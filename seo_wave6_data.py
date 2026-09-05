@@ -227,7 +227,7 @@ SEO_WAVE6_PAGES = [{'slug': 'scan-to-folder-stopped-working-after-windows-update
                     'href="/shared-folders-not-working-after-windows-11-24h2-update/">Shared '
                     'folders after the 24H2 update</a> &middot; <a '
                     'href="/windows-11-network-credentials-shared-folder/">Windows 11 asking for '
-                    'network credentials</a></p>'},
+                    'network credentials</a> &middot; <a href="/printer-support/">Printer support</a></p>'},
  {'slug': 'printer-asking-for-admin-password',
   'title': 'Printer Asking for an Admin Password? | 365 Techies',
   'metaDesc': 'Windows asking for an administrator password to install a printer is the security '

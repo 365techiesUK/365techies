@@ -79,7 +79,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=100" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=101" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -117,7 +117,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=100&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=101&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -469,7 +469,6 @@
             <a href="/web-care/">365 Web Care</a>
             <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
             <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
-            <span class="dropdown__label dropdown__label--sep">By sector</span>
           </div>
         </div>
         <div class="nav-item has-dropdown">
@@ -663,7 +662,6 @@
           <a href="/web-care/">365 Web Care</a>
           <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
           <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
-          <span class="dropdown__label dropdown__label--sep">By sector</span>
         </div>
       </details>
       <details class="m-group">
@@ -859,6 +857,17 @@
           <p>We&rsquo;re one message away if it ever drops offline again.</p>
         </li>
         </ol>
+      </div>
+    </section>
+    <section class="section" aria-label="Fix guides">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow mono" data-reveal>// FIX IT YOURSELF FIRST</p>
+          <h2 class="section-title" data-title>Thirteen printer problems, each with its own fix guide<span class="title-underline"></span></h2>
+        </div>
+        <div class="related" data-reveal>
+          <div class="related__links"><a href="/printer-wont-connect-to-bt-smart-hub/">Printer won&rsquo;t connect to a BT Smart Hub</a><a href="/printer-wont-connect-to-sky-router/">Printer won&rsquo;t connect to a Sky router</a><a href="/printer-wont-connect-to-ee-smart-hub/">Printer won&rsquo;t connect to an EE Smart Hub</a><a href="/printer-wont-connect-to-mesh-wifi/">Printer won&rsquo;t connect to mesh Wi-Fi</a><a href="/printer-says-wifi-password-incorrect/">Printer says the Wi-Fi password is incorrect</a><a href="/printer-stopped-working-after-changing-wifi-password/">Printer stopped working after a Wi-Fi password change</a><a href="/printer-wont-connect-after-changing-broadband/">Printer won&rsquo;t connect after changing broadband</a><a href="/printer-wont-connect-after-moving-house/">Printer won&rsquo;t connect after moving house</a><a href="/printer-disappeared-after-windows-update/">Printer disappeared after a Windows update</a><a href="/printer-wont-scan-to-computer-windows-11/">Printer won&rsquo;t scan to the computer on Windows 11</a><a href="/printer-prints-but-wont-scan-after-new-router/">Prints but won&rsquo;t scan after a new router</a><a href="/scan-to-folder-stopped-working-after-windows-update/">Scan to folder stopped after a Windows update</a><a href="/printer-asking-for-admin-password/">Printer keeps asking for an administrator password</a></div>
+        </div>
       </div>
     </section>
     <section class="reviews" aria-label="Customer reviews">

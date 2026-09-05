@@ -63,6 +63,11 @@ _VOLATILE = [
     # is navigation, not content. Without this line every page on the site would carry
     # today's date for it, which is the same false signal as the analytics swap above.
     (_cdre.compile(r'\s*<a href="/bournemouth/live-map/">Bournemouth Live Map</a>'), ''),
+    # The dangling "By sector" separator removed from the Services menu (5 Sep 2026 nav audit)
+    # is navigation too. A REMOVAL cannot be made invisible by a rule alone - the stored hashes
+    # were taken with the label present - so the hashes were re-based once from the built pages
+    # with this rule in place; from then on old and new builds hash alike.
+    (_cdre.compile(r'\s*<span class="dropdown__label dropdown__label--sep">By sector</span>'), ''),
     # Cache-busters are numeric (?v=22) AND date-style (?v=2026-07-30 on search.js).
     # \d+ only ate the "2026", leaving "?v=X-07-30" to change every single day - which
     # made all 649 pages claim they changed on every build and quietly destroyed the
@@ -126,7 +131,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "100"   # bumped 2026-09-05: the A+ text steps hand the nav to the hamburger instead of clipping it (nav audit). Earlier: v99 2026-09-02: hero console card no longer tilted. Earlier: v98   # bumped 2026-09-02 again: v97 was poisoned in the SiteGround proxy by a pre-completion page load (old CSS cached under the new URL for browsers; curl variants showed MISS). NEVER load a page carrying a new ?v= until the deploy run is completed+success. v97 = 2026-09-02 (live-map launcher + overlay).   # bumped 2026-09-02 (Bournemouth365 live-map launcher + overlay). Earlier: v96 2026-08-27 (skip-link could not be outgrown by the a11y ladder). Earlier: v95 2026-08-19 (proof bar replaces the duplicate reviews teaser). Earlier: v94 2026-08-17 (status strip rebuild). Earlier the same day: v88 was poisoned in the SiteGround proxy by a pre-deploy probe (see deploy-hash-sync-blindspot); NEVER request a new ?v= URL before the deploy that ships it is confirmed complete
+CSSV = "101"   # bumped 2026-09-05 (2nd): the >=1960 header expand moved to 2040 so "Contact" is never clipped. Earlier the same day: v100 = the A+ text steps hand the nav to the hamburger instead of clipping it (nav audit). Earlier: v99 2026-09-02: hero console card no longer tilted. Earlier: v98   # bumped 2026-09-02 again: v97 was poisoned in the SiteGround proxy by a pre-completion page load (old CSS cached under the new URL for browsers; curl variants showed MISS). NEVER load a page carrying a new ?v= until the deploy run is completed+success. v97 = 2026-09-02 (live-map launcher + overlay).   # bumped 2026-09-02 (Bournemouth365 live-map launcher + overlay). Earlier: v96 2026-08-27 (skip-link could not be outgrown by the a11y ladder). Earlier: v95 2026-08-19 (proof bar replaces the duplicate reviews teaser). Earlier: v94 2026-08-17 (status strip rebuild). Earlier the same day: v88 was poisoned in the SiteGround proxy by a pre-deploy probe (see deploy-hash-sync-blindspot); NEVER request a new ?v= URL before the deploy that ships it is confirmed complete
 HERITAGE_DIMS = {'heritage-01.jpg': (1400, 787), 'heritage-02.jpg': (787, 1400), 'heritage-03.jpg': (1400, 787), 'heritage-04.jpg': (1400, 787), 'heritage-05.jpg': (787, 1400), 'heritage-07.jpg': (1400, 787), 'heritage-kinson.jpg': (1200, 710), 'heritage-moordown.jpg': (1400, 788), 'heritage-stock.jpg': (1400, 788), 'heritage-storefront.jpg': (1024, 683)}
 try:
     from hero_scenes import SCENES as HERO_SCENES
@@ -341,7 +346,6 @@ HEADER = '''  <header class="site-header">
             <a href="/web-care/">365 Web Care</a>
             <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
             <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
-            <span class="dropdown__label dropdown__label--sep">By sector</span>
           </div>
         </div>
         <div class="nav-item has-dropdown">
@@ -535,7 +539,6 @@ HEADER = '''  <header class="site-header">
           <a href="/web-care/">365 Web Care</a>
           <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
           <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
-          <span class="dropdown__label dropdown__label--sep">By sector</span>
         </div>
       </details>
       <details class="m-group">

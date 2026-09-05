@@ -329,8 +329,12 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
    it was still needed: measured 2026-08-12 at a 1820px viewport, nav font returns
    to 0.94rem and .header-bar demands 1814px against 1805px available, leaving
    .nav-sos just 6px inside the right edge. 1919px keeps the tight treatment
-   through the whole risky band; at >=1920px there is ~90px of slack. */
-@media (max-width: 1959px) {
+   through the whole risky band; at >=1920px there is ~90px of slack.
+   ⚠ 1959 -> 2039 (5 Sep 2026 nav audit): releasing the tight treatment at 1960 grew
+   the row by ~130px in one step and the LAST nav item fell past the clip edge -
+   "Contact" was 70px over at 1960, 30px at 2000, clear only from 2040. All three
+   expand rules (this block, .nav-sos__long, the search label) share that number. */
+@media (max-width: 2039px) {
   .desktop-nav > a, .nav-item > a { padding: 0.55rem 0.45rem; font-size: 0.9rem; }
   .nav-cta { padding: 0.55rem 1.1rem !important; margin-left: 0.4rem; }
   .nav-sos { padding: 0.55rem 0.8rem; }
@@ -442,7 +446,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
    to match the nav-tightening block and the search-label rule: all three used to
    expand the row at exactly 1800px at once, which is what pushed .nav-sos to
    within 6px of the right edge at 1820px. They must share one threshold. */
-@media (max-width: 1959px) { .nav-sos__long { display: none; } }
+@media (max-width: 2039px) { .nav-sos__long { display: none; } }
 
 /* Hamburger */
 .mobile-menu-button {
@@ -1435,7 +1439,7 @@ body.menu-open { overflow: hidden; }
 }
 html.a11y-text-3 .desktop-nav { display: none; }
 html.a11y-text-3 .mobile-menu-button { display: flex; }
-/* And while ANY step is on, keep the >=1960px expand treatment off (wider nav padding
+/* And while ANY step is on, keep the >=2040px expand treatment off (wider nav padding
    and font, the long SOS label, the search label + kbd): at 2200px it re-clipped
    Contact at A+ and three items at A++. Same values as the <=1959px tight block. */
 html[class*="a11y-text-"] .desktop-nav > a, html[class*="a11y-text-"] .nav-item > a { padding: 0.55rem 0.45rem; font-size: 0.9rem; }
@@ -2116,7 +2120,8 @@ html.ss-open { overflow: hidden; }
    .nav-sos__long; three rules expanding the row at once was the 1820px squeeze. */
 .nav-search__label { display: none; }
 .nav-search__k { display: none; }
-@media (min-width: 1960px) { .nav-search__label { display: inline; } .nav-search__k { display: inline-flex; } }
+/* 1960 -> 2040 with the other two expand rules, 5 Sep 2026: see the nav-tightening block. */
+@media (min-width: 2040px) { .nav-search__label { display: inline; } .nav-search__k { display: inline-flex; } }
 @media (max-width: 620px) { .nav-search kbd, .nav-search .nav-search__k { display: none; } .nav-search { padding: 0 0.6rem; } }
 
 /* big search box (homepage + hubs) */

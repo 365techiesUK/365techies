@@ -647,7 +647,7 @@ def beach_reel_node(s):
                           "logo": {"@type": "ImageObject", "url": SITE + "/logo.jpg"}}}
 
 # ======================================================= CUSTOMER-TYPE PAGES
-def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_paras, feats, tile_items, faqs, chips, cta_title=None, cta_text=None, accent="cyan", split=None, split_title=None, split_eyebrow="HOME &amp; BUSINESS", steps_title=None, step_items=None, hero_cta1=None, hero_cta2=None, tools=None, scene=None, reel=False):
+def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_paras, feats, tile_items, faqs, chips, cta_title=None, cta_text=None, accent="cyan", split=None, split_title=None, split_eyebrow="HOME &amp; BUSINESS", steps_title=None, step_items=None, hero_cta1=None, hero_cta2=None, tools=None, scene=None, reel=False, guides=None, guides_title=None):
     cta_title = cta_title or "Let&rsquo;s sort your IT"
     cta_text = cta_text or "Join the Dorset homes and businesses who never worry about technology. Pick a plan or say hello."
     desc = lede.replace("&rsquo;", "'").replace("&amp;", "and")
@@ -715,6 +715,22 @@ def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_para
         </ol>
       </div>
     </section>''')
+    # Optional list of symptom/fix guides that hang off this service (href, label).
+    # Added 5 Sep 2026 after the nav audit found six printer pages that only linked to
+    # each other: a hub that names every guide is what gives them an inbound path.
+    if guides:
+        _gl = ''.join(f'<a href="{h}">{t}</a>' for h, t in guides)
+        sections.append(f"""    <section class="section" aria-label="Fix guides">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow mono" data-reveal>// FIX IT YOURSELF FIRST</p>
+          <h2 class="section-title" data-title>{guides_title or "Common problems, each with its own guide"}<span class="title-underline"></span></h2>
+        </div>
+        <div class="related" data-reveal>
+          <div class="related__links">{_gl}</div>
+        </div>
+      </div>
+    </section>""")
     sections += [reviews_block(revs), bp.PCM_BAND, faq_html(faqs)]
     if tools:
         sections.append(bp.tools_strip(tools, alt=False))
