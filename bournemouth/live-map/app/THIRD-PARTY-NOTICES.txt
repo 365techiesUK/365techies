@@ -58,7 +58,7 @@ SOFTWARE.
 
 === Material Symbols Outlined (glyph subset) — Apache-2.0 (adapted, not bundled) ===
 https://github.com/google/material-design-icons
-Adapted in: public/fonts/material-symbols-outlined-subset.woff2
+Adapted in: public/fonts/material-symbols-outlined-subset.v2.woff2
 
 Apache License
                            Version 2.0, January 2004
