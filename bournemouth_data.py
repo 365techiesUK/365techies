@@ -1456,7 +1456,7 @@ _LM_LAUNCH = '''    <section class="section b365" id="map" aria-label="Open the 
           <img src="/bournemouth/media/og-live-map.jpg" width="1200" height="630" loading="lazy" alt="The Bournemouth365 live map on the flat map view, showing Bournemouth town centre and the seafront" />
           <div>
             <button type="button" id="b365-map-launch" class="button primary button--lg">Open the live map</button>
-            <p class="b365-launch-note">The map opens right here, on top of this page, and closes with the button at the top or the Escape key. It is a heavier download than the rest of Bournemouth365 &mdash; about 1.2 MB of application code plus the CesiumJS map engine (several MB more) plus the map tiles as you pan &mdash; which is exactly why it loads only when you open it, never on arrival. It opens on the free OpenStreetMap flat map with every live layer working; the 3D city is a separate button inside the map.</p>
+            <p class="b365-launch-note">The map opens right here, on top of this page, and closes with the button at the top or the Escape key. It is a heavier download than the rest of Bournemouth365 &mdash; about 2.3 MB compressed on first open, most of it the CesiumJS map engine, plus the map tiles as you pan &mdash; which is exactly why it loads only when you open it, never on arrival. It opens on the free OpenStreetMap flat map with every live layer working; the 3D city is a separate button inside the map.</p>
             <p class="b365-launch-note">No JavaScript? <a href="/bournemouth/live-map/app/">Open the map app directly</a> instead.</p>
           </div>
         </div>
@@ -1495,6 +1495,10 @@ _LM_SOURCES = [
      "Flights and aircraft traces (ADS-B)",
      "ODbL 1.0",
      "adsb.lol (ODbL 1.0)"),
+    ('<a href="https://terrain.reearth.land" target="_blank" rel="noopener">Re:Earth Terrain</a> / <a href="https://mapterhorn.com" target="_blank" rel="noopener">Mapterhorn</a>',
+     "The ground relief under the flat map, streamed keyless as the map opens (about 4 MB for the opening view)",
+     '<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>',
+     "Terrain (keyless globe stacks): Re:Earth Terrain / Mapterhorn (CC BY 4.0) / EGM2008 (NGA)"),
     ('<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
      "The free flat basemap, and the road geometry the traffic layer draws on",
      "ODbL 1.0 and the OSMF tile usage policy",
@@ -1550,7 +1554,7 @@ _LM_PROSE = f'''          <h2 id="layers">What you are seeing</h2>
           <p>Google bills the 3D city per view. The map therefore opens on the free OpenStreetMap flat map with every live layer already working, and the 3D city loads only when someone asks for it. There are 30 3D views a day across everyone who visits; the counter at the top of this page shows how many are left, and when they are gone the 3D button inside the map says so and comes back after midnight UTC. Nothing else on the map is metered.</p>
 
           <h2 id="phone">Works on a phone, but</h2>
-          <p>The map is a heavier download than the rest of Bournemouth365: about 1.2 MB of application code, the CesiumJS engine at several MB more, and then map tiles as you move around. It runs on a modern phone, and the flat map is the light version &mdash; but open it on Wi-Fi or good 4G rather than on a thin signal on the beach, and expect the 3D city to be the part that asks most of an older device. The rest of this page, including the live counts at the top, is as light as every other Bournemouth365 page.</p>'''
+          <p>The map is a heavier download than the rest of Bournemouth365: about 2.3 MB compressed on first open, most of it the CesiumJS engine, and then map tiles as you move around. It runs on a modern phone (iPhone 6s and newer, and any current Android), and it notices what it is running on: phones, and laptops without a dedicated graphics chip, get a lighter setting that loads the 3D city in about half the time with the same picture. Open it on Wi-Fi or good 4G rather than on a thin signal on the beach, and expect the 3D city to be the part that asks most of an older device. There is a camera button in the top bar for a picture of your view that you can save or share, with the place, the time and the data sources printed on it. The rest of this page, including the live counts at the top, is as light as every other Bournemouth365 page.</p>'''
 
 _LM_FAQS = [
     ("Is the Bournemouth live map really live?",
@@ -1564,7 +1568,7 @@ _LM_FAQS = [
     ("Does the map track me?",
      "No. There is no account, the map sets no cookies and runs no analytics of its own, and at the time of writing it never asks for your location. It remembers which layers you switched on in your own browser&rsquo;s storage and nowhere else. The live counts on this page come from our own server, which reads the public feeds on your behalf."),
     ("Will it work on my phone?",
-     "Yes, on a modern phone, but it is a heavy download compared with the rest of Bournemouth365 &mdash; about 1.2 MB of application code plus the CesiumJS engine and then map tiles. Open it on Wi-Fi or good 4G. The flat map is the light version; the 3D city is the part that asks most of an older device."),
+     "Yes, on a modern phone, but it is a heavy download compared with the rest of Bournemouth365 &mdash; about 2.3 MB compressed on first open, most of it the CesiumJS engine, and then map tiles. Open it on Wi-Fi or good 4G. The map picks a lighter setting on phones; the 3D city is still the part that asks most of an older device."),
     ("Does the map tell me whether it&rsquo;s safe to swim?",
      "No &mdash; and nothing honest can, from a desk. What the sea water layer shows is two published facts, each named for who published it: the Environment Agency&rsquo;s daily pollution-risk forecast for every designated beach from Poole Harbour round to Christchurch Bay (normal or increased, with the time it expires, plus the beach&rsquo;s annual classification), and the water companies&rsquo; own near-real-time reports of which storm overflows are discharging and which discharged in the last two days. A forecast leaves the map the moment it expires, and an overflow report its company has not updated for three hours is marked unconfirmed rather than left looking current. After heavy rain, check the Environment Agency&rsquo;s Swimfo page for the beach before you go in &mdash; the map links to it."),
 ]

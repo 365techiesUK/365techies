@@ -56,6 +56,24 @@ $HISTORY_DAYS = 90;
 $PER_MINUTE = 120;
 
 function tiles_day() { return gmdate('Y-m-d'); }
+/**
+ * Did this request come from the map's own page? Current browsers say so in
+ * Sec-Fetch-Site; older ones carry an Origin or a same-site Referer. With no
+ * signal at all the answer is no: a ticket is spent on trust, and a request
+ * that hides where it came from has none.
+ */
+function tiles_same_origin() {
+    $sfs = isset($_SERVER['HTTP_SEC_FETCH_SITE']) ? strtolower(trim($_SERVER['HTTP_SEC_FETCH_SITE'])) : '';
+    if ($sfs !== '') return $sfs === 'same-origin';
+    $host = isset($_SERVER['HTTP_HOST']) ? strtolower(preg_replace('/:\d+$/', '', $_SERVER['HTTP_HOST'])) : '';
+    if ($host === '') return false;
+    foreach (array('HTTP_ORIGIN', 'HTTP_REFERER') as $h) {
+        if (empty($_SERVER[$h])) continue;
+        $u = parse_url($_SERVER[$h]);
+        if (!empty($u['host'])) return strtolower($u['host']) === $host;
+    }
+    return false;
+}
 function tiles_resets_at() { return gmdate('Y-m-d\TH:i:s\Z', strtotime('tomorrow UTC')); }
 
 function tiles_shape($state, $daily, $extra = array()) {
@@ -104,6 +122,16 @@ if ($wantStatus) {
 // ?ticket=1 : POST only.
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     dorset_send(array('ok' => false, 'reason' => 'method', 'granted' => false, 'usage' => 'POST ?ticket=1'), 405);
+}
+// ⚠️ ...AND ONLY FROM THE MAP. The endpoint took a POST from anywhere (audit,
+// 6 Sep 2026): a short script could spend the day's thirty in minutes and
+// every real visitor would then read "3D allowance used for today". Nothing
+// would be billed - a ticket without the tile request that follows costs
+// nothing - but the map would be flat for everyone. Same shape as every other
+// refusal: not granted, never an error page, the client keeps the flat map.
+if (!tiles_same_origin()) {
+    dorset_send(array('ok' => true, 'generated' => gmdate('c'), 'granted' => false, 'reason' => 'origin',
+                      'resetsAt' => tiles_resets_at()), 403);
 }
 
 $daily = $DAILY;

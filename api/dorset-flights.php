@@ -56,6 +56,12 @@ $TTL = 25;
 $LAT = (DORSET_S + DORSET_N) / 2;
 $LON = (DORSET_W + DORSET_E) / 2;
 $RADIUS_NM = 60;
+// What this feed covers, in words, for the layer row. The client defaults to
+// "worldwide upstream snapshot" when a feed says nothing, and its feed-state
+// logic then read a healthy Dorset feed as a FALLBACK (audit, 6 Sep 2026).
+// Sent as a header as well as a field because the client reads the header.
+$COVERAGE = 'within ' . $RADIUS_NM . ' nautical miles of Bournemouth';
+header('X-Flight-Coverage: ' . $COVERAGE);
 
 $EMPTY = array('ok' => false, 'ac' => array(), 'count' => 0);
 
@@ -106,6 +112,7 @@ $out = array(
     'centre'    => array($LON, $LAT),
     'radiusNm'  => $RADIUS_NM,
     'source'    => 'adsb.lol (ODbL 1.0)',
+    'coverage'  => $COVERAGE,
     // Upstream fields, verbatim. `now` is what the client's normaliser uses to
     // age each contact; `ac` is the aircraft array it maps.
     'now'       => isset($body['now']) ? $body['now'] : null,

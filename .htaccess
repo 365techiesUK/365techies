@@ -386,6 +386,20 @@ ErrorDocument 404 /404.html
   ExpiresByType text/html "access plus 0 seconds"
 </IfModule>
 <IfModule mod_headers.c>
+  # -- Security headers (audit 2026-09-06: the site sent none). `always` so
+  #    error responses carry them too. Live-verify with curl -I after deploy.
+  #    HSTS on this host only - the preview subdomains are not all on HTTPS,
+  #    so no includeSubDomains and no preload until they are.
+  Header always set Strict-Transport-Security "max-age=31536000"
+  #    Nothing here is meant to sit in another site's frame; the live map's
+  #    "Explore in 3D" button in particular must never be framed invisibly.
+  #    Same-origin frames are unaffected (the contact page embeds Google's map,
+  #    which is their frame in our page, not ours in theirs).
+  Header always set Content-Security-Policy "frame-ancestors 'self'"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  #    Geolocation is NOT restricted: the signal checker asks for it.
+  Header always set Permissions-Policy "camera=(), payment=(), usb=()"
   # ⚠ STANDING RULES (researched + live-verified 2026-07-27):
   # 1. These Cache-Control headers are the ONLY thing keeping HTML out of SiteGround's
   #    NGINX Dynamic Cache (12h TTL). FTPS deploys do NOT purge it and there is no

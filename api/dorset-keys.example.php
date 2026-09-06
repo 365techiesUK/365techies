@@ -19,6 +19,13 @@
  *                       receives no new data.
  *   CDSE_CLIENT_ID      dataspace.copernicus.eu -> account settings ->
  *   CDSE_CLIENT_SECRET  OAuth clients -> Create. The secret is shown ONCE.
+ *   GOOGLE_GEOCODE_KEY  console.cloud.google.com -> APIs & Services ->
+ *                       Credentials -> Create API key. Restrict it to the
+ *                       GEOCODING API and to this server's IP address. It is
+ *                       NOT the map's browser key: that one is restricted to
+ *                       the site's pages, and Google's Geocoding web service
+ *                       refuses referrer-restricted keys, which is why the
+ *                       search box needs a key of its own (dorset-geocode.php).
  *
  * NO closing tag in this file.
  */
@@ -28,3 +35,4 @@ $NH_API_KEY         = '';
 $CDSE_CLIENT_ID     = '';
 $CDSE_CLIENT_SECRET = '';
 $TOMTOM_API_KEY     = '';
+$GOOGLE_GEOCODE_KEY = '';

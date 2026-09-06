@@ -241,7 +241,7 @@ if (!defined('DORSET_LIB')) {
         $f = __DIR__ . '/dorset-keys.php';
         if (is_file($f)) {
             $BODS_API_KEY = ''; $NH_API_KEY = ''; $CDSE_CLIENT_ID = ''; $CDSE_CLIENT_SECRET = '';
-            $TOMTOM_API_KEY = '';
+            $TOMTOM_API_KEY = ''; $GOOGLE_GEOCODE_KEY = '';
             require $f;
             $k = array(
                 'bods' => $BODS_API_KEY,
@@ -249,6 +249,7 @@ if (!defined('DORSET_LIB')) {
                 'cdse_id' => $CDSE_CLIENT_ID,
                 'cdse_secret' => $CDSE_CLIENT_SECRET,
                 'tomtom' => $TOMTOM_API_KEY,
+                'google_geocode' => $GOOGLE_GEOCODE_KEY,
             );
         }
         return $k;
