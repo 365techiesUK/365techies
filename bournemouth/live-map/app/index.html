@@ -26,7 +26,7 @@
        (@font-face in style.css). The third icon stylesheet that used to load here was referenced by no CSS rule. -->
   <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
   <link rel="stylesheet" href="https://fonts.bunny.net/css?family=inter:300,400,500,600|jetbrains-mono:300,400,500,600,700" />
-  <link rel="stylesheet" crossorigin href="/bournemouth/live-map/app/assets/index-D51U4ISq.css">
+  <link rel="stylesheet" crossorigin href="/bournemouth/live-map/app/assets/index-DRDxILzh.css">
   <meta name="robots" content="noindex">
   <link rel="canonical" href="https://365techies.co.uk/bournemouth/live-map/">
   <meta property="og:url" content="https://365techies.co.uk/bournemouth/live-map/">
@@ -59,6 +59,9 @@
   <nav id="top-center-actions" aria-label="Globe actions">
     <button id="clear-selected-layers" type="button" aria-label="Clear selected data layers" title="Turn off all selected data layers">
       <span class="material-symbols-outlined" aria-hidden="true">layers_clear</span>
+    </button>
+    <button id="photo-btn" type="button" aria-label="Take a photo of this view" title="Take a photo you can save or share">
+      <span class="material-symbols-outlined" aria-hidden="true">photo_camera</span>
     </button>
     <button id="share-btn" type="button" aria-label="Copy share link" title="Copy share link">
       <span class="share-icon" aria-hidden="true">&#x1F517;</span>
@@ -573,41 +576,11 @@
   
 
   <!-- Scene Director Panel -->
-  <div id="scene-panel" class="panel-collapsible collapsed" data-panel-id="scene-panel">
-    <div class="panel-glow"></div>
-    <div class="scene-panel-inner">
-      <div class="panel-header">
-        <span class="panel-title">SCENES</span>
-        <span class="panel-divider"></span>
-        <button class="panel-collapse-btn" data-collapse-target="scene-panel" title="Collapse panel">+</button>
-      </div>
-      <div class="scene-controls">
-        <select id="scene-select" aria-label="Scene recipe"></select>
-        <button id="scene-new-btn" class="scene-btn">NEW</button>
-        <button id="scene-delete-btn" class="scene-btn scene-btn-danger">DEL</button>
-      </div>
-      <div class="scene-controls">
-        <button id="scene-capture-btn" class="scene-btn">CAPTURE SHOT</button>
-        <button id="scene-update-shot-btn" class="scene-btn">UPDATE SHOT</button>
-      </div>
-      <div id="scene-shot-list" class="scene-shot-list"></div>
-      <div class="scene-controls">
-        <button id="scene-start-btn" class="scene-btn">START</button>
-        <button id="scene-stop-btn" class="scene-btn scene-btn-danger">STOP</button>
-        <button id="scene-next-btn" class="scene-btn">NEXT</button>
-      </div>
-      <div class="scene-controls">
-        <button id="scene-export-btn" class="scene-btn">EXPORT PRESETS</button>
-        <button id="scene-import-btn" class="scene-btn">IMPORT</button>
-        <button id="scene-download-btn" class="scene-btn">RUN LOG</button>
-        <input type="file" id="scene-import-file" accept="application/json,.json" hidden />
-      </div>
-      <div class="scene-progress">
-        <div id="scene-progress-fill">0%</div>
-      </div>
-      <div id="scene-status">Ready</div>
-    </div>
-  </div>
+  <!-- The reel-capture tool: a shot list, a runner and a run log, used to record
+       the social videos. Nothing a visitor can act on, and it took a third of a
+       phone screen, so the public build drops it (owner, 6 Sep 2026) and the
+       camera button in the top bar takes its place. Dev keeps it. -->
+  
 
   </div>
 
@@ -685,7 +658,7 @@
     </div>
   </div>
 
-  <script data-engine="/bournemouth/live-map/app/cesium/Cesium.js" data-app="/bournemouth/live-map/app/assets/index-Cwtt5crS.js" data-engine-bytes="5726887" data-app-bytes="1223761">(function () {
+  <script data-engine="/bournemouth/live-map/app/cesium/Cesium.js" data-app="/bournemouth/live-map/app/assets/index-DGZ36Uth.js" data-engine-bytes="5726887" data-app-bytes="1233817">(function () {
   var d = document, me = d.currentScript, cfg = me ? me.dataset : {};
   var engine = cfg.engine, app = cfg.app;
   var engineBytes = Number(cfg.engineBytes) || 0, appBytes = Number(cfg.appBytes) || 0;
