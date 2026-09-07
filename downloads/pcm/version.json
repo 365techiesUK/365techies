@@ -5,7 +5,7 @@
   "sha256": "cd3642c869ba670bf28be3688ad3e4e72c16aa6fe1305a8ece88e2007d60fb6d",
   "notes": "Recognises Backup and Restore (Windows 7), the backup most of our customers use: the health check, the Backup tab and your report now show when it last completed and say if it needs attention, instead of reporting no backup. Signed by 365 Techies Ltd.",
   "installer": {
-    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup.exe",
+    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v24.exe",
     "sha256": "9646303db3f15b4f0799d1905af8ac58b0406875a527ea8ce1cb80b97ea1a4aa"
   }
 }
