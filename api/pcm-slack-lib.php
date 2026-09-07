@@ -157,3 +157,88 @@ function slk_plain($s) {
 }
 
 }  // PCM_SLACK_LIB
+
+// ---- files ----------------------------------------------------------------
+// Slack's external-upload flow (files.upload is retired): ask for a one-time
+// URL, POST the bytes to it, then complete against a channel. Needs the
+// files:write scope on the bot and the bot in the channel; either missing
+// comes back as a plain error so the caller can post text instead.
+function slk_call_form($method, $args, $timeout = 6) {
+    $c = slk_creds();
+    if ($c[0] === '') return array('ok' => false, 'error' => 'not_configured');
+    $ch = curl_init('https://slack.com/api/' . $method);
+    curl_setopt_array($ch, array(
+        CURLOPT_POST => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_CONNECTTIMEOUT => 4,
+        CURLOPT_TIMEOUT => $timeout,
+        CURLOPT_HTTPHEADER => array('Authorization: Bearer ' . $c[0]),
+        CURLOPT_POSTFIELDS => http_build_query($args),
+    ));
+    $body = @curl_exec($ch);
+    $err  = curl_error($ch);
+    $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    if ($body === false || $body === '') return array('ok' => false, 'error' => 'net:' . ($err !== '' ? $err : $code));
+    $d = json_decode($body, true);
+    return is_array($d) ? $d : array('ok' => false, 'error' => 'bad_json');
+}
+function slk_upload_file($channel, $bytes, $filename, $title, $comment) {
+    $c = slk_creds();
+    if ($c[0] === '') return array('ok' => false, 'error' => 'not_configured');
+    if ($channel === '') return array('ok' => false, 'error' => 'no_channel');
+    $r1 = slk_call_form('files.getUploadURLExternal', array('filename' => $filename, 'length' => strlen($bytes)));
+    if (empty($r1['ok']) || empty($r1['upload_url']) || empty($r1['file_id'])) return array('ok' => false, 'error' => 'geturl:' . (string)($r1['error'] ?? 'unknown'));
+    $ch = curl_init((string)$r1['upload_url']);
+    curl_setopt_array($ch, array(
+        CURLOPT_POST => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_CONNECTTIMEOUT => 4,
+        CURLOPT_TIMEOUT => 25,
+        CURLOPT_HTTPHEADER => array('Content-Type: application/octet-stream'),
+        CURLOPT_POSTFIELDS => $bytes,
+    ));
+    @curl_exec($ch);
+    $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    if ($code < 200 || $code >= 300) return array('ok' => false, 'error' => 'upload:http' . $code);
+    $r3 = slk_call('files.completeUploadExternal', array(
+        'files' => array(array('id' => (string)$r1['file_id'], 'title' => (string)$title)),
+        'channel_id' => (string)$channel,
+        'initial_comment' => (string)$comment,
+    ), 12);
+    if (empty($r3['ok'])) return array('ok' => false, 'error' => 'complete:' . (string)($r3['error'] ?? 'unknown'));
+    return array('ok' => true);
+}
+// Where service reports go: $SLACK_REPORTS_CHANNEL in pcm-slack-bot.php if set (a channel
+// ID, C…), else the messaging channel. completeUploadExternal needs an ID, not a name.
+function slk_report_channel() {
+    $raw = (string)@file_get_contents(__DIR__ . '/pcm-slack-bot.php');
+    if (preg_match('/\$SLACK_REPORTS_CHANNEL\s*=\s*[\'"]([^\'"]+)[\'"]/', $raw, $m)) return trim($m[1]);
+    $c = slk_creds();
+    return $c[1];
+}
+// The six-weekly Service Report, as the team sees it: a short summary and the report itself.
+// Text-only when the file cannot go (missing scope, channel by name, size, network) - the
+// team must still hear that a service happened. Returns what happened, for the tool's log.
+function pcm_service_report_to_slack($cust, $machine, $ts, $html, $summary) {
+    if (!slk_ready()) return array('posted' => false, 'file' => false, 'error' => 'not_configured');
+    $chan = slk_report_channel();
+    $name = trim((string)($summary['customer'] ?? ''));
+    if ($name === '') $name = trim((string)($cust['name'] ?? 'Customer'));
+    $pc = trim((string)($summary['pc'] ?? '')); $os = trim((string)($summary['os'] ?? '')); $score = trim((string)($summary['score'] ?? ''));
+    $notes = array();
+    if (isset($summary['notes']) && is_array($summary['notes'])) foreach (array_slice($summary['notes'], 0, 3) as $n) { $n = trim(slk_plain((string)$n)); if ($n !== '') $notes[] = substr($n, 0, 160); }
+    $mname = trim((string)($cust['machines'][$machine]['name'] ?? ''));
+    $text = '*6-weekly Service Report* - ' . slk_plain(substr($name, 0, 80)) . "\n"
+          . ($pc !== '' ? 'PC: ' . slk_plain(substr($pc, 0, 80)) . "\n" : '')
+          . ($os !== '' ? 'OS: ' . slk_plain(substr($os, 0, 80)) . "\n" : '')
+          . ($score !== '' ? 'Score: ' . slk_plain(substr($score, 0, 40)) . "\n" : '')
+          . ($notes ? "Top notes:\n- " . implode("\n- ", $notes) . "\n" : '')
+          . 'In the portal: Service reports' . ($mname !== '' ? ' on ' . slk_plain($mname) : '') . ' (staff: open the customer, view as, Service reports).';
+    $fname = 'Service-Report-' . trim(preg_replace('/[^A-Za-z0-9]+/', '-', $name), '-') . '-' . gmdate('Y-m-d', $ts) . '.html';
+    $up = slk_upload_file($chan, $html, $fname, '6-weekly Service Report - ' . $name, $text);
+    if (!empty($up['ok'])) return array('posted' => true, 'file' => true, 'error' => '', 'channel' => $chan);
+    $p = slk_call('chat.postMessage', array('channel' => $chan, 'text' => $text . "\n_(report file not attached: " . (string)($up['error'] ?? 'unknown') . ")_"));
+    return array('posted' => !empty($p['ok']), 'file' => false, 'error' => (string)($up['error'] ?? ''), 'post_error' => empty($p['ok']) ? (string)($p['error'] ?? 'unknown') : '', 'channel' => $chan);
+}

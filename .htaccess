@@ -163,6 +163,11 @@ ErrorDocument 404 /404.html
 <FilesMatch "^pcm-jobs\.(json(\..*)?|log)$">
   Require all denied
 </FilesMatch>
+# 365 PC Manager per-customer stores in api/: report copies, remote-maintenance logs, SOS
+# screenshots. Served only through pcm.php (customer session) and the staff admin - never as files.
+<FilesMatch "^pcm-(rep|log|sos)-.*\.(html|txt|jpe?g|png)$">
+  Require all denied
+</FilesMatch>
 # Plan-invite endpoint keeps a log (customer emails + which plan) and an optional
 # owner plan-override file. pcm-invite.php itself stays served.
 # The no-JS enquiry relay logs whether Slack and mail actually accepted each

@@ -280,7 +280,8 @@ if ($action === 'overview') {
             'crs'=>(string)($m['crs'] ?? ''), 'crst'=>(string)($m['crst'] ?? ''),
             'hist'=>isset($m['hist']) && is_array($m['hist']) ? array_slice($m['hist'], -60) : array(),
             'log'=>$log,
-            'reps'=>isset($m['reps']) && is_array($m['reps']) ? $m['reps'] : array());
+            'reps'=>isset($m['reps']) && is_array($m['reps']) ? $m['reps'] : array(),
+            'repk'=>isset($m['repk']) && is_array($m['repk']) ? $m['repk'] : array());   // ts => 'service' for six-weekly reports
     }
     $fam = isset($c['family']['name']) ? (string)$c['family']['name'] : '';
     // is a Pro plan waiting for the owner to link this self-serve identity?
@@ -598,15 +599,38 @@ if ($action === 'reportup') {
     $b = base64_decode(substr((string)($in['html'] ?? ''), 0, 600000), true);
     if ($b === false || strlen($b) < 500 || strlen($b) > 420000) out(array('ok'=>false,'error'=>'bad_report'));
     if (stripos(substr($b, 0, 200), '<html') === false && stripos(substr($b, 0, 200), '<!doctype') === false) out(array('ok'=>false,'error'=>'bad_report'));
+    // kind: 'health' = the app's own check (default); 'service' = the six-weekly Service
+    // Report written by PC Service Professional. Kept apart so the portal can label them
+    // and so a run of health checks never pushes a service report out of the store.
+    $kind = ((string)($in['kind'] ?? '')) === 'service' ? 'service' : 'health';
     $kh = substr(hash('sha256', $key), 0, 12);
     $rts = time();
-    if (@file_put_contents(__DIR__ . '/pcm-rep-' . $kh . '-' . $machine . '-' . $rts . '.html', $b, LOCK_EX) === false) out(array('ok'=>false,'error'=>'store_failed'));
     $reps = isset($db['customers'][$key]['machines'][$machine]['reps']) && is_array($db['customers'][$key]['machines'][$machine]['reps']) ? $db['customers'][$key]['machines'][$machine]['reps'] : array();
+    $repk = isset($db['customers'][$key]['machines'][$machine]['repk']) && is_array($db['customers'][$key]['machines'][$machine]['repk']) ? $db['customers'][$key]['machines'][$machine]['repk'] : array();
+    while (in_array($rts, array_map('intval', $reps), true)) $rts++;   // two uploads inside one second
+    if (@file_put_contents(__DIR__ . '/pcm-rep-' . $kh . '-' . $machine . '-' . $rts . '.html', $b, LOCK_EX) === false) out(array('ok'=>false,'error'=>'store_failed'));
     $reps[] = $rts;
-    while (count($reps) > 12) { $old = array_shift($reps); @unlink(__DIR__ . '/pcm-rep-' . $kh . '-' . $machine . '-' . $old . '.html'); }
+    if ($kind === 'service') $repk[(string)$rts] = 'service';
+    // prune per kind, oldest first: 12 health checks, 24 service reports (three years of visits)
+    foreach (array('health' => 12, 'service' => 24) as $k => $cap) {
+        $mine = array_values(array_filter($reps, function ($t) use ($repk, $k) { return (($repk[(string)$t] ?? 'health') === $k); }));
+        while (count($mine) > $cap) {
+            $old = array_shift($mine);
+            @unlink(__DIR__ . '/pcm-rep-' . $kh . '-' . $machine . '-' . $old . '.html');
+            $reps = array_values(array_filter($reps, function ($t) use ($old) { return intval($t) !== intval($old); }));
+            unset($repk[(string)$old]);
+        }
+    }
     $db['customers'][$key]['machines'][$machine]['reps'] = $reps;
+    $db['customers'][$key]['machines'][$machine]['repk'] = $repk;
     save($DATA,$db);
-    out(array('ok'=>true));
+    // a service report is also the team's cue: post it to Slack with the file attached
+    $slack = array('posted' => false, 'file' => false, 'error' => 'not_service');
+    if ($kind === 'service') {
+        require_once __DIR__ . '/pcm-slack-lib.php';   // top-level scope on purpose (php-include-scope-trap)
+        $slack = pcm_service_report_to_slack($db['customers'][$key], $machine, $rts, $b, is_array($in['summary'] ?? null) ? $in['summary'] : array());
+    }
+    out(array('ok'=>true, 'kind'=>$kind, 'ts'=>$rts, 'slack'=>$slack));
 }
 
 // portal: ask a machine for a fresh health check (the app's minute-poll picks it up)
