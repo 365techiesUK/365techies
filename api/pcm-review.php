@@ -63,7 +63,9 @@ $DN_LIVE = true;    // LIVE 2026-07-25: SimplyBook has no equivalent email, so n
 $RM_LIVE = false;   // <-- day-before reminders. SimplyBook's own reminder MUST stay switched on
                     //     until ours has run clean for 2 weeks - if our cron dies silently and
                     //     theirs is already off, nobody gets reminded and people miss visits.
-$CF_LIVE = false;   // <-- booking confirmed/changed/cancelled emails. When flipped, ours run IN
+$CF_LIVE = true;    // LIVE 2026-09-07: ours run IN PARALLEL with SimplyBook's from today; the customer
+                    //     had been getting only SimplyBook's (this flag sat false since July).
+                    //     Original rule, still in force: when flipped, ours run IN
                     //     PARALLEL with SimplyBook's for 2-4 weeks of real bookings; only then
                     //     switch SB's client notifications off ONE TYPE AT A TIME, a week apart.
                     //     SB's confirmation must NEVER go off before ours is proven live.
