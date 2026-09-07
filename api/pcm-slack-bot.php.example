@@ -1,0 +1,33 @@
+<?php
+/*
+ * TEMPLATE for api/pcm-slack-bot.php - the Slack BOT token the portal uses to post
+ * (and, for six-weekly Service Reports, to attach the report file).
+ *
+ * Copy this file to api/pcm-slack-bot.php ON THE SERVER (SiteGround File Manager),
+ * fill in the values, save. The real file is gitignored (this repo is PUBLIC) and
+ * .htaccess-denied. It is read by regex, never include()d, so the PHP tags around it
+ * do not matter - only the values below do.
+ *
+ * SLACK APP SETUP (api.slack.com/apps -> the 365 app -> OAuth & Permissions):
+ *   Bot Token Scopes needed:
+ *     chat:write        post messages
+ *     files:write       attach the Service Report file  <- the one this feature adds
+ *     channels:history  read replies in a PUBLIC channel (portal messaging)
+ *     groups:history    read replies in a PRIVATE channel (portal messaging)
+ *   Then "Install to Workspace" (re-install after adding a scope) and copy the
+ *   "Bot User OAuth Token" (starts xoxb-). In Slack, /invite @365 into each channel below.
+ *
+ * Channel IDs (not names - file posts need the ID): open the channel in Slack ->
+ * channel name at the top -> About -> Channel ID. Known ones on 2026-09-07:
+ *   #daily-jobs-in-jobs-out  C0BS3BVP48J
+ *   #365-job-tracker         C0B4TD439FB
+ */
+
+$SLACK_TOKEN = 'xoxb-PASTE-THE-BOT-USER-OAUTH-TOKEN-HERE';
+
+// Portal messaging threads go here (customer <-> engineer).
+$SLACK_CHANNEL = 'C0B4TD439FB';
+
+// Six-weekly Service Reports (summary + the report file) go here. Optional: if this
+// line is missing, reports go to $SLACK_CHANNEL.
+$SLACK_REPORTS_CHANNEL = 'C0BS3BVP48J';
