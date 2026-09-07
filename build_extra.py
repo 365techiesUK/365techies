@@ -23969,7 +23969,9 @@ def write_portal_page():
         if(!d || !d.machines) return null;
         var n=0, last=0;
         d.machines.forEach(function(m){ (m.reps||[]).forEach(function(ts){ n++; if(ts>last) last=ts; }); });
-        if(!n) return null;
+        // no reports yet is a state worth showing, not hiding: it says where they will appear
+        if(!n) return '<div class="ds__big">0<em>on file</em></div>'
+          + '<p class="ds__sub">Your first written Service Report lands here after your next six-weekly service, and stays here.</p>';
         var dt=new Date(last*1000);
         return '<div class="ds__big">'+n+'<em>on file</em></div>'
           + '<p class="ds__sub">Latest: '+dt.getDate()+' '+MON[dt.getMonth()]+' '+dt.getFullYear()+'. Open them from your computers list.</p>';
@@ -25302,7 +25304,7 @@ def write_portal_page():
         + '<path id="ngarea" fill="url(#ngfill)" opacity="0"></path><path id="ngtline" class="ngtl"></path></svg></div>';
     }
     var repShelf = (m.reps || []).slice(-4).reverse().map(function (rt) { var rd = new Date(rt * 1000); return '<button class="sm ghost repb" data-pc="' + esc(m.id) + '" data-ts="' + rt + '" style="margin:.25rem .3rem 0 0"' + (m.repk && m.repk[rt] === 'service' ? ' title="6-weekly Service Report">\\ud83d\\udccb Service ' : '>\\ud83d\\udcc4 ') + rd.getDate() + ' ' + MON[rd.getMonth()] + '</button>'; }).join('');
-    if (repShelf) h += '<div class="ngh2">Your reports</div><div class="ngc">' + repShelf + '</div>';
+    h += '<div class="ngh2">Your reports</div><div class="ngc">' + (repShelf || '<div class="ngseen">No reports here yet. Your first written Service Report appears after your next six-weekly service; the app\u2019s own health reports appear when you make one.</div>') + '</div>';
     h += '<div class="ngh2">What we\\u2019ve done \\u2014 with your permission</div><div class="ngc ngledger ng-s6">'
       + '<div class="lh"><div><div style="font-weight:650;color:var(--pwhite)">Let 365 run safe maintenance</div><div class="ngseen">' + (m.rmaint ? 'On - you\\u2019re always in control' : 'Off - you decide if we ever do') + ' \\u00b7 set in the app on your PC</div></div><div class="ngsw ' + (m.rmaint ? 'on' : 'off') + '" title="Turn this on or off inside 365 PC Manager on your PC"><i></i></div></div>';
     if (m.log && m.log.length) {
