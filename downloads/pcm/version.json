@@ -1,11 +1,11 @@
 {
-  "ver": 24,
-  "version": "1.0.24",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v24.exe",
-  "sha256": "cd3642c869ba670bf28be3688ad3e4e72c16aa6fe1305a8ece88e2007d60fb6d",
-  "notes": "Recognises Backup and Restore (Windows 7), the backup most of our customers use: the health check, the Backup tab and your report now show when it last completed and say if it needs attention, instead of reporting no backup. Signed by 365 Techies Ltd.",
+  "ver": 25,
+  "version": "1.0.25",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v25.exe",
+  "sha256": "da29015c3d21e20dc93aebc571da0f5c0a885cef1d0858f5835d56daf5d2d990",
+  "notes": "The broadband test now measures fast lines properly, shows a live speed graph while it runs, and no longer freezes the window. It also recognises Backup and Restore (Windows 7) and Toob as a provider. Signed by 365 Techies Ltd.",
   "installer": {
-    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v24.exe",
-    "sha256": "9646303db3f15b4f0799d1905af8ac58b0406875a527ea8ce1cb80b97ea1a4aa"
+    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v25.exe",
+    "sha256": "87db932a808ac858b492f3ad867ce99508388b61d6c795a3e95becc4076b781a"
   }
 }
