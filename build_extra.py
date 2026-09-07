@@ -17641,6 +17641,16 @@ info_page(
           </ul>
           <h2>How we help afterwards</h2>
           <p><strong>If your bank has asked for evidence that the computer has been checked</strong> &mdash; many do, after a remote-access or malware scam, before they restore online banking or settle a claim &mdash; that is a service we offer: a remote check, a clean-up, and a plain-English written report you can send them. See <a href="/scam-recovery/">scam recovery: clean-up and a report for your bank</a>.</p>
+          <h2>Which scam was it? The page for yours</h2>
+          <ul class="checklist">
+            <li><a href="/gave-a-scammer-remote-access/">Someone took control of my computer</a> &mdash; the &lsquo;Microsoft&rsquo;, &lsquo;BT&rsquo; or refund call that ended with remote access.</li>
+            <li><a href="/youve-been-hacked-email-bitcoin-scam/">A threatening email says I&rsquo;ve been hacked and demands Bitcoin</a> &mdash; the current template, line by line, and why it is bluff.</li>
+            <li><a href="/scam-pop-up-help-poole/">A pop-up says my computer is infected and to call a number</a> &mdash; how to close it safely.</li>
+            <li><a href="/i-think-ive-been-hacked/">I think an account or my computer has been hacked</a> &mdash; the signs, and what to lock down first.</li>
+            <li><a href="/phishing/">I clicked a link or typed a password into a fake page</a> &mdash; phishing, and the passwords to change first.</li>
+            <li><a href="/worried-about-a-parent-being-scammed/">It happened to my mum or dad</a> &mdash; how to help without taking over.</li>
+            <li><a href="/scam-recovery/">My bank wants proof the computer has been checked</a> &mdash; our clean-up and written report.</li>
+          </ul>
           <p>If a scammer had access to your computer, follow our dedicated step-by-step guide: <a href="/gave-a-scammer-remote-access/">I gave a scammer remote access &mdash; what to do now</a>. We&rsquo;ll check the computer over on a secure remote session &mdash; remove anything they left, secure your accounts and set up <a href="/how-to-set-up-two-factor-authentication/">two-factor authentication</a> so it can&rsquo;t happen again. Remember: <strong>we always phone you before we connect, and a genuine technician never cold-calls demanding access.</strong> Test yourself anytime with our <a href="/spot-the-scam/">Spot the Scam</a> quiz &mdash; and if you&rsquo;re reading this because you&rsquo;re <a href="/worried-about-a-parent-being-scammed/">worried about a parent</a>, we have a guide for that too.</p>""",
   faqs=[
     ("Should I keep talking to the scammer?","No &mdash; stop all contact. Don&rsquo;t reply, don&rsquo;t click anything, and never pay a &lsquo;fee&rsquo; to get your money back, as that&rsquo;s a second scam. Keep any messages as evidence, then report them."),

@@ -215,7 +215,7 @@ body.menu-open .site-header { z-index: 70; }
 }
 .status-ticker__track {
   display: flex; width: max-content;
-  animation: ticker 80s linear infinite;    /* loop is ~3300px (was 8500): 80s = ~82px/s, a 1600px screen takes ~19s to cross */
+  animation: ticker 85s linear infinite;    /* loop is ~3300px (was 8500): 80s = ~82px/s, a 1600px screen takes ~19s to cross */
 }
 .status-ticker:hover .status-ticker__track,
 .status-ticker:focus-within .status-ticker__track,
@@ -2631,6 +2631,21 @@ body.b365-mapov-open { overflow: hidden; }
   .b365-fresh .chip-m::before { animation: none; }
   .b365-draw path.l { animation: none; stroke-dashoffset: 0; }
 }
+
+/* ---- scam alert: the strip item and the homepage band (2026-09-07) ----
+   Red is reserved for this on the site; the dot reuses tk-pulse. */
+.status-ticker a.tk-alert { color: #ffc4c4; font-weight: 600; }
+.status-ticker a.tk-alert:hover { color: #ffe3e3; }
+.tk-dot--red { background: #e8222e; box-shadow: 0 0 0 0 rgba(232,34,46,.55); animation-name: tk-pulse-red; }
+@keyframes tk-pulse-red { 0% { box-shadow: 0 0 0 0 rgba(232,34,46,.55); } 70% { box-shadow: 0 0 0 6px rgba(232,34,46,0); } 100% { box-shadow: 0 0 0 0 rgba(232,34,46,0); } }
+.alert-band { display: flex; align-items: center; gap: .9rem; min-height: 44px; padding: .85rem 1.1rem; border: 1px solid rgba(232,34,46,.45); border-left: 4px solid #e8222e; border-radius: 12px; background: rgba(232,34,46,.08); color: inherit; text-decoration: none; transition: background .2s, border-color .2s; }
+.alert-band:hover, .alert-band:focus-visible { background: rgba(232,34,46,.15); border-color: rgba(232,34,46,.85); text-decoration: none; }
+.alert-band__dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: #e8222e; box-shadow: 0 0 0 0 rgba(232,34,46,.5); animation: tk-pulse-red 2.4s ease-out infinite; }
+.alert-band__text { flex: 1; font-size: .98rem; line-height: 1.55; }
+.alert-band__cta { flex: none; font-weight: 700; color: #ff9a9a; white-space: nowrap; }
+.alert-band:hover .alert-band__cta { text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 640px) { .alert-band { flex-wrap: wrap; } .alert-band__cta { width: 100%; padding-left: calc(10px + .9rem); } }
+@media (prefers-reduced-motion: reduce) { .alert-band__dot, .tk-dot--red { animation: none; } }
 
 /* ============================================================
    SENTINEL — must stay the LAST rule in this file.
