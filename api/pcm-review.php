@@ -1825,6 +1825,49 @@ if (!defined('RV_LIB')) {
         exit;
     }
 
+    /* Read-only census of the backfill ledger. Answers "who is left to ask?" - the
+       question bf_process()'s own census cannot, because it drops a segment before
+       counting it and only runs while BF_LIVE is false. Opens the queue, tallies and
+       closes WITHOUT saving: no sends, no writes, and no names or addresses in the
+       output. Counts only, so the result is safe to paste around. */
+    if (isset($_GET['census'])) {
+        if (!$rv_admin) { http_response_code(403); echo json_encode(array('ok' => false, 'error' => 'denied')); exit; }
+        list($lk, $q) = rvq_open();
+        if (!$lk) { echo json_encode(array('ok' => false, 'error' => 'locked')); exit; }
+        $seg_status = array(); $askable = array(); $blocked = array(
+            'already_reviewed' => 0, 'opted_out' => 0, 'asked_within_cooldown' => 0,
+            'no_usable_email' => 0, 'gave_up_after_3_tries' => 0);
+        foreach ($q['bf'] as $e) {
+            if (!is_array($e)) continue;
+            $seg = isset($e['seg']) ? $e['seg'] : 'catalogue';
+            $st  = isset($e['st'])  ? $e['st']  : 'unknown';
+            if (!isset($seg_status[$seg])) $seg_status[$seg] = array();
+            if (!isset($seg_status[$seg][$st])) $seg_status[$seg][$st] = 0;
+            $seg_status[$seg][$st]++;
+            if ($st !== 'pending') continue;
+            $em = isset($e['em']) ? $e['em'] : '';
+            if ($em === '' || !filter_var($em, FILTER_VALIDATE_EMAIL)) { $blocked['no_usable_email']++; continue; }
+            if ((isset($e['tries']) ? $e['tries'] : 0) >= 3)           { $blocked['gave_up_after_3_tries']++; continue; }
+            $eh = sha1($em);
+            if (isset($q['optout'][$eh]))   { $blocked['opted_out']++; continue; }
+            if (isset($q['reviewed'][$eh])) { $blocked['already_reviewed']++; continue; }
+            if ((isset($q['last'][$eh]) ? $q['last'][$eh] : 0) > time() - $GLOBALS['RV_ASK_COOLDOWN'])
+                                            { $blocked['asked_within_cooldown']++; continue; }
+            if (!isset($askable[$seg])) $askable[$seg] = 0;
+            $askable[$seg]++;
+        }
+        rvq_close($lk);   /* deliberately NOT rvq_save() - this must never change state */
+        echo json_encode(array('ok' => true, 'mode' => 'census', 'read_only' => true,
+            'ledger_total' => count($q['bf']),
+            'askable_now_by_segment' => $askable,
+            'segments_currently_enabled' => (array)$GLOBALS['BF_SEGMENTS'],
+            'blocked' => $blocked,
+            'by_segment_and_status' => $seg_status,
+            'already_left_a_review' => count($q['reviewed']),
+            'opted_out_total' => count($q['optout'])));
+        exit;
+    }
+
     if (isset($_GET['optout'])) {
         if (!$rv_admin) { http_response_code(403); echo json_encode(array('ok' => false, 'error' => 'denied')); exit; }
         $em = strtolower(trim((string)$_GET['optout']));
