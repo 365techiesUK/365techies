@@ -9683,7 +9683,7 @@ def dell_it_support_hub():
       ("emergency", "Book a Dell repair", "/dell-laptop-repair-bournemouth/",
        "Broken screen, dead machine, worn battery &mdash; laptop or desktop. Honest diagnosis, no-fix-no-fee, 12-month warranty on the work and free local collection. Business down? We prioritise emergencies (Mon&ndash;Fri, 9&ndash;5).", "Book a repair"),
       ("servicing", "Servicing &amp; care plans", "/dell-support-plans/",
-       "Keep your Dell fast, cool and healthy with a full service every 6 weeks &mdash; each one documented with a written Service Report &mdash; on a simple monthly plan from &pound;18.25/month per computer at home, &pound;24.38 for business. And your guarantee becomes 5 years.", "See plans"),
+       "Keep your Dell fast, cool and healthy with a full service every 6 weeks &mdash; each one documented with a written Service Report, emailed to you and kept in your portal &mdash; on a simple monthly plan from &pound;18.25/month per computer at home, &pound;24.38 for business. And your guarantee becomes 5 years.", "See plans"),
       ("sales", "Buy a Dell &mdash; new or refurbished", "/dell-hardware/#pick",
        "Pick your machine online and get an availability check &amp; quote in a minute &mdash; Latitude laptops from &pound;510, OptiPlex desktops from &pound;545 (guide prices), each with a new 1TB Samsung 990 PRO, set up and supported. Brand-new Dell to order too.", "Pick a machine"),
     ]
