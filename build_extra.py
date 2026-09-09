@@ -20877,7 +20877,7 @@ REFURB_SUPPORT_BAND = '''    <section class="section" aria-label="Setup, guarant
           <tr><th>Guarantee</th><td>12-month return-to-base</td><td>12-month return-to-base</td><td class="hi"><strong>5 years</strong> &mdash; for as long as you&rsquo;re on the plan</td></tr>
           <tr><th>Setup</th><td>Windows 11 Home or Pro, data moved across</td><td>Tailored home <em>or</em> business setup &mdash; email, printers, accounts, the lot</td><td>Tailored setup, then kept right</td></tr>
           <tr><th>Support</th><td>Pay-as-you-go remote help from &pound;20</td><td><strong>30 days of remote support included</strong></td><td class="hi">Help as often as you need it &mdash; we always phone first</td></tr>
-          <tr><th>Servicing</th><td>&mdash;</td><td><strong>A full service after your first 30 days</strong></td><td class="hi">A full service <strong>every 6 weeks</strong> with a <strong>written Service Report</strong> each time</td></tr>
+          <tr><th>Servicing</th><td>&mdash;</td><td><strong>A full service after your first 30 days</strong></td><td class="hi">A full service <strong>every 6 weeks</strong>, with a <strong>written Service Report</strong> emailed to you each time</td></tr>
           <tr><th>Best for</th><td>Confident users</td><td>A properly settled-in start</td><td class="hi">Never worrying about your computer again</td></tr>
         </tbody></table></div>
         <div class="prose" style="max-width:760px;margin:1.6rem auto 0" data-reveal>
@@ -24003,7 +24003,7 @@ def write_portal_page():
         d.machines.forEach(function(m){ (m.reps||[]).forEach(function(ts){ n++; if(ts>last) last=ts; }); });
         // no reports yet is a state worth showing, not hiding: it says where they will appear
         if(!n) return '<div class="ds__big">0<em>on file</em></div>'
-          + '<p class="ds__sub">Your first written Service Report lands here after your next six-weekly service, and stays here.</p>';
+          + '<p class="ds__sub">Your first written Service Report lands here after your next six-weekly service. We email it to you as well, and it stays here for good.</p>';
         var dt=new Date(last*1000);
         return '<div class="ds__big">'+n+'<em>on file</em></div>'
           + '<p class="ds__sub">Latest: '+dt.getDate()+' '+MON[dt.getMonth()]+' '+dt.getFullYear()+'. Open them from your computers list.</p>';
@@ -25336,7 +25336,7 @@ def write_portal_page():
         + '<path id="ngarea" fill="url(#ngfill)" opacity="0"></path><path id="ngtline" class="ngtl"></path></svg></div>';
     }
     var repShelf = (m.reps || []).slice(-4).reverse().map(function (rt) { var rd = new Date(rt * 1000); return '<button class="sm ghost repb" data-pc="' + esc(m.id) + '" data-ts="' + rt + '" style="margin:.25rem .3rem 0 0"' + (m.repk && m.repk[rt] === 'service' ? ' title="6-weekly Service Report">\\ud83d\\udccb Service ' : '>\\ud83d\\udcc4 ') + rd.getDate() + ' ' + MON[rd.getMonth()] + '</button>'; }).join('');
-    h += '<div class="ngh2">Your reports</div><div class="ngc">' + (repShelf || '<div class="ngseen">No reports here yet. Your first written Service Report appears after your next six-weekly service; the app\u2019s own health reports appear when you make one.</div>') + '</div>';
+    h += '<div class="ngh2">Your reports</div><div class="ngc">' + (repShelf || '<div class="ngseen">No reports here yet. Your first written Service Report appears after your next six-weekly service and is emailed to you at the same time; the app\u2019s own health reports appear when you make one.</div>') + '</div>';
     h += '<div class="ngh2">What we\\u2019ve done \\u2014 with your permission</div><div class="ngc ngledger ng-s6">'
       + '<div class="lh"><div><div style="font-weight:650;color:var(--pwhite)">Let 365 run safe maintenance</div><div class="ngseen">' + (m.rmaint ? 'On - you\\u2019re always in control' : 'Off - you decide if we ever do') + ' \\u00b7 set in the app on your PC</div></div><div class="ngsw ' + (m.rmaint ? 'on' : 'off') + '" title="Turn this on or off inside 365 PC Manager on your PC"><i></i></div></div>';
     if (m.log && m.log.length) {
