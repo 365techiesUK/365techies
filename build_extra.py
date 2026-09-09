@@ -24010,6 +24010,19 @@ def write_portal_page():
       },
       b:'<div class="ds__big">6<em>on file</em></div>'
         + '<p class="ds__sub">A written report every service, in plain English, kept here</p>' },
+    { k:'software', ic:'\\ud83e\\udde9', t:'Software', aud:'all',
+      live:function(d){
+        if(!d || !d.machines || !d.machines.length) return null;
+        var any=false, total=0, upd=0, out=0;
+        d.machines.forEach(function(m){ if(m.sw){ any=true; total+=(m.sw.count||0); upd+=(m.sw.updated||0); out+=(m.sw.outdated||0); } });
+        if(!any) return null;
+        var col=out>0?'var(--pwarn)':'var(--pgood)';
+        var head=out>0?(out+'<em>need'+(out===1?'s':'')+' a look</em>'):'&#10003; Up to date';
+        var sub=total+' program'+(total===1?'':'s')+' across your '+(d.machines.length===1?'PC':d.machines.length+' PCs')+(upd?' &middot; '+upd+' updated at your last service':'');
+        return '<div class="ds__big" style="color:'+col+'">'+head+'</div><p class="ds__sub">'+sub+'</p>';
+      },
+      b:'<div class="ds__big" style="color:var(--pgood)">&#10003; Up to date</div>'
+        + '<p class="ds__sub">128 programs &middot; 4 updated at your last service</p>' },
     { k:'survey', ic:'\\ud83d\\udcf6', t:'WiFi survey', aud:'all',
       live:function(){
         if(!JW || !JW.wifi) return null;

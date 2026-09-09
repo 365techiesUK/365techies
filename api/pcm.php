@@ -61,6 +61,29 @@ function pcm_drives_in($v) {
     return $o;
 }
 
+/* software inventory (P0): the snapshot the six-weekly service uploads in summary.software.
+   Every field is untrusted text - capped and stripped, exactly like pcm_drives_in. Returns null
+   when there is nothing to store, so an older uploader that sends no software block changes nothing. */
+function pcm_software_in($v) {
+    if (!is_array($v)) return null;
+    $count = max(0, min(5000, (int)(isset($v['total']) ? $v['total'] : 0)));
+    $upd   = max(0, min(5000, (int)(isset($v['updated']) ? $v['updated'] : 0)));
+    $out   = max(0, min(5000, (int)(isset($v['outdated']) ? $v['outdated'] : 0)));
+    $items = array();
+    foreach ((array)(isset($v['items']) ? $v['items'] : array()) as $it) {
+        if (!is_array($it)) continue;
+        $n = pcm_txt(isset($it['n']) ? $it['n'] : '', 80);
+        if ($n === '') continue;
+        $items[] = array('n' => $n,
+            'v'   => pcm_txt(isset($it['v'])   ? $it['v']   : '', 24),
+            'pub' => pcm_txt(isset($it['pub']) ? $it['pub'] : '', 48),
+            'upd' => !empty($it['upd']));
+        if (count($items) >= 200) break;
+    }
+    if ($count === 0 && $upd === 0 && $out === 0 && !count($items)) return null;
+    return array('ts' => time(), 'count' => $count, 'updated' => $upd, 'outdated' => $out, 'items' => $items);
+}
+
 // Serialise the whole read-modify-write so concurrent check-ins / the SimplyBook callback
 // can't lost-update each other. Returns the lock handle (release by fclose).
 function db_lock($f){ $lk = @fopen($f . '.lock', 'c'); if ($lk) @flock($lk, LOCK_EX); return $lk; }
@@ -113,6 +136,14 @@ if ($action === 'checkin') {
         // opting OUT of remote maintenance clears any queued commands, so a command the customer
         // just revoked can never resurrect and run when they later opt back in.
         if (empty($in['rmaint'])) unset($c['machines'][$machine]['cmdq']);
+        // software count from the app (P0, decision A): a cheap between-visits freshness signal.
+        // The full list arrives with the six-weekly service; here we only refresh the total.
+        if (isset($in['swc'])) {
+            $sw = isset($c['machines'][$machine]['sw']) && is_array($c['machines'][$machine]['sw']) ? $c['machines'][$machine]['sw'] : array();
+            $sw['count'] = max(0, min(5000, intval($in['swc'])));
+            $sw['ts'] = $now;
+            $c['machines'][$machine]['sw'] = $sw;
+        }
         // daily score history for the portal trend (one point per day, ~90 days)
         $hd = gmdate('Y-m-d');
         $hist = isset($c['machines'][$machine]['hist']) && is_array($c['machines'][$machine]['hist']) ? $c['machines'][$machine]['hist'] : array();
@@ -297,6 +328,7 @@ if ($action === 'overview') {
             'crs'=>(string)($m['crs'] ?? ''), 'crst'=>(string)($m['crst'] ?? ''),
             'hist'=>isset($m['hist']) && is_array($m['hist']) ? array_slice($m['hist'], -60) : array(),
             'log'=>$log,
+            'sw'=>(isset($m['sw']) && is_array($m['sw'])) ? array('count'=>intval($m['sw']['count'] ?? 0), 'updated'=>intval($m['sw']['updated'] ?? 0), 'outdated'=>intval($m['sw']['outdated'] ?? 0), 'ts'=>intval($m['sw']['ts'] ?? 0)) : null,
             'reps'=>isset($m['reps']) && is_array($m['reps']) ? $m['reps'] : array(),
             'repk'=>isset($m['repk']) && is_array($m['repk']) ? $m['repk'] : array());   // ts => 'service' for six-weekly reports
     }
@@ -690,6 +722,9 @@ if ($action === 'reportup') {
         if ($modelIn !== '') $mrec['model'] = $modelIn;
         $drivesIn = pcm_drives_in($sumr['drives'] ?? null);
         if ($drivesIn) $mrec['drives'] = $drivesIn;
+        // software inventory (P0): store the snapshot, capped + sanitised
+        $swIn = pcm_software_in(isset($sumr['software']) ? $sumr['software'] : null);
+        if ($swIn !== null) $mrec['sw'] = $swIn;
         // the tool normally asked (action=asset) minutes ago; only look now if nobody has this week
         $have = isset($mrec['asset']['computed']) && (time() - (int)$mrec['asset']['computed']) < 7 * 86400;
         if (!$have && ($modelIn !== '' || $drivesIn)) {
