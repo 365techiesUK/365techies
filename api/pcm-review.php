@@ -1784,6 +1784,29 @@ function sr_clean($s, $max = 120) {
     return strlen($s) <= $max ? $s : preg_replace('/[\x80-\xBF]+$/', '', substr($s, 0, $max));
 }
 
+/** The asset register block from pcm-asset-lib, reduced to what the email prints and checked. */
+function sr_asset_clean($a) {
+    if (!is_array($a)) return null;
+    $ok = function ($x) { return is_array($x) && isset($x['date']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', (string)$x['date']) && strtotime((string)$x['date']) !== false; };
+    $out = array('pc' => null, 'drives' => array());
+    if ($ok(isset($a['pc']) ? $a['pc'] : null))
+        $out['pc'] = array('date' => (string)$a['pc']['date'], 'num' => sr_clean(isset($a['pc']['num']) ? $a['pc']['num'] : '', 20), 'age' => sr_clean(isset($a['pc']['age']) ? $a['pc']['age'] : '', 40));
+    foreach ((array)(isset($a['drives']) ? $a['drives'] : array()) as $d) {
+        if (!$ok($d)) continue;
+        $out['drives'][] = array('model' => sr_clean(isset($d['model']) ? $d['model'] : '', 60), 'date' => (string)$d['date'],
+                                 'num' => sr_clean(isset($d['num']) ? $d['num'] : '', 20), 'age' => sr_clean(isset($d['age']) ? $d['age'] : '', 40));
+        if (count($out['drives']) >= 2) break;
+    }
+    return ($out['pc'] || $out['drives']) ? $out : null;
+}
+/** "bought from us 14 March 2024 - 2 years 5 months ago (invoice 1187)" */
+function sr_bought($x) {
+    $t = 'bought from us ' . date('j F Y', strtotime($x['date'] . ' 12:00:00'));
+    if ($x['age'] !== '' && $x['age'] !== 'days') $t .= ' - ' . $x['age'] . ' ago';
+    if ($x['num'] !== '') $t .= ' (invoice ' . $x['num'] . ')';
+    return $t;
+}
+
 /** Verdict bands, in the report's own words (Get-HealthScore in PC Service Professional). */
 function sr_verdict($score) {
     $s = (int)$score;
@@ -1942,7 +1965,11 @@ function sr_body($first, $sr) {
     } else {
         $t .= "Nothing for you to do - everything we checked came back fine.\r\n\r\n";
     }
-    if ($sr['pc'] !== '') $t .= '  Computer:      ' . $sr['pc'] . "\r\n";
+    $asset = isset($sr['asset']) && is_array($sr['asset']) ? $sr['asset'] : array();
+    $pcLine = $sr['pc'] . (!empty($asset['pc']) ? ($sr['pc'] !== '' ? ' - ' : '') . sr_bought($asset['pc']) : '');
+    if ($pcLine !== '') $t .= '  Computer:      ' . $pcLine . "\r\n";
+    foreach ((array)(isset($asset['drives']) ? $asset['drives'] : array()) as $ad)
+        $t .= '  Drive:         ' . ($ad['model'] !== '' ? $ad['model'] . ' - ' : '') . sr_bought($ad) . "\r\n";
     if ($sr['os'] !== '') $t .= '  Windows:       ' . $sr['os'] . "\r\n";
     if ($sr['backup'] !== '') $t .= '  Backup:        ' . $sr['backup'] . "\r\n";
     $t .= '  Next service:  around ' . date('j F', (int)$sr['next_ts']) . " - we will be in touch, or move it in your portal\r\n\r\n"
@@ -1982,7 +2009,14 @@ function sr_body_html($first, $sr) {
         $blocks[] = rv_h_note('<strong style="color:#0b1226;">Nothing for you to do.</strong> Everything we checked came back fine.');
     }
     $facts = array();
-    if ($sr['pc'] !== '') $facts['Computer'] = $sr['pc'];
+    $asset = isset($sr['asset']) && is_array($sr['asset']) ? $sr['asset'] : array();
+    $pcLine = $sr['pc'] . (!empty($asset['pc']) ? ($sr['pc'] !== '' ? ' - ' : '') . sr_bought($asset['pc']) : '');
+    if ($pcLine !== '') $facts['Computer'] = $pcLine;
+    $di = 0;
+    foreach ((array)(isset($asset['drives']) ? $asset['drives'] : array()) as $ad) {
+        $di++;
+        $facts[$di === 1 ? 'Drive' : 'Drive ' . $di] = ($ad['model'] !== '' ? $ad['model'] . ' - ' : '') . sr_bought($ad);
+    }
     if ($sr['os'] !== '') $facts['Windows'] = $sr['os'];
     if ($sr['backup'] !== '') $facts['Backup'] = $sr['backup'];
     $facts['Next service'] = 'Around ' . date('j F', (int)$sr['next_ts']) . ' - we will be in touch, or move it in your portal';
@@ -2037,6 +2071,10 @@ function sr_sample() {
             array('Drive encryption', 'warn', 'BitLocker is on but no recovery key was found - worth saving one together'),
         ),
         'backup' => 'Windows Backup - last completed 2 September',
+        'asset' => array(
+            'pc' => array('date' => '2024-03-14', 'num' => '1187', 'age' => '2 years 5 months'),
+            'drives' => array(array('model' => 'CT1000P3PSSD8', 'date' => '2024-03-14', 'num' => '1187', 'age' => '2 years 5 months')),
+        ),
         'url' => 'https://365techies.co.uk/portal/',
         'st' => 'sample',
     );
@@ -2097,6 +2135,7 @@ function sr_record($key, $machine, $ts, $summary, $cust, $prev = array()) {
         'prev' => (isset($prev['score']) && $prev['score'] !== null) ? (int)$prev['score'] : null,
         'prev_ts' => isset($prev['ts']) ? (int)$prev['ts'] : 0,
         'done' => $done, 'recs' => $recs, 'sec' => $sec,
+        'asset' => sr_asset_clean(isset($summary['asset']) ? $summary['asset'] : null),
         'backup' => sr_clean(isset($summary['backup']) ? $summary['backup'] : '', 160),
         'next_ts' => sr_next_ts(isset($summary['next']) ? $summary['next'] : '', $ts),
         'ts' => $ts, 'exp' => $exp,

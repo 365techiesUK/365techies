@@ -295,7 +295,7 @@ ErrorDocument 404 /404.html
 # per-install filename salt, the CLI-only cron, and the shared libraries. The
 # cron also refuses non-CLI itself - this is the belt to that braces, because a
 # lost .htaccess has happened here before.
-<FilesMatch "^(pcm-slack-bot|pcm-msg-salt|pcm-slack-lib|pcm-msg-lib|pcm-msg-poll|pcm-bkpend-lib|pcm-bkpend-test|pcm-rvbf-test|pcm-phone-lib|pcm-phones-test|pcm-qbo-lib|pcm-qbo-lib-test|pcm-portal-auth-lib|pcm-myinvoices-test|pcm-mailhtml-test|pcm-sbphone-backfill|comms-name-test|bm-sea-lib|bm-sea-key)\.php$">
+<FilesMatch "^(pcm-slack-bot|pcm-msg-salt|pcm-slack-lib|pcm-msg-lib|pcm-msg-poll|pcm-bkpend-lib|pcm-bkpend-test|pcm-rvbf-test|pcm-phone-lib|pcm-phones-test|pcm-qbo-lib|pcm-qbo-lib-test|pcm-portal-auth-lib|pcm-myinvoices-test|pcm-mailhtml-test|pcm-sbphone-backfill|comms-name-test|bm-sea-lib|bm-sea-key|pcm-sr-test|pcm-asset-lib|pcm-asset-test)\.php$">
   Require all denied
 </FilesMatch>
 <Files "pcm-msg-cron.lock">
@@ -327,7 +327,7 @@ ErrorDocument 404 /404.html
 # tmp+rename with the pid in the name, so a crash can leave a .12345.tmp behind.
 # pcm-qbo-invcache.json caches each customer's invoice numbers, dates and
 # amounts for the portal - their money, and nobody else's business.
-<FilesMatch "^(pcm-qbo-token|pcm-invoice-state|pcm-qbo-invcache)\.json(\..*)?$">
+<FilesMatch "^(pcm-qbo-token|pcm-invoice-state|pcm-qbo-invcache|pcm-asset-cache)\.json(\..*)?$">
   Require all denied
 </FilesMatch>
 <FilesMatch "^pcm-invoice\.(log|lock)$">

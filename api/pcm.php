@@ -43,6 +43,20 @@ function save($f,$d){
     if (@file_put_contents($tmp, json_encode($d, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $f);
 }
 function out($a){ echo json_encode($a); exit; }
+/* uploader-supplied text that reaches customers' emails and the portal: tags out, control
+   bytes out, capped. The uploader is our own tool, but its input is a customer's PC. */
+function pcm_txt($s, $max) { $s = trim(preg_replace('/[\x00-\x1F\x7F]+|\s+/', ' ', strip_tags((string)$s))); return function_exists('mb_substr') ? mb_substr($s, 0, $max, 'UTF-8') : substr($s, 0, $max); }
+function pcm_drives_in($v) {
+    $o = array();
+    foreach ((array)$v as $d) {
+        if (!is_array($d)) continue;
+        $m = pcm_txt(isset($d['model']) ? $d['model'] : '', 60); $g = (int)(isset($d['sizeGB']) ? $d['sizeGB'] : 0);
+        if ($m === '' || $g <= 0) continue;
+        $o[] = array('model' => $m, 'sizeGB' => $g);
+        if (count($o) >= 6) break;
+    }
+    return $o;
+}
 
 // Serialise the whole read-modify-write so concurrent check-ins / the SimplyBook callback
 // can't lost-update each other. Returns the lock handle (release by fclose).
@@ -593,6 +607,31 @@ if ($action === 'logup') {
 }
 
 // app: a freshly generated service/health report - store a portal copy (per machine, capped)
+/* The asset register for this machine: when did we sell this PC, and this drive? PC Service
+   Professional asks BEFORE it writes the report so the report can print the dates, and the
+   service-report email reuses the same answer. Read-only against QuickBooks, cached a day
+   (pcm-asset-lib.php). No match = no lines, never a guess. */
+if ($action === 'asset') {
+    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
+    if ($machine === '' || !isset($db['customers'][$key]['machines'][$machine])) out(array('ok'=>false,'error'=>'unknown_machine'));
+    $mrec = &$db['customers'][$key]['machines'][$machine];
+    $modelIn = pcm_txt($in['model'] ?? '', 80);
+    if ($modelIn !== '') $mrec['model'] = $modelIn;
+    $drivesIn = pcm_drives_in($in['drives'] ?? null);
+    if ($drivesIn) $mrec['drives'] = $drivesIn;
+    $model = $modelIn !== '' ? $modelIn : (string)($mrec['model'] ?? '');
+    $drives = $drivesIn ? $drivesIn : (array)($mrec['drives'] ?? array());
+    $fresh = isset($mrec['asset']['computed']) && (time() - (int)$mrec['asset']['computed']) < 86400 && empty($in['refresh']);
+    if (!$fresh) {
+        require_once __DIR__ . '/pcm-asset-lib.php';
+        $mrec['asset'] = pcm_asset_for_machine($db['customers'][$key], $machine, $model, $drives);
+    }
+    $asset = $mrec['asset'];
+    unset($mrec);
+    save($DATA,$db);
+    out(array('ok'=>true, 'asset'=>$asset, 'cached'=>$fresh));
+}
+
 if ($action === 'reportup') {
     if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
     if ($machine === '' || !isset($db['customers'][$key]['machines'][$machine])) out(array('ok'=>false,'error'=>'unknown_machine'));
@@ -642,6 +681,20 @@ if ($action === 'reportup') {
     $mrec['reps'] = $reps;
     $mrec['repk'] = $repk;
     $mrec['repm'] = $repm;
+    if ($kind === 'service') {
+        // what the report saw: the model and the fixed drives, for the asset register
+        $modelIn = pcm_txt(isset($sumr['model']) && $sumr['model'] !== '' ? $sumr['model'] : ($sumr['pc'] ?? ''), 80);
+        if ($modelIn !== '') $mrec['model'] = $modelIn;
+        $drivesIn = pcm_drives_in($sumr['drives'] ?? null);
+        if ($drivesIn) $mrec['drives'] = $drivesIn;
+        // the tool normally asked (action=asset) minutes ago; only look now if nobody has this week
+        $have = isset($mrec['asset']['computed']) && (time() - (int)$mrec['asset']['computed']) < 7 * 86400;
+        if (!$have && ($modelIn !== '' || $drivesIn)) {
+            require_once __DIR__ . '/pcm-asset-lib.php';
+            $mrec['asset'] = pcm_asset_for_machine($db['customers'][$key], $machine, $modelIn !== '' ? $modelIn : (string)($mrec['model'] ?? ''), $drivesIn ? $drivesIn : (array)($mrec['drives'] ?? array()));
+        }
+    }
+    $assetNow = isset($mrec['asset']) ? $mrec['asset'] : null;
     unset($mrec);
     save($DATA,$db);
     // a service report is also the team's cue: post it to Slack with the file attached...
@@ -656,7 +709,7 @@ if ($action === 'reportup') {
         // queue lock is taken inside - the order every other caller of the queue already uses.
         if (!defined('RV_LIB')) define('RV_LIB', 1);
         require_once __DIR__ . '/pcm-review.php';      // top-level scope on purpose: its $RV_Q must be a global
-        $email = sr_record($key, $machine, $rts, $sumr + array('scoren' => $scoren), $db['customers'][$key], $prev);
+        $email = sr_record($key, $machine, $rts, $sumr + array('scoren' => $scoren, 'asset' => $assetNow), $db['customers'][$key], $prev);
     }
     out(array('ok'=>true, 'kind'=>$kind, 'ts'=>$rts, 'slack'=>$slack, 'email'=>$email));
 }

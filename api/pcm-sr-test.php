@@ -133,6 +133,23 @@ ok(strpos(sr_body_html('<b>Sofia</b>', $xss), '<img') === false && strpos(sr_bod
 ok(sr_subject($ent) === 'Your service report - Dell Latitude 3520, ' . date('j F', $TS), 'subject names the computer and the day', sr_subject($ent));
 ok(sr_verdict(88) === 'Excellent' && sr_verdict(78) === 'Very good' && sr_verdict(68) === 'Good' && sr_verdict(55) === 'Fair' && sr_verdict(54) === 'Needs attention', 'verdict bands match the report');
 
+echo "-- the asset register\n";
+$aq = $summary; $aq['asset'] = array(
+    'pc' => array('date' => '2024-03-14', 'num' => '1187', 'age' => '2 years 5 months', 'line' => 'Dell Latitude 3520 <b>x</b>'),
+    'drives' => array(array('model' => 'CT1000P3PSSD8', 'sizeGB' => 932, 'date' => '2024-03-14', 'num' => '1187', 'age' => '2 years 5 months'),
+                      array('model' => 'bad', 'date' => 'not-a-date', 'num' => '1', 'age' => 'x')),
+    'why' => '', 'source' => 'quickbooks');
+sr_record($KEY, $MACHINE, $TS + 50, $aq, $cust);
+$e = q(); $ea = $e['sr'][$KH . '-' . $MACHINE . '-' . ($TS + 50)];
+ok(is_array($ea['asset']) && $ea['asset']['pc']['num'] === '1187' && count($ea['asset']['drives']) === 1, 'asset block stored: pc kept, the drive with a bad date dropped', json_encode($ea['asset']));
+$ah = sr_body_html('Sofia', $ea); $at = sr_body('Sofia', $ea);
+ok(strpos($ah, 'bought from us 14 March 2024 - 2 years 5 months ago (invoice 1187)') !== false && strpos($at, 'bought from us 14 March 2024 - 2 years 5 months ago (invoice 1187)') !== false, 'both say when we sold the computer, with the invoice number');
+ok(strpos($ah, 'CT1000P3PSSD8 - bought from us') !== false && strpos($at, 'Drive:         CT1000P3PSSD8 - bought from us') !== false, 'both say when we sold the drive');
+ok(strpos($ah, '<b>x</b>') === false && strpos($ah, 'quickbooks') === false, 'the invoice line text and the source never reach the email');
+ok(strpos(sr_body_html('Sofia', $ent), 'bought from us') === false && strpos(sr_body('Sofia', $ent), 'bought from us') === false, 'no asset = no bought line, nothing invented');
+$sd = $ea; $sd['asset']['pc']['age'] = 'days';
+ok(strpos(sr_body('Sofia', $sd), 'bought from us 14 March 2024 (invoice 1187)') !== false, 'a purchase this week reads without an age');
+
 echo "-- security\n";
 ok(count($ent['sec']) === 3 && $ent['sec'][0][1] === 'ok' && strpos($ent['sec'][0][2], '<') === false && $ent['sec'][2][0] === 'Drive encryption',
    'security rows: state lower-cased, tags stripped, unknown states and junk rows dropped', json_encode($ent['sec']));
