@@ -609,7 +609,7 @@ def pcm_landing():
              ("wrench","Startup &amp; storage","See what starts with Windows and where your space has gone."),
              ("home","Backup &amp; safety check","Know at a glance whether your files are backed up and protected."),
              ("bell","Service visits &amp; reminders","Book or change your service in-app, with friendly Windows reminders before each visit."),
-             ("check","Written service reports","After every service: what we did, your score, and honest advice on your Desktop."),
+             ("check","Written service reports","After every service: what we did, your score and honest advice &mdash; emailed to you, saved in your portal and left on your Desktop."),
              ("bolt","Help in one tap","Stuck? Reach a real local techie without hunting for the number.")]) + '''
         </div>
       </div>
@@ -794,6 +794,28 @@ def pcm_landing():
         </ul>
         <p style="text-align:center;margin-top:1.6rem" data-reveal><a class="text-link" href="#download">Download it free and test your broadband <span aria-hidden="true">&#8594;</span></a></p>
         <p class="mono" style="text-align:center;color:var(--faint);font-size:.72rem;margin-top:.8rem" data-reveal>// A FAILED TEST IS NEVER SHOWN AS ZERO &middot; WE NEVER STORE YOUR FULL POSTCODE</p>
+      </div>
+    </section>''',
+      # The six-weekly written Service Report. Every claim here is something the report
+      # genuinely prints from readings taken on the day - see api/pcm-review.php (the email)
+      # and the ServicePass summary. Do not add a figure the report does not actually show.
+      '''    <section class="section section--alt" aria-label="The written service report" id="service-report">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// AFTER EVERY SERVICE</p>
+          <h2 class="section-title section-title--center" data-title>A report you can actually read<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>On a 365 support plan we service your computer about every six weeks, and every service ends the same way &mdash; a <strong>written Service Report</strong> in plain English. It reaches you three ways: <strong>emailed to you</strong>, saved in <a href="/portal/">your portal</a>, and left on your Desktop. No jargon, no upsell, no invented problems.</p>
+        </div>
+        <ul class="security-grid" data-stagger>
+          <li><h3>Your score, and which way it moved</h3><p>A health score out of 100 with the change since your last service. A computer that is quietly drifting shows up as a number, months before it becomes a bad morning.</p></li>
+          <li><h3>Security at a glance</h3><p>Windows updates, firewall, virus protection and drive encryption &mdash; each one read on the day and written down as we found it. If something was off, it says so plainly instead of hiding it.</p></li>
+          <li><h3>What we actually did</h3><p>Item by item, in the order we did it &mdash; and anything we think is worth doing next, with the reason. Suggestions only ever come from your machine&rsquo;s own readings.</p></li>
+          <li><h3>Every drive, in detail</h3><p>Model and size, how many hours it has been running, its temperature, how much data has been written to it over its life, and how much of its rated life the drive itself reports as used.</p></li>
+          <li><h3>Backup, honestly</h3><p>Whether your backup actually ran, where it goes, and how much room is left on the backup drive &mdash; because a full backup drive quietly stops protecting you.</p></li>
+          <li><h3>Guarantees, and what is left of them</h3><p>When you bought the computer and its drive from us, and how long each guarantee still has to run. Dell computers we sold carry <strong>five years</strong> while you are on a support plan.</p></li>
+        </ul>
+        <p style="text-align:center;margin-top:1.6rem" data-reveal><a class="text-link" href="/monthly-it-support/">See what a support plan includes <span aria-hidden="true">&#8594;</span></a></p>
+        <p class="mono" style="text-align:center;color:var(--faint);font-size:.72rem;margin-top:.8rem" data-reveal>// EVERY FIGURE IS MEASURED ON YOUR PC ON THE DAY &middot; NOTHING IS ESTIMATED</p>
       </div>
     </section>''',
       get_or_waitlist_html,
