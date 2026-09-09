@@ -141,6 +141,12 @@ ok(strpos($html, '>Security<') !== false && strpos($html, 'Off for: Private') !=
 ok(strpos($text, "Security\r\n") !== false && strpos($text, '[OK]  Antivirus') !== false && strpos($text, '[!!]  Firewall') !== false && strpos($text, '[--]  Drive encryption') !== false,
    'text has the Security section with state markers');
 ok(strpos($html, 'rv_h_security') === false && strpos($html, '>Security<') < strpos($html, 'What we did today'), 'Security sits above the work list');
+ok(strpos($html, 'local family business') !== false && strpos($text, 'local family business') !== false
+   && strpos($html, 'nobody rings on our behalf') !== false && strpos($text, 'nobody rings on our behalf') !== false,
+   'both carry the who-we-are line: local family business, nobody rings on our behalf');
+$smp = sr_sample(); $mbrow = null;
+foreach ($smp['sec'] as $r) if ($r[0] === 'Malwarebytes') $mbrow = $r;
+ok($mbrow !== null && $mbrow[1] === 'info' && strpos(sr_body_html('Steve', $smp), '#9aa7bd') !== false, 'the sample shows a Malwarebytes row in grey (free edition), so the test email exercises all three dot colours');
 $nosec = $ent; $nosec['sec'] = array();
 ok(strpos(sr_body_html('Sofia', $nosec), '>Security<') === false && strpos(sr_body('Sofia', $nosec), "Security\r\n") === false, 'an older uploader with no security rows gets no Security section, not an empty one');
 

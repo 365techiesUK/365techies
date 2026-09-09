@@ -1950,9 +1950,11 @@ function sr_body($first, $sr) {
         . "Your portal:  https://365techies.co.uk/portal/\r\n\r\n"
         . "Anything not behaving the way it should? Reply to this email or ring\r\n"
         . "01202 775566 and we will make it right.\r\n\r\n"
-        . "A reminder we put in every report: we will never ask for passwords or\r\n"
-        . "payment in an out-of-the-blue phone call or pop-up. If someone does,\r\n"
-        . "hang up and ring us.\r\n\r\n"
+        . "You know who we are: 365 Techies is a local family business - Steve and\r\n"
+        . "David, Bournemouth, since 1995. We will never ask for passwords or payment\r\n"
+        . "in an out-of-the-blue phone call or pop-up, and nobody rings on our behalf.\r\n"
+        . "If anyone does, however official they sound, hang up and ring us on\r\n"
+        . "01202 775566.\r\n\r\n"
         . "Steve & David\r\n"
         . "365 Techies - family-run IT support in Bournemouth since 1995\r\n"
         . "01202 775566 - https://365techies.co.uk\r\n";
@@ -1991,8 +1993,13 @@ function sr_body_html($first, $sr) {
     $blocks[] = rv_h_p('Anything not behaving the way it should? Reply to this email or ring '
               . '<a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202&nbsp;775566</a> '
               . 'and we will make it right. That is the point of using a family firm.');
-    $blocks[] = rv_h_panel('', '<strong style="color:#0b1226;">A reminder we put in every report:</strong> we will never ask for passwords or payment in an '
-              . 'out-of-the-blue phone call or pop-up. If someone does, hang up and ring us.');
+    // the security line that matters most in a scam-heavy year: who we are, and that nobody
+    // else ever rings on our behalf. A local family firm is the thing a cold caller cannot fake.
+    $blocks[] = rv_h_panel('You know who we are',
+                '365 Techies is a <strong style="color:#0b1226;">local family business</strong> &ndash; Steve and David, Bournemouth, since 1995. '
+              . 'We will never ask for passwords or payment in an out-of-the-blue phone call or pop-up, and <strong style="color:#0b1226;">nobody rings on our behalf</strong>. '
+              . 'If anyone does, however official they sound, hang up and ring us on '
+              . '<a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202&nbsp;775566</a>.');
     return rv_html_shell(array(
         'title' => 'Your service report',
         'eyebrow' => 'Service report · ' . date('j F Y', (int)$sr['ts']),   // the shell escapes this: a literal dot, never an entity
@@ -2022,6 +2029,7 @@ function sr_sample() {
         'recs' => array('The battery now holds 59% of its original capacity - fine on the mains, but a replacement battery would restore proper portability.'),
         'sec' => array(
             array('Antivirus', 'ok', 'Real-time protection on - Microsoft Defender, definitions up to date'),
+            array('Malwarebytes', 'info', 'Installed for manual scans (the free edition); Microsoft Defender is protecting in real time'),
             array('Firewall', 'ok', 'On for every network type'),
             array('Security scan', 'ok', 'Microsoft Defender quick scan today - nothing found'),
             array('Windows updates', 'ok', '3 installed, including one driver'),
