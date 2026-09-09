@@ -45,6 +45,14 @@ $summary = array(
     'done' => array(array('Windows updates installed', '3, including one driver'), array('<b>Security scan</b>', 'clean'), 'not an array', array('', 'no label')),
     'backup' => 'Windows Backup - last completed 2 September',
     'next' => '2026-10-16',
+    'security' => array(
+        array('Antivirus', 'OK', 'Real-time protection on - <b>Malwarebytes</b>'),
+        array('Firewall', 'warn', 'Off for: Private'),
+        array('Made up', 'green', 'a state outside the vocabulary must be dropped'),
+        array('', 'ok', 'no label'),
+        'not a row',
+        array('Drive encryption', 'info', 'Not encrypted (BitLocker off)'),
+    ),
 );
 
 echo "-- queueing\n";
@@ -124,6 +132,17 @@ $xss = $ent; $xss['pc'] = 'Dell <img src=x onerror=alert(1)>'; $xss['nm'] = 'Sof
 ok(strpos(sr_body_html('<b>Sofia</b>', $xss), '<img') === false && strpos(sr_body_html('<b>Sofia</b>', $xss), '<b>Sofia') === false, 'name and model cannot inject markup');
 ok(sr_subject($ent) === 'Your service report - Dell Latitude 3520, ' . date('j F', $TS), 'subject names the computer and the day', sr_subject($ent));
 ok(sr_verdict(88) === 'Excellent' && sr_verdict(78) === 'Very good' && sr_verdict(68) === 'Good' && sr_verdict(55) === 'Fair' && sr_verdict(54) === 'Needs attention', 'verdict bands match the report');
+
+echo "-- security\n";
+ok(count($ent['sec']) === 3 && $ent['sec'][0][1] === 'ok' && strpos($ent['sec'][0][2], '<') === false && $ent['sec'][2][0] === 'Drive encryption',
+   'security rows: state lower-cased, tags stripped, unknown states and junk rows dropped', json_encode($ent['sec']));
+ok(strpos($html, '>Security<') !== false && strpos($html, 'Off for: Private') !== false && strpos($html, '#e0961a') !== false && strpos($html, '#1f9d55') !== false,
+   'HTML has the Security panel with an amber and a green dot');
+ok(strpos($text, "Security\r\n") !== false && strpos($text, '[OK]  Antivirus') !== false && strpos($text, '[!!]  Firewall') !== false && strpos($text, '[--]  Drive encryption') !== false,
+   'text has the Security section with state markers');
+ok(strpos($html, 'rv_h_security') === false && strpos($html, '>Security<') < strpos($html, 'What we did today'), 'Security sits above the work list');
+$nosec = $ent; $nosec['sec'] = array();
+ok(strpos(sr_body_html('Sofia', $nosec), '>Security<') === false && strpos(sr_body('Sofia', $nosec), "Security\r\n") === false, 'an older uploader with no security rows gets no Security section, not an empty one');
 
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);

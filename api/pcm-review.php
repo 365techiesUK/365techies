@@ -1859,6 +1859,34 @@ function rv_h_score($score, $verdict, $delta) {
          . '</td></tr></table></td></tr></table>';
 }
 
+/**
+ * Security at a glance - the block customers worry about most, so it sits right
+ * under the score. One row per fact the service actually READ, each with a state
+ * dot: green ok, amber warn, grey info/unknown. A fact that could not be read says
+ * so in grey; nothing is ever shown green by default.
+ */
+function rv_h_security($rows) {
+    if (!is_array($rows) || !$rows) return '';
+    $dots = array('ok' => '#1f9d55', 'warn' => '#e0961a', 'info' => '#9aa7bd', 'unknown' => '#9aa7bd');
+    $h = '<div style="font-size:13px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#7c8aa5 !important;margin:0 0 10px 0;">Security</div>'
+       . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 22px 0;"><tr>'
+       . '<td bgcolor="#f7f9fc" style="background-color:#f7f9fc;border:1px solid #e3eaf4;border-radius:10px;padding:4px 20px 6px 20px;">'
+       . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">';
+    $n = count($rows); $i = 0;
+    foreach ($rows as $r) {
+        $i++;
+        $state = (isset($r[1]) && isset($dots[$r[1]])) ? $r[1] : 'unknown';
+        $border = $i < $n ? 'border-bottom:1px solid #e9eef5;' : '';
+        $h .= '<tr><td valign="top" width="22" style="width:22px;padding:14px 0 10px 0;' . $border . '">'
+            . '<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>'
+            . '<td width="12" height="12" bgcolor="' . $dots[$state] . '" style="width:12px;height:12px;background-color:' . $dots[$state] . ';border-radius:6px;font-size:0;line-height:0;">&nbsp;</td>'
+            . '</tr></table></td>'
+            . '<td valign="top" width="148" style="width:148px;padding:10px 12px 10px 6px;font-size:15px;font-weight:700;line-height:1.5;color:#0b1226 !important;' . $border . '">' . rv_h(isset($r[0]) ? $r[0] : '') . '</td>'
+            . '<td valign="top" style="padding:10px 0;font-size:15px;line-height:1.5;color:' . ($state === 'warn' ? '#8a5200' : '#3d4d6d') . ' !important;' . $border . '">' . rv_h(isset($r[2]) ? $r[2] : '') . '</td></tr>';
+    }
+    return $h . '</table></td></tr></table>';
+}
+
 /** The "what we did" checklist. Each row = array(label, detail). */
 function rv_h_checks($title, $rows) {
     if (!is_array($rows) || !$rows) return '';
@@ -1892,6 +1920,15 @@ function sr_body($first, $sr) {
     if ($score !== null) {
         $t .= '  365 HEALTH SCORE   ' . $score . '%  ' . sr_verdict($score) . "\r\n"
             . '  ' . sr_delta($score, $sr['prev'], $sr['prev_ts']) . "\r\n\r\n";
+    }
+    if (!empty($sr['sec'])) {
+        $t .= "Security\r\n";
+        $mk = array('ok' => '[OK]', 'warn' => '[!!]', 'info' => '[--]', 'unknown' => '[??]');
+        foreach ((array)$sr['sec'] as $r) {
+            if (!isset($r[0]) || $r[0] === '') continue;
+            $t .= '  ' . (isset($r[1], $mk[$r[1]]) ? $mk[$r[1]] : '[--]') . '  ' . $r[0] . (isset($r[2]) && $r[2] !== '' ? ' - ' . $r[2] : '') . "\r\n";
+        }
+        $t .= "\r\n";
     }
     if (!empty($sr['done'])) {
         $t .= "What we did today\r\n";
@@ -1932,6 +1969,7 @@ function sr_body_html($first, $sr) {
              . 'Here is the short version &ndash; the full written report is one tap away below, and it is in your portal for good.'),
     );
     if ($score !== null) $blocks[] = rv_h_score($score, $verdict, sr_delta($score, $sr['prev'], $sr['prev_ts']));
+    if (!empty($sr['sec'])) $blocks[] = rv_h_security($sr['sec']);
     $blocks[] = rv_h_checks('What we did today', (array)$sr['done']);
     if (!empty($sr['recs'])) {
         $rec = '<strong style="color:#0b1226;">One thing worth knowing.</strong> ' . rv_h($sr['recs'][0]);
@@ -1982,6 +2020,14 @@ function sr_sample() {
             array('Drives optimised', 'SSD trim'),
         ),
         'recs' => array('The battery now holds 59% of its original capacity - fine on the mains, but a replacement battery would restore proper portability.'),
+        'sec' => array(
+            array('Antivirus', 'ok', 'Real-time protection on - Microsoft Defender, definitions up to date'),
+            array('Firewall', 'ok', 'On for every network type'),
+            array('Security scan', 'ok', 'Microsoft Defender quick scan today - nothing found'),
+            array('Windows updates', 'ok', '3 installed, including one driver'),
+            array('Windows version', 'ok', 'Windows 11 - fully supported'),
+            array('Drive encryption', 'warn', 'BitLocker is on but no recovery key was found - worth saving one together'),
+        ),
         'backup' => 'Windows Backup - last completed 2 September',
         'url' => 'https://365techies.co.uk/portal/',
         'st' => 'sample',
@@ -2020,6 +2066,17 @@ function sr_record($key, $machine, $ts, $summary, $cust, $prev = array()) {
         if ($r !== '') $recs[] = $r;
         if (count($recs) >= 2) break;
     }
+    // security at a glance: [label, state, detail] per fact the service actually read.
+    // The state is a closed vocabulary; anything else is dropped rather than guessed.
+    $sec = array();
+    foreach ((array)(isset($summary['security']) ? $summary['security'] : array()) as $row) {
+        if (!is_array($row)) continue;
+        $lab = sr_clean(isset($row[0]) ? $row[0] : '', 40);
+        $state = isset($row[1]) ? strtolower(trim((string)$row[1])) : '';
+        if ($lab === '' || !in_array($state, array('ok', 'warn', 'info', 'unknown'), true)) continue;
+        $sec[] = array($lab, $state, sr_clean(isset($row[2]) ? $row[2] : '', 140));
+        if (count($sec) >= 8) break;
+    }
     $score = null;
     if (isset($summary['scoren']) && is_numeric($summary['scoren'])) $score = max(0, min(100, (int)$summary['scoren']));
     elseif (preg_match('/(\d{1,3})\s*%/', (string)(isset($summary['score']) ? $summary['score'] : ''), $sm)) $score = max(0, min(100, (int)$sm[1]));
@@ -2031,7 +2088,7 @@ function sr_record($key, $machine, $ts, $summary, $cust, $prev = array()) {
         'score' => $score,
         'prev' => (isset($prev['score']) && $prev['score'] !== null) ? (int)$prev['score'] : null,
         'prev_ts' => isset($prev['ts']) ? (int)$prev['ts'] : 0,
-        'done' => $done, 'recs' => $recs,
+        'done' => $done, 'recs' => $recs, 'sec' => $sec,
         'backup' => sr_clean(isset($summary['backup']) ? $summary['backup'] : '', 160),
         'next_ts' => sr_next_ts(isset($summary['next']) ? $summary['next'] : '', $ts),
         'ts' => $ts, 'exp' => $exp,
