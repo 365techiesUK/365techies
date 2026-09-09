@@ -19,6 +19,7 @@ define('RV_LIB', 1);
 require __DIR__ . '/pcm-review.php';
 $RV_Q = $RV_TMPQ;
 $SR_LIVE = false;   // HARD SAFETY: this suite must never send
+$SR_LIVE_SINCE = time() - 3600;   // the flip, an hour ago for this run: fixtures made now are post-flip
 $RV_LIVE = false; $DN_LIVE = false; $BF_LIVE = false; $CF_LIVE = false; $RM_LIVE = false;
 
 // the senders only work 09:00-20:00 local; pick a zone where it is daytime now
@@ -105,6 +106,15 @@ $p = sr_process(5);
 ok(isset($p['mode']) && $p['mode'] === 'safe' && $p['due_waiting'] === 2 && $p['sent'] === 0, 'safe mode counts the due emails and sends none', json_encode($p));
 $e = q();
 ok($e['sr'][$id]['st'] === 'pending', 'the entry stays pending in safe mode');
+ok($p['held_pre_flip'] === 0, 'nothing made after the flip is held', json_encode($p));
+// a report that arrived while the feature was dark: held, never due, whatever the mode
+list($lkx, $qx) = rvq_open(); $qx['sr']['pre-flip-1'] = array('em' => 'someone@example.com', 'nm' => 'Old Report', 'st' => 'pending', 'ts' => $SR_LIVE_SINCE - 120, 'tries' => 0); $qx['srrun_ts'] = 0; rvq_save($qx); rvq_close($lkx);
+$p = sr_process(5);
+$e = q();
+ok($p['held_pre_flip'] === 1 && $p['due_waiting'] === 2 && $e['sr']['pre-flip-1']['st'] === 'held' && $e['sr']['pre-flip-1']['why'] === 'pre_flip', 'a report queued before the flip is held, not counted due, and marked why', json_encode($p) . ' ' . json_encode($e['sr']['pre-flip-1']));
+list($lkx, $qx) = rvq_open(); $qx['srrun_ts'] = 0; rvq_save($qx); rvq_close($lkx);
+$p = sr_process(5);
+ok($p['held_pre_flip'] === 0 && q()['sr']['pre-flip-1']['st'] === 'held', 'a held report stays held on the next tick and is not re-counted');
 
 echo "-- the words\n";
 $html = sr_body_html('Sofia', $ent);

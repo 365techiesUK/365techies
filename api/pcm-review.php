@@ -69,10 +69,13 @@ $CF_LIVE = true;    // LIVE 2026-09-07: ours run IN PARALLEL with SimplyBook's f
                     //     PARALLEL with SimplyBook's for 2-4 weeks of real bookings; only then
                     //     switch SB's client notifications off ONE TYPE AT A TIME, a week apart.
                     //     SB's confirmation must NEVER go off before ours is proven live.
-$SR_LIVE = false;   // <-- six-weekly SERVICE REPORT email. Queued the moment PC Service Professional
+$SR_LIVE = true;    // <-- six-weekly SERVICE REPORT email. Queued the moment PC Service Professional
                     //     uploads a report (pcm.php reportup kind=service); sent by the next cron tick
-                    //     inside 09:00-20:00. Ships OFF. Flip only after ?test=report has been read in
-                    //     an EXTERNAL mailbox (Gmail / Outlook.com) with spf=pass dkim=pass dmarc=pass.
+                    //     inside 09:00-20:00. Shipped OFF 2026-09-09 morning; flipped ON the same day
+                    //     at the owner's word after the sample was read ("email checked flip it go").
+$SR_LIVE_SINCE = 1788953400;   // 2026-09-09 11:30 UTC - the flip. Reports that arrived while the
+                    //     feature was dark are HELD (st=held, why=pre_flip), never sent: a customer
+                    //     must not get a surprise email about a visit from before the switch.
 $SR_LINK_DAYS = 30; // how long the "View the full report" link in that email keeps working
 
 $RV_Q = __DIR__ . '/pcm-reviewq.json';
@@ -2185,19 +2188,20 @@ function sr_record($key, $machine, $ts, $summary, $cust, $prev = array()) {
 /* ---- send them. Mirrors dn_process: quiet hours, mark-before-send, release the
    lock before SMTP, three tries, Slack heartbeat. Never opt-out gated (transactional). */
 function sr_process($cap = 5) {
-    global $SR_LIVE;
+    global $SR_LIVE, $SR_LIVE_SINCE;
     $h = (int)date('G');
     if ($h < 9 || $h >= 20) return array('skip' => 'quiet_hours');
     list($lk, $q) = rvq_open();
     if (!$lk) return array('skip' => 'locked');
     if ((isset($q['srrun_ts']) ? $q['srrun_ts'] : 0) > time() - 60) { rvq_close($lk); return array('skip' => 'ran_recently'); }
     $q['srrun_ts'] = time();
-    $picked = array(); $due = 0;
+    $picked = array(); $due = 0; $held = 0;
     foreach ($q['sr'] as $id => $e) {
         $st = isset($e['st']) ? $e['st'] : 'pending';
         $retryable = ($st === 'sending' && (isset($e['snd']) ? $e['snd'] : 0) < time() - 600 && (isset($e['tries']) ? $e['tries'] : 0) < 3);
         if ($st !== 'pending' && !$retryable) continue;
         if ((isset($e['tries']) ? $e['tries'] : 0) >= 3) continue;
+        if ((isset($e['ts']) ? (int)$e['ts'] : 0) < (int)$SR_LIVE_SINCE) { $q['sr'][$id]['st'] = 'held'; $q['sr'][$id]['why'] = 'pre_flip'; $held++; continue; }   // arrived while dark: never sent
         if ((isset($e['ts']) ? (int)$e['ts'] : 0) < time() - 1209600) { $q['sr'][$id]['st'] = 'skipped'; continue; }   // >14 days: stale
         if (!isset($e['em']) || !filter_var($e['em'], FILTER_VALIDATE_EMAIL)) { $q['sr'][$id]['st'] = 'skipped'; continue; }
         $due++;
@@ -2210,7 +2214,7 @@ function sr_process($cap = 5) {
     }
     rvq_save($q);
     rvq_close($lk);   // NEVER hold the lock across slow SMTP
-    if (!$SR_LIVE) return array('mode' => 'safe', 'due_waiting' => $due, 'sent' => 0);
+    if (!$SR_LIVE) return array('mode' => 'safe', 'due_waiting' => $due, 'held_pre_flip' => $held, 'sent' => 0);
     $sent = 0; $failed = 0; $names = array();
     foreach ($picked as $id => $p) {
         $first = rv_first(isset($p['nm']) ? $p['nm'] : '');
@@ -2225,7 +2229,7 @@ function sr_process($cap = 5) {
         rvq_close($lk2);
     }
     if ($sent > 0 || $failed > 0) rv_slack(':clipboard: 365 mail: service report emails sent ' . $sent . rv_name_list($names) . ($failed ? (', FAILED ' . $failed . ' - check pcm-review') : ''));
-    return array('mode' => 'live', 'due' => $due, 'sent' => $sent, 'failed' => $failed);
+    return array('mode' => 'live', 'due' => $due, 'held_pre_flip' => $held, 'sent' => $sent, 'failed' => $failed);
 }
 
 } // function_exists guard
