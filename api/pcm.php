@@ -605,12 +605,30 @@ if ($action === 'reportup') {
     $kind = ((string)($in['kind'] ?? '')) === 'service' ? 'service' : 'health';
     $kh = substr(hash('sha256', $key), 0, 12);
     $rts = time();
-    $reps = isset($db['customers'][$key]['machines'][$machine]['reps']) && is_array($db['customers'][$key]['machines'][$machine]['reps']) ? $db['customers'][$key]['machines'][$machine]['reps'] : array();
-    $repk = isset($db['customers'][$key]['machines'][$machine]['repk']) && is_array($db['customers'][$key]['machines'][$machine]['repk']) ? $db['customers'][$key]['machines'][$machine]['repk'] : array();
+    $mrec = &$db['customers'][$key]['machines'][$machine];
+    $reps = isset($mrec['reps']) && is_array($mrec['reps']) ? $mrec['reps'] : array();
+    $repk = isset($mrec['repk']) && is_array($mrec['repk']) ? $mrec['repk'] : array();
+    $repm = isset($mrec['repm']) && is_array($mrec['repm']) ? $mrec['repm'] : array();   // ts => {score}: the service scores, for "up 3 since"
+    // the structured twin of a service report (score, task list, top recommendations,
+    // backup line, next date) - what the Slack post and the customer's email are built from
+    $sumr = is_array($in['summary'] ?? null) ? $in['summary'] : array();
+    $scoren = null;
+    if ($kind === 'service') {
+        if (isset($sumr['scoren']) && is_numeric($sumr['scoren'])) $scoren = (int)$sumr['scoren'];
+        elseif (preg_match('/(\d{1,3})\s*%/', (string)($sumr['score'] ?? ''), $sm)) $scoren = (int)$sm[1];   // older uploader: "81% - Very good"
+        if ($scoren !== null) $scoren = max(0, min(100, $scoren));
+    }
     while (in_array($rts, array_map('intval', $reps), true)) $rts++;   // two uploads inside one second
+    // the previous SCORED service, found before this one joins the map
+    $prev = array();
+    foreach ($repm as $pts => $pm) {
+        $pts = (int)$pts;
+        if ($pts >= $rts || !is_array($pm) || !isset($pm['score']) || $pm['score'] === null) continue;
+        if (!$prev || $pts > $prev['ts']) $prev = array('ts' => $pts, 'score' => (int)$pm['score']);
+    }
     if (@file_put_contents(__DIR__ . '/pcm-rep-' . $kh . '-' . $machine . '-' . $rts . '.html', $b, LOCK_EX) === false) out(array('ok'=>false,'error'=>'store_failed'));
     $reps[] = $rts;
-    if ($kind === 'service') $repk[(string)$rts] = 'service';
+    if ($kind === 'service') { $repk[(string)$rts] = 'service'; $repm[(string)$rts] = array('score' => $scoren); }
     // prune per kind, oldest first: 12 health checks, 24 service reports (three years of visits)
     foreach (array('health' => 12, 'service' => 24) as $k => $cap) {
         $mine = array_values(array_filter($reps, function ($t) use ($repk, $k) { return (($repk[(string)$t] ?? 'health') === $k); }));
@@ -618,19 +636,29 @@ if ($action === 'reportup') {
             $old = array_shift($mine);
             @unlink(__DIR__ . '/pcm-rep-' . $kh . '-' . $machine . '-' . $old . '.html');
             $reps = array_values(array_filter($reps, function ($t) use ($old) { return intval($t) !== intval($old); }));
-            unset($repk[(string)$old]);
+            unset($repk[(string)$old], $repm[(string)$old]);
         }
     }
-    $db['customers'][$key]['machines'][$machine]['reps'] = $reps;
-    $db['customers'][$key]['machines'][$machine]['repk'] = $repk;
+    $mrec['reps'] = $reps;
+    $mrec['repk'] = $repk;
+    $mrec['repm'] = $repm;
+    unset($mrec);
     save($DATA,$db);
-    // a service report is also the team's cue: post it to Slack with the file attached
+    // a service report is also the team's cue: post it to Slack with the file attached...
     $slack = array('posted' => false, 'file' => false, 'error' => 'not_service');
+    $email = array('queued' => false, 'why' => 'not_service');
     if ($kind === 'service') {
         require_once __DIR__ . '/pcm-slack-lib.php';   // top-level scope on purpose (php-include-scope-trap)
-        $slack = pcm_service_report_to_slack($db['customers'][$key], $machine, $rts, $b, is_array($in['summary'] ?? null) ? $in['summary'] : array());
+        $slack = pcm_service_report_to_slack($db['customers'][$key], $machine, $rts, $b, $sumr);
+        // ...and the customer's: queue the service report email. Sent by the mail cron and
+        // governed by $SR_LIVE in pcm-review.php, so nothing reaches a customer until that flips.
+        // Same include discipline: this file's data lock is held for the whole request and the
+        // queue lock is taken inside - the order every other caller of the queue already uses.
+        if (!defined('RV_LIB')) define('RV_LIB', 1);
+        require_once __DIR__ . '/pcm-review.php';      // top-level scope on purpose: its $RV_Q must be a global
+        $email = sr_record($key, $machine, $rts, $sumr + array('scoren' => $scoren), $db['customers'][$key], $prev);
     }
-    out(array('ok'=>true, 'kind'=>$kind, 'ts'=>$rts, 'slack'=>$slack));
+    out(array('ok'=>true, 'kind'=>$kind, 'ts'=>$rts, 'slack'=>$slack, 'email'=>$email));
 }
 
 // portal: ask a machine for a fresh health check (the app's minute-poll picks it up)

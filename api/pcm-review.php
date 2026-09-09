@@ -69,6 +69,11 @@ $CF_LIVE = true;    // LIVE 2026-09-07: ours run IN PARALLEL with SimplyBook's f
                     //     PARALLEL with SimplyBook's for 2-4 weeks of real bookings; only then
                     //     switch SB's client notifications off ONE TYPE AT A TIME, a week apart.
                     //     SB's confirmation must NEVER go off before ours is proven live.
+$SR_LIVE = false;   // <-- six-weekly SERVICE REPORT email. Queued the moment PC Service Professional
+                    //     uploads a report (pcm.php reportup kind=service); sent by the next cron tick
+                    //     inside 09:00-20:00. Ships OFF. Flip only after ?test=report has been read in
+                    //     an EXTERNAL mailbox (Gmail / Outlook.com) with spf=pass dkim=pass dmarc=pass.
+$SR_LINK_DAYS = 30; // how long the "View the full report" link in that email keeps working
 
 $RV_Q = __DIR__ . '/pcm-reviewq.json';
 $RV_ASK_WINDOW = 1209600;   // visits stay askable for 14 days after they end; older = too late
@@ -165,6 +170,7 @@ function rvq_open() {
     if (!isset($q['reviewed']) || !is_array($q['reviewed'])) $q['reviewed'] = array();
     if (!isset($q['bf']) || !is_array($q['bf'])) $q['bf'] = array();          // backfill ledger, keyed by customer key
     if (!isset($q['bf_day']) || !is_array($q['bf_day'])) $q['bf_day'] = array();   // date => sends, for the daily cap
+    if (!isset($q['sr']) || !is_array($q['sr'])) $q['sr'] = array();            // six-weekly service report emails, keyed kh-machine-ts
     /* Per-install salt for unsubscribe tokens, generated once on first use so the
        feature needs no new secret file and no owner step. Kept in the queue, which
        is already gitignored and .htaccess-denied. */
@@ -1757,6 +1763,341 @@ function dn_process($cap = 5) {
     return array('mode' => 'live', 'due' => $due, 'sent' => $sent, 'failed' => $failed);
 }
 
+/* ==========================================================================
+   SIX-WEEKLY SERVICE REPORT EMAIL
+   Queued by pcm.php the moment PC Service Professional uploads a service report
+   (reportup kind=service); sent by the next cron tick inside 09:00-20:00, governed
+   by $SR_LIVE. TRANSACTIONAL - it is about the service the customer pays for - so
+   the marketing opt-out list does NOT suppress it (the same rule as reminders).
+   ONE email per service: a pending "All wrapped up" visit record for the same
+   person around the same time is superseded, never sent as well.
+   Everything the uploader sends is treated as untrusted text: stripped, capped,
+   escaped. Nothing in the email is invented - if a field is missing, its line is
+   left out rather than guessed.
+   ========================================================================== */
+
+/** Strip tags and control bytes from an uploader-supplied string, and cap it. */
+function sr_clean($s, $max = 120) {
+    $s = html_entity_decode(strip_tags((string)$s), ENT_QUOTES, 'UTF-8');
+    $s = trim(preg_replace('/[\x00-\x1F\x7F]+|\s+/', ' ', $s));
+    if (function_exists('mb_substr')) return mb_substr($s, 0, $max, 'UTF-8');
+    return strlen($s) <= $max ? $s : preg_replace('/[\x80-\xBF]+$/', '', substr($s, 0, $max));
+}
+
+/** Verdict bands, in the report's own words (Get-HealthScore in PC Service Professional). */
+function sr_verdict($score) {
+    $s = (int)$score;
+    return $s >= 88 ? 'Excellent' : ($s >= 78 ? 'Very good' : ($s >= 68 ? 'Good' : ($s >= 55 ? 'Fair' : 'Needs attention')));
+}
+
+/** "Up 3 since your last service on 24 July." - the line that makes six-weekly feel earned. */
+function sr_delta($score, $prev, $prevTs) {
+    if ($prev === null || $prev === '' || (int)$prevTs <= 0) return 'Your first scored service - this is the baseline.';
+    $d = (int)$score - (int)$prev;
+    $when = date('j F', (int)$prevTs);
+    if ($d === 0) return 'Same as your last service on ' . $when . '.';
+    return ($d > 0 ? 'Up ' . $d : 'Down ' . abs($d)) . ' since your last service on ' . $when . '.';
+}
+
+/** 'YYYY-MM-DD' from the uploader (the report's own next-service date), else six weeks on. */
+function sr_next_ts($s, $ts) {
+    if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', trim((string)$s), $m)) {
+        $t = mktime(9, 0, 0, (int)$m[2], (int)$m[3], (int)$m[1]);
+        if ($t > 0) return $t;
+    }
+    return (int)$ts + 42 * 86400;
+}
+
+/* ---- the "View the full report" link: signed, expiring, no sign-in ------------
+   Carries only the report's coordinates (customer-key hash, machine id, stamp) and an
+   expiry, HMAC'd with the queue's own salt - the same secret the unsubscribe links
+   use, so no new secret file. pcm-report.php verifies it and serves the stored HTML. */
+function sr_link($kh, $machine, $ts, $exp, $salt) {
+    $p = rtrim(strtr(base64_encode(json_encode(array('k' => $kh, 'm' => $machine, 't' => (int)$ts, 'e' => (int)$exp))), '+/', '-_'), '=');
+    return 'https://365techies.co.uk/api/pcm-report.php?t=' . $p . '.' . substr(hash_hmac('sha256', 'report|' . $p, (string)$salt), 0, 32);
+}
+/** The coordinates a valid, unexpired token names, or null. */
+function sr_token_verify($t, $salt) {
+    if ((string)$salt === '') return null;
+    if (!preg_match('/^([A-Za-z0-9_-]{16,400})\.([a-f0-9]{32})$/', (string)$t, $m)) return null;
+    if (!hash_equals(substr(hash_hmac('sha256', 'report|' . $m[1], (string)$salt), 0, 32), $m[2])) return null;
+    $b64 = strtr($m[1], '-_', '+/');
+    $j = json_decode((string)base64_decode($b64 . str_repeat('=', (4 - strlen($b64) % 4) % 4)), true);
+    if (!is_array($j)) return null;
+    foreach (array('k', 'm') as $f) if (!isset($j[$f]) || !preg_match('/^[a-f0-9]{8,32}$/', (string)$j[$f])) return null;
+    if (!isset($j['t'], $j['e']) || (int)$j['t'] <= 0 || (int)$j['e'] < time()) return null;
+    return array('kh' => (string)$j['k'], 'machine' => (string)$j['m'], 'ts' => (int)$j['t'], 'exp' => (int)$j['e']);
+}
+
+/* ---- the email itself ------------------------------------------------------ */
+function sr_subject($sr) {
+    $pc = isset($sr['pc']) ? (string)$sr['pc'] : '';
+    return 'Your service report - ' . ($pc !== '' ? $pc . ', ' : '') . date('j F', (int)$sr['ts']);
+}
+
+/**
+ * The score panel - the one dark block in the email, so it reads as the report's
+ * own header. The number's colour is semantic (blue from Good upwards, amber
+ * below) and separate from the brand blue, so a poor score reads as a state.
+ */
+function rv_h_score($score, $verdict, $delta) {
+    $s = (int)$score;
+    $col = $s >= 68 ? '#4fb6f0' : '#f0b04f';
+    $F = "'Segoe UI',-apple-system,Helvetica,Arial,sans-serif";
+    return '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:2px 0 22px 0;"><tr>'
+         . '<td bgcolor="#0b1226" style="background-color:#0b1226;border-radius:12px;padding:22px 26px;">'
+         . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>'
+         . '<td valign="middle" width="150" style="width:150px;padding-right:22px;border-right:1px solid #22304f;">'
+         . '<div style="font-family:' . $F . ';font-size:11px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:#7fb6e4 !important;padding-bottom:4px;">365 health score</div>'
+         . '<div style="font-family:' . $F . ';font-size:56px;line-height:1;font-weight:800;color:' . $col . ' !important;letter-spacing:-1px;">' . $s . '<span style="font-size:26px;font-weight:700;">%</span></div>'
+         . '</td>'
+         . '<td valign="middle" style="padding-left:24px;">'
+         . '<div style="font-family:' . $F . ';font-size:24px;font-weight:700;line-height:1.2;color:#ffffff !important;padding-bottom:6px;">' . rv_h($verdict) . '</div>'
+         . '<div style="font-family:' . $F . ';font-size:15px;line-height:1.5;color:#b7c6e0 !important;">' . rv_h($delta) . '</div>'
+         . '<div style="font-family:' . $F . ';font-size:13px;line-height:1.5;color:#7c8aa5 !important;padding-top:6px;">'
+         . 'Measured, not modelled. Same scoring every service, so you can see exactly what changed.</div>'
+         . '</td></tr></table></td></tr></table>';
+}
+
+/** The "what we did" checklist. Each row = array(label, detail). */
+function rv_h_checks($title, $rows) {
+    if (!is_array($rows) || !$rows) return '';
+    $h = '<div style="font-size:13px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#7c8aa5 !important;margin:0 0 10px 0;">' . rv_h($title) . '</div>'
+       . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 22px 0;">';
+    $n = count($rows); $i = 0;
+    foreach ($rows as $r) {
+        $i++;
+        $label = rv_h(isset($r[0]) ? $r[0] : ''); $detail = rv_h(isset($r[1]) ? $r[1] : '');
+        if ($label === '') continue;
+        $border = $i < $n ? 'border-bottom:1px solid #edf1f7;' : '';
+        $h .= '<tr><td valign="top" width="30" style="width:30px;padding:9px 0;' . $border . '">'
+            . '<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>'
+            . '<td align="center" valign="middle" width="22" height="22" bgcolor="#e3f2fc" style="width:22px;height:22px;background-color:#e3f2fc;border-radius:11px;'
+            . 'font-size:13px;font-weight:700;line-height:22px;color:#1266a8 !important;mso-line-height-rule:exactly;">&#10003;</td>'
+            . '</tr></table></td>'
+            . '<td valign="top" style="padding:9px 0 9px 8px;font-size:16px;line-height:1.5;color:#0b1226 !important;' . $border . '">'
+            . '<strong>' . $label . '</strong>' . ($detail !== '' ? ' <span style="color:#5b6b8a !important;">&ndash; ' . $detail . '</span>' : '')
+            . '</td></tr>';
+    }
+    return $h . '</table>';
+}
+
+/** Plain text - the first multipart part, and what text-only clients read. */
+function sr_body($first, $sr) {
+    $score = isset($sr['score']) && $sr['score'] !== null ? (int)$sr['score'] : null;
+    $t = 'Hi ' . $first . ",\r\n\r\n"
+       . "Today's six-weekly service on your " . ($sr['pc'] !== '' ? $sr['pc'] : 'computer') . " is done. Here is the\r\n"
+       . "short version - the full written report is one link away below, and it\r\n"
+       . "is in your portal for good.\r\n\r\n";
+    if ($score !== null) {
+        $t .= '  365 HEALTH SCORE   ' . $score . '%  ' . sr_verdict($score) . "\r\n"
+            . '  ' . sr_delta($score, $sr['prev'], $sr['prev_ts']) . "\r\n\r\n";
+    }
+    if (!empty($sr['done'])) {
+        $t .= "What we did today\r\n";
+        foreach ((array)$sr['done'] as $r) if (isset($r[0]) && $r[0] !== '') $t .= '  - ' . $r[0] . (isset($r[1]) && $r[1] !== '' ? ' - ' . $r[1] : '') . "\r\n";
+        $t .= "\r\n";
+    }
+    if (!empty($sr['recs'])) {
+        $t .= "One thing worth knowing\r\n";
+        foreach ((array)$sr['recs'] as $rec) $t .= '  ' . $rec . "\r\n";
+        $t .= "  No action needed unless you want it - just reply and we will quote.\r\n\r\n";
+    } else {
+        $t .= "Nothing for you to do - everything we checked came back fine.\r\n\r\n";
+    }
+    if ($sr['pc'] !== '') $t .= '  Computer:      ' . $sr['pc'] . "\r\n";
+    if ($sr['os'] !== '') $t .= '  Windows:       ' . $sr['os'] . "\r\n";
+    if ($sr['backup'] !== '') $t .= '  Backup:        ' . $sr['backup'] . "\r\n";
+    $t .= '  Next service:  around ' . date('j F', (int)$sr['next_ts']) . " - we will be in touch, or move it in your portal\r\n\r\n"
+        . 'Full report: ' . $sr['url'] . "\r\n"
+        . "Your portal:  https://365techies.co.uk/portal/\r\n\r\n"
+        . "Anything not behaving the way it should? Reply to this email or ring\r\n"
+        . "01202 775566 and we will make it right.\r\n\r\n"
+        . "A reminder we put in every report: we will never ask for passwords or\r\n"
+        . "payment in an out-of-the-blue phone call or pop-up. If someone does,\r\n"
+        . "hang up and ring us.\r\n\r\n"
+        . "Steve & David\r\n"
+        . "365 Techies - family-run IT support in Bournemouth since 1995\r\n"
+        . "01202 775566 - https://365techies.co.uk\r\n";
+    return $t;
+}
+
+/** HTML twin, on the house shell. Says exactly what the text says. */
+function sr_body_html($first, $sr) {
+    $score = isset($sr['score']) && $sr['score'] !== null ? (int)$sr['score'] : null;
+    $verdict = $score !== null ? sr_verdict($score) : '';
+    $blocks = array(
+        rv_h_p('Hi ' . rv_h($first) . ','),
+        rv_h_p('Today&rsquo;s six-weekly service on your <strong style="color:#0b1226;">' . rv_h($sr['pc'] !== '' ? $sr['pc'] : 'computer') . '</strong> is done. '
+             . 'Here is the short version &ndash; the full written report is one tap away below, and it is in your portal for good.'),
+    );
+    if ($score !== null) $blocks[] = rv_h_score($score, $verdict, sr_delta($score, $sr['prev'], $sr['prev_ts']));
+    $blocks[] = rv_h_checks('What we did today', (array)$sr['done']);
+    if (!empty($sr['recs'])) {
+        $rec = '<strong style="color:#0b1226;">One thing worth knowing.</strong> ' . rv_h($sr['recs'][0]);
+        if (count($sr['recs']) > 1) $rec .= ' ' . rv_h($sr['recs'][1]);
+        $rec .= ' <span style="color:#3d4d6d;">No action needed unless you want it &ndash; just reply and we will quote.</span>';
+        $blocks[] = rv_h_note($rec);
+    } else {
+        $blocks[] = rv_h_note('<strong style="color:#0b1226;">Nothing for you to do.</strong> Everything we checked came back fine.');
+    }
+    $facts = array();
+    if ($sr['pc'] !== '') $facts['Computer'] = $sr['pc'];
+    if ($sr['os'] !== '') $facts['Windows'] = $sr['os'];
+    if ($sr['backup'] !== '') $facts['Backup'] = $sr['backup'];
+    $facts['Next service'] = 'Around ' . date('j F', (int)$sr['next_ts']) . ' - we will be in touch, or move it in your portal';
+    $blocks[] = rv_h_facts($facts);
+    $blocks[] = rv_h_cta('View the full report', $sr['url']);
+    $blocks[] = '<p style="margin:14px 0 18px 0;font-size:14px;line-height:1.6;color:#7c8aa5 !important;text-align:center;">'
+              . 'Also filed under Service reports in <a href="https://365techies.co.uk/portal/" style="color:#1266a8;font-weight:600;text-decoration:none;">your 365 portal</a>.</p>';
+    $blocks[] = rv_h_p('Anything not behaving the way it should? Reply to this email or ring '
+              . '<a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202&nbsp;775566</a> '
+              . 'and we will make it right. That is the point of using a family firm.');
+    $blocks[] = rv_h_panel('', '<strong style="color:#0b1226;">A reminder we put in every report:</strong> we will never ask for passwords or payment in an '
+              . 'out-of-the-blue phone call or pop-up. If someone does, hang up and ring us.');
+    return rv_html_shell(array(
+        'title' => 'Your service report',
+        'eyebrow' => 'Service report · ' . date('j F Y', (int)$sr['ts']),   // the shell escapes this: a literal dot, never an entity
+        'heading' => 'Your six-weekly service is done',
+        'preview' => ($score !== null ? $score . '% ' . $verdict . ' - ' : '') . 'what we did on your ' . ($sr['pc'] !== '' ? $sr['pc'] : 'computer') . ' today, and the one thing worth knowing.',
+        'blocks' => $blocks,
+        'after' => rv_h_referral(),
+    ));
+}
+
+/** The sample the ?test=report send and the tests use. Fixed content, real shape. */
+function sr_sample() {
+    return array(
+        'em' => 'info@365techies.co.uk', 'nm' => 'Steve',
+        'pc' => 'Dell Latitude 3520', 'os' => 'Windows 11, version 24H2',
+        'score' => 81, 'prev' => 78, 'prev_ts' => mktime(10, 0, 0, 7, 24, 2026),
+        'ts' => mktime(11, 40, 0, 9, 4, 2026), 'next_ts' => mktime(9, 0, 0, 10, 16, 2026),
+        'done' => array(
+            array('Windows updates installed', '3, including one driver'),
+            array('Applications updated', 'Chrome, Zoom, Adobe Reader'),
+            array('System files verified', 'no problems found'),
+            array('Security scan', 'clean'),
+            array('Backup checked', 'Windows Backup ran successfully on 2 September'),
+            array('Temporary files cleared', '1.2 GB'),
+            array('Drives optimised', 'SSD trim'),
+        ),
+        'recs' => array('The battery now holds 59% of its original capacity - fine on the mains, but a replacement battery would restore proper portability.'),
+        'backup' => 'Windows Backup - last completed 2 September',
+        'url' => 'https://365techies.co.uk/portal/',
+        'st' => 'sample',
+    );
+}
+
+/* ---- queue it: called by pcm.php reportup (kind=service) --------------------
+   $summary is the uploader's structured twin (scoren/score, model/pc, os, notes,
+   done, backup, next); $cust the customer record (email, name); $prev the previous
+   scored service {ts, score} or empty. Returns what happened, for the upload reply. */
+function sr_record($key, $machine, $ts, $summary, $cust, $prev = array()) {
+    global $SR_LINK_DAYS;
+    $email = strtolower(trim((string)(isset($cust['email']) ? $cust['email'] : '')));
+    if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) return array('queued' => false, 'why' => 'no_email');
+    $kh = substr(hash('sha256', (string)$key), 0, 12);
+    $machine = preg_replace('/[^a-f0-9]/', '', (string)$machine);
+    $ts = (int)$ts;
+    if ($machine === '' || $ts <= 0) return array('queued' => false, 'why' => 'bad_ref');
+    $id = $kh . '-' . $machine . '-' . $ts;
+    $summary = is_array($summary) ? $summary : array();
+    list($lk, $q) = rvq_open();
+    if (!$lk) return array('queued' => false, 'why' => 'locked');
+    foreach ($q['sr'] as $k => $v) if ((isset($v['ts']) ? (int)$v['ts'] : 0) < time() - 5184000) unset($q['sr'][$k]);   // 60 days
+    if (isset($q['sr'][$id])) { rvq_close($lk); return array('queued' => false, 'why' => 'duplicate'); }
+    $done = array();
+    foreach ((array)(isset($summary['done']) ? $summary['done'] : array()) as $d) {
+        if (!is_array($d)) continue;
+        $lab = sr_clean(isset($d[0]) ? $d[0] : '', 60);
+        if ($lab === '') continue;
+        $done[] = array($lab, sr_clean(isset($d[1]) ? $d[1] : '', 110));
+        if (count($done) >= 12) break;
+    }
+    $recs = array();
+    foreach ((array)(isset($summary['notes']) ? $summary['notes'] : array()) as $r) {
+        $r = sr_clean($r, 240);
+        if ($r !== '') $recs[] = $r;
+        if (count($recs) >= 2) break;
+    }
+    $score = null;
+    if (isset($summary['scoren']) && is_numeric($summary['scoren'])) $score = max(0, min(100, (int)$summary['scoren']));
+    elseif (preg_match('/(\d{1,3})\s*%/', (string)(isset($summary['score']) ? $summary['score'] : ''), $sm)) $score = max(0, min(100, (int)$sm[1]));
+    $pc = sr_clean(isset($summary['model']) && (string)$summary['model'] !== '' ? $summary['model'] : (isset($summary['pc']) ? $summary['pc'] : ''), 80);
+    $exp = time() + 86400 * max(1, (int)$SR_LINK_DAYS);
+    $q['sr'][$id] = array(
+        'em' => $email, 'nm' => rv_clean_name(isset($cust['name']) ? $cust['name'] : ''),
+        'pc' => $pc, 'os' => sr_clean(isset($summary['os']) ? $summary['os'] : '', 80),
+        'score' => $score,
+        'prev' => (isset($prev['score']) && $prev['score'] !== null) ? (int)$prev['score'] : null,
+        'prev_ts' => isset($prev['ts']) ? (int)$prev['ts'] : 0,
+        'done' => $done, 'recs' => $recs,
+        'backup' => sr_clean(isset($summary['backup']) ? $summary['backup'] : '', 160),
+        'next_ts' => sr_next_ts(isset($summary['next']) ? $summary['next'] : '', $ts),
+        'ts' => $ts, 'exp' => $exp,
+        'url' => sr_link($kh, $machine, $ts, $exp, $q['salt']),
+        'st' => 'pending', 'tries' => 0, 'made' => time(),
+    );
+    // ONE email per service: a pending visit record for the same person within 36 hours
+    // of this report is superseded - the report email carries everything it would have.
+    $sup = 0;
+    foreach ($q['q'] as $bid => $e) {
+        if ((isset($e['em']) ? $e['em'] : '') !== $email) continue;
+        if ((isset($e['dn']) ? $e['dn'] : 'pending') !== 'pending') continue;
+        $end = isset($e['end']) ? (int)$e['end'] : 0;
+        if ($end > 0 && abs($end - $ts) <= 129600) { $q['q'][$bid]['dn'] = 'superseded'; $q['q'][$bid]['dn_by'] = $id; $sup++; }
+    }
+    rvq_save($q);
+    rvq_close($lk);
+    return array('queued' => true, 'id' => $id, 'superseded' => $sup, 'score' => $score);
+}
+
+/* ---- send them. Mirrors dn_process: quiet hours, mark-before-send, release the
+   lock before SMTP, three tries, Slack heartbeat. Never opt-out gated (transactional). */
+function sr_process($cap = 5) {
+    global $SR_LIVE;
+    $h = (int)date('G');
+    if ($h < 9 || $h >= 20) return array('skip' => 'quiet_hours');
+    list($lk, $q) = rvq_open();
+    if (!$lk) return array('skip' => 'locked');
+    if ((isset($q['srrun_ts']) ? $q['srrun_ts'] : 0) > time() - 60) { rvq_close($lk); return array('skip' => 'ran_recently'); }
+    $q['srrun_ts'] = time();
+    $picked = array(); $due = 0;
+    foreach ($q['sr'] as $id => $e) {
+        $st = isset($e['st']) ? $e['st'] : 'pending';
+        $retryable = ($st === 'sending' && (isset($e['snd']) ? $e['snd'] : 0) < time() - 600 && (isset($e['tries']) ? $e['tries'] : 0) < 3);
+        if ($st !== 'pending' && !$retryable) continue;
+        if ((isset($e['tries']) ? $e['tries'] : 0) >= 3) continue;
+        if ((isset($e['ts']) ? (int)$e['ts'] : 0) < time() - 1209600) { $q['sr'][$id]['st'] = 'skipped'; continue; }   // >14 days: stale
+        if (!isset($e['em']) || !filter_var($e['em'], FILTER_VALIDATE_EMAIL)) { $q['sr'][$id]['st'] = 'skipped'; continue; }
+        $due++;
+        if ($SR_LIVE && count($picked) < $cap) {
+            $q['sr'][$id]['st'] = 'sending';
+            $q['sr'][$id]['snd'] = time();
+            $q['sr'][$id]['tries'] = (isset($e['tries']) ? $e['tries'] : 0) + 1;
+            $picked[$id] = $q['sr'][$id];
+        }
+    }
+    rvq_save($q);
+    rvq_close($lk);   // NEVER hold the lock across slow SMTP
+    if (!$SR_LIVE) return array('mode' => 'safe', 'due_waiting' => $due, 'sent' => 0);
+    $sent = 0; $failed = 0; $names = array();
+    foreach ($picked as $id => $p) {
+        $first = rv_first(isset($p['nm']) ? $p['nm'] : '');
+        $ok = rv_send_raw($p['em'], sr_subject($p), sr_body($first, $p), '', '', sr_body_html($first, $p));
+        list($lk2, $q2) = rvq_open();
+        if (!$lk2) continue;
+        if (isset($q2['sr'][$id]) && (isset($q2['sr'][$id]['st']) ? $q2['sr'][$id]['st'] : '') === 'sending') {
+            if ($ok) { $q2['sr'][$id]['st'] = 'sent'; $q2['sr'][$id]['sent_ts'] = time(); $sent++; $names[] = isset($p['nm']) ? $p['nm'] : ''; }
+            else { $q2['sr'][$id]['st'] = ((isset($q2['sr'][$id]['tries']) ? $q2['sr'][$id]['tries'] : 1) >= 3) ? 'failed' : 'pending'; $failed++; }
+        }
+        rvq_save($q2);
+        rvq_close($lk2);
+    }
+    if ($sent > 0 || $failed > 0) rv_slack(':clipboard: 365 mail: service report emails sent ' . $sent . rv_name_list($names) . ($failed ? (', FAILED ' . $failed . ' - check pcm-review') : ''));
+    return array('mode' => 'live', 'due' => $due, 'sent' => $sent, 'failed' => $failed);
+}
+
 } // function_exists guard
 
 // ---------------------------------------------------------------- HTTP entry
@@ -1904,7 +2245,7 @@ if (!defined('RV_LIB')) {
         // ?test=1 sends the review ask; ?test=done sends the job-done visit record.
         $tmap = array('1' => 'review', 'review' => 'review', 'done' => 'done',
                       'confirm' => 'confirm', 'change' => 'change', 'cancel' => 'cancel', 'remind' => 'remind',
-                      'welcome' => 'welcome', 'launch' => 'launch');
+                      'welcome' => 'welcome', 'launch' => 'launch', 'report' => 'report');
         // NOTE the shape: the kind is the VALUE of ?test (?test=welcome). An unknown
         // value silently falls back to 'review', so a mistyped kind looks like it
         // worked - check the "kind" field in the reply, not just ok:true.
@@ -1930,6 +2271,12 @@ if (!defined('RV_LIB')) {
         elseif ($tkind === 'launch') {
             $ok = rv_send_raw($tto, wl_subject(), wl_body('Steve'), '', '', wl_body_html('Steve'));
         }
+        elseif ($tkind === 'report') {
+            // the six-weekly service report, with fixed sample facts; the button goes to
+            // the portal because a sample has no stored report to sign a link for
+            $smp = sr_sample();
+            $ok = rv_send_raw($tto, sr_subject($smp), sr_body('Steve', $smp), '', '', sr_body_html('Steve', $smp));
+        }
         elseif ($tkind === 'remind') {
             $rts = strtotime('tomorrow 14:00');
             $ok = rv_send_raw($tto, rm_subject('tomorrow'), rm_body('Steve', 'Computer Health Check', $rts));
@@ -1954,6 +2301,7 @@ if (!defined('RV_LIB')) {
         // whether anything is SENT is governed by $BF_LIVE, which ships false.
         $r6 = bf_seed();
         $r7 = bf_process(3);
+        $r8 = sr_process(5);   // six-weekly service report emails, governed by $SR_LIVE
         // this entry point is the 2-hourly GitHub cron, which runs on a machine SiteGround
         // cannot take down - so it is the right place to notice SiteGround's cron has died
         $r5 = mail_watchdog();
@@ -1964,6 +2312,7 @@ if (!defined('RV_LIB')) {
             'remind' => array('live' => (bool)$GLOBALS['RM_LIVE'], 'result' => $r3),
             'welcome' => array('live' => (bool)$GLOBALS['WC_LIVE'], 'result' => $r4),
             'watchdog' => $r5,
+            'report' => array('live' => (bool)$GLOBALS['SR_LIVE'], 'result' => $r8),
             'backfill' => array('live' => (bool)$GLOBALS['BF_LIVE'], 'seed' => $r6, 'result' => $r7)));
         else echo json_encode(array('ok' => true));
         exit;
