@@ -155,6 +155,27 @@ if (($_POST['do'] ?? '') === 'plan') {
 if (($_POST['do'] ?? '') === 'next') {
     $k=$_POST['key']??''; if (isset($db['customers'][$k])) { $db['customers'][$k]['next']=trim(substr((string)($_POST['next']??''),0,40)); save($DATA,$db); $msg="Next-service date updated."; }
 }
+// The address every customer-facing message goes to: the six-weekly service report, the
+// review ask, booking confirmations. It could only be set when the record was CREATED, so
+// a record made before we asked for one, or made by a portal sign-in, had no way to get one
+// and the customer silently received nothing (sr_record returns 'no_email' and queues
+// nothing). Blank is allowed and means exactly that: send this customer no email.
+if (($_POST['do'] ?? '') === 'email') {
+    $k = $_POST['key'] ?? '';
+    if (isset($db['customers'][$k])) {
+        $em = strtolower(trim(substr((string)($_POST['email'] ?? ''), 0, 120)));
+        $who = (string)($db['customers'][$k]['name'] ?? 'that record');
+        if ($em === '') {
+            $db['customers'][$k]['email'] = ''; save($DATA, $db);
+            $msg = "Email cleared for {$who} - they will now receive nothing from us.";
+        } elseif (!filter_var($em, FILTER_VALIDATE_EMAIL)) {
+            $msg = "That is not a valid email address, so nothing was changed.";
+        } else {
+            $db['customers'][$k]['email'] = $em; save($DATA, $db);
+            $msg = "Email for {$who} is now {$em}";
+        }
+    }
+}
 if (($_POST['do'] ?? '') === 'del') {
     $k=$_POST['key']??'';
     if (isset($db['customers'][$k])) {
@@ -749,7 +770,11 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
 <table><thead><tr><th>Customer</th><th>Key</th><th>Plan</th><th>Next service</th><th>Machines &amp; health</th><th></th></tr></thead><tbody>
 <?php foreach($cust as $key=>$c): if(!empty($c['merged_into'])) continue; /* retired after approval */ ?>
 <tr>
-  <td><strong><?=h($c['name'])?></strong><?php if(!empty($c['via']) && $c['via']==='signin')echo ' <span class="pill free" style="font-size:.66rem">signed in</span>'; if(!empty($c['email']))echo '<div class=mach>'.h($c['email']).'</div>';?><div class=mach>since <?=h($c['created']??'')?></div></td>
+  <td><strong><?=h($c['name'])?></strong><?php if(!empty($c['via']) && $c['via']==='signin')echo ' <span class="pill free" style="font-size:.66rem">signed in</span>';?>
+    <form method=post class=inline style="margin-top:.35rem"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=email><input type=hidden name=key value="<?=h($key)?>">
+    <input name=email type=email value="<?=h($c['email']??'')?>" style="width:185px;font-size:.75rem" placeholder="no email - add one" title="Every email we send this customer goes here: the service report, the review ask, booking confirmations. Leave blank to send them nothing."><button class=ghost>save</button></form>
+    <?php if(empty($c['email'])): ?><div class=mach style="color:#e8a13c">no email &mdash; gets no service report</div><?php endif; ?>
+    <div class=mach>since <?=h($c['created']??'')?></div></td>
   <td><span class=key><?=h($key)?></span>
     <div class=mach style="margin-top:.45rem">Activation link (send to customer):</div>
     <div style="display:flex;gap:.3rem;margin-top:.2rem;align-items:center">
