@@ -1788,17 +1788,40 @@ function sr_clean($s, $max = 120) {
 function sr_asset_clean($a) {
     if (!is_array($a)) return null;
     $ok = function ($x) { return is_array($x) && isset($x['date']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', (string)$x['date']) && strtotime((string)$x['date']) !== false; };
-    $out = array('pc' => null, 'drives' => array());
-    if ($ok(isset($a['pc']) ? $a['pc'] : null))
-        $out['pc'] = array('date' => (string)$a['pc']['date'], 'num' => sr_clean(isset($a['pc']['num']) ? $a['pc']['num'] : '', 20), 'age' => sr_clean(isset($a['pc']['age']) ? $a['pc']['age'] : '', 40));
+    $out = array('pc' => null, 'drives' => array(), 'terms' => array());
+    if ($ok(isset($a['pc']) ? $a['pc'] : null)) {
+        $out['pc'] = array('date' => (string)$a['pc']['date'], 'num' => sr_clean(isset($a['pc']['num']) ? $a['pc']['num'] : '', 20), 'age' => sr_clean(isset($a['pc']['age']) ? $a['pc']['age'] : '', 40),
+                           'guarantee' => (isset($a['pc']['guarantee']['text']) ? sr_clean($a['pc']['guarantee']['text'], 160) : ''));
+    }
     foreach ((array)(isset($a['drives']) ? $a['drives'] : array()) as $d) {
         if (!$ok($d)) continue;
         $out['drives'][] = array('model' => sr_clean(isset($d['model']) ? $d['model'] : '', 60), 'date' => (string)$d['date'],
                                  'num' => sr_clean(isset($d['num']) ? $d['num'] : '', 20), 'age' => sr_clean(isset($d['age']) ? $d['age'] : '', 40));
         if (count($out['drives']) >= 2) break;
     }
-    return ($out['pc'] || $out['drives']) ? $out : null;
+    // the maker's terms per drive (worded by pcm-asset-lib), matched to an invoice or not
+    foreach ((array)(isset($a['terms']) ? $a['terms'] : array()) as $t) {
+        if (!is_array($t) || empty($t['text'])) continue;
+        $out['terms'][] = array('model' => sr_clean(isset($t['model']) ? $t['model'] : '', 60), 'text' => sr_clean($t['text'], 200));
+        if (count($out['terms']) >= 2) break;
+    }
+    return ($out['pc'] || $out['drives'] || $out['terms']) ? $out : null;
 }
+/** One line per drive: purchase (when matched) and the maker's terms (when verified), merged by model. */
+function sr_drive_lines($asset) {
+    $lines = array(); $byModel = array();
+    foreach ((array)(isset($asset['drives']) ? $asset['drives'] : array()) as $ad) {
+        $k = (string)$ad['model'];
+        $byModel[$k] = ($k !== '' ? $k . ' - ' : '') . sr_bought($ad);
+    }
+    foreach ((array)(isset($asset['terms']) ? $asset['terms'] : array()) as $tm) {
+        $k = (string)$tm['model'];
+        $byModel[$k] = (isset($byModel[$k]) ? $byModel[$k] . '. ' : ($k !== '' ? $k . ' - ' : '')) . $tm['text'];
+    }
+    foreach ($byModel as $l) { $lines[] = $l; if (count($lines) >= 2) break; }
+    return $lines;
+}
+
 /** "bought from us 14 March 2024 - 2 years 5 months ago (invoice 1187)" */
 function sr_bought($x) {
     $t = 'bought from us ' . date('j F Y', strtotime($x['date'] . ' 12:00:00'));
@@ -1968,8 +1991,9 @@ function sr_body($first, $sr) {
     $asset = isset($sr['asset']) && is_array($sr['asset']) ? $sr['asset'] : array();
     $pcLine = $sr['pc'] . (!empty($asset['pc']) ? ($sr['pc'] !== '' ? ' - ' : '') . sr_bought($asset['pc']) : '');
     if ($pcLine !== '') $t .= '  Computer:      ' . $pcLine . "\r\n";
-    foreach ((array)(isset($asset['drives']) ? $asset['drives'] : array()) as $ad)
-        $t .= '  Drive:         ' . ($ad['model'] !== '' ? $ad['model'] . ' - ' : '') . sr_bought($ad) . "\r\n";
+    $gtxt = isset($asset['pc']['guarantee']) ? (is_array($asset['pc']['guarantee']) ? (string)(isset($asset['pc']['guarantee']['text']) ? $asset['pc']['guarantee']['text'] : '') : (string)$asset['pc']['guarantee']) : '';
+    if ($gtxt !== '') $t .= '  Guarantee:     ' . $gtxt . "\r\n";
+    foreach (sr_drive_lines($asset) as $dl) $t .= '  Drive:         ' . $dl . "\r\n";
     if ($sr['os'] !== '') $t .= '  Windows:       ' . $sr['os'] . "\r\n";
     if ($sr['backup'] !== '') $t .= '  Backup:        ' . $sr['backup'] . "\r\n";
     $t .= '  Next service:  around ' . date('j F', (int)$sr['next_ts']) . " - we will be in touch, or move it in your portal\r\n\r\n"
@@ -2012,11 +2036,10 @@ function sr_body_html($first, $sr) {
     $asset = isset($sr['asset']) && is_array($sr['asset']) ? $sr['asset'] : array();
     $pcLine = $sr['pc'] . (!empty($asset['pc']) ? ($sr['pc'] !== '' ? ' - ' : '') . sr_bought($asset['pc']) : '');
     if ($pcLine !== '') $facts['Computer'] = $pcLine;
+    $gtxt = isset($asset['pc']['guarantee']) ? (is_array($asset['pc']['guarantee']) ? (string)(isset($asset['pc']['guarantee']['text']) ? $asset['pc']['guarantee']['text'] : '') : (string)$asset['pc']['guarantee']) : '';
+    if ($gtxt !== '') $facts['Guarantee'] = $gtxt;
     $di = 0;
-    foreach ((array)(isset($asset['drives']) ? $asset['drives'] : array()) as $ad) {
-        $di++;
-        $facts[$di === 1 ? 'Drive' : 'Drive ' . $di] = ($ad['model'] !== '' ? $ad['model'] . ' - ' : '') . sr_bought($ad);
-    }
+    foreach (sr_drive_lines($asset) as $dl) { $di++; $facts[$di === 1 ? 'Drive' : 'Drive ' . $di] = $dl; }
     if ($sr['os'] !== '') $facts['Windows'] = $sr['os'];
     if ($sr['backup'] !== '') $facts['Backup'] = $sr['backup'];
     $facts['Next service'] = 'Around ' . date('j F', (int)$sr['next_ts']) . ' - we will be in touch, or move it in your portal';
@@ -2072,8 +2095,11 @@ function sr_sample() {
         ),
         'backup' => 'Windows Backup - last completed 2 September',
         'asset' => array(
-            'pc' => array('date' => '2024-03-14', 'num' => '1187', 'age' => '2 years 5 months'),
+            // the sample is already in the CLEANED shape sr_record stores (guarantee = text)
+            'pc' => array('date' => '2024-03-14', 'num' => '1187', 'age' => '2 years 5 months',
+                          'guarantee' => '365 Techies 5-year guarantee to 14 March 2029 - 2 years 6 months left, while you are on a support plan'),
             'drives' => array(array('model' => 'CT1000P3PSSD8', 'date' => '2024-03-14', 'num' => '1187', 'age' => '2 years 5 months')),
+            'terms' => array(array('model' => 'CT1000P3PSSD8', 'text' => "Maker's guarantee: 5 years or the drive's rated bytes written, whichever first - 12.6 TB written so far - to 14 March 2029")),
         ),
         'url' => 'https://365techies.co.uk/portal/',
         'st' => 'sample',

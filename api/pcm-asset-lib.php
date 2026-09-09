@@ -206,9 +206,115 @@ function pcm_asset_invoices($email, $ttl = 86400) {
     return array('ok' => true, 'invoices' => $rows, 'why' => $why);
 }
 
+/* ---- guarantees -------------------------------------------------------------------
+   The rules, as the owner set them on 9 Sep 2026:
+     Dell laptops and PCs sold by us: FIVE years from us for customers on a support plan,
+     TWELVE months for customers who are not. (Other makes: no guarantee line yet.)
+     Drives: the MAKER's guarantee - usually "N years or X TB written, whichever first" -
+     so the line carries the years, the TBW rating where we have verified it, how much the
+     drive has written so far, and the end date when we know the purchase date.
+   A guarantee line is only ever printed from a verified table entry; a drive we have not
+   verified gets no line, not a guess. */
+
+/** "1TB", "500GB", "250GB"... from a measured size, for the TBW table. */
+function pcm_asset_cap_label($sizeGB) {
+    $g = (float)$sizeGB;
+    foreach (array(array(100, 135, '128GB'), array(215, 262, '250GB'), array(430, 525, '500GB'), array(880, 1050, '1TB'),
+                   array(1750, 2100, '2TB'), array(3500, 4200, '4TB'), array(7000, 8400, '8TB')) as $t)
+        if ($g >= $t[0] && $g <= $t[1]) return $t[2];
+    return '';
+}
+
 /**
- * For one machine on one customer record: fetch, count, match. Returns the asset block
- * pcm.php stores on the machine and hands to the service-report email.
+ * The maker's terms for the drives we fit. Only rows marked verified print; the rest are
+ * here so enabling one is a flag flip after reading the maker's page. Sources are dated.
+ */
+function pcm_asset_drive_terms($model, $sizeGB) {
+    $m = strtoupper((string)$model);
+    $cap = pcm_asset_cap_label($sizeGB);
+    $T = array(
+        // Crucial P3 Plus - warranty wording verified on crucial.com/ssd/p3-plus 2026-09-09: "5 years from
+        // the original date of purchase or before writing the maximum total bytes written (TBW) as
+        // published in the product datasheet ... whichever comes first". The datasheet itself could not
+        // be read from here that day, so the TBW figures stay UNVERIFIED and the line names the
+        // condition without a number until they are (flip tbw_verified after reading the datasheet).
+        array('re' => '/CT\d+P3PSSD8|P3 PLUS/', 'maker' => 'Crucial', 'name' => 'P3 Plus', 'years' => 5,
+              'tbw' => array('500GB' => 110, '1TB' => 220, '2TB' => 440, '4TB' => 800), 'verified' => true, 'tbw_verified' => false),
+        // Samsung 990 PRO - "5-Year Limited Warranty or 600 TBW" (1TB) / "1200 TBW" (2TB), samsung.com/uk 2026-09-09
+        array('re' => '/990 PRO|MZ-V9P/', 'maker' => 'Samsung', 'name' => '990 PRO', 'years' => 5,
+              'tbw' => array('1TB' => 600, '2TB' => 1200, '4TB' => 2400), 'verified' => true, 'tbw_verified' => true),
+        // ---- below: NOT yet verified on the maker's page from here - no line prints until they are ----
+        array('re' => '/CT\d+P3SSD8/', 'maker' => 'Crucial', 'name' => 'P3', 'years' => 5, 'tbw' => array('500GB' => 110, '1TB' => 220, '2TB' => 440, '4TB' => 800), 'verified' => false),
+        array('re' => '/CT\d+MX500/', 'maker' => 'Crucial', 'name' => 'MX500', 'years' => 5, 'tbw' => array('250GB' => 100, '500GB' => 180, '1TB' => 360, '2TB' => 700), 'verified' => false),
+        array('re' => '/CT\d+BX500/', 'maker' => 'Crucial', 'name' => 'BX500', 'years' => 3, 'tbw' => array(), 'verified' => false),
+        array('re' => '/980 PRO|MZ-V8P/', 'maker' => 'Samsung', 'name' => '980 PRO', 'years' => 5, 'tbw' => array('500GB' => 300, '1TB' => 600, '2TB' => 1200), 'verified' => false),
+        array('re' => '/870 EVO|MZ-77E/', 'maker' => 'Samsung', 'name' => '870 EVO', 'years' => 5, 'tbw' => array('500GB' => 300, '1TB' => 600, '2TB' => 1200, '4TB' => 2400), 'verified' => false),
+        array('re' => '/SN580|WDS\d+G3B0E/', 'maker' => 'WD', 'name' => 'Blue SN580', 'years' => 5, 'tbw' => array('500GB' => 300, '1TB' => 600, '2TB' => 900), 'verified' => false),
+        array('re' => '/NV2|SNV2S/', 'maker' => 'Kingston', 'name' => 'NV2', 'years' => 3, 'tbw' => array('500GB' => 160, '1TB' => 320, '2TB' => 640), 'verified' => false),
+    );
+    foreach ($T as $t) {
+        if (!preg_match($t['re'], $m)) continue;
+        if (empty($t['verified'])) return null;
+        $hasCond = is_array($t['tbw']) && count($t['tbw']) > 0;                 // the maker states a bytes-written condition
+        $tbw = (!empty($t['tbw_verified']) && $cap !== '' && isset($t['tbw'][$cap])) ? (int)$t['tbw'][$cap] : null;
+        return array('maker' => $t['maker'], 'name' => $t['name'], 'years' => (int)$t['years'], 'tbw' => $tbw, 'tbw_cond' => $hasCond, 'cap' => $cap);
+    }
+    return null;
+}
+
+/** ISO date + N years. */
+function pcm_asset_add_years($dateIso, $years) {
+    $ts = strtotime((string)$dateIso . ' 12:00:00 UTC');
+    if ($ts === false) return '';
+    return date('Y-m-d', strtotime('+' . (int)$years . ' years', $ts));
+}
+/** "2 years 6 months left" or "ended 14 March 2025". */
+function pcm_asset_left($toIso, $nowTs = null) {
+    $now = $nowTs !== null ? (int)$nowTs : time();
+    $to = strtotime((string)$toIso . ' 12:00:00 UTC');
+    if ($to === false) return '';
+    if ($to < $now) return 'ended ' . date('j F Y', $to);
+    $left = pcm_asset_age(date('Y-m-d', $now), $to);   // age() counts forward from the first date
+    return ($left === '' || $left === 'days') ? 'ends ' . date('j F Y', $to) : $left . ' left';
+}
+
+/** The PC's guarantee line, or null when the rules do not apply. */
+function pcm_asset_pc_guarantee($pcDate, $model, $onSupport, $nowTs = null) {
+    $keys = pcm_asset_model_keys($model);
+    if (!$keys || $keys['brand'] !== 'dell') return null;                 // the rule is written for Dell machines we sold
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', (string)$pcDate)) return null;
+    $years = $onSupport ? 5 : 1;
+    $to = pcm_asset_add_years($pcDate, $years);
+    if ($to === '') return null;
+    $left = pcm_asset_left($to, $nowTs);
+    $text = $onSupport
+        ? '365 Techies 5-year guarantee to ' . date('j F Y', strtotime($to . ' 12:00:00 UTC')) . ' - ' . $left . ', while you are on a support plan'
+        : '365 Techies 12-month guarantee ' . (strpos($left, 'ended') === 0 ? '(' . $left . ')' : 'to ' . date('j F Y', strtotime($to . ' 12:00:00 UTC')) . ' - ' . $left) . '; customers on a support plan have five years';
+    return array('years' => $years, 'from' => (string)$pcDate, 'to' => $to, 'basis' => $onSupport ? 'support' : 'no_support', 'text' => $text);
+}
+
+/** The drive's maker's-terms line: terms + bytes written so far + end date when the purchase date is known. */
+function pcm_asset_drive_terms_text($terms, $purchaseIso, $tbwWritten, $nowTs = null) {
+    if (!is_array($terms)) return '';
+    $t = "Maker's guarantee: " . $terms['years'] . ' year' . ($terms['years'] > 1 ? 's' : '');
+    if (!empty($terms['tbw'])) $t .= ' or ' . $terms['tbw'] . ' TB written, whichever first';
+    elseif (!empty($terms['tbw_cond'])) $t .= " or the drive's rated bytes written, whichever first";
+    else $t .= ' from purchase';
+    if ($tbwWritten !== null && $tbwWritten !== '' && (float)$tbwWritten >= 0) {
+        $w = (float)$tbwWritten;
+        $t .= ' - ' . ($w >= 1 ? round($w, 1) . ' TB' : round($w * 1000) . ' GB') . ' written so far';
+        if (!empty($terms['tbw'])) $t .= ' (' . max(0, min(100, (int)round(100 * $w / (float)$terms['tbw']))) . '% of the rating)';
+    }
+    if (preg_match('/^\d{4}-\d{2}-\d{2}$/', (string)$purchaseIso)) {
+        $to = pcm_asset_add_years($purchaseIso, $terms['years']);
+        if ($to !== '') { $left = pcm_asset_left($to, $nowTs); $t .= ' - ' . (strpos($left, 'ended') === 0 ? $left : 'to ' . date('j F Y', strtotime($to . ' 12:00:00 UTC'))); }
+    }
+    return $t;
+}
+
+/**
+ * For one machine on one customer record: fetch, count, match, then the guarantee lines.
+ * Returns the asset block pcm.php stores on the machine and hands to the service-report email.
  */
 function pcm_asset_for_machine($cust, $machineId, $model, $drives) {
     $email = (string)(isset($cust['email']) ? $cust['email'] : '');
@@ -226,6 +332,20 @@ function pcm_asset_for_machine($cust, $machineId, $model, $drives) {
     $m = pcm_asset_match($inv['invoices'], $model, $drives, $mc, $same);
     $m['source'] = (string)(isset($inv['why']) && $inv['why'] !== '' ? $inv['why'] : (empty($inv['ok']) ? 'unavailable' : 'quickbooks'));
     $m['invoices_seen'] = count($inv['invoices']);
+    // the PC's guarantee (support status decides the term)
+    $onSupport = ((string)(isset($cust['tier']) ? $cust['tier'] : '') === 'pro');
+    if ($m['pc']) $m['pc']['guarantee'] = pcm_asset_pc_guarantee($m['pc']['date'], $model, $onSupport);
+    // the maker's terms per drive, matched or not (terms do not need an invoice; the end date does)
+    $m['terms'] = array();
+    foreach ((array)$drives as $d) {
+        if (!is_array($d) || empty($d['model'])) continue;
+        $terms = pcm_asset_drive_terms($d['model'], isset($d['sizeGB']) ? $d['sizeGB'] : 0);
+        if (!$terms) continue;
+        $bought = '';
+        foreach ($m['drives'] as $md) if ((string)$md['model'] === (string)$d['model']) { $bought = (string)$md['date']; break; }
+        $m['terms'][] = array('model' => (string)$d['model'], 'maker' => $terms['maker'], 'name' => $terms['name'], 'years' => $terms['years'], 'tbw' => $terms['tbw'],
+                              'text' => pcm_asset_drive_terms_text($terms, $bought, isset($d['tbw']) ? $d['tbw'] : null));
+    }
     $m['computed'] = time();
     return $m;
 }

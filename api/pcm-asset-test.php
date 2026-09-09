@@ -62,5 +62,33 @@ ok(pcm_asset_age('2027-01-01', $NOW) === '', 'a future date is nothing, not a ne
 ok(pcm_asset_age('rubbish', $NOW) === '', 'a bad date is nothing');
 ok(pcm_asset_size_labels(932) === array('960gb', '1tb', '1000gb', '1024gb') && pcm_asset_size_labels(238) === array('240gb', '250gb', '256gb') && pcm_asset_size_labels(50) === array(), 'measured sizes map to the labels invoices use');
 
+echo "-- guarantees\n";
+$g = pcm_asset_pc_guarantee('2024-03-14', 'Dell Inc. Latitude 3520', true, $NOW);
+ok($g && $g['to'] === '2029-03-14' && $g['text'] === '365 Techies 5-year guarantee to 14 March 2029 - 2 years 6 months left, while you are on a support plan', 'Dell on support: five years from us', json_encode($g));
+$g = pcm_asset_pc_guarantee('2024-03-14', 'Dell Inc. Latitude 3520', false, $NOW);
+ok($g && $g['to'] === '2025-03-14' && strpos($g['text'], '12-month guarantee (ended 14 March 2025)') !== false && strpos($g['text'], 'five years') !== false, 'Dell not on support: twelve months, ended, with the support-plan note', json_encode($g));
+$g = pcm_asset_pc_guarantee('2026-06-01', 'Dell OptiPlex 7010', false, $NOW);
+ok($g && strpos($g['text'], 'to 1 June 2027 - 8 months left') !== false, 'twelve months still running reads with the time left', json_encode($g));
+ok(pcm_asset_pc_guarantee('2024-03-14', 'HP Pavilion 15', true, $NOW) === null, 'not a Dell: no guarantee line (the rule is written for Dell)');
+ok(pcm_asset_pc_guarantee('rubbish', 'Dell Latitude 3520', true, $NOW) === null, 'no date: no line');
+$t = pcm_asset_drive_terms('CT1000P3PSSD8', 932);
+ok($t && $t['maker'] === 'Crucial' && $t['years'] === 5 && $t['tbw'] === null && $t['tbw_cond'] === true, 'Crucial P3 Plus 1TB: years verified, TBW figure withheld until the datasheet is read', json_encode($t));
+$t2 = pcm_asset_drive_terms('Samsung SSD 990 PRO 1TB', 932);
+ok($t2 && $t2['tbw'] === 600 && pcm_asset_drive_terms('Samsung SSD 990 PRO 2TB', 1863)['tbw'] === 1200, 'Samsung 990 PRO: verified TBW per capacity');
+ok(pcm_asset_drive_terms('KINGSTON SNV2S1000G', 932) === null, 'an unverified model prints nothing');
+ok(pcm_asset_drive_terms('WDC WD10EZEX', 932) === null, 'an unknown model prints nothing');
+$txt = pcm_asset_drive_terms_text($t2, '2024-03-14', 12.6, $NOW);
+ok($txt === "Maker's guarantee: 5 years or 600 TB written, whichever first - 12.6 TB written so far (2% of the rating) - to 14 March 2029", 'the drive terms line with a verified rating', $txt);
+$txt = pcm_asset_drive_terms_text($t, '2024-03-14', 12.6, $NOW);
+ok($txt === "Maker's guarantee: 5 years or the drive's rated bytes written, whichever first - 12.6 TB written so far - to 14 March 2029", 'the condition is named without a number when the figure is unverified', $txt);
+$txt = pcm_asset_drive_terms_text($t2, '', 0.4, $NOW);
+ok($txt === "Maker's guarantee: 5 years or 600 TB written, whichever first - 400 GB written so far (0% of the rating)", 'no purchase date: terms and usage only', $txt);
+$txt = pcm_asset_drive_terms_text(array('maker' => 'X', 'name' => 'Y', 'years' => 3, 'tbw' => null, 'cap' => ''), '2020-01-10', null, $NOW);
+ok($txt === "Maker's guarantee: 3 years from purchase - ended 10 January 2023", 'no TBW rating and an expired term', $txt);
+$custX = array('email' => 'no-such@example.invalid', 'tier' => 'pro', 'machines' => array('m1' => array('model' => 'Dell Latitude 3520')));
+$fm = pcm_asset_for_machine($custX, 'm1', 'Dell Latitude 3520', array(array('model' => 'CT1000P3PSSD8', 'sizeGB' => 932, 'tbw' => 12.6)));
+ok($fm['pc'] === null && count($fm['terms']) === 1 && strpos($fm['terms'][0]['text'], '12.6 TB written so far') !== false && strpos($fm['terms'][0]['text'], ' - to ') === false,
+   'with no books to read, the drive terms still print - usage yes, end date no, purchase never invented', json_encode($fm['terms']));
+
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);

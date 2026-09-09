@@ -52,7 +52,10 @@ function pcm_drives_in($v) {
         if (!is_array($d)) continue;
         $m = pcm_txt(isset($d['model']) ? $d['model'] : '', 60); $g = (int)(isset($d['sizeGB']) ? $d['sizeGB'] : 0);
         if ($m === '' || $g <= 0) continue;
-        $o[] = array('model' => $m, 'sizeGB' => $g);
+        $row = array('model' => $m, 'sizeGB' => $g);
+        if (isset($d['tbw']) && is_numeric($d['tbw']) && (float)$d['tbw'] >= 0 && (float)$d['tbw'] < 100000) $row['tbw'] = round((float)$d['tbw'], 2);   // TB written so far
+        if (isset($d['wear']) && is_numeric($d['wear'])) $row['wear'] = max(0, min(255, (int)$d['wear']));
+        $o[] = $row;
         if (count($o) >= 6) break;
     }
     return $o;

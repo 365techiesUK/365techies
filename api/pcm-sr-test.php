@@ -149,6 +149,19 @@ ok(strpos($ah, '<b>x</b>') === false && strpos($ah, 'quickbooks') === false, 'th
 ok(strpos(sr_body_html('Sofia', $ent), 'bought from us') === false && strpos(sr_body('Sofia', $ent), 'bought from us') === false, 'no asset = no bought line, nothing invented');
 $sd = $ea; $sd['asset']['pc']['age'] = 'days';
 ok(strpos(sr_body('Sofia', $sd), 'bought from us 14 March 2024 (invoice 1187)') !== false, 'a purchase this week reads without an age');
+$gq = $aq; $gq['asset']['pc']['guarantee'] = array('text' => '365 Techies 5-year guarantee to 14 March 2029 - 2 years 6 months left, while you are on a support plan');
+$gq['asset']['terms'] = array(array('model' => 'CT1000P3PSSD8', 'text' => "Maker's guarantee: 5 years or 220 TB written, whichever first - 12.6 TB written so far (6% of the rating) - to 14 March 2029"),
+                              array('model' => 'other', 'text' => '<i>x</i>'));
+sr_record($KEY, $MACHINE, $TS + 60, $gq, $cust);
+$e = q(); $eg = $e['sr'][$KH . '-' . $MACHINE . '-' . ($TS + 60)];
+$gh = sr_body_html('Sofia', $eg); $gt = sr_body('Sofia', $eg);
+ok(strpos($gh, '365 Techies 5-year guarantee to 14 March 2029') !== false && strpos($gt, 'Guarantee:     365 Techies 5-year guarantee') !== false, 'both carry the PC guarantee line');
+ok(strpos($gh, 'CT1000P3PSSD8 - bought from us 14 March 2024 - 2 years 5 months ago (invoice 1187). Maker&#039;s guarantee: 5 years or 220 TB written') !== false
+   && strpos($gt, "CT1000P3PSSD8 - bought from us 14 March 2024 - 2 years 5 months ago (invoice 1187). Maker's guarantee: 5 years or 220 TB written") !== false, 'the drive line merges purchase and maker terms by model');
+ok(strpos($gh, '<i>x</i>') === false, 'terms text is escaped');
+$smh = sr_body_html('Steve', sr_sample()); $smt = sr_body('Steve', sr_sample());
+ok(strpos($smh, '5-year guarantee to 14 March 2029') !== false && strpos($smh, 'Array') === false && strpos($smt, 'Array') === false
+   && strpos($smh, 'rated bytes written') !== false, 'the ?test=report sample renders the guarantee and terms lines, never the word Array');
 
 echo "-- security\n";
 ok(count($ent['sec']) === 3 && $ent['sec'][0][1] === 'ok' && strpos($ent['sec'][0][2], '<') === false && $ent['sec'][2][0] === 'Drive encryption',
