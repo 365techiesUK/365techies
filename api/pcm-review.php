@@ -1999,7 +1999,11 @@ function sr_body($first, $sr) {
     foreach (sr_drive_lines($asset) as $dl) $t .= '  Drive:         ' . $dl . "\r\n";
     if ($sr['os'] !== '') $t .= '  Windows:       ' . $sr['os'] . "\r\n";
     if ($sr['backup'] !== '') $t .= '  Backup:        ' . $sr['backup'] . "\r\n";
-    $t .= '  Next service:  around ' . date('j F', (int)$sr['next_ts']) . " - we will be in touch, or move it in your portal\r\n\r\n"
+    // Only a customer on a support plan is told when the next service is: to anyone else it
+    // would promise a visit they do not pay for. A missing flag means NOT on a plan, so an
+    // entry queued before this rule simply loses the line - the safe direction.
+    if (!empty($sr['pro'])) $t .= '  Next service:  around ' . date('j F', (int)$sr['next_ts']) . " - we will be in touch, or move it in your portal\r\n";
+    $t .= "\r\n"
         . 'Full report: ' . $sr['url'] . "\r\n"
         . "Your portal:  https://365techies.co.uk/portal/\r\n\r\n"
         . "Anything not behaving the way it should? Reply to this email or ring\r\n"
@@ -2045,7 +2049,8 @@ function sr_body_html($first, $sr) {
     foreach (sr_drive_lines($asset) as $dl) { $di++; $facts[$di === 1 ? 'Drive' : 'Drive ' . $di] = $dl; }
     if ($sr['os'] !== '') $facts['Windows'] = $sr['os'];
     if ($sr['backup'] !== '') $facts['Backup'] = $sr['backup'];
-    $facts['Next service'] = 'Around ' . date('j F', (int)$sr['next_ts']) . ' - we will be in touch, or move it in your portal';
+    // support-plan customers only - see the note in sr_body()
+    if (!empty($sr['pro'])) $facts['Next service'] = 'Around ' . date('j F', (int)$sr['next_ts']) . ' - we will be in touch, or move it in your portal';
     $blocks[] = rv_h_facts($facts);
     $blocks[] = rv_h_cta('View the full report', $sr['url']);
     $blocks[] = '<p style="margin:14px 0 18px 0;font-size:14px;line-height:1.6;color:#7c8aa5 !important;text-align:center;">'
@@ -2076,7 +2081,7 @@ function sr_sample() {
         'em' => 'info@365techies.co.uk', 'nm' => 'Steve',
         'pc' => 'Dell Latitude 3520', 'os' => 'Windows 11, version 24H2',
         'score' => 81, 'prev' => 78, 'prev_ts' => mktime(10, 0, 0, 7, 24, 2026),
-        'ts' => mktime(11, 40, 0, 9, 4, 2026), 'next_ts' => mktime(9, 0, 0, 10, 16, 2026),
+        'ts' => mktime(11, 40, 0, 9, 4, 2026), 'next_ts' => mktime(9, 0, 0, 10, 16, 2026), 'pro' => true,
         'done' => array(
             array('Windows updates installed', '3, including one driver'),
             array('Applications updated', 'Chrome, Zoom, Adobe Reader'),
@@ -2167,6 +2172,8 @@ function sr_record($key, $machine, $ts, $summary, $cust, $prev = array()) {
         'asset' => sr_asset_clean(isset($summary['asset']) ? $summary['asset'] : null),
         'backup' => sr_clean(isset($summary['backup']) ? $summary['backup'] : '', 160),
         'next_ts' => sr_next_ts(isset($summary['next']) ? $summary['next'] : '', $ts),
+        // the same field the guarantee wording branches on, read once at upload time
+        'pro' => ((string)(isset($cust['tier']) ? $cust['tier'] : 'free') === 'pro'),
         'ts' => $ts, 'exp' => $exp,
         'url' => sr_link($kh, $machine, $ts, $exp, $q['salt']),
         'st' => 'pending', 'tries' => 0, 'made' => time(),

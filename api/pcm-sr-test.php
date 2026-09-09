@@ -38,7 +38,7 @@ function q() { global $RV_Q; return json_decode((string)file_get_contents($RV_Q)
 
 $KEY = 'TESTKEY12345'; $MACHINE = 'abcdef012345'; $TS = time() - 300;
 $KH = substr(hash('sha256', $KEY), 0, 12);
-$cust = array('email' => 'Sofia.Example@Example.com', 'name' => 'Sofia Example');
+$cust = array('email' => 'Sofia.Example@Example.com', 'name' => 'Sofia Example', 'tier' => 'pro');
 $summary = array(
     'customer' => 'Sofia', 'pc' => 'Dell Inc.', 'model' => 'Dell Latitude 3520', 'os' => 'Windows 11 Home 24H2',
     'score' => '81% - Very good', 'scoren' => 81,
@@ -77,6 +77,7 @@ ok(count($ent['recs']) === 2 && strpos($ent['recs'][0], '<') === false && strpos
    && strpos($ent['recs'][0], 'script') === false, 'recommendations: tags stripped, capped at two', json_encode($ent['recs']));
 ok(count($ent['done']) === 2 && $ent['done'][1][0] === 'Security scan', 'task rows: tags stripped, junk rows dropped', json_encode($ent['done']));
 ok(date('Y-m-d', $ent['next_ts']) === '2026-10-16', 'next service date parsed from the uploader', date('Y-m-d', $ent['next_ts']));
+ok($ent['pro'] === true, 'a support-plan customer is recorded as one');
 ok(strpos($ent['url'], 'https://365techies.co.uk/api/pcm-report.php?t=') === 0, 'a signed report link was minted');
 ok($e['q']['9001']['dn'] === 'superseded' && $e['q']['9002']['dn'] === 'pending' && $e['q']['9003']['dn'] === 'sent' && $e['q']['9004']['dn'] === 'pending',
    'only the same person, same-time, still-pending visit record is superseded');
@@ -115,6 +116,21 @@ ok($p['held_pre_flip'] === 1 && $p['due_waiting'] === 2 && $e['sr']['pre-flip-1'
 list($lkx, $qx) = rvq_open(); $qx['srrun_ts'] = 0; rvq_save($qx); rvq_close($lkx);
 $p = sr_process(5);
 ok($p['held_pre_flip'] === 0 && q()['sr']['pre-flip-1']['st'] === 'held', 'a held report stays held on the next tick and is not re-counted');
+
+echo "-- who is told when the next service is\n";
+// A support-plan customer is; anybody else is not, because it would promise a visit
+// they do not pay for. Absent flag = not on a plan, so old entries lose the line too.
+$rFree = sr_record($KEY, $MACHINE, $TS + 3, $summary, array('email' => 'oneoff@example.com', 'name' => 'One Off'));
+$eFree = q(); $entFree = $eFree['sr'][$KH . '-' . $MACHINE . '-' . ($TS + 3)];
+ok($entFree['pro'] === false, 'a customer not on a plan is recorded as not on one', json_encode($entFree['pro']));
+ok(strpos(sr_body_html('One Off', $entFree), 'Next service') === false
+   && strpos(sr_body('One Off', $entFree), 'Next service') === false, 'no plan: neither body promises a next service');
+ok(strpos(sr_body_html('Sofia', $ent), 'Next service') !== false
+   && strpos(sr_body('Sofia', $ent), 'Next service') !== false, 'on a plan: both bodies still carry the next service date');
+$entOld = $ent; unset($entOld['pro']);
+ok(strpos(sr_body_html('Sofia', $entOld), 'Next service') === false
+   && strpos(sr_body('Sofia', $entOld), 'Next service') === false, 'an entry queued before the rule fails closed, it does not promise');
+ok(strpos(sr_body('One Off', $entFree), "\r\n\r\nFull report: ") !== false, 'dropping the line leaves the blank line before the link intact');
 
 echo "-- the words\n";
 $html = sr_body_html('Sofia', $ent);
