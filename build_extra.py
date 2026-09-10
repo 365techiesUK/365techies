@@ -510,9 +510,49 @@ def pcm_landing():
     content = "\n".join([
       hero(bc("Free PC Health Check"), "// FREE WINDOWS APP &middot; " + ("SIGNED &amp; LIVE" if PCM_LIVE else "COMING SOON"),
            'Your PC&rsquo;s health, <em class="grad grad--cyan">at a glance</em>',
-           "Meet 365 PC Manager &mdash; a free little app that shows your Windows PC&rsquo;s health in plain English, with <strong>no fake errors and no scare tactics</strong>. Made by a real Dorset family firm you can actually phone &mdash; not a faceless call-centre. Perfect for keeping a quiet eye on your own PC, or a parent&rsquo;s (with our free <a href='/family/'>Family View</a>). " + ("<strong>Free to download now &mdash; digitally signed by 365 Techies Ltd, so Windows knows it&rsquo;s ours.</strong>" if PCM_LIVE else "<strong>Launching soon &mdash; join the waitlist and we&rsquo;ll set it up for you free, by hand, when it&rsquo;s ready.</strong>") + "",
+           "Meet 365 PC Manager &mdash; a free app that shows your Windows PC&rsquo;s health in plain English, with <strong>no fake errors and no scare tactics</strong>. On a support plan it is also the front door to <strong>the most thorough six-weekly PC service we can find in Dorset</strong> &mdash; every update, every check, written up and emailed to you after every visit. Made by a real Dorset family firm you can actually phone. " + ("<strong>Free to download now &mdash; digitally signed by 365 Techies Ltd, so Windows knows it&rsquo;s ours.</strong>" if PCM_LIVE else "<strong>Launching soon &mdash; join the waitlist and we&rsquo;ll set it up for you free, by hand, when it&rsquo;s ready.</strong>") + "",
            cta1=(("Download free for Windows", "#download") if PCM_LIVE else ("Join the free waitlist", "#waitlist")), cta2=("Call 01202 775566", "tel:+441202775566"),
-           chips=["Free forever", "Made in Dorset", ("Signed by 365 Techies Ltd" if PCM_LIVE else "Coming soon")]),
+           chips=["Free forever", "Made in Dorset", "Written report every service", ("Signed by 365 Techies Ltd" if PCM_LIVE else "Coming soon")]),
+      '''    <section class="section section--alt" aria-label="The six-weekly service and its written report" id="six-weekly-service">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// ON A SUPPORT PLAN &middot; EVERY SIX WEEKS</p>
+          <h2 class="section-title section-title--center" data-title>The most thorough PC service we can find in Dorset<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Every six weeks we <strong>update, secure, check and tune</strong> your whole computer &mdash; then write it up. The <strong>Service Report</strong> is emailed to you and kept in <a href="/portal/">your portal</a> for good, so you can see exactly what was done and what changed since last time. We can&rsquo;t find another IT support company in Dorset that does this for every customer.</p>
+        </div>
+        <ul class="security-grid" data-stagger>
+          <li><h3>Windows updates</h3><p>Installed and verified &mdash; including the ones that fail quietly in the background.</p></li>
+          <li><h3>Driver updates</h3><p>Chipset, graphics, network and the maker&rsquo;s own drivers &mdash; the ones Windows Update leaves behind.</p></li>
+          <li><h3>Application updates</h3><p>Browsers, Office, Zoom, Reader and the rest. An old app with a known hole is how most home PCs get caught.</p></li>
+          <li><h3>Security check</h3><p>Antivirus state, firewall, drive encryption and a scan &mdash; each read on the day and written down as found.</p></li>
+          <li><h3>System file check</h3><p>Windows verified against itself and repaired where it can be, so faults are caught before they cost you a morning.</p></li>
+          <li><h3>Backup checked</h3><p>Whether last night&rsquo;s backup actually ran, and how much room is left before the drive quietly stops protecting you.</p></li>
+          <li><h3>Broadband speed test</h3><p>Measured from your machine and compared with your last visit, so a line that has slipped gets noticed by us first.</p></li>
+          <li><h3>Drive health &amp; tune-up</h3><p>Hours run, temperature, data written and wear on every drive &mdash; plus temporary files cleared and drives optimised.</p></li>
+        </ul>
+        <div class="srshots" data-reveal>
+          <figure class="srshots__tall"><img src="/images/pcm-report-email-v1.webp" width="900" height="1843" alt="The Service Report email on a phone: a 365 health score of 81, a Security panel with antivirus, firewall, updates and drive encryption each marked, and the list of what was done" loading="lazy" decoding="async"><figcaption>The email: your score, security at a glance, and what we did</figcaption></figure>
+          <div class="srshots__col">
+            <figure><img src="/images/pcm-report-computer-v1.webp" width="1230" height="1008" alt="The full report's This computer panel: make and model, bought from us with the date, the guarantee and time left, Windows build, memory, main drive space, temperature and backup drive space" loading="lazy" decoding="async"><figcaption>The full report: your computer, its guarantee and your backup drive</figcaption></figure>
+            <figure><img src="/images/pcm-report-drives-v1.webp" width="1230" height="440" alt="The full report's Drives table: model, type, health, hours powered on, wear, temperature and data written, with the maker's guarantee" loading="lazy" decoding="async"><figcaption>Every drive: hours, wear, temperature, data written</figcaption></figure>
+          </div>
+        </div>
+        <p class="mono" style="text-align:center;color:var(--faint);font-size:.72rem;margin-top:.9rem" data-reveal>// SAMPLE REPORT &middot; THE REAL TEMPLATE WITH EXAMPLE DATA &middot; EVERY FIGURE IS MEASURED ON THE DAY, NOTHING IS ESTIMATED</p>
+        <div class="prose" style="max-width:760px;margin:1.6rem auto 0;text-align:center" data-reveal>
+          <p><strong>Why it matters.</strong> Most home computers are not broken into by clever hackers. They are let in &mdash; by a scam call, or by an out-of-date app, driver or Windows with a hole that was fixed months ago. Every six weeks we close those doors, and the report shows you it was done.</p>
+          <p style="margin-top:.6rem"><strong>Home &pound;18.25 a month per computer &middot; business from &pound;24.38.</strong> Rolling monthly, no lock-in &mdash; and Dell computers we sold carry a five-year guarantee while you are on a plan.</p>
+        </div>
+        <p style="text-align:center;margin-top:1.4rem" data-reveal><a class="button primary" href="/monthly-it-support/">See support plans &#8594;</a> <a class="button secondary" href="tel:+441202775566" style="margin-left:.5rem">Call 01202 775566</a></p>
+      </div>
+      <style>
+        .srshots{display:grid;grid-template-columns:minmax(0,.62fr) minmax(0,1fr);gap:1rem;margin:1.6rem auto 0;max-width:1000px;align-items:start}
+        .srshots figure{margin:0;border-radius:14px;overflow:hidden;border:1px solid rgba(125,170,220,.25);box-shadow:0 24px 60px rgba(0,0,0,.45);background:#0a1226}
+        .srshots img{display:block;width:100%;height:auto}
+        .srshots figcaption{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.72rem;color:var(--muted);padding:.55rem .8rem;border-top:1px solid rgba(125,170,220,.18)}
+        .srshots__col{display:grid;gap:1rem}
+        @media(max-width:700px){.srshots{grid-template-columns:1fr}}
+      </style>
+    </section>''',
       '''    <section class="section" aria-label="Try the live demo" style="padding-top:1rem;position:relative;overflow:hidden">
       <div aria-hidden="true" style="position:absolute;left:50%;top:2%;transform:translateX(-50%);width:80%;height:70%;background:radial-gradient(ellipse at center,rgba(29,151,227,.2),rgba(29,151,227,0) 70%);filter:blur(50px);pointer-events:none;z-index:0"></div>
       <div class="wrap" style="max-width:1000px;position:relative;z-index:1">
@@ -794,28 +834,6 @@ def pcm_landing():
         </ul>
         <p style="text-align:center;margin-top:1.6rem" data-reveal><a class="text-link" href="#download">Download it free and test your broadband <span aria-hidden="true">&#8594;</span></a></p>
         <p class="mono" style="text-align:center;color:var(--faint);font-size:.72rem;margin-top:.8rem" data-reveal>// A FAILED TEST IS NEVER SHOWN AS ZERO &middot; WE NEVER STORE YOUR FULL POSTCODE</p>
-      </div>
-    </section>''',
-      # The six-weekly written Service Report. Every claim here is something the report
-      # genuinely prints from readings taken on the day - see api/pcm-review.php (the email)
-      # and the ServicePass summary. Do not add a figure the report does not actually show.
-      '''    <section class="section section--alt" aria-label="The written service report" id="service-report">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// AFTER EVERY SERVICE</p>
-          <h2 class="section-title section-title--center" data-title>A report you can actually read<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>On a 365 support plan we service your computer about every six weeks, and every service ends the same way &mdash; a <strong>written Service Report</strong> in plain English. It reaches you three ways: <strong>emailed to you</strong>, saved in <a href="/portal/">your portal</a>, and left on your Desktop. No jargon, no upsell, no invented problems.</p>
-        </div>
-        <ul class="security-grid" data-stagger>
-          <li><h3>Your score, and which way it moved</h3><p>A health score out of 100 with the change since your last service. A computer that is quietly drifting shows up as a number, months before it becomes a bad morning.</p></li>
-          <li><h3>Security at a glance</h3><p>Windows updates, firewall, virus protection and drive encryption &mdash; each one read on the day and written down as we found it. If something was off, it says so plainly instead of hiding it.</p></li>
-          <li><h3>What we actually did</h3><p>Item by item, in the order we did it &mdash; and anything we think is worth doing next, with the reason. Suggestions only ever come from your machine&rsquo;s own readings.</p></li>
-          <li><h3>Every drive, in detail</h3><p>Model and size, how many hours it has been running, its temperature, how much data has been written to it over its life, and how much of its rated life the drive itself reports as used.</p></li>
-          <li><h3>Backup, honestly</h3><p>Whether your backup actually ran, where it goes, and how much room is left on the backup drive &mdash; because a full backup drive quietly stops protecting you.</p></li>
-          <li><h3>Guarantees, and what is left of them</h3><p>When you bought the computer and its drive from us, and how long each guarantee still has to run. Dell computers we sold carry <strong>five years</strong> while you are on a support plan.</p></li>
-        </ul>
-        <p style="text-align:center;margin-top:1.6rem" data-reveal><a class="text-link" href="/monthly-it-support/">See what a support plan includes <span aria-hidden="true">&#8594;</span></a></p>
-        <p class="mono" style="text-align:center;color:var(--faint);font-size:.72rem;margin-top:.8rem" data-reveal>// EVERY FIGURE IS MEASURED ON YOUR PC ON THE DAY &middot; NOTHING IS ESTIMATED</p>
       </div>
     </section>''',
       get_or_waitlist_html,
