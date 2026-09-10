@@ -22445,24 +22445,15 @@ def write_portal_page():
   #p365app .ngseen { font-size: 0.85rem; color:var(--ngmut); }
   #p365app .ngchip { display:inline-flex; align-items:center; gap:.3rem; font-size: 0.78rem; padding:.2rem .55rem; border-radius:999px; border:1px solid var(--pline); color:var(--psoft); background:rgba(17,26,60,.5); }
   #p365app .ngchip.ok { color:var(--pgood); border-color:rgba(0,206,27,.3); }
-  #p365app .ngstage { position:relative; perspective:1400px; perspective-origin:50% 40%; margin:.3rem 0 1.5rem; height:clamp(300px,40vw,420px); }
-  #p365app .ngbg { position:absolute; inset:0; z-index:0; display:block; border-radius:16px; }
-  #p365app .ngscene { position:absolute; inset:0; z-index:1; transform-style:preserve-3d; transition:transform .25s ease-out; will-change:transform; }
-  #p365app .ngglow { position:absolute; left:50%; top:56%; width:340px; height:145px; transform:translate(-50%,-50%); background:radial-gradient(ellipse,var(--nghue,var(--pgood)),transparent 70%); filter:blur(32px); opacity:.4; animation:ngbreathe 5s ease-in-out infinite; }
-  @keyframes ngbreathe { 0%,100% { opacity:.32; } 50% { opacity:.5; } }
-  #p365app .ngdevice { position:absolute; left:50%; top:50%; transform-style:preserve-3d; transform:translate(-50%,-52%) rotateX(var(--rx,8deg)) rotateY(var(--ry,-16deg)); transition:transform .3s var(--ngspring); }
-  #p365app .nglid { position:relative; width:380px; height:238px; transform-origin:bottom center; transform:rotateX(-78deg); background:linear-gradient(160deg,#1b2a55,#0d1633); border:1px solid #2c3f74; border-radius:14px 14px 4px 4px; box-shadow:0 -2px 0 rgba(255,255,255,.06) inset,0 30px 60px rgba(0,0,0,.5); padding:11px; }
-  #p365app .ngbase { position:absolute; top:237px; left:-22px; width:424px; height:19px; transform:rotateX(-6deg); transform-origin:top center; background:linear-gradient(180deg,#24356a,#131d3e); border-radius:6px 6px 12px 12px; box-shadow:0 24px 40px rgba(0,0,0,.55); border:1px solid #2c3f74; border-top:0; }
-  #p365app .ngbase::after { content:""; position:absolute; left:50%; top:2px; width:66px; height:5px; border-radius:0 0 6px 6px; background:#0c1430; transform:translateX(-50%); }
-  #p365app .ngscreen { position:absolute; inset:11px; border-radius:8px; background:radial-gradient(120% 120% at 30% 20%,#12204a,#0a1330); overflow:hidden; border:1px solid #223361; }
-  #p365app .nggloss { position:absolute; inset:0; background:linear-gradient(115deg,rgba(255,255,255,.14) 0%,rgba(255,255,255,0) 30%,rgba(255,255,255,0) 70%,rgba(255,255,255,.05) 100%); pointer-events:none; mix-blend-mode:screen; }
-  #p365app .ngcam { position:absolute; top:5px; left:50%; width:5px; height:5px; border-radius:50%; background:#0c1430; transform:translateX(-50%); box-shadow:0 0 0 1px #223361; }
-  #p365app .ngmon { position:relative; width:380px; height:238px; background:linear-gradient(160deg,#1b2a55,#0d1633); border:8px solid #131d3e; border-radius:12px; box-shadow:0 30px 60px rgba(0,0,0,.5); overflow:hidden; }
-  #p365app .ngstand { position:absolute; left:50%; top:238px; width:16px; height:42px; background:#1a2650; transform:translateX(-50%); }
-  #p365app .ngfoot { position:absolute; left:50%; top:278px; width:144px; height:12px; border-radius:8px; background:#131d3e; transform:translateX(-50%); }
-  #p365app .ngtower { position:absolute; left:calc(50% + 238px); top:110px; width:66px; height:172px; background:linear-gradient(160deg,#1b2a55,#0d1633); border:1px solid #2c3f74; border-radius:8px; box-shadow:0 24px 44px rgba(0,0,0,.5); transform:translateX(-50%) rotateY(8deg); }
-  #p365app .ngtower::after { content:""; position:absolute; left:18px; bottom:16px; width:8px; height:8px; border-radius:50%; background:var(--nghue,var(--pgood)); box-shadow:0 0 10px var(--nghue,var(--pgood)); }
-  #p365app .ngscr { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  #p365app .nghp { display:grid; grid-template-columns:150px 1fr; gap:1rem 1.6rem; align-items:center; background:var(--ngcard); border:1px solid var(--pline); border-top-color:var(--ngline); border-radius:16px; padding:1.3rem 1.4rem; margin:.3rem 0 1.4rem; }
+  #p365app .nghp__verdict { font-size:2rem; font-weight:750; line-height:1.1; letter-spacing:-.01em; }
+  #p365app .nghp__line { font-size:1rem; color:var(--pwhite); margin:.3rem 0 .5rem; }
+  #p365app .nghp__meta { font-size: 0.95rem; color:var(--psoft); margin:.12rem 0; }
+  #p365app .nghp__meta b { color:var(--pwhite); font-weight:600; }
+  #p365app .nghp__tiles { grid-column:1 / -1; display:grid; grid-template-columns:repeat(auto-fit,minmax(118px,1fr)); gap:.7rem; margin-top:.2rem; }
+  #p365app .nghp__tile { background:rgba(12,22,50,.62); border:1px solid var(--pline); border-radius:12px; padding:.8rem .9rem; }
+  #p365app .nghp__tile .v { font-size:1.4rem; font-weight:700; line-height:1.1; }
+  #p365app .nghp__tile .k { font-size: 0.82rem; color:var(--psoft); margin-top:.3rem; }
   #p365app .ngringwrap { position:relative; width:150px; height:150px; }
   #p365app .ngring { transform:rotate(-90deg); }
   #p365app .ngring .tk { fill:none; stroke:#182449; stroke-width:11; }
@@ -22470,12 +22461,6 @@ def write_portal_page():
   #p365app .ngctr { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
   #p365app .ngctr .sc { font-size:2.4rem; font-weight:750; line-height:1; color:var(--pwhite); }
   #p365app .ngctr .of { font-size: 0.78rem; color:var(--ngmut); letter-spacing:.05em; }
-  #p365app .ngscr .vd { font-size: 0.78rem; color:var(--psoft); margin-top:.3rem; max-width:210px; text-align:center; padding:0 8px; }
-  #p365app .ngfloat { position:absolute; transform-style:preserve-3d; transition:transform .3s ease-out; z-index:2; }
-  #p365app .ngfchip { background:rgba(17,26,60,.82); border:1px solid var(--ngline); backdrop-filter:blur(6px); border-radius:12px; padding:.5rem .65rem; box-shadow:0 14px 30px rgba(0,0,0,.4); animation:nghover 6s ease-in-out infinite; }
-  #p365app .ngfchip .k { font-size: 0.78rem; color:var(--psoft); display:flex; gap:.3rem; align-items:center; }
-  #p365app .ngfchip .v { font-weight:700; font-size:1rem; color:var(--pwhite); }
-  @keyframes nghover { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-7px); } }
   #p365app .ngverdline { font-size:1.3rem; font-weight:650; text-align:center; margin:0 0 .3rem; color:var(--pwhite); }
   #p365app .ngh2 { font-size: 0.8rem; letter-spacing:.1em; text-transform:uppercase; color:var(--psoft); margin:1.5rem .1rem .55rem; font-weight:700; }
   #p365app .nggrid { display:grid; grid-template-columns:repeat(6,1fr); gap:.8rem; perspective:900px; }
@@ -22509,15 +22494,11 @@ def write_portal_page():
   @media (max-width:640px) {
     #p365app .nggrid { grid-template-columns:repeat(2,1fr); }
     #p365app .ng-s3 { grid-column:span 2; } #p365app .ng-s2 { grid-column:span 1; }
-    #p365app .ngfloat { display:none; }
-    #p365app .ngdevice { transform:translate(-50%,-52%) rotateX(6deg) rotateY(-8deg); }
-    #p365app .nglid,#p365app .ngmon { width:300px; height:190px; }
-    #p365app .ngbase { top:189px; left:-18px; width:336px; }
-    #p365app .ngtower { display:none; }
+    #p365app .nghp { grid-template-columns:1fr; justify-items:center; text-align:center; }
+    #p365app .nghp__tiles { justify-items:stretch; text-align:left; }
   }
   @media (prefers-reduced-motion:reduce) {
-    #p365app .ngglow,#p365app .ngfchip { animation:none; }
-    #p365app .ngscene,#p365app .ngdevice,#p365app .ngc { transition:none; }
+    #p365app .ngc { transition:none; }
   }
   /* ---------- BUSINESS TEAM ---------------------------------------------------
      The director's view of their own staff. Deliberately calm: this is a list of
@@ -25353,24 +25334,34 @@ def write_portal_page():
     var col = m.score >= 80 ? 'var(--pgood)' : (m.score >= 55 ? 'var(--pwarn)' : 'var(--pbad)');
     var word = m.score >= 80 ? 'great shape' : (m.score >= 55 ? 'good shape, with a little to tidy' : 'need of a little care');
     var lap = m.batt > 0;
-    var ringSvg = '<div class="ngringwrap"><svg class="ngring" width="150" height="150" viewBox="0 0 150 150">'
-      + '<circle class="tk" cx="75" cy="75" r="63"/><circle class="arc" id="ngarc" cx="75" cy="75" r="63"/></svg>'
-      + '<div class="ngctr"><div class="sc ngnum" id="ngscore">0</div><div class="of">HEALTH</div></div></div>'
-      + '<div class="vd">' + esc(m.verdict || (m.score >= 80 ? 'in good shape' : 'a few things to look at')) + '</div>';
-    var device = lap
-      ? '<div class="nglid"><div class="ngscreen"><div class="ngscr">' + ringSvg + '</div><div class="nggloss"></div><div class="ngcam"></div></div></div><div class="ngbase"></div>'
-      : '<div class="ngmon"><div class="ngscreen" style="inset:0;border:0"><div class="ngscr">' + ringSvg + '</div><div class="nggloss"></div></div></div><div class="ngstand"></div><div class="ngfoot"></div><div class="ngtower"></div>';
-    var protV = m.avoff ? '<span style="color:var(--pbad)">Off</span>' : (m.avon ? '<span style="color:var(--pgood)">On</span>' : '<span style="color:var(--psoft)">\\u2014</span>');
-    var f1 = '<div class="ngfloat" style="left:4%;top:14%;transform:translateZ(60px)"><div class="ngfchip"><div class="k">\\ud83d\\udee1\\ufe0f Protection</div><div class="v">' + protV + '</div></div></div>';
-    var f2 = '<div class="ngfloat" style="right:2%;top:24%;transform:translateZ(90px)"><div class="ngfchip" style="animation-delay:1.5s"><div class="k">\\u2601\\ufe0f Backup</div><div class="v" style="color:' + (m.backup ? 'var(--pgood)' : 'var(--pbad)') + '">' + (m.backup ? 'On' : 'Off') + '</div></div></div>';
-    var f3 = '<div class="ngfloat" style="right:8%;bottom:10%;transform:translateZ(40px)"><div class="ngfchip" style="animation-delay:.8s"><div class="k">\\ud83d\\udcbe Storage</div><div class="v ngnum">' + m.disk + '%</div></div></div>';
+    // ---- PCM-style health panel (replaces the 3D device hero, owner 2026-09-11):
+    //      ring + verdict + the same at-a-glance tiles the app shows. Only fields the
+    //      portal genuinely receives (score, disk %, antivirus, backup, battery, Windows 10
+    //      flag, restart flag) - nothing the app measures but never sends is invented. ----
+    if (m.fresh) col = 'var(--psoft)';
+    var verdictTxt = m.fresh ? 'Waiting for first check-in' : (m.verdict || (m.score >= 80 ? 'Healthy' : (m.score >= 55 ? 'Needs a little care' : 'Needs attention')));
+    var diskFree = Math.max(0, 100 - (m.disk || 0)), diskCol = m.disk >= 85 ? 'var(--pbad)' : (m.disk >= 70 ? 'var(--pwarn)' : 'var(--pgood)');
+    var avTxt = m.avoff ? 'off' : (m.avon ? 'on' : '\\u2014'), avCol = m.avoff ? 'var(--pbad)' : (m.avon ? 'var(--pgood)' : 'var(--psoft)');
+    function ngTile(v, k, c) { return '<div class="nghp__tile"><div class="v ngnum" style="color:' + c + '">' + v + '</div><div class="k">' + k + '</div></div>'; }
+    var tiles = ngTile(m.fresh ? '\\u2014' : diskFree + '%', 'Free disk', m.fresh ? 'var(--psoft)' : diskCol)
+      + ngTile(avTxt, 'Antivirus', avCol)
+      + ngTile(m.backup ? 'on' : 'none', 'Backup', m.backup ? 'var(--pgood)' : 'var(--pwarn)')
+      + (lap ? ngTile(m.batt + '%', 'Battery', m.batt >= 60 ? 'var(--pgood)' : 'var(--pwarn)') : '')
+      + ngTile(m.w10 ? '10' : '11', 'Windows', m.w10 ? 'var(--pwarn)' : 'var(--pgood)');
+    var ring = '<div class="ngringwrap"><svg class="ngring" width="150" height="150" viewBox="0 0 150 150"><circle class="tk" cx="75" cy="75" r="63"/>'
+      + (m.fresh ? '' : '<circle class="arc" id="ngarc" cx="75" cy="75" r="63"/>') + '</svg>'
+      + '<div class="ngctr"><div class="sc ngnum"' + (m.fresh ? '>\\u2014' : ' id="ngscore">0') + '</div><div class="of">HEALTH</div></div></div>';
     var h = '<div class="ngwrap">'
       + '<div class="ngtop"><div class="nglogo">365</div><div><div class="ngname">' + esc(m.name) + '</div><div class="ngseen">Checked ' + seenTxt(m.seen) + '</div></div>'
       + (m.ver ? '<span class="ngchip ok">\\u2713 App v' + m.ver + '</span>' : '')
       + '<button class="sm ghost rcb" data-pc="' + esc(m.id) + '" style="margin:0 0 0 auto;padding:.35rem .7rem" title="Ask this PC for a fresh health check">\\ud83e\\ude7a Check now</button></div>'
-      + '<div class="ngstage" id="ngstage" style="--nghue:' + col + '"><canvas class="ngbg" id="ngbg"></canvas>'
-      + '<div class="ngscene" id="ngscene"><div class="ngglow"></div><div class="ngdevice" id="ngdevice">' + device + '</div>' + f1 + f2 + f3 + '</div></div>'
-      + '<p class="ngverdline">Your PC is in <span style="color:' + col + '">' + word + '</span>, ' + first + '.</p>';
+      + '<div class="nghp" id="nghp" style="--nghue:' + col + '">' + ring
+      + '<div class="nghp__main"><div class="nghp__verdict" style="color:' + col + '">' + esc(verdictTxt) + '</div>'
+      + (m.fresh ? '<p class="nghp__line">As soon as 365 PC Manager checks in from this PC, its health will appear here.</p>'
+                 : '<p class="nghp__line">Your PC is in <span style="color:' + col + '">' + word + '</span>, ' + first + '.</p>')
+      + '<div class="nghp__meta"><b>' + esc(m.name) + '</b> \\u00b7 Windows ' + (m.w10 ? '10' : '11') + (m.reboot ? ' \\u00b7 <span style="color:var(--pwarn)">restart pending</span>' : '') + '</div>'
+      + '<div class="nghp__meta">Next service: <b>' + (d.next ? esc(d.next) : 'not booked') + '</b></div>'
+      + '</div><div class="nghp__tiles">' + tiles + '</div></div>';
     var acts = [];
     if (m.avoff) acts.push({ i: '\\ud83d\\udee1\\ufe0f', t: 'Turn your protection back on', s: 'Antivirus is switched off', more: 'Your PC is exposed while antivirus is off. We can switch it back on and check nothing slipped through - only with your OK.', p: '+20', c: 'var(--pbad)' });
     if (!m.backup) acts.push({ i: '\\u2601\\ufe0f', t: 'Turn on automatic backup', s: 'Your files aren\\u2019t protected yet', more: 'If the ' + (lap ? 'laptop' : 'PC') + ' failed today, your photos and documents could be lost. One word from you and 365 sets up automatic cloud backup.', p: '+15', c: 'var(--pbad)' });
@@ -25456,131 +25447,7 @@ def write_portal_page():
         }
       }
     }
-    var stage = document.getElementById('ngstage'), scene = document.getElementById('ngscene'), device = document.getElementById('ngdevice'), cv = document.getElementById('ngbg');
-    // Phones get ONE painted frame of the ambient glow, not a compositing loop.
-    // The 2026-08-01 audit verified this loop ran unconditionally on every
-    // phone - a full-canvas 'lighter' composite every frame, billed to the
-    // battery of the customer whose kit is already struggling. Desktop keeps
-    // the ambience; rAF's own throttling covers hidden tabs.
-    var coarse = false;
-    try { coarse = window.matchMedia('(pointer: coarse)').matches; } catch (e) {}
-    if (cv && stage && cv.getContext) {
-      var ctx = cv.getContext('2d'), orbs = [], t = 0, COL = ['29,151,227', '0,206,27', '29,120,200'];
-      function sz() { cv.width = stage.clientWidth; cv.height = stage.clientHeight; if (coarse && !rm && typeof amb === 'function') amb(); }
-      sz();
-      if (ngRz) window.removeEventListener('resize', ngRz);
-      ngRz = sz; window.addEventListener('resize', ngRz);
-      for (var oi = 0; oi < 5; oi++) orbs.push({ x: Math.random(), y: Math.random(), r: 120 + oi * 44, a: .05 + oi * .006, c: COL[oi % 3], dx: (oi % 2 ? 1 : -1) * .00006 * (oi + 1), dy: .00005 * (oi + 1) });
-      var amb = function amb() {
-        if (gen !== ngGen) return;
-        t++; ctx.clearRect(0, 0, cv.width, cv.height); ctx.globalCompositeOperation = 'lighter';
-        for (var k = 0; k < orbs.length; k++) {
-          var o = orbs[k]; o.x += o.dx; o.y += o.dy; if (o.x < -.2 || o.x > 1.2) o.dx *= -1; if (o.y < -.2 || o.y > 1.2) o.dy *= -1;
-          var px = (o.x + Math.sin(t / 600 + o.r) * .03) * cv.width, py = (o.y + Math.cos(t / 700 + o.r) * .03) * cv.height;
-          var g = ctx.createRadialGradient(px, py, 0, px, py, o.r); g.addColorStop(0, 'rgba(' + o.c + ',' + o.a + ')'); g.addColorStop(1, 'rgba(' + o.c + ',0)');
-          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(px, py, o.r, 0, 7); ctx.fill();
-        }
-        if (!rm && !coarse) requestAnimationFrame(amb);   // phones: this one frame is the whole show
-      };
-      amb();
-    }
-    if (!rm && !small && scene && device) {
-      var tx = 0, ty = 0, mx2 = 0, my2 = 0, baseRy = lapRy(m);
-      if (ngPM) window.removeEventListener('pointermove', ngPM);
-      ngPM = function (e) { tx = (e.clientX / window.innerWidth - .5); ty = (e.clientY / window.innerHeight - .5); };
-      window.addEventListener('pointermove', ngPM);
-      var floats = document.querySelectorAll('#p365app .ngfloat'), depth = [60, 90, 40];
-      (function loop() {
-        if (gen !== ngGen) return;
-        mx2 += (tx - mx2) * .06; my2 += (ty - my2) * .06;
-        scene.style.transform = 'rotateY(' + (mx2 * 9) + 'deg) rotateX(' + (-my2 * 7) + 'deg)';
-        device.style.setProperty('--ry', (baseRy + mx2 * 13) + 'deg'); device.style.setProperty('--rx', (8 - my2 * 7) + 'deg');
-        for (var fi = 0; fi < floats.length; fi++) floats[fi].style.transform = 'translateZ(' + depth[fi] + 'px) translate(' + (mx2 * depth[fi] * .4) + 'px,' + (my2 * depth[fi] * .4) + 'px)';
-        requestAnimationFrame(loop);
-      })();
-    }
-    // ---- premium live 3D dashboard: on capable desktop LAPTOP views, swap the CSS hero for the WebGL
-    //      device driven by THIS machine's real data (origin-locked). The CSS hero stays as the
-    //      guaranteed fallback and is retired ONLY once the iframe posts back that the model RENDERED. ----
-    (function () {
-      try {
-        var host = document.getElementById('ngstage');
-        if (!host || host.__ng3d) return;
-        if (!(m.batt > 0)) return;   // laptops only (we render a laptop model); desktops keep the CSS hero
-        var cap = true;
-        try {
-          if (matchMedia('(pointer:coarse)').matches) cap = false;                 // phones/tablets keep the CSS hero
-          if (window.innerWidth < 900) cap = false;                                 // small screens keep the CSS hero
-          if (matchMedia('(prefers-reduced-motion:reduce)').matches) cap = false;   // honour reduced-motion
-          var dmv = navigator.deviceMemory; if (dmv && dmv < 4) cap = false;         // low-RAM devices keep the CSS hero
-          var cc = document.createElement('canvas'), gl2 = cc.getContext('webgl2');
-          if (!(window.WebGL2RenderingContext && gl2)) cap = false;
-          else {
-            // SwiftShader/llvmpipe = WebGL "supported" but rendered on the CPU.
-            // That is the silent worst case for exactly this customer base: an
-            // old Intel machine with acceleration off passes every other gate,
-            // then grinds itself hot drawing a decorative laptop. Fail CLOSED
-            // on software renderers (audit 2026-08-01, highest-severity find).
-            try {
-              var dbg = gl2.getExtension('WEBGL_debug_renderer_info');
-              var rndr = dbg ? String(gl2.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || '') : '';
-              if (/swiftshader|llvmpipe|software|basic render/i.test(rndr)) cap = false;
-            } catch (_dr) {}
-            try { var _lc = gl2.getExtension('WEBGL_lose_context'); if (_lc) _lc.loseContext(); } catch (_lx) {}  // free the probe context
-          }
-        } catch (_e) { cap = false; }
-        if (!cap) return;
-        host.__ng3d = true;
-        host.style.height = 'clamp(440px, 62vw, 600px)';
-        var scn = document.getElementById('ngscene'), bg = document.getElementById('ngbg');
-        var pc = { name: m.name, score: m.score, disk: m.disk, batt: m.batt, avon: !!m.avon, avoff: !!m.avoff, backup: !!m.backup };  // ONE machine, minimal fields
-        var custName = (typeof S !== 'undefined' && S && S.name) ? S.name : '';
-        var fr = document.createElement('iframe');
-        fr.title = 'Interactive 3D view of your device';
-        fr.setAttribute('scrolling', 'no');
-        fr.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;border:0;display:block;border-radius:16px;z-index:4';
-        var settled = false, timer = null;
-        function commit() {   // model actually rendered -> the 3D view IS the hero; retire the CSS hero + stop its loops
-          if (settled) return; settled = true; if (timer) clearTimeout(timer);
-          window.removeEventListener('message', onMsg);
-          if (scn) scn.style.display = 'none'; if (bg) bg.style.display = 'none';
-          ngGen++;   // cancels the CSS hero's ambient-canvas + parallax rAF loops (they check gen === ngGen)
-          try { if (ngPM) { window.removeEventListener('pointermove', ngPM); ngPM = null; } } catch (_p) {}
-          try { if (ngRz) { window.removeEventListener('resize', ngRz); ngRz = null; } } catch (_r) {}
-          // A context lost AFTER commit used to leave a dead black rectangle
-          // with no way back - the documented failure mode on the integrated
-          // Intel GPUs this customer base actually runs. Same-origin iframe, so
-          // we can hear the loss and put the (static) CSS hero back.
-          try {
-            var c3 = fr.contentDocument && fr.contentDocument.querySelector('canvas');
-            if (c3) c3.addEventListener('webglcontextlost', function () {
-              try { fr.remove(); } catch (_x) {}
-              host.__ng3d = false; host.style.height = '';
-              if (scn) scn.style.display = ''; if (bg) bg.style.display = '';
-            }, { once: true });
-          } catch (_cl) {}
-          // Measure the reach at last: nobody has ever known how many of the 43
-          // accounts actually see this. If the number is tiny, that is the
-          // budget argument settled by data instead of debate.
-          try { if (window.gtag) gtag('event', 'ng3d_shown'); } catch (_g) {}
-        }
-        function fallback() {   // capability/load/render failure -> tear the iframe down, CSS hero remains
-          if (settled) return; settled = true; if (timer) clearTimeout(timer);
-          window.removeEventListener('message', onMsg);
-          try { fr.remove(); } catch (_x) {} host.__ng3d = false; host.style.height = '';
-          if (scn) scn.style.display = ''; if (bg) bg.style.display = '';
-        }
-        function onMsg(e) { if (e.origin !== location.origin) return; var dd = e.data; if (!dd) return; if (dd.__dashReady) commit(); else if (dd.__dashFail) fallback(); }
-        window.addEventListener('message', onMsg);
-        fr.onload = function () { try { fr.contentWindow.postMessage({ __portalDash: true, payload: { m: pc, d: { name: custName } } }, location.origin); } catch (_o) { fallback(); } };
-        fr.onerror = fallback;
-        timer = setTimeout(fallback, 12000);   // no "rendered" handshake within 12s -> keep the CSS hero
-        host.appendChild(fr);
-        fr.src = '/system-monitoring-demo/?embed=1';
-      } catch (_g) {}
-    })();
   }
-  function lapRy(m) { return m.batt > 0 ? -16 : -14; }
 
   // ---------- customer dashboard ----------
   /* The address editor. Deliberately four plain fields rather than a postcode
