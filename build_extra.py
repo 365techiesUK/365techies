@@ -417,6 +417,9 @@ def pcm_landing():
     desc = ("365 PC Manager - a free, honest PC health check app for Windows 10 &amp; 11 from a Dorset family firm: health score, one-tap boost, no fake errors or scare tactics. " + ("Free download - digitally signed by 365 Techies Ltd." if PCM_LIVE else "Launching soon - join the waitlist."))
     faqs = [
       ("Is the 365 PC Manager app really free?", "Yes &mdash; the health score, live performance graphs, one-tap boost, startup and storage tools are free forever, no sign-up. If you go on a 365 support plan we unlock the extra bits (priority help, backup checks and more), but you never have to."),
+      ("What is the written Service Report?", "After every six-weekly service on a support plan we write up what we found and what we did: your computer&rsquo;s health score and how it moved since last time, the security position on the day (Windows updates, firewall, antivirus and drive encryption, each read rather than assumed), every drive&rsquo;s hours, temperature and wear, whether your backup ran and how much room is left, and how long any guarantee has to run. It is emailed to you, kept in your portal for good, and left on your Desktop."),
+      ("How often is my computer serviced on a plan?", "About every six weeks. Each service applies Windows, driver and application updates, runs a security check and a system file check, checks your backup and every drive, measures your broadband speed from the machine, and clears out temporary files &mdash; the same routine for a home laptop as for a business fleet."),
+      ("Can I show the Service Report to my bank or insurer?", "Yes. Each report is dated and kept on file, so if a bank or insurer asks whether your computer was protected and up to date, you can show what was checked, what was updated and when &mdash; a record of the reasonable care you took. It is the same kind of write-up we produce for a customer&rsquo;s bank after a scam, only here it exists before anything goes wrong. It is evidence of care, not a guarantee of any outcome."),
       ("Will it slow my PC down?", "No. It&rsquo;s tiny and sits quietly in your system tray. In the background it does three small things: checks your health score about once an hour, watches the clock for any service reminder you&rsquo;ve set, and quietly updates itself when a new version is out (only ever while the window is closed). None of that is anything you&rsquo;d feel. The live performance graphs run only while you&rsquo;re watching them."),
       ("Is it safe to install?", "Yes. It reads your PC&rsquo;s health (memory, disk, antivirus, backup) and changes nothing unless you tap a button. The one exception is entirely your choice: support-plan customers can switch on &ldquo;let 365 run safe maintenance&rdquo;, which lets us run a short fixed list of harmless tidy-up jobs &mdash; clearing temporary files, flushing the network cache, collecting a diagnostics summary &mdash; without ringing you first. It&rsquo;s off unless you turn it on, and you can turn it off again any time. We&rsquo;re 365 Techies, a family-run Dorset IT firm here since 1995, rated 4.9 on Google."),
       ("Does it send my information anywhere?", "Yes, a little &mdash; here&rsquo;s exactly what. Once an hour it contacts us with your PC&rsquo;s health score and the basics behind it (whether antivirus and backup are on, how full the disk is, battery health, the PC name you chose and an anonymous ID for the machine). That is how every copy stays up to date, and how we spot a problem on a customer&rsquo;s machine before it bites. It never sends your files, photos, emails, browsing or passwords. If you&rsquo;re on a plan we tie it to your account so we can help proactively; if you&rsquo;re not, it isn&rsquo;t linked to a customer record. ""Run the broadband test and your connection is checked against an outside service to name your provider &mdash; see our <a href=\"/privacy-policy/\">privacy policy</a>."),
@@ -868,9 +871,18 @@ def pcm_landing():
                **({"downloadUrl": PCM_DOWNLOAD_URL, "softwareVersion": PCM_VERSION, "fileSize": PCM_FILESIZE} if PCM_LIVE else {}),   # derived from version.json + the exe on disk - retyping these is how they came to advertise 1.0.18/326KB while v20 shipped
                "screenshot": [SITE + "/images/pcm-laptop-health-v21.webp", SITE + "/images/pcm-laptop-boost-v21.webp", SITE + "/images/pcm-laptop-report-v21.webp"],
                "provider": {"@id": SITE + "/#business"}, "url": f"{SITE}/{s}/"}
+        # The six-weekly service is a real, priced service this page now sells; describe it
+        # as one. Offers reuse the plan page's own figures (from £18.25) so the two nodes
+        # can never disagree, and the URL points at the section that describes it.
+        svc = service(s, "Six-weekly PC service with written Service Report",
+                      "A full computer service every six weeks on a 365 Techies support plan: Windows, driver and application updates, a security check, a system file check, backup and drive health checks, a broadband speed test and a tune-up, each written up in a Service Report that is emailed to the customer and kept in their portal. Home £18.25 per computer per month; business from £24.38.",
+                      stype="Computer servicing and maintenance")
+        svc["offers"] = bp._from("18.25", "per computer per month", SITE + "/monthly-it-support/")
+        svc["url"] = f"{SITE}/{s}/#six-weekly-service"
         return graph([crumb(s, "Free PC Health Check"),
                       webpage(s, "Free PC Health Check - 365 PC Manager", _desc),
                       app,
+                      svc,
                       faqpage(s, _faqs)])
     add(slug=slug, title="Free PC Health Check for Windows | 365 PC Manager",
         desc=desc, og_title="Free PC Health Check - 365 PC Manager | 365 Techies", schema=schema, content=content,
@@ -18169,6 +18181,16 @@ info_page(
 {grid_cards([("&lsquo;Will you connect without telling me?&rsquo;","No. We always phone first and you start the session &mdash; we never appear on your screen unannounced."),("&lsquo;Can you see my passwords?&rsquo;","You stay in control and watch the whole session on screen. It&rsquo;s encrypted, and access ends the moment we&rsquo;re done."),("&lsquo;Do I need to be technical?&rsquo;","Not at all. There&rsquo;s nothing for you to do &mdash; we handle it, and explain anything you&rsquo;d like to know in plain English."),("&lsquo;What about Apple devices?&rsquo;","We service Windows computers and Android devices remotely. We can&rsquo;t remotely connect to Apple Macs, iPhones or iPads.")])}
         </ul>
       </div>
+    </section>
+    <section class="section section--alt" aria-label="What you get afterwards">
+      <div class="wrap" style="max-width:820px">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// AFTERWARDS</p>
+          <h2 class="section-title section-title--center" data-title>Then the written Service Report<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Every service ends the same way: a written report in plain English &mdash; your health score and how it moved, the security position on the day, what we did, and the state of every drive and your backup. It is emailed to you, kept in your portal, and left on your Desktop, so you have a dated record that your computer was kept safe and up to date.</p>
+        </div>
+        <p style="text-align:center;margin-top:.4rem" data-reveal><a class="text-link" href="/free-pc-health-check/#six-weekly-service">See exactly what the report contains <span aria-hidden="true">&#8594;</span></a></p>
+      </div>
     </section>''',
   inner="""          <h2>Why it&rsquo;s done this way</h2>
           <p>Everything about the service is built around one idea: you should always feel safe and in control. That&rsquo;s why we call before we connect, why you watch the whole session, and why the same familiar people look after you each time. It&rsquo;s included in every <a href="/monthly-it-support/">monthly plan</a>, and for the full list of what each service covers, see <a href="/preventative-maintenance/">preventative maintenance</a>.</p>""",
@@ -18177,6 +18199,7 @@ info_page(
     ("Do I have to be at the computer the whole time?","You&rsquo;re welcome to watch, but you don&rsquo;t have to hover. You start the session, and you can stop it at any point &mdash; you&rsquo;re always in control."),
     ("What if I&rsquo;m not very confident with computers?","That&rsquo;s exactly who we look after best. We&rsquo;re patient, we never rush, and there&rsquo;s no such thing as a silly question. See our <a href=\"/it-support-for-retired-users/\">support for retired users</a>."),
     ("Is it really included in the plan?","Yes &mdash; a full service every six weeks is part of every home and business monthly plan, at no extra cost."),
+    ("Do I get a report afterwards?","Yes. Every service ends with a written Service Report: your computer&rsquo;s health score and how it moved, the security position on the day, what we did, and the state of every drive and your backup. It is emailed to you, kept in your portal, and left on your Desktop. <a href=\"/free-pc-health-check/#six-weekly-service\">See what the report contains</a>."),
   ],
   cta_args=("Ready to never worry about IT again?","Join a friendly monthly plan and we&rsquo;ll keep your computers healthy &mdash; a full service every six weeks, with the same team who get to know you.",
             ("View Monthly Plans","/monthly-it-support/"), ("Talk to a Techie","/contact/")),
