@@ -230,14 +230,15 @@ function pcm_service_report_to_slack($cust, $machine, $ts, $html, $summary) {
     $notes = array();
     if (isset($summary['notes']) && is_array($summary['notes'])) foreach (array_slice($summary['notes'], 0, 3) as $n) { $n = trim(slk_plain((string)$n)); if ($n !== '') $notes[] = substr($n, 0, 160); }
     $mname = trim((string)($cust['machines'][$machine]['name'] ?? ''));
-    $text = '*6-weekly Service Report* - ' . slk_plain(substr($name, 0, 80)) . "\n"
+    $selfrun = !empty($summary['selfrun']);   // the customer ran it from the app, not a visit
+    $text = ($selfrun ? '*Self-run full service* (the customer ran it from the app) - ' : '*6-weekly Service Report* - ') . slk_plain(substr($name, 0, 80)) . "\n"
           . ($pc !== '' ? 'PC: ' . slk_plain(substr($pc, 0, 80)) . "\n" : '')
           . ($os !== '' ? 'OS: ' . slk_plain(substr($os, 0, 80)) . "\n" : '')
           . ($score !== '' ? 'Score: ' . slk_plain(substr($score, 0, 40)) . "\n" : '')
           . ($notes ? "Top notes:\n- " . implode("\n- ", $notes) . "\n" : '')
           . 'In the portal: Service reports' . ($mname !== '' ? ' on ' . slk_plain($mname) : '') . ' (staff: open the customer, view as, Service reports).';
     $fname = 'Service-Report-' . trim(preg_replace('/[^A-Za-z0-9]+/', '-', $name), '-') . '-' . gmdate('Y-m-d', $ts) . '.html';
-    $up = slk_upload_file($chan, $html, $fname, '6-weekly Service Report - ' . $name, $text);
+    $up = slk_upload_file($chan, $html, $fname, ($selfrun ? 'Self-run full service - ' : '6-weekly Service Report - ') . $name, $text);
     if (!empty($up['ok'])) return array('posted' => true, 'file' => true, 'error' => '', 'channel' => $chan);
     $p = slk_call('chat.postMessage', array('channel' => $chan, 'text' => $text . "\n_(report file not attached: " . (string)($up['error'] ?? 'unknown') . ")_"));
     return array('posted' => !empty($p['ok']), 'file' => false, 'error' => (string)($up['error'] ?? ''), 'post_error' => empty($p['ok']) ? (string)($p['error'] ?? 'unknown') : '', 'channel' => $chan);

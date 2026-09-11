@@ -62,6 +62,8 @@ $rawDb2 = (string)@file_get_contents($DATA);
 $db2 = json_decode($rawDb2, true);
 if (is_array($db2) && isset($db2['customers'][$key]['machines'][$machine])) {
     $db2['customers'][$key]['machines'][$machine]['fullservice'] = gmdate('Y-m-d H:i');
+    // consumed by pcm.php reportup: the next service report from this PC is tagged self-run
+    $db2['customers'][$key]['machines'][$machine]['selfrun_served'] = time();
     $tmp = $DATA . '.' . getmypid() . '.tmp';
     if (@file_put_contents($tmp, json_encode($db2, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $DATA);
 }
@@ -71,4 +73,7 @@ if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); }
 $code = (string)file_get_contents($payload);
 if (substr($code, 0, 3) === "\xEF\xBB\xBF") { $code = substr($code, 3); }
 echo "# 365 Techies full service - served " . gmdate('Y-m-d H:i') . " UTC - customer " . $key . " - machine " . substr($machine, 0, 8) . "\n";
+// Tell the script it is being run by the customer, not a technician: v3.8+ reads this and
+// declares selfrun in its report summary, so the portal, Slack and the email say so.
+echo "\$env:P365_SELFRUN = '1'\n";
 echo $code;

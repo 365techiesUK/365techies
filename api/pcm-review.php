@@ -1881,7 +1881,7 @@ function sr_token_verify($t, $salt) {
 /* ---- the email itself ------------------------------------------------------ */
 function sr_subject($sr) {
     $pc = isset($sr['pc']) ? (string)$sr['pc'] : '';
-    return 'Your service report - ' . ($pc !== '' ? $pc . ', ' : '') . date('j F', (int)$sr['ts']);
+    return (!empty($sr['selfrun']) ? 'Your self-run service report - ' : 'Your service report - ') . ($pc !== '' ? $pc . ', ' : '') . date('j F', (int)$sr['ts']);
 }
 
 /**
@@ -1963,7 +1963,9 @@ function rv_h_checks($title, $rows) {
 function sr_body($first, $sr) {
     $score = isset($sr['score']) && $sr['score'] !== null ? (int)$sr['score'] : null;
     $t = 'Hi ' . $first . ",\r\n\r\n"
-       . "Today's six-weekly service on your " . ($sr['pc'] !== '' ? $sr['pc'] : 'computer') . " is done. Here is the\r\n"
+       . (!empty($sr['selfrun'])
+            ? "You ran your full 365 service on your " . ($sr['pc'] !== '' ? $sr['pc'] : 'computer') . " yourself. Here is the\r\n"
+            : "Today's six-weekly service on your " . ($sr['pc'] !== '' ? $sr['pc'] : 'computer') . " is done. Here is the\r\n")
        . "short version - the full written report is one link away below, and it\r\n"
        . "is in your portal for good.\r\n\r\n";
     if ($score !== null) {
@@ -1980,7 +1982,7 @@ function sr_body($first, $sr) {
         $t .= "\r\n";
     }
     if (!empty($sr['done'])) {
-        $t .= "What we did today\r\n";
+        $t .= (!empty($sr['selfrun']) ? "What the service did today\r\n" : "What we did today\r\n");
         foreach ((array)$sr['done'] as $r) if (isset($r[0]) && $r[0] !== '') $t .= '  - ' . $r[0] . (isset($r[1]) && $r[1] !== '' ? ' - ' . $r[1] : '') . "\r\n";
         $t .= "\r\n";
     }
@@ -2025,12 +2027,14 @@ function sr_body_html($first, $sr) {
     $verdict = $score !== null ? sr_verdict($score) : '';
     $blocks = array(
         rv_h_p('Hi ' . rv_h($first) . ','),
-        rv_h_p('Today&rsquo;s six-weekly service on your <strong style="color:#0b1226;">' . rv_h($sr['pc'] !== '' ? $sr['pc'] : 'computer') . '</strong> is done. '
+        rv_h_p((!empty($sr['selfrun'])
+                 ? 'You ran your full 365 service on your <strong style="color:#0b1226;">' . rv_h($sr['pc'] !== '' ? $sr['pc'] : 'computer') . '</strong> yourself. '
+                 : 'Today&rsquo;s six-weekly service on your <strong style="color:#0b1226;">' . rv_h($sr['pc'] !== '' ? $sr['pc'] : 'computer') . '</strong> is done. ')
              . 'Here is the short version &ndash; the full written report is one tap away below, and it is in your portal for good.'),
     );
     if ($score !== null) $blocks[] = rv_h_score($score, $verdict, sr_delta($score, $sr['prev'], $sr['prev_ts']));
     if (!empty($sr['sec'])) $blocks[] = rv_h_security($sr['sec']);
-    $blocks[] = rv_h_checks('What we did today', (array)$sr['done']);
+    $blocks[] = rv_h_checks(!empty($sr['selfrun']) ? 'What the service did today' : 'What we did today', (array)$sr['done']);
     if (!empty($sr['recs'])) {
         $rec = '<strong style="color:#0b1226;">One thing worth knowing.</strong> ' . rv_h($sr['recs'][0]);
         if (count($sr['recs']) > 1) $rec .= ' ' . rv_h($sr['recs'][1]);
@@ -2068,8 +2072,8 @@ function sr_body_html($first, $sr) {
     return rv_html_shell(array(
         'title' => 'Your service report',
         'eyebrow' => 'Service report · ' . date('j F Y', (int)$sr['ts']),   // the shell escapes this: a literal dot, never an entity
-        'heading' => 'Your six-weekly service is done',
-        'preview' => ($score !== null ? $score . '% ' . $verdict . ' - ' : '') . 'what we did on your ' . ($sr['pc'] !== '' ? $sr['pc'] : 'computer') . ' today, and the one thing worth knowing.',
+        'heading' => (!empty($sr['selfrun']) ? 'Your self-run service is done' : 'Your six-weekly service is done'),
+        'preview' => ($score !== null ? $score . '% ' . $verdict . ' - ' : '') . (!empty($sr['selfrun']) ? 'what your self-run service did on your ' : 'what we did on your ') . ($sr['pc'] !== '' ? $sr['pc'] : 'computer') . ' today, and the one thing worth knowing.',
         'blocks' => $blocks,
         'after' => rv_h_referral(),
     ));
@@ -2174,6 +2178,8 @@ function sr_record($key, $machine, $ts, $summary, $cust, $prev = array()) {
         'next_ts' => sr_next_ts(isset($summary['next']) ? $summary['next'] : '', $ts),
         // the same field the guarantee wording branches on, read once at upload time
         'pro' => ((string)(isset($cust['tier']) ? $cust['tier'] : 'free') === 'pro'),
+        // the customer ran the service themselves from the app: the email must not say "we did"
+        'selfrun' => !empty($summary['selfrun']),
         'ts' => $ts, 'exp' => $exp,
         'url' => sr_link($kh, $machine, $ts, $exp, $q['salt']),
         'st' => 'pending', 'tries' => 0, 'made' => time(),
@@ -2181,7 +2187,7 @@ function sr_record($key, $machine, $ts, $summary, $cust, $prev = array()) {
     // ONE email per service: a pending visit record for the same person within 36 hours
     // of this report is superseded - the report email carries everything it would have.
     $sup = 0;
-    foreach ($q['q'] as $bid => $e) {
+    foreach ((empty($summary['selfrun']) ? $q['q'] : array()) as $bid => $e) {   // a self-run is not a visit: it never supersedes a visit's own email
         if ((isset($e['em']) ? $e['em'] : '') !== $email) continue;
         if ((isset($e['dn']) ? $e['dn'] : 'pending') !== 'pending') continue;
         $end = isset($e['end']) ? (int)$e['end'] : 0;

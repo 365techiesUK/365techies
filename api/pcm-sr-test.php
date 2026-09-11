@@ -117,6 +117,17 @@ list($lkx, $qx) = rvq_open(); $qx['srrun_ts'] = 0; rvq_save($qx); rvq_close($lkx
 $p = sr_process(5);
 ok($p['held_pre_flip'] === 0 && q()['sr']['pre-flip-1']['st'] === 'held', 'a held report stays held on the next tick and is not re-counted');
 
+echo "-- self-run services are tagged, never mistaken for a visit\n";
+list($lkS, $qS) = rvq_open(); $qS['q']['9010'] = array('em' => 'sofia.example@example.com', 'nm' => 'Sofia', 'end' => $TS + 10, 'dn' => 'pending', 'st' => 'pending'); rvq_save($qS); rvq_close($lkS);
+$rS = sr_record($KEY, $MACHINE, $TS + 10, $summary + array('selfrun' => true), $cust);
+$eS = q(); $entS = $eS['sr'][$KH . '-' . $MACHINE . '-' . ($TS + 10)];
+ok(!empty($rS['queued']) && $entS['selfrun'] === true, 'a self-run report is queued and tagged', json_encode($rS));
+ok($rS['superseded'] === 0 && $eS['q']['9010']['dn'] === 'pending', 'a self-run never supersedes a visit\'s own email', json_encode($rS));
+ok(strpos(sr_subject($entS), 'Your self-run service report') === 0, 'self-run subject says so', sr_subject($entS));
+ok(strpos(sr_body('Sofia', $entS), 'You ran your full 365 service') !== false && strpos(sr_body('Sofia', $entS), 'six-weekly service on your') === false, 'self-run text says you ran it, never that we did');
+ok(strpos(sr_body_html('Sofia', $entS), 'You ran your full 365 service') !== false && strpos(sr_body_html('Sofia', $entS), 'Your self-run service is done') !== false, 'self-run HTML intro and heading');
+ok($ent['selfrun'] === false && strpos(sr_body('Sofia', $ent), "Today's six-weekly service") !== false && strpos(sr_subject($ent), 'Your service report - ') === 0, 'a visit report reads exactly as before');
+
 echo "-- who is told when the next service is\n";
 // A support-plan customer is; anybody else is not, because it would promise a visit
 // they do not pay for. Absent flag = not on a plan, so old entries lose the line too.

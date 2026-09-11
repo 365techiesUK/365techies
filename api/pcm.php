@@ -702,9 +702,20 @@ if ($action === 'reportup') {
     }
     if (@file_put_contents(__DIR__ . '/pcm-rep-' . $kh . '-' . $machine . '-' . $rts . '.html', $b, LOCK_EX) === false) out(array('ok'=>false,'error'=>'store_failed'));
     $reps[] = $rts;
-    if ($kind === 'service') { $repk[(string)$rts] = 'service'; $repm[(string)$rts] = array('score' => $scoren); }
+    // Self-run or visit? A v3.8+ script served to the customer's own app declares itself
+    // (summary.selfrun). Older payloads are inferred from the serve stamp pcm-service.php
+    // left within the last 8 hours. Consumed here, so one serve tags exactly one report and
+    // an abandoned self-run cannot mislabel a technician's visit days later.
+    $selfrun = false;
+    if ($kind === 'service') {
+        if (array_key_exists('selfrun', $sumr)) $selfrun = !empty($sumr['selfrun']);
+        elseif (!empty($mrec['selfrun_served']) && (time() - (int)$mrec['selfrun_served']) < 8 * 3600) $selfrun = true;
+        unset($mrec['selfrun_served']);
+        $sumr['selfrun'] = $selfrun;   // what Slack and the customer email are built from
+    }
+    if ($kind === 'service') { $repk[(string)$rts] = $selfrun ? 'selfrun' : 'service'; $repm[(string)$rts] = array('score' => $scoren); }
     // prune per kind, oldest first: 12 health checks, 24 service reports (three years of visits)
-    foreach (array('health' => 12, 'service' => 24) as $k => $cap) {
+    foreach (array('health' => 12, 'service' => 24, 'selfrun' => 24) as $k => $cap) {
         $mine = array_values(array_filter($reps, function ($t) use ($repk, $k) { return (($repk[(string)$t] ?? 'health') === $k); }));
         while (count($mine) > $cap) {
             $old = array_shift($mine);
