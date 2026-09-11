@@ -587,52 +587,6 @@ def pcm_landing():
         @media(max-width:700px){.svc-cards,.srshots{grid-template-columns:1fr}}
       </style>
     </section>''',
-      '''    <section class="section" aria-label="Try the live demo" style="padding-top:1rem;position:relative;overflow:hidden">
-      <div aria-hidden="true" style="position:absolute;left:50%;top:2%;transform:translateX(-50%);width:80%;height:70%;background:radial-gradient(ellipse at center,rgba(29,151,227,.2),rgba(29,151,227,0) 70%);filter:blur(50px);pointer-events:none;z-index:0"></div>
-      <div class="wrap" style="max-width:1000px;position:relative;z-index:1">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// PLAY WITH IT &middot; LIVE 3D DEMO</p>
-          <h2 class="section-title section-title--center" data-title>See your PC in 3D &mdash; hover any gauge<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>This is the real 365 PC Manager dashboard, running live in your browser. Hover or tap a dial and the device turns to that part, with a plain-English verdict. <strong>Sample data, honestly</strong> &mdash; it&rsquo;ll be your own PC&rsquo;s numbers at launch.</p>
-        </div>
-        <div id="pcmdemo" data-reveal style="position:relative;margin:1.2rem auto 0;border-radius:18px;overflow:hidden;border:1px solid rgba(125,170,220,.3);box-shadow:0 34px 80px rgba(0,0,0,.55);aspect-ratio:16/10;background:#0a1226">
-          <img src="/images/pcm-laptop-health-v21.webp" width="2080" height="1620" alt="365 PC Manager health tab (tap to launch the interactive 3D demo)" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:opacity .3s" loading="lazy" decoding="async" />
-          <button type="button" id="pcmdemoload" aria-label="Launch the live 3D demo" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.7rem;background:rgba(7,13,34,.42);border:0;cursor:pointer;color:#fff">
-            <span style="width:76px;height:76px;border-radius:50%;background:rgba(29,151,227,.94);display:flex;align-items:center;justify-content:center;font-size:1.9rem;padding-left:6px;box-shadow:0 12px 32px rgba(0,0,0,.45)">&#9654;</span>
-            <span class="mono" style="font-size:.8rem;letter-spacing:.05em">Launch the live 3D demo</span>
-          </button>
-        </div>
-        <p class="mono" style="font-size:.72rem;color:var(--muted);margin:.8rem 0 0;text-align:center">Best on a computer &middot; loads a 3D model (~5&nbsp;MB) &middot; sample data, honestly badged</p>
-      </div>
-      <script>
-        (function(){
-          var box=document.getElementById('pcmdemo'), btn=document.getElementById('pcmdemoload'); if(!box) return;
-          var mounted=false;
-          function mount(){
-            if(mounted) return; mounted=true;
-            var f=document.createElement('iframe');
-            f.src='/system-monitoring-demo/'; f.title='365 PC Manager live 3D demo'; f.setAttribute('loading','lazy');
-            f.style.cssText='position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#0a1226;z-index:2';
-            f.addEventListener('load', function(){
-              function center(){ try{ var dd=f.contentDocument, s=dd.querySelector('.stage'); if(s){ f.contentWindow.scrollTo(0, Math.max(0, s.offsetTop + s.offsetHeight/2 - f.clientHeight/2)); } }catch(e){} }
-              center(); setTimeout(center,1600); setTimeout(center,4200);
-            });
-            box.appendChild(f);
-            if(btn){ btn.style.display='none'; }
-            var img=box.querySelector('img'); if(img){ img.style.opacity='0'; }
-          }
-          if(btn){ btn.addEventListener('click', mount); }
-          var reduce=false; try{ reduce=window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
-          var gl=false; try{ var c=document.createElement('canvas'); gl=!!(c.getContext('webgl2')||c.getContext('experimental-webgl2')); }catch(e){}
-          var coarse=false; try{ coarse=window.matchMedia && matchMedia('(pointer:coarse)').matches; }catch(e){}
-          var capable = gl && !reduce && !coarse && window.innerWidth>=900;
-          if(capable && 'IntersectionObserver' in window){
-            var io=new IntersectionObserver(function(es){ es.forEach(function(en){ if(en.isIntersecting){ mount(); io.disconnect(); } }); }, {rootMargin:'250px'});
-            io.observe(box);
-          }
-        })();
-      </script>
-    </section>''',
       '''    <section class="section" aria-label="Why you can trust us" style="padding-top:1.1rem;padding-bottom:0">
       <div class="wrap">
         <div class="mono" data-reveal style="display:flex;flex-wrap:wrap;gap:.55rem 1.5rem;justify-content:center;align-items:center;font-size:.74rem;color:var(--muted);letter-spacing:.03em">
@@ -27755,35 +27709,6 @@ def write_portal_page():
 })();
 </script>'''
     # --- Live System Monitoring: a demo teaser card above the portal app (sibling of #p365app, untouched by the client app) ---
-    lsm_style = ('<style>'
-      '.lsm{background:linear-gradient(135deg,rgba(29,151,227,.14),rgba(17,26,60,.55));border:1px solid rgba(29,151,227,.38);border-radius:18px;padding:1.4rem 1.5rem;margin:1.6rem 0 0;box-shadow:0 18px 44px rgba(0,0,0,.28)}'
-      '.lsm__head{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}'
-      '.lsm__badge{display:inline-block;background:rgba(0,206,27,.16);color:#12d02a;border:1px solid rgba(0,206,27,.45);font-size:.62rem;font-weight:700;letter-spacing:.1em;padding:.2rem .5rem;border-radius:999px;margin-bottom:.25rem}'
-      '.lsm__logo{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:12px;background:linear-gradient(160deg,#2aa4ee,#1477c9);color:#fff;font-weight:800;font-size:1.05rem;flex:0 0 auto;box-shadow:0 6px 16px rgba(29,151,227,.4)}'
-      '.lsm__dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#00ce1b;margin-right:.4rem;vertical-align:middle;box-shadow:0 0 0 0 rgba(0,206,27,.5);animation:lsmpulse 1.8s ease-out infinite}'
-      '@keyframes lsmpulse{0%{box-shadow:0 0 0 0 rgba(0,206,27,.45)}70%{box-shadow:0 0 0 8px rgba(0,206,27,0)}100%{box-shadow:0 0 0 0 rgba(0,206,27,0)}}'
-      '.lsm__title{margin:0;font-size:1.35rem;color:#f0f5fc}'
-      '.lsm__lede{color:#c7d6ee;margin:.6rem 0 1rem;line-height:1.55;max-width:64ch}'
-      '.lsm__actions{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}'
-      '.lsm__note{color:#7f97bd;font-size:.8rem}'
-      '.lsm__framewrap{margin-top:1.2rem;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.1)}'
-      '.lsm__frame{width:100%;height:660px;border:0;display:block;background:#0b1226}'
-      '@media(prefers-reduced-motion:reduce){.lsm__dot{animation:none}}'
-      '@media(max-width:640px){.lsm__frame{height:78vh}}'
-      '</style>')
-    lsm_teaser = ('<div class="lsm">'
-      '<div class="lsm__head"><span class="lsm__logo">365</span>'
-      '<div><span class="lsm__badge">&#129514; 3D PREVIEW &middot; SAMPLE DATA</span>'
-      '<h2 class="lsm__title">365 PC Manager</h2></div></div>'
-      '<p class="lsm__lede"><strong>365 PC Manager</strong> is our free Windows app &mdash; <a href="/free-pc-health-check/">out now, digitally signed</a>. This preview is where it&rsquo;s heading next: a live, interactive 3D health report of your actual PC. Hover any dial and your machine turns to that part, with a plain-English verdict on each. '
-      '<strong><span class="lsm__dot"></span>This is a demo with sample data &mdash; ready to connect to your PC.</strong></p>'
-      '<div class="lsm__actions"><button class="button primary" id="lsmLaunch" type="button">&#9654;&nbsp;Launch interactive demo</button>'
-      '<span class="lsm__note">Loads a 3D model (~5&nbsp;MB) &middot; best on a computer</span></div>'
-      '<div class="lsm__framewrap" id="lsmFrameWrap" hidden><iframe class="lsm__frame" id="lsmFrame" title="365 PC Manager demo"></iframe></div>'
-      '</div>')
-    lsm_script = ('<script>(function(){var b=document.getElementById("lsmLaunch"),w=document.getElementById("lsmFrameWrap"),f=document.getElementById("lsmFrame");'
-      'if(b&&f){b.addEventListener("click",function(){if(!f.getAttribute("src"))f.setAttribute("src","/system-monitoring-demo/");w.hidden=false;'
-      'b.textContent="Demo running below";b.disabled=true;setTimeout(function(){w.scrollIntoView({behavior:"smooth",block:"center"});},60);});}})();</script>')
     # ORDER MATTERS: the sign-in/join card renders FIRST. Every "Join free" button on
     # the site lands here, and greeting a new member with the app's "COMING SOON" badge
     # (which belongs to the unreleased PC Manager app, not the Club) read as "this whole
@@ -27923,8 +27848,7 @@ def write_portal_page():
                + '<p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">'
                + 'portal build __P365DATE__ &middot; __P365BUILD__</p>'
                + beacon
-               + lsm_teaser
-               + '</div></section>' + lsm_style + lsm_script + css + js)
+               + '</div></section>' + css + js)
     schema = bp.graph([bp.webpage("portal", "Customer portal", "Sign in to the 365 Techies customer portal.")])
     html = bp.page("portal", "Customer portal | 365 Techies",
                    "Sign in to the 365 Techies customer portal - your plan, your computers' health, your visits.",

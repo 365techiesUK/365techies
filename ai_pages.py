@@ -113,7 +113,7 @@ _PSTRONG = re.compile(r"<p><strong>(.*?)</strong>\s*(.*?)</p>", re.S)
 _SHOWCASE = {
     "/ai-roi-calculator/": "Open the ROI calculator",
     "/365-ai-os/": "Open the 365 AI OS demo",
-    "/system-monitoring-demo/": "Open the live dashboard demo",
+    "/free-pc-health-check/": "Get the free app",
     "/ai-for-beginners-course/": "Start the free course",
     "/using-ai-safely/": "Read the safety guide",
 }

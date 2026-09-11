@@ -97,8 +97,8 @@
  },
  "ai/tools": {
   "first": "2026-08-07",
-  "h": "5b2fb1b10dec72d9",
-  "last": "2026-08-31"
+  "h": "19f92e2da1354968",
+  "last": "2026-09-11"
  },
  "ai/training": {
   "first": "2026-08-07",
@@ -192,8 +192,8 @@
  },
  "bournemouth/sea-today": {
   "first": "2026-08-02",
-  "h": "517809c27f73d1fd",
-  "last": "2026-09-08"
+  "h": "232c7dda0c425d3b",
+  "last": "2026-09-11"
  },
  "bournemouth/sunrise-sunset": {
   "first": "2026-08-03",
@@ -1106,7 +1106,7 @@
  },
  "free-pc-health-check": {
   "first": "2026-07-28",
-  "h": "1fb2c8c942604ff3",
+  "h": "9233fd208786eeab",
   "last": "2026-09-11"
  },
  "free-tools": {
@@ -2645,7 +2645,7 @@
  },
  "portal": {
   "first": "2026-09-05",
-  "h": "0017020f8a13400e",
+  "h": "add3edeeaa0fa711",
   "last": "2026-09-11"
  },
  "pre-call-checklists": {
