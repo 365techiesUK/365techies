@@ -349,7 +349,7 @@ def build():
              "description": "Lighthouse 37 to 88, 63 MB to 366 KB, 605 words to 20,142 - "
                             "the Beckox website rebuild with every number measured.",
              "inLanguage": "en-GB",
-             "datePublished": "2026-08-13", "dateModified": TODAY,
+             "datePublished": "2026-08-13", "dateModified": "__LASTMOD__",   # stamped by bp.stamp_lastmod(); never TODAY (datemodified-build-date-trap)
              "author": {"@type": "Organization", "name": "365 Techies", "url": SITE + "/"},
              "publisher": {"@id": SITE + "/#business"},
              "image": SITE + "/images/beckox-new-home.webp",

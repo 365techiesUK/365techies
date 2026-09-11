@@ -650,7 +650,7 @@ def build():
              "headline": "What a website rebuild actually changes",
              "description": "A measured before-and-after of a real WordPress-to-static rebuild.",
              "inLanguage": "en-GB",
-             "datePublished": "2026-07-30", "dateModified": TODAY,
+             "datePublished": "2026-07-30", "dateModified": "__LASTMOD__",   # stamped by bp.stamp_lastmod(); never TODAY (datemodified-build-date-trap)
              "author": {"@type": "Organization", "name": "365 Techies", "url": SITE + "/"},
              "publisher": {"@id": SITE + "/#business"},
              "image": SITE + "/og-image.jpg",
