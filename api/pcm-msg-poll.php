@@ -77,13 +77,9 @@ foreach (msg_all_ids() as $id) {
         msg_close($bl);
         if ($text === '') continue;
 
-        $who = $name !== '' ? $name : 'A customer';
-        if ($mem !== '') $who .= ' (' . $mem . ')';
-        $head = ($thread === '')
-            ? ":speech_balloon: *" . $who . "* messaged from the portal"
-              . ($email !== '' ? "\n" . $email : '')
-              . "\nReply *in this thread* and it appears in their portal.\n\n" . $text
-            : $text;
+        // The head line knows where the customer wrote from - the portal, or the app on
+        // which PC - and carries the app's context line. One builder for both doors.
+        $head = msg_head($box, $text, (string)($box['msgs'][$i]['c'] ?? ''));
         $r = slk_post($head, $thread, 8);
         if (empty($r['ok'])) { $stats['err'] = (string)$r['error']; break; }
 

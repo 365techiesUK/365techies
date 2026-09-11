@@ -157,6 +157,10 @@ if ($action === 'checkin') {
         if (isset($in['remind_sms'])) $c['remind_sms'] = !empty($in['remind_sms']);
         save($DATA,$db);
     }
+    // Message us (the app): unread engineer replies on THIS machine's thread, so the app can
+    // raise its balloon. A lock-free read of the blob - it must never stall a check-in.
+    $msgUnread = 0;
+    if ($machine !== '') { require_once __DIR__ . '/pcm-msg-lib.php'; try { $msgUnread = msg_app_unread($key, $machine); } catch (Throwable $e) { $msgUnread = 0; } }
     // ready = the owner has asked this customer to confirm their PC is on and ready to connect
     $ready = (!empty($c['ready_ask']) && empty($c['ready_confirm'])) ? $c['ready_ask'] : '';
     // family view state, so the app's "Shared with ..." card survives reinstalls
@@ -176,7 +180,7 @@ if ($action === 'checkin') {
                 (string)($c['addr']['city'] ?? ''), (string)($c['addr']['postcode'] ?? ''))))))
             : '');
     $detail['have'] = ($detail['tel'] !== '' || $detail['mobile'] !== '' || $detail['addr'] !== '');
-    out(array('ok'=>true,'tier'=>$tier,'next'=>$c['next'] ?? '','next_ts'=>intval($c['next_ts'] ?? 0),'ready'=>$ready,'fam'=>$fam,'fam_url'=>$famUrl,'detail'=>$detail) + $upd);
+    out(array('ok'=>true,'tier'=>$tier,'next'=>$c['next'] ?? '','next_ts'=>intval($c['next_ts'] ?? 0),'ready'=>$ready,'fam'=>$fam,'fam_url'=>$famUrl,'detail'=>$detail,'msg_unread'=>$msgUnread) + $upd);
 }
 
 // latest published app build, from the git-deployed manifest (downloads/pcm/version.json).
