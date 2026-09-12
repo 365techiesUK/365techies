@@ -221,7 +221,7 @@
       <div class="cockpit-context-cohorts" role="list" aria-label="Nearby cohort counts">
         <div role="listitem" data-context-cohort="flights"><span>FLT</span><strong>—</strong><small>adsb.lol</small></div>
         
-        
+        <div role="listitem" data-context-cohort="ais-live-vessels"><span>AIS</span><strong>—</strong><small>AISStream</small></div>
         
       </div>
       <div class="cockpit-context-nearest">
@@ -617,6 +617,14 @@
         <span><strong>AIRCRAFT OVERHEAD</strong><small>Everything flying within sixty miles, from adsb.lol</small></span>
         <span class="material-symbols-outlined first-run-arrow" aria-hidden="true">arrow_forward</span>
       </button>
+      <!-- Ships and ferries: AIS transponder traffic only, which the subcopy
+           says. The glyph is `navigation` because it is already in the
+           self-hosted symbol subset; adding a glyph means a new font file. -->
+      <button type="button" data-first-run-choice="ships">
+        <span class="material-symbols-outlined" aria-hidden="true">navigation</span>
+        <span><strong>SHIPS AND FERRIES</strong><small>Ferries, cargo and every vessel with a transponder, from AISStream</small></span>
+        <span class="material-symbols-outlined first-run-arrow" aria-hidden="true">arrow_forward</span>
+      </button>
       
       
       <!-- Dev only: both feeds it enables (USGS quakes, NASA FIRMS) are stripped
@@ -658,7 +666,7 @@
     </div>
   </div>
 
-  <script data-engine="/bournemouth/live-map/app/cesium/Cesium.js" data-app="/bournemouth/live-map/app/assets/index-BotrUk78.js" data-engine-bytes="5726887" data-app-bytes="1237404">(function () {
+  <script data-engine="/bournemouth/live-map/app/cesium/Cesium.js" data-app="/bournemouth/live-map/app/assets/index-DMmhbMOz.js" data-engine-bytes="5726887" data-app-bytes="1237689">(function () {
   var d = document, me = d.currentScript, cfg = me ? me.dataset : {};
   var engine = cfg.engine, app = cfg.app;
   var engineBytes = Number(cfg.engineBytes) || 0, appBytes = Number(cfg.appBytes) || 0;

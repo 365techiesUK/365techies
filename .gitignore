@@ -202,3 +202,7 @@ api/form-relay.log
 api/bench-results.json
 api/bench-stats-cache.json
 api/bench-throttle.json
+
+# ships-and-ferries snapshot store + cron lock (server runtime state; .htaccess-denied too)
+api/dorset-ships-cache.json
+api/dorset-ships.lock

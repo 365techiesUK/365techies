@@ -26,6 +26,10 @@
  *                       the site's pages, and Google's Geocoding web service
  *                       refuses referrer-restricted keys, which is why the
  *                       search box needs a key of its own (dorset-geocode.php).
+ *   AISSTREAM_API_KEY   aisstream.io -> sign in with GitHub -> Account -> create
+ *                       an API key (shown once). Feeds the ships-and-ferries
+ *                       layer through the one-minute cron dorset-ships-poll.php;
+ *                       without it the layer says "not configured".
  *
  * NO closing tag in this file.
  */
@@ -36,3 +40,4 @@ $CDSE_CLIENT_ID     = '';
 $CDSE_CLIENT_SECRET = '';
 $TOMTOM_API_KEY     = '';
 $GOOGLE_GEOCODE_KEY = '';
+$AISSTREAM_API_KEY = '';
