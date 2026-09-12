@@ -21441,8 +21441,10 @@ def _ff_plan_card(lead):
             'updates applied and checked, security and backup looked at, and a written Service Report each time. Home &pound;18.25 per computer a month, '
             'business from &pound;24.38, rolling monthly.</div>')
 def _ff_fixed_ending(h3, tip, plan_lead):
+    """plan_lead=None means no plan pitch at all (diagnosis playbooks, a swollen battery): just the copy button."""
+    plans = ('<a class="button primary" href="/monthly-it-support/">See the support plans &#8594;</a><a class="button secondary" href="/free-pc-health-check/">Get the free app</a>' if plan_lead else '')
     return ('<h3>' + h3 + '</h3><p>' + tip + '</p>' + (_ff_plan_card(plan_lead) if plan_lead else '') +
-            '<div class="ff-cta"><a class="button primary" href="/monthly-it-support/">See the support plans &#8594;</a><a class="button secondary" href="/free-pc-health-check/">Get the free app</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div>')
+            '<div class="ff-cta">' + plans + '<button type="button" class="button ' + ('bm-ghost' if plan_lead else 'primary') + '" id="ff-copyall">Copy these steps</button></div>')
 def _ff_stuck_ending(h3, what, tail=' Usually the same day, remote help from &pound;20, and no fix, no fee.'):
     return ('<h3>' + h3 + '</h3><p>' + what + tail + '</p>'
             '<div class="ff-cta"><a class="button primary" href="tel:+441202775566">Call 01202 775566</a><a class="button secondary" href="sms:+447520615332">Text 07520 615332</a><a class="button bm-ghost" href="/remote-support/">How remote help works</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div>')
@@ -21750,7 +21752,7 @@ def _fix_flow_for(d):
             m = re.match(r'\s*<(?:strong|b)>(.*?)</(?:strong|b)>\s*(.*)$', li, re.S)
             if m:
                 title = re.sub(r'^\d+[.)]\s*', '', _ff_plain(m.group(1))).rstrip('.:;,')   # the bold lead names the step; drop a "1." the page numbered itself
-                body = '<p>' + _ff_plain(li) + ' <a href="#s' + str(idx + 1) + '">Full detail in the guide below &#8595;</a></p>'   # the whole item, since the lead is a fragment of it
+                body = '<p>' + re.sub(r'^\d+[.)]\s*', '', _ff_plain(li)) + ' <a href="#s' + str(idx + 1) + '">Full detail in the guide below &#8595;</a></p>'   # the whole item, since the lead is a fragment of it
             else:
                 t = _ff_plain(li); title = t.split('. ')[0].rstrip('.'); body = '<p>' + t + '</p>'
             steps.append((title, body, cfg['ask']))
