@@ -65,7 +65,25 @@ def _blog_fix_flows():
     def text(title, steps, slug):
         return (title + ' (365techies.co.uk/' + slug + '/)\n' + "\n".join(str(i + 1) + '. ' + _bx._ff_plain(t, True) + ': ' + _bx._ff_plain(b, True) for i, (t, b, _) in enumerate(steps))
                 + '\nStuck? 365 Techies help remotely: 01202 775566 - https://365techies.co.uk/remote-support/').replace('&', '&amp;').replace('<', '&lt;')
+    phone = [
+        ("Open the Mail or Outlook app and choose Add account", "<p>Open the <b>Mail</b> app (or the <b>Outlook</b> app, which we often recommend) and choose <b>Add account</b>.</p>", "Found Add account?"),
+        ("Pick your email type", "<p>Pick your email type: Outlook/Microsoft, Gmail, or &lsquo;Other&rsquo;.</p>", "Picked it?"),
+        ("Enter your email address and password", "<p>Enter your email address and password. You usually only need those two.</p>", "Entered them?"),
+        ("Approve any two-factor security prompt", '<p>If your account uses <a href="/how-to-set-up-two-factor-authentication/">two-factor authentication</a> (and it should), approve the prompt on your other device.</p>', "Approved it, or no prompt came?"),
+        ("Wait for your messages to download, then add a signature if you like", "<p>Give it a moment to download your messages, then add a signature if you like.</p>", "Are your messages showing?"),
+    ]
+    phone_text = ('Setting up email on a phone - the steps (365techies.co.uk/how-to-set-up-email-on-your-phone/)' + chr(10) + chr(10).join(str(i + 1) + '. ' + _bx._ff_plain(t, True) + ': ' + _bx._ff_plain(b, True) for i, (t, b, _) in enumerate(phone))
+                  + chr(10) + 'Stuck? 365 Techies email support: 01202 775566 - https://365techies.co.uk/email-support/').replace('&', '&amp;').replace('<', '&lt;')
     return {
+        'how-to-set-up-email-on-your-phone': _bx._fix_flow_section({
+            'eyebrow': '// SET IT UP WITH ME &middot; STEP BY STEP', 'h2': 'Set up email on your phone, one step at a time',
+            'lede': 'The steps from this guide, one at a time. Tick each one off and it shows the next. Nothing here leaves your device.',
+            'rev_suffix': '', 'os': False, 'count': 5,
+            'steps_html': _bx._ff_steps_html(phone, 'Done, next step', 'I am stuck here', seq=True),
+            'fixed_html': _bx._ff_fixed_ending('Set up{mins}. Nice work.', 'If your account did not ask for a second check, the two-factor guide linked in step 4 is worth ten minutes: it is what keeps a stolen password from becoming a stolen inbox.', None),
+            'stuck_html': _bx._ff_stuck_ending('Won&rsquo;t connect? The password or account type is the usual culprit.', 'We happily set it up for you as part of email support: ring us and we do it together, over the phone or on a visit.', '', ('/email-support/', 'Email support')),
+            'steps_text': phone_text,
+        }),
         'how-to-set-up-a-printer': _bx._fix_flow_section({
             'eyebrow': '// SET IT UP WITH ME &middot; STEP BY STEP', 'h2': 'Set the printer up, one step at a time',
             'lede': 'The four steps from this guide, one at a time. Tick each one off and it shows the next. Nothing here leaves your device.',

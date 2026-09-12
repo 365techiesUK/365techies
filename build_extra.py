@@ -8,6 +8,7 @@ import io
 import os as _os_pcm
 import json as _json_pcm
 import build_pages as bp
+from build_pages import (FIX_FLOW_STYLE, FIX_FLOW_SCRIPT, _fix_flow_section, _ff_plan_card, _ff_fixed_ending, _ff_stuck_ending, _ff_steps_html, _ff_plain, _ff_first_sentences, _FIX_FLOW_BIZ_RE)
 import build_local  # registers the 12 local/customer pages on import
 from reviews_data import REVIEWS, BY_NAME, pick   # one source of truth - must
 # be imported HERE, above the page bodies: this module calls why_choose() at
@@ -18105,6 +18106,23 @@ info_page(
 )
 
 # ============================================================ GUIDE: LOST OR STOLEN PHONE
+_LOST_PHONE_STEPS = [("Find, ring or lock it","From another device, use Find My &mdash; <a href=\"https://www.icloud.com/find\" target=\"_blank\" rel=\"noopener\">iCloud Find My</a> for iPhone or <a href=\"https://www.google.com/android/find\" target=\"_blank\" rel=\"noopener\">Google Find My Device</a> for Android. Ring it, see it on a map, then mark it as Lost (this locks it and shows a message)."),("If it&rsquo;s gone, lock or erase","If it&rsquo;s clearly stolen or unrecoverable, remotely lock it &mdash; and consider Erase to wipe your data. (Erasing usually stops you tracking it, so weigh it up.)"),("Bar the SIM &amp; block the handset","Call your mobile provider to bar the SIM and block the phone by its IMEI number, so it can&rsquo;t be used or sold."),("Change key passwords","From another device, change passwords for email, banking and anything the phone was signed into."),("Report it","Report a theft to the police (101 or online) for insurance, and to Action Fraud if any accounts or money are misused.")]
+
+def _lost_phone_flow():
+    """The first-fifteen-minutes steps as a walk-through: done, next; stuck, ring us. No plan pitch on a page like this."""
+    steps = [(t, '<p>' + h + '</p>', 'Done that?') for t, h in _LOST_PHONE_STEPS]
+    text = 'Lost or stolen phone - the first fifteen minutes (365techies.co.uk/lost-or-stolen-phone-what-to-do/)\n' + "\n".join(
+        str(n + 1) + '. ' + _ff_plain(t, True) + ': ' + _ff_plain(h, True) for n, (t, h) in enumerate(_LOST_PHONE_STEPS)) + '\nStuck? 365 Techies: 01202 775566'
+    return _fix_flow_section({
+        'eyebrow': '// DO IT WITH ME &middot; THE FIRST FIFTEEN MINUTES', 'h2': 'Work through it with me, one step at a time',
+        'lede': 'The same steps, one at a time, so nothing gets missed while you are rattled. Tick each one off and it shows the next. Nothing here leaves your device.',
+        'rev_suffix': '', 'os': False, 'count': len(steps),
+        'steps_html': _ff_steps_html(steps, 'Done, next step', 'I am stuck here', seq=True),
+        'fixed_html': _ff_fixed_ending('Done{mins}. The urgent part is handled.', 'Now read the 2FA section below: if your codes lived on that phone, your recovery codes are the way back in.', None),
+        'stuck_html': _ff_stuck_ending('Stuck on a step? Ring us and we do it with you.', 'Call 01202 775566; we will talk you through Find My, the SIM bar and the passwords, calmly.', '', ('/mobile-tablet-support/', 'Phone and tablet help')),
+        'steps_text': text.replace('&', '&amp;').replace('<', '&lt;'),
+    })
+
 info_page(
   slug="lost-or-stolen-phone-what-to-do", crumb_name="Lost or Stolen Phone", eyebrow="// DO THESE NOW",
   h1='Lost or stolen phone? <em class="grad grad--green">Do these things now</em>',
@@ -18120,10 +18138,10 @@ info_page(
           <h2 class="section-title section-title--center" data-title>Act fast, in this order<span class="title-underline title-underline--center"></span></h2>
         </div>
         <ol class="how__steps">
-{steps([("Find, ring or lock it","From another device, use Find My &mdash; <a href=\"https://www.icloud.com/find\" target=\"_blank\" rel=\"noopener\">iCloud Find My</a> for iPhone or <a href=\"https://www.google.com/android/find\" target=\"_blank\" rel=\"noopener\">Google Find My Device</a> for Android. Ring it, see it on a map, then mark it as Lost (this locks it and shows a message)."),("If it&rsquo;s gone, lock or erase","If it&rsquo;s clearly stolen or unrecoverable, remotely lock it &mdash; and consider Erase to wipe your data. (Erasing usually stops you tracking it, so weigh it up.)"),("Bar the SIM &amp; block the handset","Call your mobile provider to bar the SIM and block the phone by its IMEI number, so it can&rsquo;t be used or sold."),("Change key passwords","From another device, change passwords for email, banking and anything the phone was signed into."),("Report it","Report a theft to the police (101 or online) for insurance, and to Action Fraud if any accounts or money are misused.")])}
+{steps(_LOST_PHONE_STEPS)}
         </ol>
       </div>
-    </section>''',
+    </section>''' + _lost_phone_flow(),
   inner="""          <h2>The 2FA problem &mdash; getting back in</h2>
           <p>If your two-factor codes lived on that phone, you may be locked out of your own accounts. This is where your <strong>backup/recovery codes</strong> save the day &mdash; use them, or each provider&rsquo;s account-recovery process, to get back in and move 2FA to your new phone. Our guides to <a href="/how-to-set-up-two-factor-authentication/">2FA</a> and being <a href="/i-think-ive-been-hacked/">hacked</a> walk you through it.</p>
           <h2>iPhone vs Android &mdash; quick reference</h2>
@@ -21329,163 +21347,8 @@ VICTRON_CRED_BAND = '''    <section class="section" aria-label="Victron credenti
 # (nothing is sent anywhere). Detects Windows 11 vs 10 from the UA client hints, like the spec checker, so the
 # Settings paths match the visitor's machine; every command is copyable; the two screenshots are real captures
 # of Windows 11 (September 2026). __LASTMOD_HUMAN__ is stamped by stamp_lastmod with the date the page changed.
-FIX_FLOW_STYLE = r"""      <style>
-      #fixflow .ff{max-width:860px;margin:0 auto}
-      #fixflow .ff-rev{display:block;margin-top:.5rem;font-size:.72rem;letter-spacing:.06em;color:var(--cyan-soft,#6cc4f5)}
-      #fixflow .ff-top{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin-bottom:1rem;font-size:.85rem;color:var(--muted,#9fb5d3)}
-      #fixflow .ff-os{font-weight:600;color:var(--ink,#eaf4ff)}
-      #fixflow .ff-oslink{background:none;border:0;padding:0;color:var(--cyan-soft,#6cc4f5);font:inherit;font-size:.8rem;cursor:pointer;text-decoration:underline}
-      #fixflow .ff-prog{margin-left:auto;font-family:var(--font-mono,monospace);font-size:.72rem;letter-spacing:.06em}
-      #fixflow .ff-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.55rem}
-      #fixflow .ff-step{border:1px solid var(--line,rgba(125,170,220,.16));border-radius:14px;background:rgba(255,255,255,.03);overflow:hidden}
-      #fixflow .ff-step[hidden]{display:none}
-      #fixflow .ff-head{display:flex;align-items:center;gap:.8rem;padding:.9rem 1.1rem;font-weight:700;font-size:1.02rem}
-      #fixflow .ff-num{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-mono,monospace);font-size:.75rem;border:1px solid rgba(108,196,245,.5);color:var(--cyan-soft,#6cc4f5)}
-      #fixflow .ff-step.is-done .ff-num{border-color:rgba(46,204,113,.6);color:#2ecc71}
-      #fixflow .ff-step.is-done .ff-head{opacity:.7;font-weight:600}
-      #fixflow .ff-step.is-skip .ff-num{opacity:.45}
-      #fixflow .ff-body{display:none;padding:0 1.1rem 1.1rem;font-size:.93rem;line-height:1.6;color:var(--ink-2,#dfe9f7)}
-      #fixflow .ff-step.is-on{border-color:rgba(108,196,245,.55);background:rgba(29,151,227,.07)}
-      #fixflow .ff-step.is-on .ff-body{display:block}
-      #fixflow .ff-body p{margin:0 0 .6rem}
-      #fixflow .ff-body ol{margin:0 0 .6rem 1.2rem;padding:0}
-      #fixflow .ff-body li{margin:.25rem 0}
-      #fixflow .ff-cmd{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin:.5rem 0;padding:.5rem .7rem;border-radius:9px;background:rgba(7,13,34,.7);border:1px solid rgba(125,170,220,.22)}
-      #fixflow .ff-cmd code{font-family:var(--font-mono,monospace);font-size:.82rem;color:#eaf4ff;word-break:break-all}
-      #fixflow .ff-cmd small{width:100%;font-size:.72rem;color:var(--muted,#9fb5d3)}
-      #fixflow .ff-copy{margin-left:auto;border:1px solid rgba(108,196,245,.45);background:transparent;color:var(--cyan-soft,#6cc4f5);border-radius:7px;padding:.28rem .6rem;font:inherit;font-size:.74rem;cursor:pointer;min-height:32px}
-      #fixflow .ff-copy.done{border-color:rgba(46,204,113,.6);color:#2ecc71}
-      #fixflow .ff-open{display:inline-block;margin:.2rem .4rem .5rem 0;padding:.5rem .8rem;border-radius:9px;border:1px solid rgba(108,196,245,.45);color:var(--cyan-soft,#6cc4f5);text-decoration:none;font-size:.85rem;font-weight:600}
-      #fixflow .ff:not(.is-win) .ff-open{display:none}
-      #fixflow .ff-p10{display:none} #fixflow .ff.is-w10 .ff-p10{display:inline} #fixflow .ff.is-w10 .ff-p11{display:none}
-      #fixflow .ff-fig{margin:.8rem 0 .4rem;max-width:460px}
-      #fixflow .ff-fig img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid rgba(125,170,220,.28)}
-      #fixflow .ff-fig figcaption{font-size:.72rem;color:var(--muted,#9fb5d3);margin-top:.35rem;line-height:1.5}
-      #fixflow .ff-ask{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:.8rem;padding-top:.8rem;border-top:1px dashed rgba(125,170,220,.25)}
-      #fixflow .ff-ask b{font-size:.95rem}
-      #fixflow .ff-ask .button{min-height:44px}
-      #fixflow .ff-end{margin-top:1rem;padding:1.3rem 1.4rem;border-radius:16px;border:1px solid rgba(46,204,113,.45);background:rgba(46,204,113,.07)}
-      #fixflow .ff-end[hidden]{display:none}
-      #fixflow .ff-end.is-bad{border-color:rgba(255,180,0,.5);background:rgba(255,180,0,.07)}
-      #fixflow .ff-end h3{margin:0 0 .5rem;font-size:1.25rem}
-      #fixflow .ff-end p{margin:0 0 .6rem;line-height:1.6}
-      #fixflow .ff-end .ff-cta{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:.8rem}
-      #fixflow .ff-end .ff-cta .button{min-height:44px}
-      #fixflow .ff-plan{margin-top:1rem;padding:1rem 1.1rem;border-radius:12px;border:1px solid rgba(125,170,220,.25);background:rgba(255,255,255,.03);font-size:.9rem;line-height:1.6}
-      #fixflow .ff-plan b{color:var(--cyan-soft,#6cc4f5)}
-      @media(max-width:560px){#fixflow .ff-ask .button,#fixflow .ff-end .ff-cta .button{width:100%}#fixflow .ff-prog{margin-left:0}}
-      </style>"""
-
-# Generic: steps and endings come from the page (templates in the DOM), so one script serves every flow.
-FIX_FLOW_SCRIPT = r"""      <script>
-      (function(){
-        var root=document.getElementById('ff'); if(!root) return;
-        var steps=Array.prototype.slice.call(root.querySelectorAll('.ff-step')), N=steps.length, endEl=root.querySelector('#ff-end'), prog=root.querySelector('#ff-prog');
-        var osEl=root.querySelector('#ff-os'), tog=root.querySelector('#ff-ostoggle'), t0=null, w10=false, isWin=/Windows/i.test(navigator.userAgent);
-        root.classList.toggle('is-win',isWin);
-        function setOS(ten,label){ w10=ten; root.classList.toggle('is-w10',ten); osEl.textContent=label; tog.hidden=!isWin; tog.textContent=ten?'Not right? Switch to Windows 11':'Not right? Switch to Windows 10'; }
-        if(root.getAttribute('data-os')==='1'){
-          if(!isWin){ setOS(false,'These steps are for Windows; you seem to be on another device, so keep them for the PC.'); }
-          else if(navigator.userAgentData&&navigator.userAgentData.getHighEntropyValues){
-            navigator.userAgentData.getHighEntropyValues(['platformVersion']).then(function(v){ var maj=parseInt(String(v.platformVersion||'').split('.')[0],10);
-              if(maj>=13) setOS(false,'You are on Windows 11, so the paths below match your Settings app.'); else if(maj>0) setOS(true,'You are on Windows 10, so the paths below match your Settings app.'); else setOS(false,'Windows 10 or 11: paths shown for Windows 11.'); }).catch(function(){ setOS(false,'Windows 10 or 11: paths shown for Windows 11.'); });
-          } else setOS(false,'Windows 10 or 11: paths shown for Windows 11.');
-          tog.addEventListener('click',function(){ setOS(!w10,w10?'Showing the Windows 11 paths.':'Showing the Windows 10 paths.'); });
-        } else { osEl.hidden=true; tog.hidden=true; }
-        function tpl(id,text){ var t=root.querySelector('#'+id); if(!t) return ''; return text?(t.content?t.content.textContent:t.textContent):t.innerHTML; }
-        function show(n){ steps.forEach(function(s){ var k=parseInt(s.getAttribute('data-step'),10); s.hidden=k>n; s.classList.toggle('is-on',k===n); if(k<n&&!s.classList.contains('is-done')) s.classList.add('is-skip'); }); prog.textContent='STEP '+n+' OF '+N; var cur=steps[n-1]; if(cur) cur.scrollIntoView({behavior:'smooth',block:'nearest'}); }
-        function finish(kind){
-          steps.forEach(function(s){ s.classList.remove('is-on'); });
-          var mins=t0?Math.max(1,Math.round((Date.now()-t0)/60000)):null, minsTxt=mins?(' in about '+mins+' minute'+(mins===1?'':'s')):'';
-          endEl.className='ff-end'+(kind==='stuck'?' is-bad':''); endEl.innerHTML=tpl(kind==='fixed'?'ff-tpl-fixed':'ff-tpl-stuck').split('{mins}').join(minsTxt);
-          prog.textContent=kind==='fixed'?'DONE':'NEEDS A TECHIE'; endEl.hidden=false; endEl.scrollIntoView({behavior:'smooth',block:'nearest'});
-          var c=endEl.querySelector('#ff-copyall'); if(c) c.addEventListener('click',function(){ copyText(tpl('ff-tpl-text',true).replace(/^\s+|\s+$/g,''),c,'Copy these steps'); });
-        }
-        function copyText(txt,btn,label){ function ok(){ btn.textContent='Copied'; btn.classList.add('done'); setTimeout(function(){ btn.textContent=label; btn.classList.remove('done'); },1800); }
-          if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(ok).catch(function(){}); }
-          else{ var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); ok(); }catch(e){} document.body.removeChild(ta); } }
-        /* measurement: which ending links get clicked (plans, app, remote, phone) - the October funnel review reads this */
-        root.addEventListener('click',function(e){ var a=e.target.closest('#ff-end a'); if(!a) return;
-          try{ if(window.gtag&&localStorage.getItem('tt_internal')!=='1') gtag('event','plan_cta',{place:'fixflow',target:a.getAttribute('href'),ending:endEl.className.indexOf('is-bad')>-1?'stuck':'fixed',page:location.pathname}); }catch(x){} });
-        root.addEventListener('click',function(e){
-          var b=e.target.closest('button'); if(!b) return;
-          if(b.classList.contains('ff-copy')){ copyText(b.getAttribute('data-copy'),b,'Copy'); return; }
-          var go=b.getAttribute('data-go'); if(!go) return;
-          if(!t0) t0=Date.now();
-          var cur=b.closest('.ff-step'); if(cur){ cur.classList.add('is-done'); }
-          if(go==='fixed'||go==='stuck'){ finish(go); return; }
-          var n=parseInt(go,10); var note=b.getAttribute('data-note'); var noteEl=root.querySelector('#ff-note'+n); if(noteEl){ noteEl.hidden=!note; noteEl.innerHTML=note?'<b>'+note+'</b>':''; }
-          endEl.hidden=true; show(n);
-        });
-      })();
-      </script>"""
-
-def _fix_flow_section(cfg):
-    """One guided flow section. cfg: eyebrow, h2, lede, rev_suffix, os (bool), count, steps_html (the <li>s),
-    fixed_html / stuck_html (endings; '{mins}' becomes ' in about N minutes'), steps_text (plain, for Copy)."""
-    os_attr = ' data-os="1"' if cfg.get('os') else ''
-    return ('    <section class="section" aria-label="Fix it with me" id="fixflow">\n      <div class="wrap">\n' + FIX_FLOW_STYLE + '\n'
-            '        <div class="section-head">\n'
-            '          <p class="eyebrow eyebrow--center mono" data-reveal>' + cfg['eyebrow'] + '</p>\n'
-            '          <h2 class="section-title section-title--center" data-title>' + cfg['h2'] + '<span class="title-underline title-underline--center"></span></h2>\n'
-            '          <p class="lede lede--center" data-reveal>' + cfg['lede'] + '<span class="ff-rev mono">Last reviewed __LASTMOD_HUMAN__' + cfg.get('rev_suffix', '') + '</span></p>\n'
-            '        </div>\n'
-            '        <div class="ff" id="ff"' + os_attr + '>\n'
-            '          <div class="ff-top"><span class="ff-os" id="ff-os">Checking which Windows you have&hellip;</span><button type="button" class="ff-oslink" id="ff-ostoggle" hidden>Not right? Switch to Windows 10</button><span class="ff-prog" id="ff-prog">STEP 1 OF ' + str(cfg['count']) + '</span></div>\n'
-            '          <ol class="ff-steps" id="ff-steps">' + cfg['steps_html'] + '          </ol>\n'
-            '          <div class="ff-end" id="ff-end" hidden></div>\n'
-            '          <template id="ff-tpl-fixed">' + cfg['fixed_html'] + '</template>\n'
-            '          <template id="ff-tpl-stuck">' + cfg['stuck_html'] + '</template>\n'
-            '          <template id="ff-tpl-text">' + cfg['steps_text'] + '</template>\n'
-            '        </div>\n      </div>\n' + FIX_FLOW_SCRIPT + '\n    </section>\n')
-
-def _ff_plan_card(lead):
-    return ('<div class="ff-plan"><b>' + lead + '</b> On a 365 support plan every computer gets a full service every six weeks: Windows, driver and app '
-            'updates applied and checked, security and backup looked at, and a written Service Report each time. Home &pound;18.25 per computer a month, '
-            'business from &pound;24.38, rolling monthly.</div>')
-_FIX_FLOW_BIZ_RE = re.compile(r'sage|quickbooks|shared-folder|shared-mailbox|business-|restrict-staff|office-wifi|nas-drive|scan-to-folder|network-credentials|domain')
-
-def _ff_fixed_ending(h3, tip, plan_lead, plans_href='/monthly-it-support/'):
-    """plan_lead=None means no plan pitch at all (diagnosis playbooks, a swollen battery): just the copy button.
-    plans_href: the business plans page for business-shaped problems, the home plans page otherwise."""
-    plans = ('<a class="button primary" href="' + plans_href + '">See the support plans &#8594;</a><a class="button secondary" href="/free-pc-health-check/">Get the free app</a>' if plan_lead else '')
-    return ('<h3>' + h3 + '</h3><p>' + tip + '</p>' + (_ff_plan_card(plan_lead) if plan_lead else '') +
-            '<div class="ff-cta">' + plans + '<button type="button" class="button ' + ('bm-ghost' if plan_lead else 'primary') + '" id="ff-copyall">Copy these steps</button></div>')
-def _ff_stuck_ending(h3, what, tail=' Usually the same day, remote help from &pound;20, and no fix, no fee.'):
-    return ('<h3>' + h3 + '</h3><p>' + what + tail + '</p>'
-            '<div class="ff-cta"><a class="button primary" href="tel:+441202775566">Call 01202 775566</a><a class="button secondary" href="sms:+447520615332">Text 07520 615332</a><a class="button bm-ghost" href="/remote-support/">How remote help works</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div>')
-
-def _ff_steps_html(steps, yes_label, no_label, seq=False):
-    """steps: list of (title, body_html, ask). Fix mode (default): every Yes ends the flow as fixed, No goes on
-    and the last No is 'stuck'. Sequence mode (seq=True, for a set-up walk-through): Yes goes on to the next step
-    and the last Yes is 'fixed'; No is always 'stuck'."""
-    out = []
-    for i, (title, body, ask) in enumerate(steps):
-        n = i + 1; last = (n == len(steps))
-        if seq:
-            yes_go = 'fixed' if last else str(n + 1); no_go = 'stuck'
-        else:
-            yes_go = 'fixed'; no_go = 'stuck' if last else str(n + 1)
-        out.append('\n            <li class="ff-step' + (' is-on' if i == 0 else '') + '" data-step="' + str(n) + '"' + ('' if i == 0 else ' hidden') + '>\n'
-                   '              <div class="ff-head"><span class="ff-num">' + ('%02d' % n) + '</span>' + title + '</div>\n'
-                   '              <div class="ff-body">' + body +
-                   '<div class="ff-ask"><b>' + ask + '</b><button type="button" class="button primary" data-go="' + yes_go + '">' + yes_label + '</button><button type="button" class="button secondary" data-go="' + no_go + '">' + no_label + '</button></div>\n'
-                   '              </div>\n            </li>')
-    return "".join(out) + "\n"
-
-def _ff_plain(html_, decode=False):
-    """Tags stripped, whitespace collapsed. decode=True also turns entities into characters (for the copy text)."""
-    import re as _re, html as _h
-    t = _re.sub(r'<[^>]+>', ' ', html_); t = _re.sub(r'\s+', ' ', t).strip()
-    t = _re.sub(r'\s+([,.;:!?])', r'\1', t)          # "<strong>lead</strong>, rest" must not become "lead , rest"
-    return _h.unescape(t) if decode else t
-def _ff_first_sentences(html_, n=2, cap=300):
-    t = _ff_plain(html_)
-    parts = re.split(r'(?<=[.!?])\s+(?=[A-Z0-9])', t)
-    out = " ".join(parts[:n])
-    if len(out) > cap: out = out[:cap].rsplit(' ', 1)[0] + '&hellip;'
-    return out
-
+# The flow engine (FIX_FLOW_STYLE/SCRIPT, _fix_flow_section, the _ff_* helpers) lives in build_pages.py since 12 Sep
+# 2026 so that pages defined before this point, build_blog.py and playbook_pages.py can all use it.
 # ---- the disappeared page: exactly the flow that is live, now expressed through the engine
 _PRINTER_DISAPPEARED_STEPS_HTML = r"""
             <li class="ff-step is-on" data-step="1">
@@ -21662,6 +21525,12 @@ FIX_FLOW_PAGES = {
         'tip': 'Save one work file and one personal file and check each lands in the right OneDrive.', 'h3s': 'Stuck at a step? That is a quick remote job.',
         'h3f': 'Sorted{mins}. Nice work.', 'plan_lead': 'Rather have it done for you?',
         'sections': [(1, 'Apply the three rules that pick a OneDrive for each file'), (2, 'Get things into the right OneDrive without losing them'), (3, 'Make each OneDrive own what it should'), (4, 'Unlink a OneDrive without losing the files')]},
+    # ---- phones (12 Sep 2026)
+    'smartphone-lessons-for-seniors': {'h2': 'Make the text bigger with me, one step at a time', 'ask': 'Done that step?', 'mode': 'seq', 'yes': 'Done, next step', 'no': 'I am stuck here',
+        'eyebrow': '// TRY IT WITH ME &middot; STEP BY STEP', 'lede': 'The five steps from this page, one at a time, exactly as we would do them in a lesson. Tick each one off and it shows the next.',
+        'tip': 'Open a text message: if it reads easily at arm&rsquo;s length, it is right. If not, go back and move the slider a little more.',
+        'h3s': 'Stuck on a step? That is exactly what a lesson is for.', 'stuck_what': 'Bring the phone to a lesson, or ring us, and we do it together at your pace.', 'stuck_tail': '', 'stuck_link': ('#s2', 'How the lessons work'), 'text_title': 'Make the text bigger on your phone - the steps', 'text_tail': '\nStuck? 365 Techies phone lessons: 01202 775566 - https://365techies.co.uk/smartphone-lessons-for-seniors/',
+        'h3f': 'Done{mins}. That is the whole trick.', 'plan_lead': None},
     'printer-wont-scan-to-computer-windows-11': {'h2': 'Get scanning working on Windows 11, step by step', 'ask': 'Is it scanning now?', 'tip': 'Scan one page from the computer to be sure.', 'h3s': 'Still not scanning after every step? That is a remote job.',
         'sections': [(1, 'Swap the driver Windows fitted for the maker&rsquo;s full package'), (2, 'Start the scan at the computer, not the printer'), (3, 'Treat USB and network faults differently'), (4, 'Let scanning through the security suite and VPN')]},
 }
@@ -21791,9 +21660,9 @@ def _fix_flow_for(d):
     while len(steps) > 3 and _FIX_FLOW_TRAIL_RE.search(_ff_plain(steps[-1][0])): steps = steps[:-1]
     if len(steps) < 3: return None
     n = len(steps)
-    text = _ff_plain(d.get('h1', slug), True) + ' - the fix order (365techies.co.uk/' + slug + '/)\n' + "\n".join(
+    text = cfg.get('text_title', _ff_plain(d.get('h1', slug), True) + ' - the fix order') + ' (365techies.co.uk/' + slug + '/)\n' + "\n".join(
         str(i + 1) + '. ' + _ff_plain(t, True) + ': ' + _ff_plain(b, True).replace('Full detail in the guide below ↓', '').strip() for i, (t, b, _) in enumerate(steps)) + \
-        '\nStill stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.uk/remote-support/'
+        cfg.get('text_tail', '\nStill stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.uk/remote-support/')
     words = {'six': 6, 'seven': 7, 'five': 5, 'four': 4, 'three': 3}
     return _fix_flow_section({
         'eyebrow': cfg.get('eyebrow', '// FIX IT WITH ME &middot; STEP BY STEP'), 'h2': cfg['h2'],
@@ -21803,7 +21672,8 @@ def _fix_flow_for(d):
         'fixed_html': _ff_fixed_ending(cfg.get('h3f', 'Sorted{mins}. Nice work.'), cfg['tip'], cfg.get('plan_lead', 'Rather have it looked after?'),
                                        '/business-it-support-plans/' if _FIX_FLOW_BIZ_RE.search(slug) else '/monthly-it-support/'),
         'stuck_html': _ff_stuck_ending(cfg['h3s'].replace('every step', 'all ' + [k for k, v in words.items() if v == n][0] + ' steps') if n in words.values() else cfg['h3s'],
-                                       cfg.get('stuck_what', 'With your permission we connect to your screen and sort it in one session.'), cfg.get('stuck_tail', ' Usually the same day, remote help from &pound;20, and no fix, no fee.')),
+                                       cfg.get('stuck_what', 'With your permission we connect to your screen and sort it in one session.'), cfg.get('stuck_tail', ' Usually the same day, remote help from &pound;20, and no fix, no fee.'),
+                                       cfg.get('stuck_link', ('/remote-support/', 'How remote help works'))),
         'steps_text': text.replace('&', '&amp;').replace('<', '&lt;'),
     })
 
