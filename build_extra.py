@@ -21641,6 +21641,21 @@ FIX_FLOW_PAGES = {
         'h3s': 'Not sure what you are looking at? Ring us before you touch it.', 'mode': 'seq', 'yes': 'Done, next step', 'no': 'I am not sure',
         'eyebrow': '// MAKE IT SAFE WITH ME &middot; STEP BY STEP', 'lede': 'The four steps from this guide, one at a time. Tick each one off and it shows the next. Nothing here leaves your device.',
         'h3f': 'Made safe{mins}. Now get the battery replaced.', 'plan_lead': None},
+    # ---- OneDrive pages with sections only (12 Sep 2026)
+    'onedrive-couldnt-merge-changes': {'h2': 'Clear the merge error, step by step', 'ask': 'Has the error gone?', 'tip': 'Open, edit and save the file once more to be sure it syncs cleanly.',
+        'h3s': 'Still erroring after every step? That is a remote job.',
+        'sections': [(0, 'Save a copy safely before you click anything'), (2, 'Untangle the cache that repeats the error'), (4, 'Deal with the conflict copies afterwards')]},
+    'onedrive-file-locked-by-another-user': {'h2': 'Unlock the file, step by step', 'ask': 'Can you edit the file now?', 'tip': 'Close it, reopen it and save once to be sure the lock has gone.',
+        'h3s': 'Still locked after every step? That is a remote job.',
+        'sections': [(1, 'Wait a moment, and find out who really has it'), (2, 'Find the copy of yourself that is holding it'), (3, 'Clear stale locks, check-outs and leftovers')]},
+    'onedrive-not-syncing-between-two-computers': {'h2': 'Get both computers in step, step by step', 'ask': 'Is it syncing on both now?', 'tip': 'Save a small test file on one computer and watch it appear on the other.',
+        'h3s': 'Still out of step after every step? That is a remote job.',
+        'sections': [(0, 'Look at the cloud first: it tells you which side is stuck'), (1, 'If the file never left the computer it was saved on'), (2, 'If the cloud has it but the other computer does not'), (4, 'Reset OneDrive, then test with one file')]},
+    'two-onedrive-accounts-personal-and-work': {'h2': 'Sort the two OneDrives out, step by step', 'ask': 'Done that step?', 'mode': 'seq', 'yes': 'Done, next step', 'no': 'I am stuck here',
+        'eyebrow': '// DO IT WITH ME &middot; STEP BY STEP', 'lede': 'The four steps from this guide, one at a time. Tick each one off and it shows the next. Nothing here leaves your device.',
+        'tip': 'Save one work file and one personal file and check each lands in the right OneDrive.', 'h3s': 'Stuck at a step? That is a quick remote job.',
+        'h3f': 'Sorted{mins}. Nice work.', 'plan_lead': 'Rather have it done for you?',
+        'sections': [(1, 'Apply the three rules that pick a OneDrive for each file'), (2, 'Get things into the right OneDrive without losing them'), (3, 'Make each OneDrive own what it should'), (4, 'Unlink a OneDrive without losing the files')]},
     'printer-wont-scan-to-computer-windows-11': {'h2': 'Get scanning working on Windows 11, step by step', 'ask': 'Is it scanning now?', 'tip': 'Scan one page from the computer to be sure.', 'h3s': 'Still not scanning after every step? That is a remote job.',
         'sections': [(1, 'Swap the driver Windows fitted for the maker&rsquo;s full package'), (2, 'Start the scan at the computer, not the printer'), (3, 'Treat USB and network faults differently'), (4, 'Let scanning through the security suite and VPN')]},
 }
@@ -21688,10 +21703,12 @@ FIX_FLOW_AUTO_SKIP = {'outlook-problems', 'youve-been-hacked-email-bitcoin-scam'
                       # Windows pages that are decisions, services or explainers rather than fixes
                       'windows-10-esu-or-upgrade-your-dell', 'will-i-lose-files-upgrading-to-windows-11', 'windows-11-upgrade-service',
                       'cost-to-upgrade-office-to-windows-11', 'cnc-machine-needs-windows-xp', 'ferrari-sd2-laptop-windows-xp',
-                      'sage-instant-accounts-windows-11', 'windows-11-cant-access-windows-10-shared-folder', 'windows-11-support', 'windows-reinstall'}
+                      'sage-instant-accounts-windows-11', 'windows-11-cant-access-windows-10-shared-folder', 'windows-11-support', 'windows-reinstall',
+                      'onedrive-sharepoint-teams-explained'}
 _FIX_FLOW_SEQ_RE = re.compile(r'^(how-to-|move-|recreate-)|(-wont-add-to-new-outlook|^cant-send-btinternet-email-new-outlook|^sage-50-wont-email-invoices-outlook'
                               r'|^outlook-signature-not-showing|^outlook-ost-file-corrupt|^onedrive-full-cant-send-email'
-                              r'|^restrict-staff-access-to-shared-folders-windows-11|^windows-10-esu-free-enrolment-help|^dell-inspiron-.*-windows-11$)')
+                              r'|^restrict-staff-access-to-shared-folders-windows-11|^windows-10-esu-free-enrolment-help|^dell-inspiron-.*-windows-11$'
+                              r'|^stop-using-onedrive-without-losing-files|^stop-word-saving-to-onedrive|^onedrive-moved-my-desktop-and-documents|^excel-onedrive-sync-conflicts)')
 _FIX_FLOW_TRAIL_RE = re.compile(r'call us|still stuck|hand it to us|let us sort|ask us', re.I)   # a last step that just says "ring us" is the stuck ending already
 
 FIX_FLOW_OVERRIDES = {   # small per-page tweaks on top of the automatic config
@@ -21710,9 +21727,10 @@ for _k in ('dell-inspiron-15-3000-windows-11', 'dell-inspiron-15-5000-windows-11
 
 def _auto_flow_cfg(d):
     slug = d['slug']
-    if not ('outlook' in slug or 'email' in slug or 'windows' in slug) or slug in FIX_FLOW_AUTO_SKIP: return None
+    if not ('outlook' in slug or 'email' in slug or 'windows' in slug or 'onedrive' in slug) or slug in FIX_FLOW_AUTO_SKIP: return None
     seq = bool(_FIX_FLOW_SEQ_RE.search(slug))
     mail = ('outlook' in slug or 'email' in slug)
+    onedrive = ('onedrive' in slug)
     cfg = {'mode': 'seq' if seq else None,
            'ask': 'Done that step?' if seq else 'Is it working now?',
            'yes': 'Done, next step' if seq else 'Yes, sorted', 'no': 'I am stuck here' if seq else 'Not yet',
@@ -21720,7 +21738,8 @@ def _auto_flow_cfg(d):
            'eyebrow': '// DO IT WITH ME &middot; STEP BY STEP' if seq else '// FIX IT WITH ME &middot; STEP BY STEP',
            'lede': ('The steps from this guide, one at a time. Tick each one off and it shows the next. Nothing here leaves your device.' if seq else
                     'The steps from this guide, one at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your device.'),
-           'tip': 'Send yourself a test email to be sure it has stuck.' if mail else 'Restart once more and check it has stuck.',
+           'tip': ('Open File Explorer and check the OneDrive files show a green tick or a blue cloud, not a red cross.' if onedrive else
+                   'Send yourself a test email to be sure it has stuck.' if mail else 'Restart once more and check it has stuck.'),
            'h3s': 'Still not working after every step? That is a remote job.',
            'h3f': 'Done{mins}. Nice work.' if seq else 'Sorted{mins}. Nice work.',
            'plan_lead': 'Rather have it done for you?' if seq else 'Rather have it looked after?'}
