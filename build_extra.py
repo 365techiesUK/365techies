@@ -162,6 +162,21 @@ SPECIALIST = [
    tile_items=[("wifi","Whole-home Wi-Fi","Strong signal in every room with mesh and extenders."),("bolt","Speed fixes","Track down and fix slow, dropping connections."),("server","Router setup","New routers configured properly and securely."),("shield","Secure networks","Locked-down Wi-Fi and guest networks."),("home","Smart home","Connect cameras, speakers and smart devices."),("briefcase","Office networks","Reliable business networks and Wi-Fi.")],
    faqs=[("Can you fix Wi-Fi dead zones?","Yes — we use mesh systems and extenders to bring strong, reliable Wi-Fi to every corner of your home or office."),("My internet is slow — is it my Wi-Fi?","Often, yes. We diagnose whether it's your Wi-Fi, router or broadband and fix what we can."),("Can you set up a guest network?","Yes, we set up secure guest Wi-Fi so visitors don't need your main password."),("Why is my Wi-Fi so slow at home?","Distance from the router, thick walls, interference, an ageing router or too many devices all play a part &mdash; and sometimes it&rsquo;s the broadband, not the Wi-Fi. We&rsquo;ll find the cause and fix it, often with mesh for whole-home coverage. Check your line with our <a href=\"/broadband-checker/\">broadband checker</a>."),("Can you get Wi-Fi into a granny annexe or outbuilding?","Yes &mdash; from mesh and outdoor access points to a proper point-to-point wireless link for detached buildings. Start with our guide to <a href=\"/wifi-in-a-granny-annexe/\">Wi-Fi in a granny annexe</a> &mdash; we design and install across Dorset.")],
    chips=["Whole-home coverage","Speed fixes","Secure networks"],
+ guides_title="What is the Wi-Fi doing? Pick the closest, and work through it step by step on that page",
+   guides=[
+     ("/wifi-keeps-dropping/", "Keeps dropping at home"),
+     ("/wifi-drops-moving-between-access-points/", "Drops when I move between rooms or access points"),
+     ("/office-wifi-keeps-dropping-out/", "The office Wi-Fi keeps dropping out"),
+     ("/wifi-troubleshooting/", "Slow or unreliable and I do not know why"),
+     ("/room-by-room-wifi-test/", "Fine in one room, useless in another"),
+     ("/mesh-wifi-setup-guide/", "Setting up a mesh system"),
+     ("/mesh-wifi-systems-uk/", "Choosing a mesh system"),
+     ("/wifi-in-a-granny-annexe/", "Need Wi-Fi in a granny annexe"),
+     ("/wifi-for-a-shepherds-hut/", "Need internet in a shepherd&rsquo;s hut or outbuilding"),
+     ("/campervan-wifi-keeps-dropping/", "Campervan or motorhome Wi-Fi keeps dropping"),
+     ("/dell-killer-wifi-problems/", "A Dell laptop with Killer Wi-Fi keeps dropping"),
+     ("/wifi-signal-test/", "Measure the signal in every room, free"),
+   ],
    split_title="Reliable Wi-Fi, everywhere",
    split=[("Wi-Fi at home","Strong, reliable Wi-Fi in every room &mdash; dead zones banished with mesh, the kids&rsquo; devices and smart home connected, all on a secure network.",["Whole-home mesh Wi-Fi","Dead zones fixed","Smart home connected","Secure &amp; guest networks"]),("Office networks","Fast, secure office networks that keep your team online &mdash; reliable Wi-Fi, wired connections and guest access, designed and supported. Business access points started playing up? See our <a href='/business-access-point-end-of-life/'>access-point end-of-support guide</a> &mdash; including when ageing kit does <em>not</em> need replacing.",["Reliable office Wi-Fi","Wired &amp; wireless networks","Secure staff &amp; guest access","Designed &amp; supported"])],
    steps_title="Full coverage in three steps",
@@ -21388,10 +21403,10 @@ def _ff_plan_card(lead):
             'updates applied and checked, security and backup looked at, and a written Service Report each time. Home &pound;18.25 per computer a month, '
             'business from &pound;24.38, rolling monthly.</div>')
 def _ff_fixed_ending(h3, tip, plan_lead):
-    return ('<h3>' + h3 + '</h3><p>' + tip + '</p>' + _ff_plan_card(plan_lead) +
+    return ('<h3>' + h3 + '</h3><p>' + tip + '</p>' + (_ff_plan_card(plan_lead) if plan_lead else '') +
             '<div class="ff-cta"><a class="button primary" href="/monthly-it-support/">See the support plans &#8594;</a><a class="button secondary" href="/free-pc-health-check/">Get the free app</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div>')
-def _ff_stuck_ending(h3, what):
-    return ('<h3>' + h3 + '</h3><p>' + what + ' Usually the same day, remote help from &pound;20, and no fix, no fee.</p>'
+def _ff_stuck_ending(h3, what, tail=' Usually the same day, remote help from &pound;20, and no fix, no fee.'):
+    return ('<h3>' + h3 + '</h3><p>' + what + tail + '</p>'
             '<div class="ff-cta"><a class="button primary" href="tel:+441202775566">Call 01202 775566</a><a class="button secondary" href="sms:+447520615332">Text 07520 615332</a><a class="button bm-ghost" href="/remote-support/">How remote help works</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div>')
 
 def _ff_steps_html(steps, yes_label, no_label, seq=False):
@@ -21527,9 +21542,62 @@ FIX_FLOW_PAGES = {
         'sections': [(2, None), (3, None), (4, 'Or run a cable from a mesh node')]},
     'printer-asking-for-admin-password': {'h2': 'Get past the password prompt, step by step', 'ask': 'Did the printer install?', 'tip': 'Print a test page from the account you normally use.', 'h3s': 'Still stuck at the prompt after every step? That is a remote job.',
         'sections': [(1, 'Work out which password Windows actually wants'), (2, 'On a work laptop: ask IT for exactly this'), (3, 'At home, when the administrator password is forgotten'), (4, 'Use the leaner install that stops the repeat prompts')]},
+    # ---- Wi-Fi pages (12 Sep 2026, owner: "add the fix flow to the wifi pages too"). Same rule: the page's own text only.
+    'wifi-troubleshooting': {'h2': 'Run the seven tests with me, in order', 'ask': 'Did that test find the fault?', 'tip': 'Now match the symptom in the guide below to its fix, and change one thing at a time.',
+        'h3s': 'Still no answer after all seven tests? That is a remote job.', 'list_section': 0, 'yes': 'Yes, found it', 'no': 'Not that, next test',
+        'lede': 'The seven tests from this guide, one at a time, before you change anything. Tell it what each test showed and it moves you on. Nothing here leaves your device.',
+        'h3f': 'Fault found{mins}. Now you know what to fix.', 'plan_lead': 'Rather we found and fixed it?'},
+    'office-wifi-keeps-dropping-out': {'h2': 'Find why the office drops, step by step', 'ask': 'Has it stopped dropping?', 'tip': 'Watch it for a full working day before calling it fixed.',
+        'h3s': 'Still dropping after every step? That is a remote job.',
+        'sections': [(1, 'Check whether one consumer router is doing a whole business&rsquo;s job'), (2, 'Check the channels, and Dorset&rsquo;s radar quirk'), (3, 'Rule out a failing switch and a line drop blamed on Wi-Fi')]},
+    'dell-killer-wifi-problems': {'h2': 'Fix the Killer card, step by step', 'ask': 'Is the Wi-Fi behaving now?', 'tip': 'Give it a day of normal use before you trust it.',
+        'h3s': 'Still dropping after every step? That is a remote job, from &pound;20.', 'max_steps': 3},
+    'mesh-wifi-setup-guide': {'h2': 'Set the mesh up with me, one step at a time', 'ask': 'Done that step?', 'tip': 'Run the free room-by-room test again and compare it with the baseline you took at step 1.',
+        'h3s': 'Stuck at a step? We set mesh systems up remotely and on site.', 'mode': 'seq', 'yes': 'Done, next step', 'no': 'I am stuck here',
+        'eyebrow': '// SET IT UP WITH ME &middot; STEP BY STEP', 'lede': 'The nine steps from this guide, one at a time. Tick each one off and it shows the next. Nothing here leaves your device.',
+        'h3f': 'Mesh set up{mins}. Nice work.', 'plan_lead': 'Rather have it done for you?'},
+    'wifi-for-a-shepherds-hut': {'h2': 'Work out the right link for the hut, step by step', 'ask': 'Done that step?', 'tip': 'Whichever option you chose, test it at the hut on a wet evening before you rely on it.',
+        'h3s': 'Not sure which option fits? That is a quick call.', 'mode': 'seq', 'yes': 'Done, next step', 'no': 'I am stuck here',
+        'eyebrow': '// WORK IT OUT WITH ME &middot; STEP BY STEP', 'lede': 'The four steps from this guide, one at a time. Tick each one off and it shows the next. Nothing here leaves your device.',
+        'h3f': 'Worked out{mins}. Nice work.', 'plan_lead': 'Rather have it done for you?'},
     'printer-wont-scan-to-computer-windows-11': {'h2': 'Get scanning working on Windows 11, step by step', 'ask': 'Is it scanning now?', 'tip': 'Scan one page from the computer to be sure.', 'h3s': 'Still not scanning after every step? That is a remote job.',
         'sections': [(1, 'Swap the driver Windows fitted for the maker&rsquo;s full package'), (2, 'Start the scan at the computer, not the printer'), (3, 'Treat USB and network faults differently'), (4, 'Let scanning through the security suite and VPN')]},
 }
+
+PLAYBOOK_FLOWS = {
+    'wifi-keeps-dropping': {'h2': 'Work through the checks with me, one at a time',
+        'sections': [(0, 'Is it one device, or everything in the house?'), (1, 'Did the broadband drop, or did the WiFi drop?'), (2, 'Start the drop diary'), (3, 'Do the drops run to a timetable?')],
+        'tip': 'The two sections after the diary tell you what the pattern means, and how to make a provider report stick if it turns out to be the line.'},
+    'wifi-drops-moving-between-access-points': {'h2': 'Pin the fault down with me, one check at a time',
+        'sections': [(0, 'Work out which fault this really is'), (2, 'Walk it, then read it: the ordered diagnosis'), (5, 'Match where the fault shows itself'), (6, 'Prove the change actually worked')],
+        'tip': 'Change one thing at a time, and re-walk the same route after each change.'},
+    'campervan-wifi-keeps-dropping': {'h2': 'Find which link is dropping, one check at a time',
+        'sections': [(0, 'Which link is actually dropping?'), (1, 'Note when it drops'), (2, 'Check the 12V trap'), (3, 'Check the metal box problem'), (4, 'Check the booster trap')],
+        'tip': 'The &ldquo;which fix matches which fault&rdquo; section below pairs what you found with the one change that fixes it.'},
+}
+
+def _fix_flow_for_playbook(p):
+    """Handed to playbook_pages before build_all(): the playbook's own diagnostic sections as a walk-through."""
+    cfg = PLAYBOOK_FLOWS.get(p['slug'])
+    if not cfg: return None
+    steps = []
+    for idx, title in cfg['sections']:
+        sec = p['sections'][idx]
+        body = '<p>' + _ff_first_sentences(sec['html']) + ' <a href="#s' + str(idx + 1) + '">Full detail in the playbook below &#8595;</a></p>'
+        steps.append((title, body, 'Done that check?'))
+    n = len(steps)
+    text = _ff_plain(p['title'], True) + ' - the checks (365techies.co.uk/' + p['slug'] + '/)\n' + "\n".join(
+        str(i + 1) + '. ' + _ff_plain(t, True) + ': ' + _ff_plain(b, True).replace('Full detail in the playbook below ↓', '').strip() for i, (t, b, _) in enumerate(steps)) + \
+        '\nStuck? Call 365 Techies on 01202 775566 or send the details: https://365techies.co.uk/contact/'
+    return _fix_flow_section({
+        'eyebrow': '// DIAGNOSE IT WITH ME &middot; CHECK BY CHECK', 'h2': cfg['h2'],
+        'lede': 'The checks from this playbook, one at a time. Do each one and it shows the next. Nothing here leaves your device.',
+        'rev_suffix': '', 'os': False, 'count': n,
+        'steps_html': _ff_steps_html(steps, 'Done, next check', 'I am stuck here', seq=True),
+        'fixed_html': _ff_fixed_ending('Checks done{mins}. Now you know which fault it is.', cfg['tip'], None),
+        'stuck_html': _ff_stuck_ending('Stuck on a check? Send us what you have so far.', 'Call, or send the drop diary through the contact page; a same-day answer is usual.', ''),
+        'steps_text': text.replace('&', '&amp;').replace('<', '&lt;'),
+    })
 
 def _fix_flow_for(d):
     slug = d['slug']
@@ -21542,9 +21610,20 @@ def _fix_flow_for(d):
             sec = d['sections'][idx]
             body = '<p>' + _ff_first_sentences(sec['html']) + ' <a href="#s' + str(idx + 1) + '">Full detail in the guide below &#8595;</a></p>'
             steps.append((title or sec['h2'], body, cfg['ask']))
+    elif cfg.get('list_section') is not None:
+        idx = cfg['list_section']; sec = d['sections'][idx]
+        for li in re.findall(r'<li[^>]*>(.*?)</li>', sec['html'], re.S):
+            m = re.match(r'\s*<(?:strong|b)>(.*?)</(?:strong|b)>\s*(.*)$', li, re.S)
+            if m:
+                title = _ff_plain(m.group(1)).rstrip('.:;,')          # the bold lead names the test
+                body = '<p>' + _ff_plain(li) + ' <a href="#s' + str(idx + 1) + '">Full detail in the guide below &#8595;</a></p>'   # the whole item, since the lead is a fragment of it
+            else:
+                t = _ff_plain(li); title = t.split('. ')[0].rstrip('.'); body = '<p>' + t + '</p>'
+            steps.append((title, body, cfg['ask']))
     else:
         for st in d.get('howToSteps') or []:
             steps.append((st['name'], '<p>' + st['text'] + '</p>', cfg['ask']))
+    if cfg.get('max_steps'): steps = steps[:cfg['max_steps']]
     if len(steps) < 3: return None
     n = len(steps)
     text = _ff_plain(d.get('h1', slug), True) + ' - the fix order (365techies.co.uk/' + slug + '/)\n' + "\n".join(
@@ -21552,11 +21631,11 @@ def _fix_flow_for(d):
         '\nStill stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.uk/remote-support/'
     words = {'six': 6, 'seven': 7, 'five': 5, 'four': 4, 'three': 3}
     return _fix_flow_section({
-        'eyebrow': '// FIX IT WITH ME &middot; STEP BY STEP', 'h2': cfg['h2'],
-        'lede': 'The steps from this guide, one at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your device.',
+        'eyebrow': cfg.get('eyebrow', '// FIX IT WITH ME &middot; STEP BY STEP'), 'h2': cfg['h2'],
+        'lede': cfg.get('lede', 'The steps from this guide, one at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your device.'),
         'rev_suffix': '', 'os': False, 'count': n,
-        'steps_html': _ff_steps_html(steps, 'Yes, sorted', 'Not yet'),
-        'fixed_html': _ff_fixed_ending('Sorted{mins}. Nice work.', cfg['tip'], 'Rather have it looked after?'),
+        'steps_html': _ff_steps_html(steps, cfg.get('yes', 'Yes, sorted'), cfg.get('no', 'Not yet'), seq=(cfg.get('mode') == 'seq')),
+        'fixed_html': _ff_fixed_ending(cfg.get('h3f', 'Sorted{mins}. Nice work.'), cfg['tip'], cfg.get('plan_lead', 'Rather have it looked after?')),
         'stuck_html': _ff_stuck_ending(cfg['h3s'].replace('every step', 'all ' + [k for k, v in words.items() if v == n][0] + ' steps') if n in words.values() else cfg['h3s'],
                                        'With your permission we connect to your screen and sort it in one session.'),
         'steps_text': text.replace('&', '&amp;').replace('<', '&lt;'),
@@ -28635,4 +28714,5 @@ _network_pages.build_all()
 # wrong one - that fork is why three "WiFi dropping" pages do not compete.
 # ---------------------------------------------------------------------------
 import playbook_pages as _playbook_pages
+_playbook_pages.fix_flow = _fix_flow_for_playbook   # the flow engine lives here; the playbook builder only calls it
 _playbook_pages.build_all()

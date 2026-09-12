@@ -111,10 +111,14 @@ def _family_nav(current):
 # ---------------------------------------------------------------------------
 # The page
 # ---------------------------------------------------------------------------
+fix_flow = None   # set by build_extra before build_all(): the guided check-by-check flow, or None
+
 def _page(p):
     body_parts = []
     for i, sec in enumerate(p["sections"]):
-        body_parts.append(_KINDS[sec["kind"]](sec, alt=(i % 2 == 1)))
+        part = _KINDS[sec["kind"]](sec, alt=(i % 2 == 1))
+        body_parts.append(part.replace('<section class="section', '<section id="s%d" class="section' % (i + 1), 1))   # the flow links here
+    flow = fix_flow(p) if fix_flow else None
 
     content = "\n".join([
         hero(bc(p["crumb"]), p["eyebrow"], p["h1"], p["lede"],
@@ -123,6 +127,7 @@ def _page(p):
              chips=p["chips"]),
         '    <section class="section"><div class="wrap wrap--narrow prose" data-reveal>'
         + C.disclaimer_block() + '</div></section>',
+        flow or "",
         "\n".join(body_parts),
         _tool_cta(p),
         _family_nav(p["slug"]),

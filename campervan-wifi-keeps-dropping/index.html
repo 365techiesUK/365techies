@@ -293,7 +293,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-31"
+      "dateModified": "2026-09-12"
     },
     {
       "@type": "FAQPage",
@@ -784,7 +784,142 @@
       </div>
     </section>
     <section class="section"><div class="wrap wrap--narrow prose" data-reveal><div class="apdisc" role="note"><p><strong>Independent, and dated.</strong> 365 Techies is an independent IT firm. We are not an authorised partner, reseller or agent of RUCKUS Networks, Belden, CommScope, Cisco or Cisco Meraki, and we have no access to their support entitlements on your behalf. Every date on this page comes from the vendor&rsquo;s own published notices, linked in the source column, and was checked on 27 July 2026. Where we could not verify something from a vendor source we say &ldquo;check with vendor&rdquo; rather than guess.</p></div></div></section>
-    <section class="section"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>Which link is actually dropping?<span class="title-underline"></span></h2><p class="lede">Start here. If one of these is you, the page you actually want is linked in the line &mdash; go there, it will save you an hour.</p><div class="pbfork"><ul>
+    <section class="section" aria-label="Fix it with me" id="fixflow">
+      <div class="wrap">
+      <style>
+      #fixflow .ff{max-width:860px;margin:0 auto}
+      #fixflow .ff-rev{display:block;margin-top:.5rem;font-size:.72rem;letter-spacing:.06em;color:var(--cyan-soft,#6cc4f5)}
+      #fixflow .ff-top{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin-bottom:1rem;font-size:.85rem;color:var(--muted,#9fb5d3)}
+      #fixflow .ff-os{font-weight:600;color:var(--ink,#eaf4ff)}
+      #fixflow .ff-oslink{background:none;border:0;padding:0;color:var(--cyan-soft,#6cc4f5);font:inherit;font-size:.8rem;cursor:pointer;text-decoration:underline}
+      #fixflow .ff-prog{margin-left:auto;font-family:var(--font-mono,monospace);font-size:.72rem;letter-spacing:.06em}
+      #fixflow .ff-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.55rem}
+      #fixflow .ff-step{border:1px solid var(--line,rgba(125,170,220,.16));border-radius:14px;background:rgba(255,255,255,.03);overflow:hidden}
+      #fixflow .ff-step[hidden]{display:none}
+      #fixflow .ff-head{display:flex;align-items:center;gap:.8rem;padding:.9rem 1.1rem;font-weight:700;font-size:1.02rem}
+      #fixflow .ff-num{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-mono,monospace);font-size:.75rem;border:1px solid rgba(108,196,245,.5);color:var(--cyan-soft,#6cc4f5)}
+      #fixflow .ff-step.is-done .ff-num{border-color:rgba(46,204,113,.6);color:#2ecc71}
+      #fixflow .ff-step.is-done .ff-head{opacity:.7;font-weight:600}
+      #fixflow .ff-step.is-skip .ff-num{opacity:.45}
+      #fixflow .ff-body{display:none;padding:0 1.1rem 1.1rem;font-size:.93rem;line-height:1.6;color:var(--ink-2,#dfe9f7)}
+      #fixflow .ff-step.is-on{border-color:rgba(108,196,245,.55);background:rgba(29,151,227,.07)}
+      #fixflow .ff-step.is-on .ff-body{display:block}
+      #fixflow .ff-body p{margin:0 0 .6rem}
+      #fixflow .ff-body ol{margin:0 0 .6rem 1.2rem;padding:0}
+      #fixflow .ff-body li{margin:.25rem 0}
+      #fixflow .ff-cmd{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin:.5rem 0;padding:.5rem .7rem;border-radius:9px;background:rgba(7,13,34,.7);border:1px solid rgba(125,170,220,.22)}
+      #fixflow .ff-cmd code{font-family:var(--font-mono,monospace);font-size:.82rem;color:#eaf4ff;word-break:break-all}
+      #fixflow .ff-cmd small{width:100%;font-size:.72rem;color:var(--muted,#9fb5d3)}
+      #fixflow .ff-copy{margin-left:auto;border:1px solid rgba(108,196,245,.45);background:transparent;color:var(--cyan-soft,#6cc4f5);border-radius:7px;padding:.28rem .6rem;font:inherit;font-size:.74rem;cursor:pointer;min-height:32px}
+      #fixflow .ff-copy.done{border-color:rgba(46,204,113,.6);color:#2ecc71}
+      #fixflow .ff-open{display:inline-block;margin:.2rem .4rem .5rem 0;padding:.5rem .8rem;border-radius:9px;border:1px solid rgba(108,196,245,.45);color:var(--cyan-soft,#6cc4f5);text-decoration:none;font-size:.85rem;font-weight:600}
+      #fixflow .ff:not(.is-win) .ff-open{display:none}
+      #fixflow .ff-p10{display:none} #fixflow .ff.is-w10 .ff-p10{display:inline} #fixflow .ff.is-w10 .ff-p11{display:none}
+      #fixflow .ff-fig{margin:.8rem 0 .4rem;max-width:460px}
+      #fixflow .ff-fig img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid rgba(125,170,220,.28)}
+      #fixflow .ff-fig figcaption{font-size:.72rem;color:var(--muted,#9fb5d3);margin-top:.35rem;line-height:1.5}
+      #fixflow .ff-ask{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:.8rem;padding-top:.8rem;border-top:1px dashed rgba(125,170,220,.25)}
+      #fixflow .ff-ask b{font-size:.95rem}
+      #fixflow .ff-ask .button{min-height:44px}
+      #fixflow .ff-end{margin-top:1rem;padding:1.3rem 1.4rem;border-radius:16px;border:1px solid rgba(46,204,113,.45);background:rgba(46,204,113,.07)}
+      #fixflow .ff-end[hidden]{display:none}
+      #fixflow .ff-end.is-bad{border-color:rgba(255,180,0,.5);background:rgba(255,180,0,.07)}
+      #fixflow .ff-end h3{margin:0 0 .5rem;font-size:1.25rem}
+      #fixflow .ff-end p{margin:0 0 .6rem;line-height:1.6}
+      #fixflow .ff-end .ff-cta{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:.8rem}
+      #fixflow .ff-end .ff-cta .button{min-height:44px}
+      #fixflow .ff-plan{margin-top:1rem;padding:1rem 1.1rem;border-radius:12px;border:1px solid rgba(125,170,220,.25);background:rgba(255,255,255,.03);font-size:.9rem;line-height:1.6}
+      #fixflow .ff-plan b{color:var(--cyan-soft,#6cc4f5)}
+      @media(max-width:560px){#fixflow .ff-ask .button,#fixflow .ff-end .ff-cta .button{width:100%}#fixflow .ff-prog{margin-left:0}}
+      </style>
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// DIAGNOSE IT WITH ME &middot; CHECK BY CHECK</p>
+          <h2 class="section-title section-title--center" data-title>Find which link is dropping, one check at a time<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>The checks from this playbook, one at a time. Do each one and it shows the next. Nothing here leaves your device.<span class="ff-rev mono">Last reviewed 12 September 2026</span></p>
+        </div>
+        <div class="ff" id="ff">
+          <div class="ff-top"><span class="ff-os" id="ff-os">Checking which Windows you have&hellip;</span><button type="button" class="ff-oslink" id="ff-ostoggle" hidden>Not right? Switch to Windows 10</button><span class="ff-prog" id="ff-prog">STEP 1 OF 5</span></div>
+          <ol class="ff-steps" id="ff-steps">
+            <li class="ff-step is-on" data-step="1">
+              <div class="ff-head"><span class="ff-num">01</span>Which link is actually dropping?</div>
+              <div class="ff-body"><p>Everything on board loses connection at the same moment, phones and laptops together. That is not five devices failing at once &mdash; it is the one thing they all share. <a href="#s1">Full detail in the playbook below &#8595;</a></p><div class="ff-ask"><b>Done that check?</b><button type="button" class="button primary" data-go="2">Done, next check</button><button type="button" class="button secondary" data-go="stuck">I am stuck here</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="2" hidden>
+              <div class="ff-head"><span class="ff-num">02</span>Note when it drops</div>
+              <div class="ff-body"><p>Before you buy anything, spend two days writing down when it went rather than how bad it felt. In a vehicle the timing is more diagnostic than any measurement, because each of the four links fails on its own schedule. <a href="#s2">Full detail in the playbook below &#8595;</a></p><div class="ff-ask"><b>Done that check?</b><button type="button" class="button primary" data-go="3">Done, next check</button><button type="button" class="button secondary" data-go="stuck">I am stuck here</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="3" hidden>
+              <div class="ff-head"><span class="ff-num">03</span>Check the 12V trap</div>
+              <div class="ff-body"><p>A router does not have to lose power to fall over. It only has to see the supply dip below the point where its internal regulator gives up, at which point it restarts and everything on board loses connection at the same instant. <a href="#s3">Full detail in the playbook below &#8595;</a></p><div class="ff-ask"><b>Done that check?</b><button type="button" class="button primary" data-go="4">Done, next check</button><button type="button" class="button secondary" data-go="stuck">I am stuck here</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="4" hidden>
+              <div class="ff-head"><span class="ff-num">04</span>Check the metal box problem</div>
+              <div class="ff-body"><p>A van body is a very good radio shield. Steel panels, aluminium skins, foil-faced insulation board and metallised window film all do much the same thing to a WiFi signal, and they do it in every direction. <a href="#s4">Full detail in the playbook below &#8595;</a></p><div class="ff-ask"><b>Done that check?</b><button type="button" class="button primary" data-go="5">Done, next check</button><button type="button" class="button secondary" data-go="stuck">I am stuck here</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="5" hidden>
+              <div class="ff-head"><span class="ff-num">05</span>Check the booster trap</div>
+              <div class="ff-body"><p>A WiFi booster amplifies the link between you and the campsite&rsquo;s access point. That is all it does. <a href="#s5">Full detail in the playbook below &#8595;</a></p><div class="ff-ask"><b>Done that check?</b><button type="button" class="button primary" data-go="fixed">Done, next check</button><button type="button" class="button secondary" data-go="stuck">I am stuck here</button></div>
+              </div>
+            </li>
+          </ol>
+          <div class="ff-end" id="ff-end" hidden></div>
+          <template id="ff-tpl-fixed"><h3>Checks done{mins}. Now you know which fault it is.</h3><p>The &ldquo;which fix matches which fault&rdquo; section below pairs what you found with the one change that fixes it.</p><div class="ff-cta"><a class="button primary" href="/monthly-it-support/">See the support plans &#8594;</a><a class="button secondary" href="/free-pc-health-check/">Get the free app</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div></template>
+          <template id="ff-tpl-stuck"><h3>Stuck on a check? Send us what you have so far.</h3><p>Call, or send the drop diary through the contact page; a same-day answer is usual.</p><div class="ff-cta"><a class="button primary" href="tel:+441202775566">Call 01202 775566</a><a class="button secondary" href="sms:+447520615332">Text 07520 615332</a><a class="button bm-ghost" href="/remote-support/">How remote help works</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div></template>
+          <template id="ff-tpl-text">Campervan WiFi Keeps Dropping? Diagnose It First - the checks (365techies.co.uk/campervan-wifi-keeps-dropping/)
+1. Which link is actually dropping?: Everything on board loses connection at the same moment, phones and laptops together. That is not five devices failing at once — it is the one thing they all share.
+2. Note when it drops: Before you buy anything, spend two days writing down when it went rather than how bad it felt. In a vehicle the timing is more diagnostic than any measurement, because each of the four links fails on its own schedule.
+3. Check the 12V trap: A router does not have to lose power to fall over. It only has to see the supply dip below the point where its internal regulator gives up, at which point it restarts and everything on board loses connection at the same instant.
+4. Check the metal box problem: A van body is a very good radio shield. Steel panels, aluminium skins, foil-faced insulation board and metallised window film all do much the same thing to a WiFi signal, and they do it in every direction.
+5. Check the booster trap: A WiFi booster amplifies the link between you and the campsite’s access point. That is all it does.
+Stuck? Call 365 Techies on 01202 775566 or send the details: https://365techies.co.uk/contact/</template>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var root=document.getElementById('ff'); if(!root) return;
+        var steps=Array.prototype.slice.call(root.querySelectorAll('.ff-step')), N=steps.length, endEl=root.querySelector('#ff-end'), prog=root.querySelector('#ff-prog');
+        var osEl=root.querySelector('#ff-os'), tog=root.querySelector('#ff-ostoggle'), t0=null, w10=false, isWin=/Windows/i.test(navigator.userAgent);
+        root.classList.toggle('is-win',isWin);
+        function setOS(ten,label){ w10=ten; root.classList.toggle('is-w10',ten); osEl.textContent=label; tog.hidden=!isWin; tog.textContent=ten?'Not right? Switch to Windows 11':'Not right? Switch to Windows 10'; }
+        if(root.getAttribute('data-os')==='1'){
+          if(!isWin){ setOS(false,'These steps are for Windows; you seem to be on another device, so keep them for the PC.'); }
+          else if(navigator.userAgentData&&navigator.userAgentData.getHighEntropyValues){
+            navigator.userAgentData.getHighEntropyValues(['platformVersion']).then(function(v){ var maj=parseInt(String(v.platformVersion||'').split('.')[0],10);
+              if(maj>=13) setOS(false,'You are on Windows 11, so the paths below match your Settings app.'); else if(maj>0) setOS(true,'You are on Windows 10, so the paths below match your Settings app.'); else setOS(false,'Windows 10 or 11: paths shown for Windows 11.'); }).catch(function(){ setOS(false,'Windows 10 or 11: paths shown for Windows 11.'); });
+          } else setOS(false,'Windows 10 or 11: paths shown for Windows 11.');
+          tog.addEventListener('click',function(){ setOS(!w10,w10?'Showing the Windows 11 paths.':'Showing the Windows 10 paths.'); });
+        } else { osEl.hidden=true; tog.hidden=true; }
+        function tpl(id,text){ var t=root.querySelector('#'+id); if(!t) return ''; return text?(t.content?t.content.textContent:t.textContent):t.innerHTML; }
+        function show(n){ steps.forEach(function(s){ var k=parseInt(s.getAttribute('data-step'),10); s.hidden=k>n; s.classList.toggle('is-on',k===n); if(k<n&&!s.classList.contains('is-done')) s.classList.add('is-skip'); }); prog.textContent='STEP '+n+' OF '+N; var cur=steps[n-1]; if(cur) cur.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+        function finish(kind){
+          steps.forEach(function(s){ s.classList.remove('is-on'); });
+          var mins=t0?Math.max(1,Math.round((Date.now()-t0)/60000)):null, minsTxt=mins?(' in about '+mins+' minute'+(mins===1?'':'s')):'';
+          endEl.className='ff-end'+(kind==='stuck'?' is-bad':''); endEl.innerHTML=tpl(kind==='fixed'?'ff-tpl-fixed':'ff-tpl-stuck').split('{mins}').join(minsTxt);
+          prog.textContent=kind==='fixed'?'DONE':'NEEDS A TECHIE'; endEl.hidden=false; endEl.scrollIntoView({behavior:'smooth',block:'nearest'});
+          var c=endEl.querySelector('#ff-copyall'); if(c) c.addEventListener('click',function(){ copyText(tpl('ff-tpl-text',true).replace(/^\s+|\s+$/g,''),c,'Copy these steps'); });
+        }
+        function copyText(txt,btn,label){ function ok(){ btn.textContent='Copied'; btn.classList.add('done'); setTimeout(function(){ btn.textContent=label; btn.classList.remove('done'); },1800); }
+          if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(ok).catch(function(){}); }
+          else{ var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); ok(); }catch(e){} document.body.removeChild(ta); } }
+        root.addEventListener('click',function(e){
+          var b=e.target.closest('button'); if(!b) return;
+          if(b.classList.contains('ff-copy')){ copyText(b.getAttribute('data-copy'),b,'Copy'); return; }
+          var go=b.getAttribute('data-go'); if(!go) return;
+          if(!t0) t0=Date.now();
+          var cur=b.closest('.ff-step'); if(cur){ cur.classList.add('is-done'); }
+          if(go==='fixed'||go==='stuck'){ finish(go); return; }
+          var n=parseInt(go,10); var note=b.getAttribute('data-note'); var noteEl=root.querySelector('#ff-note'+n); if(noteEl){ noteEl.hidden=!note; noteEl.innerHTML=note?'<b>'+note+'</b>':''; }
+          endEl.hidden=true; show(n);
+        });
+      })();
+      </script>
+    </section>
+
+    <section id="s1" class="section"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>Which link is actually dropping?<span class="title-underline"></span></h2><p class="lede">Start here. If one of these is you, the page you actually want is linked in the line &mdash; go there, it will save you an hour.</p><div class="pbfork"><ul>
 <li><strong>Everything on board loses connection at the same moment, phones and laptops together.</strong> That is not five devices failing at once &mdash; it is the one thing they all share. Either the router restarted, or its link to the mast dropped. Watch the router&rsquo;s own lights during the next drop: if it runs through a boot sequence, this is a power question and not a signal one.</li>
 <li><strong>One device drops while another sitting beside it stays connected.</strong> Link 1, the short hop from your device to your own router, inside a metal box. Older laptop WiFi cards and anything tucked in a locker suffer first. Moving the router usually fixes it, and it costs nothing.</li>
 <li><strong>Full bars on the router, but pages will not load.</strong> Link 2, your router to the mobile mast. Signal strength only tells you the mast can be heard. It says nothing about whether the mast has capacity left, or whether your allowance has been used up or throttled. A strong signal to a congested mast looks perfect right up until you try to use it.</li>
@@ -796,22 +931,22 @@
 <li><strong>A boat on a mooring.</strong> Same instincts, different constraints &mdash; see <a href="/broadband-to-a-boat-mooring/">getting broadband to a boat mooring</a>.</li>
 <li><strong>A shepherd&rsquo;s hut, annexe or outbuilding that never moves.</strong> A fixed link from the main property beats mobile data every time &mdash; see <a href="/wifi-for-a-shepherds-hut/">WiFi for a shepherd&rsquo;s hut</a> or <a href="/wifi-in-a-granny-annexe/">WiFi in a granny annexe</a>.</li>
 </ul></div></div></section>
-    <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>When it drops tells you what it is<span class="title-underline"></span></h2><p>Before you buy anything, spend two days writing down <em>when</em> it went rather than how bad it felt. In a vehicle the timing is more diagnostic than any measurement, because each of the four links fails on its own schedule.</p>
+    <section id="s2" class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>When it drops tells you what it is<span class="title-underline"></span></h2><p>Before you buy anything, spend two days writing down <em>when</em> it went rather than how bad it felt. In a vehicle the timing is more diagnostic than any measurement, because each of the four links fails on its own schedule.</p>
 <p><strong>Fine at two in the morning, unusable from about six in the evening, worse at weekends and in school holidays.</strong> That is contention, and it is almost never your equipment. A campsite often has one connection &mdash; sometimes an ordinary domestic line &mdash; shared across every pitch. When the site fills up and everyone starts streaming after dinner, that single line is the ceiling for all of them at once. Your kit is working properly; there is simply nothing left to hand it.</p>
 <p><strong>Drops while you are driving, then comes back on its own after a minute or two.</strong> It is worth being precise here, because the usual explanation is wrong. Handing over from one mast to the next is fast &mdash; the interruption is measured in milliseconds, and you would never see it as a dropout. A gap of a minute means something else: the router lost usable coverage altogether and had to find and re-attach to a new cell. That is what happens in cuttings, wooded valleys and the long rural gaps between masts. Switching between 4G and 5G takes longer than moving between two cells of the same type, so patchy 5G can make the experience worse rather than better. The sting is that even a very brief break kills anything live &mdash; a call, a video meeting, a VPN &mdash; because those sessions do not survive an interruption, so a short radio problem feels like a long one.</p>
 <p><strong>Drops at a regular interval on site WiFi, and reconnecting fixes it until it happens again.</strong> That is not a fault at all. It is the captive portal, the login page with the terms you accepted, timing your session out. The length is set by the site, so it varies from one to the next. Some sites also cap how many devices one pitch may use, so the phone that logs in knocks the tablet off. Nothing you buy stops this, and a booster simply gives you a stronger connection to the same portal.</p>
 <p><strong>Drops when the engine starts, when the fridge cuts in, or around the moment you notice the lights flicker.</strong> Stop looking at the radio side entirely. That is the 12V supply, and it is the next section.</p></div></section>
-    <section class="section"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>The 12V trap nobody checks<span class="title-underline"></span></h2><div class="apcall apcall--adv"><span class="apcall__tag">Vendor advisory</span><div class="apcall__body"><p>A router does not have to lose power to fall over. It only has to see the supply dip below the point where its internal regulator gives up, at which point it restarts and everything on board loses connection at the same instant. That looks exactly like a signal problem, and it is not one.</p>
+    <section id="s3" class="section"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>The 12V trap nobody checks<span class="title-underline"></span></h2><div class="apcall apcall--adv"><span class="apcall__tag">Vendor advisory</span><div class="apcall__body"><p>A router does not have to lose power to fall over. It only has to see the supply dip below the point where its internal regulator gives up, at which point it restarts and everything on board loses connection at the same instant. That looks exactly like a signal problem, and it is not one.</p>
 <p>What makes it so hard to catch is that cabin lighting is a poor witness. Many modern LED fittings are regulated and hold their brightness a long way down the range, so by the time you can see them dim the supply has often already fallen past what a router will tolerate. Add a compressor fridge cutting in, an inverter starting, or a kettle on a long thin cable run, and you get a brief sag that nothing in the van displays. The tell is that the drops correlate with <em>appliances</em> rather than with location or signal.</p>
 <p>Chase it by measuring the supply at the router&rsquo;s own terminals while the heaviest load in the van is running &mdash; not at the battery, and not at rest. Voltage measured at rest tells you almost nothing, because the loss happens in the cable, the fuse holder and the connections between the two. Every piece of equipment has its own cut-off, so read your router&rsquo;s manual for its stated input range rather than trusting a figure from a forum. We run our own off-grid van on a Victron system, so this is a fault we have been on the wrong end of ourselves. It is nearly always a thin feed, a tired crimp or a shared fuse, and hardly ever the router.</p></div></div></div></section>
-    <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>The metal box problem<span class="title-underline"></span></h2><p>A van body is a very good radio shield. Steel panels, aluminium skins, foil-faced insulation board and metallised window film all do much the same thing to a WiFi signal, and they do it in every direction. Put a router in a locker and you have asked it to broadcast out of a metal box, through more metal.</p>
+    <section id="s4" class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>The metal box problem<span class="title-underline"></span></h2><p>A van body is a very good radio shield. Steel panels, aluminium skins, foil-faced insulation board and metallised window film all do much the same thing to a WiFi signal, and they do it in every direction. Put a router in a locker and you have asked it to broadcast out of a metal box, through more metal.</p>
 <p>This matters differently for each link. For Link 1 &mdash; your laptop or phone to your own router &mdash; the fix is usually free: move the router. As a rule of thumb, if shifting it half a metre towards a window noticeably changes what your devices see, the vehicle itself is part of the problem, and no equipment upgrade will out-muscle bodywork. Height and line of sight beat transmit power inside a small space.</p>
 <p>For Link 2 &mdash; your router to the mast &mdash; an external antenna is where money genuinely earns its keep, because it puts the receiving element outside the shield instead of inside it. A roof mount with a clear horizon is the honest version of this. It is worth being equally clear about where it does <em>not</em> help: an external antenna does little for a congested mast, nothing for an exhausted data allowance, and nothing whatsoever for a campsite&rsquo;s overloaded connection. It addresses weak signal, and mainly weak signal.</p>
 <p>Two rules of thumb are worth knowing before you order. First, keep the antenna cable as short as the mount allows &mdash; thin coax gives back some of what the antenna gained, and a long run of cheap cable can cancel out the upgrade entirely. Second, a window mount is a real compromise rather than a bodge: it gets the antenna past the bodywork without drilling the roof, and for people who only need it parked up rather than in motion it is often enough.</p></div></section>
-    <section class="section"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>The booster trap<span class="title-underline"></span></h2><div class="apcall apcall--adv"><span class="apcall__tag">Vendor advisory</span><div class="apcall__body"><p>A WiFi booster amplifies the link between you and the campsite&rsquo;s access point. That is all it does. It cannot create bandwidth the campsite has not got, and it cannot make the site&rsquo;s own connection any larger. If forty vans are sharing one domestic-grade line, a stronger signal to a saturated uplink changes nothing except how quickly you reach the same ceiling.</p>
+    <section id="s5" class="section"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>The booster trap<span class="title-underline"></span></h2><div class="apcall apcall--adv"><span class="apcall__tag">Vendor advisory</span><div class="apcall__body"><p>A WiFi booster amplifies the link between you and the campsite&rsquo;s access point. That is all it does. It cannot create bandwidth the campsite has not got, and it cannot make the site&rsquo;s own connection any larger. If forty vans are sharing one domestic-grade line, a stronger signal to a saturated uplink changes nothing except how quickly you reach the same ceiling.</p>
 <p>You can settle this before you spend a penny. Run a speed test standing near the site&rsquo;s hub &mdash; usually reception, the bar or the shop &mdash; then run the same test back at your pitch. If the pitch is slow and the hub is fast, that is a signal problem and a booster is a reasonable purchase. If <em>both</em> are slow, the site&rsquo;s connection is the limit, and no aerial, booster or repeater will improve it. Our <a href="/broadband-speed-checker/">free speed checker</a> runs in a browser and needs no sign-up, so this is a ten-minute test with a definite answer.</p>
 <p>Do it twice more if you can: once at eight in the evening, once early the following morning. A site that is quick at 7am and unusable at 8pm has a capacity problem, and capacity problems belong to the site to fix rather than to you to buy your way around.</p></div></div></div></section>
-    <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>Which fix matches which fault<span class="title-underline"></span></h2><div class="table-wrap"><table class="table">
+    <section id="s6" class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>Which fix matches which fault<span class="title-underline"></span></h2><div class="table-wrap"><table class="table">
 <thead><tr><th>Symptom</th><th>Most likely link</th><th>What actually helps</th></tr></thead>
 <tbody>
 <tr><td>Fine at 2am, unusable at 8pm</td><td>Link 3 &mdash; the campsite&rsquo;s own connection</td><td>Nothing fitted to the van. Use your own mobile data at peak times, or do large downloads early.</td></tr>
@@ -822,7 +957,7 @@
 <tr><td>Works outside the van, not inside</td><td>Link 1 &mdash; the vehicle body</td><td>Move the router to a window or higher position. If that helps, an external or window-mounted antenna is the permanent version.</td></tr>
 </tbody>
 </table></div></div></section>
-    <section class="section"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>Do not buy this yet<span class="title-underline"></span></h2><div class="apcall apcall--field"><span class="apcall__tag">Commonly reported &mdash; not vendor-confirmed</span><div class="apcall__body"><p>Most of what gets ordered after a bad week on site turns out to be the wrong thing for the fault that caused the bad week. Roughly in the order we see them go wrong:</p>
+    <section id="s7" class="section"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>Do not buy this yet<span class="title-underline"></span></h2><div class="apcall apcall--field"><span class="apcall__tag">Commonly reported &mdash; not vendor-confirmed</span><div class="apcall__body"><p>Most of what gets ordered after a bad week on site turns out to be the wrong thing for the fault that caused the bad week. Roughly in the order we see them go wrong:</p>
 <ul>
 <li><strong>A booster, for a congestion fault.</strong> Easy to order after a bad weekend, and useless if the site&rsquo;s own line is the limit. Do the two-speed-test check above first; if the site&rsquo;s hub is slow as well, put your money away.</li>
 <li><strong>Satellite, for occasional weekends on serviced sites.</strong> If you are on hookup at a proper site a handful of times a year, satellite is a lot of kit, a lot of roof and a real power draw to solve a problem a phone hotspot handles most of the time.</li>

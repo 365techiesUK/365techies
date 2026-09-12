@@ -293,7 +293,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-31"
+      "dateModified": "2026-09-12"
     },
     {
       "@type": "FAQPage",
@@ -784,7 +784,136 @@
       </div>
     </section>
     <section class="section"><div class="wrap wrap--narrow prose" data-reveal><div class="apdisc" role="note"><p><strong>Independent, and dated.</strong> 365 Techies is an independent IT firm. We are not an authorised partner, reseller or agent of RUCKUS Networks, Belden, CommScope, Cisco or Cisco Meraki, and we have no access to their support entitlements on your behalf. Every date on this page comes from the vendor&rsquo;s own published notices, linked in the source column, and was checked on 27 July 2026. Where we could not verify something from a vendor source we say &ldquo;check with vendor&rdquo; rather than guess.</p></div></div></section>
-    <section class="section"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>Which fault is this really?<span class="title-underline"></span></h2><p class="lede">Start here. If one of these is you, the page you actually want is linked in the line &mdash; go there, it will save you an hour.</p><div class="pbfork"><p>Six complaints get described in the same words. Only one of them is a roaming fault, and the fix for the other five is somewhere else entirely. Find yours before you change a single setting.</p>
+    <section class="section" aria-label="Fix it with me" id="fixflow">
+      <div class="wrap">
+      <style>
+      #fixflow .ff{max-width:860px;margin:0 auto}
+      #fixflow .ff-rev{display:block;margin-top:.5rem;font-size:.72rem;letter-spacing:.06em;color:var(--cyan-soft,#6cc4f5)}
+      #fixflow .ff-top{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin-bottom:1rem;font-size:.85rem;color:var(--muted,#9fb5d3)}
+      #fixflow .ff-os{font-weight:600;color:var(--ink,#eaf4ff)}
+      #fixflow .ff-oslink{background:none;border:0;padding:0;color:var(--cyan-soft,#6cc4f5);font:inherit;font-size:.8rem;cursor:pointer;text-decoration:underline}
+      #fixflow .ff-prog{margin-left:auto;font-family:var(--font-mono,monospace);font-size:.72rem;letter-spacing:.06em}
+      #fixflow .ff-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.55rem}
+      #fixflow .ff-step{border:1px solid var(--line,rgba(125,170,220,.16));border-radius:14px;background:rgba(255,255,255,.03);overflow:hidden}
+      #fixflow .ff-step[hidden]{display:none}
+      #fixflow .ff-head{display:flex;align-items:center;gap:.8rem;padding:.9rem 1.1rem;font-weight:700;font-size:1.02rem}
+      #fixflow .ff-num{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-mono,monospace);font-size:.75rem;border:1px solid rgba(108,196,245,.5);color:var(--cyan-soft,#6cc4f5)}
+      #fixflow .ff-step.is-done .ff-num{border-color:rgba(46,204,113,.6);color:#2ecc71}
+      #fixflow .ff-step.is-done .ff-head{opacity:.7;font-weight:600}
+      #fixflow .ff-step.is-skip .ff-num{opacity:.45}
+      #fixflow .ff-body{display:none;padding:0 1.1rem 1.1rem;font-size:.93rem;line-height:1.6;color:var(--ink-2,#dfe9f7)}
+      #fixflow .ff-step.is-on{border-color:rgba(108,196,245,.55);background:rgba(29,151,227,.07)}
+      #fixflow .ff-step.is-on .ff-body{display:block}
+      #fixflow .ff-body p{margin:0 0 .6rem}
+      #fixflow .ff-body ol{margin:0 0 .6rem 1.2rem;padding:0}
+      #fixflow .ff-body li{margin:.25rem 0}
+      #fixflow .ff-cmd{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin:.5rem 0;padding:.5rem .7rem;border-radius:9px;background:rgba(7,13,34,.7);border:1px solid rgba(125,170,220,.22)}
+      #fixflow .ff-cmd code{font-family:var(--font-mono,monospace);font-size:.82rem;color:#eaf4ff;word-break:break-all}
+      #fixflow .ff-cmd small{width:100%;font-size:.72rem;color:var(--muted,#9fb5d3)}
+      #fixflow .ff-copy{margin-left:auto;border:1px solid rgba(108,196,245,.45);background:transparent;color:var(--cyan-soft,#6cc4f5);border-radius:7px;padding:.28rem .6rem;font:inherit;font-size:.74rem;cursor:pointer;min-height:32px}
+      #fixflow .ff-copy.done{border-color:rgba(46,204,113,.6);color:#2ecc71}
+      #fixflow .ff-open{display:inline-block;margin:.2rem .4rem .5rem 0;padding:.5rem .8rem;border-radius:9px;border:1px solid rgba(108,196,245,.45);color:var(--cyan-soft,#6cc4f5);text-decoration:none;font-size:.85rem;font-weight:600}
+      #fixflow .ff:not(.is-win) .ff-open{display:none}
+      #fixflow .ff-p10{display:none} #fixflow .ff.is-w10 .ff-p10{display:inline} #fixflow .ff.is-w10 .ff-p11{display:none}
+      #fixflow .ff-fig{margin:.8rem 0 .4rem;max-width:460px}
+      #fixflow .ff-fig img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid rgba(125,170,220,.28)}
+      #fixflow .ff-fig figcaption{font-size:.72rem;color:var(--muted,#9fb5d3);margin-top:.35rem;line-height:1.5}
+      #fixflow .ff-ask{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:.8rem;padding-top:.8rem;border-top:1px dashed rgba(125,170,220,.25)}
+      #fixflow .ff-ask b{font-size:.95rem}
+      #fixflow .ff-ask .button{min-height:44px}
+      #fixflow .ff-end{margin-top:1rem;padding:1.3rem 1.4rem;border-radius:16px;border:1px solid rgba(46,204,113,.45);background:rgba(46,204,113,.07)}
+      #fixflow .ff-end[hidden]{display:none}
+      #fixflow .ff-end.is-bad{border-color:rgba(255,180,0,.5);background:rgba(255,180,0,.07)}
+      #fixflow .ff-end h3{margin:0 0 .5rem;font-size:1.25rem}
+      #fixflow .ff-end p{margin:0 0 .6rem;line-height:1.6}
+      #fixflow .ff-end .ff-cta{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:.8rem}
+      #fixflow .ff-end .ff-cta .button{min-height:44px}
+      #fixflow .ff-plan{margin-top:1rem;padding:1rem 1.1rem;border-radius:12px;border:1px solid rgba(125,170,220,.25);background:rgba(255,255,255,.03);font-size:.9rem;line-height:1.6}
+      #fixflow .ff-plan b{color:var(--cyan-soft,#6cc4f5)}
+      @media(max-width:560px){#fixflow .ff-ask .button,#fixflow .ff-end .ff-cta .button{width:100%}#fixflow .ff-prog{margin-left:0}}
+      </style>
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// DIAGNOSE IT WITH ME &middot; CHECK BY CHECK</p>
+          <h2 class="section-title section-title--center" data-title>Pin the fault down with me, one check at a time<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>The checks from this playbook, one at a time. Do each one and it shows the next. Nothing here leaves your device.<span class="ff-rev mono">Last reviewed 12 September 2026</span></p>
+        </div>
+        <div class="ff" id="ff">
+          <div class="ff-top"><span class="ff-os" id="ff-os">Checking which Windows you have&hellip;</span><button type="button" class="ff-oslink" id="ff-ostoggle" hidden>Not right? Switch to Windows 10</button><span class="ff-prog" id="ff-prog">STEP 1 OF 4</span></div>
+          <ol class="ff-steps" id="ff-steps">
+            <li class="ff-step is-on" data-step="1">
+              <div class="ff-head"><span class="ff-num">01</span>Work out which fault this really is</div>
+              <div class="ff-body"><p>Six complaints get described in the same words. Only one of them is a roaming fault, and the fix for the other five is somewhere else entirely. <a href="#s1">Full detail in the playbook below &#8595;</a></p><div class="ff-ask"><b>Done that check?</b><button type="button" class="button primary" data-go="2">Done, next check</button><button type="button" class="button secondary" data-go="stuck">I am stuck here</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="2" hidden>
+              <div class="ff-head"><span class="ff-num">02</span>Walk it, then read it: the ordered diagnosis</div>
+              <div class="ff-body"><p>Pick one fixed route and write it down. Same start, same finish, same doors, same walking pace. <a href="#s3">Full detail in the playbook below &#8595;</a></p><div class="ff-ask"><b>Done that check?</b><button type="button" class="button primary" data-go="3">Done, next check</button><button type="button" class="button secondary" data-go="stuck">I am stuck here</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="3" hidden>
+              <div class="ff-head"><span class="ff-num">03</span>Match where the fault shows itself</div>
+              <div class="ff-body"><p>Symptom Likely cause First thing to check Laptop keeps the far access point after walking Classic sticky client in an estate with no real cell edges Transmit power across the whole estate, then the minimum data rate. Look for &ldquo;every access point audible from everywhere&rdquo;. <a href="#s6">Full detail in the playbook below &#8595;</a></p><div class="ff-ask"><b>Done that check?</b><button type="button" class="button primary" data-go="4">Done, next check</button><button type="button" class="button secondary" data-go="stuck">I am stuck here</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="4" hidden>
+              <div class="ff-head"><span class="ff-num">04</span>Prove the change actually worked</div>
+              <div class="ff-body"><p>Roaming is an easy fault to convince yourself you have fixed, because the evidence is a walking human being with an opinion. Two people can walk the same corridor an hour apart and come back with opposite verdicts, both honestly reported. <a href="#s7">Full detail in the playbook below &#8595;</a></p><div class="ff-ask"><b>Done that check?</b><button type="button" class="button primary" data-go="fixed">Done, next check</button><button type="button" class="button secondary" data-go="stuck">I am stuck here</button></div>
+              </div>
+            </li>
+          </ol>
+          <div class="ff-end" id="ff-end" hidden></div>
+          <template id="ff-tpl-fixed"><h3>Checks done{mins}. Now you know which fault it is.</h3><p>Change one thing at a time, and re-walk the same route after each change.</p><div class="ff-cta"><a class="button primary" href="/monthly-it-support/">See the support plans &#8594;</a><a class="button secondary" href="/free-pc-health-check/">Get the free app</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div></template>
+          <template id="ff-tpl-stuck"><h3>Stuck on a check? Send us what you have so far.</h3><p>Call, or send the drop diary through the contact page; a same-day answer is usual.</p><div class="ff-cta"><a class="button primary" href="tel:+441202775566">Call 01202 775566</a><a class="button secondary" href="sms:+447520615332">Text 07520 615332</a><a class="button bm-ghost" href="/remote-support/">How remote help works</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div></template>
+          <template id="ff-tpl-text">WiFi Drops When Moving Between Access Points - the checks (365techies.co.uk/wifi-drops-moving-between-access-points/)
+1. Work out which fault this really is: Six complaints get described in the same words. Only one of them is a roaming fault, and the fix for the other five is somewhere else entirely.
+2. Walk it, then read it: the ordered diagnosis: Pick one fixed route and write it down. Same start, same finish, same doors, same walking pace.
+3. Match where the fault shows itself: Symptom Likely cause First thing to check Laptop keeps the far access point after walking Classic sticky client in an estate with no real cell edges Transmit power across the whole estate, then the minimum data rate. Look for “every access point audible from everywhere”.
+4. Prove the change actually worked: Roaming is an easy fault to convince yourself you have fixed, because the evidence is a walking human being with an opinion. Two people can walk the same corridor an hour apart and come back with opposite verdicts, both honestly reported.
+Stuck? Call 365 Techies on 01202 775566 or send the details: https://365techies.co.uk/contact/</template>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var root=document.getElementById('ff'); if(!root) return;
+        var steps=Array.prototype.slice.call(root.querySelectorAll('.ff-step')), N=steps.length, endEl=root.querySelector('#ff-end'), prog=root.querySelector('#ff-prog');
+        var osEl=root.querySelector('#ff-os'), tog=root.querySelector('#ff-ostoggle'), t0=null, w10=false, isWin=/Windows/i.test(navigator.userAgent);
+        root.classList.toggle('is-win',isWin);
+        function setOS(ten,label){ w10=ten; root.classList.toggle('is-w10',ten); osEl.textContent=label; tog.hidden=!isWin; tog.textContent=ten?'Not right? Switch to Windows 11':'Not right? Switch to Windows 10'; }
+        if(root.getAttribute('data-os')==='1'){
+          if(!isWin){ setOS(false,'These steps are for Windows; you seem to be on another device, so keep them for the PC.'); }
+          else if(navigator.userAgentData&&navigator.userAgentData.getHighEntropyValues){
+            navigator.userAgentData.getHighEntropyValues(['platformVersion']).then(function(v){ var maj=parseInt(String(v.platformVersion||'').split('.')[0],10);
+              if(maj>=13) setOS(false,'You are on Windows 11, so the paths below match your Settings app.'); else if(maj>0) setOS(true,'You are on Windows 10, so the paths below match your Settings app.'); else setOS(false,'Windows 10 or 11: paths shown for Windows 11.'); }).catch(function(){ setOS(false,'Windows 10 or 11: paths shown for Windows 11.'); });
+          } else setOS(false,'Windows 10 or 11: paths shown for Windows 11.');
+          tog.addEventListener('click',function(){ setOS(!w10,w10?'Showing the Windows 11 paths.':'Showing the Windows 10 paths.'); });
+        } else { osEl.hidden=true; tog.hidden=true; }
+        function tpl(id,text){ var t=root.querySelector('#'+id); if(!t) return ''; return text?(t.content?t.content.textContent:t.textContent):t.innerHTML; }
+        function show(n){ steps.forEach(function(s){ var k=parseInt(s.getAttribute('data-step'),10); s.hidden=k>n; s.classList.toggle('is-on',k===n); if(k<n&&!s.classList.contains('is-done')) s.classList.add('is-skip'); }); prog.textContent='STEP '+n+' OF '+N; var cur=steps[n-1]; if(cur) cur.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+        function finish(kind){
+          steps.forEach(function(s){ s.classList.remove('is-on'); });
+          var mins=t0?Math.max(1,Math.round((Date.now()-t0)/60000)):null, minsTxt=mins?(' in about '+mins+' minute'+(mins===1?'':'s')):'';
+          endEl.className='ff-end'+(kind==='stuck'?' is-bad':''); endEl.innerHTML=tpl(kind==='fixed'?'ff-tpl-fixed':'ff-tpl-stuck').split('{mins}').join(minsTxt);
+          prog.textContent=kind==='fixed'?'DONE':'NEEDS A TECHIE'; endEl.hidden=false; endEl.scrollIntoView({behavior:'smooth',block:'nearest'});
+          var c=endEl.querySelector('#ff-copyall'); if(c) c.addEventListener('click',function(){ copyText(tpl('ff-tpl-text',true).replace(/^\s+|\s+$/g,''),c,'Copy these steps'); });
+        }
+        function copyText(txt,btn,label){ function ok(){ btn.textContent='Copied'; btn.classList.add('done'); setTimeout(function(){ btn.textContent=label; btn.classList.remove('done'); },1800); }
+          if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(ok).catch(function(){}); }
+          else{ var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); ok(); }catch(e){} document.body.removeChild(ta); } }
+        root.addEventListener('click',function(e){
+          var b=e.target.closest('button'); if(!b) return;
+          if(b.classList.contains('ff-copy')){ copyText(b.getAttribute('data-copy'),b,'Copy'); return; }
+          var go=b.getAttribute('data-go'); if(!go) return;
+          if(!t0) t0=Date.now();
+          var cur=b.closest('.ff-step'); if(cur){ cur.classList.add('is-done'); }
+          if(go==='fixed'||go==='stuck'){ finish(go); return; }
+          var n=parseInt(go,10); var note=b.getAttribute('data-note'); var noteEl=root.querySelector('#ff-note'+n); if(noteEl){ noteEl.hidden=!note; noteEl.innerHTML=note?'<b>'+note+'</b>':''; }
+          endEl.hidden=true; show(n);
+        });
+      })();
+      </script>
+    </section>
+
+    <section id="s1" class="section"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>Which fault is this really?<span class="title-underline"></span></h2><p class="lede">Start here. If one of these is you, the page you actually want is linked in the line &mdash; go there, it will save you an hour.</p><div class="pbfork"><p>Six complaints get described in the same words. Only one of them is a roaming fault, and the fix for the other five is somewhere else entirely. Find yours before you change a single setting.</p>
 <ul>
 <li><strong>It only fails when someone is walking.</strong> Sitting at a desk, everything is fine. Cross the building on a call or a stock lookup and the session dies, then recovers a few seconds later in a new spot. That is a roaming fault, and this is the page for it &mdash; keep reading.</li>
 <li><strong>Access points drop off the controller on a timetable, whether anyone is moving or not.</strong> The same units, at roughly the same times, often overnight or on the hour. That is an infrastructure fault and nothing to do with roaming. Start with <a href="/access-points-dropping-off-controller/">access points dropping off the controller</a>.</li>
@@ -793,14 +922,14 @@
 <li><strong>A home or small-office mesh system rather than a managed estate.</strong> Different kit, different settings, different answers. Start with our <a href="/mesh-wifi-setup-guide/">mesh WiFi setup guide</a>.</li>
 <li><strong>Wired machines stutter at the same moments.</strong> If a desktop on a cable hesitates when the walkers complain, the WiFi is a bystander and the problem is upstream. Start at <a href="/broadband-down/">broadband down</a>.</li>
 </ul></div></div></section>
-    <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>Why your laptop clings to an access point two rooms away<span class="title-underline"></span></h2><p>Here is the fact that makes the rest of this page make sense, and the reason roaming projects so often disappoint: <strong>the client decides when to roam. The access point does not.</strong></p>
+    <section id="s2" class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>Why your laptop clings to an access point two rooms away<span class="title-underline"></span></h2><p>Here is the fact that makes the rest of this page make sense, and the reason roaming projects so often disappoint: <strong>the client decides when to roam. The access point does not.</strong></p>
 <p>Your controller can encourage, hint, advertise neighbours and, on some platforms, actively nudge a device towards the door. Most platforms also offer a blunter tool: a minimum signal level below which the controller simply disconnects the client and makes it associate again. That forces a fresh decision &mdash; it does not make the decision. A client you have kicked off is free to reconnect to the very access point it was just removed from, and often does.</p>
 <p>And most clients use a stubborn rule: <em>stay where you are until this connection becomes genuinely poor</em>. Not &ldquo;move when something better appears&rdquo; &mdash; that is a different rule, and few clients implement it. So a laptop that has walked past three nearer access points carries on talking to the one above the desk it left, because that link is still, just about, working.</p>
 <p>&ldquo;Just about working&rdquo; is where the damage happens. As the signal weakens, the client and the access point negotiate down to slower and slower data rates. Retries climb. The same email, the same stock lookup, the same Teams call now needs several times the airtime it needed at the desk &mdash; and it is taking that airtime from everyone else on the same radio.</p>
 <p>The user is not disconnected. They are being starved. Then, somewhere near the far end of the walk, the link finally fails, the device re-associates, and everything is fine again.</p>
 <p>That is why the complaint is usually described as a cliff edge and the data rarely shows one. It is a slow starve with an abrupt ending. The user reports the ending.</p>
 <p>It also explains one of the things that most frustrates IT managers about this fault: <strong>new access points change what the estate offers, not what the client decides</strong>. You can replace every unit in the building and the same laptop will make the same bad choice, faster.</p></div></section>
-    <section class="section"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>The ordered diagnosis: walk it, then read it<span class="title-underline"></span></h2><ol>
+    <section id="s3" class="section"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>The ordered diagnosis: walk it, then read it<span class="title-underline"></span></h2><ol>
 <li><strong>Pick one fixed route and write it down.</strong> Same start, same finish, same doors, same walking pace. Number eight to twelve stopping points along it &mdash; the desk, the corridor, the top of the stairs, the aisle head, the packing bench. Everything below is worthless without a route you can repeat exactly, because you are going to walk it again after every change.</li>
 <li><strong>Take two test devices, not one.</strong> A current laptop or phone, and one example of the oldest kit that actually has the problem: a handheld scanner, a VoIP handset, a legacy tablet. They will behave completely differently, and that difference <em>is</em> the diagnosis. A route walked with only a new laptop will tell you the estate is fine.</li>
 <li><strong>Record which access point each device is associated with at every numbered point.</strong> Your controller shows this in the client list &mdash; the access point name and the signal it is hearing from that client. Write it down point by point, for both devices. This single table is the whole test.</li>
@@ -812,15 +941,15 @@
 <li><strong>Work out which clients stick.</strong> Sort the complaints by device model rather than by location. It is usually the oldest and cheapest radios: handheld scanners, older Android tablets, budget laptops with basic wireless cards. Many enterprise handhelds carry their own roaming thresholds in the device or MDM configuration, documented in the manufacturer&rsquo;s admin guide. That one setting often matters more than anything you can change on the controller.</li>
 <li><strong>Only now change something &mdash; one thing, in one area.</strong> Then walk the same route again, with the same two devices, and compare it against the table you already have. If you change three settings across the whole estate in one evening, you will never know which one mattered, or which one you will have to undo on a trading day.</li>
 </ol></div></section>
-    <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>The double trap nobody warns you about<span class="title-underline"></span></h2><div class="apcall apcall--adv"><span class="apcall__tag">Vendor advisory</span><div class="apcall__body"><p><strong>Trap one: turning the power up makes roaming worse.</strong> This catches a lot of people, because it is the exact opposite of instinct &mdash; devices are dropping, so surely they need more signal. What more signal actually buys you is an estate where every access point can be heard from everywhere, and therefore an estate where no client ever feels the need to leave the one it has. The coverage map looks superb. The floor roams like treacle. The usual fix for sticky clients is to turn power <em>down</em>, in steps, until each cell has a real boundary that a walking device can feel. It feels wrong to do. It is what works.</p>
+    <section id="s4" class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>The double trap nobody warns you about<span class="title-underline"></span></h2><div class="apcall apcall--adv"><span class="apcall__tag">Vendor advisory</span><div class="apcall__body"><p><strong>Trap one: turning the power up makes roaming worse.</strong> This catches a lot of people, because it is the exact opposite of instinct &mdash; devices are dropping, so surely they need more signal. What more signal actually buys you is an estate where every access point can be heard from everywhere, and therefore an estate where no client ever feels the need to leave the one it has. The coverage map looks superb. The floor roams like treacle. The usual fix for sticky clients is to turn power <em>down</em>, in steps, until each cell has a real boundary that a walking device can feel. It feels wrong to do. It is what works.</p>
 <p><strong>Trap two runs the other way: enabling fast roaming across the whole estate can take your oldest kit offline.</strong> 802.11r in particular is commonly reported to break association for some legacy handhelds, barcode scanners and older VoIP handsets &mdash; they either refuse to join the SSID at all, or join and fall off repeatedly. Vendor documentation does warn that client support varies, and that some older clients may refuse to associate once fast transition is advertised; what nobody publishes is a per-model list, so the only way to know is to test. It is very model-specific: two scanners from the same manufacturer, two firmware revisions apart, can behave differently.</p>
 <p>So the change that transforms the office can be the change that stops the warehouse working &mdash; and it will not look connected, because the person who ticked the box is not the person picking stock. Enable it on one SSID, in one area, and watch the oldest device you own for a full working day before you go estate-wide. If it turns out you need fast roaming for the office and cannot have it on the handhelds, a separate SSID for the legacy kit is a legitimate design decision, not an admission of defeat.</p></div></div></div></section>
-    <section class="section"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>Warehouses, workshops and multi-floor buildings<span class="title-underline"></span></h2><p>An open-plan office is the easy version of this problem. Roaming faults get their real character from buildings full of metal, stock and floors.</p>
+    <section id="s5" class="section"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>Warehouses, workshops and multi-floor buildings<span class="title-underline"></span></h2><p>An open-plan office is the easy version of this problem. Roaming faults get their real character from buildings full of metal, stock and floors.</p>
 <p><strong>Racking reflects rather than blocks.</strong> Steel racking, roller shutters, mesh cages and stacked metal stock bounce signal around instead of politely absorbing it. Signal travels down an aisle far better than it travels across one, so a device three aisles away can hear an access point more clearly than a device two racks away. The client picks whatever it hears best, which in a warehouse is regularly not the nearest thing. Coverage maps drawn on a floor plan do not describe this well.</p>
 <p><strong>The building changes every week.</strong> A full warehouse and an empty warehouse are two different radio environments. Pallets of liquid absorb, pallets of metal reflect, and an aisle that was clear in January is a wall in November. A survey done against empty racking describes a building that will not exist when you are busy. If your roaming complaints rise and fall with stock levels, that is not coincidence &mdash; and it is not something you fix once and forget.</p>
 <p><strong>The scanners are stuck on the worst band.</strong> A great deal of handheld scanning kit still in daily use is 2.4GHz only. Greater reach sounds like an advantage and is the opposite here: bigger cells overlap more, boundaries blur, and a scanner can hold a distant access point from halfway across a building. It is also the congested band, sharing three non-overlapping channels with everything else in the postcode. So the devices with the least capable radios end up on the band with the most noise and the loosest edges.</p>
 <p><strong>And floors leak, badly.</strong> A ceiling-mounted access point radiates upwards and downwards as well as outwards. To a client standing on the ground floor, the unit on the first floor can look like a perfectly reasonable option &mdash; sometimes the best one, if it is closer in a straight line through the slab than anything on its own floor. Between-floor drops are often a device that roamed <em>upstairs</em> at the bottom of the stairwell and then walked away from what it had chosen. Stairwells, lift lobbies and mezzanines are where this shows up, and the fault is rarely where the user says it happened.</p></div></section>
-    <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>Where each fault shows itself<span class="title-underline"></span></h2><div class="table-wrap"><table class="table">
+    <section id="s6" class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>Where each fault shows itself<span class="title-underline"></span></h2><div class="table-wrap"><table class="table">
 <thead><tr><th>Symptom</th><th>Likely cause</th><th>First thing to check</th></tr></thead>
 <tbody>
 <tr><td><strong>Laptop keeps the far access point after walking</strong></td><td>Classic sticky client in an estate with no real cell edges</td><td>Transmit power across the whole estate, then the minimum data rate. Look for &ldquo;every access point audible from everywhere&rdquo;.</td></tr>
@@ -831,7 +960,7 @@
 <tr><td><strong>New access points made no difference</strong></td><td>The access points were never the fault</td><td>The client side. Roaming is the client&rsquo;s decision, and the refresh did not change a single client. Check whether power went <em>up</em> during the swap.</td></tr>
 </tbody>
 </table></div></div></section>
-    <section class="section"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>How to prove a change actually worked<span class="title-underline"></span></h2><p>Roaming is an easy fault to convince yourself you have fixed, because the evidence is a walking human being with an opinion. Two people can walk the same corridor an hour apart and come back with opposite verdicts, both honestly reported.</p>
+    <section id="s7" class="section"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>How to prove a change actually worked<span class="title-underline"></span></h2><p>Roaming is an easy fault to convince yourself you have fixed, because the evidence is a walking human being with an opinion. Two people can walk the same corridor an hour apart and come back with opposite verdicts, both honestly reported.</p>
 <p>So make the test boring and repeatable:</p>
 <ul>
 <li><strong>Same route, same numbered points, same order.</strong> The one you wrote down before you changed anything.</li>
@@ -842,7 +971,7 @@
 <li><strong>Ask the same people.</strong> Not &ldquo;is the WiFi better?&rdquo;, which gets you a mood. Ask whether the specific thing that broke &mdash; the call between the office and the bay, the scan at the far rack &mdash; happened again today.</li>
 </ul>
 <p>Keep the previous configuration written down somewhere that is not the controller you are editing. The change you make at seven in the evening is the change you will want to reverse at half past eight the next morning, and by then nobody remembers what the power level used to be.</p></div></section>
-    <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>What new hardware will and will not fix<span class="title-underline"></span></h2><div class="apcall apcall--field"><span class="apcall__tag">Commonly reported &mdash; not vendor-confirmed</span><div class="apcall__body"><p>We would rather you spent an afternoon than a budget, so here is the honest version.</p>
+    <section id="s8" class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal><h2 class="section-title" data-title>What new hardware will and will not fix<span class="title-underline"></span></h2><div class="apcall apcall--field"><span class="apcall__tag">Commonly reported &mdash; not vendor-confirmed</span><div class="apcall__body"><p>We would rather you spent an afternoon than a budget, so here is the honest version.</p>
 <p>A new access point is a better thing for a client to choose. It is not a reason for the client to choose it. That one sentence explains why estates get replaced and the complaint survives the replacement intact.</p>
 <p>New hardware, on its own, does not fix any of these:</p>
 <ul>
