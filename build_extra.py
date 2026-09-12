@@ -21268,7 +21268,199 @@ VICTRON_CRED_BAND = '''    <section class="section" aria-label="Victron credenti
       </div>
     </section>'''
 
+
+# ---- /printer-disappeared-after-windows-update/: the guided "fix it with me" flow. Runs entirely in the browser
+# (nothing is sent anywhere). Detects Windows 11 vs 10 from the UA client hints, like the spec checker, so the
+# Settings paths match the visitor's machine; every command is copyable; the two screenshots are real captures
+# of Windows 11 (September 2026). __LASTMOD_HUMAN__ is stamped by stamp_lastmod with the date the page changed.
+PRINTER_FIX_TOOL = r"""    <section class="section" aria-label="Fix it with me" id="fixflow">
+      <div class="wrap">
+      <style>
+      #fixflow .ff{max-width:860px;margin:0 auto}
+      #fixflow .ff-rev{display:block;margin-top:.5rem;font-size:.72rem;letter-spacing:.06em;color:var(--cyan-soft,#6cc4f5)}
+      #fixflow .ff-top{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin-bottom:1rem;font-size:.85rem;color:var(--muted,#9fb5d3)}
+      #fixflow .ff-os{font-weight:600;color:var(--ink,#eaf4ff)}
+      #fixflow .ff-oslink{background:none;border:0;padding:0;color:var(--cyan-soft,#6cc4f5);font:inherit;font-size:.8rem;cursor:pointer;text-decoration:underline}
+      #fixflow .ff-prog{margin-left:auto;font-family:var(--font-mono,monospace);font-size:.72rem;letter-spacing:.06em}
+      #fixflow .ff-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.55rem}
+      #fixflow .ff-step{border:1px solid var(--line,rgba(125,170,220,.16));border-radius:14px;background:rgba(255,255,255,.03);overflow:hidden}
+      #fixflow .ff-step[hidden]{display:none}
+      #fixflow .ff-head{display:flex;align-items:center;gap:.8rem;padding:.9rem 1.1rem;font-weight:700;font-size:1.02rem}
+      #fixflow .ff-num{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-mono,monospace);font-size:.75rem;border:1px solid rgba(108,196,245,.5);color:var(--cyan-soft,#6cc4f5)}
+      #fixflow .ff-step.is-done .ff-num{border-color:rgba(46,204,113,.6);color:#2ecc71}
+      #fixflow .ff-step.is-done .ff-head{opacity:.7;font-weight:600}
+      #fixflow .ff-step.is-skip .ff-num{opacity:.45}
+      #fixflow .ff-body{display:none;padding:0 1.1rem 1.1rem;font-size:.93rem;line-height:1.6;color:var(--ink-2,#dfe9f7)}
+      #fixflow .ff-step.is-on{border-color:rgba(108,196,245,.55);background:rgba(29,151,227,.07)}
+      #fixflow .ff-step.is-on .ff-body{display:block}
+      #fixflow .ff-body p{margin:0 0 .6rem}
+      #fixflow .ff-body ol{margin:0 0 .6rem 1.2rem;padding:0}
+      #fixflow .ff-body li{margin:.25rem 0}
+      #fixflow .ff-cmd{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin:.5rem 0;padding:.5rem .7rem;border-radius:9px;background:rgba(7,13,34,.7);border:1px solid rgba(125,170,220,.22)}
+      #fixflow .ff-cmd code{font-family:var(--font-mono,monospace);font-size:.82rem;color:#eaf4ff;word-break:break-all}
+      #fixflow .ff-cmd small{width:100%;font-size:.72rem;color:var(--muted,#9fb5d3)}
+      #fixflow .ff-copy{margin-left:auto;border:1px solid rgba(108,196,245,.45);background:transparent;color:var(--cyan-soft,#6cc4f5);border-radius:7px;padding:.28rem .6rem;font:inherit;font-size:.74rem;cursor:pointer;min-height:32px}
+      #fixflow .ff-copy.done{border-color:rgba(46,204,113,.6);color:#2ecc71}
+      #fixflow .ff-open{display:inline-block;margin:.2rem .4rem .5rem 0;padding:.5rem .8rem;border-radius:9px;border:1px solid rgba(108,196,245,.45);color:var(--cyan-soft,#6cc4f5);text-decoration:none;font-size:.85rem;font-weight:600}
+      #fixflow .ff:not(.is-win) .ff-open{display:none}
+      #fixflow .ff-p10{display:none} #fixflow .ff.is-w10 .ff-p10{display:inline} #fixflow .ff.is-w10 .ff-p11{display:none}
+      #fixflow .ff-fig{margin:.8rem 0 .4rem;max-width:460px}
+      #fixflow .ff-fig img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid rgba(125,170,220,.28)}
+      #fixflow .ff-fig figcaption{font-size:.72rem;color:var(--muted,#9fb5d3);margin-top:.35rem;line-height:1.5}
+      #fixflow .ff-ask{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:.8rem;padding-top:.8rem;border-top:1px dashed rgba(125,170,220,.25)}
+      #fixflow .ff-ask b{font-size:.95rem}
+      #fixflow .ff-ask .button{min-height:44px}
+      #fixflow .ff-end{margin-top:1rem;padding:1.3rem 1.4rem;border-radius:16px;border:1px solid rgba(46,204,113,.45);background:rgba(46,204,113,.07)}
+      #fixflow .ff-end[hidden]{display:none}
+      #fixflow .ff-end.is-bad{border-color:rgba(255,180,0,.5);background:rgba(255,180,0,.07)}
+      #fixflow .ff-end h3{margin:0 0 .5rem;font-size:1.25rem}
+      #fixflow .ff-end p{margin:0 0 .6rem;line-height:1.6}
+      #fixflow .ff-end .ff-cta{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:.8rem}
+      #fixflow .ff-end .ff-cta .button{min-height:44px}
+      #fixflow .ff-plan{margin-top:1rem;padding:1rem 1.1rem;border-radius:12px;border:1px solid rgba(125,170,220,.25);background:rgba(255,255,255,.03);font-size:.9rem;line-height:1.6}
+      #fixflow .ff-plan b{color:var(--cyan-soft,#6cc4f5)}
+      @media(max-width:560px){#fixflow .ff-ask .button,#fixflow .ff-end .ff-cta .button{width:100%}#fixflow .ff-prog{margin-left:0}}
+      </style>
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FIX IT WITH ME &middot; STEP BY STEP</p>
+          <h2 class="section-title section-title--center" data-title>Get the printer back in the next ten minutes<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>One step at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your computer.<span class="ff-rev mono">Last reviewed __LASTMOD_HUMAN__ &middot; Windows 11 and Windows 10</span></p>
+        </div>
+        <div class="ff" id="ff">
+          <div class="ff-top"><span class="ff-os" id="ff-os">Checking which Windows you have&hellip;</span><button type="button" class="ff-oslink" id="ff-ostoggle" hidden>Not right? Switch to Windows 10</button><span class="ff-prog" id="ff-prog">STEP 1 OF 6</span></div>
+          <ol class="ff-steps" id="ff-steps">
+            <li class="ff-step is-on" data-step="1">
+              <div class="ff-head"><span class="ff-num">01</span>Is it really gone, or just hidden?</div>
+              <div class="ff-body">
+                <p>Windows 11 keeps two lists of printers, and an update often hides a printer from the new one while the old one still shows it. Press <b>Windows key + R</b>, paste this and press Enter to open the classic list:</p>
+                <div class="ff-cmd"><code>shell:::{A8A91A66-3A7D-4424-8D24-04E180695C7A}</code><button type="button" class="ff-copy" data-copy="shell:::{A8A91A66-3A7D-4424-8D24-04E180695C7A}">Copy</button><small>Opens Devices and Printers, the classic window.</small></div>
+                <div class="ff-ask"><b>Is your printer listed there?</b><button type="button" class="button primary" data-go="4" data-note="It is installed, so it is the link that broke, not the printer. Re-adding puts it back on the Settings list.">Yes, it is there</button><button type="button" class="button secondary" data-go="2">No, not there either</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="2" hidden>
+              <div class="ff-head"><span class="ff-num">02</span>Restart the Print Spooler</div>
+              <div class="ff-body">
+                <p>The spooler is the Windows service that runs printing. An update can leave it stopped. Press <b>Windows key + R</b>, type this and press Enter:</p>
+                <div class="ff-cmd"><code>services.msc</code><button type="button" class="ff-copy" data-copy="services.msc">Copy</button></div>
+                <ol><li>Scroll to <b>Print Spooler</b>, right-click it and choose <b>Restart</b> (if Restart is greyed out, choose <b>Start</b>).</li><li>Double-click it and make sure <b>Startup type</b> is <b>Automatic</b>.</li></ol>
+                <p>Comfortable with a Terminal? Right-click Start, choose <b>Terminal (Admin)</b>, paste and press Enter:</p>
+                <div class="ff-cmd"><code>net stop spooler &amp;&amp; net start spooler</code><button type="button" class="ff-copy" data-copy="net stop spooler && net start spooler">Copy</button></div>
+                <div class="ff-ask"><b>Is the printer back?</b><button type="button" class="button primary" data-go="fixed">Yes, fixed</button><button type="button" class="button secondary" data-go="3">Still missing</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="3" hidden>
+              <div class="ff-head"><span class="ff-num">03</span>Clear the stuck print queue</div>
+              <div class="ff-body">
+                <p>A jammed queue can hold the spooler up. You are only deleting stuck print jobs, nothing important.</p>
+                <ol><li>In Services, right-click <b>Print Spooler</b> and choose <b>Stop</b>.</li><li>Press <b>Windows key + R</b>, paste this and press Enter, then delete everything in the folder that opens:</li></ol>
+                <div class="ff-cmd"><code>%windir%\System32\spool\PRINTERS</code><button type="button" class="ff-copy" data-copy="%windir%\System32\spool\PRINTERS">Copy</button></div>
+                <ol start="3"><li>Back in Services, right-click <b>Print Spooler</b> and choose <b>Start</b>.</li></ol>
+                <div class="ff-ask"><b>Is the printer back?</b><button type="button" class="button primary" data-go="fixed">Yes, fixed</button><button type="button" class="button secondary" data-go="4">Still missing</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="4" hidden>
+              <div class="ff-head"><span class="ff-num">04</span>Re-add the printer</div>
+              <div class="ff-body">
+                <p id="ff-note4" hidden></p>
+                <p>Go to <b><span class="ff-p11">Settings &rarr; Bluetooth &amp; devices &rarr; Printers &amp; scanners</span><span class="ff-p10">Settings &rarr; Devices &rarr; Printers &amp; scanners</span></b> and click <b>Add device</b>. If Windows finds the printer, click <b>Add</b>; if not, click <b>Add manually</b>.</p>
+                <a class="ff-open" href="ms-settings:printers">Open Printers &amp; scanners &#8594;</a>
+                <figure class="ff-fig"><img src="/images/printer-w11-printers-scanners.webp" width="938" height="1045" alt="Windows 11 Settings, Printers and scanners: the Add device button above the list of installed printers" loading="lazy" decoding="async"><figcaption>Windows 11, Settings &rarr; Bluetooth &amp; devices &rarr; Printers &amp; scanners. Real screenshot, September 2026.</figcaption></figure>
+                <ol><li><b>USB printer:</b> unplug the cable, wait ten seconds, plug it into a different USB port on the computer itself, not a hub.</li><li><b>Wi-Fi or network printer:</b> add it by its IP address, printed from the printer&rsquo;s own menu or shown in your router.</li></ol>
+                <div class="ff-ask"><b>Is the printer back?</b><button type="button" class="button primary" data-go="fixed">Yes, fixed</button><button type="button" class="button secondary" data-go="5">Still missing</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="5" hidden>
+              <div class="ff-head"><span class="ff-num">05</span>Reinstall a clean driver from the maker</div>
+              <div class="ff-body">
+                <p>Updates sometimes strip out an older built-in driver. A driver straight from HP, Epson, Canon or Brother for your exact model is the reliable fix.</p>
+                <ol><li>In Printers &amp; scanners, open the printer and choose <b>Remove</b>.</li><li>Download the full driver or software package for Windows from the maker&rsquo;s official site.</li><li>Install it, then restart the computer.</li></ol>
+                <p>To clear out the old driver package as well (optional), press <b>Windows key + R</b>, run this, and remove the old driver on the <b>Drivers</b> tab:</p>
+                <div class="ff-cmd"><code>printui /s /t2</code><button type="button" class="ff-copy" data-copy="printui /s /t2">Copy</button><small>Opens Print Server Properties on the Drivers tab.</small></div>
+                <div class="ff-ask"><b>Is the printer back?</b><button type="button" class="button primary" data-go="fixed">Yes, fixed</button><button type="button" class="button secondary" data-go="6">Still missing</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="6" hidden>
+              <div class="ff-head"><span class="ff-num">06</span>Roll back the update (last resort)</div>
+              <div class="ff-body">
+                <p>Only now, because updates carry security fixes too. Go to <b><span class="ff-p11">Settings &rarr; Windows Update &rarr; Update history &rarr; Uninstall updates</span><span class="ff-p10">Settings &rarr; Update &amp; Security &rarr; Windows Update &rarr; View update history &rarr; Uninstall updates</span></b>, find the update dated around when printing broke, choose <b>Uninstall</b> and restart.</p>
+                <a class="ff-open" href="ms-settings:windowsupdate-history">Open Update history &#8594;</a>
+                <figure class="ff-fig"><img src="/images/printer-w11-update-history.webp" width="938" height="1045" alt="Windows 11 Settings, Windows Update, Update history: the list of installed quality updates with their KB numbers and dates" loading="lazy" decoding="async"><figcaption>Windows 11, Settings &rarr; Windows Update &rarr; Update history. Real screenshot, September 2026.</figcaption></figure>
+                <p>Windows will often try to reinstall the same update later, so pause updates for a while; and if the driver has genuinely been retired, rolling back only buys time.</p>
+                <div class="ff-ask"><b>Is the printer back?</b><button type="button" class="button primary" data-go="fixed">Yes, fixed</button><button type="button" class="button secondary" data-go="stuck">Still missing</button></div>
+              </div>
+            </li>
+          </ol>
+          <div class="ff-end" id="ff-end" hidden></div>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var root=document.getElementById('ff'); if(!root) return;
+        var steps=Array.prototype.slice.call(root.querySelectorAll('.ff-step')), endEl=root.querySelector('#ff-end'), prog=root.querySelector('#ff-prog');
+        var osEl=root.querySelector('#ff-os'), tog=root.querySelector('#ff-ostoggle'), t0=null, w10=false, isWin=/Windows/i.test(navigator.userAgent);
+        function setOS(ten,label){ w10=ten; root.classList.toggle('is-w10',ten); root.classList.toggle('is-win',isWin); osEl.textContent=label; tog.hidden=!isWin; tog.textContent=ten?'Not right? Switch to Windows 11':'Not right? Switch to Windows 10'; }
+        if(!isWin){ setOS(false,'These steps are for Windows; you seem to be on another device, so keep them for the PC.'); }
+        else if(navigator.userAgentData&&navigator.userAgentData.getHighEntropyValues){
+          navigator.userAgentData.getHighEntropyValues(['platformVersion']).then(function(v){ var maj=parseInt(String(v.platformVersion||'').split('.')[0],10);
+            if(maj>=13) setOS(false,'You are on Windows 11, so the paths below match your Settings app.'); else if(maj>0) setOS(true,'You are on Windows 10, so the paths below match your Settings app.'); else setOS(false,'Windows 10 or 11: paths shown for Windows 11.'); }).catch(function(){ setOS(false,'Windows 10 or 11: paths shown for Windows 11.'); });
+        } else setOS(false,'Windows 10 or 11: paths shown for Windows 11.');
+        tog.addEventListener('click',function(){ setOS(!w10,w10?'Showing the Windows 11 paths.':'Showing the Windows 10 paths.'); });
+        function show(n){ steps.forEach(function(s){ var k=parseInt(s.getAttribute('data-step'),10); s.hidden=k>n; s.classList.toggle('is-on',k===n); if(k<n&&!s.classList.contains('is-done')) s.classList.add('is-skip'); }); prog.textContent='STEP '+n+' OF 6'; var cur=steps[n-1]; if(cur) cur.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+        var STEPS_TEXT='Printer disappeared after a Windows update - the fix order (365techies.co.uk)\n1. Is it hidden? Win+R, paste shell:::{A8A91A66-3A7D-4424-8D24-04E180695C7A} - if the printer is listed, re-add it (step 4).\n2. Restart the Print Spooler: Win+R, services.msc, right-click Print Spooler, Restart; Startup type Automatic.\n3. Clear the queue: stop Print Spooler, Win+R %windir%\\System32\\spool\\PRINTERS, delete everything inside, start Print Spooler.\n4. Re-add: Settings > Bluetooth & devices > Printers & scanners > Add device (USB: different port; Wi-Fi: add by IP).\n5. Clean driver: Remove the printer, install the maker\'s full package for your exact model, restart (printui /s /t2 clears old driver packages).\n6. Last resort: Settings > Windows Update > Update history > Uninstall updates, then restart.\nStill gone? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.uk/remote-support/';
+        function finish(kind){
+          steps.forEach(function(s){ s.classList.remove('is-on'); });
+          var mins=t0?Math.max(1,Math.round((Date.now()-t0)/60000)):null;
+          if(kind==='fixed'){ endEl.className='ff-end'; endEl.innerHTML='<h3>Printer back'+(mins?' in about '+mins+' minute'+(mins===1?'':'s'):'')+'. Nice work.</h3><p>Print a test page to be sure, and if it vanishes again after the next update, come straight back to step 2.</p><div class="ff-plan"><b>Two things stop it happening again.</b> On a 365 support plan, Windows and driver updates are applied on our schedule and checked afterwards, every six weeks, with a written Service Report each time: home &pound;18.25 per computer a month, business from &pound;24.38, rolling monthly. And the free 365 PC Manager app tells you when Windows is waiting for a restart.</div><div class="ff-cta"><a class="button primary" href="/monthly-it-support/">See the support plans &#8594;</a><a class="button secondary" href="/free-pc-health-check/">Get the free app</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div>'; prog.textContent='DONE'; }
+          else { endEl.className='ff-end is-bad'; endEl.innerHTML='<h3>Still gone after all six? That is a remote job, and a quick one.</h3><p>With your permission we connect to your screen, sort the spooler, the driver and the update in one session. Usually the same day, remote help from &pound;20, and no fix, no fee.</p><div class="ff-cta"><a class="button primary" href="tel:+441202775566">Call 01202 775566</a><a class="button secondary" href="sms:+447520615332">Text 07520 615332</a><a class="button bm-ghost" href="/remote-support/">How remote help works</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div>'; prog.textContent='NEEDS A TECHIE'; }
+          endEl.hidden=false; endEl.scrollIntoView({behavior:'smooth',block:'nearest'});
+          var c=endEl.querySelector('#ff-copyall'); if(c) c.addEventListener('click',function(){ copyText(STEPS_TEXT,c,'Copy these steps'); });
+        }
+        function copyText(txt,btn,label){ function ok(){ btn.textContent='Copied'; btn.classList.add('done'); setTimeout(function(){ btn.textContent=label; btn.classList.remove('done'); },1800); }
+          if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(ok).catch(function(){}); }
+          else{ var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); ok(); }catch(e){} document.body.removeChild(ta); } }
+        root.addEventListener('click',function(e){
+          var b=e.target.closest('button'); if(!b) return;
+          if(b.classList.contains('ff-copy')){ copyText(b.getAttribute('data-copy'),b,'Copy'); return; }
+          var go=b.getAttribute('data-go'); if(!go) return;
+          if(!t0) t0=Date.now();
+          var cur=b.closest('.ff-step'); if(cur){ cur.classList.add('is-done'); }
+          if(go==='fixed'||go==='stuck'){ finish(go); return; }
+          var n=parseInt(go,10); var note=b.getAttribute('data-note'); var noteEl=root.querySelector('#ff-note'+n); if(noteEl){ noteEl.hidden=!note; noteEl.innerHTML=note?'<b>'+note+'</b>':''; }
+          endEl.hidden=true; show(n);
+        });
+      })();
+      </script>
+    </section>
+"""
+
+def _printer_page_extras(d):
+    """The same page's long-form sections gain the two real screenshots, the money path and the extra links."""
+    d = dict(d); secs = [dict(x) for x in d['sections']]
+    fig1 = ('<figure class="ff-fig" style="max-width:460px;margin:1rem 0"><img src="/images/printer-w11-printers-scanners.webp" width="938" height="1045" '
+            'alt="Windows 11 Settings, Printers and scanners: the Add device button above the list of installed printers" loading="lazy" decoding="async" '
+            'style="display:block;width:100%;height:auto;border-radius:10px;border:1px solid rgba(125,170,220,.28)"><figcaption style="font-size:.72rem;color:var(--muted);margin-top:.35rem">'
+            'Windows 11, Settings &rarr; Bluetooth &amp; devices &rarr; Printers &amp; scanners. Real screenshot, September 2026.</figcaption></figure>')
+    fig2 = ('<figure class="ff-fig" style="max-width:460px;margin:1rem 0"><img src="/images/printer-w11-update-history.webp" width="938" height="1045" '
+            'alt="Windows 11 Settings, Windows Update, Update history: installed quality updates with their KB numbers and dates" loading="lazy" decoding="async" '
+            'style="display:block;width:100%;height:auto;border-radius:10px;border:1px solid rgba(125,170,220,.28)"><figcaption style="font-size:.72rem;color:var(--muted);margin-top:.35rem">'
+            'Windows 11, Settings &rarr; Windows Update &rarr; Update history. Real screenshot, September 2026.</figcaption></figure>')
+    plan = ('<div style="margin-top:1.4rem;padding:1.1rem 1.2rem;border-radius:14px;border:1px solid rgba(125,170,220,.25);background:rgba(255,255,255,.03)">'
+            '<h3 style="margin:0 0 .5rem;font-size:1.1rem">Never have this at 9am again</h3>'
+            '<p style="margin:0 0 .6rem">On a 365 support plan, Windows and driver updates are applied on our schedule and checked afterwards, every six weeks, with a written Service Report each time. '
+            '<b>Home &pound;18.25 per computer a month, business from &pound;24.38</b>, rolling monthly, no lock-in. The free <a href="/free-pc-health-check/">365 PC Manager</a> app also tells you when Windows is waiting for a restart.</p>'
+            '<p style="margin:0"><a class="button primary" href="/monthly-it-support/">See the support plans &#8594;</a> <a class="button secondary" href="/book-service/" style="margin-left:.4rem">Book a visit</a></p></div>')
+    for i, sec in enumerate(secs):
+        h = sec['h2']
+        if h.startswith('Re-add the printer'): sec['html'] = sec['html'] + fig1
+        elif h.startswith('Rolling back the update'): sec['html'] = sec['html'] + fig2
+        elif h.startswith('When to call us'): sec['html'] = sec['html'] + plan
+    d['sections'] = secs
+    d['crossLinksHtml'] = d.get('crossLinksHtml', '') + ('<p>Keep it from happening again: <a href="/free-pc-health-check/">the free 365 PC Manager app</a>, '
+        '<a href="/monthly-it-support/">monthly support plans from &pound;18.25</a>, or <a href="/book-service/">book a visit</a>.</p>')
+    return d
+
 def build_new_page(d):
+    if d['slug'] == 'printer-disappeared-after-windows-update': d = _printer_page_extras(d)
     faqs = [(f['q'], f['a']) if isinstance(f, dict) else tuple(f) for f in d['faqs']]
     _blocks = [_sec_block(s, i) for i, s in enumerate(d['sections'])]
     if d['slug'] in VICTRON_CRED_SLUGS:
@@ -21316,6 +21508,8 @@ def build_new_page(d):
       </div>
     </section>'''
         _blocks.insert(1 if len(_blocks) > 1 else len(_blocks), _ag)
+    if d['slug'] == 'printer-disappeared-after-windows-update' and len(_blocks) > 1:
+        _blocks.insert(1, PRINTER_FIX_TOOL)   # right after the 'Start here' section, before the at-a-glance table
     sections = "\n".join(_blocks)
     _is_course = ('-course' in d['slug']) or d['slug'].startswith('computer-lessons')
     toc = _toc_chips(d['sections']) if (not _is_course and len(d['sections']) >= 4) else ""

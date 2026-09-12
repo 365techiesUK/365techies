@@ -7151,7 +7151,20 @@ def stamp_lastmod(slug, html):
     note_content(slug, html)
     rec = CONTENT_DATES.get(slug) or {}
     when = rec.get("last") or rec.get("first") or TODAY
-    return _LASTMOD_RE.sub('"dateModified": "%s"' % when, html)
+    html = _LASTMOD_RE.sub('"dateModified": "%s"' % when, html)
+    # A page may also show the date it genuinely last changed ("Last reviewed 12 September 2026"):
+    # the token is constant in the hashed content, so it cannot re-stamp a page that did not change.
+    if "__LASTMOD_HUMAN__" in html:
+        html = html.replace("__LASTMOD_HUMAN__", _human_date(when))
+    return html
+
+def _human_date(iso):
+    try:
+        import datetime as _dt
+        d = _dt.date.fromisoformat(iso)
+        return "%d %s %d" % (d.day, d.strftime("%B"), d.year)
+    except Exception:
+        return iso
 
 def write_all():
     written = []
