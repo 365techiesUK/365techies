@@ -1300,6 +1300,28 @@ WORLDWIDE_AREA = [{"@type": "Country", "name": "United Kingdom"}, {"@type": "Pla
 # Placed right after a problem page's first section: the visitor has just confirmed
 # we understand their problem, and this is the moment they want it GONE. SOS only
 # works when the computer still runs - never place on dead-hardware pages.
+# ---- "Windows PCs only" notice for the Outlook pages (owner, 12 Sep 2026). Two truths, kept apart on purpose:
+# Apple forbids third-party remote CONTROL of an iPad or iPhone (a real Apple restriction, see the device matrix
+# in memory), while a Mac is simply outside our remote-support cover. Never claim Apple blocks Mac support.
+_APPLE_NOTICE_PC = ('<div class="callout callout--info" id="apple-note" style="padding:1.05rem 1.3rem">'
+    '<p class="eyebrow mono" style="margin:0 0 .35rem">// WINDOWS PCS ONLY</p>'
+    '<p style="margin:0;font-size:.98rem"><strong>We do not support Outlook on Apple Macs, iPads or iPhones.</strong> Apple does not allow our remote-support tool to take control of an iPad or iPhone (an Apple restriction), and our remote support covers Windows PCs only. On an Apple device, <a href="https://support.microsoft.com/en-gb/outlook" rel="noopener" target="_blank">Microsoft&rsquo;s own Outlook help</a> is the place to start.</p></div>')
+_APPLE_NOTICE_PHONE = ('<div class="callout callout--info" id="apple-note" style="padding:1.05rem 1.3rem">'
+    '<p class="eyebrow mono" style="margin:0 0 .35rem">// ANDROID AND WINDOWS, NOT APPLE</p>'
+    '<p style="margin:0;font-size:.98rem"><strong>We do not support Outlook on iPhones or iPads.</strong> Apple does not allow our remote-support tool to take control of them (an Apple restriction), so we cannot fix it for you from here. On an iPhone or iPad, <a href="https://support.microsoft.com/en-gb/outlook" rel="noopener" target="_blank">Microsoft&rsquo;s own Outlook help</a> is the place to start.</p></div>')
+
+def apple_notice_inner(slug):
+    """The bare callout (for a blog article body), or None when the page is not an Outlook page."""
+    if 'outlook' not in slug: return None
+    return _APPLE_NOTICE_PHONE if 'android' in slug else _APPLE_NOTICE_PC
+
+def apple_notice_for(slug):
+    """The callout as a page section, or None."""
+    inner = apple_notice_inner(slug)
+    if not inner: return None
+    return ('    <section class="section" aria-label="Windows PCs only" style="padding-top:0">' + chr(10) +
+            '      <div class="wrap" style="max-width:860px;margin:0 auto">' + inner + '</div>' + chr(10) + '    </section>')
+
 SOS_BAND = '''    <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
         <div class="callout callout--good callout--center" data-reveal>

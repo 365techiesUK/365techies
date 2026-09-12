@@ -21586,7 +21586,17 @@ _FIX_FLOW_SEQ_RE = re.compile(r'^(how-to-|move-|recreate-)|(-wont-add-to-new-out
                               r'|^stop-using-onedrive-without-losing-files|^stop-word-saving-to-onedrive|^onedrive-moved-my-desktop-and-documents|^excel-onedrive-sync-conflicts)')
 _FIX_FLOW_TRAIL_RE = re.compile(r'call us|still stuck|hand it to us|let us sort|ask us', re.I)   # a last step that just says "ring us" is the stuck ending already
 
+_PHONE_STUCK = {   # phone pages: no screen-share promise (our remote support is Windows only); ring us / email support instead
+    'h3s': 'Still not working after every step? Ring us and we sort it together.',
+    'stuck_what': 'Ring us and we go through the phone together, or bring it in with your computer: it is part of email support.',
+    'stuck_tail': '', 'stuck_link': ('/email-support/', 'Email support'),
+    'text_tail': '\nStuck? 365 Techies email support: 01202 775566 - https://365techies.co.uk/email-support/'}
 FIX_FLOW_OVERRIDES = {   # small per-page tweaks on top of the automatic config
+    'outlook-app-asking-to-sign-in-android': dict(_PHONE_STUCK),
+    'outlook-app-crashing-android': dict(_PHONE_STUCK),
+    'outlook-not-syncing-android': dict(_PHONE_STUCK),
+    'emails-on-computer-but-not-phone': dict(_PHONE_STUCK),
+    'talktalk-email-not-working-android': dict(_PHONE_STUCK),
     'sage-50-wont-email-invoices-outlook': {'max_steps': 4},   # the test invoice is the natural end; the Webmail alternative stays in the guide
     'dell-this-pc-cant-run-windows-11': {'max_steps': 3, 'ask': 'Does PC Health Check pass now?', 'tip': 'Run PC Health Check once more after a restart to be sure.'},
     'shared-folders-not-working-after-windows-11-24h2-update': {'ask': 'Can you open the shared folder now?', 'tip': 'Open, edit and save one file in the folder to be sure.'},
@@ -21761,6 +21771,8 @@ def build_new_page(d):
     _ff = _fix_flow_for(d)
     if _ff and len(_blocks) > 1:
         _blocks.insert(1, _ff)   # right after the first section, before the at-a-glance table and the SOS band
+    _an = bp.apple_notice_for(d['slug'])   # Outlook pages: 'Windows PCs only' strip between section 1 and the flow
+    if _an and len(_blocks) > 1: _blocks.insert(1, _an)
     sections = "\n".join(_blocks)
     _is_course = ('-course' in d['slug']) or d['slug'].startswith('computer-lessons')
     toc = _toc_chips(d['sections']) if (not _is_course and len(d['sections']) >= 4) else ""

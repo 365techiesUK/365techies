@@ -817,6 +817,9 @@
 <p>These are a matched pair, and they are about <strong>sending</strong>, not receiving - your incoming email may work fine while messages pile up in the Outbox.</p><ul><li><strong>0x800ccc78</strong> - Outlook tried to send but the outgoing (SMTP) server rejected the sender. Almost always this means <em>"My outgoing server (SMTP) requires authentication"</em> is switched off, so the server has no idea you are a legitimate account holder.</li><li><strong>0x800ccc79</strong> - "relay not allowed", a 550 rejection. The server refuses to <em>relay</em> (forward) your message onward because you have not authenticated. Some providers also require you to check mail first, then send.</li></ul><p>The trigger is usually a password change that Outlook did not pick up, a provider switching off unauthenticated sending for security, or an ISP blocking the old port 25. The fix ties both errors together: switch on outgoing authentication and use the correct submission port.</p>
       </div>
     </section>
+    <section class="section" aria-label="Windows PCs only" style="padding-top:0">
+      <div class="wrap" style="max-width:860px;margin:0 auto"><div class="callout callout--info" id="apple-note" style="padding:1.05rem 1.3rem"><p class="eyebrow mono" style="margin:0 0 .35rem">// WINDOWS PCS ONLY</p><p style="margin:0;font-size:.98rem"><strong>We do not support Outlook on Apple Macs, iPads or iPhones.</strong> Apple does not allow our remote-support tool to take control of an iPad or iPhone (an Apple restriction), and our remote support covers Windows PCs only. On an Apple device, <a href="https://support.microsoft.com/en-gb/outlook" rel="noopener" target="_blank">Microsoft&rsquo;s own Outlook help</a> is the place to start.</p></div></div>
+    </section>
     <section class="section" aria-label="Fix it with me" id="fixflow">
       <div class="wrap">
       <style>

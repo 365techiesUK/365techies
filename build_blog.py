@@ -107,6 +107,8 @@ BLOG_FIX_FLOWS = _blog_fix_flows()
 
 def make_post(slug, cat, title, lede, body, points, related, faqs=None, dt="2026-06-15", dt_pretty="June 2026"):
     if slug in BLOG_FIX_FLOWS: body = body + BLOG_FIX_FLOWS[slug]
+    _an = bp.apple_notice_inner(slug)   # Outlook articles: 'Windows PCs only' callout after the first paragraph
+    if _an and '</p>' in body: body = body.replace('</p>', '</p>' + _an, 1)
     desc = lede
     points_html = "\n".join(f"          <li>{p}</li>" for p in points)
     related_html = "\n".join(f'          <a href="{h}">{l}</a>' for l, h in related)

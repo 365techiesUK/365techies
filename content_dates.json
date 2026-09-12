@@ -192,7 +192,7 @@
  },
  "bournemouth/sea-today": {
   "first": "2026-08-02",
-  "h": "9bcf4d34cef8e6fd",
+  "h": "8617637ae72789f8",
   "last": "2026-09-12"
  },
  "bournemouth/sunrise-sunset": {
@@ -237,7 +237,7 @@
  },
  "btinternet-email-wont-add-to-new-outlook": {
   "first": "2026-07-28",
-  "h": "acc1e518c75a8b7e",
+  "h": "a9bda05070b8afb5",
   "last": "2026-09-12"
  },
  "business-access-point-end-of-life": {
@@ -322,12 +322,12 @@
  },
  "cant-open-attachments-in-outlook": {
   "first": "2026-07-28",
-  "h": "140b016b46c300f3",
+  "h": "c300b329e9ee346f",
   "last": "2026-09-12"
  },
  "cant-send-btinternet-email-new-outlook": {
   "first": "2026-07-28",
-  "h": "ab6e101339a714a6",
+  "h": "540d5e4f0f2cf0c8",
   "last": "2026-09-12"
  },
  "case-studies": {
@@ -416,8 +416,8 @@
  },
  "common-outlook-problems-and-fixes": {
   "first": "2026-06-16",
-  "h": "cff1e67ef61dd0ea",
-  "last": "2026-08-31"
+  "h": "5a04642821d0f38b",
+  "last": "2026-09-12"
  },
  "computer-basics-course": {
   "first": "2026-07-28",
@@ -1011,7 +1011,7 @@
  },
  "emails-on-computer-but-not-phone": {
   "first": "2026-07-28",
-  "h": "0e97c9b09cc43e1c",
+  "h": "fb885b150c2011ab",
   "last": "2026-09-12"
  },
  "embed-victron-vrm-on-website": {
@@ -1221,7 +1221,7 @@
  },
  "how-to-add-gmail-to-outlook": {
   "first": "2026-07-28",
-  "h": "4fd456950ff25406",
+  "h": "8a3e420ce257b3ab",
   "last": "2026-09-12"
  },
  "how-to-back-up-your-photos": {
@@ -1256,7 +1256,7 @@
  },
  "how-to-go-back-to-classic-outlook": {
   "first": "2026-07-28",
-  "h": "bbe095ead90b78a9",
+  "h": "a3b2f01a2acd10a9",
   "last": "2026-09-12"
  },
  "how-to-keep-children-safe-online": {
@@ -2140,42 +2140,42 @@
  },
  "new-outlook-blank-screen": {
   "first": "2026-07-28",
-  "h": "d0ccf1398f4dcb20",
+  "h": "26e539e9cd17437f",
   "last": "2026-09-12"
  },
  "new-outlook-emails-stuck-in-drafts": {
   "first": "2026-07-28",
-  "h": "cea0430f3dde8964",
+  "h": "de7a4e232298de71",
   "last": "2026-09-12"
  },
  "new-outlook-missing-features": {
   "first": "2026-07-28",
-  "h": "a40f8fa1c725044b",
+  "h": "b82e5fd3d8d3ee8d",
   "last": "2026-09-12"
  },
  "new-outlook-no-send-receive-button": {
   "first": "2026-07-28",
-  "h": "6d38fb2291c37628",
+  "h": "072fa5b2821d04f2",
   "last": "2026-09-12"
  },
  "new-outlook-not-syncing": {
   "first": "2026-07-28",
-  "h": "2de5293dc38238c8",
+  "h": "f1a177d72693ae77",
   "last": "2026-09-12"
  },
  "new-outlook-only-showing-recent-emails": {
   "first": "2026-07-28",
-  "h": "9b8d8501e7a9050c",
+  "h": "bfea962450bd7408",
   "last": "2026-09-12"
  },
  "new-outlook-search-not-working": {
   "first": "2026-07-28",
-  "h": "99350e942740a922",
+  "h": "5675e0648bd31a33",
   "last": "2026-09-12"
  },
  "new-outlook-wont-open": {
   "first": "2026-07-28",
-  "h": "89335cf53e6cb091",
+  "h": "277e3ac927b5ebd9",
   "last": "2026-09-12"
  },
  "next-gen-home-dashboards": {
@@ -2315,267 +2315,267 @@
  },
  "outlook-add-in-not-loading": {
   "first": "2026-07-28",
-  "h": "0d7c4435af837201",
+  "h": "c0ba3621ac09cf32",
   "last": "2026-09-12"
  },
  "outlook-app-asking-to-sign-in-android": {
   "first": "2026-07-28",
-  "h": "b606281721392163",
+  "h": "45758f03b179fb15",
   "last": "2026-09-12"
  },
  "outlook-app-crashing-android": {
   "first": "2026-07-28",
-  "h": "f0ef6fad89ab8d26",
+  "h": "3e4dda61e21b06dd",
   "last": "2026-09-12"
  },
  "outlook-autocomplete-not-working": {
   "first": "2026-07-28",
-  "h": "57a9c926bfd84b0d",
+  "h": "335a94b2e75ec901",
   "last": "2026-09-12"
  },
  "outlook-calendar-appointments-disappearing": {
   "first": "2026-07-28",
-  "h": "990302abb29c31d5",
+  "h": "5ef618efcca00305",
   "last": "2026-09-12"
  },
  "outlook-calendar-not-syncing": {
   "first": "2026-07-28",
-  "h": "19a32e4008adaf00",
+  "h": "31b9c0372940156a",
   "last": "2026-09-12"
  },
  "outlook-can-send-but-not-receive": {
   "first": "2026-07-28",
-  "h": "7278c8f132d63d96",
+  "h": "1a1b5261d46df272",
   "last": "2026-09-12"
  },
  "outlook-cannot-open-the-outlook-window": {
   "first": "2026-07-28",
-  "h": "aecce86f3e2dc2a0",
+  "h": "b5815a3e12729486",
   "last": "2026-09-12"
  },
  "outlook-cant-add-account-new-outlook": {
   "first": "2026-07-28",
-  "h": "632811e2420046aa",
+  "h": "99bdb3b87b9c0d5a",
   "last": "2026-09-12"
  },
  "outlook-cant-sign-in": {
   "first": "2026-07-28",
-  "h": "2834894dc6800de1",
+  "h": "53a91fc56eec5b29",
   "last": "2026-09-12"
  },
  "outlook-com-not-syncing": {
   "first": "2026-07-28",
-  "h": "275f2101f35f177b",
+  "h": "ccc2ccbf0779ee0a",
   "last": "2026-09-12"
  },
  "outlook-contacts-missing": {
   "first": "2026-07-28",
-  "h": "54ef1b39d5a026cd",
+  "h": "93dd24c5eb3bc3eb",
   "last": "2026-09-12"
  },
  "outlook-data-file-cannot-be-accessed": {
   "first": "2026-07-28",
-  "h": "9882bbc53340ed19",
+  "h": "be8c0664c2157900",
   "last": "2026-09-12"
  },
  "outlook-error-0x8004010b": {
   "first": "2026-07-28",
-  "h": "368eadf88458a781",
+  "h": "df254dd4c9e22573",
   "last": "2026-09-12"
  },
  "outlook-error-0x8004060c": {
   "first": "2026-07-28",
-  "h": "932967e1f3718d40",
+  "h": "adee427b361bdf1e",
   "last": "2026-09-12"
  },
  "outlook-error-0x80040610": {
   "first": "2026-07-28",
-  "h": "70214278277e59b3",
+  "h": "4ec69c80927779cf",
   "last": "2026-09-12"
  },
  "outlook-error-0x80042108": {
   "first": "2026-07-28",
-  "h": "4f88c76bbb9b5277",
+  "h": "f134ad543cbc2820",
   "last": "2026-09-12"
  },
  "outlook-error-0x80042109": {
   "first": "2026-07-28",
-  "h": "81b94b814ea4a8d2",
+  "h": "92b000bf2f86da1e",
   "last": "2026-09-12"
  },
  "outlook-error-0x800ccc0e": {
   "first": "2026-07-28",
-  "h": "2b98d8c10acde3ea",
+  "h": "0c5d4315d7d8d878",
   "last": "2026-09-12"
  },
  "outlook-error-0x800ccc1a": {
   "first": "2026-07-28",
-  "h": "217cdf394c407885",
+  "h": "5a1aae6d8426f827",
   "last": "2026-09-12"
  },
  "outlook-error-0x800ccc78": {
   "first": "2026-07-28",
-  "h": "dab76afd50fca50f",
+  "h": "a47bc1eb73dd0874",
   "last": "2026-09-12"
  },
  "outlook-error-0x800ccc90": {
   "first": "2026-07-28",
-  "h": "1a5fc9e6dfc59970",
+  "h": "b1cc80f7fbb30905",
   "last": "2026-09-12"
  },
  "outlook-indexing-stuck": {
   "first": "2026-07-28",
-  "h": "b12eabfc5d8cd5db",
+  "h": "a5eeea4118c5c682",
   "last": "2026-09-12"
  },
  "outlook-keeps-asking-for-password": {
   "first": "2026-07-28",
-  "h": "da377af846b57c3f",
+  "h": "0598d49badbaa8cd",
   "last": "2026-09-12"
  },
  "outlook-modern-authentication-not-working": {
   "first": "2026-07-28",
-  "h": "24ef39acd9889ebd",
+  "h": "0841558403291317",
   "last": "2026-09-12"
  },
  "outlook-needs-to-repair-your-profile": {
   "first": "2026-07-28",
-  "h": "e44e5fc627668219",
+  "h": "b7079b76781a8726",
   "last": "2026-09-12"
  },
  "outlook-not-responding": {
   "first": "2026-07-28",
-  "h": "8462721f45e226fd",
+  "h": "98fd457cd142aabd",
   "last": "2026-09-12"
  },
  "outlook-not-sending-emails": {
   "first": "2026-07-28",
-  "h": "5edce061ef74b6f6",
+  "h": "e45f042c09651710",
   "last": "2026-09-12"
  },
  "outlook-not-showing-new-emails": {
   "first": "2026-07-28",
-  "h": "4e3473addfefa26d",
+  "h": "77403de563cc4a77",
   "last": "2026-09-12"
  },
  "outlook-not-syncing": {
   "first": "2026-07-28",
-  "h": "fd4ad0cd00420856",
+  "h": "ab4a89220bb07146",
   "last": "2026-09-12"
  },
  "outlook-not-syncing-android": {
   "first": "2026-07-28",
-  "h": "73e3025684d06579",
+  "h": "09267328fa6c7a86",
   "last": "2026-09-12"
  },
  "outlook-opens-then-closes": {
   "first": "2026-07-28",
-  "h": "b6453e75304a58fb",
+  "h": "3bb9793458966cc7",
   "last": "2026-09-12"
  },
  "outlook-ost-file-corrupt": {
   "first": "2026-07-28",
-  "h": "932646e83bc13fed",
+  "h": "eb999b7625b8435a",
   "last": "2026-09-12"
  },
  "outlook-out-of-office-not-working": {
   "first": "2026-07-28",
-  "h": "67908ff14c85799d",
+  "h": "10396f0d182fff7c",
   "last": "2026-09-12"
  },
  "outlook-password-not-working": {
   "first": "2026-07-28",
-  "h": "e7923d9f749de576",
+  "h": "7d6e9e3d23bda01c",
   "last": "2026-09-12"
  },
  "outlook-problems": {
   "first": "2026-07-28",
-  "h": "e86bfce0823fb373",
-  "last": "2026-08-31"
+  "h": "e61d909229513542",
+  "last": "2026-09-12"
  },
  "outlook-pst-cannot-be-accessed": {
   "first": "2026-07-28",
-  "h": "679e9b943069a071",
+  "h": "a2132b3b81967c30",
   "last": "2026-09-12"
  },
  "outlook-rules-not-working": {
   "first": "2026-07-28",
-  "h": "d93b18bb389bf9ef",
+  "h": "e0da22222c740d3e",
   "last": "2026-09-12"
  },
  "outlook-rules-not-working-new-outlook": {
   "first": "2026-07-28",
-  "h": "08fdea7bd2b2796a",
+  "h": "ad2a5f93e3083c42",
   "last": "2026-09-12"
  },
  "outlook-running-slow": {
   "first": "2026-07-28",
-  "h": "27a0a9c45b6c33ff",
+  "h": "5f2adf4484590f21",
   "last": "2026-09-12"
  },
  "outlook-scanpst-not-working": {
   "first": "2026-07-28",
-  "h": "f155473f2309b5ce",
+  "h": "9439364db4c525a9",
   "last": "2026-09-12"
  },
  "outlook-search-greyed-out": {
   "first": "2026-07-28",
-  "h": "d2779057c3e70c14",
+  "h": "fd3ede8748bead95",
   "last": "2026-09-12"
  },
  "outlook-search-not-finding-old-emails": {
   "first": "2026-07-28",
-  "h": "b58e43e801f52964",
+  "h": "34b275af312f1858",
   "last": "2026-09-12"
  },
  "outlook-search-not-returning-all-results": {
   "first": "2026-07-28",
-  "h": "7f867ef39e6c6bb7",
+  "h": "dc3e67140f110f60",
   "last": "2026-09-12"
  },
  "outlook-shared-mailbox-not-showing": {
   "first": "2026-07-28",
-  "h": "f2a71a3d99f685dd",
+  "h": "9caabc55fa58c4f3",
   "last": "2026-09-12"
  },
  "outlook-shared-mailbox-sent-items": {
   "first": "2026-07-28",
-  "h": "1cfd4d69c6c3fbb9",
+  "h": "29ad34dc130d33a7",
   "last": "2026-09-12"
  },
  "outlook-signature-not-showing": {
   "first": "2026-07-28",
-  "h": "1f74bf0a1524d2c7",
+  "h": "d26d681d6ca72514",
   "last": "2026-09-12"
  },
  "outlook-stuck-in-outbox": {
   "first": "2026-07-28",
-  "h": "acb0b33b0bfb1846",
+  "h": "b855bd0a4d252bad",
   "last": "2026-09-12"
  },
  "outlook-stuck-in-sign-in-loop": {
   "first": "2026-07-28",
-  "h": "74ef3eeb34c9f363",
+  "h": "e9943ac0a73d23f8",
   "last": "2026-09-12"
  },
  "outlook-stuck-on-loading-profile": {
   "first": "2026-07-28",
-  "h": "bf0c39578eb4e9e5",
+  "h": "f2151b9cbdb5c5f6",
   "last": "2026-09-12"
  },
  "outlook-wont-open-after-update": {
   "first": "2026-07-28",
-  "h": "b79268b408cf492b",
+  "h": "d07fc79142f70869",
   "last": "2026-09-12"
  },
  "outlook-wont-open-in-safe-mode": {
   "first": "2026-07-28",
-  "h": "cab6389e5e657ccc",
+  "h": "70ec729fdea169df",
   "last": "2026-09-12"
  },
  "outlook-working-offline-wont-turn-off": {
   "first": "2026-07-28",
-  "h": "1d71f41aca413214",
+  "h": "f6a7bda661c96dcd",
   "last": "2026-09-12"
  },
  "outsourced-it-department": {
@@ -2640,7 +2640,7 @@
  },
  "plusnet-email-wont-add-to-new-outlook": {
   "first": "2026-07-28",
-  "h": "63eed09e4bb3c62f",
+  "h": "5a19f12ed59ab210",
   "last": "2026-09-12"
  },
  "portal": {
@@ -2770,7 +2770,7 @@
  },
  "recreate-outlook-profile-without-losing-emails": {
   "first": "2026-07-28",
-  "h": "a384db07f0885a1c",
+  "h": "68a022ea134ee71c",
   "last": "2026-09-12"
  },
  "refer-a-friend": {
@@ -2895,7 +2895,7 @@
  },
  "sage-50-wont-email-invoices-outlook": {
   "first": "2026-07-28",
-  "h": "b3225bc6fd25b773",
+  "h": "2fd845cc0f806bd5",
   "last": "2026-09-12"
  },
  "sage-50-wont-print-to-pdf-windows-11": {
@@ -3034,7 +3034,7 @@
  },
  "sky-email-wont-add-to-new-outlook": {
   "first": "2026-07-28",
-  "h": "63b3638d79bd4a9e",
+  "h": "bc34052975955ae4",
   "last": "2026-09-12"
  },
  "slow-computer-repair": {
@@ -3144,7 +3144,7 @@
  },
  "talktalk-email-not-working-android": {
   "first": "2026-09-05",
-  "h": "9acafe361b46abea",
+  "h": "a187ecd27057c051",
   "last": "2026-09-12"
  },
  "teams-chat-files-disappeared": {
@@ -3254,7 +3254,7 @@
  },
  "virgin-media-email-wont-add-to-new-outlook": {
   "first": "2026-09-05",
-  "h": "7984928c756e3bce",
+  "h": "8821a2fb5669832e",
   "last": "2026-09-12"
  },
  "virus-removal": {

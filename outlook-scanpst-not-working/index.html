@@ -823,6 +823,9 @@
 <p>ScanPST.exe (the Inbox Repair Tool that ships with classic Outlook for Windows) is fussy about three things, and almost every "not working" report comes down to one of them.</p><p><strong>The file is locked.</strong> If Outlook is still open in the background - or your antivirus is actively scanning the mailbox file - ScanPST can't get exclusive access, so it hangs at 0% or looks frozen.</p><p><strong>You pointed it at the wrong thing.</strong> "Microsoft Outlook Inbox Repair tool does not recognize the file" almost always means you fed it a desktop shortcut, a synced OneDrive placeholder that hasn't fully downloaded, or a path with odd characters - not the real .pst or .ost file. It can also mean the file is too badly corrupted for ScanPST to read at all.</p><p><strong>The file is genuinely large.</strong> Modern Unicode PSTs can grow to 50GB. ScanPST will still work on them, but it can sit for a long time on one pass and look like it has crashed when it hasn't.</p>
       </div>
     </section>
+    <section class="section" aria-label="Windows PCs only" style="padding-top:0">
+      <div class="wrap" style="max-width:860px;margin:0 auto"><div class="callout callout--info" id="apple-note" style="padding:1.05rem 1.3rem"><p class="eyebrow mono" style="margin:0 0 .35rem">// WINDOWS PCS ONLY</p><p style="margin:0;font-size:.98rem"><strong>We do not support Outlook on Apple Macs, iPads or iPhones.</strong> Apple does not allow our remote-support tool to take control of an iPad or iPhone (an Apple restriction), and our remote support covers Windows PCs only. On an Apple device, <a href="https://support.microsoft.com/en-gb/outlook" rel="noopener" target="_blank">Microsoft&rsquo;s own Outlook help</a> is the place to start.</p></div></div>
+    </section>
     <section class="section" aria-label="Fix it with me" id="fixflow">
       <div class="wrap">
       <style>

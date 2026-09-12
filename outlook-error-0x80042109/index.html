@@ -829,6 +829,9 @@
 <p>The full message is "Sending reported error (0x80042109): Outlook cannot connect to your outgoing (SMTP) e-mail server." The key word is <strong>outgoing</strong> — receiving usually works fine, it's only <em>sending</em> that fails, and messages pile up in your Outbox.</p><p>In classic Outlook this nearly always comes down to one of three things:</p><ul><li>Outlook is trying to send on <strong>port 25</strong>, which most internet providers now block — it needs to be <strong>587 with STARTTLS</strong>.</li><li>The <strong>"My outgoing server (SMTP) requires authentication"</strong> box is unticked, so the server rejects the message.</li><li>An <strong>oversized or corrupt message is jamming the Outbox</strong>, and every send attempt keeps failing on it.</li></ul>
       </div>
     </section>
+    <section class="section" aria-label="Windows PCs only" style="padding-top:0">
+      <div class="wrap" style="max-width:860px;margin:0 auto"><div class="callout callout--info" id="apple-note" style="padding:1.05rem 1.3rem"><p class="eyebrow mono" style="margin:0 0 .35rem">// WINDOWS PCS ONLY</p><p style="margin:0;font-size:.98rem"><strong>We do not support Outlook on Apple Macs, iPads or iPhones.</strong> Apple does not allow our remote-support tool to take control of an iPad or iPhone (an Apple restriction), and our remote support covers Windows PCs only. On an Apple device, <a href="https://support.microsoft.com/en-gb/outlook" rel="noopener" target="_blank">Microsoft&rsquo;s own Outlook help</a> is the place to start.</p></div></div>
+    </section>
     <section class="section" aria-label="Fix it with me" id="fixflow">
       <div class="wrap">
       <style>
