@@ -8842,6 +8842,15 @@ services_overview()
 # The full "everything Dell" cluster, grouped, rendered on the /dell-hardware/ hub.
 # (slug, short title, blurb) - each links to a page in _DELL_HUB_SLUGS.
 _DELL_CLUSTER = [
+ ("Something wrong with your Dell? Fix it step by step", [
+   ("dell-caps-lock-light-blinking-wont-turn-on", "Caps Lock light blinking, won&rsquo;t turn on", "A guided power drain, disconnect and RAM reseat before it goes anywhere."),
+   ("dell-optiplex-fan-error-f1-fix", "OptiPlex fan error at F1", "Reseat, spin check and CMOS reset, one step at a time."),
+   ("dell-g15-overheating", "G15 running hot", "Five free fixes before you spend a penny, then the honest thermal service."),
+   ("dell-killer-wifi-problems", "Killer Wi-Fi keeps dropping", "Confirm the card, Dell&rsquo;s clean reinstall, or the plain Intel driver."),
+   ("dell-xps-swollen-battery", "XPS battery swelling", "Make it safe in four steps, then a correct-fit replacement."),
+   ("dell-docking-station-not-working", "Docking station not working", "It is usually not the dock: which fault you have, and what fixes it."),
+   ("dell-this-pc-cant-run-windows-11", "PC Health Check says this Dell cannot run Windows 11", "Find the real blocker in the BIOS and enable the safe settings."),
+ ]),
  ("Dell support, servicing &amp; emergency", [
    ("dell-remote-support", "Remote Dell support", "Fix your Dell over a secure session you watch &mdash; Windows, email, drivers, slowdowns, often the same day."),
    ("dell-business-support-dorset", "Dell business support", "Managed support for business Dell fleets &mdash; Latitude, OptiPlex, Precision &mdash; across Dorset."),
@@ -8924,6 +8933,7 @@ def _dell_scene(key):
 
 # short chip labels for the directory wayfinding row (keyed by group title)
 _DELL_CHIP = {
+    "Something wrong with your Dell? Fix it step by step": "Fix it",
     "Dell support, servicing &amp; emergency": "Support",
     "Repair &amp; upgrades in Dorset": "Repairs",
     "Buying a refurbished Dell": "Buying",
@@ -21618,6 +21628,17 @@ FIX_FLOW_PAGES = {
     'windows-11-network-credentials-shared-folder': {'h2': 'Stop the credentials box, step by step', 'ask': 'Does the folder open without asking now?', 'tip': 'Restart and open the folder once more to be sure it stays signed in.',
         'h3s': 'Still asking after every step? That is a remote job.',
         'sections': [(1, 'Use the username format Windows actually wants'), (2, 'Save the login properly so Windows stops asking'), (3, 'If a saved login that worked for months suddenly stopped')]},
+    # ---- Dell fault pages (12 Sep 2026). Explicit only: the other Dell pages carry OUR process as steps, not fixes.
+    'dell-caps-lock-light-blinking-wont-turn-on': {'stuck_what': 'Tell us the model and the light pattern; we collect free across Dorset, diagnose first and quote before any repair.', 'stuck_tail': '', 'h2': 'Get it to power on, step by step', 'ask': 'Does it turn on now?', 'tip': 'Let it run for ten minutes and restart once more to be sure.',
+        'h3s': 'Still dead after all three steps? That is a workshop job: free local collection, diagnosis first.', 'max_steps': 3},
+    'dell-optiplex-fan-error-f1-fix': {'stuck_what': 'Tell us the model and what the screen says; we collect free across Dorset, diagnose first and quote before any repair.', 'stuck_tail': '', 'h2': 'Clear the fan error, step by step', 'ask': 'Does it boot without the F1 prompt now?', 'tip': 'Restart twice more to be sure the message has gone.',
+        'h3s': 'Still stopping at F1 after all three steps? That is a workshop job: free local collection, diagnosis first.', 'max_steps': 3},
+    'dell-g15-overheating': {'stuck_what': 'Tell us the model and the age; we quote the thermal service first and collect free across Dorset.', 'stuck_tail': '', 'h2': 'Cool it down with me, one free fix at a time', 'ask': 'Is it running cooler?', 'tip': 'Play or render for twenty minutes and check the fans and temperatures again.',
+        'h3s': 'Still hot after all five free fixes? That is the two-to-four-year fan de-dust and repaste, and we quote first.', 'list_section': 0},
+    'dell-xps-swollen-battery': {'stuck_what': 'Power it off, leave it off charge, and call us; we arrange a safe replacement with a correct-fit battery.', 'stuck_tail': '', 'h2': 'Make it safe with me, step by step', 'ask': 'Done that step?', 'tip': 'Keep it powered off and off charge until the battery is out.',
+        'h3s': 'Not sure what you are looking at? Ring us before you touch it.', 'mode': 'seq', 'yes': 'Done, next step', 'no': 'I am not sure',
+        'eyebrow': '// MAKE IT SAFE WITH ME &middot; STEP BY STEP', 'lede': 'The four steps from this guide, one at a time. Tick each one off and it shows the next. Nothing here leaves your device.',
+        'h3f': 'Made safe{mins}. Now get the battery replaced.', 'plan_lead': None},
     'printer-wont-scan-to-computer-windows-11': {'h2': 'Get scanning working on Windows 11, step by step', 'ask': 'Is it scanning now?', 'tip': 'Scan one page from the computer to be sure.', 'h3s': 'Still not scanning after every step? That is a remote job.',
         'sections': [(1, 'Swap the driver Windows fitted for the maker&rsquo;s full package'), (2, 'Start the scan at the computer, not the printer'), (3, 'Treat USB and network faults differently'), (4, 'Let scanning through the security suite and VPN')]},
 }
@@ -21728,7 +21749,7 @@ def _fix_flow_for(d):
         for li in re.findall(r'<li[^>]*>(.*?)</li>', sec['html'], re.S):
             m = re.match(r'\s*<(?:strong|b)>(.*?)</(?:strong|b)>\s*(.*)$', li, re.S)
             if m:
-                title = _ff_plain(m.group(1)).rstrip('.:;,')          # the bold lead names the test
+                title = re.sub(r'^\d+[.)]\s*', '', _ff_plain(m.group(1))).rstrip('.:;,')   # the bold lead names the step; drop a "1." the page numbered itself
                 body = '<p>' + _ff_plain(li) + ' <a href="#s' + str(idx + 1) + '">Full detail in the guide below &#8595;</a></p>'   # the whole item, since the lead is a fragment of it
             else:
                 t = _ff_plain(li); title = t.split('. ')[0].rstrip('.'); body = '<p>' + t + '</p>'
@@ -21751,7 +21772,7 @@ def _fix_flow_for(d):
         'steps_html': _ff_steps_html(steps, cfg.get('yes', 'Yes, sorted'), cfg.get('no', 'Not yet'), seq=(cfg.get('mode') == 'seq')),
         'fixed_html': _ff_fixed_ending(cfg.get('h3f', 'Sorted{mins}. Nice work.'), cfg['tip'], cfg.get('plan_lead', 'Rather have it looked after?')),
         'stuck_html': _ff_stuck_ending(cfg['h3s'].replace('every step', 'all ' + [k for k, v in words.items() if v == n][0] + ' steps') if n in words.values() else cfg['h3s'],
-                                       'With your permission we connect to your screen and sort it in one session.'),
+                                       cfg.get('stuck_what', 'With your permission we connect to your screen and sort it in one session.'), cfg.get('stuck_tail', ' Usually the same day, remote help from &pound;20, and no fix, no fee.')),
         'steps_text': text.replace('&', '&amp;').replace('<', '&lt;'),
     })
 

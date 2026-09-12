@@ -299,7 +299,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-31"
+      "dateModified": "2026-09-12"
     },
     {
       "@type": "Service",
@@ -886,6 +886,141 @@
 <p>Work through these in order. Between them they sort a genuinely large share of &ldquo;my G15 is overheating&rdquo; complaints &mdash; and none of them costs anything.</p><ul><li><strong>1. Hard, flat surface only.</strong> The G15 pulls most of its cool air through the underside. On a bed, sofa, carpet or your lap, that intake is smothered and temperatures climb within minutes. A desk or even a hardback book makes a measurable difference. It sounds too simple to matter; it&rsquo;s the single most common cause we see.</li><li><strong>2. Clear the vents of dust.</strong> Power off, unplug, and use a can of compressed air in short bursts through the rear and side vents and the underside intake grille. If a grey mat of dust puffs out, you&rsquo;ve found a big part of your problem. This matches Dell&rsquo;s own published overheating guidance &mdash; dust on the fans and heatsink fins is the first thing they tell owners to rule out.</li><li><strong>3. Use Game Shift (G-mode).</strong> Press <strong>Fn + F9</strong> (the key with the little &lsquo;G&rsquo;) to toggle Game Shift, which runs the fans at maximum during demanding games. It&rsquo;s loud by design, but that&rsquo;s the cooling headroom Dell built in &mdash; many owners never discover it exists.</li><li><strong>4. Update the BIOS.</strong> Dell has shipped fan-curve and thermal-behaviour changes for G15 models in BIOS updates. Put your Service Tag into dell.com/support and install any pending BIOS and thermal-related updates. Plug the charger in first and don&rsquo;t interrupt it.</li><li><strong>5. Check your thermal profile.</strong> In the Dell power/thermal software your G15 shipped with (Dell Power Manager on some models, the command-centre app on others), make sure you&rsquo;re not stuck in a &ldquo;Quiet&rdquo; profile while gaming &mdash; it deliberately holds fan speed down and lets temperatures rise. &ldquo;Ultra Performance&rdquo; or &ldquo;Performance&rdquo; prioritises cooling.</li></ul><p>One thing you&rsquo;ll see recommended in enthusiast forums is <strong>undervolting</strong> &mdash; reducing the voltage fed to the processor to cut heat. It genuinely works for some people, but it&rsquo;s a tinkerer&rsquo;s technique with stability trade-offs, and it&rsquo;s not something we recommend or offer as a service. If your G15 needs undervolting just to behave, the real problem is almost always the one in the next section.</p>
       </div>
     </section>
+    <section class="section" aria-label="Fix it with me" id="fixflow">
+      <div class="wrap">
+      <style>
+      #fixflow .ff{max-width:860px;margin:0 auto}
+      #fixflow .ff-rev{display:block;margin-top:.5rem;font-size:.72rem;letter-spacing:.06em;color:var(--cyan-soft,#6cc4f5)}
+      #fixflow .ff-top{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin-bottom:1rem;font-size:.85rem;color:var(--muted,#9fb5d3)}
+      #fixflow .ff-os{font-weight:600;color:var(--ink,#eaf4ff)}
+      #fixflow .ff-oslink{background:none;border:0;padding:0;color:var(--cyan-soft,#6cc4f5);font:inherit;font-size:.8rem;cursor:pointer;text-decoration:underline}
+      #fixflow .ff-prog{margin-left:auto;font-family:var(--font-mono,monospace);font-size:.72rem;letter-spacing:.06em}
+      #fixflow .ff-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.55rem}
+      #fixflow .ff-step{border:1px solid var(--line,rgba(125,170,220,.16));border-radius:14px;background:rgba(255,255,255,.03);overflow:hidden}
+      #fixflow .ff-step[hidden]{display:none}
+      #fixflow .ff-head{display:flex;align-items:center;gap:.8rem;padding:.9rem 1.1rem;font-weight:700;font-size:1.02rem}
+      #fixflow .ff-num{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-mono,monospace);font-size:.75rem;border:1px solid rgba(108,196,245,.5);color:var(--cyan-soft,#6cc4f5)}
+      #fixflow .ff-step.is-done .ff-num{border-color:rgba(46,204,113,.6);color:#2ecc71}
+      #fixflow .ff-step.is-done .ff-head{opacity:.7;font-weight:600}
+      #fixflow .ff-step.is-skip .ff-num{opacity:.45}
+      #fixflow .ff-body{display:none;padding:0 1.1rem 1.1rem;font-size:.93rem;line-height:1.6;color:var(--ink-2,#dfe9f7)}
+      #fixflow .ff-step.is-on{border-color:rgba(108,196,245,.55);background:rgba(29,151,227,.07)}
+      #fixflow .ff-step.is-on .ff-body{display:block}
+      #fixflow .ff-body p{margin:0 0 .6rem}
+      #fixflow .ff-body ol{margin:0 0 .6rem 1.2rem;padding:0}
+      #fixflow .ff-body li{margin:.25rem 0}
+      #fixflow .ff-cmd{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin:.5rem 0;padding:.5rem .7rem;border-radius:9px;background:rgba(7,13,34,.7);border:1px solid rgba(125,170,220,.22)}
+      #fixflow .ff-cmd code{font-family:var(--font-mono,monospace);font-size:.82rem;color:#eaf4ff;word-break:break-all}
+      #fixflow .ff-cmd small{width:100%;font-size:.72rem;color:var(--muted,#9fb5d3)}
+      #fixflow .ff-copy{margin-left:auto;border:1px solid rgba(108,196,245,.45);background:transparent;color:var(--cyan-soft,#6cc4f5);border-radius:7px;padding:.28rem .6rem;font:inherit;font-size:.74rem;cursor:pointer;min-height:32px}
+      #fixflow .ff-copy.done{border-color:rgba(46,204,113,.6);color:#2ecc71}
+      #fixflow .ff-open{display:inline-block;margin:.2rem .4rem .5rem 0;padding:.5rem .8rem;border-radius:9px;border:1px solid rgba(108,196,245,.45);color:var(--cyan-soft,#6cc4f5);text-decoration:none;font-size:.85rem;font-weight:600}
+      #fixflow .ff:not(.is-win) .ff-open{display:none}
+      #fixflow .ff-p10{display:none} #fixflow .ff.is-w10 .ff-p10{display:inline} #fixflow .ff.is-w10 .ff-p11{display:none}
+      #fixflow .ff-fig{margin:.8rem 0 .4rem;max-width:460px}
+      #fixflow .ff-fig img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid rgba(125,170,220,.28)}
+      #fixflow .ff-fig figcaption{font-size:.72rem;color:var(--muted,#9fb5d3);margin-top:.35rem;line-height:1.5}
+      #fixflow .ff-ask{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:.8rem;padding-top:.8rem;border-top:1px dashed rgba(125,170,220,.25)}
+      #fixflow .ff-ask b{font-size:.95rem}
+      #fixflow .ff-ask .button{min-height:44px}
+      #fixflow .ff-end{margin-top:1rem;padding:1.3rem 1.4rem;border-radius:16px;border:1px solid rgba(46,204,113,.45);background:rgba(46,204,113,.07)}
+      #fixflow .ff-end[hidden]{display:none}
+      #fixflow .ff-end.is-bad{border-color:rgba(255,180,0,.5);background:rgba(255,180,0,.07)}
+      #fixflow .ff-end h3{margin:0 0 .5rem;font-size:1.25rem}
+      #fixflow .ff-end p{margin:0 0 .6rem;line-height:1.6}
+      #fixflow .ff-end .ff-cta{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:.8rem}
+      #fixflow .ff-end .ff-cta .button{min-height:44px}
+      #fixflow .ff-plan{margin-top:1rem;padding:1rem 1.1rem;border-radius:12px;border:1px solid rgba(125,170,220,.25);background:rgba(255,255,255,.03);font-size:.9rem;line-height:1.6}
+      #fixflow .ff-plan b{color:var(--cyan-soft,#6cc4f5)}
+      @media(max-width:560px){#fixflow .ff-ask .button,#fixflow .ff-end .ff-cta .button{width:100%}#fixflow .ff-prog{margin-left:0}}
+      </style>
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FIX IT WITH ME &middot; STEP BY STEP</p>
+          <h2 class="section-title section-title--center" data-title>Cool it down with me, one free fix at a time<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>The steps from this guide, one at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your device.<span class="ff-rev mono">Last reviewed 12 September 2026</span></p>
+        </div>
+        <div class="ff" id="ff">
+          <div class="ff-top"><span class="ff-os" id="ff-os">Checking which Windows you have&hellip;</span><button type="button" class="ff-oslink" id="ff-ostoggle" hidden>Not right? Switch to Windows 10</button><span class="ff-prog" id="ff-prog">STEP 1 OF 5</span></div>
+          <ol class="ff-steps" id="ff-steps">
+            <li class="ff-step is-on" data-step="1">
+              <div class="ff-head"><span class="ff-num">01</span>Hard, flat surface only</div>
+              <div class="ff-body"><p>1. Hard, flat surface only. The G15 pulls most of its cool air through the underside. On a bed, sofa, carpet or your lap, that intake is smothered and temperatures climb within minutes. A desk or even a hardback book makes a measurable difference. It sounds too simple to matter; it&rsquo;s the single most common cause we see. <a href="#s1">Full detail in the guide below &#8595;</a></p><div class="ff-ask"><b>Is it running cooler?</b><button type="button" class="button primary" data-go="fixed">Yes, sorted</button><button type="button" class="button secondary" data-go="2">Not yet</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="2" hidden>
+              <div class="ff-head"><span class="ff-num">02</span>Clear the vents of dust</div>
+              <div class="ff-body"><p>2. Clear the vents of dust. Power off, unplug, and use a can of compressed air in short bursts through the rear and side vents and the underside intake grille. If a grey mat of dust puffs out, you&rsquo;ve found a big part of your problem. This matches Dell&rsquo;s own published overheating guidance &mdash; dust on the fans and heatsink fins is the first thing they tell owners to rule out. <a href="#s1">Full detail in the guide below &#8595;</a></p><div class="ff-ask"><b>Is it running cooler?</b><button type="button" class="button primary" data-go="fixed">Yes, sorted</button><button type="button" class="button secondary" data-go="3">Not yet</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="3" hidden>
+              <div class="ff-head"><span class="ff-num">03</span>Use Game Shift (G-mode)</div>
+              <div class="ff-body"><p>3. Use Game Shift (G-mode). Press Fn + F9 (the key with the little &lsquo;G&rsquo;) to toggle Game Shift, which runs the fans at maximum during demanding games. It&rsquo;s loud by design, but that&rsquo;s the cooling headroom Dell built in &mdash; many owners never discover it exists. <a href="#s1">Full detail in the guide below &#8595;</a></p><div class="ff-ask"><b>Is it running cooler?</b><button type="button" class="button primary" data-go="fixed">Yes, sorted</button><button type="button" class="button secondary" data-go="4">Not yet</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="4" hidden>
+              <div class="ff-head"><span class="ff-num">04</span>Update the BIOS</div>
+              <div class="ff-body"><p>4. Update the BIOS. Dell has shipped fan-curve and thermal-behaviour changes for G15 models in BIOS updates. Put your Service Tag into dell.com/support and install any pending BIOS and thermal-related updates. Plug the charger in first and don&rsquo;t interrupt it. <a href="#s1">Full detail in the guide below &#8595;</a></p><div class="ff-ask"><b>Is it running cooler?</b><button type="button" class="button primary" data-go="fixed">Yes, sorted</button><button type="button" class="button secondary" data-go="5">Not yet</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="5" hidden>
+              <div class="ff-head"><span class="ff-num">05</span>Check your thermal profile</div>
+              <div class="ff-body"><p>5. Check your thermal profile. In the Dell power/thermal software your G15 shipped with (Dell Power Manager on some models, the command-centre app on others), make sure you&rsquo;re not stuck in a &ldquo;Quiet&rdquo; profile while gaming &mdash; it deliberately holds fan speed down and lets temperatures rise. &ldquo;Ultra Performance&rdquo; or &ldquo;Performance&rdquo; prioritises cooling. <a href="#s1">Full detail in the guide below &#8595;</a></p><div class="ff-ask"><b>Is it running cooler?</b><button type="button" class="button primary" data-go="fixed">Yes, sorted</button><button type="button" class="button secondary" data-go="stuck">Not yet</button></div>
+              </div>
+            </li>
+          </ol>
+          <div class="ff-end" id="ff-end" hidden></div>
+          <template id="ff-tpl-fixed"><h3>Sorted{mins}. Nice work.</h3><p>Play or render for twenty minutes and check the fans and temperatures again.</p><div class="ff-plan"><b>Rather have it looked after?</b> On a 365 support plan every computer gets a full service every six weeks: Windows, driver and app updates applied and checked, security and backup looked at, and a written Service Report each time. Home &pound;18.25 per computer a month, business from &pound;24.38, rolling monthly.</div><div class="ff-cta"><a class="button primary" href="/monthly-it-support/">See the support plans &#8594;</a><a class="button secondary" href="/free-pc-health-check/">Get the free app</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div></template>
+          <template id="ff-tpl-stuck"><h3>Still hot after all five free fixes? That is the two-to-four-year fan de-dust and repaste, and we quote first.</h3><p>Tell us the model and the age; we quote the thermal service first and collect free across Dorset.</p><div class="ff-cta"><a class="button primary" href="tel:+441202775566">Call 01202 775566</a><a class="button secondary" href="sms:+447520615332">Text 07520 615332</a><a class="button bm-ghost" href="/remote-support/">How remote help works</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div></template>
+          <template id="ff-tpl-text">Dell G15 Overheating or Fans Screaming? Try the Free Fixes First - the fix order (365techies.co.uk/dell-g15-overheating/)
+1. Hard, flat surface only: 1. Hard, flat surface only. The G15 pulls most of its cool air through the underside. On a bed, sofa, carpet or your lap, that intake is smothered and temperatures climb within minutes. A desk or even a hardback book makes a measurable difference. It sounds too simple to matter; it’s the single most common cause we see.
+2. Clear the vents of dust: 2. Clear the vents of dust. Power off, unplug, and use a can of compressed air in short bursts through the rear and side vents and the underside intake grille. If a grey mat of dust puffs out, you’ve found a big part of your problem. This matches Dell’s own published overheating guidance — dust on the fans and heatsink fins is the first thing they tell owners to rule out.
+3. Use Game Shift (G-mode): 3. Use Game Shift (G-mode). Press Fn + F9 (the key with the little ‘G’) to toggle Game Shift, which runs the fans at maximum during demanding games. It’s loud by design, but that’s the cooling headroom Dell built in — many owners never discover it exists.
+4. Update the BIOS: 4. Update the BIOS. Dell has shipped fan-curve and thermal-behaviour changes for G15 models in BIOS updates. Put your Service Tag into dell.com/support and install any pending BIOS and thermal-related updates. Plug the charger in first and don’t interrupt it.
+5. Check your thermal profile: 5. Check your thermal profile. In the Dell power/thermal software your G15 shipped with (Dell Power Manager on some models, the command-centre app on others), make sure you’re not stuck in a “Quiet” profile while gaming — it deliberately holds fan speed down and lets temperatures rise. “Ultra Performance” or “Performance” prioritises cooling.
+Still stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.uk/remote-support/</template>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var root=document.getElementById('ff'); if(!root) return;
+        var steps=Array.prototype.slice.call(root.querySelectorAll('.ff-step')), N=steps.length, endEl=root.querySelector('#ff-end'), prog=root.querySelector('#ff-prog');
+        var osEl=root.querySelector('#ff-os'), tog=root.querySelector('#ff-ostoggle'), t0=null, w10=false, isWin=/Windows/i.test(navigator.userAgent);
+        root.classList.toggle('is-win',isWin);
+        function setOS(ten,label){ w10=ten; root.classList.toggle('is-w10',ten); osEl.textContent=label; tog.hidden=!isWin; tog.textContent=ten?'Not right? Switch to Windows 11':'Not right? Switch to Windows 10'; }
+        if(root.getAttribute('data-os')==='1'){
+          if(!isWin){ setOS(false,'These steps are for Windows; you seem to be on another device, so keep them for the PC.'); }
+          else if(navigator.userAgentData&&navigator.userAgentData.getHighEntropyValues){
+            navigator.userAgentData.getHighEntropyValues(['platformVersion']).then(function(v){ var maj=parseInt(String(v.platformVersion||'').split('.')[0],10);
+              if(maj>=13) setOS(false,'You are on Windows 11, so the paths below match your Settings app.'); else if(maj>0) setOS(true,'You are on Windows 10, so the paths below match your Settings app.'); else setOS(false,'Windows 10 or 11: paths shown for Windows 11.'); }).catch(function(){ setOS(false,'Windows 10 or 11: paths shown for Windows 11.'); });
+          } else setOS(false,'Windows 10 or 11: paths shown for Windows 11.');
+          tog.addEventListener('click',function(){ setOS(!w10,w10?'Showing the Windows 11 paths.':'Showing the Windows 10 paths.'); });
+        } else { osEl.hidden=true; tog.hidden=true; }
+        function tpl(id,text){ var t=root.querySelector('#'+id); if(!t) return ''; return text?(t.content?t.content.textContent:t.textContent):t.innerHTML; }
+        function show(n){ steps.forEach(function(s){ var k=parseInt(s.getAttribute('data-step'),10); s.hidden=k>n; s.classList.toggle('is-on',k===n); if(k<n&&!s.classList.contains('is-done')) s.classList.add('is-skip'); }); prog.textContent='STEP '+n+' OF '+N; var cur=steps[n-1]; if(cur) cur.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+        function finish(kind){
+          steps.forEach(function(s){ s.classList.remove('is-on'); });
+          var mins=t0?Math.max(1,Math.round((Date.now()-t0)/60000)):null, minsTxt=mins?(' in about '+mins+' minute'+(mins===1?'':'s')):'';
+          endEl.className='ff-end'+(kind==='stuck'?' is-bad':''); endEl.innerHTML=tpl(kind==='fixed'?'ff-tpl-fixed':'ff-tpl-stuck').split('{mins}').join(minsTxt);
+          prog.textContent=kind==='fixed'?'DONE':'NEEDS A TECHIE'; endEl.hidden=false; endEl.scrollIntoView({behavior:'smooth',block:'nearest'});
+          var c=endEl.querySelector('#ff-copyall'); if(c) c.addEventListener('click',function(){ copyText(tpl('ff-tpl-text',true).replace(/^\s+|\s+$/g,''),c,'Copy these steps'); });
+        }
+        function copyText(txt,btn,label){ function ok(){ btn.textContent='Copied'; btn.classList.add('done'); setTimeout(function(){ btn.textContent=label; btn.classList.remove('done'); },1800); }
+          if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(ok).catch(function(){}); }
+          else{ var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); ok(); }catch(e){} document.body.removeChild(ta); } }
+        root.addEventListener('click',function(e){
+          var b=e.target.closest('button'); if(!b) return;
+          if(b.classList.contains('ff-copy')){ copyText(b.getAttribute('data-copy'),b,'Copy'); return; }
+          var go=b.getAttribute('data-go'); if(!go) return;
+          if(!t0) t0=Date.now();
+          var cur=b.closest('.ff-step'); if(cur){ cur.classList.add('is-done'); }
+          if(go==='fixed'||go==='stuck'){ finish(go); return; }
+          var n=parseInt(go,10); var note=b.getAttribute('data-note'); var noteEl=root.querySelector('#ff-note'+n); if(noteEl){ noteEl.hidden=!note; noteEl.innerHTML=note?'<b>'+note+'</b>':''; }
+          endEl.hidden=true; show(n);
+        });
+      })();
+      </script>
+    </section>
+
     <section id="s2" class="section section--alt" aria-label="Why the G15 runs hot in the first place">
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">Why it happens</p>

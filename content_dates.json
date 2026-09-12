@@ -721,8 +721,8 @@
  },
  "dell-caps-lock-light-blinking-wont-turn-on": {
   "first": "2026-07-28",
-  "h": "e1d1ec7f44625ec5",
-  "last": "2026-09-04"
+  "h": "560bc7809059dabe",
+  "last": "2026-09-12"
  },
  "dell-docking-station-not-working": {
   "first": "2026-07-28",
@@ -731,13 +731,13 @@
  },
  "dell-g15-overheating": {
   "first": "2026-07-28",
-  "h": "da3f8822b3c61e07",
-  "last": "2026-08-31"
+  "h": "718d6dc8ca522000",
+  "last": "2026-09-12"
  },
  "dell-hardware": {
   "first": "2026-07-28",
-  "h": "e3bae1b642fe5696",
-  "last": "2026-08-31"
+  "h": "5916855f640e338c",
+  "last": "2026-09-12"
  },
  "dell-inspiron-15-3000-windows-11": {
   "first": "2026-07-28",
@@ -761,8 +761,8 @@
  },
  "dell-it-support-dorset": {
   "first": "2026-07-28",
-  "h": "d36a8e3b414ed61b",
-  "last": "2026-09-09"
+  "h": "99465d10f718c2ac",
+  "last": "2026-09-12"
  },
  "dell-killer-wifi-problems": {
   "first": "2026-07-28",
@@ -871,8 +871,8 @@
  },
  "dell-optiplex-fan-error-f1-fix": {
   "first": "2026-07-28",
-  "h": "1ffc5dff57de30be",
-  "last": "2026-08-31"
+  "h": "fa3819a449c4c731",
+  "last": "2026-09-12"
  },
  "dell-optiplex-guide": {
   "first": "2026-07-28",
@@ -951,8 +951,8 @@
  },
  "dell-xps-swollen-battery": {
   "first": "2026-07-28",
-  "h": "ec8020818ea3fcf8",
-  "last": "2026-08-31"
+  "h": "36b4b9ec5a9d1808",
+  "last": "2026-09-12"
  },
  "desktop-pc-used-as-office-server": {
   "first": "2026-07-28",
