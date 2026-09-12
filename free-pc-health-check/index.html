@@ -1205,6 +1205,7 @@
               </div>
               <div class="bm-verdict" id="bm-verdict"></div>
             </div>
+            <div class="bm-fix" id="bm-fix"></div>
             <div class="bm-scale-wrap">
               <p class="bm-scale-title">Where you land <span>(indicative reference points)</span></p>
               <div class="bm-scale"><div class="bm-scale-fill" id="bm-scale-fill"></div><i class="bm-scale-me" id="bm-scale-me"><b>You</b></i></div>
@@ -1224,7 +1225,6 @@
               <button type="button" class="button primary bm-share" id="bm-share">Share my score</button>
               <button type="button" class="button bm-ghost" data-ttshare data-share-title="Free PC Benchmark" data-share-text="Test how fast your computer really is - free, in your browser, no download:">Share this free tool</button>
             </div>
-            <div class="bm-fix" id="bm-fix"></div>
           </div>
         </div>
         <p class="bm-powered">An indicative browser benchmark &mdash; real-world speed also depends on startup programs, disk health, updates and malware. Scores are our own 0&ndash;100 scale and aren&rsquo;t comparable with native benchmark suites.</p>
@@ -1315,12 +1315,17 @@
           var t0=performance.now(), mb=0;
           function step(){ return crypto.subtle.digest('SHA-256',buf).then(function(){ mb+=8; var el=performance.now()-t0; var rate=mb/(el/1000); if(onP)onP(rate); return el<1200?step():rate; }); }
           return step().catch(function(){ return null; }); }
+        /* Graphics: shade N full-screen passes of a deliberately heavy fragment shader, make the GPU finish
+           (readPixels is a hard sync point), time it, and grow N until each batch is GPU-bound. The result is
+           pixels shaded per second - it does not care whether the screen is 60 Hz or 240 Hz, whether the tab is
+           in front, or how the browser paces frames. The old version counted frames per second and could score a
+           workstation like an office PC whenever the first second included shader compilation. */
         function gpuTest(onP){ return new Promise(function(res){ var gl;
           try{ gl=canvas.getContext('webgl',{powerPreference:'high-performance'})||canvas.getContext('experimental-webgl'); }catch(e){}
           if(!gl){ res(null); return; }
           function sh(t,s){ var o=gl.createShader(t); gl.shaderSource(o,s); gl.compileShader(o); return gl.getShaderParameter(o,gl.COMPILE_STATUS)?o:null; }
           var vs=sh(gl.VERTEX_SHADER,'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}');
-          var fs=sh(gl.FRAGMENT_SHADER,'precision mediump float;uniform float u;void main(){vec2 q=gl_FragCoord.xy*0.02;float v=sin(q.x+u)*cos(q.y-u)+sin(q.x*0.7+q.y*1.3+u*2.0);gl_FragColor=vec4(0.1+0.5*abs(sin(u+v)),0.25+0.45*abs(v*0.5),0.55+0.35*abs(cos(u-v)),0.35);}');
+          var fs=sh(gl.FRAGMENT_SHADER,'precision mediump float;uniform float u;void main(){vec2 q=gl_FragCoord.xy*0.02;float v=0.0;for(int k=1;k<=24;k++){v+=sin(q.x*float(k)*0.37+u)*cos(q.y*0.61-u*float(k));}gl_FragColor=vec4(0.1+0.5*abs(sin(u+v)),0.25+0.45*abs(v*0.05),0.55+0.35*abs(cos(u-v)),0.35);}');
           if(!vs||!fs){ res(null); return; }
           var pr=gl.createProgram(); gl.attachShader(pr,vs); gl.attachShader(pr,fs); gl.linkProgram(pr);
           if(!gl.getProgramParameter(pr,gl.LINK_STATUS)){ res(null); return; }
@@ -1330,20 +1335,22 @@
           var loc=gl.getAttribLocation(pr,'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
           var uu=gl.getUniformLocation(pr,'u');
           gl.enable(gl.BLEND); gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
-          var LEVELS=[6,18,48,120], li=0, frames=0, t0=performance.now(), held=0, topFps=0, lastP=t0, raf;
-          function frame(){ var t=(performance.now()-t0)/1000;
+          var px=canvas.width*canvas.height, n=4, t0=performance.now(), lastP=t0, samples=[], pix=new Uint8Array(4);
+          function median(){ if(!samples.length) return 0; var c=samples.slice().sort(function(a,b){return a-b;}); return c[c.length>>1]; }
+          function batch(){
+            var a=performance.now();
             gl.clearColor(0.03,0.05,0.13,1); gl.clear(gl.COLOR_BUFFER_BIT);
-            var n=LEVELS[li];
-            for(var i=0;i<n;i++){ gl.uniform1f(uu,t*1.7+i*0.37); gl.drawArrays(gl.TRIANGLES,0,3); }
-            frames++;
-            var now=performance.now(), el=now-t0;
-            if(onP&&now-lastP>300&&el>200){ onP('level '+(li+1)+'/4 · '+Math.round(frames/(el/1000))+' fps'); lastP=now; }
-            if(el>=1100){ var fps=frames/(el/1000); topFps=fps;
-              if(fps>=45){ held++; li++; if(li>=LEVELS.length){ done(); return; } frames=0; t0=performance.now(); }
-              else { done(); return; } }
-            raf=requestAnimationFrame(frame); }
-          function done(){ try{ cancelAnimationFrame(raf); }catch(e){} res({held:held, fps:topFps}); }
-          raf=requestAnimationFrame(frame); }); }
+            for(var i=0;i<n;i++){ gl.uniform1f(uu,(a/1000)*1.7+i*0.37); gl.drawArrays(gl.TRIANGLES,0,3); }
+            gl.readPixels(0,0,1,1,gl.RGBA,gl.UNSIGNED_BYTE,pix);
+            var now=performance.now(), dt=now-a, el=now-t0;
+            if(el>500) samples.push(n*px/(dt/1000));                 /* the first half second is warm-up and shader compilation */
+            if(dt<40) n=Math.ceil(n*1.6); else if(dt>120) n=Math.max(2,Math.floor(n*0.6));
+            if(onP&&now-lastP>300){ onP(fmtG(median())+' &middot; '+n+' passes per batch'); lastP=now; }
+            if(el>=3200||samples.length>=60){ res({gpix:median()}); return; }
+            setTimeout(batch,0);                                       /* lets the live readout paint between batches */
+          }
+          batch(); }); }
+        function fmtG(v){ return v>=1e9?((v/1e9).toFixed(1)+' Gpix/s'):(Math.round(v/1e6)+' Mpix/s'); }
         function storeTest(){ if(!('caches' in window)) return Promise.resolve(null);
           var data=new Uint8Array(4*1048576); for(var i=0;i<data.length;i+=1024)data[i]=(i*7)&255;
           var blob=new Blob([data]), c;
@@ -1353,6 +1360,7 @@
               [0,1,2].forEach(function(k){ q=q.then(function(){ return c.match('/tt-bench-'+k).then(function(x){ return x.arrayBuffer(); }); }); });
               return q.then(function(){ var r=12/((performance.now()-r0)/1000); caches.delete('tt-bench'); return {w:w,r:r}; }); }); })
           .catch(function(){ try{ caches.delete('tt-bench'); }catch(e){} return null; }); }
+        var GPU_REF=4.57e+10;   /* pixels shaded per second that scores 100 (a high-end desktop card); 8 points off per halving */
         function logScore(v,ref,base,mult){ if(v==null||!(v>0)) return null; var s=Math.round(base+mult*(Math.log(v/ref)/Math.log(2))); return Math.max(5,Math.min(100,s)); }
         function band(s){ return s>=60?'g':(s>=40?'a':'p'); }
         function fmtM(v){ return Math.round(v/1e6)+' M ops/s'; }
@@ -1366,7 +1374,7 @@
           setPhase('1/6 &mdash; Single-core processor speed',5);
           worker(CPUW,1500,0,function(v){ live(Math.round(v/1e6)+' M ops/s'); }).then(function(v){ R.single=v;
             setPhase('2/6 &mdash; All '+cores+' processor threads together',20); live('');
-            var n=Math.min(cores,16), rates=[], jobs=[];
+            var n=Math.min(cores,64), rates=[], jobs=[];
             for(var i=0;i<n;i++){ (function(i){ rates[i]=0; jobs.push(worker(CPUW,1500,0,function(v){ rates[i]=v; var s=rates.reduce(function(a,b){return a+b;},0); live(Math.round(s/1e6)+' M ops/s combined'); }).catch(function(){return 0;})); })(i); }
             return Promise.all(jobs); }).then(function(arr){ R.multi=arr.reduce(function(a,b){return a+b;},0)||null;
             setPhase('3/6 &mdash; Encryption speed (SHA-256)',38); live('');
@@ -1382,10 +1390,10 @@
         });
         function render(R){
           running.hidden=true; busy=false; startBtn.disabled=false; startBtn.textContent='Run it again';
-          var S={ single:logScore(R.single,300e6,70,30), multi:logScore(R.multi,1800e6,70,25), crypto:logScore(R.crypto,900,70,20),
-                  mem:logScore(R.mem,11000,70,25), gpu:(R.gpu?Math.max(5,Math.min(100,Math.round(R.gpu.held*22+Math.min(R.gpu.fps,62)/62*12))):null),
+          var S={ single:logScore(R.single,300e6,70,30), multi:logScore(R.multi,1800e6,70,12), crypto:logScore(R.crypto,900,70,20),
+                  mem:logScore(R.mem,11000,70,25), gpu:(R.gpu?logScore(R.gpu.gpix,GPU_REF,100,8):null),
                   store:(R.store?logScore(0.6*R.store.w+0.4*R.store.r,350,70,20):null) };
-          var parts=[[S.single,0.18],[S.multi,0.20],[S.crypto,0.10],[S.mem,0.12],[S.gpu,0.25],[S.store,0.15]].filter(function(p){return p[0]!=null;});
+          var parts=[[S.single,0.22],[S.multi,0.22],[S.crypto,0.08],[S.mem,0.13],[S.gpu,0.20],[S.store,0.15]].filter(function(p){return p[0]!=null;});
           if(!parts.length){ root.querySelector('#bm-verdict').innerHTML='<p>The benchmark couldn&rsquo;t run in this browser &mdash; try Chrome or Edge, or <a href="/contact/">ask us</a> to check your computer properly.</p>'; results.hidden=false; return; }
           var tw=parts.reduce(function(a,p){return a+p[1];},0);
           var overall=Math.round(parts.reduce(function(a,p){return a+p[0]*p[1];},0)/tw);
@@ -1395,7 +1403,8 @@
           top.classList.add(overall>=60?'bm-good':(overall>=40?'bm-avg':'bm-poor'));
           root.querySelector('#bm-score').textContent=overall;
           var v;
-          if(overall>=80) v={g:'Blazing fast',m:'This is a quick machine &mdash; everything should feel instant. If it doesn&rsquo;t, something else (startup programs, updates, malware) is slowing it down, and that&rsquo;s fixable.'};
+          if(overall>=90) v={g:'Workstation class',m:'A seriously fast machine &mdash; the kind of score a high-end workstation or gaming PC gets. Nothing here needs speeding up; the job is keeping it this way, and catching the one thing (a filling drive, a missed update, no backup) that quietly undoes it.'};
+          else if(overall>=80) v={g:'Blazing fast',m:'This is a quick machine &mdash; everything should feel instant. If it doesn&rsquo;t, something else (startup programs, updates, malware) is slowing it down, and that&rsquo;s fixable.'};
           else if(overall>=60) v={g:'Running well',m:'A healthy, capable computer for everyday work. Keep it maintained and it&rsquo;ll stay that way.'};
           else if(overall>=40) v={g:'Room for improvement',m:'Usable, but you&rsquo;re waiting on it more than you should be. A tune-up &mdash; and often a simple upgrade &mdash; makes a machine like this feel new again.'};
           else v={g:'Struggling',m:'This machine is holding you back every day. Before you bin it: an SSD or memory upgrade often transforms a slow computer for a fraction of the cost of a new one &mdash; and if it really is time, we supply refurbished business-grade Dells from &pound;510.'};
@@ -1409,7 +1418,7 @@
             row('Multi-core CPU ('+cores+' threads)',S.multi,R.multi?fmtM(R.multi):'')+
             row('Encryption (SHA-256)',S.crypto,R.crypto?Math.round(R.crypto)+' MB/s':'')+
             row('Memory speed',S.mem,R.mem?(Math.round(R.mem/1000*10)/10)+' GB/s':'')+
-            row('Graphics (WebGL)',S.gpu,R.gpu?('level '+R.gpu.held+'/4 &middot; '+Math.round(R.gpu.fps)+' fps'):'')+
+            row('Graphics (WebGL)',S.gpu,R.gpu?fmtG(R.gpu.gpix):'')+
             row('Storage (via browser)',S.store,R.store?(Math.round(R.store.w)+' MB/s write'):'');
           var histEl=root.querySelector('#bm-history'); histEl.innerHTML='';
           try{ var hist=JSON.parse(localStorage.getItem('tt_bench_hist')||'[]');
@@ -1427,8 +1436,8 @@
           notesEl.innerHTML=notes.map(function(n){return '<div class="bm-note">'+n+'</div>';}).join('');
           if(navigator.getBattery){ try{ navigator.getBattery().then(function(b){ if(b&&b.charging===false){ var d=document.createElement('div'); d.className='bm-note'; d.innerHTML='<b>On battery power:</b> laptops usually run faster plugged in &mdash; connect the charger and run it again for your best score.'; notesEl.appendChild(d); } }).catch(function(){}); }catch(e){} }
           var fix=root.querySelector('#bm-fix');
-          if(overall>=60) fix.innerHTML='<h3>Keep it this way</h3><p>Regular servicing is why our customers&rsquo; computers stay fast for years &mdash; a full service every six weeks, updates, security and backups, all handled for you.</p><div class="bm-fix-cta"><a class="button primary" href="/monthly-it-support/">See monthly plans &#8594;</a><a class="button bm-ghost" href="/contact/">Ask a techie</a></div>';
-          else fix.innerHTML='<h3>Don&rsquo;t put up with a slow computer</h3><p>We speed up machines like this every week &mdash; deep tune-ups, SSD and memory upgrades, or an honest &ldquo;it&rsquo;s time&rdquo; and a refurbished business-grade Dell from &pound;510. No-fix-no-fee, 12-month warranty.</p><div class="bm-fix-cta"><a class="button primary" href="/contact/">Make mine faster &#8594;</a><a class="button bm-ghost" href="/dell-hardware/">Refurbished Dells</a></div>';
+          if(overall>=60) fix.innerHTML='<h3>Keep it this way &mdash; a 365 support plan from &pound;18.25 a month</h3><p>Regular servicing is why our customers&rsquo; computers stay fast for years: a full service every six weeks, Windows, driver and app updates, security and backup checked, and a written Service Report every time. <b>Home &pound;18.25 per computer a month, business from &pound;24.38</b> &mdash; rolling monthly, no lock-in.</p><div class="bm-fix-cta"><a class="button primary" href="/monthly-it-support/">See the support plans &#8594;</a><a class="button bm-ghost" href="/free-pc-health-check/">Start free with 365 PC Manager</a></div>';
+          else fix.innerHTML='<h3>Don&rsquo;t put up with a slow computer</h3><p>We speed up machines like this every week &mdash; a tune-up from &pound;65, an SSD or memory upgrade, or an honest &ldquo;it&rsquo;s time&rdquo; and a refurbished business-grade Dell from &pound;510. Then a <b>365 support plan from &pound;18.25 per computer a month</b> keeps it serviced every six weeks so it never slides back.</p><div class="bm-fix-cta"><a class="button primary" href="/contact/">Make mine faster &#8594;</a><a class="button bm-ghost" href="/monthly-it-support/">See the support plans</a></div>';
           results.hidden=false;
           root.querySelector('#bm-ring').style.strokeDashoffset=(339.292*(1-overall/100)).toFixed(1);
           window.ttToolDone&&window.ttToolDone("pc-benchmark");
