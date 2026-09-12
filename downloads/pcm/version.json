@@ -1,11 +1,11 @@
 {
-  "ver": 25,
-  "version": "1.0.25",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v25.exe",
-  "sha256": "da29015c3d21e20dc93aebc571da0f5c0a885cef1d0858f5835d56daf5d2d990",
-  "notes": "The broadband test now measures fast lines properly, shows a live speed graph while it runs, and no longer freezes the window. It also recognises Backup and Restore (Windows 7) and Toob as a provider. Signed by 365 Techies Ltd.",
+  "ver": 26,
+  "version": "1.0.26",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v26.exe",
+  "sha256": "b398e153b0b6faaea13e34e0652618b05b1b16877a991cf61422ded68b008f54",
+  "notes": "Fixes the app header on support-plan PCs, where the plan label was covering the end of the app's name. Signed by 365 Techies Ltd.",
   "installer": {
-    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v25.exe",
-    "sha256": "87db932a808ac858b492f3ad867ce99508388b61d6c795a3e95becc4076b781a"
+    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v26.exe",
+    "sha256": "b8dad8140988de16a07363ee919393d38dce6c821fb063ed5afcb1c44d04e8cc"
   }
 }

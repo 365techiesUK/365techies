@@ -668,7 +668,7 @@ def pcm_landing():
           <p>And after every service, a <strong>written report lands on your Desktop</strong>: what we did, how your PC scored, and honest advice and recommendations in plain English. Proof, not promises.</p>
         </div>
         <figure style="margin:0" data-reveal>
-          <img width="2080" height="1620" src="/images/pcm-laptop-booking-v25.webp" alt="365 PC Manager booking tab on a laptop - signed in on a support plan, choose a PC service visit or remote help, then pick a day and a time slot" loading="lazy" decoding="async" style="width:100%;height:auto;display:block" />
+          <img width="2080" height="1620" src="/images/pcm-laptop-booking-v26.webp" alt="365 PC Manager booking tab on a laptop - signed in on a support plan, choose a PC service visit or remote help, then pick a day and a time slot" loading="lazy" decoding="async" style="width:100%;height:auto;display:block" />
         </figure>
       </div>
     </section>''',
@@ -715,11 +715,11 @@ def pcm_landing():
             <button type="button" role="tab" aria-selected="false" aria-controls="tour-panel" class="pcmtour__tab" data-i="4">Performance</button>
           </div>
           <div id="tour-panel" role="tabpanel" style="position:relative;aspect-ratio:2080/1620;border-radius:14px;overflow:hidden;border:1px solid rgba(125,170,220,.25);box-shadow:0 24px 60px rgba(0,0,0,.45);background:#0a1226">
-            <img data-i="0" src="/images/pcm-laptop-health-v25.webp" width="2080" height="1620" alt="365 PC Manager health tab - live health score ring, verdict and system glance" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:1;transition:opacity .28s ease" />
-            <img data-i="1" src="/images/pcm-laptop-boost-v25.webp" width="2080" height="1620" alt="365 PC Manager boost tab - live memory graph and one-tap boost" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
-            <img data-i="2" src="/images/pcm-laptop-report-v25.webp" width="2080" height="1620" alt="365 PC Manager service tab - the free full health-check report" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
-            <img data-i="3" src="/images/pcm-laptop-booking-v25.webp" width="2080" height="1620" alt="365 PC Manager booking tab - book, change and cancel visits" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
-            <img data-i="4" src="/images/pcm-laptop-perf-v25.webp" width="2080" height="1620" alt="365 PC Manager performance tab - live processor, memory and graphics graphs" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
+            <img data-i="0" src="/images/pcm-laptop-health-v26.webp" width="2080" height="1620" alt="365 PC Manager health tab - live health score ring, verdict and system glance" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:1;transition:opacity .28s ease" />
+            <img data-i="1" src="/images/pcm-laptop-boost-v26.webp" width="2080" height="1620" alt="365 PC Manager boost tab - live memory graph and one-tap boost" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
+            <img data-i="2" src="/images/pcm-laptop-report-v26.webp" width="2080" height="1620" alt="365 PC Manager service tab - the free full health-check report" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
+            <img data-i="3" src="/images/pcm-laptop-booking-v26.webp" width="2080" height="1620" alt="365 PC Manager booking tab - book, change and cancel visits" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
+            <img data-i="4" src="/images/pcm-laptop-perf-v26.webp" width="2080" height="1620" alt="365 PC Manager performance tab - live processor, memory and graphics graphs" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
           </div>
           <p class="mono" id="tour-cap" aria-live="polite" style="text-align:center;color:var(--muted);font-size:.75rem;margin:.75rem 0 0">Your health score, at a glance</p>
         </div>
@@ -870,7 +870,7 @@ def pcm_landing():
                "description": "Free PC health check app for Windows by 365 Techies (a real Bournemouth family IT firm): a plain-English health score, drive (SMART) health, one-tap boost, live performance graphs, backup and startup checks, and an honest report - no fake errors, no scare tactics. " + ("Free download, digitally signed by 365 Techies Ltd." if PCM_LIVE else "Launching soon; join the waitlist."),
                "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP", "availability": ("https://schema.org/InStock" if PCM_LIVE else "https://schema.org/PreOrder")},
                **({"downloadUrl": PCM_DOWNLOAD_URL, "softwareVersion": PCM_VERSION, "fileSize": PCM_FILESIZE} if PCM_LIVE else {}),   # derived from version.json + the exe on disk - retyping these is how they came to advertise 1.0.18/326KB while v20 shipped
-               "screenshot": [SITE + "/images/pcm-laptop-health-v25.webp", SITE + "/images/pcm-laptop-boost-v25.webp", SITE + "/images/pcm-laptop-report-v25.webp"],
+               "screenshot": [SITE + "/images/pcm-laptop-health-v26.webp", SITE + "/images/pcm-laptop-boost-v26.webp", SITE + "/images/pcm-laptop-report-v26.webp"],
                "provider": {"@id": SITE + "/#business"}, "url": f"{SITE}/{s}/"}
         # The six-weekly service is a real, priced service this page now sells; describe it
         # as one. Offers reuse the plan page's own figures (from £18.25) so the two nodes
@@ -14010,11 +14010,11 @@ SPECCHECK_APP_BAND = '''    <section class="section section--alt" aria-label="Wh
           @media(max-width:640px){.pcs__strip{gap:.4rem}.pcs__cap{font-size:.62rem;padding:.35rem .45rem}}
           @media(prefers-reduced-motion:reduce){.pcs__thumb{transition:none}}
           </style>
-          <a class="pcs__main" href="/free-pc-health-check/" aria-label="See 365 PC Manager, the free app"><img src="/images/pcm-laptop-health-v25.webp" width="2080" height="1620" alt="365 PC Manager health tab - live health score ring, verdict and system glance" loading="lazy" decoding="async"></a>
+          <a class="pcs__main" href="/free-pc-health-check/" aria-label="See 365 PC Manager, the free app"><img src="/images/pcm-laptop-health-v26.webp" width="2080" height="1620" alt="365 PC Manager health tab - live health score ring, verdict and system glance" loading="lazy" decoding="async"></a>
           <div class="pcs__strip">
-            <a class="pcs__thumb" href="/free-pc-health-check/"><img src="/images/pcm-laptop-boost-v25.webp" width="2080" height="1620" alt="365 PC Manager boost tab - live memory graph and one-tap boost" loading="lazy" decoding="async"><span class="pcs__cap">Live memory graph, one-tap boost</span></a>
-            <a class="pcs__thumb" href="/free-pc-health-check/#six-weekly-service"><img src="/images/pcm-laptop-report-v25.webp" width="2080" height="1620" alt="365 PC Manager service tab - health check, full service and broadband test" loading="lazy" decoding="async"><span class="pcs__cap">Health check, service and broadband test</span></a>
-            <a class="pcs__thumb" href="/free-pc-health-check/"><img src="/images/pcm-laptop-perf-v25.webp" width="2080" height="1620" alt="365 PC Manager performance tab - live processor, memory and graphics graphs" loading="lazy" decoding="async"><span class="pcs__cap">Live processor, memory and graphics graphs</span></a>
+            <a class="pcs__thumb" href="/free-pc-health-check/"><img src="/images/pcm-laptop-boost-v26.webp" width="2080" height="1620" alt="365 PC Manager boost tab - live memory graph and one-tap boost" loading="lazy" decoding="async"><span class="pcs__cap">Live memory graph, one-tap boost</span></a>
+            <a class="pcs__thumb" href="/free-pc-health-check/#six-weekly-service"><img src="/images/pcm-laptop-report-v26.webp" width="2080" height="1620" alt="365 PC Manager service tab - health check, full service and broadband test" loading="lazy" decoding="async"><span class="pcs__cap">Health check, service and broadband test</span></a>
+            <a class="pcs__thumb" href="/free-pc-health-check/"><img src="/images/pcm-laptop-perf-v26.webp" width="2080" height="1620" alt="365 PC Manager performance tab - live processor, memory and graphics graphs" loading="lazy" decoding="async"><span class="pcs__cap">Live processor, memory and graphics graphs</span></a>
           </div>
           <p class="pcs__line">// REAL SCREENSHOTS OF THE APP &middot; NOTHING MOCKED UP</p>
         </div>
