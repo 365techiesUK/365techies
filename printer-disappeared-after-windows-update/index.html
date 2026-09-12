@@ -887,7 +887,7 @@
           <h2 class="section-title section-title--center" data-title>Get the printer back in the next ten minutes<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>One step at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your computer.<span class="ff-rev mono">Last reviewed 12 September 2026 &middot; Windows 11 and Windows 10</span></p>
         </div>
-        <div class="ff" id="ff">
+        <div class="ff" id="ff" data-os="1">
           <div class="ff-top"><span class="ff-os" id="ff-os">Checking which Windows you have&hellip;</span><button type="button" class="ff-oslink" id="ff-ostoggle" hidden>Not right? Switch to Windows 10</button><span class="ff-prog" id="ff-prog">STEP 1 OF 6</span></div>
           <ol class="ff-steps" id="ff-steps">
             <li class="ff-step is-on" data-step="1">
@@ -953,29 +953,41 @@
             </li>
           </ol>
           <div class="ff-end" id="ff-end" hidden></div>
+          <template id="ff-tpl-fixed"><h3>Printer back{mins}. Nice work.</h3><p>Print a test page to be sure, and if it vanishes again after the next update, come straight back to step 2.</p><div class="ff-plan"><b>Two things stop it happening again.</b> On a 365 support plan every computer gets a full service every six weeks: Windows, driver and app updates applied and checked, security and backup looked at, and a written Service Report each time. Home &pound;18.25 per computer a month, business from &pound;24.38, rolling monthly. And the free 365 PC Manager app tells you when Windows is waiting for a restart.</div><div class="ff-cta"><a class="button primary" href="/monthly-it-support/">See the support plans &#8594;</a><a class="button secondary" href="/free-pc-health-check/">Get the free app</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div></template>
+          <template id="ff-tpl-stuck"><h3>Still gone after all six? That is a remote job, and a quick one.</h3><p>With your permission we connect to your screen, sort the spooler, the driver and the update in one session. Usually the same day, remote help from &pound;20, and no fix, no fee.</p><div class="ff-cta"><a class="button primary" href="tel:+441202775566">Call 01202 775566</a><a class="button secondary" href="sms:+447520615332">Text 07520 615332</a><a class="button bm-ghost" href="/remote-support/">How remote help works</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div></template>
+          <template id="ff-tpl-text">Printer disappeared after a Windows update - the fix order (365techies.co.uk)
+1. Is it hidden? Win+R, paste shell:::{A8A91A66-3A7D-4424-8D24-04E180695C7A} - if the printer is listed, re-add it (step 4).
+2. Restart the Print Spooler: Win+R, services.msc, right-click Print Spooler, Restart; Startup type Automatic.
+3. Clear the queue: stop Print Spooler, Win+R %windir%\System32\spool\PRINTERS, delete everything inside, start Print Spooler.
+4. Re-add: Settings > Bluetooth & devices > Printers & scanners > Add device (USB: different port; Wi-Fi: add by IP).
+5. Clean driver: Remove the printer, install the maker's full package for your exact model, restart (printui /s /t2 clears old driver packages).
+6. Last resort: Settings > Windows Update > Update history > Uninstall updates, then restart.
+Still gone? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.uk/remote-support/</template>
         </div>
       </div>
       <script>
       (function(){
         var root=document.getElementById('ff'); if(!root) return;
-        var steps=Array.prototype.slice.call(root.querySelectorAll('.ff-step')), endEl=root.querySelector('#ff-end'), prog=root.querySelector('#ff-prog');
+        var steps=Array.prototype.slice.call(root.querySelectorAll('.ff-step')), N=steps.length, endEl=root.querySelector('#ff-end'), prog=root.querySelector('#ff-prog');
         var osEl=root.querySelector('#ff-os'), tog=root.querySelector('#ff-ostoggle'), t0=null, w10=false, isWin=/Windows/i.test(navigator.userAgent);
-        function setOS(ten,label){ w10=ten; root.classList.toggle('is-w10',ten); root.classList.toggle('is-win',isWin); osEl.textContent=label; tog.hidden=!isWin; tog.textContent=ten?'Not right? Switch to Windows 11':'Not right? Switch to Windows 10'; }
-        if(!isWin){ setOS(false,'These steps are for Windows; you seem to be on another device, so keep them for the PC.'); }
-        else if(navigator.userAgentData&&navigator.userAgentData.getHighEntropyValues){
-          navigator.userAgentData.getHighEntropyValues(['platformVersion']).then(function(v){ var maj=parseInt(String(v.platformVersion||'').split('.')[0],10);
-            if(maj>=13) setOS(false,'You are on Windows 11, so the paths below match your Settings app.'); else if(maj>0) setOS(true,'You are on Windows 10, so the paths below match your Settings app.'); else setOS(false,'Windows 10 or 11: paths shown for Windows 11.'); }).catch(function(){ setOS(false,'Windows 10 or 11: paths shown for Windows 11.'); });
-        } else setOS(false,'Windows 10 or 11: paths shown for Windows 11.');
-        tog.addEventListener('click',function(){ setOS(!w10,w10?'Showing the Windows 11 paths.':'Showing the Windows 10 paths.'); });
-        function show(n){ steps.forEach(function(s){ var k=parseInt(s.getAttribute('data-step'),10); s.hidden=k>n; s.classList.toggle('is-on',k===n); if(k<n&&!s.classList.contains('is-done')) s.classList.add('is-skip'); }); prog.textContent='STEP '+n+' OF 6'; var cur=steps[n-1]; if(cur) cur.scrollIntoView({behavior:'smooth',block:'nearest'}); }
-        var STEPS_TEXT='Printer disappeared after a Windows update - the fix order (365techies.co.uk)\n1. Is it hidden? Win+R, paste shell:::{A8A91A66-3A7D-4424-8D24-04E180695C7A} - if the printer is listed, re-add it (step 4).\n2. Restart the Print Spooler: Win+R, services.msc, right-click Print Spooler, Restart; Startup type Automatic.\n3. Clear the queue: stop Print Spooler, Win+R %windir%\\System32\\spool\\PRINTERS, delete everything inside, start Print Spooler.\n4. Re-add: Settings > Bluetooth & devices > Printers & scanners > Add device (USB: different port; Wi-Fi: add by IP).\n5. Clean driver: Remove the printer, install the maker\'s full package for your exact model, restart (printui /s /t2 clears old driver packages).\n6. Last resort: Settings > Windows Update > Update history > Uninstall updates, then restart.\nStill gone? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.uk/remote-support/';
+        root.classList.toggle('is-win',isWin);
+        function setOS(ten,label){ w10=ten; root.classList.toggle('is-w10',ten); osEl.textContent=label; tog.hidden=!isWin; tog.textContent=ten?'Not right? Switch to Windows 11':'Not right? Switch to Windows 10'; }
+        if(root.getAttribute('data-os')==='1'){
+          if(!isWin){ setOS(false,'These steps are for Windows; you seem to be on another device, so keep them for the PC.'); }
+          else if(navigator.userAgentData&&navigator.userAgentData.getHighEntropyValues){
+            navigator.userAgentData.getHighEntropyValues(['platformVersion']).then(function(v){ var maj=parseInt(String(v.platformVersion||'').split('.')[0],10);
+              if(maj>=13) setOS(false,'You are on Windows 11, so the paths below match your Settings app.'); else if(maj>0) setOS(true,'You are on Windows 10, so the paths below match your Settings app.'); else setOS(false,'Windows 10 or 11: paths shown for Windows 11.'); }).catch(function(){ setOS(false,'Windows 10 or 11: paths shown for Windows 11.'); });
+          } else setOS(false,'Windows 10 or 11: paths shown for Windows 11.');
+          tog.addEventListener('click',function(){ setOS(!w10,w10?'Showing the Windows 11 paths.':'Showing the Windows 10 paths.'); });
+        } else { osEl.hidden=true; tog.hidden=true; }
+        function tpl(id,text){ var t=root.querySelector('#'+id); if(!t) return ''; return text?(t.content?t.content.textContent:t.textContent):t.innerHTML; }
+        function show(n){ steps.forEach(function(s){ var k=parseInt(s.getAttribute('data-step'),10); s.hidden=k>n; s.classList.toggle('is-on',k===n); if(k<n&&!s.classList.contains('is-done')) s.classList.add('is-skip'); }); prog.textContent='STEP '+n+' OF '+N; var cur=steps[n-1]; if(cur) cur.scrollIntoView({behavior:'smooth',block:'nearest'}); }
         function finish(kind){
           steps.forEach(function(s){ s.classList.remove('is-on'); });
-          var mins=t0?Math.max(1,Math.round((Date.now()-t0)/60000)):null;
-          if(kind==='fixed'){ endEl.className='ff-end'; endEl.innerHTML='<h3>Printer back'+(mins?' in about '+mins+' minute'+(mins===1?'':'s'):'')+'. Nice work.</h3><p>Print a test page to be sure, and if it vanishes again after the next update, come straight back to step 2.</p><div class="ff-plan"><b>Two things stop it happening again.</b> On a 365 support plan, Windows and driver updates are applied on our schedule and checked afterwards, every six weeks, with a written Service Report each time: home &pound;18.25 per computer a month, business from &pound;24.38, rolling monthly. And the free 365 PC Manager app tells you when Windows is waiting for a restart.</div><div class="ff-cta"><a class="button primary" href="/monthly-it-support/">See the support plans &#8594;</a><a class="button secondary" href="/free-pc-health-check/">Get the free app</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div>'; prog.textContent='DONE'; }
-          else { endEl.className='ff-end is-bad'; endEl.innerHTML='<h3>Still gone after all six? That is a remote job, and a quick one.</h3><p>With your permission we connect to your screen, sort the spooler, the driver and the update in one session. Usually the same day, remote help from &pound;20, and no fix, no fee.</p><div class="ff-cta"><a class="button primary" href="tel:+441202775566">Call 01202 775566</a><a class="button secondary" href="sms:+447520615332">Text 07520 615332</a><a class="button bm-ghost" href="/remote-support/">How remote help works</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div>'; prog.textContent='NEEDS A TECHIE'; }
-          endEl.hidden=false; endEl.scrollIntoView({behavior:'smooth',block:'nearest'});
-          var c=endEl.querySelector('#ff-copyall'); if(c) c.addEventListener('click',function(){ copyText(STEPS_TEXT,c,'Copy these steps'); });
+          var mins=t0?Math.max(1,Math.round((Date.now()-t0)/60000)):null, minsTxt=mins?(' in about '+mins+' minute'+(mins===1?'':'s')):'';
+          endEl.className='ff-end'+(kind==='stuck'?' is-bad':''); endEl.innerHTML=tpl(kind==='fixed'?'ff-tpl-fixed':'ff-tpl-stuck').split('{mins}').join(minsTxt);
+          prog.textContent=kind==='fixed'?'DONE':'NEEDS A TECHIE'; endEl.hidden=false; endEl.scrollIntoView({behavior:'smooth',block:'nearest'});
+          var c=endEl.querySelector('#ff-copyall'); if(c) c.addEventListener('click',function(){ copyText(tpl('ff-tpl-text',true).replace(/^\s+|\s+$/g,''),c,'Copy these steps'); });
         }
         function copyText(txt,btn,label){ function ok(){ btn.textContent='Copied'; btn.classList.add('done'); setTimeout(function(){ btn.textContent=label; btn.classList.remove('done'); },1800); }
           if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(ok).catch(function(){}); }

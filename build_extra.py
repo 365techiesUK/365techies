@@ -132,20 +132,23 @@ SPECIALIST = [
    tile_items=[("wifi","Wi-Fi printing","Print from any device, anywhere in the building."),("wrench","Offline fixes","Banish the dreaded printer offline error."),("monitor","Drivers","Correct drivers installed and kept up to date."),("mail","Scanning","Scan-to-email and scan-to-folder set up."),("server","Network printing","Shared printers for the whole office."),("bolt","Quick help","Fast remote fixes when it won't play ball.")],
    faqs=[("Why does my printer keep going offline?","Usually Wi-Fi, driver or settings issues — we diagnose and fix it remotely so it stays online."),("Can you set up wireless printing?","Yes — we connect your printer to Wi-Fi and set up printing and scanning on all your devices."),("Do you support office network printers?","Yes, we set up and troubleshoot shared and networked printers for businesses."),("Why won&rsquo;t my printer connect to Wi-Fi?","Usually it has lost the saved network, is on the wrong band (5GHz vs 2.4GHz), or needs its driver reinstalling. We&rsquo;ll reconnect it and set up printing and scanning on all your devices &mdash; often remotely."),("My printer won&rsquo;t connect to my BT Smart Hub &mdash; can you help?","Yes &mdash; BT&rsquo;s hubs have a couple of quirks (Smart Setup and the combined Wi-Fi bands) that confuse a lot of printers. Our <a href=\"/printer-wont-connect-to-bt-smart-hub/\">BT Smart Hub printer guide</a> walks through the fix, or we&rsquo;ll do it for you remotely.")],
    chips=["Wi-Fi printing","Offline fixes","Scanning setup"],
-   guides_title="Thirteen printer problems, each with its own fix guide",
-   guides=[("/printer-wont-connect-to-bt-smart-hub/","Printer won&rsquo;t connect to a BT Smart Hub"),
-           ("/printer-wont-connect-to-sky-router/","Printer won&rsquo;t connect to a Sky router"),
-           ("/printer-wont-connect-to-ee-smart-hub/","Printer won&rsquo;t connect to an EE Smart Hub"),
-           ("/printer-wont-connect-to-mesh-wifi/","Printer won&rsquo;t connect to mesh Wi-Fi"),
-           ("/printer-says-wifi-password-incorrect/","Printer says the Wi-Fi password is incorrect"),
-           ("/printer-stopped-working-after-changing-wifi-password/","Printer stopped working after a Wi-Fi password change"),
-           ("/printer-wont-connect-after-changing-broadband/","Printer won&rsquo;t connect after changing broadband"),
-           ("/printer-wont-connect-after-moving-house/","Printer won&rsquo;t connect after moving house"),
-           ("/printer-disappeared-after-windows-update/","Printer disappeared after a Windows update"),
-           ("/printer-wont-scan-to-computer-windows-11/","Printer won&rsquo;t scan to the computer on Windows 11"),
-           ("/printer-prints-but-wont-scan-after-new-router/","Prints but won&rsquo;t scan after a new router"),
-           ("/scan-to-folder-stopped-working-after-windows-update/","Scan to folder stopped after a Windows update"),
-           ("/printer-asking-for-admin-password/","Printer keeps asking for an administrator password")],
+     guides_title="What is the printer doing? Pick the closest, and fix it with the step-by-step on that page",
+   guides=[
+     ("/printer-disappeared-after-windows-update/", "Disappeared after a Windows update"),
+     ("/why-does-my-printer-keep-disconnecting/", "Keeps going offline or disconnecting"),
+     ("/printer-says-wifi-password-incorrect/", "Says the Wi-Fi password is incorrect"),
+     ("/printer-stopped-working-after-changing-wifi-password/", "Stopped working after I changed the Wi-Fi password"),
+     ("/printer-wont-connect-after-changing-broadband/", "Won&rsquo;t connect since the broadband changed"),
+     ("/printer-wont-connect-after-moving-house/", "Won&rsquo;t connect since we moved house"),
+     ("/printer-wont-connect-to-bt-smart-hub/", "Won&rsquo;t connect to a BT Smart Hub"),
+     ("/printer-wont-connect-to-sky-router/", "Won&rsquo;t connect to a Sky router"),
+     ("/printer-wont-connect-to-ee-smart-hub/", "Won&rsquo;t connect to an EE Smart Hub"),
+     ("/printer-wont-connect-to-mesh-wifi/", "Won&rsquo;t connect to mesh Wi-Fi"),
+     ("/printer-prints-but-wont-scan-after-new-router/", "Prints but won&rsquo;t scan since the new router"),
+     ("/printer-wont-scan-to-computer-windows-11/", "Won&rsquo;t scan to the computer on Windows 11"),
+     ("/printer-asking-for-admin-password/", "Asks for an administrator password"),
+     ("/how-to-set-up-a-printer/", "It is new and I am setting it up"),
+   ],
    split_title="Printing that just works",
    split=[("Printers at home","Get every device in the house printing and scanning reliably &mdash; no more &lsquo;offline&rsquo; errors or dropped Wi-Fi connections.",["Wi-Fi printing on all devices","Offline errors fixed","Scanning set up","Ink &amp; toner advice"]),("Office printers","Shared and networked office printers set up, secured and kept working &mdash; scan-to-email, scan-to-folder and reliable printing for the whole team.",["Networked &amp; shared printers","Scan-to-email &amp; folder","Reliable office printing","Fast remote fixes"])],
    steps_title="Back to printing in no time",
@@ -21273,9 +21276,7 @@ VICTRON_CRED_BAND = '''    <section class="section" aria-label="Victron credenti
 # (nothing is sent anywhere). Detects Windows 11 vs 10 from the UA client hints, like the spec checker, so the
 # Settings paths match the visitor's machine; every command is copyable; the two screenshots are real captures
 # of Windows 11 (September 2026). __LASTMOD_HUMAN__ is stamped by stamp_lastmod with the date the page changed.
-PRINTER_FIX_TOOL = r"""    <section class="section" aria-label="Fix it with me" id="fixflow">
-      <div class="wrap">
-      <style>
+FIX_FLOW_STYLE = r"""      <style>
       #fixflow .ff{max-width:860px;margin:0 auto}
       #fixflow .ff-rev{display:block;margin-top:.5rem;font-size:.72rem;letter-spacing:.06em;color:var(--cyan-soft,#6cc4f5)}
       #fixflow .ff-top{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin-bottom:1rem;font-size:.85rem;color:var(--muted,#9fb5d3)}
@@ -21320,15 +21321,111 @@ PRINTER_FIX_TOOL = r"""    <section class="section" aria-label="Fix it with me" 
       #fixflow .ff-plan{margin-top:1rem;padding:1rem 1.1rem;border-radius:12px;border:1px solid rgba(125,170,220,.25);background:rgba(255,255,255,.03);font-size:.9rem;line-height:1.6}
       #fixflow .ff-plan b{color:var(--cyan-soft,#6cc4f5)}
       @media(max-width:560px){#fixflow .ff-ask .button,#fixflow .ff-end .ff-cta .button{width:100%}#fixflow .ff-prog{margin-left:0}}
-      </style>
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// FIX IT WITH ME &middot; STEP BY STEP</p>
-          <h2 class="section-title section-title--center" data-title>Get the printer back in the next ten minutes<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>One step at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your computer.<span class="ff-rev mono">Last reviewed __LASTMOD_HUMAN__ &middot; Windows 11 and Windows 10</span></p>
-        </div>
-        <div class="ff" id="ff">
-          <div class="ff-top"><span class="ff-os" id="ff-os">Checking which Windows you have&hellip;</span><button type="button" class="ff-oslink" id="ff-ostoggle" hidden>Not right? Switch to Windows 10</button><span class="ff-prog" id="ff-prog">STEP 1 OF 6</span></div>
-          <ol class="ff-steps" id="ff-steps">
+      </style>"""
+
+# Generic: steps and endings come from the page (templates in the DOM), so one script serves every flow.
+FIX_FLOW_SCRIPT = r"""      <script>
+      (function(){
+        var root=document.getElementById('ff'); if(!root) return;
+        var steps=Array.prototype.slice.call(root.querySelectorAll('.ff-step')), N=steps.length, endEl=root.querySelector('#ff-end'), prog=root.querySelector('#ff-prog');
+        var osEl=root.querySelector('#ff-os'), tog=root.querySelector('#ff-ostoggle'), t0=null, w10=false, isWin=/Windows/i.test(navigator.userAgent);
+        root.classList.toggle('is-win',isWin);
+        function setOS(ten,label){ w10=ten; root.classList.toggle('is-w10',ten); osEl.textContent=label; tog.hidden=!isWin; tog.textContent=ten?'Not right? Switch to Windows 11':'Not right? Switch to Windows 10'; }
+        if(root.getAttribute('data-os')==='1'){
+          if(!isWin){ setOS(false,'These steps are for Windows; you seem to be on another device, so keep them for the PC.'); }
+          else if(navigator.userAgentData&&navigator.userAgentData.getHighEntropyValues){
+            navigator.userAgentData.getHighEntropyValues(['platformVersion']).then(function(v){ var maj=parseInt(String(v.platformVersion||'').split('.')[0],10);
+              if(maj>=13) setOS(false,'You are on Windows 11, so the paths below match your Settings app.'); else if(maj>0) setOS(true,'You are on Windows 10, so the paths below match your Settings app.'); else setOS(false,'Windows 10 or 11: paths shown for Windows 11.'); }).catch(function(){ setOS(false,'Windows 10 or 11: paths shown for Windows 11.'); });
+          } else setOS(false,'Windows 10 or 11: paths shown for Windows 11.');
+          tog.addEventListener('click',function(){ setOS(!w10,w10?'Showing the Windows 11 paths.':'Showing the Windows 10 paths.'); });
+        } else { osEl.hidden=true; tog.hidden=true; }
+        function tpl(id,text){ var t=root.querySelector('#'+id); if(!t) return ''; return text?(t.content?t.content.textContent:t.textContent):t.innerHTML; }
+        function show(n){ steps.forEach(function(s){ var k=parseInt(s.getAttribute('data-step'),10); s.hidden=k>n; s.classList.toggle('is-on',k===n); if(k<n&&!s.classList.contains('is-done')) s.classList.add('is-skip'); }); prog.textContent='STEP '+n+' OF '+N; var cur=steps[n-1]; if(cur) cur.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+        function finish(kind){
+          steps.forEach(function(s){ s.classList.remove('is-on'); });
+          var mins=t0?Math.max(1,Math.round((Date.now()-t0)/60000)):null, minsTxt=mins?(' in about '+mins+' minute'+(mins===1?'':'s')):'';
+          endEl.className='ff-end'+(kind==='stuck'?' is-bad':''); endEl.innerHTML=tpl(kind==='fixed'?'ff-tpl-fixed':'ff-tpl-stuck').split('{mins}').join(minsTxt);
+          prog.textContent=kind==='fixed'?'DONE':'NEEDS A TECHIE'; endEl.hidden=false; endEl.scrollIntoView({behavior:'smooth',block:'nearest'});
+          var c=endEl.querySelector('#ff-copyall'); if(c) c.addEventListener('click',function(){ copyText(tpl('ff-tpl-text',true).replace(/^\s+|\s+$/g,''),c,'Copy these steps'); });
+        }
+        function copyText(txt,btn,label){ function ok(){ btn.textContent='Copied'; btn.classList.add('done'); setTimeout(function(){ btn.textContent=label; btn.classList.remove('done'); },1800); }
+          if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(ok).catch(function(){}); }
+          else{ var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); ok(); }catch(e){} document.body.removeChild(ta); } }
+        root.addEventListener('click',function(e){
+          var b=e.target.closest('button'); if(!b) return;
+          if(b.classList.contains('ff-copy')){ copyText(b.getAttribute('data-copy'),b,'Copy'); return; }
+          var go=b.getAttribute('data-go'); if(!go) return;
+          if(!t0) t0=Date.now();
+          var cur=b.closest('.ff-step'); if(cur){ cur.classList.add('is-done'); }
+          if(go==='fixed'||go==='stuck'){ finish(go); return; }
+          var n=parseInt(go,10); var note=b.getAttribute('data-note'); var noteEl=root.querySelector('#ff-note'+n); if(noteEl){ noteEl.hidden=!note; noteEl.innerHTML=note?'<b>'+note+'</b>':''; }
+          endEl.hidden=true; show(n);
+        });
+      })();
+      </script>"""
+
+def _fix_flow_section(cfg):
+    """One guided flow section. cfg: eyebrow, h2, lede, rev_suffix, os (bool), count, steps_html (the <li>s),
+    fixed_html / stuck_html (endings; '{mins}' becomes ' in about N minutes'), steps_text (plain, for Copy)."""
+    os_attr = ' data-os="1"' if cfg.get('os') else ''
+    return ('    <section class="section" aria-label="Fix it with me" id="fixflow">\n      <div class="wrap">\n' + FIX_FLOW_STYLE + '\n'
+            '        <div class="section-head">\n'
+            '          <p class="eyebrow eyebrow--center mono" data-reveal>' + cfg['eyebrow'] + '</p>\n'
+            '          <h2 class="section-title section-title--center" data-title>' + cfg['h2'] + '<span class="title-underline title-underline--center"></span></h2>\n'
+            '          <p class="lede lede--center" data-reveal>' + cfg['lede'] + '<span class="ff-rev mono">Last reviewed __LASTMOD_HUMAN__' + cfg.get('rev_suffix', '') + '</span></p>\n'
+            '        </div>\n'
+            '        <div class="ff" id="ff"' + os_attr + '>\n'
+            '          <div class="ff-top"><span class="ff-os" id="ff-os">Checking which Windows you have&hellip;</span><button type="button" class="ff-oslink" id="ff-ostoggle" hidden>Not right? Switch to Windows 10</button><span class="ff-prog" id="ff-prog">STEP 1 OF ' + str(cfg['count']) + '</span></div>\n'
+            '          <ol class="ff-steps" id="ff-steps">' + cfg['steps_html'] + '          </ol>\n'
+            '          <div class="ff-end" id="ff-end" hidden></div>\n'
+            '          <template id="ff-tpl-fixed">' + cfg['fixed_html'] + '</template>\n'
+            '          <template id="ff-tpl-stuck">' + cfg['stuck_html'] + '</template>\n'
+            '          <template id="ff-tpl-text">' + cfg['steps_text'] + '</template>\n'
+            '        </div>\n      </div>\n' + FIX_FLOW_SCRIPT + '\n    </section>\n')
+
+def _ff_plan_card(lead):
+    return ('<div class="ff-plan"><b>' + lead + '</b> On a 365 support plan every computer gets a full service every six weeks: Windows, driver and app '
+            'updates applied and checked, security and backup looked at, and a written Service Report each time. Home &pound;18.25 per computer a month, '
+            'business from &pound;24.38, rolling monthly.</div>')
+def _ff_fixed_ending(h3, tip, plan_lead):
+    return ('<h3>' + h3 + '</h3><p>' + tip + '</p>' + _ff_plan_card(plan_lead) +
+            '<div class="ff-cta"><a class="button primary" href="/monthly-it-support/">See the support plans &#8594;</a><a class="button secondary" href="/free-pc-health-check/">Get the free app</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div>')
+def _ff_stuck_ending(h3, what):
+    return ('<h3>' + h3 + '</h3><p>' + what + ' Usually the same day, remote help from &pound;20, and no fix, no fee.</p>'
+            '<div class="ff-cta"><a class="button primary" href="tel:+441202775566">Call 01202 775566</a><a class="button secondary" href="sms:+447520615332">Text 07520 615332</a><a class="button bm-ghost" href="/remote-support/">How remote help works</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div>')
+
+def _ff_steps_html(steps, yes_label, no_label, seq=False):
+    """steps: list of (title, body_html, ask). Fix mode (default): every Yes ends the flow as fixed, No goes on
+    and the last No is 'stuck'. Sequence mode (seq=True, for a set-up walk-through): Yes goes on to the next step
+    and the last Yes is 'fixed'; No is always 'stuck'."""
+    out = []
+    for i, (title, body, ask) in enumerate(steps):
+        n = i + 1; last = (n == len(steps))
+        if seq:
+            yes_go = 'fixed' if last else str(n + 1); no_go = 'stuck'
+        else:
+            yes_go = 'fixed'; no_go = 'stuck' if last else str(n + 1)
+        out.append('\n            <li class="ff-step' + (' is-on' if i == 0 else '') + '" data-step="' + str(n) + '"' + ('' if i == 0 else ' hidden') + '>\n'
+                   '              <div class="ff-head"><span class="ff-num">' + ('%02d' % n) + '</span>' + title + '</div>\n'
+                   '              <div class="ff-body">' + body +
+                   '<div class="ff-ask"><b>' + ask + '</b><button type="button" class="button primary" data-go="' + yes_go + '">' + yes_label + '</button><button type="button" class="button secondary" data-go="' + no_go + '">' + no_label + '</button></div>\n'
+                   '              </div>\n            </li>')
+    return "".join(out) + "\n"
+
+def _ff_plain(html_, decode=False):
+    """Tags stripped, whitespace collapsed. decode=True also turns entities into characters (for the copy text)."""
+    import re as _re, html as _h
+    t = _re.sub(r'<[^>]+>', ' ', html_); t = _re.sub(r'\s+', ' ', t).strip()
+    return _h.unescape(t) if decode else t
+def _ff_first_sentences(html_, n=2, cap=300):
+    t = _ff_plain(html_)
+    parts = re.split(r'(?<=[.!?])\s+(?=[A-Z0-9])', t)
+    out = " ".join(parts[:n])
+    if len(out) > cap: out = out[:cap].rsplit(' ', 1)[0] + '&hellip;'
+    return out
+
+# ---- the disappeared page: exactly the flow that is live, now expressed through the engine
+_PRINTER_DISAPPEARED_STEPS_HTML = r"""
             <li class="ff-step is-on" data-step="1">
               <div class="ff-head"><span class="ff-num">01</span>Is it really gone, or just hidden?</div>
               <div class="ff-body">
@@ -21390,49 +21487,81 @@ PRINTER_FIX_TOOL = r"""    <section class="section" aria-label="Fix it with me" 
                 <div class="ff-ask"><b>Is the printer back?</b><button type="button" class="button primary" data-go="fixed">Yes, fixed</button><button type="button" class="button secondary" data-go="stuck">Still missing</button></div>
               </div>
             </li>
-          </ol>
-          <div class="ff-end" id="ff-end" hidden></div>
-        </div>
-      </div>
-      <script>
-      (function(){
-        var root=document.getElementById('ff'); if(!root) return;
-        var steps=Array.prototype.slice.call(root.querySelectorAll('.ff-step')), endEl=root.querySelector('#ff-end'), prog=root.querySelector('#ff-prog');
-        var osEl=root.querySelector('#ff-os'), tog=root.querySelector('#ff-ostoggle'), t0=null, w10=false, isWin=/Windows/i.test(navigator.userAgent);
-        function setOS(ten,label){ w10=ten; root.classList.toggle('is-w10',ten); root.classList.toggle('is-win',isWin); osEl.textContent=label; tog.hidden=!isWin; tog.textContent=ten?'Not right? Switch to Windows 11':'Not right? Switch to Windows 10'; }
-        if(!isWin){ setOS(false,'These steps are for Windows; you seem to be on another device, so keep them for the PC.'); }
-        else if(navigator.userAgentData&&navigator.userAgentData.getHighEntropyValues){
-          navigator.userAgentData.getHighEntropyValues(['platformVersion']).then(function(v){ var maj=parseInt(String(v.platformVersion||'').split('.')[0],10);
-            if(maj>=13) setOS(false,'You are on Windows 11, so the paths below match your Settings app.'); else if(maj>0) setOS(true,'You are on Windows 10, so the paths below match your Settings app.'); else setOS(false,'Windows 10 or 11: paths shown for Windows 11.'); }).catch(function(){ setOS(false,'Windows 10 or 11: paths shown for Windows 11.'); });
-        } else setOS(false,'Windows 10 or 11: paths shown for Windows 11.');
-        tog.addEventListener('click',function(){ setOS(!w10,w10?'Showing the Windows 11 paths.':'Showing the Windows 10 paths.'); });
-        function show(n){ steps.forEach(function(s){ var k=parseInt(s.getAttribute('data-step'),10); s.hidden=k>n; s.classList.toggle('is-on',k===n); if(k<n&&!s.classList.contains('is-done')) s.classList.add('is-skip'); }); prog.textContent='STEP '+n+' OF 6'; var cur=steps[n-1]; if(cur) cur.scrollIntoView({behavior:'smooth',block:'nearest'}); }
-        var STEPS_TEXT='Printer disappeared after a Windows update - the fix order (365techies.co.uk)\n1. Is it hidden? Win+R, paste shell:::{A8A91A66-3A7D-4424-8D24-04E180695C7A} - if the printer is listed, re-add it (step 4).\n2. Restart the Print Spooler: Win+R, services.msc, right-click Print Spooler, Restart; Startup type Automatic.\n3. Clear the queue: stop Print Spooler, Win+R %windir%\\System32\\spool\\PRINTERS, delete everything inside, start Print Spooler.\n4. Re-add: Settings > Bluetooth & devices > Printers & scanners > Add device (USB: different port; Wi-Fi: add by IP).\n5. Clean driver: Remove the printer, install the maker\'s full package for your exact model, restart (printui /s /t2 clears old driver packages).\n6. Last resort: Settings > Windows Update > Update history > Uninstall updates, then restart.\nStill gone? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.uk/remote-support/';
-        function finish(kind){
-          steps.forEach(function(s){ s.classList.remove('is-on'); });
-          var mins=t0?Math.max(1,Math.round((Date.now()-t0)/60000)):null;
-          if(kind==='fixed'){ endEl.className='ff-end'; endEl.innerHTML='<h3>Printer back'+(mins?' in about '+mins+' minute'+(mins===1?'':'s'):'')+'. Nice work.</h3><p>Print a test page to be sure, and if it vanishes again after the next update, come straight back to step 2.</p><div class="ff-plan"><b>Two things stop it happening again.</b> On a 365 support plan, Windows and driver updates are applied on our schedule and checked afterwards, every six weeks, with a written Service Report each time: home &pound;18.25 per computer a month, business from &pound;24.38, rolling monthly. And the free 365 PC Manager app tells you when Windows is waiting for a restart.</div><div class="ff-cta"><a class="button primary" href="/monthly-it-support/">See the support plans &#8594;</a><a class="button secondary" href="/free-pc-health-check/">Get the free app</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div>'; prog.textContent='DONE'; }
-          else { endEl.className='ff-end is-bad'; endEl.innerHTML='<h3>Still gone after all six? That is a remote job, and a quick one.</h3><p>With your permission we connect to your screen, sort the spooler, the driver and the update in one session. Usually the same day, remote help from &pound;20, and no fix, no fee.</p><div class="ff-cta"><a class="button primary" href="tel:+441202775566">Call 01202 775566</a><a class="button secondary" href="sms:+447520615332">Text 07520 615332</a><a class="button bm-ghost" href="/remote-support/">How remote help works</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div>'; prog.textContent='NEEDS A TECHIE'; }
-          endEl.hidden=false; endEl.scrollIntoView({behavior:'smooth',block:'nearest'});
-          var c=endEl.querySelector('#ff-copyall'); if(c) c.addEventListener('click',function(){ copyText(STEPS_TEXT,c,'Copy these steps'); });
-        }
-        function copyText(txt,btn,label){ function ok(){ btn.textContent='Copied'; btn.classList.add('done'); setTimeout(function(){ btn.textContent=label; btn.classList.remove('done'); },1800); }
-          if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(ok).catch(function(){}); }
-          else{ var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); ok(); }catch(e){} document.body.removeChild(ta); } }
-        root.addEventListener('click',function(e){
-          var b=e.target.closest('button'); if(!b) return;
-          if(b.classList.contains('ff-copy')){ copyText(b.getAttribute('data-copy'),b,'Copy'); return; }
-          var go=b.getAttribute('data-go'); if(!go) return;
-          if(!t0) t0=Date.now();
-          var cur=b.closest('.ff-step'); if(cur){ cur.classList.add('is-done'); }
-          if(go==='fixed'||go==='stuck'){ finish(go); return; }
-          var n=parseInt(go,10); var note=b.getAttribute('data-note'); var noteEl=root.querySelector('#ff-note'+n); if(noteEl){ noteEl.hidden=!note; noteEl.innerHTML=note?'<b>'+note+'</b>':''; }
-          endEl.hidden=true; show(n);
-        });
-      })();
-      </script>
-    </section>
 """
+PRINTER_FIX_TOOL = _fix_flow_section({
+    'eyebrow': '// FIX IT WITH ME &middot; STEP BY STEP',
+    'h2': 'Get the printer back in the next ten minutes',
+    'lede': 'One step at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your computer.',
+    'rev_suffix': ' &middot; Windows 11 and Windows 10', 'os': True, 'count': 6,
+    'steps_html': _PRINTER_DISAPPEARED_STEPS_HTML,
+    'fixed_html': _ff_fixed_ending('Printer back{mins}. Nice work.', 'Print a test page to be sure, and if it vanishes again after the next update, come straight back to step 2.',
+                                   'Two things stop it happening again.').replace('rolling monthly.</div>', 'rolling monthly. And the free 365 PC Manager app tells you when Windows is waiting for a restart.</div>'),
+    'stuck_html': _ff_stuck_ending('Still gone after all six? That is a remote job, and a quick one.', 'With your permission we connect to your screen, sort the spooler, the driver and the update in one session.'),
+    'steps_text': ('Printer disappeared after a Windows update - the fix order (365techies.co.uk)\n'
+                   '1. Is it hidden? Win+R, paste shell:::{A8A91A66-3A7D-4424-8D24-04E180695C7A} - if the printer is listed, re-add it (step 4).\n'
+                   '2. Restart the Print Spooler: Win+R, services.msc, right-click Print Spooler, Restart; Startup type Automatic.\n'
+                   '3. Clear the queue: stop Print Spooler, Win+R %windir%\\System32\\spool\\PRINTERS, delete everything inside, start Print Spooler.\n'
+                   '4. Re-add: Settings > Bluetooth & devices > Printers & scanners > Add device (USB: different port; Wi-Fi: add by IP).\n'
+                   "5. Clean driver: Remove the printer, install the maker's full package for your exact model, restart (printui /s /t2 clears old driver packages).\n"
+                   '6. Last resort: Settings > Windows Update > Update history > Uninstall updates, then restart.\n'
+                   'Still gone? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.uk/remote-support/'),
+})
+
+# ---- the other printer pages. Steps come from the page itself: its HowTo steps where it has them, otherwise
+# hand-picked sections (index, title override or None, ask), whose first two sentences become the step and which
+# link to the full section below. No new claims are authored here.
+FIX_FLOW_PAGES = {
+    'printer-wont-connect-after-moving-house': {'h2': 'Get the printer connected in the new place, step by step', 'ask': 'Is the printer connecting now?', 'tip': 'Print a test page from the computer you use most.', 'h3s': 'Still not connecting after every step? That is a remote job.'},
+    'printer-wont-connect-to-bt-smart-hub':    {'h2': 'Get it talking to the Smart Hub, step by step',          'ask': 'Is the printer connecting now?', 'tip': 'Print a test page, then set a fixed address in the Hub if you have not already.', 'h3s': 'Still not connecting after every step? That is a remote job.'},
+    'printer-wont-connect-to-ee-smart-hub':    {'h2': 'Get it talking to the EE hub, step by step',             'ask': 'Is the printer connecting now?', 'tip': 'Print a test page, then set a fixed address in the hub if you have not already.', 'h3s': 'Still not connecting after every step? That is a remote job.'},
+    'printer-wont-connect-to-sky-router':      {'h2': 'Get it talking to the Sky router, step by step',         'ask': 'Is the printer connecting now?', 'tip': 'Print a test page, then set a fixed address in the router if you have not already.', 'h3s': 'Still not connecting after every step? That is a remote job.'},
+    'printer-prints-but-wont-scan-after-new-router': {'h2': 'Get scanning back, step by step', 'ask': 'Is it scanning now?', 'tip': 'Scan one page from the computer to be sure.', 'h3s': 'Still not scanning after every step? That is a remote job.',
+        'sections': [(1, None), (2, None), (3, None), (4, 'Or use scan to email, which ignores the router')]},
+    'printer-says-wifi-password-incorrect': {'h2': 'Get the password accepted, step by step', 'ask': 'Has the printer joined the Wi-Fi?', 'tip': 'Print a test page, and note the network name it joined.', 'h3s': 'Still rejecting the password after every step? That is a remote job.',
+        'sections': [(4, 'Restart both, then retype the password slowly'), (1, 'Give it a 2.4GHz network to join'), (2, 'Check WPA3, hidden names and channel 13'), (3, 'Try a password the printer can digest')]},
+    'printer-stopped-working-after-changing-wifi-password': {'h2': 'Get it back on the new password, step by step', 'ask': 'Is it printing again?', 'tip': 'If it prints but will not scan, that is a separate road: the scanning step above covers it.', 'h3s': 'Still not working after every step? That is a remote job.',
+        'sections': [(1, 'Printer with a screen: re-run the wireless setup wizard'), (2, 'Button-only printer: WPS, or a temporary USB cable'), (3, 'Printing works but scanning does not: fix that too')]},
+    'printer-wont-connect-after-changing-broadband': {'h2': 'Get it onto the new broadband, step by step', 'ask': 'Is the printer connecting now?', 'tip': 'Print a test page, then pin the address so it stays found.', 'h3s': 'Still not connecting after every step? That is a remote job.',
+        'sections': [(1, None), (2, 'Free it from the old fixed address'), (3, 'Check band steering, mesh and guest networks'), (4, 'Reset the printer&rsquo;s network settings and start again')]},
+    'printer-wont-connect-to-mesh-wifi': {'h2': 'Get it onto the mesh, step by step', 'ask': 'Is the printer connecting now?', 'tip': 'Print a test page from a room away from the node it joined.', 'h3s': 'Still not connecting after every step? That is a remote job.',
+        'sections': [(2, None), (3, None), (4, 'Or run a cable from a mesh node')]},
+    'printer-asking-for-admin-password': {'h2': 'Get past the password prompt, step by step', 'ask': 'Did the printer install?', 'tip': 'Print a test page from the account you normally use.', 'h3s': 'Still stuck at the prompt after every step? That is a remote job.',
+        'sections': [(1, 'Work out which password Windows actually wants'), (2, 'On a work laptop: ask IT for exactly this'), (3, 'At home, when the administrator password is forgotten'), (4, 'Use the leaner install that stops the repeat prompts')]},
+    'printer-wont-scan-to-computer-windows-11': {'h2': 'Get scanning working on Windows 11, step by step', 'ask': 'Is it scanning now?', 'tip': 'Scan one page from the computer to be sure.', 'h3s': 'Still not scanning after every step? That is a remote job.',
+        'sections': [(1, 'Swap the driver Windows fitted for the maker&rsquo;s full package'), (2, 'Start the scan at the computer, not the printer'), (3, 'Treat USB and network faults differently'), (4, 'Let scanning through the security suite and VPN')]},
+}
+
+def _fix_flow_for(d):
+    slug = d['slug']
+    if slug == 'printer-disappeared-after-windows-update': return PRINTER_FIX_TOOL
+    cfg = FIX_FLOW_PAGES.get(slug)
+    if not cfg: return None
+    steps = []
+    if cfg.get('sections'):
+        for idx, title in cfg['sections']:
+            sec = d['sections'][idx]
+            body = '<p>' + _ff_first_sentences(sec['html']) + ' <a href="#s' + str(idx + 1) + '">Full detail in the guide below &#8595;</a></p>'
+            steps.append((title or sec['h2'], body, cfg['ask']))
+    else:
+        for st in d.get('howToSteps') or []:
+            steps.append((st['name'], '<p>' + st['text'] + '</p>', cfg['ask']))
+    if len(steps) < 3: return None
+    n = len(steps)
+    text = _ff_plain(d.get('h1', slug), True) + ' - the fix order (365techies.co.uk/' + slug + '/)\n' + "\n".join(
+        str(i + 1) + '. ' + _ff_plain(t, True) + ': ' + _ff_plain(b, True).replace('Full detail in the guide below ↓', '').strip() for i, (t, b, _) in enumerate(steps)) + \
+        '\nStill stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.uk/remote-support/'
+    words = {'six': 6, 'seven': 7, 'five': 5, 'four': 4, 'three': 3}
+    return _fix_flow_section({
+        'eyebrow': '// FIX IT WITH ME &middot; STEP BY STEP', 'h2': cfg['h2'],
+        'lede': 'The steps from this guide, one at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your device.',
+        'rev_suffix': '', 'os': False, 'count': n,
+        'steps_html': _ff_steps_html(steps, 'Yes, sorted', 'Not yet'),
+        'fixed_html': _ff_fixed_ending('Sorted{mins}. Nice work.', cfg['tip'], 'Rather have it looked after?'),
+        'stuck_html': _ff_stuck_ending(cfg['h3s'].replace('every step', 'all ' + [k for k, v in words.items() if v == n][0] + ' steps') if n in words.values() else cfg['h3s'],
+                                       'With your permission we connect to your screen and sort it in one session.'),
+        'steps_text': text.replace('&', '&amp;').replace('<', '&lt;'),
+    })
+
 
 def _printer_page_extras(d):
     """The same page's long-form sections gain the two real screenshots, the money path and the extra links."""
@@ -21514,8 +21643,9 @@ def build_new_page(d):
       </div>
     </section>'''
         _blocks.insert(1 if len(_blocks) > 1 else len(_blocks), _ag)
-    if d['slug'] == 'printer-disappeared-after-windows-update' and len(_blocks) > 1:
-        _blocks.insert(1, PRINTER_FIX_TOOL)   # right after the 'Start here' section, before the at-a-glance table
+    _ff = _fix_flow_for(d)
+    if _ff and len(_blocks) > 1:
+        _blocks.insert(1, _ff)   # right after the first section, before the at-a-glance table and the SOS band
     sections = "\n".join(_blocks)
     _is_course = ('-course' in d['slug']) or d['slug'].startswith('computer-lessons')
     toc = _toc_chips(d['sections']) if (not _is_course and len(d['sections']) >= 4) else ""

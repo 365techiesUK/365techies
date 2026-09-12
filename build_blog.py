@@ -46,7 +46,49 @@ CALLOUT = ('<div class="article__callout"><p><strong>Prefer to let us handle it?
            'with a friendly techie on hand whenever you need one. Call <a href="tel:+441202775566">01202 775566</a> '
            'or <a href="/monthly-it-support/">view our plans</a>.</p></div>')
 
+
+# Guided flows on the two printer guides that live here rather than in the page builder. Steps are the guides' own
+# advice, rendered through build_extra's flow engine; the setup guide runs as a sequence, the other as a fix flow.
+def _blog_fix_flows():
+    import build_extra as _bx
+    setup = [
+        ("Unbox it, load paper, fit the ink or toner, switch it on", "<p>Unbox it, load some paper and fit the ink or toner, then switch it on. Have your Wi-Fi password handy.</p>", "Done that?"),
+        ("Connect it to your Wi-Fi from the printer&rsquo;s screen or app", "<p>Using the printer&rsquo;s own screen or its app, connect it to your home Wi-Fi. Most printers only see the 2.4GHz network, so pick that one if your router shows two.</p>", "Is it on the Wi-Fi?"),
+        ("Add it on the PC", '<p>On your PC go to <b>Settings &rarr; Bluetooth &amp; devices &rarr; Printers &amp; scanners</b>, click <b>Add device</b>, and pick your printer from the list.</p><a class="ff-open" href="ms-settings:printers">Open Printers &amp; scanners &#8594;</a>', "Has the PC added it?"),
+        ("Let Windows install the maker&rsquo;s app, then print a test page", "<p>If Windows asks to install the maker&rsquo;s app or driver, let it: it unlocks scanning and ink-level features. Print a test page, and set it as your default printer if it is the one you use most.</p>", "Did the test page print?"),
+    ]
+    fix = [
+        ("Move the printer closer to the router, or add a Wi-Fi booster", "<p>A weak Wi-Fi signal is the commonest cause, and printers on the far side of the house are especially prone to dropping out. Bring it nearer the router for a day, or add a booster or mesh node near it.</p>", "Has it stayed online?"),
+        ("Update the printer driver", "<p>An out-of-date driver makes Windows lose the printer. Download the current driver or full software package for your exact model from the maker&rsquo;s site, install it and restart.</p>", "Has it stayed online?"),
+        ("Set it as the default printer", '<p>If the computer keeps picking a different printer, it looks offline when it is not. In <b>Settings &rarr; Bluetooth &amp; devices &rarr; Printers &amp; scanners</b>, open the printer and choose <b>Set as default</b>.</p><a class="ff-open" href="ms-settings:printers">Open Printers &amp; scanners &#8594;</a>', "Has it stayed online?"),
+    ]
+    def text(title, steps, slug):
+        return (title + ' (365techies.co.uk/' + slug + '/)\n' + "\n".join(str(i + 1) + '. ' + _bx._ff_plain(t, True) + ': ' + _bx._ff_plain(b, True) for i, (t, b, _) in enumerate(steps))
+                + '\nStuck? 365 Techies help remotely: 01202 775566 - https://365techies.co.uk/remote-support/').replace('&', '&amp;').replace('<', '&lt;')
+    return {
+        'how-to-set-up-a-printer': _bx._fix_flow_section({
+            'eyebrow': '// SET IT UP WITH ME &middot; STEP BY STEP', 'h2': 'Set the printer up, one step at a time',
+            'lede': 'The four steps from this guide, one at a time. Tick each one off and it shows the next. Nothing here leaves your device.',
+            'rev_suffix': '', 'os': False, 'count': 4,
+            'steps_html': _bx._ff_steps_html(setup, 'Done, next step', 'I am stuck here', seq=True),
+            'fixed_html': _bx._ff_fixed_ending('Set up{mins}. Nice work.', 'Keep the maker&rsquo;s app: it shows ink levels and makes scanning easy.', 'Rather have it done for you?'),
+            'stuck_html': _bx._ff_stuck_ending('Stuck at a step? We set printers up remotely, and it is a quick job.', 'With your permission we connect to your screen and finish the set-up with you.'),
+            'steps_text': text('Setting up a printer - the steps', setup, 'how-to-set-up-a-printer'),
+        }),
+        'why-does-my-printer-keep-disconnecting': _bx._fix_flow_section({
+            'eyebrow': '// FIX IT WITH ME &middot; STEP BY STEP', 'h2': 'Stop it dropping off, one step at a time',
+            'lede': 'The fixes from this guide, cheapest effort first. Tell it what happened and it shows the next step. Nothing here leaves your device.',
+            'rev_suffix': '', 'os': False, 'count': 3,
+            'steps_html': _bx._ff_steps_html(fix, 'Yes, sorted', 'Not yet'),
+            'fixed_html': _bx._ff_fixed_ending('Sorted{mins}. Nice work.', 'If it drops again after a router change, the Wi-Fi guides linked below cover mesh systems, band steering and fixed addresses.', 'Rather have it looked after?'),
+            'stuck_html': _bx._ff_stuck_ending('Still dropping off after all three steps? That is a remote job.', 'With your permission we connect to your screen, pin the printer&rsquo;s address and sort the driver in one session.'),
+            'steps_text': text('Printer keeps disconnecting - the fix order', fix, 'why-does-my-printer-keep-disconnecting'),
+        }),
+    }
+BLOG_FIX_FLOWS = _blog_fix_flows()
+
 def make_post(slug, cat, title, lede, body, points, related, faqs=None, dt="2026-06-15", dt_pretty="June 2026"):
+    if slug in BLOG_FIX_FLOWS: body = body + BLOG_FIX_FLOWS[slug]
     desc = lede
     points_html = "\n".join(f"          <li>{p}</li>" for p in points)
     related_html = "\n".join(f'          <a href="{h}">{l}</a>' for l, h in related)

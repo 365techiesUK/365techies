@@ -192,7 +192,7 @@
  },
  "bournemouth/sea-today": {
   "first": "2026-08-02",
-  "h": "b3a6f9c287fb616b",
+  "h": "67bba961798cc3ce",
   "last": "2026-09-12"
  },
  "bournemouth/sunrise-sunset": {
@@ -1310,8 +1310,8 @@
  },
  "how-to-set-up-a-printer": {
   "first": "2026-06-16",
-  "h": "210ed798fe2ac530",
-  "last": "2026-09-05"
+  "h": "47019026dc746e5e",
+  "last": "2026-09-12"
  },
  "how-to-set-up-a-second-monitor": {
   "first": "2026-06-16",
@@ -2665,68 +2665,68 @@
  },
  "printer-asking-for-admin-password": {
   "first": "2026-08-01",
-  "h": "7e97e17366c63954",
-  "last": "2026-08-31"
+  "h": "e6b72812d49ec611",
+  "last": "2026-09-12"
  },
  "printer-disappeared-after-windows-update": {
   "first": "2026-07-28",
-  "h": "ee107121b0315e1c",
+  "h": "10923fee39465dbf",
   "last": "2026-09-12"
  },
  "printer-prints-but-wont-scan-after-new-router": {
   "first": "2026-07-28",
-  "h": "13e532474287dd5e",
-  "last": "2026-08-31"
+  "h": "628f311a0ac62e01",
+  "last": "2026-09-12"
  },
  "printer-says-wifi-password-incorrect": {
   "first": "2026-07-28",
-  "h": "97f612e74593490d",
-  "last": "2026-08-31"
+  "h": "4882417553e9c99d",
+  "last": "2026-09-12"
  },
  "printer-stopped-working-after-changing-wifi-password": {
   "first": "2026-07-28",
-  "h": "c721929ed4eff5f9",
-  "last": "2026-08-31"
+  "h": "0d4ec20753314871",
+  "last": "2026-09-12"
  },
  "printer-support": {
   "first": "2026-07-28",
-  "h": "5dfc8be445013af2",
-  "last": "2026-09-09"
+  "h": "bb2779316529d7cc",
+  "last": "2026-09-12"
  },
  "printer-wont-connect-after-changing-broadband": {
   "first": "2026-07-28",
-  "h": "dd83ce8e3426d4f3",
-  "last": "2026-08-31"
+  "h": "b6adffec576d5515",
+  "last": "2026-09-12"
  },
  "printer-wont-connect-after-moving-house": {
   "first": "2026-07-28",
-  "h": "32706401e7b0ada8",
-  "last": "2026-08-31"
+  "h": "933b7f16eb0b0dca",
+  "last": "2026-09-12"
  },
  "printer-wont-connect-to-bt-smart-hub": {
   "first": "2026-07-28",
-  "h": "e4fefaf979dcc4e1",
-  "last": "2026-08-31"
+  "h": "6cfd66575ece5ca2",
+  "last": "2026-09-12"
  },
  "printer-wont-connect-to-ee-smart-hub": {
   "first": "2026-07-28",
-  "h": "af8bc48f39bdd9a1",
-  "last": "2026-08-31"
+  "h": "fe93faccb156ffe7",
+  "last": "2026-09-12"
  },
  "printer-wont-connect-to-mesh-wifi": {
   "first": "2026-07-28",
-  "h": "753300963ed1a7f4",
-  "last": "2026-08-31"
+  "h": "f08f92bca4eed6a4",
+  "last": "2026-09-12"
  },
  "printer-wont-connect-to-sky-router": {
   "first": "2026-07-28",
-  "h": "2d5353e7061929b8",
-  "last": "2026-08-31"
+  "h": "0bad9cc67c3db67b",
+  "last": "2026-09-12"
  },
  "printer-wont-scan-to-computer-windows-11": {
   "first": "2026-08-01",
-  "h": "32a4a253e695d17e",
-  "last": "2026-08-31"
+  "h": "2f514e1a8fbb4bad",
+  "last": "2026-09-12"
  },
  "privacy-policy": {
   "first": "2026-07-28",
@@ -3404,8 +3404,8 @@
  },
  "why-does-my-printer-keep-disconnecting": {
   "first": "2026-06-16",
-  "h": "72467386028b41e8",
-  "last": "2026-09-05"
+  "h": "e8042c6286d14b89",
+  "last": "2026-09-12"
  },
  "why-home-users-need-regular-maintenance": {
   "first": "2026-06-16",
