@@ -1201,6 +1201,9 @@
               else { reset(); note.textContent='That did not go through ('+((j&&j.err)||'error')+'). You can try again.'; }
             }).catch(function(){ reset(); });
         });
+        /* measurement: clicks on the plan panel's links (plans, app, contact, refurbs) */
+        root.addEventListener('click',function(e){ var a=e.target.closest('#bm-fix a'); if(!a) return;
+          try{ if(window.gtag&&localStorage.getItem('tt_internal')!=='1') gtag('event','plan_cta',{place:'benchmark',target:a.getAttribute('href'),score:LAST.overall||0,page:location.pathname}); }catch(x){} });
         /* Share my score: the share sheet where the browser has one (phones, Windows Chrome/Edge); elsewhere it copies */
         var shareBtn=root.querySelector('#bm-share');
         if(shareBtn) shareBtn.addEventListener('click',function(){

@@ -21404,6 +21404,9 @@ FIX_FLOW_SCRIPT = r"""      <script>
         function copyText(txt,btn,label){ function ok(){ btn.textContent='Copied'; btn.classList.add('done'); setTimeout(function(){ btn.textContent=label; btn.classList.remove('done'); },1800); }
           if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(ok).catch(function(){}); }
           else{ var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); ok(); }catch(e){} document.body.removeChild(ta); } }
+        /* measurement: which ending links get clicked (plans, app, remote, phone) - the October funnel review reads this */
+        root.addEventListener('click',function(e){ var a=e.target.closest('#ff-end a'); if(!a) return;
+          try{ if(window.gtag&&localStorage.getItem('tt_internal')!=='1') gtag('event','plan_cta',{place:'fixflow',target:a.getAttribute('href'),ending:endEl.className.indexOf('is-bad')>-1?'stuck':'fixed',page:location.pathname}); }catch(x){} });
         root.addEventListener('click',function(e){
           var b=e.target.closest('button'); if(!b) return;
           if(b.classList.contains('ff-copy')){ copyText(b.getAttribute('data-copy'),b,'Copy'); return; }
@@ -21440,9 +21443,12 @@ def _ff_plan_card(lead):
     return ('<div class="ff-plan"><b>' + lead + '</b> On a 365 support plan every computer gets a full service every six weeks: Windows, driver and app '
             'updates applied and checked, security and backup looked at, and a written Service Report each time. Home &pound;18.25 per computer a month, '
             'business from &pound;24.38, rolling monthly.</div>')
-def _ff_fixed_ending(h3, tip, plan_lead):
-    """plan_lead=None means no plan pitch at all (diagnosis playbooks, a swollen battery): just the copy button."""
-    plans = ('<a class="button primary" href="/monthly-it-support/">See the support plans &#8594;</a><a class="button secondary" href="/free-pc-health-check/">Get the free app</a>' if plan_lead else '')
+_FIX_FLOW_BIZ_RE = re.compile(r'sage|quickbooks|shared-folder|shared-mailbox|business-|restrict-staff|office-wifi|nas-drive|scan-to-folder|network-credentials|domain')
+
+def _ff_fixed_ending(h3, tip, plan_lead, plans_href='/monthly-it-support/'):
+    """plan_lead=None means no plan pitch at all (diagnosis playbooks, a swollen battery): just the copy button.
+    plans_href: the business plans page for business-shaped problems, the home plans page otherwise."""
+    plans = ('<a class="button primary" href="' + plans_href + '">See the support plans &#8594;</a><a class="button secondary" href="/free-pc-health-check/">Get the free app</a>' if plan_lead else '')
     return ('<h3>' + h3 + '</h3><p>' + tip + '</p>' + (_ff_plan_card(plan_lead) if plan_lead else '') +
             '<div class="ff-cta">' + plans + '<button type="button" class="button ' + ('bm-ghost' if plan_lead else 'primary') + '" id="ff-copyall">Copy these steps</button></div>')
 def _ff_stuck_ending(h3, what, tail=' Usually the same day, remote help from &pound;20, and no fix, no fee.'):
@@ -21794,7 +21800,8 @@ def _fix_flow_for(d):
         'lede': cfg.get('lede', 'The steps from this guide, one at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your device.'),
         'rev_suffix': '', 'os': False, 'count': n,
         'steps_html': _ff_steps_html(steps, cfg.get('yes', 'Yes, sorted'), cfg.get('no', 'Not yet'), seq=(cfg.get('mode') == 'seq')),
-        'fixed_html': _ff_fixed_ending(cfg.get('h3f', 'Sorted{mins}. Nice work.'), cfg['tip'], cfg.get('plan_lead', 'Rather have it looked after?')),
+        'fixed_html': _ff_fixed_ending(cfg.get('h3f', 'Sorted{mins}. Nice work.'), cfg['tip'], cfg.get('plan_lead', 'Rather have it looked after?'),
+                                       '/business-it-support-plans/' if _FIX_FLOW_BIZ_RE.search(slug) else '/monthly-it-support/'),
         'stuck_html': _ff_stuck_ending(cfg['h3s'].replace('every step', 'all ' + [k for k, v in words.items() if v == n][0] + ' steps') if n in words.values() else cfg['h3s'],
                                        cfg.get('stuck_what', 'With your permission we connect to your screen and sort it in one session.'), cfg.get('stuck_tail', ' Usually the same day, remote help from &pound;20, and no fix, no fee.')),
         'steps_text': text.replace('&', '&amp;').replace('<', '&lt;'),
@@ -27743,8 +27750,52 @@ def write_portal_page():
         + '<button class="sm ghost qbob" style="margin:0;padding:.3rem .65rem;font-size:.82rem">\\ud83d\\udcb7 Quote agreed / invoice</button></div>';
       out += '<div class="invwrap" data-em="' + esc(c.email) + '" data-nm="' + esc(c.name || '') + '" style="margin-top:.4rem">'
         + '<button class="sm ghost invb" style="margin:0;padding:.3rem .65rem;font-size:.82rem">\\ud83d\\udce8 Invite to a support plan</button></div>';
+      out += '<div class="jdwrap" data-em="' + esc(c.email) + '" data-nm="' + esc(c.name || '') + '" style="margin-top:.4rem">'
+        + '<button class="sm ghost jdb" style="margin:0;padding:.3rem .65rem;font-size:.82rem">\\u2705 Job done \\u2014 email what we did</button></div>';
     }
     return out;
+  }
+  /* "Job done - email what we did": the moment a one-off fix, tune-up or repair is finished, the
+     customer gets a short email listing the work in the technician's words and the one honest next
+     step (a support plan, rolling monthly). Preview first, then send; one per customer per job. */
+  function bindJobDone(panel) {
+    var w = panel.querySelector('.jdwrap'); if (!w) return;
+    var b = w.querySelector('.jdb'); if (!b) return;
+    b.onclick = function () {
+      var em = w.getAttribute('data-em'), nm = w.getAttribute('data-nm');
+      w.innerHTML = '<div class="quiet" style="margin:.2rem 0 .3rem">Goes to <b>' + esc(em) + '</b> from info@365techies.co.uk. One line per thing you did, in plain words.</div>'
+        + '<div style="margin:0 0 .3rem"><textarea class="jddid" rows="4" maxlength="1200" placeholder="Restarted the print spooler\\nReinstalled the HP driver\\nSet the printer as default" style="width:100%;max-width:420px"></textarea></div>'
+        + '<div style="margin:0 0 .3rem"><input class="jdamt" type="text" inputmode="decimal" placeholder="Agreed price \\u00a3 (optional, invoice still comes from QuickBooks)" style="width:100%;max-width:420px"></div>'
+        + '<div style="margin:0 0 .4rem;font-size:.85rem"><label style="margin-right:.8rem"><input type="radio" name="jdplan" value="home" checked> Home plan pitch (\\u00a318.25)</label><label><input type="radio" name="jdplan" value="business"> Business (from \\u00a324.38)</label></div>'
+        + '<button class="sm ghost jdprev" style="margin:0 .4rem 0 0;padding:.3rem .7rem;font-size:.82rem">\\ud83d\\udc41 Preview</button>'
+        + '<button class="sm jdsend" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\\ud83d\\udce8 Send job-done email</button> '
+        + '<span class="quiet jdmsg"></span>';
+      var msg = w.querySelector('.jdmsg');
+      function payload(extra) {
+        var plan = (w.querySelector('input[name=jdplan]:checked') || {}).value || 'home';
+        return Object.assign({ action: 'done', stoken: S.stoken, machine: mid(), name: nm, email: em, plan: plan,
+                               did: (w.querySelector('.jddid').value || ''), amount: (w.querySelector('.jdamt').value || '').trim() }, extra || {});
+      }
+      w.querySelector('.jdprev').onclick = function () {
+        if (!(w.querySelector('.jddid').value || '').trim()) { msg.textContent = 'Write what you did first.'; return; }
+        msg.textContent = 'Building preview\\u2026';
+        post(JOBS, payload({ preview: 1 })).then(function (r) {
+          if (!r || !r.ok) { msg.textContent = 'Preview failed: ' + jobsErr(r); return; }
+          var win = window.open('', '_blank'); if (win) { win.document.open(); win.document.write(r.html); win.document.close(); msg.textContent = 'Preview opened in a new tab. Subject: ' + r.subject; }
+          else msg.textContent = 'Pop-up blocked \\u2014 allow pop-ups for the portal to see the preview.';
+        }).catch(function () { msg.textContent = 'Couldn\\u2019t reach the server.'; });
+      };
+      w.querySelector('.jdsend').onclick = function () {
+        var go = this;
+        if (!(w.querySelector('.jddid').value || '').trim()) { msg.textContent = 'Write what you did first.'; return; }
+        if (!confirm('Send the job-done email to ' + em + ' now?')) return;
+        go.disabled = true; msg.textContent = 'Sending\\u2026';
+        post(JOBS, payload()).then(function (r) {
+          if (!r || !r.ok) { go.disabled = false; msg.textContent = 'Not sent: ' + jobsErr(r); return; }
+          w.innerHTML = '<span class="quiet">\\u2713 Job-done email sent to <b>' + esc(em) + '</b>' + (r.slack === 'sent' ? ' \\u2014 noted in #daily-jobs-in-jobs-out.' : '.') + '</span>';
+        }).catch(function () { go.disabled = false; msg.textContent = 'Couldn\\u2019t reach the server.'; });
+      };
+    };
   }
   /* "Invite to a support plan": pick a GoCardless subscription and email the
      customer the sign-up link. Two steps on purpose - the first click only opens
@@ -27905,6 +27956,11 @@ def write_portal_page():
     if (e === 'bad_amount') return 'that amount doesn\\u2019t look right.';
     if (e === 'no_customer') return 'no customer name or email to record it against.';
     if (e === 'busy') return 'the job store was busy \\u2014 try again.';
+    if (e === 'no_did') return 'write what you did first.';
+    if (e === 'no_email') return 'this customer has no usable email address.';
+    if (e === 'opted_out') return 'this customer has opted out of our emails \\u2014 not sent.';
+    if (e === 'already_sent') return 'a job-done email already went for this job.';
+    if (e === 'mail_failed') return 'the mail server refused it \\u2014 try again in a minute.';
     return 'server said ' + esc(e || 'nothing');
   }
   function qboErr(r) {
@@ -27987,7 +28043,7 @@ def write_portal_page():
           .then(function (r) {
             if (!r || !r.ok || !r.client) { panel.innerHTML = '<span class="quiet">Couldn\\u2019t load contact details.</span>'; return; }
             panel.innerHTML = clientCard(r.client); panel.setAttribute('data-loaded', '1');
-            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel);
+            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel); bindJobDone(panel);
           })
           .catch(function () { panel.innerHTML = '<span class="quiet">Couldn\\u2019t reach the server.</span>'; });
       };
@@ -28149,7 +28205,7 @@ def write_portal_page():
           .then(function (r) {
             if (!r || !r.ok || !r.client) { panel.innerHTML = '<span class="quiet">Couldn\\u2019t load contact details.</span>'; return; }
             panel.innerHTML = clientCard(r.client); panel.setAttribute('data-loaded', '1');
-            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel);
+            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel); bindJobDone(panel);
           })
           .catch(function () { panel.innerHTML = '<span class="quiet">Couldn\\u2019t reach the server.</span>'; });
       };

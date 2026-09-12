@@ -275,7 +275,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-09-11"
+      "dateModified": "2026-09-12"
     }
   ]
 }
@@ -705,9 +705,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 11 Sep 2026 &middot; 64ed48ee0a</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">portal build 12 Sep 2026 &middot; 0888ce48ad</p><script>
 (function () {
-  var P365BUILD = '64ed48ee0a';
+  var P365BUILD = '0888ce48ad';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -5690,8 +5690,52 @@
         + '<button class="sm ghost qbob" style="margin:0;padding:.3rem .65rem;font-size:.82rem">\ud83d\udcb7 Quote agreed / invoice</button></div>';
       out += '<div class="invwrap" data-em="' + esc(c.email) + '" data-nm="' + esc(c.name || '') + '" style="margin-top:.4rem">'
         + '<button class="sm ghost invb" style="margin:0;padding:.3rem .65rem;font-size:.82rem">\ud83d\udce8 Invite to a support plan</button></div>';
+      out += '<div class="jdwrap" data-em="' + esc(c.email) + '" data-nm="' + esc(c.name || '') + '" style="margin-top:.4rem">'
+        + '<button class="sm ghost jdb" style="margin:0;padding:.3rem .65rem;font-size:.82rem">\u2705 Job done \u2014 email what we did</button></div>';
     }
     return out;
+  }
+  /* "Job done - email what we did": the moment a one-off fix, tune-up or repair is finished, the
+     customer gets a short email listing the work in the technician's words and the one honest next
+     step (a support plan, rolling monthly). Preview first, then send; one per customer per job. */
+  function bindJobDone(panel) {
+    var w = panel.querySelector('.jdwrap'); if (!w) return;
+    var b = w.querySelector('.jdb'); if (!b) return;
+    b.onclick = function () {
+      var em = w.getAttribute('data-em'), nm = w.getAttribute('data-nm');
+      w.innerHTML = '<div class="quiet" style="margin:.2rem 0 .3rem">Goes to <b>' + esc(em) + '</b> from info@365techies.co.uk. One line per thing you did, in plain words.</div>'
+        + '<div style="margin:0 0 .3rem"><textarea class="jddid" rows="4" maxlength="1200" placeholder="Restarted the print spooler\nReinstalled the HP driver\nSet the printer as default" style="width:100%;max-width:420px"></textarea></div>'
+        + '<div style="margin:0 0 .3rem"><input class="jdamt" type="text" inputmode="decimal" placeholder="Agreed price \u00a3 (optional, invoice still comes from QuickBooks)" style="width:100%;max-width:420px"></div>'
+        + '<div style="margin:0 0 .4rem;font-size:.85rem"><label style="margin-right:.8rem"><input type="radio" name="jdplan" value="home" checked> Home plan pitch (\u00a318.25)</label><label><input type="radio" name="jdplan" value="business"> Business (from \u00a324.38)</label></div>'
+        + '<button class="sm ghost jdprev" style="margin:0 .4rem 0 0;padding:.3rem .7rem;font-size:.82rem">\ud83d\udc41 Preview</button>'
+        + '<button class="sm jdsend" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\ud83d\udce8 Send job-done email</button> '
+        + '<span class="quiet jdmsg"></span>';
+      var msg = w.querySelector('.jdmsg');
+      function payload(extra) {
+        var plan = (w.querySelector('input[name=jdplan]:checked') || {}).value || 'home';
+        return Object.assign({ action: 'done', stoken: S.stoken, machine: mid(), name: nm, email: em, plan: plan,
+                               did: (w.querySelector('.jddid').value || ''), amount: (w.querySelector('.jdamt').value || '').trim() }, extra || {});
+      }
+      w.querySelector('.jdprev').onclick = function () {
+        if (!(w.querySelector('.jddid').value || '').trim()) { msg.textContent = 'Write what you did first.'; return; }
+        msg.textContent = 'Building preview\u2026';
+        post(JOBS, payload({ preview: 1 })).then(function (r) {
+          if (!r || !r.ok) { msg.textContent = 'Preview failed: ' + jobsErr(r); return; }
+          var win = window.open('', '_blank'); if (win) { win.document.open(); win.document.write(r.html); win.document.close(); msg.textContent = 'Preview opened in a new tab. Subject: ' + r.subject; }
+          else msg.textContent = 'Pop-up blocked \u2014 allow pop-ups for the portal to see the preview.';
+        }).catch(function () { msg.textContent = 'Couldn\u2019t reach the server.'; });
+      };
+      w.querySelector('.jdsend').onclick = function () {
+        var go = this;
+        if (!(w.querySelector('.jddid').value || '').trim()) { msg.textContent = 'Write what you did first.'; return; }
+        if (!confirm('Send the job-done email to ' + em + ' now?')) return;
+        go.disabled = true; msg.textContent = 'Sending\u2026';
+        post(JOBS, payload()).then(function (r) {
+          if (!r || !r.ok) { go.disabled = false; msg.textContent = 'Not sent: ' + jobsErr(r); return; }
+          w.innerHTML = '<span class="quiet">\u2713 Job-done email sent to <b>' + esc(em) + '</b>' + (r.slack === 'sent' ? ' \u2014 noted in #daily-jobs-in-jobs-out.' : '.') + '</span>';
+        }).catch(function () { go.disabled = false; msg.textContent = 'Couldn\u2019t reach the server.'; });
+      };
+    };
   }
   /* "Invite to a support plan": pick a GoCardless subscription and email the
      customer the sign-up link. Two steps on purpose - the first click only opens
@@ -5852,6 +5896,11 @@
     if (e === 'bad_amount') return 'that amount doesn\u2019t look right.';
     if (e === 'no_customer') return 'no customer name or email to record it against.';
     if (e === 'busy') return 'the job store was busy \u2014 try again.';
+    if (e === 'no_did') return 'write what you did first.';
+    if (e === 'no_email') return 'this customer has no usable email address.';
+    if (e === 'opted_out') return 'this customer has opted out of our emails \u2014 not sent.';
+    if (e === 'already_sent') return 'a job-done email already went for this job.';
+    if (e === 'mail_failed') return 'the mail server refused it \u2014 try again in a minute.';
     return 'server said ' + esc(e || 'nothing');
   }
   function qboErr(r) {
@@ -5934,7 +5983,7 @@
           .then(function (r) {
             if (!r || !r.ok || !r.client) { panel.innerHTML = '<span class="quiet">Couldn\u2019t load contact details.</span>'; return; }
             panel.innerHTML = clientCard(r.client); panel.setAttribute('data-loaded', '1');
-            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel);
+            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel); bindJobDone(panel);
           })
           .catch(function () { panel.innerHTML = '<span class="quiet">Couldn\u2019t reach the server.</span>'; });
       };
@@ -6096,7 +6145,7 @@
           .then(function (r) {
             if (!r || !r.ok || !r.client) { panel.innerHTML = '<span class="quiet">Couldn\u2019t load contact details.</span>'; return; }
             panel.innerHTML = clientCard(r.client); panel.setAttribute('data-loaded', '1');
-            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel);
+            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel); bindJobDone(panel);
           })
           .catch(function () { panel.innerHTML = '<span class="quiet">Couldn\u2019t reach the server.</span>'; });
       };

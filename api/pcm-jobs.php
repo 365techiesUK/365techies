@@ -201,4 +201,60 @@ if ($action === 'quote') {
     out(array('ok' => true, 'id' => $id, 'slack' => $slack, 'slack_code' => $scode));
 }
 
+/*
+ * action=done -> the "job done" email: what we did, in the technician's words, plus the one next step
+ * (a support plan). Fields: name, email, did (lines or array), amount (optional), plan home|business,
+ * id (optional: the quoted job to mark done), preview=1 (returns the HTML instead of sending).
+ * One send per job id unless force=1. Never sends to a customer who has opted out of our emails.
+ */
+if ($action === 'done') {
+    require_once __DIR__ . '/pcm-jobmail-lib.php';
+    $name  = clean(isset($in['name'])  ? $in['name']  : '', 120);
+    $email = strtolower(clean(isset($in['email']) ? $in['email'] : '', 160));
+    $plan  = (isset($in['plan']) && $in['plan'] === 'business') ? 'business' : 'home';
+    $jid   = preg_replace('/[^0-9a-f-]/', '', (string)(isset($in['id']) ? $in['id'] : ''));
+    $did   = isset($in['did']) ? $in['did'] : '';
+    $amountRaw = (string)(isset($in['amount']) ? $in['amount'] : '');
+    $amount = ($amountRaw === '') ? 0.0 : round((float)preg_replace('/[^0-9.]/', '', $amountRaw), 2);
+    if ($amount < 0 || $amount > 100000) $amount = 0.0;
+    $lines = jd_lines($did);
+    if (!$lines) fail('no_did');
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) fail('no_email');
+    list($subject, $text, $html) = jd_build($name, $lines, $amount, $plan);
+    if (!empty($in['preview'])) out(array('ok' => true, 'preview' => true, 'subject' => $subject, 'html' => $html, 'text' => $text));
+
+    // opt-out list shared with the review/confirmation emails (same file, same sha1(email) key)
+    $rq = @json_decode((string)@file_get_contents(__DIR__ . '/pcm-reviewq.json'), true);
+    if (is_array($rq) && isset($rq['optout'][sha1($email)])) fail('opted_out');
+
+    // one per job unless forced
+    if ($jid !== '' && empty($in['force'])) {
+        $cur = db_read($JOBS); $dup = false;
+        foreach ((array)(isset($cur['jobs']) ? $cur['jobs'] : array()) as $j) if (isset($j['id']) && $j['id'] === $jid && !empty($j['done_mail'])) $dup = true;
+        if ($dup) fail('already_sent');
+    }
+    $okM = jd_mail($email, $subject, $text, $html);
+    lg('done-mail ' . ($okM ? 'sent' : 'FAILED') . ' ' . $email . ' job ' . ($jid !== '' ? $jid : '-') . ' by ' . $who);
+    if (!$okM) fail('mail_failed');
+    $stamp = time();
+    jobs_locked(function ($data) use ($jid, $stamp, $name, $email, $lines, $amount, $plan, $who) {
+        $found = false;
+        foreach ($data['jobs'] as &$j) {
+            if ($jid !== '' && isset($j['id']) && $j['id'] === $jid) { $j['status'] = 'done'; $j['done_mail'] = $stamp; $j['done_by'] = $who; $found = true; }
+        }
+        unset($j);
+        if (!$found) {
+            $data['jobs'][] = array('id' => date('ymd') . '-' . substr(bin2hex(random_bytes(3)), 0, 5), 'ts' => $stamp, 'by' => $who, 'name' => $name, 'email' => $email,
+                                    'desc' => implode('; ', $lines), 'amount' => $amount, 'plan' => $plan, 'status' => 'done', 'done_mail' => $stamp, 'done_by' => $who);
+        }
+        return array('ok' => true, 'data' => $data);
+    });
+    $hook = jobs_hook(); $slack = 'not-configured';
+    if ($hook !== '') {
+        list($okS) = slack_send($hook, array('text' => '📨 Job-done email sent to ' . ($name !== '' ? $name : $email) . ' (' . $plan . ' plan pitch)' . ($jid !== '' ? ' - job ' . $jid : '') . ' by ' . $who, 'unfurl_links' => false));
+        $slack = $okS ? 'sent' : 'failed';
+    }
+    out(array('ok' => true, 'sent' => true, 'slack' => $slack));
+}
+
 fail('bad_action');
