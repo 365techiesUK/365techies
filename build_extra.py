@@ -21719,6 +21719,8 @@ FIX_FLOW_OVERRIDES = {   # small per-page tweaks on top of the automatic config
     'sage-50-wont-print-to-pdf-windows-11': {'ask': 'Does it print to PDF now?', 'tip': 'Print one more invoice to PDF after a restart to be sure.'},
     'restrict-staff-access-to-shared-folders-windows-11': {'tip': 'Test with one staff login that should NOT see the folder, as well as one that should.'},
     'windows-10-esu-free-enrolment-help': {'tip': 'Windows Update should now say the PC is enrolled in Extended Security Updates.', 'h3f': 'Enrolled{mins}. Nice work.'},
+    'quickbooks-sage-running-slow': {'ask': 'Is it faster now?', 'tip': 'Time the same job you timed before, on the same computer.'},
+    'sage-50-multi-user-cannot-connect': {'ask': 'Can the other computers connect now?', 'tip': 'Open Sage on every workstation, not just the one you fixed on.'},
 }
 for _k in ('dell-inspiron-15-3000-windows-11', 'dell-inspiron-15-5000-windows-11', 'dell-inspiron-desktop-windows-11'):
     FIX_FLOW_OVERRIDES[_k] = {'h2': 'Check this Dell for Windows 11 with me, step by step', 'eyebrow': '// CHECK IT WITH ME &middot; STEP BY STEP',
@@ -21727,7 +21729,7 @@ for _k in ('dell-inspiron-15-3000-windows-11', 'dell-inspiron-15-5000-windows-11
 
 def _auto_flow_cfg(d):
     slug = d['slug']
-    if not ('outlook' in slug or 'email' in slug or 'windows' in slug or 'onedrive' in slug) or slug in FIX_FLOW_AUTO_SKIP: return None
+    if not ('outlook' in slug or 'email' in slug or 'windows' in slug or 'onedrive' in slug or 'sage' in slug) or slug in FIX_FLOW_AUTO_SKIP: return None
     seq = bool(_FIX_FLOW_SEQ_RE.search(slug))
     mail = ('outlook' in slug or 'email' in slug)
     onedrive = ('onedrive' in slug)
@@ -21738,7 +21740,8 @@ def _auto_flow_cfg(d):
            'eyebrow': '// DO IT WITH ME &middot; STEP BY STEP' if seq else '// FIX IT WITH ME &middot; STEP BY STEP',
            'lede': ('The steps from this guide, one at a time. Tick each one off and it shows the next. Nothing here leaves your device.' if seq else
                     'The steps from this guide, one at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your device.'),
-           'tip': ('Open File Explorer and check the OneDrive files show a green tick or a blue cloud, not a red cross.' if onedrive else
+           'tip': ('Open Sage on the affected computer once more to be sure.' if 'sage' in slug else
+                   'Open File Explorer and check the OneDrive files show a green tick or a blue cloud, not a red cross.' if onedrive else
                    'Send yourself a test email to be sure it has stuck.' if mail else 'Restart once more and check it has stuck.'),
            'h3s': 'Still not working after every step? That is a remote job.',
            'h3f': 'Done{mins}. Nice work.' if seq else 'Sorted{mins}. Nice work.',

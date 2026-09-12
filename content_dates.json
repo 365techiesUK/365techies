@@ -2750,8 +2750,8 @@
  },
  "quickbooks-sage-running-slow": {
   "first": "2026-07-28",
-  "h": "740c2fd71f1d793c",
-  "last": "2026-08-31"
+  "h": "6c52d39edc39abdd",
+  "last": "2026-09-12"
  },
  "ransomware": {
   "first": "2026-07-28",
@@ -2890,12 +2890,12 @@
  },
  "sage-50-multi-user-cannot-connect": {
   "first": "2026-07-28",
-  "h": "71f1ea902d7536f9",
-  "last": "2026-08-31"
+  "h": "853233a55b327bb0",
+  "last": "2026-09-12"
  },
  "sage-50-wont-email-invoices-outlook": {
   "first": "2026-07-28",
-  "h": "e85d0d19fb037a18",
+  "h": "7848545d45ab6d8a",
   "last": "2026-09-12"
  },
  "sage-50-wont-print-to-pdf-windows-11": {
