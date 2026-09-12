@@ -76,16 +76,27 @@ SPECIALIST = [
    tile_items=[("windows","Upgrades","Smooth, safe upgrades from Windows 10 with your files intact."),("monitor","Performance","Speed up a sluggish Windows 11 PC."),("wrench","Driver fixes","Sort out printers, audio, displays and device drivers."),("shield","Security","Sensible Windows security settings, configured for you."),("server","Updates","Keep Windows updated without the disruption."),("bolt","New PC setup","Set up a new Windows 11 machine the right way.")],
    faqs=[("Should I upgrade to Windows 11?","If your PC is compatible, Windows 11 is a sensible, supported upgrade. We will check compatibility and advise honestly whether it is worth it for your machine."),("Will I lose my files upgrading to Windows 11?","No — we back up your data first and make sure everything transfers safely before and after the upgrade."),("My Windows 11 PC is slow — can you help?","Yes, we tune up slow Windows 11 PCs remotely, clearing out the causes and getting performance back."),("Windows 10 has ended — what should I do?","Microsoft ended support for Windows 10 in October 2025 (a paid consumer Extended Security Updates option runs for a further year). If your PC supports Windows 11 we&rsquo;ll upgrade it cleanly with your files intact; if not, we&rsquo;ll advise honestly on a sensible replacement. Try our <a href=\"/repair-or-replace-advisor/\">repair or replace advisor</a>.")],
    chips=["Upgrades &amp; setup","Compatibility checks","No lost files"],
-   guides_title="Windows 11 problems we get asked about most",
-   guides=[("/windows-11-network-credentials-shared-folder/","Windows 11 keeps asking for network credentials"),
-           ("/windows-11-cant-access-windows-10-shared-folder/","Windows 11 cannot open a shared folder on a Windows 10 PC"),
-           ("/shared-folder-read-only-cant-save-windows-11/","Shared folder read-only: staff can open but cannot save"),
-           ("/fix-shared-folder-error-0x80004005/","Cannot access shared folder, error 0x80004005"),
-           ("/share-files-small-office-without-server/","Sharing files in a small office without a server"),
-           ("/onedrive-file-locked-by-another-user/","OneDrive file locked by another user, but nobody has it open"),
-           ("/sage-instant-accounts-windows-11/","Sage Instant Accounts won&rsquo;t work on Windows 11"),
-           ("/sage-50-wont-print-to-pdf-windows-11/","Sage 50 won&rsquo;t print to PDF on Windows 11"),
-           ("/cost-to-upgrade-office-to-windows-11/","What it costs to upgrade an office to Windows 11")],
+     guides_title="What is Windows doing? Pick the closest, and fix it step by step on that page",
+   guides=[
+     ("/printer-disappeared-after-windows-update/", "A printer disappeared after an update"),
+     ("/windows-11-network-credentials-shared-folder/", "Windows 11 keeps asking for network credentials"),
+     ("/windows-11-cant-access-windows-10-shared-folder/", "Windows 11 cannot open a shared folder on a Windows 10 PC"),
+     ("/windows-11-cant-see-network-computers/", "Windows 11 cannot see the other computers on the network"),
+     ("/shared-folders-not-working-after-windows-11-24h2-update/", "Shared folders stopped working after the 24H2 update"),
+     ("/shared-folder-read-only-cant-save-windows-11/", "Shared folder read-only: staff can open but cannot save"),
+     ("/fix-shared-folder-error-0x80004005/", "Cannot access shared folder, error 0x80004005"),
+     ("/nas-drive-not-showing-after-windows-11-update/", "The NAS drive vanished after an update"),
+     ("/scan-to-folder-stopped-working-after-windows-update/", "Scan to folder stopped working after an update"),
+     ("/old-program-wont-open-on-windows-11/", "An old program will not open on Windows 11"),
+     ("/dell-this-pc-cant-run-windows-11/", "PC Health Check says this Dell cannot run Windows 11"),
+     ("/windows-10-esu-free-enrolment-help/", "Still on Windows 10: enrolling in Extended Security Updates"),
+     ("/windows-10-end-of-life/", "Still on Windows 10 and not sure what to do"),
+     ("/share-files-small-office-without-server/", "Sharing files in a small office without a server"),
+     ("/onedrive-file-locked-by-another-user/", "OneDrive file locked by another user, but nobody has it open"),
+     ("/sage-instant-accounts-windows-11/", "Sage Instant Accounts won&rsquo;t work on Windows 11"),
+     ("/sage-50-wont-print-to-pdf-windows-11/", "Sage 50 won&rsquo;t print to PDF on Windows 11"),
+     ("/cost-to-upgrade-office-to-windows-11/", "What it costs to upgrade an office to Windows 11"),
+   ],
    split_title="The right help, home or work",
    split=[("Windows 11 at home","Whether it&rsquo;s one laptop or the whole family&rsquo;s devices, we check compatibility, back up your files and upgrade to Windows 11 cleanly &mdash; then keep it fast and secure.",["Compatibility check &amp; honest advice","Files backed up before we start","Clean, fast Windows 11 setup","Ongoing updates &amp; support"]),("Windows 11 for business","We plan and roll out Windows 11 across your team with no downtime &mdash; compatibility checked, data safe, security configured and everyone supported.",["Fleet-wide compatibility checks","Planned, no-downtime rollout","Security &amp; policies configured","Every user supported"])],
    steps_title="Upgraded the right way",
@@ -21592,6 +21603,21 @@ FIX_FLOW_PAGES = {
     'virgin-media-email-wont-add-to-new-outlook': {'h2': 'Add the Virgin Media account, step by step', 'ask': 'Has the account added?', 'tip': 'Send yourself a test email to be sure it both sends and receives.',
         'h3s': 'Still refusing after every step? That is a remote job.',
         'sections': [(1, 'Two minutes that tell you whether the account itself works'), (2, 'Enter the settings Virgin publishes, manually'), (3, 'Or use classic Outlook, which still adds it')]},
+    'nas-drive-not-showing-after-windows-11-update': {'h2': 'Get the NAS back, step by step', 'ask': 'Can you see the NAS now?', 'tip': 'Open a file on it and save it back to be sure.',
+        'h3s': 'Still missing after every step? That is a remote job.',
+        'sections': [(1, 'Reach it by address: the answer tells you which fault you have'), (2, 'Put the Network view back'), (3, 'Make the lasting fix on the NAS itself')]},
+    'old-program-wont-open-on-windows-11': {'h2': 'Get the old program running, step by step', 'ask': 'Does the program open now?', 'tip': 'Open the file it needs and save once, to be sure it really works.',
+        'h3s': 'Still refusing after every step? That is a remote job.',
+        'sections': [(1, 'Try compatibility mode and run as administrator'), (2, 'Put back the components a new PC does not come with'), (3, 'If it opens but cannot find its device')]},
+    'scan-to-folder-stopped-working-after-windows-update': {'h2': 'Get scan-to-folder working again, step by step', 'ask': 'Is it scanning to the folder now?', 'tip': 'Scan one page and watch it land in the folder.',
+        'h3s': 'Still not landing after every step? That is a remote job.',
+        'sections': [(1, 'Check the computer that holds the folder'), (2, 'Check the scanner&rsquo;s own address-book entry'), (3, 'Give the scanner its own account on the PC')]},
+    'shared-folder-read-only-cant-save-windows-11': {'h2': 'Get saving working again, step by step', 'ask': 'Can you save into the folder now?', 'tip': 'Save a small test file, then delete it, to be sure.',
+        'h3s': 'Still read-only after every step? That is a remote job.',
+        'sections': [(1, 'Check the share layer and the security layer'), (2, 'Rule out locks and stale lock files'), (3, 'Check the read-only tick, Protected View and Office&rsquo;s own locks')]},
+    'windows-11-network-credentials-shared-folder': {'h2': 'Stop the credentials box, step by step', 'ask': 'Does the folder open without asking now?', 'tip': 'Restart and open the folder once more to be sure it stays signed in.',
+        'h3s': 'Still asking after every step? That is a remote job.',
+        'sections': [(1, 'Use the username format Windows actually wants'), (2, 'Save the login properly so Windows stops asking'), (3, 'If a saved login that worked for months suddenly stopped')]},
     'printer-wont-scan-to-computer-windows-11': {'h2': 'Get scanning working on Windows 11, step by step', 'ask': 'Is it scanning now?', 'tip': 'Scan one page from the computer to be sure.', 'h3s': 'Still not scanning after every step? That is a remote job.',
         'sections': [(1, 'Swap the driver Windows fitted for the maker&rsquo;s full package'), (2, 'Start the scan at the computer, not the printer'), (3, 'Treat USB and network faults differently'), (4, 'Let scanning through the security suite and VPN')]},
 }
@@ -21635,19 +21661,35 @@ def _fix_flow_for_playbook(p):
 # that carries its own steps gets a flow automatically; procedures (set-up, migration, re-creating a profile) run
 # as sequences, everything else as a fix flow with "Is it working now?" after each step.
 FIX_FLOW_AUTO_SKIP = {'outlook-problems', 'youve-been-hacked-email-bitcoin-scam', 'business-email-when-closing-your-company',
-                      'take-over-email-domain-after-buying-business', 'email-migration', 'email-basics-course'}
+                      'take-over-email-domain-after-buying-business', 'email-migration', 'email-basics-course',
+                      # Windows pages that are decisions, services or explainers rather than fixes
+                      'windows-10-esu-or-upgrade-your-dell', 'will-i-lose-files-upgrading-to-windows-11', 'windows-11-upgrade-service',
+                      'cost-to-upgrade-office-to-windows-11', 'cnc-machine-needs-windows-xp', 'ferrari-sd2-laptop-windows-xp',
+                      'sage-instant-accounts-windows-11', 'windows-11-cant-access-windows-10-shared-folder', 'windows-11-support', 'windows-reinstall'}
 _FIX_FLOW_SEQ_RE = re.compile(r'^(how-to-|move-|recreate-)|(-wont-add-to-new-outlook|^cant-send-btinternet-email-new-outlook|^sage-50-wont-email-invoices-outlook'
-                              r'|^outlook-signature-not-showing|^outlook-ost-file-corrupt|^onedrive-full-cant-send-email)')
+                              r'|^outlook-signature-not-showing|^outlook-ost-file-corrupt|^onedrive-full-cant-send-email'
+                              r'|^restrict-staff-access-to-shared-folders-windows-11|^windows-10-esu-free-enrolment-help|^dell-inspiron-.*-windows-11$)')
 _FIX_FLOW_TRAIL_RE = re.compile(r'call us|still stuck|hand it to us|let us sort|ask us', re.I)   # a last step that just says "ring us" is the stuck ending already
 
 FIX_FLOW_OVERRIDES = {   # small per-page tweaks on top of the automatic config
     'sage-50-wont-email-invoices-outlook': {'max_steps': 4},   # the test invoice is the natural end; the Webmail alternative stays in the guide
+    'dell-this-pc-cant-run-windows-11': {'max_steps': 3, 'ask': 'Does PC Health Check pass now?', 'tip': 'Run PC Health Check once more after a restart to be sure.'},
+    'shared-folders-not-working-after-windows-11-24h2-update': {'ask': 'Can you open the shared folder now?', 'tip': 'Open, edit and save one file in the folder to be sure.'},
+    'windows-11-cant-see-network-computers': {'ask': 'Can you see the other computers now?', 'tip': 'Restart once more and open Network again to be sure.'},
+    'sage-50-wont-print-to-pdf-windows-11': {'ask': 'Does it print to PDF now?', 'tip': 'Print one more invoice to PDF after a restart to be sure.'},
+    'restrict-staff-access-to-shared-folders-windows-11': {'tip': 'Test with one staff login that should NOT see the folder, as well as one that should.'},
+    'windows-10-esu-free-enrolment-help': {'tip': 'Windows Update should now say the PC is enrolled in Extended Security Updates.', 'h3f': 'Enrolled{mins}. Nice work.'},
 }
+for _k in ('dell-inspiron-15-3000-windows-11', 'dell-inspiron-15-5000-windows-11', 'dell-inspiron-desktop-windows-11'):
+    FIX_FLOW_OVERRIDES[_k] = {'h2': 'Check this Dell for Windows 11 with me, step by step', 'eyebrow': '// CHECK IT WITH ME &middot; STEP BY STEP',
+        'h3f': 'Checked{mins}. Now you know where this Dell stands.', 'tip': 'If it passes, the upgrade is free; if it fails, the last section of the guide lays out the honest options.',
+        'plan_lead': 'Rather we checked and did it for you?', 'h3s': 'Not sure what you are seeing? That is a quick call.'}
 
 def _auto_flow_cfg(d):
     slug = d['slug']
-    if not ('outlook' in slug or 'email' in slug) or slug in FIX_FLOW_AUTO_SKIP: return None
+    if not ('outlook' in slug or 'email' in slug or 'windows' in slug) or slug in FIX_FLOW_AUTO_SKIP: return None
     seq = bool(_FIX_FLOW_SEQ_RE.search(slug))
+    mail = ('outlook' in slug or 'email' in slug)
     cfg = {'mode': 'seq' if seq else None,
            'ask': 'Done that step?' if seq else 'Is it working now?',
            'yes': 'Done, next step' if seq else 'Yes, sorted', 'no': 'I am stuck here' if seq else 'Not yet',
@@ -21655,7 +21697,7 @@ def _auto_flow_cfg(d):
            'eyebrow': '// DO IT WITH ME &middot; STEP BY STEP' if seq else '// FIX IT WITH ME &middot; STEP BY STEP',
            'lede': ('The steps from this guide, one at a time. Tick each one off and it shows the next. Nothing here leaves your device.' if seq else
                     'The steps from this guide, one at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your device.'),
-           'tip': 'Send yourself a test email to be sure it has stuck.',
+           'tip': 'Send yourself a test email to be sure it has stuck.' if mail else 'Restart once more and check it has stuck.',
            'h3s': 'Still not working after every step? That is a remote job.',
            'h3f': 'Done{mins}. Nice work.' if seq else 'Sorted{mins}. Nice work.',
            'plan_lead': 'Rather have it done for you?' if seq else 'Rather have it looked after?'}

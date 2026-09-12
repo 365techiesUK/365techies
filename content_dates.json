@@ -192,7 +192,7 @@
  },
  "bournemouth/sea-today": {
   "first": "2026-08-02",
-  "h": "d0c9b8eecfff326a",
+  "h": "b5e1bbdb196f0a70",
   "last": "2026-09-12"
  },
  "bournemouth/sunrise-sunset": {
@@ -741,18 +741,18 @@
  },
  "dell-inspiron-15-3000-windows-11": {
   "first": "2026-07-28",
-  "h": "fbc360052e243624",
-  "last": "2026-08-31"
+  "h": "41f86a93fa81c106",
+  "last": "2026-09-12"
  },
  "dell-inspiron-15-5000-windows-11": {
   "first": "2026-07-28",
-  "h": "81e1324dfd825243",
-  "last": "2026-08-31"
+  "h": "7481c33a7975bce8",
+  "last": "2026-09-12"
  },
  "dell-inspiron-desktop-windows-11": {
   "first": "2026-07-28",
-  "h": "49ad02af25a9e402",
-  "last": "2026-08-31"
+  "h": "d169bdc0a8bc0c0d",
+  "last": "2026-09-12"
  },
  "dell-inspiron-repair-bournemouth": {
   "first": "2026-07-28",
@@ -936,8 +936,8 @@
  },
  "dell-this-pc-cant-run-windows-11": {
   "first": "2026-07-28",
-  "h": "04a78132de6ad3c5",
-  "last": "2026-08-31"
+  "h": "d79ce8b7924e3ea3",
+  "last": "2026-09-12"
  },
  "dell-vostro-repair-support-dorset": {
   "first": "2026-07-28",
@@ -2120,8 +2120,8 @@
  },
  "nas-drive-not-showing-after-windows-11-update": {
   "first": "2026-09-05",
-  "h": "66a1ece70ed1eb66",
-  "last": "2026-09-05"
+  "h": "4334110715aa10a9",
+  "last": "2026-09-12"
  },
  "new-computer-setup": {
   "first": "2026-07-28",
@@ -2225,8 +2225,8 @@
  },
  "old-program-wont-open-on-windows-11": {
   "first": "2026-09-05",
-  "h": "8cd591a06f0f8932",
-  "last": "2026-09-05"
+  "h": "c61dde1e1bb6282b",
+  "last": "2026-09-12"
  },
  "onedrive-couldnt-merge-changes": {
   "first": "2026-09-05",
@@ -2855,8 +2855,8 @@
  },
  "restrict-staff-access-to-shared-folders-windows-11": {
   "first": "2026-07-28",
-  "h": "a88292b1d4bcb6da",
-  "last": "2026-08-31"
+  "h": "63d5c23985e0ca30",
+  "last": "2026-09-12"
  },
  "reviews": {
   "first": "2026-07-28",
@@ -2900,8 +2900,8 @@
  },
  "sage-50-wont-print-to-pdf-windows-11": {
   "first": "2026-07-28",
-  "h": "cbc1414804677801",
-  "last": "2026-08-31"
+  "h": "1748ec89d607951e",
+  "last": "2026-09-12"
  },
  "sage-instant-accounts-windows-11": {
   "first": "2026-08-01",
@@ -2919,8 +2919,8 @@
  },
  "scan-to-folder-stopped-working-after-windows-update": {
   "first": "2026-08-01",
-  "h": "ac6eedc34dcfe437",
-  "last": "2026-09-05"
+  "h": "54b4207893def4df",
+  "last": "2026-09-12"
  },
  "screen-time-and-family-link-parental-controls": {
   "first": "2026-08-18",
@@ -2984,13 +2984,13 @@
  },
  "shared-folder-read-only-cant-save-windows-11": {
   "first": "2026-08-01",
-  "h": "07e9aa397f46b7fb",
-  "last": "2026-08-31"
+  "h": "094787cc221af9ef",
+  "last": "2026-09-12"
  },
  "shared-folders-not-working-after-windows-11-24h2-update": {
   "first": "2026-07-28",
-  "h": "2ab732dc26c9ec88",
-  "last": "2026-09-05"
+  "h": "db1d461cd7959def",
+  "last": "2026-09-12"
  },
  "sharepoint-not-syncing-file-explorer": {
   "first": "2026-09-05",
@@ -3514,8 +3514,8 @@
  },
  "windows-10-esu-free-enrolment-help": {
   "first": "2026-07-28",
-  "h": "e9cfb50f7df7acc7",
-  "last": "2026-08-31"
+  "h": "6073b58d9abf6551",
+  "last": "2026-09-12"
  },
  "windows-10-esu-or-upgrade-your-dell": {
   "first": "2026-07-28",
@@ -3529,8 +3529,8 @@
  },
  "windows-11-cant-see-network-computers": {
   "first": "2026-07-28",
-  "h": "d587a04af467c47f",
-  "last": "2026-09-05"
+  "h": "2eae55b5a2a125fe",
+  "last": "2026-09-12"
  },
  "windows-11-course-for-beginners": {
   "first": "2026-09-05",
@@ -3538,13 +3538,13 @@
  },
  "windows-11-network-credentials-shared-folder": {
   "first": "2026-08-01",
-  "h": "c482a468275bcce6",
-  "last": "2026-08-31"
+  "h": "8a1a016b471873f7",
+  "last": "2026-09-12"
  },
  "windows-11-support": {
   "first": "2026-07-28",
-  "h": "d931799f1603df83",
-  "last": "2026-09-09"
+  "h": "e8e161d6489f9c01",
+  "last": "2026-09-12"
  },
  "windows-11-upgrade-service": {
   "first": "2026-07-28",
