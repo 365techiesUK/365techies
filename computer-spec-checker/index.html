@@ -293,7 +293,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-09-05"
+      "dateModified": "2026-09-12"
     },
     {
       "@type": "WebApplication",
@@ -320,6 +320,22 @@
           "acceptedAnswer": {
             "@type": "Answer",
             "text": "No &mdash; none of it. Everything on this page is read by <em>your own browser</em>, shown only to you, and vanishes when you close the tab. The only way we ever see your specs is if you download the sheet and choose to send it to us."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much RAM do I actually have?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "This page shows the rounded figure your browser is allowed to share, and browsers cap that at 8&nbsp;GB even on a machine with far more. For the exact amount on Windows, press <strong>Ctrl+Shift+Esc</strong> for Task Manager, choose <strong>Performance</strong>, then <strong>Memory</strong>. Or install the free <a href=\"/free-pc-health-check/\">365 PC Manager</a>, which shows the amount fitted and how much is in use."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can this page tell me whether my PC can run Windows 11?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Not on its own &mdash; a browser cannot read the two things that decide it, <strong>TPM 2.0</strong> and <strong>Secure Boot</strong>. Windows can: open Settings &rarr; Privacy &amp; security &rarr; Windows Security &rarr; Device security, where they appear as Security processor and Secure boot. If your machine falls short, our <a href=\"/windows-10-end-of-life/\">Windows 10 page</a> sets out the honest options."
           }
         },
         {
@@ -1177,6 +1193,40 @@
       })();
       </script>
     </section>
+    <section class="section section--alt" aria-label="What a browser cannot see" id="beyond-browser">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE NEXT STEP &middot; FREE WINDOWS APP</p>
+          <h2 class="section-title section-title--center" data-title>The browser shows the outside. The free app shows the inside.<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Browsers deliberately hide most of what is inside a computer &mdash; that is good privacy design, and it is why the readings above are rounded. <strong>365 PC Manager</strong> is our free Windows app, digitally signed by 365 Techies Ltd, and it reads the real numbers on the machine itself. No fake errors, no scare tactics, uninstall any time.</p>
+        </div>
+        <div class="cmp-wrap"><table class="cmp-table cmp-table--vs"><thead><tr><th>&nbsp;</th><th>This page (your browser)</th><th>365 PC Manager (free app)</th></tr></thead><tbody>
+          <tr><th>Memory</th><td>A rounded figure, capped at 8&nbsp;GB however much is fitted</td><td class="hi">The exact amount fitted, and how much is in use right now</td></tr>
+          <tr><th>Processor</th><td>How many threads it has</td><td class="hi">Live processor and memory load, as graphs</td></tr>
+          <tr><th>Storage</th><td>Only the space websites are allowed to use</td><td class="hi">Free space on the drive, and the drive&rsquo;s own SMART health</td></tr>
+          <tr><th>Battery</th><td>Charge level and whether it is plugged in</td><td class="hi">Battery health &mdash; how much of its original capacity is left</td></tr>
+          <tr><th>Protection &amp; backup</th><td>Nothing &mdash; a browser cannot see them</td><td class="hi">Whether antivirus is on, and whether a backup actually exists</td></tr>
+          <tr><th>Windows</th><td>The version family</td><td class="hi">The edition, whether a restart is waiting, and days since the last one</td></tr>
+          <tr><th>Broadband</th><td>An estimate from the connection type</td><td class="hi">A real measured speed test, kept so you can compare later</td></tr>
+        </tbody></table></div>
+        <p style="text-align:center;margin-top:1.5rem" data-reveal><a class="button primary" href="/free-pc-health-check/">Get the free app for Windows &#8594;</a> <a class="button secondary" href="/pc-benchmark/" style="margin-left:.5rem">Test this PC&rsquo;s speed</a></p>
+        <p class="mono" style="text-align:center;color:var(--faint);font-size:.72rem;margin-top:.9rem" data-reveal>// FREE FOREVER &middot; DIGITALLY SIGNED BY 365 TECHIES LTD &middot; MADE IN DORSET &middot; UNINSTALL ANY TIME</p>
+      </div>
+    </section>
+    <section class="section" aria-label="Can this PC run Windows 11" id="windows-11">
+      <div class="wrap" style="max-width:820px">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE QUESTION BEHIND MOST SPEC CHECKS</p>
+          <h2 class="section-title section-title--center" data-title>Can this PC run Windows 11?<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>A browser cannot read the two things that decide it, so this page will not pretend to. Here is what Microsoft requires, and where Windows itself tells you.</p>
+        </div>
+        <ul class="security-grid" data-stagger>
+          <li><h3>The minimums</h3><p>A compatible 64-bit processor &mdash; roughly Intel 8th generation or AMD Ryzen 2000 onwards &mdash; 4&nbsp;GB of memory, 64&nbsp;GB of storage, a DirectX 12 graphics chip and a 720p screen.</p></li>
+          <li><h3>The two deciders</h3><p><strong>TPM 2.0</strong> and <strong>Secure Boot</strong>. Both live in the firmware, not the browser. On Windows: Settings &rarr; Privacy &amp; security &rarr; Windows Security &rarr; Device security lists them as Security processor and Secure boot.</p></li>
+          <li><h3>Still on Windows 10?</h3><p>Free security updates ended in October 2025. Many machines can move to Windows 11 at no cost; the ones that cannot have honest options too &mdash; see <a href="/windows-10-end-of-life/">what to do about Windows 10</a>.</p></li>
+        </ul>
+      </div>
+    </section>
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
@@ -1185,6 +1235,14 @@
         <details class="faq" data-reveal>
           <summary>Is any of this information sent to you?<span class="faq__icon" aria-hidden="true"></span></summary>
           <div class="faq__ans"><p>No &mdash; none of it. Everything on this page is read by <em>your own browser</em>, shown only to you, and vanishes when you close the tab. The only way we ever see your specs is if you download the sheet and choose to send it to us.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>How much RAM do I actually have?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>This page shows the rounded figure your browser is allowed to share, and browsers cap that at 8&nbsp;GB even on a machine with far more. For the exact amount on Windows, press <strong>Ctrl+Shift+Esc</strong> for Task Manager, choose <strong>Performance</strong>, then <strong>Memory</strong>. Or install the free <a href="/free-pc-health-check/">365 PC Manager</a>, which shows the amount fitted and how much is in use.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Can this page tell me whether my PC can run Windows 11?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Not on its own &mdash; a browser cannot read the two things that decide it, <strong>TPM 2.0</strong> and <strong>Secure Boot</strong>. Windows can: open Settings &rarr; Privacy &amp; security &rarr; Windows Security &rarr; Device security, where they appear as Security processor and Secure boot. If your machine falls short, our <a href="/windows-10-end-of-life/">Windows 10 page</a> sets out the honest options.</p></div>
         </details>
         <details class="faq" data-reveal>
           <summary>Why can&rsquo;t it show my exact RAM, CPU model or temperatures?<span class="faq__icon" aria-hidden="true"></span></summary>
