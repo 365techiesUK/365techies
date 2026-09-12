@@ -3193,6 +3193,7 @@ PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="be
             <div class="bm-actions">
               <button type="button" class="button bm-ghost" id="bm-dl">Download score card &#8595;</button>
               <button type="button" class="button bm-ghost" id="bm-copy">Copy my results</button>
+              <button type="button" class="button primary bm-share" id="bm-share" hidden>Share my score</button>
               <button type="button" class="button bm-ghost" data-ttshare data-share-title="Free PC Benchmark" data-share-text="Test how fast your computer really is - free, in your browser, no download:">Share this free tool</button>
             </div>
             <div class="bm-fix" id="bm-fix"></div>
@@ -3443,6 +3444,14 @@ PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="be
           if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(ok).catch(function(){}); }
           else{ var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); ok(); }catch(e){} document.body.removeChild(ta); }
         });
+        /* Share my score: only where the browser has a share sheet (phones, Windows Chrome/Edge) */
+        var shareBtn=root.querySelector('#bm-share');
+        if(shareBtn&&navigator.share){ shareBtn.hidden=false; shareBtn.addEventListener('click',function(){
+          if(!LAST.scores) return; var S=LAST.scores; function p(n,v){ return v==null?'':(n+' '+v+' · '); }
+          var txt='My 365 Techies PC Benchmark score: '+LAST.overall+'/100 ('+LAST.band+') - '+
+            (p('Single-core',S.single)+p('Multi-core',S.multi)+p('Memory',S.mem)+p('Graphics',S.gpu)+p('Storage',S.store)).replace(/ · $/,'')+'. Test yours free:';
+          navigator.share({title:'My PC Benchmark score: '+LAST.overall+'/100',text:txt,url:'https://365techies.co.uk/pc-benchmark/'}).catch(function(){});
+        }); }
       })();
       </script>
     </section>'''

@@ -13511,12 +13511,18 @@ SPECCHECK_TOOL = r'''    <section class="section" aria-label="PC spec checker" i
           <p class="lede lede--center" data-reveal>Your browser is reading your own machine <strong>right now</strong> &mdash; operating system, graphics card, screen, memory, battery and more. The checker itself sends nothing: your readings stay on your device, are never sent to us, and disappear when you leave.</p>
         </div>
         <div id="spc" data-reveal>
+          <ol class="spc-steps" id="spc-steps" aria-label="Scan, benchmark, share">
+            <li class="spc-step is-on" data-step="scan"><span class="spc-step__n">01</span><span class="spc-step__t">Scan</span><span class="spc-step__s">what is inside</span></li>
+            <li class="spc-step" data-step="bench"><span class="spc-step__n">02</span><span class="spc-step__t">Benchmark</span><span class="spc-step__s">how fast it really is</span></li>
+            <li class="spc-step" data-step="share"><span class="spc-step__n">03</span><span class="spc-step__t">Share</span><span class="spc-step__s">score card &amp; spec sheet</span></li>
+          </ol>
           <div class="spc-hero" id="spc-hero">
             <p class="spc-scanline mono" id="spc-scanline">Warming up the scanner&hellip;</p>
             <p class="spc-verdict" id="spc-verdict" hidden></p>
             <div class="spc-flags" id="spc-flags"></div>
             <div class="spc-actions" id="spc-actions" hidden>
-              <button type="button" class="button primary" id="spc-dl">Download my spec sheet</button>
+              <button type="button" class="button primary" id="spc-bench">Benchmark this machine &#9889;</button>
+              <button type="button" class="button secondary" id="spc-dl">Download my spec sheet</button>
               <button type="button" class="button spc-ghost" id="spc-copy">Copy as text</button>
               <button type="button" class="button spc-ghost" id="spc-again">Scan again</button>
               <button type="button" class="button spc-ghost" data-ttshare data-share-title="Free PC Hardware Checker" data-share-text="See your computer's full spec in one click - free, in your browser:">Share this free tool</button>
@@ -13528,6 +13534,16 @@ SPECCHECK_TOOL = r'''    <section class="section" aria-label="PC spec checker" i
       </div>
       <style>
       #spc{max-width:1080px;margin:0 auto}
+      #spc .spc-steps{list-style:none;margin:0 0 1rem;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
+      #spc .spc-step{display:flex;flex-direction:column;gap:.15rem;padding:.7rem .9rem;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.02);opacity:.55;transition:opacity .3s,border-color .3s}
+      #spc .spc-step.is-on{opacity:1;border-color:rgba(108,196,245,.55);background:rgba(29,151,227,.08)}
+      #spc .spc-step.is-done{opacity:.9;border-color:rgba(46,204,113,.45)}
+      #spc .spc-step.is-done .spc-step__n{color:#2ecc71}
+      #spc .spc-step.is-done .spc-step__n::after{content:" ✓"}
+      #spc .spc-step__n{font-family:var(--font-mono,monospace);font-size:.7rem;letter-spacing:.08em;color:var(--cyan-soft,#6cc4f5)}
+      #spc .spc-step__t{font-weight:700;font-size:.95rem}
+      #spc .spc-step__s{font-size:.72rem;color:var(--muted,#9fb5d3)}
+      @media(max-width:560px){#spc .spc-step__s{display:none}#spc .spc-step{padding:.55rem .6rem}}
       #spc .spc-hero{padding:1.4rem 1.5rem;border-radius:16px;border:1px solid rgba(55,194,194,.35);background:rgba(55,194,194,.06);margin-bottom:1.1rem}
       #spc .spc-scanline{font-size:.72rem;color:var(--cyan,#37c2c2);margin:0;min-height:1.2em}
       #spc .spc-scanline::after{content:"";display:inline-block;width:.55em;height:1em;background:var(--cyan,#37c2c2);margin-left:.3em;vertical-align:text-bottom;animation:spc-blink 1s steps(1) infinite}
@@ -13564,6 +13580,7 @@ SPECCHECK_TOOL = r'''    <section class="section" aria-label="PC spec checker" i
       (function(){
         var root=document.getElementById('spc'); if(!root) return;
         function $(s){return root.querySelector(s);}
+        function step(k,st){ var el=$('.spc-step[data-step="'+k+'"]'); if(!el) return; el.classList.remove('is-on','is-done'); if(st) el.classList.add('is-'+st); }
         function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
         var D={rows:[]}; /* flat row list reused for copy-text and the PNG sheet */
         var CARDS=[
@@ -13695,6 +13712,7 @@ SPECCHECK_TOOL = r'''    <section class="section" aria-label="PC spec checker" i
           Array.prototype.forEach.call(grid.querySelectorAll('.spc-rows'),function(x){x.innerHTML='';});
           Array.prototype.forEach.call(grid.querySelectorAll('.spc-card'),function(c){c.classList.remove('in');});
           $('#spc-verdict').hidden=true; $('#spc-actions').hidden=true; $('#spc-flags').innerHTML='';
+          step('scan','on'); step('bench',''); step('share','');
           var sl=$('#spc-scanline'), si=0; sl.style.display='';
           if(scanTimer)clearInterval(scanTimer);
           scanTimer=setInterval(function(){ sl.textContent=SCANLINES[si%SCANLINES.length]; si++; },420);
@@ -13808,6 +13826,7 @@ SPECCHECK_TOOL = r'''    <section class="section" aria-label="PC spec checker" i
           if(g.soft)fl.insertAdjacentHTML('beforeend','<div class="spc-flag spc-flag--warn">&#9888;&#65039; <strong>Graphics are running in software</strong> &mdash; your real graphics card isn&rsquo;t being used. That makes everything feel slow; often a driver problem. <a href="/contact/">We fix this remotely</a>.</div>');
           if(dm!=null&&dm<=4)fl.insertAdjacentHTML('beforeend','<div class="spc-flag spc-flag--warn">Your browser reports about '+dm+' GB of memory. If the machine feels slow, a RAM or SSD upgrade is often the cheapest fix &mdash; <a href="/computer-tune-up/">worth a look</a>.</div>');
           $('#spc-actions').hidden=false;
+          step('scan','done'); step('bench','on');
           /* staggered card reveal */
           Array.prototype.forEach.call(grid.querySelectorAll('.spc-card'),function(c,i){ setTimeout(function(){c.classList.add('in');},80+i*110); });
         }
@@ -13847,6 +13866,14 @@ SPECCHECK_TOOL = r'''    <section class="section" aria-label="PC spec checker" i
           }catch(e){ alert('Sorry — the download didn’t work in this browser. Use “Copy as text” instead.'); }
         });
         $('#spc-again').addEventListener('click',runScan);
+        /* step 2 lives further down the page, so wire it once the whole document exists */
+        function wireBench(){
+          var b=$('#spc-bench'), bench=document.getElementById('benchtool'), bmStart=document.getElementById('bm-start'), bmRes=document.getElementById('bm-results');
+          if(!b) return; if(!bench||!bmStart){ b.hidden=true; return; }
+          b.addEventListener('click',function(){ bench.scrollIntoView({behavior:'smooth',block:'start'}); if(!bmRes||bmRes.hidden){ setTimeout(function(){ bmStart.click(); },650); } });
+          if(bmRes&&window.MutationObserver) new MutationObserver(function(){ if(!bmRes.hidden){ step('scan','done'); step('bench','done'); step('share','on'); } }).observe(bmRes,{attributes:true,attributeFilter:['hidden']});
+        }
+        if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',wireBench); else wireBench();
         runScan();
       })();
       </script>
@@ -13857,70 +13884,6 @@ SPECCHECK_TOOL = r'''    <section class="section" aria-label="PC spec checker" i
 # its Health tab or sends at check-in - memory fitted, free disk, drive SMART health, antivirus,
 # backup, battery health, uptime, restart pending, the measured broadband test. Nothing the app
 # does not read is claimed. The Windows 11 minimums are Microsoft's published requirements.
-# ---- Fleet stats: anonymised aggregates from the computers running 365 PC Manager (api/pcm-fleet-stats.php).
-# Hidden until the endpoint answers with enough machines (privacy floor lives server-side); data-show-size="1" on the
-# section would also print the coarse fleet band - off until the owner says so.
-SPECCHECK_FLEET_BAND = """    <section class="section" aria-label="Across the computers we look after" id="fleet" hidden>
-      <div class="wrap">
-      <style>
-      #fleet[hidden]{display:none}
-      #fleet .fl-wrap{max-width:1080px;margin:0 auto}
-      #fleet .fl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:.8rem;margin-top:1.4rem}
-      #fleet .fl-tile{padding:1.15rem 1.2rem 1.05rem;border-radius:14px;border:1px solid var(--line,rgba(125,170,220,.16));background:rgba(255,255,255,.03);display:flex;flex-direction:column;gap:.3rem}
-      #fleet .fl-tile[hidden]{display:none}
-      #fleet .fl-num{font-family:var(--font-display,"Clash Display",sans-serif);font-size:clamp(2.1rem,4vw,2.8rem);font-weight:600;line-height:1;letter-spacing:-.02em;color:var(--cyan-soft,#6cc4f5);font-variant-numeric:tabular-nums}
-      #fleet .fl-num small{font-size:.5em;font-weight:500;margin-left:.1em}
-      #fleet .fl-lab{font-size:.92rem;font-weight:600;line-height:1.35}
-      #fleet .fl-why{font-size:.78rem;line-height:1.5;color:var(--muted,#9fb5d3);margin:0}
-      #fleet .fl-why a{color:var(--cyan-soft,#6cc4f5)}
-      #fleet .fl-tile--warn .fl-num{color:#ffb400}
-      #fleet .fl-tile--bad .fl-num{color:#ff6b6b}
-      #fleet .fl-foot{font-family:var(--font-mono,monospace);font-size:.72rem;line-height:1.6;color:var(--muted,#9fb5d3);margin:1.1rem 0 0;max-width:80ch}
-      #fleet .fl-foot span{color:var(--cyan-soft,#6cc4f5)}
-      </style>
-        <div class="fl-wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// HOW DOES YOURS COMPARE?</p>
-          <h2 class="section-title section-title--center" data-title>Across the computers we look after<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Every computer running <a href="/free-pc-health-check/">365 PC Manager</a> checks in with us. Added up &mdash; and only added up &mdash; they show what an ordinary home or office computer looks like right now. Put your own readings above beside them.</p>
-        </div>
-        <div class="fl-grid" id="fl-grid">
-          <div class="fl-tile" data-k="windows10" data-warn="20" data-bad="40" hidden><div class="fl-num"><b>&ndash;</b><small>%</small></div><div class="fl-lab">still on Windows 10</div><p class="fl-why">Free security updates ended in October 2025. <a href="/windows-10-end-of-life/">What that means for you &#8594;</a></p></div>
-          <div class="fl-tile" data-k="backup_seen" data-inv="1" data-warn="80" data-bad="60" hidden><div class="fl-num"><b>&ndash;</b><small>%</small></div><div class="fl-lab">have a backup we can see</div><p class="fl-why">A browser cannot check this &mdash; the app can, and tells you if there is none.</p></div>
-          <div class="fl-tile" data-k="antivirus_on" data-inv="1" data-warn="97" data-bad="90" hidden><div class="fl-num"><b>&ndash;</b><small>%</small></div><div class="fl-lab">have antivirus switched on</div><p class="fl-why">The rest are running with the front door open, usually without knowing.</p></div>
-          <div class="fl-tile" data-k="drive_over_85" data-warn="15" data-bad="30" hidden><div class="fl-num"><b>&ndash;</b><small>%</small></div><div class="fl-lab">have a drive over 85% full</div><p class="fl-why">The most common reason a healthy computer feels slow.</p></div>
-          <div class="fl-tile" data-k="battery_under_70" data-warn="25" data-bad="45" hidden><div class="fl-num"><b>&ndash;</b><small>%</small></div><div class="fl-lab">of laptops have a worn battery</div><p class="fl-why">Below 70% of its original capacity &mdash; the reading your spec sheet above cannot give you.</p></div>
-          <div class="fl-tile" data-k="restart_waiting" data-warn="30" data-bad="50" hidden><div class="fl-num"><b>&ndash;</b><small>%</small></div><div class="fl-lab">are waiting for a restart</div><p class="fl-why">Updates are downloaded but not applied until the computer restarts.</p></div>
-          <div class="fl-tile" data-k="score_median" hidden><div class="fl-num"><b>&ndash;</b><small>/100</small></div><div class="fl-lab">typical health score</div><p class="fl-why">The middle computer in the fleet. <a href="/free-pc-health-check/">See how the score is worked out &#8594;</a></p></div>
-        </div>
-        <p class="fl-foot">Computers that reported in the last <span id="fl-days">30</span> days &middot; whole-number percentages &middot; no individual computer, person or business is identifiable &middot; figures refresh daily<span id="fl-band"></span></p>
-        </div>
-      </div>
-      <script>
-      (function(){
-        var sec=document.getElementById('fleet'); if(!sec||!window.fetch) return;
-        fetch('/api/pcm-fleet-stats.php').then(function(r){return r.ok?r.json():null}).then(function(d){
-          if(!d||!d.ok||!d.enough||!d.stats) return;                     /* below the privacy floor: the section stays hidden */
-          var shown=0;
-          Array.prototype.forEach.call(sec.querySelectorAll('.fl-tile'),function(t){
-            var k=t.getAttribute('data-k'), v=d.stats[k];
-            if(typeof v!=='number') return;
-            t.querySelector('.fl-num b').textContent=String(v);
-            var warn=parseInt(t.getAttribute('data-warn')||'',10), bad=parseInt(t.getAttribute('data-bad')||'',10), inv=t.getAttribute('data-inv')==='1';
-            if(!isNaN(bad) && (inv ? v<=bad : v>=bad)) t.classList.add('fl-tile--bad');
-            else if(!isNaN(warn) && (inv ? v<=warn : v>=warn)) t.classList.add('fl-tile--warn');
-            t.hidden=false; shown++;
-          });
-          if(!shown) return;
-          if(d.window_days) document.getElementById('fl-days').textContent=String(d.window_days);
-          if(d.band && sec.getAttribute('data-show-size')==='1') document.getElementById('fl-band').textContent=' · '+d.band+' computers';
-          sec.hidden=false;
-        }).catch(function(){});
-      })();
-      </script>
-    </section>
-"""
-
 # "What to check next": numbered because it IS a sequence - the order a techie would run the checks in.
 SPECCHECK_NEXT_BAND = """    <section class="section" aria-label="What to check next" id="check-next">
       <div class="wrap">
@@ -13943,7 +13906,7 @@ SPECCHECK_NEXT_BAND = """    <section class="section" aria-label="What to check 
           <p class="lede lede--center" data-reveal>Six free checks, in the order a techie would run them &mdash; each takes a minute or two, and none of them sends us a thing.</p>
         </div>
         <div class="cn-path" data-stagger>
-          <a class="cn-step" href="/pc-benchmark/"><h3><span>&#9889;</span>Benchmark it</h3><p>Cores and memory are the promise; the benchmark is the delivery. Six live tests give a score you can compare, and catch the fast machine that is being held back.</p><span class="cn-go">Run the PC benchmark &#8594;</span></a>
+          <a class="cn-step" href="#benchtool"><h3><span>&#9889;</span>Benchmark it</h3><p>Cores and memory are the promise; the benchmark is the delivery. Six live tests give a score you can compare, and catch the fast machine that is being held back.</p><span class="cn-go">Run the benchmark on this page &#8593;</span></a>
           <a class="cn-step" href="/broadband-speed-checker/"><h3><span>&#127760;</span>Test the broadband</h3><p>The network reading above is the browser&rsquo;s rough guess. The speed test measures download, upload and ping for real, so you know whether the slowness is the computer or the line.</p><span class="cn-go">Run the broadband speed test &#8594;</span></a>
           <a class="cn-step" href="/wifi-signal-test/"><h3><span>&#128246;</span>Walk the Wi-Fi</h3><p>Fast broadband at the router can still be a crawl in the back bedroom. Walk around with the signal test open and watch where it drops.</p><span class="cn-go">Test the Wi-Fi signal &#8594;</span></a>
           <a class="cn-step" href="/mobile-signal-check/"><h3><span>&#128241;</span>Check the mobile signal</h3><p>Working from the phone&rsquo;s hotspot, or thinking about a 4G or 5G broadband box? Measure the mobile data speed right where you sit.</p><span class="cn-go">Check the mobile signal &#8594;</span></a>
@@ -13955,12 +13918,101 @@ SPECCHECK_NEXT_BAND = """    <section class="section" aria-label="What to check 
     </section>
 """
 
+# Mobile signal: the owner wants spec-check visitors to run the phone signal test. Desktop visitors get a
+# scan-me QR (drawn with the site's own vendored qrcode-generator, loaded only when the band is near);
+# phones get the button. Every claim mirrors /mobile-signal-check/ itself (download, upload, ping on a live
+# gauge; reading stored as part of an area, ~500 m inland / ~140 m on the coast; GPS accuracy recorded).
+SPECCHECK_SIGNAL_BAND = """    <section class="section section--alt" aria-label="Test your mobile signal" id="signal-test">
+      <div class="wrap">
+      <style>
+      #signal-test .sg{max-width:1080px;margin:1.4rem auto 0;display:grid;grid-template-columns:1.4fr 1fr;gap:1.2rem;align-items:stretch}
+      #signal-test .sg__copy{padding:1.4rem 1.5rem;border-radius:16px;border:1px solid rgba(0,206,27,.28);background:rgba(0,206,27,.05);display:flex;flex-direction:column;gap:.8rem}
+      #signal-test .sg__copy h3{margin:0;font-size:1.35rem;line-height:1.3}
+      #signal-test .sg__copy p{margin:0;font-size:.95rem;line-height:1.6;color:var(--ink-2,#dfe9f7)}
+      #signal-test .sg__list{margin:0;padding:0;list-style:none;display:grid;gap:.45rem;font-size:.88rem;line-height:1.5;color:var(--muted,#9fb5d3)}
+      #signal-test .sg__list li::before{content:"✓ ";color:var(--green,#00ce1b);font-weight:700}
+      #signal-test .sg__cta{margin-top:auto;display:flex;gap:.7rem;flex-wrap:wrap;padding-top:.4rem}
+      #signal-test .sg__qr{padding:1.3rem;border-radius:16px;border:1px solid var(--line,rgba(125,170,220,.16));background:rgba(255,255,255,.03);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.7rem;text-align:center}
+      #signal-test .sg__qr[hidden]{display:none}
+      #signal-test .sg__qr canvas{width:180px;height:180px;border-radius:12px;background:#fff}
+      #signal-test .sg__qr b{font-size:.95rem;line-height:1.35}
+      #signal-test .sg__qr p{margin:0;font-size:.78rem;line-height:1.5;color:var(--muted,#9fb5d3);max-width:28ch}
+      #signal-test .sg__qr .mono{font-size:.68rem;letter-spacing:.06em;color:var(--cyan-soft,#6cc4f5)}
+      @media(max-width:820px){#signal-test .sg{grid-template-columns:1fr}}
+      @media(hover:none) and (pointer:coarse){#signal-test .sg__qr{display:none}}
+      @media(max-width:560px){#signal-test .sg__cta .button{width:100%}}
+      </style>
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// NOW ON YOUR PHONE</p>
+          <h2 class="section-title section-title--center" data-title>Test the mobile signal where you actually sit<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>A fast computer on a weak connection still feels slow. Our signal check measures your phone&rsquo;s real 4G or 5G data speed at the desk, on the sofa or in the van &mdash; then shows how it compares with other readings from your part of Bournemouth, Christchurch and Poole.</p>
+        </div>
+        <div class="sg">
+          <div class="sg__copy" data-reveal>
+            <h3>Ten seconds, one tap, a real reading</h3>
+            <p>Open the signal check on your phone and tap once. It measures download, upload and ping over mobile data right where you are standing, on a live gauge. No app, no sign-up, and your reading is stored as part of an area &mdash; never as a pin on you.</p>
+            <ul class="sg__list">
+              <li>Working from a phone hotspot? Find the spot in the house where it actually works.</li>
+              <li>Thinking about 4G or 5G home broadband? Measure before you buy.</li>
+              <li>Every reading helps build the Dorset signal map for the next person.</li>
+            </ul>
+            <div class="sg__cta"><a class="button primary" href="/mobile-signal-check/">Test my mobile signal &#8594;</a><a class="button secondary" href="/wifi-signal-test/">Wi-Fi instead &#8594;</a></div>
+          </div>
+          <div class="sg__qr" data-reveal id="sg-qr">
+            <b>On a computer? Scan to open it on your phone</b>
+            <canvas id="sg-qr-canvas" width="360" height="360" role="img" aria-label="QR code linking to the mobile signal check"></canvas>
+            <p>Point your phone&rsquo;s camera at the code and tap the link that appears.</p>
+            <p class="mono">365techies.co.uk/mobile-signal-check/</p>
+          </div>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var box=document.getElementById('sg-qr'), cv=document.getElementById('sg-qr-canvas'); if(!box||!cv) return;
+        if(window.matchMedia&&window.matchMedia('(hover:none) and (pointer:coarse)').matches) return;   /* phones get the button */
+        var URL='https://365techies.co.uk/mobile-signal-check/?from=spec';
+        function draw(){
+          try{
+            var q=window.qrcode(0,'M'); q.addData(URL); q.make();
+            var n=q.getModuleCount(), size=cv.width, cell=Math.floor(size/(n+4)), off=Math.floor((size-cell*n)/2), x=cv.getContext('2d');
+            x.fillStyle='#ffffff'; x.fillRect(0,0,size,size); x.fillStyle='#070d22';
+            for(var r=0;r<n;r++) for(var c=0;c<n;c++) if(q.isDark(r,c)) x.fillRect(off+c*cell,off+r*cell,cell,cell);
+          }catch(e){ box.hidden=true; }
+        }
+        function load(){ if(window.qrcode){ draw(); return; } var s=document.createElement('script'); s.src='/js/vendor/qrcode-generator-1.4.4-qrcode.js?v=1'; s.onload=draw; s.onerror=function(){ box.hidden=true; }; document.head.appendChild(s); }
+        if('IntersectionObserver' in window){ var io=new IntersectionObserver(function(en){ if(en[0].isIntersecting){ io.disconnect(); load(); } },{rootMargin:'500px'}); io.observe(box); } else load();
+      })();
+      </script>
+    </section>
+"""
+
 SPECCHECK_APP_BAND = '''    <section class="section section--alt" aria-label="What a browser cannot see" id="beyond-browser">
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// THE NEXT STEP &middot; FREE WINDOWS APP</p>
           <h2 class="section-title section-title--center" data-title>The browser shows the outside. The free app shows the inside.<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Browsers deliberately hide most of what is inside a computer &mdash; that is good privacy design, and it is why the readings above are rounded. <strong>365 PC Manager</strong> is our free Windows app, digitally signed by 365 Techies Ltd, and it reads the real numbers on the machine itself. No fake errors, no scare tactics, uninstall any time.</p>
+        </div>
+        <div class="pcs" data-reveal>
+          <style>
+          .pcs{max-width:1080px;margin:0 auto 1.6rem}
+          .pcs__main{display:block;border-radius:16px;overflow:hidden;border:1px solid rgba(125,170,220,.28);box-shadow:0 28px 70px rgba(0,0,0,.5);background:#0a1226;aspect-ratio:2080/1620}
+          .pcs__main img,.pcs__thumb img{display:block;width:100%;height:100%;object-fit:cover}
+          .pcs__strip{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-top:.8rem}
+          .pcs__thumb{display:block;position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--line,rgba(125,170,220,.16));background:#0a1226;aspect-ratio:2080/1620;transition:border-color .25s,transform .25s}
+          .pcs__thumb:hover,.pcs__thumb:focus-visible{border-color:rgba(108,196,245,.55);transform:translateY(-2px)}
+          .pcs__cap{position:absolute;left:0;right:0;bottom:0;padding:.55rem .75rem;font-size:.78rem;font-weight:600;color:#eaf4ff;background:linear-gradient(to top,rgba(7,13,34,.94),rgba(7,13,34,0))}
+          .pcs__line{font-family:var(--font-mono,monospace);font-size:.72rem;letter-spacing:.04em;color:var(--muted,#9fb5d3);text-align:center;margin:.9rem 0 0}
+          @media(max-width:640px){.pcs__strip{gap:.4rem}.pcs__cap{font-size:.62rem;padding:.35rem .45rem}}
+          @media(prefers-reduced-motion:reduce){.pcs__thumb{transition:none}}
+          </style>
+          <a class="pcs__main" href="/free-pc-health-check/" aria-label="See 365 PC Manager, the free app"><img src="/images/pcm-laptop-health-v21.webp" width="2080" height="1620" alt="365 PC Manager health tab - live health score ring, verdict and system glance" loading="lazy" decoding="async"></a>
+          <div class="pcs__strip">
+            <a class="pcs__thumb" href="/free-pc-health-check/"><img src="/images/pcm-laptop-boost-v21.webp" width="2080" height="1620" alt="365 PC Manager boost tab - live memory graph and one-tap boost" loading="lazy" decoding="async"><span class="pcs__cap">Live memory graph, one-tap boost</span></a>
+            <a class="pcs__thumb" href="/free-pc-health-check/#six-weekly-service"><img src="/images/pcm-laptop-report-v21.webp" width="2080" height="1620" alt="365 PC Manager service tab - the written report" loading="lazy" decoding="async"><span class="pcs__cap">The written report</span></a>
+            <a class="pcs__thumb" href="/free-pc-health-check/"><img src="/images/pcm-laptop-energy-v21.webp" width="2080" height="1620" alt="365 PC Manager power tab - live wattage and yearly running cost" loading="lazy" decoding="async"><span class="pcs__cap">Live wattage, yearly running cost</span></a>
+          </div>
+          <p class="pcs__line">// REAL SCREENSHOTS OF THE APP &middot; NOTHING MOCKED UP</p>
         </div>
         <div class="cmp-wrap"><table class="cmp-table cmp-table--vs"><thead><tr><th>&nbsp;</th><th>This page (your browser)</th><th>365 PC Manager (free app)</th></tr></thead><tbody>
           <tr><th>Memory</th><td>A rounded figure, capped at 8&nbsp;GB however much is fitted</td><td class="hi">The exact amount fitted, and how much is in use right now</td></tr>
@@ -13971,7 +14023,7 @@ SPECCHECK_APP_BAND = '''    <section class="section section--alt" aria-label="Wh
           <tr><th>Windows</th><td>The version family</td><td class="hi">The edition, whether a restart is waiting, and days since the last one</td></tr>
           <tr><th>Broadband</th><td>An estimate from the connection type</td><td class="hi">A real measured speed test, kept so you can compare later</td></tr>
         </tbody></table></div>
-        <p style="text-align:center;margin-top:1.5rem" data-reveal><a class="button primary" href="/free-pc-health-check/">Get the free app for Windows &#8594;</a> <a class="button secondary" href="/pc-benchmark/" style="margin-left:.5rem">Test this PC&rsquo;s speed</a></p>
+        <p style="text-align:center;margin-top:1.5rem" data-reveal><a class="button primary" href="/free-pc-health-check/">Get the free app for Windows &#8594;</a> <a class="button secondary" href="#benchtool" style="margin-left:.5rem">Test this PC&rsquo;s speed</a></p>
         <p class="mono" style="text-align:center;color:var(--faint);font-size:.72rem;margin-top:.9rem" data-reveal>// FREE FOREVER &middot; DIGITALLY SIGNED BY 365 TECHIES LTD &middot; MADE IN DORSET &middot; UNINSTALL ANY TIME</p>
       </div>
     </section>
@@ -14000,6 +14052,8 @@ def computer_spec_checker():
        "This page shows the rounded figure your browser is allowed to share, and browsers cap that at 8&nbsp;GB even on a machine with far more. For the exact amount on Windows, press <strong>Ctrl+Shift+Esc</strong> for Task Manager, choose <strong>Performance</strong>, then <strong>Memory</strong>. Or install the free <a href=\"/free-pc-health-check/\">365 PC Manager</a>, which shows the amount fitted and how much is in use."),
       ("Can this page tell me whether my PC can run Windows 11?",
        "Not on its own &mdash; a browser cannot read the two things that decide it, <strong>TPM 2.0</strong> and <strong>Secure Boot</strong>. Windows can: open Settings &rarr; Privacy &amp; security &rarr; Windows Security &rarr; Device security, where they appear as Security processor and Secure boot. If your machine falls short, our <a href=\"/windows-10-end-of-life/\">Windows 10 page</a> sets out the honest options."),
+      ("Is it safe to run the benchmark on this page?",
+       "Yes. It runs for about twenty seconds inside your browser using ordinary web features, works the processor, memory, graphics and storage hard for a moment, and installs nothing. The fan may spin up briefly, which is normal. Your score stays on your device unless you choose to download the score card or share it."),
       ("Why can&rsquo;t it show my exact RAM, CPU model or temperatures?",
        "Because browsers deliberately hide them &mdash; and that&rsquo;s good privacy design, since the same details could be used to track you. Most browsers share a rounded memory figure, a core count and usually the graphics card name &mdash; some hide even those &mdash; but never serial numbers, temperatures, fan speeds or your exact CPU model. For the engineer-grade readout we check all of that on a <a href=\"/computer-tune-up/\">service</a>."),
       ("How do I find the full detail myself on Windows?",
@@ -14015,11 +14069,12 @@ def computer_spec_checker():
       hero(bc("PC Hardware Checker"), "// FREE HARDWARE CHECKER",
            'What&rsquo;s inside <em class="grad grad--cyan">this machine?</em>',
            "One click, zero downloads: your operating system, graphics card, cores, screen, memory, battery and network &mdash; read live in your browser, never sent to us, with a spec sheet you can save.",
-           cta1=("Scan my computer", "#spectool"), cta2=("Test its speed", "/pc-benchmark/"),
-           chips=["Instant &amp; free", "Readings never sent to us", "Downloadable spec sheet"]),
+           cta1=("Scan my computer", "#spectool"), cta2=("Benchmark it", "#benchtool"),
+           chips=["Instant &amp; free", "Readings never sent to us", "Spec sheet &amp; score card to share"]),
       SPECCHECK_TOOL,
-      SPECCHECK_FLEET_BAND,
+      PCBENCH_TOOL,
       SPECCHECK_APP_BAND,
+      SPECCHECK_SIGNAL_BAND,
       SPECCHECK_NEXT_BAND,
       faq_html(faqs),
       cta("Specs raising questions?",
