@@ -1305,6 +1305,7 @@ WORLDWIDE_AREA = [{"@type": "Country", "name": "United Kingdom"}, {"@type": "Pla
 # in memory), while a Mac is simply outside our remote-support cover. Never claim Apple blocks Mac support.
 _APPLE_HELP_OUTLOOK = '<a href="https://support.microsoft.com/en-gb/outlook" rel="noopener" target="_blank">Microsoft&rsquo;s own Outlook help</a>'
 _APPLE_HELP_MAIL = '<a href="https://support.apple.com/mail" rel="noopener" target="_blank">Apple&rsquo;s own Mail help</a>'
+_APPLE_HELP_ONEDRIVE = '<a href="https://support.microsoft.com/en-gb/onedrive" rel="noopener" target="_blank">Microsoft&rsquo;s own OneDrive help</a>'
 _APPLE_NOTICE_PC = ('<div class="callout callout--info" id="apple-note" style="padding:1.05rem 1.3rem">'
     '<p class="eyebrow mono" style="margin:0 0 .35rem">// WINDOWS PCS ONLY</p>'
     '<p style="margin:0;font-size:.98rem"><strong>We do not support {what} on Apple Macs, iPads or iPhones.</strong> Apple does not allow our remote-support tool to take control of an iPad or iPhone (an Apple restriction), and our remote support covers Windows PCs only. On an Apple device, {help} is the place to start.</p></div>')
@@ -1319,10 +1320,13 @@ _APPLE_NOTICE_SKIP = {'email-basics-course', 'email-security-checker', 'email-si
 
 def apple_notice_inner(slug):
     """The bare callout (for a blog article body), or None when the page is not an Outlook/email support page."""
-    if slug in _APPLE_NOTICE_SKIP or not ('outlook' in slug or 'email' in slug): return None
-    outlook = 'outlook' in slug
+    if slug in _APPLE_NOTICE_SKIP or not ('outlook' in slug or 'email' in slug or 'onedrive' in slug): return None
+    # product word + help link per family; 'outlook' wins on a mixed slug (e.g. sage-50-wont-email-invoices-outlook)
+    if 'outlook' in slug: what, help_ = 'Outlook', _APPLE_HELP_OUTLOOK
+    elif 'onedrive' in slug: what, help_ = 'OneDrive', _APPLE_HELP_ONEDRIVE   # added 12 Sep 2026 (owner)
+    else: what, help_ = 'email', _APPLE_HELP_MAIL
     tpl = _APPLE_NOTICE_PHONE if ('android' in slug or 'phone' in slug) else _APPLE_NOTICE_PC
-    return tpl.replace('{what}', 'Outlook' if outlook else 'email').replace('{help}', _APPLE_HELP_OUTLOOK if outlook else _APPLE_HELP_MAIL)
+    return tpl.replace('{what}', what).replace('{help}', help_)
 
 def apple_notice_for(slug):
     """The callout as a page section, or None."""
