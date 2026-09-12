@@ -21431,6 +21431,7 @@ def _ff_plain(html_, decode=False):
     """Tags stripped, whitespace collapsed. decode=True also turns entities into characters (for the copy text)."""
     import re as _re, html as _h
     t = _re.sub(r'<[^>]+>', ' ', html_); t = _re.sub(r'\s+', ' ', t).strip()
+    t = _re.sub(r'\s+([,.;:!?])', r'\1', t)          # "<strong>lead</strong>, rest" must not become "lead , rest"
     return _h.unescape(t) if decode else t
 def _ff_first_sentences(html_, n=2, cap=300):
     t = _ff_plain(html_)
