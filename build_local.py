@@ -647,7 +647,7 @@ def beach_reel_node(s):
                           "logo": {"@type": "ImageObject", "url": SITE + "/logo.jpg"}}}
 
 # ======================================================= CUSTOMER-TYPE PAGES
-def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_paras, feats, tile_items, faqs, chips, cta_title=None, cta_text=None, accent="cyan", split=None, split_title=None, split_eyebrow="HOME &amp; BUSINESS", steps_title=None, step_items=None, hero_cta1=None, hero_cta2=None, tools=None, scene=None, reel=False, guides=None, guides_title=None):
+def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_paras, feats, tile_items, faqs, chips, cta_title=None, cta_text=None, accent="cyan", split=None, split_title=None, split_eyebrow="HOME &amp; BUSINESS", steps_title=None, step_items=None, hero_cta1=None, hero_cta2=None, tools=None, scene=None, reel=False, guides=None, guides_title=None, notice=None):
     cta_title = cta_title or "Let&rsquo;s sort your IT"
     cta_text = cta_text or "Join the Dorset homes and businesses who never worry about technology. Pick a plan or say hello."
     desc = lede.replace("&rsquo;", "'").replace("&amp;", "and")
@@ -685,6 +685,7 @@ def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_para
       </div>
     </section>''',
     ]
+    if notice: sections.insert(2, notice)   # e.g. the 'Windows PCs only' strip on the email hub, under the overview
     if reel:
         sections.insert(1, beach_reel_section("WATCH &middot; THE DESK IS OPTIONAL",
                         "Your IT just works, wherever you work",

@@ -102,7 +102,7 @@ SPECIALIST = [
    split=[("Windows 11 at home","Whether it&rsquo;s one laptop or the whole family&rsquo;s devices, we check compatibility, back up your files and upgrade to Windows 11 cleanly &mdash; then keep it fast and secure.",["Compatibility check &amp; honest advice","Files backed up before we start","Clean, fast Windows 11 setup","Ongoing updates &amp; support"]),("Windows 11 for business","We plan and roll out Windows 11 across your team with no downtime &mdash; compatibility checked, data safe, security configured and everyone supported.",["Fleet-wide compatibility checks","Planned, no-downtime rollout","Security &amp; policies configured","Every user supported"])],
    steps_title="Upgraded the right way",
    step_items=[("We check","We confirm your PC is Windows 11-ready and advise honestly whether it&rsquo;s worth it."),("We upgrade","We back up your files and upgrade cleanly &mdash; no lost data, no nasty surprises."),("We support","We keep Windows 11 updated, fast and secure on your support plan.")]),
- dict(slug="email-support", scene="email", crumb_name="Email Support",
+ dict(slug="email-support", scene="email", crumb_name="Email Support", notice=bp.apple_notice_for("email-support"),
    eyebrow="// EMAIL", h1='Email <em class="grad grad--cyan">support</em>',
    lede="Outlook, Microsoft 365 and business email help — fix email that won't send or receive, sort passwords, set up new accounts and stop the spam, for homes and businesses.",
    intro_head="Email that just works",

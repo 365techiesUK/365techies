@@ -1303,17 +1303,26 @@ WORLDWIDE_AREA = [{"@type": "Country", "name": "United Kingdom"}, {"@type": "Pla
 # ---- "Windows PCs only" notice for the Outlook pages (owner, 12 Sep 2026). Two truths, kept apart on purpose:
 # Apple forbids third-party remote CONTROL of an iPad or iPhone (a real Apple restriction, see the device matrix
 # in memory), while a Mac is simply outside our remote-support cover. Never claim Apple blocks Mac support.
+_APPLE_HELP_OUTLOOK = '<a href="https://support.microsoft.com/en-gb/outlook" rel="noopener" target="_blank">Microsoft&rsquo;s own Outlook help</a>'
+_APPLE_HELP_MAIL = '<a href="https://support.apple.com/mail" rel="noopener" target="_blank">Apple&rsquo;s own Mail help</a>'
 _APPLE_NOTICE_PC = ('<div class="callout callout--info" id="apple-note" style="padding:1.05rem 1.3rem">'
     '<p class="eyebrow mono" style="margin:0 0 .35rem">// WINDOWS PCS ONLY</p>'
-    '<p style="margin:0;font-size:.98rem"><strong>We do not support Outlook on Apple Macs, iPads or iPhones.</strong> Apple does not allow our remote-support tool to take control of an iPad or iPhone (an Apple restriction), and our remote support covers Windows PCs only. On an Apple device, <a href="https://support.microsoft.com/en-gb/outlook" rel="noopener" target="_blank">Microsoft&rsquo;s own Outlook help</a> is the place to start.</p></div>')
+    '<p style="margin:0;font-size:.98rem"><strong>We do not support {what} on Apple Macs, iPads or iPhones.</strong> Apple does not allow our remote-support tool to take control of an iPad or iPhone (an Apple restriction), and our remote support covers Windows PCs only. On an Apple device, {help} is the place to start.</p></div>')
 _APPLE_NOTICE_PHONE = ('<div class="callout callout--info" id="apple-note" style="padding:1.05rem 1.3rem">'
     '<p class="eyebrow mono" style="margin:0 0 .35rem">// ANDROID AND WINDOWS, NOT APPLE</p>'
-    '<p style="margin:0;font-size:.98rem"><strong>We do not support Outlook on iPhones or iPads.</strong> Apple does not allow our remote-support tool to take control of them (an Apple restriction), so we cannot fix it for you from here. On an iPhone or iPad, <a href="https://support.microsoft.com/en-gb/outlook" rel="noopener" target="_blank">Microsoft&rsquo;s own Outlook help</a> is the place to start.</p></div>')
+    '<p style="margin:0;font-size:.98rem"><strong>We do not support {what} on iPhones or iPads.</strong> Apple does not allow our remote-support tool to take control of them (an Apple restriction), so we cannot fix it for you from here. On an iPhone or iPad, {help} is the place to start.</p></div>')
+# email pages that are not device support: courses, tools, the scam funnel, a SimplyBook how-to, the migration service
+# and two admin/legal explainers. Owner asked for "the email pages" on 12 Sep 2026; these were left out and reported.
+_APPLE_NOTICE_SKIP = {'email-basics-course', 'email-security-checker', 'email-signature-generator',
+                      'youve-been-hacked-email-bitcoin-scam', 'business-email-compromise', 'simplybook-custom-email-notifications',
+                      'email-migration', 'business-email-when-closing-your-company', 'take-over-email-domain-after-buying-business'}
 
 def apple_notice_inner(slug):
-    """The bare callout (for a blog article body), or None when the page is not an Outlook page."""
-    if 'outlook' not in slug: return None
-    return _APPLE_NOTICE_PHONE if 'android' in slug else _APPLE_NOTICE_PC
+    """The bare callout (for a blog article body), or None when the page is not an Outlook/email support page."""
+    if slug in _APPLE_NOTICE_SKIP or not ('outlook' in slug or 'email' in slug): return None
+    outlook = 'outlook' in slug
+    tpl = _APPLE_NOTICE_PHONE if ('android' in slug or 'phone' in slug) else _APPLE_NOTICE_PC
+    return tpl.replace('{what}', 'Outlook' if outlook else 'email').replace('{help}', _APPLE_HELP_OUTLOOK if outlook else _APPLE_HELP_MAIL)
 
 def apple_notice_for(slug):
     """The callout as a page section, or None."""
