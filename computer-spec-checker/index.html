@@ -1177,6 +1177,9 @@
           if(dm!=null&&dm<=4)fl.insertAdjacentHTML('beforeend','<div class="spc-flag spc-flag--warn">Your browser reports about '+dm+' GB of memory. If the machine feels slow, a RAM or SSD upgrade is often the cheapest fix &mdash; <a href="/computer-tune-up/">worth a look</a>.</div>');
           $('#spc-actions').hidden=false;
           step('scan','done'); step('bench','on');
+          /* tell the Windows 11 block further down what the scan found */
+          window.__spcOS={os:os.os||'',win10:!!os.win10,win11:!!os.win11,amb:!!os.amb};
+          try{ document.dispatchEvent(new CustomEvent('spc:done',{detail:window.__spcOS})); }catch(e){}
           /* staggered card reveal */
           Array.prototype.forEach.call(grid.querySelectorAll('.spc-card'),function(c,i){ setTimeout(function(){c.classList.add('in');},80+i*110); });
         }
@@ -1579,6 +1582,30 @@
           <h2 class="section-title section-title--center" data-title>Can this PC run Windows 11?<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>A browser cannot read the two things that decide it, so this page will not pretend to. Here is what Microsoft requires, and where Windows itself tells you.</p>
         </div>
+        <style>#windows-11[hidden]{display:none}</style>
+        <script>
+        /* The scan above already knows which Windows this is, so the question must not pretend otherwise. */
+        (function(){
+          var sec=document.getElementById('windows-11'); if(!sec) return;
+          var eye=sec.querySelector('.eyebrow'), h2=sec.querySelector('.section-title'), lede=sec.querySelector('.lede');
+          function setH(t){ var ul=h2.querySelector('.title-underline'); h2.textContent=t; if(ul) h2.appendChild(ul); }
+          function apply(o){
+            if(!o||!eye||!h2||!lede) return;
+            if(o.win11){
+              eye.textContent='// YOUR SCAN SAYS WINDOWS 11';
+              setH('This PC already runs Windows 11 — here is the checklist for any older one');
+              lede.innerHTML='Your scan above found Windows 11, so this machine has already passed. Keep the checklist for the older laptop in the cupboard, or a friend&rsquo;s PC that is still on Windows 10.';
+            } else if(o.win10){
+              eye.textContent='// YOUR SCAN SAYS WINDOWS 10';
+              setH('Can this PC move to Windows 11?');
+              lede.innerHTML='Your scan above found Windows 10, which stopped getting free security updates in October 2025 &mdash; so this is the check that matters most. A browser cannot read the two things that decide it; here is what Microsoft requires, and where Windows itself tells you.';
+            } else if(o.os && !/windows/i.test(o.os)){
+              sec.hidden=true;   /* a Mac, phone or Linux box: the question does not apply */
+            }
+          }
+          if(window.__spcOS) apply(window.__spcOS); else document.addEventListener('spc:done',function(e){ apply(e.detail); });
+        })();
+        </script>
         <ul class="security-grid" data-stagger>
           <li><h3>The minimums</h3><p>A compatible 64-bit processor &mdash; roughly Intel 8th generation or AMD Ryzen 2000 onwards &mdash; 4&nbsp;GB of memory, 64&nbsp;GB of storage, a DirectX 12 graphics chip and a 720p screen.</p></li>
           <li><h3>The two deciders</h3><p><strong>TPM 2.0</strong> and <strong>Secure Boot</strong>. Both live in the firmware, not the browser. On Windows: Settings &rarr; Privacy &amp; security &rarr; Windows Security &rarr; Device security lists them as Security processor and Secure boot.</p></li>

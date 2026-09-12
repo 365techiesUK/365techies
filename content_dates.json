@@ -192,7 +192,7 @@
  },
  "bournemouth/sea-today": {
   "first": "2026-08-02",
-  "h": "7d0d3b3ccd1fbc7a",
+  "h": "f542bc44e6acc2cd",
   "last": "2026-09-12"
  },
  "bournemouth/sunrise-sunset": {
@@ -606,7 +606,7 @@
  },
  "computer-spec-checker": {
   "first": "2026-07-28",
-  "h": "a974dd9f684a838d",
+  "h": "5e2f1dd84f20a79f",
   "last": "2026-09-12"
  },
  "computer-support-gift-for-parents": {
@@ -1106,8 +1106,8 @@
  },
  "free-pc-health-check": {
   "first": "2026-07-28",
-  "h": "0243eae65e242538",
-  "last": "2026-09-11"
+  "h": "5ac8ff301f46fbb3",
+  "last": "2026-09-12"
  },
  "free-tools": {
   "first": "2026-07-28",
