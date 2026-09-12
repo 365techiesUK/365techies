@@ -199,3 +199,6 @@ drafts/*
 !drafts/r510-r550-guide-e7k2m9qw4z/
 !drafts/water-effects-x7q2m4vk/
 api/form-relay.log
+api/bench-results.json
+api/bench-stats-cache.json
+api/bench-throttle.json
