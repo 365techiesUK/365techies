@@ -99,12 +99,29 @@ SPECIALIST = [
    tile_items=[("mail","Outlook fixes","Sort send and receive errors, crashes and sync problems."),("cloud","Microsoft 365 email","Exchange Online and business mailboxes managed."),("lock","Passwords &amp; access","Recover and secure email accounts the right way."),("shield","Spam &amp; phishing","Filter junk and spot scams before you click."),("server","Migration","Move email to Microsoft 365 with nothing lost."),("monitor","All your devices","Email set up on computer, phone and tablet.")],
    faqs=[("Why is my email not sending or receiving?","There are several common causes — settings, passwords, full mailboxes or server issues. We diagnose it remotely and get your email flowing again."),("Can you move my old email to Microsoft 365?","Yes — we migrate email, contacts and calendars to Microsoft 365 with minimal disruption."),("Can you check if an email is safe?","Yes — subscribers can always ask us to check a suspicious message before clicking anything."),("Why is my Outlook not receiving emails?","Common causes are a full mailbox, wrong settings, a changed password, Outlook stuck &lsquo;working offline&rsquo;, or a rule filing mail elsewhere. We&rsquo;ll diagnose it remotely and get Outlook receiving again."),("How do I recover a hacked email account?","Act fast &mdash; change the password, turn on two-factor authentication and check for sneaky forwarding rules. We can take it from there: secure the account, lock the intruder out and check nothing else was touched. See <a href=\"/cybersecurity-support/\">cybersecurity</a>."),("My email stopped working after changing broadband or provider &mdash; can you fix it?","Yes &mdash; it&rsquo;s one of our most common jobs. Whether <a href=\"/business-email-down-domain-expired/\">your business email died because the domain expired</a>, you need to <a href=\"/move-plusnet-email-to-gmail/\">move Plusnet email to Gmail before it closes</a>, or your <a href=\"/btinternet-email-wont-add-to-new-outlook/\">BT email won&rsquo;t add to the new Outlook</a> &mdash; we sort it remotely, usually the same day.")],
    chips=["Outlook &amp; Microsoft 365","Send/receive fixes","Anti-spam"],
-   guides_title="Email problems with their own guide",
-   guides=[("/virgin-media-email-wont-add-to-new-outlook/","Virgin Media email won&rsquo;t add to the new Outlook"),
-           ("/move-virgin-media-email-to-gmail/","Moving your Virgin Media email to Gmail"),
-           ("/transfer-microsoft-365-when-owner-leaves/","Transferring Microsoft 365 when the owner leaves"),
-           ("/take-over-email-domain-after-buying-business/","Taking over the email and domain after buying a business"),
-           ("/business-email-when-closing-your-company/","What happens to business email when you close the company")],
+     guides_title="What is the email doing? Pick the closest, and fix it step by step on that page",
+   guides=[
+     ("/outlook-not-sending-emails/", "Outlook won&rsquo;t send"),
+     ("/outlook-not-showing-new-emails/", "New emails are not arriving in Outlook"),
+     ("/outlook-keeps-asking-for-password/", "Outlook keeps asking for the password"),
+     ("/outlook-cant-sign-in/", "Can&rsquo;t sign in to Outlook"),
+     ("/outlook-not-syncing/", "Outlook is not syncing"),
+     ("/new-outlook-not-syncing/", "The new Outlook is not syncing"),
+     ("/outlook-search-not-finding-old-emails/", "Search can&rsquo;t find older emails"),
+     ("/outlook-wont-open-after-update/", "Outlook won&rsquo;t open after an update"),
+     ("/outlook-stuck-in-outbox/", "Emails stuck in the Outbox"),
+     ("/cant-open-attachments-in-outlook/", "Can&rsquo;t open attachments"),
+     ("/emails-on-computer-but-not-phone/", "Emails on the computer but not the phone"),
+     ("/btinternet-email-wont-add-to-new-outlook/", "BT, Sky, Plusnet or Virgin email won&rsquo;t add to the new Outlook"),
+     ("/virgin-media-email-wont-add-to-new-outlook/", "Virgin Media email won&rsquo;t add to the new Outlook"),
+     ("/move-virgin-media-email-to-gmail/", "Moving your Virgin Media email to Gmail"),
+     ("/business-email-down-domain-expired/", "Business email stopped because the domain expired"),
+     ("/transfer-microsoft-365-when-owner-leaves/", "Transferring Microsoft 365 when the owner leaves"),
+     ("/take-over-email-domain-after-buying-business/", "Taking over the email and domain after buying a business"),
+     ("/business-email-when-closing-your-company/", "What happens to business email when you close the company"),
+     ("/how-to-stop-spam-emails/", "Too much spam"),
+     ("/outlook-problems/", "Something else in Outlook: every problem we cover"),
+   ],
    split_title="Email sorted, however you work",
    split=[("Email at home","Personal and family email sorted across every device &mdash; Outlook, webmail and phone &mdash; with the spam filtered out and the scams spotted.",["Outlook &amp; webmail set up","Email on phone &amp; tablet","Spam &amp; junk filtered","Scam-checking on call"]),("Business email","Professional business email on Microsoft 365 &mdash; shared mailboxes, signatures, security and migration, all managed for your team.",["Microsoft 365 business email","Shared mailboxes &amp; aliases","Email security &amp; filtering","Migration with nothing lost"])],
    steps_title="Email flowing again, fast",
@@ -21561,6 +21578,20 @@ FIX_FLOW_PAGES = {
         'h3s': 'Not sure which option fits? That is a quick call.', 'mode': 'seq', 'yes': 'Done, next step', 'no': 'I am stuck here',
         'eyebrow': '// WORK IT OUT WITH ME &middot; STEP BY STEP', 'lede': 'The four steps from this guide, one at a time. Tick each one off and it shows the next. Nothing here leaves your device.',
         'h3f': 'Worked out{mins}. Nice work.', 'plan_lead': 'Rather have it done for you?'},
+    'business-email-down-domain-expired': {'h2': 'Get the email back, one step at a time', 'ask': 'Done that step?', 'mode': 'seq', 'yes': 'Done, next step', 'no': 'I am stuck here',
+        'eyebrow': '// DO IT WITH ME &middot; STEP BY STEP', 'lede': 'The three steps from this guide, one at a time. Tick each one off and it shows the next. Nothing here leaves your device.',
+        'tip': 'Send a test email from outside the company to be sure it lands, then read the section on what happened to mail sent while you were down.', 'h3s': 'Stuck at a step? Every hour counts here, so ring us.',
+        'h3f': 'Email back{mins}. Nice work.', 'plan_lead': 'Rather have it watched from now on?',
+        'sections': [(1, 'Confirm the domain really is the problem'), (2, 'Renew the domain fast'), (3, 'Check the MX and DNS records, then let email flow')]},
+    'new-outlook-only-showing-recent-emails': {'h2': 'Find the older mail, step by step', 'ask': 'Can you see the older mail now?', 'tip': 'Search for a message you know is years old to be sure.',
+        'h3s': 'Still missing after every step? That is a remote job.',
+        'sections': [(1, 'Prove the mail still exists, in two minutes'), (2, 'Widen the sync window'), (3, 'Make search find what the sync window shows')]},
+    'talktalk-email-not-working-android': {'h2': 'Get TalkTalk mail working on the phone, step by step', 'ask': 'Is it working now?', 'tip': 'Send yourself a test email from another account to be sure.',
+        'h3s': 'Still not working after every step? That is a remote job.',
+        'sections': [(1, 'Two minutes that tell you whether it is the account or the phone'), (2, 'Remove the old account and add it back by hand'), (3, 'When the settings are right and it still fails')]},
+    'virgin-media-email-wont-add-to-new-outlook': {'h2': 'Add the Virgin Media account, step by step', 'ask': 'Has the account added?', 'tip': 'Send yourself a test email to be sure it both sends and receives.',
+        'h3s': 'Still refusing after every step? That is a remote job.',
+        'sections': [(1, 'Two minutes that tell you whether the account itself works'), (2, 'Enter the settings Virgin publishes, manually'), (3, 'Or use classic Outlook, which still adds it')]},
     'printer-wont-scan-to-computer-windows-11': {'h2': 'Get scanning working on Windows 11, step by step', 'ask': 'Is it scanning now?', 'tip': 'Scan one page from the computer to be sure.', 'h3s': 'Still not scanning after every step? That is a remote job.',
         'sections': [(1, 'Swap the driver Windows fitted for the maker&rsquo;s full package'), (2, 'Start the scan at the computer, not the printer'), (3, 'Treat USB and network faults differently'), (4, 'Let scanning through the security suite and VPN')]},
 }
@@ -21600,10 +21631,49 @@ def _fix_flow_for_playbook(p):
         'steps_text': text.replace('&', '&amp;').replace('<', '&lt;'),
     })
 
+# Outlook / email cluster (12 Sep 2026, owner: "add the fix flow to the outlook and email pages too"). Every page
+# that carries its own steps gets a flow automatically; procedures (set-up, migration, re-creating a profile) run
+# as sequences, everything else as a fix flow with "Is it working now?" after each step.
+FIX_FLOW_AUTO_SKIP = {'outlook-problems', 'youve-been-hacked-email-bitcoin-scam', 'business-email-when-closing-your-company',
+                      'take-over-email-domain-after-buying-business', 'email-migration', 'email-basics-course'}
+_FIX_FLOW_SEQ_RE = re.compile(r'^(how-to-|move-|recreate-)|(-wont-add-to-new-outlook|^cant-send-btinternet-email-new-outlook|^sage-50-wont-email-invoices-outlook'
+                              r'|^outlook-signature-not-showing|^outlook-ost-file-corrupt|^onedrive-full-cant-send-email)')
+_FIX_FLOW_TRAIL_RE = re.compile(r'call us|still stuck|hand it to us|let us sort|ask us', re.I)   # a last step that just says "ring us" is the stuck ending already
+
+FIX_FLOW_OVERRIDES = {   # small per-page tweaks on top of the automatic config
+    'sage-50-wont-email-invoices-outlook': {'max_steps': 4},   # the test invoice is the natural end; the Webmail alternative stays in the guide
+}
+
+def _auto_flow_cfg(d):
+    slug = d['slug']
+    if not ('outlook' in slug or 'email' in slug) or slug in FIX_FLOW_AUTO_SKIP: return None
+    seq = bool(_FIX_FLOW_SEQ_RE.search(slug))
+    cfg = {'mode': 'seq' if seq else None,
+           'ask': 'Done that step?' if seq else 'Is it working now?',
+           'yes': 'Done, next step' if seq else 'Yes, sorted', 'no': 'I am stuck here' if seq else 'Not yet',
+           'h2': 'Do it with me, one step at a time' if seq else 'Fix it with me, one step at a time',
+           'eyebrow': '// DO IT WITH ME &middot; STEP BY STEP' if seq else '// FIX IT WITH ME &middot; STEP BY STEP',
+           'lede': ('The steps from this guide, one at a time. Tick each one off and it shows the next. Nothing here leaves your device.' if seq else
+                    'The steps from this guide, one at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your device.'),
+           'tip': 'Send yourself a test email to be sure it has stuck.',
+           'h3s': 'Still not working after every step? That is a remote job.',
+           'h3f': 'Done{mins}. Nice work.' if seq else 'Sorted{mins}. Nice work.',
+           'plan_lead': 'Rather have it done for you?' if seq else 'Rather have it looked after?'}
+    if len(d.get('howToSteps') or []) >= 3: return cfg
+    best = (None, 0)
+    for i, sec in enumerate(d.get('sections') or []):
+        for ol in re.findall(r'<ol[^>]*>(.*?)</ol>', sec.get('html', ''), re.S):
+            n = len(re.findall(r'<li', ol))
+            if n >= 3 and n > best[1]: best = (i, n)
+    if best[0] is None: return None
+    cfg['list_section'] = best[0]
+    return cfg
+
 def _fix_flow_for(d):
     slug = d['slug']
     if slug == 'printer-disappeared-after-windows-update': return PRINTER_FIX_TOOL
-    cfg = FIX_FLOW_PAGES.get(slug)
+    cfg = FIX_FLOW_PAGES.get(slug) or _auto_flow_cfg(d)
+    if cfg and slug in FIX_FLOW_OVERRIDES: cfg = dict(cfg, **FIX_FLOW_OVERRIDES[slug])
     if not cfg: return None
     steps = []
     if cfg.get('sections'):
@@ -21625,6 +21695,7 @@ def _fix_flow_for(d):
         for st in d.get('howToSteps') or []:
             steps.append((st['name'], '<p>' + st['text'] + '</p>', cfg['ask']))
     if cfg.get('max_steps'): steps = steps[:cfg['max_steps']]
+    while len(steps) > 3 and _FIX_FLOW_TRAIL_RE.search(_ff_plain(steps[-1][0])): steps = steps[:-1]
     if len(steps) < 3: return None
     n = len(steps)
     text = _ff_plain(d.get('h1', slug), True) + ' - the fix order (365techies.co.uk/' + slug + '/)\n' + "\n".join(

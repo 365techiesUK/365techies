@@ -299,7 +299,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-31"
+      "dateModified": "2026-09-12"
     },
     {
       "@type": "HowTo",
@@ -829,6 +829,153 @@
 <p>The full message reads <em>"Outlook is unable to connect to your incoming (POP3) server"</em> - or the IMAP equivalent. In plain English, Outlook tried to log in to the mailbox where your email lives, waited, and got no usable reply. Your outgoing (sending) side may still work, which is why you can sometimes send but receive nothing.</p><p>Because no mail is being deleted from the server, <strong>your email is safe</strong>. Nothing is lost - it is simply sitting on your provider's server waiting for Outlook to connect. That is good news: fixing the connection brings everything down again.</p><p>The usual triggers are: your email provider or ISP changed their server names or ports, an antivirus "email scanning" feature started intercepting the connection, a Windows or firewall update tightened the rules, or a VPN is routing you somewhere the mail server rejects.</p>
       </div>
     </section>
+    <section class="section" aria-label="Fix it with me" id="fixflow">
+      <div class="wrap">
+      <style>
+      #fixflow .ff{max-width:860px;margin:0 auto}
+      #fixflow .ff-rev{display:block;margin-top:.5rem;font-size:.72rem;letter-spacing:.06em;color:var(--cyan-soft,#6cc4f5)}
+      #fixflow .ff-top{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin-bottom:1rem;font-size:.85rem;color:var(--muted,#9fb5d3)}
+      #fixflow .ff-os{font-weight:600;color:var(--ink,#eaf4ff)}
+      #fixflow .ff-oslink{background:none;border:0;padding:0;color:var(--cyan-soft,#6cc4f5);font:inherit;font-size:.8rem;cursor:pointer;text-decoration:underline}
+      #fixflow .ff-prog{margin-left:auto;font-family:var(--font-mono,monospace);font-size:.72rem;letter-spacing:.06em}
+      #fixflow .ff-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.55rem}
+      #fixflow .ff-step{border:1px solid var(--line,rgba(125,170,220,.16));border-radius:14px;background:rgba(255,255,255,.03);overflow:hidden}
+      #fixflow .ff-step[hidden]{display:none}
+      #fixflow .ff-head{display:flex;align-items:center;gap:.8rem;padding:.9rem 1.1rem;font-weight:700;font-size:1.02rem}
+      #fixflow .ff-num{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-mono,monospace);font-size:.75rem;border:1px solid rgba(108,196,245,.5);color:var(--cyan-soft,#6cc4f5)}
+      #fixflow .ff-step.is-done .ff-num{border-color:rgba(46,204,113,.6);color:#2ecc71}
+      #fixflow .ff-step.is-done .ff-head{opacity:.7;font-weight:600}
+      #fixflow .ff-step.is-skip .ff-num{opacity:.45}
+      #fixflow .ff-body{display:none;padding:0 1.1rem 1.1rem;font-size:.93rem;line-height:1.6;color:var(--ink-2,#dfe9f7)}
+      #fixflow .ff-step.is-on{border-color:rgba(108,196,245,.55);background:rgba(29,151,227,.07)}
+      #fixflow .ff-step.is-on .ff-body{display:block}
+      #fixflow .ff-body p{margin:0 0 .6rem}
+      #fixflow .ff-body ol{margin:0 0 .6rem 1.2rem;padding:0}
+      #fixflow .ff-body li{margin:.25rem 0}
+      #fixflow .ff-cmd{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin:.5rem 0;padding:.5rem .7rem;border-radius:9px;background:rgba(7,13,34,.7);border:1px solid rgba(125,170,220,.22)}
+      #fixflow .ff-cmd code{font-family:var(--font-mono,monospace);font-size:.82rem;color:#eaf4ff;word-break:break-all}
+      #fixflow .ff-cmd small{width:100%;font-size:.72rem;color:var(--muted,#9fb5d3)}
+      #fixflow .ff-copy{margin-left:auto;border:1px solid rgba(108,196,245,.45);background:transparent;color:var(--cyan-soft,#6cc4f5);border-radius:7px;padding:.28rem .6rem;font:inherit;font-size:.74rem;cursor:pointer;min-height:32px}
+      #fixflow .ff-copy.done{border-color:rgba(46,204,113,.6);color:#2ecc71}
+      #fixflow .ff-open{display:inline-block;margin:.2rem .4rem .5rem 0;padding:.5rem .8rem;border-radius:9px;border:1px solid rgba(108,196,245,.45);color:var(--cyan-soft,#6cc4f5);text-decoration:none;font-size:.85rem;font-weight:600}
+      #fixflow .ff:not(.is-win) .ff-open{display:none}
+      #fixflow .ff-p10{display:none} #fixflow .ff.is-w10 .ff-p10{display:inline} #fixflow .ff.is-w10 .ff-p11{display:none}
+      #fixflow .ff-fig{margin:.8rem 0 .4rem;max-width:460px}
+      #fixflow .ff-fig img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid rgba(125,170,220,.28)}
+      #fixflow .ff-fig figcaption{font-size:.72rem;color:var(--muted,#9fb5d3);margin-top:.35rem;line-height:1.5}
+      #fixflow .ff-ask{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:.8rem;padding-top:.8rem;border-top:1px dashed rgba(125,170,220,.25)}
+      #fixflow .ff-ask b{font-size:.95rem}
+      #fixflow .ff-ask .button{min-height:44px}
+      #fixflow .ff-end{margin-top:1rem;padding:1.3rem 1.4rem;border-radius:16px;border:1px solid rgba(46,204,113,.45);background:rgba(46,204,113,.07)}
+      #fixflow .ff-end[hidden]{display:none}
+      #fixflow .ff-end.is-bad{border-color:rgba(255,180,0,.5);background:rgba(255,180,0,.07)}
+      #fixflow .ff-end h3{margin:0 0 .5rem;font-size:1.25rem}
+      #fixflow .ff-end p{margin:0 0 .6rem;line-height:1.6}
+      #fixflow .ff-end .ff-cta{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:.8rem}
+      #fixflow .ff-end .ff-cta .button{min-height:44px}
+      #fixflow .ff-plan{margin-top:1rem;padding:1rem 1.1rem;border-radius:12px;border:1px solid rgba(125,170,220,.25);background:rgba(255,255,255,.03);font-size:.9rem;line-height:1.6}
+      #fixflow .ff-plan b{color:var(--cyan-soft,#6cc4f5)}
+      @media(max-width:560px){#fixflow .ff-ask .button,#fixflow .ff-end .ff-cta .button{width:100%}#fixflow .ff-prog{margin-left:0}}
+      </style>
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FIX IT WITH ME &middot; STEP BY STEP</p>
+          <h2 class="section-title section-title--center" data-title>Fix it with me, one step at a time<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>The steps from this guide, one at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your device.<span class="ff-rev mono">Last reviewed 12 September 2026</span></p>
+        </div>
+        <div class="ff" id="ff">
+          <div class="ff-top"><span class="ff-os" id="ff-os">Checking which Windows you have&hellip;</span><button type="button" class="ff-oslink" id="ff-ostoggle" hidden>Not right? Switch to Windows 10</button><span class="ff-prog" id="ff-prog">STEP 1 OF 7</span></div>
+          <ol class="ff-steps" id="ff-steps">
+            <li class="ff-step is-on" data-step="1">
+              <div class="ff-head"><span class="ff-num">01</span>Check your internet connection</div>
+              <div class="ff-body"><p>Open a website in your browser. If nothing loads, restart your router before touching Outlook, then try Send/Receive again.</p><div class="ff-ask"><b>Is it working now?</b><button type="button" class="button primary" data-go="fixed">Yes, sorted</button><button type="button" class="button secondary" data-go="2">Not yet</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="2" hidden>
+              <div class="ff-head"><span class="ff-num">02</span>Disconnect any VPN</div>
+              <div class="ff-body"><p>If a work or privacy VPN is on, turn it off and click Send/Receive - VPNs commonly break the route to your mail server.</p><div class="ff-ask"><b>Is it working now?</b><button type="button" class="button primary" data-go="fixed">Yes, sorted</button><button type="button" class="button secondary" data-go="3">Not yet</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="3" hidden>
+              <div class="ff-head"><span class="ff-num">03</span>Verify the incoming server and port</div>
+              <div class="ff-body"><p>Go to File > Account Settings > Account Settings, select the account, click Change > More Settings > Advanced, and confirm the incoming server name is exact and the port is IMAP 993 SSL/TLS or POP 995 SSL/TLS.</p><div class="ff-ask"><b>Is it working now?</b><button type="button" class="button primary" data-go="fixed">Yes, sorted</button><button type="button" class="button secondary" data-go="4">Not yet</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="4" hidden>
+              <div class="ff-head"><span class="ff-num">04</span>Run Test Account Settings</div>
+              <div class="ff-body"><p>On the account details screen click Test Account Settings. A red X on the incoming task shows exactly which setting still needs correcting.</p><div class="ff-ask"><b>Is it working now?</b><button type="button" class="button primary" data-go="fixed">Yes, sorted</button><button type="button" class="button secondary" data-go="5">Not yet</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="5" hidden>
+              <div class="ff-head"><span class="ff-num">05</span>Disable the antivirus email scanner</div>
+              <div class="ff-body"><p>Turn off your security suite's email/mail-shield component and test. If that fixes it, add Outlook as an exception rather than leaving protection off.</p><div class="ff-ask"><b>Is it working now?</b><button type="button" class="button primary" data-go="fixed">Yes, sorted</button><button type="button" class="button secondary" data-go="6">Not yet</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="6" hidden>
+              <div class="ff-head"><span class="ff-num">06</span>Allow Outlook through Windows Firewall</div>
+              <div class="ff-body"><p>Search 'Allow an app through Windows Firewall', click Change settings, and tick Outlook for both Private and Public networks.</p><div class="ff-ask"><b>Is it working now?</b><button type="button" class="button primary" data-go="fixed">Yes, sorted</button><button type="button" class="button secondary" data-go="7">Not yet</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="7" hidden>
+              <div class="ff-head"><span class="ff-num">07</span>Check the PC date and time</div>
+              <div class="ff-body"><p>A wrong clock breaks the secure connection. Right-click the clock, choose Adjust date and time, and enable 'Set time automatically'.</p><div class="ff-ask"><b>Is it working now?</b><button type="button" class="button primary" data-go="fixed">Yes, sorted</button><button type="button" class="button secondary" data-go="stuck">Not yet</button></div>
+              </div>
+            </li>
+          </ol>
+          <div class="ff-end" id="ff-end" hidden></div>
+          <template id="ff-tpl-fixed"><h3>Sorted{mins}. Nice work.</h3><p>Send yourself a test email to be sure it has stuck.</p><div class="ff-plan"><b>Rather have it looked after?</b> On a 365 support plan every computer gets a full service every six weeks: Windows, driver and app updates applied and checked, security and backup looked at, and a written Service Report each time. Home &pound;18.25 per computer a month, business from &pound;24.38, rolling monthly.</div><div class="ff-cta"><a class="button primary" href="/monthly-it-support/">See the support plans &#8594;</a><a class="button secondary" href="/free-pc-health-check/">Get the free app</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div></template>
+          <template id="ff-tpl-stuck"><h3>Still not working after all seven steps? That is a remote job.</h3><p>With your permission we connect to your screen and sort it in one session. Usually the same day, remote help from &pound;20, and no fix, no fee.</p><div class="ff-cta"><a class="button primary" href="tel:+441202775566">Call 01202 775566</a><a class="button secondary" href="sms:+447520615332">Text 07520 615332</a><a class="button bm-ghost" href="/remote-support/">How remote help works</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div></template>
+          <template id="ff-tpl-text">Fix Outlook error 0x80042108 in minutes - the fix order (365techies.co.uk/outlook-error-0x80042108/)
+1. Check your internet connection: Open a website in your browser. If nothing loads, restart your router before touching Outlook, then try Send/Receive again.
+2. Disconnect any VPN: If a work or privacy VPN is on, turn it off and click Send/Receive - VPNs commonly break the route to your mail server.
+3. Verify the incoming server and port: Go to File > Account Settings > Account Settings, select the account, click Change > More Settings > Advanced, and confirm the incoming server name is exact and the port is IMAP 993 SSL/TLS or POP 995 SSL/TLS.
+4. Run Test Account Settings: On the account details screen click Test Account Settings. A red X on the incoming task shows exactly which setting still needs correcting.
+5. Disable the antivirus email scanner: Turn off your security suite's email/mail-shield component and test. If that fixes it, add Outlook as an exception rather than leaving protection off.
+6. Allow Outlook through Windows Firewall: Search 'Allow an app through Windows Firewall', click Change settings, and tick Outlook for both Private and Public networks.
+7. Check the PC date and time: A wrong clock breaks the secure connection. Right-click the clock, choose Adjust date and time, and enable 'Set time automatically'.
+Still stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.uk/remote-support/</template>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var root=document.getElementById('ff'); if(!root) return;
+        var steps=Array.prototype.slice.call(root.querySelectorAll('.ff-step')), N=steps.length, endEl=root.querySelector('#ff-end'), prog=root.querySelector('#ff-prog');
+        var osEl=root.querySelector('#ff-os'), tog=root.querySelector('#ff-ostoggle'), t0=null, w10=false, isWin=/Windows/i.test(navigator.userAgent);
+        root.classList.toggle('is-win',isWin);
+        function setOS(ten,label){ w10=ten; root.classList.toggle('is-w10',ten); osEl.textContent=label; tog.hidden=!isWin; tog.textContent=ten?'Not right? Switch to Windows 11':'Not right? Switch to Windows 10'; }
+        if(root.getAttribute('data-os')==='1'){
+          if(!isWin){ setOS(false,'These steps are for Windows; you seem to be on another device, so keep them for the PC.'); }
+          else if(navigator.userAgentData&&navigator.userAgentData.getHighEntropyValues){
+            navigator.userAgentData.getHighEntropyValues(['platformVersion']).then(function(v){ var maj=parseInt(String(v.platformVersion||'').split('.')[0],10);
+              if(maj>=13) setOS(false,'You are on Windows 11, so the paths below match your Settings app.'); else if(maj>0) setOS(true,'You are on Windows 10, so the paths below match your Settings app.'); else setOS(false,'Windows 10 or 11: paths shown for Windows 11.'); }).catch(function(){ setOS(false,'Windows 10 or 11: paths shown for Windows 11.'); });
+          } else setOS(false,'Windows 10 or 11: paths shown for Windows 11.');
+          tog.addEventListener('click',function(){ setOS(!w10,w10?'Showing the Windows 11 paths.':'Showing the Windows 10 paths.'); });
+        } else { osEl.hidden=true; tog.hidden=true; }
+        function tpl(id,text){ var t=root.querySelector('#'+id); if(!t) return ''; return text?(t.content?t.content.textContent:t.textContent):t.innerHTML; }
+        function show(n){ steps.forEach(function(s){ var k=parseInt(s.getAttribute('data-step'),10); s.hidden=k>n; s.classList.toggle('is-on',k===n); if(k<n&&!s.classList.contains('is-done')) s.classList.add('is-skip'); }); prog.textContent='STEP '+n+' OF '+N; var cur=steps[n-1]; if(cur) cur.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+        function finish(kind){
+          steps.forEach(function(s){ s.classList.remove('is-on'); });
+          var mins=t0?Math.max(1,Math.round((Date.now()-t0)/60000)):null, minsTxt=mins?(' in about '+mins+' minute'+(mins===1?'':'s')):'';
+          endEl.className='ff-end'+(kind==='stuck'?' is-bad':''); endEl.innerHTML=tpl(kind==='fixed'?'ff-tpl-fixed':'ff-tpl-stuck').split('{mins}').join(minsTxt);
+          prog.textContent=kind==='fixed'?'DONE':'NEEDS A TECHIE'; endEl.hidden=false; endEl.scrollIntoView({behavior:'smooth',block:'nearest'});
+          var c=endEl.querySelector('#ff-copyall'); if(c) c.addEventListener('click',function(){ copyText(tpl('ff-tpl-text',true).replace(/^\s+|\s+$/g,''),c,'Copy these steps'); });
+        }
+        function copyText(txt,btn,label){ function ok(){ btn.textContent='Copied'; btn.classList.add('done'); setTimeout(function(){ btn.textContent=label; btn.classList.remove('done'); },1800); }
+          if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(ok).catch(function(){}); }
+          else{ var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); ok(); }catch(e){} document.body.removeChild(ta); } }
+        root.addEventListener('click',function(e){
+          var b=e.target.closest('button'); if(!b) return;
+          if(b.classList.contains('ff-copy')){ copyText(b.getAttribute('data-copy'),b,'Copy'); return; }
+          var go=b.getAttribute('data-go'); if(!go) return;
+          if(!t0) t0=Date.now();
+          var cur=b.closest('.ff-step'); if(cur){ cur.classList.add('is-done'); }
+          if(go==='fixed'||go==='stuck'){ finish(go); return; }
+          var n=parseInt(go,10); var note=b.getAttribute('data-note'); var noteEl=root.querySelector('#ff-note'+n); if(noteEl){ noteEl.hidden=!note; noteEl.innerHTML=note?'<b>'+note+'</b>':''; }
+          endEl.hidden=true; show(n);
+        });
+      })();
+      </script>
+    </section>
+
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
         <div class="callout callout--good callout--center" data-reveal>

@@ -299,7 +299,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-31"
+      "dateModified": "2026-09-12"
     },
     {
       "@type": "HowTo",
@@ -823,6 +823,147 @@
 <p>The "Loading Profile" splash is the moment Outlook opens your mail profile and loads its add-ins. If it freezes there, one of three things is usually happening: a <strong>previous Outlook (or Office) process is still running</strong> in the background and blocking a clean start, a <strong>third-party add-in</strong> is hanging during load, or the <strong>graphics/rendering</strong> or the <strong>mail profile itself</strong> has a fault.</p><p>This is a startup problem, not a lost-email problem. For Microsoft 365, Exchange, IMAP and Google Workspace accounts your mail lives on the server, so even the heavier fixes below won't lose it — Outlook re-downloads it. Work through the steps in order and stop the moment Outlook opens normally.</p>
       </div>
     </section>
+    <section class="section" aria-label="Fix it with me" id="fixflow">
+      <div class="wrap">
+      <style>
+      #fixflow .ff{max-width:860px;margin:0 auto}
+      #fixflow .ff-rev{display:block;margin-top:.5rem;font-size:.72rem;letter-spacing:.06em;color:var(--cyan-soft,#6cc4f5)}
+      #fixflow .ff-top{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin-bottom:1rem;font-size:.85rem;color:var(--muted,#9fb5d3)}
+      #fixflow .ff-os{font-weight:600;color:var(--ink,#eaf4ff)}
+      #fixflow .ff-oslink{background:none;border:0;padding:0;color:var(--cyan-soft,#6cc4f5);font:inherit;font-size:.8rem;cursor:pointer;text-decoration:underline}
+      #fixflow .ff-prog{margin-left:auto;font-family:var(--font-mono,monospace);font-size:.72rem;letter-spacing:.06em}
+      #fixflow .ff-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.55rem}
+      #fixflow .ff-step{border:1px solid var(--line,rgba(125,170,220,.16));border-radius:14px;background:rgba(255,255,255,.03);overflow:hidden}
+      #fixflow .ff-step[hidden]{display:none}
+      #fixflow .ff-head{display:flex;align-items:center;gap:.8rem;padding:.9rem 1.1rem;font-weight:700;font-size:1.02rem}
+      #fixflow .ff-num{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-mono,monospace);font-size:.75rem;border:1px solid rgba(108,196,245,.5);color:var(--cyan-soft,#6cc4f5)}
+      #fixflow .ff-step.is-done .ff-num{border-color:rgba(46,204,113,.6);color:#2ecc71}
+      #fixflow .ff-step.is-done .ff-head{opacity:.7;font-weight:600}
+      #fixflow .ff-step.is-skip .ff-num{opacity:.45}
+      #fixflow .ff-body{display:none;padding:0 1.1rem 1.1rem;font-size:.93rem;line-height:1.6;color:var(--ink-2,#dfe9f7)}
+      #fixflow .ff-step.is-on{border-color:rgba(108,196,245,.55);background:rgba(29,151,227,.07)}
+      #fixflow .ff-step.is-on .ff-body{display:block}
+      #fixflow .ff-body p{margin:0 0 .6rem}
+      #fixflow .ff-body ol{margin:0 0 .6rem 1.2rem;padding:0}
+      #fixflow .ff-body li{margin:.25rem 0}
+      #fixflow .ff-cmd{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin:.5rem 0;padding:.5rem .7rem;border-radius:9px;background:rgba(7,13,34,.7);border:1px solid rgba(125,170,220,.22)}
+      #fixflow .ff-cmd code{font-family:var(--font-mono,monospace);font-size:.82rem;color:#eaf4ff;word-break:break-all}
+      #fixflow .ff-cmd small{width:100%;font-size:.72rem;color:var(--muted,#9fb5d3)}
+      #fixflow .ff-copy{margin-left:auto;border:1px solid rgba(108,196,245,.45);background:transparent;color:var(--cyan-soft,#6cc4f5);border-radius:7px;padding:.28rem .6rem;font:inherit;font-size:.74rem;cursor:pointer;min-height:32px}
+      #fixflow .ff-copy.done{border-color:rgba(46,204,113,.6);color:#2ecc71}
+      #fixflow .ff-open{display:inline-block;margin:.2rem .4rem .5rem 0;padding:.5rem .8rem;border-radius:9px;border:1px solid rgba(108,196,245,.45);color:var(--cyan-soft,#6cc4f5);text-decoration:none;font-size:.85rem;font-weight:600}
+      #fixflow .ff:not(.is-win) .ff-open{display:none}
+      #fixflow .ff-p10{display:none} #fixflow .ff.is-w10 .ff-p10{display:inline} #fixflow .ff.is-w10 .ff-p11{display:none}
+      #fixflow .ff-fig{margin:.8rem 0 .4rem;max-width:460px}
+      #fixflow .ff-fig img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid rgba(125,170,220,.28)}
+      #fixflow .ff-fig figcaption{font-size:.72rem;color:var(--muted,#9fb5d3);margin-top:.35rem;line-height:1.5}
+      #fixflow .ff-ask{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:.8rem;padding-top:.8rem;border-top:1px dashed rgba(125,170,220,.25)}
+      #fixflow .ff-ask b{font-size:.95rem}
+      #fixflow .ff-ask .button{min-height:44px}
+      #fixflow .ff-end{margin-top:1rem;padding:1.3rem 1.4rem;border-radius:16px;border:1px solid rgba(46,204,113,.45);background:rgba(46,204,113,.07)}
+      #fixflow .ff-end[hidden]{display:none}
+      #fixflow .ff-end.is-bad{border-color:rgba(255,180,0,.5);background:rgba(255,180,0,.07)}
+      #fixflow .ff-end h3{margin:0 0 .5rem;font-size:1.25rem}
+      #fixflow .ff-end p{margin:0 0 .6rem;line-height:1.6}
+      #fixflow .ff-end .ff-cta{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:.8rem}
+      #fixflow .ff-end .ff-cta .button{min-height:44px}
+      #fixflow .ff-plan{margin-top:1rem;padding:1rem 1.1rem;border-radius:12px;border:1px solid rgba(125,170,220,.25);background:rgba(255,255,255,.03);font-size:.9rem;line-height:1.6}
+      #fixflow .ff-plan b{color:var(--cyan-soft,#6cc4f5)}
+      @media(max-width:560px){#fixflow .ff-ask .button,#fixflow .ff-end .ff-cta .button{width:100%}#fixflow .ff-prog{margin-left:0}}
+      </style>
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FIX IT WITH ME &middot; STEP BY STEP</p>
+          <h2 class="section-title section-title--center" data-title>Fix it with me, one step at a time<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>The steps from this guide, one at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your device.<span class="ff-rev mono">Last reviewed 12 September 2026</span></p>
+        </div>
+        <div class="ff" id="ff">
+          <div class="ff-top"><span class="ff-os" id="ff-os">Checking which Windows you have&hellip;</span><button type="button" class="ff-oslink" id="ff-ostoggle" hidden>Not right? Switch to Windows 10</button><span class="ff-prog" id="ff-prog">STEP 1 OF 6</span></div>
+          <ol class="ff-steps" id="ff-steps">
+            <li class="ff-step is-on" data-step="1">
+              <div class="ff-head"><span class="ff-num">01</span>End all Office tasks in Task Manager</div>
+              <div class="ff-body"><p>Open Task Manager, find Outlook, Microsoft Office and any leftover Teams or Skype helpers under Processes, and choose End task for each to clear a half-closed process.</p><div class="ff-ask"><b>Is it working now?</b><button type="button" class="button primary" data-go="fixed">Yes, sorted</button><button type="button" class="button secondary" data-go="2">Not yet</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="2" hidden>
+              <div class="ff-head"><span class="ff-num">02</span>Start Outlook in safe mode</div>
+              <div class="ff-body"><p>Press Windows key + R, type outlook.exe /safe and press Enter. If Outlook opens with add-ins off, an add-in is the cause.</p><div class="ff-ask"><b>Is it working now?</b><button type="button" class="button primary" data-go="fixed">Yes, sorted</button><button type="button" class="button secondary" data-go="3">Not yet</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="3" hidden>
+              <div class="ff-head"><span class="ff-num">03</span>Disable add-ins one at a time</div>
+              <div class="ff-body"><p>In safe mode go to File > Options > Add-ins, set Manage to COM Add-ins, click Go, untick all, restart normally, then re-enable one at a time to find the culprit.</p><div class="ff-ask"><b>Is it working now?</b><button type="button" class="button primary" data-go="fixed">Yes, sorted</button><button type="button" class="button secondary" data-go="4">Not yet</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="4" hidden>
+              <div class="ff-head"><span class="ff-num">04</span>Run an Office Quick Repair</div>
+              <div class="ff-body"><p>Go to Control Panel > Programs and Features, select Microsoft 365 / Office, click Change, then Quick Repair to fix damaged Office files without touching your mail.</p><div class="ff-ask"><b>Is it working now?</b><button type="button" class="button primary" data-go="fixed">Yes, sorted</button><button type="button" class="button secondary" data-go="5">Not yet</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="5" hidden>
+              <div class="ff-head"><span class="ff-num">05</span>Disable hardware graphics acceleration</div>
+              <div class="ff-body"><p>In File > Options > Advanced, under Display, tick Disable hardware graphics acceleration and restart. This box may be absent in current builds, which manage it automatically.</p><div class="ff-ask"><b>Is it working now?</b><button type="button" class="button primary" data-go="fixed">Yes, sorted</button><button type="button" class="button secondary" data-go="6">Not yet</button></div>
+              </div>
+            </li>
+            <li class="ff-step" data-step="6" hidden>
+              <div class="ff-head"><span class="ff-num">06</span>Create a new mail profile as a last resort</div>
+              <div class="ff-body"><p>Close Outlook, go to Control Panel > Mail > Show Profiles > Add, create a fresh profile and re-add your account. For Microsoft 365 or Outlook.com, hold Shift while starting Outlook (or run outlook.exe /manageprofiles) and sign in from Outlook. Back up any local-only PST first; server mail re-downloads.</p><div class="ff-ask"><b>Is it working now?</b><button type="button" class="button primary" data-go="fixed">Yes, sorted</button><button type="button" class="button secondary" data-go="stuck">Not yet</button></div>
+              </div>
+            </li>
+          </ol>
+          <div class="ff-end" id="ff-end" hidden></div>
+          <template id="ff-tpl-fixed"><h3>Sorted{mins}. Nice work.</h3><p>Send yourself a test email to be sure it has stuck.</p><div class="ff-plan"><b>Rather have it looked after?</b> On a 365 support plan every computer gets a full service every six weeks: Windows, driver and app updates applied and checked, security and backup looked at, and a written Service Report each time. Home &pound;18.25 per computer a month, business from &pound;24.38, rolling monthly.</div><div class="ff-cta"><a class="button primary" href="/monthly-it-support/">See the support plans &#8594;</a><a class="button secondary" href="/free-pc-health-check/">Get the free app</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div></template>
+          <template id="ff-tpl-stuck"><h3>Still not working after all six steps? That is a remote job.</h3><p>With your permission we connect to your screen and sort it in one session. Usually the same day, remote help from &pound;20, and no fix, no fee.</p><div class="ff-cta"><a class="button primary" href="tel:+441202775566">Call 01202 775566</a><a class="button secondary" href="sms:+447520615332">Text 07520 615332</a><a class="button bm-ghost" href="/remote-support/">How remote help works</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div></template>
+          <template id="ff-tpl-text">Fix Outlook stuck on loading profile - the fix order (365techies.co.uk/outlook-stuck-on-loading-profile/)
+1. End all Office tasks in Task Manager: Open Task Manager, find Outlook, Microsoft Office and any leftover Teams or Skype helpers under Processes, and choose End task for each to clear a half-closed process.
+2. Start Outlook in safe mode: Press Windows key + R, type outlook.exe /safe and press Enter. If Outlook opens with add-ins off, an add-in is the cause.
+3. Disable add-ins one at a time: In safe mode go to File > Options > Add-ins, set Manage to COM Add-ins, click Go, untick all, restart normally, then re-enable one at a time to find the culprit.
+4. Run an Office Quick Repair: Go to Control Panel > Programs and Features, select Microsoft 365 / Office, click Change, then Quick Repair to fix damaged Office files without touching your mail.
+5. Disable hardware graphics acceleration: In File > Options > Advanced, under Display, tick Disable hardware graphics acceleration and restart. This box may be absent in current builds, which manage it automatically.
+6. Create a new mail profile as a last resort: Close Outlook, go to Control Panel > Mail > Show Profiles > Add, create a fresh profile and re-add your account. For Microsoft 365 or Outlook.com, hold Shift while starting Outlook (or run outlook.exe /manageprofiles) and sign in from Outlook. Back up any local-only PST first; server mail re-downloads.
+Still stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.uk/remote-support/</template>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var root=document.getElementById('ff'); if(!root) return;
+        var steps=Array.prototype.slice.call(root.querySelectorAll('.ff-step')), N=steps.length, endEl=root.querySelector('#ff-end'), prog=root.querySelector('#ff-prog');
+        var osEl=root.querySelector('#ff-os'), tog=root.querySelector('#ff-ostoggle'), t0=null, w10=false, isWin=/Windows/i.test(navigator.userAgent);
+        root.classList.toggle('is-win',isWin);
+        function setOS(ten,label){ w10=ten; root.classList.toggle('is-w10',ten); osEl.textContent=label; tog.hidden=!isWin; tog.textContent=ten?'Not right? Switch to Windows 11':'Not right? Switch to Windows 10'; }
+        if(root.getAttribute('data-os')==='1'){
+          if(!isWin){ setOS(false,'These steps are for Windows; you seem to be on another device, so keep them for the PC.'); }
+          else if(navigator.userAgentData&&navigator.userAgentData.getHighEntropyValues){
+            navigator.userAgentData.getHighEntropyValues(['platformVersion']).then(function(v){ var maj=parseInt(String(v.platformVersion||'').split('.')[0],10);
+              if(maj>=13) setOS(false,'You are on Windows 11, so the paths below match your Settings app.'); else if(maj>0) setOS(true,'You are on Windows 10, so the paths below match your Settings app.'); else setOS(false,'Windows 10 or 11: paths shown for Windows 11.'); }).catch(function(){ setOS(false,'Windows 10 or 11: paths shown for Windows 11.'); });
+          } else setOS(false,'Windows 10 or 11: paths shown for Windows 11.');
+          tog.addEventListener('click',function(){ setOS(!w10,w10?'Showing the Windows 11 paths.':'Showing the Windows 10 paths.'); });
+        } else { osEl.hidden=true; tog.hidden=true; }
+        function tpl(id,text){ var t=root.querySelector('#'+id); if(!t) return ''; return text?(t.content?t.content.textContent:t.textContent):t.innerHTML; }
+        function show(n){ steps.forEach(function(s){ var k=parseInt(s.getAttribute('data-step'),10); s.hidden=k>n; s.classList.toggle('is-on',k===n); if(k<n&&!s.classList.contains('is-done')) s.classList.add('is-skip'); }); prog.textContent='STEP '+n+' OF '+N; var cur=steps[n-1]; if(cur) cur.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+        function finish(kind){
+          steps.forEach(function(s){ s.classList.remove('is-on'); });
+          var mins=t0?Math.max(1,Math.round((Date.now()-t0)/60000)):null, minsTxt=mins?(' in about '+mins+' minute'+(mins===1?'':'s')):'';
+          endEl.className='ff-end'+(kind==='stuck'?' is-bad':''); endEl.innerHTML=tpl(kind==='fixed'?'ff-tpl-fixed':'ff-tpl-stuck').split('{mins}').join(minsTxt);
+          prog.textContent=kind==='fixed'?'DONE':'NEEDS A TECHIE'; endEl.hidden=false; endEl.scrollIntoView({behavior:'smooth',block:'nearest'});
+          var c=endEl.querySelector('#ff-copyall'); if(c) c.addEventListener('click',function(){ copyText(tpl('ff-tpl-text',true).replace(/^\s+|\s+$/g,''),c,'Copy these steps'); });
+        }
+        function copyText(txt,btn,label){ function ok(){ btn.textContent='Copied'; btn.classList.add('done'); setTimeout(function(){ btn.textContent=label; btn.classList.remove('done'); },1800); }
+          if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(ok).catch(function(){}); }
+          else{ var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); ok(); }catch(e){} document.body.removeChild(ta); } }
+        root.addEventListener('click',function(e){
+          var b=e.target.closest('button'); if(!b) return;
+          if(b.classList.contains('ff-copy')){ copyText(b.getAttribute('data-copy'),b,'Copy'); return; }
+          var go=b.getAttribute('data-go'); if(!go) return;
+          if(!t0) t0=Date.now();
+          var cur=b.closest('.ff-step'); if(cur){ cur.classList.add('is-done'); }
+          if(go==='fixed'||go==='stuck'){ finish(go); return; }
+          var n=parseInt(go,10); var note=b.getAttribute('data-note'); var noteEl=root.querySelector('#ff-note'+n); if(noteEl){ noteEl.hidden=!note; noteEl.innerHTML=note?'<b>'+note+'</b>':''; }
+          endEl.hidden=true; show(n);
+        });
+      })();
+      </script>
+    </section>
+
     <section class="section" aria-label="Fix this now with remote support">
       <div class="wrap" style="max-width:860px;margin:0 auto">
         <div class="callout callout--good callout--center" data-reveal>
