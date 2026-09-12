@@ -192,7 +192,7 @@
  },
  "bournemouth/sea-today": {
   "first": "2026-08-02",
-  "h": "ddb35b3d7afd12e4",
+  "h": "b3a6f9c287fb616b",
   "last": "2026-09-12"
  },
  "bournemouth/sunrise-sunset": {
@@ -2670,7 +2670,7 @@
  },
  "printer-disappeared-after-windows-update": {
   "first": "2026-07-28",
-  "h": "702a1d1e1a1c2a61",
+  "h": "ee107121b0315e1c",
   "last": "2026-09-12"
  },
  "printer-prints-but-wont-scan-after-new-router": {

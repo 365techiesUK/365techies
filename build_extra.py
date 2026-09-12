@@ -21345,6 +21345,7 @@ PRINTER_FIX_TOOL = r"""    <section class="section" aria-label="Fix it with me" 
                 <ol><li>Scroll to <b>Print Spooler</b>, right-click it and choose <b>Restart</b> (if Restart is greyed out, choose <b>Start</b>).</li><li>Double-click it and make sure <b>Startup type</b> is <b>Automatic</b>.</li></ol>
                 <p>Comfortable with a Terminal? Right-click Start, choose <b>Terminal (Admin)</b>, paste and press Enter:</p>
                 <div class="ff-cmd"><code>net stop spooler &amp;&amp; net start spooler</code><button type="button" class="ff-copy" data-copy="net stop spooler && net start spooler">Copy</button></div>
+                <figure class="ff-fig" style="max-width:560px"><img src="/images/printer-w11-services-print-spooler.webp" width="1200" height="852" alt="Windows 11 Services window with Print Spooler selected: Stop the service and Restart the service links on the left, status Running, startup type Automatic" loading="lazy" decoding="async"><figcaption>Services with Print Spooler selected: the Restart link is on the left. Real screenshot, Windows 11, September 2026.</figcaption></figure>
                 <div class="ff-ask"><b>Is the printer back?</b><button type="button" class="button primary" data-go="fixed">Yes, fixed</button><button type="button" class="button secondary" data-go="3">Still missing</button></div>
               </div>
             </li>
@@ -21449,9 +21450,14 @@ def _printer_page_extras(d):
             '<p style="margin:0 0 .6rem">On a 365 support plan, Windows and driver updates are applied on our schedule and checked afterwards, every six weeks, with a written Service Report each time. '
             '<b>Home &pound;18.25 per computer a month, business from &pound;24.38</b>, rolling monthly, no lock-in. The free <a href="/free-pc-health-check/">365 PC Manager</a> app also tells you when Windows is waiting for a restart.</p>'
             '<p style="margin:0"><a class="button primary" href="/monthly-it-support/">See the support plans &#8594;</a> <a class="button secondary" href="/book-service/" style="margin-left:.4rem">Book a visit</a></p></div>')
+    fig0 = ('<figure class="ff-fig" style="max-width:560px;margin:1rem 0"><img src="/images/printer-w11-services-print-spooler.webp" width="1200" height="852" '
+            'alt="Windows 11 Services window with Print Spooler selected: Stop the service and Restart the service links, status Running, startup type Automatic" loading="lazy" decoding="async" '
+            'style="display:block;width:100%;height:auto;border-radius:10px;border:1px solid rgba(125,170,220,.28)"><figcaption style="font-size:.72rem;color:var(--muted);margin-top:.35rem">'
+            'Services (services.msc) with Print Spooler selected: Restart the service is the link on the left. Real screenshot, Windows 11, September 2026.</figcaption></figure>')
     for i, sec in enumerate(secs):
         h = sec['h2']
-        if h.startswith('Re-add the printer'): sec['html'] = sec['html'] + fig1
+        if h.startswith('Restart the Print Spooler'): sec['html'] = sec['html'] + fig0
+        elif h.startswith('Re-add the printer'): sec['html'] = sec['html'] + fig1
         elif h.startswith('Rolling back the update'): sec['html'] = sec['html'] + fig2
         elif h.startswith('When to call us'): sec['html'] = sec['html'] + plan
     d['sections'] = secs
