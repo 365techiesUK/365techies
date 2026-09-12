@@ -19852,6 +19852,7 @@ def service_parent_page(d):
 {d["intro"]}
       </div></div>
     </section>''',
+      *([bp.apple_notice_for(slug)] if bp.apple_notice_for(slug) else []),   # the email migration service carries the 'Windows PCs only' strip (owner, 12 Sep 2026)
       f'''    <section class="section section--alt" aria-label="What we cover">
       <div class="wrap">
         <div class="section-head">

@@ -1315,7 +1315,7 @@ _APPLE_NOTICE_PHONE = ('<div class="callout callout--info" id="apple-note" style
 # and two admin/legal explainers. Owner asked for "the email pages" on 12 Sep 2026; these were left out and reported.
 _APPLE_NOTICE_SKIP = {'email-basics-course', 'email-security-checker', 'email-signature-generator',
                       'youve-been-hacked-email-bitcoin-scam', 'business-email-compromise', 'simplybook-custom-email-notifications',
-                      'email-migration', 'business-email-when-closing-your-company', 'take-over-email-domain-after-buying-business'}
+                      'business-email-when-closing-your-company', 'take-over-email-domain-after-buying-business'}   # email-migration added 12 Sep (owner)
 
 def apple_notice_inner(slug):
     """The bare callout (for a blog article body), or None when the page is not an Outlook/email support page."""
