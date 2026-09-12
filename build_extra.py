@@ -13857,6 +13857,104 @@ SPECCHECK_TOOL = r'''    <section class="section" aria-label="PC spec checker" i
 # its Health tab or sends at check-in - memory fitted, free disk, drive SMART health, antivirus,
 # backup, battery health, uptime, restart pending, the measured broadband test. Nothing the app
 # does not read is claimed. The Windows 11 minimums are Microsoft's published requirements.
+# ---- Fleet stats: anonymised aggregates from the computers running 365 PC Manager (api/pcm-fleet-stats.php).
+# Hidden until the endpoint answers with enough machines (privacy floor lives server-side); data-show-size="1" on the
+# section would also print the coarse fleet band - off until the owner says so.
+SPECCHECK_FLEET_BAND = """    <section class="section" aria-label="Across the computers we look after" id="fleet" hidden>
+      <div class="wrap">
+      <style>
+      #fleet[hidden]{display:none}
+      #fleet .fl-wrap{max-width:1080px;margin:0 auto}
+      #fleet .fl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:.8rem;margin-top:1.4rem}
+      #fleet .fl-tile{padding:1.15rem 1.2rem 1.05rem;border-radius:14px;border:1px solid var(--line,rgba(125,170,220,.16));background:rgba(255,255,255,.03);display:flex;flex-direction:column;gap:.3rem}
+      #fleet .fl-tile[hidden]{display:none}
+      #fleet .fl-num{font-family:var(--font-display,"Clash Display",sans-serif);font-size:clamp(2.1rem,4vw,2.8rem);font-weight:600;line-height:1;letter-spacing:-.02em;color:var(--cyan-soft,#6cc4f5);font-variant-numeric:tabular-nums}
+      #fleet .fl-num small{font-size:.5em;font-weight:500;margin-left:.1em}
+      #fleet .fl-lab{font-size:.92rem;font-weight:600;line-height:1.35}
+      #fleet .fl-why{font-size:.78rem;line-height:1.5;color:var(--muted,#9fb5d3);margin:0}
+      #fleet .fl-why a{color:var(--cyan-soft,#6cc4f5)}
+      #fleet .fl-tile--warn .fl-num{color:#ffb400}
+      #fleet .fl-tile--bad .fl-num{color:#ff6b6b}
+      #fleet .fl-foot{font-family:var(--font-mono,monospace);font-size:.72rem;line-height:1.6;color:var(--muted,#9fb5d3);margin:1.1rem 0 0;max-width:80ch}
+      #fleet .fl-foot span{color:var(--cyan-soft,#6cc4f5)}
+      </style>
+        <div class="fl-wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// HOW DOES YOURS COMPARE?</p>
+          <h2 class="section-title section-title--center" data-title>Across the computers we look after<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Every computer running <a href="/free-pc-health-check/">365 PC Manager</a> checks in with us. Added up &mdash; and only added up &mdash; they show what an ordinary home or office computer looks like right now. Put your own readings above beside them.</p>
+        </div>
+        <div class="fl-grid" id="fl-grid">
+          <div class="fl-tile" data-k="windows10" data-warn="20" data-bad="40" hidden><div class="fl-num"><b>&ndash;</b><small>%</small></div><div class="fl-lab">still on Windows 10</div><p class="fl-why">Free security updates ended in October 2025. <a href="/windows-10-end-of-life/">What that means for you &#8594;</a></p></div>
+          <div class="fl-tile" data-k="backup_seen" data-inv="1" data-warn="80" data-bad="60" hidden><div class="fl-num"><b>&ndash;</b><small>%</small></div><div class="fl-lab">have a backup we can see</div><p class="fl-why">A browser cannot check this &mdash; the app can, and tells you if there is none.</p></div>
+          <div class="fl-tile" data-k="antivirus_on" data-inv="1" data-warn="97" data-bad="90" hidden><div class="fl-num"><b>&ndash;</b><small>%</small></div><div class="fl-lab">have antivirus switched on</div><p class="fl-why">The rest are running with the front door open, usually without knowing.</p></div>
+          <div class="fl-tile" data-k="drive_over_85" data-warn="15" data-bad="30" hidden><div class="fl-num"><b>&ndash;</b><small>%</small></div><div class="fl-lab">have a drive over 85% full</div><p class="fl-why">The most common reason a healthy computer feels slow.</p></div>
+          <div class="fl-tile" data-k="battery_under_70" data-warn="25" data-bad="45" hidden><div class="fl-num"><b>&ndash;</b><small>%</small></div><div class="fl-lab">of laptops have a worn battery</div><p class="fl-why">Below 70% of its original capacity &mdash; the reading your spec sheet above cannot give you.</p></div>
+          <div class="fl-tile" data-k="restart_waiting" data-warn="30" data-bad="50" hidden><div class="fl-num"><b>&ndash;</b><small>%</small></div><div class="fl-lab">are waiting for a restart</div><p class="fl-why">Updates are downloaded but not applied until the computer restarts.</p></div>
+          <div class="fl-tile" data-k="score_median" hidden><div class="fl-num"><b>&ndash;</b><small>/100</small></div><div class="fl-lab">typical health score</div><p class="fl-why">The middle computer in the fleet. <a href="/free-pc-health-check/">See how the score is worked out &#8594;</a></p></div>
+        </div>
+        <p class="fl-foot">Computers that reported in the last <span id="fl-days">30</span> days &middot; whole-number percentages &middot; no individual computer, person or business is identifiable &middot; figures refresh daily<span id="fl-band"></span></p>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var sec=document.getElementById('fleet'); if(!sec||!window.fetch) return;
+        fetch('/api/pcm-fleet-stats.php').then(function(r){return r.ok?r.json():null}).then(function(d){
+          if(!d||!d.ok||!d.enough||!d.stats) return;                     /* below the privacy floor: the section stays hidden */
+          var shown=0;
+          Array.prototype.forEach.call(sec.querySelectorAll('.fl-tile'),function(t){
+            var k=t.getAttribute('data-k'), v=d.stats[k];
+            if(typeof v!=='number') return;
+            t.querySelector('.fl-num b').textContent=String(v);
+            var warn=parseInt(t.getAttribute('data-warn')||'',10), bad=parseInt(t.getAttribute('data-bad')||'',10), inv=t.getAttribute('data-inv')==='1';
+            if(!isNaN(bad) && (inv ? v<=bad : v>=bad)) t.classList.add('fl-tile--bad');
+            else if(!isNaN(warn) && (inv ? v<=warn : v>=warn)) t.classList.add('fl-tile--warn');
+            t.hidden=false; shown++;
+          });
+          if(!shown) return;
+          if(d.window_days) document.getElementById('fl-days').textContent=String(d.window_days);
+          if(d.band && sec.getAttribute('data-show-size')==='1') document.getElementById('fl-band').textContent=' · '+d.band+' computers';
+          sec.hidden=false;
+        }).catch(function(){});
+      })();
+      </script>
+    </section>
+"""
+
+# "What to check next": numbered because it IS a sequence - the order a techie would run the checks in.
+SPECCHECK_NEXT_BAND = """    <section class="section" aria-label="What to check next" id="check-next">
+      <div class="wrap">
+      <style>
+      #check-next .cn-path{max-width:1080px;margin:1.4rem auto 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.8rem;counter-reset:cn}
+      #check-next .cn-step{position:relative;display:flex;flex-direction:column;gap:.45rem;padding:1.15rem 1.2rem 1.1rem;border-radius:14px;border:1px solid var(--line,rgba(125,170,220,.16));background:rgba(255,255,255,.03);color:inherit;text-decoration:none;transition:border-color .25s,transform .25s}
+      #check-next .cn-step:hover,#check-next .cn-step:focus-visible{border-color:rgba(108,196,245,.55);transform:translateY(-2px)}
+      #check-next .cn-step::before{counter-increment:cn;content:counter(cn,decimal-leading-zero);font-family:var(--font-mono,monospace);font-size:.72rem;letter-spacing:.08em;color:var(--cyan-soft,#6cc4f5)}
+      #check-next .cn-step h3{margin:0;font-size:1.02rem;line-height:1.3;display:flex;align-items:center;gap:.5rem}
+      #check-next .cn-step h3 span{font-size:1.15rem}
+      #check-next .cn-step p{margin:0;font-size:.85rem;line-height:1.55;color:var(--muted,#9fb5d3)}
+      #check-next .cn-step .cn-go{margin-top:auto;padding-top:.4rem;font-size:.85rem;font-weight:600;color:var(--cyan-soft,#6cc4f5)}
+      #check-next .cn-step--app{border-color:rgba(108,196,245,.4);background:rgba(29,151,227,.08)}
+      #check-next .cn-note{max-width:76ch;margin:1.1rem auto 0;text-align:center;font-size:.8rem;line-height:1.6;color:var(--muted,#9fb5d3)}
+      @media(prefers-reduced-motion:reduce){#check-next .cn-step{transition:none}}
+      </style>
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT TO CHECK NEXT</p>
+          <h2 class="section-title section-title--center" data-title>The spec sheet says what it <em class="grad grad--cyan">should</em> do. Now check what it <em class="grad grad--cyan">does</em>.<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Six free checks, in the order a techie would run them &mdash; each takes a minute or two, and none of them sends us a thing.</p>
+        </div>
+        <div class="cn-path" data-stagger>
+          <a class="cn-step" href="/pc-benchmark/"><h3><span>&#9889;</span>Benchmark it</h3><p>Cores and memory are the promise; the benchmark is the delivery. Six live tests give a score you can compare, and catch the fast machine that is being held back.</p><span class="cn-go">Run the PC benchmark &#8594;</span></a>
+          <a class="cn-step" href="/broadband-speed-checker/"><h3><span>&#127760;</span>Test the broadband</h3><p>The network reading above is the browser&rsquo;s rough guess. The speed test measures download, upload and ping for real, so you know whether the slowness is the computer or the line.</p><span class="cn-go">Run the broadband speed test &#8594;</span></a>
+          <a class="cn-step" href="/wifi-signal-test/"><h3><span>&#128246;</span>Walk the Wi-Fi</h3><p>Fast broadband at the router can still be a crawl in the back bedroom. Walk around with the signal test open and watch where it drops.</p><span class="cn-go">Test the Wi-Fi signal &#8594;</span></a>
+          <a class="cn-step" href="/mobile-signal-check/"><h3><span>&#128241;</span>Check the mobile signal</h3><p>Working from the phone&rsquo;s hotspot, or thinking about a 4G or 5G broadband box? Measure the mobile data speed right where you sit.</p><span class="cn-go">Check the mobile signal &#8594;</span></a>
+          <a class="cn-step" href="/it-health-check-tool/"><h3><span>&#128737;</span>Score the security</h3><p>Hardware is only half of it. A few quick questions give you a security and IT score out of 100, with the fixes ranked.</p><span class="cn-go">Take the IT health check &#8594;</span></a>
+          <a class="cn-step cn-step--app" href="/free-pc-health-check/"><h3><span>&#128190;</span>Then see the inside</h3><p>Exact memory, drive health, battery wear, antivirus and backup &mdash; the readings a browser is not allowed to see. Free, small, and it keeps watching so you don&rsquo;t have to.</p><span class="cn-go">Get 365 PC Manager &#8594;</span></a>
+        </div>
+        <p class="cn-note">Every one of these runs in your browser or on your own computer. Nothing is uploaded, and nothing needs an account. <a href="/free-tools/">See all our free tools &#8594;</a></p>
+      </div>
+    </section>
+"""
+
 SPECCHECK_APP_BAND = '''    <section class="section section--alt" aria-label="What a browser cannot see" id="beyond-browser">
       <div class="wrap">
         <div class="section-head">
@@ -13920,9 +14018,10 @@ def computer_spec_checker():
            cta1=("Scan my computer", "#spectool"), cta2=("Test its speed", "/pc-benchmark/"),
            chips=["Instant &amp; free", "Readings never sent to us", "Downloadable spec sheet"]),
       SPECCHECK_TOOL,
+      SPECCHECK_FLEET_BAND,
       SPECCHECK_APP_BAND,
+      SPECCHECK_NEXT_BAND,
       faq_html(faqs),
-      tools_strip(["pcmapp", "pcbench", "healthcheck", "faultcheck"], title="Now put it through its paces", alt=False),
       cta("Specs raising questions?",
           "Windows 10 warning, mystery slowness, or a machine that doesn&rsquo;t match what you thought you bought &mdash; send us your spec sheet and we&rsquo;ll give you an honest answer, usually within minutes remotely.",
           primary=("Ask a Techie", "/contact/"), secondary=("Book a Service", "/book-service/")),
