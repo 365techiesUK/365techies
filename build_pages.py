@@ -84,6 +84,7 @@ _VOLATILE = [
     # a footer edit never re-dates 718 pages; the stored hashes were re-based once with this rule in place.
     (_cdre.compile(r'<footer class="site-footer">.*?</footer>', _cdre.S), ''),
     (_cdre.compile(r'\s*<p class="page-hero__byline[^>]*>.*?</p>', _cdre.S), ''),   # the byline (and its indentation): constant text + a stamped date
+    (_cdre.compile(r'\s*<div class="cookie-banner"[^>]*>.*?</div>\s*</div>', _cdre.S), ''),   # the cookie banner is chrome: its wording changed on 13 Sep 2026 and re-dated 703 pages before this rule
     (_cdre.compile(r'\?v=[\w.\-]+'), '?v=X'),
     (_cdre.compile(r'checked on \d{1,2} \w+ \d{4}', _cdre.I), 'checked on X'),
     (_cdre.compile(r'Dates checked: \d{1,2} \w+ \d{4}', _cdre.I), 'Dates checked: X'),
