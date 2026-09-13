@@ -19,12 +19,16 @@ date_default_timezone_set('Europe/London');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') { header('Location: /contact/', true, 303); exit; }
 
-/* honeypot — bots fill it, humans never see it */
+/* honeypot — bots fill it, humans never see it. The field is in every contact-form since
+   13 Sep 2026 (it had been missing from /contact/, /book-a-collection/ and /support-portal/). */
 if (!empty($_POST['company_website'])) { header('Location: /contact/#message-sent', true, 303); exit; }
 
-/* soft same-site check */
+/* same-site check. A browser posting this form always sends an Origin header (and, with the
+   site's strict-origin-when-cross-origin policy, the Referer too). The marketing spam that
+   reached Slack in September posted straight at this file with neither, which the old check
+   let through because it only rejected a PRESENT foreign origin. Absent now means not a browser. */
 $src = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '');
-if ($src !== '' && strpos($src, '365techies.co.uk') === false) { http_response_code(403); exit; }
+if ($src === '' || strpos($src, '365techies.co.uk') === false) { http_response_code(403); exit; }
 
 /* light rate limit: 1 native submission per 20s per IP */
 $rl = sys_get_temp_dir() . '/tt_formrelay_' . md5(isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'x');

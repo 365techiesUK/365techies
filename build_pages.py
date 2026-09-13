@@ -1427,7 +1427,18 @@ def trust_bar():
             f'<span>Family-run since 1995</span>'
             f'<span>No call-out fee</span></p>')
 
+def _call_first(a, b):
+    """Funnel audit, 13 Sep 2026: 123 pages opened with the contact form first and the phone second, and the phone side
+    is the majority channel (12 of 19 contacts in Aug; every text and reserve lead in Sep arrived outside the form).
+    Wherever a page offers BOTH the form and the phone, the phone goes first and the form stays second. Pages whose
+    second button is a plan, a booking, the stock or an in-page jump keep their own order: those lead somewhere on purpose."""
+    if a and b and str(a[1]).startswith("/contact/") and str(b[1]).startswith("tel:"):
+        return b, a
+    return a, b
+
+
 def cta(title, text, primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Call 01202 775566", "tel:+441202775566"), whats_next=False):
+    primary, secondary = _call_first(primary, secondary)
     strip = ("\n        " + next_strip()) if whats_next else ""
     return f'''    <section class="cta-band" aria-label="Get started">
       <div class="cta-band__inner">
@@ -1448,6 +1459,7 @@ def hero_trust(lede):
 
 def hero(crumbs_html, eyebrow, h1_html, lede, cta1=("View Monthly Plans", "/monthly-it-support/"),
          cta2=("Get Support Today", "/contact/"), chips=None, scene=None, trustbar=False):
+    cta1, cta2 = _call_first(cta1, cta2)
     if trustbar:
         # the trust bar replaces both the dot-chips AND the lede's templated rating sentence
         lede = lede.replace(" Rated 4.9 on Google.", "")
@@ -6339,6 +6351,7 @@ add(
       </div>
       <div class="wrap contact-grid">
         <form class="contact-form" data-reveal action="/api/form-relay.php" method="post">
+          <input type="text" name="company_website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
           <label class="field"><span>Your name</span><input type="text" name="name" autocomplete="name" required /></label>
           <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" required /></label>
           <label class="field"><span>Phone (optional)</span><input type="tel" name="phone" autocomplete="tel" /></label>
