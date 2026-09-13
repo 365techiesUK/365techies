@@ -307,7 +307,10 @@ if (!defined('DORSET_SHIPS_LIB')) {
                      'poll' => array('lastPollAt' => $lastPoll, 'lastError' => isset($p['lastError']) ? $p['lastError'] : null,
                                      'lastMessages' => isset($p['lastMessages']) ? $p['lastMessages'] : null,
                                      'lastFrames' => isset($p['lastFrames']) ? $p['lastFrames'] : null,
-                                     'lastSeconds' => isset($p['lastSeconds']) ? $p['lastSeconds'] : null));
+                                     'lastSeconds' => isset($p['lastSeconds']) ? $p['lastSeconds'] : null,
+                                     'lastOpcodes' => isset($p['lastOpcodes']) ? $p['lastOpcodes'] : null,
+                                     'lastUnparsed' => isset($p['lastUnparsed']) ? $p['lastUnparsed'] : null,
+                                     'lastSample' => isset($p['lastSample']) ? $p['lastSample'] : null));
         if (!$hasKey) return $out + array('status' => 'missing-key', 'error' => 'AISSTREAM_API_KEY is not set');
         if (!empty($p['authFailed'])) return $out + array('status' => 'auth-failed', 'error' => 'API key rejected by AISStream');
         if ($lastPoll === null) return $out + array('status' => 'idle', 'error' => 'waiting for the first poll');
@@ -432,7 +435,7 @@ if (!defined('DORSET_SHIPS_LIB')) {
      */
     function ships_capture($apiKey, $seconds, &$store, $nowFn = null) {
         $now = $nowFn ? $nowFn : function () { return (int)round(microtime(true) * 1000); };
-        $report = array('ok' => false, 'error' => null, 'messages' => 0, 'frames' => 0, 'authFailed' => false);
+        $report = array('ok' => false, 'error' => null, 'messages' => 0, 'frames' => 0, 'authFailed' => false, 'opcodes' => array(), 'unparsed' => 0);
         $err = null;
         $fp = ships_ws_connect(SHIPS_WS_HOST, SHIPS_WS_PATH, 15, $err);
         if (!$fp) { $report['error'] = $err; return $report; }
@@ -463,14 +466,17 @@ if (!defined('DORSET_SHIPS_LIB')) {
             }
             list($op, $data, $fin) = $frame;
             $report['frames']++;
+            $report['opcodes'][$op] = (isset($report['opcodes'][$op]) ? $report['opcodes'][$op] : 0) + 1;
             if ($op === 8) { $report['error'] = $report['messages'] ? null : 'server sent close: ' . substr(bin2hex($data), 0, 8); break; }
             if ($op === 9) { @fwrite($fp, ships_ws_frame(10, $data)); continue; }
             if ($op === 10) continue;
             if ($op === 0) { $fragment .= $data; if (!$fin) continue; $data = $fragment; $fragment = ''; }
             elseif (!$fin) { $fragment = $data; continue; }
-            if ($op !== 1 && $op !== 0) continue;
+            // AISStream delivers its JSON as BINARY frames (opcode 2), not text: seen live
+            // 13 Sep 2026, ~200 frames a minute and none of them opcode 1. Parse both.
+            if ($op !== 1 && $op !== 2 && $op !== 0) continue;
             $env = json_decode($data, true);
-            if (!is_array($env)) continue;
+            if (!is_array($env)) { $report['unparsed']++; continue; }
             if (isset($env['error'])) {
                 $e = ships_str($env['error']);
                 $report['error'] = 'AISStream: ' . $e;
@@ -480,6 +486,9 @@ if (!defined('DORSET_SHIPS_LIB')) {
             if (ships_apply($store, $env, $now())) {
                 $report['messages']++;
                 $store['poll']['lastMessageAt'] = $now();
+            } else {
+                $report['unparsed']++;
+                if (!isset($report['sample'])) $report['sample'] = substr($data, 0, 300);   // the first rejected envelope, for diagnosis
             }
         }
         @fwrite($fp, ships_ws_frame(8, pack('n', 1000)));

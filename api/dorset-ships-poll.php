@@ -59,6 +59,9 @@ $store['poll']['authFailed'] = !empty($report['authFailed']);
 $store['poll']['lastMessages'] = $report['messages'];
 $store['poll']['lastFrames'] = $report['frames'];
 $store['poll']['lastSeconds'] = (int)round(($endMs - $nowMs) / 1000);
+$store['poll']['lastOpcodes'] = $report['opcodes'];
+$store['poll']['lastUnparsed'] = $report['unparsed'];
+$store['poll']['lastSample'] = isset($report['sample']) ? $report['sample'] : null;
 if ($report['ok']) {
     $store['poll']['failures'] = 0;
     $store['poll']['lastError'] = null;
