@@ -2736,3 +2736,14 @@ body.b365-mapov-open { overflow: hidden; }
 .breadcrumb a { display: inline-block; padding: 0.25rem 0; }
 .ff-areas a { display: inline-block; padding: 0.15rem 0.05rem; }
 .page-hero__byline a { display: inline-block; padding: 0.15rem 0; }
+
+/* 13 Sep 2026 (UX audit item 4): the phone cookie banner as one strip. It was 119px under the 76px header, a
+   quarter of a first-visit screen, with the buttons on their own full-width row. Now text and both buttons sit
+   in one row; the text is shorter in the markup too. Last in the file so it wins over the earlier phone rules. */
+@media (max-width: 767px) {
+  .cookie-banner { flex-wrap: nowrap; align-items: center; padding: 0.45rem 0.75rem; gap: 0.6rem; }
+  .cookie-banner p { flex: 1 1 auto; min-width: 0; font-size: 0.78rem; line-height: 1.35; }
+  .cookie-banner__actions { width: auto; flex: 0 0 auto; flex-wrap: nowrap; gap: 0.4rem; }
+  .cookie-banner__actions .button { flex: 0 0 auto; }
+  .cookie-banner .button { min-height: 40px; padding: 0.3rem 0.7rem; font-size: 0.8rem; }
+}
