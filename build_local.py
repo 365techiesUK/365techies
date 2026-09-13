@@ -243,6 +243,19 @@ def signal_block(slug, town):
 _LOCAL_HERO_PRICES = (" Remote fixes from &pound;20, monthly plans from &pound;18.25 per computer, "
                       "and no call-out fee when we come to you.")
 
+DORSET_RELATED = '''    <section class="section" aria-label="Plans, business and industry">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow mono" data-reveal>// PLANS, BUSINESS AND INDUSTRY</p>
+          <h2 class="section-title" data-title>Plans, prices and business IT support across Dorset<span class="title-underline"></span></h2>
+        </div>
+        <div class="related" data-reveal>
+          <div class="related__links"><a href="/business-it-support-plans/">Business IT support plans</a><a href="/home-it-support-plans/">Home IT support plans and pricing</a><a href="/whats-included-business-it-support-plan/">What a business plan includes</a><a href="/whats-included-home-it-support-subscription/">What a home subscription includes</a><a href="/it-support-cost-guide/">IT support cost guide</a><a href="/how-much-does-it-support-cost-uk-2026/">How much should IT support cost?</a><a href="/why-monthly-it-support-beats-per-repair/">Why monthly beats paying per repair</a><a href="/how-monthly-it-support-saves-time/">How monthly support saves a business time</a><a href="/it-support-by-industry/">IT support by industry</a><a href="/business-it-support-christchurch/">Business IT support, Christchurch</a><a href="/business-it-support-ferndown-industrial-estate/">Business IT support, Ferndown industrial estate</a><a href="/business-it-support-new-forest/">Business IT support, New Forest and Lymington</a><a href="/it-support-for-sole-traders/">IT support for sole traders</a><a href="/it-support-for-home-workers/">IT support for home workers</a><a href="/it-support-for-retired-users/">IT support for retired people</a><a href="/dell-it-support-dorset/">Dell support and repair, Dorset</a><a href="/it-support-uk-europe/">IT support across the UK and Europe</a></div>
+        </div>
+      </div>
+    </section>'''
+
+
 def make_local(i, slug, town, region, lede, intro_para, nearby):
     crumb_name = f"IT Support {town}"
     repair_slug = ("computer-repair-" + slug[len("it-support-"):]) if slug.startswith("it-support-") else ""
@@ -322,6 +335,9 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
           <img src="/images/heritage-storefront.jpg" alt="The shopfront of our former computer sales and service centre in Moordown, Bournemouth" width="1024" height="683" loading="lazy" decoding="async" />
           <figcaption class="mono">Our old Moordown shop &mdash; same family, same number then and now: 01202&nbsp;775566. As featured in the <a href="/about/">Bournemouth Echo, 2011 &rarr;</a></figcaption>
         </figure>'''
+    # 13 Sep 2026 nav audit: the Dorset hub linked 34 of its 81 cluster pages and none of the plan, business or
+    # industry pages; this block gives the hub the money side of the cluster in one grid.
+    dorset_related = DORSET_RELATED if slug == "it-support-dorset" else ""
     revs = [REVPOOL[i % len(REVPOOL)], REVPOOL[(i + 2) % len(REVPOOL)]]
     content = "\n".join([
       hero(bc_sub("IT Support Dorset", "/it-support-dorset/", crumb_name), f"// {town.upper()} &middot; {region.upper()}",
@@ -329,6 +345,7 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
            cta1=("Call 01202 775566", "tel:+441202775566"), cta2=("Plans &amp; Prices", "/monthly-it-support/"),
            trustbar=True),
       nearme_block,
+      dorset_related,
       f'''    <section class="section" aria-label="Local support">
       <div class="wrap split-2">
         <div class="prose" data-reveal>

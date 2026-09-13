@@ -1936,7 +1936,15 @@ html[class*="a11y-text-"] .nav-sos__long, html[class*="a11y-text-"] .nav-search_
 
 /* ===== Accessibility toolbar ===== */
 .a11y { position: fixed; left: 14px; bottom: 14px; z-index: 1300; transition: opacity .25s ease, transform .25s ease; }
-@media (max-width: 767px) { .a11y { left: 10px; bottom: calc(4.7rem + env(safe-area-inset-bottom)); } }
+@media (max-width: 767px) {
+  /* 13 Sep 2026 nav audit: the labelled pill sat on top of the hero's Call button at page load on any
+     page with a long lede (measured at 375x812 on the Virgin-to-Gmail and printer-disappeared pages),
+     and that button is phone-first on 302 pages. On phones the pill is a 48px icon at bottom-right,
+     above the dock and clear of the buttons; the words live in its aria-label, its title and the panel. */
+  .a11y { left: auto; right: 10px; bottom: calc(4.7rem + env(safe-area-inset-bottom)); }
+}
+/* (the phone rules for the toggle, its label and the panel sit AFTER their base rules below,
+   or the base rules would win on equal specificity) */
 /* A map is on screen (body.map-in-view, set by the map pages via
    IntersectionObserver): the fixed text-size pill was sitting over the map on
    phones. Shrink it to the icon only and tuck it into the corner while the map
@@ -1986,10 +1994,10 @@ body.lf-fullscreen .a11y, body.lf-fullscreen .mobile-cta-bar { display: none !im
 }
 .a11y__toggle svg { width: 24px; height: 24px; flex: 0 0 auto; }
 .a11y__togglelabel { white-space: nowrap; }
-/* Narrow phones: keep the pill from crowding the screen edge, but never drop the
-   label - it is the whole reason for this change. */
+/* Narrow phones once kept the label at a smaller size; since 13 Sep 2026 phones show the icon only
+   (see the 767px rule above), so this only has to keep the icon centred. */
 @media (max-width: 380px) {
-  .a11y__toggle { font-size: 0.9rem; padding: 0 0.7rem 0 0.55rem; }
+  .a11y__toggle { font-size: 0.9rem; padding: 0 0.7rem; }
 }
 .a11y__panel {
   position: absolute; left: 0; bottom: 58px; width: 232px;
@@ -1998,6 +2006,12 @@ body.lf-fullscreen .a11y, body.lf-fullscreen .mobile-cta-bar { display: none !im
   padding: 1rem; display: grid; gap: 0.5rem; box-shadow: var(--shadow-1);
 }
 .a11y__panel[hidden] { display: none; }
+@media (max-width: 767px) {
+  /* phones: icon-only toggle at bottom-right, panel opens leftwards from it (nav audit, 13 Sep 2026) */
+  .a11y__toggle { padding: 0 0.7rem; min-width: 48px; justify-content: center; }
+  .a11y__togglelabel { display: none; }
+  .a11y__panel { left: auto; right: 0; }
+}
 .a11y__title { margin: 0 0 0.2rem; color: var(--muted); }
 .a11y__rowsize { display: flex; align-items: center; justify-content: space-between; color: var(--ink); font-size: 0.95rem; }
 .a11y__btns { display: inline-flex; gap: 0.4rem; }
