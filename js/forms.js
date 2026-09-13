@@ -92,9 +92,12 @@
       add("company", val(form, "company"));
       add("message", message);
 
-      /* instant Slack ping (server-side relay) — independent of the HubSpot submission.
-         Fires once per enquiry: retries after a HubSpot failure don't re-ping (or burn the
-         relay's rate limit); the flag clears on success so a genuinely new enquiry pings. */
+      /* The Slack relay is the record the team actually reads, so since 13 Sep 2026 (funnel audit
+         item 3) its answer is what makes the enquiry a success: HubSpot accepted a labelled test
+         submission with 200 yet no contact appeared in the portal, so HubSpot is best-effort now.
+         The ping fires once per enquiry: a retry after a failure does not re-ping (or burn the
+         relay's rate limit) and remembers whether the first ping got through. */
+      var slackP = Promise.resolve(form.dataset.slackOk === "1");
       if (!form.dataset.slackSent) try {
         form.dataset.slackSent = "1";
         /* 13 Sep 2026 (funnel audit item 6): count the enquiry the moment it is sent, alongside the Slack
@@ -110,7 +113,7 @@
             window.gtag("event", evName, evParams);
           }
         } catch (gerr0) {}
-        fetch("/api/slack-lead.php", {
+        slackP = fetch("/api/slack-lead.php", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -120,21 +123,26 @@
               + (extras.length ? "\n" + extras.join("\n") : "") + attribution).trim(),
             page: location.href
           })
-        }).catch(function () {});
+        }).then(function (r) { return r.json().catch(function () { return {}; }); })
+          .then(function (d) { var ok = !!(d && d.ok); if (ok) form.dataset.slackOk = "1"; return ok; })
+          .catch(function () { return false; });
       } catch (err) {}
 
       var body = { fields: fields, context: { pageUri: location.href, pageName: document.title } };
       if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
       if (status) { status.style.color = "var(--muted)"; status.textContent = "// Sending…"; }
 
-      fetch("https://" + HOST + "/submissions/v3/integration/submit/" + PORTAL + "/" + GUID, {
+      var hsP = fetch("https://" + HOST + "/submissions/v3/integration/submit/" + PORTAL + "/" + GUID, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)
-      }).then(function (r) {
-        return r.json().catch(function () { return {}; }).then(function (d) { return { ok: r.ok, d: d }; });
-      }).then(function (res) {
+      }).then(function (r) { return !!r.ok; }).catch(function () { return false; });
+
+      /* success = the relay OR HubSpot took it; failure only when both did */
+      Promise.all([slackP, hsP]).then(function (oks) {
+        var res = { ok: !!(oks[0] || oks[1]), slack: !!oks[0], hs: !!oks[1] };
         if (btn) { btn.disabled = false; btn.textContent = label; }
+        if (res.ok && !res.hs) { try { console.warn("365: HubSpot did not accept the enquiry; the team has it via Slack"); } catch (e2) {} }
         if (res.ok) {
           if (status) { status.style.color = "#39d353"; status.textContent = form.getAttribute("data-success") || "✓ Thanks — your message is in. We’ll reply within one working day."; }
           try {
@@ -149,12 +157,11 @@
           } catch (gerr) {}
           form.reset();
           delete form.dataset.slackSent;
-        } else if (status) {
-          status.style.color = "#e06a4a"; status.innerHTML = FAIL;
+          delete form.dataset.slackOk;
+        } else {
+          if (status) { status.style.color = "#e06a4a"; status.innerHTML = FAIL; }
+          delete form.dataset.slackSent;   /* both legs failed: a retry may ping again */
         }
-      }).catch(function () {
-        if (btn) { btn.disabled = false; btn.textContent = label; }
-        if (status) { status.style.color = "#e06a4a"; status.innerHTML = FAIL; }
       });
     });
   }
