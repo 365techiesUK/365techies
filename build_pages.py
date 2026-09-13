@@ -80,6 +80,9 @@ _VOLATILE = [
     # widget that only exists after cookie consent) to Text. Chrome, not content: neither the old nor
     # the new link counts, and the stored hashes were re-based once with this rule in place.
     (_cdre.compile(r'\s*<a href="(?:#|sms:\+447520615332)"(?: data-open-chat)?><svg viewBox="0 0 24 24"[^>]*><path d="M21 11\.5a8\.5[^"]*"/></svg>(?:Chat|Text)</a>'), ''),
+    # 13 Sep 2026 (nav audit item 4): the footer is navigation, not content. The whole block is stripped so
+    # a footer edit never re-dates 718 pages; the stored hashes were re-based once with this rule in place.
+    (_cdre.compile(r'<footer class="site-footer">.*?</footer>', _cdre.S), ''),
     (_cdre.compile(r'\?v=[\w.\-]+'), '?v=X'),
     (_cdre.compile(r'checked on \d{1,2} \w+ \d{4}', _cdre.I), 'checked on X'),
     (_cdre.compile(r'Dates checked: \d{1,2} \w+ \d{4}', _cdre.I), 'Dates checked: X'),
@@ -731,7 +734,6 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/scam-pop-up-help-poole/">Scam Pop-up Help (Poole)</a>
         <a href="/virus-removal-christchurch/">Virus Removal (Christchurch)</a>
         <a href="/outlook-problems/">Outlook Problems &amp; Fixes</a>
-        <a href="/is-it-down/">Is Something Down?</a>
         <a href="/support-portal/">Support Portal</a>
         <a href="/splashtop-business-guide/">Remote Access Guide</a>
         <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
@@ -868,10 +870,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/how-we-price/">How We Price</a>
         <a href="/case-studies/">Case Studies</a>
         <a href="/reviews/">Reviews</a>
-        <a href="/areas-covered/">Areas Covered</a>
-        <a href="/plan-finder/">Plan Finder</a>
         <a href="/refer-a-friend/">Refer a Friend</a>
-        <a href="/sustainability/">Sustainability</a>
         <a href="/resources/">Resources &amp; Guides</a>
         <a href="/it-advice/">IT Advice</a>
         <a href="/bournemouth/">Bournemouth365</a>
@@ -937,8 +936,9 @@ VIS_BEACON = "" if not VISITORS_WORKER else (
     'body:JSON.stringify({site:"t365",path:location.pathname}),keepalive:true});}catch(e){}})();</script>\n')
 
 
-def page(slug, title, desc, og_title, schema_json, content, og_image=None):
+def page(slug, title, desc, og_title, schema_json, content, og_image=None, robots=None):
     canon = f"{SITE}/{slug}/"
+    robots_content = robots or "index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
     # Article counts too, not just BlogPosting. The case study declares Article (there
     # is no CaseStudy type in schema.org), and og:type=website on a dated, authored
     # piece is simply wrong when it is shared.
@@ -996,7 +996,7 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None):
   <title>{title}</title>
   <meta name="description" content="{meta_desc}" />
   <link rel="canonical" href="{canon}" />
-  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <meta name="robots" content="{robots_content}" />
   <meta name="author" content="365 Techies Limited" />
   <meta name="geo.region" content="GB-BCP" />
   <meta name="geo.placename" content="Bournemouth, Dorset" />
@@ -5624,6 +5624,17 @@ add(
       </div>
     </section>''',
    GC_NOTE,
+   f'''    <section class="section" aria-label="IT support by industry">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow mono" data-reveal>// BY INDUSTRY</p>
+          <h2 class="section-title" data-title>The same plans, written for your trade<span class="title-underline"></span></h2>
+        </div>
+        <div class="related" data-reveal>
+          <div class="related__links"><a href="/it-support-by-industry/">Every industry we cover</a><a href="/it-support-for-accountants/">Accountants</a><a href="/it-support-for-accountants-dorset/">Accountants, Dorset</a><a href="/it-support-for-architects/">Architects and surveyors</a><a href="/it-support-for-care-homes/">Care homes</a><a href="/it-support-for-charities/">Charities</a><a href="/it-support-for-charities-dorset/">Charities, Dorset</a><a href="/it-support-for-churches-faith/">Churches and faith groups</a><a href="/it-support-for-construction/">Construction firms</a><a href="/it-support-for-creative-agencies/">Creative agencies</a><a href="/it-support-for-dental-medical/">Dental and medical practices</a><a href="/it-support-for-digital-nomads/">Digital nomads</a><a href="/it-support-for-disabled-people/">Disabled people</a><a href="/it-support-for-ecommerce/">E-commerce and online retailers</a><a href="/it-support-for-education/">Schools and education</a><a href="/it-support-for-estate-agents/">Estate agents</a><a href="/it-support-for-financial-advisers/">Financial advisers and IFAs</a><a href="/it-support-for-garages-automotive/">Garages and automotive</a><a href="/it-support-for-gyms-fitness/">Gyms and fitness</a><a href="/it-support-for-home-workers/">Home workers</a><a href="/it-support-for-hotels-holiday-lets/">Hotels and holiday lets</a><a href="/it-support-for-manufacturing/">Manufacturing and engineering</a><a href="/it-support-for-nurseries-dorset/">Nurseries</a><a href="/it-support-for-opticians/">Opticians</a><a href="/it-support-for-property-management/">Property management</a><a href="/it-support-for-recruitment-agencies/">Recruitment agencies</a><a href="/it-support-for-retail-hospitality/">Retail and hospitality</a><a href="/it-support-for-retired-users/">Retired people</a><a href="/it-support-for-salons-beauty/">Salons and beauty</a><a href="/it-support-for-sole-traders/">Sole traders</a><a href="/it-support-for-solicitors/">Solicitors</a><a href="/it-support-for-tradespeople/">Tradespeople</a><a href="/it-support-for-vets/">Veterinary practices</a></div>
+        </div>
+      </div>
+    </section>''',
    REMOTE_ACCESS_BAND,
    _dash_band("business", alt=True),
    PCM_BAND,
@@ -7409,7 +7420,7 @@ def write_all():
     for p in PAGES:
         slug = p["slug"]
         schema_json = p["schema"](slug)
-        html = page(slug, p["title"], p["desc"], p["og_title"], schema_json, p["content"], og_image=p.get("og_image"))
+        html = page(slug, p["title"], p["desc"], p["og_title"], schema_json, p["content"], og_image=p.get("og_image"), robots=p.get("robots"))
         # Decide whether the page changed BEFORE stamping the date, then stamp the date
         # it genuinely last changed. The hash ignores the dateModified value, so this
         # ordering is safe; the old order wrote TODAY into every page on every build.

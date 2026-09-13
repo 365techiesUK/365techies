@@ -128,6 +128,7 @@ SPECIALIST = [
      ("/outlook-keeps-asking-for-password/", "Outlook keeps asking for the password"),
      ("/outlook-cant-sign-in/", "Can&rsquo;t sign in to Outlook"),
      ("/outlook-not-syncing/", "Outlook is not syncing"),
+     ("/outlook-contacts-missing/", "Outlook contacts have gone missing"),
      ("/new-outlook-not-syncing/", "The new Outlook is not syncing"),
      ("/outlook-search-not-finding-old-emails/", "Search can&rsquo;t find older emails"),
      ("/outlook-wont-open-after-update/", "Outlook won&rsquo;t open after an update"),
@@ -15856,7 +15857,7 @@ for _c in GAP_SERVICES:
 def _prose(inner):
     return f'    <section class="section">\n      <div class="wrap">\n        <div class="prose" data-reveal>\n{inner}\n        </div>\n      </div>\n    </section>'
 
-def info_page(slug, crumb_name, h1, eyebrow, lede, desc, inner, title=None, chips=None, faqs=None, cta_args=None, pre=None, og_title=None, hero_cta1=None, hero_cta2=None, post=None):
+def info_page(slug, crumb_name, h1, eyebrow, lede, desc, inner, title=None, chips=None, faqs=None, cta_args=None, pre=None, og_title=None, hero_cta1=None, hero_cta2=None, post=None, robots=None):
     """`pre` and `post` take raw full-width <section> HTML either side of the
     prose; `inner` is wrapped in _prose() and so cannot hold a section itself."""
     hk = {}
@@ -15879,7 +15880,7 @@ def info_page(slug, crumb_name, h1, eyebrow, lede, desc, inner, title=None, chip
         if _f:
             g.append(faqpage(s, _f))
         return graph(g)
-    add(slug=slug, title=title or f"{crumb_name} | 365 Techies", desc=desc,
+    add(slug=slug, title=title or f"{crumb_name} | 365 Techies", desc=desc, robots=robots,
         og_title=og_title or f"{crumb_name} | 365 Techies", schema=schema, content=content)
 
 # The label is derived from the policy text itself: it said "June 2026" on
@@ -28944,6 +28945,7 @@ def leave_a_review_page():
     """
     info_page(
         slug="leave-a-review",
+        robots="noindex,follow",   # the short address said on the phone and printed on the QR card; reachable by typing it, not by search
         crumb_name="Leave a Review",
         title="Leave Us a Google Review | 365 Techies, Bournemouth",
         og_title="Leave 365 Techies a Google review",
