@@ -2747,3 +2747,10 @@ body.b365-mapov-open { overflow: hidden; }
   .cookie-banner__actions .button { flex: 0 0 auto; }
   .cookie-banner .button { min-height: 40px; padding: 0.3rem 0.7rem; font-size: 0.8rem; }
 }
+
+/* 13 Sep 2026 (UX audit item 6): inline form messages (forms.js validate()) and a visible hint that a jargon
+   term can be tapped (a11y.js wraps terms in .jterm with role=button; hover was the only clue). */
+.field--error input, .field--error textarea, .field--error select { border-color: #e06a4a; box-shadow: 0 0 0 2px rgba(224, 106, 74, 0.28); }
+.field__msg { display: block; margin-top: 0.4rem; font-size: 0.82rem; line-height: 1.4; color: #ffb3a4; }
+.jterm::after { content: "?"; display: inline-block; margin-left: 0.2em; font-size: 0.62em; line-height: 1; vertical-align: super; padding: 0.05em 0.3em; border-radius: 999px; border: 1px solid var(--cyan); color: var(--cyan); font-family: var(--font-mono); letter-spacing: 0; }
+.jterm:hover::after, .jterm:focus::after, .jterm.is-open::after { background: var(--cyan); color: var(--ink-inverse, #06101f); }

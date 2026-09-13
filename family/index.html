@@ -39,7 +39,7 @@
 <body>
 <div class="wrap">
   <header><span class="lg">365</span><div><strong>365 PC Manager</strong><br /><span>Family view</span></div></header>
-  <div id="app"><div class="err">Checking the share link&hellip;</div></div>
+  <main id="app"><div class="err">Checking the share link&hellip;</div></main>
 </div>
 <footer><div class="wrap">
   <p>This page is provided by <strong>365 Techies</strong> &mdash; family-run IT support in Bournemouth since 1995.
@@ -88,7 +88,7 @@
      script can't kill self-healing. Differences from the portal one: the share code
      rides in ?c=, so every navigation MUST carry the existing query along - dropping
      it would sign the family member out of the view. */
-  var P365FAM = 'bf669141ee';
+  var P365FAM = '46a7edb069';
   function stripU(s) { return s.replace(/([?&])u=[^&]*(&?)/, function (_, a, b) { return b ? a : ''; }); }
   function withU(id) { var q = stripU(location.search); return '/family/' + q + (q ? '&' : '?') + 'u=' + encodeURIComponent(id); }
   if (/[?&]u=/.test(location.search)) { try { history.replaceState(null, '', '/family/' + stripU(location.search)); } catch (e) {} }

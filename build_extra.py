@@ -22823,7 +22823,7 @@ def write_family_page():
 <body>
 <div class="wrap">
   <header><span class="lg">365</span><div><strong>365 PC Manager</strong><br /><span>Family view</span></div></header>
-  <div id="app"><div class="err">Checking the share link&hellip;</div></div>
+  <main id="app"><div class="err">Checking the share link&hellip;</div></main>
 </div>
 <footer><div class="wrap">
   <p>This page is provided by <strong>365 Techies</strong> &mdash; family-run IT support in Bournemouth since 1995.
@@ -29000,11 +29000,11 @@ def write_activate_page():
 </style>
 </head>
 <body>
-<div class="card" id="c">
+<main class="card" id="c">
   <span class="lg">365</span>
   <h1>Activate your 365 PC Manager</h1>
   <div id="body"><p>Checking your activation link&hellip;</p></div>
-</div>
+</main>
 <script>
 (function () {
   var b = document.getElementById('body');

@@ -23,18 +23,62 @@
     var el = form.querySelector('[name="' + name + '"]');
     return el ? String(el.value || "").trim() : "";
   }
+  /* 13 Sep 2026 (UX audit item 6): inline messages under the field instead of the browser's vanishing
+     bubble. The form keeps its required attributes (semantics, no-JS fallback); with this script running
+     it goes novalidate and we say, next to the field, what is missing and keep the message until it is
+     fixed. The first problem field takes focus. */
+  function fieldWrap(el) { return (el.closest && el.closest(".field")) || el.parentElement; }
+  function fieldLabel(el) {
+    var w = fieldWrap(el); var s = w && w.querySelector("span");
+    return s ? String(s.textContent || "").replace(/\s*\(optional\)/i, "").trim() : "";
+  }
+  function showErr(el, msg) {
+    var w = fieldWrap(el); if (!w) return;
+    var m = w.querySelector(".field__msg");
+    if (!m) { m = document.createElement("small"); m.className = "field__msg"; m.setAttribute("role", "alert"); w.appendChild(m); }
+    m.textContent = msg; w.classList.add("field--error"); el.setAttribute("aria-invalid", "true");
+  }
+  function clearErr(el) {
+    var w = fieldWrap(el); if (!w) return;
+    var m = w.querySelector(".field__msg"); if (m) m.remove();
+    w.classList.remove("field--error"); el.removeAttribute("aria-invalid");
+  }
+  function messageFor(el) {
+    var name = String(el.name || "").toLowerCase(); var lab = fieldLabel(el).toLowerCase();
+    if (name === "name") return "Please add your name.";
+    if (name === "email" || el.type === "email") return "Please add your email so we can reply.";
+    if (name === "message" || el.tagName === "TEXTAREA") return "Please tell us how we can help.";
+    return lab ? "Please fill in " + lab + "." : "Please fill in this field.";
+  }
+  function validate(form) {
+    var problems = [];
+    var req = form.querySelectorAll("[required]");
+    for (var i = 0; i < req.length; i++) {
+      var el = req[i];
+      if (el.type === "checkbox" ? !el.checked : !String(el.value || "").trim()) problems.push([el, messageFor(el)]);
+    }
+    var em = form.querySelector('[name="email"]');
+    if (em && String(em.value || "").trim() && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(em.value).trim())) problems.push([em, "That email doesn’t look right — please check it."]);
+    return problems;
+  }
   function attach(form) {
+    try { form.setAttribute("novalidate", ""); } catch (nv) {}
+    form.addEventListener("input", function (ev) { if (ev.target && ev.target.name) clearErr(ev.target); });
+    form.addEventListener("change", function (ev) { if (ev.target && ev.target.name) clearErr(ev.target); });
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       var status = form.querySelector(".form-status");
       var btn = form.querySelector('button[type="submit"]') || form.querySelector("button");
       var label = btn ? btn.textContent : "";
       if (val(form, "company_website")) return; // honeypot: silently drop bots
-      var email = val(form, "email");
-      if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-        if (status) { status.style.color = "#e06a4a"; status.textContent = email ? "That email doesn’t look right — please check it." : "Please add your email so we can reply."; }
+      var problems = validate(form);
+      if (problems.length) {
+        for (var pi = 0; pi < problems.length; pi++) showErr(problems[pi][0], problems[pi][1]);
+        if (status) { status.style.color = "#e06a4a"; status.textContent = problems.length === 1 ? "One thing to check above." : problems.length + " things to check above."; }
+        try { problems[0][0].focus({ preventScroll: false }); } catch (fe) {}
         return;
       }
+      var email = val(form, "email");
       var nm = splitName(val(form, "name"));
       var topic = val(form, "topic");
       var message = val(form, "message");
