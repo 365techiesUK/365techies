@@ -76,6 +76,10 @@ _VOLATILE = [
     # \d+ only ate the "2026", leaving "?v=X-07-30" to change every single day - which
     # made all 649 pages claim they changed on every build and quietly destroyed the
     # whole point of hashing them. Match the entire version token.
+    # 13 Sep 2026 (funnel audit item 5): the mobile dock's third button changed from Chat (a HubSpot
+    # widget that only exists after cookie consent) to Text. Chrome, not content: neither the old nor
+    # the new link counts, and the stored hashes were re-based once with this rule in place.
+    (_cdre.compile(r'\s*<a href="(?:#|sms:\+447520615332)"(?: data-open-chat)?><svg viewBox="0 0 24 24"[^>]*><path d="M21 11\.5a8\.5[^"]*"/></svg>(?:Chat|Text)</a>'), ''),
     (_cdre.compile(r'\?v=[\w.\-]+'), '?v=X'),
     (_cdre.compile(r'checked on \d{1,2} \w+ \d{4}', _cdre.I), 'checked on X'),
     (_cdre.compile(r'Dates checked: \d{1,2} \w+ \d{4}', _cdre.I), 'Dates checked: X'),
@@ -1115,7 +1119,7 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None):
   <nav class="mobile-cta-bar" aria-label="Quick contact">
     <a href="tel:+441202775566"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>Call</a>
     <a href="/book-service/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book</a>
-    <a href="#" data-open-chat><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5z"/></svg>Chat</a>
+    <a href="sms:+447520615332"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5z"/></svg>Text</a>
   </nav>
   <div class="a11y" id="a11y">
     <button type="button" class="a11y__toggle" id="a11y-toggle" aria-expanded="false" aria-controls="a11y-panel" aria-label="Text size and accessibility options" title="Text size and accessibility options">
@@ -6396,7 +6400,6 @@ add(
             <li><span class="k">Email</span><span class="v"><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a></span></li>
             <li><span class="k">Hours</span><span class="v">Monday&ndash;Friday, 9am&ndash;5pm</span></li>
             <li><span class="k">Based in</span><span class="v">Bournemouth, Dorset</span></li>
-            <li><span class="k">Live chat</span><span class="v"><a href="#" data-open-chat>Chat to us now &#8594;</a></span></li>
             <li><span class="k">Book online</span><span class="v"><a href="/book-service/">Book a service or repair &#8594;</a></span></li>
             <li><span class="k">Emergency</span><span class="v"><a href="/sos/" target="_blank" rel="noopener">SOS remote support &#8594;</a></span></li>
           </ul>
