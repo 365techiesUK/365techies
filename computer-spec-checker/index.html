@@ -293,7 +293,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-09-12"
+      "dateModified": "2026-09-13"
     },
     {
       "@type": "WebApplication",
@@ -335,7 +335,7 @@
           "name": "Can this page tell me whether my PC can run Windows 11?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Not on its own &mdash; a browser cannot read the two things that decide it, <strong>TPM 2.0</strong> and <strong>Secure Boot</strong>. Windows can: open Settings &rarr; Privacy &amp; security &rarr; Windows Security &rarr; Device security, where they appear as Security processor and Secure boot. If your machine falls short, our <a href=\"/windows-10-end-of-life/\">Windows 10 page</a> sets out the honest options."
+            "text": "Not on its own &mdash; a browser cannot read the two things that decide it, <strong>TPM 2.0</strong> and <strong>Secure Boot</strong>. Windows can: open Settings &rarr; Privacy &amp; security &rarr; Windows Security &rarr; Device security, where they appear as Security processor and Secure boot. Our <a href=\"/windows-11-upgrade-service/\">Windows 11 upgrade service</a> checks it for free and does the upgrade properly if it passes; if it falls short, a <a href=\"/dell-hardware/\">refurbished business Dell</a> from &pound;510 with your data moved across is the sensible replacement, and <a href=\"/windows-10-esu-free-enrolment-help/\">Windows 10 ESU</a> keeps it patched until October 2027 while you decide."
           }
         },
         {
@@ -1170,7 +1170,7 @@
           v.hidden=false;
           window.ttToolDone&&window.ttToolDone("computer-spec-checker");
           var fl=$('#spc-flags');
-          if(os.win10)fl.insertAdjacentHTML('beforeend','<div class="spc-flag spc-flag--bad">&#9888;&#65039; <strong>You&rsquo;re on Windows 10 &mdash; it stopped getting security updates in October 2025.</strong> Every day online is riskier. See <a href="/windows-10-end-of-life/">your options</a> &mdash; many machines upgrade free, and we can check yours.</div>');
+          if(os.win10)fl.insertAdjacentHTML('beforeend','<div class="spc-flag spc-flag--bad">&#9888;&#65039; <strong>You&rsquo;re on Windows 10 &mdash; it stopped getting security updates in October 2025.</strong> Every day online is riskier. See <a href="/windows-10-end-of-life/">your options</a> &mdash; many machines upgrade free, and we can check yours. Your routes are <a href="#windows-11">below</a>.</div>');
           if(os.win11)fl.insertAdjacentHTML('beforeend','<div class="spc-flag spc-flag--good">&#10004;&#65039; Windows 11 &mdash; you&rsquo;re on the current, supported Windows. Good.</div>');
           if(os.amb)fl.insertAdjacentHTML('beforeend','<div class="spc-flag spc-flag--warn">This browser won&rsquo;t say whether you&rsquo;re on Windows 10 or 11. Worth checking &mdash; Windows 10 is <a href="/windows-10-end-of-life/">out of security updates</a>. (Start &rarr; Settings &rarr; System &rarr; About.)</div>');
           if(g.soft)fl.insertAdjacentHTML('beforeend','<div class="spc-flag spc-flag--warn">&#9888;&#65039; <strong>Graphics are running in software</strong> &mdash; your real graphics card isn&rsquo;t being used. That makes everything feel slow; often a driver problem. <a href="/contact/">We fix this remotely</a>.</div>');
@@ -1178,7 +1178,7 @@
           $('#spc-actions').hidden=false;
           step('scan','done'); step('bench','on');
           /* tell the Windows 11 block further down what the scan found */
-          window.__spcOS={os:os.os||'',win10:!!os.win10,win11:!!os.win11,amb:!!os.amb};
+          window.__spcOS={os:os.os||'',win10:!!os.win10,win11:!!os.win11,amb:!!os.amb,gpu:(g.gpu||'')};
           try{ document.dispatchEvent(new CustomEvent('spc:done',{detail:window.__spcOS})); }catch(e){}
           /* staggered card reveal */
           Array.prototype.forEach.call(grid.querySelectorAll('.spc-card'),function(c,i){ setTimeout(function(){c.classList.add('in');},80+i*110); });
@@ -1689,8 +1689,81 @@
         <ul class="security-grid" data-stagger>
           <li><h3>The minimums</h3><p>A compatible 64-bit processor &mdash; roughly Intel 8th generation or AMD Ryzen 2000 onwards &mdash; 4&nbsp;GB of memory, 64&nbsp;GB of storage, a DirectX 12 graphics chip and a 720p screen.</p></li>
           <li><h3>The two deciders</h3><p><strong>TPM 2.0</strong> and <strong>Secure Boot</strong>. Both live in the firmware, not the browser. On Windows: Settings &rarr; Privacy &amp; security &rarr; Windows Security &rarr; Device security lists them as Security processor and Secure boot.</p></li>
-          <li><h3>Still on Windows 10?</h3><p>Free security updates ended in October 2025. Many machines can move to Windows 11 at no cost; the ones that cannot have honest options too &mdash; see <a href="/windows-10-end-of-life/">what to do about Windows 10</a>.</p></li>
+          <li><h3>Still on Windows 10?</h3><p>Free security updates ended in October 2025. Whatever the check says there is a route: an upgrade if it passes, a refurbished business machine if it does not, or Extended Security Updates while you decide &mdash; the three below, or <a href="/windows-10-end-of-life/">the full Windows 10 page</a>.</p></li>
         </ul>
+        <!-- Jobs pass 4 (13 Sep 2026): the "cannot run Windows 11" outcome now routes to the upgrade service and the
+             refurbished Dells as plainly as the app cross-sell above routes to the app. The scan's graphics string gives an
+             honest CPU-era hint (Intel integrated graphics only; the same map the Dell picker uses) that orders the cards. -->
+        <div id="w11-routes" style="margin-top:1.5rem">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHATEVER THE ANSWER, THERE IS A ROUTE</p>
+          <p id="w11-hint" class="mono" style="text-align:center;font-size:.84rem;line-height:1.5;color:var(--muted);margin:.4rem auto 1rem;max-width:640px" hidden></p>
+          <div id="w11-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.9rem">
+            <div class="w11-route" data-route="upgrade" style="border:1px solid rgba(125,170,220,.28);border-radius:14px;padding:1rem 1.1rem;background:rgba(255,255,255,.03);display:flex;flex-direction:column;gap:.45rem">
+              <p class="w11-tag mono" style="margin:0;font-size:.7rem;letter-spacing:.06em;color:var(--cyan-soft,#6cc4f5)" hidden>LIKELY YOUR ROUTE</p>
+              <p class="eyebrow mono" style="margin:0">// IF IT CAN</p>
+              <h3 style="margin:0;font-size:1.1rem">We upgrade it properly</h3>
+              <p style="margin:0;font-size:.92rem;line-height:1.55;color:var(--ink-2,#dfe9f7)">A free compatibility check (TPM 2.0 and all), a full backup first, then the move from Windows 10 to 11 with your files, apps and settings intact. Remote or at your desk, across Dorset.</p>
+              <p style="margin:auto 0 0"><a class="button primary" href="/windows-11-upgrade-service/">Windows 11 upgrade service</a></p>
+            </div>
+            <div class="w11-route" data-route="refurb" style="border:1px solid rgba(125,170,220,.28);border-radius:14px;padding:1rem 1.1rem;background:rgba(255,255,255,.03);display:flex;flex-direction:column;gap:.45rem">
+              <p class="w11-tag mono" style="margin:0;font-size:.7rem;letter-spacing:.06em;color:var(--cyan-soft,#6cc4f5)" hidden>LIKELY YOUR ROUTE</p>
+              <p class="eyebrow mono" style="margin:0">// IF IT CANNOT</p>
+              <h3 style="margin:0;font-size:1.1rem">A refurbished business Dell, ready to go</h3>
+              <p style="margin:0;font-size:.92rem;line-height:1.55;color:var(--ink-2,#dfe9f7)">Ex-business Latitude laptops from &pound;510 and OptiPlex desktops from &pound;545: Windows 11 set up, a new 1TB Samsung 990&nbsp;PRO drive, your data moved across and a 12-month guarantee (5 years on a support plan), all included. We bring it to you to see first.</p>
+              <p style="margin:auto 0 0"><a class="button primary" href="/dell-hardware/#pick">See what is in stock</a></p>
+            </div>
+            <div class="w11-route" data-route="esu" style="border:1px solid rgba(125,170,220,.28);border-radius:14px;padding:1rem 1.1rem;background:rgba(255,255,255,.03);display:flex;flex-direction:column;gap:.45rem">
+              <p class="w11-tag mono" style="margin:0;font-size:.7rem;letter-spacing:.06em;color:var(--cyan-soft,#6cc4f5)" hidden>LIKELY YOUR ROUTE</p>
+              <p class="eyebrow mono" style="margin:0">// NOT READY TO CHANGE</p>
+              <h3 style="margin:0;font-size:1.1rem">Stay safe on Windows 10 for now</h3>
+              <p style="margin:0;font-size:.92rem;line-height:1.55;color:var(--ink-2,#dfe9f7)">Microsoft&rsquo;s Extended Security Updates keep Windows 10 patched until 12 October 2027, free with a Microsoft account. We enrol it for you if the button will not appear.</p>
+              <p style="margin:auto 0 0"><a class="button secondary" href="/windows-10-esu-free-enrolment-help/">Windows 10 ESU help</a></p>
+            </div>
+          </div>
+          <p class="mono" style="text-align:center;font-size:.8rem;color:var(--muted);margin:1rem 0 0">Not sure which? <a href="tel:+441202775566">Call 01202 775566</a> and we work it out with you.</p>
+        </div>
+        <script>
+        /* The graphics chip the scan read is the one honest clue a browser has to the processor's age. Intel integrated
+           graphics carry their generation in the name (HD 520 = 6th gen, UHD 620 = 8th gen, Iris Xe = 11th); Windows 11
+           officially needs 8th gen or newer. Only Intel names are mapped; anything else says nothing and the order stays. */
+        (function(){
+          var grid=document.getElementById('w11-grid'), hint=document.getElementById('w11-hint'); if(!grid||!hint) return;
+          function gen(str){
+            var t=(str||'').toLowerCase(); if(t.indexOf('intel')<0) return 0;
+            if(/iris xe/.test(t)) return 11;
+            if(/iris plus graphics 6[45]0/.test(t)) return 7;
+            if(/iris plus/.test(t)) return 10;
+            if(/iris(?: pro)? graphics 5\d\d/.test(t)) return 6;
+            if(/uhd graphics 6[0-3]\d/.test(t)) return 8;
+            if(/uhd graphics/.test(t)) return 10;
+            if(/hd graphics 6[0-3]\d/.test(t)) return 7;
+            if(/hd graphics 5\d\d/.test(t)) return 6;
+            if(/hd graphics 4\d\d\d/.test(t)) return 4;
+            if(/hd graphics [23]\d\d\d/.test(t)) return 3;
+            return 0;
+          }
+          function lead(route){
+            var c=grid.querySelector('[data-route="'+route+'"]'); if(!c) return;
+            grid.insertBefore(c, grid.firstElementChild);
+            var tag=c.querySelector('.w11-tag'); if(tag) tag.hidden=false;
+          }
+          function apply(o){
+            if(!o || o.win11 || !(o.win10||o.amb)) return;
+            var g=gen(o.gpu), name=(o.gpu||'').replace(/^ANGLE \((?:Intel, )?/i,'').replace(/ \(0x[0-9a-f]+\).*$/i,'').replace(/ Direct3D.*$/i,'').replace(/\)$/,'').slice(0,60);
+            if(!g) return;
+            if(g>=8){
+              hint.textContent='Your graphics chip ('+name+') points to an 8th-generation Intel processor or newer, so the processor is usually fine: TPM 2.0 and Secure Boot decide it. The free check settles it.';
+              lead('upgrade');
+            } else {
+              hint.textContent='Your graphics chip ('+name+') points to a 7th-generation Intel processor or older, which Windows 11 does not officially support. The realistic routes are a refurbished machine, or Extended Security Updates while you decide.';
+              grid.insertBefore(grid.querySelector('[data-route="esu"]'), grid.firstElementChild);
+              lead('refurb');
+            }
+            hint.hidden=false;
+          }
+          if(window.__spcOS) apply(window.__spcOS); else document.addEventListener('spc:done',function(e){ apply(e.detail); });
+        })();
+        </script>
       </div>
     </section>
     <section class="section section--alt" aria-label="Test your mobile signal" id="signal-test">
@@ -1803,7 +1876,7 @@
         </details>
         <details class="faq" data-reveal>
           <summary>Can this page tell me whether my PC can run Windows 11?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p>Not on its own &mdash; a browser cannot read the two things that decide it, <strong>TPM 2.0</strong> and <strong>Secure Boot</strong>. Windows can: open Settings &rarr; Privacy &amp; security &rarr; Windows Security &rarr; Device security, where they appear as Security processor and Secure boot. If your machine falls short, our <a href="/windows-10-end-of-life/">Windows 10 page</a> sets out the honest options.</p></div>
+          <div class="faq__ans"><p>Not on its own &mdash; a browser cannot read the two things that decide it, <strong>TPM 2.0</strong> and <strong>Secure Boot</strong>. Windows can: open Settings &rarr; Privacy &amp; security &rarr; Windows Security &rarr; Device security, where they appear as Security processor and Secure boot. Our <a href="/windows-11-upgrade-service/">Windows 11 upgrade service</a> checks it for free and does the upgrade properly if it passes; if it falls short, a <a href="/dell-hardware/">refurbished business Dell</a> from &pound;510 with your data moved across is the sensible replacement, and <a href="/windows-10-esu-free-enrolment-help/">Windows 10 ESU</a> keeps it patched until October 2027 while you decide.</p></div>
         </details>
         <details class="faq" data-reveal>
           <summary>Is it safe to run the benchmark on this page?<span class="faq__icon" aria-hidden="true"></span></summary>
