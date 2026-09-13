@@ -1922,16 +1922,20 @@ html[class*="a11y-text-"] .nav-sos__long, html[class*="a11y-text-"] .nav-search_
 .cookie-banner__actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
 .cookie-banner .button { padding: 0.6rem 1.2rem; font-size: 0.9rem; }
 
-/* ⚠️ MUST STAY AFTER the .cookie-banner base rule above. This override used to
-   live ~500 lines earlier inside the mobile media block, where the base rule's
-   later `bottom:1rem` beat it at equal specificity - so on a phone the banner
-   sat ON TOP of the sticky tap-to-call bar. Measured at 375x812: banner
-   y627-796, Call link y751, document.elementFromPoint returned .cookie-banner.
-   The phone number is this audience's primary conversion and it was physically
-   untappable for every first-time visitor on every page. Move this block and it
-   breaks again silently - CSS gives no warning for a rule that simply loses. */
+/* ⚠️ MUST STAY AFTER the .cookie-banner base rule above (equal specificity: the later rule wins).
+   History: at the bottom the banner first covered the dock's Call (Aug 2026); lifted above the dock it
+   covered the hero's Call button instead (nav audit, 13 Sep 2026: at 375x812 it sat over the button on
+   every page for every first-time visitor, y745-835). Since 13 Sep the phone banner pins just UNDER the
+   fixed header instead: full width, one compact strip, over the breadcrumb and eyebrow for a moment and
+   never over a button. Desktop keeps the fixed bottom card. */
 @media (max-width: 767px) {
-  .cookie-banner { left: 0.6rem; right: 0.6rem; bottom: calc(5.2rem + env(safe-area-inset-bottom)); }
+  .cookie-banner {
+    top: var(--header-h); bottom: auto; left: 0; right: 0;   /* the ticker is hidden on phones, so flush under the header */
+    max-width: none; margin: 0; border-radius: 0; border-left: 0; border-right: 0; border-top: 0;
+    padding: 0.65rem 1rem 0.75rem; gap: 0.45rem 0.8rem; box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+  }
+  .cookie-banner p { flex: 1 1 200px; font-size: 0.86rem; line-height: 1.45; }
+  .cookie-banner .button { min-height: 44px; padding: 0.5rem 0.9rem; font-size: 0.86rem; }
 }
 
 /* ===== Accessibility toolbar ===== */
