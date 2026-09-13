@@ -1521,6 +1521,8 @@ html[class*="a11y-text-"] .nav-sos__long, html[class*="a11y-text-"] .nav-search_
 .page-hero__cta { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2.2rem; }
 .page-hero__chips { display: flex; flex-wrap: wrap; gap: 1.2rem; margin-top: 2rem; }
 .page-hero__chips li { color: #869fc6; }
+.page-hero__byline { margin-top: 1.1rem; font-size: 0.78rem; letter-spacing: 0.06em; color: #7d9cc7; }
+.page-hero__byline a { color: #a9c4ea; text-decoration: none; border-bottom: 1px solid rgba(169, 196, 234, 0.4); }
 
 .breadcrumb {
   display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;

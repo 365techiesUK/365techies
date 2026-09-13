@@ -83,6 +83,7 @@ _VOLATILE = [
     # 13 Sep 2026 (nav audit item 4): the footer is navigation, not content. The whole block is stripped so
     # a footer edit never re-dates 718 pages; the stored hashes were re-based once with this rule in place.
     (_cdre.compile(r'<footer class="site-footer">.*?</footer>', _cdre.S), ''),
+    (_cdre.compile(r'\s*<p class="page-hero__byline[^>]*>.*?</p>', _cdre.S), ''),   # the byline (and its indentation): constant text + a stamped date
     (_cdre.compile(r'\?v=[\w.\-]+'), '?v=X'),
     (_cdre.compile(r'checked on \d{1,2} \w+ \d{4}', _cdre.I), 'checked on X'),
     (_cdre.compile(r'Dates checked: \d{1,2} \w+ \d{4}', _cdre.I), 'Dates checked: X'),
@@ -142,7 +143,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "106"   # bumped 2026-09-13 (3rd): metric-matched local fallback fonts (size-adjust/ascent/descent overrides) so the web-font swap moves nothing; the lab home CLS of 0.169 was entirely the swap (SEO audit item 6). Earlier: v105 2026-09-13 (2nd): the phone cookie banner pins under the header, not over the hero Call button. Earlier: v104 2026-09-13: the Text size pill is an icon at bottom-right on phones (nav audit: it covered the hero Call button). Earlier: v103 2026-09-07: scam alert in the strip + homepage band, strip re-timed to 85s. Earlier: v102 2026-09-05 (3rd): mobile-menu contact links lifted to a 44px tap target. Earlier the same day: v101 = the >=1960 header expand moved to 2040 so "Contact" is never clipped. Earlier the same day: v100 = the A+ text steps hand the nav to the hamburger instead of clipping it (nav audit). Earlier: v99 2026-09-02: hero console card no longer tilted. Earlier: v98   # bumped 2026-09-02 again: v97 was poisoned in the SiteGround proxy by a pre-completion page load (old CSS cached under the new URL for browsers; curl variants showed MISS). NEVER load a page carrying a new ?v= until the deploy run is completed+success. v97 = 2026-09-02 (live-map launcher + overlay).   # bumped 2026-09-02 (Bournemouth365 live-map launcher + overlay). Earlier: v96 2026-08-27 (skip-link could not be outgrown by the a11y ladder). Earlier: v95 2026-08-19 (proof bar replaces the duplicate reviews teaser). Earlier: v94 2026-08-17 (status strip rebuild). Earlier the same day: v88 was poisoned in the SiteGround proxy by a pre-deploy probe (see deploy-hash-sync-blindspot); NEVER request a new ?v= URL before the deploy that ships it is confirmed complete
+CSSV = "107"   # bumped 2026-09-13 (4th): the hero byline (.page-hero__byline). Earlier: v106 2026-09-13 (3rd): metric-matched local fallback fonts (size-adjust/ascent/descent overrides) so the web-font swap moves nothing; the lab home CLS of 0.169 was entirely the swap (SEO audit item 6). Earlier: v105 2026-09-13 (2nd): the phone cookie banner pins under the header, not over the hero Call button. Earlier: v104 2026-09-13: the Text size pill is an icon at bottom-right on phones (nav audit: it covered the hero Call button). Earlier: v103 2026-09-07: scam alert in the strip + homepage band, strip re-timed to 85s. Earlier: v102 2026-09-05 (3rd): mobile-menu contact links lifted to a 44px tap target. Earlier the same day: v101 = the >=1960 header expand moved to 2040 so "Contact" is never clipped. Earlier the same day: v100 = the A+ text steps hand the nav to the hamburger instead of clipping it (nav audit). Earlier: v99 2026-09-02: hero console card no longer tilted. Earlier: v98   # bumped 2026-09-02 again: v97 was poisoned in the SiteGround proxy by a pre-completion page load (old CSS cached under the new URL for browsers; curl variants showed MISS). NEVER load a page carrying a new ?v= until the deploy run is completed+success. v97 = 2026-09-02 (live-map launcher + overlay).   # bumped 2026-09-02 (Bournemouth365 live-map launcher + overlay). Earlier: v96 2026-08-27 (skip-link could not be outgrown by the a11y ladder). Earlier: v95 2026-08-19 (proof bar replaces the duplicate reviews teaser). Earlier: v94 2026-08-17 (status strip rebuild). Earlier the same day: v88 was poisoned in the SiteGround proxy by a pre-deploy probe (see deploy-hash-sync-blindspot); NEVER request a new ?v= URL before the deploy that ships it is confirmed complete
 HERITAGE_DIMS = {'heritage-01.jpg': (1400, 787), 'heritage-02.jpg': (787, 1400), 'heritage-03.jpg': (1400, 787), 'heritage-04.jpg': (1400, 787), 'heritage-05.jpg': (787, 1400), 'heritage-07.jpg': (1400, 787), 'heritage-kinson.jpg': (1200, 710), 'heritage-moordown.jpg': (1400, 788), 'heritage-stock.jpg': (1400, 788), 'heritage-storefront.jpg': (1024, 683)}
 try:
     from hero_scenes import SCENES as HERO_SCENES
@@ -1464,7 +1465,7 @@ def hero_trust(lede):
     return lede if "4.9" in lede else lede.rstrip() + " Rated 4.9 on Google."
 
 def hero(crumbs_html, eyebrow, h1_html, lede, cta1=("View Monthly Plans", "/monthly-it-support/"),
-         cta2=("Get Support Today", "/contact/"), chips=None, scene=None, trustbar=False):
+         cta2=("Get Support Today", "/contact/"), chips=None, scene=None, trustbar=False, byline=True):
     cta1, cta2 = _call_first(cta1, cta2)
     if trustbar:
         # the trust bar replaces both the dot-chips AND the lede's templated rating sentence
@@ -1477,6 +1478,10 @@ def hero(crumbs_html, eyebrow, h1_html, lede, cta1=("View Monthly Plans", "/mont
     scene_html = ""
     if scene:
         scene_html = f'\n        <div class="course-scene course-scene--band course-scene--hero" aria-hidden="true">{scene}</div>'
+    # 13 Sep 2026 (content audit item 4): who wrote it and when it last changed, on every page. The date token is
+    # stamped after hashing (like the fix flows' 'Last reviewed'), and the whole line is volatile to the content
+    # hash, so adding it re-dated nothing and a page's date still moves only when its words do.
+    byline_html = '\n        <p class="page-hero__byline mono">By the <a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>' if byline else ""
     return f'''    <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb">{crumbs_html}</nav>
@@ -1486,7 +1491,7 @@ def hero(crumbs_html, eyebrow, h1_html, lede, cta1=("View Monthly Plans", "/mont
         <div class="page-hero__cta">
           <a href="{cta1[1]}" class="button primary button--lg">{cta1[0]}</a>
           <a href="{cta2[1]}" class="button secondary button--lg">{cta2[0]}</a>
-        </div>{chips_html}{scene_html}
+        </div>{chips_html}{byline_html}{scene_html}
       </div>
     </section>'''
 
@@ -5907,7 +5912,7 @@ add(
  content="\n".join([
    hero(bc("Cybersecurity"), "// THE ULTIMATE SECURITY",
         'Cyber security <em class="grad grad--green">services</em> for Dorset',
-        hero_trust("Cyber security services for businesses and homes across Bournemouth, Poole and Dorset. Ransomware, scams and phishing don&rsquo;t care whether you&rsquo;re a family or a business &mdash; they just look for the easy way in. We close every door with layered, always-on protection that&rsquo;s set up, managed and watched over by us, keeping you safe online 24/7."),
+        hero_trust("Cyber security services for businesses and homes across Bournemouth, Poole and Dorset. Ransomware, scams and phishing don&rsquo;t care whether you&rsquo;re a family or a business &mdash; they just look for the easy way in. We close every door with layered, always-on protection that&rsquo;s set up, managed and watched over by us: protection that runs round the clock, and people who answer Monday to Friday, 9 to 5."),
         cta1=("Get Protected", "/contact/"), cta2=("Free IT Health Check", "/contact/"),
         chips=["Malwarebytes Partner", "Layered defence", "Monitored 24/7"], scene=HERO_SCENES.get("cyber")),
    f'''    <section class="section" aria-label="Why it matters">
@@ -6146,7 +6151,7 @@ add(
      ("Can you remove a virus?", "Yes — we remove viruses and malware, clean up your system and set up protection so it doesn&rsquo;t come back."),
      ("Do I have to take out a subscription?", "No — we offer one-off repairs with no subscription. Many customers then move to a monthly plan to avoid future problems."),
      ("Which areas do you cover?", "All of Dorset — we're based in Bournemouth and collect free locally, with remote help available anywhere. See <a href=\"/it-support-dorset/\">IT support across Dorset</a> for every town we cover."),
-     ("Can you recover my files?", "In most cases, yes. Bring it to us before doing anything else and we&rsquo;ll give you the best chance of recovering your data."),
+     ("Can you recover my files?", "In most cases, yes. Book a free collection before doing anything else and we&rsquo;ll give you the best chance of recovering your data."),
    ]),
    # Laptop-fault guides were four clicks from the homepage, reached only from each
    # other (5 Sep 2026 nav audit, finding 7). The repairs hub is where a reader with a

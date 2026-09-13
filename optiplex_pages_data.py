@@ -497,7 +497,7 @@ OPTIPLEX_PAGES = [
    },
    {
     "q": "Should I upgrade my current PC instead of replacing it?",
-    "a": "Often, yes. Many ex-fleet business desktops shipped with a single 8GB memory stick; fitting a matched pair for dual-channel operation is a modest upgrade that noticeably improves everyday speed and integrated graphics. It costs far less than a new machine, even at today&rsquo;s RAM prices. Bring it to us in Kinson or call 01202 775566 and we&rsquo;ll tell you honestly whether an upgrade or a refurbished replacement is better value for your case."
+    "a": "Often, yes. Many ex-fleet business desktops shipped with a single 8GB memory stick; fitting a matched pair for dual-channel operation is a modest upgrade that noticeably improves everyday speed and integrated graphics. It costs far less than a new machine, even at today&rsquo;s RAM prices. Call 01202 775566 and we&rsquo;ll tell you honestly whether an upgrade or a refurbished replacement is better value for your case."
    },
    {
     "q": "What do I actually get when I buy a refurbished Dell from 365 Techies?",

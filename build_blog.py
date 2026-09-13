@@ -121,7 +121,7 @@ def make_post(slug, cat, title, lede, body, points, related, faqs=None, dt="2026
         nodes.append(faqpage(slug, faqs))
     content = "\n".join([
       hero(bc3(title), f"// {cat.upper()}", title, lede,
-           cta1=("Read more advice", "/it-advice/"), cta2=("View Monthly Plans", "/monthly-it-support/")),
+           cta1=("Read more advice", "/it-advice/"), cta2=("View Monthly Plans", "/monthly-it-support/"), byline=False),
       f'''    <section class="section" aria-label="Article">
       <article class="article">
         <p class="mono" style="color:var(--muted);font-size:.8rem;margin:0 0 1.6rem">Published {dt_pretty} &middot; {cat} &middot; by the <a href="/meet-the-team/" style="color:var(--cyan)">365 Techies team</a> &mdash; Microsoft Partners &amp; Dell specialists, looking after Dorset since 1995</p>
@@ -532,7 +532,7 @@ def hub():
     content = "\n".join([
       hero(f'<a href="/">Home</a> <span>/</span> <span aria-current="page">IT Advice</span>',
            "// IT ADVICE HUB", 'IT advice <em class="grad grad--cyan">that actually helps</em>',
-           "Helpful, jargon-free guides on getting the most from your technology — monthly support, home computers, business IT, Microsoft 365, cybersecurity and Windows.",
+           "Helpful, jargon-free guides on getting the most from your technology — monthly support, home computers, business IT, Microsoft 365, cybersecurity and Windows. Tools, checklists and buyer&rsquo;s guides live in the <a href=\"/resources/\">resources hub</a>.",
            cta1=("View Monthly Plans", "/monthly-it-support/"), cta2=("Contact Us", "/contact/"),
            chips=["Plain English", "Practical tips", "Updated regularly"]),
       f'''    <section class="section" style="padding-bottom:0" aria-label="Filter advice">

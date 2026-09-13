@@ -79,7 +79,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=106" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=107" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -117,7 +117,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=106&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=107&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -711,6 +711,7 @@
           <a href="/wifi-signal-test/" class="button secondary button--lg">Free Wi-Fi survey tool</a>
         </div>
         <ul class="page-hero__chips mono"><li>&#9679; Deadline: 31 January 2027</li><li>&#9679; Life-safety kit flagged</li><li>&#9679; Independent &mdash; we sell no phone systems</li></ul>
+        <p class="page-hero__byline mono">By the <a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 31 August 2026</p>
       </div>
     </section>
     <section class="section"><div class="wrap wrap--narrow prose" data-reveal><div class="apdisc" role="note"><p><strong>Independent, and dated.</strong> 365 Techies is an independent IT firm. We are a Dell reseller and a Microsoft partner; we are <strong>not</strong> an authorised partner, reseller or agent of SonicWall, Fortinet, WatchGuard, Sophos, Cisco, Cisco Meraki, Ubiquiti or any other vendor named on this page, and we have no access to their support entitlements on your behalf. Every quoted behaviour comes from the vendor&rsquo;s own documentation, linked in the source column, and was checked on 27 July 2026. Where we could not verify something from a vendor source we say &ldquo;check with vendor&rdquo; rather than guess. We publish no prices for this work &mdash; every site is different, and we would rather give you a real number on the phone than a fake one here.</p></div></div></section>

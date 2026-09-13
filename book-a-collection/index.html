@@ -79,7 +79,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=106" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=107" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -117,7 +117,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=106&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=107&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -278,7 +278,7 @@
       "@id": "https://365techies.co.uk/book-a-collection/#webpage",
       "url": "https://365techies.co.uk/book-a-collection/",
       "name": "Book a Collection",
-      "description": "Book a computer or laptop collection or drop-off with 365 Techies in Bournemouth, Poole and Dorset. We collect, diagnose, repair and return your device — no-fix-no-fee on diagnosis.",
+      "description": "Book a free computer or laptop collection with 365 Techies in Bournemouth, Poole and Dorset. We collect, diagnose, repair and return your device — no-fix-no-fee on diagnosis.",
       "inLanguage": "en-GB",
       "isPartOf": {
         "@id": "https://365techies.co.uk/#website"
@@ -703,14 +703,15 @@
     <section class="page-hero" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">Book a Collection</span></nav>
-        <p class="eyebrow mono">// COLLECTION & DROP-OFF</p>
-        <h1>Book a <em class="grad grad--cyan">collection</em> or drop-off</h1>
-        <p class="lede">Computer playing up and need hands-on help? Book a convenient collection, or drop your device off with us — we'll diagnose, fix and get it back to you, with no-fix-no-fee on diagnosis.</p>
+        <p class="eyebrow mono">// FREE LOCAL COLLECTION</p>
+        <h1>Book a free <em class="grad grad--cyan">collection</em></h1>
+        <p class="lede">Computer playing up and need hands-on help? Book a convenient collection from anywhere in the areas we cover — we'll diagnose, fix and get it back to you, with no-fix-no-fee on diagnosis.</p>
         <div class="page-hero__cta">
           <a href="#book" class="button primary button--lg">Request a Collection</a>
           <a href="tel:+441202775566" class="button secondary button--lg">Call 01202 775566</a>
         </div>
-        <ul class="page-hero__chips mono"><li>&#9679; Collection or drop-off</li><li>&#9679; No-fix-no-fee</li><li>&#9679; Local to Dorset</li></ul>
+        <ul class="page-hero__chips mono"><li>&#9679; Free local collection</li><li>&#9679; No-fix-no-fee</li><li>&#9679; Local to Dorset</li></ul>
+        <p class="page-hero__byline mono">By the <a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 13 September 2026</p>
       </div>
     </section>
     <section class="section section--alt" aria-label="How collection works">
@@ -725,8 +726,8 @@
         </li>
         <li data-reveal>
           <p class="how__num mono">02</p>
-          <h3>Collect or drop off</h3>
-          <p>We arrange a convenient local collection, or you drop it off with us.</p>
+          <h3>We collect</h3>
+          <p>We arrange a convenient collection from your home or business, anywhere in the areas we cover.</p>
         </li>
         <li data-reveal>
           <p class="how__num mono">03</p>
@@ -745,20 +746,13 @@
       <div class="wrap" style="max-width:700px;margin:0 auto">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// REQUEST IT</p>
-          <h2 class="section-title section-title--center" data-title>Request a collection or drop-off<span class="title-underline title-underline--center"></span></h2>
+          <h2 class="section-title section-title--center" data-title>Request a collection<span class="title-underline title-underline--center"></span></h2>
         </div>
         <form class="contact-form" data-reveal action="/api/form-relay.php" method="post">
           <input type="text" name="company_website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
           <label class="field"><span>Your name</span><input type="text" name="name" autocomplete="name" required /></label>
           <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" required /></label>
           <label class="field"><span>Phone</span><input type="tel" name="phone" autocomplete="tel" required /></label>
-          <label class="field"><span>Collection or drop-off?</span>
-            <select name="topic">
-              <option>Please collect from me</option>
-              <option>I&rsquo;ll drop it off</option>
-              <option>Not sure &mdash; please advise</option>
-            </select>
-          </label>
           <label class="field"><span>Device &amp; problem (and your area for collection)</span><textarea name="message" required></textarea></label>
           <button type="submit" class="button primary button--lg" style="width:100%">Send Your Request</button>
           <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.7rem">// GOES STRAIGHT TO OUR FAMILY TEAM &middot; WE REPLY WITHIN ONE WORKING DAY (MON&ndash;FRI)</p>

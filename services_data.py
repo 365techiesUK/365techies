@@ -37,7 +37,7 @@ SERVICE_PAGES = [
    {
     "icon": "phone",
     "title": "Memory cards, USB sticks &amp; SD",
-    "body": "Camera and phone SD cards, USB pen drives and external drives that have corrupted or won't open. Common for photos and important documents &mdash; bring it in and we'll assess it."
+    "body": "Camera and phone SD cards, USB pen drives and external drives that have corrupted or won't open. Common for photos and important documents &mdash; book a collection and we'll assess it."
    },
    {
     "icon": "lock",
@@ -548,7 +548,7 @@ SERVICE_PAGES = [
   "howItWorks": [
    {
     "title": "Tell us what's wrong",
-    "desc": "Call, text or book online and describe the fault &mdash; won't charge, cracked screen, won't switch on. We arrange free local collection across Dorset, or you can drop it in. Many software faults we can even start remotely the same day."
+    "desc": "Call, text or book online and describe the fault &mdash; won't charge, cracked screen, won't switch on. We arrange free local collection across the areas we cover. Many software faults we can even start remotely the same day."
    },
    {
     "title": "Diagnose &amp; clear quote",
@@ -970,7 +970,7 @@ SERVICE_PAGES = [
    },
    {
     "q": "My old computer is broken or won't start &mdash; can you still get my data?",
-    "a": "Often, yes. If the computer won't boot but the hard drive itself is intact, we can usually connect the drive separately and pull your files off it. If the drive itself is the problem, the sooner you stop using it the better &mdash; every extra power-on risks more damage. Bring it in or book a visit and we'll assess it honestly before doing anything."
+    "a": "Often, yes. If the computer won't boot but the hard drive itself is intact, we can usually connect the drive separately and pull your files off it. If the drive itself is the problem, the sooner you stop using it the better &mdash; every extra power-on risks more damage. Book a collection or a visit and we'll assess it honestly before doing anything."
    },
    {
     "q": "How long does a data migration take?",
@@ -1042,7 +1042,7 @@ SERVICE_PAGES = [
   "howItWorks": [
    {
     "title": "Tell us what's happened",
-    "desc": "Call, text or book online and describe the fault &mdash; cracked, black, flickering &mdash; and your laptop's make and model. We'll arrange free local collection across Dorset, or you can drop it in."
+    "desc": "Call, text or book online and describe the fault &mdash; cracked, black, flickering &mdash; and your laptop's make and model. We'll arrange free local collection across the areas we cover."
    },
    {
     "title": "Diagnose &amp; quote",

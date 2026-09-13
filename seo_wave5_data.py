@@ -756,7 +756,7 @@ SEO_WAVE5_PAGES = [{'slug': 'windows-11-network-credentials-shared-folder',
                         'machine happens to be oldest &mdash; and now that Windows 10 support '
                         'ended in October 2025, that may well be the one no longer receiving '
                         'security updates, unless it is enrolled in Extended Security Updates, '
-                        'which for home versions runs to October 2026. Worth checking rather than '
+                        'which for home versions now runs to 12 October 2027. Worth checking rather than '
                         'assuming &mdash; Windows Update will tell you.</p><p>A few honest '
                         'questions. If that computer failed this afternoon, where is the copy of '
                         'the files? Does everyone lose access the moment the person at that desk '
@@ -810,8 +810,8 @@ SEO_WAVE5_PAGES = [{'slug': 'windows-11-network-credentials-shared-folder',
             'a': 'Not in order to fix the error &mdash; that is a configuration job and can be '
                  'done on either machine. It is worth knowing, though, that Windows 10 stopped '
                  'receiving its normal security updates in October 2025, unless that PC is '
-                 'enrolled in Extended Security Updates, which for home versions runs to October '
-                 '2026. Check Windows Update rather than assuming. Either way, if that machine '
+                 'enrolled in Extended Security Updates, which for home versions now runs to 12 October '
+                 '2027. Check Windows Update rather than assuming. Either way, if that machine '
                  'holds the whole office&rsquo;s files, the sharing fault is the smaller of your '
                  'two problems.'}],
   'chips': ['No fix, no fee', 'Rated 4.9 on Google', 'Trading since 1995'],

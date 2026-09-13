@@ -4674,8 +4674,8 @@ def windows_10_eol():
     slug = "windows-10-end-of-life"
     desc = "Windows 10 reached end of support on 14 October 2025 — no more free security updates. 365 Techies explains what it means, whether you're affected, and your options: free Windows 11 upgrade check, new PCs and Dell hardware."
     faqs = [
-  ('What happens when Windows 10 ESU ends in October 2026?',
-       'Your PC keeps working &mdash; nothing switches off &mdash; but consumer security updates stop for good, and this time there&rsquo;s no second extension for home users (businesses can buy further years through volume licensing; consumers can&rsquo;t). From that point every newly discovered Windows 10 flaw stays unpatched on your machine, which is a genuinely bad place for online banking and email to live. The sensible moves before then: upgrade to Windows 11 if your PC qualifies, or move to a machine that does &mdash; a refurbished business Dell is often the best-value route.'),
+  ('What happens when Windows 10 ESU ends in October 2027?',
+       'Your PC keeps working &mdash; nothing switches off &mdash; but consumer security updates stop for good. Microsoft has already used its one extension, from October 2026 to 12 October 2027 (businesses can buy further years through volume licensing; consumers can&rsquo;t). From that point every newly discovered Windows 10 flaw stays unpatched on your machine, which is a genuinely bad place for online banking and email to live. The sensible moves before then: upgrade to Windows 11 if your PC qualifies, or move to a machine that does &mdash; a refurbished business Dell is often the best-value route.'),
             ("Is Windows 10 still safe to use?", "Windows 10 reached end of support on 14 October 2025, so Microsoft no longer ships free security updates. It still switches on, but it gets steadily riskier the longer it goes unpatched."),
       ("Do I have to buy a new computer?", "Not always. Many PCs can upgrade to Windows 11 for free &mdash; we&rsquo;ll check whether yours is eligible, and only recommend a new machine if it genuinely makes sense."),
       ("What is ESU?", "Extended Security Updates &mdash; a Microsoft programme that buys limited extra time on Windows 10 (you can even enrol free with a Microsoft account). We can advise whether it&rsquo;s worth it, or set it up for you &mdash; see our <a href=\"/windows-10-esu-free-enrolment-help/\">Windows 10 ESU enrolment help</a> if the &lsquo;Enrol now&rsquo; button won&rsquo;t appear. Businesses have a separate paid scheme &mdash; see <a href=\"/windows-10-esu-business-cost/\">what Windows 10 ESU costs a business</a>."),
@@ -8384,7 +8384,7 @@ def web_design():
           <p class="lede lede--center" data-reveal>We host on premium, award-winning infrastructure from SiteGround — then manage every bit of it for you.</p>
         </div>
         <ul class="security-grid" data-stagger>
-{grid_cards([("Ultrafast cloud hosting","Built on premium Google Cloud infrastructure for fast, reliable websites."),("Free SSL &amp; HTTPS","Every site secured with a free SSL certificate as standard."),("Daily backups","Automatic daily backups, so your website can always be restored."),("Security &amp; anti-malware","AI anti-bot, web application firewall and malware protection built in."),("UK data centre &amp; CDN","Fast load times in the UK, with a global CDN for visitors everywhere."),("Managed &amp; monitored","We handle updates, monitoring and 24/7-backed support, so you don&rsquo;t have to.")])}
+{grid_cards([("Ultrafast cloud hosting","Built on premium Google Cloud infrastructure for fast, reliable websites."),("Free SSL &amp; HTTPS","Every site secured with a free SSL certificate as standard."),("Daily backups","Automatic daily backups, so your website can always be restored."),("Security &amp; anti-malware","AI anti-bot, web application firewall and malware protection built in."),("UK data centre &amp; CDN","Fast load times in the UK, with a global CDN for visitors everywhere."),("Managed &amp; monitored","We handle the updates and monitoring, and answer Monday to Friday, 9 to 5, so you don&rsquo;t have to.")])}
         </ul>
       </div>
     </section>''',
@@ -8756,7 +8756,7 @@ def services_overview():
         ("Remote Access", "/remote-access/", "Reach your own laptop or PC from anywhere with secure, fast Splashtop Business remote access."),
         ("Microsoft 365", "/microsoft-365-support/", "Outlook, Teams, OneDrive, SharePoint, licensing and migration."),
         ("Cybersecurity", "/cybersecurity-support/", "Protection from scams, malware, ransomware and phishing."),
-        ("Malwarebytes Premium &amp; VPN", "/malwarebytes-premium/", "Award-winning Malwarebytes Premium with VPN, set up and managed by us &mdash; safe online 24/7."),
+        ("Malwarebytes Premium &amp; VPN", "/malwarebytes-premium/", "Award-winning Malwarebytes Premium with VPN, set up and managed by us &mdash; protection that runs round the clock."),
         ("Computer Repairs", "/computer-repairs/", "Laptop and PC repairs, virus removal, upgrades and setup."),
         ("Computer Repair Bournemouth", "/computer-repair-bournemouth/", "Local PC &amp; laptop repair in Bournemouth &mdash; home visits, remote help, no call-out fee."),
         ("Computer Repair Poole", "/computer-repair-poole/", "Local PC &amp; laptop repair in Poole &mdash; home visits, remote help, no call-out fee."),
@@ -9937,7 +9937,7 @@ refurbished_local()
 # ===================================================== MALWAREBYTES
 def malwarebytes():
     slug = "malwarebytes-premium"
-    desc = "365 Techies is a Malwarebytes Partner. We set up and manage Malwarebytes Premium with VPN for homes and businesses across Dorset — award-winning protection against malware, ransomware and online threats, keeping you safe online 24/7."
+    desc = "365 Techies is a Malwarebytes Partner. We set up and manage Malwarebytes Premium with VPN for homes and businesses across Dorset — award-winning protection against malware, ransomware and online threats, running round the clock and looked after by us."
     faqs = [
       ("Are you really a Malwarebytes partner?", "Yes — 365 Techies is a Malwarebytes Partner, so we can supply, set up and manage Malwarebytes Premium for our home and business customers and look after it on your support plan."),
       ("What does Malwarebytes Premium actually protect against?", "Malware, ransomware, viruses, spyware, malicious and scam websites, and zero-day exploits. It works alongside Windows to stop threats before they take hold, with real-time protection running quietly in the background."),
@@ -9945,13 +9945,13 @@ def malwarebytes():
       ("Is the VPN the same as antivirus &mdash; do I still need both?", "They&rsquo;re different, and they work best together. The VPN protects your data as it travels across the internet, but it won&rsquo;t stop viruses, ransomware or scam downloads. Malwarebytes itself recommends using the VPN alongside proper antivirus &mdash; so the VPN looks after your data and the security software looks after your device."),
       ("Will it let me watch Netflix or BBC iPlayer from abroad?", "We can&rsquo;t promise that, and we wouldn&rsquo;t advertise it. Streaming services like Netflix actively detect and block VPNs, and using one to get around their regional rules can breach their terms. BBC iPlayer is UK-only and a VPN doesn&rsquo;t change the TV Licence position. Please think of changing your location as a privacy feature, not a streaming unlocker."),
       ("Does the VPN keep a record of what I do online?", "Malwarebytes states it doesn&rsquo;t track, log or store your activity, and its servers run in memory with no hard disks. This was checked by an independent third-party audit in 2026, which found no evidence of user-activity logging. The only logs are local diagnostic ones that stay on your device unless you choose to share them with support."),
-      ("Do you set it up and keep an eye on it?", "Yes — we install and configure Malwarebytes Premium on your devices, make sure it&rsquo;s working correctly, and monitor and maintain it as part of your monthly support plan, so you&rsquo;re protected 24/7 without lifting a finger."),
+      ("Do you set it up and keep an eye on it?", "Yes — we install and configure Malwarebytes Premium on your devices, make sure it&rsquo;s working correctly, and monitor and maintain it as part of your monthly support plan, so the protection runs round the clock without you lifting a finger."),
       ("Can I protect the whole family or team?", "Absolutely. Depending on the plan, Malwarebytes can cover multiple devices across your household or business &mdash; Windows PCs, Macs, Android phones and tablets, and iPhones and iPads &mdash; all set up and looked after by us."),
     ]
     content = "\n".join([
       hero(bc("Malwarebytes Premium"), "// MALWAREBYTES PARTNER",
            'Malwarebytes Premium <em class="grad grad--cyan">with VPN</em>',
-           "As a Malwarebytes Partner, we set up and manage award-winning Malwarebytes Premium &amp; VPN for homes and businesses across Dorset &mdash; powerful protection against malware, ransomware and online scams, keeping you safe online 24/7.",
+           "As a Malwarebytes Partner, we set up and manage award-winning Malwarebytes Premium &amp; VPN for homes and businesses across Dorset &mdash; powerful protection against malware, ransomware and online scams, running round the clock and looked after by us.",
            cta1=("Get Protected", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=["Official Malwarebytes Partner","Premium + VPN included","Set up &amp; managed by us"]),
       f'''    <section class="section" aria-label="Why Malwarebytes">
@@ -9974,7 +9974,7 @@ def malwarebytes():
           <h2 class="section-title section-title--center" data-title>Complete protection, online and off<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="tile-grid" data-stagger>
-{tiles([("shield","Real-time malware protection","Blocks viruses, malware, spyware and ransomware before they can take hold."),("bug","Ransomware defence","Stops ransomware from locking up your files and holding them to ransom."),("globe","Private VPN","Encrypts your connection so your browsing stays private &mdash; even on public Wi-Fi."),("eye","Web &amp; scam protection","Blocks malicious, scam and phishing websites the moment you click."),("bolt","Zero-day protection","Guards against brand-new threats that traditional antivirus misses."),("clock","24/7 peace of mind","Always-on protection, monitored and maintained by us on your plan.")])}
+{tiles([("shield","Real-time malware protection","Blocks viruses, malware, spyware and ransomware before they can take hold."),("bug","Ransomware defence","Stops ransomware from locking up your files and holding them to ransom."),("globe","Private VPN","Encrypts your connection so your browsing stays private &mdash; even on public Wi-Fi."),("eye","Web &amp; scam protection","Blocks malicious, scam and phishing websites the moment you click."),("bolt","Zero-day protection","Guards against brand-new threats that traditional antivirus misses."),("clock","Always-on protection","It runs round the clock; we check it at every service and answer Monday to Friday, 9 to 5.")])}
         </div>
       </div>
     </section>''',
@@ -10045,7 +10045,7 @@ def malwarebytes():
         <p class="eyebrow eyebrow--center mono" data-reveal>/06 — HOW IT WORKS</p>
         <h2 class="section-title section-title--center" data-title>Protected in three simple steps<span class="title-underline title-underline--center"></span></h2>
         <ol class="how__steps">
-{steps([("We set it up","We supply Malwarebytes Premium &amp; VPN and install it correctly on all your devices."),("We protect you","Real-time protection and the VPN keep your devices and browsing safe, day and night."),("We keep watch","We monitor and maintain it on your support plan, so you stay protected 24/7.")])}
+{steps([("We set it up","We supply Malwarebytes Premium &amp; VPN and install it correctly on all your devices."),("We protect you","Real-time protection and the VPN keep your devices and browsing safe, day and night."),("We keep watch","We monitor and maintain it on your support plan, so the protection never switches off.")])}
         </ol>
       </div>
     </section>''',
@@ -10066,7 +10066,7 @@ def malwarebytes():
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "Malwarebytes Premium"), webpage(s, "Malwarebytes Premium with VPN", _desc),
-                      service(s, "Malwarebytes Premium & VPN", "Supply, setup and management of Malwarebytes Premium with VPN for homes and businesses across Dorset, keeping customers safe online 24/7.", "Managed cybersecurity and online protection"),
+                      service(s, "Malwarebytes Premium & VPN", "Supply, setup and management of Malwarebytes Premium with VPN for homes and businesses across Dorset, with protection that runs round the clock.", "Managed cybersecurity and online protection"),
                       faqpage(s, _faqs)])
     add(slug=slug, title="Malwarebytes Premium with VPN | Malwarebytes Partner | 365 Techies",
         desc=desc, og_title="Malwarebytes Premium with VPN | 365 Techies", schema=schema, content=content)
@@ -12072,7 +12072,7 @@ def custom_pc_builder():
       ("Why do the percentages change with the use case?", "Because the bottleneck moves: games live on the graphics card (~38% of budget), editing and CAD lean on the processor and memory, and an office PC shouldn&rsquo;t buy a graphics card at all. Balance is the whole game &mdash; a monster GPU with a starved CPU wastes money."),
       ("Can you check my basket before I buy?", "Yes, free &mdash; <a href=\"/contact/\">send it over</a> and we&rsquo;ll sanity-check compatibility (socket, RAM, PSU, clearances) and tell you honestly where to spend less or more."),
       ("Should I build new or buy refurbished?", "Below about &pound;600 for a general-purpose machine, our <a href=\"/dell-hardware/\">refurbished business-grade Dells from &pound;510</a> usually beat a new budget build on quality and warranty. New custom builds shine from the mid-range up, and for gaming."),
-      ("Can you help if my build won&rsquo;t boot?", "Yes &mdash; bring it in or call. First-build gremlins (RAM not clicked in, panel connectors, missing standoffs) are usually a 20-minute fix for someone who&rsquo;s seen them a hundred times."),
+      ("Can you help if my build won&rsquo;t boot?", "Yes &mdash; call, or book a free collection. First-build gremlins (RAM not clicked in, panel connectors, missing standoffs) are usually a 20-minute fix for someone who&rsquo;s seen them a hundred times."),
     ]
     content = "\n".join([
       hero(bc("Custom PC Builder"), "// FREE PC BUILDER",
@@ -15721,7 +15721,7 @@ GAP_SERVICES = [
   "who_eyebrow": "WHEN WE HELP", "who_title": "Moves of every size",
   "who_cards": [("Small office moves", "A handful of desks moved cleanly, with no lost time."), ("Growing into bigger premises", "Plan the IT for more people and more space."), ("Brand-new offices", "From empty room to fully working, wired and secure."), ("Merging or splitting sites", "Combine or separate IT setups without the headache."), ("Home-to-office (or back)", "Set up a new business space, or move IT home."), ("Pairs with consultancy", "Plan it properly with our <a href=\"/business-it-consultancy/\">IT consultancy</a>.")],
   "how_title": "A move with no nasty surprises",
-  "how_steps": [("Survey &amp; plan", "We visit both sites, plan the move and order connectivity early."), ("Prepare the new office", "Cabling, network, Wi-Fi and internet ready before moving day."), ("Move &amp; reconnect", "Often out of hours &mdash; we move, reconnect and test everything."), ("Day-one support", "We&rsquo;re on hand as your team settles in, and after.")],
+  "how_steps": [("Survey &amp; plan", "We visit both sites, plan the move and order connectivity early."), ("Prepare the new office", "Cabling, network, Wi-Fi and internet ready before moving day."), ("Move &amp; reconnect", "On a date and time agreed with you, we move, reconnect and test everything."), ("Day-one support", "We&rsquo;re on hand as your team settles in, and after.")],
   "faqs": [
     ("Can you move our IT out of hours or at a weekend?", "Yes &mdash; we often move IT in the evening or at a weekend so your team walks into a working office with no lost working time."),
     ("Will we lose internet or phones during the move?", "We plan connectivity and phones ahead so there&rsquo;s no gap &mdash; numbers and broadband are ready at the new office before you arrive."),
@@ -15808,7 +15808,7 @@ GAP_SERVICES = [
   "who_eyebrow": "WHO IT&rsquo;S FOR", "who_title": "For anyone retiring old kit",
   "who_cards": [("Businesses replacing computers", "Dispose of old fleet kit safely and prove the data&rsquo;s gone."), ("GDPR-conscious firms", "A certificate of destruction for your records."), ("Home users &amp; families", "Sell, donate or recycle an old computer without risking your data."), ("Retired &amp; less-confident users", "We handle it all for you &mdash; safely and patiently."), ("Office clear-outs &amp; moves", "Pairs with <a href=\"/office-moves-it-relocation/\">office moves</a> and upgrades."), ("Eco-minded customers", "Responsible recycling in line with our <a href=\"/sustainability/\">sustainability</a> commitment.")],
   "how_title": "Safe, simple and certified",
-  "how_steps": [("Tell us what you&rsquo;ve got", "One laptop or a room full &mdash; we&rsquo;ll arrange collection or drop-off."), ("Rescue your data", "We move anything you still need to your new device first."), ("Wipe or destroy", "Certified secure erasure &mdash; or physical destruction if you prefer."), ("Certify &amp; recycle", "You get a certificate, and the hardware is recycled responsibly.")],
+  "how_steps": [("Tell us what you&rsquo;ve got", "One laptop or a room full &mdash; we&rsquo;ll arrange free collection across the areas we cover."), ("Rescue your data", "We move anything you still need to your new device first."), ("Wipe or destroy", "Certified secure erasure &mdash; or physical destruction if you prefer."), ("Certify &amp; recycle", "You get a certificate, and the hardware is recycled responsibly.")],
   "faqs": [
     ("Is a factory reset enough?", "Not always &mdash; data can often still be recovered after a reset. Proper secure wiping (or physically destroying the drive) is the only way to be certain it&rsquo;s gone. Wiping a computer that belonged to someone who has died? See <a href=\"/wipe-deceased-relatives-laptop-pass-on/\">our step-by-step guide</a>."),
     ("Do I get proof the data was destroyed?", "Yes &mdash; we provide a certificate of data destruction, which is important for GDPR and your own peace of mind."),
@@ -16145,7 +16145,7 @@ _TEAM_POST = _bp.promise_strip(items=[_bp.PROMISE_CALL, _bp.PROMISE_ETA, _bp.PRO
         ("monitor","Dell reseller since 2001","Supplying new and tested refurbished business-grade Dell for over two decades, set up and supported by us. Repairs we handle independently."),
         ("shield","Malwarebytes Partner","An official Malwarebytes Partner. The protection included on our support plans is the one we manage every day."),
         ("flow","Ten years teaching IT","From 1998 to 2008 we ran the Dorset Microsoft Education Resource Centre in Winton and taught IT and Microsoft Office at Bournemouth &amp; Poole College, Bournemouth School for Girls and Moyles Court School."),
-        ("lock","Authorised testing centre","Our Winton centre was an IC3 authorised testing centre (2003), a Microsoft Office Specialist authorised testing centre (2004) and a Certiport approved testing centre (2006). The plaques are on our <a href=\"/about/\">About page</a>."),
+        ("lock","Authorised testing centre","Our Winton centre was an IC3 authorised testing centre (2003), a Microsoft Office Specialist authorised testing centre (2004) and a Certiport approved testing centre (2006). The plaques are on our <a href=\"/about/\">About page</a> and the full list on our <a href=\"/accreditations/\">accreditations page</a>."),
       ]) + '''
         </div>
       </div>
@@ -16604,7 +16604,7 @@ info_page(
           </ol>
           <h2>Want us to handle it for you?</h2>
           <p>Every step above is included and managed as part of our support plans &mdash; alongside <a href="/malwarebytes-premium/">Malwarebytes Premium</a>, monitoring and verified <a href="/backup-support/">backups</a>. See our <a href="/cybersecurity-support/">cybersecurity</a> page.</p>""",
-  cta_args=("Let us secure you", "We&rsquo;ll handle every step and keep you protected 24/7.",
+  cta_args=("Let us secure you", "We&rsquo;ll handle every step, and the protection runs round the clock.",
             ("Get Protected", "/cybersecurity-support/"), ("Free Health Check", "/free-it-health-check/")),
 )
 
@@ -16681,18 +16681,18 @@ info_page(
   inner="""          <h2>How it works</h2>
           <p>Raise a ticket above and it goes straight to our team. We&rsquo;ll acknowledge it and get back to you within one working day &mdash; usually much sooner. <strong>Subscribers on a monthly plan always jump the queue</strong> for priority support.</p>
           <h2>Need it fixed right now?</h2>
-          <p>For anything urgent, <a href="/remote-support/">start a remote support session</a> or call us on <a href="tel:+441202775566">01202 775566</a>. For hardware drop-off or collection, see <a href="/book-a-collection/">book a collection</a>.</p>""",
+          <p>For anything urgent, <a href="/remote-support/">start a remote support session</a> or call us on <a href="tel:+441202775566">01202 775566</a>. For hardware collection, see <a href="/book-a-collection/">book a collection</a>. Common questions are answered on our <a href="/faqs/">FAQ page</a>.</p>""",
   cta_args=("Want priority support as standard?", "Join a monthly plan and your tickets always jump the queue.",
             ("View Monthly Plans", "/monthly-it-support/"), ("Contact Us", "/contact/")),
 )
 
 # ---- Book a Collection
 info_page(
-  slug="book-a-collection", crumb_name="Book a Collection", eyebrow="// COLLECTION & DROP-OFF",
-  h1='Book a <em class="grad grad--cyan">collection</em> or drop-off',
-  lede="Computer playing up and need hands-on help? Book a convenient collection, or drop your device off with us — we'll diagnose, fix and get it back to you, with no-fix-no-fee on diagnosis.",
-  desc="Book a computer or laptop collection or drop-off with 365 Techies in Bournemouth, Poole and Dorset. We collect, diagnose, repair and return your device — no-fix-no-fee on diagnosis.",
-  chips=["Collection or drop-off","No-fix-no-fee","Local to Dorset"],
+  slug="book-a-collection", crumb_name="Book a Collection", eyebrow="// FREE LOCAL COLLECTION",
+  h1='Book a free <em class="grad grad--cyan">collection</em>',
+  lede="Computer playing up and need hands-on help? Book a convenient collection from anywhere in the areas we cover — we'll diagnose, fix and get it back to you, with no-fix-no-fee on diagnosis.",
+  desc="Book a free computer or laptop collection with 365 Techies in Bournemouth, Poole and Dorset. We collect, diagnose, repair and return your device — no-fix-no-fee on diagnosis.",
+  chips=["Free local collection","No-fix-no-fee","Local to Dorset"],
   hero_cta1=("Request a Collection", "#book"), hero_cta2=("Call 01202 775566", "tel:+441202775566"),
   pre='''    <section class="section section--alt" aria-label="How collection works">
       <div class="wrap">
@@ -16701,7 +16701,7 @@ info_page(
         <ol class="how__steps">
 ''' + steps([
         ("Tell us about it","Fill in the form below or call us &mdash; tell us the device and the problem."),
-        ("Collect or drop off","We arrange a convenient local collection, or you drop it off with us."),
+        ("We collect","We arrange a convenient collection from your home or business, anywhere in the areas we cover."),
         ("We diagnose &amp; fix","We diagnose it (no-fix-no-fee) and, with your go-ahead, carry out the repair."),
         ("Back to you","We return your device fully working, with a warranty on the repair."),
       ]) + '''
@@ -16712,20 +16712,13 @@ info_page(
       <div class="wrap" style="max-width:700px;margin:0 auto">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// REQUEST IT</p>
-          <h2 class="section-title section-title--center" data-title>Request a collection or drop-off<span class="title-underline title-underline--center"></span></h2>
+          <h2 class="section-title section-title--center" data-title>Request a collection<span class="title-underline title-underline--center"></span></h2>
         </div>
         <form class="contact-form" data-reveal action="/api/form-relay.php" method="post">
           <input type="text" name="company_website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
           <label class="field"><span>Your name</span><input type="text" name="name" autocomplete="name" required /></label>
           <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" required /></label>
           <label class="field"><span>Phone</span><input type="tel" name="phone" autocomplete="tel" required /></label>
-          <label class="field"><span>Collection or drop-off?</span>
-            <select name="topic">
-              <option>Please collect from me</option>
-              <option>I&rsquo;ll drop it off</option>
-              <option>Not sure &mdash; please advise</option>
-            </select>
-          </label>
           <label class="field"><span>Device &amp; problem (and your area for collection)</span><textarea name="message" required></textarea></label>
           <button type="submit" class="button primary button--lg" style="width:100%">Send Your Request</button>
           <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.7rem">// GOES STRAIGHT TO OUR FAMILY TEAM &middot; WE REPLY WITHIN ONE WORKING DAY (MON&ndash;FRI)</p>
@@ -21880,7 +21873,7 @@ _FIX_FLOW_TRAIL_RE = re.compile(r'call us|still stuck|hand it to us|let us sort|
 
 _PHONE_STUCK = {   # phone pages: no screen-share promise (our remote support is Windows only); ring us / email support instead
     'h3s': 'Still not working after every step? Ring us and we sort it together.',
-    'stuck_what': 'Ring us and we go through the phone together, or bring it in with your computer: it is part of email support.',
+    'stuck_what': 'Ring us and we go through the phone together, or we look at the phone alongside your computer at a visit: it is part of email support.',
     'stuck_tail': '', 'stuck_link': ('/email-support/', 'Email support'), 'areas': False,
     'text_tail': '\nStuck? 365 Techies email support: 01202 775566 - https://365techies.co.uk/email-support/'}
 FIX_FLOW_OVERRIDES = {   # small per-page tweaks on top of the automatic config

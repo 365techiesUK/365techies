@@ -79,7 +79,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=106" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=107" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -117,7 +117,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=106&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=107&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -808,6 +808,7 @@
           <a href="/contact/" class="button secondary button--lg">Message us the problem</a>
         </div>
         <ul class="page-hero__chips mono"><li>&#9679; Outlook for Android app</li><li>&#9679; No.1 cause: WebView</li><li>&#9679; Same-day remote help</li></ul>
+        <p class="page-hero__byline mono">By the <a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 13 September 2026</p>
       </div>
     </section>
     <section id="s1" class="section" aria-label="Why the Outlook app crashes on Android">
@@ -906,7 +907,7 @@
           </ol>
           <div class="ff-end" id="ff-end" hidden></div>
           <template id="ff-tpl-fixed"><h3>Sorted{mins}. Nice work.</h3><p>Send yourself a test email to be sure it has stuck.</p><div class="ff-plan"><b>Rather have it looked after?</b> On a 365 support plan every computer gets a full service every six weeks: Windows, driver and app updates applied and checked, security and backup looked at, and a written Service Report each time. Home &pound;18.25 per computer a month, business from &pound;24.38, rolling monthly.</div><div class="ff-cta"><a class="button primary" href="/monthly-it-support/">See the support plans &#8594;</a><a class="button secondary" href="/free-pc-health-check/">Get the free app</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div></template>
-          <template id="ff-tpl-stuck"><h3>Still not working after all five steps? Ring us and we sort it together.</h3><p>Ring us and we go through the phone together, or bring it in with your computer: it is part of email support.</p><div class="ff-cta"><a class="button primary" href="tel:+441202775566">Call 01202 775566</a><a class="button secondary" href="sms:+447520615332">Text 07520 615332</a><a class="button bm-ghost" href="/email-support/">Email support</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div></template>
+          <template id="ff-tpl-stuck"><h3>Still not working after all five steps? Ring us and we sort it together.</h3><p>Ring us and we go through the phone together, or we look at the phone alongside your computer at a visit: it is part of email support.</p><div class="ff-cta"><a class="button primary" href="tel:+441202775566">Call 01202 775566</a><a class="button secondary" href="sms:+447520615332">Text 07520 615332</a><a class="button bm-ghost" href="/email-support/">Email support</a><button type="button" class="button bm-ghost" id="ff-copyall">Copy these steps</button></div></template>
           <template id="ff-tpl-text">Outlook app keeps crashing on Android - the fix order (365techies.co.uk/outlook-app-crashing-android/)
 1. Update Android System WebView and Chrome: Open the Play Store, search for Android System WebView and tap Update, then do the same for Google Chrome. Also update the Outlook app if an update is shown, then reopen Outlook.
 2. Force stop Outlook and clear its cache: Go to Settings > Apps > Outlook, tap Force stop, then Storage > Clear cache. This removes only temporary files, not your email or accounts.

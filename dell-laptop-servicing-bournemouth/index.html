@@ -79,7 +79,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=106" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=107" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -117,7 +117,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=106&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=107&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -330,8 +330,8 @@
         {
           "@type": "HowToStep",
           "position": 2,
-          "name": "Book collection or drop-off",
-          "text": "Arrange free local collection across Bournemouth, Poole and Christchurch, or bring your Dell to our Bournemouth team (BH10 7LH)."
+          "name": "Book free collection",
+          "text": "Arrange free local collection across Bournemouth, Poole and Christchurch."
         },
         {
           "@type": "HowToStep",
@@ -388,7 +388,7 @@
           "name": "Do you have to take my laptop away to service it?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "The internal clean-out is done at our Bournemouth team, but it&rsquo;s easy &mdash; we offer free local collection and return across Bournemouth and Poole, or you can drop it in. The Windows and driver side can often be handled remotely, without the laptop leaving your desk."
+            "text": "The internal clean-out is done at our Bournemouth team, but it&rsquo;s easy &mdash; we offer free local collection and return across Bournemouth and Poole. The Windows and driver side can often be handled remotely, without the laptop leaving your desk."
           }
         },
         {
@@ -817,6 +817,7 @@
           <a href="/contact/" class="button secondary button--lg">Talk to a Techie</a>
         </div>
         <ul class="page-hero__chips mono"><li>&#9679; Internal clean-out &amp; fan care</li><li>&#9679; SSD, RAM &amp; battery health</li><li>&#9679; Windows &amp; driver tune-up</li></ul>
+        <p class="page-hero__byline mono">By the <a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 13 September 2026</p>
         <div class="course-scene course-scene--band course-scene--hero" aria-hidden="true"><svg class="course-scene__svg" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">
 <g class="cs-float">
 <rect x="110" y="45" width="140" height="88" rx="8" fill="#0b1d3a" stroke="rgba(125,170,220,.35)" stroke-width="2"/>
@@ -912,7 +913,7 @@
         </details>
         <details class="faq" data-reveal>
           <summary>Do you have to take my laptop away to service it?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p>The internal clean-out is done at our Bournemouth team, but it&rsquo;s easy &mdash; we offer free local collection and return across Bournemouth and Poole, or you can drop it in. The Windows and driver side can often be handled remotely, without the laptop leaving your desk.</p></div>
+          <div class="faq__ans"><p>The internal clean-out is done at our Bournemouth team, but it&rsquo;s easy &mdash; we offer free local collection and return across Bournemouth and Poole. The Windows and driver side can often be handled remotely, without the laptop leaving your desk.</p></div>
         </details>
         <details class="faq" data-reveal>
           <summary>How much does a Dell laptop service cost?<span class="faq__icon" aria-hidden="true"></span></summary>
