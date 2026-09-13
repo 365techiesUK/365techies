@@ -103,12 +103,12 @@ LOCAL_PROOF = {
 
  "it-support-christchurch": (
    "The link we built across the River Avon",
-   "<p>In 2015 we installed a point-to-point wireless link spanning the <strong>River Avon at Knapp Mill</strong> for the <strong>Environment Agency</strong>, carrying the data for the river&rsquo;s fish counter across water where a cable was not an option. <strong>We still support it today.</strong></p>"
+   "<p>In 2015 we installed a point-to-point wireless link spanning the <strong>River Avon at Knapp Mill</strong> for the <strong>Environment Agency</strong>. It carries the data for the river&rsquo;s fish counter across water where a cable was not an option. <strong>We still support it today.</strong></p>"
    "<p>Two aerials, clear air between them, one connection that has to keep working &mdash; the same thinking we bring to a Christchurch home&rsquo;s troublesome Wi-Fi.</p>"),
 
  "it-support-dorset": (
    "Thirty years of Dorset work, named",
-   "<p>We were the IT support partner for <strong>Mercedes-Benz Pentagon</strong> across the south coast from 1998 to 2008 &mdash; upgrading the computers in their garages in 2001 and starting remote support back then, when it was still unusual. We built and ran the <strong>Dorset Microsoft Education Resource Centre</strong> in Bournemouth over the same decade.</p>"
+   "<p>We were the IT support partner for <strong>Mercedes-Benz Pentagon</strong> across the south coast from 1998 to 2008. We upgraded the computers in their garages in 2001 and started remote support back then, when it was still unusual. We built and ran the <strong>Dorset Microsoft Education Resource Centre</strong> in Bournemouth over the same decade.</p>"
    "<p>Today that continues with firms like <strong>Emblem Sports Cars</strong> and <strong>Beckox</strong> in Poole, and the <strong>Environment Agency</strong>&rsquo;s river link at Christchurch &mdash; installed in 2015 and still supported.</p>"),
 }
 
@@ -291,13 +291,13 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
       ("What does monthly IT support cost?", "Home support is £18.25/month per computer and business support from £24.38/month per computer, with Microsoft 365 at £4.85/month per user and one-off repairs also available."),
       ("Is remote support secure?", "Yes — sessions run over encrypted Splashtop SOS, you watch everything on screen, and access ends the moment the session does."),
       (f"What can you help {town} customers with?", "Computers and laptops, email, Microsoft 365, Wi-Fi, printers, security, backups, new device setup, virus removal and slow-computer fixes — for homes and businesses alike."),
-      (f"Are you a local IT company in {town}?", f"Yes — 365 Techies is a family-run local IT company, established in 1995, providing IT support, IT services and computer &amp; laptop repairs for homes and businesses across {town} and the wider {region} area."),
+      (f"Are you a local IT company in {town}?", f"Yes. 365 Techies is a family-run local IT company, established in 1995. We provide IT support, IT services and computer &amp; laptop repairs for homes and businesses across {town} and the wider {region} area."),
       (f"Do you provide business IT services and Microsoft 365 support in {town}?", f"Yes — we provide managed business IT services and IT solutions for {town} businesses, including Microsoft 365 setup, migration and support, cybersecurity, backups, and fast remote and on-site help."),
     ]
     if slug == "it-support-dorset":
         faqs = faqs + [
           ("Do you provide IT support near me?", "If you&rsquo;re in Dorset &mdash; Bournemouth, Poole, Christchurch, Dorchester, Weymouth or the surrounding towns &mdash; then yes, we&rsquo;re your local IT support team. Most issues are fixed remotely in minutes, and we visit on-site across the county when hands-on help is needed. Call 01202&nbsp;775566."),
-          ("Can I find IT support and services near me in Dorset?", "Yes &mdash; wherever you are in Dorset you&rsquo;ll find local IT support and services near you. Homes, sole traders and businesses across the county rely on us as their nearby IT experts for computer support, Microsoft 365, cybersecurity and everyday help &mdash; remotely in minutes and on-site when needed."),
+          ("Can I find IT support and services near me in Dorset?", "Yes &mdash; wherever you are in Dorset you&rsquo;ll find local IT support and services near you. Homes, sole traders and businesses across the county rely on us as their nearby IT experts for computer support, Microsoft 365, cybersecurity and everyday help. That is remotely in minutes and on-site when needed."),
           ("Do you offer managed IT services and IT solutions in Dorset?", "Yes &mdash; we&rsquo;re a family-run Dorset <a href=\"/managed-it-support/\">managed IT services</a> provider (MSP), delivering proactive IT solutions for businesses across the county: monthly <a href=\"/business-it-support-subscriptions/\">business IT support</a>, Microsoft 365, cybersecurity, backups, servers and networks, all for one predictable monthly cost."),
         ]
     if slug == "it-support-bournemouth":
@@ -315,7 +315,7 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
         <div class="prose" data-reveal>
           <p class="eyebrow mono">// NEAR YOU &middot; ALL OF DORSET</p>
           <h2 class="section-title" data-title>Looking for IT support near you?<span class="title-underline"></span></h2>
-          <p><strong>You&rsquo;ve found your local team.</strong> We&rsquo;re based at the Kinson Community Centre in Bournemouth and cover every Dorset town &mdash; most problems are fixed remotely within minutes, and when hands-on help is needed we come to you anywhere in the county, always phoning ahead with an arrival time.</p>
+          <p><strong>You&rsquo;ve found your local team.</strong> We&rsquo;re based at the Kinson Community Centre in Bournemouth and cover every Dorset town. Most problems are fixed remotely within minutes, and when hands-on help is needed we come to you anywhere in the county, always phoning ahead with an arrival time.</p>
           <p>We&rsquo;re open <strong>Monday to Friday, 9am&ndash;5pm</strong> &mdash; call <a href="tel:+441202775566">01202 775566</a>, text <a href="sms:+447520615332">07520 615332</a>, or <a href="https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI" target="_blank" rel="noopener">find us on Google Maps</a>.</p>
           <p>Honest, simple pricing: home support <strong>&pound;18.25/month per computer</strong>, business from <strong>&pound;24.38/month per computer</strong> &mdash; rolling monthly, no call-out fee, cancel anytime.</p>
         </div>
@@ -352,7 +352,7 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
           <p class="eyebrow mono">/01 — LOCAL &amp; FRIENDLY</p>
           <h2 class="section-title" data-title>Your local {town} techies<span class="title-underline"></span></h2>
           <p>{intro_para}</p>
-          <p>As your local IT company, we cover it all &mdash; IT support and business IT services, computer and laptop repairs, <a href="/microsoft-365-support/">Microsoft 365</a>, cybersecurity and practical IT solutions for {town} homes and businesses.</p>
+          <p>As your local IT company, we cover it all. IT support and business IT services, computer and laptop repairs, <a href="/microsoft-365-support/">Microsoft 365</a>, cybersecurity and practical IT solutions for {town} homes and businesses.</p>
           <p><strong>Most problems are solved remotely in minutes</strong> — and when you need someone in person, we&rsquo;re close by. Local knowledge, no call-centres, no jargon.</p>{repair_link}{biz_link}{b365_link}
         </div>
         {local_col}
@@ -474,11 +474,11 @@ LOCAL = [
   [("IT Support Poole", "/it-support-poole/"), ("IT Support Bournemouth", "/it-support-bournemouth/"), ("IT Support Dorset", "/it-support-dorset/"), ("Areas Covered", "/areas-covered/")]),
  ("it-support-poole", "Poole", "Dorset",
   "Friendly, local IT support for Poole homes and businesses — monthly support plans, computer repairs, Microsoft 365, cybersecurity and fast remote help from a team just next door.",
-  "From Poole Quay and the harbour to Canford Heath, and around the Nuffield and Fleets Corner business areas, we look after home users, families, sole traders and small businesses across Poole — including the town&rsquo;s marine and boating trade — keeping computers, email, Wi-Fi, Microsoft 365 and security working all year round.",
+  "From Poole Quay and the harbour to Canford Heath, and around the Nuffield and Fleets Corner business areas, we look after home users, families, sole traders and small businesses across Poole, including the town&rsquo;s marine and boating trade. We keep computers, email, Wi-Fi, Microsoft 365 and security working all year round.",
   [("IT Support Bournemouth", "/it-support-bournemouth/"), ("IT Support Christchurch", "/it-support-christchurch/"), ("IT Support Wimborne", "/it-support-wimborne/"), ("Areas Covered", "/areas-covered/")]),
  ("it-support-christchurch", "Christchurch", "Dorset",
   "Reliable monthly IT support and computer repairs for homes and businesses in Christchurch — remote help in minutes, on-site when you need it.",
-  "From the Quay to Highcliffe and Mudeford, we keep Christchurch homes and small businesses running smoothly — computers, email, Wi-Fi, Microsoft 365 and security, all looked after for one simple monthly cost.",
+  "From the Quay to Highcliffe and Mudeford, we keep Christchurch homes and small businesses running smoothly. Computers, email, Wi-Fi, Microsoft 365 and security, all looked after for one simple monthly cost.",
   [("IT Support Bournemouth", "/it-support-bournemouth/"), ("IT Support Poole", "/it-support-poole/"), ("IT Support Ferndown", "/it-support-ferndown/"), ("Areas Covered", "/areas-covered/")]),
  ("it-support-wimborne", "Wimborne", "Dorset",
   "Local IT support for homes and small businesses in Wimborne — monthly plans, computer help, Microsoft 365, email support and regular maintenance.",
@@ -489,7 +489,7 @@ LOCAL = [
   "Across Ferndown, West Moors and West Parley, we provide dependable IT support for homes, home workers and small businesses — keeping email, devices and security in great shape every month.",
   [("IT Support Wimborne", "/it-support-wimborne/"), ("IT Support Bournemouth", "/it-support-bournemouth/"), ("IT Support Ringwood", "/it-support-ringwood/"), ("Areas Covered", "/areas-covered/")]),
  ("it-support-dorset", "Dorset", "South Coast",
-  "Managed IT support across Dorset for homes, sole traders and small businesses — your local managed service provider (MSP) for monthly support plans, computer repairs, Microsoft 365 and cybersecurity, remote and on-site.",
+  "Managed IT support across Dorset for homes, sole traders and small businesses. Your local managed service provider (MSP) for monthly support plans, computer repairs, Microsoft 365 and cybersecurity, remote and on-site.",
   "From <a href=\"/it-support-bournemouth/\">Bournemouth</a> and <a href=\"/it-support-poole/\">Poole</a> to Dorchester, Weymouth and <a href=\"/it-support-gillingham/\">Gillingham</a> in the Blackmore Vale, we&rsquo;re the family-run <strong>managed service provider (MSP)</strong> looking after homes and small businesses right across Dorset. In plain English, that means we proactively manage and protect your technology for one predictable monthly cost &mdash; fast remote help wherever you are, plus on-site visits across the county.",
   [("IT Support Bournemouth", "/it-support-bournemouth/"), ("IT Support Poole", "/it-support-poole/"), ("IT Support Christchurch", "/it-support-christchurch/"), ("Areas Covered", "/areas-covered/")]),
  ("it-support-ringwood", "Ringwood", "Hampshire",
@@ -581,8 +581,8 @@ LOCAL = [
   "Along the Waterside around Hythe, Dibden and Marchwood, we look after home users and small businesses with reliable, proactive IT support and friendly help on call.",
   [("IT Support Totton", "/it-support-totton/"), ("IT Support Southampton", "/it-support-southampton/"), ("IT Support New Forest", "/it-support-new-forest/"), ("Areas Covered", "/areas-covered/")]),
  ("it-support-bournemouth", "Bournemouth", "Dorset",
-  "Friendly, local IT support and IT services for Bournemouth homes and businesses — monthly support plans, computer and laptop repairs, Microsoft 365, cybersecurity and fast remote help from a Bournemouth IT company right on your doorstep.",
-  "From the town centre and Boscombe to Winton, Charminster and Southbourne, we look after home users, families, sole traders and small businesses right across Bournemouth — with plenty of experience supporting the town&rsquo;s hospitality, tourism and professional-services firms — keeping computers, email, Wi-Fi, Microsoft 365 and security working all year round.",
+  "Friendly, local IT support and IT services for Bournemouth homes and businesses. Monthly support plans, computer and laptop repairs, Microsoft 365, cybersecurity and fast remote help from a Bournemouth IT company right on your doorstep.",
+  "From the town centre and Boscombe to Winton, Charminster and Southbourne, we look after home users, families, sole traders and small businesses right across Bournemouth. We have plenty of experience supporting the town&rsquo;s hospitality, tourism and professional-services firms, keeping computers, email, Wi-Fi, Microsoft 365 and security working all year round.",
   [("IT Support Poole", "/it-support-poole/"), ("IT Support Christchurch", "/it-support-christchurch/"), ("IT Support Wimborne", "/it-support-wimborne/"), ("Areas Covered", "/areas-covered/")]),
 ]
 for i, row in enumerate(LOCAL):

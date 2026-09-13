@@ -512,7 +512,7 @@ SERVICE_PAGES = [
    "12-month warranty",
    "Free local collection"
   ],
-  "intro": "<p>A laptop is harder to fix than a desktop &mdash; everything is squeezed into a thin case, the screen and hinges take real punishment, and one worn-out part can stop the whole machine. If yours <a href='/laptop-shuts-off-when-moved/'>switches off when you move it</a>, that is usually one of those worn parts &mdash; a known fault with known fixes. That's exactly why laptops are most of what we repair. The good news is that the faults people assume are fatal &mdash; a black screen, a dead battery, a port that won't charge &mdash; are very often a straightforward, affordable repair rather than a reason to buy a new machine.</p><p>This is the laptop-specific side of our repair work. We handle the parts unique to portable machines: screens and hinges, batteries and charging circuits, keyboards and trackpads, cooling and liquid damage. We diagnose the genuine cause, tell you honestly <a href=\"/worth-repairing-old-laptop/\">whether it's worth repairing</a>, and explain everything in plain English &mdash; no jargon, no pressure. We work on Windows laptops only (not Apple MacBooks).</p>",
+  "intro": "<p>A laptop is harder to fix than a desktop &mdash; everything is squeezed into a thin case, the screen and hinges take real punishment, and one worn-out part can stop the whole machine. If yours <a href='/laptop-shuts-off-when-moved/'>switches off when you move it</a>, that is usually one of those worn parts &mdash; a known fault with known fixes. That's exactly why laptops are most of what we repair. The good news is that the faults people assume are fatal (a black screen, a dead battery, a port that won't charge) are very often a straightforward, affordable repair. They are rarely a reason to buy a new machine.</p><p>This is the laptop-specific side of our repair work. We handle the parts unique to portable machines: screens and hinges, batteries and charging circuits, keyboards and trackpads, cooling and liquid damage. We diagnose the genuine cause, tell you honestly <a href=\"/worth-repairing-old-laptop/\">whether it's worth repairing</a>, and explain everything in plain English &mdash; no jargon, no pressure. We work on Windows laptops only (not Apple MacBooks).</p>",
   "features": [
    {
     "icon": "monitor",
@@ -574,7 +574,7 @@ SERVICE_PAGES = [
    },
    {
     "q": "Is it worth repairing my laptop or should I replace it?",
-    "a": "It depends on the age and the fault. A new battery, screen or SSD upgrade often gives a perfectly good laptop several more years for a fraction of the cost of a new machine &mdash; while a failed motherboard on an old laptop usually isn't worth it. We give you an honest verdict before you spend a penny. If replacement does make sense, we sell quality refurbished business-grade Dell laptops from &pound;510, so you're not pushed into an expensive new purchase."
+    "a": "It depends on the age and the fault. A new battery, screen or SSD upgrade often gives a perfectly good laptop several more years for a fraction of the cost of a new machine. A failed motherboard on an old laptop usually isn't worth it. We give you an honest verdict before you spend a penny. If replacement does make sense, we sell quality refurbished business-grade Dell laptops from &pound;510, so you're not pushed into an expensive new purchase."
    },
    {
     "q": "Can you replace a cracked laptop screen?",
@@ -582,7 +582,7 @@ SERVICE_PAGES = [
    },
    {
     "q": "My laptop won't turn on or charge &mdash; can you fix it?",
-    "a": "Usually, yes. A laptop that's completely dead, won't charge, or won't get past the maker's logo can be a faulty charger, a worn charging port or DC jack, a failed battery, a loose memory module or a Windows problem. We diagnose the real cause rather than guessing, so you only pay to fix what's actually broken."
+    "a": "Usually, yes. A laptop that's completely dead, won't charge, or won't get past the maker's logo can be several things. A faulty charger, a worn charging port or DC jack, a failed battery, a loose memory module or a Windows problem. We diagnose the real cause rather than guessing, so you only pay to fix what's actually broken."
    },
    {
     "q": "I spilled a drink on my laptop &mdash; what should I do?",

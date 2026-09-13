@@ -138,9 +138,9 @@ def plan_band(kind="both", alt=False):
     """
     cls = "section section--alt" if alt else "section"
     if kind == "business":
-        lede = ("Every business plan includes a dashboard of the estate we look after &mdash; "
+        lede = ("Every business plan includes a dashboard of the estate we look after: "
                 "every computer, what is patched, what backed up, and what is worth a call "
-                "today &mdash; instead of you ringing round to find out.")
+                "today. No more ringing round to find out.")
         demo = ('<a href="/custom-wifi-dashboards/">See a business dashboard in action &#8594;</a>')
     elif kind == "home":
         lede = ("Every home plan includes your own dashboard &mdash; one screen that answers "
