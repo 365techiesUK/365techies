@@ -389,7 +389,7 @@ SERVICE_PAGES = [
    },
    {
     "q": "Can you move us from Google Workspace, or an old web-host mailbox, to Microsoft 365?",
-    "a": "Yes. We regularly move people off Google Workspace, GoDaddy-style host mailboxes and old POP3 accounts onto Microsoft 365, bringing mail, contacts and calendars with them. We only support Windows and Android, not Apple devices."
+    "a": "Yes. We regularly move people off Google Workspace, GoDaddy-style host mailboxes and old POP3 accounts onto Microsoft 365, bringing mail, contacts and calendars with them. The move itself happens on the mail accounts, so it does not matter whether you use a Windows PC, an Android phone, a Mac or an iPad. Setting the moved mailbox up on the device afterwards is Windows and Android only: Apple does not allow our remote-support tool onto an iPad or iPhone."
    }
   ],
   "relatedSlugs": [
