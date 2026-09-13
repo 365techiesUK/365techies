@@ -27,11 +27,21 @@
 if (!defined('DORSET_SHIPS_LIB')) {
     define('DORSET_SHIPS_LIB', 1);
 
-    // west, south, east, north: Portland Bill to Selsey, the Cotentin to the New Forest.
-    define('SHIPS_W', -2.65);
-    define('SHIPS_S', 49.65);
-    define('SHIPS_E', -0.80);
-    define('SHIPS_N', 51.00);
+    // The subscription box (west, south, east, north): the whole Channel, Land's End and
+    // Ushant to the Dover Strait and the Belgian coast, Brittany to the Thames.
+    // Widened 13 Sep 2026 ("show all the boats between the UK and Europe").
+    define('SHIPS_W', -6.00);
+    define('SHIPS_S', 48.20);
+    define('SHIPS_E', 3.00);
+    define('SHIPS_N', 51.60);
+    // The HOME box keeps every vessel, moored ones included: Portland Bill to Selsey,
+    // the Cotentin to the New Forest. Outside it only vessels UNDER WAY are kept, or the
+    // Solent's and Le Havre's marinas alone would be thousands of motionless rows.
+    define('SHIPS_HOME_W', -2.65);
+    define('SHIPS_HOME_S', 49.65);
+    define('SHIPS_HOME_E', -0.80);
+    define('SHIPS_HOME_N', 51.00);
+    define('SHIPS_FAR_MIN_KN', 1.0);
     define('SHIPS_STALE_MS', 30 * 60 * 1000);   // a vessel silent this long leaves the snapshot (dev-proxy parity)
     define('SHIPS_SILENCE_MS', 180 * 1000);     // no AIS message for this long reads as 'stale'
     define('SHIPS_POLL_DEAD_MS', 5 * 60 * 1000); // no poll for this long reads as 'down' (the cron is not running)
@@ -39,7 +49,7 @@ if (!defined('DORSET_SHIPS_LIB')) {
     define('SHIPS_TRACK_MIN_GAP_SEC', 30);
     define('SHIPS_TRACK_MIN_MOVE_M', 25);
     define('SHIPS_SOURCE', 'AISStream');
-    define('SHIPS_COVERAGE', 'Poole Bay, the Solent and the Channel crossings to the Cotentin');
+    define('SHIPS_COVERAGE', 'the English Channel, Land\'s End to the Dover Strait and Brittany to the Thames; every vessel near Dorset, vessels under way further out');
     define('SHIPS_WS_HOST', 'stream.aisstream.io');
     define('SHIPS_WS_PATH', '/v0/stream');
 
@@ -50,6 +60,22 @@ if (!defined('DORSET_SHIPS_LIB')) {
     /* ------------------------------------------------------------------ store */
 
     function ships_store_path() { return __DIR__ . '/dorset-ships-cache.json'; }
+    function ships_tracks_path() { return __DIR__ . '/dorset-ships-tracks-cache.json'; }
+
+    /** The recent-path rings and pending first fixes, kept apart from the rows (the endpoint reads them only for ?track=). */
+    function ships_load_tracks() {
+        $f = ships_tracks_path();
+        if (!is_file($f)) return array('tracks' => array(), 'pending' => array());
+        $j = json_decode(@file_get_contents($f), true);
+        return (is_array($j) && isset($j['tracks'])) ? $j : array('tracks' => array(), 'pending' => array());
+    }
+
+    function ships_save_tracks($t) {
+        $f = ships_tracks_path();
+        $tmp = $f . '.' . getmypid() . '.tmp';
+        if (@file_put_contents($tmp, json_encode(array('tracks' => $t['tracks'], 'pending' => $t['pending']))) === false) return false;
+        return @rename($tmp, $f);
+    }
 
     function ships_empty_store() {
         return array(
@@ -73,8 +99,14 @@ if (!defined('DORSET_SHIPS_LIB')) {
     function ships_save_store($store) {
         $f = ships_store_path();
         $tmp = $f . '.' . getmypid() . '.tmp';
-        if (@file_put_contents($tmp, json_encode($store)) === false) return false;
+        $light = $store;
+        unset($light['tracks'], $light['pending']);           // those go to ships_save_tracks()
+        if (@file_put_contents($tmp, json_encode($light)) === false) return false;
         return @rename($tmp, $f);
+    }
+
+    function ships_in_home($lon, $lat) {
+        return $lon >= SHIPS_HOME_W && $lon <= SHIPS_HOME_E && $lat >= SHIPS_HOME_S && $lat <= SHIPS_HOME_N;
     }
 
     /* --------------------------------------------------------------- values */
@@ -175,6 +207,12 @@ if (!defined('DORSET_SHIPS_LIB')) {
         if ($lat === null || $lon === null) return true;
         if (abs($lat) > 90 || abs($lon) > 180) return true;
         if (!ships_in_box($lon, $lat)) return true;
+        $sog = ships_num(isset($msg['Sog']) ? $msg['Sog'] : (isset($msg['SOG']) ? $msg['SOG'] : null));
+        if (!ships_in_home($lon, $lat) && ($sog === null || $sog < SHIPS_FAR_MIN_KN)) {
+            // moored or drifting far from Dorset: not a row (and a row it had is dropped)
+            unset($store['vessels'][$mmsi], $store['tracks'][$mmsi], $store['pending'][$mmsi]);
+            return true;
+        }
 
         $st = isset($store['static'][$mmsi]) ? $store['static'][$mmsi] : array();
         $name = ships_name($meta, $msg, $st);

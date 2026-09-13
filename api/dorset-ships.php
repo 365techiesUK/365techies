@@ -41,18 +41,28 @@ if (isset($_GET['track'])) {
         echo json_encode(array('error' => 'mmsi query param required', 'samples' => array()));
         exit;
     }
+    $tracks = ships_load_tracks();
     echo json_encode(array(
         'mmsi' => $mmsi,
-        'samples' => ships_track($store, $mmsi),
+        'samples' => ships_track($tracks, $mmsi),
         'source' => SHIPS_SOURCE . ' (last 30 minutes)',
         'retainedSec' => (int)(SHIPS_STALE_MS / 1000),
     ));
     exit;
 }
 
-$maxRows = isset($_GET['maxRows']) ? (int)$_GET['maxRows'] : 5000;
+$maxRows = isset($_GET['maxRows']) ? (int)$_GET['maxRows'] : 8000;
 if ($maxRows < 1) $maxRows = 1;
-if ($maxRows > 5000) $maxRows = 5000;
+if ($maxRows > 8000) $maxRows = 8000;
+
+// Optional ?bbox=west,south,east,north: rows inside it only (a future viewport fetch).
+if (isset($_GET['bbox']) && preg_match('/^(-?[\d.]+),(-?[\d.]+),(-?[\d.]+),(-?[\d.]+)$/', (string)$_GET['bbox'], $bb)) {
+    $w = (float)$bb[1]; $s = (float)$bb[2]; $e = (float)$bb[3]; $n = (float)$bb[4];
+    foreach (array_keys($store['vessels']) as $k) {
+        $v = $store['vessels'][$k];
+        if ($v['lon'] < $w || $v['lon'] > $e || $v['lat'] < $s || $v['lat'] > $n) unset($store['vessels'][$k]);
+    }
+}
 
 $payload = ships_payload($store, $maxRows, $nowMs, $hasKey);
 http_response_code($hasKey ? 200 : 503);

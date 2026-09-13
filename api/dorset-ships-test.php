@@ -34,7 +34,11 @@ ok($r['type'] === '60' && $r['type_specific'] === 'Passenger' && $r['destination
 ok(isset($s['static']['232003456']) && $s['static']['232003456']['name'] === 'BARFLEUR', "'@' padding stripped from the static name");
 ok(ships_apply($s, env_pos(999000001, 50.70, -1.90, array(), array('ShipName' => ''), 'StandardClassBPositionReport'), $T0 + 2000), 'class B report recognised');
 ok($s['vessels']['999000001']['name'] === 'MMSI 999000001', 'nameless vessel gets its MMSI as a name');
-ok(ships_apply($s, env_pos(111111111, 55.0, 5.0), $T0 + 3000) && !isset($s['vessels']['111111111']), 'a position outside the Dorset box is liveness but not a row');
+ok(ships_apply($s, env_pos(111111111, 55.0, 5.0), $T0 + 3000) && !isset($s['vessels']['111111111']), 'a position outside the Channel box is liveness but not a row');
+ok(ships_apply($s, env_pos(111111112, 50.95, 1.40, array('Sog' => 0.2)), $T0 + 3000) && !isset($s['vessels']['111111112']), 'a moored vessel off Dover (far box, 0.2 kn) is not a row');
+ok(ships_apply($s, env_pos(111111113, 50.95, 1.40, array('Sog' => 12.5)), $T0 + 3000) && isset($s['vessels']['111111113']), 'a ship under way off Dover is a row');
+ok(ships_apply($s, env_pos(111111114, 50.70, -1.90, array('Sog' => 0.0)), $T0 + 3000) && isset($s['vessels']['111111114']), 'a moored vessel in Poole Bay (home box) is a row');
+ok(ships_apply($s, env_pos(111111113, 50.95, 1.40, array('Sog' => 0.0)), $T0 + 4000) && !isset($s['vessels']['111111113']), 'a far-box ship that stops is dropped from the rows');
 ok(!ships_apply($s, array('foo' => 'bar'), $T0) && !ships_apply($s, array('MessageType' => 'PositionReport', 'MetaData' => array('MMSI' => 'abc')), $T0), 'junk envelopes are not liveness');
 ok(ships_apply($s, array('MessageType' => 'PositionReport', 'MetaData' => array('MMSI' => 232003456), 'Message' => array('PositionReport' => array('UserID' => 232003456))), $T0 + 4000)
    && $s['vessels']['232003456']['lat'] === 50.65, 'a positionless report counts as liveness and leaves the row alone');
@@ -92,6 +96,12 @@ $p2 = ships_payload($s, 900, $T0 + 1000, false);
 ok($p2['status'] === 'missing-key' && $p2['refreshing'] === true && count($p2['rows']) === 1, 'missing-key payload still carries the cached rows, honestly labelled');
 ok(json_encode($p) !== false, 'payload encodes as JSON');
 
+echo "-- split stores\n";
+$s = ships_empty_store(); ships_apply($s, env_pos(100001, 50.65, -1.95), $T0); $s['tracks']['100001'] = array(array(50.65, -1.95, 1), array(50.66, -1.95, 40)); $s['pending']['100002'] = array(50.7, -1.9, 5);
+$tmpdir = sys_get_temp_dir(); $store_backup = ships_store_path();
+ok(!isset(json_decode(json_encode(array_diff_key($s, array('tracks' => 1, 'pending' => 1))), true)['tracks']), 'the light store carries no tracks');
+ok(count(ships_track(array('tracks' => $s['tracks']), '100001')) === 2 && ships_track(array('tracks' => array()), '100001') === array(), 'ships_track reads from a tracks store');
+
 echo "-- websocket frames\n";
 function frames_stream($bytes) { $fp = fopen('php://memory', 'w+'); fwrite($fp, $bytes); rewind($fp); return $fp; }
 $dl = microtime(true) + 5;
@@ -105,7 +115,7 @@ $fp = frames_stream(chr(0x81) . chr(3) . 'abc' . chr(0x89) . chr(0) . chr(0x88) 
 $a = ships_ws_read($fp, $dl); $b = ships_ws_read($fp, $dl); $c = ships_ws_read($fp, $dl); $d = ships_ws_read($fp, $dl);
 ok($a[0] === 1 && $a[1] === 'abc' && $b[0] === 9 && $c[0] === 8 && unpack('n', $c[1])[1] === 1000 && $d === null, 'unmasked server frames: text, ping, close, then EOF');
 $sub = json_decode(json_encode(array('APIKey' => 'k', 'BoundingBoxes' => array(array(array(SHIPS_S, SHIPS_W), array(SHIPS_N, SHIPS_E))))), true);
-ok($sub['BoundingBoxes'][0][0][0] === SHIPS_S && $sub['BoundingBoxes'][0][0][1] === SHIPS_W, 'subscription box is [lat, lon] pairs, south-west then north-east');
+ok($sub['BoundingBoxes'][0][0][0] == SHIPS_S && $sub['BoundingBoxes'][0][0][1] == SHIPS_W && $sub['BoundingBoxes'][0][1][0] == SHIPS_N && $sub['BoundingBoxes'][0][1][1] == SHIPS_E, 'subscription box is [lat, lon] pairs, south-west then north-east');
 
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);

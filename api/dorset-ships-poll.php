@@ -40,6 +40,8 @@ if (!$lock || !@flock($lock, LOCK_EX | LOCK_NB)) { echo gmdate('c') . " ships-po
 $store = ships_load_store();
 if ($store === null) $store = ships_empty_store();
 if (!isset($store['poll'])) $store['poll'] = ships_empty_store()['poll'];
+$t = ships_load_tracks();
+$store['tracks'] = $t['tracks']; $store['pending'] = $t['pending'];
 
 if ($apiKey === '') {
     $store['poll']['lastPollAt'] = $nowMs;
@@ -71,7 +73,7 @@ if ($report['ok']) {
     $store['poll']['lastError'] = $report['error'];
     $store['poll']['lastStatus'] = $report['authFailed'] ? 'auth-failed' : 'error';
 }
-$saved = ships_save_store($store);
+$saved = ships_save_store($store) && ships_save_tracks($store);
 flock($lock, LOCK_UN);
 fclose($lock);
 
