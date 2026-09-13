@@ -313,7 +313,13 @@ if (!defined('DORSET_SHIPS_LIB')) {
         }
         usort($rows, function ($a, $b) { return $b['_updatedAt'] <=> $a['_updatedAt']; });
         $rows = array_slice($rows, 0, max(1, (int)$maxRows));
-        foreach ($rows as &$r) unset($r['_updatedAt']);
+        foreach ($rows as &$r) {
+            unset($r['_updatedAt']);
+            // rows written before a rule change keep their old values until the vessel
+            // reports again; sanitise on the way out so the map never sees a code
+            if (array_key_exists('speed', $r)) $r['speed'] = ships_sog(ships_num($r['speed']));
+            if (array_key_exists('course', $r)) $r['course'] = ships_cog(ships_num($r['course']));
+        }
         unset($r);
         return $rows;
     }

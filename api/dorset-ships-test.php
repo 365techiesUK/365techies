@@ -73,6 +73,9 @@ ok(count($rows) === 2 && $rows[0]['mmsi'] === '100003' && $rows[1]['mmsi'] === '
 ships_prune($s, $T0 + 31 * 60000);
 ok(!isset($s['vessels']['100001']) && isset($s['vessels']['100002']) && isset($s['vessels']['100003']), 'prune drops the vessel older than 30 minutes');
 ok(count(ships_rows($s, 1, $T0 + 31 * 60000)) === 1, 'maxRows honoured');
+$s['vessels']['100003']['speed'] = 102.3; $s['vessels']['100003']['course'] = 360;
+$r0 = ships_rows($s, 5, $T0 + 31 * 60000)[0];
+ok($r0['mmsi'] === '100003' && $r0['speed'] === null && $r0['course'] === null, 'stale rows are sanitised on the way out');
 
 echo "-- health\n";
 $s = ships_empty_store();
