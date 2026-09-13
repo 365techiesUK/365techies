@@ -77,8 +77,8 @@ SEO_TITLES = {
 
 # Consumer town page -> its dedicated business/managed-IT page (reverse link)
 BIZ_LINKS = {
- "it-support-bournemouth": ("/it-services-bournemouth/", "business IT services in Bournemouth"),
- "it-support-poole": ("/it-services-poole/", "business IT services in Poole"),
+ "it-support-bournemouth": ("/business-it-support-plans/", "business IT support plans"),   # the it-services twin retired 13 Sep 2026
+ "it-support-poole": ("/business-it-support-plans/", "business IT support plans"),
  "it-support-ferndown": ("/business-it-support-ferndown-industrial-estate/", "business IT support around Ferndown Industrial Estate & Wimborne"),
  "it-support-christchurch": ("/business-it-support-christchurch/", "business IT support in Christchurch"),
  "it-support-new-forest": ("/business-it-support-new-forest/", "business IT support across the New Forest"),
@@ -1126,7 +1126,7 @@ INDUSTRIES = [
    intro_paras="<p>Churches and faith groups juggle a lot &mdash; sound and projection on a Sunday, livestreaming to those at home, member records, giving and a team that&rsquo;s often made up of volunteers.</p><p><strong>We keep your AV, livestreaming, member data and email working and secure</strong>, with patient, jargon-free help that volunteers can rely on &mdash; and charity-friendly support.</p>",
    feats=["AV &amp; projection support","Livestreaming setup &amp; help","Member &amp; giving data security","Reliable building Wi-Fi","Microsoft 365 (nonprofit)","Verified backups","Volunteer-friendly help","Affordable, charity-minded"],
    tile_items=[("monitor","AV &amp; projection","Sound, screens and projection kept working for services and events."),("globe","Livestreaming","Reliable streaming to those who can&rsquo;t be there in person."),("shield","Member &amp; giving data","We help protect member and giving records and keep them backed up."),("wifi","Building Wi-Fi","Reliable Wi-Fi across halls, offices and worship spaces."),("cloud","Microsoft 365","Email and shared files, with nonprofit licensing where eligible."),("heart","Volunteer-friendly","Patient, jargon-free help that anyone on the team can follow.")],
-   faqs=[("Can you help with our AV and livestreaming?","Yes &mdash; we help keep sound, projection and livestreaming reliable for services and events, and the network and computers behind them stable."),("Is member and giving data protected?","We help you protect member and giving records with sensible security, access controls and verified backups."),("Do you offer charity or nonprofit pricing?","We&rsquo;re charity-minded and help you access nonprofit Microsoft 365 licensing where eligible &mdash; see our <a href=\"/it-support-for-charities/\">charity IT support</a>."),("Can you help our volunteers?","Absolutely &mdash; patient, jargon-free help is what we&rsquo;re known for, so volunteers can keep things running with confidence.")],
+   faqs=[("Can you help with our AV and livestreaming?","Yes &mdash; we help keep sound, projection and livestreaming reliable for services and events, and the network and computers behind them stable."),("Is member and giving data protected?","We help you protect member and giving records with sensible security, access controls and verified backups."),("Do you offer charity or nonprofit pricing?","We&rsquo;re charity-minded and help you access nonprofit Microsoft 365 licensing where eligible &mdash; see our <a href=\"/it-support-for-charities-dorset/\">charity IT support</a>."),("Can you help our volunteers?","Absolutely &mdash; patient, jargon-free help is what we&rsquo;re known for, so volunteers can keep things running with confidence.")],
    chips=["AV &amp; livestreaming","Volunteer-friendly","Charity-minded"],
    split_eyebrow="FOR YOUR COMMUNITY", split_title="Built for churches &amp; faith groups",
    split=[("Services &amp; streaming","The AV, projection and livestreaming your gatherings rely on, kept working.",["AV &amp; projection support","Livestreaming setup &amp; help","Reliable building Wi-Fi","Volunteer-friendly help"]),("People &amp; data","Member and giving records protected, with charity-friendly tools.",["Member &amp; giving data security","Verified backups","Microsoft 365 (nonprofit)","Affordable, charity-minded support"])],
@@ -1134,6 +1134,8 @@ INDUSTRIES = [
    step_items=[("We review","We look at your AV, streaming, data and everyday systems."),("We set up &amp; secure","We make things reliable and protect your records."),("We support","Patient, friendly help your volunteers can count on.")]),
 ]
 for i, c in enumerate(INDUSTRIES):
+    if c["slug"] in ("it-support-for-accountants", "it-support-for-charities"):
+        continue   # 13 Sep 2026 (SEO audit): 301 -> the fuller -dorset twins; the dicts stay for reference
     make_customer(200 + i, **c)
 
 # ===================================================== EXTRA SERVICE PAGES

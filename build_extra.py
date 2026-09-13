@@ -8810,10 +8810,10 @@ def services_overview():
         ("Unitree Robots", "/unitree-robots/", "As a Scan partner, we supply &amp; support Unitree quadruped and humanoid robots."),
       ]),
       ("IT support by industry", [
-        ("Accountants", "/it-support-for-accountants/", "Secure, reliable IT for accountancy practices, especially through busy season."),
+        ("Accountants", "/it-support-for-accountants-dorset/", "Secure, reliable IT for accountancy practices, especially through busy season."),
         ("Solicitors &amp; Law Firms", "/it-support-for-solicitors/", "Confidential, compliant IT for legal practices."),
         ("Care Homes", "/it-support-for-care-homes/", "Always-on, secure IT for round-the-clock care settings."),
-        ("Charities", "/it-support-for-charities/", "Affordable IT and nonprofit grants for charities and non-profits."),
+        ("Charities", "/it-support-for-charities-dorset/", "Affordable IT and nonprofit grants for charities and non-profits."),
         ("Dental &amp; Medical", "/it-support-for-dental-medical/", "Compliant, reliable IT for dental and medical practices."),
         ("Estate Agents", "/it-support-for-estate-agents/", "Portals, CRM and mobile working for estate and letting agents."),
         ("Retail &amp; Hospitality", "/it-support-for-retail-hospitality/", "EPOS, payments, Wi-Fi and bookings kept running."),
@@ -10386,7 +10386,7 @@ def agentic_systems():
           <h2 class="section-title section-title--center" data-title>Agents built for your line of work<span class="title-underline title-underline--center"></span></h2>
         </div>
         <ul class="security-grid" data-stagger>
-{grid_cards([("Trades &amp; services","An enquiry-to-quote agent that captures the job, drafts a quote from your price list and books it in. See <a href=\"/it-support-for-tradespeople/\">trades IT</a>."),("Salons, clinics &amp; vets","A booking &amp; reminder agent that handles appointment requests and cuts no-shows. See <a href=\"/it-support-for-salons-beauty/\">salons</a> &amp; <a href=\"/it-support-for-vets/\">vets</a>."),("Accountants &amp; advisers","A document &amp; chasing agent that gathers client paperwork and chases what&rsquo;s missing. See <a href=\"/it-support-for-accountants/\">accountants</a>."),("Estate &amp; letting agents","An enquiry agent that qualifies leads and books viewings around the clock. See <a href=\"/it-support-for-estate-agents/\">estate agents</a>."),("Retail &amp; hospitality","A first-line agent for orders, bookings and FAQs across phone and web."),("Your line of work","Whatever you do, we build the agent around your real process &mdash; never a template.")])}
+{grid_cards([("Trades &amp; services","An enquiry-to-quote agent that captures the job, drafts a quote from your price list and books it in. See <a href=\"/it-support-for-tradespeople/\">trades IT</a>."),("Salons, clinics &amp; vets","A booking &amp; reminder agent that handles appointment requests and cuts no-shows. See <a href=\"/it-support-for-salons-beauty/\">salons</a> &amp; <a href=\"/it-support-for-vets/\">vets</a>."),("Accountants &amp; advisers","A document &amp; chasing agent that gathers client paperwork and chases what&rsquo;s missing. See <a href=\"/it-support-for-accountants-dorset/\">accountants</a>."),("Estate &amp; letting agents","An enquiry agent that qualifies leads and books viewings around the clock. See <a href=\"/it-support-for-estate-agents/\">estate agents</a>."),("Retail &amp; hospitality","A first-line agent for orders, bookings and FAQs across phone and web."),("Your line of work","Whatever you do, we build the agent around your real process &mdash; never a template.")])}
         </ul>
       </div>
     </section>''',
@@ -17064,7 +17064,7 @@ info_page(
           <h2>What we do</h2>
           <p>We put verified, off-site, ransomware-safe backups in place, build a clear recovery and business-continuity plan around your business, and &mdash; crucially &mdash; <strong>test it</strong> so you know it works. If disaster strikes, we act fast to restore your data and get you operational again.</p>
           <h2>Who it&rsquo;s for</h2>
-          <p>Any business that can&rsquo;t afford to lose its data or stop trading &mdash; especially regulated sectors like <a href="/it-support-for-solicitors/">solicitors</a>, <a href="/it-support-for-accountants/">accountants</a>, <a href="/it-support-for-care-homes/">care homes</a> <a href="/it-support-for-sole-traders/">sole traders</a> and <a href="/it-support-for-dental-medical/">dental &amp; medical practices</a>. It builds on our <a href="/backup-support/">backup &amp; recovery</a> and <a href="/cybersecurity-support/">cybersecurity</a> services.</p>""",
+          <p>Any business that can&rsquo;t afford to lose its data or stop trading &mdash; especially regulated sectors like <a href="/it-support-for-solicitors/">solicitors</a>, <a href="/it-support-for-accountants-dorset/">accountants</a>, <a href="/it-support-for-care-homes/">care homes</a> <a href="/it-support-for-sole-traders/">sole traders</a> and <a href="/it-support-for-dental-medical/">dental &amp; medical practices</a>. It builds on our <a href="/backup-support/">backup &amp; recovery</a> and <a href="/cybersecurity-support/">cybersecurity</a> services.</p>""",
   cta_args=("Be ready for anything", "Get verified backups and a tested recovery plan, so a disaster is a hiccup &mdash; not a catastrophe.",
             ("Get a Continuity Plan", "/contact/"), ("Backup & Recovery", "/backup-support/")),
 )
@@ -17097,7 +17097,7 @@ info_page(
   inner="""          <h2>The IT side of compliance</h2>
           <p>UK GDPR requires you to keep personal data secure and to handle it responsibly. We look after the <strong>practical, technical measures</strong> that underpin that &mdash; security, access control, encryption, backups, monitoring and the right Microsoft 365 policies &mdash; so compliance is built into how your systems work.</p>
           <h2>Built for regulated sectors</h2>
-          <p>It&rsquo;s especially valuable for <a href="/it-support-for-solicitors/">solicitors</a>, <a href="/it-support-for-accountants/">accountants</a>, <a href="/it-support-for-care-homes/">care homes</a>, <a href="/it-support-for-dental-medical/">dental &amp; medical practices</a> and <a href="/it-support-for-charities/">charities</a>. It pairs with our <a href="/cyber-essentials/">Cyber Essentials</a> help and <a href="/cybersecurity-support/">cybersecurity</a> service.</p>
+          <p>It&rsquo;s especially valuable for <a href="/it-support-for-solicitors/">solicitors</a>, <a href="/it-support-for-accountants-dorset/">accountants</a>, <a href="/it-support-for-care-homes/">care homes</a>, <a href="/it-support-for-dental-medical/">dental &amp; medical practices</a> and <a href="/it-support-for-charities-dorset/">charities</a>. It pairs with our <a href="/cyber-essentials/">Cyber Essentials</a> help and <a href="/cybersecurity-support/">cybersecurity</a> service.</p>
           <p class="lede-note">This supports your data-protection obligations on the IT side and isn&rsquo;t a substitute for formal legal or Data Protection Officer advice.</p>""",
   faqs=[
     ("Can you make us GDPR compliant?", "We handle the IT and security measures that underpin compliance &mdash; encryption, access control, MFA, backups, monitoring and Microsoft 365 policies. Full compliance also involves your own policies and processes, which we can support."),
@@ -19770,7 +19770,8 @@ for _ind in INDUSTRIES:
 def industry_hub():
     slug = "it-support-by-industry"
     desc = "Specialist IT support by industry across Bournemouth, Poole & Dorset - accountants, financial advisers, solicitors, dental, care homes, manufacturers, creative agencies and more, from a family firm since 1995."
-    ALL_IND = build_local.INDUSTRIES + INDUSTRIES
+    ALL_IND = [d for d in build_local.INDUSTRIES + INDUSTRIES
+               if d["slug"] not in ("it-support-for-accountants", "it-support-for-charities")]   # retired 13 Sep 2026: 301 -> the -dorset twins
     def _ind_name(d):
         return (d.get("crumbName") or d.get("crumb_name", "")).replace("IT Support for ", "").replace("IT support for ", "")
     def card(d):
@@ -19781,6 +19782,10 @@ def industry_hub():
     cards = "\n".join(card(d) for d in ALL_IND)
     cards += '\n          <a class="post-card" href="/it-support-for-construction/"><p class="post-card__cat">Industry</p><h3>Construction &amp; Building Firms</h3><p>IT for building firms, sites and offices &mdash; reliable site connectivity, project software and cybersecurity.</p><span class="post-card__more">How we help &#8594;</span></a>'
     cards += '\n          <a class="post-card" href="/it-support-for-nurseries-dorset/"><p class="post-card__cat">Industry</p><h3>Nurseries &amp; Childcare</h3><p>Friendly IT for day nurseries and pre-schools &mdash; the PCs and network behind Tapestry and Famly, safeguarding backups and patient staff support.</p><span class="post-card__more">How we help &#8594;</span></a>'
+    # 13 Sep 2026 (SEO audit): the generic accountants and charities pages retired into their Dorset twins, which live in
+    # new_pages_data rather than the industries lists, so the hub names them here.
+    cards += '\n          <a class="post-card" href="/it-support-for-accountants-dorset/"><p class="post-card__cat">Industry</p><h3>Accountants &amp; Bookkeepers</h3><p>Security-first IT for accountancy practices across Dorset &mdash; Xero, Sage, IRIS, QuickBooks and TaxCalc kept up through Making Tax Digital and the January deadlines.</p><span class="post-card__more">How we help &#8594;</span></a>'
+    cards += '\n          <a class="post-card" href="/it-support-for-charities-dorset/"><p class="post-card__cat">Industry</p><h3>Charities &amp; Non-Profits</h3><p>Down-to-earth IT for charities across Dorset &mdash; free and discounted Microsoft 365 nonprofit licences claimed, tight budgets respected, volunteers supported.</p><span class="post-card__more">How we help &#8594;</span></a>'
     content = "\n".join([
       hero(bc("IT Support by Industry"), "// BY INDUSTRY",
            'IT support for <em class="grad grad--cyan">your line of work</em>',
@@ -20123,6 +20128,8 @@ BIZ_SERVICES = [
 ]
 
 def business_it_services(d):
+    if d["slug"] in ("it-services-poole", "it-services-bournemouth"):
+        return   # 13 Sep 2026 (SEO audit): 301 -> the it-support twins; the dicts stay for reference
     town = d["town"]; region = d["region"]; slug = d["slug"]; twin = d["twin"]; co = d["coords"]
     intro_p = "\n".join(f"          <p>{p}</p>" for p in d["intro"])
     local_p = "\n".join(f"          <p>{p}</p>" for p in d["local"])

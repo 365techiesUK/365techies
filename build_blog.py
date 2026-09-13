@@ -629,6 +629,7 @@ urls = ['''  <url>
     <image:image><image:loc>https://365techies.co.uk/logo.jpg</image:loc><image:title>365 Techies logo</image:title></image:image>
   </url>''' % LM]
 for p in bp.PAGES:
+    if "noindex" in (p.get("robots") or ""): continue   # 13 Sep 2026 (SEO audit): a noindex page has no place in the sitemap
     _lm = _lastmod_for(p["slug"])
     if _lm:
         urls.append('  <url><loc>https://365techies.co.uk/%s/</loc><lastmod>%s</lastmod></url>' % (p["slug"], _lm))

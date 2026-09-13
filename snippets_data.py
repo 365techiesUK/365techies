@@ -654,12 +654,6 @@ SNIPPETS = {
     "it-cost-worksheet": {
         "desc": "A free, print-friendly worksheet: the five numbers to work out before asking any IT company for a quote, covering devices, users and what you rely on.",
     },
-    "it-services-bournemouth": {
-        "desc": "Managed business IT services in Bournemouth. Fully managed support, Microsoft 365, cyber security, servers and connectivity from £24.38 per computer.",
-    },
-    "it-services-poole": {
-        "desc": "Managed business IT services in Poole. Fully managed support, Microsoft 365, cyber security, servers and connectivity from £24.38 per computer a month.",
-    },
     "mesh-wifi-setup-guide": {
         "title": "Mesh WiFi Setup Guide UK: Step by Step, ISP by ISP",
         "desc": "How to set up mesh WiFi properly in a UK home: router placement, AP versus bridge mode on BT, Sky and Virgin, wired backhaul, and choosing channels.",
