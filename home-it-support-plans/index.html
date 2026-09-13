@@ -79,7 +79,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=108" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=109" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -117,7 +117,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=108&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=109&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -748,6 +748,7 @@
       </div>
     </section>
     <section class="support-options" aria-label="Home support plans">
+<h2 class="sr-only">Home support plans</h2>
       <div class="plan-grid">
           <article class="plan-card plan-card--home" data-reveal>
             <p class="plan-card__tag mono">HOME SUPPORT</p>
@@ -810,7 +811,7 @@
           <h2 class="section-title section-title--center" data-title>What&rsquo;s included<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Every home plan covers one computer for &pound;18.25/month &mdash; add Microsoft 365 for &pound;4.85/month per user. Got several computers? Each is covered at the same price; just tell us your setup.</p>
         </div>
-        <div class="price-table-wrap" data-reveal>
+        <div class="price-table-wrap" tabindex="0" role="group" aria-label="Price table (scrolls sideways on a small screen)" data-reveal>
           <table class="price-table">
             <thead><tr><th scope="col">Feature</th><th scope="col">Home Support<span class="price">&pound;18.25</span><span class="per">/mo per computer</span></th><th scope="col" class="pop">+ Microsoft 365<span class="price">&pound;23.10</span><span class="per">/mo per computer</span></th></tr></thead>
             <tbody>

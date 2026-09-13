@@ -79,7 +79,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=108" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=109" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -117,7 +117,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=108&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=109&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -1643,7 +1643,7 @@
           </div>
           <p class="pcs__line">// REAL SCREENSHOTS OF THE APP &middot; NOTHING MOCKED UP</p>
         </div>
-        <div class="cmp-wrap"><table class="cmp-table cmp-table--vs"><thead><tr><th>&nbsp;</th><th>This page (your browser)</th><th>365 PC Manager (free app)</th></tr></thead><tbody>
+        <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)"><table class="cmp-table cmp-table--vs"><thead><tr><th scope="col"><span class="sr-only">Feature</span></th><th>This page (your browser)</th><th>365 PC Manager (free app)</th></tr></thead><tbody>
           <tr><th>Memory</th><td>A rounded figure, capped at 8&nbsp;GB however much is fitted</td><td class="hi">The exact amount fitted, and how much is in use right now</td></tr>
           <tr><th>Processor</th><td>How many threads it has</td><td class="hi">Live processor and memory load, as graphs</td></tr>
           <tr><th>Storage</th><td>Only the space websites are allowed to use</td><td class="hi">Free space on the drive, and the drive&rsquo;s own SMART health</td></tr>

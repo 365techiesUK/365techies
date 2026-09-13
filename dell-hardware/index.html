@@ -79,7 +79,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=108" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=109" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -117,7 +117,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=108&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=109&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -1778,7 +1778,7 @@
           <h2 class="section-title section-title--center" data-title>What does brand-new business Dell cost?<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Buying brand-new instead? In 2025 Dell retired the Latitude and OptiPlex names. New business laptops are now <strong>Dell Pro</strong> (Essential, Base, Plus and Premium tiers) and desktops are <strong>Dell Pro</strong> Micro, Slim and Tower. Same business DNA, new badges. Here&rsquo;s Dell UK&rsquo;s current business range at their own from-prices &mdash; each link opens Dell&rsquo;s live page in a new tab. Compare it with our refurbished business-grade range above: laptops from <strong>&pound;510</strong>, desktops from <strong>&pound;545</strong>. Each comes with a new 1TB Samsung 990 PRO, Windows 11 set up and data moved across.</p>
         </div>
-        <div class="cmp-wrap"><table class="cmp-table ndell">
+        <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)"><table class="cmp-table ndell">
           <thead><tr><th>New model</th><th>Base spec at that price</th><th>Dell UK price</th><th>&nbsp;</th></tr></thead>
           <tbody>
           <tr><td><strong>Dell Pro 14 Essential (PV14250)</strong><br><span class="ndell__succ">The old Latitude 3000&rsquo;s successor</span></td><td>Core 3 100U &middot; 8GB &middot; 512GB SSD &middot; 14&Prime; FHD+</td><td class="ndell__p">from &pound;755</td><td><a href="https://www.dell.com/en-uk/shop/laptops-2-in-1-pcs/dell-pro-14-essential-laptop/spd/dell-pro-pv14250-laptop/cnpv1425004" target="_blank" rel="noopener noreferrer">View at Dell UK &#8599;</a></td></tr>

@@ -525,7 +525,7 @@ def pcm_landing():
                 '<p style="margin-top:.7rem">Windows SmartScreen shows that blue box for <em>any</em> program it hasn&rsquo;t seen many people download yet &mdash; even signed ones. It fades as more people install it. To check the file is genuinely ours: click <strong>More info</strong> and look for the publisher <strong>365 Techies Ltd</strong>, then <strong>Run anyway</strong>. If it says &ldquo;Unknown publisher&rdquo;, don&rsquo;t run it &mdash; ring us on 01202 775566.</p>'
                 '<p>Or right-click the file &rarr; Properties &rarr; Digital Signatures: it should show <strong>365 Techies Ltd</strong>, issued by Microsoft. If you&rsquo;d rather we simply set it up for you, we&rsquo;ll do that free, by hand or remotely.</p>'
                 '</details>') if PCM_DOWNLOAD_URL else ''
-    _live_get = f'''    <section class="section" aria-label="Get the app" id="download">
+    _live_get = f'''    <section class="section" aria-label="Download 365 PC Manager" id="download">
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// GET IT</p>
@@ -844,7 +844,7 @@ def pcm_landing():
           <h2 class="section-title section-title--center" data-title>What the free health check actually looks at<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Everything is read from your own PC &mdash; measured, never made up. If something can&rsquo;t be read, the report says so rather than guessing.</p>
         </div>
-        <div class="cmp-wrap"><table class="cmp-table">
+        <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)"><table class="cmp-table">
           <thead><tr><th>Check</th><th>What you get</th></tr></thead>
           <tbody>
             <tr><td>Drive health &amp; condition</td><td>The drive&rsquo;s own self-check (SMART) &mdash; the earliest warning most drives give before failing</td></tr>
@@ -927,7 +927,7 @@ def pcm_landing():
       ('''    <div id="pcmbar" role="region" aria-label="''' + ("Get the app" if PCM_LIVE else "Join the waitlist") + '''" style="position:fixed;left:0;right:0;bottom:0;z-index:60;transform:translateY(130%);transition:transform .3s ease;background:rgba(10,18,38,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid rgba(125,170,220,.3);box-shadow:0 -10px 30px rgba(0,0,0,.35)">
       <div class="wrap" style="display:flex;align-items:center;gap:.7rem;padding:.65rem 1rem">
         <span style="flex:1;min-width:0;font-size:.88rem;line-height:1.3">''' + ("<strong>Free &amp; signed</strong> &mdash; 365 PC Manager is ready to download, and installs in a couple of clicks." if PCM_LIVE else "<strong>Coming soon</strong> &mdash; be first when 365 PC Manager launches, and we&rsquo;ll set it up for you free.") + '''</span>
-        <a href="#download" class="button primary" id="pcmbarcta" style="white-space:nowrap;padding:.5rem 1rem;flex:0 0 auto">''' + ("Download free &#8595;" if PCM_LIVE else "Join free &#8594;") + '''
+        <a href="#download" class="button primary" id="pcmbarcta" style="white-space:nowrap;padding:.5rem 1rem;flex:0 0 auto">''' + ("Download free &#8595;" if PCM_LIVE else "Join free &#8594;") + '''</a>
         <button type="button" id="pcmbarx" aria-label="Dismiss this bar" style="background:none;border:0;color:var(--muted);font-size:1.3rem;line-height:1;cursor:pointer;padding:.1rem .35rem;flex:0 0 auto">&times;</button>
       </div>
     </div>
@@ -5294,6 +5294,7 @@ broadband_advisor()
 # the van dataset. Shows the user their network (it's their result) and never
 # shows any network-vs-network table anywhere - see the endpoint header.
 SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mobile signal check">
+<h2 class="sr-only">Mobile signal check</h2>
       <div class="wrap">
         <style>
           /* ── tester ───────────────────────────────────────────────────────
@@ -9145,7 +9146,7 @@ def new_dell_section():
           <h2 class="section-title section-title--center" data-title>What does brand-new business Dell cost?<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>''' + NEW_DELL_NAMING_NOTE + ''' Here&rsquo;s Dell UK&rsquo;s current business range at their own from-prices &mdash; each link opens Dell&rsquo;s live page in a new tab. Compare it with our refurbished business-grade range above: laptops from <strong>&pound;510</strong>, desktops from <strong>&pound;545</strong>. Each comes with a new 1TB Samsung 990 PRO, Windows 11 set up and data moved across.</p>
         </div>
-        <div class="cmp-wrap"><table class="cmp-table ndell">
+        <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)"><table class="cmp-table ndell">
           <thead><tr><th>New model</th><th>Base spec at that price</th><th>Dell UK price</th><th>&nbsp;</th></tr></thead>
           <tbody>
 ''' + rows + '''
@@ -10424,6 +10425,7 @@ def unitree_robots():
            cta1=("Enquire About Unitree", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=["Official Scan partner","Quadrupeds &amp; humanoids","Supplied &amp; supported"]),
       f'''    <section class="section section--alt" aria-label="Unitree robots showcase">
+<h2 class="sr-only">Unitree robots showcase</h2>
       <div class="wrap">
         <div class="split-2">
           <div class="tile robot-card" data-reveal>
@@ -10674,6 +10676,7 @@ def threadripper_workstations():
            cta1=("Enquire About a Workstation", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=["Built by Scan 3XS","Supplied &amp; supported","Serious multicore power"]),
       f'''    <section class="section section--alt" aria-label="Workstation showcase">
+<h2 class="sr-only">Workstation showcase</h2>
       <div class="wrap">
         <div class="split-2">
           <div class="tile robot-card" data-reveal>{WORKSTATION_SVG}<h3>Threadripper workstations</h3><p>Custom-built 3XS towers with AMD Threadripper or Threadripper PRO &mdash; huge core counts for the heaviest creative, engineering and AI work.</p></div>
@@ -10758,6 +10761,7 @@ def gaming_pcs():
            cta1=("Enquire About a Gaming PC", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=["NVIDIA Partner","GeForce RTX power","Built &amp; supported"]),
       f'''    <section class="section section--alt" aria-label="Gaming PC showcase">
+<h2 class="sr-only">Gaming PC showcase</h2>
       <div class="wrap">
         <div class="split-2">
           <div class="tile robot-card" data-reveal>{GAMING_SVG}<h3>Custom gaming rigs</h3><p>Built around your games, monitor and budget &mdash; from sleek value builds to no-compromise flagships, with proper cooling and clean cable management.</p></div>
@@ -10843,6 +10847,7 @@ def content_creator_pcs():
            cta1=("Enquire About a Creator PC", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=["NVIDIA Studio power","Desktops &amp; laptops","Built &amp; supported"]),
       f'''    <section class="section section--alt" aria-label="Creator showcase">
+<h2 class="sr-only">Creator showcase</h2>
       <div class="wrap">
         <div class="split-2">
           <div class="tile robot-card" data-reveal>{LAPTOP_SVG}<h3>Creator laptops</h3><p>Powerful, colour-accurate laptops for editing, design and creating on the move &mdash; specced and set up around your apps.</p></div>
@@ -10940,6 +10945,7 @@ def home_cinema():
            cta1=("Plan My System", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=["Richer Sounds partner","4K &amp; Dolby","Installed &amp; supported"]),
       f'''    <section class="section section--alt" aria-label="Home cinema showcase">
+<h2 class="sr-only">Home cinema showcase</h2>
       <div class="wrap">
         <div class="split-2">
           <div class="tile robot-card" data-reveal>{PROJECTOR_SVG}<h3>4K projectors &amp; screens</h3><p>Big-screen cinema at home &mdash; 4K projectors and screens, supplied, installed and calibrated for stunning picture.</p></div>
@@ -11023,6 +11029,7 @@ def starlink_internet():
            cta1=("Get Connected", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=["Residential &amp; roaming","Installed &amp; supported","Anywhere with a clear sky"]),
       f'''    <section class="section section--alt" aria-label="Starlink showcase">
+<h2 class="sr-only">Starlink showcase</h2>
       <div class="wrap">
         <div class="split-2">
           <div class="tile robot-card" data-reveal>{DISH_SVG}<h3>Starlink at your place</h3><p>We help you choose the right plan, install the dish and set up your network &mdash; fast broadband for rural homes, businesses and not-spots.</p></div>
@@ -12116,7 +12123,7 @@ DELL3520_WIDGET = r'''    <section class="section" aria-label="Interactive port 
           </div>
           <div class="d3-detail" id="d3-detail"></div>
           <div class="d3-controls"><button type="button" class="button primary" id="d3-tour">&#9654; Play tour</button></div>
-          <div class="cmp-wrap" data-reveal style="margin-top:1.7rem">
+          <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)" data-reveal style="margin-top:1.7rem">
             <p class="mono" style="text-align:center;opacity:.7;margin-bottom:.6rem">Every port at a glance</p>
             <table class="cmp-table">
               <thead><tr><th>Port</th><th>Where</th><th>What it&rsquo;s for</th></tr></thead>
@@ -12217,7 +12224,7 @@ DELL3520_WIDGET = r'''    <section class="section" aria-label="Interactive port 
           <h2 class="section-title section-title--center" data-title>Home, desk &amp; off-grid power<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>The Latitude 3520 charges through its barrel jack <em>or</em> its USB-C port &mdash; and choosing the right one saves faff at a desk and real battery power off-grid.</p>
         </div>
-        <div class="cmp-wrap" data-reveal style="margin-bottom:1.6rem">
+        <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)" data-reveal style="margin-bottom:1.6rem">
           <table class="cmp-table">
             <thead><tr><th>Setup</th><th>How</th><th>Why</th></tr></thead>
             <tbody>
@@ -12393,7 +12400,7 @@ DELLOPTI_WIDGET = r'''    <section class="section" aria-label="Interactive port 
           <div class="do-detail" id="do-detail"></div>
           <div class="do-controls"><button type="button" class="button primary" id="do-tour">&#9654; Play tour</button></div>
           <p class="do-caption">Typical OptiPlex small-form-factor layout &mdash; the exact port mix varies by model and generation, but if the port&rsquo;s on your machine, this is what it does.</p>
-          <div class="cmp-wrap" data-reveal style="margin-top:1.7rem">
+          <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)" data-reveal style="margin-top:1.7rem">
             <p class="mono" style="text-align:center;opacity:.7;margin-bottom:.6rem">Every port at a glance</p>
             <table class="cmp-table">
               <thead><tr><th>Port</th><th>Where</th><th>What it&rsquo;s for</th></tr></thead>
@@ -12493,7 +12500,7 @@ DELLOPTI_WIDGET = r'''    <section class="section" aria-label="Interactive port 
           <h2 class="section-title section-title--center" data-title>Home, business desk &amp; off-grid<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Desktops are simple to power &mdash; but a couple of choices make them safer, tidier and (if you must) even off-grid-able.</p>
         </div>
-        <div class="cmp-wrap" data-reveal style="margin-bottom:1.6rem">
+        <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)" data-reveal style="margin-bottom:1.6rem">
           <table class="cmp-table">
             <thead><tr><th>Setup</th><th>How</th><th>Why</th></tr></thead>
             <tbody>
@@ -14120,7 +14127,7 @@ SPECCHECK_APP_BAND = '''    <section class="section section--alt" aria-label="Wh
           </div>
           <p class="pcs__line">// REAL SCREENSHOTS OF THE APP &middot; NOTHING MOCKED UP</p>
         </div>
-        <div class="cmp-wrap"><table class="cmp-table cmp-table--vs"><thead><tr><th>&nbsp;</th><th>This page (your browser)</th><th>365 PC Manager (free app)</th></tr></thead><tbody>
+        <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)"><table class="cmp-table cmp-table--vs"><thead><tr><th scope="col"><span class="sr-only">Feature</span></th><th>This page (your browser)</th><th>365 PC Manager (free app)</th></tr></thead><tbody>
           <tr><th>Memory</th><td>A rounded figure, capped at 8&nbsp;GB however much is fitted</td><td class="hi">The exact amount fitted, and how much is in use right now</td></tr>
           <tr><th>Processor</th><td>How many threads it has</td><td class="hi">Live processor and memory load, as graphs</td></tr>
           <tr><th>Storage</th><td>Only the space websites are allowed to use</td><td class="hi">Free space on the drive, and the drive&rsquo;s own SMART health</td></tr>
@@ -16275,7 +16282,7 @@ info_page(
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// COMPARE PLANS</p>
         <h2 class="section-title section-title--center" data-title>What&rsquo;s included, at a glance<span class="title-underline title-underline--center"></span></h2>
-        <div class="cmp-wrap" data-reveal>
+        <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)" data-reveal>
           <table class="cmp-table">
             <thead><tr><th>Feature</th><th>Home Support</th><th>Home + Microsoft 365</th><th>Business</th></tr></thead>
             <tbody>
@@ -16288,7 +16295,7 @@ info_page(
               <tr><th>Cybersecurity &amp; backups managed</th><td>Advice</td><td>Advice</td><td class="yes">&#10003;</td></tr>
               <tr><th>On-site help (Dorset)</th><td>On request</td><td>On request</td><td class="yes">&#10003;</td></tr>
               <tr class="cmp-price"><th>From</th><td>&pound;18.25<span>/mo per computer</span></td><td>&pound;23.10<span>/mo per computer</span></td><td>from &pound;24.38<span>/mo per computer</span></td></tr>
-              <tr class="cmp-cta"><th></th><td><a href="/home-it-support-plans/">Home plans</a></td><td><a href="/home-it-support-plans/">Home plans</a></td><td><a href="/business-it-support-plans/">Business plans</a></td></tr>
+              <tr class="cmp-cta"><td></td><td><a href="/home-it-support-plans/">Home plans</a></td><td><a href="/home-it-support-plans/">Home plans</a></td><td><a href="/business-it-support-plans/">Business plans</a></td></tr>
             </tbody>
           </table>
         </div>
@@ -16329,9 +16336,9 @@ info_page(
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// HOW WE COMPARE</p>
         <h2 class="section-title section-title--center" data-title>Monthly support vs the alternatives<span class="title-underline title-underline--center"></span></h2>
-        <div class="cmp-wrap" data-reveal>
+        <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)" data-reveal>
           <table class="cmp-table cmp-table--vs">
-            <thead><tr><th>&nbsp;</th><th>Pay-per-fix</th><th>Typical national MSP</th><th>365 Techies</th></tr></thead>
+            <thead><tr><th scope="col"><span class="sr-only">Feature</span></th><th>Pay-per-fix</th><th>Typical national MSP</th><th>365 Techies</th></tr></thead>
             <tbody>
               <tr><th>Cost</th><td>&pound;0 until it breaks &mdash; then big bills</td><td>Premium + long contracts</td><td class="hi">From &pound;18.25/mo, no contract</td></tr>
               <tr><th>Proactive maintenance</th><td class="no">&ndash;</td><td class="yes">&#10003;</td><td class="yes hi">&#10003;</td></tr>
@@ -16765,7 +16772,7 @@ info_page(
           <h2 class="section-title section-title--center" data-title>Target response &amp; resolution times<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>We prioritise every issue by its impact, so the most urgent problems get the fastest response. Times are measured in working hours, within our standard support hours.</p>
         </div>
-        <div class="price-table-wrap" data-reveal>
+        <div class="price-table-wrap" tabindex="0" role="group" aria-label="Price table (scrolls sideways on a small screen)" data-reveal>
           <table class="price-table">
             <thead>
               <tr><th scope="col">Priority</th><th scope="col">What it means</th><th scope="col">Target response</th><th scope="col">Target resolution</th></tr>
@@ -16811,6 +16818,7 @@ info_page(
   desc="Free IT resources and guides from 365 Techies — IT advice articles, cyber threats explained, a cybersecurity checklist, IT cost guide, A-Z jargon buster, plan finder and a free IT health check.",
   chips=["Free to use","Plain English","Home &amp; business"],
   pre='''    <section class="section section--alt" aria-label="Resources and guides">
+<h2 class="sr-only">Resources and guides</h2>
       <div class="wrap">
         <div class="blog-grid" data-stagger>
           <a class="post-card" href="/free-tools/"><p class="post-card__cat">Hub</p><h3>All Free Tools</h3><p>Every free tool in one place &mdash; speed test, security checks, generators, calculators and more.</p><span class="post-card__more">Browse the tools &#8594;</span></a>
@@ -17065,9 +17073,9 @@ info_page(
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// YOUR OPTIONS, COMPARED</p>
         <h2 class="section-title section-title--center" data-title>Local, big-box, or do-it-yourself?<span class="title-underline title-underline--center"></span></h2>
-        <div class="cmp-wrap" data-reveal>
+        <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)" data-reveal>
           <table class="cmp-table cmp-table--vs">
-            <thead><tr><th>&nbsp;</th><th>Local independent (us)</th><th>Big-box repair desk</th><th>DIY / remote tools</th></tr></thead>
+            <thead><tr><th scope="col"><span class="sr-only">Feature</span></th><th>Local independent (us)</th><th>Big-box repair desk</th><th>DIY / remote tools</th></tr></thead>
             <tbody>
               <tr><th>Who actually helps you</th><td class="hi">A named, local person who knows you</td><td>Whoever&rsquo;s on the desk that day</td><td>You and a search engine</td></tr>
               <tr><th>Knows your setup &amp; history</th><td class="yes hi">&#10003;</td><td class="no">&ndash;</td><td class="no">&ndash;</td></tr>
@@ -17798,6 +17806,7 @@ cyber_threats_hub()
 
 # ============================================================ TOOL: PASSWORD STRENGTH CHECKER
 PASSWORD_WIDGET = '''    <section class="section" aria-label="Password strength checker">
+<h2 class="sr-only">Password strength checker</h2>
       <div class="wrap">
         <div class="quiz" style="max-width:640px">
           <label for="pw-in" class="quiz__q" style="font-size:1.3rem;display:block">Type a password to test it</label>
@@ -19364,9 +19373,9 @@ info_page(
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// SIDE BY SIDE</p>
         <h2 class="section-title section-title--center" data-title>The honest comparison<span class="title-underline title-underline--center"></span></h2>
-        <div class="cmp-wrap" data-reveal>
+        <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)" data-reveal>
           <table class="cmp-table cmp-table--vs">
-            <thead><tr><th>&nbsp;</th><th>Microsoft 365</th><th>Google Workspace</th></tr></thead>
+            <thead><tr><th scope="col"><span class="sr-only">Feature</span></th><th>Microsoft 365</th><th>Google Workspace</th></tr></thead>
             <tbody>
               <tr><th>Installable desktop apps</th><td class="hi">Full Word, Excel, Outlook on your PC</td><td>Browser-first (Docs, Sheets, Gmail)</td></tr>
               <tr><th>Works offline</th><td class="hi">Full offline working in the apps</td><td>Limited offline in the browser</td></tr>
@@ -19408,9 +19417,9 @@ info_page(
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// SIDE BY SIDE</p>
         <h2 class="section-title section-title--center" data-title>Two ways to get IT support<span class="title-underline title-underline--center"></span></h2>
-        <div class="cmp-wrap" data-reveal>
+        <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)" data-reveal>
           <table class="cmp-table cmp-table--vs">
-            <thead><tr><th>&nbsp;</th><th>Break-fix (pay per repair)</th><th>Managed / monthly plan</th></tr></thead>
+            <thead><tr><th scope="col"><span class="sr-only">Feature</span></th><th>Break-fix (pay per repair)</th><th>Managed / monthly plan</th></tr></thead>
             <tbody>
               <tr><th>When you get help</th><td>After something breaks</td><td class="hi">Before and after &mdash; problems are caught early</td></tr>
               <tr><th>Cost</th><td>Unpredictable, per job</td><td class="hi">One fixed monthly fee, from &pound;18.25 per computer</td></tr>
@@ -19712,9 +19721,9 @@ info_page(
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// SIDE BY SIDE</p>
         <h2 class="section-title section-title--center" data-title>The honest comparison<span class="title-underline title-underline--center"></span></h2>
-        <div class="cmp-wrap" data-reveal>
+        <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)" data-reveal>
           <table class="cmp-table cmp-table--vs">
-            <thead><tr><th>&nbsp;</th><th>Cloud (e.g. Microsoft 365)</th><th>On-premise server</th></tr></thead>
+            <thead><tr><th scope="col"><span class="sr-only">Feature</span></th><th>Cloud (e.g. Microsoft 365)</th><th>On-premise server</th></tr></thead>
             <tbody>
               <tr><th>Upfront cost</th><td class="hi">Low &mdash; pay monthly per user</td><td>Higher &mdash; buy the hardware</td></tr>
               <tr><th>Ongoing cost</th><td>Predictable monthly subscription</td><td>Maintenance, power and eventual replacement</td></tr>
@@ -21487,7 +21496,7 @@ REFURB_SUPPORT_BAND = '''    <section class="section" aria-label="Setup, guarant
           <h2 class="section-title section-title--center" data-title>Every machine set up properly &mdash; then choose your cover<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center">Every computer is <strong>professionally set up by 365 Techies with Windows 11 Home or Pro</strong> (your choice) and your data moved across &mdash; that&rsquo;s included. Then pick how looked-after you want to be:</p>
         </div>
-        <div class="cmp-wrap"><table class="cmp-table cmp-table--vs"><thead><tr><th>&nbsp;</th><th>Machine only</th><th>+ &pound;49 Setup Pack</th><th>On a 365 support plan</th></tr></thead><tbody>
+        <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)"><table class="cmp-table cmp-table--vs"><thead><tr><th scope="col"><span class="sr-only">Feature</span></th><th>Machine only</th><th>+ &pound;49 Setup Pack</th><th>On a 365 support plan</th></tr></thead><tbody>
           <tr><th>Cost</th><td>Included in the price</td><td>One-off &pound;49</td><td>Home &pound;18.25/month per computer &middot; business from &pound;24.38</td></tr>
           <tr><th>Guarantee</th><td>12-month return-to-base</td><td>12-month return-to-base</td><td class="hi"><strong>5 years</strong> &mdash; for as long as you&rsquo;re on the plan</td></tr>
           <tr><th>Setup</th><td>Windows 11 Home or Pro, data moved across</td><td>Tailored home <em>or</em> business setup &mdash; email, printers, accounts, the lot</td><td>Tailored setup, then kept right</td></tr>
@@ -21547,7 +21556,7 @@ def _model_details_band(slug):
         label = ('Display' if kind == 'laptop' else 'Form factors')
         rows.append(f'''          <div class="mdet" id="{mid}">
             <h3>{name} <span class="mdet__price mono">guide &pound;{price}</span></h3>
-            <div class="cmp-wrap"><table class="cmp-table"><tbody>
+            <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)"><table class="cmp-table"><tbody>
               <tr><th>{label}</th><td>{first}</td></tr>
               <tr><th>Processor</th><td>{cpu_disp}</td></tr>
               <tr><th>Memory</th><td>{('16GB soldered &mdash; cannot be upgraded later; 32GB units available to order, so pick the size you&rsquo;ll ever need' if mid.startswith('latitude-7') else ('16GB fitted (dual-channel, two slots) &middot; 32GB upgrade guide +&pound;176' if kind=='laptop' else '16GB fitted (two slots) &middot; 32GB upgrade guide +&pound;176 (Micro) or +&pound;210 (SFF/Tower)'))}</td></tr>
@@ -22052,7 +22061,7 @@ def build_new_page(d):
         _ag = f'''    <section class="section section--alt" aria-label="At a glance">
       <div class="wrap" data-reveal>
         <div class="section-head"><h2 class="section-title section-title--center">At a glance<span class="title-underline title-underline--center"></span></h2></div>
-        <div class="price-table-wrap"><table class="price-table price-table--facts"><tbody>
+        <div class="price-table-wrap" tabindex="0" role="group" aria-label="Price table (scrolls sideways on a small screen)"><table class="price-table price-table--facts"><tbody>
 {_ag_rows}
             </tbody></table></div>
       </div>
@@ -22291,9 +22300,9 @@ def custom_dashboards():
           <h2 class="section-title section-title--center" data-title>VRM is excellent. Here&rsquo;s what custom adds.<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>Let&rsquo;s be straight: Victron&rsquo;s VRM portal is polished, free, and keeps getting better &mdash; live data every couple of seconds while you&rsquo;re watching, a rearrangeable Advanced tab with a custom widget builder, alarms to your phone, even remote control of your system. <strong>A custom dashboard doesn&rsquo;t replace VRM &mdash; it sits alongside it</strong> (read-only, via Victron&rsquo;s own API) and does the things VRM deliberately doesn&rsquo;t.</p>
         </div>
-        <div class="price-table-wrap" data-reveal style="max-width:920px;margin:0 auto">
+        <div class="price-table-wrap" tabindex="0" role="group" aria-label="Price table (scrolls sideways on a small screen)" data-reveal style="max-width:920px;margin:0 auto">
           <table class="price-table">
-            <thead><tr><th></th><th>VRM portal (free)</th><th>Our custom dashboards</th></tr></thead>
+            <thead><tr><th scope="col"><span class="sr-only">Feature</span></th><th>VRM portal (free)</th><th>Our custom dashboards</th></tr></thead>
             <tbody>
               <tr><td>Main dashboard layout</td><td>Auto-generated and fixed &mdash; only the Advanced tab is rearrangeable</td><td><strong>Anything, anywhere</strong> &mdash; your layout, your numbers, your look</td></tr>
               <tr><td>Several installations on one live screen</td><td>A sortable site list; group overviews; Fleet dashboard needs 10+ sites</td><td><strong>Any number of sites, one screen, live</strong> &mdash; from 2 vans to a whole estate</td></tr>
@@ -22696,7 +22705,7 @@ _join_compare = '''<section class="section section--alt" id="included" aria-labe
       <h2 class="section-title section-title--center" data-title>What&rsquo;s free, and what a plan adds<span class="title-underline title-underline--center"></span></h2>
       <p class="lede lede--center" data-reveal>The 365 Club is genuinely free forever. A support plan adds a real techie who services your PC and helps whenever you&rsquo;re stuck &mdash; from &pound;18.25/month per computer, no contract.</p>
     </div>
-    <div class="price-table-wrap" data-reveal>
+    <div class="price-table-wrap" tabindex="0" role="group" aria-label="Price table (scrolls sideways on a small screen)" data-reveal>
       <table class="price-table">
         <thead><tr><th scope="col">What you get</th><th scope="col">365 Club<span class="price">&pound;0</span><span class="per">free forever</span></th><th scope="col" class="pop">On 365 support<span class="price">&pound;18.25</span><span class="per">/mo per computer</span></th></tr></thead>
         <tbody>

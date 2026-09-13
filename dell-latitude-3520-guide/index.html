@@ -79,7 +79,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=108" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=109" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -117,7 +117,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=108&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=109&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -293,7 +293,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-09-04"
+      "dateModified": "2026-09-13"
     },
     {
       "@type": "TechArticle",
@@ -777,7 +777,7 @@
           <a href="/dell-hardware/" class="button secondary button--lg">Refurbished Dell Laptops from &pound;510</a>
         </div>
         <ul class="page-hero__chips mono"><li>&#9679; Interactive port tour</li><li>&#9679; Home &middot; desk &middot; off-grid</li><li>&#9679; Plain English</li></ul>
-        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 4 September 2026</p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 13 September 2026</p>
         <div class="course-scene course-scene--band course-scene--hero" aria-hidden="true"><svg class="course-scene__svg" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><rect x="222" y="56" width="120" height="104" rx="8" fill="#0b1d3a" stroke="rgba(125,170,220,.35)" stroke-width="2"/><path d="M238 82 h88" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><path d="M238 100 h70" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><path d="M238 118 h84" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><circle cx="246" cy="140" r="9" fill="none" stroke="#86b6e8" stroke-width="2"/><path d="M253 147 L262 156" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><path d="M168 100 C188 86 202 112 222 98" fill="none" stroke="#86b6e8" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 8" class="nm-link"/><g class="cs-float"><rect x="56" y="58" width="100" height="66" rx="8" fill="#0b1d3a" stroke="rgba(125,170,220,.35)" stroke-width="2"/><path d="M70 80 h56" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><path d="M70 96 h40" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><path d="M70 112 h48" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><path d="M46 124 L166 124 L180 140 L32 140 Z" fill="#0a1f3d" stroke="rgba(125,170,220,.35)" stroke-width="2" stroke-linejoin="round"/><path d="M96 132 h20" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><circle cx="148" cy="66" r="4" fill="#00ce1b" class="nm-dot" style="--d:.4s"/></g><circle cx="246" cy="140" r="13" fill="none" stroke="rgba(29,151,227,.5)" stroke-width="2" class="nm-scan"/></svg></div>
       </div>
     </section>
@@ -801,7 +801,7 @@
           </div>
           <div class="d3-detail" id="d3-detail"></div>
           <div class="d3-controls"><button type="button" class="button primary" id="d3-tour">&#9654; Play tour</button></div>
-          <div class="cmp-wrap" data-reveal style="margin-top:1.7rem">
+          <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)" data-reveal style="margin-top:1.7rem">
             <p class="mono" style="text-align:center;opacity:.7;margin-bottom:.6rem">Every port at a glance</p>
             <table class="cmp-table">
               <thead><tr><th>Port</th><th>Where</th><th>What it&rsquo;s for</th></tr></thead>
@@ -902,7 +902,7 @@
           <h2 class="section-title section-title--center" data-title>Home, desk &amp; off-grid power<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>The Latitude 3520 charges through its barrel jack <em>or</em> its USB-C port &mdash; and choosing the right one saves faff at a desk and real battery power off-grid.</p>
         </div>
-        <div class="cmp-wrap" data-reveal style="margin-bottom:1.6rem">
+        <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)" data-reveal style="margin-bottom:1.6rem">
           <table class="cmp-table">
             <thead><tr><th>Setup</th><th>How</th><th>Why</th></tr></thead>
             <tbody>

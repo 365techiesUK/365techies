@@ -79,7 +79,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=108" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=109" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -117,7 +117,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=108&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=109&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -293,7 +293,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-31"
+      "dateModified": "2026-09-13"
     },
     {
       "@type": "FAQPage",
@@ -741,16 +741,16 @@
           <a href="/contact/" class="button secondary button--lg">Get Support Today</a>
         </div>
         <ul class="page-hero__chips mono"><li>&#9679; Side by side</li><li>&#9679; Plain English</li><li>&#9679; No lock-in either way</li></ul>
-        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 31 August 2026</p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 13 September 2026</p>
       </div>
     </section>
     <section class="section section--alt" aria-label="Break-fix vs managed IT">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// SIDE BY SIDE</p>
         <h2 class="section-title section-title--center" data-title>Two ways to get IT support<span class="title-underline title-underline--center"></span></h2>
-        <div class="cmp-wrap" data-reveal>
+        <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)" data-reveal>
           <table class="cmp-table cmp-table--vs">
-            <thead><tr><th>&nbsp;</th><th>Break-fix (pay per repair)</th><th>Managed / monthly plan</th></tr></thead>
+            <thead><tr><th scope="col"><span class="sr-only">Feature</span></th><th>Break-fix (pay per repair)</th><th>Managed / monthly plan</th></tr></thead>
             <tbody>
               <tr><th>When you get help</th><td>After something breaks</td><td class="hi">Before and after &mdash; problems are caught early</td></tr>
               <tr><th>Cost</th><td>Unpredictable, per job</td><td class="hi">One fixed monthly fee, from &pound;18.25 per computer</td></tr>

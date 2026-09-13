@@ -79,7 +79,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=108" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=109" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -117,7 +117,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=108&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=109&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -1002,7 +1002,7 @@ Still stuck? 365 Techies fix it remotely: 01202 775566 - https://365techies.co.u
     <section class="section section--alt" aria-label="At a glance">
       <div class="wrap" data-reveal>
         <div class="section-head"><h2 class="section-title section-title--center">At a glance<span class="title-underline title-underline--center"></span></h2></div>
-        <div class="price-table-wrap"><table class="price-table price-table--facts"><tbody>
+        <div class="price-table-wrap" tabindex="0" role="group" aria-label="Price table (scrolls sideways on a small screen)"><table class="price-table price-table--facts"><tbody>
               <tr><th scope="row">Most common cause</th><td>New Outlook auto-detects the wrong mail servers, then shows a misleading app-password error &mdash; Plusnet doesn&rsquo;t use app passwords.</td></tr>
               <tr><th scope="row">DIY first step</th><td>Add the mailbox by hand as IMAP: incoming imap.plus.net, port 993, SSL/TLS; outgoing relay.plus.net, port 587, STARTTLS.</td></tr>
               <tr><th scope="row">Which password to use</th><td>Your ordinary Plusnet mailbox password &mdash; the one for webmail &mdash; not your Microsoft account password.</td></tr>

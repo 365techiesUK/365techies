@@ -79,7 +79,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=108" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=109" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -117,7 +117,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=108&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=109&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -740,7 +740,7 @@
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// COMPARE PLANS</p>
         <h2 class="section-title section-title--center" data-title>What&rsquo;s included, at a glance<span class="title-underline title-underline--center"></span></h2>
-        <div class="cmp-wrap" data-reveal>
+        <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)" data-reveal>
           <table class="cmp-table">
             <thead><tr><th>Feature</th><th>Home Support</th><th>Home + Microsoft 365</th><th>Business</th></tr></thead>
             <tbody>
@@ -753,7 +753,7 @@
               <tr><th>Cybersecurity &amp; backups managed</th><td>Advice</td><td>Advice</td><td class="yes">&#10003;</td></tr>
               <tr><th>On-site help (Dorset)</th><td>On request</td><td>On request</td><td class="yes">&#10003;</td></tr>
               <tr class="cmp-price"><th>From</th><td>&pound;18.25<span>/mo per computer</span></td><td>&pound;23.10<span>/mo per computer</span></td><td>from &pound;24.38<span>/mo per computer</span></td></tr>
-              <tr class="cmp-cta"><th></th><td><a href="/home-it-support-plans/">Home plans</a></td><td><a href="/home-it-support-plans/">Home plans</a></td><td><a href="/business-it-support-plans/">Business plans</a></td></tr>
+              <tr class="cmp-cta"><td></td><td><a href="/home-it-support-plans/">Home plans</a></td><td><a href="/home-it-support-plans/">Home plans</a></td><td><a href="/business-it-support-plans/">Business plans</a></td></tr>
             </tbody>
           </table>
         </div>
@@ -794,9 +794,9 @@
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// HOW WE COMPARE</p>
         <h2 class="section-title section-title--center" data-title>Monthly support vs the alternatives<span class="title-underline title-underline--center"></span></h2>
-        <div class="cmp-wrap" data-reveal>
+        <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)" data-reveal>
           <table class="cmp-table cmp-table--vs">
-            <thead><tr><th>&nbsp;</th><th>Pay-per-fix</th><th>Typical national MSP</th><th>365 Techies</th></tr></thead>
+            <thead><tr><th scope="col"><span class="sr-only">Feature</span></th><th>Pay-per-fix</th><th>Typical national MSP</th><th>365 Techies</th></tr></thead>
             <tbody>
               <tr><th>Cost</th><td>&pound;0 until it breaks &mdash; then big bills</td><td>Premium + long contracts</td><td class="hi">From &pound;18.25/mo, no contract</td></tr>
               <tr><th>Proactive maintenance</th><td class="no">&ndash;</td><td class="yes">&#10003;</td><td class="yes hi">&#10003;</td></tr>

@@ -2731,3 +2731,8 @@ body.b365-mapov-open { overflow: hidden; }
   .page-hero .lede { font-size: 1rem; }
   .page-hero__cta .button--lg, .hero-buttons .button--lg { padding-top: 0.8rem; padding-bottom: 0.8rem; }
 }
+
+/* 13 Sep 2026 (UX audit item 2): standalone text links reach the 24px minimum without changing their look. */
+.breadcrumb a { display: inline-block; padding: 0.25rem 0; }
+.ff-areas a { display: inline-block; padding: 0.15rem 0.05rem; }
+.page-hero__byline a { display: inline-block; padding: 0.15rem 0; }
