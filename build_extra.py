@@ -21041,7 +21041,7 @@ _DELL_GUIDE_STOCK_SLUGS = {
     # NOT dell-latitude-3520-guide / dell-optiplex-guide: those are hand-built owner's
     # guides (not pack pages) and already carry the from-&pound;510 CTA in their own hero.
 }
-DELL_GUIDE_STOCK_BAND = '''    <section class="section" aria-label="Real refurbished Dell stock">
+DELL_GUIDE_STOCK_BAND = '''    <section class="section" aria-label="Real refurbished Dell stock" id="stock">
       <div class="wrap" style="max-width:960px;margin:0 auto">
         <div class="repairs__card" data-reveal style="border-color:rgba(29,151,227,.4);flex-direction:column;align-items:flex-start;gap:1.2rem">
           <div>
@@ -21056,6 +21056,64 @@ DELL_GUIDE_STOCK_BAND = '''    <section class="section" aria-label="Real refurbi
         </div>
       </div>
     </section>'''
+
+# Jobs pass 3 (13 Sep 2026, GSC 1-12 Sep): the three guides that carry the buying traffic
+# (Latitude series 16 clicks, 5420 vs 5430 10, OptiPlex Micro/SFF/Tower 9) showed the generic
+# band above. They now show the actual machines the page is about, with the registry's guide
+# price, a Reserve link that preselects the machine in the picker and the per-model details
+# anchor. Prices come from DELL_MACHINES only (see [[refurbished-dell]] in memory: owner's formula).
+_DELL_GUIDE_STOCK_PICKS = {
+    'dell-latitude-5420-vs-5430-which-to-buy': ('Both machines this page compares, refurbished and in stock',
+        [('latitude-5420', None), ('latitude-5430', None)]),
+    'dell-latitude-series-explained-3000-5000-7000': ('One machine from each tier, refurbished and in stock',
+        [('latitude-3420', 'Latitude 3000 series'), ('latitude-5520', 'Latitude 5000 series'), ('latitude-7420', 'Latitude 7000 series')]),
+    'dell-optiplex-micro-sff-tower-which-to-buy': ('The three OptiPlex tiers, refurbished and in stock in every body',
+        [('optiplex-3080', 'OptiPlex 3000 series'), ('optiplex-5080', 'OptiPlex 5000 series'), ('optiplex-7080', 'OptiPlex 7000 series')]),
+}
+
+
+def dell_guide_stock_band(slug):
+    """The stock band for a Dell guide: model cards for the three buying guides, the generic band elsewhere."""
+    pick = _DELL_GUIDE_STOCK_PICKS.get(slug)
+    if not pick:
+        return DELL_GUIDE_STOCK_BAND
+    title, rows = pick
+    by_id = {m[0]: m for m in DELL_MACHINES}
+    cards = []
+    for mid, tier_label in rows:
+        _id, kind, series, name, meta, price, href = by_id[mid][:7]
+        if tier_label:
+            tier_min = min(x[5] for x in DELL_MACHINES if x[2] == series)
+            assert price == tier_min, (slug, mid, price, tier_min)   # the example IS the from-price, never a dearer one
+            head, label, line = tier_label, 'from', 'e.g. ' + name + ' &middot; ' + meta
+            reserve, details = ('Reserve ' + ('an ' if name[:1] in 'AEIOU' else 'a ') + name, '/dell-hardware/?model=' + mid + '#pick'), ('See the ' + series + ' page', href)
+        else:
+            head, label, line = name, 'guide price', meta
+            reserve, details = ('Reserve this one', '/dell-hardware/?model=' + mid + '#pick'), ('Full details', href + '#' + mid)
+        sub = '<span style="font-size:.8rem;font-weight:500;color:var(--muted)">' + label + '</span> &pound;' + str(price)
+        cards.append(
+            '            <div style="border:1px solid rgba(125,170,220,.28);border-radius:14px;padding:1rem 1.1rem;background:rgba(255,255,255,.03);display:flex;flex-direction:column;gap:.45rem">\n'
+            '              <p class="eyebrow mono" style="margin:0">// ' + series.upper() + '</p>\n'
+            '              <h3 style="margin:0;font-size:1.15rem">' + head + '</h3>\n'
+            '              <p class="mono" style="margin:0;font-size:.78rem;color:var(--muted)">' + line + ' &middot; new 1TB Samsung 990&nbsp;PRO</p>\n'
+            '              <p style="margin:.2rem 0 .4rem;font-size:1.35rem;font-weight:700">' + sub + '</p>\n'
+            '              <p style="margin:auto 0 0;display:flex;flex-wrap:wrap;gap:.5rem"><a class="button primary" href="' + reserve[1] + '">' + reserve[0] + '</a><a class="button secondary" href="' + details[1] + '">' + details[0] + '</a></p>\n'
+            '            </div>')
+    return ('    <section class="section" aria-label="Real refurbished Dell stock" id="stock">\n'
+            '      <div class="wrap" style="max-width:960px;margin:0 auto">\n'
+            '        <div class="repairs__card" data-reveal style="border-color:rgba(29,151,227,.4);flex-direction:column;align-items:flex-start;gap:1.2rem">\n'
+            '          <div>\n'
+            '            <p class="eyebrow mono">// NOT JUST A GUIDE</p>\n'
+            '            <h2 class="repairs__title" style="max-width:none">' + title + '</h2>\n'
+            '            <p class="lede">Real, tested ex-business machines, each with a new 1TB Samsung 990&nbsp;PRO drive, set up and supported by the same Bournemouth techies who wrote this. Guide prices, set-up included; we bring it to you to see before you decide, home or business, across Dorset.</p>\n'
+            '          </div>\n'
+            '          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.9rem;width:100%">\n' + '\n'.join(cards) + '\n'
+            '          </div>\n'
+            '          <p style="margin:0;display:flex;flex-wrap:wrap;gap:.7rem;align-items:center"><a href="/dell-hardware/#pick" class="button bm-ghost">See everything in stock</a><a href="tel:+441202775566" class="button bm-ghost">Call 01202 775566</a></p>\n'
+            '        </div>\n'
+            '      </div>\n'
+            '    </section>')
+
 
 # Free-courses funnel: gentle/how-to/beginner pages promote the courses at the
 # END of the page (reader got their answer; now offer to build their confidence).
@@ -21741,7 +21799,7 @@ def build_new_page(d):
     # (inserted BEFORE the compare table below, which also inserts at 1, so the final
     # order reads section 1 -> at-a-glance table -> stock band)
     if d['slug'] in _DELL_GUIDE_STOCK_SLUGS and len(_blocks) > 1:
-        _blocks.insert(1, DELL_GUIDE_STOCK_BAND)
+        _blocks.insert(1, dell_guide_stock_band(d['slug']))
     # AEO comparison table: high-value "vs"/"which" pages get an at-a-glance table after section 1
     _cmp = DELL_COMPARE_TABLES.get(d['slug'])
     if _cmp:
