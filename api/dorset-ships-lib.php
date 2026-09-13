@@ -125,6 +125,9 @@ if (!defined('DORSET_SHIPS_LIB')) {
         return is_finite($n) ? $n : null;
     }
 
+    function ships_sog($n) { return ($n === null || $n < 0 || $n >= 102.2) ? null : $n; }
+    function ships_cog($n) { return ($n === null || $n < 0 || $n >= 360) ? null : $n; }
+
     function ships_heading($v) {
         $h = ships_num($v);
         return ($h !== null && $h >= 0 && $h <= 360) ? $h : null;
@@ -208,6 +211,7 @@ if (!defined('DORSET_SHIPS_LIB')) {
         if (abs($lat) > 90 || abs($lon) > 180) return true;
         if (!ships_in_box($lon, $lat)) return true;
         $sog = ships_num(isset($msg['Sog']) ? $msg['Sog'] : (isset($msg['SOG']) ? $msg['SOG'] : null));
+        $sog = ships_sog($sog);
         if (!ships_in_home($lon, $lat) && ($sog === null || $sog < SHIPS_FAR_MIN_KN)) {
             // moored or drifting far from Dorset: not a row (and a row it had is dropped)
             unset($store['vessels'][$mmsi], $store['tracks'][$mmsi], $store['pending'][$mmsi]);
@@ -228,8 +232,9 @@ if (!defined('DORSET_SHIPS_LIB')) {
             'type' => $typeCode,
             'type_specific' => ships_type_word($typeCode),
             'destination' => ships_str(isset($msg['Destination']) ? $msg['Destination'] : (isset($st['destination']) ? $st['destination'] : '')),
-            'speed'   => ships_num(isset($msg['Sog']) ? $msg['Sog'] : (isset($msg['SOG']) ? $msg['SOG'] : null)),
-            'course'  => ships_num(isset($msg['Cog']) ? $msg['Cog'] : (isset($msg['COG']) ? $msg['COG'] : null)),
+            // AIS 'not available' codes: SOG 102.3 (1023/10) and COG 360 mean unknown, not a value.
+            'speed'   => ships_sog($sog),
+            'course'  => ships_cog(ships_num(isset($msg['Cog']) ? $msg['Cog'] : (isset($msg['COG']) ? $msg['COG'] : null))),
             'heading' => ships_heading(isset($msg['TrueHeading']) ? $msg['TrueHeading'] : (isset($msg['Heading']) ? $msg['Heading'] : null)),
             'last_position_UTC'   => $iso,
             'last_position_epoch' => $epoch,

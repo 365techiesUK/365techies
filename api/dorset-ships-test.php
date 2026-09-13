@@ -44,6 +44,10 @@ ok(ships_apply($s, array('MessageType' => 'PositionReport', 'MetaData' => array(
    && $s['vessels']['232003456']['lat'] === 50.65, 'a positionless report counts as liveness and leaves the row alone');
 ok(ships_type_word(70) === 'Cargo' && ships_type_word(36) === 'Sailing' && ships_type_word(51) === 'Search and rescue' && ships_type_word('') === '' && ships_type_word(95) === 'Other', 'type words');
 ok(ships_heading(511) === null && ships_heading(0) === 0.0 && ships_heading(360) === 360.0, 'heading 511 (not available) is null');
+ok(ships_sog(102.3) === null && ships_sog(0.0) === 0.0 && ships_sog(18.2) === 18.2 && ships_cog(360.0) === null && ships_cog(359.9) === 359.9, "SOG 102.3 and COG 360 (AIS 'not available') are null");
+$s2 = ships_empty_store(); ships_apply($s2, env_pos(232003457, 50.65, -1.95, array('Sog' => 102.3, 'Cog' => 360)), $T0);
+ok($s2['vessels']['232003457']['speed'] === null && $s2['vessels']['232003457']['course'] === null, 'a row never carries the not-available codes');
+ok(ships_apply($s2, env_pos(111111115, 50.95, 1.40, array('Sog' => 102.3)), $T0) && !isset($s2['vessels']['111111115']), 'a far-box vessel with unknown speed is not treated as under way');
 
 echo "-- tracks\n";
 $s = ships_empty_store();
