@@ -1228,6 +1228,18 @@ if os.path.exists(_hp):
             _hout = _hout[:j] + bp.CSSV + _hout[k:]; _cn += 1
         _cpos = j
     if _cn: _hchanged.append("styles.min.css?v=%s x%d" % (bp.CSSV, _cn))
+    # 13 Sep 2026 (SEO audit): the business node's postal address travels with the template too. The July
+    # NAP fix (street + postcode in BUSINESS_NODE) never reached the hand-edited homepage, the page Google
+    # ties to the Business Profile; now the homepage's address is compared with the template's on every build.
+    import json as _json, re as _re
+    _bi = _hout.find('"@id": "https://365techies.co.uk/#business"')
+    _am = _re.compile(r'"address":\s*\{[^}]*\}').search(_hout, _bi if _bi >= 0 else 0)
+    if _am:
+        try: _have_addr = _json.loads(_am.group(0)[len('"address":'):].strip())
+        except ValueError: _have_addr = None
+        if _have_addr != bp.BUSINESS_NODE["address"]:
+            _hout = _hout[:_am.start()] + '"address": ' + _json.dumps(bp.BUSINESS_NODE["address"], ensure_ascii=False) + _hout[_am.end():]
+            _hchanged.append("business address")
     if _hout != _hsrc:
         open(_hp, "w", encoding="utf-8").write(_hout)
         print("  homepage: synced from the template -> " + ", ".join(_hchanged))

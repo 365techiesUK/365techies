@@ -824,6 +824,7 @@ SNIPPETS = {
     },
     "ruckus-access-point-end-of-life": {
         "title": "RUCKUS Access Point End-of-Life Dates: R310 to R770",
+        "desc": "End-of-sale and end-of-support dates for RUCKUS R310 to R770, checked against the vendor's own table, plus the three things people get wrong about them.",
     },
     "windows-10-end-of-life": {
         "title": "Windows 10 End of Life (Oct 2025): What to Do Next",
@@ -845,12 +846,14 @@ SNIPPETS = {
     },
     "refurbished-vs-new-laptop": {
         "title": "Refurbished vs New Laptop: Which Should You Buy?",
+        "desc": "Refurbished or new? An honest comparison on price, reliability, warranty and the planet, from a Dorset firm that refurbishes business laptops for a living.",
     },
     "outlook-indexing-stuck": {
         "title": "Outlook Indexing Stuck or Freezes When Searching",
     },
     "microsoft-word-wont-open": {
         "title": "Microsoft Word Won't Open? The 5-Step Fix Ladder",
+        "desc": "Word will not open, crashes or only starts in safe mode? A five-step fix ladder from the likeliest cause in 2026, a Windows update, down to a clean repair.",
     },
     "malware-and-viruses": {
         "title": "Malware &amp; Viruses: What They Are, How to Stay Safe",
@@ -1008,6 +1011,46 @@ SNIPPETS = {
     "microsoft-365-support": {
         "title": "Microsoft 365 Support Dorset | Setup, Migration & Lockouts",
         "desc": "Microsoft 365 setup, email migration and admin lockouts fixed for Bournemouth, Poole and Dorset. Microsoft Partner, rated 4.9 on Google. Call 01202 775566.",
+    },
+    # SEO audit 13 Sep 2026: the July call to leave amputated descriptions alone held while they all sat at
+    # position 26+. These eleven now rank on page one or take clicks, and four titles ran over 60 characters.
+    "solar-battery-calculator": {
+        "desc": "Tick what you run each day and get a realistic lithium battery size and solar panel wattage for UK conditions. Free, no sign-up, no sales inflation.",
+    },
+    "home-assistant-victron-cerbo-gx": {
+        "desc": "Connect a Victron Cerbo GX to Home Assistant with the official integrations, MQTT or Modbus (we measured both), and skip the old custom-component route.",
+    },
+    "computer-help-for-seniors": {
+        "desc": "Patient, plain-English computer help for older people: staying safe, video calling, online banking, accessibility, and a real person when you want one.",
+    },
+    "bournemouth/live-map": {
+        "title": "Bournemouth Live Map: Buses, Traffic, Floods, Sea Quality",
+        "desc": "Live buses, flights, road closures, river levels, flood warnings, bathing water, storm overflows, bike bays and the latest satellite pass on one free map.",
+    },
+    "mobile-signal-check": {
+        "title": "Mobile Signal Check: Test Your Phone Where You Stand",
+        "desc": "One tap measures your phone's real mobile data speed on the spot and compares it with your part of Bournemouth. Ten seconds, no app, no sign-up.",
+    },
+    "website-checker": {
+        "desc": "Test any website's speed, SEO, mobile-friendliness, accessibility and security in one instant report with Google's Lighthouse engine. Free, no sign-up.",
+    },
+    "broadband-speed-checker": {
+        "desc": "Test your real broadband speed live, download, upload and ping, then see the speed your household needs and what to do if you are falling short. Free.",
+    },
+    "it-support-cost-guide": {
+        "desc": "What IT support costs in the UK, what moves the price, monthly support against paying per fix, and how to read a quote before you sign it.",
+    },
+    "case-study-signal-map": {
+        "title": "Case Study: A Live Signal-Mapping Platform for Dorset",
+        "desc": "How we built a live mobile-signal measurement platform for Bournemouth, Christchurch and Poole: a ten-second browser test feeding a public map.",
+    },
+    "ai/case-studies": {
+        "title": "AI & Automation Case Studies: Real Systems, Real Dates",
+        "desc": "Shipped systems with dates, not promises: the automation and AI running 365 Techies' own business every day, from booking rescue to the review pipeline.",
+    },
+    "our-values": {
+        "title": "Our Values: How a Family-Run Dorset IT Team Works",
+        "desc": "How our family-run Dorset IT team works and its promises: no upsell, honest independent advice, repair before replace, the same people every time.",
     },
     "computer-repair-wimborne": {
         "desc": "Broken or slow computer in Wimborne, Colehill or Corfe Mullen? Free collection, 12-month warranty, and no fix means no fee. Family-run since 1995.",
