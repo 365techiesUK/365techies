@@ -237,6 +237,12 @@ def signal_block(slug, town):
     return html
 
 
+# Jobs pass, 13 Sep 2026: the first screen of every town page now carries the job,
+# the real prices, the number and the rating (the trust bar). People buy a fix
+# first and a plan second (GSC + GA4, Sep 2026), so the primary button rings us.
+_LOCAL_HERO_PRICES = (" Remote fixes from &pound;20, monthly plans from &pound;18.25 per computer, "
+                      "and no call-out fee when we come to you.")
+
 def make_local(i, slug, town, region, lede, intro_para, nearby):
     crumb_name = f"IT Support {town}"
     repair_slug = ("computer-repair-" + slug[len("it-support-"):]) if slug.startswith("it-support-") else ""
@@ -319,7 +325,8 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
     revs = [REVPOOL[i % len(REVPOOL)], REVPOOL[(i + 2) % len(REVPOOL)]]
     content = "\n".join([
       hero(bc_sub("IT Support Dorset", "/it-support-dorset/", crumb_name), f"// {town.upper()} &middot; {region.upper()}",
-           f'IT support in <em class="grad grad--cyan">{town}</em>', bp.hero_trust(lede),
+           f'IT support in <em class="grad grad--cyan">{town}</em>', bp.hero_trust(lede.rstrip() + _LOCAL_HERO_PRICES),
+           cta1=("Call 01202 775566", "tel:+441202775566"), cta2=("Plans &amp; Prices", "/monthly-it-support/"),
            trustbar=True),
       nearme_block,
       f'''    <section class="section" aria-label="Local support">
@@ -328,7 +335,7 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
           <p class="eyebrow mono">/01 — LOCAL &amp; FRIENDLY</p>
           <h2 class="section-title" data-title>Your local {town} techies<span class="title-underline"></span></h2>
           <p>{intro_para}</p>
-          <p>As your local IT company, we cover it all &mdash; IT support and business IT services, computer and laptop repairs, Microsoft 365, cybersecurity and practical IT solutions for {town} homes and businesses.</p>
+          <p>As your local IT company, we cover it all &mdash; IT support and business IT services, computer and laptop repairs, <a href="/microsoft-365-support/">Microsoft 365</a>, cybersecurity and practical IT solutions for {town} homes and businesses.</p>
           <p><strong>Most problems are solved remotely in minutes</strong> — and when you need someone in person, we&rsquo;re close by. Local knowledge, no call-centres, no jargon.</p>{repair_link}{biz_link}{b365_link}
         </div>
         {local_col}

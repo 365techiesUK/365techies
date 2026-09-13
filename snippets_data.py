@@ -24,8 +24,10 @@ RULES FOR ANYTHING ADDED HERE
    "a guide to whether". Position 7 has to earn the click off the page.
 4. Do not change what the page is ABOUT. These pages already rank; the
    query language that earns the impressions must survive the rewrite.
-5. No prices, no invented specs, no VAT-inclusive figures, no claims the
-   page body does not support. Same standard as everywhere else on this site.
+5. No prices (the one exception: a plan page may quote its own real from-price,
+   the figure on the page's plan cards), no invented specs, no VAT-inclusive
+   figures, no claims the page body does not support. Same standard as
+   everywhere else on this site.
 6. Plain ASCII in desc (no & or curly quotes) - it lands in an HTML
    attribute, and entities would be counted against the 155 by _meta_desc
    while rendering shorter. Titles use &amp; per site convention.
@@ -596,8 +598,13 @@ SNIPPETS = {
     "business-hacked-emergency-help": {
         "desc": "Hacked, hit by ransomware or had money diverted? 365 Techies give Dorset businesses same-day emergency help to contain it, recover, and close the hole.",
     },
+    # GSC 13 Sep 2026: "it support plans" at 4.5 for 46 impressions, "business it
+    # support poole" at 11.2 - zero clicks between them. Jobs pass, round 1: the
+    # snippet says what a small business gets, the real from-price, no lock-in and
+    # the number to ring. The price is the page's own plan-card figure.
     "business-it-support-plans": {
-        "desc": "Monthly business IT support plans from £24.38 per computer. Microsoft 365 management, cyber security, backups, onboarding, and remote or on-site support.",
+        "title": "Business IT Support Plans | From £24.38, No Lock-In",
+        "desc": "Monthly IT support plans for Dorset small businesses from £24.38 per computer, no lock-in. Microsoft 365 looked after, no call-out fee. Call 01202 775566.",
     },
     "business-wifi-installation": {
         "desc": "What business WiFi installation actually costs in Dorset, and what a proper job includes: VLANs, fast roaming, captive portals, licence traps and PoE.",
@@ -972,16 +979,35 @@ SNIPPETS = {
         "title": "IT Support Blandford Forum | North Dorset, No Call-Out Fee",
         "desc": "IT support across Blandford Forum, Pimperne, Bryanston and the Blackmore Vale. No call-out fee, the same two faces every visit, rated 4.9 on Google.",
     },
+    # Jobs pass, 13 Sep 2026 (GSC 1-12 Sep): the local job queries sit at positions
+    # 2-13 and earn NOTHING - "it support christchurch" 5.2, "it support new forest"
+    # 3.1, "it support poole" 10.2, "it support ringwood" 13.6, all zero clicks.
+    # Every snippet here now says the same four things a searcher with a broken
+    # computer wants before anything else: same day, no call-out fee, the rating
+    # and the number to ring. The Starlink angle on the New Forest title (Aug 2026)
+    # sat at 3.1 for zero clicks, so it goes; the page still offers Starlink.
     "it-support-christchurch": {
         "title": "IT Support Christchurch and Highcliffe | No Call-Out Fee",
-        "desc": "IT support from the Quay out to Mudeford and Highcliffe. No call-out fee, remote help in minutes, on-site when you need it, rated 4.9 on Google.",
+        "desc": "Same-day IT support from the Quay to Mudeford and Highcliffe. No call-out fee, remote fixes in minutes, rated 4.9 on Google. Call 01202 775566.",
     },
-    # The one genuine differentiator in the set: the New Forest page already
-    # offers Starlink for rural not-spots, which no rival locally does. Leading
-    # with it earns the click that "IT support, same as everywhere" does not.
     "it-support-new-forest": {
-        "title": "IT Support New Forest | Starlink for Rural Not-Spots",
-        "desc": "IT support from Lyndhurst and Brockenhurst to Lymington, New Milton and Ringwood, plus Starlink satellite internet where forest broadband is slow.",
+        "title": "IT Support New Forest | Same-Day, No Call-Out Fee",
+        "desc": "Same-day IT support across the New Forest, Lyndhurst to Lymington. No call-out fee, remote fixes in minutes, rated 4.9 on Google. Call 01202 775566.",
+    },
+    "it-support-poole": {
+        "title": "IT Support Poole | Home & Business, No Call-Out Fee",
+        "desc": "Same-day IT support and computer repairs for Poole homes and businesses. No call-out fee, remote fixes in minutes, rated 4.9 on Google. Call 01202 775566.",
+    },
+    "it-support-ringwood": {
+        "title": "IT Support Ringwood | Same-Day, No Call-Out Fee",
+        "desc": "Same-day IT support for Ringwood homes and businesses. No call-out fee, remote fixes in minutes, rated 4.9 on Google. Call 01202 775566.",
+    },
+    # "microsoft 365 support dorset": position 1.7, 61 impressions, ZERO clicks
+    # (GSC 13 Sep 2026). The old snippet led with heritage; this one leads with
+    # the three jobs people ring about and the number.
+    "microsoft-365-support": {
+        "title": "Microsoft 365 Support Dorset | Setup, Migration & Lockouts",
+        "desc": "Microsoft 365 setup, email migration and admin lockouts fixed for Bournemouth, Poole and Dorset. Microsoft Partner, rated 4.9 on Google. Call 01202 775566.",
     },
     "computer-repair-wimborne": {
         "desc": "Broken or slow computer in Wimborne, Colehill or Corfe Mullen? Free collection, 12-month warranty, and no fix means no fee. Family-run since 1995.",

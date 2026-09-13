@@ -18114,7 +18114,7 @@ def _lost_phone_flow():
     text = 'Lost or stolen phone - the first fifteen minutes (365techies.co.uk/lost-or-stolen-phone-what-to-do/)\n' + "\n".join(
         str(n + 1) + '. ' + _ff_plain(t, True) + ': ' + _ff_plain(h, True) for n, (t, h) in enumerate(_LOST_PHONE_STEPS)) + '\nStuck? 365 Techies: 01202 775566'
     return _fix_flow_section({
-        'eyebrow': '// DO IT WITH ME &middot; THE FIRST FIFTEEN MINUTES', 'h2': 'Work through it with me, one step at a time',
+        'eyebrow': '// DO IT WITH ME &middot; THE FIRST FIFTEEN MINUTES', 'h2': 'Work through it with me, one step at a time', 'areas': False,
         'lede': 'The same steps, one at a time, so nothing gets missed while you are rattled. Tick each one off and it shows the next. Nothing here leaves your device.',
         'rev_suffix': '', 'os': False, 'count': len(steps),
         'steps_html': _ff_steps_html(steps, 'Done, next step', 'I am stuck here', seq=True),
@@ -21531,7 +21531,7 @@ FIX_FLOW_PAGES = {
         'eyebrow': '// TRY IT WITH ME &middot; STEP BY STEP', 'lede': 'The five steps from this page, one at a time, exactly as we would do them in a lesson. Tick each one off and it shows the next.',
         'tip': 'Open a text message: if it reads easily at arm&rsquo;s length, it is right. If not, go back and move the slider a little more.',
         'h3s': 'Stuck on a step? That is exactly what a lesson is for.', 'stuck_what': 'Bring the phone to a lesson, or ring us, and we do it together at your pace.', 'stuck_tail': '', 'stuck_link': ('#s2', 'How the lessons work'), 'text_title': 'Make the text bigger on your phone - the steps', 'text_tail': '\nStuck? 365 Techies phone lessons: 01202 775566 - https://365techies.co.uk/smartphone-lessons-for-seniors/',
-        'h3f': 'Done{mins}. That is the whole trick.', 'plan_lead': None},
+        'h3f': 'Done{mins}. That is the whole trick.', 'plan_lead': None, 'areas': False},
     'printer-wont-scan-to-computer-windows-11': {'h2': 'Get scanning working on Windows 11, step by step', 'ask': 'Is it scanning now?', 'tip': 'Scan one page from the computer to be sure.', 'h3s': 'Still not scanning after every step? That is a remote job.',
         'sections': [(1, 'Swap the driver Windows fitted for the maker&rsquo;s full package'), (2, 'Start the scan at the computer, not the printer'), (3, 'Treat USB and network faults differently'), (4, 'Let scanning through the security suite and VPN')]},
 }
@@ -21590,7 +21590,7 @@ _FIX_FLOW_TRAIL_RE = re.compile(r'call us|still stuck|hand it to us|let us sort|
 _PHONE_STUCK = {   # phone pages: no screen-share promise (our remote support is Windows only); ring us / email support instead
     'h3s': 'Still not working after every step? Ring us and we sort it together.',
     'stuck_what': 'Ring us and we go through the phone together, or bring it in with your computer: it is part of email support.',
-    'stuck_tail': '', 'stuck_link': ('/email-support/', 'Email support'),
+    'stuck_tail': '', 'stuck_link': ('/email-support/', 'Email support'), 'areas': False,
     'text_tail': '\nStuck? 365 Techies email support: 01202 775566 - https://365techies.co.uk/email-support/'}
 FIX_FLOW_OVERRIDES = {   # small per-page tweaks on top of the automatic config
     'outlook-app-asking-to-sign-in-android': dict(_PHONE_STUCK),
@@ -21678,7 +21678,7 @@ def _fix_flow_for(d):
     return _fix_flow_section({
         'eyebrow': cfg.get('eyebrow', '// FIX IT WITH ME &middot; STEP BY STEP'), 'h2': cfg['h2'],
         'lede': cfg.get('lede', 'The steps from this guide, one at a time, in the order that fixes the most cases fastest. Tell it what happened and it shows the next step. Nothing here leaves your device.'),
-        'rev_suffix': '', 'os': False, 'count': n,
+        'rev_suffix': '', 'os': False, 'count': n, 'areas': cfg.get('areas', True),
         'steps_html': _ff_steps_html(steps, cfg.get('yes', 'Yes, sorted'), cfg.get('no', 'Not yet'), seq=(cfg.get('mode') == 'seq')),
         'fixed_html': _ff_fixed_ending(cfg.get('h3f', 'Sorted{mins}. Nice work.'), cfg['tip'], cfg.get('plan_lead', 'Rather have it looked after?'),
                                        '/business-it-support-plans/' if _FIX_FLOW_BIZ_RE.search(slug) else '/monthly-it-support/'),

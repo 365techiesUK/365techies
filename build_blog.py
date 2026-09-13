@@ -76,7 +76,7 @@ def _blog_fix_flows():
                   + chr(10) + 'Stuck? 365 Techies email support: 01202 775566 - https://365techies.co.uk/email-support/').replace('&', '&amp;').replace('<', '&lt;')
     return {
         'how-to-set-up-email-on-your-phone': _bx._fix_flow_section({
-            'eyebrow': '// SET IT UP WITH ME &middot; STEP BY STEP', 'h2': 'Set up email on your phone, one step at a time',
+            'eyebrow': '// SET IT UP WITH ME &middot; STEP BY STEP', 'h2': 'Set up email on your phone, one step at a time', 'areas': False,
             'lede': 'The steps from this guide, one at a time. Tick each one off and it shows the next. Nothing here leaves your device.',
             'rev_suffix': '', 'os': False, 'count': 5,
             'steps_html': _bx._ff_steps_html(phone, 'Done, next step', 'I am stuck here', seq=True),

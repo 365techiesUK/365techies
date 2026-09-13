@@ -3211,6 +3211,8 @@ FIX_FLOW_STYLE = r"""      <style>
       #fixflow .ff-end h3{margin:0 0 .5rem;font-size:1.25rem}
       #fixflow .ff-end p{margin:0 0 .6rem;line-height:1.6}
       #fixflow .ff-end .ff-cta{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:.8rem}
+.ff-areas{margin:1rem .2rem 0;font-size:.86rem;line-height:1.55;color:var(--ink-2,#dfe9f7);opacity:.88}
+.ff-areas a{color:var(--cyan-soft,#6cc4f5)}
       #fixflow .ff-end .ff-cta .button{min-height:44px}
       #fixflow .ff-plan{margin-top:1rem;padding:1rem 1.1rem;border-radius:12px;border:1px solid rgba(125,170,220,.25);background:rgba(255,255,255,.03);font-size:.9rem;line-height:1.6}
       #fixflow .ff-plan b{color:var(--cyan-soft,#6cc4f5)}
@@ -3261,9 +3263,16 @@ FIX_FLOW_SCRIPT = r"""      <script>
       })();
       </script>"""
 
+# The visible line under every PC flow (jobs pass, 13 Sep 2026): the town pages sit at
+# positions 2-13 for "it support <town>" with no clicks and almost no internal links, and
+# the flow pages are where the traffic is. Rendered in the DOM, not in the hidden ending,
+# so the links count. Phone flows opt out with cfg['areas'] = False (no on-site promise).
+FIX_FLOW_AREAS = ('Rather have it done for you? Remote help from &pound;20, or in person across <a href="/it-support-bournemouth/">Bournemouth</a>, <a href="/it-support-poole/">Poole</a>, <a href="/it-support-christchurch/">Christchurch</a>, <a href="/it-support-ringwood/">Ringwood</a> and the <a href="/it-support-new-forest/">New Forest</a>, with no call-out fee.')
+
 def _fix_flow_section(cfg):
     """One guided flow section. cfg: eyebrow, h2, lede, rev_suffix, os (bool), count, steps_html (the <li>s),
-    fixed_html / stuck_html (endings; '{mins}' becomes ' in about N minutes'), steps_text (plain, for Copy)."""
+    fixed_html / stuck_html (endings; '{mins}' becomes ' in about N minutes'), steps_text (plain, for Copy),
+    areas (default True: the visible towns line under the steps)."""
     os_attr = ' data-os="1"' if cfg.get('os') else ''
     return ('    <section class="section" aria-label="Fix it with me" id="fixflow">\n      <div class="wrap">\n' + FIX_FLOW_STYLE + '\n'
             '        <div class="section-head">\n'
@@ -3275,6 +3284,7 @@ def _fix_flow_section(cfg):
             '          <div class="ff-top"><span class="ff-os" id="ff-os">Checking which Windows you have&hellip;</span><button type="button" class="ff-oslink" id="ff-ostoggle" hidden>Not right? Switch to Windows 10</button><span class="ff-prog" id="ff-prog">STEP 1 OF ' + str(cfg['count']) + '</span></div>\n'
             '          <ol class="ff-steps" id="ff-steps">' + cfg['steps_html'] + '          </ol>\n'
             '          <div class="ff-end" id="ff-end" hidden></div>\n'
+            + (('          <p class="ff-areas">' + FIX_FLOW_AREAS + '</p>\n') if cfg.get('areas', True) else '') +
             '          <template id="ff-tpl-fixed">' + cfg['fixed_html'] + '</template>\n'
             '          <template id="ff-tpl-stuck">' + cfg['stuck_html'] + '</template>\n'
             '          <template id="ff-tpl-text">' + cfg['steps_text'] + '</template>\n'
@@ -5540,8 +5550,10 @@ add(
  content="\n".join([
    hero(bc("Business Support Plans"), "// BUSINESS PLANS",
         'Business IT support <em class="grad grad--green">plans</em>',
-        "Scalable monthly packages for sole traders and small businesses. From a single user to a busy team — choose the cover that fits, and grow when you&rsquo;re ready.",
-        cta1=("Get a quote", "/contact/?topic=business-it-support"), cta2=("Compare Plans", "#compare"),
+        # Jobs pass, 13 Sep 2026: "it support plans" at 4.5 with zero clicks. The first screen now
+        # carries the real from-price, no lock-in, the on-site promise and the number.
+        "Monthly plans from &pound;24.38 per computer, no lock-in. Remote fixes in minutes, on-site across Dorset with no call-out fee, and Microsoft 365, backups and security looked after for you. From a single user to a busy team &mdash; choose the cover that fits, and grow when you&rsquo;re ready.",
+        cta1=("Call 01202 775566", "tel:+441202775566"), cta2=("Get a quote", "/contact/?topic=business-it-support"),
         trustbar=True),
    f'''    <section class="support-options" aria-label="Business support plans">
       <div class="plan-grid plan-grid--3">
@@ -5728,8 +5740,11 @@ add(
  content="\n".join([
    hero(bc("Microsoft 365"), "// MICROSOFT PARTNER",
         'Microsoft 365, <em class="grad grad--cyan">done properly</em>',
-        hero_trust("We&rsquo;ve supported Microsoft Office since 1995 &mdash; the dial-up days &mdash; and taught it for over ten years &mdash; at our own Dorset Microsoft Education Resource Centre in Bournemouth, and in local schools and colleges including Bournemouth &amp; Poole College and Bournemouth School for Girls. Our centre was an authorised Microsoft Office Specialist and Certiport testing centre &mdash; the plaques are on our <a href=\"/about/\">about page</a>. As Microsoft partners and certified Office Specialists, we set up, migrate, secure and support Microsoft 365: from a single mailbox at home to a whole team in the cloud, all working together and managed for you."),
-        cta1=("Get Microsoft 365 Support", "/contact/"), cta2=("View Plans", "/monthly-it-support/"),
+        # Jobs pass, 13 Sep 2026: position 1.7 for "microsoft 365 support dorset" with zero clicks.
+        # The first screen now says the jobs, the real prices and the number; the heritage paragraph
+        # that used to be the lede sits in the overview below, word for word.
+        hero_trust("Setup, email migration, licensing, admin lockouts and the everyday Outlook, Teams and OneDrive problems, for Bournemouth, Poole and Dorset homes and businesses. Microsoft 365 with us is &pound;4.85 per user a month, remote fixes start at &pound;20, and there is no call-out fee on site."),
+        cta1=("Call 01202 775566", "tel:+441202775566"), cta2=("Get Microsoft 365 Support", "/contact/"),
         chips=["Microsoft Partner", "Office Specialists", "Setup, migration &amp; security"], scene=HERO_SCENES.get("m365")),
    f'''    <section class="section" aria-label="Overview">
       <div class="wrap split-2">
@@ -5738,6 +5753,7 @@ add(
           <h2 class="section-title" data-title>Make Microsoft 365 work for you<span class="title-underline"></span></h2>
           <p>Microsoft 365 is powerful &mdash; but only when it&rsquo;s set up properly. Too often it&rsquo;s half-configured, over-licensed and wide open. We get email, files and apps working together, lock it down, and keep it running smoothly.</p>
           <p><strong>From a single home mailbox to a full business migration</strong>, we handle the setup, the licensing, the security and the day-to-day support &mdash; so you can just use it.</p>
+          <p>We&rsquo;ve supported Microsoft Office since 1995 &mdash; the dial-up days &mdash; and taught it for over ten years &mdash; at our own Dorset Microsoft Education Resource Centre in Bournemouth, and in local schools and colleges including Bournemouth &amp; Poole College and Bournemouth School for Girls. Our centre was an authorised Microsoft Office Specialist and Certiport testing centre &mdash; the plaques are on our <a href="/about/">about page</a>. As Microsoft partners and certified Office Specialists, we set up, migrate, secure and support Microsoft 365: from a single mailbox at home to a whole team in the cloud, all working together and managed for you.</p>
         </div>
         <ul class="checklist" data-stagger>
 {checklist(["Setup &amp; licensing","Email &amp; Outlook","Email migration","Teams &amp; collaboration","OneDrive &amp; SharePoint","Exchange Online","MFA &amp; security","User onboarding &amp; leavers","Microsoft 365 backup","Friendly training"])}
