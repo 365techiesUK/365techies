@@ -123,7 +123,7 @@ _CSS = """
 .dbp__tag--live{background:rgba(29,151,227,.1);color:#6fc2f5;border:1px solid rgba(29,151,227,.45)}
 .dbp__tag--sample{background:rgba(159,181,211,.1);color:#b9cbe2;border:1px solid rgba(159,181,211,.34)}
 .dbp__cta{text-align:center;margin:1.4rem auto 0}
-.dbp__cta .mono{display:block;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mut,#9fb5d3);margin-top:.55rem}
+.dbp__cta .mono{display:block;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mut,#9fb5d3);margin-top:.55rem}
 @media (prefers-reduced-motion:reduce){.dbp__card:hover{transform:none}}
 </style>
 """

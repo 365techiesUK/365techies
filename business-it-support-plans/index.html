@@ -79,7 +79,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=109" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=110" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -117,7 +117,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=109&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=110&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -844,7 +844,7 @@
         <p class="eyebrow eyebrow--center mono" data-reveal>// SIMPLE MONTHLY PAYMENTS</p>
         <h2 class="section-title section-title--center" data-title>Pay monthly by Direct Debit<span class="title-underline title-underline--center"></span></h2>
         <p class="lede lede--center" data-reveal>Pay monthly by secure Direct Debit, powered by GoCardless. Tell us your setup and we&rsquo;ll send your secure sign-up link the same working day — no card to re-enter each month, no contract, change or cancel anytime.</p>
-        <div style="display:flex;justify-content:center;margin-top:1.6rem" data-reveal><span class="gc-badge" style="display:inline-flex;align-items:center;flex-wrap:wrap;justify-content:center;gap:.9rem;padding:.7rem 1.1rem;border:1px solid rgba(125,170,220,.22);border-radius:999px;background:rgba(125,170,220,.06)"><span style="font-size:.62rem;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);white-space:nowrap">Payments powered by</span><img src="/images/gocardless-dawn.png" alt="GoCardless" width="147" height="22" loading="lazy" decoding="async" style="height:22px;width:auto;display:block;vertical-align:middle" /></span></div>
+        <div style="display:flex;justify-content:center;margin-top:1.6rem" data-reveal><span class="gc-badge" style="display:inline-flex;align-items:center;flex-wrap:wrap;justify-content:center;gap:.9rem;padding:.7rem 1.1rem;border:1px solid rgba(125,170,220,.22);border-radius:999px;background:rgba(125,170,220,.06)"><span style="font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap">Payments powered by</span><img src="/images/gocardless-dawn.png" alt="GoCardless" width="147" height="22" loading="lazy" decoding="async" style="height:22px;width:auto;display:block;vertical-align:middle" /></span></div>
         <div class="partner-badges" style="justify-content:center;margin-top:1rem" data-reveal>
           <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>FCA-regulated payments</span>
           <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Cancel anytime</span>
@@ -929,7 +929,7 @@
 .dbp__tag--live{background:rgba(29,151,227,.1);color:#6fc2f5;border:1px solid rgba(29,151,227,.45)}
 .dbp__tag--sample{background:rgba(159,181,211,.1);color:#b9cbe2;border:1px solid rgba(159,181,211,.34)}
 .dbp__cta{text-align:center;margin:1.4rem auto 0}
-.dbp__cta .mono{display:block;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mut,#9fb5d3);margin-top:.55rem}
+.dbp__cta .mono{display:block;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mut,#9fb5d3);margin-top:.55rem}
 @media (prefers-reduced-motion:reduce){.dbp__card:hover{transform:none}}
 </style>
 

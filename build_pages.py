@@ -143,7 +143,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "109"   # bumped 2026-09-13 (6th): tap-target padding on breadcrumb/towns/byline links (UX audit item 2); also retires v108, whose URL was requested before the file landed. Earlier: v108 2026-09-13 (5th): phone heroes under one screen (UX audit item 1). Earlier: v107 2026-09-13 (4th): the hero byline (.page-hero__byline). Earlier: v106 2026-09-13 (3rd): metric-matched local fallback fonts (size-adjust/ascent/descent overrides) so the web-font swap moves nothing; the lab home CLS of 0.169 was entirely the swap (SEO audit item 6). Earlier: v105 2026-09-13 (2nd): the phone cookie banner pins under the header, not over the hero Call button. Earlier: v104 2026-09-13: the Text size pill is an icon at bottom-right on phones (nav audit: it covered the hero Call button). Earlier: v103 2026-09-07: scam alert in the strip + homepage band, strip re-timed to 85s. Earlier: v102 2026-09-05 (3rd): mobile-menu contact links lifted to a 44px tap target. Earlier the same day: v101 = the >=1960 header expand moved to 2040 so "Contact" is never clipped. Earlier the same day: v100 = the A+ text steps hand the nav to the hamburger instead of clipping it (nav audit). Earlier: v99 2026-09-02: hero console card no longer tilted. Earlier: v98   # bumped 2026-09-02 again: v97 was poisoned in the SiteGround proxy by a pre-completion page load (old CSS cached under the new URL for browsers; curl variants showed MISS). NEVER load a page carrying a new ?v= until the deploy run is completed+success. v97 = 2026-09-02 (live-map launcher + overlay).   # bumped 2026-09-02 (Bournemouth365 live-map launcher + overlay). Earlier: v96 2026-08-27 (skip-link could not be outgrown by the a11y ladder). Earlier: v95 2026-08-19 (proof bar replaces the duplicate reviews teaser). Earlier: v94 2026-08-17 (status strip rebuild). Earlier the same day: v88 was poisoned in the SiteGround proxy by a pre-deploy probe (see deploy-hash-sync-blindspot); NEVER request a new ?v= URL before the deploy that ships it is confirmed complete
+CSSV = "110"   # bumped 2026-09-13 (7th): 12px floor for readable phone text (UX audit item 3). Earlier: v109 2026-09-13 (6th): tap-target padding on breadcrumb/towns/byline links (UX audit item 2); also retires v108, whose URL was requested before the file landed. Earlier: v108 2026-09-13 (5th): phone heroes under one screen (UX audit item 1). Earlier: v107 2026-09-13 (4th): the hero byline (.page-hero__byline). Earlier: v106 2026-09-13 (3rd): metric-matched local fallback fonts (size-adjust/ascent/descent overrides) so the web-font swap moves nothing; the lab home CLS of 0.169 was entirely the swap (SEO audit item 6). Earlier: v105 2026-09-13 (2nd): the phone cookie banner pins under the header, not over the hero Call button. Earlier: v104 2026-09-13: the Text size pill is an icon at bottom-right on phones (nav audit: it covered the hero Call button). Earlier: v103 2026-09-07: scam alert in the strip + homepage band, strip re-timed to 85s. Earlier: v102 2026-09-05 (3rd): mobile-menu contact links lifted to a 44px tap target. Earlier the same day: v101 = the >=1960 header expand moved to 2040 so "Contact" is never clipped. Earlier the same day: v100 = the A+ text steps hand the nav to the hamburger instead of clipping it (nav audit). Earlier: v99 2026-09-02: hero console card no longer tilted. Earlier: v98   # bumped 2026-09-02 again: v97 was poisoned in the SiteGround proxy by a pre-completion page load (old CSS cached under the new URL for browsers; curl variants showed MISS). NEVER load a page carrying a new ?v= until the deploy run is completed+success. v97 = 2026-09-02 (live-map launcher + overlay).   # bumped 2026-09-02 (Bournemouth365 live-map launcher + overlay). Earlier: v96 2026-08-27 (skip-link could not be outgrown by the a11y ladder). Earlier: v95 2026-08-19 (proof bar replaces the duplicate reviews teaser). Earlier: v94 2026-08-17 (status strip rebuild). Earlier the same day: v88 was poisoned in the SiteGround proxy by a pre-deploy probe (see deploy-hash-sync-blindspot); NEVER request a new ?v= URL before the deploy that ships it is confirmed complete
 HERITAGE_DIMS = {'heritage-01.jpg': (1400, 787), 'heritage-02.jpg': (787, 1400), 'heritage-03.jpg': (1400, 787), 'heritage-04.jpg': (1400, 787), 'heritage-05.jpg': (787, 1400), 'heritage-07.jpg': (1400, 787), 'heritage-kinson.jpg': (1200, 710), 'heritage-moordown.jpg': (1400, 788), 'heritage-stock.jpg': (1400, 788), 'heritage-storefront.jpg': (1024, 683)}
 try:
     from hero_scenes import SCENES as HERO_SCENES
@@ -210,7 +210,7 @@ def gc_badge(variant=None, label="Payments powered by", h=22):
     img = gc_logo(variant, h=h)
     if not img:
         return '<span class="partner-badge">Direct Debit by GoCardless</span>'
-    lab = (f'<span style="font-size:.62rem;letter-spacing:.11em;text-transform:uppercase;'
+    lab = (f'<span style="font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;'
            f'color:var(--muted);white-space:nowrap">{label}</span>') if label else ''
     # flex-wrap lets the label drop above the mark on very narrow phones; padding/gap
     # give the wordmark its clear space (exclusion zone) on all sides.
@@ -5267,7 +5267,7 @@ add(
               <li>Loyalty discount on any fault work</li>
             </ul>
             <a href="/home-it-support-plans/" class="button primary plan-card__cta">See Home Plans</a>
-            <p class="mono" style="text-align:center;margin-top:.7rem;color:var(--faint);font-size:.6rem;letter-spacing:.12em">DIRECT DEBIT BY GOCARDLESS &middot; CANCEL ANYTIME</p>
+            <p class="mono" style="text-align:center;margin-top:.7rem;color:var(--faint);font-size:.75rem;letter-spacing:.1em">DIRECT DEBIT BY GOCARDLESS &middot; CANCEL ANYTIME</p>
           </article>
           <article class="plan-card plan-card--business" data-reveal>
             <p class="plan-card__badge mono">&#9733; MOST POPULAR</p>
@@ -5283,7 +5283,7 @@ add(
               <li>Loyalty discount on any fault work</li>
             </ul>
             <a href="/business-it-support-plans/" class="button primary plan-card__cta">See Business Plans</a>
-            <p class="mono" style="text-align:center;margin-top:.7rem;color:var(--faint);font-size:.6rem;letter-spacing:.12em">DIRECT DEBIT BY GOCARDLESS &middot; CANCEL ANYTIME</p>
+            <p class="mono" style="text-align:center;margin-top:.7rem;color:var(--faint);font-size:.75rem;letter-spacing:.1em">DIRECT DEBIT BY GOCARDLESS &middot; CANCEL ANYTIME</p>
           </article>
         </div>
         <p class="plans-note mono" data-reveal>// NO LOCK-IN &middot; CANCEL ANYTIME &middot; FULL COMPUTER SERVICE EVERY 6 WEEKS &middot; LOYALTY DISCOUNT ON ANY FAULT WORK</p>
@@ -6407,7 +6407,7 @@ add(
           </label>
           <label class="field"><span>How can we help?</span><textarea name="message" required></textarea></label>
           <button type="submit" class="button primary button--lg" style="width:100%">Send Your Message</button>
-          <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.7rem">// GOES STRAIGHT TO OUR FAMILY TEAM &middot; WE REPLY WITHIN ONE WORKING DAY (MON&ndash;FRI)</p>
+          <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.75rem">// GOES STRAIGHT TO OUR FAMILY TEAM &middot; WE REPLY WITHIN ONE WORKING DAY (MON&ndash;FRI)</p>
           <p style="margin-top:.6rem;color:var(--muted);font-size:.85rem">Prefer email? Write to <a href="mailto:help@365techies.co.uk" style="color:var(--cyan)">help@365techies.co.uk</a> directly.</p>
         </form>
         <div data-reveal>

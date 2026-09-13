@@ -79,7 +79,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=109" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=110" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -117,7 +117,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=109&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=110&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -920,7 +920,7 @@
       #spc .spc-row:last-child{border-bottom:0}
       #spc .spc-row b{color:var(--muted,#9aa6c2);font-weight:500;flex:none}
       #spc .spc-row span{text-align:right;word-break:break-word;font-weight:600}
-      #spc .spc-row .spc-approx{display:block;font-weight:400;font-size:.68rem;color:var(--muted,#9aa6c2)}
+      #spc .spc-row .spc-approx{display:block;font-weight:400;font-size:.75rem;color:var(--muted,#9aa6c2)}
       #spc .spc-batt{height:10px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin:.45rem 0 .2rem}
       #spc .spc-battfill{height:100%;width:0;border-radius:999px;background:#2ecc71;transition:width 1.2s cubic-bezier(.2,.7,.3,1)}
       #spc .spc-caveat{margin:1.2rem auto 0;max-width:76ch;font-size:.76rem;line-height:1.6;color:var(--muted,#9aa6c2)}
@@ -1632,7 +1632,7 @@
           .pcs__thumb:hover,.pcs__thumb:focus-visible{border-color:rgba(108,196,245,.55);transform:translateY(-2px)}
           .pcs__cap{position:absolute;left:0;right:0;bottom:0;padding:.55rem .75rem;font-size:.78rem;font-weight:600;color:#eaf4ff;background:linear-gradient(to top,rgba(7,13,34,.94),rgba(7,13,34,0))}
           .pcs__line{font-family:var(--font-mono,monospace);font-size:.72rem;letter-spacing:.04em;color:var(--muted,#9fb5d3);text-align:center;margin:.9rem 0 0}
-          @media(max-width:640px){.pcs__strip{gap:.4rem}.pcs__cap{font-size:.62rem;padding:.35rem .45rem}}
+          @media(max-width:640px){.pcs__strip{gap:.4rem}.pcs__cap{font-size:.75rem;padding:.35rem .45rem}}
           @media(prefers-reduced-motion:reduce){.pcs__thumb{transition:none}}
           </style>
           <a class="pcs__main" href="/free-pc-health-check/" aria-label="See 365 PC Manager, the free app"><img src="/images/pcm-laptop-health-v26.webp" width="2080" height="1620" alt="365 PC Manager health tab - live health score ring, verdict and system glance" loading="lazy" decoding="async"></a>

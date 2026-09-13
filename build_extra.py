@@ -9159,7 +9159,7 @@ def new_dell_section():
         .ndell__succ{color:var(--muted);font-size:.74rem}
         .ndell__p{white-space:nowrap;font-weight:700}
         .ndell a{color:var(--cyan-soft)}
-        .ndell__note{text-align:center;max-width:74ch;margin:1.1rem auto 0;color:var(--faint);font-size:.68rem;letter-spacing:.04em}
+        .ndell__note{text-align:center;max-width:74ch;margin:1.1rem auto 0;color:var(--faint);font-size:.75rem;letter-spacing:.04em}
       </style>
     </section>''')
 
@@ -9272,7 +9272,7 @@ def dell_picker_section():
         .dpick__card:hover{border-color:rgba(29,151,227,.55);transform:translateY(-2px)}
         .dpick__card.is-picked{border-color:#00ce1b;box-shadow:0 0 0 1px rgba(0,206,27,.5)}
         .dpick__card[hidden]{display:none}
-        .dpick__series{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--cyan-soft);margin:0 0 .3rem}
+        .dpick__series{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--cyan-soft);margin:0 0 .3rem}
         .dpick__card h3{margin:0 0 .35rem;font-size:1.06rem}
         .dpick__specs{display:flex;flex-direction:column;gap:.15rem;margin:0 0 .55rem}
         .dpick__specs span{color:var(--ink);font-size:.88rem;line-height:1.4}
@@ -9716,7 +9716,7 @@ def dell_hardware():
           </label>
           <label class="field"><span>Anything else?</span><textarea name="message" placeholder="The kind of work you do, screen size, must-haves, or an old machine to trade in&hellip;"></textarea></label>
           <button type="submit" class="button primary button--lg" style="width:100%">Find me a refurbished Dell</button>
-          <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.7rem">// NO OBLIGATION &middot; NO HARD SELL &middot; A REAL PERSON REPLIES WITHIN ONE WORKING DAY (MON&ndash;FRI) &middot; OR CALL 01202 775566</p>
+          <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.75rem">// NO OBLIGATION &middot; NO HARD SELL &middot; A REAL PERSON REPLIES WITHIN ONE WORKING DAY (MON&ndash;FRI) &middot; OR CALL 01202 775566</p>
         </form>
         <p class="mono" style="text-align:center;max-width:62ch;margin:1.6rem auto 0;color:var(--muted)" data-reveal>Prefer to just talk it through? Call <a href="tel:+441202775566">01202 775566</a>, text <a href="sms:+447520615332">07520 615332</a> or <a href="mailto:help@365techies.co.uk">email us</a> &mdash; a real Dorset family firm, here since 1995.</p>
       </div>
@@ -13679,7 +13679,7 @@ SPECCHECK_TOOL = r'''    <section class="section" aria-label="PC spec checker" i
       #spc .spc-row:last-child{border-bottom:0}
       #spc .spc-row b{color:var(--muted,#9aa6c2);font-weight:500;flex:none}
       #spc .spc-row span{text-align:right;word-break:break-word;font-weight:600}
-      #spc .spc-row .spc-approx{display:block;font-weight:400;font-size:.68rem;color:var(--muted,#9aa6c2)}
+      #spc .spc-row .spc-approx{display:block;font-weight:400;font-size:.75rem;color:var(--muted,#9aa6c2)}
       #spc .spc-batt{height:10px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin:.45rem 0 .2rem}
       #spc .spc-battfill{height:100%;width:0;border-radius:999px;background:#2ecc71;transition:width 1.2s cubic-bezier(.2,.7,.3,1)}
       #spc .spc-caveat{margin:1.2rem auto 0;max-width:76ch;font-size:.76rem;line-height:1.6;color:var(--muted,#9aa6c2)}
@@ -14116,7 +14116,7 @@ SPECCHECK_APP_BAND = '''    <section class="section section--alt" aria-label="Wh
           .pcs__thumb:hover,.pcs__thumb:focus-visible{border-color:rgba(108,196,245,.55);transform:translateY(-2px)}
           .pcs__cap{position:absolute;left:0;right:0;bottom:0;padding:.55rem .75rem;font-size:.78rem;font-weight:600;color:#eaf4ff;background:linear-gradient(to top,rgba(7,13,34,.94),rgba(7,13,34,0))}
           .pcs__line{font-family:var(--font-mono,monospace);font-size:.72rem;letter-spacing:.04em;color:var(--muted,#9fb5d3);text-align:center;margin:.9rem 0 0}
-          @media(max-width:640px){.pcs__strip{gap:.4rem}.pcs__cap{font-size:.62rem;padding:.35rem .45rem}}
+          @media(max-width:640px){.pcs__strip{gap:.4rem}.pcs__cap{font-size:.75rem;padding:.35rem .45rem}}
           @media(prefers-reduced-motion:reduce){.pcs__thumb{transition:none}}
           </style>
           <a class="pcs__main" href="/free-pc-health-check/" aria-label="See 365 PC Manager, the free app"><img src="/images/pcm-laptop-health-v26.webp" width="2080" height="1620" alt="365 PC Manager health tab - live health score ring, verdict and system glance" loading="lazy" decoding="async"></a>
@@ -16681,7 +16681,7 @@ info_page(
           </label>
           <label class="field"><span>Describe the problem</span><textarea name="message" required></textarea></label>
           <button type="submit" class="button primary button--lg" style="width:100%">Send Your Ticket</button>
-          <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.7rem">// GOES STRAIGHT TO OUR FAMILY TEAM &middot; WE REPLY WITHIN ONE WORKING DAY (MON&ndash;FRI)</p>
+          <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.75rem">// GOES STRAIGHT TO OUR FAMILY TEAM &middot; WE REPLY WITHIN ONE WORKING DAY (MON&ndash;FRI)</p>
         </form>
       </div>
     </section>''',
@@ -16728,7 +16728,7 @@ info_page(
           <label class="field"><span>Phone</span><input type="tel" name="phone" autocomplete="tel" required /></label>
           <label class="field"><span>Device &amp; problem (and your area for collection)</span><textarea name="message" required></textarea></label>
           <button type="submit" class="button primary button--lg" style="width:100%">Send Your Request</button>
-          <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.7rem">// GOES STRAIGHT TO OUR FAMILY TEAM &middot; WE REPLY WITHIN ONE WORKING DAY (MON&ndash;FRI)</p>
+          <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.75rem">// GOES STRAIGHT TO OUR FAMILY TEAM &middot; WE REPLY WITHIN ONE WORKING DAY (MON&ndash;FRI)</p>
         </form>
       </div>
     </section>''',
@@ -22533,7 +22533,7 @@ def custom_dashboards():
           </label>
           <label class="field"><span>Anything else?</span><textarea name="message" placeholder="What kit you run, how many sites, what you&rsquo;d like to see at a glance&hellip;"></textarea></label>
           <button type="submit" class="button primary button--lg" style="width:100%">Book my free demo</button>
-          <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.7rem">// NO OBLIGATION &middot; FIXED QUOTE BEFORE ANY WORK &middot; A REAL PERSON REPLIES WITHIN ONE UK WORKING DAY</p>
+          <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.75rem">// NO OBLIGATION &middot; FIXED QUOTE BEFORE ANY WORK &middot; A REAL PERSON REPLIES WITHIN ONE UK WORKING DAY</p>
         </form>
         <p class="mono" style="text-align:center;max-width:62ch;margin:1.6rem auto 0;color:var(--muted)" data-reveal>Prefer to talk? Call <a href="tel:+441202775566">+44 1202 775566</a>, text <a href="sms:+447520615332">+44 7520 615332</a> or email <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a> &mdash; a family-run UK firm, since 1995.</p>
       </div>

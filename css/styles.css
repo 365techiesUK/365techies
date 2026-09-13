@@ -2720,13 +2720,13 @@ body.b365-mapov-open { overflow: hidden; }
   .page-hero .course-scene--band { display: none; }
   /* the home page's badge strip and scam band: 587px and 251px of the first phone screen before the first sentence */
   .partner-badges { gap: 0.4rem; }
-  .partner-badge { padding: 0.32rem 0.6rem; gap: 0.35rem; font-size: 0.66rem; letter-spacing: 0.06em; }
+  .partner-badge { padding: 0.32rem 0.6rem; gap: 0.35rem; font-size: 0.75rem; letter-spacing: 0.05em; }
   .partner-badge svg { width: 12px; height: 12px; }
   .trust-strip { padding: 1rem var(--pad-x); }
   .alert-band { padding: 0.65rem 0.9rem; gap: 0.6rem; }
   .alert-band__text { font-size: 0.92rem; line-height: 1.45; }
   .hero__title { font-size: 2.3rem; }
-  .hero__eyebrow { font-size: 0.7rem; letter-spacing: 0.06em; }
+  .hero__eyebrow { font-size: 0.75rem; letter-spacing: 0.06em; }
   .search-box--hero { display: none; }   /* the header's search button and the palette shortcut remain */
   .page-hero .lede { font-size: 1rem; }
   .page-hero__cta .button--lg, .hero-buttons .button--lg { padding-top: 0.8rem; padding-bottom: 0.8rem; }

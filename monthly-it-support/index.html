@@ -79,7 +79,7 @@
   <noscript>
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
   </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=109" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=110" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -117,7 +117,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=109&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=110&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -878,7 +878,7 @@
               <li>Loyalty discount on any fault work</li>
             </ul>
             <a href="/home-it-support-plans/" class="button primary plan-card__cta">See Home Plans</a>
-            <p class="mono" style="text-align:center;margin-top:.7rem;color:var(--faint);font-size:.6rem;letter-spacing:.12em">DIRECT DEBIT BY GOCARDLESS &middot; CANCEL ANYTIME</p>
+            <p class="mono" style="text-align:center;margin-top:.7rem;color:var(--faint);font-size:.75rem;letter-spacing:.1em">DIRECT DEBIT BY GOCARDLESS &middot; CANCEL ANYTIME</p>
           </article>
           <article class="plan-card plan-card--business" data-reveal>
             <p class="plan-card__badge mono">&#9733; MOST POPULAR</p>
@@ -894,7 +894,7 @@
               <li>Loyalty discount on any fault work</li>
             </ul>
             <a href="/business-it-support-plans/" class="button primary plan-card__cta">See Business Plans</a>
-            <p class="mono" style="text-align:center;margin-top:.7rem;color:var(--faint);font-size:.6rem;letter-spacing:.12em">DIRECT DEBIT BY GOCARDLESS &middot; CANCEL ANYTIME</p>
+            <p class="mono" style="text-align:center;margin-top:.7rem;color:var(--faint);font-size:.75rem;letter-spacing:.1em">DIRECT DEBIT BY GOCARDLESS &middot; CANCEL ANYTIME</p>
           </article>
         </div>
         <p class="plans-note mono" data-reveal>// NO LOCK-IN &middot; CANCEL ANYTIME &middot; FULL COMPUTER SERVICE EVERY 6 WEEKS &middot; LOYALTY DISCOUNT ON ANY FAULT WORK</p>
@@ -1000,7 +1000,7 @@
 .dbp__tag--live{background:rgba(29,151,227,.1);color:#6fc2f5;border:1px solid rgba(29,151,227,.45)}
 .dbp__tag--sample{background:rgba(159,181,211,.1);color:#b9cbe2;border:1px solid rgba(159,181,211,.34)}
 .dbp__cta{text-align:center;margin:1.4rem auto 0}
-.dbp__cta .mono{display:block;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mut,#9fb5d3);margin-top:.55rem}
+.dbp__cta .mono{display:block;font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mut,#9fb5d3);margin-top:.55rem}
 @media (prefers-reduced-motion:reduce){.dbp__card:hover{transform:none}}
 </style>
 
