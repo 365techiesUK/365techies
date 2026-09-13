@@ -146,11 +146,6 @@
   "h": "94dddc347a9cd025",
   "last": "2026-08-31"
  },
- "back-to-school-it": {
-  "first": "2026-07-28",
-  "h": "5cc93826505a48e8",
-  "last": "2026-08-31"
- },
  "backup-support": {
   "first": "2026-07-28",
   "h": "d0244a9dbebb1d49",
@@ -692,8 +687,8 @@
  },
  "cybersecurity-checklist": {
   "first": "2026-07-28",
-  "h": "1d6db587c690bfad",
-  "last": "2026-08-31"
+  "h": "35649e0f3f51e883",
+  "last": "2026-09-13"
  },
  "cybersecurity-support": {
   "first": "2026-07-28",
@@ -957,8 +952,8 @@
  },
  "desktop-pc-used-as-office-server": {
   "first": "2026-07-28",
-  "h": "e59abea7a9dbccd3",
-  "last": "2026-08-31"
+  "h": "167995ad318a66e2",
+  "last": "2026-09-13"
  },
  "digital-photos-course": {
   "first": "2026-07-28",
@@ -1102,8 +1097,8 @@
  },
  "free-it-health-check": {
   "first": "2026-07-28",
-  "h": "035e5bf234e67536",
-  "last": "2026-09-04"
+  "h": "e77f482dadd6e6d2",
+  "last": "2026-09-13"
  },
  "free-pc-health-check": {
   "first": "2026-07-28",
@@ -1205,11 +1200,6 @@
   "h": "c2b8d992661d932e",
   "last": "2026-09-13"
  },
- "how-monthly-it-support-saves-time": {
-  "first": "2026-06-16",
-  "h": "23d1db2cadd098a1",
-  "last": "2026-08-31"
- },
  "how-much-does-it-support-cost-uk-2026": {
   "first": "2026-06-16",
   "h": "0bb27ac944a41143",
@@ -1227,8 +1217,8 @@
  },
  "how-to-back-up-your-photos": {
   "first": "2026-06-16",
-  "h": "c9e62f0903635099",
-  "last": "2026-09-05"
+  "h": "30dd3ef8da151627",
+  "last": "2026-09-13"
  },
  "how-to-block-nuisance-calls-and-texts": {
   "first": "2026-06-16",
@@ -1301,8 +1291,8 @@
  },
  "how-to-secure-your-microsoft-365-account": {
   "first": "2026-06-16",
-  "h": "f3b85ba41c8f9911",
-  "last": "2026-08-31"
+  "h": "7f2f5b54721d40a1",
+  "last": "2026-09-13"
  },
  "how-to-set-up-a-new-windows-computer": {
   "first": "2026-06-16",
@@ -1421,18 +1411,8 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "510780fdb6666db4",
-  "last": "2026-08-31"
- },
- "it-checklist-for-small-businesses": {
-  "first": "2026-06-16",
-  "h": "d94b3592f85b10c9",
-  "last": "2026-08-31"
- },
- "it-cost-worksheet": {
-  "first": "2026-07-28",
-  "h": "e7f5880339257fd9",
-  "last": "2026-08-31"
+  "h": "732566a5f09692b9",
+  "last": "2026-09-13"
  },
  "it-health-check-tool": {
   "first": "2026-07-28",
@@ -1591,7 +1571,7 @@
  },
  "it-support-cost-guide": {
   "first": "2026-07-28",
-  "h": "ba11d0f10142b451",
+  "h": "3dfabb02dd3daa7a",
   "last": "2026-09-13"
  },
  "it-support-dorchester": {
@@ -1601,7 +1581,7 @@
  },
  "it-support-dorset": {
   "first": "2026-07-28",
-  "h": "1072e673df539993",
+  "h": "5af5648a986ec6be",
   "last": "2026-09-13"
  },
  "it-support-ferndown": {
@@ -2011,8 +1991,8 @@
  },
  "meet-the-team": {
   "first": "2026-07-28",
-  "h": "84000032effc7090",
-  "last": "2026-08-31"
+  "h": "a082a4fe20410f03",
+  "last": "2026-09-13"
  },
  "meraki-licence-expiry-what-happens": {
   "first": "2026-07-28",
@@ -2031,8 +2011,8 @@
  },
  "microsoft-365-backup-do-you-need-it": {
   "first": "2026-06-16",
-  "h": "173e74baa73ad70c",
-  "last": "2026-08-31"
+  "h": "4697f978789dee38",
+  "last": "2026-09-13"
  },
  "microsoft-365-migration": {
   "first": "2026-07-28",
@@ -2044,15 +2024,10 @@
   "h": "d9831a9ca6941f74",
   "last": "2026-09-13"
  },
- "microsoft-365-vs-gmail-for-small-businesses": {
-  "first": "2026-06-16",
-  "h": "4f110b458b73bb43",
-  "last": "2026-08-31"
- },
  "microsoft-365-vs-google-workspace": {
   "first": "2026-07-28",
-  "h": "5e331c0825472af3",
-  "last": "2026-08-31"
+  "h": "f68b2657543d6303",
+  "last": "2026-09-13"
  },
  "microsoft-office-unlicensed-product-error": {
   "first": "2026-07-28",
@@ -2831,8 +2806,8 @@
  },
  "resources": {
   "first": "2026-07-28",
-  "h": "2781abb6e254b174",
-  "last": "2026-08-31"
+  "h": "db710738b117632d",
+  "last": "2026-09-13"
  },
  "restrict-staff-access-to-shared-folders-windows-11": {
   "first": "2026-07-28",
@@ -3068,11 +3043,6 @@
   "h": "6065a05f137bd6fa",
   "last": "2026-08-31"
  },
- "spring-clean-your-computer": {
-  "first": "2026-07-28",
-  "h": "bb08d959fce93f4b",
-  "last": "2026-08-31"
- },
  "ssl-checker": {
   "first": "2026-07-28",
   "h": "91ac4fb10c522fad",
@@ -3110,8 +3080,8 @@
  },
  "switching-it-provider": {
   "first": "2026-07-28",
-  "h": "eedda7fe188d92f6",
-  "last": "2026-08-31"
+  "h": "155d562b9f9b7135",
+  "last": "2026-09-13"
  },
  "system-status": {
   "first": "2026-07-28",
@@ -3325,8 +3295,8 @@
  },
  "what-to-do-when-an-employee-leaves": {
   "first": "2026-06-16",
-  "h": "fa5fa5cf41d41d48",
-  "last": "2026-08-31"
+  "h": "5fff6d5e2b378da1",
+  "last": "2026-09-13"
  },
  "what-websites-know": {
   "first": "2026-07-28",
@@ -3336,16 +3306,6 @@
  "what-would-you-lose": {
   "first": "2026-07-28",
   "h": "fca33b79e74b2400",
-  "last": "2026-08-31"
- },
- "whats-included-business-it-support-plan": {
-  "first": "2026-06-16",
-  "h": "bf3af1ff1e3399b4",
-  "last": "2026-08-31"
- },
- "whats-included-home-it-support-subscription": {
-  "first": "2026-06-16",
-  "h": "ce8299693f74a7cc",
   "last": "2026-08-31"
  },
  "whatsapp-course-for-beginners": {
@@ -3368,11 +3328,6 @@
   "h": "ab4b5e7dfbd74450",
   "last": "2026-09-05"
  },
- "why-backups-are-essential-for-small-businesses": {
-  "first": "2026-06-16",
-  "h": "b6b621a1bad86e85",
-  "last": "2026-08-31"
- },
  "why-choose-365-techies": {
   "first": "2026-07-28",
   "h": "e1977773093a9434",
@@ -3388,11 +3343,6 @@
   "h": "01844f0b91b5ab80",
   "last": "2026-09-13"
  },
- "why-home-users-need-regular-maintenance": {
-  "first": "2026-06-16",
-  "h": "55e0cf93d75d3a25",
-  "last": "2026-08-31"
- },
  "why-is-my-computer-slow": {
   "first": "2026-06-16",
   "h": "2e0c7e73dbf3c20e",
@@ -3401,11 +3351,6 @@
  "why-monthly-it-support-beats-per-repair": {
   "first": "2026-06-16",
   "h": "3b5088ebf9876a16",
-  "last": "2026-08-31"
- },
- "why-small-businesses-need-cybersecurity": {
-  "first": "2026-06-16",
-  "h": "db37df5bb7025bee",
   "last": "2026-08-31"
  },
  "why-windows-updates-break-things": {

@@ -56,6 +56,19 @@ RewriteRule ^it-services-poole/?$ /it-support-poole/ [R=301,L]
 RewriteRule ^it-services-bournemouth/?$ /it-support-bournemouth/ [R=301,L]
 RewriteRule ^it-support-for-accountants/?$ /it-support-for-accountants-dorset/ [R=301,L]
 RewriteRule ^it-support-for-charities/?$ /it-support-for-charities-dorset/ [R=301,L]
+# 2026-09-13 (SEO audit item 5): eleven launch-era pages under 300 words, none with more than 15 impressions
+# in 1-12 Sep, each a shorter twin of the page it now redirects to. The pages are no longer built. Keep >= 1 year.
+RewriteRule ^why-backups-are-essential-for-small-businesses/?$ /backup-support/ [R=301,L]
+RewriteRule ^whats-included-home-it-support-subscription/?$ /home-it-support-plans/ [R=301,L]
+RewriteRule ^whats-included-business-it-support-plan/?$ /business-it-support-plans/ [R=301,L]
+RewriteRule ^how-monthly-it-support-saves-time/?$ /business-it-support-plans/ [R=301,L]
+RewriteRule ^why-home-users-need-regular-maintenance/?$ /preventative-maintenance/ [R=301,L]
+RewriteRule ^why-small-businesses-need-cybersecurity/?$ /cybersecurity-support/ [R=301,L]
+RewriteRule ^it-checklist-for-small-businesses/?$ /small-business-it-support/ [R=301,L]
+RewriteRule ^microsoft-365-vs-gmail-for-small-businesses/?$ /microsoft-365-vs-google-workspace/ [R=301,L]
+RewriteRule ^spring-clean-your-computer/?$ /how-to-speed-up-a-slow-computer/ [R=301,L]
+RewriteRule ^back-to-school-it/?$ /family-it-support/ [R=301,L]
+RewriteRule ^it-cost-worksheet/?$ /it-support-cost-guide/ [R=301,L]
 # 2026-08-31, post-freeze baseline review: the last true duplicate pair.
 # /agentic-ai-systems/ and /ai/agents/ were both live, both self-canonical and
 # both in the sitemap for the same intent; the legacy page held 292 impressions

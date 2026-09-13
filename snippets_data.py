@@ -318,13 +318,6 @@ SNIPPETS = {
         "title": "What to Do When an Employee Leaves Your Business",
         "desc": "When someone leaves, their access does not disappear on its own. A simple offboarding checklist to keep your business secure, in the order to do it.",
     },
-    "whats-included-home-it-support-subscription": {
-        "title": "What Is Included in a Home IT Support Subscription?",
-    },
-    "whats-included-business-it-support-plan": {
-        "title": "What Is Included in a Business IT Support Plan?",
-        "desc": "A business IT support plan gives you an outsourced IT department for a flat monthly fee. Exactly what is included, and how it keeps your team working.",
-    },
     "how-onboarding-works": {
         "title": "How Onboarding Works: Your First Few Weeks With Us",
         "desc": "What happens when you become a 365 Techies customer, from your first hello to settling into the six-weekly rhythm of planned visits.",
@@ -650,9 +643,6 @@ SNIPPETS = {
     },
     "independent-it-support": {
         "desc": "An honest comparison of local independent IT support against big-box repair desks and DIY remote tools: who actually helps you, speed, and repair honesty.",
-    },
-    "it-cost-worksheet": {
-        "desc": "A free, print-friendly worksheet: the five numbers to work out before asking any IT company for a quote, covering devices, users and what you rely on.",
     },
     "mesh-wifi-setup-guide": {
         "title": "Mesh WiFi Setup Guide UK: Step by Step, ISP by ISP",

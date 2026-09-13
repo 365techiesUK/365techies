@@ -284,7 +284,7 @@
       "@id": "https://365techies.co.uk/what-to-do-when-an-employee-leaves/#webpage",
       "url": "https://365techies.co.uk/what-to-do-when-an-employee-leaves/",
       "name": "What to Do When an Employee Leaves Your Business",
-      "description": "When someone leaves, their access does not disappear on its own. Here is a simple offboarding checklist to keep your business secure.",
+      "description": "When someone leaves, their access does not switch itself off. The leaver checklist we work through, in the order that keeps the business secure without losing their email or files.",
       "inLanguage": "en-GB",
       "isPartOf": {
         "@id": "https://365techies.co.uk/#website"
@@ -299,17 +299,17 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-31"
+      "dateModified": "2026-09-13"
     },
     {
       "@type": "BlogPosting",
       "@id": "https://365techies.co.uk/what-to-do-when-an-employee-leaves/#article",
       "headline": "What to Do When an Employee Leaves Your Business",
-      "description": "When someone leaves, their access does not disappear on its own. Here is a simple offboarding checklist to keep your business secure.",
+      "description": "When someone leaves, their access does not switch itself off. The leaver checklist we work through, in the order that keeps the business secure without losing their email or files.",
       "articleSection": "Business IT",
       "inLanguage": "en-GB",
       "datePublished": "2026-06-16",
-      "dateModified": "2026-08-31",
+      "dateModified": "2026-09-13",
       "author": {
         "@type": "Organization",
         "name": "365 Techies",
@@ -323,6 +323,44 @@
         "@id": "https://365techies.co.uk/what-to-do-when-an-employee-leaves/#webpage"
       },
       "url": "https://365techies.co.uk/what-to-do-when-an-employee-leaves/"
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://365techies.co.uk/what-to-do-when-an-employee-leaves/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Can we keep a leaver&rsquo;s emails without paying for their licence?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Convert the mailbox to a shared mailbox first, then remove the licence. Shared mailboxes up to 50 GB need no licence, and the people you choose can read and reply from it."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How long do we have before their files disappear?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "By default 30 days after the account is deleted, for both the mailbox and OneDrive. Blocking sign-in does not start that clock; deleting the account does, so block first and delete later."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Should we delete the account or just block it?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Block it on the day, then tidy up over the following week and delete it once the mailbox is shared and the files are moved. Deleting first is how businesses lose data."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can you do all this for us?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Ring 01202 775566, ideally before the person&rsquo;s last day; for a Windows-based business it is a short remote job."
+          }
+        }
+      ]
     }
   ]
 }
@@ -734,7 +772,7 @@
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/it-advice/">IT Advice</a> <span>/</span> <span aria-current="page">What to Do When an Employee Leaves Your Business</span></nav>
         <p class="eyebrow mono">// BUSINESS IT</p>
         <h1>What to Do When an Employee Leaves Your Business</h1>
-        <p class="lede">When someone leaves, their access does not disappear on its own. Here is a simple offboarding checklist to keep your business secure.</p>
+        <p class="lede">When someone leaves, their access does not switch itself off. The leaver checklist we work through, in the order that keeps the business secure without losing their email or files.</p>
         <div class="page-hero__cta">
           <a href="/it-advice/" class="button primary button--lg">Read more advice</a>
           <a href="/monthly-it-support/" class="button secondary button--lg">View Monthly Plans</a>
@@ -744,27 +782,52 @@
     <section class="section" aria-label="Article">
       <article class="article">
         <p class="mono" style="color:var(--muted);font-size:.8rem;margin:0 0 1.6rem">Published 16 June 2026 &middot; Business IT &middot; by the <a href="/meet-the-team/" style="color:var(--cyan)">365 Techies team</a> &mdash; Microsoft Partners &amp; Dell specialists, looking after Dorset since 1995</p>
-<p>Former staff accounts that stay active are a real security risk — and a common one. A clear leaver process closes that gap.</p><h2>Secure the accounts</h2><p>Disable the user's sign-in, reset passwords, and remove access to email, files and apps. With Microsoft 365 you can block access instantly while keeping their mailbox and files for the business.</p><h2>Preserve and hand over</h2><p>Forward or delegate their email, transfer ownership of important files, and reclaim the software licence. Recovering company devices and wiping personal ones completes the process.</p>
+<p>Most small businesses handle a leaver&rsquo;s keys and laptop and forget the part that matters more: the accounts. A former employee who can still read the company mailbox, or an attacker who takes over an account nobody is watching, is one of the most common ways a small firm gets hurt. This is the order we do it in.</p><h2>On their last day</h2><ol><li><strong>Block sign-in.</strong> In the Microsoft 365 admin centre, block the user and reset their password; that alone stops new sign-ins. Then revoke their existing sessions from Microsoft Entra so an already-open Outlook or phone is signed out too, and remove the MFA methods registered to their personal phone.</li><li><strong>Take the devices back, or wipe them.</strong> Collect the laptop and phone. If a device is not coming back and it is managed with Intune, wipe it remotely; if it is not managed, at least remove the work account from it and change any saved passwords it held.</li><li><strong>Change what they knew.</strong> The Wi-Fi password, the shared inbox password, the alarm code, the banking and supplier logins that live on a sticky note. Anything shared is now theirs too.</li></ol><h2>In the first week</h2><ol start="4"><li><strong>Keep the mailbox without keeping the licence.</strong> Convert their mailbox to a shared mailbox before you remove the licence: it stays readable by whoever you choose, keeps receiving mail, and costs nothing while it is under 50 GB. Set an automatic reply telling senders who to contact now, and forward anything important to their successor.</li><li><strong>Save their files.</strong> Their OneDrive is kept for 30 days after the account is deleted and then removed. Give a manager access, move what the business needs into a shared SharePoint library, and download anything you are unsure about.</li><li><strong>Remove them everywhere else.</strong> Teams and groups, shared mailboxes, the accounts software (Xero, Sage, QuickBooks), the website and social media, the bank&rsquo;s online portal, any supplier portals in their name. Reassign anything they owned: a Teams channel, a SharePoint site, a recurring meeting, a company phone number.</li><li><strong>Free the licence.</strong> Once the mailbox is shared and the files are moved, remove the Microsoft 365 licence so you stop paying for it, and reassign it to their replacement.</li></ol><h2>If they left on bad terms</h2><p>Do the last-day steps before the conversation, not after it, and check their sent items and any inbox rules for forwarding to a personal address. If you suspect data has already gone, stop and take advice before deleting anything, because the account may be evidence.</p><h2>If they were the only admin</h2><p>That is the emergency version. A departing owner, director or IT-minded employee who was the only Global Administrator can leave the business unable to add users or recover anything. We have written up <a href="/transfer-microsoft-365-when-owner-leaves/">the handover when Microsoft 365 is in a leaver&rsquo;s name</a> and <a href="/employee-left-dont-know-computer-password/">getting into a leaver&rsquo;s locked computer</a>, both of which we can do with you.</p>
         <h2>Key points</h2>
         <ul>
-          <li>Disable sign-in and reset passwords immediately</li>
-          <li>Keep the mailbox and files for the business</li>
-          <li>Reassign or forward their email</li>
-          <li>Reclaim licences and devices</li>
+          <li>Block sign-in, reset the password and revoke sessions on the last day</li>
+          <li>Convert the mailbox to a shared mailbox before removing the licence</li>
+          <li>OneDrive is kept 30 days after deletion: move what you need first</li>
+          <li>Change every shared password and remove them from every other system</li>
+          <li>Never leave the business with a single admin</li>
         </ul>
         <div class="article__callout"><p><strong>Prefer to let us handle it?</strong> Our monthly IT support plans include this and much more, from &pound;18.25/month per computer — with a friendly techie on hand whenever you need one. Call <a href="tel:+441202775566">01202 775566</a> or <a href="/monthly-it-support/">view our plans</a>.</p></div>
       </article>
       <div class="related">
         <p class="related__head">Related advice and services</p>
         <div class="related__links">
-          <a href="/business-it-support-subscriptions/">Business IT Support</a>
-          <a href="/microsoft-365-support/">Microsoft 365 Support</a>
-          <a href="/cybersecurity-support/">Cybersecurity</a>
+          <a href="/transfer-microsoft-365-when-owner-leaves/">Transfer Microsoft 365 when the owner leaves</a>
+          <a href="/employee-left-dont-know-computer-password/">Employee left, no computer password</a>
           <a href="/new-employee-laptop-setup/">New Employee Laptop Setup</a>
+          <a href="/how-to-secure-your-microsoft-365-account/">How to secure your Microsoft 365 account</a>
+          <a href="/business-it-support-subscriptions/">Business IT Support</a>
         </div>
       </div>
     </section>
-
+    <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
+        <div class="faq-wrap">
+        <details class="faq" data-reveal>
+          <summary>Can we keep a leaver&rsquo;s emails without paying for their licence?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Yes. Convert the mailbox to a shared mailbox first, then remove the licence. Shared mailboxes up to 50 GB need no licence, and the people you choose can read and reply from it.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>How long do we have before their files disappear?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>By default 30 days after the account is deleted, for both the mailbox and OneDrive. Blocking sign-in does not start that clock; deleting the account does, so block first and delete later.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Should we delete the account or just block it?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Block it on the day, then tidy up over the following week and delete it once the mailbox is shared and the files are moved. Deleting first is how businesses lose data.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Can you do all this for us?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Yes. Ring 01202 775566, ideally before the person&rsquo;s last day; for a Windows-based business it is a short remote job.</p></div>
+        </details>
+        </div>
+      </div>
+    </section>
 
     <section class="cta-band" aria-label="Get started">
       <div class="cta-band__inner">

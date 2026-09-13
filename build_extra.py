@@ -16125,21 +16125,83 @@ info_page(
 )
 
 # ---- Meet the Team
+# 13 Sep 2026 (SEO audit item 5): the page was a 292-word stub at 70 impressions a fortnight. It now says who you
+# deal with, how the team works and what it is qualified in, from facts already published on /about/ and the
+# accreditations page. Nobody is named in our own copy (house rule); the reviews are customers' own words, drawn
+# from reviews_data like every other review on the site. No headcount is stated because none is on record.
+import build_pages as _bp
+from reviews_data import pick as _pick
+_TEAM_POST = _bp.promise_strip(items=[_bp.PROMISE_CALL, _bp.PROMISE_ETA, _bp.PROMISE_SMS, _bp.PROMISE_PEOPLE], title="How we work, on every job") + '''
+    <section class="section section--alt" aria-label="Qualifications and partners">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT WE ARE QUALIFIED IN</p>
+          <h2 class="section-title section-title--center" data-title>Thirty years of Microsoft and Dell<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+''' + tiles([
+        ("windows","Microsoft Partner","A verified Microsoft partner: 365 Techies Limited passed Microsoft Partner Center&rsquo;s business verification in August 2026. We have supported Microsoft Office since 1995, when it arrived on floppy disks."),
+        ("spark","Microsoft Office Specialist teachers","Certified Microsoft Office Specialists on the team, qualified when the programme was still called Microsoft Office User Specialist, and ECDL-certified with the British Computer Society."),
+        ("monitor","Dell reseller since 2001","Supplying new and tested refurbished business-grade Dell for over two decades, set up and supported by us. Repairs we handle independently."),
+        ("shield","Malwarebytes Partner","An official Malwarebytes Partner. The protection included on our support plans is the one we manage every day."),
+        ("flow","Ten years teaching IT","From 1998 to 2008 we ran the Dorset Microsoft Education Resource Centre in Winton and taught IT and Microsoft Office at Bournemouth &amp; Poole College, Bournemouth School for Girls and Moyles Court School."),
+        ("lock","Authorised testing centre","Our Winton centre was an IC3 authorised testing centre (2003), a Microsoft Office Specialist authorised testing centre (2004) and a Certiport approved testing centre (2006). The plaques are on our <a href=\"/about/\">About page</a>."),
+      ]) + '''
+        </div>
+      </div>
+    </section>
+    <section class="section" aria-label="Where the team has been">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// WHERE WE HAVE BEEN</p>
+        <h2 class="section-title section-title--center" data-title>The same team, four addresses<span class="title-underline title-underline--center"></span></h2>
+        <ol class="how__steps">
+''' + steps([
+        ("1995: a family business begins","Home and small-business computer support in Bournemouth, back when Windows 95 was new and email came down a phone line. Some of the customers from those years are still with us."),
+        ("1998 to 2008: the training centre","We built and ran the Dorset Microsoft Education Resource Centre in Winton on a network we designed ourselves, and were the IT support partner for Mercedes-Benz Pentagon across the south coast. Supporting so many garages is why we started doing remote support in 2001, and why we still do it every day."),
+        ("2008 to 2017: the Moordown shop","A busy computer sales, service and support centre in Moordown, Winton: a wall of refurbished Dell laptops, a bench of PCs, and the same phone number we answer today."),
+        ("2017 to today: Kinson Community Centre","Our base for classes, open days and meetings by appointment. Most support is now remote, we come to you for anything hands-on, and repairs are collected free locally."),
+      ]) + '''
+        </ol>
+        <div class="heritage-grid" data-stagger>
+          <figure class="heritage-card" data-reveal>
+            <img src="/images/heritage-05.jpg" alt="The door of our Microsoft Education Resource Centre in Winton, Bournemouth" width="787" height="1400" loading="lazy" decoding="async" />
+            <figcaption class="mono">Our MERC door &middot; Winton &middot; 1998&ndash;2008</figcaption>
+          </figure>
+          <figure class="heritage-card" data-reveal>
+            <img src="/images/heritage-storefront.jpg" alt="The shopfront of our computer sales and service centre in Moordown, Bournemouth" width="1024" height="683" loading="lazy" decoding="async" />
+            <figcaption class="mono">Our shopfront &middot; Moordown &middot; 2008&ndash;2017</figcaption>
+          </figure>
+          <figure class="heritage-card" data-reveal>
+            <img src="/images/heritage-kinson.jpg" alt="The Kinson Community Centre in Bournemouth, our base since 2017" width="1200" height="710" loading="lazy" decoding="async" />
+            <figcaption class="mono">Kinson Community Centre &middot; 2017&ndash;today</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+''' + _bp.reviews_block(_pick("Alan Bevis", "Maureen Drake", "JAR Accountants", "Roger Eede", "Penny Hanford", "David Hagner"))
+
 info_page(
   slug="meet-the-team", crumb_name="Meet the Team", eyebrow="// THE TEAM",
   h1='Meet the <em class="grad grad--cyan">team</em>',
-  lede="The friendly faces behind 365 Techies — a family-run team that&rsquo;s been looking after Dorset&rsquo;s technology since 1995.",
-  desc="Meet the team behind 365 Techies — a family-run IT support business in Bournemouth, looking after Dorset homes and businesses with patience and care since 1995.",
+  lede="The people behind 365 Techies: a small family-run team that has looked after Dorset&rsquo;s computers since 1995, and still answers its own phone.",
+  desc="Meet the family-run team behind 365 Techies: who answers the phone, how we work on every job, what we are qualified in and where to find us in Bournemouth. Since 1995.",
   chips=["Family-run since 1995","Friendly &amp; patient","Local to Dorset"],
-  inner="""          <h2>A family business, since 1995</h2>
-          <p>365 Techies has been a family-run business since 1995. Over three decades, the same friendly, no-nonsense approach has driven everything we do &mdash; and many of our customers have been with us for fifteen or twenty years.</p>
-          <h2>Real people, real help</h2>
-          <p>When you call us, you reach a real, familiar person who knows your setup &mdash; not a call centre or a script. We&rsquo;re patient, we explain things in plain English, and there&rsquo;s no such thing as a silly question.</p>
-          <p>Because we&rsquo;re a small family team, you see the same faces year after year. We remember how you like your computer set up and get to know you really well &mdash; and that bond only grows as we look after and service your computer every six weeks.</p>
-          <p>Today we&rsquo;re Dell hardware specialists, Microsoft partners, certified Microsoft Office Specialists and a Malwarebytes Partner &mdash; but what our customers value most is simply that we genuinely care about getting it right.</p>
-          <h2>Here when you need us</h2>
-          <p>From our base in Bournemouth, our team supports homes, families, retired and disabled people, sole traders and small businesses right across Dorset &mdash; and remotely across the UK and Europe.</p>
+  inner="""          <h2>A small family team, since 1995</h2>
+          <p>365 Techies has been a family-run business since 1995. There is no call centre and no script: when you ring <a href="tel:+441202775566">01202 775566</a> you reach one of the same few people who looked after you last time, who knows how your computer is set up and what you use it for. Many of our customers have been with us for fifteen or twenty years, and some since the dial-up days.</p>
+          <p>We look after homes, families, retired and disabled people, sole traders and small businesses across Dorset, and remotely across the UK and Europe. Windows PCs and Android are what we specialise in. The one exception is anything that lives on an account rather than a device, such as a locked Microsoft 365 account or a mailbox move, which we sort out from our end whatever you own.</p>
+          <h2>What you can expect from us</h2>
+          <p>Plain English, patience, and no such thing as a silly question. We explain what is wrong and what we are going to do about it before we do it. Before any remote session or a full service we ring you first, so you are never surprised by someone connecting to your computer; if we are coming out to you, we ring on the way with a time. If your backup is due, we can remind you by text to plug the drive in.</p>
+          <p>Every monthly plan includes a full service every six weeks, done remotely, which is how we come to know each customer&rsquo;s setup so well: we see the same computers every six weeks, year after year, and we notice when something is not right before you do.</p>
+          <h2>Where to find us</h2>
+          <p>We are based at the <a href="/about/">Kinson Community Centre</a> in Bournemouth, where we run our <a href="/free-courses/">classes</a> and occasional open days and meet customers by appointment. We are not a walk-in shop: most support is done remotely, we come to you for anything hands-on, repairs are collected free locally, and if you are choosing a <a href="/dell-hardware/">Dell</a> we bring it to your home or business so you can try it before you decide.</p>
           <p class="lede-note">Want to put faces to names? We&rsquo;re happy to introduce the team &mdash; just <a href="/contact/">get in touch</a>.</p>""",
+  post=_TEAM_POST,
+  faqs=[
+    ("Will I speak to the same person each time?","Yes. We are a small family team, so you deal with the same few people year after year, and we remember how you like your computer set up."),
+    ("Is there a call centre?","No. You ring 01202 775566 and reach us directly, Monday to Friday, 9am to 5pm. Outside those hours, email help@365techies.co.uk and we reply when we open."),
+    ("Can I meet you in person?","Yes, by appointment at the Kinson Community Centre, or we come to you. We are not a walk-in shop, so please ring first rather than turning up: we are often out with customers."),
+    ("Do you support Apple Macs, iPads and iPhones?","Our remote support covers Windows PCs, and we specialise in Windows and Android. Anything that lives on an account rather than a device, such as a locked Microsoft 365 account or moving a mailbox, we handle from our end whatever you own."),
+  ],
   cta_args=("Talk to a real techie", "Friendly, expert help from a team that&rsquo;s been here since 1995.",
             ("Contact Us", "/contact/"), ("Why Choose Us", "/why-choose-365-techies/")),
 )
@@ -16299,6 +16361,9 @@ info_page(
 )
 
 # ---- Free IT Health Check
+# 13 Sep 2026 (SEO audit item 5): expanded from 275 words. Fifteen pages and the nav send people here; it now says
+# what each check looks at, how it is done and what the report contains, with no process claims beyond the ones
+# already on the site (remote on Windows PCs, we ring first, no pressure).
 info_page(
   slug="free-it-health-check", crumb_name="Free IT Health Check", eyebrow="// FREE &middot; NO OBLIGATION",
   h1='Free <em class="grad grad--green">IT health check</em>',
@@ -16307,21 +16372,32 @@ info_page(
   chips=["100% free","No obligation","Clear report"],
   inner="""          <h2>What we check</h2>
           <ul>
-            <li><strong>Security</strong> &mdash; antivirus, protection, passwords and exposure to scams and ransomware.</li>
-            <li><strong>Backups</strong> &mdash; whether your important data is genuinely backed up and recoverable.</li>
-            <li><strong>Updates</strong> &mdash; whether your devices and software are patched and supported.</li>
-            <li><strong>Performance</strong> &mdash; what&rsquo;s slowing you down and how to fix it.</li>
+            <li><strong>Security</strong> &mdash; whether real protection is running and up to date, whether Windows itself is still supported (Windows 10 left support in October 2025), whether the accounts that matter (email, Microsoft 365, banking) sit behind multi-factor authentication, and whether anything is on the machine that should not be.</li>
+            <li><strong>Backups</strong> &mdash; not whether a backup was set up once, but whether it is still running, what it covers (photos, documents, email, Microsoft 365) and whether a file could actually be restored today.</li>
+            <li><strong>Updates</strong> &mdash; Windows, browsers, Office and the drivers that keep printers and Wi-Fi working, plus any software that has quietly gone out of support.</li>
+            <li><strong>Performance</strong> &mdash; what is slowing it down (a full or failing drive, too little memory, start-up clutter) and whether it is worth fixing or the machine is near the end of its road.</li>
           </ul>
+          <h2>How it works</h2>
+          <p>For a Windows PC we do it remotely. We ring you first, you sit at the computer, and we look together through our encrypted remote-support tool. Nothing is installed without asking and nothing is changed without telling you. We do not need your passwords: you type them in yourself if something needs signing into.</p>
+          <p>For a business it usually starts with a conversation before we look at any machine: what you rely on, where your data lives, who holds the admin account for Microsoft 365, and what would happen tomorrow if a laptop was lost or an email account was taken over.</p>
+          <p>Prefer to start yourself? Try our free <a href="/it-health-check-tool/">instant IT Health Check tool</a> &mdash; answer a few quick questions and get a score out of 100 and a personalised action plan on the spot. Or our free <a href="/free-pc-health-check/">365 PC Manager app</a> (free, digitally signed) will read a Windows PC&rsquo;s real health &mdash; drive condition, backup, protection and age &mdash; and put a plain-English report on your Desktop. <a href="/free-pc-health-check/">Download it free</a> &mdash; it installs in a couple of clicks and uninstalls just as easily.</p>
           <h2>What you get</h2>
-          <p>A clear, jargon-free report on where you stand and what (if anything) we&rsquo;d recommend &mdash; with <strong>absolutely no pressure to sign up</strong>. It&rsquo;s the easiest way to see how we can help.</p>
-          <p>Prefer to start yourself? Try our free <a href="/it-health-check-tool/">instant IT Health Check tool</a> &mdash; answer a few quick questions and get a score out of 100 and a personalised action plan on the spot. Or our free <a href="/free-pc-health-check/">365 PC Manager app</a> (free, digitally signed) will read a Windows PC&rsquo;s real health &mdash; drive condition, backup, protection and age &mdash; and put a plain-English report on your Desktop. <a href="/free-pc-health-check/#download">Download it free</a> &mdash; it installs in a couple of clicks and uninstalls just as easily.</p>
+          <p>A short, plain-English report: what is fine, what needs attention, and what we would do first if it were ours &mdash; with <strong>absolutely no pressure to sign up</strong>. Some people take the report and sort things themselves, some ask us to fix the one thing that worried them, and some join a plan. All three are fine by us.</p>
           <h2>Who it&rsquo;s for</h2>
           <p>Home users and businesses alike &mdash; whether you&rsquo;re worried about security, frustrated by slow tech, or just want peace of mind.</p>""",
+  faqs=[
+    ("Is it really free?","Yes, with no obligation. If you want us to fix something we find, we quote it first; the check itself costs nothing."),
+    ("Does it work on a Mac?","The remote check covers Windows PCs. On a Mac, iPad or iPhone we can still review the account side: email, Microsoft 365 and any backup that lives in the cloud."),
+    ("Will you try to sell me a plan?","We will tell you what a plan would cover if it fits what we found, and leave it there. The report is yours either way."),
+    ("What do I need ready?","The computer switched on and online, and yourself at the keyboard. We ring before we connect, so you will never find us on your computer unannounced."),
+  ],
   cta_args=("Book your free health check", "No cost, no obligation &mdash; just a clear picture of your IT.",
             ("Book Now", "/book-service/"), ("Contact Us", "/contact/")),
 )
 
 # ---- Switching IT provider
+# 13 Sep 2026 (SEO audit item 5): expanded from 259 words. It is in the nav and eleven pages link to it; it now
+# answers the real question, what you need to hold before you switch, in the terms /it-provider-gone-bust/ uses.
 info_page(
   slug="switching-it-provider", crumb_name="Switching IT Provider", eyebrow="// SWITCHING IS EASY",
   h1='Switching is <em class="grad grad--cyan">easy</em>',
@@ -16341,12 +16417,31 @@ info_page(
         </ol>
       </div>
     </section>''',
-  inner="""          <h2>Worried it&rsquo;ll be a hassle?</h2>
+  inner="""          <h2>What you need from your old provider (and what you don&rsquo;t)</h2>
+          <p>Most of a handover is about ownership, not goodwill. Your domain, your Microsoft 365 tenant, your backups and your data belong to you; the provider was only managing them on your behalf. So before you give notice, check you hold, or can get, these:</p>
+          <ul>
+            <li><strong>Your domain name</strong> &mdash; the login for the registrar it was bought from, and confirmation it is registered in your business&rsquo;s name, not theirs.</li>
+            <li><strong>Microsoft 365 or Google Workspace</strong> &mdash; a global administrator account in your own name. If the only admin is your provider&rsquo;s, that is the first thing to fix.</li>
+            <li><strong>Backups</strong> &mdash; where they go, the login, and when a restore was last tested.</li>
+            <li><strong>Network kit</strong> &mdash; the admin password for your router, firewall and any Wi-Fi system, and whether the hardware is yours or leased.</li>
+            <li><strong>Licences and subscriptions</strong> &mdash; antivirus, Office, accounts software, website hosting, and which of them are billed through the provider rather than to you directly.</li>
+            <li><strong>Passwords they hold</strong> &mdash; a list of every account they set up for you. We change every one of them at handover.</li>
+          </ul>
+          <p>Anything on that list you cannot get, we recover with you. In almost every case the accounts can be proved yours and reclaimed, even from a provider that has stopped answering.</p>
+          <h2>What happens on the day</h2>
+          <p>We take over quietly. Your email keeps flowing, your files stay where they are and nobody&rsquo;s computer needs rebuilding. What changes is who you ring, who holds the admin passwords, and what gets checked every six weeks. We install our remote-support tool on each Windows PC, run the first full service, confirm the backup restores, and remove the old provider&rsquo;s access and monitoring software so they are not still connected to your machines after the contract ends.</p>
+          <h2>Notice periods and overlap</h2>
+          <p>Check your current contract for a notice period: a month is common, and some tie you in for a year. We are happy to start before it ends so there is no gap in cover, and our own plans are rolling with no minimum term, so switching to us carries no lock-in of its own.</p>
+          <h2>Worried it&rsquo;ll be a hassle?</h2>
           <p>Most people put off switching because they fear disruption. In reality, we do the heavy lifting &mdash; transferring what&rsquo;s needed, securing your accounts and making sure nothing is lost.</p>
-          <h2>No long contracts</h2>
-          <p>Our plans are rolling and cancel-anytime, so there&rsquo;s no risk in trying us. Most new customers tell us they wish they&rsquo;d switched sooner.</p>
           <h2>Provider gone bust or vanished?</h2>
           <p>If your current IT company has stopped responding, closed down or is holding your systems hostage, that&rsquo;s an emergency &mdash; see our <a href="/it-provider-gone-bust/">emergency IT takeover</a>, where we regain control of your domain, Microsoft 365 and backups and get you stable fast.</p>""",
+  faqs=[
+    ("Do I have to tell my current provider before talking to you?","No. A conversation with us commits you to nothing, and it is useful to know what you hold before you give notice."),
+    ("Will we lose email or files during the switch?","No. Your email, files and Microsoft 365 stay exactly where they are; what moves is the management of them."),
+    ("What if my old provider owns our domain or Microsoft 365?","It happens more than it should. Ownership can be transferred to you, and if they will not cooperate the accounts can usually be proved yours and recovered. Our page on a provider that has gone bust or vanished covers the steps."),
+    ("Can you take over just one part, like Microsoft 365?","Yes. Some customers keep a hardware supplier or a web developer and move only their support and Microsoft 365 to us."),
+  ],
   cta_args=("Ready to switch?", "Let&rsquo;s make moving to better IT support effortless.",
             ("Start the Switch", "/contact/"), ("View Monthly Plans", "/monthly-it-support/")),
 )
@@ -16365,6 +16460,16 @@ info_page(
             <li>The level of cover &mdash; from basic help to fully managed security, backups and Microsoft 365.</li>
             <li>Whether support is remote (usually cheaper and faster) or on-site.</li>
           </ul>
+          <h2>Before you ask anyone for a quote</h2>
+          <p>Any IT company, us included, can quote faster and more fairly when you can answer five things. Jot them down first:</p>
+          <ol>
+            <li><strong>How many devices?</strong> The computers, laptops, tablets and phones you would want covered.</li>
+            <li><strong>How many people?</strong> Just you, the family, or a team.</li>
+            <li><strong>What do you rely on most?</strong> Email, Microsoft 365, accounts software, a website.</li>
+            <li><strong>What do you spend on IT now?</strong> Roughly, per month or per year, on repairs, software and support.</li>
+            <li><strong>What is your biggest worry?</strong> Losing data, scams, slow computers, downtime.</li>
+          </ol>
+          <p>Two more worth knowing: whether you have working, tested backups, and whether you are tied into a contract now and when it ends.</p>
           <h2>Monthly support vs pay-per-fix</h2>
           <p>Paying per problem feels cheaper until something goes wrong &mdash; then a single emergency repair can cost more than months of cover. <strong>Monthly support spreads the cost, catches problems early and includes maintenance</strong>, which usually works out cheaper and far less stressful overall.</p>
           <h2>Typical price ranges</h2>
@@ -16486,16 +16591,16 @@ info_page(
   inner="""          <p class="no-print"><button type="button" class="button secondary" onclick="window.print()">&#128424; Print / Save as PDF</button></p>
           <h2>Your 10-step cybersecurity checklist</h2>
           <ol>
-            <li><strong>Turn on multi-factor authentication (MFA)</strong> for email, banking and key accounts.</li>
-            <li><strong>Use strong, unique passwords</strong> &mdash; ideally with a password manager.</li>
-            <li><strong>Keep everything updated</strong> &mdash; Windows, browsers and apps.</li>
-            <li><strong>Run proper protection</strong> &mdash; reputable antivirus and web protection on every device.</li>
-            <li><strong>Back up your data</strong> automatically, with at least one off-site copy.</li>
-            <li><strong>Think before you click</strong> &mdash; be wary of unexpected links and attachments.</li>
-            <li><strong>Check email senders carefully</strong> &mdash; scammers imitate people and brands you trust.</li>
-            <li><strong>Secure your Wi-Fi</strong> with a strong password and a separate guest network.</li>
-            <li><strong>Lock your devices</strong> with a PIN, password or biometrics.</li>
-            <li><strong>Have someone to ask</strong> &mdash; a real person to check &lsquo;is this safe?&rsquo; before you act.</li>
+            <li><strong>Turn on multi-factor authentication (MFA)</strong> for email, banking and key accounts. Start with your main email account, because the reset link for everything else lands there, and use an authenticator app rather than a text message where the service allows it.</li>
+            <li><strong>Use strong, unique passwords</strong> &mdash; ideally with a password manager, which remembers them so every account can have a different one. Three random words is a good pattern for the few you must type.</li>
+            <li><strong>Keep everything updated</strong> &mdash; Windows, browsers and apps. Let Windows Update run and restart when it asks, and replace software that has gone out of support, including Windows 10, which left support in October 2025.</li>
+            <li><strong>Run proper protection</strong> &mdash; reputable antivirus and web protection on every device. Windows Security is a fair baseline; a paid product adds web and scam protection. One product, not two: two antivirus programs fight each other.</li>
+            <li><strong>Back up your data</strong> automatically, with at least one off-site copy. A drive that is only plugged in when you remember is not a backup. Automate it, and try restoring a file once a year to prove it works.</li>
+            <li><strong>Think before you click</strong> &mdash; be wary of unexpected links and attachments. Hover over a link to see where it really goes, and open an attachment you were not expecting only after checking with the sender by another route.</li>
+            <li><strong>Check email senders carefully</strong> &mdash; scammers imitate people and brands you trust. Look at the actual address, not the display name, and remember that a bank, HMRC or a courier will not ask you to act within the hour.</li>
+            <li><strong>Secure your Wi-Fi</strong> with a strong password and a separate guest network. Change the router&rsquo;s own admin password too, and put smart TVs, doorbells and visitors on the guest network.</li>
+            <li><strong>Lock your devices</strong> with a PIN, password or biometrics. Set the screen to lock after a few minutes, turn on Find My Device, and encrypt any laptop that leaves the house.</li>
+            <li><strong>Have someone to ask</strong> &mdash; a real person to check &lsquo;is this safe?&rsquo; before you act. Agree with family or staff that pausing to ask is always the right call, and never a nuisance.</li>
           </ol>
           <h2>Want us to handle it for you?</h2>
           <p>Every step above is included and managed as part of our support plans &mdash; alongside <a href="/malwarebytes-premium/">Malwarebytes Premium</a>, monitoring and verified <a href="/backup-support/">backups</a>. See our <a href="/cybersecurity-support/">cybersecurity</a> page.</p>""",
@@ -16755,7 +16860,7 @@ info_page(
           <a class="post-card" href="/computer-fault-checker/"><p class="post-card__cat">Tool</p><h3>Computer Fault Checker</h3><p>Tell us what&rsquo;s playing up and get the likely cause &amp; best next step.</p><span class="post-card__more">Diagnose it &#8594;</span></a>
           <a class="post-card" href="/choosing-it-support/"><p class="post-card__cat">Guide</p><h3>How to Choose IT Support</h3><p>10 questions to ask any IT company before you commit.</p><span class="post-card__more">Read the guide &#8594;</span></a>
           <a class="post-card" href="/independent-it-support/"><p class="post-card__cat">Compare</p><h3>Local vs the Alternatives</h3><p>Local independent vs big-box vs DIY &mdash; an honest comparison.</p><span class="post-card__more">Compare &#8594;</span></a>
-          <a class="post-card" href="/it-cost-worksheet/"><p class="post-card__cat">Worksheet</p><h3>IT Quote Worksheet</h3><p>The 5 numbers to work out before you ask anyone for a quote.</p><span class="post-card__more">Get ready &#8594;</span></a>
+          <a class="post-card" href="/it-support-cost-guide/"><p class="post-card__cat">Cost guide</p><h3>IT Support Cost Guide</h3><p>What IT support costs, and the 5 numbers to work out before you ask anyone for a quote.</p><span class="post-card__more">Read more &#8594;</span></a>
           <a class="post-card" href="/free-it-health-check/"><p class="post-card__cat">Free</p><h3>Free IT Health Check</h3><p>A free, no-obligation review of your security, backups, updates and performance.</p><span class="post-card__more">Book a check &#8594;</span></a>
           <a class="post-card" href="/switching-it-provider/"><p class="post-card__cat">Switching</p><h3>Switching to Us</h3><p>How easy it is to move your IT support to 365 Techies &mdash; with no downtime.</p><span class="post-card__more">How it works &#8594;</span></a>
           <a class="post-card" href="/password-strength-checker/"><p class="post-card__cat">Tool</p><h3>Password Strength Checker</h3><p>Test your password and get a strong, memorable one &mdash; privately, in your browser.</p><span class="post-card__more">Check it &#8594;</span></a>
@@ -16786,11 +16891,9 @@ info_page(
           <a class="post-card" href="/server-or-cloud-picker/"><p class="post-card__cat">Tool</p><h3>Server or Cloud?</h3><p>Get a clear, jargon-free steer on the right setup for your business.</p><span class="post-card__more">Find out &#8594;</span></a>
           <a class="post-card" href="/microsoft-365-vs-google-workspace/"><p class="post-card__cat">Compare</p><h3>Microsoft 365 vs Google Workspace</h3><p>An even-handed comparison to help you choose &mdash; we support both.</p><span class="post-card__more">Compare &#8594;</span></a>
           <a class="post-card" href="/break-fix-vs-managed-it/"><p class="post-card__cat">Compare</p><h3>Break-Fix vs Managed IT</h3><p>Pay per repair or a monthly plan? A clear side-by-side.</p><span class="post-card__more">Compare &#8594;</span></a>
-          <a class="post-card" href="/spring-clean-your-computer/"><p class="post-card__cat">Seasonal</p><h3>Spring-Clean Your Computer</h3><p>Quick wins for a faster, safer, tidier computer.</p><span class="post-card__more">Get started &#8594;</span></a>
           <a class="post-card" href="/how-onboarding-works/"><p class="post-card__cat">Getting started</p><h3>How Onboarding Works</h3><p>What happens when you join us &mdash; spoiler: almost nothing for you to do.</p><span class="post-card__more">See how &#8594;</span></a>
           <a class="post-card" href="/sustainability/"><p class="post-card__cat">About</p><h3>Sustainability</h3><p>Greener IT in Dorset &mdash; repair before replace, and responsible recycling.</p><span class="post-card__more">Read more &#8594;</span></a>
           <a class="post-card" href="/cloud-vs-on-premise/"><p class="post-card__cat">Compare</p><h3>Cloud vs On-Premise</h3><p>Cloud, a server, or a mix? A clear side-by-side for your business.</p><span class="post-card__more">Compare &#8594;</span></a>
-          <a class="post-card" href="/back-to-school-it/"><p class="post-card__cat">Seasonal</p><h3>Back-to-School IT</h3><p>Choosing a laptop, online safety and setup &mdash; sorted for families.</p><span class="post-card__more">Get ready &#8594;</span></a>
         </div>
       </div>
     </section>''',
@@ -17008,7 +17111,9 @@ info_page(
 )
 
 # ---- Pre-quote cost worksheet
-info_page(
+# 13 Sep 2026 (SEO audit item 5): retired; its five questions now live on /it-support-cost-guide/ and the URL 301s there.
+def _retired_page(**kw): return
+_retired_page(
   slug="it-cost-worksheet", crumb_name="IT Quote Worksheet", eyebrow="// BEFORE YOU ASK",
   h1='Work out 5 numbers <em class="grad grad--green">before you get an IT quote</em>',
   lede="Before you ask any IT company for a quote, it helps to know a few basics about your setup. Jot these down (or print this page) and you&rsquo;ll get a faster, fairer quote from anyone &mdash; us included.",
@@ -19284,9 +19389,10 @@ info_page(
         <p class="cmp-foot mono" data-reveal>A fair, general comparison &mdash; check the latest features and prices on <a href="https://www.microsoft.com/en-gb/microsoft-365/business" target="_blank" rel="noopener">Microsoft</a> and <a href="https://workspace.google.com/" target="_blank" rel="noopener">Google</a>.</p>
       </div>
     </section>''',
-  inner="""          <h2>Which is right for you?</h2>
+  inner="""          <p>Searching for &ldquo;Microsoft 365 vs Gmail&rdquo;? Gmail is the email half of Google Workspace, so this is the comparison you want: business email, files, video calls and the apps around them, side by side.</p>
+          <h2>Which is right for you?</h2>
           <p>There&rsquo;s no single winner &mdash; it depends on how you work. <strong>Microsoft 365</strong> tends to suit businesses that want the full Office apps installed on their computers, work offline, deal with complex spreadsheets and documents, or simply prefer what their team already knows. <strong>Google Workspace</strong> suits teams that live in the browser, collaborate on shared documents in real time, and like things clean and simple.</p>
-          <p>Honestly? Most small businesses we look after are well served by either &mdash; the bigger wins come from setting it up properly, securing it and actually using it well. We&rsquo;re Microsoft partners, but we set up and support both, and we&rsquo;ll give you a straight recommendation for your situation. Prefer a quick steer on Microsoft licensing? Try our <a href="/which-microsoft-365-plan/">Microsoft 365 plan picker</a>, or read our <a href="/microsoft-365-vs-gmail-for-small-businesses/">Microsoft 365 vs Gmail</a> guide.</p>""",
+          <p>Honestly? Most small businesses we look after are well served by either &mdash; the bigger wins come from setting it up properly, securing it and actually using it well. We&rsquo;re Microsoft partners, but we set up and support both, and we&rsquo;ll give you a straight recommendation for your situation. Prefer a quick steer on Microsoft licensing? Try our <a href="/which-microsoft-365-plan/">Microsoft 365 plan picker</a>.</p>""",
   faqs=[
     ("Can you move us from one to the other?","Yes &mdash; we migrate email, contacts, calendars and files between Microsoft 365 and Google Workspace with minimal disruption and nothing lost. See <a href=\"/cloud-migration/\">cloud migration</a>."),
     ("Which is cheaper?","Both have similar tiers, and prices change, so we&rsquo;d rather point you to each vendor&rsquo;s current pricing and confirm the best-value option for you for free than quote a figure that might be out of date."),
@@ -19598,7 +19704,7 @@ def spring_clean_hub():
                       {"@type":"ItemList","@id":SITE+"/spring-clean-your-computer/#list","itemListElement":_it}])
     add(slug=slug, title="Spring-Clean Your Computer — Quick Speed Wins",
         desc=desc, og_title="Spring-Clean Your Computer | 365 Techies", schema=schema, content=content)
-spring_clean_hub()
+# spring_clean_hub()   # 13 Sep 2026 (SEO audit item 5): retired, 301 -> /how-to-speed-up-a-slow-computer/ (a list of links with no answer of its own)
 
 # ============================================================ COMPARISON: CLOUD VS ON-PREMISE
 info_page(
@@ -19685,7 +19791,7 @@ def back_to_school_hub():
                       {"@type":"ItemList","@id":SITE+"/back-to-school-it/#list","itemListElement":_it}])
     add(slug=slug, title="Back-to-School IT — Laptops, Safety & Setup | 365 Techies",
         desc=desc, og_title="Back-to-School IT | 365 Techies", schema=schema, content=content)
-back_to_school_hub()
+# back_to_school_hub()   # 13 Sep 2026 (SEO audit item 5): retired, 301 -> /family-it-support/ (a list of links with no answer of its own)
 
 # ============================================================ INDUSTRY PAGES (deep-dive expansion, wave 1)
 from industries_data import INDUSTRIES
