@@ -61,7 +61,7 @@ PLAYBOOKS = [
     ],
     "cta_head": "Still dropping after all that?",
     "cta_sub": "Send us a week of your drop diary and a photo of the router&rsquo;s lights. We will tell you whether it is the line, the kit or the house &mdash; no charge for the answer, and no obligation.",
-    "cta_secondary": ("Home support plans", "/home-it-support-plans/"),
+    "cta_secondary": ("See Home Plans &amp; Prices", "/home-it-support-plans/"),
     "sections": [
         {
             "h2": "One device, or everything in the house?",

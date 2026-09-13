@@ -342,7 +342,7 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
     content = "\n".join([
       hero(bc_sub("IT Support Dorset", "/it-support-dorset/", crumb_name), f"// {town.upper()} &middot; {region.upper()}",
            f'IT support in <em class="grad grad--cyan">{town}</em>', bp.hero_trust(lede.rstrip() + _LOCAL_HERO_PRICES),
-           cta1=("Call 01202 775566", "tel:+441202775566"), cta2=("Plans &amp; Prices", "/monthly-it-support/"),
+           cta1=("Call 01202 775566", "tel:+441202775566"), cta2=("See Plans &amp; Prices", "/monthly-it-support/"),
            trustbar=True),
       nearme_block,
       dorset_related,
@@ -420,7 +420,7 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
       faq_html([(q, a) for q, a in faqs]),
       cta(f"IT support in {town}, sorted",
           f"Join the {town} homes and businesses who never worry about IT. Pick a plan or say hello.",
-          primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Contact Us", "/contact/")),
+          primary=("See Plans &amp; Prices", "/monthly-it-support/"), secondary=("Contact Us", "/contact/")),
     ])
     def schema(s, _desc=desc, _cn=crumb_name, _faqs=faqs, _town=town, _region=region):
         svc = service(s, f"IT Support {_town}", f"Monthly IT support, computer repairs, Microsoft 365 and cybersecurity for {_town} homes and businesses.", "IT support")
@@ -683,7 +683,7 @@ def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_para
     _bch = bp.bc_sub("IT Support by Industry", "/it-support-by-industry/", crumb_name) if _is_ind else bc(crumb_name)
     sections = [
       hero(_bch, eyebrow, h1, bp.hero_trust(lede), chips=chips, scene=bp.HERO_SCENES.get(scene),
-           cta1=hero_cta1 or ("View Monthly Plans", "/monthly-it-support/"),
+           cta1=hero_cta1 or ("See Plans &amp; Prices", "/monthly-it-support/"),
            cta2=hero_cta2 or ("Get Support Today", "/contact/")),
       f'''    <section class="section" aria-label="Overview">
       <div class="wrap split-2">

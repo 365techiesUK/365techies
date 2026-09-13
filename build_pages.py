@@ -1445,7 +1445,7 @@ def _call_first(a, b):
     return a, b
 
 
-def cta(title, text, primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Call 01202 775566", "tel:+441202775566"), whats_next=False):
+def cta(title, text, primary=("See Plans &amp; Prices", "/monthly-it-support/"), secondary=("Call 01202 775566", "tel:+441202775566"), whats_next=False):
     primary, secondary = _call_first(primary, secondary)
     strip = ("\n        " + next_strip()) if whats_next else ""
     return f'''    <section class="cta-band" aria-label="Get started">
@@ -1465,7 +1465,7 @@ def hero_trust(lede):
     Used by landing-page heroes (service/town/customer pages) — NOT info/legal/tool pages."""
     return lede if "4.9" in lede else lede.rstrip() + " Rated 4.9 on Google."
 
-def hero(crumbs_html, eyebrow, h1_html, lede, cta1=("View Monthly Plans", "/monthly-it-support/"),
+def hero(crumbs_html, eyebrow, h1_html, lede, cta1=("See Plans &amp; Prices", "/monthly-it-support/"),
          cta2=("Get Support Today", "/contact/"), chips=None, scene=None, trustbar=False, byline=True):
     cta1, cta2 = _call_first(cta1, cta2)
     if trustbar:
@@ -3328,7 +3328,7 @@ _FIX_FLOW_BIZ_RE = re.compile(r'sage|quickbooks|shared-folder|shared-mailbox|bus
 def _ff_fixed_ending(h3, tip, plan_lead, plans_href='/monthly-it-support/'):
     """plan_lead=None means no plan pitch at all (diagnosis playbooks, a swollen battery): just the copy button.
     plans_href: the business plans page for business-shaped problems, the home plans page otherwise."""
-    plans = ('<a class="button primary" href="' + plans_href + '">See the support plans &#8594;</a><a class="button secondary" href="/free-pc-health-check/">Get the free app</a>' if plan_lead else '')
+    plans = ('<a class="button primary" href="' + plans_href + '">' + ('See Business Plans' if 'business' in plans_href else 'See Plans') + ' &amp; Prices &#8594;</a><a class="button secondary" href="/free-pc-health-check/">Get the free app</a>' if plan_lead else '')
     return ('<h3>' + h3 + '</h3><p>' + tip + '</p>' + (_ff_plan_card(plan_lead, plans_href == '/business-it-support-plans/') if plan_lead else '') +
             '<div class="ff-cta">' + plans + '<button type="button" class="button ' + ('bm-ghost' if plan_lead else 'primary') + '" id="ff-copyall">Copy these steps</button></div>')
 def _ff_stuck_ending(h3, what, tail=' Usually the same day, remote help from &pound;20, and no fix, no fee.', link=('/remote-support/', 'How remote help works')):
@@ -3691,8 +3691,8 @@ PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="be
           PCT=null; loadChart(overall);
           var addBtn0=root.querySelector('#bm-add'); if(addBtn0){ addBtn0.disabled=false; addBtn0.textContent='Add my score to the chart'; root.querySelector('#bm-submit').classList.remove('done'); }
           var fix=root.querySelector('#bm-fix');
-          if(overall>=60) fix.innerHTML='<h3>Keep it this way &mdash; a 365 support plan from &pound;18.25 a month</h3><p>Regular servicing is why our customers&rsquo; computers stay fast for years: a full service every six weeks, Windows, driver and app updates, security and backup checked, and a written Service Report every time. <b>Home &pound;18.25 per computer a month, business from &pound;24.38</b> &mdash; rolling monthly, no lock-in.</p><div class="bm-fix-cta"><a class="button primary" href="/monthly-it-support/">See the support plans &#8594;</a><a class="button bm-ghost" href="/free-pc-health-check/">Start free with 365 PC Manager</a></div>';
-          else fix.innerHTML='<h3>Don&rsquo;t put up with a slow computer</h3><p>We speed up machines like this every week &mdash; a tune-up from &pound;65, an SSD or memory upgrade, or an honest &ldquo;it&rsquo;s time&rdquo; and a refurbished business-grade Dell from &pound;510. Then a <b>365 support plan from &pound;18.25 per computer a month</b> keeps it serviced every six weeks so it never slides back.</p><div class="bm-fix-cta"><a class="button primary" href="/contact/">Make mine faster &#8594;</a><a class="button bm-ghost" href="/monthly-it-support/">See the support plans</a></div>';
+          if(overall>=60) fix.innerHTML='<h3>Keep it this way &mdash; a 365 support plan from &pound;18.25 a month</h3><p>Regular servicing is why our customers&rsquo; computers stay fast for years: a full service every six weeks, Windows, driver and app updates, security and backup checked, and a written Service Report every time. <b>Home &pound;18.25 per computer a month, business from &pound;24.38</b> &mdash; rolling monthly, no lock-in.</p><div class="bm-fix-cta"><a class="button primary" href="/monthly-it-support/">See Plans &amp; Prices &#8594;</a><a class="button bm-ghost" href="/free-pc-health-check/">Start free with 365 PC Manager</a></div>';
+          else fix.innerHTML='<h3>Don&rsquo;t put up with a slow computer</h3><p>We speed up machines like this every week &mdash; a tune-up from &pound;65, an SSD or memory upgrade, or an honest &ldquo;it&rsquo;s time&rdquo; and a refurbished business-grade Dell from &pound;510. Then a <b>365 support plan from &pound;18.25 per computer a month</b> keeps it serviced every six weeks so it never slides back.</p><div class="bm-fix-cta"><a class="button primary" href="/contact/">Make mine faster &#8594;</a><a class="button bm-ghost" href="/monthly-it-support/">See Plans &amp; Prices</a></div>';
           results.hidden=false;
           root.querySelector('#bm-ring').style.strokeDashoffset=(339.292*(1-overall/100)).toFixed(1);
           window.ttToolDone&&window.ttToolDone("pc-benchmark");
@@ -5208,7 +5208,7 @@ add(
    hero(bc("Monthly IT Support"), "// MONTHLY SUBSCRIPTIONS",
         'Monthly IT support <em class="grad grad--cyan">subscriptions</em>',
         hero_trust("Reliable monthly IT support for homes and businesses — remote help, regular maintenance, security checks and friendly technical support whenever you need it. £18.25 a month per computer, cancel anytime."),
-        cta1=("See the Plans", "#plans"), cta2=("Call 01202 775566", "tel:+441202775566"),
+        cta1=("See Plans &amp; Prices", "#plans"), cta2=("Call 01202 775566", "tel:+441202775566"),
         chips=["&pound;18.25/mo per computer", "Full service every 6 weeks", "Cancel anytime"], scene=HERO_SCENES.get("how3")),
    uk_remote_band(alt=True),
    f'''    <section class="section" aria-label="What is monthly IT support">
@@ -5267,7 +5267,7 @@ add(
               <li>Microsoft 365 &amp; security</li>
               <li>Loyalty discount on any fault work</li>
             </ul>
-            <a href="/home-it-support-plans/" class="button primary plan-card__cta">See Home Plans</a>
+            <a href="/home-it-support-plans/" class="button primary plan-card__cta">See Home Plans &amp; Prices</a>
             <p class="mono" style="text-align:center;margin-top:.7rem;color:var(--faint);font-size:.75rem;letter-spacing:.1em">DIRECT DEBIT BY GOCARDLESS &middot; CANCEL ANYTIME</p>
           </article>
           <article class="plan-card plan-card--business" data-reveal>
@@ -5283,7 +5283,7 @@ add(
               <li>Staff onboarding &amp; advice</li>
               <li>Loyalty discount on any fault work</li>
             </ul>
-            <a href="/business-it-support-plans/" class="button primary plan-card__cta">See Business Plans</a>
+            <a href="/business-it-support-plans/" class="button primary plan-card__cta">See Business Plans &amp; Prices</a>
             <p class="mono" style="text-align:center;margin-top:.7rem;color:var(--faint);font-size:.75rem;letter-spacing:.1em">DIRECT DEBIT BY GOCARDLESS &middot; CANCEL ANYTIME</p>
           </article>
         </div>
@@ -5324,7 +5324,7 @@ add(
    ]),
    REMOTE_ACCESS_BAND,
    cta("Start your monthly support plan", "Join the Dorset homes and businesses who never worry about IT. Pick a plan, or talk to a friendly techie first.",
-       primary=("View Home Plans", "/home-it-support-plans/"), secondary=("View Business Plans", "/business-it-support-plans/")),
+       primary=("See Home Plans &amp; Prices", "/home-it-support-plans/"), secondary=("See Business Plans &amp; Prices", "/business-it-support-plans/")),
  ]),
 )
 
@@ -5347,7 +5347,7 @@ add(
    hero(bc("Home IT Support"), "// FOR HOMES",
         'Home IT support <em class="grad grad--cyan">subscriptions</em>',
         "Friendly monthly computer support for your home. Help with computers, laptops, printers, email, Wi-Fi, Microsoft 365, online accounts and security — patient, jargon-free and one message away.",
-        cta1=("Get Monthly Home IT Support", "/home-it-support-plans/"), cta2=("Talk to a techie", "/contact/"),
+        cta1=("See Home Plans &amp; Prices", "/home-it-support-plans/"), cta2=("Talk to a techie", "/contact/"),
         chips=["&pound;18.25/mo per computer", "Patient, jargon-free help", "Full service every 6 weeks"], scene=HERO_SCENES.get("home")),
    f'''    <section class="section" aria-label="Who it is for">
       <div class="wrap">
@@ -5394,7 +5394,7 @@ add(
    ]),
    REMOTE_ACCESS_BAND,
    cta("Get monthly home IT support", "Pick a home plan and get friendly, reliable help every month — or talk to a techie first.",
-       primary=("Pick a Home Plan", "/home-it-support-plans/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+       primary=("See Home Plans &amp; Prices", "/home-it-support-plans/"), secondary=("Call 01202 775566", "tel:+441202775566")),
  ]),
 )
 
@@ -5417,7 +5417,7 @@ add(
    hero(bc("Business IT Support"), "// BUSINESS IT SUPPORT &middot; BOURNEMOUTH &amp; DORSET",
         'Business IT support <em class="grad grad--green">subscriptions</em>',
         "Reliable monthly IT support for sole traders and small businesses — Microsoft 365, cybersecurity, backups and staff support, all proactively managed for you. Like having your own IT department, without the cost of employing one. Rated 4.9 on Google, family-run since 1995.",
-        cta1=("Choose a Business Plan", "/business-it-support-plans/"), cta2=("Book a chat", "/contact/"),
+        cta1=("See Business Plans &amp; Prices", "/business-it-support-plans/"), cta2=("Book a chat", "/contact/"),
         chips=["Your outsourced IT team", "From &pound;24.38/mo per computer", "Remote &amp; on-site across Dorset"], scene=HERO_SCENES.get("business")),
    uk_remote_band(alt=True),
    f'''    <section class="section" aria-label="Who it is for">
@@ -5467,7 +5467,7 @@ add(
    ]),
    REMOTE_ACCESS_BAND,
    cta("Choose a business IT support plan", "Give your team reliable, secure IT for one predictable monthly cost. Pick a plan or book a quick chat.",
-       primary=("Choose a Business Plan", "/business-it-support-plans/"), secondary=("Book a chat", "/contact/")),
+       primary=("See Business Plans &amp; Prices", "/business-it-support-plans/"), secondary=("Book a chat", "/contact/")),
  ]),
 )
 
@@ -5745,7 +5745,7 @@ add(
    REMOTE_ACCESS_BAND,
    tools_strip(["isitdown", "speed", "healthcheck", "faultcheck"], title="While you wait &mdash; try our free tools"),
    cta("Need help right now?", "Start a secure remote session, or join a monthly plan so help is always one message away.",
-       primary=("Get Remote Support", "/contact/"), secondary=("View Monthly Plans", "/monthly-it-support/")),
+       primary=("Get Remote Support", "/contact/"), secondary=("See Plans &amp; Prices", "/monthly-it-support/")),
  ]),
 )
 
@@ -5887,7 +5887,7 @@ add(
    faq_html(M365_FAQS),
    tools_strip(["isitdown", "emailsec", "m365picker", "breach"], title="Free tools while you&rsquo;re here", alt=False),
    cta("Get Microsoft 365 working for you", "Stuck with Outlook, Teams or a migration? Get it sorted by Microsoft partners &mdash; or fold Microsoft 365 into a monthly plan.",
-       primary=("Get Microsoft 365 Support", "/contact/"), secondary=("View Monthly Plans", "/monthly-it-support/")),
+       primary=("Get Microsoft 365 Support", "/contact/"), secondary=("See Plans &amp; Prices", "/monthly-it-support/")),
  ]),
 )
 
@@ -6010,7 +6010,7 @@ add(
    tools_strip(["emailsec", "breach", "scamlink", "pwgen"], title="Check yourself &mdash; free security tools", lede_text="Run our free security checks right now and see where you stand.", alt=False),
    cta("Get the ultimate protection",
        "Layered, always-on security &mdash; set up, managed and monitored by your local team, and included in every monthly plan.",
-       primary=("Get Protected", "/contact/"), secondary=("View Monthly Plans", "/monthly-it-support/")),
+       primary=("Get Protected", "/contact/"), secondary=("See Plans &amp; Prices", "/monthly-it-support/")),
  ]),
 )
 
@@ -6093,7 +6093,7 @@ add(
    hero(bc("Computer Repairs"), "// ONE-OFF FIXES",
         'Computer &amp; laptop <em class="grad grad--cyan">repairs</em>',
         hero_trust("Slow laptop, virus clean-up, dead Wi-Fi or a PC that just won&rsquo;t start? Book a one-off computer or laptop repair in Bournemouth, Poole or anywhere in Dorset — no subscription required."),
-        cta1=("Book a Computer Repair", "/book-a-collection/"), cta2=("Avoid Future Problems", "/monthly-it-support/"),
+        cta1=("Book a Computer Repair", "/book-a-collection/"), cta2=("See Plans &amp; Prices", "/monthly-it-support/"),
         chips=["No-fix-no-fee", "12-month warranty", "Remote or on-site"], scene=HERO_SCENES.get("repairdesktop")),
    f'''    <section class="section" aria-label="Overview">
       <div class="wrap split-2">
@@ -6128,7 +6128,7 @@ add(
             <h2 class="repairs__title">Avoid future problems with monthly support</h2>
             <p class="lede">One-off repairs fix today&rsquo;s problem. A monthly plan stops tomorrow&rsquo;s — with regular maintenance, security and a techie on hand, from &pound;18.25/month per computer.</p>
           </div>
-          <a href="/monthly-it-support/" class="button primary">View Monthly Plans</a>
+          <a href="/monthly-it-support/" class="button primary">See Plans &amp; Prices</a>
         </div>
       </div>
     </section>''',
@@ -6203,7 +6203,7 @@ add(
    hero(bc("Areas Covered"), "// WHERE WE WORK",
         'IT support across <em class="grad grad--cyan">Dorset</em>',
         "We provide fast, secure remote support across the whole UK and Europe, and on-site help right across Bournemouth, Poole, the rest of Dorset and the New Forest — for homes, businesses and digital nomads alike.",
-        cta1=("View Monthly Plans", "/monthly-it-support/"), cta2=("UK &amp; Europe", "/it-support-uk-europe/"),
+        cta1=("See Plans &amp; Prices", "/monthly-it-support/"), cta2=("UK &amp; Europe", "/it-support-uk-europe/"),
         chips=["Remote across UK &amp; Europe", "On-site across Dorset", "Local, friendly techies"]),
    f'''    <section class="section" aria-label="Areas we cover">
       <div class="wrap">
@@ -6235,7 +6235,7 @@ add(
       </div>
     </section>''',
    cta("Not sure if we cover you?", "If you&rsquo;re in or around Dorset, we can almost certainly help — and remote support works wherever you are. Just ask.",
-       primary=("Contact Us", "/contact/"), secondary=("View Monthly Plans", "/monthly-it-support/")),
+       primary=("Contact Us", "/contact/"), secondary=("See Plans &amp; Prices", "/monthly-it-support/")),
  ]),
 )
 
@@ -6252,7 +6252,7 @@ add(
    hero(bc("About"), "// ABOUT US",
         'The IT support <em class="grad grad--cyan">experts</em>',
         "365 Techies is a family-run, Bournemouth-based IT support company established in 1995: Dell specialists, Microsoft partners and certified Microsoft Office Specialists. We help homes and small businesses across Dorset with friendly, jargon-free support they can rely on every month.",
-        cta1=("View Monthly Plans", "/monthly-it-support/"), cta2=("Contact Us", "/contact/"),
+        cta1=("See Plans &amp; Prices", "/monthly-it-support/"), cta2=("Contact Us", "/contact/"),
         chips=["Family-run since 1995", "Bournemouth-based", "Rated 4.9 on Google"]),
    f'''    <section class="section" aria-label="Who we are">
       <div class="wrap wrap--narrow prose" data-reveal>
@@ -6341,7 +6341,7 @@ add(
       </div>
     </section>''',
    cta("Let&rsquo;s sort your IT", "Join the Dorset homes and businesses who never worry about technology. Friendly help is one message away.",
-       primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Contact Us", "/contact/")),
+       primary=("See Plans &amp; Prices", "/monthly-it-support/"), secondary=("Contact Us", "/contact/")),
  ]),
 )
 
@@ -6434,7 +6434,7 @@ add(
     </section>''',
    PCM_BAND,
    cta("Prefer to just pick a plan?", "Browse monthly support for homes and businesses — clear pricing, no contracts, cancel anytime.",
-       primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Home Plans", "/home-it-support-plans/")),
+       primary=("See Plans &amp; Prices", "/monthly-it-support/"), secondary=("See Home Plans &amp; Prices", "/home-it-support-plans/")),
  ]),
 )
 

@@ -261,7 +261,7 @@ def why_choose():
       hero(bc(crumb_name), "// WHY 365 TECHIES",
            'Why choose <em class="grad grad--cyan">365 Techies</em>',
            "Reliable, friendly IT support for homes and businesses across Dorset — with monthly cover, real human help and a security-first approach. Here is what makes us different.",
-           cta1=("View Monthly Plans", "/monthly-it-support/"), cta2=("Read Reviews", "/reviews/"),
+           cta1=("See Plans &amp; Prices", "/monthly-it-support/"), cta2=("Read Reviews", "/reviews/"),
            chips=["Rated 4.9 on Google", "Bournemouth-based", "Homes &amp; businesses"]),
       f'''    <section class="section" aria-label="Reasons to choose us">
       <div class="wrap">
@@ -288,7 +288,7 @@ def why_choose():
     </section>''',
       reviews_block(pick("Vince Jones", "Alan Bevis", "Peter Moody")),
       cta("See why people choose us", "Join the Dorset homes and businesses who never worry about IT. Pick a plan or talk to a friendly techie first.",
-          primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Contact Us", "/contact/")),
+          primary=("See Plans &amp; Prices", "/monthly-it-support/"), secondary=("Contact Us", "/contact/")),
     ])
     def schema(s, _desc=desc, _cn=crumb_name):
         return graph([crumb(s, _cn), webpage(s, _cn, _desc)])
@@ -315,7 +315,7 @@ def reviews_page():
            'Rated <em class="grad grad--green">4.9</em> on Google',
            "Don't just take our word for it. Here's what home and business customers across Bournemouth, Poole and Dorset say about 365 Techies.",
            cta1=("Review us on Google", "https://search.google.com/local/writereview?placeid=ChIJlTb8YRuic0gRCRczduB8OFI"),
-           cta2=("View Monthly Plans", "/monthly-it-support/"),
+           cta2=("See Plans &amp; Prices", "/monthly-it-support/"),
            chips=["4.9 / 5 average", "Google reviews", "Real verified customers"]),
       f'''    <section class="reviews" aria-label="Customer reviews">
       <p class="reviews__badge mono" data-reveal style="display:block;width:max-content;margin:0 auto 3rem"><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>&ensp;RATED 4.9 ON GOOGLE</p>
@@ -328,7 +328,7 @@ def reviews_page():
       </div>
     </section>''',
       cta("Join our happy customers", "Reliable monthly IT support for homes and businesses across Dorset. See why people stay for years.",
-          primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Contact Us", "/contact/")),
+          primary=("See Plans &amp; Prices", "/monthly-it-support/"), secondary=("Contact Us", "/contact/")),
     ])
     # ⚠️ NO Review NODES HERE, DELIBERATELY - do not "restore" them.
     # Google flagged this page on 2026-08-02: "Multiple reviews without
@@ -387,7 +387,7 @@ def faqs_page():
       hero(bc(crumb_name), "// GOOD QUESTIONS",
            'IT support <em class="grad grad--cyan">FAQs</em>',
            "Everything you might want to know about monthly IT support, remote help, what's included and how we work. Still not sure? Just ask.",
-           cta1=("Contact Us", "/contact/"), cta2=("View Monthly Plans", "/monthly-it-support/"),
+           cta1=("Contact Us", "/contact/"), cta2=("See Plans &amp; Prices", "/monthly-it-support/"),
            chips=["UK-wide remote support", "No lock-in", "Homes &amp; businesses"]),
       faq_html(FAQS),
       cta("Still have a question?", "We're happy to help — no pressure and no jargon. Call, email or send us a message.",
@@ -658,7 +658,7 @@ def pcm_landing():
           <p><strong>Why it matters.</strong> Most home computers are not broken into by clever hackers. They are let in &mdash; by a scam call, or by an out-of-date app, driver or Windows with a hole that was fixed months ago. Every six weeks we close those doors, and the report shows you it was done.</p>
           <p style="margin-top:.6rem"><strong>Home &pound;18.25 a month per computer &middot; business from &pound;24.38.</strong> Rolling monthly, no lock-in &mdash; and Dell computers we sold carry a five-year guarantee while you are on a plan.</p>
         </div>
-        <p style="text-align:center;margin-top:1.4rem" data-reveal><a class="button primary" href="/monthly-it-support/">See support plans &#8594;</a> <a class="button secondary" href="tel:+441202775566" style="margin-left:.5rem">Call 01202 775566</a></p>
+        <p style="text-align:center;margin-top:1.4rem" data-reveal><a class="button primary" href="/monthly-it-support/">See Plans &amp; Prices &#8594;</a> <a class="button secondary" href="tel:+441202775566" style="margin-left:.5rem">Call 01202 775566</a></p>
       </div>
       <style>
         .svc-cards{display:grid;grid-template-columns:1fr 1fr;gap:1rem;max-width:1000px;margin:1.6rem auto 0}
@@ -923,7 +923,7 @@ def pcm_landing():
       })();
     </script>''',
       cta("Rather we just sorted it?", "Put your computer on a 365 support plan and we&rsquo;ll keep it healthy for you &mdash; the app included.",
-          primary=("View support plans", "/monthly-it-support/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+          primary=("See Plans &amp; Prices", "/monthly-it-support/"), secondary=("Call 01202 775566", "tel:+441202775566")),
       ('''    <div id="pcmbar" role="region" aria-label="''' + ("Get the app" if PCM_LIVE else "Join the waitlist") + '''" style="position:fixed;left:0;right:0;bottom:0;z-index:60;transform:translateY(130%);transition:transform .3s ease;background:rgba(10,18,38,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid rgba(125,170,220,.3);box-shadow:0 -10px 30px rgba(0,0,0,.35)">
       <div class="wrap" style="display:flex;align-items:center;gap:.7rem;padding:.65rem 1rem">
         <span style="flex:1;min-width:0;font-size:.88rem;line-height:1.3">''' + ("<strong>Free &amp; signed</strong> &mdash; 365 PC Manager is ready to download, and installs in a couple of clicks." if PCM_LIVE else "<strong>Coming soon</strong> &mdash; be first when 365 PC Manager launches, and we&rsquo;ll set it up for you free.") + '''</span>
@@ -1322,7 +1322,7 @@ def wifi_optimizer():
           <div class="callout callout--info callout--center" data-reveal style="margin:0 0 1.4rem">
             <p class="eyebrow eyebrow--center mono" style="margin-bottom:.4rem">// WANT THIS MANAGED FOR YOU?</p>
             <p style="margin:0 0 .8rem">This tool is free for everyone. With <strong>365 Home &amp; Business Support</strong> you also get your own customer portal (bookings, PC performance reports, your saved WiFi surveys and more), honest WiFi advice from a real local team, and a full computer service every 6 weeks.</p>
-            <p class="callout__row"><a class="button primary" href="/monthly-it-support/">See support plans</a><a class="button secondary" href="/portal/">Customer portal</a></p>
+            <p class="callout__row"><a class="button primary" href="/monthly-it-support/">See Plans &amp; Prices</a><a class="button secondary" href="/portal/">Customer portal</a></p>
           </div>
           <div class="wf__send" id="wf-send">
             <p class="eyebrow mono" style="margin:0 0 .4rem">// FREE HUMAN REVIEW</p>
@@ -4418,7 +4418,7 @@ def plan_finder():
       hero(bc("Plan Finder"), "// FIND YOUR PLAN",
            'Which plan is <em class="grad grad--cyan">right for you?</em>',
            "Answer three quick questions and we'll recommend the best monthly plan for your home or business — no email, no sign-up, no pressure.",
-           cta1=("View All Plans", "/monthly-it-support/"), cta2=("Talk to a Techie", "/contact/"),
+           cta1=("See Plans &amp; Prices", "/monthly-it-support/"), cta2=("Talk to a Techie", "/contact/"),
            chips=["Takes 30 seconds","No sign-up","Honest recommendation"]),
       PLAN_FINDER_WIDGET,
       cta("Still not sure?",
@@ -4580,7 +4580,7 @@ def health_check_tool():
       hero(bc("Free IT Health Check Tool"), "// FREE INSTANT CHECK",
            'How healthy is your <em class="grad grad--cyan">IT &amp; security?</em>',
            "Answer a few quick questions and get an instant score out of 100 &mdash; plus a clear, jargon-free action plan. No sign-up, and no email needed to see your result.",
-           cta1=("Book a Free Call", "/book-service/"), cta2=("See Our Plans", "/monthly-it-support/"),
+           cta1=("Book a Free Call", "/book-service/"), cta2=("See Plans &amp; Prices", "/monthly-it-support/"),
            chips=["Takes ~90 seconds", "Instant on-screen score", "Home &amp; business"]),
       HEALTH_CHECK_WIDGET,
       faq_html(faqs),
@@ -6698,7 +6698,7 @@ def case_studies():
       hero(bc("Case Studies"), "// REAL RESULTS",
            'Real results for <em class="grad grad--cyan">real customers</em>',
            "See how monthly IT support from 365 Techies keeps homes and businesses across Dorset running smoothly — fewer problems, faster fixes and total peace of mind. Every quote below is a genuine Google review.",
-           cta1=("View Monthly Plans", "/monthly-it-support/"), cta2=("Read Google Reviews", "/reviews/"),
+           cta1=("See Plans &amp; Prices", "/monthly-it-support/"), cta2=("Read Google Reviews", "/reviews/"),
            chips=["Rated 4.9 on Google","Homes &amp; businesses","30+ years' experience"]),
       '''    <section class="stats section--alt" aria-label="By the numbers">
       <div class="stats__grid">
@@ -6786,7 +6786,7 @@ def case_studies():
     </section>''',
       cta("Could your IT run this smoothly?",
           "Join the Dorset homes and businesses who never worry about technology. Pick a plan or book a free IT health check.",
-          primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Free IT Health Check", "/free-it-health-check/")),
+          primary=("See Plans &amp; Prices", "/monthly-it-support/"), secondary=("Free IT Health Check", "/free-it-health-check/")),
     ])
     def schema(s, _desc=desc):
         return graph([crumb(s, "Case Studies"), webpage(s, "Customer Case Studies", _desc, "CollectionPage")])
@@ -8860,7 +8860,7 @@ def services_overview():
       hero(bc("Services"), "// EVERYTHING WE DO",
            'Everything <em class="grad grad--cyan">365 Techies</em> does',
            "From monthly IT support for homes and businesses to Microsoft 365, cybersecurity and repairs — plus off-grid Victron energy and premium website design, hosting and email. One friendly, local team for it all.",
-           cta1=("View Monthly Plans", "/monthly-it-support/"), cta2=("Book a Service", "/book-service/"),
+           cta1=("See Plans &amp; Prices", "/monthly-it-support/"), cta2=("Book a Service", "/book-service/"),
            chips=["Homes &amp; businesses","UK-wide remote support","One trusted team"], scene=HERO_SCENES.get("msp")),
       uk_remote_band(alt=True),
       f'''    <section class="blog-section" aria-label="All services">
@@ -10165,7 +10165,7 @@ def backup_recovery():
       faq_html(faqs),
       cta("Protect what you can&rsquo;t replace",
           "Get automatic, verified, ransomware-safe backups set up and monitored by your local team &mdash; included in every monthly plan.",
-          primary=("Protect My Data", "/contact/"), secondary=("View Monthly Plans", "/monthly-it-support/")),
+          primary=("Protect My Data", "/contact/"), secondary=("See Plans &amp; Prices", "/monthly-it-support/")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "Backup & Recovery"), webpage(s, "Backup & Recovery", _desc),
@@ -11538,14 +11538,14 @@ def cost_calculator():
       hero(bc("Cost Calculator"), "// COST CALCULATOR",
            'See your monthly cost in <em class="grad grad--cyan">seconds</em>',
            "Move the sliders to match your home or business &mdash; how many computers, and any Microsoft 365 licences &mdash; and watch a clear monthly total appear. Real prices straight from our live plans, with no obligation.",
-           cta1=("View Plans", "/monthly-it-support/"), cta2=("Talk to Us", "/contact/"),
+           cta1=("See Plans &amp; Prices", "/monthly-it-support/"), cta2=("Talk to Us", "/contact/"),
            chips=["Live sliders","Guide prices from real plans","Cancel anytime"]),
       calc,
       promise_strip(items=[PROMISE_CALL, PROMISE_ETA, PROMISE_PEOPLE], alt=True, title="What every plan includes"),
       faq_html(faqs),
       cta("See your exact price",
           "Pick a plan or get a tailored quote &mdash; a friendly techie will confirm everything, with no obligation.",
-          primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Get a Quote", "/contact/")),
+          primary=("See Plans &amp; Prices", "/monthly-it-support/"), secondary=("Get a Quote", "/contact/")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "Cost Calculator"), webpage(s, "IT Support Cost Calculator", _desc), faqpage(s, _faqs)])
@@ -12368,7 +12368,7 @@ def dell_3520_guide():
       tools_strip(["pcmapp", "speccheck", "pcbench", "healthcheck"], title="Free tools for your machine", alt=False),
       cta("This guide comes with the laptops we sell",
           "Refurbished business-grade Dell &mdash; Latitude laptops from &pound;510 (with a new 1TB Samsung 990 PRO), OptiPlex desktops from &pound;545 &mdash; tested, securely wiped, 5-year guarantee (with a support plan), and set up ready to use. Plus a friendly techie on the end of the phone.",
-          primary=("See Refurbished Dells", "/dell-hardware/"), secondary=("Keep It Healthy &mdash; Plans", "/monthly-it-support/")),
+          primary=("See Refurbished Dells", "/dell-hardware/"), secondary=("See Plans &amp; Prices", "/monthly-it-support/")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "Dell Latitude 3520 Guide"), webpage(s, "Dell Latitude 3520 — The Easy Owner's Guide", _desc),
@@ -12633,7 +12633,7 @@ def dell_optiplex_guide():
       tools_strip(["pcmapp", "speccheck", "pcbench", "pcbuild"], title="Free tools for your machine", alt=False),
       cta("This guide comes with the desktops we sell",
           "Refurbished business-grade Dell OptiPlex &amp; Latitude from &pound;545 &mdash; tested, new SSD, securely wiped, 5-year guarantee, and set up ready to use. Plus a friendly techie on the end of the phone.",
-          primary=("See Refurbished Dells", "/dell-hardware/"), secondary=("Keep It Healthy &mdash; Plans", "/monthly-it-support/")),
+          primary=("See Refurbished Dells", "/dell-hardware/"), secondary=("See Plans &amp; Prices", "/monthly-it-support/")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "Dell OptiPlex Guide"), webpage(s, "Dell OptiPlex — The Easy Owner's Guide", _desc),
@@ -13044,7 +13044,7 @@ def heatwave_guide():
       tools_strip(["pcmapp", "pcbench", "healthcheck"], title="Check your machine&rsquo;s health &mdash; free", lede_text="A hot summer is hard on tired machines. See how yours is really doing.", alt=False),
       cta("Beat the heat before it beats your tech",
           "A service cleans the fans and dust that cause summer meltdowns &mdash; and our monitored plans watch business machines&rsquo; health all year round, so the server cupboard never becomes a surprise.",
-          primary=("Book a Cooling Check", "/contact/"), secondary=("Monitored IT Support", "/monthly-it-support/")),
+          primary=("Book a Cooling Check", "/contact/"), secondary=("See Plans &amp; Prices", "/monthly-it-support/")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "Heatwave Tech Guide"), webpage(s, "The Heatwave Guide for Your Tech", _desc),
@@ -13599,7 +13599,7 @@ def is_it_down():
       tools_strip(["speed", "dns", "healthcheck"], title="While you&rsquo;re here &mdash; more free checks", alt=False),
       cta("Still down when everything says it shouldn&rsquo;t be?",
           "Then it&rsquo;s something local &mdash; the router, the computer, the Wi&#8209;Fi, a setting. That&rsquo;s our home turf: same-day help, usually within minutes remotely, from a friendly Dorset family firm.",
-          primary=("Get Help Now", "/contact/"), secondary=("Monthly IT Support", "/monthly-it-support/")),
+          primary=("Get Help Now", "/contact/"), secondary=("See Plans &amp; Prices", "/monthly-it-support/")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "Is It Down?"), webpage(s, "Is It Down? Live Service Status Checker", _desc),
@@ -14894,7 +14894,7 @@ def free_tools_hub():
       hero(bc("Free Tools"), "// FREE IT TOOLS &middot; NO DOWNLOAD",
            'Free IT tools that run in your <em class="grad grad--cyan">browser</em>',
            f"365 Techies offers {pos - 1} free IT tools that run entirely in your web browser &mdash; no download, no sign-up, nothing installed, and your passwords and files never leave your device. <a href=\"/website-checker/\">Check your website</a>, <a href=\"/broadband-speed-checker/\">test your broadband</a>, <a href=\"/password-breach-checker/\">see if a password&rsquo;s leaked</a>, <a href=\"/pc-benchmark/\">benchmark your PC</a> and more.",
-           cta1=("Talk to a Techie", "/contact/"), cta2=("View Monthly Plans", "/monthly-it-support/"),
+           cta1=("Talk to a Techie", "/contact/"), cta2=("See Plans &amp; Prices", "/monthly-it-support/"),
            chips=["100% free","No download","Built in Dorset"], scene=HERO_SCENES.get("tools")),
       '''    <section class="section" aria-label="Search" style="padding-top:0">
       <div class="wrap" style="display:flex;justify-content:center">
@@ -14912,7 +14912,7 @@ def free_tools_hub():
       faq_html(faqs),
       cta("Like the free stuff? The paid stuff is even better.",
           "These tools give you answers &mdash; our monthly plans give you a friendly techie who sorts the problems for you, from &pound;18.25/month per computer.",
-          primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Contact Us", "/contact/")),
+          primary=("See Plans &amp; Prices", "/monthly-it-support/"), secondary=("Contact Us", "/contact/")),
     ])
     def schema(s, _desc=desc, _items=items, _faqs=faqs):
         return graph([crumb(s, "Free Tools"), webpage(s, "Free IT Tools & Checkers", _desc, "CollectionPage"),
@@ -15360,7 +15360,7 @@ def repair_pages():
           faq_html(faqs),
           cta(f"Need a computer repair in {town}?",
               "Tell us what&rsquo;s wrong and we&rsquo;ll get you sorted &mdash; remotely, at home or by collection, with no call-out fee and a clear price first.",
-              primary=("Book a Repair", "/book-a-collection/"), secondary=("View Monthly Plans", "/monthly-it-support/")),
+              primary=("Book a Repair", "/book-a-collection/"), secondary=("See Plans &amp; Prices", "/monthly-it-support/")),
         ])
         def schema(s, _desc=desc, _faqs=faqs, _town=town):
             svc = service(s, f"Computer Repair {_town}", f"Computer and laptop repair for homes and businesses in {_town}, Dorset.", "Computer repair")
@@ -16063,7 +16063,7 @@ info_page(
           <h2>Contact us</h2>
           <p>Questions? Email <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a> or call <a href="tel:+441202775566">01202 775566</a>.</p>""" % UPDATED,
   cta_args=("Ready to get started?", "Pick a plan or talk to a friendly techie.",
-            ("View Monthly Plans", "/monthly-it-support/"), ("Contact Us", "/contact/")),
+            ("See Plans &amp; Prices", "/monthly-it-support/"), ("Contact Us", "/contact/")),
 )
 
 # ---- Cookie Policy
@@ -16128,7 +16128,7 @@ info_page(
           <p>We&rsquo;ve been looking after Dorset homes and businesses since 1995. These guarantees aren&rsquo;t marketing &mdash; they&rsquo;re simply how we&rsquo;ve always worked, and why our customers stay with us for years.</p>
           <p>If something isn&rsquo;t right, tell us and we&rsquo;ll put it right. That&rsquo;s our promise.</p>""",
   cta_args=("Experience the difference", "Join the Dorset homes and businesses who never worry about IT.",
-            ("View Monthly Plans", "/monthly-it-support/"), ("Why Choose Us", "/why-choose-365-techies/")),
+            ("See Plans &amp; Prices", "/monthly-it-support/"), ("Why Choose Us", "/why-choose-365-techies/")),
 )
 
 # ---- Meet the Team
@@ -16246,7 +16246,7 @@ info_page(
           <p>Accreditations and partnerships mean your technology is handled by people who are recognised, trained and trusted by the companies that make it. It&rsquo;s the difference between guesswork and genuine expertise.</p>
           <p>Combined with three decades of hands-on experience since 1995, it&rsquo;s why Dorset homes and businesses trust us with the technology they rely on.</p>""",
   cta_args=("Experience expert IT support", "Put our expertise to work for your home or business.",
-            ("View Monthly Plans", "/monthly-it-support/"), ("Contact Us", "/contact/")),
+            ("See Plans &amp; Prices", "/monthly-it-support/"), ("Contact Us", "/contact/")),
 )
 
 # ---- Pricing
@@ -16450,7 +16450,7 @@ info_page(
     ("Can you take over just one part, like Microsoft 365?","Yes. Some customers keep a hardware supplier or a web developer and move only their support and Microsoft 365 to us."),
   ],
   cta_args=("Ready to switch?", "Let&rsquo;s make moving to better IT support effortless.",
-            ("Start the Switch", "/contact/"), ("View Monthly Plans", "/monthly-it-support/")),
+            ("Start the Switch", "/contact/"), ("See Plans &amp; Prices", "/monthly-it-support/")),
 )
 
 # ---- IT support cost guide
@@ -16690,7 +16690,7 @@ info_page(
           <h2>Need it fixed right now?</h2>
           <p>For anything urgent, <a href="/remote-support/">start a remote support session</a> or call us on <a href="tel:+441202775566">01202 775566</a>. For hardware collection, see <a href="/book-a-collection/">book a collection</a>. Common questions are answered on our <a href="/faqs/">FAQ page</a>.</p>""",
   cta_args=("Want priority support as standard?", "Join a monthly plan and your tickets always jump the queue.",
-            ("View Monthly Plans", "/monthly-it-support/"), ("Contact Us", "/contact/")),
+            ("See Plans &amp; Prices", "/monthly-it-support/"), ("Contact Us", "/contact/")),
 )
 
 # ---- Book a Collection
@@ -16807,7 +16807,7 @@ info_page(
     ("Is the 99.9% availability guaranteed?", "It&rsquo;s our target for services we manage, excluding planned maintenance and things outside our control like third-party or broadband outages."),
   ],
   cta_args=("Support you can count on", "Get priority support backed by clear service levels &mdash; included with every monthly plan.",
-            ("View Monthly Plans", "/monthly-it-support/"), ("Our Guarantees", "/our-guarantees/")),
+            ("See Plans &amp; Prices", "/monthly-it-support/"), ("Our Guarantees", "/our-guarantees/")),
 )
 
 # ---- Resources hub
@@ -16901,7 +16901,7 @@ info_page(
   inner="""          <h2>Need a hand applying any of this?</h2>
           <p>Every guide and tool here is something we handle for our customers every day. If you&rsquo;d rather we just sorted it, get friendly monthly IT support for your home or business &mdash; or book a free IT health check.</p>""",
   cta_args=("Rather we just sorted it?", "Get friendly, proactive IT support from your local team &mdash; or start with a free health check.",
-            ("View Monthly Plans", "/monthly-it-support/"), ("Free IT Health Check", "/free-it-health-check/")),
+            ("See Plans &amp; Prices", "/monthly-it-support/"), ("Free IT Health Check", "/free-it-health-check/")),
 )
 
 # ---- Using AI Safely (beginner guide)
@@ -16961,7 +16961,7 @@ info_page(
           <h2>Still unsure about a word?</h2>
           <p>Our <a href="/it-jargon-buster/">A&ndash;Z jargon buster</a> explains the rest &mdash; or just ask us. We never talk down to anyone.</p>""",
   cta_args=("Prefer a real person to explain?", "We&rsquo;re patient, friendly and jargon-free &mdash; ask us anything, no question is too small.",
-            ("Talk to a Techie", "/contact/"), ("View Plans", "/monthly-it-support/")),
+            ("Talk to a Techie", "/contact/"), ("See Plans &amp; Prices", "/monthly-it-support/")),
 )
 
 # ---- Pre-call / get-ready checklists (print-friendly)
@@ -17031,7 +17031,7 @@ info_page(
           </ul>
           <p>It&rsquo;s why so many customers have stayed with us for years &mdash; and why we proudly specialise in supporting <a href="/it-support-for-retired-users/">retired</a> and <a href="/it-support-for-disabled-people/">disabled</a> people who deserve patient, respectful help.</p>""",
   cta_args=("Experience the difference", "Friendly, honest IT support from people who genuinely care.",
-            ("View Monthly Plans", "/monthly-it-support/"), ("Talk to a Techie", "/contact/")),
+            ("See Plans &amp; Prices", "/monthly-it-support/"), ("Talk to a Techie", "/contact/")),
 )
 
 # ---- Buyer's guide: choosing an IT support company
@@ -17108,7 +17108,7 @@ info_page(
           <p>If your technology matters to you &mdash; for work, for staying connected, or just for peace of mind &mdash; a local independent team that knows you usually wins on value and stress. A big-box desk can suit a quick one-off; DIY suits the very confident. Either way, we&rsquo;ll always give you an honest steer &mdash; even if that&rsquo;s &ldquo;you don&rsquo;t need us for this&rdquo;.</p>
           <p>Not sure? Try our 30-second <a href="/plan-finder/">Plan Finder</a>, get a <a href="/quick-quote/">quick quote</a>, or read <a href="/choosing-it-support/">how to choose an IT company</a>.</p>""",
   cta_args=("Talk it through, no pressure", "A friendly local techie will give you honest advice &mdash; whatever you decide.",
-            ("Talk to a Techie", "/contact/"), ("View Monthly Plans", "/monthly-it-support/")),
+            ("Talk to a Techie", "/contact/"), ("See Plans &amp; Prices", "/monthly-it-support/")),
 )
 
 # ---- Pre-quote cost worksheet
@@ -17315,7 +17315,7 @@ info_page(
               <li>Fully-managed servicing on set days &mdash; change it any time</li>
               <li><strong>Loyalty promise:</strong> if something does go wrong, any work you need is <strong>discounted</strong></li>
             </ul>
-            <a href="/monthly-it-support/" class="button primary plan-card__cta">See Monthly Plans</a>
+            <a href="/monthly-it-support/" class="button primary plan-card__cta">See Plans &amp; Prices</a>
           </article>
         </div>
       </div>
@@ -18730,7 +18730,7 @@ info_page(
     ("Do I get a report afterwards?","Yes. Every service ends with a written Service Report: your computer&rsquo;s health score and how it moved, the security position on the day, what we did, and the state of every drive and your backup. It is emailed to you, kept in your portal, and left on your Desktop. <a href=\"/free-pc-health-check/#six-weekly-service\">See what the report contains</a>."),
   ],
   cta_args=("Ready to never worry about IT again?","Join a friendly monthly plan and we&rsquo;ll keep your computers healthy &mdash; a full service every six weeks, with the same team who get to know you.",
-            ("View Monthly Plans","/monthly-it-support/"), ("Talk to a Techie","/contact/")),
+            ("See Plans &amp; Prices","/monthly-it-support/"), ("Talk to a Techie","/contact/")),
 )
 
 # ============================================================ TRUST: HOW WE PRICE
@@ -19010,7 +19010,7 @@ def what_would_you_lose():
       faq_html(faqs),
       cta("Never lose a thing, ever",
           "We set up automatic, verified, ransomware-safe backups and quietly keep an eye on them &mdash; included in every monthly plan.",
-          primary=("Backup &amp; Recovery","/backup-support/"), secondary=("View Monthly Plans","/monthly-it-support/")),
+          primary=("Backup &amp; Recovery","/backup-support/"), secondary=("See Plans &amp; Prices","/monthly-it-support/")),
     ])
     def schema(s,_d=desc,_f=faqs):
         return graph([crumb(s,"What Would You Lose?"), webpage(s,"What Would You Lose?",_d),
@@ -19314,7 +19314,7 @@ def computer_help_for_seniors():
     </section>''',
       faq_html(SENIOR_FAQS),
       cta("Help that treats you like family","Friendly, patient IT support for older people across Dorset and beyond &mdash; mostly on your own screen, always at your pace.",
-          primary=("Talk to a Techie","/contact/"), secondary=("View Monthly Plans","/monthly-it-support/")),
+          primary=("Talk to a Techie","/contact/"), secondary=("See Plans &amp; Prices","/monthly-it-support/")),
     ])
     allitems=guides+support
     def schema(s,_d=desc,_it=[{"@type":"ListItem","position":i+1,"name":t,"url":SITE+href} for i,(cat,t,d,href) in enumerate(allitems)]):
@@ -19357,7 +19357,7 @@ info_page(
     ("What is Sustainable Dorset?","It&rsquo;s a local community and network working towards a more sustainable Dorset. We&rsquo;re a member, and it reflects how we like to do business locally."),
   ],
   cta_args=("Make your tech last longer","Friendly, proactive IT support that keeps your computers healthy for years &mdash; better for you, and kinder to the planet.",
-            ("View Monthly Plans","/monthly-it-support/"), ("Talk to a Techie","/contact/")),
+            ("See Plans &amp; Prices","/monthly-it-support/"), ("Talk to a Techie","/contact/")),
 )
 
 # ============================================================ COMPARISON: MICROSOFT 365 VS GOOGLE WORKSPACE
@@ -19443,7 +19443,7 @@ info_page(
     ("Do I have to sign a long contract for managed support?","No &mdash; our plans are rolling and cancel-anytime. You stay because it&rsquo;s working, not because you&rsquo;re locked in."),
   ],
   cta_args=("Ready to stop firefighting?","Get predictable, proactive IT support that prevents problems instead of just reacting to them &mdash; from &pound;18.25/month per computer, cancel anytime.",
-            ("View Monthly Plans","/monthly-it-support/"), ("Get a Quick Quote","/quick-quote/")),
+            ("See Plans &amp; Prices","/monthly-it-support/"), ("Get a Quick Quote","/quick-quote/")),
 )
 
 # ============================================================ TOOL: DOWNTIME COST CALCULATOR
@@ -19505,7 +19505,7 @@ DOWNTIME_WIDGET = '''    <section class="section section--alt" aria-label="Downt
           window.ttToolDone&&window.ttToolDone('downtime-cost-calculator');document.getElementById('dt-result').innerHTML=
             '<p class="hc-bandlabel '+cls+'">About &pound;'+annual.toLocaleString()+' a year in lost time</p>'+
             '<p>Based on your own numbers, IT downtime could be costing your business roughly <strong>&pound;'+annual.toLocaleString()+' a year</strong> in lost working time alone &mdash; before counting lost data, missed deadlines or stress.'+ctx+'</p>'+
-            '<div class="quiz__actions"><a href="/monthly-it-support/" class="button primary">Prevent downtime</a><a href="/quick-quote/" class="button secondary">Get a quick quote</a></div>'+
+            '<div class="quiz__actions"><a href="/monthly-it-support/" class="button primary">See Plans &amp; Prices</a><a href="/quick-quote/" class="button secondary">Get a quick quote</a></div>'+
             '<p class="hc-disclaimer">A friendly estimate from your own figures, not a quote &mdash; real costs vary. For context on the wider cost of IT problems, the UK&rsquo;s <a href="https://www.ncsc.gov.uk/section/information-for/small-medium-sized-organisations" target="_blank" rel="noopener">NCSC</a> has useful guidance.</p>';
         }
         quiz.addEventListener('click',function(e){ var o=e.target.closest('.quiz__opt'); if(!o) return; var kv=o.getAttribute('data-set').split(':'); a[kv[0]]=kv[1];
@@ -19530,7 +19530,7 @@ def downtime_cost_calculator():
       hero(bc("Downtime Cost Calculator"), "// FREE BUSINESS TOOL",
            'What is IT downtime <em class="grad grad--green">costing you?</em>',
            "When systems go down, the meter is running &mdash; in lost hours, missed work and stress. Answer four quick questions for a friendly estimate based on your own numbers.",
-           cta1=("Prevent Downtime","/monthly-it-support/"), cta2=("Get a Quick Quote","/quick-quote/"),
+           cta1=("See Plans &amp; Prices","/monthly-it-support/"), cta2=("Get a Quick Quote","/quick-quote/"),
            chips=["Your own numbers","Takes 30 seconds","Nothing stored"]),
       DOWNTIME_WIDGET,
       faq_html(faqs),
@@ -19699,7 +19699,7 @@ def spring_clean_hub():
     </section>''',
       cta("Rather we did the spring clean?",
           "Join a monthly plan and we&rsquo;ll keep your computers fast, safe and tidy all year &mdash; with a full service every six weeks.",
-          primary=("View Monthly Plans","/monthly-it-support/"), secondary=("Free IT Health Check","/free-it-health-check/")),
+          primary=("See Plans &amp; Prices","/monthly-it-support/"), secondary=("Free IT Health Check","/free-it-health-check/")),
     ])
     def schema(s,_d=desc,_it=[{"@type":"ListItem","position":i+1,"name":t,"url":SITE+href} for i,(cat,t,d,href) in enumerate(items)]):
         return graph([crumb(s,"Spring-Clean Your Computer"), webpage(s,"Spring-Clean Your Computer",_d,"CollectionPage"),
@@ -19862,7 +19862,7 @@ def industry_page(d):
       bp.PCM_BAND,
       faq_html(faqs),
       cta(d["ctaHead"], d["ctaSub"],
-          primary=("Get a Recommendation", "/contact/"), secondary=("Business Support Plans", "/business-it-support-plans/")),
+          primary=("Get a Recommendation", "/contact/"), secondary=("See Business Plans &amp; Prices", "/business-it-support-plans/")),
     ])
     def schema(s, _cn=cn_schema, _desc=d["metaDesc"], _faqs=faqs):
         return graph([bp.crumb_sub(s, "IT Support by Industry", "it-support-by-industry", f"IT Support for {_cn}"),
@@ -19898,7 +19898,7 @@ def industry_hub():
       hero(bc("IT Support by Industry"), "// BY INDUSTRY",
            'IT support for <em class="grad grad--cyan">your line of work</em>',
            hero_trust("Every trade has its own software, its own rules and its own headaches. We tailor IT support to how your business actually runs &mdash; across Bournemouth, Poole and Dorset."),
-           cta1=("Get a Recommendation", "/contact/"), cta2=("Business Plans", "/business-it-support-plans/"),
+           cta1=("Get a Recommendation", "/contact/"), cta2=("See Business Plans &amp; Prices", "/business-it-support-plans/"),
            chips=["Specialist by sector", "Compliance-aware", "Real local family firm"]),
       f'''    <section class="section" aria-label="Industries we support">
       <div class="wrap">
@@ -20036,7 +20036,7 @@ def remote_access_page():
       faq_html(faqs),
       cta("Set up to work from anywhere",
           "Whether it&rsquo;s one home laptop or a whole team, we&rsquo;ll set up fast, fully-encrypted remote access and look after it for you &mdash; in plain English, from a real local team.",
-          primary=("Talk to us about remote access", "/contact/"), secondary=("See Business Plans", "/business-it-support-plans/")),
+          primary=("Talk to us about remote access", "/contact/"), secondary=("See Business Plans &amp; Prices", "/business-it-support-plans/")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "Remote Access"), webpage(s, "Remote Access - Work From Anywhere", _desc),
@@ -20123,7 +20123,7 @@ def service_parent_page(d):
     </section>''' if rel_html else ""),
       faq_html(faqs),
       cta(d["ctaHead"], d["ctaSub"],
-          primary=("Get a Quote", "/contact/"), secondary=("See Monthly IT Support", "/monthly-it-support/")),
+          primary=("Get a Quote", "/contact/"), secondary=("See Plans &amp; Prices", "/monthly-it-support/")),
     ])
     def schema(s, _cn=cn_schema, _desc=d["metaDesc"], _faqs=faqs):
         return graph([crumb(s, _cn), webpage(s, _cn, _desc),
@@ -22002,7 +22002,7 @@ def _printer_page_extras(d):
             '<h3 style="margin:0 0 .5rem;font-size:1.1rem">Never have this at 9am again</h3>'
             '<p style="margin:0 0 .6rem">On a 365 support plan, Windows and driver updates are applied on our schedule and checked afterwards, every six weeks, with a written Service Report each time. '
             '<b>Home &pound;18.25 per computer a month, business from &pound;24.38</b>, rolling monthly, no lock-in. The free <a href="/free-pc-health-check/">365 PC Manager</a> app also tells you when Windows is waiting for a restart.</p>'
-            '<p style="margin:0"><a class="button primary" href="/monthly-it-support/">See the support plans &#8594;</a> <a class="button secondary" href="/book-service/" style="margin-left:.4rem">Book a visit</a></p></div>')
+            '<p style="margin:0"><a class="button primary" href="/monthly-it-support/">See Plans &amp; Prices &#8594;</a> <a class="button secondary" href="/book-service/" style="margin-left:.4rem">Book a visit</a></p></div>')
     fig0 = ('<figure class="ff-fig" style="max-width:560px;margin:1rem 0"><img src="/images/printer-w11-services-print-spooler.webp" width="1200" height="852" '
             'alt="Windows 11 Services window with Print Spooler selected: Stop the service and Restart the service links, status Running, startup type Automatic" loading="lazy" decoding="async" '
             'style="display:block;width:100%;height:auto;border-radius:10px;border:1px solid rgba(125,170,220,.28)"><figcaption style="font-size:.72rem;color:var(--muted);margin-top:.35rem">'
@@ -22726,7 +22726,7 @@ _join_compare = '''<section class="section section--alt" id="included" aria-labe
     <p class="lede lede--center" data-reveal style="margin-top:.9rem">Recommended by a friend? Your <strong>first</strong> Computer Service &amp; Health Check is free either way &mdash; <a href="/book-service/">book it here</a> and mention their name.</p>
     <div class="page-hero__cta" style="justify-content:center;margin-top:1.4rem">
       <a href="/portal/" class="button primary button--lg">Join the 365 Club free</a>
-      <a href="/home-it-support-plans/" class="button secondary button--lg">See support plans</a>
+      <a href="/home-it-support-plans/" class="button secondary button--lg">See Home Plans &amp; Prices</a>
     </div>
   </div>
 </section>'''

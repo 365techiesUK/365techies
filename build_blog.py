@@ -121,7 +121,7 @@ def make_post(slug, cat, title, lede, body, points, related, faqs=None, dt="2026
         nodes.append(faqpage(slug, faqs))
     content = "\n".join([
       hero(bc3(title), f"// {cat.upper()}", title, lede,
-           cta1=("Read more advice", "/it-advice/"), cta2=("View Monthly Plans", "/monthly-it-support/"), byline=False),
+           cta1=("Read more advice", "/it-advice/"), cta2=("See Plans &amp; Prices", "/monthly-it-support/"), byline=False),
       f'''    <section class="section" aria-label="Article">
       <article class="article">
         <p class="mono" style="color:var(--muted);font-size:.8rem;margin:0 0 1.6rem">Published {dt_pretty} &middot; {cat} &middot; by the <a href="/meet-the-team/" style="color:var(--cyan)">365 Techies team</a> &mdash; Microsoft Partners &amp; Dell specialists, looking after Dorset since 1995</p>
@@ -144,7 +144,7 @@ def make_post(slug, cat, title, lede, body, points, related, faqs=None, dt="2026
       bp.COURSES_BAND if cat in ("Home Users", "Windows") else "",
       cta("Reliable IT support, every month",
           "Stop firefighting tech problems. Get friendly monthly IT support for your home or business across Dorset.",
-          primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+          primary=("See Plans &amp; Prices", "/monthly-it-support/"), secondary=("Call 01202 775566", "tel:+441202775566")),
     ])
     def schema(s, _nodes=nodes):
         return graph(_nodes)
@@ -533,7 +533,7 @@ def hub():
       hero(f'<a href="/">Home</a> <span>/</span> <span aria-current="page">IT Advice</span>',
            "// IT ADVICE HUB", 'IT advice <em class="grad grad--cyan">that actually helps</em>',
            "Helpful, jargon-free guides on getting the most from your technology — monthly support, home computers, business IT, Microsoft 365, cybersecurity and Windows. Tools, checklists and buyer&rsquo;s guides live in the <a href=\"/resources/\">resources hub</a>.",
-           cta1=("View Monthly Plans", "/monthly-it-support/"), cta2=("Contact Us", "/contact/"),
+           cta1=("See Plans &amp; Prices", "/monthly-it-support/"), cta2=("Contact Us", "/contact/"),
            chips=["Plain English", "Practical tips", "Updated regularly"]),
       f'''    <section class="section" style="padding-bottom:0" aria-label="Filter advice">
       <div class="wrap">
@@ -567,7 +567,7 @@ def hub():
     </script>''',
       cta("Rather we just sorted it?",
           "Every guide here is something we handle for our customers every day. Get friendly monthly IT support for your home or business.",
-          primary=("View Monthly Plans", "/monthly-it-support/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+          primary=("See Plans &amp; Prices", "/monthly-it-support/"), secondary=("Call 01202 775566", "tel:+441202775566")),
     ])
     def schema(s, _desc=desc):
         return graph([crumb(s, "IT Advice"), webpage(s, "IT Advice Hub", _desc, "CollectionPage")])
