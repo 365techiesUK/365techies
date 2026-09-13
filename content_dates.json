@@ -408,7 +408,8 @@
  },
  "cnc-machine-needs-windows-xp": {
   "first": "2026-09-05",
-  "h": "932de0ed42159bd0"
+  "h": "38ae3e5a5d0c3681",
+  "last": "2026-09-13"
  },
  "common-outlook-problems-and-fixes": {
   "first": "2026-06-16",
@@ -1062,8 +1063,8 @@
  },
  "ferrari-sd2-laptop-windows-xp": {
   "first": "2026-09-05",
-  "h": "8217fcba5c1bf85e",
-  "last": "2026-09-05"
+  "h": "5eb3feaa1d6e5133",
+  "last": "2026-09-13"
  },
  "file-transfer": {
   "first": "2026-07-28",
