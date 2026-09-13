@@ -3290,7 +3290,12 @@ def _fix_flow_section(cfg):
             '          <template id="ff-tpl-text">' + cfg['steps_text'] + '</template>\n'
             '        </div>\n      </div>\n' + FIX_FLOW_SCRIPT + '\n    </section>\n')
 
-def _ff_plan_card(lead):
+def _ff_plan_card(lead, business=False):
+    """business=True on the flows that go to the business plans page (13 Sep 2026): the office wording and the office price."""
+    if business:
+        return ('<div class="ff-plan"><b>' + lead + '</b> On a 365 business plan every computer in the office gets a full service every six weeks: Windows, driver and app '
+                'updates applied and checked, security and backup looked at, and a written Service Report each time, with remote support for the day-to-day. '
+                'From &pound;24.38 per computer a month, no lock-in.</div>')
     return ('<div class="ff-plan"><b>' + lead + '</b> On a 365 support plan every computer gets a full service every six weeks: Windows, driver and app '
             'updates applied and checked, security and backup looked at, and a written Service Report each time. Home &pound;18.25 per computer a month, '
             'business from &pound;24.38, rolling monthly.</div>')
@@ -3300,7 +3305,7 @@ def _ff_fixed_ending(h3, tip, plan_lead, plans_href='/monthly-it-support/'):
     """plan_lead=None means no plan pitch at all (diagnosis playbooks, a swollen battery): just the copy button.
     plans_href: the business plans page for business-shaped problems, the home plans page otherwise."""
     plans = ('<a class="button primary" href="' + plans_href + '">See the support plans &#8594;</a><a class="button secondary" href="/free-pc-health-check/">Get the free app</a>' if plan_lead else '')
-    return ('<h3>' + h3 + '</h3><p>' + tip + '</p>' + (_ff_plan_card(plan_lead) if plan_lead else '') +
+    return ('<h3>' + h3 + '</h3><p>' + tip + '</p>' + (_ff_plan_card(plan_lead, plans_href == '/business-it-support-plans/') if plan_lead else '') +
             '<div class="ff-cta">' + plans + '<button type="button" class="button ' + ('bm-ghost' if plan_lead else 'primary') + '" id="ff-copyall">Copy these steps</button></div>')
 def _ff_stuck_ending(h3, what, tail=' Usually the same day, remote help from &pound;20, and no fix, no fee.', link=('/remote-support/', 'How remote help works')):
     """link: the third button. Remote help by default; phone pages point at the service that actually covers a phone

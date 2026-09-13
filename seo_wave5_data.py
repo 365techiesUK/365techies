@@ -220,8 +220,8 @@ SEO_WAVE5_PAGES = [{'slug': 'windows-11-network-credentials-shared-folder',
                  'password. A renamed computer, a new address from the router, or an account '
                  'deleted and recreated will all do it too.'}],
   'chips': ['No fix, no fee', 'Rated 4.9 on Google', 'Trading since 1995'],
-  'primaryCta': ['Get it looked at', '/contact/'],
-  'secondaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  'secondaryCta': ['Get it looked at', '/contact/'],
   'schemaKind': 'service',
   'crossLinksHtml': '<p><strong>Related guides:</strong> <a '
                     'href="/share-files-small-office-without-server/">Sharing files without a '
