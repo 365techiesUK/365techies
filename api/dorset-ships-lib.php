@@ -303,7 +303,11 @@ if (!defined('DORSET_SHIPS_LIB')) {
         $fail = isset($p['failures']) ? (int)$p['failures'] : 0;
         $out = array('lastMessageAt' => $lastMsg, 'silentForMs' => null, 'reconnectAttempt' => $fail,
                      'nextAttemptAt' => isset($p['nextAttemptAt']) ? $p['nextAttemptAt'] : null,
-                     'staleAfterMs' => SHIPS_SILENCE_MS, 'watchdog' => 'cron');
+                     'staleAfterMs' => SHIPS_SILENCE_MS, 'watchdog' => 'cron',
+                     'poll' => array('lastPollAt' => $lastPoll, 'lastError' => isset($p['lastError']) ? $p['lastError'] : null,
+                                     'lastMessages' => isset($p['lastMessages']) ? $p['lastMessages'] : null,
+                                     'lastFrames' => isset($p['lastFrames']) ? $p['lastFrames'] : null,
+                                     'lastSeconds' => isset($p['lastSeconds']) ? $p['lastSeconds'] : null));
         if (!$hasKey) return $out + array('status' => 'missing-key', 'error' => 'AISSTREAM_API_KEY is not set');
         if (!empty($p['authFailed'])) return $out + array('status' => 'auth-failed', 'error' => 'API key rejected by AISStream');
         if ($lastPoll === null) return $out + array('status' => 'idle', 'error' => 'waiting for the first poll');
@@ -336,6 +340,7 @@ if (!defined('DORSET_SHIPS_LIB')) {
             'nextAttemptAt' => $h['nextAttemptAt'],
             'staleAfterMs' => $h['staleAfterMs'],
             'watchdog' => $h['watchdog'],
+            'poll' => $h['poll'],
             'count' => count($rows),
         );
     }
@@ -363,8 +368,8 @@ if (!defined('DORSET_SHIPS_LIB')) {
             $chunk = @fread($fp, $n - strlen($buf));
             if ($chunk === false || $chunk === '') {
                 if (feof($fp)) return null;
-                $info = stream_get_meta_data($fp);
-                if (!empty($info['timed_out'])) return null;
+                // A socket read timeout (stream_set_timeout) is a quiet spell, not a
+                // closed feed: keep waiting until the capture deadline.
                 usleep(20000);
                 continue;
             }
@@ -438,11 +443,22 @@ if (!defined('DORSET_SHIPS_LIB')) {
         ));
         if (@fwrite($fp, ships_ws_frame(1, $sub)) === false) { $report['error'] = 'subscribe: write failed'; fclose($fp); return $report; }
         $deadline = microtime(true) + $seconds;
+        $subscribedAt = microtime(true);
         $fragment = '';
         while (microtime(true) < $deadline) {
             $frame = ships_ws_read($fp, $deadline);
             if ($frame === null) {
-                if (feof($fp)) { $report['error'] = $report['messages'] ? null : 'connection closed by the server'; }
+                if (feof($fp)) {
+                    if ($report['messages']) { /* a normal end after traffic */ }
+                    elseif ($report['frames'] === 0 && microtime(true) - $subscribedAt < 5) {
+                        // Verified 13 Sep 2026 from Node and PHP alike: a rejected key gets no
+                        // error message, the server simply drops the socket within a second.
+                        $report['error'] = 'AISStream closed the connection right after the subscription (key rejected or subscription refused)';
+                        $report['authFailed'] = true;
+                    } else {
+                        $report['error'] = 'connection closed by the server';
+                    }
+                }
                 break;
             }
             list($op, $data, $fin) = $frame;

@@ -56,6 +56,9 @@ ships_prune($store, $endMs);
 $store['poll']['lastPollAt'] = $endMs;
 $store['poll']['nextAttemptAt'] = $endMs + 60000;
 $store['poll']['authFailed'] = !empty($report['authFailed']);
+$store['poll']['lastMessages'] = $report['messages'];
+$store['poll']['lastFrames'] = $report['frames'];
+$store['poll']['lastSeconds'] = (int)round(($endMs - $nowMs) / 1000);
 if ($report['ok']) {
     $store['poll']['failures'] = 0;
     $store['poll']['lastError'] = null;
