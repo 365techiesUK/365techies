@@ -97,6 +97,19 @@
          relay's rate limit); the flag clears on success so a genuinely new enquiry pings. */
       if (!form.dataset.slackSent) try {
         form.dataset.slackSent = "1";
+        /* 13 Sep 2026 (funnel audit item 6): count the enquiry the moment it is sent, alongside the Slack
+           ping. generate_lead further down only fires when HubSpot answers OK, which the audit could not
+           confirm it does. A form may name its own event with data-ga-event (the Dell picker: dell_reserve,
+           with the machine label); every other contact-form is enquiry_sent. Internal visits excluded as
+           everywhere else on the site. */
+        try {
+          if (typeof window.gtag === "function" && !(fn && fn.internal) && localStorage.getItem("tt_internal") !== "1") {
+            var evName = form.getAttribute("data-ga-event") || "enquiry_sent";
+            var evParams = { form_page: location.pathname, form_topic: topic || "(none)" };
+            if (val(form, "machine")) evParams.machine = val(form, "machine").slice(0, 90);
+            window.gtag("event", evName, evParams);
+          }
+        } catch (gerr0) {}
         fetch("/api/slack-lead.php", {
           method: "POST",
           headers: { "Content-Type": "application/json" },

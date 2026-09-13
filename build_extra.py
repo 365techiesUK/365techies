@@ -9186,7 +9186,7 @@ def dell_picker_section():
               <button type="button" class="button" id="dcmp-run">&#9889; How much faster is this than my current computer?</button>
               <div class="dcmp__out" id="dcmp-out" hidden aria-live="polite"></div>
             </div>
-            <form class="contact-form dpick__form" method="post" action="/api/form-relay.php" data-success="&#10003; Sent &mdash; thank you! We&rsquo;re checking availability for your pick and a real 365 techie will be in contact shortly with your quote.">
+            <form class="contact-form dpick__form" data-ga-event="dell_reserve" method="post" action="/api/form-relay.php" data-success="&#10003; Sent &mdash; thank you! We&rsquo;re checking availability for your pick and a real 365 techie will be in contact shortly with your quote.">
               <input type="hidden" name="machine" id="dpick-machine" value="" />
               <input type="hidden" name="current_system" id="dcmp-field" value="" />
               <input type="hidden" name="topic" value="Dell availability &amp; quote" />
