@@ -1162,7 +1162,7 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None, robot
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=22"></script>
-  <script src="/js/a11y.min.js?v=12" defer></script>
+  <script src="/js/a11y.min.js?v=13" defer></script>
   <script src="/js/forms.min.js?v=11" defer></script>
   <script src="/js/search.min.js?v={SEARCHV}" defer></script>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->
