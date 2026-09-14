@@ -426,3 +426,37 @@
   };
   if ("requestIdleCallback" in window) requestIdleCallback(run, { timeout: 4000 }); else setTimeout(run, 1200);
 })();
+
+/* ==========================================================================
+   14 Sep 2026 (performance audit item 1): scenes animate only while on screen, and
+   content-visibility pages render everything for a moment around a fragment jump.
+   ========================================================================== */
+(function () {
+  var SEL = ".nm-link,.nm-scan,.nm-hub,.nm-node,.nm-dot,.cs-float,.float-icon,.ring-pulse";
+  function scenes() {
+    var els = document.querySelectorAll(SEL); if (!els.length) return;
+    if (!("IntersectionObserver" in window)) { document.documentElement.classList.add("scenes-live"); return; }
+    var seen = [], i, el, t;
+    for (i = 0; i < els.length; i++) {
+      el = els[i];
+      t = (el.closest && (el.closest("svg") || el.closest(".plan-card__icons"))) || el;
+      if (seen.indexOf(t) < 0) seen.push(t);
+    }
+    var io = new IntersectionObserver(function (entries) {
+      for (var j = 0; j < entries.length; j++) entries[j].target.classList.toggle("is-live", entries[j].isIntersecting);
+    }, { rootMargin: "25% 0px" });
+    for (i = 0; i < seen.length; i++) io.observe(seen[i]);
+  }
+  var cvTimer = null;
+  function cvOff() {
+    var m = document.querySelector("main[data-cv]"); if (!m) return;
+    m.classList.add("cv-off"); clearTimeout(cvTimer);
+    cvTimer = setTimeout(function () { m.classList.remove("cv-off"); }, 3200);   // outlasts the smooth scroll
+  }
+  document.addEventListener("click", function (e) {
+    var a = e.target && e.target.closest && e.target.closest("a[href*=\"#\"]");
+    if (a && a.hash && a.pathname === location.pathname) cvOff();
+  }, true);
+  if (location.hash) cvOff();
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", scenes); else scenes();
+})();

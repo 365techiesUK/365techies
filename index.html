@@ -93,16 +93,11 @@
   <link rel="me" href="https://www.facebook.com/365computersuk" />
 
   <!-- Resource hints -->
-  <link rel="preconnect" href="https://fonts.bunny.net" />
-  <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" fetchpriority="high" crossorigin />
+  <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="/fonts/clash-display-700.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
-  <noscript>
-    <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
-  </noscript>
 
-  <link rel="stylesheet" href="css/styles.min.css?v=112" />
+  <link rel="stylesheet" href="css/styles.min.css?v=113" />
   <style>/* Emergency styles - see the SENTINEL rule at the foot of styles.css.
     ⚠️ This homepage is hand-maintained: keep this block in step with the copy in
     build_pages.py that every generated page gets. */
@@ -131,7 +126,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=112&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=113&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -734,7 +729,7 @@
     <p class="mobile-menu__foot mono"><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a><br /><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a></p>
   </aside>
 
-  <main id="main">
+  <main id="main" data-cv>
 
     <!-- ============ HERO ============ -->
     <section class="hero" id="hero">
@@ -844,14 +839,14 @@
       </div>
       <div class="split-section__visual">
         <div class="scene-frame" data-reveal>
-          <video id="pcm-live" autoplay muted loop playsinline preload="metadata" width="880" height="640" poster="/images/pcm-app-live-poster.jpg" aria-label="Screen recording of 365 PC Manager running on a Windows PC" style="display:block;width:100%;height:auto;border-radius:12px;background:#0b1d3a">
+          <video id="pcm-live" muted loop playsinline preload="none" width="880" height="640" poster="/images/pcm-app-live-poster.webp" aria-label="Screen recording of 365 PC Manager running on a Windows PC" style="display:block;width:100%;height:auto;border-radius:12px;background:#0b1d3a">
             <source src="/images/pcm-app-live.mp4" type="video/mp4">
           </video>
           <span class="scene-frame__corner tl"></span><span class="scene-frame__corner tr"></span>
           <span class="scene-frame__corner bl"></span><span class="scene-frame__corner br"></span>
           <p class="scene-frame__label mono"><span class="rec-dot"></span> REAL SCREEN RECORDING &mdash; 365 PC MANAGER</p>
         </div>
-        <script>try{if(matchMedia("(prefers-reduced-motion: reduce)").matches){var v=document.getElementById("pcm-live");v.removeAttribute("autoplay");v.pause();}}catch(e){}</script>
+        <script>(function(){var v=document.getElementById("pcm-live");if(!v)return;try{if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;}catch(e){}var s=false;function go(){s=true;v.play().catch(function(){});}if(!("IntersectionObserver" in window)){go();return;}new IntersectionObserver(function(es){for(var i=0;i<es.length;i++){if(es[i].isIntersecting)go();else if(s){try{v.pause();}catch(e){}}}},{rootMargin:"100% 0px"}).observe(v);})();</script>
       </div>
     </section>
 
@@ -1698,7 +1693,7 @@
     </div>
   </div>
   <script type="module" src="js/main.min.js?v=17"></script>
-  <script src="js/a11y.min.js?v=10" defer></script>
+  <script src="js/a11y.min.js?v=11" defer></script>
   <script src="js/search.min.js?v=654de821" defer></script>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>Cookies run our live chat and site stats. <a href="/cookie-policy/">Cookie policy</a>.</p>

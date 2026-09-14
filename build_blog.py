@@ -1117,7 +1117,7 @@ if os.path.exists(_css_src):
 import shutil as _shutil, subprocess as _subprocess
 _terser = os.path.join(bp.BASE, "node_modules", ".bin", "terser.cmd")
 # main/interior are ES modules (loaded with type=module); a11y/forms are classic scripts.
-for _js, _is_module in (("main", True), ("interior", True), ("a11y", False), ("forms", False), ("search", False)):
+for _js, _is_module in (("main", True), ("interior", True), ("a11y", False), ("forms", False), ("search", False), ("spec-checker", False), ("pcbench", False)):
     _src = os.path.join(bp.BASE, "js", _js + ".js")
     _dst = os.path.join(bp.BASE, "js", _js + ".min.js")
     if not os.path.exists(_src):
