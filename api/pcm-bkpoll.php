@@ -213,6 +213,11 @@ require_once __DIR__ . '/pcm-review.php';   // _once: already loaded at the top 
 $mailR = rv_process(3);
 $mailD = dn_process(3);
 $mailM = rm_process(5);
+// 14 Sep 2026 (owner: "send within 5 minutes"): the six-weekly service report email used to wait for the
+// 2-hourly GitHub run (up to two hours after the service, next morning after 19:17). sr_process guards itself
+// (09:00-20:00 only, queue lock, 60 s ran-recently, $SR_LIVE), so it rides this poll like the other queues and
+// the 2-hourly run stays as the fallback.
+$mailS = sr_process(5);
 jout(array('ok' => true, 'bookings' => count($rows), 'seeded' => $seeded, 'changed' => $changed, 'alerts' => count($toSlack),
            'review_asks_queued' => $rvQueued,
-           'mail' => array('review' => $mailR, 'done' => $mailD, 'remind' => $mailM, 'welcome' => $GLOBALS['mailW'])));
+           'mail' => array('review' => $mailR, 'done' => $mailD, 'remind' => $mailM, 'report' => $mailS, 'welcome' => $GLOBALS['mailW'])));
