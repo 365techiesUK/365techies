@@ -2166,12 +2166,16 @@ function sr_resend_as_visit_once($dataFile = null, $from = 1789344000, $to = 178
     if (!$lk) return array('skip' => 'locked');
     if (!empty($q['sr_resend_visit_1'])) { rvq_close($lk); return array('skip' => 'done'); }
     $names = array(); $refs = array(); $sup = 0;
+    $diag = array('entries' => count($q['sr']), 'selfrun_sent' => 0, 'in_window' => 0, 'booked' => 0, 'bookings' => count($q['q']));   // counts only, for the one-time Slack line
     foreach ($q['sr'] as $id => $e) {
         if (empty($e['selfrun']) || (isset($e['st']) ? $e['st'] : '') !== 'sent' || !empty($e['resent_as'])) continue;
+        $diag['selfrun_sent']++;
         $ts = isset($e['ts']) ? (int)$e['ts'] : 0;
         if ($ts < (int)$from || $ts > (int)$to) continue;
+        $diag['in_window']++;
         $em = strtolower(trim((string)(isset($e['em']) ? $e['em'] : '')));
         if ($em === '' || !sr_visit_booked_in($q, $em, $ts)) continue;
+        $diag['booked']++;
         $nid = $id . '-visit';
         if (isset($q['sr'][$nid])) continue;
         $n = $e;
@@ -2192,8 +2196,12 @@ function sr_resend_as_visit_once($dataFile = null, $from = 1789344000, $to = 178
     // latch only once something was re-queued (a missing booking row must not burn the one chance),
     // or a day after the window, when there is nothing left to find
     if ($names || time() > (int)$to + 86400) $q['sr_resend_visit_1'] = time();
+    // nothing matched: say so ONCE (counts only, no names) so the reason is visible without server access
+    $sayDiag = (!$names && empty($q['sr_resend_visit_1_diag']));
+    if ($sayDiag) $q['sr_resend_visit_1_diag'] = time();
     rvq_save($q);
     rvq_close($lk);
+    if ($sayDiag && $SR_LIVE) rv_slack(':mag: 365 mail: re-send check found nothing to re-queue - ' . json_encode($diag));
     // the portal's report list: 'selfrun' -> 'service' on the machine record, under the lock the app uses.
     // A file that will not parse is left alone (refuse-to-wipe), exactly as the poller treats it.
     $flipped = 0;
@@ -2221,7 +2229,7 @@ function sr_resend_as_visit_once($dataFile = null, $from = 1789344000, $to = 178
         if ($dlk) { @flock($dlk, LOCK_UN); @fclose($dlk); }
     }
     if ($names && $SR_LIVE) rv_slack(':repeat: 365 mail: re-sending ' . count($names) . ' service report(s) as the 6-weekly report' . rv_name_list($names) . ' - they went out tagged self-run before the booked-visit rule (portal tag corrected on ' . $flipped . ')');
-    return array('requeued' => count($names), 'superseded' => $sup, 'portal_flipped' => $flipped);
+    return array('requeued' => count($names), 'superseded' => $sup, 'portal_flipped' => $flipped, 'diag' => $diag);
 }
 
 function sr_record($key, $machine, $ts, $summary, $cust, $prev = array()) {
@@ -2550,6 +2558,7 @@ if (!defined('RV_LIB')) {
         // whether anything is SENT is governed by $BF_LIVE, which ships false.
         $r6 = bf_seed();
         $r7 = bf_process(3);
+        $r9 = sr_resend_as_visit_once(__DIR__ . '/pcm-data.json');   // 14 Sep 2026 one shot; self-guarding, a no-op after
         $r8 = sr_process(5);   // six-weekly service report emails, governed by $SR_LIVE
         // this entry point is the 2-hourly GitHub cron, which runs on a machine SiteGround
         // cannot take down - so it is the right place to notice SiteGround's cron has died
@@ -2558,6 +2567,7 @@ if (!defined('RV_LIB')) {
         if ($rv_admin) echo json_encode(array('ok' => true, 'mode' => 'run',
             'review' => array('live' => (bool)$GLOBALS['RV_LIVE'], 'result' => $r),
             'done' => array('live' => (bool)$GLOBALS['DN_LIVE'], 'result' => $r2),
+            'resend' => $r9,
             'remind' => array('live' => (bool)$GLOBALS['RM_LIVE'], 'result' => $r3),
             'welcome' => array('live' => (bool)$GLOBALS['WC_LIVE'], 'result' => $r4),
             'watchdog' => $r5,
