@@ -128,6 +128,16 @@ ok(strpos(sr_body('Sofia', $entS), 'You ran your full 365 service') !== false &&
 ok(strpos(sr_body_html('Sofia', $entS), 'You ran your full 365 service') !== false && strpos(sr_body_html('Sofia', $entS), 'Your self-run service is done') !== false, 'self-run HTML intro and heading');
 ok($ent['selfrun'] === false && strpos(sr_body('Sofia', $ent), "Today's six-weekly service") !== false && strpos(sr_subject($ent), 'Your service report - ') === 0, 'a visit report reads exactly as before');
 
+echo "-- a booked visit makes the app-launched service the visit's report\n";
+ok(sr_visit_booked('sofia.example@example.com', $TS + 10) === true, 'a pending visit for the same person within 36 h is found');
+ok(sr_visit_booked('SOFIA.example@example.com', $TS + 3600 * 30) === true, 'case-insensitive, and 30 h either side still counts');
+ok(sr_visit_booked('sofia.example@example.com', $TS + 86400 * 3) === false, 'a visit three days away does not');
+ok(sr_visit_booked('nobody@example.com', $TS + 10) === false, 'another person\'s visit does not');
+ok(sr_visit_booked('', $TS + 10) === false, 'no email, no match');
+list($lkC, $qC) = rvq_open(); $qC['q']['9010']['st'] = 'cancelled'; rvq_save($qC); rvq_close($lkC);
+ok(sr_visit_booked('sofia.example@example.com', $TS + 10) === false, 'a cancelled booking does not count');
+list($lkC, $qC) = rvq_open(); $qC['q']['9010']['st'] = 'pending'; rvq_save($qC); rvq_close($lkC);
+
 echo "-- who is told when the next service is\n";
 // A support-plan customer is; anybody else is not, because it would promise a visit
 // they do not pay for. Absent flag = not on a plan, so old entries lose the line too.

@@ -715,6 +715,14 @@ if ($action === 'reportup') {
         if (array_key_exists('selfrun', $sumr)) $selfrun = !empty($sumr['selfrun']);
         elseif (!empty($mrec['selfrun_served']) && (time() - (int)$mrec['selfrun_served']) < 8 * 3600) $selfrun = true;
         unset($mrec['selfrun_served']);
+        // A booked visit within 36 hours means the team pressed the app's button during the visit
+        // (Splashtop, from the customer's own app): the report is the visit's, not a self-run.
+        if ($selfrun) {
+            if (!defined('RV_LIB')) define('RV_LIB', 1);
+            require_once __DIR__ . '/pcm-review.php';   // top-level scope on purpose (php-include-scope-trap)
+            $cem = strtolower(trim((string)(isset($db['customers'][$key]['email']) ? $db['customers'][$key]['email'] : '')));
+            if ($cem !== '' && function_exists('sr_visit_booked') && sr_visit_booked($cem, $rts)) { $selfrun = false; $sumr['selfrun_booked'] = true; }
+        }
         $sumr['selfrun'] = $selfrun;   // what Slack and the customer email are built from
     }
     if ($kind === 'service') { $repk[(string)$rts] = $selfrun ? 'selfrun' : 'service'; $repm[(string)$rts] = array('score' => $scoren); }

@@ -2122,6 +2122,28 @@ function sr_sample() {
    $summary is the uploader's structured twin (scoren/score, model/pc, os, notes,
    done, backup, next); $cust the customer record (email, name); $prev the previous
    scored service {ts, score} or empty. Returns what happened, for the upload reply. */
+/** Is a technician's visit booked for this person within 36 hours of a report? Then the app's
+ *  "Run my full 365 service" button was pressed during that visit - the team runs the service
+ *  over Splashtop from the customer's own app - and the report is the visit's report, not a
+ *  self-run. Same window and same queue the superseding rule below uses (rv_record queues every
+ *  booking with its visit end when it is made, so the entry exists before the service runs).
+ *  14 Sep 2026: the owner ran two booked services from the app and both came out "self-run". */
+function sr_visit_booked($email, $ts) {
+    $email = strtolower(trim((string)$email));
+    if ($email === '') return false;
+    list($lk, $q) = rvq_open();
+    if (!$lk) return false;
+    $hit = false;
+    foreach ((array)(isset($q['q']) ? $q['q'] : array()) as $e) {
+        if ((isset($e['em']) ? strtolower((string)$e['em']) : '') !== $email) continue;
+        if ((isset($e['st']) ? $e['st'] : '') === 'cancelled') continue;
+        $end = isset($e['end']) ? (int)$e['end'] : 0;
+        if ($end > 0 && abs($end - (int)$ts) <= 129600) { $hit = true; break; }
+    }
+    rvq_close($lk);
+    return $hit;
+}
+
 function sr_record($key, $machine, $ts, $summary, $cust, $prev = array()) {
     global $SR_LINK_DAYS;
     $email = strtolower(trim((string)(isset($cust['email']) ? $cust['email'] : '')));
