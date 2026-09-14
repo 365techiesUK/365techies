@@ -2133,15 +2133,95 @@ function sr_visit_booked($email, $ts) {
     if ($email === '') return false;
     list($lk, $q) = rvq_open();
     if (!$lk) return false;
-    $hit = false;
+    $hit = sr_visit_booked_in($q, $email, $ts);
+    rvq_close($lk);
+    return $hit;
+}
+/** The same question over a queue the caller already holds open (the lock is not re-entrant). */
+function sr_visit_booked_in($q, $email, $ts) {
+    $email = strtolower(trim((string)$email));
+    if ($email === '') return false;
     foreach ((array)(isset($q['q']) ? $q['q'] : array()) as $e) {
         if ((isset($e['em']) ? strtolower((string)$e['em']) : '') !== $email) continue;
         if ((isset($e['st']) ? $e['st'] : '') === 'cancelled') continue;
         $end = isset($e['end']) ? (int)$e['end'] : 0;
-        if ($end > 0 && abs($end - (int)$ts) <= 129600) { $hit = true; break; }
+        if ($end > 0 && abs($end - (int)$ts) <= 129600) return true;
     }
+    return false;
+}
+
+/** One shot, 14 Sep 2026. Two booked six-weekly services were run from the customer's app over
+ *  Splashtop and emailed as "Your self-run service report" before the booked-visit rule above
+ *  existed (c8741559). Owner: "send today's service reports again ... it doesn't look good saying
+ *  self service when we have done the service as the customer's 6 weekly service". For every SENT
+ *  self-run report in the window whose person had a booked visit within 36 h: queue the same report
+ *  again as the visit's (six-weekly wording, same content and link), flip the portal's report tag in
+ *  pcm-data.json from self-run to service, supersede the visit's own job-done email as a visit
+ *  report does, and say so in Slack. Guarded by a flag in the queue AND a window that closed at
+ *  10:45 UTC on 14 Sep 2026, so it can never touch a later report. Called by pcm-bkpoll.php ahead
+ *  of sr_process, so the copies go out on the same five-minute run. */
+function sr_resend_as_visit_once($dataFile = null, $from = 1789344000, $to = 1789382700) {
+    global $SR_LIVE;
+    list($lk, $q) = rvq_open();
+    if (!$lk) return array('skip' => 'locked');
+    if (!empty($q['sr_resend_visit_1'])) { rvq_close($lk); return array('skip' => 'done'); }
+    $names = array(); $refs = array(); $sup = 0;
+    foreach ($q['sr'] as $id => $e) {
+        if (empty($e['selfrun']) || (isset($e['st']) ? $e['st'] : '') !== 'sent' || !empty($e['resent_as'])) continue;
+        $ts = isset($e['ts']) ? (int)$e['ts'] : 0;
+        if ($ts < (int)$from || $ts > (int)$to) continue;
+        $em = strtolower(trim((string)(isset($e['em']) ? $e['em'] : '')));
+        if ($em === '' || !sr_visit_booked_in($q, $em, $ts)) continue;
+        $nid = $id . '-visit';
+        if (isset($q['sr'][$nid])) continue;
+        $n = $e;
+        unset($n['snd'], $n['sent_ts'], $n['why'], $n['resent_as']);
+        $n['selfrun'] = false; $n['st'] = 'pending'; $n['tries'] = 0; $n['made'] = time(); $n['resend_of'] = $id;
+        $q['sr'][$nid] = $n;
+        $q['sr'][$id]['resent_as'] = $nid;
+        // one email per service: the visit's own job-done email is carried by the report, as in sr_record
+        foreach ($q['q'] as $bid => $b) {
+            if ((isset($b['em']) ? strtolower((string)$b['em']) : '') !== $em) continue;
+            if ((isset($b['dn']) ? $b['dn'] : 'pending') !== 'pending') continue;
+            $end = isset($b['end']) ? (int)$b['end'] : 0;
+            if ($end > 0 && abs($end - $ts) <= 129600) { $q['q'][$bid]['dn'] = 'superseded'; $q['q'][$bid]['dn_by'] = $nid; $sup++; }
+        }
+        $names[] = isset($e['nm']) ? $e['nm'] : '';
+        $refs[] = $id;
+    }
+    // latch only once something was re-queued (a missing booking row must not burn the one chance),
+    // or a day after the window, when there is nothing left to find
+    if ($names || time() > (int)$to + 86400) $q['sr_resend_visit_1'] = time();
+    rvq_save($q);
     rvq_close($lk);
-    return $hit;
+    // the portal's report list: 'selfrun' -> 'service' on the machine record, under the lock the app uses.
+    // A file that will not parse is left alone (refuse-to-wipe), exactly as the poller treats it.
+    $flipped = 0;
+    if ($refs && is_string($dataFile) && $dataFile !== '' && file_exists($dataFile)) {
+        $dlk = @fopen($dataFile . '.lock', 'c'); if ($dlk) @flock($dlk, LOCK_EX);
+        $db = @json_decode((string)@file_get_contents($dataFile), true);
+        if (is_array($db) && isset($db['customers']) && is_array($db['customers'])) {
+            foreach ($refs as $id) {
+                $p = explode('-', $id);            // kh-machine-ts: none of the three holds a dash
+                if (count($p) !== 3) continue;
+                list($kh, $machine, $ts) = $p;
+                foreach ($db['customers'] as $key => $c) {
+                    if (substr(hash('sha256', (string)$key), 0, 12) !== $kh) continue;
+                    if (isset($c['machines'][$machine]['repk'][(string)$ts]) && $c['machines'][$machine]['repk'][(string)$ts] === 'selfrun') {
+                        $db['customers'][$key]['machines'][$machine]['repk'][(string)$ts] = 'service'; $flipped++;
+                    }
+                    break;
+                }
+            }
+            if ($flipped > 0) {
+                $tmp = $dataFile . '.' . getmypid() . '.tmp';
+                if (@file_put_contents($tmp, json_encode($db, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $dataFile);
+            }
+        }
+        if ($dlk) { @flock($dlk, LOCK_UN); @fclose($dlk); }
+    }
+    if ($names && $SR_LIVE) rv_slack(':repeat: 365 mail: re-sending ' . count($names) . ' service report(s) as the 6-weekly report' . rv_name_list($names) . ' - they went out tagged self-run before the booked-visit rule (portal tag corrected on ' . $flipped . ')');
+    return array('requeued' => count($names), 'superseded' => $sup, 'portal_flipped' => $flipped);
 }
 
 function sr_record($key, $machine, $ts, $summary, $cust, $prev = array()) {

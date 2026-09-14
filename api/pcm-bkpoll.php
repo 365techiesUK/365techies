@@ -217,7 +217,11 @@ $mailM = rm_process(5);
 // 2-hourly GitHub run (up to two hours after the service, next morning after 19:17). sr_process guards itself
 // (09:00-20:00 only, queue lock, 60 s ran-recently, $SR_LIVE), so it rides this poll like the other queues and
 // the 2-hourly run stays as the fallback.
+// 14 Sep 2026, one shot (owner: "send today's service reports again"): this morning's two booked
+// services were emailed as self-run before the booked-visit rule existed. Re-queued as the visit's
+// report right before sr_process, so the copies go on this run. Self-guarding; a no-op after.
+$mailX = function_exists('sr_resend_as_visit_once') ? sr_resend_as_visit_once($DATA) : array('skip' => 'no_fn');
 $mailS = sr_process(5);
 jout(array('ok' => true, 'bookings' => count($rows), 'seeded' => $seeded, 'changed' => $changed, 'alerts' => count($toSlack),
            'review_asks_queued' => $rvQueued,
-           'mail' => array('review' => $mailR, 'done' => $mailD, 'remind' => $mailM, 'report' => $mailS, 'welcome' => $GLOBALS['mailW'])));
+           'mail' => array('review' => $mailR, 'done' => $mailD, 'remind' => $mailM, 'report' => $mailS, 'resend' => $mailX, 'welcome' => $GLOBALS['mailW'])));
