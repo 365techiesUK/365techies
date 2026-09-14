@@ -1043,7 +1043,7 @@ print("Wrote sitemap-legacy.xml (%d old URLs, expires %s)" % (len(_lg.LEGACY), _
 
 # ---------------- custom 404 page ----------------
 _404_cards = "".join(
-    f'          <a class="post-card" href="{h}"><h3>{l}</h3><span class="post-card__more">Go &#8594;</span></a>\n'
+    f'          <a class="post-card" href="{h}"><h2>{l}</h2><span class="post-card__more">Go &#8594;</span></a>\n'
     for l, h in [("Home", "/"), ("All Services", "/services/"), ("Monthly IT Support", "/monthly-it-support/"),
                  ("Book a Service", "/book-service/"), ("IT Advice", "/it-advice/"), ("Contact Us", "/contact/")])
 content_404 = "\n".join([

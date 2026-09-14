@@ -187,8 +187,21 @@
     var rel = (a.getAttribute('rel') || '').split(/\s+/).filter(Boolean);
     if (rel.indexOf('noopener') === -1) rel.push('noopener');
     a.setAttribute('rel', rel.join(' '));
+    cue(a);
   }
-  function run() { var l = document.getElementsByTagName('a'), i; for (i = 0; i < l.length; i++) fix(l[i]); }
+  /* 14 Sep 2026 (a11y audit item 6): every link that opens a new tab says so to a screen reader (a visually
+     hidden suffix) and to a pointer (a title). 2,090 built links carried no cue, and this function had been
+     adding target=_blank to every external link without one. */
+  function cue(a) {
+    if (a.querySelector('.sr-only--newtab')) return;
+    var name = (a.textContent || '') + ' ' + (a.getAttribute('aria-label') || '') + ' ' + (a.getAttribute('title') || '');
+    if (/new (tab|window)|opens in/i.test(name)) return;
+    var s = document.createElement('span'); s.className = 'sr-only sr-only--newtab'; s.textContent = ' (opens in a new tab)';
+    a.appendChild(s);
+    var al = a.getAttribute('aria-label'); if (al) a.setAttribute('aria-label', al + ' (opens in a new tab)');   // an aria-label replaces the text, so the cue must join it
+    if (!a.getAttribute('title')) a.setAttribute('title', 'Opens in a new tab');
+  }
+  function run() { var l = document.getElementsByTagName('a'), i; for (i = 0; i < l.length; i++) { fix(l[i]); if (l[i].getAttribute('target') === '_blank') cue(l[i]); } }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
   else run();
 })();

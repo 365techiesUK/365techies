@@ -306,7 +306,7 @@ def reviews_page():
     crumb_name = "Reviews"
     desc = "365 Techies is rated 4.9 out of 5 on Google. Read what home and business customers across Bournemouth, Poole and Dorset say about our IT support."
     figs = "\n".join(f'''        <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;{t}&rdquo;</blockquote>
           <figcaption data-initial="{n.strip()[0]}"><strong>{n}</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>''' for n, t in REVIEWS)
@@ -1109,7 +1109,7 @@ def wifi_optimizer():
               <button type="button" class="button primary" id="wq-go">Test here</button>
             </div>
             <p style="margin:1rem 0 0"><button type="button" class="button ghost" id="wq-viewrep" hidden>&#128202;&nbsp; View my report</button>
-            <button type="button" class="wq__link" id="wq-modeswap" style="margin-left:.8rem"></button></p>
+            <button type="button" class="wq__link" id="wq-modeswap" style="margin-left:.8rem">Change mode</button></p>
             <p style="margin:.7rem 0 0"><button type="button" class="wq__bonus" id="wq-bonus">&#128225;&nbsp; Signal Hunter <span class="wq__bonussub">map the best mobile signal, anywhere</span></button></p>
             <p style="margin:1rem 0 0"><button type="button" class="wq__link" id="wq-exit">&#8592;&nbsp; Exit game mode &mdash; back to the page</button></p>
             <p class="wq__note mono">Each room includes a real download <em>and</em> upload test (about 14&nbsp;MB together) &mdash; happiest on WiFi, mind your allowance on mobile data.</p>
@@ -1456,7 +1456,7 @@ def wifi_optimizer():
       .wf__spotlist{list-style:none;padding:0;margin:0;display:grid;gap:.45rem}
       .wf__spotlist li{display:flex;align-items:center;gap:.7rem;background:rgba(125,170,220,.06);border:1px solid rgba(125,170,220,.16);border-radius:10px;padding:.55rem .8rem}
       .wf__badge{font-weight:800;font-variant-numeric:tabular-nums;min-width:2.6rem;text-align:center;border-radius:8px;padding:.15rem .3rem}
-      .wf__link{background:none;border:0;color:var(--cyan);cursor:pointer;font:inherit;text-decoration:underline;padding:0}
+      .wf__link{background:none;border:0;color:var(--cyan);cursor:pointer;font:inherit;text-decoration:underline;padding:.2rem 0}
       .wf__conn{border:1px solid rgba(125,170,220,.2);border-radius:14px;overflow:hidden}
       .wf__crow{display:flex;justify-content:space-between;gap:1rem;padding:.7rem 1rem;border-bottom:1px solid rgba(125,170,220,.12)}
       .wf__crow:last-child{border-bottom:0}
@@ -4451,7 +4451,7 @@ HEALTH_CHECK_WIDGET = '''    <section class="section section--alt" aria-label="I
           <div class="quiz__step" data-step="q">
             <div class="hc-meter hc-meter--top"><span id="hc-bar"></span></div>
             <p class="quiz__count mono" id="hc-count"></p>
-            <h2 class="quiz__q" id="hc-q"></h2>
+            <h2 class="quiz__q" id="hc-q" aria-live="polite"></h2>
             <div class="quiz__opts" id="hc-opts"></div>
           </div>
           <div class="quiz__step" data-step="result">
@@ -5323,10 +5323,11 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           .sck__gos{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin:0 0 .7rem}
           @media (max-width:380px){.sck__gos{grid-template-columns:1fr}}
           .sck__gos .sck__go{margin:0;padding:1.05rem .8rem;font-size:1.1rem;position:relative}
-          .sck__gos .sck__go small{display:block;font-weight:500;font-size:.72rem;line-height:1.25;opacity:.82;margin-top:.28rem}
-          .sck__go--in{background:linear-gradient(135deg,#2b4a72,var(--cyan,#1d97e3));color:var(--ink,#eaf4ff)}
+.sck__linkbtn{background:none;border:0;padding:0;font:inherit;color:var(--cyan);text-decoration:underline;cursor:pointer}
+          .sck__gos .sck__go small{display:block;font-weight:500;font-size:.72rem;line-height:1.25;opacity:1;margin-top:.28rem}
+          .sck__go--in{background:linear-gradient(135deg,#2b4a72,#1565a8);color:var(--ink,#eaf4ff)}
           /* The two place buttons are the CHOICE; Run does the work. */
-          .sck__place{opacity:.55;box-shadow:none;outline:2px solid transparent;outline-offset:3px}
+          .sck__place{opacity:.85;box-shadow:none;outline:2px solid transparent;outline-offset:3px}
           .sck__place[aria-pressed="true"]{opacity:1;outline-color:var(--cyan-soft,#6cc4f5);box-shadow:0 14px 40px -14px rgba(29,151,227,.7)}
           .sck__place[aria-pressed="true"]::after{content:"\2713";position:absolute;top:.5rem;right:.65rem;font-size:.9rem;opacity:.9}
           .sck__run{display:block;width:100%;padding:1.2rem 1rem;margin:0;border:0;border-radius:18px;position:relative;overflow:hidden;
@@ -5464,7 +5465,7 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           @media (max-width:380px){.sck__nextbtns{grid-template-columns:1fr}}
           .sck__nextbtns button{padding:.85rem .8rem;min-height:48px;border-radius:12px;border:0;cursor:pointer;
             font-weight:700;font-size:.98rem;line-height:1.15;background:linear-gradient(135deg,var(--cyan,#1d97e3),var(--green,#00ce1b));color:#061019;transition:transform .1s,opacity .2s}
-          .sck__nextbtns button.sck__go--in{background:linear-gradient(135deg,#2b4a72,var(--cyan,#1d97e3));color:var(--ink,#eaf4ff)}
+          .sck__nextbtns button.sck__go--in{background:linear-gradient(135deg,#2b4a72,#1565a8);color:var(--ink,#eaf4ff)}
           .sck__nextbtns button:disabled{opacity:.45;cursor:default}
           .sck__wait{text-align:center;margin:.6rem 0 0}
           .sck__keep{margin:.8rem 0 0;text-align:center}
@@ -5488,7 +5489,7 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           <div class="sck__prog" id="sck-prog" aria-hidden="true"><i></i></div>
           <p class="sck__cool" id="sck-cool" hidden>Next test in <b>1:00</b></p>
           <p class="sck__st" id="sck-st" role="status" aria-live="polite">WiFi off, then tap &mdash; about ten seconds.</p>
-          <p class="sck__wifi" id="sck-wifi" hidden>Still on WiFi? <a href="#" id="sck-wifi-no">Turn it off first</a> &mdash; a reading on WiFi is your router, not the network.</p>
+          <p class="sck__wifi" id="sck-wifi" hidden>Still on WiFi? <button type="button" class="sck__linkbtn" id="sck-wifi-no">Turn it off first</button> &mdash; a reading on WiFi is your router, not the network.</p>
           <div class="sck__gauge" id="sck-gauge" hidden>
             <svg viewBox="0 0 220 128" aria-hidden="true">
               <defs><linearGradient id="sck-grad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1d97e3"/><stop offset="1" stop-color="#00ce1b"/></linearGradient></defs>
@@ -6415,7 +6416,7 @@ SCAM_WIDGET = '''    <section class="section section--alt" aria-label="Spot the 
         <div class="quiz" id="sc">
           <div class="quiz__step is-active" data-step="q">
             <p class="quiz__count mono" id="sc-count"></p>
-            <h2 class="quiz__q" id="sc-q"></h2>
+            <h2 class="quiz__q" id="sc-q" aria-live="polite"></h2>
             <div class="quiz__opts" id="sc-opts">
               <button type="button" class="quiz__opt" data-said="scam">It&rsquo;s a scam</button>
               <button type="button" class="quiz__opt" data-said="safe">Looks genuine</button>
@@ -9152,7 +9153,7 @@ def new_dell_section():
           <p class="lede lede--center" data-reveal>''' + NEW_DELL_NAMING_NOTE + ''' Here&rsquo;s Dell UK&rsquo;s current business range at their own from-prices &mdash; each link opens Dell&rsquo;s live page in a new tab. Compare it with our refurbished business-grade range above: laptops from <strong>&pound;510</strong>, desktops from <strong>&pound;545</strong>. Each comes with a new 1TB Samsung 990 PRO, Windows 11 set up and data moved across.</p>
         </div>
         <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)"><table class="cmp-table ndell">
-          <thead><tr><th>New model</th><th>Base spec at that price</th><th>Dell UK price</th><th>&nbsp;</th></tr></thead>
+          <thead><tr><th>New model</th><th>Base spec at that price</th><th>Dell UK price</th><th scope="col"><span class="sr-only">Feature</span></th></tr></thead>
           <tbody>
 ''' + rows + '''
           </tbody>
@@ -9287,7 +9288,7 @@ def dell_picker_section():
         .dpick__price strong{font-size:1.2rem}
         .dpick__row{display:flex;align-items:center;gap:.8rem}
         .dpick__sel{font-size:.82rem;padding:.55rem .95rem}
-        .dpick__more{color:var(--cyan-soft);text-decoration:none;font-size:.78rem;white-space:nowrap}
+        .dpick__more{color:var(--cyan-soft);text-decoration:none;font-size:.78rem;white-space:nowrap;display:inline-block;padding:.15rem 0}
         .dpick__more:hover{text-decoration:underline}
         .dpick__formwrap{margin-top:1.6rem;background:var(--glass-strong);border:1px solid rgba(29,151,227,.4);border-radius:18px;padding:1.4rem clamp(1rem,3vw,2rem) 1.6rem}
         .dpick__chosenlabel{font-size:.62rem;letter-spacing:.1em;color:var(--cyan-soft);margin:0 0 .3rem}
@@ -13161,7 +13162,8 @@ ISITDOWN_TOOL = r'''    <section class="section" aria-label="Is it down checker"
       #iid .iid-you{font-size:.74rem;color:var(--muted,#9aa6c2)}
       #iid .iid-s-txt b{font-weight:700}
       #iid .iid-links{margin-top:auto}
-      #iid .iid-links a{font-size:.72rem;color:var(--cyan,#37c2c2);text-decoration:none}
+      #iid .iid-links a{font-size:.72rem;color:var(--cyan,#37c2c2);text-decoration:none;display:inline-block;padding:.3rem 0}
+#iid-problems{width:20px;height:20px}
       #iid .iid-links a:hover{text-decoration:underline}
       #iid .iid-note{margin:0;font-size:.68rem;color:var(--muted,#9aa6c2);font-style:italic}
       #iid .iid-caveat{margin:1.2rem auto 0;max-width:76ch;font-size:.76rem;line-height:1.6;color:var(--muted,#9aa6c2)}
@@ -13634,6 +13636,7 @@ SPECCHECK_TOOL = r'''    <section class="section" aria-label="PC spec checker" i
           <div class="spc-hero" id="spc-hero">
             <p class="spc-scanline mono" id="spc-scanline">Warming up the scanner&hellip;</p>
             <p class="spc-verdict" id="spc-verdict" hidden></p>
+            <p class="sr-only" id="spc-live" aria-live="polite"></p>
             <div class="spc-flags" id="spc-flags"></div>
             <div class="spc-actions" id="spc-actions" hidden>
               <button type="button" class="button primary" id="spc-bench">Benchmark this machine &#9889;</button>
@@ -13650,7 +13653,7 @@ SPECCHECK_TOOL = r'''    <section class="section" aria-label="PC spec checker" i
       <style>
       #spc{max-width:1080px;margin:0 auto}
       #spc .spc-steps{list-style:none;margin:0 0 1rem;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
-      #spc .spc-step{display:flex;flex-direction:column;gap:.15rem;padding:.7rem .9rem;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.02);opacity:.55;transition:opacity .3s,border-color .3s}
+      #spc .spc-step{display:flex;flex-direction:column;gap:.15rem;padding:.7rem .9rem;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.02);opacity:.72;transition:opacity .3s,border-color .3s}
       #spc .spc-step.is-on{opacity:1;border-color:rgba(108,196,245,.55);background:rgba(29,151,227,.08)}
       #spc .spc-step.is-done{opacity:.9;border-color:rgba(46,204,113,.45)}
       #spc .spc-step.is-done .spc-step__n{color:#2ecc71}
@@ -16935,7 +16938,12 @@ info_page(
             <li><strong>Works everywhere</strong> &mdash; the site adapts to phones, tablets and computers.</li>
           </ul>
           <h2>Aiming for the standard</h2>
-          <p>We work towards the Web Content Accessibility Guidelines (WCAG) 2.1 AA and keep improving. Accessibility is never &ldquo;finished&rdquo; &mdash; we review and refine the site over time.</p>
+          <p>We work to the Web Content Accessibility Guidelines (WCAG) 2.2 AA. The site was last audited on 14 September 2026: fifty page templates were tested by machine and by hand (keyboard, screen-reader semantics, zoom, colour contrast measured on screen), and every page was checked for headings, labels and link names. The problems that audit found were fixed the same day; anything still open is listed below. Accessibility is never &ldquo;finished&rdquo; &mdash; we re-audit and refine the site over time.</p>
+          <h2>Known issues</h2>
+          <ul>
+            <li>The Bournemouth 3D map&rsquo;s advanced controls (four sliders and a search box) do not yet have labels.</li>
+            <li>The customer portal after sign-in has not yet had a full screen-reader walkthrough.</li>
+          </ul>
           <h2>Having difficulty?</h2>
           <p>If any part of our website is hard to use, or you&rsquo;d simply prefer to talk to a real person, we&rsquo;re glad to help personally &mdash; call <a href="tel:+441202775566">01202 775566</a> or email <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a>. We&rsquo;ll happily assist with anything you need, patiently and without jargon.</p>
           <h2>Tell us about a problem</h2>
@@ -22499,7 +22507,8 @@ def write_family_page():
   body { background:var(--ink); color:var(--white); font-family:"Segoe UI",system-ui,-apple-system,sans-serif; min-height:100vh; display:flex; flex-direction:column; }
   .wrap { width:100%; max-width:640px; margin:0 auto; padding:1.2rem 1rem 2rem; flex:1; }
   header { display:flex; align-items:center; gap:.65rem; padding:.35rem 0 1.1rem; }
-  .lg { background:var(--cyan); color:#fff; font-weight:900; font-size:1.05rem; padding:.32rem .5rem; letter-spacing:.02em; }
+  .lg { background:var(--cyan); color:#06101f; font-weight:900; font-size:1.05rem; padding:.32rem .5rem; letter-spacing:.02em; }
+  .fv-h1 { font: inherit; font-weight: 700; margin: 0; display: inline; }
   header strong { font-size:1.05rem; } header span { color:var(--mut); font-size:.85rem; }
   h1 { font-size:1.35rem; margin:.2rem 0 .4rem; line-height:1.3; }
   .lede { color:var(--mut); font-size:.93rem; margin-bottom:1.2rem; line-height:1.5; }
@@ -22525,7 +22534,7 @@ def write_family_page():
 </head>
 <body>
 <div class="wrap">
-  <header><span class="lg">365</span><div><strong>365 PC Manager</strong><br /><span>Family view</span></div></header>
+  <header><span class="lg">365</span><div><h1 class="fv-h1">365 PC Manager</h1><br /><span>Family view</span></div></header>
   <main id="app"><div class="err">Checking the share link&hellip;</div></main>
 </div>
 <footer><div class="wrap">
@@ -22661,7 +22670,7 @@ def write_portal_page():
   #p365app .addrshow { margin:.15rem 0 .5rem; line-height:1.6; font-size:1rem; }
   /* a.btn = links dressed as buttons (a <button> inside an <a> is invalid HTML,
      a double tab stop, and double-announced by screen readers - same fix as SOS) */
-  #p365app button, #p365app a.btn { padding:.6rem 1.05rem; border:0; border-radius:9px; background:var(--pcyan); color:#fff; font-size: 0.95rem; font-weight:600; cursor:pointer; margin-top:.75rem; font-family:inherit; }
+  #p365app button, #p365app a.btn { padding:.6rem 1.05rem; border:0; border-radius:9px; background:var(--pcyan); color:#06101f; font-size: 0.95rem; font-weight:600; cursor:pointer; margin-top:.75rem; font-family:inherit; }
   #p365app a.btn { display:inline-block; text-decoration:none; text-align:center; }
   #p365app button.ghost, #p365app a.btn.ghost { background:transparent; border:1px solid var(--pline); color:var(--psoft); }
   /* .sm was 27-29px tall - below any touch-target guidance, and it is what the
@@ -22770,7 +22779,7 @@ def write_portal_page():
   #p365app .stat.g b { color:var(--pgood); } #p365app .stat.w b { color:var(--pwarn); }
   #p365app .ftabs { display:flex; gap:.35rem; margin:.2rem 0 .55rem; flex-wrap:wrap; }
   #p365app .ftabs button { margin:0; padding:.32rem .68rem; font-size: 0.85rem; background:transparent; border:1px solid var(--pline); color:var(--pmut); }
-  #p365app .ftabs button.on { background:var(--pcyan); border-color:var(--pcyan); color:#fff; }
+  #p365app .ftabs button.on { background:var(--pcyan); border-color:var(--pcyan); color:#06101f; }
   #p365app .chip.b { color:var(--pbad); border-color:rgba(232,99,126,.4); }
   #p365app .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:.3rem; }
   #p365app .amenu { position:relative; }
@@ -23205,7 +23214,7 @@ def write_portal_page():
     background:var(--pink); border:1px solid var(--pline); margin:0 0 .7rem; flex-wrap:wrap; }
   #p365app .ds__modes button { margin:0; padding:.42rem .9rem; font-size: 0.9rem; border-radius:9px;
     background:transparent; color:var(--pmut); }
-  #p365app .ds__modes button.on { background:var(--pcyan); color:#fff; box-shadow:0 6px 16px rgba(29,151,227,.35); }
+  #p365app .ds__modes button.on { background:var(--pcyan); color:#06101f; box-shadow:0 6px 16px rgba(29,151,227,.35); }
   #p365app .ds__legend { display:flex; align-items:center; gap:.4rem; flex-wrap:wrap; font-size: 0.8rem;
     color:var(--pmut); margin:0 0 .8rem; line-height:1.6; }
   /* the whole product in two chips: a tile is either reading their account or it is
@@ -25809,8 +25818,8 @@ def write_portal_page():
     el.innerHTML = '<h1>Your 365 portal</h1>'
       + '<p class="lede">No passwords needed - we email or text a 6-digit code, then <strong>this computer stays signed in</strong> so you won\\u2019t keep re-doing it. New to 365? The same box joins you free, no card details.</p>'
       + '<div class="card"><h2>Sign in or join free</h2>'
-      + '<label>Your name</label><input id="nm" type="text" autocomplete="name" placeholder="Jane Smith - so we know what to call you" />'
-      + '<label>Your email</label><input id="em" type="email" autocomplete="email" />'
+      + '<label for="nm">Your name</label><input id="nm" type="text" autocomplete="name" placeholder="Jane Smith - so we know what to call you" />'
+      + '<label for="em">Your email</label><input id="em" type="email" autocomplete="email" />'
       + '<div class="row" style="border:0;padding:.2rem 0 0">'
       + '<button id="cml" class="sm">\\u2709 Email me a code</button>'
       + '<button id="csm" class="sm ghost">\\ud83d\\udcf1 Text me a code</button>'
@@ -28603,7 +28612,7 @@ def write_portal_page():
   });
 })();
 </script>'''
-               + '<p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.55;margin:.5rem 0 0">'
+               + '<p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">'
                + 'portal build __P365DATE__ &middot; __P365BUILD__</p>'
                + beacon
                + '</div></section>' + css + js)
@@ -28692,7 +28701,7 @@ def write_activate_page():
   * { box-sizing:border-box; margin:0; padding:0; }
   body { background:var(--ink); color:var(--white); font-family:"Segoe UI",system-ui,sans-serif; min-height:100vh; display:grid; place-items:center; padding:1rem; }
   .card { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:2rem 1.6rem; max-width:480px; width:100%; }
-  .lg { background:var(--cyan); color:#fff; font-weight:900; padding:.3rem .5rem; display:inline-block; margin-bottom:.8rem; }
+  .lg { background:var(--cyan); color:#06101f; font-weight:900; padding:.3rem .5rem; display:inline-block; margin-bottom:.8rem; }
   h1 { font-size:1.25rem; margin-bottom:.6rem; }
   p { color:var(--mut); font-size:.95rem; line-height:1.55; margin-bottom:.8rem; }
   .key { font-family:Consolas,monospace; font-size:1.15rem; color:var(--white); background:var(--ink); border:1px solid var(--line); border-radius:9px; padding:.55rem .8rem; text-align:center; margin:.6rem 0 1rem; }

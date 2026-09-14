@@ -139,7 +139,7 @@ _STATUS = f'''    <section class="section b365 b365--dusk" id="tonight" aria-lab
         <div class="tile-grid" data-stagger style="grid-template-columns:1fr">
           <div class="b365-tile b365-tile--dusk" id="bmfw-tile">
             <p class="b365-state{" off" if SEASON_OVER else ""}" id="bmfw-state">{"SEASON FINISHED &middot; 2027 DATES WHEN BCP ANNOUNCES THEM" if SEASON_OVER else "FINALE &middot; FRIDAY 4 SEPTEMBER &middot; 10PM"}</p>
-            <h3 id="bmfw-head">{"That was the last one &mdash; the 2026 season has finished" if SEASON_OVER else "One more: the finale is Friday 4 September at 10pm"}</h3>
+            <h2 id="bmfw-head">{"That was the last one &mdash; the 2026 season has finished" if SEASON_OVER else "One more: the finale is Friday 4 September at 10pm"}</h2>
             <p id="bmfw-sub">{"The finale on Friday 4 September closed a season that lost three Fridays: 14 and 21 August to the wildfire emergency, 28 August to high winds at sea. BCP Council announces the next season in the spring, and this page will be updated when they do. Last checked " if SEASON_OVER else "BCP Council reinstated the displays on 26 August after the wildfire risk eased, then had to cancel 28 August on the night for high winds at sea. The finale they added, Friday 4 September at 10pm from the seafront east of the pier, is still on as announced &mdash; weather permitting, as ever. Last checked "}{CANCELLED_UPDATED}.</p>
             <p class="b365-sub" id="bmfw-live"></p>
           </div>
@@ -451,7 +451,7 @@ _ST_PANEL ='''    <section class="section b365" id="now" aria-label="Live sea co
           <p class="b365-sub" id="st-why-p">No usable wave direction is available right now. As a general rule here, refracted waves driven by west and south-westerly weather affect the inshore waters of Poole Bay about 85 percent of the time, arriving bent around Handfast Point from the south and south-east; the rest is mostly sea built over the local southerly and easterly fetches.</p>
           <p class="mono" style="margin-top:.5rem">Physics: the <a href="https://www.scopac.org.uk/scopac_sedimentdb/pbay/pbay.htm" target="_blank" rel="noopener">SCOPAC Poole Bay sediment-transport study</a>.</p>
         </div>
-        <div class="b365-bands" id="st-bands" data-reveal aria-label="Swimmer temperature bands">
+        <div class="b365-bands" id="st-bands" role="group" data-reveal aria-label="Swimmer temperature bands">
           <span data-band="0">0&ndash;6&deg; Baltic</span><span data-band="1">6&ndash;11&deg; Freezing</span><span data-band="2">12&ndash;16&deg; Fresh</span><span data-band="3">17&ndash;20&deg; Summer</span><span data-band="4">21&deg;+ Warm</span>
         </div>
         <p class="b365-sub" id="st-band-note" data-reveal style="margin-bottom:1rem">The Outdoor Swimming Society&rsquo;s bands &mdash; anecdotal, not scientific, as the OSS itself says. The highlight follows the live measured reading.</p>
@@ -460,7 +460,7 @@ _ST_PANEL ='''    <section class="section b365" id="now" aria-label="Live sea co
           <div class="tile" id="st-tile-overflow"><span class="chip-f" id="st-overflow-chip">WESSEX WATER MONITORS</span><h3 id="st-overflow">Storm overflows</h3><p id="st-overflow-sub">Waiting for the monitor feed&hellip;</p></div>
           <div class="tile"><span class="chip-f" id="st-sun-chip">COMPUTED &middot; ASTRONOMY</span><h3 id="st-sun">Sun</h3><p id="st-sun-sub">Today&rsquo;s sunrise and sunset, computed for the seafront.</p></div>
         </div>
-        <div class="b365-months" id="st-months" data-reveal aria-label="Long-term monthly sea temperature averages">
+        <div class="b365-months" id="st-months" role="group" data-reveal aria-label="Long-term monthly sea temperature averages">
           <span data-mo="0">Jan<b>7.4&deg;</b></span>
           <span data-mo="1">Feb<b>6.8&deg;</b></span>
           <span data-mo="2">Mar<b>7.4&deg;</b></span>

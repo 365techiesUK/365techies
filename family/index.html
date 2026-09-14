@@ -12,7 +12,8 @@
   body { background:var(--ink); color:var(--white); font-family:"Segoe UI",system-ui,-apple-system,sans-serif; min-height:100vh; display:flex; flex-direction:column; }
   .wrap { width:100%; max-width:640px; margin:0 auto; padding:1.2rem 1rem 2rem; flex:1; }
   header { display:flex; align-items:center; gap:.65rem; padding:.35rem 0 1.1rem; }
-  .lg { background:var(--cyan); color:#fff; font-weight:900; font-size:1.05rem; padding:.32rem .5rem; letter-spacing:.02em; }
+  .lg { background:var(--cyan); color:#06101f; font-weight:900; font-size:1.05rem; padding:.32rem .5rem; letter-spacing:.02em; }
+  .fv-h1 { font: inherit; font-weight: 700; margin: 0; display: inline; }
   header strong { font-size:1.05rem; } header span { color:var(--mut); font-size:.85rem; }
   h1 { font-size:1.35rem; margin:.2rem 0 .4rem; line-height:1.3; }
   .lede { color:var(--mut); font-size:.93rem; margin-bottom:1.2rem; line-height:1.5; }
@@ -38,7 +39,7 @@
 </head>
 <body>
 <div class="wrap">
-  <header><span class="lg">365</span><div><strong>365 PC Manager</strong><br /><span>Family view</span></div></header>
+  <header><span class="lg">365</span><div><h1 class="fv-h1">365 PC Manager</h1><br /><span>Family view</span></div></header>
   <main id="app"><div class="err">Checking the share link&hellip;</div></main>
 </div>
 <footer><div class="wrap">
@@ -88,7 +89,7 @@
      script can't kill self-healing. Differences from the portal one: the share code
      rides in ?c=, so every navigation MUST carry the existing query along - dropping
      it would sign the family member out of the view. */
-  var P365FAM = '46a7edb069';
+  var P365FAM = '2b8d410d24';
   function stripU(s) { return s.replace(/([?&])u=[^&]*(&?)/, function (_, a, b) { return b ? a : ''; }); }
   function withU(id) { var q = stripU(location.search); return '/family/' + q + (q ? '&' : '?') + 'u=' + encodeURIComponent(id); }
   if (/[?&]u=/.test(location.search)) { try { history.replaceState(null, '', '/family/' + stripU(location.search)); } catch (e) {} }

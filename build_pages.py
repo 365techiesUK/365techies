@@ -165,7 +165,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "113"   # bumped 2026-09-14: performance audit (scenes paused off screen, content-visibility on phones, self-hosted body fonts, compositor glows). Earlier: v112 2026-09-13 (9th): inline form messages + jargon-term hint (UX audit item 6). Earlier: v111 2026-09-13 (8th): the phone cookie banner as one strip (UX audit item 4). Earlier: v110 2026-09-13 (7th): 12px floor for readable phone text (UX audit item 3). Earlier: v109 2026-09-13 (6th): tap-target padding on breadcrumb/towns/byline links (UX audit item 2); also retires v108, whose URL was requested before the file landed. Earlier: v108 2026-09-13 (5th): phone heroes under one screen (UX audit item 1). Earlier: v107 2026-09-13 (4th): the hero byline (.page-hero__byline). Earlier: v106 2026-09-13 (3rd): metric-matched local fallback fonts (size-adjust/ascent/descent overrides) so the web-font swap moves nothing; the lab home CLS of 0.169 was entirely the swap (SEO audit item 6). Earlier: v105 2026-09-13 (2nd): the phone cookie banner pins under the header, not over the hero Call button. Earlier: v104 2026-09-13: the Text size pill is an icon at bottom-right on phones (nav audit: it covered the hero Call button). Earlier: v103 2026-09-07: scam alert in the strip + homepage band, strip re-timed to 85s. Earlier: v102 2026-09-05 (3rd): mobile-menu contact links lifted to a 44px tap target. Earlier the same day: v101 = the >=1960 header expand moved to 2040 so "Contact" is never clipped. Earlier the same day: v100 = the A+ text steps hand the nav to the hamburger instead of clipping it (nav audit). Earlier: v99 2026-09-02: hero console card no longer tilted. Earlier: v98   # bumped 2026-09-02 again: v97 was poisoned in the SiteGround proxy by a pre-completion page load (old CSS cached under the new URL for browsers; curl variants showed MISS). NEVER load a page carrying a new ?v= until the deploy run is completed+success. v97 = 2026-09-02 (live-map launcher + overlay).   # bumped 2026-09-02 (Bournemouth365 live-map launcher + overlay). Earlier: v96 2026-08-27 (skip-link could not be outgrown by the a11y ladder). Earlier: v95 2026-08-19 (proof bar replaces the duplicate reviews teaser). Earlier: v94 2026-08-17 (status strip rebuild). Earlier the same day: v88 was poisoned in the SiteGround proxy by a pre-deploy probe (see deploy-hash-sync-blindspot); NEVER request a new ?v= URL before the deploy that ships it is confirmed complete
+CSSV = "114"   # bumped 2026-09-14 (2nd): accessibility audit (tooltip box, breadcrumb contrast, focus ring, reveal on focus, clip). Earlier: v113 2026-09-14: performance audit (scenes paused off screen, content-visibility on phones, self-hosted body fonts, compositor glows). Earlier: v112 2026-09-13 (9th): inline form messages + jargon-term hint (UX audit item 6). Earlier: v111 2026-09-13 (8th): the phone cookie banner as one strip (UX audit item 4). Earlier: v110 2026-09-13 (7th): 12px floor for readable phone text (UX audit item 3). Earlier: v109 2026-09-13 (6th): tap-target padding on breadcrumb/towns/byline links (UX audit item 2); also retires v108, whose URL was requested before the file landed. Earlier: v108 2026-09-13 (5th): phone heroes under one screen (UX audit item 1). Earlier: v107 2026-09-13 (4th): the hero byline (.page-hero__byline). Earlier: v106 2026-09-13 (3rd): metric-matched local fallback fonts (size-adjust/ascent/descent overrides) so the web-font swap moves nothing; the lab home CLS of 0.169 was entirely the swap (SEO audit item 6). Earlier: v105 2026-09-13 (2nd): the phone cookie banner pins under the header, not over the hero Call button. Earlier: v104 2026-09-13: the Text size pill is an icon at bottom-right on phones (nav audit: it covered the hero Call button). Earlier: v103 2026-09-07: scam alert in the strip + homepage band, strip re-timed to 85s. Earlier: v102 2026-09-05 (3rd): mobile-menu contact links lifted to a 44px tap target. Earlier the same day: v101 = the >=1960 header expand moved to 2040 so "Contact" is never clipped. Earlier the same day: v100 = the A+ text steps hand the nav to the hamburger instead of clipping it (nav audit). Earlier: v99 2026-09-02: hero console card no longer tilted. Earlier: v98   # bumped 2026-09-02 again: v97 was poisoned in the SiteGround proxy by a pre-completion page load (old CSS cached under the new URL for browsers; curl variants showed MISS). NEVER load a page carrying a new ?v= until the deploy run is completed+success. v97 = 2026-09-02 (live-map launcher + overlay).   # bumped 2026-09-02 (Bournemouth365 live-map launcher + overlay). Earlier: v96 2026-08-27 (skip-link could not be outgrown by the a11y ladder). Earlier: v95 2026-08-19 (proof bar replaces the duplicate reviews teaser). Earlier: v94 2026-08-17 (status strip rebuild). Earlier the same day: v88 was poisoned in the SiteGround proxy by a pre-deploy probe (see deploy-hash-sync-blindspot); NEVER request a new ?v= URL before the deploy that ships it is confirmed complete
 HERITAGE_DIMS = {'heritage-01.jpg': (1400, 787), 'heritage-02.jpg': (787, 1400), 'heritage-03.jpg': (1400, 787), 'heritage-04.jpg': (1400, 787), 'heritage-05.jpg': (787, 1400), 'heritage-07.jpg': (1400, 787), 'heritage-kinson.jpg': (1200, 710), 'heritage-moordown.jpg': (1400, 788), 'heritage-stock.jpg': (1400, 788), 'heritage-storefront.jpg': (1024, 683)}
 try:
     from hero_scenes import SCENES as HERO_SCENES
@@ -732,7 +732,7 @@ FOOTER = '''  <footer class="site-footer">
           <span class="logo__text"><em>365</em>techies</span>
         </a>
         <p>The IT support experts. A family-run business established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists, providing monthly IT support for homes and businesses across Bournemouth, Poole and Dorset.</p>
-        <div class="partner-badges" aria-label="Accreditations">
+        <div class="partner-badges" role="group" aria-label="Accreditations">
           <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 21l5-2.5L17 21l-1.5-8.5"/></svg>Family Business &middot; Est. 1995</span>
           <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 18h18M9 22h6"/></svg>Dell Specialist</span>
           <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Partner</span>
@@ -1128,6 +1128,13 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None, robot
 </head>
 <body id="top">
   <a class="skip-link" href="#main">Skip to content</a>
+  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
+    <p>Cookies run our live chat and site stats. <a href="/cookie-policy/">Cookie policy</a>.</p>
+    <div class="cookie-banner__actions">
+      <button type="button" class="button secondary" data-cookie="decline">Decline</button>
+      <button type="button" class="button primary" data-cookie="accept">Accept</button>
+    </div>
+  </div>
   <div class="grid-overlay" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
 {HEADER}
@@ -1155,16 +1162,9 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None, robot
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=22"></script>
-  <script src="/js/a11y.min.js?v=11" defer></script>
+  <script src="/js/a11y.min.js?v=12" defer></script>
   <script src="/js/forms.min.js?v=11" defer></script>
   <script src="/js/search.min.js?v={SEARCHV}" defer></script>
-  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
-    <p>Cookies run our live chat and site stats. <a href="/cookie-policy/">Cookie policy</a>.</p>
-    <div class="cookie-banner__actions">
-      <button type="button" class="button secondary" data-cookie="decline">Decline</button>
-      <button type="button" class="button primary" data-cookie="accept">Accept</button>
-    </div>
-  </div>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->
   <script>
   (function () {{
@@ -1545,7 +1545,7 @@ def steps(items):
 
 def reviews_block(revs):
     figs = "\n".join(f'''        <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;{q}&rdquo;</blockquote>
           <figcaption data-initial="{who.strip()[0]}"><strong>{who}</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>''' for q, who in revs)
@@ -1723,7 +1723,7 @@ WCHECK_TOOL = r'''    <section class="section" aria-label="Free website checker"
           </div>
           <div class="wc-error" id="wc-error" hidden></div>
           <div class="wc-results" id="wc-results" hidden>
-            <p class="wc-tested">Results for <a id="wc-tested-url" href="#" target="_blank" rel="noopener nofollow"></a> <span id="wc-tested-strat" class="wc-badge"></span></p>
+            <p class="wc-tested">Results for <a id="wc-tested-url" href="#" target="_blank" rel="noopener nofollow" hidden></a> <span id="wc-tested-strat" class="wc-badge"></span></p>
             <div class="wc-gauges" id="wc-gauges"></div>
             <div class="wc-actions" id="wc-actions">
               <button type="button" class="button wc-ghost" id="wc-copy">Copy my report</button>
@@ -1966,7 +1966,7 @@ WCHECK_TOOL = r'''    <section class="section" aria-label="Free website checker"
           var cats=lh.categories;
           function sc(k){ return cats[k]&&cats[k].score!=null?Math.round(cats[k].score*100):null; }
           var S={performance:sc('performance'),seo:sc('seo'),accessibility:sc('accessibility'),bp:sc('best-practices')};
-          var tu=lh.finalUrl||u, a=root.querySelector('#wc-tested-url'); a.textContent=tu.replace(/^https?:\/\//,''); a.href=tu;
+          var tu=lh.finalUrl||u, a=root.querySelector('#wc-tested-url'); a.textContent=tu.replace(/^https?:\/\//,''); a.href=tu; a.hidden=false;
           root.querySelector('#wc-tested-strat').textContent=(strat==='mobile'?'Mobile':'Desktop');
           var g='';
           [['performance','Performance'],['seo','SEO'],['accessibility','Accessibility'],['bp','Best Practices']].forEach(function(p){ if(S[p[0]]!=null) g+=gauge(S[p[0]],p[1]); });
@@ -3278,11 +3278,14 @@ FIX_FLOW_SCRIPT = r"""      <script>
         } else { osEl.hidden=true; tog.hidden=true; }
         function tpl(id,text){ var t=root.querySelector('#'+id); if(!t) return ''; return text?(t.content?t.content.textContent:t.textContent):t.innerHTML; }
         function show(n){ steps.forEach(function(s){ var k=parseInt(s.getAttribute('data-step'),10); s.hidden=k>n; s.classList.toggle('is-on',k===n); if(k<n&&!s.classList.contains('is-done')) s.classList.add('is-skip'); }); prog.textContent='STEP '+n+' OF '+N; var cur=steps[n-1]; if(cur) cur.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+        /* 14 Sep 2026 (a11y audit item 4): the answered button disappears, so focus follows the flow instead of falling to the page body */
+        function focusStep(n){ var s=steps.filter(function(x){ return parseInt(x.getAttribute('data-step'),10)===n; })[0]; if(!s) return; var h=s.querySelector('.ff-head')||s; h.setAttribute('tabindex','-1'); try{ h.focus(); }catch(e){} }
         function finish(kind){
           steps.forEach(function(s){ s.classList.remove('is-on'); });
           var mins=t0?Math.max(1,Math.round((Date.now()-t0)/60000)):null, minsTxt=mins?(' in about '+mins+' minute'+(mins===1?'':'s')):'';
           endEl.className='ff-end'+(kind==='stuck'?' is-bad':''); endEl.innerHTML=tpl(kind==='fixed'?'ff-tpl-fixed':'ff-tpl-stuck').split('{mins}').join(minsTxt);
           prog.textContent=kind==='fixed'?'DONE':'NEEDS A TECHIE'; endEl.hidden=false; endEl.scrollIntoView({behavior:'smooth',block:'nearest'});
+          endEl.setAttribute('tabindex','-1'); try{ endEl.focus({preventScroll:true}); }catch(e){}
           var c=endEl.querySelector('#ff-copyall'); if(c) c.addEventListener('click',function(){ copyText(tpl('ff-tpl-text',true).replace(/^\s+|\s+$/g,''),c,'Copy these steps'); });
         }
         function copyText(txt,btn,label){ function ok(){ btn.textContent='Copied'; btn.classList.add('done'); setTimeout(function(){ btn.textContent=label; btn.classList.remove('done'); },1800); }
@@ -3299,7 +3302,7 @@ FIX_FLOW_SCRIPT = r"""      <script>
           var cur=b.closest('.ff-step'); if(cur){ cur.classList.add('is-done'); }
           if(go==='fixed'||go==='stuck'){ finish(go); return; }
           var n=parseInt(go,10); var note=b.getAttribute('data-note'); var noteEl=root.querySelector('#ff-note'+n); if(noteEl){ noteEl.hidden=!note; noteEl.innerHTML=note?'<b>'+note+'</b>':''; }
-          endEl.hidden=true; show(n);
+          endEl.hidden=true; show(n); focusStep(n);
         });
       })();
       </script>"""
@@ -3322,7 +3325,7 @@ def _fix_flow_section(cfg):
             '          <p class="lede lede--center" data-reveal>' + cfg['lede'] + '<span class="ff-rev mono">Last reviewed __LASTMOD_HUMAN__' + cfg.get('rev_suffix', '') + '</span></p>\n'
             '        </div>\n'
             '        <div class="ff" id="ff"' + os_attr + '>\n'
-            '          <div class="ff-top"><span class="ff-os" id="ff-os">Checking which Windows you have&hellip;</span><button type="button" class="ff-oslink" id="ff-ostoggle" hidden>Not right? Switch to Windows 10</button><span class="ff-prog" id="ff-prog">STEP 1 OF ' + str(cfg['count']) + '</span></div>\n'
+            '          <div class="ff-top"><span class="ff-os" id="ff-os">Checking which Windows you have&hellip;</span><button type="button" class="ff-oslink" id="ff-ostoggle" hidden>Not right? Switch to Windows 10</button><span class="ff-prog" id="ff-prog" aria-live="polite">STEP 1 OF ' + str(cfg['count']) + '</span></div>\n'
             '          <ol class="ff-steps" id="ff-steps">' + cfg['steps_html'] + '          </ol>\n'
             '          <div class="ff-end" id="ff-end" hidden></div>\n'
             + (('          <p class="ff-areas">' + FIX_FLOW_AREAS + '</p>\n') if cfg.get('areas', True) else '') +
@@ -3424,7 +3427,7 @@ PCBENCH_TOOL = r'''    <section class="section" aria-label="PC benchmark" id="be
           <div class="bm-results" id="bm-results" hidden>
             <div class="bm-top">
               <div class="bm-ring-wrap">
-                <div class="bm-ring"><svg viewBox="0 0 120 120"><circle class="bm-ring-track" cx="60" cy="60" r="54"></circle><circle class="bm-ring-val" id="bm-ring" cx="60" cy="60" r="54" stroke-dasharray="339.292" stroke-dashoffset="339.292"></circle></svg><span class="bm-ring-num" id="bm-score">0</span></div>
+                <div class="bm-ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="bm-ring-track" cx="60" cy="60" r="54"></circle><circle class="bm-ring-val" id="bm-ring" cx="60" cy="60" r="54" stroke-dasharray="339.292" stroke-dashoffset="339.292"></circle></svg><span class="bm-ring-num" id="bm-score">0</span></div>
                 <p class="bm-ring-lab">365 Benchmark Score</p>
               </div>
               <div class="bm-verdict" id="bm-verdict"></div>

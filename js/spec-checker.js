@@ -241,6 +241,7 @@
     bits.push('<em>'+Math.round(w*dpr)+'×'+Math.round(h*dpr)+(hz?' @ ~'+hz+'Hz':'')+'</em>');
     v.innerHTML='This machine: '+bits.join(' &middot; ');
     v.hidden=false;
+    var lv=$('#spc-live'); if(lv){ lv.textContent='Scan complete. '+v.textContent; }   /* 14 Sep 2026 (a11y audit item 4): the result is announced */
     window.ttToolDone&&window.ttToolDone("computer-spec-checker");
     var fl=$('#spc-flags');
     if(os.win10)fl.insertAdjacentHTML('beforeend','<div class="spc-flag spc-flag--bad">&#9888;&#65039; <strong>You&rsquo;re on Windows 10 &mdash; it stopped getting security updates in October 2025.</strong> Every day online is riskier. See <a href="/windows-10-end-of-life/">your options</a> &mdash; many machines upgrade free, and we can check yours. Your routes are <a href="#windows-11">below</a>.</div>');

@@ -74,7 +74,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=113" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=114" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -112,7 +112,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=113&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=114&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -219,6 +219,13 @@
 </head>
 <body id="top">
   <a class="skip-link" href="#main">Skip to content</a>
+  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
+    <p>Cookies run our live chat and site stats. <a href="/cookie-policy/">Cookie policy</a>.</p>
+    <div class="cookie-banner__actions">
+      <button type="button" class="button secondary" data-cookie="decline">Decline</button>
+      <button type="button" class="button primary" data-cookie="accept">Accept</button>
+    </div>
+  </div>
   <div class="grid-overlay" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
   <header class="site-header">
@@ -614,237 +621,237 @@
       <p class="reviews__badge mono" data-reveal style="display:block;width:max-content;margin:0 auto 3rem"><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>&ensp;RATED 4.9 ON GOOGLE</p>
       <div class="reviews__grid">
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;A friendly team, there to help when needed. Nice to know that our laptops are being regularly checked for updates and kept virus free. Worth the monthly fee.&rdquo;</blockquote>
           <figcaption data-initial="A"><strong>Alan Bevis</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;The service I get with 365 techies is amazing always on the other end of the phone. The monthly subscription and plans are worth the money as I know I have the backup and the common sense, without them I wouldn’t have a working laptop that is bang up to date with all data backed up.&rdquo;</blockquote>
           <figcaption data-initial="V"><strong>Vince Jones</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;I have benefited from the help of the guys at 365 for most of twenty years. They have helped me on so many occasions I can not remember! Their monthly remote checks… 365 offer a fully inclusive service. Thank you.&rdquo;</blockquote>
           <figcaption data-initial="D"><strong>David Hagner</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;We have asked Steve and David from 365 to help us with computing for many years now and found their service and responses to be brilliant. When we have had issues (which because they regularly check us issues are rare) they are perfect. Highly recommend 365.&rdquo;</blockquote>
           <figcaption data-initial="P"><strong>Peter Moody</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;As usual your service and support have been immaculate when required recently. I cannot thank you enough.&rdquo;</blockquote>
           <figcaption data-initial="J"><strong>John Holloway</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;These guys at 365 have been keeping me going for over 14 years. No need to search for someone new as they must be number one. Always sorted any problems I’ve had and very quickly. First class&rdquo;</blockquote>
           <figcaption data-initial="M"><strong>Mark Lemon</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;Thank you David & Steve for the usual service and sorting out the problem I told you about. Excellent work as usual.&rdquo;</blockquote>
           <figcaption data-initial="D"><strong>David Young</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;Absolutely first class service. Highly recommend.&rdquo;</blockquote>
           <figcaption data-initial="A"><strong>Andy Carapiet</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;365 Techies have given my PC its regular ‘MOT’ for many years now. Not only that, but if I have any problems, however small, David and Steve are always there at the other end of the phone to answer my questions and reassure me.&rdquo;</blockquote>
           <figcaption data-initial="R"><strong>Rosemary Allen</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;Can’t fault the skill and attention the 365 guys give… confidence that things keep ticking over with their regular maintenance access checks, and there on call when other oddities crop up — or I mess things up ;)&rdquo;</blockquote>
           <figcaption data-initial="R"><strong>Rob Hazell</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;I’m always so grateful for 365’s Brilliant service and how you are always able to come to the rescue immediately I have a problem.&rdquo;</blockquote>
           <figcaption data-initial="F"><strong>Free Spirit</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;Always great service from these guys. I know I can contact them anytime I have a technical problem. I would absolutely recommend them.&rdquo;</blockquote>
           <figcaption data-initial="J"><strong>Julie Collins</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;All is working fine even the day after, really professional Service.&rdquo;</blockquote>
           <figcaption data-initial="F"><strong>Frederick Woods</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;I have been with 365 Techies for many years and have found them always helpful and professional. Long may they continue.&rdquo;</blockquote>
           <figcaption data-initial="M"><strong>Mary Memmott</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;Always delighted with the support given by David, Steve and Becky. I couldn’t ask for any more.&rdquo;</blockquote>
           <figcaption data-initial="A"><strong>Anne Lewis</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;ALWAYS A PROMPT AND FIRST CLASS SERVICE UNABLE TO FAULT.&rdquo;</blockquote>
           <figcaption data-initial="E"><strong>Edward Clough</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;Thanks for coming to my rescue once again. You still keep my computer system in perfect order. Many, many thanks.&rdquo;</blockquote>
           <figcaption data-initial="C"><strong>Cordelia Cutler</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;Efficient and helpful people.&rdquo;</blockquote>
           <figcaption data-initial="J"><strong>John Ridd</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;I have trusted 365 with my IT support since 2001 and cannot recommend them highly enough. I’ve lost count of the number of PCs, tablets, laptops I’ve bought from them. Living 60 miles away has not been a problem either.&rdquo;</blockquote>
           <figcaption data-initial="H"><strong>Heather</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;After a quick phone call they log in to my computer and quickly sort me out. It’s good to know who you can trust and rely on these days. A very fair company indeed.&rdquo;</blockquote>
           <figcaption data-initial="M"><strong>Maureen Drake</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;These guys look after my IT requirements at reasonable cost. They are less patronising than most and explain things in plain English, rather than gobbledygook.&rdquo;</blockquote>
           <figcaption data-initial="J"><strong>JAR Accountants</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;Courteous and prompt service offered. Will definitely be my choice of support when needed again. Thank you.&rdquo;</blockquote>
           <figcaption data-initial="K"><strong>Karen Gater</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;You can tell they are honest people who know exactly what they are doing. My laptop now works like a dream. They went above and beyond.&rdquo;</blockquote>
           <figcaption data-initial="E"><strong>Eve Day</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;I took my laptop to 365 and within a day the problem was rectified and I paid half the amount of money I expected. They are honest, upfront and swift.&rdquo;</blockquote>
           <figcaption data-initial="E"><strong>Emmanuel O</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;The guys at 365 listened to my actual needs and tweaked a desktop to the specs I required. It’s a quality Dell machine, with good software included. They installed it and sorted out all the data transfer too.&rdquo;</blockquote>
           <figcaption data-initial="D"><strong>Dean Robertson</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;Even though the computer itself could not be saved, all my data was retrieved for a very reasonable price and customer service was second to none.&rdquo;</blockquote>
           <figcaption data-initial="J"><strong>John Plumbe</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;365 came to my rescue again and built me a new computer to my specifications for an extremely reasonable price. Thank you David and Steve.&rdquo;</blockquote>
           <figcaption data-initial="S"><strong>Sheila Cutler</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;We have been so lucky to have Stephen & David looking after our computers. Nothing is too much trouble and quite frankly we wonder how we would manage without them.&rdquo;</blockquote>
           <figcaption data-initial="V"><strong>Valerie Hunt</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;They were very obliging and booked me in for a remote session later that morning. Whatever it was they put their finger on it and sorted it out. Great service.&rdquo;</blockquote>
           <figcaption data-initial="R"><strong>Roger Eede</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;David and Steve have been at the end of a phone to sort out any computer problems for over 10 years.&rdquo;</blockquote>
           <figcaption data-initial="J"><strong>Judith Kent</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;Always there when you need help and support with any problems. Hard to imagine what I’d do without them — can’t believe you could get a better standard of service.&rdquo;</blockquote>
           <figcaption data-initial="A"><strong>Andrew Willis</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;A credit to the moral, support-over-profit mentality I witnessed which should be evident in all businesses, big or small.&rdquo;</blockquote>
           <figcaption data-initial="J"><strong>Julian Barker</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;Always a professional service, a great source of knowledgeable advice and very reasonably priced. 365 Computers look after all my business and home computing needs.&rdquo;</blockquote>
           <figcaption data-initial="S"><strong>Sarah Austin</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;I have unfailingly received prompt and courteous service from both David and Steve. I would recommend them to anyone who has a computer problem.&rdquo;</blockquote>
           <figcaption data-initial="A"><strong>Anthony Sloane</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;David and Steven have been so helpful, caring and polite irrespective of the problem I may have with my laptop.&rdquo;</blockquote>
           <figcaption data-initial="T"><strong>Terese Lawton</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;Quite simply an excellent service! Thank you to all the team.&rdquo;</blockquote>
           <figcaption data-initial="A"><strong>Alison Knight</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;I’ve used their services for years and have always been impressed with their knowledge and skill. They’ve never been beaten by any problem. Friendly and super efficient sums them up.&rdquo;</blockquote>
           <figcaption data-initial="R"><strong>Reg Portwaine</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;A first class service to a technological emergency. Highly recommended.&rdquo;</blockquote>
           <figcaption data-initial="H"><strong>Hardie</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;Service is one on one with people who know what they are talking about and also what they are selling!&rdquo;</blockquote>
           <figcaption data-initial="M"><strong>Michael Finch</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;Thank you David & Steve for the amazing service on a monthly basis&rdquo;</blockquote>
           <figcaption data-initial="R"><strong>Robert Kennard</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;This lovely, friendly family firm are very approachable, dependable and professional. I thank them for going the “extra mile” for me!&rdquo;</blockquote>
           <figcaption data-initial="P"><strong>Penny Hanford</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;Their service has been excellent. I use computers all the time but am useless in the way the things work. Steve at 365 built my latest laptop which has been faultless for several years now. The monthly maintenance call means it’s kept in great condition. When I have had problems... normally down to me, their response time to sort it again is excellent. I highly recommend this excellent company.&rdquo;</blockquote>
           <figcaption data-initial="D"><strong>David Butcher</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;I think that 365 is a first class service. They are always so competent and obliging.&rdquo;</blockquote>
           <figcaption data-initial="M"><strong>Marianne Gill</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;Steve and David have been looking after our Tech for years and I would highly recommend their services as they really are exceptional. Knowing they are always available allows us to focus on running our business and not worrying about our computers. Thanks so much for always going that extra mile!&rdquo;</blockquote>
           <figcaption data-initial="V"><strong>Victoria</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;365 have looked after my computers for many years. They have always gone out of their way to be professional and helpful and I trust them completely.&rdquo;</blockquote>
           <figcaption data-initial="S"><strong>Stephanie Smith</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;Invaluable from 365 for years. David and Steve are 100% supportive. Always there to help in a timely manner, A giant thanks to the team at 365!&rdquo;</blockquote>
           <figcaption data-initial="K"><strong>Kevin Flight</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
         <figure class="review" data-reveal>
-          <p class="review__stars mono" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
+          <p class="review__stars mono" role="img" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>
           <blockquote>&ldquo;Have used 365 for years now. Always there if there is an issue, which is dealt with swiftly&rdquo;</blockquote>
           <figcaption data-initial="R"><strong>Robina Craweford</strong><span class="mono">GOOGLE REVIEW</span></figcaption>
         </figure>
@@ -909,7 +916,7 @@
           <span class="logo__text"><em>365</em>techies</span>
         </a>
         <p>The IT support experts. A family-run business established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists, providing monthly IT support for homes and businesses across Bournemouth, Poole and Dorset.</p>
-        <div class="partner-badges" aria-label="Accreditations">
+        <div class="partner-badges" role="group" aria-label="Accreditations">
           <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 21l5-2.5L17 21l-1.5-8.5"/></svg>Family Business &middot; Est. 1995</span>
           <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 18h18M9 22h6"/></svg>Dell Specialist</span>
           <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Partner</span>
@@ -1114,16 +1121,9 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=22"></script>
-  <script src="/js/a11y.min.js?v=11" defer></script>
+  <script src="/js/a11y.min.js?v=12" defer></script>
   <script src="/js/forms.min.js?v=11" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
-  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
-    <p>Cookies run our live chat and site stats. <a href="/cookie-policy/">Cookie policy</a>.</p>
-    <div class="cookie-banner__actions">
-      <button type="button" class="button secondary" data-cookie="decline">Decline</button>
-      <button type="button" class="button primary" data-cookie="accept">Accept</button>
-    </div>
-  </div>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->
   <script>
   (function () {

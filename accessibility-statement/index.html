@@ -74,7 +74,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=113" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=114" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -112,7 +112,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=113&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=114&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -318,6 +318,13 @@
 </head>
 <body id="top">
   <a class="skip-link" href="#main">Skip to content</a>
+  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
+    <p>Cookies run our live chat and site stats. <a href="/cookie-policy/">Cookie policy</a>.</p>
+    <div class="cookie-banner__actions">
+      <button type="button" class="button secondary" data-cookie="decline">Decline</button>
+      <button type="button" class="button primary" data-cookie="accept">Accept</button>
+    </div>
+  </div>
   <div class="grid-overlay" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
   <header class="site-header">
@@ -723,7 +730,12 @@
             <li><strong>Works everywhere</strong> &mdash; the site adapts to phones, tablets and computers.</li>
           </ul>
           <h2>Aiming for the standard</h2>
-          <p>We work towards the Web Content Accessibility Guidelines (WCAG) 2.1 AA and keep improving. Accessibility is never &ldquo;finished&rdquo; &mdash; we review and refine the site over time.</p>
+          <p>We work to the Web Content Accessibility Guidelines (WCAG) 2.2 AA. The site was last audited on 14 September 2026: fifty page templates were tested by machine and by hand (keyboard, screen-reader semantics, zoom, colour contrast measured on screen), and every page was checked for headings, labels and link names. The problems that audit found were fixed the same day; anything still open is listed below. Accessibility is never &ldquo;finished&rdquo; &mdash; we re-audit and refine the site over time.</p>
+          <h2>Known issues</h2>
+          <ul>
+            <li>The Bournemouth 3D map&rsquo;s advanced controls (four sliders and a search box) do not yet have labels.</li>
+            <li>The customer portal after sign-in has not yet had a full screen-reader walkthrough.</li>
+          </ul>
           <h2>Having difficulty?</h2>
           <p>If any part of our website is hard to use, or you&rsquo;d simply prefer to talk to a real person, we&rsquo;re glad to help personally &mdash; call <a href="tel:+441202775566">01202 775566</a> or email <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a>. We&rsquo;ll happily assist with anything you need, patiently and without jargon.</p>
           <h2>Tell us about a problem</h2>
@@ -786,7 +798,7 @@
           <span class="logo__text"><em>365</em>techies</span>
         </a>
         <p>The IT support experts. A family-run business established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists, providing monthly IT support for homes and businesses across Bournemouth, Poole and Dorset.</p>
-        <div class="partner-badges" aria-label="Accreditations">
+        <div class="partner-badges" role="group" aria-label="Accreditations">
           <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 21l5-2.5L17 21l-1.5-8.5"/></svg>Family Business &middot; Est. 1995</span>
           <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 18h18M9 22h6"/></svg>Dell Specialist</span>
           <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Partner</span>
@@ -991,16 +1003,9 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=22"></script>
-  <script src="/js/a11y.min.js?v=11" defer></script>
+  <script src="/js/a11y.min.js?v=12" defer></script>
   <script src="/js/forms.min.js?v=11" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
-  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
-    <p>Cookies run our live chat and site stats. <a href="/cookie-policy/">Cookie policy</a>.</p>
-    <div class="cookie-banner__actions">
-      <button type="button" class="button secondary" data-cookie="decline">Decline</button>
-      <button type="button" class="button primary" data-cookie="accept">Accept</button>
-    </div>
-  </div>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->
   <script>
   (function () {

@@ -1548,7 +1548,7 @@ html[class*="a11y-text-"] .nav-sos__long, html[class*="a11y-text-"] .nav-search_
 .breadcrumb a { color: var(--muted); transition: color 0.2s ease; }
 .breadcrumb a:hover { color: var(--cyan); }
 .breadcrumb span { opacity: 0.5; }
-.breadcrumb [aria-current] { color: var(--cyan); }
+.breadcrumb [aria-current] { color: var(--cyan); opacity: 0.9; }   /* 14 Sep 2026: 0.5 measured 2.6:1 */
 
 .section { padding: clamp(3.5rem, 8vh, 6.5rem) var(--pad-x); }
 .section--alt {
@@ -1957,7 +1957,7 @@ html[class*="a11y-text-"] .nav-sos__long, html[class*="a11y-text-"] .nav-search_
 }
 .cookie-banner[hidden] { display: none; }
 .cookie-banner p { margin: 0; flex: 1 1 320px; font-size: 0.95rem; color: var(--muted); line-height: 1.55; }
-.cookie-banner a { color: var(--cyan); }
+.cookie-banner a { color: var(--cyan); text-decoration: underline; }   /* 14 Sep 2026: 1.5:1 against the banner text, the underline carries the distinction */
 .cookie-banner__actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
 .cookie-banner .button { padding: 0.6rem 1.2rem; font-size: 0.9rem; }
 
@@ -2109,21 +2109,23 @@ html.a11y-contrast *, html.a11y-contrast *::before, html.a11y-contrast *::after 
 html.a11y-contrast a, html.a11y-contrast .grad, html.a11y-contrast [class*="grad"] {
   color: #ffe400 !important; -webkit-text-fill-color: #ffe400 !important;
 }
+html.a11y-contrast a { text-decoration: underline !important; }   /* 14 Sep 2026: yellow on white text is 1.28:1, the underline carries the distinction */
 html.a11y-contrast .button, html.a11y-contrast .nav-cta, html.a11y-contrast .a11y__toggle,
 html.a11y-contrast .a11y__opt[aria-pressed="true"] { background: #ffe400 !important; color: #000 !important; -webkit-text-fill-color: #000 !important; }
 html.a11y-contrast .button *, html.a11y-contrast .nav-cta * { color: #000 !important; -webkit-text-fill-color: #000 !important; }
 
 /* Inline jargon tooltips */
 .jterm { border-bottom: 1px dotted var(--cyan); cursor: help; position: relative; outline: none; }
+.jterm:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; border-radius: 3px; }
 .jterm > .jtip {
   position: absolute; left: 50%; bottom: 145%; transform: translateX(-50%);
   width: max-content; max-width: 260px; padding: 0.6rem 0.8rem; border-radius: var(--r-md);
   background: #0c1430; border: 1px solid var(--cyan); color: var(--ink);
   font-size: 0.9rem; line-height: 1.45; font-weight: 400; letter-spacing: normal;
   box-shadow: var(--shadow-1);
-  opacity: 0; visibility: hidden; transition: opacity 0.15s ease; z-index: 50; pointer-events: none;
+  display: none; z-index: 50; pointer-events: none;   /* 14 Sep 2026 (a11y audit item 1): was visibility:hidden, which still has a box and widened the phone layout to 476 px */
 }
-.jterm:hover > .jtip, .jterm:focus > .jtip, .jterm.is-open > .jtip { opacity: 1; visibility: visible; }
+.jterm:hover > .jtip, .jterm:focus > .jtip, .jterm.is-open > .jtip { display: block; }
 @media (max-width: 600px) { .jterm > .jtip { left: 0; transform: none; max-width: 78vw; } }
 
 /* ===== Print (lead-magnet / checklist friendly) ===== */
@@ -2569,7 +2571,7 @@ html.ss-open { overflow: hidden; }
 .b365 {
   --b365-deep: #0a1420; --b365-water: #10202f; --b365-line: #1d3346;
   --b365-foam: #e8f1f2; --b365-surf: #4fd8c4; --b365-dusk: #ffb066;
-  --b365-mute: #6b8296;
+  --b365-mute: #7f95a8;   /* 14 Sep 2026: #6b8296 measured 4.2:1 on the tiles */
 }
 /* provenance chips — every reading wears exactly one */
 .chip-m, .chip-f { display: inline-flex; align-items: center; gap: .45em;
@@ -2786,6 +2788,17 @@ html.scenes-live .nm-link, html.scenes-live .nm-scan, html.scenes-live .nm-hub, 
   main[data-cv] > section:not(.hero):not(.page-hero) { contain-intrinsic-size: auto 700px; }
   main[data-cv]:not(.cv-off) > section:not(.hero):not(.page-hero) { content-visibility: auto; }
 }
+
+/* ==========================================================================
+   14 Sep 2026 (accessibility audit). html clips sideways overflow so no absolutely positioned decoration can
+   ever widen a phone's layout viewport again (body alone does not do it on phones). Revealed-on-scroll blocks
+   turn visible the moment keyboard focus lands inside them (they sat at opacity 0 for up to a second). The
+   status strip's links get a 24 px pointer target without changing the strip's 30 px line box.
+   ========================================================================== */
+html { overflow-x: clip; }
+[data-reveal]:focus-within, [data-stagger] > *:focus-within, [data-title]:focus-within { opacity: 1 !important; transform: none !important; filter: none !important; }
+.status-ticker__track a { display: inline-block; padding: 3px 0; margin: -3px 0; }
+@media (min-width: 768px) { .footer-areas__links a, .site-footer__legal-links a { display: inline-block; padding: 0.2rem 0.35rem; } }   /* 23.6 px tall on desktop */
 
 /* ============================================================
    SENTINEL — must stay the LAST rule in this file.

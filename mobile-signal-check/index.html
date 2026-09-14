@@ -74,7 +74,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=113" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=114" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -112,7 +112,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=113&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=114&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -499,6 +499,13 @@
 </head>
 <body id="top">
   <a class="skip-link" href="#main">Skip to content</a>
+  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
+    <p>Cookies run our live chat and site stats. <a href="/cookie-policy/">Cookie policy</a>.</p>
+    <div class="cookie-banner__actions">
+      <button type="button" class="button secondary" data-cookie="decline">Decline</button>
+      <button type="button" class="button primary" data-cookie="accept">Accept</button>
+    </div>
+  </div>
   <div class="grid-overlay" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
   <header class="site-header">
@@ -915,10 +922,11 @@
           .sck__gos{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin:0 0 .7rem}
           @media (max-width:380px){.sck__gos{grid-template-columns:1fr}}
           .sck__gos .sck__go{margin:0;padding:1.05rem .8rem;font-size:1.1rem;position:relative}
-          .sck__gos .sck__go small{display:block;font-weight:500;font-size:.72rem;line-height:1.25;opacity:.82;margin-top:.28rem}
-          .sck__go--in{background:linear-gradient(135deg,#2b4a72,var(--cyan,#1d97e3));color:var(--ink,#eaf4ff)}
+.sck__linkbtn{background:none;border:0;padding:0;font:inherit;color:var(--cyan);text-decoration:underline;cursor:pointer}
+          .sck__gos .sck__go small{display:block;font-weight:500;font-size:.72rem;line-height:1.25;opacity:1;margin-top:.28rem}
+          .sck__go--in{background:linear-gradient(135deg,#2b4a72,#1565a8);color:var(--ink,#eaf4ff)}
           /* The two place buttons are the CHOICE; Run does the work. */
-          .sck__place{opacity:.55;box-shadow:none;outline:2px solid transparent;outline-offset:3px}
+          .sck__place{opacity:.85;box-shadow:none;outline:2px solid transparent;outline-offset:3px}
           .sck__place[aria-pressed="true"]{opacity:1;outline-color:var(--cyan-soft,#6cc4f5);box-shadow:0 14px 40px -14px rgba(29,151,227,.7)}
           .sck__place[aria-pressed="true"]::after{content:"\2713";position:absolute;top:.5rem;right:.65rem;font-size:.9rem;opacity:.9}
           .sck__run{display:block;width:100%;padding:1.2rem 1rem;margin:0;border:0;border-radius:18px;position:relative;overflow:hidden;
@@ -1056,7 +1064,7 @@
           @media (max-width:380px){.sck__nextbtns{grid-template-columns:1fr}}
           .sck__nextbtns button{padding:.85rem .8rem;min-height:48px;border-radius:12px;border:0;cursor:pointer;
             font-weight:700;font-size:.98rem;line-height:1.15;background:linear-gradient(135deg,var(--cyan,#1d97e3),var(--green,#00ce1b));color:#061019;transition:transform .1s,opacity .2s}
-          .sck__nextbtns button.sck__go--in{background:linear-gradient(135deg,#2b4a72,var(--cyan,#1d97e3));color:var(--ink,#eaf4ff)}
+          .sck__nextbtns button.sck__go--in{background:linear-gradient(135deg,#2b4a72,#1565a8);color:var(--ink,#eaf4ff)}
           .sck__nextbtns button:disabled{opacity:.45;cursor:default}
           .sck__wait{text-align:center;margin:.6rem 0 0}
           .sck__keep{margin:.8rem 0 0;text-align:center}
@@ -1080,7 +1088,7 @@
           <div class="sck__prog" id="sck-prog" aria-hidden="true"><i></i></div>
           <p class="sck__cool" id="sck-cool" hidden>Next test in <b>1:00</b></p>
           <p class="sck__st" id="sck-st" role="status" aria-live="polite">WiFi off, then tap &mdash; about ten seconds.</p>
-          <p class="sck__wifi" id="sck-wifi" hidden>Still on WiFi? <a href="#" id="sck-wifi-no">Turn it off first</a> &mdash; a reading on WiFi is your router, not the network.</p>
+          <p class="sck__wifi" id="sck-wifi" hidden>Still on WiFi? <button type="button" class="sck__linkbtn" id="sck-wifi-no">Turn it off first</button> &mdash; a reading on WiFi is your router, not the network.</p>
           <div class="sck__gauge" id="sck-gauge" hidden>
             <svg viewBox="0 0 220 128" aria-hidden="true">
               <defs><linearGradient id="sck-grad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1d97e3"/><stop offset="1" stop-color="#00ce1b"/></linearGradient></defs>
@@ -2079,7 +2087,7 @@
           <span class="logo__text"><em>365</em>techies</span>
         </a>
         <p>The IT support experts. A family-run business established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists, providing monthly IT support for homes and businesses across Bournemouth, Poole and Dorset.</p>
-        <div class="partner-badges" aria-label="Accreditations">
+        <div class="partner-badges" role="group" aria-label="Accreditations">
           <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 21l5-2.5L17 21l-1.5-8.5"/></svg>Family Business &middot; Est. 1995</span>
           <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 18h18M9 22h6"/></svg>Dell Specialist</span>
           <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Partner</span>
@@ -2284,16 +2292,9 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=22"></script>
-  <script src="/js/a11y.min.js?v=11" defer></script>
+  <script src="/js/a11y.min.js?v=12" defer></script>
   <script src="/js/forms.min.js?v=11" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
-  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
-    <p>Cookies run our live chat and site stats. <a href="/cookie-policy/">Cookie policy</a>.</p>
-    <div class="cookie-banner__actions">
-      <button type="button" class="button secondary" data-cookie="decline">Decline</button>
-      <button type="button" class="button primary" data-cookie="accept">Accept</button>
-    </div>
-  </div>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->
   <script>
   (function () {

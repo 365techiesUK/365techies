@@ -74,7 +74,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=113" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=114" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -112,7 +112,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=113&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=114&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -451,6 +451,13 @@
 </head>
 <body id="top">
   <a class="skip-link" href="#main">Skip to content</a>
+  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
+    <p>Cookies run our live chat and site stats. <a href="/cookie-policy/">Cookie policy</a>.</p>
+    <div class="cookie-banner__actions">
+      <button type="button" class="button secondary" data-cookie="decline">Decline</button>
+      <button type="button" class="button primary" data-cookie="accept">Accept</button>
+    </div>
+  </div>
   <div class="grid-overlay" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
   <header class="site-header">
@@ -872,30 +879,30 @@
           <div class="hd__screen" role="tabpanel" aria-label="Overview">
             <div class="hd__row">
               <div class="hd__card hd__card--wide">
-                <h3><svg class="ic ic--spin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" class="ic-f"/></svg> Cameras</h3>
+                <h3><svg class="ic ic--spin" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3" class="ic-f"/></svg> Cameras</h3>
                 <div class="hd__cams" id="hdCams"></div>
                 <p class="hd__sub" id="hdCamNote">All four recording. Nothing needs you.</p>
               </div>
               <div class="hd__card">
-                <h3><svg class="ic ic--flash" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg> Power</h3>
+                <h3><svg class="ic ic--flash" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg> Power</h3>
                 <div class="hd__big"><span id="hdPower">0</span><em>W now</em></div>
                 <div class="hd__bar2"><i id="hdBatt" style="width:80%"></i></div>
                 <p class="hd__sub" id="hdBattTxt">Battery 80%</p>
               </div>
               <div class="hd__card">
-                <h3><svg class="ic ic--wave" viewBox="0 0 24 24"><path d="M4 14a8 8 0 0 1 16 0"/><path d="M7 17a5 5 0 0 1 10 0"/><circle cx="12" cy="20" r="1.4" class="ic-f"/></svg> Broadband</h3>
+                <h3><svg class="ic ic--wave" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 14a8 8 0 0 1 16 0"/><path d="M7 17a5 5 0 0 1 10 0"/><circle cx="12" cy="20" r="1.4" class="ic-f"/></svg> Broadband</h3>
                 <div class="hd__big"><span id="hdNet">—</span><em>Mbps</em></div>
                 <p class="hd__sub" id="hdNetNote">Router up 41 days</p>
               </div>
             </div>
             <div class="hd__row">
-              <div class="hd__card"><h3><svg class="ic" viewBox="0 0 24 24"><path d="M4 7h16v12H4z"/><path d="M4 7l8-4 8 4"/></svg> Backups</h3>
+              <div class="hd__card"><h3><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v12H4z"/><path d="M4 7l8-4 8 4"/></svg> Backups</h3>
                 <div class="hd__ok" id="hdBk">&#10003;</div><p class="hd__sub" id="hdBkNote">3 PCs backed up last night</p></div>
-              <div class="hd__card"><h3><svg class="ic" viewBox="0 0 24 24"><path d="M5 21V6l7-3 7 3v15"/><path d="M9 21v-7h6v7"/></svg> Doors</h3>
+              <div class="hd__card"><h3><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V6l7-3 7 3v15"/><path d="M9 21v-7h6v7"/></svg> Doors</h3>
                 <div class="hd__ok" id="hdDoor">&#10003;</div><p class="hd__sub" id="hdDoorNote">All closed</p></div>
-              <div class="hd__card"><h3><svg class="ic ic--cool" viewBox="0 0 24 24"><path d="M12 3v18M4.5 7.5l15 9M19.5 7.5l-15 9"/></svg> Freezer</h3>
+              <div class="hd__card"><h3><svg class="ic ic--cool" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M4.5 7.5l15 9M19.5 7.5l-15 9"/></svg> Freezer</h3>
                 <div class="hd__big"><span id="hdFrz">-19</span><em>&deg;C</em></div><p class="hd__sub">Normal</p></div>
-              <div class="hd__card"><h3><svg class="ic ic--blink" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8"/></svg> Devices</h3>
+              <div class="hd__card"><h3><svg class="ic ic--blink" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8 21h8"/></svg> Devices</h3>
                 <div class="hd__big"><span id="hdDev">24</span><em>of 24</em></div><p class="hd__sub">Nothing missing</p></div>
             </div>
           </div>
@@ -910,13 +917,13 @@
           <div class="hd__screen" role="tabpanel" aria-label="Weather and energy">
             <div class="hd__row">
               <div class="hd__card hd__card--wide hd__wx">
-                <h3><svg class="ic ic--float" viewBox="0 0 24 24"><circle cx="9" cy="9" r="3.4"/><path d="M6 18h11a3.5 3.5 0 0 0 0-7 5 5 0 0 0-9.6-1"/></svg> Weather &mdash; <span id="wxPlace">your postcode</span></h3>
+                <h3><svg class="ic ic--float" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="9" r="3.4"/><path d="M6 18h11a3.5 3.5 0 0 0 0-7 5 5 0 0 0-9.6-1"/></svg> Weather &mdash; <span id="wxPlace">your postcode</span></h3>
                 <div class="hd__wxnow"><span id="wxTemp">14</span><em>&deg;C</em>
                   <div class="hd__wxd"><b id="wxDesc">Cloudy</b><span id="wxSub">Feels like 12&deg; &middot; wind 11mph</span></div></div>
                 <div class="hd__wxrow" id="wxDays"></div>
               </div>
               <div class="hd__card">
-                <h3><svg class="ic ic--flash" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg> Today</h3>
+                <h3><svg class="ic ic--flash" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg> Today</h3>
                 <div class="hd__big"><span id="wxGen">0.0</span><em>kWh made</em></div>
                 <p class="hd__sub" id="wxSaved">Used at home rather than exported</p>
               </div>
@@ -942,9 +949,11 @@
 .hd__btn:hover,.hd__btn:focus-visible{border-color:var(--cyan,#1d97e3);color:var(--cyan,#1d97e3)}
 .hd__btn--pulse{animation:hdPulse 2.4s ease-in-out infinite}
 @keyframes hdPulse{0%,100%{box-shadow:0 0 0 0 rgba(29,151,227,.5)}50%{box-shadow:0 0 0 7px rgba(29,151,227,0)}}
-.hd__dots{display:flex;gap:.3rem;padding:0 .3rem}
-.hd__dots button{width:8px;height:8px;padding:0;border-radius:50%;border:0;background:#2a3b63;cursor:pointer}
-.hd__dots button[aria-selected="true"]{background:var(--cyan,#1d97e3);width:20px;border-radius:4px}
+.hd__dots{display:flex;gap:0;padding:0 .1rem}
+.hd__dots button{width:24px;height:24px;padding:0;border:0;background:transparent;cursor:pointer;position:relative}   /* 14 Sep 2026 (a11y audit): 24 px target, the dot is drawn inside */
+.hd__dots button::before{content:"";position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:#2a3b63}
+.hd__dots button[aria-selected="true"]{width:36px}
+.hd__dots button[aria-selected="true"]::before{width:20px;margin-left:-10px;border-radius:4px;background:var(--cyan,#1d97e3)}
 .hd__viewport{overflow:hidden;border-radius:12px;touch-action:pan-y}
 .hd__track{display:flex;transition:transform .45s cubic-bezier(.4,0,.2,1)}
 .hd__screen{min-width:100%;flex:0 0 100%}
@@ -1179,8 +1188,8 @@
  <section class="section section--alt"><div class="wrap wrap--narrow prose" data-reveal>
 <h2 class="section-title" data-title>Three ways in, and the first one is free<span class="title-underline"></span></h2>
 <p>You do not have to take our word for any of this. There is a <strong>dashboard studio in the 365 portal</strong>: drag the tiles where you want them, take off what you do not care about, save the layout to your account and it is there on your phone too. <a href="/join/">Joining takes about twenty seconds</a> &mdash; no card, no salesperson.</p>
-<div class="price-table-wrap"><table class="price-table">
-<thead><tr><th></th><th>Free 365 member</th><th>On 365 Home Support</th><th>A bespoke home dashboard</th></tr></thead><tbody>
+<div class="price-table-wrap" tabindex="0" role="group" aria-label="Price table (scrolls sideways on a small screen)"><table class="price-table">
+<thead><tr><th scope="col"><span class="sr-only">Feature</span></th><th>Free 365 member</th><th>On 365 Home Support</th><th>A bespoke home dashboard</th></tr></thead><tbody>
 <tr><td><strong>Cost</strong></td><td>Free to join</td><td>&pound;18.25 a month per computer</td><td>Quoted once, per home</td></tr>
 <tr><td><strong>Arrange it yourself</strong></td><td>Yes &mdash; and the layout is saved to your account</td><td>Yes</td><td>We lay it out with you, then adjust it after a fortnight of real use</td></tr>
 <tr><td><strong>What is actually live</strong></td><td>Nothing &mdash; every tile is a clearly marked sample</td><td>The computers we look after: health, backups, storage, protection, your next visit, your written reports, your saved Wi-Fi surveys</td><td>Whatever your house has that publishes its data &mdash; cameras, power, broadband, doors, sensors, the freezer</td></tr>
@@ -1314,7 +1323,7 @@
           <span class="logo__text"><em>365</em>techies</span>
         </a>
         <p>The IT support experts. A family-run business established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists, providing monthly IT support for homes and businesses across Bournemouth, Poole and Dorset.</p>
-        <div class="partner-badges" aria-label="Accreditations">
+        <div class="partner-badges" role="group" aria-label="Accreditations">
           <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 21l5-2.5L17 21l-1.5-8.5"/></svg>Family Business &middot; Est. 1995</span>
           <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 18h18M9 22h6"/></svg>Dell Specialist</span>
           <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Partner</span>
@@ -1519,16 +1528,9 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=22"></script>
-  <script src="/js/a11y.min.js?v=11" defer></script>
+  <script src="/js/a11y.min.js?v=12" defer></script>
   <script src="/js/forms.min.js?v=11" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
-  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
-    <p>Cookies run our live chat and site stats. <a href="/cookie-policy/">Cookie policy</a>.</p>
-    <div class="cookie-banner__actions">
-      <button type="button" class="button secondary" data-cookie="decline">Decline</button>
-      <button type="button" class="button primary" data-cookie="accept">Accept</button>
-    </div>
-  </div>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->
   <script>
   (function () {
