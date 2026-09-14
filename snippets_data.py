@@ -895,7 +895,7 @@ SNIPPETS = {
         "desc": "Meet the team behind 365 Techies, a family-run IT support business in Bournemouth looking after Dorset homes and businesses with patience since 1995.",
     },
     "free-pc-health-check": {
-        "desc": "365 PC Manager is a free, honest PC health check for Windows 10 and 11 from a Dorset family firm. A health score and one-tap boost, with no fake errors.",
+        "desc": "365 PC Manager: the must-have free PC health check for Windows 10 and 11. No fake errors, and on a support plan it keeps your PC up to date and secure.",
     },
     "it-support-for-home-workers": {
         "desc": "Reliable IT support for people working from home. Email, Microsoft 365, Teams, printers, Wi-Fi, security and backups, all kept working so you can stay put.",
