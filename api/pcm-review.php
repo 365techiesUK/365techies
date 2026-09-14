@@ -2128,24 +2128,41 @@ function sr_sample() {
  *  self-run. Same window and same queue the superseding rule below uses (rv_record queues every
  *  booking with its visit end when it is made, so the entry exists before the service runs).
  *  14 Sep 2026: the owner ran two booked services from the app and both came out "self-run". */
-function sr_visit_booked($email, $ts) {
+function sr_visit_booked($email, $ts, $name = '') {
     $email = strtolower(trim((string)$email));
-    if ($email === '') return false;
+    if ($email === '' && sr_name_key($name) === '') return false;
     list($lk, $q) = rvq_open();
     if (!$lk) return false;
-    $hit = sr_visit_booked_in($q, $email, $ts);
+    $hit = sr_visit_booked_in($q, $email, $ts, $name);
     rvq_close($lk);
     return $hit;
 }
-/** The same question over a queue the caller already holds open (the lock is not re-entrant). */
-function sr_visit_booked_in($q, $email, $ts) {
+/** "Mr John Ridd" / "john  ridd " -> "john ridd": first + last name, lower-case, titles dropped.
+ *  '' for a single name, which is too loose to match a visit on. */
+function sr_name_key($n) {
+    $n = strtolower(trim((string)$n));
+    $n = preg_replace('/[^a-z ]+/', ' ', $n);
+    $t = array_values(array_filter(explode(' ', $n), function ($w) {
+        return $w !== '' && !in_array($w, array('mr', 'mrs', 'ms', 'miss', 'dr', 'prof', 'rev', 'sir', 'and'), true);
+    }));
+    if (count($t) < 2) return '';
+    return $t[0] . ' ' . $t[count($t) - 1];
+}
+/** The same question over a queue the caller already holds open (the lock is not re-entrant).
+ *  A row is that person's visit when it ends within 36 h of the report AND carries either the same
+ *  email or the same first + last name. The name fallback exists because the team's booking often
+ *  carries a different address from the portal record (SimplyBook's client entry, a spouse, an old
+ *  one): on 14 Sep 2026 three booked visits matched on nothing by email alone. */
+function sr_visit_booked_in($q, $email, $ts, $name = '') {
     $email = strtolower(trim((string)$email));
-    if ($email === '') return false;
+    $nk = sr_name_key($name);
+    if ($email === '' && $nk === '') return false;
     foreach ((array)(isset($q['q']) ? $q['q'] : array()) as $e) {
-        if ((isset($e['em']) ? strtolower((string)$e['em']) : '') !== $email) continue;
         if ((isset($e['st']) ? $e['st'] : '') === 'cancelled') continue;
         $end = isset($e['end']) ? (int)$e['end'] : 0;
-        if ($end > 0 && abs($end - (int)$ts) <= 129600) return true;
+        if ($end <= 0 || abs($end - (int)$ts) > 129600) continue;
+        if ($email !== '' && (isset($e['em']) ? strtolower((string)$e['em']) : '') === $email) return true;
+        if ($nk !== '' && sr_name_key(isset($e['nm']) ? $e['nm'] : '') === $nk) return true;
     }
     return false;
 }
@@ -2174,7 +2191,18 @@ function sr_resend_as_visit_once($dataFile = null, $from = 1789344000, $to = 178
         if ($ts < (int)$from || $ts > (int)$to) continue;
         $diag['in_window']++;
         $em = strtolower(trim((string)(isset($e['em']) ? $e['em'] : '')));
-        if ($em === '' || !sr_visit_booked_in($q, $em, $ts)) continue;
+        $enm = isset($e['nm']) ? (string)$e['nm'] : '';
+        if (!sr_visit_booked_in($q, $em, $ts, $enm)) {
+            // counts only: how close the nearest same-email row is, and what sits in the window under other addresses
+            $same = 0; $near = null; $win = 0; $nmw = 0; $nk = sr_name_key($enm);
+            foreach ($q['q'] as $b) {
+                $bend = isset($b['end']) ? (int)$b['end'] : 0; $d = $bend > 0 ? abs($bend - $ts) : null;
+                if ($em !== '' && (isset($b['em']) ? strtolower((string)$b['em']) : '') === $em) { $same++; if ($d !== null && ($near === null || $d < $near)) $near = $d; }
+                if ($d !== null && $d <= 129600) { $win++; if ($nk !== '' && sr_name_key(isset($b['nm']) ? $b['nm'] : '') === $nk) $nmw++; }
+            }
+            $diag['rows'][] = array('same_email' => $same, 'nearest_h' => ($near === null ? null : round($near / 3600, 1)), 'in_window_any' => $win, 'name_hits' => $nmw, 'has_name' => ($nk !== ''));
+            continue;
+        }
         $diag['booked']++;
         $nid = $id . '-visit';
         if (isset($q['sr'][$nid])) continue;
@@ -2197,8 +2225,8 @@ function sr_resend_as_visit_once($dataFile = null, $from = 1789344000, $to = 178
     // or a day after the window, when there is nothing left to find
     if ($names || time() > (int)$to + 86400) $q['sr_resend_visit_1'] = time();
     // nothing matched: say so ONCE (counts only, no names) so the reason is visible without server access
-    $sayDiag = (!$names && empty($q['sr_resend_visit_1_diag']));
-    if ($sayDiag) $q['sr_resend_visit_1_diag'] = time();
+    $sayDiag = (!$names && empty($q['sr_resend_visit_1_diag2']));
+    if ($sayDiag) $q['sr_resend_visit_1_diag2'] = time();
     rvq_save($q);
     rvq_close($lk);
     if ($sayDiag && $SR_LIVE) rv_slack(':mag: 365 mail: re-send check found nothing to re-queue - ' . json_encode($diag));

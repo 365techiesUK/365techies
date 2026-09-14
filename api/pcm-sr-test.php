@@ -136,6 +136,12 @@ ok(sr_visit_booked('nobody@example.com', $TS + 10) === false, 'another person\'s
 ok(sr_visit_booked('', $TS + 10) === false, 'no email, no match');
 list($lkC, $qC) = rvq_open(); $qC['q']['9011'] = array('em' => 'cancelled.example@example.com', 'nm' => 'Cara', 'end' => $TS + 10, 'dn' => 'pending', 'st' => 'cancelled'); rvq_save($qC); rvq_close($lkC);
 ok(sr_visit_booked('cancelled.example@example.com', $TS + 10) === false, 'a cancelled booking does not count');
+ok(sr_name_key('Mr John Ridd') === 'john ridd' && sr_name_key(' john  RIDD ') === 'john ridd' && sr_name_key('Stephanie') === '' && sr_name_key('John and Mary Ridd') === 'john ridd', 'the name key is first + last, lower-case, titles dropped, one name = none');
+list($lkN, $qN) = rvq_open(); $qN['q']['9012'] = array('em' => 'other.address@example.com', 'nm' => 'Sofia Example', 'end' => $TS + 10, 'dn' => 'pending', 'st' => 'pending'); rvq_save($qN); rvq_close($lkN);
+ok(sr_visit_booked('sofia.nomatch@example.com', $TS + 10, 'Sofia Example') === true, 'a different address but the same first + last name in the window is her visit');
+ok(sr_visit_booked('', $TS + 10, 'sofia example') === true, 'the name alone is enough');
+ok(sr_visit_booked('sofia.nomatch@example.com', $TS + 10, 'Sofia') === false, 'a single name never matches');
+ok(sr_visit_booked('sofia.nomatch@example.com', $TS + 86400 * 3, 'Sofia Example') === false, 'the name fallback keeps the 36 h window');
 
 echo "-- 14 Sep one shot: a sent self-run report for a booked visit goes again as the visit's report\n";
 $khT = substr(hash('sha256', $KEY), 0, 12); $oidT = $khT . '-' . $MACHINE . '-' . ($TS + 10); $nidT = $oidT . '-visit';
