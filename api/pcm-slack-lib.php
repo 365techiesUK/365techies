@@ -228,7 +228,12 @@ function pcm_service_report_to_slack($cust, $machine, $ts, $html, $summary) {
     if ($name === '') $name = trim((string)($cust['name'] ?? 'Customer'));
     $pc = trim((string)($summary['pc'] ?? '')); $os = trim((string)($summary['os'] ?? '')); $score = trim((string)($summary['score'] ?? ''));
     $notes = array();
-    if (isset($summary['notes']) && is_array($summary['notes'])) foreach (array_slice($summary['notes'], 0, 3) as $n) { $n = trim(slk_plain((string)$n)); if ($n !== '') $notes[] = substr($n, 0, 160); }
+    if (isset($summary['notes']) && is_array($summary['notes'])) foreach (array_slice($summary['notes'], 0, 3) as $n) {
+        // the payload strips the tags from its recommendations but leaves HTML entities in
+        // (&pound;545, &deg;C): decode them, or Slack shows the escaped entity as text
+        $n = trim(slk_plain(html_entity_decode((string)$n, ENT_QUOTES | ENT_HTML5, 'UTF-8')));
+        if ($n !== '') $notes[] = substr($n, 0, 160);
+    }
     $mname = trim((string)($cust['machines'][$machine]['name'] ?? ''));
     $selfrun = !empty($summary['selfrun']);   // the customer ran it from the app, not a visit
     $text = ($selfrun ? '*Self-run full service* (the customer ran it from the app) - ' : '*6-weekly Service Report* - ') . slk_plain(substr($name, 0, 80)) . "\n"
