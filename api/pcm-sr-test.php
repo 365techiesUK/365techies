@@ -142,19 +142,25 @@ ok(sr_visit_booked('sofia.nomatch@example.com', $TS + 10, 'Sofia Example') === t
 ok(sr_visit_booked('', $TS + 10, 'sofia example') === true, 'the name alone is enough');
 ok(sr_visit_booked('sofia.nomatch@example.com', $TS + 10, 'Sofia') === false, 'a single name never matches');
 ok(sr_visit_booked('sofia.nomatch@example.com', $TS + 86400 * 3, 'Sofia Example') === false, 'the name fallback keeps the 36 h window');
+$sbvT = array(array('bid' => 77, 'em' => 'dana-other@example.com', 'nm' => 'Mrs Dana Example', 'start' => $TS - 3600, 'end' => $TS + 1800));
+ok(sr_visit_in_list($sbvT, 'DANA-other@example.com', $TS + 10) === true && sr_visit_in_list($sbvT, 'dana.example@example.com', $TS + 10, 'Dana Example') === true, "SimplyBook's list matches by email or by name");
+ok(sr_visit_in_list($sbvT, 'dana.example@example.com', $TS + 86400 * 3, 'Dana Example') === false && sr_visit_in_list(array(), 'dana-other@example.com', $TS + 10) === false && sr_visit_in_list($sbvT, '', $TS + 10, 'Dana') === false, 'outside the window, an empty list, or a single name: no');
+ok(sr_visit_booked('dana.example@example.com', $TS + 10, 'Dana Example', $sbvT) === true && sr_visit_booked('dana.example@example.com', $TS + 10, 'Dana Example') === false, 'the rule takes the list first; without it the queue alone does not know Dana');
 
 echo "-- 14 Sep one shot: a sent self-run report for a booked visit goes again as the visit's report\n";
 $khT = substr(hash('sha256', $KEY), 0, 12); $oidT = $khT . '-' . $MACHINE . '-' . ($TS + 10); $nidT = $oidT . '-visit';
 list($lkR, $qR) = rvq_open();
 $qR['sr'][$oidT] = array('em' => 'sofia.example@example.com', 'nm' => 'Sofia', 'pc' => 'Dell OptiPlex 3000', 'selfrun' => true, 'ts' => $TS + 10, 'st' => 'sent', 'sent_ts' => $TS + 400, 'tries' => 1, 'made' => $TS + 20);
 $qR['sr']['nobody-sent-selfrun'] = array('em' => 'nobody@example.com', 'nm' => 'Nobody', 'selfrun' => true, 'ts' => $TS + 10, 'st' => 'sent');   // no booked visit: left alone
+$qR['sr']['dana-sent-selfrun'] = array('em' => 'dana.example@example.com', 'nm' => 'Dana Example', 'selfrun' => true, 'ts' => $TS + 10, 'st' => 'sent');   // her visit is only in SimplyBook's list
 $qR['q']['9010']['dn'] = 'pending';
 rvq_save($qR); rvq_close($lkR);
 $dbT = $RV_TMPQ . '.db.json';
-file_put_contents($dbT, json_encode(array('customers' => array($KEY => array('email' => 'sofia.example@example.com', 'machines' => array($MACHINE => array('repk' => array((string)($TS + 10) => 'selfrun'))))))));
+file_put_contents($dbT, json_encode(array('customers' => array($KEY => array('email' => 'sofia.example@example.com', 'machines' => array($MACHINE => array('repk' => array((string)($TS + 10) => 'selfrun'))))), 'sbv' => $sbvT)));
 $rr = sr_resend_as_visit_once($dbT, $TS - 100, $TS + 100);
 $qq = q();
-ok(isset($rr['requeued']) && $rr['requeued'] === 1, 'exactly the booked self-run is queued again', json_encode($rr));
+ok(isset($rr['requeued']) && $rr['requeued'] === 2, 'the two booked self-runs are queued again (one known to the queue, one only to SimplyBook)', json_encode($rr));
+ok(isset($qq['sr']['dana-sent-selfrun-visit']) && $qq['sr']['dana-sent-selfrun-visit']['st'] === 'pending' && $qq['sr']['dana-sent-selfrun-visit']['selfrun'] === false, "Dana's copy is pending as the visit's report");
 ok(isset($qq['sr'][$nidT]) && $qq['sr'][$nidT]['st'] === 'pending' && $qq['sr'][$nidT]['selfrun'] === false && $qq['sr'][$nidT]['tries'] === 0, 'the copy is pending and no longer self-run');
 ok(isset($qq['sr'][$nidT]) && $qq['sr'][$nidT]['pc'] === 'Dell OptiPlex 3000' && $qq['sr'][$nidT]['ts'] === $TS + 10 && $qq['sr'][$nidT]['resend_of'] === $oidT, 'same report, same content, points back at the original');
 ok(isset($qq['sr'][$nidT]) && strpos(sr_subject($qq['sr'][$nidT]), 'self-run') === false && strpos(sr_body('Sofia', $qq['sr'][$nidT]), 'six-weekly service on your') !== false && strpos(sr_body_html('Sofia', $qq['sr'][$nidT]), 'six-weekly service is done') !== false, 'the copy reads as the six-weekly report');
@@ -166,7 +172,7 @@ ok(isset($dbR['customers'][$KEY]['machines'][$MACHINE]['repk'][(string)($TS + 10
 $rr2 = sr_resend_as_visit_once($dbT, $TS - 100, $TS + 100);
 ok(isset($rr2['skip']) && $rr2['skip'] === 'done', 'it runs once');
 @unlink($dbT);
-list($lkR, $qR) = rvq_open(); unset($qR['sr'][$oidT], $qR['sr'][$nidT], $qR['sr']['nobody-sent-selfrun'], $qR['sr_resend_visit_1']); $qR['q']['9010']['dn'] = 'pending'; unset($qR['q']['9010']['dn_by']); rvq_save($qR); rvq_close($lkR);   // leave the queue as the later cases expect it
+list($lkR, $qR) = rvq_open(); unset($qR['sr'][$oidT], $qR['sr'][$nidT], $qR['sr']['nobody-sent-selfrun'], $qR['sr']['dana-sent-selfrun'], $qR['sr']['dana-sent-selfrun-visit'], $qR['sr_resend_visit_1']); $qR['q']['9010']['dn'] = 'pending'; unset($qR['q']['9010']['dn_by']); rvq_save($qR); rvq_close($lkR);   // leave the queue as the later cases expect it
 
 echo "-- who is told when the next service is\n";
 // A support-plan customer is; anybody else is not, because it would promise a visit

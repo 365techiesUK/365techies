@@ -722,7 +722,7 @@ if ($action === 'reportup') {
             require_once __DIR__ . '/pcm-review.php';   // top-level scope on purpose (php-include-scope-trap)
             $cem = strtolower(trim((string)(isset($db['customers'][$key]['email']) ? $db['customers'][$key]['email'] : '')));
             $cnm = (string)(isset($db['customers'][$key]['name']) ? $db['customers'][$key]['name'] : '');
-            if (function_exists('sr_visit_booked') && sr_visit_booked($cem, $rts, $cnm)) { $selfrun = false; $sumr['selfrun_booked'] = true; }
+            if (function_exists('sr_visit_booked') && sr_visit_booked($cem, $rts, $cnm, isset($db['sbv']) && is_array($db['sbv']) ? $db['sbv'] : array())) { $selfrun = false; $sumr['selfrun_booked'] = true; }
         }
         $sumr['selfrun'] = $selfrun;   // what Slack and the customer email are built from
     }

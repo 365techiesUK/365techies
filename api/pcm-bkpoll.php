@@ -99,6 +99,27 @@ if (isset($br['_net'])) jout(array('ok' => false, 'error' => 'sb_unavailable'));
 $rows = (isset($br['result']) && is_array($br['result'])) ? $br['result'] : array();
 
 function bp_clean($s) { return trim(substr(preg_replace('/[\x00-\x1F\x7F]+/', ' ', (string)$s), 0, 80)); }
+// who, and when, from one SimplyBook booking row (the same keys the completed-seeding below reads)
+function bp_visit_of($b) {
+    $em = '';
+    foreach (array('email', 'client_email') as $k) if (!empty($b[$k]) && is_string($b[$k])) { $em = strtolower(trim($b[$k])); break; }
+    if ($em === '' && isset($b['client']) && is_array($b['client']) && !empty($b['client']['email'])) $em = strtolower(trim((string)$b['client']['email']));
+    if ($em !== '' && !filter_var($em, FILTER_VALIDATE_EMAIL)) $em = '';
+    $stS = ''; foreach (array('start_date_time', 'start_datetime', 'start_date') as $k) if (!empty($b[$k])) { $stS = (string)$b[$k]; break; }
+    if ($stS !== '' && strlen($stS) <= 10 && !empty($b['start_time'])) $stS .= ' ' . $b['start_time'];
+    $st = $stS !== '' ? (int)strtotime($stS) : 0;
+    $enS = ''; foreach (array('end_date_time', 'end_datetime', 'end_date') as $k) if (!empty($b[$k])) { $enS = (string)$b[$k]; break; }
+    if ($enS !== '' && strlen($enS) <= 10 && !empty($b['end_time'])) $enS .= ' ' . $b['end_time'];
+    $en = $enS !== '' ? (int)strtotime($enS) : 0;
+    if ($en <= 0 && $st > 0) $en = $st + 5400;                       // no end given: assume 90 min
+    $nm = '';
+    foreach (array('client_name', 'client') as $k) {
+        if (empty($b[$k])) continue;
+        if (is_array($b[$k])) { if (!empty($b[$k]['name'])) { $nm = (string)$b[$k]['name']; break; } }
+        else { $nm = (string)$b[$k]; break; }
+    }
+    return array('em' => $em, 'nm' => $nm, 'start' => $st, 'end' => $en);
+}
 
 // read-modify-write bkmeta under the SAME lock the app uses (pcm-data.json.lock) - short hold, no API calls inside
 $dlk = @fopen($DATA . '.lock', 'c'); if ($dlk) @flock($dlk, LOCK_EX);
@@ -181,6 +202,24 @@ foreach ($rows as $b) {
     if ($m === 'completed') $toSlack[] = ':ballot_box_with_check: *Service completed* (in SimplyBook) - ' . $lbl;
     elseif ($m === 'confirmed') $toSlack[] = ':white_check_mark: *Booking confirmed* (in SimplyBook) - ' . $lbl;
     else $toSlack[] = ':arrows_counterclockwise: *Booking status cleared* (in SimplyBook) - ' . $lbl;
+}
+/* SimplyBook's own view of who has a visit and when, for the report tagger: a full service launched
+   from the app while this person has a booking ending within 36 h is the team's visit run over
+   Splashtop, not a self-run (pcm.php reportup -> sr_visit_booked -> sr_visit_in_list). The review
+   queue could not answer that - it only learns of a booking when it is created through our page or
+   marked Completed, and the 6-weekly plan visits pre-date both (14 Sep 2026: three visits, no rows).
+   Rewritten on every poll that got an answer from SimplyBook (never wiped on a failed call); the fetch
+   window is 2 days back, 30 ahead. Booking id, email, name, start, end - nothing else. */
+if (isset($br['result']) && is_array($br['result'])) {
+    $sbv = array();
+    foreach ($rows as $b) {
+        $vbid = (int)(isset($b['id']) ? $b['id'] : 0); if ($vbid <= 0) continue;
+        $v = bp_visit_of($b);
+        if ($v['end'] <= 0 || ($v['em'] === '' && $v['nm'] === '')) continue;
+        $sbv[] = array('bid' => $vbid, 'em' => $v['em'], 'nm' => bp_clean($v['nm']), 'start' => $v['start'], 'end' => $v['end']);
+        if (count($sbv) >= 400) break;
+    }
+    $db['sbv'] = $sbv; $db['sbv_ts'] = time();
 }
 foreach ($db['bkmeta'] as $k2 => $v2) if ((isset($v2['ts']) ? $v2['ts'] : 0) < time() - 86400 * 90) unset($db['bkmeta'][$k2]);
 $tmp = $DATA . '.' . getmypid() . '.tmp';
