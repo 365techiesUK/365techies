@@ -1960,6 +1960,15 @@ function rv_h_checks($title, $rows) {
 }
 
 /** Plain text - the first multipart part, and what text-only clients read. */
+/** Did the service's "Update applications" step run? (a done row by that name). Owner, 14 Sep 2026:
+ *  customers should know the service updates ALL their programs, not just Windows and Office - an
+ *  out-of-date program is the back door attackers, now with AI doing the looking, hunt for. */
+function sr_apps_updated($sr) {
+    foreach ((array)(isset($sr['done']) ? $sr['done'] : array()) as $r) {
+        if (is_array($r) && isset($r[0]) && preg_match('/^Update applications/i', (string)$r[0])) return true;
+    }
+    return false;
+}
 function sr_body($first, $sr) {
     $score = isset($sr['score']) && $sr['score'] !== null ? (int)$sr['score'] : null;
     $t = 'Hi ' . $first . ",\r\n\r\n"
@@ -1985,6 +1994,13 @@ function sr_body($first, $sr) {
         $t .= (!empty($sr['selfrun']) ? "What the service did today\r\n" : "What we did today\r\n");
         foreach ((array)$sr['done'] as $r) if (isset($r[0]) && $r[0] !== '') $t .= '  - ' . $r[0] . (isset($r[1]) && $r[1] !== '' ? ' - ' . $r[1] : '') . "\r\n";
         $t .= "\r\n";
+    }
+    if (sr_apps_updated($sr)) {
+        $t .= "Every program updated, not just Windows\r\n"
+            . "  Criminals now use AI to hunt for a single out-of-date program to use as a\r\n"
+            . "  back door, so the service updates all the programs on your computer - not\r\n"
+            . "  only Windows and Microsoft 365. Keeping everything current is one of the\r\n"
+            . "  most important things it does.\r\n\r\n";
     }
     if (!empty($sr['recs'])) {
         $t .= "One thing worth knowing\r\n";
@@ -2035,6 +2051,7 @@ function sr_body_html($first, $sr) {
     if ($score !== null) $blocks[] = rv_h_score($score, $verdict, sr_delta($score, $sr['prev'], $sr['prev_ts']));
     if (!empty($sr['sec'])) $blocks[] = rv_h_security($sr['sec']);
     $blocks[] = rv_h_checks(!empty($sr['selfrun']) ? 'What the service did today' : 'What we did today', (array)$sr['done']);
+    if (sr_apps_updated($sr)) $blocks[] = rv_h_p('<strong style="color:#0b1226;">Every program updated, not just Windows.</strong> Criminals now use AI to hunt for a single out-of-date program to use as a back door, so the service updates all the programs on your computer &ndash; not only Windows and Microsoft 365. Keeping everything current is one of the most important things it does.');
     if (!empty($sr['recs'])) {
         $rec = '<strong style="color:#0b1226;">One thing worth knowing.</strong> ' . rv_h($sr['recs'][0]);
         if (count($sr['recs']) > 1) $rec .= ' ' . rv_h($sr['recs'][1]);

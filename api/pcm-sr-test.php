@@ -189,6 +189,11 @@ ok(strpos(sr_body_html('Sofia', $entOld), 'Next service') === false
    && strpos(sr_body('Sofia', $entOld), 'Next service') === false, 'an entry queued before the rule fails closed, it does not promise');
 ok(strpos(sr_body('One Off', $entFree), "\r\n\r\nFull report: ") !== false, 'dropping the line leaves the blank line before the link intact');
 
+echo "-- every program updated, not just Windows\n";
+$entA = $ent; $entA['done'][] = array('Update applications', '4 app(s) updated');
+ok(strpos(sr_body('Sofia', $entA), 'Every program updated, not just Windows') !== false && strpos(sr_body_html('Sofia', $entA), 'Every program updated, not just Windows.') !== false, 'when the app-update step ran, both bodies say every program was updated');
+ok(strpos(sr_body('Sofia', $ent), 'Every program updated') === false && strpos(sr_body_html('Sofia', $ent), 'Every program updated') === false, 'when it did not run, neither body claims it');
+
 echo "-- the words\n";
 $html = sr_body_html('Sofia', $ent);
 $text = sr_body('Sofia', $ent);
