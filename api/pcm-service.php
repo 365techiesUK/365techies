@@ -75,5 +75,20 @@ if (substr($code, 0, 3) === "\xEF\xBB\xBF") { $code = substr($code, 3); }
 echo "# 365 Techies full service - served " . gmdate('Y-m-d H:i') . " UTC - customer " . $key . " - machine " . substr($machine, 0, 8) . "\n";
 // Tell the script it is being run by the customer, not a technician: v3.8+ reads this and
 // declares selfrun in its report summary, so the portal, Slack and the email say so.
-echo "\$env:P365_SELFRUN = '1'\n";
+// ⚠ It has to go AFTER the script's [CmdletBinding()] / param(...) block. PowerShell only accepts
+// those as the first statements of a file; from 11 to 14 Sep 2026 this line was echoed BEFORE
+// them, the served script failed to parse ("Unexpected attribute 'CmdletBinding'"), and every
+// self-run service died at launch as a flash of console. Verified with the PowerShell parser
+// on the served form before this fix shipped (scratchpad/pcm-service-test.php).
+$inject = "\$env:P365_SELFRUN = '1'\n";
+$placed = false;
+$pp = strpos($code, "\nparam(");
+if ($pp !== false) {
+    $close = strpos($code, "\n)", $pp);                       // the block's closing paren, column 0
+    if ($close !== false) {
+        $eol = strpos($code, "\n", $close + 1);
+        if ($eol !== false) { $code = substr($code, 0, $eol + 1) . $inject . substr($code, $eol + 1); $placed = true; }
+    }
+}
+if (!$placed) { $code = $inject . $code; }   // a payload without a param block can take it first
 echo $code;
