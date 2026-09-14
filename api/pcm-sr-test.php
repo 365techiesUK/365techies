@@ -134,9 +134,8 @@ ok(sr_visit_booked('SOFIA.example@example.com', $TS + 3600 * 30) === true, 'case
 ok(sr_visit_booked('sofia.example@example.com', $TS + 86400 * 3) === false, 'a visit three days away does not');
 ok(sr_visit_booked('nobody@example.com', $TS + 10) === false, 'another person\'s visit does not');
 ok(sr_visit_booked('', $TS + 10) === false, 'no email, no match');
-list($lkC, $qC) = rvq_open(); $qC['q']['9010']['st'] = 'cancelled'; rvq_save($qC); rvq_close($lkC);
-ok(sr_visit_booked('sofia.example@example.com', $TS + 10) === false, 'a cancelled booking does not count');
-list($lkC, $qC) = rvq_open(); $qC['q']['9010']['st'] = 'pending'; rvq_save($qC); rvq_close($lkC);
+list($lkC, $qC) = rvq_open(); $qC['q']['9011'] = array('em' => 'cancelled.example@example.com', 'nm' => 'Cara', 'end' => $TS + 10, 'dn' => 'pending', 'st' => 'cancelled'); rvq_save($qC); rvq_close($lkC);
+ok(sr_visit_booked('cancelled.example@example.com', $TS + 10) === false, 'a cancelled booking does not count');
 
 echo "-- who is told when the next service is\n";
 // A support-plan customer is; anybody else is not, because it would promise a visit
