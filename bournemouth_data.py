@@ -1170,14 +1170,326 @@ _HUB_CARD_HTML = "\n".join(
           <p class="b365-sub" style="margin:.3rem 0 0">{d}</p></div>
         </a>''' for u, img, h, d in _HUB_CARDS)
 
+# ----------------------------------------------------------------------------
+# THE FORECAST PANEL (16 Sep 2026, owner request: "weather forecast fully
+# animated on our bournemouth page"). Lives ON the hub, not on its own page:
+# "bournemouth weather" is owned by the Met Office and BBC, the same reason the
+# do-not list refuses a standalone tide page. The hub gets a reason to return.
+# Data: api/bm-weather.php (MET Norway Locationforecast, CC BY 4.0 - see
+# api/bm-weather-lib.php for why that source and not Open-Meteo/Met Office).
+# Honesty rules carried from the approved plan:
+#  - it is a FORECAST: chip-f only, never chip-m or --b365-surf (the build
+#    guard in build_blog.py fails the build if either appears in #weather);
+#  - no rain PERCENTAGE - the feed supplies none for Dorset; forecast mm only;
+#  - the licence's attribution, licence link and "we changed it" note are
+#    conditions of use, not decoration - also guarded;
+#  - a feed that is down or too old shows nothing rather than an old forecast.
+# Animation: CSS only, SVG icons built in JS, paused while the panel is off
+# screen (idle-CPU lesson from the perf audit), off under reduced motion.
+# Plain raw string ON PURPOSE - not an f-string, so JS braces stay single.
+# ----------------------------------------------------------------------------
+_WX_SECTION = r'''    <section class="section b365 wx" id="weather" aria-labelledby="wx-h">
+      <style>
+      .wx{--wx-sun:#ffc94d;--wx-moon:#efe6c4;--wx-cloud:#e4eef5;--wx-cloud2:#9fb4c5;--wx-rain:#6cc4f5;--wx-bolt:#ffd84d;--wx-warm:#ffb347;--wx-cool:#79b8ff}
+      .wx-top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:.5rem 1.2rem;margin:0 0 1rem}
+      .wx-top h2{margin:.15rem 0 0;font-size:clamp(1.45rem,3.4vw,2.15rem);text-wrap:balance}
+      .wx-now{position:relative;overflow:hidden;display:grid;grid-template-columns:auto minmax(0,1fr);gap:.3rem 1.3rem;align-items:center;background:var(--b365-water);border:1px solid var(--b365-line);border-radius:18px;padding:1.1rem 1.3rem;min-height:9.5rem}
+      .wx-now::before{content:"";position:absolute;inset:-40% -20% auto auto;width:70%;height:180%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,201,77,.18),transparent);pointer-events:none;animation:wx-breathe 9s ease-in-out infinite}
+      .wx-now.m-wet::before{background:radial-gradient(closest-side,rgba(108,196,245,.16),transparent)}
+      .wx-now.m-grey::before{background:radial-gradient(closest-side,rgba(228,238,245,.10),transparent)}
+      .wx-now .wx-ic{width:clamp(92px,21vw,148px);height:auto;display:block}
+      @media (max-width:520px){.wx-now{gap:.3rem .8rem;padding:1rem .9rem}.wx-now .wx-ic{width:78px}}
+      .wx-when{font-family:var(--mono,ui-monospace,monospace);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--b365-mute);margin:0}
+      .wx-temp{font-family:var(--font-display,inherit);font-weight:600;font-size:clamp(2.9rem,9vw,4.6rem);line-height:.95;color:var(--b365-foam);margin:.1rem 0}
+      .wx-cond{font-size:1.12rem;color:var(--b365-foam);margin:0 0 .45rem}
+      .wx-facts{display:flex;flex-wrap:wrap;gap:.3rem 1.1rem;margin:0;padding:0;list-style:none;color:var(--b365-mute);font-size:.95rem}
+      .wx-facts b{color:var(--b365-foam);font-weight:600}
+      .wx-hours{margin:.9rem 0 0;background:var(--b365-water);border:1px solid var(--b365-line);border-radius:18px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:.4rem 0 .2rem}
+      .wx-hours svg{display:block}
+      .wx-hours text{font-family:var(--mono,ui-monospace,monospace);fill:var(--b365-mute);font-size:11px}
+      .wx-hours .t-temp{fill:var(--b365-foam);font-size:12.5px;font-weight:600}
+      .wx-line{fill:none;stroke:var(--wx-warm);stroke-width:2.6;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:wx-draw 1.6s cubic-bezier(.3,.7,.2,1) .15s forwards}
+      .wx-area{opacity:0;animation:wx-fade 1s ease 1s forwards}
+      .wx-dot{fill:var(--b365-water);stroke:var(--wx-warm);stroke-width:2;opacity:0;animation:wx-fade .4s ease forwards}
+      .wx-bar{fill:var(--wx-rain);opacity:.85;transform-box:fill-box;transform-origin:bottom;transform:scaleY(0);animation:wx-grow .7s cubic-bezier(.3,.7,.2,1) forwards}
+      .wx-cap{margin:.45rem .2rem 0;color:var(--b365-mute);font-size:.9rem}
+      .wx-days{list-style:none;margin:.9rem 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}
+      @media (min-width:720px){.wx-days{grid-template-columns:repeat(5,minmax(0,1fr))}}
+      .wx-day{background:var(--b365-water);border:1px solid var(--b365-line);border-radius:14px;padding:.75rem .8rem .8rem;display:flex;flex-direction:column;gap:.15rem;opacity:0;transform:translateY(14px);animation:wx-rise .6s cubic-bezier(.3,.7,.2,1) forwards}
+      .wx-day h3{margin:0;font-size:.98rem;color:var(--b365-foam)}
+      .wx-day .wx-ic{width:64px;height:64px;margin:.1rem 0 0 -.3rem}
+      .wx-day .wx-w{font-size:.88rem;color:var(--b365-mute);min-height:2.4em;line-height:1.2}
+      .wx-hl{display:flex;align-items:baseline;gap:.45rem;font-variant-numeric:tabular-nums}
+      .wx-hl b{font-size:1.45rem;color:var(--b365-foam);font-weight:600}
+      .wx-hl span{color:var(--b365-mute)}
+      .wx-range{position:relative;height:5px;border-radius:3px;background:var(--b365-line);margin:.35rem 0 .45rem}
+      .wx-range i{position:absolute;top:0;bottom:0;border-radius:3px;background:linear-gradient(90deg,var(--wx-cool),var(--wx-warm));transform-origin:left;transform:scaleX(0);animation:wx-growx .9s cubic-bezier(.3,.7,.2,1) forwards}
+      .wx-meta{display:flex;flex-wrap:wrap;gap:.1rem .7rem;font-size:.86rem;color:var(--b365-mute);font-variant-numeric:tabular-nums}
+      .wx-arrow{display:inline-block;width:.85em;height:.85em;vertical-align:-.05em;margin-right:.2em;transition:transform 1.2s cubic-bezier(.3,.7,.2,1)}
+      .wx-arrow path{fill:var(--b365-foam)}
+      .wx-note{margin:.9rem 0 0}
+      .wx-skel{display:block;height:1rem;width:60%;border-radius:6px;background:linear-gradient(90deg,var(--b365-line),#284259,var(--b365-line));background-size:200% 100%;animation:wx-shimmer 1.4s linear infinite}
+      /* the icons */
+      /* origin only on the ANIMATED parts: transform-origin also applies to SVG transform
+         attributes, so a blanket rule would shift every translate/scale/rotate positioning group */
+      .wx-rays,.wx-core,.wx-moon,.wx-star,.wx-cl,.wx-cl2,.wx-drop,.wx-flake,.wx-fog,.wx-bolt{transform-box:fill-box;transform-origin:center}
+      .wx-rays line{stroke:var(--wx-sun);stroke-width:3.2;stroke-linecap:round}
+      .wx-rays{animation:wx-spin 26s linear infinite}
+      .wx-core{fill:var(--wx-sun);animation:wx-pulse 3.4s ease-in-out infinite}
+      .wx-moon{fill:var(--wx-moon);animation:wx-rock 7s ease-in-out infinite}
+      .wx-star{fill:var(--wx-moon);animation:wx-twinkle 2.6s ease-in-out infinite}
+      .wx-cl{fill:var(--wx-cloud);animation:wx-drift 7s ease-in-out infinite alternate}
+      .wx-cl2{fill:var(--wx-cloud2);animation:wx-drift 9s ease-in-out infinite alternate-reverse}
+      .wx-drop{stroke:var(--wx-rain);stroke-width:2.6;stroke-linecap:round;animation:wx-fall 1.05s linear infinite}
+      .wx-heavy .wx-drop{animation-duration:.72s}
+      .wx-flake{fill:#fff;animation:wx-snow 2.6s linear infinite}
+      .wx-fog{stroke:var(--wx-cloud2);stroke-width:3;stroke-linecap:round;animation:wx-slide 4s ease-in-out infinite alternate}
+      .wx-bolt{fill:var(--wx-bolt);opacity:0;animation:wx-flash 3.6s linear infinite}
+      @keyframes wx-spin{to{transform:rotate(360deg)}}
+      @keyframes wx-pulse{50%{transform:scale(1.07)}}
+      @keyframes wx-rock{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(5deg)}}
+      @keyframes wx-twinkle{0%,100%{opacity:.25}50%{opacity:1}}
+      @keyframes wx-drift{from{transform:translateX(-2.6px)}to{transform:translateX(2.6px)}}
+      @keyframes wx-fall{0%{transform:translateY(-6px);opacity:0}20%{opacity:1}100%{transform:translateY(10px);opacity:0}}
+      @keyframes wx-snow{0%{transform:translate(0,-6px);opacity:0}25%{opacity:1}50%{transform:translate(2px,2px)}100%{transform:translate(-1px,11px);opacity:0}}
+      @keyframes wx-slide{from{transform:translateX(-4px)}to{transform:translateX(4px)}}
+      @keyframes wx-flash{0%,84%,100%{opacity:0}86%,90%{opacity:1}88%{opacity:.25}}
+      @keyframes wx-breathe{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-4%,3%) scale(1.08)}}
+      @keyframes wx-draw{to{stroke-dashoffset:0}}
+      @keyframes wx-fade{to{opacity:1}}
+      @keyframes wx-grow{to{transform:scaleY(1)}}
+      @keyframes wx-growx{to{transform:scaleX(1)}}
+      @keyframes wx-rise{to{opacity:1;transform:none}}
+      @keyframes wx-shimmer{to{background-position:-200% 0}}
+      .wx.wx-off *,.wx.wx-off *::before{animation-play-state:paused!important}
+      @media (prefers-reduced-motion:reduce){
+        .wx *,.wx *::before{animation:none!important;transition:none!important}
+        .wx-line{stroke-dashoffset:0}.wx-area,.wx-dot,.wx-day{opacity:1;transform:none}
+        .wx-bar{transform:none}.wx-range i{transform:none}.wx-drop,.wx-flake{opacity:1}.wx-bolt{opacity:1}
+      }
+      </style>
+      <div class="wrap">
+        <div class="wx-top">
+          <div>
+            <span class="chip-f" id="wx-chip">FORECAST &middot; MET NORWAY &middot; LOADING</span>
+            <h2 id="wx-h">Bournemouth weather: the next 10 days</h2>
+          </div>
+          <a class="mono" href="/bournemouth/sea-today/" style="font-size:.85rem">The sea is measured, not forecast &rarr;</a>
+        </div>
+        <div class="wx-now" id="wx-now" aria-live="polite">
+          <div aria-hidden="true" style="width:120px;height:110px"></div>
+          <div><span class="wx-skel"></span><span class="wx-skel" style="margin-top:.7rem;width:40%;height:2.6rem"></span></div>
+        </div>
+        <div class="wx-hours" id="wx-hours" hidden></div>
+        <p class="wx-cap" id="wx-cap" hidden></p>
+        <ol class="wx-days" id="wx-days" aria-label="Daily forecast"></ol>
+        <noscript><p class="b365-sub wx-note">The forecast panel needs JavaScript. MET Norway&rsquo;s own Bournemouth forecast is at <a href="https://www.yr.no/en/forecast/daily-table/2-2655095" rel="noopener">yr.no</a>.</p></noscript>
+        <p class="b365-sub wx-note">A forecast is a prediction, so it changes. The first two to three days come in hourly steps and are the ones to plan around; after that the model works in six-hour steps and the detail is looser, so check again nearer the day. Rain is the forecast amount in millimetres &mdash; this forecast gives no percentage chance for our coast, so we don&rsquo;t invent one. Wind is the forecast average speed, not gusts.</p>
+        <p class="b365-foot">Forecast data from <a href="https://www.met.no/en" rel="noopener">MET Norway</a> (the Norwegian Meteorological Institute) for Bournemouth Pier, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a>. Changes made: we group their hourly and six-hourly steps into days, round the numbers, convert wind to mph and draw our own symbols. It updates about every hour.</p>
+      </div>
+      <script>
+      (function () {
+        var root = document.getElementById('weather');
+        if (!root || !window.fetch) return;
+        function $(id) { return document.getElementById(id); }
+        var DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        var COMPASS = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+        function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]; }); }
+        function mph(ms) { return Math.round(ms * 2.23694); }
+        function compass(d) { return (d === null || d === undefined) ? '' : COMPASS[Math.round(d / 22.5) % 16]; }
+        function deg(t) { return Math.round(t) + '°'; }
+        /* times and days in UK time whatever the visitor's own clock says - the forecast is for the pier */
+        function lon(iso, o) { o.timeZone = 'Europe/London'; try { return new Date(iso).toLocaleString('en-GB', o); } catch (e) { delete o.timeZone; return new Date(iso).toLocaleString('en-GB', o); } }
+        function hhmm(iso) { return lon(iso, { hour: '2-digit', minute: '2-digit', hour12: false }); }
+
+        /* ---- symbols: MET Norway symbol_code -> kind + words ---- */
+        function kind(code) {
+          var c = String(code || ''), base = c.split('_')[0], night = /_night|_polartwilight/.test(c);
+          var k = /thunder/.test(base) ? 'thunder' : /snow/.test(base) ? 'snow' : /sleet/.test(base) ? 'sleet'
+            : /rain/.test(base) ? (/showers/.test(base) ? 'showers' : 'rain')
+            : base === 'fog' ? 'fog' : base === 'cloudy' ? 'cloudy' : base === 'partlycloudy' ? 'partly'
+            : base === 'fair' ? 'fair' : base === 'clearsky' ? 'clear' : 'cloudy';
+          return { k: k, night: night, heavy: /heavy/.test(base), light: /light/.test(base) };
+        }
+        function words(code) {
+          var s = kind(code), q = s.heavy ? 'Heavy ' : s.light ? 'Light ' : '';
+          switch (s.k) {
+            case 'clear': return s.night ? 'Clear' : 'Sunny';
+            case 'fair': return s.night ? 'Mostly clear' : 'Mostly sunny';
+            case 'partly': return s.night ? 'Partly cloudy' : 'Sunny spells';
+            case 'cloudy': return 'Cloudy';
+            case 'fog': return 'Fog';
+            case 'rain': return q ? q + 'rain' : 'Rain';
+            case 'showers': return q ? q + 'showers' : 'Showers';
+            case 'sleet': return (q || '') + (q ? 'sleet' : 'Sleet');
+            case 'snow': return (q || '') + (q ? 'snow' : 'Snow');
+            case 'thunder': return 'Thundery rain';
+          }
+          return 'Cloudy';
+        }
+        function mood(code) { var k = kind(code).k; return (k === 'clear' || k === 'fair' || k === 'partly') ? '' : (k === 'cloudy' || k === 'fog') ? 'm-grey' : 'm-wet'; }
+
+        /* ---- animated icons, 64x64 ---- */
+        var CLOUD = 'M18 48h28c5.6 0 10-4.4 10-10s-4.4-9.8-9.8-10C44.6 21.2 39 17 32.5 17c-7.3 0-13.3 5.3-14.3 12.3C12.9 30 9 34 9 39c0 5 4 9 9 9z';
+        function sun(t) {
+          var rays = '';
+          for (var i = 0; i < 8; i++) rays += '<line x1="32" y1="8" x2="32" y2="14" transform="rotate(' + (i * 45) + ' 32 32)"/>';
+          return '<g transform="' + (t || '') + '"><g class="wx-rays">' + rays + '</g><circle class="wx-core" cx="32" cy="32" r="11.5"/></g>';
+        }
+        function moon(t) {
+          return '<g transform="' + (t || '') + '"><circle class="wx-star" cx="14" cy="16" r="1.6"/><circle class="wx-star" cx="50" cy="12" r="1.3" style="animation-delay:-1.1s"/>'
+            + '<path class="wx-moon" d="M38 12a19 19 0 1 0 14 31A16 16 0 1 1 38 12z"/></g>';
+        }
+        function cloud(t, cls) { return '<g transform="' + (t || '') + '"><path class="' + (cls || 'wx-cl') + '" d="' + CLOUD + '"/></g>'; }
+        function drops(n, snow, sleet) {
+          var out = '', x0 = 32 - (n - 1) * 4.5;
+          for (var i = 0; i < n; i++) {
+            var x = x0 + i * 9, dl = ' style="animation-delay:-' + (i * 0.31).toFixed(2) + 's"';
+            if (snow || (sleet && i % 2)) out += '<circle class="wx-flake" cx="' + x + '" cy="53" r="2.3"' + dl + '/>';
+            else out += '<line class="wx-drop" x1="' + x + '" y1="50" x2="' + (x - 2) + '" y2="56"' + dl + '/>';
+          }
+          return out;
+        }
+        function icon(code, cls, attrs) {
+          var s = kind(code), body = '', lum = s.night ? moon : sun;
+          switch (s.k) {
+            case 'clear': body = lum(''); break;
+            case 'fair': body = lum('translate(-5 -6)') + cloud('translate(20 20) scale(.62)'); break;
+            case 'partly': body = lum('translate(-9 -9) scale(.86)') + cloud('translate(5 6) scale(.9)'); break;
+            case 'cloudy': body = cloud('translate(-7 -9) scale(.8)', 'wx-cl2') + cloud('translate(4 3) scale(.92)'); break;
+            case 'fog': body = cloud('translate(0 -8)', 'wx-cl2') + '<line class="wx-fog" x1="12" y1="50" x2="50" y2="50"/><line class="wx-fog" x1="18" y1="57" x2="56" y2="57" style="animation-delay:-2s"/>'; break;
+            case 'rain': body = cloud('translate(0 -9)') + drops(s.heavy ? 4 : s.light ? 2 : 3); break;
+            case 'showers': body = lum('translate(-10 -12) scale(.78)') + cloud('translate(3 -5) scale(.92)') + drops(s.heavy ? 3 : 2); break;
+            case 'sleet': body = cloud('translate(0 -9)') + drops(3, false, true); break;
+            case 'snow': body = cloud('translate(0 -9)') + drops(s.heavy ? 4 : 3, true); break;
+            case 'thunder': body = cloud('translate(0 -10)', 'wx-cl2') + '<path class="wx-bolt" d="M34 36l-8 13h7l-4 11 13-16h-7l5-8z"/>' + drops(2); break;
+          }
+          return '<svg class="wx-ic ' + (s.heavy ? 'wx-heavy ' : '') + (cls || '') + '" ' + (attrs || '') + ' viewBox="0 0 64 64" aria-hidden="true" focusable="false">' + body + '</svg>';
+        }
+        function arrow(d) {
+          if (d === null || d === undefined) return '';
+          return '<svg class="wx-arrow" viewBox="0 0 16 16" aria-hidden="true" data-rot="' + ((d + 180) % 360) + '"><path d="M8 1 13 13 8 10 3 13z"/></svg>';
+        }
+
+        /* ---- render ---- */
+        function fail(msg) {
+          var chip = $('wx-chip');
+          chip.textContent = 'FORECAST · NOT AVAILABLE RIGHT NOW';
+          $('wx-now').innerHTML = '<div></div><div><p class="wx-cond">The forecast feed isn’t answering, so nothing is shown rather than an old forecast.</p>'
+            + '<p class="b365-sub" style="margin:0">MET Norway’s own Bournemouth forecast: <a href="https://www.yr.no/en/forecast/daily-table/2-2655095" rel="noopener">yr.no</a>.</p></div>';
+        }
+
+        function render(d) {
+          if (!d || !d.ok || !d.hours || !d.hours.length || !d.days || !d.days.length) return fail();
+          var sameDay = lon(d.issued, { dateStyle: 'short' }) === lon(new Date().toISOString(), { dateStyle: 'short' });
+          var chip = $('wx-chip');
+          chip.textContent = 'FORECAST · MET NORWAY · ISSUED ' + (sameDay ? '' : lon(d.issued, { weekday: 'short' }).toUpperCase() + ' ') + hhmm(d.issued) + (d.stale ? ' · OLDER THAN USUAL' : '');
+          root.classList.toggle('b365-stale', !!d.stale);
+
+          /* this hour */
+          var h0 = d.hours[0], t0 = d.days[0];
+          var facts = [];
+          if (h0.feels !== null && Math.abs(h0.feels - h0.temp) >= 1) facts.push('Feels like <b>' + deg(h0.feels) + '</b>');
+          facts.push('Wind ' + arrow(h0.dir) + '<b>' + mph(h0.wind) + ' mph</b>' + (h0.dir !== null ? ' from the ' + compass(h0.dir) : ''));
+          facts.push(h0.rain > 0 ? 'Rain <b>' + h0.rain.toFixed(1) + ' mm</b> this hour' : '<b>Dry</b> this hour');
+          if (h0.cloud !== null) facts.push('Cloud <b>' + h0.cloud + '%</b>');
+          var nowEl = $('wx-now');
+          nowEl.className = 'wx-now ' + mood(h0.sym);
+          nowEl.innerHTML = icon(h0.sym)
+            + '<div><p class="wx-when">Forecast for ' + hhmm(h0.t) + ' at Bournemouth Pier</p>'
+            + '<p class="wx-temp">' + deg(h0.temp) + '</p>'
+            + '<p class="wx-cond">' + esc(words(h0.sym)) + ' &middot; ' + (t0.part ? 'rest of today' : 'today') + ' up to ' + deg(t0.hi) + ', down to ' + deg(t0.lo) + '</p>'
+            + '<ul class="wx-facts"><li>' + facts.join('</li><li>') + '</li></ul></div>';
+
+          /* next 24 hours */
+          var hs = d.hours, n = hs.length, col = 46, W = n * col, H = 186;
+          var tmin = Infinity, tmax = -Infinity, rainSum = 0;
+          hs.forEach(function (h) { tmin = Math.min(tmin, h.temp); tmax = Math.max(tmax, h.temp); rainSum += h.rain; });
+          var lo = Math.floor(tmin) - 1, hi = Math.ceil(tmax) + 1;
+          function X(i) { return col / 2 + i * col; }
+          function Y(t) { return 58 + (hi - t) / (hi - lo) * 62; }
+          var line = 'M' + X(0) + ' ' + Y(hs[0].temp).toFixed(1);
+          for (var i = 1; i < n; i++) {
+            line += ' C' + (X(i - 1) + col / 2) + ' ' + Y(hs[i - 1].temp).toFixed(1) + ' ' + (X(i) - col / 2) + ' ' + Y(hs[i].temp).toFixed(1) + ' ' + X(i) + ' ' + Y(hs[i].temp).toFixed(1);
+          }
+          var area = line + ' L' + X(n - 1) + ' 150 L' + X(0) + ' 150 Z';
+          var svg = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Next 24 hours: between ' + deg(tmin) + ' and ' + deg(tmax) + ', ' + (rainSum > 0 ? rainSum.toFixed(1) + ' mm of rain forecast' : 'no rain forecast') + '.">'
+            + '<defs><linearGradient id="wx-area-g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ffb347" stop-opacity=".28"/><stop offset="1" stop-color="#ffb347" stop-opacity="0"/></linearGradient></defs>'
+            + '<path class="wx-area" d="' + area + '" fill="url(#wx-area-g)"/>'
+            + '<path class="wx-line" d="' + line + '" pathLength="1"/>';
+          for (i = 0; i < n; i++) {
+            var h = hs[i], x = X(i), y = Y(h.temp), delay = (0.15 + 1.5 * i / n).toFixed(2);
+            if (h.rain > 0) {
+              var bh = Math.max(2, Math.min(h.rain, 4) / 4 * 26);
+              svg += '<rect class="wx-bar" x="' + (x - 6) + '" y="' + (152 - bh) + '" width="12" height="' + bh.toFixed(1) + '" rx="2" style="animation-delay:' + delay + 's"><title>' + h.rain.toFixed(1) + ' mm</title></rect>';
+            }
+            svg += '<circle class="wx-dot" cx="' + x + '" cy="' + y.toFixed(1) + '" r="3" style="animation-delay:' + delay + 's"/>';
+            if (i % 3 === 0) {
+              svg += '<text class="t-temp" x="' + x + '" y="' + (y - 9).toFixed(1) + '" text-anchor="middle">' + deg(h.temp) + '</text>'
+                + icon(h.sym, '', 'x="' + (x - 15) + '" y="2" width="30" height="30"')
+                + '<text x="' + x + '" y="176" text-anchor="middle">' + (i === 0 ? 'Now' : hhmm(h.t)) + '</text>';
+            }
+          }
+          svg += '<line x1="0" x2="' + W + '" y1="152.5" y2="152.5" stroke="#1d3346"/></svg>';
+          var hoursEl = $('wx-hours');
+          hoursEl.innerHTML = svg;
+          hoursEl.hidden = false;
+          var cap = $('wx-cap');
+          cap.textContent = 'Next 24 hours: ' + deg(tmin) + ' to ' + deg(tmax) + (rainSum > 0 ? ', ' + rainSum.toFixed(1) + ' mm of rain in total (the blue bars).' : ', no rain in the forecast.')
+            + (hoursEl.scrollWidth > hoursEl.clientWidth + 2 ? ' Swipe sideways for all 24 hours.' : '');
+          cap.hidden = false;
+
+          /* 10 days */
+          var gmin = Infinity, gmax = -Infinity;
+          d.days.forEach(function (x) { gmin = Math.min(gmin, x.lo); gmax = Math.max(gmax, x.hi); });
+          var span = Math.max(1, gmax - gmin), html = '';
+          d.days.forEach(function (x, k) {
+            var p = x.d.split('-'), dt = new Date(+p[0], +p[1] - 1, +p[2]);
+            var label = k === 0 ? (x.part ? 'Rest of today' : 'Today') : k === 1 ? 'Tomorrow' : DAYS[dt.getDay()] + ' ' + dt.getDate();
+            var left = ((x.lo - gmin) / span * 100).toFixed(1), width = Math.max(4, (x.hi - x.lo) / span * 100).toFixed(1);
+            html += '<li class="wx-day" style="animation-delay:' + (0.08 * k).toFixed(2) + 's">'
+              + '<h3>' + label + '</h3>' + icon(x.sym)
+              + '<span class="wx-w">' + esc(words(x.sym)) + '</span>'
+              + '<span class="wx-hl"><b>' + deg(x.hi) + '</b><span>' + deg(x.lo) + '</span></span>'
+              + '<span class="wx-range" aria-hidden="true"><i style="left:' + left + '%;width:' + width + '%;animation-delay:' + (0.3 + 0.08 * k).toFixed(2) + 's"></i></span>'
+              + '<span class="wx-meta"><span>' + (x.rain >= 0.1 ? x.rain.toFixed(1) + ' mm rain' : 'Dry') + '</span>'
+              + '<span>' + arrow(x.dir) + mph(x.wind) + ' mph' + (x.dir !== null ? ' ' + compass(x.dir) : '') + '</span></span></li>';
+          });
+          $('wx-days').innerHTML = html;
+
+          /* wind arrows swing round to their bearing once drawn */
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+              var a = root.querySelectorAll('.wx-arrow');
+              for (var j = 0; j < a.length; j++) a[j].style.transform = 'rotate(' + a[j].getAttribute('data-rot') + 'deg)';
+            });
+          });
+        }
+
+        /* animation costs CPU only while the panel is on screen */
+        if ('IntersectionObserver' in window) {
+          new IntersectionObserver(function (es) {
+            es.forEach(function (e) { root.classList.toggle('wx-off', !e.isIntersecting); });
+          }).observe(root);
+        }
+
+        fetch('/api/bm-weather.php', { cache: 'no-cache' })
+          .then(function (r) { return r.json(); })
+          .then(render)
+          .catch(function () { fail(); });
+      })();
+      </script>
+    </section>'''
+
 _HUB_CONTENT = "\n".join([
     hero(bc("Bournemouth365"),
          "// BOURNEMOUTH365",
          'Bournemouth, <em class="grad grad--cyan">365 days a year</em>',
-         "The web home of our Bournemouth365 Facebook page, where 39,000 of you watch this seafront with us every day. Here: the sea measured live, the fireworks answered honestly, and the coastline photographed as it actually is &mdash; no ads, no paywall, nothing modelled and sold as measured.",
-         cta1=("The sea right now", "/bournemouth/sea-today/"),
-         cta2=("Friday fireworks", "/bournemouth/fireworks/"),
-         chips=["Measured, not modelled", "Our own photography", "No ads, ever"]),
+         "The web home of our Bournemouth365 Facebook page, where 39,000 of you watch this seafront with us every day. Here: the next 10 days of weather, the sea measured live, and the coastline photographed as it actually is &mdash; no ads, no paywall, and nothing forecast or modelled ever passed off as measured.",
+         cta1=("10-day weather", "#weather"),
+         cta2=("The sea right now", "/bournemouth/sea-today/"),
+         chips=["Measured or clearly labelled", "Our own photography", "No ads, ever"]),
+    _WX_SECTION,
     f'''    <section class="section b365" aria-label="Bournemouth365 pages">
       <div class="wrap">
         <p class="mono" id="hub-live" data-reveal style="margin:0 0 1rem"></p>
@@ -1187,7 +1499,7 @@ _HUB_CONTENT = "\n".join([
         <div class="prose" data-reveal style="margin-top:1.6rem">
           <h2>What this is</h2>
           <p>For years our <a href="https://www.facebook.com/bournemouth365" target="_blank" rel="noopener">Bournemouth365 Facebook page</a> (born Bournemouth Live) has filmed this coastline daily &mdash; the calm mornings, the storms, the fireworks, the light. These pages bring that to the open web and add the thing social media can&rsquo;t: live measured data with its provenance shown. The sea page reads real instruments &mdash; the bay&rsquo;s wave buoy, the Environment Agency&rsquo;s tide gauge mounted on Bournemouth Pier &mdash; and every reading carries the time it was taken. When a feed is down, the page says so rather than guessing.</p>
-          <p>More is coming: an honest local guide to parking for the beach, and a page on Westover Road in 1985 &mdash; the cinemas, the ice rink and the cruising loop &mdash; built from sourced local history. <span class="mono">Built in Bournemouth by <a href="/">365 Techies</a>, the family firm that has looked after the town&rsquo;s computers since 1995.</span></p>
+          <p>The weather panel at the top is the one thing here that is a forecast, and it is labelled as one on every screen: MET Norway&rsquo;s model for Bournemouth Pier, with the time it was issued. Still to come: a page on Westover Road in 1985 &mdash; the cinemas, the ice rink and the cruising loop &mdash; built from sourced local history. <span class="mono">Built in Bournemouth by <a href="/">365 Techies</a>, the family firm that has looked after the town&rsquo;s computers since 1995.</span></p>
         </div>
         <p class="b365-foot" data-reveal style="margin-top:1rem">No ads. No paywall. No consent wall. Every reading carries its instrument and its measurement time.</p>
       </div>
@@ -1210,7 +1522,7 @@ def _hub_schema(s):
     return graph([
         crumb(s, "Bournemouth365"),
         webpage(s, "Bournemouth365",
-                "Bournemouth, 365 days a year: live measured sea conditions, the Friday fireworks, sunrise and sunset spots - from the team behind the Bournemouth365 Facebook page.",
+                "Bournemouth, 365 days a year: a 10-day seafront weather forecast, live measured sea conditions, beach parking, sunrise and sunset spots - from the team behind the Bournemouth365 Facebook page.",
                 wtype="CollectionPage"),
     ])
 
@@ -1218,7 +1530,7 @@ def _hub_schema(s):
 add(
     slug=_HUB_SLUG,
     title="Bournemouth365 \u2014 the Sea, the Fireworks & the Light",
-    desc="Bournemouth, 365 days a year: live measured sea conditions, Friday fireworks answered honestly, and sunrise spots photographed by us. From the 39K-follower Bournemouth365 page.",
+    desc="Bournemouth's 10-day seafront weather forecast, the sea measured live, beach parking and sunrise spots - from the 39K-follower Bournemouth365 Facebook page.",
     og_title="Bournemouth365 \u2014 Bournemouth, every day of the year",
     schema=_hub_schema,
     content=_HUB_CONTENT,

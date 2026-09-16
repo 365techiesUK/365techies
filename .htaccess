@@ -230,6 +230,11 @@ ErrorDocument 404 /404.html
 <Files "tm-cron.lock">
   Require all denied
 </Files>
+# Bournemouth365 weather forecast runtime stores (16 Sep 2026). Public data, but the
+# api/ store rule is deny-by-default: bm-weather.php is the only public surface.
+<FilesMatch "^bm-weather(-cache\.json.*|-beat\.json.*|\.lock)$">
+  Require all denied
+</FilesMatch>
 <FilesMatch "^(tools-rate|domain-cache|isitdown-cache|wifi-map-rate|wifi-map-pins)\.json(\.tmp|\.lock)?$">
   Require all denied
 </FilesMatch>

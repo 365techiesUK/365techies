@@ -57,6 +57,11 @@ $bkp = bkpend_sweep();
 require_once __DIR__ . '/bm-sea-lib.php';
 $sea = bm_sea_refresh();
 
+/* Bournemouth365 weather forecast (hub panel). Same placement, same reason.
+   Obeys MET Norway's Expires header and a 10-minute floor, so most ticks no-op. */
+require_once __DIR__ . '/bm-weather-lib.php';
+$wx = bm_weather_refresh();
+
 /* Comms hub: inbound texts (Textmagic replies) + the Voipfone voicemail relay
    mailbox. Same placement, same reason: the inbox must keep filling whatever
    state the scheduled-SMS account is in. Each poller no-ops cleanly when its

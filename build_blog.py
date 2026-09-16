@@ -1007,6 +1007,22 @@ if _osg.path.exists(_st_fp):
 if _osg.path.exists(_fw_fp):
     if "SEASON FINISHED" not in open(_fw_fp, encoding="utf-8").read():
         _bm_bad.append("fireworks: season-finished branch missing (G3)")
+# The hub's weather panel is a FORECAST (16 Sep 2026): it may never wear the
+# measured chip or the measured colour, and the CC BY 4.0 attribution, licence
+# link and changes note are licence conditions of the MET Norway data.
+_hub_fp = _osg.path.join(bp.BASE, "bournemouth", "index.html")
+if _osg.path.exists(_hub_fp):
+    _hub_html = open(_hub_fp, encoding="utf-8").read()
+    _wx_at = _hub_html.find('id="weather"')
+    if _wx_at >= 0:
+        _wx_seg = _hub_html[_wx_at:_hub_html.find("</section>", _wx_at)]
+        if "chip-m" in _wx_seg:
+            _bm_bad.append("hub weather: a forecast is wearing the measured chip (chip-m)")
+        if "--b365-surf" in _wx_seg:
+            _bm_bad.append("hub weather: a forecast is using the measured colour (--b365-surf)")
+        for _need in ("MET Norway", "creativecommons.org/licenses/by/4.0", "Changes made", 'id="wx-chip"', "chip-f"):
+            if _need not in _wx_seg:
+                _bm_bad.append("hub weather: missing %s (licence/provenance condition)" % _need)
 if _bm_bad:
     raise SystemExit(
         "\n*** Bournemouth365 speed/cleanliness guard failed ***\n"

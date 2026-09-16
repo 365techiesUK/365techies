@@ -117,6 +117,11 @@ api/bm-sea-beat.json
 api/bm-sea-beat.json.tmp
 api/bm-sea.lock
 api/bm-sea-key.php
+api/bm-weather-cache.json
+api/bm-weather-cache.json.*
+api/bm-weather-beat.json
+api/bm-weather-beat.json.tmp
+api/bm-weather.lock
 api/signal-token.php
 api/signal-data.json
 api/signal-data.json.tmp
