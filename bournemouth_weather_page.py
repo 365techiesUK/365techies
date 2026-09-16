@@ -97,7 +97,7 @@ _WXP_CSS = r'''
 @media (max-width:520px){.wxp-tides li{grid-template-columns:1fr}}
 .wxp-tides h3{margin:0;font-size:.95rem;color:var(--b365-foam)}
 .wxp-evs{display:flex;flex-wrap:wrap;gap:.35rem .5rem}
-.wxp-ev{display:inline-flex;align-items:baseline;gap:.35rem;padding:.18rem .6rem;border-radius:8px;font-variant-numeric:tabular-nums;font-size:.92rem;background:rgba(255,255,255,.04);border:1px solid var(--b365-line);color:var(--b365-foam)}
+.wxp-ev{display:inline-flex;flex-wrap:wrap;white-space:nowrap;align-items:baseline;gap:0 .35rem;padding:.18rem .6rem;border-radius:8px;font-variant-numeric:tabular-nums;font-size:.92rem;background:rgba(255,255,255,.04);border:1px solid var(--b365-line);color:var(--b365-foam)}
 .wxp-ev b{font-weight:600}
 .wxp-ev.hi{border-color:rgba(108,196,245,.45)}.wxp-ev.lo{border-color:rgba(159,180,197,.35)}
 .wxp-ev small{color:var(--b365-mute)}
@@ -106,6 +106,22 @@ _WXP_CSS = r'''
 @media (min-width:720px){.wxp-days{grid-template-columns:repeat(5,minmax(0,1fr))}}
 .wxp-day{background:var(--b365-water);border:1px solid var(--b365-line);border-radius:14px;padding:.75rem .8rem .8rem;display:flex;flex-direction:column;gap:.15rem;opacity:0;transform:translateY(14px);animation:wx-rise .6s cubic-bezier(.3,.7,.2,1) forwards}
 .wxp-day h3{margin:0;font-size:.98rem;color:var(--b365-foam)}
+.wxp-days li{display:flex}
+button.wxp-day{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;transition:border-color .2s ease,background-color .2s ease}
+button.wxp-day:hover{border-color:rgba(255,215,106,.55)}
+button.wxp-day:focus-visible{outline:2px solid #ffd76a;outline-offset:2px}
+button.wxp-day[aria-expanded="true"]{border-color:#ffd76a;background:rgba(255,215,106,.07)}
+.wxp-open{margin-top:auto;padding-top:.35rem;font-size:.78rem;color:#ffd76a}
+.wxp-detail{margin:.9rem 0 0;background:var(--b365-water);border:1px solid #ffd76a;border-radius:18px;padding:1rem 1.1rem;scroll-margin-top:110px;animation:wx-rise .45s cubic-bezier(.3,.7,.2,1) both}
+.wxp-dd-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:.6rem}
+.wxp-dd-head h3{margin:.15rem 0 0;font-size:clamp(1.3rem,3vw,1.7rem);color:var(--b365-foam)}
+.wxp-dd-head h3:focus{outline:none}
+.wxp-dd-nav{display:flex;flex-wrap:wrap;gap:.45rem}
+.wxp-dd-nav button{min-height:44px;min-width:44px;border-radius:999px;border:1px solid var(--b365-line);background:transparent;color:var(--b365-foam);font:inherit;padding:0 .9rem;cursor:pointer}
+.wxp-dd-nav button:focus-visible{outline:2px solid #ffd76a;outline-offset:2px}
+.wxp-dd-sum{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.4rem 1rem;align-items:center;margin:.7rem 0 0}
+.wxp-dd-sum .wx-ic{width:84px;height:84px}
+.wxp-six{display:grid;gap:.6rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,128px),1fr));margin-top:.8rem}
 .wxp-day .wx-ic{width:62px;height:62px;margin:.1rem 0 0 -.3rem}
 .wxp-hl{display:flex;align-items:baseline;gap:.45rem;font-variant-numeric:tabular-nums}
 .wxp-hl b{font-size:1.45rem;color:var(--b365-foam);font-weight:600}.wxp-hl span{color:var(--b365-mute)}
@@ -246,8 +262,9 @@ _WXP_HTML = r'''
     <section class="section b365" id="ten-day" aria-labelledby="ten-h">
       <div class="wrap">
         <div class="wxp-head"><div><p class="eyebrow mono">// 10-DAY FORECAST</p><h2 id="ten-h">The next 10 days</h2></div><span class="chip-f" id="wxp-days-chip">FORECAST &middot; MET NORWAY</span></div>
-        <ol class="wxp-days" id="wxp-days" aria-label="Daily forecast"></ol>
-        <p class="wxp-note">The first two to three days are forecast hour by hour and are the ones to plan around; after that the model works in six-hour steps. Rain is the forecast amount in millimetres &mdash; this forecast gives no percentage chance for our coast, so we don&rsquo;t invent one.</p>
+        <ol class="wxp-days" id="wxp-days" aria-label="Daily forecast: choose a day for its detail"></ol>
+        <div class="wxp-detail" id="wxp-daydetail" hidden aria-live="polite"></div>
+        <p class="wxp-note"><b>Tap any day</b> for its hour-by-hour forecast, tide times and sunrise and sunset. The first two to three days are forecast hour by hour and are the ones to plan around; after that the model works in six-hour steps. Rain is the forecast amount in millimetres &mdash; this forecast gives no percentage chance for our coast, so we don&rsquo;t invent one.</p>
       </div>
     </section>
 
@@ -338,6 +355,14 @@ _WXP_JS = r'''
   function lon(iso, o) { o.timeZone = 'Europe/London'; try { return new Date(iso).toLocaleString('en-GB', o); } catch (e) { delete o.timeZone; return new Date(iso).toLocaleString('en-GB', o); } }
   function hhmm(iso) { return lon(iso, { hour: '2-digit', minute: '2-digit', hour12: false }); }
   function ukDate(iso) { return lon(iso, { year: 'numeric', month: '2-digit', day: '2-digit' }); }
+  function ukYmd(ms) { var s2 = ukDate(new Date(ms).toISOString()).split('/'); return s2[2] + '-' + s2[1] + '-' + s2[0]; }
+  /* UK midnight of a YYYY-MM-DD day: UK offsets are whole hours, so step hourly from 2 h before UTC midnight */
+  function londonMidnight(ymd) {
+    var p2 = ymd.split('-'), t = Date.UTC(+p2[0], +p2[1] - 1, +p2[2], 0, 0) - 2 * 3600000;
+    for (var k = 0; k < 6; k++, t += 3600000) if (ukYmd(t) === ymd) return t;
+    return Date.UTC(+p2[0], +p2[1] - 1, +p2[2], 0, 0);
+  }
+  function longDay(ymd) { return lon(new Date(londonMidnight(ymd) + 12 * 3600000).toISOString(), { weekday: 'long', day: 'numeric', month: 'long' }); }
   function dayLabel(iso) {
     var today = ukDate(new Date().toISOString()), tomorrow = ukDate(new Date(Date.now() + 864e5).toISOString()), d = ukDate(iso);
     return d === today ? 'Today' : d === tomorrow ? 'Tomorrow' : lon(iso, { weekday: 'short', day: 'numeric', month: 'short' });
@@ -432,11 +457,9 @@ _WXP_JS = r'''
     var gmst = (18.697374558 + 24.06570982441908 * d) % 24, ha = (gmst * 15 + LNG) * rad - ra;
     return Math.asin(Math.sin(LAT * rad) * Math.sin(dec) + Math.cos(LAT * rad) * Math.cos(dec) * Math.cos(ha)) / rad;
   }
-  function sunDay() {
-    /* find today's UK midnight with a few hourly date checks (UK offsets are whole hours), then scan the
-       day minute by minute with pure maths - toLocaleString inside the minute loop was ~3,000 slow calls */
-    var now = Date.now(), ymd = ukDate(new Date(now).toISOString()), mid = now - (now % 3600000), found = {};
-    while (ukDate(new Date(mid - 3600000).toISOString()) === ymd) mid -= 3600000;
+  function sunDay(ymd) {
+    /* scan the UK day minute by minute with pure maths (no toLocaleString inside the loop - that was ~3,000 slow calls) */
+    var mid = londonMidnight(ymd), found = {};
     var prev = sunElev(mid - 60000);
     for (var t = mid; t < mid + 24 * 3600000; t += 60000) {
       var e = sunElev(t);
@@ -553,7 +576,7 @@ _WXP_JS = r'''
   }
 
   function renderSunAir(d) {
-    var sd = sunDay(), m = moon(Date.now()), card = $('wxp-suncard'), f = d.forecast;
+    var sd = sunDay(ukYmd(Date.now())), m = moon(Date.now()), card = $('wxp-suncard'), f = d.forecast;
     function t(ms) { return ms ? hhmm(new Date(ms).toISOString()) : '&mdash;'; }
     var len = sd.rise && sd.set ? Math.round((sd.set - sd.rise) / 60000) : null, uv = null;
     if (f && f.ok) {
@@ -583,6 +606,16 @@ _WXP_JS = r'''
     }
   }
 
+  /* H, D, H -> one double high water */
+  function groupTides(e) {
+    var evs = [];
+    for (var i = 0; i < (e || []).length; i++) {
+      if (e[i].type === 'H' && e[i + 1] && e[i + 1].type === 'D' && e[i + 2] && e[i + 2].type === 'H') { evs.push({ type: 'HH', t: e[i].t, h: e[i].h, t2: e[i + 2].t, h2: e[i + 2].h }); i += 2; }
+      else if (e[i].type !== 'D') evs.push(e[i]);
+    }
+    return evs;
+  }
+
   function renderTides(d) {
     var t = d.tide, box = $('wxp-tide-chart');
     if (!t || !t.ok) {
@@ -595,11 +628,7 @@ _WXP_JS = r'''
     setChip('wxp-tide-chip', 'chip-f', 'PREDICTED \u00b7 CHECKED AGAINST THE PIER GAUGE');
     var now = Date.now();
     /* group H,D,H into one double high water */
-    var evs = [], e = t.events;
-    for (var i = 0; i < e.length; i++) {
-      if (e[i].type === 'H' && e[i + 1] && e[i + 1].type === 'D' && e[i + 2] && e[i + 2].type === 'H') { evs.push({ type: 'HH', t: e[i].t, h: e[i].h, t2: e[i + 2].t, h2: e[i + 2].h }); i += 2; }
-      else if (e[i].type !== 'D') evs.push(e[i]);
-    }
+    var evs = groupTides(t.events);
     var next = evs.filter(function (x) { return Date.parse(x.type === 'HH' ? x.t2 : x.t) > now; });
     var nh = next.filter(function (x) { return x.type !== 'L'; })[0], nl = next.filter(function (x) { return x.type === 'L'; })[0];
     function evTxt(x) { return x.type === 'HH' ? hhmm(x.t) + ' &amp; ' + hhmm(x.t2) : hhmm(x.t); }
@@ -683,7 +712,7 @@ _WXP_JS = r'''
   function renderWind(d) {
     var f = d.forecast, box = $('wxp-wind-chart');
     if (!f || !f.ok) { box.innerHTML = '<p class="wxp-sub">The wind forecast isn\u2019t available right now.</p>'; return; }
-    var hs = f.hours, n = hs.length, W = Math.max(340, box.clientWidth || 340), col = Math.max(26, (W - 44) / n); W = Math.round(44 + col * n);
+    var hs = f.hours.slice(0, 48), n = hs.length, W = Math.max(340, box.clientWidth || 340), col = Math.max(26, (W - 44) / n); W = Math.round(44 + col * n);
     var H = 200, pt = 34, pb = 44, max = 10;
     hs.forEach(function (h) { max = Math.max(max, mph(h.wind)); });
     max = Math.ceil((max + 3) / 5) * 5;
@@ -710,7 +739,7 @@ _WXP_JS = r'''
   function renderHourly(d) {
     var f = d.forecast, box = $('wxp-hourly-chart');
     if (!f || !f.ok) { box.innerHTML = '<p class="wxp-sub">The hourly forecast isn\u2019t available right now.</p>'; return; }
-    var hs = f.hours, n = hs.length, W0 = Math.max(340, box.clientWidth || 340), col = Math.max(26, (W0 - 10) / n), W = Math.round(10 + col * n), H = 262;
+    var hs = f.hours.slice(0, 48), n = hs.length, W0 = Math.max(340, box.clientWidth || 340), col = Math.max(26, (W0 - 10) / n), W = Math.round(10 + col * n), H = 262;
     var tmin = Infinity, tmax = -Infinity, rsum = 0;
     hs.forEach(function (h) { tmin = Math.min(tmin, h.temp); tmax = Math.max(tmax, h.temp); rsum += h.rain; });
     var lo = Math.floor(tmin) - 1, hi = Math.ceil(tmax) + 1;
@@ -746,12 +775,136 @@ _WXP_JS = r'''
       var p = x.d.split('-'), dt = new Date(+p[0], +p[1] - 1, +p[2]);
       var label = k === 0 ? (x.part ? 'Rest of today' : 'Today') : k === 1 ? 'Tomorrow' : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][dt.getDay()] + ' ' + dt.getDate();
       var sh = shore(x.dir);
-      return '<li class="wxp-day" style="animation-delay:' + (0.07 * k).toFixed(2) + 's"><h3>' + label + '</h3>' + icon(x.sym) + '<span class="wxp-sub" style="margin:0;min-height:2.4em">' + esc(words(x.sym)) + '</span>'
+      return '<li><button type="button" class="wxp-day" data-d="' + x.d + '" aria-controls="wxp-daydetail" aria-expanded="false" style="animation-delay:' + (0.07 * k).toFixed(2) + 's"><h3>' + label + '</h3>' + icon(x.sym) + '<span class="wxp-sub" style="margin:0;min-height:2.4em">' + esc(words(x.sym)) + '</span>'
         + '<span class="wxp-hl"><b>' + deg(x.hi) + '</b><span>' + deg(x.lo) + '</span></span>'
         + '<span class="wxp-range" aria-hidden="true"><i style="left:' + ((x.lo - gmin) / span * 100).toFixed(1) + '%;width:' + Math.max(4, (x.hi - x.lo) / span * 100).toFixed(1) + '%;animation-delay:' + (0.3 + 0.07 * k).toFixed(2) + 's"></i></span>'
-        + '<span class="wxp-meta"><span>' + (x.rain >= 0.1 ? x.rain.toFixed(1) + ' mm rain' : 'Dry') + '</span><span>' + arrow(x.dir) + mph(x.wind) + ' mph ' + compass(x.dir) + '</span>' + (sh === 'off' ? '<span class="wxp-shore off" style="font-size:.72rem">offshore</span>' : '') + '</span></li>';
+        + '<span class="wxp-meta"><span>' + (x.rain >= 0.1 ? x.rain.toFixed(1) + ' mm rain' : 'Dry') + '</span><span>' + arrow(x.dir) + mph(x.wind) + ' mph ' + compass(x.dir) + '</span>' + (sh === 'off' ? '<span class="wxp-shore off" style="font-size:.72rem">offshore</span>' : '') + '</span><span class="wxp-open">Hour by hour, tides &amp; sun &rarr;</span></button></li>';
     }).join('');
     swingArrows();
+    [].forEach.call(box.querySelectorAll('.wxp-day'), function (b) {
+      b.addEventListener('click', function () {
+        if (b.getAttribute('aria-expanded') === 'true') closeDay(); else openDay(b.getAttribute('data-d'), true);
+      });
+    });
+    var m = /^#day-(\d{4}-\d{2}-\d{2})$/.exec(location.hash);
+    if (m && f.days.some(function (x) { return x.d === m[1]; })) openDay(m[1], 'deep');
+  }
+
+  /* ---------------- one day, opened from its card ---------------- */
+  var openYmd = null;
+  function closeDay() {
+    var box = $('wxp-daydetail'); box.hidden = true; box.innerHTML = ''; openYmd = null;
+    [].forEach.call(document.querySelectorAll('#wxp-days .wxp-day'), function (b) { b.setAttribute('aria-expanded', 'false'); });
+    if (history.replaceState) history.replaceState(null, '', location.pathname + location.search + '#ten-day');
+  }
+  function dayChart(hs, W0) {
+    var n = hs.length, col = Math.max(30, (W0 - 10) / n), W = Math.round(10 + col * n), H = 214;
+    var tmin = Infinity, tmax = -Infinity;
+    hs.forEach(function (h) { tmin = Math.min(tmin, h.temp); tmax = Math.max(tmax, h.temp); });
+    var lo = Math.floor(tmin) - 1, hi = Math.ceil(tmax) + 1;
+    function X(i) { return 5 + col / 2 + i * col; }
+    function Y(t) { return 58 + (hi - t) / (hi - lo) * 56; }
+    var line = hs.map(function (h, i) { return (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(h.temp).toFixed(1); }).join(' ');
+    var g = '<path class="wxp-fadein" d="' + line + ' L' + X(n - 1).toFixed(1) + ' 124 L' + X(0).toFixed(1) + ' 124 Z" fill="rgba(255,179,71,.16)"/><path class="wxp-draw" d="' + line + '" pathLength="1" stroke="#ffb347" stroke-width="2.6"/>';
+    var every = n > 16 ? 2 : 1;
+    hs.forEach(function (h, k) {
+      var x = X(k), dl = (0.1 + 1.2 * k / n).toFixed(2);
+      if (h.rain > 0) { var bh = Math.max(2, Math.min(h.rain, 4) / 4 * 24); g += '<rect class="wxp-bar" x="' + (x - col * 0.3).toFixed(1) + '" y="' + (150 - bh).toFixed(1) + '" width="' + (col * 0.6).toFixed(1) + '" height="' + bh.toFixed(1) + '" rx="2" fill="#6cc4f5" style="animation-delay:' + dl + 's"><title>' + h.rain.toFixed(1) + ' mm</title></rect>'; }
+      if (k % every === 0) {
+        var to = ((h.dir || 0) + 180) % 360;
+        g += icon(h.sym, '', 'x="' + (x - 13).toFixed(1) + '" y="2" width="26" height="26"')
+          + '<text class="t-strong" x="' + x.toFixed(1) + '" y="' + (Y(h.temp) - 8).toFixed(1) + '" text-anchor="middle">' + deg(h.temp) + '</text>'
+          + '<g transform="translate(' + x.toFixed(1) + ' 168)"><path d="M0 -6 L4 5 L0 2.5 L-4 5 Z" fill="#e8f1f2" transform="rotate(' + to + ')"/></g>'
+          + '<text x="' + x.toFixed(1) + '" y="186" text-anchor="middle">' + mph(h.wind) + '</text>'
+          + '<text x="' + x.toFixed(1) + '" y="206" text-anchor="middle">' + hhmm(h.t) + '</text>';
+      }
+    });
+    g += '<line x1="0" x2="' + W + '" y1="150.5" y2="150.5" stroke="#1d3346"/>';
+    return svgEl(W, H, 'Hour by hour: ' + deg(tmin) + ' to ' + deg(tmax) + ', wind in mph under each hour', g);
+  }
+  function openDay(ymd, scroll) {
+    var d = last, f = d && d.forecast, box = $('wxp-daydetail');
+    if (!f || !f.ok) return;
+    var day = f.days.filter(function (x) { return x.d === ymd; })[0];
+    if (!day) return;
+    openYmd = ymd;
+    [].forEach.call(document.querySelectorAll('#wxp-days .wxp-day'), function (b) { b.setAttribute('aria-expanded', b.getAttribute('data-d') === ymd ? 'true' : 'false'); });
+    var hrs = (f.hours || []).filter(function (h) { return ukYmd(Date.parse(h.t)) === ymd; });
+    var six = (f.six || []).filter(function (b) { return ukYmd(Date.parse(b.t)) === ymd; });
+    var uv = null;
+    hrs.concat(six).forEach(function (h) { if (h.uv !== null && h.uv !== undefined && (uv === null || h.uv > uv)) uv = h.uv; });
+    var sh = shore(day.dir), idx = f.days.indexOf(day);
+    var sd = sunDay(ymd), mo = moon(londonMidnight(ymd) + 12 * 3600000);
+    function t(ms) { return ms ? hhmm(new Date(ms).toISOString()) : '&mdash;'; }
+    function shortDay(y2) { return esc(lon(new Date(londonMidnight(y2) + 12 * 3600000).toISOString(), { weekday: 'short' })); }
+    var len = sd.rise && sd.set ? Math.round((sd.set - sd.rise) / 60000) : null;
+
+    var timeline = '';
+    if (hrs.length >= 4) {
+      var cw = Math.max(320, (box.parentNode.clientWidth || 360) - 40);
+      timeline = '<div class="wxp-chart">' + dayChart(hrs, cw) + '</div>'
+        + '<p class="wxp-note" style="margin-top:.3rem">Hour by hour' + (idx === 0 ? ' for the rest of today' : hrs.length < 20 ? ' for the hours the forecast still gives in hourly steps' : '') + ', with the forecast wind in mph under each time.'
+        + (hrs.length * 30 + 10 > cw ? ' Swipe the chart for the later hours.' : '') + '</p>';
+    } else if (six.length) {
+      timeline = '<div class="wxp-six">' + six.map(function (b) {
+        var hr = +hhmm(b.t).slice(0, 2), part = hr < 5 ? 'Night' : hr < 11 ? 'Morning' : hr < 17 ? 'Afternoon' : 'Evening';
+        return '<div class="wxp-card" style="padding:.7rem .8rem"><p class="wxp-lbl">' + part + ' &middot; from ' + hhmm(b.t) + '</p>' + icon(b.sym, '', 'width="54" height="54"')
+          + '<p class="wxp-sub" style="margin:.1rem 0;color:var(--b365-foam)">' + esc(words(b.sym)) + '</p>'
+          + '<p class="wxp-sub"><b>' + (b.tmax !== null ? deg(b.tmax) : deg(b.temp)) + '</b>' + (b.tmin !== null ? ' / ' + deg(b.tmin) : '') + ' &middot; ' + (b.rain >= 0.1 ? b.rain.toFixed(1) + ' mm' : 'dry') + '</p>'
+          + '<p class="wxp-sub">' + arrow(b.dir) + mph(b.wind) + ' mph ' + compass(b.dir) + '</p></div>';
+      }).join('') + '</div><p class="wxp-note" style="margin-top:.4rem">This far ahead the forecast comes in six-hour blocks, and the detail can still change.</p>';
+    } else {
+      timeline = '<p class="wxp-sub">No hour-by-hour detail for this day.</p>';
+    }
+
+    var tideHtml = '';
+    if (d.tide && d.tide.ok) {
+      var te = groupTides(d.tide.events).filter(function (x) { return ukYmd(Date.parse(x.t)) === ymd; });
+      var rg = (d.tide.days || []).filter(function (x) { return x.d === ymd; })[0];
+      tideHtml = '<div class="wxp-card"><span class="chip-f">PREDICTED &middot; PIER TIDE</span>'
+        + (te.length ? '<div class="wxp-evs" style="margin-top:.5rem">' + te.map(function (x) {
+            if (x.type === 'HH') return '<span class="wxp-ev hi">High <b>' + hhmm(x.t) + '</b> ' + x.h.toFixed(1) + 'm &amp; <b>' + hhmm(x.t2) + '</b> ' + x.h2.toFixed(1) + 'm <small>double high water</small></span>';
+            return '<span class="wxp-ev ' + (x.type === 'H' ? 'hi' : 'lo') + '">' + (x.type === 'H' ? 'High' : 'Low') + ' <b>' + hhmm(x.t) + '</b> ' + x.h.toFixed(1) + 'm</span>';
+          }).join('') + '</div>' : '<p class="wxp-sub">Tide times for this day aren\u2019t available.</p>')
+        + (rg ? '<p class="wxp-sub">Rise and fall <b>' + rg.range.toFixed(1) + ' m</b>' + (rg.range < 0.55 ? ' &mdash; a neap day, the sea barely moves' : '') + '.</p>' : '')
+        + '<p class="wxp-sub" style="font-size:.8rem">Heights above chart datum. Not for navigation.</p></div>';
+    }
+
+    box.innerHTML = '<div class="wxp-dd-head"><div><p class="eyebrow mono" style="margin:0">// ' + (idx === 0 ? 'TODAY' : idx === 1 ? 'TOMORROW' : 'DAY ' + (idx + 1) + ' OF 10') + '</p>'
+      + '<h3 id="wxp-dd-h" tabindex="-1">' + esc(longDay(ymd)) + '</h3></div>'
+      + '<div class="wxp-dd-nav">' + (idx > 0 ? '<button type="button" data-go="' + f.days[idx - 1].d + '">&larr; ' + shortDay(f.days[idx - 1].d) + '</button>' : '')
+      + (idx < f.days.length - 1 ? '<button type="button" data-go="' + f.days[idx + 1].d + '">' + shortDay(f.days[idx + 1].d) + ' &rarr;</button>' : '')
+      + '<button type="button" data-close="1" aria-label="Close this day">Close</button></div></div>'
+      + '<div class="wxp-dd-sum">' + icon(day.sym) + '<div><span class="chip-f">FORECAST &middot; MET NORWAY</span><p class="wxp-mid" style="margin:.2rem 0">' + deg(day.hi) + ' <span style="color:var(--b365-mute);font-size:.6em">/ ' + deg(day.lo) + '</span></p>'
+      + '<p class="wxp-sub" style="color:var(--b365-foam);font-size:1.05rem">' + esc(words(day.sym)) + '</p>'
+      + '<p class="wxp-sub">' + (day.rain >= 0.1 ? '<b>' + day.rain.toFixed(1) + ' mm</b> of rain' : '<b>Dry</b>') + ' &middot; wind up to <b>' + mph(day.wind) + ' mph</b> ' + compass(day.dir) + (sh ? ' &middot; <span class="wxp-shore ' + sh + '">' + SHORE_WORD[sh] + '</span>' : '')
+      + (uv !== null ? ' &middot; UV up to <b>' + Math.round(uv) + '</b> if clear' : '') + '</p></div></div>'
+      + timeline
+      + '<div class="wxp-grid" style="margin-top:.8rem">' + tideHtml
+      + '<div class="wxp-card"><span class="chip-f">COMPUTED &middot; SUN &amp; MOON</span><p class="wxp-mid" style="font-size:1.5rem;margin:.4rem 0 .1rem">' + t(sd.rise) + ' &ndash; ' + t(sd.set) + '</p>'
+      + '<p class="wxp-sub">Sunrise to sunset' + (len ? ' &middot; <b>' + Math.floor(len / 60) + 'h ' + (len % 60) + 'm</b>' : '') + '</p><p class="wxp-sub">Golden hour <b>' + t(sd.rise) + '&ndash;' + t(sd.goldAmEnd) + '</b> and <b>' + t(sd.goldPmStart) + '&ndash;' + t(sd.set) + '</b></p>'
+      + '<p class="wxp-sub">' + mo.name + ', ' + Math.round(mo.illum * 100) + '% lit</p></div></div>';
+    box.hidden = false;
+    swingArrows();
+    [].forEach.call(box.querySelectorAll('[data-go]'), function (b) { b.addEventListener('click', function () { openDay(b.getAttribute('data-go'), true); }); });
+    box.querySelector('[data-close]').addEventListener('click', function () {
+      var card = document.querySelector('#wxp-days .wxp-day[data-d="' + ymd + '"]'); closeDay(); if (card) card.focus();
+    });
+    if (history.replaceState) history.replaceState(null, '', location.pathname + location.search + '#day-' + ymd);
+    if (scroll) {
+      /* a link straight to a day JUMPS: 'instant', because the site's html{scroll-behavior:smooth} turns 'auto'
+         into a smooth scroll that page load cancels a few pixels in. Re-aligns once after late layout
+         unless the reader has already scrolled. */
+      box.scrollIntoView({ behavior: scroll === 'deep' ? 'instant' : REDUCE ? 'auto' : 'smooth', block: 'start' });
+      if (scroll === 'deep') {
+        var y0 = window.scrollY;
+        setTimeout(function () {
+          var top = box.getBoundingClientRect().top;
+          if (!box.hidden && Math.abs(window.scrollY - y0) < 4 && (top < -4 || top > 120)) box.scrollIntoView({ behavior: 'instant', block: 'start' });
+        }, 900);
+      }
+      var hd = $('wxp-dd-h'); if (hd && hd.focus) { try { hd.focus({ preventScroll: true }); } catch (e2) { hd.focus(); } }
+    }
   }
 
   /* ---------------- image loops (radar + satellite) ---------------- */
@@ -872,7 +1025,7 @@ _WXP_JS = r'''
   var lastW = window.innerWidth, rt = null;
   window.addEventListener('resize', function () {
     if (!last || Math.abs(window.innerWidth - lastW) < 40) return; lastW = window.innerWidth;
-    clearTimeout(rt); rt = setTimeout(function () { try { renderTides(last); renderWind(last); renderHourly(last); } catch (e) {} }, 250);
+    clearTimeout(rt); rt = setTimeout(function () { try { renderTides(last); renderWind(last); renderHourly(last); if (openYmd) openDay(openYmd, false); } catch (e) {} }, 250);
   });
 })();
 </script>'''

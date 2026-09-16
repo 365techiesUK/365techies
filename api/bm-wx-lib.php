@@ -411,16 +411,16 @@ function bm_tide_public($seaTide) {
     foreach ($d['events'] as $e) {
         $te = strtotime($e[0]);
         if ($te < $now - 12 * 3600) continue;
-        if ($te > $now + 7 * 86400) break;
+        if ($te > $now + 11 * 86400) break;   // the 10-day forecast's day detail shows each day's tides
         $events[] = array('t' => $e[0], 'type' => $e[1], 'h' => round($e[2] / 100 + $cd, 2));
     }
-    // Rise and fall per UK day for the next 8 days. Poole Bay's neap tides can be almost flat (predicted
+    // Rise and fall per UK day for the next 11 days. Poole Bay's neap tides can be almost flat (predicted
     // 19 Sep 2026: 1.60-1.97 m all day), when "the" high and low times are ambiguous - the page flags
     // those days instead of presenting precise-looking times as if they meant much.
     $days = array();
     $tz = new DateTimeZone('Europe/London');
     $dt = new DateTime('@' . $now); $dt->setTimezone($tz); $dt->setTime(0, 0, 0);
-    for ($k = 0; $k < 8; $k++) {
+    for ($k = 0; $k < 11; $k++) {
         $a = $dt->getTimestamp(); $dt->modify('+1 day'); $b = $dt->getTimestamp();
         $lo = null; $hi = null;
         for ($t = $a; $t < $b; $t += 600) {

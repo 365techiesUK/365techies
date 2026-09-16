@@ -1,7 +1,7 @@
 <?php
 /**
  * Bournemouth365 weather forecast - the data layer behind the forecast panel
- * on /bournemouth/ (the hub). Library only: included by bm-weather.php (the
+ * on /bournemouth/weather/. Library only: included by bm-wx.php (the
  * public endpoint) and by tm-cron.php (the 15-minute cron), so nothing here may
  * echo or exit.
  *
@@ -29,7 +29,7 @@
  *
  * SECURITY: bm-weather-cache.json / bm-weather-beat.json / bm-weather.lock hold
  * nothing sensitive (a public forecast), but are gitignored and denied in
- * .htaccess anyway, per the api/ store rule. Public surface = bm-weather.php.
+ * .htaccess anyway, per the api/ store rule. Public surface = bm-wx.php.
  */
 
 if (!defined('BMWX_URL'))       define('BMWX_URL', 'https://api.met.no/weatherapi/locationforecast/2.0/complete?lat=50.7163&lon=-1.8762&altitude=5');
@@ -40,7 +40,7 @@ if (!defined('BMWX_STALE'))     define('BMWX_STALE', 6 * 3600);    // model run 
 if (!defined('BMWX_DEAD'))      define('BMWX_DEAD', 24 * 3600);    // older than this: not shown at all
 if (!defined('BMWX_DAYS'))      define('BMWX_DAYS', 10);
 if (!defined('BMWX_HOURS'))     define('BMWX_HOURS', 24);
-if (!defined('BMWX_PARSE_V'))   define('BMWX_PARSE_V', 2);
+if (!defined('BMWX_PARSE_V'))   define('BMWX_PARSE_V', 3);
 
 function bmwx_file() { return __DIR__ . '/bm-weather-cache.json'; }
 
@@ -100,6 +100,7 @@ function bmwx_parse($j) {
 
     $tz = new DateTimeZone('Europe/London');
     $hours = array();
+    $six = array();
     $days = array();
     $covered = 0;
 
@@ -120,8 +121,8 @@ function bmwx_parse($j) {
         $wind = isset($det['wind_speed']) ? (float)$det['wind_speed'] : 0.0;
         $dir = isset($det['wind_from_direction']) ? (int)round($det['wind_from_direction']) : null;
 
-        // up to 50 hourly steps: the hub panel shows 24, the weather page's meteogram shows 48
-        if ($n1 && isset($n1['summary']['symbol_code']) && count($hours) < 50) {
+        // every hourly step MET gives (about the first 60 h): the meteogram shows 48, the day detail uses the rest
+        if ($n1 && isset($n1['summary']['symbol_code']) && count($hours) < 90) {
             $hours[] = array(
                 't' => date('c', $t),
                 'temp' => round($temp, 1),
@@ -136,6 +137,22 @@ function bmwx_parse($j) {
                 'rh' => isset($det['relative_humidity']) ? (int)round($det['relative_humidity']) : null,
                 'pres' => isset($det['air_pressure_at_sea_level']) ? round((float)$det['air_pressure_at_sea_level']) : null,
                 'dew' => isset($det['dew_point_temperature']) ? round((float)$det['dew_point_temperature'], 1) : null,
+            );
+        }
+
+        // six-hourly part of the run (no next_1_hours): kept as blocks so a day beyond the hourly range can
+        // still be opened as night / morning / afternoon / evening on the weather page
+        if (!$n1 && $n6 && isset($n6['summary']['symbol_code'])) {
+            $six[] = array(
+                't' => date('c', $t),
+                'sym' => $n6['summary']['symbol_code'],
+                'temp' => round($temp, 1),
+                'tmax' => isset($n6['details']['air_temperature_max']) ? round((float)$n6['details']['air_temperature_max'], 1) : null,
+                'tmin' => isset($n6['details']['air_temperature_min']) ? round((float)$n6['details']['air_temperature_min'], 1) : null,
+                'rain' => round(isset($n6['details']['precipitation_amount']) ? (float)$n6['details']['precipitation_amount'] : 0, 1),
+                'wind' => round($wind, 1),
+                'dir' => $dir,
+                'uv' => isset($det['ultraviolet_index_clear_sky']) ? round((float)$det['ultraviolet_index_clear_sky'], 1) : null,
             );
         }
 
@@ -190,7 +207,7 @@ function bmwx_parse($j) {
     if (!count($hours) || !count($outDays)) return null;
     // v: bump whenever this parse changes shape, so an old cached model is re-fetched instead of waiting
     // for MET's next run (16 Sep 2026: the hub-era cache kept 26 hours and no UV after the page shipped)
-    return array('v' => BMWX_PARSE_V, 'issued' => $issued, 'hours' => $hours, 'days' => $outDays);
+    return array('v' => BMWX_PARSE_V, 'issued' => $issued, 'hours' => $hours, 'six' => $six, 'days' => $outDays);
 }
 
 /** Cron + first-visitor refresh. Obeys Expires, a minimum gap, and a lock. */
@@ -255,7 +272,12 @@ function bm_weather_refresh($force = false) {
 
 /** The weather page's version: the same honesty rules, 48 hourly steps instead of 24. */
 function bm_weather_public_full() {
-    return bm_weather_public(48);
+    $out = bm_weather_public(90);
+    if (!empty($out['ok'])) {
+        $c = bmwx_load();
+        $out['six'] = isset($c['model']['six']) ? $c['model']['six'] : array();
+    }
+    return $out;
 }
 
 /** The public JSON. Staleness is applied at READ time, so honesty does not depend on cron. */
