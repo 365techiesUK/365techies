@@ -122,6 +122,9 @@ api/bm-weather-cache.json.*
 api/bm-weather-beat.json
 api/bm-weather-beat.json.tmp
 api/bm-weather.lock
+api/bm-wx.lock
+api/bm-wx-store/*
+!api/bm-wx-store/.htaccess
 api/signal-token.php
 api/signal-data.json
 api/signal-data.json.tmp

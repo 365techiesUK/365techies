@@ -1023,6 +1023,19 @@ if _osg.path.exists(_hub_fp):
         for _need in ("MET Norway", "creativecommons.org/licenses/by/4.0", "Changes made", 'id="wx-chip"', "chip-f"):
             if _need not in _wx_seg:
                 _bm_bad.append("hub weather: missing %s (licence/provenance condition)" % _need)
+# The full weather page (16 Sep 2026): every licence attribution is a condition of use, predicted tides
+# must never wear the measured chip, and the page must keep saying the tide times are not for navigation.
+_wxp_fp = _osg.path.join(bp.BASE, "bournemouth", "weather", "index.html")
+if _osg.path.exists(_wxp_fp):
+    _wxp_html = open(_wxp_fp, encoding="utf-8").read()
+    for _need in ("MET Norway", "EUMETSAT", "EUMETNET", "NASA", "Environment Agency", "Open Government Licence",
+                  "Met Office", "Defra", "OpenStreetMap contributors", "CC BY 4.0", "Not for navigation",
+                  "wxp-tide-chip", "wxp-radar-chip", "wxp-sat-chip"):
+        if _need not in _wxp_html:
+            _bm_bad.append("weather page: missing %s (licence/provenance condition)" % _need)
+    for _forbidden in ("setChip('wxp-tide-chip', 'chip-m'", "PREDICTED · MEASURED", 'class="chip-m" id="wxp-tide-chip"'):
+        if _forbidden in _wxp_html:
+            _bm_bad.append("weather page: predicted tide wearing the measured chip: %s" % _forbidden)
 if _bm_bad:
     raise SystemExit(
         "\n*** Bournemouth365 speed/cleanliness guard failed ***\n"

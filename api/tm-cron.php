@@ -62,6 +62,12 @@ $sea = bm_sea_refresh();
 require_once __DIR__ . '/bm-weather-lib.php';
 $wx = bm_weather_refresh();
 
+/* Bournemouth365 weather page: airport observations, Met Office warnings, Defra air quality, rain radar
+   and satellite loops. Each source keeps its own cadence inside; radar/satellite back-fill a few frames per
+   tick so a fresh deploy fills its loops within the hour without one long run. */
+require_once __DIR__ . '/bm-wx-lib.php';
+$wxp = bm_wx_refresh();
+
 /* Comms hub: inbound texts (Textmagic replies) + the Voipfone voicemail relay
    mailbox. Same placement, same reason: the inbox must keep filling whatever
    state the scheduled-SMS account is in. Each poller no-ops cleanly when its

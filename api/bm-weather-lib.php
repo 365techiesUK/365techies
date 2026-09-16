@@ -119,7 +119,8 @@ function bmwx_parse($j) {
         $wind = isset($det['wind_speed']) ? (float)$det['wind_speed'] : 0.0;
         $dir = isset($det['wind_from_direction']) ? (int)round($det['wind_from_direction']) : null;
 
-        if ($n1 && isset($n1['summary']['symbol_code']) && count($hours) < BMWX_HOURS + 2) {
+        // up to 50 hourly steps: the hub panel shows 24, the weather page's meteogram shows 48
+        if ($n1 && isset($n1['summary']['symbol_code']) && count($hours) < 50) {
             $hours[] = array(
                 't' => date('c', $t),
                 'temp' => round($temp, 1),
@@ -129,6 +130,11 @@ function bmwx_parse($j) {
                 'wind' => round($wind, 1),
                 'dir' => $dir,
                 'cloud' => isset($det['cloud_area_fraction']) ? (int)round($det['cloud_area_fraction']) : null,
+                // clear-sky UV: what the UV would be with no cloud - the page labels it that way
+                'uv' => isset($det['ultraviolet_index_clear_sky']) ? round((float)$det['ultraviolet_index_clear_sky'], 1) : null,
+                'rh' => isset($det['relative_humidity']) ? (int)round($det['relative_humidity']) : null,
+                'pres' => isset($det['air_pressure_at_sea_level']) ? round((float)$det['air_pressure_at_sea_level']) : null,
+                'dew' => isset($det['dew_point_temperature']) ? round((float)$det['dew_point_temperature'], 1) : null,
             );
         }
 
@@ -242,8 +248,13 @@ function bm_weather_refresh($force = false) {
     return array('refreshed' => $did);
 }
 
+/** The weather page's version: the same honesty rules, 48 hourly steps instead of 24. */
+function bm_weather_public_full() {
+    return bm_weather_public(48);
+}
+
 /** The public JSON. Staleness is applied at READ time, so honesty does not depend on cron. */
-function bm_weather_public() {
+function bm_weather_public($maxHours = BMWX_HOURS) {
     $c = bmwx_load();
     $now = time();
     $src = array(
@@ -265,7 +276,7 @@ function bm_weather_public() {
     $hours = array();
     foreach ($c['model']['hours'] as $h) {
         if (strtotime($h['t']) + 3600 > $now) $hours[] = $h;
-        if (count($hours) >= BMWX_HOURS) break;
+        if (count($hours) >= $maxHours) break;
     }
     $today = date('Y-m-d');   // Europe/London (set by the endpoint)
     $days = array();

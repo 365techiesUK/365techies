@@ -1,0 +1,3 @@
+# Bournemouth365 weather runtime store (radar/satellite frames, feed caches).
+# Never served directly: api/bm-wx-img.php reads the images, api/bm-wx.php the JSON.
+Require all denied

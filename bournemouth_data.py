@@ -275,8 +275,8 @@ _B365 = '''    <section class="section" aria-label="About Bournemouth365">
           <h2 class="section-title section-title--center" data-title>Bournemouth, 365 days a year<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="prose" data-reveal>
-          <p>Bournemouth365 is the web home of our <a href="https://www.facebook.com/bournemouth365" target="_blank" rel="noopener">Bournemouth Live Facebook page</a>, where 39,000 of you watch the seafront with us every day. More pages are on the way: live sea conditions measured at the Boscombe wave buoy, an honest local guide to parking for the beach, and the best sunrise and sunset spots &mdash; photographed by us, not stock.</p>
-          <p class="mono" style="margin-bottom:.6rem"><a href="/bournemouth/">Bournemouth365 home</a> &middot; <a href="/bournemouth/live-map/">Live map: traffic, buses, sea</a> &middot; <a href="/bournemouth/sea-today/">The sea right now</a> &middot; <a href="/bournemouth/fireworks/">Friday fireworks</a> &middot; <a href="/bournemouth/sunrise-sunset/">Sunrise &amp; sunset</a> &middot; <a href="/bournemouth/beach-parking/">Beach parking</a> &middot; <a href="/van-signal-map/">Mobile signal map</a></p>
+          <p>Bournemouth365 is the web home of our <a href="https://www.facebook.com/bournemouth365" target="_blank" rel="noopener">Bournemouth Live Facebook page</a>, where 39,000 of you watch the seafront with us every day. Here: the seafront&rsquo;s weather, tide times and rain radar, the sea measured live, an honest guide to beach parking, and the best sunrise and sunset spots &mdash; photographed by us, not stock.</p>
+          <p class="mono" style="margin-bottom:.6rem"><a href="/bournemouth/">Bournemouth365 home</a> &middot; <a href="/bournemouth/weather/">Weather, tides &amp; radar</a> &middot; <a href="/bournemouth/live-map/">Live map: traffic, buses, sea</a> &middot; <a href="/bournemouth/sea-today/">The sea right now</a> &middot; <a href="/bournemouth/fireworks/">Friday fireworks</a> &middot; <a href="/bournemouth/sunrise-sunset/">Sunrise &amp; sunset</a> &middot; <a href="/bournemouth/beach-parking/">Beach parking</a> &middot; <a href="/van-signal-map/">Mobile signal map</a></p>
           <p class="mono">Built in Bournemouth by <a href="/">365 Techies</a> &mdash; the family firm that has looked after the town&rsquo;s computers since 1995.</p>
           <p class="b365-foot">No ads. No paywall. No consent wall. Built to load fast on beach 4G.</p>
         </div>
@@ -1143,6 +1143,8 @@ add(
 _HUB_SLUG = "bournemouth"
 
 _HUB_CARDS = [
+    ("/bournemouth/weather/", "/bournemouth/media/og-weather.jpg",
+     "Weather, tides &amp; radar", "The seafront forecast hour by hour and ten days out, tide times checked against the gauge on the pier, rain radar and satellite loops every 15 minutes, and the wind measured at the airport &mdash; every number labelled with where it came from."),
     ("/bournemouth/live-map/", "/bournemouth/media/og-live-map.jpg",
      "The live map", "Buses, flights, road closures, river levels, bike bays and the latest satellite pass over Bournemouth, Christchurch and Poole &mdash; every layer from a named public feed, on a free flat map, with the 3D city loaded only when you ask for it."),
     ("/bournemouth/sea-today/", "/bournemouth/media/og-sunrise-sunset.jpg",
@@ -1285,6 +1287,7 @@ _WX_SECTION = r'''    <section class="section b365 wx" id="weather" aria-labelle
         <ol class="wx-days" id="wx-days" aria-label="Daily forecast"></ol>
         <noscript><p class="b365-sub wx-note">The forecast panel needs JavaScript. MET Norway&rsquo;s own Bournemouth forecast is at <a href="https://www.yr.no/en/forecast/daily-table/2-2655095" rel="noopener">yr.no</a>.</p></noscript>
         <p class="b365-sub wx-note">A forecast is a prediction, so it changes. The first two to three days come in hourly steps and are the ones to plan around; after that the model works in six-hour steps and the detail is looser, so check again nearer the day. Rain is the forecast amount in millimetres &mdash; this forecast gives no percentage chance for our coast, so we don&rsquo;t invent one. Wind is the forecast average speed, not gusts.</p>
+        <p class="mono" style="margin:.9rem 0 0"><a href="/bournemouth/weather/">Full seafront weather: tide times, wind, rain radar and satellite &rarr;</a></p>
         <p class="b365-foot">Forecast data from <a href="https://www.met.no/en" rel="noopener">MET Norway</a> (the Norwegian Meteorological Institute) for Bournemouth Pier, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a>. Changes made: we group their hourly and six-hourly steps into days, round the numbers, convert wind to mph and draw our own symbols. It updates about every hour.</p>
       </div>
       <script>
@@ -1536,6 +1539,11 @@ add(
     content=_HUB_CONTENT,
     og_image="/bournemouth/media/og-sunrise-sunset.jpg",
 )
+
+# /bournemouth/weather/ - the full seafront weather page (16 Sep 2026). Its own module because it is
+# big; it takes the shared cross-link band so it stays a full member of the section.
+import bournemouth_weather_page as _wxp
+_wxp.register(_B365)
 
 
 # ============================================================================
