@@ -40,6 +40,9 @@ BENCHV = _jsv("pcbench.js")
 # Per-page attributes on <main>: data-cv marks the scene-heavy pages that get content-visibility on phones
 # (the static home page carries it by hand). Volatile in the content hash, see _VOLATILE.
 MAIN_ATTRS = {"dell-hardware": " data-cv"}
+# Per-page CSS placed at the end of <head> (after the site stylesheet, so equal-specificity rules win, and parsed before
+# anything paints). Set by a page module, e.g. the Bournemouth weather page's phone app view.
+HEAD_EXTRA = {}
 
 # ---------------------------------------------------------------------------
 # HONEST LASTMOD
@@ -976,6 +979,7 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None, robot
     og_title = og_title.replace('"', "&quot;")
     meta_desc = _meta_desc(desc)
     main_attrs = MAIN_ATTRS.get(slug, "")
+    head_extra = HEAD_EXTRA.get(slug, "")
     return f'''<!DOCTYPE html>
 <html lang="en-GB">
 <head>
@@ -1124,7 +1128,7 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None, robot
         }});
       }});
     }})();
-  </script>
+  </script>{head_extra}
 </head>
 <body id="top">
   <a class="skip-link" href="#main">Skip to content</a>

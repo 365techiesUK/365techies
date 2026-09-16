@@ -33,6 +33,7 @@ Everything is drawn client-side from /api/bm-wx.php as SVG + CSS (no chart or ma
 host - the section's speed guard). Loops load only when their tab is opened, animation pauses off screen and
 stops under prefers-reduced-motion or the site's own reduce-motion setting.
 """
+import build_pages as _bp
 from build_pages import add, graph, crumb_sub, webpage, faqpage, faq_html, bc_sub
 
 _WXP_SLUG = "bournemouth/weather"
@@ -73,6 +74,29 @@ _WXP_HERO = '''    <section class="page-hero wxp-hero b365" aria-label="Introduc
         <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
       </div>
     </section>'''
+
+
+# PHONE APP VIEW (16 Sep 2026, owner: "as this is a weather page on the phone view the header and footer bits should vanish").
+# Phones only (the site's 767 px phone breakpoint): no site header, no Call/Book/Text bar, no site footer and no
+# Bournemouth365 about-band; the breadcrumb stays as the way back, and a slim footer keeps the Bournemouth365 links and
+# the legal links (privacy, cookies, terms, accessibility) that every page must still reach. The HTML is untouched -
+# it is hidden by CSS only, so desktop and crawlers see the same page. The cookie banner and the accessibility
+# button stay: consent and accessibility are not decoration.
+_WXP_HEAD = '''
+  <style>
+  @media (max-width:767px){
+    :root{--header-h:0px}
+    .site-header,.mobile-cta-bar,.site-footer,section[aria-label="About Bournemouth365"]{display:none!important}
+    body{padding-bottom:env(safe-area-inset-bottom)!important}
+    .a11y{bottom:calc(14px + env(safe-area-inset-bottom))!important}
+  }
+  </style>'''
+
+_WXP_MINIFOOT = '''
+    <nav class="wxp-minifoot b365" aria-label="Bournemouth365 pages and legal information">
+      <p><a href="/bournemouth/">Bournemouth365</a><a href="/bournemouth/live-map/">Live map</a><a href="/bournemouth/sea-today/">The sea right now</a><a href="/bournemouth/sunrise-sunset/">Sunrise &amp; sunset</a><a href="/bournemouth/beach-parking/">Beach parking</a><a href="/bournemouth/fireworks/">Fireworks</a></p>
+      <p class="mono">&copy; 2026 365 Techies Limited<a href="/privacy-policy/">Privacy</a><a href="/cookie-policy/">Cookies</a><a href="/terms/">Terms</a><a href="/accessibility-statement/">Accessibility</a></p>
+    </nav>'''
 
 
 _WXP_CSS = r'''
@@ -380,6 +404,16 @@ html.a11y-contrast .wxp-tablist [role="tab"][aria-selected="true"],html.a11y-con
 @media (max-width:379px){
   .wxp-vital{padding:.5rem .5rem .55rem}.wxp-vital .v{font-size:1.04rem}.wxp-vital .c{font-size:.79rem}
   .wxp-tablist [role="tab"]{font-size:.72rem}.wxp-dchip{flex-basis:76px}.page-hero.wxp-hero h1{font-size:1.55rem}
+}
+/* phone app view: the slim footer that replaces the site footer on phones (hidden from 768 px, where the site footer shows) */
+.wxp-minifoot{display:none}
+@media (max-width:767px){
+  .page-hero.wxp-hero{padding-top:1.15rem}
+  .wxp-minifoot{display:block;padding:1rem var(--wxp-gut,1rem) calc(1.2rem + env(safe-area-inset-bottom));border-top:1px solid var(--b365-line);background:#07101a}
+  .wxp-minifoot p{display:flex;flex-wrap:wrap;align-items:center;gap:0 1rem;margin:0;color:var(--b365-mute);font-size:.86rem}
+  .wxp-minifoot p.mono{font-size:.74rem;margin-top:.2rem}
+  .wxp-minifoot a{display:inline-flex;align-items:center;min-height:44px;color:#a9c4ea;text-decoration:none}
+  .wxp-minifoot a:focus-visible{outline:2px solid var(--wx-gold);outline-offset:2px}
 }
 /* the animated icons (same shapes as before) */
 .wx-rays,.wx-core,.wx-moon,.wx-star,.wx-cl,.wx-cl2,.wx-drop,.wx-flake,.wx-fog,.wx-bolt{transform-box:fill-box;transform-origin:center}
@@ -1435,7 +1469,8 @@ _WXP_JS = r'''
     ink.style.transform = 'translateX(' + (tr.left - wr.left - wrap.clientLeft).toFixed(1) + 'px)';
   }
   function barStuck() { return $('wxp-tabbar').classList.contains('is-stuck'); }
-  function stickTop() { return parseFloat(getComputedStyle($('wxp-tabbar')).top) || 76; }
+  /* 0 is a real value: on phones the site header is hidden and the bar sticks to the very top */
+  function stickTop() { var v = parseFloat(getComputedStyle($('wxp-tabbar')).top); return isNaN(v) ? 76 : v; }
   function jumpTo(el, extra, smooth) {
     if (!el) return;
     var y = el.getBoundingClientRect().top + window.scrollY - extra;
@@ -1498,20 +1533,23 @@ _WXP_JS = r'''
   selectTab('tides');
 
   /* the stuck look for the tab bar; the phone cookie banner (fixed under the header) pushes the bar down while it shows */
-  var sio = null, cb = null;
+  /* measured on scroll (one read per frame): an observer on the sentinel never fires when a jump carries it from below the
+     screen to above it in one go, so the bar sat pinned without its solid background */
+  var cb = null, stuckRaf = 0;
   function watchStuck() {
-    if (!('IntersectionObserver' in window)) return;
-    if (sio) sio.disconnect();
-    sio = new IntersectionObserver(function (es) { es.forEach(function (e) { $('wxp-tabbar').classList.toggle('is-stuck', !e.isIntersecting && e.boundingClientRect.top < stickTop() + 2); }); }, { rootMargin: '-' + Math.round(stickTop() + 1) + 'px 0px 0px 0px' });
-    sio.observe($('wxp-sentinel'));
+    stuckRaf = 0;
+    var st = stickTop(), deck = $('wxp-deck').getBoundingClientRect();
+    $('wxp-tabbar').classList.toggle('is-stuck', $('wxp-sentinel').getBoundingClientRect().top < st && deck.bottom > st + 90);
   }
+  window.addEventListener('scroll', function () { if (!stuckRaf) stuckRaf = requestAnimationFrame(watchStuck); }, { passive: true });
   function cbSync() {
     cb = cb || document.querySelector('.cookie-banner');
     var h = 0;
     if (cb && !cb.hidden && window.innerWidth < 768) { var r = cb.getBoundingClientRect(); if (r.height && r.top < 150) h = Math.round(r.height); }
     var v = h + 'px', changed = root.style.getPropertyValue('--wxp-cb') !== v;
     root.style.setProperty('--wxp-cb', v);
-    if (changed || !sio) { watchStuck(); runPending(); }
+    watchStuck();
+    if (changed) runPending();
   }
   cbSync();
   function cbWatch() {
@@ -1614,12 +1652,13 @@ _WXP_CONTENT = "\n".join([
 
 
 def register(b365_band):
+    _bp.HEAD_EXTRA[_WXP_SLUG] = _WXP_HEAD
     add(
         slug=_WXP_SLUG,
         title="Bournemouth Weather, Tides, Radar & Sea Temperature",
         desc="Bournemouth seafront weather: 10-day forecast, tide times checked against the pier gauge, live rain radar and satellite, wind and the sea temperature.",
         og_title="Bournemouth seafront weather: tides, radar, satellite and the sea",
         schema=_wxp_schema,
-        content=_WXP_CONTENT + "\n" + b365_band,
+        content=_WXP_CONTENT + "\n" + b365_band + _WXP_MINIFOOT,
         og_image="/bournemouth/media/og-weather.jpg",
     )
