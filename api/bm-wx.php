@@ -20,7 +20,8 @@ if (empty($beat['t']) || time() - (int)$beat['t'] > 45 * 60) {
     bm_wx_refresh(true);
 }
 $c = bmwx_load();
-if (empty($c['model']) || (time() - (isset($c['fetched_at']) ? (int)$c['fetched_at'] : 0)) > 2 * 3600) {
+if (empty($c['model']) || !isset($c['model']['v']) || $c['model']['v'] < BMWX_PARSE_V
+    || (time() - (isset($c['fetched_at']) ? (int)$c['fetched_at'] : 0)) > 2 * 3600) {
     bm_weather_refresh();
 }
 if (!file_exists(bmsea_file())) {

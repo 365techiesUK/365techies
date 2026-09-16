@@ -40,6 +40,7 @@ if (!defined('BMWX_STALE'))     define('BMWX_STALE', 6 * 3600);    // model run 
 if (!defined('BMWX_DEAD'))      define('BMWX_DEAD', 24 * 3600);    // older than this: not shown at all
 if (!defined('BMWX_DAYS'))      define('BMWX_DAYS', 10);
 if (!defined('BMWX_HOURS'))     define('BMWX_HOURS', 24);
+if (!defined('BMWX_PARSE_V'))   define('BMWX_PARSE_V', 2);
 
 function bmwx_file() { return __DIR__ . '/bm-weather-cache.json'; }
 
@@ -187,7 +188,9 @@ function bmwx_parse($j) {
         if (count($outDays) >= BMWX_DAYS) break;
     }
     if (!count($hours) || !count($outDays)) return null;
-    return array('issued' => $issued, 'hours' => $hours, 'days' => $outDays);
+    // v: bump whenever this parse changes shape, so an old cached model is re-fetched instead of waiting
+    // for MET's next run (16 Sep 2026: the hub-era cache kept 26 hours and no UV after the page shipped)
+    return array('v' => BMWX_PARSE_V, 'issued' => $issued, 'hours' => $hours, 'days' => $outDays);
 }
 
 /** Cron + first-visitor refresh. Obeys Expires, a minimum gap, and a lock. */
@@ -200,15 +203,17 @@ function bm_weather_refresh($force = false) {
     $expires = isset($c['expires_at']) ? (int)$c['expires_at'] : 0;
     $fetched = isset($c['fetched_at']) ? (int)$c['fetched_at'] : 0;
     $tried = isset($c['tried_at']) ? (int)$c['tried_at'] : 0;
-    $due = empty($c['model']) || $now >= $expires || ($now - $fetched) >= BMWX_MAX_AGE;
+    $stale_shape = !empty($c['model']) && (!isset($c['model']['v']) || $c['model']['v'] < BMWX_PARSE_V);
+    $due = empty($c['model']) || $stale_shape || $now >= $expires || ($now - $fetched) >= BMWX_MAX_AGE;
 
-    if (!$force && (!$due || ($now - $tried) < BMWX_MIN_GAP)) {
+    if (!$force && !$stale_shape && (!$due || ($now - $tried) < BMWX_MIN_GAP)) {
         @flock($lk, LOCK_UN); @fclose($lk);
         return array('skipped' => true);
     }
     $c['tried_at'] = $now;
 
-    $lm = (!empty($c['model']) && isset($c['last_modified'])) ? (string)$c['last_modified'] : '';
+    // no If-Modified-Since when the cached shape is old: a 304 would keep the old shape
+    $lm = (!empty($c['model']) && !$stale_shape && isset($c['last_modified'])) ? (string)$c['last_modified'] : '';
     $r = bmwx_http($lm);
     $did = 'fail';
 
