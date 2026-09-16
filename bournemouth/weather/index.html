@@ -294,7 +294,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-09-16"
+      "dateModified": "2026-09-17"
     },
     {
       "@type": "FAQPage",
@@ -784,7 +784,7 @@
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/bournemouth/">Bournemouth365</a> <span>/</span> <span aria-current="page">Weather, Tides &amp; Sea</span></nav>
         <h1><span class="wxp-w" style="--i:0">Bournemouth</span> <span class="wxp-w" style="--i:1">weather,</span> <em class="grad grad--cyan wxp-w" style="--i:2">tides &amp; the sea</em></h1>
         <p class="wxp-lede">The seafront&rsquo;s forecast, tide times checked against the gauge on the pier, rain radar, satellite and the sea temperature from the buoy in the bay &mdash; every number labelled with where it came from.</p>
-        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 16 September 2026</p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 17 September 2026</p>
       </div>
     </section>
 
@@ -862,11 +862,11 @@ html{scroll-padding-top:calc(var(--header-h) + 4.6rem)}
 .sky-cloud{background:linear-gradient(180deg,rgba(159,180,197,.09),transparent 72%)}
 .sky-rain,.sky-storm{background:linear-gradient(180deg,rgba(108,160,210,.13),transparent 78%)}
 .sky-fog,.sky-snow{background:linear-gradient(180deg,rgba(210,220,230,.09),transparent 80%)}
-.sk-glow{width:440px;height:440px;right:-170px;top:-210px;border-radius:50%;background:radial-gradient(circle,rgba(255,206,110,.42),rgba(255,179,71,.14) 42%,transparent 68%);animation:wxs-breathe 8s ease-in-out infinite}
-.sk-rays{width:600px;height:600px;right:-250px;top:-290px;border-radius:50%;background:repeating-conic-gradient(rgba(255,215,106,.1) 0 5deg,transparent 5deg 18deg);-webkit-mask:radial-gradient(circle,#000 18%,transparent 66%);mask:radial-gradient(circle,#000 18%,transparent 66%);animation:wx-spin 110s linear infinite}
+.sk-glow{width:440px;height:440px;right:-170px;top:-210px;border-radius:50%;background:radial-gradient(circle,rgba(255,206,110,.42),rgba(255,179,71,.14) 42%,transparent 68%);animation:wxs-breathe 5.5s ease-in-out infinite}
+.sk-rays{width:600px;height:600px;right:-250px;top:-290px;border-radius:50%;background:repeating-conic-gradient(rgba(255,215,106,.14) 0 5deg,transparent 5deg 18deg);-webkit-mask:radial-gradient(circle,#000 18%,transparent 66%);mask:radial-gradient(circle,#000 18%,transparent 66%);animation:wx-spin 55s linear infinite}
 .sk-moon{width:280px;height:280px;right:-90px;top:-130px;border-radius:50%;background:radial-gradient(circle,rgba(239,230,196,.26),transparent 62%)}
 .sk-star{width:2px;height:2px;border-radius:50%;background:var(--wx-moon);opacity:.25;animation:wx-twinkle 3.6s ease-in-out infinite}
-.sk-cloud{left:-45%;width:70%;height:36%;border-radius:50%;background:radial-gradient(closest-side,rgba(228,238,245,.16),transparent);animation:wxs-drift 42s linear infinite}
+.sk-cloud{left:-45%;width:72%;height:40%;border-radius:50%;background:radial-gradient(closest-side,rgba(228,238,245,.26),transparent);animation:wxs-drift 22s linear infinite}
 .sk-drop{top:-12%;width:1.5px;height:24px;border-radius:2px;background:linear-gradient(rgba(108,196,245,0),rgba(108,196,245,.58));animation:wxs-fall 1s linear infinite}
 .sk-flake{top:-4%;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.45);animation:wxs-snow 6s linear infinite}
 .sk-haze{left:-30%;top:22%;width:160%;height:24%;background:linear-gradient(90deg,transparent,rgba(210,220,230,.15),transparent);animation:wxs-haze 22s ease-in-out infinite alternate}
@@ -944,7 +944,7 @@ html.a11y-contrast .wxp-tablist [role="tab"][aria-selected="true"],html.a11y-con
 #wxp-dsun:focus:not(:focus-visible){outline:none}
 .wxp-air-link{display:inline-flex;align-items:center;min-height:44px;color:#a9c4ea}
 @media (min-width:768px){.wxp-tablist [role="tab"]{flex-direction:row;gap:.45rem;min-height:46px;font-size:.93rem}}
-.wxp-tabink{position:absolute;z-index:0;top:.22rem;left:0;height:calc(100% - .44rem);border-radius:13px;background:linear-gradient(135deg,#ffe08a,#ffb347);box-shadow:0 4px 18px rgba(255,190,90,.25);transition:transform .32s var(--wx-ease),width .32s var(--wx-ease)}
+.wxp-tabink{overflow:hidden;position:absolute;z-index:0;top:.22rem;left:0;height:calc(100% - .44rem);border-radius:13px;background:linear-gradient(135deg,#ffe08a,#ffb347);box-shadow:0 4px 18px rgba(255,190,90,.25);transition:transform .32s var(--wx-ease),width .32s var(--wx-ease)}
 .wxp-js .wxp-panel[data-off]{display:none}
 .wxp-panel{scroll-margin-top:calc(var(--header-h) + var(--ticker-h) + 4.5rem)}
 /* a panel's contents cascade in when it opens (tab switch, or the deck first coming into view) */
@@ -961,17 +961,21 @@ html.a11y-contrast .wxp-tablist [role="tab"][aria-selected="true"],html.a11y-con
 .wxp-anim [data-anim="stagger"]{opacity:1;transform:none}
 .wxp-anim .wxp-strip:not(.is-in) .wxp-dchip,.wxp-anim .wxp-strip:not(.is-in) .wxp-ink{opacity:0}
 .wxp-strip.is-in .wxp-dchip:not(.skel){animation:wxp-chip .62s ease-out both;animation-delay:calc(.05s + var(--i,0) * .065s)}
-.wxp-strip.is-in .wxp-ink.on{animation:wxp-inkin .5s var(--wx-ease) .45s both}
+.wxp-strip.is-in .wxp-ink.on{animation:wxp-inkin .5s var(--wx-ease) .45s both,wxp-glow 3.2s ease-in-out 1.2s infinite}
 .wxp-strip-list.no-pop .wxp-dchip{animation:none!important}
 .wxp-anim .wxp-deck:not(.is-in) .wxp-panel>*{opacity:0}
 .wxp-shown-all [data-anim],.wxp-shown-all .wxp-dchip,.wxp-shown-all .wxp-ink,.wxp-shown-all .wxp-panel>*{opacity:1!important;transform:none!important}
 .wxp-now.wxp-rise .wxp-num{animation:wxp-temp .7s cubic-bezier(.2,.9,.25,1.2) .1s both}
 .wxp-now.wxp-rise .wx-ic{animation:wxp-pop2 .7s cubic-bezier(.2,.9,.25,1.2) both}
+/* always-on touches: a swaying wind arrow, a glowing Today outline, a sheen over the chosen tab, pulsing live dots */
+.wxp-sway{display:inline-block;transform-origin:50% 60%;animation:wxp-sway 2.6s ease-in-out infinite}
+.wxp-tabink::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.5) 50%,transparent 65%);background-size:260% 100%;background-position:160% 0;animation:wxp-shine 5.5s ease-in-out 1.5s infinite}
+.wxp .chip-m::before{animation:b365pulse 2.2s ease-in-out infinite}
 /* the sea along the bottom of the glance card */
-.wxp-wave{position:absolute;left:0;bottom:-2px;width:200%;height:64px;z-index:-1;pointer-events:none;animation:wxp-wave 16s linear infinite}
-.wxp-wave path{fill:rgba(79,216,196,.13)}
-.wxp-wave.w-b{height:46px;animation-duration:10s;animation-direction:reverse}
-.wxp-wave.w-b path{fill:rgba(108,196,245,.1)}
+.wxp-wave{position:absolute;left:0;bottom:-2px;width:200%;height:96px;z-index:-1;pointer-events:none;animation:wxp-wave 9s linear infinite}
+.wxp-wave path{fill:rgba(79,216,196,.22)}
+.wxp-wave.w-b{height:68px;animation-duration:6s;animation-direction:reverse}
+.wxp-wave.w-b path{fill:rgba(108,196,245,.17)}
 .wxp-split{display:grid;gap:.7rem}
 @media (min-width:900px){.wxp-split{grid-template-columns:minmax(0,1fr) minmax(0,2fr);align-items:start}}
 .wxp-media{display:grid;gap:.8rem}
@@ -1130,12 +1134,12 @@ html.a11y-contrast .wxp-tablist [role="tab"][aria-selected="true"],html.a11y-con
 /* the animated icons (same shapes as before) */
 .wx-rays,.wx-core,.wx-moon,.wx-star,.wx-cl,.wx-cl2,.wx-drop,.wx-flake,.wx-fog,.wx-bolt{transform-box:fill-box;transform-origin:center}
 .wx-rays line{stroke:var(--wx-sun);stroke-width:3.2;stroke-linecap:round}
-.wx-rays{animation:wx-spin 26s linear infinite}
+.wx-rays{animation:wx-spin 12s linear infinite}
 .wx-core{fill:var(--wx-sun);animation:wx-pulse 3.4s ease-in-out infinite}
 .wx-moon{fill:var(--wx-moon);animation:wx-rock 7s ease-in-out infinite}
 .wx-star{fill:var(--wx-moon);animation:wx-twinkle 2.6s ease-in-out infinite}
-.wx-cl{fill:var(--wx-cloud);animation:wx-drift 7s ease-in-out infinite alternate}
-.wx-cl2{fill:var(--wx-cloud2);animation:wx-drift 9s ease-in-out infinite alternate-reverse}
+.wx-cl{fill:var(--wx-cloud);animation:wx-drift 3.6s ease-in-out infinite alternate}
+.wx-cl2{fill:var(--wx-cloud2);animation:wx-drift 4.8s ease-in-out infinite alternate-reverse}
 .wx-drop{stroke:var(--wx-rain);stroke-width:2.6;stroke-linecap:round;animation:wx-fall 1.05s linear infinite}
 .wx-heavy .wx-drop{animation-duration:.72s}
 .wx-flake{fill:#fff;animation:wx-snow 2.6s linear infinite}
@@ -1144,10 +1148,10 @@ html.a11y-contrast .wxp-tablist [role="tab"][aria-selected="true"],html.a11y-con
 /* small icons in the strip and the timeline stand still: two moving icons on screen, not forty */
 .wx-still *{animation:none!important}.wx-still .wx-bolt,.wx-still .wx-star{opacity:1}
 @keyframes wx-spin{to{transform:rotate(360deg)}}
-@keyframes wx-pulse{50%{transform:scale(1.07)}}
+@keyframes wx-pulse{50%{transform:scale(1.12)}}
 @keyframes wx-rock{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(5deg)}}
 @keyframes wx-twinkle{0%,100%{opacity:.25}50%{opacity:1}}
-@keyframes wx-drift{from{transform:translateX(-2.6px)}to{transform:translateX(2.6px)}}
+@keyframes wx-drift{from{transform:translateX(-5px)}to{transform:translateX(5px)}}
 @keyframes wx-fall{0%{transform:translateY(-6px);opacity:0}20%{opacity:1}100%{transform:translateY(10px);opacity:0}}
 @keyframes wx-snow{0%{transform:translate(0,-6px);opacity:0}25%{opacity:1}50%{transform:translate(2px,2px)}100%{transform:translate(-1px,11px);opacity:0}}
 @keyframes wx-slide{from{transform:translateX(-4px)}to{transform:translateX(4px)}}
@@ -1162,6 +1166,9 @@ html.a11y-contrast .wxp-tablist [role="tab"][aria-selected="true"],html.a11y-con
 @keyframes wxp-chip{0%{opacity:0;transform:translateY(30px) scale(.82)}70%{opacity:1;transform:translateY(-4px) scale(1.03)}100%{opacity:1;transform:none}}
 @keyframes wxp-inkin{from{opacity:0;transform:scale(.9)}}
 @keyframes wxp-temp{from{opacity:0;transform:translateY(14px) scale(.9)}to{opacity:1;transform:none}}
+@keyframes wxp-sway{0%,100%{transform:rotate(-9deg)}50%{transform:rotate(9deg)}}
+@keyframes wxp-glow{0%,100%{box-shadow:0 0 12px rgba(255,215,106,.12)}50%{box-shadow:0 0 34px rgba(255,215,106,.45)}}
+@keyframes wxp-shine{0%,55%{background-position:160% 0}100%{background-position:-60% 0}}
 @keyframes wxp-wave{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
 @keyframes wxp-panin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes wxp-inl{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
@@ -1171,7 +1178,7 @@ html.a11y-contrast .wxp-tablist [role="tab"][aria-selected="true"],html.a11y-con
 @keyframes wxp-pop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
 @keyframes wxp-ping{0%{box-shadow:0 0 0 0 rgba(255,215,106,.7)}80%,100%{box-shadow:0 0 0 18px rgba(255,215,106,0)}}
 @keyframes wxp-ring{0%{transform:scale(.6);opacity:.9}100%{transform:scale(2.6);opacity:0}}
-@keyframes wxs-breathe{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.08);opacity:1}}
+@keyframes wxs-breathe{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.15);opacity:1}}
 @keyframes wxs-drift{from{transform:translateX(0)}to{transform:translateX(215%)}}
 @keyframes wxs-fall{from{transform:translate3d(0,0,0) rotate(14deg)}to{transform:translate3d(-150px,640px,0) rotate(14deg)}}
 @keyframes wxs-snow{from{transform:translate3d(0,0,0)}50%{transform:translate3d(14px,320px,0)}to{transform:translate3d(-6px,640px,0)}}
@@ -1578,8 +1585,8 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
     type = s.k === 'thunder' ? 'storm' : (s.k === 'rain' || s.k === 'showers' || s.k === 'sleet') ? 'rain' : s.k === 'snow' ? 'snow' : s.k === 'fog' ? 'fog'
       : s.k === 'cloudy' ? 'cloud' : s.night ? 'night' : (s.k === 'partly' ? 'cloud' : 'sun');
     if (type === 'sun' || (s.k === 'partly' && !s.night)) parts += '<i class="sk-glow"></i>' + (type === 'sun' ? '<i class="sk-rays"></i>' : '');
-    if (type === 'night' || (s.night && s.k !== 'cloudy')) { parts += '<i class="sk-moon"></i>'; for (i = 0; i < 18; i++) parts += '<i class="sk-star" style="left:' + ((i * 37 + 11) % 97) + '%;top:' + ((i * 53 + 7) % 90) + '%;animation-delay:-' + (i * 0.41).toFixed(2) + 's"></i>'; }
-    if (type !== 'sun' && type !== 'night') for (i = 0; i < 3; i++) parts += '<i class="sk-cloud" style="top:' + (4 + i * 24) + '%;animation-duration:' + (38 + i * 11) + 's;animation-delay:-' + (i * 13 + 4) + 's"></i>';
+    if (type === 'night' || (s.night && s.k !== 'cloudy')) { parts += '<i class="sk-moon"></i>'; for (i = 0; i < 28; i++) parts += '<i class="sk-star" style="left:' + ((i * 37 + 11) % 97) + '%;top:' + ((i * 53 + 7) % 90) + '%;animation-delay:-' + (i * 0.41).toFixed(2) + 's"></i>'; }
+    if (type !== 'sun' && type !== 'night') for (i = 0; i < 4; i++) parts += '<i class="sk-cloud" style="top:' + (2 + i * 20) + '%;animation-duration:' + (18 + i * 5) + 's;animation-delay:-' + (i * 7 + 3) + 's"></i>';
     if (type === 'rain' || type === 'storm') for (i = 0; i < 24; i++) parts += '<i class="sk-drop" style="left:' + ((i * 41 + 7) % 104) + '%;animation-duration:' + (0.85 + (i % 5) * 0.11).toFixed(2) + 's;animation-delay:-' + ((i * 0.29) % 1.3).toFixed(2) + 's"></i>';
     if (type === 'snow') for (i = 0; i < 18; i++) parts += '<i class="sk-flake" style="left:' + ((i * 43 + 9) % 100) + '%;animation-duration:' + (5 + (i % 4)) + 's;animation-delay:-' + ((i * 0.7) % 6).toFixed(1) + 's"></i>';
     if (type === 'fog') parts += '<i class="sk-haze"></i><i class="sk-haze" style="top:58%;animation-delay:-9s"></i>';
@@ -1627,11 +1634,11 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
     if (o && o.ok && o.latest && has(o.latest.wspd)) {
       var L = o.latest, oo = obsOld(o), sp = ktmph(L.wspd), calm = L.wspd < 1, dir = (calm || L.wdir === 'VRB' || !has(L.wdir)) ? null : +L.wdir, sh = shore(dir);
       vital('wxp-v-wind', oo ? 'chip-f' : 'chip-m', oo ? 'LAST HEARD ' + ago(L.t).toUpperCase() : 'MEASURED ' + hhmm(L.t),
-        calm ? 'Calm' : (dir === null ? '' : '<span style="color:' + (SHORE_COL[sh] || 'inherit') + '">' + arrow(dir) + '</span>') + sp + ' mph',
+        calm ? 'Calm' : (dir === null ? '' : '<span class="wxp-sway" style="color:' + (SHORE_COL[sh] || 'inherit') + '">' + arrow(dir) + '</span>') + sp + ' mph',
         (calm ? 'Barely a breath of wind' : windWords(dir, sh)) + '<br>Bournemouth Airport', 'Wind');
     } else if (f && f.ok && f.hours && f.hours.length) {
       var h = f.hours[0], s2 = shore(h.dir);
-      vital('wxp-v-wind', 'chip-f', 'FORECAST ' + hhmm(h.t), '<span style="color:' + (SHORE_COL[s2] || 'inherit') + '">' + arrow(h.dir) + '</span>' + mph(h.wind) + ' mph', windWords(h.dir, s2) + '<br>MET Norway, the pier', 'Wind');
+      vital('wxp-v-wind', 'chip-f', 'FORECAST ' + hhmm(h.t), '<span class="wxp-sway" style="color:' + (SHORE_COL[s2] || 'inherit') + '">' + arrow(h.dir) + '</span>' + mph(h.wind) + ' mph', windWords(h.dir, s2) + '<br>MET Norway, the pier', 'Wind');
     } else {
       vital('wxp-v-wind', 'chip-f', 'WIND &middot; NOT AVAILABLE', '&mdash;', 'No wind report<br>right now', 'Wind');
     }
@@ -1700,7 +1707,7 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
       var name = label + ' \u2013 ' + (k === 0 ? (x.part ? 'rest of today' : 'today') : longDay(x.d)) + ': ' + words(x.sym) + ', up to ' + Math.round(x.hi) + ' down to ' + Math.round(x.lo) + ' degrees, '
         + (x.rain >= 0.1 ? x.rain.toFixed(1) + ' millimetres of rain' : 'dry') + ', wind up to ' + mph(x.wind) + ' miles an hour' + (sh ? ', ' + SHORE_WORD[sh].toLowerCase() : '') + ', forecast';
       return '<button type="button" role="tab" class="wxp-dchip" style="--i:' + k + '" id="wxp-day-' + k + '" data-i="' + k + '" aria-selected="false" tabindex="-1" aria-controls="wxp-daypanel" aria-label="' + esc(name) + '">'
-        + '<span class="dl">' + esc(label) + '</span>' + icon(x.sym, 'wx-still')
+        + '<span class="dl">' + esc(label) + '</span>' + icon(x.sym, '')
         + '<span class="hl"><b>' + deg(x.hi) + '</b> <span>' + deg(x.lo) + '</span></span>'
         + '<span class="rg" aria-hidden="true"><i style="left:' + ((x.lo - gmin) / span * 100).toFixed(1) + '%;width:' + Math.max(6, (x.hi - x.lo) / span * 100).toFixed(1) + '%;animation-delay:' + (0.1 + 0.05 * k).toFixed(2) + 's"></i></span>'
         + '<span class="mt">' + (x.rain >= 0.1 ? x.rain.toFixed(1) + ' mm' : 'Dry') + '</span>'
