@@ -1012,70 +1012,69 @@ html.a11y-contrast .wxp-tablist [role="tab"][aria-selected="true"],html.a11y-con
 .wxp-src td{color:var(--b365-mute)}
 #wxp~.faq-section{padding-top:2.2rem;padding-bottom:2.6rem}
 #wxp~.faq-section .section-title--center{margin-bottom:1.6rem}
-/* phones: later in the sheet than the base rules it overrides. Sized up 16 Sep 2026 (owner: "on a phone everything looks a bit
-   small"): body text 17 px, secondary 15 px, labels 13 px, chart text 13-15 px, on a 17 px side gutter so it still fits. */
+/* phones: later in the sheet than the base rules it overrides. Sizes 16 Sep 2026: the owner's "everything looks a bit small" was
+   seen in the browser's Desktop-site mode (the desktop layout shrunk to fit); in real phone view the sized-up version was "a bit large".
+   These sit halfway: body 16 px, secondary 14 px, labels 12 px, chart text 12-13 px, on a 17 px side gutter. */
 @media (max-width:639px){
   .wxp,.wxp-hero{--wxp-gut:1rem}
   .page-hero.wxp-hero{padding-left:var(--wxp-gut);padding-right:var(--wxp-gut)}
-  .page-hero.wxp-hero h1{font-size:1.95rem}
-  .wxp .chip-m,.wxp .chip-f{font-size:.78rem;letter-spacing:.03em}
-  .wxp-sub{font-size:1rem}
-  .wxp-note,.wxp-pintro{font-size:1rem}
-  .wxp-ok{font-size:.95rem}
-  .wxp-h2{font-size:1.4rem}
-  .wxp-lbl{font-size:.8rem}
-  .wxp-mid{font-size:2rem}
-  .wxp-card{padding:1rem .95rem}
-  .wxp-glance{padding:1rem .85rem;gap:.8rem}
-  .wxp-now{min-height:250px}
-  .wxp-now-top .wx-ic{width:108px}
-  .wxp-num{font-size:4.1rem}
-  .wxp-now-w{font-size:1.3rem}
-  .wxp-hilo{margin-top:.45rem!important}
-  .wxp-vitals{gap:.5rem}
-  .wxp-vital{position:relative;min-height:0;padding:.65rem .7rem .75rem;gap:.12rem}
-  .wxp-vital .v{font-size:1.32rem;white-space:normal}
-  .wxp-vital .c{font-size:.92rem;line-height:1.38}
+  .page-hero.wxp-hero h1{font-size:1.7rem}
+  .wxp .chip-m,.wxp .chip-f{font-size:.74rem;letter-spacing:.03em}
+  .wxp-sub{font-size:.96rem}
+  .wxp-note,.wxp-pintro{font-size:.95rem}
+  .wxp-ok{font-size:.88rem}
+  .wxp-h2{font-size:1.25rem}
+  .wxp-lbl{font-size:.74rem}
+  .wxp-mid{font-size:1.75rem}
+  .wxp-card{padding:.9rem .85rem}
+  .wxp-glance{padding:.9rem .8rem;gap:.7rem}
+  .wxp-now{min-height:236px}
+  .wxp-now-top .wx-ic{width:92px}
+  .wxp-num{font-size:3.5rem}
+  .wxp-now-w{font-size:1.12rem}
+  .wxp-hilo{margin-top:.4rem!important}
+  .wxp-vitals{gap:.45rem}
+  .wxp-vital{position:relative;min-height:0;padding:.55rem .6rem .6rem;gap:.08rem}
+  .wxp-vital .v{font-size:1.14rem;white-space:normal}
+  .wxp-vital .c{font-size:.83rem;line-height:1.36;padding-right:.85rem}
   .wxp-vital .go{display:none}
-  .wxp-vital::after{content:"";position:absolute;right:.65rem;bottom:.75rem;width:8px;height:8px;border-right:2px solid var(--wx-gold);border-top:2px solid var(--wx-gold);transform:rotate(45deg)}
-  .wxp-vital .chip-m,.wxp-vital .chip-f{font-size:.74rem;letter-spacing:0}
-  .wxp-dchip{flex-basis:90px;min-height:160px;padding:.55rem .3rem .5rem;gap:.12rem}
-  .wxp-dchip .dl{font-size:.95rem}
-  .wxp-dchip .wx-ic{width:48px;height:48px}
-  .wxp-dchip .hl{font-size:1.1rem}
-  .wxp-dchip .mt{font-size:.86rem}
-  .wxp-dayp{min-height:560px}
-  .wxp-dsum h3{font-size:1.22rem;line-height:1.28}
-  .wxp-dsum .wx-ic{width:64px;height:64px}
+  .wxp-vital::after{content:"";position:absolute;right:.6rem;bottom:.7rem;width:7px;height:7px;border-right:2px solid var(--wx-gold);border-top:2px solid var(--wx-gold);transform:rotate(45deg)}
+  .wxp-vital .chip-m,.wxp-vital .chip-f{font-size:.72rem;letter-spacing:0}
+  .wxp-dchip{flex-basis:82px;min-height:144px;padding:.5rem .28rem .45rem;gap:.08rem}
+  .wxp-dchip .dl{font-size:.86rem}
+  .wxp-dchip .wx-ic{width:42px;height:42px}
+  .wxp-dchip .hl{font-size:.98rem}
+  .wxp-dchip .mt{font-size:.78rem}
+  .wxp-dayp{min-height:520px}
+  .wxp-dsum h3{font-size:1.08rem;line-height:1.28}
+  .wxp-dsum .wx-ic{width:56px;height:56px}
   .wxp-dnav{display:none}
-  .wxp-sunc .wxp-mid{font-size:1.55rem!important}
-  .wxp-legend{font-size:.9rem;gap:.25rem .85rem}
-  .wxp-legend i{width:18px}
-  .wxp-hint{font-size:.92rem}
-  .wxp-chart text{font-size:13px}
-  .wxp-chart .t-strong{font-size:15px}
-  .wxp-chart .t-small{font-size:11px}
-  .wxp-chart .t-dim,.wxp-chart .t-rain{font-size:12.5px}
-  .wxp-tablist [role="tab"]{font-size:.84rem;min-height:62px;gap:.2rem}
-  .wxp-tablist [role="tab"] svg{width:24px;height:24px}
-  .wxp-tides h3{font-size:1.08rem}
-  .wxp-tides h3 span{font-size:.9rem}
-  .wxp-ev{font-size:1.02rem;padding:.22rem .6rem}
-  .wxp-neap{font-size:.95rem}
-  .wxp-details summary{font-size:1rem}
-  .wxp-shore{font-size:.9rem}
-  .wxp-scale{font-size:.9rem}
-  .wxp-scale i{width:16px;height:12px}
-  .wxp-time{font-size:1rem}
-  .wxp-daqi span{font-size:.9rem;min-width:3.2rem}
-  .wxp-daqi b{font-size:1.2rem}
-  .wxp-key{font-size:.95rem}
-  .wxp-src{font-size:.95rem}
-  .wxp-compass{width:150px;height:150px}
+  .wxp-sunc .wxp-mid{font-size:1.35rem!important}
+  .wxp-legend{font-size:.8rem;gap:.2rem .75rem}
+  .wxp-hint{font-size:.84rem}
+  .wxp-chart text{font-size:12px}
+  .wxp-chart .t-strong{font-size:13px}
+  .wxp-chart .t-small{font-size:10px}
+  .wxp-chart .t-dim,.wxp-chart .t-rain{font-size:11px}
+  .wxp-tablist [role="tab"]{font-size:.8rem;min-height:56px;gap:.15rem}
+  .wxp-tablist [role="tab"] svg{width:21px;height:21px}
+  .wxp-tides h3{font-size:.98rem}
+  .wxp-tides h3 span{font-size:.8rem}
+  .wxp-ev{font-size:.92rem;padding:.18rem .5rem}
+  .wxp-neap{font-size:.86rem}
+  .wxp-details summary{font-size:.95rem}
+  .wxp-shore{font-size:.82rem}
+  .wxp-scale{font-size:.82rem}
+  .wxp-time{font-size:.92rem}
+  .wxp-daqi span{font-size:.82rem}
+  .wxp-daqi b{font-size:1.1rem}
+  .wxp-key{font-size:.9rem}
+  .wxp-src{font-size:.9rem}
+  .wxp-compass{width:140px;height:140px}
 }
 @media (max-width:379px){
-  .wxp-vital{padding:.6rem .55rem .7rem}.wxp-vital .v{font-size:1.18rem}.wxp-vital .c{font-size:.86rem}
-  .wxp-tablist [role="tab"]{font-size:.74rem}.wxp-dchip{flex-basis:84px}.page-hero.wxp-hero h1{font-size:1.75rem}
+  .wxp-vital{padding:.5rem .5rem .55rem}.wxp-vital .v{font-size:1.04rem}.wxp-vital .c{font-size:.79rem}
+  .wxp-tablist [role="tab"]{font-size:.72rem}.wxp-dchip{flex-basis:76px}.page-hero.wxp-hero h1{font-size:1.55rem}
 }
 /* the animated icons (same shapes as before) */
 .wx-rays,.wx-core,.wx-moon,.wx-star,.wx-cl,.wx-cl2,.wx-drop,.wx-flake,.wx-fog,.wx-bolt{transform-box:fill-box;transform-origin:center}
@@ -1712,8 +1711,8 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
   function timeline(steps, W0, today) {
     var phone = W0 < 560, nH = 0, n6 = 0;
     steps.forEach(function (s) { if (s.six) n6++; else nH++; });
-    var cH = phone ? 50 : Math.min(90, Math.max(30, (W0 - 10) / (nH + 2.2 * n6)));
-    var c6 = phone ? (nH ? 96 : Math.max(76, (W0 - 10) / Math.max(1, n6))) : Math.max(84, cH * 2.2);
+    var cH = phone ? 44 : Math.min(90, Math.max(30, (W0 - 10) / (nH + 2.2 * n6)));
+    var c6 = phone ? (nH ? 88 : Math.max(72, (W0 - 10) / Math.max(1, n6))) : Math.max(84, cH * 2.2);
     var cols = [], x = 5;
     steps.forEach(function (s) { var w = s.six ? c6 : cH; cols.push({ x: x + w / 2, w: w, l: x }); x += w; });
     var W = Math.round(x + 5), H = 240, anim = !reduced();
@@ -1739,7 +1738,7 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
       if (s.six && !seenSix) { seenSix = true; if (k > 0) g += '<line x1="' + c.l.toFixed(1) + '" x2="' + c.l.toFixed(1) + '" y1="2" y2="236" stroke="#1d3346" stroke-dasharray="3 4"/><text class="t-small" x="' + (c.l + 5).toFixed(1) + '" y="52">6-HOUR STEPS</text>'; }
       if (!s.six && k > 0 && hhmm(s.t) === '00:00') g += '<line x1="' + c.l.toFixed(1) + '" x2="' + c.l.toFixed(1) + '" y1="2" y2="236" stroke="#1d3346" stroke-dasharray="3 4"/><text class="t-small" x="' + (c.l + 5).toFixed(1) + '" y="52">' + esc(lon(s.t, { weekday: 'short' }).toUpperCase()) + '</text>';
       if (show) {
-        var isz = phone ? (s.six ? 38 : 32) : (s.six ? 34 : 28);
+        var isz = phone ? (s.six ? 36 : 30) : (s.six ? 34 : 28);
         g += icon(s.sym, 'wx-still', 'x="' + (c.x - isz / 2).toFixed(1) + '" y="' + (s.six ? 2 : 6) + '" width="' + isz + '" height="' + isz + '"')
           + '<text class="t-strong" x="' + c.x.toFixed(1) + '" y="' + (Y(tv[k]) - 8).toFixed(1) + '" text-anchor="middle">' + deg(tv[k]) + (s.six && has(s.tmin) ? '<tspan class="t-dim">/' + deg(s.tmin) + '</tspan>' : '') + '</text>';
       }
@@ -1829,7 +1828,7 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
     $('wxp-tide-next').innerHTML = next.length ? '<span class="chip-f">PREDICTED &middot; PIER</span> ' + next.map(function (x, k) { return (k ? 'Then ' : 'Next: ') + (x.type === 'L' ? 'low water' : 'high water') + ' <b>' + evTxt(x) + '</b>' + (x.type === 'HH' ? ' (double high water)' : '') + '.'; }).join(' ') : '';
 
     /* chart: phones get 10 px an hour and open at "now" */
-    var phone = (box.clientWidth || 340) < 560, W = phone ? Math.max(1180, box.clientWidth) : Math.max(340, box.clientWidth), H = 236, pl = 38, pr = 12, pt = 30, pb = 38;
+    var phone = (box.clientWidth || 340) < 560, W = phone ? Math.max(1060, box.clientWidth) : Math.max(340, box.clientWidth), H = 236, pl = 38, pr = 12, pt = 30, pb = 38;
     var curve = t.curve.map(function (p) { return [Date.parse(p[0]), p[1]]; });
     var t0 = curve[0][0], t1 = curve[curve.length - 1][0], lo = Infinity, hi = -Infinity;
     curve.forEach(function (p) { lo = Math.min(lo, p[1]); hi = Math.max(hi, p[1]); });
@@ -1940,7 +1939,7 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
   function renderWind(d) {
     var f = d.forecast, box = $('wxp-wind-chart');
     if (!f || !f.ok) { box.innerHTML = '<p class="wxp-sub">The wind forecast isn\u2019t available right now.</p>'; return; }
-    var hs = f.hours.slice(0, 48), n = hs.length, W = Math.max(340, box.clientWidth || 340), col = Math.max(W < 560 ? 36 : 26, (W - 44) / n); W = Math.round(44 + col * n);
+    var hs = f.hours.slice(0, 48), n = hs.length, W = Math.max(340, box.clientWidth || 340), col = Math.max(W < 560 ? 30 : 26, (W - 44) / n); W = Math.round(44 + col * n);
     var H = 196, pt = 34, pb = 44, max = 10, anim = !reduced();
     hs.forEach(function (h) { max = Math.max(max, mph(h.wind)); });
     max = Math.ceil((max + 3) / 5) * 5;
