@@ -382,6 +382,15 @@
     body{padding-bottom:env(safe-area-inset-bottom)!important}
     .a11y{bottom:calc(14px + env(safe-area-inset-bottom))!important}
   }
+  /* the title's entrance (all widths): words rise in, then the lede and byline */
+  @keyframes wxp-word{from{opacity:0;transform:translateY(.45em)}to{opacity:1;transform:none}}
+  @keyframes wxp-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  .page-hero.wxp-hero h1 .wxp-w{display:inline-block;animation:wxp-word .85s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.06s + var(--i,0) * .12s)}
+  .page-hero.wxp-hero .breadcrumb{animation:wxp-up .6s ease both}
+  .page-hero.wxp-hero .wxp-lede{animation:wxp-up .7s cubic-bezier(.2,.8,.2,1) .42s both}
+  .page-hero.wxp-hero .page-hero__byline{animation:wxp-up .7s cubic-bezier(.2,.8,.2,1) .5s both}
+  @media (prefers-reduced-motion:reduce){.page-hero.wxp-hero *{animation:none!important}}
+  html.a11y-reduce .page-hero.wxp-hero *{animation:none!important}
   </style>
 </head>
 <body id="top">
@@ -773,7 +782,7 @@
     <section class="page-hero wxp-hero b365" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/bournemouth/">Bournemouth365</a> <span>/</span> <span aria-current="page">Weather, Tides &amp; Sea</span></nav>
-        <h1>Bournemouth weather, <em class="grad grad--cyan">tides &amp; the sea</em></h1>
+        <h1><span class="wxp-w" style="--i:0">Bournemouth</span> <span class="wxp-w" style="--i:1">weather,</span> <em class="grad grad--cyan wxp-w" style="--i:2">tides &amp; the sea</em></h1>
         <p class="wxp-lede">The seafront&rsquo;s forecast, tide times checked against the gauge on the pier, rain radar, satellite and the sea temperature from the buoy in the bay &mdash; every number labelled with where it came from.</p>
         <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 16 September 2026</p>
       </div>
@@ -828,7 +837,7 @@ html{scroll-padding-top:calc(var(--header-h) + 4.6rem)}
 .wxp-warn{overflow-wrap:anywhere;border:1px solid var(--b365-dusk);border-left-width:4px;background:rgba(255,176,102,.08);border-radius:12px;padding:.7rem 1rem;margin:0 0 .6rem;color:var(--b365-foam)}
 .wxp-warn a{color:var(--b365-foam)}
 /* GLANCE */
-.wxp-glance{display:grid;gap:.85rem;padding:1rem;border-radius:22px;isolation:isolate;background:linear-gradient(165deg,rgba(79,216,196,.05),transparent 45%),var(--b365-water)}
+.wxp-glance{position:relative;overflow:hidden;display:grid;gap:.85rem;padding:1rem;border-radius:22px;isolation:isolate;background:linear-gradient(165deg,rgba(79,216,196,.05),transparent 45%),var(--b365-water)}
 @media (min-width:900px){.wxp-glance{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:center;gap:1.2rem;padding:1.2rem 1.35rem}}
 .wxp-glance h2{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .wxp-now{min-height:150px}
@@ -845,7 +854,7 @@ html{scroll-padding-top:calc(var(--header-h) + 4.6rem)}
 .wxp-vital .c{font-size:.8rem;line-height:1.35;color:var(--b365-mute)}
 .wxp-vital .go{margin-top:auto;padding-top:.15rem;font-size:.76rem;color:var(--wx-gold)}
 /* the animated sky behind the glance card: gradients and small transformed shapes only, paused off screen */
-.wxp-sky{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden;border-radius:inherit;opacity:0;transition:opacity .9s ease}
+.wxp-sky{position:absolute;inset:-50px 0;z-index:-1;will-change:transform;pointer-events:none;overflow:hidden;border-radius:inherit;opacity:0;transition:opacity .9s ease}
 .wxp-sky.on{opacity:1}
 .wxp-sky i{position:absolute;display:block}
 .sky-sun{background:radial-gradient(110% 85% at 100% 0%,rgba(255,190,90,.17),transparent 62%)}
@@ -853,14 +862,14 @@ html{scroll-padding-top:calc(var(--header-h) + 4.6rem)}
 .sky-cloud{background:linear-gradient(180deg,rgba(159,180,197,.09),transparent 72%)}
 .sky-rain,.sky-storm{background:linear-gradient(180deg,rgba(108,160,210,.13),transparent 78%)}
 .sky-fog,.sky-snow{background:linear-gradient(180deg,rgba(210,220,230,.09),transparent 80%)}
-.sk-glow{width:440px;height:440px;right:-170px;top:-210px;border-radius:50%;background:radial-gradient(circle,rgba(255,206,110,.30),rgba(255,179,71,.09) 42%,transparent 68%);animation:wxs-breathe 8s ease-in-out infinite}
-.sk-rays{width:600px;height:600px;right:-250px;top:-290px;border-radius:50%;background:repeating-conic-gradient(rgba(255,215,106,.06) 0 5deg,transparent 5deg 18deg);-webkit-mask:radial-gradient(circle,#000 18%,transparent 66%);mask:radial-gradient(circle,#000 18%,transparent 66%);animation:wx-spin 110s linear infinite}
-.sk-moon{width:280px;height:280px;right:-90px;top:-130px;border-radius:50%;background:radial-gradient(circle,rgba(239,230,196,.17),transparent 62%)}
+.sk-glow{width:440px;height:440px;right:-170px;top:-210px;border-radius:50%;background:radial-gradient(circle,rgba(255,206,110,.42),rgba(255,179,71,.14) 42%,transparent 68%);animation:wxs-breathe 8s ease-in-out infinite}
+.sk-rays{width:600px;height:600px;right:-250px;top:-290px;border-radius:50%;background:repeating-conic-gradient(rgba(255,215,106,.1) 0 5deg,transparent 5deg 18deg);-webkit-mask:radial-gradient(circle,#000 18%,transparent 66%);mask:radial-gradient(circle,#000 18%,transparent 66%);animation:wx-spin 110s linear infinite}
+.sk-moon{width:280px;height:280px;right:-90px;top:-130px;border-radius:50%;background:radial-gradient(circle,rgba(239,230,196,.26),transparent 62%)}
 .sk-star{width:2px;height:2px;border-radius:50%;background:var(--wx-moon);opacity:.25;animation:wx-twinkle 3.6s ease-in-out infinite}
-.sk-cloud{left:-45%;width:70%;height:36%;border-radius:50%;background:radial-gradient(closest-side,rgba(228,238,245,.085),transparent);animation:wxs-drift 42s linear infinite}
-.sk-drop{top:-12%;width:1.5px;height:24px;border-radius:2px;background:linear-gradient(rgba(108,196,245,0),rgba(108,196,245,.42));animation:wxs-fall 1s linear infinite}
+.sk-cloud{left:-45%;width:70%;height:36%;border-radius:50%;background:radial-gradient(closest-side,rgba(228,238,245,.16),transparent);animation:wxs-drift 42s linear infinite}
+.sk-drop{top:-12%;width:1.5px;height:24px;border-radius:2px;background:linear-gradient(rgba(108,196,245,0),rgba(108,196,245,.58));animation:wxs-fall 1s linear infinite}
 .sk-flake{top:-4%;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.45);animation:wxs-snow 6s linear infinite}
-.sk-haze{left:-30%;top:22%;width:160%;height:24%;background:linear-gradient(90deg,transparent,rgba(210,220,230,.08),transparent);animation:wxs-haze 22s ease-in-out infinite alternate}
+.sk-haze{left:-30%;top:22%;width:160%;height:24%;background:linear-gradient(90deg,transparent,rgba(210,220,230,.15),transparent);animation:wxs-haze 22s ease-in-out infinite alternate}
 .sk-flash{inset:0;background:rgba(255,240,180,.08);opacity:0;animation:wxs-flash 7s linear infinite}
 /* DAY: strip + panel */
 .wxp-strip{position:relative;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:none;margin:0 calc(-1 * var(--wxp-gut));padding:.2rem var(--wxp-gut) .45rem;scroll-padding-inline:var(--wxp-gut)}
@@ -938,7 +947,31 @@ html.a11y-contrast .wxp-tablist [role="tab"][aria-selected="true"],html.a11y-con
 .wxp-tabink{position:absolute;z-index:0;top:.22rem;left:0;height:calc(100% - .44rem);border-radius:13px;background:linear-gradient(135deg,#ffe08a,#ffb347);box-shadow:0 4px 18px rgba(255,190,90,.25);transition:transform .32s var(--wx-ease),width .32s var(--wx-ease)}
 .wxp-js .wxp-panel[data-off]{display:none}
 .wxp-panel{scroll-margin-top:calc(var(--header-h) + var(--ticker-h) + 4.5rem)}
-.wxp-panel.wxp-in{animation:wxp-panin .32s var(--wx-ease) both}
+/* a panel's contents cascade in when it opens (tab switch, or the deck first coming into view) */
+.wxp-panel.wxp-in>*{animation:wxp-rise .55s var(--wx-ease) both}
+.wxp-panel.wxp-in>:nth-child(2){animation-delay:.07s}.wxp-panel.wxp-in>:nth-child(3){animation-delay:.14s}.wxp-panel.wxp-in>:nth-child(4){animation-delay:.21s}
+.wxp-panel.wxp-in>:nth-child(5){animation-delay:.28s}.wxp-panel.wxp-in>:nth-child(6){animation-delay:.35s}.wxp-panel.wxp-in>:nth-child(n+7){animation-delay:.42s}
+.wxp-panel.wxp-in .wxp-tides li{animation:wxp-rise .5s var(--wx-ease) both;animation-delay:calc(.22s + var(--i,0) * .07s)}
+.wxp-panel.wxp-in .wxp-split>*,.wxp-panel.wxp-in .wxp-media>*,.wxp-panel.wxp-in #wxp-seatiles>*,.wxp-panel.wxp-in .wxp-grid>.wxp-card{animation:wxp-pop2 .55s cubic-bezier(.2,.9,.25,1.15) both}
+.wxp-panel.wxp-in .wxp-split>:nth-child(2),.wxp-panel.wxp-in .wxp-media>:nth-child(2),.wxp-panel.wxp-in #wxp-seatiles>:nth-child(2){animation-delay:.1s}
+.wxp-panel.wxp-in #wxp-seatiles>:nth-child(3){animation-delay:.2s}.wxp-panel.wxp-in #wxp-seatiles>:nth-child(4){animation-delay:.3s}.wxp-panel.wxp-in #wxp-aircard{animation-delay:.4s}
+/* scroll entrances: hidden only once JavaScript is running (wxp-anim), revealed as each block comes into view */
+.wxp-anim [data-anim]{opacity:0;transform:translateY(24px)}
+.wxp-anim [data-anim].is-in{opacity:1;transform:none;transition:opacity .7s var(--wx-ease) var(--d,0s),transform .8s var(--wx-ease) var(--d,0s)}
+.wxp-anim [data-anim="stagger"]{opacity:1;transform:none}
+.wxp-anim .wxp-strip:not(.is-in) .wxp-dchip,.wxp-anim .wxp-strip:not(.is-in) .wxp-ink{opacity:0}
+.wxp-strip.is-in .wxp-dchip:not(.skel){animation:wxp-chip .62s ease-out both;animation-delay:calc(.05s + var(--i,0) * .065s)}
+.wxp-strip.is-in .wxp-ink.on{animation:wxp-inkin .5s var(--wx-ease) .45s both}
+.wxp-strip-list.no-pop .wxp-dchip{animation:none!important}
+.wxp-anim .wxp-deck:not(.is-in) .wxp-panel>*{opacity:0}
+.wxp-shown-all [data-anim],.wxp-shown-all .wxp-dchip,.wxp-shown-all .wxp-ink,.wxp-shown-all .wxp-panel>*{opacity:1!important;transform:none!important}
+.wxp-now.wxp-rise .wxp-num{animation:wxp-temp .7s cubic-bezier(.2,.9,.25,1.2) .1s both}
+.wxp-now.wxp-rise .wx-ic{animation:wxp-pop2 .7s cubic-bezier(.2,.9,.25,1.2) both}
+/* the sea along the bottom of the glance card */
+.wxp-wave{position:absolute;left:0;bottom:-2px;width:200%;height:64px;z-index:-1;pointer-events:none;animation:wxp-wave 16s linear infinite}
+.wxp-wave path{fill:rgba(79,216,196,.13)}
+.wxp-wave.w-b{height:46px;animation-duration:10s;animation-direction:reverse}
+.wxp-wave.w-b path{fill:rgba(108,196,245,.1)}
 .wxp-split{display:grid;gap:.7rem}
 @media (min-width:900px){.wxp-split{grid-template-columns:minmax(0,1fr) minmax(0,2fr);align-items:start}}
 .wxp-media{display:grid;gap:.8rem}
@@ -1124,7 +1157,12 @@ html.a11y-contrast .wxp-tablist [role="tab"][aria-selected="true"],html.a11y-con
 @keyframes wx-grow{to{transform:scaleY(1)}}
 @keyframes wx-growx{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 @keyframes wx-shimmer{to{background-position:-200% 0}}
-@keyframes wxp-rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes wxp-rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes wxp-pop2{from{opacity:0;transform:translateY(18px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes wxp-chip{0%{opacity:0;transform:translateY(30px) scale(.82)}70%{opacity:1;transform:translateY(-4px) scale(1.03)}100%{opacity:1;transform:none}}
+@keyframes wxp-inkin{from{opacity:0;transform:scale(.9)}}
+@keyframes wxp-temp{from{opacity:0;transform:translateY(14px) scale(.9)}to{opacity:1;transform:none}}
+@keyframes wxp-wave{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
 @keyframes wxp-panin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes wxp-inl{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
 @keyframes wxp-inr{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
@@ -1142,20 +1180,26 @@ html.a11y-contrast .wxp-tablist [role="tab"][aria-selected="true"],html.a11y-con
 .wx-off *,.wx-off *::before,.wx-off *::after{animation-play-state:paused!important}
 @media (prefers-reduced-motion:reduce){
   .wxp *,.wxp *::before,.wxp *::after{animation:none!important;transition:none!important}
+  .wxp-anim [data-anim],.wxp-anim .wxp-dchip,.wxp-anim .wxp-ink,.wxp-anim .wxp-panel>*{opacity:1!important;transform:none!important}
+  .wxp-sky{transform:none!important}
   .wxp-draw{stroke-dashoffset:0}.wxp-fadein,.wxp-pop{opacity:1}.wxp-bar,.wxp-dchip .rg i{transform:none}
   .wx-drop,.wx-flake,.wx-bolt{opacity:1}.wxp-streaks,.wxp-sky i{display:none}.wxp-ping{opacity:0}
 }
+html.a11y-reduce .wxp-anim [data-anim],html.a11y-reduce .wxp-anim .wxp-dchip,html.a11y-reduce .wxp-anim .wxp-ink,html.a11y-reduce .wxp-anim .wxp-panel>*{opacity:1!important;transform:none!important}
+html.a11y-reduce .wxp-sky{transform:none!important}
 html.a11y-reduce .wxp-draw{stroke-dashoffset:0}html.a11y-reduce .wxp-fadein,html.a11y-reduce .wxp-pop{opacity:1}
 html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.a11y-reduce .wx-bolt{opacity:1}html.a11y-reduce .wxp-sky i,html.a11y-reduce .wxp-streaks{display:none}
 </style>
 
     <div class="wxp" id="wxp">
-    <script>document.getElementById('wxp').className += ' wxp-js';</script>
+    <script>document.getElementById('wxp').className += ' wxp-js wxp-anim';setTimeout(function(){if(!window.__wxpAnim){var w=document.getElementById('wxp');if(w)w.classList.add('wxp-shown-all');}},5000);</script>
     <section class="wxp-sec b365" id="now" aria-labelledby="now-h">
       <div class="wrap">
-        <div id="wxp-warnings" class="wxp-warnings" aria-live="polite"><p class="wxp-ok mono">Checking Met Office weather warnings&hellip;</p></div>
-        <div class="wxp-glance" id="wxp-glance">
+        <div id="wxp-warnings" class="wxp-warnings" aria-live="polite" data-anim><p class="wxp-ok mono">Checking Met Office weather warnings&hellip;</p></div>
+        <div class="wxp-glance" id="wxp-glance" data-anim style="--d:.08s">
           <div class="wxp-sky" id="wxp-sky" aria-hidden="true"></div>
+          <svg class="wxp-wave w-a" viewBox="0 0 2400 80" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0 40 C150 18 450 62 600 40 C750 18 1050 62 1200 40 C1350 18 1650 62 1800 40 C1950 18 2250 62 2400 40 V80 H0 Z"/></svg>
+          <svg class="wxp-wave w-b" viewBox="0 0 2400 80" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0 40 C150 26 450 54 600 40 C750 26 1050 54 1200 40 C1350 26 1650 54 1800 40 C1950 26 2250 54 2400 40 V80 H0 Z"/></svg>
           <h2 id="now-h">Bournemouth right now</h2>
           <noscript><p class="wxp-sub">The live readings on this page need JavaScript. The tide, radar and source notes below still apply.</p></noscript>
           <div class="wxp-now" id="wxp-nowcard">
@@ -1175,23 +1219,23 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
 
     <section class="wxp-sec b365" id="ten-day" aria-labelledby="ten-h">
       <div class="wrap">
-        <div class="wxp-head"><h2 class="wxp-h2" id="ten-h">Next 10 days</h2><span class="chip-f" id="wxp-days-chip">FORECAST &middot; MET NORWAY</span></div>
-        <div class="wxp-strip" id="wxp-strip">
+        <div class="wxp-head" data-anim><h2 class="wxp-h2" id="ten-h">Next 10 days</h2><span class="chip-f" id="wxp-days-chip">FORECAST &middot; MET NORWAY</span></div>
+        <div class="wxp-strip" id="wxp-strip" data-anim="stagger">
           <div class="wxp-strip-list" role="tablist" aria-label="Choose a day" id="wxp-strip-list">
             <span class="wxp-dchip skel"><span class="wxp-skel" style="width:70%"></span></span><span class="wxp-dchip skel"><span class="wxp-skel" style="width:70%"></span></span><span class="wxp-dchip skel"><span class="wxp-skel" style="width:70%"></span></span><span class="wxp-dchip skel"><span class="wxp-skel" style="width:70%"></span></span><span class="wxp-dchip skel"><span class="wxp-skel" style="width:70%"></span></span>
           </div>
           <span class="wxp-ink" id="wxp-ink" aria-hidden="true"></span>
         </div>
-        <div class="wxp-dayp" id="wxp-daypanel" role="tabpanel" aria-label="The chosen day" tabindex="-1"></div>
+        <div class="wxp-dayp" id="wxp-daypanel" role="tabpanel" aria-label="The chosen day" tabindex="-1" data-anim style="--d:.25s"></div>
         <p class="wxp-note">Hour by hour for the first two to three days, then six-hour steps that can still change. Rain is the forecast amount in millimetres &mdash; this forecast gives no percentage chance for our coast, so we don&rsquo;t invent one.</p>
       </div>
     </section>
 
-    <section class="wxp-sec b365 wxp-deck" id="wxp-deck" aria-label="Tides, wind, radar, satellite and the sea">
+    <section class="wxp-sec b365 wxp-deck" id="wxp-deck" aria-label="Tides, wind, radar, satellite and the sea" data-anim="stagger">
       <div class="wrap">
         <div class="wxp-sentinel" id="wxp-sentinel" aria-hidden="true"></div>
         <div class="wxp-tabbar" id="wxp-tabbar">
-          <div class="wxp-tabs5">
+          <div class="wxp-tabs5" data-anim>
             <span class="wxp-tabink" id="wxp-tabink" aria-hidden="true"></span>
             <div class="wxp-tablist" role="tablist" aria-label="Tides, wind, radar, satellite and the sea" id="wxp-tablist">
               <button type="button" role="tab" id="wxp-tab-tides" aria-controls="tides" aria-selected="true" tabindex="0" data-tab="tides"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M2 10c2.2 0 2.2-2 4.4-2s2.2 2 4.4 2 2.2-2 4.4-2 2.2 2 4.4 2 1.8-1 2.4-1.4"/><path d="M2 16c2.2 0 2.2-2 4.4-2s2.2 2 4.4 2 2.2-2 4.4-2 2.2 2 4.4 2 1.8-1 2.4-1.4"/></svg><span>Tides</span></button>
@@ -1294,7 +1338,7 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
     </section>
 
     <section class="wxp-sec b365 wxp-about" id="sources" aria-labelledby="src-h">
-      <div class="wrap">
+      <div class="wrap" data-anim>
         <h2 class="wxp-h2" id="src-h">Where every number comes from</h2>
         <p class="wxp-note">Every reading on this page wears a label. <b>Measured</b> and <b>observed</b> mean an instrument saw it. <b>Predicted</b>, <b>forecast</b> and <b>computed</b> mean a model or a calculation. <b>Official</b> means it is shown exactly as the issuer published it. When a feed is down or late, the page says so rather than showing old numbers as new. No ads, ever.</p>
         <ul class="wxp-key"><li><span class="chip-m">MEASURED &middot; OBSERVED</span> an instrument</li><li><span class="chip-f">FORECAST &middot; PREDICTED &middot; COMPUTED &middot; OFFICIAL</span> a model, a calculation or an issuer</li></ul>
@@ -1573,6 +1617,7 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
   function vital(id, chipCls, chipTxt, value, cap, go) {
     var b = $(id); if (!b) return;
     b.innerHTML = '<span class="' + chipCls + '" id="' + id + '-chip">' + chipTxt + '</span><span class="v">' + value + '</span><span class="c">' + cap + '</span><span class="go">' + go + ' &rarr;</span>';
+    b.style.animationDelay = (0.18 + ({ 'wxp-v-wind': 0, 'wxp-v-sea': 1, 'wxp-v-tide': 2, 'wxp-v-sun': 3 }[id] || 0) * 0.09) + 's';
     rise(b);
   }
   function windWords(dir, sh) { return (dir === null ? 'Variable' : 'From the ' + compass(dir)) + (sh ? ' &middot; ' + SHORE_WORD[sh].toLowerCase() : ''); }
@@ -1645,6 +1690,7 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
       $('wxp-ink').classList.remove('on'); setChip('wxp-days-chip', 'chip-f', 'FORECAST \u00b7 NOT AVAILABLE'); dayIdx = -1; return;
     }
     panel.style.minHeight = '';
+    list.classList.toggle('no-pop', !!keepYmd);
     setChip('wxp-days-chip', 'chip-f', 'FORECAST \u00b7 MET NORWAY \u00b7 ISSUED ' + hhmm(f.issued));
     var gmin = Infinity, gmax = -Infinity;
     f.days.forEach(function (x) { gmin = Math.min(gmin, x.lo); gmax = Math.max(gmax, x.hi); });
@@ -1653,7 +1699,7 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
       var label = k === 0 ? 'Today' : k === 1 ? 'Tomorrow' : shortDay(x.d) + ' ' + (+x.d.split('-')[2]), sh = shore(x.dir);
       var name = label + ' \u2013 ' + (k === 0 ? (x.part ? 'rest of today' : 'today') : longDay(x.d)) + ': ' + words(x.sym) + ', up to ' + Math.round(x.hi) + ' down to ' + Math.round(x.lo) + ' degrees, '
         + (x.rain >= 0.1 ? x.rain.toFixed(1) + ' millimetres of rain' : 'dry') + ', wind up to ' + mph(x.wind) + ' miles an hour' + (sh ? ', ' + SHORE_WORD[sh].toLowerCase() : '') + ', forecast';
-      return '<button type="button" role="tab" class="wxp-dchip" id="wxp-day-' + k + '" data-i="' + k + '" aria-selected="false" tabindex="-1" aria-controls="wxp-daypanel" aria-label="' + esc(name) + '">'
+      return '<button type="button" role="tab" class="wxp-dchip" style="--i:' + k + '" id="wxp-day-' + k + '" data-i="' + k + '" aria-selected="false" tabindex="-1" aria-controls="wxp-daypanel" aria-label="' + esc(name) + '">'
         + '<span class="dl">' + esc(label) + '</span>' + icon(x.sym, 'wx-still')
         + '<span class="hl"><b>' + deg(x.hi) + '</b> <span>' + deg(x.lo) + '</span></span>'
         + '<span class="rg" aria-hidden="true"><i style="left:' + ((x.lo - gmin) / span * 100).toFixed(1) + '%;width:' + Math.max(6, (x.hi - x.lo) / span * 100).toFixed(1) + '%;animation-delay:' + (0.1 + 0.05 * k).toFixed(2) + 's"></i></span>'
@@ -1891,7 +1937,7 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
     var tbl = $('wxp-tide-table');
     tbl.innerHTML = order.slice(0, 7).map(function (key, n) {
       var day = byDay[key], rg = rangeByDay[key], flat = rg && rg.range < 0.55;
-      return '<li class="' + (flat ? 'flat ' : '') + (n >= 3 ? 'wxp-more' : '') + '"><h3>' + esc(day.label) + (rg ? '<span>Rise &amp; fall ' + rg.range.toFixed(1) + ' m</span>' : '') + '</h3><div class="wxp-evs">'
+      return '<li style="--i:' + n + '" class="' + (flat ? 'flat ' : '') + (n >= 3 ? 'wxp-more' : '') + '"><h3>' + esc(day.label) + (rg ? '<span>Rise &amp; fall ' + rg.range.toFixed(1) + ' m</span>' : '') + '</h3><div class="wxp-evs">'
         + (flat ? '<span class="wxp-neap">Neap: the sea only moves between ' + rg.lo.toFixed(1) + ' and ' + rg.hi.toFixed(1) + ' m, so the times mean little &mdash; the curve is the better guide.</span>' : '')
         + day.items.map(evChip).join('') + '</div></li>';
     }).join('');
@@ -2245,6 +2291,10 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
   var cb = null, stuckRaf = 0;
   function watchStuck() {
     stuckRaf = 0;
+    if (!reduced()) {
+      var gl = $('wxp-glance').getBoundingClientRect();
+      if (gl.bottom > 0 && gl.top < window.innerHeight) $('wxp-sky').style.transform = 'translate3d(0,' + Math.max(-45, Math.min(45, -gl.top * 0.12)).toFixed(1) + 'px,0)';
+    }
     var st = stickTop(), deck = $('wxp-deck').getBoundingClientRect();
     $('wxp-tabbar').classList.toggle('is-stuck', $('wxp-sentinel').getBoundingClientRect().top < st && deck.bottom > st + 90);
   }
@@ -2345,6 +2395,24 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
     }, 250);
   });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { moveTabInk(); moveInk(); runPending(); });
+
+  /* entrances: each marked block animates in the first time it comes into view; the deck cascades its open panel */
+  (function () {
+    var marks = [].slice.call(root.querySelectorAll('[data-anim]'));
+    function show(el) {
+      el.classList.add('is-in');
+      if (el.id === 'wxp-deck') { var p = $(curTab); if (p && !reduced()) { p.classList.remove('wxp-in'); void p.offsetWidth; p.classList.add('wxp-in'); } }
+    }
+    if ('IntersectionObserver' in window && !reduced()) {
+      var aio = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) { show(e.target); aio.unobserve(e.target); } });
+      }, { rootMargin: '0px 0px -6% 0px', threshold: 0.04 });
+      marks.forEach(function (el) { aio.observe(el); });
+    } else {
+      marks.forEach(show);
+    }
+    window.__wxpAnim = true;
+  })();
 })();
 </script>
     <section class="section" aria-label="About Bournemouth365">
