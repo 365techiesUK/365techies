@@ -933,7 +933,7 @@ html.a11y-contrast .wxp-tablist [role="tab"][aria-selected="true"],html.a11y-con
 /* without JavaScript: no dead controls or placeholders, every panel's text shows */
 .wxp:not(.wxp-js) .wxp-tabbar,.wxp:not(.wxp-js) .wxp-vitals,.wxp:not(.wxp-js) .wxp-strip,.wxp:not(.wxp-js) .wxp-dayp,.wxp:not(.wxp-js) .wxp-skel,.wxp:not(.wxp-js) .wxp-now-top{display:none}
 #wxp-dsun:focus:not(:focus-visible){outline:none}
-.wxp-air-link{display:inline-flex;align-items:center;min-height:44px}
+.wxp-air-link{display:inline-flex;align-items:center;min-height:44px;color:#a9c4ea}
 @media (min-width:768px){.wxp-tablist [role="tab"]{flex-direction:row;gap:.45rem;min-height:46px;font-size:.93rem}}
 .wxp-tabink{position:absolute;z-index:0;top:.22rem;left:0;height:calc(100% - .44rem);border-radius:13px;background:linear-gradient(135deg,#ffe08a,#ffb347);box-shadow:0 4px 18px rgba(255,190,90,.25);transition:transform .32s var(--wx-ease),width .32s var(--wx-ease)}
 .wxp-js .wxp-panel[data-off]{display:none}
@@ -2002,7 +2002,19 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
     var b = s.bathing;
     if (b && b.ok) {
       var parts = []; for (var k in b.classes) parts.push(b.classes[k] + ' ' + k);
-      tiles.push('<div class="wxp-card"><span class="chip-f">OFFICIAL &middot; ENVIRONMENT AGENCY</span><p class="wxp-mid">' + b.sites + ' beaches</p><p class="wxp-sub">Bathing water classification: <b>' + esc(parts.join(', ')) + '</b>. ' + (b.stale ? 'Pollution-risk warnings couldn\u2019t be checked recently.' : b.warnings ? '<b>' + b.warnings + '</b> with a pollution-risk warning today.' : 'No pollution-risk warnings today.') + '</p></div>');
+      /* name the beaches: today's pollution-risk forecast and the EA's standing heavy-rain note are different things */
+      var list = b.list || [], nowMs = Date.now(), inForce = list.filter(function (x) { return x.prf && (!x.prf_expires || Date.parse(x.prf_expires) > nowMs); });
+      var raised = inForce.filter(function (x) { return x.prf !== 'normal'; }), rain = list.filter(function (x) { return x.heavyRain; });
+      function names(arr) { var n = arr.map(function (x) { return '<b>' + esc(x.name) + '</b>'; }); return n.length > 1 ? n.slice(0, -1).join(', ') + ' and ' + n[n.length - 1] : n.join(''); }
+      var prfTxt;
+      if (b.stale) prfTxt = 'Today\u2019s pollution-risk forecasts couldn\u2019t be checked recently.';
+      else if (!inForce.length) prfTxt = 'No pollution-risk forecast is in force right now &mdash; the Environment Agency issues them daily in the bathing season.';
+      else if (!raised.length) prfTxt = 'Today\u2019s pollution-risk forecast: <b>normal</b> at ' + (inForce.length === list.length ? 'all ' + list.length + ' beaches' : names(inForce)) + '.';
+      else prfTxt = '<span style="color:#ffb27a">Pollution-risk warning today:</span> ' + raised.map(function (x) { return '<b>' + esc(x.name) + '</b> (' + esc(x.prf) + ' risk)'; }).join(', ') + '.' + (inForce.length > raised.length ? ' Normal at the other ' + (inForce.length - raised.length) + '.' : '');
+      tiles.push('<div class="wxp-card"><span class="chip-f">OFFICIAL &middot; ENVIRONMENT AGENCY</span><p class="wxp-mid">' + b.sites + ' beaches</p><p class="wxp-sub">Bathing water classification: <b>' + esc(parts.join(', ')) + '</b>.</p>'
+        + '<p class="wxp-sub">' + prfTxt + '</p>'
+        + (rain.length ? '<p class="wxp-sub">Water quality can dip after heavy rain at ' + names(rain) + ' &mdash; a standing Environment Agency note for ' + (rain.length > 1 ? 'those beaches' : 'that beach') + ', not a warning for today.</p>' : '')
+        + '<p class="wxp-sub"><a class="wxp-air-link" href="/bournemouth/sea-today/">Every beach, one by one</a></p></div>');
     }
     var ov = s.overflow;
     if (ov && ov.ok) {

@@ -34,12 +34,21 @@ foreach (array('sea', 'tide', 'bathing', 'overflow') as $k) {
     if (!isset($sea[$k])) continue;
     $b = $sea[$k];
     if ($k === 'bathing' && !empty($b['sites'])) {
-        $classes = array(); $warn = 0;
+        /* Two different Environment Agency facts, kept apart (16 Sep 2026): 'prf' is TODAY's pollution-risk forecast
+           (normal / increased, only in season, expired ones already removed by bm_sea_public); 'heavyRain' is the EA's
+           STANDING note that a beach's water quality can dip after heavy rain - never a warning for today. */
+        $classes = array(); $list = array();
         foreach ($b['sites'] as $s) {
             $classes[] = $s['class'];
-            if (!empty($s['heavyRain']) || (isset($s['prf']['level']) && $s['prf']['level'] !== 'normal')) $warn++;
+            $list[] = array(
+                'name' => $s['name'],
+                'class' => $s['class'],
+                'prf' => isset($s['prf']['level']) ? $s['prf']['level'] : null,
+                'prf_expires' => isset($s['prf']['expires']) ? $s['prf']['expires'] : null,
+                'heavyRain' => !empty($s['heavyRain']),
+            );
         }
-        $b = array('ok' => $b['ok'], 'stale' => !empty($b['stale']), 'sites' => count($b['sites']), 'classes' => array_count_values($classes), 'warnings' => $warn, 'read_at' => isset($sea[$k]['read_at']) ? $sea[$k]['read_at'] : null);
+        $b = array('ok' => $b['ok'], 'stale' => !empty($b['stale']), 'sites' => count($b['sites']), 'classes' => array_count_values($classes), 'list' => $list, 'read_at' => isset($sea[$k]['read_at']) ? $sea[$k]['read_at'] : null);
     }
     if ($k === 'overflow' && !empty($b['ok'])) {
         $b = array('ok' => true, 'stale' => !empty($b['stale']), 'discharging' => $b['discharging'], 'offline' => $b['offline'], 'total' => $b['total'], 'read_at' => isset($b['read_at']) ? $b['read_at'] : null);
