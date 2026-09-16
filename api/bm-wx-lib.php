@@ -129,7 +129,8 @@ function bm_obs_refresh() {
     foreach ($j as $m) {
         if (!isset($m['reportTime'])) continue;
         $series[] = array(
-            't' => gmdate('c', strtotime($m['reportTime'])),
+            /* obsTime is when the airport observed it; reportTime is the rounded issue slot */
+            't' => isset($m['obsTime']) ? gmdate('c', (int)$m['obsTime']) : gmdate('c', strtotime($m['reportTime'])),
             'temp' => isset($m['temp']) ? $m['temp'] : null,
             'dewp' => isset($m['dewp']) ? $m['dewp'] : null,
             'wdir' => isset($m['wdir']) ? $m['wdir'] : null,        // degrees, or "VRB"

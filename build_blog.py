@@ -1024,10 +1024,14 @@ if _osg.path.exists(_wxp_fp):
     _wxp_html = open(_wxp_fp, encoding="utf-8").read()
     for _need in ("MET Norway", "EUMETSAT", "EUMETNET", "NASA", "Environment Agency", "Open Government Licence",
                   "Met Office", "Defra", "OpenStreetMap contributors", "CC BY 4.0", "Not for navigation",
-                  "wxp-tide-chip", "wxp-radar-chip", "wxp-sat-chip"):
+                  "wxp-tide-chip", "wxp-radar-chip", "wxp-sat-chip", "Wessex Water",
+                  'class="chip-f" id="wxp-v-tide-chip"', 'class="chip-f" id="wxp-v-sun-chip"'):
         if _need not in _wxp_html:
             _bm_bad.append("weather page: missing %s (licence/provenance condition)" % _need)
-    for _forbidden in ("setChip('wxp-tide-chip', 'chip-m'", "PREDICTED · MEASURED", 'class="chip-m" id="wxp-tide-chip"'):
+    for _forbidden in ("setChip('wxp-tide-chip', 'chip-m'", "PREDICTED · MEASURED", "PREDICTED &middot; MEASURED", 'class="chip-m" id="wxp-tide-chip"',
+                       "vital('wxp-v-tide', 'chip-m'", "vital('wxp-v-sun', 'chip-m'",
+                       # one page, one address (16 Sep 2026, owner): nothing may write a #fragment back into the URL
+                       "location.hash =", "location.hash=", "pushState(", "+ '#day-'", "'#ten-day'", 'href="#tides"', 'href="#radar"'):
         if _forbidden in _wxp_html:
             _bm_bad.append("weather page: predicted tide wearing the measured chip: %s" % _forbidden)
 if _bm_bad:

@@ -39,10 +39,10 @@ foreach (array('sea', 'tide', 'bathing', 'overflow') as $k) {
             $classes[] = $s['class'];
             if (!empty($s['heavyRain']) || (isset($s['prf']['level']) && $s['prf']['level'] !== 'normal')) $warn++;
         }
-        $b = array('ok' => $b['ok'], 'stale' => !empty($b['stale']), 'sites' => count($b['sites']), 'classes' => array_count_values($classes), 'warnings' => $warn);
+        $b = array('ok' => $b['ok'], 'stale' => !empty($b['stale']), 'sites' => count($b['sites']), 'classes' => array_count_values($classes), 'warnings' => $warn, 'read_at' => isset($sea[$k]['read_at']) ? $sea[$k]['read_at'] : null);
     }
     if ($k === 'overflow' && !empty($b['ok'])) {
-        $b = array('ok' => true, 'stale' => !empty($b['stale']), 'discharging' => $b['discharging'], 'offline' => $b['offline'], 'total' => $b['total']);
+        $b = array('ok' => true, 'stale' => !empty($b['stale']), 'discharging' => $b['discharging'], 'offline' => $b['offline'], 'total' => $b['total'], 'read_at' => isset($b['read_at']) ? $b['read_at'] : null);
     }
     $seaOut[$k] = $b;
 }

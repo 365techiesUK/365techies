@@ -762,133 +762,276 @@
   </aside>
 
   <main id="main">
-    <section class="page-hero" aria-label="Introduction">
+    <section class="page-hero wxp-hero b365" aria-label="Introduction">
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/bournemouth/">Bournemouth365</a> <span>/</span> <span aria-current="page">Weather, Tides &amp; Sea</span></nav>
-        <p class="eyebrow mono">// BOURNEMOUTH365</p>
         <h1>Bournemouth weather, <em class="grad grad--cyan">tides &amp; the sea</em></h1>
-        <p class="lede">The seafront&rsquo;s forecast hour by hour and ten days ahead, tide times checked against the gauge on the pier, rain radar and satellite loops every 15 minutes, the wind measured and forecast, and the sea temperature from the buoy in the bay &mdash; every number labelled with where it came from.</p>
-        <div class="page-hero__cta">
-          <a href="#tides" class="button primary button--lg">Tide times</a>
-          <a href="#radar" class="button secondary button--lg">Rain radar</a>
-        </div>
-        <ul class="page-hero__chips mono"><li>&#9679; Measured, predicted or forecast &mdash; always labelled</li><li>&#9679; Radar &amp; satellite every 15 minutes</li><li>&#9679; No ads, ever</li></ul>
+        <p class="wxp-lede">The seafront&rsquo;s forecast, tide times checked against the gauge on the pier, rain radar, satellite and the sea temperature from the buoy in the bay &mdash; every number labelled with where it came from.</p>
         <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 16 September 2026</p>
       </div>
     </section>
 
 <style>
-.wxp{--wx-sun:#ffc94d;--wx-moon:#efe6c4;--wx-cloud:#e4eef5;--wx-cloud2:#9fb4c5;--wx-rain:#6cc4f5;--wx-bolt:#ffd84d;--wx-warm:#ffb347;--wx-cool:#79b8ff;--wx-off:#ff9f5a;--wx-on:#7fd8a8}
-.wxp h2{text-wrap:balance}
-.wxp-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:.4rem 1.2rem;margin:0 0 1rem}
-.wxp-head h2{margin:.2rem 0 0;font-size:clamp(1.45rem,3.2vw,2.1rem)}
-.wxp-head p{margin:.35rem 0 0;color:var(--b365-mute);max-width:62ch}
-.wxp-card{background:var(--b365-water);border:1px solid var(--b365-line);border-radius:18px;padding:1rem 1.1rem;position:relative;overflow:hidden}
-.wxp-grid{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr))}
-.wxp-big{grid-column:1/-1;display:grid;grid-template-columns:auto minmax(0,1fr);gap:.4rem 1.3rem;align-items:center}
-@media (min-width:980px){.wxp-big{grid-column:span 2}}
-.wxp-big .wx-ic{width:clamp(84px,18vw,136px);height:auto}
-@media (max-width:560px){.wxp-big{grid-template-columns:1fr}.wxp-big .wx-ic{width:84px}}
-.wxp-num{font-family:var(--font-display,inherit);font-weight:600;font-size:clamp(2.6rem,7vw,3.9rem);line-height:.95;color:var(--b365-foam);margin:.15rem 0;font-variant-numeric:tabular-nums}
-.wxp-mid{font-family:var(--font-display,inherit);font-weight:600;font-size:clamp(1.7rem,4.4vw,2.3rem);line-height:1;color:var(--b365-foam);margin:.2rem 0;font-variant-numeric:tabular-nums}
-.wxp-sub{color:var(--b365-mute);font-size:.94rem;line-height:1.5;margin:.25rem 0 0}
+/* the site sets body{overflow-x:hidden} and html{overflow-x:clip}: with html clipping, body's overflow no longer
+   passes to the viewport, body becomes a scroll container, and position:sticky silently never sticks. html already
+   clips sideways, so clip on body changes nothing else on this page. */
+body{overflow-x:clip}
+html{scroll-padding-top:calc(var(--header-h) + 4.6rem)}
+@media (min-width:768px){html{scroll-padding-top:calc(var(--header-h) + var(--ticker-h) + 4.6rem)}}
+/* the hidden attribute must win over display rules (.wxp-ctl is flex); tab panels use until-found and keep theirs */
+.wxp [hidden]:not([hidden="until-found"]){display:none!important}
+.wxp-vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.nw{white-space:nowrap}
+.wxp{--mono:var(--font-mono);--wx-sun:#ffc94d;--wx-moon:#efe6c4;--wx-cloud:#e4eef5;--wx-cloud2:#9fb4c5;--wx-rain:#6cc4f5;--wx-bolt:#ffd84d;--wx-warm:#ffb347;--wx-cool:#79b8ff;--wx-off:#ff9f5a;--wx-on:#7fd8a8;--wx-gold:#ffd76a;--wx-ease:cubic-bezier(.3,.7,.2,1)}
+/* compact title */
+.page-hero.wxp-hero{padding:calc(var(--header-h) + .9rem) var(--pad-x) .2rem}
+.page-hero.wxp-hero .breadcrumb{margin:0 0 .35rem}
+.page-hero.wxp-hero h1{font-size:clamp(1.55rem,4.4vw,2.7rem);line-height:1.08;margin:0 0 .3rem;max-width:none;text-wrap:balance}
+.wxp-lede{display:none;margin:.2rem 0 0;max-width:62ch;color:#9fb4c5;font-size:1rem;line-height:1.5}
+.page-hero.wxp-hero .page-hero__byline{margin-top:.35rem}
+@media (min-width:768px){
+  .page-hero.wxp-hero{padding:calc(var(--header-h) + var(--ticker-h) + 1.4rem) var(--pad-x) .4rem}
+  .wxp-lede{display:block}
+}
+.wxp h2,.wxp h3{text-wrap:balance}
+.wxp-sec{padding:.7rem var(--pad-x)}
+@media (min-width:768px){.wxp-sec{padding:.9rem var(--pad-x)}}
+.wxp-h2{margin:0;font-size:clamp(1.12rem,2.4vw,1.45rem);line-height:1.2;color:var(--b365-foam)}
+.wxp-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.25rem 1rem;margin:0 0 .55rem}
+.wxp-pintro{margin:0 0 .75rem;color:var(--b365-mute);font-size:.95rem;line-height:1.5;max-width:64ch}
+.wxp-card{background:var(--b365-water);border:1px solid var(--b365-line);border-radius:18px;padding:.9rem 1rem;position:relative;overflow:hidden}
+.wxp-grid{display:grid;gap:.7rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+.wxp-num{font-family:var(--font-display,inherit);font-weight:600;font-size:clamp(2.9rem,9vw,4rem);line-height:.92;color:var(--b365-foam);margin:0;font-variant-numeric:tabular-nums}
+.wxp-mid{font-family:var(--font-display,inherit);font-weight:600;font-size:clamp(1.55rem,4vw,2.1rem);line-height:1.05;color:var(--b365-foam);margin:.25rem 0 .1rem;font-variant-numeric:tabular-nums}
+.wxp-sub{color:var(--b365-mute);font-size:.94rem;line-height:1.5;margin:.2rem 0 0}
 .wxp-sub b{color:var(--b365-foam);font-weight:600}
-.wxp-lbl{font-family:var(--mono,ui-monospace,monospace);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--b365-mute);margin:0 0 .15rem}
+.wxp-lbl{font-family:var(--mono,ui-monospace,monospace);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--b365-mute);margin:0 0 .15rem}
+.wxp-note{margin:.6rem 0 0;color:var(--b365-mute);font-size:.9rem;line-height:1.5}
 .wxp-skel{display:block;height:1rem;width:60%;border-radius:6px;background:linear-gradient(90deg,var(--b365-line),#284259,var(--b365-line));background-size:200% 100%;animation:wx-shimmer 1.4s linear infinite;margin:.4rem 0}
-.wxp-warn{border:1px solid var(--b365-dusk);border-left-width:4px;background:rgba(255,176,102,.08);border-radius:12px;padding:.7rem 1rem;margin:0 0 .9rem;color:var(--b365-foam)}
+.wxp-rise{animation:wxp-rise .45s var(--wx-ease) both}
+/* warnings */
+.wxp-warnings{margin:0 0 .55rem}
+.wxp-ok{margin:0;color:var(--b365-mute);font-size:.84rem;line-height:1.45}
+.wxp-ok .chip-f{margin-right:.35rem}
+.wxp-short{display:none}
+@media (max-width:639px){.wxp-long{display:none}.wxp-short{display:inline}}
+.wxp-ok a{color:#a9c4ea}
+.wxp-warn{overflow-wrap:anywhere;border:1px solid var(--b365-dusk);border-left-width:4px;background:rgba(255,176,102,.08);border-radius:12px;padding:.7rem 1rem;margin:0 0 .6rem;color:var(--b365-foam)}
 .wxp-warn a{color:var(--b365-foam)}
-.wxp-ok{margin:0 0 .9rem;color:var(--b365-mute);font-size:.9rem}
-/* wind */
-.wxp-compass{width:150px;height:150px;flex:none;position:relative}
-.wxp-compass svg{width:100%;height:100%;display:block}
-.wxp-needle{transition:transform 1.6s cubic-bezier(.2,1.35,.4,1);transform-box:view-box;transform-origin:75px 75px}
-.wxp-wobble{animation:wxp-wobble 3.2s ease-in-out infinite;transform-box:view-box;transform-origin:75px 75px}
-.wxp-windrow{display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
-.wxp-streaks{position:absolute;inset:-30%;pointer-events:none;opacity:.22}
-.wxp-streaks i{position:absolute;left:0;height:1.5px;width:60px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--b365-foam));animation:wxp-streak linear infinite}
-.wxp-shore{display:inline-block;padding:.1rem .55rem;border-radius:999px;font-size:.82rem;font-weight:600;border:1px solid currentColor}
-.wxp-shore.off{color:var(--wx-off)}.wxp-shore.on{color:var(--wx-on)}.wxp-shore.cross{color:var(--wx-cool)}
+/* GLANCE */
+.wxp-glance{display:grid;gap:.85rem;padding:1rem;border-radius:22px;isolation:isolate;background:linear-gradient(165deg,rgba(79,216,196,.05),transparent 45%),var(--b365-water)}
+@media (min-width:900px){.wxp-glance{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:center;gap:1.2rem;padding:1.2rem 1.35rem}}
+.wxp-glance h2{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wxp-now{min-height:150px}
+.wxp-now-top{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.1rem .85rem;align-items:center;margin-top:.35rem}
+.wxp-now-top .wx-ic{width:clamp(78px,20vw,116px);height:auto}
+.wxp-now-w{margin:.25rem 0 0;font-size:1.12rem;color:var(--b365-foam);line-height:1.3}
+.wxp-obs{display:flex;flex-wrap:wrap;align-items:center;gap:.2rem .6rem;margin-top:.45rem}
+.wxp-vitals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem}
+.wxp-vital{display:flex;flex-direction:column;align-items:flex-start;gap:.1rem;min-height:98px;margin:0;text-align:left;font:inherit;color:inherit;background:rgba(8,18,29,.55);border:1px solid var(--b365-line);border-radius:14px;padding:.55rem .7rem .5rem;cursor:pointer;transition:border-color .2s ease,transform .2s var(--wx-ease),background-color .2s ease;-webkit-tap-highlight-color:transparent}
+.wxp-vital:hover{border-color:rgba(255,215,106,.55);transform:translateY(-2px)}
+.wxp-vital:active{transform:translateY(0)}
+.wxp-vital:focus-visible{outline:2px solid var(--wx-gold);outline-offset:2px}
+.wxp-vital .v{font-family:var(--font-display,inherit);font-size:1.28rem;font-weight:600;line-height:1.15;color:var(--b365-foam);font-variant-numeric:tabular-nums;margin-top:.1rem;white-space:nowrap}
+.wxp-vital .c{font-size:.8rem;line-height:1.35;color:var(--b365-mute)}
+.wxp-vital .go{margin-top:auto;padding-top:.15rem;font-size:.76rem;color:var(--wx-gold)}
+/* the animated sky behind the glance card: gradients and small transformed shapes only, paused off screen */
+.wxp-sky{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden;border-radius:inherit;opacity:0;transition:opacity .9s ease}
+.wxp-sky.on{opacity:1}
+.wxp-sky i{position:absolute;display:block}
+.sky-sun{background:radial-gradient(110% 85% at 100% 0%,rgba(255,190,90,.17),transparent 62%)}
+.sky-night{background:radial-gradient(95% 80% at 92% 0%,rgba(125,145,225,.15),transparent 66%)}
+.sky-cloud{background:linear-gradient(180deg,rgba(159,180,197,.09),transparent 72%)}
+.sky-rain,.sky-storm{background:linear-gradient(180deg,rgba(108,160,210,.13),transparent 78%)}
+.sky-fog,.sky-snow{background:linear-gradient(180deg,rgba(210,220,230,.09),transparent 80%)}
+.sk-glow{width:440px;height:440px;right:-170px;top:-210px;border-radius:50%;background:radial-gradient(circle,rgba(255,206,110,.30),rgba(255,179,71,.09) 42%,transparent 68%);animation:wxs-breathe 8s ease-in-out infinite}
+.sk-rays{width:600px;height:600px;right:-250px;top:-290px;border-radius:50%;background:repeating-conic-gradient(rgba(255,215,106,.06) 0 5deg,transparent 5deg 18deg);-webkit-mask:radial-gradient(circle,#000 18%,transparent 66%);mask:radial-gradient(circle,#000 18%,transparent 66%);animation:wx-spin 110s linear infinite}
+.sk-moon{width:280px;height:280px;right:-90px;top:-130px;border-radius:50%;background:radial-gradient(circle,rgba(239,230,196,.17),transparent 62%)}
+.sk-star{width:2px;height:2px;border-radius:50%;background:var(--wx-moon);opacity:.25;animation:wx-twinkle 3.6s ease-in-out infinite}
+.sk-cloud{left:-45%;width:70%;height:36%;border-radius:50%;background:radial-gradient(closest-side,rgba(228,238,245,.085),transparent);animation:wxs-drift 42s linear infinite}
+.sk-drop{top:-12%;width:1.5px;height:24px;border-radius:2px;background:linear-gradient(rgba(108,196,245,0),rgba(108,196,245,.42));animation:wxs-fall 1s linear infinite}
+.sk-flake{top:-4%;width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.45);animation:wxs-snow 6s linear infinite}
+.sk-haze{left:-30%;top:22%;width:160%;height:24%;background:linear-gradient(90deg,transparent,rgba(210,220,230,.08),transparent);animation:wxs-haze 22s ease-in-out infinite alternate}
+.sk-flash{inset:0;background:rgba(255,240,180,.08);opacity:0;animation:wxs-flash 7s linear infinite}
+/* DAY: strip + panel */
+.wxp-strip{position:relative;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:none;margin:0 calc(-1 * var(--pad-x));padding:.2rem var(--pad-x) .45rem;scroll-padding-inline:var(--pad-x)}
+.wxp-strip::-webkit-scrollbar{display:none}
+.wxp-strip-list{position:relative;z-index:1;display:flex;gap:.45rem;width:max-content}
+@media (min-width:900px){.wxp-strip{overflow:visible;margin:0;padding:.2rem 0 .45rem}.wxp-strip-list{width:auto}.wxp-dchip{flex:1 1 0!important;min-width:0}}
+.wxp-dchip{flex:0 0 76px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:.05rem;min-height:132px;margin:0;padding:.45rem .25rem .4rem;border-radius:14px;border:1px solid var(--b365-line);background:var(--b365-water);color:var(--b365-foam);font:inherit;cursor:pointer;transition:background-color .25s ease,border-color .25s ease;-webkit-tap-highlight-color:transparent}
+.wxp-dchip:hover{border-color:rgba(255,215,106,.45)}
+.wxp-dchip:focus-visible{outline:2px solid var(--wx-gold);outline-offset:2px}
+.wxp-dchip[aria-selected="true"]{background:rgba(255,215,106,.09);border-color:transparent}
+.wxp-dchip .dl{font-size:.8rem;font-weight:600;white-space:nowrap;line-height:1.2}
+.wxp-dchip .wx-ic{width:38px;height:38px}
+.wxp-dchip .hl{font-size:.9rem;font-variant-numeric:tabular-nums;line-height:1.2}
+.wxp-dchip .hl span{color:var(--b365-mute)}
+.wxp-dchip .rg{position:relative;width:78%;height:4px;border-radius:3px;background:var(--b365-line);margin:.2rem 0 .15rem}
+.wxp-dchip .rg i{position:absolute;top:0;bottom:0;border-radius:3px;background:linear-gradient(90deg,var(--wx-cool),var(--wx-warm));transform-origin:left;animation:wx-growx .8s var(--wx-ease) both}
+.wxp-dchip .mt{font-size:.74rem;color:var(--b365-mute);line-height:1.3;white-space:nowrap;font-variant-numeric:tabular-nums}
+.wxp-dchip.skel{cursor:default}
+.wxp-ink{position:absolute;z-index:2;left:0;top:.2rem;height:132px;border:2px solid var(--wx-gold);border-radius:14px;pointer-events:none;box-shadow:0 0 22px rgba(255,215,106,.16);opacity:0;transition:transform .34s var(--wx-ease),width .34s var(--wx-ease),opacity .2s ease}
+.wxp-ink.on{opacity:1}
+.wxp-dayp{margin-top:.35rem;min-height:480px}
+@media (min-width:980px){.wxp-dayp{min-height:360px}}
+.wxp-dsum{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.1rem .8rem;align-items:center}
+.wxp-dsum .wx-ic{width:62px;height:62px}
+.wxp-dsum h3{margin:0;font-size:clamp(1.1rem,2.6vw,1.35rem);color:var(--b365-foam)}
+.wxp-dnav{grid-column:1/-1;display:flex;gap:.45rem;justify-content:flex-end;margin-top:.2rem}
+@media (min-width:640px){.wxp-dsum{grid-template-columns:auto minmax(0,1fr) auto}.wxp-dnav{grid-column:auto;margin:0}}
+.wxp-dnav button,.wxp-more-btn{min-height:44px;min-width:44px;border-radius:999px;border:1px solid var(--b365-line);background:transparent;color:var(--b365-foam);font:inherit;font-size:.9rem;padding:0 .95rem;cursor:pointer;transition:border-color .2s ease}
+.wxp-dnav button:hover,.wxp-more-btn:hover{border-color:rgba(255,215,106,.55)}
+.wxp-dnav button:focus-visible,.wxp-more-btn:focus-visible{outline:2px solid var(--wx-gold);outline-offset:2px}
+.wxp-dnav button[disabled]{opacity:.35;cursor:default}
+.wxp-dgrid{display:grid;gap:.7rem;margin-top:.7rem}
+@media (min-width:980px){.wxp-dgrid{grid-template-columns:minmax(0,2fr) minmax(0,1fr);align-items:start}}
+.wxp-dside{display:grid;gap:.7rem;align-content:start}
+.wxp-in-l{animation:wxp-inl .3s var(--wx-ease) both}.wxp-in-r{animation:wxp-inr .3s var(--wx-ease) both}
+.wxp-hint{margin:.35rem 0 0;font-size:.8rem;color:var(--b365-mute)}
 /* charts */
-.wxp-chart{margin-top:.8rem;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.wxp-chart{margin-top:.6rem}
+.wxp-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:#284259 transparent;border-radius:8px}
+.wxp-scroll:focus-visible{outline:2px solid var(--wx-gold);outline-offset:2px}
 .wxp-chart svg{display:block}
 .wxp-chart text{font-family:var(--mono,ui-monospace,monospace);fill:var(--b365-mute);font-size:11px}
 .wxp-chart .t-strong{fill:var(--b365-foam);font-weight:600;font-size:12px}
-.wxp-draw{fill:none;stroke-dasharray:1;stroke-dashoffset:1;animation:wx-draw 1.8s cubic-bezier(.3,.7,.2,1) .1s forwards}
-.wxp-fadein{opacity:0;animation:wx-fade .8s ease .9s forwards}
-.wxp-pop{opacity:0;transform-box:fill-box;transform-origin:center;animation:wxp-pop .5s cubic-bezier(.2,1.4,.4,1) forwards}
-.wxp-bar{transform-box:fill-box;transform-origin:bottom;transform:scaleY(0);animation:wx-grow .7s cubic-bezier(.3,.7,.2,1) forwards}
-.wxp-legend{display:flex;flex-wrap:wrap;gap:.3rem 1rem;margin:.5rem 0 0;padding:0;list-style:none;font-size:.85rem;color:var(--b365-mute)}
-.wxp-legend i{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:middle;margin-right:.35rem}
-/* tide table */
-.wxp-tides{list-style:none;margin:.9rem 0 0;padding:0;display:grid;gap:.5rem}
-.wxp-tides li{display:grid;grid-template-columns:7.2rem minmax(0,1fr);gap:.2rem .8rem;align-items:start;padding:.55rem .8rem;border:1px solid var(--b365-line);border-radius:12px;background:rgba(16,32,47,.55)}
-@media (max-width:520px){.wxp-tides li{grid-template-columns:1fr}}
-.wxp-tides h3{margin:0;font-size:.95rem;color:var(--b365-foam)}
-.wxp-evs{display:flex;flex-wrap:wrap;gap:.35rem .5rem}
-.wxp-ev{display:inline-flex;flex-wrap:wrap;white-space:nowrap;align-items:baseline;gap:0 .35rem;padding:.18rem .6rem;border-radius:8px;font-variant-numeric:tabular-nums;font-size:.92rem;background:rgba(255,255,255,.04);border:1px solid var(--b365-line);color:var(--b365-foam)}
+.wxp-chart .t-dim{fill:var(--b365-mute);font-weight:400;font-size:11px}
+.wxp-chart .t-small{font-size:10px;letter-spacing:.06em}
+.wxp-chart .t-rain{fill:var(--wx-rain);font-size:11px}
+.wxp-draw{fill:none;stroke-dasharray:1;stroke-dashoffset:1;animation:wx-draw .95s var(--wx-ease) .05s forwards}
+.wxp-fadein{opacity:0;animation:wx-fade .6s ease .45s forwards}
+.wxp-pop{opacity:0;transform-box:fill-box;transform-origin:center;animation:wxp-pop .45s cubic-bezier(.2,1.4,.4,1) forwards}
+.wxp-bar{transform-box:fill-box;transform-origin:bottom;transform:scaleY(0);animation:wx-grow .55s var(--wx-ease) forwards}
+.wxp-ping{transform-box:fill-box;transform-origin:center;animation:wxp-ring 2.4s ease-out infinite}
+.wxp-legend{display:flex;flex-wrap:wrap;gap:.25rem .9rem;margin:.45rem 0 0;padding:0;list-style:none;font-size:.82rem;color:var(--b365-mute)}
+.wxp-legend i{display:inline-block;width:16px;height:3px;border-radius:2px;vertical-align:middle;margin-right:.35rem}
+/* DECK: sticky tabs */
+.wxp-sentinel{height:1px;margin:0}
+.wxp-tabbar{position:sticky;top:calc(var(--header-h) + var(--wxp-cb,0px));z-index:40;margin:0 calc(-1 * var(--pad-x)) .75rem;padding:.35rem var(--pad-x);transition:background-color .2s ease,box-shadow .2s ease}
+@media (min-width:768px){.wxp-tabbar{top:calc(var(--header-h) + var(--ticker-h))}}
+.wxp-tabbar.is-stuck{background:rgba(7,15,25,.94);box-shadow:0 1px 0 var(--b365-line),0 12px 26px rgba(0,0,0,.35)}
+.wxp-tabs5{position:relative;max-width:780px;background:var(--b365-water);border:1px solid var(--b365-line);border-radius:17px;padding:.22rem}
+.wxp-tablist{position:relative;z-index:1;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.2rem}
+.wxp-tablist [role="tab"]{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.12rem;min-height:52px;margin:0;border:0;border-radius:13px;background:transparent;color:#a9bccb;font:inherit;font-size:.8rem;font-weight:600;line-height:1.1;padding:.2rem .1rem;cursor:pointer;transition:color .25s ease;-webkit-tap-highlight-color:transparent}
+.wxp-tablist [role="tab"] svg{width:20px;height:20px;flex:none}
+.wxp-tablist [role="tab"]:hover{color:var(--b365-foam)}
+.wxp-js .wxp-tablist [role="tab"][aria-selected="true"]{color:#08131e}
+.wxp-tablist [role="tab"]:focus-visible{outline:2px solid var(--wx-gold);outline-offset:1px}
+.wxp-tablist [role="tab"][aria-selected="true"]:focus-visible{outline-color:#e8f1f2;outline-offset:3px}
+.wxp-tablist [role="tab"] span{white-space:nowrap}
+@media (max-width:379px){.wxp-tablist [role="tab"]{font-size:.72rem}}
+html.a11y-contrast .wxp-tablist [role="tab"][aria-selected="true"],html.a11y-contrast .wxp-dchip[aria-selected="true"]{outline:2px solid #fff!important;outline-offset:-4px;text-decoration:underline}
+/* without JavaScript: no dead controls or placeholders, every panel's text shows */
+.wxp:not(.wxp-js) .wxp-tabbar,.wxp:not(.wxp-js) .wxp-vitals,.wxp:not(.wxp-js) .wxp-strip,.wxp:not(.wxp-js) .wxp-dayp,.wxp:not(.wxp-js) .wxp-skel,.wxp:not(.wxp-js) .wxp-now-top{display:none}
+#wxp-dsun:focus:not(:focus-visible){outline:none}
+.wxp-air-link{display:inline-flex;align-items:center;min-height:44px}
+@media (min-width:768px){.wxp-tablist [role="tab"]{flex-direction:row;gap:.45rem;min-height:46px;font-size:.93rem}}
+.wxp-tabink{position:absolute;z-index:0;top:.22rem;left:0;height:calc(100% - .44rem);border-radius:13px;background:linear-gradient(135deg,#ffe08a,#ffb347);box-shadow:0 4px 18px rgba(255,190,90,.25);transition:transform .32s var(--wx-ease),width .32s var(--wx-ease)}
+.wxp-js .wxp-panel[data-off]{display:none}
+.wxp-panel{scroll-margin-top:calc(var(--header-h) + var(--ticker-h) + 4.5rem)}
+.wxp-panel.wxp-in{animation:wxp-panin .32s var(--wx-ease) both}
+.wxp-split{display:grid;gap:.7rem}
+@media (min-width:900px){.wxp-split{grid-template-columns:minmax(0,1fr) minmax(0,2fr);align-items:start}}
+.wxp-media{display:grid;gap:.8rem}
+@media (min-width:900px){.wxp-media{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);align-items:start}}
+/* tides */
+.wxp-tides{list-style:none;margin:.7rem 0 0;padding:0;display:grid;gap:.45rem}
+@media (min-width:768px){.wxp-tides{grid-template-columns:repeat(auto-fill,minmax(360px,1fr))}}
+.wxp-tides li{display:grid;grid-template-columns:6.4rem minmax(0,1fr);gap:.2rem .7rem;align-items:start;padding:.5rem .75rem;border:1px solid var(--b365-line);border-radius:12px;background:rgba(16,32,47,.55)}
+.wxp-tides h3{margin:0;font-size:.92rem;color:var(--b365-foam)}
+.wxp-tides h3 span{display:block;font-size:.76rem;font-weight:400;color:var(--b365-mute);margin-top:.1rem}
+@media (max-width:639px){
+  .wxp-tides li{grid-template-columns:1fr;gap:.35rem;padding:.5rem .65rem}
+  .wxp-tides h3{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem}
+  .wxp-tides h3 span{display:inline;margin:0}
+  .wxp-ev{font-size:.86rem;padding:.14rem .45rem}
+}
+.wxp-tides li.flat{border-color:rgba(255,215,106,.45)}
+.wxp-tides li.wxp-more{display:none}
+.wxp-tides.all li.wxp-more{display:grid;animation:wxp-rise .35s var(--wx-ease) both}
+@media (min-width:768px){.wxp-tides li.wxp-more{display:grid}#wxp-tide-more{display:none}}
+.wxp-neap{flex-basis:100%;margin:0 0 .15rem;font-size:.82rem;color:#e9d9a6}
+.wxp-evs{display:flex;flex-wrap:wrap;gap:.3rem .45rem}
+.wxp-ev{display:inline-flex;flex-wrap:wrap;white-space:nowrap;align-items:baseline;gap:0 .35rem;padding:.16rem .55rem;border-radius:8px;font-variant-numeric:tabular-nums;font-size:.9rem;background:rgba(255,255,255,.04);border:1px solid var(--b365-line);color:var(--b365-foam)}
 .wxp-ev b{font-weight:600}
 .wxp-ev.hi{border-color:rgba(108,196,245,.45)}.wxp-ev.lo{border-color:rgba(159,180,197,.35)}
 .wxp-ev small{color:var(--b365-mute)}
-/* ten-day + hourly icons reuse the hub panel look */
-.wxp-days{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem}
-@media (min-width:720px){.wxp-days{grid-template-columns:repeat(5,minmax(0,1fr))}}
-.wxp-day{background:var(--b365-water);border:1px solid var(--b365-line);border-radius:14px;padding:.75rem .8rem .8rem;display:flex;flex-direction:column;gap:.15rem;opacity:0;transform:translateY(14px);animation:wx-rise .6s cubic-bezier(.3,.7,.2,1) forwards}
-.wxp-day h3{margin:0;font-size:.98rem;color:var(--b365-foam)}
-.wxp-days li{display:flex}
-button.wxp-day{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;transition:border-color .2s ease,background-color .2s ease}
-button.wxp-day:hover{border-color:rgba(255,215,106,.55)}
-button.wxp-day:focus-visible{outline:2px solid #ffd76a;outline-offset:2px}
-button.wxp-day[aria-expanded="true"]{border-color:#ffd76a;background:rgba(255,215,106,.07)}
-.wxp-open{margin-top:auto;padding-top:.35rem;font-size:.78rem;color:#ffd76a}
-.wxp-detail{margin:.9rem 0 0;background:var(--b365-water);border:1px solid #ffd76a;border-radius:18px;padding:1rem 1.1rem;scroll-margin-top:110px;animation:wx-rise .45s cubic-bezier(.3,.7,.2,1) both}
-.wxp-dd-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:.6rem}
-.wxp-dd-head h3{margin:.15rem 0 0;font-size:clamp(1.3rem,3vw,1.7rem);color:var(--b365-foam)}
-.wxp-dd-head h3:focus{outline:none}
-.wxp-dd-nav{display:flex;flex-wrap:wrap;gap:.45rem}
-.wxp-dd-nav button{min-height:44px;min-width:44px;border-radius:999px;border:1px solid var(--b365-line);background:transparent;color:var(--b365-foam);font:inherit;padding:0 .9rem;cursor:pointer}
-.wxp-dd-nav button:focus-visible{outline:2px solid #ffd76a;outline-offset:2px}
-.wxp-dd-sum{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.4rem 1rem;align-items:center;margin:.7rem 0 0}
-.wxp-dd-sum .wx-ic{width:84px;height:84px}
-.wxp-six{display:grid;gap:.6rem;grid-template-columns:repeat(auto-fit,minmax(min(100%,128px),1fr));margin-top:.8rem}
-.wxp-day .wx-ic{width:62px;height:62px;margin:.1rem 0 0 -.3rem}
-.wxp-hl{display:flex;align-items:baseline;gap:.45rem;font-variant-numeric:tabular-nums}
-.wxp-hl b{font-size:1.45rem;color:var(--b365-foam);font-weight:600}.wxp-hl span{color:var(--b365-mute)}
-.wxp-range{position:relative;height:5px;border-radius:3px;background:var(--b365-line);margin:.35rem 0 .45rem}
-.wxp-range i{position:absolute;top:0;bottom:0;border-radius:3px;background:linear-gradient(90deg,var(--wx-cool),var(--wx-warm));transform-origin:left;transform:scaleX(0);animation:wx-growx .9s cubic-bezier(.3,.7,.2,1) forwards}
-.wxp-meta{display:flex;flex-wrap:wrap;gap:.1rem .7rem;font-size:.86rem;color:var(--b365-mute);font-variant-numeric:tabular-nums}
-.wxp-arrow{display:inline-block;width:.85em;height:.85em;vertical-align:-.05em;margin-right:.2em;transition:transform 1.2s cubic-bezier(.3,.7,.2,1)}
-.wxp-arrow path{fill:var(--b365-foam)}
+.wxp-more-btn{margin-top:.55rem}
+.wxp-details{margin:.6rem 0 0;border:1px solid var(--b365-line);border-radius:12px;background:rgba(16,32,47,.45)}
+.wxp-details summary{display:flex;align-items:center;gap:.6rem;line-height:1.35;min-height:44px;padding:.45rem .9rem;cursor:pointer;list-style:none;color:var(--b365-foam);font-size:.93rem}
+.wxp-details summary::-webkit-details-marker{display:none}
+.wxp-details summary::after{content:"";flex:none;width:9px;height:9px;margin-left:auto;border-right:2px solid var(--wx-gold);border-bottom:2px solid var(--wx-gold);transform:rotate(45deg);transition:transform .25s var(--wx-ease)}
+.wxp-details[open] summary::after{transform:rotate(225deg)}
+.wxp-details summary:focus-visible{outline:2px solid var(--wx-gold);outline-offset:2px}
+.wxp-details>div{padding:0 .9rem .8rem}
+/* wind */
+.wxp-compass{width:136px;height:136px;flex:none;position:relative}
+.wxp-compass svg{width:100%;height:100%;display:block}
+.wxp-needle{transition:transform 1.6s cubic-bezier(.2,1.35,.4,1);transform-box:view-box;transform-origin:75px 75px}
+.wxp-wobble{animation:wxp-wobble 3.2s ease-in-out infinite;transform-box:view-box;transform-origin:75px 75px}
+.wxp-windrow{display:flex;gap:.9rem;align-items:center;flex-wrap:wrap}
+.wxp-streaks{position:absolute;inset:-30%;pointer-events:none;opacity:.22}
+.wxp-streaks i{position:absolute;left:0;height:1.5px;width:60px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--b365-foam));animation:wxp-streak linear infinite}
+.wxp-shore{display:inline-block;padding:.08rem .5rem;border-radius:999px;font-size:.8rem;font-weight:600;border:1px solid currentColor}
+.wxp-shore.off{color:var(--wx-off)}.wxp-shore.on{color:var(--wx-on)}.wxp-shore.cross{color:var(--wx-cool)}
+.wxp-alert{border:1px solid rgba(255,159,90,.5);border-left-width:4px;border-radius:12px;padding:.6rem .85rem;background:rgba(255,159,90,.06)}
+.wxp-arrow{display:inline-block;width:.85em;height:.85em;vertical-align:-.05em;margin-right:.2em;transition:transform 1.2s var(--wx-ease)}
+.wxp-arrow path{fill:currentColor}
 /* map players */
-.wxp-map{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--b365-line);background:#0a1a28;aspect-ratio:960/850;width:100%;max-width:min(100%,820px);margin:0 auto}
-#wxp-nasa{max-width:min(100%,980px);margin:0 auto}
+.wxp-map{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--b365-line);background:#0a1a28;aspect-ratio:960/850;width:100%;max-width:min(100%,calc(min(68vh,600px) * 1.1294));margin:0 auto}
+#wxp-nasa{max-width:100%;margin:0}
 .wxp-map img{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .35s linear}
 .wxp-map img.on,.wxp-map img.base,.wxp-map img.lines{opacity:1}
-.wxp-map img.radar{image-rendering:auto}
-.wxp-pin{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#ffd76a;box-shadow:0 0 0 0 rgba(255,215,106,.7);animation:wxp-ping 2s ease-out infinite}
-.wxp-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem .9rem;margin:.7rem 0 0}
-.wxp-ctl button{min-height:44px;min-width:44px;border-radius:999px;border:1px solid var(--b365-line);background:var(--b365-water);color:var(--b365-foam);font:inherit;padding:0 1rem;cursor:pointer}
-.wxp-ctl button[aria-pressed="true"]{border-color:#ffd76a;color:#ffd76a}
-.wxp-ctl button:focus-visible,.wxp-ctl input:focus-visible{outline:2px solid #ffd76a;outline-offset:2px}
-.wxp-ctl input[type=range]{flex:1 1 180px;accent-color:#ffd76a;min-height:44px}
-.wxp-time{font-family:var(--mono,ui-monospace,monospace);color:var(--b365-foam);font-size:.9rem;min-width:9.5rem}
+.wxp-pin{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--wx-gold);box-shadow:0 0 0 0 rgba(255,215,106,.7);animation:wxp-ping 2s ease-out infinite}
+.wxp-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .8rem;margin:0}
+.wxp-ctl button,.wxp-views button{min-height:44px;min-width:44px;border-radius:999px;border:1px solid var(--b365-line);background:var(--b365-water);color:var(--b365-foam);font:inherit;font-size:.9rem;padding:0 1rem;cursor:pointer}
+.wxp-views button[aria-pressed="true"]{border-color:var(--wx-gold);color:var(--wx-gold)}
+.wxp-ctl button:focus-visible,.wxp-ctl input:focus-visible,.wxp-views button:focus-visible{outline:2px solid var(--wx-gold);outline-offset:2px}
+.wxp-ctl input[type=range]{flex:1 1 160px;accent-color:var(--wx-gold);min-height:44px}
+.wxp-time{font-family:var(--mono,ui-monospace,monospace);color:var(--b365-foam);font-size:.88rem;min-width:9.5rem}
+.wxp-views{display:flex;flex-wrap:wrap;gap:.45rem;margin:0 0 .6rem}
 .wxp-scale{display:flex;gap:2px;align-items:center;flex-wrap:wrap;margin:.6rem 0 0;font-size:.8rem;color:var(--b365-mute)}
-.wxp-scale span{display:inline-flex;align-items:center;gap:.3rem;margin-right:.6rem}
+.wxp-scale span{display:inline-flex;align-items:center;gap:.3rem;margin-right:.55rem}
 .wxp-scale i{display:inline-block;width:14px;height:10px;border-radius:2px}
-.wxp-tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin:0 0 .7rem}
-.wxp-tabs button[aria-pressed="true"]{border-color:#ffd76a!important;color:#ffd76a!important}
-.wxp-tabs button:focus-visible{outline:2px solid #ffd76a;outline-offset:2px}
-.wxp-note{margin:.7rem 0 0;color:var(--b365-mute);font-size:.9rem}
-.wxp-src{width:100%;border-collapse:collapse;font-size:.9rem}
-.wxp-src th,.wxp-src td{text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--b365-line);vertical-align:top}
+/* sea & air, sun & moon */
+.wxp-moon{width:40px;height:40px;border-radius:50%;background:var(--wx-moon);position:relative;overflow:hidden;flex:none;box-shadow:0 0 22px rgba(239,230,196,.22)}
+.wxp-moon i{position:absolute;inset:0;border-radius:50%;background:#10202f;transition:transform 1.6s var(--wx-ease)}
+.wxp-daqi{display:flex;gap:.35rem;flex-wrap:wrap;margin:.4rem 0 0}
+.wxp-daqi span{display:inline-flex;flex-direction:column;align-items:center;min-width:2.9rem;padding:.25rem .35rem;border-radius:10px;border:1px solid var(--b365-line);font-size:.8rem;color:var(--b365-mute)}
+.wxp-daqi b{font-size:1.05rem;color:var(--b365-foam)}
+.wxp-daqi .low{border-color:rgba(127,216,168,.5)}.wxp-daqi .mod{border-color:rgba(255,179,71,.6)}.wxp-daqi .high{border-color:rgba(255,110,90,.7)}
+/* sources */
+.wxp-about{padding-top:1.4rem}
+.wxp-about p{max-width:70ch}
+.wxp-key{display:flex;flex-wrap:wrap;gap:.3rem 1.2rem;margin:.5rem 0 0;padding:0;list-style:none;font-size:.88rem;color:var(--b365-mute)}
+.wxp-src-wrap{overflow-x:auto}
+.wxp-src{width:100%;border-collapse:collapse;font-size:.88rem}
+.wxp-src th,.wxp-src td{text-align:left;padding:.45rem .55rem;border-bottom:1px solid var(--b365-line);vertical-align:top}
 .wxp-src th{color:var(--b365-foam);font-weight:600}
 .wxp-src td{color:var(--b365-mute)}
-.wxp-moon{width:56px;height:56px;border-radius:50%;background:var(--wx-moon);position:relative;overflow:hidden;flex:none;box-shadow:0 0 24px rgba(239,230,196,.25)}
-.wxp-moon i{position:absolute;inset:0;border-radius:50%;background:#10202f;transition:transform 1.6s cubic-bezier(.3,.7,.2,1)}
-.wxp-daqi{display:flex;gap:.4rem;flex-wrap:wrap;margin:.4rem 0 0}
-.wxp-daqi span{display:inline-flex;flex-direction:column;align-items:center;min-width:3rem;padding:.3rem .4rem;border-radius:10px;border:1px solid var(--b365-line);font-size:.8rem;color:var(--b365-mute)}
-.wxp-daqi b{font-size:1.1rem;color:var(--b365-foam)}
-.wxp-daqi .low{border-color:rgba(127,216,168,.5)}.wxp-daqi .mod{border-color:rgba(255,179,71,.6)}.wxp-daqi .high{border-color:rgba(255,110,90,.7)}
-/* the animated icons (same shapes as the hub panel) */
+#wxp~.faq-section{padding-top:2.2rem;padding-bottom:2.6rem}
+#wxp~.faq-section .section-title--center{margin-bottom:1.6rem}
+/* phones: later in the sheet than the base rules it overrides */
+@media (max-width:639px){
+  .wxp-glance{padding:.85rem .8rem;gap:.7rem}
+  .wxp-vitals{gap:.45rem}
+  .wxp-vital{position:relative;min-height:0;padding:.5rem .6rem .5rem;gap:0}
+  .wxp-vital .v{font-size:1.02rem;white-space:normal}
+  .wxp-vital .c{font-size:.76rem}
+  .wxp-vital .go{display:none}
+  .wxp-vital::after{content:"";position:absolute;right:.6rem;bottom:.65rem;width:7px;height:7px;border-right:2px solid var(--wx-gold);border-top:2px solid var(--wx-gold);transform:rotate(45deg)}
+  .wxp-vital .chip-m,.wxp-vital .chip-f{letter-spacing:0}
+  .wxp-now{min-height:250px}
+  .wxp-now-w{font-size:1.02rem}
+  .wxp-dsum h3{font-size:1.02rem}
+  .wxp-dsum .wx-ic{width:52px;height:52px}
+  .wxp-dnav{display:none}
+  .wxp-hilo{margin-top:.35rem!important}
+  .wxp-sunc .wxp-mid{font-size:1.2rem!important}
+  .wxp-legend{font-size:.76rem;gap:.15rem .7rem}
+}
+@media (max-width:379px){.wxp-vital{padding:.45rem .5rem}.wxp-vital .v{font-size:.96rem}}
+/* the animated icons (same shapes as before) */
 .wx-rays,.wx-core,.wx-moon,.wx-star,.wx-cl,.wx-cl2,.wx-drop,.wx-flake,.wx-fog,.wx-bolt{transform-box:fill-box;transform-origin:center}
 .wx-rays line{stroke:var(--wx-sun);stroke-width:3.2;stroke-linecap:round}
 .wx-rays{animation:wx-spin 26s linear infinite}
@@ -902,6 +1045,8 @@ button.wxp-day[aria-expanded="true"]{border-color:#ffd76a;background:rgba(255,21
 .wx-flake{fill:#fff;animation:wx-snow 2.6s linear infinite}
 .wx-fog{stroke:var(--wx-cloud2);stroke-width:3;stroke-linecap:round;animation:wx-slide 4s ease-in-out infinite alternate}
 .wx-bolt{fill:var(--wx-bolt);opacity:0;animation:wx-flash 3.6s linear infinite}
+/* small icons in the strip and the timeline stand still: two moving icons on screen, not forty */
+.wx-still *{animation:none!important}.wx-still .wx-bolt,.wx-still .wx-star{opacity:1}
 @keyframes wx-spin{to{transform:rotate(360deg)}}
 @keyframes wx-pulse{50%{transform:scale(1.07)}}
 @keyframes wx-rock{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(5deg)}}
@@ -914,157 +1059,201 @@ button.wxp-day[aria-expanded="true"]{border-color:#ffd76a;background:rgba(255,21
 @keyframes wx-draw{to{stroke-dashoffset:0}}
 @keyframes wx-fade{to{opacity:1}}
 @keyframes wx-grow{to{transform:scaleY(1)}}
-@keyframes wx-growx{to{transform:scaleX(1)}}
-@keyframes wx-rise{to{opacity:1;transform:none}}
+@keyframes wx-growx{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 @keyframes wx-shimmer{to{background-position:-200% 0}}
+@keyframes wxp-rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes wxp-panin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes wxp-inl{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+@keyframes wxp-inr{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
 @keyframes wxp-wobble{0%,100%{transform:rotate(-2.5deg)}50%{transform:rotate(2.5deg)}}
 @keyframes wxp-streak{from{transform:translateX(-80px)}to{transform:translateX(560px)}}
 @keyframes wxp-pop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
 @keyframes wxp-ping{0%{box-shadow:0 0 0 0 rgba(255,215,106,.7)}80%,100%{box-shadow:0 0 0 18px rgba(255,215,106,0)}}
-.wxp.wx-off *,.wxp.wx-off *::before{animation-play-state:paused!important}
+@keyframes wxp-ring{0%{transform:scale(.6);opacity:.9}100%{transform:scale(2.6);opacity:0}}
+@keyframes wxs-breathe{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.08);opacity:1}}
+@keyframes wxs-drift{from{transform:translateX(0)}to{transform:translateX(215%)}}
+@keyframes wxs-fall{from{transform:translate3d(0,0,0) rotate(14deg)}to{transform:translate3d(-150px,640px,0) rotate(14deg)}}
+@keyframes wxs-snow{from{transform:translate3d(0,0,0)}50%{transform:translate3d(14px,320px,0)}to{transform:translate3d(-6px,640px,0)}}
+@keyframes wxs-haze{from{transform:translateX(-8%)}to{transform:translateX(8%)}}
+@keyframes wxs-flash{0%,92%,100%{opacity:0}93%{opacity:1}94%{opacity:.2}95.5%{opacity:.8}97%{opacity:0}}
+.wx-off *,.wx-off *::before,.wx-off *::after{animation-play-state:paused!important}
 @media (prefers-reduced-motion:reduce){
-  .wxp *,.wxp *::before{animation:none!important;transition:none!important}
-  .wxp-draw{stroke-dashoffset:0}.wxp-fadein,.wxp-pop,.wxp-day{opacity:1;transform:none}
-  .wxp-bar,.wxp-range i{transform:none}.wx-drop,.wx-flake,.wx-bolt{opacity:1}.wxp-streaks{display:none}
+  .wxp *,.wxp *::before,.wxp *::after{animation:none!important;transition:none!important}
+  .wxp-draw{stroke-dashoffset:0}.wxp-fadein,.wxp-pop{opacity:1}.wxp-bar,.wxp-dchip .rg i{transform:none}
+  .wx-drop,.wx-flake,.wx-bolt{opacity:1}.wxp-streaks,.wxp-sky i{display:none}.wxp-ping{opacity:0}
 }
+html.a11y-reduce .wxp-draw{stroke-dashoffset:0}html.a11y-reduce .wxp-fadein,html.a11y-reduce .wxp-pop{opacity:1}
+html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.a11y-reduce .wx-bolt{opacity:1}html.a11y-reduce .wxp-sky i,html.a11y-reduce .wxp-streaks{display:none}
 </style>
 
     <div class="wxp" id="wxp">
-    <section class="section b365" id="now" aria-labelledby="now-h">
+    <script>document.getElementById('wxp').className += ' wxp-js';</script>
+    <section class="wxp-sec b365" id="now" aria-labelledby="now-h">
       <div class="wrap">
-        <div id="wxp-warnings" aria-live="polite"></div>
-        <div class="wxp-head"><div><p class="eyebrow mono">// RIGHT NOW ON THE SEAFRONT</p><h2 id="now-h">Bournemouth right now</h2></div></div>
-        <div class="wxp-grid">
-          <div class="wxp-card wxp-big" id="wxp-nowcard">
-            <div aria-hidden="true" style="width:110px;height:100px"></div>
-            <div><span class="wxp-skel"></span><span class="wxp-skel" style="width:35%;height:2.6rem"></span><span class="wxp-skel" style="width:80%"></span></div>
+        <div id="wxp-warnings" class="wxp-warnings" aria-live="polite"><p class="wxp-ok mono">Checking Met Office weather warnings&hellip;</p></div>
+        <div class="wxp-glance" id="wxp-glance">
+          <div class="wxp-sky" id="wxp-sky" aria-hidden="true"></div>
+          <h2 id="now-h">Bournemouth right now</h2>
+          <noscript><p class="wxp-sub">The live readings on this page need JavaScript. The tide, radar and source notes below still apply.</p></noscript>
+          <div class="wxp-now" id="wxp-nowcard">
+            <span class="wxp-skel" style="width:55%"></span>
+            <div class="wxp-now-top"><div aria-hidden="true" style="width:90px;height:84px"></div><div><span class="wxp-skel" style="width:45%;height:2.8rem"></span><span class="wxp-skel" style="width:75%"></span></div></div>
+            <span class="wxp-skel" style="width:85%"></span>
           </div>
-          <div class="wxp-card" id="wxp-windcard"><span class="chip-m" id="wxp-wind-chip">WIND &middot; LOADING</span><span class="wxp-skel"></span><span class="wxp-skel" style="width:40%"></span></div>
-          <div class="wxp-card" id="wxp-seacard"><span class="chip-m" id="wxp-sea-chip">SEA TEMPERATURE &middot; LOADING</span><span class="wxp-skel"></span></div>
-          <div class="wxp-card" id="wxp-tidecard"><span class="chip-f" id="wxp-tidenow-chip">TIDE &middot; LOADING</span><span class="wxp-skel"></span></div>
-          <div class="wxp-card" id="wxp-suncard"><span class="chip-f" id="wxp-sun-chip">COMPUTED &middot; SUN &amp; MOON</span><span class="wxp-skel"></span></div>
-          <div class="wxp-card" id="wxp-aircard"><span class="chip-f" id="wxp-air-chip">FORECAST &middot; AIR QUALITY &middot; DEFRA</span><span class="wxp-skel"></span></div>
+          <div class="wxp-vitals" id="wxp-vitals">
+            <button type="button" class="wxp-vital" data-go="wind" id="wxp-v-wind"><span class="chip-f" id="wxp-v-wind-chip">WIND &middot; LOADING</span><span class="wxp-skel" style="width:70%"></span><span class="wxp-skel" style="width:50%"></span></button>
+            <button type="button" class="wxp-vital" data-go="sea" id="wxp-v-sea"><span class="chip-f" id="wxp-v-sea-chip">SEA &middot; LOADING</span><span class="wxp-skel" style="width:70%"></span><span class="wxp-skel" style="width:50%"></span></button>
+            <button type="button" class="wxp-vital" data-go="tides" id="wxp-v-tide"><span class="chip-f" id="wxp-v-tide-chip">PREDICTED &middot; PIER</span><span class="wxp-skel" style="width:70%"></span><span class="wxp-skel" style="width:50%"></span></button>
+            <button type="button" class="wxp-vital" data-go="sun" id="wxp-v-sun"><span class="chip-f" id="wxp-v-sun-chip">COMPUTED &middot; PIER</span><span class="wxp-skel" style="width:70%"></span><span class="wxp-skel" style="width:50%"></span></button>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="section b365" id="tides" aria-labelledby="tides-h">
+    <section class="wxp-sec b365" id="ten-day" aria-labelledby="ten-h">
       <div class="wrap">
-        <div class="wxp-head"><div><p class="eyebrow mono">// TIDE TIMES &middot; BOURNEMOUTH PIER</p><h2 id="tides-h">Bournemouth tide times</h2>
-          <p>High and low water for the next seven days at the pier, with the pier&rsquo;s own gauge drawn over the prediction so you can see how the sea is really running.</p></div>
-          <span class="chip-f" id="wxp-tide-chip">PREDICTED &middot; LOADING</span></div>
-        <div class="wxp-card">
-          <p class="wxp-sub" id="wxp-tide-now">Loading the tide&hellip;</p>
-          <div class="wxp-chart" id="wxp-tide-chart"></div>
-          <ul class="wxp-legend"><li><i style="background:#79b8ff"></i>Predicted tide</li><li><i style="background:#4fd8c4"></i>Measured by the pier gauge</li><li><i style="background:#ffd76a"></i>Now</li></ul>
+        <div class="wxp-head"><h2 class="wxp-h2" id="ten-h">Next 10 days</h2><span class="chip-f" id="wxp-days-chip">FORECAST &middot; MET NORWAY</span></div>
+        <div class="wxp-strip" id="wxp-strip">
+          <div class="wxp-strip-list" role="tablist" aria-label="Choose a day" id="wxp-strip-list">
+            <span class="wxp-dchip skel"><span class="wxp-skel" style="width:70%"></span></span><span class="wxp-dchip skel"><span class="wxp-skel" style="width:70%"></span></span><span class="wxp-dchip skel"><span class="wxp-skel" style="width:70%"></span></span><span class="wxp-dchip skel"><span class="wxp-skel" style="width:70%"></span></span><span class="wxp-dchip skel"><span class="wxp-skel" style="width:70%"></span></span>
+          </div>
+          <span class="wxp-ink" id="wxp-ink" aria-hidden="true"></span>
         </div>
-        <ol class="wxp-tides" id="wxp-tide-table" aria-label="High and low water, next seven days"></ol>
-        <p class="wxp-note" id="wxp-tide-acc"></p>
-        <p class="wxp-note">Heights are metres above chart datum, as in printed tide tables (chart datum at Bournemouth is 1.40&nbsp;m below Ordnance Datum Newlyn). <strong>Not for navigation</strong> &mdash; for passage planning use the official <a href="https://easytide.admiralty.co.uk/" rel="noopener">ADMIRALTY EasyTide</a> tables.</p>
+        <div class="wxp-dayp" id="wxp-daypanel" role="tabpanel" aria-label="The chosen day" tabindex="-1"></div>
+        <p class="wxp-note">Hour by hour for the first two to three days, then six-hour steps that can still change. Rain is the forecast amount in millimetres &mdash; this forecast gives no percentage chance for our coast, so we don&rsquo;t invent one.</p>
       </div>
     </section>
 
-    <section class="section b365" id="wind" aria-labelledby="wind-h">
+    <section class="wxp-sec b365 wxp-deck" id="wxp-deck" aria-label="Tides, wind, radar, satellite and the sea">
       <div class="wrap">
-        <div class="wxp-head"><div><p class="eyebrow mono">// WIND</p><h2 id="wind-h">Wind speed and direction</h2>
-          <p>Measured now at Bournemouth Airport, and MET Norway&rsquo;s 48-hour forecast for the pier &mdash; with what the direction means on the beach.</p></div>
-          <span class="chip-f" id="wxp-windfc-chip">FORECAST &middot; MET NORWAY</span></div>
-        <div class="wxp-card">
-          <div class="wxp-chart" id="wxp-wind-chart"></div>
-          <ul class="wxp-legend"><li><i style="background:#ffb347"></i>Forecast average wind, mph</li><li><i style="background:#ff9f5a;height:8px;width:8px;border-radius:50%"></i>Offshore (blowing out to sea)</li><li><i style="background:#7fd8a8;height:8px;width:8px;border-radius:50%"></i>Onshore</li><li><i style="background:#79b8ff;height:8px;width:8px;border-radius:50%"></i>Along the shore</li></ul>
+        <div class="wxp-sentinel" id="wxp-sentinel" aria-hidden="true"></div>
+        <div class="wxp-tabbar" id="wxp-tabbar">
+          <div class="wxp-tabs5">
+            <span class="wxp-tabink" id="wxp-tabink" aria-hidden="true"></span>
+            <div class="wxp-tablist" role="tablist" aria-label="Tides, wind, radar, satellite and the sea" id="wxp-tablist">
+              <button type="button" role="tab" id="wxp-tab-tides" aria-controls="tides" aria-selected="true" tabindex="0" data-tab="tides"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M2 10c2.2 0 2.2-2 4.4-2s2.2 2 4.4 2 2.2-2 4.4-2 2.2 2 4.4 2 1.8-1 2.4-1.4"/><path d="M2 16c2.2 0 2.2-2 4.4-2s2.2 2 4.4 2 2.2-2 4.4-2 2.2 2 4.4 2 1.8-1 2.4-1.4"/></svg><span>Tides</span></button>
+              <button type="button" role="tab" id="wxp-tab-wind" aria-controls="wind" aria-selected="false" tabindex="-1" data-tab="wind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M3 9h11.5a3 3 0 1 0-3-3"/><path d="M3 13h15.5a3 3 0 1 1-3 3"/><path d="M3 17h7"/></svg><span>Wind</span></button>
+              <button type="button" role="tab" id="wxp-tab-radar" aria-controls="radar" aria-selected="false" tabindex="-1" data-tab="radar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><path d="M12 12 18.5 5.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg><span>Radar</span></button>
+              <button type="button" role="tab" id="wxp-tab-satellite" aria-controls="satellite" aria-selected="false" tabindex="-1" data-tab="satellite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="rotate(-35 12 12)"><rect x="9.5" y="9" width="5" height="6" rx="1"/><path d="M2.5 9.5h5v5h-5zM16.5 9.5h5v5h-5zM7.5 12h2M14.5 12h2M12 15v3M10 18.5h4"/></g></svg><span>Satellite</span></button>
+              <button type="button" role="tab" id="wxp-tab-sea" aria-controls="sea" aria-selected="false" tabindex="-1" data-tab="sea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M10 13.5V5a2 2 0 1 1 4 0v8.5a4 4 0 1 1-4 0z"/><path d="M12 10v6"/></svg><span>Sea &amp; air</span></button>
+            </div>
+          </div>
         </div>
-        <p class="wxp-note">Offshore wind blows from the land out to sea. It flattens the waves, but the RNLI warns it can <a href="https://rnli.org/news-and-media/2026/july/09/rnli-issue-warning-as-forecast-of-hot-weather-and-offshore-winds-in-north-west" rel="noopener">very easily sweep inflatables and paddleboards away from the shore</a> &mdash; on offshore days, leave the inflatables on the sand.</p>
-      </div>
-    </section>
 
-    <section class="section b365" id="hourly" aria-labelledby="hourly-h">
-      <div class="wrap">
-        <div class="wxp-head"><div><p class="eyebrow mono">// NEXT 48 HOURS</p><h2 id="hourly-h">Hour by hour</h2></div><span class="chip-f" id="wxp-hourly-chip">FORECAST &middot; MET NORWAY</span></div>
-        <div class="wxp-card"><div class="wxp-chart" id="wxp-hourly-chart"></div>
-          <ul class="wxp-legend"><li><i style="background:#ffb347"></i>Temperature</li><li><i style="background:#6cc4f5;height:8px"></i>Rain, mm per hour</li><li><i style="background:#e4eef5;opacity:.5;height:8px"></i>Cloud cover</li><li><i style="background:linear-gradient(90deg,#7fd8a8,#ffd84d,#ff9f5a,#ff5a5a);height:8px"></i>UV if the sky is clear</li></ul></div>
-      </div>
-    </section>
-
-    <section class="section b365" id="ten-day" aria-labelledby="ten-h">
-      <div class="wrap">
-        <div class="wxp-head"><div><p class="eyebrow mono">// 10-DAY FORECAST</p><h2 id="ten-h">The next 10 days</h2></div><span class="chip-f" id="wxp-days-chip">FORECAST &middot; MET NORWAY</span></div>
-        <ol class="wxp-days" id="wxp-days" aria-label="Daily forecast: choose a day for its detail"></ol>
-        <div class="wxp-detail" id="wxp-daydetail" hidden aria-live="polite"></div>
-        <p class="wxp-note"><b>Tap any day</b> for its hour-by-hour forecast, tide times and sunrise and sunset. The first two to three days are forecast hour by hour and are the ones to plan around; after that the model works in six-hour steps. Rain is the forecast amount in millimetres &mdash; this forecast gives no percentage chance for our coast, so we don&rsquo;t invent one.</p>
-      </div>
-    </section>
-
-    <section class="section b365" id="radar" aria-labelledby="radar-h">
-      <div class="wrap">
-        <div class="wxp-head"><div><p class="eyebrow mono">// RAIN RADAR</p><h2 id="radar-h">Rain radar: the last three hours</h2>
-          <p>Where it is raining across Dorset, the Channel and beyond, every 15 minutes. Play the loop to see which way the showers are heading.</p></div>
-          <span class="chip-m" id="wxp-radar-chip">OBSERVED &middot; RADAR &middot; LOADING</span></div>
-        <div class="wxp-map" id="wxp-radar-map">
-          <img class="base" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-src="/bournemouth/media/wx-basemap.jpg" alt="" width="960" height="850">
-          <img class="lines" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-src="/bournemouth/media/wx-lines.png" alt="" width="960" height="850" style="z-index:3">
-          <span class="wxp-pin" style="left:48.4%;top:43.2%;z-index:4" aria-hidden="true"></span>
+        <div class="wxp-panel" id="tides" role="tabpanel" aria-labelledby="wxp-tab-tides" tabindex="-1">
+          <div class="wxp-head"><h2 class="wxp-h2" id="tides-h">Bournemouth tide times</h2><span class="chip-f" id="wxp-tide-chip">PREDICTED &middot; LOADING</span></div>
+          <p class="wxp-pintro">High and low water at the pier for seven days, with the pier&rsquo;s own gauge drawn over the prediction.</p>
+          <div class="wxp-card">
+            <p class="wxp-sub" id="wxp-tide-now" style="margin:0">Loading the tide&hellip;</p>
+            <p class="wxp-sub" id="wxp-tide-next" style="margin:.35rem 0 0"></p>
+            <div class="wxp-chart wxp-scroll" id="wxp-tide-chart" data-sc="Tide chart for the pier"></div>
+            <ul class="wxp-legend"><li><i style="background:#79b8ff"></i>Predicted tide</li><li><i style="background:#4fd8c4"></i>Measured by the pier gauge</li><li><i style="background:#ffd76a"></i>Now</li></ul>
+          </div>
+          <ol class="wxp-tides" id="wxp-tide-table" aria-label="High and low water, next seven days"></ol>
+          <button type="button" class="wxp-more-btn" id="wxp-tide-more" aria-expanded="false" aria-controls="wxp-tide-table" hidden>Show the next 4 days</button>
+          <p class="wxp-note"><b>Heights are metres above chart datum. Not for navigation</b> &mdash; for passage planning use the official <a href="https://easytide.admiralty.co.uk/" rel="noopener">ADMIRALTY EasyTide</a> tables.</p>
+          <details class="wxp-details" id="wxp-tide-acc-box"><summary><span id="wxp-tide-acc-sum">How accurate are these tide times?</span></summary><div>
+            <p class="wxp-note" id="wxp-tide-acc">We test the prediction blind against a month the pier gauge measured.</p>
+            <p class="wxp-note">Chart datum at Bournemouth is 1.40&nbsp;m below Ordnance Datum Newlyn. The rest of the error is weather &mdash; strong winds and low pressure push the sea above any tide table &mdash; which is why the gauge is drawn live on the chart.</p>
+          </div></details>
         </div>
-        <div class="wxp-ctl" id="wxp-radar-ctl" hidden>
-          <button type="button" class="wxp-play" aria-label="Pause the radar loop">Pause</button>
-          <input type="range" min="0" max="0" value="0" aria-label="Radar frame">
-          <span class="wxp-time" aria-live="polite"></span>
+
+        <div class="wxp-panel" id="wind" role="tabpanel" aria-labelledby="wxp-tab-wind" tabindex="-1" data-off>
+          <div class="wxp-head"><h2 class="wxp-h2" id="wind-h">Wind speed and direction</h2></div>
+          <p class="wxp-pintro">Measured now at Bournemouth Airport, and MET Norway&rsquo;s 48-hour forecast for the pier &mdash; with what the direction means on the beach.</p>
+          <div class="wxp-split">
+            <div class="wxp-card" id="wxp-windcard"><span class="chip-f">WIND &middot; LOADING</span><span class="wxp-skel"></span><span class="wxp-skel" style="width:40%"></span></div>
+            <div class="wxp-card">
+              <span class="chip-f" id="wxp-windfc-chip">FORECAST &middot; MET NORWAY &middot; NEXT 48 HOURS</span>
+              <div class="wxp-chart wxp-scroll" id="wxp-wind-chart" data-sc="Forecast wind chart"></div>
+              <ul class="wxp-legend"><li><i style="background:#ffb347"></i>Forecast average wind, mph</li><li><i style="background:#ff9f5a;height:8px;width:8px;border-radius:50%"></i>Offshore (blowing out to sea)</li><li><i style="background:#7fd8a8;height:8px;width:8px;border-radius:50%"></i>Onshore</li><li><i style="background:#79b8ff;height:8px;width:8px;border-radius:50%"></i>Along the shore</li></ul>
+            </div>
+          </div>
+          <p class="wxp-note" id="wxp-rnli">Offshore wind blows from the land out to sea. It flattens the waves, but the RNLI warns it can <a href="https://rnli.org/news-and-media/2026/july/09/rnli-issue-warning-as-forecast-of-hot-weather-and-offshore-winds-in-north-west" rel="noopener">very easily sweep inflatables and paddleboards away from the shore</a> &mdash; on offshore days, leave the inflatables on the sand.</p>
         </div>
-        <div class="wxp-scale" aria-label="Rain rate colours"><span><i style="background:rgb(116,185,255)"></i>Drizzle</span><span><i style="background:rgb(28,96,232)"></i>Light, 1&ndash;2 mm/h</span><span><i style="background:rgb(40,190,90)"></i>Moderate, 2&ndash;4</span><span><i style="background:rgb(250,220,40)"></i>Heavy, 4&ndash;8</span><span><i style="background:rgb(255,140,20)"></i>Very heavy, 8&ndash;16</span><span><i style="background:rgb(240,40,30)"></i>16&ndash;32</span><span><i style="background:rgb(210,40,210)"></i>32+</span></div>
-        <p class="wxp-note" id="wxp-radar-note"></p>
+
+        <div class="wxp-panel" id="radar" role="tabpanel" aria-labelledby="wxp-tab-radar" tabindex="-1" data-off>
+          <div class="wxp-head"><h2 class="wxp-h2" id="radar-h">Rain radar: the last three hours</h2><span class="chip-f" id="wxp-radar-chip">RADAR &middot; LOADING</span></div>
+          <div class="wxp-media">
+            <div class="wxp-map" id="wxp-radar-map">
+              <img class="base" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/bournemouth/media/wx-basemap.jpg" alt="" width="960" height="850">
+              <img class="lines" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/bournemouth/media/wx-lines.png" alt="" width="960" height="850" style="z-index:3">
+              <span class="wxp-pin" style="left:48.4%;top:43.2%;z-index:4" aria-hidden="true"></span>
+            </div>
+            <div>
+              <p class="wxp-pintro">Where it is raining across Dorset, the Channel and beyond, every 15 minutes. Play the loop to see which way the showers are heading.</p>
+              <div class="wxp-ctl" id="wxp-radar-ctl" hidden>
+                <button type="button" class="wxp-play">Pause</button>
+                <input type="range" min="0" max="0" value="0" aria-label="Radar frame">
+                <span class="wxp-time"></span>
+              </div>
+              <div class="wxp-scale" aria-label="Rain rate colours"><span><i style="background:rgb(116,185,255)"></i>Drizzle</span><span><i style="background:rgb(28,96,232)"></i>Light, 1&ndash;2 mm/h</span><span><i style="background:rgb(40,190,90)"></i>Moderate, 2&ndash;4</span><span><i style="background:rgb(250,220,40)"></i>Heavy, 4&ndash;8</span><span><i style="background:rgb(255,140,20)"></i>Very heavy, 8&ndash;16</span><span><i style="background:rgb(240,40,30)"></i>16&ndash;32</span><span><i style="background:rgb(210,40,210)"></i>32+</span></div>
+              <p class="wxp-note" id="wxp-radar-note">Radar: EUMETNET OPERA, CC BY 4.0. Map: &copy; OpenStreetMap contributors, via NASA GIBS.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="wxp-panel" id="satellite" role="tabpanel" aria-labelledby="wxp-tab-satellite" tabindex="-1" data-off>
+          <div class="wxp-head"><h2 class="wxp-h2" id="sat-h">Bournemouth from space</h2><span class="chip-f" id="wxp-sat-chip">SATELLITE &middot; LOADING</span></div>
+          <div class="wxp-media">
+            <div>
+              <div class="wxp-map" id="wxp-sat-map">
+                <img class="lines" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="/bournemouth/media/wx-lines.png" alt="" width="960" height="850" style="z-index:3">
+                <span class="wxp-pin" style="left:48.4%;top:43.2%;z-index:4" aria-hidden="true"></span>
+              </div>
+              <figure id="wxp-nasa" hidden style="margin:0">
+                <img alt="NASA satellite image of the coast from Portland to the Isle of Wight" width="1200" height="759" style="width:100%;height:auto;border-radius:16px;border:1px solid var(--b365-line);display:block">
+                <figcaption class="wxp-note" id="wxp-nasa-cap"></figcaption>
+              </figure>
+            </div>
+            <div>
+              <p class="wxp-pintro">Cloud over the Channel from Meteosat, a new picture every 10 minutes, plus NASA&rsquo;s sharper once-a-day view of Poole Bay.</p>
+              <div class="wxp-views" id="wxp-sat-tabs" role="group" aria-label="Satellite view"></div>
+              <div class="wxp-ctl" id="wxp-sat-ctl" hidden>
+                <button type="button" class="wxp-play">Pause</button>
+                <input type="range" min="0" max="0" value="0" aria-label="Satellite frame">
+                <span class="wxp-time"></span>
+              </div>
+              <p class="wxp-note" id="wxp-sat-note">Images &copy; EUMETSAT, Meteosat Third Generation via EUMETView, CC BY 4.0. Daily picture: NASA Worldview / GIBS. Coastline &copy; OpenStreetMap contributors.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="wxp-panel" id="sea" role="tabpanel" aria-labelledby="wxp-tab-sea" tabindex="-1" data-off>
+          <div class="wxp-head"><h2 class="wxp-h2" id="sea-h">The sea, the beaches and the air</h2></div>
+          <div class="wxp-grid">
+            <div id="wxp-seatiles" style="display:contents"><div class="wxp-card"><span class="chip-f">SEA &middot; LOADING</span><span class="wxp-skel"></span></div></div>
+            <div class="wxp-card" id="wxp-aircard"><span class="chip-f">FORECAST &middot; AIR QUALITY &middot; DEFRA</span><span class="wxp-skel"></span></div>
+          </div>
+          <p class="wxp-note">More on the water &mdash; wetsuit advice, every beach&rsquo;s classification and the live storm-overflow monitors &mdash; on <a href="/bournemouth/sea-today/">the sea right now</a>.</p>
+        </div>
       </div>
     </section>
 
-    <section class="section b365" id="satellite" aria-labelledby="sat-h">
+    <section class="wxp-sec b365 wxp-about" id="sources" aria-labelledby="src-h">
       <div class="wrap">
-        <div class="wxp-head"><div><p class="eyebrow mono">// SATELLITE</p><h2 id="sat-h">Bournemouth from space</h2>
-          <p>Cloud over the Channel from Meteosat, a new picture every 10 minutes, plus NASA&rsquo;s sharper once-a-day view of Poole Bay.</p></div>
-          <span class="chip-m" id="wxp-sat-chip">OBSERVED &middot; SATELLITE &middot; LOADING</span></div>
-        <div class="wxp-tabs" id="wxp-sat-tabs" role="group" aria-label="Satellite view"></div>
-        <div class="wxp-map" id="wxp-sat-map">
-          <img class="lines" src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" data-src="/bournemouth/media/wx-lines.png" alt="" width="960" height="850" style="z-index:3">
-          <span class="wxp-pin" style="left:48.4%;top:43.2%;z-index:4" aria-hidden="true"></span>
-        </div>
-        <figure id="wxp-nasa" hidden style="margin:0">
-          <img alt="NASA satellite image of the coast from Portland to the Isle of Wight" width="1200" height="759" style="width:100%;height:auto;border-radius:16px;border:1px solid var(--b365-line);display:block">
-          <figcaption class="wxp-note" id="wxp-nasa-cap"></figcaption>
-        </figure>
-        <div class="wxp-ctl" id="wxp-sat-ctl" hidden>
-          <button type="button" class="wxp-play" aria-label="Pause the satellite loop">Pause</button>
-          <input type="range" min="0" max="0" value="0" aria-label="Satellite frame">
-          <span class="wxp-time" aria-live="polite"></span>
-        </div>
-        <p class="wxp-note" id="wxp-sat-note"></p>
-      </div>
-    </section>
-
-    <section class="section b365" id="sea" aria-labelledby="sea-h">
-      <div class="wrap">
-        <div class="wxp-head"><div><p class="eyebrow mono">// THE SEA</p><h2 id="sea-h">The sea and the beaches</h2></div></div>
-        <div class="wxp-grid" id="wxp-seagrid"></div>
-        <p class="wxp-note">More on the water &mdash; wetsuit advice, every beach&rsquo;s classification and the live storm-overflow monitors &mdash; on <a href="/bournemouth/sea-today/">the sea right now</a>.</p>
-      </div>
-    </section>
-
-    <section class="section b365" id="sources" aria-labelledby="src-h">
-      <div class="wrap">
-        <div class="wxp-head"><div><p class="eyebrow mono">// WHERE EVERY NUMBER COMES FROM</p><h2 id="src-h">Sources, licences and labels</h2>
-          <p>Every reading on this page wears a label. <b>Measured</b> and <b>observed</b> mean an instrument saw it. <b>Predicted</b>, <b>forecast</b> and <b>computed</b> mean a model or a calculation. When a feed is down or late, the page says so rather than showing old numbers as new.</p></div></div>
-        <div class="wxp-chart"><table class="wxp-src">
+        <h2 class="wxp-h2" id="src-h">Where every number comes from</h2>
+        <p class="wxp-note">Every reading on this page wears a label. <b>Measured</b> and <b>observed</b> mean an instrument saw it. <b>Predicted</b>, <b>forecast</b> and <b>computed</b> mean a model or a calculation. <b>Official</b> means it is shown exactly as the issuer published it. When a feed is down or late, the page says so rather than showing old numbers as new. No ads, ever.</p>
+        <ul class="wxp-key"><li><span class="chip-m">MEASURED &middot; OBSERVED</span> an instrument</li><li><span class="chip-f">FORECAST &middot; PREDICTED &middot; COMPUTED &middot; OFFICIAL</span> a model, a calculation or an issuer</li></ul>
+        <p class="wxp-note">Forecast: MET Norway (CC BY 4.0). Radar: EUMETNET OPERA (CC BY 4.0). Satellite: &copy; EUMETSAT (CC BY 4.0) and NASA Worldview / GIBS. Tides, the pier gauge, the wave buoys and bathing waters: Environment Agency, Cefas and Regional Coastal Monitoring Programme data under the Open Government Licence v3.0. Storm overflows: &copy; Wessex Water, CC BY 4.0. Warnings: Met Office. Air quality: Defra. Wind and temperature now: Bournemouth Airport via the NOAA Aviation Weather Center. Map: &copy; OpenStreetMap contributors.</p>
+        <details class="wxp-details"><summary>Sources, licences and how often each one updates</summary><div class="wxp-src-wrap"><table class="wxp-src">
           <thead><tr><th scope="col">What</th><th scope="col">Label</th><th scope="col">Source</th><th scope="col">How often</th><th scope="col">Licence</th></tr></thead>
           <tbody>
-            <tr><td>Forecast (hourly and 10-day), UV if clear</td><td>Forecast</td><td><a href="https://www.met.no/en" rel="noopener">MET Norway</a> Locationforecast for Bournemouth Pier</td><td>About hourly</td><td><a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a>. Changes made: grouped into days, rounded, wind in mph, our own symbols</td></tr>
-            <tr><td>Wind, temperature and pressure now</td><td>Measured</td><td>Bournemouth Airport (EGHH) reports, via the NOAA Aviation Weather Center</td><td>Every 30 minutes</td><td>Public domain</td></tr>
+            <tr><td>Forecast (hourly and 10-day), feels like, humidity, pressure, UV if clear</td><td>Forecast</td><td><a href="https://www.met.no/en" rel="noopener">MET Norway</a> Locationforecast for Bournemouth Pier</td><td>About hourly</td><td><a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a>. Changes made: grouped into days, rounded, wind in mph, our own symbols</td></tr>
+            <tr><td>Wind and temperature now</td><td>Measured</td><td>Bournemouth Airport (EGHH) reports, via the NOAA Aviation Weather Center</td><td>Every 30 minutes</td><td>Public domain</td></tr>
             <tr><td>Tide times and heights</td><td>Predicted</td><td>365 Techies&rsquo; harmonic prediction fitted to a year of the Environment Agency&rsquo;s Bournemouth pier gauge</td><td>Computed ahead; checked live against the gauge</td><td>Contains Environment Agency data licensed under the Open Government Licence v3.0</td></tr>
             <tr><td>Tide level now</td><td>Measured</td><td>Environment Agency tide gauge on Bournemouth Pier</td><td>Every 15 minutes</td><td>Open Government Licence v3.0</td></tr>
-            <tr><td>Sea temperature and waves</td><td>Measured</td><td>Poole Bay wave buoy (Cefas WaveNet)</td><td>Every 30 minutes</td><td>Open Government Licence v3.0</td></tr>
+            <tr><td>Sea temperature and waves</td><td>Measured</td><td>Poole Bay wave buoy (Cefas WaveNet), or the Boscombe buoy (Regional Coastal Monitoring Programme) when Poole Bay is not reporting</td><td>Every 30 minutes</td><td>Open Government Licence v3.0</td></tr>
+            <tr><td>Storm overflows discharging</td><td>Measured</td><td>Wessex Water Storm Overflow Activity monitors on this coast</td><td>Every few minutes</td><td>&copy; Wessex Water, <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a></td></tr>
             <tr><td>Rain radar</td><td>Observed</td><td><a href="https://www.eumetnet.eu/" rel="noopener">EUMETNET</a> OPERA rain-rate composite of the European radar networks, including the Met Office&rsquo;s</td><td>Every 15 minutes</td><td>CC BY 4.0</td></tr>
             <tr><td>Satellite loops</td><td>Observed</td><td><a href="https://www.eumetsat.int/" rel="noopener">EUMETSAT</a> Meteosat Third Generation imagery via EUMETView</td><td>Every 10 minutes</td><td>&copy; EUMETSAT, CC BY 4.0</td></tr>
             <tr><td>Daily high-detail satellite picture</td><td>Observed</td><td>NASA Worldview / GIBS, VIIRS true colour</td><td>Once a day</td><td>Public domain, courtesy of NASA</td></tr>
             <tr><td>Weather warnings</td><td>Official</td><td><a href="https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings" rel="noopener">Met Office</a> warnings for South West England, shown exactly as issued</td><td>Checked every 15 minutes</td><td>&copy; Crown copyright, Met Office RSS terms</td></tr>
             <tr><td>Air quality</td><td>Forecast</td><td>Defra UK-AIR Daily Air Quality Index forecast for Bournemouth</td><td>Daily</td><td>&copy; Crown copyright, Open Government Licence v3.0</td></tr>
+            <tr><td>Bathing water classifications</td><td>Official</td><td>Environment Agency bathing water quality</td><td>Daily in the season</td><td>Open Government Licence v3.0</td></tr>
             <tr><td>Sunrise, sunset, golden hour, moon</td><td>Computed</td><td>Astronomy, calculated in your browser for the pier</td><td>Always current</td><td>&mdash;</td></tr>
             <tr><td>Map coastline</td><td>&mdash;</td><td>&copy; OpenStreetMap contributors, via NASA GIBS</td><td>&mdash;</td><td><a href="https://www.openstreetmap.org/copyright" rel="noopener">ODbL</a></td></tr>
-          </tbody></table></div>
+          </tbody></table></div></details>
       </div>
     </section>
     </div>
@@ -1105,11 +1294,19 @@ button.wxp-day[aria-expanded="true"]{border-color:#ffd76a;background:rgba(255,21
 (function () {
   var root = document.getElementById('wxp');
   if (!root || !window.fetch) return;
-  var REDUCE = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var MQ = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  function reduced() { return !!(MQ && MQ.matches) || document.documentElement.classList.contains('a11y-reduce'); }
   function $(id) { return document.getElementById(id); }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]; }); }
-  function lon(iso, o) { o.timeZone = 'Europe/London'; try { return new Date(iso).toLocaleString('en-GB', o); } catch (e) { delete o.timeZone; return new Date(iso).toLocaleString('en-GB', o); } }
-  function hhmm(iso) { return lon(iso, { hour: '2-digit', minute: '2-digit', hour12: false }); }
+  /* one formatter per option set: building a formatter is the slow part of toLocaleString (a long task on phones) */
+  var FMTS = {};
+  function lon(iso, o) {
+    var k = JSON.stringify(o), f = FMTS[k];
+    if (!f) { try { f = new Intl.DateTimeFormat('en-GB', Object.assign({ timeZone: 'Europe/London' }, o)); } catch (e) { f = new Intl.DateTimeFormat('en-GB', o); } FMTS[k] = f; }
+    return f.format(new Date(iso));
+  }
+  function hhmm(iso) { return lon(iso, { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }); }
+  function age(iso) { var t = Date.parse(iso); return isNaN(t) ? Infinity : Date.now() - t; }
   function ukDate(iso) { return lon(iso, { year: 'numeric', month: '2-digit', day: '2-digit' }); }
   function ukYmd(ms) { var s2 = ukDate(new Date(ms).toISOString()).split('/'); return s2[2] + '-' + s2[1] + '-' + s2[0]; }
   /* UK midnight of a YYYY-MM-DD day: UK offsets are whole hours, so step hourly from 2 h before UTC midnight */
@@ -1119,6 +1316,7 @@ button.wxp-day[aria-expanded="true"]{border-color:#ffd76a;background:rgba(255,21
     return Date.UTC(+p2[0], +p2[1] - 1, +p2[2], 0, 0);
   }
   function longDay(ymd) { return lon(new Date(londonMidnight(ymd) + 12 * 3600000).toISOString(), { weekday: 'long', day: 'numeric', month: 'long' }); }
+  function shortDay(ymd) { return lon(new Date(londonMidnight(ymd) + 12 * 3600000).toISOString(), { weekday: 'short' }); }
   function dayLabel(iso) {
     var today = ukDate(new Date().toISOString()), tomorrow = ukDate(new Date(Date.now() + 864e5).toISOString()), d = ukDate(iso);
     return d === today ? 'Today' : d === tomorrow ? 'Tomorrow' : lon(iso, { weekday: 'short', day: 'numeric', month: 'short' });
@@ -1129,6 +1327,7 @@ button.wxp-day[aria-expanded="true"]{border-color:#ffd76a;background:rgba(255,21
   function mph(ms) { return Math.round(ms * 2.23694); }
   function ktmph(kt) { return Math.round(kt * 1.15078); }
   function deg(t) { return Math.round(t) + '\u00b0'; }
+  function has(v) { return v !== null && v !== undefined && !isNaN(v); }
   function beaufort(m) {
     var lim = [1, 4, 8, 13, 19, 25, 32, 39, 47, 55, 64, 73], names = ['Calm', 'Light air', 'Light breeze', 'Gentle breeze', 'Moderate breeze', 'Fresh breeze', 'Strong breeze', 'Near gale', 'Gale', 'Strong gale', 'Storm', 'Violent storm', 'Hurricane force'];
     for (var i = 0; i < lim.length; i++) if (m < lim[i]) return [i, names[i]];
@@ -1136,13 +1335,23 @@ button.wxp-day[aria-expanded="true"]{border-color:#ffd76a;background:rgba(255,21
   }
   /* Bournemouth beach faces the sea at about 160 degrees (SSE). Wind FROM the sea = onshore. */
   function shore(dir) {
-    if (dir === null || dir === undefined || isNaN(dir)) return null;
+    if (!has(dir)) return null;
     var diff = Math.abs(((dir - 160 + 540) % 360) - 180);
     return diff <= 60 ? 'on' : diff >= 120 ? 'off' : 'cross';
   }
   var SHORE_WORD = { on: 'Onshore', off: 'Offshore', cross: 'Along the shore' };
+  var SHORE_COL = { on: '#7fd8a8', off: '#ff9f5a', cross: '#79b8ff' };
   function setChip(id, cls, txt) { var e = $(id); if (e) { e.className = cls; e.textContent = txt; } }
   function svgEl(w, h, label, body) { return '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + esc(label) + '">' + body + '</svg>'; }
+  /* a chart gets a keyboard stop and a "scrolls sideways" name only when it really scrolls */
+  function scrollRegions(scope) {
+    [].forEach.call((scope || root).querySelectorAll('.wxp-scroll'), function (el) {
+      if (el.scrollWidth > el.clientWidth + 4) { el.setAttribute('role', 'region'); el.tabIndex = 0; el.setAttribute('aria-label', (el.getAttribute('data-sc') || 'Chart') + ', scrolls sideways'); }
+      else { el.removeAttribute('role'); el.removeAttribute('tabindex'); el.removeAttribute('aria-label'); }
+    });
+  }
+  function uvCol(u) { return u < 3 ? '#7fd8a8' : u < 6 ? '#ffd84d' : u < 8 ? '#ff9f5a' : '#ff5a5a'; }
+  function rise(el) { if (!el || reduced()) return; el.classList.remove('wxp-rise'); void el.offsetWidth; el.classList.add('wxp-rise'); }
 
   /* ---------------- animated weather symbols (MET Norway symbol_code) ---------------- */
   function kind(code) {
@@ -1198,9 +1407,9 @@ button.wxp-day[aria-expanded="true"]{border-color:#ffd76a;background:rgba(255,21
     }
     return '<svg class="wx-ic ' + (s.heavy ? 'wx-heavy ' : '') + (cls || '') + '" ' + (attrs || '') + ' viewBox="0 0 64 64" aria-hidden="true" focusable="false">' + b + '</svg>';
   }
-  function arrow(d) { if (d === null || d === undefined || isNaN(d)) return ''; return '<svg class="wxp-arrow" viewBox="0 0 16 16" aria-hidden="true" data-rot="' + ((d + 180) % 360) + '"><path d="M8 1 13 13 8 10 3 13z"/></svg>'; }
-  function swingArrows() { requestAnimationFrame(function () { requestAnimationFrame(function () {
-    var a = root.querySelectorAll('.wxp-arrow[data-rot]'); for (var i = 0; i < a.length; i++) a[i].style.transform = 'rotate(' + a[i].getAttribute('data-rot') + 'deg)';
+  function arrow(d) { if (!has(d)) return ''; return '<svg class="wxp-arrow" viewBox="0 0 16 16" aria-hidden="true" data-rot="' + ((d + 180) % 360) + '"><path d="M8 1 13 13 8 10 3 13z"/></svg>'; }
+  function swingArrows(scope) { requestAnimationFrame(function () { requestAnimationFrame(function () {
+    var a = (scope || root).querySelectorAll('.wxp-arrow[data-rot]'); for (var i = 0; i < a.length; i++) a[i].style.transform = 'rotate(' + a[i].getAttribute('data-rot') + 'deg)';
   }); }); }
 
   /* ---------------- astronomy (COMPUTED in the browser) ---------------- */
@@ -1213,7 +1422,9 @@ button.wxp-day[aria-expanded="true"]{border-color:#ffd76a;background:rgba(255,21
     var gmst = (18.697374558 + 24.06570982441908 * d) % 24, ha = (gmst * 15 + LNG) * rad - ra;
     return Math.asin(Math.sin(LAT * rad) * Math.sin(dec) + Math.cos(LAT * rad) * Math.cos(dec) * Math.cos(ha)) / rad;
   }
+  var sunCache = {};
   function sunDay(ymd) {
+    if (sunCache[ymd]) return sunCache[ymd];
     /* scan the UK day minute by minute with pure maths (no toLocaleString inside the loop - that was ~3,000 slow calls) */
     var mid = londonMidnight(ymd), found = {};
     var prev = sunElev(mid - 60000);
@@ -1223,11 +1434,9 @@ button.wxp-day[aria-expanded="true"]{border-color:#ffd76a;background:rgba(255,21
       if (prev >= -0.833 && e < -0.833) found.set = t;
       if (prev < 6 && e >= 6) found.goldAmEnd = t;
       if (prev >= 6 && e < 6) found.goldPmStart = t;
-      if (prev < -6 && e >= -6) found.dawn = t;
-      if (prev >= -6 && e < -6) found.dusk = t;
       prev = e;
     }
-    return found;
+    return (sunCache[ymd] = found);
   }
   function moon(ms) {
     var syn = 29.530588853, age = ((ms / 864e5 + 2440587.5 - 2451550.1) / syn) % 1; if (age < 0) age += 1;
@@ -1236,130 +1445,118 @@ button.wxp-day[aria-expanded="true"]{border-color:#ffd76a;background:rgba(255,21
       : age < 0.534 ? 'Full moon' : age < 0.716 ? 'Waning gibbous' : age < 0.784 ? 'Last quarter' : 'Waning crescent';
     return { age: age, illum: illum, name: name };
   }
+  function tm(ms) { return ms ? hhmm(new Date(ms).toISOString()) : '&mdash;'; }
 
-  /* ---------------- blocks ---------------- */
+  /* ---------------- warnings ---------------- */
   function renderWarnings(w) {
-    var box = $('wxp-warnings');
-    if (!w || !w.ok) { box.innerHTML = ''; return; }
+    var box = $('wxp-warnings'), url = (w && w.source_url) || 'https://www.metoffice.gov.uk/weather/warnings-and-advice/uk-warnings';
+    var link = '<a href="' + esc(url) + '" rel="noopener">Met Office warnings</a>';
+    if (!w || !w.ok) { box.innerHTML = '<p class="wxp-ok"><span class="chip-f">WARNINGS &middot; NOT AVAILABLE</span>We couldn\u2019t check the Met Office warnings just now &middot; ' + link + '</p>'; return; }
+    var old = w.stale || age(w.checked) > 3 * 3600000;
     if (!w.items.length) {
-      box.innerHTML = '<p class="wxp-ok mono">No Met Office weather warnings for ' + esc(w.region) + ' &middot; checked ' + hhmm(w.checked) + ' &middot; <a href="' + esc(w.source_url) + '" rel="noopener">Met Office warnings</a></p>';
+      box.innerHTML = old
+        ? '<p class="wxp-ok"><span class="chip-f">LAST CHECKED ' + ago(w.checked).toUpperCase() + '</span>We couldn\u2019t check the Met Office warnings recently &middot; ' + link + '</p>'
+        : '<p class="wxp-ok"><span class="chip-f">OFFICIAL</span>No Met Office weather warnings<span class="wxp-long"> for ' + esc(w.region) + '</span> &middot; checked ' + hhmm(w.checked) + ' &middot; ' + link + '</p>';
       return;
     }
     /* Met Office RSS terms: shown exactly as issued, linked back */
     box.innerHTML = w.items.map(function (it) {
       return '<div class="wxp-warn" role="alert"><span class="chip-f">OFFICIAL &middot; MET OFFICE WARNING</span><p style="margin:.3rem 0"><a href="' + esc(it.link) + '" rel="noopener"><b>' + esc(it.title) + '</b></a></p><p style="margin:0">' + esc(it.description) + '</p></div>';
-    }).join('');
+    }).join('') + (old ? '<p class="wxp-ok">Last checked ' + ago(w.checked) + ' &middot; ' + link + '</p>' : '');
   }
 
-  function renderNow(d) {
-    var f = d.forecast, o = d.obs, card = $('wxp-nowcard');
-    if (!f || !f.ok) {
-      card.innerHTML = '<div></div><div><p class="wxp-sub">The forecast feed isn\u2019t answering, so nothing is shown rather than an old forecast.</p></div>';
-    } else {
-      var h0 = f.hours[0], t0 = f.days[0], lines = [];
-      if (o && o.ok && o.latest && o.latest.temp !== null) {
-        lines.push('<b>' + deg(o.latest.temp) + '</b> measured at Bournemouth Airport ' + (o.stale ? '<b>' + ago(o.latest.t) + '</b> (late)' : hhmm(o.latest.t)));
-      }
-      if (h0.feels !== null && Math.abs(h0.feels - h0.temp) >= 1) lines.push('Feels like <b>' + deg(h0.feels) + '</b>');
-      lines.push(h0.rain > 0 ? '<b>' + h0.rain.toFixed(1) + ' mm</b> of rain forecast this hour' : '<b>Dry</b> this hour');
-      if (h0.rh !== null) lines.push('Humidity <b>' + h0.rh + '%</b>');
-      if (h0.pres !== null) lines.push('Pressure <b>' + h0.pres + ' hPa</b>');
-      card.innerHTML = icon(h0.sym) + '<div><span class="chip-f">FORECAST FOR ' + hhmm(h0.t) + ' &middot; MET NORWAY &middot; ISSUED ' + hhmm(f.issued) + (f.stale ? ' &middot; OLDER THAN USUAL' : '') + '</span>'
-        + '<p class="wxp-num">' + deg(h0.temp) + '</p><p class="wxp-sub" style="font-size:1.1rem;color:var(--b365-foam)">' + esc(words(h0.sym)) + ' &middot; ' + (t0.part ? 'rest of today' : 'today') + ' up to ' + deg(t0.hi) + ', down to ' + deg(t0.lo) + '</p>'
-        + '<p class="wxp-sub">' + lines.join(' &middot; ') + '</p></div>';
-    }
-
-    /* wind: measured at the airport */
-    var wc = $('wxp-windcard');
-    if (o && o.ok && o.latest && o.latest.wspd !== null) {
-      var L = o.latest, vrb = (L.wdir === 'VRB' || L.wdir === null), dir = vrb ? null : +L.wdir, sp = ktmph(L.wspd), gs = L.wgst ? ktmph(L.wgst) : null, bf = beaufort(sp), sh = shore(dir);
-      var to = dir === null ? 0 : (dir + 180) % 360, streaks = '';
-      if (!REDUCE && dir !== null && sp > 2) {
-        var dur = Math.max(0.9, 3.2 - sp / 12);
-        for (var i = 0; i < 7; i++) streaks += '<i style="top:' + (8 + i * 13) + '%;animation-duration:' + (dur + (i % 3) * 0.35).toFixed(2) + 's;animation-delay:-' + (i * 0.45).toFixed(2) + 's"></i>';
-      }
-      var ticks = '';
-      for (var k = 0; k < 16; k++) ticks += '<line x1="75" y1="10" x2="75" y2="' + (k % 4 ? 15 : 19) + '" stroke="#7f95a8" stroke-width="' + (k % 4 ? 1 : 2) + '" transform="rotate(' + (k * 22.5) + ' 75 75)"/>';
-      /* the sea side of the dial (bearings 70..250 through 160) tinted, so on/offshore reads at a glance */
-      var seaArc = '<path d="M75 75 L' + (75 + 58 * Math.sin(70 * Math.PI / 180)).toFixed(1) + ' ' + (75 - 58 * Math.cos(70 * Math.PI / 180)).toFixed(1) + ' A58 58 0 0 1 ' + (75 + 58 * Math.sin(250 * Math.PI / 180)).toFixed(1) + ' ' + (75 - 58 * Math.cos(250 * Math.PI / 180)).toFixed(1) + ' Z" fill="rgba(108,196,245,.10)"/>';
-      var dial = '<svg viewBox="0 0 150 150" aria-hidden="true"><circle cx="75" cy="75" r="62" fill="none" stroke="#1d3346" stroke-width="2"/>' + seaArc + ticks
-        + '<text x="75" y="33" text-anchor="middle" font-size="11" fill="#e8f1f2">N</text><text x="122" y="79" text-anchor="middle" font-size="11" fill="#7f95a8">E</text><text x="75" y="126" text-anchor="middle" font-size="11" fill="#7f95a8">S</text><text x="28" y="79" text-anchor="middle" font-size="11" fill="#7f95a8">W</text>'
-        + '<text x="104" y="112" text-anchor="middle" font-size="9" fill="#6cc4f5">SEA</text>'
-        + (dir === null ? '<text x="75" y="80" text-anchor="middle" font-size="12" fill="#e8f1f2">variable</text>'
-          : '<g class="wxp-needle" style="transform:rotate(0deg)" data-rot="' + to + '"><g class="' + (REDUCE ? '' : 'wxp-wobble') + '"><path d="M75 22 L84 70 L75 64 L66 70 Z" fill="#ffd76a"/><path d="M75 128 L80 80 L75 84 L70 80 Z" fill="#7f95a8"/><circle cx="75" cy="75" r="5" fill="#e8f1f2"/></g></g>')
-        + '</svg>';
-      wc.innerHTML = '<div class="wxp-streaks" aria-hidden="true" style="transform:rotate(' + (to - 90) + 'deg)">' + streaks + '</div>'
-        + '<span class="' + (o.stale ? 'chip-f' : 'chip-m') + '">' + (o.stale ? 'LAST HEARD ' + ago(L.t).toUpperCase() : 'MEASURED ' + hhmm(L.t)) + ' &middot; BOURNEMOUTH AIRPORT</span>'
-        + '<div class="wxp-windrow" style="position:relative;margin-top:.4rem"><div class="wxp-compass">' + dial + '</div><div>'
-        + '<p class="wxp-mid">' + sp + ' <span style="font-size:.55em">mph</span></p>'
-        + '<p class="wxp-sub">' + (dir === null ? 'Variable direction' : 'From the <b>' + compass(dir) + '</b> (' + dir + '\u00b0)') + (gs ? ' &middot; gusts <b>' + gs + ' mph</b>' : '') + '</p>'
-        + '<p class="wxp-sub">Force ' + bf[0] + ', ' + bf[1].toLowerCase() + '</p>'
-        + (sh ? '<p class="wxp-sub"><span class="wxp-shore ' + sh + '">' + SHORE_WORD[sh] + ' on the beach</span></p>' : '')
-        + '</div></div><p class="wxp-sub" style="font-size:.82rem">Airport is 7 km inland &mdash; the beach is often windier.</p>';
-      var needle = wc.querySelector('.wxp-needle');
-      if (needle) requestAnimationFrame(function () { requestAnimationFrame(function () { needle.style.transform = 'rotate(' + needle.getAttribute('data-rot') + 'deg)'; }); });
-    } else {
-      wc.innerHTML = '<span class="chip-f">WIND &middot; NOT AVAILABLE</span><p class="wxp-sub">The airport\u2019s wind report isn\u2019t coming through right now. The forecast wind is in the wind section below.</p>';
-    }
+  /* ---------------- GLANCE ---------------- */
+  function setSky(code) {
+    var s = kind(code), box = $('wxp-sky'), parts = '', i, type;
+    type = s.k === 'thunder' ? 'storm' : (s.k === 'rain' || s.k === 'showers' || s.k === 'sleet') ? 'rain' : s.k === 'snow' ? 'snow' : s.k === 'fog' ? 'fog'
+      : s.k === 'cloudy' ? 'cloud' : s.night ? 'night' : (s.k === 'partly' ? 'cloud' : 'sun');
+    if (type === 'sun' || (s.k === 'partly' && !s.night)) parts += '<i class="sk-glow"></i>' + (type === 'sun' ? '<i class="sk-rays"></i>' : '');
+    if (type === 'night' || (s.night && s.k !== 'cloudy')) { parts += '<i class="sk-moon"></i>'; for (i = 0; i < 18; i++) parts += '<i class="sk-star" style="left:' + ((i * 37 + 11) % 97) + '%;top:' + ((i * 53 + 7) % 90) + '%;animation-delay:-' + (i * 0.41).toFixed(2) + 's"></i>'; }
+    if (type !== 'sun' && type !== 'night') for (i = 0; i < 3; i++) parts += '<i class="sk-cloud" style="top:' + (4 + i * 24) + '%;animation-duration:' + (38 + i * 11) + 's;animation-delay:-' + (i * 13 + 4) + 's"></i>';
+    if (type === 'rain' || type === 'storm') for (i = 0; i < 24; i++) parts += '<i class="sk-drop" style="left:' + ((i * 41 + 7) % 104) + '%;animation-duration:' + (0.85 + (i % 5) * 0.11).toFixed(2) + 's;animation-delay:-' + ((i * 0.29) % 1.3).toFixed(2) + 's"></i>';
+    if (type === 'snow') for (i = 0; i < 18; i++) parts += '<i class="sk-flake" style="left:' + ((i * 43 + 9) % 100) + '%;animation-duration:' + (5 + (i % 4)) + 's;animation-delay:-' + ((i * 0.7) % 6).toFixed(1) + 's"></i>';
+    if (type === 'fog') parts += '<i class="sk-haze"></i><i class="sk-haze" style="top:58%;animation-delay:-9s"></i>';
+    if (type === 'storm') parts += '<i class="sk-flash"></i>';
+    box.className = 'wxp-sky sky-' + type;
+    box.innerHTML = reduced() ? '' : parts;
+    requestAnimationFrame(function () { box.classList.add('on'); });
   }
 
-  function renderSea(d) {
-    var s = d.sea || {}, sea = s.sea, card = $('wxp-seacard'), grid = $('wxp-seagrid'), tiles = [];
+  function obsOld(o) { return !!(o.stale || age(o.latest.t) > 90 * 60000); }
+  function renderGlance(d) {
+    var f = d.forecast, o = d.obs, card = $('wxp-nowcard'), obsLine = '';
+    if (o && o.ok && o.latest && has(o.latest.temp)) {
+      var oo = obsOld(o);
+      obsLine = '<p class="wxp-sub wxp-obs"><span class="' + (oo ? 'chip-f' : 'chip-m') + '">' + (oo ? 'LAST HEARD ' + ago(o.latest.t).toUpperCase() : 'MEASURED ' + hhmm(o.latest.t)) + ' &middot; <span class="wxp-long">BOURNEMOUTH </span>AIRPORT</span><span><b>' + deg(o.latest.temp) + '</b> in the air<span class="wxp-long">, 7 km inland</span></span></p>';
+    }
+    if (!f || !f.ok || !f.hours || !f.hours.length) {
+      card.innerHTML = '<span class="chip-f">FORECAST &middot; NOT AVAILABLE</span><p class="wxp-sub">The forecast feed isn\u2019t answering, so nothing is shown rather than an old forecast.</p>' + obsLine;
+    } else {
+      var h0 = f.hours[0], t0 = f.days && f.days[0], facts = [];
+      if (has(h0.feels) && Math.abs(h0.feels - h0.temp) >= 1) facts.push('Feels like <b>' + deg(h0.feels) + '</b>');
+      facts.push(h0.rain > 0 ? '<b>' + h0.rain.toFixed(1) + ' mm</b> of rain this hour' : '<b>Dry</b> this hour');
+      if (has(h0.rh)) facts.push('Humidity <b>' + h0.rh + '%</b>');
+      if (has(h0.pres)) facts.push('Pressure <b>' + h0.pres + ' hPa</b>');
+      card.innerHTML = '<span class="chip-f">FORECAST FOR ' + hhmm(h0.t) + ' &middot; MET NORWAY<span class="wxp-long"> &middot; ISSUED ' + hhmm(f.issued) + '</span>' + (f.stale ? ' &middot; OLDER THAN USUAL' : '') + '</span>'
+        + '<div class="wxp-now-top">' + icon(h0.sym) + '<div><p class="wxp-num">' + deg(h0.temp) + '</p><p class="wxp-now-w">' + esc(words(h0.sym)) + '</p></div></div>'
+        + (t0 ? '<p class="wxp-sub wxp-hilo">' + (t0.part ? 'Rest of today' : 'Today') + ' up to <b>' + deg(t0.hi) + '</b>, down to <b>' + deg(t0.lo) + '</b></p>' : '')
+        + '<p class="wxp-sub">' + facts.join(' &middot; ') + '</p>' + obsLine;
+      setSky(h0.sym);
+    }
+    rise(card);
+    renderVitals(d);
+  }
+
+  function vital(id, chipCls, chipTxt, value, cap, go) {
+    var b = $(id); if (!b) return;
+    b.innerHTML = '<span class="' + chipCls + '" id="' + id + '-chip">' + chipTxt + '</span><span class="v">' + value + '</span><span class="c">' + cap + '</span><span class="go">' + go + ' &rarr;</span>';
+    rise(b);
+  }
+  function windWords(dir, sh) { return (dir === null ? 'Variable' : 'From the ' + compass(dir)) + (sh ? ' &middot; ' + SHORE_WORD[sh].toLowerCase() : ''); }
+  function renderVitals(d) {
+    var o = d.obs, f = d.forecast;
+    /* wind: measured at the airport; if the report is missing, the pier forecast wearing the forecast label */
+    if (o && o.ok && o.latest && has(o.latest.wspd)) {
+      var L = o.latest, oo = obsOld(o), sp = ktmph(L.wspd), calm = L.wspd < 1, dir = (calm || L.wdir === 'VRB' || !has(L.wdir)) ? null : +L.wdir, sh = shore(dir);
+      vital('wxp-v-wind', oo ? 'chip-f' : 'chip-m', oo ? 'LAST HEARD ' + ago(L.t).toUpperCase() : 'MEASURED ' + hhmm(L.t),
+        calm ? 'Calm' : (dir === null ? '' : '<span style="color:' + (SHORE_COL[sh] || 'inherit') + '">' + arrow(dir) + '</span>') + sp + ' mph',
+        (calm ? 'Barely a breath of wind' : windWords(dir, sh)) + '<br>Bournemouth Airport', 'Wind');
+    } else if (f && f.ok && f.hours && f.hours.length) {
+      var h = f.hours[0], s2 = shore(h.dir);
+      vital('wxp-v-wind', 'chip-f', 'FORECAST ' + hhmm(h.t), '<span style="color:' + (SHORE_COL[s2] || 'inherit') + '">' + arrow(h.dir) + '</span>' + mph(h.wind) + ' mph', windWords(h.dir, s2) + '<br>MET Norway, the pier', 'Wind');
+    } else {
+      vital('wxp-v-wind', 'chip-f', 'WIND &middot; NOT AVAILABLE', '&mdash;', 'No wind report<br>right now', 'Wind');
+    }
+    var sea = d.sea && d.sea.sea;
     if (sea && sea.ok) {
-      var chip = (sea.stale ? 'LAST HEARD ' + ago(sea.read_at).toUpperCase() : 'MEASURED ' + hhmm(sea.read_at)) + ' &middot; ' + esc(String(sea.station).toUpperCase());
-      var spark = '';
-      if (sea.series && sea.series.length > 3) {
-        var v = sea.series.map(function (p) { return p[1]; }), mn = Math.min.apply(null, v), mx = Math.max.apply(null, v), w = 200, hgt = 34;
-        var pts = v.map(function (x, i) { return (i / (v.length - 1) * w).toFixed(1) + ',' + (hgt - 3 - (mx === mn ? 0.5 : (x - mn) / (mx - mn)) * (hgt - 6)).toFixed(1); }).join(' ');
-        spark = '<svg width="100%" height="' + hgt + '" viewBox="0 0 ' + w + ' ' + hgt + '" preserveAspectRatio="none" aria-hidden="true"><polyline points="' + pts + '" fill="none" stroke="#4fd8c4" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>';
-      }
-      card.innerHTML = '<span class="' + (sea.stale ? 'chip-f' : 'chip-m') + '">' + chip + '</span><p class="wxp-mid">' + sea.tempC.toFixed(1) + '\u00b0C</p><p class="wxp-sub">Sea temperature &middot; waves <b>' + sea.hs.toFixed(1) + ' m</b>' + (sea.tp ? ', every <b>' + Math.round(sea.tp) + ' s</b>' : '') + '</p>' + spark + '<p class="wxp-sub" style="font-size:.82rem">Last 24 hours.</p>';
-      tiles.push('<div class="wxp-card"><span class="' + (sea.stale ? 'chip-f' : 'chip-m') + '">' + chip + '</span><p class="wxp-mid">' + sea.tempC.toFixed(1) + '\u00b0C</p><p class="wxp-sub">' + (sea.tempC >= 18 ? 'Warm for our coast &mdash; most swimmers are comfortable without a wetsuit.' : sea.tempC >= 15 ? 'Fresh &mdash; a shorty or thin wetsuit helps for longer swims.' : 'Cold &mdash; cold water shock is a real risk; a wetsuit and a short swim.') + '</p></div>');
-      tiles.push('<div class="wxp-card"><span class="' + (sea.stale ? 'chip-f' : 'chip-m') + '">' + chip + '</span><p class="wxp-mid">' + sea.hs.toFixed(1) + ' m</p><p class="wxp-sub">Wave height' + (sea.tp ? ', a wave every <b>' + Math.round(sea.tp) + ' s</b>' : '') + '.</p></div>');
+      var so = sea.stale || age(sea.read_at) > 3 * 3600000;
+      vital('wxp-v-sea', so ? 'chip-f' : 'chip-m', so ? 'LAST HEARD ' + ago(sea.read_at).toUpperCase() : 'MEASURED ' + hhmm(sea.read_at),
+        sea.tempC.toFixed(1) + '\u00b0C sea', 'Waves ' + sea.hs.toFixed(1) + ' m<br>' + esc(sea.station), 'Sea &amp; beaches');
     } else {
-      card.innerHTML = '<span class="chip-f">SEA TEMPERATURE &middot; NOT AVAILABLE</span><p class="wxp-sub">The wave buoy isn\u2019t reporting right now.</p>';
+      vital('wxp-v-sea', 'chip-f', 'SEA &middot; NOT AVAILABLE', '&mdash;', 'The buoy isn\u2019t reporting<br>right now', 'Sea &amp; beaches');
     }
-    var b = s.bathing;
-    if (b && b.ok) {
-      var parts = []; for (var k in b.classes) parts.push(b.classes[k] + ' ' + k);
-      tiles.push('<div class="wxp-card"><span class="chip-f">OFFICIAL &middot; ENVIRONMENT AGENCY</span><p class="wxp-mid">' + b.sites + ' beaches</p><p class="wxp-sub">Bathing water classification: <b>' + esc(parts.join(', ')) + '</b>. ' + (b.warnings ? '<b>' + b.warnings + '</b> with a pollution-risk warning today.' : 'No pollution-risk warnings today.') + '</p></div>');
-    }
-    var ov = s.overflow;
-    if (ov && ov.ok) {
-      tiles.push('<div class="wxp-card"><span class="chip-m">MEASURED &middot; WESSEX WATER MONITORS</span><p class="wxp-mid">' + ov.discharging + ' of ' + ov.total + '</p><p class="wxp-sub">Storm overflows on this coast discharging right now' + (ov.offline ? ' (' + ov.offline + ' monitor offline)' : '') + '.</p></div>');
-    }
-    grid.innerHTML = tiles.join('') || '<p class="wxp-sub">Sea data isn\u2019t available right now.</p>';
-  }
-
-  function renderSunAir(d) {
-    var sd = sunDay(ukYmd(Date.now())), m = moon(Date.now()), card = $('wxp-suncard'), f = d.forecast;
-    function t(ms) { return ms ? hhmm(new Date(ms).toISOString()) : '&mdash;'; }
-    var len = sd.rise && sd.set ? Math.round((sd.set - sd.rise) / 60000) : null, uv = null;
-    if (f && f.ok) {
-      var today = ukDate(new Date().toISOString());
-      f.hours.forEach(function (h) { if (h.uv !== null && ukDate(h.t) === today && (uv === null || h.uv > uv)) uv = h.uv; });
-    }
-    var uvWord = uv === null ? '' : uv < 3 ? 'low' : uv < 6 ? 'moderate' : uv < 8 ? 'high' : uv < 11 ? 'very high' : 'extreme';
-    var shadow = m.age < 0.5 ? (1 - m.age * 2) * 100 : -(m.age - 0.5) * 2 * 100;
-    card.innerHTML = '<span class="chip-f">COMPUTED &middot; SUN &amp; MOON AT THE PIER</span>'
-      + '<p class="wxp-mid">' + t(sd.rise) + ' &ndash; ' + t(sd.set) + '</p>'
-      + '<p class="wxp-sub">Sunrise to sunset' + (len ? ' &middot; <b>' + Math.floor(len / 60) + 'h ' + (len % 60) + 'm</b> of daylight' : '') + '</p>'
-      + '<p class="wxp-sub">Golden hour <b>' + t(sd.rise) + '&ndash;' + t(sd.goldAmEnd) + '</b> and <b>' + t(sd.goldPmStart) + '&ndash;' + t(sd.set) + '</b></p>'
-      + (uv !== null ? '<p class="wxp-sub">UV up to <b>' + uv.toFixed(0) + '</b> (' + uvWord + ') if the sky is clear <span class="mono" style="font-size:.75rem">FORECAST</span></p>' : '')
-      + '<div style="display:flex;gap:.8rem;align-items:center;margin-top:.5rem"><span class="wxp-moon" aria-hidden="true"><i style="transform:translateX(0%)"></i></span><p class="wxp-sub" style="margin:0"><b>' + m.name + '</b> &middot; ' + Math.round(m.illum * 100) + '% lit</p></div>';
-    var mi = card.querySelector('.wxp-moon i');
-    requestAnimationFrame(function () { requestAnimationFrame(function () { mi.style.transform = 'translateX(' + shadow.toFixed(0) + '%)'; }); });
-
-    var a = d.air, ac = $('wxp-aircard');
-    if (a && a.ok) {
-      var band = function (i) { return i <= 3 ? ['low', 'Low'] : i <= 6 ? ['mod', 'Moderate'] : i <= 9 ? ['high', 'High'] : ['high', 'Very high']; };
-      var first = band(a.days[0].index);
-      ac.innerHTML = '<span class="chip-f">FORECAST &middot; AIR QUALITY &middot; DEFRA</span><p class="wxp-mid">' + first[1] + '</p><p class="wxp-sub">Air pollution today, index <b>' + a.days[0].index + '</b> of 10.</p>'
-        + '<div class="wxp-daqi">' + a.days.map(function (x) { var bd = band(x.index); return '<span class="' + bd[0] + '">' + x.day + '<b>' + x.index + '</b></span>'; }).join('') + '</div>'
-        + '<p class="wxp-sub" style="font-size:.82rem"><a href="' + esc(a.source_url) + '" rel="noopener">What the index means</a></p>';
+    var t = d.tide, nextT = [];
+    if (t && t.ok) { var now = Date.now(); nextT = groupTides(t.events).filter(function (x) { return Date.parse(x.type === 'HH' ? x.t2 : x.t) > now; }); }
+    if (nextT.length) {
+      var a = nextT[0], b2 = nextT[1];
+      /* a double high water keeps its second time in the caption, so the value never outgrows a phone-width button */
+      var cap = a.type === 'HH' ? '&amp; ' + hhmm(a.t2) + ', double high &middot; ' + a.h.toFixed(1) + ' m'
+        : a.h.toFixed(1) + ' m' + (b2 ? ' &middot; then ' + (b2.type === 'L' ? 'low ' : 'high ') + hhmm(b2.t) : '');
+      vital('wxp-v-tide', 'chip-f', 'PREDICTED<span class="wxp-long"> &middot; PIER</span>', (a.type === 'L' ? 'Low ' : 'High ') + hhmm(a.t), cap + '<br>Not for navigation', 'All tides');
     } else {
-      ac.innerHTML = '<span class="chip-f">AIR QUALITY &middot; NOT AVAILABLE</span><p class="wxp-sub">Defra\u2019s forecast for Bournemouth isn\u2019t available right now.</p>';
+      vital('wxp-v-tide', 'chip-f', 'TIDE &middot; NOT AVAILABLE', '&mdash;', 'Tide times aren\u2019t<br>available right now', 'Tides');
     }
+    var ymd = ukYmd(Date.now()), sd = sunDay(ymd), nowMs = Date.now(), val, cap2;
+    if (sd.set && nowMs < sd.set) {
+      var before = sd.rise && nowMs < sd.rise;
+      val = before ? 'Sunrise ' + tm(sd.rise) : 'Sunset ' + tm(sd.set);
+      cap2 = before ? 'Golden hour to ' + tm(sd.goldAmEnd) : 'Golden hour from ' + tm(sd.goldPmStart);
+    } else {
+      var sd2 = sunDay(ukYmd(nowMs + 864e5));
+      val = 'Sunrise ' + tm(sd2.rise); cap2 = 'Tomorrow &middot; golden hour to ' + tm(sd2.goldAmEnd);
+    }
+    vital('wxp-v-sun', 'chip-f', 'COMPUTED<span class="wxp-long"> &middot; PIER</span>', val, cap2 + '<br>' + esc(moon(nowMs).name), 'Sun &amp; moon');
+    swingArrows($('wxp-vitals'));
   }
 
   /* H, D, H -> one double high water */
@@ -1371,105 +1568,334 @@ button.wxp-day[aria-expanded="true"]{border-color:#ffd76a;background:rgba(255,21
     }
     return evs;
   }
+  function evChip(x) {
+    if (x.type === 'HH') return '<span class="wxp-ev hi"><span class="wxp-long">High</span><span class="wxp-short">Double high</span> <span class="nw"><b>' + hhmm(x.t) + '</b> ' + x.h.toFixed(1) + 'm</span> &amp; <span class="nw"><b>' + hhmm(x.t2) + '</b> ' + x.h2.toFixed(1) + 'm</span> <small class="wxp-long">double high water</small></span>';
+    return '<span class="wxp-ev ' + (x.type === 'H' ? 'hi' : 'lo') + '">' + (x.type === 'H' ? 'High' : 'Low') + ' <span class="nw"><b>' + hhmm(x.t) + '</b> ' + x.h.toFixed(1) + 'm</span></span>';
+  }
 
+  /* ---------------- DAY: the strip and one day panel ---------------- */
+  var dayIdx = -1;
+  function renderStrip(d, keepYmd) {
+    var f = d.forecast, list = $('wxp-strip-list'), panel = $('wxp-daypanel');
+    if (!f || !f.ok || !f.days || !f.days.length) {
+      list.innerHTML = '<p class="wxp-sub">The 10-day forecast isn\u2019t available right now.</p>'; panel.innerHTML = ''; panel.style.minHeight = '0';
+      $('wxp-ink').classList.remove('on'); setChip('wxp-days-chip', 'chip-f', 'FORECAST \u00b7 NOT AVAILABLE'); dayIdx = -1; return;
+    }
+    panel.style.minHeight = '';
+    setChip('wxp-days-chip', 'chip-f', 'FORECAST \u00b7 MET NORWAY \u00b7 ISSUED ' + hhmm(f.issued));
+    var gmin = Infinity, gmax = -Infinity;
+    f.days.forEach(function (x) { gmin = Math.min(gmin, x.lo); gmax = Math.max(gmax, x.hi); });
+    var span = Math.max(1, gmax - gmin);
+    list.innerHTML = f.days.map(function (x, k) {
+      var label = k === 0 ? 'Today' : k === 1 ? 'Tomorrow' : shortDay(x.d) + ' ' + (+x.d.split('-')[2]), sh = shore(x.dir);
+      var name = label + ' \u2013 ' + (k === 0 ? (x.part ? 'rest of today' : 'today') : longDay(x.d)) + ': ' + words(x.sym) + ', up to ' + Math.round(x.hi) + ' down to ' + Math.round(x.lo) + ' degrees, '
+        + (x.rain >= 0.1 ? x.rain.toFixed(1) + ' millimetres of rain' : 'dry') + ', wind up to ' + mph(x.wind) + ' miles an hour' + (sh ? ', ' + SHORE_WORD[sh].toLowerCase() : '') + ', forecast';
+      return '<button type="button" role="tab" class="wxp-dchip" id="wxp-day-' + k + '" data-i="' + k + '" aria-selected="false" tabindex="-1" aria-controls="wxp-daypanel" aria-label="' + esc(name) + '">'
+        + '<span class="dl">' + esc(label) + '</span>' + icon(x.sym, 'wx-still')
+        + '<span class="hl"><b>' + deg(x.hi) + '</b> <span>' + deg(x.lo) + '</span></span>'
+        + '<span class="rg" aria-hidden="true"><i style="left:' + ((x.lo - gmin) / span * 100).toFixed(1) + '%;width:' + Math.max(6, (x.hi - x.lo) / span * 100).toFixed(1) + '%;animation-delay:' + (0.1 + 0.05 * k).toFixed(2) + 's"></i></span>'
+        + '<span class="mt">' + (x.rain >= 0.1 ? x.rain.toFixed(1) + ' mm' : 'Dry') + '</span>'
+        + '<span class="mt" style="color:' + (SHORE_COL[sh] || 'inherit') + '">' + arrow(x.dir) + '<span style="color:var(--b365-mute)">' + mph(x.wind) + ' mph</span></span></button>';
+    }).join('');
+    swingArrows(list);
+    var chips = list.querySelectorAll('.wxp-dchip');
+    [].forEach.call(chips, function (b) {
+      b.addEventListener('click', function () { selectDay(+b.getAttribute('data-i'), { scrollStrip: true }); });
+      b.addEventListener('keydown', function (e) {
+        var i = +b.getAttribute('data-i'), n = chips.length, j = null;
+        if (e.key === 'ArrowRight') j = (i + 1) % n; else if (e.key === 'ArrowLeft') j = (i - 1 + n) % n; else if (e.key === 'Home') j = 0; else if (e.key === 'End') j = n - 1;
+        if (j === null) return;
+        e.preventDefault(); selectDay(j, { scrollStrip: true }); chips[j].focus();
+      });
+    });
+    var start = 0, want = pendingDay || keepYmd;
+    if (want) f.days.forEach(function (x, k) { if (x.d === want) start = k; });
+    pendingDay = null;
+    dayIdx = -1;
+    selectDay(start, { scrollStrip: true, instant: true });
+  }
+  function moveInk() {
+    var ink = $('wxp-ink'), chip = $('wxp-day-' + dayIdx), strip = $('wxp-strip');
+    if (!ink || !chip) return;
+    var sr = strip.getBoundingClientRect(), cr = chip.getBoundingClientRect();
+    ink.style.width = cr.width + 'px'; ink.style.height = cr.height + 'px';
+    ink.style.transform = 'translateX(' + (cr.left - sr.left + strip.scrollLeft).toFixed(1) + 'px)';
+    ink.classList.add('on');
+  }
+  function selectDay(i, opts) {
+    var f = last && last.forecast; if (!f || !f.days[i]) return;
+    opts = opts || {};
+    var dir = dayIdx < 0 ? 0 : i > dayIdx ? 1 : i < dayIdx ? -1 : 0;
+    if (i === dayIdx && !opts.force) return;
+    dayIdx = i;
+    var list = $('wxp-strip-list'), chips = list.querySelectorAll('.wxp-dchip');
+    [].forEach.call(chips, function (c, k) { c.setAttribute('aria-selected', k === i ? 'true' : 'false'); c.tabIndex = k === i ? 0 : -1; });
+    $('wxp-daypanel').setAttribute('aria-labelledby', 'wxp-day-' + i);
+    moveInk();
+    if (opts.scrollStrip) {
+      var strip = $('wxp-strip'), chip = chips[i];
+      if (strip.scrollWidth > strip.clientWidth + 2) {
+        var left = chip.offsetLeft - (strip.clientWidth - chip.offsetWidth) / 2;
+        try { strip.scrollTo({ left: Math.max(0, left), behavior: opts.instant || reduced() ? 'instant' : 'smooth' }); } catch (e) { strip.scrollLeft = left; }
+      }
+    }
+    renderDay(i, dir);
+  }
+
+  function dayTides(ymd) {
+    var d = last;
+    if (!d.tide || !d.tide.ok) return '';
+    var te = groupTides(d.tide.events).filter(function (x) { return ukYmd(Date.parse(x.t)) === ymd; });
+    var rg = (d.tide.days || []).filter(function (x) { return x.d === ymd; })[0];
+    return '<div class="wxp-card"><span class="chip-f">PREDICTED &middot; PIER TIDE</span>'
+      + (te.length ? '<div class="wxp-evs" style="margin-top:.5rem">' + te.map(evChip).join('') + '</div>' : '<p class="wxp-sub">Tide times for this day aren\u2019t available.</p>')
+      + (rg ? '<p class="wxp-sub">Rise and fall <b>' + rg.range.toFixed(1) + ' m</b>' + (rg.range < 0.55 ? ' &mdash; a neap day, the sea barely moves' : '') + '.</p>' : '')
+      + '<p class="wxp-sub" style="font-size:.8rem">Heights above chart datum. Not for navigation.</p></div>';
+  }
+  function daySun(ymd) {
+    var sd = sunDay(ymd), mo = moon(londonMidnight(ymd) + 12 * 3600000), len = sd.rise && sd.set ? Math.round((sd.set - sd.rise) / 60000) : null;
+    var shadow = mo.age < 0.5 ? (1 - mo.age * 2) * 100 : -(mo.age - 0.5) * 2 * 100;
+    return '<div class="wxp-card wxp-sunc" id="wxp-dsun"><span class="chip-f">COMPUTED &middot; SUN &amp; MOON AT THE PIER</span>'
+      + '<div style="display:flex;gap:.8rem;align-items:center;margin-top:.35rem"><div style="flex:1;min-width:0"><p class="wxp-mid" style="font-size:1.45rem;margin:0">' + tm(sd.rise) + ' &ndash; ' + tm(sd.set) + '</p>'
+      + '<p class="wxp-sub" style="margin:0">Sunrise to sunset' + (len ? ' &middot; <b>' + Math.floor(len / 60) + 'h ' + (len % 60) + 'm</b>' : '') + '</p></div>'
+      + '<span class="wxp-moon" aria-hidden="true"><i data-moon="' + shadow.toFixed(0) + '" style="transform:translateX(' + (reduced() ? shadow.toFixed(0) : 0) + '%)"></i></span></div>'
+      + '<p class="wxp-sub">Golden hour <b>' + tm(sd.rise) + '&ndash;' + tm(sd.goldAmEnd) + '</b> and <b>' + tm(sd.goldPmStart) + '&ndash;' + tm(sd.set) + '</b> &middot; ' + mo.name + ', ' + Math.round(mo.illum * 100) + '% lit</p></div>';
+  }
+
+  /* one timeline for a day: hourly columns while the forecast has them, wider six-hour columns after */
+  function timeline(steps, W0, today) {
+    var phone = W0 < 560, nH = 0, n6 = 0;
+    steps.forEach(function (s) { if (s.six) n6++; else nH++; });
+    var cH = phone ? 40 : Math.min(90, Math.max(30, (W0 - 10) / (nH + 2.2 * n6)));
+    var c6 = phone ? (nH ? 84 : Math.max(70, (W0 - 10) / Math.max(1, n6))) : Math.max(84, cH * 2.2);
+    var cols = [], x = 5;
+    steps.forEach(function (s) { var w = s.six ? c6 : cH; cols.push({ x: x + w / 2, w: w, l: x }); x += w; });
+    var W = Math.round(x + 5), H = 240, anim = !reduced();
+    var tv = [], lo = Infinity, hi = -Infinity;
+    steps.forEach(function (s) {
+      var v = s.six && has(s.tmax) ? s.tmax : s.temp; tv.push(v);
+      lo = Math.min(lo, v, s.six && has(s.tmin) ? s.tmin : v); hi = Math.max(hi, v);
+    });
+    lo = Math.floor(lo) - 1; hi = Math.ceil(hi) + 1;
+    function Y(t) { return 66 + (hi - t) / (hi - lo) * 46; }
+    var line = 'M' + cols[0].x.toFixed(1) + ' ' + Y(tv[0]).toFixed(1);
+    for (var i = 1; i < steps.length; i++) {
+      var mx = ((cols[i - 1].x + cols[i].x) / 2).toFixed(1);
+      line += ' C' + mx + ' ' + Y(tv[i - 1]).toFixed(1) + ' ' + mx + ' ' + Y(tv[i]).toFixed(1) + ' ' + cols[i].x.toFixed(1) + ' ' + Y(tv[i]).toFixed(1);
+    }
+    var last1 = cols[cols.length - 1];
+    var g = '<path class="' + (anim ? 'wxp-fadein' : '') + '" d="' + line + ' L' + last1.x.toFixed(1) + ' 124 L' + cols[0].x.toFixed(1) + ' 124 Z" fill="rgba(255,179,71,.13)"/>'
+      + '<path class="' + (anim ? 'wxp-draw' : '') + '" d="' + line + '" pathLength="1" fill="none" stroke="#ffb347" stroke-width="2.6"/>';
+    var dense = cH < 36, seenSix = false, rsum = 0;
+    steps.forEach(function (s, k) {
+      var c = cols[k], show = s.six || !dense || k % 2 === 0, dl = (0.05 + 0.5 * k / steps.length).toFixed(2);
+      rsum += s.rain || 0;
+      if (s.six && !seenSix) { seenSix = true; if (k > 0) g += '<line x1="' + c.l.toFixed(1) + '" x2="' + c.l.toFixed(1) + '" y1="2" y2="236" stroke="#1d3346" stroke-dasharray="3 4"/><text class="t-small" x="' + (c.l + 5).toFixed(1) + '" y="52">6-HOUR STEPS</text>'; }
+      if (!s.six && k > 0 && hhmm(s.t) === '00:00') g += '<line x1="' + c.l.toFixed(1) + '" x2="' + c.l.toFixed(1) + '" y1="2" y2="236" stroke="#1d3346" stroke-dasharray="3 4"/><text class="t-small" x="' + (c.l + 5).toFixed(1) + '" y="52">' + esc(lon(s.t, { weekday: 'short' }).toUpperCase()) + '</text>';
+      if (show) {
+        var isz = s.six ? 34 : 28;
+        g += icon(s.sym, 'wx-still', 'x="' + (c.x - isz / 2).toFixed(1) + '" y="' + (s.six ? 2 : 6) + '" width="' + isz + '" height="' + isz + '"')
+          + '<text class="t-strong" x="' + c.x.toFixed(1) + '" y="' + (Y(tv[k]) - 8).toFixed(1) + '" text-anchor="middle">' + deg(tv[k]) + (s.six && has(s.tmin) ? '<tspan class="t-dim">/' + deg(s.tmin) + '</tspan>' : '') + '</text>';
+      }
+      if (s.rain >= 0.05) {
+        var per = s.six ? s.rain / 6 : s.rain, bh = Math.max(2, Math.min(per, 4) / 4 * 22);
+        g += '<rect class="' + (anim ? 'wxp-bar' : '') + '" x="' + (c.x - c.w * 0.28).toFixed(1) + '" y="' + (150 - bh).toFixed(1) + '" width="' + (c.w * 0.56).toFixed(1) + '" height="' + bh.toFixed(1) + '" rx="2" fill="#6cc4f5" style="animation-delay:' + dl + 's"><title>' + s.rain.toFixed(1) + ' mm</title></rect>';
+        if (show && s.rain >= 0.1) g += '<text class="t-rain" x="' + c.x.toFixed(1) + '" y="' + (147 - bh).toFixed(1) + '" text-anchor="middle">' + (s.rain < 10 ? s.rain.toFixed(1) : Math.round(s.rain)) + '</text>';
+      }
+      if (show) {
+        var sh = shore(s.dir), to = ((s.dir || 0) + 180) % 360;
+        g += '<g transform="translate(' + c.x.toFixed(1) + ' 167)"><path d="M0 -6 L4 5 L0 2.5 L-4 5 Z" fill="' + (SHORE_COL[sh] || '#e8f1f2') + '" transform="rotate(' + to + ')"/></g>'
+          + '<text x="' + c.x.toFixed(1) + '" y="186" text-anchor="middle">' + mph(s.wind) + '</text>';
+      }
+      if (has(s.cloud)) g += '<rect x="' + c.l.toFixed(1) + '" y="194" width="' + c.w.toFixed(1) + '" height="7" fill="#e4eef5" opacity="' + (s.cloud / 100 * 0.5).toFixed(2) + '"><title>Cloud ' + s.cloud + '%</title></rect>';
+      if (has(s.uv)) g += '<rect x="' + (c.l + 1).toFixed(1) + '" y="204" width="' + Math.max(1, c.w - 2).toFixed(1) + '" height="6" rx="2" fill="' + uvCol(s.uv) + '" opacity="' + (s.uv < 0.5 ? 0.12 : 0.85) + '"><title>UV ' + s.uv.toFixed(1) + ' if clear</title></rect>';
+      if (show) g += '<text x="' + c.x.toFixed(1) + '" y="228" text-anchor="middle"' + (k === 0 && today ? ' fill="#ffd76a"' : '') + '>' + (s.six ? hhmm(s.t).slice(0, 2) + '\u2013' + hhmm(new Date(Date.parse(s.t) + 6 * 3600000).toISOString()).slice(0, 2) : (k === 0 && today ? 'Now' : hhmm(s.t))) + '</text>';
+    });
+    g += '<line x1="0" x2="' + W + '" y1="150.5" y2="150.5" stroke="#1d3346"/>';
+    return { svg: svgEl(W, H, 'Hour by hour: ' + deg(lo + 1) + ' to ' + deg(hi - 1) + ', ' + (rsum >= 0.1 ? rsum.toFixed(1) + ' mm of rain forecast' : 'no rain forecast') + ', wind in mph under each time', g), W: W };
+  }
+
+  function renderDay(i, dir) {
+    var d = last, f = d.forecast, box = $('wxp-daypanel'), day = f.days[i], ymd = day.d, today = i === 0;
+    var ae = document.activeElement, focusStep = ae && box.contains(ae) ? ae.getAttribute('data-step') : null;
+    var steps;
+    if (today) {
+      steps = f.hours.slice(0, 24);
+    } else {
+      steps = f.hours.filter(function (h) { return ukYmd(Date.parse(h.t)) === ymd; });
+      var lastH = steps.length ? Date.parse(steps[steps.length - 1].t) : -Infinity;
+      (f.six || []).forEach(function (b) { if (ukYmd(Date.parse(b.t)) === ymd && Date.parse(b.t) > lastH) steps.push({ t: b.t, six: true, sym: b.sym, temp: b.temp, tmax: b.tmax, tmin: b.tmin, rain: b.rain, wind: b.wind, dir: b.dir, uv: b.uv, cloud: null }); });
+    }
+    var uv = null;
+    (today ? f.hours.filter(function (h) { return ukYmd(Date.parse(h.t)) === ymd; }) : steps).forEach(function (h) { if (has(h.uv) && (uv === null || h.uv > uv)) uv = h.uv; });
+    /* the chart card's inner width: full width on phones, the 2fr column beside tides and sun from 980 px */
+    var bw = box.clientWidth || 340, sh = shore(day.dir), W0 = Math.max(260, Math.floor((window.innerWidth >= 980 ? (bw - 12) * 2 / 3 : bw) - 38));
+    var tl = steps.length ? timeline(steps, W0, today) : null;
+    var hourly = steps.filter(function (s) { return !s.six; }).length;
+    var kindTxt = !steps.length ? '' : hourly && hourly < steps.length ? 'HOURLY, THEN SIX-HOUR STEPS' : hourly ? 'HOUR BY HOUR' : 'SIX-HOUR STEPS';
+    var label = today ? 'Today' : i === 1 ? 'Tomorrow' : shortDay(ymd);
+    var prevTxt = i > 0 ? (i === 1 ? 'Today' : shortDay(f.days[i - 1].d)) : '', nextTxt = i < f.days.length - 1 ? shortDay(f.days[i + 1].d) : '';
+    box.innerHTML = '<div class="wxp-dsum">' + icon(day.sym) + '<div><p class="wxp-lbl">' + esc(label) + (today ? ' &middot; next 24 hours' : '') + '</p><h3>' + esc(longDay(ymd)) + ' &middot; ' + esc(words(day.sym)) + '</h3>'
+      + '<p class="wxp-sub" style="margin-top:.15rem">' + (day.part ? 'Rest of today up to ' : 'Up to ') + '<b>' + deg(day.hi) + '</b>, down to <b>' + deg(day.lo) + '</b> &middot; ' + (day.rain >= 0.1 ? '<b>' + day.rain.toFixed(1) + ' mm</b> of rain' : '<b>Dry</b>')
+      + ' &middot; wind up to <b>' + mph(day.wind) + ' mph</b> ' + compass(day.dir) + (sh ? ' <span class="wxp-shore ' + sh + '">' + SHORE_WORD[sh] + '</span>' : '') + (uv !== null && uv >= 1 ? ' &middot; UV up to <b>' + Math.round(uv) + '</b> if clear' : '') + '</p></div>'
+      + '<div class="wxp-dnav"><button type="button" data-step="-1"' + (i === 0 ? ' disabled' : '') + '>&larr; ' + esc(prevTxt) + '<span class="wxp-vh">, previous day</span></button>'
+      + '<button type="button" data-step="1"' + (nextTxt ? '' : ' disabled') + '>' + esc(nextTxt) + ' &rarr;<span class="wxp-vh">, next day</span></button></div></div>'
+      + '<div class="wxp-dgrid"><div class="wxp-card"><span class="chip-f">FORECAST &middot; MET NORWAY' + (kindTxt ? ' &middot; ' + kindTxt : '') + '</span>'
+      + (tl ? '<div class="wxp-chart wxp-scroll" data-sc="Hour-by-hour chart">' + tl.svg + '</div>'
+        + '<ul class="wxp-legend"><li><i style="background:#ffb347"></i>Temperature</li><li><i style="background:#6cc4f5;height:8px"></i>Rain, mm</li><li><i style="background:#e4eef5;opacity:.5;height:8px"></i>Cloud</li><li><i style="background:linear-gradient(90deg,#7fd8a8,#ffd84d,#ff9f5a,#ff5a5a);height:8px"></i>UV if clear</li><li><span style="color:#ff9f5a">&#9650;</span> offshore <span style="color:#7fd8a8">&#9650;</span> onshore <span style="color:#79b8ff">&#9650;</span> along the shore wind, mph</li></ul>'
+        + '<p class="wxp-hint" data-hint hidden>Swipe the chart for later hours &rarr;</p>'
+        : '<p class="wxp-sub">No hour-by-hour detail for this day.</p>')
+      + '</div><div class="wxp-dside">' + dayTides(ymd) + daySun(ymd) + '</div></div>';
+    [].forEach.call(box.querySelectorAll('[data-step]'), function (b) { b.addEventListener('click', function () { selectDay(dayIdx + (+b.getAttribute('data-step')), { scrollStrip: true }); }); });
+    scrollRegions(box);
+    var sc = box.querySelector('.wxp-scroll'), hint = box.querySelector('[data-hint]');
+    if (sc && hint && sc.scrollWidth > sc.clientWidth + 4) hint.hidden = false;
+    var mi = box.querySelector('[data-moon]');
+    if (mi && !reduced()) requestAnimationFrame(function () { requestAnimationFrame(function () { mi.style.transform = 'translateX(' + mi.getAttribute('data-moon') + '%)'; }); });
+    if (dir && !reduced()) { box.classList.remove('wxp-in-l', 'wxp-in-r'); void box.offsetWidth; box.classList.add(dir > 0 ? 'wxp-in-r' : 'wxp-in-l'); }
+    else if (!dir) rise(box);
+    /* Previous/Next were rebuilt with the panel: give keyboard focus back to the same button (or the other one at the ends) */
+    if (focusStep) { var nb = box.querySelector('[data-step="' + focusStep + '"]'); if (!nb || nb.disabled) nb = box.querySelector('[data-step]:not([disabled])'); if (nb) nb.focus({ preventScroll: true }); }
+  }
+
+  /* ---------------- TIDES ---------------- */
   function renderTides(d) {
     var t = d.tide, box = $('wxp-tide-chart');
     if (!t || !t.ok) {
       setChip('wxp-tide-chip', 'chip-f', 'PREDICTED \u00b7 NOT AVAILABLE');
-      setChip('wxp-tidenow-chip', 'chip-f', 'TIDE \u00b7 NOT AVAILABLE');
       $('wxp-tide-now').textContent = 'Tide times aren\u2019t available right now.';
-      $('wxp-tidecard').innerHTML = '<span class="chip-f">TIDE &middot; NOT AVAILABLE</span><p class="wxp-sub">Tide times aren\u2019t available right now.</p>';
+      $('wxp-tide-next').innerHTML = ''; box.innerHTML = ''; $('wxp-tide-table').innerHTML = ''; $('wxp-tide-more').hidden = true;
       return;
     }
     setChip('wxp-tide-chip', 'chip-f', 'PREDICTED \u00b7 CHECKED AGAINST THE PIER GAUGE');
-    var now = Date.now();
-    /* group H,D,H into one double high water */
-    var evs = groupTides(t.events);
-    var next = evs.filter(function (x) { return Date.parse(x.type === 'HH' ? x.t2 : x.t) > now; });
-    var nh = next.filter(function (x) { return x.type !== 'L'; })[0], nl = next.filter(function (x) { return x.type === 'L'; })[0];
+    var now = Date.now(), evs = groupTides(t.events);
+    var next = evs.filter(function (x) { return Date.parse(x.type === 'HH' ? x.t2 : x.t) > now; }).slice(0, 2);
     function evTxt(x) { return x.type === 'HH' ? hhmm(x.t) + ' &amp; ' + hhmm(x.t2) : hhmm(x.t); }
-    /* rise and fall per UK day; under ~0.55 m the tide is nearly flat (a deep neap) and the event times mean little */
     var rangeByDay = {};
     (t.days || []).forEach(function (dd) { rangeByDay[dd.d] = dd; });
-    function ymdUK(iso) { var p = ukDate(iso).split('/'); return p[2] + '-' + p[1] + '-' + p[0]; }
-    function isFlat(iso) { var r = rangeByDay[ymdUK(iso)]; return r && r.range < 0.55; }
-    var rising = null;
-    if (t.now.trend) rising = t.now.trend === 'rising';
-    var res = t.now.residual_cm, resTxt = '';
-    if (typeof res === 'number') resTxt = Math.abs(res) < 6 ? 'The sea is running <b>right on the prediction</b>.' : 'The sea is running <b>' + Math.abs(res) + ' cm ' + (res > 0 ? 'higher' : 'lower') + '</b> than predicted &mdash; weather at work.';
-    $('wxp-tide-now').innerHTML = (typeof t.now.measured === 'number' ? '<span class="chip-m">MEASURED ' + hhmm(t.now.measured_at) + ' &middot; PIER GAUGE</span> Now <b>' + t.now.measured.toFixed(2) + ' m</b>' + (rising === null ? '' : ' and <b>' + (rising ? 'rising' : 'falling') + '</b>') + '. ' + resTxt + ' ' : '')
-      + [nh, nl].filter(Boolean).sort(function (a2, b2) { return Date.parse(a2.t) - Date.parse(b2.t); }).map(function (x, k) {
-          return (k ? 'Then ' : 'Next: ') + (x.type === 'L' ? 'low water' : 'high water') + ' <b>' + evTxt(x) + '</b>' + (x.type === 'HH' ? ' (double high water)' : '') + '.';
-        }).join(' ');
-    /* the next two tides in time order - "next high" before a sooner "next low" read wrongly */
-    var firstTwo = [nh, nl].filter(Boolean).sort(function (a2, b2) { return Date.parse(a2.t) - Date.parse(b2.t); });
-    $('wxp-tidecard').innerHTML = '<span class="chip-f">PREDICTED &middot; PIER TIDE</span>'
-      + firstTwo.map(function (x) {
-          var isHi = x.type !== 'L';
-          return '<p class="wxp-lbl" style="margin-top:.5rem">Next ' + (isHi ? 'high' : 'low') + ' water</p><p class="wxp-mid" style="' + (x.type === 'HH' ? 'font-size:clamp(1.3rem,3.4vw,1.8rem)' : '') + '">' + evTxt(x) + '</p>'
-            + '<p class="wxp-sub">' + dayLabel(x.t) + ' &middot; ' + x.h.toFixed(1) + ' m' + (x.type === 'HH' ? ' &middot; <b>double high water</b>' : '') + (isFlat(x.t) ? ' &middot; <b>neap: the sea barely moves</b>' : '') + '</p>';
-        }).join('')
-      + (typeof t.now.measured === 'number' ? '<p class="wxp-sub"><span class="chip-m">MEASURED ' + hhmm(t.now.measured_at) + '</span> ' + t.now.measured.toFixed(2) + ' m' + (rising === null ? '' : ', ' + (rising ? 'rising' : 'falling')) + '</p>' : '');
+    var rising = t.now.trend ? t.now.trend === 'rising' : null, res = t.now.residual_cm, resTxt = '';
+    if (typeof res === 'number') resTxt = Math.abs(res) < 6 ? 'That is <b>right on the prediction</b>.' : 'That is <b>' + Math.abs(res) + ' cm ' + (res > 0 ? 'higher' : 'lower') + '</b> than predicted &mdash; weather at work.';
+    /* the gauge reading and the predicted tide times each wear their own label */
+    var mAt = t.now.measured_at, mOld = mAt ? age(mAt) > 20 * 60000 : true, mGone = mAt ? age(mAt) > 2 * 3600000 : true;
+    $('wxp-tide-now').innerHTML = typeof t.now.measured === 'number'
+      ? '<span class="' + (mGone ? 'chip-f">LAST READING ' : 'chip-m">MEASURED ') + hhmm(mAt) + ' &middot; PIER GAUGE</span> The sea ' + (mOld ? 'was' : 'is') + ' at <b>' + t.now.measured.toFixed(2) + ' m</b>' + (t.now.trend === 'steady' ? ', steady' : rising === null ? '' : ' and <b>' + (rising ? 'rising' : 'falling') + '</b>') + '. ' + resTxt
+      : '<span class="chip-f">PIER GAUGE &middot; NOT REPORTING</span> The gauge isn\u2019t reporting just now, so the chart shows the prediction only.';
+    $('wxp-tide-next').innerHTML = next.length ? '<span class="chip-f">PREDICTED &middot; PIER</span> ' + next.map(function (x, k) { return (k ? 'Then ' : 'Next: ') + (x.type === 'L' ? 'low water' : 'high water') + ' <b>' + evTxt(x) + '</b>' + (x.type === 'HH' ? ' (double high water)' : '') + '.'; }).join(' ') : '';
 
-    /* chart */
-    var W = Math.max(340, box.clientWidth || 340), H = 250, pl = 38, pr = 12, pt = 30, pb = 40;
+    /* chart: phones get 10 px an hour and open at "now" */
+    var phone = (box.clientWidth || 340) < 560, W = phone ? Math.max(980, box.clientWidth) : Math.max(340, box.clientWidth), H = 236, pl = 38, pr = 12, pt = 30, pb = 38;
     var curve = t.curve.map(function (p) { return [Date.parse(p[0]), p[1]]; });
     var t0 = curve[0][0], t1 = curve[curve.length - 1][0], lo = Infinity, hi = -Infinity;
     curve.forEach(function (p) { lo = Math.min(lo, p[1]); hi = Math.max(hi, p[1]); });
     lo = Math.floor(lo - 0.2); hi = Math.ceil(hi + 0.3);
     function X(ms) { return pl + (ms - t0) / (t1 - t0) * (W - pl - pr); }
     function Y(h) { return pt + (hi - h) / (hi - lo) * (H - pt - pb); }
+    var anim = !reduced();
     var g = '<defs><linearGradient id="wxp-tide-g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#79b8ff" stop-opacity=".35"/><stop offset="1" stop-color="#79b8ff" stop-opacity="0"/></linearGradient></defs>';
     for (var y = lo; y <= hi; y++) g += '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + Y(y).toFixed(1) + '" y2="' + Y(y).toFixed(1) + '" stroke="#1d3346"/><text x="' + (pl - 6) + '" y="' + (Y(y) + 4).toFixed(1) + '" text-anchor="end">' + y + 'm</text>';
-    /* midnight separators, UK days */
     for (var ms = t0; ms <= t1; ms += 1800000) {
       if (hhmm(new Date(ms).toISOString()) === '00:00') g += '<line x1="' + X(ms).toFixed(1) + '" x2="' + X(ms).toFixed(1) + '" y1="' + pt + '" y2="' + (H - pb) + '" stroke="#1d3346" stroke-dasharray="3 4"/><text x="' + (X(ms) + 5).toFixed(1) + '" y="' + (H - 8) + '">' + esc(lon(new Date(ms).toISOString(), { weekday: 'short', day: 'numeric' })) + '</text>';
     }
     var line = curve.map(function (p, k) { return (k ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1); }).join(' ');
-    g += '<path class="wxp-fadein" d="' + line + ' L' + X(t1).toFixed(1) + ' ' + (H - pb) + ' L' + X(t0).toFixed(1) + ' ' + (H - pb) + ' Z" fill="url(#wxp-tide-g)"/>';
-    g += '<path class="wxp-draw" d="' + line + '" pathLength="1" stroke="#79b8ff" stroke-width="2.4"/>';
+    g += '<path class="' + (anim ? 'wxp-fadein' : '') + '" d="' + line + ' L' + X(t1).toFixed(1) + ' ' + (H - pb) + ' L' + X(t0).toFixed(1) + ' ' + (H - pb) + ' Z" fill="url(#wxp-tide-g)"/>';
+    g += '<path class="' + (anim ? 'wxp-draw' : '') + '" d="' + line + '" pathLength="1" fill="none" stroke="#79b8ff" stroke-width="2.4"/>';
     if (t.measured && t.measured.length) {
       var ml = t.measured.map(function (p) { return [Date.parse(p[0]), p[1]]; }).filter(function (p) { return p[0] >= t0 && p[0] <= t1; });
-      if (ml.length > 1) g += '<path class="wxp-fadein" d="' + ml.map(function (p, k) { return (k ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1); }).join(' ') + '" fill="none" stroke="#4fd8c4" stroke-width="2.4"/>';
+      if (ml.length > 1) g += '<path class="' + (anim ? 'wxp-fadein' : '') + '" d="' + ml.map(function (p, k) { return (k ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1); }).join(' ') + '" fill="none" stroke="#4fd8c4" stroke-width="2.4"/>';
     }
+    var lastHx = -1e9;
     t.events.forEach(function (x, k) {
       var ms2 = Date.parse(x.t); if (ms2 < t0 || ms2 > t1) return;
-      var cx = X(ms2), cy = Y(x.h), up = x.type !== 'L';
-      if (x.type === 'D') { g += '<circle class="wxp-pop" cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" r="2.5" fill="#79b8ff" style="animation-delay:' + (0.6 + k * 0.04).toFixed(2) + 's"/>'; return; }
-      g += '<circle class="wxp-pop" cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" r="4" fill="' + (up ? '#79b8ff' : '#9fb4c5') + '" stroke="#10202f" stroke-width="2" style="animation-delay:' + (0.6 + k * 0.04).toFixed(2) + 's"/>'
-        + '<text class="t-strong" x="' + cx.toFixed(1) + '" y="' + (up ? cy - 10 : cy + 18).toFixed(1) + '" text-anchor="middle">' + hhmm(x.t) + '</text>';
+      var cx = X(ms2), cy = Y(x.h), up = x.type !== 'L', cls = anim ? 'wxp-pop' : '', dly = anim ? ' style="animation-delay:' + (0.5 + k * 0.03).toFixed(2) + 's"' : '';
+      if (x.type === 'D') { g += '<circle class="' + cls + '" cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" r="2.5" fill="#79b8ff"' + dly + '/>'; return; }
+      g += '<circle class="' + cls + '" cx="' + cx.toFixed(1) + '" cy="' + cy.toFixed(1) + '" r="4" fill="' + (up ? '#79b8ff' : '#9fb4c5') + '" stroke="#10202f" stroke-width="2"' + dly + '/>'
+        + '<text class="t-strong" x="' + cx.toFixed(1) + '" y="' + (up ? cy - 10 - (x.type === 'H' && cx - lastHx < 44 ? 13 : 0) : cy + 18).toFixed(1) + '" text-anchor="middle">' + hhmm(x.t) + '</text>';
+      if (x.type === 'H') lastHx = cx;
     });
-    var nx = X(now);
+    var nx = X(now), ny = typeof t.now.pred === 'number' ? Y(t.now.pred) : null;
     g += '<line x1="' + nx.toFixed(1) + '" x2="' + nx.toFixed(1) + '" y1="' + (pt - 12) + '" y2="' + (H - pb) + '" stroke="#ffd76a" stroke-width="1.5"/><text x="' + nx.toFixed(1) + '" y="' + (pt - 16) + '" text-anchor="middle" fill="#ffd76a">Now</text>';
+    if (ny !== null) g += '<circle class="' + (anim ? 'wxp-ping' : '') + '" cx="' + nx.toFixed(1) + '" cy="' + ny.toFixed(1) + '" r="5" fill="none" stroke="#ffd76a" stroke-width="2"/><circle cx="' + nx.toFixed(1) + '" cy="' + ny.toFixed(1) + '" r="4" fill="#ffd76a"/>';
     box.innerHTML = svgEl(W, H, 'Tide at Bournemouth Pier: predicted curve for the past 12 hours and next 60, with the measured level', g);
+    if (phone) box.scrollLeft = Math.max(0, nx - box.clientWidth / 3);
+    scrollRegions(box.parentNode);
 
-    /* table: next 7 days */
+    /* table: next 7 days; phones show three and a button */
     var byDay = {}, order = [];
     evs.forEach(function (x) {
       var end = Date.parse(x.type === 'HH' ? x.t2 : x.t); if (end < now - 3 * 3600000) return;
-      var key = ukDate(x.t); if (!byDay[key]) { byDay[key] = { label: dayLabel(x.t), items: [] }; order.push(key); } byDay[key].items.push(x);
+      var key = ukYmd(Date.parse(x.t)); if (!byDay[key]) { byDay[key] = { label: dayLabel(x.t), items: [] }; order.push(key); } byDay[key].items.push(x);
     });
-    $('wxp-tide-table').innerHTML = order.slice(0, 7).map(function (key) {
-      var day = byDay[key], rg = rangeByDay[ymdUK(day.items[0].t)], flat = rg && rg.range < 0.55;
-      return '<li' + (flat ? ' style="border-color:rgba(255,215,106,.45)"' : '') + '><h3>' + day.label
-        + (rg ? '<br><span class="wxp-sub" style="font-size:.8rem;font-weight:400">Rise &amp; fall ' + rg.range.toFixed(1) + ' m</span>' : '') + '</h3><div class="wxp-evs">'
-        + (flat ? '<span class="wxp-sub" style="flex-basis:100%;margin:0 0 .2rem">Neap tide: the sea only moves between ' + rg.lo.toFixed(1) + ' and ' + rg.hi.toFixed(1) + ' m today, so exact high and low times mean little &mdash; the curve above is the better guide.</span>' : '')
-        + day.items.map(function (x) {
-        if (x.type === 'HH') return '<span class="wxp-ev hi">High <b>' + hhmm(x.t) + '</b> ' + x.h.toFixed(1) + 'm &amp; <b>' + hhmm(x.t2) + '</b> ' + x.h2.toFixed(1) + 'm <small>double high water</small></span>';
-        return '<span class="wxp-ev ' + (x.type === 'H' ? 'hi' : 'lo') + '">' + (x.type === 'H' ? 'High' : 'Low') + ' <b>' + hhmm(x.t) + '</b> ' + x.h.toFixed(1) + 'm</span>';
-      }).join('') + '</div></li>';
+    var tbl = $('wxp-tide-table');
+    tbl.innerHTML = order.slice(0, 7).map(function (key, n) {
+      var day = byDay[key], rg = rangeByDay[key], flat = rg && rg.range < 0.55;
+      return '<li class="' + (flat ? 'flat ' : '') + (n >= 3 ? 'wxp-more' : '') + '"><h3>' + esc(day.label) + (rg ? '<span>Rise &amp; fall ' + rg.range.toFixed(1) + ' m</span>' : '') + '</h3><div class="wxp-evs">'
+        + (flat ? '<span class="wxp-neap">Neap: the sea only moves between ' + rg.lo.toFixed(1) + ' and ' + rg.hi.toFixed(1) + ' m, so the times mean little &mdash; the curve is the better guide.</span>' : '')
+        + day.items.map(evChip).join('') + '</div></li>';
     }).join('');
+    var more = $('wxp-tide-more');
+    if (order.length > 3) {
+      more.hidden = false;
+      more.onclick = function () {
+        var open = !tbl.classList.contains('all');
+        tbl.classList.toggle('all', open); more.setAttribute('aria-expanded', open ? 'true' : 'false');
+        more.textContent = open ? 'Show fewer days' : 'Show the next ' + (Math.min(order.length, 7) - 3) + ' days';
+      };
+      more.textContent = tbl.classList.contains('all') ? 'Show fewer days' : 'Show the next ' + (Math.min(order.length, 7) - 3) + ' days';
+    } else { more.hidden = true; }
     var a = t.accuracy;
     if (a && a.hw_time_median_min !== null) {
-      $('wxp-tide-acc').innerHTML = '<b>How good is it?</b> We fitted the prediction without the ' + esc(lon(a.from, { day: 'numeric', month: 'long' })) + '&ndash;' + esc(lon(a.to, { day: 'numeric', month: 'long' })) + ' readings, then compared it with what the gauge measured over those days: high and low water times were typically within <b>' + a.hw_time_median_min + ' minutes</b>, and heights within <b>' + Math.round(a.hw_height_median_cm) + ' cm</b> (' + a.events_compared + ' tides compared). The rest is weather &mdash; which is why the gauge is drawn live on the chart. ' + esc(t.method);
+      $('wxp-tide-acc-sum').innerHTML = 'How accurate? Typically within <b>' + a.hw_time_median_min + ' minutes</b> and <b>' + Math.round(a.hw_height_median_cm) + ' cm</b>';
+      $('wxp-tide-acc').innerHTML = 'We fitted the prediction without the ' + esc(lon(a.from, { day: 'numeric', month: 'long' })) + '&ndash;' + esc(lon(a.to, { day: 'numeric', month: 'long' })) + ' readings, then compared it with what the gauge measured over those days: high and low water times were typically within <b>' + a.hw_time_median_min + ' minutes</b>, and heights within <b>' + Math.round(a.hw_height_median_cm) + ' cm</b> (' + a.events_compared + ' tides compared). ' + esc(t.method);
     }
   }
 
+  /* ---------------- WIND ---------------- */
+  function renderWindCard(d) {
+    var o = d.obs, wc = $('wxp-windcard'), f = d.forecast;
+    if (o && o.ok && o.latest && has(o.latest.wspd)) {
+      var L = o.latest, calm = L.wspd < 1, vrb = (calm || L.wdir === 'VRB' || !has(L.wdir)), dir = vrb ? null : +L.wdir, sp = ktmph(L.wspd), gs = L.wgst ? ktmph(L.wgst) : null, bf = beaufort(sp), sh = shore(dir), oo = obsOld(o);
+      var to = dir === null ? 0 : (dir + 180) % 360, streaks = '';
+      if (!reduced() && dir !== null && sp > 2) {
+        var dur = Math.max(0.9, 3.2 - sp / 12);
+        for (var i = 0; i < 7; i++) streaks += '<i style="top:' + (8 + i * 13) + '%;animation-duration:' + (dur + (i % 3) * 0.35).toFixed(2) + 's;animation-delay:-' + (i * 0.45).toFixed(2) + 's"></i>';
+      }
+      var ticks = '';
+      for (var k = 0; k < 16; k++) ticks += '<line x1="75" y1="10" x2="75" y2="' + (k % 4 ? 15 : 19) + '" stroke="#7f95a8" stroke-width="' + (k % 4 ? 1 : 2) + '" transform="rotate(' + (k * 22.5) + ' 75 75)"/>';
+      /* the sea side of the dial (bearings 70..250 through 160) tinted, so on/offshore reads at a glance */
+      var seaArc = '<path d="M75 75 L' + (75 + 58 * Math.sin(70 * Math.PI / 180)).toFixed(1) + ' ' + (75 - 58 * Math.cos(70 * Math.PI / 180)).toFixed(1) + ' A58 58 0 0 1 ' + (75 + 58 * Math.sin(250 * Math.PI / 180)).toFixed(1) + ' ' + (75 - 58 * Math.cos(250 * Math.PI / 180)).toFixed(1) + ' Z" fill="rgba(108,196,245,.10)"/>';
+      var dial = '<svg viewBox="0 0 150 150" aria-hidden="true"><circle cx="75" cy="75" r="62" fill="none" stroke="#1d3346" stroke-width="2"/>' + seaArc + ticks
+        + '<text x="75" y="33" text-anchor="middle" font-size="11" fill="#e8f1f2">N</text><text x="122" y="79" text-anchor="middle" font-size="11" fill="#7f95a8">E</text><text x="75" y="126" text-anchor="middle" font-size="11" fill="#7f95a8">S</text><text x="28" y="79" text-anchor="middle" font-size="11" fill="#7f95a8">W</text>'
+        + '<text x="104" y="112" text-anchor="middle" font-size="11" fill="#6cc4f5">SEA</text>'
+        + (dir === null ? '<text x="75" y="80" text-anchor="middle" font-size="12" fill="#e8f1f2">' + (calm ? 'calm' : 'variable') + '</text>'
+          : '<g class="wxp-needle" style="transform:rotate(0deg)" data-rot="' + to + '"><g class="' + (reduced() ? '' : 'wxp-wobble') + '"><path d="M75 22 L84 70 L75 64 L66 70 Z" fill="#ffd76a"/><path d="M75 128 L80 80 L75 84 L70 80 Z" fill="#7f95a8"/><circle cx="75" cy="75" r="5" fill="#e8f1f2"/></g></g>')
+        + '</svg>';
+      wc.innerHTML = '<div class="wxp-streaks" aria-hidden="true" style="transform:rotate(' + (to - 90) + 'deg)">' + streaks + '</div>'
+        + '<span class="' + (oo ? 'chip-f' : 'chip-m') + '">' + (oo ? 'LAST HEARD ' + ago(L.t).toUpperCase() : 'MEASURED ' + hhmm(L.t)) + ' &middot; BOURNEMOUTH AIRPORT</span>'
+        + '<div class="wxp-windrow" style="position:relative;margin-top:.4rem"><div class="wxp-compass">' + dial + '</div><div>'
+        + '<p class="wxp-mid">' + sp + ' <span style="font-size:.55em">mph</span></p>'
+        + '<p class="wxp-sub">' + (dir === null ? (calm ? 'Calm' : 'Variable direction') : 'From the <b>' + compass(dir) + '</b> (' + dir + '\u00b0)') + (gs ? ' &middot; gusts <b>' + gs + ' mph</b>' : '') + '</p>'
+        + '<p class="wxp-sub">Force ' + bf[0] + ', ' + bf[1].toLowerCase() + '</p>'
+        + (sh ? '<p class="wxp-sub"><span class="wxp-shore ' + sh + '">' + SHORE_WORD[sh] + ' on the beach</span></p>' : '')
+        + '</div></div><p class="wxp-sub" style="font-size:.82rem">The airport is 7 km inland &mdash; the beach is often windier.</p>';
+      var needle = wc.querySelector('.wxp-needle');
+      if (needle) requestAnimationFrame(function () { requestAnimationFrame(function () { needle.style.transform = 'rotate(' + needle.getAttribute('data-rot') + 'deg)'; }); });
+    } else {
+      wc.innerHTML = '<span class="chip-f">WIND &middot; NOT AVAILABLE</span><p class="wxp-sub">The airport\u2019s wind report isn\u2019t coming through right now. The forecast wind is in the chart.</p>';
+    }
+    /* the RNLI advice lights up when the wind is offshore now (measured) or in the next 12 forecast hours */
+    var off = false, how = '';
+    if (o && o.ok && o.latest && !obsOld(o) && has(o.latest.wdir) && shore(+o.latest.wdir) === 'off' && o.latest.wspd >= 3) { off = true; how = 'Offshore wind measured at the airport at ' + hhmm(o.latest.t); }
+    else if (f && f.ok) f.hours.slice(0, 12).forEach(function (h) { if (!off && shore(h.dir) === 'off' && mph(h.wind) >= 4) { off = true; how = 'Offshore wind forecast from ' + hhmm(h.t); } });
+    var rn = $('wxp-rnli');
+    rn.classList.toggle('wxp-alert', off);
+    var flag = rn.querySelector('[data-flag]'); if (flag) flag.remove();
+    if (off) rn.insertAdjacentHTML('afterbegin', '<b data-flag style="display:block;color:#ffb27a">' + how + '.</b>');
+  }
   function renderWind(d) {
     var f = d.forecast, box = $('wxp-wind-chart');
     if (!f || !f.ok) { box.innerHTML = '<p class="wxp-sub">The wind forecast isn\u2019t available right now.</p>'; return; }
     var hs = f.hours.slice(0, 48), n = hs.length, W = Math.max(340, box.clientWidth || 340), col = Math.max(26, (W - 44) / n); W = Math.round(44 + col * n);
-    var H = 200, pt = 34, pb = 44, max = 10;
+    var H = 196, pt = 34, pb = 44, max = 10, anim = !reduced();
     hs.forEach(function (h) { max = Math.max(max, mph(h.wind)); });
     max = Math.ceil((max + 3) / 5) * 5;
     function X(i) { return 38 + col / 2 + i * col; }
@@ -1477,195 +1903,68 @@ button.wxp-day[aria-expanded="true"]{border-color:#ffd76a;background:rgba(255,21
     var g = '';
     for (var v = 0; v <= max; v += (max > 30 ? 10 : 5)) g += '<line x1="38" x2="' + W + '" y1="' + Y(v).toFixed(1) + '" y2="' + Y(v).toFixed(1) + '" stroke="#1d3346"/><text x="32" y="' + (Y(v) + 4).toFixed(1) + '" text-anchor="end">' + v + '</text>';
     var line = hs.map(function (h, i) { return (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(mph(h.wind)).toFixed(1); }).join(' ');
-    g += '<path class="wxp-fadein" d="' + line + ' L' + X(n - 1).toFixed(1) + ' ' + (H - pb) + ' L' + X(0).toFixed(1) + ' ' + (H - pb) + ' Z" fill="rgba(255,179,71,.14)"/>';
-    g += '<path class="wxp-draw" d="' + line + '" pathLength="1" stroke="#ffb347" stroke-width="2.4"/>';
+    g += '<path class="' + (anim ? 'wxp-fadein' : '') + '" d="' + line + ' L' + X(n - 1).toFixed(1) + ' ' + (H - pb) + ' L' + X(0).toFixed(1) + ' ' + (H - pb) + ' Z" fill="rgba(255,179,71,.14)"/>';
+    g += '<path class="' + (anim ? 'wxp-draw' : '') + '" d="' + line + '" pathLength="1" fill="none" stroke="#ffb347" stroke-width="2.4"/>';
     hs.forEach(function (h, i) {
-      var sh = shore(h.dir), c = sh === 'off' ? '#ff9f5a' : sh === 'on' ? '#7fd8a8' : '#79b8ff';
-      g += '<circle class="wxp-pop" cx="' + X(i).toFixed(1) + '" cy="' + (H - pb + 10) + '" r="3.2" fill="' + c + '" style="animation-delay:' + (0.3 + i * 0.02).toFixed(2) + 's"><title>' + (sh ? SHORE_WORD[sh] : '') + '</title></circle>';
+      var sh = shore(h.dir), c = SHORE_COL[sh] || '#79b8ff';
+      g += '<circle class="' + (anim ? 'wxp-pop' : '') + '" cx="' + X(i).toFixed(1) + '" cy="' + (H - pb + 10) + '" r="3.2" fill="' + c + '"' + (anim ? ' style="animation-delay:' + (0.3 + i * 0.015).toFixed(2) + 's"' : '') + '><title>' + (sh ? SHORE_WORD[sh] : '') + '</title></circle>';
       if (i % 3 === 0) {
         var to = ((h.dir || 0) + 180) % 360;
-        g += '<g transform="translate(' + X(i).toFixed(1) + ' 16)"><g class="wxp-pop" style="animation-delay:' + (0.4 + i * 0.02).toFixed(2) + 's"><path d="M0 -8 L5 6 L0 3 L-5 6 Z" fill="#e8f1f2" transform="rotate(' + to + ')"/></g></g>'
+        g += '<g transform="translate(' + X(i).toFixed(1) + ' 16)"><path d="M0 -8 L5 6 L0 3 L-5 6 Z" fill="#e8f1f2" transform="rotate(' + to + ')"/></g>'
           + '<text class="t-strong" x="' + X(i).toFixed(1) + '" y="' + (Y(mph(h.wind)) - 8).toFixed(1) + '" text-anchor="middle">' + mph(h.wind) + '</text>'
           + '<text x="' + X(i).toFixed(1) + '" y="' + (H - 6) + '" text-anchor="middle">' + (i === 0 ? 'Now' : hhmm(h.t)) + '</text>';
       }
     });
-    box.innerHTML = svgEl(W, H, 'Forecast wind at Bournemouth Pier for the next 48 hours, in miles per hour, with direction arrows', g);
+    var ws = hs.map(function (h) { return mph(h.wind); }), wmax = Math.max.apply(null, ws), wi = ws.indexOf(wmax);
+    box.innerHTML = svgEl(W, H, 'Forecast wind at Bournemouth Pier for the next 48 hours: ' + Math.min.apply(null, ws) + ' to ' + wmax + ' mph, strongest around ' + hhmm(hs[wi].t) + ' ' + lon(hs[wi].t, { weekday: 'short' }) + ' from the ' + compass(hs[wi].dir), g);
+    scrollRegions(box.parentNode);
   }
 
-  function renderHourly(d) {
-    var f = d.forecast, box = $('wxp-hourly-chart');
-    if (!f || !f.ok) { box.innerHTML = '<p class="wxp-sub">The hourly forecast isn\u2019t available right now.</p>'; return; }
-    var hs = f.hours.slice(0, 48), n = hs.length, W0 = Math.max(340, box.clientWidth || 340), col = Math.max(26, (W0 - 10) / n), W = Math.round(10 + col * n), H = 262;
-    var tmin = Infinity, tmax = -Infinity, rsum = 0;
-    hs.forEach(function (h) { tmin = Math.min(tmin, h.temp); tmax = Math.max(tmax, h.temp); rsum += h.rain; });
-    var lo = Math.floor(tmin) - 1, hi = Math.ceil(tmax) + 1;
-    function X(i) { return 5 + col / 2 + i * col; }
-    function Y(t) { return 70 + (hi - t) / (hi - lo) * 70; }
-    var line = 'M' + X(0) + ' ' + Y(hs[0].temp).toFixed(1);
-    for (var i = 1; i < n; i++) line += ' C' + (X(i - 1) + col / 2).toFixed(1) + ' ' + Y(hs[i - 1].temp).toFixed(1) + ' ' + (X(i) - col / 2).toFixed(1) + ' ' + Y(hs[i].temp).toFixed(1) + ' ' + X(i).toFixed(1) + ' ' + Y(hs[i].temp).toFixed(1);
-    var g = '<path class="wxp-fadein" d="' + line + ' L' + X(n - 1).toFixed(1) + ' 160 L' + X(0) + ' 160 Z" fill="rgba(255,179,71,.16)"/><path class="wxp-draw" d="' + line + '" pathLength="1" stroke="#ffb347" stroke-width="2.6"/>';
-    function uvCol(u) { return u < 3 ? '#7fd8a8' : u < 6 ? '#ffd84d' : u < 8 ? '#ff9f5a' : '#ff5a5a'; }
-    hs.forEach(function (h, k) {
-      var x = X(k), dl = (0.15 + 1.4 * k / n).toFixed(2);
-      if (hhmm(h.t) === '00:00' && k) g += '<line x1="' + (x - col / 2).toFixed(1) + '" x2="' + (x - col / 2).toFixed(1) + '" y1="36" y2="240" stroke="#1d3346" stroke-dasharray="3 4"/><text x="' + (x - col / 2 + 4).toFixed(1) + '" y="48">' + esc(lon(h.t, { weekday: 'short' })) + '</text>';
-      if (h.rain > 0) { var bh = Math.max(2, Math.min(h.rain, 4) / 4 * 28); g += '<rect class="wxp-bar" x="' + (x - col * 0.32).toFixed(1) + '" y="' + (190 - bh).toFixed(1) + '" width="' + (col * 0.64).toFixed(1) + '" height="' + bh.toFixed(1) + '" rx="2" fill="#6cc4f5" style="animation-delay:' + dl + 's"><title>' + h.rain.toFixed(1) + ' mm</title></rect>'; }
-      if (h.cloud !== null) g += '<rect x="' + (x - col / 2).toFixed(1) + '" y="198" width="' + col.toFixed(1) + '" height="9" fill="#e4eef5" opacity="' + (h.cloud / 100 * 0.55).toFixed(2) + '"><title>Cloud ' + h.cloud + '%</title></rect>';
-      if (h.uv !== null) g += '<rect x="' + (x - col / 2 + 1).toFixed(1) + '" y="211" width="' + (col - 2).toFixed(1) + '" height="7" rx="2" fill="' + uvCol(h.uv) + '" opacity="' + (h.uv < 0.5 ? 0.12 : 0.85) + '"><title>UV ' + h.uv.toFixed(1) + ' if clear</title></rect>';
-      if (k % 3 === 0) {
-        g += icon(h.sym, '', 'x="' + (x - 14).toFixed(1) + '" y="4" width="28" height="28"')
-          + '<text class="t-strong" x="' + x.toFixed(1) + '" y="' + (Y(h.temp) - 9).toFixed(1) + '" text-anchor="middle">' + deg(h.temp) + '</text>'
-          + '<text x="' + x.toFixed(1) + '" y="236" text-anchor="middle">' + hhmm(h.t) + '</text>';
+  /* ---------------- SEA & AIR ---------------- */
+  function renderSea(d) {
+    var s = d.sea || {}, sea = s.sea, grid = $('wxp-seatiles'), tiles = [];
+    if (sea && sea.ok) {
+      var so = sea.stale || age(sea.read_at) > 3 * 3600000;
+      var chip = (so ? 'LAST HEARD ' + ago(sea.read_at).toUpperCase() : 'MEASURED ' + hhmm(sea.read_at)) + ' &middot; ' + esc(String(sea.station).toUpperCase()), cc = so ? 'chip-f' : 'chip-m', spark = '';
+      if (sea.series && sea.series.length > 3) {
+        var v = sea.series.map(function (p) { return p[1]; }), mn = Math.min.apply(null, v), mx = Math.max.apply(null, v), w = 200, hgt = 34;
+        var pts = v.map(function (x, i) { return (i / (v.length - 1) * w).toFixed(1) + ',' + (hgt - 3 - (mx === mn ? 0.5 : (x - mn) / (mx - mn)) * (hgt - 6)).toFixed(1); }).join(' ');
+        spark = '<svg width="100%" height="' + hgt + '" viewBox="0 0 ' + w + ' ' + hgt + '" preserveAspectRatio="none" aria-hidden="true"><polyline points="' + pts + '" fill="none" stroke="#4fd8c4" stroke-width="2" vector-effect="non-scaling-stroke"/></svg><p class="wxp-sub" style="font-size:.8rem;margin:0">The last 24 hours.</p>';
       }
-    });
-    g += '<line x1="0" x2="' + W + '" y1="190.5" y2="190.5" stroke="#1d3346"/>';
-    box.innerHTML = svgEl(W, H, 'Next 48 hours: ' + deg(tmin) + ' to ' + deg(tmax) + ', ' + (rsum > 0 ? rsum.toFixed(1) + ' mm of rain forecast' : 'no rain forecast'), g);
-  }
-
-  function renderDays(d) {
-    var f = d.forecast, box = $('wxp-days');
-    if (!f || !f.ok) { box.innerHTML = '<li class="wxp-sub">The 10-day forecast isn\u2019t available right now.</li>'; return; }
-    var gmin = Infinity, gmax = -Infinity;
-    f.days.forEach(function (x) { gmin = Math.min(gmin, x.lo); gmax = Math.max(gmax, x.hi); });
-    var span = Math.max(1, gmax - gmin);
-    box.innerHTML = f.days.map(function (x, k) {
-      var p = x.d.split('-'), dt = new Date(+p[0], +p[1] - 1, +p[2]);
-      var label = k === 0 ? (x.part ? 'Rest of today' : 'Today') : k === 1 ? 'Tomorrow' : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][dt.getDay()] + ' ' + dt.getDate();
-      var sh = shore(x.dir);
-      return '<li><button type="button" class="wxp-day" data-d="' + x.d + '" aria-controls="wxp-daydetail" aria-expanded="false" style="animation-delay:' + (0.07 * k).toFixed(2) + 's"><h3>' + label + '</h3>' + icon(x.sym) + '<span class="wxp-sub" style="margin:0;min-height:2.4em">' + esc(words(x.sym)) + '</span>'
-        + '<span class="wxp-hl"><b>' + deg(x.hi) + '</b><span>' + deg(x.lo) + '</span></span>'
-        + '<span class="wxp-range" aria-hidden="true"><i style="left:' + ((x.lo - gmin) / span * 100).toFixed(1) + '%;width:' + Math.max(4, (x.hi - x.lo) / span * 100).toFixed(1) + '%;animation-delay:' + (0.3 + 0.07 * k).toFixed(2) + 's"></i></span>'
-        + '<span class="wxp-meta"><span>' + (x.rain >= 0.1 ? x.rain.toFixed(1) + ' mm rain' : 'Dry') + '</span><span>' + arrow(x.dir) + mph(x.wind) + ' mph ' + compass(x.dir) + '</span>' + (sh === 'off' ? '<span class="wxp-shore off" style="font-size:.72rem">offshore</span>' : '') + '</span><span class="wxp-open">Hour by hour, tides &amp; sun &rarr;</span></button></li>';
-    }).join('');
-    swingArrows();
-    [].forEach.call(box.querySelectorAll('.wxp-day'), function (b) {
-      b.addEventListener('click', function () {
-        if (b.getAttribute('aria-expanded') === 'true') closeDay(); else openDay(b.getAttribute('data-d'), true);
-      });
-    });
-    var m = /^#day-(\d{4}-\d{2}-\d{2})$/.exec(location.hash);
-    if (m && f.days.some(function (x) { return x.d === m[1]; })) openDay(m[1], 'deep');
-  }
-
-  /* ---------------- one day, opened from its card ---------------- */
-  var openYmd = null;
-  function closeDay() {
-    var box = $('wxp-daydetail'); box.hidden = true; box.innerHTML = ''; openYmd = null;
-    [].forEach.call(document.querySelectorAll('#wxp-days .wxp-day'), function (b) { b.setAttribute('aria-expanded', 'false'); });
-    if (history.replaceState) history.replaceState(null, '', location.pathname + location.search + '#ten-day');
-  }
-  function dayChart(hs, W0) {
-    var n = hs.length, col = Math.max(30, (W0 - 10) / n), W = Math.round(10 + col * n), H = 214;
-    var tmin = Infinity, tmax = -Infinity;
-    hs.forEach(function (h) { tmin = Math.min(tmin, h.temp); tmax = Math.max(tmax, h.temp); });
-    var lo = Math.floor(tmin) - 1, hi = Math.ceil(tmax) + 1;
-    function X(i) { return 5 + col / 2 + i * col; }
-    function Y(t) { return 58 + (hi - t) / (hi - lo) * 56; }
-    var line = hs.map(function (h, i) { return (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(h.temp).toFixed(1); }).join(' ');
-    var g = '<path class="wxp-fadein" d="' + line + ' L' + X(n - 1).toFixed(1) + ' 124 L' + X(0).toFixed(1) + ' 124 Z" fill="rgba(255,179,71,.16)"/><path class="wxp-draw" d="' + line + '" pathLength="1" stroke="#ffb347" stroke-width="2.6"/>';
-    var every = n > 16 ? 2 : 1;
-    hs.forEach(function (h, k) {
-      var x = X(k), dl = (0.1 + 1.2 * k / n).toFixed(2);
-      if (h.rain > 0) { var bh = Math.max(2, Math.min(h.rain, 4) / 4 * 24); g += '<rect class="wxp-bar" x="' + (x - col * 0.3).toFixed(1) + '" y="' + (150 - bh).toFixed(1) + '" width="' + (col * 0.6).toFixed(1) + '" height="' + bh.toFixed(1) + '" rx="2" fill="#6cc4f5" style="animation-delay:' + dl + 's"><title>' + h.rain.toFixed(1) + ' mm</title></rect>'; }
-      if (k % every === 0) {
-        var to = ((h.dir || 0) + 180) % 360;
-        g += icon(h.sym, '', 'x="' + (x - 13).toFixed(1) + '" y="2" width="26" height="26"')
-          + '<text class="t-strong" x="' + x.toFixed(1) + '" y="' + (Y(h.temp) - 8).toFixed(1) + '" text-anchor="middle">' + deg(h.temp) + '</text>'
-          + '<g transform="translate(' + x.toFixed(1) + ' 168)"><path d="M0 -6 L4 5 L0 2.5 L-4 5 Z" fill="#e8f1f2" transform="rotate(' + to + ')"/></g>'
-          + '<text x="' + x.toFixed(1) + '" y="186" text-anchor="middle">' + mph(h.wind) + '</text>'
-          + '<text x="' + x.toFixed(1) + '" y="206" text-anchor="middle">' + hhmm(h.t) + '</text>';
-      }
-    });
-    g += '<line x1="0" x2="' + W + '" y1="150.5" y2="150.5" stroke="#1d3346"/>';
-    return svgEl(W, H, 'Hour by hour: ' + deg(tmin) + ' to ' + deg(tmax) + ', wind in mph under each hour', g);
-  }
-  function openDay(ymd, scroll) {
-    var d = last, f = d && d.forecast, box = $('wxp-daydetail');
-    if (!f || !f.ok) return;
-    var day = f.days.filter(function (x) { return x.d === ymd; })[0];
-    if (!day) return;
-    openYmd = ymd;
-    [].forEach.call(document.querySelectorAll('#wxp-days .wxp-day'), function (b) { b.setAttribute('aria-expanded', b.getAttribute('data-d') === ymd ? 'true' : 'false'); });
-    var hrs = (f.hours || []).filter(function (h) { return ukYmd(Date.parse(h.t)) === ymd; });
-    var six = (f.six || []).filter(function (b) { return ukYmd(Date.parse(b.t)) === ymd; });
-    var uv = null;
-    hrs.concat(six).forEach(function (h) { if (h.uv !== null && h.uv !== undefined && (uv === null || h.uv > uv)) uv = h.uv; });
-    var sh = shore(day.dir), idx = f.days.indexOf(day);
-    var sd = sunDay(ymd), mo = moon(londonMidnight(ymd) + 12 * 3600000);
-    function t(ms) { return ms ? hhmm(new Date(ms).toISOString()) : '&mdash;'; }
-    function shortDay(y2) { return esc(lon(new Date(londonMidnight(y2) + 12 * 3600000).toISOString(), { weekday: 'short' })); }
-    var len = sd.rise && sd.set ? Math.round((sd.set - sd.rise) / 60000) : null;
-
-    var timeline = '';
-    if (hrs.length >= 4) {
-      var cw = Math.max(320, (box.parentNode.clientWidth || 360) - 40);
-      timeline = '<div class="wxp-chart">' + dayChart(hrs, cw) + '</div>'
-        + '<p class="wxp-note" style="margin-top:.3rem">Hour by hour' + (idx === 0 ? ' for the rest of today' : hrs.length < 20 ? ' for the hours the forecast still gives in hourly steps' : '') + ', with the forecast wind in mph under each time.'
-        + (hrs.length * 30 + 10 > cw ? ' Swipe the chart for the later hours.' : '') + '</p>';
-    } else if (six.length) {
-      timeline = '<div class="wxp-six">' + six.map(function (b) {
-        var hr = +hhmm(b.t).slice(0, 2), part = hr < 5 ? 'Night' : hr < 11 ? 'Morning' : hr < 17 ? 'Afternoon' : 'Evening';
-        return '<div class="wxp-card" style="padding:.7rem .8rem"><p class="wxp-lbl">' + part + ' &middot; from ' + hhmm(b.t) + '</p>' + icon(b.sym, '', 'width="54" height="54"')
-          + '<p class="wxp-sub" style="margin:.1rem 0;color:var(--b365-foam)">' + esc(words(b.sym)) + '</p>'
-          + '<p class="wxp-sub"><b>' + (b.tmax !== null ? deg(b.tmax) : deg(b.temp)) + '</b>' + (b.tmin !== null ? ' / ' + deg(b.tmin) : '') + ' &middot; ' + (b.rain >= 0.1 ? b.rain.toFixed(1) + ' mm' : 'dry') + '</p>'
-          + '<p class="wxp-sub">' + arrow(b.dir) + mph(b.wind) + ' mph ' + compass(b.dir) + '</p></div>';
-      }).join('') + '</div><p class="wxp-note" style="margin-top:.4rem">This far ahead the forecast comes in six-hour blocks, and the detail can still change.</p>';
+      tiles.push('<div class="wxp-card"><span class="' + cc + '">' + chip + '</span><p class="wxp-mid">' + sea.tempC.toFixed(1) + '\u00b0C</p><p class="wxp-sub">' + (sea.tempC >= 18 ? 'Warm for our coast &mdash; most swimmers are comfortable without a wetsuit.' : sea.tempC >= 15 ? 'Fresh &mdash; a shorty or thin wetsuit helps for longer swims.' : 'Cold &mdash; cold water shock is a real risk; a wetsuit and a short swim.') + '</p>' + spark + '</div>');
+      tiles.push('<div class="wxp-card"><span class="' + cc + '">' + chip + '</span><p class="wxp-mid">' + sea.hs.toFixed(1) + ' m</p><p class="wxp-sub">Wave height' + (sea.tp ? ', a wave every <b>' + Math.round(sea.tp) + ' s</b>' : '') + '.</p></div>');
     } else {
-      timeline = '<p class="wxp-sub">No hour-by-hour detail for this day.</p>';
+      tiles.push('<div class="wxp-card"><span class="chip-f">SEA TEMPERATURE &middot; NOT AVAILABLE</span><p class="wxp-sub">The wave buoy isn\u2019t reporting right now.</p></div>');
     }
-
-    var tideHtml = '';
-    if (d.tide && d.tide.ok) {
-      var te = groupTides(d.tide.events).filter(function (x) { return ukYmd(Date.parse(x.t)) === ymd; });
-      var rg = (d.tide.days || []).filter(function (x) { return x.d === ymd; })[0];
-      tideHtml = '<div class="wxp-card"><span class="chip-f">PREDICTED &middot; PIER TIDE</span>'
-        + (te.length ? '<div class="wxp-evs" style="margin-top:.5rem">' + te.map(function (x) {
-            if (x.type === 'HH') return '<span class="wxp-ev hi">High <b>' + hhmm(x.t) + '</b> ' + x.h.toFixed(1) + 'm &amp; <b>' + hhmm(x.t2) + '</b> ' + x.h2.toFixed(1) + 'm <small>double high water</small></span>';
-            return '<span class="wxp-ev ' + (x.type === 'H' ? 'hi' : 'lo') + '">' + (x.type === 'H' ? 'High' : 'Low') + ' <b>' + hhmm(x.t) + '</b> ' + x.h.toFixed(1) + 'm</span>';
-          }).join('') + '</div>' : '<p class="wxp-sub">Tide times for this day aren\u2019t available.</p>')
-        + (rg ? '<p class="wxp-sub">Rise and fall <b>' + rg.range.toFixed(1) + ' m</b>' + (rg.range < 0.55 ? ' &mdash; a neap day, the sea barely moves' : '') + '.</p>' : '')
-        + '<p class="wxp-sub" style="font-size:.8rem">Heights above chart datum. Not for navigation.</p></div>';
+    var b = s.bathing;
+    if (b && b.ok) {
+      var parts = []; for (var k in b.classes) parts.push(b.classes[k] + ' ' + k);
+      tiles.push('<div class="wxp-card"><span class="chip-f">OFFICIAL &middot; ENVIRONMENT AGENCY</span><p class="wxp-mid">' + b.sites + ' beaches</p><p class="wxp-sub">Bathing water classification: <b>' + esc(parts.join(', ')) + '</b>. ' + (b.stale ? 'Pollution-risk warnings couldn\u2019t be checked recently.' : b.warnings ? '<b>' + b.warnings + '</b> with a pollution-risk warning today.' : 'No pollution-risk warnings today.') + '</p></div>');
     }
-
-    box.innerHTML = '<div class="wxp-dd-head"><div><p class="eyebrow mono" style="margin:0">// ' + (idx === 0 ? 'TODAY' : idx === 1 ? 'TOMORROW' : 'DAY ' + (idx + 1) + ' OF 10') + '</p>'
-      + '<h3 id="wxp-dd-h" tabindex="-1">' + esc(longDay(ymd)) + '</h3></div>'
-      + '<div class="wxp-dd-nav">' + (idx > 0 ? '<button type="button" data-go="' + f.days[idx - 1].d + '">&larr; ' + shortDay(f.days[idx - 1].d) + '</button>' : '')
-      + (idx < f.days.length - 1 ? '<button type="button" data-go="' + f.days[idx + 1].d + '">' + shortDay(f.days[idx + 1].d) + ' &rarr;</button>' : '')
-      + '<button type="button" data-close="1" aria-label="Close this day">Close</button></div></div>'
-      + '<div class="wxp-dd-sum">' + icon(day.sym) + '<div><span class="chip-f">FORECAST &middot; MET NORWAY</span><p class="wxp-mid" style="margin:.2rem 0">' + deg(day.hi) + ' <span style="color:var(--b365-mute);font-size:.6em">/ ' + deg(day.lo) + '</span></p>'
-      + '<p class="wxp-sub" style="color:var(--b365-foam);font-size:1.05rem">' + esc(words(day.sym)) + '</p>'
-      + '<p class="wxp-sub">' + (day.rain >= 0.1 ? '<b>' + day.rain.toFixed(1) + ' mm</b> of rain' : '<b>Dry</b>') + ' &middot; wind up to <b>' + mph(day.wind) + ' mph</b> ' + compass(day.dir) + (sh ? ' &middot; <span class="wxp-shore ' + sh + '">' + SHORE_WORD[sh] + '</span>' : '')
-      + (uv !== null ? ' &middot; UV up to <b>' + Math.round(uv) + '</b> if clear' : '') + '</p></div></div>'
-      + timeline
-      + '<div class="wxp-grid" style="margin-top:.8rem">' + tideHtml
-      + '<div class="wxp-card"><span class="chip-f">COMPUTED &middot; SUN &amp; MOON</span><p class="wxp-mid" style="font-size:1.5rem;margin:.4rem 0 .1rem">' + t(sd.rise) + ' &ndash; ' + t(sd.set) + '</p>'
-      + '<p class="wxp-sub">Sunrise to sunset' + (len ? ' &middot; <b>' + Math.floor(len / 60) + 'h ' + (len % 60) + 'm</b>' : '') + '</p><p class="wxp-sub">Golden hour <b>' + t(sd.rise) + '&ndash;' + t(sd.goldAmEnd) + '</b> and <b>' + t(sd.goldPmStart) + '&ndash;' + t(sd.set) + '</b></p>'
-      + '<p class="wxp-sub">' + mo.name + ', ' + Math.round(mo.illum * 100) + '% lit</p></div></div>';
-    box.hidden = false;
-    swingArrows();
-    [].forEach.call(box.querySelectorAll('[data-go]'), function (b) { b.addEventListener('click', function () { openDay(b.getAttribute('data-go'), true); }); });
-    box.querySelector('[data-close]').addEventListener('click', function () {
-      var card = document.querySelector('#wxp-days .wxp-day[data-d="' + ymd + '"]'); closeDay(); if (card) card.focus();
-    });
-    if (history.replaceState) history.replaceState(null, '', location.pathname + location.search + '#day-' + ymd);
-    if (scroll) {
-      /* a link straight to a day JUMPS: 'instant', because the site's html{scroll-behavior:smooth} turns 'auto'
-         into a smooth scroll that page load cancels a few pixels in. Re-aligns once after late layout
-         unless the reader has already scrolled. */
-      box.scrollIntoView({ behavior: scroll === 'deep' ? 'instant' : REDUCE ? 'auto' : 'smooth', block: 'start' });
-      if (scroll === 'deep') {
-        var y0 = window.scrollY;
-        setTimeout(function () {
-          var top = box.getBoundingClientRect().top;
-          if (!box.hidden && Math.abs(window.scrollY - y0) < 4 && (top < -4 || top > 120)) box.scrollIntoView({ behavior: 'instant', block: 'start' });
-        }, 900);
-      }
-      var hd = $('wxp-dd-h'); if (hd && hd.focus) { try { hd.focus({ preventScroll: true }); } catch (e2) { hd.focus(); } }
+    var ov = s.overflow;
+    if (ov && ov.ok) {
+      var ovOld = !!(ov.stale || !ov.read_at || age(ov.read_at) > 2 * 3600000);
+      tiles.push('<div class="wxp-card"><span class="' + (ovOld ? 'chip-f' : 'chip-m') + '">' + (ov.read_at ? (ovOld ? 'LAST HEARD ' + ago(ov.read_at).toUpperCase() : 'MEASURED ' + hhmm(ov.read_at)) : 'LAST HEARD') + ' &middot; WESSEX WATER MONITORS</span><p class="wxp-mid">' + ov.discharging + ' of ' + ov.total + '</p><p class="wxp-sub">Storm overflows on this coast discharging ' + (ovOld ? 'at the last reading' : 'right now') + (ov.offline ? ' (' + ov.offline + ' monitor offline)' : '') + '. &copy; Wessex Water, CC BY 4.0.</p></div>');
+    }
+    grid.innerHTML = tiles.join('');
+  }
+  function renderAir(d) {
+    var a = d.air, ac = $('wxp-aircard');
+    if (a && a.ok) {
+      var band = function (i) { return i <= 3 ? ['low', 'Low'] : i <= 6 ? ['mod', 'Moderate'] : i <= 9 ? ['high', 'High'] : ['high', 'Very high']; };
+      var first = band(a.days[0].index);
+      ac.innerHTML = '<span class="chip-f">FORECAST &middot; AIR QUALITY &middot; DEFRA</span><p class="wxp-mid">' + first[1] + '</p><p class="wxp-sub">Air pollution today, index <b>' + a.days[0].index + '</b> of 10.</p>'
+        + '<div class="wxp-daqi">' + a.days.map(function (x) { var bd = band(x.index); return '<span class="' + bd[0] + '">' + x.day + '<b>' + x.index + '</b></span>'; }).join('') + '</div>'
+        + '<p class="wxp-sub" style="font-size:.86rem;margin:0"><a class="wxp-air-link" href="' + esc(a.source_url) + '" rel="noopener">What the index means</a></p>';
+    } else {
+      ac.innerHTML = '<span class="chip-f">AIR QUALITY &middot; NOT AVAILABLE</span><p class="wxp-sub">Defra\u2019s forecast for Bournemouth isn\u2019t available right now.</p>';
     }
   }
 
   /* ---------------- image loops (radar + satellite) ---------------- */
-  function Player(mapId, ctlId, frames, labelFn) {
-    var map = $(mapId), ctl = $(ctlId), imgs = [], i = frames.length - 1, timer = null, playing = !REDUCE, visible = false;
+  var players = [];
+  function Player(mapId, ctlId, frames, labelFn, what) {
+    var map = $(mapId), ctl = $(ctlId), imgs = [], i = frames.length - 1, timer = null, playing = !reduced(), visible = false;
     var btn = ctl.querySelector('.wxp-play'), range = ctl.querySelector('input'), label = ctl.querySelector('.wxp-time');
     frames.forEach(function (fr) {
       var im = document.createElement('img'); im.alt = ''; im.width = 960; im.height = 850; im.decoding = 'async'; im.className = fr.cls || 'frame'; im.style.zIndex = 2;
@@ -1674,115 +1973,299 @@ button.wxp-day[aria-expanded="true"]{border-color:#ffd76a;background:rgba(255,21
     range.max = String(frames.length - 1); range.value = String(i); ctl.hidden = false;
     function show(k) {
       i = k; for (var j = 0; j < imgs.length; j++) imgs[j].classList.toggle('on', j === k);
-      range.value = String(k); label.textContent = labelFn(frames[k], k, frames.length);
+      range.value = String(k); label.textContent = labelFn(frames[k], k, frames.length); range.setAttribute('aria-valuetext', label.textContent);
     }
     function load() { imgs.forEach(function (im) { if (!im.src) im.src = im.getAttribute('data-src'); }); }
     function tick() {
-      if (!playing || !visible) return;
+      if (reduced()) { setPlaying(false); return; }
+      if (!playing || !visible || document.hidden) return;
       var nextI = (i + 1) % frames.length;
       show(nextI);
       timer = setTimeout(tick, nextI === frames.length - 1 ? 1800 : 650);
     }
     function setPlaying(p) {
-      playing = p; btn.textContent = p ? 'Pause' : 'Play'; btn.setAttribute('aria-label', (p ? 'Pause' : 'Play') + ' the loop'); btn.setAttribute('aria-pressed', p ? 'false' : 'true');
+      playing = p; btn.textContent = p ? 'Pause' : 'Play';
+      btn.setAttribute('aria-label', (p ? 'Pause the ' : 'Play the ') + what + ' loop'); btn.removeAttribute('aria-pressed');
+      /* the frame time is announced only while paused or scrubbing, not every 650 ms */
+      label.setAttribute('aria-live', p ? 'off' : 'polite');
       clearTimeout(timer); if (p) timer = setTimeout(tick, 650);
     }
     function onBtn() { setPlaying(!playing); }
     function onRange() { setPlaying(false); show(+range.value); }
+    function onVis() { if (!document.hidden && playing && visible) { clearTimeout(timer); timer = setTimeout(tick, 650); } }
     btn.addEventListener('click', onBtn);
     range.addEventListener('input', onRange);
+    document.addEventListener('visibilitychange', onVis);
     show(i);
     var io = null;
     if ('IntersectionObserver' in window) {
       io = new IntersectionObserver(function (es) { es.forEach(function (e) {
         if (e.isIntersecting) { load(); visible = true; if (playing) { clearTimeout(timer); timer = setTimeout(tick, 900); } } else { visible = false; clearTimeout(timer); }
-      }); }, { rootMargin: '500px 0px' });
+      }); }, { rootMargin: '300px 0px' });
       io.observe(map);
     } else { load(); visible = true; if (playing) timer = setTimeout(tick, 900); }
     setPlaying(playing);
-    /* switching satellite views builds a new player on the same controls: remove this one's listeners,
-       observer and frames first, or every switch would stack another play/pause handler */
-    return { destroy: function () {
-      clearTimeout(timer); playing = false;
-      btn.removeEventListener('click', onBtn); range.removeEventListener('input', onRange);
-      if (io) io.disconnect();
-      imgs.forEach(function (im) { im.remove(); }); ctl.hidden = true;
-    } };
+    /* switching satellite views (or a data refresh) builds a new player on the same controls: remove this one's
+       listeners, observer and frames first, or every switch would stack another play/pause handler */
+    var api = {
+      pause: function () { setPlaying(false); },
+      destroy: function () {
+        clearTimeout(timer); playing = false;
+        btn.removeEventListener('click', onBtn); range.removeEventListener('input', onRange); document.removeEventListener('visibilitychange', onVis);
+        if (io) io.disconnect();
+        imgs.forEach(function (im) { im.remove(); }); ctl.hidden = true; label.textContent = '';
+        var at = players.indexOf(api); if (at >= 0) players.splice(at, 1);
+      }
+    };
+    players.push(api);
+    return api;
   }
-  function lazyStatic(mapId) {
-    var map = $(mapId), st = map.querySelectorAll('img[data-src].base, img[data-src].lines');
-    function go() { for (var k = 0; k < st.length; k++) st[k].src = st[k].getAttribute('data-src'); }
-    if ('IntersectionObserver' in window) new IntersectionObserver(function (es, ob) { if (es[0].isIntersecting) { go(); ob.disconnect(); } }, { rootMargin: '600px 0px' }).observe(map); else go();
+  /* switching Reduce motion on mid-visit (the site's toolbar or the system setting) stops what is already moving */
+  function onReduce() {
+    if (!reduced()) return;
+    players.forEach(function (pl) { pl.pause(); });
+    var sky = $('wxp-sky'); if (sky) sky.innerHTML = '';
+    [].forEach.call(root.querySelectorAll('.wxp-streaks'), function (st) { st.innerHTML = ''; });
   }
-
+  if (MQ) { if (MQ.addEventListener) MQ.addEventListener('change', onReduce); else if (MQ.addListener) MQ.addListener(onReduce); }
+  if ('MutationObserver' in window) new MutationObserver(onReduce).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  function staticImgs(mapId) {
+    var st = $(mapId).querySelectorAll('img[data-src].base, img[data-src].lines');
+    for (var k = 0; k < st.length; k++) if (st[k].getAttribute('src') !== st[k].getAttribute('data-src')) st[k].src = st[k].getAttribute('data-src');
+  }
+  var radarP = null, satCur = null;
   function renderRadar(d) {
-    var r = d.radar; lazyStatic('wxp-radar-map');
-    if (!r || !r.ok || !r.frames.length) { setChip('wxp-radar-chip', 'chip-f', 'RADAR \u00b7 NOT AVAILABLE YET'); $('wxp-radar-note').textContent = 'Radar pictures are being gathered - the first loop appears within about 15 minutes of this page going live.'; return; }
-    var last = r.frames[r.frames.length - 1];
-    setChip('wxp-radar-chip', r.stale ? 'chip-f' : 'chip-m', (r.stale ? 'LAST RADAR ' + ago(last.t).toUpperCase() : 'OBSERVED ' + hhmm(last.t)) + ' \u00b7 EUMETNET RADAR');
-    Player('wxp-radar-map', 'wxp-radar-ctl', r.frames.map(function (f) { return { url: f.url, t: f.t, cls: 'radar' }; }), function (fr, k, nn) { return lon(fr.t, { weekday: 'short' }) + ' ' + hhmm(fr.t) + ' \u00b7 ' + (k + 1) + '/' + nn; });
+    var r = d.radar; staticImgs('wxp-radar-map');
+    if (radarP) { radarP.destroy(); radarP = null; }
+    if (!r || !r.ok || !r.frames || !r.frames.length) { setChip('wxp-radar-chip', 'chip-f', 'RADAR \u00b7 NOT AVAILABLE YET'); $('wxp-radar-note').textContent = 'Radar pictures aren\u2019t available right now. Radar: EUMETNET OPERA, CC BY 4.0. Map: \u00a9 OpenStreetMap contributors, via NASA GIBS.'; return; }
+    var lastF = r.frames[r.frames.length - 1];
+    setChip('wxp-radar-chip', r.stale ? 'chip-f' : 'chip-m', (r.stale ? 'LAST RADAR ' + ago(lastF.t).toUpperCase() : 'OBSERVED ' + hhmm(lastF.t)) + ' \u00b7 EUMETNET RADAR');
+    radarP = Player('wxp-radar-map', 'wxp-radar-ctl', r.frames.map(function (f) { return { url: f.url, t: f.t, cls: 'radar' }; }), function (fr, k, nn) { return lon(fr.t, { weekday: 'short' }) + ' ' + hhmm(fr.t) + ' \u00b7 ' + (k + 1) + '/' + nn; }, 'radar');
     var notes = [];
-    notes.push(last.home_mmh === null ? '' : last.home_mmh >= 0.1 ? 'Rain at the pier in the latest picture: about ' + last.home_mmh.toFixed(1) + ' mm/h.' : 'No rain showing at the pier in the latest picture (' + hhmm(last.t) + ').');
-    if (!last.local_ok) notes.push('The radars that cover Bournemouth are missing from this picture, so a dry-looking area near us may not be dry.');
+    notes.push(lastF.home_mmh === null || lastF.home_mmh === undefined ? '' : lastF.home_mmh >= 0.1 ? 'Rain at the pier in the latest picture: about ' + lastF.home_mmh.toFixed(1) + ' mm/h.' : 'No rain showing at the pier in the latest picture (' + hhmm(lastF.t) + ').');
+    if (lastF.local_ok === false) notes.push('The radars that cover Bournemouth are missing from this picture, so a dry-looking area near us may not be dry.');
     notes.push('Radar pictures reach us 10 to 25 minutes after they are taken. Radar: EUMETNET OPERA, CC BY 4.0. Map: \u00a9 OpenStreetMap contributors, via NASA GIBS.');
     $('wxp-radar-note').textContent = notes.filter(Boolean).join(' ');
   }
-
   function renderSat(d) {
-    var s = d.sat, tabs = $('wxp-sat-tabs'), cur = null, map = $('wxp-sat-map');
-    lazyStatic('wxp-sat-map');
-    if (!s) { setChip('wxp-sat-chip', 'chip-f', 'SATELLITE \u00b7 NOT AVAILABLE YET'); return; }
+    var s = d.sat, tabs = $('wxp-sat-tabs'), map = $('wxp-sat-map');
+    staticImgs('wxp-sat-map');
+    if (satCur) { satCur.destroy(); satCur = null; }
+    tabs.innerHTML = '';
     var views = [];
-    ['geo', 'vis'].forEach(function (k) { var p = s.products[k]; if (p && p.frames.length) views.push({ key: k, label: k === 'geo' ? 'Colour loop' : 'Sharp daylight loop', frames: p.frames }); });
-    if (s.nasa) views.push({ key: 'nasa', label: 'NASA today', nasa: s.nasa });
-    if (!views.length) { setChip('wxp-sat-chip', 'chip-f', 'SATELLITE \u00b7 NOT AVAILABLE YET'); $('wxp-sat-note').textContent = 'Satellite pictures are being gathered - the first loop appears within about 15 minutes of this page going live.'; return; }
+    if (s && s.products) ['geo', 'vis'].forEach(function (k) { var p = s.products[k]; if (p && p.frames && p.frames.length) views.push({ key: k, label: k === 'geo' ? 'Colour loop' : 'Sharp daylight loop', frames: p.frames }); });
+    if (s && s.nasa) views.push({ key: 'nasa', label: s.nasa.day === ukYmd(Date.now()) ? 'NASA today' : 'NASA ' + lon(s.nasa.day + 'T12:00:00Z', { day: 'numeric', month: 'short' }), nasa: s.nasa });
+    if (!views.length) { setChip('wxp-sat-chip', 'chip-f', 'SATELLITE \u00b7 NOT AVAILABLE YET'); $('wxp-sat-note').textContent = 'Satellite pictures aren\u2019t available right now. Images \u00a9 EUMETSAT, CC BY 4.0; NASA Worldview / GIBS.'; return; }
     function choose(v) {
-      if (cur) cur.destroy(); cur = null;
+      if (satCur) { satCur.destroy(); satCur = null; }
       [].forEach.call(tabs.querySelectorAll('button'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-k') === v.key ? 'true' : 'false'); });
       var fig = $('wxp-nasa');
       if (v.key === 'nasa') {
         map.hidden = true; fig.hidden = false; $('wxp-sat-ctl').hidden = true;
-        var im = fig.querySelector('img'); if (!im.src) im.src = v.nasa.url;
+        var im = fig.querySelector('img'); if (im.getAttribute('src') !== v.nasa.url) im.src = v.nasa.url;
         setChip('wxp-sat-chip', 'chip-m', 'OBSERVED \u00b7 NASA ' + v.nasa.satellite.toUpperCase() + ' \u00b7 ' + lon(v.nasa.day + 'T12:00:00Z', { day: 'numeric', month: 'short' }).toUpperCase());
-        $('wxp-nasa-cap').textContent = 'Portland Bill to the Isle of Wight from the VIIRS instrument on ' + v.nasa.satellite + ', ' + lon(v.nasa.day + 'T12:00:00Z', { weekday: 'long', day: 'numeric', month: 'long' }) + ' (the early-afternoon pass). About 375 m per pixel. Image: NASA Worldview / GIBS, public domain.';
-        $('wxp-sat-note').textContent = '';
+        $('wxp-nasa-cap').textContent = 'Portland Bill to the Isle of Wight from the VIIRS instrument on ' + v.nasa.satellite + ', ' + lon(v.nasa.day + 'T12:00:00Z', { weekday: 'long', day: 'numeric', month: 'long' }) + ' (the early-afternoon pass). About 375 m per pixel.';
+        $('wxp-sat-note').textContent = 'Image: NASA Worldview / GIBS, public domain.';
         return;
       }
       map.hidden = false; fig.hidden = true;
-      var lastF = v.frames[v.frames.length - 1], old = Date.now() - Date.parse(lastF.t) > 3 * 3600000;
+      var lastF = v.frames[v.frames.length - 1], old = age(lastF.t) > 3 * 3600000;
       setChip('wxp-sat-chip', old ? 'chip-f' : 'chip-m', (old ? 'LAST PICTURE ' + ago(lastF.t).toUpperCase() : 'OBSERVED ' + hhmm(lastF.t)) + ' \u00b7 METEOSAT');
-      cur = Player('wxp-sat-map', 'wxp-sat-ctl', v.frames.map(function (f) { return { url: f.url, t: f.t }; }), function (fr, k, nn) { return lon(fr.t, { weekday: 'short' }) + ' ' + hhmm(fr.t) + ' \u00b7 ' + (k + 1) + '/' + nn; });
+      satCur = Player('wxp-sat-map', 'wxp-sat-ctl', v.frames.map(function (f) { return { url: f.url, t: f.t }; }), function (fr, k, nn) { return lon(fr.t, { weekday: 'short' }) + ' ' + hhmm(fr.t) + ' \u00b7 ' + (k + 1) + '/' + nn; }, 'satellite');
       $('wxp-sat-note').textContent = (v.key === 'vis' ? 'The sharp view uses visible light, so it only has pictures in daylight' + (old ? ' - this is the last daylight loop.' : '.') + ' ' : 'Colour by day; after dark the cloud is from infrared over a fixed night-lights background, not tonight\u2019s lights. ')
         + 'Images \u00a9 EUMETSAT ' + new Date().getFullYear() + ', Meteosat Third Generation via EUMETView, CC BY 4.0. Coastline \u00a9 OpenStreetMap contributors.';
     }
-    tabs.innerHTML = views.map(function (v) { return '<button type="button" class="wxp-ctl-tab" data-k="' + v.key + '" aria-pressed="false" style="min-height:44px;border-radius:999px;border:1px solid var(--b365-line);background:var(--b365-water);color:var(--b365-foam);padding:0 1rem;cursor:pointer;font:inherit">' + v.label + '</button>'; }).join('');
+    tabs.innerHTML = views.map(function (v) { return '<button type="button" data-k="' + v.key + '" aria-pressed="false">' + esc(v.label) + '</button>'; }).join('');
     [].forEach.call(tabs.querySelectorAll('button'), function (b) { b.addEventListener('click', function () { views.forEach(function (v) { if (v.key === b.getAttribute('data-k')) choose(v); }); }); });
     choose(views[0]);
   }
 
-  /* ---------------- boot ---------------- */
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(function (es) { es.forEach(function (e) { root.classList.toggle('wx-off', !e.isIntersecting); }); }).observe(root);
+  /* ---------------- the deck: tabs ---------------- */
+  var TABS = ['tides', 'wind', 'radar', 'satellite', 'sea'], curTab = 'tides', shown = {}, last = null;
+  function ensure(t) {
+    if (!last || shown[t]) return;
+    shown[t] = true;
+    try {
+      if (t === 'tides') renderTides(last);
+      else if (t === 'wind') { renderWindCard(last); renderWind(last); }
+      else if (t === 'radar') renderRadar(last);
+      else if (t === 'satellite') renderSat(last);
+      else if (t === 'sea') { renderSea(last); renderAir(last); }
+    } catch (err) { if (window.console) console.error('weather panel failed', err); }
   }
-  var last = null;
-  function renderAll(d) {
-    last = d;
-    [renderWarnings.bind(null, d.warnings), renderNow.bind(null, d), renderSea.bind(null, d), renderSunAir.bind(null, d), renderTides.bind(null, d), renderWind.bind(null, d), renderHourly.bind(null, d), renderDays.bind(null, d)]
-      .forEach(function (fn) { try { fn(); } catch (err) { if (window.console) console.error('weather block failed', err); } });
+  function moveTabInk() {
+    var ink = $('wxp-tabink'), tab = $('wxp-tab-' + curTab), wrap = ink && ink.parentNode;
+    if (!ink || !tab) return;
+    var wr = wrap.getBoundingClientRect(), tr = tab.getBoundingClientRect();
+    ink.style.width = tr.width + 'px';
+    ink.style.transform = 'translateX(' + (tr.left - wr.left - wrap.clientLeft).toFixed(1) + 'px)';
   }
-  fetch('/api/bm-wx.php', { cache: 'no-cache' }).then(function (r) { return r.json(); }).then(function (d) {
-    renderAll(d);
-    try { renderRadar(d); } catch (err) { if (window.console) console.error(err); }
-    try { renderSat(d); } catch (err) { if (window.console) console.error(err); }
-  }).catch(function () {
-    $('wxp-nowcard').innerHTML = '<div></div><div><p class="wxp-sub">The weather feeds aren\u2019t answering right now, so nothing is shown rather than old numbers. Try again in a few minutes.</p></div>';
+  function barStuck() { return $('wxp-tabbar').classList.contains('is-stuck'); }
+  function stickTop() { return parseFloat(getComputedStyle($('wxp-tabbar')).top) || 76; }
+  function jumpTo(el, extra, smooth) {
+    if (!el) return;
+    var y = el.getBoundingClientRect().top + window.scrollY - extra;
+    window.scrollTo({ top: Math.max(0, Math.round(y)), behavior: smooth && !reduced() ? 'smooth' : 'instant' });
+  }
+  /* a jump for an old link is repeated while the page settles (data arriving, fonts, the cookie banner) until the reader
+     scrolls, taps or types - real input, not a scroll position that moved on its own */
+  var pending = null, userMoved = false;
+  ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (ev) { window.addEventListener(ev, function () { userMoved = true; pending = null; }, { passive: true, capture: true }); });
+  function runPending() { if (pending && !userMoved) { var el = pending.el(); if (el) jumpTo(el, pending.extra(), false); } }
+  function wantJump(getEl, extraFn) {
+    if (userMoved) return;
+    pending = { el: getEl, extra: extraFn };
+    runPending();
+    [250, 800, 1600, 3000].forEach(function (ms) { setTimeout(runPending, ms); });
+    setTimeout(function () { pending = null; }, 9000);
+  }
+  function selectTab(name, opts) {
+    if (TABS.indexOf(name) < 0) return;
+    opts = opts || {};
+    var changed = name !== curTab;
+    curTab = name;
+    TABS.forEach(function (t) {
+      var on = t === name, tab = $('wxp-tab-' + t), p = $(t);
+      tab.setAttribute('aria-selected', on ? 'true' : 'false'); tab.tabIndex = on ? 0 : -1;
+      p.removeAttribute('data-off');
+      if (on) p.removeAttribute('hidden'); else p.setAttribute('hidden', 'until-found');
+    });
+    moveTabInk();
+    ensure(name);
+    var panel = $(name);
+    if (changed && !reduced()) { panel.classList.remove('wxp-in'); void panel.offsetWidth; panel.classList.add('wxp-in'); }
+    if (opts.scroll) jumpTo($('wxp-sentinel'), stickTop(), opts.smooth);
+    else if (changed && barStuck()) jumpTo($('wxp-sentinel'), stickTop(), false);   /* switching while stuck: the new panel starts at its top */
+    if (opts.focusTab) $('wxp-tab-' + name).focus({ preventScroll: true });
+  }
+  [].forEach.call($('wxp-tablist').querySelectorAll('[role="tab"]'), function (b) {
+    b.addEventListener('click', function () { selectTab(b.getAttribute('data-tab')); });
+    /* manual activation: arrows move focus, Enter/Space opens - so arrowing past Radar loads no pictures */
+    b.addEventListener('keydown', function (e) {
+      var i = TABS.indexOf(b.getAttribute('data-tab')), j = null;
+      if (e.key === 'ArrowRight') j = (i + 1) % TABS.length; else if (e.key === 'ArrowLeft') j = (i - 1 + TABS.length) % TABS.length; else if (e.key === 'Home') j = 0; else if (e.key === 'End') j = TABS.length - 1;
+      if (j === null) return;
+      e.preventDefault(); $('wxp-tab-' + TABS[j]).focus();
+    });
   });
-  /* charts are sized to their box: redraw on a real width change (not on mobile toolbar scroll) */
+  TABS.forEach(function (t) { $(t).addEventListener('beforematch', function () { selectTab(t); }); });
+  [].forEach.call($('wxp-vitals').querySelectorAll('[data-go]'), function (b) {
+    b.addEventListener('click', function () {
+      var go = b.getAttribute('data-go');
+      if (go === 'sun') {
+        if (dayIdx !== 0) selectDay(0, { scrollStrip: true });
+        var sc = $('wxp-dsun');
+        if (sc) { jumpTo(sc, stickTop() + 12, true); sc.setAttribute('tabindex', '-1'); sc.focus({ preventScroll: true }); }
+        return;
+      }
+      selectTab(go, { scroll: true, smooth: true, focusTab: true });
+    });
+  });
+  selectTab('tides');
+
+  /* the stuck look for the tab bar; the phone cookie banner (fixed under the header) pushes the bar down while it shows */
+  var sio = null, cb = null;
+  function watchStuck() {
+    if (!('IntersectionObserver' in window)) return;
+    if (sio) sio.disconnect();
+    sio = new IntersectionObserver(function (es) { es.forEach(function (e) { $('wxp-tabbar').classList.toggle('is-stuck', !e.isIntersecting && e.boundingClientRect.top < stickTop() + 2); }); }, { rootMargin: '-' + Math.round(stickTop() + 1) + 'px 0px 0px 0px' });
+    sio.observe($('wxp-sentinel'));
+  }
+  function cbSync() {
+    cb = cb || document.querySelector('.cookie-banner');
+    var h = 0;
+    if (cb && !cb.hidden && window.innerWidth < 768) { var r = cb.getBoundingClientRect(); if (r.height && r.top < 150) h = Math.round(r.height); }
+    var v = h + 'px', changed = root.style.getPropertyValue('--wxp-cb') !== v;
+    root.style.setProperty('--wxp-cb', v);
+    if (changed || !sio) { watchStuck(); runPending(); }
+  }
+  cbSync();
+  function cbWatch() {
+    cbSync();
+    cb = document.querySelector('.cookie-banner');
+    if (cb && 'MutationObserver' in window) new MutationObserver(cbSync).observe(cb, { attributes: true, attributeFilter: ['hidden', 'class', 'style'] });
+    setTimeout(cbSync, 700);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', cbWatch); else cbWatch();
+  if ('IntersectionObserver' in window) {
+    [$('now'), $('ten-day'), $('wxp-deck')].forEach(function (sec) {
+      new IntersectionObserver(function (es) { es.forEach(function (e) { sec.classList.toggle('wx-off', !e.isIntersecting); }); }).observe(sec);
+    });
+  }
+
+  /* old links: #tides, #radar, #day-2026-09-19, #faq ... open the right place, then the address goes back to /bournemouth/weather/ */
+  var pendingDay = null;
+  function below() { return stickTop() + 8; }
+  function route() {
+    var h = location.hash.replace(/^#/, ''), m, handled = true;
+    if (!h) return;
+    if ((m = /^day-(\d{4}-\d{2}-\d{2})$/.exec(h))) {
+      if (last && last.forecast && last.forecast.ok) last.forecast.days.forEach(function (x, k) { if (x.d === m[1]) selectDay(k, { scrollStrip: true, instant: true }); });
+      else pendingDay = m[1];
+      wantJump(function () { return $('ten-day'); }, below);
+    }
+    else if (TABS.indexOf(h) >= 0) { selectTab(h); wantJump(function () { return $('wxp-sentinel'); }, stickTop); }
+    else if (h === 'now' || h === 'weather') wantJump(function () { return $('now'); }, below);
+    else if (h === 'hourly' || h === 'ten-day') wantJump(function () { return $('ten-day'); }, below);
+    else if (h === 'sources') { var det = $('sources').querySelector('details'); if (det) det.open = true; wantJump(function () { return $('sources'); }, below); }
+    else if (h === 'faq') wantJump(function () { return $('faq'); }, below);
+    else if (h !== 'main') handled = false;   /* #main: the site's skip link has already moved focus; only tidy the address */
+    if (handled && history.replaceState) history.replaceState(history.state, '', location.pathname + location.search);
+  }
+  route();
+  window.addEventListener('hashchange', route);
+
+  /* ---------------- loading, and keeping a long-open page honest ---------------- */
+  var DOWN = { warnings: { ok: false }, forecast: { ok: false, hours: [], days: [] }, obs: { ok: false }, tide: { ok: false }, sea: {}, radar: { ok: false, frames: [] }, sat: null, air: { ok: false } };
+  var lastFetch = 0, lastRender = 0, fetching = false;
+  function renderAll(d, again) {
+    var keep = again && last && last.forecast && last.forecast.days && dayIdx >= 0 && last.forecast.days[dayIdx] ? last.forecast.days[dayIdx].d : null;
+    last = d; lastRender = Date.now();
+    [function () { renderWarnings(d.warnings); }, function () { renderGlance(d); }, function () { renderStrip(d, keep); }]
+      .forEach(function (fn) { try { fn(); } catch (err) { if (window.console) console.error('weather block failed', err); } });
+    if (again) { var was = shown; shown = {}; TABS.forEach(function (t) { if (was[t]) ensure(t); }); }
+    ensure(curTab);
+    runPending();
+  }
+  function load() {
+    if (fetching) return;
+    fetching = true;
+    fetch('/api/bm-wx.php', { cache: 'no-cache' }).then(function (r) { if (!r.ok) throw new Error('weather feed answered ' + r.status); return r.json(); }).then(function (d) {
+      fetching = false; lastFetch = Date.now(); renderAll(d, !!last);
+    }).catch(function (err) {
+      fetching = false; lastFetch = Date.now();
+      if (window.console && err) console.error(err);
+      /* keep readings already on screen (their labels age on their own); with nothing yet, say the feeds are down */
+      if (!last || last === DOWN) {
+        renderAll(DOWN, !!last);
+        $('wxp-nowcard').innerHTML = '<span class="chip-f">WEATHER FEEDS &middot; NOT AVAILABLE</span><p class="wxp-sub">The weather feeds aren\u2019t answering right now, so nothing is shown rather than old numbers. Try again in a few minutes.</p>';
+      }
+    });
+  }
+  load();
+  setInterval(function () {
+    if (document.hidden) return;
+    if (Date.now() - lastFetch > 10 * 60000) load();
+    else if (last && last !== DOWN && Date.now() - lastRender > 10 * 60000) { lastRender = Date.now(); try { renderGlance(last); if (shown.sea) renderSea(last); } catch (e) {} }
+  }, 60000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && lastFetch && Date.now() - lastFetch > 5 * 60000) load(); });
+  window.addEventListener('pageshow', function (e) { if (e.persisted) load(); });
+
+  /* charts are sized to their box: redraw on a real width change (not on the mobile toolbar resizing the height) */
   var lastW = window.innerWidth, rt = null;
   window.addEventListener('resize', function () {
+    moveTabInk(); moveInk(); cbSync();
     if (!last || Math.abs(window.innerWidth - lastW) < 40) return; lastW = window.innerWidth;
-    clearTimeout(rt); rt = setTimeout(function () { try { renderTides(last); renderWind(last); renderHourly(last); if (openYmd) openDay(openYmd, false); } catch (e) {} }, 250);
+    clearTimeout(rt); rt = setTimeout(function () {
+      try {
+        if (shown.tides) renderTides(last);
+        if (shown.wind) renderWind(last);
+        if (dayIdx >= 0 && last.forecast && last.forecast.ok) renderDay(dayIdx, 0);
+        moveTabInk(); moveInk(); cbSync();
+      } catch (e) {}
+    }, 250);
   });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { moveTabInk(); moveInk(); runPending(); });
 })();
 </script>
     <section class="section" aria-label="About Bournemouth365">
