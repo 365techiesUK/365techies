@@ -199,6 +199,27 @@ if ($method === 'GET') {
     // and it is the same threshold as the compare - a cell with 2 readings is
     // not a result, so it is not drawn. NO per-network breakdown is emitted:
     // the map shows the crowd's median, not any operator's.
+    // ?stats=1 -> the crowd's totals only, no cells: readings, squares, verified squares and how long
+    // since the last reading landed. For the recruitment strip on other pages (the spec checker first),
+    // which must not pay for the 170 KB map payload to print four numbers. Same rules as the map:
+    // counts of the crowd, never a per-network figure.
+    if (isset($_GET['stats']) && $_GET['stats'] === '1') {
+        $rows = jload(DATA_FILE);
+        $cells = []; $last = 0;
+        foreach ($rows as $r) {
+            $g = $r['g'] ?? 'i';
+            $k = $g . ':' . $r['cla'] . ',' . $r['clo'];
+            if (!isset($cells[$k])) $cells[$k] = ['g' => $g, 'n' => 0];
+            $cells[$k]['n']++;
+            $t = (int)($r['t'] ?? 0); if ($t > $last) $last = $t;
+        }
+        $verified = 0;
+        foreach ($cells as $c) if ($c['n'] >= min_for($c['g'])) $verified++;
+        header('Cache-Control: public, max-age=120');
+        echo json_encode(['ok' => true, 'total' => count($rows), 'cells' => count($cells), 'verified' => $verified,
+                          'pending' => count($cells) - $verified, 'age_s' => ($last ? max(0, time() - $last) : null)]);
+        exit;
+    }
     if (isset($_GET['map']) && $_GET['map'] === '1') {
         $rows = jload(DATA_FILE);
         $cells = [];

@@ -13757,41 +13757,71 @@ SPECCHECK_NEXT_BAND = """    <section class="section" aria-label="What to check 
 # scan-me QR (drawn with the site's own vendored qrcode-generator, loaded only when the band is near);
 # phones get the button. Every claim mirrors /mobile-signal-check/ itself (download, upload, ping on a live
 # gauge; reading stored as part of an area, ~500 m inland / ~140 m on the coast; GPS accuracy recorded).
-SPECCHECK_SIGNAL_BAND = """    <section class="section section--alt" aria-label="Test your mobile signal" id="signal-test">
+SPECCHECK_SIGNAL_BAND = """    <section class="section section--alt" aria-label="Help map the mobile signal" id="signal-test">
       <div class="wrap">
       <style>
+      #signal-test .sg__stats{max-width:1080px;margin:1.3rem auto 0;display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem}
+      #signal-test .sg__stats[hidden]{display:none}
+      #signal-test .sg__stats div{padding:.9rem 1rem;border-radius:14px;border:1px solid var(--line,rgba(125,170,220,.16));background:rgba(255,255,255,.03);text-align:center}
+      #signal-test .sg__stats b{display:block;font-size:1.7rem;line-height:1.1;font-variant-numeric:tabular-nums;color:var(--ink,#eaf4ff)}
+      #signal-test .sg__stats span{display:block;margin-top:.25rem;font-size:.76rem;line-height:1.35;color:var(--muted,#9fb5d3)}
+      #signal-test .sg__mapwrap{max-width:1080px;margin:1rem auto 0}
+      #signal-test #sg-map{height:min(56vh,440px);width:100%;background:#0b1020;border-radius:16px;overflow:hidden;border:1px solid rgba(125,170,220,.22)}
+      #signal-test .sg__mapnote{margin:.6rem 0 0;font-size:.82rem;line-height:1.5;color:var(--muted,#9fb5d3);text-align:center}
+      #signal-test .sg__mapnote a{color:var(--cyan-soft,#6cc4f5)}
+      #signal-test .sg-leg{background:rgba(10,16,32,.9);color:#cfe0f5;padding:8px 10px;border-radius:9px;border:1px solid rgba(125,170,220,.22);font-size:.72rem;line-height:1.5;max-width:220px}
+      #signal-test .sg-leg .bar{display:inline-block;width:96px;height:9px;border-radius:5px;vertical-align:middle;background:linear-gradient(90deg,#e0563f,#e0b341,#00ce1b)}
+      #signal-test .leaflet-popup-content-wrapper,#signal-test .leaflet-popup-tip{background:#141b2e;color:#e6edf3}
       #signal-test .sg{max-width:1080px;margin:1.4rem auto 0;display:grid;grid-template-columns:1.4fr 1fr;gap:1.2rem;align-items:stretch}
       #signal-test .sg__copy{padding:1.4rem 1.5rem;border-radius:16px;border:1px solid rgba(0,206,27,.28);background:rgba(0,206,27,.05);display:flex;flex-direction:column;gap:.8rem}
       #signal-test .sg__copy h3{margin:0;font-size:1.35rem;line-height:1.3}
       #signal-test .sg__copy p{margin:0;font-size:.95rem;line-height:1.6;color:var(--ink-2,#dfe9f7)}
+      #signal-test .sg__steps{margin:0;padding:0 0 0 1.3rem;display:grid;gap:.5rem;font-size:.92rem;line-height:1.55;color:var(--ink-2,#dfe9f7)}
+      #signal-test .sg__steps b{color:var(--ink,#eaf4ff)}
       #signal-test .sg__list{margin:0;padding:0;list-style:none;display:grid;gap:.45rem;font-size:.88rem;line-height:1.5;color:var(--muted,#9fb5d3)}
       #signal-test .sg__list li::before{content:"✓ ";color:var(--green,#00ce1b);font-weight:700}
       #signal-test .sg__cta{margin-top:auto;display:flex;gap:.7rem;flex-wrap:wrap;padding-top:.4rem}
+      #signal-test .sg__cta button.button{font:inherit;cursor:pointer}
       #signal-test .sg__qr{padding:1.3rem;border-radius:16px;border:1px solid var(--line,rgba(125,170,220,.16));background:rgba(255,255,255,.03);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.7rem;text-align:center}
       #signal-test .sg__qr[hidden]{display:none}
       #signal-test .sg__qr canvas{width:180px;height:180px;border-radius:12px;background:#fff}
       #signal-test .sg__qr b{font-size:.95rem;line-height:1.35}
       #signal-test .sg__qr p{margin:0;font-size:.78rem;line-height:1.5;color:var(--muted,#9fb5d3);max-width:28ch}
       #signal-test .sg__qr .mono{font-size:.68rem;letter-spacing:.06em;color:var(--cyan-soft,#6cc4f5)}
-      @media(max-width:820px){#signal-test .sg{grid-template-columns:1fr}}
+      @media(max-width:820px){#signal-test .sg{grid-template-columns:1fr}#signal-test .sg__stats{grid-template-columns:repeat(2,1fr)}}
       @media(hover:none) and (pointer:coarse){#signal-test .sg__qr{display:none}}
-      @media(max-width:560px){#signal-test .sg__cta .button{width:100%}}
+      @media(max-width:560px){#signal-test .sg__cta .button{width:100%}#signal-test .sg__stats b{font-size:1.4rem}}
       </style>
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// NOW ON YOUR PHONE</p>
-          <h2 class="section-title section-title--center" data-title>Test the mobile signal where you actually sit<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>A fast computer on a weak connection still feels slow. Our signal check measures your phone&rsquo;s real 4G or 5G data speed at the desk, on the sofa or in the van &mdash; then shows how it compares with other readings from your part of Bournemouth, Christchurch and Poole.</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>// HELP MAP THE MOBILE SIGNAL &middot; BOURNEMOUTH, POOLE, CHRISTCHURCH &amp; BEYOND</p>
+          <h2 class="section-title section-title--center" data-title>Where does a phone actually work? Help everyone find out<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Knowing where a call will connect matters &mdash; for someone working from the back bedroom, for a relative living alone, for the day the broadband goes down. Our signal map is built from ten-second tests on ordinary phones, one square at a time. It started in Bournemouth, Poole and Christchurch, and a reading from anywhere in the UK now counts. Your reading joins a square on the map &mdash; never a pin on you.</p>
+        </div>
+        <div class="sg__stats" id="sg-stats" data-reveal hidden>
+          <div><b id="sg-n">&ndash;</b><span>readings from people&rsquo;s phones</span></div>
+          <div><b id="sg-c">&ndash;</b><span>squares on the map</span></div>
+          <div><b id="sg-v">&ndash;</b><span>squares verified (8+ readings)</span></div>
+          <div><b id="sg-l">&ndash;</b><span>since the last reading</span></div>
+        </div>
+        <div class="sg__mapwrap" data-reveal>
+          <div id="sg-map" role="region" aria-label="Live map of mobile signal readings so far" tabindex="0"></div>
+          <p class="sg__mapnote"><span id="sg-mapst">Live: each square shows the crowd&rsquo;s typical reading for that spot; dashed squares are still early days.</span> <a href="/mobile-signal-check/#sigcheck-map">Open the full map and show the gaps &#8594;</a></p>
         </div>
         <div class="sg">
           <div class="sg__copy" data-reveal>
-            <h3>Ten seconds, one tap, a real reading</h3>
-            <p>Open the signal check on your phone and tap once. It measures download, upload and ping over mobile data right where you are standing, on a live gauge. No app, no sign-up, and your reading is stored as part of an area &mdash; never as a pin on you.</p>
+            <h3>Ten seconds, one tap, one more square filled</h3>
+            <p>Open the signal check on your phone, say whether you are inside or outside, and tap once. It measures download, upload and ping over mobile data right where you stand, on a live gauge. No app, no sign-up.</p>
+            <ol class="sg__steps">
+              <li><b>Test where you are.</b> Home, work, the bus stop, the beach &mdash; the first reading in a square puts it on the map.</li>
+              <li><b>Walk 500 metres and test again.</b> A square is about 500 m across (140 m on the coast), so a short walk fills the next one. Eight readings make a square verified.</li>
+              <li><b>Find the gaps.</b> On the full map, tap <em>Show the gaps</em> to see the untested squares near you, and take one for the team.</li>
+            </ol>
             <ul class="sg__list">
               <li>Working from a phone hotspot? Find the spot in the house where it actually works.</li>
               <li>Thinking about 4G or 5G home broadband? Measure before you buy.</li>
-              <li>Every reading helps build the Dorset signal map for the next person.</li>
+              <li>You see your own network&rsquo;s result; the map shows the crowd&rsquo;s typical reading. No league table, no pins.</li>
             </ul>
-            <div class="sg__cta"><a class="button primary" href="/mobile-signal-check/">Test my mobile signal &#8594;</a><a class="button secondary" href="/wifi-signal-test/">Wi-Fi instead &#8594;</a></div>
+            <div class="sg__cta"><a class="button primary" href="/mobile-signal-check/?from=spec">Test my mobile signal &#8594;</a><button type="button" class="button secondary" id="sg-share">Ask a friend to test their spot</button><a class="button secondary" href="/wifi-signal-test/">Wi-Fi instead &#8594;</a></div>
           </div>
           <div class="sg__qr" data-reveal id="sg-qr">
             <b>On a computer? Scan to open it on your phone</b>
@@ -13816,6 +13846,68 @@ SPECCHECK_SIGNAL_BAND = """    <section class="section section--alt" aria-label=
         }
         function load(){ if(window.qrcode){ draw(); return; } var s=document.createElement('script'); s.src='/js/vendor/qrcode-generator-1.4.4-qrcode.js?v=1'; s.onload=draw; s.onerror=function(){ box.hidden=true; }; document.head.appendChild(s); }
         if('IntersectionObserver' in window){ var io=new IntersectionObserver(function(en){ if(en[0].isIntersecting){ io.disconnect(); load(); } },{rootMargin:'500px'}); io.observe(box); } else load();
+      })();
+      </script>
+      <script>
+      (function(){
+        /* ---- live totals: four numbers from ?stats=1, never the map payload ---- */
+        var st=document.getElementById('sg-stats'); if(!st) return;
+        function ago(s){ if(s==null) return '\u2013'; if(s<90) return 'a minute'; if(s<5400) return Math.round(s/60)+' min'; if(s<172800) return Math.round(s/3600)+' hours'; return Math.round(s/86400)+' days'; }
+        function num(n){ try{ return Number(n).toLocaleString('en-GB'); }catch(e){ return String(n); } }
+        fetch('/api/signal-check.php?stats=1',{cache:'default'}).then(function(r){return r.json();}).then(function(j){
+          if(!j||!j.ok) return;
+          document.getElementById('sg-n').textContent=num(j.total); document.getElementById('sg-c').textContent=num(j.cells);
+          document.getElementById('sg-v').textContent=num(j.verified); document.getElementById('sg-l').textContent=ago(j.age_s);
+          st.hidden=false;
+        }).catch(function(){});
+        /* ---- the live map: the signal page's own libraries and squares, loaded only when it is near ---- */
+        var el=document.getElementById('sg-map'); if(!el) return;
+        var SRC=['/vendor/leaflet/leaflet.js','/vendor/protomaps/protomaps-leaflet.js','/vendor/leaflet/touch-friendly.js?v=20260819c'], started=false;
+        function libs(){ if(started) return; started=true;
+          if(!document.querySelector('link[href^="/vendor/leaflet/leaflet.css"]')){ var l=document.createElement('link'); l.rel='stylesheet'; l.href='/vendor/leaflet/leaflet.css'; document.head.appendChild(l); }
+          SRC.forEach(function(u){ var s=document.createElement('script'); s.src=u; s.async=false; document.head.appendChild(s); });
+          boot(); }
+        function col(d){ return d>=25?'#00ce1b':(d>=10?'#e0b341':'#e0563f'); }
+        var tries=0;
+        function boot(){
+          if(!window.L||!window.protomapsL){ if(tries++<60) setTimeout(boot,150); return; }
+          var map=L.map('sg-map',{zoomControl:true,attributionControl:true,scrollWheelZoom:false});
+          map.fitBounds([[50.68,-2.02],[50.80,-1.72]],{padding:[10,10]});
+          if(window.makeTouchFriendly) makeTouchFriendly(map);
+          protomapsL.leafletLayer({url:'/vendor/protomaps/uk.pmtiles',flavor:'dark',maxDataZoom:10,attribution:''}).addTo(map);
+          protomapsL.leafletLayer({url:'/vendor/protomaps/southcoast.pmtiles',flavor:'dark',maxDataZoom:14,minZoom:11,bounds:[[50.45,-2.98],[51.15,-0.90]],attribution:'&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> &middot; <a href="https://protomaps.com">Protomaps</a>'}).addTo(map);
+          var layer=L.layerGroup().addTo(map);
+          var leg=L.control({position:'bottomright'});
+          leg.onAdd=function(){ var d=L.DomUtil.create('div','sg-leg'); d.innerHTML='<span class="bar"></span><br>slow &nbsp;&middot;&nbsp; fine for calls &nbsp;&middot;&nbsp; great for work'; return d; };
+          leg.addTo(map);
+          fetch('/api/signal-check.php?map=1&_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(j){
+            if(!j||!j.ok) return;
+            var ready=0;
+            j.cells.forEach(function(c){
+              var isC=(c.g==='c'), gl=isC?(j.coast||{cell_lat:800,cell_lon:500}):(j.inland||{cell_lat:200,cell_lon:125});
+              var need=c.need||j.need, h=0.5/gl.cell_lat, w=0.5/gl.cell_lon, conf=Math.min(1,c.n/need), fill=.16+.32*conf;
+              if(c.ready){ ready++;
+                L.rectangle([[c.lat-h,c.lon-w],[c.lat+h,c.lon+w]],{color:col(c.dl),weight:1.5,fillColor:col(c.dl),fillOpacity:fill})
+                  .bindPopup('<b>'+c.dl+' Mbps</b> typical here<br>'+c.n+' reading'+(c.n>1?'s':'')+' from people&rsquo;s phones').addTo(layer); }
+              else {
+                L.rectangle([[c.lat-h,c.lon-w],[c.lat+h,c.lon+w]],{color:col(c.dl),weight:1.5,dashArray:'5 4',fillColor:col(c.dl),fillOpacity:fill})
+                  .bindPopup('<b>'+c.dl+' Mbps</b> so far &mdash; from '+c.n+' reading'+(c.n>1?'s':'')+'<br><span style="opacity:.8">Early days: firms up at '+need+'. Add yours!</span>').addTo(layer); }
+            });
+            var s2=document.getElementById('sg-mapst');
+            if(s2) s2.textContent='Live: '+j.cells.length+' squares so far, '+ready+' verified. Dashed squares are still early days; every one started with one phone.';
+            setTimeout(function(){ map.invalidateSize(); },400);
+          }).catch(function(){});
+          setTimeout(function(){ map.invalidateSize(); },600);
+        }
+        if('IntersectionObserver' in window){ new IntersectionObserver(function(es,o){ es.forEach(function(e){ if(e.isIntersecting){ libs(); o.disconnect(); } }); },{rootMargin:'600px'}).observe(el); } else libs();
+        /* ---- ask a friend: a plain invitation, never a network or a result ---- */
+        var sh=document.getElementById('sg-share');
+        if(sh){ sh.addEventListener('click',function(){
+          var url='https://365techies.co.uk/mobile-signal-check/?from=share', text='Help map the mobile signal where you live - a ten-second test on your phone, no app: ';
+          try{ if(typeof gtag==='function') gtag('event','signal_share_spec',{}); }catch(e){}
+          if(navigator.share){ navigator.share({title:'Help map the mobile signal',text:text,url:url}).catch(function(){}); }
+          else { window.open('https://wa.me/?text='+encodeURIComponent(text+url),'_blank','noopener'); }
+        }); }
       })();
       </script>
     </section>
