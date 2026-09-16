@@ -1,0 +1,16 @@
+{
+  "name": "Bournemouth365 Weather, Tides & Radar",
+  "short_name": "B365 Weather",
+  "description": "Bournemouth seafront forecast, tide times, rain radar, satellite and the sea temperature.",
+  "lang": "en-GB",
+  "start_url": "/bournemouth/weather/?src=a2hs",
+  "scope": "/bournemouth/weather/",
+  "display": "standalone",
+  "background_color": "#08131e",
+  "theme_color": "#08131e",
+  "icons": [
+    { "src": "/bournemouth/media/b365-weather-icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/bournemouth/media/b365-weather-icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/bournemouth/media/b365-weather-icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

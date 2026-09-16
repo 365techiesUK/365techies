@@ -83,6 +83,10 @@ _WXP_HERO = '''    <section class="page-hero wxp-hero b365" aria-label="Introduc
 # it is hidden by CSS only, so desktop and crawlers see the same page. The cookie banner and the accessibility
 # button stay: consent and accessibility are not decoration.
 _WXP_HEAD = '''
+  <meta name="apple-mobile-web-app-title" content="B365 Weather" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   <style>
   @media (max-width:767px){
     :root{--header-h:0px}
@@ -103,7 +107,7 @@ _WXP_HEAD = '''
 
 _WXP_MINIFOOT = '''
     <nav class="wxp-minifoot b365" aria-label="Bournemouth365 pages and legal information">
-      <p><a href="/bournemouth/">Bournemouth365</a><a href="/bournemouth/live-map/">Live map</a><a href="/bournemouth/sea-today/">The sea right now</a><a href="/bournemouth/sunrise-sunset/">Sunrise &amp; sunset</a><a href="/bournemouth/beach-parking/">Beach parking</a><a href="/bournemouth/fireworks/">Fireworks</a></p>
+      <p><button type="button" class="wxp-a2hs-pill" data-a2hs style="margin-right:.4rem"><span aria-hidden="true">&#128204;</span> Add to home screen</button><a href="/bournemouth/">Bournemouth365</a><a href="/bournemouth/live-map/">Live map</a><a href="/bournemouth/sea-today/">The sea right now</a><a href="/bournemouth/sunrise-sunset/">Sunrise &amp; sunset</a><a href="/bournemouth/beach-parking/">Beach parking</a><a href="/bournemouth/fireworks/">Fireworks</a></p>
       <p class="mono">&copy; 2026 365 Techies Limited<a href="/privacy-policy/">Privacy</a><a href="/cookie-policy/">Cookies</a><a href="/terms/">Terms</a><a href="/accessibility-statement/">Accessibility</a></p>
     </nav>'''
 
@@ -292,6 +296,25 @@ html.a11y-contrast .wxp-tablist [role="tab"][aria-selected="true"],html.a11y-con
 .wxp-flow{stroke-dasharray:.06 .94;stroke-dashoffset:1;opacity:.8;animation:wxp-flow 5s linear 1.1s infinite}
 .wxp-sway-svg{transform-box:fill-box;transform-origin:center;animation:wxp-sway 2.6s ease-in-out infinite}
 .wxp-rdrop{stroke:#6cc4f5;stroke-width:2;stroke-linecap:round;opacity:0;animation:wxp-rdrop 1.2s linear infinite}
+/* keep it on the home screen */
+.wxp-a2hs-done [data-a2hs]{display:none!important}
+.wxp-a2hs-row{display:none;margin:.6rem 0 0;text-align:right}
+@media (max-width:767px){.wxp-a2hs-row{display:block}}
+.wxp-a2hs-pill{display:inline-flex;align-items:center;gap:.4rem;min-height:44px;padding:0 1rem;border-radius:999px;border:1px solid rgba(255,215,106,.55);background:rgba(255,215,106,.08);color:#ffe7a6;font:inherit;font-size:.9rem;font-weight:600;cursor:pointer}
+.wxp-a2hs-pill:hover{background:rgba(255,215,106,.16)}
+.wxp-a2hs-pill:focus-visible,.wxp-a2hs button:focus-visible{outline:2px solid var(--wx-gold);outline-offset:2px}
+.wxp-a2hs{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:1310;max-width:540px;margin:0 auto;display:grid;grid-template-columns:auto minmax(0,1fr);gap:.8rem;align-items:start;padding:1rem 2.6rem 1rem 1rem;border-radius:20px;border:1px solid rgba(255,215,106,.35);background:rgba(8,19,30,.97);box-shadow:0 18px 50px rgba(0,0,0,.55);color:var(--b365-foam);transform:translateY(130%);opacity:0;transition:transform .45s var(--wx-ease),opacity .3s ease}
+.wxp-a2hs.on{transform:none;opacity:1}
+.wxp-a2hs-ic{width:52px;height:52px;border-radius:13px;background:url(/bournemouth/media/b365-weather-icon-192.png) center/cover;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+.wxp-a2hs-h{margin:0;font-weight:700;font-size:1.02rem;line-height:1.3}
+.wxp-a2hs-sub{margin:.2rem 0 0;color:var(--b365-mute);font-size:.9rem;line-height:1.45}
+.wxp-a2hs-how{margin:.6rem 0 0;padding:.65rem .75rem;border-radius:12px;background:rgba(255,255,255,.05);font-size:.92rem;line-height:1.55}
+.wxp-a2hs-how svg{width:1.1em;height:1.1em;vertical-align:-.18em}
+.wxp-a2hs-btns{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem}
+.wxp-a2hs-add{min-height:44px;padding:0 1.1rem;border:0;border-radius:999px;background:linear-gradient(135deg,#ffe08a,#ffb347);color:#08131e;font:inherit;font-weight:700;cursor:pointer}
+.wxp-a2hs-no{min-height:44px;padding:0 1rem;border:1px solid var(--b365-line);border-radius:999px;background:transparent;color:var(--b365-foam);font:inherit;cursor:pointer}
+.wxp-a2hs-x{position:absolute;top:.35rem;right:.35rem;width:44px;height:44px;border:0;background:transparent;color:var(--b365-mute);font-size:1.6rem;line-height:1;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.wxp-a2hs{transition:none}}
 /* always-on touches: a swaying wind arrow, a glowing Today outline, a sheen over the chosen tab, pulsing live dots */
 .wxp-sway{display:inline-block;transform-origin:50% 60%;animation:wxp-sway 2.6s ease-in-out infinite}
 .wxp-tabink::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.5) 50%,transparent 65%);background-size:260% 100%;background-position:160% 0;animation:wxp-shine 5.5s ease-in-out 1.5s infinite}
@@ -454,6 +477,7 @@ html.a11y-contrast .wxp-tablist [role="tab"][aria-selected="true"],html.a11y-con
   .wxp-minifoot p{display:flex;flex-wrap:wrap;align-items:center;gap:0 1rem;margin:0;color:var(--b365-mute);font-size:.86rem}
   .wxp-minifoot p.mono{font-size:.74rem;margin-top:.2rem}
   .wxp-minifoot a{display:inline-flex;align-items:center;min-height:44px;color:#a9c4ea;text-decoration:none}
+  .wxp-minifoot .wxp-a2hs-pill{font-size:.84rem;min-height:40px}
   .wxp-minifoot a:focus-visible{outline:2px solid var(--wx-gold);outline-offset:2px}
 }
 /* the animated icons (same shapes as before) */
@@ -571,6 +595,7 @@ _WXP_HTML = r'''
             <button type="button" class="wxp-vital" data-go="sun" id="wxp-v-sun"><span class="chip-f" id="wxp-v-sun-chip">COMPUTED &middot; PIER</span><span class="wxp-skel" style="width:70%"></span><span class="wxp-skel" style="width:50%"></span></button>
           </div>
         </div>
+        <p class="wxp-a2hs-row"><button type="button" class="wxp-a2hs-pill" data-a2hs><span aria-hidden="true">&#128204;</span> Add to home screen</button></p>
       </div>
     </section>
 
@@ -696,6 +721,7 @@ _WXP_HTML = r'''
         <p class="wxp-note">Every reading on this page wears a label. <b>Measured</b> and <b>observed</b> mean an instrument saw it. <b>Predicted</b>, <b>forecast</b> and <b>computed</b> mean a model or a calculation. <b>Official</b> means it is shown exactly as the issuer published it. When a feed is down or late, the page says so rather than showing old numbers as new. No ads, ever.</p>
         <ul class="wxp-key"><li><span class="chip-m">MEASURED &middot; OBSERVED</span> an instrument</li><li><span class="chip-f">FORECAST &middot; PREDICTED &middot; COMPUTED &middot; OFFICIAL</span> a model, a calculation or an issuer</li></ul>
         <p class="wxp-note">Forecast: MET Norway (CC BY 4.0). Radar: EUMETNET OPERA (CC BY 4.0). Satellite: &copy; EUMETSAT (CC BY 4.0) and NASA Worldview / GIBS. Tides, the pier gauge, the wave buoys and bathing waters: Environment Agency, Cefas and Regional Coastal Monitoring Programme data under the Open Government Licence v3.0. Storm overflows: &copy; Wessex Water, CC BY 4.0. Warnings: Met Office. Air quality: Defra. Wind and temperature now: Bournemouth Airport via the NOAA Aviation Weather Center. Map: &copy; OpenStreetMap contributors.</p>
+        <p style="margin:.7rem 0 0"><button type="button" class="wxp-a2hs-pill wxp-a2hs-any" data-a2hs><span aria-hidden="true">&#128204;</span> Keep Bournemouth weather on your home screen</button></p>
         <details class="wxp-details"><summary>Sources, licences and how often each one updates</summary><div class="wxp-src-wrap"><table class="wxp-src">
           <thead><tr><th scope="col">What</th><th scope="col">Label</th><th scope="col">Source</th><th scope="col">How often</th><th scope="col">Licence</th></tr></thead>
           <tbody>
@@ -716,6 +742,16 @@ _WXP_HTML = r'''
           </tbody></table></div></details>
       </div>
     </section>
+    <div class="wxp-a2hs" id="wxp-a2hs" role="dialog" aria-labelledby="wxp-a2hs-h" hidden>
+      <span class="wxp-a2hs-ic" aria-hidden="true"></span>
+      <div class="wxp-a2hs-body">
+        <p class="wxp-a2hs-h" id="wxp-a2hs-h">Keep Bournemouth weather one tap away</p>
+        <p class="wxp-a2hs-sub">Put it on your home screen: the forecast, tide times and rain radar, straight from an icon.</p>
+        <div class="wxp-a2hs-how" id="wxp-a2hs-how" aria-live="polite" hidden></div>
+        <div class="wxp-a2hs-btns"><button type="button" class="wxp-a2hs-add" id="wxp-a2hs-add">Add to home screen</button><button type="button" class="wxp-a2hs-no" id="wxp-a2hs-no">Not now</button></div>
+      </div>
+      <button type="button" class="wxp-a2hs-x" id="wxp-a2hs-x" aria-label="Close">&times;</button>
+    </div>
     </div>'''.replace("__TABS__", "\n              ".join([
     _tab("tides", "Tides", True), _tab("wind", "Wind", False), _tab("radar", "Radar", False),
     _tab("satellite", "Satellite", False), _tab("sea", "Sea &amp; air", False)]))
@@ -1727,6 +1763,88 @@ _WXP_JS = r'''
   });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { moveTabInk(); moveInk(); runPending(); });
 
+  /* ---------------- keep it on the home screen ----------------
+     Android Chrome/Edge: the browser's own install prompt. iPhone/iPad: Safari has no prompt, so the steps, with the Share
+     icon drawn. Facebook/Instagram's in-app browsers can't add to the home screen at all, so they get "open in your browser
+     first" (most visits arrive from Facebook). Desktop: the bookmark shortcut. No service worker, same as the signal check. */
+  (function () {
+    var UA = navigator.userAgent || '';
+    var IOS = /iPad|iPhone|iPod/.test(UA) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    var ANDROID = /Android/i.test(UA), INAPP = /FBAN|FBAV|FB_IAB|FBIOS|Instagram|Messenger/i.test(UA);
+    var IOS_OTHER = /CriOS|FxiOS|EdgiOS/.test(UA), SAMSUNG = /SamsungBrowser/i.test(UA);
+    var PHONE = IOS || ANDROID || (window.matchMedia && window.matchMedia('(max-width: 767px)').matches);
+    var standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+    var sheet = $('wxp-a2hs'), how = $('wxp-a2hs-how'), deferred = null;
+    function get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+    function put(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+    function track(name) { try { if (typeof window.gtag === 'function' && get('tt_internal') !== '1') window.gtag('event', name, { platform: IOS ? 'ios' : ANDROID ? 'android' : 'desktop', in_app: INAPP ? 1 : 0 }); } catch (e) {} }
+    /* a class, not just hidden=true: the slim footer's button is parsed after this script runs */
+    function pills(show) { document.documentElement.classList.toggle('wxp-a2hs-done', !show); [].forEach.call(document.querySelectorAll('[data-a2hs]'), function (b) { b.hidden = !show; }); }
+    if (standalone || get('wxp_a2hs_added')) {
+      pills(false);
+      if (standalone) track('weather_opened_from_home_screen');
+      return;
+    }
+    var SHARE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="Share"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
+    var PLUS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 8v8M8 12h8"/></svg>';
+    function steps() {
+      if (INAPP) return '<b>You\u2019re in Facebook\u2019s built-in browser</b>, which can\u2019t add pages to your home screen. Tap <b>\u22ef</b> at the top right, choose <b>' + (IOS ? 'Open in Safari' : 'Open in browser') + '</b>, then tap <b>Add to home screen</b> again from there.';
+      if (IOS && IOS_OTHER) return 'Tap the <b>Share</b> button ' + SHARE + ' by the address bar, then <b>Add to Home Screen</b>.';
+      if (IOS) return '1. Tap the <b>Share</b> button ' + SHARE + ' in Safari\u2019s toolbar.<br>2. Scroll down and tap <b>Add to Home Screen</b> ' + PLUS + '.<br>3. Tap <b>Add</b>. The B365 Weather icon opens straight to this page.';
+      if (SAMSUNG) return 'Tap the <b>menu</b> (\u2630, bottom right), then <b>Add page to</b> \u2192 <b>Home screen</b>.';
+      if (ANDROID) return 'Tap the <b>\u22ee</b> menu at the top right and choose <b>Add to home screen</b> (or <b>Install app</b>).';
+      return 'Press <b>' + (/Mac/.test(navigator.platform) ? '\u2318' : 'Ctrl') + ' + D</b> to bookmark this page, or use your browser\u2019s menu to <b>install</b> it as an app.';
+    }
+    function open(auto) {
+      sheet.hidden = false;
+      if (!auto) { how.innerHTML = steps(); how.hidden = !!deferred; }
+      requestAnimationFrame(function () { requestAnimationFrame(function () { sheet.classList.add('on'); }); });
+      track(auto ? 'weather_a2hs_offer' : 'weather_a2hs_open');
+    }
+    function close() { sheet.classList.remove('on'); setTimeout(function () { sheet.hidden = true; }, reduced() ? 0 : 320); }
+    function add() {
+      track('weather_a2hs_click');
+      if (deferred) {
+        var d = deferred; deferred = null; d.prompt();
+        d.userChoice.then(function (r) { if (r && r.outcome === 'accepted') { put('wxp_a2hs_added', '1'); pills(false); close(); } });
+        return;
+      }
+      how.innerHTML = steps(); how.hidden = false;
+    }
+    window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferred = e; });
+    window.addEventListener('appinstalled', function () { put('wxp_a2hs_added', '1'); pills(false); close(); track('weather_a2hs_installed'); });
+    document.addEventListener('click', function (e) {
+      var t = e.target && e.target.closest ? e.target.closest('[data-a2hs]') : null;
+      if (!t) return;
+      e.preventDefault();
+      if (deferred) add(); else open(false);
+    });
+    $('wxp-a2hs-add').addEventListener('click', add);
+    $('wxp-a2hs-no').addEventListener('click', function () { put('wxp_a2hs_off', String(Date.now())); close(); track('weather_a2hs_dismiss'); });
+    $('wxp-a2hs-x').addEventListener('click', function () { put('wxp_a2hs_off', String(Date.now())); close(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) close(); });
+
+    /* the invitation: phones only, once per visit, after the page has been used - two taps on days, tabs or readings,
+       40 seconds on the page, or 8 seconds into a return visit. "Not now" keeps it away for 30 days. */
+    if (!PHONE) return;
+    var visits = (+get('wxp_visits') || 0) + 1; put('wxp_visits', String(visits));
+    var off = +(get('wxp_a2hs_off') || 0);
+    if (off && Date.now() - off < 30 * 864e5) return;
+    try { if (sessionStorage.getItem('wxp_a2hs_shown')) return; } catch (e) {}
+    var fired = false, used = 0;
+    function invite() {
+      if (fired || !sheet.hidden) return;
+      if (document.hidden) { document.addEventListener('visibilitychange', function once() { if (!document.hidden) { document.removeEventListener('visibilitychange', once); invite(); } }); return; }
+      fired = true;
+      try { sessionStorage.setItem('wxp_a2hs_shown', '1'); } catch (e) {}
+      open(true);
+    }
+    root.addEventListener('click', function (e) {
+      if (e.target && e.target.closest && e.target.closest('.wxp-dchip, [role="tab"], .wxp-vital')) { used++; if (used === 2) setTimeout(invite, 1800); }
+    });
+    setTimeout(invite, visits >= 2 ? 8000 : 40000);
+  })();
+
   /* entrances: each marked block animates in the first time it comes into view; the deck cascades its open panel */
   (function () {
     var marks = [].slice.call(root.querySelectorAll('[data-anim]'));
@@ -1759,6 +1877,8 @@ _WXP_CONTENT = "\n".join([
 
 def register(b365_band):
     _bp.HEAD_EXTRA[_WXP_SLUG] = _WXP_HEAD
+    _bp.MANIFEST_FOR[_WXP_SLUG] = "/bournemouth/weather/app.webmanifest?v=1"
+    _bp.TOUCH_ICON_FOR[_WXP_SLUG] = "/bournemouth/media/b365-weather-icon-180.png"
     add(
         slug=_WXP_SLUG,
         title="Bournemouth Weather, Tides, Radar & Sea Temperature",

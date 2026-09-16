@@ -43,6 +43,11 @@ MAIN_ATTRS = {"dell-hardware": " data-cv"}
 # Per-page CSS placed at the end of <head> (after the site stylesheet, so equal-specificity rules win, and parsed before
 # anything paints). Set by a page module, e.g. the Bournemouth weather page's phone app view.
 HEAD_EXTRA = {}
+# Per-page home-screen identity: a page that should install as its own app (its own name, icon and scope) sets these.
+# Default = the site manifest and the 365 Techies touch icon. write_portal_page() swaps the manifest by string - keep
+# the default href identical to what it searches for.
+MANIFEST_FOR = {}
+TOUCH_ICON_FOR = {}
 
 # ---------------------------------------------------------------------------
 # HONEST LASTMOD
@@ -980,6 +985,8 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None, robot
     meta_desc = _meta_desc(desc)
     main_attrs = MAIN_ATTRS.get(slug, "")
     head_extra = HEAD_EXTRA.get(slug, "")
+    manifest_href = MANIFEST_FOR.get(slug, "/site.webmanifest?v=2")
+    touch_icon = TOUCH_ICON_FOR.get(slug, "/apple-touch-icon.png")
     return f'''<!DOCTYPE html>
 <html lang="en-GB">
 <head>
@@ -1046,13 +1053,13 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None, robot
   <meta name="twitter:description" content="{desc}" />
   <meta name="twitter:image" content="{og_img}" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="apple-touch-icon" href="{touch_icon}" />
   <!-- ?v= bumps past SiteGround's proxy cache. Learned the hard way 2026-08-01:
        the un-versioned URL was serving a month-old copy (proxy HIT, Last-Modified
        28 June) because no Cache-Control applied to it. The .htaccess rule now makes
        these revalidate, but a URL already stuck in the cache stays stuck until its
        TTL - a new URL is the only immediate escape. BUMP THIS when the manifest changes. -->
-  <link rel="manifest" href="/site.webmanifest?v=2" />
+  <link rel="manifest" href="{manifest_href}" />
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
