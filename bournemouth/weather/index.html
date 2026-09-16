@@ -967,6 +967,10 @@ html.a11y-contrast .wxp-tablist [role="tab"][aria-selected="true"],html.a11y-con
 .wxp-shown-all [data-anim],.wxp-shown-all .wxp-dchip,.wxp-shown-all .wxp-ink,.wxp-shown-all .wxp-panel>*{opacity:1!important;transform:none!important}
 .wxp-now.wxp-rise .wxp-num{animation:wxp-temp .7s cubic-bezier(.2,.9,.25,1.2) .1s both}
 .wxp-now.wxp-rise .wx-ic{animation:wxp-pop2 .7s cubic-bezier(.2,.9,.25,1.2) both}
+/* charts keep moving: a glint travels along each line, wind arrows sway, rain drops fall into the rain bars */
+.wxp-flow{stroke-dasharray:.06 .94;stroke-dashoffset:1;opacity:.8;animation:wxp-flow 5s linear 1.1s infinite}
+.wxp-sway-svg{transform-box:fill-box;transform-origin:center;animation:wxp-sway 2.6s ease-in-out infinite}
+.wxp-rdrop{stroke:#6cc4f5;stroke-width:2;stroke-linecap:round;opacity:0;animation:wxp-rdrop 1.2s linear infinite}
 /* always-on touches: a swaying wind arrow, a glowing Today outline, a sheen over the chosen tab, pulsing live dots */
 .wxp-sway{display:inline-block;transform-origin:50% 60%;animation:wxp-sway 2.6s ease-in-out infinite}
 .wxp-tabink::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.5) 50%,transparent 65%);background-size:260% 100%;background-position:160% 0;animation:wxp-shine 5.5s ease-in-out 1.5s infinite}
@@ -1174,6 +1178,8 @@ html.a11y-contrast .wxp-tablist [role="tab"][aria-selected="true"],html.a11y-con
 @keyframes wxp-sway{0%,100%{transform:rotate(-9deg)}50%{transform:rotate(9deg)}}
 @keyframes wxp-glow{0%,100%{box-shadow:0 0 12px rgba(255,215,106,.12)}50%{box-shadow:0 0 34px rgba(255,215,106,.45)}}
 @keyframes wxp-shine{0%,55%{background-position:160% 0}100%{background-position:-60% 0}}
+@keyframes wxp-flow{to{stroke-dashoffset:0}}
+@keyframes wxp-rdrop{0%{opacity:0;transform:translateY(-8px)}25%{opacity:.9}100%{opacity:0;transform:translateY(20px)}}
 @keyframes wxp-wave{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
 @keyframes wxp-panin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes wxp-inl{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
@@ -1194,11 +1200,13 @@ html.a11y-contrast .wxp-tablist [role="tab"][aria-selected="true"],html.a11y-con
   .wxp *,.wxp *::before,.wxp *::after{animation:none!important;transition:none!important}
   .wxp-anim [data-anim],.wxp-anim .wxp-dchip,.wxp-anim .wxp-ink,.wxp-anim .wxp-panel>*{opacity:1!important;transform:none!important}
   .wxp-sky{transform:none!important}
+  .wxp-flow,.wxp-rdrop{display:none}
   .wxp-draw{stroke-dashoffset:0}.wxp-fadein,.wxp-pop{opacity:1}.wxp-bar,.wxp-dchip .rg i{transform:none}
   .wx-drop,.wx-flake,.wx-bolt{opacity:1}.wxp-streaks,.wxp-sky i{display:none}.wxp-ping{opacity:0}
 }
 html.a11y-reduce .wxp-anim [data-anim],html.a11y-reduce .wxp-anim .wxp-dchip,html.a11y-reduce .wxp-anim .wxp-ink,html.a11y-reduce .wxp-anim .wxp-panel>*{opacity:1!important;transform:none!important}
 html.a11y-reduce .wxp-sky{transform:none!important}
+html.a11y-reduce .wxp-flow,html.a11y-reduce .wxp-rdrop{display:none}
 html.a11y-reduce .wxp-draw{stroke-dashoffset:0}html.a11y-reduce .wxp-fadein,html.a11y-reduce .wxp-pop{opacity:1}
 html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.a11y-reduce .wx-bolt{opacity:1}html.a11y-reduce .wxp-sky i,html.a11y-reduce .wxp-streaks{display:none}
 </style>
@@ -1805,8 +1813,10 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
       line += ' C' + mx + ' ' + Y(tv[i - 1]).toFixed(1) + ' ' + mx + ' ' + Y(tv[i]).toFixed(1) + ' ' + cols[i].x.toFixed(1) + ' ' + Y(tv[i]).toFixed(1);
     }
     var last1 = cols[cols.length - 1];
-    var g = '<path class="' + (anim ? 'wxp-fadein' : '') + '" d="' + line + ' L' + last1.x.toFixed(1) + ' 124 L' + cols[0].x.toFixed(1) + ' 124 Z" fill="rgba(255,179,71,.13)"/>'
-      + '<path class="' + (anim ? 'wxp-draw' : '') + '" d="' + line + '" pathLength="1" fill="none" stroke="#ffb347" stroke-width="2.6"/>';
+    var g = '<defs><linearGradient id="wxp-tl-g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ffb347" stop-opacity=".34"/><stop offset="1" stop-color="#ffb347" stop-opacity="0"/></linearGradient></defs>'
+      + '<path class="' + (anim ? 'wxp-fadein' : '') + '" d="' + line + ' L' + last1.x.toFixed(1) + ' 124 L' + cols[0].x.toFixed(1) + ' 124 Z" fill="url(#wxp-tl-g)"/>'
+      + '<path class="' + (anim ? 'wxp-draw' : '') + '" d="' + line + '" pathLength="1" fill="none" stroke="#ffb347" stroke-width="2.6"/>'
+      + '<path class="wxp-flow" d="' + line + '" pathLength="1" fill="none" stroke="#fff1cf" stroke-width="3.4" stroke-linecap="round"/>';
     var dense = cH < 36, seenSix = false, rsum = 0;
     steps.forEach(function (s, k) {
       var c = cols[k], show = s.six || !dense || k % 2 === 0, dl = (0.05 + 0.5 * k / steps.length).toFixed(2);
@@ -1815,17 +1825,18 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
       if (!s.six && k > 0 && hhmm(s.t) === '00:00') g += '<line x1="' + c.l.toFixed(1) + '" x2="' + c.l.toFixed(1) + '" y1="2" y2="236" stroke="#1d3346" stroke-dasharray="3 4"/><text class="t-small" x="' + (c.l + 5).toFixed(1) + '" y="52">' + esc(lon(s.t, { weekday: 'short' }).toUpperCase()) + '</text>';
       if (show) {
         var isz = phone ? (s.six ? 36 : 30) : (s.six ? 34 : 28);
-        g += icon(s.sym, 'wx-still', 'x="' + (c.x - isz / 2).toFixed(1) + '" y="' + (s.six ? 2 : 6) + '" width="' + isz + '" height="' + isz + '"')
+        g += icon(s.sym, '', 'x="' + (c.x - isz / 2).toFixed(1) + '" y="' + (s.six ? 2 : 6) + '" width="' + isz + '" height="' + isz + '" style="overflow:visible"')
           + '<text class="t-strong" x="' + c.x.toFixed(1) + '" y="' + (Y(tv[k]) - 8).toFixed(1) + '" text-anchor="middle">' + deg(tv[k]) + (s.six && has(s.tmin) ? '<tspan class="t-dim">/' + deg(s.tmin) + '</tspan>' : '') + '</text>';
       }
       if (s.rain >= 0.05) {
-        var per = s.six ? s.rain / 6 : s.rain, bh = Math.max(2, Math.min(per, 4) / 4 * 22);
-        g += '<rect class="' + (anim ? 'wxp-bar' : '') + '" x="' + (c.x - c.w * 0.28).toFixed(1) + '" y="' + (150 - bh).toFixed(1) + '" width="' + (c.w * 0.56).toFixed(1) + '" height="' + bh.toFixed(1) + '" rx="2" fill="#6cc4f5" style="animation-delay:' + dl + 's"><title>' + s.rain.toFixed(1) + ' mm</title></rect>';
+        var per = s.six ? s.rain / 6 : s.rain, bh = Math.max(4, Math.min(per, 4) / 4 * 22), bw = Math.min(c.w * 0.56, 34);
+        g += '<rect class="' + (anim ? 'wxp-bar' : '') + '" x="' + (c.x - bw / 2).toFixed(1) + '" y="' + (150 - bh).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + bh.toFixed(1) + '" rx="2" fill="#6cc4f5" style="animation-delay:' + dl + 's"><title>' + s.rain.toFixed(1) + ' mm</title></rect>';
+        if (show && s.rain >= 0.1 && c.w >= 56) for (var q = -1; q <= 1; q += 2) g += '<line class="wxp-rdrop" x1="' + (c.x + q * (bw / 2 + 12)).toFixed(1) + '" y1="' + (124 - bh).toFixed(1) + '" x2="' + (c.x + q * (bw / 2 + 12) - 1).toFixed(1) + '" y2="' + (130 - bh).toFixed(1) + '" style="animation-delay:-' + ((k * 0.37 + (q + 1) * 0.3) % 1.2).toFixed(2) + 's"/>';
         if (show && s.rain >= 0.1) g += '<text class="t-rain" x="' + c.x.toFixed(1) + '" y="' + (147 - bh).toFixed(1) + '" text-anchor="middle">' + (s.rain < 10 ? s.rain.toFixed(1) : Math.round(s.rain)) + '</text>';
       }
       if (show) {
         var sh = shore(s.dir), to = ((s.dir || 0) + 180) % 360;
-        g += '<g transform="translate(' + c.x.toFixed(1) + ' 167)"><path d="M0 -6 L4 5 L0 2.5 L-4 5 Z" fill="' + (SHORE_COL[sh] || '#e8f1f2') + '" transform="rotate(' + to + ')"/></g>'
+        g += '<g transform="translate(' + c.x.toFixed(1) + ' 167)"><g class="wxp-sway-svg" style="animation-delay:-' + (k * 0.29).toFixed(2) + 's"><path d="M0 -6 L4 5 L0 2.5 L-4 5 Z" fill="' + (SHORE_COL[sh] || '#e8f1f2') + '" transform="rotate(' + to + ')"/></g></g>'
           + '<text x="' + c.x.toFixed(1) + '" y="186" text-anchor="middle">' + mph(s.wind) + '</text>';
       }
       if (has(s.cloud)) g += '<rect x="' + c.l.toFixed(1) + '" y="194" width="' + c.w.toFixed(1) + '" height="7" fill="#e4eef5" opacity="' + (s.cloud / 100 * 0.5).toFixed(2) + '"><title>Cloud ' + s.cloud + '%</title></rect>';
@@ -1833,6 +1844,7 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
       if (show) g += '<text x="' + c.x.toFixed(1) + '" y="228" text-anchor="middle"' + (k === 0 && today ? ' fill="#ffd76a"' : '') + '>' + (s.six ? hhmm(s.t).slice(0, 2) + '\u2013' + hhmm(new Date(Date.parse(s.t) + 6 * 3600000).toISOString()).slice(0, 2) : (k === 0 && today ? 'Now' : hhmm(s.t))) + '</text>';
     });
     g += '<line x1="0" x2="' + W + '" y1="150.5" y2="150.5" stroke="#1d3346"/>';
+    if (today) g += '<circle class="wxp-ping" cx="' + cols[0].x.toFixed(1) + '" cy="' + Y(tv[0]).toFixed(1) + '" r="5" fill="none" stroke="#ffd76a" stroke-width="2"/><circle cx="' + cols[0].x.toFixed(1) + '" cy="' + Y(tv[0]).toFixed(1) + '" r="4" fill="#ffd76a"/>';
     return { svg: svgEl(W, H, 'Hour by hour: ' + deg(lo + 1) + ' to ' + deg(hi - 1) + ', ' + (rsum >= 0.1 ? rsum.toFixed(1) + ' mm of rain forecast' : 'no rain forecast') + ', wind in mph under each time', g), W: W };
   }
 
@@ -1919,7 +1931,8 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
     }
     var line = curve.map(function (p, k) { return (k ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1); }).join(' ');
     g += '<path class="' + (anim ? 'wxp-fadein' : '') + '" d="' + line + ' L' + X(t1).toFixed(1) + ' ' + (H - pb) + ' L' + X(t0).toFixed(1) + ' ' + (H - pb) + ' Z" fill="url(#wxp-tide-g)"/>';
-    g += '<path class="' + (anim ? 'wxp-draw' : '') + '" d="' + line + '" pathLength="1" fill="none" stroke="#79b8ff" stroke-width="2.4"/>';
+    g += '<path class="' + (anim ? 'wxp-draw' : '') + '" d="' + line + '" pathLength="1" fill="none" stroke="#79b8ff" stroke-width="2.4"/>'
+      + '<path class="wxp-flow" d="' + line + '" pathLength="1" fill="none" stroke="#e3f3ff" stroke-width="3.2" stroke-linecap="round"/>';
     if (t.measured && t.measured.length) {
       var ml = t.measured.map(function (p) { return [Date.parse(p[0]), p[1]]; }).filter(function (p) { return p[0] >= t0 && p[0] <= t1; });
       if (ml.length > 1) g += '<path class="' + (anim ? 'wxp-fadein' : '') + '" d="' + ml.map(function (p, k) { return (k ? 'L' : 'M') + X(p[0]).toFixed(1) + ' ' + Y(p[1]).toFixed(1); }).join(' ') + '" fill="none" stroke="#4fd8c4" stroke-width="2.4"/>';
@@ -2025,13 +2038,14 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
     for (var v = 0; v <= max; v += (max > 30 ? 10 : 5)) g += '<line x1="38" x2="' + W + '" y1="' + Y(v).toFixed(1) + '" y2="' + Y(v).toFixed(1) + '" stroke="#1d3346"/><text x="32" y="' + (Y(v) + 4).toFixed(1) + '" text-anchor="end">' + v + '</text>';
     var line = hs.map(function (h, i) { return (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(mph(h.wind)).toFixed(1); }).join(' ');
     g += '<path class="' + (anim ? 'wxp-fadein' : '') + '" d="' + line + ' L' + X(n - 1).toFixed(1) + ' ' + (H - pb) + ' L' + X(0).toFixed(1) + ' ' + (H - pb) + ' Z" fill="rgba(255,179,71,.14)"/>';
-    g += '<path class="' + (anim ? 'wxp-draw' : '') + '" d="' + line + '" pathLength="1" fill="none" stroke="#ffb347" stroke-width="2.4"/>';
+    g += '<path class="' + (anim ? 'wxp-draw' : '') + '" d="' + line + '" pathLength="1" fill="none" stroke="#ffb347" stroke-width="2.4"/>'
+      + '<path class="wxp-flow" d="' + line + '" pathLength="1" fill="none" stroke="#fff1cf" stroke-width="3.2" stroke-linecap="round"/>';
     hs.forEach(function (h, i) {
       var sh = shore(h.dir), c = SHORE_COL[sh] || '#79b8ff';
       g += '<circle class="' + (anim ? 'wxp-pop' : '') + '" cx="' + X(i).toFixed(1) + '" cy="' + (H - pb + 10) + '" r="3.2" fill="' + c + '"' + (anim ? ' style="animation-delay:' + (0.3 + i * 0.015).toFixed(2) + 's"' : '') + '><title>' + (sh ? SHORE_WORD[sh] : '') + '</title></circle>';
       if (i % 3 === 0) {
         var to = ((h.dir || 0) + 180) % 360;
-        g += '<g transform="translate(' + X(i).toFixed(1) + ' 16)"><path d="M0 -8 L5 6 L0 3 L-5 6 Z" fill="#e8f1f2" transform="rotate(' + to + ')"/></g>'
+        g += '<g transform="translate(' + X(i).toFixed(1) + ' 16)"><g class="wxp-sway-svg" style="animation-delay:-' + (i * 0.23).toFixed(2) + 's"><path d="M0 -8 L5 6 L0 3 L-5 6 Z" fill="#e8f1f2" transform="rotate(' + to + ')"/></g></g>'
           + '<text class="t-strong" x="' + X(i).toFixed(1) + '" y="' + (Y(mph(h.wind)) - 8).toFixed(1) + '" text-anchor="middle">' + mph(h.wind) + '</text>'
           + '<text x="' + X(i).toFixed(1) + '" y="' + (H - 6) + '" text-anchor="middle">' + (i === 0 ? 'Now' : hhmm(h.t)) + '</text>';
       }
