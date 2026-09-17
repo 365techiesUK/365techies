@@ -1,0 +1,5 @@
+# The live map landing page is served by index.php: the built index.html with the feeds' latest counts and a dated
+# sentence of what they reported filled in on the server at request time, for crawlers and AI answer engines that
+# don't run JavaScript (see api/bm-map-ssr.php). index.html stays the build output and the fallback. The map app
+# itself lives in app/ and is untouched.
+DirectoryIndex index.php index.html

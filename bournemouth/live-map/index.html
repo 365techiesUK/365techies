@@ -810,48 +810,49 @@
           <h2 class="section-title section-title--center" data-title>What the map is reading at this moment<span class="title-underline title-underline--center"></span></h2>
         </div>
         <p class="b365-sub" data-reveal style="margin:0 0 1rem">These are the same feeds the map itself reads, fetched from our own server when you opened this page. Times are in your local time; hover a time for the exact UTC stamp. A feed that does not answer says so &mdash; nothing here is filled in from memory.</p>
+        <!--ssr:summary--><!--/ssr:summary-->
         <div class="b365-hero" data-stagger>
           <div class="b365-tile" id="lm-tile-buses">
             <span class="chip-m" id="lm-buses-chip">MEASURED &middot; DfT BUS OPEN DATA</span>
-            <div class="b365-num" id="lm-buses">&mdash;</div>
-            <p class="b365-sub" id="lm-buses-sub">Buses tracked now across Bournemouth, Christchurch and Poole. Waiting for the feed&hellip; if this stays, the feed is down and we would rather say so than guess.</p>
-            <p class="b365-foot" id="lm-buses-upd">updated &mdash;</p>
+            <div class="b365-num" id="lm-buses"><!--ssr:busesnum-->&mdash;<!--/ssr:busesnum--></div>
+            <p class="b365-sub" id="lm-buses-sub"><!--ssr:busessub-->Buses tracked now in and around Bournemouth, Christchurch and Poole. Waiting for the feed&hellip; if this stays, the feed is down and we would rather say so than guess.<!--/ssr:busessub--></p>
+            <p class="b365-foot" id="lm-buses-upd"><!--ssr:busesupd-->updated &mdash;<!--/ssr:busesupd--></p>
           </div>
           <div class="b365-tile" id="lm-tile-gauges">
             <span class="chip-m" id="lm-gauges-chip">MEASURED &middot; ENVIRONMENT AGENCY GAUGES</span>
-            <div class="b365-num" id="lm-gauges">&mdash;</div>
-            <p class="b365-sub" id="lm-gauges-sub">River and tide gauges reporting a reading. Waiting for the feed&hellip;</p>
-            <p class="b365-foot" id="lm-gauges-upd">updated &mdash;</p>
+            <div class="b365-num" id="lm-gauges"><!--ssr:gaugesnum-->&mdash;<!--/ssr:gaugesnum--></div>
+            <p class="b365-sub" id="lm-gauges-sub"><!--ssr:gaugessub-->River and tide gauges reporting a reading. Waiting for the feed&hellip;<!--/ssr:gaugessub--></p>
+            <p class="b365-foot" id="lm-gauges-upd"><!--ssr:gaugesupd-->updated &mdash;<!--/ssr:gaugesupd--></p>
           </div>
           <div class="b365-tile" id="lm-tile-warn">
             <span class="chip-f" id="lm-warn-chip">OFFICIAL STATUS &middot; ENVIRONMENT AGENCY</span>
-            <div class="b365-num" id="lm-warn">&mdash;</div>
+            <div class="b365-num" id="lm-warn"><!--ssr:warnnum-->&mdash;<!--/ssr:warnnum--></div>
             <p class="b365-sub" id="lm-warn-sub">Flood warnings and alerts in force for the area. <strong>No active warnings is not the same as no flood risk.</strong> Check the Environment Agency&rsquo;s own warnings page before you act on this.</p>
-            <p class="b365-foot" id="lm-warn-upd">updated &mdash;</p>
+            <p class="b365-foot" id="lm-warn-upd"><!--ssr:warnupd-->updated &mdash;<!--/ssr:warnupd--></p>
           </div>
           <div class="b365-tile" id="lm-tile-sea">
             <span class="chip-f" id="lm-sea-chip">OFFICIAL STATUS &middot; EA + WATER COMPANIES</span>
-            <div class="b365-num" id="lm-sea">&mdash;</div>
-            <p class="b365-sub" id="lm-sea-sub">Storm overflows their water company reports as discharging right now, and the Environment Agency&rsquo;s bathing-water forecast for the area&rsquo;s beaches. <strong>Their published status, not a verdict on swimming.</strong> Waiting for the feed&hellip;</p>
-            <p class="b365-foot" id="lm-sea-upd">updated &mdash;</p>
+            <div class="b365-num" id="lm-sea"><!--ssr:seanum-->&mdash;<!--/ssr:seanum--></div>
+            <p class="b365-sub" id="lm-sea-sub"><!--ssr:seasub-->Storm overflows their water company reports as discharging right now, and the Environment Agency&rsquo;s bathing-water forecast for the area&rsquo;s beaches. <strong>Their published status, not a verdict on swimming.</strong> Waiting for the feed&hellip;<!--/ssr:seasub--></p>
+            <p class="b365-foot" id="lm-sea-upd"><!--ssr:seaupd-->updated &mdash;<!--/ssr:seaupd--></p>
           </div>
           <div class="b365-tile" id="lm-tile-roads">
             <span class="chip-f" id="lm-roads-chip">OFFICIAL STATUS &middot; NATIONAL HIGHWAYS</span>
-            <div class="b365-num" id="lm-roads">&mdash;</div>
-            <p class="b365-sub" id="lm-roads-sub">Road closures in force on the National Highways network around the conurbation. Waiting for the feed&hellip;</p>
-            <p class="b365-foot" id="lm-roads-upd">updated &mdash;</p>
+            <div class="b365-num" id="lm-roads"><!--ssr:roadsnum-->&mdash;<!--/ssr:roadsnum--></div>
+            <p class="b365-sub" id="lm-roads-sub"><!--ssr:roadssub-->Closures signed on the National Highways network nearby, which here means the A31. Waiting for the feed&hellip;<!--/ssr:roadssub--></p>
+            <p class="b365-foot" id="lm-roads-upd"><!--ssr:roadsupd-->updated &mdash;<!--/ssr:roadsupd--></p>
           </div>
           <div class="b365-tile" id="lm-tile-air">
             <span class="chip-m" id="lm-air-chip">MEASURED &middot; ADS-B VIA ADSB.LOL</span>
-            <div class="b365-num" id="lm-air">&mdash;</div>
-            <p class="b365-sub" id="lm-air-sub">Aircraft transmitting a position within range of the centre of the map. Waiting for the feed&hellip;</p>
-            <p class="b365-foot" id="lm-air-upd">updated &mdash;</p>
+            <div class="b365-num" id="lm-air"><!--ssr:airnum-->&mdash;<!--/ssr:airnum--></div>
+            <p class="b365-sub" id="lm-air-sub"><!--ssr:airsub-->Aircraft transmitting a position within range of the centre of the map. Waiting for the feed&hellip;<!--/ssr:airsub--></p>
+            <p class="b365-foot" id="lm-air-upd"><!--ssr:airupd-->updated &mdash;<!--/ssr:airupd--></p>
           </div>
           <div class="b365-tile" id="lm-tile-sat">
             <span class="chip-f" id="lm-sat-chip">OFFICIAL &middot; COPERNICUS SENTINEL-2</span>
-            <div class="b365-num" id="lm-sat" style="font-size:clamp(1.5rem,4.2vw,2.5rem)">&mdash;</div>
-            <p class="b365-sub" id="lm-sat-sub">The most recent satellite pass over the area and how much of it was cloud. Waiting for the scene metadata&hellip;</p>
-            <p class="b365-foot" id="lm-sat-upd">updated &mdash;</p>
+            <div class="b365-num" id="lm-sat" style="font-size:clamp(1.5rem,4.2vw,2.5rem)"><!--ssr:satnum-->&mdash;<!--/ssr:satnum--></div>
+            <p class="b365-sub" id="lm-sat-sub"><!--ssr:satsub-->The most recent satellite pass over the area and how much of it was cloud. Waiting for the scene metadata&hellip;<!--/ssr:satsub--></p>
+            <p class="b365-foot" id="lm-sat-upd"><!--ssr:satupd-->updated &mdash;<!--/ssr:satupd--></p>
           </div>
           <div class="b365-tile b365-tile--dusk" id="lm-tile-tiles">
             <span class="chip-f" id="lm-tiles-chip">COMPUTED &middot; OUR OWN COUNTER</span>
@@ -860,7 +861,7 @@
             <p class="b365-foot" id="lm-tiles-upd">updated &mdash;</p>
           </div>
         </div>
-        <p class="b365-foot" data-reveal>Chips: MEASURED is an instrument or transponder reporting; OFFICIAL STATUS is a public body&rsquo;s own published state; COMPUTED is arithmetic we do ourselves. Test hooks for our own checks: <span class="mono">?b365test=stale</span> and <span class="mono">?b365test=down</span> force the stale and offline presentations of real data &mdash; nothing is invented.</p>
+        <p class="b365-foot" data-reveal>Chips: MEASURED is an instrument or transponder reporting; OFFICIAL STATUS is a public body&rsquo;s own published state; COMPUTED is arithmetic we do ourselves.</p>
       </div>
     </section>
     <section class="section b365" id="map" aria-label="Open the live map">
@@ -886,7 +887,7 @@
           <p>Every layer on the Bournemouth365 live map is a named public feed drawn where it says it is. Nothing is modelled, interpolated or guessed; where a feed goes quiet the layer says so instead of holding its last value.</p>
           <p><strong>Buses.</strong> Vehicle positions from the Department for Transport&rsquo;s Bus Open Data Service &mdash; the same feed the operators publish for their own apps. Our server re-reads it every 12 seconds and the map moves the buses every 15. A bus that stops reporting is dropped after four minutes rather than left parked on the map.</p>
           <p><strong>Flights.</strong> Aircraft transmitting ADS-B, received by the adsb.lol community network and read every 25 seconds. It is what is being received, not the airport&rsquo;s schedule: an aircraft nobody is receiving is not on the map.</p>
-          <p><strong>Road closures and planned works.</strong> National Highways&rsquo; own feeds for its network, read every minute. This covers the trunk roads (the A31, A338 and A35 corridors), not every council-managed street; a closure BCP Council runs on a seafront road is not in this feed.</p>
+          <p><strong>Road closures and planned works.</strong> National Highways&rsquo; own feeds for its network, read every minute. Around here that network is the A31: the A338 Wessex Way and the A35 through Poole, Bournemouth and Christchurch are BCP Council&rsquo;s roads, so their closures are not in this feed. It also reports only closures that are signed on the road, so an empty list means nothing is signed, not that every road is clear.</p>
           <p><strong>Traffic.</strong> The road geometry is OpenStreetMap. Colouring a road with live congestion needs measured flow data &mdash; ours is TomTom&rsquo;s traffic flow, credited on the map whenever it is drawn &mdash; and a road we have no measured flow for is left uncoloured, never coloured from a guess.</p>
           <p><strong>River levels and flood warnings.</strong> The Environment Agency&rsquo;s real-time data API: river and tide gauges on the Stour, Avon and the harbour report on roughly a 15-minute cycle, and flood alerts and warnings are re-read every five minutes. <strong>No active warnings is not the same as no flood risk.</strong></p>
           <p><strong>Bike bays.</strong> The Beryl BCP scheme&rsquo;s public GBFS feed &mdash; bay locations and how many bikes are docked, read every three minutes.</p>
@@ -988,6 +989,8 @@
         }
         function num(id, html) { var e = el('lm-' + id); if (e) e.innerHTML = html; }
         function sub(id, txt) { var e = el('lm-' + id + '-sub'); if (e) e.textContent = txt; }
+        // markup from our own wording and the feed's numbers only (the sea tile's note carries a <strong>)
+        function subHtml(id, h) { var e = el('lm-' + id + '-sub'); if (e) e.innerHTML = h; }
         function upd(id, label, iso) {
           var e = el('lm-' + id + '-upd'); if (!e) return;
           if (iso && hhmm(iso)) { e.textContent = label + ' ' + hhmm(iso); e.title = iso; }
@@ -1033,7 +1036,7 @@
         Promise.all(urls.map(get)).then(function (r) {
           paint('buses', 'lm-buses-chip', 'chip-m', 'MEASURED \u00b7 DfT BUS OPEN DATA', r[0], 60000, function (d) {
             num('buses', String(d.count));
-            sub('buses', 'Buses reporting a position across Bournemouth, Christchurch and Poole. Our server re-reads the feed every 12 seconds; the map moves them every 15.');
+            sub('buses', 'Buses reporting a position in and around Bournemouth, Christchurch and Poole. Our server re-reads the feed every 12 seconds; the map moves them every 15.');
           });
           paint('gauges', 'lm-gauges-chip', 'chip-m', 'MEASURED \u00b7 ENVIRONMENT AGENCY GAUGES', r[1], 30 * 60000, function (d) {
             num('gauges', String(d.withValues) + '<small>of ' + d.count + '</small>');
@@ -1045,12 +1048,12 @@
           });
           paint('sea', 'lm-sea-chip', 'chip-f', 'OFFICIAL STATUS · EA + WATER COMPANIES', r[7], 15 * 60000, function (d) {
             num('sea', String(d.discharging) + '<small>of ' + d.overflows + ' monitored overflows discharging</small>');
-            var inc = d.increasedRisk || 0;
-            sub('sea', d.beaches + ' designated beaches from Poole Harbour to Christchurch Bay: ' + (inc ? inc + ' with an increased pollution-risk forecast from the Environment Agency today, ' + (d.beaches - inc) + ' normal' : 'all on a normal pollution-risk forecast from the Environment Agency today') + '. ' + d.recentDischarges48h + ' overflow' + (d.recentDischarges48h === 1 ? '' : 's') + ' discharged in the last 48 hours. <strong>Their published status, not a verdict on swimming</strong> — the map links each beach to its Swimfo page.');
+            var inc = +d.increasedRisk || 0;
+            subHtml('sea', (+d.beaches) + ' designated beaches from Poole Harbour to Christchurch Bay: ' + (inc ? inc + ' with an increased pollution-risk forecast from the Environment Agency today, ' + (d.beaches - inc) + ' normal' : 'all on a normal pollution-risk forecast from the Environment Agency today') + '. ' + (+d.recentDischarges48h) + ' overflow' + (d.recentDischarges48h === 1 ? '' : 's') + ' discharged in the last 48 hours. <strong>Their published status, not a verdict on swimming</strong> — the map links each beach to its Swimfo page.');
           });
           paint('roads', 'lm-roads-chip', 'chip-f', 'OFFICIAL STATUS \u00b7 NATIONAL HIGHWAYS', r[3], 2 * 60000, function (d) {
             num('roads', String(d.count));
-            sub('roads', 'Closures in force on the National Highways network around the conurbation, read every minute. Council-run street closures are not in this feed.');
+            sub('roads', 'Closures signed on the National Highways network nearby, which here means the A31, read every minute. Council roads, including the A338 Wessex Way, are not in this feed.');
           });
           paint('air', 'lm-air-chip', 'chip-m', 'MEASURED \u00b7 ADS-B VIA ADSB.LOL', r[4], 60000, function (d) {
             num('air', String(d.count));

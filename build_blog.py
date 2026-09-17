@@ -1040,6 +1040,25 @@ if _osg.path.exists(_ss_fp):
         _bm_bad.append("sunrise-sunset: bournemouth/sunrise-sunset/index.php or api/bm-sun-ssr.php is missing")
     if not _osg.path.exists(_ss_hta) or "DirectoryIndex index.php" not in open(_ss_hta, encoding="utf-8").read():
         _bm_bad.append("sunrise-sunset: bournemouth/sunrise-sunset/.htaccess must set DirectoryIndex index.php first")
+# Live map server first paint (17 Sep 2026): bournemouth/live-map/index.php fills the feed tiles and a dated sentence
+# from the /api/dorset-*.php caches (api/bm-map-ssr.php). Same rules: each marker once, FAQ anchor twice, files present.
+_lm_fp = _osg.path.join(bp.BASE, "bournemouth", "live-map", "index.html")
+if _osg.path.exists(_lm_fp):
+    _lm_html = open(_lm_fp, encoding="utf-8").read()
+    _lm_marks = ["summary"] + ["%s%s" % (f, k) for f in ("buses", "gauges", "sea", "roads", "air", "sat") for k in ("num", "sub", "upd")] + ["warnnum", "warnupd"]
+    for _m in _lm_marks:
+        for _tag in ("<!--ssr:%s-->" % _m, "<!--/ssr:%s-->" % _m):
+            if _lm_html.count(_tag) != 1:
+                _bm_bad.append("live-map: server-render marker %s appears %d times (must be 1)" % (_tag, _lm_html.count(_tag)))
+    _anc = "Every layer polls a named public feed while the map is open"
+    if _lm_html.count(_anc) != 2:
+        _bm_bad.append("live-map: FAQ anchor %r appears %d times (must be 2: FAQ + JSON-LD)" % (_anc, _lm_html.count(_anc)))
+    _lm_hta = _osg.path.join(bp.BASE, "bournemouth", "live-map", ".htaccess")
+    if not (_osg.path.exists(_osg.path.join(bp.BASE, "bournemouth", "live-map", "index.php"))
+            and _osg.path.exists(_osg.path.join(bp.BASE, "api", "bm-map-ssr.php"))):
+        _bm_bad.append("live-map: bournemouth/live-map/index.php or api/bm-map-ssr.php is missing")
+    if not _osg.path.exists(_lm_hta) or "DirectoryIndex index.php" not in open(_lm_hta, encoding="utf-8").read():
+        _bm_bad.append("live-map: bournemouth/live-map/.htaccess must set DirectoryIndex index.php first")
 if _osg.path.exists(_fw_fp):
     if "SEASON FINISHED" not in open(_fw_fp, encoding="utf-8").read():
         _bm_bad.append("fireworks: season-finished branch missing (G3)")
