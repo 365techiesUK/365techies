@@ -56,13 +56,13 @@
   <meta property="og:url" content="https://365techies.co.uk/bournemouth/sea-today/" />
   <meta property="og:title" content="The sea at Bournemouth, measured right now" />
   <meta property="og:description" content="Live Bournemouth sea temperature, waves and tide — measured by the bay's wave buoy and the pier gauge, not modelled — plus water quality for all 7 beaches." />
-  <meta property="og:image" content="https://365techies.co.uk/og-image.jpg" />
+  <meta property="og:image" content="https://365techies.co.uk/bournemouth/media/og-weather.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="The sea at Bournemouth, measured right now" />
   <meta name="twitter:description" content="Live Bournemouth sea temperature, waves and tide — measured by the bay's wave buoy and the pier gauge, not modelled — plus water quality for all 7 beaches." />
-  <meta name="twitter:image" content="https://365techies.co.uk/og-image.jpg" />
+  <meta name="twitter:image" content="https://365techies.co.uk/bournemouth/media/og-weather.jpg" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <!-- ?v= bumps past SiteGround's proxy cache. Learned the hard way 2026-08-01:
@@ -284,15 +284,34 @@
       "isPartOf": {
         "@id": "https://365techies.co.uk/#website"
       },
-      "about": {
-        "@id": "https://365techies.co.uk/#business"
-      },
+      "about": [
+        {
+          "@type": "BodyOfWater",
+          "name": "Poole Bay",
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 50.6667,
+            "longitude": -1.8667
+          },
+          "sameAs": "https://www.wikidata.org/wiki/Q6980908"
+        },
+        {
+          "@type": "Beach",
+          "name": "Bournemouth Beach",
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 50.7162,
+            "longitude": -1.8736
+          },
+          "sameAs": "https://www.wikidata.org/wiki/Q96655623"
+        }
+      ],
       "breadcrumb": {
         "@id": "https://365techies.co.uk/bournemouth/sea-today/#breadcrumb"
       },
       "primaryImageOfPage": {
         "@type": "ImageObject",
-        "url": "https://365techies.co.uk/og-image.jpg"
+        "url": "https://365techies.co.uk/bournemouth/media/og-weather.jpg"
       },
       "dateModified": "2026-09-17"
     },
@@ -484,7 +503,7 @@
             <a href="/van-signal-map/">Bournemouth Signal Map</a>
             <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
             <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
-            <a href="/bournemouth/live-map/app/">Bournemouth in 3D</a>
+            <a href="/bournemouth/live-map/#map">Bournemouth in 3D</a>
             <a href="/pc-benchmark/">PC Benchmark</a>
             <a href="/computer-spec-checker/">PC Hardware Checker</a>
             <a href="/website-checker/">Website Checker</a>
@@ -677,7 +696,7 @@
           <a href="/van-signal-map/">Bournemouth Signal Map</a>
           <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
           <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
-          <a href="/bournemouth/live-map/app/">Bournemouth in 3D</a>
+          <a href="/bournemouth/live-map/#map">Bournemouth in 3D</a>
           <a href="/pc-benchmark/">PC Benchmark</a>
           <a href="/computer-spec-checker/">PC Hardware Checker</a>
           <a href="/website-checker/">Website Checker</a>
@@ -766,8 +785,8 @@
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/bournemouth/">Bournemouth365</a> <span>/</span> <span aria-current="page">Sea Conditions</span></nav>
         <p class="eyebrow mono">// BOURNEMOUTH365</p>
-        <h1>The sea at Bournemouth, <em class="grad grad--cyan">measured right now</em></h1>
-        <p class="lede">Sea temperature from the bay&rsquo;s wave buoy. Tide from the gauge on the pier itself. Water quality from the Environment Agency, storm overflows from Wessex Water&rsquo;s live monitors. Every reading timestamped &mdash; and when a feed is down, we say so.</p>
+        <h1>Bournemouth sea temperature, <em class="grad grad--cyan">measured right now</em></h1>
+        <p class="lede"><!--ssr:answer--><!--/ssr:answer-->Sea temperature from the bay&rsquo;s wave buoy. Tide from the gauge on the pier itself. Water quality from the Environment Agency, storm overflows from Wessex Water&rsquo;s live monitors. Every reading timestamped &mdash; and when a feed is down, we say so.</p>
         <div class="page-hero__cta">
           <a href="#now" class="button primary button--lg">The sea right now</a>
           <a href="#swim" class="button secondary button--lg">Can you swim today?</a>
@@ -881,8 +900,8 @@
           <p>The tide curve above often shows something tide tables flatten out: a long <em>stand</em> around high water, sometimes a visible double hump. It is not a faulty gauge &mdash; it is the English Channel&rsquo;s geometry. The Channel behaves as a standing-wave system with a node near this coast, and in shallow water the tide&rsquo;s harmonics distort the simple twice-a-day curve: Christchurch Harbour gets a true double high water on each tide, and Poole shows double highs at springs and a long stand at neaps (Humphreys, <em>Salinity and Tides in Poole Harbour</em>, Proceedings in Marine Science, 2005). Bournemouth sits between the two. Practical upshot: high water hangs around for hours &mdash; generous for swimmers, and the reason the beach can feel narrow all afternoon.</p>
 
           <h2 id="sewage">Is sewage being discharged into the sea at Bournemouth today?</h2>
-          <p class="b365-verdict" id="st-sewage"><!--ssr:sewage-->No &mdash; none of the 11 monitored storm overflows around Bournemouth was reporting a discharge (Wessex Water monitors, checked 12:13).<!--/ssr:sewage--></p>
-          <p class="mono" id="st-baked-note"><!--ssr:bakednote-->Statuses as read at 12:13 on 17 September 2026; they refresh live when this page opens.<!--/ssr:bakednote--></p>
+          <p class="b365-verdict" id="st-sewage"><!--ssr:sewage-->No &mdash; none of the 11 monitored storm overflows around Bournemouth was reporting a discharge (Wessex Water monitors, checked 16:43).<!--/ssr:sewage--></p>
+          <p class="mono" id="st-baked-note"><!--ssr:bakednote-->Statuses as read at 16:43 on 17 September 2026; they refresh live when this page opens.<!--/ssr:bakednote--></p>
           <p>How that is known: Wessex Water fits every storm overflow around the bay with a monitor that reports a discharge starting or stopping within the hour, and this page reads those monitors every twenty minutes. &ldquo;No discharge&rdquo; means exactly that &mdash; the monitor has not recorded one &mdash; and is not a statement that the water is clean. The Environment Agency&rsquo;s daily pollution-risk forecast, beach by beach below, is the other half of the answer; after heavy rain it is worth checking both before you go in. Every monitored outfall in Bournemouth, Christchurch and Poole is drawn on the <a href="/bournemouth/live-map/">live map</a>, with the beaches and their forecasts alongside.</p>
 
           <h2 id="quality">Is the water at Bournemouth beach clean? Beach by beach</h2>
@@ -1464,7 +1483,7 @@
         <a href="/van-signal-map/">Bournemouth Signal Map</a>
         <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
         <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
-        <a href="/bournemouth/live-map/app/">Bournemouth in 3D</a>
+        <a href="/bournemouth/live-map/#map">Bournemouth in 3D</a>
         <a href="/pc-benchmark/">PC Benchmark</a>
         <a href="/website-checker/">Website Checker</a>
         <a href="/email-security-checker/">Email Security Checker</a>

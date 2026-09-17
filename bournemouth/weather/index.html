@@ -56,13 +56,13 @@
   <meta property="og:url" content="https://365techies.co.uk/bournemouth/weather/" />
   <meta property="og:title" content="Bournemouth seafront weather: tides, radar, satellite and the sea" />
   <meta property="og:description" content="Bournemouth seafront weather: 10-day forecast, tide times checked against the pier gauge, live rain radar and satellite, and whether the wind is offshore." />
-  <meta property="og:image" content="/bournemouth/media/og-weather.jpg" />
+  <meta property="og:image" content="https://365techies.co.uk/bournemouth/media/og-weather.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Bournemouth seafront weather: tides, radar, satellite and the sea" />
   <meta name="twitter:description" content="Bournemouth seafront weather: 10-day forecast, tide times checked against the pier gauge, live rain radar and satellite, and whether the wind is offshore." />
-  <meta name="twitter:image" content="/bournemouth/media/og-weather.jpg" />
+  <meta name="twitter:image" content="https://365techies.co.uk/bournemouth/media/og-weather.jpg" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/bournemouth/media/b365-weather-icon-180.png" />
   <!-- ?v= bumps past SiteGround's proxy cache. Learned the hard way 2026-08-01:
@@ -284,15 +284,34 @@
       "isPartOf": {
         "@id": "https://365techies.co.uk/#website"
       },
-      "about": {
-        "@id": "https://365techies.co.uk/#business"
-      },
+      "about": [
+        {
+          "@type": "Place",
+          "name": "Bournemouth",
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 50.72,
+            "longitude": -1.88
+          },
+          "sameAs": "https://www.wikidata.org/wiki/Q170478"
+        },
+        {
+          "@type": "TouristAttraction",
+          "name": "Bournemouth Pier",
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 50.7161,
+            "longitude": -1.8756
+          },
+          "sameAs": "https://www.wikidata.org/wiki/Q24662609"
+        }
+      ],
       "breadcrumb": {
         "@id": "https://365techies.co.uk/bournemouth/weather/#breadcrumb"
       },
       "primaryImageOfPage": {
         "@type": "ImageObject",
-        "url": "https://365techies.co.uk/og-image.jpg"
+        "url": "https://365techies.co.uk/bournemouth/media/og-weather.jpg"
       },
       "dateModified": "2026-09-17"
     },
@@ -505,7 +524,7 @@
             <a href="/van-signal-map/">Bournemouth Signal Map</a>
             <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
             <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
-            <a href="/bournemouth/live-map/app/">Bournemouth in 3D</a>
+            <a href="/bournemouth/live-map/#map">Bournemouth in 3D</a>
             <a href="/pc-benchmark/">PC Benchmark</a>
             <a href="/computer-spec-checker/">PC Hardware Checker</a>
             <a href="/website-checker/">Website Checker</a>
@@ -698,7 +717,7 @@
           <a href="/van-signal-map/">Bournemouth Signal Map</a>
           <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
           <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
-          <a href="/bournemouth/live-map/app/">Bournemouth in 3D</a>
+          <a href="/bournemouth/live-map/#map">Bournemouth in 3D</a>
           <a href="/pc-benchmark/">PC Benchmark</a>
           <a href="/computer-spec-checker/">PC Hardware Checker</a>
           <a href="/website-checker/">Website Checker</a>
@@ -1516,6 +1535,8 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
     var today = ukDate(new Date().toISOString()), tomorrow = ukDate(new Date(Date.now() + 864e5).toISOString()), d = ukDate(iso);
     return d === today ? 'Today' : d === tomorrow ? 'Tomorrow' : lon(iso, { weekday: 'short', day: 'numeric', month: 'short' });
   }
+  /* the tide table's day heading: dated, so a saved copy never says a bare "Today" (mirrored in api/bm-wx-ssr.php) */
+  function dayHead(iso) { var l = dayLabel(iso), full = lon(iso, { weekday: 'short', day: 'numeric', month: 'short' }); return (l === 'Today' || l === 'Tomorrow') ? l + ', ' + full : l; }
   function ago(iso) { var m = Math.round((Date.now() - Date.parse(iso)) / 60000); return m < 1 ? 'just now' : m < 60 ? m + ' min ago' : Math.round(m / 60) + ' h ago'; }
   var COMPASS = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
   function compass(d) { return (d === null || d === undefined || isNaN(d)) ? '' : COMPASS[Math.round(d / 22.5) % 16]; }
@@ -2026,7 +2047,7 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
     var byDay = {}, order = [];
     evs.forEach(function (x) {
       var end = Date.parse(x.type === 'HH' ? x.t2 : x.t); if (end < now - 3 * 3600000) return;
-      var key = ukYmd(Date.parse(x.t)); if (!byDay[key]) { byDay[key] = { label: dayLabel(x.t), items: [] }; order.push(key); } byDay[key].items.push(x);
+      var key = ukYmd(Date.parse(x.t)); if (!byDay[key]) { byDay[key] = { label: dayHead(x.t), items: [] }; order.push(key); } byDay[key].items.push(x);
     });
     var tbl = $('wxp-tide-table');
     tbl.innerHTML = order.slice(0, 7).map(function (key, n) {
@@ -2797,7 +2818,7 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
         <a href="/van-signal-map/">Bournemouth Signal Map</a>
         <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
         <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
-        <a href="/bournemouth/live-map/app/">Bournemouth in 3D</a>
+        <a href="/bournemouth/live-map/#map">Bournemouth in 3D</a>
         <a href="/pc-benchmark/">PC Benchmark</a>
         <a href="/website-checker/">Website Checker</a>
         <a href="/email-security-checker/">Email Security Checker</a>

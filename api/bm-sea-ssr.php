@@ -25,6 +25,19 @@ function bmst_ago($iso, $now) {
 }
 function bmst_read_at($iso, $now) { return bmssr_hhmm($iso) . ' (' . bmst_ago($iso, $now) . ')'; }
 
+/* ABSOLUTE TIMES in the served HTML (17 Sep 2026, SEO audit). "Measured 52 min ago" means nothing to a crawler that
+   reads the page tomorrow or an AI answer quoting it next week, so the server writes clock times and dates; the page
+   script still switches the chips to "N min ago" once it has loaded. */
+function bmst_chip_time($iso, $now) {
+    $t = bmssr_ts($iso);
+    if (date('Y-m-d', $t) === date('Y-m-d', $now)) return date('H:i', $t);
+    $m = array('JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEPT', 'OCT', 'NOV', 'DEC');
+    return date('j ', $t) . $m[(int)date('n', $t) - 1] . date(' H:i', $t);
+}
+function bmst_on($iso) { $t = bmssr_ts($iso); return 'at ' . date('H:i', $t) . ' on ' . date('l j F Y', $t); }   // at 15:29 on Thursday 17 September 2026
+
+/* bmssr_prefix_anchor(): dated FAQ prefixes - defined in bm-wx-ssr.php, which index.php loads first */
+
 /* Outdoor Swimming Society bands - anecdotal, not scientific, and the page says so */
 function bmst_band($t) {
     if ($t >= 21) return array("\u{201C}Warm\u{201D}", 'comfortable swimming for most people');
@@ -83,14 +96,14 @@ function bmst_page($html) {
         $state = $stale ? 'b365-stale' : ($ageMin <= 105 ? 'b365-fresh' : '');
         $p['tiletemp'] = bmst_tile('st-tile-temp', $state);
         $p['tilewaves'] = bmst_tile('st-tile-waves', $state);
-        $chip = bmssr_esc(($stale ? 'LAST HEARD ' : 'MEASURED ') . strtoupper(bmst_ago($sea['read_at'], $now)) . " \u{00B7} " . strtoupper((string)bmssr_get($sea, 'station')));
+        $chip = bmssr_esc(($stale ? 'LAST HEARD ' : 'MEASURED ') . bmst_chip_time($sea['read_at'], $now) . " \u{00B7} " . strtoupper((string)bmssr_get($sea, 'station')));
         $p['tempchip'] = $chip;
         $p['waveschip'] = $chip;
         $p['temp'] = bmssr_fixed($sea['tempC'], 1) . "<small>\u{00B0}C</small>";
         $p['waves'] = bmssr_fixed($sea['hs'], 2) . '<small>m</small>';
         $band = bmst_band($sea['tempC']);
         $p['tempsub'] = bmssr_esc($stale
-            ? 'The buoy has not reported since ' . bmst_read_at($sea['read_at'], $now) . " \u{2014} this is its last reading, not a current one."
+            ? 'The buoy has not reported since ' . date('H:i \o\n l j F', bmssr_ts($sea['read_at'])) . " \u{2014} this is its last reading, not a current one."
             : $band[0] . " on the swimmers\u{2019} scale \u{2014} " . $band[1] . '.');
         $w = 'Significant height, measured. ';
         if (bmssr_get($sea, 'tz')) $w .= 'Mean period ' . bmssr_fixed($sea['tz'], 1) . 's. ';
@@ -100,7 +113,7 @@ function bmst_page($html) {
             // verdict: sea-state words only, and never on stale data
             $v = bmst_verdict($sea['hs'], $sea['tempC']);
             $p['verdict'] = '<p class="b365-verdict ' . $v[1] . '" id="st-verdict" data-reveal>' . $v[0] . " \u{00B7} SEA STATE \u{00B7} BANDED FROM MEASURED READINGS</p>";
-            $line = 'Computed from the latest readings: ' . bmssr_fixed($sea['tempC'], 1) . "\u{00B0} water, " . bmssr_fixed($sea['hs'], 2) . "m waves \u{2014} measured " . bmst_ago($sea['read_at'], $now) . '.';
+            $line = 'Computed from the latest readings: ' . bmssr_fixed($sea['tempC'], 1) . "\u{00B0} water, " . bmssr_fixed($sea['hs'], 2) . "m waves \u{2014} measured " . bmst_on($sea['read_at']) . '.';
             $p['bandnote'] = bmssr_esc('At ' . bmssr_fixed($sea['tempC'], 1) . "\u{00B0}C measured now: " . str_replace(array("\u{201C}", "\u{201D}"), '', $band[0]) . " \u{2014} " . $band[1]
                 . ". Bands: the Outdoor Swimming Society\u{2019}s guide (anecdotal, as the OSS itself says).");
             // thermal lag: live reading vs this month's long-term average (Cefas station 23)
@@ -131,7 +144,7 @@ function bmst_page($html) {
         $p['tiletide'] = bmst_tile('st-tile-tide', $stale ? 'b365-stale' : ($tAge <= 75 ? 'b365-fresh' : ''));
         $tr = (string)$tide['trend'];
         $p['tide'] = bmssr_esc(strtoupper(substr($tr, 0, 1)) . substr($tr, 1));
-        $p['tidechip'] = bmssr_esc(($stale ? 'LAST HEARD ' : 'MEASURED ') . strtoupper(bmst_ago($tide['read_at'], $now)) . " \u{00B7} GAUGE ON THE PIER");
+        $p['tidechip'] = bmssr_esc(($stale ? 'LAST HEARD ' : 'MEASURED ') . bmst_chip_time($tide['read_at'], $now) . " \u{00B7} GAUGE ON THE PIER");
         $p['tidesub'] = bmssr_esc('Water level ' . bmssr_fixed($tide['levelMAOD'], 2) . " m (vs Ordnance Datum) \u{2014} a real instrument on Bournemouth Pier, not a prediction. Not for navigation or safety-critical use.");
     } elseif (is_array($tide) && empty($tide['ok'])) {
         $p['tiletide'] = bmst_tile('st-tile-tide', 'b365-down');
@@ -162,7 +175,7 @@ function bmst_page($html) {
             $q .= "Pollution risk forecasts are issued daily May\u{2013}September; none is in force right now.";
         }
         $p['qualitysub'] = bmssr_esc($q);
-        $p['qualitychip'] = bmssr_esc("EA SERVICE \u{00B7} CHECKED " . strtoupper(bmst_ago(bmssr_get($bath, 'read_at'), $now)));
+        $p['qualitychip'] = bmssr_esc("EA SERVICE \u{00B7} CHECKED " . bmst_chip_time(bmssr_get($bath, 'read_at'), $now));
         $rows = '';
         foreach ($sites as $st) {
             $pf = bmssr_get($st, 'prf');
@@ -198,9 +211,9 @@ function bmst_page($html) {
 
     /* ---- storm overflows: the tile, and the sewage question in the article ---- */
     if (!empty($ov['ok'])) {
-        $when = bmst_ago(bmssr_get($ov, 'read_at'), $now);
-        $ra = bmst_read_at(bmssr_get($ov, 'read_at'), $now);
-        $p['overflowchip'] = bmssr_esc("WESSEX MONITORS \u{00B7} CHECKED " . strtoupper($when));
+        $when = bmst_on(bmssr_get($ov, 'read_at'));
+        $ra = $when;
+        $p['overflowchip'] = bmssr_esc("WESSEX MONITORS \u{00B7} CHECKED " . bmst_chip_time(bmssr_get($ov, 'read_at'), $now));
         if ($seaDis > 0) {
             $p['overflow'] = $seaDis . ' seafront outfall' . ($seaDis > 1 ? 's' : '') . ' discharging';
             $p['overflowsub'] = bmssr_esc('Of ' . count($seaM) . ' monitored outfalls along the front, ' . $seaDis . ' ' . ($seaDis > 1 ? 'are' : 'is') . ' reporting a discharge into the bay. Monitor reported ' . $ra
@@ -237,12 +250,41 @@ function bmst_page($html) {
     if ($warns) $p['warn'] = '<div class="b365-warn" id="st-warn">' . bmssr_esc(implode(' ', $warns)) . '</div>';
     if ($line !== null) $p['line'] = bmssr_esc($line . ($warns ? " \u{2014} official warning in force, see below." : ''));
 
-    if (bmssr_get($d, 'at')) $p['asof'] = bmssr_esc('Feed assembled ' . bmst_read_at($d['at'], $now) . " \u{00B7} refreshes every 20 minutes \u{00B7} readings show their own measurement times");
+    if (bmssr_get($d, 'at')) $p['asof'] = bmssr_esc('Feed assembled ' . bmst_on($d['at']) . " \u{00B7} refreshes every 20 minutes \u{00B7} readings show their own measurement times");
+
+    /* ---- the answer, first thing under the H1, and dated FAQ answers (17 Sep 2026, SEO audit) ----
+       Question searches ("what is the sea temperature in bournemouth today") reward one self-contained, dated
+       sentence; the sea-temperature sites that outrank us put exactly that under their H1. */
+    $faqTemp = null;
+    if (!empty($sea['ok']) && bmssr_has(bmssr_get($sea, 'tempC'))) {
+        $rt = bmssr_ts(bmssr_get($sea, 'read_at'));
+        $st = 'the ' . (string)bmssr_get($sea, 'station');
+        $temp = bmssr_fixed($sea['tempC'], 1) . "\u{00B0}C";
+        if (empty($sea['stale']) && date('Y-m-d', $rt) === date('Y-m-d', $now)) {
+            $norms = array(7.4, 6.8, 7.4, 8.9, 11.8, 14.9, 17.4, 18.4, 16.8, 14.2, 11.2, 8.7);
+            $dl = $sea['tempC'] - $norms[(int)date('n', $now) - 1];
+            $vs = bmssr_fixed(abs($dl), 1) . "\u{00B0}C " . ($dl >= 0 ? 'above' : 'below') . ' the ' . date('F', $now) . ' long-term average';
+            $p['answer'] = '<strong>Bournemouth sea temperature today: ' . $temp . '</strong>, measured by ' . bmssr_esc($st) . ' ' . bmst_on($sea['read_at']) . " \u{2014} " . $vs . '. ';
+            $faqTemp = 'Bournemouth sea temperature today: ' . $temp . ', measured by ' . $st . ' ' . bmst_on($sea['read_at']) . ', ' . $vs . '. ';
+        } else {
+            $p['answer'] = 'Bournemouth sea temperature: ' . bmssr_esc($st) . ' last reported <strong>' . $temp . '</strong> ' . bmst_on($sea['read_at']) . ' and has not reported since. ';
+            $faqTemp = 'Bournemouth sea temperature: ' . $st . ' last reported ' . $temp . ' ' . bmst_on($sea['read_at']) . ' and has not reported since. ';
+        }
+    }
+    $faqSewage = null;
+    if (!empty($ov['ok'])) {
+        $at = ucfirst(bmst_on(bmssr_get($ov, 'read_at')));
+        if ($seaDis > 0) $faqSewage = $at . ', ' . $seaDis . ' seafront storm overflow' . ($seaDis > 1 ? 's were' : ' was') . ' reporting a discharge into the sea (Wessex Water monitors). ';
+        elseif ($rivDis > 0) $faqSewage = $at . ', no seafront storm overflow was discharging; ' . $rivDis . ' monitor' . ($rivDis > 1 ? 's' : '') . ' upstream on the Stour or Avon ' . ($rivDis > 1 ? 'were' : 'was') . ' (Wessex Water monitors). ';
+        else $faqSewage = $at . ', none of the ' . bmssr_get($ov, 'total') . ' monitored storm overflows around Bournemouth was reporting a discharge (Wessex Water monitors). ';
+    }
 
     $done = 0;
     foreach ($p as $name => $inner) {
         $html = bmssr_swap($html, $name, $inner, $hit);
         $done += $hit;
     }
+    if ($faqTemp !== null) { $html = bmssr_prefix_anchor($html, 'The live panel at the top of this page shows', $faqTemp, $hit); $done += $hit ? 1 : 0; }
+    if ($faqSewage !== null) { $html = bmssr_prefix_anchor($html, 'This page reads Wessex Water', $faqSewage, $hit); $done += $hit ? 1 : 0; }
     return array($html, $done);
 }

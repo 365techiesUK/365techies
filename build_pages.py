@@ -87,6 +87,8 @@ _VOLATILE = [
     # today's date for it, which is the same false signal as the analytics swap above.
     (_cdre.compile(r'\s*<a href="/bournemouth/live-map/">Bournemouth Live Map</a>'), ''),
     (_cdre.compile(r'\s*<a href="/bournemouth/live-map/app/">Bournemouth in 3D</a>'), ''),
+    # 17 Sep 2026: the same menu item now points at the landing page (#map opens the map there) - still chrome.
+    (_cdre.compile(r'\s*<a href="/bournemouth/live-map/#map">Bournemouth in 3D</a>'), ''),
     # 2026-09-07: the scam help went into the chrome (strip item + Help menu). Chrome, not content.
     (_cdre.compile(r'\s*<a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed &mdash; What To Do</a>'), ''),
     (_cdre.compile(r'<a class="tk-alert"[^>]*>.*?</a>&ensp;<em class="tk-sep">//</em>&ensp;'), ''),
@@ -402,7 +404,7 @@ HEADER = '''  <header class="site-header">
             <a href="/van-signal-map/">Bournemouth Signal Map</a>
             <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
             <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
-            <a href="/bournemouth/live-map/app/">Bournemouth in 3D</a>
+            <a href="/bournemouth/live-map/#map">Bournemouth in 3D</a>
             <a href="/pc-benchmark/">PC Benchmark</a>
             <a href="/computer-spec-checker/">PC Hardware Checker</a>
             <a href="/website-checker/">Website Checker</a>
@@ -595,7 +597,7 @@ HEADER = '''  <header class="site-header">
           <a href="/van-signal-map/">Bournemouth Signal Map</a>
           <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
           <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
-          <a href="/bournemouth/live-map/app/">Bournemouth in 3D</a>
+          <a href="/bournemouth/live-map/#map">Bournemouth in 3D</a>
           <a href="/pc-benchmark/">PC Benchmark</a>
           <a href="/computer-spec-checker/">PC Hardware Checker</a>
           <a href="/website-checker/">Website Checker</a>
@@ -793,7 +795,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/van-signal-map/">Bournemouth Signal Map</a>
         <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
         <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
-        <a href="/bournemouth/live-map/app/">Bournemouth in 3D</a>
+        <a href="/bournemouth/live-map/#map">Bournemouth in 3D</a>
         <a href="/pc-benchmark/">PC Benchmark</a>
         <a href="/website-checker/">Website Checker</a>
         <a href="/email-security-checker/">Email Security Checker</a>
@@ -976,6 +978,8 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None, robot
     og_type = "article" if ('"BlogPosting"' in schema_json or '"Article"' in schema_json) else "website"
     # Per-page social share card; falls back to the site-wide default.
     og_img = og_image or f"{SITE}/og-image.jpg"
+    if og_img.startswith("/"):
+        og_img = SITE + og_img   # absolute, or Facebook's crawler ignores it (17 Sep 2026)
     # Escape raw double quotes so descriptions that OPEN with a quoted phrase
     # (e.g. '"Cannot start Microsoft Outlook..."') can't terminate the content=""
     # attribute early — that was silently emptying the meta description.
@@ -1276,12 +1280,17 @@ def crumb_sub(slug, parent_name, parent_slug, name):
     ]
     return {"@type": "BreadcrumbList", "@id": f"{SITE}/{slug}/#breadcrumb", "itemListElement": items}
 
-def webpage(slug, title, desc, wtype="WebPage"):
+def webpage(slug, title, desc, wtype="WebPage", about=None, image=None):
+    # about/image (17 Sep 2026, Bournemouth365 SEO audit): every page used to say it was ABOUT the IT business and
+    # that its main image was the company's "Monthly IT Support" card - true for the service pages, false for a
+    # sea-temperature or beach-parking page. Those pages now pass the place they describe and their own photo.
+    if image and image.startswith("/"):
+        image = SITE + image
     return {"@type": wtype, "@id": f"{SITE}/{slug}/#webpage", "url": f"{SITE}/{slug}/",
             "name": title, "description": desc, "inLanguage": "en-GB",
-            "isPartOf": {"@id": SITE + "/#website"}, "about": {"@id": SITE + "/#business"},
+            "isPartOf": {"@id": SITE + "/#website"}, "about": about or {"@id": SITE + "/#business"},
             "breadcrumb": {"@id": f"{SITE}/{slug}/#breadcrumb"},
-            "primaryImageOfPage": {"@type": "ImageObject", "url": SITE + "/og-image.jpg"},
+            "primaryImageOfPage": {"@type": "ImageObject", "url": image or SITE + "/og-image.jpg"},
             # A PLACEHOLDER, substituted at write time by write_all() from content_dates.json.
             # This used to be TODAY, so every page claimed it changed on whatever day the site
             # was last built - lastmod_for() existed to stop that and was never called. The

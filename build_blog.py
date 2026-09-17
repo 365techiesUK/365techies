@@ -1006,12 +1006,16 @@ if _osg.path.exists(_st_fp):
             _bm_bad.append("sea-today: official/computed chip wearing the measured class: %s" % _forbidden)
     # Server first paint (17 Sep 2026): bournemouth/sea-today/index.php fills these markers at request time. A marker
     # that vanishes fails silently (the block just shows its placeholder again), so each must appear exactly once.
-    for _m in ("verdict", "warn", "line", "tiletemp", "tempchip", "temp", "tempsub", "tilewaves", "waveschip", "waves",
+    for _m in ("answer", "verdict", "warn", "line", "tiletemp", "tempchip", "temp", "tempsub", "tilewaves", "waveschip", "waves",
                "wavessub", "tiletide", "tidechip", "tide", "tidesub", "bandnote", "qualitychip", "quality", "qualitysub",
                "overflowchip", "overflow", "overflowsub", "lagnote", "asof", "attrib", "sewage", "bakednote", "sites"):
         for _tag in ("<!--ssr:%s-->" % _m, "<!--/ssr:%s-->" % _m):
             if _st_html.count(_tag) != 1:
                 _bm_bad.append("sea-today: server-render marker %s appears %d times (must be 1)" % (_tag, _st_html.count(_tag)))
+    # the server prefixes dated answers to these FAQ answers - once in the visible FAQ, once in its JSON-LD (17 Sep 2026)
+    for _anc in ("The live panel at the top of this page shows", "This page reads Wessex Water"):
+        if _st_html.count(_anc) != 2:
+            _bm_bad.append("sea-today: FAQ anchor %r appears %d times (must be 2: FAQ + JSON-LD)" % (_anc, _st_html.count(_anc)))
     _st_hta = _osg.path.join(bp.BASE, "bournemouth", "sea-today", ".htaccess")
     if not (_osg.path.exists(_osg.path.join(bp.BASE, "bournemouth", "sea-today", "index.php"))
             and _osg.path.exists(_osg.path.join(bp.BASE, "api", "bm-sea-ssr.php"))):
@@ -1058,6 +1062,9 @@ if _osg.path.exists(_wxp_fp):
     for _need in ('id="wxp-nowcard"', 'id="wxp-vitals"'):
         if _wxp_html.count(_need) != 1:
             _bm_bad.append("weather page: %s must appear exactly once (index.php marks it)" % _need)
+    _anc = "The tide table on this page lists every high and low water"   # server prefixes today's dated tides (17 Sep 2026)
+    if _wxp_html.count(_anc) != 2:
+        _bm_bad.append("weather page: FAQ anchor %r appears %d times (must be 2: FAQ + JSON-LD)" % (_anc, _wxp_html.count(_anc)))
     _wxp_php = _osg.path.join(bp.BASE, "bournemouth", "weather", "index.php")
     _wxp_hta = _osg.path.join(bp.BASE, "bournemouth", "weather", ".htaccess")
     _wxp_ssr = _osg.path.join(bp.BASE, "api", "bm-wx-ssr.php")

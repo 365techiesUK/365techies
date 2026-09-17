@@ -56,14 +56,46 @@ function bmssr_ago($iso, $now) {
     return $m < 1 ? 'just now' : ($m < 60 ? $m . ' min ago' : bmssr_round($m / 60) . ' h ago');
 }
 
-/* "Today", "Tomorrow", else the browser's en-GB short date - which writes September as "Sept" */
+/* The tide table's day heading, as the page script's dayHead() writes it: "Today, Thu 17 Sept", "Tomorrow, Fri 18 Sept",
+   else "Sat 19 Sept" (the browser's en-GB short date writes September as "Sept"). Dated since 17 Sep 2026 so a saved
+   copy or an AI answer never quotes a bare "Today". */
 function bmssr_day_label($iso, $now) {
     $ts = bmssr_ts($iso);
     $d = bmssr_ymd($ts);
-    if ($d === bmssr_ymd($now)) return 'Today';
-    if ($d === bmssr_ymd($now + 86400)) return 'Tomorrow';
     $m = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec');
-    return date('D j ', $ts) . $m[(int)date('n', $ts) - 1];
+    $short = date('D j ', $ts) . $m[(int)date('n', $ts) - 1];
+    if ($d === bmssr_ymd($now)) return 'Today, ' . $short;
+    if ($d === bmssr_ymd($now + 86400)) return 'Tomorrow, ' . $short;
+    return $short;
+}
+
+/* "Today, Thursday 17 September 2026, high water at Bournemouth Pier is predicted at 12:50 and 17:00 (a double high
+   water, 2.0 m), and low water at 20:10 (1.3 m). " - the whole UK day from the prediction table (the public feed drops
+   events older than 12 hours, so the morning's would be missing late in the day). Plain text: it goes into the FAQ and
+   its JSON-LD. */
+function bmssr_today_tides_sentence($now) {
+    if (!function_exists('bmtide_data')) return null;
+    $td = bmtide_data();
+    if (empty($td['events']) || !isset($td['datum']['cd_below_odn'])) return null;
+    $cd = (float)$td['datum']['cd_below_odn'];
+    $today = bmssr_ymd($now);
+    $evs = array();
+    foreach ($td['events'] as $e) {
+        $t = strtotime($e[0]);
+        if (!$t || bmssr_ymd($t) !== $today) continue;
+        $evs[] = array('t' => $e[0], 'type' => $e[1], 'h' => round($e[2] / 100 + $cd, 2));
+    }
+    $highs = array(); $lows = array();
+    foreach (bmssr_group_tides($evs) as $x) {
+        if ($x['type'] === 'HH') $highs[] = bmssr_hhmm($x['t']) . ' and ' . bmssr_hhmm($x['t2']) . ' (a double high water, ' . bmssr_fixed(max($x['h'], $x['h2']), 1) . ' m)';
+        elseif ($x['type'] === 'H') $highs[] = bmssr_hhmm($x['t']) . ' (' . bmssr_fixed($x['h'], 1) . ' m)';
+        elseif ($x['type'] === 'L') $lows[] = bmssr_hhmm($x['t']) . ' (' . bmssr_fixed($x['h'], 1) . ' m)';
+    }
+    if (!$highs && !$lows) return null;
+    $parts = array();
+    if ($highs) $parts[] = 'high water at Bournemouth Pier is predicted at ' . implode(', then ', $highs);
+    if ($lows) $parts[] = ($highs ? 'and low water at ' : 'low water at Bournemouth Pier is predicted at ') . implode(', then ', $lows);
+    return 'Today, ' . date('l j F Y', $now) . ', ' . implode(', ', $parts) . '. ';
 }
 
 /* MET Norway symbol code -> the page's words (JS kind() + words()) */
@@ -293,6 +325,15 @@ function bmssr_tides($d, $now) {
 }
 
 /* ---------------- stitching ---------------- */
+if (!function_exists('bmssr_prefix_anchor')) {
+    /* Put a dated sentence in front of an FAQ answer, in the visible FAQ AND its FAQPage JSON-LD (the same text appears
+       in both, so every occurrence of the anchor is prefixed). The prefix must stay plain: no quotes, backslashes or markup. */
+    function bmssr_prefix_anchor($html, $anchor, $prefix, &$hit) {
+        $prefix = str_replace(array('"', '\\', '<', '>', '&'), '', $prefix);
+        $hit = substr_count($html, $anchor);
+        return $hit ? str_replace($anchor, $prefix . $anchor, $html) : $html;
+    }
+}
 function bmssr_swap($html, $name, $inner, &$hit) {
     $a = '<!--ssr:' . $name . '-->';
     $b = '<!--/ssr:' . $name . '-->';
@@ -337,6 +378,12 @@ function bmssr_page($html) {
     // markers the page's no-JavaScript styles use to show the filled blocks instead of hiding the skeletons
     if ($parts['now'] !== null) $html = bmssr_mark($html, 'id="wxp-nowcard"');
     if ($parts['wind'] !== null || $parts['sea'] !== null || $parts['tide'] !== null) $html = bmssr_mark($html, 'id="wxp-vitals"');
+    // the FAQ "What time is high tide in Bournemouth today?" starts with today's dated times (visible FAQ and JSON-LD)
+    $tideFaq = bmssr_today_tides_sentence($now);
+    if ($tideFaq !== null && function_exists('bmssr_prefix_anchor')) {
+        $html = bmssr_prefix_anchor($html, 'The tide table on this page lists every high and low water', $tideFaq, $hitA);
+        $done += $hitA ? 1 : 0;
+    }
     if ($done) {
         $html = bmssr_swap($html, 'noscript', '<noscript><p class="wxp-sub">Without JavaScript you see the readings as they stood when this page loaded. The charts, the 10-day forecast, radar and satellite need JavaScript.</p></noscript>', $hit);
     }

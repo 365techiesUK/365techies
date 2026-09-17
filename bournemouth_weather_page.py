@@ -40,6 +40,7 @@ renderGlance, renderVitals, evChip and renderTides - change the words or labels 
 """
 import build_pages as _bp
 from build_pages import add, graph, crumb_sub, webpage, faqpage, faq_html, bc_sub
+import bournemouth_places as _pl   # what the page is ABOUT in its schema (17 Sep 2026)
 
 _WXP_SLUG = "bournemouth/weather"
 
@@ -63,7 +64,8 @@ def _wxp_schema(s):
     return graph([
         crumb_sub(s, "Bournemouth365", "bournemouth", "Weather, Tides &amp; Sea"),
         webpage(s, "Bournemouth Weather, Tide Times & Rain Radar",
-                "Bournemouth seafront weather: a 10-day forecast, predicted tide times checked against the pier gauge, live rain radar and satellite loops, and measured wind."),
+                "Bournemouth seafront weather: a 10-day forecast, predicted tide times checked against the pier gauge, live rain radar and satellite loops, and measured wind.",
+                about=[_pl.BOURNEMOUTH, _pl.PIER], image="/bournemouth/media/og-weather.jpg"),
         faqpage(s, _WXP_FAQS),
     ])
 
@@ -826,6 +828,8 @@ _WXP_JS = r'''
     var today = ukDate(new Date().toISOString()), tomorrow = ukDate(new Date(Date.now() + 864e5).toISOString()), d = ukDate(iso);
     return d === today ? 'Today' : d === tomorrow ? 'Tomorrow' : lon(iso, { weekday: 'short', day: 'numeric', month: 'short' });
   }
+  /* the tide table's day heading: dated, so a saved copy never says a bare "Today" (mirrored in api/bm-wx-ssr.php) */
+  function dayHead(iso) { var l = dayLabel(iso), full = lon(iso, { weekday: 'short', day: 'numeric', month: 'short' }); return (l === 'Today' || l === 'Tomorrow') ? l + ', ' + full : l; }
   function ago(iso) { var m = Math.round((Date.now() - Date.parse(iso)) / 60000); return m < 1 ? 'just now' : m < 60 ? m + ' min ago' : Math.round(m / 60) + ' h ago'; }
   var COMPASS = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
   function compass(d) { return (d === null || d === undefined || isNaN(d)) ? '' : COMPASS[Math.round(d / 22.5) % 16]; }
@@ -1336,7 +1340,7 @@ _WXP_JS = r'''
     var byDay = {}, order = [];
     evs.forEach(function (x) {
       var end = Date.parse(x.type === 'HH' ? x.t2 : x.t); if (end < now - 3 * 3600000) return;
-      var key = ukYmd(Date.parse(x.t)); if (!byDay[key]) { byDay[key] = { label: dayLabel(x.t), items: [] }; order.push(key); } byDay[key].items.push(x);
+      var key = ukYmd(Date.parse(x.t)); if (!byDay[key]) { byDay[key] = { label: dayHead(x.t), items: [] }; order.push(key); } byDay[key].items.push(x);
     });
     var tbl = $('wxp-tide-table');
     tbl.innerHTML = order.slice(0, 7).map(function (key, n) {

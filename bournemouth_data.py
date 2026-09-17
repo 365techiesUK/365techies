@@ -39,6 +39,7 @@ import math
 import datetime as _dt
 
 from build_pages import add, graph, crumb, crumb_sub, webpage, faqpage, faq_html, hero, bc, bc_sub, SITE
+import bournemouth_places as _pl   # what each page is ABOUT in its schema (17 Sep 2026)
 
 # The published 2026 season, plus the finale BCP added on 26 Aug 2026 after
 # the wildfire cancellations ("an additional display will take place next
@@ -140,7 +141,7 @@ _STATUS = f'''    <section class="section b365 b365--dusk" id="tonight" aria-lab
           <div class="b365-tile b365-tile--dusk" id="bmfw-tile">
             <p class="b365-state{" off" if SEASON_OVER else ""}" id="bmfw-state">{"SEASON FINISHED &middot; 2027 DATES WHEN BCP ANNOUNCES THEM" if SEASON_OVER else "FINALE &middot; FRIDAY 4 SEPTEMBER &middot; 10PM"}</p>
             <h2 id="bmfw-head">{"That was the last one &mdash; the 2026 season has finished" if SEASON_OVER else "One more: the finale is Friday 4 September at 10pm"}</h2>
-            <p id="bmfw-sub">{"The finale on Friday 4 September closed a season that lost three Fridays: 14 and 21 August to the wildfire emergency, 28 August to high winds at sea. BCP Council announces the next season in the spring, and this page will be updated when they do. Last checked " if SEASON_OVER else "BCP Council reinstated the displays on 26 August after the wildfire risk eased, then had to cancel 28 August on the night for high winds at sea. The finale they added, Friday 4 September at 10pm from the seafront east of the pier, is still on as announced &mdash; weather permitting, as ever. Last checked "}{CANCELLED_UPDATED}.</p>
+            <p id="bmfw-sub">{"The finale on Friday 4 September closed a season that lost three Fridays: 14 and 21 August to the wildfire emergency, 28 August to high winds at sea. The 2027 dates have not been announced yet; this page will be updated as soon as BCP Council confirms them. Last checked " if SEASON_OVER else "BCP Council reinstated the displays on 26 August after the wildfire risk eased, then had to cancel 28 August on the night for high winds at sea. The finale they added, Friday 4 September at 10pm from the seafront east of the pier, is still on as announced &mdash; weather permitting, as ever. Last checked "}{CANCELLED_UPDATED}.</p>
             <p class="b365-sub" id="bmfw-live"></p>
           </div>
         </div>
@@ -187,7 +188,7 @@ _STATUS = f'''    <section class="section b365 b365--dusk" id="tonight" aria-lab
           var se = document.getElementById('bmfw-state');
           if (se) {{ se.textContent = 'SEASON FINISHED \\u2014 2027 DATES WHEN BCP ANNOUNCES THEM'; se.classList.add('off'); }}
           head.textContent = 'That was the last one \\u2014 the 2026 season has finished';
-          sub.textContent = 'The finale on Friday 4 September closed a season that lost three Fridays: 14 and 21 August to the wildfire emergency, 28 August to high winds at sea. BCP Council announces the next season in the spring, and this page will be updated when they do.';
+          sub.textContent = 'The finale on Friday 4 September closed a season that lost three Fridays: 14 and 21 August to the wildfire emergency, 28 August to high winds at sea. The 2027 dates have not been announced yet; this page will be updated as soon as BCP Council confirms them.';
           return;
         }}
         var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -256,14 +257,14 @@ _WHERE = '''          <h2 id="where">Where to stand</h2>
 # ---- practical ---------------------------------------------------------------
 _PRACTICAL = '''          <h2 id="practical">Getting there and back</h2>
           <p><strong>Arrive well before 10.</strong> On a warm Friday the seafront fills through the evening; being settled by half nine beats hunting for a gap in the dark.</p>
-          <p><strong>Buses:</strong> Morebus has run extra &ldquo;Firework Fridays&rdquo; services in recent seasons &mdash; check <a href="https://www.morebus.co.uk" target="_blank" rel="noopener">morebus.co.uk</a> for this year&rsquo;s times. <strong>Parking:</strong> the seafront and clifftop car parks fill early on fireworks nights; allow more time than feels sensible, or take the bus. An honest local guide to beach parking is coming to this section soon.</p>
+          <p><strong>Buses:</strong> Morebus has run extra &ldquo;Firework Fridays&rdquo; services in recent seasons &mdash; check <a href="https://www.morebus.co.uk" target="_blank" rel="noopener">morebus.co.uk</a> for this year&rsquo;s times. <strong>Parking:</strong> the seafront and clifftop car parks fill early on fireworks nights; allow more time than feels sensible, or take the bus. Our <a href="/bournemouth/beach-parking/">beach parking guide</a> has the seafront car park prices and the cheaper options.</p>
           <p><strong>Afterwards:</strong> it is dark, the paths are busy, and small legs are tired &mdash; the overcliff exits thin the crowd out fastest. Take your litter home, and keep clear of any cordoned area near the firing site on the beach.</p>
           <h2 id="history">130 years of summer light</h2>
           <p>Bournemouth&rsquo;s habit of lighting up its seafront on summer evenings has a recorded origin: the candlelight illuminations of the Lower Gardens, first staged in 1896 &mdash; the year the Empress Eug&eacute;nie visited &mdash; and extended in 1897 for Queen Victoria&rsquo;s Diamond Jubilee, when some fifteen thousand coloured candles were lit through the gardens. The tradition survives in two forms today: the gardens&rsquo; candlelight nights, and the Friday fireworks &mdash; fired by the council&rsquo;s events team from a barge just east of the pier, part-funded by the town&rsquo;s Coastal BID to keep summer evenings on the seafront busy. Same idea as 1896: give everyone on the beach a reason to stay for dusk.</p>
           <p class="mono">History: recorded origin per Bournemouth Parks &amp; Gardens histories and visitor-guide archives (the 1896 date and the Jubilee candle count are corroborated across independent local accounts); today&rsquo;s operation per BCP Council&rsquo;s event listings.</p>
 
           <h2 id="winter">November 5th and New Year</h2>
-          <p>Organised autumn and New Year displays around Bournemouth vary year to year, and nothing has been announced for late 2026 yet. We will update this page when the organisers confirm anything &mdash; the Friday Fireworks above are the seafront&rsquo;s regular fixture.</p>
+          <p>Bonfire Night and New Year displays around Bournemouth are run by different organisers and change from year to year, so check the organiser&rsquo;s own page before you go. The Friday Fireworks above are the seafront&rsquo;s regular fixture.</p>
           <h2>What happened to the Air Festival?</h2>
           <p>The Bournemouth Air Festival is not running &mdash; there was no event in 2025, there is none in 2026, and no return has been confirmed. The Friday Fireworks are now the big free regular on the seafront&rsquo;s summer calendar.</p>'''
 
@@ -285,7 +286,7 @@ _B365 = '''    <section class="section" aria-label="About Bournemouth365">
 
 _FAQS = [
     ("What time do the Bournemouth Friday fireworks start?",
-     "10pm, from the seafront just east of Bournemouth Pier. In 2026 the season ran on Fridays from 24 July, lost 14 and 21 August to the national wildfire emergency and 28 August to high winds at sea, and closed with a finale BCP Council added on Friday 4 September. Next year&rsquo;s dates come from BCP Council in the spring."),
+     "10pm, from the seafront just east of Bournemouth Pier. In 2026 the season ran on Fridays from 24 July, lost 14 and 21 August to the national wildfire emergency and 28 August to high winds at sea, and closed with a finale BCP Council added on Friday 4 September. Next year&rsquo;s dates will be added here as soon as BCP Council announces them."),
     ("Are the Friday fireworks free?",
      "Yes &mdash; completely free, no tickets, no wristbands. They are organised by BCP Council&rsquo;s events team. Just turn up."),
     ("Where are the fireworks set off?",
@@ -301,7 +302,8 @@ def _schema(s):
     g = [
         crumb_sub(s, "Bournemouth365", "bournemouth", "Friday Fireworks"),
         webpage(s, "Bournemouth Friday Fireworks 2026",
-                "Every 2026 date for Bournemouth's free Friday night fireworks, the best places to stand, and whether the display is on tonight."),
+                "Every 2026 date for Bournemouth's free Friday night fireworks, which were cancelled and why, and the best places to stand.",
+                about=_pl.PIER, image="/bournemouth/media/og-fireworks.jpg"),
         faqpage(s, _FAQS),
     ]
     # Event nodes for displays still to come at BUILD time. Google's guidance
@@ -967,7 +969,8 @@ def _st_schema(s):
     return graph([
         crumb_sub(s, "Bournemouth365", "bournemouth", "Sea Conditions"),
         webpage(s, "Bournemouth Sea Conditions Today",
-                "Live measured sea temperature, waves, tide and water quality for Bournemouth beach - from the bay's wave buoy, the pier tide gauge, the Environment Agency and Wessex Water."),
+                "Live measured sea temperature, waves, tide and water quality for Bournemouth beach - from the bay's wave buoy, the pier tide gauge, the Environment Agency and Wessex Water.",
+                about=[_pl.POOLE_BAY, _pl.BEACH], image="/bournemouth/media/og-weather.jpg"),
         faqpage(s, _ST_FAQS),
     ])
 
@@ -975,8 +978,8 @@ def _st_schema(s):
 _ST_CONTENT = "\n".join([
     hero(bc_sub("Bournemouth365", "/bournemouth/", "Sea Conditions"),
          "// BOURNEMOUTH365",
-         'The sea at Bournemouth, <em class="grad grad--cyan">measured right now</em>',
-         "Sea temperature from the bay&rsquo;s wave buoy. Tide from the gauge on the pier itself. Water quality from the Environment Agency, storm overflows from Wessex Water&rsquo;s live monitors. Every reading timestamped &mdash; and when a feed is down, we say so.",
+         'Bournemouth sea temperature, <em class="grad grad--cyan">measured right now</em>',
+         "<!--ssr:answer--><!--/ssr:answer-->Sea temperature from the bay&rsquo;s wave buoy. Tide from the gauge on the pier itself. Water quality from the Environment Agency, storm overflows from Wessex Water&rsquo;s live monitors. Every reading timestamped &mdash; and when a feed is down, we say so.",
          cta1=("The sea right now", "#now"),
          cta2=("Can you swim today?", "#swim"),
          chips=["Measured, not modelled", "Every reading timestamped", "Updated through the day"]),
@@ -994,6 +997,7 @@ add(
     og_title="The sea at Bournemouth, measured right now",
     schema=_st_schema,
     content=_ST_CONTENT,
+    og_image="/bournemouth/media/og-weather.jpg",   # the pier and the sea from the beach, owner footage (was the company card)
 )
 
 
@@ -1107,7 +1111,8 @@ def _ss_schema(s):
     return graph([
         crumb_sub(s, "Bournemouth365", "bournemouth", "Sunrise & Sunset"),
         webpage(s, "Sunrise and Sunset in Bournemouth",
-                "Today's computed sunrise and sunset times for Bournemouth seafront, and the best spots to watch - photographed by us, not stock."),
+                "Today's computed sunrise and sunset times for Bournemouth seafront, and the best spots to watch - photographed by us, not stock.",
+                about=_pl.BEACH, image="/bournemouth/media/og-sunrise-sunset.jpg"),
         faqpage(s, _SS_FAQS),
     ])
 
@@ -1227,7 +1232,7 @@ def _hub_schema(s):
         crumb(s, "Bournemouth365"),
         webpage(s, "Bournemouth365",
                 "Bournemouth, 365 days a year: seafront weather, tide times and rain radar, live measured sea conditions, beach parking, sunrise and sunset spots - from the team behind the Bournemouth365 Facebook page.",
-                wtype="CollectionPage"),
+                wtype="CollectionPage", about=_pl.BOURNEMOUTH, image="/bournemouth/media/og-sunrise-sunset.jpg"),
     ])
 
 
@@ -1317,7 +1322,7 @@ _PK_PROSE = f'''          <h2 id="carparks">What the seafront car parks actually
           <p><strong>If you live here.</strong> BCP&rsquo;s evening and weekend car park permits run 5pm&ndash;8am on weekdays and all day at weekends. Alumhurst Road is on the list at &pound;290 a year &mdash; effectively a beach season ticket that nobody markets as one.</p>
 
           <h2 id="onstreet">&ldquo;Where can I park for free?&rdquo; &mdash; the honest answer</h2>
-          <p>We are not going to send you to somebody&rsquo;s street. This month in particular, guessing wrong costs &pound;110.</p>
+          <p>We are not going to send you to somebody&rsquo;s street. Guessing wrong is expensive: a ticket for parking where you are not allowed is &pound;70 (&pound;35 within 14 days), and during BCP&rsquo;s August 2026 seafront trial it was &pound;160.</p>
           <p>What is true is that Bournemouth has no seafront-wide controlled parking zone. The residents&rsquo; permit zones here are <strong>small and specific</strong> &mdash; one of them covers little more than Windsor Road and part of Cecil Road &mdash; and they are signed at the kerb. Everything else is governed by the lines and the plates, which is exactly why the council keeps consulting on changing it.</p>
           <p>The mistake that actually catches people out is not the seafront at all. In the year to May 2026 the single biggest fine-earning road in the whole area was <strong>St Stephen&rsquo;s Road in the town centre &mdash; 389 tickets, &pound;24,160</strong> &mdash; a permit-zone street that visitors drift into while hunting for something free. If you want certainty, take the &pound;3 station option or the bus; if you want to read the actual restriction on any given street, BCP publishes the authoritative map at <a href="https://bcp.traffweb.app/" target="_blank" rel="noopener">bcp.traffweb.app</a>.</p>
 
@@ -1344,7 +1349,7 @@ _PK_FAQS = [
     ("Where is the cheapest place to park for Bournemouth beach?",
      "On a Saturday, Sunday or bank holiday, Bournemouth station car park at &pound;3.00 all day is the cheapest realistic option &mdash; about 1.6 miles from the beach. In town, Avenue Road is &pound;12.90 for 24 hours with 900 spaces. Alumhurst Road, five minutes from Alum Chine, is &pound;5.80 for its four-hour maximum."),
     ("Is there any free parking near Bournemouth beach?",
-     "There is no seafront-wide controlled zone, and the residents&rsquo; permit zones here are small and clearly signed &mdash; but we won&rsquo;t point you at particular streets, because the restrictions are set by the lines and the plates and getting it wrong is expensive. During August 2026 in particular, a wrongly-parked car on any road from Sandbanks to Southbourne costs &pound;110 or &pound;160. BCP&rsquo;s traffic-restriction map at bcp.traffweb.app shows the actual rules street by street."),
+     "There is no seafront-wide controlled zone, and the residents&rsquo; permit zones here are small and clearly signed &mdash; but we won&rsquo;t point you at particular streets, because the restrictions are set by the lines and the plates and getting it wrong is expensive. Outside a trial a ticket is &pound;70, or &pound;50 for overstaying a legal bay; during BCP&rsquo;s August 2026 trial on every road from Sandbanks to Southbourne it was &pound;160 or &pound;110. BCP&rsquo;s traffic-restriction map at bcp.traffweb.app shows the actual rules street by street."),
     ("What time do Bournemouth beach car parks fill up?",
      "On hot summer weekends, early. BCP reported that on the busiest weekend of July 2025 the Sandbanks and Boscombe car parks were full by 10am on both days. When Boscombe&rsquo;s car parks fill, Sea Road is closed at The Marina junction and the A338 signs show which car parks still have space."),
     ("Do Blue Badge holders park free in Bournemouth car parks?",
@@ -1358,7 +1363,8 @@ def _pk_schema(s):
     return graph([
         crumb_sub(s, "Bournemouth365", "bournemouth", "Beach Parking"),
         webpage(s, "Parking for Bournemouth Beach",
-                "What Bournemouth beach parking actually costs, where it is cheaper, and the rules that catch people out - sourced from BCP Council and dated."),
+                "What Bournemouth beach parking actually costs, where it is cheaper, and the rules that catch people out - sourced from BCP Council and dated.",
+                about=_pl.BEACH, image="/bournemouth/media/og-weather.jpg"),
         faqpage(s, _PK_FAQS),
     ])
 
@@ -1368,7 +1374,7 @@ _PK_CONTENT = "\n".join([
          "// BOURNEMOUTH365",
          'Parking for <em class="grad grad--cyan">Bournemouth beach</em>',
          f"What it actually costs, where it is cheaper, and the rules that catch people out &mdash; every price taken from BCP Council&rsquo;s own pages on {_PK_CHECKED}, and dated so you can see how fresh it is.",
-         cta1=("This month&rsquo;s higher fines", "#fines"),
+         cta1=("What a parking ticket costs", "#fines"),
          cta2=("The cheaper options", "#cheaper"),
          chips=["Prices from BCP, dated", "No made-up free-parking tips", "Written by locals"]),
     _PK_ALERT,
@@ -1384,7 +1390,7 @@ add(
     og_title="Parking for Bournemouth beach \u2014 the honest guide",
     schema=_pk_schema,
     content=_PK_CONTENT,
-    og_image="/bournemouth/media/og-sunrise-sunset.jpg",
+    og_image="/bournemouth/media/og-weather.jpg",
 )
 
 
@@ -1751,7 +1757,7 @@ _LM_JS = '''      <script>
 def _lm_schema(s):
     return graph([
         crumb_sub(s, "Bournemouth365", "bournemouth", "Live map"),
-        webpage(s, "Bournemouth live map", _LM_DESC),
+        webpage(s, "Bournemouth live map", _LM_DESC, about=_pl.BCP, image="/bournemouth/media/og-live-map.jpg"),
         {"@type": "WebApplication", "@id": _LM_URL + "#app", "name": "Bournemouth365 live map",
          "url": _LM_URL, "applicationCategory": "MapApplication", "operatingSystem": "Any (web browser)",
          "isAccessibleForFree": True,
