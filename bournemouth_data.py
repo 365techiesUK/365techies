@@ -1370,30 +1370,68 @@ _wxp.register(_B365)
 
 
 # ============================================================================
-# PAGE 4: /bournemouth/beach-parking/ - the honest guide. Google currently
-# ranks a 2012 Tripadvisor thread and a Reddit thread for these queries
-# because no page answers them. Everything here is sourced from BCP's own
-# pages, dated, and says so. See this module's header for the do-not list.
+# PAGE 4: /bournemouth/beach-parking/ - the honest guide. Everything here is
+# sourced from BCP's own pages, dated, and says so. See this module's header
+# for the do-not list.
 # ============================================================================
 
 _PK_SLUG = "bournemouth/beach-parking"
+# The page's other facts (station, Beach Breezer, permits, cliff lifts, Queen's Road, fines data) - as_of 3 Aug 2026
+# in C:/claude/seo-research/parking-sources.md.
 _PK_CHECKED = "3 August 2026"
+# The car park table and every price in it: all 14 BCP car park pages re-read on this date (17 Sep 2026). Change it
+# only after re-reading every page listed in _PK_PARKS - never to freshen the page.
+_PK_PARKS_CHECKED = "17 September 2026"
+# BCP's winter tariff runs 1 November to 14 March (Boscombe Undercliff: 29 October to 31 March). Build-time, like
+# SEASON_OVER: the description leads with the prices in force on the day the page was built.
+_PK_TODAY = _dt.date.today()
+PK_WINTER = (_PK_TODAY.month, _PK_TODAY.day) >= (11, 1) or (_PK_TODAY.month, _PK_TODAY.day) <= (3, 14)
 
-# BCP's three distinct seafront tariff bands - assuming one price for "the
-# seafront" is the biggest factual trap on this subject.
-_PK_BANDS = [
-    ("Seafront band", "Alum Chine, Durley Chine, Overstrand, Warren Edge, Solent Beach, Hengistbury Head",
-     "&pound;3.20 for 1 hour, &pound;9.60 for 4, &pound;23.60 for 24", "&pound;2.70 for 2 hours, &pound;5.30 for 24"),
-    ("Pier and town band", "Bath Road North, Bath Road South, Pavilion",
-     "&pound;3.80 for 1 hour, &pound;15.40 for 4, &pound;28.00 for 24", "&pound;2.40 for 1 hour, &pound;20.90 for 24"),
-    ("Boscombe Undercliff", "the big one at Boscombe &mdash; 355 spaces, and priced on when you arrive",
-     "2 Jul&ndash;2 Sep: &pound;19.10 before 2pm, &pound;13 from 2&ndash;4pm, &pound;8.20 after 4pm, &pound;4.10 after 6pm",
-     "29 Oct&ndash;31 Mar: &pound;2.70 up to 2 hours, &pound;5.30 over"),
+# Every council car park on the seafront, plus the two BCP names on its seafront pages as the overflow ("If this car
+# park is full, you can park at either Avenue Road car park or Richmond Gardens multi-storey car park"). Copied from
+# https://www.bcpcouncil.gov.uk/parking/find-a-car-park/<slug> on _PK_PARKS_CHECKED; a detail BCP does not publish is
+# left out, never guessed. Seabourne Road is not here: it is a small inland car park, not a beach one.
+# (group, slug, name, postcode, spaces, accessible, height, EV points, open, summer, winter)
+_SEA = ("&pound;3.20 1 hr<br />&pound;9.60 4 hrs<br />&pound;23.60 24 hrs", "&pound;2.70 2 hrs<br />&pound;5.30 24 hrs")
+_PIER = ("&pound;3.80 1 hr<br />&pound;15.40 4 hrs<br />&pound;28 24 hrs", "&pound;2.40 1 hr<br />&pound;8.20 4 hrs<br />&pound;20.90 24 hrs")
+_TOWN = "&pound;3.30 2 hrs<br />&pound;5.80 4 hrs<br />&pound;12.90 24 hrs"
+_PK_PARKS = [
+    ("Alum Chine and Durley Chine", "alum-chine-car-park", "Alum Chine", "BH4 8HS", 92, 6, None, None, "24 hours") + _SEA,
+    ("Alum Chine and Durley Chine", "alumhurst-road-car-park", "Alumhurst Road", "BH4 8EL", 98, 6, None, None, "24 hours<br />4-hour maximum stay",
+     "&pound;2.10 1 hr<br />&pound;3.30 2 hrs<br />&pound;5.80 4 hrs", "same all year"),
+    ("Alum Chine and Durley Chine", "durley-chine-car-park", "Durley Chine", "BH2 5JG", 131, 7, "2.1m", 4, "24 hours") + _SEA,
+    ("By the pier", "bath-road-north-car-park", "Bath Road North", "BH1 2EW", 116, 2, "2m", None, "24 hours") + _PIER,
+    ("By the pier", "bath-road-south-car-park", "Bath Road South", "BH1 2EW", 163, 11, "2m", 4, "24 hours") + _PIER,
+    ("By the pier", "pavilion-car-park", "Pavilion<br />(run by BH Live)", "BH1 2BU", 185, 8, None, None, "24 hours") + _PIER,
+    ("By the pier", "bic-car-park", "BIC<br />(run by BH Live)", "BH2 5BH", 644, 15, "2m", None, "24 hours<br />pay on exit,<br />card only",
+     "no price from BCP:<br />see BH Live&rsquo;s<br />website", "&mdash;"),
+    ("Boscombe", "boscombe-undercliff-car-park", "Boscombe Undercliff", "BH5 1BN", 355, 23, "2.1m", None, "8am to midnight;<br />no cars in or out<br />midnight&ndash;8am",
+     "1 Apr&ndash;1 Jul and<br />3 Sep&ndash;28 Oct:<br />&pound;3.20 1 hr<br />&pound;9.70 4 hrs<br />&pound;13.60 6 hrs<br />2 Jul&ndash;2 Sep,<br />by arrival:<br />&pound;19.10 before 2pm<br />&pound;13 2&ndash;4pm<br />&pound;8.20 after 4pm<br />&pound;4.10 after 6pm",
+     "29 Oct&ndash;31 Mar:<br />&pound;2.70 up to 2 hrs<br />&pound;5.30 over 2 hrs"),
+    ("Boscombe", "overstrand-car-park", "Overstrand", "BH5 1BN", 70, 5, "2.1m", 6, "24 hours") + _SEA,
+    ("Southbourne and Hengistbury Head", "warren-edge-car-park", "Warren Edge", "BH6 4BE", 192, 10, "2.1m", 4, "gate closed<br />11.59pm&ndash;8am") + _SEA,
+    ("Southbourne and Hengistbury Head", "solent-beach-car-park", "Solent Beach", "BH6 4EN", 581, None, "2m", None, "5am&ndash;10pm") + _SEA,
+    ("Southbourne and Hengistbury Head", "hengistbury-head-car-park", "Hengistbury Head", "BH6 4EN", 704, 17, "2.1m", 6, "5am&ndash;10pm<br />locked 10pm&ndash;5am",
+     _SEA[0] + "<br />7 days &pound;51.80", _SEA[1]),
+    ("In town: BCP&rsquo;s overflow when the seafront is full", "avenue-road-car-park", "Avenue Road", "BH2 5SL", 900, 14, "2m", None, "24 hours<br />card only for now", _TOWN, "same all year"),
+    ("In town: BCP&rsquo;s overflow when the seafront is full", "richmond-gardens-multistorey-car-park", "Richmond Gardens<br />multi-storey", "BH1 1JD", 859, 12, "1.91m", 4,
+     "24 hours; lifts<br />and stairs shut<br />5pm&ndash;8am<br />(Sunday 4pm&ndash;8am)", _TOWN, "same all year"),
 ]
 
-_PK_BAND_ROWS = "\n".join(
-    f'            <tr><td><strong>{n}</strong><br /><span class="mono">{w}</span></td><td>{s}</td><td>{win}</td></tr>'
-    for n, w, s, win in _PK_BANDS)
+
+def _pk_park_rows():
+    out, group = [], None
+    for g, slug, name, pc, spaces, acc, height, ev, hours, summer, winter in _PK_PARKS:
+        if g != group:
+            out.append(f'            <tr><th colspan="4" scope="colgroup" style="white-space:normal">{g}</th></tr>')
+            group = g
+        lines = [pc, f"{spaces} spaces"] + ([f"{acc} accessible"] if acc else []) + ([f"height {height}"] if height else []) + ([f"{ev} EV points"] if ev else [])
+        out.append(f'            <tr><td><a href="https://www.bcpcouncil.gov.uk/parking/find-a-car-park/{slug}" target="_blank" rel="noopener"><strong>{name}</strong></a>'
+                   f'<br />{"<br />".join(lines)}</td><td>{summer}</td><td>{winter}</td><td>{hours}</td></tr>')
+    return "\n".join(out)
+
+
+_PK_PARK_ROWS = _pk_park_rows()
 
 # f-string: the script's braces are doubled for that reason. It shipped as a
 # plain string from launch to 3 Sep 2026, so the browser received "{{" and the
@@ -1421,21 +1459,22 @@ _PK_ALERT = f'''    <section class="section b365 b365--dusk" id="fines" aria-lab
       </script>
     </section>'''
 
-_PK_PROSE = f'''          <h2 id="carparks">What the seafront car parks actually cost</h2>
-          <p>There is no single &ldquo;seafront price&rdquo; &mdash; BCP runs three different tariff bands along this coast, and the gap between them is wide. All prices below are as published by BCP on <strong>{_PK_CHECKED}</strong>; the council sets them in its February budget and changed them last on 16 March 2026.</p>
+_PK_PROSE = f'''          <h2 id="carparks">What every seafront car park costs, and when it closes</h2>
+          <p>There is no single &ldquo;seafront price&rdquo;. Most of BCP&rsquo;s beach car parks charge &pound;3.20 an hour and &pound;23.60 a day in summer; the ones by the pier charge &pound;3.80 and &pound;28; Boscombe Undercliff has its own dates and, in high summer, prices by the time you arrive. Winter prices run from 1 November to 14 March. Every figure below is from the car park&rsquo;s own page on BCP Council&rsquo;s website, read on <strong>{_PK_PARKS_CHECKED}</strong> &mdash; each name links to it. BCP&rsquo;s pages carry no &ldquo;prices from&rdquo; date; the current tariffs were reported as starting on 16 March 2026.</p>
           <table>
-            <thead><tr><th>Band</th><th>Summer (15 Mar&ndash;31 Oct)</th><th>Winter</th></tr></thead>
+            <thead><tr><th>Car park</th><th>Summer<br />15 Mar&ndash;31 Oct</th><th>Winter<br />1 Nov&ndash;14 Mar</th><th>Open</th></tr></thead>
             <tbody>
-{_PK_BAND_ROWS}
+{_PK_PARK_ROWS}
             </tbody>
           </table>
-          <p><strong>Two things worth knowing before you drive down.</strong> Boscombe Undercliff &mdash; the biggest car park on this stretch, 355 spaces &mdash; charges by <em>arrival time</em> in high summer, so turning up after 4pm costs &pound;8.20 instead of &pound;19.10. And at the time of checking, BCP&rsquo;s own page for it carried a live notice: <em>&ldquo;We are currently unable to accept card payments at this location.&rdquo;</em> Cash or the app only. That is described as a fault rather than a policy, so check the page before you rely on it.</p>
+          <p><strong>Not every car park stays open all night.</strong> Hengistbury Head is locked from 10pm to 5am and Solent Beach is open 5am to 10pm; Warren Edge&rsquo;s gate is closed from 11.59pm to 8am; and Boscombe Undercliff has no vehicle access in or out from midnight to 8am. A 24-hour ticket at those car parks does not mean you can drive out at night.</p>
+          <p><strong>And two things about Boscombe Undercliff</strong>, the biggest car park at Boscombe. It charges by <em>arrival time</em> from 2 July to 2 September, so turning up after 4pm costs &pound;8.20 instead of &pound;19.10. And when we checked on {_PK_PARKS_CHECKED}, BCP&rsquo;s page for it still carried the notice <em>&ldquo;We are currently unable to accept card payments at this location&rdquo;</em> &mdash; pay in cash or with RingGo there, and check the page before you rely on a card.</p>
           <p>Alumhurst Road, five minutes from Alum Chine, is the cheap outlier at <strong>&pound;5.80 for its four-hour maximum</strong> &mdash; no seasonal uplift, and a rare short-stay bargain within walking distance of sand.</p>
 
           <h2 id="cheaper">The cheaper ways, in order of how much they save</h2>
           <p><strong>The station on a weekend.</strong> Bournemouth station car park is <strong>&pound;3.00 all day on Saturdays, Sundays and bank holidays</strong> (APCOA, 362 spaces) &mdash; about an eighth of a seafront day, and roughly 1.6 miles from the beach by BCP&rsquo;s own reckoning. It is the least-published useful fact about parking here.</p>
           <p><strong>Avenue Road, in town.</strong> BCP&rsquo;s own recommended overflow: 900 spaces at <strong>&pound;12.90 for 24 hours</strong>, no seasonal uplift, about fifteen minutes&rsquo; walk down through the Gardens to the pier. On a busy Saturday it is usually still taking cars long after the seafront has stopped.</p>
-          <p><strong>The Beach Breezer.</strong> Morebus&rsquo;s seafront bus, the 70, runs <strong>23 May to 13 September 2026</strong> from Rockley Park to Mudeford &mdash; Alum Chine, Bournemouth, Boscombe Pier, Hengistbury Head. Zone A fares, single fares capped at &pound;3, contactless accepted, and a Zone A Dayrider covers up to five people together.</p>
+          <p><strong>The Beach Breezer.</strong> Morebus&rsquo;s seafront bus, the 70, ran from <strong>23 May to 13 September in 2026</strong>, from Rockley Park to Mudeford &mdash; Alum Chine, Bournemouth, Boscombe Pier, Hengistbury Head. Zone A fares, single fares capped at &pound;3, contactless accepted, and a Zone A Dayrider covers up to five people together.</p>
           <p><strong>If you live here.</strong> BCP&rsquo;s evening and weekend car park permits run 5pm&ndash;8am on weekdays and all day at weekends. Alumhurst Road is on the list at &pound;290 a year &mdash; effectively a beach season ticket that nobody markets as one.</p>
 
           <h2 id="onstreet">&ldquo;Where can I park for free?&rdquo; &mdash; the honest answer</h2>
@@ -1462,7 +1501,7 @@ _PK_PROSE = f'''          <h2 id="carparks">What the seafront car parks actually
 
 _PK_FAQS = [
     ("How much is parking at Bournemouth beach?",
-     f"It depends which car park. As published by BCP on {_PK_CHECKED}: the seafront band (Alum Chine, Durley Chine, Overstrand, Hengistbury Head and others) is &pound;3.20 for an hour and &pound;23.60 for 24 hours in summer; the pier-side car parks (Bath Road North and South, Pavilion) are dearer at &pound;3.80 an hour and &pound;28 for 24 hours. Winter prices are far lower &mdash; &pound;5.30 for 24 hours in the seafront band."),
+     f"It depends which car park. As published by BCP on {_PK_PARKS_CHECKED}: the seafront band (Alum Chine, Durley Chine, Overstrand, Hengistbury Head and others) is &pound;3.20 for an hour and &pound;23.60 for 24 hours in summer; the pier-side car parks (Bath Road North and South, Pavilion) are dearer at &pound;3.80 an hour and &pound;28 for 24 hours. Winter prices are far lower &mdash; &pound;5.30 for 24 hours in the seafront band."),
     ("Where is the cheapest place to park for Bournemouth beach?",
      "On a Saturday, Sunday or bank holiday, Bournemouth station car park at &pound;3.00 all day is the cheapest realistic option &mdash; about 1.6 miles from the beach. In town, Avenue Road is &pound;12.90 for 24 hours with 900 spaces. Alumhurst Road, five minutes from Alum Chine, is &pound;5.80 for its four-hour maximum."),
     ("Is there any free parking near Bournemouth beach?",
@@ -1472,7 +1511,11 @@ _PK_FAQS = [
     ("Do Blue Badge holders park free in Bournemouth car parks?",
      "BCP does not publish an answer, and we are not going to guess one. The council&rsquo;s own guidance says a Blue Badge covers on-street parking and that &ldquo;different rules apply to off-street car parks&rdquo;, which &ldquo;vary between councils&rdquo; &mdash; and tells you to check the signs on display. So read the sign at the machine before paying."),
     ("How do I pay for parking in Bournemouth?",
-     "Card at most machines, or the RingGo app &mdash; BCP switched to RingGo only in September 2025, so PayByPhone and JustPark no longer work. Boscombe Undercliff was unable to take card payments at the time we checked, so cash or app there. And note BCP&rsquo;s warning: RingGo does not use QR codes, so do not scan a QR code on a parking sign."),
+     "Card at most machines, or the RingGo app &mdash; BCP switched to RingGo only in September 2025, so PayByPhone and JustPark no longer work. Boscombe Undercliff&rsquo;s page said it could not take card payments when we checked on " + _PK_PARKS_CHECKED + ", so cash or RingGo there. And note BCP&rsquo;s warning: RingGo does not use QR codes, so do not scan a QR code on a parking sign."),
+    ("Which Bournemouth beach car parks close at night?",
+     "Four of the seafront car parks do, as BCP&rsquo;s own pages said on " + _PK_PARKS_CHECKED + ": Hengistbury Head is locked from 10pm to 5am, Solent Beach is open 5am to 10pm, Warren Edge&rsquo;s gate is closed from 11.59pm to 8am, and Boscombe Undercliff has no vehicle access from midnight to 8am. Alum Chine, Durley Chine, Overstrand and the car parks by the pier are open 24 hours."),
+    ("How much is Bournemouth beach parking in winter?",
+     "From 1 November to 14 March most seafront car parks are &pound;2.70 for two hours or &pound;5.30 for 24 hours, and the car parks by the pier are &pound;2.40 for an hour or &pound;20.90 for 24 hours. Boscombe Undercliff switches earlier, on 29 October: &pound;2.70 up to two hours, &pound;5.30 over. As published by BCP on " + _PK_PARKS_CHECKED + "."),
 ]
 
 
@@ -1491,9 +1534,9 @@ _PK_CONTENT = "\n".join([
     hero(bc_sub("Bournemouth365", "/bournemouth/", "Beach Parking"),
          "// BOURNEMOUTH365",
          'Parking for <em class="grad grad--cyan">Bournemouth beach</em>',
-         f"What it actually costs, where it is cheaper, and the rules that catch people out &mdash; every price taken from BCP Council&rsquo;s own pages on {_PK_CHECKED}, and dated so you can see how fresh it is.",
+         f"What every seafront car park costs and when it closes, where it is cheaper, and the rules that catch people out &mdash; every car park price read from BCP Council&rsquo;s own pages on {_PK_PARKS_CHECKED}, and dated so you can see how fresh it is.",
          cta1=("What a parking ticket costs", "#fines"),
-         cta2=("The cheaper options", "#cheaper"),
+         cta2=("Every car park", "#carparks"),
          chips=["Prices from BCP, dated", "No made-up free-parking tips", "Written by locals"]),
     _PK_ALERT,
     f'    <section class="section">\n      <div class="wrap">\n        <div class="prose" data-reveal>\n{_PK_PROSE}\n        </div>\n      </div>\n    </section>',
@@ -1503,8 +1546,10 @@ _PK_CONTENT = "\n".join([
 
 add(
     slug=_PK_SLUG,
-    title="Bournemouth Beach Parking \u2014 Real Prices & Cheaper Options",
-    desc=f"What Bournemouth beach parking costs in {_PK_CHECKED[-4:]}, where it is far cheaper, and the rules that catch people out \u2014 taken from BCP Council's own pages and dated.",
+    title=f"Bournemouth Beach Parking {_PK_PARKS_CHECKED[-4:]}: Car Park Prices & Postcodes",
+    desc=("Winter seafront parking is \u00a35.30 a day, \u00a320.90 by the pier, to 14 March. Prices, postcodes and closing times for every council car park."
+          if PK_WINTER else
+          "Seafront car parks: \u00a33.20\u2013\u00a33.80 an hour, \u00a323.60\u2013\u00a328 a day. Prices, postcodes and closing times for every council car park, and why only RingGo works."),
     og_title="Parking for Bournemouth beach \u2014 the honest guide",
     schema=_pk_schema,
     content=_PK_CONTENT,
