@@ -1,0 +1,4 @@
+# The sea page is served by index.php: the built index.html with the measured sea temperature, waves, tide, beach
+# table and storm-overflow answer filled in on the server at request time, for crawlers and AI answer engines that
+# don't run JavaScript (see api/bm-sea-ssr.php). index.html stays the build output and the fallback.
+DirectoryIndex index.php index.html

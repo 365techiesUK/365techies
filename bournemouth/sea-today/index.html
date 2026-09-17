@@ -72,14 +72,9 @@
        TTL - a new URL is the only immediate escape. BUMP THIS when the manifest changes. -->
   <link rel="manifest" href="/site.webmanifest?v=2" />
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
-  <link rel="preconnect" href="https://fonts.bunny.net" />
-  <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
-  <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
-  <noscript>
-    <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
-  </noscript>
-  <link rel="stylesheet" href="/css/styles.min.css?v=103" />
+  <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/css/styles.min.css?v=114" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -117,7 +112,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=103&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=114&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -299,7 +294,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-09-08"
+      "dateModified": "2026-09-17"
     },
     {
       "@type": "FAQPage",
@@ -383,6 +378,13 @@
 </head>
 <body id="top">
   <a class="skip-link" href="#main">Skip to content</a>
+  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
+    <p>Cookies run our live chat and site stats. <a href="/cookie-policy/">Cookie policy</a>.</p>
+    <div class="cookie-banner__actions">
+      <button type="button" class="button secondary" data-cookie="decline">Decline</button>
+      <button type="button" class="button primary" data-cookie="accept">Accept</button>
+    </div>
+  </div>
   <div class="grid-overlay" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
   <header class="site-header">
@@ -771,6 +773,7 @@
           <a href="#swim" class="button secondary button--lg">Can you swim today?</a>
         </div>
         <ul class="page-hero__chips mono"><li>&#9679; Measured, not modelled</li><li>&#9679; Every reading timestamped</li><li>&#9679; Updated through the day</li></ul>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 17 September 2026</p>
       </div>
     </section>
     <section class="section b365" id="now" aria-label="Live sea conditions">
@@ -779,26 +782,26 @@
           <p class="eyebrow eyebrow--center mono" data-reveal>// MEASURED, NOT MODELLED</p>
           <h2 class="section-title section-title--center" data-title>The sea right now<span class="title-underline title-underline--center"></span></h2>
         </div>
-        <p class="b365-verdict" id="st-verdict" data-reveal></p>
-        <div class="b365-warn" id="st-warn" hidden></div>
-        <p class="mono" id="st-line" data-reveal style="margin:0 0 1rem"></p>
+        <!--ssr:verdict--><p class="b365-verdict" id="st-verdict" data-reveal></p><!--/ssr:verdict-->
+        <!--ssr:warn--><div class="b365-warn" id="st-warn" hidden></div><!--/ssr:warn-->
+        <p class="mono" id="st-line" data-reveal style="margin:0 0 1rem"><!--ssr:line--><!--/ssr:line--></p>
         <div class="b365-hero" data-stagger>
-          <div class="b365-tile" id="st-tile-temp">
-            <span class="chip-m" id="st-temp-chip">SEA TEMPERATURE</span>
-            <div class="b365-num" id="st-temp">&mdash;<small>&deg;C</small></div>
+          <!--ssr:tiletemp--><div class="b365-tile" id="st-tile-temp"><!--/ssr:tiletemp-->
+            <span class="chip-m" id="st-temp-chip"><!--ssr:tempchip-->SEA TEMPERATURE<!--/ssr:tempchip--></span>
+            <div class="b365-num" id="st-temp"><!--ssr:temp-->&mdash;<small>&deg;C</small><!--/ssr:temp--></div>
             <svg class="b365-spark" id="st-spark-t" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"></svg>
-            <p class="b365-sub" id="st-temp-sub">Waiting for the buoy&hellip; if this message stays, the live feed is down and we&rsquo;d rather say so than guess.</p>
+            <p class="b365-sub" id="st-temp-sub"><!--ssr:tempsub-->Waiting for the buoy&hellip; if this message stays, the live feed is down and we&rsquo;d rather say so than guess.<!--/ssr:tempsub--></p>
           </div>
-          <div class="b365-tile" id="st-tile-waves">
-            <span class="chip-m" id="st-waves-chip">WAVE HEIGHT</span>
-            <div class="b365-num" id="st-waves">&mdash;<small>m</small></div>
+          <!--ssr:tilewaves--><div class="b365-tile" id="st-tile-waves"><!--/ssr:tilewaves-->
+            <span class="chip-m" id="st-waves-chip"><!--ssr:waveschip-->WAVE HEIGHT<!--/ssr:waveschip--></span>
+            <div class="b365-num" id="st-waves"><!--ssr:waves-->&mdash;<small>m</small><!--/ssr:waves--></div>
             <svg class="b365-spark" id="st-spark-w" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"></svg>
-            <p class="b365-sub" id="st-waves-sub">Waiting for the buoy&hellip;</p>
+            <p class="b365-sub" id="st-waves-sub"><!--ssr:wavessub-->Waiting for the buoy&hellip;<!--/ssr:wavessub--></p>
           </div>
-          <div class="b365-tile" id="st-tile-tide">
-            <span class="chip-m" id="st-tide-chip">TIDE &middot; PIER GAUGE</span>
-            <div class="b365-num" id="st-tide">&mdash;</div>
-            <p class="b365-sub" id="st-tide-sub">Waiting for the pier gauge&hellip;</p>
+          <!--ssr:tiletide--><div class="b365-tile" id="st-tile-tide"><!--/ssr:tiletide-->
+            <span class="chip-m" id="st-tide-chip"><!--ssr:tidechip-->TIDE &middot; PIER GAUGE<!--/ssr:tidechip--></span>
+            <div class="b365-num" id="st-tide"><!--ssr:tide-->&mdash;<!--/ssr:tide--></div>
+            <p class="b365-sub" id="st-tide-sub"><!--ssr:tidesub-->Waiting for the pier gauge&hellip;<!--/ssr:tidesub--></p>
           </div>
         </div>
         <div class="b365-tile" id="st-tile-curve" data-reveal>
@@ -812,16 +815,16 @@
           <p class="b365-sub" id="st-why-p">No usable wave direction is available right now. As a general rule here, refracted waves driven by west and south-westerly weather affect the inshore waters of Poole Bay about 85 percent of the time, arriving bent around Handfast Point from the south and south-east; the rest is mostly sea built over the local southerly and easterly fetches.</p>
           <p class="mono" style="margin-top:.5rem">Physics: the <a href="https://www.scopac.org.uk/scopac_sedimentdb/pbay/pbay.htm" target="_blank" rel="noopener">SCOPAC Poole Bay sediment-transport study</a>.</p>
         </div>
-        <div class="b365-bands" id="st-bands" data-reveal aria-label="Swimmer temperature bands">
+        <div class="b365-bands" id="st-bands" role="group" data-reveal aria-label="Swimmer temperature bands">
           <span data-band="0">0&ndash;6&deg; Baltic</span><span data-band="1">6&ndash;11&deg; Freezing</span><span data-band="2">12&ndash;16&deg; Fresh</span><span data-band="3">17&ndash;20&deg; Summer</span><span data-band="4">21&deg;+ Warm</span>
         </div>
-        <p class="b365-sub" id="st-band-note" data-reveal style="margin-bottom:1rem">The Outdoor Swimming Society&rsquo;s bands &mdash; anecdotal, not scientific, as the OSS itself says. The highlight follows the live measured reading.</p>
+        <p class="b365-sub" id="st-band-note" data-reveal style="margin-bottom:1rem"><!--ssr:bandnote-->The Outdoor Swimming Society&rsquo;s bands &mdash; anecdotal, not scientific, as the OSS itself says. The highlight follows the live measured reading.<!--/ssr:bandnote--></p>
         <div class="tile-grid" data-stagger>
-          <div class="tile" id="st-tile-quality"><span class="chip-f" id="st-quality-chip">EA BATHING WATER SERVICE</span><h3 id="st-quality">Water quality</h3><p id="st-quality-sub">Waiting for the Environment Agency feed&hellip;</p></div>
-          <div class="tile" id="st-tile-overflow"><span class="chip-f" id="st-overflow-chip">WESSEX WATER MONITORS</span><h3 id="st-overflow">Storm overflows</h3><p id="st-overflow-sub">Waiting for the monitor feed&hellip;</p></div>
+          <div class="tile" id="st-tile-quality"><span class="chip-f" id="st-quality-chip"><!--ssr:qualitychip-->EA BATHING WATER SERVICE<!--/ssr:qualitychip--></span><h3 id="st-quality"><!--ssr:quality-->Water quality<!--/ssr:quality--></h3><p id="st-quality-sub"><!--ssr:qualitysub-->Waiting for the Environment Agency feed&hellip;<!--/ssr:qualitysub--></p></div>
+          <div class="tile" id="st-tile-overflow"><span class="chip-f" id="st-overflow-chip"><!--ssr:overflowchip-->WESSEX WATER MONITORS<!--/ssr:overflowchip--></span><h3 id="st-overflow"><!--ssr:overflow-->Storm overflows<!--/ssr:overflow--></h3><p id="st-overflow-sub"><!--ssr:overflowsub-->Waiting for the monitor feed&hellip;<!--/ssr:overflowsub--></p></div>
           <div class="tile"><span class="chip-f" id="st-sun-chip">COMPUTED &middot; ASTRONOMY</span><h3 id="st-sun">Sun</h3><p id="st-sun-sub">Today&rsquo;s sunrise and sunset, computed for the seafront.</p></div>
         </div>
-        <div class="b365-months" id="st-months" data-reveal aria-label="Long-term monthly sea temperature averages">
+        <div class="b365-months" id="st-months" role="group" data-reveal aria-label="Long-term monthly sea temperature averages">
           <span data-mo="0">Jan<b>7.4&deg;</b></span>
           <span data-mo="1">Feb<b>6.8&deg;</b></span>
           <span data-mo="2">Mar<b>7.4&deg;</b></span>
@@ -835,12 +838,12 @@
           <span data-mo="10">Nov<b>11.2&deg;</b></span>
           <span data-mo="11">Dec<b>8.7&deg;</b></span>
         </div>
-        <p class="b365-sub" id="st-lag-note" data-reveal>Long-term monthly averages (Cefas station 23 &ldquo;Bournemouth&rdquo;, 1971&ndash;2000). The sea lags the air by about two months &mdash; September beats June.</p>
+        <p class="b365-sub" id="st-lag-note" data-reveal><!--ssr:lagnote-->Long-term monthly averages (Cefas station 23 &ldquo;Bournemouth&rdquo;, 1971&ndash;2000). The sea lags the air by about two months &mdash; September beats June.<!--/ssr:lagnote--></p>
         <details data-reveal style="margin-top:1rem"><summary class="mono">Why our number can differ from what Google shows</summary>
           <p class="b365-sub" style="margin-top:.5rem">Most sea-temperature sites publish satellite-derived estimates of open water, sometimes updated daily, sometimes modelled from long-term analysis &mdash; and nearshore water can differ from those estimates by several degrees, as those sites&rsquo; own disclaimers note. The number above is a physical instrument in the bay reporting a measurement, with the time it was taken. When the instrument is down, we say so rather than switching to a model.</p>
         </details>
-        <p class="mono" id="st-asof" style="margin-top:.8rem" data-reveal></p>
-        <p class="mono" id="st-attrib" style="margin-top:.4rem" data-reveal>Sources: the bay&rsquo;s wave buoy, the Environment Agency tide gauge at Bournemouth Pier and bathing-water service, and Wessex Water&rsquo;s storm-overflow monitors &mdash; details at the foot of this page.</p>
+        <p class="mono" id="st-asof" style="margin-top:.8rem" data-reveal><!--ssr:asof--><!--/ssr:asof--></p>
+        <p class="mono" id="st-attrib" style="margin-top:.4rem" data-reveal><!--ssr:attrib-->Sources: the bay&rsquo;s wave buoy, the Environment Agency tide gauge at Bournemouth Pier and bathing-water service, and Wessex Water&rsquo;s storm-overflow monitors &mdash; details at the foot of this page.<!--/ssr:attrib--></p>
         <p class="mono" style="margin-top:.4rem" data-reveal>See the buses, flights, road closures and river gauges moving on the <a href="/bournemouth/live-map/">live map</a>.</p>
         <p class="b365-foot" data-reveal style="margin-top:1.2rem">No ads. No paywall. No consent wall. Every reading carries its instrument and its measurement time &mdash; built in Bournemouth to load fast on beach 4G.</p>
       </div>
@@ -878,21 +881,21 @@
           <p>The tide curve above often shows something tide tables flatten out: a long <em>stand</em> around high water, sometimes a visible double hump. It is not a faulty gauge &mdash; it is the English Channel&rsquo;s geometry. The Channel behaves as a standing-wave system with a node near this coast, and in shallow water the tide&rsquo;s harmonics distort the simple twice-a-day curve: Christchurch Harbour gets a true double high water on each tide, and Poole shows double highs at springs and a long stand at neaps (Humphreys, <em>Salinity and Tides in Poole Harbour</em>, Proceedings in Marine Science, 2005). Bournemouth sits between the two. Practical upshot: high water hangs around for hours &mdash; generous for swimmers, and the reason the beach can feel narrow all afternoon.</p>
 
           <h2 id="sewage">Is sewage being discharged into the sea at Bournemouth today?</h2>
-          <p class="b365-verdict" id="st-sewage">No &mdash; none of the 11 monitored storm overflows around Bournemouth was reporting a discharge (Wessex Water monitors, checked 09:43).</p>
-          <p class="mono" id="st-baked-note">Statuses as read at 09:43 on 8 September 2026; they refresh live when this page opens.</p>
+          <p class="b365-verdict" id="st-sewage"><!--ssr:sewage-->No &mdash; none of the 11 monitored storm overflows around Bournemouth was reporting a discharge (Wessex Water monitors, checked 12:13).<!--/ssr:sewage--></p>
+          <p class="mono" id="st-baked-note"><!--ssr:bakednote-->Statuses as read at 12:13 on 17 September 2026; they refresh live when this page opens.<!--/ssr:bakednote--></p>
           <p>How that is known: Wessex Water fits every storm overflow around the bay with a monitor that reports a discharge starting or stopping within the hour, and this page reads those monitors every twenty minutes. &ldquo;No discharge&rdquo; means exactly that &mdash; the monitor has not recorded one &mdash; and is not a statement that the water is clean. The Environment Agency&rsquo;s daily pollution-risk forecast, beach by beach below, is the other half of the answer; after heavy rain it is worth checking both before you go in. Every monitored outfall in Bournemouth, Christchurch and Poole is drawn on the <a href="/bournemouth/live-map/">live map</a>, with the beaches and their forecasts alongside.</p>
 
           <h2 id="quality">Is the water at Bournemouth beach clean? Beach by beach</h2>
           <p>The Environment Agency classifies seven bathing waters along this seafront &mdash; Alum Chine, Durley Chine, Bournemouth Pier, Boscombe Pier, Manor Steps, Fisherman&rsquo;s Walk and Southbourne &mdash; and samples each through the May&ndash;September season. In season it also issues a daily pollution-risk forecast. The live panel above summarises; this table is per beach:</p>
           <table>
             <thead><tr><th>Beach</th><th>Classification</th><th>Today&rsquo;s risk forecast</th><th>Affected by heavy rain?</th><th>Nearest outfall monitor</th><th>On the map</th></tr></thead>
-            <tbody id="st-sites"><tr><td>Alum Chine</td><td>Excellent (2025)</td><td>normal</td><td>no</td><td>no discharge &middot; 1.0 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7111&amp;lon=-1.8954&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr>
+            <tbody id="st-sites"><!--ssr:sites--><tr><td>Alum Chine</td><td>Excellent (2025)</td><td>normal</td><td>no</td><td>no discharge &middot; 1.0 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7111&amp;lon=-1.8954&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr>
 <tr><td>Durley Chine</td><td>Excellent (2025)</td><td>normal</td><td>no</td><td>no discharge &middot; 1.2 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7131&amp;lon=-1.8887&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr>
 <tr><td>Bournemouth Pier</td><td>Excellent (2025)</td><td>normal</td><td>no</td><td>no discharge &middot; 0.5 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7155&amp;lon=-1.8759&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr>
-<tr><td>Boscombe Pier</td><td>Excellent (2025)</td><td>increased</td><td>yes</td><td>no discharge &middot; 0.7 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7195&amp;lon=-1.8440&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr>
-<tr><td>Manor Steps</td><td>Excellent (2025)</td><td>increased</td><td>yes</td><td>no discharge &middot; 0.8 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7203&amp;lon=-1.8323&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr>
+<tr><td>Boscombe Pier</td><td>Excellent (2025)</td><td>normal</td><td>yes</td><td>no discharge &middot; 0.7 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7195&amp;lon=-1.8440&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr>
+<tr><td>Manor Steps</td><td>Excellent (2025)</td><td>normal</td><td>yes</td><td>no discharge &middot; 0.8 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7203&amp;lon=-1.8323&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr>
 <tr><td>Fisherman's Walk</td><td>Excellent (2025)</td><td>normal</td><td>no</td><td>no discharge &middot; 0.6 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7207&amp;lon=-1.8169&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr>
-<tr><td>Southbourne</td><td>Excellent (2025)</td><td>normal</td><td>no</td><td>no discharge &middot; 1.2 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7190&amp;lon=-1.7917&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr></tbody>
+<tr><td>Southbourne</td><td>Excellent (2025)</td><td>normal</td><td>no</td><td>no discharge &middot; 1.2 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7190&amp;lon=-1.7917&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr><!--/ssr:sites--></tbody>
           </table>
           <p>&ldquo;Affected by heavy rain&rdquo; is the Environment Agency&rsquo;s own flag: at those beaches, water quality can dip temporarily after a downpour. That is also what the storm-overflow tile above watches &mdash; Wessex Water&rsquo;s live monitors on this stretch of coast, the same feed behind the national Storm Overflow Hub, updated every few minutes. Our honest advice matches the EA&rsquo;s: after heavy rain, give it a day.</p>
 
@@ -952,8 +955,8 @@
           <h2 class="section-title section-title--center" data-title>Bournemouth, 365 days a year<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="prose" data-reveal>
-          <p>Bournemouth365 is the web home of our <a href="https://www.facebook.com/bournemouth365" target="_blank" rel="noopener">Bournemouth Live Facebook page</a>, where 39,000 of you watch the seafront with us every day. More pages are on the way: live sea conditions measured at the Boscombe wave buoy, an honest local guide to parking for the beach, and the best sunrise and sunset spots &mdash; photographed by us, not stock.</p>
-          <p class="mono" style="margin-bottom:.6rem"><a href="/bournemouth/">Bournemouth365 home</a> &middot; <a href="/bournemouth/live-map/">Live map: traffic, buses, sea</a> &middot; <a href="/bournemouth/sea-today/">The sea right now</a> &middot; <a href="/bournemouth/fireworks/">Friday fireworks</a> &middot; <a href="/bournemouth/sunrise-sunset/">Sunrise &amp; sunset</a> &middot; <a href="/bournemouth/beach-parking/">Beach parking</a> &middot; <a href="/van-signal-map/">Mobile signal map</a></p>
+          <p>Bournemouth365 is the web home of our <a href="https://www.facebook.com/bournemouth365" target="_blank" rel="noopener">Bournemouth Live Facebook page</a>, where 39,000 of you watch the seafront with us every day. Here: the seafront&rsquo;s weather, tide times and rain radar, the sea measured live, an honest guide to beach parking, and the best sunrise and sunset spots &mdash; photographed by us, not stock.</p>
+          <p class="mono" style="margin-bottom:.6rem"><a href="/bournemouth/">Bournemouth365 home</a> &middot; <a href="/bournemouth/weather/">Weather, tides &amp; radar</a> &middot; <a href="/bournemouth/live-map/">Live map: traffic, buses, sea</a> &middot; <a href="/bournemouth/sea-today/">The sea right now</a> &middot; <a href="/bournemouth/fireworks/">Friday fireworks</a> &middot; <a href="/bournemouth/sunrise-sunset/">Sunrise &amp; sunset</a> &middot; <a href="/bournemouth/beach-parking/">Beach parking</a> &middot; <a href="/van-signal-map/">Mobile signal map</a></p>
           <p class="mono">Built in Bournemouth by <a href="/">365 Techies</a> &mdash; the family firm that has looked after the town&rsquo;s computers since 1995.</p>
           <p class="b365-foot">No ads. No paywall. No consent wall. Built to load fast on beach 4G.</p>
         </div>
@@ -1408,7 +1411,7 @@
           <span class="logo__text"><em>365</em>techies</span>
         </a>
         <p>The IT support experts. A family-run business established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists, providing monthly IT support for homes and businesses across Bournemouth, Poole and Dorset.</p>
-        <div class="partner-badges" aria-label="Accreditations">
+        <div class="partner-badges" role="group" aria-label="Accreditations">
           <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 21l5-2.5L17 21l-1.5-8.5"/></svg>Family Business &middot; Est. 1995</span>
           <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 18h18M9 22h6"/></svg>Dell Specialist</span>
           <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Partner</span>
@@ -1433,7 +1436,6 @@
         <a href="/scam-pop-up-help-poole/">Scam Pop-up Help (Poole)</a>
         <a href="/virus-removal-christchurch/">Virus Removal (Christchurch)</a>
         <a href="/outlook-problems/">Outlook Problems &amp; Fixes</a>
-        <a href="/is-it-down/">Is Something Down?</a>
         <a href="/support-portal/">Support Portal</a>
         <a href="/splashtop-business-guide/">Remote Access Guide</a>
         <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
@@ -1570,10 +1572,7 @@
         <a href="/how-we-price/">How We Price</a>
         <a href="/case-studies/">Case Studies</a>
         <a href="/reviews/">Reviews</a>
-        <a href="/areas-covered/">Areas Covered</a>
-        <a href="/plan-finder/">Plan Finder</a>
         <a href="/refer-a-friend/">Refer a Friend</a>
-        <a href="/sustainability/">Sustainability</a>
         <a href="/resources/">Resources &amp; Guides</a>
         <a href="/it-advice/">IT Advice</a>
         <a href="/bournemouth/">Bournemouth365</a>
@@ -1600,7 +1599,7 @@
   <nav class="mobile-cta-bar" aria-label="Quick contact">
     <a href="tel:+441202775566"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>Call</a>
     <a href="/book-service/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book</a>
-    <a href="#" data-open-chat><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5z"/></svg>Chat</a>
+    <a href="sms:+447520615332"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5z"/></svg>Text</a>
   </nav>
   <div class="a11y" id="a11y">
     <button type="button" class="a11y__toggle" id="a11y-toggle" aria-expanded="false" aria-controls="a11y-panel" aria-label="Text size and accessibility options" title="Text size and accessibility options">
@@ -1617,16 +1616,9 @@
     </div>
   </div>
   <script type="module" src="/js/interior.min.js?v=22"></script>
-  <script src="/js/a11y.min.js?v=10" defer></script>
-  <script src="/js/forms.min.js?v=8" defer></script>
+  <script src="/js/a11y.min.js?v=13" defer></script>
+  <script src="/js/forms.min.js?v=11" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
-  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
-    <p>We use cookies to power our live chat and understand how the site is used. See our <a href="/cookie-policy/">cookie policy</a>.</p>
-    <div class="cookie-banner__actions">
-      <button type="button" class="button secondary" data-cookie="decline">Decline</button>
-      <button type="button" class="button primary" data-cookie="accept">Accept</button>
-    </div>
-  </div>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->
   <script>
   (function () {

@@ -1004,6 +1004,20 @@ if _osg.path.exists(_st_fp):
                        "setChip('st-sun-chip', 'chip-m'"):
         if _forbidden in _st_html:
             _bm_bad.append("sea-today: official/computed chip wearing the measured class: %s" % _forbidden)
+    # Server first paint (17 Sep 2026): bournemouth/sea-today/index.php fills these markers at request time. A marker
+    # that vanishes fails silently (the block just shows its placeholder again), so each must appear exactly once.
+    for _m in ("verdict", "warn", "line", "tiletemp", "tempchip", "temp", "tempsub", "tilewaves", "waveschip", "waves",
+               "wavessub", "tiletide", "tidechip", "tide", "tidesub", "bandnote", "qualitychip", "quality", "qualitysub",
+               "overflowchip", "overflow", "overflowsub", "lagnote", "asof", "attrib", "sewage", "bakednote", "sites"):
+        for _tag in ("<!--ssr:%s-->" % _m, "<!--/ssr:%s-->" % _m):
+            if _st_html.count(_tag) != 1:
+                _bm_bad.append("sea-today: server-render marker %s appears %d times (must be 1)" % (_tag, _st_html.count(_tag)))
+    _st_hta = _osg.path.join(bp.BASE, "bournemouth", "sea-today", ".htaccess")
+    if not (_osg.path.exists(_osg.path.join(bp.BASE, "bournemouth", "sea-today", "index.php"))
+            and _osg.path.exists(_osg.path.join(bp.BASE, "api", "bm-sea-ssr.php"))):
+        _bm_bad.append("sea-today: bournemouth/sea-today/index.php or api/bm-sea-ssr.php is missing")
+    if not _osg.path.exists(_st_hta) or "DirectoryIndex index.php" not in open(_st_hta, encoding="utf-8").read():
+        _bm_bad.append("sea-today: bournemouth/sea-today/.htaccess must set DirectoryIndex index.php first")
 if _osg.path.exists(_fw_fp):
     if "SEASON FINISHED" not in open(_fw_fp, encoding="utf-8").read():
         _bm_bad.append("fireworks: season-finished branch missing (G3)")

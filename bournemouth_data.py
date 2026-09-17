@@ -412,32 +412,35 @@ _ST_CLIMATE_ROWS = "\n".join(
 # The live panel: six tiles the JS fills from /api/bm-sea.php. Every tile has
 # an honest no-data state baked into the HTML, so a fetch failure needs no JS
 # at all to be truthful.
+# SERVER FIRST PAINT (17 Sep 2026): bournemouth/sea-today/index.php serves the built page with the
+# <!--ssr:NAME--> markers filled at request time (api/bm-sea-ssr.php mirrors _ST_JS below - change
+# the words in both), so crawlers and AI answers read today's measured readings, not a placeholder.
 _ST_PANEL ='''    <section class="section b365" id="now" aria-label="Live sea conditions">
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// MEASURED, NOT MODELLED</p>
           <h2 class="section-title section-title--center" data-title>The sea right now<span class="title-underline title-underline--center"></span></h2>
         </div>
-        <p class="b365-verdict" id="st-verdict" data-reveal></p>
-        <div class="b365-warn" id="st-warn" hidden></div>
-        <p class="mono" id="st-line" data-reveal style="margin:0 0 1rem"></p>
+        <!--ssr:verdict--><p class="b365-verdict" id="st-verdict" data-reveal></p><!--/ssr:verdict-->
+        <!--ssr:warn--><div class="b365-warn" id="st-warn" hidden></div><!--/ssr:warn-->
+        <p class="mono" id="st-line" data-reveal style="margin:0 0 1rem"><!--ssr:line--><!--/ssr:line--></p>
         <div class="b365-hero" data-stagger>
-          <div class="b365-tile" id="st-tile-temp">
-            <span class="chip-m" id="st-temp-chip">SEA TEMPERATURE</span>
-            <div class="b365-num" id="st-temp">&mdash;<small>&deg;C</small></div>
+          <!--ssr:tiletemp--><div class="b365-tile" id="st-tile-temp"><!--/ssr:tiletemp-->
+            <span class="chip-m" id="st-temp-chip"><!--ssr:tempchip-->SEA TEMPERATURE<!--/ssr:tempchip--></span>
+            <div class="b365-num" id="st-temp"><!--ssr:temp-->&mdash;<small>&deg;C</small><!--/ssr:temp--></div>
             <svg class="b365-spark" id="st-spark-t" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"></svg>
-            <p class="b365-sub" id="st-temp-sub">Waiting for the buoy&hellip; if this message stays, the live feed is down and we&rsquo;d rather say so than guess.</p>
+            <p class="b365-sub" id="st-temp-sub"><!--ssr:tempsub-->Waiting for the buoy&hellip; if this message stays, the live feed is down and we&rsquo;d rather say so than guess.<!--/ssr:tempsub--></p>
           </div>
-          <div class="b365-tile" id="st-tile-waves">
-            <span class="chip-m" id="st-waves-chip">WAVE HEIGHT</span>
-            <div class="b365-num" id="st-waves">&mdash;<small>m</small></div>
+          <!--ssr:tilewaves--><div class="b365-tile" id="st-tile-waves"><!--/ssr:tilewaves-->
+            <span class="chip-m" id="st-waves-chip"><!--ssr:waveschip-->WAVE HEIGHT<!--/ssr:waveschip--></span>
+            <div class="b365-num" id="st-waves"><!--ssr:waves-->&mdash;<small>m</small><!--/ssr:waves--></div>
             <svg class="b365-spark" id="st-spark-w" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"></svg>
-            <p class="b365-sub" id="st-waves-sub">Waiting for the buoy&hellip;</p>
+            <p class="b365-sub" id="st-waves-sub"><!--ssr:wavessub-->Waiting for the buoy&hellip;<!--/ssr:wavessub--></p>
           </div>
-          <div class="b365-tile" id="st-tile-tide">
-            <span class="chip-m" id="st-tide-chip">TIDE &middot; PIER GAUGE</span>
-            <div class="b365-num" id="st-tide">&mdash;</div>
-            <p class="b365-sub" id="st-tide-sub">Waiting for the pier gauge&hellip;</p>
+          <!--ssr:tiletide--><div class="b365-tile" id="st-tile-tide"><!--/ssr:tiletide-->
+            <span class="chip-m" id="st-tide-chip"><!--ssr:tidechip-->TIDE &middot; PIER GAUGE<!--/ssr:tidechip--></span>
+            <div class="b365-num" id="st-tide"><!--ssr:tide-->&mdash;<!--/ssr:tide--></div>
+            <p class="b365-sub" id="st-tide-sub"><!--ssr:tidesub-->Waiting for the pier gauge&hellip;<!--/ssr:tidesub--></p>
           </div>
         </div>
         <div class="b365-tile" id="st-tile-curve" data-reveal>
@@ -454,10 +457,10 @@ _ST_PANEL ='''    <section class="section b365" id="now" aria-label="Live sea co
         <div class="b365-bands" id="st-bands" role="group" data-reveal aria-label="Swimmer temperature bands">
           <span data-band="0">0&ndash;6&deg; Baltic</span><span data-band="1">6&ndash;11&deg; Freezing</span><span data-band="2">12&ndash;16&deg; Fresh</span><span data-band="3">17&ndash;20&deg; Summer</span><span data-band="4">21&deg;+ Warm</span>
         </div>
-        <p class="b365-sub" id="st-band-note" data-reveal style="margin-bottom:1rem">The Outdoor Swimming Society&rsquo;s bands &mdash; anecdotal, not scientific, as the OSS itself says. The highlight follows the live measured reading.</p>
+        <p class="b365-sub" id="st-band-note" data-reveal style="margin-bottom:1rem"><!--ssr:bandnote-->The Outdoor Swimming Society&rsquo;s bands &mdash; anecdotal, not scientific, as the OSS itself says. The highlight follows the live measured reading.<!--/ssr:bandnote--></p>
         <div class="tile-grid" data-stagger>
-          <div class="tile" id="st-tile-quality"><span class="chip-f" id="st-quality-chip">EA BATHING WATER SERVICE</span><h3 id="st-quality">Water quality</h3><p id="st-quality-sub">Waiting for the Environment Agency feed&hellip;</p></div>
-          <div class="tile" id="st-tile-overflow"><span class="chip-f" id="st-overflow-chip">WESSEX WATER MONITORS</span><h3 id="st-overflow">Storm overflows</h3><p id="st-overflow-sub">Waiting for the monitor feed&hellip;</p></div>
+          <div class="tile" id="st-tile-quality"><span class="chip-f" id="st-quality-chip"><!--ssr:qualitychip-->EA BATHING WATER SERVICE<!--/ssr:qualitychip--></span><h3 id="st-quality"><!--ssr:quality-->Water quality<!--/ssr:quality--></h3><p id="st-quality-sub"><!--ssr:qualitysub-->Waiting for the Environment Agency feed&hellip;<!--/ssr:qualitysub--></p></div>
+          <div class="tile" id="st-tile-overflow"><span class="chip-f" id="st-overflow-chip"><!--ssr:overflowchip-->WESSEX WATER MONITORS<!--/ssr:overflowchip--></span><h3 id="st-overflow"><!--ssr:overflow-->Storm overflows<!--/ssr:overflow--></h3><p id="st-overflow-sub"><!--ssr:overflowsub-->Waiting for the monitor feed&hellip;<!--/ssr:overflowsub--></p></div>
           <div class="tile"><span class="chip-f" id="st-sun-chip">COMPUTED &middot; ASTRONOMY</span><h3 id="st-sun">Sun</h3><p id="st-sun-sub">Today&rsquo;s sunrise and sunset, computed for the seafront.</p></div>
         </div>
         <div class="b365-months" id="st-months" role="group" data-reveal aria-label="Long-term monthly sea temperature averages">
@@ -474,12 +477,12 @@ _ST_PANEL ='''    <section class="section b365" id="now" aria-label="Live sea co
           <span data-mo="10">Nov<b>11.2&deg;</b></span>
           <span data-mo="11">Dec<b>8.7&deg;</b></span>
         </div>
-        <p class="b365-sub" id="st-lag-note" data-reveal>Long-term monthly averages (Cefas station 23 &ldquo;Bournemouth&rdquo;, 1971&ndash;2000). The sea lags the air by about two months &mdash; September beats June.</p>
+        <p class="b365-sub" id="st-lag-note" data-reveal><!--ssr:lagnote-->Long-term monthly averages (Cefas station 23 &ldquo;Bournemouth&rdquo;, 1971&ndash;2000). The sea lags the air by about two months &mdash; September beats June.<!--/ssr:lagnote--></p>
         <details data-reveal style="margin-top:1rem"><summary class="mono">Why our number can differ from what Google shows</summary>
           <p class="b365-sub" style="margin-top:.5rem">Most sea-temperature sites publish satellite-derived estimates of open water, sometimes updated daily, sometimes modelled from long-term analysis &mdash; and nearshore water can differ from those estimates by several degrees, as those sites&rsquo; own disclaimers note. The number above is a physical instrument in the bay reporting a measurement, with the time it was taken. When the instrument is down, we say so rather than switching to a model.</p>
         </details>
-        <p class="mono" id="st-asof" style="margin-top:.8rem" data-reveal></p>
-        <p class="mono" id="st-attrib" style="margin-top:.4rem" data-reveal>Sources: the bay&rsquo;s wave buoy, the Environment Agency tide gauge at Bournemouth Pier and bathing-water service, and Wessex Water&rsquo;s storm-overflow monitors &mdash; details at the foot of this page.</p>
+        <p class="mono" id="st-asof" style="margin-top:.8rem" data-reveal><!--ssr:asof--><!--/ssr:asof--></p>
+        <p class="mono" id="st-attrib" style="margin-top:.4rem" data-reveal><!--ssr:attrib-->Sources: the bay&rsquo;s wave buoy, the Environment Agency tide gauge at Bournemouth Pier and bathing-water service, and Wessex Water&rsquo;s storm-overflow monitors &mdash; details at the foot of this page.<!--/ssr:attrib--></p>
         <p class="mono" style="margin-top:.4rem" data-reveal>See the buses, flights, road closures and river gauges moving on the <a href="/bournemouth/live-map/">live map</a>.</p>
         <p class="b365-foot" data-reveal style="margin-top:1.2rem">No ads. No paywall. No consent wall. Every reading carries its instrument and its measurement time &mdash; built in Bournemouth to load fast on beach 4G.</p>
       </div>
@@ -917,15 +920,15 @@ _ST_PROSE = f'''          <h2 id="swim">Can you swim today?</h2>
           <p>The tide curve above often shows something tide tables flatten out: a long <em>stand</em> around high water, sometimes a visible double hump. It is not a faulty gauge &mdash; it is the English Channel&rsquo;s geometry. The Channel behaves as a standing-wave system with a node near this coast, and in shallow water the tide&rsquo;s harmonics distort the simple twice-a-day curve: Christchurch Harbour gets a true double high water on each tide, and Poole shows double highs at springs and a long stand at neaps (Humphreys, <em>Salinity and Tides in Poole Harbour</em>, Proceedings in Marine Science, 2005). Bournemouth sits between the two. Practical upshot: high water hangs around for hours &mdash; generous for swimmers, and the reason the beach can feel narrow all afternoon.</p>
 
           <h2 id="sewage">Is sewage being discharged into the sea at Bournemouth today?</h2>
-          <p class="b365-verdict" id="st-sewage">{_ST_BAKED_SEWAGE}</p>
-          <p class="mono" id="st-baked-note">{_ST_BAKED_NOTE}</p>
+          <p class="b365-verdict" id="st-sewage"><!--ssr:sewage-->{_ST_BAKED_SEWAGE}<!--/ssr:sewage--></p>
+          <p class="mono" id="st-baked-note"><!--ssr:bakednote-->{_ST_BAKED_NOTE}<!--/ssr:bakednote--></p>
           <p>How that is known: Wessex Water fits every storm overflow around the bay with a monitor that reports a discharge starting or stopping within the hour, and this page reads those monitors every twenty minutes. &ldquo;No discharge&rdquo; means exactly that &mdash; the monitor has not recorded one &mdash; and is not a statement that the water is clean. The Environment Agency&rsquo;s daily pollution-risk forecast, beach by beach below, is the other half of the answer; after heavy rain it is worth checking both before you go in. Every monitored outfall in Bournemouth, Christchurch and Poole is drawn on the <a href="/bournemouth/live-map/">live map</a>, with the beaches and their forecasts alongside.</p>
 
           <h2 id="quality">Is the water at Bournemouth beach clean? Beach by beach</h2>
           <p>The Environment Agency classifies seven bathing waters along this seafront &mdash; Alum Chine, Durley Chine, Bournemouth Pier, Boscombe Pier, Manor Steps, Fisherman&rsquo;s Walk and Southbourne &mdash; and samples each through the May&ndash;September season. In season it also issues a daily pollution-risk forecast. The live panel above summarises; this table is per beach:</p>
           <table>
             <thead><tr><th>Beach</th><th>Classification</th><th>Today&rsquo;s risk forecast</th><th>Affected by heavy rain?</th><th>Nearest outfall monitor</th><th>On the map</th></tr></thead>
-            <tbody id="st-sites">{_ST_BAKED_ROWS}</tbody>
+            <tbody id="st-sites"><!--ssr:sites-->{_ST_BAKED_ROWS}<!--/ssr:sites--></tbody>
           </table>
           <p>&ldquo;Affected by heavy rain&rdquo; is the Environment Agency&rsquo;s own flag: at those beaches, water quality can dip temporarily after a downpour. That is also what the storm-overflow tile above watches &mdash; Wessex Water&rsquo;s live monitors on this stretch of coast, the same feed behind the national Storm Overflow Hub, updated every few minutes. Our honest advice matches the EA&rsquo;s: after heavy rain, give it a day.</p>
 
