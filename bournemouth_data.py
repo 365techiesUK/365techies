@@ -29,8 +29,8 @@ HONESTY RULES SPECIFIC TO THIS PAGE:
   - No fireworks photos yet: the real ones arrive with the Facebook export.
     Until then the page ships without - never stock, never AI.
 
-SEASON ROLLOVER (owner job, ~March 2027): BCP announces next season's dates in
-spring. Update FRIDAYS below and the two prose mentions of "2026"; the panel,
+SEASON ROLLOVER (owner job, 2027): BCP announced the 2025 season on 9 July 2025;
+when the 2026 dates first appeared is not known. Update FRIDAYS below and the two prose mentions of "2026"; the panel,
 table, schema and season-over state all follow the list automatically. If the
 event is not renewed, the panel's season-over text already says "expected" -
 soften the page rather than deleting it (the Air Festival precedent).
@@ -64,6 +64,27 @@ SEASON_OVER = _dt.date.today() > _dt.date.fromisoformat(FINALE)
 # script flips itself after 31 Aug; this build-time twin keeps the STATIC
 # text honest for crawlers and no-JS readers once the trial has ended.
 PCN_TRIAL_OVER = _dt.date.today() > _dt.date(2026, 8, 31)
+
+# OFF-SEASON PHASES (17 Sep 2026, SEO audit: C:/claude/seo-research/b365-seo-audit-2026-09-17/fireworks.md).
+# One evergreen URL whose title follows what people search for between seasons: Bonfire Night until 8 November,
+# New Year's Eve until 1 January, then "when are the 2027 dates". Build-time like SEASON_OVER, so the page flips on
+# the first site build after each date - build on 9 November and 2 January. When BCP publishes 2027 dates, FRIDAYS
+# and FINALE change, SEASON_OVER goes False and the page is back in season.
+#   "season"  - Fridays still to come (the in-season copy)
+#   "bonfire" - after the finale, to 8 Nov 2026
+#   "newyear" - 9 Nov 2026 to 1 Jan 2027
+#   "waiting" - from 2 Jan 2027 until next season's dates are in FRIDAYS
+_FW_TODAY = _dt.date.today()
+if not SEASON_OVER:
+    FW_PHASE = "season"
+elif _FW_TODAY <= _dt.date(2026, 11, 8):
+    FW_PHASE = "bonfire"
+elif _FW_TODAY <= _dt.date(2027, 1, 1):
+    FW_PHASE = "newyear"
+else:
+    FW_PHASE = "waiting"
+# When the Bonfire Night, New Year and 2027 facts below were last checked at their sources. Change it only on a real check.
+FW_OFFSEASON_CHECKED = "17 September 2026"
 
 # Displays the ORGANISERS have called off. date -> short public reason.
 # ⚠️ This is the safety switch for the whole page: a date listed here is struck
@@ -141,7 +162,7 @@ _STATUS = f'''    <section class="section b365 b365--dusk" id="tonight" aria-lab
           <div class="b365-tile b365-tile--dusk" id="bmfw-tile">
             <p class="b365-state{" off" if SEASON_OVER else ""}" id="bmfw-state">{"SEASON FINISHED &middot; 2027 DATES WHEN BCP ANNOUNCES THEM" if SEASON_OVER else "FINALE &middot; FRIDAY 4 SEPTEMBER &middot; 10PM"}</p>
             <h2 id="bmfw-head">{"That was the last one &mdash; the 2026 season has finished" if SEASON_OVER else "One more: the finale is Friday 4 September at 10pm"}</h2>
-            <p id="bmfw-sub">{"The finale on Friday 4 September closed a season that lost three Fridays: 14 and 21 August to the wildfire emergency, 28 August to high winds at sea. The 2027 dates have not been announced yet; this page will be updated as soon as BCP Council confirms them. Last checked " if SEASON_OVER else "BCP Council reinstated the displays on 26 August after the wildfire risk eased, then had to cancel 28 August on the night for high winds at sea. The finale they added, Friday 4 September at 10pm from the seafront east of the pier, is still on as announced &mdash; weather permitting, as ever. Last checked "}{CANCELLED_UPDATED}.</p>
+            <p id="bmfw-sub">{"The finale on Friday 4 September closed a season that lost three Fridays: 14 and 21 August to the wildfire emergency, 28 August to high winds at sea. The 2027 dates have not been announced yet; this page will be updated as soon as BCP Council confirms them. Last checked " if SEASON_OVER else "BCP Council reinstated the displays on 26 August after the wildfire risk eased, then had to cancel 28 August on the night for high winds at sea. The finale they added, Friday 4 September at 10pm from the barge east of the pier, is still on as announced &mdash; weather permitting, as ever. Last checked "}{CANCELLED_UPDATED}.</p>
             <p class="b365-sub" id="bmfw-live"></p>
           </div>
         </div>
@@ -210,12 +231,12 @@ _STATUS = f'''    <section class="section b365 b365--dusk" id="tonight" aria-lab
             }}
           }}).catch(function () {{}});
           head.textContent = 'Yes \\u2014 fireworks TONIGHT at 10pm';
-          sub.textContent = 'Fired from the seafront just east of Bournemouth Pier, weather permitting \\u2014 if it is blowing a gale, check the official channels below before you set off. Free, no tickets, just turn up.';
+          sub.textContent = 'Fired from a barge just offshore, east of Bournemouth Pier, weather permitting \\u2014 if it is blowing a gale, check the official channels below before you set off. Free, no tickets, just turn up.';
         }} else {{
           if (stateEl) stateEl.textContent = 'NEXT SHOW: ' + next.label.toUpperCase() + ' (' + days + (days === 1 ? ' DAY)' : ' DAYS)');
           head.textContent = 'Next display: ' + next.label + ' \\u2014 10pm';
           sub.textContent = (days === 1 ? 'That is tomorrow night.' : 'That is ' + days + ' nights away.') +
-            ' Free, from the seafront just east of Bournemouth Pier \\u2014 weather permitting.';
+            ' Free, fired from a barge just east of Bournemouth Pier \\u2014 weather permitting.';
         }}
         }}
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
@@ -239,9 +260,38 @@ _DATES = f'''          <h2 id="dates">Every 2026 date</h2>
           </table>
           <p class="mono">Dates and the 10pm start are as published by the organisers, BCP Council&rsquo;s events team; the 4 September finale and the cancellations are from BCP Council&rsquo;s own announcements of 26 and 28 August 2026. Last verified: 3 September 2026.</p>'''
 
+# ---- between seasons: Bonfire Night, New Year, when the Fridays return ----------
+# Sources, all checked 17 Sep 2026 (FW_OFFSEASON_CHECKED):
+#   Littledown: bournemouthfireworks.co.uk - "Saturday 7th November 2026", Littledown Centre, Chaseside, BH7 7DX,
+#     "3 Displays in One Night", ticketed. The site gives no display times and no organiser name, so nor do we.
+#   Poole Quay 5 Nov: BCP Council on X, 3 Nov 2024 - free, Poole Quay, Tuesday, display 8pm. BCP news "Back with a
+#     bang" (9 Jul 2025) - "Weds 5 November", Poole Quay, event 5.30pm, fireworks 8pm; BCP funding 12 nights (six
+#     Bournemouth Fridays 25 Jul-29 Aug, five Poole Thursdays, 5 November). No 2026 5 November announcement found.
+#   New Year: no organiser found for any Bournemouth seafront display; not in BCP's 2025 programme.
+#   2024 Fridays: Coastal BID, 10 Jul 2024 - "Every Friday from July 26th to August 23rd", 10pm, "presents".
+# Never Event markup for any of these: they are not the council's Friday series, and a predicted date is not an event.
+_FW_BONFIRE = f'''          <h2 id="bonfire-night">Bonfire Night 2026</h2>
+          <p><strong>Bournemouth Fireworks at the Littledown Centre</strong> (Chaseside, BH7 7DX) is on <strong>Saturday 7 November 2026</strong>: three displays in one night, ticketed, and run by the event&rsquo;s own organisers rather than the council. Times and tickets are on <a href="https://bournemouthfireworks.co.uk/" target="_blank" rel="noopener">bournemouthfireworks.co.uk</a>.</p>
+          <p><strong>The council&rsquo;s free Bonfire Night display has been on Poole Quay, not Bournemouth seafront</strong>: on Tuesday 5 November 2024 at 8pm, and on Wednesday 5 November 2025, with the event from 5.30pm and fireworks at 8pm. BCP Council had not announced a 2026 display when we checked on {FW_OFFSEASON_CHECKED}.</p>
+          <p class="mono">Sources: bournemouthfireworks.co.uk; BCP Council on X (3 November 2024); BCP Council, &ldquo;Back with a bang&rdquo; (9 July 2025). Checked {FW_OFFSEASON_CHECKED}.</p>'''
+
+_FW_NEWYEAR = f'''          <h2 id="new-year">New Year&rsquo;s Eve</h2>
+          <p>No New Year&rsquo;s Eve fireworks on Bournemouth seafront had been announced by the council or any named organiser when we checked on {FW_OFFSEASON_CHECKED}. BCP Council&rsquo;s 2025 programme was twelve nights: six Bournemouth Fridays, five Thursdays on Poole Quay and Poole Quay on 5 November &mdash; none of them New Year. Some travel sites describe a free seafront display without naming who runs it; if an organiser announces one, it goes here.</p>'''
+
+_FW_NEXT = f'''          <h2 id="next-season">When the Friday fireworks return</h2>
+          <p>BCP Council had not published 2027 dates when we checked on {FW_OFFSEASON_CHECKED}. The record so far: in <strong>2024</strong> the Fridays ran from 26 July to 23 August, presented by the town&rsquo;s Coastal BID; in <strong>2025</strong> from 25 July to 29 August, funded by BCP Council, which announced them on 9 July; in <strong>2026</strong> from 24 July to the 4 September finale. All three seasons started on the Friday closest to 25 July, at 10pm. On that pattern 2027 would open on Friday 23 July &mdash; but that is a pattern, not an announcement, and this page changes the day the dates are published.</p>
+          <p class="mono">Sources: Coastal BID (10 July 2024); BCP Council, &ldquo;Back with a bang&rdquo; (9 July 2025); BCP Council&rsquo;s 2026 announcements and bournemouth.co.uk.</p>'''
+
+_FW_OFFSEASON = {
+    "season": "",
+    "bonfire": _FW_BONFIRE + "\n" + _FW_NEWYEAR + "\n" + _FW_NEXT,
+    "newyear": _FW_NEWYEAR + "\n" + _FW_NEXT,
+    "waiting": _FW_NEXT,
+}[FW_PHASE]
+
 # ---- where to stand ----------------------------------------------------------
 _WHERE = '''          <h2 id="where">Where to stand</h2>
-          <p>The fireworks go up from the shore <strong>just east of Bournemouth Pier</strong>, over the water. That one fact picks your spot for you:</p>
+          <p>The fireworks go up from a barge just offshore, <strong>east of Bournemouth Pier</strong>. That one fact picks your spot for you:</p>
           <h3>The beach east of the pier</h3>
           <p>The stretch of sand between Bournemouth and Boscombe piers looks straight at the firing site &mdash; this is the front row, and where most people head. Get there early on a warm night, and remember a high tide narrows the beach, so the space by the water varies week to week.</p>
           <h3>Bournemouth Pier approach</h3>
@@ -250,8 +300,8 @@ _WHERE = '''          <h2 id="where">Where to stand</h2>
           <p>Up on the clifftop you trade closeness for the full sweep of the bay &mdash; and a much easier exit. It is noticeably cooler than the beach even in August, so bring a layer, and stick to the lit routes rather than the dark zigzag paths once the show ends.</p>
           <h3>From the Boscombe side</h3>
           <p>Walking up from Boscombe Pier keeps you clear of the biggest crowds, looking west at the display with Bournemouth Pier glowing behind it. A good shout with a pushchair.</p>
-          <figure style="margin:1.2rem 0"><img src="/bournemouth/media/fireworks-2024.jpg" alt="Bournemouth Friday fireworks firing from the sea platform east of the pier, reflected in the water" loading="lazy" width="1080" height="1920" style="max-width:min(420px,100%);height:auto;border-radius:12px" />
-          <figcaption class="mono" style="margin-top:.4rem">One of our own frames: the display firing from the sea platform east of the pier — 31 August 2024, 10.47pm.</figcaption></figure>
+          <figure style="margin:1.2rem 0"><img src="/bournemouth/media/fireworks-2024.jpg" alt="Fireworks fired from the water east of Bournemouth Pier, reflected in the sea, with spectators silhouetted in front" loading="lazy" width="1080" height="1920" style="max-width:min(420px,100%);height:auto;border-radius:12px" />
+          <figcaption class="mono" style="margin-top:.4rem">One of our own frames: fireworks fired from the water east of the pier on Saturday 31 August 2024.</figcaption></figure>
           <p>We film most Friday displays for our <a href="https://www.facebook.com/bournemouth365" target="_blank" rel="noopener">Bournemouth365 Facebook page</a> &mdash; the clips are an honest way to judge the vantage points before you pick one.</p>'''
 
 # ---- practical ---------------------------------------------------------------
@@ -260,11 +310,9 @@ _PRACTICAL = '''          <h2 id="practical">Getting there and back</h2>
           <p><strong>Buses:</strong> Morebus has run extra &ldquo;Firework Fridays&rdquo; services in recent seasons &mdash; check <a href="https://www.morebus.co.uk" target="_blank" rel="noopener">morebus.co.uk</a> for this year&rsquo;s times. <strong>Parking:</strong> the seafront and clifftop car parks fill early on fireworks nights; allow more time than feels sensible, or take the bus. Our <a href="/bournemouth/beach-parking/">beach parking guide</a> has the seafront car park prices and the cheaper options.</p>
           <p><strong>Afterwards:</strong> it is dark, the paths are busy, and small legs are tired &mdash; the overcliff exits thin the crowd out fastest. Take your litter home, and keep clear of any cordoned area near the firing site on the beach.</p>
           <h2 id="history">130 years of summer light</h2>
-          <p>Bournemouth&rsquo;s habit of lighting up its seafront on summer evenings has a recorded origin: the candlelight illuminations of the Lower Gardens, first staged in 1896 &mdash; the year the Empress Eug&eacute;nie visited &mdash; and extended in 1897 for Queen Victoria&rsquo;s Diamond Jubilee, when some fifteen thousand coloured candles were lit through the gardens. The tradition survives in two forms today: the gardens&rsquo; candlelight nights, and the Friday fireworks &mdash; fired by the council&rsquo;s events team from a barge just east of the pier, part-funded by the town&rsquo;s Coastal BID to keep summer evenings on the seafront busy. Same idea as 1896: give everyone on the beach a reason to stay for dusk.</p>
+          <p>Bournemouth&rsquo;s habit of lighting up its seafront on summer evenings has a recorded origin: the candlelight illuminations of the Lower Gardens, first staged in 1896 &mdash; the year the Empress Eug&eacute;nie visited &mdash; and extended in 1897 for Queen Victoria&rsquo;s Diamond Jubilee, when some fifteen thousand coloured candles were lit through the gardens. The tradition survives in two forms today: the gardens&rsquo; candlelight nights, and the Friday fireworks &mdash; fired from a barge just east of the pier, presented by the town&rsquo;s Coastal BID in 2024 and funded by BCP Council in 2025, to keep summer evenings on the seafront busy. Same idea as 1896: give everyone on the beach a reason to stay for dusk.</p>
           <p class="mono">History: recorded origin per Bournemouth Parks &amp; Gardens histories and visitor-guide archives (the 1896 date and the Jubilee candle count are corroborated across independent local accounts); today&rsquo;s operation per BCP Council&rsquo;s event listings.</p>
 
-          <h2 id="winter">November 5th and New Year</h2>
-          <p>Bonfire Night and New Year displays around Bournemouth are run by different organisers and change from year to year, so check the organiser&rsquo;s own page before you go. The Friday Fireworks above are the seafront&rsquo;s regular fixture.</p>
           <h2>What happened to the Air Festival?</h2>
           <p>The Bournemouth Air Festival is not running &mdash; there was no event in 2025, there is none in 2026, and no return has been confirmed. The Friday Fireworks are now the big free regular on the seafront&rsquo;s summer calendar.</p>'''
 
@@ -286,23 +334,73 @@ _B365 = '''    <section class="section" aria-label="About Bournemouth365">
 
 _FAQS = [
     ("What time do the Bournemouth Friday fireworks start?",
-     "10pm, from the seafront just east of Bournemouth Pier. In 2026 the season ran on Fridays from 24 July, lost 14 and 21 August to the national wildfire emergency and 28 August to high winds at sea, and closed with a finale BCP Council added on Friday 4 September. Next year&rsquo;s dates will be added here as soon as BCP Council announces them."),
+     "10pm, fired from a barge just east of Bournemouth Pier. In 2026 the season ran on Fridays from 24 July, lost 14 and 21 August to the national wildfire emergency and 28 August to high winds at sea, and closed with a finale BCP Council added on Friday 4 September. Next year&rsquo;s dates will be added here as soon as BCP Council announces them."),
     ("Are the Friday fireworks free?",
      "Yes &mdash; completely free, no tickets, no wristbands. They are organised by BCP Council&rsquo;s events team. Just turn up."),
     ("Where are the fireworks set off?",
-     "From the seafront just east of Bournemouth Pier, over the sea &mdash; so anywhere with a clear view of the water east of the pier sees the show. Our favourite spots are in the guide above."),
+     "From a barge just offshore, east of Bournemouth Pier &mdash; which is why wind at sea, not rain, is what cancels them: 28 August 2026 was called off because the fireworks could not be launched safely from the barge. Anywhere with a clear view of the water east of the pier sees the show; our favourite spots are in the guide above."),
     ("What happens if the weather is bad?",
      "Displays are weather-dependent and occasionally cancelled at short notice &mdash; strong wind is the usual culprit. Cancellations are announced on bournemouth.co.uk and the official Love Bournemouth social channels, so check there before you set off if it is wild out."),
     ("Is it on tonight?",
-     "The panel at the top of this page works it out from today&rsquo;s date and the organisers&rsquo; announcements: the last 2026 display is the finale on Friday 4 September at 10pm, weather permitting. Cancellations are the organisers&rsquo; call, made on the day and posted on bournemouth.co.uk and the Love Bournemouth channels &mdash; check there if it is blowing a gale."),
+     ("The panel at the top of this page works it out from today&rsquo;s date and the organisers&rsquo; announcements: the last 2026 display is the finale on Friday 4 September at 10pm, weather permitting. Cancellations are the organisers&rsquo; call, made on the day and posted on bournemouth.co.uk and the Love Bournemouth channels &mdash; check there if it is blowing a gale."
+      if FW_PHASE == "season" else
+      "Not until next summer. The Friday fireworks run from late July to the end of August, and the 2026 season ended with the finale on Friday 4 September."
+      + (" For November, Bournemouth Fireworks at the Littledown Centre is on Saturday 7 November 2026 (ticketed) &mdash; see Bonfire Night above." if FW_PHASE == "bonfire" else ""))),
 ]
+if FW_PHASE == "bonfire":
+    _FAQS.append(("Are there fireworks in Bournemouth on Bonfire Night 2026?",
+                  "Yes: Bournemouth Fireworks at the Littledown Centre (Chaseside, BH7 7DX) is on Saturday 7 November 2026, with three displays in one night, ticketed and run by its own organisers. The council&rsquo;s free 5 November display has been on Poole Quay rather than Bournemouth seafront, at 8pm in both 2024 and 2025; BCP Council had not announced a 2026 display when we checked on " + FW_OFFSEASON_CHECKED + "."))
+if FW_PHASE in ("bonfire", "newyear"):
+    _FAQS.append(("Is there a New Year&rsquo;s Eve fireworks display on Bournemouth beach?",
+                  "None had been announced by the council or any named organiser when we checked on " + FW_OFFSEASON_CHECKED + ". BCP Council&rsquo;s 2025 fireworks were the summer Fridays in Bournemouth, Thursdays on Poole Quay and Poole Quay on 5 November, with no New Year display. Some travel sites describe a free seafront display without naming who runs it."))
+if FW_PHASE != "season":
+    _FAQS.append(("When will the 2027 Bournemouth Friday fireworks dates be announced?",
+                  "Not yet: BCP Council had published no 2027 dates when we checked on " + FW_OFFSEASON_CHECKED + ". For comparison, it announced the 2025 season on 9 July 2025. The last three seasons started on the Friday closest to 25 July at 10pm (26 July 2024, 25 July 2025, 24 July 2026), so 2027 would open on Friday 23 July on that pattern &mdash; a pattern, not an announcement."))
+
+
+_FW_TEXT = {
+    # phase: (title <=60, meta description <=155, og:title, H1 html, lede, cta1, cta2, chips, schema name)
+    "season": ("Bournemouth Fireworks: Finale Friday 4 September, 10pm",
+               "One more: BCP Council added a finale for Friday 4 September at 10pm after the wildfire and high-wind cancellations. Every date, what happened, and where to stand.",
+               "Bournemouth Friday Fireworks \u2014 finale Friday 4 September, 10pm",
+               'Bournemouth Friday fireworks &mdash; <em class="grad grad--cyan">finale Friday 4 September</em>',
+               "One more display: BCP Council reinstated the fireworks on 26 August after the wildfire risk eased, lost 28 August to high winds at sea on the night, and added a finale for Friday 4 September at 10pm. Here is the full picture: every date with the cancelled nights struck through, what happened, and the best places to stand.",
+               ("Is it on tonight?", "#tonight"), ("Where to stand", "#where"),
+               ["Free &mdash; no tickets", "Fridays at 10pm", "East of Bournemouth Pier"],
+               "Bournemouth Friday Fireworks 2026"),
+    "bonfire": ("Bournemouth Fireworks: Bonfire Night 2026 & New Year's Eve",
+                "Bonfire Night 2026: Littledown's three displays on Sat 7 Nov, where the council's free 5 November show has been, New Year's Eve, and every 2026 Friday.",
+                "Bournemouth fireworks \u2014 Bonfire Night 2026, New Year and the Friday season",
+                'Bournemouth fireworks &mdash; <em class="grad grad--cyan">Bonfire Night, New Year and the Fridays</em>',
+                "Bonfire Night first: Bournemouth Fireworks at the Littledown Centre is on Saturday 7 November 2026, and the council&rsquo;s free 5 November display has been on Poole Quay. The Friday fireworks finished on 4 September after losing three Fridays to the wildfire emergency and high winds at sea &mdash; here is the full record, and where to stand when they return.",
+                ("Bonfire Night 2026", "#bonfire-night"), ("Every 2026 Friday", "#dates"),
+                ["Littledown: Saturday 7 November", "Summer Fridays at 10pm", "Every fact sourced and dated"],
+                "Bournemouth Fireworks: Bonfire Night 2026, New Year's Eve and the Friday Season"),
+    "newyear": ("Bournemouth Fireworks: New Year's Eve & 2027 Friday Season",
+                "Is there a New Year's Eve fireworks display in Bournemouth? What is confirmed for 31 December 2026, plus the 2027 Friday fireworks and past seasons.",
+                "Bournemouth fireworks \u2014 New Year's Eve, and when the Fridays return",
+                'Bournemouth fireworks &mdash; <em class="grad grad--cyan">New Year&rsquo;s Eve, and when the Fridays return</em>',
+                "What is and is not confirmed for New Year&rsquo;s Eve on Bournemouth seafront, and when the Friday fireworks come back: the last three seasons began on the Friday nearest 25 July at 10pm. Here is the full 2026 record, and where to stand.",
+                ("New Year&rsquo;s Eve", "#new-year"), ("When the Fridays return", "#next-season"),
+                ["Summer Fridays at 10pm", "Every fact sourced and dated", "East of Bournemouth Pier"],
+                "Bournemouth Fireworks: New Year's Eve and the 2027 Friday Season"),
+    "waiting": ("Bournemouth Friday Fireworks 2027: Dates Not Yet Announced",
+                "No 2027 dates yet from BCP Council. The last three seasons started on the Friday nearest 25 July at 10pm - here is that record, and where to stand.",
+                "Bournemouth Friday fireworks 2027 \u2014 dates not announced yet",
+                'Bournemouth Friday fireworks 2027 &mdash; <em class="grad grad--cyan">dates not announced yet</em>',
+                "The last three seasons started on the Friday nearest 25 July, at 10pm: 26 July 2024, 25 July 2025 and 24 July 2026. Here is that record, what happened in 2026, and the best places to stand when the displays return.",
+                ("When the Fridays return", "#next-season"), ("Where to stand", "#where"),
+                ["Free &mdash; no tickets", "Fridays at 10pm", "East of Bournemouth Pier"],
+                "Bournemouth Friday Fireworks 2027"),
+}[FW_PHASE]
 
 
 def _schema(s):
     g = [
         crumb_sub(s, "Bournemouth365", "bournemouth", "Friday Fireworks"),
-        _pl.published(webpage(s, "Bournemouth Friday Fireworks 2026",
-                "Every 2026 date for Bournemouth's free Friday night fireworks, which were cancelled and why, and the best places to stand.",
+        _pl.published(webpage(s, _FW_TEXT[8],
+                ("Every 2026 date for Bournemouth's free Friday night fireworks, which were cancelled and why, and the best places to stand."
+                 if FW_PHASE == "season" else _FW_TEXT[1]),
                 about=_pl.PIER, image="/bournemouth/media/og-fireworks.jpg")),
         _pl.ORG,
         faqpage(s, _FAQS),
@@ -325,18 +423,18 @@ def _schema(s):
                 "eventStatus": ("https://schema.org/EventCancelled" if d in CANCELLED
                                 else "https://schema.org/EventScheduled"),
                 "isAccessibleForFree": True,
-                "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP",
-                           "availability": ("https://schema.org/SoldOut" if d in CANCELLED
-                                            else "https://schema.org/InStock"), "url": _URL},
+                # free and unticketed: no availability to claim, sold out or otherwise
+                "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP", "url": _URL},
                 "location": {"@type": "Place",
                              "name": "Bournemouth seafront, east of Bournemouth Pier",
                              "address": {"@type": "PostalAddress", "addressLocality": "Bournemouth",
                                          "addressRegion": "Dorset", "addressCountry": "GB"},
                              "geo": {"@type": "GeoCoordinates", "latitude": 50.7154, "longitude": -1.8710}},
                 "organizer": {"@type": "Organization", "name": "BCP Council Events Team"},
-                "description": ("CANCELLED. This display has been called off by the organisers following the national wildfire emergency alert."
+                "description": (# the reason is the date's own (28 Aug 2026 was wind, not the wildfire alert)
+                                ("CANCELLED: " + CANCELLED[d].replace("cancelled &mdash; ", "").replace("&mdash;", "-") + ".")
                                 if d in CANCELLED else
-                                "Free fireworks display over the sea from the seafront just east of Bournemouth Pier, 10pm. Weather permitting."),
+                                "Free fireworks display over the sea, fired from a barge just east of Bournemouth Pier, 10pm. Weather permitting."),
             })
     return graph(g)
 
@@ -344,29 +442,22 @@ def _schema(s):
 _CONTENT = "\n".join([
     hero(bc_sub("Bournemouth365", "/bournemouth/", "Friday Fireworks"),
          "// BOURNEMOUTH365",
-         ('Bournemouth Friday fireworks &mdash; <em class="grad grad--cyan">the 2026 season</em>' if SEASON_OVER
-          else 'Bournemouth Friday fireworks &mdash; <em class="grad grad--cyan">finale Friday 4 September</em>'),
-         ("The 2026 season has finished. It lost three Fridays &mdash; 14 and 21 August to the national wildfire emergency, 28 August to high winds at sea &mdash; and closed with the finale BCP Council added on 4 September. Here is the full record: every date, what happened, and the best places to stand when the displays return."
-          if SEASON_OVER else
-          "One more display: BCP Council reinstated the fireworks on 26 August after the wildfire risk eased, lost 28 August to high winds at sea on the night, and added a finale for Friday 4 September at 10pm. Here is the full picture: every date with the cancelled nights struck through, what happened, and the best places to stand."),
-         cta1=("Is it on tonight?", "#tonight"),
-         cta2=("Where to stand", "#where"),
-         chips=["Free &mdash; no tickets", "Fridays at 10pm", "East of Bournemouth Pier"]),
+         _FW_TEXT[3],
+         _FW_TEXT[4],
+         cta1=_FW_TEXT[5],
+         cta2=_FW_TEXT[6],
+         chips=_FW_TEXT[7]),
     _STATUS,
-    f'    <section class="section">\n      <div class="wrap">\n        <div class="prose" data-reveal>\n{_DATES}\n{_WHERE}\n{_PRACTICAL}\n        </div>\n      </div>\n    </section>',
+    f'    <section class="section">\n      <div class="wrap">\n        <div class="prose" data-reveal>\n{_FW_OFFSEASON + chr(10) if _FW_OFFSEASON else ""}{_DATES}\n{_WHERE}\n{_PRACTICAL}\n        </div>\n      </div>\n    </section>',
     faq_html(_FAQS),
     _B365,
 ])
 
 add(
     slug=_SLUG,
-    title=("Bournemouth Friday Fireworks 2026: Every Date, What Happened" if SEASON_OVER
-           else "Bournemouth Fireworks: Finale Friday 4 September, 10pm"),
-    desc=("The 2026 season is over: which Fridays ran, which were cancelled and why, the 4 September finale, and where to stand when the displays return."
-          if SEASON_OVER else
-          "One more: BCP Council added a finale for Friday 4 September at 10pm after the wildfire and high-wind cancellations. Every date, what happened, and where to stand."),
-    og_title=("Bournemouth Friday Fireworks \u2014 the 2026 season, every date and what happened" if SEASON_OVER
-              else "Bournemouth Friday Fireworks \u2014 finale Friday 4 September, 10pm"),
+    title=_FW_TEXT[0],
+    desc=_FW_TEXT[1],
+    og_title=_FW_TEXT[2],
     schema=_schema,
     content=_CONTENT,
     og_image="/bournemouth/media/og-fireworks.jpg",
@@ -1179,10 +1270,12 @@ _HUB_CARDS = [
      "Beach parking prices &amp; cheaper car parks", "What it really costs, where it is far cheaper, and the rules that catch people out &mdash; every price from BCP&rsquo;s own pages, dated.",
      "Sunset over the beach at Durley Chine, with The Deck kiosk, picnic benches and beach huts under the cliff"),
     ("/bournemouth/fireworks/", "/bournemouth/media/og-fireworks.jpg",
-     ("Friday fireworks: what happened in 2026" if SEASON_OVER else "Friday fireworks"),
-     ("The 2026 season, every date and what happened &mdash; three Fridays lost to the wildfire emergency and high winds, one finale added &mdash; and the best places to stand when the displays return."
-      if SEASON_OVER else
-      "One more: the finale is Friday 4 September at 10pm, added by BCP Council after the wildfire and high-wind cancellations &mdash; every date, what happened, and where to stand."),
+     {"season": "Friday fireworks", "bonfire": "Fireworks: Bonfire Night 2026 &amp; the Friday season",
+      "newyear": "Fireworks: New Year&rsquo;s Eve &amp; the 2027 Fridays", "waiting": "Friday fireworks 2027: when the dates come"}[FW_PHASE],
+     {"season": "One more: the finale is Friday 4 September at 10pm, added by BCP Council after the wildfire and high-wind cancellations &mdash; every date, what happened, and where to stand.",
+      "bonfire": "Bournemouth Fireworks at the Littledown Centre on Saturday 7 November, where the council&rsquo;s free 5 November display has been, and the full 2026 Friday record &mdash; three Fridays lost to the wildfire emergency and high winds.",
+      "newyear": "What is and is not confirmed for New Year&rsquo;s Eve on the seafront, when the Friday fireworks come back, and the full 2026 record.",
+      "waiting": "No 2027 dates yet &mdash; the pattern of the last three seasons, the full 2026 record, and the best places to stand."}[FW_PHASE],
      "Firework trails falling through the night sky"),
     ("/van-signal-map/", "/bournemouth/media/pier-golden-hour.jpg",
      "Mobile signal, measured by our van", "Real 4G/5G speeds our own van logs as it drives around Bournemouth and Poole &mdash; the places that tested fastest for working on the move, on a map you can check before you rely on it. One van, one network, measured not modelled.",
