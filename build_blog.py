@@ -1022,6 +1022,24 @@ if _osg.path.exists(_st_fp):
         _bm_bad.append("sea-today: bournemouth/sea-today/index.php or api/bm-sea-ssr.php is missing")
     if not _osg.path.exists(_st_hta) or "DirectoryIndex index.php" not in open(_st_hta, encoding="utf-8").read():
         _bm_bad.append("sea-today: bournemouth/sea-today/.htaccess must set DirectoryIndex index.php first")
+# Sunrise & sunset server first paint (17 Sep 2026): bournemouth/sunrise-sunset/index.php fills these markers and dates
+# the "What time is sunset" FAQ answer (api/bm-sun-ssr.php). A lost marker fails silently, so each must appear once.
+_ss_fp = _osg.path.join(bp.BASE, "bournemouth", "sunrise-sunset", "index.html")
+if _osg.path.exists(_ss_fp):
+    _ss_html = open(_ss_fp, encoding="utf-8").read()
+    for _m in ("answer", "risechip", "rise", "setchip", "set", "len", "lensub"):
+        for _tag in ("<!--ssr:%s-->" % _m, "<!--/ssr:%s-->" % _m):
+            if _ss_html.count(_tag) != 1:
+                _bm_bad.append("sunrise-sunset: server-render marker %s appears %d times (must be 1)" % (_tag, _ss_html.count(_tag)))
+    _anc = "The panel at the top of this page computes it for the seafront every day"
+    if _ss_html.count(_anc) != 2:
+        _bm_bad.append("sunrise-sunset: FAQ anchor %r appears %d times (must be 2: FAQ + JSON-LD)" % (_anc, _ss_html.count(_anc)))
+    _ss_hta = _osg.path.join(bp.BASE, "bournemouth", "sunrise-sunset", ".htaccess")
+    if not (_osg.path.exists(_osg.path.join(bp.BASE, "bournemouth", "sunrise-sunset", "index.php"))
+            and _osg.path.exists(_osg.path.join(bp.BASE, "api", "bm-sun-ssr.php"))):
+        _bm_bad.append("sunrise-sunset: bournemouth/sunrise-sunset/index.php or api/bm-sun-ssr.php is missing")
+    if not _osg.path.exists(_ss_hta) or "DirectoryIndex index.php" not in open(_ss_hta, encoding="utf-8").read():
+        _bm_bad.append("sunrise-sunset: bournemouth/sunrise-sunset/.htaccess must set DirectoryIndex index.php first")
 if _osg.path.exists(_fw_fp):
     if "SEASON FINISHED" not in open(_fw_fp, encoding="utf-8").read():
         _bm_bad.append("fireworks: season-finished branch missing (G3)")

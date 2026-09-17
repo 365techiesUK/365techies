@@ -1040,9 +1040,9 @@ _SS_PANEL = f'''    <section class="section b365 b365--dusk" id="times" aria-lab
           <h2 class="section-title section-title--center" data-title>Today&rsquo;s light<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="b365-hero" data-stagger>
-          <div class="b365-tile b365-tile--dusk"><span class="chip-m" id="ss-rise-chip">SUNRISE</span><div class="b365-num" id="ss-rise">&mdash;</div><p class="b365-sub">Golden hour runs roughly the hour after.</p></div>
-          <div class="b365-tile b365-tile--dusk"><span class="chip-m" id="ss-set-chip">SUNSET</span><div class="b365-num" id="ss-set">&mdash;</div><p class="b365-sub">Golden hour runs roughly the hour before.</p></div>
-          <div class="b365-tile b365-tile--dusk"><span class="chip-m">DAY LENGTH</span><div class="b365-num" id="ss-len">&mdash;</div><p class="b365-sub" id="ss-len-sub">Computed for the seafront (NOAA solar position, &plusmn;2 minutes). Needs JavaScript; nothing here is fetched or forecast.</p></div>
+          <div class="b365-tile b365-tile--dusk"><span class="chip-m" id="ss-rise-chip"><!--ssr:risechip-->SUNRISE<!--/ssr:risechip--></span><div class="b365-num" id="ss-rise"><!--ssr:rise-->&mdash;<!--/ssr:rise--></div><p class="b365-sub">Golden hour runs roughly the hour after.</p></div>
+          <div class="b365-tile b365-tile--dusk"><span class="chip-m" id="ss-set-chip"><!--ssr:setchip-->SUNSET<!--/ssr:setchip--></span><div class="b365-num" id="ss-set"><!--ssr:set-->&mdash;<!--/ssr:set--></div><p class="b365-sub">Golden hour runs roughly the hour before.</p></div>
+          <div class="b365-tile b365-tile--dusk"><span class="chip-m">DAY LENGTH</span><div class="b365-num" id="ss-len"><!--ssr:len-->&mdash;<!--/ssr:len--></div><p class="b365-sub" id="ss-len-sub"><!--ssr:lensub-->Computed for the seafront (NOAA solar position, &plusmn;2 minutes). Needs JavaScript; nothing here is fetched or forecast.<!--/ssr:lensub--></p></div>
         </div>
         <div class="tile-grid" data-stagger style="margin-top:1rem">
 {_SS_FIGS}
@@ -1051,11 +1051,15 @@ _SS_PANEL = f'''    <section class="section b365 b365--dusk" id="times" aria-lab
       </div>
       <script>
       (function () {{
+        // MIRRORED IN api/bm-sun-ssr.php, which writes the same times into the HTML on the server (17 Sep 2026)
         var LAT = 50.7166, LON = -1.8757;
+        var ymd = {{}};
+        new Intl.DateTimeFormat('en-GB', {{ timeZone: 'Europe/London', year: 'numeric', month: 'numeric', day: 'numeric' }})
+          .formatToParts(new Date()).forEach(function (x) {{ ymd[x.type] = +x.value; }});
+        var Y = ymd.year, MO = ymd.month - 1, D = ymd.day;
         function sunUT(riseNotSet) {{
-          var now = new Date();
-          var start = Date.UTC(now.getUTCFullYear(), 0, 0);
-          var n = Math.floor((Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()) - start) / 86400000);
+          var start = Date.UTC(Y, 0, 0);
+          var n = Math.floor((Date.UTC(Y, MO, D) - start) / 86400000);
           var lngHour = LON / 15, rad = Math.PI / 180;
           var t = n + (((riseNotSet ? 6 : 18) - lngHour) / 24);
           var M = (0.9856 * t) - 3.289;
@@ -1072,7 +1076,7 @@ _SS_PANEL = f'''    <section class="section b365 b365--dusk" id="times" aria-lab
           if (riseNotSet) H = 360 - H;
           var T = (H / 15) + RA - (0.06571 * t) - 6.622;
           var UT = ((T - lngHour) % 24 + 24) % 24;
-          var d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+          var d = new Date(Date.UTC(Y, MO, D));
           d.setUTCMinutes(Math.round(UT * 60));
           return d;
         }}
@@ -1083,7 +1087,9 @@ _SS_PANEL = f'''    <section class="section b365 b365--dusk" id="times" aria-lab
           document.getElementById('ss-set').textContent = hm(set);
           var mins = Math.round((set - rise) / 60000);
           document.getElementById('ss-len').textContent = Math.floor(mins / 60) + 'h ' + (mins % 60) + 'm';
-          var today = new Date().toLocaleDateString('en-GB', {{ day: 'numeric', month: 'long' }});
+          var day = new Date(Date.UTC(Y, MO, D));
+          var today = day.toLocaleDateString('en-GB', {{ day: 'numeric', month: 'long', timeZone: 'UTC' }});
+          document.getElementById('ss-len-sub').textContent = 'Computed for the seafront for ' + day.toLocaleDateString('en-GB', {{ weekday: 'long', timeZone: 'UTC' }}) + ' ' + day.toLocaleDateString('en-GB', {{ day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }}) + ' (NOAA solar position, \u00b12 minutes). Nothing here is fetched or forecast.';
           document.getElementById('ss-rise-chip').textContent = 'SUNRISE \u00b7 ' + today.toUpperCase();
           document.getElementById('ss-set-chip').textContent = 'SUNSET \u00b7 ' + today.toUpperCase();
         }}
@@ -1121,7 +1127,7 @@ _SS_CONTENT = "\n".join([
     hero(bc_sub("Bournemouth365", "/bournemouth/", "Sunrise &amp; Sunset"),
          "// BOURNEMOUTH365",
          'Sunrise and sunset in <em class="grad grad--cyan">Bournemouth</em>',
-         "Today&rsquo;s times, computed for the seafront &mdash; and every good spot to watch from, photographed by us on this coastline. Not stock, and each caption says only what the frame shows.",
+         "<!--ssr:answer--><!--/ssr:answer-->Today&rsquo;s times, computed for the seafront &mdash; and every good spot to watch from, photographed by us on this coastline. Not stock, and each caption says only what the frame shows.",
          cta1=("Today's times", "#times"),
          cta2=("The spots", "#where"),
          chips=["Computed times &mdash; never stale", "Our own photographs", "Every spot named"]),
