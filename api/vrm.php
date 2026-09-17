@@ -163,42 +163,70 @@ if (isset($m['rf0']) && (string)$m['rf0']['raw'] === '3' && isset($m['cRelay']))
     $pump = ($rv === '0') ? 'off' : (($rv === '1') ? 'on' : null);   // unknown stays unknown, never asserted 'on'
 }
 
-/* ---- 30-day solar history: daily kWh = Pb (PV->battery) + Pc (PV->consumers) ---- */
-$hist = [];
-$end = time(); $start = $end - 31 * 86400;
-$st = vrm_get('/installations/' . $SITE_ID . '/stats?type=kwh&interval=days&start=' . $start . '&end=' . $end, $VRM_TOKEN);
-$ledger = ['pb' => null, 'pc' => null, 'bc' => null];   // today's DAILY totals (the last stats entry accumulates through the day)
-if ($st && isset($st['records']['Pb']) && is_array($st['records']['Pb'])) {
-    $pc = []; $bc = [];
-    if (isset($st['records']['Pc']) && is_array($st['records']['Pc'])) {
-        foreach ($st['records']['Pc'] as $p) if (is_array($p) && count($p) >= 2) $pc[(string)$p[0]] = (float)$p[1];
+/* ---- 30-day solar history + today's energy ledger (VRM kWh stats: Pb PV->battery, Pc PV->loads, Bc battery->loads) ----
+ * 17 Sep 2026 - both were wrong. The request asked for days from exactly 31x24 h before NOW, and VRM cut the
+ * buckets from that start time: rolling 24-hour windows ending at the moment of the request, not calendar days.
+ * So the "last entry" the ledger read as "today so far" was really yesterday afternoon to this morning (seen live:
+ * over 32 minutes the MPPT's own yieldToday rose 0.68 -> 0.77 kWh while the "today" ledger stayed at ~1.19), and
+ * every older day drifted as the window slid (15 Sep read 1.24 then 1.27). Now both are asked from a UK midnight:
+ *  - history: 30 whole calendar days, midnight 30 days ago -> midnight today (today is never in the history);
+ *  - ledger: today since midnight in 15-minute buckets, summed - it grows through the day.
+ * Cached 60 s (vrm-stats-cache.json, denied in .htaccess): the diagnostics above stay near-live, and these two
+ * calls no longer run on every 3-second refresh. */
+function vrm_series($st, $code) {
+    $o = [];
+    if ($st && isset($st['records'][$code]) && is_array($st['records'][$code])) {
+        foreach ($st['records'][$code] as $p) if (is_array($p) && count($p) >= 2 && $p[1] !== null) $o[] = [(float)$p[0], (float)$p[1]];
     }
-    if (isset($st['records']['Bc']) && is_array($st['records']['Bc'])) {
-        foreach ($st['records']['Bc'] as $p) if (is_array($p) && count($p) >= 2) $bc[(string)$p[0]] = (float)$p[1];
+    return $o;
+}
+function vrm_bucket_ts($ms) { return (int)floor($ms > 1e11 ? $ms / 1000 : $ms); }   // VRM stamps buckets in milliseconds
+$ukTz = new DateTimeZone('Europe/London');
+$midnight = new DateTime('today', $ukTz);
+$todayKey = $midnight->format('Y-m-d');
+$STATS_CACHE = __DIR__ . '/vrm-stats-cache.json';
+$sc = @json_decode((string)@file_get_contents($STATS_CACHE), true);
+if (is_array($sc) && isset($sc['at'], $sc['day'], $sc['hist'], $sc['ledger']) && $sc['day'] === $todayKey && time() - (int)$sc['at'] < 60) {
+    $hist = $sc['hist'];
+    $ledger = $sc['ledger'];
+} else {
+    $hist = [];
+    $ledger = ['pb' => null, 'pc' => null, 'bc' => null];   // today since UK midnight
+    $from = clone $midnight; $from->modify('-30 days');
+    $st = vrm_get('/installations/' . $SITE_ID . '/stats?type=kwh&interval=days&start=' . $from->getTimestamp() . '&end=' . $midnight->getTimestamp(), $VRM_TOKEN);
+    $pbS = vrm_series($st, 'Pb');
+    if ($pbS) {
+        $pc = []; $bc = [];
+        foreach (vrm_series($st, 'Pc') as $p) $pc[(string)$p[0]] = $p[1];
+        foreach (vrm_series($st, 'Bc') as $p) $bc[(string)$p[0]] = $p[1];
+        foreach ($pbS as $p) {
+            $pdt = new DateTime('@' . vrm_bucket_ts($p[0]));
+            $pdt->setTimezone($ukTz);
+            if ($pdt->format('Y-m-d') >= $todayKey) continue;   // a bucket starting at the end boundary is today's, not history
+            $k = (string)$p[0];
+            $pck = isset($pc[$k]) ? $pc[$k] : 0.0;
+            $hist[] = [
+                'd'    => $pdt->format('Y-m-d'),                                 // UK calendar day, for the forecast's day-by-day calibration
+                'kwh'  => round($p[1] + $pck, 2),                                // solar generated = PV->battery + PV->loads
+                'used' => round($pck + (isset($bc[$k]) ? $bc[$k] : 0.0), 2),     // energy used = PV->loads + battery->loads
+            ];
+        }
+        $hist = array_slice($hist, -30);
     }
-    $lastK = null;
-    foreach ($st['records']['Pb'] as $p) {
-        if (!is_array($p) || count($p) < 2) continue;
-        $k = (string)$p[0];
-        $lastK = $k;
-        $pck = isset($pc[$k]) ? $pc[$k] : 0.0;
-        // the UK calendar day of the bucket (VRM stamps it in milliseconds): the solar forecast matches each day's
-        // real yield to NASA POWER's recorded sunshine for the same date (17 Sep 2026)
-        $pts = (float)$p[0];
-        $pdt = new DateTime('@' . (int)floor($pts > 1e11 ? $pts / 1000 : $pts));
-        $pdt->setTimezone(new DateTimeZone('Europe/London'));
-        $hist[] = [
-            'd'    => $pdt->format('Y-m-d'),
-            'kwh'  => round((float)$p[1] + $pck, 2),                        // solar generated = PV->battery + PV->loads
-            'used' => round($pck + (isset($bc[$k]) ? $bc[$k] : 0.0), 2),   // energy used = PV->loads + battery->loads
-        ];
-        $ledger['pb'] = round((float)$p[1], 2);
+    $tq = vrm_get('/installations/' . $SITE_ID . '/stats?type=kwh&interval=15mins&start=' . $midnight->getTimestamp() . '&end=' . time(), $VRM_TOKEN);
+    if ($tq && isset($tq['records']) && is_array($tq['records'])) {
+        foreach (['Pb' => 'pb', 'Pc' => 'pc', 'Bc' => 'bc'] as $code => $key) {
+            $sum = 0.0;
+            foreach (vrm_series($tq, $code) as $p) if (vrm_bucket_ts($p[0]) >= $midnight->getTimestamp()) $sum += $p[1];
+            $ledger[$key] = round($sum, 2);
+        }
     }
-    if ($lastK !== null) {
-        $ledger['pc'] = isset($pc[$lastK]) ? round($pc[$lastK], 2) : 0.0;
-        $ledger['bc'] = isset($bc[$lastK]) ? round($bc[$lastK], 2) : 0.0;
+    if ($hist) {
+        @file_put_contents($STATS_CACHE . '.tmp', json_encode(['at' => time(), 'day' => $todayKey, 'hist' => $hist, 'ledger' => $ledger]), LOCK_EX);
+        @rename($STATS_CACHE . '.tmp', $STATS_CACHE);
+    } elseif (is_array($sc) && !empty($sc['hist'])) {
+        $hist = $sc['hist'];   // VRM hiccup: keep the last good history rather than a blank chart
     }
-    $hist = array_slice($hist, -30);
 }
 
 $out = json_encode([
