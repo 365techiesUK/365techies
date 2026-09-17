@@ -25,3 +25,23 @@ BCP = {"@type": "AdministrativeArea", "name": "Bournemouth, Christchurch and Poo
 PIER = {"@type": "TouristAttraction", "name": "Bournemouth Pier", "geo": _geo(50.7161, -1.8756), "sameAs": _WD + "Q24662609"}
 BEACH = {"@type": "Beach", "name": "Bournemouth Beach", "geo": _geo(50.7162, -1.8736), "sameAs": _WD + "Q96655623"}
 POOLE_BAY = {"@type": "BodyOfWater", "name": "Poole Bay", "geo": _geo(50.6667, -1.8667), "sameAs": _WD + "Q6980908"}
+
+
+# Bournemouth365 itself (17 Sep 2026). Until now the section had no entity of its own: search engines and AI answers
+# knew the name only from one sentence on an IT-support page. This names it, ties it to its Facebook page (checked
+# 17 Sep 2026: facebook.com/bournemouth365, "Bournemouth365", 39,509 followers) and to 365 Techies as its parent,
+# and every section page names it as publisher. No logo: it has none of its own yet.
+_SITE = "https://365techies.co.uk"
+ORG_ID = _SITE + "/bournemouth/#organization"
+ORG = {"@type": "Organization", "@id": ORG_ID, "name": "Bournemouth365", "url": _SITE + "/bournemouth/",
+       "description": "A free, ad-free guide to Bournemouth's seafront as it is today - the sea measured live, the weather "
+                      "and tides, a live map of the town and the best places to watch the light - from the Bournemouth365 "
+                      "Facebook page.",
+       "sameAs": ["https://www.facebook.com/bournemouth365/"],
+       "parentOrganization": {"@id": _SITE + "/#business"}}
+
+
+def published(node):
+    """A section page's WebPage node, published by Bournemouth365."""
+    node["publisher"] = {"@id": ORG_ID}
+    return node

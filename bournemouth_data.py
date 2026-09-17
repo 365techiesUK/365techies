@@ -301,9 +301,10 @@ _FAQS = [
 def _schema(s):
     g = [
         crumb_sub(s, "Bournemouth365", "bournemouth", "Friday Fireworks"),
-        webpage(s, "Bournemouth Friday Fireworks 2026",
+        _pl.published(webpage(s, "Bournemouth Friday Fireworks 2026",
                 "Every 2026 date for Bournemouth's free Friday night fireworks, which were cancelled and why, and the best places to stand.",
-                about=_pl.PIER, image="/bournemouth/media/og-fireworks.jpg"),
+                about=_pl.PIER, image="/bournemouth/media/og-fireworks.jpg")),
+        _pl.ORG,
         faqpage(s, _FAQS),
     ]
     # Event nodes for displays still to come at BUILD time. Google's guidance
@@ -968,9 +969,10 @@ _ST_FAQS = [
 def _st_schema(s):
     return graph([
         crumb_sub(s, "Bournemouth365", "bournemouth", "Sea Conditions"),
-        webpage(s, "Bournemouth Sea Conditions Today",
+        _pl.published(webpage(s, "Bournemouth Sea Conditions Today",
                 "Live measured sea temperature, waves, tide and water quality for Bournemouth beach - from the bay's wave buoy, the pier tide gauge, the Environment Agency and Wessex Water.",
-                about=[_pl.POOLE_BAY, _pl.BEACH], image="/bournemouth/media/og-weather.jpg"),
+                about=[_pl.POOLE_BAY, _pl.BEACH], image="/bournemouth/media/og-weather.jpg")),
+        _pl.ORG,
         faqpage(s, _ST_FAQS),
     ])
 
@@ -1116,9 +1118,10 @@ _SS_FAQS = [
 def _ss_schema(s):
     return graph([
         crumb_sub(s, "Bournemouth365", "bournemouth", "Sunrise & Sunset"),
-        webpage(s, "Sunrise and Sunset in Bournemouth",
+        _pl.published(webpage(s, "Sunrise and Sunset in Bournemouth",
                 "Today's computed sunrise and sunset times for Bournemouth seafront, and the best spots to watch - photographed by us, not stock.",
-                about=_pl.BEACH, image="/bournemouth/media/og-sunrise-sunset.jpg"),
+                about=_pl.BEACH, image="/bournemouth/media/og-sunrise-sunset.jpg")),
+        _pl.ORG,
         faqpage(s, _SS_FAQS),
     ])
 
@@ -1157,34 +1160,48 @@ add(
 _HUB_SLUG = "bournemouth"
 
 _HUB_CARDS = [
-    ("/bournemouth/weather/", "/bournemouth/media/og-weather.jpg",
-     "Weather, tides &amp; radar", "The seafront forecast hour by hour and ten days out, tide times checked against the gauge on the pier, rain radar and satellite loops every 15 minutes, and the wind measured at the airport &mdash; every number labelled with where it came from."),
-    ("/bournemouth/live-map/", "/bournemouth/media/og-live-map.jpg",
-     "The live map", "Buses, flights, road closures, river levels, bike bays and the latest satellite pass over Bournemouth, Christchurch and Poole &mdash; every layer from a named public feed, on a free flat map, with the 3D city loaded only when you ask for it."),
+    # (link, image, heading, text, alt). Ordered by what people search for (SEO audit 17 Sep 2026: sea-today already
+    # ranks, then weather, sunrise and the map). The alt text says only what each frame shows - they are our own
+    # photographs, which is the section's point; the signal-check card's image is a text graphic, so it stays alt="".
     ("/bournemouth/sea-today/", "/bournemouth/media/og-sunrise-sunset.jpg",
-     "The sea right now", "Sea temperature and waves measured by the bay&rsquo;s buoy, tide from the gauge on the pier, water quality for all seven beaches &mdash; live, timestamped, never modelled."),
-    ("/bournemouth/fireworks/", "/bournemouth/media/og-fireworks.jpg",
-     "Friday fireworks", ("The 2026 season, every date and what happened &mdash; three Fridays lost to the wildfire emergency and high winds, one finale added &mdash; and the best places to stand when the displays return."
-                          if SEASON_OVER else
-                          "One more: the finale is Friday 4 September at 10pm, added by BCP Council after the wildfire and high-wind cancellations &mdash; every date, what happened, and where to stand.")),
+     "Sea temperature today, measured in the bay", "Sea temperature and waves measured by the bay&rsquo;s buoy, tide from the gauge on the pier, water quality for all seven beaches &mdash; live, timestamped, never modelled.",
+     "Low sun over the sea at Bournemouth beach, shining on the wet sand beside a groyne marker post"),
+    ("/bournemouth/weather/", "/bournemouth/media/og-weather.jpg",
+     "Weather, tide times &amp; rain radar", "The seafront forecast hour by hour and ten days out, tide times checked against the gauge on the pier, rain radar and satellite loops every 15 minutes, and the wind measured at the airport &mdash; every number labelled with where it came from.",
+     "Bournemouth Pier seen from the water&rsquo;s edge on a bright day, with waves breaking in front of it"),
     ("/bournemouth/sunrise-sunset/", "/bournemouth/media/beach-sunrise.jpg",
-     "Sunrise &amp; sunset", "Today&rsquo;s times computed for the seafront, and every good spot to watch from &mdash; photographed by us, not stock."),
+     "Sunrise &amp; sunset times, and where to watch", "Today&rsquo;s times computed for the seafront, and every good spot to watch from &mdash; photographed by us, not stock.",
+     "The sun just above the sea off Bournemouth beach, with the cliff, beach huts and a tower block along the shore"),
+    ("/bournemouth/live-map/", "/bournemouth/media/og-live-map.jpg",
+     "Live map: buses, flights, rivers &amp; 3D city", "Buses, flights, road closures, river levels, bike bays and the latest satellite pass over Bournemouth, Christchurch and Poole &mdash; every layer from a named public feed, on a free flat map, with the 3D city loaded only when you ask for it.",
+     "The Bournemouth365 live map on the flat map view, showing Bournemouth town centre and the seafront"),
     ("/bournemouth/beach-parking/", "/bournemouth/media/durley-chine-sunset.jpg",
-     "Beach parking, honestly", "What it really costs, where it is far cheaper, and the rules that catch people out &mdash; every price from BCP&rsquo;s own pages, dated."),
+     "Beach parking prices &amp; cheaper car parks", "What it really costs, where it is far cheaper, and the rules that catch people out &mdash; every price from BCP&rsquo;s own pages, dated.",
+     "Sunset over the beach at Durley Chine, with The Deck kiosk, picnic benches and beach huts under the cliff"),
+    ("/bournemouth/fireworks/", "/bournemouth/media/og-fireworks.jpg",
+     ("Friday fireworks: what happened in 2026" if SEASON_OVER else "Friday fireworks"),
+     ("The 2026 season, every date and what happened &mdash; three Fridays lost to the wildfire emergency and high winds, one finale added &mdash; and the best places to stand when the displays return."
+      if SEASON_OVER else
+      "One more: the finale is Friday 4 September at 10pm, added by BCP Council after the wildfire and high-wind cancellations &mdash; every date, what happened, and where to stand."),
+     "Firework trails falling through the night sky"),
     ("/van-signal-map/", "/bournemouth/media/pier-golden-hour.jpg",
-     "Mobile signal, measured", "Real 4G/5G speeds our own van logs as it drives around Bournemouth and Poole &mdash; the places that tested fastest for working on the move, on a map you can check before you rely on it. One van, one network, measured not modelled."),
+     "Mobile signal, measured by our van", "Real 4G/5G speeds our own van logs as it drives around Bournemouth and Poole &mdash; the places that tested fastest for working on the move, on a map you can check before you rely on it. One van, one network, measured not modelled.",
+     "Bournemouth beach and seafront seen from the pier railing at golden hour"),
     # The crowd counterpart. Kept as its own card, not folded into the van one:
     # different instrument, different data, and the page it links to says so.
     ("/mobile-signal-check/", "/og-mobile-signal-check.jpg",
-     "Test your own phone here", "Ten seconds, where you&rsquo;re standing: your phone&rsquo;s real mobile-data speed, how it compares with your part of town, and a live map everyone&rsquo;s readings build together. No sign-up, nothing that identifies you &mdash; and no network league tables."),
+     "Test your own phone&rsquo;s signal", "Ten seconds, where you&rsquo;re standing: your phone&rsquo;s real mobile-data speed, how it compares with your part of town, and a live map everyone&rsquo;s readings build together. No sign-up, nothing that identifies you &mdash; and no network league tables.",
+     ""),
 ]
 
+# The card title is an h2 (it was a <strong>, so the page had one heading for eight sections). Inline styles keep the
+# card looking exactly as it did: the site's h2 rule would otherwise switch it to the display face.
 _HUB_CARD_HTML = "\n".join(
     f'''        <a class="b365-tile" href="{u}" data-reveal style="display:block;text-decoration:none;padding:0;overflow:hidden">
-          <img src="{img}" alt="" loading="lazy" width="1200" height="630" style="width:100%;height:auto;display:block;aspect-ratio:1200/630;object-fit:cover" />
-          <div style="padding:1rem 1.1rem 1.1rem"><strong style="color:var(--b365-foam);font-size:1.1rem">{h}</strong>
+          <img src="{img}" alt="{alt}" loading="lazy" width="1200" height="630" style="width:100%;height:auto;display:block;aspect-ratio:1200/630;object-fit:cover" />
+          <div style="padding:1rem 1.1rem 1.1rem"><h2 style="margin:0;font-family:inherit;font-weight:700;color:var(--b365-foam);font-size:1.1rem">{h}</h2>
           <p class="b365-sub" style="margin:.3rem 0 0">{d}</p></div>
-        </a>''' for u, img, h, d in _HUB_CARDS)
+        </a>''' for u, img, h, d, alt in _HUB_CARDS)
 
 # ----------------------------------------------------------------------------
 # ONE WEATHER PAGE (16 Sep 2026, owner: "can it be one page"). The hub used to
@@ -1236,9 +1253,10 @@ _HUB_CONTENT = "\n".join([
 def _hub_schema(s):
     return graph([
         crumb(s, "Bournemouth365"),
-        webpage(s, "Bournemouth365",
+        _pl.published(webpage(s, "Bournemouth365",
                 "Bournemouth, 365 days a year: seafront weather, tide times and rain radar, live measured sea conditions, beach parking, sunrise and sunset spots - from the team behind the Bournemouth365 Facebook page.",
-                wtype="CollectionPage", about=_pl.BOURNEMOUTH, image="/bournemouth/media/og-sunrise-sunset.jpg"),
+                wtype="CollectionPage", about=_pl.BOURNEMOUTH, image="/bournemouth/media/og-sunrise-sunset.jpg")),
+        _pl.ORG,
     ])
 
 
@@ -1368,9 +1386,10 @@ _PK_FAQS = [
 def _pk_schema(s):
     return graph([
         crumb_sub(s, "Bournemouth365", "bournemouth", "Beach Parking"),
-        webpage(s, "Parking for Bournemouth Beach",
+        _pl.published(webpage(s, "Parking for Bournemouth Beach",
                 "What Bournemouth beach parking actually costs, where it is cheaper, and the rules that catch people out - sourced from BCP Council and dated.",
-                about=_pl.BEACH, image="/bournemouth/media/og-weather.jpg"),
+                about=_pl.BEACH, image="/bournemouth/media/og-weather.jpg")),
+        _pl.ORG,
         faqpage(s, _PK_FAQS),
     ])
 
@@ -1766,12 +1785,13 @@ _LM_JS = '''      <script>
 def _lm_schema(s):
     return graph([
         crumb_sub(s, "Bournemouth365", "bournemouth", "Live map"),
-        webpage(s, "Bournemouth live map", _LM_DESC, about=_pl.BCP, image="/bournemouth/media/og-live-map.jpg"),
+        _pl.published(webpage(s, "Bournemouth live map", _LM_DESC, about=_pl.BCP, image="/bournemouth/media/og-live-map.jpg")),
+        _pl.ORG,
         {"@type": "WebApplication", "@id": _LM_URL + "#app", "name": "Bournemouth365 live map",
          "url": _LM_URL, "applicationCategory": "MapApplication", "operatingSystem": "Any (web browser)",
          "isAccessibleForFree": True,
          "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP"},
-         "publisher": {"@id": SITE + "/#business"}},
+         "publisher": {"@id": _pl.ORG_ID}},
         faqpage(s, _LM_FAQS),
     ])
 

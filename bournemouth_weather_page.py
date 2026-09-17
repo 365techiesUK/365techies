@@ -63,9 +63,10 @@ _WXP_FAQS = [
 def _wxp_schema(s):
     return graph([
         crumb_sub(s, "Bournemouth365", "bournemouth", "Weather, Tides &amp; Sea"),
-        webpage(s, "Bournemouth Weather, Tide Times & Rain Radar",
+        _pl.published(webpage(s, "Bournemouth Weather, Tide Times & Rain Radar",
                 "Bournemouth seafront weather: a 10-day forecast, predicted tide times checked against the pier gauge, live rain radar and satellite loops, and measured wind.",
-                about=[_pl.BOURNEMOUTH, _pl.PIER], image="/bournemouth/media/og-weather.jpg"),
+                about=[_pl.BOURNEMOUTH, _pl.PIER], image="/bournemouth/media/og-weather.jpg")),
+        _pl.ORG,
         faqpage(s, _WXP_FAQS),
     ])
 
