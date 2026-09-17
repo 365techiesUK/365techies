@@ -241,6 +241,8 @@ function pcm_service_report_to_slack($cust, $machine, $ts, $html, $summary) {
           . ($os !== '' ? 'OS: ' . slk_plain(substr($os, 0, 80)) . "\n" : '')
           . ($score !== '' ? 'Score: ' . slk_plain(substr($score, 0, 40)) . "\n" : '')
           . ($notes ? "Top notes:\n- " . implode("\n- ", $notes) . "\n" : '')
+          // ServicePass "Resend last report" (17 Sep 2026): the service ran earlier and its first upload failed
+          . (!empty($summary['resent']) ? '_Resent from the PC: this report is from ' . slk_plain(substr((string)$summary['resent'], 0, 40)) . " - its first upload did not reach the portal._\n" : '')
           . 'In the portal: Service reports' . ($mname !== '' ? ' on ' . slk_plain($mname) : '') . ' (staff: open the customer, view as, Service reports).';
     $fname = 'Service-Report-' . trim(preg_replace('/[^A-Za-z0-9]+/', '-', $name), '-') . '-' . gmdate('Y-m-d', $ts) . '.html';
     $up = slk_upload_file($chan, $html, $fname, ($selfrun ? 'Self-run full service - ' : '6-weekly Service Report - ') . $name, $text);

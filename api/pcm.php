@@ -703,6 +703,18 @@ if ($action === 'reportup') {
     $reps = isset($mrec['reps']) && is_array($mrec['reps']) ? $mrec['reps'] : array();
     $repk = isset($mrec['repk']) && is_array($mrec['repk']) ? $mrec['repk'] : array();
     $repm = isset($mrec['repm']) && is_array($mrec['repm']) ? $mrec['repm'] : array();   // ts => {score}: the service scores, for "up 3 since"
+    // ts => content hash (17 Sep 2026). The same report arriving twice - ServicePass's "Resend last report" after a
+    // reply went missing, or a double tap - is answered as stored and changes nothing: no second copy, no second
+    // Slack card, no second customer email.
+    $reph = isset($mrec['reph']) && is_array($mrec['reph']) ? $mrec['reph'] : array();
+    $rhash = substr(sha1($b), 0, 20);
+    foreach ($reps as $t0) {
+        if (($reph[(string)$t0] ?? '') === $rhash) {
+            out(array('ok'=>true, 'kind'=>$kind, 'ts'=>(int)$t0, 'duplicate'=>true,
+                'slack'=>array('posted'=>false, 'file'=>false, 'error'=>'already stored'),
+                'email'=>array('queued'=>false, 'why'=>'already stored - the first upload queued it')));
+        }
+    }
     // the structured twin of a service report (score, task list, top recommendations,
     // backup line, next date) - what the Slack post and the customer's email are built from
     $sumr = is_array($in['summary'] ?? null) ? $in['summary'] : array();
@@ -743,6 +755,7 @@ if ($action === 'reportup') {
         $sumr['selfrun'] = $selfrun;   // what Slack and the customer email are built from
     }
     if ($kind === 'service') { $repk[(string)$rts] = $selfrun ? 'selfrun' : 'service'; $repm[(string)$rts] = array('score' => $scoren); }
+    $reph[(string)$rts] = $rhash;
     // prune per kind, oldest first: 12 health checks, 24 service reports (three years of visits)
     foreach (array('health' => 12, 'service' => 24, 'selfrun' => 24) as $k => $cap) {
         $mine = array_values(array_filter($reps, function ($t) use ($repk, $k) { return (($repk[(string)$t] ?? 'health') === $k); }));
@@ -750,12 +763,13 @@ if ($action === 'reportup') {
             $old = array_shift($mine);
             @unlink(__DIR__ . '/pcm-rep-' . $kh . '-' . $machine . '-' . $old . '.html');
             $reps = array_values(array_filter($reps, function ($t) use ($old) { return intval($t) !== intval($old); }));
-            unset($repk[(string)$old], $repm[(string)$old]);
+            unset($repk[(string)$old], $repm[(string)$old], $reph[(string)$old]);
         }
     }
     $mrec['reps'] = $reps;
     $mrec['repk'] = $repk;
     $mrec['repm'] = $repm;
+    $mrec['reph'] = $reph;
     if ($kind === 'service') {
         // what the report saw: the model and the fixed drives, for the asset register
         $modelIn = pcm_txt(isset($sumr['model']) && $sumr['model'] !== '' ? $sumr['model'] : ($sumr['pc'] ?? ''), 80);
