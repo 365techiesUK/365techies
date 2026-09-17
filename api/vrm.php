@@ -182,7 +182,13 @@ if ($st && isset($st['records']['Pb']) && is_array($st['records']['Pb'])) {
         $k = (string)$p[0];
         $lastK = $k;
         $pck = isset($pc[$k]) ? $pc[$k] : 0.0;
+        // the UK calendar day of the bucket (VRM stamps it in milliseconds): the solar forecast matches each day's
+        // real yield to NASA POWER's recorded sunshine for the same date (17 Sep 2026)
+        $pts = (float)$p[0];
+        $pdt = new DateTime('@' . (int)floor($pts > 1e11 ? $pts / 1000 : $pts));
+        $pdt->setTimezone(new DateTimeZone('Europe/London'));
         $hist[] = [
+            'd'    => $pdt->format('Y-m-d'),
             'kwh'  => round((float)$p[1] + $pck, 2),                        // solar generated = PV->battery + PV->loads
             'used' => round($pck + (isset($bc[$k]) ? $bc[$k] : 0.0), 2),   // energy used = PV->loads + battery->loads
         ];

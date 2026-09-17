@@ -1,18 +1,23 @@
 <?php
 /*
- * Weather + 7-day solar-forecast feed for the off-grid live dashboard.
+ * Weather + 7-day solar-forecast feed for the off-grid live dashboard (/off-grid-victron-energy/).
  *
- * Privacy: reads the van's GPS from VRM server-side, rounds it to 2 decimal
- * places (~1 km) BEFORE any external call, and the public output contains the
- * nearest TOWN NAME only — never coordinates.
+ * 17 Sep 2026 - OFF OPEN-METEO. Its free API is for non-commercial use only ("You may only use the free API services
+ * for non-commercial purposes") and this is a company website; it also disagreed with /bournemouth/weather/.
+ *  - Forecast: MET Norway Locationforecast 2.0 (CC BY 4.0, commercial use allowed), parsed by the SAME bmwx_parse()
+ *    the weather page uses. Within 10 km of Bournemouth Pier the weather page's own cached run is used, so the two
+ *    pages print the same days, temperatures and symbols.
+ *  - Sunshine: MET Norway has none, so it is estimated from the sun's position and the forecast cloud cover, and the
+ *    page converts it to kWh with the van's own factor against NASA POWER's recorded sunshine. See vrm-weather-lib.php.
  *
- * Sources: Open-Meteo forecast API (no key; blends the UK Met Office UKMO
- * model short-range with ECMWF beyond it) + Nominatim reverse geocoding for
- * the town name (called only when the ~1 km grid square changes, then cached).
- * Cached 30 min (vrm-weather-cache.json, gitignored); atomic writes.
+ * Privacy (unchanged): reads the van's GPS from VRM server-side, rounds it to 2 decimal places (~1 km) BEFORE any
+ * external call, and the public output contains the nearest TOWN NAME only - never coordinates.
+ * Cached 30 min (vrm-weather-cache.json, gitignored + denied); MET's Expires/Last-Modified honoured for the van's own
+ * forecast; NASA POWER re-read every 6 hours. Atomic writes.
  */
 error_reporting(0);
 ini_set('serialize_precision', '-1');
+date_default_timezone_set('Europe/London');
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 
@@ -20,20 +25,32 @@ $SITE_ID = 458482;
 $TTL     = 1800;
 $CACHE   = __DIR__ . '/vrm-weather-cache.json';
 $TOKENF  = __DIR__ . '/vrm-token.php';
+$CACHE_V = 2;   // 2 = MET Norway + NASA POWER. A cache from before (Open-Meteo) is never served.
+$PIER    = array(50.7163, -1.8762);
+$UA      = '365techies-offgrid-dashboard/2.0 (+https://365techies.co.uk/off-grid-victron-energy/)';
 
-/* the cache file wraps {grid, town, body}: grid stays server-side, only body is ever served */
-function serve_cache_body() {
+require_once __DIR__ . '/bm-weather-lib.php';    // bmwx_parse(), bm_weather_public_full() - top-level scope on purpose
+require_once __DIR__ . '/vrm-weather-lib.php';
+
+/* the cache file wraps {v, grid, town, met, power, body}: everything but body stays server-side */
+function wx_cache_load() {
     global $CACHE;
     $c = @json_decode((string)@file_get_contents($CACHE), true);
-    if (is_array($c) && isset($c['body']) && is_string($c['body']) && $c['body'] !== '') { echo $c['body']; exit; }
+    return is_array($c) ? $c : array();
 }
-if (is_file($CACHE) && (time() - filemtime($CACHE)) < $TTL) serve_cache_body();
+function serve_cache_body($c) {
+    global $CACHE_V;
+    if (isset($c['v'], $c['body']) && $c['v'] === $CACHE_V && is_string($c['body']) && $c['body'] !== '') { echo $c['body']; exit; }
+}
+$old = wx_cache_load();
+if (is_file($CACHE) && (time() - filemtime($CACHE)) < $TTL) serve_cache_body($old);
 if (!is_file($TOKENF)) { echo json_encode(['ok' => false, 'error' => 'not-configured']); exit; }
 $cfgsrc = (string)@file_get_contents($TOKENF);
 $VRM_TOKEN = preg_match('/\$VRM_TOKEN\s*=\s*[\'"]([^\'"]+)[\'"]/', $cfgsrc, $mm) ? $mm[1] : '';
 if ($VRM_TOKEN === '') { echo json_encode(['ok' => false, 'error' => 'not-configured']); exit; }
 
 function fetch_json($url, $headers = []) {
+    global $UA;
     $ch = curl_init($url);
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
@@ -44,7 +61,7 @@ function fetch_json($url, $headers = []) {
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_MAXREDIRS      => 3,
         CURLOPT_HTTPHEADER     => $headers,
-        CURLOPT_USERAGENT      => '365techies-offgrid-dashboard/1.0 (help@365techies.co.uk)',
+        CURLOPT_USERAGENT      => $UA,
     ]);
     $body = curl_exec($ch);
     curl_close($ch);
@@ -53,9 +70,39 @@ function fetch_json($url, $headers = []) {
     return is_array($j) ? $j : null;
 }
 function serve_stale_or($err) {
-    global $CACHE;
-    if (is_file($CACHE)) serve_cache_body();
+    global $old;
+    serve_cache_body($old);
     echo json_encode(['ok' => false, 'error' => $err]); exit;
+}
+/* MET Norway for the van's rounded position, with If-Modified-Since (MET's terms) */
+function met_fetch($lat, $lon, $lastMod) {
+    global $UA;
+    $hdr = array('expires' => '', 'last_modified' => '');
+    $ch = curl_init('https://api.met.no/weatherapi/locationforecast/2.0/complete?lat=' . $lat . '&lon=' . $lon);
+    $send = array('Accept: application/json');
+    if ($lastMod !== '') $send[] = 'If-Modified-Since: ' . $lastMod;
+    curl_setopt_array($ch, array(
+        CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 20, CURLOPT_CONNECTTIMEOUT => 8, CURLOPT_ENCODING => '',
+        CURLOPT_PROTOCOLS => CURLPROTO_HTTPS, CURLOPT_HTTPHEADER => $send, CURLOPT_USERAGENT => $UA,
+        CURLOPT_HEADERFUNCTION => function ($c, $line) use (&$hdr) {
+            $p = strpos($line, ':');
+            if ($p !== false) {
+                $k = strtolower(trim(substr($line, 0, $p)));
+                if ($k === 'expires') $hdr['expires'] = trim(substr($line, $p + 1));
+                if ($k === 'last-modified') $hdr['last_modified'] = trim(substr($line, $p + 1));
+            }
+            return strlen($line);
+        },
+    ));
+    $body = curl_exec($ch);
+    $code = (int)curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+    curl_close($ch);
+    return array('code' => $code, 'body' => $body === false ? '' : $body, 'hdr' => $hdr);
+}
+function km_between($la1, $lo1, $la2, $lo2) {
+    $p = M_PI / 180;
+    $h = pow(sin(($la2 - $la1) * $p / 2), 2) + cos($la1 * $p) * cos($la2 * $p) * pow(sin(($lo2 - $lo1) * $p / 2), 2);
+    return 2 * 6371 * asin(sqrt($h));
 }
 
 /* ---- van GPS from VRM (server-side only), rounded to ~1km before anything else ---- */
@@ -74,9 +121,8 @@ $lat = round($lat, 2); $lon = round($lon, 2);
 $grid = $lat . ',' . $lon;
 
 /* ---- town name: only re-geocode when the 1km grid square changes ---- */
-$old = @json_decode((string)@file_get_contents($CACHE), true);
 $town = '';
-if (is_array($old) && isset($old['grid'], $old['town']) && $old['grid'] === $grid && $old['town'] !== '') {
+if (isset($old['grid'], $old['town']) && $old['grid'] === $grid && $old['town'] !== '') {
     $town = $old['town'];
 } else {
     $g = fetch_json('https://nominatim.openstreetmap.org/reverse?lat=' . $lat . '&lon=' . $lon .
@@ -87,46 +133,79 @@ if (is_array($old) && isset($old['grid'], $old['town']) && $old['grid'] === $gri
             if (!empty($a[$k])) { $town = (string)$a[$k]; break; }
         }
     }
-    if ($town === '' && is_array($old) && !empty($old['town'])) $town = $old['town'];  // keep last known
+    if ($town === '' && !empty($old['town'])) $town = $old['town'];  // keep last known
 }
 
-/* ---- Open-Meteo: current temp + 7-day daily forecast + past 30d irradiance ---- */
-$wx = fetch_json('https://api.open-meteo.com/v1/forecast?latitude=' . $lat . '&longitude=' . $lon .
-    '&current=temperature_2m,weather_code,is_day' .
-    '&daily=shortwave_radiation_sum,temperature_2m_max,temperature_2m_min,weather_code' .
-    '&past_days=30&forecast_days=7&timezone=Europe%2FLondon');
-if (!$wx || !isset($wx['daily']['time']) || !is_array($wx['daily']['time'])) serve_stale_or('weather-unreachable');
-
-$d = $wx['daily'];
-$n = count($d['time']);
-$days = []; $pastRad = [];
-for ($i = 0; $i < $n; $i++) {
-    $rad = isset($d['shortwave_radiation_sum'][$i]) ? $d['shortwave_radiation_sum'][$i] : null;
-    if ($i < $n - 7) {                       // the past-30d calibration window
-        $pastRad[] = ($rad === null) ? 0 : round((float)$rad, 1);
-    } else {                                 // the 7 forecast days
-        $days[] = [
-            'd'    => (string)$d['time'][$i],
-            'rad'  => ($rad === null) ? null : round((float)$rad, 1),   // MJ/m2
-            'tmax' => isset($d['temperature_2m_max'][$i]) && $d['temperature_2m_max'][$i] !== null ? round((float)$d['temperature_2m_max'][$i]) : null,
-            'tmin' => isset($d['temperature_2m_min'][$i]) && $d['temperature_2m_min'][$i] !== null ? round((float)$d['temperature_2m_min'][$i]) : null,
-            'code' => isset($d['weather_code'][$i]) && $d['weather_code'][$i] !== null ? (int)$d['weather_code'][$i] : null,
-        ];
+/* ---- the forecast: the weather page's own run near the pier, otherwise MET Norway for the van's square ---- */
+$now = time();
+$model = null; $samePage = false;
+if (km_between($lat, $lon, $PIER[0], $PIER[1]) <= 10) {
+    $pub = bm_weather_public_full();
+    $sixCloud = true;
+    foreach ((array)(isset($pub['six']) ? $pub['six'] : array()) as $s) if (!array_key_exists('cloud', $s)) { $sixCloud = false; break; }
+    if (!empty($pub['ok']) && !empty($pub['hours']) && $sixCloud && empty($pub['stale'])) {
+        $model = array('issued' => $pub['issued'], 'hours' => $pub['hours'], 'six' => $pub['six'], 'days' => $pub['days']);
+        $samePage = true;
     }
 }
-$cur = isset($wx['current']) && is_array($wx['current']) ? $wx['current'] : [];
+$met = isset($old['met']) && is_array($old['met']) ? $old['met'] : array();
+if ($model === null) {
+    $mine = isset($met['grid'], $met['model']) && $met['grid'] === $grid;
+    if (!$mine || $now >= (int)(isset($met['exp']) ? $met['exp'] : 0)) {
+        $r = met_fetch($lat, $lon, $mine && isset($met['lm']) ? (string)$met['lm'] : '');
+        $exp = strtotime($r['hdr']['expires']);
+        $exp = max($now + 600, $exp ? $exp : $now + 3600);
+        if ($r['code'] === 200) {
+            $m = bmwx_parse(json_decode($r['body'], true));
+            if ($m) { $met = array('grid' => $grid, 'model' => $m, 'lm' => $r['hdr']['last_modified'], 'exp' => $exp); $mine = true; }
+        } elseif ($r['code'] === 304 && $mine) {
+            $met['exp'] = $exp;
+        }
+    }
+    if ($mine) {
+        $m = $met['model'];
+        $issuedT = strtotime(isset($m['issued']) ? $m['issued'] : '');
+        if ($issuedT && ($now - $issuedT) < BMWX_DEAD) {
+            $hours = array();
+            foreach ($m['hours'] as $h) if (strtotime($h['t']) + 3600 > $now) $hours[] = $h;
+            $m['hours'] = $hours;
+            $model = $m;
+        }
+    }
+}
+if ($model === null || empty($model['hours'])) serve_stale_or('weather-unreachable');
 
+/* ---- NASA POWER: recorded sunshine for the calibration (and the clear-sky scale), every 6 hours ---- */
+$power = isset($old['power']) && is_array($old['power']) ? $old['power'] : array();
+if (!isset($power['grid'], $power['at'], $power['rows']) || $power['grid'] !== $grid || $now - (int)$power['at'] > 6 * 3600) {
+    $rows = vw_power_fetch($lat, $lon, 40, $UA);
+    if ($rows) $power = array('grid' => $grid, 'at' => $now, 'rows' => $rows);
+    elseif (!isset($power['grid']) || $power['grid'] !== $grid) $power = array();
+}
+$rows = isset($power['rows']) ? $power['rows'] : array();
+$scale = vw_clear_scale($rows, $lat, $lon);
+$today = date('Y-m-d', $now);
+$past = array();
+foreach ($rows as $d => $v) {
+    if ($d < $today && $v[0] !== null) $past[] = array('d' => $d, 'rad' => round($v[0] * 3.6, 1));   // kWh/m2 -> MJ/m2
+}
+$past = array_slice($past, -30);
+
+$h0 = $model['hours'][0];
 $body = json_encode([
     'ok'      => true,
-    'town'    => $town,   // town name only — coordinates never leave the server
-    'tempC'   => isset($cur['temperature_2m']) ? round((float)$cur['temperature_2m'], 1) : null,
-    'wcode'   => isset($cur['weather_code']) ? (int)$cur['weather_code'] : null,
-    'isDay'   => isset($cur['is_day']) ? (int)$cur['is_day'] : 1,
-    'days'    => $days,
-    'pastRad' => $pastRad,
-    't'       => time(),
+    'v'       => $CACHE_V,
+    'town'    => $town,   // town name only - coordinates never leave the server
+    'tempC'   => isset($h0['temp']) ? round((float)$h0['temp'], 1) : null,
+    'sym'     => isset($h0['sym']) ? (string)$h0['sym'] : '',
+    'forecastFor' => isset($h0['t']) ? (string)$h0['t'] : null,
+    'issued'  => isset($model['issued']) ? (string)$model['issued'] : null,
+    'samePage' => $samePage,   // true: the very forecast /bournemouth/weather/ is showing
+    'days'    => vw_days($model, $lat, $lon, $scale, $now),
+    'past'    => $past,        // [{d, rad MJ/m2}] recorded by NASA POWER, for the page's day-by-day calibration
+    't'       => $now,
 ]);
-$wrap = json_encode(['grid' => $grid, 'town' => $town, 'body' => $body]);
+$wrap = json_encode(['v' => $CACHE_V, 'grid' => $grid, 'town' => $town, 'met' => $met, 'power' => $power, 'body' => $body]);
 @file_put_contents($CACHE . '.tmp', $wrap, LOCK_EX);
 @rename($CACHE . '.tmp', $CACHE);
 echo $body;

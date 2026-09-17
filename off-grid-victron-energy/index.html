@@ -288,7 +288,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-09-13"
+      "dateModified": "2026-09-17"
     },
     {
       "@type": "Service",
@@ -782,7 +782,7 @@
           <a href="/contact/" class="button secondary button--lg">Get a Free Energy Consultation</a>
         </div>
         <ul class="page-hero__chips mono"><li>&#9679; Victron Energy systems</li><li>&#9679; Solar &amp; battery storage</li><li>&#9679; Remote monitoring (VRM)</li></ul>
-        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 13 September 2026</p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 17 September 2026</p>
       </div>
     </section>
     <section class="section" aria-label="Live off-grid data from our support van">
@@ -1655,48 +1655,71 @@
           paintEngine(j.engine||null,false);
         }).catch(function(){ var s1=sampleSeries(); paintCharts(s1.soc,s1.pv,true); paintEngine(s1.engine,true); });
       }
-      /* ---- weather + 7-day solar forecast (nearest-town GPS; calibrated to this van's real last 30 days) ---- */
-      var WMO={0:["☀️","Clear"],1:["🌤️","Mostly clear"],2:["⛅","Partly cloudy"],3:["☁️","Overcast"],45:["🌫️","Fog"],48:["🌫️","Fog"],51:["🌦️","Drizzle"],53:["🌦️","Drizzle"],55:["🌦️","Drizzle"],56:["🌧️","Icy drizzle"],57:["🌧️","Icy drizzle"],61:["🌧️","Rain"],63:["🌧️","Rain"],65:["🌧️","Heavy rain"],66:["🌧️","Icy rain"],67:["🌧️","Icy rain"],71:["🌨️","Snow"],73:["🌨️","Snow"],75:["🌨️","Heavy snow"],77:["🌨️","Snow"],80:["🌦️","Showers"],81:["🌦️","Showers"],82:["🌧️","Heavy showers"],85:["🌨️","Snow showers"],86:["🌨️","Snow showers"],95:["⛈️","Thunderstorm"],96:["⛈️","Hail"],99:["⛈️","Hail"]};
-      function wmo(c){ return WMO[c]||["🌤️",""]; }
+      /* ---- weather + 7-day solar forecast (nearest-town GPS; calibrated day by day to this van's real output) ----
+         17 Sep 2026: moved to MET Norway (the previous source's free tier was non-commercial only), parsed the way
+         /bournemouth/weather/ parses it, so the words below are that page's words for the same symbols; near
+         Bournemouth it is the very same forecast. MET Norway has no sunshine figure, so api/vrm-weather.php estimates
+         one from the sun's position and the cloud cover, and the kWh factor is this van's real yield against NASA
+         POWER's recorded sunshine on the same dates. */
+      function symInfo(code){
+        var c=String(code||""), b=c.split("_")[0], night=/_night|_polartwilight/.test(c);
+        var kd=/thunder/.test(b)?"thunder":/snow/.test(b)?"snow":/sleet/.test(b)?"sleet":/rain/.test(b)?(/showers/.test(b)?"showers":"rain"):b==="fog"?"fog":b==="cloudy"?"cloudy":b==="partlycloudy"?"partly":b==="fair"?"fair":b==="clearsky"?"clear":"cloudy";
+        var qn=/heavy/.test(b)?"Heavy ":/light/.test(b)?"Light ":"";
+        switch(kd){
+          case "clear": return [night?"🌙":"☀️", night?"Clear":"Sunny"];
+          case "fair": return [night?"🌙":"🌤️", night?"Mostly clear":"Mostly sunny"];
+          case "partly": return [night?"☁️":"⛅", night?"Partly cloudy":"Sunny spells"];
+          case "fog": return ["🌫️","Fog"];
+          case "rain": return ["🌧️", qn?qn+"rain":"Rain"];
+          case "showers": return ["🌦️", qn?qn+"showers":"Showers"];
+          case "sleet": return ["🌨️", qn?qn+"sleet":"Sleet"];
+          case "snow": return ["❄️", qn?qn+"snow":"Snow"];
+          case "thunder": return ["⛈️","Thundery rain"];
+        }
+        return ["☁️","Cloudy"];
+      }
       function sampleWx(){
         var days=[],now=new Date();
-        var rads=[24,27,22,18,25,28,26], codes=[1,0,2,3,1,0,2], tms=[24,26,23,21,25,27,26];
+        var rads=[24,27,22,18,25,28,26], syms=["fair_day","clearsky_day","partlycloudy_day","cloudy","fair_day","clearsky_day","partlycloudy_day"], tms=[24,26,23,21,25,27,26];
         for(var i=0;i<7;i++){ var d2=new Date(now.getTime()+i*86400000);
-          days.push({d:d2.toISOString().slice(0,10),rad:rads[i],tmax:tms[i],tmin:14,code:codes[i]}); }
-        var past=[]; for(i=0;i<30;i++)past.push(20+Math.round(6*Math.sin(i/4)));
-        return {sample:1,ok:1,town:"Bournemouth",tempC:19.8,wcode:2,isDay:1,days:days,pastRad:past};
+          days.push({d:d2.toISOString().slice(0,10),rad:rads[i],tmax:tms[i],tmin:14,sym:syms[i]}); }
+        return {sample:1,ok:1,town:"Bournemouth",tempC:19.8,sym:"partlycloudy_day",days:days,past:[]};
       }
       var lastWx=null, wxSig=null;
       function paintWx(){
         var wx=lastWx, box=q("[data-wx]"); if(!box)return;
         if(!wx||!wx.ok){ box.hidden=true; return; }
         var k=null;
-        if(histKind==="l"&&histData&&wx.pastRad&&wx.pastRad.length){
-          var eSum=0,rSum=0;
-          histData.forEach(function(dd){eSum+=((dd&&dd.kwh)||0);});
-          wx.pastRad.forEach(function(r){rSum+=(r||0);});
-          if(rSum>1&&eSum>0)k=eSum/rSum;   /* kWh generated per MJ/m2 — this van's own real-world factor */
+        if(histKind==="l"&&histData&&wx.past&&wx.past.length){
+          /* day for day: only the dates both VRM and NASA POWER have (POWER runs ~5 days behind) */
+          var byD={}, eSum=0, rSum=0, nDays=0;
+          wx.past.forEach(function(p){ if(p&&p.d&&p.rad!=null)byD[p.d]=p.rad; });
+          histData.forEach(function(dd){ if(dd&&dd.d&&byD[dd.d]!=null){ eSum+=(dd.kwh||0); rSum+=byD[dd.d]; nDays++; } });
+          if(nDays>=7&&rSum>1&&eSum>0)k=eSum/rSum;   /* kWh generated per MJ/m2 of recorded sunshine - this van's own real-world factor */
         }
         if(k==null&&wx.sample)k=0.09;      /* demo calibration, only ever shown with the sample badge */
         var sig=(wx.t||0)+"|"+(k==null?"nok":k.toFixed(4))+"|"+histKind;
         if(sig===wxSig)return; wxSig=sig;
         box.hidden=false;
-        var w=wmo(wx.wcode);
+        var w=symInfo(wx.sym);
         setTxt(q("[data-wx-ico]"),w[0]);
         setTxt(q("[data-wx-temp]"),(wx.tempC!=null)?wx.tempC.toFixed(1)+"°C":"—");
-        setTxt(q("[data-wx-desc]"),(w[1]?w[1]+" ":"")+(wx.town?"in "+wx.town+" right now":"at the van right now"));
+        setTxt(q("[data-wx-desc]"),w[1]+" "+(wx.town?"in "+wx.town+" now":"at the van now")+" · forecast");
         var wd=q("[data-wx-days]"), names=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"], tot=0, html="";
         (wx.days||[]).forEach(function(dy){
           var dn=names[new Date(dy.d+"T12:00:00").getDay()];
-          var wi=wmo(dy.code);
+          var wi=symInfo(dy.sym);
           var yld=(k!=null&&dy.rad!=null)?k*dy.rad:null; if(yld!=null)tot+=yld;
           html+='<div class="vlive__wxday"><span class="vlive__wxd-n">'+dn+'</span><span class="vlive__wxd-i">'+wi[0]+'</span><span class="vlive__wxd-t">'+(dy.tmax!=null?dy.tmax+"°":"—")+'</span><span class="vlive__wxd-y">'+(yld!=null?"~"+yld.toFixed(1)+" kWh":"—")+'</span></div>';
         });
         setHTML(wd,html);
         Array.prototype.forEach.call(wd.children,function(c2,i2){ setTimeout(function(){c2.classList.add("in");},60+i2*90); });
-        setTxt(q("[data-wx-cap]"),
+        setHTML(q("[data-wx-cap]"),
           "7-day solar forecast"+(k!=null?" · predicted ~"+tot.toFixed(1)+" kWh ≈ £"+(tot*RATE).toFixed(2)+" at 48p/kWh":"")+
-          " · calibrated to this van's real last 30 days · Met Office UKMO + ECMWF models via Open-Meteo · nearest town only · estimate, not a promise"+(wx.sample?" · sample":""));
+          " · calibrated day by day to this van's real output against <a href='https://power.larc.nasa.gov/' rel='noopener'>NASA POWER</a> sunshine records"+
+          " · forecast: <a href='https://www.met.no/en' rel='noopener'>MET Norway</a> (<a href='https://creativecommons.org/licenses/by/4.0/' rel='noopener'>CC BY 4.0</a>), sunshine estimated by us from its cloud cover"+
+          (wx.samePage?" · the same forecast as <a href='/bournemouth/weather/'>our Bournemouth weather page</a>":"")+
+          " · nearest town only · estimate, not a promise"+(wx.sample?" · sample":""));
       }
       function loadWx(){
         if(!window.fetch){ lastWx=sampleWx(); paintWx(); return; }

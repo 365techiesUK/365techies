@@ -40,7 +40,7 @@ if (!defined('BMWX_STALE'))     define('BMWX_STALE', 6 * 3600);    // model run 
 if (!defined('BMWX_DEAD'))      define('BMWX_DEAD', 24 * 3600);    // older than this: not shown at all
 if (!defined('BMWX_DAYS'))      define('BMWX_DAYS', 10);
 if (!defined('BMWX_HOURS'))     define('BMWX_HOURS', 24);
-if (!defined('BMWX_PARSE_V'))   define('BMWX_PARSE_V', 3);
+if (!defined('BMWX_PARSE_V'))   define('BMWX_PARSE_V', 4);   // 4 (17 Sep 2026): cloud cover in the six-hour blocks, for the off-grid solar estimate
 
 function bmwx_file() { return __DIR__ . '/bm-weather-cache.json'; }
 
@@ -152,6 +152,7 @@ function bmwx_parse($j) {
                 'rain' => round(isset($n6['details']['precipitation_amount']) ? (float)$n6['details']['precipitation_amount'] : 0, 1),
                 'wind' => round($wind, 1),
                 'dir' => $dir,
+                'cloud' => isset($det['cloud_area_fraction']) ? (int)round($det['cloud_area_fraction']) : null,   // the off-grid dashboard's sunshine estimate
                 'uv' => isset($det['ultraviolet_index_clear_sky']) ? round((float)$det['ultraviolet_index_clear_sky'], 1) : null,
             );
         }

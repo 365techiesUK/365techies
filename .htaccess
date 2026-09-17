@@ -298,7 +298,8 @@ ErrorDocument 404 /404.html
 # Victron VRM caches, the Venus device CA, and the broadband comparison store.
 # Same 2026-09-01 sweep. vrm-live.php / vrm-history.php / broadband-compare.php
 # stay served - they are the public read side and hold no credential.
-<FilesMatch "^(vrm-(cache|history-cache|weather-cache)\.json(\..*)?|venus-ca\.crt|broadband-compare-(data|rate)\.json(\..*)?)$">
+# vrm-weather-lib.php (17 Sep 2026): the off-grid dashboard's solar-estimate library, include-only.
+<FilesMatch "^(vrm-(cache|history-cache|weather-cache)\.json(\..*)?|vrm-weather-lib\.php|venus-ca\.crt|broadband-compare-(data|rate)\.json(\..*)?)$">
   Require all denied
 </FilesMatch>
 # The Overpass road-geometry cache: files are sha1(query).json inside
