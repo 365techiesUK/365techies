@@ -32,6 +32,11 @@ measured or forecast), a webcam, and any claim the tide times are for navigation
 Everything is drawn client-side from /api/bm-wx.php as SVG + CSS (no chart or map library, no third-party
 host - the section's speed guard). Loops load only when their tab is opened, animation pauses off screen and
 stops under prefers-reduced-motion or the site's own reduce-motion setting.
+
+SERVER FIRST PAINT (17 Sep 2026): bournemouth/weather/index.php serves this page's built index.html with the glance card,
+the wind/sea/tide vitals and the tide panel already filled in (the <!--ssr:NAME--> markers), so crawlers and AI answer engines
+that don't run JavaScript read real tide times, sea temperature and forecast instead of "Loading". api/bm-wx-ssr.php mirrors
+renderGlance, renderVitals, evChip and renderTides - change the words or labels there too; wxp-ssr-check.mjs compares them.
 """
 import build_pages as _bp
 from build_pages import add, graph, crumb_sub, webpage, faqpage, faq_html, bc_sub
@@ -50,15 +55,15 @@ _WXP_FAQS = [
     ("Is the rain radar live?",
      "It is as live as radar gets: EUMETNET&rsquo;s composite of the national radar networks, including the Met Office radar at Dean Hill near Salisbury that covers Bournemouth, is published every 15 minutes and usually reaches this page 10 to 25 minutes after it was measured. Each frame shows its own time."),
     ("What is the sea temperature at Bournemouth today?",
-     "The sea temperature on this page is measured by the wave buoy in Poole Bay and updates through the day. For the full picture &mdash; wetsuit advice, water quality at all seven beaches and live storm-overflow monitoring &mdash; see our sea conditions page."),
+     "The reading at the top of this page is measured by the wave buoy in Poole Bay and updates through the day. For the full picture &mdash; wetsuit advice, water quality at all seven beaches and live storm-overflow monitoring &mdash; see <a href=\"/bournemouth/sea-today/\">Bournemouth sea temperature and conditions, measured live</a>."),
 ]
 
 
 def _wxp_schema(s):
     return graph([
         crumb_sub(s, "Bournemouth365", "bournemouth", "Weather, Tides &amp; Sea"),
-        webpage(s, "Bournemouth Weather, Tides, Radar & Sea Temperature",
-                "Bournemouth seafront weather: a 10-day forecast, predicted tide times checked against the pier gauge, live rain radar and satellite loops, measured wind and the measured sea temperature."),
+        webpage(s, "Bournemouth Weather, Tide Times & Rain Radar",
+                "Bournemouth seafront weather: a 10-day forecast, predicted tide times checked against the pier gauge, live rain radar and satellite loops, and measured wind."),
         faqpage(s, _WXP_FAQS),
     ])
 
@@ -70,7 +75,7 @@ _WXP_HERO = '''    <section class="page-hero wxp-hero b365" aria-label="Introduc
       <div class="page-hero__inner">
         <nav class="breadcrumb" aria-label="Breadcrumb">''' + bc_sub("Bournemouth365", "/bournemouth/", "Weather, Tides &amp; Sea") + '''</nav>
         <h1><span class="wxp-w" style="--i:0">Bournemouth</span> <span class="wxp-w" style="--i:1">weather,</span> <em class="grad grad--cyan wxp-w" style="--i:2">tides &amp; the sea</em></h1>
-        <p class="wxp-lede">The seafront&rsquo;s forecast, tide times checked against the gauge on the pier, rain radar, satellite and the sea temperature from the buoy in the bay &mdash; every number labelled with where it came from.</p>
+        <p class="wxp-lede">The seafront&rsquo;s forecast, tide times checked against the gauge on the pier, rain radar, satellite and the wind &mdash; every number labelled with where it came from.</p>
         <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
       </div>
     </section>'''
@@ -266,6 +271,11 @@ html{scroll-padding-top:calc(var(--header-h) + 4.6rem)}
 html.a11y-contrast .wxp-tablist [role="tab"][aria-selected="true"],html.a11y-contrast .wxp-dchip[aria-selected="true"]{outline:2px solid #fff!important;outline-offset:-4px;text-decoration:underline}
 /* without JavaScript: no dead controls or placeholders, every panel's text shows */
 .wxp:not(.wxp-js) .wxp-tabbar,.wxp:not(.wxp-js) .wxp-vitals,.wxp:not(.wxp-js) .wxp-strip,.wxp:not(.wxp-js) .wxp-dayp,.wxp:not(.wxp-js) .wxp-skel,.wxp:not(.wxp-js) .wxp-now-top{display:none}
+/* ...unless the server filled them in (index.php, 17 Sep 2026): then the readings show as they stood at load. The sun tile
+   is computed in the browser, so it stays hidden; the whole tide week shows, since its button needs a script. */
+.wxp:not(.wxp-js) .wxp-vitals[data-ssr]{display:grid}.wxp:not(.wxp-js) .wxp-now[data-ssr] .wxp-now-top{display:grid}
+.wxp:not(.wxp-js) #wxp-v-sun,.wxp:not(.wxp-js) .wxp-now-top .wx-ic,.wxp:not(.wxp-js) #wxp-tide-more{display:none}
+.wxp:not(.wxp-js) .wxp-tides li.wxp-more{display:grid}
 #wxp-dsun:focus:not(:focus-visible){outline:none}
 .wxp-air-link{display:inline-flex;align-items:center;min-height:44px;color:#a9c4ea}
 @media (min-width:768px){.wxp-tablist [role="tab"]{flex-direction:row;gap:.45rem;min-height:46px;font-size:.93rem}}
@@ -597,16 +607,18 @@ _WXP_HTML = r'''
           <svg class="wxp-wave w-a" viewBox="0 0 2400 80" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0 40 C150 18 450 62 600 40 C750 18 1050 62 1200 40 C1350 18 1650 62 1800 40 C1950 18 2250 62 2400 40 V80 H0 Z"/></svg>
           <svg class="wxp-wave w-b" viewBox="0 0 2400 80" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0 40 C150 26 450 54 600 40 C750 26 1050 54 1200 40 C1350 26 1650 54 1800 40 C1950 26 2250 54 2400 40 V80 H0 Z"/></svg>
           <h2 id="now-h">Bournemouth right now</h2>
-          <noscript><p class="wxp-sub">The live readings on this page need JavaScript. The tide, radar and source notes below still apply.</p></noscript>
-          <div class="wxp-now" id="wxp-nowcard">
+          <!--ssr:noscript--><noscript><p class="wxp-sub">The live readings on this page need JavaScript. The tide, radar and source notes below still apply.</p></noscript><!--/ssr:noscript-->
+          <!-- The ssr: markers are filled on the server by bournemouth/weather/index.php (api/bm-wx-ssr.php) with today's
+               numbers, for readers that don't run JavaScript; the script redraws each block as before. -->
+          <div class="wxp-now" id="wxp-nowcard"><!--ssr:now-->
             <span class="wxp-skel" style="width:55%"></span>
             <div class="wxp-now-top"><div aria-hidden="true" style="width:90px;height:84px"></div><div><span class="wxp-skel" style="width:45%;height:2.8rem"></span><span class="wxp-skel" style="width:75%"></span></div></div>
             <span class="wxp-skel" style="width:85%"></span>
-          </div>
+          <!--/ssr:now--></div>
           <div class="wxp-vitals" id="wxp-vitals">
-            <button type="button" class="wxp-vital" data-go="wind" id="wxp-v-wind"><span class="chip-f" id="wxp-v-wind-chip">WIND &middot; LOADING</span><span class="wxp-skel" style="width:70%"></span><span class="wxp-skel" style="width:50%"></span></button>
-            <button type="button" class="wxp-vital" data-go="sea" id="wxp-v-sea"><span class="chip-f" id="wxp-v-sea-chip">SEA &middot; LOADING</span><span class="wxp-skel" style="width:70%"></span><span class="wxp-skel" style="width:50%"></span></button>
-            <button type="button" class="wxp-vital" data-go="tides" id="wxp-v-tide"><span class="chip-f" id="wxp-v-tide-chip">PREDICTED &middot; PIER</span><span class="wxp-skel" style="width:70%"></span><span class="wxp-skel" style="width:50%"></span></button>
+            <button type="button" class="wxp-vital" data-go="wind" id="wxp-v-wind"><!--ssr:wind--><span class="chip-f" id="wxp-v-wind-chip">WIND &middot; LOADING</span><span class="wxp-skel" style="width:70%"></span><span class="wxp-skel" style="width:50%"></span><!--/ssr:wind--></button>
+            <button type="button" class="wxp-vital" data-go="sea" id="wxp-v-sea"><!--ssr:sea--><span class="chip-f" id="wxp-v-sea-chip">SEA &middot; LOADING</span><span class="wxp-skel" style="width:70%"></span><span class="wxp-skel" style="width:50%"></span><!--/ssr:sea--></button>
+            <button type="button" class="wxp-vital" data-go="tides" id="wxp-v-tide"><!--ssr:tide--><span class="chip-f" id="wxp-v-tide-chip">PREDICTED &middot; PIER</span><span class="wxp-skel" style="width:70%"></span><span class="wxp-skel" style="width:50%"></span><!--/ssr:tide--></button>
             <button type="button" class="wxp-vital" data-go="sun" id="wxp-v-sun"><span class="chip-f" id="wxp-v-sun-chip">COMPUTED &middot; PIER</span><span class="wxp-skel" style="width:70%"></span><span class="wxp-skel" style="width:50%"></span></button>
           </div>
         </div>
@@ -641,20 +653,20 @@ _WXP_HTML = r'''
         </div>
 
         <div class="wxp-panel" id="tides" role="tabpanel" aria-labelledby="wxp-tab-tides" tabindex="-1">
-          <div class="wxp-head"><h2 class="wxp-h2" id="tides-h">Bournemouth tide times</h2><span class="chip-f" id="wxp-tide-chip">PREDICTED &middot; LOADING</span></div>
+          <div class="wxp-head"><h2 class="wxp-h2" id="tides-h">Bournemouth tide times</h2><span class="chip-f" id="wxp-tide-chip"><!--ssr:tidechip-->PREDICTED &middot; LOADING<!--/ssr:tidechip--></span></div>
           <p class="wxp-pintro">High and low water at the pier for seven days, with the pier&rsquo;s own gauge drawn over the prediction.</p>
           <div class="wxp-card">
-            <p class="wxp-sub" id="wxp-tide-now" style="margin:0">Loading the tide&hellip;</p>
-            <p class="wxp-sub" id="wxp-tide-next" style="margin:.35rem 0 0"></p>
+            <p class="wxp-sub" id="wxp-tide-now" style="margin:0"><!--ssr:tidenow-->Loading the tide&hellip;<!--/ssr:tidenow--></p>
+            <p class="wxp-sub" id="wxp-tide-next" style="margin:.35rem 0 0"><!--ssr:tidenext--><!--/ssr:tidenext--></p>
             <div class="wxp-chart wxp-scroll" id="wxp-tide-chart" data-sc="Tide chart for the pier"></div>
             <ul class="wxp-legend"><li><i style="background:#79b8ff"></i>Predicted tide</li><li><i style="background:#4fd8c4"></i>Measured by the pier gauge</li><li><i style="background:#ffd76a"></i>Now</li></ul>
           </div>
-          <ol class="wxp-tides" id="wxp-tide-table" aria-label="High and low water, next seven days"></ol>
-          <button type="button" class="wxp-more-btn" id="wxp-tide-more" aria-expanded="false" aria-controls="wxp-tide-table" hidden>Show the next 4 days</button>
+          <ol class="wxp-tides" id="wxp-tide-table" aria-label="High and low water, next seven days"><!--ssr:tidetable--><!--/ssr:tidetable--></ol>
+          <!--ssr:tidemore--><button type="button" class="wxp-more-btn" id="wxp-tide-more" aria-expanded="false" aria-controls="wxp-tide-table" hidden>Show the next 4 days</button><!--/ssr:tidemore-->
           <p style="margin:.55rem 0 0"><button type="button" class="wxp-share-mini" data-share="tides"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg> Share today&rsquo;s tide times</button></p>
           <p class="wxp-note"><b>Heights are metres above chart datum. Not for navigation</b> &mdash; for passage planning use the official <a href="https://easytide.admiralty.co.uk/" rel="noopener">ADMIRALTY EasyTide</a> tables.</p>
-          <details class="wxp-details" id="wxp-tide-acc-box"><summary><span id="wxp-tide-acc-sum">How accurate are these tide times?</span></summary><div>
-            <p class="wxp-note" id="wxp-tide-acc">We test the prediction blind against a month the pier gauge measured.</p>
+          <details class="wxp-details" id="wxp-tide-acc-box"><summary><span id="wxp-tide-acc-sum"><!--ssr:tideaccsum-->How accurate are these tide times?<!--/ssr:tideaccsum--></span></summary><div>
+            <p class="wxp-note" id="wxp-tide-acc"><!--ssr:tideacc-->We test the prediction blind against a month the pier gauge measured.<!--/ssr:tideacc--></p>
             <p class="wxp-note">Chart datum at Bournemouth is 1.40&nbsp;m below Ordnance Datum Newlyn. The rest of the error is weather &mdash; strong winds and low pressure push the sea above any tide table &mdash; which is why the gauge is drawn live on the chart.</p>
           </div></details>
         </div>
@@ -726,7 +738,7 @@ _WXP_HTML = r'''
             <div id="wxp-seatiles" style="display:contents"><div class="wxp-card"><span class="chip-f">SEA &middot; LOADING</span><span class="wxp-skel"></span></div></div>
             <div class="wxp-card" id="wxp-aircard"><span class="chip-f">FORECAST &middot; AIR QUALITY &middot; DEFRA</span><span class="wxp-skel"></span></div>
           </div>
-          <p class="wxp-note">More on the water &mdash; wetsuit advice, every beach&rsquo;s classification and the live storm-overflow monitors &mdash; on <a href="/bournemouth/sea-today/">the sea right now</a>.</p>
+          <p class="wxp-note">More on the water &mdash; wetsuit advice, every beach&rsquo;s classification and the live storm-overflow monitors &mdash; on <a href="/bournemouth/sea-today/">Bournemouth&rsquo;s sea temperature and conditions page</a>.</p>
         </div>
       </div>
     </section>
@@ -1997,8 +2009,10 @@ def register(b365_band):
     _bp.TOUCH_ICON_FOR[_WXP_SLUG] = "/bournemouth/media/b365-weather-icon-180.png"
     add(
         slug=_WXP_SLUG,
-        title="Bournemouth Weather, Tides, Radar & Sea Temperature",
-        desc="Bournemouth seafront weather: 10-day forecast, tide times checked against the pier gauge, live rain radar and satellite, wind and the sea temperature.",
+        # 17 Sep 2026: "Sea Temperature" left the title and description - /bournemouth/sea-today/ is the measured sea
+        # temperature page, and two of our pages targeting it would split what Google gives either of them.
+        title="Bournemouth Weather, Tide Times & Rain Radar",
+        desc="Bournemouth seafront weather: 10-day forecast, tide times checked against the pier gauge, live rain radar and satellite, and whether the wind is offshore.",
         og_title="Bournemouth seafront weather: tides, radar, satellite and the sea",
         schema=_wxp_schema,
         content=_WXP_CONTENT + "\n" + b365_band + _WXP_MINIFOOT,

@@ -1034,6 +1034,25 @@ if _osg.path.exists(_wxp_fp):
                        "location.hash =", "location.hash=", "pushState(", "+ '#day-'", "'#ten-day'", 'href="#tides"', 'href="#radar"'):
         if _forbidden in _wxp_html:
             _bm_bad.append("weather page: predicted tide wearing the measured chip: %s" % _forbidden)
+    # Today's numbers in the HTML (17 Sep 2026): index.php fills these markers for readers that don't run JavaScript.
+    # A marker that vanishes fails silently (the page just goes back to "Loading..."), so each must appear exactly once,
+    # the server files must exist, and the renderer must never give a predicted tide the measured chip either.
+    for _m in ("noscript", "now", "wind", "sea", "tide", "tidechip", "tidenow", "tidenext", "tidetable", "tidemore", "tideaccsum", "tideacc"):
+        for _tag in ("<!--ssr:%s-->" % _m, "<!--/ssr:%s-->" % _m):
+            if _wxp_html.count(_tag) != 1:
+                _bm_bad.append("weather page: server-render marker %s appears %d times (must be 1)" % (_tag, _wxp_html.count(_tag)))
+    for _need in ('id="wxp-nowcard"', 'id="wxp-vitals"'):
+        if _wxp_html.count(_need) != 1:
+            _bm_bad.append("weather page: %s must appear exactly once (index.php marks it)" % _need)
+    _wxp_php = _osg.path.join(bp.BASE, "bournemouth", "weather", "index.php")
+    _wxp_hta = _osg.path.join(bp.BASE, "bournemouth", "weather", ".htaccess")
+    _wxp_ssr = _osg.path.join(bp.BASE, "api", "bm-wx-ssr.php")
+    if not (_osg.path.exists(_wxp_php) and _osg.path.exists(_wxp_ssr)):
+        _bm_bad.append("weather page: bournemouth/weather/index.php or api/bm-wx-ssr.php is missing")
+    elif "vital('wxp-v-tide', 'chip-m'" in open(_wxp_ssr, encoding="utf-8").read():
+        _bm_bad.append("weather page: the server renderer gives the predicted tide the measured chip")
+    if not _osg.path.exists(_wxp_hta) or "DirectoryIndex index.php" not in open(_wxp_hta, encoding="utf-8").read():
+        _bm_bad.append("weather page: bournemouth/weather/.htaccess must set DirectoryIndex index.php first")
 if _bm_bad:
     raise SystemExit(
         "\n*** Bournemouth365 speed/cleanliness guard failed ***\n"

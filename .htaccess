@@ -237,7 +237,8 @@ ErrorDocument 404 /404.html
 </FilesMatch>
 # Weather page (16 Sep 2026): its lock and the tide prediction table (read by bm-wx-lib.php, not a public file).
 # The frames and caches live in api/bm-wx-store/, which carries its own deny-all .htaccess.
-<FilesMatch "^(bm-wx\.lock|bm-tide-pred\.json)$">
+# bm-wx-ssr.php (17 Sep 2026) is the include-only renderer behind bournemouth/weather/index.php.
+<FilesMatch "^(bm-wx\.lock|bm-tide-pred\.json|bm-wx-ssr\.php)$">
   Require all denied
 </FilesMatch>
 <FilesMatch "^(tools-rate|domain-cache|isitdown-cache|wifi-map-rate|wifi-map-pins)\.json(\.tmp|\.lock)?$">

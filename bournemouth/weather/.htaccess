@@ -1,0 +1,4 @@
+# The weather page is served by index.php: the built index.html with today's tide times, sea temperature and
+# forecast filled in on the server, for crawlers and AI answer engines that don't run JavaScript
+# (see api/bm-wx-ssr.php). index.html stays the build output and the fallback.
+DirectoryIndex index.php index.html
