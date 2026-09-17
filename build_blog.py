@@ -1059,6 +1059,20 @@ if _osg.path.exists(_lm_fp):
         _bm_bad.append("live-map: bournemouth/live-map/index.php or api/bm-map-ssr.php is missing")
     if not _osg.path.exists(_lm_hta) or "DirectoryIndex index.php" not in open(_lm_hta, encoding="utf-8").read():
         _bm_bad.append("live-map: bournemouth/live-map/.htaccess must set DirectoryIndex index.php first")
+# Crowd signal press page (17 Sep 2026, /mobile-signal-check/data/): it duplicates figures from the public map, so it
+# must stay out of search (noindex); and it must never name a network - one operator's name beside a speed figure is
+# the league table the whole signal project refuses to publish.
+_cp_fp = _osg.path.join(bp.BASE, "mobile-signal-check", "data", "index.html")
+if not _osg.path.exists(_cp_fp):
+    _bm_bad.append("crowd press page: mobile-signal-check/data/index.html was not written")
+else:
+    import re as _cpre
+    _cp_html = open(_cp_fp, encoding="utf-8").read()
+    if '<meta name="robots" content="noindex,follow">' not in _cp_html:
+        _bm_bad.append("crowd press page: must be noindex,follow")
+    _cp_nets = sorted(set(_cpre.findall(r"\b(EE|O2|Vodafone\w*|Three UK|Tesco Mobile|giffgaff|Sky Mobile|Lebara|Lyca\w*|Voxi|iD Mobile|Smarty)\b", _cp_html)))
+    if _cp_nets:
+        _bm_bad.append("crowd press page: names a network (%s) - no operator figures, ever" % ", ".join(_cp_nets))
 if _osg.path.exists(_fw_fp):
     if "SEASON FINISHED" not in open(_fw_fp, encoding="utf-8").read():
         _bm_bad.append("fireworks: season-finished branch missing (G3)")

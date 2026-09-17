@@ -7186,6 +7186,227 @@ def write_press_page():
     return "van-signal-map/data/index.html"
 
 
+def write_crowd_press_page():
+    """Write /mobile-signal-check/data/ - the crowd signal map's figures, for journalists, BCP Council and researchers.
+
+    Built 17 Sep 2026 for the ISPreview pitch (the owner: base it on the crowd map, not the van). The same doctrine as
+    write_press_page(): no nav, no prices, no calls to action, noindex,follow, one plain line saying who we are.
+
+    THE FIGURES ARE FROZEN. They come from signal_press_data.py, written by refresh_signal_press.py from
+    api/signal-check.php?press=1 (counts only, by council area - api/signal-press-lib.php). Refresh deliberately, not
+    per build: a pitch quotes these numbers and they must still be here when the journalist clicks through.
+
+    ⚠️ Rules that bind this page: never anything per network (no league table, not even "all networks were
+    similar"); the readings are not offered as a download (owner decision 24 Aug 2026 - figures case by case, via us);
+    the Dorset Council / Streetwave context is dated and sourced, and says "we know of", never "there is no".
+    """
+    from signal_press_data import SIGNAL_PRESS as P
+
+    def n(x):
+        return "{:,}".format(x)
+
+    def pct(a, b):
+        return "%d%%" % round(100.0 * a / b) if b else "&ndash;"
+
+    def day(iso):
+        import datetime as _d
+        d = _d.date.fromisoformat(iso)
+        return "%d %s %d" % (d.day, d.strftime("%B"), d.year)
+
+    def span(a):
+        if not a["first_day"]:
+            return "&ndash;"
+        f, l = a["first_day"], a["last_day"]
+        import datetime as _d
+        fd, ld = _d.date.fromisoformat(f), _d.date.fromisoformat(l)
+        first = "%d %s" % (fd.day, fd.strftime("%B")) + ("" if fd.year == ld.year else " %d" % fd.year)
+        return "%s to %s" % (first, day(l))
+
+    import datetime as _d
+    gen = _d.datetime.fromisoformat(P["generated"].replace("Z", "+00:00"))
+    frozen = "%s UTC on %d %s %d" % (gen.strftime("%H:%M"), gen.day, gen.strftime("%B"), gen.year)
+    M, A = P["method"], P["areas"]
+    B, T = A["bcp"], {k: A[k] for k in ("bournemouth", "christchurch", "poole")}
+    sq = B["squares"]
+    lo, hi = M["bands_mbps"]
+
+    town_rows = "".join(
+        '<tr><td>%s</td><td class="num">%s</td><td class="num">%s</td><td class="num">%s</td><td class="num">%s</td></tr>'
+        % (name, n(T[k]["readings"]), pct(T[k]["outdoor"], T[k]["readings"]), n(T[k]["squares"]["started"]),
+           n(T[k]["squares"]["verified"]))
+        for k, name in (("bournemouth", "Bournemouth"), ("christchurch", "Christchurch"), ("poole", "Poole")))
+    town_rows += ('<tr class="tot"><td>Bournemouth, Christchurch and Poole</td><td class="num">%s</td><td class="num">%s</td>'
+                  '<td class="num">%s</td><td class="num">%s</td></tr>'
+                  % (n(B["readings"]), pct(B["outdoor"], B["readings"]), n(sq["started"]), n(sq["verified"])))
+
+    vb, vo = sq["verified_by_band"], sq["verified_outdoor_by_band"]
+    band_rows = "".join(
+        '<tr><td>%s</td><td class="num">%s</td><td class="num">%s</td></tr>' % (label, n(vb[k]), n(vo[k]))
+        for k, label in (("work", "Great for working (%d Mbps or more)" % hi),
+                         ("calls", "Fine for calls and email (%d to %d Mbps)" % (lo, hi)),
+                         ("struggles", "Struggles (under %d Mbps)" % lo)))
+    band_rows += ('<tr class="tot"><td>Verified squares</td><td class="num">%s</td><td class="num">%s</td></tr>'
+                  % (n(sq["verified"]), n(sq["verified_outdoor"])))
+
+    tod = B["time_of_day"]
+    thin = [name for k, name in (("bournemouth", "Bournemouth"), ("christchurch", "Christchurch"), ("poole", "Poole"))
+            if T[k]["squares"]["verified"] < 10]
+    thin_li = ("<li><strong>Thin in places.</strong> %s &mdash; treat %s figures as early, not as a picture of the %s.</li>"
+               % ("; ".join("%s has only %s readings and %s verified squares" % (t, n(T[t.lower()]["readings"]),
+                                                                                  n(T[t.lower()]["squares"]["verified"]))
+                            for t in thin),
+                  "its" if len(thin) == 1 else "their", "town" if len(thin) == 1 else "towns")) if thin else ""
+
+    head = """<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,follow">
+<title>Mobile data speeds measured by the public, Bournemouth, Christchurch and Poole &mdash; the figures</title>
+<meta name="description" content="Crowd-sourced mobile data speed tests across Bournemouth, Christchurch and Poole: frozen, dated totals, method and limits, for journalists, the council and researchers.">
+<style>
+  :root{--bg:#0b1020;--panel:#141b2e;--ink:#e6edf3;--muted:#9db3cf;--line:rgba(125,170,220,.18);--cyan:#6cc4f5}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.65 system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+  .wrap{max-width:760px;margin:0 auto;padding:2.4rem 1.2rem 3.5rem}
+  h1{font-size:1.7rem;line-height:1.25;margin:0 0 .6rem;text-wrap:balance}
+  h2{font-size:1.06rem;margin:2.2rem 0 .6rem}
+  p{margin:0 0 1rem}
+  .lede{color:var(--muted);font-size:1.02rem}
+  a{color:var(--cyan)}
+  ul{margin:0 0 1rem;padding-left:1.15rem}
+  li{margin:0 0 .5rem}
+  .facts{border:1px solid var(--line);border-radius:12px;padding:1rem 1.2rem;margin:1.4rem 0;background:rgba(20,27,46,.55)}
+  .facts dl{display:grid;grid-template-columns:auto 1fr;gap:.35rem 1.1rem;margin:0;font-size:.94rem}
+  .facts dt{color:var(--muted)}
+  .facts dd{margin:0;font-variant-numeric:tabular-nums}
+  .stamp{font-size:.82rem;color:var(--muted);margin:.8rem 0 0}
+  .tablewrap{overflow-x:auto;margin:0 0 1rem}
+  table{width:100%;border-collapse:collapse;font-size:.94rem}
+  th,td{text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;vertical-align:bottom}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  tr.tot td{font-weight:600;border-bottom:0}
+  .src{font-size:.86rem;color:var(--muted)}
+  .who{margin-top:2.6rem;padding-top:1.1rem;border-top:1px solid var(--line);font-size:.88rem;color:var(--muted)}
+  @media (max-width:520px){.facts dl{grid-template-columns:1fr;gap:0 0}.facts dd{margin:0 0 .5rem}table{font-size:.88rem}th,td{padding:.45rem .3rem}th{font-size:.68rem;letter-spacing:.02em}}
+</style>
+</head>
+<body>
+<div class="wrap">
+"""
+    body = f"""  <h1>Mobile data speeds measured by the public across Bournemouth, Christchurch and Poole</h1>
+  <p class="lede">People test their own phone&rsquo;s mobile data speed where they are standing with a free web page, and
+  every reading goes onto a public map as part of a square. This page is the method, the limits and the totals for
+  Bournemouth, Christchurch and Poole, frozen at one moment so they can be quoted and checked.</p>
+
+  <div class="facts">
+    <dl>
+      <dt>Readings</dt><dd>{n(B["readings"])} inside Bournemouth, Christchurch and Poole ({n(A["all"]["readings"])} on the whole map)</dd>
+      <dt>Taken outdoors</dt><dd>{n(B["outdoor"])} ({pct(B["outdoor"], B["readings"])}); {n(B["indoor"])} indoors; {n(B["place_unrecorded"])} not recorded</dd>
+      <dt>Squares with readings</dt><dd>{n(sq["started"])}</dd>
+      <dt>Verified squares</dt><dd>{n(sq["verified"])} with enough readings to show a result; {n(sq["verified_outdoor"])} on outdoor readings alone</dd>
+      <dt>Days with readings</dt><dd>{n(B["days_with_readings"])} ({span(B)})</dd>
+      <dt>Networks</dt><dd>Every network, pooled. We publish no figures for any single operator.</dd>
+    </dl>
+    <p class="stamp">Figures frozen at <strong>{frozen}</strong>. The live map keeps moving, so quote these and cite the time.</p>
+  </div>
+
+  <h2>By town</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Area</th><th class="num">Readings</th><th class="num">Outdoor</th><th class="num">Squares</th><th class="num">Verified</th></tr></thead>
+    <tbody>{town_rows}</tbody>
+  </table></div>
+  <p class="src">Towns are the former Bournemouth, Christchurch and Poole council areas, which merged in 2019.</p>
+
+  <h2>What the verified squares show</h2>
+  <p>Each square&rsquo;s result is the median of every reading taken in it, on whatever network each phone was on. The
+  bands are the ones the public map uses. The second column counts only outdoor readings, and only squares with enough
+  of them, which takes the building out of the result.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Typical download speed in the square</th><th class="num">All readings</th><th class="num">Outdoor only</th></tr></thead>
+    <tbody>{band_rows}</tbody>
+  </table></div>
+
+  <h2>When the readings were taken</h2>
+  <ul>
+    <li>Morning (6am to noon): {n(tod["morning"])} &middot; afternoon (noon to 6pm): {n(tod["afternoon"])} &middot;
+    evening (6pm to midnight): {n(tod["evening"])} &middot; night (midnight to 6am): {n(tod["night"])}. UK time.</li>
+    <li>Weekdays: {n(B["weekday"])} &middot; weekends: {n(B["weekend"])}.</li>
+  </ul>
+
+  <h2>Why this exists</h2>
+  <p>Measuring coverage can tell a different story from estimating it. In June 2025
+  Dorset Council reported that equipment on its 32 food waste lorries had carried out more than a million tests over
+  2,400 miles, and that where Ofcom estimated 90% of Dorset had good coverage from all four networks, the measurements
+  suggested below 50% (<a href="https://www.dorsetcouncil.gov.uk/news/council-waste-trucks-help-signal-a-better-future-for-connectivity">Dorset Council, 24 June 2025</a>).
+  That survey covered the Dorset Council area. The survey company&rsquo;s own list of council coverage checkers includes
+  Dorset Council and does not include Bournemouth, Christchurch and Poole
+  (<a href="https://streetwave.co/mobile-coverage-checker/">Streetwave</a>, checked 17 September 2026). We know of no
+  published independent measured survey of mobile coverage for Bournemouth, Christchurch and Poole; if one exists, we
+  would like to hear about it.</p>
+
+  <h2>How a reading is taken</h2>
+  <ul>
+    <li><strong>Speed, not radio signal.</strong> The page downloads a 10&nbsp;MB file from a Cloudflare server near the
+    phone and times the whole transfer. The delay figure is the middle of three round trips. Browsers do not give web
+    pages the phone&rsquo;s radio measurements or the name of its network.</li>
+    <li><strong>Mobile data only.</strong> The test will not run on WiFi. Where the browser reports the connection type,
+    the page checks it; iPhones do not report it, so their users confirm it themselves. In Bournemouth, Christchurch and
+    Poole, {n(B["mobile_detected"])} readings were checked by the browser and {n(B["mobile_confirmed"])} confirmed by the tester.</li>
+    <li><strong>Indoors or outdoors</strong> is chosen by the tester before each test, with the button that starts it.
+    &ldquo;Not recorded&rdquo; readings come from an earlier version of the page that did not ask.</li>
+    <li><strong>A square, never a point.</strong> The phone&rsquo;s position is used once and the reading is stored against
+    the centre of a square: about 500&nbsp;m across inland, and about 140&nbsp;m on the beaches, piers and promenade
+    between Sandbanks and Hengistbury Head, where nobody lives. The small seafront squares are only used when the
+    position fix is better than {n(M["seafront_max_acc_m"])}&nbsp;m; a fix worse than {n(M["max_acc_m"])}&nbsp;m is refused.
+    {n(sq["seafront_grid"])} of the {n(sq["started"])} squares here are seafront squares.</li>
+    <li><strong>Verified</strong> means {n(M["inland_need"])} or more readings in an inland square, or {n(M["seafront_need"])}
+    in a seafront square. Below that the map shows the square as early days rather than a result.</li>
+    <li><strong>Limits on repeats:</strong> one reading per connection per {"minute" if M["rate_s"] == 60 else "%d seconds" % M["rate_s"]}, and a daily cap per square.
+    No name, account, IP address or device identifier is stored with a reading. Readings are kept for {n(M["keep_days"])} days.</li>
+    <li><strong>Which area a square counts in</strong> is decided by its centre, using the Office for National Statistics
+    council boundaries out to the low-water line (December 2024 for Bournemouth, Christchurch and Poole; December 2018 for
+    the former towns). Seafront squares always count here. A square whose centre falls just outside every council, in the
+    sea, counts here if this is the nearest council and within 400&nbsp;m.</li>
+  </ul>
+
+  <h2>What these figures cannot tell you</h2>
+  <ul>
+    <li><strong>Not a survey of every street.</strong> People test where they choose to, so some areas have many
+    readings and others none. Squares with no readings say nothing either way.</li>
+    <li><strong>Nothing about any one network.</strong> Every phone&rsquo;s reading goes into its square&rsquo;s median,
+    whatever the network, and the mix of networks can differ from square to square. We do not compare or rank networks.</li>
+    <li><strong>Speed depends on more than coverage:</strong> the phone, its data plan, how busy the mast is at that
+    moment, and walls. That is why indoor and outdoor readings are kept apart above.</li>
+    {thin_li}
+    <li><strong>Squares straddle boundaries.</strong> A square near a council boundary counts wholly on the side where its
+    centre falls.</li>
+  </ul>
+
+  <h2>Figures for a specific place or question</h2>
+  <p>We do not publish the individual readings as a download. If you are a journalist, a council officer or a researcher
+  and need figures for a particular area, time of day or question, <a href="/contact/">ask us</a> and we will share what
+  the data can honestly support.</p>
+
+  <p class="src">Boundaries: Office for National Statistics, Local Authority Districts (December 2024 and December 2018),
+  Open Government Licence v3.0. Contains OS data &copy; Crown copyright and database right 2024.</p>
+
+  <p class="who">Collected and published by 365 Techies, an IT firm in Bournemouth. Independent &mdash; not affiliated with,
+  endorsed by or funded by any mobile network. <a href="/mobile-signal-check/">The public map and the test itself</a>.</p>
+</div>
+</body>
+</html>
+"""
+    d = os.path.join(BASE, "mobile-signal-check", "data")
+    os.makedirs(d, exist_ok=True)
+    with open(os.path.join(d, "index.html"), "w", encoding="utf-8") as f:
+        f.write(head + body)
+    return "mobile-signal-check/data/index.html"
+
+
 _LASTMOD_RE = _cdre.compile(r'"dateModified":\s*"__LASTMOD__"')
 
 def stamp_lastmod(slug, html):
@@ -7236,6 +7457,7 @@ def write_all():
         written.append(slug + "/index.html")
     written.append(write_embed_page())
     written.append(write_press_page())
+    written.append(write_crowd_press_page())
     save_content_dates()
     return written
 
