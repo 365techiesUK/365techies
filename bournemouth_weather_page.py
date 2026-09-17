@@ -107,7 +107,7 @@ _WXP_HEAD = '''
 
 _WXP_MINIFOOT = '''
     <nav class="wxp-minifoot b365" aria-label="Bournemouth365 pages and legal information">
-      <p><button type="button" class="wxp-a2hs-pill" data-a2hs style="margin-right:.4rem"><span aria-hidden="true">&#128204;</span> Add to home screen</button><a href="/bournemouth/">Bournemouth365</a><a href="/bournemouth/live-map/">Live map</a><a href="/bournemouth/sea-today/">The sea right now</a><a href="/bournemouth/sunrise-sunset/">Sunrise &amp; sunset</a><a href="/bournemouth/beach-parking/">Beach parking</a><a href="/bournemouth/fireworks/">Fireworks</a></p>
+      <p><button type="button" class="wxp-a2hs-pill wxp-share-pill" data-share="page" style="margin-right:.4rem"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg> Share</button><button type="button" class="wxp-a2hs-pill" data-a2hs style="margin-right:.4rem"><span aria-hidden="true">&#128204;</span> Add to home screen</button><a href="/bournemouth/">Bournemouth365</a><a href="/bournemouth/live-map/">Live map</a><a href="/bournemouth/sea-today/">The sea right now</a><a href="/bournemouth/sunrise-sunset/">Sunrise &amp; sunset</a><a href="/bournemouth/beach-parking/">Beach parking</a><a href="/bournemouth/fireworks/">Fireworks</a></p>
       <p class="mono">&copy; 2026 365 Techies Limited<a href="/privacy-policy/">Privacy</a><a href="/cookie-policy/">Cookies</a><a href="/terms/">Terms</a><a href="/accessibility-statement/">Accessibility</a></p>
     </nav>'''
 
@@ -298,8 +298,8 @@ html.a11y-contrast .wxp-tablist [role="tab"][aria-selected="true"],html.a11y-con
 .wxp-rdrop{stroke:#6cc4f5;stroke-width:2;stroke-linecap:round;opacity:0;animation:wxp-rdrop 1.2s linear infinite}
 /* keep it on the home screen */
 .wxp-a2hs-done [data-a2hs]{display:none!important}
-.wxp-a2hs-row{display:none;margin:.6rem 0 0;text-align:right}
-@media (max-width:767px){.wxp-a2hs-row{display:block}}
+.wxp-a2hs-row{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:.5rem;margin:.6rem 0 0}
+@media (min-width:768px){.wxp-a2hs-row [data-a2hs]{display:none}}
 .wxp-a2hs-pill{display:inline-flex;align-items:center;gap:.4rem;min-height:44px;padding:0 1rem;border-radius:999px;border:1px solid rgba(255,215,106,.55);background:rgba(255,215,106,.08);color:#ffe7a6;font:inherit;font-size:.9rem;font-weight:600;cursor:pointer}
 .wxp-a2hs-pill:hover{background:rgba(255,215,106,.16)}
 .wxp-a2hs-pill:focus-visible,.wxp-a2hs button:focus-visible{outline:2px solid var(--wx-gold);outline-offset:2px}
@@ -315,6 +315,21 @@ html.a11y-contrast .wxp-tablist [role="tab"][aria-selected="true"],html.a11y-con
 .wxp-a2hs-no{min-height:44px;padding:0 1rem;border:1px solid var(--b365-line);border-radius:999px;background:transparent;color:var(--b365-foam);font:inherit;cursor:pointer}
 .wxp-a2hs-x{position:absolute;top:.35rem;right:.35rem;width:44px;height:44px;border:0;background:transparent;color:var(--b365-mute);font-size:1.6rem;line-height:1;cursor:pointer}
 @media (prefers-reduced-motion:reduce){.wxp-a2hs{transition:none}}
+/* share */
+.wxp-share-pill{border-color:rgba(169,196,234,.5);background:rgba(169,196,234,.08);color:#dce8f6}
+.wxp-share-pill:hover{background:rgba(169,196,234,.16)}
+.wxp-share-mini{display:inline-flex;align-items:center;gap:.4rem;min-height:40px;padding:0 .9rem;border-radius:999px;border:1px solid var(--b365-line);background:transparent;color:#a9c4ea;font:inherit;font-size:.86rem;font-weight:600;cursor:pointer}
+.wxp-share-mini:hover{border-color:rgba(169,196,234,.6)}
+.wxp-share-mini:focus-visible{outline:2px solid var(--wx-gold);outline-offset:2px}
+.wxp-share{grid-template-columns:1fr}
+.wxp-share-text{margin:.35rem 0 0;padding:.6rem .7rem;border-radius:12px;background:rgba(255,255,255,.05);color:var(--b365-mute);font-size:.86rem;line-height:1.5;max-height:7.5em;overflow:auto;white-space:pre-line}
+.wxp-share-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem;margin-top:.7rem}
+.wxp-share-grid a,.wxp-share-grid button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3rem;min-height:68px;padding:.4rem;border-radius:14px;border:1px solid var(--b365-line);background:rgba(255,255,255,.03);color:var(--b365-foam);font:inherit;font-size:.82rem;text-decoration:none;cursor:pointer}
+.wxp-share-grid a:hover,.wxp-share-grid button:hover{border-color:rgba(255,215,106,.5)}
+.wxp-share-grid a:focus-visible,.wxp-share-grid button:focus-visible{outline:2px solid var(--wx-gold);outline-offset:2px}
+.wxp-share-grid i{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;font-style:normal}
+.wxp-share-grid svg{width:18px;height:18px}
+.wxp-share-done{margin:.5rem 0 0;min-height:1.2em;color:#7fd8a8;font-size:.86rem}
 /* always-on touches: a swaying wind arrow, a glowing Today outline, a sheen over the chosen tab, pulsing live dots */
 .wxp-sway{display:inline-block;transform-origin:50% 60%;animation:wxp-sway 2.6s ease-in-out infinite}
 .wxp-tabink::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.5) 50%,transparent 65%);background-size:260% 100%;background-position:160% 0;animation:wxp-shine 5.5s ease-in-out 1.5s infinite}
@@ -595,7 +610,7 @@ _WXP_HTML = r'''
             <button type="button" class="wxp-vital" data-go="sun" id="wxp-v-sun"><span class="chip-f" id="wxp-v-sun-chip">COMPUTED &middot; PIER</span><span class="wxp-skel" style="width:70%"></span><span class="wxp-skel" style="width:50%"></span></button>
           </div>
         </div>
-        <p class="wxp-a2hs-row"><button type="button" class="wxp-a2hs-pill" data-a2hs><span aria-hidden="true">&#128204;</span> Add to home screen</button></p>
+        <p class="wxp-a2hs-row"><button type="button" class="wxp-a2hs-pill wxp-share-pill" data-share="page"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg> Share</button><button type="button" class="wxp-a2hs-pill" data-a2hs><span aria-hidden="true">&#128204;</span> Add to home screen</button></p>
       </div>
     </section>
 
@@ -636,6 +651,7 @@ _WXP_HTML = r'''
           </div>
           <ol class="wxp-tides" id="wxp-tide-table" aria-label="High and low water, next seven days"></ol>
           <button type="button" class="wxp-more-btn" id="wxp-tide-more" aria-expanded="false" aria-controls="wxp-tide-table" hidden>Show the next 4 days</button>
+          <p style="margin:.55rem 0 0"><button type="button" class="wxp-share-mini" data-share="tides"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg> Share today&rsquo;s tide times</button></p>
           <p class="wxp-note"><b>Heights are metres above chart datum. Not for navigation</b> &mdash; for passage planning use the official <a href="https://easytide.admiralty.co.uk/" rel="noopener">ADMIRALTY EasyTide</a> tables.</p>
           <details class="wxp-details" id="wxp-tide-acc-box"><summary><span id="wxp-tide-acc-sum">How accurate are these tide times?</span></summary><div>
             <p class="wxp-note" id="wxp-tide-acc">We test the prediction blind against a month the pier gauge measured.</p>
@@ -721,7 +737,7 @@ _WXP_HTML = r'''
         <p class="wxp-note">Every reading on this page wears a label. <b>Measured</b> and <b>observed</b> mean an instrument saw it. <b>Predicted</b>, <b>forecast</b> and <b>computed</b> mean a model or a calculation. <b>Official</b> means it is shown exactly as the issuer published it. When a feed is down or late, the page says so rather than showing old numbers as new. No ads, ever.</p>
         <ul class="wxp-key"><li><span class="chip-m">MEASURED &middot; OBSERVED</span> an instrument</li><li><span class="chip-f">FORECAST &middot; PREDICTED &middot; COMPUTED &middot; OFFICIAL</span> a model, a calculation or an issuer</li></ul>
         <p class="wxp-note">Forecast: MET Norway (CC BY 4.0). Radar: EUMETNET OPERA (CC BY 4.0). Satellite: &copy; EUMETSAT (CC BY 4.0) and NASA Worldview / GIBS. Tides, the pier gauge, the wave buoys and bathing waters: Environment Agency, Cefas and Regional Coastal Monitoring Programme data under the Open Government Licence v3.0. Storm overflows: &copy; Wessex Water, CC BY 4.0. Warnings: Met Office. Air quality: Defra. Wind and temperature now: Bournemouth Airport via the NOAA Aviation Weather Center. Map: &copy; OpenStreetMap contributors.</p>
-        <p style="margin:.7rem 0 0"><button type="button" class="wxp-a2hs-pill wxp-a2hs-any" data-a2hs><span aria-hidden="true">&#128204;</span> Keep Bournemouth weather on your home screen</button></p>
+        <p style="margin:.7rem 0 0;display:flex;flex-wrap:wrap;gap:.5rem"><button type="button" class="wxp-a2hs-pill wxp-share-pill" data-share="page"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg> Share this page</button><button type="button" class="wxp-a2hs-pill wxp-a2hs-any" data-a2hs><span aria-hidden="true">&#128204;</span> Keep Bournemouth weather on your home screen</button></p>
         <details class="wxp-details"><summary>Sources, licences and how often each one updates</summary><div class="wxp-src-wrap"><table class="wxp-src">
           <thead><tr><th scope="col">What</th><th scope="col">Label</th><th scope="col">Source</th><th scope="col">How often</th><th scope="col">Licence</th></tr></thead>
           <tbody>
@@ -751,6 +767,15 @@ _WXP_HTML = r'''
         <div class="wxp-a2hs-btns"><button type="button" class="wxp-a2hs-add" id="wxp-a2hs-add">Add to home screen</button><button type="button" class="wxp-a2hs-no" id="wxp-a2hs-no">Not now</button></div>
       </div>
       <button type="button" class="wxp-a2hs-x" id="wxp-a2hs-x" aria-label="Close">&times;</button>
+    </div>
+    <div class="wxp-a2hs wxp-share" id="wxp-share" role="dialog" aria-labelledby="wxp-share-h" hidden>
+      <div class="wxp-a2hs-body" style="grid-column:1/-1">
+        <p class="wxp-a2hs-h" id="wxp-share-h">Share</p>
+        <p class="wxp-share-text" id="wxp-share-text"></p>
+        <div class="wxp-share-grid" id="wxp-share-grid"></div>
+        <p class="wxp-share-done" id="wxp-share-done" aria-live="polite"></p>
+      </div>
+      <button type="button" class="wxp-a2hs-x" id="wxp-share-x" aria-label="Close">&times;</button>
     </div>
     </div>'''.replace("__TABS__", "\n              ".join([
     _tab("tides", "Tides", True), _tab("wind", "Wind", False), _tab("radar", "Radar", False),
@@ -1211,7 +1236,8 @@ _WXP_JS = r'''
     var prevTxt = i > 0 ? (i === 1 ? 'Today' : shortDay(f.days[i - 1].d)) : '', nextTxt = i < f.days.length - 1 ? shortDay(f.days[i + 1].d) : '';
     box.innerHTML = '<div class="wxp-dsum">' + icon(day.sym) + '<div><p class="wxp-lbl">' + esc(label) + (today ? ' &middot; next 24 hours' : '') + '</p><h3>' + esc(longDay(ymd)) + ' &middot; ' + esc(words(day.sym)) + '</h3>'
       + '<p class="wxp-sub" style="margin-top:.15rem">' + (day.part ? 'Rest of today up to ' : 'Up to ') + '<b>' + deg(day.hi) + '</b>, down to <b>' + deg(day.lo) + '</b> &middot; ' + (day.rain >= 0.1 ? '<b>' + day.rain.toFixed(1) + ' mm</b> of rain' : '<b>Dry</b>')
-      + ' &middot; wind up to <b>' + mph(day.wind) + ' mph</b> ' + compass(day.dir) + (sh ? ' <span class="wxp-shore ' + sh + '">' + SHORE_WORD[sh] + '</span>' : '') + (uv !== null && uv >= 1 ? ' &middot; UV up to <b>' + Math.round(uv) + '</b> if clear' : '') + '</p></div>'
+      + ' &middot; wind up to <b>' + mph(day.wind) + ' mph</b> ' + compass(day.dir) + (sh ? ' <span class="wxp-shore ' + sh + '">' + SHORE_WORD[sh] + '</span>' : '') + (uv !== null && uv >= 1 ? ' &middot; UV up to <b>' + Math.round(uv) + '</b> if clear' : '') + '</p>'
+      + '<p style="margin:.45rem 0 0"><button type="button" class="wxp-share-mini" data-share="day" data-ymd="' + ymd + '">' + SHARE_ICON + ' Share this day</button></p></div>'
       + '<div class="wxp-dnav"><button type="button" data-step="-1"' + (i === 0 ? ' disabled' : '') + '>&larr; ' + esc(prevTxt) + '<span class="wxp-vh">, previous day</span></button>'
       + '<button type="button" data-step="1"' + (nextTxt ? '' : ' disabled') + '>' + esc(nextTxt) + ' &rarr;<span class="wxp-vh">, next day</span></button></div></div>'
       + '<div class="wxp-dgrid"><div class="wxp-card"><span class="chip-f">FORECAST &middot; MET NORWAY' + (kindTxt ? ' &middot; ' + kindTxt : '') + '</span>'
@@ -1762,6 +1788,96 @@ _WXP_JS = r'''
     }, 250);
   });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { moveTabInk(); moveInk(); runPending(); });
+
+  /* ---------------- share ----------------
+     Phones: the phone's own share sheet (WhatsApp, Messages, Facebook...). Computers, or browsers without one (Facebook's
+     in-app browser): a small panel of plain links - no share scripts from anyone. What gets shared is written from the
+     data on screen and keeps its labels: forecast, measured, predicted and not for navigation. */
+  var SHARE_ICON = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>';
+  (function () {
+    var UA = navigator.userAgent || '';
+    var IOS = /iPad|iPhone|iPod/.test(UA) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1), ANDROID = /Android/i.test(UA);
+    var COARSE = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    var sheet = $('wxp-share'), PAGE = location.origin + location.pathname;
+    function enc(x) { return encodeURIComponent(x); }
+    function tideLine(evs) {
+      return evs.map(function (x) {
+        return x.type === 'HH' ? 'high ' + hhmm(x.t) + ' & ' + hhmm(x.t2) + ' (double high water)' : (x.type === 'L' ? 'low ' : 'high ') + hhmm(x.t);
+      }).join(', ');
+    }
+    function content(kind, el) {
+      var d = last || {}, f = d.forecast, t = d.tide, url = PAGE, text = '';
+      if (kind === 'day' && f && f.ok) {
+        var ymd = el.getAttribute('data-ymd'), day = (f.days || []).filter(function (x) { return x.d === ymd; })[0];
+        if (day) {
+          text = (day.part ? 'The rest of today, ' : '') + longDay(ymd) + ' in Bournemouth: ' + words(day.sym).toLowerCase() + ', up to ' + deg(day.hi) + ', down to ' + deg(day.lo)
+            + (day.rain >= 0.1 ? ', ' + day.rain.toFixed(1) + ' mm of rain' : ', dry') + ', wind up to ' + mph(day.wind) + ' mph ' + compass(day.dir) + '. (MET Norway forecast)';
+          url += '#day-' + ymd;
+        }
+      } else if (kind === 'tides' && t && t.ok) {
+        var today = ukYmd(Date.now()), evs = groupTides(t.events).filter(function (x) { return ukYmd(Date.parse(x.t)) === today; });
+        if (evs.length) text = 'Bournemouth Pier tide times, ' + longDay(today) + ': ' + tideLine(evs) + '. Predicted times, not for navigation.';
+        url += '#tides';
+      }
+      if (!text) {
+        var bits = [];
+        if (f && f.ok && f.hours && f.hours.length) bits.push(deg(f.hours[0].temp) + ' and ' + words(f.hours[0].sym).toLowerCase() + ' (forecast)');
+        var sea = d.sea && d.sea.sea;
+        if (sea && sea.ok && !sea.stale && age(sea.read_at) <= 3 * 3600000) bits.push('sea ' + sea.tempC.toFixed(1) + '\u00b0C (measured)');   /* same freshness rule as the page's labels */
+        if (t && t.ok) { var nx = groupTides(t.events).filter(function (x) { return Date.parse(x.type === 'HH' ? x.t2 : x.t) > Date.now(); })[0]; if (nx) bits.push('next tide: ' + tideLine([nx]) + (ukYmd(Date.parse(nx.t)) !== ukYmd(Date.now()) ? ' ' + dayLabel(nx.t).toLowerCase() : '')); }
+        text = (bits.length ? 'Bournemouth right now: ' + bits.join(', ') + '.\n' : '') + 'The seafront forecast, tide times, rain radar and the sea temperature, all in one place:';
+      }
+      return { title: 'Bournemouth weather, tides & the sea', text: text, url: url };
+    }
+    function track(method, kind) { try { if (typeof window.gtag === 'function' && localStorage.getItem('tt_internal') !== '1') window.gtag('event', 'weather_share', { method: method, content_type: kind }); } catch (e) {} }
+    var ICONS = {
+      whatsapp: '<i style="background:#25d366;color:#fff"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.5 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5.2.5.8 1.8.8 1.9.1.1.1.3 0 .5-.1.2-.1.3-.3.5l-.4.5c-.1.1-.3.3-.1.6.2.3.7 1.1 1.5 1.8 1 .9 1.8 1.2 2.1 1.3.3.1.4.1.6-.1.2-.2.7-.8.9-1.1.2-.3.4-.2.6-.1.3.1 1.6.8 1.9.9.3.1.5.2.5.3.1.2.1.7-.1 1.3z"/></svg></i>',
+      facebook: '<i style="background:#1877f2;color:#fff"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.5 1.6-1.5h1.7V4.4c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.2v2.3H7.5V14h2.7v8h3.3z"/></svg></i>',
+      x: '<i style="background:#000;color:#fff;border:1px solid #333"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.8 3h3l-6.6 7.5L22 21h-6.1l-4.8-6.2L5.6 21h-3l7-8L2 3h6.2l4.3 5.7L17.8 3zm-1.1 16.2h1.7L7.4 4.7H5.6l11.1 14.5z"/></svg></i>',
+      email: '<i style="background:#2a86c4;color:#fff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></i>',
+      sms: '<i style="background:#7fd8a8;color:#08131e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5z"/></svg></i>',
+      copy: '<i style="background:#ffd76a;color:#08131e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></i>'
+    };
+    function openPanel(c, kind) {
+      var full = c.text + '\n' + c.url;
+      $('wxp-share-text').textContent = full;
+      $('wxp-share-done').textContent = '';
+      var links = [
+        ['whatsapp', 'WhatsApp', 'https://wa.me/?text=' + enc(full)],
+        ['facebook', 'Facebook', 'https://www.facebook.com/sharer/sharer.php?u=' + enc(c.url)],
+        ['x', 'X', 'https://twitter.com/intent/tweet?text=' + enc(c.text) + '&url=' + enc(c.url)],
+        ['email', 'Email', 'mailto:?subject=' + enc(c.title) + '&body=' + enc(c.text + '\n\n' + c.url)]
+      ];
+      if (IOS || ANDROID) links.push(['sms', 'Text message', 'sms:' + (IOS ? '&' : '?') + 'body=' + enc(full)]);
+      $('wxp-share-grid').innerHTML = links.map(function (l) {
+        var ext = /^https/.test(l[2]);
+        return '<a href="' + l[2] + '" data-m="' + l[0] + '"' + (ext ? ' target="_blank" rel="noopener"' : '') + '>' + ICONS[l[0]] + l[1] + '</a>';
+      }).join('') + '<button type="button" data-copy>' + ICONS.copy + 'Copy link</button>';
+      [].forEach.call($('wxp-share-grid').querySelectorAll('a'), function (a) { a.addEventListener('click', function () { track(a.getAttribute('data-m'), kind); }); });
+      $('wxp-share-grid').querySelector('[data-copy]').addEventListener('click', function () {
+        var done = function () { $('wxp-share-done').textContent = 'Link copied'; track('copy', kind); };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(c.url).then(done, fallback); else fallback();
+        function fallback() { var ta = document.createElement('textarea'); ta.value = c.url; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); done(); } catch (e) { $('wxp-share-done').textContent = c.url; } ta.remove(); }
+      });
+      sheet.hidden = false;
+      requestAnimationFrame(function () { requestAnimationFrame(function () { sheet.classList.add('on'); }); });
+      var first = $('wxp-share-grid').querySelector('a'); if (first) try { first.focus({ preventScroll: true }); } catch (e) {}
+    }
+    function closePanel() { sheet.classList.remove('on'); setTimeout(function () { sheet.hidden = true; }, reduced() ? 0 : 320); }
+    $('wxp-share-x').addEventListener('click', closePanel);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) closePanel(); });
+    document.addEventListener('click', function (e) {
+      var b = e.target && e.target.closest ? e.target.closest('[data-share]') : null;
+      if (!b) return;
+      e.preventDefault();
+      var kind = b.getAttribute('data-share'), c = content(kind, b);
+      if (navigator.share && (COARSE || IOS || ANDROID)) {
+        navigator.share({ title: c.title, text: c.text, url: c.url }).then(function () { track('native', kind); }).catch(function (err) { if (err && err.name !== 'AbortError') openPanel(c, kind); });
+        return;
+      }
+      openPanel(c, kind);
+    });
+  })();
 
   /* ---------------- keep it on the home screen ----------------
      Android Chrome/Edge: the browser's own install prompt. iPhone/iPad: Safari has no prompt, so the steps, with the Share
