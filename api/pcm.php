@@ -88,8 +88,24 @@ function pcm_software_in($v) {
 // can't lost-update each other. Returns the lock handle (release by fclose).
 function db_lock($f){ $lk = @fopen($f . '.lock', 'c'); if ($lk) @flock($lk, LOCK_EX); return $lk; }
 
+// Windows PowerShell 5.1's Invoke-RestMethod encodes a string -Body as ISO-8859-1 unless the content type names a
+// charset, so one "®" or "°" in a software name arrives as a single byte that is not UTF-8 and json_decode refuses
+// the whole upload. 17 Sep 2026: a customer's service report came back "Portal copy: not stored - server said:
+// bad_request" (ServicePass v4.1 sends the software inventory). A body that is NOT valid UTF-8 is re-read as
+// Latin-1 - exactly what that client sent; a valid UTF-8 body is never touched. ServicePass 4.2 sends UTF-8 itself.
+function pcm_json_body($raw) {
+    $in = json_decode((string)$raw, true);
+    if (!is_array($in) && is_string($raw) && $raw !== '' && !preg_match('//u', $raw)) {
+        $in = json_decode(preg_replace_callback('/[\x80-\xFF]/', function ($m) {
+            $o = ord($m[0]);
+            return chr(0xC0 | ($o >> 6)) . chr(0x80 | ($o & 0x3F));
+        }, $raw), true);
+    }
+    return $in;
+}
+
 $raw = file_get_contents('php://input');
-$in = json_decode($raw, true);
+$in = pcm_json_body($raw);
 if (!is_array($in)) out(array('ok'=>false,'error'=>'bad_request'));
 
 $action  = isset($in['action'])  ? preg_replace('/[^a-z]/','',$in['action']) : '';

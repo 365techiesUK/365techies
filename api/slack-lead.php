@@ -49,7 +49,16 @@ if ($PROBE) {  // diagnostic: send a minimal test message and surface Slack's ex
     echo json_encode(['ok' => ($code >= 200 && $code < 300), 'slackCode' => $code, 'slackBody' => substr((string)$res, 0, 150), 'curlErr' => $cerr, 'hook' => $mask]); exit;
 }
 
-$in = json_decode((string)file_get_contents('php://input'), true);
+$raw = (string)file_get_contents('php://input');
+$in = json_decode($raw, true);
+// Windows PowerShell 5.1 (ServicePass) sends a string body as ISO-8859-1 unless told otherwise: re-read a body that
+// is not valid UTF-8 as Latin-1 rather than dropping the whole card. Same fix as pcm.php (17 Sep 2026).
+if (!is_array($in) && $raw !== '' && !preg_match('//u', $raw)) {
+    $in = json_decode(preg_replace_callback('/[\x80-\xFF]/', function ($m) {
+        $o = ord($m[0]);
+        return chr(0xC0 | ($o >> 6)) . chr(0x80 | ($o & 0x3F));
+    }, $raw), true);
+}
 if (!is_array($in)) { echo json_encode(['ok' => false, 'error' => 'bad-json']); exit; }
 
 function clean($v, $max) {
