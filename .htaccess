@@ -292,7 +292,8 @@ ErrorDocument 404 /404.html
 # The endpoints stay served - only the stores are denied. signal-token.php,
 # geo-fence.php and pcm-team-lib.php are @include-only, so denying them over HTTP
 # costs nothing: .htaccess gates requests, not include().
-<FilesMatch "^(signal-(data|geo)\.json(\..*)?|signal-check-(data|rate)\.json(\..*)?|signal-token\.php|geo-fence\.php|van-live-(data|geo)\.json(\..*)?|pcm-team-lib\.php)$">
+# signal-press-lib.php (17 Sep 2026) is include-only too: the area totals behind signal-check.php?press=1.
+<FilesMatch "^(signal-(data|geo)\.json(\..*)?|signal-check-(data|rate)\.json(\..*)?|signal-token\.php|geo-fence\.php|van-live-(data|geo)\.json(\..*)?|pcm-team-lib\.php|signal-press-lib\.php)$">
   Require all denied
 </FilesMatch>
 # Victron VRM caches, the Venus device CA, and the broadband comparison store.

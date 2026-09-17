@@ -220,6 +220,24 @@ if ($method === 'GET') {
                           'pending' => count($cells) - $verified, 'age_s' => ($last ? max(0, time() - $last) : null)]);
         exit;
     }
+    // ?press=1 -> totals by council area for the press page (/mobile-signal-check/data/, 17 Sep 2026): readings,
+    // indoor/outdoor, days, time of day, squares started/verified and verified squares per map band - for
+    // Bournemouth, Christchurch and Poole as a whole, each former borough, and everything. Totals only: no
+    // square, no reading, no date tied to a place, and never anything per network. See api/signal-press-lib.php.
+    if (isset($_GET['press']) && $_GET['press'] === '1') {
+        require __DIR__ . '/signal-press-lib.php';
+        $areasDoc = json_decode((string)@file_get_contents(__DIR__ . '/signal-areas.json'), true);
+        if (!is_array($areasDoc) || empty($areasDoc['areas']['bcp'])) { echo json_encode(['ok' => false, 'error' => 'areas unavailable']); exit; }
+        $sum = sigpress_summary(jload(DATA_FILE), $areasDoc, 'min_for');
+        header('Cache-Control: public, max-age=300');
+        echo json_encode(['ok' => true, 'generated' => gmdate('c'),
+            'method' => ['inland_need' => MIN_FOR_COMPARE, 'seafront_need' => COAST_MIN, 'rate_s' => RATE_S,
+                         'max_acc_m' => MAX_ACC_M, 'seafront_max_acc_m' => COAST_MAX_ACC_M, 'bands_mbps' => [10, 25],
+                         'keep_days' => KEEP_DAYS],
+            'boundaries' => $areasDoc['source'] ?? null,
+            'areas' => $sum['areas']]);
+        exit;
+    }
     if (isset($_GET['map']) && $_GET['map'] === '1') {
         $rows = jload(DATA_FILE);
         $cells = [];
