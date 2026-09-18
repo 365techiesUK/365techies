@@ -243,6 +243,10 @@ function pcm_service_report_to_slack($cust, $machine, $ts, $html, $summary) {
                     : ($selfrun ? '*Self-run full service* (the customer ran it from the app) - ' : '*6-weekly Service Report* - ');
     $text = $lead . slk_plain(substr($name, 0, 80)) . "\n"
           . ($oneoff && ($eng = trim((string)($cust['machines'][$machine]['engineer'] ?? ''))) !== '' ? 'Engineer: ' . slk_plain($eng) . "\n" : '')
+          . ($oneoff ? 'Invoice: ' . (($amt = trim((string)($cust['machines'][$machine]['oneoff_amount'] ?? ''))) !== ''
+                        ? '£' . number_format((float)$amt, 2) . ' agreed on the day - raise the QuickBooks draft from the staff console '
+                          . '(find the customer, then Quote agreed / invoice)'
+                        : 'no price was entered on the day') . "\n" : '')
           . ($pc !== '' ? 'PC: ' . slk_plain(substr($pc, 0, 80)) . "\n" : '')
           . ($os !== '' ? 'OS: ' . slk_plain(substr($os, 0, 80)) . "\n" : '')
           . ($score !== '' ? 'Score: ' . slk_plain(substr($score, 0, 40)) . "\n" : '')

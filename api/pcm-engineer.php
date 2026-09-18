@@ -81,6 +81,10 @@ $customer = eng_txt($in['customer'] ?? '', 60);
 $email    = strtolower(eng_txt($in['email'] ?? '', 120));
 $machine  = preg_replace('/[^a-f0-9]/', '', substr((string)($in['machine'] ?? ''), 0, 32));
 $pcname   = eng_txt($in['pc'] ?? '', 60);
+/* What the engineer agreed with the customer, for the invoice. Digits and one decimal point only, and
+   never a guess: blank means there is nothing to invoice, and the Slack card says exactly that. */
+$amount   = preg_replace('/[^0-9.]/', '', (string)($in['amount'] ?? ''));
+if ($amount !== '' && (!is_numeric($amount) || (float)$amount <= 0 || (float)$amount > 5000)) $amount = '';
 $ipHash   = substr(hash('sha256', 'eng|' . ($_SERVER['REMOTE_ADDR'] ?? '')), 0, 12);
 $now      = time();
 
@@ -140,6 +144,8 @@ if (!isset($db['customers'][$key]['machines'][$machine])) {
 $m = &$db['customers'][$key]['machines'][$machine];
 if ($pcname !== '') $m['name'] = $pcname;
 $m['engineer'] = $who;
+$m['oneoff_amount'] = $amount;               // read by the Slack card when the report lands
+$m['oneoff_started'] = gmdate('Y-m-d H:i');
 $m['fullservice'] = gmdate('Y-m-d H:i');
 unset($m);
 eng_save($DATA, $db);
@@ -147,7 +153,7 @@ if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); }
 
 $runId = substr(hash('sha256', $key . '|' . $machine . '|' . $now . '|' . mt_rand()), 0, 16);
 eng_log($runs, array('t' => $now, 'ok' => true, 'who' => $who, 'cust' => $customer, 'email' => $email,
-                     'machine' => $machine, 'pc' => $pcname, 'key' => $key, 'run' => $runId, 'ip' => $ipHash), $RUNS);
+                     'machine' => $machine, 'pc' => $pcname, 'key' => $key, 'run' => $runId, 'ip' => $ipHash, 'amount' => $amount), $RUNS);
 
 header('X-365-Key: ' . $key);
 header('X-365-Run: ' . $runId);
