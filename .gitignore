@@ -215,3 +215,9 @@ api/bench-throttle.json
 api/dorset-ships-cache.json
 api/dorset-ships.lock
 api/dorset-ships-tracks-cache.json
+
+# Engineer mode (18 Sep 2026): the hashed one-off-service PINs and the run log. Server-only, like pcm-data.
+api/pcm-engineer-secret.json
+api/pcm-engineer-secret.json.tmp
+api/pcm-engineer-runs.json
+api/pcm-engineer-runs.json.tmp

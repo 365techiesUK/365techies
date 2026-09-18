@@ -152,6 +152,39 @@ if (($_POST['do'] ?? '') === 'plan') {
         save($DATA,$db); $msg="Updated {$db['customers'][$k]['name']} → {$db['customers'][$k]['plan']} plan";
     }
 }
+/* Engineer mode (18 Sep 2026): the PIN that lets an engineer run ONE service, with a report, on a PC
+   that is not on a plan (api/pcm-engineer.php). Stored as a password hash, never in the clear, and
+   never shown again after it is set - rotate it here if it is ever typed somewhere it shouldn't be. */
+if (($_POST['do'] ?? '') === 'engpin') {
+    $who = trim(substr((string)($_POST['engwho'] ?? ''), 0, 40));
+    $pin = preg_replace('/[^0-9A-Za-z]/', '', (string)($_POST['engpin'] ?? ''));
+    if ($who === '') { $msg = 'Give the engineer a name first.'; }
+    elseif (strlen($pin) < 8) { $msg = 'That PIN is too short - use at least 8 characters.'; }
+    else {
+        $ef = __DIR__ . '/pcm-engineer-secret.json';
+        $cur = json_decode((string)@file_get_contents($ef), true);
+        if (!is_array($cur) || !isset($cur['pins']) || !is_array($cur['pins'])) $cur = array('pins' => array());
+        $pins = array();
+        foreach ($cur['pins'] as $p) { if (is_array($p) && strcasecmp((string)($p['who'] ?? ''), $who) !== 0) $pins[] = $p; }
+        $pins[] = array('who' => $who, 'hash' => password_hash($pin, PASSWORD_DEFAULT), 'set' => gmdate('Y-m-d H:i'));
+        $tmp = $ef . '.' . getmypid() . '.tmp';
+        if (@file_put_contents($tmp, json_encode(array('pins' => $pins), JSON_PRETTY_PRINT), LOCK_EX) !== false && @rename($tmp, $ef)) {
+            $msg = 'Engineer PIN set for ' . htmlspecialchars($who) . '. It is stored as a hash - write it down now, it cannot be shown again.';
+        } else { $msg = 'Could not save the PIN (server write failed).'; }
+    }
+}
+if (($_POST['do'] ?? '') === 'engpindel') {
+    $who = trim(substr((string)($_POST['engwho'] ?? ''), 0, 40));
+    $ef = __DIR__ . '/pcm-engineer-secret.json';
+    $cur = json_decode((string)@file_get_contents($ef), true);
+    if (is_array($cur) && isset($cur['pins'])) {
+        $pins = array();
+        foreach ($cur['pins'] as $p) { if (is_array($p) && strcasecmp((string)($p['who'] ?? ''), $who) !== 0) $pins[] = $p; }
+        $tmp = $ef . '.' . getmypid() . '.tmp';
+        if (@file_put_contents($tmp, json_encode(array('pins' => $pins), JSON_PRETTY_PRINT), LOCK_EX) !== false) @rename($tmp, $ef);
+        $msg = 'Engineer PIN removed for ' . htmlspecialchars($who) . '.';
+    }
+}
 if (($_POST['do'] ?? '') === 'next') {
     $k=$_POST['key']??''; if (isset($db['customers'][$k])) { $db['customers'][$k]['next']=trim(substr((string)($_POST['next']??''),0,40)); save($DATA,$db); $msg="Next-service date updated."; }
 }
@@ -722,6 +755,52 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
   <p style="color:#9fb5d3;font-size:.82rem;margin:0">Nobody is waiting &mdash; everyone signed in has already had it.</p>
   <?php endif; ?>
 <?php endif; ?>
+</div>
+
+<?php
+/* Engineer mode: the PIN that unlocks ONE service on a PC that is not on a plan, and the log of runs.
+   The PIN is only ever stored hashed, so this can show who has one and when it was set, never what it is. */
+$engPins = json_decode((string)@file_get_contents(__DIR__ . '/pcm-engineer-secret.json'), true);
+$engPins = (is_array($engPins) && isset($engPins['pins']) && is_array($engPins['pins'])) ? $engPins['pins'] : array();
+$engRuns = json_decode((string)@file_get_contents(__DIR__ . '/pcm-engineer-runs.json'), true);
+$engRuns = is_array($engRuns) ? array_slice($engRuns, -12) : array();
+?>
+<div style="background:#0d1a2e;border:1px solid #2a5b8f;border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.5rem">
+  <h2 style="margin:0 0 .3rem;font-size:1rem;color:#86b6e8">&#128295; Engineer mode &mdash; one-off services</h2>
+  <p style="color:#9fb5d3;font-size:.82rem;margin:0 0 .6rem">The PIN an engineer types into 365 PC Manager to run <strong>one</strong> full service, with a report, on a PC that is <strong>not</strong> on a support plan. Setting a PIN replaces that engineer's old one. Letters and numbers only. It is stored as a hash: write it down when you set it, because it cannot be shown again.</p>
+  <form method=post class=inline style="margin:0 0 .8rem">
+    <input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=engpin>
+    <input name=engwho placeholder="Engineer name" style="padding:.45rem;border-radius:8px;border:1px solid #2a3b63;background:#0b1226;color:#fff;width:150px">
+    <input name=engpin placeholder="New PIN (8+ letters/numbers)" autocomplete=off style="padding:.45rem;border-radius:8px;border:1px solid #2a3b63;background:#0b1226;color:#fff;width:190px">
+    <button>Set PIN</button>
+  </form>
+  <?php if($engPins): ?>
+  <table style="margin-top:0"><thead><tr><th>Engineer</th><th>PIN set</th><th></th></tr></thead><tbody>
+    <?php foreach($engPins as $ep): ?>
+    <tr>
+      <td><strong><?=h((string)($ep['who'] ?? ''))?></strong></td>
+      <td class=mach><?=h((string)($ep['set'] ?? ''))?></td>
+      <td><form method=post class=inline onsubmit="return confirm('Remove this engineer\'s PIN? They will not be able to start a one-off service.')"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=engpindel><input type=hidden name=engwho value="<?=h((string)($ep['who'] ?? ''))?>"><button style="background:#3a1c1c;border-color:#7a3b2b">Remove</button></form></td>
+    </tr>
+    <?php endforeach; ?>
+  </tbody></table>
+  <?php else: ?>
+  <p style="color:#ffb4a2;font-size:.82rem;margin:0">No PIN set, so engineer mode is closed &mdash; the app refuses every attempt until one exists.</p>
+  <?php endif; ?>
+  <?php if($engRuns): ?>
+  <h3 style="margin:1rem 0 .3rem;font-size:.9rem;color:#86b6e8">Last attempts</h3>
+  <table style="margin-top:0"><thead><tr><th>When</th><th>Engineer</th><th>Customer</th><th>PC</th><th>Result</th></tr></thead><tbody>
+    <?php foreach(array_reverse($engRuns) as $er): ?>
+    <tr>
+      <td class=mach><?=h(gmdate('d M H:i', (int)($er['t'] ?? 0)))?></td>
+      <td><?=h((string)($er['who'] ?? '&mdash;'))?></td>
+      <td><?=h((string)($er['cust'] ?? ''))?><?php if(!empty($er['email'])): ?><div class=mach><?=h((string)$er['email'])?></div><?php endif; ?></td>
+      <td class=mach><?=h((string)($er['pc'] ?? ''))?></td>
+      <td><?= !empty($er['ok']) ? '<span style="color:#7bd88f">service served</span>' : '<span style="color:#ffb4a2">' . h(str_replace('_', ' ', (string)($er['why'] ?? 'refused'))) . '</span>' ?></td>
+    </tr>
+    <?php endforeach; ?>
+  </tbody></table>
+  <?php endif; ?>
 </div>
 
 <?php if($pendings): ?>

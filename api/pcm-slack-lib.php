@@ -236,7 +236,13 @@ function pcm_service_report_to_slack($cust, $machine, $ts, $html, $summary) {
     }
     $mname = trim((string)($cust['machines'][$machine]['name'] ?? ''));
     $selfrun = !empty($summary['selfrun']);   // the customer ran it from the app, not a visit
-    $text = ($selfrun ? '*Self-run full service* (the customer ran it from the app) - ' : '*6-weekly Service Report* - ') . slk_plain(substr($name, 0, 80)) . "\n"
+    // A one-off service for someone who is NOT on a plan (engineer mode, pcm-engineer.php). It must never
+    // be read as a six-weekly plan visit: no plan, no next service, and the card says so.
+    $oneoff = (($cust['tier'] ?? '') === 'oneoff') || !empty($cust['oneoff']);
+    $lead = $oneoff ? '*One-off service* (not on a support plan) - '
+                    : ($selfrun ? '*Self-run full service* (the customer ran it from the app) - ' : '*6-weekly Service Report* - ');
+    $text = $lead . slk_plain(substr($name, 0, 80)) . "\n"
+          . ($oneoff && ($eng = trim((string)($cust['machines'][$machine]['engineer'] ?? ''))) !== '' ? 'Engineer: ' . slk_plain($eng) . "\n" : '')
           . ($pc !== '' ? 'PC: ' . slk_plain(substr($pc, 0, 80)) . "\n" : '')
           . ($os !== '' ? 'OS: ' . slk_plain(substr($os, 0, 80)) . "\n" : '')
           . ($score !== '' ? 'Score: ' . slk_plain(substr($score, 0, 40)) . "\n" : '')
