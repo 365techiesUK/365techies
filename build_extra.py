@@ -19016,6 +19016,101 @@ def what_would_you_lose():
         desc=desc, og_title="What Would You Lose? | 365 Techies", schema=schema, content=content)
 what_would_you_lose()
 
+# ============================================================ GUIDE: DO I NEED A VPN?
+# The honest answer, including "probably not, at home" - which is the half the VPN industry leaves out.
+# Owner, 18 Sep 2026: make the honest case and mention Malwarebytes as what we supply. So: no affiliate
+# creative here, one internal link to /malwarebytes-premium/ (the canonical VPN deep-dive), and every
+# number on the page carries its source. Honest-copy rules from the Malwarebytes work still bind:
+# never promise it unblocks streaming, never imply a VPN is antivirus, never promise a location change works.
+info_page(
+  slug="do-i-need-a-vpn", crumb_name="Do I Need a VPN?", eyebrow="// HONEST GUIDE",
+  h1='Do you <em class="grad grad--cyan">really</em> need a VPN?',
+  lede="Short answer: at home, most people don&rsquo;t. Away from home, sometimes. Here is what a VPN actually does, what it cannot do whatever the adverts say, and how to decide &mdash; from a firm that supplies one and would still rather you knew the truth.",
+  desc="Do you need a VPN? A plain-English guide: what a VPN does and does not do, when it is worth having, why free ones are risky, and what we supply. Honest advice from 365 Techies.",
+  title="Do I Need a VPN? An Honest Guide | 365 Techies",
+  og_title="Do you really need a VPN? | 365 Techies",
+  chips=["Plain English","What it can&rsquo;t do","No scare tactics"],
+  pre=f'''    <section class="section section--alt" aria-label="What a VPN does and does not do">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE HONEST SUMMARY</p>
+          <h2 class="section-title section-title--center" data-title>Three things it does, three it doesn&rsquo;t<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("lock","It hides where you go, from the network","Your broadband provider, or the caf&eacute; whose Wi-Fi you are on, sees a connection to the VPN and not the sites you visit."),("globe","It changes where you appear to be","Websites see the VPN&rsquo;s address instead of yours. Useful abroad; not a magic key, as below."),("wifi","It covers you on somebody else&rsquo;s Wi-Fi","Hotels, airports, a client&rsquo;s guest network &mdash; anywhere you cannot vouch for the connection."),("bug","It does not stop viruses","Malware, ransomware and a bad download travel down an encrypted tunnel exactly as happily as an open one."),("eye","It does not make you anonymous","Signed into Google, Facebook or your email, you are still you. Cookies and accounts identify you, not your address."),("bolt","It does not speed anything up","Your traffic takes a longer route through another computer. Expect to lose a little speed, sometimes a lot.")])}
+        </div>
+      </div>
+    </section>''',
+  inner="""          <h2>The short answer</h2>
+          <p><strong>If you are at home, on your own broadband, doing ordinary things &mdash; banking, shopping, email, streaming &mdash; you almost certainly do not need a VPN.</strong> The protection that matters for those jobs is already there: the padlock in your browser. What a VPN adds is privacy from whoever runs the network you are using, which matters far more in a hotel than in your own living room.</p>
+          <p>Where a VPN does earn its money is away from home, on connections you do not control, and for people who genuinely need their browsing kept from the company providing it. That is a real list of people &mdash; it is just much shorter than the adverts suggest.</p>
+
+          <h2>What a VPN actually is</h2>
+          <p>A VPN &mdash; virtual private network &mdash; builds an encrypted tunnel from your device to a computer run by the VPN company, and sends everything you do through it. The National Cyber Security Centre describes VPNs as <a href="https://www.ncsc.gov.uk/collection/device-security-guidance/infrastructure/virtual-private-networks" target="_blank" rel="noopener">encrypted network connections that guarantee the security of &ldquo;data in transit&rdquo; across an untrusted network</a>.</p>
+          <p>Here is the part worth understanding, because everything else follows from it: <strong>a VPN does not remove the need to trust somebody &mdash; it moves that trust.</strong> Without one, your broadband provider can see which sites you connect to. With one, it sees an encrypted connection to the VPN company &mdash; and the VPN company is now the one who could see where you go. You are choosing who to trust, which is exactly why a free app from a name you have never heard of is a bad trade.</p>
+
+          <h2>Why the coffee-shop story has changed</h2>
+          <p>The warning that sold VPNs for a decade &mdash; a stranger on caf&eacute; Wi-Fi reading your banking password &mdash; is largely history. Nearly all web traffic is encrypted now: Google reports that <a href="https://blog.google/security/https-by-default/" target="_blank" rel="noopener">over 99% of pages loaded in Chrome on Mac, ChromeOS and Android use HTTPS, and 95% on Windows</a>, and from October 2026 Chrome will ask permission before opening a public site that is not encrypted at all. Your connection to your bank is already private, VPN or no VPN.</p>
+          <p>What somebody running the network can still see is <em>which</em> sites you visit, and that is the gap a VPN closes. There is also the older, simpler risk: a hotspot named to look like the hotel&rsquo;s. A VPN protects you there, though so does the plain habit of checking the network name and using your phone&rsquo;s own data when in doubt.</p>
+
+          <h2>When a VPN genuinely earns its place</h2>
+          <ul class="checklist">
+            <li><strong>You work from other people&rsquo;s networks</strong> &mdash; hotels, sites, caf&eacute;s, a customer&rsquo;s guest Wi-Fi, a van parked somewhere with signal.</li>
+            <li><strong>You travel</strong>, and want your own country&rsquo;s services and your usual internet while you are away.</li>
+            <li><strong>You would rather your broadband provider did not have a list of the sites you visit</strong> &mdash; a legitimate preference, not a suspicious one.</li>
+            <li><strong>You are researching something sensitive</strong> &mdash; a health worry, a job move, leaving a relationship &mdash; on a connection somebody else can see.</li>
+            <li><strong>Your employer requires one</strong> to reach work systems. That is a company VPN, set up by their IT people; it is a different thing from a consumer subscription and you should not replace one with the other.</li>
+          </ul>
+
+          <h2>The disadvantages nobody selling one mentions</h2>
+          <ul class="checklist">
+            <li><strong>It costs you speed.</strong> Your traffic goes the long way round. On a fast line you may not notice; on a slow one you will.</li>
+            <li><strong>Things start refusing you.</strong> Banks are the common one: a login from an unfamiliar country looks like fraud, and you get locked out or pestered for checks.</li>
+            <li><strong>Streaming is not a free pass.</strong> The big services actively block VPNs, and using one to reach another country&rsquo;s catalogue breaks their terms. We will not promise you it works, because it often does not.</li>
+            <li><strong>It is one more thing to keep working.</strong> Another subscription, another app that updates, another thing to switch off when something breaks and you are working out why.</li>
+            <li><strong>You have swapped who sees your browsing</strong>, as above. A VPN is only as trustworthy as the company behind it.</li>
+            <li><strong>It does nothing about the biggest risks.</strong> Scam emails, a convincing phone call, a weak password, no backup &mdash; a VPN is silent on every one of them.</li>
+          </ul>
+
+          <h2>Free VPNs: what the research found</h2>
+          <p>Running a VPN service costs real money. If nobody is charging you, the product is usually you &mdash; and the measurements bear that out.</p>
+          <p>Researchers from the University of Michigan, the University of New Mexico and IIT Delhi audited <a href="https://www.ndss-symposium.org/ndss-paper/mvpnalyzer-an-investigative-framework-for-auditing-the-security-privacy-of-mobile-vpns/" target="_blank" rel="noopener">281 of the most popular free Android VPN apps</a> and presented the results in February 2026: <strong>247 of them &mdash; 88% &mdash; had at least one security or privacy failing</strong>, 29 leaked traffic outside the tunnel they promised, and the apps involved had been installed over 2.4 billion times between them.</p>
+          <p>Separately, the University of Toronto&rsquo;s Citizen Lab and Arizona State University found in <a href="https://www.petsymposium.org/foci/2025/foci-2025-0008.php" target="_blank" rel="noopener">&ldquo;Hidden Links: Analyzing Secret Families of VPN Apps&rdquo;</a> that several hugely popular Android VPN apps, presented as unrelated products, were quietly run by the same people and shipped with <strong>hard-coded passwords that would let an attacker decrypt their users&rsquo; traffic</strong> &mdash; the precise opposite of what the app was installed to do.</p>
+          <p>If you decide you need a VPN, pay for it. If the choice is a free VPN or no VPN, no VPN is usually the safer answer.</p>
+
+          <h2>A VPN is not antivirus &mdash; they do different jobs</h2>
+          <p>This is the confusion we hear most often. Antivirus watches what arrives on your computer and stops it running. A VPN encrypts where your traffic goes. Neither does the other&rsquo;s job, and a VPN will not save you from clicking a scam link or downloading something nasty. If you are choosing protection, start with our <a href="/how-to-choose-antivirus/">plain-English guide to antivirus</a>, not with a VPN.</p>
+
+          <h2>What we supply, and why we are telling you this</h2>
+          <p>We are a Malwarebytes partner, and the protection we set up and manage &mdash; <a href="/malwarebytes-premium/">Malwarebytes Premium with its Privacy VPN</a> &mdash; includes a VPN. So we could have written the usual page telling everyone they need one.</p>
+          <p>We would rather tell you the truth: for most people at home, the antivirus half is what earns its keep, and the VPN is a bonus you will use when you travel or work from somewhere else. For people who are out and about &mdash; trades, carers, anyone working from a van, a site or a caf&eacute; &mdash; having both, set up properly and actually kept running, is worth it. If you want the detail on the VPN itself, it is on the <a href="/malwarebytes-premium/">Malwarebytes page</a>.</p>
+
+          <h2>If you do want one, here is how to choose</h2>
+          <ul class="checklist">
+            <li><strong>Pay for it</strong>, from a company with a name to lose.</li>
+            <li><strong>Look for a no-logs policy that somebody independent has audited</strong> &mdash; the claim is easy, the audit is not.</li>
+            <li><strong>Check there is a kill switch</strong>, which cuts your connection if the VPN drops rather than quietly letting your traffic out in the open.</li>
+            <li><strong>Make sure it covers the devices you actually use</strong>, phone included, and that you can cancel without a fight.</li>
+            <li><strong>Turn it off when you do not need it.</strong> A VPN you fight with all day is a VPN you will end up disabling permanently.</li>
+          </ul>
+          <p class="mono">Sources on this page: NCSC device security guidance; Google Security Blog, &ldquo;HTTPS by default&rdquo;, 28 October 2025; MVPNalyzer, NDSS, February 2026; Citizen Lab and Arizona State University, FOCI 2025. Checked 18 September 2026.</p>""" + PRINT_BTN,
+  faqs=[
+    ("Do I need a VPN at home?","Usually not. On your own broadband, doing ordinary things, the encryption in your browser already protects what matters &mdash; and it is your own network, so there is nobody on it to hide from. The exception is if you would rather your broadband provider did not have a record of the sites you visit, which is a fair reason to want one."),
+    ("Does a VPN stop viruses and scams?","No, and this is the most expensive misunderstanding about them. A VPN encrypts where your traffic goes; it does not inspect what arrives. Malware, ransomware and scam links go down an encrypted tunnel perfectly happily. You need <a href=\"/how-to-choose-antivirus/\">proper protection</a> for that job."),
+    ("Are free VPNs safe?","Mostly not. An audit of 281 popular free Android VPN apps, presented at the NDSS conference in February 2026, found 88% of them had at least one security or privacy failing and 29 leaked traffic outside the tunnel they promised. Separate research found popular apps sharing hard-coded passwords that would let an attacker decrypt their users&rsquo; traffic. If the choice is a free VPN or none, none is usually safer."),
+    ("Will a VPN slow my internet down?","Some, yes &mdash; your traffic travels further and is encrypted on the way. On a fast fibre line you may not notice; on a slower connection, or a distant server, you will. Choosing a server in the UK rather than the other side of the world helps."),
+    ("Are VPNs legal in the UK?","Yes. Using a VPN is perfectly legal here. It does not make anything else legal, though: breaking a website&rsquo;s terms, or the law, is no different with one switched on."),
+    ("Will a VPN let me watch another country&rsquo;s Netflix or iPlayer?","We will not promise that. The streaming services actively detect and block VPNs, and using one to reach another region&rsquo;s catalogue breaks their terms of use. Sometimes it works, often it does not, and it can stop working overnight."),
+    ("Why did my bank stop working when I turned the VPN on?","Because you suddenly appeared to be logging in from somewhere else, which is exactly what fraud looks like. Turning the VPN off, or picking a UK server, usually settles it."),
+    ("Does a VPN hide what I do from my employer?","Not on a work computer. Anything the company has installed on the device itself &mdash; management software, monitoring, filtering &mdash; sees what you do before a VPN gets involved. And connecting a personal VPN on a work machine often breaks the company&rsquo;s own systems."),
+    ("Do I need one on my phone?","The same rules apply: on your own mobile data, rarely; on hotel, airport and caf&eacute; Wi-Fi, it is the place a VPN is most useful. If you buy one, check the phone app is included rather than an extra."),
+    ("Can you just sort this out for me?","Yes. We supply and manage <a href=\"/malwarebytes-premium/\">Malwarebytes Premium with its Privacy VPN</a> across Bournemouth, Poole and Dorset &mdash; set up on your devices, kept running, with a real person to ask. And if your answer is that you do not need the VPN half, we will say so."),
+  ],
+  cta_args=("Not sure what you actually need?",
+            "We will tell you straight &mdash; including when the answer is &ldquo;you don&rsquo;t need that&rdquo;. Protection set up and looked after by your local team, with a person on the end of the phone.",
+            ("Malwarebytes Premium &amp; VPN","/malwarebytes-premium/"), ("Talk to us","/contact/")),
+)
+
 # ============================================================ GUIDE: HOW TO CHOOSE ANTIVIRUS
 info_page(
   slug="how-to-choose-antivirus", crumb_name="How to Choose Antivirus", eyebrow="// BUYER&rsquo;S GUIDE",
@@ -19039,7 +19134,7 @@ info_page(
   inner="""          <h2>Free vs paid &mdash; what&rsquo;s the difference?</h2>
           <p>Windows comes with Microsoft Defender built in, and for a careful user it&rsquo;s a decent baseline. Paid products add stronger web and scam protection, better support, and bring everything into one place. For most people &mdash; especially anyone who banks, shops or emails a lot &mdash; a good paid product is worth it for the extra layers and peace of mind.</p>
           <h2>Do I need a VPN?</h2>
-          <p>A VPN keeps your browsing private, which is genuinely useful on public Wi-Fi in cafes, hotels and airports. At home on your own connection it matters less. Some security bundles include one, which is a nice bonus.</p>
+          <p>A VPN keeps your browsing private, which is genuinely useful on public Wi-Fi in cafes, hotels and airports. At home on your own connection it matters less. Some security bundles include one, which is a nice bonus. We have written the honest version in full: <a href="/do-i-need-a-vpn/">do you really need a VPN?</a></p>
           <h2>What we recommend &mdash; and why</h2>
           <p>As a Malwarebytes Partner we supply, set up and manage <a href="/malwarebytes-premium/">Malwarebytes Premium with VPN</a> &mdash; award-winning protection against malware, ransomware and scam sites, with a private VPN built in. The real value isn&rsquo;t just the software, though: it&rsquo;s having it set up properly, kept updated, and a real person to ask &lsquo;is this safe?&rsquo; The independent experts at <a href="https://www.which.co.uk/reviews/antivirus-software-packages/article/best-antivirus-software-aMDh67g7Cmws" target="_blank" rel="noopener">Which?</a> and the UK&rsquo;s <a href="https://www.ncsc.gov.uk/" target="_blank" rel="noopener">NCSC</a> have good independent guidance too.</p>
           <h2>Avoid these traps</h2>
