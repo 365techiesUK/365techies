@@ -9069,6 +9069,150 @@ def _dell_cluster_section(exclude=()):
             '      </div>\n'
             '    </section>')
 
+# ================================================ 360 SPIN VIEWER (drag a real machine round)
+# 36 photographs of ONE real laptop, every 10 degrees of a turntable revolution, swapped as the
+# visitor drags - the same thing manufacturers' "360 view" controls do, with no 3D model, no
+# library and no video. Built from the owner's own 4K clip (18 Sep 2026) by
+# scratchpad dellvid/make_spin.py; the frames live in /images/spin/<set>/.
+#
+# ⚠️ HONESTY: it is ONE example machine, not the stock list. The caption says so, says when it was
+# photographed, and never implies the visitor receives this exact laptop. Refurbished stock changes
+# and grades differ - see the refurbished honesty rules on /dell-hardware/.
+#
+# Works with no JavaScript: frame 0 is a plain <img> in the HTML (a real photograph of the machine),
+# and the controls only appear once the script has upgraded the block. Inline CSS/JS like the video
+# block below, so no stylesheet version bump.
+SPIN_SETS = {
+    "latitude-5520": {
+        "dir": "/images/spin/latitude-5520/",
+        "frames": 36, "w": 1400, "h": 787,
+        "alt": "A refurbished Dell Latitude 5520 laptop, open, seen from the front with Windows 11 on the screen",
+        "aria": "A refurbished Dell Latitude 5520 laptop photographed from 36 angles around a full turn. "
+                "Use the left and right arrow keys to turn it.",
+    },
+}
+
+
+def spin_viewer(set_name, eyebrow, title, lede, caption, section_class="section section--alt"):
+    s = SPIN_SETS[set_name]
+    return f'''    <section class="{section_class}" id="spin" aria-label="{title}">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>{eyebrow}</p>
+          <h2 class="section-title section-title--center" data-title>{title}<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <p class="dspin-lede" data-reveal>{lede}</p>
+        <figure class="dspin" id="dspin" data-dir="{s['dir']}" data-frames="{s['frames']}">
+          <div class="dspin__stage" id="dspin-stage" role="img" aria-label="{s['aria']}">
+            <img id="dspin-first" src="{s['dir']}spin_00.webp" width="{s['w']}" height="{s['h']}" loading="lazy" decoding="async" alt="{s['alt']}" />
+            <span class="dspin__hint" aria-hidden="true">&#8596; Drag to turn</span>
+          </div>
+          <div class="dspin__bar">
+            <span class="dspin__angle" id="dspin-angle">0&deg; of 360&deg;</span>
+            <span class="dspin__turn">
+              <button type="button" id="dspin-left" aria-label="Turn left">&#8592;</button>
+              <button type="button" id="dspin-right" aria-label="Turn right">&#8594;</button>
+            </span>
+          </div>
+          <figcaption>{caption}</figcaption>
+        </figure>
+      </div>
+      <style>
+        .dspin-lede{{max-width:62ch;margin:0 auto 1.1rem;text-align:center;color:var(--muted,#8fa3bd)}}
+        .dspin{{margin:0 auto;max-width:860px;background:rgba(255,255,255,.03);border:1px solid rgba(125,170,220,.18);
+          border-radius:14px;overflow:hidden}}
+        .dspin__stage{{position:relative;aspect-ratio:{s['w']}/{s['h']};max-width:100%;background:#fff}}
+        .dspin__stage img{{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0}}
+        .dspin__stage img:first-of-type,.dspin__stage img.is-on{{opacity:1}}
+        .dspin__hint{{position:absolute;left:50%;bottom:.8rem;transform:translateX(-50%);background:rgba(10,16,32,.78);
+          color:#fff;font-size:.8rem;padding:.35rem .8rem;border-radius:999px;pointer-events:none;opacity:0;transition:opacity .3s}}
+        .dspin__bar{{display:none;align-items:center;justify-content:space-between;gap:1rem;padding:.55rem .8rem;
+          border-top:1px solid rgba(125,170,220,.18)}}
+        .dspin__angle{{font-size:.84rem;opacity:.75;font-variant-numeric:tabular-nums}}
+        .dspin__turn{{display:flex;gap:.4rem}}
+        .dspin__turn button{{font:inherit;line-height:1;min-width:2.8rem;padding:.55rem .8rem;cursor:pointer;
+          color:inherit;background:transparent;border:1px solid rgba(125,170,220,.28);border-radius:8px}}
+        .dspin__turn button:hover{{border-color:var(--cyan,#6cc4f5);color:var(--cyan,#6cc4f5)}}
+        .dspin figcaption{{padding:.7rem .9rem 1rem;font-size:.86rem;opacity:.75;text-align:center}}
+        .dspin--live .dspin__stage{{cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none}}
+        .dspin--live .dspin__stage.is-dragging{{cursor:grabbing}}
+        .dspin--live .dspin__bar{{display:flex}}
+        .dspin--live .dspin__hint{{opacity:1}}
+        .dspin--live[data-touched="1"] .dspin__hint{{opacity:0}}
+        .dspin__stage:focus-visible,.dspin__turn button:focus-visible{{outline:3px solid var(--cyan,#6cc4f5);outline-offset:2px}}
+        @media (prefers-reduced-motion:reduce){{.dspin__hint{{transition:none}}}}
+      </style>
+      <script>
+      (function () {{
+        var fig = document.getElementById('dspin');
+        if (!fig || !('IntersectionObserver' in window)) return;      // no JS upgrade: the single photo stands alone
+        var stage = document.getElementById('dspin-stage'), angle = document.getElementById('dspin-angle');
+        var DIR = fig.dataset.dir, N = +fig.dataset.frames;
+        var imgs = [document.getElementById('dspin-first')], cur = 0, ready = 1, spin = null;
+        fig.classList.add('dspin--live');
+        stage.tabIndex = 0;
+
+        function show(i) {{
+          i = ((i % N) + N) % N;
+          if (imgs[cur]) imgs[cur].classList.remove('is-on');
+          cur = i;
+          if (imgs[cur]) imgs[cur].classList.add('is-on');
+          angle.textContent = (cur * Math.round(360 / N)) + '\\u00b0 of 360\\u00b0';
+        }}
+        function touched() {{ fig.dataset.touched = '1'; if (spin) {{ clearInterval(spin); spin = null; }} }}
+
+        function loadRest() {{
+          imgs[0].classList.add('is-on');
+          for (var i = 1; i < N; i++) {{
+            (function (i) {{
+              var im = new Image();
+              im.alt = ''; im.decoding = 'async';
+              im.onload = function () {{ if (im.decode) {{ im.decode().then(done, done); }} else {{ done(); }} }};
+              im.onerror = done;
+              function done() {{ if (++ready === N) firstTurn(); }}
+              im.src = DIR + 'spin_' + (i < 10 ? '0' + i : i) + '.webp';
+              imgs[i] = im;
+              stage.appendChild(im);
+            }})(i);
+          }}
+        }}
+        function firstTurn() {{
+          // one slow turn so it is visibly a spin, then it waits - never for anyone who asked for less motion
+          if (fig.dataset.touched === '1' || (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+          spin = setInterval(function () {{ show(cur + 1); if (cur === 0) {{ clearInterval(spin); spin = null; }} }}, 85);
+        }}
+        new IntersectionObserver(function (es, o) {{ if (es[0].isIntersecting) {{ loadRest(); o.disconnect(); }} }},
+          {{ rootMargin: '300px' }}).observe(fig);
+
+        // a full turn takes about one and a half screen widths of dragging, and never gets twitchy on a phone
+        var dragging = false, lastX = 0, acc = 0;
+        function step() {{ return Math.max(stage.clientWidth, 360) * 1.6 / N; }}
+        stage.addEventListener('pointerdown', function (e) {{
+          dragging = true; lastX = e.clientX; acc = 0; stage.classList.add('is-dragging'); touched();
+          if (stage.setPointerCapture) {{ try {{ stage.setPointerCapture(e.pointerId); }} catch (err) {{}} }}
+        }});
+        stage.addEventListener('pointermove', function (e) {{
+          if (!dragging) return;
+          e.preventDefault();
+          acc += e.clientX - lastX; lastX = e.clientX;
+          var s = step();
+          while (Math.abs(acc) >= s) {{ show(cur + (acc > 0 ? -1 : 1)); acc += acc > 0 ? -s : s; }}
+        }});
+        function stop() {{ dragging = false; stage.classList.remove('is-dragging'); }}
+        stage.addEventListener('pointerup', stop);
+        stage.addEventListener('pointercancel', stop);
+        stage.addEventListener('dragstart', function (e) {{ e.preventDefault(); }});
+        stage.addEventListener('keydown', function (e) {{
+          if (e.key === 'ArrowLeft') {{ touched(); show(cur - 1); e.preventDefault(); }}
+          if (e.key === 'ArrowRight') {{ touched(); show(cur + 1); e.preventDefault(); }}
+        }});
+        document.getElementById('dspin-left').addEventListener('click', function () {{ touched(); show(cur - 1); }});
+        document.getElementById('dspin-right').addEventListener('click', function () {{ touched(); show(cur + 1); }});
+      }})();
+      </script>
+    </section>'''
+
+
 # ================================================ RESPONSIVE YOUTUBE VIDEO BLOCK (Dell reel)
 # Self-contained click-to-play facade. Serves the vertical YouTube Short to phones and the
 # landscape video to desktops (chosen per visitor via matchMedia), on youtube-nocookie so NO
@@ -9528,6 +9672,13 @@ def dell_hardware():
       responsive_video("WATCH &middot; REFURBISHED DELL IN ACTION", "See a refurbished Dell at work",
                        "/images/dell-reel-poster-wide.webp", "/images/dell-reel-poster-tall.webp",
                        "365 Techies refurbished Dell computers at home, at work and working remotely across Dorset"),
+      spin_viewer("latitude-5520", "// SEE ONE PROPERLY", "Turn one around",
+                  "Drag the laptop to turn it, swipe it on a phone, or use the arrow keys. These are 36 photographs of "
+                  "one real machine, taken right the way round &mdash; the lid, both sides and every port &mdash; so you "
+                  "can look at it the way you would in a shop.",
+                  "An example machine: a refurbished Dell Latitude 5520, photographed by us on 18 September 2026. Stock "
+                  "changes constantly, so the one we match you with may be a different model, specification or condition "
+                  "grade &mdash; we will tell you exactly which before you buy."),
       _qpick_strip(),
       f'''    <section class="section" aria-label="Why refurbished business Dell">
       <div class="wrap split-2">
@@ -9825,7 +9976,10 @@ def dell_hardware():
     def schema(s, _desc=desc, _faqs=faqs):
         _nodes = [crumb_sub(s, "Dell", "dell-it-support-dorset", "Refurbished Dell"), webpage(s, "Refurbished Dell Latitude Laptops & OptiPlex Desktops", _desc),
                       service(s, "Refurbished Dell Supply & Support", "Professionally refurbished, tested ex-business Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported by 365 Techies across Dorset, with our own warranty.", "Refurbished computer supply and support"),
-                      {"@type": "Product", "@id": SITE + "/" + s + "/#product", "name": "Refurbished Dell Latitude Laptops & OptiPlex Desktops", "description": "Professionally refurbished, tested ex-business Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported by 365 Techies with our own warranty.", "brand": {"@type": "Brand", "name": "Dell"}, "itemCondition": "https://schema.org/RefurbishedCondition", "category": "Refurbished computer hardware", "additionalProperty": [{"@type": "PropertyValue", "name": "Storage", "value": "New Samsung Pro SSD (5-year guarantee)"}, {"@type": "PropertyValue", "name": "Condition grading", "value": "Graded A, B or C by appearance; every grade fully tested"}, {"@type": "PropertyValue", "name": "Warranty", "value": "any remaining Dell warranty where applicable plus 365 Techies 5-year guarantee (with a support plan)"}], "offers": {"@type": "AggregateOffer", "priceCurrency": "GBP", "lowPrice": "510", "availability": "https://schema.org/InStock", "url": SITE + "/" + s + "/#match", "seller": {"@type": "Organization", "name": "365 Techies"}}, "image": SITE + "/og-image.jpg", "url": SITE + "/" + s + "/"},
+                      {"@type": "Product", "@id": SITE + "/" + s + "/#product", "name": "Refurbished Dell Latitude Laptops & OptiPlex Desktops", "description": "Professionally refurbished, tested ex-business Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported by 365 Techies with our own warranty.", "brand": {"@type": "Brand", "name": "Dell"}, "itemCondition": "https://schema.org/RefurbishedCondition", "category": "Refurbished computer hardware", "additionalProperty": [{"@type": "PropertyValue", "name": "Storage", "value": "New Samsung Pro SSD (5-year guarantee)"}, {"@type": "PropertyValue", "name": "Condition grading", "value": "Graded A, B or C by appearance; every grade fully tested"}, {"@type": "PropertyValue", "name": "Warranty", "value": "any remaining Dell warranty where applicable plus 365 Techies 5-year guarantee (with a support plan)"}], "offers": {"@type": "AggregateOffer", "priceCurrency": "GBP", "lowPrice": "510", "availability": "https://schema.org/InStock", "url": SITE + "/" + s + "/#match", "seller": {"@type": "Organization", "name": "365 Techies"}},
+                       # real photographs of an example machine (the 360 spin), not the company advert card
+                       "image": [SITE + SPIN_SETS["latitude-5520"]["dir"] + f for f in ("spin_00.webp", "spin_09.webp", "spin_18.webp")],
+                       "url": SITE + "/" + s + "/"},
                       faqpage(s, _faqs)]
         _v = dell_video_node(s, "Refurbished Dell computers, set up and supported across Dorset - 365 Techies",
                              "A short 365 Techies film showing refurbished, business-grade Dell computers in use at home, in the workplace and working remotely across Dorset.")
