@@ -23847,7 +23847,7 @@ def write_portal_page():
 </style>'''
     js = '''<script>
 (function () {
-  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php', CONN = '/api/pcm-connect.php', FEEDS = '/api/pcm-feeds.php', WCHK = '/api/pcm-wcheck.php', MSG = '/api/pcm-msg.php', QBO = '/api/pcm-qbo.php', JOBS = '/api/pcm-jobs.php', INVITE = '/api/pcm-invite.php';
+  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php', CONN = '/api/pcm-connect.php', FEEDS = '/api/pcm-feeds.php', WCHK = '/api/pcm-wcheck.php', MSG = '/api/pcm-msg.php', QBO = '/api/pcm-qbo.php', JOBS = '/api/pcm-jobs.php', INVITE = '/api/pcm-invite.php', PAY = '/api/pcm-paylink.php';
   var el = document.getElementById('p365app');
   var S = {};
   try { S = JSON.parse(sessionStorage.getItem('p365s') || 'null') || JSON.parse(localStorage.getItem('p365') || '{}'); } catch (e) { S = {}; }
@@ -28026,6 +28026,13 @@ def write_portal_page():
       out += '<div class="jdwrap" data-em="' + esc(c.email) + '" data-nm="' + esc(c.name || '') + '" style="margin-top:.4rem">'
         + '<button class="sm ghost jdb" style="margin:0;padding:.3rem .65rem;font-size:.82rem">\\u2705 Job done \\u2014 email what we did</button></div>';
     }
+    /* A pay link needs an email OR a mobile, not both: the customer most likely to
+       want one texted is often the one we only hold a number for. */
+    if (c.email || c.phone) {
+      out += '<div class="plwrap" data-em="' + esc(c.email || '') + '" data-nm="' + esc(c.name || '')
+        + '" data-ph="' + esc(c.phone || '') + '" style="margin-top:.4rem">'
+        + '<button class="sm ghost plb" style="margin:0;padding:.3rem .65rem;font-size:.82rem">\\ud83d\\udcb3 Send a pay link</button></div>';
+    }
     return out;
   }
   /* "Job done - email what we did": the moment a one-off fix, tune-up or repair is finished, the
@@ -28162,6 +28169,107 @@ def write_portal_page():
         setTimeout(function () { b.textContent = 'copy'; }, 1600);
       }, function () { b.textContent = 'copy failed'; });
     };
+  }
+  /* "Send a pay link": a GoCardless payment link for the exact amount agreed on
+     the phone, for this one customer. Three steps on purpose - the first click
+     only opens the form, the second asks GoCardless for a link, and sending it
+     to the customer needs a confirm of its own. Nothing here can send to an
+     address typed into this form: the server reads the destination back off the
+     row it stored, so what the card shows is what gets it.
+     \\u26a0 The link is SINGLE-USE and personal. Copy it into a text or an email
+     by all means - never into anything public. */
+  function bindPaylink(panel) {
+    var w = panel.querySelector('.plwrap'); if (!w) return;
+    var b = w.querySelector('.plb'); if (!b) return;
+    b.onclick = function () {
+      var em = w.getAttribute('data-em'), nm = w.getAttribute('data-nm'), ph = w.getAttribute('data-ph');
+      /* If the quote form above is already filled in, start from that - the two
+         are almost always used one after the other. */
+      var q = panel.querySelector('.qamt'), qd = panel.querySelector('.qdesc');
+      var amt0 = (q && q.value ? q.value : '').trim(), desc0 = (qd && qd.value ? qd.value : '').trim();
+      w.innerHTML = '<div style="margin:.2rem 0 .3rem"><input class="plamt" type="text" inputmode="decimal" value="' + esc(amt0) + '" placeholder="Amount to collect \\u00a3" style="width:100%;max-width:320px"></div>'
+        + '<div style="margin:0 0 .3rem"><input class="pldesc" type="text" maxlength="100" value="' + esc(desc0) + '" placeholder="What it\\u2019s for \\u2014 the customer sees this" style="width:100%;max-width:320px"></div>'
+        + '<button class="sm plgo" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\\ud83d\\udd17 Create the link</button> '
+        + '<span class="quiet plmsg"></span>';
+      var msg = w.querySelector('.plmsg');
+      w.querySelector('.plgo').onclick = function () {
+        var go = this;
+        var amt = (w.querySelector('.plamt').value || '').trim(), desc = (w.querySelector('.pldesc').value || '').trim();
+        if (!amt || !desc) { msg.textContent = 'Put in the amount and what it\\u2019s for first.'; return; }
+        go.disabled = true; msg.textContent = 'Asking GoCardless\\u2026';
+        post(PAY, { action: 'create', stoken: S.stoken, machine: mid(), name: nm, email: em, phone: ph, amount: amt, desc: desc })
+          .then(function (r) {
+            go.disabled = false;
+            if (!r || !r.ok) { msg.innerHTML = paylinkErr(r); return; }
+            showPayLink(w, r, em, ph);
+          })
+          .catch(function () { go.disabled = false; msg.textContent = 'Couldn\\u2019t reach the server.'; });
+      };
+    };
+  }
+  function showPayLink(w, r, em, ph) {
+    var exp = r.expires ? new Date(r.expires * 1000).toLocaleString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+    w.innerHTML = '<div class="quiet" style="margin:.2rem 0 .35rem">'
+        + (r.reused ? 'That job already had a live link \\u2014 this is the same one, so nobody gets asked twice.' : '\\u2713 Link ready.')
+        + (exp ? ' Expires ' + esc(exp) + '.' : '') + '</div>'
+      + '<div class="plurl" style="margin:0 0 .35rem;word-break:break-all;font-size:.76rem;opacity:.85">' + esc(r.url) + '</div>'
+      + '<button class="sm ghost plcopy" style="margin:0 .35rem .35rem 0;padding:.3rem .65rem;font-size:.82rem">copy link</button> '
+      + (ph ? '<button class="sm plsms" style="margin:0 .35rem .35rem 0;padding:.3rem .65rem;font-size:.82rem">\\ud83d\\udcac Text it to ' + esc(ph) + '</button> ' : '')
+      + (em ? '<button class="sm ghost plmail" style="margin:0 .35rem .35rem 0;padding:.3rem .65rem;font-size:.82rem">\\u2709\\ufe0f Email it</button> ' : '')
+      + '<button class="sm ghost plchk" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Check if paid</button>'
+      + '<div class="quiet plmsg2" style="margin-top:.3rem"></div>';
+    var m2 = w.querySelector('.plmsg2');
+    w.querySelector('.plcopy').onclick = function () {
+      var c = this;
+      navigator.clipboard.writeText(r.url).then(function () {
+        c.textContent = '\\u2713 copied'; setTimeout(function () { c.textContent = 'copy link'; }, 1600);
+      }, function () { c.textContent = 'copy failed'; });
+    };
+    function sendIt(via, to) {
+      if (!confirm('Send the ' + (via === 'sms' ? 'text' : 'email') + ' asking ' + to + ' to pay now?')) return;
+      m2.textContent = 'Sending\\u2026';
+      post(PAY, { action: 'send', stoken: S.stoken, machine: mid(), id: r.id, via: via })
+        .then(function (j) {
+          if (!j || !j.ok) { m2.innerHTML = paylinkErr(j); return; }
+          m2.innerHTML = '<span style="color:#7ee0a2">\\u2713 Sent to ' + esc(to) + '.'
+            + (j.slack === 'sent' ? ' Noted in #daily-jobs-in-jobs-out.' : '') + '</span>';
+        })
+        .catch(function () { m2.textContent = 'Couldn\\u2019t reach the server.'; });
+    }
+    if (w.querySelector('.plsms')) w.querySelector('.plsms').onclick = function () { sendIt('sms', ph); };
+    if (w.querySelector('.plmail')) w.querySelector('.plmail').onclick = function () { sendIt('email', em); };
+    w.querySelector('.plchk').onclick = function () {
+      m2.textContent = 'Checking\\u2026';
+      post(PAY, { action: 'status', stoken: S.stoken, machine: mid(), id: r.id })
+        .then(function (j) {
+          if (!j || !j.ok) { m2.innerHTML = paylinkErr(j); return; }
+          if (j.state === 'paid') { m2.innerHTML = '<span style="color:#7ee0a2">\\ud83d\\udcb7 Paid \\u2014 it will come through in the GoCardless payout.</span>'; return; }
+          if (j.state === 'expired') { m2.textContent = 'That link has expired \\u2014 make a fresh one.'; return; }
+          if (j.state === 'cancelled') { m2.textContent = 'That link was cancelled in GoCardless.'; return; }
+          m2.textContent = (j.checked === false) ? 'Couldn\\u2019t reach GoCardless just now \\u2014 the link is still live.' : 'Not paid yet.';
+        })
+        .catch(function () { m2.textContent = 'Couldn\\u2019t reach the server.'; });
+    };
+  }
+  function paylinkErr(r) {
+    var e = r && r.error;
+    if (e === 'not_staff') return 'Your staff sign-in expired \\u2014 sign in again.';
+    if (e === 'no_gocardless') return 'GoCardless isn\\u2019t connected on the server yet, so no link can be made.';
+    if (e === 'bad_amount') return 'That amount doesn\\u2019t look right \\u2014 it has to be between \\u00a31 and \\u00a32,000.';
+    if (e === 'no_desc') return 'Say what the payment is for \\u2014 the customer sees it.';
+    if (e === 'no_destination') return 'No email address or mobile on file, so there\\u2019s nowhere to send it.';
+    if (e === 'no_customer') return 'No customer name or email to make the link against.';
+    if (e === 'rate_limited') return 'That\\u2019s a lot of links in one hour \\u2014 stopped as a precaution. Try again shortly.';
+    if (e === 'unknown_link') return 'That link isn\\u2019t in our records any more.';
+    if (e === 'link_expired') return 'That link has expired \\u2014 make a fresh one.';
+    if (e === 'link_paid') return 'That one is already paid.';
+    if (e === 'link_cancelled') return 'That link was cancelled in GoCardless.';
+    if (e === 'no_mobile') return 'No mobile number on file for a text.';
+    if (e === 'no_email' || e === 'bad_email') return 'No usable email address on file.';
+    if (e === 'sms_failed') return 'The text didn\\u2019t go' + (r && r.why ? ' (' + esc(r.why) + ')' : '') + ' \\u2014 try emailing it instead.';
+    if (e === 'email_failed') return 'The mail server refused it \\u2014 try again in a minute.';
+    if (e === 'gc_failed') return 'GoCardless refused it' + (r && r.why ? ': ' + esc(r.why) : '') + '.';
+    return 'Couldn\\u2019t do that \\u2014 the server said ' + esc(e || 'nothing') + '.';
   }
   function bindQbo(panel) {
     var w = panel.querySelector('.qbowrap'); if (!w) return;
@@ -28316,7 +28424,7 @@ def write_portal_page():
           .then(function (r) {
             if (!r || !r.ok || !r.client) { panel.innerHTML = '<span class="quiet">Couldn\\u2019t load contact details.</span>'; return; }
             panel.innerHTML = clientCard(r.client); panel.setAttribute('data-loaded', '1');
-            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel); bindJobDone(panel);
+            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel); bindJobDone(panel); bindPaylink(panel);
           })
           .catch(function () { panel.innerHTML = '<span class="quiet">Couldn\\u2019t reach the server.</span>'; });
       };
@@ -28478,7 +28586,7 @@ def write_portal_page():
           .then(function (r) {
             if (!r || !r.ok || !r.client) { panel.innerHTML = '<span class="quiet">Couldn\\u2019t load contact details.</span>'; return; }
             panel.innerHTML = clientCard(r.client); panel.setAttribute('data-loaded', '1');
-            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel); bindJobDone(panel);
+            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel); bindJobDone(panel); bindPaylink(panel);
           })
           .catch(function () { panel.innerHTML = '<span class="quiet">Couldn\\u2019t reach the server.</span>'; });
       };

@@ -215,6 +215,14 @@ ErrorDocument 404 /404.html
 <FilesMatch "^pcm-gc-templates\.json(\..*)?$">
   Require all denied
 </FilesMatch>
+# Per-job pay links (20 Sep 2026). The store holds SINGLE-USE GoCardless payment
+# links, each made for one named customer and each worth the money on it, plus
+# their name, email, phone and the amount - the most sensitive api/ store we have.
+# pcm-paylink.php itself stays served (staff token gated); its library is
+# include-only and its test suite is CLI-only, so both are denied over HTTP.
+<FilesMatch "^(pcm-paylink\.(json(\..*)?|log)|pcm-paylink-(lib|test)\.php)$">
+  Require all denied
+</FilesMatch>
 <Files "slack-rate.json">
   Require all denied
 </Files>
