@@ -123,7 +123,7 @@ function pl_count_since($store, $since) {
 function pl_row_state($row, $now = null) {
     $now = $now === null ? time() : $now;
     $s = (string)(isset($row['status']) ? $row['status'] : '');
-    if ($s === 'paid' || $s === 'cancelled') return $s;
+    if ($s === 'paid' || $s === 'cancelled' || $s === 'failed') return $s;
     $exp = (int)(isset($row['expires']) ? $row['expires'] : 0);
     if ($exp > 0 && $exp <= $now) return 'expired';
     return 'open';
@@ -133,7 +133,8 @@ function pl_row_state($row, $now = null) {
 function pl_status_from_br($br) {
     $s = strtolower((string)(is_array($br) && isset($br['status']) ? $br['status'] : ''));
     if ($s === 'fulfilled') return 'paid';
-    if ($s === 'cancelled' || $s === 'failed') return 'cancelled';
+    if ($s === 'cancelled') return 'cancelled';
+    if ($s === 'failed')    return 'failed';
     return 'open';
 }
 
@@ -195,6 +196,115 @@ function pl_msg_email($name, $amount, $desc, $url, $note = '') {
         . '</div></body></html>';
 
     return array($subject, $text, $html);
+}
+
+/* ---- webhooks: what GoCardless tells us, and whether to believe it ------ */
+
+/* Signature check. GoCardless signs the RAW body with the webhook endpoint
+   secret; the digest is lower-case hex SHA-256. Constant-time compare, and a
+   missing secret or header fails closed - an unsigned webhook is a stranger
+   claiming one of our customers has paid. */
+function pl_sig_ok($raw, $header, $secret) {
+    $secret = (string)$secret; $given = strtolower(trim((string)$header));
+    if ($secret === '' || $given === '') return false;
+    $calc = hash_hmac('sha256', (string)$raw, $secret);
+    if (strlen($given) !== strlen($calc)) return false;      // hash_equals wants equal lengths
+    return hash_equals($calc, $given);
+}
+
+/* Which events change a row's state. Anything unrecognised returns '' and is
+   ignored on purpose: GoCardless adds event types without warning, and a
+   payment link we do not understand is one we leave alone. */
+function pl_event_state($type, $action) {
+    $type = strtolower((string)$type); $action = strtolower((string)$action);
+    if ($type === 'billing_requests') {
+        if ($action === 'fulfilled') return 'paid';
+        if ($action === 'cancelled') return 'cancelled';
+        if ($action === 'failed')    return 'failed';
+        return '';                                   // flow_visited, bank_authorisation_* etc: nothing to record
+    }
+    if ($type === 'payments') {
+        if ($action === 'confirmed' || $action === 'paid_out') return 'paid';
+        if ($action === 'failed' || $action === 'cancelled' || $action === 'charged_back') return 'failed';
+        return '';
+    }
+    return '';
+}
+
+/* Apply one event to the store. Pure: hand it the decoded store and an event,
+   get back the new store plus what changed, if anything. Matching is by OUR
+   stored ids only - an event about somebody else's billing request touches
+   nothing. A paid row is never quietly downgraded; only a failure can follow a
+   payment, because that is the one case where the money really did come back. */
+function pl_event_apply($data, $event, $now = null) {
+    $now = $now === null ? time() : $now;
+    $res = array('data' => $data, 'id' => '', 'change' => '', 'why' => '', 'matched' => false, 'row' => null);
+    $links  = (isset($event['links']) && is_array($event['links'])) ? $event['links'] : array();
+    $br     = (string)(isset($links['billing_request']) ? $links['billing_request'] : '');
+    $pay    = (string)(isset($links['payment']) ? $links['payment'] : '');
+    $state  = pl_event_state(isset($event['resource_type']) ? $event['resource_type'] : '',
+                             isset($event['action']) ? $event['action'] : '');
+    foreach ((array)$data['links'] as $i => $row) {
+        $rowPay = (string)(isset($row['payment']) ? $row['payment'] : '');
+        $hit = ($br !== '' && (string)$row['br'] === $br) || ($pay !== '' && $rowPay !== '' && $rowPay === $pay);
+        if (!$hit) continue;
+        $res['matched'] = true; $res['id'] = (string)$row['id'];
+        if ($pay !== '' && $rowPay === '') $data['links'][$i]['payment'] = $pay;    // learn the payment id for later events
+        $cur = pl_row_state($row, $now);
+        if ($state !== '' && $cur !== $state && !($cur === 'paid' && $state !== 'failed')) {
+            $data['links'][$i]['status'] = $state;
+            $data['links'][$i]['status_at'] = $now;
+            $res['change'] = $state;
+            $res['why'] = pl_clean(isset($event['details']['description']) ? $event['details']['description'] : '', 140);
+        }
+        $res['row'] = $data['links'][$i];
+        break;
+    }
+    $res['data'] = $data;
+    return $res;
+}
+
+/* Seen-event ids, so a redelivery cannot announce the same payment twice.
+   GoCardless delivers at least once and may deliver out of order. */
+function pl_seen_has($seen, $id) { return $id !== '' && is_array($seen) && isset($seen[$id]); }
+function pl_seen_add($seen, $id, $now = null, $cap = 1000) {
+    if (!is_array($seen)) $seen = array();
+    if ($id === '') return $seen;
+    $seen[$id] = $now === null ? time() : $now;
+    if (count($seen) > $cap) { asort($seen); $seen = array_slice($seen, -$cap, null, true); }
+    return $seen;
+}
+
+/* ---- what the team reads in Slack -------------------------------------- */
+function pl_job_tail($row) {
+    $j = (string)(isset($row['job']) ? $row['job'] : '');
+    return $j !== '' ? (' - job ' . $j) : '';
+}
+function pl_who($row) {
+    $n = trim((string)(isset($row['name']) ? $row['name'] : ''));
+    if ($n !== '') return $n;
+    $e = trim((string)(isset($row['email']) ? $row['email'] : ''));
+    return $e !== '' ? $e : 'a customer';
+}
+function pl_paid_text($row) {
+    return ':moneybag: *Paid* - ' . pl_who($row) . ' paid ' . pl_money($row['amount'])
+         . ' for ' . (string)$row['desc'] . pl_job_tail($row)
+         . '. It will come through in the next GoCardless payout.';
+}
+function pl_failed_text($row, $why = '') {
+    return ':warning: *Payment failed* - ' . pl_who($row) . '&rsquo;s ' . pl_money($row['amount'])
+         . ' for ' . (string)$row['desc'] . pl_job_tail($row) . ' did not go through'
+         . ($why !== '' ? ' (' . $why . ')' : '') . '. That link is spent - make a new one or take it another way.';
+}
+function pl_cancelled_text($row) {
+    return ':heavy_multiplication_x: *Pay link cancelled* - ' . pl_who($row) . ', ' . pl_money($row['amount'])
+         . ' for ' . (string)$row['desc'] . pl_job_tail($row) . '. Nothing was collected.';
+}
+function pl_change_text($row, $change, $why = '') {
+    if ($change === 'paid')      return pl_paid_text($row);
+    if ($change === 'failed')    return pl_failed_text($row, $why);
+    if ($change === 'cancelled') return pl_cancelled_text($row);
+    return '';
 }
 
 /* What the console shows in a row. Never includes the link itself - the console

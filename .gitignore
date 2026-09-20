@@ -31,6 +31,10 @@ api/pcm-paylink.json
 api/pcm-paylink.json.lock
 api/pcm-paylink.json.*.tmp
 api/pcm-paylink.log
+api/pcm-paylink-events.json
+api/pcm-paylink-events.json.*.tmp
+# GoCardless webhook endpoint secret (server-only, like every other key file)
+api/gocardless-webhook-secret.php
 # Portal messaging: bot token, per-install filename salt, conversations, cron state
 api/pcm-slack-bot.php
 api/pcm-msg-salt.php

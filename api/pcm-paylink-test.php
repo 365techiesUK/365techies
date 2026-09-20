@@ -67,7 +67,8 @@ ok(pl_row_state(array('status' => 'paid', 'expires' => $now - 999), $now) === 'p
 ok(pl_row_state(array('status' => 'cancelled', 'expires' => $now + 60), $now) === 'cancelled', 'cancelled is final');
 ok(pl_row_state(array('status' => 'open', 'expires' => 0), $now) === 'open', 'no expiry recorded = still open');
 ok(pl_status_from_br(array('status' => 'fulfilled')) === 'paid', 'fulfilled means paid');
-ok(pl_status_from_br(array('status' => 'cancelled')) === 'cancelled' && pl_status_from_br(array('status' => 'failed')) === 'cancelled', 'cancelled/failed');
+ok(pl_status_from_br(array('status' => 'cancelled')) === 'cancelled' && pl_status_from_br(array('status' => 'failed')) === 'failed', 'cancelled and failed are different things');
+ok(pl_row_state(array('status' => 'failed', 'expires' => $now + 60), $now) === 'failed', 'a failed payment is terminal too');
 ok(pl_status_from_br(array('status' => 'pending')) === 'open' && pl_status_from_br(null) === 'open' && pl_status_from_br(array('status' => 'something_new')) === 'open',
    'anything unrecognised stays open - hiding a working link is the worse error');
 
@@ -129,6 +130,109 @@ foreach (array('sitemap.xml', 'llms.txt', 'search-index.json', 'projects-feed.js
     if (is_file($p) && strpos((string)file_get_contents($p), 'billing/static/flow') !== false) $leaks[] = $n;
 }
 ok(!$leaks, 'no single-use payment link anywhere in the built site', implode(', ', $leaks));
+
+echo "-- phase 2: the webhook signature is the whole trust model\n";
+$body = '{"events":[{"id":"EV123","resource_type":"billing_requests","action":"fulfilled","links":{"billing_request":"BRQ1"}}]}';
+$secret = 'a-long-webhook-endpoint-secret';
+$good = hash_hmac('sha256', $body, $secret);
+ok(pl_sig_ok($body, $good, $secret), 'a correctly signed body is accepted');
+ok(pl_sig_ok($body, strtoupper($good), $secret), 'upper-case hex is accepted too');
+ok(!pl_sig_ok($body . ' ', $good, $secret), 'one extra byte in the body fails');
+ok(!pl_sig_ok($body, $good, 'the-wrong-secret'), 'the wrong secret fails');
+ok(!pl_sig_ok($body, '', $secret), 'a missing signature header fails');
+ok(!pl_sig_ok($body, $good, ''), 'no secret installed = nothing is believed');
+ok(!pl_sig_ok($body, 'deadbeef', $secret), 'a short digest fails (and does not warn)');
+
+echo "-- phase 2: which events mean what\n";
+ok(pl_event_state('billing_requests', 'fulfilled') === 'paid', 'billing request fulfilled = paid');
+ok(pl_event_state('payments', 'confirmed') === 'paid' && pl_event_state('payments', 'paid_out') === 'paid', 'payment confirmed/paid out = paid');
+ok(pl_event_state('payments', 'failed') === 'failed' && pl_event_state('payments', 'charged_back') === 'failed', 'failed and charged back = failed');
+ok(pl_event_state('billing_requests', 'cancelled') === 'cancelled', 'cancelled');
+ok(pl_event_state('billing_requests', 'flow_visited') === '' && pl_event_state('billing_requests', 'bank_authorisation_denied') === '',
+   'opening the page, or one refused bank, changes nothing - they can try again');
+ok(pl_event_state('mandates', 'active') === '' && pl_event_state('payouts', 'paid') === '' && pl_event_state('whatever', 'new_thing') === '',
+   'events about other things, and future event types, are ignored');
+
+echo "-- phase 2: applying an event to the store\n";
+$data = array('links' => array(
+    array('id' => 'a1', 'job' => 'J1', 'name' => 'Gordon Snook', 'email' => 'g@example.com', 'amount' => 60.0,
+          'desc' => 'laptop service', 'br' => 'BRQ1', 'url' => $LIVE_LINK, 'created' => $now - 600, 'expires' => $now + 3600, 'status' => 'open'),
+    array('id' => 'b2', 'job' => 'J2', 'name' => 'Someone Else', 'email' => 's@example.com', 'amount' => 30.0,
+          'desc' => 'callout', 'br' => 'BRQ2', 'url' => $LIVE_LINK, 'created' => $now - 600, 'expires' => $now + 3600, 'status' => 'open'),
+));
+$ev = function ($type, $action, $links, $desc = '') {
+    return array('id' => 'EV' . substr(md5($type . $action . json_encode($links) . $desc), 0, 8),
+                 'resource_type' => $type, 'action' => $action, 'links' => $links, 'details' => array('description' => $desc));
+};
+$r = pl_event_apply($data, $ev('billing_requests', 'fulfilled', array('billing_request' => 'BRQ1', 'payment' => 'PM9')), $now);
+ok($r['matched'] && $r['id'] === 'a1' && $r['change'] === 'paid', 'the right row is marked paid');
+ok($r['data']['links'][0]['payment'] === 'PM9', 'the payment id is learned for later events');
+ok($r['data']['links'][1]['status'] === 'open', 'the other customer is untouched');
+$paid = $r['data'];
+ok(strpos(pl_change_text($r['row'], $r['change']), 'Gordon Snook paid £60.00') !== false, 'Slack line names the customer and the amount', pl_change_text($r['row'], $r['change']));
+
+$r2 = pl_event_apply($paid, $ev('billing_requests', 'fulfilled', array('billing_request' => 'BRQ1')), $now);
+ok($r2['matched'] && $r2['change'] === '', 'the same event twice says nothing the second time');
+$r3 = pl_event_apply($paid, $ev('billing_requests', 'cancelled', array('billing_request' => 'BRQ1')), $now);
+ok($r3['change'] === '' && $r3['data']['links'][0]['status'] === 'paid', 'a late cancellation never un-pays a paid row');
+$r4 = pl_event_apply($paid, $ev('payments', 'charged_back', array('payment' => 'PM9'), 'Disputed by the payer'), $now);
+ok($r4['change'] === 'failed' && $r4['id'] === 'a1', 'a charge-back DOES follow a payment, matched by payment id');
+ok(strpos(pl_change_text($r4['row'], 'failed', $r4['why']), 'Disputed by the payer') !== false, 'the reason GoCardless gave is passed on', pl_change_text($r4['row'], 'failed', $r4['why']));
+$r5 = pl_event_apply($data, $ev('billing_requests', 'fulfilled', array('billing_request' => 'BRQ-SOMEONE-ELSE')), $now);
+ok(!$r5['matched'] && $r5['change'] === '' && $r5['data'] === $data, 'an event about a billing request that is not ours changes nothing');
+$r6 = pl_event_apply($data, $ev('billing_requests', 'flow_visited', array('billing_request' => 'BRQ1')), $now);
+ok($r6['matched'] && $r6['change'] === '' && $r6['data']['links'][0]['status'] === 'open', 'opening the page is noticed but not recorded');
+
+echo "-- phase 2: a redelivered webhook cannot announce a payment twice\n";
+$seen = array();
+$seen = pl_seen_add($seen, 'EV1', $now);
+ok(pl_seen_has($seen, 'EV1') && !pl_seen_has($seen, 'EV2'), 'seen ids are remembered');
+ok(!pl_seen_has($seen, ''), 'an event with no id is never treated as seen');
+$big = array();
+for ($i = 0; $i < 1205; $i++) $big = pl_seen_add($big, 'E' . $i, $now + $i, 1000);
+ok(count($big) <= 1000 && pl_seen_has($big, 'E1204') && !pl_seen_has($big, 'E0'), 'the list is capped, newest kept', (string)count($big));
+
+echo "-- phase 2: the receiver's own guarantees (source level)\n";
+$WH = (string)file_get_contents(__DIR__ . '/gocardless-webhook.php');
+ok(strpos($WH, '?' . '>') === false, 'no closing tag');
+$sigAt = strpos($WH, 'pl_sig_ok('); $jsonAt = strpos($WH, 'json_decode($raw');
+ok($sigAt !== false && $jsonAt !== false && $sigAt < $jsonAt, 'the signature is checked BEFORE the body is parsed');
+ok(strpos($WH, 'gcw_end(498') !== false, '498 on a bad signature, as GoCardless expects');
+ok(strpos($WH, 'gcw_end(503') !== false, 'a missing secret fails closed with a retryable 503');
+ok(strpos($WH, 'GCW_MAX_BODY') !== false, 'an oversized body is refused');
+ok(strpos($WH, 'pl_seen_has($seen, $id)') !== false, 'redeliveries are skipped by event id');
+ok(strpos($WH, 'fastcgi_finish_request') !== false, 'GoCardless is answered before Slack is called');
+ok(!preg_match('/\$_(GET|POST)\[/', $WH), 'nothing in the query string or form data can steer it');
+ok(strpos($WH, 'preg_match(\'/\\$GC_WEBHOOK_SECRET') !== false, 'the secret is read by pattern, not require()d');
+$SW = (string)file_get_contents(__DIR__ . '/pcm-paylink-sweep.php');
+ok(strpos($SW, '?' . '>') === false, 'the sweep has no closing tag either');
+/* plq_slack() posts to Slack, so a file-wide search for POST proves nothing.
+   The claim is about the GoCardless caller specifically. */
+$gcFn = substr($SW, strpos($SW, 'function plq_get('));
+$gcFn = substr($gcFn, 0, (int)strpos($gcFn, "\nfunction "));
+ok(!preg_match('/CURLOPT_POST|CUSTOMREQUEST|CURLOPT_PUT/', $gcFn) && strpos($gcFn, 'api.gocardless.com') !== false,
+   'the only GoCardless call in the sweep is a GET - it cannot charge, cancel or create anything');
+ok(strpos($SW, 'PLQ_MIN_AGE') !== false && strpos($SW, 'PLQ_RECHECK') !== false && strpos($SW, 'PLQ_MAX_CHECK') !== false,
+   'the poll gives the webhook a head start, re-checks slowly, and caps its calls');
+$CR = (string)file_get_contents(__DIR__ . '/tm-cron.php');
+ok(strpos($CR, 'paylink_sweep()') !== false && strpos($CR, 'paylink_sweep()') < strpos($CR, 'if (!tm_configured())'),
+   'the cron runs the poll ABOVE the SMS gate, so it survives an unconfigured SMS account');
+ok(strpos($gi, 'api/pcm-paylink-events.json') !== false && strpos($gi, 'api/gocardless-webhook-secret.php') !== false,
+   'the event list and the webhook secret are gitignored');
+ok(strpos($ht, 'gocardless-webhook-secret') !== false, 'the webhook secret is .htaccess-denied');
+/* Don't look for filenames in the .htaccess text - the deny rule is a regex, and
+   grouping it (pcm-paylink(-events)?) makes a literal search pass or fail for the
+   wrong reasons. Pull the pattern out and run it against real filenames instead:
+   that is what Apache will do. */
+$deny = '';
+if (preg_match('/<FilesMatch "(\^\(pcm-paylink[^"]*)">/', $ht, $mm)) $deny = $mm[1];
+ok($deny !== '', 'the pay-link deny rule is there to test', $deny);
+foreach (array('pcm-paylink.json', 'pcm-paylink.json.lock', 'pcm-paylink.json.123.tmp', 'pcm-paylink.log',
+               'pcm-paylink-events.json', 'pcm-paylink-events.json.9.tmp',
+               'pcm-paylink-lib.php', 'pcm-paylink-test.php', 'pcm-paylink-sweep.php') as $f)
+    ok($deny !== '' && preg_match('#' . $deny . '#', $f) === 1, 'denied: ' . $f);
+foreach (array('pcm-paylink.php', 'gocardless-webhook.php') as $f)
+    ok($deny !== '' && preg_match('#' . $deny . '#', $f) !== 1, 'still served (it has to be): ' . $f);
 
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);

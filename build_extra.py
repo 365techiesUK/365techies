@@ -28246,6 +28246,9 @@ def write_portal_page():
           if (j.state === 'paid') { m2.innerHTML = '<span style="color:#7ee0a2">\\ud83d\\udcb7 Paid \\u2014 it will come through in the GoCardless payout.</span>'; return; }
           if (j.state === 'expired') { m2.textContent = 'That link has expired \\u2014 make a fresh one.'; return; }
           if (j.state === 'cancelled') { m2.textContent = 'That link was cancelled in GoCardless.'; return; }
+          /* A payment that started and then failed (or was charged back) is not
+             the same as "not paid yet" - that link is spent. */
+          if (j.state === 'failed') { m2.textContent = 'That payment failed \\u2014 the link is spent. Make a fresh one, or take it another way.'; return; }
           m2.textContent = (j.checked === false) ? 'Couldn\\u2019t reach GoCardless just now \\u2014 the link is still live.' : 'Not paid yet.';
         })
         .catch(function () { m2.textContent = 'Couldn\\u2019t reach the server.'; });

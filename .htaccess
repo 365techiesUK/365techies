@@ -220,9 +220,14 @@ ErrorDocument 404 /404.html
 # their name, email, phone and the amount - the most sensitive api/ store we have.
 # pcm-paylink.php itself stays served (staff token gated); its library is
 # include-only and its test suite is CLI-only, so both are denied over HTTP.
-<FilesMatch "^(pcm-paylink\.(json(\..*)?|log)|pcm-paylink-(lib|test)\.php)$">
+<FilesMatch "^(pcm-paylink(-events)?\.(json(\..*)?|log)|pcm-paylink-lib\.php|pcm-paylink-test\.php|pcm-paylink-sweep\.php)$">
   Require all denied
 </FilesMatch>
+# The GoCardless webhook endpoint secret. gocardless-webhook.php itself MUST stay
+# served - it is the URL GoCardless posts to - and it trusts nothing without this.
+<Files "gocardless-webhook-secret.php">
+  Require all denied
+</Files>
 <Files "slack-rate.json">
   Require all denied
 </Files>

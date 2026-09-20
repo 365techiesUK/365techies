@@ -263,32 +263,18 @@ if ($action === 'send') {
     out(array('ok' => true, 'via' => $via, 'slack' => $slack));
 }
 
+/* "Check if paid". Since phase 2 the same question is answered three ways - this
+   button, the GoCardless webhook, and the cron poll - so all three go through
+   plq_check_row(), which writes the row and says it in Slack exactly once. */
 if ($action === 'status') {
     $id = preg_replace('/[^0-9a-zA-Z-]/', '', (string)(isset($in['id']) ? $in['id'] : ''));
-    $store = pl_store_read($STORE);
-    $row = pl_find($store, $id);
+    $row = pl_find(pl_store_read($STORE), $id);
     if (!$row) fail('unknown_link');
     if (gc_token() === '') out(array('ok' => true, 'state' => pl_row_state($row), 'checked' => false));
 
-    list($c, $j) = gc_call('GET', '/billing_requests/' . rawurlencode((string)$row['br']));
-    if ($c < 200 || $c >= 300) out(array('ok' => true, 'state' => pl_row_state($row), 'checked' => false, 'code' => $c));
-    $state = pl_status_from_br(isset($j['billing_requests']) ? $j['billing_requests'] : null);
-
-    if ($state !== 'open' && (string)(isset($row['status']) ? $row['status'] : '') !== $state) {
-        $stamp = time();
-        pl_store_locked($STORE, function ($data) use ($id, $state, $stamp) {
-            foreach ($data['links'] as &$r) if ($r['id'] === $id) { $r['status'] = $state; $r['status_at'] = $stamp; }
-            unset($r);
-            return array('ok' => true, 'data' => $data);
-        });
-        lg('status ' . $id . ' -> ' . $state);
-        if ($state === 'paid') {
-            slack_note(':moneybag: *Paid* - ' . ($row['name'] !== '' ? $row['name'] : $row['email']) . ' paid '
-                     . pl_money($row['amount']) . ' (' . $row['desc'] . ')'
-                     . ($row['job'] !== '' ? ' - job ' . $row['job'] : '') . ' by bank payment.');
-        }
-    }
-    out(array('ok' => true, 'state' => $state, 'checked' => true));
+    require_once __DIR__ . '/pcm-paylink-sweep.php';
+    $r = plq_check_row($row);
+    out(array('ok' => true, 'state' => $r['state'], 'checked' => !empty($r['reached'])));
 }
 
 if ($action === 'link') {

@@ -76,8 +76,16 @@ $wxp = bm_wx_refresh();
 require_once __DIR__ . '/comms-lib.php';
 $cm = comms_sweep();
 
+/* Pay links: the insurance behind the GoCardless webhook. Same placement, same
+   reason - learning that a customer has paid must not depend on the state of
+   the SMS account. Only looks at links still open, only after the webhook has
+   had its three minutes, and at most a handful of API calls a tick, so a
+   normal day finds nothing to do. No token on the server = a clean no-op. */
+require_once __DIR__ . '/pcm-paylink-sweep.php';
+$pl = paylink_sweep();
+
 if (!tm_configured()) {
-    $out = array('ok' => false, 'error' => 'not-configured', 'bkpend' => $bkp);
+    $out = array('ok' => false, 'error' => 'not-configured', 'bkpend' => $bkp, 'paylinks' => $pl);
     echo $CLI ? ("sms not configured (abandoned bookings reported: " . $bkp['told'] . ")\n")
               : json_encode($out);
     exit;
@@ -112,8 +120,10 @@ if (@file_put_contents($tmp, json_encode(array(
 if ($CLI) {
     echo "due {$res['due']}, sent {$res['sent']}, skipped {$res['skipped']}, failed {$res['failed']}"
        . ", abandoned bookings reported {$bkp['told']}"
-       . ", comms " . json_encode($cm) . "\n";
+       . ", comms " . json_encode($cm)
+       . ", pay links " . json_encode($pl) . "\n";
 } else {
     $res['comms'] = $cm;
+    $res['paylinks'] = $pl;
     echo json_encode($res);
 }
