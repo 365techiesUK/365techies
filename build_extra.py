@@ -23847,7 +23847,7 @@ def write_portal_page():
 </style>'''
     js = '''<script>
 (function () {
-  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php', CONN = '/api/pcm-connect.php', FEEDS = '/api/pcm-feeds.php', WCHK = '/api/pcm-wcheck.php', MSG = '/api/pcm-msg.php', QBO = '/api/pcm-qbo.php', JOBS = '/api/pcm-jobs.php', INVITE = '/api/pcm-invite.php', PAY = '/api/pcm-paylink.php';
+  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php', CONN = '/api/pcm-connect.php', FEEDS = '/api/pcm-feeds.php', WCHK = '/api/pcm-wcheck.php', MSG = '/api/pcm-msg.php', QBO = '/api/pcm-qbo.php', JOBS = '/api/pcm-jobs.php', INVITE = '/api/pcm-invite.php', PAY = '/api/pcm-paylink.php', GEO = '/api/pcm-geo.php';
   var el = document.getElementById('p365app');
   var S = {};
   try { S = JSON.parse(sessionStorage.getItem('p365s') || 'null') || JSON.parse(localStorage.getItem('p365') || '{}'); } catch (e) { S = {}; }
@@ -27769,6 +27769,14 @@ def write_portal_page():
         + '<div class="quiet">Choose which GoCardless plans staff can invite new customers to \\u2014 most of your templates are customer-specific and shouldn\\u2019t be offered.</div>'
         + '<p style="margin:.5rem 0 0"><button class="sm ghost" id="invmanage">Choose plans</button></p>'
         + '<div id="invmanagebox"></div></div>';
+      /* Where our customers are: counted by postcode district from our own records
+         (the address a customer gives in their portal or when booking). Counts only -
+         no names come back - and the coverage line is part of the answer, because the
+         address is never mandatory and a tally of half the base is only half a map. */
+      h += '<div class="card" id="geocard"><h2>\\ud83d\\udccd Where our customers are</h2>'
+        + '<div class="quiet">Customers counted by postcode district, from the address on their record. Not search traffic \\u2014 real customers.</div>'
+        + '<p style="margin:.5rem 0 0"><button class="sm ghost" id="geogo">Count by postcode</button></p>'
+        + '<div id="geobox"></div></div>';
       h += '<div class="card"><h2>Quick links</h2><div class="row">'
         + '<a class="btn sm ghost" href="https://365techies.secure.simplybook.it/v2/management/" target="_blank" rel="noopener">SimplyBook admin</a>'
         + '<button class="sm ghost" id="pcmadm">Full PCM console</button>'
@@ -27816,6 +27824,7 @@ def write_portal_page():
       loadVis();
       qboSetup();
       invitePlansSetup();
+      geoSetup();
       var visiv = setInterval(function () {
         if (!document.getElementById('vislive')) { clearInterval(visiv); return; }
         loadVis();
@@ -28145,6 +28154,31 @@ def write_portal_page():
           }).catch(function () { go.disabled = false; m.textContent = 'Couldn\\u2019t reach the server.'; });
         };
       }).catch(function () { box.innerHTML = '<span class="quiet">Couldn\\u2019t reach the server.</span>'; });
+    };
+  }
+  function geoSetup() {
+    var btn = document.getElementById('geogo'); if (!btn) return;
+    var box = document.getElementById('geobox');
+    btn.onclick = function () {
+      btn.disabled = true; box.innerHTML = '<span class="quiet">Counting\\u2026</span>';
+      post(GEO, { action: 'tally', stoken: S.stoken, machine: mid() }).then(function (r) {
+        btn.disabled = false;
+        if (!r || !r.ok) { box.innerHTML = '<span class="quiet">Couldn\\u2019t count' + (r && r.error === 'not_staff' ? ' \\u2014 your staff sign-in expired, sign in again' : (r && r.error ? ' (' + esc(r.error) + ')' : '')) + '.</span>'; return; }
+        var covered = r.with_postcode, all = r.customers, pct = all ? Math.round(covered * 100 / all) : 0;
+        var head = '<p style="margin:.4rem 0 .3rem"><strong>' + covered + ' of ' + all + ' customers</strong> (' + pct + '%) have a postcode on their record'
+          + (r.without_postcode ? ' \\u2014 ' + r.without_postcode + ' have no address yet' : '')
+          + (r.unreadable_postcode ? ', ' + r.unreadable_postcode + ' unreadable' : '') + '. '
+          + r.on_plan + ' on a plan in total.</p>';
+        if (!r.districts || !r.districts.length) { box.innerHTML = head + '<span class="quiet">No postcodes on file yet. They arrive as customers fill in their portal details or book a visit.</span>'; return; }
+        var rows = r.districts.map(function (d) {
+          return '<tr><td><strong>' + esc(d.district) + '</strong></td><td>' + esc(d.area) + '</td><td style="text-align:right">' + d.plan + '</td><td style="text-align:right">' + d.other + '</td><td style="text-align:right"><strong>' + d.total + '</strong></td></tr>';
+        }).join('');
+        var areas = (r.areas || []).map(function (a) { return esc(a.label) + ' <strong>' + a.total + '</strong>'; }).join(' \\u00b7 ');
+        box.innerHTML = head
+          + '<div class="tblwrap"><table><tr><th>District</th><th>Where that is</th><th style="text-align:right">On a plan</th><th style="text-align:right">Other</th><th style="text-align:right">Total</th></tr>' + rows + '</table></div>'
+          + (areas ? '<p class="quiet" style="margin:.4rem 0 0">By area: ' + areas + '</p>' : '')
+          + '<p class="quiet" style="margin:.3rem 0 0">\\u201cOther\\u201d = free-app users and one-off jobs. Counted ' + esc(r.as_of || '') + '.</p>';
+      }).catch(function () { btn.disabled = false; box.innerHTML = '<span class="quiet">Couldn\\u2019t reach the server.</span>'; });
     };
   }
   function inviteErr(j) {

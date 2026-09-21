@@ -223,6 +223,11 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(pcm-paylink(-events)?\.(json(\..*)?|log)|pcm-paylink-lib\.php|pcm-paylink-test\.php|pcm-paylink-sweep\.php)$">
   Require all denied
 </FilesMatch>
+# "Where our customers are" (21 Sep 2026): pcm-geo.php stays served (staff token
+# gated, counts only); its library is include-only and its test suite CLI-only.
+<FilesMatch "^(pcm-geo-lib\.php|pcm-geo-test\.php)$">
+  Require all denied
+</FilesMatch>
 # The GoCardless webhook endpoint secret. gocardless-webhook.php itself MUST stay
 # served - it is the URL GoCardless posts to - and it trusts nothing without this.
 <Files "gocardless-webhook-secret.php">
