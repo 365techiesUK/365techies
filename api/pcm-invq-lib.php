@@ -1,30 +1,33 @@
 <?php
 /*
- * "Invoices waiting for your OK" - library half (22 Sep 2026).
+ * "This month's jobs -> invoices" - library half (22 Sep 2026, v2 the same day).
  *
- * WHY
- * Invoices were being raised (by the staff console at "Quote agreed", or by hand
- * in QuickBooks) and then not sent, because sending depended on one person
- * remembering. The owner wants the raising automated and the SENDING checked:
- * every invoice with money on it that has not been emailed sits in one queue,
- * shown as the PDF the customer would actually get, with the likely mistakes
- * flagged in red, and leaves only on an explicit "Approve & send".
+ * WHY, AND WHY IT CHANGED
+ * v1 listed every unsent invoice QuickBooks held, which surfaced years of
+ * backlog and missed the point. The owner's words: "we have the jobs in Slack
+ * ... these new jobs which have come in in the last month ... it basically
+ * produces invoices for those customers." So the queue now starts from the
+ * JOBS - the "Quote agreed" records in pcm-jobs.json, last 30 days - and for
+ * each one either finds its QuickBooks invoice or has one created. Sending is
+ * still a human's "Approve & send" against the real PDF, with the likely
+ * mistakes flagged. Older unsent invoices are still reachable, folded away.
  *
- * This file is the pure part: which invoices belong in the queue, what to warn
- * about, how a row is shaped, what the morning Slack line says. No network, no
- * files, so pcm-invq-test.php can run it from the CLI. The QuickBooks calls live
- * in pcm-invq-sweep.php; the staff endpoint is pcm-invq.php.
+ * This file is the pure part: the window, matching a job to an invoice, the
+ * job's state, the warnings, the row shapes, the morning line. No network, no
+ * files - pcm-invq-test.php runs it from the CLI. QuickBooks lives in
+ * pcm-invq-sweep.php; the staff endpoint is pcm-invq.php.
  *
- * QuickBooks has NO draft flag (see qbo_lib_invoice_ready). "Waiting" here means
- * EmailStatus is not EmailSent and there is a balance: the honest definition of
- * "raised but never sent", and it catches hand-raised invoices too.
+ * QuickBooks has NO draft flag (see qbo_lib_invoice_ready). "Unsent" here means
+ * EmailStatus is not EmailSent and there is a balance.
  *
  * NO closing tag in this file.
  */
 
-define('INVQ_MAX_AMOUNT', 2000.00);   // above this, a second look before it goes
+define('INVQ_MAX_AMOUNT', 2000.00);   // above this, a second look before it goes (and never auto-created)
 define('INVQ_DUP_DAYS', 7);           // same customer, same amount, within this many days = likely duplicate
 define('INVQ_OLD_DAYS', 14);          // raised this long ago and still unsent = something is stuck
+define('INVQ_WINDOW_DAYS', 30);       // "this month": jobs and invoices younger than this are the queue
+define('INVQ_MATCH_DAYS', 7);         // a job and an invoice this close, same customer, same amount = the same job
 define('INVQ_GENERIC_DESC', 'work carried out');   // the console's placeholder line when nobody typed a job
 
 function invq_num($v) { return is_numeric($v) ? (float)$v : 0.0; }
@@ -40,18 +43,18 @@ function invq_days_since($ymd, $now = null) {
     if ($t === false) return 0;
     return max(0, (int)floor(($now - $t) / 86400));
 }
-function invq_money($v) { return '£' . number_format(invq_num($v), 2); }
-
-/* The invoice's own email, if QuickBooks holds one on the invoice itself. */
-function invq_bill_email($inv) {
-    $e = strtolower(trim((string)(isset($inv['BillEmail']['Address']) ? $inv['BillEmail']['Address'] : '')));
-    return filter_var($e, FILTER_VALIDATE_EMAIL) ? $e : '';
+function invq_days_since_ts($ts, $now = null) {
+    $now = $now === null ? time() : $now;
+    return max(0, (int)floor(($now - (int)$ts) / 86400));
 }
+function invq_money($v) { return '£' . number_format(invq_num($v), 2); }
+function invq_email_ok($e) { $e = strtolower(trim((string)$e)); return filter_var($e, FILTER_VALIDATE_EMAIL) ? $e : ''; }
+
+/* ---- invoice accessors ------------------------------------------------- */
+function invq_bill_email($inv) { return invq_email_ok(isset($inv['BillEmail']['Address']) ? $inv['BillEmail']['Address'] : ''); }
 function invq_customer_id($inv) { return (string)(isset($inv['CustomerRef']['value']) ? $inv['CustomerRef']['value'] : ''); }
 function invq_customer_name($inv) { return invq_str(isset($inv['CustomerRef']['name']) ? $inv['CustomerRef']['name'] : '', 80); }
 function invq_email_status($inv) { return (string)(isset($inv['EmailStatus']) ? $inv['EmailStatus'] : 'NotSet'); }
-
-/* Line descriptions, for the row and for the "generic description" warning. */
 function invq_lines($inv) {
     $out = array();
     foreach ((array)(isset($inv['Line']) ? $inv['Line'] : array()) as $l) {
@@ -63,11 +66,10 @@ function invq_lines($inv) {
     }
     return $out;
 }
-
-/* Does this invoice belong in the queue? Money owed, never emailed, not voided. */
+/* Money owed, never emailed, not voided. */
 function invq_waiting($inv) {
     if (!is_array($inv) || empty($inv['Id'])) return false;
-    if (invq_num(isset($inv['Balance']) ? $inv['Balance'] : 0) <= 0) return false;      // paid, part-paid to zero, or voided
+    if (invq_num(isset($inv['Balance']) ? $inv['Balance'] : 0) <= 0) return false;
     if (invq_num(isset($inv['TotalAmt']) ? $inv['TotalAmt'] : 0) <= 0) return false;
     return invq_email_status($inv) !== 'EmailSent';
 }
@@ -76,10 +78,65 @@ function invq_pick($invoices) {
     foreach ((array)$invoices as $inv) if (invq_waiting($inv)) $out[] = $inv;
     return $out;
 }
+/* paid | sent | unsent, for an invoice we have in hand. */
+function invq_invoice_state($inv) {
+    if (invq_num(isset($inv['Balance']) ? $inv['Balance'] : 0) <= 0) return 'paid';
+    return invq_email_status($inv) === 'EmailSent' ? 'sent' : 'unsent';
+}
 
-/* The warnings. $email is the address the invoice would go to (invoice's own, else
-   the customer's); $all is every invoice we fetched, for the duplicate check.
-   Each warning is {code, text}; the text is what the reviewer reads. */
+/* ---- jobs -------------------------------------------------------------- */
+/* The jobs from the last INVQ_WINDOW_DAYS - "Quote agreed" from the console and the
+   "New Job In" posts from Slack - newest first, one per id. A job with no price
+   yet is INCLUDED: it needs a person to type one, and hiding it is how jobs get
+   forgotten. */
+function invq_jobs_recent($jobs, $now = null, $days = INVQ_WINDOW_DAYS) {
+    $now = $now === null ? time() : $now;
+    $seen = array(); $out = array();
+    foreach (array_reverse((array)$jobs) as $j) {
+        if (!is_array($j) || empty($j['id']) || isset($seen[$j['id']])) continue;
+        if ((int)(isset($j['ts']) ? $j['ts'] : 0) < $now - $days * 86400) continue;
+        $st = (string)(isset($j['status']) ? $j['status'] : '');
+        if ($st !== '' && $st !== 'quoted' && $st !== 'done') continue;
+        $seen[$j['id']] = true; $out[] = $j;
+    }
+    return $out;
+}
+
+/* Find the invoice that IS this job. First by the id the console recorded when it
+   created the draft; then by the invoice NUMBER someone typed in Slack's
+   "Invoiced?" box; else the same customer, the same amount, within a week of the
+   job. $byId = invoices keyed by Id; $custId = the job customer's QuickBooks id
+   ('' when unknown). Returns the invoice or null. */
+function invq_match_job($job, $byId, $custId = '') {
+    $no = (string)(isset($job['invoice_no']) ? $job['invoice_no'] : '');
+    if ($no !== '' && isset($byId[$no])) return $byId[$no];
+    $doc = trim((string)(isset($job['invoice_doc']) ? $job['invoice_doc'] : ''));
+    if ($doc !== '') foreach ($byId as $inv) if (trim((string)(isset($inv['DocNumber']) ? $inv['DocNumber'] : '')) === $doc) return $inv;
+    if ($custId === '') return null;
+    $amt = round(invq_num($job['amount']), 2);
+    $jt = (int)(isset($job['ts']) ? $job['ts'] : 0);
+    $best = null;
+    foreach ($byId as $inv) {
+        if (invq_customer_id($inv) !== $custId) continue;
+        if (abs(round(invq_num(isset($inv['TotalAmt']) ? $inv['TotalAmt'] : 0), 2) - $amt) > 0.005) continue;
+        $it = strtotime((string)(isset($inv['TxnDate']) ? $inv['TxnDate'] : '') . ' 12:00:00 UTC');
+        if ($it === false || abs($it - $jt) > INVQ_MATCH_DAYS * 86400) continue;
+        if ($best === null || abs($it - $jt) < abs(strtotime($best['TxnDate'] . ' 12:00:00 UTC') - $jt)) $best = $inv;
+    }
+    return $best;
+}
+
+/* Why a job can or cannot have an invoice created for it automatically. */
+function invq_can_create($job) {
+    if (invq_email_ok(isset($job['email']) ? $job['email'] : '') === '') return array(false, 'no_email');
+    $amt = invq_num(isset($job['amount']) ? $job['amount'] : 0);
+    if ($amt <= 0) return array(false, 'no_amount');
+    if ($amt > INVQ_MAX_AMOUNT) return array(false, 'large');
+    if (trim((string)(isset($job['desc']) ? $job['desc'] : '')) === '') return array(false, 'no_desc');
+    return array(true, '');
+}
+
+/* ---- warnings ---------------------------------------------------------- */
 function invq_flags($inv, $email, $all = array(), $now = null) {
     $now = $now === null ? time() : $now;
     $f = array();
@@ -109,8 +166,7 @@ function invq_flags($inv, $email, $all = array(), $now = null) {
     return $f;
 }
 
-/* What the console shows. Staff-only, so the customer's name and email are fine
-   here; still no notes, no addresses, nothing beyond what the decision needs. */
+/* ---- rows -------------------------------------------------------------- */
 function invq_row($inv, $email, $flags, $held, $qboHost, $now = null) {
     $id = (string)$inv['Id'];
     $date = (string)(isset($inv['TxnDate']) ? $inv['TxnDate'] : '');
@@ -125,6 +181,7 @@ function invq_row($inv, $email, $flags, $held, $qboHost, $now = null) {
         'due'      => (string)(isset($inv['DueDate']) ? $inv['DueDate'] : ''),
         'days'     => invq_days_since($date, $now),
         'status'   => invq_email_status($inv),
+        'state'    => invq_invoice_state($inv),
         'console_made' => (trim((string)(isset($inv['DocNumber']) ? $inv['DocNumber'] : '')) === ''),
         'lines'    => invq_lines($inv),
         'flags'    => array_values($flags),
@@ -132,23 +189,50 @@ function invq_row($inv, $email, $flags, $held, $qboHost, $now = null) {
         'url'      => rtrim((string)$qboHost, '/') . '/app/invoice?txnId=' . rawurlencode($id),
     );
 }
+/* A job row: what the job was, and where its invoice stands. $invRow is the
+   invoice row when one exists, else null. */
+function invq_job_row($job, $invRow, $now = null) {
+    list($can, $why) = invq_can_create($job);
+    $state = $invRow ? $invRow['state'] : 'none';
+    /* "Invoiced? (Y/N) Y" in Slack with no invoice we can find: somebody has dealt
+       with it outside this queue. Say so and leave it alone. */
+    if ($state === 'none' && !empty($job['invoiced_in_slack'])) { $state = 'invoiced'; $can = false; $why = 'invoiced_in_slack'; }
+    return array(
+        'job'      => (string)$job['id'],
+        'source'   => ((string)(isset($job['via']) ? $job['via'] : '') === 'slack') ? 'slack' : 'console',
+        'customer' => invq_str(isset($job['name']) ? $job['name'] : '', 80),
+        'email'    => invq_email_ok(isset($job['email']) ? $job['email'] : ''),
+        'desc'     => invq_str(isset($job['desc']) ? $job['desc'] : '', 160),
+        'detail'   => invq_str(isset($job['note']) ? $job['note'] : '', 120),   // the Slack post's type / time / assignee line - not a private note
+        'amount'   => round(invq_num(isset($job['amount']) ? $job['amount'] : 0), 2),
+        'ts'       => (int)(isset($job['ts']) ? $job['ts'] : 0),
+        'days'     => invq_days_since_ts(isset($job['ts']) ? $job['ts'] : 0, $now),
+        'by'       => invq_str(isset($job['by']) ? $job['by'] : '', 40),
+        'done'     => ((string)(isset($job['status']) ? $job['status'] : '') === 'done'),
+        'state'    => $state,                      // none | unsent | sent | paid | invoiced
+        'can_create' => ($state === 'none' && $can),
+        'why_not'  => ($state === 'none' ? $why : ''),
+        'invoice'  => $invRow,
+    );
+}
 
-/* The 9 o'clock line. Says who and how much, oldest first, and how many carry
-   a warning - enough to decide whether to open the console now or after coffee. */
-function invq_slack_line($rows, $consoleUrl = 'https://365techies.co.uk/portal/') {
-    $rows = array_values(array_filter((array)$rows, function ($r) { return is_array($r) && empty($r['held']); }));
-    if (!$rows) return '';
-    usort($rows, function ($a, $b) { return (int)$b['days'] - (int)$a['days']; });
-    $n = count($rows); $warn = 0;
-    $bits = array();
-    foreach ($rows as $r) {
-        if (!empty($r['flags'])) $warn++;
-        $who = (string)$r['customer'] !== '' ? (string)$r['customer'] : 'a customer';
-        $bits[] = $who . ' ' . invq_money($r['total']) . ' (' . (int)$r['days'] . ' day' . ((int)$r['days'] === 1 ? '' : 's') . ')';
+/* The 9 o'clock line: what is waiting for a human, oldest first. */
+function invq_slack_line($jobRows, $invRows, $consoleUrl = 'https://365techies.co.uk/portal/') {
+    $wait = array_values(array_filter((array)$invRows, function ($r) { return is_array($r) && empty($r['held']) && $r['state'] === 'unsent'; }));
+    usort($wait, function ($a, $b) { return (int)$b['days'] - (int)$a['days']; });
+    $need = array_values(array_filter((array)$jobRows, function ($j) { return is_array($j) && $j['state'] === 'none'; }));
+    if (!$wait && !$need) return '';
+    $parts = array();
+    if ($wait) {
+        $warn = 0; $bits = array();
+        foreach ($wait as $r) { if (!empty($r['flags'])) $warn++; $bits[] = ((string)$r['customer'] !== '' ? $r['customer'] : 'a customer') . ' ' . invq_money($r['total']) . ' (' . (int)$r['days'] . ' day' . ((int)$r['days'] === 1 ? '' : 's') . ')'; }
+        $n = count($wait);
+        $parts[] = '*' . $n . ' invoice' . ($n === 1 ? '' : 's') . ' waiting for your OK* - ' . implode(' · ', array_slice($bits, 0, 6)) . ($n > 6 ? ' and ' . ($n - 6) . ' more' : '') . ($warn ? ' :warning: ' . $warn . ' with a warning' : '');
     }
-    $shown = array_slice($bits, 0, 6);
-    $more = $n > 6 ? ' and ' . ($n - 6) . ' more' : '';
-    return ':receipt: *' . $n . ' invoice' . ($n === 1 ? '' : 's') . ' waiting for your OK* - ' . implode(' · ', $shown) . $more
-         . ($warn ? ' :warning: ' . $warn . ' with a warning' : '')
-         . '. Check and send from the staff console: ' . $consoleUrl;
+    if ($need) {
+        $noEmail = count(array_filter($need, function ($j) { return $j['why_not'] === 'no_email'; }));
+        $n = count($need);
+        $parts[] = '*' . $n . ' job' . ($n === 1 ? '' : 's') . ' with no invoice yet*' . ($noEmail ? ' (' . $noEmail . ' need an email address first)' : '');
+    }
+    return ':receipt: ' . implode(' · ', $parts) . '. Staff console: ' . $consoleUrl;
 }

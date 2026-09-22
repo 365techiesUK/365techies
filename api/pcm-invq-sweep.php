@@ -1,24 +1,32 @@
 <?php
 /*
- * "Invoices waiting for your OK" - the half that talks to QuickBooks and Slack (22 Sep 2026).
+ * "This month's jobs -> invoices" - the half that talks to QuickBooks and Slack
+ * (22 Sep 2026, v2 the same day).
  *
- * Shared by pcm-invq.php (the staff endpoint) and tm-cron.php (the 9 o'clock line).
- * Library only: no top-level side effects, safe to include from any scope.
+ * Shared by pcm-invq.php (the staff endpoint) and tm-cron.php (the morning
+ * sweep). Library only: no top-level side effects, safe to include anywhere.
  *
- * WHAT IT TOUCHES
- *   Reads QuickBooks (invoices with a balance, the customers behind them, one
- *   invoice's PDF). The ONE write to QuickBooks is invq_send(): QuickBooks
- *   emails an invoice, from its own template, to an address QuickBooks already
- *   holds. It never creates, edits or voids an invoice, and never touches the
- *   monthly biller's state file.
+ * WHAT IT WRITES, AND WHERE
+ *   1. Invoices for jobs. invq_create_for_job() makes the QuickBooks invoice a
+ *      "Quote agreed" job is owed - the same customer find-or-create, the same
+ *      line, item, tax code and address block, and the same email->id map under
+ *      the same lock as pcm-qbo.php, so it can never mint a duplicate customer.
+ *      Only while $QBO_LIVE_ENABLED is on and $QBO_ONLY_KEY is empty (the two
+ *      gates the other writers honour), only for a job with an email, a price
+ *      and a description, and never twice: the job is marked with the invoice
+ *      id under pcm-jobs.json's own lock, and QuickBooks is checked for a
+ *      same-customer same-amount invoice within a week before anything is
+ *      created.
+ *   2. Sending. invq_send() has QuickBooks email an invoice, from its own
+ *      template, to the address QuickBooks holds. It never edits or voids.
  *
- *   ⚠️ Token refresh takes the monthly biller's own lock (pcm-invoice.lock,
- *   non-blocking): Intuit rotates the refresh token and kills the old one, so a
- *   refresh racing pcm-invoice.php or pcm-qbo.php would silently stop invoicing.
- *   Held only across the token call - exactly as pcm-myinvoices.php does it.
+ *   ⚠️ Token refresh AND the customer map are under the monthly biller's own
+ *   lock (pcm-invoice.lock, non-blocking): Intuit rotates the refresh token and
+ *   kills the old one, and the map is what stops two writers making two
+ *   customers. Same discipline as pcm-qbo.php / pcm-myinvoices.php.
  *
- * Store: pcm-invq.json (gitignored + denied) - held ids, a log of sends, a
- * 5-minute cache of the queue, and the date the morning line last went out.
+ * Store: pcm-invq.json (gitignored + denied) - held ids, a log of sends and
+ * creates, a 5-minute cache, and the date the morning line last went out.
  *
  * NO closing tag in this file.
  */
@@ -29,22 +37,25 @@ require_once __DIR__ . '/pcm-invq-lib.php';
 define('INVQ_CFG',    __DIR__ . '/pcm-quickbooks.php');
 define('INVQ_TOKENF', __DIR__ . '/pcm-qbo-token.json');
 define('INVQ_LOCKF',  __DIR__ . '/pcm-invoice.lock');
+define('INVQ_STATEF', __DIR__ . '/pcm-invoice-state.json');   // the email->QuickBooks-id map the writers share
+define('INVQ_JOBS',   __DIR__ . '/pcm-jobs.json');
 define('INVQ_STORE',  __DIR__ . '/pcm-invq.json');
 define('INVQ_LOG',    __DIR__ . '/pcm-invq.log');
 define('INVQ_WEBF',   __DIR__ . '/slack-webhook-jobs.php');
 define('INVQ_MINOR',  '70');
-define('INVQ_CACHE_TTL', 300);      // the queue changes when someone acts, not by the second
+define('INVQ_CACHE_TTL', 300);
 define('INVQ_MAX_ROWS', 200);
-define('INVQ_MAX_SENDS_HOUR', 20);  // a loop-bug tripwire, not a quota
-define('INVQ_MORNING_HOUR', 9);     // local time, Europe/London
+define('INVQ_MAX_SENDS_HOUR', 20);      // tripwires, not quotas
+define('INVQ_MAX_CREATES_RUN', 10);
+define('INVQ_MORNING_HOUR', 9);         // Europe/London
 
 function invq_log($m) { @file_put_contents(INVQ_LOG, '[' . gmdate('Y-m-d H:i:s') . 'Z] invq: ' . $m . "\n", FILE_APPEND | LOCK_EX); }
 
-/* ---- store ---------------------------------------------------------------- */
+/* ---- our store ------------------------------------------------------------ */
 function invq_store_read() {
     $j = @json_decode((string)@file_get_contents(INVQ_STORE), true);
     if (!is_array($j)) $j = array();
-    foreach (array('held' => array(), 'sent' => array(), 'cache' => null, 'last_morning' => '') as $k => $d) if (!isset($j[$k])) $j[$k] = $d;
+    foreach (array('held' => array(), 'sent' => array(), 'created' => array(), 'cache' => null, 'last_morning' => '') as $k => $d) if (!isset($j[$k])) $j[$k] = $d;
     return $j;
 }
 function invq_store_locked($fn) {
@@ -54,7 +65,7 @@ function invq_store_locked($fn) {
     $r = $fn(invq_store_read());
     if (!empty($r['ok']) && isset($r['data'])) {
         $d = $r['data'];
-        if (count($d['sent']) > 500) $d['sent'] = array_slice($d['sent'], -500);
+        foreach (array('sent', 'created') as $k) if (count($d[$k]) > 500) $d[$k] = array_slice($d[$k], -500);
         $tmp = INVQ_STORE . '.' . getmypid() . '.tmp';
         if (@file_put_contents($tmp, json_encode($d, JSON_UNESCAPED_SLASHES), LOCK_EX) === false || !@rename($tmp, INVQ_STORE)) { @unlink($tmp); $r = array('ok' => false, 'error' => 'store_write'); }
     }
@@ -62,48 +73,164 @@ function invq_store_locked($fn) {
     return $r;
 }
 
+/* ---- the jobs store (pcm-jobs.php owns it; same lock, same shape) ---------- */
+function invq_jobs_read() {
+    $j = @json_decode((string)@file_get_contents(INVQ_JOBS), true);
+    return (is_array($j) && isset($j['jobs']) && is_array($j['jobs'])) ? $j['jobs'] : array();
+}
+function invq_jobs_locked($fn) {
+    $h = @fopen(INVQ_JOBS . '.lock', 'c');
+    if (!$h || !flock($h, LOCK_EX)) { if ($h) fclose($h); return array('ok' => false, 'error' => 'busy'); }
+    $data = @json_decode((string)@file_get_contents(INVQ_JOBS), true);
+    if (!is_array($data)) $data = array('jobs' => array());
+    if (!isset($data['jobs']) || !is_array($data['jobs'])) $data['jobs'] = array();
+    $r = $fn($data);
+    if (isset($r['data'])) {
+        $tmp = INVQ_JOBS . '.' . getmypid() . '.tmp';
+        $j = json_encode($r['data'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        if ($j !== false && @file_put_contents($tmp, $j, LOCK_EX) !== false) @rename($tmp, INVQ_JOBS); else @unlink($tmp);
+    }
+    flock($h, LOCK_UN); fclose($h);
+    return $r;
+}
+/* Write the invoice id onto a job, once. Returns false if the job already had one. */
+function invq_job_link($jobId, $invId, $url, $how) {
+    $r = invq_jobs_locked(function ($d) use ($jobId, $invId, $url, $how) {
+        foreach ($d['jobs'] as $i => $j) {
+            if (!is_array($j) || (string)(isset($j['id']) ? $j['id'] : '') !== (string)$jobId) continue;
+            if (!empty($j['invoice_no'])) return array('ok' => false, 'error' => 'already_linked');
+            $d['jobs'][$i]['invoice_no'] = (string)$invId;
+            $d['jobs'][$i]['invoice_url'] = (string)$url;
+            $d['jobs'][$i]['invq'] = array('how' => $how, 'at' => time());
+            return array('ok' => true, 'data' => $d);
+        }
+        return array('ok' => false, 'error' => 'no_such_job');
+    });
+    return !empty($r['ok']);
+}
+
+/* A person types the price or description a Slack post lacked. Marked as theirs,
+   so the Slack poller never overwrites it (see sj_merge). Amounts within the
+   same limits the invoice itself will be held to. */
+function invq_job_set($jobId, $amount, $desc, $who) {
+    $amount = ($amount === null) ? null : round(invq_num($amount), 2);
+    if ($amount !== null && ($amount < 1 || $amount > INVQ_MAX_AMOUNT)) return array('ok' => false, 'error' => 'bad_amount');
+    $desc = ($desc === null) ? null : invq_str($desc, 200);
+    if ($desc !== null && $desc === '') return array('ok' => false, 'error' => 'no_desc');
+    if ($amount === null && $desc === null) return array('ok' => false, 'error' => 'nothing_to_set');
+    $r = invq_jobs_locked(function ($d) use ($jobId, $amount, $desc, $who) {
+        foreach ($d['jobs'] as $i => $j) {
+            if (!is_array($j) || (string)(isset($j['id']) ? $j['id'] : '') !== (string)$jobId) continue;
+            if (!empty($j['invoice_no'])) return array('ok' => false, 'error' => 'already_invoiced');
+            if ($amount !== null) { $d['jobs'][$i]['amount'] = $amount; $d['jobs'][$i]['amount_by'] = 'staff'; }
+            if ($desc !== null)   { $d['jobs'][$i]['desc'] = $desc; $d['jobs'][$i]['desc_by'] = 'staff'; }
+            $d['jobs'][$i]['set_by'] = $who; $d['jobs'][$i]['set_at'] = time();
+            return array('ok' => true, 'data' => $d);
+        }
+        return array('ok' => false, 'error' => 'no_such_job');
+    });
+    if (!empty($r['ok'])) invq_store_locked(function ($d) { $d['cache'] = null; return array('ok' => true, 'data' => $d); });
+    return $r;
+}
+
 /* ---- QuickBooks connection ------------------------------------------------ */
-/* Returns array(ok, why|access, base, realm, host). "not_configured" and "busy"
-   are normal states the callers report honestly, not errors. */
 function invq_connect() {
     if (!is_readable(INVQ_CFG)) return array('ok' => false, 'why' => 'not_configured');
     require INVQ_CFG;
     if (empty($QBO_CLIENT_ID) || empty($QBO_CLIENT_SECRET) || empty($QBO_REALM_ID)) return array('ok' => false, 'why' => 'not_configured');
     $env = isset($QBO_ENV) ? $QBO_ENV : '';
-    $base = qbo_lib_base($env);
-    $host = (stripos($env, 'sandbox') !== false) ? 'https://sandbox.qbo.intuit.com' : 'https://app.qbo.intuit.com';
     $lock = @fopen(INVQ_LOCKF, 'c');
     if (!$lock || !@flock($lock, LOCK_EX | LOCK_NB)) return array('ok' => false, 'why' => 'busy');
     $tok = qbo_lib_token(INVQ_TOKENF, $QBO_CLIENT_ID, $QBO_CLIENT_SECRET);
     @flock($lock, LOCK_UN); @fclose($lock);
     if (!empty($tok['err']) || empty($tok['access_token'])) return array('ok' => false, 'why' => 'not_configured');
-    return array('ok' => true, 'access' => $tok['access_token'], 'base' => $base, 'realm' => (string)$QBO_REALM_ID, 'host' => $host);
+    return array('ok' => true, 'access' => $tok['access_token'], 'base' => qbo_lib_base($env), 'realm' => (string)$QBO_REALM_ID,
+                 'host' => (stripos($env, 'sandbox') !== false) ? 'https://sandbox.qbo.intuit.com' : 'https://app.qbo.intuit.com',
+                 'live' => !empty($QBO_LIVE_ENABLED), 'only' => trim((string)(isset($QBO_ONLY_KEY) ? $QBO_ONLY_KEY : '')),
+                 'item' => (string)(isset($QBO_ITEM_ID) ? $QBO_ITEM_ID : ''), 'tax' => (string)(isset($QBO_TAX_CODE_ID) ? $QBO_TAX_CODE_ID : ''));
 }
 function invq_api($c, $method, $path, $body = null, $accept = 'application/json') {
     return qbo_lib_api($method, $path, $body, $c['access'], $c['base'], $c['realm'], INVQ_MINOR, $accept);
 }
+function invq_why($res) {
+    $j = isset($res['json']) ? $res['json'] : null;
+    if (isset($j['Fault']['Error'][0]['Message'])) return invq_str($j['Fault']['Error'][0]['Message'], 120);
+    return 'http ' . (int)(isset($res['code']) ? $res['code'] : 0);
+}
 
-/* Every invoice with a balance, plus the email each would go to. */
-function invq_fetch($c) {
+/* ---- the customer map (email -> QuickBooks id), shared with the writers -- */
+/* Read under the biller's lock, keyed exactly as pcm-qbo.php / pcm-invoice.php key it. */
+function invq_map_get($c, $email) {
+    $lock = @fopen(INVQ_LOCKF, 'c');
+    if (!$lock || !@flock($lock, LOCK_EX | LOCK_NB)) return null;              // busy: caller treats as unknown
+    $state = @json_decode((string)@file_get_contents(INVQ_STATEF), true);
+    @flock($lock, LOCK_UN); @fclose($lock);
+    $k = qbo_lib_custkey($email, $c['realm']);
+    return (is_array($state) && !empty($state['cust'][$k])) ? (string)$state['cust'][$k] : '';
+}
+function invq_map_put($c, $email, $cid) {
+    $lock = @fopen(INVQ_LOCKF, 'c');
+    if (!$lock || !@flock($lock, LOCK_EX | LOCK_NB)) return false;
+    $state = @json_decode((string)@file_get_contents(INVQ_STATEF), true);
+    if (!is_array($state)) $state = array('cust' => array(), 'invoiced' => array());
+    if (!isset($state['cust'])) $state['cust'] = array();
+    if (!isset($state['invoiced'])) $state['invoiced'] = array();
+    $state['cust'][qbo_lib_custkey($email, $c['realm'])] = (string)$cid;
+    $tmp = INVQ_STATEF . '.' . getmypid() . '.tmp';
+    $ok = (@file_put_contents($tmp, json_encode($state, JSON_PRETTY_PRINT), LOCK_EX) !== false) && @rename($tmp, INVQ_STATEF);
+    @flock($lock, LOCK_UN); @fclose($lock);
+    return $ok;
+}
+/* The QuickBooks customer for an email: the map, else a read-only lookup (which
+   is written back, as pcm-qbo.php does), else '' . */
+function invq_customer_for($c, $email) {
+    $email = invq_email_ok($email);
+    if ($email === '') return '';
+    $cid = invq_map_get($c, $email);
+    if ($cid === null) return '';                       // map busy - do not guess
+    if ($cid !== '') return $cid;
+    $q = "select Id from Customer where PrimaryEmailAddr = '" . qbo_lib_qesc($email) . "'";
+    $res = invq_api($c, 'GET', '/query?query=' . rawurlencode($q));
+    if (qbo_lib_ok($res) && !empty($res['json']['QueryResponse']['Customer'][0]['Id'])) {
+        $cid = (string)$res['json']['QueryResponse']['Customer'][0]['Id'];
+        invq_map_put($c, $email, $cid);
+        return $cid;
+    }
+    return '';
+}
+
+/* ---- reading QuickBooks --------------------------------------------------- */
+/* Invoices with a balance (last INVQ_MAX_ROWS), plus any specific ids asked for
+   (the ones jobs point at, so a paid one still shows as paid). Returns them keyed
+   by Id, plus the email each would go to. */
+function invq_fetch($c, $extraIds = array()) {
     $q = "select * from Invoice where Balance > '0' orderby TxnDate desc maxresults " . (int)INVQ_MAX_ROWS;
     $res = invq_api($c, 'GET', '/query?query=' . rawurlencode($q));
     if (!qbo_lib_ok($res)) return array('ok' => false, 'why' => 'qbo_' . (int)$res['code']);
-    $all = (isset($res['json']['QueryResponse']['Invoice']) && is_array($res['json']['QueryResponse']['Invoice'])) ? $res['json']['QueryResponse']['Invoice'] : array();
-    $waiting = invq_pick($all);
-    // customers' emails, for the invoices that carry none themselves
+    $byId = array();
+    foreach ((array)(isset($res['json']['QueryResponse']['Invoice']) ? $res['json']['QueryResponse']['Invoice'] : array()) as $inv)
+        if (is_array($inv) && !empty($inv['Id'])) $byId[(string)$inv['Id']] = $inv;
+    $missing = array();
+    foreach ((array)$extraIds as $id) if (preg_match('/^\d+$/', (string)$id) && !isset($byId[(string)$id])) $missing[(string)$id] = true;
+    if ($missing) {
+        $iq = "select * from Invoice where Id in ('" . implode("','", array_keys($missing)) . "')";
+        $ir = invq_api($c, 'GET', '/query?query=' . rawurlencode($iq));
+        if (qbo_lib_ok($ir)) foreach ((array)(isset($ir['json']['QueryResponse']['Invoice']) ? $ir['json']['QueryResponse']['Invoice'] : array()) as $inv)
+            if (is_array($inv) && !empty($inv['Id'])) $byId[(string)$inv['Id']] = $inv;
+    }
+    // customers' emails for invoices that carry none themselves
     $need = array();
-    foreach ($waiting as $inv) if (invq_bill_email($inv) === '' && preg_match('/^\d+$/', invq_customer_id($inv))) $need[invq_customer_id($inv)] = true;
+    foreach ($byId as $inv) if (invq_bill_email($inv) === '' && preg_match('/^\d+$/', invq_customer_id($inv))) $need[invq_customer_id($inv)] = true;
     $emails = array();
     if ($need) {
-        $ids = "'" . implode("','", array_keys($need)) . "'";
-        $cq = 'select Id, PrimaryEmailAddr from Customer where Id in (' . $ids . ')';
+        $cq = "select Id, PrimaryEmailAddr from Customer where Id in ('" . implode("','", array_keys($need)) . "')";
         $cr = invq_api($c, 'GET', '/query?query=' . rawurlencode($cq));
         if (qbo_lib_ok($cr)) foreach ((array)(isset($cr['json']['QueryResponse']['Customer']) ? $cr['json']['QueryResponse']['Customer'] : array()) as $cu) {
-            $e = strtolower(trim((string)(isset($cu['PrimaryEmailAddr']['Address']) ? $cu['PrimaryEmailAddr']['Address'] : '')));
-            if (filter_var($e, FILTER_VALIDATE_EMAIL)) $emails[(string)$cu['Id']] = $e;
+            $e = invq_email_ok(isset($cu['PrimaryEmailAddr']['Address']) ? $cu['PrimaryEmailAddr']['Address'] : '');
+            if ($e !== '') $emails[(string)$cu['Id']] = $e;
         }
     }
-    return array('ok' => true, 'all' => $all, 'waiting' => $waiting, 'emails' => $emails);
+    return array('ok' => true, 'byId' => $byId, 'emails' => $emails);
 }
 function invq_email_for($inv, $emails) {
     $e = invq_bill_email($inv);
@@ -112,30 +239,132 @@ function invq_email_for($inv, $emails) {
     return isset($emails[$cid]) ? $emails[$cid] : '';
 }
 
-/* The queue as rows, cached briefly. $fresh forces a live read. */
-function invq_rows($c, $fresh = false) {
+/* The whole picture: this month's jobs with their invoice state, this month's
+   unsent invoices, and the older unsent ones folded away. Cached briefly. */
+function invq_overview($c, $fresh = false, $now = null) {
+    $now = $now === null ? time() : $now;
     $store = invq_store_read();
-    if (!$fresh && is_array($store['cache']) && (int)$store['cache']['ts'] > time() - INVQ_CACHE_TTL) {
-        $rows = $store['cache']['rows'];
-        foreach ($rows as $i => $r) $rows[$i]['held'] = isset($store['held'][(string)$r['id']]);   // hold state is live even when the rows are cached
-        return array('ok' => true, 'rows' => $rows, 'cached' => true);
+    if (!$fresh && is_array($store['cache']) && (int)$store['cache']['ts'] > $now - INVQ_CACHE_TTL) {
+        $o = $store['cache']['data'];
+        foreach (array('waiting', 'older') as $k) foreach ($o[$k] as $i => $r) $o[$k][$i]['held'] = isset($store['held'][(string)$r['id']]);
+        $o['cached'] = true;
+        return $o;
     }
-    $f = invq_fetch($c);
-    if (empty($f['ok'])) return array('ok' => false, 'why' => $f['why'], 'rows' => is_array($store['cache']) ? $store['cache']['rows'] : array(), 'stale' => true);
-    $rows = array();
-    foreach ($f['waiting'] as $inv) {
+    $jobs = invq_jobs_recent(invq_jobs_read(), $now);
+    $ids = array();
+    foreach ($jobs as $j) if (!empty($j['invoice_no'])) $ids[] = (string)$j['invoice_no'];
+    $f = invq_fetch($c, $ids);
+    if (empty($f['ok'])) {
+        $o = is_array($store['cache']) ? $store['cache']['data'] : array('jobs' => array(), 'waiting' => array(), 'older' => array());
+        $o['ok'] = false; $o['why'] = $f['why']; $o['stale'] = true;
+        return $o;
+    }
+    $byId = $f['byId']; $all = array_values($byId);
+    $rowOf = function ($inv) use ($f, $all, $store, $c, $now) {
         $email = invq_email_for($inv, $f['emails']);
-        $rows[] = invq_row($inv, $email, invq_flags($inv, $email, $f['all']), isset($store['held'][(string)$inv['Id']]), $c['host']);
+        return invq_row($inv, $email, invq_flags($inv, $email, $all, $now), isset($store['held'][(string)$inv['Id']]), $c['host'], $now);
+    };
+    // jobs -> their invoices
+    $jobRows = array(); $linked = array();
+    foreach ($jobs as $j) {
+        $custId = '';
+        if (empty($j['invoice_no'])) $custId = invq_customer_for($c, isset($j['email']) ? $j['email'] : '');
+        $inv = invq_match_job($j, $byId, $custId);
+        if ($inv && empty($j['invoice_no'])) invq_job_link($j['id'], (string)$inv['Id'], $c['host'] . '/app/invoice?txnId=' . rawurlencode((string)$inv['Id']), 'matched');
+        if ($inv) $linked[(string)$inv['Id']] = true;
+        $jobRows[] = invq_job_row($j, $inv ? $rowOf($inv) : null, $now);
     }
-    invq_store_locked(function ($d) use ($rows) { $d['cache'] = array('ts' => time(), 'rows' => $rows); return array('ok' => true, 'data' => $d); });
-    return array('ok' => true, 'rows' => $rows, 'cached' => false);
+    // unsent invoices: this month's (not already shown under a job) and the older ones
+    $waiting = array(); $older = array();
+    foreach (invq_pick($all) as $inv) {
+        if (isset($linked[(string)$inv['Id']])) continue;
+        $r = $rowOf($inv);
+        if ($r['days'] <= INVQ_WINDOW_DAYS) $waiting[] = $r; else $older[] = $r;
+    }
+    usort($waiting, function ($a, $b) { return (int)$b['days'] - (int)$a['days']; });
+    usort($older, function ($a, $b) { return (int)$b['days'] - (int)$a['days']; });
+    $o = array('ok' => true, 'jobs' => $jobRows, 'waiting' => $waiting, 'older' => $older, 'cached' => false,
+               'live' => !empty($c['live']), 'only_key' => ($c['only'] !== ''));
+    invq_store_locked(function ($d) use ($o, $now) { $d['cache'] = array('ts' => $now, 'data' => $o); return array('ok' => true, 'data' => $d); });
+    return $o;
 }
 
-/* ---- the one write: QuickBooks emails an invoice ------------------------- */
-/* $id must be an unsent invoice with a balance, re-read from QuickBooks at the
-   moment of sending (never trusted from a cached row), and the address is the
-   one QuickBooks holds - on the invoice, else on the customer. Nothing in the
-   request can choose where an invoice goes. */
+/* ---- WRITE 1: create the invoice a job is owed --------------------------- */
+function invq_create_for_job($c, $jobId, $who, $auto = false) {
+    $job = null;
+    foreach (invq_jobs_read() as $j) if (is_array($j) && (string)(isset($j['id']) ? $j['id'] : '') === (string)$jobId) { $job = $j; break; }
+    if (!$job) return array('ok' => false, 'error' => 'no_such_job');
+    if (!empty($job['invoice_no'])) return array('ok' => false, 'error' => 'already_invoiced', 'invoice' => (string)$job['invoice_no']);
+    list($can, $why) = invq_can_create($job);
+    if (!$can) return array('ok' => false, 'error' => $why);
+    if (empty($c['live'])) return array('ok' => false, 'error' => 'not_live');
+    if ($c['only'] !== '') return array('ok' => false, 'error' => 'only_key');
+    if ($c['item'] === '') return array('ok' => false, 'error' => 'no_item');
+    $store = invq_store_read();
+    $hourAgo = time() - 3600; $n = 0;
+    foreach ($store['created'] as $s) if ((int)$s['at'] > $hourAgo) $n++;
+    if ($n >= INVQ_MAX_CREATES_RUN) return array('ok' => false, 'error' => 'rate_limited');
+
+    $email = invq_email_ok($job['email']);
+    $amount = round(invq_num($job['amount']), 2);
+    $desc = invq_str($job['desc'], 200);
+    $name = invq_str(isset($job['name']) ? $job['name'] : '', 90); if ($name === '') $name = $email;
+    $phone = invq_str(isset($job['phone']) ? $job['phone'] : '', 30);
+
+    // 1. the customer: map, else lookup, else create - never a duplicate
+    $cid = invq_customer_for($c, $email);
+    if ($cid === '') {
+        $m = invq_map_get($c, $email);
+        if ($m === null) return array('ok' => false, 'error' => 'busy');
+        $body = array('DisplayName' => $name, 'PrimaryEmailAddr' => array('Address' => $email));
+        if ($phone !== '') $body['PrimaryPhone'] = array('FreeFormNumber' => $phone);
+        $res = invq_api($c, 'POST', '/customer', $body);
+        if (!qbo_lib_ok($res) || empty($res['json']['Customer']['Id'])) {
+            $code = (string)(isset($res['json']['Fault']['Error'][0]['code']) ? $res['json']['Fault']['Error'][0]['code'] : '');
+            invq_log('customer create FAILED for job ' . $jobId . ' ' . invq_why($res));
+            return array('ok' => false, 'error' => ($code === '6240' ? 'duplicate_name' : 'qbo_customer'), 'why' => invq_why($res), 'name' => $name);
+        }
+        $cid = (string)$res['json']['Customer']['Id'];
+        invq_map_put($c, $email, $cid);
+        invq_log('created QuickBooks customer ' . $cid . ' for job ' . $jobId);
+    }
+    // 2. is there already an invoice that IS this job? Then link, don't create.
+    $f = invq_fetch($c);
+    if (!empty($f['ok'])) {
+        $found = invq_match_job($job, $f['byId'], $cid);
+        if ($found) {
+            invq_job_link($jobId, (string)$found['Id'], $c['host'] . '/app/invoice?txnId=' . rawurlencode((string)$found['Id']), 'matched');
+            return array('ok' => true, 'invoice' => (string)$found['Id'], 'linked' => true);
+        }
+    }
+    // 3. the invoice - the same line pcm-qbo.php writes
+    $line = array('DetailType' => 'SalesItemLineDetail', 'Amount' => $amount, 'Description' => $desc,
+                  'SalesItemLineDetail' => array('ItemRef' => array('value' => $c['item']), 'Qty' => 1, 'UnitPrice' => $amount));
+    if ($c['tax'] !== '') $line['SalesItemLineDetail']['TaxCodeRef'] = array('value' => $c['tax']);
+    $inv = array('CustomerRef' => array('value' => $cid), 'Line' => array($line), 'TxnDate' => gmdate('Y-m-d'),
+                 'BillEmail' => array('Address' => $email));
+    $res = invq_api($c, 'POST', '/invoice', $inv);
+    if (!qbo_lib_ok($res) || empty($res['json']['Invoice']['Id'])) {
+        invq_log('invoice create FAILED for job ' . $jobId . ' ' . invq_why($res));
+        return array('ok' => false, 'error' => 'qbo_invoice', 'why' => invq_why($res));
+    }
+    $invId = (string)$res['json']['Invoice']['Id'];
+    $url = $c['host'] . '/app/invoice?txnId=' . rawurlencode($invId);
+    invq_job_link($jobId, $invId, $url, $auto ? 'auto' : 'staff');
+    invq_store_locked(function ($d) use ($jobId, $invId, $amount, $who) {
+        $d['created'][] = array('job' => (string)$jobId, 'id' => $invId, 'amount' => $amount, 'by' => $who, 'at' => time());
+        $d['cache'] = null;
+        return array('ok' => true, 'data' => $d);
+    });
+    invq_log('created invoice ' . $invId . ' ' . invq_money($amount) . ' for job ' . $jobId . ' by ' . $who);
+    invq_slack(':receipt: *Invoice created* - ' . $name . ', ' . invq_money($amount) . ' for ' . $desc . ' (job ' . $jobId . ')'
+             . ($auto ? ', automatically' : ', by ' . $who) . '. Waiting for your OK in the staff console.');
+    return array('ok' => true, 'invoice' => $invId, 'linked' => false);
+}
+
+/* ---- WRITE 2: QuickBooks emails an invoice -------------------------------- */
+/* Re-read at the moment of sending, never from a cached row; the address is the
+   one QuickBooks holds. Nothing in the request can choose where it goes. */
 function invq_send($c, $id, $who) {
     if (!preg_match('/^\d+$/', (string)$id)) return array('ok' => false, 'error' => 'bad_id');
     $store = invq_store_read();
@@ -153,16 +382,14 @@ function invq_send($c, $id, $who) {
         $cid = invq_customer_id($inv);
         if (preg_match('/^\d+$/', $cid)) {
             $cr = invq_api($c, 'GET', '/customer/' . $cid);
-            $e = strtolower(trim((string)(isset($cr['json']['Customer']['PrimaryEmailAddr']['Address']) ? $cr['json']['Customer']['PrimaryEmailAddr']['Address'] : '')));
-            if (filter_var($e, FILTER_VALIDATE_EMAIL)) $to = $e;
+            $to = invq_email_ok(isset($cr['json']['Customer']['PrimaryEmailAddr']['Address']) ? $cr['json']['Customer']['PrimaryEmailAddr']['Address'] : '');
         }
     }
     if ($to === '') return array('ok' => false, 'error' => 'no_email');
 
     /* Intuit's send operation: POST .../invoice/{id}/send?sendTo=..., Content-Type
-       application/octet-stream, empty body. QuickBooks emails it from the company's
-       own template and sets EmailStatus to EmailSent. qbo_lib_api only knows JSON
-       bodies, so this one call is made here with the header Intuit asks for. */
+       application/octet-stream, empty body. QuickBooks emails from the company's
+       own template and sets EmailStatus to EmailSent. */
     $url = $c['base'] . '/v3/company/' . rawurlencode($c['realm']) . '/invoice/' . $id . '/send?sendTo=' . rawurlencode($to) . '&minorversion=' . INVQ_MINOR;
     $ch = curl_init($url);
     curl_setopt_array($ch, array(CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_POSTFIELDS => '',
@@ -181,7 +408,7 @@ function invq_send($c, $id, $who) {
     invq_store_locked(function ($d) use ($id, $num, $to, $who, $amt) {
         $d['sent'][] = array('id' => (string)$id, 'num' => $num, 'to' => $to, 'by' => $who, 'at' => time(), 'amount' => $amt);
         unset($d['held'][(string)$id]);
-        $d['cache'] = null;                                    // the queue just changed
+        $d['cache'] = null;
         return array('ok' => true, 'data' => $d);
     });
     invq_log('sent ' . $id . ($num !== '' ? ' #' . $num : '') . ' ' . invq_money($amt) . ' to ' . $to . ' by ' . $who);
@@ -211,9 +438,9 @@ function invq_slack($text) {
     return $code >= 200 && $code < 300;
 }
 
-/* ---- the cron tick: one line a day, after nine ---------------------------- */
+/* ---- the cron tick: create what this month's jobs are owed, then one line -- */
 function invq_morning() {
-    $out = array('posted' => false, 'waiting' => 0, 'skipped' => '');
+    $out = array('posted' => false, 'created' => 0, 'waiting' => 0, 'need' => 0, 'skipped' => '');
     $tz = new DateTimeZone('Europe/London');
     $now = new DateTime('now', $tz);
     if ((int)$now->format('G') < INVQ_MORNING_HOUR) { $out['skipped'] = 'before ' . INVQ_MORNING_HOUR; return $out; }
@@ -221,13 +448,22 @@ function invq_morning() {
     $store = invq_store_read();
     if ($store['last_morning'] === $today) { $out['skipped'] = 'done today'; return $out; }
     $c = invq_connect();
-    if (empty($c['ok'])) { $out['skipped'] = $c['why']; return $out; }      // busy or unconfigured: try again next tick
-    $r = invq_rows($c, true);
-    if (empty($r['ok'])) { $out['skipped'] = $r['why']; return $out; }
-    $line = invq_slack_line($r['rows']);
-    $out['waiting'] = count($r['rows']);
+    if (empty($c['ok'])) { $out['skipped'] = $c['why']; return $out; }
+    $o = invq_overview($c, true);
+    if (empty($o['ok'])) { $out['skipped'] = $o['why']; return $out; }
+    // the automation: every job that can have its invoice created, gets it
+    if (!empty($c['live']) && $c['only'] === '') {
+        foreach ($o['jobs'] as $jr) {
+            if (!$jr['can_create'] || $out['created'] >= INVQ_MAX_CREATES_RUN) continue;
+            $r = invq_create_for_job($c, $jr['job'], 'the morning sweep', true);
+            if (!empty($r['ok'])) $out['created']++;
+        }
+        if ($out['created']) $o = invq_overview($c, true);
+    }
+    $line = invq_slack_line($o['jobs'], array_merge($o['waiting'], array_values(array_filter(array_map(function ($j) { return $j['invoice']; }, $o['jobs'])))));
+    $out['waiting'] = count($o['waiting']); $out['need'] = count(array_filter($o['jobs'], function ($j) { return $j['state'] === 'none'; }));
     if ($line !== '') $out['posted'] = invq_slack($line);
     invq_store_locked(function ($d) use ($today) { $d['last_morning'] = $today; return array('ok' => true, 'data' => $d); });
-    invq_log('morning ' . $today . ': ' . $out['waiting'] . ' waiting' . ($out['posted'] ? ', posted' : ''));
+    invq_log('morning ' . $today . ': created ' . $out['created'] . ', waiting ' . $out['waiting'] . ', no invoice yet ' . $out['need'] . ($out['posted'] ? ', posted' : ''));
     return $out;
 }

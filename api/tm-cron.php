@@ -89,6 +89,12 @@ $pl = paylink_sweep();
    placement, same reason. Read-only against QuickBooks; silent when the queue
    is empty; a clean no-op before nine, once it has posted today, when QuickBooks
    is not configured, or when the monthly biller holds the token lock. */
+/* Slack jobs first: the "New Job In" posts in #sos-jobs-in-out become job records,
+   so the invoice sweep below sees this month's new customers. Read-only against
+   Slack, rate-limited inside, and a clean no-op until the bot is in the channel. */
+require_once __DIR__ . '/pcm-slackjobs-sweep.php';
+$sj = sj_poll();
+
 require_once __DIR__ . '/pcm-invq-sweep.php';
 $iq = invq_morning();
 
@@ -130,10 +136,12 @@ if ($CLI) {
        . ", abandoned bookings reported {$bkp['told']}"
        . ", comms " . json_encode($cm)
        . ", pay links " . json_encode($pl)
+       . ", slack jobs " . json_encode($sj)
        . ", invoices " . json_encode($iq) . "\n";
 } else {
     $res['comms'] = $cm;
     $res['paylinks'] = $pl;
+    $res['slackjobs'] = $sj;
     $res['invq'] = $iq;
     echo json_encode($res);
 }

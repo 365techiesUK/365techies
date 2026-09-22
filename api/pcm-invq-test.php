@@ -1,16 +1,19 @@
 <?php
 /**
- * "Invoices waiting for your OK" - test suite.   Run:  php api/pcm-invq-test.php
- * Pins: which invoices are "waiting" (the only definition of a draft QuickBooks
- * offers), every warning the reviewer relies on, the row shape, the morning line,
- * and the endpoint's guarantees at source level - staff gate first, recipient
- * never from the request, no create/void anywhere, the one write is the send.
+ * "This month's jobs -> invoices" - test suite.   Run:  php api/pcm-invq-test.php
+ * Pins: the 30-day job window, matching a job to its invoice (by the recorded id,
+ * else same customer + amount + within a week), when a job may have an invoice
+ * created automatically, which invoices count as unsent, every warning, the row
+ * shapes, the morning line, and the source-level guarantees of the endpoint and
+ * the sweep - staff gate first, recipient never from the request, the two writes
+ * are the create and the send, both under the writers' gates and lock.
  */
 if (PHP_SAPI !== 'cli') { http_response_code(403); exit('cli only'); }
 require __DIR__ . '/pcm-invq-lib.php';
 $fails = 0;
 function ok($cond, $what, $detail = '') { global $fails; echo ($cond ? '  PASS  ' : '  FAIL  ') . $what . ($cond || $detail === '' ? '' : '   [' . $detail . ']') . "\n"; if (!$cond) $fails++; }
 $now = strtotime('2026-09-22 09:00:00 UTC');
+$day = 86400;
 $mk = function ($id, $over = array()) {
     return array_merge(array('Id' => (string)$id, 'DocNumber' => '4905/' . $id, 'TxnDate' => '2026-09-20', 'DueDate' => '2026-10-01',
         'TotalAmt' => 60, 'Balance' => 60, 'EmailStatus' => 'NotSet',
@@ -20,77 +23,94 @@ $mk = function ($id, $over = array()) {
                         array('DetailType' => 'SubTotalLineDetail', 'Amount' => 60)),
         'TxnTaxDetail' => array('TotalTax' => 0)), $over);
 };
+$job = function ($id, $over = array()) use ($now, $day) {
+    return array_merge(array('id' => $id, 'ts' => $now - 4 * $day, 'by' => 'Steve', 'name' => 'Gordon Snook', 'email' => 'g@example.com',
+        'phone' => '07700 900000', 'desc' => 'Laptop service 18 Sept', 'amount' => 60, 'invoice_no' => '', 'status' => 'quoted'), $over);
+};
 
-echo "-- what counts as waiting\n";
-ok(invq_waiting($mk(1)), 'unsent with a balance waits');
-ok(!invq_waiting($mk(2, array('EmailStatus' => 'EmailSent'))), 'already emailed does not');
-ok(!invq_waiting($mk(3, array('Balance' => 0))), 'paid does not');
-ok(!invq_waiting($mk(4, array('Balance' => 0, 'TotalAmt' => 0))), 'voided does not');
-ok(invq_waiting($mk(5, array('EmailStatus' => 'NeedToSend'))), 'marked "send later" waits');
-ok(invq_waiting($mk(6, array('DocNumber' => ''))), 'a console-made invoice (no number) waits like any other');
-ok(count(invq_pick(array($mk(1), $mk(2, array('EmailStatus' => 'EmailSent')), 'junk', $mk(7)))) === 2, 'pick keeps the waiting ones and ignores junk');
+echo "-- the month's jobs\n";
+$jobs = array($job('a'), $job('b', array('ts' => $now - 40 * $day)), $job('c', array('amount' => 0)), $job('d', array('status' => 'cancelled')), $job('a'), 'junk', $job('e', array('ts' => $now - 1 * $day)));
+$rec = invq_jobs_recent($jobs, $now);
+ok(count($rec) === 3 && $rec[0]['id'] === 'e' && $rec[1]['id'] === 'a' && $rec[2]['id'] === 'c', 'last 30 days, quoted/done, newest first, one per id - and an unpriced job is KEPT (it needs a price typing)', json_encode(array_map(function ($j) { return $j['id']; }, $rec)));
+ok(count(invq_jobs_recent(array($job('x', array('status' => 'done'))), $now)) === 1, 'a done job still counts (it still needs invoicing)');
+ok(invq_job_row($job('c', array('amount' => 0)), null, $now)['why_not'] === 'no_amount', 'an unpriced job says it needs a price');
+ok(invq_match_job($job('a', array('invoice_doc' => '4905/2')), $byId = array('1' => $mk(1), '2' => $mk(2, array('TotalAmt' => 85, 'Balance' => 85))), '')['Id'] === '2', 'an invoice NUMBER typed in Slack finds the invoice, whatever the amount');
+$sl = invq_job_row($job('s', array('via' => 'slack', 'invoiced_in_slack' => true, 'note' => 'remote · 2 hours')), null, $now);
+ok($sl['source'] === 'slack' && $sl['state'] === 'invoiced' && $sl['can_create'] === false && $sl['detail'] === 'remote · 2 hours', 'a Slack job marked Y in Invoiced? is left alone and says so', json_encode($sl));
 
-echo "-- the email an invoice would go to\n";
-ok(invq_bill_email($mk(1)) === 'g@example.com', 'the invoice\'s own address');
-ok(invq_bill_email($mk(1, array('BillEmail' => array('Address' => 'not an email')))) === '', 'a bad address is treated as none');
-ok(invq_bill_email($mk(1, array('BillEmail' => null))) === '', 'no BillEmail at all');
+echo "-- matching a job to its invoice\n";
+$byId = array('1' => $mk(1), '2' => $mk(2, array('TotalAmt' => 85, 'Balance' => 85)), '3' => $mk(3, array('TxnDate' => '2026-09-01')), '4' => $mk(4, array('CustomerRef' => array('value' => '99', 'name' => 'Other'))));
+ok(invq_match_job($job('a', array('invoice_no' => '2')), $byId, '11')['Id'] === '2', 'the recorded invoice id wins, whatever the amount');
+ok(invq_match_job($job('a'), $byId, '11')['Id'] === '1', 'else the same customer, same amount, within a week');
+ok(invq_match_job($job('a'), $byId, '') === null, 'no customer id = no guessing');
+ok(invq_match_job($job('a', array('amount' => 85)), $byId, '11')['Id'] === '2', 'amount is matched exactly');
+ok(invq_match_job($job('a', array('amount' => 61)), $byId, '11') === null, 'a pound out is not a match');
+$byId2 = array('3' => $mk(3, array('TxnDate' => '2026-09-01')));
+ok(invq_match_job($job('a'), $byId2, '11') === null, 'three weeks apart is not the same job');
+ok(invq_match_job($job('a', array('invoice_no' => '77')), $byId, '11')['Id'] === '1', 'a recorded id QuickBooks no longer returns falls back to matching');
+
+echo "-- when a job may have an invoice created\n";
+ok(invq_can_create($job('a')) === array(true, ''), 'email + price + description = yes');
+ok(invq_can_create($job('a', array('email' => 'nope')))[1] === 'no_email', 'no usable email');
+ok(invq_can_create($job('a', array('amount' => 2500)))[1] === 'large', 'over the ceiling needs a human');
+ok(invq_can_create($job('a', array('desc' => '  ')))[1] === 'no_desc', 'no description');
+
+echo "-- what counts as unsent\n";
+ok(invq_waiting($mk(1)) && !invq_waiting($mk(2, array('EmailStatus' => 'EmailSent'))) && !invq_waiting($mk(3, array('Balance' => 0))), 'unsent with a balance only');
+ok(invq_invoice_state($mk(1)) === 'unsent' && invq_invoice_state($mk(1, array('EmailStatus' => 'EmailSent'))) === 'sent' && invq_invoice_state($mk(1, array('Balance' => 0))) === 'paid', 'states');
 
 echo "-- the warnings\n";
 $codes = function ($f) { return array_map(function ($x) { return $x['code']; }, $f); };
-ok($codes(invq_flags($mk(1), 'g@example.com', array(), $now)) === array(), 'a clean invoice has no warnings', json_encode(invq_flags($mk(1), 'g@example.com', array(), $now)));
+ok($codes(invq_flags($mk(1), 'g@example.com', array(), $now)) === array(), 'a clean invoice has no warnings');
 ok(in_array('no_email', $codes(invq_flags($mk(1), '', array(), $now))), 'no email address is flagged');
-ok(in_array('vat', $codes(invq_flags($mk(1, array('TxnTaxDetail' => array('TotalTax' => 12))), 'g@example.com', array(), $now))), 'VAT on the invoice is flagged');
+ok(in_array('vat', $codes(invq_flags($mk(1, array('TxnTaxDetail' => array('TotalTax' => 12))), 'g@example.com', array(), $now))), 'VAT is flagged');
 ok(in_array('amount', $codes(invq_flags($mk(1, array('TotalAmt' => 2500, 'Balance' => 2500)), 'g@example.com', array(), $now))), 'over the ceiling is flagged');
-ok(!in_array('amount', $codes(invq_flags($mk(1, array('TotalAmt' => 2000, 'Balance' => 2000)), 'g@example.com', array(), $now))), 'exactly the ceiling is not');
-$g = $mk(1, array('Line' => array(array('DetailType' => 'SalesItemLineDetail', 'Amount' => 60, 'Description' => 'Work carried out'))));
-ok(in_array('generic', $codes(invq_flags($g, 'g@example.com', array(), $now))), 'the console placeholder description is flagged');
-$g2 = $mk(1, array('Line' => array()));
-ok(in_array('generic', $codes(invq_flags($g2, 'g@example.com', array(), $now))), 'no lines at all is flagged');
-$all = array($mk(1), $mk(9, array('TxnDate' => '2026-09-18', 'EmailStatus' => 'EmailSent')));
-$f = invq_flags($mk(1), 'g@example.com', $all, $now);
-ok(in_array('dup', $codes($f)) && strpos($f[0]['text'], '#4905/9') !== false, 'same customer, same amount, 2 days apart = possible duplicate, naming the other', json_encode($f));
-$all2 = array($mk(1), $mk(9, array('TxnDate' => '2026-09-01')));
-ok(!in_array('dup', $codes(invq_flags($mk(1), 'g@example.com', $all2, $now))), '19 days apart is not a duplicate');
-$all3 = array($mk(1), $mk(9, array('CustomerRef' => array('value' => '12', 'name' => 'Someone Else'))));
-ok(!in_array('dup', $codes(invq_flags($mk(1), 'g@example.com', $all3, $now))), 'a different customer is not a duplicate');
-ok(in_array('old', $codes(invq_flags($mk(1, array('TxnDate' => '2026-09-01')), 'g@example.com', array(), $now))), 'raised three weeks ago and unsent is flagged');
-$many = invq_flags($mk(1, array('TxnDate' => '2026-08-01', 'TxnTaxDetail' => array('TotalTax' => 5))), '', array(), $now);
-ok(count($many) === 3, 'warnings stack (no email + VAT + old)', json_encode($codes($many)));
+ok(in_array('generic', $codes(invq_flags($mk(1, array('Line' => array(array('DetailType' => 'SalesItemLineDetail', 'Amount' => 60, 'Description' => 'Work carried out')))), 'g@example.com', array(), $now))), 'the placeholder description is flagged');
+$f = invq_flags($mk(1), 'g@example.com', array($mk(1), $mk(9, array('TxnDate' => '2026-09-18', 'EmailStatus' => 'EmailSent'))), $now);
+ok(in_array('dup', $codes($f)) && strpos($f[0]['text'], '#4905/9') !== false, 'same customer, same amount, 2 days apart = possible duplicate, naming the other');
+ok(in_array('old', $codes(invq_flags($mk(1, array('TxnDate' => '2026-09-01')), 'g@example.com', array(), $now))), 'three weeks unsent is flagged');
 
-echo "-- the row\n";
-$row = invq_row($mk(1), 'g@example.com', invq_flags($mk(1), 'g@example.com', array(), $now), false, 'https://app.qbo.intuit.com', $now);
-ok($row['id'] === '1' && $row['number'] === '4905/1' && $row['customer'] === 'Gordon Snook' && $row['total'] === 60.0 && $row['days'] === 2, 'row basics', json_encode($row));
-ok($row['url'] === 'https://app.qbo.intuit.com/app/invoice?txnId=1', 'Fix-in-QuickBooks link');
-ok(count($row['lines']) === 1 && $row['lines'][0]['desc'] === 'Laptop service 18 Sept', 'subtotal line dropped, description kept');
-ok(invq_row($mk(1, array('DocNumber' => '')), 'g@example.com', array(), false, 'x', $now)['console_made'] === true, 'no number = made by the console');
-ok(!isset($row['BillAddr']) && !isset($row['note']) && !isset($row['PrivateNote']), 'no address or notes in a row');
+echo "-- rows\n";
+$ir = invq_row($mk(1), 'g@example.com', array(), false, 'https://app.qbo.intuit.com', $now);
+ok($ir['id'] === '1' && $ir['days'] === 2 && $ir['state'] === 'unsent' && $ir['url'] === 'https://app.qbo.intuit.com/app/invoice?txnId=1', 'invoice row', json_encode($ir));
+$jr = invq_job_row($job('a'), null, $now);
+ok($jr['job'] === 'a' && $jr['state'] === 'none' && $jr['can_create'] === true && $jr['days'] === 4 && $jr['amount'] === 60.0, 'job row with no invoice yet can be created', json_encode($jr));
+$jr2 = invq_job_row($job('a', array('email' => '')), null, $now);
+ok($jr2['can_create'] === false && $jr2['why_not'] === 'no_email', 'and says why when it cannot');
+$jr3 = invq_job_row($job('a'), $ir, $now);
+ok($jr3['state'] === 'unsent' && $jr3['can_create'] === false && $jr3['invoice']['id'] === '1', 'a job with an unsent invoice shows it and is not created again');
+ok(invq_job_row($job('a'), invq_row($mk(1, array('Balance' => 0)), 'g@example.com', array(), false, 'x', $now), $now)['state'] === 'paid', 'a paid invoice makes a paid job');
+ok(!isset($jr['phone']) && !isset($jr['addr']) && !isset($jr['note']), 'no phone, address or notes in a job row');
 
 echo "-- the morning line\n";
-$rows = array(
-    invq_row($mk(1), 'g@example.com', array(), false, 'x', $now),
-    invq_row($mk(2, array('TxnDate' => '2026-09-01', 'TotalAmt' => 745.98, 'Balance' => 745.98, 'CustomerRef' => array('value' => '3', 'name' => 'Emblem Sports Cars'))), 'e@example.com', array(array('code' => 'old', 'text' => 'x')), false, 'x', $now),
-    invq_row($mk(3, array('CustomerRef' => array('value' => '4', 'name' => 'Held Person'))), 'h@example.com', array(), true, 'x', $now),
-);
-$line = invq_slack_line($rows, 'https://365techies.co.uk/portal/');
-ok(strpos($line, '*2 invoices waiting for your OK*') !== false, 'counts the unheld ones only', $line);
+$jobRows = array(invq_job_row($job('a'), null, $now), invq_job_row($job('f', array('email' => '')), null, $now), invq_job_row($job('g'), $ir, $now));
+$invRows = array($ir, invq_row($mk(2, array('TxnDate' => '2026-09-01', 'TotalAmt' => 745.98, 'Balance' => 745.98, 'CustomerRef' => array('value' => '3', 'name' => 'Emblem Sports Cars'))), 'e@example.com', array(array('code' => 'old', 'text' => 'x')), false, 'x', $now));
+$line = invq_slack_line($jobRows, $invRows);
+ok(strpos($line, '*2 invoices waiting for your OK*') !== false && strpos($line, '*2 jobs with no invoice yet* (1 need an email address first)') !== false, 'both halves', $line);
 ok(strpos($line, 'Emblem Sports Cars £745.98 (21 days)') < strpos($line, 'Gordon Snook £60.00 (2 days)'), 'oldest first');
-ok(strpos($line, '1 with a warning') !== false && strpos($line, 'Held Person') === false, 'warning count, held row not named');
-ok(invq_slack_line(array()) === '' && invq_slack_line(array($rows[2])) === '', 'nothing waiting = silence');
-ok(strpos($line, '@example.com') === false, 'no email address in Slack');
+ok(strpos($line, '1 with a warning') !== false && strpos($line, '@example.com') === false, 'warning count, no email addresses');
+ok(invq_slack_line(array(), array()) === '' && invq_slack_line(array(invq_job_row($job('g'), $ir, $now)), array(invq_row($mk(2, array('EmailStatus' => 'EmailSent')), 'x', array(), false, 'x', $now))) === '', 'nothing to do = silence');
 
 echo "-- the endpoint and the sweep, at source level\n";
 $EP = (string)file_get_contents(__DIR__ . '/pcm-invq.php');
 $SW = (string)file_get_contents(__DIR__ . '/pcm-invq-sweep.php');
 ok(strpos($EP, '?' . '>') === false && strpos($SW, '?' . '>') === false, 'no closing tags');
 ok(strpos($EP, 'need_staff();') !== false && strpos($EP, 'need_staff();') < strpos($EP, "if (\$action === 'hold'"), 'the staff gate runs before any action');
-ok(!preg_match('/\$in\[\'(to|email|sendto|sendTo|address)\'\]/', $EP) && !preg_match('/\$in\[/', $SW), 'the recipient can never come from the request');
+ok(!preg_match('/\$in\[\'(to|email|sendto|sendTo|address|name|customer)\'\]/', $EP) && !preg_match('/\$in\[/', $SW), 'no recipient, name or customer can come from the request');
+/* A price or description MAY be typed - but only into a job, via setjob, never into
+   an invoice or a send. Pin that the request's amount/desc are read nowhere else. */
+$sj0 = strpos($EP, "if (\$action === 'setjob')"); $sj1 = strpos($EP, "if (\$action === 'hold'");
+$setjobBlock = ($sj0 !== false && $sj1 !== false && $sj1 > $sj0) ? substr($EP, $sj0, $sj1 - $sj0) : '';
+ok($setjobBlock !== '' && substr_count($EP, "\$in['amount']") === substr_count($setjobBlock, "\$in['amount']") && substr_count($EP, "\$in['desc']") === substr_count($setjobBlock, "\$in['desc']") && substr_count($setjobBlock, "\$in['amount']") > 0,
+   'a typed price or description reaches only the job record (setjob), never a send or a create');
 ok(strpos($SW, "invq_email_status(\$inv) === 'EmailSent') return array('ok' => false, 'error' => 'already_sent')") !== false, 'an already-sent invoice is refused at send time');
-ok(strpos($SW, "'Content-Type: application/octet-stream'") !== false && strpos($SW, "/send?sendTo=") !== false, 'the send call is the one Intuit documents');
-ok(strpos($SW, "\$status !== 'EmailSent'") !== false, 'a send is only counted when QuickBooks says EmailSent');
-ok(!preg_match("#'/invoice'#", $SW) && !preg_match('/\/void|operation=void|sparse/', $SW) && !preg_match('/\/customer\',/', $SW), 'nothing here creates, edits or voids an invoice or customer');
-ok(substr_count($SW, "invq_api(\$c, 'GET'") >= 4 && substr_count($SW, "invq_api(\$c, 'POST'") === 0, 'every shared-helper call is a GET');
-ok(strpos($SW, 'LOCK_EX | LOCK_NB') !== false && strpos($SW, 'qbo_lib_token(') !== false, 'token refresh sits under the monthly biller\'s non-blocking lock');
-ok(strpos($SW, 'INVQ_MAX_SENDS_HOUR') !== false, 'a sends-per-hour tripwire exists');
+ok(strpos($SW, "'Content-Type: application/octet-stream'") !== false && strpos($SW, "/send?sendTo=") !== false && strpos($SW, "\$status !== 'EmailSent'") !== false, 'the send call is the one Intuit documents, counted only on EmailSent');
+ok(strpos($SW, "if (empty(\$c['live'])) return array('ok' => false, 'error' => 'not_live')") !== false && strpos($SW, "if (\$c['only'] !== '') return array('ok' => false, 'error' => 'only_key')") !== false, 'creating honours QBO_LIVE_ENABLED and QBO_ONLY_KEY');
+ok(strpos($SW, "if (!empty(\$job['invoice_no'])) return array('ok' => false, 'error' => 'already_invoiced'") !== false, 'a job with an invoice is never invoiced again');
+ok(strpos($SW, 'qbo_lib_custkey($email, $c[\'realm\'])') !== false && substr_count($SW, 'LOCK_EX | LOCK_NB') >= 3, 'the customer map is keyed like the other writers and read/written under their lock');
+ok(preg_match_all("/invq_api\(\\\$c, 'POST', '\/(customer|invoice)'/", $SW, $mm) === 2 && !preg_match('/\/void|operation=void|sparse|\/customer\/\d/', $SW), 'exactly two creates (customer, invoice); nothing edits or voids');
+ok(strpos($SW, 'INVQ_MAX_SENDS_HOUR') !== false && strpos($SW, 'INVQ_MAX_CREATES_RUN') !== false, 'tripwires on sends and creates');
+ok(strpos($SW, "'BillEmail' => array('Address' => \$email)") !== false, 'a created invoice carries the customer email, so it can be sent');
 $gi = (string)file_get_contents(__DIR__ . '/../.gitignore');
 ok(strpos($gi, 'api/pcm-invq.json') !== false && strpos($gi, 'api/pcm-invq.log') !== false, 'the store and log are gitignored');
 $ht = (string)file_get_contents(__DIR__ . '/../.htaccess');
@@ -100,7 +120,7 @@ foreach (array('pcm-invq.json', 'pcm-invq.json.lock', 'pcm-invq.json.12.tmp', 'p
     ok($deny !== '' && preg_match('#' . $deny . '#', $f) === 1, 'denied: ' . $f);
 ok($deny !== '' && preg_match('#' . $deny . '#', 'pcm-invq.php') !== 1, 'the endpoint itself stays served');
 $CR = (string)file_get_contents(__DIR__ . '/tm-cron.php');
-ok(strpos($CR, 'invq_morning()') !== false && strpos($CR, 'invq_morning()') < strpos($CR, 'if (!tm_configured())'), 'the morning line runs from the cron, above the SMS gate');
+ok(strpos($CR, 'invq_morning()') !== false && strpos($CR, 'invq_morning()') < strpos($CR, 'if (!tm_configured())'), 'the morning sweep runs from the cron, above the SMS gate');
 
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);

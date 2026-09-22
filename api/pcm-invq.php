@@ -1,30 +1,32 @@
 <?php
 /*
- * Staff-only: the invoices waiting for someone's OK (22 Sep 2026).
+ * Staff-only: this month's jobs and their invoices (22 Sep 2026, v2 the same day).
  *
- *   action=list           -> every QuickBooks invoice with a balance that has not
- *                            been emailed, as rows with warnings (5-min cache;
- *                            fresh=1 forces a live read)
- *   action=pdf   {id}     -> that invoice exactly as the customer would receive it
- *   action=send  {id}     -> QuickBooks emails it, from its own template, to the
- *                            address QuickBooks holds. THE ONE WRITE.
- *   action=hold / unhold  -> park a row without sending it
+ *   action=list             -> this month's "Quote agreed" jobs with where their
+ *                              invoice stands (none / unsent / sent / paid), this
+ *                              month's other unsent invoices, and the older unsent
+ *                              ones folded away (5-min cache; fresh=1 forces a read)
+ *   action=create  {job}    -> make the QuickBooks invoice that job is owed
+ *                              (or link the one that already matches it). WRITE 1.
+ *   action=pdf     {id}     -> an invoice exactly as the customer would receive it
+ *   action=send    {id}     -> QuickBooks emails it, from its own template, to the
+ *                              address QuickBooks holds. WRITE 2.
+ *   action=hold / unhold    -> park a row without sending it
  *
  * WHY
- * Raising an invoice is automatic (the console does it at "Quote agreed"); sending
- * it depended on one person remembering, so invoices sat unsent. Now every unsent
- * invoice - console-made or hand-raised - waits in one place, is previewed as the
- * real PDF, and leaves only on an explicit "Approve & send".
+ * The owner's words: the new jobs of the last month are in Slack, and the system
+ * should produce invoices for those customers - then let a person check each one
+ * before it goes. So: raising is automatic (the morning sweep, or one click here),
+ * sending is a human's "Approve & send" against the real PDF.
  *
  * SECURITY
  * - Staff token only, re-implemented locally (same rules as pcm-jobs.php /
  *   pcm-qbo.php / pcm-invite.php / pcm-paylink.php / pcm-geo.php). Fails closed.
- * - The recipient is NEVER taken from the request. invq_send() re-reads the
- *   invoice from QuickBooks and uses the address QuickBooks holds; a wrong address
- *   is fixed in QuickBooks, not overridden here.
- * - An invoice that is already EmailSent, or has nothing owing, is refused - a
- *   double-click cannot send twice.
- * - This file cannot create, edit or void an invoice; see pcm-invq-sweep.php.
+ * - The request names a JOB or an INVOICE ID. Never a recipient, never an amount,
+ *   never a customer: those come from the job record and from QuickBooks.
+ * - Creating honours the same gates as every other writer ($QBO_LIVE_ENABLED,
+ *   $QBO_ONLY_KEY) and the same customer map under the same lock.
+ * - An invoice already EmailSent, or with nothing owing, is refused at send time.
  *
  * NO closing tag in this file.
  */
@@ -68,10 +70,24 @@ list($db, $staff) = need_staff();
 $who = trim((string)(isset($staff['name']) ? $staff['name'] : (isset($staff['who']) ? $staff['who'] : '')));
 if ($who === '') $who = 'staff';
 
-$id = preg_replace('/[^0-9]/', '', (string)(isset($in['id']) ? $in['id'] : ''));
-if (!in_array($action, array('list', 'pdf', 'send', 'hold', 'unhold'), true)) fail('bad_action');
+$id  = preg_replace('/[^0-9]/', '', (string)(isset($in['id']) ? $in['id'] : ''));
+$job = preg_replace('/[^0-9a-zA-Z-]/', '', (string)(isset($in['job']) ? $in['job'] : ''));
+if (!in_array($action, array('list', 'create', 'pdf', 'send', 'hold', 'unhold', 'setjob'), true)) fail('bad_action');
 
 // ===========================================================================
+/* A price or description typed in the portal for a job whose Slack post had none.
+   This sets what the INVOICE will say - it does not make one, and it does not send
+   anything. QuickBooks is not needed for it, so it works before connecting. */
+if ($action === 'setjob') {
+    if ($job === '') fail('bad_job');
+    $amount = (isset($in['amount']) && trim((string)$in['amount']) !== '') ? preg_replace('/[^0-9.]/', '', (string)$in['amount']) : null;
+    $desc   = (isset($in['desc']) && trim((string)$in['desc']) !== '') ? (string)$in['desc'] : null;
+    $r = invq_job_set($job, $amount, $desc, $who);
+    if (empty($r['ok'])) fail($r['error']);
+    invq_log('set job ' . $job . ($amount !== null ? ' amount ' . $amount : '') . ($desc !== null ? ' desc' : '') . ' by ' . $who);
+    out(array('ok' => true));
+}
+
 if ($action === 'hold' || $action === 'unhold') {
     if ($id === '') fail('bad_id');
     if (!invq_set_held($id, $action === 'hold')) fail('store');
@@ -82,13 +98,21 @@ if ($action === 'hold' || $action === 'unhold') {
 $c = invq_connect();
 if (empty($c['ok'])) {
     if ($action === 'pdf') { http_response_code(503); fail($c['why']); }
-    out(array('ok' => true, 'connected' => false, 'why' => $c['why'], 'rows' => array()));
+    out(array('ok' => true, 'connected' => false, 'why' => $c['why'], 'jobs' => array(), 'waiting' => array(), 'older' => array()));
 }
 
 if ($action === 'list') {
-    $r = invq_rows($c, !empty($in['fresh']));
-    out(array('ok' => true, 'connected' => true, 'rows' => $r['rows'], 'cached' => !empty($r['cached']),
-              'stale' => !empty($r['stale']), 'why' => isset($r['why']) ? $r['why'] : ''));
+    $o = invq_overview($c, !empty($in['fresh']));
+    out(array('ok' => true, 'connected' => true, 'jobs' => $o['jobs'], 'waiting' => $o['waiting'], 'older' => $o['older'],
+              'cached' => !empty($o['cached']), 'stale' => !empty($o['stale']), 'why' => isset($o['why']) ? $o['why'] : '',
+              'live' => !empty($c['live']), 'only_key' => ($c['only'] !== '')));
+}
+
+if ($action === 'create') {
+    if ($job === '') fail('bad_job');
+    $r = invq_create_for_job($c, $job, $who, false);
+    if (empty($r['ok'])) fail($r['error'], array_intersect_key($r, array('why' => 1, 'name' => 1, 'invoice' => 1)));
+    out(array('ok' => true, 'invoice' => $r['invoice'], 'linked' => !empty($r['linked'])));
 }
 
 if ($action === 'pdf') {

@@ -33,6 +33,10 @@ api/pcm-paylink.json.*.tmp
 api/pcm-paylink.log
 api/pcm-paylink-events.json
 api/pcm-paylink-events.json.*.tmp
+# Slack jobs poller: last-poll status (names the channel error) + log
+api/pcm-slackjobs-status.json
+api/pcm-slackjobs-status.json.*.tmp
+api/pcm-slackjobs.log
 # Invoice review queue: held ids, send log, cached rows (names + emails + amounts)
 api/pcm-invq.json
 api/pcm-invq.json.lock

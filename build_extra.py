@@ -27752,8 +27752,8 @@ def write_portal_page():
       /* Invoices waiting for your OK: every QuickBooks invoice with a balance that has
          not been emailed - raised by the console at "Quote agreed" or by hand - with the
          likely mistakes flagged. Nothing leaves without "Approve & send" here. */
-      h += '<div class="card" id="invqcard" style="border-left:4px solid var(--pwarn)"><h2>\\ud83e\\uddfe Invoices waiting for your OK</h2>'
-        + '<p class="quiet" style="margin:.1rem 0 .6rem">Raised but not yet sent. Check the PDF the customer would get, then approve. QuickBooks sends it and marks it sent.</p>'
+      h += '<div class="card" id="invqcard" style="border-left:4px solid var(--pwarn)"><h2>\\ud83e\\uddfe This month\\u2019s jobs \\u2192 invoices</h2>'
+        + '<p class="quiet" style="margin:.1rem 0 .6rem">Every job from the last 30 days \\u2014 the \\u201cNew Job In\\u201d posts in #sos-jobs-in-out and the console\\u2019s \\u201cQuote agreed\\u201d \\u2014 and where its invoice stands. Invoices are raised for you; nothing is sent until you check the PDF and approve it.</p>'
         + '<div id="invq"><p class="quiet">Checking QuickBooks\\u2026</p></div></div>';
       h += '<div class="card"><h2>\\ud83d\\udda5 PC Manager fleet</h2>'
         + '<div class="stats" id="fstats"></div>'
@@ -28174,57 +28174,110 @@ def write_portal_page():
     }).catch(function () { box.innerHTML = '<p class="quiet">Couldn\\u2019t reach the server.</p>'; });
   }
   function invqMoney(v) { return '\\u00a3' + (Math.round(v * 100) / 100).toFixed(2); }
+  function invqWhen(d) { return d === 0 ? 'today' : (d === 1 ? 'yesterday' : d + ' days ago'); }
+  var INVQ_WHY = { no_email: 'needs an email address \\u2014 add it to the Slack post (Email: \\u2026) and it will pick it up', no_desc: 'needs a description of the work', large: 'over \\u00a32,000 \\u2014 raise this one by hand in QuickBooks', no_amount: 'no price yet', invoiced_in_slack: 'marked invoiced in Slack \\u2014 left alone' };
   function renderInvq(box, r) {
-    var rows = r.rows || [];
-    var live = rows.filter(function (x) { return !x.held; }), held = rows.filter(function (x) { return x.held; });
-    var note = (r.stale ? '<p class="quiet">QuickBooks didn\\u2019t answer just now \\u2014 this is the last list it gave us.</p>' : '');
-    if (!rows.length) { box.innerHTML = note + '<p style="margin:.2rem 0"><span style="color:#7ee0a2">\\u2713 Nothing waiting</span> <span class="quiet">\\u2014 every invoice with a balance has been sent.</span> <button class="sm ghost invqfresh" style="margin-left:.4rem;padding:.2rem .5rem;font-size:.78rem">re-check</button></p>'; bindInvqFresh(box); return; }
-    function rowHtml(x) {
-      var warn = (x.flags || []).map(function (f) { return '<div style="color:#ffb4a2;font-size:.85rem;margin:.15rem 0 0">\\u26a0 ' + esc(f.text) + '</div>'; }).join('');
-      var lines = (x.lines || []).map(function (l) { return esc(l.desc || '(no description)') + (l.amount ? ' \\u2014 ' + invqMoney(l.amount) : ''); }).join('<br>');
-      var when = x.days === 0 ? 'today' : (x.days === 1 ? 'yesterday' : x.days + ' days ago');
-      return '<div class="invqrow" data-id="' + esc(x.id) + '" style="border:1px solid rgba(125,170,220,.25);border-radius:10px;padding:.55rem .7rem;margin:0 0 .5rem' + (x.held ? ';opacity:.7' : '') + '">'
-        + '<div style="display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;align-items:baseline">'
-        + '<div><strong>' + esc(x.customer || 'Unnamed customer') + '</strong> <span class="quiet">' + (x.number ? '#' + esc(x.number) : 'no number \\u2014 made by the console') + ' \\u00b7 ' + esc(when) + (x.email ? ' \\u00b7 to ' + esc(x.email) : '') + '</span></div>'
-        + '<div style="font-weight:700;font-size:1.05rem">' + invqMoney(x.total) + '</div></div>'
-        + (lines ? '<div class="quiet" style="margin:.2rem 0 0;font-size:.85rem">' + lines + '</div>' : '')
-        + warn
-        + '<div style="margin:.45rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">'
-        + '<button class="sm ghost invqpdf" style="margin:0;padding:.3rem .65rem;font-size:.82rem">\\ud83d\\udc41 Preview PDF</button>'
-        + (x.held ? '<button class="sm ghost invqunhold" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Release</button>'
-                  : '<button class="sm invqsend" style="margin:0;padding:.3rem .7rem;font-size:.82rem"' + (x.email ? '' : ' disabled title="No email address on the customer"') + '>\\u2705 Approve &amp; send</button>'
-                    + '<button class="sm ghost invqhold" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Hold</button>')
-        + '<a class="btn sm ghost" style="margin:0;padding:.3rem .65rem;font-size:.82rem" href="' + esc(x.url) + '" target="_blank" rel="noopener">Fix in QuickBooks</a>'
-        + '<span class="quiet invqmsg"></span></div></div>';
+    var jobs = r.jobs || [], waiting = r.waiting || [], older = r.older || [];
+    var note = (r.stale ? '<p class="quiet">QuickBooks didn\\u2019t answer just now \\u2014 this is the last picture it gave us.</p>' : '')
+      + (r.live === false ? '<p class="quiet">\\u26a0 QuickBooks is in dry-run on the server, so invoices can\\u2019t be raised from here yet.</p>' : '')
+      + (r.only_key ? '<p class="quiet">\\u26a0 QuickBooks is limited to one test customer on the server (QBO_ONLY_KEY), so nothing is raised automatically yet.</p>' : '');
+    function warnHtml(x) { return (x.flags || []).map(function (f) { return '<div style="color:#ffb4a2;font-size:.85rem;margin:.15rem 0 0">\\u26a0 ' + esc(f.text) + '</div>'; }).join(''); }
+    function invButtons(x) {
+      return '<button class="sm ghost invqpdf" data-id="' + esc(x.id) + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem">\\ud83d\\udc41 Preview PDF</button>'
+        + (x.held ? '<button class="sm ghost invqunhold" data-id="' + esc(x.id) + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Release</button>'
+                  : '<button class="sm invqsend" data-id="' + esc(x.id) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem"' + (x.email ? '' : ' disabled title="No email address on the customer"') + '>\\u2705 Approve &amp; send</button>'
+                    + '<button class="sm ghost invqhold" data-id="' + esc(x.id) + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Hold</button>')
+        + '<a class="btn sm ghost" style="margin:0;padding:.3rem .65rem;font-size:.82rem" href="' + esc(x.url) + '" target="_blank" rel="noopener">Fix in QuickBooks</a>';
     }
-    box.innerHTML = note + live.map(rowHtml).join('')
-      + (held.length ? '<p class="quiet" style="margin:.5rem 0 .3rem">On hold</p>' + held.map(rowHtml).join('') : '')
-      + '<p class="quiet" style="margin:.3rem 0 0">' + live.length + ' waiting' + (held.length ? ', ' + held.length + ' on hold' : '') + (r.cached ? ' \\u00b7 as of a few minutes ago' : '') + ' <button class="sm ghost invqfresh" style="margin-left:.4rem;padding:.2rem .5rem;font-size:.78rem">re-check</button></p>';
-    bindInvqFresh(box);
-    Array.prototype.forEach.call(box.querySelectorAll('.invqrow'), function (row) {
-      var id = row.getAttribute('data-id'), msg = row.querySelector('.invqmsg');
-      var x = rows.filter(function (y) { return y.id === id; })[0] || {};
-      var pdfBtn = row.querySelector('.invqpdf');
-      if (pdfBtn) pdfBtn.onclick = function () { invqPdf(id, pdfBtn); };
-      var sendBtn = row.querySelector('.invqsend');
-      if (sendBtn) sendBtn.onclick = function () {
-        var warnTxt = (x.flags && x.flags.length) ? '\\n\\nWARNINGS:\\n\\u2022 ' + x.flags.map(function (f) { return f.text; }).join('\\n\\u2022 ') + '\\n' : '';
-        if (!confirm('QuickBooks will email invoice ' + (x.number ? '#' + x.number : '') + ' for ' + invqMoney(x.total) + ' to ' + x.email + ' now.' + warnTxt + '\\nHave you checked the PDF?')) return;
-        sendBtn.disabled = true; msg.textContent = 'Sending\\u2026';
-        post(INVQ, { action: 'send', stoken: S.stoken, machine: mid(), id: id }).then(function (j) {
-          if (!j || !j.ok) { sendBtn.disabled = false; msg.innerHTML = invqErr(j); return; }
-          row.innerHTML = '<span style="color:#7ee0a2">\\u2713 Sent to ' + esc(j.to) + ' \\u2014 ' + invqMoney(j.amount) + (j.number ? ' (#' + esc(j.number) + ')' : '') + '. Noted in #daily-jobs-in-jobs-out.</span>';
-        }).catch(function () { sendBtn.disabled = false; msg.textContent = 'Couldn\\u2019t reach the server.'; });
+    function jobHtml(j) {
+      var inv = j.invoice, st = j.state, chip, body = '', btns = '';
+      if (st === 'paid') chip = '<span style="color:#7ee0a2">\\u2713 Paid</span>';
+      else if (st === 'sent') chip = '<span style="color:#7ee0a2">\\u2713 Invoice sent' + (inv && inv.number ? ' #' + esc(inv.number) : '') + '</span>';
+      else if (st === 'unsent') { chip = '<span style="color:#ffd76a">Invoice raised \\u2014 waiting for your OK</span>'; body = warnHtml(inv); btns = invButtons(inv); }
+      else if (st === 'invoiced') chip = '<span class="quiet">\\u2713 ' + esc(INVQ_WHY.invoiced_in_slack) + '</span>';
+      else {
+        chip = '<span style="color:#ffb4a2">No invoice yet</span>' + (j.done ? '' : ' <span class="quiet">\\u00b7 job not marked done in Slack yet</span>');
+        if (j.can_create) btns = '<button class="sm invqcreate" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\\ud83e\\uddfe Raise the invoice</button>';
+        else if (j.why_not === 'no_amount' || j.why_not === 'no_desc') {
+          body = '<div style="margin:.35rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">'
+            + (j.amount > 0 ? '' : '<input class="invqamt" type="text" inputmode="decimal" placeholder="Price \\u00a3" style="width:110px;margin:0">')
+            + (j.desc ? '' : '<input class="invqdesc" type="text" maxlength="200" placeholder="What was done (goes on the invoice)" style="flex:1;min-width:200px;margin:0">')
+            + '<button class="sm ghost invqset" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Save</button><span class="quiet invqsetmsg"></span></div>';
+        }
+        else body = '<div style="color:#ffb4a2;font-size:.85rem;margin:.15rem 0 0">\\u26a0 ' + esc(INVQ_WHY[j.why_not] || j.why_not) + '</div>';
+      }
+      return '<div class="invqrow" style="border:1px solid rgba(125,170,220,.25);border-radius:10px;padding:.55rem .7rem;margin:0 0 .5rem' + (inv && inv.held ? ';opacity:.7' : '') + '">'
+        + '<div style="display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;align-items:baseline">'
+        + '<div><strong>' + esc(j.customer || j.email || 'Unnamed') + '</strong> <span class="quiet">' + (j.desc ? esc(j.desc) + ' \\u00b7 ' : '') + esc(invqWhen(j.days)) + (j.email ? ' \\u00b7 ' + esc(j.email) : '') + (j.source === 'slack' ? ' \\u00b7 <span title="' + esc(j.detail || '') + '">from Slack</span>' : '') + '</span></div>'
+        + '<div style="font-weight:700;font-size:1.05rem">' + (j.amount > 0 ? invqMoney(j.amount) : '<span class="quiet" style="font-weight:400;font-size:.85rem">no price</span>') + '</div></div>'
+        + '<div style="margin:.25rem 0 0;font-size:.9rem">' + chip + '</div>' + body
+        + (btns ? '<div style="margin:.45rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">' + btns + '<span class="quiet invqmsg"></span></div>' : '')
+        + '</div>';
+    }
+    function invHtml(x) {
+      return '<div class="invqrow" style="border:1px solid rgba(125,170,220,.25);border-radius:10px;padding:.55rem .7rem;margin:0 0 .5rem' + (x.held ? ';opacity:.7' : '') + '">'
+        + '<div style="display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;align-items:baseline">'
+        + '<div><strong>' + esc(x.customer || 'Unnamed customer') + '</strong> <span class="quiet">' + (x.number ? '#' + esc(x.number) : 'no number') + ' \\u00b7 ' + esc(invqWhen(x.days)) + (x.email ? ' \\u00b7 ' + esc(x.email) : '') + '</span></div>'
+        + '<div style="font-weight:700;font-size:1.05rem">' + invqMoney(x.total) + '</div></div>'
+        + ((x.lines || []).length ? '<div class="quiet" style="margin:.2rem 0 0;font-size:.85rem">' + x.lines.map(function (l) { return esc(l.desc || '(no description)'); }).join('<br>') + '</div>' : '')
+        + warnHtml(x)
+        + '<div style="margin:.45rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">' + invButtons(x) + '<span class="quiet invqmsg"></span></div></div>';
+    }
+    var html = note;
+    html += jobs.length ? jobs.map(jobHtml).join('') : '<p class="quiet">No \\u201cQuote agreed\\u201d jobs in the last 30 days.</p>';
+    if (waiting.length) html += '<p class="quiet" style="margin:.6rem 0 .3rem">Other unsent invoices from the last 30 days</p>' + waiting.map(invHtml).join('');
+    if (older.length) html += '<p style="margin:.6rem 0 .3rem"><button class="sm ghost invqolder" style="padding:.2rem .6rem;font-size:.8rem">Show ' + older.length + ' older unsent invoice' + (older.length === 1 ? '' : 's') + '</button></p><div id="invqolder" style="display:none">' + older.map(invHtml).join('') + '</div>';
+    html += '<p class="quiet" style="margin:.4rem 0 0">' + (r.cached ? 'As of a few minutes ago. ' : '') + '<button class="sm ghost invqfresh" style="padding:.2rem .5rem;font-size:.78rem">re-check</button></p>';
+    box.innerHTML = html;
+    var fb = box.querySelector('.invqfresh'); if (fb) fb.onclick = function () { fb.disabled = true; fb.textContent = 'checking\\u2026'; loadInvq(true); };
+    var ob = box.querySelector('.invqolder'); if (ob) ob.onclick = function () { var d = document.getElementById('invqolder'); d.style.display = d.style.display === 'none' ? '' : 'none'; };
+    var all = jobs.map(function (j) { return j.invoice; }).filter(Boolean).concat(waiting, older);
+    function invOf(id) { return all.filter(function (y) { return y.id === id; })[0] || {}; }
+    function msgOf(btn) { var row = btn.closest('.invqrow'); return row ? row.querySelector('.invqmsg') : null; }
+    Array.prototype.forEach.call(box.querySelectorAll('.invqcreate'), function (b) {
+      b.onclick = function () {
+        var jobId = b.getAttribute('data-job'), msg = msgOf(b);
+        b.disabled = true; if (msg) msg.textContent = 'Raising in QuickBooks\\u2026';
+        post(INVQ, { action: 'create', stoken: S.stoken, machine: mid(), job: jobId }).then(function (j) {
+          if (!j || !j.ok) { b.disabled = false; if (msg) msg.innerHTML = invqErr(j); return; }
+          loadInvq(true);
+        }).catch(function () { b.disabled = false; if (msg) msg.textContent = 'Couldn\\u2019t reach the server.'; });
       };
-      var holdBtn = row.querySelector('.invqhold'), unBtn = row.querySelector('.invqunhold');
-      var toggle = function (act) { msg.textContent = '\\u2026'; post(INVQ, { action: act, stoken: S.stoken, machine: mid(), id: id }).then(function () { loadInvq(false); }).catch(function () { msg.textContent = 'Couldn\\u2019t reach the server.'; }); };
-      if (holdBtn) holdBtn.onclick = function () { toggle('hold'); };
-      if (unBtn) unBtn.onclick = function () { toggle('unhold'); };
     });
-  }
-  function bindInvqFresh(box) {
-    var b = box.querySelector('.invqfresh'); if (!b) return;
-    b.onclick = function () { b.disabled = true; b.textContent = 'checking\\u2026'; loadInvq(true); };
+    Array.prototype.forEach.call(box.querySelectorAll('.invqset'), function (b) {
+      b.onclick = function () {
+        var row = b.closest('.invqrow'), a = row.querySelector('.invqamt'), d = row.querySelector('.invqdesc'), msg = row.querySelector('.invqsetmsg');
+        var body = { action: 'setjob', stoken: S.stoken, machine: mid(), job: b.getAttribute('data-job') };
+        if (a && a.value.trim()) body.amount = a.value.trim();
+        if (d && d.value.trim()) body.desc = d.value.trim();
+        if (!body.amount && !body.desc) { msg.textContent = 'Type the price' + (d ? ' and what was done' : '') + ' first.'; return; }
+        b.disabled = true; msg.textContent = 'Saving\\u2026';
+        post(INVQ, body).then(function (j) {
+          if (!j || !j.ok) { b.disabled = false; msg.innerHTML = invqErr(j); return; }
+          loadInvq(true);
+        }).catch(function () { b.disabled = false; msg.textContent = 'Couldn\\u2019t reach the server.'; });
+      };
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('.invqpdf'), function (b) { b.onclick = function () { invqPdf(b.getAttribute('data-id'), b); }; });
+    Array.prototype.forEach.call(box.querySelectorAll('.invqsend'), function (b) {
+      b.onclick = function () {
+        var id = b.getAttribute('data-id'), x = invOf(id), msg = msgOf(b);
+        var warnTxt = (x.flags && x.flags.length) ? '\\n\\nWARNINGS:\\n\\u2022 ' + x.flags.map(function (f) { return f.text; }).join('\\n\\u2022 ') + '\\n' : '';
+        if (!confirm('QuickBooks will email invoice ' + (x.number ? '#' + x.number : '') + ' for ' + invqMoney(x.total || 0) + ' to ' + x.email + ' now.' + warnTxt + '\\nHave you checked the PDF?')) return;
+        b.disabled = true; if (msg) msg.textContent = 'Sending\\u2026';
+        post(INVQ, { action: 'send', stoken: S.stoken, machine: mid(), id: id }).then(function (j) {
+          if (!j || !j.ok) { b.disabled = false; if (msg) msg.innerHTML = invqErr(j); return; }
+          var row = b.closest('.invqrow'); if (row) row.innerHTML = '<span style="color:#7ee0a2">\\u2713 Sent to ' + esc(j.to) + ' \\u2014 ' + invqMoney(j.amount) + (j.number ? ' (#' + esc(j.number) + ')' : '') + '. Noted in #daily-jobs-in-jobs-out.</span>';
+        }).catch(function () { b.disabled = false; if (msg) msg.textContent = 'Couldn\\u2019t reach the server.'; });
+      };
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('.invqhold, .invqunhold'), function (b) {
+      b.onclick = function () {
+        var msg = msgOf(b); if (msg) msg.textContent = '\\u2026';
+        post(INVQ, { action: b.classList.contains('invqhold') ? 'hold' : 'unhold', stoken: S.stoken, machine: mid(), id: b.getAttribute('data-id') })
+          .then(function () { loadInvq(false); }).catch(function () { if (msg) msg.textContent = 'Couldn\\u2019t reach the server.'; });
+      };
+    });
   }
   /* The PDF is fetched with the staff token (a POST), so it cannot be a plain link;
      open the tab first, then hand it the blob, or the popup blocker eats it. */
@@ -28241,12 +28294,22 @@ def write_portal_page():
     var e = j && j.error;
     if (e === 'not_staff') return 'Your staff sign-in expired \\u2014 sign in again.';
     if (e === 'already_sent') return 'QuickBooks says this one has already been sent.';
+    if (e === 'already_invoiced') return 'This job already has an invoice' + (j.invoice ? ' (' + esc(j.invoice) + ')' : '') + ' \\u2014 re-check.';
     if (e === 'nothing_owed') return 'Nothing is owed on this invoice any more.';
-    if (e === 'no_email') return 'No email address on the customer \\u2014 add one in QuickBooks, then re-check.';
+    if (e === 'no_email') return 'No email address \\u2014 add one, then re-check.';
+    if (e === 'no_desc') return 'The job has no description to put on the invoice.';
+    if (e === 'large') return 'Over \\u00a32,000 \\u2014 raise this one by hand in QuickBooks.';
+    if (e === 'not_live') return 'QuickBooks is in dry-run on the server, so nothing can be raised yet.';
+    if (e === 'only_key') return 'QuickBooks is limited to one test customer on the server (QBO_ONLY_KEY).';
+    if (e === 'no_item') return 'QuickBooks needs a product/service set as QBO_ITEM_ID before it will take an invoice line.';
+    if (e === 'duplicate_name') return 'QuickBooks already has someone called <strong>' + esc(j.name || '') + '</strong> \\u2014 put this email on that record in QuickBooks, then try again.';
     if (e === 'not_found') return 'QuickBooks can\\u2019t find that invoice any more.';
-    if (e === 'rate_limited') return 'That\\u2019s a lot of sends in an hour \\u2014 stopped as a precaution.';
+    if (e === 'no_such_job') return 'That job isn\\u2019t in the record any more.';
+    if (e === 'bad_amount') return 'That price doesn\\u2019t look right \\u2014 between \\u00a31 and \\u00a32,000.';
+    if (e === 'nothing_to_set') return 'Nothing to save.';
+    if (e === 'rate_limited') return 'That\\u2019s a lot in one hour \\u2014 stopped as a precaution.';
     if (e === 'busy') return 'QuickBooks is busy with the monthly run \\u2014 try again in a minute.';
-    if (e === 'send_failed') return 'QuickBooks refused to send it' + (j && j.why ? ': ' + esc(j.why) : '') + '.';
+    if (e === 'send_failed' || e === 'qbo_invoice' || e === 'qbo_customer') return 'QuickBooks refused it' + (j && j.why ? ': ' + esc(j.why) : '') + '.';
     return 'Couldn\\u2019t do that \\u2014 the server said ' + esc(e || 'nothing') + '.';
   }
   function geoSetup() {

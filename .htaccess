@@ -223,6 +223,12 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(pcm-paylink(-events)?\.(json(\..*)?|log)|pcm-paylink-lib\.php|pcm-paylink-test\.php|pcm-paylink-sweep\.php)$">
   Require all denied
 </FilesMatch>
+# Slack jobs poller (22 Sep 2026): reads #sos-jobs-in-out into the job store from the
+# cron. Library, poller and test suite are include/CLI-only; the status file and log
+# name customers. Nothing here is a URL.
+<FilesMatch "^(pcm-slackjobs-(lib|sweep|test)\.php|pcm-slackjobs-status\.json(\..*)?|pcm-slackjobs\.log)$">
+  Require all denied
+</FilesMatch>
 # Invoices waiting for your OK (22 Sep 2026): pcm-invq.php stays served (staff token
 # gated). Its store holds customer names, emails and amounts; the library, the
 # QuickBooks/Slack half and the test suite are include-only or CLI-only.
