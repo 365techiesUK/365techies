@@ -14,6 +14,7 @@ header('X-Robots-Tag: noindex, nofollow');
 require_once __DIR__ . '/bm-weather-lib.php';
 require_once __DIR__ . '/bm-sea-lib.php';
 require_once __DIR__ . '/bm-wx-lib.php';
+require_once __DIR__ . '/bm-records-lib.php';   // today against the record books (22 Sep 2026)
 
 $beat = bmwx_json_load('beat.json');
 if (empty($beat['t']) || time() - (int)$beat['t'] > 45 * 60) {
@@ -66,4 +67,5 @@ echo json_encode(array(
     'sea' => $seaOut,
     'radar' => bm_radar_public(),
     'sat' => bm_sat_public(),
+    'records' => bm_records_public(),
 ));
