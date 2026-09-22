@@ -125,7 +125,14 @@ ok(count($items) === 2 && $items[0]['name'] === 'Full Computer Service' && $item
 ok($items[0]['price'] === 65.0 && $items[0]['desc'] === 'Full service: updates, malware scan, clean-up and health check', 'list price and sales description carried');
 ok(invq_item_find($items, '1200')['name'] === 'Full Computer Service' && invq_item_find($items, '999') === null && invq_item_find($items, '') === null, 'find by id, never by a blank');
 ok(invq_item_match($items, 'full computer service')['id'] === '1200' && invq_item_match($items, ' Full-Computer Service. ')['id'] === '1200', 'a Slack job type matches the item by name, ignoring case, spaces and punctuation');
-ok(invq_item_match($items, 'Full service') === null && invq_item_match($items, 'remote') === null && invq_item_match($items, '') === null, 'a partial or unknown name matches nothing');
+ok(invq_item_match($items, 'Full service') === null && invq_item_match($items, 'remote') === null && invq_item_match($items, '') === null, 'a partial or unknown name matches nothing (strict)');
+$Q2 = $Q; $Q2['QueryResponse']['Item'][] = array('Id' => '1400', 'Name' => '365 Techies Full Computer Service', 'Type' => 'Service', 'Active' => true, 'UnitPrice' => 65);
+$Q2['QueryResponse']['Item'][] = array('Id' => '1401', 'Name' => 'Remote Support Session (30 min)', 'Type' => 'Service', 'Active' => true, 'UnitPrice' => 30);
+$items2 = invq_items_clean($Q2);
+ok(invq_item_match($items2, 'Remote support', true) === null && invq_item_match($items2, 'Remote support', true, 'shortest')['id'] === '1401', 'loosely, "Remote support" is inside two names: nothing for a job (money), the shortest for the shortlist');
+ok(invq_item_match($items2, 'Full computer service', true)['id'] === '1200', 'an exact name still wins over a longer one that contains it');
+ok(invq_item_match($items, 'Full computer service', true)['id'] === '1200' && invq_item_match($items2, 'Computer', true) === null && invq_item_match($items, 'Data recovery', true) === null, 'unique containment matches; a word inside several names, or a name nobody has, does not');
+ok(invq_items_short($items2, array('Remote support', 'Full computer service', 'Gaming PC tune-up')) === array('1401', '1200'), 'the shortlist takes the shortest containing name and skips what QuickBooks lacks');
 $j1 = array('id' => 'a', 'desc' => '', 'amount' => 0);
 ok(invq_job_apply_item($j1, $items[0]) && $j1['item_id'] === '1200' && $j1['desc'] === 'Full service: updates, malware scan, clean-up and health check' && $j1['desc_by'] === 'item' && $j1['amount'] === 65.0 && $j1['amount_by'] === 'item', 'an empty job takes the item, its description and its list price', json_encode($j1));
 $j2 = array('id' => 'b', 'desc' => 'VPN advice', 'desc_by' => 'staff', 'amount' => 60.0, 'amount_by' => 'staff');
@@ -139,7 +146,7 @@ ok(invq_job_apply_item($j4, $items[1]) === false, 'the same item again changes n
 $row = invq_job_row(array('id' => 'x', 'name' => 'A', 'email' => 'a@b.com', 'desc' => 'd', 'amount' => 65.0, 'ts' => $now - $day, 'status' => 'done', 'item_id' => '1200', 'item_name' => 'Full Computer Service', 'kind' => 'Full computer service'), null, $now);
 ok($row['item'] === '1200' && $row['item_name'] === 'Full Computer Service' && $row['kind'] === 'Full computer service', 'the row carries the item and the Slack job type');
 ok(invq_items_short($items, array('Full computer service', 'Gaming PC tune-up', 'online remote support services', 'Full Computer Service')) === array('1200', '1174'), 'the shortlist: matched by name in the given order, a name QuickBooks lacks skipped, no repeats');
-ok(invq_items_short($items, invq_shortlist_default()) === array('1200') && invq_items_short(array(), array('Remote support')) === array() && invq_items_short($items, array('Laptop repair')) === array(), 'the default against this list finds only Full Computer Service; no items or no matches = empty (the console then shows the full list)');
+ok(invq_items_short($items, invq_shortlist_default()) === array('1174', '1200') && invq_items_short(array(), array('Remote support')) === array() && invq_items_short($items, array('Laptop repair')) === array(), 'the default against this list finds Online Remote Support Services and Full Computer Service, in shortlist order; no items or no matches = empty (the console then shows the full list)');
 ok(invq_shortlist_default() === array('Remote support', 'Full computer service', 'Gaming PC tune-up'), 'the default shortlist is the three the owner named');
 
 echo "-- the endpoint and the sweep, at source level\n";

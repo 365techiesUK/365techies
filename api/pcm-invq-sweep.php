@@ -141,7 +141,7 @@ function invq_kind_sync($c, $now = null) {
             if (!is_array($j) || !empty($j['invoice_no']) || !empty($j['item_id']) || empty($j['kind'])) continue;
             if ((int)(isset($j['ts']) ? $j['ts'] : 0) < $now - INVQ_WINDOW_DAYS * 86400) continue;
             if ((string)(isset($j['status']) ? $j['status'] : '') === 'dismissed') continue;
-            $it = invq_item_match($items, $j['kind']);
+            $it = invq_item_match($items, $j['kind'], true);        // exact, else the ONE QuickBooks name containing it; ambiguous = none
             if ($it && invq_job_apply_item($j, $it)) { $d['jobs'][$i] = $j; $n++; }
         }
         return $n ? array('ok' => true, 'data' => $d, 'n' => $n) : array('ok' => true, 'n' => 0);

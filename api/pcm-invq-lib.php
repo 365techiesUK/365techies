@@ -208,10 +208,23 @@ function invq_item_find($items, $id) {
    name, ignoring case, spaces and punctuation. The whole name or nothing: a partial
    match would be a guess about money. */
 function invq_item_key($s) { return preg_replace('/[^a-z0-9]/', '', strtolower((string)$s)); }
-function invq_item_match($items, $text) {
+/* Exact name first. With $loose, a QuickBooks name that CONTAINS the text also counts
+   ("Remote support" -> "Online Remote Support Services"; "Full computer service" ->
+   "365 Techies Full Computer Service"): one candidate wins outright; several and the
+   shortest name wins if $pick is 'shortest', else nothing (the caller that puts a
+   price on a job asks for nothing - an ambiguous match is a guess about money). */
+function invq_item_match($items, $text, $loose = false, $pick = 'none') {
     $k = invq_item_key($text);
     if ($k === '') return null;
     foreach ((array)$items as $it) if (invq_item_key($it['name']) === $k) return $it;
+    if (!$loose) return null;
+    $cands = array();
+    foreach ((array)$items as $it) if (strpos(invq_item_key($it['name']), $k) !== false) $cands[] = $it;
+    if (count($cands) === 1) return $cands[0];
+    if (count($cands) > 1 && $pick === 'shortest') {
+        usort($cands, function ($a, $b) { return strlen(invq_item_key($a['name'])) - strlen(invq_item_key($b['name'])); });
+        return $cands[0];
+    }
     return null;
 }
 /* The few services new customers actually get, shown first (owner, 22 Sep: "remote
@@ -222,7 +235,7 @@ function invq_item_match($items, $text) {
 function invq_shortlist_default() { return array('Remote support', 'Full computer service', 'Gaming PC tune-up'); }
 function invq_items_short($items, $names) {
     $ids = array();
-    foreach ((array)$names as $n) { $it = invq_item_match($items, $n); if ($it && !in_array($it['id'], $ids, true)) $ids[] = $it['id']; }
+    foreach ((array)$names as $n) { $it = invq_item_match($items, $n, true, 'shortest'); if ($it && !in_array($it['id'], $ids, true)) $ids[] = $it['id']; }
     return $ids;
 }
 
