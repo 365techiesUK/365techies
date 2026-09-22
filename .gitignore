@@ -33,6 +33,11 @@ api/pcm-paylink.json.*.tmp
 api/pcm-paylink.log
 api/pcm-paylink-events.json
 api/pcm-paylink-events.json.*.tmp
+# Invoice review queue: held ids, send log, cached rows (names + emails + amounts)
+api/pcm-invq.json
+api/pcm-invq.json.lock
+api/pcm-invq.json.*.tmp
+api/pcm-invq.log
 # GoCardless webhook endpoint secret (server-only, like every other key file)
 api/gocardless-webhook-secret.php
 # Portal messaging: bot token, per-install filename salt, conversations, cron state

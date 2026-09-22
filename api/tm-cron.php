@@ -84,6 +84,14 @@ $cm = comms_sweep();
 require_once __DIR__ . '/pcm-paylink-sweep.php';
 $pl = paylink_sweep();
 
+/* Invoices waiting for someone's OK: one Slack line a day, after nine, naming
+   every QuickBooks invoice with a balance that has never been emailed. Same
+   placement, same reason. Read-only against QuickBooks; silent when the queue
+   is empty; a clean no-op before nine, once it has posted today, when QuickBooks
+   is not configured, or when the monthly biller holds the token lock. */
+require_once __DIR__ . '/pcm-invq-sweep.php';
+$iq = invq_morning();
+
 if (!tm_configured()) {
     $out = array('ok' => false, 'error' => 'not-configured', 'bkpend' => $bkp, 'paylinks' => $pl);
     echo $CLI ? ("sms not configured (abandoned bookings reported: " . $bkp['told'] . ")\n")
@@ -121,9 +129,11 @@ if ($CLI) {
     echo "due {$res['due']}, sent {$res['sent']}, skipped {$res['skipped']}, failed {$res['failed']}"
        . ", abandoned bookings reported {$bkp['told']}"
        . ", comms " . json_encode($cm)
-       . ", pay links " . json_encode($pl) . "\n";
+       . ", pay links " . json_encode($pl)
+       . ", invoices " . json_encode($iq) . "\n";
 } else {
     $res['comms'] = $cm;
     $res['paylinks'] = $pl;
+    $res['invq'] = $iq;
     echo json_encode($res);
 }

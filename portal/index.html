@@ -270,7 +270,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-09-21"
+      "dateModified": "2026-09-22"
     }
   ]
 }
@@ -707,9 +707,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 21 Sep 2026 &middot; 07addf6e92</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 22 Sep 2026 &middot; ef7d7d72aa</p><script>
 (function () {
-  var P365BUILD = '07addf6e92';
+  var P365BUILD = 'ef7d7d72aa';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -1516,7 +1516,7 @@
   }
 </style><script>
 (function () {
-  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php', CONN = '/api/pcm-connect.php', FEEDS = '/api/pcm-feeds.php', WCHK = '/api/pcm-wcheck.php', MSG = '/api/pcm-msg.php', QBO = '/api/pcm-qbo.php', JOBS = '/api/pcm-jobs.php', INVITE = '/api/pcm-invite.php', PAY = '/api/pcm-paylink.php', GEO = '/api/pcm-geo.php';
+  var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php', CONN = '/api/pcm-connect.php', FEEDS = '/api/pcm-feeds.php', WCHK = '/api/pcm-wcheck.php', MSG = '/api/pcm-msg.php', QBO = '/api/pcm-qbo.php', JOBS = '/api/pcm-jobs.php', INVITE = '/api/pcm-invite.php', PAY = '/api/pcm-paylink.php', GEO = '/api/pcm-geo.php', INVQ = '/api/pcm-invq.php';
   var el = document.getElementById('p365app');
   var S = {};
   try { S = JSON.parse(sessionStorage.getItem('p365s') || 'null') || JSON.parse(localStorage.getItem('p365') || '{}'); } catch (e) { S = {}; }
@@ -5418,6 +5418,12 @@
       h += '<div class="card" style="border-left:4px solid var(--pwarn)"><h2>\ud83d\udcde Worth a call today</h2>'
         + '<p class="quiet" style="margin:.1rem 0 .6rem">The PCs that could do with a friendly call \u2014 ranked by what needs attention. Proactive care, before they even ring us.</p>'
         + '<div id="worthcall"><p class="quiet">Checking the fleet\u2026</p></div></div>';
+      /* Invoices waiting for your OK: every QuickBooks invoice with a balance that has
+         not been emailed - raised by the console at "Quote agreed" or by hand - with the
+         likely mistakes flagged. Nothing leaves without "Approve & send" here. */
+      h += '<div class="card" id="invqcard" style="border-left:4px solid var(--pwarn)"><h2>\ud83e\uddfe Invoices waiting for your OK</h2>'
+        + '<p class="quiet" style="margin:.1rem 0 .6rem">Raised but not yet sent. Check the PDF the customer would get, then approve. QuickBooks sends it and marks it sent.</p>'
+        + '<div id="invq"><p class="quiet">Checking QuickBooks\u2026</p></div></div>';
       h += '<div class="card"><h2>\ud83d\udda5 PC Manager fleet</h2>'
         + '<div class="stats" id="fstats"></div>'
         + '<div class="ftabs" id="ftabs"></div><div class="tblwrap" id="ffleet"><p class="quiet">Loading the fleet\u2026</p></div></div>';
@@ -5494,6 +5500,7 @@
       qboSetup();
       invitePlansSetup();
       geoSetup();
+      loadInvq();
       var visiv = setInterval(function () {
         if (!document.getElementById('vislive')) { clearInterval(visiv); return; }
         loadVis();
@@ -5824,6 +5831,92 @@
         };
       }).catch(function () { box.innerHTML = '<span class="quiet">Couldn\u2019t reach the server.</span>'; });
     };
+  }
+  function loadInvq(fresh) {
+    var box = document.getElementById('invq'); if (!box) return;
+    post(INVQ, { action: 'list', stoken: S.stoken, machine: mid(), fresh: fresh ? 1 : 0 }).then(function (r) {
+      if (!r || !r.ok) { box.innerHTML = '<p class="quiet">Couldn\u2019t check' + (r && r.error ? ' (' + esc(r.error) + ')' : '') + '.</p>'; return; }
+      if (r.connected === false) {
+        box.innerHTML = '<p class="quiet">' + (r.why === 'busy' ? 'QuickBooks is busy with the monthly run \u2014 try again in a minute.' : 'QuickBooks isn\u2019t connected on the server.') + '</p>'; return;
+      }
+      renderInvq(box, r);
+    }).catch(function () { box.innerHTML = '<p class="quiet">Couldn\u2019t reach the server.</p>'; });
+  }
+  function invqMoney(v) { return '\u00a3' + (Math.round(v * 100) / 100).toFixed(2); }
+  function renderInvq(box, r) {
+    var rows = r.rows || [];
+    var live = rows.filter(function (x) { return !x.held; }), held = rows.filter(function (x) { return x.held; });
+    var note = (r.stale ? '<p class="quiet">QuickBooks didn\u2019t answer just now \u2014 this is the last list it gave us.</p>' : '');
+    if (!rows.length) { box.innerHTML = note + '<p style="margin:.2rem 0"><span style="color:#7ee0a2">\u2713 Nothing waiting</span> <span class="quiet">\u2014 every invoice with a balance has been sent.</span> <button class="sm ghost invqfresh" style="margin-left:.4rem;padding:.2rem .5rem;font-size:.78rem">re-check</button></p>'; bindInvqFresh(box); return; }
+    function rowHtml(x) {
+      var warn = (x.flags || []).map(function (f) { return '<div style="color:#ffb4a2;font-size:.85rem;margin:.15rem 0 0">\u26a0 ' + esc(f.text) + '</div>'; }).join('');
+      var lines = (x.lines || []).map(function (l) { return esc(l.desc || '(no description)') + (l.amount ? ' \u2014 ' + invqMoney(l.amount) : ''); }).join('<br>');
+      var when = x.days === 0 ? 'today' : (x.days === 1 ? 'yesterday' : x.days + ' days ago');
+      return '<div class="invqrow" data-id="' + esc(x.id) + '" style="border:1px solid rgba(125,170,220,.25);border-radius:10px;padding:.55rem .7rem;margin:0 0 .5rem' + (x.held ? ';opacity:.7' : '') + '">'
+        + '<div style="display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;align-items:baseline">'
+        + '<div><strong>' + esc(x.customer || 'Unnamed customer') + '</strong> <span class="quiet">' + (x.number ? '#' + esc(x.number) : 'no number \u2014 made by the console') + ' \u00b7 ' + esc(when) + (x.email ? ' \u00b7 to ' + esc(x.email) : '') + '</span></div>'
+        + '<div style="font-weight:700;font-size:1.05rem">' + invqMoney(x.total) + '</div></div>'
+        + (lines ? '<div class="quiet" style="margin:.2rem 0 0;font-size:.85rem">' + lines + '</div>' : '')
+        + warn
+        + '<div style="margin:.45rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">'
+        + '<button class="sm ghost invqpdf" style="margin:0;padding:.3rem .65rem;font-size:.82rem">\ud83d\udc41 Preview PDF</button>'
+        + (x.held ? '<button class="sm ghost invqunhold" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Release</button>'
+                  : '<button class="sm invqsend" style="margin:0;padding:.3rem .7rem;font-size:.82rem"' + (x.email ? '' : ' disabled title="No email address on the customer"') + '>\u2705 Approve &amp; send</button>'
+                    + '<button class="sm ghost invqhold" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Hold</button>')
+        + '<a class="btn sm ghost" style="margin:0;padding:.3rem .65rem;font-size:.82rem" href="' + esc(x.url) + '" target="_blank" rel="noopener">Fix in QuickBooks</a>'
+        + '<span class="quiet invqmsg"></span></div></div>';
+    }
+    box.innerHTML = note + live.map(rowHtml).join('')
+      + (held.length ? '<p class="quiet" style="margin:.5rem 0 .3rem">On hold</p>' + held.map(rowHtml).join('') : '')
+      + '<p class="quiet" style="margin:.3rem 0 0">' + live.length + ' waiting' + (held.length ? ', ' + held.length + ' on hold' : '') + (r.cached ? ' \u00b7 as of a few minutes ago' : '') + ' <button class="sm ghost invqfresh" style="margin-left:.4rem;padding:.2rem .5rem;font-size:.78rem">re-check</button></p>';
+    bindInvqFresh(box);
+    Array.prototype.forEach.call(box.querySelectorAll('.invqrow'), function (row) {
+      var id = row.getAttribute('data-id'), msg = row.querySelector('.invqmsg');
+      var x = rows.filter(function (y) { return y.id === id; })[0] || {};
+      var pdfBtn = row.querySelector('.invqpdf');
+      if (pdfBtn) pdfBtn.onclick = function () { invqPdf(id, pdfBtn); };
+      var sendBtn = row.querySelector('.invqsend');
+      if (sendBtn) sendBtn.onclick = function () {
+        var warnTxt = (x.flags && x.flags.length) ? '\n\nWARNINGS:\n\u2022 ' + x.flags.map(function (f) { return f.text; }).join('\n\u2022 ') + '\n' : '';
+        if (!confirm('QuickBooks will email invoice ' + (x.number ? '#' + x.number : '') + ' for ' + invqMoney(x.total) + ' to ' + x.email + ' now.' + warnTxt + '\nHave you checked the PDF?')) return;
+        sendBtn.disabled = true; msg.textContent = 'Sending\u2026';
+        post(INVQ, { action: 'send', stoken: S.stoken, machine: mid(), id: id }).then(function (j) {
+          if (!j || !j.ok) { sendBtn.disabled = false; msg.innerHTML = invqErr(j); return; }
+          row.innerHTML = '<span style="color:#7ee0a2">\u2713 Sent to ' + esc(j.to) + ' \u2014 ' + invqMoney(j.amount) + (j.number ? ' (#' + esc(j.number) + ')' : '') + '. Noted in #daily-jobs-in-jobs-out.</span>';
+        }).catch(function () { sendBtn.disabled = false; msg.textContent = 'Couldn\u2019t reach the server.'; });
+      };
+      var holdBtn = row.querySelector('.invqhold'), unBtn = row.querySelector('.invqunhold');
+      var toggle = function (act) { msg.textContent = '\u2026'; post(INVQ, { action: act, stoken: S.stoken, machine: mid(), id: id }).then(function () { loadInvq(false); }).catch(function () { msg.textContent = 'Couldn\u2019t reach the server.'; }); };
+      if (holdBtn) holdBtn.onclick = function () { toggle('hold'); };
+      if (unBtn) unBtn.onclick = function () { toggle('unhold'); };
+    });
+  }
+  function bindInvqFresh(box) {
+    var b = box.querySelector('.invqfresh'); if (!b) return;
+    b.onclick = function () { b.disabled = true; b.textContent = 'checking\u2026'; loadInvq(true); };
+  }
+  /* The PDF is fetched with the staff token (a POST), so it cannot be a plain link;
+     open the tab first, then hand it the blob, or the popup blocker eats it. */
+  function invqPdf(id, btn) {
+    var lbl = btn.textContent, tab = window.open('', '_blank');
+    btn.disabled = true; btn.textContent = '\u2026';
+    var done = function () { btn.disabled = false; btn.textContent = lbl; };
+    fetch(INVQ, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'pdf', id: id, stoken: S.stoken, machine: mid() }) })
+      .then(function (r) { if (!r.ok || (r.headers.get('content-type') || '').indexOf('application/pdf') < 0) throw new Error('nopdf'); return r.blob(); })
+      .then(function (blob) { var u = URL.createObjectURL(blob); if (tab) { tab.location = u; } else { location.href = u; } setTimeout(function () { URL.revokeObjectURL(u); }, 60000); done(); })
+      .catch(function () { if (tab) { try { tab.close(); } catch (_e) {} } done(); alert('That PDF would not open just now \u2014 open the invoice in QuickBooks instead.'); });
+  }
+  function invqErr(j) {
+    var e = j && j.error;
+    if (e === 'not_staff') return 'Your staff sign-in expired \u2014 sign in again.';
+    if (e === 'already_sent') return 'QuickBooks says this one has already been sent.';
+    if (e === 'nothing_owed') return 'Nothing is owed on this invoice any more.';
+    if (e === 'no_email') return 'No email address on the customer \u2014 add one in QuickBooks, then re-check.';
+    if (e === 'not_found') return 'QuickBooks can\u2019t find that invoice any more.';
+    if (e === 'rate_limited') return 'That\u2019s a lot of sends in an hour \u2014 stopped as a precaution.';
+    if (e === 'busy') return 'QuickBooks is busy with the monthly run \u2014 try again in a minute.';
+    if (e === 'send_failed') return 'QuickBooks refused to send it' + (j && j.why ? ': ' + esc(j.why) : '') + '.';
+    return 'Couldn\u2019t do that \u2014 the server said ' + esc(e || 'nothing') + '.';
   }
   function geoSetup() {
     var btn = document.getElementById('geogo'); if (!btn) return;
