@@ -143,7 +143,7 @@ if ($action === 'list') {
     out(array('ok' => true, 'connected' => true, 'jobs' => $o['jobs'], 'waiting' => $o['waiting'], 'older' => $o['older'],
               'cached' => !empty($o['cached']), 'stale' => !empty($o['stale']), 'why' => isset($o['why']) ? $o['why'] : '',
               'live' => !empty($c['live']), 'only_key' => ($c['only'] !== ''), 'slack' => $slack,
-              'items' => ($items = invq_items($c)),                       // QuickBooks' Products & Services, for the drop-down
+              'items' => ($items = invq_items($c, !empty($in['fresh']))), // QuickBooks' Products & Services, for the drop-down; re-check re-reads them
               'short' => invq_items_short($items, $c['shortlist'])));     // the few shown first, in this order
 }
 
