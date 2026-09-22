@@ -5864,13 +5864,13 @@
         + (x.held ? '<button class="sm ghost invqunhold" data-id="' + esc(x.id) + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Release</button>'
                   : '<button class="sm invqsend" data-id="' + esc(x.id) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem"' + (x.email ? '' : ' disabled title="No email address on the customer"') + '>\u2705 Approve &amp; send</button>'
                     + '<button class="sm ghost invqhold" data-id="' + esc(x.id) + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Hold</button>')
-        + '<a class="btn sm ghost" style="margin:0;padding:.3rem .65rem;font-size:.82rem" href="' + esc(x.url) + '" target="_blank" rel="noopener">Fix in QuickBooks</a>';
+        + '<a class="btn sm ghost" style="margin:0;padding:.3rem .65rem;font-size:.82rem;opacity:.75" href="' + esc(x.url) + '" target="_blank" rel="noopener" title="Only if something on the invoice needs changing. Sign in to QuickBooks first, or it opens a blank new invoice instead of this one.">Open in QuickBooks</a>';
     }
     function jobHtml(j) {
       var inv = j.invoice, st = j.state, chip, body = '', btns = '';
       if (st === 'paid') chip = '<span style="color:#7ee0a2">\u2713 Paid</span>';
       else if (st === 'sent') chip = '<span style="color:#7ee0a2">\u2713 Invoice sent' + (inv && inv.number ? ' #' + esc(inv.number) : '') + '</span>';
-      else if (st === 'unsent') { chip = '<span style="color:#ffd76a">Invoice raised \u2014 waiting for your OK</span>'; body = warnHtml(inv); btns = invButtons(inv); }
+      else if (st === 'unsent') { chip = '<span style="color:#ffd76a">Invoice raised \u2014 check it with Preview PDF, then Approve &amp; send</span>'; body = warnHtml(inv); btns = invButtons(inv); }
       else if (st === 'invoiced') chip = '<span class="quiet">\u2713 ' + esc(INVQ_WHY.invoiced_in_slack) + '</span>';
       else {
         chip = '<span style="color:#ffb4a2">No invoice yet</span>' + (j.done ? '' : ' <span class="quiet">\u00b7 job not marked done in Slack yet</span>');
