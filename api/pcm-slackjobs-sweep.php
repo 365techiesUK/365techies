@@ -71,8 +71,16 @@ function sj_jobs_locked($fn) {
    post itself left one of those blank. */
 function sj_thread_extras($channel, $ts) {
     $r = slk_call('conversations.replies', array('channel' => $channel, 'ts' => $ts, 'limit' => 50), 8);
-    if (empty($r['ok']) || empty($r['messages'])) return array('price' => 0.0, 'email' => '');
-    return sj_replies_extract($r['messages'], $ts);
+    if (empty($r['ok'])) {
+        $e = (string)(isset($r['error']) ? $r['error'] : 'unknown');
+        sj_log('replies ' . $ts . ' failed: ' . $e);
+        return array('price' => 0.0, 'email' => '', 'error' => $e);
+    }
+    if (empty($r['messages'])) return array('price' => 0.0, 'email' => '', 'error' => '');
+    $x = sj_replies_extract($r['messages'], $ts);
+    $x['error'] = '';
+    sj_log('replies ' . $ts . ': ' . count($r['messages']) . ' msgs, price ' . $x['price'] . ', email ' . ($x['email'] !== '' ? 'found' : 'none'));
+    return $x;
 }
 
 /* Merge a "Job Out" post into its job: the same email if the post carries one, else
@@ -115,7 +123,7 @@ function sj_apply_out($m, $now = null) {
 /* The poll. Returns a small summary for the cron's output. */
 function sj_poll($now = null) {
     $now = $now === null ? time() : $now;
-    $out = array('channels' => 0, 'seen' => 0, 'jobs' => 0, 'new' => 0, 'updated' => 0, 'error' => '');
+    $out = array('channels' => 0, 'seen' => 0, 'jobs' => 0, 'new' => 0, 'updated' => 0, 'error' => '', 'threads' => 0, 'thread_error' => '');
     $st = sj_status_read();
     if ((int)(isset($st['last']) ? $st['last'] : 0) > $now - SJ_MIN_GAP) { $out['error'] = 'recent'; return $out; }
     $c = slk_creds();
@@ -136,8 +144,9 @@ function sj_poll($now = null) {
             $job = sj_job($m, $chan, $now);
             if (!$job) continue;
             if (($job['amount'] <= 0 || $job['email'] === '') && !empty($m['reply_count']) && $threads < SJ_MAX_THREADS) {
-                $threads++;
+                $threads++; $out['threads']++;
                 $x = sj_thread_extras($chan, (string)$m['ts']);
+                if ($x['error'] !== '' && $out['thread_error'] === '') $out['thread_error'] = $x['error'];   // surfaced in the console
                 if ($job['amount'] <= 0 && $x['price'] > 0) { $job['amount'] = $x['price']; $job['amount_by'] = 'slack'; }
                 if ($job['email'] === '' && $x['email'] !== '') $job['email'] = $x['email'];
             }
@@ -159,7 +168,8 @@ function sj_poll($now = null) {
         foreach ($outs as $m) if (sj_apply_out($m, $now)) $out['updated']++;
     }
     if ($errors) $out['error'] = implode(',', array_unique(array_values($errors)));
-    sj_status_write(array('last' => $now, 'error' => $out['error'], 'errors' => $errors, 'jobs' => $out['jobs'], 'new' => $out['new'], 'channels' => sj_channels()));
+    sj_status_write(array('last' => $now, 'error' => $out['error'], 'errors' => $errors, 'jobs' => $out['jobs'], 'new' => $out['new'], 'channels' => sj_channels(),
+                          'threads' => $out['threads'], 'thread_error' => $out['thread_error']));
     if ($out['new'] || $out['updated'] || $out['error']) sj_log('poll: ' . json_encode($out));
     return $out;
 }

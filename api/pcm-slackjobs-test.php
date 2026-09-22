@@ -136,6 +136,7 @@ ok(strpos($SW, '?' . '>') === false, 'no closing tag');
 ok(strpos($SW, "'conversations.history'") !== false && strpos($SW, "'conversations.replies'") !== false && !preg_match("/'chat\.postMessage'|'chat\.update'|'chat\.delete'/", $SW), 'reads Slack, never writes to it');
 ok(strpos($SW, 'SJ_MIN_GAP') !== false && strpos($SW, 'SJ_MAX_THREADS') !== false, 'polls are rate-limited and thread reads bounded');
 ok(strpos($SW, "(\$job['amount'] <= 0 || \$job['email'] === '') && !empty(\$m['reply_count'])") !== false && strpos($SW, "sj_replies_extract(\$r['messages'], \$ts)") !== false, 'a thread is read only when the post left the price or the email blank, and only through the pure extractor');
+ok(strpos($SW, "'thread_error' => \$out['thread_error']") !== false && strpos($SW, "sj_log('replies ' . \$ts . ' failed: '") !== false, 'a failed thread read is written to the status file and the log, never swallowed');
 ok(strpos($SW, "SJ_JOBS . '.lock'") !== false, 'writes the job store under its own lock');
 ok(strpos($SW, 'usort($msgs') !== false && strpos($SW, 'sj_apply_out($m, $now)') !== false && strpos($SW, "\$j['out_ts'] = \$ts") !== false, 'completions are applied after the jobs, oldest first, and each one only once');
 ok(strpos($SW, "!== 'staff' && \$p['work'] !== ''") !== false && strpos($SW, "!== 'staff' && \$p['price'] > 0") !== false, 'a completion never overwrites a price or description a person typed');

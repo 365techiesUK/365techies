@@ -138,7 +138,8 @@ if ($action === 'list') {
     require_once __DIR__ . '/pcm-slackjobs-sweep.php';
     $st = sj_status_read();
     $slack = array('last' => (int)(isset($st['last']) ? $st['last'] : 0), 'error' => (string)(isset($st['error']) ? $st['error'] : ''),
-                   'jobs' => (int)(isset($st['jobs']) ? $st['jobs'] : 0), 'channels' => (array)(isset($st['channels']) ? $st['channels'] : array()));
+                   'jobs' => (int)(isset($st['jobs']) ? $st['jobs'] : 0), 'channels' => (array)(isset($st['channels']) ? $st['channels'] : array()),
+                   'threads' => (int)(isset($st['threads']) ? $st['threads'] : 0), 'thread_error' => (string)(isset($st['thread_error']) ? $st['thread_error'] : ''));
     out(array('ok' => true, 'connected' => true, 'jobs' => $o['jobs'], 'waiting' => $o['waiting'], 'older' => $o['older'],
               'cached' => !empty($o['cached']), 'stale' => !empty($o['stale']), 'why' => isset($o['why']) ? $o['why'] : '',
               'live' => !empty($c['live']), 'only_key' => ($c['only'] !== ''), 'slack' => $slack,
