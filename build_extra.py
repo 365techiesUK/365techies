@@ -28182,10 +28182,11 @@ def write_portal_page():
       + (r.live === false ? '<p class="quiet">\\u26a0 QuickBooks is in dry-run on the server, so invoices can\\u2019t be raised from here yet.</p>' : '')
       + (r.only_key ? '<p class="quiet">\\u26a0 QuickBooks is limited to one test customer on the server (QBO_ONLY_KEY), so nothing is raised automatically yet.</p>' : '');
     var sk = r.slack || {};
-    if (sk.error === 'not_in_channel') note += '<p style="color:#ffb4a2;margin:.2rem 0">\\u26a0 Slack says the 365 techies app is not in the jobs channel yet \\u2014 type /invite @365 techies app in #sos-jobs-in-out.</p>';
-    else if (sk.error === 'missing_scope') note += '<p style="color:#ffb4a2;margin:.2rem 0">\\u26a0 Slack says the app cannot read channel history \\u2014 add the channels:history scope to the app and reinstall it.</p>';
+    var skWhen = sk.last ? ' <span class="quiet">(last tried ' + esc(new Date(sk.last * 1000).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })) + '; it retries every 15 minutes)</span>' : '';
+    if (sk.error === 'not_in_channel') note += '<p style="color:#ffb4a2;margin:.2rem 0">\\u26a0 Slack said the 365 techies app was not in the jobs channel \\u2014 if you have invited it since, wait for the next read; if not, type /invite @365 techies app in #sos-jobs-in-out.' + skWhen + '</p>';
+    else if (sk.error === 'missing_scope') note += '<p style="color:#ffb4a2;margin:.2rem 0">\\u26a0 Slack says the app cannot read channel history \\u2014 add the channels:history scope to the app and reinstall it.' + skWhen + '</p>';
     else if (sk.error === 'not_configured') note += '<p class="quiet">Slack bot token isn\\u2019t on the server, so Slack jobs can\\u2019t be read yet.</p>';
-    else if (sk.error && sk.error !== 'recent') note += '<p style="color:#ffb4a2;margin:.2rem 0">\\u26a0 Slack read failed: ' + esc(sk.error) + '.</p>';
+    else if (sk.error && sk.error !== 'recent') note += '<p style="color:#ffb4a2;margin:.2rem 0">\\u26a0 Slack read failed: ' + esc(sk.error) + '.' + skWhen + '</p>';
     else if (sk.last) note += '<p class="quiet">Slack read ' + esc(new Date(sk.last * 1000).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })) + ' \\u00b7 ' + (sk.jobs || 0) + ' job post' + (sk.jobs === 1 ? '' : 's') + ' in the channel.</p>';
     else note += '<p class="quiet">Slack hasn\\u2019t been read yet \\u2014 the cron does that within about 15 minutes of the app joining the channel.</p>';
     function warnHtml(x) { return (x.flags || []).map(function (f) { return '<div style="color:#ffb4a2;font-size:.85rem;margin:.15rem 0 0">\\u26a0 ' + esc(f.text) + '</div>'; }).join(''); }
@@ -28226,7 +28227,7 @@ def write_portal_page():
         + '<div style="display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;align-items:baseline">'
         + '<div><strong>' + esc(x.customer || 'Unnamed customer') + '</strong> <span class="quiet">' + (x.number ? '#' + esc(x.number) : 'no number') + ' \\u00b7 ' + esc(invqWhen(x.days)) + (x.email ? ' \\u00b7 ' + esc(x.email) : '') + '</span></div>'
         + '<div style="font-weight:700;font-size:1.05rem">' + invqMoney(x.total) + '</div></div>'
-        + ((x.lines || []).length ? '<div class="quiet" style="margin:.2rem 0 0;font-size:.85rem">' + x.lines.map(function (l) { return esc(l.desc || '(no description)'); }).join('<br>') + '</div>' : '')
+        + ((x.lines || []).length ? '<div class="quiet" style="margin:.2rem 0 0;font-size:.85rem">' + x.lines.slice(0, 4).map(function (l) { return esc(l.desc || '(no description)'); }).join('<br>') + (x.lines.length > 4 ? '<br>\\u2026 and ' + (x.lines.length - 4) + ' more line' + (x.lines.length - 4 === 1 ? '' : 's') + ' \\u2014 see the PDF' : '') + '</div>' : '')
         + warnHtml(x)
         + '<div style="margin:.45rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">' + invButtons(x) + '<span class="quiet invqmsg"></span></div></div>';
     }
