@@ -93,6 +93,15 @@ if ($action === 'setjob') {
     if ($job === '') fail('bad_job');
     $amount = (isset($in['amount']) && trim((string)$in['amount']) !== '') ? preg_replace('/[^0-9.]/', '', (string)$in['amount']) : null;
     $desc   = (isset($in['desc']) && trim((string)$in['desc']) !== '') ? (string)$in['desc'] : null;
+    /* The customer's email, typed here when the Slack post had none (22 Sep: Colin
+       Sutton). It goes on the JOB - the new QuickBooks customer is made from it and
+       the send later goes to that customer's address, which "Approve & send" names
+       before anything leaves. Staff-typed, behind the staff gate, validated. */
+    $email = null;
+    if (isset($in['email']) && trim((string)$in['email']) !== '') {
+        $email = invq_email_ok($in['email']);
+        if ($email === '') fail('bad_email');
+    }
     /* The service picked from the drop-down: an id that must be on QuickBooks' own
        list (fetched here, cached an hour) - the request can name it, never define it. */
     $item = null;
@@ -103,9 +112,9 @@ if ($action === 'setjob') {
         $item = invq_item_find(invq_items($c), $itemId);
         if (!$item) fail('bad_item');
     }
-    $r = invq_job_set($job, $amount, $desc, $who, $item);
+    $r = invq_job_set($job, $amount, $desc, $who, $item, $email);
     if (empty($r['ok'])) fail($r['error']);
-    invq_log('set job ' . $job . ($amount !== null ? ' amount ' . $amount : '') . ($desc !== null ? ' desc' : '') . ($item ? ' item ' . $item['id'] : '') . ' by ' . $who);
+    invq_log('set job ' . $job . ($amount !== null ? ' amount ' . $amount : '') . ($desc !== null ? ' desc' : '') . ($item ? ' item ' . $item['id'] : '') . ($email !== null ? ' email' : '') . ' by ' . $who);
     out(array('ok' => true, 'item' => ($item ? $item['name'] : '')));
 }
 

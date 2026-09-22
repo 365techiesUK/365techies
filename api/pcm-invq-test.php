@@ -149,13 +149,18 @@ ok(strpos($SW, "!empty(\$job['item_id']) ? (string)\$job['item_id'] : \$c['item'
 ok(strpos($SW, "'select * from Item where Active = true") !== false && strpos($SW, 'INVQ_ITEMS_TTL') !== false, 'the item list is read from QuickBooks and cached');
 ok(strpos($SW, 'invq_kind_sync($c, $now);') !== false && strpos($SW, 'invq_kind_sync($c, $now);') > strpos($SW, 'invq_pcm_sync($now);'), 'a Slack job type is matched to a service before every fresh overview');
 ok(strpos($SW, "\$body['BillAddr']") !== false && strpos($SW, "'PostalCode'") !== false, 'a new customer is created with the address and postcode from Slack');
-ok(!preg_match('/\$in\[\'(to|email|sendto|sendTo|address|name|customer)\'\]/', $EP) && !preg_match('/\$in\[/', $SW), 'no recipient, name or customer can come from the request');
+ok(!preg_match('/\$in\[\'(to|sendto|sendTo|address|name|customer)\'\]/', $EP) && !preg_match('/\$in\[/', $SW), 'no recipient, name or customer can come from the request');
 /* A price or description MAY be typed - but only into a job, via setjob, never into
    an invoice or a send. Pin that the request's amount/desc are read nowhere else. */
 $sj0 = strpos($EP, "if (\$action === 'setjob')"); $sj1 = strpos($EP, "if (\$action === 'hold'");
 $setjobBlock = ($sj0 !== false && $sj1 !== false && $sj1 > $sj0) ? substr($EP, $sj0, $sj1 - $sj0) : '';
 ok($setjobBlock !== '' && substr_count($EP, "\$in['amount']") === substr_count($setjobBlock, "\$in['amount']") && substr_count($EP, "\$in['desc']") === substr_count($setjobBlock, "\$in['desc']") && substr_count($setjobBlock, "\$in['amount']") > 0,
    'a typed price or description reaches only the job record (setjob), never a send or a create');
+/* The customer's email MAY be typed too (22 Sep: a Slack post with none) - into the job
+   only, validated, and the send still takes its address from QuickBooks, never from here. */
+ok(substr_count($EP, "\$in['email']") === substr_count($setjobBlock, "\$in['email']") && substr_count($setjobBlock, "\$in['email']") > 0 && strpos($setjobBlock, "invq_email_ok(\$in['email'])") !== false && strpos($setjobBlock, "fail('bad_email')") !== false,
+   'a typed customer email reaches only the job record, and only if it is a valid address');
+ok(strpos($SW, "\$d['jobs'][\$i]['email_by'] = 'staff'") !== false, 'the job remembers the email was typed by staff, so a re-poll keeps it');
 ok(strpos($SW, "invq_email_status(\$inv) === 'EmailSent') return array('ok' => false, 'error' => 'already_sent')") !== false, 'an already-sent invoice is refused at send time');
 ok(strpos($SW, "'Content-Type: application/octet-stream'") !== false && strpos($SW, "/send?sendTo=") !== false && strpos($SW, "\$status !== 'EmailSent'") !== false, 'the send call is the one Intuit documents, counted only on EmailSent');
 ok(strpos($SW, "if (empty(\$c['live'])) return array('ok' => false, 'error' => 'not_live')") !== false && strpos($SW, "if (\$c['only'] !== '') return array('ok' => false, 'error' => 'only_key')") !== false, 'creating honours QBO_LIVE_ENABLED and QBO_ONLY_KEY');

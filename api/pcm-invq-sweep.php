@@ -149,18 +149,21 @@ function invq_kind_sync($c, $now = null) {
     return !empty($r['n']) ? (int)$r['n'] : 0;
 }
 
-function invq_job_set($jobId, $amount, $desc, $who, $item = null) {
+function invq_job_set($jobId, $amount, $desc, $who, $item = null, $email = null) {
     $amount = ($amount === null) ? null : round(invq_num($amount), 2);
     if ($amount !== null && ($amount < 1 || $amount > INVQ_MAX_AMOUNT)) return array('ok' => false, 'error' => 'bad_amount');
     $desc = ($desc === null) ? null : invq_str($desc, 200);
     if ($desc !== null && $desc === '') return array('ok' => false, 'error' => 'no_desc');
-    if ($amount === null && $desc === null && $item === null) return array('ok' => false, 'error' => 'nothing_to_set');
-    $r = invq_jobs_locked(function ($d) use ($jobId, $amount, $desc, $who, $item) {
+    $email = ($email === null) ? null : invq_email_ok($email);
+    if ($email !== null && $email === '') return array('ok' => false, 'error' => 'bad_email');
+    if ($amount === null && $desc === null && $item === null && $email === null) return array('ok' => false, 'error' => 'nothing_to_set');
+    $r = invq_jobs_locked(function ($d) use ($jobId, $amount, $desc, $who, $item, $email) {
         foreach ($d['jobs'] as $i => $j) {
             if (!is_array($j) || (string)(isset($j['id']) ? $j['id'] : '') !== (string)$jobId) continue;
             if (!empty($j['invoice_no'])) return array('ok' => false, 'error' => 'already_invoiced');
             if ($amount !== null) { $d['jobs'][$i]['amount'] = $amount; $d['jobs'][$i]['amount_by'] = 'staff'; }
             if ($desc !== null)   { $d['jobs'][$i]['desc'] = $desc; $d['jobs'][$i]['desc_by'] = 'staff'; }
+            if ($email !== null)  { $d['jobs'][$i]['email'] = $email; $d['jobs'][$i]['email_by'] = 'staff'; }   // kept through re-polls by sj_merge()
             if (is_array($item))  invq_job_apply_item($d['jobs'][$i], $item);   // after the typed values, so it never overrides them
             $d['jobs'][$i]['set_by'] = $who; $d['jobs'][$i]['set_at'] = time();
             return array('ok' => true, 'data' => $d);

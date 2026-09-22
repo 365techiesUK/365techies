@@ -339,6 +339,8 @@ function sj_merge($old, $new) {
     if (!is_array($old)) return $new;
     $keep = $old;
     foreach (array('name', 'email', 'phone', 'addr', 'postcode', 'note', 'kind', 'status', 'invoice_doc', 'invoiced_in_slack', 'slack', 'ts') as $k) $keep[$k] = $new[$k];
+    // an email a person typed in the portal outranks whatever the post has (usually nothing)
+    if ((string)(isset($old['email_by']) ? $old['email_by'] : '') === 'staff' && (string)(isset($old['email']) ? $old['email'] : '') !== '') $keep['email'] = $old['email'];
     if ((string)(isset($old['amount_by']) ? $old['amount_by'] : '') !== 'staff') { $keep['amount'] = $new['amount']; $keep['amount_by'] = $new['amount_by']; }
     if ((string)(isset($old['desc_by']) ? $old['desc_by'] : '') !== 'staff') $keep['desc'] = $new['desc'];
     if (!empty($old['invoice_no'])) { $keep['invoice_no'] = $old['invoice_no']; $keep['invoice_url'] = isset($old['invoice_url']) ? $old['invoice_url'] : ''; }

@@ -106,6 +106,9 @@ ok(sj_job(array('ts' => '1790082400.1', 'text' => $WF_JOAN), 'C0C3VGP1SJC', 1790
 ok($w['kind'] === 'test' && $jb['kind'] === 'remote' && sj_parse($CHARLOTTE)['kind'] === 'Asus prime B60 plus' && $jb['postcode'] === 'BH5 1AA', 'the job type as typed or picked, and the postcode, ride along (QuickBooks service match; customer address)', json_encode(array($w['kind'], $jb['kind'], $jb['postcode'])));
 $wjob = sj_job(array('ts' => '1790082400.1', 'text' => $WF_JOAN), 'C0C3VGP1SJC', 1790082500);
 ok($wjob['kind'] === 'remote' && $wjob['postcode'] === 'BH5 1AA' && sj_merge(array('id' => $wjob['id'], 'kind' => 'old'), $wjob)['kind'] === 'remote', 'on the job record, and refreshed on a re-poll');
+$gj = sj_job(array('ts' => '1789794361.365689', 'text' => $COLIN), 'C0C3VGP1SJC', 1790000000);
+$kept = sj_merge(array_merge($gj, array('email' => 'colin.sutton7@ntlworld.com', 'email_by' => 'staff')), $gj);
+ok($gj['email'] === '' && $kept['email'] === 'colin.sutton7@ntlworld.com' && $kept['email_by'] === 'staff', 'an email typed in the portal survives a re-poll of a post that has none', json_encode(array($gj['email'], $kept['email'])));
 ok(sj_is_out($WF_DONE) && !sj_is_job($WF_DONE), 'a "Job done" form post is a completion');
 $jd = sj_parse($WF_DONE);
 ok($jd['work'] === 'Rebuilt the Outlook profile, mail flowing again' && $jd['time'] === '45 min' && $jd['price'] === 60.0 && $jd['closed'] === '22/09/2026' && $jd['invoiced'] === 'none' && $jd['done'] === true, 'work, time, £60 in the box, date closed, N = not invoiced', json_encode(array($jd['work'], $jd['time'], $jd['price'], $jd['closed'], $jd['invoiced'])));

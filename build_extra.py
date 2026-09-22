@@ -28175,7 +28175,7 @@ def write_portal_page():
   }
   function invqMoney(v) { return '\\u00a3' + (Math.round(v * 100) / 100).toFixed(2); }
   function invqWhen(d) { return d === 0 ? 'today' : (d === 1 ? 'yesterday' : d + ' days ago'); }
-  var INVQ_WHY = { no_email: 'needs an email address \\u2014 add it to the Slack post, or reply in its thread with the address, and it will pick it up', no_desc: 'needs a description of the work', large: 'over \\u00a32,000 \\u2014 raise this one by hand in QuickBooks', no_amount: 'no price yet', invoiced_in_slack: 'marked invoiced in Slack \\u2014 left alone' };
+  var INVQ_WHY = { no_email: 'needs an email address \\u2014 type it here, or add it to the Slack post or its thread and it will pick it up', bad_email: 'that email address doesn\\u2019t look right', no_desc: 'needs a description of the work', large: 'over \\u00a32,000 \\u2014 raise this one by hand in QuickBooks', no_amount: 'no price yet', invoiced_in_slack: 'marked invoiced in Slack \\u2014 left alone' };
   function renderInvq(box, r) {
     var jobs = r.jobs || [], waiting = r.waiting || [], older = r.older || [];
     var note = (r.stale ? '<p class="quiet">QuickBooks didn\\u2019t answer just now \\u2014 this is the last picture it gave us.</p>' : '')
@@ -28224,9 +28224,14 @@ def write_portal_page():
       else {
         chip = steps(1) + '<span style="color:#ffb4a2">No invoice yet</span>' + (j.done ? '' : ' <span class="quiet">\\u00b7 job not marked done in Slack yet</span>');
         if (j.can_create) btns = itemSelect(j) + '<button class="sm invqcreate" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\\ud83e\\uddfe 1 \\u00b7 Raise the invoice</button>';
-        else if (j.why_not === 'no_amount' || j.why_not === 'no_desc') {
-          body = '<div class="quiet" style="font-size:.85rem;margin:.25rem 0 0">' + (items.length ? 'Pick the service, or type ' : 'Type ') + (j.amount > 0 ? 'what was done' : (j.desc ? 'the price' : 'the price and what was done')) + ', then press the button \\u2014 the invoice is raised in QuickBooks with those on it.</div>'
+        else if (j.why_not === 'no_amount' || j.why_not === 'no_desc' || j.why_not === 'no_email') {
+          var need = [];
+          if (!j.email) need.push('the customer\\u2019s email');
+          if (!(j.amount > 0)) need.push('the price');
+          if (!j.desc) need.push('what was done');
+          body = '<div class="quiet" style="font-size:.85rem;margin:.25rem 0 0">' + (items.length && (!(j.amount > 0) || !j.desc) ? 'Pick the service, and type ' : 'Type ') + need.join(need.length > 2 ? ', ' : ' and ') + ', then press the button \\u2014 the invoice is raised in QuickBooks with those on it.</div>'
             + '<div style="margin:.35rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">'
+            + (j.email ? '' : '<input class="invqemail" type="email" maxlength="120" placeholder="Customer email" style="width:220px;margin:0">')
             + itemSelect(j)
             + (j.amount > 0 ? '' : '<input class="invqamt" type="text" inputmode="decimal" placeholder="Price \\u00a3" style="width:110px;margin:0">')
             + (j.desc ? '' : '<input class="invqdesc" type="text" maxlength="200" placeholder="What was done (goes on the invoice)" style="flex:1;min-width:200px;margin:0">')
@@ -28280,7 +28285,9 @@ def write_portal_page():
         if (a && a.value.trim()) body.amount = a.value.trim();
         if (d && d.value.trim()) body.desc = d.value.trim();
         var sel = row.querySelector('.invqitem'); if (sel && sel.value) body.item = sel.value;
-        if (!body.amount && !body.desc && !body.item) { msg.textContent = (sel ? 'Pick the service, or type the price' : 'Type the price') + (d ? ' and what was done' : '') + ' first.'; return; }
+        var em = row.querySelector('.invqemail'); if (em && em.value.trim()) body.email = em.value.trim();
+        if (em && !body.email) { msg.textContent = 'Type the customer\\u2019s email first.'; em.focus(); return; }
+        if (!body.amount && !body.desc && !body.item && !body.email) { msg.textContent = (sel ? 'Pick the service, or type the price' : 'Type the price') + (d ? ' and what was done' : '') + ' first.'; return; }
         b.disabled = true; msg.textContent = 'Saving\\u2026';
         post(INVQ, body).then(function (j) {
           if (!j || !j.ok) { b.disabled = false; msg.innerHTML = invqErr(j); return; }
