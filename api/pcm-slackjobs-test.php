@@ -77,12 +77,23 @@ ok($mg['note'] !== $old['note'] && $mg['slack']['replies'] === 2, 'but takes the
 $mg2 = sj_merge(array_merge($j, array('amount' => 0.0, 'amount_by' => '')), array_merge($fresh, array('amount' => 45.0, 'amount_by' => 'slack')));
 ok($mg2['amount'] === 45.0, 'a price that appears in Slack later is picked up when nobody typed one');
 
+echo "-- a stand-alone Job Out post (what a Workflow Builder 'Job done' form produces)\n";
+$OUT = "📤 Job Out / Completed\nCustomer name: Mrs Charlotte Jeffery\nWork carried out: Full service, malware removed, Windows updated\nTime spent: 1.5 hours\nPrice: £60\nInvoiced? (Y/N) N\nFollow-up needed?:\nDate closed: 22/09/2026";
+ok(sj_is_out($OUT) && !sj_is_job($OUT), 'recognised as a completion, not a new job');
+ok(!sj_is_out($CHARLOTTE), 'a full template with both blocks is a job, never a completion');
+$o = sj_parse($OUT);
+ok($o['work'] === 'Full service, malware removed, Windows updated' && $o['price'] === 60.0 && $o['time'] === '1.5 hours' && $o['done'] === true, 'work, price, time read from it', json_encode(array($o['work'], $o['price'], $o['time'])));
+ok(sj_name_key('Mrs Charlotte Jeffery') === sj_name_key('charlotte Jeffery') && sj_name_key('Mary Freeman-Owen (Henrietta)') === sj_name_key('Mary Freeman Owen'), 'names match across titles, case, hyphens and brackets');
+ok(sj_name_key('Gordon Snook') !== sj_name_key('Gordon Snooks'), 'but a different name is different');
+
 echo "-- the poller and the cron, at source level\n";
 $SW = (string)file_get_contents(__DIR__ . '/pcm-slackjobs-sweep.php');
 ok(strpos($SW, '?' . '>') === false, 'no closing tag');
 ok(strpos($SW, "'conversations.history'") !== false && strpos($SW, "'conversations.replies'") !== false && !preg_match("/'chat\.postMessage'|'chat\.update'|'chat\.delete'/", $SW), 'reads Slack, never writes to it');
 ok(strpos($SW, 'SJ_MIN_GAP') !== false && strpos($SW, 'SJ_MAX_THREADS') !== false, 'polls are rate-limited and thread reads bounded');
 ok(strpos($SW, "SJ_JOBS . '.lock'") !== false, 'writes the job store under its own lock');
+ok(strpos($SW, 'usort($msgs') !== false && strpos($SW, 'sj_apply_out($m, $now)') !== false && strpos($SW, "\$j['out_ts'] = \$ts") !== false, 'completions are applied after the jobs, oldest first, and each one only once');
+ok(strpos($SW, "!== 'staff' && \$p['work'] !== ''") !== false && strpos($SW, "!== 'staff' && \$p['price'] > 0") !== false, 'a completion never overwrites a price or description a person typed');
 $CR = (string)file_get_contents(__DIR__ . '/tm-cron.php');
 ok(strpos($CR, 'sj_poll()') !== false && strpos($CR, 'sj_poll()') < strpos($CR, 'invq_morning()') && strpos($CR, 'sj_poll()') < strpos($CR, 'if (!tm_configured())'), 'the poll runs before the invoice sweep, above the SMS gate');
 $ht = (string)file_get_contents(__DIR__ . '/../.htaccess');

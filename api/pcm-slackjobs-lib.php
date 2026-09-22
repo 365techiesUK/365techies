@@ -157,6 +157,24 @@ function sj_phone($raw) {
 /* Is this Slack message a job post at all? */
 function sj_is_job($text) { return stripos((string)$text, SJ_MARK) !== false && stripos((string)$text, 'customer name') !== false; }
 
+/* A stand-alone "Job Out / Completed" post - what a Workflow Builder "Job done" form
+   produces, since a workflow cannot edit the original post. It names the customer
+   and carries the work, time, price and Invoiced? fields; the poller merges it into
+   the matching job. Never both: a post that has "New Job In" is a job. */
+function sj_is_out($text) {
+    $t = (string)$text;
+    return !sj_is_job($t) && stripos($t, 'job out') !== false && stripos($t, 'customer name') !== false;
+}
+/* Names as typed on two different days: "charlotte Jeffery" / "Mrs Charlotte Jeffery"
+   / "Charlotte  Jeffery (Henrietta)". Letters only, lower-case, titles and brackets
+   dropped - good enough to match a Job Out to its Job In within one month. */
+function sj_name_key($name) {
+    $s = strtolower(sj_clean($name, 120));
+    $s = preg_replace('/\([^)]*\)/', ' ', $s);
+    $s = preg_replace('/\b(mr|mrs|ms|miss|dr|mx)\b\.?/', ' ', $s);
+    return preg_replace('/[^a-z]/', '', $s);
+}
+
 /* One Slack message -> the fields of a job. $text is the raw Slack text. */
 function sj_parse($text) {
     $L = sj_lines($text);

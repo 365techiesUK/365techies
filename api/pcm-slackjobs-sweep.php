@@ -79,6 +79,43 @@ function sj_thread_price($channel, $ts) {
     return 0.0;
 }
 
+/* Merge a "Job Out" post into its job: the same email if the post carries one, else
+   the same name, choosing the newest job in the window. Work carried out becomes
+   the description and a £ price the amount - unless a person typed those in the
+   portal; Invoiced? and Date closed are taken as typed; the job is marked done.
+   Applied once per post (the post's ts is remembered on the job). */
+function sj_apply_out($m, $now = null) {
+    $now = $now === null ? time() : $now;
+    $text = (string)(isset($m['text']) ? $m['text'] : ''); $ts = (string)(isset($m['ts']) ? $m['ts'] : '');
+    $p = sj_parse($text);
+    if ($p['name'] === '' || $ts === '') return false;
+    $email = $p['email']; $nk = sj_name_key($p['name']);
+    $r = sj_jobs_locked(function ($d) use ($p, $email, $nk, $ts, $now) {
+        $best = -1; $bestTs = 0;
+        foreach ($d['jobs'] as $i => $j) {
+            if (!is_array($j) || (int)(isset($j['ts']) ? $j['ts'] : 0) < $now - SJ_WINDOW_DAYS * 86400) continue;
+            $st = (string)(isset($j['status']) ? $j['status'] : '');
+            if ($st !== '' && $st !== 'quoted' && $st !== 'done') continue;
+            $hit = ($email !== '' && sj_email(isset($j['email']) ? $j['email'] : '') === $email) || ($nk !== '' && sj_name_key(isset($j['name']) ? $j['name'] : '') === $nk);
+            if ($hit && (int)$j['ts'] > $bestTs) { $best = $i; $bestTs = (int)$j['ts']; }
+        }
+        if ($best < 0) return array('ok' => false, 'error' => 'no_match');
+        $j = $d['jobs'][$best];
+        if (isset($j['out_ts']) && (string)$j['out_ts'] === $ts) return array('ok' => false, 'error' => 'seen');
+        if ((string)(isset($j['desc_by']) ? $j['desc_by'] : '') !== 'staff' && $p['work'] !== '') $j['desc'] = $p['work'];
+        if ((string)(isset($j['amount_by']) ? $j['amount_by'] : '') !== 'staff' && $p['price'] > 0) { $j['amount'] = $p['price']; $j['amount_by'] = 'slack'; }
+        if ($p['invoice_doc'] !== '') $j['invoice_doc'] = $p['invoice_doc'];
+        if ($p['invoiced'] === 'yes') $j['invoiced_in_slack'] = true;
+        if ($p['time'] !== '') $j['note'] = trim((string)(isset($j['note']) ? $j['note'] : '') . ' · ' . $p['time'], ' ·');
+        $j['status'] = 'done'; $j['out_ts'] = $ts;
+        $d['jobs'][$best] = $j;
+        return array('ok' => true, 'data' => $d, 'job' => (string)$j['id']);
+    });
+    if (!empty($r['ok'])) { sj_log('job out ' . $ts . ' -> job ' . $r['job']); return true; }
+    if (!empty($r['error']) && $r['error'] === 'no_match') sj_log('job out ' . $ts . ' matched no job (' . $p['name'] . ')');
+    return false;
+}
+
 /* The poll. Returns a small summary for the cron's output. */
 function sj_poll($now = null) {
     $now = $now === null ? time() : $now;
@@ -92,9 +129,14 @@ function sj_poll($now = null) {
         $out['channels']++;
         $r = slk_call('conversations.history', array('channel' => $chan, 'limit' => SJ_MAX_MSGS, 'oldest' => (string)($now - SJ_WINDOW_DAYS * 86400)), 10);
         if (empty($r['ok'])) { $errors[$chan] = (string)(isset($r['error']) ? $r['error'] : 'unknown'); sj_log('history ' . $chan . ' failed: ' . $errors[$chan]); continue; }
-        foreach ((array)(isset($r['messages']) ? $r['messages'] : array()) as $m) {
-            if (!is_array($m)) continue;
+        /* Oldest first, jobs before completions: a "Job Out" post must find the job
+           it belongs to, which may have arrived in the same read. */
+        $msgs = array_values(array_filter((array)(isset($r['messages']) ? $r['messages'] : array()), 'is_array'));
+        usort($msgs, function ($a, $b) { return strcmp((string)(isset($a['ts']) ? $a['ts'] : ''), (string)(isset($b['ts']) ? $b['ts'] : '')); });
+        $outs = array();
+        foreach ($msgs as $m) {
             $out['seen']++;
+            if (sj_is_out(isset($m['text']) ? $m['text'] : '')) { $outs[] = $m; continue; }
             $job = sj_job($m, $chan, $now);
             if (!$job) continue;
             if ($job['amount'] <= 0 && !empty($m['reply_count']) && $threads < SJ_MAX_THREADS) {
@@ -117,6 +159,7 @@ function sj_poll($now = null) {
             });
             if (!empty($res['ok'])) { $out['jobs']++; if ($res['what'] === 'new') $out['new']++; elseif ($res['what'] === 'updated') $out['updated']++; }
         }
+        foreach ($outs as $m) if (sj_apply_out($m, $now)) $out['updated']++;
     }
     if ($errors) $out['error'] = implode(',', array_unique(array_values($errors)));
     sj_status_write(array('last' => $now, 'error' => $out['error'], 'errors' => $errors, 'jobs' => $out['jobs'], 'new' => $out['new'], 'channels' => sj_channels()));
