@@ -214,6 +214,18 @@ function invq_item_match($items, $text) {
     foreach ((array)$items as $it) if (invq_item_key($it['name']) === $k) return $it;
     return null;
 }
+/* The few services new customers actually get, shown first (owner, 22 Sep: "remote
+   support and full computer service mostly"); anything else is picked from the full
+   list behind "Other". Names are matched to QuickBooks items like a Slack job type;
+   a name QuickBooks doesn't have is left out. $QBO_ITEM_SHORTLIST in the config
+   overrides the default. */
+function invq_shortlist_default() { return array('Remote support', 'Full computer service', 'Gaming PC tune-up'); }
+function invq_items_short($items, $names) {
+    $ids = array();
+    foreach ((array)$names as $n) { $it = invq_item_match($items, $n); if ($it && !in_array($it['id'], $ids, true)) $ids[] = $it['id']; }
+    return $ids;
+}
+
 /* Put an item on a job: it becomes the QuickBooks line; its sales description is the
    job description and its list price the amount where nobody set one. A price or
    description a person typed (staff), or one typed in Slack, is never overwritten;

@@ -28200,11 +28200,21 @@ def write_portal_page():
     /* QuickBooks' Products & Services (from the server, cached an hour): pick one and the
        invoice line, its description and its list price come from it. */
     var items = r.items || [];
+    /* The shortlist (the few services new customers get, in the server's order) is what
+       David sees; "Other service" swaps in the whole QuickBooks list. A picked item that
+       is not on the shortlist shows the whole list so it stays visible. */
+    var shortIds = r.short || [];
+    var shortItems = shortIds.map(function (id) { return items.filter(function (x) { return x.id === id; })[0]; }).filter(Boolean);
+    function itemOptions(list, picked, withMore) {
+      return '<option value="">Service (from QuickBooks)\\u2026</option>'
+        + list.map(function (it) { return '<option value="' + esc(it.id) + '"' + (picked === it.id ? ' selected' : '') + '>' + esc(it.name) + (it.price > 0 ? ' \\u2014 ' + invqMoney(it.price) : '') + '</option>'; }).join('')
+        + (withMore ? '<option value="__more">Other service (show the full QuickBooks list)\\u2026</option>' : '');
+    }
     function itemSelect(j) {
       if (!items.length) return '';
-      return '<select class="invqitem" data-job="' + esc(j.job) + '" style="margin:0;max-width:280px;font-size:.82rem;padding:.3rem .4rem" title="The service from your QuickBooks Products &amp; Services list">'
-        + '<option value="">Service (from QuickBooks)\\u2026</option>'
-        + items.map(function (it) { return '<option value="' + esc(it.id) + '"' + (j.item === it.id ? ' selected' : '') + '>' + esc(it.name) + (it.price > 0 ? ' \\u2014 ' + invqMoney(it.price) : '') + '</option>'; }).join('')
+      var useShort = shortItems.length > 0 && !(j.item && shortIds.indexOf(j.item) < 0);
+      return '<select class="invqitem" data-job="' + esc(j.job) + '" data-full="' + (useShort ? '0' : '1') + '" style="margin:0;max-width:280px;font-size:.82rem;padding:.3rem .4rem" title="The service from your QuickBooks Products &amp; Services list">'
+        + itemOptions(useShort ? shortItems : items, j.item, useShort)
         + '</select>';
     }
     /* 1 Raise > 2 Check > 3 Send - the step this row is on, so the next click is obvious. */
@@ -28302,6 +28312,7 @@ def write_portal_page():
     });
     Array.prototype.forEach.call(box.querySelectorAll('.invqitem'), function (sel) {
       sel.onchange = function () {
+        if (sel.value === '__more') { sel.innerHTML = itemOptions(items, '', false); sel.setAttribute('data-full', '1'); sel.focus(); return; }
         var row = sel.closest('.invqrow'), it = items.filter(function (x) { return x.id === sel.value; })[0];
         if (!it) return;
         var a = row.querySelector('.invqamt'), d = row.querySelector('.invqdesc'), msg = row.querySelector('.invqsetmsg') || row.querySelector('.invqmsg');

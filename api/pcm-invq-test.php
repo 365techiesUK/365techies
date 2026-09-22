@@ -138,6 +138,9 @@ ok(invq_job_apply_item($j4, $items[1]) && $j4['item_id'] === '1174' && $j4['desc
 ok(invq_job_apply_item($j4, $items[1]) === false, 'the same item again changes nothing');
 $row = invq_job_row(array('id' => 'x', 'name' => 'A', 'email' => 'a@b.com', 'desc' => 'd', 'amount' => 65.0, 'ts' => $now - $day, 'status' => 'done', 'item_id' => '1200', 'item_name' => 'Full Computer Service', 'kind' => 'Full computer service'), null, $now);
 ok($row['item'] === '1200' && $row['item_name'] === 'Full Computer Service' && $row['kind'] === 'Full computer service', 'the row carries the item and the Slack job type');
+ok(invq_items_short($items, array('Full computer service', 'Gaming PC tune-up', 'online remote support services', 'Full Computer Service')) === array('1200', '1174'), 'the shortlist: matched by name in the given order, a name QuickBooks lacks skipped, no repeats');
+ok(invq_items_short($items, invq_shortlist_default()) === array('1200') && invq_items_short(array(), array('Remote support')) === array() && invq_items_short($items, array('Laptop repair')) === array(), 'the default against this list finds only Full Computer Service; no items or no matches = empty (the console then shows the full list)');
+ok(invq_shortlist_default() === array('Remote support', 'Full computer service', 'Gaming PC tune-up'), 'the default shortlist is the three the owner named');
 
 echo "-- the endpoint and the sweep, at source level\n";
 $EP = (string)file_get_contents(__DIR__ . '/pcm-invq.php');

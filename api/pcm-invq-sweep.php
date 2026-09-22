@@ -247,7 +247,8 @@ function invq_connect() {
     return array('ok' => true, 'access' => $tok['access_token'], 'base' => qbo_lib_base($env), 'realm' => (string)$QBO_REALM_ID,
                  'host' => (stripos($env, 'sandbox') !== false) ? 'https://sandbox.qbo.intuit.com' : 'https://app.qbo.intuit.com',
                  'live' => !empty($QBO_LIVE_ENABLED), 'only' => trim((string)(isset($QBO_ONLY_KEY) ? $QBO_ONLY_KEY : '')),
-                 'item' => (string)(isset($QBO_ITEM_ID) ? $QBO_ITEM_ID : ''), 'tax' => (string)(isset($QBO_TAX_CODE_ID) ? $QBO_TAX_CODE_ID : ''));
+                 'item' => (string)(isset($QBO_ITEM_ID) ? $QBO_ITEM_ID : ''), 'tax' => (string)(isset($QBO_TAX_CODE_ID) ? $QBO_TAX_CODE_ID : ''),
+                 'shortlist' => (isset($QBO_ITEM_SHORTLIST) && is_array($QBO_ITEM_SHORTLIST)) ? $QBO_ITEM_SHORTLIST : invq_shortlist_default());
 }
 function invq_api($c, $method, $path, $body = null, $accept = 'application/json') {
     return qbo_lib_api($method, $path, $body, $c['access'], $c['base'], $c['realm'], INVQ_MINOR, $accept);
