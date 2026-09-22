@@ -5419,7 +5419,7 @@
          agreed", and PC Manager services on non-plan customers, with each one's invoice
          raised for review. First card on purpose: it is the money. */
       h += '<div class="card" id="invqcard" style="border-left:4px solid var(--pwarn)"><h2>\ud83e\uddfe This month\u2019s jobs \u2192 invoices</h2>'
-        + '<p class="quiet" style="margin:.1rem 0 .6rem">Every job from the last 30 days \u2014 the \u201cNew Job In\u201d posts in #sos-jobs-in-out, the console\u2019s \u201cQuote agreed\u201d, and services run through 365 PC Manager for people not on a plan \u2014 and where its invoice stands. Invoices are raised for you; nothing is sent until you check the PDF and approve it.</p>'
+        + '<p class="quiet" style="margin:.1rem 0 .6rem">Every job from the last 30 days \u2014 the \u201cNew Job In\u201d posts in #sos-jobs-in-out, the console\u2019s \u201cQuote agreed\u201d, and services run through 365 PC Manager for people not on a plan \u2014 and where its invoice stands. Three steps for each: 1 raise the invoice, 2 check the PDF, 3 approve &amp; send \u2014 every row shows the step it is on and the button for it. Invoices are raised for you; nothing is sent until you check the PDF and approve it.</p>'
         + '<div id="invq"><p class="quiet">Checking QuickBooks\u2026</p></div></div>';
       h += '<div class="card" style="border-left:4px solid var(--pwarn)"><h2>\ud83d\udcde Worth a call today</h2>'
         + '<p class="quiet" style="margin:.1rem 0 .6rem">The PCs that could do with a friendly call \u2014 ranked by what needs attention. Proactive care, before they even ring us.</p>'
@@ -5860,26 +5860,35 @@
     else note += '<p class="quiet">Slack hasn\u2019t been read yet \u2014 the cron does that within about 15 minutes of the app joining the channel.</p>';
     function warnHtml(x) { return (x.flags || []).map(function (f) { return '<div style="color:#ffb4a2;font-size:.85rem;margin:.15rem 0 0">\u26a0 ' + esc(f.text) + '</div>'; }).join(''); }
     function invButtons(x) {
-      return '<button class="sm ghost invqpdf" data-id="' + esc(x.id) + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem">\ud83d\udc41 Preview PDF</button>'
+      return '<button class="sm ghost invqpdf" data-id="' + esc(x.id) + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem">\ud83d\udc41 2 \u00b7 Preview PDF</button>'
         + (x.held ? '<button class="sm ghost invqunhold" data-id="' + esc(x.id) + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Release</button>'
-                  : '<button class="sm invqsend" data-id="' + esc(x.id) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem"' + (x.email ? '' : ' disabled title="No email address on the customer"') + '>\u2705 Approve &amp; send</button>'
+                  : '<button class="sm invqsend" data-id="' + esc(x.id) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem"' + (x.email ? '' : ' disabled title="No email address on the customer"') + '>\u2705 3 \u00b7 Approve &amp; send</button>'
                     + '<button class="sm ghost invqhold" data-id="' + esc(x.id) + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Hold</button>')
         + '<a class="btn sm ghost" style="margin:0;padding:.3rem .65rem;font-size:.82rem;opacity:.75" href="' + esc(x.url) + '" target="_blank" rel="noopener" title="Only if something on the invoice needs changing. Sign in to QuickBooks first, or it opens a blank new invoice instead of this one.">Open in QuickBooks</a>';
     }
+    /* 1 Raise > 2 Check > 3 Send - the step this row is on, so the next click is obvious. */
+    function steps(n) {
+      var names = ['Raise', 'Check', 'Send'];
+      return '<span class="invqsteps" style="font-size:.78rem;margin-right:.55rem;white-space:nowrap">' + names.map(function (nm, i) {
+        var k = i + 1, done = k < n, cur = k === n;
+        return '<span style="' + (done ? 'color:#7ee0a2' : cur ? 'color:#ffd76a;font-weight:700' : 'opacity:.45') + '">' + (done ? '\u2713 ' : k + ' ') + nm + '</span>' + (i < 2 ? ' <span style="opacity:.4">\u203a</span> ' : '');
+      }).join('') + '</span>';
+    }
     function jobHtml(j) {
       var inv = j.invoice, st = j.state, chip, body = '', btns = '';
-      if (st === 'paid') chip = '<span style="color:#7ee0a2">\u2713 Paid</span>';
-      else if (st === 'sent') chip = '<span style="color:#7ee0a2">\u2713 Invoice sent' + (inv && inv.number ? ' #' + esc(inv.number) : '') + '</span>';
-      else if (st === 'unsent') { chip = '<span style="color:#ffd76a">Invoice raised \u2014 check it with Preview PDF, then Approve &amp; send</span>'; body = warnHtml(inv); btns = invButtons(inv); }
-      else if (st === 'invoiced') chip = '<span class="quiet">\u2713 ' + esc(INVQ_WHY.invoiced_in_slack) + '</span>';
+      if (st === 'paid') chip = steps(4) + '<span style="color:#7ee0a2">\u2713 Paid</span>';
+      else if (st === 'sent') chip = steps(4) + '<span style="color:#7ee0a2">\u2713 Invoice sent' + (inv && inv.number ? ' #' + esc(inv.number) : '') + '</span>';
+      else if (st === 'unsent') { chip = steps(2) + '<span style="color:#ffd76a">Invoice raised \u2014 now check it, then send it</span>'; body = warnHtml(inv); btns = invButtons(inv); }
+      else if (st === 'invoiced') chip = steps(4) + '<span class="quiet">\u2713 ' + esc(INVQ_WHY.invoiced_in_slack) + '</span>';
       else {
-        chip = '<span style="color:#ffb4a2">No invoice yet</span>' + (j.done ? '' : ' <span class="quiet">\u00b7 job not marked done in Slack yet</span>');
-        if (j.can_create) btns = '<button class="sm invqcreate" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\ud83e\uddfe Raise the invoice</button>';
+        chip = steps(1) + '<span style="color:#ffb4a2">No invoice yet</span>' + (j.done ? '' : ' <span class="quiet">\u00b7 job not marked done in Slack yet</span>');
+        if (j.can_create) btns = '<button class="sm invqcreate" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\ud83e\uddfe 1 \u00b7 Raise the invoice</button>';
         else if (j.why_not === 'no_amount' || j.why_not === 'no_desc') {
-          body = '<div style="margin:.35rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">'
+          body = '<div class="quiet" style="font-size:.85rem;margin:.25rem 0 0">' + (j.amount > 0 ? 'Type what was done' : (j.desc ? 'Type the price' : 'Type the price and what was done')) + ', then press the button \u2014 the invoice is raised in QuickBooks with those on it.</div>'
+            + '<div style="margin:.35rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">'
             + (j.amount > 0 ? '' : '<input class="invqamt" type="text" inputmode="decimal" placeholder="Price \u00a3" style="width:110px;margin:0">')
             + (j.desc ? '' : '<input class="invqdesc" type="text" maxlength="200" placeholder="What was done (goes on the invoice)" style="flex:1;min-width:200px;margin:0">')
-            + '<button class="sm ghost invqset" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Save</button><span class="quiet invqsetmsg"></span></div>';
+            + '<button class="sm invqset" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\ud83e\uddfe 1 \u00b7 Save &amp; raise the invoice</button><span class="quiet invqsetmsg"></span></div>';
         }
         else body = '<div style="color:#ffb4a2;font-size:.85rem;margin:.15rem 0 0">\u26a0 ' + esc(INVQ_WHY[j.why_not] || j.why_not) + '</div>';
         body += '<div style="margin:.3rem 0 0"><button class="sm ghost invqdismiss" data-job="' + esc(j.job) + '" style="padding:.15rem .5rem;font-size:.76rem;opacity:.8">Not a job \u2014 hide it</button></div>';
@@ -5932,7 +5941,12 @@
         b.disabled = true; msg.textContent = 'Saving\u2026';
         post(INVQ, body).then(function (j) {
           if (!j || !j.ok) { b.disabled = false; msg.innerHTML = invqErr(j); return; }
-          loadInvq(true);
+          msg.textContent = 'Saved \u2014 raising it in QuickBooks\u2026';
+          // straight on to the raise; if it cannot be raised yet the reloaded row says why
+          return post(INVQ, { action: 'create', stoken: S.stoken, machine: mid(), job: b.getAttribute('data-job') }).then(function (c) {
+            if (!c || !c.ok) msg.innerHTML = 'Saved. ' + invqErr(c);
+            loadInvq(true);
+          });
         }).catch(function () { b.disabled = false; msg.textContent = 'Couldn\u2019t reach the server.'; });
       };
     });
