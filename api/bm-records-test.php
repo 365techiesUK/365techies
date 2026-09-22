@@ -50,11 +50,13 @@ ok(bmr_verdict($day, 26.0, 'fc', $ctx)['line'] === "Forecast to come within 0.4\
 
 echo "-- the caption\n";
 $c = bmr_caption($ctx, $day, 23.0, 'obs', 'The warmest 22 September since 2010.', 'warmest_since');
-ok($c === "Bournemouth: 23\xC2\xB0C the high today. The warmest 22 September since 2010. Average for the date 18.5\xC2\xB0C. Records: Met Office, Bournemouth Airport (Hurn), since 1957.", 'the date once (the verdict has it), ONE year in the whole caption, the source named', $c);
+ok($c === "Bournemouth: 23\xC2\xB0C the high today. The warmest 22 September since 2010. Hottest 22 September on record: 26.4\xC2\xB0C (1985). Coldest: 1.2\xC2\xB0C (1977). Average high 18.5\xC2\xB0C. Records: Met Office, Bournemouth Airport (Hurn), since 1957.", 'the verdict, then the hottest and the coldest on this date each in a sentence of its own (one year per sentence), the source named', $c);
 $c2 = bmr_caption($ctx, $day, 25.6, 'fc', "Forecast to come within 0.8\xC2\xB0C of the 22 September record, 26.4\xC2\xB0C in 1985.", 'near');
-ok($c2 === "Bournemouth: 25.6\xC2\xB0C forecast high today. Forecast to come within 0.8\xC2\xB0C of the 22 September record, 26.4\xC2\xB0C in 1985. Average for the date 18.5\xC2\xB0C. Records: Met Office, Bournemouth Airport (Hurn), since 1957.", 'when the verdict already gives the record it is not repeated; a forecast says forecast', $c2);
+ok($c2 === "Bournemouth: 25.6\xC2\xB0C forecast high today. Forecast to come within 0.8\xC2\xB0C of the 22 September record, 26.4\xC2\xB0C in 1985. Coldest: 1.2\xC2\xB0C (1977). Average high 18.5\xC2\xB0C. Records: Met Office, Bournemouth Airport (Hurn), since 1957.", 'when the verdict already gives the hottest it is not repeated; a forecast says forecast', $c2);
 $c3 = bmr_caption($ctx, $day, 18.8, 'obs', 'About average for the date.', 'normal');
-ok(strpos($c3, 'Bournemouth, 22 September: ') === 0 && strpos($c3, 'Record ') === false && substr_count($c3, '19') + substr_count($c3, '20') === 1, 'when the verdict names no date, the prefix supplies it; still no second year (only "since 1957")', $c3);
+ok(strpos($c3, 'Bournemouth, 22 September: ') === 0 && strpos($c3, "Hottest 22 September on record: 26.4\xC2\xB0C (1985). Coldest: 1.2\xC2\xB0C (1977).") !== false, 'when the verdict names no date, the prefix supplies it, and both records follow', $c3);
+$dayNoLo = $day; unset($dayNoLo['lo']);
+ok(strpos(bmr_caption($ctx, $dayNoLo, 18.8, 'obs', 'About average for the date.', 'normal'), 'Coldest') === false, 'no record low on file = no coldest sentence, never a made-up one');
 ok(strlen($c) < 280 && strlen($c2) < 280, 'short enough for a post');
 echo "-- tomorrow, in one sentence\n";
 $d24 = array('hi' => array(24.9, 1983));

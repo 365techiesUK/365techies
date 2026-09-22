@@ -103,8 +103,12 @@ function bmr_verdict($day, $value, $mode, $ctx) {
 function bmr_caption($ctx, $day, $value, $mode, $line, $tier = '') {
     $what = $mode === 'fc' ? 'forecast high today' : 'the high today';
     $prefix = (strpos($line, $ctx['date']) === false) ? 'Bournemouth, ' . $ctx['date'] . ': ' : 'Bournemouth: ';
-    // ONE year per caption (owner, 23 Sep): the verdict's own year is the only one; no record tail
-    return $prefix . bmr_deg($value) . ' ' . $what . '. ' . $line . ' Average for the date ' . bmr_deg((float)$day['avg_hi']) . '.'
+    /* One year per SENTENCE (owner, 23 Sep): the hottest and the coldest on this date
+       each get a sentence of their own, and the hottest is left out when the verdict
+       already named it. */
+    $hot = in_array($tier, array('record', 'near'), true) ? '' : ' Hottest ' . $ctx['date'] . ' on record: ' . bmr_deg((float)$day['hi'][0]) . ' (' . (int)$day['hi'][1] . ').';
+    $cold = (isset($day['lo']) && is_array($day['lo'])) ? ' Coldest: ' . bmr_deg((float)$day['lo'][0]) . ' (' . (int)$day['lo'][1] . ').' : '';
+    return $prefix . bmr_deg($value) . ' ' . $what . '. ' . $line . $hot . $cold . ' Average high ' . bmr_deg((float)$day['avg_hi']) . '.'
         . ' Records: Met Office, ' . $ctx['station'] . ', since ' . (int)$ctx['from'] . '.';
 }
 
