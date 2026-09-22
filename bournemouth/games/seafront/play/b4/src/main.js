@@ -716,6 +716,13 @@ new ResizeObserver(resize).observe($('#left'));
 // actions
 // ---------------------------------------------------------------------------
 function restart(quiet) {
+  // >>> UNPAUSE
+  // Same reasoning as the picker's: a restart is an explicit "go", and every summary card's
+  // PLAY AGAIN reaches the game through here. Without it, finishing a level while paused -
+  // which is easy, because the pause key is also the key that releases the mouse - gave a
+  // fresh run that would not move.
+  paused = false;
+  // <<< UNPAUSE
   const t0 = performance.now();
   sim.reset();
   const cost = performance.now() - t0;
@@ -1168,6 +1175,25 @@ $('#tmode').addEventListener('click', (e) => {
   if (!b || !b.dataset.m) return;
   const id = b.dataset.m;
   if (id === 'close') { closeLevels(); return; }
+
+  // >>> UNPAUSE
+  // PICKING A LEVEL UNPAUSES. Reported by the owner from the live site: pause, open the
+  // picker, choose a level, and the level starts with the world frozen. Reproduced and
+  // measured rather than reasoned about - entering PIRATE RAID from a paused game gave
+  // `levelEntered: true`, `status: PAUSED`, `simAdvancing: false`.
+  //
+  // Nothing in this handler, or in the four per-level listeners that also fire for this
+  // click, ever touched `paused`. It is module state that outlived the level it was set in.
+  //
+  // It goes HERE, above the `needsReload` branch, so it covers all eight rows - the four
+  // live switches this function enters itself, and the navigating ones too. A page load
+  // resets `paused` to false anyway, so for those it is simply a no-op rather than a second
+  // rule to keep in step.
+  //
+  // ⚠️ NOT in closeLevels(): dismissing the sheet with CANCEL must leave a paused game
+  // paused. Choosing a level is an explicit "play this now"; closing a menu is not.
+  paused = false;
+  // <<< UNPAUSE
 
   if (needsReload(id, location.search)) {
     // >>> STARTCRAFT
