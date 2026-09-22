@@ -36,7 +36,10 @@ print('\n'.join(sorted(p)))
 
 # Intentionally public. Anything here must be a deliberate, reviewed decision -
 # adding a line to silence a failure is how the first leak survived as long as it did.
-ALLOW="^(dorset-traffic-budget\.json)$"
+#   signal-areas.json (22 Sep 2026): ONS Local Authority District boundaries under the Open
+#   Government Licence, git-TRACKED in this public repo and read by signal-check.php ?press=1.
+#   Geometry, not a store - nothing in it belongs to anyone. It tripped every deploy from 17 Sep.
+ALLOW="^(dorset-traffic-budget\.json|signal-areas\.json)$"
 
 if [ "${1:-}" = "--list" ]; then echo "$paths"; exit 0; fi
 

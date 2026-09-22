@@ -24,12 +24,32 @@ let failures = 0;
 const fail = (m) => { failures++; console.log("::error title=header smoke::" + m); };
 const ok = (m) => console.log("ok  " + m);
 
+// The runner is sometimes bot-walled by SiteGround (22 Sep 2026: alternate deploys died here
+// with a bare exception and no diagnosis). A wall is not a broken header: when the response is
+// not the site at all, warn and skip that width - the same policy as the build-id verify step.
+// A page that IS the site but lacks the header still fails, as it should.
+let blocked = 0;
+
 const browser = await chromium.launch();
 try {
   for (const w of WIDTHS) {
     const page = await browser.newPage({ viewport: { width: w, height: 900 }, userAgent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36 deploy-smoke" });
-    await page.goto(URL, { waitUntil: "domcontentloaded", timeout: 45000 });
-    await page.waitForSelector(".site-header .nav-sos", { timeout: 20000 });
+    let resp = null;
+    try {
+      resp = await page.goto(URL, { waitUntil: "domcontentloaded", timeout: 45000 });
+      await page.waitForSelector(".site-header .nav-sos", { timeout: 20000 });
+    } catch (e) {
+      const status = resp ? resp.status() : 0;
+      const html = await page.content().catch(() => "");
+      const isSite = /class="[^"]*\bsite-header\b/.test(html);
+      const why = String(e && e.message || e).split("\n")[0];
+      if (!isSite) {
+        console.log(`::warning title=Header smoke blocked::${w}px: the runner did not get the site (HTTP ${status}; ${why}) - bot wall or network, nothing verified. Check by hand: open a menu on https://365techies.co.uk/`);
+        blocked++; await page.close(); continue;
+      }
+      fail(`${w}px: the site loaded (HTTP ${status}) but .site-header .nav-sos never appeared: ${why}`);
+      await page.close(); continue;
+    }
     // make sure the header is at rest (it auto-hides on scroll)
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(400);
@@ -87,4 +107,5 @@ try {
   await browser.close();
 }
 if (failures) { console.log(`HEADER SMOKE: ${failures} failure(s)`); process.exit(1); }
-console.log("HEADER SMOKE: all checks passed");
+if (blocked === WIDTHS.length) { console.log("HEADER SMOKE: blocked at every width (bot wall) - NOTHING verified, see the warning"); process.exit(0); }
+console.log(blocked ? `HEADER SMOKE: passed at ${WIDTHS.length - blocked} of ${WIDTHS.length} widths (${blocked} blocked by a bot wall)` : "HEADER SMOKE: all checks passed");
