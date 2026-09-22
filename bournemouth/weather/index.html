@@ -313,7 +313,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/bournemouth/media/og-weather.jpg"
       },
-      "dateModified": "2026-09-22",
+      "dateModified": "2026-09-23",
       "publisher": {
         "@id": "https://365techies.co.uk/bournemouth/#organization"
       }
@@ -823,7 +823,7 @@
         <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/bournemouth/">Bournemouth365</a> <span>/</span> <span aria-current="page">Weather, Tides &amp; Sea</span></nav>
         <h1><span class="wxp-w" style="--i:0">Bournemouth</span> <span class="wxp-w" style="--i:1">weather,</span> <em class="grad grad--cyan wxp-w" style="--i:2">tides &amp; the sea</em></h1>
         <p class="wxp-lede">The seafront&rsquo;s forecast, tide times checked against the gauge on the pier, rain radar, satellite and the wind &mdash; every number labelled with where it came from.</p>
-        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 22 September 2026</p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 23 September 2026</p>
       </div>
     </section>
 
@@ -885,8 +885,6 @@ html{scroll-padding-top:calc(var(--header-h) + 4.6rem)}
 .wxp-rec-line{font-family:var(--font-display,inherit);font-weight:600;font-size:clamp(1.15rem,3.4vw,1.5rem);line-height:1.25;color:var(--b365-foam);margin:.35rem 0 0;text-wrap:balance}
 .wxp-rec-nums{display:flex;flex-wrap:wrap;gap:.35rem 1.1rem;margin:.55rem 0 0;font-variant-numeric:tabular-nums}
 .wxp-rec-nums span{color:var(--b365-mute);font-size:.9rem}.wxp-rec-nums b{color:var(--b365-foam);font-size:1.05rem;margin-right:.3rem}
-.wxp-rec-copy{margin-top:.65rem;display:inline-flex;align-items:center;gap:.4rem;padding:.42rem .85rem;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:var(--b365-foam);font:inherit;font-size:.86rem;cursor:pointer}
-.wxp-rec-copy:hover,.wxp-rec-copy:focus-visible{background:rgba(255,255,255,.15)}
 .wxp-rec.rec-record{border-color:rgba(255,176,90,.6);background:linear-gradient(135deg,rgba(255,120,40,.2),rgba(255,255,255,.05))}
 .wxp-rec.rec-cold{border-color:rgba(120,190,255,.55);background:linear-gradient(135deg,rgba(60,140,255,.18),rgba(255,255,255,.05))}
 .wxp-now-top{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.1rem .85rem;align-items:center;margin-top:.35rem}
@@ -1763,20 +1761,13 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
     var v = t.verdict, tone = v.tier === 'record' ? ' rec-record' : (v.tier === 'record_cold' ? ' rec-cold' : '');
     var what = t.mode === 'fc' ? 'forecast high today' : 'the high today';
     card.className = 'wxp-rec' + tone;
-    card.innerHTML = '<span class="chip-f">RECORD BOOKS &middot; MET OFFICE &middot; ' + esc(String(r.station || 'BOURNEMOUTH AIRPORT').toUpperCase()) + ' &middot; SINCE ' + esc(String(r.from)) + '</span>'
+    card.innerHTML = '<span class="chip-f">RECORD BOOKS &middot; MET OFFICE &middot; SINCE ' + esc(String(r.from)) + '</span>'
       + '<p class="wxp-rec-line">' + esc(v.line) + '</p>'
-      + '<div class="wxp-rec-nums"><span><b>' + deg1(t.value) + '</b>' + what + '</span><span><b>' + deg1(t.avg_hi) + '</b>average for ' + esc(t.date) + '</span><span><b>' + deg1(t.hi[0]) + '</b>record, ' + esc(String(t.hi[1])) + '</span>'
+      + '<div class="wxp-rec-nums"><span><b>' + deg1(t.value) + '</b>' + what + '</span><span><b>' + deg1(t.avg_hi) + '</b>average for the date</span><span><b>' + deg1(t.hi[0]) + '</b>record, ' + esc(String(t.hi[1])) + '</span>'
       + (t.lohi ? '<span><b>' + deg1(t.lohi[0]) + '</b>coldest day, ' + esc(String(t.lohi[1])) + '</span>' : '') + '</div>'
       + (r.tomorrow && r.tomorrow.line ? '<p class="wxp-sub">' + esc(r.tomorrow.line) + '</p>' : '')
-      + '<button type="button" class="wxp-rec-copy" id="wxp-rec-copy">Copy for a post</button><span class="wxp-sub" id="wxp-rec-msg" style="display:inline-block;margin-left:.6rem"></span>';
+      + '<p class="wxp-sub" style="font-size:.8rem;opacity:.75">Daily records for ' + esc(String(r.station || 'Bournemouth Airport')) + ', ' + esc(String(r.from)) + '–' + esc(String(r.to)) + ', Met Office (Open Government Licence). Today’s high is the airport’s measured reading from 5 pm; before that, the forecast.</p>';
     card.hidden = false;
-    var b = $('wxp-rec-copy'), m = $('wxp-rec-msg');
-    if (b) b.onclick = function () {
-      var txt = t.caption + (r.tomorrow && r.tomorrow.line ? ' ' + r.tomorrow.line : '') + ' https://365techies.co.uk/bournemouth/weather/';
-      var done = function () { m.textContent = 'Copied — paste it into the post.'; };
-      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, function () { window.prompt('Copy this:', txt); });
-      else window.prompt('Copy this:', txt);
-    };
     rise(card);
   }
 

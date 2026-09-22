@@ -96,12 +96,24 @@ function bmr_verdict($day, $value, $mode, $ctx) {
     return $out;
 }
 
-/* The copy-and-post caption. Every number in it is in the page too. */
-function bmr_caption($ctx, $day, $value, $mode, $line) {
+/* The caption for a post (read from the feed by whoever writes the post - it is
+   not offered to visitors). The date and the record each appear ONCE: the verdict
+   line usually carries both, so the prefix and the record tail are added only
+   when it does not. */
+function bmr_caption($ctx, $day, $value, $mode, $line, $tier = '') {
     $what = $mode === 'fc' ? 'forecast high today' : 'the high today';
-    return $ctx['date'] . ' in Bournemouth: ' . bmr_deg($value) . ' ' . $what . '. ' . $line
-        . ' Average for the date ' . bmr_deg((float)$day['avg_hi']) . '; record ' . bmr_deg((float)$day['hi'][0]) . ' (' . (int)$day['hi'][1] . ').'
+    $prefix = (strpos($line, $ctx['date']) === false) ? 'Bournemouth, ' . $ctx['date'] . ': ' : 'Bournemouth: ';
+    $rec = in_array($tier, array('record', 'record_cold', 'near'), true) ? '' : ' Record ' . bmr_deg((float)$day['hi'][0]) . ' (' . (int)$day['hi'][1] . ').';
+    return $prefix . bmr_deg($value) . ' ' . $what . '. ' . $line . ' Average for the date ' . bmr_deg((float)$day['avg_hi']) . '.' . $rec
         . ' Records: Met Office, ' . $ctx['station'] . ', since ' . (int)$ctx['from'] . '.';
+}
+
+/* Tomorrow in one sentence, the date named once (by the verdict) and the record
+   added only when the verdict did not already give it. */
+function bmr_tomorrow_line($fcHi, $verdict, $day) {
+    $l = lcfirst((string)$verdict['line']);      // every verdict starts with an ASCII word or a digit
+    $rec = in_array($verdict['tier'], array('record', 'record_cold', 'near'), true) ? '' : ' Record ' . bmr_deg((float)$day['hi'][0]) . ' (' . (int)$day['hi'][1] . ').';
+    return 'Tomorrow: forecast high ' . bmr_deg($fcHi) . ', ' . rtrim($l, '.') . '.' . $rec;
 }
 
 /* The measured maximum so far on the given local date, from the METAR series
@@ -154,7 +166,7 @@ function bm_records_public($now = null) {
     if ($mode !== null) {
         $v = bmr_verdict($day, $value, $mode, $ctx);
         $today['verdict'] = $v;
-        $today['caption'] = bmr_caption($ctx, $day, $value, $mode, $v['line']);
+        $today['caption'] = bmr_caption($ctx, $day, $value, $mode, $v['line'], $v['tier']);
     }
     $out = array('ok' => true, 'station' => $R['station'], 'source' => $R['source'], 'licence' => $R['licence'], 'from' => (int)$R['from'], 'to' => (int)$R['to'], 'today' => $today);
     // tomorrow: the forecast against its date's record
@@ -165,7 +177,7 @@ function bm_records_public($now = null) {
         if ($fcTom !== null) {
             $v2 = bmr_verdict($d2, $fcTom, 'fc', array_merge($ctx, array('date' => $date2)));
             $tom['verdict'] = $v2;
-            $tom['line'] = 'Tomorrow, ' . $date2 . ': forecast high ' . bmr_deg($fcTom) . '. ' . $v2['line'] . ' The record for the date is ' . bmr_deg((float)$d2['hi'][0]) . ' (' . (int)$d2['hi'][1] . ').';
+            $tom['line'] = bmr_tomorrow_line($fcTom, $v2, $d2);
         }
         $out['tomorrow'] = $tom;
     }
