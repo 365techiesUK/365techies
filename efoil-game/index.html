@@ -788,6 +788,17 @@
     (e.message || 'error') + ' @ ' + (e.filename || '?').split('/').pop() + ':' + (e.lineno || '?')));
   addEventListener('unhandledrejection', (e) => __trap('unhandled rejection: ' + (e.reason && e.reason.message || e.reason)));
 </script>
-<script type="module" src="./src/main.js"></script>
+<!-- DEPLOY-ONLY EDIT, and the ONLY difference from the game repo copy.
+     SiteGround proxy-caches every .js under this folder for a YEAR (immutable) and
+     serves STALE CONTENT, not just a stale header - measured: the bare URL returned the
+     old build while the same URL + ?cb= returned the new one. A .htaccess Cache-Control
+     does not override it. So the modules live under a BUILD FOLDER that changes every
+     deploy, which is a new URL the proxy has never seen.
+     This page itself is Cache-Control: no-cache and revalidates, so /efoil-game/ stays a
+     PERMANENT link that always points at the newest build.
+     assets/ is NOT moved: those paths are document-relative (no import.meta.url in
+     textures.js), so they resolve against this page wherever the modules are.
+     ⚠️ BUMP b2 -> b3 -> ... ON EVERY DEPLOY, or the update will not reach anyone. -->
+<script type="module" src="./b2/src/main.js"></script>
 </body>
 </html>
