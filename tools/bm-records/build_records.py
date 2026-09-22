@@ -73,6 +73,8 @@ def read_midas(path):
             except (ValueError, KeyError):
                 continue
             mx = r.get("max_air_temp", "").strip(); mn = r.get("min_air_temp", "").strip()
+            if mx.upper() == "NA": mx = ""          # the Met Office's missing-value marker
+            if mn.upper() == "NA": mn = ""
             if hours == 24 and end.hour == 9:
                 d_max = (end - datetime.timedelta(days=1)).date(); d_min = end.date()
                 if mx: _put(tmax, tmax_src, d_max, float(mx), 24)
