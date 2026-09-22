@@ -517,6 +517,9 @@ export class RaidHud {
       <div id="rd-over" class="rd-panel">
         <h1>RAID OVER</h1><div class="why">The raiders made off with the harvest.</div><div class="big">0</div><dl></dl>
         <button type="button" data-a="again">PLAY AGAIN <small>Enter</small></button>
+        <!-- >>> LEVELBACK  see the listener below for why this is here and why it is third. -->
+        <button type="button" data-a="levels" class="alt">CHOOSE LEVEL</button>
+        <!-- <<< LEVELBACK -->
         <button type="button" data-a="exit" class="alt">FREE RIDE <small>Shift+L</small></button>
       </div>`;
     mount.appendChild(r);
@@ -535,6 +538,35 @@ export class RaidHud {
     this.level = 'pier';
     this.G = GATE_COPY;
     q('#rd-over [data-a=again]').addEventListener('click', (e) => { e.stopPropagation(); onAgain(); });
+    // >>> LEVELBACK
+    // A WAY TO ANOTHER LEVEL FROM THE CARD YOU FINISH ON. The owner, having played a full raid
+    // through to PIER SAVED on the live site: "when you complete a level I think you should have
+    // a choice to select other levels to give them a go."
+    //
+    // This is not a new idea - it is an INCONSISTENCY being closed. `smuggle.js` and `stunt.js`
+    // have both carried a LEVELS button on their own cards for rounds; the raid, the rescue and
+    // the trip back never got one, so three of the five levels ended in a dead end offering only
+    // the same level again or free ride.
+    //
+    // ⚠️ NO `onLevels` CALLBACK, and that is deliberate rather than lazy. The two older cards
+    // take one and then spend it on exactly this single line. Threading a third callback through
+    // this constructor, rescue-hud's and overboard-hud's - and then through their four call
+    // sites - would add surface for no behaviour. Clicking a DOM button from the DOM layer is
+    // in-layer, and `#btn-mode` is the handle the picker publishes.
+    //
+    // It works even where the button is not visible: `index.html` hides the row on a calibration
+    // render and used to hide it on a desktop, and a display:none button still takes a
+    // programmatic click - the same property `main.js` already relies on to enter the rescue
+    // through #rq-door.
+    //
+    // THIRD, not second: PLAY AGAIN keeps the Enter key and the first slot, because after a win
+    // the most likely next action is another run of the thing you just got good at.
+    q('#rd-over [data-a=levels]').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const b = document.querySelector('#btn-mode');
+      if (b) b.click();
+    });
+    // <<< LEVELBACK
     q('#rd-over [data-a=exit]').addEventListener('click', (e) => { e.stopPropagation(); onExit(); });
     // POINTER CAPTURE, NOT pointerleave (tmp-tr82). A thumb that rolls a few px off a 92 px
     // circle is normal; it is not a release intent, and treating it as one stopped the weapon

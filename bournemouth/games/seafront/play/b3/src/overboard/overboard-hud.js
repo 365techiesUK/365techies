@@ -160,6 +160,9 @@ export class OverboardHud {
         <h1>PASSAGE OVER</h1><div>final score</div><div class="big">0</div><dl></dl>
         <button type="button" data-a="next">NEXT LEG <small>Enter</small></button>
         <button type="button" data-a="again" class="alt">SAME LEG AGAIN</button>
+        <!-- >>> LEVELBACK -->
+        <button type="button" data-a="levels" class="alt">CHOOSE LEVEL</button>
+        <!-- <<< LEVELBACK -->
         <button type="button" data-a="exit" class="alt">FREE RIDE <small>Shift+O</small></button>
       </div>`;
     mount.appendChild(r);
@@ -176,6 +179,14 @@ export class OverboardHud {
     };
     q('#ob-over [data-a=next]').addEventListener('click', (e) => { e.stopPropagation(); onNext(); });
     q('#ob-over [data-a=again]').addEventListener('click', (e) => { e.stopPropagation(); onAgain(); });
+    // >>> LEVELBACK  the raid card carries the reasoning; this is the same closure of the
+    // same inconsistency. No onLevels callback for the reason stated there.
+    q('#ob-over [data-a=levels]').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const b = document.querySelector('#btn-mode');
+      if (b) b.click();
+    });
+    // <<< LEVELBACK
     q('#ob-over [data-a=exit]').addEventListener('click', (e) => { e.stopPropagation(); onExit(); });
     this.markerEls = [];
     this.pipEls = [];

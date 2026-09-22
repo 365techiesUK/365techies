@@ -135,6 +135,9 @@ export class RescueHud {
       <div id="rq-over" class="rq-panel">
         <h1>SHIFT OVER</h1><div>final score</div><div class="big">0</div><dl></dl>
         <button type="button" data-a="again">PLAY AGAIN <small>Enter</small></button>
+        <!-- >>> LEVELBACK -->
+        <button type="button" data-a="levels" class="alt">CHOOSE LEVEL</button>
+        <!-- <<< LEVELBACK -->
         <button type="button" data-a="exit" class="alt">FREE RIDE <small>Shift+R</small></button>
       </div>`;
     mount.appendChild(r);
@@ -148,6 +151,14 @@ export class RescueHud {
       over: q('#rq-over'), overScore: q('#rq-over .big'), overDl: q('#rq-over dl'),
     };
     q('#rq-over [data-a=again]').addEventListener('click', (e) => { e.stopPropagation(); onAgain(); });
+    // >>> LEVELBACK  the raid card carries the reasoning; this is the same closure of the
+    // same inconsistency. No onLevels callback for the reason stated there.
+    q('#rq-over [data-a=levels]').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const b = document.querySelector('#btn-mode');
+      if (b) b.click();
+    });
+    // <<< LEVELBACK
     q('#rq-over [data-a=exit]').addEventListener('click', (e) => { e.stopPropagation(); onExit(); });
     this.markerEls = [];
     this.bannerUntil = 0;
