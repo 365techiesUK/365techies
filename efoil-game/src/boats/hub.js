@@ -136,12 +136,29 @@ export class CraftHub {
 
   hintText() {
     if (!this.active) {
+      // >>> LEVELBACK  the eFoil's line needs it for the same reason the boats' does.
       return '<b>Move the mouse</b> to lean and steer &middot; <b>scroll</b> for throttle &middot; <b>SPACE</b> pop-up '
-        + '&mdash; <b>M</b> for keyboard, <b>H</b> help, <b>K</b> craft';
+        + '&mdash; <b>M</b> for keyboard, <b>H</b> help, <b>K</b> craft, <b>L</b> levels';
+      // <<< LEVELBACK
     }
+    // >>> LEVELBACK
+    // ⚠️ `L` EARNED ITS PLACE ON THIS LINE THE HARD WAY. The owner played the game on a
+    // desktop and reported that once you pick a level "there's no way to go back to the
+    // level menu". The key has always worked - measured, not assumed: pressing L inside a
+    // running Viking raid opens the picker over the top of it, all eight rows. What was
+    // missing is that NOTHING SAID SO. The LEVELS button exists but `index.html` hides the
+    // whole button row on a desktop (`body:not(.touch) #tbtns { display: none }`), and this
+    // hint line - the one piece of text a desktop player actually reads - listed only K.
+    // The help card behind H had it; a player who does not know there is a help card does not
+    // press H.
+    //
+    // It goes LAST and after K because the line is already long; at 1280 px it wraps on a
+    // narrow window, and the two least-used items should be the ones that fall to the second
+    // row rather than `steer` or `throttle`.
     return `<b>${LABEL[this.kind]}</b> &middot; <b>mouse left/right</b> or <b>A/D</b> to steer &middot; `
       + '<b>scroll</b> or <b>&uarr;/&darr;</b> throttle &middot; <b>W/S</b> trim &middot; <b>right mouse</b> or <b>SPACE</b> slow/reverse '
-      + '&mdash; <b>K</b> next craft';
+      + '&mdash; <b>K</b> next craft &middot; <b>L</b> levels';
+    // <<< LEVELBACK
   }
 
   pose() {

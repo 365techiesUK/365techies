@@ -933,6 +933,30 @@ for (const b of document.querySelectorAll('#viewbar button')) {
   b.addEventListener('click', () => setCamera(b.dataset.cam));
 }
 
+// >>> PAD
+// A CONNECTED CONTROLLER SAYS SO (tmp-tr198). The pad has driven this game since input.js was
+// written and there was nothing anywhere - no toast, no help line, no hint - to tell anyone.
+// A feature nobody can find is a secret, so this is the smallest thing that turns it into one.
+//
+// It also reports the refusal. input.js will not read a pad that does not claim the standard
+// mapping (its indices would be noise), and a pad that silently does nothing is a worse bug
+// than one that says why.
+//
+// NEVER on a calibration or clean render: the toast is a visible DOM element and a pad plugged
+// in mid-render would paint a banner into a measured frame. Read once, at load, because ?cal=
+// is a property of the address and cannot appear later.
+{
+  const padQuiet = new URLSearchParams(location.search).has('cal');
+  addEventListener('gamepadconnected', (e) => {
+    if (padQuiet || window.__calCam || document.body.classList.contains('clean-render')) return;
+    const g = e && e.gamepad;
+    toast(g && g.mapping === 'standard'
+      ? 'controller connected — left stick lean/steer, RT throttle, LT ease off (astern on a boat), A punch it, B camera'
+      : 'controller connected, but it does not report a standard layout — its buttons would be guesswork, so keyboard or mouse it is');
+  });
+}
+// <<< PAD
+
 // ---------------------------------------------------------------------------
 // touch
 // ---------------------------------------------------------------------------
@@ -1853,6 +1877,33 @@ function frame(nowMs) {
   let ft = now - last;
   last = now;
   if (ft > 0.25) ft = 0.25;          // a stall must not teleport the sim
+
+  // >>> PAD
+  // THE PAD'S ONE-SHOT ACTIONS (tmp-tr198), drained once per rendered frame.
+  //
+  // Here and not in tick() on purpose. tick() runs 0-8 times a frame off an accumulator, and
+  // during a replay or the attract demo `source` is not `live` at all, so tick() never calls
+  // live.sample() - a camera button hung off the sim step would be jittery when it worked and
+  // silently dead when it mattered. pollActions() owns the edge state (input.js), nothing else
+  // in the file touches it, so a button held across frames fires exactly once.
+  //
+  // These are VIEW actions. They set no sim input, they are not in the recorded stream, and
+  // they cannot reach sim.hash - the same reason C and K cannot.
+  //
+  // Off during a calibration or clean render: a pad cycling the camera mid-measurement would
+  // corrupt the corpus, and the craft is a page-load decision on those addresses anyway.
+  if (!window.__calCam && !document.body.classList.contains('clean-render')) {
+    for (const a of live.pollActions()) {
+      if (a === 'camera') cycleCamera();
+      // Exactly what the CRAFT button does, including its in-a-mode override - not a second
+      // set of rules for the same action (boats/hub.js cycle()).
+      else if (a === 'craft') {
+        craftHub.cycle(document.body.classList.contains('raid') || document.body.classList.contains('rescue'));
+        applyTouchSettings();
+      }
+    }
+  }
+  // <<< PAD
 
   // ?hold=1 stops the physics so successive calibration renders are identical,
   // while the draw below keeps running (a frozen loop screenshots as an empty

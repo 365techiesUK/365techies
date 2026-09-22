@@ -239,7 +239,40 @@
                   border: 1px solid rgba(232,237,244,0.22); }
   #tbtns button.danger { margin-left: 14px; }            /* ≥22 px from SET in total */
   #tbtns button.on { background: rgba(255,215,106,0.22); color: #ffd76a; }
+  /* >>> LEVELBACK
+     THE DESKTOP GOT NO WAY BACK TO THE PICKER, and the comment ten lines below this one has
+     been describing the fix for phones the whole time: "LEVELS is the only way back to the
+     picker on a phone, and a player who cannot leave the level she is in cannot choose
+     another one." Exactly true on a desktop too, where this rule hid the entire row.
+
+     The owner hit it playing the live build: pick a level, and there is no visible way out of
+     it. The KEY always worked - measured, not assumed: L inside a running Viking raid opens
+     the picker over the top of it with all eight rows. It was only ever invisible. The help
+     card behind H listed it; nothing on screen did.
+
+     So: show the row on a desktop, but ONLY the LEVELS button. VIEW, SET, CRAFT and RESET all
+     have keys (C, T, K, R) and a desktop player has a keyboard; putting five touch-sized pills
+     on a mouse-driven screen would be clutter. One button, bottom right, clear of the hint pill
+     (which is centred at bottom 26px and about 38px tall) and clear of the bottom-left
+     instrument panels the raid and the trip back both draw.
+
+     ⚠️ `:not(.clean-render)` IS LOAD-BEARING AND NOT TIDINESS. `body.clean-render #tbtns` at
+     the top of this file hides the row for calibration renders, and it has the SAME specificity
+     as `body:not(.touch) #tbtns` but comes EARLIER in the cascade - so without this second
+     :not(), a LEVELS button would appear in all 25 judged views and silently corrupt the
+     instrument this project measures everything with.
+
+     ⚠️ The base `#tbtns` rule and the min-width:481px rule are NOT touched: test-touch.mjs
+     pins both against regexes (its sections on the centring and the max-width cap). This adds
+     a rule, it does not edit one. */
   body:not(.touch) #tbtns { display: none; }
+  body:not(.touch):not(.clean-render) #tbtns {
+    display: flex; left: auto; right: 16px; transform: none;
+    bottom: 76px; width: auto; max-width: none; opacity: .85;
+  }
+  body:not(.touch):not(.clean-render) #tbtns button { display: none; }
+  body:not(.touch):not(.clean-render) #tbtns #btn-mode { display: inline-flex; }
+  /* <<< LEVELBACK */
   /* ⚠️ UITAIL 2026-09-20: THE COLD ROW NOW RESERVES BOOST / FIRE'S COLUMN INSTEAD OF
      GUESSING WHERE IT IS. This is a real bug fix, and the bug was bigger than it looked.
 
@@ -718,6 +751,9 @@
         <tr><td><kbd>M</kbd></td><td>mouse steering — move to lean, hold LMB for throttle</td></tr>
         <tr><td>click</td><td>locks the mouse to the game (it can't wander off the window) · <kbd>Esc</kbd> gives it back</td></tr>
         <tr><td>right mouse</td><td>ease the throttle off — hold it on a boat and she goes astern</td></tr>
+        <!-- >>> PAD -->
+        <tr><td>controller</td><td>left stick lean &amp; steer &middot; <kbd>RT</kbd> throttle &middot; <kbd>LT</kbd> ease off, then astern on a boat &middot; <kbd>A</kbd> punch it &middot; <kbd>B</kbd> camera &middot; d&#8209;pad&nbsp;&rarr; craft &middot; in a raid <kbd>X</kbd>/<kbd>RB</kbd> fire, <kbd>Y</kbd>/<kbd>LB</kbd> water</td></tr>
+        <!-- <<< PAD -->
         <tr><td><kbd>J</kbd></td><td>camera motion: full &middot; reduced &middot; off (also <kbd>&#9881;</kbd> SET on a phone, or ?cam=)</td></tr>
         <!-- WIREMUSIC -->
         <tr><td><kbd>O</kbd></td><td>music: full &middot; bed &middot; off &mdash; the score, per level (also <kbd>&#9881;</kbd> SET, or ?music=)</td></tr>

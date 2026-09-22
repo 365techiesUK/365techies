@@ -12,6 +12,17 @@
 // The one rule that makes replay a proof rather than a demo: input is quantised
 // AT SAMPLE TIME, so a live tick and a replayed tick are fed byte-identical
 // numbers whichever device produced them.
+//
+// >>> PAD
+// ⚠️ AND THE RULE THAT PROTECTS IT (tmp-tr198). The pad's one-shot actions - camera, craft -
+// are VIEW actions, not craft input. They are NOT in the contract above, they are NOT in
+// `out`, and Recorder never sees them; they leave this file through pollActions(), which
+// main.js drains once per rendered FRAME. So the recorded stream is the same four numbers
+// it has always been, and a replay - which does not call sample() at all - cannot be
+// reached by a pad. The only pad value that is new INSIDE the contract is astern, and it
+// arrives as `brake`, which was already outside the recording by the same reasoning the
+// mouse's right button is.
+// <<< PAD
 
 const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
 const q8 = (v) => Math.round(clamp(v, -1, 1) * 127) / 127;
@@ -30,6 +41,51 @@ export const KEYMAP = {
 const KEY_RAMP = 3.0;      // /s - how fast a held key expresses intent.
                            // Deliberately faster than the rider's hand, so the
                            // hand stays the binding constraint on every device.
+
+// >>> PAD
+// ---------------------------------------------------------------------------
+// GAMEPAD (tmp-tr198). The pad was already half-wired and nobody knew: the left stick,
+// the right trigger and A have driven this game since the file was written, and the raid
+// has read FIRE and WATER off the pad since tr60. What was missing was ASTERN - `brake` was
+// gated to touch and mouse, so a boat could not be backed off on a pad by construction -
+// and the two VIEW actions, camera and craft.
+//
+// THE WHOLE MAP, so it is written down in one place for the first time:
+//
+//   left stick          lean (Y) / steer (X)        this file, dead zone PAD.dead
+//   RT      buttons[7]  throttle, analogue          this file
+//   LT      buttons[6]  ease off, then ASTERN       this file, NEW
+//   A       buttons[0]  punch it (boost)            this file
+//   B       buttons[1]  camera: side/chase/FPV      this file, NEW (edge)
+//   R3      buttons[11] camera, same action         this file, NEW (edge)
+//   d-pad R buttons[15] next craft                  this file, NEW (edge)
+//   X       buttons[2]  fire       )  raid/raid-mode.js, since tr60. NOT bound here, and
+//   RB      buttons[5]  fire       )  deliberately not moved: they are HELD, that file polls
+//   Y       buttons[3]  water      )  them itself every tick, and they already work.
+//   LB      buttons[4]  water      )
+//
+// Why the brief's proposed Y-for-camera was declined: Y is the water cannon and has been
+// since tr60. B and R3 were free; nothing had to move.
+//
+// ⚠️ THE INDICES ABOVE ONLY MEAN ANYTHING ON THE STANDARD MAPPING. A pad reporting
+// `mapping: ""` lays its axes and buttons out however its driver felt like, so reading
+// index 7 off one is not "an approximation", it is noise. _padUsable() refuses those pads
+// outright and says so, instead of steering the craft with them.
+export const PAD = {
+  dead: 0.12,        // stick dead zone. Unchanged - this is the number the file has always used.
+  trigDead: 0.06,    // LT only. RT is read RAW, exactly as before, so with LT at rest the
+                     // throttle path is byte-identical to the one that shipped.
+  astern: 0.55,      // LT past this, with RT shut, is ASTERN. Below it LT only cuts the ahead
+                     // throttle. The detent is in the VALUE, not on the trigger, which is the
+                     // same trick the touch lever uses (_thrRaw) - so a player finds neutral
+                     // without looking and cannot slip into reverse by resting a finger.
+  rtShut: 0.05,      // ... and astern needs the ahead trigger actually shut, so you cannot be
+                     // driving forward and astern at the same time.
+  wake: 0.2,         // how much REAL input it takes to make the pad the active device (defect 2)
+  BTN: { boost: 0, camera: 1, fire: 2, water: 3, lb: 4, rb: 5, lt: 6, rt: 7,
+         camera2: 11, dpadRight: 15 },
+};
+// <<< PAD
 
 // ---------------------------------------------------------------------------
 // PHONE CONTROL SCHEME (tmp-tr82): "left thumb rides, right thumb fights, the
@@ -157,7 +213,20 @@ export class InputHub {
       padId: null, padX: 0, padY: 0, thrId: null, thrStart: 0, thrOrigin: 0, thrRaw: 0,
     };
     loadTouchSettings();
-    this.pad = { lean: 0, turn: 0, throttle: 0, boost: 0 };
+    // >>> PAD
+    // `astern` joins the pad's own state for the same reason `touch.astern` exists: it is the
+    // reverse half of one lever, and the craft reads it through `brake` like every other device.
+    this.pad = { lean: 0, turn: 0, throttle: 0, boost: 0, astern: 0 };
+    // What the last pad we looked at actually is. `usable` is false for a pad whose layout we
+    // cannot read; the toast in main.js says which of the two happened, so a refused pad is
+    // visible rather than simply dead.
+    this.padInfo = { id: '', mapping: '', usable: false, seen: false };
+    this._padPrev = 0;          // edge state for pollActions(). Written in ONE place, on purpose.
+    this._padActions = [];
+    // Defect 2: a pad appearing must not steal the mode. When it is genuinely used and later
+    // unplugged, the player goes back to whatever they were driving with, not to 'keyboard'.
+    this._preGamepadMode = 'mouse';
+    // <<< PAD
 
     this.throttle = 0;       // persistent target, ramped by digital devices
     this.out = { lean: 0, turn: 0, throttle: 0, boost: 0 };
@@ -280,13 +349,112 @@ export class InputHub {
     return a < dz ? 0 : Math.sign(v) * ((a - dz) / (1 - dz));
   }
 
+  // >>> PAD
+  // DEFECT 2 (tmp-tr198). This used to be `this.mode = 'gamepad'` on connect. Plugging a pad in
+  // while playing on the keyboard or the mouse stopped the keyboard and the mouse steering until
+  // you touched a key, because sample() reads `mode` and nothing else. A pad APPEARING is not a
+  // player using one. Availability follows the connection; the MODE follows actual input, in
+  // _pollGamepad() below, against PAD.wake.
+  //
+  // Disconnect is the same rule read backwards: if the pad was never driven the mode is already
+  // right and must not be touched, and if it was, the player goes back to the device they were
+  // on before - not unconditionally to 'keyboard', which on a desktop was never where they were.
   _bindGamepad() {
-    addEventListener('gamepadconnected', () => { this.available.gamepad = true; this.mode = 'gamepad'; });
+    addEventListener('gamepadconnected', (e) => {
+      const g = e && e.gamepad;
+      this.padInfo = { id: (g && g.id) || '', mapping: (g && g.mapping) || '',
+        usable: this._padUsable(g), seen: true };
+      if (this.padInfo.usable) this.available.gamepad = true;
+    });
     addEventListener('gamepaddisconnected', () => {
-      this.available.gamepad = false;
-      if (this.mode === 'gamepad') this.mode = 'keyboard';
+      // Re-derive rather than assume: a second pad may still be plugged in.
+      this.available.gamepad = this._anyUsablePad();
+      if (!this.available.gamepad) {
+        this.padInfo = { ...this.padInfo, usable: false, seen: false };
+        if (this.mode === 'gamepad') this.mode = this._preGamepadMode || 'keyboard';
+      }
     });
   }
+
+  // The ONE test for "may I read this pad's indices". `mapping` is the only thing the Gamepad
+  // API tells us about the layout, and off 'standard' the numbers are whatever the driver chose.
+  _padUsable(g) { return !!g && g.mapping === 'standard'; }
+
+  _anyUsablePad() {
+    try {
+      const pads = navigator.getGamepads ? navigator.getGamepads() : [];
+      for (const g of pads) if (this._padUsable(g)) return true;
+    } catch { /* getGamepads throws in some sandboxes; treat it as no pad */ }
+    return false;
+  }
+
+  // The live standard-mapping pad, or null. Lowest index wins, and an unreadable pad is SKIPPED
+  // rather than taken - with a generic pad in port 0 and a proper one in port 1, the old loop
+  // took port 0's garbage and never looked further.
+  _pad() {
+    let pads;
+    try { pads = navigator.getGamepads ? navigator.getGamepads() : []; }
+    catch { return null; }
+    let refused = null;
+    for (const g of pads) {
+      if (!g) continue;
+      if (this._padUsable(g)) return g;
+      if (!refused) refused = g;
+    }
+    if (refused && this.padInfo.id !== refused.id) {
+      this.padInfo = { id: refused.id || '', mapping: refused.mapping || '', usable: false, seen: true };
+    }
+    return null;
+  }
+
+  _btn(g, i) {
+    const b = g.buttons[i];
+    if (!b) return 0;
+    return b.value != null ? b.value : (b.pressed ? 1 : 0);
+  }
+
+  _pressed(g, i) {
+    const b = g.buttons[i];
+    return !!(b && (b.pressed || (b.value != null && b.value > 0.5)));
+  }
+
+  // EDGE ACTIONS. Buttons on a pad are POLLED, not evented: there is no queue of transitions to
+  // drain, only "what is down right now". So a one-shot action needs a rising edge computed
+  // against the previous poll, and there are exactly two properties to get right:
+  //
+  //   cannot DOUBLE-FIRE - `_padPrev` is written in this method and nowhere else in the file,
+  //     once per call, from the same `bits` the edge was computed against. A button held across
+  //     N calls rises exactly once. sample() never touches it, so the 1-8 sample() calls a frame
+  //     makes cannot consume or repeat an edge.
+  //   cannot MISS a press that spans a poll - a button down at poll N and up at poll N+1 still
+  //     shows in `bits` at poll N.
+  //
+  // ⚠️ What it CANNOT do, and no web page can: see a press that goes down AND up entirely
+  // between two polls. The Gamepad API exposes no transition history. main.js calls this once
+  // per rendered frame, so the blind window is one frame - ~17 ms at 60 fps, against a human
+  // button press of 50-200 ms. Stated, and tested, rather than claimed away.
+  //
+  // Called once per FRAME, not per sim tick, and deliberately not from sample(): sample() is not
+  // called at all during a replay or the attract demo, and is called 0-8 times in a frame
+  // otherwise, so an edge hung off it would be both jittery and absent exactly when the player
+  // wants to change camera.
+  pollActions() {
+    const out = this._padActions;
+    out.length = 0;
+    const g = this._pad();
+    if (!g) { this._padPrev = 0; return out; }
+    const B = PAD.BTN;
+    // Both camera buttons are ORed into ONE bit before the edge is taken, so pressing B and R3
+    // together is one camera change, not two.
+    const bits = (this._pressed(g, B.camera) || this._pressed(g, B.camera2) ? 1 : 0)
+      | (this._pressed(g, B.dpadRight) ? 2 : 0);
+    const rise = bits & ~this._padPrev;
+    this._padPrev = bits;
+    if (rise & 1) out.push('camera');
+    if (rise & 2) out.push('craft');
+    return out;
+  }
+  // <<< PAD
 
   // Tilt-to-lean. Fits an eFoil unusually well - you lean the phone the way you
   // lean your body. Needs a secure context, so over plain http on a LAN it will
@@ -496,22 +664,42 @@ export class InputHub {
   has(list) { return list.some((c) => this.keys.has(c)) ? 1 : 0; }
 
   _pollGamepad() {
-    const pads = navigator.getGamepads ? navigator.getGamepads() : [];
-    for (const g of pads) {
-      if (!g) continue;
-      this.available.gamepad = true;
-      const dz = (v) => (Math.abs(v) < 0.12 ? 0 : v);
-      this.pad.lean = -dz(g.axes[1] || 0);
-      this.pad.turn = dz(g.axes[0] || 0);
-      // Right trigger: buttons[7] on the standard mapping, analogue where the
-      // pad supports it.
-      const rt = g.buttons[7];
-      this.pad.throttle = rt ? (rt.value != null ? rt.value : (rt.pressed ? 1 : 0)) : 0;
-      this.pad.boost = g.buttons[0] && g.buttons[0].pressed ? 1 : 0;
-      if (Math.abs(this.pad.lean) > 0.2 || this.pad.throttle > 0.1) this.mode = 'gamepad';
-      return true;
+    // >>> PAD
+    const g = this._pad();
+    if (!g) {
+      // A pad that has gone, or one we refused, drives nothing. Leaving the last values in place
+      // would hold the throttle open on a craft after the cable was pulled.
+      if (this.pad.throttle || this.pad.astern || this.pad.boost || this.pad.lean || this.pad.turn) {
+        this.pad.lean = 0; this.pad.turn = 0; this.pad.throttle = 0; this.pad.boost = 0; this.pad.astern = 0;
+      }
+      return false;
     }
-    return false;
+    this.available.gamepad = true;
+    this.padInfo = { id: g.id || '', mapping: g.mapping, usable: true, seen: true };
+    const dz = (v) => (Math.abs(v) < PAD.dead ? 0 : v);
+    this.pad.lean = -dz(g.axes[1] || 0);
+    this.pad.turn = dz(g.axes[0] || 0);
+    // THE THROTTLE LEVER, both halves of it. RT is read RAW - no dead zone, no shaping - so
+    // with LT at rest `throttle` is the identical expression the file shipped with. LT then
+    // subtracts from it, which is "ease off" and costs nothing to learn, and past PAD.astern
+    // with RT shut it becomes reverse, which is what a boat's `brake` has always meant.
+    const rt = this._btn(g, PAD.BTN.rt);
+    const ltRaw = this._btn(g, PAD.BTN.lt);
+    const lt = ltRaw < PAD.trigDead ? 0 : ltRaw;
+    this.pad.throttle = clamp(rt - lt, 0, 1);
+    this.pad.astern = (rt < PAD.rtShut && lt > PAD.astern)
+      ? clamp((lt - PAD.astern) / (1 - PAD.astern), 0, 1) : 0;
+    this.pad.boost = this._pressed(g, PAD.BTN.boost) ? 1 : 0;
+    // DEFECT 2, the other half: the mode follows what the player DOES. Every channel counts,
+    // not just lean and throttle - steering out of a turn, or backing off a jetty on LT, used
+    // to leave the pad "not the active device" while it was plainly the one being driven.
+    if (Math.abs(this.pad.lean) > PAD.wake || Math.abs(this.pad.turn) > PAD.wake
+      || this.pad.throttle > 0.1 || this.pad.astern > 0 || this.pad.boost) {
+      if (this.mode !== 'gamepad') this._preGamepadMode = this.mode;
+      this.mode = 'gamepad';
+    }
+    return true;
+    // <<< PAD
   }
 
   sample(dt = 1 / 120) {
@@ -524,6 +712,14 @@ export class InputHub {
     if (this.mode === 'gamepad') {
       lean = this.pad.lean; turn = this.pad.turn;
       target = this.pad.throttle; boost = this.pad.boost;
+      // >>> PAD
+      // ASTERN ON A PAD (tmp-tr198), through the SAME `brake` channel the mouse's right button
+      // and the touch lever already use - boats/hub.js:171 ramps the reverse power off it, and
+      // the eFoil never reads it, so this is boats-only by construction exactly as those are.
+      // Assigning it here also closes a latent bug: this branch never wrote `this.brake` at all,
+      // so a brake raised on the mouse stayed raised for ever once the player picked up a pad.
+      this.brake = this.pad.astern > 0 ? 1 : 0;
+      // <<< PAD
     } else if (this.mode === 'touch') {
       lean = this.touch.lean; turn = this.touch.turn;
       target = this.touch.throttle; boost = this.touch.boost;
