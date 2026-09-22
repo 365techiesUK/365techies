@@ -103,9 +103,15 @@ if (empty($c['ok'])) {
 
 if ($action === 'list') {
     $o = invq_overview($c, !empty($in['fresh']));
+    /* How the Slack side is doing, so "no Slack jobs" is never silent: the last poll
+       time and Slack's own error word (not_in_channel, missing_scope, ...). */
+    require_once __DIR__ . '/pcm-slackjobs-sweep.php';
+    $st = sj_status_read();
+    $slack = array('last' => (int)(isset($st['last']) ? $st['last'] : 0), 'error' => (string)(isset($st['error']) ? $st['error'] : ''),
+                   'jobs' => (int)(isset($st['jobs']) ? $st['jobs'] : 0), 'channels' => (array)(isset($st['channels']) ? $st['channels'] : array()));
     out(array('ok' => true, 'connected' => true, 'jobs' => $o['jobs'], 'waiting' => $o['waiting'], 'older' => $o['older'],
               'cached' => !empty($o['cached']), 'stale' => !empty($o['stale']), 'why' => isset($o['why']) ? $o['why'] : '',
-              'live' => !empty($c['live']), 'only_key' => ($c['only'] !== '')));
+              'live' => !empty($c['live']), 'only_key' => ($c['only'] !== ''), 'slack' => $slack));
 }
 
 if ($action === 'create') {
