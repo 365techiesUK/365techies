@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!-- ⚠️ NOINDEX WHILE THIS IS UNLISTED. Nothing on the site links here and there is no sitemap
+     entry, but robots.txt allows everything, so this tag is what actually keeps it out of
+     search. REMOVE IT DELIBERATELY at launch, along with the one in play/index.html. -->
+<meta name="robots" content="noindex,nofollow">
+<title>Seafront — a Bournemouth game</title>
+<meta name="description" content="A free browser game set on the real Bournemouth seafront. Ride a jet ski past the pier, save the pier from a Viking raid, run the Dorset smuggling coast, or bring a boatload of people home.">
+<!-- DELIBERATELY NOT THE SITE CHROME, and that is a decision rather than laziness.
+     The site header is a 1,700-line block with a scrolling ticker, a nav and dropdowns. Copying
+     it into a hand-maintained page would create a second copy that drifts the moment the real
+     one changes - the dev/prod divergence this project has been bitten by before. A game splash
+     also simply reads better on its own terms than a game boxed inside corporate navigation.
+     If this ever wants the full site furniture, the right move is to add it to the site's own
+     page builder so the chrome is generated, not pasted. -->
+<style>
+  :root { --bg:#0e1116; --ink:#e8edf4; --dim:rgba(232,237,244,.55);
+          --line:rgba(232,237,244,.14); --amber:#f2c14e; --blue:#7fb6ff; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; background:var(--bg); color:var(--ink);
+              font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+              -webkit-text-size-adjust:100%; }
+  a { color:var(--blue); }
+  .wrap { max-width:860px; margin:0 auto; padding:32px 16px 72px; }
+  h1 { font-size:clamp(30px,6vw,46px); line-height:1.1; margin:.2em 0 .1em; letter-spacing:-.01em; }
+  .sub { color:var(--dim); font-size:clamp(16px,2.4vw,19px); margin:0 0 28px; }
+  .shot { width:100%; height:auto; display:block; border-radius:10px;
+          border:1px solid var(--line); margin:0 0 26px; }
+  /* 44px floor for a thumb, the same rule the game's own controls keep. */
+  .play { display:inline-flex; align-items:center; gap:10px; min-height:56px;
+          padding:0 30px; border-radius:999px; background:var(--amber); color:#12151a;
+          font-size:20px; font-weight:700; text-decoration:none; letter-spacing:.01em; }
+  .play:hover { filter:brightness(1.07); }
+  .after { color:var(--dim); font-size:15px; margin:14px 0 34px; }
+  h2 { font-size:20px; margin:34px 0 8px; }
+  ul { margin:0 0 14px; padding-left:20px; }
+  li { margin:5px 0; }
+  kbd { font:13px/1 ui-monospace,Menlo,Consolas,monospace; background:rgba(255,255,255,.08);
+        border:1px solid var(--line); border-radius:4px; padding:3px 6px; }
+  .cols { display:grid; gap:0 36px; grid-template-columns:1fr; }
+  @media (min-width:660px) { .cols { grid-template-columns:1fr 1fr; } }
+  footer { border-top:1px solid var(--line); margin-top:44px; padding-top:18px;
+           color:var(--dim); font-size:14px; }
+  footer a { color:var(--dim); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Seafront</h1>
+  <p class="sub">A free browser game on the real Bournemouth seafront &mdash; the pier, the beach,
+  Boscombe, and the Dorset coast round to Old Harry Rocks. No download, no sign-up.</p>
+
+  <img class="shot" src="shot.jpg" width="1200" height="675" alt="A jet ski at speed on the sea
+  off Bournemouth Pier, with the beach, the big wheel and the seafront buildings ahead.">
+
+  <p><a class="play" href="play/">Play now &rarr;</a></p>
+  <p class="after">Opens straight into the game. It takes a moment to load the first time.</p>
+
+  <div class="cols">
+    <div>
+      <h2>Eight ways to play</h2>
+      <ul>
+        <li><b>Free ride</b> &mdash; open water, nothing chasing you.</li>
+        <li><b>Rescue mode</b> &mdash; swimmers in trouble off the beach.</li>
+        <li><b>Viking raid</b> &mdash; longships at the pier. Save it.</li>
+        <li><b>Pirate raid</b> &mdash; the same siege, a corsair fleet.</li>
+        <li><b>The Harbour Mouth</b> &mdash; Old Harry Rocks.</li>
+        <li><b>The Smuggling Run</b> &mdash; the Dorset coast at night.</li>
+        <li><b>The Stunt Stage</b> &mdash; a ramp course off Boscombe.</li>
+        <li><b>The Trip Back</b> &mdash; a boatload too many in a swell.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Controls</h2>
+      <ul>
+        <li>Mouse, or <kbd>A</kbd><kbd>D</kbd> to steer</li>
+        <li>Scroll, or <kbd>&uarr;</kbd><kbd>&darr;</kbd> for throttle</li>
+        <li><kbd>W</kbd><kbd>S</kbd> to trim &middot; <kbd>Space</kbd> to punch it</li>
+        <li><kbd>C</kbd> camera &middot; <kbd>K</kbd> craft &middot; <kbd>L</kbd> levels</li>
+        <li>An <b>Xbox controller</b> works if you have one plugged in</li>
+        <li>On a phone or tablet, it is all touch</li>
+      </ul>
+      <h2>You will need</h2>
+      <ul>
+        <li>A browser with WebGL2 &mdash; anything current</li>
+        <li>It runs best on a desktop or a recent phone</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Three craft</h2>
+  <p>An electric hydrofoil, a jet ski and a rigid inflatable, each with its own handling. The sea
+  is simulated rather than animated, so the swell you are riding is the swell the boat is
+  reacting to, and the coast is built from survey data rather than drawn by eye.</p>
+
+  <footer>
+    <p>Contains Environment Agency information &copy; Environment Agency and/or database right.</p>
+    <p>Made in Bournemouth by <a href="/">365 Techies</a>.</p>
+  </footer>
+
+</div>
+</body>
+</html>
