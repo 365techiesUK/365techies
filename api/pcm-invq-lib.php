@@ -102,6 +102,49 @@ function invq_jobs_recent($jobs, $now = null, $days = INVQ_WINDOW_DAYS) {
     return $out;
 }
 
+/* The third source: a service run through 365 PC Manager on a customer who is
+   NOT on a plan. The owner activates new customers in the app to run a service
+   even when they are not on support, and those are jobs to invoice too.
+   One job per machine, dated by its latest service in the window. Guards:
+   plan customers never (their service is what the plan pays for), self-serve
+   sign-in identities never (not customers), and the caller drops anyone who
+   already has a Slack or console job this month (see invq_pcm_sync). Money:
+   the engineer-mode amount when there is one, else nothing - a person prices it. */
+function invq_jobs_from_pcm($customers, $now = null, $days = INVQ_WINDOW_DAYS) {
+    $now = $now === null ? time() : $now;
+    $out = array();
+    foreach ((array)$customers as $key => $c) {
+        if (!is_array($c)) continue;
+        if ((string)(isset($c['tier']) ? $c['tier'] : '') === 'pro') continue;
+        if ((string)(isset($c['via']) ? $c['via'] : '') === 'signin') continue;
+        $name = invq_str(isset($c['name']) ? $c['name'] : '', 90);
+        $email = invq_email_ok(isset($c['email']) ? $c['email'] : '');
+        $phone = invq_str(isset($c['mobile']) && $c['mobile'] !== '' ? $c['mobile'] : (isset($c['tel']) ? $c['tel'] : ''), 30);
+        foreach ((array)(isset($c['machines']) ? $c['machines'] : array()) as $mid => $m) {
+            if (!is_array($m) || !preg_match('/^[a-f0-9]{6,32}$/', (string)$mid)) continue;
+            $last = 0; $kind = '';
+            foreach ((array)(isset($m['repk']) ? $m['repk'] : array()) as $ts => $k) {
+                if (($k === 'service' || $k === 'selfrun') && (int)$ts > $last) { $last = (int)$ts; $kind = $k; }
+            }
+            $fs = isset($m['fullservice']) ? strtotime((string)$m['fullservice'] . ' UTC') : false;
+            if ($fs !== false && $fs > $last) { $last = $fs; $kind = 'service'; }
+            if ($last <= 0 || $last < $now - $days * 86400) continue;
+            $pc = invq_str(isset($m['name']) ? $m['name'] : '', 40);
+            $amt = invq_num(isset($m['oneoff_amount']) ? $m['oneoff_amount'] : 0);
+            $out[] = array(
+                'id' => 'pcm-' . preg_replace('/[^0-9a-zA-Z-]/', '', (string)$key) . '-' . (string)$mid, 'ts' => $last, 'by' => 'PC Manager', 'via' => 'pcm',
+                'name' => ($name !== '' ? $name : $email), 'email' => $email, 'phone' => $phone, 'addr' => '',
+                'desc' => 'Full computer service' . ($pc !== '' ? ' on ' . $pc : '') . ($kind === 'selfrun' ? ' (run from the app)' : '') . ', ' . gmdate('j M', $last),
+                'note' => ($kind === 'selfrun' ? 'self-run' : 'service') . ($pc !== '' ? ' · ' . $pc : ''),
+                'amount' => ($amt > 0 ? round($amt, 2) : 0.0), 'amount_by' => ($amt > 0 ? 'engineer' : ''),
+                'invoice_no' => '', 'invoice_url' => '', 'invoice_doc' => '', 'invoiced_in_slack' => false,
+                'status' => 'done', 'pcm' => array('key' => (string)$key, 'machine' => (string)$mid, 'kind' => $kind),
+            );
+        }
+    }
+    return $out;
+}
+
 /* Find the invoice that IS this job. First by the id the console recorded when it
    created the draft; then by the invoice NUMBER someone typed in Slack's
    "Invoiced?" box; else the same customer, the same amount, within a week of the
@@ -199,7 +242,7 @@ function invq_job_row($job, $invRow, $now = null) {
     if ($state === 'none' && !empty($job['invoiced_in_slack'])) { $state = 'invoiced'; $can = false; $why = 'invoiced_in_slack'; }
     return array(
         'job'      => (string)$job['id'],
-        'source'   => ((string)(isset($job['via']) ? $job['via'] : '') === 'slack') ? 'slack' : 'console',
+        'source'   => in_array((string)(isset($job['via']) ? $job['via'] : ''), array('slack', 'pcm'), true) ? (string)$job['via'] : 'console',
         'customer' => invq_str(isset($job['name']) ? $job['name'] : '', 80),
         'email'    => invq_email_ok(isset($job['email']) ? $job['email'] : ''),
         'desc'     => invq_str(isset($job['desc']) ? $job['desc'] : '', 160),

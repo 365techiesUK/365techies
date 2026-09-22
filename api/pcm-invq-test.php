@@ -38,6 +38,27 @@ ok(invq_match_job($job('a', array('invoice_doc' => '4905/2')), $byId = array('1'
 $sl = invq_job_row($job('s', array('via' => 'slack', 'invoiced_in_slack' => true, 'note' => 'remote · 2 hours')), null, $now);
 ok($sl['source'] === 'slack' && $sl['state'] === 'invoiced' && $sl['can_create'] === false && $sl['detail'] === 'remote · 2 hours', 'a Slack job marked Y in Invoiced? is left alone and says so', json_encode($sl));
 
+echo "-- PC Manager services on non-plan customers\n";
+$svc = $now - 4 * $day;
+$cust = array(
+    'k1' => array('name' => 'Gordon Snook', 'email' => 'g@example.com', 'mobile' => '07517 878204', 'tier' => 'free',
+                  'machines' => array('890a5bf00f13' => array('name' => 'GORDON_LAPTOP', 'repk' => array((string)$svc => 'selfrun', (string)($svc - 86400 * 40) => 'service')))),
+    'k2' => array('name' => 'Plan Person', 'email' => 'p@example.com', 'tier' => 'pro', 'machines' => array('a1b2c3d4e5f6' => array('name' => 'PC', 'repk' => array((string)$svc => 'service')))),
+    'k3' => array('name' => 'Signin', 'email' => 's@example.com', 'via' => 'signin', 'machines' => array('a1b2c3d4e5f7' => array('repk' => array((string)$svc => 'service')))),
+    'k4' => array('name' => 'Old Service', 'email' => 'o@example.com', 'tier' => 'free', 'machines' => array('a1b2c3d4e5f8' => array('repk' => array((string)($now - 45 * $day) => 'service')))),
+    'k5' => array('name' => 'Engineer Job', 'email' => 'e@example.com', 'tier' => 'oneoff', 'machines' => array('a1b2c3d4e5f9' => array('name' => 'HP-1', 'fullservice' => gmdate('Y-m-d H:i', $svc + 3600), 'oneoff_amount' => '85'))),
+    'k6' => array('name' => 'Health only', 'email' => 'h@example.com', 'tier' => 'free', 'machines' => array('a1b2c3d4e5fa' => array('repk' => array((string)$svc => 'health')))),
+);
+$pj = invq_jobs_from_pcm($cust, $now);
+$ids = array_map(function ($j) { return $j['id']; }, $pj);
+ok(count($pj) === 2 && in_array('pcm-k1-890a5bf00f13', $ids, true) && in_array('pcm-k5-a1b2c3d4e5f9', $ids, true), 'a free customer\'s self-run and an engineer one-off count; plan, sign-in, old and health-only do not', json_encode($ids));
+$g = $pj[0]['id'] === 'pcm-k1-890a5bf00f13' ? $pj[0] : $pj[1]; $e = $pj[0]['id'] === 'pcm-k5-a1b2c3d4e5f9' ? $pj[0] : $pj[1];
+ok($g['ts'] === $svc && $g['via'] === 'pcm' && $g['status'] === 'done' && $g['amount'] === 0.0 && $g['phone'] === '07517 878204', 'dated by the LATEST service, unpriced, done', json_encode($g));
+ok(strpos($g['desc'], 'Full computer service on GORDON_LAPTOP (run from the app)') === 0, 'a description a customer would recognise', $g['desc']);
+ok($e['amount'] === 85.0 && $e['amount_by'] === 'engineer' && strpos($e['desc'], 'on HP-1,') !== false && $e['ts'] === $svc + 3600, 'engineer mode brings its agreed price and its fullservice time', json_encode($e));
+ok(invq_job_row($g, null, $now)['source'] === 'pcm' && invq_job_row($g, null, $now)['why_not'] === 'no_amount', 'shows as a PC Manager job needing a price');
+ok(count(invq_jobs_recent(array($job('d', array('status' => 'dismissed'))), $now)) === 0, 'a dismissed job leaves the month\'s list');
+
 echo "-- matching a job to its invoice\n";
 $byId = array('1' => $mk(1), '2' => $mk(2, array('TotalAmt' => 85, 'Balance' => 85)), '3' => $mk(3, array('TxnDate' => '2026-09-01')), '4' => $mk(4, array('CustomerRef' => array('value' => '99', 'name' => 'Other'))));
 ok(invq_match_job($job('a', array('invoice_no' => '2')), $byId, '11')['Id'] === '2', 'the recorded invoice id wins, whatever the amount');

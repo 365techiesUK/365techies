@@ -72,7 +72,18 @@ if ($who === '') $who = 'staff';
 
 $id  = preg_replace('/[^0-9]/', '', (string)(isset($in['id']) ? $in['id'] : ''));
 $job = preg_replace('/[^0-9a-zA-Z-]/', '', (string)(isset($in['job']) ? $in['job'] : ''));
-if (!in_array($action, array('list', 'create', 'pdf', 'send', 'hold', 'unhold', 'setjob'), true)) fail('bad_action');
+if (!in_array($action, array('list', 'create', 'pdf', 'send', 'hold', 'unhold', 'setjob', 'dismiss'), true)) fail('bad_action');
+
+/* "Not a job": a PC Manager service that was goodwill, a duplicate write-up, a
+   test. Leaves the list; touches nothing in QuickBooks. */
+if ($action === 'dismiss') {
+    if ($job === '') fail('bad_job');
+    $r = invq_job_dismiss($job, $who);
+    if (empty($r['ok'])) fail($r['error']);
+    invq_store_locked(function ($d) { $d['cache'] = null; return array('ok' => true, 'data' => $d); });
+    invq_log('dismissed job ' . $job . ' by ' . $who);
+    out(array('ok' => true));
+}
 
 // ===========================================================================
 /* A price or description typed in the portal for a job whose Slack post had none.

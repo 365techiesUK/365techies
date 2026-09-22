@@ -707,9 +707,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 22 Sep 2026 &middot; 90a5a2fb85</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 22 Sep 2026 &middot; e8d85c6382</p><script>
 (function () {
-  var P365BUILD = '90a5a2fb85';
+  var P365BUILD = 'e8d85c6382';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -5415,15 +5415,15 @@
       // reading them aloud. Codes appear ONLY here (never in Slack) and expire
       // server-side after 15 minutes.
       h += '<div class="card" id="sosqcard" style="display:none;border-left:4px solid var(--pbad)"><h2>\ud83c\udd98 SOS codes waiting</h2><div id="sosq"></div></div>';
+      /* This month's jobs -> invoices: the Slack "New Job In" posts, the console's "Quote
+         agreed", and PC Manager services on non-plan customers, with each one's invoice
+         raised for review. First card on purpose: it is the money. */
+      h += '<div class="card" id="invqcard" style="border-left:4px solid var(--pwarn)"><h2>\ud83e\uddfe This month\u2019s jobs \u2192 invoices</h2>'
+        + '<p class="quiet" style="margin:.1rem 0 .6rem">Every job from the last 30 days \u2014 the \u201cNew Job In\u201d posts in #sos-jobs-in-out, the console\u2019s \u201cQuote agreed\u201d, and services run through 365 PC Manager for people not on a plan \u2014 and where its invoice stands. Invoices are raised for you; nothing is sent until you check the PDF and approve it.</p>'
+        + '<div id="invq"><p class="quiet">Checking QuickBooks\u2026</p></div></div>';
       h += '<div class="card" style="border-left:4px solid var(--pwarn)"><h2>\ud83d\udcde Worth a call today</h2>'
         + '<p class="quiet" style="margin:.1rem 0 .6rem">The PCs that could do with a friendly call \u2014 ranked by what needs attention. Proactive care, before they even ring us.</p>'
         + '<div id="worthcall"><p class="quiet">Checking the fleet\u2026</p></div></div>';
-      /* Invoices waiting for your OK: every QuickBooks invoice with a balance that has
-         not been emailed - raised by the console at "Quote agreed" or by hand - with the
-         likely mistakes flagged. Nothing leaves without "Approve & send" here. */
-      h += '<div class="card" id="invqcard" style="border-left:4px solid var(--pwarn)"><h2>\ud83e\uddfe This month\u2019s jobs \u2192 invoices</h2>'
-        + '<p class="quiet" style="margin:.1rem 0 .6rem">Every job from the last 30 days \u2014 the \u201cNew Job In\u201d posts in #sos-jobs-in-out and the console\u2019s \u201cQuote agreed\u201d \u2014 and where its invoice stands. Invoices are raised for you; nothing is sent until you check the PDF and approve it.</p>'
-        + '<div id="invq"><p class="quiet">Checking QuickBooks\u2026</p></div></div>';
       h += '<div class="card"><h2>\ud83d\udda5 PC Manager fleet</h2>'
         + '<div class="stats" id="fstats"></div>'
         + '<div class="ftabs" id="ftabs"></div><div class="tblwrap" id="ffleet"><p class="quiet">Loading the fleet\u2026</p></div></div>';
@@ -5882,10 +5882,11 @@
             + '<button class="sm ghost invqset" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Save</button><span class="quiet invqsetmsg"></span></div>';
         }
         else body = '<div style="color:#ffb4a2;font-size:.85rem;margin:.15rem 0 0">\u26a0 ' + esc(INVQ_WHY[j.why_not] || j.why_not) + '</div>';
+        body += '<div style="margin:.3rem 0 0"><button class="sm ghost invqdismiss" data-job="' + esc(j.job) + '" style="padding:.15rem .5rem;font-size:.76rem;opacity:.8">Not a job \u2014 hide it</button></div>';
       }
       return '<div class="invqrow" style="border:1px solid rgba(125,170,220,.25);border-radius:10px;padding:.55rem .7rem;margin:0 0 .5rem' + (inv && inv.held ? ';opacity:.7' : '') + '">'
         + '<div style="display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;align-items:baseline">'
-        + '<div><strong>' + esc(j.customer || j.email || 'Unnamed') + '</strong> <span class="quiet">' + (j.desc ? esc(j.desc) + ' \u00b7 ' : '') + esc(invqWhen(j.days)) + (j.email ? ' \u00b7 ' + esc(j.email) : '') + (j.source === 'slack' ? ' \u00b7 <span title="' + esc(j.detail || '') + '">from Slack</span>' : '') + '</span></div>'
+        + '<div><strong>' + esc(j.customer || j.email || 'Unnamed') + '</strong> <span class="quiet">' + (j.desc ? esc(j.desc) + ' \u00b7 ' : '') + esc(invqWhen(j.days)) + (j.email ? ' \u00b7 ' + esc(j.email) : '') + (j.source === 'slack' ? ' \u00b7 <span title="' + esc(j.detail || '') + '">from Slack</span>' : j.source === 'pcm' ? ' \u00b7 <span title="' + esc(j.detail || '') + '">from PC Manager</span>' : '') + '</span></div>'
         + '<div style="font-weight:700;font-size:1.05rem">' + (j.amount > 0 ? invqMoney(j.amount) : '<span class="quiet" style="font-weight:400;font-size:.85rem">no price</span>') + '</div></div>'
         + '<div style="margin:.25rem 0 0;font-size:.9rem">' + chip + '</div>' + body
         + (btns ? '<div style="margin:.45rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">' + btns + '<span class="quiet invqmsg"></span></div>' : '')
@@ -5933,6 +5934,13 @@
           if (!j || !j.ok) { b.disabled = false; msg.innerHTML = invqErr(j); return; }
           loadInvq(true);
         }).catch(function () { b.disabled = false; msg.textContent = 'Couldn\u2019t reach the server.'; });
+      };
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('.invqdismiss'), function (b) {
+      b.onclick = function () {
+        if (!confirm('Hide this from the jobs list? Nothing in QuickBooks changes.')) return;
+        b.disabled = true;
+        post(INVQ, { action: 'dismiss', stoken: S.stoken, machine: mid(), job: b.getAttribute('data-job') }).then(function () { loadInvq(true); }).catch(function () { b.disabled = false; });
       };
     });
     Array.prototype.forEach.call(box.querySelectorAll('.invqpdf'), function (b) { b.onclick = function () { invqPdf(b.getAttribute('data-id'), b); }; });

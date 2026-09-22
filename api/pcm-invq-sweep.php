@@ -133,6 +133,65 @@ function invq_job_set($jobId, $amount, $desc, $who) {
     return $r;
 }
 
+/* Mark a row "not a job" (a goodwill free-app service, say). Excluded from the
+   month's list from then on; nothing in QuickBooks is touched. */
+function invq_job_dismiss($jobId, $who) {
+    return invq_jobs_locked(function ($d) use ($jobId, $who) {
+        foreach ($d['jobs'] as $i => $j) {
+            if (!is_array($j) || (string)(isset($j['id']) ? $j['id'] : '') !== (string)$jobId) continue;
+            if (!empty($j['invoice_no'])) return array('ok' => false, 'error' => 'already_invoiced');
+            $d['jobs'][$i]['status'] = 'dismissed'; $d['jobs'][$i]['dismissed_by'] = $who; $d['jobs'][$i]['dismissed_at'] = time();
+            return array('ok' => true, 'data' => $d);
+        }
+        return array('ok' => false, 'error' => 'no_such_job');
+    });
+}
+
+/* PC Manager services on non-plan customers -> the job store. Idempotent: the
+   id is the customer key + machine, so a re-run updates rather than repeats,
+   and a person's price/description/invoice on the row is never overwritten.
+   Someone who already has a Slack or console job this month is skipped - one
+   job per person, and the written-up one is the record. */
+function invq_pcm_sync($now = null) {
+    $now = $now === null ? time() : $now;
+    $db = @json_decode((string)@file_get_contents(__DIR__ . '/pcm-data.json'), true);
+    $customers = (is_array($db) && isset($db['customers']) && is_array($db['customers'])) ? $db['customers'] : array();
+    $cand = invq_jobs_from_pcm($customers, $now);
+    if (!$cand) return array('added' => 0, 'updated' => 0);
+    $added = 0; $updated = 0;
+    invq_jobs_locked(function ($d) use ($cand, $now, &$added, &$updated) {
+        $byId = array(); $emailsElsewhere = array();
+        foreach ($d['jobs'] as $i => $j) {
+            if (!is_array($j) || empty($j['id'])) continue;
+            $byId[(string)$j['id']] = $i;
+            $via = (string)(isset($j['via']) ? $j['via'] : '');
+            $st = (string)(isset($j['status']) ? $j['status'] : '');
+            if ($via !== 'pcm' && ($st === '' || $st === 'quoted' || $st === 'done') && (int)(isset($j['ts']) ? $j['ts'] : 0) >= $now - INVQ_WINDOW_DAYS * 86400) {
+                $e = invq_email_ok(isset($j['email']) ? $j['email'] : '');
+                if ($e !== '') $emailsElsewhere[$e] = true;
+            }
+        }
+        foreach ($cand as $job) {
+            if (isset($byId[$job['id']])) {
+                $old = $d['jobs'][$byId[$job['id']]];
+                if ((string)(isset($old['status']) ? $old['status'] : '') === 'dismissed') continue;
+                $keep = $old;
+                foreach (array('name', 'email', 'phone', 'note', 'ts', 'pcm') as $k) $keep[$k] = $job[$k];
+                if ((string)(isset($old['amount_by']) ? $old['amount_by'] : '') !== 'staff') { $keep['amount'] = $job['amount']; $keep['amount_by'] = $job['amount_by']; }
+                if ((string)(isset($old['desc_by']) ? $old['desc_by'] : '') !== 'staff') $keep['desc'] = $job['desc'];
+                if ($keep != $old) { $d['jobs'][$byId[$job['id']]] = $keep; $updated++; }
+                continue;
+            }
+            if ($job['email'] !== '' && isset($emailsElsewhere[$job['email']])) continue;     // already written up in Slack / the console
+            $d['jobs'][] = $job; $added++;
+        }
+        if (count($d['jobs']) > 2000) $d['jobs'] = array_slice($d['jobs'], -2000);
+        return array('ok' => true, 'data' => $d);
+    });
+    if ($added || $updated) invq_log('pcm sync: ' . $added . ' added, ' . $updated . ' updated');
+    return array('added' => $added, 'updated' => $updated);
+}
+
 /* ---- QuickBooks connection ------------------------------------------------ */
 function invq_connect() {
     if (!is_readable(INVQ_CFG)) return array('ok' => false, 'why' => 'not_configured');
@@ -250,6 +309,7 @@ function invq_overview($c, $fresh = false, $now = null) {
         $o['cached'] = true;
         return $o;
     }
+    invq_pcm_sync($now);                                   // PC Manager services join the store before we read it
     $jobs = invq_jobs_recent(invq_jobs_read(), $now);
     $ids = array();
     foreach ($jobs as $j) if (!empty($j['invoice_no'])) $ids[] = (string)$j['invoice_no'];
