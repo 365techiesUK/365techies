@@ -341,8 +341,22 @@ function sj_merge($old, $new) {
     foreach (array('name', 'email', 'phone', 'addr', 'postcode', 'note', 'kind', 'status', 'invoice_doc', 'invoiced_in_slack', 'slack', 'ts') as $k) $keep[$k] = $new[$k];
     // an email a person typed in the portal outranks whatever the post has (usually nothing)
     if ((string)(isset($old['email_by']) ? $old['email_by'] : '') === 'staff' && (string)(isset($old['email']) ? $old['email'] : '') !== '') $keep['email'] = $old['email'];
-    if ((string)(isset($old['amount_by']) ? $old['amount_by'] : '') !== 'staff') { $keep['amount'] = $new['amount']; $keep['amount_by'] = $new['amount_by']; }
-    if ((string)(isset($old['desc_by']) ? $old['desc_by'] : '') !== 'staff') $keep['desc'] = $new['desc'];
+    // an email that reached the job from its thread never vanishes because one poll could not read the thread
+    if ($keep['email'] === '' && (string)(isset($old['email']) ? $old['email'] : '') !== '') $keep['email'] = $old['email'];
+    /* The parent post is re-parsed every poll, but a price or description can have reached
+       the job from somewhere the parent never carries: a thread reply, a Job Out post
+       (slack_out), a QuickBooks service pick (item), or a person (staff). Those are kept
+       unless the fresh parse actually has a price of its own. */
+    $ab = (string)(isset($old['amount_by']) ? $old['amount_by'] : ''); $db = (string)(isset($old['desc_by']) ? $old['desc_by'] : '');
+    $oldAmt = (float)(isset($old['amount']) ? $old['amount'] : 0);
+    if ($ab !== 'staff' && ($new['amount'] > 0 || $oldAmt <= 0)) { $keep['amount'] = $new['amount']; $keep['amount_by'] = $new['amount_by']; }
+    if ($db !== 'staff' && $db !== 'slack_out' && $db !== 'item') $keep['desc'] = $new['desc'];
+    /* a Job Out post was merged in (out_ts): done stays done, and what it recorded stays */
+    if (!empty($old['out_ts'])) {
+        $keep['status'] = 'done';
+        if ((string)$keep['invoice_doc'] === '' && !empty($old['invoice_doc'])) $keep['invoice_doc'] = $old['invoice_doc'];
+        if (empty($keep['invoiced_in_slack']) && !empty($old['invoiced_in_slack'])) $keep['invoiced_in_slack'] = true;
+    }
     if (!empty($old['invoice_no'])) { $keep['invoice_no'] = $old['invoice_no']; $keep['invoice_url'] = isset($old['invoice_url']) ? $old['invoice_url'] : ''; }
     return $keep;
 }

@@ -109,6 +109,17 @@ ok($wjob['kind'] === 'remote' && $wjob['postcode'] === 'BH5 1AA' && sj_merge(arr
 $gj = sj_job(array('ts' => '1789794361.365689', 'text' => $COLIN), 'C0C3VGP1SJC', 1790000000);
 $kept = sj_merge(array_merge($gj, array('email' => 'colin.sutton7@ntlworld.com', 'email_by' => 'staff')), $gj);
 ok($gj['email'] === '' && $kept['email'] === 'colin.sutton7@ntlworld.com' && $kept['email_by'] === 'staff', 'an email typed in the portal survives a re-poll of a post that has none', json_encode(array($gj['email'], $kept['email'])));
+$kept2 = sj_merge(array_merge($gj, array('email' => 'colin.sutton7@ntlworld.com')), $gj);
+ok($kept2['email'] === 'colin.sutton7@ntlworld.com', 'an email that came from the thread is kept when a later poll cannot read the thread');
+echo "-- what a Job Out post added survives the next re-parse of the parent post (the 'test' job, 22 Sep)\n";
+$tj = sj_job(array('ts' => '1790082345.241299', 'text' => $WF_TEST), 'C0C3VGP1SJC', 1790082400);
+$after = array_merge($tj, array('status' => 'done', 'out_ts' => '1790085320.751399', 'desc' => 'Rebuilt the profile', 'desc_by' => 'slack_out', 'amount' => 60.0, 'amount_by' => 'slack', 'invoice_doc' => '4905/810', 'invoiced_in_slack' => true));
+$re = sj_merge($after, $tj);
+ok($re['status'] === 'done' && $re['desc'] === 'Rebuilt the profile' && $re['amount'] === 60.0 && $re['invoice_doc'] === '4905/810' && $re['invoiced_in_slack'] === true, 'done, the work, the price and the invoice number all stay', json_encode(array($re['status'], $re['desc'], $re['amount'], $re['invoice_doc'])));
+$re2 = sj_merge(array_merge($tj, array('desc' => 'Full service: updates and clean-up', 'desc_by' => 'item', 'amount' => 65.0, 'amount_by' => 'item', 'item_id' => '1200')), $tj);
+ok($re2['desc'] === 'Full service: updates and clean-up' && $re2['amount'] === 65.0 && $re2['amount_by'] === 'item', 'a QuickBooks service pick survives too');
+$re3 = sj_merge(array_merge($tj, array('amount' => 45.0, 'amount_by' => 'slack')), array_merge($tj, array('amount' => 80.0, 'amount_by' => 'slack')));
+ok($re3['amount'] === 80.0, 'but a price that appears in the post itself is taken');
 ok(sj_is_out($WF_DONE) && !sj_is_job($WF_DONE), 'a "Job done" form post is a completion');
 $jd = sj_parse($WF_DONE);
 ok($jd['work'] === 'Rebuilt the Outlook profile, mail flowing again' && $jd['time'] === '45 min' && $jd['price'] === 60.0 && $jd['closed'] === '22/09/2026' && $jd['invoiced'] === 'none' && $jd['done'] === true, 'work, time, £60 in the box, date closed, N = not invoiced', json_encode(array($jd['work'], $jd['time'], $jd['price'], $jd['closed'], $jd['invoiced'])));
@@ -137,6 +148,10 @@ ok(strpos($SW, "'conversations.history'") !== false && strpos($SW, "'conversatio
 ok(strpos($SW, 'SJ_MIN_GAP') !== false && strpos($SW, 'SJ_MAX_THREADS') !== false, 'polls are rate-limited and thread reads bounded');
 ok(strpos($SW, "(\$job['amount'] <= 0 || \$job['email'] === '') && !empty(\$m['reply_count'])") !== false && strpos($SW, "sj_replies_extract(\$r['messages'], \$ts)") !== false, 'a thread is read only when the post left the price or the email blank, and only through the pure extractor');
 ok(strpos($SW, "'thread_error' => \$out['thread_error']") !== false && strpos($SW, "sj_log('replies ' . \$ts . ' failed: '") !== false, 'a failed thread read is written to the status file and the log, never swallowed');
+ok(strpos($SW, "slk_call_form('conversations.replies'") !== false && strpos($SW, "slk_call('conversations.replies'") === false, 'thread replies are requested form-encoded: Slack answers invalid_arguments to a JSON body (live, 22 Sep)');
+ok(strpos($SW, "\$j['desc_by'] = 'slack_out'") !== false, 'a Job Out description is marked as such so the merge keeps it');
+$SL = (string)file_get_contents(__DIR__ . '/pcm-slack-lib.php');
+ok(strpos($SL, "slk_call_form('conversations.replies'") !== false, 'the portal messaging thread reader uses the form call too');
 ok(strpos($SW, "SJ_JOBS . '.lock'") !== false, 'writes the job store under its own lock');
 ok(strpos($SW, 'usort($msgs') !== false && strpos($SW, 'sj_apply_out($m, $now)') !== false && strpos($SW, "\$j['out_ts'] = \$ts") !== false, 'completions are applied after the jobs, oldest first, and each one only once');
 ok(strpos($SW, "!== 'staff' && \$p['work'] !== ''") !== false && strpos($SW, "!== 'staff' && \$p['price'] > 0") !== false, 'a completion never overwrites a price or description a person typed');

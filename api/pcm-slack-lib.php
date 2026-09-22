@@ -120,7 +120,8 @@ function slk_replies($thread, $oldest = '', $limit = 100) {
     if (!slk_ready()) return array('ok' => false, 'error' => 'not_configured');
     $args = array('channel' => $c[1], 'ts' => (string)$thread, 'limit' => (int)$limit);
     if ($oldest !== '') $args['oldest'] = (string)$oldest;
-    $r = slk_call('conversations.replies', $args, 10);
+    // form-encoded: conversations.replies ignores a JSON body and answers invalid_arguments (22 Sep 2026)
+    $r = slk_call_form('conversations.replies', $args, 10);
     if (empty($r['ok'])) return array('ok' => false, 'error' => (string)($r['error'] ?? 'unknown'));
     return array('ok' => true, 'messages' => isset($r['messages']) && is_array($r['messages']) ? $r['messages'] : array());
 }

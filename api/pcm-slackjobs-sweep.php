@@ -70,7 +70,9 @@ function sj_jobs_locked($fn) {
    missing email ("Email: x@y.com" as a reply, 22 Sep). Only read a thread when the
    post itself left one of those blank. */
 function sj_thread_extras($channel, $ts) {
-    $r = slk_call('conversations.replies', array('channel' => $channel, 'ts' => $ts, 'limit' => 50), 8);
+    /* FORM-encoded, not JSON: conversations.replies ignores a JSON body and answers
+       invalid_arguments (seen live 22 Sep 2026, 16:30 - the console's red line). */
+    $r = slk_call_form('conversations.replies', array('channel' => $channel, 'ts' => $ts, 'limit' => 50), 8);
     if (empty($r['ok'])) {
         $e = (string)(isset($r['error']) ? $r['error'] : 'unknown');
         sj_log('replies ' . $ts . ' failed: ' . $e);
@@ -106,7 +108,7 @@ function sj_apply_out($m, $now = null) {
         if ($best < 0) return array('ok' => false, 'error' => 'no_match');
         $j = $d['jobs'][$best];
         if (isset($j['out_ts']) && (string)$j['out_ts'] === $ts) return array('ok' => false, 'error' => 'seen');
-        if ((string)(isset($j['desc_by']) ? $j['desc_by'] : '') !== 'staff' && $p['work'] !== '') $j['desc'] = $p['work'];
+        if ((string)(isset($j['desc_by']) ? $j['desc_by'] : '') !== 'staff' && $p['work'] !== '') { $j['desc'] = $p['work']; $j['desc_by'] = 'slack_out'; }   // sj_merge keeps it
         if ((string)(isset($j['amount_by']) ? $j['amount_by'] : '') !== 'staff' && $p['price'] > 0) { $j['amount'] = $p['price']; $j['amount_by'] = 'slack'; }
         if ($p['invoice_doc'] !== '') $j['invoice_doc'] = $p['invoice_doc'];
         if ($p['invoiced'] === 'yes') $j['invoiced_in_slack'] = true;
