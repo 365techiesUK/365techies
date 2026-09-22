@@ -199,6 +199,22 @@ function sj_pick($val, $options) {
     return '';
 }
 
+/* What a thread under a job post can add: the price ("£60 agreed") and the email
+   ("Email: x@y.com" or just the address), typed as replies after the event. The
+   parent post is skipped; the first of each wins. Pure - the poller feeds it the
+   replies it fetched. */
+function sj_replies_extract($messages, $parentTs) {
+    $out = array('price' => 0.0, 'email' => '');
+    foreach ((array)$messages as $m) {
+        if (!is_array($m) || (string)(isset($m['ts']) ? $m['ts'] : '') === (string)$parentTs) continue;
+        $t = (string)(isset($m['text']) ? $m['text'] : '');
+        if ($out['price'] <= 0) $out['price'] = sj_price($t);
+        if ($out['email'] === '') $out['email'] = sj_email(sj_clean($t, 4000));
+        if ($out['price'] > 0 && $out['email'] !== '') break;
+    }
+    return $out;
+}
+
 /* "Invoiced? (Y/N) 4905/799" -> array(kind, value): none | yes | number */
 function sj_invoiced($raw) {
     $s = trim((string)$raw);

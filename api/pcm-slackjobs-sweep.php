@@ -66,17 +66,13 @@ function sj_jobs_locked($fn) {
     return $r;
 }
 
-/* Prices are often typed in the thread ("£60 agreed"), not the post. Only read a
-   thread when the post itself gave no price. */
-function sj_thread_price($channel, $ts) {
+/* Prices are often typed in the thread ("£60 agreed"), not the post, and so is a
+   missing email ("Email: x@y.com" as a reply, 22 Sep). Only read a thread when the
+   post itself left one of those blank. */
+function sj_thread_extras($channel, $ts) {
     $r = slk_call('conversations.replies', array('channel' => $channel, 'ts' => $ts, 'limit' => 50), 8);
-    if (empty($r['ok']) || empty($r['messages'])) return 0.0;
-    foreach ((array)$r['messages'] as $m) {
-        if (!is_array($m) || (string)(isset($m['ts']) ? $m['ts'] : '') === (string)$ts) continue;
-        $p = sj_price(isset($m['text']) ? $m['text'] : '');
-        if ($p > 0) return $p;
-    }
-    return 0.0;
+    if (empty($r['ok']) || empty($r['messages'])) return array('price' => 0.0, 'email' => '');
+    return sj_replies_extract($r['messages'], $ts);
 }
 
 /* Merge a "Job Out" post into its job: the same email if the post carries one, else
@@ -139,10 +135,11 @@ function sj_poll($now = null) {
             if (sj_is_out(isset($m['text']) ? $m['text'] : '')) { $outs[] = $m; continue; }
             $job = sj_job($m, $chan, $now);
             if (!$job) continue;
-            if ($job['amount'] <= 0 && !empty($m['reply_count']) && $threads < SJ_MAX_THREADS) {
+            if (($job['amount'] <= 0 || $job['email'] === '') && !empty($m['reply_count']) && $threads < SJ_MAX_THREADS) {
                 $threads++;
-                $p = sj_thread_price($chan, (string)$m['ts']);
-                if ($p > 0) { $job['amount'] = $p; $job['amount_by'] = 'slack'; }
+                $x = sj_thread_extras($chan, (string)$m['ts']);
+                if ($job['amount'] <= 0 && $x['price'] > 0) { $job['amount'] = $x['price']; $job['amount_by'] = 'slack'; }
+                if ($job['email'] === '' && $x['email'] !== '') $job['email'] = $x['email'];
             }
             $res = sj_jobs_locked(function ($d) use ($job) {
                 foreach ($d['jobs'] as $i => $old) {

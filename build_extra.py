@@ -28175,7 +28175,7 @@ def write_portal_page():
   }
   function invqMoney(v) { return '\\u00a3' + (Math.round(v * 100) / 100).toFixed(2); }
   function invqWhen(d) { return d === 0 ? 'today' : (d === 1 ? 'yesterday' : d + ' days ago'); }
-  var INVQ_WHY = { no_email: 'needs an email address \\u2014 add it to the Slack post (Email: \\u2026) and it will pick it up', no_desc: 'needs a description of the work', large: 'over \\u00a32,000 \\u2014 raise this one by hand in QuickBooks', no_amount: 'no price yet', invoiced_in_slack: 'marked invoiced in Slack \\u2014 left alone' };
+  var INVQ_WHY = { no_email: 'needs an email address \\u2014 add it to the Slack post, or reply in its thread with the address, and it will pick it up', no_desc: 'needs a description of the work', large: 'over \\u00a32,000 \\u2014 raise this one by hand in QuickBooks', no_amount: 'no price yet', invoiced_in_slack: 'marked invoiced in Slack \\u2014 left alone' };
   function renderInvq(box, r) {
     var jobs = r.jobs || [], waiting = r.waiting || [], older = r.older || [];
     var note = (r.stale ? '<p class="quiet">QuickBooks didn\\u2019t answer just now \\u2014 this is the last picture it gave us.</p>' : '')

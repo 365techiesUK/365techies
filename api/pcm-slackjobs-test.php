@@ -112,11 +112,24 @@ ok(sj_price_field('60') === 60.0 && sj_price_field('£60.00') === 60.0 && sj_pri
 ok(sj_price_field('0') === 0.0 && sj_price_field('') === 0.0 && sj_price_field('sixty') === 0.0 && sj_price_field('tbc') === 0.0, 'zero, blank or words in the price box = no price');
 ok(sj_block_label('*Price £.*') === 'price' && sj_block_label('*Invoiced? (Y/N)*') === 'invoiced' && sj_block_label(' *Issue*') === 'issue' && sj_block_label('*Joan Baker*') === '' && sj_block_label('Customer name: x') === '', 'block labels normalise; unknown bold lines are not labels');
 
+echo "-- a thread under the post: the price and the email typed as replies (Colin, 22 Sep)\n";
+$REPLIES = array(
+    array('ts' => '1789794361.365689', 'text' => $COLIN),                                  // the parent - never read
+    array('ts' => '1789794400.000100', 'text' => 'Email: <mailto:colin.sutton@example.com|colin.sutton@example.com>'),
+    array('ts' => '1789794500.000100', 'text' => 'agreed £45 on the phone, other address is second@example.com'),
+);
+$x = sj_replies_extract($REPLIES, '1789794361.365689');
+ok($x['email'] === 'colin.sutton@example.com' && $x['price'] === 45.0, 'first email and first price from the replies, mailto unwrapped', json_encode($x));
+ok(sj_replies_extract(array($REPLIES[0]), '1789794361.365689') === array('price' => 0.0, 'email' => ''), 'the parent alone yields nothing (its own £30 is read from the post, not here)');
+ok(sj_replies_extract(array(array('ts' => '2.0', 'text' => 'no details yet')), '1.0') === array('price' => 0.0, 'email' => ''), 'a reply with neither gives nothing');
+ok(sj_replies_extract(array(array('ts' => '2.0', 'text' => 'test@gmail.com'), array('ts' => '3.0', 'text' => 'other@x.com')), '1.0')['email'] === 'test@gmail.com', 'a bare address in a reply is enough; the first wins');
+
 echo "-- the poller and the cron, at source level\n";
 $SW = (string)file_get_contents(__DIR__ . '/pcm-slackjobs-sweep.php');
 ok(strpos($SW, '?' . '>') === false, 'no closing tag');
 ok(strpos($SW, "'conversations.history'") !== false && strpos($SW, "'conversations.replies'") !== false && !preg_match("/'chat\.postMessage'|'chat\.update'|'chat\.delete'/", $SW), 'reads Slack, never writes to it');
 ok(strpos($SW, 'SJ_MIN_GAP') !== false && strpos($SW, 'SJ_MAX_THREADS') !== false, 'polls are rate-limited and thread reads bounded');
+ok(strpos($SW, "(\$job['amount'] <= 0 || \$job['email'] === '') && !empty(\$m['reply_count'])") !== false && strpos($SW, "sj_replies_extract(\$r['messages'], \$ts)") !== false, 'a thread is read only when the post left the price or the email blank, and only through the pure extractor');
 ok(strpos($SW, "SJ_JOBS . '.lock'") !== false, 'writes the job store under its own lock');
 ok(strpos($SW, 'usort($msgs') !== false && strpos($SW, 'sj_apply_out($m, $now)') !== false && strpos($SW, "\$j['out_ts'] = \$ts") !== false, 'completions are applied after the jobs, oldest first, and each one only once');
 ok(strpos($SW, "!== 'staff' && \$p['work'] !== ''") !== false && strpos($SW, "!== 'staff' && \$p['price'] > 0") !== false, 'a completion never overwrites a price or description a person typed');
