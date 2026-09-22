@@ -112,11 +112,43 @@ ok(strpos($line, 'Emblem Sports Cars £745.98 (21 days)') < strpos($line, 'Gordo
 ok(strpos($line, '1 with a warning') !== false && strpos($line, '@example.com') === false, 'warning count, no email addresses');
 ok(invq_slack_line(array(), array()) === '' && invq_slack_line(array(invq_job_row($job('g'), $ir, $now)), array(invq_row($mk(2, array('EmailStatus' => 'EmailSent')), 'x', array(), false, 'x', $now))) === '', 'nothing to do = silence');
 
+echo "-- QuickBooks' Products & Services as the job drop-down (22 Sep 2026)\n";
+$Q = array('QueryResponse' => array('Item' => array(
+    array('Id' => '1174', 'Name' => 'Online Remote Support Services', 'Type' => 'Service', 'Active' => true, 'UnitPrice' => 0, 'Description' => 'Remote support session'),
+    array('Id' => '1200', 'Name' => 'Full Computer Service', 'Type' => 'Service', 'Active' => true, 'UnitPrice' => 65, 'Description' => 'Full service: updates, malware scan, clean-up and health check'),
+    array('Id' => '1201', 'Name' => 'Old thing', 'Type' => 'Service', 'Active' => false, 'UnitPrice' => 10),
+    array('Id' => '9', 'Name' => 'Services', 'Type' => 'Category'),
+    array('Id' => '1300', 'Name' => 'Dell Latitude 5420 (refurbished)', 'Type' => 'Inventory', 'Active' => true, 'UnitPrice' => 349),
+)));
+$items = invq_items_clean($Q);
+ok(count($items) === 2 && $items[0]['name'] === 'Full Computer Service' && $items[1]['id'] === '1174', 'active services only (no categories, stock or inactive), sorted by name', json_encode(array_map(function ($i) { return $i['name']; }, $items)));
+ok($items[0]['price'] === 65.0 && $items[0]['desc'] === 'Full service: updates, malware scan, clean-up and health check', 'list price and sales description carried');
+ok(invq_item_find($items, '1200')['name'] === 'Full Computer Service' && invq_item_find($items, '999') === null && invq_item_find($items, '') === null, 'find by id, never by a blank');
+ok(invq_item_match($items, 'full computer service')['id'] === '1200' && invq_item_match($items, ' Full-Computer Service. ')['id'] === '1200', 'a Slack job type matches the item by name, ignoring case, spaces and punctuation');
+ok(invq_item_match($items, 'Full service') === null && invq_item_match($items, 'remote') === null && invq_item_match($items, '') === null, 'a partial or unknown name matches nothing');
+$j1 = array('id' => 'a', 'desc' => '', 'amount' => 0);
+ok(invq_job_apply_item($j1, $items[0]) && $j1['item_id'] === '1200' && $j1['desc'] === 'Full service: updates, malware scan, clean-up and health check' && $j1['desc_by'] === 'item' && $j1['amount'] === 65.0 && $j1['amount_by'] === 'item', 'an empty job takes the item, its description and its list price', json_encode($j1));
+$j2 = array('id' => 'b', 'desc' => 'VPN advice', 'desc_by' => 'staff', 'amount' => 60.0, 'amount_by' => 'staff');
+ok(invq_job_apply_item($j2, $items[0]) && $j2['item_id'] === '1200' && $j2['desc'] === 'VPN advice' && $j2['amount'] === 60.0, 'staff-typed price and description are never overwritten by the item');
+$j3 = array('id' => 'c', 'desc' => 'Suspect Scammers', 'amount' => 30.0, 'amount_by' => 'slack');
+invq_job_apply_item($j3, $items[0]);
+ok($j3['desc'] === 'Suspect Scammers' && $j3['amount'] === 30.0, 'a Slack-typed price and issue are kept too');
+$j4 = array('id' => 'd', 'item_id' => '1200', 'desc' => 'Full service: updates, malware scan, clean-up and health check', 'desc_by' => 'item', 'amount' => 65.0, 'amount_by' => 'item');
+ok(invq_job_apply_item($j4, $items[1]) && $j4['item_id'] === '1174' && $j4['desc'] === 'Remote support session' && $j4['amount'] === 65.0, 'picking a different item replaces an item-set description; a £0 item leaves the price', json_encode($j4));
+ok(invq_job_apply_item($j4, $items[1]) === false, 'the same item again changes nothing');
+$row = invq_job_row(array('id' => 'x', 'name' => 'A', 'email' => 'a@b.com', 'desc' => 'd', 'amount' => 65.0, 'ts' => $now - $day, 'status' => 'done', 'item_id' => '1200', 'item_name' => 'Full Computer Service', 'kind' => 'Full computer service'), null, $now);
+ok($row['item'] === '1200' && $row['item_name'] === 'Full Computer Service' && $row['kind'] === 'Full computer service', 'the row carries the item and the Slack job type');
+
 echo "-- the endpoint and the sweep, at source level\n";
 $EP = (string)file_get_contents(__DIR__ . '/pcm-invq.php');
 $SW = (string)file_get_contents(__DIR__ . '/pcm-invq-sweep.php');
 ok(strpos($EP, '?' . '>') === false && strpos($SW, '?' . '>') === false, 'no closing tags');
 ok(strpos($EP, 'need_staff();') !== false && strpos($EP, 'need_staff();') < strpos($EP, "if (\$action === 'hold'"), 'the staff gate runs before any action');
+ok(strpos($EP, "invq_item_find(invq_items(\$c), \$itemId)") !== false && strpos($EP, "fail('bad_item')") !== false, 'a picked service must be on QuickBooks\' own list - the request names it, never defines it');
+ok(strpos($SW, "!empty(\$job['item_id']) ? (string)\$job['item_id'] : \$c['item']") !== false, 'the invoice line uses the job\'s item, else the default');
+ok(strpos($SW, "'select * from Item where Active = true") !== false && strpos($SW, 'INVQ_ITEMS_TTL') !== false, 'the item list is read from QuickBooks and cached');
+ok(strpos($SW, 'invq_kind_sync($c, $now);') !== false && strpos($SW, 'invq_kind_sync($c, $now);') > strpos($SW, 'invq_pcm_sync($now);'), 'a Slack job type is matched to a service before every fresh overview');
+ok(strpos($SW, "\$body['BillAddr']") !== false && strpos($SW, "'PostalCode'") !== false, 'a new customer is created with the address and postcode from Slack');
 ok(!preg_match('/\$in\[\'(to|email|sendto|sendTo|address|name|customer)\'\]/', $EP) && !preg_match('/\$in\[/', $SW), 'no recipient, name or customer can come from the request');
 /* A price or description MAY be typed - but only into a job, via setjob, never into
    an invoice or a send. Pin that the request's amount/desc are read nowhere else. */

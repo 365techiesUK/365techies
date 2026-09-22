@@ -103,6 +103,9 @@ ok($jb['phone'] === '07700900123' && $jb['addr'] === '12 Sea Road BH5 1AA' && $j
 ok($jb['type'] === 'remote' && $jb['type_tail'] === '' && $jb['priority'] === 'high', 'drop-down answers are the type and priority', json_encode(array($jb['type'], $jb['type_tail'], $jb['priority'])));
 ok($jb['desc'] === 'Outlook will not open. Says profile corrupt: needs a rebuild' && $jb['price'] === 60.0 && $jb['done'] === false, 'a two-line issue with a colon inside stays one answer; the price box is the price', json_encode(array($jb['desc'], $jb['price'])));
 ok(sj_job(array('ts' => '1790082400.1', 'text' => $WF_JOAN), 'C0C3VGP1SJC', 1790082500)['note'] === 'remote · David', 'note reads "remote · David"');
+ok($w['kind'] === 'test' && $jb['kind'] === 'remote' && sj_parse($CHARLOTTE)['kind'] === 'Asus prime B60 plus' && $jb['postcode'] === 'BH5 1AA', 'the job type as typed or picked, and the postcode, ride along (QuickBooks service match; customer address)', json_encode(array($w['kind'], $jb['kind'], $jb['postcode'])));
+$wjob = sj_job(array('ts' => '1790082400.1', 'text' => $WF_JOAN), 'C0C3VGP1SJC', 1790082500);
+ok($wjob['kind'] === 'remote' && $wjob['postcode'] === 'BH5 1AA' && sj_merge(array('id' => $wjob['id'], 'kind' => 'old'), $wjob)['kind'] === 'remote', 'on the job record, and refreshed on a re-poll');
 ok(sj_is_out($WF_DONE) && !sj_is_job($WF_DONE), 'a "Job done" form post is a completion');
 $jd = sj_parse($WF_DONE);
 ok($jd['work'] === 'Rebuilt the Outlook profile, mail flowing again' && $jd['time'] === '45 min' && $jd['price'] === 60.0 && $jd['closed'] === '22/09/2026' && $jd['invoiced'] === 'none' && $jd['done'] === true, 'work, time, £60 in the box, date closed, N = not invoiced', json_encode(array($jd['work'], $jd['time'], $jd['price'], $jd['closed'], $jd['invoiced'])));

@@ -179,6 +179,64 @@ function invq_can_create($job) {
     return array(true, '');
 }
 
+/* ---- QuickBooks Products & Services as the job drop-down (22 Sep 2026) ---- */
+/* QBO's Item list -> {id, name, desc, price}: active Service / NonInventory items
+   (not categories, groups or stock), sorted by name. The price is QBO's own
+   UnitPrice - the business's price list, kept in QuickBooks, never a guess. */
+function invq_items_clean($json) {
+    $out = array();
+    $items = (isset($json['QueryResponse']['Item']) && is_array($json['QueryResponse']['Item'])) ? $json['QueryResponse']['Item'] : array();
+    foreach ($items as $it) {
+        if (!is_array($it) || empty($it['Id']) || empty($it['Name'])) continue;
+        if (isset($it['Active']) && !$it['Active']) continue;
+        $type = (string)(isset($it['Type']) ? $it['Type'] : '');
+        if (!in_array($type, array('Service', 'NonInventory', ''), true)) continue;
+        $out[] = array('id' => (string)$it['Id'], 'name' => invq_str($it['Name'], 100),
+                       'desc' => invq_str(isset($it['Description']) ? $it['Description'] : '', 200),
+                       'price' => round(invq_num(isset($it['UnitPrice']) ? $it['UnitPrice'] : 0), 2));
+    }
+    usort($out, function ($a, $b) { return strcasecmp($a['name'], $b['name']); });
+    return $out;
+}
+function invq_item_find($items, $id) {
+    $id = (string)$id;
+    if ($id === '') return null;
+    foreach ((array)$items as $it) if ((string)$it['id'] === $id) return $it;
+    return null;
+}
+/* "Full computer service" picked or typed as the Slack job type -> the item of that
+   name, ignoring case, spaces and punctuation. The whole name or nothing: a partial
+   match would be a guess about money. */
+function invq_item_key($s) { return preg_replace('/[^a-z0-9]/', '', strtolower((string)$s)); }
+function invq_item_match($items, $text) {
+    $k = invq_item_key($text);
+    if ($k === '') return null;
+    foreach ((array)$items as $it) if (invq_item_key($it['name']) === $k) return $it;
+    return null;
+}
+/* Put an item on a job: it becomes the QuickBooks line; its sales description is the
+   job description and its list price the amount where nobody set one. A price or
+   description a person typed (staff), or one typed in Slack, is never overwritten;
+   what an earlier item pick set is replaced when the item changes. Returns true if
+   anything changed. */
+function invq_job_apply_item(&$job, $item) {
+    if (!is_array($item) || empty($item['id'])) return false;
+    $changed = false;
+    $same = ((string)(isset($job['item_id']) ? $job['item_id'] : '') === (string)$item['id']);
+    if (!$same) { $job['item_id'] = (string)$item['id']; $job['item_name'] = (string)$item['name']; $changed = true; }
+    $descBy = (string)(isset($job['desc_by']) ? $job['desc_by'] : '');
+    $descEmpty = trim((string)(isset($job['desc']) ? $job['desc'] : '')) === '';
+    if ($descBy !== 'staff' && ($descEmpty || (!$same && $descBy === 'item'))) {
+        $job['desc'] = $item['desc'] !== '' ? $item['desc'] : $item['name']; $job['desc_by'] = 'item'; $changed = true;
+    }
+    $amtBy = (string)(isset($job['amount_by']) ? $job['amount_by'] : '');
+    $amtEmpty = invq_num(isset($job['amount']) ? $job['amount'] : 0) <= 0;
+    if ($amtBy !== 'staff' && $amtBy !== 'slack' && ($amtEmpty || (!$same && $amtBy === 'item')) && $item['price'] > 0) {
+        $job['amount'] = round((float)$item['price'], 2); $job['amount_by'] = 'item'; $changed = true;
+    }
+    return $changed;
+}
+
 /* ---- warnings ---------------------------------------------------------- */
 function invq_flags($inv, $email, $all = array(), $now = null) {
     $now = $now === null ? time() : $now;
@@ -252,6 +310,9 @@ function invq_job_row($job, $invRow, $now = null) {
         'days'     => invq_days_since_ts(isset($job['ts']) ? $job['ts'] : 0, $now),
         'by'       => invq_str(isset($job['by']) ? $job['by'] : '', 40),
         'done'     => ((string)(isset($job['status']) ? $job['status'] : '') === 'done'),
+        'item'     => (string)(isset($job['item_id']) ? $job['item_id'] : ''),          // the QuickBooks Product/Service picked for it
+        'item_name' => invq_str(isset($job['item_name']) ? $job['item_name'] : '', 100),
+        'kind'     => invq_str(isset($job['kind']) ? $job['kind'] : '', 80),               // the Slack "Job type" as typed or picked
         'state'    => $state,                      // none | unsent | sent | paid | invoiced
         'can_create' => ($state === 'none' && $can),
         'why_not'  => ($state === 'none' ? $why : ''),

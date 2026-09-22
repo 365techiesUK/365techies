@@ -27750,7 +27750,7 @@ def write_portal_page():
          agreed", and PC Manager services on non-plan customers, with each one's invoice
          raised for review. First card on purpose: it is the money. */
       h += '<div class="card" id="invqcard" style="border-left:4px solid var(--pwarn)"><h2>\\ud83e\\uddfe This month\\u2019s jobs \\u2192 invoices</h2>'
-        + '<p class="quiet" style="margin:.1rem 0 .6rem">Every job from the last 30 days \\u2014 the \\u201cNew Job In\\u201d posts in #sos-jobs-in-out, the console\\u2019s \\u201cQuote agreed\\u201d, and services run through 365 PC Manager for people not on a plan \\u2014 and where its invoice stands. Three steps for each: 1 raise the invoice, 2 check the PDF, 3 approve &amp; send \\u2014 every row shows the step it is on and the button for it. Invoices are raised for you; nothing is sent until you check the PDF and approve it.</p>'
+        + '<p class="quiet" style="margin:.1rem 0 .6rem">Every job from the last 30 days \\u2014 the \\u201cNew Job In\\u201d posts in #sos-jobs-in-out, the console\\u2019s \\u201cQuote agreed\\u201d, and services run through 365 PC Manager for people not on a plan \\u2014 and where its invoice stands. Three steps for each: 1 raise the invoice, 2 check the PDF, 3 approve &amp; send \\u2014 every row shows the step it is on and the button for it. The service drop-down is your QuickBooks Products &amp; Services list: pick one and its description and list price go on the invoice; a Slack job type that matches a service name does the same by itself. Invoices are raised for you; nothing is sent until you check the PDF and approve it.</p>'
         + '<div id="invq"><p class="quiet">Checking QuickBooks\\u2026</p></div></div>';
       h += '<div class="card" style="border-left:4px solid var(--pwarn)"><h2>\\ud83d\\udcde Worth a call today</h2>'
         + '<p class="quiet" style="margin:.1rem 0 .6rem">The PCs that could do with a friendly call \\u2014 ranked by what needs attention. Proactive care, before they even ring us.</p>'
@@ -28197,6 +28197,16 @@ def write_portal_page():
                     + '<button class="sm ghost invqhold" data-id="' + esc(x.id) + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Hold</button>')
         + '<a class="btn sm ghost" style="margin:0;padding:.3rem .65rem;font-size:.82rem;opacity:.75" href="' + esc(x.url) + '" target="_blank" rel="noopener" title="Only if something on the invoice needs changing. Sign in to QuickBooks first, or it opens a blank new invoice instead of this one.">Open in QuickBooks</a>';
     }
+    /* QuickBooks' Products & Services (from the server, cached an hour): pick one and the
+       invoice line, its description and its list price come from it. */
+    var items = r.items || [];
+    function itemSelect(j) {
+      if (!items.length) return '';
+      return '<select class="invqitem" data-job="' + esc(j.job) + '" style="margin:0;max-width:280px;font-size:.82rem;padding:.3rem .4rem" title="The service from your QuickBooks Products &amp; Services list">'
+        + '<option value="">Service (from QuickBooks)\\u2026</option>'
+        + items.map(function (it) { return '<option value="' + esc(it.id) + '"' + (j.item === it.id ? ' selected' : '') + '>' + esc(it.name) + (it.price > 0 ? ' \\u2014 ' + invqMoney(it.price) : '') + '</option>'; }).join('')
+        + '</select>';
+    }
     /* 1 Raise > 2 Check > 3 Send - the step this row is on, so the next click is obvious. */
     function steps(n) {
       var names = ['Raise', 'Check', 'Send'];
@@ -28213,10 +28223,11 @@ def write_portal_page():
       else if (st === 'invoiced') chip = steps(4) + '<span class="quiet">\\u2713 ' + esc(INVQ_WHY.invoiced_in_slack) + '</span>';
       else {
         chip = steps(1) + '<span style="color:#ffb4a2">No invoice yet</span>' + (j.done ? '' : ' <span class="quiet">\\u00b7 job not marked done in Slack yet</span>');
-        if (j.can_create) btns = '<button class="sm invqcreate" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\\ud83e\\uddfe 1 \\u00b7 Raise the invoice</button>';
+        if (j.can_create) btns = itemSelect(j) + '<button class="sm invqcreate" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\\ud83e\\uddfe 1 \\u00b7 Raise the invoice</button>';
         else if (j.why_not === 'no_amount' || j.why_not === 'no_desc') {
-          body = '<div class="quiet" style="font-size:.85rem;margin:.25rem 0 0">' + (j.amount > 0 ? 'Type what was done' : (j.desc ? 'Type the price' : 'Type the price and what was done')) + ', then press the button \\u2014 the invoice is raised in QuickBooks with those on it.</div>'
+          body = '<div class="quiet" style="font-size:.85rem;margin:.25rem 0 0">' + (items.length ? 'Pick the service, or type ' : 'Type ') + (j.amount > 0 ? 'what was done' : (j.desc ? 'the price' : 'the price and what was done')) + ', then press the button \\u2014 the invoice is raised in QuickBooks with those on it.</div>'
             + '<div style="margin:.35rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">'
+            + itemSelect(j)
             + (j.amount > 0 ? '' : '<input class="invqamt" type="text" inputmode="decimal" placeholder="Price \\u00a3" style="width:110px;margin:0">')
             + (j.desc ? '' : '<input class="invqdesc" type="text" maxlength="200" placeholder="What was done (goes on the invoice)" style="flex:1;min-width:200px;margin:0">')
             + '<button class="sm invqset" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\\ud83e\\uddfe 1 \\u00b7 Save &amp; raise the invoice</button><span class="quiet invqsetmsg"></span></div>';
@@ -28268,7 +28279,8 @@ def write_portal_page():
         var body = { action: 'setjob', stoken: S.stoken, machine: mid(), job: b.getAttribute('data-job') };
         if (a && a.value.trim()) body.amount = a.value.trim();
         if (d && d.value.trim()) body.desc = d.value.trim();
-        if (!body.amount && !body.desc) { msg.textContent = 'Type the price' + (d ? ' and what was done' : '') + ' first.'; return; }
+        var sel = row.querySelector('.invqitem'); if (sel && sel.value) body.item = sel.value;
+        if (!body.amount && !body.desc && !body.item) { msg.textContent = (sel ? 'Pick the service, or type the price' : 'Type the price') + (d ? ' and what was done' : '') + ' first.'; return; }
         b.disabled = true; msg.textContent = 'Saving\\u2026';
         post(INVQ, body).then(function (j) {
           if (!j || !j.ok) { b.disabled = false; msg.innerHTML = invqErr(j); return; }
@@ -28279,6 +28291,19 @@ def write_portal_page():
             loadInvq(true);
           });
         }).catch(function () { b.disabled = false; msg.textContent = 'Couldn\\u2019t reach the server.'; });
+      };
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('.invqitem'), function (sel) {
+      sel.onchange = function () {
+        var row = sel.closest('.invqrow'), it = items.filter(function (x) { return x.id === sel.value; })[0];
+        if (!it) return;
+        var a = row.querySelector('.invqamt'), d = row.querySelector('.invqdesc'), msg = row.querySelector('.invqsetmsg') || row.querySelector('.invqmsg');
+        if (a && !a.value.trim() && it.price > 0) a.value = it.price.toFixed(2);
+        if (d && !d.value.trim()) d.value = it.desc || it.name;
+        if (msg) msg.textContent = 'Setting the service\\u2026';
+        post(INVQ, { action: 'setjob', stoken: S.stoken, machine: mid(), job: sel.getAttribute('data-job'), item: it.id }).then(function (j) {
+          if (msg) msg.innerHTML = (j && j.ok) ? 'Service: ' + esc(it.name) + (a || d ? ' \\u2014 change the boxes if the price or wording differs, then press the button.' : '.') : invqErr(j);
+        }).catch(function () { if (msg) msg.textContent = 'Couldn\\u2019t reach the server.'; });
       };
     });
     Array.prototype.forEach.call(box.querySelectorAll('.invqdismiss'), function (b) {

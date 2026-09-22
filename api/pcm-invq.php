@@ -93,10 +93,20 @@ if ($action === 'setjob') {
     if ($job === '') fail('bad_job');
     $amount = (isset($in['amount']) && trim((string)$in['amount']) !== '') ? preg_replace('/[^0-9.]/', '', (string)$in['amount']) : null;
     $desc   = (isset($in['desc']) && trim((string)$in['desc']) !== '') ? (string)$in['desc'] : null;
-    $r = invq_job_set($job, $amount, $desc, $who);
+    /* The service picked from the drop-down: an id that must be on QuickBooks' own
+       list (fetched here, cached an hour) - the request can name it, never define it. */
+    $item = null;
+    $itemId = preg_replace('/[^0-9]/', '', (string)(isset($in['item']) ? $in['item'] : ''));
+    if ($itemId !== '') {
+        $c = invq_connect();
+        if (empty($c['ok'])) fail($c['why']);
+        $item = invq_item_find(invq_items($c), $itemId);
+        if (!$item) fail('bad_item');
+    }
+    $r = invq_job_set($job, $amount, $desc, $who, $item);
     if (empty($r['ok'])) fail($r['error']);
-    invq_log('set job ' . $job . ($amount !== null ? ' amount ' . $amount : '') . ($desc !== null ? ' desc' : '') . ' by ' . $who);
-    out(array('ok' => true));
+    invq_log('set job ' . $job . ($amount !== null ? ' amount ' . $amount : '') . ($desc !== null ? ' desc' : '') . ($item ? ' item ' . $item['id'] : '') . ' by ' . $who);
+    out(array('ok' => true, 'item' => ($item ? $item['name'] : '')));
 }
 
 if ($action === 'hold' || $action === 'unhold') {
@@ -122,7 +132,8 @@ if ($action === 'list') {
                    'jobs' => (int)(isset($st['jobs']) ? $st['jobs'] : 0), 'channels' => (array)(isset($st['channels']) ? $st['channels'] : array()));
     out(array('ok' => true, 'connected' => true, 'jobs' => $o['jobs'], 'waiting' => $o['waiting'], 'older' => $o['older'],
               'cached' => !empty($o['cached']), 'stale' => !empty($o['stale']), 'why' => isset($o['why']) ? $o['why'] : '',
-              'live' => !empty($c['live']), 'only_key' => ($c['only'] !== ''), 'slack' => $slack));
+              'live' => !empty($c['live']), 'only_key' => ($c['only'] !== ''), 'slack' => $slack,
+              'items' => invq_items($c)));   // QuickBooks' Products & Services, for the drop-down
 }
 
 if ($action === 'create') {

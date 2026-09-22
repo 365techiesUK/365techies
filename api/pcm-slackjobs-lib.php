@@ -303,6 +303,8 @@ function sj_parse($text) {
         'invoiced' => $invKind, 'invoice_doc' => ($invKind === 'number' ? $invVal : ''),
         'closed' => sj_clean($closed, 40), 'price' => ($priceField > 0 ? $priceField : sj_price($text)),
         'desc' => sj_clean($desc, 200),
+        'kind' => sj_clean($typeTail !== '' ? $typeTail : $type, 80),        // the job type as typed or picked: matched to a QuickBooks service by name
+        'postcode' => sj_clean(sj_get($L, 'postcode'), 12),
         'done' => ($work !== '' || $closed !== '' || $time !== ''),
     );
 }
@@ -323,8 +325,8 @@ function sj_job($msg, $channel, $now = null) {
         'id' => sj_job_id($ts), 'ts' => (int)floor((float)$ts), 'by' => 'Slack', 'via' => 'slack',
         'slack' => array('channel' => (string)$channel, 'ts' => $ts, 'replies' => (int)(isset($msg['reply_count']) ? $msg['reply_count'] : 0),
                          'seen' => ($now === null ? time() : $now)),
-        'name' => $p['name'], 'email' => $p['email'], 'phone' => $p['phone'], 'addr' => $p['addr'],
-        'desc' => $p['desc'], 'note' => $note,
+        'name' => $p['name'], 'email' => $p['email'], 'phone' => $p['phone'], 'addr' => $p['addr'], 'postcode' => $p['postcode'],
+        'desc' => $p['desc'], 'note' => $note, 'kind' => $p['kind'],
         'amount' => $p['price'], 'amount_by' => ($p['price'] > 0 ? 'slack' : ''),
         'invoice_no' => '', 'invoice_url' => '', 'invoice_doc' => $p['invoice_doc'], 'invoiced_in_slack' => ($p['invoiced'] === 'yes'),
         'status' => ($p['done'] ? 'done' : 'quoted'),
@@ -336,7 +338,7 @@ function sj_job($msg, $channel, $now = null) {
 function sj_merge($old, $new) {
     if (!is_array($old)) return $new;
     $keep = $old;
-    foreach (array('name', 'email', 'phone', 'addr', 'note', 'status', 'invoice_doc', 'invoiced_in_slack', 'slack', 'ts') as $k) $keep[$k] = $new[$k];
+    foreach (array('name', 'email', 'phone', 'addr', 'postcode', 'note', 'kind', 'status', 'invoice_doc', 'invoiced_in_slack', 'slack', 'ts') as $k) $keep[$k] = $new[$k];
     if ((string)(isset($old['amount_by']) ? $old['amount_by'] : '') !== 'staff') { $keep['amount'] = $new['amount']; $keep['amount_by'] = $new['amount_by']; }
     if ((string)(isset($old['desc_by']) ? $old['desc_by'] : '') !== 'staff') $keep['desc'] = $new['desc'];
     if (!empty($old['invoice_no'])) { $keep['invoice_no'] = $old['invoice_no']; $keep['invoice_url'] = isset($old['invoice_url']) ? $old['invoice_url'] : ''; }

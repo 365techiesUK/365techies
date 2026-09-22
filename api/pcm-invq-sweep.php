@@ -55,7 +55,7 @@ function invq_log($m) { @file_put_contents(INVQ_LOG, '[' . gmdate('Y-m-d H:i:s')
 function invq_store_read() {
     $j = @json_decode((string)@file_get_contents(INVQ_STORE), true);
     if (!is_array($j)) $j = array();
-    foreach (array('held' => array(), 'sent' => array(), 'created' => array(), 'cache' => null, 'last_morning' => '') as $k => $d) if (!isset($j[$k])) $j[$k] = $d;
+    foreach (array('held' => array(), 'sent' => array(), 'created' => array(), 'cache' => null, 'last_morning' => '', 'items' => null) as $k => $d) if (!isset($j[$k])) $j[$k] = $d;
     return $j;
 }
 function invq_store_locked($fn) {
@@ -112,18 +112,56 @@ function invq_job_link($jobId, $invId, $url, $how) {
 /* A person types the price or description a Slack post lacked. Marked as theirs,
    so the Slack poller never overwrites it (see sj_merge). Amounts within the
    same limits the invoice itself will be held to. */
-function invq_job_set($jobId, $amount, $desc, $who) {
+define('INVQ_ITEMS_TTL', 3600);
+/* QuickBooks' Products & Services, cached an hour in the store: the drop-down in the
+   console, and what a Slack "Job type" is matched against. A failed read keeps the
+   last list rather than emptying the drop-down. */
+function invq_items($c, $fresh = false, $now = null) {
+    $now = $now === null ? time() : $now;
+    $store = invq_store_read();
+    $have = (is_array($store['items']) && isset($store['items']['list'])) ? (array)$store['items']['list'] : array();
+    if (!$fresh && $have && (int)$store['items']['ts'] > $now - INVQ_ITEMS_TTL) return $have;
+    $res = invq_api($c, 'GET', '/query?query=' . rawurlencode('select * from Item where Active = true maxresults 500'));
+    if (!qbo_lib_ok($res) || !isset($res['json']['QueryResponse'])) return $have;
+    $list = invq_items_clean($res['json']);
+    invq_store_locked(function ($d) use ($list, $now) { $d['items'] = array('ts' => $now, 'list' => $list); return array('ok' => true, 'data' => $d); });
+    return $list;
+}
+/* A Slack "Job type" that names one of those items ("Full computer service") puts
+   that item, its description and its list price on the job - unless a person typed
+   otherwise (invq_job_apply_item's rules). Runs before every fresh overview, so a
+   job picked from the workflow's drop-down arrives ready to raise. */
+function invq_kind_sync($c, $now = null) {
+    $now = $now === null ? time() : $now;
+    $items = invq_items($c, false, $now);
+    if (!$items) return 0;
+    $r = invq_jobs_locked(function ($d) use ($items, $now) {
+        $n = 0;
+        foreach ($d['jobs'] as $i => $j) {
+            if (!is_array($j) || !empty($j['invoice_no']) || !empty($j['item_id']) || empty($j['kind'])) continue;
+            if ((int)(isset($j['ts']) ? $j['ts'] : 0) < $now - INVQ_WINDOW_DAYS * 86400) continue;
+            if ((string)(isset($j['status']) ? $j['status'] : '') === 'dismissed') continue;
+            $it = invq_item_match($items, $j['kind']);
+            if ($it && invq_job_apply_item($j, $it)) { $d['jobs'][$i] = $j; $n++; }
+        }
+        return $n ? array('ok' => true, 'data' => $d, 'n' => $n) : array('ok' => true, 'n' => 0);
+    });
+    return !empty($r['n']) ? (int)$r['n'] : 0;
+}
+
+function invq_job_set($jobId, $amount, $desc, $who, $item = null) {
     $amount = ($amount === null) ? null : round(invq_num($amount), 2);
     if ($amount !== null && ($amount < 1 || $amount > INVQ_MAX_AMOUNT)) return array('ok' => false, 'error' => 'bad_amount');
     $desc = ($desc === null) ? null : invq_str($desc, 200);
     if ($desc !== null && $desc === '') return array('ok' => false, 'error' => 'no_desc');
-    if ($amount === null && $desc === null) return array('ok' => false, 'error' => 'nothing_to_set');
-    $r = invq_jobs_locked(function ($d) use ($jobId, $amount, $desc, $who) {
+    if ($amount === null && $desc === null && $item === null) return array('ok' => false, 'error' => 'nothing_to_set');
+    $r = invq_jobs_locked(function ($d) use ($jobId, $amount, $desc, $who, $item) {
         foreach ($d['jobs'] as $i => $j) {
             if (!is_array($j) || (string)(isset($j['id']) ? $j['id'] : '') !== (string)$jobId) continue;
             if (!empty($j['invoice_no'])) return array('ok' => false, 'error' => 'already_invoiced');
             if ($amount !== null) { $d['jobs'][$i]['amount'] = $amount; $d['jobs'][$i]['amount_by'] = 'staff'; }
             if ($desc !== null)   { $d['jobs'][$i]['desc'] = $desc; $d['jobs'][$i]['desc_by'] = 'staff'; }
+            if (is_array($item))  invq_job_apply_item($d['jobs'][$i], $item);   // after the typed values, so it never overrides them
             $d['jobs'][$i]['set_by'] = $who; $d['jobs'][$i]['set_at'] = time();
             return array('ok' => true, 'data' => $d);
         }
@@ -310,6 +348,7 @@ function invq_overview($c, $fresh = false, $now = null) {
         return $o;
     }
     invq_pcm_sync($now);                                   // PC Manager services join the store before we read it
+    invq_kind_sync($c, $now);                              // a Slack job type that names a QuickBooks service puts it on the job
     $jobs = invq_jobs_recent(invq_jobs_read(), $now);
     $ids = array();
     foreach ($jobs as $j) if (!empty($j['invoice_no'])) $ids[] = (string)$j['invoice_no'];
@@ -378,6 +417,16 @@ function invq_create_for_job($c, $jobId, $who, $auto = false) {
         if ($m === null) return array('ok' => false, 'error' => 'busy');
         $body = array('DisplayName' => $name, 'PrimaryEmailAddr' => array('Address' => $email));
         if ($phone !== '') $body['PrimaryPhone'] = array('FreeFormNumber' => $phone);
+        /* the address as written up in Slack (22 Sep): the postcode is its own field
+           when the post had one; the rest is line 1 */
+        $addr = invq_str(isset($job['addr']) ? $job['addr'] : '', 200);
+        $pc = strtoupper(invq_str(isset($job['postcode']) ? $job['postcode'] : '', 12));
+        if ($pc !== '' && strtoupper(substr($addr, -strlen($pc))) === $pc) $addr = trim(substr($addr, 0, -strlen($pc)), " ,");
+        if ($addr !== '' || $pc !== '') {
+            $body['BillAddr'] = array('Country' => 'United Kingdom');
+            if ($addr !== '') $body['BillAddr']['Line1'] = $addr;
+            if ($pc !== '') $body['BillAddr']['PostalCode'] = $pc;
+        }
         $res = invq_api($c, 'POST', '/customer', $body);
         if (!qbo_lib_ok($res) || empty($res['json']['Customer']['Id'])) {
             $code = (string)(isset($res['json']['Fault']['Error'][0]['code']) ? $res['json']['Fault']['Error'][0]['code'] : '');
@@ -398,8 +447,9 @@ function invq_create_for_job($c, $jobId, $who, $auto = false) {
         }
     }
     // 3. the invoice - the same line pcm-qbo.php writes
+    $itemRef = !empty($job['item_id']) ? (string)$job['item_id'] : $c['item'];   // the Product/Service picked for the job, else the default
     $line = array('DetailType' => 'SalesItemLineDetail', 'Amount' => $amount, 'Description' => $desc,
-                  'SalesItemLineDetail' => array('ItemRef' => array('value' => $c['item']), 'Qty' => 1, 'UnitPrice' => $amount));
+                  'SalesItemLineDetail' => array('ItemRef' => array('value' => $itemRef), 'Qty' => 1, 'UnitPrice' => $amount));
     if ($c['tax'] !== '') $line['SalesItemLineDetail']['TaxCodeRef'] = array('value' => $c['tax']);
     $inv = array('CustomerRef' => array('value' => $cid), 'Line' => array($line), 'TxnDate' => gmdate('Y-m-d'),
                  'BillEmail' => array('Address' => $email));
