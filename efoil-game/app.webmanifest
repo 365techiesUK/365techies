@@ -1,0 +1,11 @@
+{
+  "name": "365 eFoil — Bournemouth",
+  "short_name": "365 eFoil",
+  "description": "Ride an eFoil, a speedboat or a jetski around Bournemouth Pier.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#0b1520",
+  "theme_color": "#0b1520"
+}

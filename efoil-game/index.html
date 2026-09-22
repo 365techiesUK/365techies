@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="365 eFoil">
+<link rel="manifest" href="app.webmanifest">
+<meta name="robots" content="noindex,nofollow">
+<title>365 eFoil — kill-gate rig</title>
+<style>
+  :root {
+    --bg: #16181c;
+    --ink: #e8edf4;
+    --dim: rgba(232,237,244,0.45);
+    --line: rgba(232,237,244,0.12);
+    --green: #6fe3a0;
+    --amber: #f2c14e;
+    --red: #ff7a7a;
+    --blue: #7fb6ff;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  /* ⚠️ A11Y 2026-09-20 — THE ROOT FONT SIZE IS LOAD-BEARING AND IT USED TO BE 12px.
+     This project's UI rule is "no body text below .95rem". `rem` is relative to the ROOT, and
+     with the root at 12px, .95rem rendered at 11.4 px — 29% under the 16 px the rule assumes.
+     So the rule MEASURED as complying while the screen was a quarter too small, and three
+     files (ui/juice.js, ui/levels.js, raid/smuggle.js, stunt/stunt.js) each had to carry a
+     comment telling the next author not to use rem on this page. That is a defect in the root,
+     not in four stylesheets.
+     16px makes 1rem mean 16px, which is what every rule in this project already assumes, and
+     it lifts every element that INHERITS its size (the HUD cards, the toast, the help table,
+     the status line) from 12 px to 16 px in one move. Nothing else moves: there is not one
+     `rem` length in this page or in src/, and every `em` length sits on an element with its
+     own explicit font-size, so none of them is measured against the root.
+     ⛔ Do not put this back to 12px to "fix" a layout. Fix the layout. */
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink);
+               font: 16px/1.45 var(--mono); overflow: hidden;
+               /* Kills pull-to-refresh and the horizontal swipe-navigation rubber band in a
+                  home-screen app. One line, and the page never scrolls anyway (tmp-tr82). */
+               overscroll-behavior: none; }
+  /* A held thumb on a control must not raise a selection, a magnifier or a share sheet.
+     Scoped to touch so desktop text selection in the panel and the help box still works. */
+  body.touch { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+  /* Every DOM button is tap-delay-free even if the player has pinch-zoomed (WebKit: single
+     taps on touch-action:manipulation are fast at all zoom scales). NOT on html/body - that
+     would disable pinch zoom for everyone, which MDN calls out as a low-vision a11y harm. */
+  button { touch-action: manipulation; }
+  /* 100svh is the SMALL viewport: the height with the browser toolbars SHOWING, so nothing the
+     player must reach can hide behind them (2026-09-17). 100vh stays as the fallback. */
+  #stage { display: flex; height: 100vh; height: 100svh; }
+  /* DEMO MODE - the default front door.
+     This started life as a physics rig and the rig is worth keeping, but its
+     default view was a keyboard-help overlay on top of a tuning panel taking
+     40% of the width, which is not something you can hand to anyone. Demo mode
+     hides the instrumentation and leaves the scene; T or H bring the rig back
+     instantly, and ?rig=1 skips demo mode entirely.
+     Deliberately NOT a splash screen: SPEC §5 forbids a loading step or a
+     click-to-continue anywhere, so this starts playing immediately. */
+  body.demo #panel,
+  body.demo #charts,
+  body.demo #help    { display: none !important; }
+  body.demo #hud .card:not(:first-child) { display: none; }
+  body.demo #hud     { pointer-events: none; }
+  #hint {
+    position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%);
+    padding: 9px 16px; border-radius: 999px; white-space: nowrap;
+    background: rgba(14,17,22,.62); color: #dfe6ee; font-size: 16px;   /* A11Y 13 -> 16 */
+    letter-spacing: .02em; backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,.10);
+    opacity: 0; transition: opacity .6s ease; pointer-events: none; z-index: 40;
+  }
+  #hint.on { opacity: 1; }
+  #hint b { color: #ffd76a; font-weight: 600; }
+  body.clean-render #hint { display: none !important; }
+  /* On a phone the instrument panel, the graphs and the keyboard hint are clutter across a
+     390px-high landscape screen, and none of them can be driven without a keyboard (2026-09-17).
+     T / G still bring them back on a desktop. */
+  body.touch #panel, body.touch #charts, body.touch #hint { display: none !important; }
+  /* ?clean=1 - strip everything but the scene, so a headless screenshot can be
+     composited straight against a reference photograph. The GL canvas is left
+     to fill the window; charts, HUD, tuning panel and touch controls all go. */
+  body.clean-render #panel,
+  body.clean-render #charts,
+  body.clean-render #hud,
+  body.clean-render #viewbar,
+  body.clean-render #touchui,
+  body.clean-render #tbtns,
+  body.clean-render #tboost,
+  body.clean-render #tset,
+  body.clean-render #tmode,
+  body.clean-render #status,
+  body.clean-render #help,
+  body.clean-render #toast,
+  body.clean-render #testout { display: none !important; }
+  body.clean-render #stagewrap { position: absolute; inset: 0; }
+  #left { position: relative; flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+  /* The GL sea sits underneath; #view is the transparent 2D overlay that still
+     carries the craft, the wake and the depth ribbon. Same camera, two layers. */
+  #stagewrap { position: relative; flex: 1 1 auto; min-height: 0; display: flex; }
+  #gl { position: absolute; inset: 0; width: 100%; height: 100%; display: none; }
+  #gl.on { display: block; }
+  #view { display: block; flex: 1 1 auto; min-height: 0; width: 100%; height: 100%;
+          cursor: crosshair; touch-action: none; position: relative; z-index: 1; }
+  #charts { display: block; flex: 0 0 auto; width: 100%; height: 170px;
+            border-top: 1px solid var(--line); background: #101216; }
+
+  /* ---- HUD ---- */
+  #hud { position: absolute; top: 12px; left: 12px; pointer-events: none;
+         display: grid; gap: 10px; }
+  .card { background: rgba(12,14,18,0.72); border: 1px solid var(--line);
+          border-radius: 6px; padding: 9px 11px; backdrop-filter: blur(3px); }
+  .rowset { display: grid; grid-template-columns: auto auto; gap: 2px 14px; }
+  .rowset dt { color: var(--dim); }
+  .rowset dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+  .big { font-size: 26px; line-height: 1.1; font-weight: 600; }
+  .unit { font-size: 16px; color: var(--dim); font-weight: 400; }        /* A11Y 11 -> 16 */
+  .mode { letter-spacing: .08em; font-weight: 600; }
+  .m-flying { color: var(--green); }
+  .m-taxi, .m-float { color: var(--dim); }
+  .m-vent { color: var(--red); }
+  .m-stall { color: var(--amber); }
+  .m-down { color: var(--red); }
+  .flow { letter-spacing: 3px; color: var(--dim); }
+  .flow.in { color: var(--green); }
+  #h-dldv { font-size: 16px; color: var(--amber); }                      /* A11Y 11 -> 16 */
+  .note { color: var(--dim); font-size: 16px; }                          /* A11Y 11 -> 16 */
+
+  /* ---- view switcher ---- */
+  #viewbar { position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+             display: flex; gap: 4px; background: rgba(12,14,18,0.72);
+             border: 1px solid var(--line); border-radius: 20px; padding: 4px; }
+  #viewbar button { border: 0; border-radius: 16px; padding: 5px 13px; background: transparent;
+                    color: var(--dim); letter-spacing: .06em; }
+  #viewbar button.on { background: rgba(255,255,255,0.13); color: var(--ink); }
+
+  /* ---- touch ---- */
+  #touchui { display: none; }
+  body.touch #touchui { display: block; }
+  body.touch #hud { top: 8px; left: 8px; gap: 6px; transform: scale(.92); transform-origin: top left; }
+  body.touch #viewbar { display: none; }
+  /* The stick's ring is an ELLIPSE, because the stick is: 48 px of travel for steer, 62 for
+     trim (2*R each way), so the shape tells you which axis has the resolution (tmp-tr82). */
+  #tpad { position: absolute; width: 0; height: 0; pointer-events: none; opacity: var(--tbo, .85); }
+  #tpad::before { content: ''; position: absolute; left: -48px; top: -62px;
+                  width: 96px; height: 124px; border-radius: 50%;
+                  border: 1.5px solid rgba(232,237,244,0.28); background: rgba(12,14,18,0.25); }
+  #tpad .nub { position: absolute; left: -19px; top: -19px; width: 38px; height: 38px;
+               border-radius: 50%; background: rgba(232,237,244,0.55); }
+  /* A resting ghost so an unbriefed player knows the stick is there before they touch it.
+     It fades the moment a thumb lands. */
+  /* The ghost is the ONLY clue where the stick lives, and at 40% dashed on bright water the owner
+     could not see it at all (phone test, 2026-09-18). Brighter ring, a dot at the centre, a label,
+     and a slow pulse until the first touch of the run. */
+  #tghost { position: absolute; display: none; left: 124px; bottom: 96px; width: 96px; height: 124px;
+            margin: 0 0 -62px -48px; border-radius: 50%; pointer-events: none;
+            border: 2.5px dashed rgba(255,255,255,0.78); background: rgba(8,14,22,0.30);
+            box-shadow: 0 0 0 1px rgba(0,0,0,.35), 0 3px 14px rgba(0,0,0,.35);
+            opacity: var(--tbo, .85); animation: tghostpulse 2.4s ease-in-out infinite; }
+  #tghost::before { content: ''; position: absolute; left: 50%; top: 50%; width: 12px; height: 12px;
+            margin: -6px 0 0 -6px; border-radius: 50%; background: rgba(255,255,255,.85); }
+  #tghost::after { content: 'STEER / TRIM'; position: absolute; left: 50%; bottom: -20px; transform: translateX(-50%);
+            font: 700 16px ui-sans-serif, system-ui, sans-serif; letter-spacing: .10em; color: rgba(255,255,255,.85);  /* A11Y 10 -> 16 */
+            text-shadow: 0 1px 3px rgba(0,0,0,.6); white-space: nowrap; }
+  @keyframes tghostpulse { 0%, 100% { opacity: calc(var(--tbo, .85) * .70); } 50% { opacity: var(--tbo, .85); } }
+  body.touch #tghost { display: block; }
+  body.touch.riding #tghost, body.clean-render #tghost { display: none; }
+  body.touch.mirror #tghost { left: auto; right: 124px; }
+  /* ---- THE THROTTLE STRIP (tmp-tr82) ----
+     What you see is now exactly what you can grab. The old slider was decorative
+     (pointer-events:none, 56 px wide) while the real target was the WHOLE RIGHT HALF of the
+     canvas - which is why FIRE and WATER sat inside the throttle's grab region and one thumb
+     could not do both. src/input.js `stripRect()` is the single source of truth and
+     main.js writes these four numbers from it on every resize; the CSS below is the fallback.
+     Still pointer-events:none, because the canvas is what reads the drag. */
+  /* Contrast matters more than subtlety here: over sunlit water at 40 km/h the old 0.30 border
+     on a 0.35 fill was invisible in a headless shot and would be worse in daylight on glass. */
+  #tthr { position: absolute; right: 24px; top: 35%; bottom: 46px; width: 64px;
+          border: 2px solid rgba(232,237,244,0.55); border-radius: 32px;
+          background: rgba(12,14,18,0.52); overflow: hidden; pointer-events: none;
+          box-shadow: 0 2px 10px rgba(0,0,0,.35); opacity: var(--tbo, .85); }
+  /* Ahead fills UP from the zero detent; astern fills DOWN from it. 1/(1+0.5) = 66.7%. */
+  #tthr .fill { position: absolute; left: 0; bottom: 33.33%; width: 100%; height: 0%;
+                background: linear-gradient(0deg, rgba(111,227,160,0.55), rgba(111,227,160,0.20)); }
+  #tthr .rev { position: absolute; left: 0; top: 66.67%; width: 100%; height: 0%;
+               background: linear-gradient(180deg, rgba(242,193,78,0.60), rgba(255,122,122,0.35)); }
+  /* The detent, drawn so you can find idle without looking. */
+  #tthr .zero { position: absolute; left: 6px; right: 6px; top: 66.67%; height: 2px;
+                background: rgba(232,237,244,0.55); }
+  /* A11Y: 9 -> 16 px. The strip is 64 px wide and input.js `stripRect()` owns that number
+     (test-touch asserts it), so the label cannot be given more room - the TRACKING gives way
+     instead. MEASURED with Range.getClientRects() on the live page, not computed: the widest
+     label ("CRUISE" / "MANUAL" / "ASTERN", all six characters) is 58.2 px inside a 60 px
+     content box. That is 1.8 px of margin, so do NOT put the .1em tracking back and do not
+     add a seventh character to any of these words without re-measuring. */
+  #tthr .ast { position: absolute; bottom: 7px; width: 100%; text-align: center;
+               color: rgba(242,193,78,.8); font-size: 16px; letter-spacing: .02em; display: none; }
+  body.astern #tthr .ast { display: block; }
+  #tthr span.lbl { position: absolute; top: 7px; width: 100%; text-align: center;
+               color: var(--dim); font-size: 16px; letter-spacing: .02em; }   /* A11Y 9 -> 16 */
+  #tthr .pct { position: absolute; top: 50%; width: 100%; text-align: center; transform: translateY(-50%);
+               color: rgba(232,237,244,.75); font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }  /* A11Y 13 -> 18 */
+  body.touch.mirror #tthr { right: auto; left: 24px; }
+
+  /* ---- THE COLD ROW (tmp-tr82) ----
+     Camera, craft, mode entry and restart are things you do BETWEEN runs, never under
+     pressure. They were in the top-right corner, which is the hardest part of the screen to
+     reach in landscape and the part the raid HUD also wants. Bottom-centre is the one band
+     neither thumb is parked on and both can stretch to, and it is out of the corners where
+     observed tap error is worst. RESET is last and spaced, because it is the destructive one.
+     Nothing here is draggable, so the home-indicator band only needs the 36 px clearance. */
+  /* ⚠️ UITAIL 2026-09-20: this rule is now the PORTRAIT one. It used to set `left: 48%`,
+     "not 50%, because the clear band in landscape runs from the stick's reach (~x 220) to
+     FIRE's left edge (~x 610) and its centre is a little left of the screen's" - which was
+     a measurement taken at one width against a button that moves with three different
+     inputs, and it is why RESET ended up on top of FIRE. Landscape is now handled by the
+     reservation rule below, which derives the same intent from BOOST's own two numbers.
+     48% is gone rather than left standing: every branch overrode it, so it described the
+     layout of no screen at all.
+     Still true and still load-bearing, in portrait: the row does NOT scale with the
+     button-size setting - it is the cold row, it is never hit under pressure, and growing
+     it is what would push RESET into BOOST. And `width: max-content` matters, because an
+     absolutely-positioned box with only `left` set is shrink-to-fit against
+     (container - left), which on a 393 px portrait screen is 204 px and wrapped the row
+     into two lines on top of BOOST. */
+  #tbtns { position: absolute; left: 50%; transform: translateX(-50%);
+           bottom: calc(39px + env(safe-area-inset-bottom, 0px));
+           display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+           width: max-content; max-width: calc(100vw - 16px);
+           z-index: 32; opacity: var(--tbo, .85); }
+  /* A11Y 11.5 -> 16 px. The row must still fit ONE line at 393 px portrait - it wrapped on
+     top of BOOST once already - so the horizontal padding comes down 7 -> 5 px to pay for it.
+     Measured on the live page at 393 px, not computed. */
+  #tbtns button { min-width: 62px; height: 52px;
+                  padding: 0 5px; border-radius: 12px; font-size: 16px;
+                  letter-spacing: .06em; background: rgba(12,14,18,0.72);
+                  border: 1px solid rgba(232,237,244,0.22); }
+  #tbtns button.danger { margin-left: 14px; }            /* ≥22 px from SET in total */
+  #tbtns button.on { background: rgba(255,215,106,0.22); color: #ffd76a; }
+  body:not(.touch) #tbtns { display: none; }
+  /* ⚠️ UITAIL 2026-09-20: THE COLD ROW NOW RESERVES BOOST / FIRE'S COLUMN INSTEAD OF
+     GUESSING WHERE IT IS. This is a real bug fix, and the bug was bigger than it looked.
+
+     `left: 48%` was measured once, on an 844 px screen, against a FIRE button that was then
+     at x 604. But that button's position is `right: calc(144px * var(--tbs,1))` with a
+     `96px * var(--tbs,1)` width, so its left edge is at (viewport - 240 * --tbs) and it
+     MOVES with the screen width, with the button-size setting, and - to the other side of
+     the screen entirely - with the hand setting. A fixed 48% tracks none of the three.
+
+     Measured on the real page with elementFromPoint over the visible disc of FIRE, at 11
+     landscape widths x 3 button sizes x 2 hand settings (tmp-tr177/uitail/work/probe.mjs):
+     36 of those 66 combinations overlapped, and on the worst of them 138 of 288 points on
+     the FIRE disc - 48% - pressed a cold button instead. It is not a near miss at the edge
+     of the disc: #rd-root is z-index 30 and this row is 32, so in a RAID the row wins, and
+     the thief is RESET. A thumb stabbing at the bottom-left of FIRE restarts the run.
+     Right-handed it starts below 818 px wide; LEFT-handed it was broken at 844 too, which
+     is the width everyone checks.
+
+     THE FIX. The row is ANCHORED to the edge of the column BOOST/FIRE occupies, from the
+     same two numbers that button is positioned from, so the two can never drift apart
+     again. It ends up hard against that column, which is where `left: 48%` was trying to
+     put it - away from the stick, next to the thumb that reaches it - and `max-width` caps
+     it at the band that is left, so `flex-wrap: wrap` takes it to two lines INSIDE the band
+     on the one combination where a single line genuinely will not fit (667 px at the L
+     button size). That wrap is safe in a way it was not before: the comment above warns the
+     row once wrapped "on top of BOOST", and it could, because it was still centred on a
+     percentage while it wrapped. It cannot reach BOOST from inside a band that excludes it.
+
+     ⚠️ ANCHORED, NOT PADDED, and the difference is not cosmetic. The first attempt reserved
+     the column with padding on a `left: 0; right: 0` box. It lays out identically and it is
+     WRONG: #tbtns is a solid div at z-index 32, so a full-width box blankets the whole
+     bottom strip and eats every tap that lands in its own padding. Measured before it was
+     replaced - FIRE went from 112 stolen sample points to 152, and the new thief was the
+     row's padding. Anchoring keeps `width: max-content`, so the box is still exactly its
+     own buttons and the water beside them still belongs to whatever is underneath.
+
+     NOT the portrait branch: `@media (max-width: 480px)` below moves BOOST up to
+     `bottom: 120px`, clear of the row, and all six size/hand combinations measured 0 px of
+     overlap at 393x852. Reserving a column there would cost width for nothing.
+
+     32px in the max-width is 24 + 8: TOUCH.edge from src/input.js on the far side - the
+     strip a page cannot take back from the phone's own edge gestures - plus the row's own
+     8px inter-button gap, reused so the space between RESET and FIRE reads like the spaces
+     inside the row. */
+  @media (min-width: 481px) {
+    #tbtns { left: auto; right: calc(240px * var(--tbs, 1) + 8px); transform: none;
+             max-width: calc(100vw - 32px - 240px * var(--tbs, 1)); }
+    body.touch.mirror #tbtns { right: auto; left: calc(240px * var(--tbs, 1) + 8px); }
+  }
+  /* tr154: BOTH of these must stay shown. LEVELS is the only way back to the picker on a
+     phone, and a player who cannot leave the level she is in cannot choose another one. */
+  body.touch.raid #btn-mode, body.touch.rescue #btn-mode,
+  /* was: hidden in raid/rescue - which left a phone player with NO way to change craft at all. */
+  body.touch.raid #btn-craft, body.touch.rescue #btn-craft { display: inline-flex; }
+  /* The craft chooser and the two mode doors lived in the top strip; the cold row replaces
+     both, so they go. The pills below drive the same code by clicking the original elements. */
+  body.touch #left > #craftbar { display: none !important; }
+  body.touch #rq-door, body.touch #rd-door { display: none !important; }
+  /* WIREMUSIC 2026-09-20: THE TWO FRONT DOORS, FOLDED AWAY EVERYWHERE.
+     #rq-door (RESCUE MODE) and #rd-door (RAID MODE) are shortcuts from before there was a level
+     picker. There are seven levels now, the picker lists all seven, and a bare URL opens it as
+     the start screen - so on a desktop these two sat in the top-right corner, in a different
+     visual language, drawn over the level card, offering two of the seven again. The rule above
+     had already folded them away on touch for the same reason; this finishes the job.
+     ⚠️ HIDDEN, NOT DELETED, and the markup stays exactly as the two HUDs build it. main.js:748
+     enters the rescue by CLICKING #rq-door - it is the handle rescue-mode.js publishes, since
+     enter/exit are private there - and a display:none button still takes a programmatic click.
+     Delete the button and the picker's RESCUE MODE row stops working.
+     Shift+R / Shift+L / Shift+J / Shift+T are untouched: they are keydown listeners in the four
+     mode modules and never went through these buttons. So is the start card's MutationObserver,
+     which watches for a body class and not for a click. */
+  #rq-door, #rd-door { display: none !important; }
+
+  /* ---- BOOST (tmp-tr82) ----
+     `touch.boost` was declared and read and never assigned: the pop-up, the move that gets an
+     eFoil onto the foil, had NO phone input at all. This is it, in the same slot the raid
+     gives FIRE, so the right thumb learns one place. */
+  #tboost { position: absolute; display: none; right: calc(144px * var(--tbs, 1));
+            bottom: calc(49px + env(safe-area-inset-bottom, 0px));
+            width: calc(96px * var(--tbs, 1)); height: calc(96px * var(--tbs, 1));
+            border-radius: 50%; border: 4px solid #ffd76a; background: rgba(255,170,40,.42);
+            color: #fff; font: 900 16px ui-sans-serif, system-ui, sans-serif; letter-spacing: .06em;  /* A11Y 15 -> 16 */
+            touch-action: none; user-select: none; z-index: 33; opacity: var(--tbo, .85); }
+  #tboost.down { background: rgba(255,200,60,.85); transform: scale(.94); }
+  body.touch:not(.raid) #tboost { display: block; }
+  body.touch.mirror #tboost { right: auto; left: calc(144px * var(--tbs, 1)); }
+
+  /* ---- SETTINGS (tmp-tr82) ---- */
+  /* A column with a scrolling body and a PINNED footer: on a 393 px-tall landscape screen the
+     panel is taller than the window, and a DONE button you have to scroll to find is a trap. */
+  #tset { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+          display: none; flex-direction: column; z-index: 60; width: min(440px, calc(100% - 28px));
+          max-height: calc(100% - 20px); padding: 12px 14px 14px;
+          background: rgba(12,14,18,0.94); border: 1px solid var(--line); border-radius: 12px;
+          backdrop-filter: blur(6px); }
+  #tset.on { display: flex; }
+  #tset .body { flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain; }
+  #tset h3 { margin: 0 0 8px; font-size: 17px; letter-spacing: .12em; flex: 0 0 auto; }  /* A11Y 13 -> 17 */
+  #tset .srow { display: grid; grid-template-columns: 78px 1fr; gap: 6px 10px;
+                align-items: center; margin: 7px 0; }
+  #tset .srow > span { color: var(--dim); font-size: 16px; }             /* A11Y 11 -> 16 */
+  #tset .seg { display: flex; gap: 5px; flex-wrap: wrap; }
+  #tset .seg button { min-height: 44px; padding: 0 11px; border-radius: 9px; font-size: 16px; }  /* A11Y 11.5 -> 16 */
+  #tset .seg button.on { background: rgba(255,215,106,0.22); color: #ffd76a; border-color: rgba(255,215,106,.4); }
+  #tset .why { color: var(--dim); font-size: 16px; margin: 2px 0 8px; line-height: 1.4; }  /* A11Y 10.5 -> 16 */
+  /* CAMERA MOTION (tr163). Styled exactly like .seg but NOT called .seg, on purpose:
+     main.js has a generic `for (const seg of querySelectorAll('#tset .seg'))` that routes
+     every click into setTouchSetting() and every sync out of touchSettings. A camera row
+     inside that selector would quietly write a `camera` key into the touch-settings store.
+     Its own class keeps the two apart without editing the loop. */
+  #tset .camseg { display: flex; gap: 5px; flex-wrap: wrap; }
+  #tset .camseg button { min-height: 44px; padding: 0 11px; border-radius: 9px; font-size: 16px; }  /* A11Y 11.5 -> 16 */
+  #tset .camseg button.on { background: rgba(255,215,106,0.22); color: #ffd76a; border-color: rgba(255,215,106,.4); }
+  /* SOUND + MUSIC (WIREMUSIC 2026-09-20). Styled like .seg and .camseg and called NEITHER, for
+     the reason the camera row gives directly above: the generic `#tset .seg` loop would write a
+     `sound` key into the TOUCH-settings store. Two rows share this one class and are told apart
+     by data-k, exactly as the .seg rows are. suites/test-wire.mjs asserts that neither key can
+     reach touchSettings, rather than trusting this comment to stay true. */
+  #tset .sndseg { display: flex; gap: 5px; flex-wrap: wrap; }
+  #tset .sndseg button { min-height: 44px; padding: 0 11px; border-radius: 9px; font-size: 16px; }
+  #tset .sndseg button.on { background: rgba(255,215,106,0.22); color: #ffd76a; border-color: rgba(255,215,106,.4); }
+  #tset .foot { display: flex; gap: 8px; margin-top: 10px; flex: 0 0 auto; flex-wrap: wrap; }
+  #tset .foot button { min-height: 48px; flex: 1 1 auto; border-radius: 10px; font-size: 16px; }  /* A11Y 12 -> 16 */
+  #tset input[type=range] { width: 100%; height: 44px; }
+  /* A phone held sideways is ~393 px tall. Two columns, and the prose goes: the segment
+     labels carry the meaning and the explanations are still there in portrait. */
+  @media (max-height: 520px) {
+    /* A11Y 620 -> 760 px. At 16 px the segment labels are monospace 9.6 px/character, so the
+       widest row (OFF / LEAN / LEAN+STEER) needs 208 px of chip and a 620 px sheet gives its
+       two columns only 200 px each - the row wrapped, every row doubled in height, and the
+       sheet went 131 px below its own fold. 760 is the same ceiling #tmode already uses in
+       this query, and calc(100% - 24px) still caps it on every screen narrower than that. */
+    #tset { width: min(760px, calc(100% - 24px)); }
+    #tset .why { display: none; }
+    #tset .body { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; align-content: start; }
+    #tset .srow { margin: 5px 0; }
+    /* A11Y: 9 -> 7 px of horizontal padding, and an explicit 44 px min-WIDTH so the shortest
+       label (OFF) is still a 44 x 44 target. At 16 px with 9 px padding the three-button rows
+       (CRUISE HOLD MANUAL, OFF LEAN LEAN+STEER) wrapped onto two lines and the sheet went
+       131 px below its own fold on a 375 px-tall phone. Seven pixels is what buys the line
+       back. Measured on the live page at 844x390, 740x360, 720x375, 700x375 and 667x375. */
+    #tset .seg button, #tset .camseg button, #tset .sndseg button { min-height: 44px; min-width: 44px; padding: 0 5px; }   /* WIREMUSIC: .sndseg added */
+  }
+  /* ---- PORTRAIT (393 wide) ----
+     The row centres properly, BOOST takes the same slot FIRE takes in a portrait raid, and the
+     stick's ghost lifts clear of both. Landscape's numbers do not survive a 393 px width and a
+     852 px height: the strip would be 660 px of lever and everything would stack on the row.
+     UITAIL 2026-09-20: `#tbtns { left: 50% }` used to be repeated here to undo the base
+     rule's 48%. The base rule is 50% now, so the override said nothing and is gone. The row
+     still centres here, and it still clears BOOST here - 0 px of overlap at 393x852 across
+     all three button sizes and both hand settings, measured, which is why the reservation
+     rule above is scoped to `min-width: 481px` and does not reach this block. */
+  @media (max-width: 480px) {
+    #tboost { right: 119px; bottom: calc(120px + env(safe-area-inset-bottom, 0px));
+              width: calc(92px * var(--tbs, 1)); height: calc(92px * var(--tbs, 1)); }
+    body.touch.mirror #tboost { right: auto; left: 119px; }
+    #tghost { left: 104px; bottom: 230px; }
+    body.touch.mirror #tghost { left: auto; right: 104px; }
+  }
+  /* ---- THE LEVEL PICKER (tr154) ----
+     Owner: "how can we make it easy to choose levels". The Old Harry corsair level could only
+     be reached by hand-editing the URL, so this is the same sheet the cold row already opened,
+     grown from three doors into SEVEN levels with a line of description each. (Five of those
+     seven are in the markup below; the sixth and seventh are appended at run time from the
+     SMUGGLE and STUNT fences in main.js, which say why.)
+     ⚠️ 2026-09-20 IT IS NOW THE START SCREEN, and the two sentences that used to stand here -
+     "It is NOT a start screen"; "the game still opens straight into the jetski Viking raid" -
+     were true until tmp-tr180 and are not true now. A bare URL opens THIS SHEET before any
+     level begins (src/ui/levels.js asksWhichLevel(), and the STARTPICK fence in main.js). It
+     still costs zero pixels once a level is running, and the HUD still stays at 9%.
+     Shaped like #tset, for the reason #tset is shaped that way: a phone in landscape is ~390 px
+     tall, a bottom-anchored column of seven 52 px pills is 530 px of sheet, and a CANCEL you
+     have to scroll to reach is a trap. Centred card, scrolling body, PINNED foot.
+     ⚠️ The GRID below no longer decides the layout on its own: the PICKFIT fence in main.js
+     injects the shipped one over it, because three stylesheets are already injected over this
+     file at run time and the last one wins. See that fence before changing anything here. */
+  #tmode { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+           display: none; flex-direction: column; z-index: 60;
+           width: min(460px, calc(100% - 28px)); max-height: calc(100% - 20px);
+           padding: 12px 14px 14px; border-radius: 12px;
+           background: rgba(12,14,18,0.94); border: 1px solid var(--line);
+           backdrop-filter: blur(6px); }
+  #tmode.on { display: flex; }
+  #tmode h3 { margin: 0 0 8px; font-size: 17px; letter-spacing: .12em; flex: 0 0 auto; }  /* A11Y 13 -> 17 */
+  /* Button, then that button's description, then the next pair. The description is a SIBLING
+     and never a child - see the markup for why the pirate button may not be touched. `auto`
+     sizes the pill column to the widest title, so five pills line up with no magic width. */
+  #tmode .body { flex: 1 1 auto; overflow-y: auto; overscroll-behavior: contain;
+                 display: grid; grid-template-columns: auto minmax(0, 1fr);
+                 gap: 8px 12px; align-items: center; }
+  #tmode .body button { width: 100%; min-height: 50px; border-radius: 10px; padding: 0 12px;
+                  font: 700 16px ui-sans-serif, system-ui, sans-serif; letter-spacing: .06em;
+                  color: #0b1520; background: #ffc21a; border: 0; }        /* A11Y 12.5 -> 16 */
+  #tmode .d { color: var(--dim); font-size: 16px; line-height: 1.35; }     /* A11Y 11 -> 16 */
+  #tmode .foot { display: flex; gap: 10px; align-items: center; margin-top: 10px; flex: 0 0 auto; }
+  #tmode .foot button { min-height: 44px; padding: 0 16px; border-radius: 10px; border: 0;
+                  font: 700 16px ui-sans-serif, system-ui, sans-serif; letter-spacing: .06em;  /* A11Y 12 -> 16 */
+                  background: rgba(255,255,255,.14); color: var(--ink); }
+  /* The licence line. Small, but it is in the PINNED foot: it cannot scroll away.
+     A11Y: 9.5 -> 13 px, and 13 is a DECLARED EXCEPTION to the 16 px floor, not an oversight.
+     It is a legal attribution rather than anything a player acts on, it is the one run of text
+     on this sheet that is never read in order to play, and at 16 px it takes three lines of a
+     PINNED foot on a 375 px-tall phone - pixels stolen from the level list, which is the text
+     that does matter. Listed with its reason in tmp-tr174/a11y/RESULT.md. */
+  #tmode .ea { flex: 1 1 auto; color: var(--dim); font-size: 13px; line-height: 1.3; }
+  /* Crossing into or out of the Old Harry arena is a PAGE LOAD - the chalk is baked into the
+     world mesh while the page loads (src/ui/levels.js says why). This replaces the sheet while
+     the browser fetches, rather than pretending the switch is instant. */
+  #tmode .load { display: none; min-height: 50px; align-items: center; justify-content: center;
+                 text-align: center; font-size: 16px; color: #ffd76a; letter-spacing: .04em; }  /* A11Y 12.5 -> 16 */
+  #tmode.loading .body, #tmode.loading .foot { display: none; }
+  #tmode.loading .load { display: flex; }
+  /* Landscape is ~390 px tall and ~844 px wide. TWO level columns, which put all FIVE of the
+     levels this rule was written for on screen at once with no scrolling.
+     ⚠️ 2026-09-20 THAT CLAIM IS NO LONGER TRUE OF THIS RULE and is kept only to say what it
+     used to do. There are seven levels, not five, and tmp-tr174 raised the description from
+     10.5 px to 16: measured with this rule alone, 844 x 390 is 388 px of content in 259 px of
+     body and FOUR of the seven are reachable. The shipped landscape layout is the PICKFIT
+     fence in main.js, which overrides the grid below; the numbers are in its comment and in
+     tmp-tr181/pickfit/RESULT.md. The sheet WIDTH here is still live and still used. */
+  @media (max-height: 520px) {
+    #tmode { width: min(800px, calc(100% - 24px)); padding: 10px 12px 12px; }
+    /* BOTH pill columns the same width, so five titles read as one list and not as a ragged
+       pair - measured at 176 and 118 px before this line. 176px is the widest title at this
+       size; a longer one wraps inside its pill rather than clipping, because nothing here
+       sets white-space. */
+    #tmode .body { grid-template-columns: repeat(2, 176px minmax(0, 1fr)); gap: 7px 12px; }
+    #tmode .body button { min-height: 44px; }
+    #tmode .d { font-size: 16px; }                                       /* A11Y 10.5 -> 16 */
+  }
+
+  #status { position: absolute; top: 12px; right: 16px; }
+  .status { font-weight: 700; letter-spacing: .1em; }
+  .status.rec { color: var(--red); }
+  .status.rep { color: var(--blue); }
+
+  #toast { position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%);
+           background: rgba(12,14,18,0.9); border: 1px solid var(--line);
+           padding: 7px 14px; border-radius: 20px; opacity: 0;
+           transition: opacity .15s; pointer-events: none; white-space: nowrap; }
+  #toast.on { opacity: 1; }
+
+  #help { position: absolute; left: 12px; bottom: 14px; max-width: 430px; }
+  #help.hidden { display: none; }
+  #help kbd { background: rgba(255,255,255,0.08); border: 1px solid var(--line);
+              border-radius: 3px; padding: 0 4px; }
+  #help table { border-collapse: collapse; }
+  #help td { padding: 1px 10px 1px 0; vertical-align: top; }
+  #help td:last-child { color: var(--dim); }
+
+  /* ---- panel ---- */
+  #panel { flex: 0 0 322px; overflow-y: auto; background: #101216;
+           border-left: 1px solid var(--line); padding: 10px 12px 40px; }
+  #panel.hidden { display: none; }
+  .pnl-head { display: flex; justify-content: space-between; align-items: baseline;
+              letter-spacing: .12em; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+  .pnl-head .hint { color: var(--dim); }
+  .pnl-sec { margin-top: 16px; }
+  .pnl-sec h3 { margin: 0 0 2px; font-size: 12px; letter-spacing: .14em;
+                display: flex; align-items: center; gap: 8px; }
+  .pnl-plant h3 { color: var(--amber); }
+  .pnl-rider h3 { color: var(--green); }
+  .pnl-assist h3 { color: var(--blue); }
+  .pnl-sec .blurb { margin: 0 0 8px; color: var(--dim); font-size: 11px; }
+  .lock { margin-left: auto; font-size: 10px; color: var(--dim);
+          font-weight: 400; letter-spacing: 0; display: flex; align-items: center; gap: 3px; }
+  .pnl-plant .pnl-row { opacity: .45; }
+  .pnl-plant.unlocked .pnl-row { opacity: 1; }
+  .pnl-row { display: grid; grid-template-columns: 118px 1fr 74px; gap: 6px;
+             align-items: center; margin: 3px 0; }
+  .pnl-row label { color: var(--dim); font-size: 11px; overflow: hidden;
+                   text-overflow: ellipsis; white-space: nowrap; }
+  .pnl-row .val { text-align: right; font-variant-numeric: tabular-nums; font-size: 11px; }
+  input[type=range] { width: 100%; height: 16px; accent-color: #8aa0bd; }
+  .pnl-foot { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--line);
+              display: flex; flex-wrap: wrap; gap: 5px; }
+  /* A11Y 11 -> 16 px. This is the default for every control that does not set its own font,
+     which on a player's screen means the view switcher and boats/hub.js's craft chooser.
+     The TUNING RIG below is held at 11 px on purpose and is a DECLARED EXCEPTION: #panel,
+     #charts and #testout are instrumentation, hidden by `body.demo` (the default front
+     door) and by `body.touch` (every phone), and reachable only by pressing T or G on a
+     desktop keyboard. Sizing them up would mean re-laying-out a 322 px column of ~40 slider
+     rows, which is a redesign and not a legibility fix. */
+  button, select, input[type=text] { font: 16px var(--mono); color: var(--ink);
+    background: rgba(255,255,255,0.06); border: 1px solid var(--line);
+    border-radius: 4px; padding: 4px 8px; cursor: pointer; }
+  #panel button, #panel select, #panel input[type=text] { font-size: 11px; }
+  button:hover { background: rgba(255,255,255,0.12); }
+  .preset-name { width: 96px; cursor: text; }
+  .preset-list { min-width: 96px; }
+  #testout { display: none; position: fixed; right: 12px; bottom: 12px; z-index: 20;
+             white-space: pre; font-size: 10.5px; max-width: 460px; max-height: 46vh;
+             padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px;
+             background: #0d1013; color: var(--green); overflow: auto; cursor: pointer; }
+  #testout.on { display: block; }
+  #testout.fail { background: rgba(255,122,122,0.08); color: var(--red); }
+  /* UITAIL 2026-09-20: two rules were deleted here. They styled a class that no element in
+     this build has ever carried - not in this file's markup, not from any `className` or
+     `classList` write in src/, and not from #testout, which is a <pre> filled with
+     textContent and can therefore never contain an element at all. Swept for the class in
+     every quoting style across index.html, src/, tools/ and suites/: zero hits. Every other
+     occurrence of that word in the tree is a JS property read (TUNING, B and this.T all
+     carry one) or the harbour-mouth level id, and none of those is a CSS class. Deleted
+     rather than left, because dead CSS carrying a 10.5 px size reads to the next sweep as
+     an exception somebody weighed - and this one nobody had.
+     ⚠️ The class name is DELIBERATELY not written out above. Naming it here would put the
+     string back in this file, and test-stunt counts the level rows in this markup by
+     pattern: spelling the level id out in prose failed that check on the first attempt. */
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="left">
+    <div id="stagewrap">
+      <canvas id="gl"></canvas>
+      <canvas id="view"></canvas>
+    </div>
+    <canvas id="charts"></canvas>
+
+    <div id="hud">
+      <div class="card">
+        <div class="big"><span id="h-speed">0</span> <span class="unit">km/h</span></div>
+        <div class="mode" id="h-mode">FLOAT</div>
+      </div>
+      <div class="card">
+        <dl class="rowset">
+          <dt>wing depth</dt><dd><span id="h-depth">0</span> cm</dd>
+          <dt>ride height</dt><dd><span id="h-height">0</span> cm</dd>
+          <dt>alpha</dt><dd><span id="h-alpha">0</span>°</dd>
+          <dt>lift / weight</dt><dd><span id="h-lw">0.00</span></dd>
+          <dt>power</dt><dd><span id="h-power">0.00</span> kW</dd>
+        </dl>
+        <div id="h-dldv" style="margin-top:6px">—</div>
+      </div>
+      <div class="card">
+        <dl class="rowset">
+          <dt>foil flow</dt><dd><span id="h-flow" class="flow">░░░░░</span></dd>
+          <dt>time in band</dt><dd><span id="h-band">0</span>%</dd>
+          <dt>best flight</dt><dd><span id="h-best">0.0</span> s</dd>
+          <dt>wipeouts</dt><dd><span id="h-wipes">0</span></dd>
+          <dt>distance</dt><dd><span id="h-dist">0</span> m</dd>
+        </dl>
+      </div>
+      <div class="card note">
+        assist <span id="h-sig">—</span><br>
+        hash <span id="h-hash">—</span><br>
+        input <span id="h-scheme">—</span><br>
+        sea <span id="h-sea">—</span>
+      </div>
+    </div>
+
+    <div id="viewbar">
+      <button data-cam="side">SIDE</button>
+      <button data-cam="chase">CHASE</button>
+      <button data-cam="fpv">FPV</button>
+    </div>
+
+    <div id="touchui">
+      <div id="tghost"></div>
+      <div id="tpad"><div class="nub"></div></div>
+      <div id="tthr">
+        <div class="fill"></div><div class="rev"></div><div class="zero"></div>
+        <span class="lbl">CRUISE</span><span class="pct">0</span><span class="ast">ASTERN</span>
+      </div>
+    </div>
+    <button id="tboost" type="button">PUNCH<br>IT</button>
+    <div id="tbtns">
+      <!-- Ordered by MEASURED thumb reach, not by tidiness. At 852x393 the five slots sit
+           217 / 287 / 357 / 335 / 251 px from the nearer thumb base, so the middle slot is the
+           hardest to reach and SET - the one you open between runs and never during one -
+           goes there. VIEW takes the best slot; RESET keeps the spaced end. -->
+      <button id="btn-cam">VIEW</button>
+      <button id="btn-mode">LEVELS</button>
+      <button id="btn-set">⚙<br>SET</button>
+      <button id="btn-craft">CRAFT</button>
+      <button id="btn-restart" class="danger">RESET</button>
+    </div>
+    <div id="tset">
+      <h3>CONTROLS</h3>
+      <div class="body">
+      <div class="srow"><span>throttle</span><div class="seg" data-k="throttle">
+        <button data-v="cruise">CRUISE</button><button data-v="hold">HOLD</button><button data-v="manual">MANUAL</button></div></div>
+      <div class="why">Cruise holds where you leave it — drag the right strip to change it, below the line for astern on a boat. Hold = power only while your thumb is down.</div>
+      <div class="srow"><span>fire</span><div class="seg" data-k="fire">
+        <button data-v="auto">AUTO</button><button data-v="button">BUTTON</button></div></div>
+      <div class="why">The weapon already aims itself. On AUTO it shoots whenever a longship is in the cone, and the FIRE button is a manual override — which leaves your thumb for the water cannon.</div>
+      <div class="srow"><span>tilt</span><div class="seg" data-k="tilt">
+        <button data-v="off">OFF</button><button data-v="lean">LEAN</button><button data-v="leansteer">LEAN+STEER</button></div></div>
+      <div class="why">Tip the phone to trim, and optionally to steer. Your thumb on the stick always wins, on both axes. Needs https. <b id="tset-tiltmsg"></b></div>
+      <div class="srow"><span>hand</span><div class="seg" data-k="mirror">
+        <button data-v="0">RIGHT</button><button data-v="1">LEFT</button></div></div>
+      <div class="srow"><span>buttons</span><div class="seg" data-k="size">
+        <button data-v="s">S</button><button data-v="m">M</button><button data-v="l">L</button></div></div>
+      <div class="srow"><span>camera</span><div class="camseg" data-k="camera">
+        <button data-v="full">FULL</button><button data-v="reduced">REDUCED</button><button data-v="off">OFF</button></div></div>
+      <div class="why">How much the chase camera moves: the view widening as you wind it on, the swing through a carve, the kick on a hit and the drop when you land. FULL is the arcade setting. REDUCED is about half of it. OFF holds the camera still. Your device asking for less motion picks REDUCED for you.</div>
+      <!-- WIREMUSIC 2026-09-20. Until these two rows there was NO in-page sound control at all
+           and the only way to silence the game was ?sound=0 in the address bar - a WCAG 2.1
+           SC 1.4.2 (Level A) failure, since the engine starts on the first gesture and then runs
+           continuously. Two dials and not one, because the Game Accessibility Guidelines put
+           separate mutes for effects and for music at Basic level.
+           ⚠️ class="sndseg", NOT "seg" - see the stylesheet above. -->
+      <div class="srow"><span>sound</span><div class="sndseg" data-k="sound">
+        <button data-v="on">ON</button><button data-v="off">OFF</button></div></div>
+      <div class="srow"><span>music</span><div class="sndseg" data-k="music">
+        <button data-v="full">FULL</button><button data-v="bed">BED</button><button data-v="off">OFF</button></div></div>
+      <div class="why">SOUND is all of it &mdash; engine, raid and music. MUSIC is the score on its own, so you can keep the engine and lose the music: FULL is the bed and its pulse, BED keeps the bed and drops the pulse, OFF stops it. A device asking for less motion starts on BED. Free ride has no music at any setting &mdash; there the engine is the music. On a keyboard: <b>O</b> for music, <b>Shift+O</b> for sound.</div>
+      <div class="srow"><span>opacity</span><input id="tset-op" type="range" min="35" max="100" step="5"></div>
+      </div>
+      <div class="foot">
+        <button id="btn-tilt">RE-ZERO TILT</button>
+        <button id="btn-full">FULL</button>
+        <button id="btn-set-def">DEFAULTS</button>
+        <button id="btn-set-close">DONE</button>
+      </div>
+    </div>
+    <!-- THE LEVEL PICKER (tr154). Opened by LEVELS on the cold row, or by L on a keyboard;
+         closed by choosing, or by CANCEL.
+         ⚠ 2026-09-20 "On screen at no other time" used to follow that sentence and is no
+         longer true: a bare URL now opens this sheet as the START SCREEN, before any level
+         begins, with CANCEL hidden because there is nothing behind it to go back to. See the
+         STARTPICK fence in main.js.
+         ⚠ The pirate button is asserted CHARACTER FOR CHARACTER by the shipped
+         tmp-tr136x/test-pirate.mjs, so every description is a SIBLING <span> and none of them
+         is ever nested inside a button. All SEVEN rows keep that shape, not just the one -
+         the two appended at run time included.
+         ⚠ On a short landscape phone the descriptions are hidden from the eye and kept in the
+         accessibility tree (PICKFIT fence, main.js): seven 44 px targets and seven 16 px
+         descriptions do not both fit 259 px of body. Do not "tidy" them away on that basis -
+         they are what a portrait phone and a desktop show.
+         ⚠ The EA line below is a LICENCE OBLIGATION, not a credit: the Old Harry landform
+         is Environment Agency LIDAR under the Open Government Licence. It is on the corsair
+         level's intro and game-over cards (src/raid/raid-hud.js) and now here as well, which
+         makes it reachable from anywhere in the game whether or not that level is entered. -->
+    <div id="tmode">
+      <h3>CHOOSE A LEVEL</h3>
+      <div class="body">
+      <button type="button" data-m="free">FREE RIDE</button>
+      <span class="d">Bournemouth bay, open water, nothing chasing you.</span>
+      <button type="button" data-m="rescue">RESCUE MODE</button>
+      <span class="d">Swimmers are in trouble off the beach &mdash; reach them in time.</span>
+      <button type="button" data-m="raid">VIKING RAID</button>
+      <span class="d">Longships are at the pier. Sink them before it falls.</span>
+      <button type="button" data-m="pirate">PIRATE RAID</button>
+      <span class="d">The same siege, fought against a corsair fleet.</span>
+      <button type="button" data-m="gate">THE HARBOUR MOUTH</button>
+      <span class="d">Old Harry Rocks: sink them before they cross the line. Three through and the harbour falls.</span>
+      </div>
+      <div class="load"></div>
+      <div class="foot">
+        <span class="ea">Contains Environment Agency information &copy; Environment Agency and/or database right</span>
+        <button type="button" data-m="close">CANCEL</button>
+      </div>
+    </div>
+
+    <div id="status"><span id="h-status" class="status"></span></div>
+    <div id="hint"></div>
+<div id="toast"></div>
+
+    <div id="help" class="card">
+      <table>
+        <tr><td><kbd>W</kbd>/<kbd>S</kbd></td><td>lean forward / back — nose down / up</td></tr>
+        <tr><td><kbd>A</kbd>/<kbd>D</kbd></td><td>steer</td></tr>
+        <tr><td><kbd>↑</kbd>/<kbd>↓</kbd></td><td>throttle</td></tr>
+        <tr><td><kbd>space</kbd></td><td>punch it (the pop-up)</td></tr>
+        <tr><td><kbd>C</kbd></td><td>camera: side · chase · FPV</td></tr>
+        <tr><td><kbd>L</kbd></td><td>choose a level &mdash; free ride, rescue, the two raids, the harbour mouth</td></tr>
+        <!-- >>> CRAFT -->
+        <tr><td><kbd>K</kbd></td><td>craft: eFoil · speedboat · jetski (when stopped; ?craft=)</td></tr>
+        <!-- >>> RAID -->
+        <tr><td><kbd>Shift+L</kbd></td><td>Viking raid: save the pier (?mode=raid) · hold <kbd>Z</kbd> to fire · <kbd>X</kbd> water cannon</td></tr>
+        <tr><td>&nbsp;</td><td>same siege, pirate fleet: <b>PIRATE RAID</b> on the mode sheet, or ?mode=raid&amp;raidfoe=pirate</td></tr>
+        <!-- <<< RAID -->
+        <!-- <<< CRAFT -->
+        <tr><td><kbd>,</kbd>/<kbd>.</kbd> <kbd>F</kbd></td><td>sea state · straight back to flat</td></tr>
+        <tr><td><kbd>M</kbd></td><td>mouse steering — move to lean, hold LMB for throttle</td></tr>
+        <tr><td>click</td><td>locks the mouse to the game (it can't wander off the window) · <kbd>Esc</kbd> gives it back</td></tr>
+        <tr><td>right mouse</td><td>ease the throttle off — hold it on a boat and she goes astern</td></tr>
+        <tr><td><kbd>J</kbd></td><td>camera motion: full &middot; reduced &middot; off (also <kbd>&#9881;</kbd> SET on a phone, or ?cam=)</td></tr>
+        <!-- WIREMUSIC -->
+        <tr><td><kbd>O</kbd></td><td>music: full &middot; bed &middot; off &mdash; the score, per level (also <kbd>&#9881;</kbd> SET, or ?music=)</td></tr>
+        <tr><td><kbd>Shift+O</kbd></td><td>sound on / off &mdash; all of it, engine included (also <kbd>&#9881;</kbd> SET, or ?sound=0)</td></tr>
+        <tr><td><kbd>R</kbd></td><td>restart, and print what it cost</td></tr>
+        <tr><td><kbd>[</kbd> <kbd>]</kbd> <kbd>\</kbd></td><td>record · replay · verify determinism</td></tr>
+        <tr><td><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd></td><td>assist: easy · default · expert</td></tr>
+        <tr><td><kbd>T</kbd> <kbd>G</kbd> <kbd>B</kbd> <kbd>U</kbd> <kbd>M</kbd></td><td>panel · graphs · band · ruler · mouse lean</td></tr>
+        <tr><td><kbd>V</kbd> <kbd>E</kbd> <kbd>P</kbd> <kbd>H</kbd></td><td>self-test · export run · pause · this box</td></tr>
+      </table>
+      <div class="note" style="margin-top:6px">
+        Hold the foil in the green band. Too high and it ventilates; too low and it is slow and dull.
+      </div>
+    </div>
+  </div>
+
+  <aside id="panel"></aside>
+</div>
+<pre id="testout"></pre>
+<!-- Headless diagnosis. A screenshot of a broken page is a black rectangle and
+     tells you nothing, and the Browser pane stops firing requestAnimationFrame
+     when it is not displayed, so in-page probing can be blind at exactly the
+     moment it is needed. Errors are mirrored into the TITLE, which survives
+     into `chrome --headless --dump-dom`. Costs nothing when nothing is wrong. -->
+<script>
+  window.__err = [];
+  function __trap(what) {
+    window.__err.push(what);
+    document.title = 'ERR: ' + window.__err.join(' || ').slice(0, 400);
+  }
+  addEventListener('error', (e) => __trap(
+    (e.message || 'error') + ' @ ' + (e.filename || '?').split('/').pop() + ':' + (e.lineno || '?')));
+  addEventListener('unhandledrejection', (e) => __trap('unhandled rejection: ' + (e.reason && e.reason.message || e.reason)));
+</script>
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
