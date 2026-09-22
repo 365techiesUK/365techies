@@ -31,6 +31,25 @@
  * functions, no network, so pcm-slackjobs-test.php can run them against the
  * real posts.
  *
+ * SECOND LAYOUT (22 Sep 2026, later the same day): the owner rebuilt both halves
+ * as Slack Workflow Builder forms. A form's "Send a message" step lays every
+ * answer out as a whole-line bold label with the answer beneath it, and carries
+ * no "New Job In" phrase at all (the workflow's name is the poster, not text):
+ *
+ *   *Customer name*
+ *   Joan Baker
+ *   *Email*
+ *   <mailto:j@x.com|j@x.com>
+ *   *Price £.*
+ *   60
+ *
+ * sj_lines() folds that back into "Label: value" rows, so everything below
+ * reads both layouts. A post is a job when it carries the job-in fields
+ * (issue / job type / address / postcode / contact number) and a completion
+ * when it carries the job-out ones (work carried out / time spent / date
+ * closed / invoiced). Only KNOWN labels open a block: a bold line that is a
+ * customer's name typed as a heading stays ordinary text.
+ *
  * WHAT IT READS AND WHAT IT REFUSES TO GUESS
  * Fields are taken line by line from "Label: value". Slack's own markup is
  * unwrapped (<mailto:a|a>, <tel:+44..|+44..>, *bold*, ``` fences). A price is
@@ -66,19 +85,53 @@ function sj_clean($v, $max = 200) {
    punctuation, the "(Y/N)" and "(remote / on-site / hardware)" hints). A label
    that appears twice (Customer name is in both blocks) keeps the first
    non-empty value under 'first' and the last under 'last'. */
+/* The labels that may open a block in the Workflow Builder layout: a whole line
+   that is nothing but *Label*, the answer on the line(s) beneath. Returns the
+   normalised key ("Price £." -> "price", "Invoiced? (Y/N)" -> "invoiced") or ''
+   for any other line, including a bold heading that is not a known label. */
+function sj_block_label($rawLine) {
+    $t = trim((string)$rawLine);
+    if (!preg_match('/^\*([^*]{2,60})\*$/u', $t, $m)) return '';
+    $k = strtolower(trim($m[1]));
+    $k = str_replace(array('£', ':'), '', $k);
+    $k = preg_replace('/\s*\(y\/n\)\s*/', ' ', $k);
+    $k = trim(preg_replace('/\s+/', ' ', rtrim(trim($k), ' .?')));
+    static $known = array('customer name', 'address', 'postcode', 'contact number', 'email', 'job type', 'issue',
+                          'date received', 'assigned to', 'priority', 'price', 'work carried out', 'time spent',
+                          'invoiced', 'follow-up needed', 'follow up needed', 'date closed');
+    return in_array($k, $known, true) ? $k : '';
+}
+/* The set of block labels a post carries (empty for the hand-typed layout). */
+function sj_block_labels($text) {
+    $set = array();
+    foreach (preg_split('/\r\n|\r|\n/', (string)$text) as $raw) { $k = sj_block_label($raw); if ($k !== '') $set[$k] = true; }
+    return $set;
+}
+function sj_lines_put(&$out, $label, $val) {
+    if (!isset($out[$label])) $out[$label] = array('first' => $val, 'last' => $val, 'all' => array($val));
+    else { if ($out[$label]['first'] === '' && $val !== '') $out[$label]['first'] = $val; $out[$label]['last'] = $val; $out[$label]['all'][] = $val; }
+}
 function sj_lines($text) {
     $out = array();
-    foreach (preg_split('/\r\n|\r|\n/', (string)$text) as $ln) {
-        $ln = sj_clean($ln, 400);
+    /* Pass 1: fold the block layout into rows. A known whole-line bold label opens a
+       block; every line up to the next one is its value (a long answer may span
+       lines and contain colons). Lines outside any block are hand-typed rows. */
+    $rows = array(); $cur = ''; $buf = array();
+    foreach (preg_split('/\r\n|\r|\n/', (string)$text) as $raw) {
+        $k = sj_block_label($raw);
+        if ($k !== '') { if ($cur !== '') $rows[] = array($cur, implode(' ', $buf)); $cur = $k; $buf = array(); continue; }
+        if ($cur !== '') { $buf[] = $raw; continue; }
+        $rows[] = array('', $raw);
+    }
+    if ($cur !== '') $rows[] = array($cur, implode(' ', $buf));
+    /* Pass 2: "Label: value". */
+    foreach ($rows as $r) {
+        if ($r[0] !== '') { sj_lines_put($out, $r[0], sj_clean($r[1], 400)); continue; }
+        $ln = sj_clean($r[1], 400);
         if ($ln === '') continue;
         /* The template's "Invoiced? (Y/N) N" line has no colon at all, so it gets its
            own rule: whatever follows the hint is the value. */
-        if (preg_match('/^invoiced\??\s*(?:\(y\/n\))?\s*:?\s*(.*)$/i', $ln, $mi)) {
-            $val = trim($mi[1]);
-            if (!isset($out['invoiced'])) $out['invoiced'] = array('first' => $val, 'last' => $val, 'all' => array($val));
-            else { if ($out['invoiced']['first'] === '' && $val !== '') $out['invoiced']['first'] = $val; $out['invoiced']['last'] = $val; $out['invoiced']['all'][] = $val; }
-            continue;
-        }
+        if (preg_match('/^invoiced\??\s*(?:\(y\/n\))?\s*:?\s*(.*)$/i', $ln, $mi)) { sj_lines_put($out, 'invoiced', trim($mi[1])); continue; }
         if (strpos($ln, ':') === false) continue;
         if (!preg_match('/^([A-Za-z][A-Za-z &\/?()-]{1,40}?)\s*:\s*(.*)$/', $ln, $m)) continue;
         $label = strtolower(trim(preg_replace('/\s+/', ' ', $m[1])));
@@ -87,8 +140,7 @@ function sj_lines($text) {
         $val = trim($m[2]);
         // "Invoiced? (Y/N) N" carries the hint after the colon-less label; catch the value after it
         if (preg_match('/^\(y\/n\)\s*(.*)$/i', $val, $mm)) $val = trim($mm[1]);
-        if (!isset($out[$label])) $out[$label] = array('first' => $val, 'last' => $val, 'all' => array($val));
-        else { if ($out[$label]['first'] === '' && $val !== '') $out[$label]['first'] = $val; $out[$label]['last'] = $val; $out[$label]['all'][] = $val; }
+        sj_lines_put($out, $label, $val);
     }
     return $out;
 }
@@ -132,6 +184,21 @@ function sj_price($text) {
     return 0.0;
 }
 
+/* The workflow form's own price box ("Price £." -> "60", "£60", "60.00", "30/00").
+   Blank, words or 0 = no price; the person types one in the portal. */
+function sj_price_field($raw) {
+    $s = str_replace(array('£', ',', ' '), '', sj_clean($raw, 40));
+    if ($s === '' || !preg_match('/^\d+(?:[.\/]\d{1,2})?$/', $s)) return 0.0;
+    $v = round((float)str_replace('/', '.', $s), 2);
+    return ($v > 0 && $v <= 100000) ? $v : 0.0;
+}
+/* A drop-down answer ("remote", "High") -> the option, lower-case; anything else ''. */
+function sj_pick($val, $options) {
+    $v = trim((string)$val);
+    foreach ($options as $o) if (strcasecmp($v, $o) === 0) return strtolower($o);
+    return '';
+}
+
 /* "Invoiced? (Y/N) 4905/799" -> array(kind, value): none | yes | number */
 function sj_invoiced($raw) {
     $s = trim((string)$raw);
@@ -154,16 +221,29 @@ function sj_phone($raw) {
     return preg_match('/^0\d{9,10}$/', $s) ? $s : '';
 }
 
-/* Is this Slack message a job post at all? */
-function sj_is_job($text) { return stripos((string)$text, SJ_MARK) !== false && stripos((string)$text, 'customer name') !== false; }
+/* Is this Slack message a job post at all? Hand-typed: the "New Job In" phrase plus a
+   customer name. Workflow layout: a customer-name block plus at least one job-in
+   field and none of the job-out ones. */
+function sj_is_job($text) {
+    $t = (string)$text;
+    if (stripos($t, SJ_MARK) !== false && stripos($t, 'customer name') !== false) return true;
+    $B = sj_block_labels($t);
+    if (!isset($B['customer name'])) return false;
+    $in   = isset($B['issue']) || isset($B['job type']) || isset($B['address']) || isset($B['postcode']) || isset($B['contact number']);
+    $done = isset($B['work carried out']) || isset($B['date closed']) || isset($B['time spent']);
+    return $in && !$done;
+}
 
 /* A stand-alone "Job Out / Completed" post - what a Workflow Builder "Job done" form
    produces, since a workflow cannot edit the original post. It names the customer
    and carries the work, time, price and Invoiced? fields; the poller merges it into
-   the matching job. Never both: a post that has "New Job In" is a job. */
+   the matching job. Never both: a post that is a job is not a completion. */
 function sj_is_out($text) {
     $t = (string)$text;
-    return !sj_is_job($t) && stripos($t, 'job out') !== false && stripos($t, 'customer name') !== false;
+    if (sj_is_job($t)) return false;
+    if (stripos($t, 'job out') !== false && stripos($t, 'customer name') !== false) return true;
+    $B = sj_block_labels($t);
+    return isset($B['customer name']) && (isset($B['work carried out']) || isset($B['date closed']) || isset($B['time spent']) || isset($B['invoiced']));
 }
 /* Names as typed on two different days: "charlotte Jeffery" / "Mrs Charlotte Jeffery"
    / "Charlotte  Jeffery (Henrietta)". Letters only, lower-case, titles and brackets
@@ -181,15 +261,22 @@ function sj_parse($text) {
     $name = sj_get($L, 'customer name');
     if ($name === '' || strcasecmp($name, 'as above') === 0) $name = sj_get($L, 'customer name', 'last');
     $addr = trim(sj_get($L, 'address') . ' ' . sj_get($L, 'postcode'));
-    $type = sj_bold_choice($text, 'Job type', array('remote', 'on-site', 'hardware'));
+    $TYPES = array('remote', 'on-site', 'hardware');
+    $type = sj_bold_choice($text, 'Job type', $TYPES);
+    if ($type === '') $type = sj_pick(sj_get($L, 'job type'), $TYPES);          // a drop-down answer on its own line
     $typeTail = trim(preg_replace('/\([^)]*\)/', '', sj_get($L, 'job type')));
+    if ($type !== '' && strcasecmp($typeTail, $type) === 0) $typeTail = '';      // the answer IS the type, not a tail
     $issue = sj_get($L, 'issue');
     $work = sj_get($L, 'work carried out');
     if (strcasecmp($work, 'steve') === 0 || strcasecmp($work, 'david') === 0) $work = '';   // a name in the work box is who did it, not what
     list($invKind, $invVal) = sj_invoiced(sj_get($L, 'invoiced'));
     $closed = sj_get($L, 'date closed');
     $time = sj_get($L, 'time spent');
-    $priority = sj_bold_choice($text, 'Priority', array('Low', 'Medium', 'High'));
+    $PRIOS = array('Low', 'Medium', 'High');
+    $priority = sj_bold_choice($text, 'Priority', $PRIOS);
+    if ($priority === '') $priority = sj_pick(sj_get($L, 'priority'), $PRIOS);
+    // the form's own price box first (explicit, typed by a person); else the first £ in the text
+    $priceField = sj_price_field(sj_get($L, 'price'));
     // the invoice line: what was done, else what was asked for, else the type
     $desc = $work !== '' ? $work : ($issue !== '' ? $issue : trim($type . ($typeTail !== '' ? ' - ' . $typeTail : '')));
     return array(
@@ -198,7 +285,7 @@ function sj_parse($text) {
         'issue' => sj_clean($issue, 200), 'work' => sj_clean($work, 300), 'time' => sj_clean($time, 40),
         'assigned' => sj_clean(sj_get($L, 'assigned to'), 40), 'priority' => $priority,
         'invoiced' => $invKind, 'invoice_doc' => ($invKind === 'number' ? $invVal : ''),
-        'closed' => sj_clean($closed, 40), 'price' => sj_price($text),
+        'closed' => sj_clean($closed, 40), 'price' => ($priceField > 0 ? $priceField : sj_price($text)),
         'desc' => sj_clean($desc, 200),
         'done' => ($work !== '' || $closed !== '' || $time !== ''),
     );
@@ -214,12 +301,14 @@ function sj_job($msg, $channel, $now = null) {
     $p = sj_parse($text);
     $ts = (string)(isset($msg['ts']) ? $msg['ts'] : '');
     if ($ts === '' || $p['name'] === '') return null;
+    $kind = $p['type'] !== '' ? $p['type'] . ($p['type_tail'] !== '' ? ' - ' . $p['type_tail'] : '') : $p['type_tail'];
+    $note = implode(' · ', array_filter(array($kind, $p['time'], $p['assigned']), 'strlen'));
     return array(
         'id' => sj_job_id($ts), 'ts' => (int)floor((float)$ts), 'by' => 'Slack', 'via' => 'slack',
         'slack' => array('channel' => (string)$channel, 'ts' => $ts, 'replies' => (int)(isset($msg['reply_count']) ? $msg['reply_count'] : 0),
                          'seen' => ($now === null ? time() : $now)),
         'name' => $p['name'], 'email' => $p['email'], 'phone' => $p['phone'], 'addr' => $p['addr'],
-        'desc' => $p['desc'], 'note' => trim($p['type'] . ($p['type_tail'] !== '' ? ' - ' . $p['type_tail'] : '') . ($p['time'] !== '' ? ' · ' . $p['time'] : '') . ($p['assigned'] !== '' ? ' · ' . $p['assigned'] : '')),
+        'desc' => $p['desc'], 'note' => $note,
         'amount' => $p['price'], 'amount_by' => ($p['price'] > 0 ? 'slack' : ''),
         'invoice_no' => '', 'invoice_url' => '', 'invoice_doc' => $p['invoice_doc'], 'invoiced_in_slack' => ($p['invoiced'] === 'yes'),
         'status' => ($p['done'] ? 'done' : 'quoted'),

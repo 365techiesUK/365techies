@@ -86,6 +86,32 @@ ok($o['work'] === 'Full service, malware removed, Windows updated' && $o['price'
 ok(sj_name_key('Mrs Charlotte Jeffery') === sj_name_key('charlotte Jeffery') && sj_name_key('Mary Freeman-Owen (Henrietta)') === sj_name_key('Mary Freeman Owen'), 'names match across titles, case, hyphens and brackets');
 ok(sj_name_key('Gordon Snook') !== sj_name_key('Gordon Snooks'), 'but a different name is different');
 
+echo "-- the Workflow Builder layout (bold label, answer beneath, no 'New Job In' phrase)\n";
+// the first real post from the published "New job in" workflow, 22 Sep 2026 14:05, verbatim (note the space before *Issue*)
+$WF_TEST = "*Customer name*\ntest\n*Address*\ntest\n*Postcode*\ntest\n*Contact number*\ntest\n*Email*\n<mailto:test@gmail.com|test@gmail.com>\n*Job type*\ntest\n *Issue*\ntest\n*Assigned to*\nsteve\n*Priority*\ntest\n*Price £.*\n0";
+$WF_JOAN = "*Customer name*\nJoan Baker\n*Address*\n12 Sea Road\n*Postcode*\nBH5 1AA\n*Contact number*\n07700 900123\n*Email*\n<mailto:joan.baker@example.com|joan.baker@example.com>\n*Job type*\nremote\n*Issue*\nOutlook will not open.\nSays profile corrupt: needs a rebuild\n*Assigned to*\nDavid\n*Priority*\nHigh\n*Price £.*\n60";
+$WF_DONE = "*Customer name*\nJoan Baker\n*Email*\n<mailto:joan.baker@example.com|joan.baker@example.com>\n*Work carried out*\nRebuilt the Outlook profile, mail flowing again\n*Time spent*\n45 min\n*Price £.*\n£60\n*Invoiced?*\nN\n*Date closed*\n22/09/2026";
+$BOLD_HEAD = "*Gordon Snook*\n📥 New Job In\nCustomer name: Gordon Snook\nContact number: 07517 878204\nEmail: snookg003@gmail.com\nIssue: VPN advice";
+ok(sj_is_job($WF_TEST) && !sj_is_out($WF_TEST), 'the workflow post is a job even without the phrase');
+$w = sj_parse($WF_TEST);
+ok($w['name'] === 'test' && $w['email'] === 'test@gmail.com' && $w['phone'] === '' && $w['addr'] === 'test test', 'fields read from the block layout; "test" is not a phone', json_encode(array($w['name'], $w['email'], $w['phone'], $w['addr'])));
+ok($w['desc'] === 'test' && $w['price'] === 0.0 && $w['assigned'] === 'steve' && $w['type'] === '' && $w['priority'] === '' && $w['done'] === false, 'issue -> description, a 0 in the price box is no price, "test" is no type or priority', json_encode(array($w['desc'], $w['price'], $w['assigned'], $w['type'], $w['priority'])));
+$wj = sj_job(array('ts' => '1790082345.241299', 'text' => $WF_TEST), 'C0C3VGP1SJC', 1790082400);
+ok($wj !== null && $wj['status'] === 'quoted' && $wj['amount'] === 0.0 && $wj['note'] === 'test · steve', 'a job record, waiting for a price', json_encode($wj ? array($wj['status'], $wj['amount'], $wj['note']) : null));
+$jb = sj_parse($WF_JOAN);
+ok($jb['phone'] === '07700900123' && $jb['addr'] === '12 Sea Road BH5 1AA' && $jb['email'] === 'joan.baker@example.com', 'phone, address + postcode, unwrapped email', json_encode(array($jb['phone'], $jb['addr'], $jb['email'])));
+ok($jb['type'] === 'remote' && $jb['type_tail'] === '' && $jb['priority'] === 'high', 'drop-down answers are the type and priority', json_encode(array($jb['type'], $jb['type_tail'], $jb['priority'])));
+ok($jb['desc'] === 'Outlook will not open. Says profile corrupt: needs a rebuild' && $jb['price'] === 60.0 && $jb['done'] === false, 'a two-line issue with a colon inside stays one answer; the price box is the price', json_encode(array($jb['desc'], $jb['price'])));
+ok(sj_job(array('ts' => '1790082400.1', 'text' => $WF_JOAN), 'C0C3VGP1SJC', 1790082500)['note'] === 'remote · David', 'note reads "remote · David"');
+ok(sj_is_out($WF_DONE) && !sj_is_job($WF_DONE), 'a "Job done" form post is a completion');
+$jd = sj_parse($WF_DONE);
+ok($jd['work'] === 'Rebuilt the Outlook profile, mail flowing again' && $jd['time'] === '45 min' && $jd['price'] === 60.0 && $jd['closed'] === '22/09/2026' && $jd['invoiced'] === 'none' && $jd['done'] === true, 'work, time, £60 in the box, date closed, N = not invoiced', json_encode(array($jd['work'], $jd['time'], $jd['price'], $jd['closed'], $jd['invoiced'])));
+ok(sj_name_key($jd['name']) === sj_name_key($jb['name']), 'and it matches its job by name');
+ok(sj_is_job($BOLD_HEAD) && sj_parse($BOLD_HEAD)['name'] === 'Gordon Snook' && sj_parse($BOLD_HEAD)['email'] === 'snookg003@gmail.com', 'a bold NAME heading in a hand-typed post opens no block', json_encode(sj_parse($BOLD_HEAD)['name']));
+ok(sj_price_field('60') === 60.0 && sj_price_field('£60.00') === 60.0 && sj_price_field('30/00') === 30.0 && sj_price_field('1,250') === 1250.0, 'the price box: plain, £, pence, slash-pence, thousands');
+ok(sj_price_field('0') === 0.0 && sj_price_field('') === 0.0 && sj_price_field('sixty') === 0.0 && sj_price_field('tbc') === 0.0, 'zero, blank or words in the price box = no price');
+ok(sj_block_label('*Price £.*') === 'price' && sj_block_label('*Invoiced? (Y/N)*') === 'invoiced' && sj_block_label(' *Issue*') === 'issue' && sj_block_label('*Joan Baker*') === '' && sj_block_label('Customer name: x') === '', 'block labels normalise; unknown bold lines are not labels');
+
 echo "-- the poller and the cron, at source level\n";
 $SW = (string)file_get_contents(__DIR__ . '/pcm-slackjobs-sweep.php');
 ok(strpos($SW, '?' . '>') === false, 'no closing tag');
