@@ -1,0 +1,40 @@
+# /efoil-game/ — cache policy for an UNLISTED TEST BUILD, 22 Sep 2026
+#
+# THE PROBLEM THIS SOLVES, measured on the live server before it was written:
+#
+#   /efoil-game/                     Cache-Control: no-cache          (revalidates, fine)
+#   /efoil-game/src/main.js          Cache-Control: max-age=31536000, immutable
+#   /efoil-game/assets/foam.png      Cache-Control: max-age=31536000, immutable
+#
+# The PAGE revalidates but the 109 ES modules it imports do not. `immutable`
+# tells the browser not even to ask. So a phone that loads this game once keeps
+# that exact copy for a YEAR, and every update pushed after it would be
+# invisible to the one device we most need to test on.
+#
+# The usual fix — a ?v= on the URL — does not work here, because ES modules
+# import each other by bare relative path inside the source. Versioning the
+# entry point busts main.js and nothing else; every one of its imports would
+# need rewriting, which needs a build step this game deliberately does not have
+# (zero dependencies, no bundler, 109 plain modules).
+#
+# So while this is a TEST BUILD that changes often, correctness beats speed:
+# revalidate everything. The cost is a conditional request per module on a
+# repeat visit; they come back 304 and near-instantly.
+#
+# ⚠️ REVERSE THIS BEFORE ANY REAL LAUNCH. When the game is bundled and its
+# filenames carry a content hash, the year-long immutable cache is exactly what
+# you want and this file should be deleted. Leaving it in place on a launched
+# build would throw away the best caching the platform gives you.
+#
+# ⚠️ IT MAY NOT WORK. This project has already been bitten once by SiteGround
+# answering from a platform handler ABOVE .htaccess — see the robots.txt note in
+# the site root, where a Crawl-delay is injected no matter what the file says,
+# and the portal's freshness beacon, where un-versioned files stuck in the proxy
+# and only a NEW URL rescued them. If the header below does not appear on a live
+# request, the proxy is overriding it and the fallback is to version the FOLDER
+# (/efoil-game-2/) on each update. Measure it; do not assume it took.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|png|webmanifest|html)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>
