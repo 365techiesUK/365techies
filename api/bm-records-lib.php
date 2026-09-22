@@ -103,17 +103,19 @@ function bmr_verdict($day, $value, $mode, $ctx) {
 function bmr_caption($ctx, $day, $value, $mode, $line, $tier = '') {
     $what = $mode === 'fc' ? 'forecast high today' : 'the high today';
     $prefix = (strpos($line, $ctx['date']) === false) ? 'Bournemouth, ' . $ctx['date'] . ': ' : 'Bournemouth: ';
-    $rec = in_array($tier, array('record', 'record_cold', 'near'), true) ? '' : ' Record ' . bmr_deg((float)$day['hi'][0]) . ' (' . (int)$day['hi'][1] . ').';
-    return $prefix . bmr_deg($value) . ' ' . $what . '. ' . $line . ' Average for the date ' . bmr_deg((float)$day['avg_hi']) . '.' . $rec
+    // ONE year per caption (owner, 23 Sep): the verdict's own year is the only one; no record tail
+    return $prefix . bmr_deg($value) . ' ' . $what . '. ' . $line . ' Average for the date ' . bmr_deg((float)$day['avg_hi']) . '.'
         . ' Records: Met Office, ' . $ctx['station'] . ', since ' . (int)$ctx['from'] . '.';
 }
 
-/* Tomorrow in one sentence, the date named once (by the verdict) and the record
-   added only when the verdict did not already give it. */
-function bmr_tomorrow_line($fcHi, $verdict, $day) {
-    $l = lcfirst((string)$verdict['line']);      // every verdict starts with an ASCII word or a digit
-    $rec = in_array($verdict['tier'], array('record', 'record_cold', 'near'), true) ? '' : ' Record ' . bmr_deg((float)$day['hi'][0]) . ' (' . (int)$day['hi'][1] . ').';
-    return 'Tomorrow: forecast high ' . bmr_deg($fcHi) . ', ' . rtrim($l, '.') . '.' . $rec;
+/* Tomorrow in one sentence with ONE year in it: the forecast against the date's
+   record, and nothing else (owner, 23 Sep 2026: "why two dates?"). */
+function bmr_tomorrow_line($date, $fcHi, $day) {
+    $hi = (float)$day['hi'][0]; $hiY = (int)$day['hi'][1];
+    $head = 'Tomorrow: forecast high ' . bmr_deg($fcHi);
+    if ($fcHi >= $hi + 0.05) return $head . ', which would beat the ' . $date . ' record of ' . bmr_deg($hi) . ' (' . $hiY . ').';
+    if ($fcHi >= $hi - 1.0)  return $head . ', within ' . bmr_deg(round($hi - $fcHi, 1)) . ' of the ' . $date . ' record, ' . bmr_deg($hi) . ' (' . $hiY . ').';
+    return $head . '. The ' . $date . ' record is ' . bmr_deg($hi) . ' (' . $hiY . ').';
 }
 
 /* The measured maximum so far on the given local date, from the METAR series
@@ -177,7 +179,7 @@ function bm_records_public($now = null) {
         if ($fcTom !== null) {
             $v2 = bmr_verdict($d2, $fcTom, 'fc', array_merge($ctx, array('date' => $date2)));
             $tom['verdict'] = $v2;
-            $tom['line'] = bmr_tomorrow_line($fcTom, $v2, $d2);
+            $tom['line'] = bmr_tomorrow_line($date2, $fcTom, $d2);
         }
         $out['tomorrow'] = $tom;
     }

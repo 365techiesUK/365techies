@@ -50,18 +50,21 @@ ok(bmr_verdict($day, 26.0, 'fc', $ctx)['line'] === "Forecast to come within 0.4\
 
 echo "-- the caption\n";
 $c = bmr_caption($ctx, $day, 23.0, 'obs', 'The warmest 22 September since 2010.', 'warmest_since');
-ok($c === "Bournemouth: 23\xC2\xB0C the high today. The warmest 22 September since 2010. Average for the date 18.5\xC2\xB0C. Record 26.4\xC2\xB0C (1985). Records: Met Office, Bournemouth Airport (Hurn), since 1957.", 'the date once (the verdict has it), the record once, the source named', $c);
+ok($c === "Bournemouth: 23\xC2\xB0C the high today. The warmest 22 September since 2010. Average for the date 18.5\xC2\xB0C. Records: Met Office, Bournemouth Airport (Hurn), since 1957.", 'the date once (the verdict has it), ONE year in the whole caption, the source named', $c);
 $c2 = bmr_caption($ctx, $day, 25.6, 'fc', "Forecast to come within 0.8\xC2\xB0C of the 22 September record, 26.4\xC2\xB0C in 1985.", 'near');
 ok($c2 === "Bournemouth: 25.6\xC2\xB0C forecast high today. Forecast to come within 0.8\xC2\xB0C of the 22 September record, 26.4\xC2\xB0C in 1985. Average for the date 18.5\xC2\xB0C. Records: Met Office, Bournemouth Airport (Hurn), since 1957.", 'when the verdict already gives the record it is not repeated; a forecast says forecast', $c2);
 $c3 = bmr_caption($ctx, $day, 18.8, 'obs', 'About average for the date.', 'normal');
-ok(strpos($c3, 'Bournemouth, 22 September: ') === 0 && strpos($c3, "Record 26.4\xC2\xB0C (1985)") !== false, 'when the verdict names no date, the prefix supplies it', $c3);
+ok(strpos($c3, 'Bournemouth, 22 September: ') === 0 && strpos($c3, 'Record ') === false && substr_count($c3, '19') + substr_count($c3, '20') === 1, 'when the verdict names no date, the prefix supplies it; still no second year (only "since 1957")', $c3);
 ok(strlen($c) < 280 && strlen($c2) < 280, 'short enough for a post');
 echo "-- tomorrow, in one sentence\n";
-$tl = bmr_tomorrow_line(19.9, array('tier' => 'warmest_since', 'line' => 'On course for the warmest 24 September since 2021.'), array('hi' => array(24.9, 1983)));
-ok($tl === "Tomorrow: forecast high 19.9\xC2\xB0C, on course for the warmest 24 September since 2021. Record 24.9\xC2\xB0C (1983).", 'the date named once, by the verdict', $tl);
-$tl2 = bmr_tomorrow_line(24.5, array('tier' => 'near', 'line' => "Forecast to come within 0.4\xC2\xB0C of the 24 September record, 24.9\xC2\xB0C in 1983."), array('hi' => array(24.9, 1983)));
-ok($tl2 === "Tomorrow: forecast high 24.5\xC2\xB0C, forecast to come within 0.4\xC2\xB0C of the 24 September record, 24.9\xC2\xB0C in 1983.", 'a verdict that already gives the record gets no second record', $tl2);
-ok(bmr_tomorrow_line(18.0, array('tier' => 'normal', 'line' => 'About average for the date.'), array('hi' => array(24.9, 1983))) === "Tomorrow: forecast high 18\xC2\xB0C, about average for the date. Record 24.9\xC2\xB0C (1983).", 'and the plain case');
+$d24 = array('hi' => array(24.9, 1983));
+$tl = bmr_tomorrow_line('24 September', 19.9, $d24);
+ok($tl === "Tomorrow: forecast high 19.9\xC2\xB0C. The 24 September record is 24.9\xC2\xB0C (1983).", 'the forecast against the record and nothing else: one date, one year', $tl);
+$tl2 = bmr_tomorrow_line('24 September', 24.5, $d24);
+ok($tl2 === "Tomorrow: forecast high 24.5\xC2\xB0C, within 0.4\xC2\xB0C of the 24 September record, 24.9\xC2\xB0C (1983).", 'within a degree of the record', $tl2);
+$tl3 = bmr_tomorrow_line('24 September', 25.2, $d24);
+ok($tl3 === "Tomorrow: forecast high 25.2\xC2\xB0C, which would beat the 24 September record of 24.9\xC2\xB0C (1983).", 'a forecast above the record says "would beat", never "will"', $tl3);
+ok(bmr_tomorrow_line('24 September', 24.9, $d24) === "Tomorrow: forecast high 24.9\xC2\xB0C, within 0\xC2\xB0C of the 24 September record, 24.9\xC2\xB0C (1983).", 'equalling the record is not beating it');
 
 echo "-- degrees and dates\n";
 ok(bmr_deg(23.0) === "23\xC2\xB0C" && bmr_deg(22.5) === "22.5\xC2\xB0C" && bmr_deg(-1.0) === "-1\xC2\xB0C", 'whole degrees without .0, halves kept');
