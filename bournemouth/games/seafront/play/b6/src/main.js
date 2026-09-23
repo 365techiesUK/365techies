@@ -67,6 +67,13 @@ import { Score, resolveMusicMode, storeMusicMode, MUSIC_MODES } from './audio/sc
 // level names - see musicNow() below.
 import { LEVELS as WM_LEVELS } from './ui/levels.js';
 // <<< WIREMUSIC
+// >>> PAUSEMENU
+// THE PAUSE MENU (tmp-tr199). src/ui/pausemenu.js carries the whole of it - the overlay, the
+// one list of sheets that need a cursor, and the reason each of those exists, measured rather
+// than reasoned. Importing it builds no DOM: the constructor returns before its first node
+// when main.js hands it no mount, which is what happens on a calibration address.
+import { PauseMenu, otherSheetOpen } from './ui/pausemenu.js';
+// <<< PAUSEMENU
 
 const $ = (s) => document.querySelector(s);
 
@@ -1645,6 +1652,93 @@ const startPick = {
 }
 // <<< STARTPICK
 
+// >>> PAUSEMENU
+// ---------------------------------------------------------------------------
+// A PAUSE MENU YOU CAN ACTUALLY PRESS (tmp-tr199, 23 Sep 2026)
+//
+// The owner, on the live site: "it's a bit weird in the game if you press escape... because
+// otherwise you can't select the menu if you've paused the game", and "when you finish the
+// level or fail the level it's difficult to select the different buttons".
+//
+// src/ui/pausemenu.js carries the evidence and the reasoning; the short version is that both
+// complaints are POINTER LOCK. Measured through a real browser's input pipeline: the FIRST
+// Escape is eaten by Chrome to release the lock and this file's keydown handler never runs
+// (0 Escapes seen, #h-status still empty), and while the lock IS held a real click on the
+// exact centre of a summary card's CHOOSE LEVEL button lands on the canvas instead. So:
+//
+//   * the trigger is the LOCK GOING AWAY, not the key - that is the event the page can
+//     actually observe when Chrome swallows the press;
+//   * the key stays exactly as it was, for the player who never clicked the water and whose
+//     Escape therefore arrives normally. The two can never both fire for one press, because
+//     Chrome delivers the key only when there is no lock to release;
+//   * and a sheet with buttons in it gets the mouse back, which is what the summary cards
+//     needed and what this menu needed too.
+//
+// It is placed here, below STARTPICK, because it is the fourth thing to be interested in the
+// level picker and it reads best after the three that came before it. Nothing above is
+// touched or reordered.
+// ---------------------------------------------------------------------------
+// Module scope, because frame() calls sync() on it once per rendered frame. Assigned inside
+// the block below so the block can keep its own working variables to itself.
+let pauseMenu = null;
+{
+  // Gate 1 of 3 (the other two are in pausemenu.js): on a calibration or clean address the
+  // overlay is NOT BUILT - no node, no stylesheet, no listener - exactly as juice.js is not.
+  const pmQ = new URLSearchParams(location.search);
+  const pmQuiet = pmQ.has('cal') || pmQ.get('clean') === '1';
+
+  pauseMenu = new PauseMenu({
+    mount: pmQuiet ? null : ($('#left') || $('#stagewrap') || document.body),
+
+    // RESUME is the ONLY line in this fence that writes `paused`, and it writes the same
+    // module variable Escape and P have always written. Everything else goes down a route
+    // that already exists and already unpauses itself.
+    onResume: () => { paused = false; },
+
+    // ⚠️ restart() carries its own UNPAUSE fence, so this must NOT set `paused` as well - a
+    // second copy of that rule is a second place for it to go stale. This is the R key and
+    // the touch row's RESET, which reset the sim and the craft; it is not a raid's PLAY
+    // AGAIN, which is the summary card's own button and belongs to the level, not to here.
+    onRestart: () => restart(),
+
+    // The ONE picker. #btn-mode is the handle the picker publishes and the same handle the
+    // summary cards' CHOOSE LEVEL buttons press (see the LEVELBACK fences in raid-hud.js and
+    // its two siblings), so there is no second list anywhere and levels.js stays the one
+    // table. Opening it does NOT unpause, deliberately: the picker's own UNPAUSE fence says
+    // choosing a level is "play this now" and CANCEL is not, and sync() brings this card back
+    // the moment a cancelled sheet closes over a game that is still paused.
+    onLevels: () => { const b = $('#btn-mode'); if (b && !$('#tmode').classList.contains('on')) b.click(); },
+
+    // FREE RIDE presses the picker's own row rather than reimplementing it, so the ONE
+    // handler above does the unpausing, the leaving of whatever mode is running, the toast
+    // and - on the Old Harry arena, where free ride is a page away - the navigation. A
+    // display:none button still takes a programmatic click; main.js already relies on that
+    // for #rq-door and LEVELBACK relies on it for #btn-mode.
+    onFree: () => { const f = $('#tmode .body button[data-m="free"]'); if (f) f.click(); },
+  });
+
+  if (!pmQuiet) {
+    // THE TRIGGER. Three refusals, each of them a measured way this can fire when it should
+    // not (tmp-tr199/probe-loss.mjs, run on the untouched tree):
+    //   1. ACQUIRING the lock fires this same event - `plc` went 0 -> 1 on the first click.
+    //   2. Our own exitPointerLock() is INDISTINGUISHABLE from an Escape in the event, so the
+    //      only honest way to tell them apart is to remember that we did it. pauseMenu.mine().
+    //   3. If a sheet with buttons is already up, the player is not playing and has real
+    //      buttons in front of them already; releasing the lock for that sheet must not also
+    //      pause a level that has just ended.
+    // Measured NOT to fire it: C through all three cameras, and T / G / H / R / L.
+    // Reasoned, not measured: a real alt-tab releases the lock and so pauses the game, which
+    // is what a pause menu should do.
+    document.addEventListener('pointerlockchange', () => {
+      if (document.pointerLockElement) return;
+      if (pauseMenu.mine() || otherSheetOpen() || paused) return;
+      paused = true;
+      toast('paused');
+    });
+  }
+}
+// <<< PAUSEMENU
+
 // >>> PICKFIT
 // ---------------------------------------------------------------------------
 // THE PICKER HAS TO FIT, BECAUSE IT IS NOW THE FIRST THING A PLAYER SEES (2026-09-20)
@@ -1930,6 +2024,16 @@ function frame(nowMs) {
     }
   }
   // <<< PAD
+
+  // >>> PAUSEMENU
+  // ONCE PER RENDERED FRAME, above the sim block on purpose: this is view state, it never
+  // writes sim input, and it must keep working while `paused` holds the block below shut -
+  // which is the whole point of it. It is edge-triggered inside sync(), so a running game
+  // costs one boolean and one querySelector, and it touches the DOM only when what it wants
+  // differs from what is there. Under ?cal= / ?clean=1 pauseMenu was built with no mount and
+  // every method returns at its first line.
+  pauseMenu.sync(paused);
+  // <<< PAUSEMENU
 
   // ?hold=1 stops the physics so successive calibration renders are identical,
   // while the draw below keeps running (a frozen loop screenshots as an empty

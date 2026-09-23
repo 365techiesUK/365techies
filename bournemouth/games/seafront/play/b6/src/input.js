@@ -305,7 +305,34 @@ export class InputHub {
       // the compatibility mousedown a tap produces.
       const fromTouch = (e.sourceCapabilities && e.sourceCapabilities.firesTouchEvents)
         || (matchMedia('(pointer: coarse)').matches && !matchMedia('(pointer: fine)').matches);
-      if (!fromTouch && !this.locked && !window.__calCam && !document.body.classList.contains('clean-render')) {
+      // >>> PAUSEMENU
+      // ...AND NOT WHILE A SHEET WITH BUTTONS IS ON SCREEN (tmp-tr199).
+      //
+      // Measured, through a real browser's own input pipeline rather than a synthetic
+      // event: while the lock is held, a real click on the EXACT CENTRE of a summary
+      // card's CHOOSE LEVEL button lands on `view` and the button cannot be pressed at
+      // all. There is no cursor and every mouse event goes to the locked element. So the
+      // owner's "it's difficult to select the different buttons" is not difficulty, it is
+      // impossibility, and it is the same defect as the swallowed Escape.
+      //
+      // main.js hands the mouse back when such a sheet appears. This term is the other
+      // half: without it the next click that MISSES the card would take the lock straight
+      // back and the cursor would vanish again between one button and the next.
+      //
+      // A BODY CLASS, NOT AN IMPORT, and that is deliberate rather than lazy: this file
+      // has never imported anything and is the better for it, and the same line already
+      // asks document.body for `clean-render`, so this is the identical question asked
+      // the identical way. src/ui/pausemenu.js sets the class and owns the ONE list of
+      // which sheets need a cursor; there is no second copy of that list here.
+      //
+      // ⚠️ THIS FILE IS CRLF. Verified by byte count before and after - never with
+      // `grep -c $'\r$'`, which lies on this project (CONTRACT-round5 §1).
+      // <<< PAUSEMENU
+      if (!fromTouch && !this.locked && !window.__calCam && !document.body.classList.contains('clean-render')
+      // >>> PAUSEMENU
+          && !document.body.classList.contains('pm-sheet')
+      // <<< PAUSEMENU
+      ) {
         const r = c.getBoundingClientRect();
         this.lockX = clamp(((e.clientX - r.left) / r.width) * 2 - 1, -1, 1);
         this.lockY = clamp(((e.clientY - r.top) / r.height) * 2 - 1, -1, 1);
