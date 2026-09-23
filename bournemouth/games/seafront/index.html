@@ -9,6 +9,26 @@
 <meta name="robots" content="noindex,nofollow">
 <title>Seafront — a Bournemouth game</title>
 <meta name="description" content="A free browser game set on the real Bournemouth seafront. Ride a jet ski past the pier, save the pier from a Viking raid, run the Dorset smuggling coast, or bring a boatload of people home.">
+<!-- >>> INSTALL
+     The manifest makes this page installable; scope "./" covers the page AND play/, which is
+     what lets the button live HERE while the installed app opens straight into the game.
+     A page outside its manifest's scope cannot be installed, which is why there are two
+     manifests: this one, and the game's own for anyone who installs from /play/ directly. -->
+<link rel="manifest" href="app.webmanifest">
+<meta name="theme-color" content="#0e1116">
+<!-- iOS ignores the manifest for "Add to Home Screen" and uses these three instead. -->
+<link rel="apple-touch-icon" href="play/assets/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Seafront">
+<!-- Shared links: what WhatsApp, Messages, Facebook and the rest put on the card. Without
+     these a shared link is a bare URL, which is the thing most likely to stop it travelling. -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Seafront — a Bournemouth game">
+<meta property="og:description" content="A free browser game on the real Bournemouth seafront. No download, no sign-up.">
+<meta property="og:image" content="https://365techies.co.uk/bournemouth/games/seafront/shot.jpg">
+<meta property="og:url" content="https://365techies.co.uk/bournemouth/games/seafront/">
+<meta name="twitter:card" content="summary_large_image">
+<!-- <<< INSTALL -->
 <!-- DELIBERATELY NOT THE SITE CHROME, and that is a decision rather than laziness.
      The site header is a 1,700-line block with a scrolling ticker, a nav and dropdowns. Copying
      it into a hand-maintained page would create a second copy that drifts the moment the real
@@ -35,6 +55,15 @@
           font-size:20px; font-weight:700; text-decoration:none; letter-spacing:.01em; }
   .play:hover { filter:brightness(1.07); }
   .after { color:var(--dim); font-size:15px; margin:14px 0 34px; }
+  /* >>> INSTALL  the secondary actions sit beside PLAY, and wrap under it on a phone. */
+  .row { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin:0; }
+  .sec { min-height:56px; padding:0 22px; border-radius:999px; cursor:pointer;
+         border:1px solid var(--line); background:rgba(255,255,255,.05); color:var(--ink);
+         font:600 16px ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  .sec:hover { background:rgba(255,255,255,.11); }
+  .sec[hidden] { display:none; }
+  #ios-tip { margin-top:-22px; }
+  /* <<< INSTALL */
   h2 { font-size:20px; margin:34px 0 8px; }
   ul { margin:0 0 14px; padding-left:20px; }
   li { margin:5px 0; }
@@ -57,8 +86,21 @@
   <img class="shot" src="shot.jpg" width="1200" height="675" alt="A jet ski at speed on the sea
   off Bournemouth Pier, with the beach, the big wheel and the seafront buildings ahead.">
 
-  <p><a class="play" href="play/">Play now &rarr;</a></p>
+  <p class="row">
+    <a class="play" href="play/">Play now &rarr;</a>
+    <!-- >>> INSTALL  both start hidden and are shown by script only when they can actually
+         do something. A button that does nothing when pressed is worse than no button. -->
+    <button type="button" class="sec" id="btn-install" hidden>Add to home screen</button>
+    <button type="button" class="sec" id="btn-share" hidden>Share</button>
+    <!-- <<< INSTALL -->
+  </p>
   <p class="after">Opens straight into the game. It takes a moment to load the first time.</p>
+  <!-- >>> INSTALL -->
+  <p class="after" id="ios-tip" hidden>
+    To add it to your home screen on an iPhone or iPad: tap
+    <b>Share</b> at the bottom of Safari, then <b>Add to Home Screen</b>.
+  </p>
+  <!-- <<< INSTALL -->
 
   <div class="cols">
     <div>
@@ -103,5 +145,97 @@
   </footer>
 
 </div>
+
+<!-- >>> INSTALL
+     Three capabilities, three different answers, and the honest part is that ONE OF THEM DOES
+     NOT EXIST ON iOS.
+
+       Chrome / Edge / Android : `beforeinstallprompt` fires, we keep the event, and the button
+                                 calls prompt() on it. This is a real one-tap install.
+       iOS Safari              : there is NO install API AT ALL. Apple has never shipped
+                                 beforeinstallprompt. The only route is the user doing
+                                 Share -> Add to Home Screen themselves, so on iOS the button is
+                                 replaced by the instruction for exactly that. Anything else
+                                 would be a button that cannot work.
+       already installed       : display-mode is standalone, so neither is shown - there is
+                                 nothing left to add.
+
+     Share uses navigator.share where it exists (every modern phone, and Chrome on Windows) and
+     falls back to copying the link. It is NOT shown when neither is available, for the same
+     reason as everything else here.
+
+     No build step touches this file, so it is plain inline script - the same choice the rest of
+     this page makes. -->
+<script>
+(function () {
+  'use strict';
+  var URL_ = 'https://365techies.co.uk/bournemouth/games/seafront/';
+  var installBtn = document.getElementById('btn-install');
+  var shareBtn = document.getElementById('btn-share');
+  var iosTip = document.getElementById('ios-tip');
+
+  function standalone() {
+    try {
+      return (window.matchMedia && matchMedia('(display-mode: standalone)').matches)
+        || window.navigator.standalone === true;   // iOS reports it here and nowhere else
+    } catch (e) { return false; }
+  }
+
+  // ---- add to home screen -------------------------------------------------------------
+  var deferred = null;
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();            // keep it; Chrome will not fire it again on this load
+    deferred = e;
+    if (!standalone()) { installBtn.hidden = false; }
+  });
+  installBtn.addEventListener('click', function () {
+    if (!deferred) return;
+    deferred.prompt();
+    // The outcome is worth reading only to tidy up: a dismissed prompt cannot be re-fired from
+    // the same event, so the button would do nothing on a second press.
+    deferred.userChoice.then(function () { deferred = null; installBtn.hidden = true; });
+  });
+  window.addEventListener('appinstalled', function () {
+    deferred = null; installBtn.hidden = true; if (iosTip) iosTip.hidden = true;
+  });
+
+  // iOS: no event will ever arrive, so decide from the platform and show the instruction.
+  // Tested on the string rather than on a feature, because there IS no feature to test - and
+  // iPadOS reports itself as a Mac, which is why the touch-point check is there.
+  var ua = navigator.userAgent || '';
+  var iOS = /iPad|iPhone|iPod/.test(ua)
+    || (/Macintosh/.test(ua) && typeof document.ontouchend !== 'undefined');
+  if (iOS && !standalone() && iosTip) { iosTip.hidden = false; }
+
+  // ---- share --------------------------------------------------------------------------
+  var canShare = typeof navigator.share === 'function';
+  var canCopy = !!(navigator.clipboard && navigator.clipboard.writeText);
+  if (canShare || canCopy) { shareBtn.hidden = false; }
+  shareBtn.addEventListener('click', function () {
+    var data = { title: 'Seafront — a Bournemouth game', text: 'A free browser game on the real Bournemouth seafront.', url: URL_ };
+    if (canShare) {
+      // A cancelled share rejects. That is the user saying no, not an error, so it is
+      // swallowed rather than reported.
+      navigator.share(data).catch(function () {});
+      return;
+    }
+    navigator.clipboard.writeText(URL_).then(function () {
+      var was = shareBtn.textContent;
+      shareBtn.textContent = 'Link copied';
+      setTimeout(function () { shareBtn.textContent = was; }, 1800);
+    }, function () { /* clipboard refused: leave the button alone rather than lie */ });
+  });
+
+  // ---- the service worker, which exists ONLY so the install prompt can fire -------------
+  // See sw.js: it caches nothing, on purpose. Registered last and failure is silent - if it
+  // does not register, the page still works and only the install button goes missing.
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js').catch(function () {});
+    });
+  }
+}());
+</script>
+<!-- <<< INSTALL -->
 </body>
 </html>

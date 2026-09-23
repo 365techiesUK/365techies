@@ -1,11 +1,16 @@
 {
-  "name": "365 eFoil — Bournemouth",
-  "short_name": "365 eFoil",
-  "description": "Ride an eFoil, a speedboat or a jetski around Bournemouth Pier.",
+  "name": "Seafront — a Bournemouth game",
+  "short_name": "Seafront",
+  "description": "Ride a jet ski, an eFoil or a speedboat on the real Bournemouth seafront.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "fullscreen",
   "orientation": "landscape",
-  "background_color": "#0b1520",
-  "theme_color": "#0b1520"
+  "background_color": "#0e1116",
+  "theme_color": "#0e1116",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
 }
