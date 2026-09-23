@@ -196,13 +196,14 @@
   "h": "285d27377a29ffa0",
   "last": "2026-09-17"
  },
- "bournemouth/weather-records": {
-  "first": "2026-09-23",
-  "h": "7304412c93f89740"
- },
  "bournemouth/weather": {
   "first": "2026-09-16",
-  "h": "af373d29c7e970b7",
+  "h": "c12efc1fdb419f28",
+  "last": "2026-09-23"
+ },
+ "bournemouth/weather-records": {
+  "first": "2026-09-23",
+  "h": "3bdf48f65444379c",
   "last": "2026-09-23"
  },
  "break-fix-vs-managed-it": {

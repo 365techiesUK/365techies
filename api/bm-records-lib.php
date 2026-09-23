@@ -108,8 +108,14 @@ function bmr_caption($ctx, $day, $value, $mode, $line, $tier = '') {
        already named it. */
     $hot = in_array($tier, array('record', 'near'), true) ? '' : ' Hottest ' . $ctx['date'] . ' on record: ' . bmr_deg((float)$day['hi'][0]) . ' (' . (int)$day['hi'][1] . ').';
     $cold = (isset($day['lo']) && is_array($day['lo'])) ? ' Coldest: ' . bmr_deg((float)$day['lo'][0]) . ' (' . (int)$day['lo'][1] . ').' : '';
-    return $prefix . bmr_deg($value) . ' ' . $what . '. ' . $line . $hot . $cold . ' Average high ' . bmr_deg((float)$day['avg_hi']) . '.'
+    $sun = (isset($day['sun']) && is_array($day['sun'])) ? ' Sunniest: ' . bmr_hours((float)$day['sun'][0]) . ' of sunshine (' . (int)$day['sun'][1] . ').' : '';
+    return $prefix . bmr_deg($value) . ' ' . $what . '. ' . $line . $hot . $cold . $sun . ' Average high ' . bmr_deg((float)$day['avg_hi']) . '.'
         . ' Records: Met Office, ' . $ctx['station'] . ', since ' . (int)$ctx['from'] . '.';
+}
+
+function bmr_hours($h) {
+    $h = round((float)$h, 1);
+    return (abs($h - round($h)) < 0.05 ? (string)(int)round($h) : number_format($h, 1)) . ($h == 1 ? ' hour' : ' hours');
 }
 
 /* Tomorrow in one sentence with ONE year in it: the forecast against the date's
@@ -168,6 +174,10 @@ function bm_records_public($now = null) {
     $today = array(
         'date' => $date, 'md' => $md, 'hi' => $day['hi'], 'lohi' => isset($day['lohi']) ? $day['lohi'] : null, 'lo' => isset($day['lo']) ? $day['lo'] : null,
         'avg_hi' => $day['avg_hi'], 'n' => $day['n'], 'obs_max' => $obsMax, 'obs_n' => $obsN, 'fc_hi' => $fcHi, 'mode' => $mode, 'value' => $value,
+        // from the daily weather files (sunshine 1967 on; snow depth, with a gap in the 2000s)
+        'sun' => isset($day['sun']) ? $day['sun'] : null, 'avg_sun' => isset($day['avg_sun']) ? $day['avg_sun'] : null,
+        'snow' => isset($day['snow']) ? $day['snow'] : null, 'snow_years' => isset($day['snow_years']) ? (int)$day['snow_years'] : null,
+        'snow_n' => isset($day['snow_n']) ? (int)$day['snow_n'] : null, 'snow_last' => isset($day['snow_last']) ? (int)$day['snow_last'] : null,
     );
     if ($mode !== null) {
         $v = bmr_verdict($day, $value, $mode, $ctx);

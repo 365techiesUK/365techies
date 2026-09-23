@@ -242,3 +242,4 @@ api/pcm-engineer-runs.json.tmp
 
 # Met Office MIDAS Open raw files (OGL) live only on this PC; api/bm-records.json is what ships
 tools/bm-records/midas/
+tools/bm-records/midas-weather/

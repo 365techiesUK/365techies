@@ -1766,7 +1766,9 @@ html.a11y-reduce .wxp-bar,html.a11y-reduce .wxp-dchip .rg i{transform:none}html.
       + '<div class="wxp-rec-nums"><span><b>' + deg1(t.value) + '</b>' + what + '</span>'
       + '<span><b>' + deg1(t.hi[0]) + '</b>hottest ' + esc(t.date) + ' on record, ' + esc(String(t.hi[1])) + '</span>'
       + (t.lo ? '<span><b>' + deg1(t.lo[0]) + '</b>coldest, ' + esc(String(t.lo[1])) + '</span>' : '')
-      + '<span><b>' + deg1(t.avg_hi) + '</b>average high</span></div>'
+      + '<span><b>' + deg1(t.avg_hi) + '</b>average high</span>'
+      + (t.sun ? '<span><b>' + (Math.round(t.sun[0] * 10) / 10) + ' h</b>sunniest, ' + esc(String(t.sun[1])) + '</span>' : '')
+      + (t.snow ? '<span><b>' + (Math.round(t.snow[0])) + ' cm</b>deepest snow, ' + esc(String(t.snow[1])) + '</span>' : '') + '</div>'
       + (r.tomorrow && r.tomorrow.line ? '<p class="wxp-sub">' + esc(r.tomorrow.line) + '</p>' : '')
       + '<p class="wxp-sub" style="font-size:.8rem;opacity:.75">Daily records for ' + esc(String(r.station || 'Bournemouth Airport')) + ', ' + esc(String(r.from)) + '–' + esc(String(r.to)) + ', Met Office (Open Government Licence). Today’s high is the airport’s measured reading from 5 pm; before that, the forecast. <a href="/bournemouth/weather-records/">All the records &rarr;</a></p>';
     card.hidden = false;

@@ -58,6 +58,11 @@ ok(strpos($c3, 'Bournemouth, 22 September: ') === 0 && strpos($c3, "Hottest 22 S
 $dayNoLo = $day; unset($dayNoLo['lo']);
 ok(strpos(bmr_caption($ctx, $dayNoLo, 18.8, 'obs', 'About average for the date.', 'normal'), 'Coldest') === false, 'no record low on file = no coldest sentence, never a made-up one');
 ok(strlen($c) < 280 && strlen($c2) < 280, 'short enough for a post');
+$daySun = $day; $daySun['sun'] = array(12.4, 2003); $daySun['avg_sun'] = 5.2;
+$c4 = bmr_caption($ctx, $daySun, 18.8, 'obs', 'About average for the date.', 'normal');
+ok(strpos($c4, "Coldest: 1.2\xC2\xB0C (1977). Sunniest: 12.4 hours of sunshine (2003). Average high 18.5\xC2\xB0C.") !== false, 'the sunniest sentence follows the coldest, one year in it, hours not degrees', $c4);
+ok(strpos($c, 'Sunniest') === false, 'no sunshine record on file = no sunniest sentence');
+ok(bmr_hours(12.0) === '12 hours' && bmr_hours(1.0) === '1 hour' && bmr_hours(15.65) === '15.7 hours', 'hours read as whole numbers when they are whole, one decimal otherwise, singular for one', bmr_hours(12.0) . '|' . bmr_hours(1.0) . '|' . bmr_hours(15.65));
 echo "-- tomorrow, in one sentence\n";
 $d24 = array('hi' => array(24.9, 1983));
 $tl = bmr_tomorrow_line('24 September', 19.9, $d24);

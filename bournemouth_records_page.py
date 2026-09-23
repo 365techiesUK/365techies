@@ -125,6 +125,57 @@ def _markers(s):
                      for t, v, w in tiles)
 
 
+def _hours(h):
+    h = round(float(h), 1)
+    return ("%d" % int(round(h))) if abs(h - round(h)) < 0.05 else ("%.1f" % h)
+
+
+def _sun_section(s):
+    w = s.get("weather", {}).get("sun")
+    if not w: return ""
+    tiles = "\n".join([
+        _tile(_hours(w["sunniest_days"][0][1]) + " h", "Sunniest day on record", _esc(w["sunniest_days"][0][0])),
+        _tile(_hours(w["sunniest_months"][0][1]) + " h", "Sunniest month", _esc(w["sunniest_months"][0][0])),
+        _tile(f'{w["sunniest_years"][0][1]:,} h', "Sunniest year", f'{w["sunniest_years"][0][0]} &middot; average {w["avg_year"]:,} h a year'),
+        _tile(f'{w["zero_days_per_year"]:.0f}', "Days a year with no sun at all", f'dullest month {_esc(w["dullest_months"][0][0])}, {_hours(w["dullest_months"][0][1])} h'),
+    ])
+    mlen = {"January": 31, "February": 28.25, "March": 31, "April": 30, "May": 31, "June": 30, "July": 31, "August": 31, "September": 30, "October": 31, "November": 30, "December": 31}
+    months = "\n".join(f'              <tr><th scope="row">{_esc(m)}</th><td class="n"><b>{_hours(t)}</b></td><td class="n">{_hours(t / mlen.get(m, 30.4))}</td></tr>' for m, t, n in w["month_avg"])
+    month_tbl = ('          <table class="bwr-table"><caption>Average sunshine by month</caption>\n'
+                 '            <thead><tr><th>Month</th><th class="n">Hours in the month</th><th class="n">Hours a day</th></tr></thead>\n'
+                 f'            <tbody>\n{months}\n            </tbody></table>')
+    sdays = "\n".join(f'              <tr><td>{i + 1}</td><td>{_esc(d)}</td><td class="n"><b>{_hours(v)} h</b></td></tr>' for i, (d, v) in enumerate(w["sunniest_days"]))
+    sunny = ('          <table class="bwr-table"><caption>Sunniest days</caption>\n            <thead><tr><th>#</th><th>Date</th><th class="n">Hours</th></tr></thead>\n'
+             f'            <tbody>\n{sdays}\n            </tbody></table>')
+    smonths = "\n".join(f'              <tr><td>{i + 1}</td><td>{_esc(d)}</td><td class="n"><b>{_hours(v)} h</b></td></tr>' for i, (d, v) in enumerate(w["sunniest_months"]))
+    smonths_tbl = ('          <table class="bwr-table"><caption>Sunniest months</caption>\n            <thead><tr><th>#</th><th>Month</th><th class="n">Hours</th></tr></thead>\n'
+                   f'            <tbody>\n{smonths}\n            </tbody></table>')
+    yrs = "\n".join(f'              <tr><td>{_esc(str(y))}</td><td class="n"><b>{t:,} h</b></td></tr>' for y, t in w["sunniest_years"])
+    dyrs = "\n".join(f'              <tr><td>{_esc(str(y))}</td><td class="n"><b>{t:,} h</b></td></tr>' for y, t in w["dullest_years"])
+    years_tbl = ('          <table class="bwr-table"><caption>Sunniest and dullest years</caption>\n            <thead><tr><th>Year</th><th class="n">Hours</th></tr></thead>\n'
+                 f'            <tbody>\n{yrs}\n              <tr><th colspan="2" scope="colgroup">Dullest</th></tr>\n{dyrs}\n            </tbody></table>')
+    return ('    <section class="section b365" aria-labelledby="sun-h">\n      <div class="wrap">\n        <h2 id="sun-h">Sunshine</h2>\n'
+            f'        <p class="b365-sub" style="max-width:70ch">Hours of bright sunshine measured at the airport each day, {w["from"]} to {w["to"]} ({w["full_years"]} complete years). A day&rsquo;s figure is the whole 24 hours; a &ldquo;no sun&rdquo; day recorded none at all.</p>\n'
+            f'        <div class="bwr-tiles" data-reveal>\n{tiles}\n        </div>\n        <div class="bwr-grid" data-reveal>\n{sunny}\n{smonths_tbl}\n{years_tbl}\n{month_tbl}\n        </div>\n      </div>\n    </section>')
+
+
+def _snow_section(s):
+    w = s.get("weather", {}); sn = w.get("snow"); th = w.get("thunder")
+    if not sn: return ""
+    deep = "\n".join(f'              <tr><td>{i + 1}</td><td>{_esc(d)}</td><td class="n"><b>{int(round(v))} cm</b></td></tr>' for i, (d, v) in enumerate(sn["deepest"]))
+    deep_tbl = ('          <table class="bwr-table"><caption>Deepest snow at 9 am</caption>\n            <thead><tr><th>#</th><th>Date</th><th class="n">Depth</th></tr></thead>\n'
+                f'            <tbody>\n{deep}\n            </tbody></table>')
+    dec = "\n".join(f'              <tr><th scope="row">{k}</th><td class="n"><b>{lying}</b></td><td class="n">{days:,}</td><td class="n">{"&#9888; partial" if days < years * 300 else ""}</td></tr>' for k, lying, days, years in sn["by_decade"])
+    dec_tbl = ('          <table class="bwr-table"><caption>Mornings with snow lying, by decade</caption>\n            <thead><tr><th>Decade</th><th class="n">Mornings with snow</th><th class="n">Mornings reported</th><th class="n"></th></tr></thead>\n'
+               f'            <tbody>\n{dec}\n            </tbody></table>')
+    tiles = [_tile(str(sn["lying_days"]), "Mornings with snow lying", f'{sn["from"]}&ndash;{sn["to"]}; last on {_esc(sn["last_lying"])}')]
+    if th:
+        tiles.append(_tile(f'{th["avg_days"]:.0f}', "Thunder days a year", f'{th["from"]}&ndash;{th["to"]}; most {th["most"][0]} in {th["most"][1]}, fewest {th["fewest"][0]} in {th["fewest"][1]}'))
+    return ('    <section class="section b365" aria-labelledby="snow-h">\n      <div class="wrap">\n        <h2 id="snow-h">Snow and thunder</h2>\n'
+            f'        <p class="b365-sub" style="max-width:70ch">Snow depth is the 9 am reading. It was reported almost every morning from {sn["from"]} to 1999 and again from 2010, but on only about a fifth of mornings between 2000 and 2009, so that decade is understated. Thunder and hail were logged as day flags until 1999 and not since.</p>\n'
+            f'        <div class="bwr-tiles" data-reveal>\n' + "\n".join(tiles) + f'\n        </div>\n        <div class="bwr-grid" data-reveal>\n{deep_tbl}\n{dec_tbl}\n        </div>\n      </div>\n    </section>')
+
+
 def _lookup(s):
     data = json.dumps(s["dates"], separators=(",", ":"))
     months = "".join(f'<option value="{m:02d}">{n}</option>' for m, n in enumerate(["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"], 1))
@@ -148,8 +199,10 @@ def _lookup(s):
             out.innerHTML = '<p class="big">' + label + ' at Bournemouth Airport, {s["from"]}\\u2013{s["to"]}</p>'
               + '<p><b>Hottest:</b> ' + deg(e[0]) + ' in ' + e[1] + '</p>'
               + (e[2] !== null ? '<p><b>Coldest:</b> ' + deg(e[2]) + ' in ' + e[3] + '</p>' : '')
-              + '<p><b>Average:</b> high ' + deg(e[4]) + (e[5] !== null ? ', low ' + deg(e[5]) : '') + '</p>';
+              + '<p><b>Average:</b> high ' + deg(e[4]) + (e[5] !== null ? ', low ' + deg(e[5]) : '') + '</p>'
+              + (e.length > 6 && e[6] !== null ? '<p><b>Sunniest:</b> ' + hrs(e[6]) + ' of sunshine in ' + e[7] + (e[8] !== null ? ', against an average of ' + hrs(e[8]) : '') + '</p>' : '');
           }}
+          function hrs(v) {{ var x = Math.round(v * 10) / 10; return (x % 1 === 0 ? String(x) : x.toFixed(1)) + ' hours'; }}
           var now = new Date(); mSel.value = ('0' + (now.getMonth() + 1)).slice(-2); dSel.value = ('0' + now.getDate()).slice(-2);
           dSel.addEventListener('change', show); mSel.addEventListener('change', show); show();
         }})();
@@ -168,16 +221,18 @@ def _content(s, b365_band):
     trend = (f'The average daytime high across a whole year was {_deg(d0["avg_hi"])} in the {d0["label"]} and {_deg(d1["avg_hi"])} in the {d1["label"]} so far; '
              f'days of 25&deg; or more went from about {d0["days25"]:.0f} a year to about {d1["days25"]:.0f}. '
              f'The month table shows the same comparison for each month, {s["early"]} against {s["late"]}. These are the station&rsquo;s own readings, nothing modelled.')
+    sun_from = s.get("weather", {}).get("sun", {}).get("from", 1967)
     prose = f'''
           <h2 id="method">Where these numbers come from</h2>
           <p>Every figure on this page is computed from the Met Office&rsquo;s daily readings at <strong>Bournemouth Airport (Hurn)</strong>, the station whose live observations the <a href="/bournemouth/weather/">weather page</a> shows, from {s["from"]} to the end of {s["to"]}: {s["years"]} years, every day. The data is the Met Office&rsquo;s MIDAS Open collection, published under the Open Government Licence, and the page is rebuilt when the Met Office releases the next year each summer. Nothing here is estimated or modelled.</p>
           <p>A day&rsquo;s <strong>maximum</strong> is the highest reading between 09:00 and 21:00 on that date; its <strong>minimum</strong> is the lowest in the night to 09:00 that morning. That is the Met Office&rsquo;s own convention, so &ldquo;the hottest 10 August&rdquo; means the daytime of 10 August. A frost is a night whose minimum fell below 0&deg;. Where two years tie for a record, the earlier year holds it.</p>
+          <p><strong>Sunshine</strong> is hours of bright sunshine over the whole 24 hours, in the same Met Office series, from {sun_from}. Until the early 2000s it was measured with a Campbell&ndash;Stokes recorder, the glass ball that burns a trace on a card; since then with an electronic sensor. The two agree closely but not perfectly, so a sunny-day record that spans the change carries that small caveat. <strong>Snow depth</strong> is what was lying at 09:00. It was reported almost every morning up to 1999 and again from 2010, but on only about a fifth of mornings between 2000 and 2009, so that decade counts fewer snow mornings than there really were. Thunder was logged as a day flag until 1999 and not since, so its averages stop there.</p>
           <p>The airport is about 7 km inland. On a hot afternoon the beach is usually a degree or two cooler than the airport, and on a still winter night a little milder, so treat these as Bournemouth&rsquo;s records with that caveat. <a href="/bournemouth/weather/">Today&rsquo;s place in the record books</a> is worked out live on the weather page from the same table.</p>'''
     return "\n".join([
         hero(bc_sub("Bournemouth365", "/bournemouth/", "Weather Records"),
              "// BOURNEMOUTH365",
              f'Bournemouth&rsquo;s weather records, <em class="grad grad--cyan">{s["from"]} to {s["to"]}</em>',
-             f"The hottest and coldest days on record, every month&rsquo;s records and averages, how the averages have moved over {s['years']} years, when the first frost and the first 25-degree day usually arrive, and any date looked up. All from the Met Office&rsquo;s own daily readings at Bournemouth Airport.",
+             f"The hottest and coldest days on record, every month&rsquo;s records and averages, how the averages have moved over {s['years']} years, when the first frost and the first 25-degree day usually arrive, the sunniest days and the deepest snow, and any date looked up. All from the Met Office&rsquo;s own daily readings at Bournemouth Airport.",
              cta1=("Today in the record books", "/bournemouth/weather/"),
              cta2=("Look up a date", "#lookup"),
              chips=[f"{s['years']} years of daily readings", "Met Office station data", "Open Government Licence"]),
@@ -190,6 +245,8 @@ def _content(s, b365_band):
         '    <section class="section b365" aria-labelledby="months-h">\n      <div class="wrap">\n        <h2 id="months-h">Month by month</h2>\n        <div class="bwr-scroll" data-reveal>\n' + _months_table(s) + '\n        </div>\n      </div>\n    </section>',
         '    <section class="section b365" aria-labelledby="trend-h">\n      <div class="wrap">\n        <h2 id="trend-h">How the averages have moved</h2>\n        <p class="b365-sub" style="max-width:70ch">' + trend + '</p>\n        <div class="bwr-scroll" data-reveal>\n' + _decades_table(s) + '\n        </div>\n      </div>\n    </section>',
         '    <section class="section b365" aria-labelledby="marks-h">\n      <div class="wrap">\n        <h2 id="marks-h">Frost and summer, on average</h2>\n        <div class="bwr-marks" data-reveal>\n' + _markers(s) + '\n        </div>\n      </div>\n    </section>',
+        _sun_section(s),
+        _snow_section(s),
         '    <section class="section">\n      <div class="wrap">\n        <div class="prose" data-reveal>' + prose + '\n        </div>\n      </div>\n    </section>',
         faq_html(_faqs(s)),
         b365_band,
@@ -205,11 +262,24 @@ def _faqs(s):
          f"The lowest night-time minimum on record at the airport is {cold[1]}&deg;C, on {cold[0]}. The coldest full day, when the temperature never rose above {a['cold_days'][0][1]}&deg;C, was {a['cold_days'][0][0]}."),
         ("When is the first frost in Bournemouth?",
          f"On average the first air frost of the autumn comes around {s['markers']['first_frost']['avg']}; the earliest on record was {s['markers']['first_frost']['earliest']} and the latest {s['markers']['first_frost']['latest']}. The last frost of spring averages {s['markers']['last_frost']['avg']}."),
+    ] + _wx_faqs(s) + [
         ("Where do these records come from, and are they official?",
          f"They are the Met Office&rsquo;s own daily readings for station 00842 Hurn (Bournemouth Airport), published in its MIDAS Open collection under the Open Government Licence, {s['from']} to {s['to']}. We compute the records from those readings and rebuild this page when the Met Office releases the next year. Nothing is modelled or estimated."),
         ("Why does today not appear in these tables?",
          f"The Met Office publishes each year&rsquo;s readings the following summer, so this page runs to the end of {s['to']}. For today, the <a href=\"/bournemouth/weather/\">weather page</a> compares the airport&rsquo;s live reading and the forecast with this table and says where the day stands."),
     ]
+
+
+def _wx_faqs(s):
+    w = s.get("weather", {}); sun = w.get("sun"); sn = w.get("snow")
+    out = []
+    if sun:
+        out.append(("How much sunshine does Bournemouth get?",
+                    f"Bournemouth Airport averages about {sun['avg_year']:,} hours of bright sunshine a year over {sun['full_years']} complete years of readings, {sun['from']} to {sun['to']}. The sunniest year was {sun['sunniest_years'][0][0]} with {sun['sunniest_years'][0][1]:,} hours and the dullest {sun['dullest_years'][0][0]} with {sun['dullest_years'][0][1]:,}. The sunniest single day was {sun['sunniest_days'][0][0]}, with {_hours(sun['sunniest_days'][0][1])} hours."))
+    if sn:
+        out.append(("When did it last snow in Bournemouth?",
+                    f"The last morning with snow lying at Bournemouth Airport at 09:00 was {sn['last_lying']}. Snow that settles is rare here: {sn['lying_days']} such mornings in the whole record, {sn['from']} to {sn['to']}, and the deepest was {int(round(sn['deepest'][0][1]))} cm on {sn['deepest'][0][0]}. Snow that falls and melts the same day is not counted, because the reading is what was lying at 09:00."))
+    return out
 
 
 def _schema(s):
