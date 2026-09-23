@@ -2339,6 +2339,36 @@ resize();
 updateHud();
 requestAnimationFrame(frame);
 
+// >>> SPLASH
+// THE END OF THE BOOT, which is the earliest honest moment to say the game is ready: the
+// module graph is parsed, the world is built, the first frame is scheduled.
+//
+// `preboot` is dropped here rather than in the DEMO block below, because it must come off on
+// EVERY path - ?rig=1 skips that block entirely, and a rig that never gets its panel back
+// would be a worse bug than the flash this fixes.
+document.body.classList.remove('preboot');
+{
+  const el = document.getElementById('splash');
+  if (el) {
+    // A MINIMUM VISIBLE TIME, and it is the only delay in the whole boot. Without it a fast
+    // connection shows the splash for ~30 ms, which reads as a glitch - worse than not having
+    // one. With it the name is legible and the fade looks deliberate. Play is NOT gated: the
+    // sim is already running underneath and the overlay is pointer-events: none, so this
+    // costs the player nothing but a look at the title. SPEC §5's rule is about never making
+    // someone press a button to start, and nothing here asks for a press.
+    const MIN_MS = 700, FADE_MS = 450;
+    const wait = Math.max(0, MIN_MS - performance.now());
+    setTimeout(() => {
+      el.classList.add('gone');
+      // Removed from the DOM after the transition rather than left at opacity 0: a full-screen
+      // element that is merely transparent still sits in the layer tree, and this one is
+      // position:fixed over the canvas.
+      setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, FADE_MS + 60);
+    }, wait);
+  }
+}
+// <<< SPLASH
+
 if (DEMO) {
   document.body.classList.add('demo');
   $('#help').classList.add('hidden');
