@@ -1046,7 +1046,7 @@ _WXP_JS = r'''
       + (t.lo ? '<span><b>' + deg1(t.lo[0]) + '</b>coldest, ' + esc(String(t.lo[1])) + '</span>' : '')
       + '<span><b>' + deg1(t.avg_hi) + '</b>average high</span></div>'
       + (r.tomorrow && r.tomorrow.line ? '<p class="wxp-sub">' + esc(r.tomorrow.line) + '</p>' : '')
-      + '<p class="wxp-sub" style="font-size:.8rem;opacity:.75">Daily records for ' + esc(String(r.station || 'Bournemouth Airport')) + ', ' + esc(String(r.from)) + '–' + esc(String(r.to)) + ', Met Office (Open Government Licence). Today’s high is the airport’s measured reading from 5 pm; before that, the forecast.</p>';
+      + '<p class="wxp-sub" style="font-size:.8rem;opacity:.75">Daily records for ' + esc(String(r.station || 'Bournemouth Airport')) + ', ' + esc(String(r.from)) + '–' + esc(String(r.to)) + ', Met Office (Open Government Licence). Today’s high is the airport’s measured reading from 5 pm; before that, the forecast. <a href="/bournemouth/weather-records/">All the records &rarr;</a></p>';
     card.hidden = false;
     rise(card);
   }

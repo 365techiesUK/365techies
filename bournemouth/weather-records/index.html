@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Google tag (gtag.js) - Consent Mode v2: denied by default, granted on cookie-accept.
+       The library itself loads lazily (first interaction, or idle ~4s) so its ~90KB never
+       competes with LCP; calls below queue into dataLayer and replay when it arrives. -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', wait_for_update: 500 });
+    try { if (localStorage.getItem('tt_consent') === 'accepted') gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); } catch (e) {}
+    gtag('js', new Date());
+    gtag('config', 'G-EBLTJ9WJXZ');
+    // phone_click: a tap on any tel: link. Twelve phone leads a window were invisible to
+    // every source; this counts the ones that start from the site. It queues into
+    // dataLayer like every other call here - same consent gate, no extra Google contact.
+    document.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest && e.target.closest('a[href^="tel:"]');
+      if (!a) return;
+      gtag('event', 'phone_click', { phone_number: (a.getAttribute('href') || '').replace('tel:', ''), link_text: (a.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 40) });
+    }, true);
+    (function () {
+      function loadGtagLib() {
+        if (window.__gtagLibLoaded) return; window.__gtagLibLoaded = true;
+        var g = document.createElement('script'); g.async = true;
+        g.src = 'https://www.googletagmanager.com/gtag/js?id=G-EBLTJ9WJXZ';
+        document.head.appendChild(g);
+      }
+      // Load on the first sign of a real person: mousemove/wheel cover desktop
+      // readers who never click, touch/scroll cover mobile. Lab runs (Lighthouse,
+      // PSI) never interact, so gtag stays out of TBT/TTI entirely. The 30s
+      // fallback outlives any lab trace window (a 9s timer landed INSIDE PSI's
+      // observation window and dragged TTI out — TBT 2.5s. Never shorten it).
+      ['pointerdown', 'keydown', 'touchstart', 'scroll', 'mousemove', 'wheel'].forEach(function (evt) {
+        window.addEventListener(evt, loadGtagLib, { once: true, passive: true });
+      });
+      window.addEventListener('load', function () { setTimeout(loadGtagLib, 30000); });
+    })();
+  </script>
+  <title>Bournemouth Weather Records: Hottest & Coldest Since 1957</title>
+  <meta name="description" content="Bournemouth weather records from 69 years of Met Office readings: hottest and coldest days, monthly records, frost dates, and any date looked up." />
+  <link rel="canonical" href="https://365techies.co.uk/bournemouth/weather-records/" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <meta name="author" content="365 Techies Limited" />
+  <meta name="geo.region" content="GB-BCP" />
+  <meta name="geo.placename" content="Bournemouth, Dorset" />
+  <meta name="geo.position" content="50.7192;-1.8808" />
+  <meta name="ICBM" content="50.7192, -1.8808" />
+  <meta name="theme-color" content="#070d22" />
+  <meta name="color-scheme" content="dark" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="365 Techies" />
+  <meta property="og:locale" content="en_GB" />
+  <meta property="og:url" content="https://365techies.co.uk/bournemouth/weather-records/" />
+  <meta property="og:title" content="Bournemouth's weather records, 1957 to 2025" />
+  <meta property="og:description" content="Bournemouth weather records from 69 years of Met Office readings: hottest and coldest days, monthly records, frost dates, and any date looked up." />
+  <meta property="og:image" content="https://365techies.co.uk/bournemouth/media/og-weather.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Bournemouth's weather records, 1957 to 2025" />
+  <meta name="twitter:description" content="Bournemouth weather records from 69 years of Met Office readings: hottest and coldest days, monthly records, frost dates, and any date looked up." />
+  <meta name="twitter:image" content="https://365techies.co.uk/bournemouth/media/og-weather.jpg" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <!-- ?v= bumps past SiteGround's proxy cache. Learned the hard way 2026-08-01:
+       the un-versioned URL was serving a month-old copy (proxy HIT, Last-Modified
+       28 June) because no Cache-Control applied to it. The .htaccess rule now makes
+       these revalidate, but a URL already stuck in the cache stays stuck until its
+       TTL - a new URL is the only immediate escape. BUMP THIS when the manifest changes. -->
+  <link rel="manifest" href="/site.webmanifest?v=2" />
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+  <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
+  <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/css/styles.min.css?v=114" />
+  <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
+    or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
+    failed page readable instead of raw giant-serif HTML. */
+  html.css-sos{background:#070d22;color:#eaf4ff;font:17px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  html.css-sos body{max-width:44rem;margin:0 auto;padding:1rem 1.1rem 3rem}
+  html.css-sos a{color:#6cc4f5}
+  html.css-sos svg,html.css-sos img{max-width:100%;max-height:64px;height:auto}
+  html.css-sos .status-ticker,html.css-sos canvas{display:none!important}
+  html.css-sos h1{font-size:1.55rem;line-height:1.25}
+  html.css-sos h2{font-size:1.2rem}
+  html.css-sos nav a,html.css-sos .button{display:inline-block;padding:.4rem .55rem}
+  </style>
+  <script>
+  /* Stylesheet insurance (2026-08-11, owner reported customers seeing raw HTML).
+     A render-blocking <link> means a SLOW stylesheet only delays paint - it cannot
+     produce an unstyled page. Unstyled means the response was UNUSABLE: 404/403, a
+     bot-wall HTML body served for a .css request, a dropped connection, or a copy
+     truncated by a deploy overwriting the file mid-flight (FTPS writes in place).
+     And because .htaccess serves css/js as immutable for a year, one bad copy then
+     STICKS on that machine until the version string changes - which is how a single
+     bad second turned into customers repeatedly seeing an unstyled site.
+     Scripts wait for pending stylesheets, so by the time this runs the sheet has
+     applied or failed. Missing sentinel => make the page readable at once, then
+     re-request the stylesheet with a cache-busting parameter, which bypasses the
+     poisoned cache entry and usually repairs the page before anyone notices.
+     Bounded to 2 attempts per tab. Never reloads the page. */
+  (function () {
+    try {
+      var R = document.documentElement;
+      if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') return;
+      R.className += ' css-sos';
+      var n = 0;
+      try { n = parseInt(sessionStorage.getItem('tt_css_sos') || '0', 10) || 0; } catch (e) {}
+      if (n >= 2) return;
+      try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
+      var l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = '/css/styles.min.css?v=114&sos=' + Date.now();
+      l.onload = function () {
+        if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
+          R.className = R.className.replace(/\s*css-sos/, '');
+        }
+      };
+      document.head.appendChild(l);
+    } catch (e) {}
+  })();
+  </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://365techies.co.uk/#website",
+      "url": "https://365techies.co.uk/",
+      "name": "365 Techies",
+      "alternateName": [
+        "365techies",
+        "365 Techies Ltd"
+      ],
+      "inLanguage": "en-GB",
+      "publisher": {
+        "@id": "https://365techies.co.uk/#business"
+      }
+    },
+    {
+      "@type": [
+        "LocalBusiness",
+        "ProfessionalService"
+      ],
+      "@id": "https://365techies.co.uk/#business",
+      "name": "365 Techies",
+      "legalName": "365 Techies Limited",
+      "url": "https://365techies.co.uk/",
+      "telephone": "+441202775566",
+      "email": "help@365techies.co.uk",
+      "foundingDate": "1995",
+      "image": "https://365techies.co.uk/og-image.jpg",
+      "logo": "https://365techies.co.uk/logo.jpg",
+      "priceRange": "££",
+      "alternateName": [
+        "365 Techies Ltd",
+        "365techies",
+        "365 Computers",
+        "365 Computers Limited"
+      ],
+      "slogan": "The IT support experts",
+      "description": "Family-run, leading Managed Service Provider (MSP) established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists. Fully managed monthly IT support, cybersecurity, backups and cloud, plus one-off computer repairs and refurbished Dell hardware, for homes and small businesses across Bournemouth, Poole and Dorset.",
+      "currenciesAccepted": "GBP",
+      "paymentAccepted": "Direct Debit (GoCardless), Bank Transfer, Credit Card, Debit Card",
+      "identifier": {
+        "@type": "PropertyValue",
+        "name": "Company registration number",
+        "value": "11073501"
+      },
+      "memberOf": {
+        "@type": "Organization",
+        "name": "Sustainable Dorset",
+        "url": "https://www.sustainabledorset.org/"
+      },
+      "knowsAbout": [
+        "IT support",
+        "Computer repair",
+        "Laptop repair",
+        "Microsoft 365",
+        "Cybersecurity",
+        "Data backup",
+        "Network security",
+        "Wi-Fi",
+        "Remote support",
+        "Dell hardware",
+        "Dell Latitude laptops",
+        "Dell OptiPlex desktops",
+        "Refurbished computers",
+        "Malwarebytes Premium",
+        "VPN",
+        "Online safety",
+        "Accessible IT support",
+        "IT support for retired people",
+        "IT support for disabled people",
+        "Website design",
+        "Web hosting",
+        "Business email",
+        "Managed service provider",
+        "Managed IT services",
+        "MSP",
+        "New Forest IT support"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Kinson Community Centre, Millhams Road, Kinson",
+        "addressLocality": "Bournemouth",
+        "addressRegion": "Dorset",
+        "postalCode": "BH10 7LH",
+        "addressCountry": "GB"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 50.7192,
+        "longitude": -1.8808
+      },
+      "areaServed": [
+        {
+          "@type": "AdministrativeArea",
+          "name": "Dorset"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "Bournemouth, Christchurch and Poole"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "New Forest"
+        }
+      ],
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday"
+        ],
+        "opens": "09:00",
+        "closes": "17:00"
+      },
+      "hasMap": "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
+      "sameAs": [
+        "https://www.facebook.com/365computersuk",
+        "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
+        "https://find-and-update.company-information.service.gov.uk/company/11073501",
+        "https://www.helpandkindness.co.uk/service/7188/patient-computer-%26-tech-help-for-older-people-in-dorset"
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://365techies.co.uk/bournemouth/weather-records/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://365techies.co.uk/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Bournemouth365",
+          "item": "https://365techies.co.uk/bournemouth/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Weather Records",
+          "item": "https://365techies.co.uk/bournemouth/weather-records/"
+        }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://365techies.co.uk/bournemouth/weather-records/#webpage",
+      "url": "https://365techies.co.uk/bournemouth/weather-records/",
+      "name": "Bournemouth Weather Records: Hottest & Coldest Since 1957",
+      "description": "Bournemouth weather records from 69 years of Met Office readings: hottest and coldest days, monthly records, frost dates, and any date looked up.",
+      "inLanguage": "en-GB",
+      "isPartOf": {
+        "@id": "https://365techies.co.uk/#website"
+      },
+      "about": [
+        {
+          "@type": "Place",
+          "name": "Bournemouth",
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 50.72,
+            "longitude": -1.88
+          },
+          "sameAs": "https://www.wikidata.org/wiki/Q170478"
+        }
+      ],
+      "breadcrumb": {
+        "@id": "https://365techies.co.uk/bournemouth/weather-records/#breadcrumb"
+      },
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://365techies.co.uk/bournemouth/media/og-weather.jpg"
+      },
+      "dateModified": "2026-09-23",
+      "publisher": {
+        "@id": "https://365techies.co.uk/bournemouth/#organization"
+      }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://365techies.co.uk/bournemouth/#organization",
+      "name": "Bournemouth365",
+      "url": "https://365techies.co.uk/bournemouth/",
+      "description": "A free, ad-free guide to Bournemouth's seafront as it is today - the sea measured live, the weather and tides, a live map of the town and the best places to watch the light - from the Bournemouth365 Facebook page.",
+      "sameAs": [
+        "https://www.facebook.com/bournemouth365/"
+      ],
+      "parentOrganization": {
+        "@id": "https://365techies.co.uk/#business"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://365techies.co.uk/bournemouth/weather-records/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is the hottest day ever recorded in Bournemouth?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "At Bournemouth Airport, the station with a continuous record since 1957, the highest daily maximum is 34.1&deg;C on 4 August 1990. The next hottest days are in the table above. The seafront itself has no equally long record; on a hot afternoon it usually runs a degree or two cooler than the airport."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the coldest it has been in Bournemouth?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The lowest night-time minimum on record at the airport is -13.4&deg;C, on 23 January 1963. The coldest full day, when the temperature never rose above -4.8&deg;C, was 12 January 1987."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "When is the first frost in Bournemouth?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "On average the first air frost of the autumn comes around 23 October; the earliest on record was 22 September 1962 and the latest 25 November 2023. The last frost of spring averages 28 April."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where do these records come from, and are they official?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "They are the Met Office&rsquo;s own daily readings for station 00842 Hurn (Bournemouth Airport), published in its MIDAS Open collection under the Open Government Licence, 1957 to 2025. We compute the records from those readings and rebuild this page when the Met Office releases the next year. Nothing is modelled or estimated."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why does today not appear in these tables?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The Met Office publishes each year&rsquo;s readings the following summer, so this page runs to the end of 2025. For today, the <a href=\"/bournemouth/weather/\">weather page</a> compares the airport&rsquo;s live reading and the forecast with this table and says where the day stands."
+          }
+        }
+      ]
+    }
+  ]
+}
+  </script>
+  <script>
+    /* Motion gate: GSAP + ScrollTrigger are DESKTOP-ONLY. Phones, tablets and
+       reduced-motion users skip the ~90KB download and all the ScrollTrigger
+       layout work (the main mobile TBT cost) — reveals just render visible.
+       main.js boots the animations on the motion-ready event. */
+    (function () {
+      var wantMotion = window.innerWidth >= 920
+        && window.matchMedia('(hover: hover)').matches
+        && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!wantMotion) { document.documentElement.classList.add('no-motion'); return; }
+      function inject(src, onload) {
+        var s = document.createElement('script');
+        s.src = src; s.async = true; s.onload = onload;
+        document.head.appendChild(s);
+      }
+      inject('/js/vendor/gsap-3.12.5-gsap.min.js?v=1', function () {
+        inject('/js/vendor/gsap-3.12.5-ScrollTrigger.min.js?v=1', function () {
+          window.dispatchEvent(new Event('motion-ready'));
+        });
+      });
+    })();
+  </script>
+  <style>
+    .bwr-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.9rem;margin:0 0 1.6rem}
+    .bwr-tile .b365-num{font-size:clamp(2.2rem,5.5vw,3.4rem)}
+    .bwr-when{font-family:var(--mono,ui-monospace,monospace);font-size:.82rem;color:var(--b365-mute);letter-spacing:.04em;margin:.25rem 0 0}
+    .bwr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem 1.4rem;margin:0 0 1.2rem}
+    .bwr-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:.95rem}
+    .bwr-table caption{text-align:left;font-weight:650;color:var(--b365-foam);padding:0 0 .45rem;font-size:1.02rem}
+    .bwr-table th,.bwr-table td{padding:.42rem .55rem;border-bottom:1px solid var(--b365-line);text-align:left;vertical-align:top}
+    .bwr-table th{font-family:var(--mono,ui-monospace,monospace);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--b365-mute);font-weight:600}
+    .bwr-table td.n,.bwr-table th.n{text-align:right;white-space:nowrap}
+    .bwr-table td b{color:var(--b365-foam);font-weight:650}
+    .bwr-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 1.2rem}
+    .bwr-up{color:#ffb36b}.bwr-down{color:#8fd3ff}
+    .bwr-look{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin:.6rem 0 1rem}
+    .bwr-look select{font:inherit;padding:.5rem .7rem;border-radius:10px;border:1px solid var(--b365-line);background:var(--b365-water);color:var(--b365-foam);min-width:7rem}
+    .bwr-out{border:1px solid var(--b365-line);border-radius:12px;padding:.9rem 1.1rem;background:var(--b365-water)}
+    .bwr-out p{margin:.25rem 0}
+    .bwr-out .big{font-size:1.25rem;font-weight:650;color:var(--b365-foam);margin:0 0 .35rem}
+    .bwr-marks{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:.9rem;margin:0 0 1.4rem}
+    .bwr-marks .b365-tile p{margin:.2rem 0}
+    @media (prefers-reduced-motion:reduce){.bwr-out{transition:none}}
+  </style>
+
+</head>
+<body id="top">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
+    <p>Cookies run our live chat and site stats. <a href="/cookie-policy/">Cookie policy</a>.</p>
+    <div class="cookie-banner__actions">
+      <button type="button" class="button secondary" data-cookie="decline">Decline</button>
+      <button type="button" class="button primary" data-cookie="accept">Accept</button>
+    </div>
+  </div>
+  <div class="grid-overlay" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <header class="site-header">
+    <div class="status-ticker">
+      <div class="status-ticker__track" aria-hidden="true">
+        <span><b class="tk-live" data-tk-live hidden><i class="tk-dot" aria-hidden="true"></i>LIVE&ensp;<span data-tk-live-text></span>&ensp;<em class="tk-sep">//</em>&ensp;</b><a class="tk-alert" href="/ive-been-scammed-what-to-do/" tabindex="-1"><i class="tk-dot tk-dot--red" aria-hidden="true"></i>BEEN SCAMMED? WHAT TO DO NOW &rarr;</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="tel:+441202775566" tabindex="-1">CALL 01202 775566</a>&ensp;<em class="tk-sep">//</em>&ensp;MON&ndash;FRI 9&ndash;5 &middot; SAME-DAY, USUALLY MINUTES REMOTELY&ensp;<em class="tk-sep">//</em>&ensp;<a href="/pricing/" tabindex="-1">IT SUPPORT PLANS FROM &pound;18.25/MO</a>&ensp;<em class="tk-sep">//</em>&ensp;FAMILY BUSINESS SINCE 1995 &middot; VERIFIED MICROSOFT PARTNER &middot; BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;<em class="tk-sep">//</em>&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR JUST YOU? CHECK LIVE</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/sos/" tabindex="-1">SOS REMOTE SUPPORT &mdash; WE&rsquo;LL DO IT TOGETHER</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/mobile-signal-check/" tabindex="-1"><b class="tk-new">NEW</b>&thinsp;BOURNEMOUTH MOBILE SIGNAL MAP</a>&ensp;<em class="tk-sep">//</em>&ensp;</span>
+        <span><b class="tk-live" data-tk-live hidden><i class="tk-dot" aria-hidden="true"></i>LIVE&ensp;<span data-tk-live-text></span>&ensp;<em class="tk-sep">//</em>&ensp;</b><a class="tk-alert" href="/ive-been-scammed-what-to-do/" tabindex="-1"><i class="tk-dot tk-dot--red" aria-hidden="true"></i>BEEN SCAMMED? WHAT TO DO NOW &rarr;</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="tel:+441202775566" tabindex="-1">CALL 01202 775566</a>&ensp;<em class="tk-sep">//</em>&ensp;MON&ndash;FRI 9&ndash;5 &middot; SAME-DAY, USUALLY MINUTES REMOTELY&ensp;<em class="tk-sep">//</em>&ensp;<a href="/pricing/" tabindex="-1">IT SUPPORT PLANS FROM &pound;18.25/MO</a>&ensp;<em class="tk-sep">//</em>&ensp;FAMILY BUSINESS SINCE 1995 &middot; VERIFIED MICROSOFT PARTNER &middot; BOURNEMOUTH &middot; POOLE &middot; DORSET&ensp;<em class="tk-sep">//</em>&ensp;<a href="/is-it-down/" tabindex="-1">IS IT DOWN, OR JUST YOU? CHECK LIVE</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/sos/" tabindex="-1">SOS REMOTE SUPPORT &mdash; WE&rsquo;LL DO IT TOGETHER</a>&ensp;<em class="tk-sep">//</em>&ensp;<a href="/mobile-signal-check/" tabindex="-1"><b class="tk-new">NEW</b>&thinsp;BOURNEMOUTH MOBILE SIGNAL MAP</a>&ensp;<em class="tk-sep">//</em>&ensp;</span>
+      </div>
+      <button type="button" class="tk-pause" data-tk-pause aria-label="Pause the scrolling strip" aria-pressed="false" title="Pause / play"><svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><rect x="2" y="1.5" width="3" height="9" rx="0.6"/><rect x="7" y="1.5" width="3" height="9" rx="0.6"/></svg></button>
+    </div>
+    <div class="header-bar">
+      <a class="logo" href="/" aria-label="365techies — home">
+        <svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="16" r="13.4" fill="none" stroke="#8fb3d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="63 22" transform="rotate(-55 16 16)"/>
+          <circle cx="16" cy="16" r="9.4" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-dasharray="46 14" transform="rotate(115 16 16)"/>
+          <path d="M12.4 18.4l3.6-5.8 3.4 5.1z" fill="none" stroke="#8fb3d9" stroke-width="1.2"/>
+          <circle cx="12.4" cy="18.4" r="1.6" fill="#00ce1b"/>
+          <circle cx="16" cy="12.6" r="1.6" fill="#1d97e3"/>
+          <circle cx="19.4" cy="17.7" r="1.6" fill="#1d97e3"/>
+        </svg>
+        <span class="logo__text"><em>365</em>techies</span>
+      </a>
+      <nav class="desktop-nav" aria-label="Primary">
+        <a href="/dell-it-support-dorset/">Dell</a>
+        <div class="nav-item has-dropdown">
+          <a href="/home-it-support-subscriptions/" aria-haspopup="true">For Home
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/home-it-support-subscriptions/">Home IT Support</a>
+            <a href="/home-it-support-plans/">Home Support Plans</a>
+            <a href="/free-pc-health-check/">365 PC Manager app &mdash; free</a>
+            <a href="/it-support-for-home-workers/">Home Workers</a>
+            <a href="/family-it-support/">Families</a>
+            <a href="/it-support-for-retired-users/">Retired Users</a>
+            <a href="/it-support-for-disabled-people/">Disabled People</a>
+            <a href="/computer-help-for-seniors/">Help for Seniors</a>
+            <a href="/free-courses/">Free Courses</a>
+            <a href="/parents-guide-online-safety/">Parents&rsquo; Online Safety Guide</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/business-it-support-subscriptions/" aria-haspopup="true">For Business
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/business-it-support-subscriptions/">Business IT Support</a>
+            <a href="/business-it-support-plans/">Business Support Plans</a>
+            <a href="/free-pc-health-check/">365 PC Manager app &mdash; free</a>
+            <a href="/small-business-it-support/">Small Businesses</a>
+            <a href="/it-support-for-sole-traders/">Sole Traders</a>
+            <a href="/it-support-for-education/">Schools &amp; Education</a>
+            <a href="/it-support-by-industry/">IT Support by Industry</a>
+            <a href="/business-wifi-installation/">Business WiFi</a>
+            <a href="/business-continuity-internet/">Broadband Emergency Plan</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/services/" aria-haspopup="true">Services
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/services/">All Services &#8594;</a>
+            <span class="dropdown__label dropdown__label--sep">Everyday support</span>
+            <a href="/remote-it-support/">Remote IT Support</a>
+            <a href="/computer-repairs/">Computer Repairs</a>
+            <a href="/preventative-maintenance/">Preventative Maintenance</a>
+            <a href="/microsoft-365-support/">Microsoft 365</a>
+            <a href="/cybersecurity-support/">Cybersecurity</a>
+            <a href="/email-support/">Email Support</a>
+            <a href="/printer-support/">Printer Support</a>
+            <a href="/backup-support/">Backup Support</a>
+            <span class="dropdown__label dropdown__label--sep">WiFi &amp; internet</span>
+            <a href="/wifi-support/">Wi-Fi Support</a>
+            <a href="/starlink-internet/">Starlink Internet</a>
+            <a href="/emergency-internet/">365 Emergency Internet</a>
+            <span class="dropdown__label dropdown__label--sep">Computers &amp; hardware</span>
+            <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+            <a href="/custom-pc-builds/">Custom-Built PCs</a>
+            <span class="dropdown__label dropdown__label--sep">Web, AI &amp; off-grid</span>
+            <a href="/ai/">AI &amp; Automation</a>
+            <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+            <a href="/web-care/">365 Web Care</a>
+            <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+            <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/free-tools/" aria-haspopup="true">Free Tools
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/free-tools/">All Free Tools &#8594;</a>
+            <span class="dropdown__label dropdown__label--sep">Test your setup</span>
+            <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+            <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
+            <a href="/van-signal-map/">Bournemouth Signal Map</a>
+            <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+            <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
+            <a href="/bournemouth/live-map/#map">Bournemouth in 3D</a>
+            <a href="/pc-benchmark/">PC Benchmark</a>
+            <a href="/computer-spec-checker/">PC Hardware Checker</a>
+            <a href="/website-checker/">Website Checker</a>
+            <a href="/is-it-down/">Is It Down? Status Checker</a>
+            <span class="dropdown__label dropdown__label--sep">Stay safe</span>
+            <a href="/email-security-checker/">Email Security Checker</a>
+            <a href="/password-breach-checker/">Password Breach Checker</a>
+            <a href="/link-safety-checker/">Link Safety Checker</a>
+            <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+            <a href="/online-safety-course/">Free Online Safety Course</a>
+            <span class="dropdown__label dropdown__label--sep">Apps &amp; builders</span>
+            <a href="/free-pc-health-check/">365 PC Manager app</a>
+            <a href="/custom-pc-builder/">Custom PC Builder</a>
+            <a href="/victron-system-builder/">Victron System Builder</a>
+            <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+          </div>
+        </div>
+        <div class="nav-item has-dropdown">
+          <a href="/book-service/" aria-haspopup="true">Get Help
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <a href="/contact/">Contact Us &#8594;</a>
+            <span class="dropdown__label dropdown__label--sep">Right now</span>
+            <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed &mdash; What To Do</a>
+            <a href="/remote-support/">Start Remote Support</a>
+            <a href="/emergency-it-help/">Emergency IT Help</a>
+            <a href="/scam-pop-up-help-poole/">Scam Pop-up Help</a>
+            <span class="dropdown__label dropdown__label--sep">Book &amp; pay</span>
+            <a href="/book-service/">Book a Service</a>
+            <a href="/book-a-collection/">Book a Collection</a>
+            <a href="/quick-quote/">Quick Quote</a>
+            <a href="/pay/">Pay Us</a>
+            <span class="dropdown__label dropdown__label--sep">Plans &amp; pricing</span>
+            <a href="/monthly-it-support/">Monthly IT Support</a>
+            <a href="/plan-finder/">Plan Finder</a>
+            <a href="/switching-it-provider/">Switching to Us</a>
+            <span class="dropdown__label dropdown__label--sep">Fix it yourself</span>
+            <a href="/wifi-troubleshooting/">WiFi Troubleshooting</a>
+            <a href="/broadband-down/">Broadband Down? Start Here</a>
+          </div>
+        </div>
+        <a href="/pricing/">Pricing</a>
+        <div class="nav-item has-dropdown">
+          <a href="/about/" aria-haspopup="true">About
+            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </a>
+          <div class="dropdown">
+            <span class="dropdown__label dropdown__label--sep">Who we are</span>
+            <a href="/about/">About 365 Techies</a>
+            <a href="/meet-the-team/">Meet the Team</a>
+            <a href="/why-choose-365-techies/">Why Choose Us</a>
+            <span class="dropdown__label dropdown__label--sep">Proof</span>
+            <a href="/reviews/">Reviews</a>
+            <a href="/case-studies/">Case Studies</a>
+            <a href="/our-guarantees/">Our Guarantees</a>
+            <a href="/accreditations/">Accreditations</a>
+            <span class="dropdown__label dropdown__label--sep">Where we work</span>
+            <a href="/areas-covered/">Areas Covered</a>
+          </div>
+        </div>
+        <a href="/contact/">Contact</a>
+      </nav>
+      <div class="header-actions">
+        <button type="button" class="nav-search" data-search-open aria-label="Search this website" aria-keyshortcuts="/ Control+K">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <span class="nav-search__label">Search</span>
+          <span class="nav-search__k" aria-hidden="true"><kbd>/</kbd></span>
+        </button>
+        <a href="tel:+441202775566" class="nav-phone" aria-label="Call 365 Techies on 01202 775566">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg><span class="nav-phone__num">01202 775566</span>
+        </a>
+        <a href="/portal/" class="nav-signin" aria-label="Sign in to your 365 customer portal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="nav-signin__t">Sign in</span>
+        </a>
+        <a href="/book-service/" class="nav-book" aria-label="Book a computer service">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book
+        </a>
+        <a href="/sos/" class="nav-sos" target="_blank" rel="noopener" aria-label="SOS emergency remote support — download Splashtop SOS">
+          <span class="sos-dot" aria-hidden="true"></span>SOS<span class="nav-sos__long">&nbsp;REMOTE SUPPORT</span>
+        </a>
+        <button class="mobile-menu-button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <script>
+  /* Header sign-in state. Telling a signed-in customer to "Sign in" reads as broken -
+     and telling a first-time visitor only "Sign in" reads as members-only, hiding the
+     free membership from the people we most want to join. So: signed OUT invites
+     joining (in the drawer, where there is room); signed IN says where the button
+     actually goes. Inline and tiny so it settles before anyone reads the header.
+     Session shapes match the portal: customer = localStorage p365 with a wtoken;
+     staff/view-as = sessionStorage p365s. Never render the person's name here - on a
+     shared computer that would announce who last used it. */
+  (function () {
+    var cust = false, staff = false;
+    try {
+      var a = JSON.parse(localStorage.getItem('p365') || '{}') || {};
+      var b = JSON.parse(sessionStorage.getItem('p365s') || '{}') || {};
+      staff = !!(a.staff || a.stoken || b.staff || b.stoken);
+      cust = !staff && !!a.wtoken;
+    } catch (e) { return; }
+    if (!cust && !staff) return;
+    var label = staff ? 'Staff area' : 'Your portal';
+    var aria = staff ? 'Open the 365 staff area' : 'Go to your 365 portal';
+    var t = document.querySelector('.nav-signin .nav-signin__t');
+    if (t) t.textContent = label;
+    var a2 = document.querySelector('.nav-signin');
+    if (a2) a2.setAttribute('aria-label', aria);
+    var m = document.querySelector('.mobile-menu .m-signin');
+    if (m) m.textContent = label;
+  })();
+  </script>
+
+  <div class="menu-backdrop" aria-hidden="true"></div>
+  <aside class="mobile-menu" id="mobile-menu" aria-hidden="true">
+    <p class="mobile-menu__label mono">// NAVIGATION</p>
+    <nav class="mobile-menu__nav" aria-label="Mobile">
+      <a href="/">Home</a>
+      <a href="/dell-it-support-dorset/">Dell</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/contact/">Contact</a>
+      <a href="/portal/" class="m-signin">Sign in or join free</a>
+      <details class="m-group">
+        <summary>For Home</summary>
+        <div class="m-group__links">
+          <a href="/home-it-support-subscriptions/">Home IT Support</a>
+          <a href="/home-it-support-plans/">Home Support Plans</a>
+          <a href="/free-pc-health-check/">365 PC Manager app &mdash; free</a>
+          <a href="/it-support-for-home-workers/">Home Workers</a>
+          <a href="/family-it-support/">Families</a>
+          <a href="/it-support-for-retired-users/">Retired Users</a>
+          <a href="/it-support-for-disabled-people/">Disabled People</a>
+          <a href="/computer-help-for-seniors/">Help for Seniors</a>
+          <a href="/free-courses/">Free Courses</a>
+          <a href="/parents-guide-online-safety/">Parents&rsquo; Online Safety Guide</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>For Business</summary>
+        <div class="m-group__links">
+          <a href="/business-it-support-subscriptions/">Business IT Support</a>
+          <a href="/business-it-support-plans/">Business Support Plans</a>
+          <a href="/free-pc-health-check/">365 PC Manager app &mdash; free</a>
+          <a href="/small-business-it-support/">Small Businesses</a>
+          <a href="/it-support-for-sole-traders/">Sole Traders</a>
+          <a href="/it-support-for-education/">Schools &amp; Education</a>
+          <a href="/it-support-by-industry/">IT Support by Industry</a>
+          <a href="/business-wifi-installation/">Business WiFi</a>
+          <a href="/business-continuity-internet/">Broadband Emergency Plan</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Services</summary>
+        <div class="m-group__links">
+          <a href="/services/">All Services &#8594;</a>
+          <span class="dropdown__label dropdown__label--sep">Everyday support</span>
+          <a href="/remote-it-support/">Remote IT Support</a>
+          <a href="/computer-repairs/">Computer Repairs</a>
+          <a href="/preventative-maintenance/">Preventative Maintenance</a>
+          <a href="/microsoft-365-support/">Microsoft 365</a>
+          <a href="/cybersecurity-support/">Cybersecurity</a>
+          <a href="/email-support/">Email Support</a>
+          <a href="/printer-support/">Printer Support</a>
+          <a href="/backup-support/">Backup Support</a>
+          <span class="dropdown__label dropdown__label--sep">WiFi &amp; internet</span>
+          <a href="/wifi-support/">Wi-Fi Support</a>
+          <a href="/starlink-internet/">Starlink Internet</a>
+          <a href="/emergency-internet/">365 Emergency Internet</a>
+          <span class="dropdown__label dropdown__label--sep">Computers &amp; hardware</span>
+          <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+          <a href="/custom-pc-builds/">Custom-Built PCs</a>
+          <span class="dropdown__label dropdown__label--sep">Web, AI &amp; off-grid</span>
+          <a href="/ai/">AI &amp; Automation</a>
+          <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+          <a href="/web-care/">365 Web Care</a>
+          <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+          <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Free Tools</summary>
+        <div class="m-group__links">
+          <a href="/free-tools/">All Free Tools &#8594;</a>
+          <span class="dropdown__label dropdown__label--sep">Test your setup</span>
+          <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+          <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
+          <a href="/van-signal-map/">Bournemouth Signal Map</a>
+          <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+          <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
+          <a href="/bournemouth/live-map/#map">Bournemouth in 3D</a>
+          <a href="/pc-benchmark/">PC Benchmark</a>
+          <a href="/computer-spec-checker/">PC Hardware Checker</a>
+          <a href="/website-checker/">Website Checker</a>
+          <a href="/is-it-down/">Is It Down? Status Checker</a>
+          <span class="dropdown__label dropdown__label--sep">Stay safe</span>
+          <a href="/email-security-checker/">Email Security Checker</a>
+          <a href="/password-breach-checker/">Password Breach Checker</a>
+          <a href="/link-safety-checker/">Link Safety Checker</a>
+          <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+          <a href="/online-safety-course/">Free Online Safety Course</a>
+          <span class="dropdown__label dropdown__label--sep">Apps &amp; builders</span>
+          <a href="/free-pc-health-check/">365 PC Manager app</a>
+          <a href="/custom-pc-builder/">Custom PC Builder</a>
+          <a href="/victron-system-builder/">Victron System Builder</a>
+          <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Get Help</summary>
+        <div class="m-group__links">
+          <a href="/contact/">Contact Us &#8594;</a>
+          <span class="dropdown__label dropdown__label--sep">Right now</span>
+          <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed &mdash; What To Do</a>
+          <a href="/remote-support/">Start Remote Support</a>
+          <a href="/emergency-it-help/">Emergency IT Help</a>
+          <a href="/scam-pop-up-help-poole/">Scam Pop-up Help</a>
+          <span class="dropdown__label dropdown__label--sep">Book &amp; pay</span>
+          <a href="/book-service/">Book a Service</a>
+          <a href="/book-a-collection/">Book a Collection</a>
+          <a href="/quick-quote/">Quick Quote</a>
+          <a href="/pay/">Pay Us</a>
+          <span class="dropdown__label dropdown__label--sep">Plans &amp; pricing</span>
+          <a href="/monthly-it-support/">Monthly IT Support</a>
+          <a href="/plan-finder/">Plan Finder</a>
+          <a href="/switching-it-provider/">Switching to Us</a>
+          <span class="dropdown__label dropdown__label--sep">Fix it yourself</span>
+          <a href="/wifi-troubleshooting/">WiFi Troubleshooting</a>
+          <a href="/broadband-down/">Broadband Down? Start Here</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>About &amp; Trust</summary>
+        <div class="m-group__links">
+          <span class="dropdown__label dropdown__label--sep">Who we are</span>
+          <a href="/about/">About 365 Techies</a>
+          <a href="/meet-the-team/">Meet the Team</a>
+          <a href="/why-choose-365-techies/">Why Choose Us</a>
+          <span class="dropdown__label dropdown__label--sep">Proof</span>
+          <a href="/reviews/">Reviews</a>
+          <a href="/case-studies/">Case Studies</a>
+          <a href="/our-guarantees/">Our Guarantees</a>
+          <a href="/accreditations/">Accreditations</a>
+          <span class="dropdown__label dropdown__label--sep">Where we work</span>
+          <a href="/areas-covered/">Areas Covered</a>
+        </div>
+      </details>
+      <details class="m-group">
+        <summary>Resources &amp; Info</summary>
+        <div class="m-group__links">
+          <a href="/resources/">Resources &amp; Guides</a>
+          <a href="/it-advice/">IT Advice</a>
+          <a href="/it-support-cost-guide/">IT Cost Guide</a>
+          <a href="/it-jargon-buster/">IT Jargon Buster</a>
+          <a href="/cybersecurity-checklist/">Cybersecurity Checklist</a>
+          <a href="/cyber-threats/">Cyber Threats Explained</a>
+          <a href="/faqs/">FAQs</a>
+          <a href="/system-status/">System Status</a>
+          <a href="/privacy-policy/">Privacy Policy</a>
+          <a href="/cookie-policy/">Cookie Policy</a>
+          <a href="/terms/">Terms of Service</a>
+          <a href="/accessibility-statement/">Accessibility</a>
+        </div>
+      </details>
+    </nav>
+    <div class="mobile-menu__plans">
+      <a class="button sos" href="/sos/" target="_blank" rel="noopener"><span class="sos-dot" aria-hidden="true"></span>SOS Remote Support</a>
+      <a class="button primary" href="/book-service/">Book a Service</a>
+      <a class="button secondary" href="/home-it-support-plans/">Home Plans</a>
+      <a class="button secondary" href="/business-it-support-plans/">Business Plans</a>
+    </div>
+    <p class="mobile-menu__foot mono"><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a><br /><a href="tel:+441202775566">01202 775566</a><br /><a href="sms:+447520615332">Text only: 07520 615332</a></p>
+  </aside>
+
+  <main id="main">
+    <section class="page-hero" aria-label="Introduction">
+      <div class="page-hero__inner">
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/bournemouth/">Bournemouth365</a> <span>/</span> <span aria-current="page">Weather Records</span></nav>
+        <p class="eyebrow mono">// BOURNEMOUTH365</p>
+        <h1>Bournemouth&rsquo;s weather records, <em class="grad grad--cyan">1957 to 2025</em></h1>
+        <p class="lede">The hottest and coldest days on record, every month&rsquo;s records and averages, how the averages have moved over 69 years, when the first frost and the first 25-degree day usually arrive, and any date looked up. All from the Met Office&rsquo;s own daily readings at Bournemouth Airport.</p>
+        <div class="page-hero__cta">
+          <a href="/bournemouth/weather/" class="button primary button--lg">Today in the record books</a>
+          <a href="#lookup" class="button secondary button--lg">Look up a date</a>
+        </div>
+        <ul class="page-hero__chips mono"><li>&#9679; 69 years of daily readings</li><li>&#9679; Met Office station data</li><li>&#9679; Open Government Licence</li></ul>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 23 September 2026</p>
+      </div>
+    </section>
+    <section class="section b365" aria-label="The headline records">
+      <div class="wrap">
+        <div class="bwr-tiles" data-reveal>
+          <div class="b365-tile bwr-tile"><p class="b365-num">34.1&deg;</p><p class="b365-sub">Hottest day on record</p><p class="bwr-when">4 August 1990</p></div>
+          <div class="b365-tile bwr-tile"><p class="b365-num">&minus;13.4&deg;</p><p class="b365-sub">Coldest night on record</p><p class="bwr-when">23 January 1963</p></div>
+          <div class="b365-tile bwr-tile"><p class="b365-num">40</p><p class="b365-sub">Most 25&deg; days in one year</p><p class="bwr-when">1995</p></div>
+          <div class="b365-tile bwr-tile"><p class="b365-num">23 October</p><p class="b365-sub">Average first frost</p><p class="bwr-when">earliest 22 September 1962</p></div>
+        </div>
+      </div>
+    </section>
+    <section class="section b365" aria-labelledby="look-h">
+      <div class="wrap">
+        <h2 id="look-h">Any date, since 1957</h2>
+        <div class="bwr-look" id="lookup">
+          <label for="bwr-m" class="b365-sub" style="margin:0">Pick a date:</label>
+          <select id="bwr-d" aria-label="Day"><option value="01">1</option><option value="02">2</option><option value="03">3</option><option value="04">4</option><option value="05">5</option><option value="06">6</option><option value="07">7</option><option value="08">8</option><option value="09">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option></select>
+          <select id="bwr-m" aria-label="Month"><option value="01">January</option><option value="02">February</option><option value="03">March</option><option value="04">April</option><option value="05">May</option><option value="06">June</option><option value="07">July</option><option value="08">August</option><option value="09">September</option><option value="10">October</option><option value="11">November</option><option value="12">December</option></select>
+        </div>
+        <div class="bwr-out" id="bwr-out" aria-live="polite"><p class="b365-sub">Choose a day and a month.</p></div>
+        <script>
+        (function () {
+          var D = {"01-01":[14.3,2022,-9.5,1979,8.0,2.6],"01-02":[13.4,2024,-11.0,1979,7.7,2.3],"01-03":[13.7,2015,-12.9,1979,7.7,1.8],"01-04":[13.3,2023,-7.8,2010,7.6,2.4],"01-05":[13.1,2025,-10.0,2010,8.3,2.4],"01-06":[14.1,1999,-10.8,1979,8.1,2.6],"01-07":[12.7,2005,-11.1,2009,7.8,1.8],"01-08":[12.6,2007,-7.5,2010,7.8,2.4],"01-09":[14.3,1998,-8.4,1985,7.8,2.7],"01-10":[13.1,2023,-8.8,2009,7.7,1.9],"01-11":[12.5,2005,-6.8,1963,7.7,2.6],"01-12":[12.7,1976,-10.7,1987,7.6,2.0],"01-13":[13.3,1998,-12.5,1963,7.8,2.0],"01-14":[12.9,2020,-12.7,1982,7.8,1.4],"01-15":[13.5,1974,-10.2,1963,7.8,2.7],"01-16":[13.1,1993,-8.3,2024,7.8,2.1],"01-17":[12.1,2008,-7.2,1959,7.5,1.7],"01-18":[13.4,2007,-7.3,2024,7.6,1.1],"01-19":[14.5,2007,-8.8,2024,8.0,2.3],"01-20":[13.1,2005,-7.4,2016,7.8,2.1],"01-21":[13.3,2012,-7.2,2022,8.0,2.1],"01-22":[13.4,2016,-10.7,1963,8.2,2.5],"01-23":[12.8,1973,-13.4,1963,8.1,2.2],"01-24":[13.4,2016,-11.3,1963,8.1,2.2],"01-25":[13.6,2019,-11.2,1963,8.2,1.8],"01-26":[13.0,2003,-11.7,1963,8.2,2.2],"01-27":[14.7,2003,-8.4,2000,8.5,2.6],"01-28":[13.4,2018,-10.6,1979,8.5,2.4],"01-29":[13.6,2022,-5.5,2004,8.2,2.9],"01-30":[13.7,2000,-6.1,1972,7.5,2.4],"01-31":[13.7,2016,-10.1,1972,8.1,1.9],"02-01":[13.6,1964,-7.9,1987,8.2,3.0],"02-02":[13.7,2020,-7.2,1963,8.4,2.4],"02-03":[13.6,2023,-7.6,2019,8.6,2.2],"02-04":[15.3,2004,-11.0,2012,8.8,2.4],"02-05":[13.2,1989,-6.5,1996,8.7,2.7],"02-06":[13.5,1981,-6.5,1964,8.5,3.0],"02-07":[13.5,1990,-9.2,1991,8.2,2.0],"02-08":[13.9,2000,-10.9,1991,8.2,1.8],"02-09":[13.8,2022,-8.0,1986,7.9,1.4],"02-10":[13.1,2008,-9.9,1986,8.1,1.4],"02-11":[12.7,2001,-8.3,2012,8.0,1.8],"02-12":[14.0,2002,-9.7,1978,8.1,2.1],"02-13":[14.1,1998,-9.3,1985,7.8,2.4],"02-14":[13.5,1998,-9.9,1985,7.9,0.5],"02-15":[14.7,2024,-8.6,1981,8.3,1.2],"02-16":[14.0,2022,-7.7,1969,8.1,1.5],"02-17":[13.7,2023,-6.7,1960,8.3,1.6],"02-18":[16.0,2024,-6.1,1960,8.2,1.4],"02-19":[13.6,1999,-9.0,1985,8.4,1.4],"02-20":[15.8,2017,-7.2,2012,8.4,2.3],"02-21":[14.2,2017,-7.4,1994,8.7,2.6],"02-22":[14.1,2002,-10.3,1986,8.9,3.0],"02-23":[15.7,2012,-5.3,1963,9.1,2.6],"02-24":[15.1,2019,-7.0,1982,9.3,2.5],"02-25":[17.8,2019,-7.8,1963,8.7,1.8],"02-26":[17.0,2019,-6.2,1963,8.8,1.5],"02-27":[14.8,2019,-7.9,2004,8.9,1.6],"02-28":[14.0,2019,-7.5,2005,8.9,2.5],"02-29":[14.4,1960,-4.4,2016,9.5,2.1],"03-01":[13.8,2012,-5.2,1963,9.2,1.9],"03-02":[17.9,1977,-7.2,2006,9.3,1.9],"03-03":[15.0,1960,-10.2,1965,9.5,2.0],"03-04":[13.5,2003,-6.3,2005,9.0,0.9],"03-05":[13.8,1961,-6.8,1988,9.7,0.7],"03-06":[13.3,1957,-7.8,1962,10.0,1.8],"03-07":[16.3,2014,-7.3,1971,10.1,2.7],"03-08":[15.8,2000,-6.2,1970,9.9,2.1],"03-09":[16.6,2017,-5.9,1976,10.6,2.8],"03-10":[16.3,2025,-6.7,1970,10.8,3.3],"03-11":[17.2,1957,-7.8,1958,10.6,3.1],"03-12":[16.1,1997,-7.2,1958,10.4,2.9],"03-13":[17.0,1991,-6.1,1987,10.5,3.3],"03-14":[17.8,1961,-6.1,1987,10.8,2.6],"03-15":[16.8,2011,-6.6,1962,11.2,3.7],"03-16":[19.1,1972,-4.0,2010,10.9,3.2],"03-17":[19.4,1999,-6.5,1962,10.7,3.2],"03-18":[17.2,1972,-6.7,1985,10.8,2.9],"03-19":[18.2,2005,-4.9,2011,10.8,2.9],"03-20":[20.1,1972,-8.0,1985,11.0,2.6],"03-21":[17.6,1972,-7.2,1958,11.3,3.1],"03-22":[17.4,1972,-7.4,1980,11.3,2.9],"03-23":[17.4,2022,-4.9,1979,11.3,2.6],"03-24":[19.7,2012,-5.9,1976,11.3,3.2],"03-25":[18.3,2012,-7.5,1962,11.8,3.3],"03-26":[20.1,2012,-4.9,1993,11.8,3.1],"03-27":[19.5,2012,-4.5,1990,11.9,3.3],"03-28":[20.9,2012,-4.7,1969,11.8,3.1],"03-29":[20.6,2012,-4.7,1975,11.6,3.9],"03-30":[21.0,1965,-4.3,1995,12.2,3.4],"03-31":[16.3,2014,-5.1,2013,12.1,3.9],"04-01":[18.1,1965,-4.9,1967,12.1,3.9],"04-02":[19.0,2007,-5.5,1996,12.4,4.3],"04-03":[18.2,2014,-5.1,1984,11.7,3.0],"04-04":[22.4,2025,-5.0,1996,11.9,3.5],"04-05":[20.8,2025,-5.7,1990,12.2,3.2],"04-06":[19.3,2015,-4.7,1975,12.9,3.6],"04-07":[21.9,2011,-5.2,2021,12.8,3.2],"04-08":[21.8,2020,-4.6,2008,12.6,3.0],"04-09":[23.2,2020,-5.4,1970,12.9,2.2],"04-10":[21.9,2020,-5.0,2003,12.9,3.4],"04-11":[21.5,2020,-5.4,1978,12.9,3.3],"04-12":[20.0,2007,-3.0,2003,13.2,3.4],"04-13":[19.6,1991,-3.6,2021,12.9,3.6],"04-14":[24.3,2007,-3.5,1999,13.1,3.4],"04-15":[24.5,2007,-3.2,1989,13.7,3.7],"04-16":[25.0,2003,-3.1,2012,13.9,3.8],"04-17":[24.9,2003,-3.8,1984,13.7,3.9],"04-18":[23.8,2003,-2.8,1999,13.8,4.2],"04-19":[24.1,2018,-4.8,1995,13.8,4.1],"04-20":[25.0,2019,-4.6,1995,14.1,3.7],"04-21":[24.6,2011,-4.7,1995,14.8,4.1],"04-22":[23.3,2011,-1.4,1974,14.5,4.8],"04-23":[24.2,2011,-1.9,1991,14.8,5.5],"04-24":[23.2,2011,-1.9,2010,14.8,4.7],"04-25":[22.6,1984,-2.1,2017,14.2,5.4],"04-26":[23.0,1984,-3.8,1989,14.3,5.2],"04-27":[20.6,2007,-3.2,2017,14.5,5.0],"04-28":[23.6,2007,-3.3,1985,14.3,4.3],"04-29":[23.1,2007,-3.4,1976,14.4,4.7],"04-30":[24.4,2025,-2.5,1976,15.0,4.4],"05-01":[25.9,2025,-2.1,1962,15.2,5.9],"05-02":[26.3,1990,-2.1,1967,15.3,5.2],"05-03":[27.2,1990,-3.6,1967,15.2,5.2],"05-04":[25.7,1990,-1.1,1998,15.3,5.4],"05-05":[24.8,1995,-3.0,1982,15.6,5.5],"05-06":[26.2,1995,-2.2,1979,15.7,5.5],"05-07":[25.6,1976,-1.7,2021,16.3,6.2],"05-08":[24.8,1976,-2.0,1982,15.9,6.8],"05-09":[25.6,1976,-1.5,1984,16.2,6.8],"05-10":[24.4,1998,-1.3,1982,16.6,6.9],"05-11":[26.0,2008,-0.9,1996,16.7,7.2],"05-12":[26.3,2001,-2.6,2010,16.6,7.1],"05-13":[25.8,1998,-1.6,1996,16.9,7.3],"05-14":[25.8,1998,-0.5,1995,16.7,6.8],"05-15":[26.2,1998,-0.5,2020,17.0,6.5],"05-16":[24.9,1998,-1.0,1986,16.8,7.1],"05-17":[22.8,1985,-0.7,2013,16.5,7.1],"05-18":[22.7,1992,-0.2,2005,16.6,6.8],"05-19":[24.2,1992,0.5,1979,17.0,6.9],"05-20":[26.1,1989,-0.7,1965,16.9,6.8],"05-21":[27.6,1989,1.2,1968,17.0,7.4],"05-22":[26.6,1989,2.0,1987,17.0,7.7],"05-23":[26.6,1992,1.7,2021,17.6,8.0],"05-24":[26.8,1989,1.3,1975,17.8,8.2],"05-25":[28.5,2012,1.5,2011,17.9,8.0],"05-26":[27.3,2018,2.0,2013,17.9,7.9],"05-27":[25.1,1992,-0.4,1961,17.9,8.2],"05-28":[25.0,2018,-1.1,1961,17.4,7.7],"05-29":[26.2,1999,1.1,2007,18.0,8.1],"05-30":[25.4,1978,1.8,1974,18.2,8.3],"05-31":[26.6,1963,0.9,1989,18.7,8.0],"06-01":[26.5,2009,1.0,1962,18.8,8.1],"06-02":[26.3,2020,0.4,1962,19.2,8.8],"06-03":[26.9,2011,1.5,1989,19.0,9.3],"06-04":[26.7,2011,0.9,1991,19.0,8.5],"06-05":[24.6,1997,2.1,1969,18.4,9.0],"06-06":[26.6,1982,1.7,1962,18.7,9.2],"06-07":[28.8,1996,2.8,2015,18.9,9.2],"06-08":[25.8,1963,2.0,1985,19.2,9.1],"06-09":[28.6,2023,0.4,2001,19.5,9.0],"06-10":[28.2,1970,3.2,1987,19.5,9.7],"06-11":[27.4,1975,3.0,2001,19.1,9.8],"06-12":[28.3,1975,2.2,1987,19.2,9.8],"06-13":[30.1,2023,2.4,1971,19.6,9.4],"06-14":[27.8,1957,2.0,1973,20.2,9.8],"06-15":[29.4,1957,1.4,1987,20.4,9.3],"06-16":[29.4,1957,0.7,1978,20.1,9.4],"06-17":[29.4,1957,3.7,1985,20.1,10.4],"06-18":[28.9,1957,5.2,1981,20.1,10.6],"06-19":[29.0,2017,4.2,1986,20.0,10.6],"06-20":[30.6,2017,2.9,2010,20.4,10.5],"06-21":[28.6,2017,3.5,2004,20.1,10.7],"06-22":[26.9,2022,4.7,1999,20.2,10.5],"06-23":[27.5,2005,4.7,2006,20.2,10.0],"06-24":[29.8,2020,5.2,2011,20.5,10.5],"06-25":[31.3,2020,4.5,2013,20.6,10.8],"06-26":[33.3,1976,3.9,2013,20.6,11.0],"06-27":[33.6,1976,4.3,1965,20.8,11.6],"06-28":[33.8,1976,3.5,1981,20.9,11.0],"06-29":[31.7,1976,3.0,1972,20.9,11.2],"06-30":[31.7,1976,2.9,1972,21.0,10.8],"07-01":[32.6,1976,3.7,1984,21.6,11.7],"07-02":[32.9,1976,6.0,1987,21.1,11.3],"07-03":[31.2,1976,4.1,1984,21.3,10.7],"07-04":[31.0,1976,3.9,1968,21.2,10.8],"07-05":[32.1,1976,5.5,1961,21.7,11.6],"07-06":[30.3,1976,4.4,1962,21.5,11.3],"07-07":[30.4,2018,3.0,1962,21.7,11.4],"07-08":[30.7,2018,2.9,1962,21.9,11.8],"07-09":[30.2,1995,5.4,1986,21.6,11.9],"07-10":[29.3,2025,4.6,1993,21.6,11.7],"07-11":[30.5,1983,5.4,2020,21.8,11.8],"07-12":[31.9,1983,5.0,1993,21.4,12.1],"07-13":[30.6,1983,5.6,1993,21.6,12.0],"07-14":[31.0,2013,6.4,2011,21.8,12.2],"07-15":[30.8,2003,5.1,2001,21.8,11.9],"07-16":[29.6,1983,4.5,2001,21.9,11.7],"07-17":[30.5,2006,5.2,1965,22.1,11.8],"07-18":[31.9,2022,4.5,1966,22.0,11.6],"07-19":[33.9,2006,6.4,1971,22.3,12.1],"07-20":[29.6,2016,7.2,1959,22.2,12.5],"07-21":[30.2,1990,6.6,2008,22.0,11.6],"07-22":[31.0,1989,2.6,1970,22.2,11.8],"07-23":[31.7,2019,5.6,1986,22.3,11.8],"07-24":[30.1,1989,5.0,1961,21.9,12.1],"07-25":[29.7,2019,4.2,1978,22.4,11.5],"07-26":[29.5,2014,6.0,1987,22.0,12.4],"07-27":[29.2,1984,4.4,1963,21.9,12.8],"07-28":[28.6,1984,5.8,1992,22.3,12.3],"07-29":[28.4,1999,5.8,2020,22.1,11.6],"07-30":[30.9,2024,4.0,1961,22.2,12.0],"07-31":[31.0,1995,4.2,2015,21.9,12.5],"08-01":[32.0,1995,4.4,2015,22.3,11.6],"08-02":[32.4,1995,3.0,1966,22.2,12.2],"08-03":[33.5,1990,3.8,1983,22.1,12.2],"08-04":[34.1,1990,6.1,1983,22.0,12.1],"08-05":[31.1,2003,5.5,1987,22.1,12.8],"08-06":[28.2,2003,6.0,1974,21.7,12.1],"08-07":[30.7,2020,3.5,1961,22.2,11.7],"08-08":[32.9,2020,4.0,1987,22.1,11.7],"08-09":[31.0,2020,3.5,1962,21.9,12.2],"08-10":[33.9,2003,5.1,1987,21.9,12.0],"08-11":[32.1,2022,4.5,1972,21.9,12.1],"08-12":[32.4,2022,4.4,1972,22.0,12.5],"08-13":[32.0,2022,3.4,1993,21.6,12.1],"08-14":[30.8,2022,4.7,1994,21.5,12.5],"08-15":[30.5,1973,5.0,1994,21.7,12.0],"08-16":[30.3,1995,5.4,2015,21.6,11.5],"08-17":[27.6,1995,5.0,1985,21.6,11.2],"08-18":[29.5,1995,2.4,1970,21.2,11.6],"08-19":[30.8,1995,5.0,1972,21.6,11.8],"08-20":[30.8,1995,3.3,2014,21.7,11.9],"08-21":[29.0,1995,2.7,2014,21.1,11.9],"08-22":[25.7,1976,4.8,1964,21.5,11.7],"08-23":[27.3,2003,3.0,1964,21.1,11.3],"08-24":[30.2,2016,2.5,2014,21.0,11.7],"08-25":[29.5,1976,2.6,1993,21.5,11.3],"08-26":[29.5,1976,6.0,1979,21.3,11.7],"08-27":[27.2,2019,4.7,1998,21.3,11.2],"08-28":[25.9,1975,3.0,1974,21.0,10.2],"08-29":[28.1,1961,2.1,1986,21.0,10.0],"08-30":[25.8,1961,2.5,1964,20.5,10.1],"08-31":[26.7,1991,4.5,2012,20.4,10.2],"09-01":[26.2,2024,4.2,1989,20.5,10.6],"09-02":[27.0,1961,4.2,1985,20.5,10.1],"09-03":[26.8,2023,2.1,1989,20.8,11.0],"09-04":[28.1,2023,1.6,1986,20.6,10.1],"09-05":[29.1,2023,1.7,1993,20.7,10.1],"09-06":[28.1,2023,2.4,1984,20.3,10.1],"09-07":[29.5,2023,2.4,1985,20.6,9.7],"09-08":[27.9,2023,2.4,1961,20.3,10.0],"09-09":[29.2,2023,2.5,1990,19.9,10.2],"09-10":[26.7,1959,0.8,1986,19.8,10.2],"09-11":[28.3,1959,2.6,1986,19.7,10.4],"09-12":[28.3,1959,3.7,2024,19.5,10.0],"09-13":[26.1,1959,0.7,2024,19.1,9.2],"09-14":[27.4,2020,1.1,1979,19.1,9.5],"09-15":[27.5,2020,2.2,2013,19.0,9.4],"09-16":[26.8,2020,2.3,1979,18.9,9.7],"09-17":[26.8,1982,1.2,1966,18.8,9.5],"09-18":[25.0,1961,0.7,1962,18.7,9.1],"09-19":[25.4,2024,1.1,1991,18.8,9.5],"09-20":[24.4,2020,0.1,1986,18.8,9.4],"09-21":[23.8,1970,1.0,1964,18.9,8.6],"09-22":[23.3,1959,-0.4,1962,18.6,9.1],"09-23":[23.0,2006,0.1,1979,18.5,8.7],"09-24":[24.9,1983,-1.3,2003,18.3,9.2],"09-25":[21.5,2006,0.3,2018,18.1,8.8],"09-26":[21.7,1985,0.7,1993,18.0,8.6],"09-27":[22.3,2018,0.4,1962,17.7,9.2],"09-28":[23.7,2011,-1.4,1990,17.9,8.3],"09-29":[24.1,2011,-0.3,1987,17.5,8.8],"09-30":[23.6,1997,-1.1,1957,17.1,8.7],"10-01":[25.2,2011,0.1,1988,17.4,9.4],"10-02":[23.5,2011,-0.6,1957,17.1,8.4],"10-03":[25.0,1959,1.4,2016,17.1,8.5],"10-04":[23.9,1959,-0.2,1994,17.0,8.5],"10-05":[22.2,1959,-2.7,1994,16.8,8.5],"10-06":[21.7,1959,-1.1,1999,16.7,8.6],"10-07":[22.0,2023,-0.2,1971,16.5,8.4],"10-08":[22.5,2023,-1.5,1990,16.7,8.4],"10-09":[23.1,2023,0.3,1970,16.7,8.1],"10-10":[22.8,1969,-1.8,1980,16.5,8.3],"10-11":[21.0,1978,-0.3,2022,16.2,8.4],"10-12":[23.1,1978,-1.0,1964,16.0,7.4],"10-13":[21.1,2001,-3.0,1974,15.7,7.7],"10-14":[19.6,1995,-2.5,1992,15.4,7.1],"10-15":[20.2,1994,-1.4,1993,15.3,7.1],"10-16":[19.3,1977,-4.6,1992,15.2,6.9],"10-17":[19.5,1969,-5.0,1992,15.1,6.8],"10-18":[20.0,1997,-3.0,1992,15.1,6.6],"10-19":[20.7,1997,-3.4,2002,15.1,7.5],"10-20":[20.7,1969,-2.5,2011,14.8,7.3],"10-21":[18.7,2018,-4.9,2010,14.7,7.4],"10-22":[18.5,1978,-2.6,1991,14.7,6.9],"10-23":[18.7,1996,-2.1,1983,14.4,7.1],"10-24":[19.6,1971,-3.1,2003,14.6,7.2],"10-25":[18.9,1978,-3.9,2003,14.6,7.4],"10-26":[20.0,1969,-2.4,2010,14.3,7.3],"10-27":[20.1,2022,-3.7,2003,14.3,6.9],"10-28":[18.5,2009,-3.2,2003,14.0,6.7],"10-29":[19.4,2022,-3.6,1997,13.5,6.6],"10-30":[19.4,1957,-6.4,1983,13.7,6.4],"10-31":[19.8,2014,-5.1,1992,14.0,6.8],"11-01":[16.9,2015,-4.7,1997,13.8,6.8],"11-02":[17.5,1969,-4.9,2018,13.1,6.4],"11-03":[17.6,1996,-4.2,1985,12.9,5.5],"11-04":[16.8,2010,-5.0,1966,12.4,4.7],"11-05":[16.8,1993,-4.2,1988,12.4,4.9],"11-06":[17.1,1992,-4.0,1995,12.4,4.8],"11-07":[16.2,2015,-4.9,1971,12.4,5.3],"11-08":[17.3,1978,-5.4,2016,12.3,5.8],"11-09":[15.7,1998,-4.0,2019,11.9,5.1],"11-10":[16.7,1977,-4.3,1981,11.9,5.4],"11-11":[16.5,1995,-4.5,1971,12.2,5.3],"11-12":[17.3,2022,-6.3,1985,11.9,5.3],"11-13":[17.7,2022,-8.0,1985,11.4,3.9],"11-14":[16.3,2022,-5.6,1985,11.1,4.6],"11-15":[16.3,2016,-7.1,1965,11.2,3.8],"11-16":[15.6,1995,-5.0,2007,11.0,4.4],"11-17":[15.8,2015,-5.4,1973,10.6,3.8],"11-18":[15.2,1978,-6.5,2005,11.0,4.8],"11-19":[15.1,1963,-5.0,2005,10.8,4.0],"11-20":[15.0,1959,-6.6,1971,10.2,3.8],"11-21":[14.9,1978,-5.0,2005,10.1,3.8],"11-22":[15.6,2017,-8.1,1993,10.3,4.1],"11-23":[15.0,2024,-9.6,1993,10.2,3.5],"11-24":[16.1,2024,-6.5,1989,10.6,3.8],"11-25":[15.0,1964,-5.9,1988,10.1,3.8],"11-26":[14.5,1970,-7.2,1989,9.7,3.0],"11-27":[14.3,2006,-7.9,1978,9.9,3.5],"11-28":[14.7,2000,-6.1,1987,9.5,3.4],"11-29":[15.1,2014,-6.8,1978,9.2,3.1],"11-30":[14.2,2024,-6.6,2016,9.4,2.9],"12-01":[14.6,2024,-7.1,2016,9.2,3.3],"12-02":[14.7,2018,-6.0,1973,9.0,3.4],"12-03":[14.4,2018,-8.0,2010,9.2,3.2],"12-04":[14.1,1986,-6.1,1976,9.0,2.8],"12-05":[16.0,1979,-6.7,1957,9.4,2.8],"12-06":[14.2,2007,-6.8,2012,9.0,3.1],"12-07":[14.4,2025,-7.0,1983,9.2,3.2],"12-08":[13.7,2025,-7.2,1980,9.1,3.5],"12-09":[14.3,2023,-7.7,2022,8.7,2.3],"12-10":[14.2,1997,-8.6,2022,8.7,2.1],"12-11":[14.0,2003,-6.9,2022,8.5,2.3],"12-12":[14.7,1961,-6.9,2017,9.1,3.0],"12-13":[13.5,1964,-9.0,1981,8.9,3.6],"12-14":[13.5,1998,-6.7,1991,8.5,2.5],"12-15":[13.7,2015,-7.6,1968,8.7,3.0],"12-16":[14.2,2015,-8.2,2022,8.5,3.4],"12-17":[14.8,2015,-7.8,1957,8.6,1.9],"12-18":[13.9,2024,-7.2,2005,8.8,3.5],"12-19":[14.1,2015,-9.8,1981,8.5,2.7],"12-20":[14.0,1989,-8.9,2010,8.6,2.5],"12-21":[13.8,1989,-8.4,1963,8.7,3.6],"12-22":[14.5,1991,-6.1,1963,8.8,3.7],"12-23":[15.5,1977,-8.1,1963,9.0,4.2],"12-24":[14.3,1988,-9.0,1994,8.3,3.7],"12-25":[14.4,2015,-7.1,2010,8.2,3.0],"12-26":[14.2,2015,-10.4,2010,8.3,2.0],"12-27":[14.4,2015,-8.3,1995,8.0,2.9],"12-28":[15.0,1974,-8.5,1985,7.9,2.4],"12-29":[14.9,2021,-10.5,1964,8.1,1.9],"12-30":[14.1,2021,-8.5,1985,8.4,3.3],"12-31":[13.8,2021,-6.6,2000,8.2,3.3]};
+          var dSel = document.getElementById('bwr-d'), mSel = document.getElementById('bwr-m'), out = document.getElementById('bwr-out');
+          var NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+          function deg(v) { if (v === null || v === undefined) return '\u2014'; var x = Math.round(v * 10) / 10; return (x % 1 === 0 ? String(x) : x.toFixed(1)) + '\u00b0'; }
+          function show() {
+            var k = mSel.value + '-' + dSel.value, e = D[k];
+            var label = String(parseInt(dSel.value, 10)) + ' ' + NAMES[parseInt(mSel.value, 10) - 1];
+            if (!e) { out.innerHTML = '<p class="b365-sub">There is no ' + label + '.</p>'; return; }
+            out.innerHTML = '<p class="big">' + label + ' at Bournemouth Airport, 1957\u20132025</p>'
+              + '<p><b>Hottest:</b> ' + deg(e[0]) + ' in ' + e[1] + '</p>'
+              + (e[2] !== null ? '<p><b>Coldest:</b> ' + deg(e[2]) + ' in ' + e[3] + '</p>' : '')
+              + '<p><b>Average:</b> high ' + deg(e[4]) + (e[5] !== null ? ', low ' + deg(e[5]) : '') + '</p>';
+          }
+          var now = new Date(); mSel.value = ('0' + (now.getMonth() + 1)).slice(-2); dSel.value = ('0' + now.getDate()).slice(-2);
+          dSel.addEventListener('change', show); mSel.addEventListener('change', show); show();
+        })();
+        </script>
+      </div>
+    </section>
+    <section class="section b365" aria-labelledby="top-h">
+      <div class="wrap">
+        <h2 id="top-h">The all-time top ten</h2>
+        <div class="bwr-grid" data-reveal>
+          <table class="bwr-table"><caption>Hottest days</caption>
+            <thead><tr><th>#</th><th>Date</th><th class="n">Max</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>4 August 1990</td><td class="n"><b>34.1&deg;</b></td></tr>
+              <tr><td>2</td><td>10 August 2003</td><td class="n"><b>33.9&deg;</b></td></tr>
+              <tr><td>3</td><td>19 July 2006</td><td class="n"><b>33.9&deg;</b></td></tr>
+              <tr><td>4</td><td>28 June 1976</td><td class="n"><b>33.8&deg;</b></td></tr>
+              <tr><td>5</td><td>27 June 1976</td><td class="n"><b>33.6&deg;</b></td></tr>
+              <tr><td>6</td><td>3 August 1990</td><td class="n"><b>33.5&deg;</b></td></tr>
+              <tr><td>7</td><td>26 June 1976</td><td class="n"><b>33.3&deg;</b></td></tr>
+              <tr><td>8</td><td>3 August 1995</td><td class="n"><b>33&deg;</b></td></tr>
+              <tr><td>9</td><td>2 July 1976</td><td class="n"><b>32.9&deg;</b></td></tr>
+              <tr><td>10</td><td>8 August 2020</td><td class="n"><b>32.9&deg;</b></td></tr>
+            </tbody></table>
+          <table class="bwr-table"><caption>Coldest nights</caption>
+            <thead><tr><th>#</th><th>Date</th><th class="n">Min</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>23 January 1963</td><td class="n"><b>&minus;13.4&deg;</b></td></tr>
+              <tr><td>2</td><td>3 January 1979</td><td class="n"><b>&minus;12.9&deg;</b></td></tr>
+              <tr><td>3</td><td>14 January 1982</td><td class="n"><b>&minus;12.7&deg;</b></td></tr>
+              <tr><td>4</td><td>13 January 1963</td><td class="n"><b>&minus;12.5&deg;</b></td></tr>
+              <tr><td>5</td><td>26 January 1963</td><td class="n"><b>&minus;11.7&deg;</b></td></tr>
+              <tr><td>6</td><td>24 January 1963</td><td class="n"><b>&minus;11.3&deg;</b></td></tr>
+              <tr><td>7</td><td>25 January 1963</td><td class="n"><b>&minus;11.2&deg;</b></td></tr>
+              <tr><td>8</td><td>7 January 2009</td><td class="n"><b>&minus;11.1&deg;</b></td></tr>
+              <tr><td>9</td><td>2 January 1979</td><td class="n"><b>&minus;11&deg;</b></td></tr>
+              <tr><td>10</td><td>4 February 2012</td><td class="n"><b>&minus;11&deg;</b></td></tr>
+            </tbody></table>
+          <table class="bwr-table"><caption>Coldest days (lowest daytime maximum)</caption>
+            <thead><tr><th>#</th><th>Date</th><th class="n">Max</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>12 January 1987</td><td class="n"><b>&minus;4.8&deg;</b></td></tr>
+              <tr><td>2</td><td>12 January 1963</td><td class="n"><b>&minus;4.6&deg;</b></td></tr>
+              <tr><td>3</td><td>13 January 1987</td><td class="n"><b>&minus;4.1&deg;</b></td></tr>
+              <tr><td>4</td><td>1 January 1979</td><td class="n"><b>&minus;4&deg;</b></td></tr>
+              <tr><td>5</td><td>13 January 1963</td><td class="n"><b>&minus;3.6&deg;</b></td></tr>
+              <tr><td>6</td><td>25 January 1963</td><td class="n"><b>&minus;3.5&deg;</b></td></tr>
+              <tr><td>7</td><td>7 February 1991</td><td class="n"><b>&minus;3.1&deg;</b></td></tr>
+              <tr><td>8</td><td>10 January 1982</td><td class="n"><b>&minus;2.9&deg;</b></td></tr>
+              <tr><td>9</td><td>17 January 1985</td><td class="n"><b>&minus;2.5&deg;</b></td></tr>
+              <tr><td>10</td><td>14 January 1987</td><td class="n"><b>&minus;2.5&deg;</b></td></tr>
+            </tbody></table>
+          <table class="bwr-table"><caption>Warmest nights (highest minimum)</caption>
+            <thead><tr><th>#</th><th>Date</th><th class="n">Min</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>12 August 2024</td><td class="n"><b>20.3&deg;</b></td></tr>
+              <tr><td>2</td><td>11 August 2003</td><td class="n"><b>19.8&deg;</b></td></tr>
+              <tr><td>3</td><td>5 August 2003</td><td class="n"><b>19.5&deg;</b></td></tr>
+              <tr><td>4</td><td>26 June 2001</td><td class="n"><b>19.2&deg;</b></td></tr>
+              <tr><td>5</td><td>21 July 1989</td><td class="n"><b>19&deg;</b></td></tr>
+              <tr><td>6</td><td>6 July 1957</td><td class="n"><b>18.9&deg;</b></td></tr>
+              <tr><td>7</td><td>22 August 1997</td><td class="n"><b>18.7&deg;</b></td></tr>
+              <tr><td>8</td><td>10 August 2020</td><td class="n"><b>18.7&deg;</b></td></tr>
+              <tr><td>9</td><td>23 August 1997</td><td class="n"><b>18.6&deg;</b></td></tr>
+              <tr><td>10</td><td>1 July 2015</td><td class="n"><b>18.6&deg;</b></td></tr>
+            </tbody></table>
+        </div>
+      </div>
+    </section>
+    <section class="section b365" aria-labelledby="months-h">
+      <div class="wrap">
+        <h2 id="months-h">Month by month</h2>
+        <div class="bwr-scroll" data-reveal>
+          <table class="bwr-table"><caption>Every month&rsquo;s records and averages</caption>
+            <thead><tr><th>Month</th><th class="n">Hottest day</th><th class="n">Coldest night</th><th class="n">Average high</th><th class="n">Average low</th><th class="n">Avg high 1957-1986</th><th class="n">Avg high 1996-2025</th><th class="n">Change</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">January</th><td class="n"><b>14.7&deg;</b><br /><span class="bwr-when">27 January 2003</span></td><td class="n"><b>&minus;13.4&deg;</b><br /><span class="bwr-when">23 January 1963</span></td><td class="n">7.9&deg;</td><td class="n">2.2&deg;</td><td class="n">7.2&deg;</td><td class="n">8.5&deg;</td><td class="n"><span class="bwr-up">+1.3&deg;</span></td></tr>
+              <tr><th scope="row">February</th><td class="n"><b>17.8&deg;</b><br /><span class="bwr-when">25 February 2019</span></td><td class="n"><b>&minus;11&deg;</b><br /><span class="bwr-when">4 February 2012</span></td><td class="n">8.5&deg;</td><td class="n">2&deg;</td><td class="n">7.6&deg;</td><td class="n">9.3&deg;</td><td class="n"><span class="bwr-up">+1.7&deg;</span></td></tr>
+              <tr><th scope="row">March</th><td class="n"><b>21&deg;</b><br /><span class="bwr-when">30 March 1965</span></td><td class="n"><b>&minus;10.2&deg;</b><br /><span class="bwr-when">3 March 1965</span></td><td class="n">10.8&deg;</td><td class="n">2.8&deg;</td><td class="n">10&deg;</td><td class="n">11.5&deg;</td><td class="n"><span class="bwr-up">+1.5&deg;</span></td></tr>
+              <tr><th scope="row">April</th><td class="n"><b>25&deg;</b><br /><span class="bwr-when">16 April 2003</span></td><td class="n"><b>&minus;5.7&deg;</b><br /><span class="bwr-when">5 April 1990</span></td><td class="n">13.5&deg;</td><td class="n">3.9&deg;</td><td class="n">12.8&deg;</td><td class="n">14.3&deg;</td><td class="n"><span class="bwr-up">+1.5&deg;</span></td></tr>
+              <tr><th scope="row">May</th><td class="n"><b>28.5&deg;</b><br /><span class="bwr-when">25 May 2012</span></td><td class="n"><b>&minus;3.6&deg;</b><br /><span class="bwr-when">3 May 1967</span></td><td class="n">16.8&deg;</td><td class="n">7&deg;</td><td class="n">15.9&deg;</td><td class="n">17.5&deg;</td><td class="n"><span class="bwr-up">+1.6&deg;</span></td></tr>
+              <tr><th scope="row">June</th><td class="n"><b>33.8&deg;</b><br /><span class="bwr-when">28 June 1976</span></td><td class="n"><b>0.4&deg;</b><br /><span class="bwr-when">9 June 2001</span></td><td class="n">19.8&deg;</td><td class="n">9.9&deg;</td><td class="n">19.4&deg;</td><td class="n">20.4&deg;</td><td class="n"><span class="bwr-up">+1.0&deg;</span></td></tr>
+              <tr><th scope="row">July</th><td class="n"><b>33.9&deg;</b><br /><span class="bwr-when">19 July 2006</span></td><td class="n"><b>2.6&deg;</b><br /><span class="bwr-when">22 July 1970</span></td><td class="n">21.8&deg;</td><td class="n">11.8&deg;</td><td class="n">21.3&deg;</td><td class="n">22.3&deg;</td><td class="n"><span class="bwr-up">+1.0&deg;</span></td></tr>
+              <tr><th scope="row">August</th><td class="n"><b>34.1&deg;</b><br /><span class="bwr-when">4 August 1990</span></td><td class="n"><b>2.1&deg;</b><br /><span class="bwr-when">29 August 1986</span></td><td class="n">21.6&deg;</td><td class="n">11.6&deg;</td><td class="n">20.8&deg;</td><td class="n">22&deg;</td><td class="n"><span class="bwr-up">+1.2&deg;</span></td></tr>
+              <tr><th scope="row">September</th><td class="n"><b>29.5&deg;</b><br /><span class="bwr-when">7 September 2023</span></td><td class="n"><b>&minus;1.4&deg;</b><br /><span class="bwr-when">28 September 1990</span></td><td class="n">19.2&deg;</td><td class="n">9.5&deg;</td><td class="n">18.6&deg;</td><td class="n">19.9&deg;</td><td class="n"><span class="bwr-up">+1.3&deg;</span></td></tr>
+              <tr><th scope="row">October</th><td class="n"><b>25.2&deg;</b><br /><span class="bwr-when">1 October 2011</span></td><td class="n"><b>&minus;6.4&deg;</b><br /><span class="bwr-when">30 October 1983</span></td><td class="n">15.5&deg;</td><td class="n">7.6&deg;</td><td class="n">15.1&deg;</td><td class="n">16&deg;</td><td class="n"><span class="bwr-up">+0.9&deg;</span></td></tr>
+              <tr><th scope="row">November</th><td class="n"><b>17.7&deg;</b><br /><span class="bwr-when">13 November 2022</span></td><td class="n"><b>&minus;9.6&deg;</b><br /><span class="bwr-when">23 November 1993</span></td><td class="n">11.2&deg;</td><td class="n">4.4&deg;</td><td class="n">10.6&deg;</td><td class="n">11.8&deg;</td><td class="n"><span class="bwr-up">+1.2&deg;</span></td></tr>
+              <tr><th scope="row">December</th><td class="n"><b>16&deg;</b><br /><span class="bwr-when">5 December 1979</span></td><td class="n"><b>&minus;10.5&deg;</b><br /><span class="bwr-when">29 December 1964</span></td><td class="n">8.7&deg;</td><td class="n">3&deg;</td><td class="n">8.3&deg;</td><td class="n">9.1&deg;</td><td class="n"><span class="bwr-up">+0.8&deg;</span></td></tr>
+            </tbody></table>
+        </div>
+      </div>
+    </section>
+    <section class="section b365" aria-labelledby="trend-h">
+      <div class="wrap">
+        <h2 id="trend-h">How the averages have moved</h2>
+        <p class="b365-sub" style="max-width:70ch">The average daytime high across a whole year was 13.7&deg; in the 1960s and 15.9&deg; in the 2020s so far; days of 25&deg; or more went from about 4 a year to about 20. The month table shows the same comparison for each month, 1957-1986 against 1996-2025. These are the station&rsquo;s own readings, nothing modelled.</p>
+        <div class="bwr-scroll" data-reveal>
+          <table class="bwr-table"><caption>Decade by decade</caption>
+            <thead><tr><th>Decade</th><th>Years</th><th class="n">Average high, all year</th><th class="n">Average low</th><th class="n">Days of 25&deg; or more, per year</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">1960s</th><td>1960-1969 (10 yrs)</td><td class="n"><b>13.7&deg;</b></td><td class="n">6&deg;</td><td class="n">4</td></tr>
+              <tr><th scope="row">1970s</th><td>1970-1979 (10 yrs)</td><td class="n"><b>14.1&deg;</b></td><td class="n">6&deg;</td><td class="n">10</td></tr>
+              <tr><th scope="row">1980s</th><td>1980-1989 (10 yrs)</td><td class="n"><b>14.2&deg;</b></td><td class="n">5.9&deg;</td><td class="n">12</td></tr>
+              <tr><th scope="row">1990s</th><td>1990-1999 (10 yrs)</td><td class="n"><b>14.8&deg;</b></td><td class="n">6.3&deg;</td><td class="n">16</td></tr>
+              <tr><th scope="row">2000s</th><td>2000-2009 (10 yrs)</td><td class="n"><b>15&deg;</b></td><td class="n">6.8&deg;</td><td class="n">11</td></tr>
+              <tr><th scope="row">2010s</th><td>2010-2019 (10 yrs)</td><td class="n"><b>15.2&deg;</b></td><td class="n">6.6&deg;</td><td class="n">14</td></tr>
+              <tr><th scope="row">2020s</th><td>2020-2025 (6 yrs)</td><td class="n"><b>15.9&deg;</b></td><td class="n">7.2&deg;</td><td class="n">20</td></tr>
+            </tbody></table>
+        </div>
+      </div>
+    </section>
+    <section class="section b365" aria-labelledby="marks-h">
+      <div class="wrap">
+        <h2 id="marks-h">Frost and summer, on average</h2>
+        <div class="bwr-marks" data-reveal>
+          <div class="b365-tile"><p class="b365-sub" style="margin:0">First frost of the autumn</p><p class="big" style="font-size:1.35rem;font-weight:650;color:var(--b365-foam);margin:.15rem 0 .1rem">23 October</p><p class="bwr-when">earliest 22 September 1962, latest 25 November 2023</p></div>
+          <div class="b365-tile"><p class="b365-sub" style="margin:0">Last frost of the spring</p><p class="big" style="font-size:1.35rem;font-weight:650;color:var(--b365-foam);margin:.15rem 0 .1rem">28 April</p><p class="bwr-when">earliest 23 March 2011, latest 28 May 1961</p></div>
+          <div class="b365-tile"><p class="b365-sub" style="margin:0">First 25&deg; day of the year</p><p class="big" style="font-size:1.35rem;font-weight:650;color:var(--b365-foam);margin:.15rem 0 .1rem">11 June</p><p class="bwr-when">earliest 16 April 2003, latest 25 August 2007; 2 years never got there</p></div>
+          <div class="b365-tile"><p class="b365-sub" style="margin:0">Days of 25&deg; or more, per year</p><p class="big" style="font-size:1.35rem;font-weight:650;color:var(--b365-foam);margin:.15rem 0 .1rem">12</p><p class="bwr-when">most 40 in 1995, fewest 0 in 1962</p></div>
+          <div class="b365-tile"><p class="b365-sub" style="margin:0">Nights below freezing, per year</p><p class="big" style="font-size:1.35rem;font-weight:650;color:var(--b365-foam);margin:.15rem 0 .1rem">52</p><p class="bwr-when">air frost: the minimum below 0&deg;</p></div>
+          <div class="b365-tile"><p class="b365-sub" style="margin:0">Days that never rose above freezing</p><p class="big" style="font-size:1.35rem;font-weight:650;color:var(--b365-foam);margin:.15rem 0 .1rem">1.1 a year</p><p class="bwr-when">79 in 69 years</p></div>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="wrap">
+        <div class="prose" data-reveal>
+          <h2 id="method">Where these numbers come from</h2>
+          <p>Every figure on this page is computed from the Met Office&rsquo;s daily readings at <strong>Bournemouth Airport (Hurn)</strong>, the station whose live observations the <a href="/bournemouth/weather/">weather page</a> shows, from 1957 to the end of 2025: 69 years, every day. The data is the Met Office&rsquo;s MIDAS Open collection, published under the Open Government Licence, and the page is rebuilt when the Met Office releases the next year each summer. Nothing here is estimated or modelled.</p>
+          <p>A day&rsquo;s <strong>maximum</strong> is the highest reading between 09:00 and 21:00 on that date; its <strong>minimum</strong> is the lowest in the night to 09:00 that morning. That is the Met Office&rsquo;s own convention, so &ldquo;the hottest 10 August&rdquo; means the daytime of 10 August. A frost is a night whose minimum fell below 0&deg;. Where two years tie for a record, the earlier year holds it.</p>
+          <p>The airport is about 7 km inland. On a hot afternoon the beach is usually a degree or two cooler than the airport, and on a still winter night a little milder, so treat these as Bournemouth&rsquo;s records with that caveat. <a href="/bournemouth/weather/">Today&rsquo;s place in the record books</a> is worked out live on the weather page from the same table.</p>
+        </div>
+      </div>
+    </section>
+    <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>
+        <h2 class="section-title section-title--center" data-title>Frequently asked<span class="title-underline title-underline--center"></span></h2>
+        <div class="faq-wrap">
+        <details class="faq" data-reveal>
+          <summary>What is the hottest day ever recorded in Bournemouth?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>At Bournemouth Airport, the station with a continuous record since 1957, the highest daily maximum is 34.1&deg;C on 4 August 1990. The next hottest days are in the table above. The seafront itself has no equally long record; on a hot afternoon it usually runs a degree or two cooler than the airport.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>What is the coldest it has been in Bournemouth?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>The lowest night-time minimum on record at the airport is -13.4&deg;C, on 23 January 1963. The coldest full day, when the temperature never rose above -4.8&deg;C, was 12 January 1987.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>When is the first frost in Bournemouth?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>On average the first air frost of the autumn comes around 23 October; the earliest on record was 22 September 1962 and the latest 25 November 2023. The last frost of spring averages 28 April.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Where do these records come from, and are they official?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>They are the Met Office&rsquo;s own daily readings for station 00842 Hurn (Bournemouth Airport), published in its MIDAS Open collection under the Open Government Licence, 1957 to 2025. We compute the records from those readings and rebuild this page when the Met Office releases the next year. Nothing is modelled or estimated.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Why does today not appear in these tables?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>The Met Office publishes each year&rsquo;s readings the following summer, so this page runs to the end of 2025. For today, the <a href="/bournemouth/weather/">weather page</a> compares the airport&rsquo;s live reading and the forecast with this table and says where the day stands.</p></div>
+        </details>
+        </div>
+      </div>
+    </section>
+    <section class="section" aria-label="About Bournemouth365">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// BOURNEMOUTH365</p>
+          <h2 class="section-title section-title--center" data-title>Bournemouth, 365 days a year<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <div class="prose" data-reveal>
+          <p>These pages are the web home of our <a href="https://www.facebook.com/bournemouth365" target="_blank" rel="noopener">Bournemouth365 Facebook page</a>, where 39,000 of you watch the seafront with us every day. Here: the seafront&rsquo;s weather, tide times and rain radar, the sea measured live, an honest guide to beach parking, and the best sunrise and sunset spots &mdash; photographed by us, not stock.</p>
+          <p class="mono" style="margin-bottom:.6rem"><a href="/bournemouth/">Bournemouth365 home</a> &middot; <a href="/bournemouth/weather/">Weather, tides &amp; radar</a> &middot; <a href="/bournemouth/live-map/">Live map: traffic, buses, sea</a> &middot; <a href="/bournemouth/sea-today/">The sea right now</a> &middot; <a href="/bournemouth/fireworks/">Friday fireworks</a> &middot; <a href="/bournemouth/sunrise-sunset/">Sunrise &amp; sunset</a> &middot; <a href="/bournemouth/beach-parking/">Beach parking</a> &middot; <a href="/van-signal-map/">Mobile signal map</a></p>
+          <p class="mono">Built in Bournemouth by <a href="/">365 Techies</a> &mdash; the family firm that has looked after the town&rsquo;s computers since 1995.</p>
+          <p class="b365-foot">No ads. No paywall. No consent wall. Built to load fast on beach 4G.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-areas">
+      <p class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</p>
+      <nav class="footer-areas__links" aria-label="Areas we cover">
+        <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
+        <a href="/it-support-bournemouth/">Bournemouth</a>
+        <a href="/it-support-poole/">Poole</a>
+        <a href="/it-support-christchurch/">Christchurch</a>
+        <a href="/it-support-ferndown/">Ferndown</a>
+        <a href="/it-support-wimborne/">Wimborne</a>
+        <a href="/it-support-broadstone/">Broadstone</a>
+        <a href="/it-support-verwood/">Verwood</a>
+        <a href="/it-support-ringwood/">Ringwood</a>
+        <a href="/it-support-wareham/">Wareham</a>
+        <a href="/it-support-swanage/">Swanage</a>
+        <a href="/it-support-weymouth/">Weymouth</a>
+        <a href="/it-support-dorchester/">Dorchester</a>
+        <a href="/it-support-blandford-forum/">Blandford Forum</a>
+        <a href="/it-support-shaftesbury/">Shaftesbury</a>
+        <a href="/it-support-gillingham/">Gillingham</a>
+        <a href="/it-support-sherborne/">Sherborne</a>
+        <a href="/it-support-new-forest/">New Forest</a>
+        <a href="/it-support-lymington/">Lymington</a>
+        <a href="/it-support-new-milton/">New Milton</a>
+        <a href="/it-support-brockenhurst/">Brockenhurst</a>
+        <a href="/it-support-southampton/">Southampton</a>
+        <a class="footer-areas__all" href="/areas-covered/">View all areas &#8594;</a>
+      </nav>
+    </div>
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <a class="logo" href="/">
+          <svg class="logo__mark" viewBox="0 0 32 32" aria-hidden="true">
+            <circle cx="16" cy="16" r="13.4" fill="none" stroke="#8fb3d9" stroke-width="2" stroke-linecap="round" stroke-dasharray="63 22" transform="rotate(-55 16 16)"/>
+            <circle cx="16" cy="16" r="9.4" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-dasharray="46 14" transform="rotate(115 16 16)"/>
+            <path d="M12.4 18.4l3.6-5.8 3.4 5.1z" fill="none" stroke="#8fb3d9" stroke-width="1.2"/>
+            <circle cx="12.4" cy="18.4" r="1.6" fill="#00ce1b"/>
+            <circle cx="16" cy="12.6" r="1.6" fill="#1d97e3"/>
+            <circle cx="19.4" cy="17.7" r="1.6" fill="#1d97e3"/>
+          </svg>
+          <span class="logo__text"><em>365</em>techies</span>
+        </a>
+        <p>The IT support experts. A family-run business established in 1995 — Dell hardware specialists, Microsoft partners and certified Microsoft Office Specialists, providing monthly IT support for homes and businesses across Bournemouth, Poole and Dorset.</p>
+        <div class="partner-badges" role="group" aria-label="Accreditations">
+          <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 21l5-2.5L17 21l-1.5-8.5"/></svg>Family Business &middot; Est. 1995</span>
+          <span class="partner-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 18h18M9 22h6"/></svg>Dell Specialist</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Partner</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Office Specialist</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Malwarebytes Partner</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/></svg>NVIDIA &amp; Scan Partner</span>
+          <a class="partner-badge partner-badge--gold" href="https://www.google.com/maps?cid=5924622613303465737" target="_blank" rel="noopener" title="See our 4.9-star reviews on Google"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.5 1.6 6.7L12 17l-6.2 3.6 1.6-6.7L2.2 8.9l6.9-.6z"/></svg>4.9 on Google</a>
+          <a class="partner-badge partner-badge--green" href="/sustainability/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 20c0-9 7-16 16-16 0 9-7 16-16 16z"/><path d="M4 20C9 15 13 11 18 9"/></svg>Sustainable Dorset Member</a>
+          <a class="partner-badge partner-badge--green" href="/help-in-dorset/" title="Patient computer &amp; tech help for older people — listed on Dorset's community help directory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 21C8 17 3 13.5 3 8.8 3 6 5.2 4 7.8 4c1.7 0 3.2.9 4.2 2.4C13 4.9 14.5 4 16.2 4 18.8 4 21 6 21 8.8c0 4.7-5 8.2-9 12.2z"/></svg>Listed on #HelpAndKindness</a>
+        </div>
+      </div>
+      <nav aria-label="Support links">
+        <p class="site-footer__head mono">SUPPORT</p>
+        <a href="/join/">Join the 365 Club &mdash; Free</a>
+        <a href="/book-service/">Book a Service</a>
+        <a href="/book-a-collection/">Book a Collection</a>
+        <a href="/pay/">Pay Us</a>
+        <a href="/remote-support/">Start Remote Support</a>
+        <a href="/emergency-it-help/">Emergency IT Help</a>
+        <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed</a>
+        <a href="/i-think-ive-been-hacked/">If You&rsquo;ve Been Hacked</a>
+        <a href="/scam-pop-up-help-poole/">Scam Pop-up Help (Poole)</a>
+        <a href="/virus-removal-christchurch/">Virus Removal (Christchurch)</a>
+        <a href="/outlook-problems/">Outlook Problems &amp; Fixes</a>
+        <a href="/support-portal/">Support Portal</a>
+        <a href="/splashtop-business-guide/">Remote Access Guide</a>
+        <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
+            <a href="/dell-latitude-5000-guide/">Latitude 5000 Guide</a>
+            <a href="/dell-latitude-7000-guide/">Latitude 7000 Guide</a>
+        <a href="/dell-optiplex-guide/">Dell Desktop Guide</a>
+        <a href="/heatwave-tech-guide/">Heatwave Tech Guide</a>
+            <a href="/why-computer-prices-have-gone-up/">Why Prices Went Up</a>
+        <a href="/monthly-it-support/">Monthly IT Support</a>
+        <a href="/home-it-support-subscriptions/">Home IT Support</a>
+        <a href="/business-it-support-subscriptions/">Business IT Support</a>
+        <a href="/computer-repairs/">Computer Repairs</a>
+        <a href="/switching-it-provider/">Switching to Us</a>
+        <a href="/pricing/">Pricing</a>
+        <a href="/quick-quote/">Quick Quote</a>
+        <a href="/free-it-health-check/">Free IT Health Check</a>
+      </nav>
+      <nav aria-label="Free tools links">
+        <p class="site-footer__head mono">FREE TOOLS</p>
+        <a href="/free-courses/">Free Courses</a>
+        <a href="/free-tools/">All Free Tools &#8594;</a>
+        <a href="/free-pc-health-check/">365 PC Manager app</a>
+        <a href="/online-safety-course/">Free Online Safety Course</a>
+        <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+        <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
+        <a href="/van-signal-map/">Bournemouth Signal Map</a>
+        <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+        <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
+        <a href="/bournemouth/live-map/#map">Bournemouth in 3D</a>
+        <a href="/pc-benchmark/">PC Benchmark</a>
+        <a href="/website-checker/">Website Checker</a>
+        <a href="/email-security-checker/">Email Security Checker</a>
+        <a href="/password-breach-checker/">Password Breach Checker</a>
+        <a href="/link-safety-checker/">Link Safety Checker</a>
+        <a href="/password-generator/">Password Generator</a>
+        <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+        <a href="/custom-pc-builder/">Custom PC Builder</a>
+        <a href="/victron-system-builder/">Victron System Builder</a>
+        <a href="/solar-battery-calculator/">Battery &amp; Solar Calculator</a>
+        <a href="/cost-calculator/">Cost Calculator</a>
+        <a href="/plan-finder/">Plan Finder</a>
+        <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+        <a href="/is-it-down/">Is It Down? Status Checker</a>
+        <a href="/computer-spec-checker/">PC Hardware Checker</a>
+      </nav>
+      <nav aria-label="Services links">
+        <p class="site-footer__head mono">SERVICES</p>
+        <a href="/services/">All Services</a>
+        <a href="/it-support-by-industry/">IT Support by Industry</a>
+        <p class="site-footer__subhead mono">Support &amp; security</p>
+        <a href="/preventative-maintenance/">Preventative Maintenance</a>
+        <a href="/remote-it-support/">Remote IT Support</a>
+        <a href="/microsoft-365-support/">Microsoft 365</a>
+        <a href="/cybersecurity-support/">Cybersecurity</a>
+        <a href="/malwarebytes-premium/">Malwarebytes Premium &amp; VPN</a>
+        <a href="/disaster-recovery/">Disaster Recovery</a>
+        <a href="/gdpr-it-compliance/">GDPR &amp; IT Compliance</a>
+        <a href="/windows-11-support/">Windows 11</a>
+        <a href="/windows-10-end-of-life/">Windows 10 End of Life</a>
+        <a href="/email-support/">Email Support</a>
+        <a href="/wifi-support/">Wi-Fi Support</a>
+        <a href="/printer-support/">Printer Support</a>
+        <a href="/backup-support/">Backup Support</a>
+        <p class="site-footer__subhead mono">Hardware &amp; setup</p>
+        <a href="/new-computer-setup/">New Computer Setup</a>
+        <a href="/new-laptop-set-up-bournemouth/">New Laptop Set Up for You</a>
+        <a href="/transfer-photos-to-a-new-computer-bournemouth/">Transfer Files to a New PC</a>
+        <a href="/dell-it-support-dorset/">Dell IT Support &amp; Repair</a>
+        <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+            <a href="/refurbished-dell-latitude-3000/">Latitude 3000 Series</a>
+            <a href="/refurbished-dell-latitude-5000/">Latitude 5000 Series</a>
+            <a href="/refurbished-dell-latitude-7000/">Latitude 7000 Series</a>
+            <a href="/refurbished-dell-optiplex-3000/">OptiPlex 3000 Tier</a>
+            <a href="/refurbished-dell-optiplex-5000/">OptiPlex 5000 Tier</a>
+            <a href="/refurbished-dell-optiplex-7000/">OptiPlex 7000 Tier</a>
+        <a href="/dell-laptop-repair-bournemouth/">Dell Laptop Repair</a>
+        <a href="/dell-support-bournemouth/">Dell Support Bournemouth</a>
+        <a href="/dell-support-poole/">Dell Support Poole</a>
+        <a href="/refurbished-dell-laptops-bournemouth/">Refurbished Dell Laptops</a>
+        <a href="/second-hand-office-computers-poole/">Refurbished Office Computers</a>
+        <a href="/custom-pc-builds/">Custom-Built PCs</a>
+        <a href="/threadripper-workstations/">Threadripper Workstations</a>
+        <a href="/gaming-pcs/">Gaming PCs</a>
+        <a href="/content-creator-pcs/">Content Creator PCs</a>
+        <a href="/home-cinema-entertainment/">Home Cinema &amp; AV</a>
+        <p class="site-footer__subhead mono">Connectivity &amp; energy</p>
+        <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+        <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+        <a href="/simplybook-integration/">Custom Booking Systems</a>
+        <a href="/lithium-battery-installs-dorset/">Leisure &amp; Marine Batteries</a>
+        <a href="/rural-and-farm-wifi-dorset/">Rural &amp; Farm Wi-Fi</a>
+        <a href="/broadband-to-a-boat-mooring/">Broadband to a Boat Mooring</a>
+        <a href="/wifi-for-a-shepherds-hut/">Wi-Fi for a Shepherd&rsquo;s Hut</a>
+        <a href="/starlink-internet/">Starlink Internet</a>
+        <p class="site-footer__subhead mono">Web, AI &amp; robotics</p>
+        <a href="/ai/">AI &amp; Automation</a>
+        <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+        <a href="/ai/agents/">AI Agents</a>
+        <a href="/365-ai-os/">365 AI OS</a>
+        <a href="/ai/voice-agents/">AI Voice Agents</a>
+        <a href="/unitree-robots/">Unitree Robots</a>
+        <p class="site-footer__subhead mono">IT support by industry</p>
+        <a href="/it-support-for-hotels-holiday-lets/">Hotels &amp; Holiday Lets</a>
+        <a href="/it-support-for-vets/">Veterinary Practices</a>
+        <a href="/it-support-for-salons-beauty/">Salons &amp; Beauty</a>
+        <a href="/it-support-for-financial-advisers/">Financial Advisers</a>
+        <a href="/it-support-for-recruitment-agencies/">Recruitment Agencies</a>
+        <a href="/it-support-for-garages-automotive/">Garages &amp; Automotive</a>
+        <a href="/it-support-for-gyms-fitness/">Gyms &amp; Fitness</a>
+        <a href="/it-support-for-ecommerce/">E-commerce &amp; Online Retail</a>
+        <a href="/it-support-for-property-management/">Property Management</a>
+        <a href="/it-support-for-manufacturing/">Manufacturing &amp; Engineering</a>
+        <a href="/it-support-for-nurseries-dorset/">Nurseries &amp; Childcare</a>
+        <a href="/it-support-for-churches-faith/">Churches &amp; Faith Groups</a>
+      </nav>
+      <nav aria-label="Who we help links">
+        <p class="site-footer__head mono">WHO WE HELP</p>
+        <a href="/family-it-support/">Families</a>
+        <a href="/it-support-for-retired-users/">Retired Users</a>
+        <a href="/it-support-for-disabled-people/">Disabled People</a>
+        <a href="/computer-help-for-seniors/">Help for Seniors</a>
+        <a href="/it-support-for-home-workers/">Home Workers</a>
+        <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
+        <a href="/it-support-for-sole-traders/">Sole Traders</a>
+        <a href="/small-business-it-support/">Small Businesses</a>
+      </nav>
+      <nav aria-label="Company links">
+        <p class="site-footer__head mono">COMPANY</p>
+        <a href="/about/">About</a>
+        <a href="/meet-the-team/">Meet the Team</a>
+        <a href="/why-choose-365-techies/">Why Choose Us</a>
+        <a href="/our-guarantees/">Our Guarantees</a>
+        <a href="/our-values/">Our Values &amp; Promises</a>
+        <a href="/how-we-price/">How We Price</a>
+        <a href="/case-studies/">Case Studies</a>
+        <a href="/reviews/">Reviews</a>
+        <a href="/refer-a-friend/">Refer a Friend</a>
+        <a href="/resources/">Resources &amp; Guides</a>
+        <a href="/it-advice/">IT Advice</a>
+        <a href="/bournemouth/">Bournemouth365</a>
+        <a href="/faqs/">FAQs</a>
+        <a href="/contact/">Contact</a>
+        <a href="/portal/">Customer portal</a>
+        <a href="tel:+441202775566">01202 775566</a>
+        <a href="sms:+447520615332">Text only: 07520 615332</a>
+        <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a>
+      </nav>
+    </div>
+    <nav class="site-footer__legal-links mono" aria-label="Legal and policies">
+      <a href="/privacy-policy/">Privacy Policy</a>
+      <a href="/cookie-policy/">Cookie Policy</a>
+      <a href="/terms/">Terms of Service</a>
+      <a href="/service-level-agreement/">SLA</a>
+      <a href="/accessibility-statement/">Accessibility</a>
+      <a href="/accreditations/">Accreditations</a>
+      <a href="/system-status/">System Status</a>
+    </nav>
+    <p class="site-footer__legal mono">&copy; 2026 365 TECHIES LIMITED &middot; REGISTERED IN ENGLAND &amp; WALES 11073501 &middot; ALL SYSTEMS OPERATIONAL <span class="pulse-dot pulse-dot--green"></span></p>
+  </footer>
+
+  <nav class="mobile-cta-bar" aria-label="Quick contact">
+    <a href="tel:+441202775566"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>Call</a>
+    <a href="/book-service/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book</a>
+    <a href="sms:+447520615332"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5z"/></svg>Text</a>
+  </nav>
+  <div class="a11y" id="a11y">
+    <button type="button" class="a11y__toggle" id="a11y-toggle" aria-expanded="false" aria-controls="a11y-panel" aria-label="Text size and accessibility options" title="Text size and accessibility options">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="3.6" r="1.6"/><path d="M3.5 8h17M12 8v6m0 0-3.2 6.4M12 14l3.2 6.4"/></svg><span class="a11y__togglelabel">Text size</span>
+    </button>
+    <div class="a11y__panel" id="a11y-panel" role="region" aria-label="Accessibility options" hidden>
+      <p class="a11y__title mono">Accessibility</p>
+      <div class="a11y__rowsize"><span>Text size</span><span class="a11y__btns"><button type="button" data-a11y="text-down" aria-label="Decrease text size">A&minus;</button><button type="button" data-a11y="text-up" aria-label="Increase text size">A+</button></span></div>
+      <button type="button" class="a11y__opt" data-a11y="contrast" aria-pressed="false">High contrast</button>
+      <button type="button" class="a11y__opt" data-a11y="readable" aria-pressed="false">Readable font</button>
+      <button type="button" class="a11y__opt" data-a11y="reduce" aria-pressed="false">Reduce motion</button>
+      <button type="button" class="a11y__opt" data-a11y="read" aria-pressed="false">Read this page aloud</button>
+      <button type="button" class="a11y__reset" data-a11y="reset">Reset</button>
+    </div>
+  </div>
+  <script type="module" src="/js/interior.min.js?v=22"></script>
+  <script src="/js/a11y.min.js?v=13" defer></script>
+  <script src="/js/forms.min.js?v=11" defer></script>
+  <script src="/js/search.min.js?v=654de821" defer></script>
+  <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->
+  <script>
+  (function () {
+    var KEY = "tt_consent";
+    function loadConsented() {
+      if (!document.getElementById("hs-script-loader")) {
+        var s = document.createElement("script");
+        s.id = "hs-script-loader"; s.async = true; s.defer = true;
+        s.src = "//js-eu1.hs-scripts.com/148562638.js";
+        document.body.appendChild(s);
+      }
+      if (window.ANALYTICS_SRC && !window.__analyticsLoaded) {
+        window.__analyticsLoaded = true;
+        var a = document.createElement("script"); a.async = true; a.src = window.ANALYTICS_SRC;
+        document.head.appendChild(a);
+      }
+    }
+    var c = null;
+    try { c = localStorage.getItem(KEY); } catch (e) {}
+    if (c === "accepted") { loadConsented(); }
+    else if (c !== "declined") { var b = document.getElementById("cookie-banner"); if (b) b.hidden = false; }
+    document.addEventListener("click", function (e) {
+      var t = e.target.closest("[data-cookie]"); if (!t) return;
+      var v = t.getAttribute("data-cookie") === "accept" ? "accepted" : "declined";
+      try { localStorage.setItem(KEY, v); } catch (e) {}
+      var b = document.getElementById("cookie-banner"); if (b) b.hidden = true;
+      if (v === "accepted") { if (window.gtag) gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); loadConsented(); }
+    });
+  })();
+  </script>
+</body>
+</html>

@@ -1368,6 +1368,12 @@ add(
 import bournemouth_weather_page as _wxp
 _wxp.register(_B365)
 
+# /bournemouth/weather-records/ - the whole record book behind the weather page's card (23 Sep 2026): all-time
+# lists, month records, decade averages, frost and summer markers, a date lookup. Laid out from
+# tools/bm-records/stats.json (Met Office MIDAS Open, Hurn, OGL); see the module header.
+import bournemouth_records_page as _rec
+_rec.register(_B365)
+
 
 # ============================================================================
 # PAGE 4: /bournemouth/beach-parking/ - the honest guide. Everything here is
