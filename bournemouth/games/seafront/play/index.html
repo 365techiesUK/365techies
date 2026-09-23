@@ -752,6 +752,18 @@
         <button id="btn-tilt">RE-ZERO TILT</button>
         <button id="btn-full">FULL</button>
         <button id="btn-set-def">DEFAULTS</button>
+        <!-- >>> TOUCHLEAVE
+             ⚠️ ON A TABLET THERE WAS NO WAY OUT OF THE GAME AT ALL. Reported by the owner from
+             an iPad. The LEAVE THE GAME button added yesterday lives in the PAUSE MENU, and the
+             pause menu deliberately has no touch trigger - there is no pointer lock to lose, no
+             Escape key and no P key on a tablet, which was the right call for not showing two
+             menus. But the first tap also takes the page FULLSCREEN, so there is no address bar
+             and no back button either. Between the two, a tablet player was sealed in.
+             It goes HERE rather than in #tbtns because that row is pinned to ONE LINE at 393 px
+             portrait (it wrapped on top of BOOST once already) and a sixth pill would break it.
+             The settings sheet is already the home of FULL, and it is two taps away. -->
+        <button id="btn-leave" hidden>LEAVE</button>
+        <!-- <<< TOUCHLEAVE -->
         <button id="btn-set-close">DONE</button>
       </div>
     </div>
@@ -865,6 +877,6 @@
      assets/ is NOT moved: those paths are document-relative (no import.meta.url in
      textures.js), so they resolve against this page wherever the modules are.
      ⚠️ BUMP b2 -> b3 -> ... ON EVERY DEPLOY, or the update will not reach anyone. -->
-<script type="module" src="./b9/src/main.js"></script>
+<script type="module" src="./b10/src/main.js"></script>
 </body>
 </html>

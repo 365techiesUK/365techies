@@ -1759,6 +1759,27 @@ let pauseMenu = null;
     // <<< LEAVE
   });
 
+  // >>> TOUCHLEAVE
+  // THE SAME DOOR, ON THE SHEET A TABLET CAN ACTUALLY REACH. The pause menu has no touch
+  // trigger by design, and the first tap goes fullscreen, so on an iPad the LEAVE button in
+  // that menu was unreachable and the browser's own back button was hidden. This wires the
+  // settings sheet's LEAVE to the SAME destination and the SAME handler - one rule about where
+  // "out" is, not two that can drift apart.
+  //
+  // Hidden unless there is somewhere to go, exactly as the pause menu's is: the standalone dev
+  // copy has no parent, and a button that navigates nowhere is worse than no button.
+  {
+    const lv = $('#btn-leave');
+    if (lv && pmLeaveTo) {
+      lv.hidden = false;
+      lv.addEventListener('click', () => {
+        const a = pauseMenu && pauseMenu.acts && pauseMenu.acts.onLeave;
+        if (a) a();
+      });
+    }
+  }
+  // <<< TOUCHLEAVE
+
   if (!pmQuiet) {
     // THE TRIGGER. Three refusals, each of them a measured way this can fire when it should
     // not (tmp-tr199/probe-loss.mjs, run on the untouched tree):
