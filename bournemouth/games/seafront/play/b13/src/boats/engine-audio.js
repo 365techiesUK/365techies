@@ -84,9 +84,35 @@ export class EngineAudio {
     this.lastTicks = -1; this.stallT = 0; this.lastSlams = 0; this.slamsPlayed = 0; this.frames = 0;
     this.landings = 0; this.knocks = 0; this.passN = 0; this.trafficList = null;
     if (!this.enabled) return;
-    const onGesture = () => { this.gesture = true; if (this.kind) this._build(); else if (this.ac && this.ac.state === 'running') this.ac.suspend(); };
-    addEventListener('pointerdown', onGesture, { passive: true, capture: true });
-    addEventListener('keydown', onGesture, { passive: true, capture: true });
+    // >>> RESUME
+    // ⚠️ TWO DEFECTS HERE, AND TOGETHER THEY ARE WHY AN iPAD HEARD NO ENGINE. Reported by the
+    // owner after the music was fixed: "you can't hear the engine of the jet ski. But apart
+    // from that, everything else seems fine."
+    //
+    //   1. THE LISTENER LIST HAD NO `touchstart`. It was pointerdown + keydown. score.js's
+    //      equivalent list is ['pointerdown', 'keydown', 'touchstart'] - whoever wrote that one
+    //      knew touchstart was needed, and this one never got it. A tap that is consumed by the
+    //      touch UI (the stick and the throttle strip both preventDefault) need not produce a
+    //      pointerdown at all, so on a tablet this could go a whole session without one gesture.
+    //
+    //   2. `_build()` OPENS WITH `if (this.v || ...) return;` AND THE resume() IS INSIDE IT.
+    //      So the first gesture built the graph and every later gesture returned at that guard
+    //      without ever resuming. If the context was created suspended - which is what iOS does
+    //      when the graph is built before a real activation - nothing could ever wake it.
+    //      Identical in shape to the bug just fixed in score.js._wake().
+    //
+    // So: resume FIRST, on every gesture, before _build() gets a chance to return early.
+    const onGesture = () => {
+      this.gesture = true;
+      if (this.ac && this.kind && this.ac.state === 'suspended') {
+        this.ac.resume().catch(() => { /* a refused resume is not fatal; the next tap retries */ });
+      }
+      if (this.kind) this._build(); else if (this.ac && this.ac.state === 'running') this.ac.suspend();
+    };
+    for (const e of ['pointerdown', 'keydown', 'touchstart']) {
+      addEventListener(e, onGesture, { passive: true, capture: true });
+    }
+    // <<< RESUME
     addEventListener('pagehide', () => this.close());
     document.addEventListener('visibilitychange', () => {
       if (!this.ac) return;
