@@ -1687,6 +1687,20 @@ let pauseMenu = null;
   const pmQ = new URLSearchParams(location.search);
   const pmQuiet = pmQ.has('cal') || pmQ.get('clean') === '1';
 
+  // >>> LEAVE
+  // Hoisted out of the options object because onLeave() below reads it, and a property cannot
+  // see its own sibling. Computed ONCE at construction: the deployment does not change under a
+  // running page, and re-reading location on every press would only invite a difference.
+  const pmLeaveTo = (() => {
+    try {
+      if (/\/play\/(index\.html)?$/.test(location.pathname)) return '../';
+      const r = document.referrer;
+      if (r && new URL(r).origin === location.origin && history.length > 1) return 'BACK';
+      return null;
+    } catch { return null; }
+  })();
+  // <<< LEAVE
+
   pauseMenu = new PauseMenu({
     mount: pmQuiet ? null : ($('#left') || $('#stagewrap') || document.body),
 
@@ -1715,6 +1729,34 @@ let pauseMenu = null;
     // display:none button still takes a programmatic click; main.js already relies on that
     // for #rq-door and LEVELBACK relies on it for #btn-mode.
     onFree: () => { const f = $('#tmode .body button[data-m="free"]'); if (f) f.click(); },
+    // >>> LEAVE
+    // WHERE "LEAVE THE GAME" GOES, decided here rather than in the menu, so the UI stays dumb
+    // and there is ONE place that knows how this page is deployed.
+    //
+    // The deployed address is /bournemouth/games/seafront/play/, so `../` is the page ABOUT
+    // the game - a real destination that exists whether the player arrived from it, from a
+    // shared link or from a bookmark. history.back() would be wrong for the last two: it
+    // would throw them out of the site entirely, or do nothing at all.
+    //
+    // null when neither is available - the standalone copy served at a root, or a page with no
+    // same-origin history. pausemenu.js then builds no button at all rather than a dead one.
+    leaveTo: pmLeaveTo,
+    onLeave: () => {
+      // Fullscreen first, and awaited-ish: leaving a fullscreen page by navigating can strand
+      // some browsers in fullscreen on the NEXT page. It is a promise in current Chrome and
+      // absent in older WebKit, so both shapes are handled and neither is allowed to block the
+      // navigation - a player who pressed LEAVE must leave.
+      const done = () => { if (pmLeaveTo === 'BACK') history.back(); else location.assign(pmLeaveTo); };
+      try {
+        const ex = document.exitFullscreen || document.webkitExitFullscreen;
+        if (ex && (document.fullscreenElement || document.webkitFullscreenElement)) {
+          const p = ex.call(document);
+          if (p && p.then) { p.then(done, done); return; }
+        }
+      } catch { /* fall through: leaving matters more than tidying the screen */ }
+      done();
+    },
+    // <<< LEAVE
   });
 
   if (!pmQuiet) {

@@ -158,6 +158,14 @@ body.clean-render #pm-root { display: none !important; }
   color: #0b1520; background: #ffc21a; }
 #pm-card button.alt { background: rgba(255,255,255,.16); color: #e8edf4; }
 #pm-card button:last-of-type { margin-bottom: 0; }
+/* >>> LEAVE
+   Set apart from the four that keep you in the game, and quieter than them, because it is the
+   one button whose press ends the session. Still the full 48 px target - "quieter" is contrast,
+   never a smaller thing to hit. */
+#pm-card button.pm-leave { margin-top: 14px; background: rgba(255,255,255,.07);
+  color: #9fb3c4; font-weight: 600; }
+#pm-card button.pm-leave:hover { background: rgba(255,255,255,.13); color: #e8edf4; }
+/* <<< LEAVE */
 #pm-card button:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
 #pm-card .pm-foot { margin: 13px 0 0; font: 400 16px/1.4 ui-sans-serif, system-ui, sans-serif;
   color: #9fb3c4; }
@@ -201,6 +209,23 @@ export class PauseMenu {
       + '<button type="button" data-p="levels" class="alt">CHOOSE LEVEL</button>'
       + '<button type="button" data-p="restart" class="alt">RESTART THIS LEVEL</button>'
       + '<button type="button" data-p="free" class="alt">FREE RIDE</button>'
+      // >>> LEAVE
+      // A DOOR OUT, and it is on a phone that it matters. The four buttons above all keep you
+      // INSIDE the game. On touch the first tap takes the page fullscreen (main.js:2746), so
+      // there is no address bar and no visible back button - a player who wants to stop has
+      // nothing to press. On a desktop the browser's own back button covers it, which is why
+      // this was easy to not notice.
+      //
+      // ⚠️ IT IS ONLY BUILT WHEN THERE IS SOMEWHERE TO GO. `o.leaveTo` is computed by main.js
+      // and is null when the page has no parent and no same-origin history - the standalone
+      // dev copy served at a root, for instance. A button that navigates nowhere is worse than
+      // no button, because the player presses it and concludes the game is broken.
+      //
+      // ⚠️ NOT window.close(). A page cannot close a tab it did not open itself; the call is
+      // silently ignored in every current browser, which is the same dead button by another
+      // route.
+      + (o.leaveTo ? '<button type="button" data-p="leave" class="alt pm-leave">LEAVE THE GAME</button>' : '')
+      // <<< LEAVE
       + '<p class="pm-foot"><b>Esc</b> or <b>P</b> to carry on. '
       + 'Click the water to give the mouse back to the game.</p>'
       + '</div>';
