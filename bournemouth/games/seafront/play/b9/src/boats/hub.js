@@ -156,7 +156,14 @@ export class CraftHub {
     // narrow window, and the two least-used items should be the ones that fall to the second
     // row rather than `steer` or `throttle`.
     return `<b>${LABEL[this.kind]}</b> &middot; <b>mouse left/right</b> or <b>A/D</b> to steer &middot; `
-      + '<b>scroll</b> or <b>&uarr;/&darr;</b> throttle &middot; <b>W/S</b> trim &middot; <b>right mouse</b> or <b>SPACE</b> slow/reverse '
+      // >>> LEFTMOUSE
+      // ⚠️ THE LEFT BUTTON WAS MISSING FROM ITS OWN HINT. `input.js:775` is
+      // `this.mouse.down - this.mouse.right`, so the left button ramps the throttle UP exactly
+      // as the right one ramps it down - and this line listed only scroll and the arrows. The
+      // owner found it by playing and reported the instructions as wrong; he was right.
+      + '<b>left mouse</b>, <b>scroll</b> or <b>&uarr;/&darr;</b> throttle &middot; <b>W/S</b> trim '
+      + '&middot; <b>right mouse</b> or <b>SPACE</b> slow/reverse '
+      // <<< LEFTMOUSE
       + '&mdash; <b>K</b> next craft &middot; <b>L</b> levels';
     // <<< LEVELBACK
   }

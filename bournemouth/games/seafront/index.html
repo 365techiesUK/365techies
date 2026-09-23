@@ -117,15 +117,30 @@
       </ul>
     </div>
     <div>
+      <!-- >>> CONTROLS
+           ⚠️ WRITTEN FROM src/input.js, NOT from the in-game hint bar. The first version of
+           this list was copied off that hint and was wrong twice, which the owner caught by
+           playing:
+             * it never mentioned the LEFT MOUSE BUTTON, which is the throttle
+               (input.js:775 is `this.mouse.down - this.mouse.right`);
+             * it said Space "punches it", which is only true on the eFoil. hull.js:210 is
+               `const wantRev = inp.boost ? 1 : 0`, so on a JET SKI or SPEEDBOAT the same key
+               is REVERSE - and those are the craft most people play.
+           If this list is ever edited again, read the source. -->
       <h2>Controls</h2>
       <ul>
-        <li>Mouse, or <kbd>A</kbd><kbd>D</kbd> to steer</li>
-        <li>Scroll, or <kbd>&uarr;</kbd><kbd>&darr;</kbd> for throttle</li>
-        <li><kbd>W</kbd><kbd>S</kbd> to trim &middot; <kbd>Space</kbd> to punch it</li>
-        <li><kbd>C</kbd> camera &middot; <kbd>K</kbd> craft &middot; <kbd>L</kbd> levels</li>
+        <li><b>Mouse:</b> move to steer and trim</li>
+        <li><b>Left button</b> throttle &middot; <b>right button</b> eases off, then reverses</li>
+        <li>Or <kbd>A</kbd><kbd>D</kbd> steer &middot; <kbd>W</kbd><kbd>S</kbd> trim &middot;
+            <kbd>&uarr;</kbd><kbd>&darr;</kbd> or scroll for throttle</li>
+        <li><kbd>Space</kbd> reverses a boat &mdash; on the eFoil it is the pop-up</li>
+        <li>In the raids: <kbd>Z</kbd> fire &middot; <kbd>X</kbd> water cannon</li>
+        <li><kbd>C</kbd> camera &middot; <kbd>K</kbd> craft &middot; <kbd>L</kbd> levels &middot;
+            <kbd>Esc</kbd> pause</li>
         <li>An <b>Xbox controller</b> works if you have one plugged in</li>
         <li>On a phone or tablet, it is all touch</li>
       </ul>
+      <!-- <<< CONTROLS -->
       <h2>You will need</h2>
       <ul>
         <li>A browser with WebGL2 &mdash; anything current</li>
