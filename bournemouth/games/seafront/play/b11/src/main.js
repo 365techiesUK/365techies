@@ -1768,11 +1768,18 @@ let pauseMenu = null;
   //
   // Hidden unless there is somewhere to go, exactly as the pause menu's is: the standalone dev
   // copy has no parent, and a button that navigates nowhere is worse than no button.
-  {
-    const lv = $('#btn-leave');
+  // TWO buttons, ONE handler. The CONTROLS sheet's is the tidy home; the level picker's is the
+  // one a stuck player actually finds, because LEVELS is a button they already press.
+  for (const sel of ['#btn-leave', '#btn-leave2']) {
+    const lv = $(sel);
     if (lv && pmLeaveTo) {
       lv.hidden = false;
-      lv.addEventListener('click', () => {
+      lv.addEventListener('click', (e) => {
+        // ⚠️ stopPropagation: #btn-leave2 sits inside #tmode, whose own click handler treats
+        // any button in the sheet as a level choice. Without this it would read `data-m`,
+        // find nothing, and fall through - harmless today, but one edit away from entering a
+        // level on the way out.
+        e.stopPropagation();
         const a = pauseMenu && pauseMenu.acts && pauseMenu.acts.onLeave;
         if (a) a();
       });

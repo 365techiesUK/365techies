@@ -802,6 +802,16 @@
       <div class="load"></div>
       <div class="foot">
         <span class="ea">Contains Environment Agency information &copy; Environment Agency and/or database right</span>
+        <!-- >>> TOUCHLEAVE
+             ⚠️ SECOND HOME FOR THE EXIT, because the first one was not findable. It went into
+             the CONTROLS sheet, which is behind the gear button - and the owner, sealed in
+             fullscreen on an iPad, reported he still could not see an exit. He was right: a
+             player who feels stuck does not go exploring a settings panel.
+             LEVELS is a button he already knows and already presses, and "choose a level, or
+             leave" is the same thought. Both buttons call the SAME handler, so there is still
+             one rule about where "out" is. -->
+        <button type="button" id="btn-leave2" hidden>LEAVE THE GAME</button>
+        <!-- <<< TOUCHLEAVE -->
         <button type="button" data-m="close">CANCEL</button>
       </div>
     </div>
@@ -877,6 +887,6 @@
      assets/ is NOT moved: those paths are document-relative (no import.meta.url in
      textures.js), so they resolve against this page wherever the modules are.
      ⚠️ BUMP b2 -> b3 -> ... ON EVERY DEPLOY, or the update will not reach anyone. -->
-<script type="module" src="./b10/src/main.js"></script>
+<script type="module" src="./b11/src/main.js"></script>
 </body>
 </html>

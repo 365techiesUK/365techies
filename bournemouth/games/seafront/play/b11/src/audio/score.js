@@ -162,12 +162,35 @@ export class Score {
   }
 
   _wake() {
-    if (!this.enabled || this.ac) return;
+    if (!this.enabled) return;
+    // >>> RESUME
+    // ⚠️ THIS USED TO BE `if (!this.enabled || this.ac) return;` AND THAT IS WHY AN iPAD WENT
+    // SILENT. The only resume() call is below the guard, so once a context existed - suspended
+    // or not - every later gesture returned here and NOTHING EVER RESUMED IT AGAIN.
+    //
+    // Measured against the live site with an emulated iPad (tmp-tr191/ipad-audio.mjs), which
+    // is how this was found rather than reasoned:
+    //     before any gesture : NO CONTEXT YET
+    //     after a real tap   : state "suspended"
+    // So the tap DID reach this function, it DID create the context, and the context was still
+    // suspended afterwards. A second tap could never have helped.
+    //
+    // A browser is entitled to suspend a context at any time - iOS does it on backgrounding, on
+    // a call, on an audio interruption - and the only way back is resume() inside a user
+    // gesture. This function IS that gesture handler, so it must try every time.
+    //
+    // engine-audio.js already gets this right twice over (_build resumes, and its
+    // visibilitychange handler resumes) which is why the engine was never the reported symptom.
+    if (this.ac) {
+      if (this.ac.state === 'suspended') this.ac.resume().catch(() => { /* a refused resume is not fatal */ });
+      return;
+    }
+    // <<< RESUME
     try {
       const ac = new (window.AudioContext || window.webkitAudioContext)();
       this._attach(ac, ac.destination);
     } catch { this.enabled = false; return; }
-    if (this.ac.state === 'suspended') this.ac.resume();
+    if (this.ac.state === 'suspended') this.ac.resume().catch(() => {});
     // A level asked for before the first gesture is honoured as soon as there is a context.
     if (this.level && !this.preset) this.start(this.level);
   }
