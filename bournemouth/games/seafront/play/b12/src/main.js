@@ -1787,6 +1787,40 @@ let pauseMenu = null;
   }
   // <<< TOUCHLEAVE
 
+  // >>> PINCH
+  // SAFARI'S PINCH ZOOM, WHICH TWO THUMBS ON A GAME PAD LOOK EXACTLY LIKE.
+  //
+  // Owner, from an iPad: "when I click on fire it zooms a little bit and to one side and you
+  // can't play it." A thumb holding the stick and a finger stabbing FIRE is TWO SIMULTANEOUS
+  // TOUCHES, and that is Safari's pinch gesture. The page zooms, shifts off-centre, and in
+  // fullscreen there is no chrome to pinch back out with.
+  //
+  // ⚠️ `touch-action` CANNOT FIX THIS ON iOS. The controls already carry touch-action: none,
+  // which is why double-tap zoom was never the problem - but Safari deliberately keeps
+  // pinch-to-zoom outside touch-action's reach, and it ignores user-scalable=no, both for
+  // accessibility reasons. The only lever is preventDefault on its own non-standard
+  // `gesture*` events, which is why this listener exists and why it is Safari-shaped.
+  //
+  // ⚠️ AND IT IS DELIBERATELY NOT UNCONDITIONAL. Blocking zoom outright would be a WCAG 1.4.4
+  // failure on the one part of this game that is TEXT: the level picker's descriptions, the
+  // raid's briefing card, the settings sheet. So the block is lifted whenever one of those is
+  // open, and `otherSheetOpen()` is the same list pausemenu.js already keeps - not a second
+  // copy that can drift from it. Playing: no zoom. Reading: zoom as much as you like.
+  //
+  // On the document rather than on the controls, because a two-finger gesture spanning the
+  // stick and the FIRE button is dispatched at their common ancestor, not at either one.
+  //
+  // NOT VERIFIED ON REAL HARDWARE - `gesture*` is Safari-only, so it cannot be exercised from
+  // this machine at all. What IS verified is that it is inert everywhere else: no other engine
+  // fires these events, so this is three listeners that never run off iOS.
+  for (const ev of ['gesturestart', 'gesturechange', 'gestureend']) {
+    document.addEventListener(ev, (e) => {
+      if (otherSheetOpen()) return;
+      e.preventDefault();
+    }, { passive: false });
+  }
+  // <<< PINCH
+
   if (!pmQuiet) {
     // THE TRIGGER. Three refusals, each of them a measured way this can fire when it should
     // not (tmp-tr199/probe-loss.mjs, run on the untouched tree):
