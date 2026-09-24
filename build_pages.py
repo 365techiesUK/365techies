@@ -1250,8 +1250,10 @@ BUSINESS_NODE = {
     # Verified Google Business Profile (Place ID ChIJlTb8YRuic0gRCRczduB8OFI / CID 5924622613303465737)
     # links the site's business entity to the official Google listing for local-SEO entity confirmation.
     "hasMap": "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
-    "sameAs": ["https://www.facebook.com/365computersuk",
-               "https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
+    # No Facebook entry (24 Sep 2026): the old page address died when the page was renamed, and the
+    # big page is becoming the owner's creative brand, not this IT business. Add the IT company's own
+    # page here, and on the homepage (rel=me + sameAs), when it exists.
+    "sameAs": ["https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI",
                "https://find-and-update.company-information.service.gov.uk/company/11073501",
                # Help & Kindness (Dorset community help directory) listing - live 2026-07-27,
                # confirmed by their CEO; two dofollow links back. Real third-party profile.
