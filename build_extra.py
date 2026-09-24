@@ -28270,7 +28270,7 @@ def write_portal_page():
         + (x.held ? '<button class="sm ghost invqunhold" data-id="' + esc(x.id) + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Release</button>'
                   : '<button class="sm invqsend" data-id="' + esc(x.id) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem"' + (x.email ? '' : ' disabled title="No email address on the customer"') + '>\\u2705 3 \\u00b7 Approve &amp; send</button>'
                     + '<button class="sm ghost invqhold" data-id="' + esc(x.id) + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem">Hold</button>')
-        + '<a class="btn sm ghost" style="margin:0;padding:.3rem .65rem;font-size:.82rem;opacity:.75" href="' + esc(x.url) + '" target="_blank" rel="noopener" title="Only if something on the invoice needs changing. Sign in to QuickBooks first, or it opens a blank new invoice instead of this one.">Open in QuickBooks</a>';
+        + '<a class="btn sm ghost" style="margin:0;padding:.3rem .65rem;font-size:.82rem;opacity:.75" href="' + esc(x.url) + '" target="_blank" rel="noopener" title="Add products or more lines, or change anything on it, in QuickBooks. Sign in to QuickBooks first, or it opens a blank new invoice instead of this one.">Open in QuickBooks</a>';
     }
     /* QuickBooks' Products & Services (from the server, cached an hour): pick one and the
        invoice line, its description and its list price come from it. */
@@ -28304,36 +28304,37 @@ def write_portal_page():
        products are added and it is sent. Stays on the row whatever the invoice does later. */
     function quoteHtml(j) {
       var q = j.quote; if (!q || !q.id) return '';
-      return '<div style="margin:.3rem 0 0;font-size:.88rem;color:#9fd0ff">\\ud83d\\udcdd Quote started' + (q.no ? ' #' + esc(q.no) : ' <span class="quiet">(no number yet \\u2014 give it one in QuickBooks)</span>')
-        + ' \\u00b7 <a href="' + esc(q.url) + '" target="_blank" rel="noopener" style="color:#9fd0ff">Open it in QuickBooks</a> to add the products and send it. <span class="quiet">Sign in to QuickBooks first, or the link opens a blank quote instead of this one.</span></div>';
+      return '<div style="margin:.3rem 0 0;font-size:.88rem;color:#9fd0ff">\\ud83d\\udcdd Estimate raised' + (q.no ? ' #' + esc(q.no) : ' <span class="quiet">(no number yet \\u2014 give it one in QuickBooks)</span>')
+        + ' \\u00b7 <a href="' + esc(q.url) + '" target="_blank" rel="noopener" style="color:#9fd0ff">Open it in QuickBooks</a> to add the products and send it. <span class="quiet">Sign in to QuickBooks first, or the link opens a blank estimate instead of this one. When they say yes, QuickBooks turns it into the invoice.</span></div>';
     }
-    /* The quote button for a job with everything it needs; the needs-inputs row gets its own. */
+    /* The two ways off a job (owner, 24 Sep 2026): an ESTIMATE when they are still deciding,
+       an INVOICE when they have told us what they want. Equal buttons, side by side. */
     function quoteBtn(j) {
       if (j.quote && j.quote.id) return '';
-      return '<button class="sm ghost invqquote" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem" title="Starts a quote in QuickBooks for this customer with what is here as its first line. You add the products and send it from QuickBooks. Nothing is emailed by this button.">\\ud83d\\udcdd Start a quote instead</button>';
+      return ' <span class="quiet" style="font-size:.8rem">or</span> <button class="sm invqquote" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem" title="An estimate (quote) in QuickBooks for this customer, with what is here as its first line. You add the products and send it from QuickBooks. Nothing is emailed by this button.">\\ud83d\\udcdd Raise an estimate</button>';
     }
     function jobHtml(j) {
       var inv = j.invoice, st = j.state, chip, body = '', btns = '';
       if (st === 'paid') chip = steps(4) + '<span style="color:#7ee0a2">\\u2713 Paid</span>';
       else if (st === 'sent') chip = steps(4) + '<span style="color:#7ee0a2">\\u2713 Invoice sent' + (inv && inv.number ? ' #' + esc(inv.number) : '') + '</span>';
-      else if (st === 'unsent') { chip = steps(2) + '<span style="color:#ffd76a">Invoice raised \\u2014 now check it, then send it</span>'; body = warnHtml(inv); btns = invButtons(inv); }
+      else if (st === 'unsent') { chip = steps(2) + '<span style="color:#ffd76a">Invoice raised \\u2014 now check it, then send it</span> <span class="quiet">\\u00b7 more products or lines go on in QuickBooks first</span>'; body = warnHtml(inv); btns = invButtons(inv); }
       else if (st === 'invoiced') chip = steps(4) + '<span class="quiet">\\u2713 ' + esc(INVQ_WHY.invoiced_in_slack) + '</span>';
       else {
         chip = steps(1) + '<span style="color:#ffb4a2">No invoice yet</span>' + (j.done ? '' : ' <span class="quiet">\\u00b7 job not marked done in Slack yet</span>');
-        if (j.can_create) btns = itemSelect(j) + '<button class="sm invqcreate" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\\ud83e\\uddfe 1 \\u00b7 Raise the invoice</button>' + quoteBtn(j);
+        if (j.can_create) btns = itemSelect(j) + '<button class="sm invqcreate" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem" title="They have told us what they want: the invoice, with the service and price here as its first line. Then check it and send it from here.">\\ud83e\\uddfe Raise an invoice</button>' + quoteBtn(j);
         else if (j.why_not === 'no_amount' || j.why_not === 'no_desc' || j.why_not === 'no_email') {
           var need = [];
           if (!j.email) need.push('the customer\\u2019s email');
           if (!(j.amount > 0)) need.push('the price');
           if (!j.desc) need.push('what was done');
-          body = '<div class="quiet" style="font-size:.85rem;margin:.25rem 0 0">' + (items.length && (!(j.amount > 0) || !j.desc) ? 'Pick the service, and type ' : 'Type ') + need.join(need.length > 2 ? ', ' : ' and ') + ', then press the button \\u2014 the invoice is raised in QuickBooks with those on it.</div>'
+          body = '<div class="quiet" style="font-size:.85rem;margin:.25rem 0 0">' + (items.length && (!(j.amount > 0) || !j.desc) ? 'Pick the service, and type ' : 'Type ') + need.join(need.length > 2 ? ', ' : ' and ') + ', then press a button \\u2014 the invoice or the estimate is raised in QuickBooks with those on it. An estimate needs only the email.</div>'
             + '<div style="margin:.35rem 0 0;display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">'
             + (j.email ? '' : '<input class="invqemail" type="email" maxlength="120" placeholder="Customer email" style="width:220px;margin:0">')
             + itemSelect(j)
             + (j.amount > 0 ? '' : '<input class="invqamt" type="text" inputmode="decimal" placeholder="Price \\u00a3" style="width:110px;margin:0">')
             + (j.desc ? '' : '<input class="invqdesc" type="text" maxlength="200" placeholder="What was done (goes on the invoice)" style="flex:1;min-width:200px;margin:0">')
-            + '<button class="sm invqset" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\\ud83e\\uddfe 1 \\u00b7 Save &amp; raise the invoice</button>'
-            + (j.quote && j.quote.id ? '' : '<button class="sm ghost invqset invqsetq" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem" title="A quote needs only the customer\\u2019s email: the price and wording are optional and go on as its first line. You add the products and send it from QuickBooks.">\\ud83d\\udcdd Save &amp; start a quote instead</button>')
+            + '<button class="sm invqset" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem" title="They have told us what they want: the invoice, with what is typed here as its first line.">\\ud83e\\uddfe Save &amp; raise an invoice</button>'
+            + (j.quote && j.quote.id ? '' : ' <span class="quiet" style="font-size:.8rem">or</span> <button class="sm invqset invqsetq" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem" title="An estimate (quote) needs only the customer\\u2019s email: the price and wording are optional and go on as its first line. You add the products and send it from QuickBooks.">\\ud83d\\udcdd Save &amp; raise an estimate</button>')
             + '<span class="quiet invqsetmsg"></span></div>';
         }
         else body = '<div style="color:#ffb4a2;font-size:.85rem;margin:.15rem 0 0">\\u26a0 ' + esc(INVQ_WHY[j.why_not] || j.why_not) + '</div>';
@@ -28382,7 +28383,7 @@ def write_portal_page():
         }).catch(function () { b.disabled = false; if (msg) msg.textContent = 'Couldn\\u2019t reach the server.'; });
       };
     });
-    /* "Start a quote instead": a QuickBooks estimate for the customer with the row's price and
+    /* "Raise an estimate": a QuickBooks estimate for the customer with the row's price and
        wording as its first line (24 Sep 2026, Bradley Parry's new laptop). The products are
        added and it is sent from QuickBooks through the link the row then shows; nothing is
        emailed here. One quote per job - a second press finds the first. */

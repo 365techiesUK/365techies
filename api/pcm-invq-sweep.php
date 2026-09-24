@@ -555,8 +555,8 @@ function invq_quote_for_job($c, $jobId, $who) {
         $d['cache'] = null;
         return array('ok' => true, 'data' => $d);
     });
-    invq_log('started quote ' . $estId . ($no !== '' ? ' #' . $no : '') . ' ' . invq_money($amount) . ' for job ' . $jobId . ' by ' . $who);
-    invq_slack(':memo: *Quote started* - ' . $name . ($no !== '' ? ' (#' . $no . ')' : '') . ', from ' . invq_money($amount) . ' for ' . $desc . ', by ' . $who . '. Add the products and send it from QuickBooks.');
+    invq_log('raised estimate ' . $estId . ($no !== '' ? ' #' . $no : '') . ' ' . invq_money($amount) . ' for job ' . $jobId . ' by ' . $who);
+    invq_slack(':memo: *Estimate raised* - ' . $name . ($no !== '' ? ' (#' . $no . ')' : '') . ', from ' . invq_money($amount) . ' for ' . $desc . ', by ' . $who . '. Add the products and send it from QuickBooks.');
     return array('ok' => true, 'quote' => $estId, 'number' => $no, 'url' => $url, 'existed' => false);
 }
 
