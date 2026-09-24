@@ -254,6 +254,11 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(pcm-geo-lib\.php|pcm-geo-test\.php)$">
   Require all denied
 </FilesMatch>
+# App sign-in password reset (24 Sep 2026): the action lives in pcm-booking.php (staff token
+# gated); its generator library is include-only and its test suite CLI-only.
+<FilesMatch "^(pcm-apppass-lib\.php|pcm-apppass-test\.php)$">
+  Require all denied
+</FilesMatch>
 # The GoCardless webhook endpoint secret. gocardless-webhook.php itself MUST stay
 # served - it is the URL GoCardless posts to - and it trusts nothing without this.
 <Files "gocardless-webhook-secret.php">

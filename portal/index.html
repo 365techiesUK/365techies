@@ -707,9 +707,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 24 Sep 2026 &middot; 462902bf2c</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 24 Sep 2026 &middot; 378d19c37f</p><script>
 (function () {
-  var P365BUILD = '462902bf2c';
+  var P365BUILD = '378d19c37f';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -5718,7 +5718,49 @@
         + '" data-ph="' + esc(c.phone || '') + '" style="margin-top:.4rem">'
         + '<button class="sm ghost plb" style="margin:0;padding:.3rem .65rem;font-size:.82rem">\ud83d\udcb3 Send a pay link</button></div>';
     }
+    /* "Reset app sign-in password": 365 PC Manager signs in with the customer's SimplyBook
+       booking password, which nobody remembers at the visit. Needs the SimplyBook client
+       (id) - the record this diary row came from - and its email, which is the login. */
+    if (c.id && c.email) {
+      out += '<div class="apwrap" data-cid="' + esc('' + c.id) + '" data-em="' + esc(c.email) + '" data-nm="' + esc(c.name || '') + '" style="margin-top:.4rem">'
+        + '<button class="sm ghost apb" style="margin:0;padding:.3rem .65rem;font-size:.82rem">\ud83d\udd11 Reset app sign-in password</button></div>';
+    }
     return out;
+  }
+  /* The reset itself: one confirm, then the new password shown once with a copy button and
+     the exact place to type it in the app. The server checks it against SimplyBook with the
+     same call the app makes before it is shown, so "verified" means it will work. */
+  function bindAppPass(panel) {
+    var w = panel.querySelector('.apwrap'); if (!w) return;
+    var b = w.querySelector('.apb'); if (!b) return;
+    var label = '\ud83d\udd11 Reset app sign-in password';
+    b.onclick = function () {
+      var nm = w.getAttribute('data-nm') || w.getAttribute('data-em');
+      if (!confirm('Give ' + nm + ' a new booking password? The old one stops working straight away.')) return;
+      b.disabled = true; b.textContent = 'Resetting\u2026';
+      post(BK, { action: 'staffapppass', stoken: S.stoken, machine: mid(), cid: w.getAttribute('data-cid'), email: w.getAttribute('data-em') })
+        .then(function (r) {
+          if (!r || !r.ok) {
+            var why = { duplicate_client: 'SimplyBook has more than one client with this email - merge them in SimplyBook first.',
+                        unknown_client: 'No SimplyBook client with this email.',
+                        no_email: 'This SimplyBook client has no email, so there is nothing to sign in with.',
+                        slow_down: 'Three resets in an hour for this customer already - use the last one.',
+                        sb_unavailable: 'SimplyBook did not answer - try again in a minute.',
+                        sb_refused: 'SimplyBook refused the change.' }[r && r.error] || ('Could not reset it (' + ((r && r.error) || 'error') + ').');
+            b.disabled = false; b.textContent = label;
+            var old = w.querySelector('.apmsg'); if (old) old.remove();
+            var m = document.createElement('div'); m.className = 'quiet apmsg'; m.textContent = why; w.appendChild(m); return;
+          }
+          w.innerHTML = '<div style="margin:.2rem 0 .15rem">New booking password for <strong>' + esc(r.email) + '</strong>:</div>'
+            + '<div><strong class="mono" style="font-size:1.25rem;color:var(--pwhite);letter-spacing:.02em">' + esc(r.password) + '</strong>'
+            + ' <button class="sm apcp" style="margin:0 0 0 .5rem;padding:.25rem .6rem;font-size:.8rem">\ud83d\udccb copy</button></div>'
+            + '<div class="quiet" style="margin-top:.3rem">' + (r.verified ? '\u2713 Checked with SimplyBook - it works now. ' : '\u26a0 Set, but the check sign-in did not confirm - try it in the app. ')
+            + 'In 365 PC Manager: Booking tab \u2192 Sign in with your booking account \u2192 this email and this password. Shown once, not emailed; they can change it any time on the booking page.</div>';
+          var cp = w.querySelector('.apcp');
+          cp.onclick = function () { navigator.clipboard.writeText(r.password).then(function () { cp.textContent = '\u2713 copied'; }); };
+        })
+        .catch(function () { b.disabled = false; b.textContent = label; });
+    };
   }
   /* "Job done - email what we did": the moment a one-off fix, tune-up or repair is finished, the
      customer gets a short email listing the work in the technician's words and the one honest next
@@ -6360,7 +6402,7 @@
           .then(function (r) {
             if (!r || !r.ok || !r.client) { panel.innerHTML = '<span class="quiet">Couldn\u2019t load contact details.</span>'; return; }
             panel.innerHTML = clientCard(r.client); panel.setAttribute('data-loaded', '1');
-            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel); bindJobDone(panel); bindPaylink(panel);
+            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel); bindJobDone(panel); bindPaylink(panel); bindAppPass(panel);
           })
           .catch(function () { panel.innerHTML = '<span class="quiet">Couldn\u2019t reach the server.</span>'; });
       };
@@ -6522,7 +6564,7 @@
           .then(function (r) {
             if (!r || !r.ok || !r.client) { panel.innerHTML = '<span class="quiet">Couldn\u2019t load contact details.</span>'; return; }
             panel.innerHTML = clientCard(r.client); panel.setAttribute('data-loaded', '1');
-            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel); bindJobDone(panel); bindPaylink(panel);
+            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel); bindJobDone(panel); bindPaylink(panel); bindAppPass(panel);
           })
           .catch(function () { panel.innerHTML = '<span class="quiet">Couldn\u2019t reach the server.</span>'; });
       };

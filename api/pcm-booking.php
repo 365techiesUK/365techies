@@ -2221,6 +2221,65 @@ if ($action === 'staffkey') {
     fail('unknown_customer');
 }
 
+// staff: reset a customer's BOOKING password so the app's "Sign in with your booking account"
+// works at the visit. 365 PC Manager checks email + password against SimplyBook
+// (getClientInfoByLoginPassword), so a customer who cannot remember it cannot be signed in by
+// us any other way; the website portal is passwordless (codes) and unaffected. The new password
+// is shown ONCE to the signed-in staff member and typed into the app there and then. SimplyBook
+// is told not to email it, Slack gets the fact but never the password, nothing is stored here.
+if ($action === 'staffapppass') {
+    need_staff();
+    global $HAS_ADMIN, $STAFF_REC;
+    if (!$HAS_ADMIN) fail('sb_unavailable');
+    require_once __DIR__ . '/pcm-apppass-lib.php';
+    $cid = (int)(isset($in['cid']) ? $in['cid'] : 0);
+    $email = strtolower(trim((string)(isset($in['email']) ? $in['email'] : '')));
+    if ($cid <= 0 && ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL))) fail('bad_email');
+    if ($cid <= 0) {
+        // no client id on the row: the client with exactly this email, and only if there is just one
+        $r0 = sb_adm('getClientList', array($email, 20));
+        if (sb_net($r0) || !isset($r0['result']) || !is_array($r0['result'])) fail('sb_unavailable');
+        $hits = array();
+        foreach ($r0['result'] as $cli0) {
+            $ce = strtolower(trim((string)(isset($cli0['email']) ? $cli0['email'] : '')));
+            $id0 = (int)(isset($cli0['id']) ? $cli0['id'] : 0);
+            if ($id0 > 0 && $ce === $email) $hits[$id0] = 1;
+        }
+        if (count($hits) === 0) fail('unknown_client');
+        if (count($hits) > 1) fail('duplicate_client');
+        $cid = (int)key($hits);
+    }
+    $cli = sb_client_fetch($cid);
+    if (!$cli) fail('unknown_client');
+    $cemail = strtolower(trim((string)(isset($cli['email']) ? $cli['email'] : '')));
+    $cname = bk_clean(isset($cli['name']) ? $cli['name'] : '');
+    if ($cemail === '') fail('no_email');   // SimplyBook's login IS the email: nothing to sign in with otherwise
+    // three resets per client per hour: a mistyped password is one retry, not a stream of them
+    list($lk, $db) = db_open();
+    if (!isset($db['apppw']) || !is_array($db['apppw'])) $db['apppw'] = array();
+    $now = time();
+    foreach ($db['apppw'] as $k2 => $ts2) {
+        $keep = array_values(array_filter((array)$ts2, function ($t) use ($now) { return $t > $now - 3600; }));
+        if (count($keep)) $db['apppw'][$k2] = $keep; else unset($db['apppw'][$k2]);
+    }
+    if (count(isset($db['apppw'][$cid]) ? $db['apppw'][$cid] : array()) >= 3) { db_close($lk); fail('slow_down'); }
+    $db['apppw'][$cid][] = $now;
+    db_save($db); db_close($lk);
+    $pw = apppass_generate();
+    if (!apppass_ok($pw)) fail('internal');
+    $r = sb_adm('changeClientPassword', array($cid, $pw, false));   // false = SimplyBook sends no email
+    if (sb_net($r)) fail('sb_unavailable');
+    if (isset($r['error']) && empty($r['result'])) fail('sb_refused');
+    // prove it before the staffer types it: the same call the app makes
+    $chk = sb_pub('getClientInfoByLoginPassword', array($cemail, $pw));
+    $verified = (!sb_net($chk) && isset($chk['result']['id']) && (int)$chk['result']['id'] === $cid);
+    $who = staff_who();
+    if ($who === '') $who = (string)(isset($STAFF_REC['login']) ? $STAFF_REC['login'] : 'staff');
+    pcm_slack_say(':key: *' . bk_clean($who) . '* reset the app sign-in password for *' . ($cname !== '' ? $cname : $cemail)
+        . '* at the visit (shown once in the staff portal, not emailed).');
+    out(array('ok' => true, 'cid' => $cid, 'email' => $cemail, 'name' => $cname, 'password' => $pw, 'verified' => $verified));
+}
+
 // staff: view the portal AS a customer (testing + "what does this customer see?").
 // Mints a SHORT (12h) machine-bound customer session; staff already see all this data,
 // so this changes presentation, not privilege.
@@ -2502,6 +2561,7 @@ if ($action === 'clientinfo') {
        on their own so the card can show them beside SimplyBook's. */
     $oursPhone = $ours['mobile'] !== '' ? $ours['mobile'] : $ours['tel'];
     out(array('ok' => true, 'client' => array(
+        'id' => (int)$cid,   // the SimplyBook client: the diary's reset-password action needs it
         'name' => $g('name'), 'email' => $g('email'),
         'phone' => ($g('phone') !== '' ? $g('phone') : $oursPhone),
         'phone_src' => ($g('phone') !== '' ? 'simplybook' : ($oursPhone !== '' ? 'portal' : '')),
