@@ -8959,6 +8959,7 @@ _DELL_CLUSTER = [
  ]),
  ("Owner&rsquo;s guides", [
    ("dell-latitude-3520-guide", "Latitude 3520 owner&rsquo;s guide", "Ports, power and USB-C, with the animated port explorer."),
+   ("dell-latitude-charging-on-the-go", "Charging a Latitude on the move", "The 65 W rule, which models charge over USB-C, and the car adapter, cable and power bank that work."),
    ("dell-latitude-5000-guide", "Latitude 5000 series guide", "5420, 5520, 5430, 5530 and newer: upgrades, screens, batteries."),
    ("dell-latitude-7000-guide", "Latitude 7000 series guide", "The ultralight tier: what changes, what to check, what it costs refurbished."),
    ("dell-optiplex-guide", "OptiPlex owner&rsquo;s guide", "Ports, monitors, UPS and care for the whole family."),
@@ -12238,7 +12239,7 @@ def victron_system_builder():
     desc = "Free Victron system builder. Four questions → the complete build: lithium battery, solar, MPPT, B2B, inverter and monitoring, PLUS the exact cables, lugs and fuses per circuit, the tools you need and the golden rules — with buy links for every part. From 365 Techies, Dorset — Victron installers."
     faqs = [
       ("How is the kit sized?", "From your daily energy use: watts &times; hours plus 15% real-world losses, a 1.5-day battery buffer at lithium&rsquo;s ~90% usable capacity, solar sized for UK spring/autumn sun (~2.5 peak hours), and the matching Victron MPPT from the official controller limits. It&rsquo;s an honest starter spec &mdash; a real design also covers cable sizing, fusing and alternator limits."),
-      ("Are the shop links affiliate links?", "No &mdash; the buttons simply open live searches on Amazon UK and Bimble Solar for each part, and we don&rsquo;t earn a penny from them. If that ever changes we&rsquo;ll say so clearly right next to the links. We recommend this kit because we install it and run it ourselves."),
+      ("Are the shop links affiliate links?", "The Amazon buttons are &mdash; since September 2026 they carry our Amazon Associates tag, so we may earn a small commission if you buy through one, at no extra cost to you, and the note beside the buttons says so. Bimble Solar links are plain searches. We recommend this kit because we install it and run it ourselves; the links change nothing about what we pick."),
       ("How accurate are the price guides?", "They&rsquo;re typical UK retail ranges (as of mid-2026) meant for planning a budget, not quoting a job &mdash; Victron prices move with sales and stock, so the live links always show today&rsquo;s real price. Expect the truth to land inside the range most of the time, and add the 10&ndash;15% cabling allowance on top."),
       ("Why Victron?", "It&rsquo;s the kit we trust with our own van: everything talks to everything (one app for the lot), the build quality is superb, warranties are long, and the remote-monitoring platform (VRM) is genuinely brilliant &mdash; you can watch our own system streaming live on this website."),
       ("Can I fit it myself?", "Plenty of people do &mdash; 12V systems are DIY-friendly if you&rsquo;re careful, and the SuperPack batteries with built-in protection make it safer. The parts that deserve respect are fusing, cable sizing and anything near the alternator or mains. We&rsquo;re happy to fit kit you&rsquo;ve bought, check over a DIY install, or do the whole job."),
@@ -12274,7 +12275,7 @@ def custom_pc_builder():
     desc = "Free custom PC builder. Set your budget and use — gaming, creative, office or CAD — and get an experienced builder's split of where the money should go, what class of part to buy, and live Scan.co.uk links for every component. From 365 Techies, Dorset."
     faqs = [
       ("Why don&rsquo;t you show exact prices?", "Because component prices genuinely change weekly (graphics cards especially), and a stale price is worse than none. Instead we split <em>your</em> budget the way experienced builders do, tell you what class of part that money buys, and link you to the live listing where the real price is. Prices always come from the retailer, never from us."),
-      ("Are the Scan or Amazon links affiliate links?", "No &mdash; they&rsquo;re plain searches and we don&rsquo;t earn anything from them. If that ever changes we&rsquo;ll say so clearly right next to the links."),
+      ("Are the Scan or Amazon links affiliate links?", "The Amazon ones are &mdash; since September 2026 they carry our Amazon Associates tag, so we may earn a small commission if you buy through one, at no extra cost to you; the note beside the buttons says so. Scan links are plain searches. Neither changes which parts we recommend."),
       ("Why do the percentages change with the use case?", "Because the bottleneck moves: games live on the graphics card (~38% of budget), editing and CAD lean on the processor and memory, and an office PC shouldn&rsquo;t buy a graphics card at all. Balance is the whole game &mdash; a monster GPU with a starved CPU wastes money."),
       ("Can you check my basket before I buy?", "Yes, free &mdash; <a href=\"/contact/\">send it over</a> and we&rsquo;ll sanity-check compatibility (socket, RAM, PSU, clearances) and tell you honestly where to spend less or more."),
       ("Should I build new or buy refurbished?", "Below about &pound;600 for a general-purpose machine, our <a href=\"/dell-hardware/\">refurbished business-grade Dells from &pound;510</a> usually beat a new budget build on quality and warranty. New custom builds shine from the mid-range up, and for gaming."),
@@ -12472,7 +12473,7 @@ DELL3520_WIDGET = r'''    <section class="section" aria-label="Interactive port 
       <script>
       (function(){
         var root=document.getElementById('d3p'); if(!root) return;
-        var AMZN_TAG='';
+        var AMZN_TAG='365techies0d-21';   /* Amazon Associates tag - live since 24 Sep 2026 */
         function amzn(q){ return 'https://www.amazon.co.uk/s?k='+encodeURIComponent(q)+(AMZN_TAG?('&tag='+AMZN_TAG):''); }
         function badge(x,y,line1,line2,accent){
           return '<rect x="'+x+'" y="'+y+'" width="90" height="52" rx="8" fill="rgba(255,255,255,.05)" stroke="'+(accent||'rgba(255,255,255,.3)')+'"></rect>'+
@@ -12749,7 +12750,7 @@ DELLOPTI_WIDGET = r'''    <section class="section" aria-label="Interactive port 
       <script>
       (function(){
         var root=document.getElementById('dpp'); if(!root) return;
-        var AMZN_TAG='';
+        var AMZN_TAG='365techies0d-21';   /* Amazon Associates tag - live since 24 Sep 2026 */
         function amzn(q){ return 'https://www.amazon.co.uk/s?k='+encodeURIComponent(q)+(AMZN_TAG?('&tag='+AMZN_TAG):''); }
         function badge(x,y,line1,line2,accent){
           return '<rect x="'+x+'" y="'+y+'" width="90" height="52" rx="8" fill="rgba(255,255,255,.05)" stroke="'+(accent||'rgba(255,255,255,.3)')+'"></rect>'+
@@ -21455,7 +21456,7 @@ def _wants_courses_band(slug):
 # The Dell cluster - repair, buying, model guides, Windows - all breadcrumb under
 # the Dell hardware hub so they read as one "everything Dell" section of the site.
 _DELL_HUB_SLUGS = frozenset({
- 'dell-laptop-repair-bournemouth', 'dell-optiplex-repair-poole', 'dell-laptop-battery-replacement-dorset',
+ 'dell-laptop-repair-bournemouth', 'dell-optiplex-repair-poole', 'dell-laptop-battery-replacement-dorset', 'dell-latitude-charging-on-the-go',
  'laptop-ssd-upgrade-bournemouth', 'refurbished-dell-laptops-bournemouth', 'refurbished-dell-desktops-dorset',
  'dell-latitude-5410-worth-it-2026', 'dell-latitude-3510-refurbished-worth-it', 'dell-latitude-5300-refurbished-worth-it',
  'dell-latitude-series-explained-3000-5000-7000', 'dell-optiplex-micro-sff-tower-which-to-buy',
@@ -21526,7 +21527,7 @@ _PACK_SCENE = {
     "dell-laptop-repair-bournemouth": "broken", "dell-laptop-repair-poole": "broken",
     "dell-optiplex-repair-poole": "repairdesktop", "dell-out-of-warranty-repair": "broken",
     "emergency-dell-repair-bournemouth": "emergency",
-    "dell-laptop-battery-replacement-dorset": "battery",
+    "dell-laptop-battery-replacement-dorset": "battery", "dell-latitude-charging-on-the-go": "battery",
     "refurbished-dell-laptops-bournemouth": "refurblaptop", "refurbished-dell-desktops-dorset": "refurbdesktop",
     "dell-latitude-5410-worth-it-2026": "sales", "dell-latitude-3510-refurbished-worth-it": "sales",
     "dell-latitude-5300-refurbished-worth-it": "sales",

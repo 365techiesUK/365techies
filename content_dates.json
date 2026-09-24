@@ -663,8 +663,8 @@
  },
  "custom-pc-builder": {
   "first": "2026-07-28",
-  "h": "2cd027f8f25e3539",
-  "last": "2026-09-13"
+  "h": "5493a3c13c0e0922",
+  "last": "2026-09-24"
  },
  "custom-pc-builds": {
   "first": "2026-07-28",
@@ -743,8 +743,8 @@
  },
  "dell-hardware": {
   "first": "2026-07-28",
-  "h": "cb76d5793560b5a6",
-  "last": "2026-09-18"
+  "h": "5d78368185778b26",
+  "last": "2026-09-24"
  },
  "dell-inspiron-15-3000-windows-11": {
   "first": "2026-07-28",
@@ -768,8 +768,8 @@
  },
  "dell-it-support-dorset": {
   "first": "2026-07-28",
-  "h": "cfcb8753460403b8",
-  "last": "2026-09-13"
+  "h": "653317d9506ada81",
+  "last": "2026-09-24"
  },
  "dell-killer-wifi-problems": {
   "first": "2026-07-28",
@@ -808,8 +808,8 @@
  },
  "dell-latitude-3520-guide": {
   "first": "2026-07-28",
-  "h": "116b5bd10d0f57ce",
-  "last": "2026-09-13"
+  "h": "e5e825534f6db3e4",
+  "last": "2026-09-24"
  },
  "dell-latitude-5000-guide": {
   "first": "2026-07-28",
@@ -835,6 +835,10 @@
   "first": "2026-07-28",
   "h": "dda60578e0f11e8c",
   "last": "2026-09-13"
+ },
+ "dell-latitude-charging-on-the-go": {
+  "first": "2026-09-24",
+  "h": "0fbb5dec297d4932"
  },
  "dell-latitude-e5540-upgrade": {
   "first": "2026-07-28",
@@ -883,8 +887,8 @@
  },
  "dell-optiplex-guide": {
   "first": "2026-07-28",
-  "h": "0a59fca954dbc1c2",
-  "last": "2026-09-13"
+  "h": "ebcefde7787ba286",
+  "last": "2026-09-24"
  },
  "dell-optiplex-micro-sff-tower-which-to-buy": {
   "first": "2026-07-28",
@@ -2181,8 +2185,8 @@
  },
  "off-grid-victron-energy": {
   "first": "2026-07-28",
-  "h": "2d0521c10b828566",
-  "last": "2026-09-17"
+  "h": "42fa9d2e9b0d1d13",
+  "last": "2026-09-24"
  },
  "office-moves-it-relocation": {
   "first": "2026-07-28",
@@ -3200,8 +3204,8 @@
  },
  "victron-system-builder": {
   "first": "2026-07-28",
-  "h": "146a7318cbf86b78",
-  "last": "2026-08-31"
+  "h": "952346a064dba2e4",
+  "last": "2026-09-24"
  },
  "victron-vrm-api-dashboard": {
   "first": "2026-07-28",

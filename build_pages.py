@@ -4414,7 +4414,7 @@ VBUILDER_TOOL = r'''    <section class="section" aria-label="Victron system buil
       <script>
       (function(){
         var root=document.getElementById('vb'); if(!root) return;
-        var AMZN_TAG='';   /* Amazon Associates tag, e.g. '365techies-21' — leave empty for plain links */
+        var AMZN_TAG='365techies0d-21';   /* Amazon Associates tag - live since 24 Sep 2026; empty = plain links */
         function amzn(q){ return 'https://www.amazon.co.uk/s?k='+encodeURIComponent(q)+(AMZN_TAG?('&tag='+AMZN_TAG):''); }
         function bimble(q){ return 'https://www.bimblesolar.com/index.php?route=product/search&search='+encodeURIComponent(q); }
         function buyBtns(q){ return '<div class="vb-buy"><a href="'+amzn(q)+'" target="_blank" rel="noopener'+(AMZN_TAG?' sponsored':'')+'">Amazon UK &#8599;</a><a href="'+bimble(q)+'" target="_blank" rel="noopener">Bimble Solar &#8599;</a></div>'; }
@@ -4751,7 +4751,7 @@ PCBUILD_TOOL = r'''    <section class="section" aria-label="Custom PC builder" i
       <script>
       (function(){
         var root=document.getElementById('pcb'); if(!root) return;
-        var AMZN_TAG='';
+        var AMZN_TAG='365techies0d-21';   /* Amazon Associates tag - live since 24 Sep 2026 */
         function scan(q){ return 'https://www.scan.co.uk/search?q='+encodeURIComponent(q); }
         function amzn(q){ return 'https://www.amazon.co.uk/s?k='+encodeURIComponent(q)+(AMZN_TAG?('&tag='+AMZN_TAG):''); }
         function buy(q){ return '<div class="pb-buy"><a href="'+scan(q)+'" target="_blank" rel="noopener">Scan.co.uk &#8599;</a><a href="'+amzn(q)+'" target="_blank" rel="noopener'+(AMZN_TAG?' sponsored':'')+'">Amazon UK &#8599;</a></div>'; }
