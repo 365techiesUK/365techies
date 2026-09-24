@@ -12,6 +12,10 @@
  *   action=send    {id}     -> QuickBooks emails it, from its own template, to the
  *                              address QuickBooks holds. WRITE 2.
  *   action=hold / unhold    -> park a row without sending it
+ *   action=quote   {job}    -> start a QuickBooks QUOTE (estimate) for the job's customer
+ *                              with the row's price and wording as its first line; the
+ *                              products are added and it is sent from QuickBooks. WRITE,
+ *                              never an email. (24 Sep 2026)
  *
  * WHY
  * The owner's words: the new jobs of the last month are in Slack, and the system
@@ -72,7 +76,7 @@ if ($who === '') $who = 'staff';
 
 $id  = preg_replace('/[^0-9]/', '', (string)(isset($in['id']) ? $in['id'] : ''));
 $job = preg_replace('/[^0-9a-zA-Z-]/', '', (string)(isset($in['job']) ? $in['job'] : ''));
-if (!in_array($action, array('list', 'recent', 'create', 'pdf', 'send', 'hold', 'unhold', 'setjob', 'dismiss'), true)) fail('bad_action');
+if (!in_array($action, array('list', 'recent', 'create', 'quote', 'pdf', 'send', 'hold', 'unhold', 'setjob', 'dismiss'), true)) fail('bad_action');
 
 /* "Not a job": a PC Manager service that was goodwill, a duplicate write-up, a
    test. Leaves the list; touches nothing in QuickBooks. */
@@ -154,6 +158,15 @@ if ($action === 'recent') {
     $rec = invq_recent($c, $days);
     if (empty($rec['ok'])) fail($rec['why']);
     out(array('ok' => true, 'days' => $days, 'since' => $rec['since'], 'rows' => $rec['rows']));
+}
+
+/* Start a QUOTE (QuickBooks estimate) for a job: customer + one line, then the products are
+   added and it is sent from QuickBooks through the link. WRITE, but never an email. */
+if ($action === 'quote') {
+    if ($job === '') fail('bad_job');
+    $r = invq_quote_for_job($c, $job, $who);
+    if (empty($r['ok'])) fail($r['error'], array('why' => isset($r['why']) ? $r['why'] : ''));
+    out(array('ok' => true, 'quote' => $r['quote'], 'number' => $r['number'], 'url' => $r['url'], 'existed' => !empty($r['existed'])));
 }
 
 if ($action === 'create') {

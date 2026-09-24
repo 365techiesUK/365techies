@@ -28300,6 +28300,18 @@ def write_portal_page():
         return '<span style="' + (done ? 'color:#7ee0a2' : cur ? 'color:#ffd76a;font-weight:700' : 'opacity:.45') + '">' + (done ? '\\u2713 ' : k + ' ') + nm + '</span>' + (i < 2 ? ' <span style="opacity:.4">\\u203a</span> ' : '');
       }).join('') + '</span>';
     }
+    /* A quote (QuickBooks estimate) started from the row: its number and the link where the
+       products are added and it is sent. Stays on the row whatever the invoice does later. */
+    function quoteHtml(j) {
+      var q = j.quote; if (!q || !q.id) return '';
+      return '<div style="margin:.3rem 0 0;font-size:.88rem;color:#9fd0ff">\\ud83d\\udcdd Quote started' + (q.no ? ' #' + esc(q.no) : ' <span class="quiet">(no number yet \\u2014 give it one in QuickBooks)</span>')
+        + ' \\u00b7 <a href="' + esc(q.url) + '" target="_blank" rel="noopener" style="color:#9fd0ff">Open it in QuickBooks</a> to add the products and send it. <span class="quiet">Sign in to QuickBooks first, or the link opens a blank quote instead of this one.</span></div>';
+    }
+    /* The quote button for a job with everything it needs; the needs-inputs row gets its own. */
+    function quoteBtn(j) {
+      if (j.quote && j.quote.id) return '';
+      return '<button class="sm ghost invqquote" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem" title="Starts a quote in QuickBooks for this customer with what is here as its first line. You add the products and send it from QuickBooks. Nothing is emailed by this button.">\\ud83d\\udcdd Start a quote instead</button>';
+    }
     function jobHtml(j) {
       var inv = j.invoice, st = j.state, chip, body = '', btns = '';
       if (st === 'paid') chip = steps(4) + '<span style="color:#7ee0a2">\\u2713 Paid</span>';
@@ -28308,7 +28320,7 @@ def write_portal_page():
       else if (st === 'invoiced') chip = steps(4) + '<span class="quiet">\\u2713 ' + esc(INVQ_WHY.invoiced_in_slack) + '</span>';
       else {
         chip = steps(1) + '<span style="color:#ffb4a2">No invoice yet</span>' + (j.done ? '' : ' <span class="quiet">\\u00b7 job not marked done in Slack yet</span>');
-        if (j.can_create) btns = itemSelect(j) + '<button class="sm invqcreate" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\\ud83e\\uddfe 1 \\u00b7 Raise the invoice</button>';
+        if (j.can_create) btns = itemSelect(j) + '<button class="sm invqcreate" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\\ud83e\\uddfe 1 \\u00b7 Raise the invoice</button>' + quoteBtn(j);
         else if (j.why_not === 'no_amount' || j.why_not === 'no_desc' || j.why_not === 'no_email') {
           var need = [];
           if (!j.email) need.push('the customer\\u2019s email');
@@ -28320,11 +28332,14 @@ def write_portal_page():
             + itemSelect(j)
             + (j.amount > 0 ? '' : '<input class="invqamt" type="text" inputmode="decimal" placeholder="Price \\u00a3" style="width:110px;margin:0">')
             + (j.desc ? '' : '<input class="invqdesc" type="text" maxlength="200" placeholder="What was done (goes on the invoice)" style="flex:1;min-width:200px;margin:0">')
-            + '<button class="sm invqset" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\\ud83e\\uddfe 1 \\u00b7 Save &amp; raise the invoice</button><span class="quiet invqsetmsg"></span></div>';
+            + '<button class="sm invqset" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem">\\ud83e\\uddfe 1 \\u00b7 Save &amp; raise the invoice</button>'
+            + (j.quote && j.quote.id ? '' : '<button class="sm ghost invqset invqsetq" data-job="' + esc(j.job) + '" style="margin:0;padding:.3rem .7rem;font-size:.82rem" title="A quote needs only the customer\\u2019s email: the price and wording are optional and go on as its first line. You add the products and send it from QuickBooks.">\\ud83d\\udcdd Save &amp; start a quote instead</button>')
+            + '<span class="quiet invqsetmsg"></span></div>';
         }
         else body = '<div style="color:#ffb4a2;font-size:.85rem;margin:.15rem 0 0">\\u26a0 ' + esc(INVQ_WHY[j.why_not] || j.why_not) + '</div>';
         body += '<div style="margin:.3rem 0 0"><button class="sm ghost invqdismiss" data-job="' + esc(j.job) + '" style="padding:.15rem .5rem;font-size:.76rem;opacity:.8">Not a job \\u2014 hide it</button></div>';
       }
+      body = quoteHtml(j) + body;
       return '<div class="invqrow" style="border:1px solid rgba(125,170,220,.25);border-radius:10px;padding:.55rem .7rem;margin:0 0 .5rem' + (inv && inv.held ? ';opacity:.7' : '') + '">'
         + '<div style="display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;align-items:baseline">'
         + '<div><strong>' + esc(j.customer || j.email || 'Unnamed') + '</strong> <span class="quiet">' + (j.desc ? esc(j.desc) + ' \\u00b7 ' : '') + esc(invqWhen(j.days)) + (j.email ? ' \\u00b7 ' + esc(j.email) : '') + (j.source === 'slack' ? ' \\u00b7 <span title="' + esc(j.detail || '') + '">from Slack</span>' : j.source === 'pcm' ? ' \\u00b7 <span title="' + esc(j.detail || '') + '">from PC Manager</span>' : '') + '</span></div>'
@@ -28367,8 +28382,23 @@ def write_portal_page():
         }).catch(function () { b.disabled = false; if (msg) msg.textContent = 'Couldn\\u2019t reach the server.'; });
       };
     });
+    /* "Start a quote instead": a QuickBooks estimate for the customer with the row's price and
+       wording as its first line (24 Sep 2026, Bradley Parry's new laptop). The products are
+       added and it is sent from QuickBooks through the link the row then shows; nothing is
+       emailed here. One quote per job - a second press finds the first. */
+    Array.prototype.forEach.call(box.querySelectorAll('.invqquote'), function (b) {
+      b.onclick = function () {
+        var jobId = b.getAttribute('data-job'), msg = msgOf(b);
+        b.disabled = true; if (msg) msg.textContent = 'Starting the quote in QuickBooks\\u2026';
+        post(INVQ, { action: 'quote', stoken: S.stoken, machine: mid(), job: jobId }).then(function (j) {
+          if (!j || !j.ok) { b.disabled = false; if (msg) msg.innerHTML = invqErr(j); return; }
+          loadInvq(true);
+        }).catch(function () { b.disabled = false; if (msg) msg.textContent = 'Couldn\\u2019t reach the server.'; });
+      };
+    });
     Array.prototype.forEach.call(box.querySelectorAll('.invqset'), function (b) {
       b.onclick = function () {
+        var quote = b.classList.contains('invqsetq');   // save, then start a quote rather than raise an invoice
         var row = b.closest('.invqrow'), a = row.querySelector('.invqamt'), d = row.querySelector('.invqdesc'), msg = row.querySelector('.invqsetmsg');
         var body = { action: 'setjob', stoken: S.stoken, machine: mid(), job: b.getAttribute('data-job') };
         if (a && a.value.trim()) body.amount = a.value.trim();
@@ -28376,16 +28406,22 @@ def write_portal_page():
         var sel = row.querySelector('.invqitem'); if (sel && sel.value) body.item = sel.value;
         var em = row.querySelector('.invqemail'); if (em && em.value.trim()) body.email = em.value.trim();
         if (em && !body.email) { msg.textContent = 'Type the customer\\u2019s email first.'; em.focus(); return; }
-        if (!body.amount && !body.desc && !body.item && !body.email) { msg.textContent = (sel ? 'Pick the service, or type the price' : 'Type the price') + (d ? ' and what was done' : '') + ' first.'; return; }
-        b.disabled = true; msg.textContent = 'Saving\\u2026';
-        post(INVQ, body).then(function (j) {
-          if (!j || !j.ok) { b.disabled = false; msg.innerHTML = invqErr(j); return; }
-          msg.textContent = 'Saved \\u2014 raising it in QuickBooks\\u2026';
-          // straight on to the raise; if it cannot be raised yet the reloaded row says why
-          return post(INVQ, { action: 'create', stoken: S.stoken, machine: mid(), job: b.getAttribute('data-job') }).then(function (c) {
-            if (!c || !c.ok) msg.innerHTML = 'Saved. ' + invqErr(c);
+        var typed = !!(body.amount || body.desc || body.item || body.email);
+        if (!quote && !typed) { msg.textContent = (sel ? 'Pick the service, or type the price' : 'Type the price') + (d ? ' and what was done' : '') + ' first.'; return; }
+        function go(prefix) {
+          // straight on to the raise / the quote; if it cannot be done yet the reloaded row says why
+          return post(INVQ, { action: quote ? 'quote' : 'create', stoken: S.stoken, machine: mid(), job: b.getAttribute('data-job') }).then(function (c) {
+            if (!c || !c.ok) msg.innerHTML = prefix + invqErr(c);
             loadInvq(true);
           });
+        }
+        b.disabled = true;
+        if (!typed) { msg.textContent = 'Starting the quote in QuickBooks\\u2026'; go('').catch(function () { b.disabled = false; msg.textContent = 'Couldn\\u2019t reach the server.'; }); return; }
+        msg.textContent = 'Saving\\u2026';
+        post(INVQ, body).then(function (j) {
+          if (!j || !j.ok) { b.disabled = false; msg.innerHTML = invqErr(j); return; }
+          msg.textContent = 'Saved \\u2014 ' + (quote ? 'starting the quote' : 'raising it') + ' in QuickBooks\\u2026';
+          return go('Saved. ');
         }).catch(function () { b.disabled = false; msg.textContent = 'Couldn\\u2019t reach the server.'; });
       };
     });
@@ -28461,7 +28497,7 @@ def write_portal_page():
     if (e === 'nothing_to_set') return 'Nothing to save.';
     if (e === 'rate_limited') return 'That\\u2019s a lot in one hour \\u2014 stopped as a precaution.';
     if (e === 'busy') return 'QuickBooks is busy with the monthly run \\u2014 try again in a minute.';
-    if (e === 'send_failed' || e === 'qbo_invoice' || e === 'qbo_customer') return 'QuickBooks refused it' + (j && j.why ? ': ' + esc(j.why) : '') + '.';
+    if (e === 'send_failed' || e === 'qbo_invoice' || e === 'qbo_customer' || e === 'qbo_estimate') return 'QuickBooks refused it' + (j && j.why ? ': ' + esc(j.why) : '') + '.';
     return 'Couldn\\u2019t do that \\u2014 the server said ' + esc(e || 'nothing') + '.';
   }
   function geoSetup() {

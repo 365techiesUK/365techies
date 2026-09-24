@@ -190,6 +190,19 @@ ok($deny !== '' && preg_match('#' . $deny . '#', 'pcm-invq.php') !== 1, 'the end
 $CR = (string)file_get_contents(__DIR__ . '/tm-cron.php');
 ok(strpos($CR, 'invq_morning()') !== false && strpos($CR, 'invq_morning()') < strpos($CR, 'if (!tm_configured())'), 'the morning sweep runs from the cron, above the SMS gate');
 
+echo "-- a quote's number when quotes use a plain running number\n";
+ok(invq_next_number(array('1041', '1040', '4905/3', 'Q-7', ''), '') === '1042', 'plain integers continue (1042), the rest ignored');
+ok(invq_next_number(array('4905/3', 'Q-7'), '') === '', 'no plain sequence = blank');
+
+echo "-- a quote started from a job shows on its row\n";
+$jq = array('id' => 'q1', 'name' => 'Bradley Parry', 'email' => 'bjparry1963@gmail.com', 'amount' => 200, 'desc' => 'New laptop', 'ts' => time() - 86400, 'via' => 'slack',
+            'quote_id' => '4411', 'quote_no' => '4905/806', 'quote_url' => 'https://app.qbo.intuit.com/app/estimate?txnId=4411', 'quote_at' => time() - 60);
+$rq = invq_job_row($jq, null);
+ok(is_array($rq['quote']) && $rq['quote']['id'] === '4411' && $rq['quote']['no'] === '4905/806' && strpos($rq['quote']['url'], 'estimate?txnId=4411') !== false, 'the row carries the quote id, number and QuickBooks link');
+ok($rq['state'] === 'none' && $rq['can_create'] === true, 'a quote does not stop the invoice being raised later');
+unset($jq['quote_id']);
+ok(invq_job_row($jq, null)['quote'] === null, 'no quote = null, not an empty shape');
+
 echo "-- the next invoice number (4905/NNN, David's sequence)\n";
 ok(invq_next_number(array('4905/799', '4905/801', '4905/800')) === '4905/802', 'highest plus one, whatever the order', invq_next_number(array('4905/799', '4905/801', '4905/800')));
 ok(invq_next_number(array('4905/99', '4905/801')) === '4905/802', 'numeric, not alphabetical (99 does not beat 801)');

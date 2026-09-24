@@ -361,6 +361,9 @@ function invq_job_row($job, $invRow, $now = null) {
         'can_create' => ($state === 'none' && $can),
         'why_not'  => ($state === 'none' ? $why : ''),
         'invoice'  => $invRow,
+        /* a quote (QuickBooks estimate) started from the row, if any: id, number, link */
+        'quote'    => !empty($job['quote_id']) ? array('id' => (string)$job['quote_id'], 'no' => invq_str(isset($job['quote_no']) ? $job['quote_no'] : '', 30),
+                                                       'url' => (string)(isset($job['quote_url']) ? $job['quote_url'] : ''), 'at' => (int)(isset($job['quote_at']) ? $job['quote_at'] : 0)) : null,
     );
 }
 

@@ -441,14 +441,139 @@ function invq_overview($c, $fresh = false, $now = null) {
 /* The next 4905/NNN from QuickBooks itself: the newest hundred invoices carrying the prefix,
    newest first, so the highest number is always among them. '' if the read fails - the invoice
    is still created, just unnumbered, which is what happened before. */
-function invq_next_docnumber($c) {
-    $q = "select DocNumber from Invoice where DocNumber like '" . INVQ_DOC_PREFIX . "%' orderby Id desc maxresults 100";
+function invq_next_docnumber($c, $entity = 'Invoice') {
+    $nums = invq_docnumbers($c, $entity, INVQ_DOC_PREFIX);
+    return $nums === null ? '' : invq_next_number($nums);
+}
+
+/* The last 100 DocNumbers of an entity (Invoice / Estimate), newest first; $like narrows
+   to a prefix. null when QuickBooks could not be read (as opposed to "none"). */
+function invq_docnumbers($c, $entity = 'Invoice', $like = '') {
+    $q = "select DocNumber from " . $entity . ($like !== '' ? " where DocNumber like '" . $like . "%'" : '') . " orderby Id desc maxresults 100";
     $res = invq_api($c, 'GET', '/query?query=' . rawurlencode($q));
-    if (!qbo_lib_ok($res)) return '';
+    if (!qbo_lib_ok($res)) return null;
     $nums = array();
-    foreach ((array)(isset($res['json']['QueryResponse']['Invoice']) ? $res['json']['QueryResponse']['Invoice'] : array()) as $inv)
-        if (is_array($inv) && isset($inv['DocNumber'])) $nums[] = (string)$inv['DocNumber'];
-    return invq_next_number($nums);
+    foreach ((array)(isset($res['json']['QueryResponse'][$entity]) ? $res['json']['QueryResponse'][$entity] : array()) as $row)
+        if (is_array($row) && isset($row['DocNumber'])) $nums[] = (string)$row['DocNumber'];
+    return $nums;
+}
+
+/* The QuickBooks customer for a job: the map, else a lookup by email, else created from
+   the Slack details (name, email, phone, address with the postcode as its own field).
+   Shared by the invoice raise and the quote. Never a duplicate: the map is written under
+   the biller's lock and a name clash comes back as duplicate_name. */
+function invq_ensure_customer($c, $job, $jobId) {
+    $email = invq_email_ok($job['email']);
+    $name = invq_str(isset($job['name']) ? $job['name'] : '', 90); if ($name === '') $name = $email;
+    $phone = invq_str(isset($job['phone']) ? $job['phone'] : '', 30);
+    $cid = invq_customer_for($c, $email);
+    if ($cid !== '') return array('ok' => true, 'cid' => $cid, 'existed' => true);
+    $m = invq_map_get($c, $email);
+    if ($m === null) return array('ok' => false, 'error' => 'busy');
+    $body = array('DisplayName' => $name, 'PrimaryEmailAddr' => array('Address' => $email));
+    if ($phone !== '') $body['PrimaryPhone'] = array('FreeFormNumber' => $phone);
+    /* the address as written up in Slack (22 Sep): the postcode is its own field
+       when the post had one; the rest is line 1 */
+    $addr = invq_str(isset($job['addr']) ? $job['addr'] : '', 200);
+    $pc = strtoupper(invq_str(isset($job['postcode']) ? $job['postcode'] : '', 12));
+    if ($pc !== '' && strtoupper(substr($addr, -strlen($pc))) === $pc) $addr = trim(substr($addr, 0, -strlen($pc)), " ,");
+    if ($addr !== '' || $pc !== '') {
+        $body['BillAddr'] = array('Country' => 'United Kingdom');
+        if ($addr !== '') $body['BillAddr']['Line1'] = $addr;
+        if ($pc !== '') $body['BillAddr']['PostalCode'] = $pc;
+    }
+    $res = invq_api($c, 'POST', '/customer', $body);
+    if (!qbo_lib_ok($res) || empty($res['json']['Customer']['Id'])) {
+        $code = (string)(isset($res['json']['Fault']['Error'][0]['code']) ? $res['json']['Fault']['Error'][0]['code'] : '');
+        invq_log('customer create FAILED for job ' . $jobId . ' ' . invq_why($res));
+        return array('ok' => false, 'error' => ($code === '6240' ? 'duplicate_name' : 'qbo_customer'), 'why' => invq_why($res), 'name' => $name);
+    }
+    $cid = (string)$res['json']['Customer']['Id'];
+    invq_map_put($c, $email, $cid);
+    invq_log('created QuickBooks customer ' . $cid . ' for job ' . $jobId);
+    return array('ok' => true, 'cid' => $cid, 'existed' => false);
+}
+
+/* A QUOTE (QuickBooks estimate) started from a job (owner, 24 Sep 2026: Bradley Parry needs a
+   quote for a new laptop). The portal starts it - the customer, one line from the service picked
+   or the price typed, the next 4905/NNN if quotes carry that sequence - and QuickBooks is where
+   the products are added and the quote is sent, through the link the row shows. Nothing is
+   emailed from here. One quote per job; a second press just returns the first. */
+function invq_quote_for_job($c, $jobId, $who) {
+    $job = null;
+    foreach (invq_jobs_read() as $j) if (is_array($j) && (string)(isset($j['id']) ? $j['id'] : '') === (string)$jobId) { $job = $j; break; }
+    if (!$job) return array('ok' => false, 'error' => 'no_such_job');
+    if (!empty($job['quote_id'])) return array('ok' => true, 'quote' => (string)$job['quote_id'], 'number' => (string)(isset($job['quote_no']) ? $job['quote_no'] : ''), 'url' => (string)(isset($job['quote_url']) ? $job['quote_url'] : ''), 'existed' => true);
+    $email = invq_email_ok(isset($job['email']) ? $job['email'] : '');
+    if ($email === '') return array('ok' => false, 'error' => 'no_email');
+    $amount = round(invq_num(isset($job['amount']) ? $job['amount'] : 0), 2);
+    $itemRef = !empty($job['item_id']) ? (string)$job['item_id'] : $c['item'];
+    if ($amount > INVQ_MAX_AMOUNT * 10) return array('ok' => false, 'error' => 'large');
+    if (empty($c['live'])) return array('ok' => false, 'error' => 'not_live');
+    if ($c['only'] !== '') return array('ok' => false, 'error' => 'only_key');
+    if ($amount > 0 && $itemRef === '') return array('ok' => false, 'error' => 'no_item');
+    $store = invq_store_read();
+    $hourAgo = time() - 3600; $n = 0;
+    foreach ($store['created'] as $s) if ((int)$s['at'] > $hourAgo) $n++;
+    if ($n >= INVQ_MAX_CREATES_RUN) return array('ok' => false, 'error' => 'rate_limited');
+    $desc = invq_str(isset($job['desc']) ? $job['desc'] : '', 200);
+    if ($desc === '') $desc = invq_str(isset($job['item_name']) ? $job['item_name'] : '', 100);
+    if ($desc === '') $desc = 'Quote';
+    $name = invq_str(isset($job['name']) ? $job['name'] : '', 90); if ($name === '') $name = $email;
+    $cu = invq_ensure_customer($c, $job, $jobId);
+    if (empty($cu['ok'])) return $cu;
+    /* One line to start from: the job's price on its service when there is one, else a
+       heading line with the description (a quote for "a new laptop" has no price yet -
+       the products go on in QuickBooks). */
+    if ($amount > 0) {
+        $line = array('DetailType' => 'SalesItemLineDetail', 'Amount' => $amount, 'Description' => $desc,
+                      'SalesItemLineDetail' => array('ItemRef' => array('value' => $itemRef), 'Qty' => 1, 'UnitPrice' => $amount));
+        if ($c['tax'] !== '') $line['SalesItemLineDetail']['TaxCodeRef'] = array('value' => $c['tax']);
+    } else {
+        $line = array('DetailType' => 'DescriptionOnly', 'Description' => $desc, 'DescriptionLineDetail' => new stdClass());
+    }
+    $est = array('CustomerRef' => array('value' => $cu['cid']), 'Line' => array($line), 'TxnDate' => gmdate('Y-m-d'),
+                 'ExpirationDate' => gmdate('Y-m-d', time() + 30 * 86400), 'BillEmail' => array('Address' => $email),
+                 'PrivateNote' => 'Started from the staff portal by ' . $who . ' (job ' . $jobId . ')');
+    /* Its number: the 4905/NNN sequence if quotes already carry it, else the next in whatever
+       plain running number the quotes use, else blank (QuickBooks' "custom transaction
+       numbers" leaves it blank, and the row says so). */
+    $doc = invq_next_docnumber($c, 'Estimate');
+    if ($doc === '') { $all = invq_docnumbers($c, 'Estimate'); $doc = $all ? invq_next_number($all, '') : ''; }
+    if ($doc !== '') $est['DocNumber'] = $doc;
+    $res = invq_api($c, 'POST', '/estimate', $est);
+    if (!qbo_lib_ok($res) || empty($res['json']['Estimate']['Id'])) {
+        invq_log('quote create FAILED for job ' . $jobId . ' ' . invq_why($res));
+        return array('ok' => false, 'error' => 'qbo_estimate', 'why' => invq_why($res));
+    }
+    $estId = (string)$res['json']['Estimate']['Id'];
+    $no = (string)(isset($res['json']['Estimate']['DocNumber']) ? $res['json']['Estimate']['DocNumber'] : $doc);
+    $url = $c['host'] . '/app/estimate?txnId=' . rawurlencode($estId);
+    invq_job_quote($jobId, $estId, $url, $no);
+    invq_store_locked(function ($d) use ($jobId, $estId, $amount, $who) {
+        $d['created'][] = array('job' => (string)$jobId, 'id' => 'est-' . $estId, 'amount' => $amount, 'by' => $who, 'at' => time());
+        $d['cache'] = null;
+        return array('ok' => true, 'data' => $d);
+    });
+    invq_log('started quote ' . $estId . ($no !== '' ? ' #' . $no : '') . ' ' . invq_money($amount) . ' for job ' . $jobId . ' by ' . $who);
+    invq_slack(':memo: *Quote started* - ' . $name . ($no !== '' ? ' (#' . $no . ')' : '') . ', from ' . invq_money($amount) . ' for ' . $desc . ', by ' . $who . '. Add the products and send it from QuickBooks.');
+    return array('ok' => true, 'quote' => $estId, 'number' => $no, 'url' => $url, 'existed' => false);
+}
+
+/* The quote a job now has, on the job record (mirror of invq_job_link). */
+function invq_job_quote($jobId, $estId, $url, $no) {
+    $r = invq_jobs_locked(function ($d) use ($jobId, $estId, $url, $no) {
+        foreach ($d['jobs'] as $i => $j) {
+            if (!is_array($j) || (string)(isset($j['id']) ? $j['id'] : '') !== (string)$jobId) continue;
+            $d['jobs'][$i]['quote_id'] = (string)$estId;
+            $d['jobs'][$i]['quote_url'] = (string)$url;
+            $d['jobs'][$i]['quote_no'] = (string)$no;
+            $d['jobs'][$i]['quote_at'] = time();
+            return array('ok' => true, 'data' => $d);
+        }
+        return array('ok' => false, 'error' => 'no_such_job');
+    });
+    return !empty($r['ok']);
 }
 
 function invq_create_for_job($c, $jobId, $who, $auto = false) {
@@ -473,32 +598,9 @@ function invq_create_for_job($c, $jobId, $who, $auto = false) {
     $phone = invq_str(isset($job['phone']) ? $job['phone'] : '', 30);
 
     // 1. the customer: map, else lookup, else create - never a duplicate
-    $cid = invq_customer_for($c, $email);
-    if ($cid === '') {
-        $m = invq_map_get($c, $email);
-        if ($m === null) return array('ok' => false, 'error' => 'busy');
-        $body = array('DisplayName' => $name, 'PrimaryEmailAddr' => array('Address' => $email));
-        if ($phone !== '') $body['PrimaryPhone'] = array('FreeFormNumber' => $phone);
-        /* the address as written up in Slack (22 Sep): the postcode is its own field
-           when the post had one; the rest is line 1 */
-        $addr = invq_str(isset($job['addr']) ? $job['addr'] : '', 200);
-        $pc = strtoupper(invq_str(isset($job['postcode']) ? $job['postcode'] : '', 12));
-        if ($pc !== '' && strtoupper(substr($addr, -strlen($pc))) === $pc) $addr = trim(substr($addr, 0, -strlen($pc)), " ,");
-        if ($addr !== '' || $pc !== '') {
-            $body['BillAddr'] = array('Country' => 'United Kingdom');
-            if ($addr !== '') $body['BillAddr']['Line1'] = $addr;
-            if ($pc !== '') $body['BillAddr']['PostalCode'] = $pc;
-        }
-        $res = invq_api($c, 'POST', '/customer', $body);
-        if (!qbo_lib_ok($res) || empty($res['json']['Customer']['Id'])) {
-            $code = (string)(isset($res['json']['Fault']['Error'][0]['code']) ? $res['json']['Fault']['Error'][0]['code'] : '');
-            invq_log('customer create FAILED for job ' . $jobId . ' ' . invq_why($res));
-            return array('ok' => false, 'error' => ($code === '6240' ? 'duplicate_name' : 'qbo_customer'), 'why' => invq_why($res), 'name' => $name);
-        }
-        $cid = (string)$res['json']['Customer']['Id'];
-        invq_map_put($c, $email, $cid);
-        invq_log('created QuickBooks customer ' . $cid . ' for job ' . $jobId);
-    }
+    $cu = invq_ensure_customer($c, $job, $jobId);
+    if (empty($cu['ok'])) return $cu;
+    $cid = $cu['cid'];
     // 2. is there already an invoice that IS this job? Then link, don't create.
     $f = invq_fetch($c);
     if (!empty($f['ok'])) {
