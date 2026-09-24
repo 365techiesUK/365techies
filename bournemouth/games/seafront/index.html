@@ -3,16 +3,46 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!-- >>> ANALYTICS (24 Sep 2026). The site's own Google tag and Consent Mode v2 set-up, as on
+     /bournemouth/: every kind of storage DENIED until the visitor accepts the banner below (the
+     same `tt_consent` key as the rest of the site, so a choice made anywhere holds everywhere).
+     This page is where links from YouTube and Facebook land, which is why it - and not the game
+     next door - carries the banner. The game reads the same choice and adds its own events.
+     One deliberate difference from the site's snippet: when the address carries a campaign tag
+     (utm_*), the library loads AT ONCE instead of on first interaction. Otherwise a visitor who
+     taps Play straight away leaves before the page view is sent, and the campaign is lost. The
+     Play links also carry the tags through (see the end of the page), as a second guard. -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', wait_for_update: 500 });
+  try { if (localStorage.getItem('tt_consent') === 'accepted') gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); } catch (e) {}
+  gtag('js', new Date());
+  gtag('config', 'G-EBLTJ9WJXZ');
+  (function () {
+    function loadGtagLib() {
+      if (window.__gtagLibLoaded) return; window.__gtagLibLoaded = true;
+      var g = document.createElement('script'); g.async = true;
+      g.src = 'https://www.googletagmanager.com/gtag/js?id=G-EBLTJ9WJXZ';
+      document.head.appendChild(g);
+    }
+    if (/[?&]utm_/.test(location.search)) { loadGtagLib(); return; }
+    ['pointerdown', 'keydown', 'touchstart', 'scroll', 'mousemove', 'wheel'].forEach(function (evt) {
+      window.addEventListener(evt, loadGtagLib, { once: true, passive: true });
+    });
+    window.addEventListener('load', function () { setTimeout(loadGtagLib, 30000); });
+  })();
+</script>
+<!-- <<< ANALYTICS -->
 <!-- 24 Sep 2026: THE NOINDEX IS GONE FROM THIS PAGE. It was here while the game was unlisted.
      It has NOT been removed from play/index.html, and that is deliberate rather than an
      oversight: this page carries the actual content - what it is, the eight levels, the
      controls, the spec table - so this is the page that should rank. The game shell next door
      is UI chrome with no editorial text, and indexing it would put a bare canvas in the results
      competing with this page for the same queries.
-     ⚠️ STILL AN ORPHAN. sitemap.xml is generated from build_pages.PAGES and this page is not in
-     it (it is hand-maintained on purpose), and nothing on the site links here yet. Allowed to be
-     indexed is not the same as findable - it needs a sitemap entry or an inbound link to be
-     crawled at all. -->
+     Linked from the Bournemouth365 hub (/bournemouth/) since 24 Sep 2026, so it can be crawled.
+     ⚠️ Still NOT in sitemap.xml: that is generated from build_pages.PAGES and this page is not in
+     it (it is hand-maintained on purpose). -->
 <link rel="canonical" href="https://365techies.co.uk/bournemouth/games/seafront/">
 <title>Seafront — a Bournemouth game</title>
 <meta name="description" content="A free browser game set on the real Bournemouth seafront. Ride a jet ski past the pier, save the pier from a Viking raid, run the Dorset smuggling coast, or bring a boatload of people home.">
@@ -115,9 +145,35 @@
   footer { border-top:1px solid var(--line); margin-top:44px; padding-top:18px;
            color:var(--dim); font-size:14px; }
   footer a { color:var(--dim); }
+  /* >>> ANALYTICS: the site's cookie banner, in this page's own colours. A strip along the
+     bottom edge that never covers the Play button's row on a phone: it is fixed to the bottom
+     and the page gains bottom padding while it shows. Buttons are 44 px tall, the site's floor. */
+  .cookie-banner { position:fixed; left:12px; right:12px; bottom:12px; z-index:50; display:flex;
+                   flex-wrap:wrap; align-items:center; gap:10px 16px; padding:12px 14px;
+                   background:#171b22; border:1px solid var(--line); border-radius:12px;
+                   box-shadow:0 8px 30px rgba(0,0,0,.45); font-size:15px; color:var(--ink); }
+  .cookie-banner[hidden] { display:none; }
+  .cookie-banner p { margin:0; flex:1 1 220px; }
+  .cookie-banner a { color:var(--blue); }
+  .cookie-banner__actions { display:flex; gap:10px; }
+  .cookie-banner button { min-height:44px; padding:0 18px; border-radius:999px; font:inherit;
+                          font-weight:700; cursor:pointer; border:1px solid var(--line); }
+  .cookie-banner [data-cookie="decline"] { background:transparent; color:var(--ink); }
+  .cookie-banner [data-cookie="accept"] { background:var(--amber); color:#12151a; border-color:var(--amber); }
+  body.has-cookie-banner { padding-bottom:110px; }
+  /* <<< ANALYTICS */
 </style>
 </head>
 <body>
+<!-- >>> ANALYTICS: the site's banner and wording, minus "live chat" - this page loads no chat. -->
+<div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
+  <p>Cookies run our site stats. <a href="/cookie-policy/">Cookie policy</a>.</p>
+  <div class="cookie-banner__actions">
+    <button type="button" data-cookie="decline">Decline</button>
+    <button type="button" data-cookie="accept">Accept</button>
+  </div>
+</div>
+<!-- <<< ANALYTICS -->
 <div class="wrap">
 
   <h1>Seafront</h1>
@@ -310,8 +366,10 @@
       // A cancelled share rejects. That is the user saying no, not an error, so it is
       // swallowed rather than reported.
       navigator.share(data).catch(function () {});
+      if (window.gtag) gtag('event', 'share', { method: 'native', content_type: 'game', item_id: 'seafront' });
       return;
     }
+    if (window.gtag) gtag('event', 'share', { method: 'copy_link', content_type: 'game', item_id: 'seafront' });
     navigator.clipboard.writeText(URL_).then(function () {
       var was = shareBtn.textContent;
       shareBtn.textContent = 'Link copied';
@@ -330,5 +388,39 @@
 }());
 </script>
 <!-- <<< INSTALL -->
+<!-- >>> ANALYTICS: the banner's behaviour (the site's own, minus the chat loader), and the
+     campaign tags carried from this page's address onto every link into the game. -->
+<script>
+(function () {
+  var KEY = 'tt_consent';
+  var b = document.getElementById('cookie-banner');
+  var c = null;
+  try { c = localStorage.getItem(KEY); } catch (e) {}
+  if (c !== 'accepted' && c !== 'declined' && b) { b.hidden = false; document.body.classList.add('has-cookie-banner'); }
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest && e.target.closest('[data-cookie]'); if (!t) return;
+    var v = t.getAttribute('data-cookie') === 'accept' ? 'accepted' : 'declined';
+    try { localStorage.setItem(KEY, v); } catch (e2) {}
+    if (b) b.hidden = true;
+    document.body.classList.remove('has-cookie-banner');
+    if (v === 'accepted' && window.gtag) gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' });
+  });
+  // utm_* from this address onto each link into play/, so the game's own page view carries the
+  // campaign even if this page's view never got sent.
+  var tags = [];
+  try {
+    new URLSearchParams(location.search).forEach(function (v, k) { if (/^utm_/.test(k)) tags.push([k, v]); });
+  } catch (e) {}
+  if (!tags.length) return;
+  Array.prototype.forEach.call(document.querySelectorAll('a[href^="play/"]'), function (a) {
+    try {
+      var u = new URL(a.getAttribute('href'), location.href);
+      tags.forEach(function (kv) { u.searchParams.set(kv[0], kv[1]); });
+      a.setAttribute('href', u.pathname + u.search + u.hash);
+    } catch (e) {}
+  });
+}());
+</script>
+<!-- <<< ANALYTICS -->
 </body>
 </html>

@@ -25,6 +25,38 @@
   } catch (e) { /* no location in some embedding: the splash simply shows, which is harmless */ }
 </script>
 <!-- <<< SPLASH -->
+<!-- >>> ANALYTICS (24 Sep 2026)
+     Google Analytics: the site's own property and the site's own Consent Mode v2 set-up, copied
+     from bournemouth/index.html. Every kind of storage is DENIED by default and granted only if
+     this visitor accepted cookies somewhere on 365techies.co.uk - the same `tt_consent` key the
+     site's banner writes. The game's landing page (the page links point at) carries that banner;
+     this page has none, so nothing is ever drawn over the game.
+     NOTHING RUNS OFF THE LIVE SITE, AND NOTHING UNDER ?cal=: local play, the 25 judged views and
+     the node suites never get a gtag, so src/ui/analytics.js is a no-op for all of them.
+     The library is NOT loaded here. __seafrontGtag() is only defined; the game calls it once its
+     textures are in (analytics.js startLibrary), with a 20 s fallback for a game that never
+     finishes booting, so the visit is still counted. -->
+<script>
+  (function () {
+    try {
+      if (!/(^|\.)365techies\.co\.uk$/.test(location.hostname) || /[?&]cal=/.test(location.search)) return;
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { window.dataLayer.push(arguments); };
+      gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', wait_for_update: 500 });
+      try { if (localStorage.getItem('tt_consent') === 'accepted') gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' }); } catch (e) {}
+      gtag('js', new Date());
+      gtag('config', 'G-EBLTJ9WJXZ');
+      window.__seafrontGtag = function () {
+        if (window.__gtagLibLoaded) return; window.__gtagLibLoaded = true;
+        var g = document.createElement('script'); g.async = true;
+        g.src = 'https://www.googletagmanager.com/gtag/js?id=G-EBLTJ9WJXZ';
+        document.head.appendChild(g);
+      };
+      window.addEventListener('load', function () { setTimeout(window.__seafrontGtag, 20000); });
+    } catch (e) { /* analytics must never stop the game loading */ }
+  })();
+</script>
+<!-- <<< ANALYTICS -->
 <style>
   :root {
     --bg: #16181c;
@@ -908,6 +940,6 @@
      assets/ is NOT moved: those paths are document-relative (no import.meta.url in
      textures.js), so they resolve against this page wherever the modules are.
      ⚠️ BUMP b2 -> b3 -> ... ON EVERY DEPLOY, or the update will not reach anyone. -->
-<script type="module" src="./b20/src/main.js"></script>
+<script type="module" src="./b21/src/main.js"></script>
 </body>
 </html>
