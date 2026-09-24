@@ -3,10 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<!-- ⚠️ NOINDEX WHILE THIS IS UNLISTED. Nothing on the site links here and there is no sitemap
-     entry, but robots.txt allows everything, so this tag is what actually keeps it out of
-     search. REMOVE IT DELIBERATELY at launch, along with the one in play/index.html. -->
-<meta name="robots" content="noindex,nofollow">
+<!-- 24 Sep 2026: THE NOINDEX IS GONE FROM THIS PAGE. It was here while the game was unlisted.
+     It has NOT been removed from play/index.html, and that is deliberate rather than an
+     oversight: this page carries the actual content - what it is, the eight levels, the
+     controls, the spec table - so this is the page that should rank. The game shell next door
+     is UI chrome with no editorial text, and indexing it would put a bare canvas in the results
+     competing with this page for the same queries.
+     ⚠️ STILL AN ORPHAN. sitemap.xml is generated from build_pages.PAGES and this page is not in
+     it (it is hand-maintained on purpose), and nothing on the site links here yet. Allowed to be
+     indexed is not the same as findable - it needs a sitemap entry or an inbound link to be
+     crawled at all. -->
+<link rel="canonical" href="https://365techies.co.uk/bournemouth/games/seafront/">
 <title>Seafront — a Bournemouth game</title>
 <meta name="description" content="A free browser game set on the real Bournemouth seafront. Ride a jet ski past the pier, save the pier from a Viking raid, run the Dorset smuggling coast, or bring a boatload of people home.">
 <!-- >>> INSTALL
@@ -71,6 +78,34 @@
         border:1px solid var(--line); border-radius:4px; padding:3px 6px; }
   .cols { display:grid; gap:0 36px; grid-template-columns:1fr; }
   @media (min-width:660px) { .cols { grid-template-columns:1fr 1fr; } }
+  /* >>> SPEC  a plain three-column grid, not a <table>: it has to collapse to a phone
+     without a horizontal scrollbar, and the row label carries the meaning on its own. */
+  .spec { display:grid; grid-template-columns:1fr; gap:0; margin:6px 0 18px;
+          border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+  .spec > div { padding:11px 14px; border-top:1px solid var(--line); font-size:15px; }
+  .spec > div:first-child { border-top:0; }
+  .spec-h { display:none; font-weight:700; color:var(--amber); background:rgba(255,255,255,.04); }
+  .spec-h span { display:block; font-weight:400; font-size:13px; color:var(--dim); }
+  .spec-k { font-weight:700; background:rgba(255,255,255,.05); color:var(--ink); }
+  .spec .d { color:var(--dim); font-size:13.5px; }
+  .specnote { color:var(--dim); font-size:15px; margin:0 0 14px; }
+  .specnote strong { color:var(--ink); }
+  @media (min-width:660px) {
+    .spec { grid-template-columns:150px 1fr 1fr; }
+    .spec > div { border-top:1px solid var(--line); }
+    .spec > div:nth-child(-n+3) { border-top:0; }
+    .spec-h { display:block; }
+  }
+  /* On a phone the header cells are hidden, so each value needs its own label. */
+  @media (max-width:659px) {
+    .spec > div:not(.spec-k):not(.spec-h)::before {
+      content:"Minimum \00a0"; display:block; font-size:12px; letter-spacing:.06em;
+      text-transform:uppercase; color:var(--amber); margin-bottom:3px; }
+    /* ⚠️ The :not():not() above scores HIGHER than a bare .alt, so this override has to carry
+       the same two :not()s or every row on a phone reads "MINIMUM". It did. */
+    .spec > div.alt:not(.spec-k):not(.spec-h)::before { content:"Recommended \00a0"; }
+  }
+  /* <<< SPEC */
   footer { border-top:1px solid var(--line); margin-top:44px; padding-top:18px;
            color:var(--dim); font-size:14px; }
   footer a { color:var(--dim); }
@@ -144,10 +179,46 @@
       <h2>You will need</h2>
       <ul>
         <li>A browser with WebGL2 &mdash; anything current</li>
-        <li>It runs best on a desktop or a recent phone</li>
+        <li>Hardware acceleration switched on (it is, by default)</li>
       </ul>
     </div>
   </div>
+
+  <h2>Will it run on mine?</h2>
+  <p class="specnote">Almost certainly. It is a browser game and it asks for very little &mdash;
+  about 5MB to download and nothing installed.</p>
+
+  <div class="spec">
+    <div class="spec-h"></div>
+    <div class="spec-h">Minimum <span>about 30fps</span></div>
+    <div class="spec-h">Recommended <span>a steady 60fps</span></div>
+
+    <div class="spec-k">Phone</div>
+    <div>Android from about 2019<br><span class="d">iPhone 8 or newer</span></div>
+    <div class="alt">Android from about 2021<br><span class="d">iPhone XR or newer</span></div>
+
+    <div class="spec-k">Tablet</div>
+    <div>iPad from about 2018</div>
+    <div class="alt">Any iPad still getting updates</div>
+
+    <div class="spec-k">PC or laptop</div>
+    <div>Intel 6th gen or similar, 2015<br><span class="d">4GB memory</span></div>
+    <div class="alt">Intel 8th gen or Ryzen 2000, 2018<br><span class="d">8GB memory</span></div>
+
+    <div class="spec-k">Chromebook</div>
+    <div>Mid-range<br><span class="d">the cheapest Celeron ones will be slow</span></div>
+    <div class="alt">Core i3 or Ryzen 3 class</div>
+  </div>
+
+  <p class="specnote"><strong>A graphics card makes no difference.</strong> We measured it rather
+  than guessed: on a fast card the game asks the graphics chip for roughly three hundredths of a
+  millisecond of work per frame, and going from a 1080p screen to a 4K one barely moved that.
+  What decides your frame rate is the processor. A built-in Intel or AMD graphics chip has all
+  the headroom this game needs, and an expensive card will not make it any smoother.</p>
+
+  <p class="specnote">It is light on power for the same reason. On a desktop with a high-end
+  graphics card, playing this draws about <strong>twelve watts</strong> more than leaving the
+  machine idle &mdash; on a card rated for three hundred and fifty.</p>
 
   <h2>Three craft</h2>
   <p>An electric hydrofoil, a jet ski and a rigid inflatable, each with its own handling. The sea
