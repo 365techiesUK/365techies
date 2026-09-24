@@ -12499,6 +12499,7 @@ DELL3520_WIDGET = r'''    <section class="section" aria-label="Interactive port 
           var m=MODES[mode];
           src.innerHTML=m.src; mid.innerHTML=m.mid;
           var buys=m.buy.map(function(b){ return '<a href="'+amzn(b[1])+'" target="_blank" rel="noopener'+(AMZN_TAG?' sponsored':'')+'">'+b[0]+' &#8599;</a>'; }).join('');
+          if(AMZN_TAG&&buys) buys+='<p class="affiliate-note mono" style="margin:.5rem 0 0">Amazon buttons are paid links: as an Amazon Associate we earn from qualifying purchases, at no extra cost to you. They open live searches, so the price is always Amazon&rsquo;s, never ours.</p>';
           info.innerHTML='<span class="dp-eff '+m.eff[0]+'">'+m.eff[1]+'</span>'+m.info+'<div class="dp-buy">'+buys+'</div>';
         }
         root.querySelectorAll('.dp-tab').forEach(function(t){
@@ -12776,6 +12777,7 @@ DELLOPTI_WIDGET = r'''    <section class="section" aria-label="Interactive port 
           var m=MODES[mode];
           src.innerHTML=m.src; mid.innerHTML=m.mid;
           var buys=m.buy.map(function(b){ return '<a href="'+amzn(b[1])+'" target="_blank" rel="noopener'+(AMZN_TAG?' sponsored':'')+'">'+b[0]+' &#8599;</a>'; }).join('');
+          if(AMZN_TAG&&buys) buys+='<p class="affiliate-note mono" style="margin:.5rem 0 0">Amazon buttons are paid links: as an Amazon Associate we earn from qualifying purchases, at no extra cost to you. They open live searches, so the price is always Amazon&rsquo;s, never ours.</p>';
           info.innerHTML='<span class="do2-eff '+m.eff[0]+'">'+m.eff[1]+'</span>'+m.info+'<div class="do2-buy">'+buys+'</div>';
         }
         root.querySelectorAll('.do2-tab').forEach(function(t){
