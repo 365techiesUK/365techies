@@ -953,7 +953,17 @@ for _fp in _bm_paths:
         if _m2:
             _bm_bad.append("%s: image loaded from a remote host: %s" % (_rel, _u[:60]))
             continue
-        _ip = _osg.path.join(bp.BASE, _u.lstrip("/").replace("/", _osg.sep))
+        # 24 Sep 2026: RESOLVE THE WAY A BROWSER DOES. This used to treat every src as
+        # root-relative, so a perfectly valid page-relative one - src="shot.jpg" on
+        # bournemouth/games/seafront/ - was looked for at the site root and reported
+        # "missing from the build" for an image that is there and loads fine. The hand-
+        # maintained game page is deployed by tools/deploy-to-site.py rather than by this
+        # build, so nothing ran the guard over it until now. Getting this right also means
+        # the page-weight total below counts those images instead of silently skipping them.
+        if _u.startswith("/"):
+            _ip = _osg.path.join(bp.BASE, _u.lstrip("/").replace("/", _osg.sep))
+        else:
+            _ip = _osg.path.normpath(_osg.path.join(_osg.path.dirname(_fp), _u.replace("/", _osg.sep)))
         if not _osg.path.exists(_ip):
             _bm_bad.append("%s: image missing from the build: %s" % (_rel, _u))
         else:

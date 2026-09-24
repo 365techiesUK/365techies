@@ -168,43 +168,43 @@
  },
  "bournemouth": {
   "first": "2026-08-03",
-  "h": "3ce12ef024eb9d9e",
-  "last": "2026-09-17"
+  "h": "d7eb62bddce60c03",
+  "last": "2026-09-24"
  },
  "bournemouth/beach-parking": {
   "first": "2026-08-03",
-  "h": "9a0aaad6e68e1a2e",
-  "last": "2026-09-17"
+  "h": "2974b2a26641e264",
+  "last": "2026-09-24"
  },
  "bournemouth/fireworks": {
   "first": "2026-08-02",
-  "h": "1a4f222fe8fa35e0",
-  "last": "2026-09-17"
+  "h": "d017bc803a174d65",
+  "last": "2026-09-24"
  },
  "bournemouth/live-map": {
   "first": "2026-09-02",
-  "h": "11b2e09eee149d68",
-  "last": "2026-09-17"
+  "h": "2f9ae948f5ed1ab3",
+  "last": "2026-09-24"
  },
  "bournemouth/sea-today": {
   "first": "2026-08-02",
-  "h": "bc77a0298d29ba01",
-  "last": "2026-09-17"
+  "h": "ffd210501c76a3d5",
+  "last": "2026-09-24"
  },
  "bournemouth/sunrise-sunset": {
   "first": "2026-08-03",
-  "h": "285d27377a29ffa0",
-  "last": "2026-09-17"
+  "h": "0380e4cb2ebe2216",
+  "last": "2026-09-24"
  },
  "bournemouth/weather": {
   "first": "2026-09-16",
-  "h": "c12efc1fdb419f28",
-  "last": "2026-09-23"
+  "h": "74ab008c54a02ab7",
+  "last": "2026-09-24"
  },
  "bournemouth/weather-records": {
   "first": "2026-09-23",
-  "h": "3bdf48f65444379c",
-  "last": "2026-09-23"
+  "h": "b1b2a101b7606517",
+  "last": "2026-09-24"
  },
  "break-fix-vs-managed-it": {
   "first": "2026-07-28",
@@ -2616,8 +2616,8 @@
  },
  "portal": {
   "first": "2026-09-05",
-  "h": "d75db46b7529995e",
-  "last": "2026-09-22"
+  "h": "cd0be3852253f5ee",
+  "last": "2026-09-24"
  },
  "pre-call-checklists": {
   "first": "2026-07-28",

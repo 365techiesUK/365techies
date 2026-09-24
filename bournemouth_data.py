@@ -325,7 +325,7 @@ _B365 = '''    <section class="section" aria-label="About Bournemouth365">
         </div>
         <div class="prose" data-reveal>
           <p>These pages are the web home of our <a href="https://www.facebook.com/bournemouth365" target="_blank" rel="noopener">Bournemouth365 Facebook page</a>, where 39,000 of you watch the seafront with us every day. Here: the seafront&rsquo;s weather, tide times and rain radar, the sea measured live, an honest guide to beach parking, and the best sunrise and sunset spots &mdash; photographed by us, not stock.</p>
-          <p class="mono" style="margin-bottom:.6rem"><a href="/bournemouth/">Bournemouth365 home</a> &middot; <a href="/bournemouth/weather/">Weather, tides &amp; radar</a> &middot; <a href="/bournemouth/live-map/">Live map: traffic, buses, sea</a> &middot; <a href="/bournemouth/sea-today/">The sea right now</a> &middot; <a href="/bournemouth/fireworks/">Friday fireworks</a> &middot; <a href="/bournemouth/sunrise-sunset/">Sunrise &amp; sunset</a> &middot; <a href="/bournemouth/beach-parking/">Beach parking</a> &middot; <a href="/van-signal-map/">Mobile signal map</a></p>
+          <p class="mono" style="margin-bottom:.6rem"><a href="/bournemouth/">Bournemouth365 home</a> &middot; <a href="/bournemouth/weather/">Weather, tides &amp; radar</a> &middot; <a href="/bournemouth/live-map/">Live map: traffic, buses, sea</a> &middot; <a href="/bournemouth/sea-today/">The sea right now</a> &middot; <a href="/bournemouth/fireworks/">Friday fireworks</a> &middot; <a href="/bournemouth/sunrise-sunset/">Sunrise &amp; sunset</a> &middot; <a href="/bournemouth/beach-parking/">Beach parking</a> &middot; <a href="/van-signal-map/">Mobile signal map</a> &middot; <a href="/bournemouth/games/seafront/">Seafront: the game</a></p>
           <p class="mono">Built in Bournemouth by <a href="/">365 Techies</a> &mdash; the family firm that has looked after the town&rsquo;s computers since 1995.</p>
           <p class="b365-foot">No ads. No paywall. No consent wall. Built to load fast on beach 4G.</p>
         </div>
@@ -1285,6 +1285,15 @@ _HUB_CARDS = [
     ("/mobile-signal-check/", "/og-mobile-signal-check.jpg",
      "Test your own phone&rsquo;s signal", "Ten seconds, where you&rsquo;re standing: your phone&rsquo;s real mobile-data speed, how it compares with your part of town, and a live map everyone&rsquo;s readings build together. No sign-up, nothing that identifies you &mdash; and no network league tables.",
      ""),
+    # 24 Sep 2026. Last on purpose: the order above is what people search for, and this one has
+    # no search history yet. It is here at all because the game page was an ORPHAN - it is not in
+    # sitemap.xml (that is generated from build_pages.PAGES and the game page is hand-maintained),
+    # so this card and the strip below are the only routes a crawler has into it.
+    # The image is the game's own hero, already deployed at that path, so no new weight - the
+    # renderer's object-fit:cover takes the 1200x675 down to the card's 1200x630.
+    ("/bournemouth/games/seafront/", "/bournemouth/games/seafront/shot.jpg",
+     "Seafront: the game", "The pier, the big wheel, the beach and the coast round to Old Harry Rocks, rebuilt as somewhere you can ride &mdash; on a jet ski, a speedboat or an electric hydrofoil. Free in your browser, nothing to install, on a phone or a PC.",
+     "A jet ski at speed on the sea off Bournemouth Pier, with the beach, the big wheel and the seafront buildings ahead"),
 ]
 
 # The card title is an h2 (it was a <strong>, so the page had one heading for eight sections). Inline styles keep the
