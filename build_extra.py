@@ -28225,6 +28225,7 @@ def write_portal_page():
     var el = document.getElementById('invqrecent'); if (!el) return;
     post(INVQ, { action: 'recent', stoken: S.stoken, machine: mid(), days: days }).then(function (r) {
       if (!r || !r.ok) { el.innerHTML = '<p class="quiet">Couldn\\u2019t read recent invoices from QuickBooks' + (r && r.error ? ' (' + esc(r.error) + ')' : '') + '.</p>'; return; }
+      if (r.connected === false) { el.innerHTML = '<p class="quiet">QuickBooks isn\\u2019t connected on the server, so recent invoices can\\u2019t be read.</p>'; return; }
       var rows = r.rows || [], sent = 0, unsent = 0;
       function when(iso) { if (!iso) return ''; var d = new Date(iso); return isNaN(d) ? esc(iso) : esc(d.toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })); }
       function dateOf(ymd) { var p = (ymd || '').split('-'); return p.length === 3 ? esc(parseInt(p[2], 10) + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(p[1], 10) - 1]) : esc(ymd); }
