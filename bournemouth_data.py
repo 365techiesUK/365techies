@@ -1251,6 +1251,22 @@ add(
 _HUB_SLUG = "bournemouth"
 
 _HUB_CARDS = [
+    # 24 Sep 2026, MOVED TO THE TOP THE SAME DAY IT WENT IN, and the reason matters more
+    # than the position. Last looked defensible - the order below is what people search for
+    # and a brand-new page has no search history - until it was measured on the live page:
+    # the card sat 4,648px down, behind eight others, 8.6 screens of scroll on a phone. It
+    # was present, correct and effectively invisible, and the owner quite reasonably said it
+    # was not showing. Being in the DOM is not the same as being on the page.
+    # First, because this is the only page that page has any route to an audience from;
+    # sea-today below already ranks in search and does not depend on this card to be found.
+    # Every hook is a thing the game actually does, checked against the source: longships and
+    # the burning pier are raid-mode, Harry Paye and the Poole ships come out on your side in
+    # the pirate raid and at the harbour mouth (raid-hud.js:399, :442), and the smuggling run
+    # is the Preventive Service against Isaac Gulliver's luggers (smuggle.js:593). Nobody is
+    # ever a target and nobody is ever hurt, which is why the copy stops at "see off".
+    ("/bournemouth/games/seafront/", "/bournemouth/games/seafront/shot-pirate-raid.jpg",
+     "Seafront: Vikings, pirates &amp; smugglers", "Longships are burning Bournemouth Pier and all you have is a jet ski. See off a Viking raid, hold the harbour mouth at Old Harry Rocks until Harry Paye&rsquo;s Poole ships come out on your side, or run down Isaac Gulliver&rsquo;s smugglers in the chines. Free in your browser.",
+     "A jet ski racing past a pirate brig with striped sails, open gun ports and crew along the rail, with Bournemouth Pier and the big wheel on the shore behind"),
     # (link, image, heading, text, alt). Ordered by what people search for (SEO audit 17 Sep 2026: sea-today already
     # ranks, then weather, sunrise and the map). The alt text says only what each frame shows - they are our own
     # photographs, which is the section's point; the signal-check card's image is a text graphic, so it stays alt="".
@@ -1285,21 +1301,7 @@ _HUB_CARDS = [
     ("/mobile-signal-check/", "/og-mobile-signal-check.jpg",
      "Test your own phone&rsquo;s signal", "Ten seconds, where you&rsquo;re standing: your phone&rsquo;s real mobile-data speed, how it compares with your part of town, and a live map everyone&rsquo;s readings build together. No sign-up, nothing that identifies you &mdash; and no network league tables.",
      ""),
-    # 24 Sep 2026. Last on purpose: the order above is what people search for, and this one has
-    # no search history yet. It is here at all because the game page was an ORPHAN - it is not in
-    # sitemap.xml (that is generated from build_pages.PAGES and the game page is hand-maintained),
-    # so this card and the strip below are the only routes a crawler has into it.
-    # The image is the game's own hero, already deployed at that path, so no new weight - the
-    # renderer's object-fit:cover takes the 1200x675 down to the card's 1200x630.
-    # Every hook below is a thing the game actually does, checked against the source rather than
-    # written to sound good: the longships and the burning pier are raid-mode, Harry Paye and the
-    # Poole ships come out on your side in the pirate raid and at the harbour mouth
-    # (raid-hud.js:399, :442), and the smuggling run is the Preventive Service against Isaac
-    # Gulliver's luggers in the chines (smuggle.js:593). Nobody is ever a target and nobody is
-    # ever hurt - which is why the copy says "beat off" and "run down" and no more than that.
-    ("/bournemouth/games/seafront/", "/bournemouth/games/seafront/shot-pirate-raid.jpg",
-     "Seafront: Vikings, pirates &amp; smugglers", "Longships are burning Bournemouth Pier and all you have is a jet ski. See off a Viking raid, hold the harbour mouth at Old Harry Rocks until Harry Paye&rsquo;s Poole ships come out on your side, or run down Isaac Gulliver&rsquo;s smugglers in the chines. Free in your browser.",
-     "A jet ski racing past a pirate brig with striped sails, open gun ports and crew along the rail, with Bournemouth Pier and the big wheel on the shore behind"),
+
 ]
 
 # The card title is an h2 (it was a <strong>, so the page had one heading for eight sections). Inline styles keep the
