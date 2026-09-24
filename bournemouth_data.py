@@ -1297,9 +1297,9 @@ _HUB_CARDS = [
     # (raid-hud.js:399, :442), and the smuggling run is the Preventive Service against Isaac
     # Gulliver's luggers in the chines (smuggle.js:593). Nobody is ever a target and nobody is
     # ever hurt - which is why the copy says "beat off" and "run down" and no more than that.
-    ("/bournemouth/games/seafront/", "/bournemouth/games/seafront/shot.jpg",
+    ("/bournemouth/games/seafront/", "/bournemouth/games/seafront/shot-pirate-raid.jpg",
      "Seafront: Vikings, pirates &amp; smugglers", "Longships are burning Bournemouth Pier and all you have is a jet ski. See off a Viking raid, hold the harbour mouth at Old Harry Rocks until Harry Paye&rsquo;s Poole ships come out on your side, or run down Isaac Gulliver&rsquo;s smugglers in the chines. Free in your browser.",
-     "A jet ski at speed on the sea off Bournemouth Pier, with the beach, the big wheel and the seafront buildings ahead"),
+     "A jet ski racing past a pirate brig with striped sails, open gun ports and crew along the rail, with Bournemouth Pier and the big wheel on the shore behind"),
 ]
 
 # The card title is an h2 (it was a <strong>, so the page had one heading for eight sections). Inline styles keep the

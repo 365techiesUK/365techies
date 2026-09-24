@@ -32,7 +32,13 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Seafront — a Bournemouth game">
 <meta property="og:description" content="A free browser game on the real Bournemouth seafront. No download, no sign-up.">
-<meta property="og:image" content="https://365techies.co.uk/bournemouth/games/seafront/shot.jpg">
+<!-- 24 Sep 2026: A NEW FILENAME, NOT AN OVERWRITE OF shot.jpg. The site root sets
+     ExpiresByType image/jpeg "access plus 1 year" and play/.htaccess does not cover .jpg or
+     this folder, so the old picture is cached hard - by the SiteGround proxy, by anyone who has
+     already opened the page, and by Facebook's link scraper. Replacing the bytes at the same URL
+     would have changed nothing for any of them for up to a year. shot.jpg is deliberately LEFT
+     IN PLACE: links already shared point their og:image at it. -->
+<meta property="og:image" content="https://365techies.co.uk/bournemouth/games/seafront/shot-pirate-raid.jpg">
 <meta property="og:url" content="https://365techies.co.uk/bournemouth/games/seafront/">
 <meta name="twitter:card" content="summary_large_image">
 <!-- <<< INSTALL -->
@@ -118,8 +124,9 @@
   <p class="sub">A free browser game on the real Bournemouth seafront &mdash; the pier, the beach,
   Boscombe, and the Dorset coast round to Old Harry Rocks. No download, no sign-up.</p>
 
-  <img class="shot" src="shot.jpg" width="1200" height="675" alt="A jet ski at speed on the sea
-  off Bournemouth Pier, with the beach, the big wheel and the seafront buildings ahead.">
+  <img class="shot" src="shot-pirate-raid.jpg" width="1200" height="675" alt="A jet ski racing
+  past a pirate brig with striped sails, open gun ports and crew along the rail, with Bournemouth
+  Pier and the big wheel on the shore behind.">
 
   <p class="row">
     <a class="play" href="play/">Play now &rarr;</a>
