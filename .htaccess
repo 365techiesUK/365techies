@@ -36,6 +36,11 @@ RewriteRule ^shop/?$ /dell-hardware/ [R=301,L]
 # line and build a real hub when there is a SECOND game.
 RewriteRule ^efoil-game(/.*)?$ /bournemouth/games/seafront/ [R=301,L]
 RewriteRule ^bournemouth/games/?$ /bournemouth/games/seafront/ [R=301,L]
+# /seafront - the SHORT address shown on screen at the end of the game videos. YouTube has not
+# made links in a Short's description clickable since Aug 2023, so viewers type it. 302, not 301:
+# it carries a campaign tag that may change, and browsers cache a permanent redirect for good.
+# utm_source=video / utm_medium=onscreen marks "typed it from a video" in Google Analytics.
+RewriteRule ^seafront/?$ /bournemouth/games/seafront/?utm_source=video&utm_medium=onscreen&utm_campaign=seafront [R=302,L,NC]
 # --- 301: the standalone 3D dashboard demo was retired 2026-09-11 (owner: the 3D looked wrong) ---
 RewriteRule ^system-monitoring-demo(/|/index\.html)?$ /free-pc-health-check/ [R=301,L]
 
