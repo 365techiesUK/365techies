@@ -482,6 +482,21 @@
                   font: 700 16px ui-sans-serif, system-ui, sans-serif; letter-spacing: .06em;
                   color: #0b1520; background: #ffc21a; border: 0; }        /* A11Y 12.5 -> 16 */
   #tmode .d { color: var(--dim); font-size: 16px; line-height: 1.35; }     /* A11Y 11 -> 16 */
+  /* >>> PROGRESS  shown with CLASSES and ::after, never by editing a row's text - the suites
+     read these labels, and a tick inside textContent would change what they compare. */
+  /* The tick is a BADGE in the corner, absolutely positioned, so it never joins the label's
+     line - inline, it pushed "VIKING RAID" onto two lines. */
+  #tmode .body button.done { position: relative; }
+  #tmode .body button.done::after { content: "\2713"; position: absolute; top: -6px; right: -6px;
+    width: 20px; height: 20px; line-height: 20px; text-align: center; border-radius: 50%;
+    background: #0e1116; color: #4ade80; font-size: 13px; font-weight: 700;
+    box-shadow: 0 0 0 2px #4ade80; }
+  /* WHITE, not amber: the rows are already filled amber, so an amber ring was invisible - the
+     first version of this looked finished in code and showed nothing on screen. */
+  #tmode .body button.nextup { box-shadow: 0 0 0 3px #fff, 0 0 14px rgba(255,255,255,.55); }
+  #tmode .tally { margin: -2px 0 8px; font-size: 15px; color: #f2c14e; flex: 0 0 auto; }
+  body.clean-render #tmode .tally { display: none; }
+  /* <<< PROGRESS */
   #tmode .foot { display: flex; gap: 10px; align-items: center; margin-top: 10px; flex: 0 0 auto; }
   #tmode .foot button { min-height: 44px; padding: 0 16px; border-radius: 10px; border: 0;
                   font: 700 16px ui-sans-serif, system-ui, sans-serif; letter-spacing: .06em;  /* A11Y 12 -> 16 */
@@ -887,6 +902,6 @@
      assets/ is NOT moved: those paths are document-relative (no import.meta.url in
      textures.js), so they resolve against this page wherever the modules are.
      ⚠️ BUMP b2 -> b3 -> ... ON EVERY DEPLOY, or the update will not reach anyone. -->
-<script type="module" src="./b16/src/main.js"></script>
+<script type="module" src="./b17/src/main.js"></script>
 </body>
 </html>
