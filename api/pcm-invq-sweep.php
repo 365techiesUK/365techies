@@ -340,6 +340,51 @@ function invq_email_for($inv, $emails) {
     return isset($emails[$cid]) ? $emails[$cid] : '';
 }
 
+/* Every invoice dated in the last $days days, with what QuickBooks says about its email
+   (owner, 24 Sep 2026: "we don't think some of them have arrived"). Read-only, never cached:
+   the point is to see the live state. EmailStatus is QuickBooks' own word - EmailSent means
+   Intuit accepted it for delivery, NeedToSend means marked to send but not sent, NotSet means
+   never emailed from QuickBooks (GoCardless-collected plan invoices sit here by design).
+   DeliveryInfo carries the time Intuit sent it. QuickBooks cannot see whether it LANDED. */
+function invq_recent($c, $days = 14, $now = null) {
+    $now = $now === null ? time() : $now;
+    $since = date('Y-m-d', $now - max(1, (int)$days) * 86400);
+    $q = "select * from Invoice where TxnDate >= '" . $since . "' orderby TxnDate desc maxresults 200";
+    $res = invq_api($c, 'GET', '/query?query=' . rawurlencode($q));
+    if (!qbo_lib_ok($res)) return array('ok' => false, 'why' => 'qbo_' . (int)$res['code']);
+    $list = (array)(isset($res['json']['QueryResponse']['Invoice']) ? $res['json']['QueryResponse']['Invoice'] : array());
+    $need = array();
+    foreach ($list as $inv) if (is_array($inv) && invq_bill_email($inv) === '' && preg_match('/^\d+$/', invq_customer_id($inv))) $need[invq_customer_id($inv)] = true;
+    $emails = array();
+    if ($need) {
+        $cq = "select Id, PrimaryEmailAddr from Customer where Id in ('" . implode("','", array_keys($need)) . "')";
+        $cr = invq_api($c, 'GET', '/query?query=' . rawurlencode($cq));
+        if (qbo_lib_ok($cr)) foreach ((array)(isset($cr['json']['QueryResponse']['Customer']) ? $cr['json']['QueryResponse']['Customer'] : array()) as $cu) {
+            $e = invq_email_ok(isset($cu['PrimaryEmailAddr']['Address']) ? $cu['PrimaryEmailAddr']['Address'] : '');
+            if ($e !== '') $emails[(string)$cu['Id']] = $e;
+        }
+    }
+    $rows = array();
+    foreach ($list as $inv) {
+        if (!is_array($inv) || empty($inv['Id'])) continue;
+        $di = isset($inv['DeliveryInfo']) && is_array($inv['DeliveryInfo']) ? $inv['DeliveryInfo'] : array();
+        $rows[] = array(
+            'id'       => (string)$inv['Id'],
+            'number'   => invq_str(isset($inv['DocNumber']) ? $inv['DocNumber'] : '', 20),
+            'date'     => (string)(isset($inv['TxnDate']) ? $inv['TxnDate'] : ''),
+            'customer' => invq_str(isset($inv['CustomerRef']['name']) ? $inv['CustomerRef']['name'] : '', 80),
+            'email'    => invq_email_for($inv, $emails),
+            'total'    => round((float)(isset($inv['TotalAmt']) ? $inv['TotalAmt'] : 0), 2),
+            'balance'  => round((float)(isset($inv['Balance']) ? $inv['Balance'] : 0), 2),
+            'status'   => invq_email_status($inv),
+            'sent_at'  => (string)(isset($di['DeliveryTime']) ? $di['DeliveryTime'] : ''),
+            'delivery' => (string)(isset($di['DeliveryType']) ? $di['DeliveryType'] : ''),
+            'url'      => $c['host'] . '/app/invoice?txnId=' . rawurlencode((string)$inv['Id']),
+        );
+    }
+    return array('ok' => true, 'since' => $since, 'rows' => $rows);
+}
+
 /* The whole picture: this month's jobs with their invoice state, this month's
    unsent invoices, and the older unsent ones folded away. Cached briefly. */
 function invq_overview($c, $fresh = false, $now = null) {

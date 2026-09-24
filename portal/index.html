@@ -707,9 +707,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 24 Sep 2026 &middot; 378d19c37f</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 24 Sep 2026 &middot; f93bba476f</p><script>
 (function () {
-  var P365BUILD = '378d19c37f';
+  var P365BUILD = 'f93bba476f';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -5884,6 +5884,34 @@
       renderInvq(box, r);
     }).catch(function () { box.innerHTML = '<p class="quiet">Couldn\u2019t reach the server.</p>'; });
   }
+  /* Every invoice of the last N days with what QuickBooks says about its email. "Sent" is
+     Intuit accepting it for delivery, not proof it landed: QuickBooks cannot see the customer's
+     inbox. Plan invoices collected by GoCardless are never emailed from QuickBooks by design. */
+  function loadInvqRecent(days) {
+    var el = document.getElementById('invqrecent'); if (!el) return;
+    post(INVQ, { action: 'recent', stoken: S.stoken, machine: mid(), days: days }).then(function (r) {
+      if (!r || !r.ok) { el.innerHTML = '<p class="quiet">Couldn\u2019t read recent invoices from QuickBooks' + (r && r.error ? ' (' + esc(r.error) + ')' : '') + '.</p>'; return; }
+      var rows = r.rows || [], sent = 0, unsent = 0;
+      function when(iso) { if (!iso) return ''; var d = new Date(iso); return isNaN(d) ? esc(iso) : esc(d.toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })); }
+      function dateOf(ymd) { var p = (ymd || '').split('-'); return p.length === 3 ? esc(parseInt(p[2], 10) + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(p[1], 10) - 1]) : esc(ymd); }
+      var body = rows.map(function (x) {
+        var st;
+        if (x.status === 'EmailSent') { sent++; st = '<span style="color:#7ee0a2">\u2713 Sent by QuickBooks' + (x.sent_at ? ' ' + when(x.sent_at) : '') + '</span>'; }
+        else if (x.status === 'NeedToSend') { unsent++; st = '<span style="color:#ffb4a2">\u26a0 Marked to send, not sent</span>'; }
+        else { unsent++; st = '<span class="quiet">\u25cb Not emailed from QuickBooks</span>'; }
+        return '<tr><td style="white-space:nowrap">' + dateOf(x.date) + '</td><td>' + (x.number ? '#' + esc(x.number) : '<span class="quiet">no no.</span>') + '</td>'
+          + '<td><strong>' + esc(x.customer || 'Unnamed') + '</strong>' + (x.email ? '<br><span class="quiet" style="font-size:.82rem">' + esc(x.email) + '</span>' : '<br><span style="color:#ffb4a2;font-size:.82rem">no email on the customer</span>') + '</td>'
+          + '<td style="text-align:right;white-space:nowrap">' + invqMoney(x.total) + (x.balance > 0 ? '' : '<br><span style="color:#7ee0a2;font-size:.82rem">paid</span>') + '</td>'
+          + '<td style="font-size:.88rem">' + st + '</td>'
+          + '<td><a class="btn sm ghost" style="margin:0;padding:.2rem .5rem;font-size:.78rem;opacity:.8" href="' + esc(x.url) + '" target="_blank" rel="noopener">Open</a></td></tr>';
+      }).join('');
+      el.innerHTML = '<p style="margin:0 0 .35rem"><strong>Did they go?</strong> <span class="quiet">' + rows.length + ' invoice' + (rows.length === 1 ? '' : 's') + ' dated since ' + dateOf(r.since) + ' \u00b7 ' + sent + ' sent by QuickBooks \u00b7 ' + unsent + ' not</span> '
+        + '<button class="sm ghost invqrecent60" style="padding:.15rem .5rem;font-size:.76rem">' + (r.days >= 60 ? 'last fortnight' : 'last 60 days') + '</button></p>'
+        + (rows.length ? '<div class="cmp-wrap" style="overflow-x:auto"><table class="cmp-table" style="font-size:.9rem;width:100%"><thead><tr><th>Date</th><th>No.</th><th>Customer</th><th style="text-align:right">Amount</th><th>Email</th><th></th></tr></thead><tbody>' + body + '</tbody></table></div>' : '<p class="quiet">No invoices in that window.</p>')
+        + '<p class="quiet" style="margin:.4rem 0 0;font-size:.82rem">\u201cSent\u201d means Intuit accepted it for delivery from quickbooks@notification.intuit.com; QuickBooks cannot see whether it reached the inbox. If a customer says nothing arrived, open it and send it again with a short note, or email them the invoice link from info@. Plan invoices collected by GoCardless are not emailed from QuickBooks on purpose.</p>';
+      var b = el.querySelector('.invqrecent60'); if (b) b.onclick = function () { b.disabled = true; loadInvqRecent(r.days >= 60 ? 14 : 60); };
+    }).catch(function () { el.innerHTML = '<p class="quiet">Couldn\u2019t reach the server for recent invoices.</p>'; });
+  }
   function invqMoney(v) { return '\u00a3' + (Math.round(v * 100) / 100).toFixed(2); }
   function invqWhen(d) { return d === 0 ? 'today' : (d === 1 ? 'yesterday' : d + ' days ago'); }
   var INVQ_WHY = { no_email: 'needs an email address \u2014 type it here, or add it to the Slack post or its thread and it will pick it up', bad_email: 'that email address doesn\u2019t look right', no_desc: 'needs a description of the work', large: 'over \u00a32,000 \u2014 raise this one by hand in QuickBooks', no_amount: 'no price yet', invoiced_in_slack: 'marked invoiced in Slack \u2014 left alone' };
@@ -5984,7 +6012,11 @@
     if (waiting.length) html += '<p class="quiet" style="margin:.6rem 0 .3rem">Other unsent invoices from the last 30 days</p>' + waiting.map(invHtml).join('');
     if (older.length) html += '<p style="margin:.6rem 0 .3rem"><button class="sm ghost invqolder" style="padding:.2rem .6rem;font-size:.8rem">Show ' + older.length + ' older unsent invoice' + (older.length === 1 ? '' : 's') + '</button></p><div id="invqolder" style="display:none">' + older.map(invHtml).join('') + '</div>';
     html += '<p class="quiet" style="margin:.4rem 0 0">' + (r.cached ? 'As of a few minutes ago. ' : '') + '<button class="sm ghost invqfresh" style="padding:.2rem .5rem;font-size:.78rem">re-check</button></p>';
+    /* "Did they go?" - every invoice of the last fortnight with QuickBooks' own sent / not-sent
+       word, loaded live after the queue so a slow QuickBooks read never delays the queue. */
+    html += '<div id="invqrecent" style="margin:.8rem 0 0;border-top:1px solid rgba(125,170,220,.2);padding-top:.6rem"><p class="quiet">Reading the last fortnight\u2019s invoices from QuickBooks\u2026</p></div>';
     box.innerHTML = html;
+    loadInvqRecent(14);
     var fb = box.querySelector('.invqfresh'); if (fb) fb.onclick = function () { fb.disabled = true; fb.textContent = 'checking\u2026'; loadInvq(true); };
     var ob = box.querySelector('.invqolder'); if (ob) ob.onclick = function () { var d = document.getElementById('invqolder'); d.style.display = d.style.display === 'none' ? '' : 'none'; };
     var all = jobs.map(function (j) { return j.invoice; }).filter(Boolean).concat(waiting, older);

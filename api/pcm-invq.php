@@ -147,6 +147,15 @@ if ($action === 'list') {
               'short' => invq_items_short($items, $c['shortlist'])));     // the few shown first, in this order
 }
 
+/* Sent from QuickBooks lately: every invoice of the last N days with QuickBooks' own
+   sent / not-sent word and the time Intuit sent it. Read-only; see invq_recent(). */
+if ($action === 'recent') {
+    $days = max(1, min(60, (int)(isset($in['days']) ? $in['days'] : 14)));
+    $rec = invq_recent($c, $days);
+    if (empty($rec['ok'])) fail($rec['why']);
+    out(array('ok' => true, 'days' => $days, 'since' => $rec['since'], 'rows' => $rec['rows']));
+}
+
 if ($action === 'create') {
     if ($job === '') fail('bad_job');
     $r = invq_create_for_job($c, $job, $who, false);
