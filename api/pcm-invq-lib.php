@@ -29,6 +29,25 @@ define('INVQ_OLD_DAYS', 14);          // raised this long ago and still unsent =
 define('INVQ_WINDOW_DAYS', 30);       // "this month": jobs and invoices younger than this are the queue
 define('INVQ_MATCH_DAYS', 7);         // a job and an invoice this close, same customer, same amount = the same job
 define('INVQ_GENERIC_DESC', 'work carried out');   // the console's placeholder line when nobody typed a job
+define('INVQ_DOC_PREFIX', '4905/');   // David's invoice numbering: 4905/NNN. QuickBooks has custom numbers ON, so an
+                                      // invoice made through the API gets NO number unless we set one (owner, 24 Sep 2026:
+                                      // "Colin's invoice doesn't seem to have an invoice number").
+
+/* The next number in David's sequence, from the DocNumbers QuickBooks already holds: the
+   highest 4905/NNN plus one, whatever order the list came in. Numbers outside the pattern
+   (the monthly biller's licence-keyed ones, blanks, typos) are ignored. '' when nothing
+   matches, so a caller leaves the number blank rather than inventing a sequence. */
+function invq_next_number($docNumbers, $prefix = INVQ_DOC_PREFIX) {
+    $max = -1;
+    foreach ((array)$docNumbers as $n) {
+        $n = trim((string)$n);
+        if ($prefix !== '' && strpos($n, $prefix) !== 0) continue;
+        $tail = substr($n, strlen($prefix));
+        if (!preg_match('/^\d{1,6}$/', $tail)) continue;
+        if ((int)$tail > $max) $max = (int)$tail;
+    }
+    return $max < 0 ? '' : $prefix . ($max + 1);
+}
 
 function invq_num($v) { return is_numeric($v) ? (float)$v : 0.0; }
 function invq_str($v, $max = 200) {

@@ -438,6 +438,19 @@ function invq_overview($c, $fresh = false, $now = null) {
 }
 
 /* ---- WRITE 1: create the invoice a job is owed --------------------------- */
+/* The next 4905/NNN from QuickBooks itself: the newest hundred invoices carrying the prefix,
+   newest first, so the highest number is always among them. '' if the read fails - the invoice
+   is still created, just unnumbered, which is what happened before. */
+function invq_next_docnumber($c) {
+    $q = "select DocNumber from Invoice where DocNumber like '" . INVQ_DOC_PREFIX . "%' orderby Id desc maxresults 100";
+    $res = invq_api($c, 'GET', '/query?query=' . rawurlencode($q));
+    if (!qbo_lib_ok($res)) return '';
+    $nums = array();
+    foreach ((array)(isset($res['json']['QueryResponse']['Invoice']) ? $res['json']['QueryResponse']['Invoice'] : array()) as $inv)
+        if (is_array($inv) && isset($inv['DocNumber'])) $nums[] = (string)$inv['DocNumber'];
+    return invq_next_number($nums);
+}
+
 function invq_create_for_job($c, $jobId, $who, $auto = false) {
     $job = null;
     foreach (invq_jobs_read() as $j) if (is_array($j) && (string)(isset($j['id']) ? $j['id'] : '') === (string)$jobId) { $job = $j; break; }
@@ -502,12 +515,15 @@ function invq_create_for_job($c, $jobId, $who, $auto = false) {
     if ($c['tax'] !== '') $line['SalesItemLineDetail']['TaxCodeRef'] = array('value' => $c['tax']);
     $inv = array('CustomerRef' => array('value' => $cid), 'Line' => array($line), 'TxnDate' => gmdate('Y-m-d'),
                  'BillEmail' => array('Address' => $email));
+    $doc = invq_next_docnumber($c);            // 4905/NNN, David's sequence, so the console's invoices are numbered like his
+    if ($doc !== '') $inv['DocNumber'] = $doc;
     $res = invq_api($c, 'POST', '/invoice', $inv);
     if (!qbo_lib_ok($res) || empty($res['json']['Invoice']['Id'])) {
         invq_log('invoice create FAILED for job ' . $jobId . ' ' . invq_why($res));
         return array('ok' => false, 'error' => 'qbo_invoice', 'why' => invq_why($res));
     }
     $invId = (string)$res['json']['Invoice']['Id'];
+    $docMade = (string)(isset($res['json']['Invoice']['DocNumber']) ? $res['json']['Invoice']['DocNumber'] : $doc);
     $url = $c['host'] . '/app/invoice?txnId=' . rawurlencode($invId);
     invq_job_link($jobId, $invId, $url, $auto ? 'auto' : 'staff');
     invq_store_locked(function ($d) use ($jobId, $invId, $amount, $who) {
@@ -515,8 +531,8 @@ function invq_create_for_job($c, $jobId, $who, $auto = false) {
         $d['cache'] = null;
         return array('ok' => true, 'data' => $d);
     });
-    invq_log('created invoice ' . $invId . ' ' . invq_money($amount) . ' for job ' . $jobId . ' by ' . $who);
-    invq_slack(':receipt: *Invoice created* - ' . $name . ', ' . invq_money($amount) . ' for ' . $desc . ' (job ' . $jobId . ')'
+    invq_log('created invoice ' . $invId . ($docMade !== '' ? ' #' . $docMade : ' (no number)') . ' ' . invq_money($amount) . ' for job ' . $jobId . ' by ' . $who);
+    invq_slack(':receipt: *Invoice created* - ' . $name . ', ' . invq_money($amount) . ' for ' . $desc . ($docMade !== '' ? ' (#' . $docMade . ', job ' . $jobId . ')' : ' (job ' . $jobId . ')')
              . ($auto ? ', automatically' : ', by ' . $who) . '. Waiting for your OK in the staff console.');
     return array('ok' => true, 'invoice' => $invId, 'linked' => false);
 }

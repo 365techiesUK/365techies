@@ -190,5 +190,13 @@ ok($deny !== '' && preg_match('#' . $deny . '#', 'pcm-invq.php') !== 1, 'the end
 $CR = (string)file_get_contents(__DIR__ . '/tm-cron.php');
 ok(strpos($CR, 'invq_morning()') !== false && strpos($CR, 'invq_morning()') < strpos($CR, 'if (!tm_configured())'), 'the morning sweep runs from the cron, above the SMS gate');
 
+echo "-- the next invoice number (4905/NNN, David's sequence)\n";
+ok(invq_next_number(array('4905/799', '4905/801', '4905/800')) === '4905/802', 'highest plus one, whatever the order', invq_next_number(array('4905/799', '4905/801', '4905/800')));
+ok(invq_next_number(array('4905/99', '4905/801')) === '4905/802', 'numeric, not alphabetical (99 does not beat 801)');
+ok(invq_next_number(array('', 'ABCD-1234-EFGH', '4905/803', 'INV-1')) === '4905/804', 'blanks, licence-keyed and other numbers are ignored', invq_next_number(array('', 'ABCD-1234-EFGH', '4905/803', 'INV-1')));
+ok(invq_next_number(array('4905/80a', '4905/', '4905/802')) === '4905/803', 'a typo after the slash is ignored');
+ok(invq_next_number(array()) === '' && invq_next_number(array('INV-7')) === '', 'nothing in the sequence = blank, never an invented start');
+ok(invq_next_number(array('7/12'), '7/') === '7/13', 'the prefix is a parameter');
+
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);

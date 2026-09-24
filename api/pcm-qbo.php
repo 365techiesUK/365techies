@@ -422,6 +422,17 @@ if ($action === 'qbostart') {
         if (!empty($QBO_TAX_CODE_ID)) $line['SalesItemLineDetail']['TaxCodeRef'] = array('value' => (string)$QBO_TAX_CODE_ID);
         $inv = array('CustomerRef' => array('value' => $cid), 'Line' => array($line), 'TxnDate' => gmdate('Y-m-d'));
         if ($bill) $inv['BillAddr'] = $bill;
+        /* David's 4905/NNN sequence: QuickBooks has custom numbers on, so an API invoice is
+           blank unless we number it. Next = highest existing + 1 (pcm-invq-lib's rule). */
+        require_once __DIR__ . '/pcm-invq-lib.php';
+        $nq = qbo_api('GET', '/query?query=' . rawurlencode("select DocNumber from Invoice where DocNumber like '" . INVQ_DOC_PREFIX . "%' orderby Id desc maxresults 100"), null, $access);
+        if (qbo_ok($nq)) {
+            $nums = array();
+            foreach ((array)(isset($nq['json']['QueryResponse']['Invoice']) ? $nq['json']['QueryResponse']['Invoice'] : array()) as $ni)
+                if (is_array($ni) && isset($ni['DocNumber'])) $nums[] = (string)$ni['DocNumber'];
+            $doc = invq_next_number($nums);
+            if ($doc !== '') $inv['DocNumber'] = $doc;
+        }
         $res = qbo_api('POST', '/invoice', $inv, $access);
         if (qbo_ok($res) && !empty($res['json']['Invoice']['Id'])) {
             $invId = (string)$res['json']['Invoice']['Id'];
