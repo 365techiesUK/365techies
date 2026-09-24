@@ -72,7 +72,7 @@ if ($who === '') $who = 'staff';
 
 $id  = preg_replace('/[^0-9]/', '', (string)(isset($in['id']) ? $in['id'] : ''));
 $job = preg_replace('/[^0-9a-zA-Z-]/', '', (string)(isset($in['job']) ? $in['job'] : ''));
-if (!in_array($action, array('list', 'create', 'pdf', 'send', 'hold', 'unhold', 'setjob', 'dismiss'), true)) fail('bad_action');
+if (!in_array($action, array('list', 'recent', 'create', 'pdf', 'send', 'hold', 'unhold', 'setjob', 'dismiss'), true)) fail('bad_action');
 
 /* "Not a job": a PC Manager service that was goodwill, a duplicate write-up, a
    test. Leaves the list; touches nothing in QuickBooks. */
