@@ -1291,8 +1291,14 @@ _HUB_CARDS = [
     # so this card and the strip below are the only routes a crawler has into it.
     # The image is the game's own hero, already deployed at that path, so no new weight - the
     # renderer's object-fit:cover takes the 1200x675 down to the card's 1200x630.
+    # Every hook below is a thing the game actually does, checked against the source rather than
+    # written to sound good: the longships and the burning pier are raid-mode, Harry Paye and the
+    # Poole ships come out on your side in the pirate raid and at the harbour mouth
+    # (raid-hud.js:399, :442), and the smuggling run is the Preventive Service against Isaac
+    # Gulliver's luggers in the chines (smuggle.js:593). Nobody is ever a target and nobody is
+    # ever hurt - which is why the copy says "beat off" and "run down" and no more than that.
     ("/bournemouth/games/seafront/", "/bournemouth/games/seafront/shot.jpg",
-     "Seafront: the game", "The pier, the big wheel, the beach and the coast round to Old Harry Rocks, rebuilt as somewhere you can ride &mdash; on a jet ski, a speedboat or an electric hydrofoil. Free in your browser, nothing to install, on a phone or a PC.",
+     "Seafront: Vikings, pirates &amp; smugglers", "Longships are burning Bournemouth Pier and all you have is a jet ski. See off a Viking raid, hold the harbour mouth at Old Harry Rocks until Harry Paye&rsquo;s Poole ships come out on your side, or run down Isaac Gulliver&rsquo;s smugglers in the chines. Free in your browser.",
      "A jet ski at speed on the sea off Bournemouth Pier, with the beach, the big wheel and the seafront buildings ahead"),
 ]
 
