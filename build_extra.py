@@ -10022,23 +10022,225 @@ dell_hardware()
 # four money outcomes (remote support / servicing / emergency repair / refurbished sales)
 # and the 30-year independent-specialist USP - the "support hub" positioning, distinct from
 # the /dell-hardware/ buying spoke.
+# ============================================ DELL HUB v2 (26 Sep 2026): intent-first, like homepage v3
+# The hub's job is to turn Dell owners into a call or a quote: ~250 clicks a month land on the Dell
+# guides and fault pages and come here via the "Dell" breadcrumb, and refurbished-Dell quotes from the
+# stock picker are among the few search visits that became enquiries (GSC + Slack read, 25 Sep 2026).
+# So: the four choices with prices beside the H1, refurbished machines with guide prices and a real
+# photo, proof, the owners' reviews, the video, the full Dell index folded on phones, the same FAQ.
+# Title, H1 text, FAQ text and every link the old page had are unchanged (checked by the build note
+# below). Styles are inline and scoped to .dh, the same components as the homepage (.hp-* names).
+import html as _dh_html
+
+DELL_HUB_CSS = """
+.dh{--hp-card:rgba(13,23,49,.66);--hp-card-hi:rgba(20,33,68,.78);--hp-edge:rgba(125,170,220,.17);--hp-edge-hi:rgba(125,190,240,.42);--hp-ink:#f2f8ff;--hp-body:#cbdcf1;--hp-soft:#9fb5d3;--hp-dark:#03101f}
+.dh *{box-sizing:border-box}
+.dh .hp-ico{--s:52px;flex:none;display:grid;place-items:center;width:var(--s);height:var(--s);border-radius:calc(var(--s)*.3);background:linear-gradient(145deg,var(--c2),var(--c1) 58%,color-mix(in srgb,var(--c1) 70%,#000));box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -6px 12px rgba(0,0,0,.18),0 10px 22px -10px color-mix(in srgb,var(--c1) 80%,transparent);color:#fff}
+.dh .hp-ico svg{width:52%;height:52%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.dh .hp-ico--sm{--s:34px}
+.dh .hp-c-fix{--c1:#1d97e3;--c2:#79d0ff}.dh .hp-c-care{--c1:#0fb34a;--c2:#7af08e}.dh .hp-c-buy{--c1:#e59a00;--c2:#ffd978}.dh .hp-c-biz{--c1:#5b6cf0;--c2:#b3bcff}.dh .hp-c-teal{--c1:#0f9fa8;--c2:#79e6ec}
+.dh a:focus-visible{outline:2px solid var(--cyan-soft);outline-offset:3px}
+.dh-in{max-width:1180px;margin-inline:auto}
+.dh-sec{padding-block:clamp(2.8rem,6vw,4.6rem);padding-inline:var(--pad-x)}
+.dh-kicker{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan-soft);margin:0 0 .7rem}
+.dh-h2{font-family:var(--font-display);font-weight:600;font-size:clamp(1.75rem,3.2vw,2.6rem);line-height:1.08;letter-spacing:-.012em;margin:0;color:var(--hp-ink);text-wrap:balance}
+.dh-lede{margin:.75rem 0 0;max-width:60ch;color:var(--hp-body);font-size:1.03rem;line-height:1.6}
+.dh-link{display:inline-flex;align-items:center;gap:.35rem;font-weight:600;font-size:.95rem;color:var(--cyan-soft);text-decoration:none}
+.dh-link:hover{color:#fff}
+.dh-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.85rem 1.3rem;border-radius:999px;font-weight:700;font-size:.97rem;text-decoration:none;color:var(--hp-dark);background:linear-gradient(135deg,var(--c2),var(--c1));box-shadow:0 12px 26px -14px var(--c1),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .2s}
+.dh-btn:hover{transform:translateY(-2px)}
+/* hero: headline left, the four choices right */
+.dh-hero.page-hero{padding-bottom:clamp(2rem,4vw,3rem)}
+.dh-hero__grid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.04fr);gap:clamp(1.5rem,4vw,3.2rem);align-items:center}
+.dh-hero.page-hero h1{font-size:clamp(2rem,3.7vw,3.1rem);margin-bottom:1rem}
+.dh-hero .lede{margin:0;font-size:clamp(1rem,1.5vw,1.15rem);color:var(--hp-body)}
+.dh-hero .page-hero__cta{margin-top:1.4rem;gap:.7rem}
+.dh-rating{display:flex;flex-wrap:wrap;gap:.3rem 1rem;align-items:center;margin-top:1.1rem;font-size:.9rem;color:var(--hp-soft);text-decoration:none}
+.dh-rating strong{color:var(--hp-ink)}
+.dh-rating span[aria-hidden]{color:var(--gold);letter-spacing:.08em}
+.dh .hp-intents{margin:0;padding:1.1rem;border-radius:28px;border:1px solid var(--hp-edge);background:linear-gradient(160deg,rgba(18,30,64,.62),rgba(8,15,34,.7));-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);box-shadow:0 40px 80px -40px rgba(0,0,0,.8)}
+.dh .hp-intents__q{margin:.1rem .2rem .85rem;font-family:var(--font-display);font-weight:600;font-size:1.2rem;color:var(--hp-ink)}
+.dh .hp-intents__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem}
+.dh .hp-intent{position:relative;display:flex;flex-direction:column;gap:.35rem;padding:1.05rem 1.1rem 1rem;border-radius:20px;border:1px solid var(--hp-edge);background:radial-gradient(120% 90% at 100% 0%,color-mix(in srgb,var(--c1) 17%,transparent),transparent 62%),var(--hp-card);text-decoration:none;color:var(--hp-body);transition:transform .22s cubic-bezier(.2,.8,.2,1),border-color .22s,box-shadow .22s}
+.dh .hp-intent .hp-ico{margin-bottom:.45rem}
+.dh .hp-intent__t{font-family:var(--font-display);font-weight:600;font-size:1.14rem;line-height:1.2;color:var(--hp-ink)}
+.dh .hp-intent__d{font-size:.9rem;line-height:1.45}
+.dh .hp-intent__p{margin-top:auto;padding-top:.5rem;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.05em;color:color-mix(in srgb,var(--c2) 85%,#fff)}
+.dh .hp-intent:hover,.dh .hp-intent:focus-visible{transform:translateY(-4px);border-color:color-mix(in srgb,var(--c1) 60%,transparent);box-shadow:0 22px 44px -22px color-mix(in srgb,var(--c1) 85%,transparent)}
+.dh-quick{max-width:1180px;margin:clamp(1.2rem,2.4vw,1.8rem) auto 0;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .6rem;font-size:.88rem;color:var(--hp-soft)}
+.dh-quick a{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .75rem;border-radius:999px;border:1px solid var(--hp-edge);background:rgba(9,18,40,.55);color:#dfe9f7;font-weight:600;text-decoration:none}
+.dh-quick a svg{width:15px;height:15px;flex:none;color:var(--cyan-soft)}
+.dh-quick a:hover{border-color:var(--hp-edge-hi);background:rgba(29,151,227,.12)}
+/* proof */
+.dh-proof{padding-block:clamp(1rem,2.4vw,1.8rem)}
+.dh-proof .dh-in{border-block:1px solid var(--hp-edge);padding-block:clamp(1.2rem,2.4vw,1.7rem)}
+.dh-facts{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem}
+.dh-facts li{display:flex;flex-direction:column;gap:.2rem;padding-left:1rem;border-left:2px solid color-mix(in srgb,var(--c1) 70%,transparent)}
+.dh-facts b{font-family:var(--font-display);font-weight:600;font-size:clamp(1.6rem,2.8vw,2.2rem);line-height:1;color:var(--hp-ink)}
+.dh-facts b i{font-style:normal;color:var(--gold);font-size:.7em}
+.dh-facts span{font-size:.88rem;color:var(--hp-soft);line-height:1.35}
+.dh-indep{margin:1rem 0 0;font-size:.9rem;line-height:1.6;color:var(--hp-soft);max-width:80ch}
+.dh-indep strong{color:var(--hp-body)}
+/* refurbished machines */
+.dh-buy{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(1.5rem,4vw,3.2rem);align-items:start}
+@media (min-width:961px){.dh-photo{position:sticky;top:calc(var(--header-h) + var(--ticker-h) + 1.5rem)}}
+.dh-photo{margin:0}
+.dh-photo__frame{display:block;border-radius:22px;overflow:hidden;background:#f3f4f6;box-shadow:0 30px 60px -30px rgba(0,0,0,.8);border:1px solid rgba(255,255,255,.12)}
+.dh-photo img{display:block;width:100%;height:auto}
+.dh-photo figcaption{margin-top:.65rem;font-size:.8rem;line-height:1.5;color:var(--hp-soft)}
+.dh-photo figcaption a{color:var(--cyan-soft);font-weight:600}
+.dh-steps{list-style:none;margin:1.3rem 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem;counter-reset:dhs}
+.dh-steps li{counter-increment:dhs;position:relative;padding:2.4rem .9rem .9rem;border-radius:16px;border:1px solid var(--hp-edge);background:var(--hp-card)}
+.dh-steps li::before{content:counter(dhs);position:absolute;left:.9rem;top:.85rem;width:1.35rem;height:1.35rem;border-radius:50%;display:grid;place-items:center;font:700 .75rem var(--font-mono);color:var(--hp-dark);background:linear-gradient(135deg,#ffd978,#e59a00)}
+.dh-steps b{display:block;font-size:.92rem;color:var(--hp-ink)}
+.dh-steps span{display:block;margin-top:.2rem;font-size:.8rem;line-height:1.4;color:var(--hp-soft)}
+.dh-machines{list-style:none;margin:1.2rem 0 0;padding:0;display:grid;gap:.5rem}
+.dh-machines a{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.2rem 1rem;padding:.75rem 1rem;border-radius:14px;border:1px solid var(--hp-edge);background:var(--hp-card);text-decoration:none;transition:border-color .2s,transform .2s}
+.dh-machines a:hover{border-color:rgba(255,217,120,.5);transform:translateX(3px)}
+.dh-machines b{font-family:var(--font-display);font-weight:600;font-size:1.02rem;color:var(--hp-ink)}
+.dh-machines small{grid-column:1;font-size:.82rem;color:var(--hp-soft)}
+.dh-machines em{grid-row:1 / span 2;grid-column:2;font-style:normal;text-align:right;font-family:var(--font-display);font-weight:600;font-size:1.2rem;color:#ffd978}
+.dh-machines em span{display:block;font-family:var(--font-mono);font-size:.66rem;letter-spacing:.1em;color:var(--hp-soft)}
+.dh-ticks{list-style:none;margin:1.1rem 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem 1rem}
+.dh-ticks li{position:relative;padding-left:1.6rem;font-size:.93rem;line-height:1.45;color:var(--hp-body)}
+.dh-ticks li::before{content:"\\2713";position:absolute;left:0;top:0;color:#39d353;font-weight:700}
+.dh-buy__cta{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1.2rem;margin-top:1.3rem}
+.dh-small{margin:.8rem 0 0;font-size:.8rem;color:var(--hp-soft)}
+/* reviews */
+.dh-quotes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-top:1.4rem}
+.dh-quote{margin:0;padding:1.2rem 1.25rem;border-radius:20px;border:1px solid var(--hp-edge);background:var(--hp-card);display:flex;flex-direction:column;gap:.6rem}
+.dh-quote p{margin:0;color:var(--gold);letter-spacing:.08em;font-size:.95rem}
+.dh-quote blockquote{margin:0;font-size:.95rem;line-height:1.55;color:#dbe7f6}
+.dh-quote figcaption{margin-top:auto;font-size:.8rem;color:var(--hp-soft)}
+.dh-quote figcaption strong{color:#dfe9f7}
+/* the Dell index: open on desktop, folded into groups on phones (same idea as the phone footer) */
+.dh-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:1.1rem}
+.dh-chips a{padding:.34rem .7rem;border-radius:999px;border:1px solid var(--hp-edge);font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;color:#bcd0ea;text-decoration:none}
+.dh-chips a:hover{border-color:var(--hp-edge-hi);color:#fff}
+.dh-index{margin-top:1.6rem;columns:3 300px;column-gap:2.2rem}
+.dh-fold{break-inside:avoid;margin:0 0 1.5rem}
+.dh-fold summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:.8rem;cursor:auto;font-family:var(--font-display);font-weight:600;font-size:1.02rem;line-height:1.3;color:var(--hp-ink);padding-bottom:.55rem;margin-bottom:.55rem;border-bottom:1px solid var(--hp-edge)}
+.dh-fold summary::-webkit-details-marker{display:none}
+.dh-fold summary small{font-family:var(--font-mono);font-size:.7rem;font-weight:400;color:var(--hp-soft);white-space:nowrap}
+.dh-fold ul{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
+.dh-fold a{font-size:.9rem;line-height:1.4;color:#c8d8ee;text-decoration:none}
+.dh-fold a:hover{color:#fff;text-decoration:underline}
+@media (max-width:960px){
+  .dh-hero__grid,.dh-buy{grid-template-columns:1fr}
+  .dh-buy .dh-photo{order:2}
+  .dh-facts{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:1.1rem}
+  .dh-quotes{grid-template-columns:1fr}
+}
+@media (max-width:767px){
+  .dh .hp-intents{padding:0;border:0;background:none;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+  .dh .hp-intents__grid{gap:.6rem}
+  .dh .hp-intent{padding:.85rem .85rem .8rem;border-radius:18px}
+  .dh .hp-intent .hp-ico{--s:42px;margin-bottom:.25rem}
+  .dh .hp-intent__t{font-size:1rem}
+  .dh .hp-intent__d{font-size:.82rem}
+  .dh-ticks{grid-template-columns:1fr}
+  .dh-steps{grid-template-columns:1fr}
+  .dh-steps li{padding:.8rem .9rem .8rem 2.8rem}
+  .dh-steps li::before{top:.85rem}
+  .dh-chips{display:none}
+  .dh-index{columns:1}
+  .dh-fold{margin:0;border-bottom:1px solid var(--hp-edge)}
+  .dh-fold summary{cursor:pointer;border:0;margin:0;padding:.95rem 0}
+  .dh-fold summary::after{content:"+";font-family:var(--font-mono);color:var(--cyan-soft);font-size:1.1rem}
+  .dh-fold[open] summary::after{content:"\\2212"}
+  .dh-fold ul{padding-bottom:1rem}
+}
+@media (prefers-reduced-motion:reduce){.dh .hp-intent,.dh-btn,.dh-machines a{transition:none}}
+"""
+
+# folds: shipped OPEN (so no-JS and desktop see every link); phones close them and desktop can't collapse them
+DELL_HUB_FOLD_JS = """<script>
+(function(){ var mq=window.matchMedia('(max-width:767px)'); var f=[].slice.call(document.querySelectorAll('.dh-fold'));
+  function set(){ f.forEach(function(d){ var s=d.querySelector('summary');
+    if(mq.matches){ d.open=false; s.removeAttribute('tabindex'); } else { d.open=true; s.setAttribute('tabindex','-1'); } }); }
+  f.forEach(function(d){ d.querySelector('summary').addEventListener('click',function(e){ if(!mq.matches) e.preventDefault(); }); });
+  set(); if(mq.addEventListener) mq.addEventListener('change',set); else if(mq.addListener) mq.addListener(set);
+})();
+</script>"""
+
+_DH_A = 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"'
+_DH_ICONS = {
+    "wrench": '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/>',
+    "monitor": '<rect x="2" y="3.5" width="20" height="13.5" rx="2.5"/><path d="M8 21h8M12 17v4"/>',
+    "shield": '<path d="M20 13c0 5-3.5 7.5-7.7 9a1 1 0 0 1-.6 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.2-2.7a1.2 1.2 0 0 1 1.6 0C14.5 3.8 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M9 12l2 2 4-4"/>',
+    "laptop": '<path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.3 2.6a1 1 0 0 1-.9 1.4H3.6a1 1 0 0 1-.9-1.4L4 16"/>',
+    "briefcase": '<rect x="2.5" y="7" width="19" height="14" rx="2.5"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16M2.5 13h19"/>',
+    "alert": '<path d="M21.7 18l-8-14a2 2 0 0 0-3.5 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3z"/><path d="M12 9v4M12 17h.01"/>',
+    "clock": '<circle cx="12" cy="12" r="9.5"/><path d="M12 7v5l3 2"/>',
+    "book": '<path d="M4 19.5V5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2.5z"/><path d="M8 7h8M8 11h6"/>',
+}
+def _dh_ico(name):
+    return '<svg viewBox="0 0 24 24" %s aria-hidden="true" focusable="false">%s</svg>' % (_DH_A, _DH_ICONS[name])
+
+
+def _dell_hub_index(exclude=()):
+    """The whole Dell cluster as one compact index: group headings + link titles (the one-line blurbs
+    live on the pages themselves). Folded into groups on phones; open, in columns, on desktop."""
+    import re as _re
+    ex = set(exclude)
+    def anchor(t):
+        return 'g-' + _re.sub(r'[^a-z0-9]+', '-', t.replace('&amp;', 'and').lower()).strip('-')
+    chips, groups = "", ""
+    for gtitle, cards in _DELL_CLUSTER:
+        cards = [c for c in cards if c[0] not in ex]
+        if not cards:
+            continue
+        a = anchor(gtitle)
+        chips += f'          <a href="#{a}">{_DELL_CHIP.get(gtitle, gtitle.split()[0])}</a>\n'
+        items = "\n".join(f'              <li><a href="/{s}/">{t}</a></li>' for s, t, b in cards)
+        groups += (f'          <details class="dh-fold" id="{a}" open>\n'
+                   f'            <summary>{gtitle} <small>{len(cards)}</small></summary>\n'
+                   f'            <ul>\n{items}\n            </ul>\n'
+                   f'          </details>\n')
+    return ('    <section class="dh dh-sec section--alt" aria-labelledby="dell-help-title" id="dell-help">\n'
+            '      <div class="dh-in">\n'
+            '        <p class="dh-kicker">Everything Dell &middot; 30 years of answers</p>\n'
+            '        <h2 class="dh-h2" id="dell-help-title">Browse all our Dell help</h2>\n'
+            '        <p class="dh-lede">Fixes you can try yourself, repairs, buying advice and every Dell range &mdash; or just <a href="/contact/" class="dh-link">talk to a techie</a>.</p>\n'
+            '        <nav class="dh-chips" aria-label="Jump to a Dell topic">\n' + chips + '        </nav>\n'
+            '        <div class="dh-index">\n' + groups + '        </div>\n'
+            '      </div>\n'
+            '    </section>\n' + DELL_HUB_FOLD_JS)
+
+
+def _dell_hub_quotes(*names):
+    """Review cards from reviews_data (never retyped: the build checks every quote against it)."""
+    out = []
+    for q, n in pick(*names):
+        out.append('          <figure class="dh-quote"><p aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>'
+                   f'<blockquote>&ldquo;{_dh_html.escape(q, quote=False)}&rdquo;</blockquote>'
+                   f'<figcaption><strong>{_dh_html.escape(n, quote=False)}</strong> &middot; Google review</figcaption></figure>')
+    return "\n".join(out)
+
+
+def _dell_hub_machines(ids):
+    by_id = {m[0]: m for m in DELL_MACHINES}
+    rows = []
+    for mid in ids:
+        _id, kind, series, name, meta, price, href, *_ = by_id[mid]
+        rows.append(f'          <li><a href="{href}"><b>{name}</b><small>{meta}</small><em>&pound;{price}<span>GUIDE</span></em></a></li>')
+    return "\n".join(rows)
+
+
 def dell_it_support_hub():
     slug = "dell-it-support-dorset"
     desc = ("Independent Dell support, servicing & repair across Bournemouth, Poole & Dorset &mdash; 30+ years, "
             "no call-out fee. Refurbished Dell from &pound;510. Call 01202 775566.")
-    ways = [
-      ("remote", "Get Dell support", "/dell-remote-support/",
-       "Something&rsquo;s not working &mdash; Windows, email, drivers, slowdowns. We connect securely over a session you watch and sort it, often the same day. We always phone before we connect.", "Get support"),
-      ("emergency", "Book a Dell repair", "/dell-laptop-repair-bournemouth/",
-       "Broken screen, dead machine, worn battery &mdash; laptop or desktop. Honest diagnosis, no-fix-no-fee, 12-month warranty on the work and free local collection. Business down? We prioritise emergencies (Mon&ndash;Fri, 9&ndash;5).", "Book a repair"),
-      ("servicing", "Servicing &amp; care plans", "/dell-support-plans/",
-       "Keep your Dell fast, cool and healthy with a full service every 6 weeks &mdash; each one documented with a written Service Report, emailed to you and kept in your portal &mdash; on a simple monthly plan from &pound;18.25/month per computer at home, &pound;24.38 for business. And your guarantee becomes 5 years.", "See plans"),
-      ("sales", "Buy a Dell &mdash; new or refurbished", "/dell-hardware/#pick",
-       "Pick your machine online and get an availability check &amp; quote in a minute &mdash; Latitude laptops from &pound;510, OptiPlex desktops from &pound;545 (guide prices), each with a new 1TB Samsung 990 PRO, set up and supported. Brand-new Dell to order too.", "Pick a machine"),
+    tiles = [
+      ("hp-c-fix", "wrench", "Fix my Dell", "Won&rsquo;t boot, broken screen, worn battery", "NO FIX, NO FEE", "/dell-laptop-repair-bournemouth/"),
+      ("hp-c-teal", "monitor", "Get Dell support", "Windows, email, drivers, slowdowns &mdash; over a session you watch", "OFTEN THE SAME DAY", "/dell-remote-support/"),
+      ("hp-c-care", "shield", "Look after it", "A full service every 6 weeks, with a written report", "FROM &pound;18.25/MONTH", "/dell-support-plans/"),
+      ("hp-c-buy", "laptop", "Buy a Dell", "Refurbished or brand new, set up for you", "LATITUDE FROM &pound;510", "/dell-hardware/#pick"),
     ]
-    ways_html = "\n".join(
-      f'          <a class="dell-way" href="{href}">{_dell_scene(key)}<h3>{title}</h3><p>{blurb}</p><span class="post-card__more">{more} &#8594;</span></a>'
-      for key, title, href, blurb, more in ways)
+    tiles_html = "\n".join(
+      f'            <a class="hp-intent {c}" href="{href}"><span class="hp-ico">{_dh_ico(i)}</span><span class="hp-intent__t">{t}</span>'
+      f'<span class="hp-intent__d">{d}</span><span class="hp-intent__p">{p}</span></a>'
+      for c, i, t, d, p, href in tiles)
     faqs = [
       ("Do you offer Dell support across Bournemouth, Poole and Dorset?", "Yes &mdash; we&rsquo;re a family-run, independent Dell specialist based in Kinson, Bournemouth (BH10&nbsp;7LH), and we&rsquo;ve supplied and supported Dell systems for homes and businesses across Bournemouth, Poole, Christchurch and the wider Dorset area since 1995. Remote support and refurbished sales reach customers UK-wide."),
       ("Are you a Dell reseller or a Dell authorised repair centre?", "Both parts have an honest answer. We <strong>are</strong> a genuine <strong>Dell reseller &mdash; and have been since 2001</strong> &mdash; so we can supply brand-new Dell hardware as well as our tested refurbished range. For <strong>repairs and support</strong>, though, we&rsquo;re deliberately independent: not a Dell Authorised Service Provider and not Dell ProSupport. That independence lets us give honest advice and fair prices, and fix machines Dell would rather you replaced."),
@@ -10048,39 +10250,90 @@ def dell_it_support_hub():
       ("What if my Dell is too old to be worth fixing?", "We&rsquo;ll tell you honestly. If a repair costs more than the machine is worth, we&rsquo;ll suggest a tested, refurbished business-grade Dell from <strong>&pound;510</strong> instead &mdash; with a new Samsung Pro SSD, a clean copy of Windows and our own 5-year guarantee on a 365 support plan. No pressure either way."),
     ]
     content = "\n".join([
-      hero(bc("Dell"), "// DORSET&rsquo;S INDEPENDENT DELL SPECIALIST &middot; SINCE 1995",
-           'Dell support, servicing &amp; repair across <em class="grad grad--cyan">Bournemouth, Poole &amp; Dorset</em>',
-           hero_trust("Whatever&rsquo;s going on with your Dell &mdash; a laptop that won&rsquo;t boot, a business fleet to look after, or a machine that&rsquo;s just had its day &mdash; you&rsquo;re in the right place. We&rsquo;re a family-run, independent Dell specialist who&rsquo;s been supplying and supporting Dell systems for homes and businesses for over 30 years. Here&rsquo;s the honest help &mdash; and if you&rsquo;d rather just leave it to the techies, that&rsquo;s exactly what we&rsquo;re here for."),
-           cta1=("Talk to a Techie", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
-           chips=["Independent Dell specialist since 1995", "Homes &amp; businesses", "No call-out fee &middot; 4.9 on Google"]),
-      ('    <section class="blog-section" aria-label="What do you need today?" id="ways">\n'
-       '      <div class="wrap">\n'
-       '        <div class="section-head">\n'
-       '          <p class="eyebrow eyebrow--center mono" data-reveal>// START HERE</p>\n'
-       '          <h2 class="section-title section-title--center" data-title>What do you need today?<span class="title-underline title-underline--center"></span></h2>\n'
-       '          <p class="lede lede--center" data-reveal><strong>Support</strong>, a <strong>repair</strong>, ongoing <strong>servicing</strong> &mdash; or a <strong>new or refurbished Dell</strong>? Pick one and you&rsquo;re two clicks from sorted. Not sure? Call 01202 775566 and we&rsquo;ll steer you right.</p>\n'
-       '        </div>\n'
-       '        <div class="dell-ways" data-stagger>\n' + ways_html + '\n        </div>\n'
-       '      </div>\n'
-       '    </section>'),
+      '    <style>' + " ".join(l.strip() for l in DELL_HUB_CSS.strip().splitlines()) + '</style>',
+      f'''    <section class="page-hero dh dh-hero" aria-label="Introduction">
+      <div class="dh-hero__grid">
+        <div>
+          <nav class="breadcrumb" aria-label="Breadcrumb">{bc("Dell")}</nav>
+          <p class="eyebrow mono">// DORSET&rsquo;S INDEPENDENT DELL SPECIALIST &middot; SINCE 1995</p>
+          <h1>Dell support, servicing &amp; repair across <em class="grad grad--cyan">Bournemouth, Poole &amp; Dorset</em></h1>
+          <p class="lede">A fix, a service or a replacement &mdash; from a family-run, independent Dell specialist who&rsquo;s supplied and supported Dell for homes and businesses for over 30 years.</p>
+          <div class="page-hero__cta">
+            <a href="tel:+441202775566" class="button primary button--lg">Call 01202 775566</a>
+            <a href="/contact/" class="button secondary button--lg">Talk to a Techie</a>
+          </div>
+          <a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Rated 4.9 on Google</strong></span><span>Dell reseller since 2001 &middot; no call-out fee</span></a>
+          <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
+        </div>
+        <nav class="hp-intents" aria-label="What does your Dell need?">
+          <p class="hp-intents__q">What does your Dell need?</p>
+          <div class="hp-intents__grid">
+{tiles_html}
+          </div>
+        </nav>
+      </div>
+      <div class="dh-quick">
+        <span>Also:</span>
+        <a href="/dell-business-support-dorset/">{_dh_ico("briefcase")}Dell for business</a>
+        <a href="/emergency-dell-repair-bournemouth/">{_dh_ico("alert")}Emergency repair</a>
+        <a href="/dell-out-of-warranty-repair/">{_dh_ico("clock")}Out of warranty?</a>
+        <a href="/dell-latitude-3520-guide/">{_dh_ico("book")}Owner&rsquo;s guides</a>
+      </div>
+    </section>''',
+      '''    <section class="dh dh-sec dh-proof" aria-label="Why people choose us for Dell">
+      <div class="dh-in">
+        <ul class="dh-facts">
+          <li class="hp-c-fix"><b>1995</b><span>a Dell specialist since</span></li>
+          <li class="hp-c-buy"><b>2001</b><span>a Dell reseller since</span></li>
+          <li class="hp-c-care"><b>12&nbsp;months</b><span>warranty on repair work &middot; no fix, no fee</span></li>
+          <li class="hp-c-biz"><b>4.9<i aria-hidden="true">&#9733;</i></b><span>average rating on Google</span></li>
+        </ul>
+        <p class="dh-indep"><strong>Independent where it counts.</strong> We sell Dell as a reseller, but the repairs and support are ours: we&rsquo;re not a Dell authorised repairer or Dell ProSupport, so you get an honest verdict, fair prices and the same friendly faces year after year &mdash; including on machines Dell would rather you replaced.</p>
+      </div>
+    </section>''',
+      f'''    <section class="dh dh-sec" id="buy" aria-labelledby="buy-title">
+      <div class="dh-in dh-buy">
+        <figure class="dh-photo">
+          <a class="dh-photo__frame" href="/dell-hardware/#spin"><img src="/images/spin/latitude-5520/spin_00.webp" width="1400" height="787" loading="lazy" decoding="async" alt="A refurbished Dell Latitude 5520 laptop, open, seen from the front with Windows 11 on the screen" /></a>
+          <figcaption>An example machine: a refurbished Latitude 5520 we photographed on 18 September 2026. <a href="/dell-hardware/#spin">Turn it round in 360&deg;</a></figcaption>
+          <ol class="dh-steps">
+            <li><b>Pick a machine</b><span>Online, in about a minute</span></li>
+            <li><b>We check and quote</b><span>Availability and the exact spec, before you commit</span></li>
+            <li><b>We bring it to you</b><span>Try it at home or work, set up and ready</span></li>
+          </ol>
+        </figure>
+        <div>
+          <p class="dh-kicker">Refurbished &amp; new Dell</p>
+          <h2 class="dh-h2" id="buy-title">Time for a new Dell?</h2>
+          <p class="dh-lede">Business-grade Latitude laptops and OptiPlex desktops, tested and set up for you. Pick one online and we check it&rsquo;s available and send you a quote.</p>
+          <ul class="dh-machines">
+{_dell_hub_machines(["latitude-3420", "latitude-5430", "latitude-7420", "optiplex-3080", "optiplex-7090"])}
+          </ul>
+          <ul class="dh-ticks">
+            <li>A new 1TB Samsung 990 PRO in each</li>
+            <li>Our 5-year guarantee on a 365 support plan</li>
+            <li>We&rsquo;ll bring one to your home or business to try</li>
+            <li>Brand-new Dell to order too</li>
+          </ul>
+          <div class="dh-buy__cta hp-c-buy"><a class="dh-btn" href="/dell-hardware/#pick">Pick a machine &amp; get a quote &#8594;</a><a class="dh-link" href="/dell-hardware/">All refurbished Dells</a></div>
+          <p class="dh-small">Guide prices. Stock changes all the time, so we confirm the exact machine, specification and grade before you buy.</p>
+        </div>
+      </div>
+    </section>''',
+      f'''    <section class="dh dh-sec" aria-labelledby="dh-reviews-title">
+      <div class="dh-in">
+        <p class="dh-kicker">What Dell owners say</p>
+        <h2 class="dh-h2" id="dh-reviews-title">Rated 4.9 on Google</h2>
+        <div class="dh-quotes">
+{_dell_hub_quotes("Dean Robertson", "Heather", "Rob Hazell")}
+        </div>
+        <p style="margin:1.1rem 0 0;display:flex;flex-wrap:wrap;gap:.5rem 1.6rem"><a class="dh-link" href="/reviews/">Read all our reviews &#8594;</a><a class="dh-link" href="https://www.google.com/maps?cid=5924622613303465737" target="_blank" rel="noopener">See them on Google &#8594;</a><a class="dh-link" href="https://search.google.com/local/writereview?placeid=ChIJlTb8YRuic0gRCRczduB8OFI" target="_blank" rel="noopener">Already a customer? Review us &#8594;</a></p>
+      </div>
+    </section>''',
       responsive_video("WATCH", "Dell support, wherever you work",
                        "/images/dell-reel-poster-wide.webp", "/images/dell-reel-poster-tall.webp",
                        "365 Techies Dell support - home office, workplace and working remotely across Dorset"),
-      ('    <section class="section section--alt" aria-label="30 years of Dell">\n'
-       '      <div class="wrap split-2">\n'
-       '        <div class="prose" data-reveal>\n'
-       '          <p class="eyebrow mono">// WHY 365 TECHIES</p>\n'
-       '          <h2 class="section-title" data-title>30+ years of Dell &mdash; for real people, in plain English<span class="title-underline"></span></h2>\n'
-       '          <p>We&rsquo;ve been a familiar local face in computing since 1995 &mdash; from the Dorset Microsoft Education Resource Centre, to our Moordown computer shop, to our base today at the Kinson Community Centre in Bournemouth. Dell has been at the heart of it the whole way: we&rsquo;ve supplied, set up, serviced and repaired countless Latitude laptops and OptiPlex desktops for Dorset homes and businesses.</p>\n'
-       '          <p>Being <strong>independent</strong> is the point. We&rsquo;re not a Dell call centre, not &ldquo;authorised&rdquo;, and not tied to selling you anything &mdash; so you get an honest verdict, fair prices and the same friendly faces year after year. We&rsquo;ll always tell you when something&rsquo;s a quick fix, when it&rsquo;s better left to us, and when a machine simply isn&rsquo;t worth saving.</p>\n'
-       '        </div>\n'
-       '        <ul class="checklist" data-stagger>\n'
-       + checklist(["Independent Dell specialist &mdash; since 1995", "Homes and small businesses alike", "Remote, on-site &amp; free local collection", "No-fix-no-fee &middot; 12-month repair warranty", "No call-out fee &middot; honest, up-front prices", "Windows &amp; Android &middot; Mon&ndash;Fri, 9&ndash;5", "Rated 4.9 on Google by local customers"]) + '\n'
-       '        </ul>\n'
-       '      </div>\n'
-       '    </section>'),
-      reviews_block(pick("Dean Robertson", "Heather", "Rob Hazell")),
-      _dell_cluster_section(exclude=("dell-remote-support", "dell-support-plans")),   # emergency repair listed again since 13 Sep (nav audit: no link to it from the hub)
+      _dell_hub_index(exclude=("dell-remote-support", "dell-support-plans")),
       faq_html(faqs),
       cta("Not sure what your Dell needs? Just ask.",
           "Tell us what&rsquo;s going on &mdash; a fault, a fleet, a slow machine or a replacement &mdash; and we&rsquo;ll give you an honest steer and a fixed price before any work. Or just leave it to the techies.",
