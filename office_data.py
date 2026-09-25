@@ -1331,7 +1331,7 @@ OFFICE_PAGES = [
   "crumbName": "Unlicensed Product Error",
   "primaryCta": [
    "Get It Fixed Remotely",
-   "/dell-remote-support/"
+   "/remote-support/"
   ],
   "secondaryCta": [
    "Call 01202 775566",
