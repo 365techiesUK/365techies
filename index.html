@@ -294,7 +294,7 @@
         "primaryImageOfPage": { "@type": "ImageObject", "url": "https://365techies.co.uk/og-image.jpg" },
         "inLanguage": "en-GB",
         "datePublished": "2026-06-12",
-        "dateModified": "2026-06-15",
+        "dateModified": "2026-09-25",
         "breadcrumb": { "@id": "https://365techies.co.uk/#breadcrumb" },
         "speakable": { "@type": "SpeakableSpecification", "cssSelector": ["h1", ".hero__sub"] }
       },
@@ -737,19 +737,21 @@
   <main id="main" data-cv>
 
     <!-- ============ HERO ============ -->
-    <section class="hero" id="hero">
+    <section class="hero hero--home" id="hero">
       <div class="hero__inner">
-        <p class="hero__eyebrow mono"><span class="pulse-dot"></span> FRIENDLY IT SUPPORT &mdash; BOURNEMOUTH &middot; DORSET &middot; SINCE 1995</p>
+        <p class="hero__eyebrow mono"><span class="pulse-dot"></span> IT SUPPORT &amp; COMPUTER REPAIR &mdash; BOURNEMOUTH &middot; POOLE &middot; DORSET &middot; SINCE 1995</p>
         <h1 class="hero__title">
           <span class="line"><span class="line-inner">Friendly IT support</span></span>
-          <span class="line"><span class="line-inner">that <em class="grad grad--cyan">just works</em></span></span>
-          <span class="line"><span class="line-inner">for <em class="grad grad--cyan">homes</em> &amp; <em class="grad grad--green">businesses</em>.</span></span>
+          <span class="line"><span class="line-inner">&amp; <em class="grad grad--cyan">computer repair</em></span></span>
+          <span class="line"><span class="line-inner">in <em class="grad grad--green">Bournemouth, Poole &amp; Dorset</em></span></span>
         </h1>
-        <p class="hero__sub">Friendly, local IT support and repairs for home users, families and small businesses across Dorset &mdash; plus fast, secure remote IT support anywhere in the UK. <span class="hero__sub-more">We look after your computers, email, security and backups, and explain everything in plain English. </span>Rated 4.9 on Google, family-run since 1995.</p>
+        <p class="hero__sub">For homes, families and small businesses: we fix what&rsquo;s broken, keep everything updated and secure, and explain it in plain English. <span class="hero__sub-more">Same day, usually within minutes remotely &mdash; and secure remote support anywhere in the UK. </span>Rated 4.9 on Google, family-run since 1995.</p>
         <div class="hero-buttons">
-          <a href="#plans" class="button primary">See Plans &amp; Prices</a>
-          <a href="#cta" class="button secondary">Talk to a Techie</a>
+          <a href="tel:+441202775566" class="button primary">Call 01202 775566</a>
+          <a href="/book-service/" class="button secondary">Book a fix online</a>
         </div>
+        <p class="hero__open mono" data-open-now><span class="hero__opendot"></span><span data-open-txt>Mon&ndash;Fri 9&ndash;5 &middot; same day, usually within minutes remotely</span></p>
+        <p class="hero__quick"><a href="#plans">Support plans from &pound;18.25/month</a><a href="/dell-hardware/">Refurbished Dells from &pound;510</a><a href="/ive-been-scammed-what-to-do/">Been scammed? What to do now</a></p>
         <aside class="hero__console-mini" aria-hidden="true">
           <span class="dim">EXAMPLE &middot; WHAT WE MONITOR &mdash;</span> <span class="dim">device</span> HOME-LAPTOP-07 &nbsp;&middot;&nbsp; <span class="ok">&#10003; protected</span> &nbsp;&middot;&nbsp; <span class="dim">backup</span> <span class="ok">verified 03:00</span><br />
           <span class="dim">365techies@noc:~$</span> looking after 200+ computers across Dorset
@@ -780,8 +782,32 @@
         <p class="hero__console-foot mono">365techies@noc:~$ <span class="cursor"></span></p>
       </aside>
 
-      <a class="scroll-hint mono" href="#stats" aria-label="Scroll down">SCROLL<span class="scroll-hint__line"></span></a>
+      <a class="scroll-hint mono" href="#help" aria-label="Scroll down">SCROLL<span class="scroll-hint__line"></span></a>
     </section>
+
+    <style>
+    /* homepage hero, 25 Sep 2026: says what we do and where, calls and books from the first screen */
+    .hero--home .hero__title{font-size:clamp(2.3rem,5vw,4.3rem);line-height:1.02}
+    .hero--home .hero-buttons{margin-top:1.6rem}
+    .hero__open{display:flex;align-items:center;gap:.55rem;margin:1rem 0 0;font-size:.74rem;letter-spacing:.06em;color:#a9bdd8}
+    .hero__opendot{width:8px;height:8px;border-radius:50%;background:#8fa3bd;flex:none}
+    .hero__open.is-open .hero__opendot{background:#39d353;box-shadow:0 0 0 4px rgba(57,211,83,.18)}
+    .hero__open.is-open{color:#bff0cb}
+    .hero__quick{display:flex;flex-wrap:wrap;gap:.45rem .6rem;margin:1rem 0 0}
+    .hero__quick a{font-size:.86rem;font-weight:600;color:#dfe9f7;text-decoration:none;padding:.42rem .8rem;border-radius:999px;border:1px solid rgba(125,170,220,.28);background:rgba(255,255,255,.04);transition:border-color .2s,background .2s}
+    .hero__quick a:hover,.hero__quick a:focus-visible{border-color:rgba(108,196,245,.6);background:rgba(29,151,227,.12)}
+    @media(max-width:600px){.hero__quick a{font-size:.82rem}}
+    </style>
+    <script>
+    /* "lines open now" in UK time (Mon-Fri 9-5); otherwise say when we are open and point at online booking */
+    (function(){ var p=document.querySelector('[data-open-now]'); if(!p) return; var t=p.querySelector('[data-open-txt]');
+      try{ var wd='',hr=-1; new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/London',weekday:'short',hour:'numeric',hourCycle:'h23'}).formatToParts(new Date()).forEach(function(x){ if(x.type==='weekday')wd=x.value; if(x.type==='hour')hr=parseInt(x.value,10); });
+        var open=!/Sat|Sun/.test(wd)&&hr>=9&&hr<17;
+        p.classList.toggle('is-open',open);
+        t.textContent=open?'Lines open now \u00b7 same day, usually within minutes remotely':'Closed right now \u00b7 book online any time \u00b7 phones Mon\u2013Fri 9\u20135';
+      }catch(e){} })();
+    </script>
+
 
     <!-- ============ TRUST STRIP ============ -->
     <div class="wrap" style="padding-top:1.3rem;padding-bottom:0">
@@ -805,7 +831,7 @@
     <div class="wrap" style="padding-top:1.4rem;padding-bottom:0"><p class="mono" data-reveal style="text-align:center;max-width:76ch;margin:0 auto;color:var(--muted);font-size:0.9rem;line-height:1.75">Trusted by local businesses and public bodies too &mdash; from a Poole supercar specialist&rsquo;s Ferrari, Maserati &amp; Lamborghini diagnostic systems, to a major south-coast Mercedes-Benz dealer, to the Environment Agency&rsquo;s fish-monitoring link across the River Avon. <a href="/about/" style="color:var(--cyan)">Read our story &#8594;</a></p></div>
 
     <!-- ============ SITUATION ROUTER ============ -->
-    <section class="section" aria-label="What brought you here?">
+    <section class="section" id="help" aria-label="What brought you here?">
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// HOW CAN WE HELP?</p>
@@ -825,56 +851,16 @@
       </div>
     </section>
 
-    <!-- ============ 365 PC MANAGER - THE APP ============ -->
-    <section class="split-section" id="pc-manager" aria-label="365 PC Manager, our own app">
-      <div class="split-section__text">
-        <p class="eyebrow mono" data-reveal>// OUR OWN APP &mdash; 365 PC MANAGER</p>
-        <h2 class="section-title" data-title>The IT support company with its own app<span class="title-underline"></span></h2>
-        <p class="lede" data-reveal>365 PC Manager is our own free Windows app, digitally signed in our name. It shows your PC&rsquo;s health in plain English &mdash; drive, memory, protection, backup &mdash; with no fake errors and nothing to buy: the must-have app for any Windows PC. On a plan it keeps your computer up to date and secure &mdash; every six weeks every program is updated, not just Windows, the service is written up as a Service Report, and we keep an eye on the machines we look after between visits. We can&rsquo;t find another IT support company in Dorset that gives its customers anything like it.</p>
-        <ul class="feature-chips" data-stagger>
-          <li>Free, no sign-up, uninstall any time</li>
-          <li>Health score in plain English</li>
-          <li>Written Service Report every visit</li>
-          <li>Every program updated on a plan</li>
-          <li>Broadband speed kept visit to visit</li>
-          <li>Signed by 365 Techies Ltd</li>
-          <li>No scare tactics, ever</li>
-        </ul>
-        <a href="/free-pc-health-check/" class="text-link" data-reveal>Download 365 PC Manager &mdash; free <span aria-hidden="true">&#8594;</span></a>
-        <a href="/your-first-6-weekly-service/" class="text-link" data-reveal>What a Service Report looks like <span aria-hidden="true">&#8594;</span></a>
-      </div>
-      <div class="split-section__visual">
-        <div class="scene-frame" data-reveal>
-          <video id="pcm-live" muted loop playsinline preload="none" width="880" height="640" poster="/images/pcm-app-live-poster.webp" aria-label="Screen recording of 365 PC Manager running on a Windows PC" style="display:block;width:100%;height:auto;border-radius:12px;background:#0b1d3a">
-            <source src="/images/pcm-app-live.mp4" type="video/mp4">
-          </video>
-          <span class="scene-frame__corner tl"></span><span class="scene-frame__corner tr"></span>
-          <span class="scene-frame__corner bl"></span><span class="scene-frame__corner br"></span>
-          <p class="scene-frame__label mono"><span class="rec-dot"></span> REAL SCREEN RECORDING &mdash; 365 PC MANAGER</p>
+<!-- ============ REPAIRS ============ -->
+    <section class="repairs" id="repairs">
+      <div class="repairs__card" data-reveal>
+        <div class="course-scene" aria-hidden="true"><svg class="course-scene__svg" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><g class="cs-float"><rect x="90" y="38" width="220" height="170" rx="14" fill="#0b1d3a" stroke="#86b6e8" stroke-width="2"/><line x1="112" y1="62" x2="210" y2="62" stroke="rgba(125,170,220,.35)" stroke-width="4" stroke-linecap="round"/><line x1="112" y1="90" x2="196" y2="90" stroke="rgba(125,170,220,.35)" stroke-width="3" stroke-linecap="round"/><line x1="250" y1="90" x2="288" y2="90" stroke="#86b6e8" stroke-width="3" stroke-linecap="round"/><line x1="112" y1="110" x2="180" y2="110" stroke="rgba(125,170,220,.35)" stroke-width="3" stroke-linecap="round"/><line x1="256" y1="110" x2="288" y2="110" stroke="#86b6e8" stroke-width="3" stroke-linecap="round"/><line x1="112" y1="128" x2="288" y2="128" stroke="rgba(125,170,220,.35)" stroke-width="2"/><path d="M166 150 C166 141 154 137 147 143 C141 149 142 158 142 168 L142 192" fill="none" stroke="#86b6e8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M130 192 L172 192" fill="none" stroke="#86b6e8" stroke-width="4" stroke-linecap="round"/><path d="M132 168 L160 168" fill="none" stroke="#86b6e8" stroke-width="4" stroke-linecap="round"/><path d="M196 178 L207 190 L228 160" fill="none" stroke="#00ce1b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="232" cy="92" r="30" fill="#0a1f3d" stroke="#86b6e8" stroke-width="3"/><line x1="253" y1="113" x2="277" y2="137" stroke="#86b6e8" stroke-width="5" stroke-linecap="round"/><circle cx="232" cy="92" r="13" fill="none" stroke="rgba(29,151,227,.5)" stroke-width="2" class="nm-scan"/><circle cx="232" cy="92" r="3" fill="#1d97e3"/><circle cx="300" cy="48" r="4" fill="#00ce1b" class="nm-dot" style="--d:.4s"/><circle cx="238" cy="150" r="4" fill="#00ce1b" class="nm-dot" style="--d:.9s"/></g></svg></div>
+        <div style="flex:1">
+          <p class="eyebrow mono">// ONE-OFF FIXES &middot; HOW PRICING WORKS</p>
+          <h2 class="repairs__title">Not on a plan? We check the fault free, then quote before we fix.</h2>
+          <p class="lede">Slow laptop, virus clean-up, dead Wi&#8209;Fi or a PC that just won&rsquo;t start? A senior techie connects and <strong>checks the problem for free</strong>, then gives you a realistic quote: what needs doing, how long it&rsquo;ll take and the cost. Nothing is fixed until you&rsquo;ve agreed. Remote fixes <strong>from &pound;20</strong>, no subscription required. We never charge for a fix you haven&rsquo;t approved &mdash; and if it can&rsquo;t be done remotely, we&rsquo;ll collect it or visit, quoted first either way.</p>
         </div>
-        <script>(function(){var v=document.getElementById("pcm-live");if(!v)return;try{if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;}catch(e){}var s=false;function go(){s=true;v.play().catch(function(){});}if(!("IntersectionObserver" in window)){go();return;}new IntersectionObserver(function(es){for(var i=0;i<es.length;i++){if(es[i].isIntersecting)go();else if(s){try{v.pause();}catch(e){}}}},{rootMargin:"100% 0px"}).observe(v);})();</script>
-      </div>
-    </section>
-
-    <!-- ============ STATS ============ -->
-    <section class="stats" id="stats">
-      <div class="stats__grid">
-        <div class="stat" data-reveal>
-          <p class="stat__value"><span class="stat__prefix">&pound;</span><span class="stat-num" data-count="18.25" data-decimals="2">18.25</span><span class="stat__suffix">/mo</span></p>
-          <p class="stat__label mono">PLANS FROM</p>
-        </div>
-        <div class="stat" data-reveal>
-          <p class="stat__value"><span class="stat-num" data-count="200">200</span><span class="stat__suffix">+</span></p>
-          <p class="stat__label mono">COMPUTERS UNDER OUR CARE</p>
-        </div>
-        <div class="stat" data-reveal>
-          <p class="stat__value"><span class="stat-num" data-count="26">26</span><span class="stat__suffix">+</span></p>
-          <p class="stat__label mono">DORSET AREAS COVERED</p>
-        </div>
-        <div class="stat" data-reveal>
-          <p class="stat__value"><span class="stat-num" data-count="365">365</span><span class="stat__suffix">days</span></p>
-          <p class="stat__label mono">COVERED EVERY YEAR</p>
-        </div>
+        <a href="/remote-support/" class="button secondary">See pricing &amp; start a fix</a>
       </div>
     </section>
 
@@ -1056,6 +1042,51 @@
       </div>
     </section>
 
+    <!-- ============ STATS ============ -->
+    <section class="stats" id="stats">
+      <div class="stats__grid">
+        <div class="stat" data-reveal>
+          <p class="stat__value"><span class="stat__prefix">&pound;</span><span class="stat-num" data-count="18.25" data-decimals="2">18.25</span><span class="stat__suffix">/mo</span></p>
+          <p class="stat__label mono">PLANS FROM</p>
+        </div>
+        <div class="stat" data-reveal>
+          <p class="stat__value"><span class="stat-num" data-count="200">200</span><span class="stat__suffix">+</span></p>
+          <p class="stat__label mono">COMPUTERS UNDER OUR CARE</p>
+        </div>
+        <div class="stat" data-reveal>
+          <p class="stat__value"><span class="stat-num" data-count="26">26</span><span class="stat__suffix">+</span></p>
+          <p class="stat__label mono">DORSET AREAS COVERED</p>
+        </div>
+        <div class="stat" data-reveal>
+          <p class="stat__value"><span class="stat-num" data-count="365">365</span><span class="stat__suffix">days</span></p>
+          <p class="stat__label mono">COVERED EVERY YEAR</p>
+        </div>
+      </div>
+    </section>
+
+
+    
+
+    
+
+    <!-- ============ DELL SPECIALISTS ============ -->
+    <section class="section section--alt" aria-labelledby="dell-home-title" id="dell">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// INDEPENDENT DELL SPECIALISTS</p>
+          <h2 class="section-title section-title--center" id="dell-home-title" data-title>Dorset&rsquo;s Dell people, for 30+ years<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>We&rsquo;ve been supplying, servicing and rescuing Dell laptops and desktops for homes and businesses since 1995. Independent Dell specialists &mdash; no call centres, no jargon, just the same friendly local faces who know these machines inside out.</p>
+        </div>
+        <div class="dell-chips" data-reveal style="justify-content:center">
+          <a href="/dell-remote-support/">Remote Dell support</a>
+          <a href="/dell-support-plans/">Servicing &amp; care plans</a>
+          <a href="/emergency-dell-repair-bournemouth/">Emergency repairs</a>
+          <a href="/dell-hardware/">Refurbished Dells from &pound;510</a>
+        </div>
+        <p style="text-align:center;margin-top:1.4rem" data-reveal><a class="text-link" href="/dell-it-support-dorset/">Visit the Dell support hub <span aria-hidden="true">&#8594;</span></a></p>
+      </div>
+    </section>
+
 <!-- ============ HOW IT WORKS ============ -->
     <section class="how" id="how">
       <p class="eyebrow eyebrow--center mono" data-reveal>/06 &mdash; GETTING STARTED</p>
@@ -1078,17 +1109,94 @@
         </li>
       </ol>
     </section>
-
-<!-- ============ REPAIRS ============ -->
-    <section class="repairs" id="repairs">
-      <div class="repairs__card" data-reveal>
-        <div class="course-scene" aria-hidden="true"><svg class="course-scene__svg" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><g class="cs-float"><rect x="90" y="38" width="220" height="170" rx="14" fill="#0b1d3a" stroke="#86b6e8" stroke-width="2"/><line x1="112" y1="62" x2="210" y2="62" stroke="rgba(125,170,220,.35)" stroke-width="4" stroke-linecap="round"/><line x1="112" y1="90" x2="196" y2="90" stroke="rgba(125,170,220,.35)" stroke-width="3" stroke-linecap="round"/><line x1="250" y1="90" x2="288" y2="90" stroke="#86b6e8" stroke-width="3" stroke-linecap="round"/><line x1="112" y1="110" x2="180" y2="110" stroke="rgba(125,170,220,.35)" stroke-width="3" stroke-linecap="round"/><line x1="256" y1="110" x2="288" y2="110" stroke="#86b6e8" stroke-width="3" stroke-linecap="round"/><line x1="112" y1="128" x2="288" y2="128" stroke="rgba(125,170,220,.35)" stroke-width="2"/><path d="M166 150 C166 141 154 137 147 143 C141 149 142 158 142 168 L142 192" fill="none" stroke="#86b6e8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M130 192 L172 192" fill="none" stroke="#86b6e8" stroke-width="4" stroke-linecap="round"/><path d="M132 168 L160 168" fill="none" stroke="#86b6e8" stroke-width="4" stroke-linecap="round"/><path d="M196 178 L207 190 L228 160" fill="none" stroke="#00ce1b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="232" cy="92" r="30" fill="#0a1f3d" stroke="#86b6e8" stroke-width="3"/><line x1="253" y1="113" x2="277" y2="137" stroke="#86b6e8" stroke-width="5" stroke-linecap="round"/><circle cx="232" cy="92" r="13" fill="none" stroke="rgba(29,151,227,.5)" stroke-width="2" class="nm-scan"/><circle cx="232" cy="92" r="3" fill="#1d97e3"/><circle cx="300" cy="48" r="4" fill="#00ce1b" class="nm-dot" style="--d:.4s"/><circle cx="238" cy="150" r="4" fill="#00ce1b" class="nm-dot" style="--d:.9s"/></g></svg></div>
-        <div style="flex:1">
-          <p class="eyebrow mono">// ONE-OFF FIXES &middot; HOW PRICING WORKS</p>
-          <h2 class="repairs__title">Not on a plan? We check the fault free, then quote before we fix.</h2>
-          <p class="lede">Slow laptop, virus clean-up, dead Wi&#8209;Fi or a PC that just won&rsquo;t start? A senior techie connects and <strong>checks the problem for free</strong>, then gives you a realistic quote: what needs doing, how long it&rsquo;ll take and the cost. Nothing is fixed until you&rsquo;ve agreed. Remote fixes <strong>from &pound;20</strong>, no subscription required. We never charge for a fix you haven&rsquo;t approved &mdash; and if it can&rsquo;t be done remotely, we&rsquo;ll collect it or visit, quoted first either way.</p>
+    <!-- ============ BUSINESS IT (M365 + security + managed IT, merged 25 Sep 2026) ============ -->
+    <section class="section section--alt" id="business-it" aria-label="Business IT, done properly">
+      <style>
+      #business-it .biz-grid{max-width:1180px;margin:1.6rem auto 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+      #business-it .biz-card{display:flex;flex-direction:column;gap:.6rem;padding:1.3rem 1.35rem;border-radius:16px;border:1px solid var(--line,rgba(125,170,220,.16));background:rgba(255,255,255,.03)}
+      #business-it .biz-tag{margin:0;font-size:.68rem;letter-spacing:.08em;color:var(--cyan-soft,#6cc4f5)}
+      #business-it .biz-card h3{margin:0;font-size:1.25rem;line-height:1.3}
+      #business-it .biz-card p,#business-it .biz-card li{margin:0;font-size:.93rem;line-height:1.6;color:var(--ink-2,#dfe9f7)}
+      #business-it .biz-card ul{margin:0;padding:0;list-style:none;display:grid;gap:.4rem}
+      #business-it .biz-card li{padding-left:1.35rem;position:relative}
+      #business-it .biz-card li::before{content:"\2713";position:absolute;left:0;color:#39d353;font-weight:700}
+      #business-it .biz-links{margin-top:auto !important;padding-top:.4rem;display:flex;flex-wrap:wrap;gap:.3rem .9rem}
+      #business-it .biz-links a{font-size:.88rem;font-weight:600;color:var(--cyan-soft,#6cc4f5);text-decoration:none}
+      #business-it .biz-links a:hover{text-decoration:underline}
+      #business-it .biz-cta{display:flex;flex-wrap:wrap;gap:.7rem;justify-content:center;margin-top:1.5rem}
+      @media(max-width:900px){#business-it .biz-grid{grid-template-columns:1fr}}
+      </style>
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// FOR BUSINESSES</p>
+          <h2 class="section-title section-title--center" data-title>Business IT, <em class="grad grad--cyan">done properly</em><span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Microsoft 365, security and managed IT under one friendly, predictable monthly service &mdash; from a local team you can actually phone.</p>
         </div>
-        <a href="/remote-support/" class="button secondary">See pricing &amp; start a fix</a>
+        <div class="biz-grid" data-stagger>
+          <article class="biz-card" id="m365">
+            <p class="biz-tag mono">MICROSOFT 365 &middot; SINCE 1995</p>
+            <h3>Microsoft 365, handled</h3>
+            <p>We&rsquo;ve supported Microsoft Office since 1995 and taught it for over ten years at our own Dorset Microsoft Education Resource Centre. Setup, migration, licensing, troubleshooting and training, managed from &pound;4.85 per user per month.</p>
+            <p class="biz-links"><a href="/microsoft-365-support/">Microsoft 365 support</a><a href="/outlook-problems/">Outlook problems &amp; fixes</a><a href="/how-to-secure-your-microsoft-365-account/">Secure your 365 account</a><a href="/which-microsoft-365-plan/">Which 365 plan?</a><a href="/how-to-use-microsoft-teams/">Teams, explained</a></p>
+          </article>
+          <article class="biz-card" id="security">
+            <p class="biz-tag mono">CYBERSECURITY</p>
+            <h3>Protected, every single day</h3>
+            <ul>
+              <li>Devices watched for viruses, malware and suspicious behaviour</li>
+              <li>Windows, browsers and apps kept up to date before holes are exploited</li>
+              <li>Phishing filtering, plus a real human to ask &ldquo;is this email safe?&rdquo;</li>
+              <li>Backups checked, passwords and MFA set up the painless way</li>
+            </ul>
+            <p class="biz-links"><a href="/cybersecurity-support/">How we protect home &amp; business customers</a></p>
+          </article>
+          <article class="biz-card" id="msp">
+            <p class="biz-tag mono">MANAGED IT</p>
+            <h3>Your local managed IT team</h3>
+            <ul>
+              <li>Proactive monitoring that catches issues before they cause downtime</li>
+              <li>Automatic, verified backups, quickly recoverable</li>
+              <li>Unlimited helpdesk from a real, familiar person</li>
+              <li>Honest advice and an IT roadmap that grows with you</li>
+            </ul>
+            <p class="biz-links"><a href="/business-it-support-subscriptions/">Explore managed IT</a><a href="/why-choose-365-techies/">Why choose us</a></p>
+          </article>
+        </div>
+        <p class="biz-cta" data-reveal><a class="button primary" href="/business-it-support-plans/">Business plans from &pound;24.38/month</a><a class="button secondary" href="tel:+441202775566">Call 01202 775566</a></p>
+      </div>
+    </section>
+
+
+    <!-- ============ 365 PC MANAGER - THE APP ============ -->
+    <section class="split-section" id="pc-manager" aria-label="365 PC Manager, our own app">
+      <div class="split-section__text">
+        <p class="eyebrow mono" data-reveal>// OUR OWN APP &mdash; 365 PC MANAGER</p>
+        <h2 class="section-title" data-title>The IT support company with its own app<span class="title-underline"></span></h2>
+        <p class="lede" data-reveal>365 PC Manager is our own free Windows app, digitally signed in our name. It shows your PC&rsquo;s health in plain English &mdash; drive, memory, protection, backup &mdash; with no fake errors and nothing to buy: the must-have app for any Windows PC. On a plan it keeps your computer up to date and secure &mdash; every six weeks every program is updated, not just Windows, the service is written up as a Service Report, and we keep an eye on the machines we look after between visits. We can&rsquo;t find another IT support company in Dorset that gives its customers anything like it.</p>
+        <ul class="feature-chips" data-stagger>
+          <li>Free, no sign-up, uninstall any time</li>
+          <li>Health score in plain English</li>
+          <li>Written Service Report every visit</li>
+          <li>Every program updated on a plan</li>
+          <li>Broadband speed kept visit to visit</li>
+          <li>Signed by 365 Techies Ltd</li>
+          <li>No scare tactics, ever</li>
+        </ul>
+        <a href="/free-pc-health-check/" class="text-link" data-reveal>Download 365 PC Manager &mdash; free <span aria-hidden="true">&#8594;</span></a>
+        <a href="/your-first-6-weekly-service/" class="text-link" data-reveal>What a Service Report looks like <span aria-hidden="true">&#8594;</span></a>
+        <p class="pcm-dash" data-reveal>Every plan also includes your own 365 dashboard: backups that really ran, health and protection per computer, your next visit, and every written Service Report in one place. Keeping an eye on a parent&rsquo;s PC? Our free <a href="/family/">Family View</a> does exactly that.</p>
+        <p class="pcm-dash mono" data-reveal><a href="/join/">See your dashboard &mdash; join free &#8594;</a> &middot; <a href="/next-gen-home-dashboards/">Home dashboards</a> &middot; <a href="/custom-wifi-dashboards/">Custom Wi-Fi dashboards</a></p>
+      </div>
+      <div class="split-section__visual">
+        <div class="scene-frame" data-reveal>
+          <video id="pcm-live" muted loop playsinline preload="none" width="880" height="640" poster="/images/pcm-app-live-poster.webp" aria-label="Screen recording of 365 PC Manager running on a Windows PC" style="display:block;width:100%;height:auto;border-radius:12px;background:#0b1d3a">
+            <source src="/images/pcm-app-live.mp4" type="video/mp4">
+          </video>
+          <span class="scene-frame__corner tl"></span><span class="scene-frame__corner tr"></span>
+          <span class="scene-frame__corner bl"></span><span class="scene-frame__corner br"></span>
+          <p class="scene-frame__label mono"><span class="rec-dot"></span> REAL SCREEN RECORDING &mdash; 365 PC MANAGER</p>
+        </div>
+        <script>(function(){var v=document.getElementById("pcm-live");if(!v)return;try{if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;}catch(e){}var s=false;function go(){s=true;v.play().catch(function(){});}if(!("IntersectionObserver" in window)){go();return;}new IntersectionObserver(function(es){for(var i=0;i<es.length;i++){if(es[i].isIntersecting)go();else if(s){try{v.pause();}catch(e){}}}},{rootMargin:"100% 0px"}).observe(v);})();</script>
       </div>
     </section>
 
@@ -1126,66 +1234,6 @@
           </div>
         </div>
       </div>
-    </section>
-
-
-    
-
-    
-
-    <!-- ============ DELL SPECIALISTS ============ -->
-    <section class="section section--alt" aria-labelledby="dell-home-title" id="dell">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// INDEPENDENT DELL SPECIALISTS</p>
-          <h2 class="section-title section-title--center" id="dell-home-title" data-title>Dorset&rsquo;s Dell people, for 30+ years<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>We&rsquo;ve been supplying, servicing and rescuing Dell laptops and desktops for homes and businesses since 1995. Independent Dell specialists &mdash; no call centres, no jargon, just the same friendly local faces who know these machines inside out.</p>
-        </div>
-        <div class="dell-chips" data-reveal style="justify-content:center">
-          <a href="/dell-remote-support/">Remote Dell support</a>
-          <a href="/dell-support-plans/">Servicing &amp; care plans</a>
-          <a href="/emergency-dell-repair-bournemouth/">Emergency repairs</a>
-          <a href="/dell-hardware/">Refurbished Dells from &pound;510</a>
-        </div>
-        <p style="text-align:center;margin-top:1.4rem" data-reveal><a class="text-link" href="/dell-it-support-dorset/">Visit the Dell support hub <span aria-hidden="true">&#8594;</span></a></p>
-      </div>
-    </section>
-
-    
-
-    <!-- ============ MICROSOFT 365 ============ -->
-    <section class="m365" id="m365">
-      <div class="m365__inner">
-        <div>
-          <p class="eyebrow mono" data-reveal>/04 &mdash; CLOUD &amp; PRODUCTIVITY &middot; SINCE 1995</p>
-          <h2 class="section-title" data-title>Microsoft 365, handled<span class="title-underline"></span></h2>
-          <p class="lede" data-reveal>We&rsquo;ve supported Microsoft Office since <strong>1995</strong>, back when it arrived on floppy disks and email crawled down a dial-up line. We <strong>taught it for over ten years</strong> at our own Dorset Microsoft Education Resource Centre and in local schools and colleges, from Bournemouth &amp; Poole College to Bournemouth School for Girls. The team includes Microsoft Office Specialist and BCS&nbsp;ECDL certified teachers. Setup, migration, licensing, troubleshooting and training. Whether it&rsquo;s one mailbox at home or a whole team in the cloud, we keep Microsoft&nbsp;365 working for you, not the other way round.</p>
-          <p class="mono" data-reveal style="font-size:0.85rem;letter-spacing:.05em;color:var(--faint);margin:.9rem 0 0">// 30 YEARS OF OFFICE &middot; 10+ YEARS TEACHING IT &middot; MICROSOFT OFFICE SPECIALIST CERTIFIED &middot; MANAGED FROM &pound;4.85/MO PER USER</p>
-          <p data-reveal style="margin:1rem 0 0;font-size:0.95rem"><a href="/microsoft-365-support/" class="text-link">Microsoft 365 support</a> &nbsp;&middot;&nbsp; <a href="/outlook-problems/" class="text-link">Outlook problems &amp; fixes</a> &nbsp;&middot;&nbsp; <a href="/how-to-secure-your-microsoft-365-account/" class="text-link">Secure your 365 account</a> &nbsp;&middot;&nbsp; <a href="/which-microsoft-365-plan/" class="text-link">Which 365 plan?</a> &nbsp;&middot;&nbsp; <a href="/how-to-use-microsoft-teams/" class="text-link">Teams, explained</a></p><div class="course-scene course-scene--band" aria-hidden="true"><svg class="course-scene__svg" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><circle cx="200" cy="84" r="50" fill="none" stroke="rgba(29,151,227,.5)" stroke-width="2" class="nm-scan"/><path d="M176 108 C150 122 104 132 84 150" fill="none" stroke="#86b6e8" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 8" class="nm-link"/><path d="M200 114 C200 130 200 142 200 156" fill="none" stroke="#86b6e8" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 8" class="nm-link"/><path d="M224 108 C250 122 292 132 311 150" fill="none" stroke="#86b6e8" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 8" class="nm-link"/><g class="cs-float"><path d="M158 112 a20 20 0 0 1 -2 -40 a26 26 0 0 1 46 -14 a24 24 0 0 1 40 14 a18 18 0 0 1 -2 40 Z" fill="#0b1d3a" stroke="#86b6e8" stroke-width="2" stroke-linejoin="round"/><circle cx="200" cy="112" r="4" fill="#00ce1b" class="nm-dot" style="--d:.4s"/></g><rect x="50" y="152" width="56" height="38" rx="6" fill="#0a1f3d" stroke="rgba(125,170,220,.35)" stroke-width="2"/><path d="M53 156 L78 174 L103 156" fill="none" stroke="#86b6e8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="172" y="156" width="56" height="34" rx="8" fill="#0a1f3d" stroke="rgba(125,170,220,.35)" stroke-width="2"/><path d="M186 190 L184 204 L200 190" fill="none" stroke="rgba(125,170,220,.35)" stroke-width="2" stroke-linejoin="round"/><path d="M186 168 h28" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><path d="M186 178 h18" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><rect x="288" y="150" width="46" height="54" rx="4" fill="#0a1f3d" stroke="rgba(125,170,220,.35)" stroke-width="2"/><path d="M298 166 h26" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><path d="M298 176 h26" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><path d="M298 186 h18" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><circle cx="84" cy="150" r="3" fill="#1d97e3" class="nm-node"/><circle cx="200" cy="156" r="3" fill="#1d97e3" class="nm-node"/><circle cx="311" cy="150" r="3" fill="#1d97e3" class="nm-node"/></svg></div>
-        </div>
-        <ul class="m365__apps mono" data-stagger>
-          <li>Outlook</li><li>Teams</li><li>OneDrive</li><li>SharePoint</li>
-          <li>Word</li><li>Excel</li><li>Defender</li><li>Intune</li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- ============ CYBERSECURITY ============ -->
-    <section class="security" id="security">
-      <div class="security__glow" aria-hidden="true"></div>
-      <p class="eyebrow eyebrow--center mono" data-reveal>/05 &mdash; CYBERSECURITY</p>
-      <h2 class="section-title section-title--center" data-title>Protected, every single day<span class="title-underline title-underline--center"></span></h2>
-      <p class="lede lede--center" data-reveal>Every plan includes always-on protection. We watch for threats, patch the holes and check the backups — so a dodgy email never becomes a disaster.</p>
-      <p class="security__status mono" data-reveal><span class="pulse-dot pulse-dot--green"></span> SHIELD STATUS: ACTIVE</p><div class="course-scene course-scene--band" aria-hidden="true"><svg class="course-scene__svg" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><g class="cs-float"><circle cx="200" cy="120" r="72" fill="#0b1d3a" stroke="#86b6e8" stroke-width="2"/><circle cx="200" cy="120" r="48" fill="none" stroke="rgba(125,170,220,.35)" stroke-width="2"/><circle cx="200" cy="120" r="24" fill="none" stroke="rgba(125,170,220,.35)" stroke-width="2"/><path d="M128 120 h144" stroke="rgba(125,170,220,.35)" stroke-width="2" stroke-linecap="round"/><path d="M200 48 v144" stroke="rgba(125,170,220,.35)" stroke-width="2" stroke-linecap="round"/><path d="M200 120 L254 78" stroke="#1d97e3" stroke-width="2" stroke-linecap="round"/><circle cx="200" cy="120" r="3" fill="#1d97e3"/><path d="M234 144 L252 144 L252 152 C252 158 247 161 243 163 C239 161 234 158 234 152 Z" fill="#0a1f3d" stroke="#86b6e8" stroke-width="2" stroke-linejoin="round"/></g><circle cx="243" cy="152" r="14" fill="none" stroke="rgba(29,151,227,.5)" stroke-width="2" class="nm-scan"/><circle cx="200" cy="206" r="4" fill="#00ce1b" class="nm-dot" style="--d:.4s"/></svg></div>
-      <ul class="security-grid" data-stagger>
-        <li><h3>Threat monitoring</h3><p>Devices watched around the clock for viruses, malware and suspicious behaviour.</p></li>
-        <li><h3>Patch management</h3><p>Windows, browsers and apps kept up to date before vulnerabilities are exploited.</p></li>
-        <li><h3>Email security</h3><p>Phishing and scam filtering — plus a real human to ask: &ldquo;is this email safe?&rdquo;</p></li>
-        <li><h3>Backup checks</h3><p>Backups verified regularly, because a backup you&rsquo;ve never tested isn&rsquo;t a backup.</p></li>
-        <li><h3>Passwords &amp; MFA</h3><p>Password managers and multi-factor authentication set up the painless way.</p></li>
-        <li><h3>Security reports</h3><p>A plain-English monthly health report. Know exactly what we blocked and fixed.</p></li>
-      </ul>
-      <p style="text-align:center;margin-top:1.6rem" data-reveal><a class="text-link" href="/cybersecurity-support/">How we protect home &amp; business customers <span aria-hidden="true">&#8594;</span></a></p>
     </section>
 
     
@@ -1245,30 +1293,6 @@
         </div>
       </div>
       <p style="text-align:center;margin-top:1.6rem" data-reveal><a class="text-link" href="/services/">See all our services <span aria-hidden="true">&#8594;</span></a></p>
-    </section>
-
-
-    <!-- ============ LEADING MSP ============ -->
-    <section class="section section--alt" aria-label="Leading managed service provider" id="msp">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// LEADING MANAGED SERVICE PROVIDER</p>
-          <h2 class="section-title section-title--center" data-title>Your local, leading MSP<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>We&rsquo;re a leading <strong>Managed Service Provider (MSP)</strong> &mdash; looking after the technology for homes and businesses across Dorset so you don&rsquo;t have to. From proactive monitoring and cybersecurity to backups, cloud and IT strategy, we manage it all under one friendly, predictable monthly service.</p><div class="course-scene course-scene--band" aria-hidden="true"><svg class="course-scene__svg" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><circle cx="200" cy="57" r="36" fill="none" stroke="rgba(29,151,227,.5)" stroke-width="2" class="nm-scan"/><path d="M182 70 C150 90 110 100 92 124" fill="none" stroke="#86b6e8" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 8" class="nm-link"/><path d="M200 72 L200 118" fill="none" stroke="#86b6e8" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 8" class="nm-link"/><path d="M218 70 C250 90 292 100 314 122" fill="none" stroke="#86b6e8" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 8" class="nm-link"/><path d="M52 158 h68 l10 8 h-88 Z" fill="#0b1d3a" stroke="#86b6e8" stroke-width="2" stroke-linejoin="round"/><rect x="62" y="126" width="48" height="32" rx="3" fill="#0a1f3d" stroke="#86b6e8" stroke-width="2"/><path d="M76 141 l6 7 l12 -15" fill="none" stroke="#00ce1b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="176" y="120" width="48" height="34" rx="3" fill="#0a1f3d" stroke="#86b6e8" stroke-width="2"/><path d="M200 154 v10 M186 164 h28" fill="none" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><path d="M190 136 l6 7 l12 -15" fill="none" stroke="#00ce1b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="298" y="120" width="30" height="56" rx="6" fill="#0a1f3d" stroke="#86b6e8" stroke-width="2"/><path d="M307 128 h12" fill="none" stroke="rgba(125,170,220,.35)" stroke-width="2" stroke-linecap="round"/><path d="M309 168 h10" fill="none" stroke="rgba(125,170,220,.35)" stroke-width="2" stroke-linecap="round"/><path d="M305 145 l5 6 l11 -14" fill="none" stroke="#00ce1b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><g class="cs-float"><path d="M178 72 C166 72 164 60 174 58 C172 47 189 44 196 51 C202 42 219 45 220 58 C232 57 234 72 223 72 Z" fill="#0b1d3a" stroke="#86b6e8" stroke-width="2" stroke-linejoin="round"/><circle cx="214" cy="50" r="3.5" fill="#00ce1b" class="nm-dot" style="--d:.4s"/></g></svg></div>
-        </div>
-        <ul class="security-grid" data-stagger>
-          <li><h3>Proactive monitoring</h3><p>We watch your systems and catch issues before they cause downtime &mdash; prevention, not just cure.</p></li>
-          <li><h3>Managed cybersecurity</h3><p>Layered, always-on protection with Malwarebytes Premium, MFA, patching and monitoring.</p></li>
-          <li><h3>Backup &amp; recovery</h3><p>Automatic, verified backups so your data is always safe and quickly recoverable.</p></li>
-          <li><h3>Microsoft 365 &amp; cloud</h3><p>Fully managed email, Teams, files and licensing &mdash; kept secure and running smoothly.</p></li>
-          <li><h3>Unlimited helpdesk</h3><p>Friendly, fast remote support from a real, familiar person whenever you need one.</p></li>
-          <li><h3>IT strategy &amp; planning</h3><p>Honest advice and a technology roadmap that grows with your home or business.</p></li>
-        </ul>
-        <p style="text-align:center;margin-top:2.2rem" data-reveal>
-          <a href="/business-it-support-subscriptions/" class="button primary button--lg">Explore Managed IT</a>
-          <a href="/why-choose-365-techies/" class="button secondary button--lg">Why Choose Us</a>
-        </p>
-      </div>
     </section>
 
     <!-- ============ OUR PROMISE ============ -->
@@ -1385,56 +1409,6 @@
         </details>
       </div>
     </section>
-
-    
-
-    <!-- ============ FINAL CTA ============ -->
-    <section class="section section--alt" aria-label="Your 365 dashboard" id="dashboard">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// INCLUDED WITH EVERY PLAN</p>
-          <h2 class="section-title section-title--center" data-title>Your own dashboard, not another login you never use<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Every plan includes your own 365 dashboard &mdash; one screen that answers &ldquo;is everything actually all right?&rdquo; without you having to ask. Home or business, arranged however suits you.</p>
-        </div>
-        <ul class="feature-chips" data-stagger style="justify-content:center">
-          <li>Backups that really ran &mdash; not just &ldquo;configured&rdquo;</li>
-          <li>Health, storage &amp; protection per computer</li>
-          <li>Your next visit &mdash; move or cancel it yourself</li>
-          <li>Every written Service Report in one place</li>
-          <li>Saved room-by-room Wi-Fi surveys</li>
-        </ul>
-        <p class="lede lede--center" data-reveal style="margin-top:1.6rem"><strong>365 PC Manager is here</strong> &mdash; a free little Windows app that shows your PC&rsquo;s health at a glance, and can test your broadband while it&rsquo;s at it. Honest, plain English, no fake errors and no scare tactics &mdash; made by a real Dorset family firm you can actually phone, and digitally signed in our name. Perfect for your own PC, or keeping a quiet eye on a parent&rsquo;s with our free <a href="/family/">Family View</a>.</p>
-        <p style="text-align:center;margin-top:1rem" data-reveal>
-          <a class="text-link" href="/join/">See your dashboard &mdash; join free <span aria-hidden="true">&#8594;</span></a>&ensp;&middot;&ensp;
-          <a class="text-link" href="/free-pc-health-check/">Download 365 PC Manager &mdash; free <span aria-hidden="true">&#8594;</span></a>
-        </p>
-        <p class="eyebrow eyebrow--center mono" style="margin-top:1.2rem" data-reveal>ALSO: <a href="/next-gen-home-dashboards/">HOME DASHBOARDS</a> &middot; <a href="/custom-wifi-dashboards/">CUSTOM WI-FI DASHBOARDS</a></p>
-      </div>
-    </section>
-<style>
-/* 1-2-3-5 columns, never 4 - see LAYOUT note in dashboard_promo.py */
-.dbp__grid{display:grid;grid-template-columns:1fr;gap:.7rem;max-width:1160px;margin:0 auto}
-@media (min-width:520px){.dbp__grid{grid-template-columns:repeat(2,1fr)}}
-@media (min-width:760px){.dbp__grid{grid-template-columns:repeat(3,1fr)}}
-@media (min-width:1060px){.dbp__grid{grid-template-columns:repeat(5,1fr)}}
-.dbp__card{background:var(--panel,#0d1530);border:1px solid var(--line,#2a3b63);border-radius:13px;padding:1rem 1.05rem;transition:border-color .3s,transform .3s}
-.dbp__card:hover{border-color:var(--cyan,#1d97e3);transform:translateY(-2px)}
-.dbp__ico{font-size:1.4rem;line-height:1;display:inline-block;margin-bottom:.45rem}
-.dbp__card h3{margin:0 0 .3rem;font-size:0.95rem;color:var(--white,#f0f5fc)}
-.dbp__card p{margin:0;font-size:0.9rem;line-height:1.55;color:var(--soft,#86b6e8)}
-.dbp__live{max-width:900px;margin:1.5rem auto 0;padding:.9rem 1.1rem;border-left:3px solid var(--cyan,#1d97e3);background:var(--panel,#0d1530);border-radius:0 10px 10px 0;font-size:0.9rem;line-height:1.65;color:var(--soft,#86b6e8)}
-.dbp__live strong{color:var(--white,#f0f5fc)}
-/* These two carry the live/sample distinction the whole product rests on, so they
-   have to be READABLE, not merely decorative. At .62rem on a .16-alpha tint the
-   live tag measured 4.53:1 - over AA by 0.03, which is no margin at all. Bigger
-   type and a lighter tint give it real headroom. Re-measure if either changes. */
-.dbp__tag{display:inline-block;font-family:var(--mono,monospace);font-size:0.78rem;letter-spacing:.08em;text-transform:uppercase;padding:.1rem .42rem;border-radius:4px;vertical-align:baseline}
-.dbp__tag--live{background:rgba(29,151,227,.1);color:#6fc2f5;border:1px solid rgba(29,151,227,.45)}
-.dbp__tag--sample{background:rgba(159,181,211,.1);color:#b9cbe2;border:1px solid rgba(159,181,211,.34)}
-.dbp__cta{text-align:center;margin:1.4rem auto 0}
-.dbp__cta .mono{display:block;font-size:0.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mut,#9fb5d3);margin-top:.55rem}
-@media (prefers-reduced-motion:reduce){.dbp__card:hover{transform:none}}
-</style>
 
 
 
