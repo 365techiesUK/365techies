@@ -175,7 +175,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "114"   # bumped 2026-09-14 (2nd): accessibility audit (tooltip box, breadcrumb contrast, focus ring, reveal on focus, clip). Earlier: v113 2026-09-14: performance audit (scenes paused off screen, content-visibility on phones, self-hosted body fonts, compositor glows). Earlier: v112 2026-09-13 (9th): inline form messages + jargon-term hint (UX audit item 6). Earlier: v111 2026-09-13 (8th): the phone cookie banner as one strip (UX audit item 4). Earlier: v110 2026-09-13 (7th): 12px floor for readable phone text (UX audit item 3). Earlier: v109 2026-09-13 (6th): tap-target padding on breadcrumb/towns/byline links (UX audit item 2); also retires v108, whose URL was requested before the file landed. Earlier: v108 2026-09-13 (5th): phone heroes under one screen (UX audit item 1). Earlier: v107 2026-09-13 (4th): the hero byline (.page-hero__byline). Earlier: v106 2026-09-13 (3rd): metric-matched local fallback fonts (size-adjust/ascent/descent overrides) so the web-font swap moves nothing; the lab home CLS of 0.169 was entirely the swap (SEO audit item 6). Earlier: v105 2026-09-13 (2nd): the phone cookie banner pins under the header, not over the hero Call button. Earlier: v104 2026-09-13: the Text size pill is an icon at bottom-right on phones (nav audit: it covered the hero Call button). Earlier: v103 2026-09-07: scam alert in the strip + homepage band, strip re-timed to 85s. Earlier: v102 2026-09-05 (3rd): mobile-menu contact links lifted to a 44px tap target. Earlier the same day: v101 = the >=1960 header expand moved to 2040 so "Contact" is never clipped. Earlier the same day: v100 = the A+ text steps hand the nav to the hamburger instead of clipping it (nav audit). Earlier: v99 2026-09-02: hero console card no longer tilted. Earlier: v98   # bumped 2026-09-02 again: v97 was poisoned in the SiteGround proxy by a pre-completion page load (old CSS cached under the new URL for browsers; curl variants showed MISS). NEVER load a page carrying a new ?v= until the deploy run is completed+success. v97 = 2026-09-02 (live-map launcher + overlay).   # bumped 2026-09-02 (Bournemouth365 live-map launcher + overlay). Earlier: v96 2026-08-27 (skip-link could not be outgrown by the a11y ladder). Earlier: v95 2026-08-19 (proof bar replaces the duplicate reviews teaser). Earlier: v94 2026-08-17 (status strip rebuild). Earlier the same day: v88 was poisoned in the SiteGround proxy by a pre-deploy probe (see deploy-hash-sync-blindspot); NEVER request a new ?v= URL before the deploy that ships it is confirmed complete
+CSSV = "115"   # bumped 2026-09-25: phone footer folds into accordions + badge grid (it was 8,316 px at 390 wide). Earlier: v114 2026-09-14 (2nd): accessibility audit (tooltip box, breadcrumb contrast, focus ring, reveal on focus, clip). Earlier: v113 2026-09-14: performance audit (scenes paused off screen, content-visibility on phones, self-hosted body fonts, compositor glows). Earlier: v112 2026-09-13 (9th): inline form messages + jargon-term hint (UX audit item 6). Earlier: v111 2026-09-13 (8th): the phone cookie banner as one strip (UX audit item 4). Earlier: v110 2026-09-13 (7th): 12px floor for readable phone text (UX audit item 3). Earlier: v109 2026-09-13 (6th): tap-target padding on breadcrumb/towns/byline links (UX audit item 2); also retires v108, whose URL was requested before the file landed. Earlier: v108 2026-09-13 (5th): phone heroes under one screen (UX audit item 1). Earlier: v107 2026-09-13 (4th): the hero byline (.page-hero__byline). Earlier: v106 2026-09-13 (3rd): metric-matched local fallback fonts (size-adjust/ascent/descent overrides) so the web-font swap moves nothing; the lab home CLS of 0.169 was entirely the swap (SEO audit item 6). Earlier: v105 2026-09-13 (2nd): the phone cookie banner pins under the header, not over the hero Call button. Earlier: v104 2026-09-13: the Text size pill is an icon at bottom-right on phones (nav audit: it covered the hero Call button). Earlier: v103 2026-09-07: scam alert in the strip + homepage band, strip re-timed to 85s. Earlier: v102 2026-09-05 (3rd): mobile-menu contact links lifted to a 44px tap target. Earlier the same day: v101 = the >=1960 header expand moved to 2040 so "Contact" is never clipped. Earlier the same day: v100 = the A+ text steps hand the nav to the hamburger instead of clipping it (nav audit). Earlier: v99 2026-09-02: hero console card no longer tilted. Earlier: v98   # bumped 2026-09-02 again: v97 was poisoned in the SiteGround proxy by a pre-completion page load (old CSS cached under the new URL for browsers; curl variants showed MISS). NEVER load a page carrying a new ?v= until the deploy run is completed+success. v97 = 2026-09-02 (live-map launcher + overlay).   # bumped 2026-09-02 (Bournemouth365 live-map launcher + overlay). Earlier: v96 2026-08-27 (skip-link could not be outgrown by the a11y ladder). Earlier: v95 2026-08-19 (proof bar replaces the duplicate reviews teaser). Earlier: v94 2026-08-17 (status strip rebuild). Earlier the same day: v88 was poisoned in the SiteGround proxy by a pre-deploy probe (see deploy-hash-sync-blindspot); NEVER request a new ?v= URL before the deploy that ships it is confirmed complete
 HERITAGE_DIMS = {'heritage-01.jpg': (1400, 787), 'heritage-02.jpg': (787, 1400), 'heritage-03.jpg': (1400, 787), 'heritage-04.jpg': (1400, 787), 'heritage-05.jpg': (787, 1400), 'heritage-07.jpg': (1400, 787), 'heritage-kinson.jpg': (1200, 710), 'heritage-moordown.jpg': (1400, 788), 'heritage-stock.jpg': (1400, 788), 'heritage-storefront.jpg': (1024, 683)}
 try:
     from hero_scenes import SCENES as HERO_SCENES
@@ -701,7 +701,8 @@ def affiliate_block(creative_id, w, h, lead=""):
 
 FOOTER = '''  <footer class="site-footer">
     <div class="footer-areas">
-      <p class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</p>
+      <details class="footer-fold" open>
+      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>
@@ -727,6 +728,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/it-support-southampton/">Southampton</a>
         <a class="footer-areas__all" href="/areas-covered/">View all areas &#8594;</a>
       </nav>
+      </details>
     </div>
     <div class="site-footer__grid">
       <div class="site-footer__brand">
@@ -755,7 +757,9 @@ FOOTER = '''  <footer class="site-footer">
         </div>
       </div>
       <nav aria-label="Support links">
-        <p class="site-footer__head mono">SUPPORT</p>
+        <details class="footer-fold" open>
+        <summary class="site-footer__head mono">SUPPORT</summary>
+        <div class="footer-fold__body">
         <a href="/join/">Join the 365 Club &mdash; Free</a>
         <a href="/book-service/">Book a Service</a>
         <a href="/book-a-collection/">Book a Collection</a>
@@ -783,9 +787,13 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/pricing/">Pricing</a>
         <a href="/quick-quote/">Quick Quote</a>
         <a href="/free-it-health-check/">Free IT Health Check</a>
+        </div>
+        </details>
       </nav>
       <nav aria-label="Free tools links">
-        <p class="site-footer__head mono">FREE TOOLS</p>
+        <details class="footer-fold" open>
+        <summary class="site-footer__head mono">FREE TOOLS</summary>
+        <div class="footer-fold__body">
         <a href="/free-courses/">Free Courses</a>
         <a href="/free-tools/">All Free Tools &#8594;</a>
         <a href="/free-pc-health-check/">365 PC Manager app</a>
@@ -811,9 +819,13 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/spot-the-scam/">Spot the Scam Quiz</a>
         <a href="/is-it-down/">Is It Down? Status Checker</a>
         <a href="/computer-spec-checker/">PC Hardware Checker</a>
+        </div>
+        </details>
       </nav>
       <nav aria-label="Services links">
-        <p class="site-footer__head mono">SERVICES</p>
+        <details class="footer-fold" open>
+        <summary class="site-footer__head mono">SERVICES</summary>
+        <div class="footer-fold__body">
         <a href="/services/">All Services</a>
         <a href="/it-support-by-industry/">IT Support by Industry</a>
         <p class="site-footer__subhead mono">Support &amp; security</p>
@@ -881,9 +893,13 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/it-support-for-manufacturing/">Manufacturing &amp; Engineering</a>
         <a href="/it-support-for-nurseries-dorset/">Nurseries &amp; Childcare</a>
         <a href="/it-support-for-churches-faith/">Churches &amp; Faith Groups</a>
+        </div>
+        </details>
       </nav>
       <nav aria-label="Who we help links">
-        <p class="site-footer__head mono">WHO WE HELP</p>
+        <details class="footer-fold" open>
+        <summary class="site-footer__head mono">WHO WE HELP</summary>
+        <div class="footer-fold__body">
         <a href="/family-it-support/">Families</a>
         <a href="/it-support-for-retired-users/">Retired Users</a>
         <a href="/it-support-for-disabled-people/">Disabled People</a>
@@ -892,9 +908,13 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
         <a href="/it-support-for-sole-traders/">Sole Traders</a>
         <a href="/small-business-it-support/">Small Businesses</a>
+        </div>
+        </details>
       </nav>
       <nav aria-label="Company links">
-        <p class="site-footer__head mono">COMPANY</p>
+        <details class="footer-fold" open>
+        <summary class="site-footer__head mono">COMPANY</summary>
+        <div class="footer-fold__body">
         <a href="/about/">About</a>
         <a href="/meet-the-team/">Meet the Team</a>
         <a href="/why-choose-365-techies/">Why Choose Us</a>
@@ -913,6 +933,8 @@ FOOTER = '''  <footer class="site-footer">
         <a href="tel:+441202775566">01202 775566</a>
         <a href="sms:+447520615332">Text only: 07520 615332</a>
         <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a>
+        </div>
+        </details>
       </nav>
     </div>
     <nav class="site-footer__legal-links mono" aria-label="Legal and policies">
@@ -925,6 +947,28 @@ FOOTER = '''  <footer class="site-footer">
       <a href="/system-status/">System Status</a>
     </nav>
     <p class="site-footer__legal mono">&copy; 2026 365 TECHIES LIMITED &middot; REGISTERED IN ENGLAND &amp; WALES 11073501 &middot; ALL SYSTEMS OPERATIONAL <span class="pulse-dot pulse-dot--green"></span></p>
+    <script>
+    /* Below 768px the areas list and the five link columns fold into accordions. They ship open, so with
+       no script (and to crawlers) every link is in plain view; this closes them on phones only. From 768px
+       up they stay open and each summary is inert: out of the tab order, a click on it does nothing, and
+       CSS draws it as the plain column heading it replaced, so the desktop footer is unchanged. */
+    (function () {
+      var f = document.currentScript.parentNode, m = matchMedia("(max-width: 767px)"),
+          d = f.querySelectorAll("details.footer-fold");
+      function fold() {
+        for (var i = 0; i < d.length; i++) {
+          d[i].open = !m.matches;
+          if (m.matches) d[i].firstElementChild.removeAttribute("tabindex");
+          else d[i].firstElementChild.setAttribute("tabindex", "-1");
+        }
+      }
+      fold();
+      if (m.addEventListener) m.addEventListener("change", fold); else if (m.addListener) m.addListener(fold);
+      f.addEventListener("click", function (e) {
+        if (!m.matches && e.target.closest && e.target.closest(".footer-fold > summary")) e.preventDefault();
+      });
+    })();
+    </script>
   </footer>
 '''
 
