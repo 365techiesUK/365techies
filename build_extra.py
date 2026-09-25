@@ -24,6 +24,7 @@ from new_pages_data import NEW_PAGES
 from booking_app import BOOKING_APP   # our own booking UI (replaces the SimplyBook widget)
 from signal_area_data import SIGNAL_AREAS as _SIGA  # dated counts for the Dataset schema on the signal page
 from at_a_glance_data import AT_A_GLANCE
+from keep_bands_data import KEEP_BANDS   # 'stop it happening again' band words, per page (25 Sep 2026)
 from projects_data import CCB_RELATIONSHIP, jt_html   # the journeys, one source of truth
 from latitude_pages_data import LATITUDE_PAGES, LATITUDE_COMPARE_TABLES
 from optiplex_pages_data import OPTIPLEX_PAGES, OPTIPLEX_COMPARE_TABLES
@@ -1372,6 +1373,7 @@ def wifi_optimizer():
         </div>
       </div>
     </section>''',
+      bp.keep_band(KEEP_BANDS["wifi-signal-test"]),
       '''    <section class="section" aria-label="Signal Hunter - work from anywhere" id="nomad">
       <div class="wrap">
         <div class="section-head">
@@ -14414,6 +14416,7 @@ def pc_benchmark():
         </div>
       </div>
     </section>''',
+      bp.keep_band(dict(KEEP_BANDS["pc-benchmark"], alt=False)),
       faq_html(faqs),
       tools_strip(["pcmapp", "gpubench", "speccheck", "pcbuild"], title="More free computer check-ups", alt=False),
       cta("Not happy with your score?",
@@ -22223,6 +22226,13 @@ def build_new_page(d):
     _ff = _fix_flow_for(d)
     if _ff and len(_blocks) > 1:
         _blocks.insert(1, _ff)   # right after the first section, before the at-a-glance table and the SOS band
+    _kb = KEEP_BANDS.get(d['slug'])
+    if _kb and len(_blocks) > 1:
+        if _ff:
+            _blocks.insert(2, bp.keep_band(_kb))   # straight after the flow: fixed or stuck, this is where they are
+        else:   # no flow: after the page's own fixes, just before its closing section
+            _last = f'id="s{len(d["sections"])}"'
+            _blocks.insert(next((i for i, b in enumerate(_blocks) if _last in b), len(_blocks)), bp.keep_band(_kb))
     _an = bp.apple_notice_for(d['slug'])   # Outlook pages: 'Windows PCs only' strip between section 1 and the flow
     if _an and len(_blocks) > 1: _blocks.insert(1, _an)
     sections = "\n".join(_blocks)

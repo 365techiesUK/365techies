@@ -3456,6 +3456,146 @@ def _ff_first_sentences(html_, n=2, cap=300):
     return out
 
 
+# ---- "Stop it happening again" band (25 Sep 2026) --------------------------------------------------------------
+# Owner: recommend proper servicing on the busiest symptom and tool pages - kept up to date for the security
+# threats AI is bringing, and kept running at its best. One design for every page; the words come from
+# keep_bands_data.KEEP_BANDS. Rules: the quote is the NCSC's own key judgement, verbatim and linked; the AI line is
+# the one already on /free-pc-health-check/; plan lines are what the plan pages and the page itself already say;
+# prices are the real ones; the app is never called an antivirus and never claimed to check printers or licences.
+KEEP_BAND_STYLE = r"""      <style>
+      .kb{background:linear-gradient(180deg,rgba(29,151,227,.07),rgba(29,151,227,0) 70%);border-top:1px solid rgba(125,170,220,.14)}
+      .kb .kb-grid{max-width:1120px;margin:1.5rem auto 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem;align-items:stretch}
+      .kb .kb-card{padding:1.25rem 1.35rem;border-radius:16px;border:1px solid var(--line,rgba(125,170,220,.16));background:rgba(255,255,255,.03);display:flex;flex-direction:column;gap:.65rem}
+      .kb .kb-q{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:1rem 1.6rem;border-color:rgba(231,76,60,.35);background:linear-gradient(160deg,rgba(231,76,60,.12),rgba(7,13,34,.35) 75%)}
+      .kb .kb-q__l{display:flex;flex-direction:column;gap:.6rem}
+      .kb .kb-plan{border-color:rgba(46,204,113,.38);background:linear-gradient(165deg,rgba(46,204,113,.11),rgba(255,255,255,.02) 60%)}
+      .kb .kb-app{border-color:rgba(108,196,245,.42);background:linear-gradient(165deg,rgba(29,151,227,.13),rgba(255,255,255,.02) 60%)}
+      .kb .kb-tag{margin:0;font-family:var(--font-mono,monospace);font-size:.68rem;letter-spacing:.08em;color:var(--cyan-soft,#6cc4f5)}
+      .kb .kb-q .kb-tag{color:#ff8b7c}
+      .kb .kb-plan .kb-tag{color:#5fe39a}
+      .kb .kb-card h3{margin:0;font-size:1.2rem;line-height:1.3}
+      .kb .kb-ai{margin:0;font-size:1.12rem;line-height:1.45;font-weight:700;color:var(--ink,#eaf4ff)}
+      .kb .kb-ncsc{margin:0;font-size:.92rem;line-height:1.6;color:var(--ink-2,#dfe9f7)}
+      .kb .kb-ncsc q{color:#ffd2cb}
+      .kb .kb-why{margin:0;padding-top:.6rem;border-top:1px solid rgba(255,255,255,.08);font-size:.88rem;line-height:1.6;color:var(--ink-2,#dfe9f7)}
+      .kb .kb-src{margin:auto 0 0;font-size:.74rem;line-height:1.5;color:var(--muted,#9fb5d3)}
+      .kb .kb-doors{list-style:none;margin:0;padding:0;display:grid;gap:.5rem;align-content:start}
+      .kb .kb-doors li{padding:.7rem .85rem;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:rgba(7,13,34,.4)}
+      .kb .kb-doors b{display:block;font-size:.9rem;line-height:1.35}
+      .kb .kb-doors span{display:block;margin-top:.15rem;font-size:.8rem;line-height:1.5;color:var(--muted,#9fb5d3)}
+      .kb .kb-doors i{font-style:normal}
+      .kb .kb-doors em{font-style:normal;font-weight:600;color:var(--ink-2,#dfe9f7)}
+      .kb .kb-list{list-style:none;margin:0;padding:0;display:grid;gap:.45rem;font-size:.9rem;line-height:1.5;color:var(--ink-2,#dfe9f7)}
+      .kb .kb-list li{padding-left:1.35rem;position:relative}
+      .kb .kb-list li::before{content:"\2713";position:absolute;left:0;top:0;font-weight:700;color:var(--cyan-soft,#6cc4f5)}
+      .kb .kb-plan .kb-list li::before{color:#5fe39a}
+      .kb .kb-price{margin:0;font-size:.92rem;line-height:1.5;color:var(--ink-2,#dfe9f7)}
+      .kb .kb-price b{font-size:1.2rem;color:var(--ink,#eaf4ff);font-variant-numeric:tabular-nums}
+      .kb .kb-fine{margin:0;font-size:.78rem;line-height:1.55;color:var(--muted,#9fb5d3)}
+      .kb .kb-card a:not(.button){color:var(--cyan-soft,#6cc4f5)}
+      .kb .kb-cta{margin:auto 0 0;padding-top:.35rem;display:flex;flex-wrap:wrap;gap:.55rem}
+      .kb .kb-cta .button{margin:0}
+      .kb .kb-shot,.kb .kb-rep a{display:block;position:relative;border-radius:11px;overflow:hidden;border:1px solid rgba(125,170,220,.28);background:#0a1226}
+      .kb .kb-shot{aspect-ratio:2080/1180;box-shadow:0 14px 34px rgba(0,0,0,.4)}
+      .kb .kb-shot img{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 30%}
+      .kb .kb-rep{margin:0}
+      .kb .kb-rep a{aspect-ratio:1230/520;background:#0c1733}
+      .kb .kb-rep a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34%;background:linear-gradient(to top,#0c1733,rgba(12,23,51,0))}
+      .kb .kb-rep img{display:block;width:100%;height:auto}
+      .kb .kb-rep figcaption{margin-top:.4rem;font-family:var(--font-mono,monospace);font-size:.62rem;letter-spacing:.06em;line-height:1.5;color:var(--muted,#9fb5d3)}
+      @media(max-width:900px){.kb .kb-grid{grid-template-columns:1fr}.kb .kb-q{grid-template-columns:1fr}}
+      @media(max-width:700px){.kb .kb-rep,.kb .kb-shot{display:none}.kb .kb-cta .button{width:100%;text-align:center}.kb .kb-card{padding:1.1rem}.kb .kb-doors li{padding:.55rem .7rem}.kb .kb-dx{display:none}}
+      </style>"""
+
+KEEP_BAND_SCRIPT = """      <script>
+      /* plan_cta: which link people take out of this band (same event as the fix-flow endings and the benchmark panel) */
+      (function(){ var s=document.currentScript&&document.currentScript.parentNode; if(!s) return;
+        s.addEventListener('click',function(e){ var a=e.target.closest&&e.target.closest('a[href]'); if(!a) return;
+          try{ if(typeof gtag==='function'&&localStorage.getItem('tt_internal')!=='1') gtag('event','plan_cta',{place:'keep_band',target:a.getAttribute('href'),page:location.pathname}); }catch(x){} }); })();
+      </script>"""
+
+KEEP_BAND_NCSC = ('<p class="kb-ncsc">The UK&rsquo;s National Cyber Security Centre expects AI to mean <q>increasing the volume of attacks against '
+                  'systems that have not been updated with security fixes</q>.</p>')
+KEEP_BAND_SRC = ('<p class="kb-src">NCSC, <a href="https://www.ncsc.gov.uk/report/impact-ai-cyber-threat-now-2027" rel="noopener" target="_blank">'
+                 'Impact of AI on cyber threat from now to 2027</a>, May 2025</p>')
+KEEP_BAND_DOORS = [
+    ("A program that missed its updates", "Not just Windows: the browser, the PDF reader, the printer software.", "every program updated, every six weeks"),
+    ("A message that looks genuine", "Scam emails and texts written with AI no longer give themselves away with clumsy spelling.", "someone to check with before you click"),
+    ("A backup that quietly stopped", "When ransomware or a dead drive strikes, a working backup is the difference.", "a backup that is checked, not assumed"),
+]
+KEEP_BAND_REPORT = ('<figure class="kb-rep"><a href="/free-pc-health-check/#six-weekly-service"><img src="/images/pcm-report-computer-v1.webp" width="1230" height="1008" '
+                    'alt="The This computer section of a 365 Service Report: make and model, guarantee, Windows 11 Home 24H2, Intel Core i5-1145G7, Iris Xe graphics, 8 GB at 3200 MHz" '
+                    'loading="lazy" decoding="async"></a><figcaption>// SAMPLE SERVICE REPORT &middot; REAL TEMPLATE, EXAMPLE DATA</figcaption></figure>')
+KEEP_BAND_PLAN = [
+    "Every program on it updated every six weeks, not just Windows and Microsoft 365",
+    "Antivirus, firewall, drive encryption and backup checked and written down in a dated Service Report",
+    "Unlimited remote support in between",
+]
+KEEP_BAND_APP = [
+    "Exact memory, drive health and free space",
+    "Whether antivirus is on and a backup actually exists",
+    "Battery wear, and when Windows is waiting for a restart",
+]
+
+
+def keep_band(cfg):
+    """The "stop it happening again" band. cfg: id, eyebrow, h2 (html), lede (html), why (html, optional line under the
+    quote), plan_h3, plan (list of bullet html, defaults to KEEP_BAND_PLAN), price (html, optional override), plan_fine
+    (html, optional), business (bool: business prices and link first), app (bool, default True), app_h3, app_list,
+    alt (bool: section--alt)."""
+    li = lambda xs: "".join(f"<li>{x}</li>" for x in xs)
+    biz = cfg.get("business")
+    price = cfg.get("price") or ("Business from <b>&pound;24.38</b> a month per computer &middot; home <b>&pound;18.25</b>. Rolling monthly, no lock-in."
+                                 if biz else "<b>&pound;18.25</b> a month per computer at home &middot; business from <b>&pound;24.38</b>. Rolling monthly, no lock-in.")
+    btns = ('<a class="button primary" href="/business-it-support-plans/">Business plans</a><a class="button secondary" href="/home-it-support-plans/">Home plans</a>'
+            if biz else '<a class="button primary" href="/home-it-support-plans/">Home plans</a><a class="button secondary" href="/business-it-support-plans/">Business plans</a>')
+    why = f'\n            <p class="kb-why">{cfg["why"]}</p>' if cfg.get("why") else ""
+    fine = f'\n            <p class="kb-fine">{cfg["plan_fine"]}</p>' if cfg.get("plan_fine") else ""
+    doors = "".join(f'<li><b>{t}</b><span><i class="kb-dx">{x} </i><em>Closed by: {c}.</em></span></li>' for t, x, c in cfg.get("doors", KEEP_BAND_DOORS))
+    app = ""
+    if cfg.get("app", True):
+        app = f'''
+          <div class="kb-card kb-app" data-reveal>
+            <a class="kb-shot" href="/free-pc-health-check/" aria-label="See 365 PC Manager, the free app"><img src="/images/pcm-laptop-health-v26.webp" width="2080" height="1620" alt="365 PC Manager health tab - live health score ring, verdict and system glance" loading="lazy" decoding="async"></a>
+            <p class="kb-tag">FREE APP &middot; WINDOWS &middot; REAL SCREENSHOT</p>
+            <h3>{cfg.get("app_h3", "See how this PC is really doing")}</h3>
+            <ul class="kb-list">{li(cfg.get("app_list", KEEP_BAND_APP))}</ul>
+            <p class="kb-fine">365 PC Manager, digitally signed by 365 Techies Ltd. No fake errors, no scare tactics. It shows you where you stand; it isn&rsquo;t an antivirus.</p>
+            <p class="kb-cta"><a class="button secondary" href="/free-pc-health-check/#download">Get the free app &#8594;</a></p>
+          </div>'''
+    cls = "section section--alt kb" if cfg.get("alt") else "section kb"
+    return f'''    <section class="{cls}" id="{cfg.get("id", "keep-it")}" aria-label="Stop it happening again">
+{KEEP_BAND_STYLE}
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>{cfg.get("eyebrow", "// STOP IT HAPPENING AGAIN")}</p>
+          <h2 class="section-title section-title--center" data-title>{cfg["h2"]}<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>{cfg["lede"]}</p>
+        </div>
+        <div class="kb-grid">
+          <div class="kb-card kb-q" data-reveal>
+            <div class="kb-q__l">
+            <p class="kb-tag">// WHY IT MATTERS MORE NOW</p>
+            <p class="kb-ai">Criminals now use AI to hunt for a single out-of-date program to use as a back door.</p>
+            {KEEP_BAND_NCSC}{why}
+            {KEEP_BAND_SRC}
+            </div>
+            <ul class="kb-doors">{doors}</ul>
+          </div>
+          <div class="kb-card kb-plan" data-reveal>
+            <p class="kb-tag">SUPPORT PLAN &middot; EVERY SIX WEEKS</p>
+            <h3>{cfg.get("plan_h3", "We keep it updated and checked for you")}</h3>
+            <ul class="kb-list">{li(cfg.get("plan", KEEP_BAND_PLAN))}</ul>
+            {KEEP_BAND_REPORT}
+            <p class="kb-price">{price}</p>{fine}
+            <p class="kb-cta">{btns}</p>
+          </div>{app}
+        </div>
+      </div>
+{KEEP_BAND_SCRIPT}
+    </section>'''
+
+
 def tools_strip(keys, title="Try our free tools", lede_text="No sign-up, no catch — free tools built by our techies.", alt=True):
     """Compact cross-link band of relevant free tools for service pages."""
     cls = "blog-section section--alt" if alt else "blog-section"

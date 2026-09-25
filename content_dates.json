@@ -2050,8 +2050,8 @@
  },
  "microsoft-office-unlicensed-product-error": {
   "first": "2026-07-28",
-  "h": "0b6e7249021bf483",
-  "last": "2026-08-31"
+  "h": "5973e1b81698009f",
+  "last": "2026-09-25"
  },
  "microsoft-word-wont-open": {
   "first": "2026-07-28",
@@ -2590,8 +2590,8 @@
  },
  "pc-benchmark": {
   "first": "2026-07-28",
-  "h": "80e3d34c5f1a3039",
-  "last": "2026-09-12"
+  "h": "b7a06c7815ed5416",
+  "last": "2026-09-25"
  },
  "phishing": {
   "first": "2026-07-28",
@@ -2645,8 +2645,8 @@
  },
  "printer-disappeared-after-windows-update": {
   "first": "2026-07-28",
-  "h": "c19711e96ed1661b",
-  "last": "2026-09-13"
+  "h": "ef2fb82945a78cd9",
+  "last": "2026-09-25"
  },
  "printer-prints-but-wont-scan-after-new-router": {
   "first": "2026-07-28",
@@ -2685,8 +2685,8 @@
  },
  "printer-wont-connect-to-ee-smart-hub": {
   "first": "2026-07-28",
-  "h": "2e5b67df302d0fdd",
-  "last": "2026-09-13"
+  "h": "ff73f277e17c5897",
+  "last": "2026-09-25"
  },
  "printer-wont-connect-to-mesh-wifi": {
   "first": "2026-07-28",
@@ -2964,8 +2964,8 @@
  },
  "shared-folders-not-working-after-windows-11-24h2-update": {
   "first": "2026-07-28",
-  "h": "c3ab966ddf0f51ff",
-  "last": "2026-09-13"
+  "h": "721765b494266b77",
+  "last": "2026-09-25"
  },
  "sharepoint-not-syncing-file-explorer": {
   "first": "2026-09-05",
@@ -3419,8 +3419,8 @@
  },
  "wifi-signal-test": {
   "first": "2026-07-28",
-  "h": "0cc1c7cb25850481",
-  "last": "2026-08-31"
+  "h": "a80cdf19eb03cb14",
+  "last": "2026-09-25"
  },
  "wifi-support": {
   "first": "2026-07-28",
