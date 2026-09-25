@@ -728,7 +728,7 @@
  },
  "dell-caps-lock-light-blinking-wont-turn-on": {
   "first": "2026-07-28",
-  "h": "7bdbd20d3db81179",
+  "h": "7310b4e5be7d6409",
   "last": "2026-09-26"
  },
  "dell-docking-station-not-working": {
@@ -902,7 +902,7 @@
  },
  "dell-optiplex-vs-inspiron-desktop": {
   "first": "2026-07-28",
-  "h": "be568399e3c81d8f",
+  "h": "25fdb497e010edbd",
   "last": "2026-09-26"
  },
  "dell-out-of-warranty-repair": {
@@ -932,8 +932,8 @@
  },
  "dell-support-bournemouth": {
   "first": "2026-07-28",
-  "h": "012aef81412ef08c",
-  "last": "2026-09-13"
+  "h": "b0e900e7d1e0e63d",
+  "last": "2026-09-26"
  },
  "dell-support-plans": {
   "first": "2026-07-28",
@@ -3464,8 +3464,8 @@
  },
  "windows-10-esu-or-upgrade-your-dell": {
   "first": "2026-07-28",
-  "h": "18c48a45d5796db1",
-  "last": "2026-09-13"
+  "h": "e067996adcf150d7",
+  "last": "2026-09-26"
  },
  "windows-11-cant-access-windows-10-shared-folder": {
   "first": "2026-08-01",
