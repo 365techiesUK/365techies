@@ -7099,6 +7099,129 @@ def signal_map_case_study():
 signal_map_case_study()
 
 # ===================================================== OFF-GRID & VICTRON ENERGY
+# 25 Sep 2026 revamp (owner: "revamp this page"; 2 clicks / 124 impressions in 28 days). The page was 23,600 px with the
+# first mid-page call to action at 11,500 px and what we do / who for only after 12,900 px. Now: hero > one router of
+# who we power (each card with its own next step; replaces four overlapping sections) > the live van + Home Assistant >
+# one how-it-works with the two tools as links (the builder has its own page; the 5,800 px embed is gone) > the van story
+# > 365 AI OS > FAQ > CTA. Every sentence is the page's own earlier text or a linked page's own claim.
+OG_ROUTER = '''    <section class="section section--alt" id="og-router" aria-label="What do you want to power?">
+      <style>
+      #og-router .og-grid{max-width:1120px;margin:1.5rem auto 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+      #og-router .og-card{display:flex;flex-direction:column;gap:.55rem;padding:1.2rem 1.25rem;border-radius:16px;border:1px solid var(--line,rgba(125,170,220,.16));background:rgba(255,255,255,.03);transition:border-color .25s,transform .25s}
+      #og-router .og-card:hover{border-color:rgba(0,206,27,.45);transform:translateY(-2px)}
+      #og-router .og-card--dash{border-color:rgba(108,196,245,.4);background:linear-gradient(165deg,rgba(29,151,227,.12),rgba(255,255,255,.02) 60%)}
+      #og-router .og-tag{margin:0;font-family:var(--font-mono,monospace);font-size:.68rem;letter-spacing:.08em;color:#5fe39a}
+      #og-router .og-card--dash .og-tag{color:var(--cyan-soft,#6cc4f5)}
+      #og-router .og-card h3{margin:0;font-size:1.15rem;line-height:1.3}
+      #og-router .og-card p{margin:0;font-size:.9rem;line-height:1.6;color:var(--ink-2,#dfe9f7)}
+      #og-router .og-go{margin-top:auto;padding-top:.35rem;display:flex;flex-wrap:wrap;gap:.3rem 1rem;font-size:.88rem;font-weight:600}
+      #og-router .og-go a{color:#5fe39a;text-decoration:none}
+      #og-router .og-card--dash .og-go a{color:var(--cyan-soft,#6cc4f5)}
+      #og-router .og-go a:hover{text-decoration:underline}
+      #og-router .og-inc{max-width:1120px;margin:1.2rem auto 0;padding:1rem 1.25rem;border-radius:14px;border:1px dashed rgba(125,170,220,.28);display:flex;flex-wrap:wrap;gap:.45rem 1.3rem;align-items:center;justify-content:center;font-size:.86rem;color:var(--ink-2,#dfe9f7)}
+      #og-router .og-inc b{font-family:var(--font-mono,monospace);font-size:.68rem;letter-spacing:.08em;color:var(--muted,#9fb5d3);font-weight:600}
+      #og-router .og-inc span::before{content:"\\2713  ";color:#5fe39a;font-weight:700}
+      #og-router .og-trust{max-width:1120px;margin:.9rem auto 0;display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;justify-content:center;font-family:var(--font-mono,monospace);font-size:.72rem;letter-spacing:.03em;color:var(--muted,#9fb5d3)}
+      #og-router .og-trust a{color:inherit;text-decoration:none}
+      #og-router .og-trust a.og-cred{color:#5fe39a;font-weight:700}
+      #og-router .og-cta{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-top:1.4rem}
+      @media(max-width:980px){#og-router .og-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+      @media(max-width:620px){#og-router .og-grid{grid-template-columns:1fr}#og-router .og-cta .button{width:100%;text-align:center}}
+      @media(prefers-reduced-motion:reduce){#og-router .og-card{transition:none}}
+      </style>
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT DO YOU WANT TO POWER?</p>
+          <h2 class="section-title section-title--center" data-title>Off-grid power, built around <em class="grad grad--green">how you use it</em><span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>An off-grid system makes, stores and manages your own electricity: solar, batteries and inverters working together, so you have power with no mains connection or when the grid goes down. We build them on Victron Energy and, because we&rsquo;re an IT and monitoring company at heart, set up remote monitoring so the system can be checked and fine-tuned from anywhere. Pick the closest:</p>
+        </div>
+        <div class="og-grid" data-stagger>
+          <div class="og-card">
+            <p class="og-tag">CAMPERVANS &amp; MOTORHOMES</p>
+            <h3>Silent power for van life</h3>
+            <p>Roof solar, a lithium leisure battery, a Victron MPPT and inverter, and DC-DC charging that tops up from the engine as you drive. Power for the fridge, lights, devices and induction hob, watched from your phone.</p>
+            <p class="og-go"><a href="/lithium-battery-installs-dorset/">Lithium &amp; solar installs &#8594;</a><a href="/solar-battery-calculator/">Size it first</a></p>
+          </div>
+          <div class="og-card">
+            <p class="og-tag">BOATS &amp; MARINE</p>
+            <h3>Know your state of charge afloat</h3>
+            <p>12/24V lithium banks, inverter/chargers for shore power and underway, solar and marine-grade battery monitoring, so you&rsquo;re never caught out away from the pontoon.</p>
+            <p class="og-go"><a href="/contact/">Talk to us about your boat &#8594;</a><a href="/victron-boat-gps-tracking/">GPS &amp; Starlink at sea</a></p>
+          </div>
+          <div class="og-card">
+            <p class="og-tag">HOMES &amp; BACKUP POWER</p>
+            <h3>Off-grid living, or backup that just switches over</h3>
+            <p>Solar, a lithium battery bank and a Victron inverter/charger that switches over in milliseconds when the grid fails. Run the essentials, or everything, on your own stored energy and see it all on VRM.</p>
+            <p class="og-go"><a href="/contact/">Book a free consultation &#8594;</a></p>
+          </div>
+          <div class="og-card">
+            <p class="og-tag">BUSINESSES</p>
+            <h3>Keep trading through a power cut</h3>
+            <p>Keep tills, broadband, servers and fridges running when the power goes, and trim bills by storing solar or off-peak energy for busy times, with monitoring that catches problems before they cost you.</p>
+            <p class="og-go"><a href="/victron-for-business/">Victron for business &#8594;</a></p>
+          </div>
+          <div class="og-card">
+            <p class="og-tag">CABINS, OFFICES &amp; HOLIDAY LETS</p>
+            <h3>Power where there&rsquo;s no easy mains run</h3>
+            <p>Garden offices, studios, shepherd&rsquo;s huts, glamping and remote sites: solar, storage and inverters sized to the job, with remote monitoring so you can keep an eye from afar.</p>
+            <p class="og-go"><a href="/off-grid-holiday-let-monitoring/">Holiday-let &amp; cabin monitoring &#8594;</a><a href="/glamping-power-monitoring/">Glamping sites</a></p>
+          </div>
+          <div class="og-card og-card--dash">
+            <p class="og-tag">ALREADY RUNNING VICTRON?</p>
+            <h3>Dashboards, monitoring and Home Assistant</h3>
+            <p>We build custom VRM dashboards like the live one below, Home Assistant set-ups on the Cerbo GX, and screens for fleets and holiday lets, for owners and installers worldwide.</p>
+            <p class="og-go"><a href="/custom-vrm-dashboards/">Custom VRM dashboards &#8594;</a><a href="/home-assistant-victron-cerbo-gx/">Home Assistant</a></p>
+          </div>
+        </div>
+        <div class="og-inc" data-reveal><b>EVERY SYSTEM</b><span>Designed and sized to how you really use power</span><span>Genuine Victron kit</span><span>Installed and commissioned</span><span>Monitored on Victron VRM</span><span>Maintenance and support after</span></div>
+        <div class="og-trust" data-reveal><a class="og-cred" href="https://professional.victronenergy.com/app/software-integrators-program" target="_blank" rel="noopener">&#10003; Victron Recommended Software Integrator</a><span>(not a Victron dealer or reseller)</span><a href="/reviews/">&#9733; 4.9 on Google</a><span>Family-run in Dorset since 1995</span><a href="https://www.sustainabledorset.org/" target="_blank" rel="noopener">Sustainable Dorset members</a></div>
+        <p class="og-cta" data-reveal><a class="button primary" href="/contact/">Get a free consultation</a><a class="button secondary" href="tel:+441202775566">Call 01202 775566</a></p>
+      </div>
+      <script>
+      (function(){ var s=document.getElementById('og-router'); if(!s) return;
+        s.addEventListener('click',function(e){ var a=e.target.closest&&e.target.closest('a[href]'); if(!a) return;
+          try{ if(typeof gtag==='function'&&localStorage.getItem('tt_internal')!=='1') gtag('event','plan_cta',{place:'offgrid_router',target:a.getAttribute('href'),page:location.pathname}); }catch(x){} }); })();
+      </script>
+    </section>'''
+
+OG_HOW_HEAD = '''    <section class="how" id="og-how" aria-label="How it works">
+      <style>
+      #og-how .og-tools{max-width:980px;margin:1.6rem auto 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+      #og-how .og-tool{display:flex;flex-direction:column;gap:.5rem;padding:1.15rem 1.25rem;border-radius:16px;border:1px solid rgba(0,206,27,.3);background:rgba(0,206,27,.05);color:inherit;text-decoration:none;transition:border-color .25s,transform .25s}
+      #og-how .og-tool:hover,#og-how .og-tool:focus-visible{border-color:rgba(0,206,27,.6);transform:translateY(-2px)}
+      #og-how .og-tool b{font-size:1.08rem;line-height:1.3}
+      #og-how .og-tool span{font-size:.88rem;line-height:1.55;color:var(--ink-2,#dfe9f7)}
+      #og-how .og-tool i{font-style:normal;margin-top:auto;font-weight:600;font-size:.88rem;color:#5fe39a}
+      #og-how .og-tool small{font-family:var(--font-mono,monospace);font-size:.68rem;letter-spacing:.08em;color:#5fe39a}
+      #og-how .og-cta{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-top:1.5rem}
+      @media(max-width:700px){#og-how .og-tools{grid-template-columns:1fr}#og-how .og-cta .button{width:100%;text-align:center}}
+      @media(prefers-reduced-motion:reduce){#og-how .og-tool{transition:none}}
+      </style>
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// HOW IT WORKS</p>
+        <h2 class="section-title section-title--center" data-title>From idea to powered up<span class="title-underline title-underline--center"></span></h2>
+        <p class="lede lede--center" data-reveal>You&rsquo;ve seen ours working. Here&rsquo;s the path from watching it to running your own &mdash; and if you like to do your homework first, the two free tools below give you the numbers.</p>
+        <ol class="how__steps">
+'''
+OG_HOW_STEPS = [
+    ("Free consultation", "Tell us how you live or work and how you want to use power. No pressure, no jargon &mdash; or bring the kit list from the builder below and we&rsquo;ll sanity-check it."),
+    ("Design &amp; quote", "We design and size the right Victron system and give you a clear, fixed quote."),
+    ("Install &amp; monitor", "We install, commission and set up remote monitoring on VRM, just like our van &mdash; then keep an eye on it for you."),
+]
+OG_HOW_TAIL = '''        </ol>
+        <div class="og-tools">
+          <a class="og-tool" href="/victron-system-builder/"><small>FREE TOOL</small><b>Victron system builder</b><span>Answer four questions and get the complete build: every component with a realistic price guide, the exact cables, lugs and fuses per circuit, the order to buy it in, and a build sheet to download.</span><i>Build my system &#8594;</i></a>
+          <a class="og-tool" href="/solar-battery-calculator/"><small>FREE TOOL</small><b>Battery &amp; solar calculator</b><span>Work out how much battery and solar your van, boat or cabin needs from what you actually run, before you spend anything.</span><i>Size my system &#8594;</i></a>
+        </div>
+        <p class="og-cta" data-reveal><a class="button primary" href="/contact/">Get a free consultation</a><a class="button secondary" href="tel:+441202775566">Call 01202 775566</a></p>
+      </div>
+      <script>
+      (function(){ var s=document.getElementById('og-how'); if(!s) return;
+        s.addEventListener('click',function(e){ var a=e.target.closest&&e.target.closest('a[href]'); if(!a) return;
+          try{ if(typeof gtag==='function'&&localStorage.getItem('tt_internal')!=='1') gtag('event','plan_cta',{place:'offgrid_how',target:a.getAttribute('href'),page:location.pathname}); }catch(x){} }); })();
+      </script>
+    </section>'''
+
 def off_grid():
     slug = "off-grid-victron-energy"
     desc = "Off-grid and backup power built on Victron Energy — design, supply, install and remote monitoring of solar, battery storage and inverters for homes, businesses, campervans, motorhomes and boats across Dorset, with live monitoring you can see in the 365 AI OS."
@@ -7113,9 +7236,10 @@ def off_grid():
     content = "\n".join([
       hero(bc("Off-Grid & Victron Energy"), "// OFF-GRID POWER",
            'Off-grid &amp; <em class="grad grad--green">Victron energy</em> solutions',
-           "Reliable off-grid and backup power for homes, businesses, campervans and motorhomes — designed, supplied, installed and remotely monitored, built on trusted Victron Energy equipment. Proud members of Sustainable Dorset.",
+           "Reliable off-grid and backup power for homes, businesses, campervans, motorhomes and boats — designed, supplied, installed and remotely monitored, built on trusted Victron Energy equipment. Our own support van runs on it: watch it live below.",
            cta1=("Get a Free Energy Consultation", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=["Victron Energy systems","Solar &amp; battery storage","Remote monitoring (VRM)"]),
+      OG_ROUTER,
       r'''    <section class="section" aria-label="Live off-grid data from our support van">
       <div class="wrap">
         <div class="section-head">
@@ -8169,17 +8293,7 @@ def off_grid():
         <p class="mono" data-reveal style="text-align:center;font-size:.72rem;color:#7f8ea0;margin:.9rem 0 0">Live from Victron VRM &middot; updates at our GX logging interval.</p>
       </div>
     </section>''' if VRM_EMBED_URL else ""),
-      f'''    <section class="how" aria-label="From watching to owning">
-      <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// FROM WATCHING TO OWNING</p>
-        <h2 class="section-title section-title--center" data-title>Seen it working? Now build yours<span class="title-underline title-underline--center"></span></h2>
-        <p class="lede lede--center" data-reveal>That dashboard above is our real van&rsquo;s feed &mdash; and if the link ever drops, it says so and shows a clearly-badged sample rather than pretending. Here&rsquo;s the clean path from watching ours to running your own.</p>
-        <ol class="how__steps">
-{steps([("Watch it work","The live feed above is the exact Victron kit we install &mdash; solar coming in, battery breathing, all of it monitored on VRM."),("Build your own","Four questions in the builder below and you&rsquo;ll have your complete kit list &mdash; components, cables, fuses, tools and the golden rules."),("We make it real","Have us design, supply and fit it &mdash; or sanity-check your own build. Either way, it ends up monitored on VRM, just like ours.")])}
-        </ol>
-      </div>
-    </section>''',
-      VBUILDER_TOOL,
+      OG_HOW_HEAD + steps(OG_HOW_STEPS) + OG_HOW_TAIL,
       f'''    <section class="section section--alt" aria-label="Clean, mobile, off-grid">
       <div class="wrap">
         <div class="section-head">
@@ -8193,49 +8307,7 @@ def off_grid():
         <p class="lede lede--center" data-reveal style="margin-top:1.6rem">Want the same? We design clean off-grid power for homes, businesses and vehicles on Victron &mdash; and you&rsquo;ll see yours live, just like ours. <a href="/sustainability/">Our sustainability commitment &rarr;</a></p>
       </div>
     </section>''',
-      f'''    <section class="section" aria-label="Overview">
-      <div class="wrap split-2">
-        <div class="prose" data-reveal>
-          <p class="eyebrow mono">/01 — WHAT IT IS</p>
-          <h2 class="section-title" data-title>Your own power, wherever you are<span class="title-underline"></span></h2>
-          <p>An off-grid system generates, stores and manages your own electricity — solar panels, batteries and inverters working together so you have power even with no mains connection, or when the grid goes down.</p>
-          <p>We build these around <strong>Victron Energy</strong>, the gold standard for off-grid and mobile power. And because we&rsquo;re an IT and monitoring company at heart, we set up <strong>remote monitoring</strong> so your system can be checked and fine-tuned from anywhere.</p>
-        </div>
-        <ul class="checklist" data-stagger>
-{checklist(["System design &amp; sizing","Victron inverters &amp; chargers","MPPT solar charge controllers","Lithium battery storage","Battery monitoring (BMV)","Cerbo GX &amp; VRM monitoring","Shore power &amp; DC-DC charging","Ongoing support &amp; maintenance"])}
-        </ul>
-      </div>
-    </section>''',
-      f'''    <section class="section section--alt" aria-label="Who we power">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/02 — WHO WE POWER</p>
-          <h2 class="section-title section-title--center" data-title>Off-grid power for every setting<span class="title-underline title-underline--center"></span></h2>
-        </div>
-        <div class="tile-grid" data-stagger>
-{tiles([("home","Homes","Off-grid living, or whole-home backup for when the grid goes down."),("briefcase","Businesses","Energy resilience and backup power that keeps you trading — and cuts bills."),("van","Campervans","12V solar, lithium and inverter systems built for van life."),("van","Motorhomes","Dependable power for everything you run on the road."),("server","Garden offices &amp; outbuildings","Power where there&rsquo;s no mains — studios, cabins and sheds."),("shield","Boats &amp; marine","Reliable, well-monitored power out on the water.")])}
-        </div>
-      </div>
-    </section>''',
-      f'''    <section class="section" aria-label="Off-grid power in detail">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// IN DETAIL</p>
-          <h2 class="section-title section-title--center" data-title>Power built for how you live &amp; work<span class="title-underline title-underline--center"></span></h2>
-        </div>
-        <ul class="security-grid" data-stagger>
-{grid_cards([
-  ("Off-grid &amp; backup power for homes","Whole-home off-grid living, or seamless backup when the grid fails &mdash; solar, a lithium battery bank and a Victron inverter/charger that switches over in milliseconds. Run the essentials (or everything) on your own stored, clean energy, and see it all on VRM."),
-  ("Energy resilience for businesses","Keep tills, broadband, servers and fridges running through power cuts, and trim bills by storing solar or off-peak energy for busy times. We size resilient Victron systems to your real load, with remote monitoring so problems are caught before they cost you."),
-  ("Campervans &mdash; built for van life","Proper 12V systems for weekend trips or full-time travel &mdash; roof solar, a lithium leisure battery, a Victron MPPT and inverter, and DC-DC charging that tops up from the engine as you drive. Silent power for the fridge, lights, devices and induction hob, watched from your phone."),
-  ("Motorhomes &amp; overlanding","Dependable power for everything you run on the road &mdash; larger battery banks, inverters for 230V appliances, solar and smart charging, all built on Victron and set up so a screen (or the VRM app) shows charge, solar and usage at a glance."),
-  ("Boats &amp; marine","Reliable, well-monitored power afloat &mdash; 12/24V lithium banks, inverter/chargers for shore power and underway, solar and marine-grade battery monitoring. Always know your state of charge, so you&rsquo;re never caught out away from the pontoon."),
-  ("Garden offices, cabins &amp; sites","Power where there&rsquo;s no easy mains run &mdash; studios, home offices, shepherd&rsquo;s huts, glamping and remote sites. Solar, storage and inverters sized to the job, with remote monitoring so you can keep an eye from afar."),
-])}
-        </ul>
-      </div>
-    </section>''',
-      f'''    <section class="section section--alt" aria-label="Monitor with the 365 AI OS">
+      f'''    <section class="section" aria-label="Monitor with the 365 AI OS">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
           <p class="eyebrow mono">// MONITOR IT WITH THE 365 AI OS</p>
@@ -8248,38 +8320,6 @@ def off_grid():
         <ul class="checklist" data-stagger>
 {checklist(["Battery charge &amp; time-to-go","Solar &amp; DC power, live","AC loads &amp; inverter state","Fresh &amp; waste tank levels","Works in any browser","Built on Victron VRM monitoring"])}
         </ul>
-      </div>
-    </section>''',
-      f'''    <section class="section" aria-label="What we do">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/03 — WHAT WE DO</p>
-          <h2 class="section-title section-title--center" data-title>Designed, installed and monitored<span class="title-underline title-underline--center"></span></h2>
-        </div>
-        <ul class="security-grid" data-stagger>
-{grid_cards([("Design &amp; sizing","We size your system to how you actually use power — no guesswork, no overspend."),("Genuine Victron kit","Inverters, MPPT solar chargers, lithium batteries and GX monitoring from Victron Energy."),("Install &amp; commission","Professional installation and proper commissioning, so it simply works."),("Remote monitoring","Victron VRM lets us watch and fine-tune your system from anywhere — our speciality."),("Maintenance &amp; support","Ongoing checks, fault-finding and upgrades to keep you powered."),("Cut bills &amp; carbon","Use more of your own clean energy and rely less on the grid or the generator.")])}
-        </ul>
-      </div>
-    </section>''',
-      f'''    <section class="section section--alt" aria-label="Sustainability">
-      <div class="wrap wrap--narrow" style="text-align:center">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// SUSTAINABILITY</p>
-        <h2 class="section-title section-title--center" data-title>Proud members of Sustainable Dorset<span class="title-underline title-underline--center"></span></h2>
-        <p class="lede lede--center" data-reveal>Helping homes and businesses across Dorset generate, store and use their own clean energy is something we genuinely care about. We&rsquo;re proud members of <a href="https://www.sustainabledorset.org/" target="_blank" rel="noopener" style="color:var(--cyan)">Sustainable Dorset</a>, supporting a greener, more resilient county.</p>
-        <div class="partner-badges" style="justify-content:center;margin-top:1.6rem" data-reveal>
-          <span class="partner-badge partner-badge--green">{ico("leaf","")}Sustainable Dorset Member</span>
-          <span class="partner-badge">{ico("battery","")}Victron Energy Systems</span>
-          <span class="partner-badge partner-badge--green">{ico("sun","")}Solar &amp; Battery Storage</span>
-        </div>
-      </div>
-    </section>''',
-      f'''    <section class="how" aria-label="How it works">
-      <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>/04 — HOW IT WORKS</p>
-        <h2 class="section-title section-title--center" data-title>From idea to powered up<span class="title-underline title-underline--center"></span></h2>
-        <ol class="how__steps">
-{steps([("Free consultation","Tell us how you live or work and how you want to use power. No pressure, no jargon."),("Design &amp; quote","We design and size the right Victron system and give you a clear, fixed quote."),("Install &amp; monitor","We install, commission and set up remote monitoring — then keep an eye on it for you.")])}
-        </ol>
       </div>
     </section>''',
       faq_html(faqs),
