@@ -932,46 +932,73 @@
         @keyframes vbreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
         .vcost.thump{animation:vthump .45s cubic-bezier(.34,1.56,.64,1) 1}
         @keyframes vthump{0%{transform:scale(1)}35%{transform:scale(1.18)}100%{transform:scale(1)}}
-        /* ===== metric tiles: one milled instrument cluster ===== */
-        .vlive__metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(125,170,220,.10);border:1px solid rgba(125,170,220,.10);border-radius:14px;overflow:hidden;margin-top:.9rem}
-        .vlive__m{background:#0b1330;padding:.85rem .5rem .7rem;text-align:center;transition:background .15s ease;contain:layout paint}
-        .vlive__m:hover{background:#0e1738}
+        /* ===== panels under the cluster (tidied 25 Sep 2026): one card recipe, one header style, readable type,
+                 the money first. No coloured side-bars; each panel says what it is with a small coloured dot. ===== */
+        .vlive__save,.vlive__metrics,.vlive__charts,.vlive__histwrap,.vlive__pass,.vlive__engine,.vlive__wx,.vlive__tanks{background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012));border:1px solid rgba(125,170,220,.13);border-radius:16px;margin-top:.8rem}
+        /* what it is worth */
+        .vlive__save{display:grid;grid-template-columns:repeat(3,1fr);padding:1.05rem .4rem .85rem;margin-top:1rem;background:radial-gradient(120% 150% at 50% 0%,rgba(242,193,78,.11),transparent 62%),linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012));border-color:rgba(242,193,78,.3)}
+        .vlive__savebox{padding:.3rem .5rem;text-align:center}
+        .vlive__savebox+.vlive__savebox{border-left:1px solid rgba(125,170,220,.10)}
+        .vlive__savebig{display:block;font:600 1.75rem/1 "Clash Display","Archivo",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.01em;color:#f2c14e}
+        .vlive__savebig--gen{color:#4ce27f}
+        .vlive__savelbl{display:block;font:600 .64rem/1.3 ui-monospace,monospace;letter-spacing:.09em;text-transform:uppercase;color:#9fb1c7;margin-top:.45rem}
+        .vlive__ledger{grid-column:1/-1;font:500 .74rem/1.5 "Archivo",sans-serif;color:#8ea2bb;text-align:center;margin:.85rem .9rem 0;padding-top:.7rem;border-top:1px solid rgba(125,170,220,.10);letter-spacing:0;text-transform:none}
+        .vlive__ledger[hidden]{display:none}
+        /* the key numbers */
+        .vlive__metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:.15rem;padding:.35rem}
+        .vlive__m{padding:.8rem .5rem .7rem;text-align:center;border-radius:12px;transition:background .15s ease;contain:layout paint}
+        .vlive__m:hover{background:rgba(255,255,255,.045)}
         .vlive__mv{display:block;font:600 1.2rem/1.1 "Clash Display","Archivo",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.01em;color:#f2f7ff}
-        .vlive__ml{display:block;font:600 .58rem/1.3 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#93a5bb;margin-top:.35rem}
-        /* ===== shared layer-1 panel recipe ===== */
-        .vlive__pass,.vlive__engine,.vlive__charts,.vlive__wx,.vlive__save,.vlive__histwrap,.vlive__tanks{background:rgba(148,180,220,.04);border:1px solid rgba(125,170,220,.10);border-radius:14px;margin-top:.9rem}
-        .vlive__pass{border-left:3px solid rgba(57,211,83,.55);padding:1rem 1.1rem}
-        .vlive__engine{border-left:3px solid rgba(224,136,74,.55)}
-        .vlive__save{border-left:3px solid rgba(224,179,65,.55)}
-        /* panel micro-headers */
-        .vlive__passhead,.vlive__charthead,.vlive__histhead{font:600 .66rem/1.3 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:#a9bacd}
-        .vlive__passhead,.vlive__histhead{display:flex;justify-content:space-between;gap:.8rem;flex-wrap:wrap;padding-bottom:.55rem;margin-bottom:.7rem;border-bottom:1px solid rgba(125,170,220,.08)}
-        .vlive__passhead::before{content:"";display:inline-block;width:6px;height:6px;border-radius:2px;background:#39d353;margin-right:.5rem;vertical-align:1px}
-        .vlive__passhead b{color:#39d353}
-        /* battery passport */
-        .vlive__passbar{position:relative;height:26px;border-radius:8px;background:rgba(8,14,32,.9);box-shadow:inset 0 1px 3px rgba(0,0,0,.5);overflow:hidden;background-image:repeating-linear-gradient(90deg,transparent 0 calc(10% - 1px),rgba(255,255,255,.10) calc(10% - 1px) 10%)}
-        .vlive__passfill{height:100%;width:0;border-radius:8px 0 0 8px;background:#2fbf4c;transition:width 1.4s cubic-bezier(.4,0,.2,1)}
-        .vlive__passtxt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:700 .72rem/1 ui-monospace,monospace;font-variant-numeric:tabular-nums;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6);letter-spacing:.04em}
-        .vlive__chips{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.65rem}
-        .vlive__chip{font:600 .58rem/1.3 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#93a5bb;background:rgba(8,14,32,.6);border:1px solid rgba(125,170,220,.12);border-radius:999px;padding:.32rem .7rem}
-        .vlive__chip b{color:#f2f7ff;font-weight:700}
-        /* engine strip */
-        .vlive__engine{display:flex;justify-content:space-between;gap:.8rem;flex-wrap:wrap;padding:.8rem 1.1rem;font:600 .58rem/1.5 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#93a5bb}
-        .vlive__engine b{color:#e0884a}
-        .vlive__eng-money{flex-basis:100%;border-top:1px solid rgba(125,170,220,.10);padding-top:.5rem;margin-top:.1rem}
-        .vlive__eng-money[hidden]{display:none}
-        /* charts: one panel, internal divider */
-        .vlive__charts{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:.9rem 1rem .6rem}
+        .vlive__ml{display:block;font:600 .62rem/1.3 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#93a5bb;margin-top:.35rem}
+        /* one header style for every panel */
+        .vlive__passhead,.vlive__charthead,.vlive__histhead{font:600 .68rem/1.3 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#b4c3d6}
+        .vlive__passhead,.vlive__histhead{display:flex;justify-content:space-between;align-items:center;gap:.6rem .8rem;flex-wrap:wrap;padding-bottom:.6rem;margin-bottom:.75rem;border-bottom:1px solid rgba(125,170,220,.09)}
+        .vlive__charthead::before,.vlive__histhead::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;align-self:center;flex:none}
+        .vlive__passhead::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:#4ce27f;margin-right:.5rem;vertical-align:1px}
+        .vlive__passhead b{color:#4ce27f}
+        /* the last 24 hours */
+        .vlive__charts{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:1rem 1.1rem .8rem}
         .vlive__chart{background:none;border:0;padding:0;contain:layout paint}
-        .vlive__chart:first-child{padding-right:1rem}
-        .vlive__chart+.vlive__chart{border-left:1px solid rgba(125,170,220,.08);padding-left:1rem}
-        .vlive__charthead{display:flex;justify-content:space-between;gap:.6rem;margin-bottom:.4rem}
-        .vlive__charthead::before{content:"";display:inline-block;width:6px;height:6px;border-radius:2px;background:#2aa9e0;margin-right:.1rem;align-self:center}
+        .vlive__chart:first-child{padding-right:1.1rem}
+        .vlive__chart+.vlive__chart{border-left:1px solid rgba(125,170,220,.09);padding-left:1.1rem}
+        .vlive__charthead{display:flex;justify-content:space-between;gap:.6rem;margin-bottom:.45rem}
+        .vlive__chart:first-child .vlive__charthead::before{background:#4ce27f}
+        .vlive__chart+.vlive__chart .vlive__charthead::before{background:#f2c14e}
         .vlive__charthead span:last-child{color:#f2f7ff;font-variant-numeric:tabular-nums}
-        .vlive__chart svg{width:100%;height:80px;display:block}
-        .vlive__chartaxis{display:flex;justify-content:space-between;font:600 .58rem/1 ui-monospace,monospace;color:#647893;margin-top:.25rem;letter-spacing:.08em;text-transform:uppercase}
-        .vlive__chartnote{font:600 .58rem/1.5 ui-monospace,monospace;color:#647893;text-align:center;margin:.5rem 0 0;letter-spacing:.08em;text-transform:uppercase}
-        /* weather (contextual — no accent) */
+        .vlive__chart svg{width:100%;height:84px;display:block}
+        .vlive__chartaxis{display:flex;justify-content:space-between;font:600 .6rem/1 ui-monospace,monospace;color:#6f839e;margin-top:.3rem;letter-spacing:.08em;text-transform:uppercase}
+        .vlive__chartnote{grid-column:1/-1;font:500 .72rem/1.5 "Archivo",sans-serif;color:#7d91ab;text-align:center;margin:.8rem 0 0;padding-top:.6rem;border-top:1px solid rgba(125,170,220,.08);letter-spacing:0;text-transform:none}
+        /* the last 30 days */
+        .vlive__histwrap{padding:1rem 1.1rem}
+        .vlive__histhead::before{background:#f2c14e}
+        .vlive__histtot{color:#f2f7ff;font-variant-numeric:tabular-nums}
+        .vlive__htabs{display:flex;gap:.35rem;flex-wrap:wrap}
+        .vlive__htab{font:600 .62rem/1 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#a3b3c7;background:rgba(8,14,32,.6);border:1px solid rgba(125,170,220,.14);border-radius:999px;padding:.42rem .8rem;cursor:pointer;transition:color .18s,border-color .18s,background .18s,transform .18s}
+        .vlive__htab:hover{color:#fff;border-color:rgba(255,255,255,.32);background:rgba(255,255,255,.05);transform:translateY(-1px)}
+        .vlive__htab:active{transform:scale(.95)}
+        .vlive__htab:focus-visible{outline:2px solid #37c2c2;outline-offset:2px}
+        .vlive__htab.on{color:#0b1020;background:#4ce27f;border-color:#4ce27f;font-weight:700}
+        .vlive__hist{display:flex;align-items:flex-end;gap:2px;height:72px;border-bottom:1px solid rgba(125,170,220,.14);padding-bottom:1px}
+        .vlive__bar2{flex:1 1 0;border-radius:2px 2px 0 0;min-height:2px;opacity:.9;transition:height .7s cubic-bezier(.2,.7,.3,1),background .4s,opacity .15s,filter .15s;cursor:crosshair}
+        .vlive__bar2:hover{opacity:1;filter:brightness(1.35)}
+        .vlive__histcap{font:500 .72rem/1.4 "Archivo",sans-serif;color:#7d91ab;text-align:center;margin:.55rem 0 0}
+        /* the battery */
+        .vlive__pass{padding:1rem 1.1rem}
+        .vlive__passrow{display:flex;justify-content:flex-end;margin:-.15rem 0 .45rem}
+        .vlive__passtxt{font:600 .8rem/1 "Archivo",sans-serif;font-variant-numeric:tabular-nums;color:#dfe9f7}
+        .vlive__passbar{position:relative;height:12px;border-radius:999px;background:rgba(8,14,32,.9);box-shadow:inset 0 1px 2px rgba(0,0,0,.5);overflow:hidden;background-image:repeating-linear-gradient(90deg,transparent 0 calc(10% - 1px),rgba(255,255,255,.10) calc(10% - 1px) 10%)}
+        .vlive__passfill{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#2fbf4c,#4ce27f);transition:width 1.4s cubic-bezier(.4,0,.2,1)}
+        .vlive__chips{display:grid;grid-template-columns:repeat(5,1fr);gap:.5rem;margin-top:.85rem}
+        .vlive__chip{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.35rem;text-align:center;font:600 .6rem/1.3 ui-monospace,monospace;letter-spacing:.07em;text-transform:uppercase;color:#93a5bb;background:rgba(8,14,32,.5);border:1px solid rgba(125,170,220,.10);border-radius:12px;padding:.7rem .4rem}
+        .vlive__chip b{display:block;font:600 1.05rem/1 "Clash Display","Archivo",sans-serif;letter-spacing:0;text-transform:none;color:#f2f7ff}
+        /* the engine */
+        .vlive__engine{display:flex;justify-content:space-between;align-items:center;gap:.5rem 1rem;flex-wrap:wrap;padding:.95rem 1.1rem;font:600 .66rem/1.5 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#b4c3d6}
+        .vlive__engine::before{content:"";width:8px;height:8px;border-radius:50%;background:#f08a4b;margin-right:-.5rem;flex:none}
+        .vlive__engine>span:first-of-type{margin-right:auto}
+        .vlive__engine b{color:#f08a4b}
+        .vlive__eng-money{flex-basis:100%;font:500 .76rem/1.55 "Archivo",sans-serif;letter-spacing:0;text-transform:none;color:#9fb1c7;border-top:1px solid rgba(125,170,220,.09);padding-top:.6rem;margin-top:.15rem}
+        .vlive__eng-money[hidden]{display:none}
+        /* the week ahead */
         .vlive__wx{padding:1rem 1.1rem}
         .vlive__wx[hidden]{display:none}
         .vlive__wxnow{display:flex;align-items:baseline;gap:.6rem;flex-wrap:wrap;margin-bottom:.7rem}
@@ -986,40 +1013,37 @@
         .vlive__wxd-i{display:block;font-size:1.15rem;margin:.3rem 0}
         .vlive__wxd-t{display:block;font:700 .78rem/1 "Archivo",sans-serif;font-variant-numeric:tabular-nums;color:#f2f7ff}
         .vlive__wxd-y{display:block;font:800 .82rem/1.2 "Archivo",sans-serif;font-variant-numeric:tabular-nums;color:#39d353;margin-top:.35rem}
-        .vlive__wxcap{font:600 .58rem/1.5 ui-monospace,monospace;color:#647893;text-align:center;margin:.7rem 0 0;letter-spacing:.05em;text-transform:uppercase}
-        /* savings: one gold ledger strip */
-        .vlive__save{display:grid;grid-template-columns:repeat(3,1fr);gap:0;padding:.9rem 0}
-        .vlive__savebox{background:none;border:0;padding:.35rem .5rem;text-align:center}
-        .vlive__savebox+.vlive__savebox{border-left:1px solid rgba(125,170,220,.08)}
-        .vlive__savebig{display:block;font:600 1.5rem/1 "Clash Display","Archivo",sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.01em;color:#e8c35a}
-        .vlive__savelbl{display:block;font:600 .58rem/1.3 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#93a5bb;margin-top:.4rem}
-        .vlive__ledger{font:600 .58rem/1.5 ui-monospace,monospace;color:#647893;text-align:center;margin:.65rem 1rem 0;letter-spacing:.08em;text-transform:uppercase}
-        .vlive__ledger[hidden]{display:none}
-        /* 30-day history */
-        .vlive__histwrap{padding:1rem 1.1rem}
-        .vlive__histhead::before{content:"";display:inline-block;width:6px;height:6px;border-radius:2px;background:var(--warn);margin-right:.1rem;align-self:center}
-        .vlive__histtot{color:#f2f7ff;font-variant-numeric:tabular-nums}
-        .vlive__htabs{display:flex;gap:.35rem;flex-wrap:wrap}
-        .vlive__htab{font:600 .58rem/1 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#93a5bb;background:rgba(8,14,32,.6);border:1px solid rgba(125,170,220,.12);border-radius:999px;padding:.38rem .75rem;cursor:pointer;transition:color .18s,border-color .18s,background .18s,transform .18s}
-        .vlive__htab:hover{color:#fff;border-color:rgba(255,255,255,.32);background:rgba(255,255,255,.05);transform:translateY(-1px)}
-        .vlive__htab:active{transform:scale(.95)}
-        .vlive__htab:focus-visible{outline:2px solid #37c2c2;outline-offset:2px}
-        .vlive__htab.on{color:#0b1020;background:#39d353;border-color:#39d353;font-weight:700}
-        .vlive__hist{display:flex;align-items:flex-end;gap:2px;height:64px;border-bottom:1px solid rgba(125,170,220,.14);padding-bottom:1px}
-        .vlive__bar2{flex:1 1 0;border-radius:2px 2px 0 0;min-height:2px;opacity:.9;transition:height .7s cubic-bezier(.2,.7,.3,1),background .4s,opacity .15s,filter .15s;cursor:crosshair}
-        .vlive__bar2:hover{opacity:1;filter:brightness(1.35)}
-        .vlive__histcap{font:600 .58rem/1.4 ui-monospace,monospace;color:#647893;text-align:center;margin:.45rem 0 0;letter-spacing:.08em;text-transform:uppercase}
-        /* tanks: footer utility zone */
-        .vlive__tanks{display:flex;gap:1.1rem;padding:.85rem 1.1rem;flex-wrap:wrap;align-items:center}
+        .vlive__wxmore{margin-top:.75rem}
+        .vlive__wxmore summary{cursor:pointer;list-style:none;text-align:center;font:600 .64rem/1.3 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#7d91ab}
+        .vlive__wxmore summary::-webkit-details-marker{display:none}
+        .vlive__wxmore summary::after{content:"  +";color:#6cc4f5}
+        .vlive__wxmore[open] summary::after{content:"  \2212"}
+        .vlive__wxmore summary:focus-visible{outline:2px solid #37c2c2;outline-offset:3px;border-radius:6px}
+        .vlive__wxcap{font:500 .74rem/1.55 "Archivo",sans-serif;color:#8ea2bb;text-align:center;margin:.55rem auto 0;max-width:72ch;letter-spacing:0;text-transform:none}
+        /* water */
+        .vlive__tanks{display:flex;gap:1.1rem;padding:.9rem 1.1rem;flex-wrap:wrap;align-items:center}
         .vlive__tank{flex:1;min-width:140px}
         .vlive__tankhead{display:flex;justify-content:space-between;font:600 .66rem/1.3 ui-monospace,monospace;letter-spacing:.06em;text-transform:uppercase;color:#a9bacd;margin-bottom:.35rem}
         .vlive__tankbar{height:6px;border-radius:999px;background:rgba(8,14,32,.9);overflow:hidden}
         .vlive__tankfill{height:100%;width:0;border-radius:999px;background:#2aa9e0;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
         .vlive__pump{font:600 .58rem/1 ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:#93a5bb;background:rgba(8,14,32,.6);border:1px solid rgba(125,170,220,.12);border-radius:999px;padding:.35rem .7rem;white-space:nowrap}
         .vlive__pump[hidden]{display:none}
-        /* footer honesty captions */
-        .vlive__note{font:600 .62rem/1.6 ui-monospace,monospace;color:#647893;text-align:center;max-width:62ch;margin:.9rem auto 0;letter-spacing:.05em;border-top:1px solid rgba(125,170,220,.08);padding-top:.9rem}
-        .vlive__rate{font:600 .62rem/1.6 ui-monospace,monospace;color:#647893;text-align:center;max-width:62ch;margin:.5rem auto 0;letter-spacing:.05em;text-transform:uppercase}
+        /* footer */
+        .vlive__note{font:500 .78rem/1.6 "Archivo",sans-serif;color:#8ea2bb;text-align:center;max-width:62ch;margin:1rem auto 0;padding-top:.9rem;border-top:1px solid rgba(125,170,220,.08)}
+        .vlive__rate{font:600 .62rem/1.6 ui-monospace,monospace;color:#6f839e;text-align:center;max-width:72ch;margin:.35rem auto 0;letter-spacing:.06em;text-transform:uppercase}
+        .vlive__charthead span:first-of-type{margin-right:auto;margin-left:.1rem}
+        .vlive__histhead .vlive__htabs{margin-right:auto;margin-left:.1rem}
+        .vlive__passhead>span:first-of-type{margin-right:auto}
+        @media(max-width:559px){
+          .vlive__save,.vlive__charts,.vlive__histwrap,.vlive__pass,.vlive__engine,.vlive__wx,.vlive__tanks{padding-left:.85rem;padding-right:.85rem}
+          .vlive__savelbl{text-align:right;max-width:7.6rem;line-height:1.35}
+          .vlive__histhead::before,.vlive__passhead::before{display:none}
+          .vlive__m{padding:.6rem .35rem .5rem}
+          .vlive__chips{grid-template-columns:repeat(2,1fr);gap:.4rem}
+          .vlive__chip{padding:.55rem .4rem}
+          .vlive__chip:last-child{grid-column:1/-1}
+          .vlive__passhead{font-size:.64rem}
+        }
         .vlive--sample .vlive__live{color:var(--warn)}.vlive--sample .vlive__dot{background:var(--warn)}.vlive--sample .vlive__dot::after{border-color:rgba(224,179,65,.5)}
         /* ===== FULLSCREEN = THE DASHBOARD: the cluster scales to fill the screen; everything else steps back ===== */
         .vlive--fs{position:fixed;inset:0;z-index:9999;max-width:none;border-radius:0;border:0;overflow:hidden;background:#070d22;animation:vfsin .45s cubic-bezier(.22,1,.36,1) 1;display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top,0px) + .6rem) calc(env(safe-area-inset-right,0px) + 1rem) calc(env(safe-area-inset-bottom,0px) + .8rem) calc(env(safe-area-inset-left,0px) + 1rem)}
@@ -1231,6 +1255,12 @@
               </g>
             </svg>
           </div>
+          <div class="vlive__save">
+            <div class="vlive__savebox"><span class="vlive__savebig" data-save-today>&pound;0.00</span><span class="vlive__savelbl">Saved today</span></div>
+            <div class="vlive__savebox"><span class="vlive__savebig" data-save-life>&pound;0.00</span><span class="vlive__savelbl" data-save-days>30-day saving</span></div>
+            <div class="vlive__savebox"><span class="vlive__savebig vlive__savebig--gen" data-gen-life>&mdash;</span><span class="vlive__savelbl">Clean energy generated</span></div>
+            <p class="vlive__ledger" data-ledger hidden></p>
+          </div>
           <div class="vlive__metrics">
             <div class="vlive__m"><span class="vlive__mv" data-bw>&mdash;</span><span class="vlive__ml">Battery power</span></div>
             <div class="vlive__m"><span class="vlive__mv" data-yield>&mdash;</span><span class="vlive__ml">Solar today</span></div>
@@ -1241,18 +1271,6 @@
             <div class="vlive__m"><span class="vlive__mv" data-peak>&mdash;</span><span class="vlive__ml">Peak solar today</span></div>
             <div class="vlive__m"><span class="vlive__mv" data-starter>&mdash;</span><span class="vlive__ml">Starter battery</span></div>
           </div>
-          <div class="vlive__pass" data-pass hidden>
-            <div class="vlive__passhead"><span>Battery passport &middot; <b data-pass-cap>&mdash;</b> lithium bank</span><span data-pass-since>&mdash;</span></div>
-            <div class="vlive__passbar"><div class="vlive__passfill" data-pass-fill></div><span class="vlive__passtxt" data-pass-ah>&mdash;</span></div>
-            <div class="vlive__chips">
-              <span class="vlive__chip"><b data-pass-cycles>&mdash;</b> charge cycles</span>
-              <span class="vlive__chip"><b data-pass-fulldis>&mdash;</b> full discharges</span>
-              <span class="vlive__chip"><b data-pass-eff>&mdash;</b> round-trip efficiency</span>
-              <span class="vlive__chip"><b data-pass-chg>&mdash;</b> charged lifetime</span>
-              <span class="vlive__chip">battery temp <b data-pass-temp>no sensor yet</b></span>
-            </div>
-          </div>
-          <div class="vlive__engine" data-engine hidden><span data-eng-state>&mdash;</span><span data-eng-life>&mdash;</span><span class="vlive__eng-money" data-eng-money hidden></span></div>
           <div class="vlive__charts">
             <div class="vlive__chart">
               <div class="vlive__charthead"><span data-ch-soc-title>Battery charge &middot; 24h</span><span data-ch-soc-now>&mdash;</span></div>
@@ -1264,23 +1282,8 @@
               <svg viewBox="0 0 300 74" preserveAspectRatio="none" data-ch-pv aria-label="Solar power over the last 24 hours"></svg>
               <div class="vlive__chartaxis"><span>24h ago</span><span>now</span></div>
             </div>
+            <p class="vlive__chartnote" data-chartnote>&nbsp;</p>
           </div>
-          <p class="vlive__chartnote" data-chartnote>&nbsp;</p>
-          <div class="vlive__wx" data-wx hidden>
-            <div class="vlive__wxnow">
-              <span class="vlive__wxico" data-wx-ico>&mdash;</span>
-              <span class="vlive__wxtemp" data-wx-temp>&mdash;</span>
-              <span class="vlive__wxdesc" data-wx-desc></span>
-            </div>
-            <div class="vlive__wxdays" data-wx-days></div>
-            <p class="vlive__wxcap" data-wx-cap></p>
-          </div>
-          <div class="vlive__save">
-            <div class="vlive__savebox"><span class="vlive__savebig" data-save-today>&pound;0.00</span><span class="vlive__savelbl">Saved today</span></div>
-            <div class="vlive__savebox"><span class="vlive__savebig" data-save-life>&pound;0.00</span><span class="vlive__savelbl" data-save-days>30-day saving</span></div>
-            <div class="vlive__savebox"><span class="vlive__savebig" data-gen-life>&mdash;</span><span class="vlive__savelbl">Clean energy generated</span></div>
-          </div>
-          <p class="vlive__ledger" data-ledger hidden></p>
           <div class="vlive__histwrap">
             <div class="vlive__histhead">
               <div class="vlive__htabs" role="group" aria-label="30-day history view">
@@ -1292,6 +1295,28 @@
             </div>
             <div class="vlive__hist" data-hist></div>
             <p class="vlive__histcap">Last 30 days &middot; tap or hover a bar for the day&rsquo;s figure</p>
+          </div>
+          <div class="vlive__pass" data-pass hidden>
+            <div class="vlive__passhead"><span>Battery passport &middot; <b data-pass-cap>&mdash;</b> lithium bank</span><span data-pass-since>&mdash;</span></div>
+            <div class="vlive__passrow"><span class="vlive__passtxt" data-pass-ah>&mdash;</span></div>
+            <div class="vlive__passbar"><div class="vlive__passfill" data-pass-fill></div></div>
+            <div class="vlive__chips">
+              <span class="vlive__chip"><b data-pass-cycles>&mdash;</b> charge cycles</span>
+              <span class="vlive__chip"><b data-pass-fulldis>&mdash;</b> full discharges</span>
+              <span class="vlive__chip"><b data-pass-eff>&mdash;</b> round-trip efficiency</span>
+              <span class="vlive__chip"><b data-pass-chg>&mdash;</b> charged lifetime</span>
+              <span class="vlive__chip"><b data-pass-temp>no sensor yet</b> battery temp</span>
+            </div>
+          </div>
+          <div class="vlive__engine" data-engine hidden><span data-eng-state>&mdash;</span><span data-eng-life>&mdash;</span><span class="vlive__eng-money" data-eng-money hidden></span></div>
+          <div class="vlive__wx" data-wx hidden>
+            <div class="vlive__wxnow">
+              <span class="vlive__wxico" data-wx-ico>&mdash;</span>
+              <span class="vlive__wxtemp" data-wx-temp>&mdash;</span>
+              <span class="vlive__wxdesc" data-wx-desc></span>
+            </div>
+            <div class="vlive__wxdays" data-wx-days></div>
+            <details class="vlive__wxmore"><summary>How this solar forecast works</summary><p class="vlive__wxcap" data-wx-cap></p></details>
           </div>
           <div class="vlive__tanks"><div style="display:contents" data-tanks></div><span class="vlive__pump" data-pump hidden></span></div>
           <p class="vlive__note" data-note></p>
@@ -1643,7 +1668,7 @@
         setTxt(q("[data-save-days]"),days30+"-day saving");
         tween("[data-save-life]","slife",(k30!=null)?(k30*RATE+STANDING*days30):null,function(v){return "£"+v.toFixed(2);});
         tween("[data-gen-life]","glife",s.yieldLifetime,function(v){return v.toFixed(1)+" kWh";});
-        var rt=q("[data-rate]"); if(rt){ var ph=(s.pvW!=null)?(s.pvW/1000*RATE*100):0; setHTML(rt,(s.pvW>5?("Generating now &middot; saving ~"+ph.toFixed(1)+"p/hour"):"Resting now")+" &middot; 48p/kWh + 60p/day standing charge inc. VAT"); }
+        var rt=q("[data-rate]"); if(rt){ var ph=(s.pvW!=null)?(s.pvW/1000*RATE*100):0; setHTML(rt,(s.pvW>5?("Generating now &middot; saving ~"+ph.toFixed(1)+"p/hour"):"No solar right now")+" &middot; 48p/kWh + 60p/day standing charge inc. VAT"); }
         /* today's energy ledger */
         var lg=q("[data-ledger]"), ld=s.ledger||{};
         if(lg){
