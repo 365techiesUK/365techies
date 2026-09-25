@@ -21724,6 +21724,7 @@ _SOS_WORDS = ('outlook', 'not-working', 'wont-', 'error', 'problem', 'slow', 'st
               'virus', 'malware', 'hacked', 'scammer', 'password', 'domain-expired')
 _SOS_EXCLUDE = {
     'laptop-wont-turn-on-no-lights', 'laptop-clicking-noise-wont-turn-on',  # dead hardware
+    'dell-caps-lock-light-blinking-wont-turn-on', 'dell-optiplex-fan-error-f1-fix',  # Dell hardware faults: no screen to share (26 Sep 2026); they get the Dell panel instead
     'how-to-add-gmail-to-outlook', 'how-to-go-back-to-classic-outlook',      # unhurried guides
     'move-plusnet-email-to-gmail', 'move-virgin-media-email-to-gmail',
     'wifi-in-a-granny-annexe', 'worried-about-a-parent-being-scammed',
@@ -21752,21 +21753,6 @@ _DELL_GUIDE_STOCK_SLUGS = {
     # NOT dell-latitude-3520-guide / dell-optiplex-guide: those are hand-built owner's
     # guides (not pack pages) and already carry the from-&pound;510 CTA in their own hero.
 }
-DELL_GUIDE_STOCK_BAND = '''    <section class="section" aria-label="Real refurbished Dell stock" id="stock">
-      <div class="wrap" style="max-width:960px;margin:0 auto">
-        <div class="repairs__card" data-reveal style="border-color:rgba(29,151,227,.4);flex-direction:column;align-items:flex-start;gap:1.2rem">
-          <div>
-            <p class="eyebrow mono">// NOT JUST A GUIDE</p>
-            <h2 class="repairs__title" style="max-width:none">We sell the machines this page describes &mdash; and bring them to you first</h2>
-            <p class="lede">Real, tested ex-business Latitude laptops and OptiPlex desktops from <strong>&pound;510</strong>, each with a new 1TB Samsung 990&nbsp;PRO drive, set up and supported by the same Bournemouth techies who wrote this. We bring it to you to see before you decide, home or business, across Dorset.</p>
-          </div>
-          <p style="margin:0;display:flex;flex-wrap:wrap;gap:.7rem">
-            <a href="/dell-hardware/" class="button primary">See what&rsquo;s in stock</a>
-            <a href="/refurbished-dell-laptops-bournemouth/" class="button secondary">Refurbished Latitudes explained</a>
-          </p>
-        </div>
-      </div>
-    </section>'''
 
 # Jobs pass 3 (13 Sep 2026, GSC 1-12 Sep): the three guides that carry the buying traffic
 # (Latitude series 16 clicks, 5420 vs 5430 10, OptiPlex Micro/SFF/Tower 9) showed the generic
@@ -21784,46 +21770,177 @@ _DELL_GUIDE_STOCK_PICKS = {
 
 
 def dell_guide_stock_band(slug):
-    """The stock band for a Dell guide: model cards for the three buying guides, the generic band elsewhere."""
-    pick = _DELL_GUIDE_STOCK_PICKS.get(slug)
-    if not pick:
-        return DELL_GUIDE_STOCK_BAND
-    title, rows = pick
+    """The Dell guides' band is now the two-sided Dell panel (26 Sep 2026)."""
+    return dell_panel(slug)
+
+
+# ============================================ DELL PANEL (26 Sep 2026)
+# Owner: "Dell playing up? We'll fix it, or pick a refurbished one" on the busiest Dell pages. The ten
+# Dell guides already carried a buy-only stock band after section 1 (the AI-Overview funnel, Aug 2026);
+# that band is now this panel, buy side first, with the fix side beside it. The two Dell hardware-fault
+# pages (Caps Lock blinking, OptiPlex F1 fan error) get it fix side first, at the end of the page, and no
+# longer get the generic SOS band (it promised a remote session to machines with no screen to share).
+# Claims are the Dell pages' own: no fix no fee, free local collection, 12-month repair warranty, remote
+# help often the same day for software faults, guide prices from DELL_MACHINES, new 1TB Samsung 990 PRO.
+DELL_PANEL_PICKS = dict(_DELL_GUIDE_STOCK_PICKS)
+_LAT_TIERS = [('latitude-3420', 'Latitude 3000 series'), ('latitude-5520', 'Latitude 5000 series'), ('latitude-7420', 'Latitude 7000 series')]
+_OPTI_TIERS = [('optiplex-3080', 'OptiPlex 3000 series'), ('optiplex-5080', 'OptiPlex 5000 series'), ('optiplex-7080', 'OptiPlex 7000 series')]
+DELL_PANEL_PICKS.update({
+    'are-dell-latitude-laptops-good': ('Refurbished Latitudes, tested and in stock', _LAT_TIERS),
+    'how-long-do-dell-latitude-laptops-last': ('Refurbished Latitudes with years left in them', _LAT_TIERS),
+    'dell-precision-vs-latitude': ('Refurbished Latitudes, tested and in stock', _LAT_TIERS),
+    'dell-latitude-5000-guide': ('Latitude 5000s, refurbished and in stock',
+        [('latitude-5520', None), ('latitude-5420', None), ('latitude-5430', None)]),
+    'dell-latitude-7000-guide': ('Latitude 7000s, refurbished and in stock',
+        [('latitude-7420', None), ('latitude-7330', None), ('latitude-7430', None)]),
+    'dell-optiplex-vs-inspiron-desktop': ('Refurbished OptiPlex desktops, tested and in stock', _OPTI_TIERS),
+    'why-computer-prices-have-gone-up': ('What a refurbished Dell costs instead',
+        [('latitude-3420', 'Latitude 3000 series'), ('optiplex-3080', 'OptiPlex 3000 series')]),
+    'dell-caps-lock-light-blinking-wont-turn-on': ('If it isn&rsquo;t worth fixing',
+        [('latitude-3420', 'Latitude 3000 series'), ('latitude-5520', 'Latitude 5000 series')]),
+    'dell-optiplex-fan-error-f1-fix': ('If it isn&rsquo;t worth fixing',
+        [('optiplex-3080', 'OptiPlex 3000 series'), ('optiplex-7080', 'OptiPlex 7000 series')]),
+})
+# fix-first pages: (title, lede, repair page)
+DELL_PANEL_FIX = {
+    'dell-caps-lock-light-blinking-wont-turn-on': (
+        'Still blinking? We&rsquo;ll get to the bottom of it',
+        'A Dell that won&rsquo;t start needs hands-on diagnosis, not a remote session. We collect it, find the fault and tell you the price before we touch it.',
+        '/dell-laptop-repair-bournemouth/'),
+    'dell-optiplex-fan-error-f1-fix': (
+        'Fan error keeps coming back? We&rsquo;ll sort it',
+        'A fan that fails its check needs hands-on work. We collect the OptiPlex, find the cause and tell you the price before we touch it.',
+        '/dell-optiplex-repair-poole/'),
+}
+
+DELL_PANEL_CSS = """
+.dpan{--hp-card:rgba(13,23,49,.66);--hp-edge:rgba(125,170,220,.17);--hp-edge-hi:rgba(125,190,240,.42);--hp-ink:#f2f8ff;--hp-body:#cbdcf1;--hp-soft:#9fb5d3;--hp-dark:#03101f;padding-block:clamp(2rem,4.5vw,3.4rem);padding-inline:var(--pad-x)}
+.dpan *{box-sizing:border-box}
+.dpan__card{max-width:1080px;margin:0 auto;padding:clamp(1.2rem,3vw,2rem);border-radius:26px;border:1px solid var(--hp-edge-hi);background:radial-gradient(60% 90% at 0% 0%,rgba(29,151,227,.16),transparent 60%),radial-gradient(50% 90% at 100% 100%,rgba(229,154,0,.1),transparent 60%),rgba(10,19,42,.82)}
+.dpan__kicker{margin:0 0 .5rem;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan-soft)}
+.dpan__title{margin:0;font-family:var(--font-display);font-weight:600;font-size:clamp(1.5rem,2.8vw,2.1rem);line-height:1.12;color:var(--hp-ink);text-wrap:balance}
+.dpan__lede{margin:.6rem 0 0;max-width:62ch;font-size:.98rem;line-height:1.6;color:var(--hp-body)}
+.dpan__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1rem;margin-top:1.3rem}
+.dpan__col{display:flex;flex-direction:column;gap:.75rem;padding:1.1rem 1.15rem;border-radius:20px;border:1px solid var(--hp-edge);background:var(--hp-card)}
+.dpan__tag{display:flex;align-items:center;gap:.6rem;margin:0;font-family:var(--font-display);font-weight:600;font-size:1.12rem;color:var(--hp-ink)}
+.dpan__ico{--s:36px;flex:none;display:grid;place-items:center;width:var(--s);height:var(--s);border-radius:11px;background:linear-gradient(145deg,var(--c2),var(--c1) 58%);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 8px 18px -10px var(--c1);color:#fff}
+.dpan__ico svg{width:54%;height:54%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.dpan .hp-c-fix{--c1:#1d97e3;--c2:#79d0ff}.dpan .hp-c-buy{--c1:#e59a00;--c2:#ffd978}
+.dpan__ticks{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
+.dpan__ticks li{position:relative;padding-left:1.5rem;font-size:.92rem;line-height:1.45;color:var(--hp-body)}
+.dpan__ticks li::before{content:"\\2713";position:absolute;left:0;top:0;color:#39d353;font-weight:700}
+.dpan__rows{list-style:none;margin:0;padding:0;display:grid;gap:.45rem}
+.dpan__rows a{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.15rem .9rem;padding:.65rem .85rem;border-radius:13px;border:1px solid var(--hp-edge);background:rgba(4,10,26,.35);text-decoration:none;transition:border-color .2s}
+.dpan__rows a:hover{border-color:rgba(255,217,120,.55)}
+.dpan__rows b{font-family:var(--font-display);font-weight:600;font-size:.98rem;color:var(--hp-ink)}
+.dpan__rows small{grid-column:1;font-size:.78rem;color:var(--hp-soft)}
+.dpan__rows em{grid-row:1 / span 2;grid-column:2;font-style:normal;text-align:right;font-family:var(--font-display);font-weight:600;font-size:1.12rem;color:#ffd978}
+.dpan__rows em span{display:block;font-family:var(--font-mono);font-size:.64rem;letter-spacing:.08em;color:var(--hp-soft)}
+.dpan__help{list-style:none;margin:.2rem 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem}
+.dpan__help a{display:block;padding:.55rem .75rem;border-radius:12px;border:1px solid var(--hp-edge);background:rgba(4,10,26,.35);font-size:.86rem;font-weight:600;color:#dfe9f7;text-decoration:none;transition:border-color .2s}
+.dpan__help a:hover{border-color:rgba(121,208,255,.55)}
+.dpan__more{margin:0;font-size:.8rem;line-height:1.55;color:var(--hp-soft)}
+.dpan__more a{color:var(--cyan-soft);text-decoration:none}
+.dpan__more a:hover{text-decoration:underline}
+.dpan__cta{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem 1rem;margin-top:auto;padding-top:.2rem}
+.dpan__btn{display:inline-flex;align-items:center;gap:.45rem;padding:.72rem 1.15rem;border-radius:999px;font-weight:700;font-size:.93rem;text-decoration:none;color:var(--hp-dark);background:linear-gradient(135deg,var(--c2),var(--c1));box-shadow:0 12px 24px -14px var(--c1),inset 0 1px 0 rgba(255,255,255,.4)}
+.dpan__link{font-weight:600;font-size:.92rem;color:var(--cyan-soft);text-decoration:none}
+.dpan__link:hover{color:#fff}
+.dpan__foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.4rem 1.4rem;margin:1rem 0 0;font-size:.8rem;color:var(--hp-soft)}
+.dpan__foot a{color:var(--cyan-soft);font-weight:600;text-decoration:none}
+@media (max-width:820px){.dpan__grid{grid-template-columns:1fr}}
+"""
+
+DELL_PANEL_SCRIPT = """      <script>
+      /* plan_cta: which link people take out of the Dell panel (same event as the keep bands and fix-flow endings) */
+      (function(){ var s=document.currentScript&&document.currentScript.parentNode; if(!s) return;
+        s.addEventListener('click',function(e){ var a=e.target.closest&&e.target.closest('a[href]'); if(!a) return;
+          try{ if(typeof gtag==='function'&&localStorage.getItem('tt_internal')!=='1') gtag('event','plan_cta',{place:'dell_panel',target:a.getAttribute('href'),page:location.pathname}); }catch(x){} }); })();
+      </script>"""
+
+
+def _dell_panel_rows(slug):
+    title, rows = DELL_PANEL_PICKS[slug]
     by_id = {m[0]: m for m in DELL_MACHINES}
-    cards = []
+    out, more, kinds = [], [], []
     for mid, tier_label in rows:
         _id, kind, series, name, meta, price, href = by_id[mid][:7]
+        kinds.append(kind)
         if tier_label:
             tier_min = min(x[5] for x in DELL_MACHINES if x[2] == series)
             assert price == tier_min, (slug, mid, price, tier_min)   # the example IS the from-price, never a dearer one
-            head, label, line = tier_label, 'from', 'e.g. ' + name + ' &middot; ' + meta
-            reserve, details = ('Reserve ' + ('an ' if name[:1] in 'AEIOU' else 'a ') + name, '/dell-hardware/?model=' + mid + '#pick'), ('See the ' + series + ' page', href)
+            head, sub, label = tier_label, 'e.g. ' + name + ' &middot; ' + meta, 'FROM'
+            more.append((series, href))
         else:
-            head, label, line = name, 'guide price', meta
-            reserve, details = ('Reserve this one', '/dell-hardware/?model=' + mid + '#pick'), ('Full details', href + '#' + mid)
-        sub = '<span style="font-size:.8rem;font-weight:500;color:var(--muted)">' + label + '</span> &pound;' + str(price)
-        cards.append(
-            '            <div style="border:1px solid rgba(125,170,220,.28);border-radius:14px;padding:1rem 1.1rem;background:rgba(255,255,255,.03);display:flex;flex-direction:column;gap:.45rem">\n'
-            '              <p class="eyebrow mono" style="margin:0">// ' + series.upper() + '</p>\n'
-            '              <h3 style="margin:0;font-size:1.15rem">' + head + '</h3>\n'
-            '              <p class="mono" style="margin:0;font-size:.78rem;color:var(--muted)">' + line + ' &middot; new 1TB Samsung 990&nbsp;PRO</p>\n'
-            '              <p style="margin:.2rem 0 .4rem;font-size:1.35rem;font-weight:700">' + sub + '</p>\n'
-            '              <p style="margin:auto 0 0;display:flex;flex-wrap:wrap;gap:.5rem"><a class="button primary" href="' + reserve[1] + '">' + reserve[0] + '</a><a class="button secondary" href="' + details[1] + '">' + details[0] + '</a></p>\n'
-            '            </div>')
-    return ('    <section class="section" aria-label="Real refurbished Dell stock" id="stock">\n'
-            '      <div class="wrap" style="max-width:960px;margin:0 auto">\n'
-            '        <div class="repairs__card" data-reveal style="border-color:rgba(29,151,227,.4);flex-direction:column;align-items:flex-start;gap:1.2rem">\n'
-            '          <div>\n'
-            '            <p class="eyebrow mono">// NOT JUST A GUIDE</p>\n'
-            '            <h2 class="repairs__title" style="max-width:none">' + title + '</h2>\n'
-            '            <p class="lede">Real, tested ex-business machines, each with a new 1TB Samsung 990&nbsp;PRO drive, set up and supported by the same Bournemouth techies who wrote this. Guide prices, set-up included; we bring it to you to see before you decide, home or business, across Dorset.</p>\n'
-            '          </div>\n'
-            '          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.9rem;width:100%">\n' + '\n'.join(cards) + '\n'
-            '          </div>\n'
-            '          <p style="margin:0;display:flex;flex-wrap:wrap;gap:.7rem;align-items:center"><a href="/dell-hardware/#pick" class="button bm-ghost">See everything in stock</a><a href="tel:+441202775566" class="button bm-ghost">Call 01202 775566</a></p>\n'
-            '        </div>\n'
-            '      </div>\n'
-            '    </section>')
+            head, sub, label = name, meta, 'GUIDE'
+            more.append((name, href + '#' + mid))
+        out.append(f'            <li><a href="/dell-hardware/?model={mid}#pick"><b>{head}</b><small>{sub}</small><em>&pound;{price}<span>{label}</span></em></a></li>')
+    if 'laptop' in kinds:
+        more.append(('all refurbished Dell laptops', '/refurbished-dell-laptops-bournemouth/'))
+    if 'desktop' in kinds:
+        more.append(('all refurbished Dell desktops', '/refurbished-dell-desktops-dorset/'))
+    more_html = ' &middot; '.join(f'<a href="{h}">{t}</a>' for t, h in more)
+    return title, "\n".join(out), more_html
+
+
+def dell_panel(slug):
+    fix = DELL_PANEL_FIX.get(slug)
+    buy_title, rows, more_html = _dell_panel_rows(slug)
+    if fix:
+        title, lede, repair_href = fix
+        fix_col = f'''          <div class="dpan__col hp-c-fix">
+            <p class="dpan__tag"><span class="dpan__ico">{_dh_ico("wrench")}</span>Book a Dell repair</p>
+            <ul class="dpan__ticks">
+              <li>Diagnosis first &mdash; no fix, no fee</li>
+              <li>Free local collection across Dorset</li>
+              <li>A clear price before we start</li>
+              <li>12-month warranty on the repair</li>
+            </ul>
+            <div class="dpan__cta"><a class="dpan__btn" href="{repair_href}">Book a repair</a><a class="dpan__link" href="tel:+441202775566">Call 01202 775566</a></div>
+          </div>'''
+        kicker = 'Dorset&rsquo;s independent Dell specialist'
+    else:
+        title = 'Dell playing up? We&rsquo;ll fix it. Time for a new one? Pick one here.'
+        lede = 'Real, tested ex-business Dells from the same Bournemouth techies who wrote this, each with a new 1TB Samsung 990&nbsp;PRO, set up and supported &mdash; and help for the Dell you&rsquo;ve already got.'
+        fix_col = f'''          <div class="dpan__col hp-c-fix">
+            <p class="dpan__tag"><span class="dpan__ico">{_dh_ico("wrench")}</span>Dell playing up?</p>
+            <ul class="dpan__ticks">
+              <li>Software problems: remote help, often the same day</li>
+              <li>Hardware: free local collection, no fix no fee</li>
+              <li>12-month warranty on repairs</li>
+            </ul>
+            <ul class="dpan__help">
+              <li><a href="/dell-laptop-repair-bournemouth/">Dell laptop repair</a></li>
+              <li><a href="/dell-laptop-battery-replacement-dorset/">Battery replacement</a></li>
+              <li><a href="/dell-out-of-warranty-repair/">Out-of-warranty repair</a></li>
+              <li><a href="/dell-remote-support/">Remote Dell support</a></li>
+              <li><a href="/dell-support-plans/">Dell servicing plans</a></li>
+            </ul>
+            <div class="dpan__cta"><a class="dpan__btn" href="/dell-it-support-dorset/">Get Dell help</a><a class="dpan__link" href="tel:+441202775566">Call 01202 775566</a></div>
+          </div>'''
+        kicker = 'Not just a guide'
+    buy_col = f'''          <div class="dpan__col hp-c-buy">
+            <p class="dpan__tag"><span class="dpan__ico">{_dh_ico("laptop")}</span>{buy_title}</p>
+            <ul class="dpan__rows">
+{rows}
+            </ul>
+            <p class="dpan__more">More detail: {more_html}</p>
+            <div class="dpan__cta"><a class="dpan__btn" href="/dell-hardware/#pick">See everything in stock</a><a class="dpan__link" href="/dell-hardware/">How buying works</a></div>
+          </div>'''
+    cols = (fix_col + "\n" + buy_col) if fix else (buy_col + "\n" + fix_col)
+    return ('    <style>' + " ".join(l.strip() for l in DELL_PANEL_CSS.strip().splitlines()) + '</style>\n'
+            f'''    <section class="dpan" aria-label="Help with your Dell" id="stock">
+      <div class="dpan__card">
+        <p class="dpan__kicker">// {kicker}</p>
+        <h2 class="dpan__title">{title}</h2>
+        <p class="dpan__lede">{lede}</p>
+        <div class="dpan__grid">
+{cols}
+        </div>
+        <p class="dpan__foot"><span>Guide prices; stock changes, so we confirm the exact machine before you buy. We bring it to you to see first.</span><a href="/dell-it-support-dorset/">All our Dell help in one place &#8594;</a></p>
+      </div>
+{DELL_PANEL_SCRIPT}
+    </section>''')
 
 
 # Free-courses funnel: gentle/how-to/beginner pages promote the courses at the
@@ -22553,6 +22670,8 @@ def build_new_page(d):
         else:   # no flow: after the page's own fixes, just before its closing section
             _last = f'id="s{len(d["sections"])}"'
             _blocks.insert(next((i for i, b in enumerate(_blocks) if _last in b), len(_blocks)), bp.keep_band(_kb))
+    if d['slug'] in DELL_PANEL_FIX:
+        _blocks.append(dell_panel(d['slug']))   # Dell hardware faults: fix first, replace second (26 Sep 2026)
     _an = bp.apple_notice_for(d['slug'])   # Outlook pages: 'Windows PCs only' strip between section 1 and the flow
     if _an and len(_blocks) > 1: _blocks.insert(1, _an)
     sections = "\n".join(_blocks)
