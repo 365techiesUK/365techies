@@ -287,7 +287,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-08-31"
+      "dateModified": "2026-09-25"
     },
     {
       "@type": "Service",
@@ -773,7 +773,7 @@
           <a href="/off-grid-victron-energy/" class="button secondary button--lg">Off-Grid Energy</a>
         </div>
         <ul class="page-hero__chips mono"><li>&#9679; Victron LiFePO4</li><li>&#9679; Vans, motorhomes &amp; boats</li><li>&#9679; Free survey &amp; quote</li></ul>
-        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 31 August 2026</p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 25 September 2026</p>
       </div>
     </section>
     <section class="section" aria-label="What it is">
@@ -873,7 +873,7 @@
           function q(s){return el.querySelector(s);}
           function tw(sel,key,to,fmt){ var n=q(sel); if(!n) return; if(to==null){n.textContent="—";return;} var f=(cur[key]==null?to:cur[key]); cur[key]=to; if(reduce||f===to){n.textContent=fmt(to);return;} var t0=null; function st(ts){if(t0===null)t0=ts;var p=Math.min(1,(ts-t0)/700);var e=1-Math.pow(1-p,3);n.textContent=fmt(f+(to-f)*e);if(p<1)requestAnimationFrame(st);} requestAnimationFrame(st); }
           function render(s){
-            var charging=s.battState==="charging"||(s.battW!=null&&s.battW>3);
+            var charging=(s.battW!=null)?(s.battW>3):(s.battState==="charging");   /* live power wins: VRM battState lags up to 15 min (said Charging at -1.2 A, 25 Sep) */
             var idle=(s.battW!=null&&Math.abs(s.battW)<=3);
             var col=(s.soc>=70)?"#39d353":((s.soc>=40)?"#e0b341":"#e06a4a");
             tw("[data-m-soc]","soc",s.soc,function(v){return v.toFixed(1)+"%";});
