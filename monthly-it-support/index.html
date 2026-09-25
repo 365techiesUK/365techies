@@ -287,7 +287,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-09-14"
+      "dateModified": "2026-09-25"
     },
     {
       "@type": "Service",
@@ -790,7 +790,7 @@
           <a href="tel:+441202775566" class="button secondary button--lg">Call 01202 775566</a>
         </div>
         <ul class="page-hero__chips mono"><li>&#9679; &pound;18.25/mo per computer</li><li>&#9679; Full service every 6 weeks</li><li>&#9679; Cancel anytime</li></ul>
-        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 14 September 2026</p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 25 September 2026</p>
         <div class="course-scene course-scene--band course-scene--hero" aria-hidden="true"><svg class="course-scene__svg" viewBox="0 0 400 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false"><path d="M217 45 A80 80 0 1 1 167 45" fill="none" stroke="#1d97e3" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 8" class="nm-link"/><path d="M169 45 L156 39 L156 51 Z" fill="#1d97e3"/><g class="cs-float"><rect x="137" y="74" width="110" height="94" rx="10" fill="#0b1d3a" stroke="rgba(125,170,220,.35)" stroke-width="2"/><path d="M143 97 h98" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><path d="M167 66 v14 M217 66 v14" stroke="#86b6e8" stroke-width="2" stroke-linecap="round"/><circle cx="158" cy="116" r="3" fill="#86b6e8"/><circle cx="181" cy="116" r="3" fill="#86b6e8"/><circle cx="204" cy="116" r="3" fill="#86b6e8"/><circle cx="227" cy="116" r="3" fill="#86b6e8"/><circle cx="158" cy="137" r="3" fill="#86b6e8"/><circle cx="181" cy="137" r="3" fill="#86b6e8"/><circle cx="227" cy="137" r="3" fill="#86b6e8"/><circle cx="158" cy="158" r="3" fill="#86b6e8"/><circle cx="181" cy="158" r="3" fill="#86b6e8"/><circle cx="204" cy="158" r="3" fill="#86b6e8"/><circle cx="227" cy="158" r="3" fill="#86b6e8"/><circle cx="204" cy="137" r="10" fill="none" stroke="rgba(29,151,227,.5)" stroke-width="2" class="nm-scan"/><circle cx="204" cy="137" r="4" fill="#00ce1b" class="nm-dot" style="--d:.4s"/></g><path d="M252 152 H290 V176 Q290 190 271 199 Q252 190 252 176 Z" fill="#0a1f3d" stroke="rgba(125,170,220,.35)" stroke-width="2"/><path d="M261 174 L269 182 L282 166" fill="none" stroke="#00ce1b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       </div>
     </section>
@@ -865,8 +865,18 @@
           <p class="eyebrow eyebrow--center mono" data-reveal>/04 — CHOOSE YOUR PATH</p>
           <h2 class="section-title section-title--center" data-title>Home or business support<span class="title-underline title-underline--center"></span></h2>
         </div>
+        <style>
+        /* Most of our customers are homes and retired users, so HOME is the featured card here (owner,
+           25 Sep 2026). .plan-card--business carries the featured look site-wide and main.js uses the
+           --home/--business classes only for slide-in direction, so the swap is scoped to this section. */
+        #plans .plan-card--home.is-featured{border:1px solid transparent;background:linear-gradient(165deg,rgba(13,27,52,.86),rgba(7,15,32,.92)) padding-box,linear-gradient(135deg,rgba(29,151,227,.85),rgba(0,206,27,.85),rgba(29,151,227,.85)) border-box;box-shadow:var(--shadow-2),0 0 32px rgba(29,151,227,.2)}
+        #plans .plan-card--home.is-featured .plan-card__tag{color:var(--green)}
+        #plans .plan-card--business.is-plain{border:1px solid rgba(125,170,220,.16);background:linear-gradient(165deg,rgba(13,27,52,.72),rgba(7,15,32,.82));box-shadow:var(--shadow-2)}
+        #plans .plan-card--business.is-plain .plan-card__tag{color:var(--cyan)}
+        </style>
         <div class="plan-grid">
-          <article class="plan-card plan-card--home" data-reveal>
+          <article class="plan-card plan-card--home is-featured" data-reveal>
+            <p class="plan-card__badge mono">&#9733; MOST POPULAR</p>
             <p class="plan-card__tag mono">FOR HOMES</p>
             <h3>Home IT Support</h3>
             <p class="plan-card__desc">Friendly monthly computer support for homes, families, home workers and retired users.</p>
@@ -881,8 +891,7 @@
             <a href="/home-it-support-plans/" class="button primary plan-card__cta">See Home Plans &amp; Prices</a>
             <p class="mono" style="text-align:center;margin-top:.7rem;color:var(--faint);font-size:.75rem;letter-spacing:.1em">DIRECT DEBIT BY GOCARDLESS &middot; CANCEL ANYTIME</p>
           </article>
-          <article class="plan-card plan-card--business" data-reveal>
-            <p class="plan-card__badge mono">&#9733; MOST POPULAR</p>
+          <article class="plan-card plan-card--business is-plain" data-reveal>
             <p class="plan-card__tag mono">FOR BUSINESS</p>
             <h3>Business IT Support</h3>
             <p class="plan-card__desc">Reliable monthly IT support for sole traders and small businesses across Dorset.</p>

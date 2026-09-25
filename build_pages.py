@@ -5235,8 +5235,18 @@ add(
           <p class="eyebrow eyebrow--center mono" data-reveal>/04 — CHOOSE YOUR PATH</p>
           <h2 class="section-title section-title--center" data-title>Home or business support<span class="title-underline title-underline--center"></span></h2>
         </div>
+        <style>
+        /* Most of our customers are homes and retired users, so HOME is the featured card here (owner,
+           25 Sep 2026). .plan-card--business carries the featured look site-wide and main.js uses the
+           --home/--business classes only for slide-in direction, so the swap is scoped to this section. */
+        #plans .plan-card--home.is-featured{{border:1px solid transparent;background:linear-gradient(165deg,rgba(13,27,52,.86),rgba(7,15,32,.92)) padding-box,linear-gradient(135deg,rgba(29,151,227,.85),rgba(0,206,27,.85),rgba(29,151,227,.85)) border-box;box-shadow:var(--shadow-2),0 0 32px rgba(29,151,227,.2)}}
+        #plans .plan-card--home.is-featured .plan-card__tag{{color:var(--green)}}
+        #plans .plan-card--business.is-plain{{border:1px solid rgba(125,170,220,.16);background:linear-gradient(165deg,rgba(13,27,52,.72),rgba(7,15,32,.82));box-shadow:var(--shadow-2)}}
+        #plans .plan-card--business.is-plain .plan-card__tag{{color:var(--cyan)}}
+        </style>
         <div class="plan-grid">
-          <article class="plan-card plan-card--home" data-reveal>
+          <article class="plan-card plan-card--home is-featured" data-reveal>
+            <p class="plan-card__badge mono">&#9733; MOST POPULAR</p>
             <p class="plan-card__tag mono">FOR HOMES</p>
             <h3>Home IT Support</h3>
             <p class="plan-card__desc">Friendly monthly computer support for homes, families, home workers and retired users.</p>
@@ -5251,8 +5261,7 @@ add(
             <a href="/home-it-support-plans/" class="button primary plan-card__cta">See Home Plans &amp; Prices</a>
             <p class="mono" style="text-align:center;margin-top:.7rem;color:var(--faint);font-size:.75rem;letter-spacing:.1em">DIRECT DEBIT BY GOCARDLESS &middot; CANCEL ANYTIME</p>
           </article>
-          <article class="plan-card plan-card--business" data-reveal>
-            <p class="plan-card__badge mono">&#9733; MOST POPULAR</p>
+          <article class="plan-card plan-card--business is-plain" data-reveal>
             <p class="plan-card__tag mono">FOR BUSINESS</p>
             <h3>Business IT Support</h3>
             <p class="plan-card__desc">Reliable monthly IT support for sole traders and small businesses across Dorset.</p>
