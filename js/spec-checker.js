@@ -134,7 +134,7 @@
     D={rows:[]};
     Array.prototype.forEach.call(grid.querySelectorAll('.spc-rows'),function(x){x.innerHTML='';});
     Array.prototype.forEach.call(grid.querySelectorAll('.spc-card'),function(c){c.classList.remove('in');});
-    $('#spc-verdict').hidden=true; $('#spc-actions').hidden=true; $('#spc-flags').innerHTML='';
+    $('#spc-verdict').hidden=true; $('#spc-actions').hidden=true; $('#spc-report').hidden=true; $('#spc-report').innerHTML='';
     step('scan','on'); step('bench',''); step('share','');
     var sl=$('#spc-scanline'), si=0; sl.style.display='';
     if(scanTimer)clearInterval(scanTimer);
@@ -145,8 +145,8 @@
     refreshRate(function(h){hz=h;maybe();});
     webgpuInfo(function(w){wgpu=w;maybe();});
   }
-  function finish(g,os,hz,wgpu){
-    if(g!==scanGen)return; /* a newer scan superseded this one */
+  function finish(gen,os,hz,wgpu){
+    if(gen!==scanGen)return; /* a newer scan superseded this one */
     clearInterval(scanTimer);
     var g=gpuInfo();
     /* OS card */
@@ -183,17 +183,17 @@
     try{
       if(navigator.storage&&navigator.storage.estimate){
         navigator.storage.estimate().then(function(est){
-          if(g!==scanGen)return;
+          if(gen!==scanGen)return;
           if(est&&est.quota){ var gb=est.quota/1073741824; put('store','Space this browser can use',(gb>=1?gb.toFixed(0)+' GB':(gb*1024).toFixed(0)+' MB'),'a rough hint of free disk space — not an exact reading'); }
           else put('store','Storage','No estimate available');
-        },function(){if(g===scanGen)put('store','Storage','No estimate available');});
+        },function(){if(gen===scanGen)put('store','Storage','No estimate available');});
       } else put('store','Storage','Hidden by this browser');
     }catch(e){put('store','Storage','Hidden by this browser');}
     /* Battery */
     try{
       if(navigator.getBattery){
         navigator.getBattery().then(function(b){
-          if(g!==scanGen)return;
+          if(gen!==scanGen)return;
           var pct=Math.round(b.level*100);
           var mains=(b.charging&&pct>=100); /* Chromium reports 100%+charging on battery-less desktops too */
           putRaw('batt','<div class="spc-row"><b>Charge</b><span>'+(mains?'On mains — battery full, or none fitted':pct+'% '+(b.charging?'⚡ charging':'on battery'))+'</span></div>');
@@ -201,7 +201,7 @@
           D.rows.push(['Power',mains?'On mains — battery full, or none fitted':pct+'% '+(b.charging?'(charging)':'(on battery)')]);
           setTimeout(function(){ var f=root.querySelector('.spc-battfill'); if(f)f.style.width=pct+'%'; },120);
           if(!b.charging&&b.dischargingTime&&isFinite(b.dischargingTime)&&b.dischargingTime>0&&b.dischargingTime<86400)put('batt','Time remaining','~'+Math.round(b.dischargingTime/60)+' min','browser estimate');
-        },function(){if(g===scanGen)put('batt','Battery','Not readable here');});
+        },function(){if(gen===scanGen)put('batt','Battery','Not readable here');});
       } else put('batt','Battery','Hidden by this browser','desktops have none; Firefox & Safari hide it for privacy');
     }catch(e){put('batt','Battery','Not readable here');}
     /* Network */
@@ -217,14 +217,14 @@
     try{
       if(navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices){
         navigator.mediaDevices.enumerateDevices().then(function(ds){
-          if(g!==scanGen)return;
+          if(gen!==scanGen)return;
           var n={videoinput:0,audioinput:0,audiooutput:0};
           ds.forEach(function(d){ if(n[d.kind]!=null)n[d.kind]++; });
           put('av','Cameras',n.videoinput||'None detected');
           put('av','Microphones',n.audioinput||'None detected');
           if(n.audiooutput)put('av','Speakers / outputs',n.audiooutput);
           putRaw('av','<div class="spc-row"><b>Names</b><span>Hidden until you grant permission<span class="spc-approx">counts only — test them on our <a href="/webcam-mic-test/" style="color:var(--cyan,#37c2c2)">webcam &amp; mic tester</a></span></span></div>');
-        },function(){if(g===scanGen)put('av','Devices','Not readable here');});
+        },function(){if(gen===scanGen)put('av','Devices','Not readable here');});
       } else put('av','Devices','Hidden by this browser');
     }catch(e){}
     try{ var AC=window.AudioContext||window.webkitAudioContext; if(AC){ var ac=new AC(); put('av','Audio sample rate',(ac.sampleRate/1000)+' kHz'); ac.close(); } }catch(e){}
@@ -243,12 +243,7 @@
     v.hidden=false;
     var lv=$('#spc-live'); if(lv){ lv.textContent='Scan complete. '+v.textContent; }   /* 14 Sep 2026 (a11y audit item 4): the result is announced */
     window.ttToolDone&&window.ttToolDone("computer-spec-checker");
-    var fl=$('#spc-flags');
-    if(os.win10)fl.insertAdjacentHTML('beforeend','<div class="spc-flag spc-flag--bad">&#9888;&#65039; <strong>You&rsquo;re on Windows 10 &mdash; it stopped getting security updates in October 2025.</strong> Every day online is riskier. See <a href="/windows-10-end-of-life/">your options</a> &mdash; many machines upgrade free, and we can check yours. Your routes are <a href="#windows-11">below</a>.</div>');
-    if(os.win11)fl.insertAdjacentHTML('beforeend','<div class="spc-flag spc-flag--good">&#10004;&#65039; Windows 11 &mdash; you&rsquo;re on the current, supported Windows. Good.</div>');
-    if(os.amb)fl.insertAdjacentHTML('beforeend','<div class="spc-flag spc-flag--warn">This browser won&rsquo;t say whether you&rsquo;re on Windows 10 or 11. Worth checking &mdash; Windows 10 is <a href="/windows-10-end-of-life/">out of security updates</a>. (Start &rarr; Settings &rarr; System &rarr; About.)</div>');
-    if(g.soft)fl.insertAdjacentHTML('beforeend','<div class="spc-flag spc-flag--warn">&#9888;&#65039; <strong>Graphics are running in software</strong> &mdash; your real graphics card isn&rsquo;t being used. That makes everything feel slow; often a driver problem. <a href="/contact/">We fix this remotely</a>.</div>');
-    if(dm!=null&&dm<=4)fl.insertAdjacentHTML('beforeend','<div class="spc-flag spc-flag--warn">Your browser reports about '+dm+' GB of memory. If the machine feels slow, a RAM or SSD upgrade is often the cheapest fix &mdash; <a href="/computer-tune-up/">worth a look</a>.</div>');
+    report(os,g,cores,dm);
     $('#spc-actions').hidden=false;
     step('scan','done'); step('bench','on');
     /* tell the Windows 11 block further down what the scan found */
@@ -257,6 +252,82 @@
     /* staggered card reveal */
     Array.prototype.forEach.call(grid.querySelectorAll('.spc-card'),function(c,i){ setTimeout(function(){c.classList.add('in');},80+i*110); });
   }
+  /* ---------- what the scan means (25 Sep 2026) ----------
+     The readings above are raw numbers; this turns the few a browser can honestly judge into plain grades, says out
+     loud what no website can see, and ends on one next step that fits the machine: the free app on Windows, a phone
+     number in UK office hours, a way to open the page on a computer for phone visitors. Nothing here is estimated:
+     every grade comes from a reading on this page, and "Hidden" is said as hidden. */
+  var TAG={bad:'Act now',warn:'Worth a look',ok:'Fine',good:'Good',info:'Tip',hid:'Hidden'};
+  var RANK={bad:0,warn:1,ok:2,good:2,info:3,hid:4};
+  function ukTime(){ try{ var tz=Intl.DateTimeFormat().resolvedOptions().timeZone||''; return !tz||/^Europe\/(London|Jersey|Guernsey|Isle_of_Man)$/.test(tz); }catch(e){ return true; } }
+  function officeOpen(){
+    try{
+      var wd='',hr=-1;
+      new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/London',weekday:'short',hour:'numeric',hourCycle:'h23'}).formatToParts(new Date()).forEach(function(x){ if(x.type==='weekday')wd=x.value; if(x.type==='hour')hr=parseInt(x.value,10); });
+      return !/Sat|Sun/.test(wd)&&hr>=9&&hr<17;
+    }catch(e){ return false; }
+  }
+  var lastWorst='';
+  function report(os,g,cores,dm){
+    var box=$('#spc-report'); if(!box) return;
+    var o=os.os||'', mac=/macOS/.test(o), kind=/Windows/.test(o)?'win':((/iOS|Android/.test(o)||(mac&&navigator.maxTouchPoints>1))?'mobile':(mac?'mac':'other'));
+    var rows=[];
+    function row(k,t,p){ rows.push({k:k,t:t,p:p,i:rows.length}); }
+    /* Windows: the one reading that can decide whether a machine is safe to use online */
+    if(os.win11) row('good','Windows 11','The current, supported Windows, so it keeps getting security fixes. Check they are actually installing: Settings &rarr; Windows Update.');
+    else if(os.win10) row('bad','Windows 10','Free security updates ended on 14 October 2025. It is only still patched if it has been enrolled in Extended Security Updates, which Microsoft runs until 12 October 2027. <a href="#windows-11">See your three routes</a>.');
+    else if(os.amb) row('warn','Windows 10 or 11?','This browser won&rsquo;t say which. Look in Start &rarr; Settings &rarr; System &rarr; About: if it says Windows 10, free security updates ended in October 2025. <a href="#windows-11">See your routes</a>.');
+    else if(/Windows [78]/.test(o)) row('bad',esc(o),'No security updates for years, so it is not safe for email, banking or shopping. <a href="/windows-10-end-of-life/">What to do instead</a>.');
+    else if(kind==='mobile') row('info','Phone or tablet','This checker is made for computers, so open it on the PC or laptop you want to check. While you have your phone out, <a href="/mobile-signal-check/?from=spec">test the mobile signal where you are</a>.');
+    else if(kind==='mac') row('info','Mac','Keep macOS current: Apple menu &rarr; System Settings &rarr; General &rarr; Software Update.');
+    else if(o) row('info',esc(o),'Keep it updated through its own settings: a security fix only helps once it is installed.');
+    if(kind!=='mobile'){
+      if(g.soft) row('bad','Graphics running in software','The real graphics chip isn&rsquo;t being used, so the processor draws everything the slow way: video calls stutter and batteries drain. Usually a driver fault, and usually fixable remotely.');
+      else if(g.ok) row('good','Graphics working properly','Hardware acceleration is on'+(g.gpu?' ('+esc(g.gpu.length>46?g.gpu.slice(0,45)+'…':g.gpu)+')':'')+'.');
+      else row('warn','No 3D graphics detected','Hardware acceleration is switched off in the browser, or the graphics driver is missing. Either one makes a machine feel slow.');
+      if(dm!=null){
+        if(dm>=8) row('good','8 GB or more of memory','The most a browser is allowed to report, so there may well be more.'+(kind==='win'?' The free app below shows exactly how much is fitted and in use.':''));
+        else if(dm>=4) row('warn','Between 4 and 8 GB of memory','Browsers round down, so this is somewhere from 4 GB to just under 8. At the low end it runs out quickly with a browser and a video call open, and more memory or a solid-state drive is often the cheapest speed-up.');
+        else row('bad','Under 4 GB of memory','Too little for today&rsquo;s Windows and browsers: it will feel slow whatever you do. <a href="/repair-or-replace-advisor/">Upgrade or replace?</a>');
+      }
+      if(cores){
+        if(cores>=8) row('good',cores+' processor threads','Plenty for everyday work, video calls and a browser full of tabs. <a href="#benchtool">The benchmark</a> shows how fast they really are.');
+        else if(cores>=4) row('ok',cores+' processor threads','Fine for email, browsing and the odd video call; heavy multitasking will feel it. <a href="#benchtool">Benchmark it</a> for the real speed.');
+        else row('warn',cores+' processor threads','Slow by today&rsquo;s standards: expect to wait whenever more than one thing is open.');
+      }
+      row('hid','What no website can see','Whether antivirus is on, whether every program is up to date, whether a backup exists, drive health and battery wear. They are what slows a machine down and what attackers look for.');
+    }
+    rows.sort(function(a,b){ return (RANK[a.k]-RANK[b.k])||(a.i-b.i); });
+    var nb=0,nw=0; rows.forEach(function(r){ if(r.k==='bad')nb++; if(r.k==='warn')nw++; });
+    var one=function(n,s,p){ return n===1?s:n+' '+p; };
+    var sum=kind==='mobile'?'Checking a computer? Open this page on it.'
+      :nb?one(nb,'One thing needs attention now','things need attention now')+(nw?', and '+one(nw,'one more is worth a look','more are worth a look')+'.':'.')
+      :nw?'Nothing urgent. '+one(nw,'One thing is','things are')+' worth a look.'
+      :'Everything a browser can see looks healthy.';
+    var worst=nb?'bad':(nw?'warn':'good'); lastWorst=worst;
+    /* the next step: one lead action, the others quieter */
+    var uk=ukTime(), open=officeOpen(), fixFirst=nb>0, nx=[];
+    var callBtn='<a class="button '+(fixFirst?'primary':'secondary')+'" href="tel:+441202775566" data-cta="call">Call 01202 775566</a>';
+    var help=(uk&&kind!=='mobile')?'<div class="spc-nx"><b>'+(nb||nw?'Want it sorted?':(kind==='mac'?'Mac playing up anyway?':'Slow or playing up anyway?'))+'</b><p>Not on a plan? We check the fault free, then quote before we fix &mdash; usually remotely, often within minutes.</p><div class="spc-nx__row">'
+      +(open?callBtn+'<span class="spc-nx__hint"><i class="spc-dot"></i>Lines open now</span>'
+            :'<a class="button '+(fixFirst?'primary':'secondary')+'" href="/book-service/" data-cta="book">Book a time</a><a class="spc-nx__link" href="tel:+441202775566" data-cta="call">01202 775566</a><span class="spc-nx__hint">phones Mon&ndash;Fri 9&ndash;5</span>')
+      +'</div></div>':'';
+    var app=kind==='win'?'<div class="spc-nx spc-nx--app"><b>See the inside, free</b><p>365 PC Manager reads what this page can&rsquo;t: exact memory, drive health, battery wear, antivirus and backup. Signed by 365 Techies Ltd, no fake scares, and it doesn&rsquo;t pretend to be an antivirus.</p><div class="spc-nx__row"><a class="button '+(fixFirst&&help?'secondary':'primary')+'" href="/free-pc-health-check/#download" data-cta="app">Get the free app for Windows</a></div></div>':'';
+    if(fixFirst){ nx.push(help,app); } else { nx.push(app,help); }
+    if(kind==='mobile') nx.push('<div class="spc-nx"><b>Check your computer instead</b><p>Send this page to yourself, then open it on the PC or laptop you want to check.</p><div class="spc-nx__row"><button type="button" class="button primary" data-cta="send" data-ttshare data-share-title="Free PC Hardware Checker" data-share-text="Open this on the computer you want to check:">Send it to my computer</button></div></div>');
+    if(uk&&kind!=='mobile') nx.push('<p class="spc-nx__plan">Keep it that way: on a <a href="/home-it-support-plans/" data-cta="plan">support plan</a> every program is updated every six weeks and the backup is checked. Home &pound;18.25 a month per computer, <a href="/business-it-support-plans/" data-cta="plan-biz">business</a> from &pound;24.38.</p>');
+    box.innerHTML='<div class="spc-rep__main"><p class="spc-rep__eye mono">// WHAT YOUR SCAN MEANS</p><p class="spc-rep__sum">'+sum+'</p><ul class="spc-rep__list">'
+      +rows.map(function(r){ return '<li class="spc-g spc-g--'+r.k+'"><span class="spc-g__tag">'+TAG[r.k]+'</span><div class="spc-g__body"><b>'+r.t+'</b><span>'+r.p+'</span></div></li>'; }).join('')
+      +'</ul></div>'+(nx.join('')?'<div class="spc-rep__next"><p class="spc-rep__eye mono">// YOUR NEXT STEP</p>'+nx.join('')+'</div>':'');
+    box.hidden=false;
+    var lv=$('#spc-live'); if(lv) lv.textContent+=' '+box.querySelector('.spc-rep__sum').textContent;
+    try{ if(typeof gtag==='function'&&localStorage.getItem('tt_internal')!=='1') gtag('event','spec_result',{os_kind:kind,windows:os.win11?'11':(os.win10?'10':(os.amb?'10or11':'')),worst:worst}); }catch(e){}
+  }
+  /* measurement: which next step people take from the result, and from the app band further down */
+  document.addEventListener('click',function(e){
+    var a=e.target.closest&&e.target.closest('#spc-report [data-cta], #beyond-browser a[href]'); if(!a) return;
+    try{ if(typeof gtag==='function'&&localStorage.getItem('tt_internal')!=='1') gtag('event','plan_cta',{place:a.closest('#spc-report')?'spec_result':'spec_app_band',target:a.getAttribute('data-cta')||a.getAttribute('href'),worst:lastWorst,page:location.pathname}); }catch(x){}
+  },true);
   /* ---------- export ---------- */
   function sheetText(){
     var t='MY COMPUTER — SPEC SHEET\nChecked with 365techies.co.uk/computer-spec-checker/\n'+new Date().toLocaleString()+'\n\n';

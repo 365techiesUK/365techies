@@ -13779,7 +13779,7 @@ SPECCHECK_TOOL = r'''    <section class="section" aria-label="PC spec checker" i
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// YOUR MACHINE, REVEALED</p>
           <h2 class="section-title section-title--center" data-title>Scanning your computer&hellip; live<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Your browser is reading your own machine <strong>right now</strong> &mdash; operating system, graphics card, screen, memory, battery and more. The checker itself sends nothing: your readings stay on your device, are never sent to us, and disappear when you leave.</p>
+          <p class="lede lede--center" data-reveal>Your browser is reading this machine <strong>right now</strong>. Nothing is sent to us, and it all disappears when you leave.</p>
         </div>
         <div id="spc" data-reveal>
           <ol class="spc-steps" id="spc-steps" aria-label="Scan, benchmark, share">
@@ -13791,9 +13791,9 @@ SPECCHECK_TOOL = r'''    <section class="section" aria-label="PC spec checker" i
             <p class="spc-scanline mono" id="spc-scanline">Warming up the scanner&hellip;</p>
             <p class="spc-verdict" id="spc-verdict" hidden></p>
             <p class="sr-only" id="spc-live" aria-live="polite"></p>
-            <div class="spc-flags" id="spc-flags"></div>
+            <div class="spc-rep" id="spc-report" hidden></div>
             <div class="spc-actions" id="spc-actions" hidden>
-              <button type="button" class="button primary" id="spc-bench">Benchmark this machine &#9889;</button>
+              <button type="button" class="button secondary" id="spc-bench">Benchmark this machine &#9889;</button>
               <button type="button" class="button secondary" id="spc-dl">Download my spec sheet</button>
               <button type="button" class="button spc-ghost" id="spc-copy">Copy as text</button>
               <button type="button" class="button spc-ghost" id="spc-again">Scan again</button>
@@ -13805,7 +13805,7 @@ SPECCHECK_TOOL = r'''    <section class="section" aria-label="PC spec checker" i
         </div>
       </div>
       <style>
-      #spc{max-width:1080px;margin:0 auto}
+      #spc{max-width:1080px;margin:0 auto;scroll-margin-top:calc(var(--header-h,72px) + var(--ticker-h,0px) + 2.5rem)}
       #spc .spc-steps{list-style:none;margin:0 0 1rem;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem}
       #spc .spc-step{display:flex;flex-direction:column;gap:.15rem;padding:.7rem .9rem;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.02);opacity:.72;transition:opacity .3s,border-color .3s}
       #spc .spc-step.is-on{opacity:1;border-color:rgba(108,196,245,.55);background:rgba(29,151,227,.08)}
@@ -13822,12 +13822,36 @@ SPECCHECK_TOOL = r'''    <section class="section" aria-label="PC spec checker" i
       @keyframes spc-blink{50%{opacity:0}}
       #spc .spc-verdict{margin:.5rem 0 0;font-size:1.25rem;font-weight:800;line-height:1.5}
       #spc .spc-verdict em{font-style:normal;color:var(--cyan,#37c2c2)}
-      #spc .spc-flags{display:flex;flex-direction:column;gap:.5rem;margin-top:.7rem}
-      #spc .spc-flag{padding:.7rem .9rem;border-radius:10px;font-size:.85rem;line-height:1.55;border:1px solid}
-      #spc .spc-flag--warn{border-color:rgba(241,196,15,.45);background:rgba(241,196,15,.08)}
-      #spc .spc-flag--bad{border-color:rgba(231,76,60,.5);background:rgba(231,76,60,.09)}
-      #spc .spc-flag--good{border-color:rgba(46,204,113,.4);background:rgba(46,204,113,.07)}
-      #spc .spc-flag a{color:var(--cyan,#37c2c2)}
+      /* what the scan means: grades on the left, one next step on the right (stacked on phones) */
+      #spc .spc-rep{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:1rem;margin-top:1rem;align-items:start}
+      #spc .spc-rep[hidden]{display:none}
+      #spc .spc-rep__eye{margin:0 0 .35rem;font-size:.68rem;letter-spacing:.08em;color:var(--cyan-soft,#6cc4f5)}
+      #spc .spc-rep__sum{margin:0 0 .7rem;font-size:1.02rem;font-weight:700;line-height:1.4}
+      #spc .spc-rep__list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.45rem}
+      #spc .spc-g{display:grid;grid-template-columns:7.2rem minmax(0,1fr);gap:.8rem;align-items:start;padding:.65rem .8rem;border-radius:11px;background:rgba(7,13,34,.45);border:1px solid rgba(255,255,255,.07)}
+      #spc .spc-g__tag{justify-self:start;font-family:var(--font-mono,monospace);font-size:.66rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.28rem .5rem;border-radius:999px;border:1px solid;white-space:nowrap;margin-top:.08rem}
+      #spc .spc-g__body b{display:block;font-size:.92rem;line-height:1.35}
+      #spc .spc-g__body span{display:block;margin-top:.15rem;font-size:.84rem;line-height:1.55;color:var(--ink-2,#dfe9f7)}
+      #spc .spc-g__body a,#spc .spc-nx a:not(.button){color:var(--cyan,#37c2c2)}
+      #spc .spc-g--bad{border-color:rgba(231,76,60,.45);background:rgba(231,76,60,.08)}
+      #spc .spc-g--bad .spc-g__tag{color:#ff8b7c;border-color:rgba(231,76,60,.6);background:rgba(231,76,60,.14)}
+      #spc .spc-g--warn .spc-g__tag{color:#f5d45e;border-color:rgba(241,196,15,.5);background:rgba(241,196,15,.1)}
+      #spc .spc-g--good .spc-g__tag,#spc .spc-g--ok .spc-g__tag{color:#5fe39a;border-color:rgba(46,204,113,.45);background:rgba(46,204,113,.09)}
+      #spc .spc-g--info .spc-g__tag,#spc .spc-g--hid .spc-g__tag{color:var(--cyan-soft,#6cc4f5);border-color:rgba(108,196,245,.45);background:rgba(29,151,227,.1)}
+      #spc .spc-g--hid{border-style:dashed}
+      #spc .spc-rep__next{display:flex;flex-direction:column;gap:.7rem}
+      #spc .spc-nx{padding:1rem 1.05rem;border-radius:13px;border:1px solid rgba(255,255,255,.12);background:rgba(7,13,34,.55)}
+      #spc .spc-nx--app{border-color:rgba(108,196,245,.45);background:linear-gradient(160deg,rgba(29,151,227,.16),rgba(7,13,34,.55) 70%)}
+      #spc .spc-nx b{display:block;font-size:1.02rem;line-height:1.3}
+      #spc .spc-nx p{margin:.35rem 0 0;font-size:.85rem;line-height:1.55;color:var(--ink-2,#dfe9f7)}
+      #spc .spc-nx__row{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .8rem;margin-top:.75rem}
+      #spc .spc-nx__row .button{margin:0}
+      #spc .spc-nx__link{font-weight:700;font-variant-numeric:tabular-nums}
+      #spc .spc-nx__hint{font-size:.76rem;color:var(--muted,#9fb5d3);display:inline-flex;align-items:center;gap:.4rem}
+      #spc .spc-dot{width:.5rem;height:.5rem;border-radius:50%;background:#2ecc71;box-shadow:0 0 0 3px rgba(46,204,113,.2)}
+      #spc .spc-nx__plan{margin:0;font-size:.8rem;line-height:1.55;color:var(--muted,#9fb5d3)}
+      @media(max-width:860px){#spc .spc-rep{grid-template-columns:1fr}}
+      @media(max-width:560px){#spc .spc-g{grid-template-columns:1fr;gap:.4rem}#spc .spc-nx__row .button{width:100%;text-align:center}}
       #spc .spc-actions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1rem}
       #spc .spc-actions[hidden]{display:none}
       #spc .spc-ghost{background:transparent;border:1px solid rgba(255,255,255,.25);color:inherit}
@@ -13845,7 +13869,7 @@ SPECCHECK_TOOL = r'''    <section class="section" aria-label="PC spec checker" i
       #spc .spc-batt{height:10px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin:.45rem 0 .2rem}
       #spc .spc-battfill{height:100%;width:0;border-radius:999px;background:#2ecc71;transition:width 1.2s cubic-bezier(.2,.7,.3,1)}
       #spc .spc-caveat{margin:1.2rem auto 0;max-width:76ch;font-size:.76rem;line-height:1.6;color:var(--muted,#9aa6c2)}
-      @media(max-width:560px){#spc .spc-actions .button{width:100%}}
+      @media(max-width:560px){#spc .spc-actions{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}#spc .spc-actions .button{width:100%;margin:0;padding-left:.5rem;padding-right:.5rem;font-size:.88rem}#spc .spc-actions .button:first-child,#spc .spc-actions .button:last-child{grid-column:1/-1}}
       @media(prefers-reduced-motion:reduce){#spc *,#spc *::after{animation:none!important;transition:none!important}#spc .spc-card{opacity:1;transform:none}}
       </style>
       <script src="/js/spec-checker.min.js?v=__SPECV__" defer></script>
@@ -14051,44 +14075,115 @@ SPECCHECK_SIGNAL_BAND = """    <section class="section section--alt" aria-label=
     </section>
 """
 
-SPECCHECK_APP_BAND = '''    <section class="section section--alt" aria-label="What a browser cannot see" id="beyond-browser">
+SPECCHECK_APP_BAND = '''    <section class="section section--alt" aria-label="Keep it fast and safe" id="beyond-browser">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// THE NEXT STEP &middot; FREE WINDOWS APP</p>
-          <h2 class="section-title section-title--center" data-title>The browser shows the outside. The free app shows the inside.<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Browsers deliberately hide most of what is inside a computer &mdash; that is good privacy design, and it is why the readings above are rounded. <strong>365 PC Manager</strong> is our free Windows app, digitally signed by 365 Techies Ltd, and it reads the real numbers on the machine itself. No fake errors, no scare tactics, uninstall any time.</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>// THE NEXT STEP &middot; KEEP IT FAST, KEEP IT SAFE</p>
+          <h2 class="section-title section-title--center" data-title>Your scan is a snapshot. Here&rsquo;s how to keep it <em class="grad grad--cyan">fast and safe</em><span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>A browser only sees the outside of a computer. What slows it down and what lets criminals in sits on the inside: a program that missed its updates, a backup that quietly stopped, a drive on its way out.</p>
         </div>
-        <div class="pcs" data-reveal>
-          <style>
-          .pcs{max-width:1080px;margin:0 auto 1.6rem}
-          .pcs__main{display:block;border-radius:16px;overflow:hidden;border:1px solid rgba(125,170,220,.28);box-shadow:0 28px 70px rgba(0,0,0,.5);background:#0a1226;aspect-ratio:2080/1620}
-          .pcs__main img,.pcs__thumb img{display:block;width:100%;height:100%;object-fit:cover}
-          .pcs__strip{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-top:.8rem}
-          .pcs__thumb{display:block;position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--line,rgba(125,170,220,.16));background:#0a1226;aspect-ratio:2080/1620;transition:border-color .25s,transform .25s}
-          .pcs__thumb:hover,.pcs__thumb:focus-visible{border-color:rgba(108,196,245,.55);transform:translateY(-2px)}
-          .pcs__cap{position:absolute;left:0;right:0;bottom:0;padding:.55rem .75rem;font-size:.78rem;font-weight:600;color:#eaf4ff;background:linear-gradient(to top,rgba(7,13,34,.94),rgba(7,13,34,0))}
-          .pcs__line{font-family:var(--font-mono,monospace);font-size:.72rem;letter-spacing:.04em;color:var(--muted,#9fb5d3);text-align:center;margin:.9rem 0 0}
-          @media(max-width:640px){.pcs__strip{gap:.4rem}.pcs__cap{font-size:.75rem;padding:.35rem .45rem}}
-          @media(prefers-reduced-motion:reduce){.pcs__thumb{transition:none}}
-          </style>
-          <a class="pcs__main" href="/free-pc-health-check/" aria-label="See 365 PC Manager, the free app"><img src="/images/pcm-laptop-health-v26.webp" width="2080" height="1620" alt="365 PC Manager health tab - live health score ring, verdict and system glance" loading="lazy" decoding="async"></a>
-          <div class="pcs__strip">
-            <a class="pcs__thumb" href="/free-pc-health-check/"><img src="/images/pcm-laptop-boost-v26.webp" width="2080" height="1620" alt="365 PC Manager boost tab - live memory graph and one-tap boost" loading="lazy" decoding="async"><span class="pcs__cap">Live memory graph, one-tap boost</span></a>
-            <a class="pcs__thumb" href="/free-pc-health-check/#six-weekly-service"><img src="/images/pcm-laptop-report-v26.webp" width="2080" height="1620" alt="365 PC Manager service tab - health check, full service and broadband test" loading="lazy" decoding="async"><span class="pcs__cap">Health check, service and broadband test</span></a>
-            <a class="pcs__thumb" href="/free-pc-health-check/"><img src="/images/pcm-laptop-perf-v26.webp" width="2080" height="1620" alt="365 PC Manager performance tab - live processor, memory and graphics graphs" loading="lazy" decoding="async"><span class="pcs__cap">Live processor, memory and graphics graphs</span></a>
+        <!-- 25 Sep 2026 (owner: no jobs from this page; promote the app and the AI-era security case). The quote is the
+             NCSC's own key judgement, verbatim and linked; every app line is something 365 PC Manager reads, every plan
+             line is on /free-pc-health-check/ and the plan pages, and the prices are the real ones. No fleet figures. -->
+        <style>
+        #beyond-browser .kx-ai{max-width:1080px;margin:0 auto 1.1rem;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:1rem;align-items:stretch}
+        #beyond-browser .kx-ai__q{padding:1.3rem 1.4rem;border-radius:16px;border:1px solid rgba(231,76,60,.35);background:linear-gradient(160deg,rgba(231,76,60,.12),rgba(7,13,34,.4) 75%);display:flex;flex-direction:column;gap:.7rem}
+        #beyond-browser .kx-ai__eye{margin:0;font-size:.68rem;letter-spacing:.08em;color:#ff8b7c}
+        #beyond-browser .kx-ai__lead{margin:0;font-size:1.08rem;line-height:1.55;font-weight:600;color:var(--ink,#eaf4ff)}
+        #beyond-browser .kx-ai__lead q{color:#ffd2cb}
+        #beyond-browser .kx-ai__src{margin:auto 0 0;font-size:.76rem;line-height:1.5;color:var(--muted,#9fb5d3)}
+        #beyond-browser .kx-ai__src a,#beyond-browser .kx-doors a,#beyond-browser .kx__fine a{color:var(--cyan-soft,#6cc4f5)}
+        #beyond-browser .kx-doors{list-style:none;margin:0;padding:0;display:grid;gap:.6rem}
+        #beyond-browser .kx-doors li{padding:.85rem 1rem;border-radius:13px;border:1px solid var(--line,rgba(125,170,220,.16));background:rgba(255,255,255,.03)}
+        #beyond-browser .kx-doors b{display:block;font-size:.95rem;line-height:1.35}
+        #beyond-browser .kx-doors span{display:block;margin-top:.2rem;font-size:.85rem;line-height:1.55;color:var(--muted,#9fb5d3)}
+        #beyond-browser .kx-doors em{font-style:normal;color:var(--ink-2,#dfe9f7);font-weight:600}
+        #beyond-browser .kx{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:1rem;align-items:stretch}
+        #beyond-browser .kx__card{padding:1.3rem 1.4rem;border-radius:16px;border:1px solid var(--line,rgba(125,170,220,.16));background:rgba(255,255,255,.03);display:flex;flex-direction:column;gap:.7rem}
+        #beyond-browser .kx__card--app{border-color:rgba(108,196,245,.45);background:linear-gradient(165deg,rgba(29,151,227,.14),rgba(255,255,255,.02) 60%)}
+        #beyond-browser .kx__card--plan{border-color:rgba(46,204,113,.38);background:linear-gradient(165deg,rgba(46,204,113,.1),rgba(255,255,255,.02) 60%)}
+        #beyond-browser .kx__shot{display:block;border-radius:12px;overflow:hidden;border:1px solid rgba(125,170,220,.28);background:#0a1226;aspect-ratio:2080/1620;box-shadow:0 18px 44px rgba(0,0,0,.45)}
+        #beyond-browser .kx__shot img{display:block;width:100%;height:100%;object-fit:cover}
+        #beyond-browser .kx__tag{margin:0;font-size:.68rem;letter-spacing:.08em;color:var(--cyan-soft,#6cc4f5)}
+        #beyond-browser .kx__card--plan .kx__tag{color:#5fe39a}
+        #beyond-browser .kx__card h3{margin:0;font-size:1.3rem;line-height:1.3}
+        #beyond-browser .kx__list{list-style:none;margin:0;padding:0;display:grid;gap:.45rem;font-size:.92rem;line-height:1.5;color:var(--ink-2,#dfe9f7)}
+        #beyond-browser .kx__list li{padding-left:1.4rem;position:relative}
+        #beyond-browser .kx__list li::before{content:"\\2713";position:absolute;left:0;top:0;font-weight:700;color:var(--cyan-soft,#6cc4f5)}
+        #beyond-browser .kx__card--plan .kx__list li::before{color:#5fe39a}
+        #beyond-browser .kx__rep{margin:0}
+        #beyond-browser .kx__rep a{display:block;position:relative;border-radius:11px;overflow:hidden;border:1px solid rgba(125,170,220,.22);aspect-ratio:1230/600;background:#0c1733}
+        #beyond-browser .kx__rep a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34%;background:linear-gradient(to top,#0c1733,rgba(12,23,51,0))}
+        #beyond-browser .kx__rep img{display:block;width:100%;height:auto}
+        #beyond-browser .kx__rep figcaption{margin-top:.45rem;font-size:.64rem;letter-spacing:.06em;line-height:1.5;color:var(--muted,#9fb5d3)}
+        #beyond-browser .kx__price{margin:0;font-size:.95rem;line-height:1.5;color:var(--ink-2,#dfe9f7)}
+        #beyond-browser .kx__price b{font-size:1.25rem;color:var(--ink,#eaf4ff);font-variant-numeric:tabular-nums}
+        #beyond-browser .kx__fine{margin:0;font-size:.8rem;line-height:1.55;color:var(--muted,#9fb5d3)}
+        #beyond-browser .kx__cta{margin:auto 0 0;padding-top:.3rem;display:flex;flex-wrap:wrap;gap:.6rem}
+        #beyond-browser .kx__cta .button{margin:0}
+        #beyond-browser .kx-more{max-width:1080px;margin:1.1rem auto 0;border-radius:14px;border:1px solid var(--line,rgba(125,170,220,.16));background:rgba(255,255,255,.02)}
+        #beyond-browser .kx-more summary{cursor:pointer;padding:.9rem 1.1rem;font-weight:600;font-size:.95rem;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:1rem}
+        #beyond-browser .kx-more summary::-webkit-details-marker{display:none}
+        #beyond-browser .kx-more summary::after{content:"+";font-family:var(--font-mono,monospace);font-size:1.2rem;color:var(--cyan-soft,#6cc4f5)}
+        #beyond-browser .kx-more[open] summary::after{content:"\\2212"}
+        #beyond-browser .kx-more summary:focus-visible{outline:2px solid var(--cyan-soft,#6cc4f5);outline-offset:2px;border-radius:14px}
+        #beyond-browser .kx-more .cmp-wrap{padding:0 1rem 1rem}
+        @media(max-width:880px){#beyond-browser .kx-ai,#beyond-browser .kx{grid-template-columns:1fr}}
+        @media(max-width:560px){#beyond-browser .kx__cta .button{width:100%;text-align:center}#beyond-browser .kx__card,#beyond-browser .kx-ai__q{padding:1.1rem}}
+        </style>
+        <div class="kx-ai" data-reveal>
+          <div class="kx-ai__q">
+            <p class="kx-ai__eye mono">// WHY UPDATES MATTER MORE IN THE AI ERA</p>
+            <p class="kx-ai__lead">The UK&rsquo;s National Cyber Security Centre says that by 2027 AI tools will almost certainly help attackers exploit known weaknesses, <q>increasing the volume of attacks against systems that have not been updated with security fixes</q>.</p>
+            <p class="kx-ai__src">NCSC, <a href="https://www.ncsc.gov.uk/report/impact-ai-cyber-threat-now-2027" rel="noopener" target="_blank">Impact of AI on cyber threat from now to 2027</a>, May 2025</p>
           </div>
-          <p class="pcs__line">// REAL SCREENSHOTS OF THE APP &middot; NOTHING MOCKED UP</p>
+          <ul class="kx-doors">
+            <li><b>A program that missed its updates</b><span>Not just Windows: the browser, the PDF reader, the printer software. AI makes the one you missed quicker to find. <em>Closed by: every program updated, every six weeks.</em></span></li>
+            <li><b>A message that looks genuine</b><span>Scam emails and texts written with AI no longer give themselves away with clumsy spelling. <em>Closed by: someone to check with before you click.</em> <a href="/spot-the-scam/">Try the Spot the Scam quiz</a></span></li>
+            <li><b>A backup that quietly stopped</b><span>When ransomware or a dead drive strikes, a working backup is the difference between a bad afternoon and losing everything. <em>Closed by: a backup that is checked, not assumed.</em></span></li>
+          </ul>
         </div>
-        <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)"><table class="cmp-table cmp-table--vs"><thead><tr><th scope="col"><span class="sr-only">Feature</span></th><th>This page (your browser)</th><th>365 PC Manager (free app)</th></tr></thead><tbody>
-          <tr><th>Memory</th><td>A rounded figure, capped at 8&nbsp;GB however much is fitted</td><td class="hi">The exact amount fitted, and how much is in use right now</td></tr>
-          <tr><th>Processor</th><td>How many threads it has</td><td class="hi">Live processor and memory load, as graphs</td></tr>
-          <tr><th>Storage</th><td>Only the space websites are allowed to use</td><td class="hi">Free space on the drive, and the drive&rsquo;s own SMART health</td></tr>
-          <tr><th>Battery</th><td>Charge level and whether it is plugged in</td><td class="hi">Battery health &mdash; how much of its original capacity is left</td></tr>
-          <tr><th>Protection &amp; backup</th><td>Nothing &mdash; a browser cannot see them</td><td class="hi">Whether antivirus is on, and whether a backup actually exists</td></tr>
-          <tr><th>Windows</th><td>The version family</td><td class="hi">The edition, whether a restart is waiting, and days since the last one</td></tr>
-          <tr><th>Broadband</th><td>An estimate from the connection type</td><td class="hi">A real measured speed test, kept so you can compare later</td></tr>
-        </tbody></table></div>
-        <p style="text-align:center;margin-top:1.5rem" data-reveal><a class="button primary" href="/free-pc-health-check/">Get the free app for Windows &#8594;</a> <a class="button secondary" href="#benchtool" style="margin-left:.5rem">Test this PC&rsquo;s speed</a></p>
+        <div class="kx">
+          <div class="kx__card kx__card--app" data-reveal>
+            <a class="kx__shot" href="/free-pc-health-check/" aria-label="See 365 PC Manager, the free app"><img src="/images/pcm-laptop-health-v26.webp" width="2080" height="1620" alt="365 PC Manager health tab - live health score ring, verdict and system glance" loading="lazy" decoding="async"></a>
+            <p class="kx__tag mono">FREE &middot; WINDOWS &middot; REAL SCREENSHOT</p>
+            <h3>See the inside with 365 PC Manager</h3>
+            <ul class="kx__list">
+              <li>The exact memory fitted, and how much is in use, on a live graph</li>
+              <li>Drive health and free space, before a failing drive takes your files with it</li>
+              <li>Battery wear: how much of its original capacity is left</li>
+              <li>Whether antivirus is on, and whether a backup actually exists</li>
+              <li>A one-tap tune-up and a real broadband speed test</li>
+            </ul>
+            <p class="kx__fine">Digitally signed by 365 Techies Ltd. No fake errors, no scare tactics, uninstall any time. It shows you where you stand; it isn&rsquo;t an antivirus.</p>
+            <p class="kx__cta"><a class="button primary" href="/free-pc-health-check/#download">Get the free app for Windows &#8594;</a></p>
+          </div>
+          <div class="kx__card kx__card--plan" data-reveal>
+            <p class="kx__tag mono">SUPPORT PLAN &middot; WE DO IT FOR YOU</p>
+            <h3>Kept up to date and checked, every six weeks</h3>
+            <ul class="kx__list">
+              <li>Every program on it updated, not just Windows and Microsoft 365</li>
+              <li>Antivirus, firewall, drive encryption and backup checked and written down in a dated report you can show a bank or insurer</li>
+              <li>Unlimited remote support, so you can check with us before you click on anything that looks odd</li>
+            </ul>
+            <figure class="kx__rep"><a href="/free-pc-health-check/#six-weekly-service"><img src="/images/pcm-report-computer-v1.webp" width="1230" height="1008" alt="The This computer section of a 365 Service Report: make and model, guarantee, Windows 11 Home 24H2, Intel Core i5-1145G7, Iris Xe graphics, 8 GB at 3200 MHz with one of two slots free" loading="lazy" decoding="async"></a><figcaption class="mono">// SAMPLE SERVICE REPORT &middot; REAL TEMPLATE, EXAMPLE DATA &middot; THE FULL SPEC A BROWSER CAN&rsquo;T READ</figcaption></figure>
+            <p class="kx__price"><b>&pound;18.25</b> a month per computer at home &middot; business from <b>&pound;24.38</b>. Rolling monthly, no lock-in.</p>
+            <p class="kx__cta"><a class="button primary" href="/home-it-support-plans/">Home plans</a><a class="button secondary" href="/business-it-support-plans/">Business plans</a></p>
+            <p class="kx__fine">Something wrong right now and not on a plan? We check the fault free, then quote before we fix: <a href="tel:+441202775566">01202 775566</a>, Monday to Friday 9 to 5.</p>
+          </div>
+        </div>
+        <details class="kx-more">
+          <summary>Reading by reading: what this page sees, and what the free app sees</summary>
+          <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)"><table class="cmp-table cmp-table--vs"><thead><tr><th scope="col"><span class="sr-only">Feature</span></th><th>This page (your browser)</th><th>365 PC Manager (free app)</th></tr></thead><tbody>
+            <tr><th>Memory</th><td>A rounded figure, capped at 8&nbsp;GB however much is fitted</td><td class="hi">The exact amount fitted, and how much is in use right now</td></tr>
+            <tr><th>Processor</th><td>How many threads it has</td><td class="hi">Live processor and memory load, as graphs</td></tr>
+            <tr><th>Storage</th><td>Only the space websites are allowed to use</td><td class="hi">Free space on the drive, and the drive&rsquo;s own SMART health</td></tr>
+            <tr><th>Battery</th><td>Charge level and whether it is plugged in</td><td class="hi">Battery health &mdash; how much of its original capacity is left</td></tr>
+            <tr><th>Protection &amp; backup</th><td>Nothing &mdash; a browser cannot see them</td><td class="hi">Whether antivirus is on, and whether a backup actually exists</td></tr>
+            <tr><th>Windows</th><td>The version family</td><td class="hi">The edition, whether a restart is waiting, and days since the last one</td></tr>
+            <tr><th>Broadband</th><td>An estimate from the connection type</td><td class="hi">A real measured speed test, kept so you can compare later</td></tr>
+          </tbody></table></div>
+        </details>
         <p class="mono" style="text-align:center;color:var(--faint);font-size:.72rem;margin-top:.9rem" data-reveal>// FREE FOREVER &middot; DIGITALLY SIGNED BY 365 TECHIES LTD &middot; MADE IN DORSET &middot; UNINSTALL ANY TIME</p>
       </div>
     </section>
@@ -14204,6 +14299,11 @@ SPECCHECK_APP_BAND = '''    <section class="section section--alt" aria-label="Wh
       </div>
     </section>'''
 
+# 25 Sep 2026: the Windows 11 block stands on its own so the page runs scan > keep it fast and safe > benchmark > Windows 11.
+_W11_MARK = '    <section class="section" aria-label="Can this PC run Windows 11" id="windows-11">'
+SPECCHECK_APP_BAND, SPECCHECK_W11_BAND = SPECCHECK_APP_BAND.split(_W11_MARK, 1)
+SPECCHECK_W11_BAND = _W11_MARK.replace('class="section"', 'class="section section--alt"') + SPECCHECK_W11_BAND   # alt: it now follows the plain benchmark band
+
 def computer_spec_checker():
     slug = "computer-spec-checker"
     desc = "Free PC hardware checker. See what's inside your computer instantly — operating system, graphics card, cores, screen, memory, battery and more, read live in your browser and never sent to us. Download your spec sheet. From 365 Techies."
@@ -14221,7 +14321,7 @@ def computer_spec_checker():
       ("How do I find the full detail myself on Windows?",
        "Press Start and type <strong>About your PC</strong> for the basics (Windows edition, processor, RAM), or type <strong>dxdiag</strong> and press Enter for the fuller system report including your graphics card. Stuck reading it? Send us the spec sheet from this page and we&rsquo;ll translate."),
       ("It says I&rsquo;m on Windows 10 &mdash; is that bad?",
-       "It needs attention: Windows 10 stopped receiving free security updates in October 2025, so it gets riskier to use online every month. Many machines can move to Windows 11 free &mdash; see <a href=\"/windows-10-end-of-life/\">your options</a> or call us and we&rsquo;ll check yours in minutes remotely."),
+       "It needs attention. Free security updates for Windows 10 ended on 14 October 2025, so a machine that is not enrolled in <a href=\"/windows-10-esu-free-enrolment-help/\">Extended Security Updates</a> gets riskier to use online every month; ESU keeps it patched until 12 October 2027. Many machines can move to Windows 11 free &mdash; see <a href=\"/windows-10-end-of-life/\">your options</a> or call us and we&rsquo;ll check yours in minutes remotely."),
       ("What does &lsquo;graphics running in software&rsquo; mean?",
        "It means your real graphics card isn&rsquo;t being used, so the processor is drawing everything the hard way &mdash; video calls stutter, video playback eats the battery and everything feels sluggish. It&rsquo;s usually a driver or settings problem and is very fixable, often remotely."),
       ("How accurate is the refresh-rate reading?",
@@ -14230,17 +14330,18 @@ def computer_spec_checker():
     content = "\n".join([
       hero(bc("PC Hardware Checker"), "// FREE HARDWARE CHECKER",
            'What&rsquo;s inside <em class="grad grad--cyan">this machine?</em>',
-           "One click, zero downloads: your operating system, graphics card, cores, screen, memory, battery and network &mdash; read live in your browser, never sent to us, with a spec sheet you can save.",
-           cta1=("Scan my computer", "#spectool"), cta2=("Benchmark it", "#benchtool"),
+           "One click, zero downloads: your operating system, graphics card, cores, screen, memory, battery and network &mdash; read live in your browser, never sent to us, with a plain-English verdict on what needs attention and a spec sheet you can save.",
+           cta1=("See my results", "#spc"), cta2=("Benchmark it", "#benchtool"),
            chips=["Instant &amp; free", "Readings never sent to us", "Spec sheet &amp; score card to share"]),
       SPECCHECK_TOOL,
-      PCBENCH_TOOL,
       SPECCHECK_APP_BAND,
-      SPECCHECK_SIGNAL_BAND,
+      PCBENCH_TOOL,
+      SPECCHECK_W11_BAND,
       SPECCHECK_NEXT_BAND,
+      SPECCHECK_SIGNAL_BAND,
       faq_html(faqs),
       cta("Specs raising questions?",
-          "Windows 10 warning, mystery slowness, or a machine that doesn&rsquo;t match what you thought you bought &mdash; send us your spec sheet and we&rsquo;ll give you an honest answer, usually within minutes remotely.",
+          "Windows 10 warning, mystery slowness, or a machine that doesn&rsquo;t match what you thought you bought? Not on a plan? We check the fault free, then quote before we fix &mdash; usually within minutes, remotely. Or send us your spec sheet for an honest answer.",
           primary=("Ask a Techie", "/contact/"), secondary=("Book a Service", "/book-service/")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
