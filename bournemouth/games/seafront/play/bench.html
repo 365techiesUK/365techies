@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>365 Techies graphics test</title>
+<!-- SEAFRONT GAME BENCHMARK (26 Sep 2026). Owner: "when we do the graphics card test on the full service, could it
+     run part of our game, like surfing by Bournemouth Pier, and have frames per second as the benchmark".
+     PC Service Professional opens THIS page in its own Microsoft Edge window (a throwaway profile, frame cap off)
+     and reads the result from the window title - nothing is sent anywhere and nothing is stored:
+       365BENCH|v1|ok|avg=71.8|low1=48.2|frames=1795|secs=25.0|w=1280|h=720|gpu=ANGLE (Intel, ...)
+       365BENCH|v1|err|<why>
+     It does not touch the game: the page the public plays (./, whichever build that is) runs inside the frame
+     under ?clean=1&sound=0 - no menus, no sound - and its attract-mode autopilot rides the eFoil past the pier on
+     its own. We count the game's own frames from outside by riding its requestAnimationFrame. -->
+<style>
+  html, body { margin: 0; height: 100%; background: #0b1226; overflow: hidden; }
+  iframe { border: 0; width: 100%; height: 100%; display: block; }
+  #cap { position: fixed; left: 0; right: 0; bottom: 0; padding: 9px 16px; font: 600 15px/1.3 "Segoe UI", system-ui, sans-serif;
+         color: #fff; background: rgba(11, 18, 38, .72); pointer-events: none; }
+  #st { color: #7fd0ff; font-weight: 400; margin-left: 8px; }
+</style>
+</head>
+<body>
+<iframe id="g" src="./?clean=1&amp;sound=0" title="Seafront game"></iframe>
+<div id="cap">365 Techies graphics test &ndash; riding past Bournemouth Pier <span id="st">loading the game&hellip;</span></div>
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  var RUN = Math.max(5, Math.min(60, +(q.get('secs') || 25))) * 1000;   // measured seconds
+  var WARM = 10000;          // after the game draws: shaders compile and textures stream in - not counted (a 4 s warm-up
+                             // left 100-170 ms hitches 3.7-6.8 s into the run on an RTX 3090, 26 Sep)
+  var BOOT_LIMIT = 90000;    // slow broadband: the game is a few MB
+  var st = document.getElementById('st');
+  var f = document.getElementById('g');
+  var t0 = performance.now();
+
+  // the graphics chip Edge is drawing with - on a laptop with two, usually the power-saving one
+  var gpu = '';
+  try {
+    var c = document.createElement('canvas');
+    var gl = c.getContext('webgl2') || c.getContext('webgl');
+    if (gl) {
+      var ext = gl.getExtension('WEBGL_debug_renderer_info');
+      gpu = String(ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER) || '');
+    }
+  } catch (e) { /* no WebGL at all: the game cannot run either, and the boot wait says so */ }
+  gpu = gpu.replace(/\|/g, '/').slice(0, 160);
+
+  function done(t, shown) { document.title = t; st.textContent = shown; }
+
+  function gameWindow() { try { return f.contentWindow; } catch (e) { return null; } }
+  function canvasOf(w) { try { return w.document.querySelector('canvas'); } catch (e) { return null; } }
+
+  function waitBoot() {
+    var w = gameWindow(), cv = w && canvasOf(w), n = 0;
+    try { n = (w && w.__frames) || 0; } catch (e) { n = 0; }
+    var waited = performance.now() - t0;
+    // the game counts its own frames (window.__frames); if a later build ever drops that, a drawn canvas
+    // after 15 s is taken as started
+    if (n > 10 || (cv && cv.width > 0 && waited > 15000)) { st.textContent = 'warming up…'; return setTimeout(function () { measure(w); }, WARM); }
+    if (waited > BOOT_LIMIT) return done('365BENCH|v1|err|the game did not start within ' + Math.round(BOOT_LIMIT / 1000) + ' s' + (gpu ? '' : ' (no WebGL)'), 'the game did not start');
+    setTimeout(waitBoot, 250);
+  }
+
+  function measure(w) {
+    var times = [], stop = false;
+    function tick(ts) { if (stop) return; times.push(ts); w.requestAnimationFrame(tick); }
+    try { w.requestAnimationFrame(tick); } catch (e) { return done('365BENCH|v1|err|could not time the game', 'could not time the game'); }
+    var tStart = performance.now();
+    var live = setInterval(function () {
+      var n = times.length, s = (performance.now() - tStart) / 1000;
+      if (n > 1) st.textContent = Math.round((n - 1) / ((times[n - 1] - times[0]) / 1000)) + ' frames a second – ' + Math.max(0, Math.ceil(RUN / 1000 - s)) + ' s to go';
+    }, 500);
+    setTimeout(function () {
+      stop = true; clearInterval(live);
+      if (times.length < 20) return done('365BENCH|v1|err|only ' + times.length + ' frames drawn (window hidden or covered?)', 'too few frames drawn');
+      var iv = [];
+      for (var i = 1; i < times.length; i++) iv.push(times[i] - times[i - 1]);
+      var secs = (times[times.length - 1] - times[0]) / 1000;
+      var avg = iv.length / secs;
+      // "1% low": the average of the slowest 1% of frames, as frames a second - the stutter a player feels
+      var worst = iv.slice().sort(function (a, b) { return b - a; }).slice(0, Math.max(1, Math.floor(iv.length * 0.01)));
+      var wsum = 0; for (var j = 0; j < worst.length; j++) wsum += worst[j];
+      var low1 = 1000 / (wsum / worst.length);
+      var cv = canvasOf(w);
+      // diagnostics: the long frames, and when in the run they came (hitches from loading vs steady slowness)
+      var longs = [], el = 0, maxIv = 0;
+      for (var k = 0; k < iv.length; k++) { el += iv[k]; if (iv[k] > maxIv) maxIv = iv[k]; if (iv[k] > 50 && longs.length < 8) longs.push(Math.round(iv[k]) + '@' + (el / 1000).toFixed(1)); }
+      var p99 = iv.slice().sort(function (a, b) { return a - b; })[Math.floor(iv.length * 0.99)];
+      done('365BENCH|v1|ok|avg=' + avg.toFixed(1) + '|low1=' + low1.toFixed(1) + '|p99ms=' + p99.toFixed(1) + '|maxms=' + Math.round(maxIv)
+        + '|long=' + longs.join(',') + '|frames=' + iv.length + '|secs=' + secs.toFixed(1)
+        + '|w=' + (cv ? cv.width : 0) + '|h=' + (cv ? cv.height : 0) + '|gpu=' + gpu,
+        Math.round(avg) + ' frames a second – done');
+    }, RUN);
+  }
+
+  waitBoot();
+})();
+</script>
+</body>
+</html>
