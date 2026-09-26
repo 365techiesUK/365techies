@@ -2397,7 +2397,7 @@ function sr_record($key, $machine, $ts, $summary, $cust, $prev = array()) {
         $state = isset($row[1]) ? strtolower(trim((string)$row[1])) : '';
         if ($lab === '' || !in_array($state, array('ok', 'warn', 'info', 'unknown'), true)) continue;
         $sec[] = array($lab, $state, sr_clean(isset($row[2]) ? $row[2] : '', 140));
-        if (count($sec) >= 8) break;
+        if (count($sec) >= 10) break;   // v4.12 adds a Network row: 8 would drop Drive encryption on a PC with Malwarebytes
     }
     // programs check (evaluated by reportup against OUR list - see pcm-programs-lib.php): programs the PC doesn't need,
     // as [shown name, reason, verdict]. Remote-access tools are never put in the customer's email (staff only).

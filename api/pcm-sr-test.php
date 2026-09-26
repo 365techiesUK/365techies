@@ -368,5 +368,16 @@ require_once __DIR__ . '/pcm-slack-lib.php';
 $sl = pcm_slack_prog_lines(array('progs' => $pg + array('active' => array('McAfee LiveSafe', 'Norton 360'))));
 ok(strpos($sl, 'Security: 2 programs protecting at once') !== false && strpos($sl, 'Remote-access tools installed (staff only') !== false && strpos($sl, 'AnyDesk') !== false, 'the staff Slack post carries the conflict and the remote tools', $sl);
 
+echo "\n-- network safety (PC Service Professional v4.12)\n";
+$nine = array();
+foreach (array('Antivirus', 'Firewall', 'Network', 'Malwarebytes', 'Security scan', 'Windows updates', 'Windows version', 'Drive encryption', 'Extra one', 'Extra two', 'Eleventh') as $lab) $nine[] = array($lab, 'ok', 'fine');
+sr_record($KEY, $MACHINE, $TS + 95, array('security' => $nine) + $summary, $cust);
+$ne = q()['sr'][$KH . '-' . $MACHINE . '-' . ($TS + 95)];
+ok(count($ne['sec']) === 10 && $ne['sec'][7][0] === 'Drive encryption', 'ten security rows kept - the Network row no longer pushes Drive encryption out', json_encode(array_column($ne['sec'], 0)));
+$sn = pcm_slack_net_lines(array('net' => array('listen' => array('135 svchost', '5900 tvnserver (VNC remote control)'), 'fwd' => array('TCP 3389 -> 192.168.1.20:3389 (RDP)'))));
+ok(strpos($sn, 'Listening on the network: 135 svchost, 5900 tvnserver (VNC remote control)') !== false && strpos($sn, 'Router forwards: TCP 3389 -> 192.168.1.20:3389 (RDP)') !== false, 'the staff Slack post carries the ports and router forwards', $sn);
+ok(strpos(pcm_slack_prog_lines(array('net' => array('listen' => array('135 svchost'), 'fwd' => array()))), 'Listening on the network: 135 svchost') !== false, 'network detail reaches Slack even when there is no programs check');
+ok(pcm_slack_net_lines(array()) === '' &&strpos(pcm_slack_net_lines(array('net' => array('listen' => array(), 'fwd' => array()))), 'Router forwards: none') !== false, 'no net block: nothing; an empty router: "none"');
+
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);

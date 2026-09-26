@@ -226,7 +226,7 @@ function slk_report_channel() {
 // at once, programs the PC doesn't need, and remote-access tools - the last is for staff only, never the customer.
 function pcm_slack_prog_lines($summary) {
     $p = isset($summary['progs']) && is_array($summary['progs']) ? $summary['progs'] : null;
-    if (!$p) return '';
+    if (!$p) return pcm_slack_net_lines($summary);   // no programs check (older tool, list unreadable) - the network detail still goes
     $t = '';
     $act = array_map('strval', (array)($p['active'] ?? array()));
     if (count($act) >= 2) $t .= 'Security: ' . count($act) . ' programs protecting at once - ' . slk_plain(substr(implode(', ', $act), 0, 120)) . "\n";
@@ -236,6 +236,19 @@ function pcm_slack_prog_lines($summary) {
     $rm = array();
     foreach ((array)($p['remote'] ?? array()) as $u) if (is_array($u)) $rm[] = slk_plain(substr((string)($u['dn'] ?? ''), 0, 60));
     if ($rm) $t .= ':warning: Remote-access tools installed (staff only - ask who installed them): ' . implode(', ', array_slice($rm, 0, 6)) . "\n";
+    return $t . pcm_slack_net_lines($summary);
+}
+
+// Network safety detail for the team (PC Service Professional v4.12 summary.net): what listens on the network and
+// every router forward. The customer's email carries only the one Network row.
+function pcm_slack_net_lines($summary) {
+    $n = isset($summary['net']) && is_array($summary['net']) ? $summary['net'] : null;
+    if (!$n) return '';
+    $clip = function ($list, $max) { $o = array(); foreach ((array)$list as $x) { $x = trim(slk_plain(substr((string)$x, 0, 80))); if ($x !== '') $o[] = $x; if (count($o) >= $max) break; } return $o; };
+    $l = $clip($n['listen'] ?? array(), 30); $f = $clip($n['fwd'] ?? array(), 12);
+    $t = '';
+    if ($l) $t .= 'Listening on the network: ' . implode(', ', $l) . "\n";
+    $t .= 'Router forwards: ' . ($f ? implode(', ', $f) : 'none') . "\n";
     return $t;
 }
 
