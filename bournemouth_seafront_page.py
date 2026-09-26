@@ -11,7 +11,7 @@ real header, footer, cookie banner and consent handling like every other page.
 
 THE STORE-PAGE LAYOUT (26 Sep 2026, owner: "show that it's actually a simulator as well and more
 screenshots... like a premium page for the game or simulator")
-Laid out like a game's store page: a silent highlight loop beside the title, a facts strip, the nine
+Laid out like a game's store page: a silent highlight loop beside the title, a facts strip, the ten
 levels as a picture gallery, the simulator with three silent loops, two stills and its own film, the
 trailer, then how to play and the spec. Every picture and clip is the game's own render:
 - media/lv-*.webp and hero-loop-v2.mp4: the landscape trailer's CLEAN frames (365-efoil-game/tmp-tr201/
@@ -77,7 +77,7 @@ _HEAD = '''
   <meta name="apple-mobile-web-app-title" content="Seafront" />
   <link rel="preload" as="image" href="/bournemouth/games/seafront/media/hero-poster-v3.webp" />'''
 
-# (slug-ish id, picture, name, one line) - the nine levels, in the game's own order
+# (slug-ish id, picture, name, one line) - the ten levels, in the game's own order (Free ride kept last)
 _LEVELS = [
     ("viking", "lv-viking", "Viking raid", "Longships at the pier. Save it."),
     ("pirate", "lv-pirate", "Pirate raid", "The same siege, a corsair fleet &mdash; and the pier on fire."),
@@ -87,6 +87,7 @@ _LEVELS = [
     ("trip", "lv-trip", "The Trip Back", "A boatload too many in a swell."),
     ("stunt", "lv-stunt", "The Stunt Stage", "A ramp course off Boscombe: airtime, height and rotation all score."),
     ("dolphins", "lv-dolphins-v2", "Dolphin Watch", "Find the pod, go gently, and they ride your bow."),
+    ("surfer", "lv-surf", "Pier Surf", "Paddle out beside Bournemouth Pier, duck the whitewater and catch three waves."),
     ("free", "lv-free", "Free ride", "Open water, nothing chasing you. Anywhere along the real coast."),
 ]
 
@@ -263,7 +264,7 @@ def _body(crumbs):
           </div>
         </div>
         <ul class="sfp-facts" aria-label="At a glance">
-          <li><b>9 levels</b><span>raids, rescues, stunts and dolphins</span></li>
+          <li><b>10 levels</b><span>raids, rescues, stunts, dolphins and surf</span></li>
           <li><b>3 craft</b><span>an eFoil, a jet ski and a RIB</span></li>
           <li><b>Real physics</b><span>lift, planing hulls and a simulated sea</span></li>
           <li><b>Free</b><span>phone, tablet or PC &middot; no download</span></li>
@@ -274,7 +275,7 @@ def _body(crumbs):
     <section aria-labelledby="sfp-levels-h" id="how-to-play">
       <div class="sfp-in">
         <p class="sfp-kick">The game</p>
-        <h2 id="sfp-levels-h">Nine ways to play</h2>
+        <h2 id="sfp-levels-h">Ten ways to play</h2>
         <p class="sfp-lead">Every level is the real Bournemouth water: the pier, Boscombe, the beach and the coast out to Old Harry Rocks. Tap a picture to see it larger.</p>
         <ul class="sfp-levels">
 {_levels_html()}
@@ -288,10 +289,11 @@ def _body(crumbs):
         <h2 id="sfp-sim-h">A ride simulator too</h2>
         <div class="sfp-sim">
           <div>
-            <p class="sfp-lead" style="margin-bottom:1rem">Under the levels, Seafront is a physics simulation of an eFoil, a jet ski and a rigid inflatable on the real Bournemouth water. Free ride has no score and no clock: pick a craft, pick a sea, and ride.</p>
+            <p class="sfp-lead" style="margin-bottom:1rem">Under the levels, Seafront is a physics simulation of an eFoil, a jet ski, a rigid inflatable and a surfboard on the real Bournemouth water. Free ride has no score and no clock: pick a craft, pick a sea, and ride.</p>
             <ul>
               <li><b>The eFoil flies on the lift equation</b>: water density, speed, wing area and angle of attack. A small change in speed makes a big change in lift, so it is as touchy as the real thing, and the game shows you the live figure. Bring the wing too close to the surface and it ventilates and drops you.</li>
               <li><b>The jet ski and the RIB are planing hulls.</b> They climb over the hump before they get on the plane, lose drive when the prop or jet leaves the water, and pay for a hard turn in speed.</li>
+              <li><b>The surfboard rides the waves the sea actually makes.</b> Nothing is scripted: you catch one only when the wave&rsquo;s slope and push close the gap between your paddling, about 5&nbsp;km/h, and the wave, about 14&nbsp;km/h. Stay on top of the whitewater and it washes you back in, so duck under it.</li>
               <li><b>The sea is simulated rather than animated</b>, so the swell you are riding is the swell the boat is reacting to. The default is Poole Bay&rsquo;s most common sea, about half a metre every four seconds from the south-south-west, and it goes from glassy calm to a two-metre storm.</li>
               <li><b>On a computer:</b> <kbd>T</kbd> opens the tuning panel (all-up weight, wing area, mast length, motor power and more), <kbd>G</kbd> shows live charts of wing depth, lift and speed, <kbd>,</kbd> and <kbd>.</kbd> change the sea, and <kbd>C</kbd> cycles the camera, including a side-on instrument view.</li>
             </ul>
@@ -517,7 +519,7 @@ def _schema(s):
         {"@type": "VideoGame", "@id": _bp.SITE + _BASE + "#game", "name": "Seafront",
          "description": _DESC, "url": _bp.SITE + _BASE, "image": _bp.SITE + _BASE + "shot-pirate-raid.jpg",
          # no "screenshot" list: build_blog's eager-load guard finds a picture's FIRST mention, and this head
-         # list would come before the lazy <img> tags (the guard then counts all nine as eager).
+         # list would come before the lazy <img> tags (the guard then counts every level picture as eager).
          "trailer": {"@id": _bp.SITE + _BASE + "#trailer-video"},
          "gamePlatform": "Web browser", "applicationCategory": "Game", "operatingSystem": "Any, with a WebGL2 browser",
          "genre": ["Simulation", "Action"], "inLanguage": "en-GB",

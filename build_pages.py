@@ -5870,7 +5870,7 @@ add(
      ("What can be fixed remotely?", "Most things: email problems, software issues, Microsoft 365, slow computers, printer setup and Windows updates. Even a scare like <a href=\"/onedrive-files-disappeared/\">OneDrive files that have vanished</a>, and general troubleshooting for home and business users."),
      ("How fast is remote support?", "Most remote sessions start within minutes during opening hours (Mon–Fri, 9am–5pm), and subscribers always jump the queue."),
      ("How much does a remote fix cost?", "Remote fix jobs are priced on difficulty and the time they take, starting from £20 — and the price is agreed with you before any chargeable work. Every pay-as-you-go job also includes 30 days of follow-up remote support plus a health check at 30 days. As an example, a full Windows clean install with all your data backed up and restored takes about 4 hours and is £149. On a monthly plan your computer is kept maintained and running, with priority support included and any fault work discounted (our customer loyalty promise)."),
-     ("Will you connect to my computer without warning?", "No. We always phone you first to say we're ready and to check you're ready before we connect. We never connect out of the blue, and a remote session can only start when you click our secure link to begin an encrypted Splashtop SOS session."),
+     ("Will you connect to my computer without warning?", "No. We always phone you first to say we're ready and to check you're ready before we connect. We never connect out of the blue, and a remote session can only start when you open our support tool and read us its one-time code, which begins an encrypted Splashtop SOS session."),
    ]),
  ]),
  content="\n".join([
@@ -5884,7 +5884,7 @@ add(
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/01 — HOW IT WORKS</p>
           <h2 class="section-title" data-title>Secure help, on your screen<span class="title-underline"></span></h2>
-          <p>When you need help, we send you a secure link. One click connects us to your screen so we can see exactly what you see and fix it there and then.</p>
+          <p>When you need help, you download our small support tool, open it and read us the 9-digit code it shows. That connects us to your screen so we can see exactly what you see and fix it there and then.</p>
           <p><strong>You watch the whole session and stay in control</strong> — and the moment we finish, access ends automatically. It&rsquo;s a fast, safe way to solve many IT problems.</p>
           <p>New to us? A senior techie connects first to confirm what&rsquo;s needed, then <strong>agrees the cost with you before any chargeable work</strong> &mdash; remote fixes start from &pound;20. Already on a <a href="/monthly-it-support/">monthly plan</a>? Remote support is included, with priority &mdash; just call, and if we don&rsquo;t answer, leave a message and we&rsquo;ll call you back.</p>
         </div>
@@ -5898,7 +5898,7 @@ add(
         <p class="eyebrow eyebrow--center mono" data-reveal>/02 — THREE STEPS</p>
         <h2 class="section-title section-title--center" data-title>From stuck to sorted<span class="title-underline title-underline--center"></span></h2>
         <ol class="how__steps">
-{steps([("Tell us what&rsquo;s wrong","Call or message and describe the problem in plain English."),("We phone first","We call to say we&rsquo;re ready and check it&rsquo;s a good time &mdash; a session only ever starts when you&rsquo;re expecting it."),("Connect securely","Click our secure link to start an encrypted Splashtop SOS session."),("Watch it get fixed","We solve it on your screen, explain what happened, and access ends.")])}
+{steps([("Tell us what&rsquo;s wrong","Call or message and describe the problem in plain English."),("We phone first","We call to say we&rsquo;re ready and check it&rsquo;s a good time &mdash; a session only ever starts when you&rsquo;re expecting it."),("Connect securely","Open our support tool and read us its 9-digit code to start an encrypted Splashtop SOS session."),("Watch it get fixed","We solve it on your screen, explain what happened, and access ends.")])}
         </ol>
       </div>
     </section>''',
@@ -5911,7 +5911,7 @@ add(
      ("What can be fixed remotely?", "Most things: email problems, software issues, Microsoft 365, slow computers, printer setup and Windows updates. Even a scare like <a href=\"/onedrive-files-disappeared/\">OneDrive files that have vanished</a>, and general troubleshooting for home and business users."),
      ("How fast is it?", "Most remote sessions start within minutes during opening hours (Mon&ndash;Fri, 9am&ndash;5pm). Subscribers always jump the queue."),
      ("How much does a remote fix cost?", "Remote fix jobs are priced on difficulty and the time they take, <strong>starting from &pound;20</strong>. A senior techie connects first to confirm what&rsquo;s needed and agrees the price with you before any chargeable work. Every pay-as-you-go job also includes <strong>30 days&rsquo; follow-up remote support</strong> and a <strong>health check at 30 days</strong>. As an example, a full Windows clean install with all your data backed up and restored (about 4 hours) is <strong>&pound;149</strong>. On a <a href=\"/monthly-it-support/\">monthly plan</a> your computer is kept maintained and running, with priority support included and any fault work <strong>discounted</strong> &mdash; our customer loyalty promise."),
-     ("Will you connect to my computer without warning?", "No &mdash; we always phone you first to say we&rsquo;re ready and to check you&rsquo;re ready before we connect. We never connect out of the blue, and a session can only start when you click our secure link."),
+     ("Will you connect to my computer without warning?", "No &mdash; we always phone you first to say we&rsquo;re ready and to check you&rsquo;re ready before we connect. We never connect out of the blue, and a session can only start when you open our support tool and read us its code."),
      ("Should I let someone remote into my computer?", "Only when you trust them and <em>you</em> started it. A genuine session (like ours over Splashtop SOS) only begins when you click a link you asked for, and we always phone first to check you&rsquo;re ready. If someone rings out of the blue claiming to be Microsoft, BT or your bank and asks for remote access, hang up &mdash; that&rsquo;s a scam. See our <a href=\"/spot-the-scam/\">Spot the Scam</a> guide."),
      ("What if it can&rsquo;t be fixed remotely?", "Some jobs need hands-on work &mdash; a failing drive, a cracked screen or a machine that won&rsquo;t power on. If so, we&rsquo;ll either <a href=\"/book-a-collection/\">collect your computer or laptop</a> or come to you on-site, and <strong>either way you&rsquo;re quoted for the work before we start</strong>. For an on-site call-out we arrange the day and time with you first and phone ahead with an ETA &mdash; we never just turn up. We cover Bournemouth, Poole, Christchurch and across Dorset."),
    ]),
