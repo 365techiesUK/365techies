@@ -23168,16 +23168,24 @@ _FIX_TILES = [("hp-c-fix", "book", "Fix it with me", "The steps on this page, on
               ("hp-c-care", "wrench", "Fix it for me", "We connect and sort it while you watch", "FROM &pound;20, AGREED FIRST", "#fix-help")]
 
 
+# 26 Sep 2026 (owner: "check the website... work through the ones that get the traffic... all look the same"):
+# the same first screen for the fix pages and guides, tiles from page_tiles_data.py (180-page review).
+from page_tiles_data import PAGE_HERO_TILES
+# hands-on repairs are collection jobs: never "remote from £20" (see fix_panel / FIX_PANEL_HARDWARE)
+_FIX_TILE_HW = ("hp-c-care", "wrench", "Fix it for me", "We collect it and find the fault first", "FREE COLLECTION, NO FIX NO FEE", "#fix-help")
+
+
 def email_fix_v2(d, crumbs):
-    own = [tuple(t) for t in EMAIL_HERO_TILES[d['slug']]]
+    own = [tuple(t) for t in (EMAIL_HERO_TILES.get(d['slug']) or PAGE_HERO_TILES[d['slug']])]
     full = len(own) == 2
     cta2 = ("Fix it with me", "#fixflow") if full else tuple(d['secondaryCta'])
     if cta2[1].startswith('tel:'):   # the first button is already the call
-        cta2 = ("Email help", "/email-support/")
-    return _email_hero(d, crumbs, d['lede'], cta2, (_FIX_TILES + own) if full else own), ""
+        cta2 = ("Email help", "/email-support/") if d['slug'] in EMAIL_HERO_TILES else ("Get in touch", "/contact/")
+    fixed = [_FIX_TILES[0], _FIX_TILE_HW] if d['slug'] in FIX_PANEL_HARDWARE else _FIX_TILES
+    return _email_hero(d, crumbs, d['lede'], cta2, (fixed + own) if full else own), ""
 
 
-for _s in EMAIL_HERO_TILES:
+for _s in list(EMAIL_HERO_TILES) + list(PAGE_HERO_TILES):
     EMAIL_MOVE_V2.setdefault(_s, email_fix_v2)
 
 

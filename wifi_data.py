@@ -11,7 +11,7 @@ HOUSE RULES baked into this file (do not quietly drop them):
 
 PRICE_STAMP = ("Indicative UK street prices captured <strong>22 July 2026</strong> from the manufacturer&rsquo;s UK store or a named UK retailer. "
                "Prices move constantly &mdash; we have seen the same box swing 30&ndash;40% in three months, so treat these as a guide and check before you buy. "
-               "We don&rsquo;t sell hardware and we earn nothing if you do.")
+               "We don&rsquo;t sell the kit on this page and we earn nothing if you buy it.")   # not "hardware": we resell Dell
 
 COVERAGE_NOTE = ("Coverage figures are the <strong>manufacturer&rsquo;s own claim</strong>, measured in open-plan, line-of-sight conditions. "
                  "A UK solid-brick house typically achieves a fraction of it.")
@@ -323,9 +323,7 @@ WIFI_PAGES = [
  'crumbName': 'Mesh WiFi Buying Guide',
  'eyebrow': '// MESH WIFI &middot; UK BUYING GUIDE',
  'h1': 'Mesh WiFi for <em class="grad grad--cyan">UK homes</em>, honestly compared',
- 'lede': 'Most mesh guides are rewritten spec sheets with an affiliate link. This one is written for British houses &mdash; solid brick, foil-backed insulation, '
-         'party walls and all &mdash; by a family-run Dorset IT firm that has been fixing real WiFi since 1995. We don&rsquo;t sell hardware, so we have nothing to '
-         'gain from telling you to buy some. Sometimes the honest answer is one cable and a better-placed router.',
+ 'lede': 'Most mesh guides are rewritten spec sheets with an affiliate link. This one is written for British houses &mdash; solid brick, foil-backed insulation, party walls and all &mdash; by a family-run Dorset IT firm that has been fixing real WiFi since 1995. We don&rsquo;t sell mesh systems, so we have nothing to gain from telling you to buy one. Sometimes the honest answer is one cable and a better-placed router.',
  'chips': ['Prices checked July 2026', 'No affiliate links', 'We don&rsquo;t sell hardware'],
  'primaryCta': ['Ask us what your house needs', '/contact/'],
  'secondaryCta': ['Test your WiFi first', '/wifi-signal-test/'],
@@ -338,17 +336,7 @@ WIFI_PAGES = [
 
   {'eyebrow': '/01 &mdash; BEFORE YOU SPEND ANYTHING',
    'h2': 'Three checks that save most people the money',
-   'html': '<p>Before you compare a single product, do these. They take ten minutes and they routinely save people two or three hundred pounds.</p>'
-           '<ol><li><strong>Plug a laptop into the router with a cable and run a speed test.</strong> That number is your ceiling. If it is slow on the cable, '
-           'nothing wireless will fix it &mdash; you have a broadband problem, not a WiFi problem, and no mesh system in existence adds speed your line isn&rsquo;t '
-           'delivering.</li>'
-           '<li><strong>Move the router and re-test.</strong> A router on the floor of the front hall, inside a cupboard, at one end of the house is the single most '
-           'common cause of bad WiFi in Britain. Central, high, out in the open. This is free.</li>'
-           '<li><strong>Test a modern phone in the bad room.</strong> If a new phone is fine and only the eight-year-old laptop struggles, the network isn&rsquo;t the '
-           'problem &mdash; the device is. TP-Link&rsquo;s own small print says performance varies by &ldquo;client limitations, including rated performance, location, '
-           'connection quality, and client condition&rdquo;.</li></ol>'
-           '<p>Our free <a href="/wifi-signal-test/">365 WiFi Optimizer</a> will measure the connection live in each room while you walk around, so you can see '
-           'where it actually falls apart rather than guessing.</p>'},
+   'html': '<p>Before you compare a single product, do these. They take ten minutes and they can save you the cost of a mesh system.</p><ol><li><strong>Plug a laptop into the router with a cable and run a speed test.</strong> That number is your ceiling. If it is slow on the cable, nothing wireless will fix it &mdash; you have a broadband problem, not a WiFi problem, and no mesh system in existence adds speed your line isn&rsquo;t delivering.</li><li><strong>Move the router and re-test.</strong> A router on the floor of the front hall, inside a cupboard, at one end of the house is a very common cause of bad WiFi. Central, high, out in the open. This is free.</li><li><strong>Test a modern phone in the bad room.</strong> If a new phone is fine and only the eight-year-old laptop struggles, the network isn&rsquo;t the problem &mdash; the device is. TP-Link&rsquo;s own small print says performance varies by &ldquo;client limitations, including rated performance, location, connection quality, and client condition&rdquo;.</li></ol><p>Our free <a href="/wifi-signal-test/">365 WiFi Optimizer</a> will measure the connection live in each room while you walk around, so you can see where it actually falls apart rather than guessing.</p>'},
 
   {'eyebrow': '/02 &mdash; THE COVERAGE NUMBERS ON THE BOX',
    'h2': 'Why &ldquo;up to 6,500 sq ft&rdquo; means very little here',
@@ -547,8 +535,7 @@ WIFI_PAGES = [
         'ducting, fibre for long runs, or a point-to-point link with genuine outdoor line of sight. Pointing a bridge through a coated window throws most of the '
         'signal away.'},
   {'q': 'Do you sell mesh WiFi systems?',
-   'a': 'No. We are an IT support firm, not a reseller, and we earn nothing from anything listed on this page. We are happy to advise on what suits your property, '
-        'install and configure whatever you buy, or run the cabling that usually turns out to be the better answer.'},
+   'a': 'No. We don&rsquo;t sell mesh systems, and we earn nothing from anything listed on this page. We are happy to advise on what suits your property, install and configure whatever you buy, or run the cabling that usually turns out to be the better answer.'},
  ],
  'crossLinksHtml': '<p><strong>Next steps:</strong> <a href="/mesh-wifi-setup-guide/">set it up properly, ISP by ISP</a> &middot; '
                    '<a href="/wifi-troubleshooting/">fix WiFi that is already misbehaving</a> &middot; '
@@ -574,8 +561,7 @@ WIFI_PAGES = [
  'primaryCta': ['Get us to set it up', '/contact/'],
  'secondaryCta': ['Compare mesh systems first', '/mesh-wifi-systems-uk/'],
  'ctaHead': 'Would you rather we just did it?',
- 'ctaSub': 'We set up mesh networks properly &mdash; placed, wired where it matters, channels planned, IoT devices onboarded and the whole thing documented and '
-           'handed over. Remote where possible, in person across Bournemouth, Poole and Dorset where it isn&rsquo;t.',
+ 'ctaSub': 'We set up mesh networks properly &mdash; placed, wired where it matters, channels planned, IoT devices onboarded and the whole thing documented and handed over. Remote where possible, in person across Bournemouth, Poole and Dorset where it isn&rsquo;t (priced before we come).',
  'serviceName': 'Mesh WiFi setup and configuration',
  'schemaKind': 'service',
  'howToName': 'How to set up a mesh WiFi system in a UK home',
@@ -691,20 +677,7 @@ WIFI_PAGES = [
 
   {'eyebrow': '/06 &mdash; NETWORK NAMES & SMART DEVICES',
    'h2': 'Step 6: one network name, and the smart-home trap',
-   'html': '<p><strong>Default to one network name across all bands</strong> with band steering, so devices roam properly instead of clinging to the wrong one.</p>'
-           '<p>Then there is the exception that generates more support calls than anything else on this page. A great deal of smart-home kit &mdash; plugs, bulbs, '
-           'video doorbells, robot vacuums, older printers, thermostats, garage door openers, cheap cameras &mdash; is <strong>2.4&nbsp;GHz only</strong>. During '
-           'setup they scan 2.4&nbsp;GHz only, and if the phone running the app is sitting on 5&nbsp;GHz, pairing fails with a misleading &ldquo;wrong '
-           'password&rdquo; error. Nothing is wrong with your password.</p>'
-           '<p><strong>A UK-specific gotcha almost nobody mentions:</strong> the UK permits 2.4&nbsp;GHz channels 1&ndash;13, but many US-designed smart devices only '
-           'support 1&ndash;11 and literally cannot see a network on channel 12 or 13. If a device insists it &ldquo;cannot find&rdquo; a network that is plainly '
-           'working, check the channel before you check anything else.</p>'
-           '<ul><li><strong>Clean fix:</strong> a dedicated 2.4&nbsp;GHz network for smart devices, where your system supports one.</li>'
-           '<li><strong>Quick fix:</strong> temporarily disable 5&nbsp;GHz or create a temporary 2.4&nbsp;GHz guest network, join the phone to it, pair the device, '
-           'then re-enable. Most devices remember the name and password, not the band.</li>'
-           '<li><strong>Naming:</strong> one clear main name plus <code>-IoT</code> and <code>-Guest</code>. Avoid your house number, your business name and address, '
-           'or the router model. Never leave the manufacturer default.</li>'
-           '<li>Keep the name and password <strong>identical on every node</strong> and on any access point you have kept.</li></ul>'},
+   'html': '<p><strong>Default to one network name across all bands</strong> with band steering, so devices roam properly instead of clinging to the wrong one.</p><p>Then there is the exception behind a great many support calls. A great deal of smart-home kit &mdash; plugs, bulbs, video doorbells, robot vacuums, older printers, thermostats, garage door openers, cheap cameras &mdash; is <strong>2.4&nbsp;GHz only</strong>. During setup they scan 2.4&nbsp;GHz only, and if the phone running the app is sitting on 5&nbsp;GHz, pairing fails with a misleading &ldquo;wrong password&rdquo; error. Nothing is wrong with your password.</p><p><strong>A UK-specific gotcha almost nobody mentions:</strong> the UK permits 2.4&nbsp;GHz channels 1&ndash;13, but many US-designed smart devices only support 1&ndash;11 and literally cannot see a network on channel 12 or 13. If a device insists it &ldquo;cannot find&rdquo; a network that is plainly working, check the channel before you check anything else.</p><ul><li><strong>Clean fix:</strong> a dedicated 2.4&nbsp;GHz network for smart devices, where your system supports one.</li><li><strong>Quick fix:</strong> temporarily disable 5&nbsp;GHz or create a temporary 2.4&nbsp;GHz guest network, join the phone to it, pair the device, then re-enable. Most devices remember the name and password, not the band.</li><li><strong>Naming:</strong> one clear main name plus <code>-IoT</code> and <code>-Guest</code>. Avoid your house number, your business name and address, or the router model. Never leave the manufacturer default.</li><li>Keep the name and password <strong>identical on every node</strong> and on any access point you have kept.</li></ul>'},
 
   {'eyebrow': '/07 &mdash; CHANNELS',
    'h2': 'Step 7: channels and widths (set them manually)',
@@ -986,8 +959,7 @@ WIFI_PAGES = [
  'primaryCta': ['Book a site survey', '/contact/'],
  'secondaryCta': ['Call 01202 775566', 'tel:+441202775566'],
  'ctaHead': 'Want a straight quote for your premises?',
- 'ctaSub': 'We survey first, design against measured coverage rather than a coverage map, and show you the cabling cost separately so you can see where the money '
-           'goes. Offices, shops, cafes, holiday lets, care homes and practices across Bournemouth, Poole, Christchurch and Dorset.',
+ 'ctaSub': 'We survey first (priced before we come), design against measured coverage rather than a coverage map, and show you the cabling cost separately so you can see where the money goes. Offices, shops, cafes, holiday lets, care homes and practices across Bournemouth, Poole, Christchurch and Dorset.',
  'serviceName': 'Business WiFi survey, installation and support',
  'schemaKind': 'service',
  'sections': [
@@ -1269,28 +1241,7 @@ WIFI_PAGES = [
 
   {'eyebrow': '/07 &mdash; PLACEMENT & COOLING',
    'h2': 'Where equipment fails in summer, and what to do',
-   'html': '<p><strong>The placements that cause summer faults:</strong> airing and meter cupboards (no ventilation, plus a hot cylinder); sunlit windowsills; on top '
-           'of or underneath a TV, set-top box, console, amplifier or NAS; sealed AV cabinets with a glass door and no rear cut-out; equipment stacked so each unit '
-           'blocks the next one&rsquo;s vents; soft surfaces &mdash; TP-Link&rsquo;s own guidance says not to place units on paper, cloth or fabric, and carpet is a '
-           'common offender; dust blanketing the heatsinks; and anything active left in a loft.</p>'
-           '<p><strong>Are fans and cooling pads sensible, or snake oil?</strong> Genuinely useful, with a caveat. A cheap cooling pad or small fan blowing across '
-           'the case does increase heat transfer from a passively-cooled device, and they cost around &pound;10&ndash;&pound;20. <strong>But it is second best.</strong> '
-           'Moving the device out of the cupboard, off the sofa, out of the sun or off the top of the television is free, permanent, and does more. Fix the placement '
-           'first, and use a fan only where the cabinet genuinely cannot be relocated.</p>'
-           '<p><strong>Snake oil:</strong> &ldquo;signal-boosting&rdquo; heatsinks and stick-on cooling accessories sold on the basis that they improve throughput. '
-           'Cooling restores performance that heat took away. It does not add performance the device never had.</p>'
-           '<div class="callout"><p><strong>Never</strong> pour water over equipment, put it in a fridge or freezer, or use a freezer block or damp cloth. '
-           'Condensation on live electronics is an electric shock and fire risk. There is no safe &ldquo;just be careful&rdquo; version of this &mdash; don&rsquo;t '
-           'do it. Equally, never cover equipment, run it under blankets or cushions, or seal it in an unventilated cabinet.</p></div>'
-           '<p><strong>The UK-specific one that costs people permanently:</strong> on copper and FTTC lines, avoid repeatedly power-cycling the router. Repeated '
-           'resyncs are read as line instability and can leave you on a <em>permanently</em> lower speed. You can genuinely slow your own line for good by rebooting '
-           'it every hot afternoon.</p>'
-           '<p><strong>For businesses:</strong> PoE delivers up to 60&nbsp;W or 90&nbsp;W per port on modern standards, and the losses show up as heat in the copper. '
-           'Industry guidance recommends keeping the temperature rise from power delivery to 15&nbsp;&deg;C above ambient, leaving cables unbundled where possible, '
-           'and limiting bundles where not. <strong>Do not coil surplus PoE cable</strong> &mdash; cut it to length. And remember a switch with a 150&nbsp;W power '
-           'budget in a sealed cupboard is a 150&nbsp;W heater.</p>'
-           '<p><strong>One thing that is <em>not</em> happening:</strong> heat does not meaningfully weaken the radio signal over household distances. The failure is '
-           'in the electronics, not the propagation. Worth knowing before you spend an afternoon on the phone to your provider.</p>'},
+   'html': '<p><strong>The placements that cause summer faults:</strong> airing and meter cupboards (no ventilation, plus a hot cylinder); sunlit windowsills; on top of or underneath a TV, set-top box, console, amplifier or NAS; sealed AV cabinets with a glass door and no rear cut-out; equipment stacked so each unit blocks the next one&rsquo;s vents; soft surfaces &mdash; TP-Link&rsquo;s own guidance says not to place units on paper, cloth or fabric, and carpet is a common offender; dust blanketing the heatsinks; and anything active left in a loft.</p><p><strong>Are fans and cooling pads sensible, or snake oil?</strong> Genuinely useful, with a caveat. A cheap cooling pad or small fan blowing across the case does increase heat transfer from a passively-cooled device, and they cost around &pound;10&ndash;&pound;20. <strong>But it is second best.</strong> Moving the device out of the cupboard, off the sofa, out of the sun or off the top of the television is free, permanent, and does more. Fix the placement first, and use a fan only where the cabinet genuinely cannot be relocated.</p><p><strong>Snake oil:</strong> &ldquo;signal-boosting&rdquo; heatsinks and stick-on cooling accessories sold on the basis that they improve throughput. Cooling restores performance that heat took away. It does not add performance the device never had.</p><div class="callout"><p><strong>Never</strong> pour water over equipment, put it in a fridge or freezer, or use a freezer block or damp cloth. Condensation on live electronics is an electric shock and fire risk. There is no safe &ldquo;just be careful&rdquo; version of this &mdash; don&rsquo;t do it. Equally, never cover equipment, run it under blankets or cushions, or seal it in an unventilated cabinet.</p></div><p><strong>The UK-specific one that costs people permanently:</strong> on copper and FTTC lines, avoid repeatedly power-cycling the router. Repeated resyncs are read as line instability, and your speed can then be reduced automatically to keep the line stable. You can genuinely slow your own line by rebooting it every hot afternoon.</p><p><strong>For businesses:</strong> PoE delivers up to 60&nbsp;W or 90&nbsp;W per port on modern standards, and the losses show up as heat in the copper. Industry guidance recommends keeping the temperature rise from power delivery to 15&nbsp;&deg;C above ambient, leaving cables unbundled where possible, and limiting bundles where not. <strong>Do not coil surplus PoE cable</strong> &mdash; cut it to length. And remember a switch with a 150&nbsp;W power budget in a sealed cupboard is a 150&nbsp;W heater.</p><p><strong>One thing that is <em>not</em> happening:</strong> heat does not meaningfully weaken the radio signal over household distances. The failure is in the electronics, not the propagation. Worth knowing before you spend an afternoon on the phone to your provider.</p>'},
  ],
  'faqs': [
   {'q': 'Does mesh WiFi work through thick brick walls and foil insulation?',

@@ -69,8 +69,7 @@ EMERGENCY_PAGES = [
  'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
  'secondaryCta': ['Plan it before you need it', '/business-continuity-internet/'],
  'ctaHead': 'Down right now?',
- 'ctaSub': 'Call us on 01202 775566 and we will tell you honestly, on the phone, whether we can help you today and what it will cost. If a &pound;300 failover '
-           'router is the better answer for you, we will say so.',
+ 'ctaSub': 'Call us on 01202 775566 and we will tell you honestly, on the phone, whether we can help you today and what it will cost. If a failover router is the better answer for you, we will say so.',
  'serviceName': '365 Emergency Internet &mdash; mobile connectivity response',
  'schemaKind': 'service',
  'sections': [
@@ -287,7 +286,7 @@ EMERGENCY_PAGES = [
   {'q': 'How do I get internet working again while my broadband is down?',
    'a': 'Fastest first: tether your phone &mdash; turn on its hotspot and connect your computer to it. That takes minutes and comfortably carries email, card machines and video calls, though it eats mobile data. Next step up is a 4G/5G router with a data SIM, which puts the whole premises back online and, kept afterwards, becomes automatic failover for next time. And if there&rsquo;s no usable mobile signal or the outage is running into days, that&rsquo;s what our <a href="/emergency-internet/">emergency internet service</a> exists for.'},
     {'q': 'Am I entitled to compensation if my broadband goes down?',
-   'a': 'Often, yes &mdash; and it should be automatic. Under Ofcom&rsquo;s automatic compensation scheme, providers that have signed up (including BT, EE, Sky, Virgin Media, TalkTalk, Vodafone and Plusnet, among others) pay a fixed amount per day when a total loss of service isn&rsquo;t fixed within two full working days of you reporting it &mdash; currently around &pound;9&ndash;&pound;10 a day, credited to your bill without you having to claim. The rates rise periodically and not every provider is in the scheme, so check yours. It applies to the line being down, not to slow WiFi inside your home.'},
+   'a': 'On a home (residential) line, often yes &mdash; and it should be automatic. Ofcom&rsquo;s scheme does not cover business broadband, so on a business line check the fix times and any compensation in your contract. Under Ofcom&rsquo;s automatic compensation scheme, providers that have signed up (including BT, EE, Sky, Virgin Media, TalkTalk, Vodafone and Plusnet, among others) pay a fixed amount per day when a total loss of service isn&rsquo;t fixed within two full working days of you reporting it &mdash; currently &pound;10.34 a day, credited to your bill without you having to claim. The rates rise periodically and not every provider is in the scheme, so check yours. It applies to the line being down, not to slow WiFi inside your home.'},
     {'q': 'How do I know if it is my router or the broadband line?',
    'a': 'Plug a laptop directly into the router with a network cable. If that works, your line is fine and you have a WiFi or internal network problem. If it does '
         'not, look at the router&rsquo;s broadband or DSL light &mdash; if it is off or flashing, the fault is on the line rather than inside your building. Then '
@@ -553,9 +552,7 @@ EMERGENCY_PAGES = [
         'within reach. Rural venues are actually where this works best: poor fixed connectivity, patchy mobile coverage and plenty of open sky is exactly the '
         'combination the van is for.'},
   {'q': 'Can you get internet to a filming location with no signal?',
-   'a': 'Usually, provided there is a clear view of the sky and somewhere to park within cable reach. It is a common use for us, and because we produce web and video '
-        'content ourselves we understand the upload workflow rather than just supplying bandwidth &mdash; getting rushes moving before you leave site rather than '
-        'days later is normally the real requirement.'},
+   'a': 'Usually, provided there is a clear view of the sky and somewhere to park within cable reach. It is exactly what the van suits, and because we produce web and video content ourselves we understand the upload workflow rather than just supplying bandwidth &mdash; getting rushes moving before you leave site rather than days later is normally the real requirement.'},
  ],
  'crossLinksHtml': '<p><strong>Related:</strong> <a href="/emergency-internet/">the service in full</a> &middot; '
                    '<a href="/off-grid-internet/">off-grid and no-signal locations</a> &middot; '

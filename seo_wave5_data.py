@@ -33,12 +33,7 @@ SEO_WAVE5_PAGES = [{'slug': 'windows-11-network-credentials-shared-folder',
   'crumbName': 'Network Credentials Prompt',
   'eyebrow': '// OFFICE FILE SHARING',
   'h1': 'Windows 11 keeps asking for network credentials to access a shared folder',
-  'lede': 'You click the shared folder, the same grey box appears, you type the same password, and '
-          'tomorrow morning it asks again. It is one of the most common jobs we get called about '
-          'in small Dorset offices, and it is almost never a fault with the network. It is Windows '
-          'failing to work out who you are on the other computer, or failing to hold on to the '
-          'answer once you have given it. Here is what the box is really asking, what to type in '
-          'it, and how to make it stop coming back without weakening your office network.',
+  'lede': 'You click the shared folder, the same grey box appears, you type the same password, and tomorrow morning it asks again. It is a common problem in small Dorset offices, and it is almost never a fault with the network. It is Windows failing to work out who you are on the other computer, or failing to hold on to the answer once you have given it. Here is what the box is really asking, what to type in it, and how to make it stop coming back without weakening your office network.',
   'ctaHead': 'Still getting the credentials box?',
   'ctaSub': 'We fix office file sharing for businesses across Bournemouth, Poole and Dorset, '
             'usually remotely without anyone leaving their desk. Call 01202 775566.',
@@ -436,11 +431,7 @@ SEO_WAVE5_PAGES = [{'slug': 'windows-11-network-credentials-shared-folder',
   'crumbName': 'Shared Folder Read-Only',
   'eyebrow': '// OFFICE FILE SHARING',
   'h1': 'Shared folder read-only in Windows 11: staff can open files but cannot save',
-  'lede': 'Everyone can see the folder. Everyone can open the files. But the moment anyone presses '
-          'Save, Windows says the file is read-only or that they do not have permission to save in '
-          'this location. Nine times out of ten this is not a broken network. It is a mismatch '
-          'between the two separate permission layers Windows puts on every share, and once you '
-          "know where to look it is usually a few minutes' work.",
+  'lede': "Everyone can see the folder. Everyone can open the files. But the moment anyone presses Save, Windows says the file is read-only or that they do not have permission to save in this location. Usually this is not a broken network. It is a mismatch between the two separate permission layers Windows puts on every share, and once you know where to look it is usually a few minutes' work.",
   'ctaHead': 'Still read-only after all that?',
   'ctaSub': 'We can look at the share with you remotely, or collect the machine free of charge if '
             'it needs hands on it. Call 01202 775566.',
@@ -646,27 +637,7 @@ SEO_WAVE5_PAGES = [{'slug': 'windows-11-network-credentials-shared-folder',
   'serviceName': 'Office File Sharing Support',
   'sections': [{'eyebrow': '/01 &mdash; WHAT CHANGED',
                 'h2': 'Why the new PC is the only one that cannot get in',
-                'html': '<p>This is one of the most common calls we get from Dorset offices at the '
-                        'moment, and it almost always follows the same pattern. A new Windows 11 '
-                        'machine arrives to replace an ageing one, everything else on it works, '
-                        'and yet the folder the whole office has shared from an older Windows 10 '
-                        'computer for years simply will not open.</p><p>Nothing has gone wrong '
-                        'with the share. What has changed is the machine asking for it. Older '
-                        'Windows was content to fall back to a very relaxed way of connecting when '
-                        'a share did not insist on a proper login &mdash; effectively knocking on '
-                        'the door and being waved in without giving a name. Current Windows will '
-                        'not do that. If the Windows 10 PC has never been set up to challenge for '
-                        'a real username and password, the new machine has nothing valid to offer '
-                        'and the connection stops there.</p><p>The second half of the problem is '
-                        'who the new PC thinks it is. Most new machines are set up with a '
-                        'Microsoft account, so the name it presents is not a name the old computer '
-                        'has ever heard of. In a small office with no server, every PC keeps its '
-                        'own separate list of users, and a share can only recognise accounts that '
-                        'live on the machine hosting it.</p><p>The symptoms are usually one of '
-                        'these: the old computer appears under Network but double-clicking it '
-                        'throws an error, or a login box appears and rejects details you know are '
-                        'correct, or the folder opens from every PC in the office except the '
-                        'newest one.</p>'},
+                'html': '<p>This is a common call from Dorset offices at the moment, and it usually follows the same pattern. A new Windows 11 machine arrives to replace an ageing one, everything else on it works, and yet the folder the whole office has shared from an older Windows 10 computer for years simply will not open.</p><p>Nothing has gone wrong with the share. What has changed is the machine asking for it. Older Windows was content to fall back to a very relaxed way of connecting when a share did not insist on a proper login &mdash; effectively knocking on the door and being waved in without giving a name. Current Windows will not do that. If the Windows 10 PC has never been set up to challenge for a real username and password, the new machine has nothing valid to offer and the connection stops there.</p><p>The second half of the problem is who the new PC thinks it is. Most new machines are set up with a Microsoft account, so the name it presents is not a name the old computer has ever heard of. In a small office with no server, every PC keeps its own separate list of users, and a share can only recognise accounts that live on the machine hosting it.</p><p>The symptoms are usually one of these: the old computer appears under Network but double-clicking it throws an error, or a login box appears and rejects details you know are correct, or the folder opens from every PC in the office except the newest one.</p>'},
                {'eyebrow': '/02 &mdash; THE ADVICE TO SKIP',
                 'h2': 'Why we will not switch SMB1 or guest access back on',
                 'html': '<p>Search for this error and the top answers are nearly always the same '

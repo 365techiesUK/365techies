@@ -110,7 +110,7 @@ SEO_WAVE4_PAGES = [
         "crumbName": "Shuts Down at 30%",
         "eyebrow": "// LAPTOP BATTERY FAULTS",
         "h1": "Laptop Shuts Down Suddenly at 30% Battery? The Percentage Is Lying to You",
-        "lede": "It says 30 percent, sometimes 40, and then without warning the laptop drops dead as though you pulled the plug &mdash; no shutdown, no warning, no low-battery message. This is one of the most misdiagnosed faults we see, because everybody assumes it is a software or calibration problem. It is almost never either. Here is what is actually happening inside the battery, and why recalibrating it will not save you.",
+        "lede": 'It says 30 percent, sometimes 40, and then without warning the laptop drops dead as though you pulled the plug &mdash; no shutdown, no warning, no low-battery message. This fault is often misdiagnosed, because everybody assumes it is a software or calibration problem. It is almost never either. Here is what is actually happening inside the battery, and why recalibrating it will not save you.',
         "chips": CHIPS,
         "ctaHead": "Not sure if the battery is worth replacing?",
         "ctaSub": "We will check the real capacity against the design capacity and tell you honestly whether it is the battery or something else. Free collection across Dorset. Call 01202 775566.",
@@ -139,7 +139,7 @@ SEO_WAVE4_PAGES = [
             {
                 "eyebrow": "/05 &mdash; WHAT TO DO ABOUT IT",
                 "h2": "Replacement, and the one safety point that matters",
-                "html": "<p>A worn battery is a consumable, not a fault. Laptop batteries are generally expected to hold most of their capacity for a few hundred full charge cycles, and after three or four years of daily use a noticeable drop is completely normal. Replacing it is routine work and restores the machine properly.</p><p>Two things are worth saying before you order one yourself. First, quality varies enormously with cheap third-party packs, and a poor cell pack in a sealed laptop is a genuinely bad trade. Second, and more importantly:</p><p><strong>If the battery is swollen, stop using the laptop.</strong> The signs are a trackpad that has started to sit proud or click oddly, a base that no longer sits flat on the desk, or a gap opening between the case panels. A swollen lithium battery is a safety issue, not a performance one. Do not press it, do not puncture it, and do not leave it charging unattended. Get it out of the machine.</p><p>If you would rather someone else handled it, we replace laptop batteries routinely, we will check the real capacity figures first so you are not replacing a healthy battery for nothing, and we will tell you if the shutdowns turn out to be something else entirely. Free collection across Bournemouth, Poole and Dorset, and no fix means no fee.</p>",
+                "html": '<p>A worn battery is a consumable, not a fault. Laptop batteries are generally expected to hold most of their capacity for a few hundred full charge cycles, and after three or four years of daily use a noticeable drop is completely normal. Replacing it is routine work and restores the machine properly.</p><p>Two things are worth saying before you order one yourself. First, quality varies enormously with cheap third-party packs, and a poor cell pack in a sealed laptop is a genuinely bad trade. Second, and more importantly:</p><p><strong>If the battery is swollen, stop using the laptop.</strong> The signs are a trackpad that has started to sit proud or click oddly, a base that no longer sits flat on the desk, or a gap opening between the case panels. A swollen lithium battery is a safety issue, not a performance one. Do not press it, do not puncture it, and unplug the charger. Have the battery removed by someone who does this routinely.</p><p>If you would rather someone else handled it, we replace laptop batteries routinely, we will check the real capacity figures first so you are not replacing a healthy battery for nothing, and we will tell you if the shutdowns turn out to be something else entirely. Free collection across Bournemouth, Poole and Dorset, and no fix means no fee.</p>',
             },
         ],
         "faqs": [
@@ -157,7 +157,7 @@ SEO_WAVE4_PAGES = [
             },
             {
                 "q": "Is it dangerous to keep using a laptop that shuts down early?",
-                "a": "The early shutdown itself is not dangerous, though you will lose unsaved work. What is dangerous is a swollen battery, which sometimes accompanies a badly worn one. If your trackpad has started sitting proud or clicking oddly, the base no longer sits flat, or the case panels are separating, stop using the laptop and have the battery removed. Do not press it or puncture it, and do not leave it charging unattended.",
+                "a": 'The early shutdown itself is not dangerous, though you will lose unsaved work. What is dangerous is a swollen battery, which sometimes accompanies a badly worn one. If your trackpad has started sitting proud or clicking oddly, the base no longer sits flat, or the case panels are separating, stop using the laptop and have the battery removed. Do not press it or puncture it, and unplug the charger.',
             },
             {
                 "q": "How long should a laptop battery last before this happens?",

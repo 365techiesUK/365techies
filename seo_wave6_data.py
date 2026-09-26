@@ -154,31 +154,7 @@ SEO_WAVE6_PAGES = [{'slug': 'scan-to-folder-stopped-working-after-windows-update
                         'scanners rely on.</p>'},
                {'eyebrow': '/05 &mdash; THE BAD ADVICE',
                 'h2': 'The workaround the internet will offer you, and what it costs',
-                'html': '<p>Search this problem and you will be told, confidently and often, to '
-                        'put SMB1 back, to turn off the requirement for signed connections, or to '
-                        'switch on guest access. The guest setting people quote is usually the '
-                        'wrong one anyway &mdash; it governs how your PC connects out to other '
-                        'machines, not how the scanner connects in &mdash; and the version that '
-                        'does apply means anything reaching the PC can write into that share '
-                        'without proving who it is. Two of the three will have you scanning by '
-                        'lunchtime. All three are a poor trade for a business, and it is worth '
-                        'knowing why before anyone does it to your PC.</p><p>None of them are '
-                        'scanner settings. They are settings for the whole computer. Turning off '
-                        'signing does not loosen one connection from one printer &mdash; it '
-                        'loosens every connection that PC makes and accepts, so anyone who gets '
-                        'onto your network can sit in the middle of your file traffic. Allowing '
-                        'guest logins means anything that reaches the machine can write into that '
-                        'share without proving who it is. And SMB1 is the protocol at the heart of '
-                        'the ransomware outbreaks that stopped hospitals and factories a few years '
-                        'ago.</p><p>The point is the ratio: you weaken every share on that '
-                        'computer to accommodate one device that could usually be fixed properly '
-                        'instead. If the machine genuinely cannot be brought up to date &mdash; '
-                        'and some cannot &mdash; the conversation to have is with whoever supplies '
-                        'or maintains it. On a lease or a service contract, keeping it able to '
-                        'talk to current Windows is reasonably their job as much as '
-                        'yours.</p><p>If you would rather not spend an afternoon on it, this is '
-                        'routine work for us: usually one remote session while you watch, or a '
-                        'visit anywhere across Bournemouth, Poole and Dorset.</p>'}],
+                'html': '<p>Search this problem and you will be told, confidently and often, to put SMB1 back, to turn off the requirement for signed connections, or to switch on guest access. The guest setting people quote is usually the wrong one anyway &mdash; it governs how your PC connects out to other machines, not how the scanner connects in &mdash; and the version that does apply means anything reaching the PC can write into that share without proving who it is. Two of the three will have you scanning by lunchtime. All three are a poor trade for a business, and it is worth knowing why before anyone does it to your PC.</p><p>None of them are scanner settings. They are settings for the whole computer. Turning off signing does not loosen one connection from one printer &mdash; it loosens every connection that PC makes and accepts, so anyone who gets onto your network can sit in the middle of your file traffic. Allowing guest logins means anything that reaches the machine can write into that share without proving who it is. And SMB1 is the protocol at the heart of the ransomware outbreaks that stopped hospitals and factories a few years ago.</p><p>The point is the ratio: you weaken every share on that computer to accommodate one device that could usually be fixed properly instead. If the machine genuinely cannot be brought up to date &mdash; and some cannot &mdash; the conversation to have is with whoever supplies or maintains it. On a lease or a service contract, keeping it able to talk to current Windows is reasonably their job as much as yours.</p><p>If you would rather not spend an afternoon on it, this is routine work for us: usually one remote session while you watch, or a visit anywhere across Bournemouth, Poole and Dorset, priced before we come.</p>'}],
   'faqs': [{'q': 'Why can the printer still print if it can&rsquo;t scan to the folder?',
             'a': 'Printing goes one way and scanning to a folder goes the other. Your PC sends '
                  'print jobs out to the printer, which needs no permission from anything. Scanning '
@@ -209,12 +185,7 @@ SEO_WAVE6_PAGES = [{'slug': 'scan-to-folder-stopped-working-after-windows-update
                  'truly cannot do anything newer, talk to whoever supplies it before you weaken '
                  'the computer.'},
            {'q': 'What can we do today while the folder is being sorted?',
-            'a': 'Two things work immediately and neither depends on the shared folder. Scan to '
-                 'email sends each scan as an attachment from the printer itself, and scan to a '
-                 'USB stick puts the file straight onto a memory stick at the machine. Both are '
-                 'worth setting up anyway as a fallback. In the background, ring us on 01202 '
-                 '775566 and we will usually sort the folder in one remote session while you watch '
-                 '&mdash; or come out to you if the printer needs hands on it.'}],
+            'a': 'Two things work immediately and neither depends on the shared folder. Scan to email sends each scan as an attachment from the printer itself, and scan to a USB stick puts the file straight onto a memory stick at the machine. Both are worth setting up anyway as a fallback. In the background, ring us on 01202 775566 and we will usually sort the folder in one remote session while you watch &mdash; or come out to you if the printer needs hands on it, priced before we come.'}],
   'chips': ['No fix, no fee', 'Rated 4.9 on Google', 'Trading since 1995'],
   'primaryCta': ['Get it looked at', '/contact/'],
   'secondaryCta': ['Call 01202 775566', 'tel:+441202775566'],
@@ -437,15 +408,9 @@ SEO_WAVE6_PAGES = [{'slug': 'scan-to-folder-stopped-working-after-windows-update
   'crumbName': "Printer Won't Scan (Win 11)",
   'eyebrow': '// PRINTER &amp; SCANNER SUPPORT',
   'h1': "Printer Won't Scan to Your Computer on Windows 11? Here's Where to Start",
-  'lede': 'Your printer prints without complaint, but ask it to scan and nothing arrives &mdash; '
-          'or the scan option has vanished from Windows 11 altogether. It is one of the more '
-          'common calls we take, and the cause is rarely the scanner itself. Most cases come down '
-          'to the driver Windows fitted on its own, a piece of software that has to be listening '
-          'on your PC, or something on the computer quietly blocking the printer&rsquo;s side of '
-          'the conversation. Here is how to tell which one you have, in plain English.',
+  'lede': 'Your printer prints without complaint, but ask it to scan and nothing arrives &mdash; or the scan option has vanished from Windows 11 altogether. It is a common problem, and the cause is rarely the scanner itself. Most cases come down to the driver Windows fitted on its own, a piece of software that has to be listening on your PC, or something on the computer quietly blocking the printer&rsquo;s side of the conversation. Here is how to tell which one you have, in plain English.',
   'ctaHead': 'Still no scanner?',
-  'ctaSub': 'We sort scanning faults remotely most weeks &mdash; you watch every step, and '
-            'it&rsquo;s no fix, no fee. Call 01202 775566 and we&rsquo;ll take a look together.',
+  'ctaSub': 'We sort scanning faults remotely &mdash; you watch every step, and it&rsquo;s no fix, no fee. Call 01202 775566 and we&rsquo;ll take a look together.',
   'serviceName': 'Printer and Scanner Support',
   'sections': [{'eyebrow': '/01 &mdash; START HERE',
                 'h2': "First, check you're on the right page",
@@ -542,30 +507,7 @@ SEO_WAVE6_PAGES = [{'slug': 'scan-to-folder-stopped-working-after-windows-update
                         'problem or a network problem.</p>'},
                {'eyebrow': '/05 &mdash; THE QUIET BLOCKER',
                 'h2': 'Security suites and VPNs block the very thing scanning needs',
-                'html': '<p>Printing is mostly your computer talking outwards. Scanning leans much '
-                        'harder on the two devices being able to find and reach each other in both '
-                        'directions &mdash; Windows&rsquo; own network scanning and the '
-                        'manufacturer&rsquo;s scan-to-PC helper both need the printer to be able '
-                        'to reach your computer, not just the other way round. A firewall that '
-                        'quietly allows printing while blocking that side of the conversation '
-                        'produces exactly the fault we see often, where printing has never missed '
-                        'a beat and scanning has never once worked on that machine.</p><p>A full '
-                        'internet security suite &mdash; the sort that replaces Windows&rsquo; own '
-                        'firewall with one of its own &mdash; will often allow the printing and '
-                        'block the rest without saying a word about it. To test that, and only to '
-                        'test it, turn the suite&rsquo;s firewall off for a moment while you are '
-                        'on your own network at home or in the office, try one scan, then turn it '
-                        'straight back on. If the scan worked you have your answer, but leaving '
-                        'the firewall off is not the fix. Use the suite&rsquo;s own list of '
-                        'trusted devices or allowed applications to permit the printer and its '
-                        'scanning software. Same result, none of the exposure.</p><p>VPN software '
-                        'on the computer deserves the same test. Many VPN apps send everything '
-                        'down the tunnel and cut the computer off from other devices on the local '
-                        'network, and your printer is one of those devices. Disconnect the VPN '
-                        'briefly and try the scan again.</p><p>If you have worked through all of '
-                        'this and the scanner still is not there, that is a fair point to stop. '
-                        'This is the sort of job we finish remotely most weeks, in one short '
-                        'session, with you watching every step we take.</p>'}],
+                'html': '<p>Printing is mostly your computer talking outwards. Scanning leans much harder on the two devices being able to find and reach each other in both directions &mdash; Windows&rsquo; own network scanning and the manufacturer&rsquo;s scan-to-PC helper both need the printer to be able to reach your computer, not just the other way round. A firewall that quietly allows printing while blocking that side of the conversation produces exactly the fault we see often, where printing has never missed a beat and scanning has never once worked on that machine.</p><p>A full internet security suite &mdash; the sort that replaces Windows&rsquo; own firewall with one of its own &mdash; will often allow the printing and block the rest without saying a word about it. To test that, and only to test it, turn the suite&rsquo;s firewall off for a moment while you are on your own network at home or in the office, try one scan, then turn it straight back on. If the scan worked you have your answer, but leaving the firewall off is not the fix. Use the suite&rsquo;s own list of trusted devices or allowed applications to permit the printer and its scanning software. Same result, none of the exposure.</p><p>VPN software on the computer deserves the same test. Many VPN apps send everything down the tunnel and cut the computer off from other devices on the local network, and your printer is one of those devices. Disconnect the VPN briefly and try the scan again.</p><p>If you have worked through all of this and the scanner still is not there, that is a fair point to stop. This is the sort of job we can often finish remotely, in one short session, with you watching every step we take.</p>'}],
   'faqs': [{'q': 'Why does my printer print perfectly but refuse to scan?',
             'a': 'Because they are two separate halves of the same machine, and Windows treats '
                  'them separately. The driver Windows installs automatically is built for '
@@ -596,12 +538,7 @@ SEO_WAVE6_PAGES = [{'slug': 'scan-to-folder-stopped-working-after-windows-update
                  'the computer instead; if that works, only the listening software needs '
                  'attention.'},
            {'q': 'Could my antivirus really be stopping a scan?',
-            'a': 'Yes, and it is one of the more common causes we find. Scanning needs your '
-                 'computer to accept an incoming connection from the printer, and a full security '
-                 'suite with its own firewall will often permit printing while silently blocking '
-                 'that. Turn the firewall off briefly as a test only, then put it straight back on '
-                 "and add the printer and its software to the suite's trusted list instead. A VPN "
-                 'app on the computer can cut off local devices in much the same way.'}],
+            'a': "Yes, and it is a common cause. Scanning needs your computer to accept an incoming connection from the printer, and a full security suite with its own firewall will often permit printing while silently blocking that. Turn the firewall off briefly as a test only, then put it straight back on and add the printer and its software to the suite's trusted list instead. A VPN app on the computer can cut off local devices in much the same way."}],
   'chips': ['No fix, no fee', 'Rated 4.9 on Google', 'Trading since 1995'],
   'primaryCta': ['Get it looked at', '/contact/'],
   'secondaryCta': ['Call 01202 775566', 'tel:+441202775566'],
