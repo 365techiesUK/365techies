@@ -340,5 +340,11 @@ $fc = q()['sr'][$KH . '-' . $MACHINE . '-' . ($TS + 82) . '-f'];
 ok(strpos(sr_fam_body($fc, q()['salt']), 'Running cost:  About £249') !== false && strpos(sr_fam_body_html($fc, q()['salt']), '>Running cost</td>') !== false, 'the family copy carries the line too');
 ok(strpos(sr_body_html('Steve', sr_sample()), '>Running cost</td>') !== false && strpos(sr_body('Steve', sr_sample()), 'Running cost:  About') !== false, 'the ?test=report sample shows the line');
 
+echo "\n-- the big button in Outlook for Windows\n";
+// Outlook ignores padding on a link and paints a seen link purple: it drew a thin blue strip with purple words
+ok(strpos($html, '<td align="center" bgcolor="#1d97e3" style="background-color:#1d97e3;border-radius:9px;mso-padding-alt:17px 38px;">') !== false, 'the button cell carries Outlook-only padding');
+ok(strpos($html, '<span style="color:#ffffff;">View the full report</span></a>') !== false, 'the button words sit in a white span that Outlook\'s link colours cannot override');
+ok(substr_count((string)file_get_contents(__DIR__ . '/pcm-review.php'), 'mso-padding-alt:17px 38px') === 3, 'all three big buttons in the email code carry the fix (rv_h_cta and both portal-welcome templates)');
+
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);

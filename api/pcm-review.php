@@ -1141,8 +1141,8 @@ function wc_body_html($first) {
 
 <tr><td bgcolor="#ffffff" align="center" style="background-color:#ffffff;padding:14px 32px 6px 32px;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
-<td align="center" bgcolor="#1d97e3" style="background-color:#1d97e3;border-radius:9px;">
-<a href="https://365techies.co.uk/portal/" style="display:inline-block;padding:17px 38px;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;font-size:18px;font-weight:700;color:#ffffff !important;text-decoration:none;border-radius:9px;">Open my 365&nbsp;portal</a>
+<td align="center" bgcolor="#1d97e3" style="background-color:#1d97e3;border-radius:9px;mso-padding-alt:17px 38px;">
+<a href="https://365techies.co.uk/portal/" style="display:inline-block;padding:17px 38px;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;font-size:18px;font-weight:700;color:#ffffff !important;text-decoration:none;border-radius:9px;"><span style="color:#ffffff;">Open my 365&nbsp;portal</span></a>
 </td></tr></table>
 <p style="margin:16px 0 0 0;font-size:15px;line-height:1.6;color:#5b6b8a !important;">On your phone or tablet? Tap it anyway &mdash; we will email you a six&#8209;digit code to let you in, and that device stays signed in too.</p>
 </td></tr>
@@ -1272,12 +1272,16 @@ function rv_h_facts($rows) {
     }
     return $h . '</table></td></tr></table>';
 }
-/** The one big button. Never more than one per email. */
+/** The one big button. Never more than one per email.
+ *  Outlook for Windows ignores padding on a link and paints a link it has seen in its own purple, so it
+ *  drew this as a thin blue strip with purple words (owner's service-report email, 26 Sep 2026). The
+ *  cell carries the padding for Outlook alone (mso-padding-alt; every other client reads the link's own
+ *  padding), and the words sit in a span whose colour Outlook's link styles do not override. */
 function rv_h_cta($label, $url) {
     return '<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:6px auto 4px auto;"><tr>'
-         . '<td align="center" bgcolor="#1d97e3" style="background-color:#1d97e3;border-radius:9px;">'
+         . '<td align="center" bgcolor="#1d97e3" style="background-color:#1d97e3;border-radius:9px;mso-padding-alt:17px 38px;">'
          . '<a href="' . rv_h($url) . '" style="display:inline-block;padding:17px 38px;font-family:\'Segoe UI\',-apple-system,Helvetica,Arial,sans-serif;'
-         . 'font-size:18px;font-weight:700;color:#ffffff !important;text-decoration:none;border-radius:9px;">' . rv_h($label) . '</a>'
+         . 'font-size:18px;font-weight:700;color:#ffffff !important;text-decoration:none;border-radius:9px;"><span style="color:#ffffff;">' . rv_h($label) . '</span></a>'
          . '</td></tr></table>';
 }
 
@@ -1416,8 +1420,8 @@ function wl_body_html($first) {
 
 <tr><td bgcolor="#ffffff" align="center" style="background-color:#ffffff;padding:28px 32px 6px 32px;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;">
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center"><tr>
-<td align="center" bgcolor="#1d97e3" style="background-color:#1d97e3;border-radius:9px;">
-<a href="https://365techies.co.uk/portal/" style="display:inline-block;padding:17px 38px;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;font-size:18px;font-weight:700;color:#ffffff !important;text-decoration:none;border-radius:9px;">Open my 365&nbsp;portal</a>
+<td align="center" bgcolor="#1d97e3" style="background-color:#1d97e3;border-radius:9px;mso-padding-alt:17px 38px;">
+<a href="https://365techies.co.uk/portal/" style="display:inline-block;padding:17px 38px;font-family:'Segoe UI',-apple-system,Helvetica,Arial,sans-serif;font-size:18px;font-weight:700;color:#ffffff !important;text-decoration:none;border-radius:9px;"><span style="color:#ffffff;">Open my 365&nbsp;portal</span></a>
 </td></tr></table>
 <p style="margin:16px 0 0 0;font-size:15px;line-height:1.6;color:#5b6b8a !important;">Reading this on your phone or tablet? Tap it anyway &mdash; we will email you a six&#8209;digit code to let you in, and that device stays signed in afterwards too.</p>
 </td></tr>
