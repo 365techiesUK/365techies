@@ -9,6 +9,7 @@ from office_cluster import _office_cluster_section
 from tool_seo_data import TOOL_TITLES, TOOL_SEO
 from snippets_data import SNIPPETS
 from dashboard_promo import plan_band as _dash_band
+from hub_ui import DELL_HUB_CSS, _dh_ico, _dell_hub_quotes   # intent-first layout pieces (26 Sep 2026)
 TODAY = datetime.date.today().isoformat()
 
 # Cache-bust for search.min.js, derived from the CONTENT of js/search.js.
@@ -6057,6 +6058,88 @@ def repair_town_links():
       </div>
     </section>'''
 
+# ============================================ COMPUTER REPAIRS v2 (26 Sep 2026)
+# The homepage "Fix my computer" tile lands here, and the page ranks ~14 for repair searches (1,076
+# impressions in 28 days). Same intent-first layout as the homepage and the Dell pages: H1 unchanged,
+# "What's wrong?" tiles beside it, call first, a proof strip, how a repair works, then the page's own
+# sections, repair customers' reviews and the same FAQ. Claims are this page's own (no fix no fee on the
+# diagnosis, quote before chargeable work, 12-month warranty, free collection and return, many repairs
+# done remotely the same day) plus the remote-fix price on /remote-support/ (from £20).
+def _repairs_v2():
+    tiles = [
+        ("hp-c-fix", "gauge", "Slow or playing up", "Slow, freezing, pop-ups or Windows errors", "REMOTE FIXES FROM &pound;20", "/slow-computer-repair/"),
+        ("hp-c-teal", "power", "Won&rsquo;t turn on", "Dead, stuck on the logo or blinking lights", "FREE COLLECTION", "/book-a-collection/"),
+        ("hp-c-buy", "laptop", "Screen, battery or keys", "Cracked screen, worn battery, broken keyboard", "12-MONTH WARRANTY", "/laptop-repair/"),
+        ("hp-c-biz", "bug", "Virus or scam worry", "Pop-ups, a scammer got in, or it just feels wrong", "CLEANED &amp; PROTECTED", "/virus-removal/"),
+    ]
+    tiles_html = "\n".join(
+        f'            <a class="hp-intent {c}" href="{href}"><span class="hp-ico">{_dh_ico(i)}</span><span class="hp-intent__t">{t}</span>'
+        f'<span class="hp-intent__d">{d}</span><span class="hp-intent__p">{p}</span></a>'
+        for c, i, t, d, p, href in tiles)
+    hero_html = f'''    <style>{" ".join(l.strip() for l in DELL_HUB_CSS.strip().splitlines())}</style>
+    <section class="page-hero dh dh-hero" aria-label="Introduction">
+      <div class="dh-hero__grid">
+        <div>
+          <nav class="breadcrumb" aria-label="Breadcrumb">{bc("Computer Repairs")}</nav>
+          <p class="eyebrow mono">// ONE-OFF FIXES</p>
+          <h1>Computer &amp; laptop <em class="grad grad--cyan">repairs</em></h1>
+          <p class="lede">Slow, broken, a virus, or it won&rsquo;t start? We find the fault, tell you the price first and fix it &mdash; remotely the same day where we can, with free collection across Bournemouth, Poole and Dorset when it needs hands-on work. No subscription needed.</p>
+          <div class="page-hero__cta">
+            <a href="tel:+441202775566" class="button primary button--lg">Call 01202 775566</a>
+            <a href="/book-a-collection/" class="button secondary button--lg">Book a free collection</a>
+          </div>
+          <a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Rated 4.9 on Google</strong></span><span>No fix, no fee &middot; 12-month warranty</span></a>
+          <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
+        </div>
+        <nav class="hp-intents" aria-label="What&rsquo;s wrong?">
+          <p class="hp-intents__q">What&rsquo;s wrong?</p>
+          <div class="hp-intents__grid">
+{tiles_html}
+          </div>
+        </nav>
+      </div>
+      <div class="dh-quick">
+        <span>Also:</span>
+        <a href="/data-recovery/">{_dh_ico("cloud")}Lost files?</a>
+        <a href="/computer-fault-checker/">{_dh_ico("gauge")}Not sure what&rsquo;s wrong?</a>
+        <a href="/monthly-it-support/">{_dh_ico("shield")}Stop it happening again</a>
+      </div>
+    </section>'''
+    top_html = '''    <section class="dh dh-sec dh-proof" aria-label="Our repair promise in numbers">
+      <div class="dh-in">
+        <ul class="dh-facts">
+          <li class="hp-c-care"><b>&pound;0</b><span>for the diagnosis if we can&rsquo;t fix it</span></li>
+          <li class="hp-c-fix"><b>12&nbsp;months</b><span>warranty on every repair</span></li>
+          <li class="hp-c-buy"><b>Free</b><span>collection and return across Dorset</span></li>
+          <li class="hp-c-biz"><b>4.9<i aria-hidden="true">&#9733;</i></b><span>average rating on Google</span></li>
+        </ul>
+        <p class="dh-indep"><strong>Quote first, always.</strong> We tell you what&rsquo;s wrong, what it costs and how long it&rsquo;ll take before any chargeable work &mdash; and if a repair isn&rsquo;t worth doing, we say so.</p>
+      </div>
+    </section>
+    <section class="dh dh-sec" aria-labelledby="cr-how-title" style="padding-top:0">
+      <div class="dh-in">
+        <p class="dh-kicker">How a repair works</p>
+        <h2 class="dh-h2" id="cr-how-title">Three steps, no surprises</h2>
+        <ol class="dh-steps" style="margin-top:1.2rem">
+          <li><b>Call or book</b><span>Tell us what&rsquo;s wrong, by phone or online</span></li>
+          <li><b>We check it</b><span>Remotely where we can, or we collect it free</span></li>
+          <li><b>Quote, then fix</b><span>A clear price first, and a 12-month warranty on the repair</span></li>
+        </ol>
+      </div>
+    </section>'''
+    reviews_html = f'''    <section class="dh dh-sec" aria-labelledby="cr-reviews-title">
+      <div class="dh-in">
+        <p class="dh-kicker">What repair customers say</p>
+        <h2 class="dh-h2" id="cr-reviews-title">Rated 4.9 on Google</h2>
+        <div class="dh-quotes">
+{_dell_hub_quotes("Eve Day", "Roger Eede", "John Plumbe")}
+        </div>
+        <p style="margin:1.1rem 0 0;display:flex;flex-wrap:wrap;gap:.5rem 1.6rem"><a class="dh-link" href="/reviews/">Read all our reviews &#8594;</a><a class="dh-link" href="https://www.google.com/maps?cid=5924622613303465737" target="_blank" rel="noopener">See them on Google &#8594;</a></p>
+      </div>
+    </section>'''
+    return hero_html, top_html, reviews_html
+_CR_HERO, _CR_TOP, _CR_REVIEWS = _repairs_v2()
+
 add(
  slug="computer-repairs",
  # Ranks position 8.3 for "computer repair" and 7.7 for "laptop repair" - 1,112 impressions,
@@ -6080,11 +6163,8 @@ add(
    ]),
  ]),
  content="\n".join([
-   hero(bc("Computer Repairs"), "// ONE-OFF FIXES",
-        'Computer &amp; laptop <em class="grad grad--cyan">repairs</em>',
-        hero_trust("Slow laptop, virus clean-up, dead Wi-Fi or a PC that just won&rsquo;t start? Book a one-off computer or laptop repair in Bournemouth, Poole or anywhere in Dorset — no subscription required."),
-        cta1=("Book a Computer Repair", "/book-a-collection/"), cta2=("See Plans &amp; Prices", "/monthly-it-support/"),
-        chips=["No-fix-no-fee", "12-month warranty", "Remote or on-site"], scene=HERO_SCENES.get("repairdesktop")),
+   _CR_HERO,
+   _CR_TOP,
    f'''    <section class="section" aria-label="Overview">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
@@ -6136,6 +6216,7 @@ add(
       </div>
     </section>''',
    repair_town_links(),
+   _CR_REVIEWS,
    faq_html([
      ("Do you offer no-fix-no-fee?", "Yes &mdash; if we can&rsquo;t fix your device, you don&rsquo;t pay for the diagnosis. We always quote clearly before any chargeable work."),
      ("Is there a warranty on repairs?", "Yes &mdash; every repair is backed by a full 12-month warranty."),
