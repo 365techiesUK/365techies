@@ -315,6 +315,9 @@
       "description": "A free browser game and ride simulator on the real Bournemouth seafront. Ride an eFoil, a jet ski or a RIB past the pier, save it from a Viking raid, run the Dorset smuggling coast, or find the dolphins in the bay.",
       "url": "https://365techies.co.uk/bournemouth/games/seafront/",
       "image": "https://365techies.co.uk/bournemouth/games/seafront/shot-pirate-raid.jpg",
+      "trailer": {
+        "@id": "https://365techies.co.uk/bournemouth/games/seafront/#trailer-video"
+      },
       "gamePlatform": "Web browser",
       "applicationCategory": "Game",
       "operatingSystem": "Any, with a WebGL2 browser",
@@ -329,6 +332,38 @@
         "priceCurrency": "GBP"
       },
       "author": {
+        "@id": "https://365techies.co.uk/#business"
+      }
+    },
+    {
+      "@type": "VideoObject",
+      "@id": "https://365techies.co.uk/bournemouth/games/seafront/#trailer-video",
+      "name": "Seafront: the trailer",
+      "description": "34 seconds of Seafront's levels on the real Bournemouth seafront, from a Viking raid at the pier to the dolphins in the bay.",
+      "thumbnailUrl": [
+        "https://365techies.co.uk/bournemouth/games/seafront/media/trailer-poster.webp"
+      ],
+      "uploadDate": "2026-09-26T12:00:00+01:00",
+      "duration": "PT34S",
+      "contentUrl": "https://365techies.co.uk/bournemouth/games/seafront/media/trailer.mp4",
+      "inLanguage": "en-GB",
+      "publisher": {
+        "@id": "https://365techies.co.uk/#business"
+      }
+    },
+    {
+      "@type": "VideoObject",
+      "@id": "https://365techies.co.uk/bournemouth/games/seafront/#sim-video",
+      "name": "Seafront: the ride simulator",
+      "description": "An eFoil, a jet ski and a RIB on the real Bournemouth water: lift-off, a smaller wing, the side-on view, glassy calm to a two-metre storm, and free ride.",
+      "thumbnailUrl": [
+        "https://365techies.co.uk/bournemouth/games/seafront/media/ride-simulator-poster.webp"
+      ],
+      "uploadDate": "2026-09-26T12:00:00+01:00",
+      "duration": "PT2M10S",
+      "contentUrl": "https://365techies.co.uk/bournemouth/games/seafront/media/ride-simulator.mp4",
+      "inLanguage": "en-GB",
+      "publisher": {
         "@id": "https://365techies.co.uk/#business"
       }
     }
@@ -370,6 +405,7 @@
   </script>
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Seafront" />
+  <link rel="preload" as="image" href="/bournemouth/games/seafront/media/hero-poster.webp" />
 </head>
 <body id="top">
   <a class="skip-link" href="#main">Skip to content</a>
@@ -759,102 +795,238 @@
   <main id="main">
 
     <style>
-      .sfl { max-width: 880px; margin: 0 auto; }
-      .sfl-shot { width: 100%; max-width: 100%; height: auto; display: block; border-radius: 14px;
-                  border: 1px solid rgba(232,237,244,.14); margin: 0 0 22px; }
-      .sfl-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 0; }
-      /* 44px floor for a thumb, the same rule the game's own controls keep */
-      .sfl-play { display: inline-flex; align-items: center; gap: 10px; min-height: 56px; padding: 0 30px;
-                  border-radius: 999px; background: #f2c14e; color: #12151a; font-size: 20px; font-weight: 700;
-                  text-decoration: none; letter-spacing: .01em; }
-      .sfl-play:hover { filter: brightness(1.07); }
-      .sfl-sec { min-height: 56px; padding: 0 22px; border-radius: 999px; cursor: pointer; font: inherit;
-                 font-weight: 600; border: 1px solid rgba(232,237,244,.18); background: rgba(255,255,255,.05);
-                 color: inherit; }
-      .sfl-sec:hover { background: rgba(255,255,255,.11); }
-      .sfl-sec[hidden] { display: none; }
-      .sfl-after { color: var(--muted, rgba(232,237,244,.62)); font-size: 15px; margin: 14px 0 0; }
-      .sfl h2 { margin: 1.6em 0 .5em; }
-      .sfl ul { margin: 0 0 14px; padding-left: 20px; }
-      .sfl li { margin: 5px 0; }
-      .sfl kbd { font: 13px/1 ui-monospace, Menlo, Consolas, monospace; background: rgba(255,255,255,.08);
-                 border: 1px solid rgba(232,237,244,.14); border-radius: 4px; padding: 3px 6px; }
-      .sfl-cols { display: grid; gap: 0 36px; grid-template-columns: 1fr; }
-      @media (min-width: 660px) { .sfl-cols { grid-template-columns: 1fr 1fr; } }
-      /* a plain three-column grid, not a table: it collapses to a phone without a sideways scroll */
-      .sfl-spec { display: grid; grid-template-columns: 1fr; margin: 6px 0 18px; border: 1px solid rgba(232,237,244,.14);
-                  border-radius: 12px; overflow: hidden; }
-      .sfl-spec > div { padding: 11px 14px; border-top: 1px solid rgba(232,237,244,.14); font-size: 15px; }
-      .sfl-spec > div:first-child { border-top: 0; }
-      .sfl-spec .h { display: none; font-weight: 700; color: #f2c14e; background: rgba(255,255,255,.04); }
-      .sfl-spec .h span { display: block; font-weight: 400; font-size: 13px; color: var(--muted, rgba(232,237,244,.62)); }
-      .sfl-spec .k { font-weight: 700; background: rgba(255,255,255,.05); }
-      .sfl-spec .d { color: var(--muted, rgba(232,237,244,.62)); font-size: 13.5px; }
-      .sfl-note { color: var(--muted, rgba(232,237,244,.62)); font-size: 15px; margin: 0 0 14px; }
-      .sfl-note strong { color: inherit; }
+      .sfp { --gold: #f2c14e; --line: rgba(232,237,244,.13); --card: rgba(255,255,255,.035);
+             --soft: var(--muted, rgba(232,237,244,.64)); }
+      .sfp-in { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+      .sfp-narrow { max-width: 880px; }
+      .sfp-kick { font: 600 .78rem/1.2 var(--font-mono, ui-monospace, monospace); letter-spacing: .14em;
+                  text-transform: uppercase; color: var(--gold); margin: 0 0 .7rem; }
+      .sfp h2 { font-size: clamp(1.7rem, 3.4vw, 2.5rem); line-height: 1.08; margin: 0 0 .7rem; letter-spacing: -.01em; }
+      .sfp-lead { color: var(--soft); font-size: 1.08rem; line-height: 1.6; max-width: 62ch; margin: 0 0 1.4rem; }
+      .sfp section { padding: clamp(2.6rem, 6vw, 4.6rem) 0 0; }
+
+      /* ---- hero: title and buttons beside a silent highlight loop */
+      /* the site header is fixed: clear it the way .page-hero does */
+      .sfp-hero { position: relative; padding: calc(var(--header-h, 72px) + var(--ticker-h, 28px) + clamp(1rem, 3vw, 2.2rem)) 0 0 !important; overflow: hidden; }
+      .sfp-hero::before { content: ""; position: absolute; inset: -20% -10% auto; height: 120%; pointer-events: none;
+          background: radial-gradient(40% 55% at 78% 30%, rgba(29,151,227,.20), transparent 70%),
+                      radial-gradient(30% 45% at 18% 20%, rgba(242,193,78,.12), transparent 70%); }
+      .sfp-hero__grid { position: relative; display: grid; gap: 1.6rem 3rem; align-items: center;
+          grid-template-columns: minmax(0, 1fr);
+          grid-template-areas: "crumbs" "text" "media" "cta"; }
+      @media (min-width: 980px) { .sfp-hero__grid { grid-template-columns: minmax(0, .9fr) minmax(0, 1.25fr);
+          grid-template-areas: "crumbs media" "text media" "cta media"; align-content: center; } }
+      .sfp-crumbs { grid-area: crumbs; align-self: end; }
+      .sfp-text { grid-area: text; }
+      .sfp-media { grid-area: media; }
+      .sfp-cta { grid-area: cta; align-self: start; }
+      .sfp-hero h1 { font-size: clamp(3rem, 8vw, 5.4rem); line-height: .95; letter-spacing: -.03em; margin: .2rem 0 .9rem; }
+      .sfp-hero h1 span { display: block; font-size: .34em; letter-spacing: .02em; color: var(--gold); margin-top: .55rem; }
+      .sfp-sub { color: var(--soft); font-size: clamp(1.05rem, 1.8vw, 1.2rem); line-height: 1.6; margin: 0; max-width: 46ch; }
+      .sfp-frame { position: relative; border-radius: 18px; overflow: hidden; border: 1px solid var(--line);
+                   background: #0b1426; box-shadow: 0 40px 90px -40px rgba(29,151,227,.55), 0 0 0 1px rgba(242,193,78,.08); }
+      .sfp-frame video, .sfp-frame img { display: block; width: 100%; max-width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
+      .sfp-tag { position: absolute; left: 12px; bottom: 12px; font: 600 .7rem/1 var(--font-mono, monospace); letter-spacing: .12em;
+                 text-transform: uppercase; background: rgba(4,9,20,.72); color: #e8edf4; padding: .45rem .6rem; border-radius: 6px; }
+      .sfp-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 0; }
+      .sfp-play { display: inline-flex; align-items: center; justify-content: center; gap: .55rem; min-height: 58px; padding: 0 32px;
+                  border-radius: 999px; background: var(--gold); color: #12151a; font-size: 1.2rem; font-weight: 800; text-decoration: none;
+                  box-shadow: 0 16px 40px -16px rgba(242,193,78,.8); }
+      .sfp-play:hover { filter: brightness(1.07); }
+      .sfp-btn { min-height: 58px; padding: 0 22px; border-radius: 999px; cursor: pointer; font: inherit; font-weight: 700;
+                 border: 1px solid rgba(232,237,244,.2); background: rgba(255,255,255,.05); color: inherit;
+                 display: inline-flex; align-items: center; gap: .5rem; text-decoration: none; }
+      .sfp-btn:hover { background: rgba(255,255,255,.11); }
+      .sfp-btn[hidden] { display: none; }
+      .sfp-note { color: var(--soft); font-size: .92rem; margin: .8rem 0 0; }
+
+      /* ---- facts strip */
+      .sfp-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: clamp(2rem, 5vw, 3.2rem) 0 0;
+                   list-style: none; padding: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--line); }
+      @media (min-width: 760px) { .sfp-facts { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+      .sfp-facts li { background: #0a1224; padding: 1rem 1.1rem; }
+      .sfp-facts b { display: block; font-size: 1.55rem; line-height: 1.1; color: #fff; }
+      .sfp-facts span { color: var(--soft); font-size: .9rem; }
+
+      /* ---- level gallery */
+      .sfp-levels { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); list-style: none; padding: 0; margin: 0; }
+      .sfp-level { background: var(--card); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+      .sfp-shot { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: zoom-in; position: relative; }
+      .sfp-shot img { display: block; width: 100%; max-width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; transition: transform .5s ease; }
+      .sfp-shot:hover img, .sfp-shot:focus-visible img { transform: scale(1.04); }
+      .sfp-num { position: absolute; left: 10px; top: 10px; font: 700 .72rem/1 var(--font-mono, monospace); letter-spacing: .1em;
+                 background: rgba(4,9,20,.75); color: var(--gold); padding: .4rem .55rem; border-radius: 6px; }
+      .sfp-level h3 { font-size: 1.12rem; margin: .9rem 1rem .25rem; }
+      .sfp-level p { color: var(--soft); font-size: .95rem; line-height: 1.5; margin: 0 1rem 1rem; }
+
+      /* ---- simulator */
+      .sfp-sim { display: grid; gap: 2rem 3rem; grid-template-columns: minmax(0, 1fr); align-items: start; }
+      @media (min-width: 980px) { .sfp-sim { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); } }
+      .sfp-sim ul { margin: 0 0 1rem; padding-left: 1.2rem; }
+      .sfp-sim li { margin: .55rem 0; line-height: 1.55; }
+      .sfp-loops { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(170px, 1fr); gap: 12px; overflow-x: auto;
+                   scroll-snap-type: x mandatory; padding-bottom: 4px; }
+      .sfp-loop { scroll-snap-align: start; margin: 0; }
+      .sfp-loop .sfp-frame video, .sfp-loop .sfp-frame img { aspect-ratio: 9 / 16; }
+      .sfp-loop figcaption { font-size: .88rem; color: var(--soft); margin-top: .5rem; }
+      .sfp-stills { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); margin: 1.6rem 0 0; }
+      .sfp-stills figure { margin: 0; }
+      .sfp-stills figcaption { font-size: .9rem; color: var(--soft); margin-top: .5rem; }
+      .sfp kbd { font: 13px/1 ui-monospace, Menlo, Consolas, monospace; background: rgba(255,255,255,.08);
+                 border: 1px solid var(--line); border-radius: 4px; padding: 3px 6px; }
+
+      /* ---- films */
+      .sfp-films { display: grid; gap: 22px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); }
+      .sfp-films figure { margin: 0; }
+      .sfp-films video { background: #000; }
+      .sfp-films figcaption { margin-top: .6rem; }
+      .sfp-films figcaption b { display: block; font-size: 1.05rem; }
+      .sfp-films figcaption span { color: var(--soft); font-size: .92rem; }
+
+      /* ---- how to play + spec (unchanged content) */
+      .sfp-cols { display: grid; gap: 0 36px; grid-template-columns: 1fr; }
+      @media (min-width: 660px) { .sfp-cols { grid-template-columns: 1fr 1fr; } }
+      .sfp-cols h3 { font-size: 1.15rem; margin: 0 0 .5rem; }
+      .sfp-cols ul { margin: 0 0 1.2rem; padding-left: 20px; }
+      .sfp-cols li { margin: 5px 0; }
+      .sfp-spec { display: grid; grid-template-columns: 1fr; margin: 6px 0 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+      .sfp-spec > div { padding: 11px 14px; border-top: 1px solid var(--line); font-size: 15px; }
+      .sfp-spec > div:first-child { border-top: 0; }
+      .sfp-spec .h { display: none; font-weight: 700; color: var(--gold); background: rgba(255,255,255,.04); }
+      .sfp-spec .h span { display: block; font-weight: 400; font-size: 13px; color: var(--soft); }
+      .sfp-spec .k { font-weight: 700; background: rgba(255,255,255,.05); }
+      .sfp-spec .d { color: var(--soft); font-size: 13.5px; }
+      .sfp-small { color: var(--soft); font-size: 15px; margin: 0 0 14px; }
       @media (min-width: 660px) {
-        .sfl-spec { grid-template-columns: 150px 1fr 1fr; }
-        .sfl-spec > div:nth-child(-n+3) { border-top: 0; }
-        .sfl-spec .h { display: block; }
+        .sfp-spec { grid-template-columns: 150px 1fr 1fr; }
+        .sfp-spec > div:nth-child(-n+3) { border-top: 0; }
+        .sfp-spec .h { display: block; }
       }
-      /* on a phone the header cells are hidden, so each value carries its own label; the .alt rule must
-         carry the same two :not()s or it loses on specificity and every row reads "MINIMUM" */
+      /* on a phone the header cells are hidden, so each value carries its own label; the .alt rule must carry the
+         same two :not()s or it loses on specificity and every row reads "MINIMUM" */
       @media (max-width: 659px) {
-        .sfl-spec > div:not(.k):not(.h)::before { content: "Minimum \00a0"; display: block; font-size: 12px;
-          letter-spacing: .06em; text-transform: uppercase; color: #f2c14e; margin-bottom: 3px; }
-        .sfl-spec > div.alt:not(.k):not(.h)::before { content: "Recommended \00a0"; }
+        .sfp-spec > div:not(.k):not(.h)::before { content: "Minimum \00a0"; display: block; font-size: 12px;
+          letter-spacing: .06em; text-transform: uppercase; color: var(--gold); margin-bottom: 3px; }
+        .sfp-spec > div.alt:not(.k):not(.h)::before { content: "Recommended \00a0"; }
       }
-      .sfl-small { color: var(--muted, rgba(232,237,244,.62)); font-size: 14px; }
+      .sfp-final { text-align: center; padding-bottom: clamp(2.4rem, 6vw, 4rem) !important; }
+      .sfp-final .sfp-row { justify-content: center; }
+
+      /* ---- picture viewer */
+      .sfp-lb { border: 0; padding: 0; background: transparent; max-width: min(1280px, 94vw); width: 100%; }
+      .sfp-lb::backdrop { background: rgba(2,6,16,.88); }
+      .sfp-lb img { width: 100%; max-width: 100%; height: auto; border-radius: 12px; display: block; }
+      .sfp-lb p { color: #e8edf4; margin: .7rem 0 0; font-size: 1rem; }
+      .sfp-lb button { position: absolute; right: 10px; top: 10px; min-width: 44px; min-height: 44px; border-radius: 999px; border: 0;
+                       background: rgba(4,9,20,.8); color: #fff; font-size: 1.4rem; cursor: pointer; }
+      @media (prefers-reduced-motion: reduce) { .sfp-shot img { transition: none; } }
     </style>
-    <section class="page-hero" aria-label="Introduction">
-      <div class="page-hero__inner">
-        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/bournemouth/">Bournemouth365</a> <span>/</span> <span aria-current="page">Seafront</span></nav>
-        <p class="eyebrow mono">// BOURNEMOUTH365 &middot; FREE GAME</p>
-        <h1>Seafront</h1>
-        <p class="lede">A free browser game on the real Bournemouth seafront &mdash; the pier, the beach, Boscombe, and the Dorset coast round to Old Harry Rocks. No download, no sign-up.</p>
-        <div class="page-hero__cta">
-          <a href="/bournemouth/games/seafront/play/" class="button primary button--lg">Play now &rarr;</a>
-          <a href="#how-to-play" class="button secondary button--lg">How to play</a>
-        </div>
-        <ul class="page-hero__chips mono"><li>&#9679; Free, no sign-up</li><li>&#9679; Runs in your browser</li><li>&#9679; Made in Bournemouth</li></ul>
-        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 26 September 2026</p>
-      </div>
-    </section>
 
-    <section class="section" aria-label="The game">
-      <div class="wrap">
-        <div class="sfl">
-          <img class="sfl-shot" src="shot-pirate-raid.jpg" width="1200" height="675" alt="A jet ski racing past a pirate brig with striped sails, open gun ports and crew along the rail, with Bournemouth Pier and the big wheel on the shore behind.">
-          <p class="sfl-row">
-            <a class="sfl-play" href="/bournemouth/games/seafront/play/">Play now &rarr;</a>
-            <button type="button" class="sfl-sec" id="btn-install" hidden>Add to home screen</button>
-            <button type="button" class="sfl-sec" id="btn-share" hidden>Share</button>
-          </p>
-          <p class="sfl-after">Opens straight into the game. It takes a moment to load the first time.</p>
-          <p class="sfl-after" id="ios-tip" hidden>To add it to your home screen on an iPhone or iPad: tap <b>Share</b> at the bottom of Safari, then <b>Add to Home Screen</b>.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="sfl-play-h" id="how-to-play">
-      <div class="wrap">
-        <div class="sfl sfl-cols">
-          <div>
-            <h2 id="sfl-play-h">Nine ways to play</h2>
-            <ul>
-              <li><b>Free ride</b> &mdash; open water, nothing chasing you.</li>
-              <li><b>Rescue mode</b> &mdash; swimmers in trouble off the beach.</li>
-              <li><b>Viking raid</b> &mdash; longships at the pier. Save it.</li>
-              <li><b>Pirate raid</b> &mdash; the same siege, a corsair fleet.</li>
-              <li><b>The Harbour Mouth</b> &mdash; Old Harry Rocks.</li>
-              <li><b>The Smuggling Run</b> &mdash; the Dorset coast at night.</li>
-              <li><b>The Stunt Stage</b> &mdash; a ramp course off Boscombe.</li>
-              <li><b>The Trip Back</b> &mdash; a boatload too many in a swell.</li>
-              <li><b>Dolphin Watch</b> &mdash; find the pod, go gently, and they ride your bow.</li>
-            </ul>
+    <div class="sfp">
+    <section class="sfp-hero" aria-label="Seafront">
+      <div class="sfp-in">
+        <div class="sfp-hero__grid">
+          <nav class="breadcrumb sfp-crumbs" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/bournemouth/">Bournemouth365</a> <span>/</span> <span aria-current="page">Seafront</span></nav>
+          <div class="sfp-text">
+            <p class="sfp-kick">// Bournemouth365 &middot; free browser game</p>
+            <h1>Seafront <span>A game and a ride simulator</span></h1>
+            <p class="sfp-sub">A free browser game on the real Bournemouth seafront &mdash; the pier, the beach, Boscombe, and the Dorset coast round to Old Harry Rocks. No download, no sign-up.</p>
           </div>
+          <div class="sfp-media">
+            <div class="sfp-frame">
+              <video class="sfp-auto" muted loop playsinline preload="none" poster="media/hero-poster.webp" aria-label="Highlights: the pier, the pirate raid, a stunt jump, the dolphins, a rescue and Old Harry Rocks">
+                <source src="media/hero-loop.mp4" type="video/mp4">
+              </video>
+              <span class="sfp-tag">Gameplay &middot; in your browser</span>
+            </div>
+          </div>
+          <div class="sfp-cta">
+            <p class="sfp-row">
+              <a class="sfp-play" href="/bournemouth/games/seafront/play/">Play now &rarr;</a>
+              <a class="sfp-btn" href="#trailer" data-play="trailer-video">&#9654; Watch the trailer</a>
+              <button type="button" class="sfp-btn" id="btn-install" hidden>Add to home screen</button>
+              <button type="button" class="sfp-btn" id="btn-share" hidden>Share</button>
+            </p>
+            <p class="sfp-note">Opens straight into the game. It takes a moment to load the first time.</p>
+            <p class="sfp-note" id="ios-tip" hidden>To add it to your home screen on an iPhone or iPad: tap <b>Share</b> at the bottom of Safari, then <b>Add to Home Screen</b>.</p>
+          </div>
+        </div>
+        <ul class="sfp-facts" aria-label="At a glance">
+          <li><b>9 levels</b><span>raids, rescues, stunts and dolphins</span></li>
+          <li><b>3 craft</b><span>an eFoil, a jet ski and a RIB</span></li>
+          <li><b>Real physics</b><span>lift, planing hulls and a simulated sea</span></li>
+          <li><b>Free</b><span>phone, tablet or PC &middot; no download</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section aria-labelledby="sfp-levels-h" id="how-to-play">
+      <div class="sfp-in">
+        <p class="sfp-kick">The game</p>
+        <h2 id="sfp-levels-h">Nine ways to play</h2>
+        <p class="sfp-lead">Every level is the real Bournemouth water: the pier, Boscombe, the beach and the coast out to Old Harry Rocks. Tap a picture to see it larger.</p>
+        <ul class="sfp-levels">
+          <li class="sfp-level" id="level-viking"><button type="button" class="sfp-shot" data-cap="Viking raid: Longships at the pier. Save it." aria-label="See the Viking raid picture larger"><img loading="lazy" src="media/lv-viking.webp" width="1280" height="720" decoding="async" alt="Seafront, Viking raid: Longships at the pier. Save it."><span class="sfp-num">LEVEL 01</span></button><h3>Viking raid</h3><p>Longships at the pier. Save it.</p></li>
+          <li class="sfp-level" id="level-pirate"><button type="button" class="sfp-shot" data-cap="Pirate raid: The same siege, a corsair fleet &mdash; and the pier on fire." aria-label="See the Pirate raid picture larger"><img loading="lazy" src="media/lv-pirate.webp" width="1280" height="720" decoding="async" alt="Seafront, Pirate raid: The same siege, a corsair fleet &mdash; and the pier on fire."><span class="sfp-num">LEVEL 02</span></button><h3>Pirate raid</h3><p>The same siege, a corsair fleet &mdash; and the pier on fire.</p></li>
+          <li class="sfp-level" id="level-harbour"><button type="button" class="sfp-shot" data-cap="The Harbour Mouth: Hold the channel under Old Harry Rocks." aria-label="See the The Harbour Mouth picture larger"><img loading="lazy" src="media/lv-harbour.webp" width="1280" height="720" decoding="async" alt="Seafront, The Harbour Mouth: Hold the channel under Old Harry Rocks."><span class="sfp-num">LEVEL 03</span></button><h3>The Harbour Mouth</h3><p>Hold the channel under Old Harry Rocks.</p></li>
+          <li class="sfp-level" id="level-smuggle"><button type="button" class="sfp-shot" data-cap="The Smuggling Run: The Dorset coast at night: creep up on the lugger." aria-label="See the The Smuggling Run picture larger"><img loading="lazy" src="media/lv-smuggle.webp" width="1280" height="720" decoding="async" alt="Seafront, The Smuggling Run: The Dorset coast at night: creep up on the lugger."><span class="sfp-num">LEVEL 04</span></button><h3>The Smuggling Run</h3><p>The Dorset coast at night: creep up on the lugger.</p></li>
+          <li class="sfp-level" id="level-rescue"><button type="button" class="sfp-shot" data-cap="Rescue mode: Swimmers in trouble off the beach. Slow right down beside them." aria-label="See the Rescue mode picture larger"><img loading="lazy" src="media/lv-rescue.webp" width="1280" height="720" decoding="async" alt="Seafront, Rescue mode: Swimmers in trouble off the beach. Slow right down beside them."><span class="sfp-num">LEVEL 05</span></button><h3>Rescue mode</h3><p>Swimmers in trouble off the beach. Slow right down beside them.</p></li>
+          <li class="sfp-level" id="level-trip"><button type="button" class="sfp-shot" data-cap="The Trip Back: A boatload too many in a swell." aria-label="See the The Trip Back picture larger"><img loading="lazy" src="media/lv-trip.webp" width="1280" height="720" decoding="async" alt="Seafront, The Trip Back: A boatload too many in a swell."><span class="sfp-num">LEVEL 06</span></button><h3>The Trip Back</h3><p>A boatload too many in a swell.</p></li>
+          <li class="sfp-level" id="level-stunt"><button type="button" class="sfp-shot" data-cap="The Stunt Stage: A ramp course off Boscombe: airtime, height and rotation all score." aria-label="See the The Stunt Stage picture larger"><img loading="lazy" src="media/lv-stunt.webp" width="1280" height="720" decoding="async" alt="Seafront, The Stunt Stage: A ramp course off Boscombe: airtime, height and rotation all score."><span class="sfp-num">LEVEL 07</span></button><h3>The Stunt Stage</h3><p>A ramp course off Boscombe: airtime, height and rotation all score.</p></li>
+          <li class="sfp-level" id="level-dolphins"><button type="button" class="sfp-shot" data-cap="Dolphin Watch: Find the pod, go gently, and they ride your bow." aria-label="See the Dolphin Watch picture larger"><img loading="lazy" src="media/lv-dolphins.webp" width="1280" height="720" decoding="async" alt="Seafront, Dolphin Watch: Find the pod, go gently, and they ride your bow."><span class="sfp-num">LEVEL 08</span></button><h3>Dolphin Watch</h3><p>Find the pod, go gently, and they ride your bow.</p></li>
+          <li class="sfp-level" id="level-free"><button type="button" class="sfp-shot" data-cap="Free ride: Open water, nothing chasing you. Anywhere along the real coast." aria-label="See the Free ride picture larger"><img loading="lazy" src="media/lv-free.webp" width="1280" height="720" decoding="async" alt="Seafront, Free ride: Open water, nothing chasing you. Anywhere along the real coast."><span class="sfp-num">LEVEL 09</span></button><h3>Free ride</h3><p>Open water, nothing chasing you. Anywhere along the real coast.</p></li>
+        </ul>
+      </div>
+    </section>
+
+    <section aria-labelledby="sfp-sim-h" id="simulator">
+      <div class="sfp-in">
+        <p class="sfp-kick">The simulator</p>
+        <h2 id="sfp-sim-h">A ride simulator too</h2>
+        <div class="sfp-sim">
           <div>
-            <h2>Controls</h2>
+            <p class="sfp-lead" style="margin-bottom:1rem">Under the levels, Seafront is a physics simulation of an eFoil, a jet ski and a rigid inflatable on the real Bournemouth water. Free ride has no score and no clock: pick a craft, pick a sea, and ride.</p>
+            <ul>
+              <li><b>The eFoil flies on the lift equation</b>: water density, speed, wing area and angle of attack. A small change in speed makes a big change in lift, so it is as touchy as the real thing, and the game shows you the live figure. Bring the wing too close to the surface and it ventilates and drops you.</li>
+              <li><b>The jet ski and the RIB are planing hulls.</b> They climb over the hump before they get on the plane, lose drive when the prop or jet leaves the water, and pay for a hard turn in speed.</li>
+              <li><b>The sea is simulated rather than animated</b>, so the swell you are riding is the swell the boat is reacting to. The default is Poole Bay&rsquo;s most common sea, about half a metre every four seconds from the south-south-west, and it goes from glassy calm to a two-metre storm.</li>
+              <li><b>On a computer:</b> <kbd>T</kbd> opens the tuning panel (all-up weight, wing area, mast length, motor power and more), <kbd>G</kbd> shows live charts of wing depth, lift and speed, <kbd>,</kbd> and <kbd>.</kbd> change the sea, and <kbd>C</kbd> cycles the camera, including a side-on instrument view.</li>
+            </ul>
+            <p>The coast is built from survey data rather than drawn by eye. It is a game built on real physics, not a training tool.</p>
+          </div>
+          <div class="sfp-loops" role="group" aria-label="The simulator in motion">
+            <figure class="sfp-loop"><div class="sfp-frame"><video class="sfp-auto" muted loop playsinline preload="none" poster="media/sim-efoil.webp" aria-label="The eFoil lifting off"><source src="media/sim-efoil.mp4" type="video/mp4"></video></div><figcaption>The eFoil lifts off</figcaption></figure>
+            <figure class="sfp-loop"><div class="sfp-frame"><video class="sfp-auto" muted loop playsinline preload="none" poster="media/sim-rib-loop.webp" aria-label="The RIB climbing over the hump onto the plane"><source src="media/sim-rib-loop.mp4" type="video/mp4"></video></div><figcaption>The RIB climbs onto the plane</figcaption></figure>
+            <figure class="sfp-loop"><div class="sfp-frame"><video class="sfp-auto" muted loop playsinline preload="none" poster="media/sim-storm.webp" aria-label="Riding into rougher sea"><source src="media/sim-storm.mp4" type="video/mp4"></video></div><figcaption>Glassy calm to a two-metre storm</figcaption></figure>
+          </div>
+        </div>
+        <div class="sfp-stills">
+          <figure><button type="button" class="sfp-shot" data-cap="The tuning panel: weight, wing area, mast length, motor power and more" aria-label="See the tuning panel picture larger"><img loading="lazy" src="media/sim-tuning.webp" width="1280" height="720" decoding="async" alt="Seafront's tuning panel open beside an eFoil rider off Bournemouth Pier"></button><figcaption><kbd>T</kbd> the tuning panel, with <kbd>G</kbd> live charts along the bottom</figcaption></figure>
+          <figure><button type="button" class="sfp-shot" data-cap="The side-on instrument view: the wing, the mast and the water line" aria-label="See the instrument view picture larger"><img loading="lazy" src="media/sim-sideview.webp" width="1280" height="720" decoding="async" alt="Seafront's side-on instrument view of the eFoil, showing the wing and mast under the water line"></button><figcaption><kbd>C</kbd> the side-on instrument view: wing, mast and water line</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="sfp-films-h" id="trailer">
+      <div class="sfp-in">
+        <p class="sfp-kick">Watch</p>
+        <h2 id="sfp-films-h">The trailer, and the simulator film</h2>
+        <div class="sfp-films">
+          <figure><div class="sfp-frame"><video id="trailer-video" controls playsinline preload="none" poster="media/trailer-poster.webp" data-title="Seafront trailer"><source src="media/trailer.mp4" type="video/mp4"></video></div>
+            <figcaption><b>The trailer</b><span>34 seconds of the levels, from Vikings at the pier to the dolphins.</span></figcaption></figure>
+          <figure><div class="sfp-frame"><video id="sim-video" controls playsinline preload="none" poster="media/ride-simulator-poster.webp" data-title="Seafront ride simulator"><source src="media/ride-simulator.mp4" type="video/mp4"></video></div>
+            <figcaption><b>The ride simulator</b><span>Two minutes on the eFoil, the RIB and the jet ski, from glassy calm to a storm.</span></figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="sfp-ctl-h">
+      <div class="sfp-in sfp-narrow">
+        <p class="sfp-kick">How to play</p>
+        <h2 id="sfp-ctl-h">Controls, and what you need</h2>
+        <div class="sfp-cols">
+          <div>
+            <h3>Controls</h3>
             <ul>
               <li><b>Mouse:</b> move to steer and trim</li>
               <li><b>Left button</b> throttle &middot; <b>right button</b> eases off, then reverses</li>
@@ -865,60 +1037,49 @@
               <li>An <b>Xbox controller</b> works if you have one plugged in</li>
               <li>On a phone or tablet, it is all touch</li>
             </ul>
-            <h2>You will need</h2>
+          </div>
+          <div>
+            <h3>You will need</h3>
             <ul>
               <li>A browser with WebGL2 &mdash; anything current</li>
               <li>Hardware acceleration switched on (it is, by default)</li>
             </ul>
           </div>
         </div>
+        <h2 id="sfp-run-h" style="margin-top:1.6rem">Will it run on mine?</h2>
+        <p class="sfp-small">Almost certainly. It is a browser game and it asks for very little &mdash; about 5MB to download and nothing installed.</p>
+        <div class="sfp-spec">
+          <div class="h"></div>
+          <div class="h">Minimum <span>about 30fps</span></div>
+          <div class="h">Recommended <span>a steady 60fps</span></div>
+          <div class="k">Phone</div>
+          <div>Android from about 2019<br><span class="d">iPhone 8 or newer</span></div>
+          <div class="alt">Android from about 2021<br><span class="d">iPhone XR or newer</span></div>
+          <div class="k">Tablet</div>
+          <div>iPad from about 2018</div>
+          <div class="alt">Any iPad still getting updates</div>
+          <div class="k">PC or laptop</div>
+          <div>Intel 6th gen or similar, 2015<br><span class="d">4GB memory</span></div>
+          <div class="alt">Intel 8th gen or Ryzen 2000, 2018<br><span class="d">8GB memory</span></div>
+          <div class="k">Chromebook</div>
+          <div>Mid-range<br><span class="d">the cheapest Celeron ones will be slow</span></div>
+          <div class="alt">Core i3 or Ryzen 3 class</div>
+        </div>
+        <p class="sfp-small"><strong>A graphics card makes no difference.</strong> We measured it rather than guessed: on a fast card the game asks the graphics chip for roughly three hundredths of a millisecond of work per frame, and going from a 1080p screen to a 4K one barely moved that. What decides your frame rate is the processor. A built-in Intel or AMD graphics chip has all the headroom this game needs, and an expensive card will not make it any smoother.</p>
+        <p class="sfp-small">It is light on power for the same reason. On a desktop with a high-end graphics card, playing this draws about <strong>twelve watts</strong> more than leaving the machine idle &mdash; on a card rated for three hundred and fifty.</p>
       </div>
     </section>
 
-    <section class="section" aria-labelledby="sfl-run-h">
-      <div class="wrap">
-        <div class="sfl">
-          <h2 id="sfl-run-h">Will it run on mine?</h2>
-          <p class="sfl-note">Almost certainly. It is a browser game and it asks for very little &mdash; about 5MB to download and nothing installed.</p>
-          <div class="sfl-spec">
-            <div class="h"></div>
-            <div class="h">Minimum <span>about 30fps</span></div>
-            <div class="h">Recommended <span>a steady 60fps</span></div>
-            <div class="k">Phone</div>
-            <div>Android from about 2019<br><span class="d">iPhone 8 or newer</span></div>
-            <div class="alt">Android from about 2021<br><span class="d">iPhone XR or newer</span></div>
-            <div class="k">Tablet</div>
-            <div>iPad from about 2018</div>
-            <div class="alt">Any iPad still getting updates</div>
-            <div class="k">PC or laptop</div>
-            <div>Intel 6th gen or similar, 2015<br><span class="d">4GB memory</span></div>
-            <div class="alt">Intel 8th gen or Ryzen 2000, 2018<br><span class="d">8GB memory</span></div>
-            <div class="k">Chromebook</div>
-            <div>Mid-range<br><span class="d">the cheapest Celeron ones will be slow</span></div>
-            <div class="alt">Core i3 or Ryzen 3 class</div>
-          </div>
-          <p class="sfl-note"><strong>A graphics card makes no difference.</strong> We measured it rather than guessed: on a fast card the game asks the graphics chip for roughly three hundredths of a millisecond of work per frame, and going from a 1080p screen to a 4K one barely moved that. What decides your frame rate is the processor. A built-in Intel or AMD graphics chip has all the headroom this game needs, and an expensive card will not make it any smoother.</p>
-          <p class="sfl-note">It is light on power for the same reason. On a desktop with a high-end graphics card, playing this draws about <strong>twelve watts</strong> more than leaving the machine idle &mdash; on a card rated for three hundred and fifty.</p>
-        </div>
+    <section class="sfp-final" aria-label="Play">
+      <div class="sfp-in">
+        <h2>Ready to ride?</h2>
+        <p class="sfp-row"><a class="sfp-play" href="/bournemouth/games/seafront/play/">Play Seafront free &rarr;</a></p>
+        <p class="sfp-small" style="margin-top:1.2rem">Contains Environment Agency information &copy; Environment Agency and/or database right. Made in Bournemouth by 365 Techies.</p>
       </div>
     </section>
 
-    <section class="section" aria-labelledby="sfl-sim-h">
-      <div class="wrap">
-        <div class="sfl">
-          <h2 id="sfl-sim-h">A ride simulator too</h2>
-          <p>Under the levels, Seafront is a physics simulation of an eFoil, a jet ski and a rigid inflatable on the real Bournemouth water. Free ride has no score and no clock: pick a craft, pick a sea, and ride.</p>
-          <ul>
-            <li><b>The eFoil flies on the lift equation</b>: water density, speed, wing area and angle of attack. A small change in speed makes a big change in lift, so it is as touchy as the real thing, and the game shows you the live figure. Bring the wing too close to the surface and it ventilates and drops you.</li>
-            <li><b>The jet ski and the RIB are planing hulls.</b> They climb over the hump before they get on the plane, lose drive when the prop or jet leaves the water, and pay for a hard turn in speed.</li>
-            <li><b>The sea is simulated rather than animated</b>, so the swell you are riding is the swell the boat is reacting to. The default is Poole Bay&rsquo;s most common sea, about half a metre every four seconds from the south-south-west, and it goes from glassy calm to a two-metre storm.</li>
-            <li><b>On a computer:</b> <kbd>T</kbd> opens the tuning panel (all-up weight, wing area, mast length, motor power and more), <kbd>G</kbd> shows live charts of wing depth, lift and speed, <kbd>,</kbd> and <kbd>.</kbd> change the sea, and <kbd>C</kbd> cycles the camera, including a side-on instrument view.</li>
-          </ul>
-          <p>The coast is built from survey data rather than drawn by eye. It is a game built on real physics, not a training tool.</p>
-          <p class="sfl-small">Contains Environment Agency information &copy; Environment Agency and/or database right. Made in Bournemouth by 365 Techies.</p>
-        </div>
-      </div>
-    </section>
+    <dialog class="sfp-lb" id="sfp-lb" aria-label="Picture"><button type="button" aria-label="Close">&times;</button><img alt=""><p></p></dialog>
+    </div>
     <section class="section" aria-label="About Bournemouth365">
       <div class="wrap">
         <div class="section-head">
@@ -963,7 +1124,7 @@
       var canCopy = !!(navigator.clipboard && navigator.clipboard.writeText);
       if (canShare || canCopy) { shareBtn.hidden = false; }
       shareBtn.addEventListener('click', function () {
-        var data = { title: 'Seafront \u2014 a Bournemouth game', text: 'A free browser game on the real Bournemouth seafront.', url: URL_ };
+        var data = { title: 'Seafront \u2014 a Bournemouth game', text: 'A free browser game and ride simulator on the real Bournemouth seafront.', url: URL_ };
         if (canShare) {
           navigator.share(data).catch(function () {});
           if (window.gtag) gtag('event', 'share', { method: 'native', content_type: 'game', item_id: 'seafront' });
@@ -979,7 +1140,55 @@
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
       }
-      // utm_* from this address onto each link into play/, so the game's own page view carries the campaign.
+
+      // ---- silent loops: play only while on screen; never with reduced motion or Save-Data (the poster stays)
+      var calm = false;
+      try { calm = matchMedia('(prefers-reduced-motion: reduce)').matches || !!(navigator.connection && navigator.connection.saveData); } catch (e) {}
+      var loops = Array.prototype.slice.call(document.querySelectorAll('video.sfp-auto'));
+      if (calm) { loops.forEach(function (v) { v.controls = true; }); }
+      else if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (es) {
+          es.forEach(function (e) {
+            var v = e.target;
+            if (e.isIntersecting) { if (v.preload === 'none') { v.preload = 'auto'; } var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+            else { v.pause(); }
+          });
+        }, { threshold: 0.35 });
+        loops.forEach(function (v) { io.observe(v); });
+      }
+
+      // ---- "Watch the trailer": go to it and start it; count film starts
+      Array.prototype.forEach.call(document.querySelectorAll('[data-play]'), function (a) {
+        a.addEventListener('click', function (e) {
+          var v = document.getElementById(a.getAttribute('data-play')); if (!v) return;
+          e.preventDefault();
+          v.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'center' });
+          var p = v.play(); if (p && p.catch) p.catch(function () {});
+        });
+      });
+      Array.prototype.forEach.call(document.querySelectorAll('video[controls][data-title]'), function (v) {
+        var sent = false;
+        v.addEventListener('play', function () {
+          if (sent) return; sent = true;
+          if (window.gtag) gtag('event', 'video_start', { video_title: v.getAttribute('data-title'), video_provider: 'self' });
+        });
+      });
+
+      // ---- picture viewer
+      var lb = document.getElementById('sfp-lb');
+      if (lb && typeof lb.showModal === 'function') {
+        var lbImg = lb.querySelector('img'), lbCap = lb.querySelector('p');
+        Array.prototype.forEach.call(document.querySelectorAll('.sfp-shot'), function (b) {
+          b.addEventListener('click', function () {
+            lbImg.src = b.querySelector('img').currentSrc || b.querySelector('img').src; lbImg.alt = b.getAttribute('data-cap') || '';
+            lbCap.textContent = (b.getAttribute('data-cap') || '').replace(/&mdash;/g, '\u2014');
+            lb.showModal();
+          });
+        });
+        lb.addEventListener('click', function (e) { if (e.target === lb || e.target.tagName === 'BUTTON') lb.close(); });
+      }
+
+      // ---- utm_* from this address onto each link into the game, so its own page view carries the campaign
       var tags = [];
       try { new URLSearchParams(location.search).forEach(function (v, k) { if (/^utm_/.test(k)) tags.push([k, v]); }); } catch (e) {}
       if (!tags.length) return;
