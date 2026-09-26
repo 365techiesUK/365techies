@@ -4,6 +4,8 @@ Imports shared chrome/helpers, registers all prior pages, adds the hub + 25 post
 Run: python build_blog.py
 """
 import build_pages as bp
+from hub_ui import intent_hero
+from playbook_tiles_data import PLAYBOOK_HERO_TILES   # 26 Sep 2026: the shared first screen on chosen posts
 import build_local      # registers 12 local/customer pages
 import build_extra      # registers 9 specialist/trust pages
 import simplybook_cluster  # SimplyBook integration pillar + 5 firsthand technical guides
@@ -120,8 +122,11 @@ def make_post(slug, cat, title, lede, body, points, related, faqs=None, dt="2026
     if faqs:
         nodes.append(faqpage(slug, faqs))
     content = "\n".join([
-      hero(bc3(title), f"// {cat.upper()}", title, lede,
-           cta1=("Read more advice", "/it-advice/"), cta2=("See Plans &amp; Prices", "/monthly-it-support/"), byline=False),
+      (intent_hero(bc3(title), f"// {cat.upper()}", title, lede,
+                   ("Call 01202 775566", "tel:+441202775566"), ("Fix it with me", "#fixflow"), PLAYBOOK_HERO_TILES[slug])
+       if slug in PLAYBOOK_HERO_TILES and slug in BLOG_FIX_FLOWS else
+       hero(bc3(title), f"// {cat.upper()}", title, lede,
+           cta1=("Read more advice", "/it-advice/"), cta2=("See Plans &amp; Prices", "/monthly-it-support/"), byline=False)),
       f'''    <section class="section" aria-label="Article">
       <article class="article">
         <p class="mono" style="color:var(--muted);font-size:.8rem;margin:0 0 1.6rem">Published {dt_pretty} &middot; {cat} &middot; by the <a href="/meet-the-team/" style="color:var(--cyan)">365 Techies team</a> &mdash; Microsoft Partners &amp; Dell specialists, looking after Dorset since 1995</p>
@@ -238,7 +243,7 @@ POSTS = [
    title="Why Does My Printer Keep Disconnecting?",
    lede="Few things are as annoying as a printer that drops offline just when you need it. Here is why it happens and how to fix it for good.",
    body="<p>Most printer disconnections come down to the wireless connection or the way the printer talks to your computer — not a broken printer.</p><h2>Common causes</h2><p>A weak Wi-Fi signal, the printer going to sleep, an out-of-date driver, or the computer picking the wrong printer all cause the dreaded offline status. Printers on the far side of the house are especially prone to dropping out.</p><h2>How to fix it</h2><p>Move the printer closer to the router or add a Wi-Fi booster, update the printer driver, and set it as the default. For a permanent fix, we can configure reliable wireless printing across all your devices.</p>",
-   points=["Weak Wi-Fi is the most common cause","Keep printer drivers up to date","Set the correct default printer","We can set up reliable wireless printing"],
+   points=['Weak Wi-Fi is a common cause',"Keep printer drivers up to date","Set the correct default printer","We can set up reliable wireless printing"],
    related=[("Printer Support","/printer-support/"),("Wi-Fi Support","/wifi-support/"),("Home IT Support","/home-it-support-subscriptions/"),("Printer says the WiFi password is incorrect","/printer-says-wifi-password-incorrect/")]),
  dict(slug="how-to-keep-home-computer-secure", cat="Home Users",
    title="How to Keep Your Home Computer Secure",

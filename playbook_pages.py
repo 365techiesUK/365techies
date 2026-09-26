@@ -27,6 +27,8 @@ recorded in that file's header). This module owns structure only.
 """
 import build_pages as bp
 from build_pages import add, hero, bc, cta, graph, crumb, webpage
+from hub_ui import intent_hero
+from playbook_tiles_data import PLAYBOOK_HERO_TILES   # 26 Sep 2026: the shared first screen
 import ap_cluster as C
 import playbook_data as D
 
@@ -121,10 +123,15 @@ def _page(p):
     flow = fix_flow(p) if fix_flow else None
 
     content = "\n".join([
-        hero(bc(p["crumb"]), p["eyebrow"], p["h1"], p["lede"],
+        (intent_hero(bc(p["crumb"]), p["eyebrow"], p["h1"], p["lede"],
+                     ("Call 01202 775566", "tel:+441202775566"),
+                     p.get("cta2", ("Run the free WiFi test", "/wifi-signal-test/")),   # keep the page's own second action
+                     PLAYBOOK_HERO_TILES[p["slug"]])
+         if p["slug"] in PLAYBOOK_HERO_TILES and flow else
+         hero(bc(p["crumb"]), p["eyebrow"], p["h1"], p["lede"],
              cta1=p.get("cta1", ("Talk to a human: 01202 775566", "tel:+441202775566")),
              cta2=p.get("cta2", ("Run the free WiFi test", "/wifi-signal-test/")),
-             chips=p["chips"]),
+             chips=p["chips"])),
         '    <section class="section"><div class="wrap wrap--narrow prose" data-reveal>'
         + C.disclaimer_block() + '</div></section>',
         flow or "",
