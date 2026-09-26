@@ -5,7 +5,10 @@ checks every quote)."""
 import html as _dh_html
 from reviews_data import pick
 
-DELL_HUB_CSS = """
+# 26 Sep 2026 (audit item 4): this block used to be inlined into every page that used the layout (520 of them, 11 KB
+# each, re-downloaded on every visit because HTML is no-cache). build_blog.py now writes HUB_CSS_SHEET into
+# css/styles.css between the HUB-CSS markers, so browsers cache it once. EDIT IT HERE, then bump build_pages.CSSV.
+HUB_CSS_SHEET = """
 .dh{--hp-card:rgba(13,23,49,.66);--hp-card-hi:rgba(20,33,68,.78);--hp-edge:rgba(125,170,220,.17);--hp-edge-hi:rgba(125,190,240,.42);--hp-ink:#f2f8ff;--hp-body:#cbdcf1;--hp-soft:#9fb5d3;--hp-dark:#03101f}
 .dh *{box-sizing:border-box}
 .dh .hp-ico{--s:52px;flex:none;display:grid;place-items:center;width:var(--s);height:var(--s);border-radius:calc(var(--s)*.3);background:linear-gradient(145deg,var(--c2),var(--c1) 58%,color-mix(in srgb,var(--c1) 70%,#000));box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -6px 12px rgba(0,0,0,.18),0 10px 22px -10px color-mix(in srgb,var(--c1) 80%,transparent);color:#fff}
@@ -106,11 +109,16 @@ DELL_HUB_CSS = """
 }
 @media (max-width:767px){
   .dh .hp-intents{padding:0;border:0;background:none;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
-  .dh .hp-intents__grid{gap:.6rem}
-  .dh .hp-intent{padding:.85rem .85rem .8rem;border-radius:18px}
-  .dh .hp-intent .hp-ico{--s:42px;margin-bottom:.25rem}
-  .dh .hp-intent__t{font-size:1rem}
-  .dh .hp-intent__d{font-size:.82rem}
+  .dh .hp-intents__q{font-size:1rem;margin:.1rem 0 .6rem}
+  /* audit item 2 (26 Sep 2026): on phones the four choices are a compact one-column list - icon, title, tag under
+     it, the descriptive line hidden - about 290px instead of ~520px, so the page itself starts higher. A 2x2 grid
+     was tried first: at 390px the titles wrapped to three lines. */
+  .dh .hp-intents__grid{grid-template-columns:1fr;gap:.5rem}
+  .dh .hp-intent{display:grid;grid-template-columns:auto 1fr;column-gap:.75rem;row-gap:.1rem;align-items:center;padding:.65rem .85rem;border-radius:16px}
+  .dh .hp-intent .hp-ico{--s:36px;margin:0;grid-row:1 / span 2}
+  .dh .hp-intent__t{font-size:1rem;line-height:1.25}
+  .dh .hp-intent__d{display:none}
+  .dh .hp-intent__p{margin:0;padding:0;font-size:.75rem}
   .dh-ticks{grid-template-columns:1fr}
   .dh-steps{grid-template-columns:1fr}
   .dh-steps li{padding:.8rem .9rem .8rem 2.8rem}
@@ -125,6 +133,9 @@ DELL_HUB_CSS = """
 }
 @media (prefers-reduced-motion:reduce){.dh .hp-intent,.dh-btn,.dh-machines a{transition:none}}
 """
+# Kept for the builders that used to inline it (build_extra, build_pages, build_local): empty now, so they emit
+# nothing; build_pages.page() drops the empty <style></style> they leave behind.
+DELL_HUB_CSS = ""
 
 _DH_A = 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"'
 
@@ -228,9 +239,7 @@ def intent_tiles(tiles, indent="            "):
 # markup; this copy lets build_pages / build_local pages use it without importing build_extra.
 def intent_hero(crumbs, eyebrow, h1, lede, cta1, cta2, tiles, question="What would you like to do?",
                 rating_note="Family-run since 1995 &middot; no fix, no fee"):
-    css = " ".join(l.strip() for l in DELL_HUB_CSS.strip().splitlines())
-    return f'''    <style>{css}</style>
-    <section class="page-hero dh dh-hero" aria-label="Introduction">
+    return f'''    <section class="page-hero dh dh-hero" aria-label="Introduction">
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb">{crumbs}</nav>

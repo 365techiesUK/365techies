@@ -96,7 +96,7 @@
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="/fonts/clash-display-700.woff2" as="font" type="font/woff2" crossorigin />
 
-  <link rel="stylesheet" href="css/styles.min.css?v=115" />
+  <link rel="stylesheet" href="css/styles.min.css?v=116" />
   <style>/* Emergency styles - see the SENTINEL rule at the foot of styles.css.
     ⚠️ This homepage is hand-maintained: keep this block in step with the copy in
     build_pages.py that every generated page gets. */
@@ -125,7 +125,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=115&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=116&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -1013,7 +1013,7 @@
             <li><span class="hp-ico hp-ico--sm hp-c-care"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2M15 18H9M19 18h2a1 1 0 0 0 1-1v-3.6a1 1 0 0 0-.2-.6l-3.5-4.4a1 1 0 0 0-.8-.4H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg></span><span><b>Free local collection</b> across the areas we cover, or we visit.</span></li>
             <li><span class="hp-ico hp-ico--sm hp-c-buy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></span><span><b>We always phone first</b>, and never connect out of the blue.</span></li>
           </ul>
-          <nav class="hp-chips" aria-label="Areas we cover">
+          <nav class="hp-chips" aria-label="Local towns and areas">
             <a href="/it-support-bournemouth/">Bournemouth</a><a href="/it-support-poole/">Poole</a><a href="/it-support-christchurch/">Christchurch</a><a href="/it-support-ferndown/">Ferndown</a><a href="/it-support-wimborne/">Wimborne</a><a href="/it-support-broadstone/">Broadstone</a><a href="/it-support-verwood/">Verwood</a><a href="/it-support-ringwood/">Ringwood</a><a href="/it-support-highcliffe/">Highcliffe</a><a href="/it-support-wareham/">Wareham</a><a href="/it-support-swanage/">Swanage</a><a href="/it-support-dorset/">All of Dorset</a>
           </nav>
           <p style="margin:1.1rem 0 0"><a class="hp-link" href="/areas-covered/">See every area we cover <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>

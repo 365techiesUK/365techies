@@ -62,7 +62,7 @@ SNIPPETS = {
         # GSC 17 Aug: "password generator" 528 imps at pos 4, 0 clicks - the old title
         # narrowed the tool to "three random words"; the page does both, so say so.
         "title": "Free Password Generator: Random or Three-Word Passphrase",
-        "desc": "Free password generator. Make a strong random password or an easy-to-remember three-word passphrase in one click - made in your browser, never sent anywhere.",
+        "desc": "Free password generator: make a strong random password or an easy-to-remember three-word passphrase in one click. Made in your browser, never sent.",
     },
     "dell-optiplex-micro-sff-tower-which-to-buy": {
         "desc": "Micro hides behind the monitor, SFF still takes a graphics card, Tower upgrades for years. Choose by what you will add later, not just desk space.",
@@ -1047,6 +1047,25 @@ SNIPPETS = {
     # descriptions in total, but the other 99 rank between position 26 and 88,
     # where the snippet is not what costs the click. Those are left alone on
     # purpose - rewriting a snippet for a page nobody sees is churn, not traffic.
+    # 26 Sep 2026 site audit item 4: the six pages WITH clicks whose descriptions were still cut with an ellipsis.
+    "custom-pc-builds": {
+        "desc": "Bespoke desktop PCs for home, office, gaming or creative work: specced to what you do, built and tested, then set up by your local Dorset team.",
+    },
+    "it-support-for-sole-traders": {
+        "desc": "Monthly IT support for sole traders: your computer, email, phone, printer and cloud kept working, without the cost of an IT department.",
+    },
+    "it-support-for-disabled-people": {
+        "desc": "Patient, accessible IT support across Dorset: computers, tablets and phones set up around your needs, with accessibility features and friendly help.",
+    },
+    "graphics-card-benchmark": {
+        "desc": "Free graphics card benchmark in your browser: a live 3D WebGL test with a GPU score, live FPS and 1% lows. Nothing to install, safe to run.",
+    },
+    "gaming-pcs": {
+        "desc": "Custom NVIDIA GeForce RTX gaming PCs built to your games and budget by Scan 3XS, then set up, optimised and supported locally in Dorset.",
+    },
+    "computer-fault-checker": {
+        "desc": "Computer playing up? Pick what's wrong and our free checker shows the likely cause, whether it's worth repairing, and the easiest next step.",
+    },
 }
 
 

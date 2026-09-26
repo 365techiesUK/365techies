@@ -1239,6 +1239,20 @@ def _minify_css(css):
 _css_src = os.path.join(bp.BASE, "css", "styles.css")
 if os.path.exists(_css_src):
     _raw = open(_css_src, encoding="utf-8").read()
+    # 26 Sep 2026: the shared first-screen CSS (hub_ui.HUB_CSS_SHEET) lives in styles.css between these markers, just
+    # above the sentinel (which must stay last). Rewritten from hub_ui on every build, so hub_ui stays the one source.
+    import hub_ui as _hub
+    _m1, _m2 = "/* HUB-CSS START (generated from hub_ui.HUB_CSS_SHEET - edit it there) */", "/* HUB-CSS END */"
+    _block = _m1 + "\n" + _hub.HUB_CSS_SHEET.strip() + "\n" + _m2 + "\n\n"
+    if _m1 in _raw:
+        _new = _raw[:_raw.index(_m1)] + _block + _raw[_raw.index(_m2) + len(_m2):].lstrip("\n")
+    else:
+        _s = _raw.index("/* ============================================================\n   SENTINEL")
+        _new = _raw[:_s] + _block + _raw[_s:]
+    if _new != _raw:
+        open(_css_src, "w", encoding="utf-8", newline="").write(_new)
+        _raw = _new
+        print("styles.css: shared first-screen CSS written from hub_ui (bump CSSV if it changed)")
     _min = _minify_css(_raw)
     with open(os.path.join(bp.BASE, "css", "styles.min.css"), "w", encoding="utf-8") as f:
         f.write(_min)
