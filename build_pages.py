@@ -5632,6 +5632,79 @@ add(
 )
 
 # ============================================================ BUSINESS IT SUPPORT PLANS
+# ============================================ BUSINESS PLANS v2 (26 Sep 2026)
+# Same intent-first layout as the home plans page. The hero words and buttons are the 13 Sep "jobs pass"
+# version (call first, the real from-price, no lock-in) and stay as they are; the tiles, proof strip,
+# steps (the small-business page's own) and business customers' reviews are added around them.
+def _business_plans_v2():
+    tiles = [
+        ("hp-c-fix", "user", "Just me, or a few computers", "Sole traders and very small businesses", "FROM &pound;24.38/MONTH", "#plans"),
+        ("hp-c-care", "briefcase", "A growing team", "Microsoft 365 admin, backup checks and new-user setup", "SAME FROM-PRICE", "#plans"),
+        ("hp-c-biz", "cloud", "Microsoft 365, sorted", "Email, Teams and OneDrive set up and looked after", "&pound;4.85/USER A MONTH", "/microsoft-365-support/"),
+        ("hp-c-buy", "shield", "Switching provider", "We handle the move, with no downtime", "WE HANDLE IT", "/switching-it-provider/"),
+    ]
+    tiles_html = "\n".join(
+        f'            <a class="hp-intent {c}" href="{href}"><span class="hp-ico">{_dh_ico(i)}</span><span class="hp-intent__t">{t}</span>'
+        f'<span class="hp-intent__d">{d}</span><span class="hp-intent__p">{p}</span></a>'
+        for c, i, t, d, p, href in tiles)
+    hero_html = f'''    <style>{" ".join(l.strip() for l in DELL_HUB_CSS.strip().splitlines())}</style>
+    <section class="page-hero dh dh-hero" aria-label="Introduction">
+      <div class="dh-hero__grid">
+        <div>
+          <nav class="breadcrumb" aria-label="Breadcrumb">{bc("Business Support Plans")}</nav>
+          <p class="eyebrow mono">// BUSINESS PLANS</p>
+          <h1>Business IT support <em class="grad grad--green">plans</em></h1>
+          <p class="lede">Monthly plans from &pound;24.38 per computer, no lock-in. Remote fixes in minutes, on-site across Dorset with no call-out fee, and Microsoft 365, backups and security looked after for you. From a single user to a busy team &mdash; choose the cover that fits, and grow when you&rsquo;re ready.</p>
+          <div class="page-hero__cta">
+            <a href="tel:+441202775566" class="button primary button--lg">Call 01202 775566</a>
+            <a href="/contact/?topic=business-it-support" class="button secondary button--lg">Get a quote</a>
+          </div>
+          <a class="dh-rating" href="https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI" target="_blank" rel="noopener"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Rated 4.9 on Google</strong></span><span>Family-run since 1995 &middot; no call-out fee</span></a>
+          <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
+        </div>
+        <nav class="hp-intents" aria-label="What does your business need?">
+          <p class="hp-intents__q">What does your business need?</p>
+          <div class="hp-intents__grid">
+{tiles_html}
+          </div>
+        </nav>
+      </div>
+    </section>'''
+    proof_html = '''    <section class="dh dh-sec dh-proof" aria-label="What every business plan includes">
+      <div class="dh-in">
+        <ul class="dh-facts">
+          <li class="hp-c-fix"><b>&pound;24.38</b><span>from, per computer a month</span></li>
+          <li class="hp-c-care"><b>6&nbsp;weeks</b><span>between full services, each with a written report</span></li>
+          <li class="hp-c-buy"><b>&pound;0</b><span>call-out fee on-site across Dorset</span></li>
+          <li class="hp-c-biz"><b>4.9<i aria-hidden="true">&#9733;</i></b><span>average rating on Google</span></li>
+        </ul>
+        <p class="dh-indep"><strong>No lock-in.</strong> Pay monthly by Direct Debit and cancel any time &mdash; from a home office to a supercar workshop, businesses stay because it works.</p>
+      </div>
+    </section>'''
+    steps_html = '''    <section class="dh dh-sec" aria-labelledby="bpl-how-title">
+      <div class="dh-in">
+        <p class="dh-kicker">Getting started</p>
+        <h2 class="dh-h2" id="bpl-how-title">Your IT, handled in three steps</h2>
+        <ol class="dh-steps" style="margin-top:1.2rem">
+          <li><b>We review</b><span>We map your setup, users and where the risks are</span></li>
+          <li><b>We manage</b><span>We take over Microsoft 365, security, backups and support</span></li>
+          <li><b>We plan ahead</b><span>Regular check-ins and technology planning as you grow</span></li>
+        </ol>
+      </div>
+    </section>'''
+    reviews_html = f'''    <section class="dh dh-sec" aria-labelledby="bpl-reviews-title">
+      <div class="dh-in">
+        <p class="dh-kicker">What business customers say</p>
+        <h2 class="dh-h2" id="bpl-reviews-title">Rated 4.9 on Google</h2>
+        <div class="dh-quotes">
+{_dell_hub_quotes("JAR Accountants", "Sarah Austin", "Mark Lemon")}
+        </div>
+        <p style="margin:1.1rem 0 0;display:flex;flex-wrap:wrap;gap:.5rem 1.6rem"><a class="dh-link" href="/reviews/">Read all our reviews &#8594;</a><a class="dh-link" href="https://www.google.com/maps?cid=5924622613303465737" target="_blank" rel="noopener">See them on Google &#8594;</a></p>
+      </div>
+    </section>'''
+    return hero_html, proof_html, steps_html, reviews_html
+_BPL_HERO, _BPL_PROOF, _BPL_STEPS, _BPL_REVIEWS = _business_plans_v2()
+
 add(
  slug="business-it-support-plans",
  title="Business IT Support Plans | Small Business IT Packages",
@@ -5642,14 +5715,9 @@ add(
    service(s, "Business IT Support Plans", "Starter, Standard and Premium monthly business IT support packages.", "Business IT support"),
  ]),
  content="\n".join([
-   hero(bc("Business Support Plans"), "// BUSINESS PLANS",
-        'Business IT support <em class="grad grad--green">plans</em>',
-        # Jobs pass, 13 Sep 2026: "it support plans" at 4.5 with zero clicks. The first screen now
-        # carries the real from-price, no lock-in, the on-site promise and the number.
-        "Monthly plans from &pound;24.38 per computer, no lock-in. Remote fixes in minutes, on-site across Dorset with no call-out fee, and Microsoft 365, backups and security looked after for you. From a single user to a busy team &mdash; choose the cover that fits, and grow when you&rsquo;re ready.",
-        cta1=("Call 01202 775566", "tel:+441202775566"), cta2=("Get a quote", "/contact/?topic=business-it-support"),
-        trustbar=True),
-   f'''    <section class="support-options" aria-label="Business support plans">
+   _BPL_HERO,
+   _BPL_PROOF,
+   f'''    <section class="support-options" id="plans" aria-label="Business support plans">
 <h2 class="sr-only">Business support plans</h2>
       <div class="plan-grid plan-grid--3">
 {plan_card("business", None, "STARTER", "Business Starter", "For sole traders and very small businesses.", "&pound;24.38", ("FROM","/mo per computer"), ["Support for 1&ndash;3 computers","Remote IT support","Email support","Microsoft 365 help","Basic security checks","Loyalty discount on any fault work","Computer maintenance with written Service Reports","Your own 365 estate dashboard"], "Set up Direct Debit", subscribe_href("business-starter"))}
@@ -5660,6 +5728,7 @@ add(
       <p class="plans-note mono" data-reveal style="margin-top:.5rem"><a href="/our-guarantees/" style="color:var(--cyan)">&#10003; No lock-in, cancel anytime &middot; No-fix-no-fee repairs &middot; Family-run since 1995 &mdash; see our guarantees</a></p>
       <p data-reveal style="text-align:center;max-width:62ch;margin:1.4rem auto 0;color:var(--muted)">From a home office to a supercar workshop: since 2016 we&rsquo;ve looked after <a href="https://www.emblemsportscars.com/" target="_blank" rel="noopener">Emblem Sports Cars</a>, Poole&rsquo;s Ferrari, Maserati &amp; Lamborghini specialists &mdash; diagnostic systems and all. We tailor support to your trade too &mdash; see <a href="/it-support-by-industry/">IT support by industry</a>.</p>
     </section>''',
+   _BPL_STEPS,
    f'''    <section class="section" aria-label="Popular add-ons">
       <div class="wrap">
         <div class="section-head">
@@ -5695,6 +5764,7 @@ add(
         </div>
       </div>
     </section>''',
+   _BPL_REVIEWS,
    GC_NOTE,
    f'''    <section class="section" aria-label="IT support by industry">
       <div class="wrap">
