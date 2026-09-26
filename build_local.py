@@ -671,6 +671,83 @@ def beach_reel_node(s):
                           "logo": {"@type": "ImageObject", "url": SITE + "/logo.jpg"}}}
 
 # ======================================================= CUSTOMER-TYPE PAGES
+# ---- intent-first layout for the audience pages (26 Sep 2026): the same first screen as the homepage
+# and the service pages. The page's own four "how we help" tiles move into the panel beside the H1,
+# the phone comes first, then a proof strip; the reviews use the new cards. Words are each page's own.
+from hub_ui import DELL_HUB_CSS as _HUB_CSS, _DH_ICONS as _HUB_ICONS, _DH_A as _HUB_A, _dh_ico as _hub_ico
+_CUST_CSS = _HUB_CSS + """
+.dh div.hp-intent{cursor:default}
+.dh div.hp-intent:hover{transform:none;box-shadow:none;border-color:var(--hp-edge)}
+"""
+_CUST_COLOURS = ["hp-c-fix", "hp-c-care", "hp-c-buy", "hp-c-biz"]
+
+
+def _cust_ico(name):
+    if name in _HUB_ICONS:
+        return _hub_ico(name)
+    return '<svg viewBox="0 0 24 24" %s aria-hidden="true" focusable="false">%s</svg>' % (_HUB_A, bp.IC[name])
+
+
+def _cust_hero(crumbs, eyebrow, h1, lede, chips, tile_items, cta1, cta2):
+    tiles = "\n".join(
+        f'            <div class="hp-intent {_CUST_COLOURS[k % 4]}"><span class="hp-ico">{_cust_ico(ic)}</span>'
+        f'<span class="hp-intent__t">{t}</span><span class="hp-intent__d">{d}</span></div>'
+        for k, (ic, t, d) in enumerate(tile_items[:4]))
+    extra = " &middot; ".join(chips[:2]) if chips else "Family-run since 1995"
+    write = ("" if "/contact/" in (cta1[1] + cta2[1]) else
+             '<p class="dh-small" style="margin:.9rem 0 0">Prefer to write? <a class="dh-link" href="/contact/">Message us</a></p>' + chr(10) + '          ')
+    return f'''    <style>{" ".join(l.strip() for l in _CUST_CSS.strip().splitlines())}</style>
+    <section class="page-hero dh dh-hero" aria-label="Introduction">
+      <div class="dh-hero__grid">
+        <div>
+          <nav class="breadcrumb" aria-label="Breadcrumb">{crumbs}</nav>
+          <p class="eyebrow mono">{eyebrow}</p>
+          <h1>{h1}</h1>
+          <p class="lede">{lede}</p>
+          <div class="page-hero__cta">
+            <a href="{cta1[1]}" class="button primary button--lg">{cta1[0]}</a>
+            <a href="{cta2[1]}" class="button secondary button--lg">{cta2[0]}</a>
+          </div>
+          {write}<a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Rated 4.9 on Google</strong></span><span>{extra}</span></a>
+          <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
+        </div>
+        <div class="hp-intents" role="group" aria-label="How we help">
+          <p class="hp-intents__q">How we help</p>
+          <div class="hp-intents__grid">
+{tiles}
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="dh dh-sec dh-proof" aria-label="Why people choose us">
+      <div class="dh-in">
+        <ul class="dh-facts">
+          <li class="hp-c-fix"><b>1995</b><span>a family business since</span></li>
+          <li class="hp-c-care"><b>6&nbsp;weeks</b><span>between full services on every plan</span></li>
+          <li class="hp-c-buy"><b>&pound;0</b><span>call-out fee for remote help</span></li>
+          <li class="hp-c-biz"><b>4.9<i aria-hidden="true">&#9733;</i></b><span>average rating on Google</span></li>
+        </ul>
+      </div>
+    </section>'''
+
+
+def _cust_reviews(revs):
+    cards = "\n".join(
+        '          <figure class="dh-quote"><p aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</p>'
+        f'<blockquote>&ldquo;{q}&rdquo;</blockquote><figcaption><strong>{n}</strong> &middot; Google review</figcaption></figure>'
+        for q, n in revs)
+    return f'''    <section class="dh dh-sec" aria-label="Reviews">
+      <div class="dh-in">
+        <p class="dh-kicker">What customers say</p>
+        <h2 class="dh-h2">Rated 4.9 on Google</h2>
+        <div class="dh-quotes">
+{cards}
+        </div>
+        <p style="margin:1.1rem 0 0;display:flex;flex-wrap:wrap;gap:.5rem 1.6rem"><a class="dh-link" href="https://www.google.com/maps?cid=5924622613303465737" target="_blank" rel="noopener">Read all reviews on Google &#8594;</a><a class="dh-link" href="https://search.google.com/local/writereview?placeid=ChIJlTb8YRuic0gRCRczduB8OFI" target="_blank" rel="noopener">Leave us a review &#8594;</a></p>
+      </div>
+    </section>'''
+
+
 def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_paras, feats, tile_items, faqs, chips, cta_title=None, cta_text=None, accent="cyan", split=None, split_title=None, split_eyebrow="HOME &amp; BUSINESS", steps_title=None, step_items=None, hero_cta1=None, hero_cta2=None, tools=None, scene=None, reel=False, guides=None, guides_title=None, notice=None):
     cta_title = cta_title or "Let&rsquo;s sort your IT"
     cta_text = cta_text or "Join the Dorset homes and businesses who never worry about technology. Pick a plan or say hello."
@@ -681,10 +758,11 @@ def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_para
         v = "/%02d" % n[0]; n[0] += 1; return v
     _is_ind = slug.startswith("it-support-for-")
     _bch = bp.bc_sub("IT Support by Industry", "/it-support-by-industry/", crumb_name) if _is_ind else bc(crumb_name)
+    # 26 Sep 2026: intent-first first screen (phone first; the tiles move up beside the H1)
+    _c1 = hero_cta1 or ("Call 01202 775566", "tel:+441202775566")
+    _c2 = hero_cta2 or ("See plans &amp; prices", "/monthly-it-support/")
     sections = [
-      hero(_bch, eyebrow, h1, bp.hero_trust(lede), chips=chips, scene=bp.HERO_SCENES.get(scene),
-           cta1=hero_cta1 or ("See Plans &amp; Prices", "/monthly-it-support/"),
-           cta2=hero_cta2 or ("Get Support Today", "/contact/")),
+      _cust_hero(_bch, eyebrow, h1, lede, chips, tile_items, _c1, _c2),
       f'''    <section class="section" aria-label="Overview">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
@@ -695,17 +773,6 @@ def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_para
         <ul class="checklist" data-stagger>
 {checklist(feats)}
         </ul>
-      </div>
-    </section>''',
-      f'''    <section class="section section--alt" aria-label="What we help with">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>{num()} — HOW WE HELP</p>
-          <h2 class="section-title section-title--center" data-title>Support that fits how you work<span class="title-underline title-underline--center"></span></h2>
-        </div>
-        <div class="tile-grid" data-stagger>
-{tiles(tile_items)}
-        </div>
       </div>
     </section>''',
     ]
@@ -756,7 +823,7 @@ def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_para
         </div>
       </div>
     </section>""")
-    sections += [reviews_block(revs), bp.PCM_BAND, faq_html(faqs)]
+    sections += [_cust_reviews(revs), bp.PCM_BAND, faq_html(faqs)]
     if tools:
         sections.append(bp.tools_strip(tools, alt=False))
     sections.append(cta(cta_title, cta_text))
