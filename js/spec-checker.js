@@ -167,7 +167,7 @@
     if(g.soft)put('gpu','Hardware acceleration','OFF — running in software');
     /* RAM */
     var dm=navigator.deviceMemory;
-    if(dm!=null){ put('ram','Memory available to sites',(dm>=8?'8 GB or more':'about '+dm+' GB'),'browsers round down and cap this — the real total may be higher'); }
+    if(dm!=null){ put('ram','Memory available to sites',(dm>=32?'32 GB or more':'about '+dm+' GB'),'a rounded figure — browsers stop at 32 GB (older ones at 8 GB), so the real total may be higher'); }
     else put('ram','Memory','Hidden by this browser','Chrome and Edge reveal an approximate figure');
     /* Display */
     var w=screen.width||0,h=screen.height||0,dpr=window.devicePixelRatio||1,dispNote=dpr!==1?('scaled '+Math.round(dpr*100)+'% — drawn at '+w+' × '+h):null;
@@ -286,8 +286,12 @@
       else if(g.ok) row('good','Graphics working properly','Hardware acceleration is on'+(g.gpu?' ('+esc(g.gpu.length>46?g.gpu.slice(0,45)+'…':g.gpu)+')':'')+'.');
       else row('warn','No 3D graphics detected','Hardware acceleration is switched off in the browser, or the graphics driver is missing. Either one makes a machine feel slow.');
       if(dm!=null){
-        if(dm>=8) row('good','8 GB or more of memory','The most a browser is allowed to report, so there may well be more.'+(kind==='win'?' The free app below shows exactly how much is fitted and in use.':''));
-        else if(dm>=4) row('warn','Between 4 and 8 GB of memory','Browsers round down, so this is somewhere from 4 GB to just under 8. At the low end it runs out quickly with a browser and a video call open, and more memory or a solid-state drive is often the cheapest speed-up.');
+        /* Chrome and Edge report 2, 4, 8, 16 or 32 (they stopped at 8 until 2026), rounded to the nearest step */
+        var appx=(kind==='win'?' The free app below shows exactly how much is fitted and in use.':'');
+        if(dm>=32) row('good','32 GB or more of memory','The most a browser will report, so there may be more.'+appx);
+        else if(dm>=16) row('good','About 16 GB of memory','Plenty for everyday use, photo editing and most games. Browsers round this figure to the nearest step.'+appx);
+        else if(dm>=8) row('good','About 8 GB of memory','Enough for everyday use. Browsers round this figure, and older ones stop at 8 GB, so there may be more.'+appx);
+        else if(dm>=4) row('warn','About 4 GB of memory','Browsers round this figure, so it may be a little more or less. It runs out quickly with a browser and a video call open, and more memory or a solid-state drive is often the cheapest speed-up.');
         else row('bad','Under 4 GB of memory','Too little for today&rsquo;s Windows and browsers: it will feel slow whatever you do. <a href="/repair-or-replace-advisor/">Upgrade or replace?</a>');
       }
       if(cores){

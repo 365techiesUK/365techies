@@ -2607,7 +2607,7 @@ PWNED_TOOL = r'''    <section class="section" aria-label="Password breach checke
             </div>
           </div>
         </div>
-        <p class="pw-powered">Checked against Have I Been Pwned&rsquo;s corpus of 10+ billion breached passwords using k-anonymity. Your password never leaves this page.</p>
+        <p class="pw-powered">Checked against Have I Been Pwned&rsquo;s corpus of over a billion breached passwords using k-anonymity. Your password never leaves this page.</p>
       </div>
       <style>
       #pwn{max-width:680px;margin:0 auto}
@@ -4860,7 +4860,7 @@ PCBUILD_TOOL = r'''    <section class="section" aria-label="Custom PC builder" i
             <li><b>The graphics card can come last.</b> GPU prices swing more than any other part &mdash; bridge with integrated graphics or a cheap used card, then pounce when the sales hit.</li>
             <li><b>Storage and memory are the easy laters.</b> Start at 1TB and one 2&times;8GB kit if you must &mdash; both drop in later in minutes. Just always buy RAM as a matched pair, never a single stick &ldquo;to add to&rdquo;.</li>
             <li><b>Case bling and RGB wait at the back of the queue.</b> A &pound;60 mesh case cools as well as a &pound;150 showpiece &mdash; looks are the one upgrade with zero performance.</li>
-            <li><b>Under ~&pound;600 all-in?</b> Be honest with yourself: a <a href="/dell-hardware/">refurbished business-grade Dell from &pound;510</a> plus a graphics card later usually beats a compromised new build.</li>
+            <li><b>Under ~&pound;600 all-in?</b> Be honest with yourself: a <a href="/dell-hardware/">refurbished business-grade Dell desktop from &pound;545</a> usually beats a compromised new build (choose a tower model if you want to add a graphics card later).</li>
           </ul>
           <h3 class="pb-sec-t">&#128161; Golden rules of PC building</h3>
           <ul class="pb-rules">
@@ -4875,7 +4875,7 @@ PCBUILD_TOOL = r'''    <section class="section" aria-label="Custom PC builder" i
           </ul>
           <h3 class="pb-sec-t">&#128736;&#65039; Tools (you need less than you think)</h3>
           <ul class="pb-rules">
-            <li><b>A #2 Phillips screwdriver</b> &mdash; magnetic tip ideally. That&rsquo;s genuinely 95% of it.</li>
+            <li><b>A #2 Phillips screwdriver</b> &mdash; magnetic tip ideally. That&rsquo;s genuinely most of it.</li>
             <li><b>A USB stick (8GB+)</b> for the Windows installer, made with Microsoft&rsquo;s free Media Creation Tool.</li>
             <li><b>Nice to have:</b> a magnetic parts tray, zip ties for cable tidying, and a torch. Thermal paste comes pre-applied on most coolers.</li>
           </ul>
@@ -5123,8 +5123,34 @@ def tool_seo_html(slug, enh):
       </div>
     </section>'''
 
+# 26 Sep 2026: tools get the shared first screen (tiles in tool_tiles_data.py). The page's own breadcrumb,
+# eyebrow, H1, lede and first two buttons are lifted out of its standard hero, so nothing the page says changes;
+# only the layout and the four choices are new. A page without the standard hero is left as it was.
+from tool_tiles_data import TOOL_HERO_TILES
+_HERO_RE = re.compile(r'    <section class="page-hero[^"]*"[^>]*>.*?</section>', re.S)
+
+
+def _tool_intent_hero(content, tiles):
+    m = _HERO_RE.search(content)
+    if not m:
+        return content
+    h = m.group(0)
+    crumbs = re.search(r'<nav class="breadcrumb"[^>]*>(.*?)</nav>', h, re.S)
+    eyebrow = re.search(r'<p class="eyebrow[^"]*"[^>]*>(.*?)</p>', h, re.S)
+    h1 = re.search(r'<h1[^>]*>(.*?)</h1>', h, re.S)
+    lede = re.search(r'<p class="lede[^"]*"[^>]*>(.*?)</p>', h, re.S)
+    btns = re.findall(r'<a href="([^"]+)" class="button[^"]*"[^>]*>(.*?)</a>', h, re.S)
+    if not (crumbs and eyebrow and h1 and lede and len(btns) >= 2):
+        return content
+    new = intent_hero(crumbs.group(1).strip(), eyebrow.group(1).strip(), h1.group(1).strip(), lede.group(1).strip(),
+                      (btns[0][1].strip(), btns[0][0]), (btns[1][1].strip(), btns[1][0]), tiles)
+    return content[:m.start()] + new + content[m.end():]
+
+
 def add(**kw):
     _slug = kw.get("slug")
+    if _slug in TOOL_HERO_TILES and isinstance(kw.get("content"), str):
+        kw["content"] = _tool_intent_hero(kw["content"], TOOL_HERO_TILES[_slug])
     if _slug in TOOL_TITLES:
         kw["title"] = TOOL_TITLES[_slug]
     _enh = TOOL_SEO.get(_slug)

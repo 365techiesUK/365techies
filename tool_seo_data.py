@@ -99,7 +99,7 @@ TOOL_SEO = {'ai-roi-calculator': {'answer': 'This free ROI calculator estimates 
                                        '30 Mbps handles HD streaming, video calls and browsing without fuss for most homes, but it can struggle when several people are online at once. 100 Mbps or more is plenty for a busy household '
                                        'running multiple 4K streams, video calls and gaming simultaneously. The recommendation on this page scales with how many people use the connection together.'],
                                       ['How many Mbps do I need for Netflix, Teams and gaming at the same time?',
-                                       'Roughly: 4K Netflix needs about 25 Mbps per stream, a Teams or Zoom HD call needs a few Mbps, and online gaming needs little bandwidth but low ping. Doing all three at once comfortably points to a '
+                                       'Roughly: 4K Netflix needs about 15 Mbps per stream, a Teams or Zoom HD call needs a few Mbps, and online gaming needs little bandwidth but low ping. Doing all three at once comfortably points to a '
                                        '100 Mbps-plus connection, which is why this tool multiplies your usage by household size when it suggests a target speed.']],
                              'howto': {'name': 'How to work out the broadband speed your home needs',
                                        'steps': [['Run the live speed test', "Press Start to measure your real download, upload and ping right now, live against Cloudflare's network — no sign-up needed."],
@@ -138,8 +138,8 @@ TOOL_SEO = {'ai-roi-calculator': {'answer': 'This free ROI calculator estimates 
                                      'Open this checker and it instantly shows what your browser can detect &mdash; operating system, graphics card, screen resolution, an estimate of memory and your processor&rsquo;s core count &mdash; '
                                      'with nothing installed and nothing sent to us.'),
                                     ('Why can&rsquo;t the checker see my exact CPU or RAM?',
-                                     'Browsers deliberately limit what a website can read about your hardware for privacy, so some details (like the precise processor model or total RAM) aren&rsquo;t available. What it does show is '
-                                     'accurate; for the full picture, Windows&rsquo; own System Information or our team can help.')],
+                                     'Browsers deliberately limit what a website can read about your hardware for privacy, so some details (like the precise processor model or total RAM) aren&rsquo;t available. What it does show comes '
+                                     'straight from your browser, with memory rounded; for the full picture, Windows&rsquo; own System Information or our team can help.')],
                            'howto': {'name': 'How to check your computer&rsquo;s specs online',
                                      'steps': [('Open the checker', 'It reads what your browser exposes about your device automatically &mdash; no permissions or install needed.'),
                                                ('Read your specs', 'See your operating system, graphics card, screen resolution and colour depth, memory hint and processor core count.'),
@@ -724,7 +724,7 @@ TOOL_SEO = {'ai-roi-calculator': {'answer': 'This free ROI calculator estimates 
                                                   ['Answer the security question', 'For business, tell the picker whether you handle sensitive data or need managed, secured devices.'],
                                                   ['Read your suggested plan', 'The tool names the best-fit plan - Personal, Family, Business Basic, Standard or Premium - in plain English with no upselling.'],
                                                   ['Compare or get it set up', "Follow the link to Microsoft's own live comparison, or ask 365 Techies to confirm the current best-value option and set it up for free."]]},
-                              'keyfacts': '<table><thead><tr><th>Plan</th><th>Best for</th><th>Office apps</th></tr></thead><tbody><tr><td>Personal</td><td>One person / household</td><td>Full apps on your devices + 1TB '
+                              'keyfacts': '<table><thead><tr><th>Plan</th><th>Best for</th><th>Office apps</th></tr></thead><tbody><tr><td>Personal</td><td>One person</td><td>Full apps on your devices + 1TB '
                                           'OneDrive</td></tr><tr><td>Family</td><td>Up to 6 people, each with own login</td><td>Full apps + 1TB OneDrive each</td></tr><tr><td>Business Basic</td><td>Small business, no installed apps '
                                           'needed</td><td>Web &amp; mobile apps only + business email</td></tr><tr><td>Business Standard</td><td>Most small businesses</td><td>Full apps installed on PCs + business '
                                           'email</td></tr><tr><td>Business Premium</td><td>Sensitive data / managed devices</td><td>Everything in Standard + advanced security &amp; device management</td></tr></tbody></table>',

@@ -50,8 +50,8 @@
  },
  "ai-roi-calculator": {
   "first": "2026-07-28",
-  "h": "02338b2d47d47b1f",
-  "last": "2026-08-31"
+  "h": "a27e04dfb48864aa",
+  "last": "2026-09-26"
  },
  "ai-training": {
   "first": "2026-07-28",
@@ -223,8 +223,8 @@
  },
  "broadband-checker": {
   "first": "2026-07-28",
-  "h": "1dadcf5a9a39fa3c",
-  "last": "2026-09-13"
+  "h": "0cd02ebea1b40600",
+  "last": "2026-09-26"
  },
  "broadband-down": {
   "first": "2026-07-28",
@@ -238,8 +238,8 @@
  },
  "broadband-speed-checker": {
   "first": "2026-07-28",
-  "h": "b51844d9acc32045",
-  "last": "2026-09-13"
+  "h": "2e0f14e434b6528e",
+  "last": "2026-09-26"
  },
  "broadband-to-a-boat-mooring": {
   "first": "2026-07-28",
@@ -438,8 +438,8 @@
  },
  "computer-fault-checker": {
   "first": "2026-07-28",
-  "h": "3799328f8afdaff5",
-  "last": "2026-08-31"
+  "h": "1038914f03a74303",
+  "last": "2026-09-26"
  },
  "computer-help-for-elderly-parents": {
   "first": "2026-07-28",
@@ -618,8 +618,8 @@
  },
  "computer-spec-checker": {
   "first": "2026-07-28",
-  "h": "8983dadf11a755b5",
-  "last": "2026-09-25"
+  "h": "a8ccedf4a3e79e8c",
+  "last": "2026-09-26"
  },
  "computer-support-gift-for-parents": {
   "first": "2026-07-28",
@@ -653,8 +653,8 @@
  },
  "cost-calculator": {
   "first": "2026-07-28",
-  "h": "152cc91e8b264506",
-  "last": "2026-09-13"
+  "h": "7ef42f65560e40a3",
+  "last": "2026-09-26"
  },
  "cost-to-upgrade-office-to-windows-11": {
   "first": "2026-09-05",
@@ -663,13 +663,13 @@
  },
  "coverage-checker": {
   "first": "2026-07-28",
-  "h": "06baefbaa2f52f7c",
-  "last": "2026-08-31"
+  "h": "98f49440647377a7",
+  "last": "2026-09-26"
  },
  "custom-pc-builder": {
   "first": "2026-07-28",
-  "h": "a63eb9ee5bdbd5d3",
-  "last": "2026-09-24"
+  "h": "a8c5314368b02e6f",
+  "last": "2026-09-26"
  },
  "custom-pc-builds": {
   "first": "2026-07-28",
@@ -987,8 +987,8 @@
  },
  "dns-lookup": {
   "first": "2026-07-28",
-  "h": "727104f13a763817",
-  "last": "2026-08-31"
+  "h": "19e9d13354a21ee8",
+  "last": "2026-09-26"
  },
  "do-i-need-a-vpn": {
   "first": "2026-09-18",
@@ -1016,13 +1016,13 @@
  },
  "email-security-checker": {
   "first": "2026-07-28",
-  "h": "c930474f151d8e36",
-  "last": "2026-08-31"
+  "h": "167198af3238f220",
+  "last": "2026-09-26"
  },
  "email-signature-generator": {
   "first": "2026-07-28",
-  "h": "f4eb7aaac7a23adc",
-  "last": "2026-08-31"
+  "h": "826456b265e8c1e6",
+  "last": "2026-09-26"
  },
  "email-support": {
   "first": "2026-07-28",
@@ -1131,8 +1131,8 @@
  },
  "free-tools": {
   "first": "2026-07-28",
-  "h": "bcd7d4aa1ca3083a",
-  "last": "2026-09-05"
+  "h": "1ce1d7f3dee094b7",
+  "last": "2026-09-26"
  },
  "gaming-pc-slow-wont-load-games": {
   "first": "2026-09-05",
@@ -1171,8 +1171,8 @@
  },
  "graphics-card-benchmark": {
   "first": "2026-07-28",
-  "h": "e4172129e0894f01",
-  "last": "2026-09-04"
+  "h": "3140540412e00c2c",
+  "last": "2026-09-26"
  },
  "hard-drive-upgrade": {
   "first": "2026-07-28",
@@ -1420,7 +1420,7 @@
  },
  "is-it-down": {
   "first": "2026-07-28",
-  "h": "2208d691229270f0",
+  "h": "3bf771a0e737cece",
   "last": "2026-09-26"
  },
  "is-it-safe-to-buy-a-refurbished-laptop": {
@@ -1970,8 +1970,8 @@
  },
  "link-safety-checker": {
   "first": "2026-07-28",
-  "h": "3600e85388aa7885",
-  "last": "2026-08-31"
+  "h": "b9ec0159f993b7ec",
+  "last": "2026-09-26"
  },
  "lithium-battery-installs-dorset": {
   "first": "2026-07-28",
@@ -2070,8 +2070,8 @@
  },
  "mobile-signal-check": {
   "first": "2026-08-17",
-  "h": "c63c8639a2de0e30",
-  "last": "2026-09-25"
+  "h": "a520538c10b9ebf2",
+  "last": "2026-09-26"
  },
  "mobile-tablet-support": {
   "first": "2026-07-28",
@@ -2570,13 +2570,13 @@
  },
  "password-breach-checker": {
   "first": "2026-07-28",
-  "h": "54f1afc5c6a21dda",
-  "last": "2026-08-31"
+  "h": "8fda93c6c6ba52dc",
+  "last": "2026-09-26"
  },
  "password-generator": {
   "first": "2026-07-28",
-  "h": "cc0533e771f0679d",
-  "last": "2026-08-31"
+  "h": "17eb87eabb3f32a6",
+  "last": "2026-09-26"
  },
  "password-manager-setup": {
   "first": "2026-07-28",
@@ -2585,8 +2585,8 @@
  },
  "password-strength-checker": {
   "first": "2026-07-28",
-  "h": "392bbec2d5f6be43",
-  "last": "2026-09-13"
+  "h": "9aac54105da32a44",
+  "last": "2026-09-26"
  },
  "pay": {
   "first": "2026-07-28",
@@ -2595,8 +2595,8 @@
  },
  "pc-benchmark": {
   "first": "2026-07-28",
-  "h": "b7a06c7815ed5416",
-  "last": "2026-09-25"
+  "h": "a5680d92eab3974e",
+  "last": "2026-09-26"
  },
  "phishing": {
   "first": "2026-07-28",
@@ -2610,8 +2610,8 @@
  },
  "plan-finder": {
   "first": "2026-07-28",
-  "h": "fc67b5594a8491be",
-  "last": "2026-09-13"
+  "h": "62db8001082994dc",
+  "last": "2026-09-26"
  },
  "playstation-parental-controls-uk": {
   "first": "2026-08-18",
@@ -2720,13 +2720,13 @@
  },
  "qr-code-generator": {
   "first": "2026-07-28",
-  "h": "17b8fac81649c095",
-  "last": "2026-08-31"
+  "h": "d20b5e074d207851",
+  "last": "2026-09-26"
  },
  "quick-quote": {
   "first": "2026-07-28",
-  "h": "e02933261da190fc",
-  "last": "2026-09-13"
+  "h": "8fb5463961e4b453",
+  "last": "2026-09-26"
  },
  "quickbooks-sage-running-slow": {
   "first": "2026-07-28",
@@ -3050,8 +3050,8 @@
  },
  "solar-battery-calculator": {
   "first": "2026-07-28",
-  "h": "256c713354b6b1ba",
-  "last": "2026-09-13"
+  "h": "dd02a7f04e4d9ea5",
+  "last": "2026-09-26"
  },
  "sos": {
   "first": "2026-07-28",
@@ -3065,13 +3065,13 @@
  },
  "spot-the-scam": {
   "first": "2026-07-28",
-  "h": "c2745ddcff393e37",
-  "last": "2026-08-31"
+  "h": "40a54bbb45c7a4a7",
+  "last": "2026-09-26"
  },
  "ssl-checker": {
   "first": "2026-07-28",
-  "h": "426e95fc5c8121c0",
-  "last": "2026-08-31"
+  "h": "d5ec53e6ae310a7d",
+  "last": "2026-09-26"
  },
  "starlink-internet": {
   "first": "2026-07-28",
@@ -3210,8 +3210,8 @@
  },
  "victron-system-builder": {
   "first": "2026-07-28",
-  "h": "19da03ec250c2597",
-  "last": "2026-09-24"
+  "h": "4c42a5ec6c40b308",
+  "last": "2026-09-26"
  },
  "victron-vrm-api-dashboard": {
   "first": "2026-07-28",
@@ -3275,8 +3275,8 @@
  },
  "website-checker": {
   "first": "2026-07-28",
-  "h": "fc51c5d711737e9b",
-  "last": "2026-09-13"
+  "h": "4d08d1399bac9f00",
+  "last": "2026-09-26"
  },
  "website-hacked-what-to-do": {
   "first": "2026-07-28",
@@ -3330,13 +3330,13 @@
  },
  "what-websites-know": {
   "first": "2026-07-28",
-  "h": "564be82bcf9afd56",
-  "last": "2026-08-31"
+  "h": "b9b2705a27e68917",
+  "last": "2026-09-26"
  },
  "what-would-you-lose": {
   "first": "2026-07-28",
-  "h": "c6b6648adfd7c75a",
-  "last": "2026-08-31"
+  "h": "1fd9a17ec0b01ca6",
+  "last": "2026-09-26"
  },
  "whatsapp-course-for-beginners": {
   "first": "2026-07-28",
@@ -3345,8 +3345,8 @@
  },
  "which-microsoft-365-plan": {
   "first": "2026-07-28",
-  "h": "4ac458966164ab26",
-  "last": "2026-08-31"
+  "h": "411f6f25e31dda4a",
+  "last": "2026-09-26"
  },
  "white-label-victron-monitoring": {
   "first": "2026-07-28",
@@ -3425,13 +3425,13 @@
  },
  "wifi-qr-code-generator": {
   "first": "2026-07-28",
-  "h": "8bf87c0f499e1b32",
-  "last": "2026-08-31"
+  "h": "fe82d2457434bdd7",
+  "last": "2026-09-26"
  },
  "wifi-signal-test": {
   "first": "2026-07-28",
-  "h": "a80cdf19eb03cb14",
-  "last": "2026-09-25"
+  "h": "ec03e116ff72ef59",
+  "last": "2026-09-26"
  },
  "wifi-support": {
   "first": "2026-07-28",

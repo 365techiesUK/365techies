@@ -4383,11 +4383,11 @@ def wifi_optimizer():
         <h3>How to run this properly</h3>
         <p>Test in the same spot in the same minute, and <strong>run a wired test first</strong> &mdash; that is your ceiling, and nothing wireless beats it.
         Record three numbers each time: download, upload and ping. On Windows, <code>netsh wlan show interfaces</code> tells you the band, channel and signal;
-        on a Mac, hold Option and click the WiFi icon. iPhones do not expose signal strength, so use an Android handset if you are walking a survey.</p>
+        on a Mac, hold Option and click the WiFi icon. iPhones hide signal strength unless you switch on the Wi-Fi Scanner in Apple&rsquo;s free AirPort Utility app (in Settings, under AirPort Utility), so an Android handset is easier if you are walking a survey.</p>
         <h3>The test that matters more than speed</h3>
         <p>Start a large download and watch your ping while it runs. If an idle ping of around 15&nbsp;ms climbs to 250&nbsp;ms under load, that is
         <strong>bufferbloat</strong> &mdash; and it is why calls break up the moment somebody else in the house uses the internet. It is invisible to a
-        normal speed test, and it explains more complaints than any shortage of megabits.</p>
+        normal speed test, and it explains a lot of complaints that more megabits would not fix.</p>
         <h3>Where to go next</h3>
         <ul>
           <li><strong>The reading is fine but it is still slow</strong> &rarr; <a href="/wifi-troubleshooting/">the fault-finding guide</a></li>
@@ -6405,7 +6405,7 @@ def mobile_signal_check():
       # asserted in safety copy on a hunch. Verify with Ofcom/BT before ever adding it.
       # ⚠️ emergencysms.org.uk has lapsed (the domain now parks on a marketplace) - never
       # link it; link an NHS trust instead.
-      ('I can&rsquo;t always make a voice call. Can I text 999?', 'Yes &mdash; but only if you register your phone first, and that has to happen <strong>before</strong> you ever need it. Text the word <strong>register</strong> to <strong>999</strong>, read the reply and answer <strong>YES</strong>, and you&rsquo;re done; it takes about ten seconds. It&rsquo;s meant for anyone who can&rsquo;t safely speak &mdash; if you&rsquo;re deaf or hard of hearing, if speech is difficult, or if being overheard would put you in danger. A reply usually comes within about two minutes; if nothing arrives in three, get help another way. You&rsquo;ll need to register again if you change your number, and it&rsquo;s worth doing on the phones of anyone you look after. Whether you call or text, it still needs a signal to leave your phone &mdash; which is the whole point of knowing where yours works.'),
+      ('I can&rsquo;t always make a voice call. Can I text 999?', 'Yes &mdash; but only if you register your phone first, and that has to happen <strong>before</strong> you ever need it. Text the word <strong>register</strong> to <strong>999</strong>, read the reply and answer <strong>YES</strong>, and you&rsquo;re done; it takes about ten seconds. It&rsquo;s meant for people who are deaf, hard of hearing or speech-impaired, and it is slower than a voice call. If you&rsquo;re in danger and can&rsquo;t speak, call 999 from a mobile and press 55 when prompted instead (the police Silent Solution). A reply to an emergency text can take a couple of minutes; if nothing arrives, get help another way. You&rsquo;ll need to register again if you change your number, and it&rsquo;s worth doing on the phone of anyone you look after who is deaf, hard of hearing or speech-impaired. Whether you call or text, it still needs a signal to leave your phone &mdash; which is the whole point of knowing where yours works.'),
       ('What does &lsquo;better connected&rsquo; actually mean for me?', 'Nothing grand. It means the bus app loads before the bus goes, the card machine takes the payment, the GP&rsquo;s text arrives, the photo sends from the beach on the first try. Most of that needs a modest, steady signal rather than a fast one, which is why the map&rsquo;s middle band is &lsquo;fine for calls and email&rsquo; and not a speed number. Being connected beats not being connected; this page just tells you where that&rsquo;s true.'),
       ('What&rsquo;s a not-spot, and why bother finding them?', 'A not-spot is somewhere no network gives you a usable signal; a partial not-spot is where some do and some don&rsquo;t. On paper they barely exist, which is exactly why the remaining gaps are so hard to find from a desk. A square that stays red after eight outdoor readings is something we can take to BCP Council and the operators &mdash; and until it&rsquo;s fixed, something you can route around.'),
       ('I work from home or hybrid. How does this help?', 'More than a quarter of working adults in Great Britain now hybrid-work, and a lot of those days happen somewhere that isn&rsquo;t an office: the kitchen, a caf&eacute;, a parked car between visits. &lsquo;Fine for calls&rsquo; and &lsquo;fine for a video call with your screen shared&rsquo; are different bars, which is why the map has separate bands. Test outside, then test inside where you actually sit: if the number collapses between the two, it&rsquo;s the building, not the network &mdash; and that&rsquo;s fixable.'),
@@ -6561,7 +6561,7 @@ COVERAGE_WIDGET = '''    <section class="section section--alt" aria-label="Cover
       <script>
       (function () {
         var f = document.getElementById('cov'); if (!f) return;
-        var ON = {BH:'Bournemouth, Poole &amp; Christchurch', DT:'Dorchester, Weymouth &amp; west Dorset', SO:'Southampton &amp; the New Forest', SP:'Salisbury &amp; Fordingbridge', BA:'the north Somerset / Bath edge'};
+        var ON = {BH:'Bournemouth, Poole &amp; Christchurch', DT:'Dorchester, Weymouth &amp; west Dorset', SO:'Southampton &amp; the New Forest', SP:'Salisbury &amp; Fordingbridge', BA:'the Bath, Frome &amp; Yeovil area'};
         var AREA = {BH:'/it-support-bournemouth/', DT:'/it-support-dorchester/', SO:'/it-support-southampton/', SP:'/it-support-fordingbridge/'};
         function check(){
           var m=(document.getElementById('cov-in').value||'').toUpperCase().match(/[A-Z]{1,2}/);
@@ -6582,7 +6582,7 @@ def coverage_checker():
     faqs = [
       ("Which areas do you cover on-site?", "We cover Bournemouth, Poole, Christchurch and across Dorset, the New Forest and parts of Hampshire on-site. See our <a href=\"/areas-covered/\">areas covered</a> page for the full list."),
       ("What if I&rsquo;m outside your area?", "No problem &mdash; we provide fast, secure <a href=\"/remote-it-support/\">remote IT support</a> and fully managed monthly plans <a href=\"/it-support-uk-europe/\">across the UK and Europe</a>."),
-      ("Is remote support as good as on-site?", "For most issues, yes &mdash; most problems are fixed remotely in minutes. We arrange on-site visits when hands-on help is genuinely needed."),
+      ("Is remote support as good as on-site?", "For most issues, yes &mdash; many problems are fixed remotely, often in minutes. We arrange on-site visits when hands-on help is genuinely needed."),
     ]
     content = "\n".join([
       hero(bc("Coverage Checker"), "// DO WE COVER YOU?",
@@ -6652,7 +6652,10 @@ FAULT_WIDGET = '''    <section class="section section--alt" aria-label="Computer
         };
         function result(){
           var r=MAP[a.sym]||MAP.other; var dev=a.device?(' with your '+a.device.toLowerCase()):'';
-          document.getElementById('ff-result').innerHTML='<p class="tag">What we&rsquo;d suggest</p><h3>'+r.t+'</h3><p>The trouble'+dev+': '+r.a+'</p><div class="quiz__actions"><a href="'+r.p[1]+'" class="button primary">'+r.p[0]+'</a><a href="'+r.s[1]+'" class="button secondary">'+r.s[0]+'</a></div><p class="hc-disclaimer">We always diagnose first and quote before any work &mdash; no-fix-no-fee, a 12-month warranty on repairs, and we&rsquo;ll honestly tell you when a repair isn&rsquo;t worth it.</p>';
+          var mob=a.device==='Phone or tablet', ra=r.a, rp=r.p, rs=r.s;
+          if(mob){ var tk=['Talk to us first','/contact/']; if(rp[1]==='/remote-support/')rp=tk; else if(rs[1]==='/remote-support/')rs=tk;
+            ra=ra.split(', often remotely.').join('.').split(' &mdash; and we can usually sort it remotely in minutes').join('')+' Remote control is for Windows computers, so for a phone or tablet we talk you through it instead.'; }
+          document.getElementById('ff-result').innerHTML='<p class="tag">What we&rsquo;d suggest</p><h3>'+r.t+'</h3><p>The trouble'+dev+': '+ra+'</p><div class="quiz__actions"><a href="'+rp[1]+'" class="button primary">'+rp[0]+'</a><a href="'+rs[1]+'" class="button secondary">'+rs[0]+'</a></div><p class="hc-disclaimer">We always diagnose first and quote before any work &mdash; no-fix-no-fee, a 12-month warranty on repairs, and we&rsquo;ll honestly tell you when a repair isn&rsquo;t worth it.</p>';
         }
         q.addEventListener('click',function(e){ var o=e.target.closest('.quiz__opt'); if(!o) return; var set=o.getAttribute('data-set').split(':'); a[set[0]]=set[1]; var n=o.getAttribute('data-next'); if(n==='result') result(); show(n); });
         document.getElementById('ff-restart').addEventListener('click',function(){ a={}; show('device'); });
@@ -6664,7 +6667,7 @@ def fault_checker():
     slug = "computer-fault-checker"
     desc = "Computer not working? Use our free fault checker — pick what's playing up and we'll tell you the likely cause, whether it's worth repairing, and the best next step. No-fix-no-fee, with honest repair-or-replace advice."
     faqs = [
-      ("Is the fault checker free?", "Yes &mdash; it&rsquo;s a free, instant guide. And if you bring or send us the device, the diagnosis is free too, on a no-fix-no-fee basis."),
+      ("Is the fault checker free?", "Yes &mdash; it&rsquo;s a free, instant guide. And if we collect the device, the diagnosis is free too, on a no-fix-no-fee basis."),
       ("Will you push me to replace a working device?", "Never. We&rsquo;ll always tell you honestly when a repair makes sense and when it doesn&rsquo;t &mdash; we&rsquo;d rather keep your trust than sell you a new machine you don&rsquo;t need."),
       ("Do you guarantee repairs?", "Yes &mdash; computer and laptop repairs come with a 12-month warranty, and there&rsquo;s no fee if we can&rsquo;t fix it. <a href=\"/our-guarantees/\">See our guarantees</a>."),
     ]
@@ -6677,7 +6680,7 @@ def fault_checker():
       FAULT_WIDGET,
       faq_html(faqs),
       cta("Rather we just took a look?",
-          "Pop it in, post it, or let us connect remotely &mdash; a friendly local techie will diagnose it free and quote before any work.",
+          "Book a free collection, or let us connect remotely &mdash; a friendly local techie will diagnose it free and quote before any work.",
           primary=("Book a Collection", "/book-a-collection/"), secondary=("Start Remote Support", "/remote-support/")),
     ])
     def schema(s, _d=desc, _f=faqs):
@@ -12307,14 +12310,14 @@ def password_breach_checker():
       ("What does &lsquo;found in a breach&rsquo; mean?", "That exact password has appeared in a real data breach somewhere online, so it&rsquo;s on the lists criminals use to try to break into accounts. Even if it wasn&rsquo;t <em>your</em> account that leaked it, the password is now unsafe to use anywhere."),
       ("My password was found &mdash; what should I do?", "Stop using it, change it on any account where you use it (or anything similar), use a different password for every login, and switch on two-factor authentication. A password manager makes this easy &mdash; <a href=\"/contact/\">we can set you up</a>."),
       ("My password wasn&rsquo;t found &mdash; am I safe?", "It&rsquo;s a good sign, but not a guarantee it&rsquo;s <em>strong</em>. A long, unique passphrase you don&rsquo;t reuse anywhere is what really keeps you safe. Try our <a href=\"/password-strength-checker/\">password strength checker</a> too."),
-      ("Where does the data come from?", "From Have I Been Pwned, a respected security service with a database of over 10 billion passwords exposed in data breaches. We check against it without ever sending your actual password."),
+      ("Where does the data come from?", "From Have I Been Pwned, a respected security service with a database of over a billion passwords exposed in data breaches. We check against it without ever sending your actual password."),
     ]
     content = "\n".join([
       hero(bc("Password Breach Checker"), "// FREE BREACH CHECK",
            'Has your password <em class="grad grad--cyan">been leaked?</em>',
            "Check any password against billions exposed in real data breaches &mdash; instantly and privately. Your password is hashed in your browser and never sent, so it&rsquo;s completely safe to check.",
            cta1=("Check a Password", "#pwntool"), cta2=("Cybersecurity Help", "/cybersecurity-support/"),
-           chips=["Private &amp; safe","10+ billion passwords","No sign-up"]),
+           chips=["Private &amp; safe","Over a billion leaked passwords","No sign-up"]),
       PWNED_TOOL,
       faq_html(faqs),
       cta("Let&rsquo;s lock down your accounts",
@@ -12586,7 +12589,7 @@ def solar_battery_calculator():
     desc = "Free campervan & off-grid battery and solar calculator. Tick what you run each day and get an honest lithium battery size and solar panel wattage for UK conditions. From 365 Techies, Dorset — Victron installers."
     faqs = [
       ("How accurate is this calculator?", "It&rsquo;s honest, indicative sizing: your devices&rsquo; watts &times; hours, plus 15% real-world system losses, sized against lithium (~90% usable) or AGM (~50% usable) and UK average peak-sun hours. Real installs vary with panel angle, shading, battery age and weather &mdash; which is why we always survey before we fit anything."),
-      ("Why is winter solar so different?", "UK peak-sun drops from roughly 4 hours a day in summer to about 1 in December &mdash; an eighth of the harvest. Winter setups usually pair solar with charging from the engine (a B2B charger) or hook-up, rather than fitting an enormous array."),
+      ("Why is winter solar so different?", "UK peak-sun drops from roughly 4 hours a day in summer to under 1 in December &mdash; a sixth of the harvest or less. Winter setups usually pair solar with charging from the engine (a B2B charger) or hook-up, rather than fitting an enormous array."),
       ("Lithium or AGM leisure battery?", "Lithium costs more upfront but you can use ~90% of its capacity, it charges faster, lasts many times longer and weighs half as much. AGM is cheaper but you should only use ~50% of the label capacity. That&rsquo;s why the AGM equivalent in the results is nearly double the lithium size."),
       ("What kit do you install?", "We design and fit Victron-based systems &mdash; lithium batteries, MPPT solar controllers, B2B chargers, inverters and remote monitoring &mdash; for campervans, boats and off-grid buildings. Our own support van runs on one; you can <a href=\"/off-grid-victron-energy/\">watch its live dashboard</a>."),
       ("Can you check my numbers?", "Gladly &mdash; tell us what you run and how you travel, and we&rsquo;ll size it properly (and tell you honestly if a smaller system will do). <a href=\"/contact/\">Get in touch</a>."),
@@ -14135,7 +14138,7 @@ ISITDOWN_TOOL = r'''    <section class="section" aria-label="Is it down checker"
           <details class="iid-play"><summary>Could it be a cyber attack? (DDoS, hacks and scares)</summary><div>
             <ol>
               <li><strong>A big-name outage is almost never &ldquo;hackers&rdquo;.</strong> It&rsquo;s usually a botched update or a broken dependency &mdash; DDoS makes headlines, config errors make outages.</li>
-              <li><strong>Home users can&rsquo;t be &ldquo;DDoSed offline&rdquo; in any meaningful way</strong> &mdash; attacks target services, not your router. If you&rsquo;re offline, work the connection steps above.</li>
+              <li><strong>Home connections are rarely the target</strong> &mdash; attacks almost always aim at big services, not your router (the exception is online gaming, where paid &ldquo;booter&rdquo; attacks on players do happen). If you&rsquo;re offline, work the connection steps above.</li>
               <li><strong>Received a threat demanding payment to stop an attack?</strong> It&rsquo;s almost always an empty threat. Don&rsquo;t pay &mdash; report it to Report Fraud on <a href="tel:03001232040">0300 123 2040</a>.</li>
               <li><strong>Run a business website that&rsquo;s genuinely under attack?</strong> Talk to your host about DDoS protection (Cloudflare&rsquo;s free tier stops most of it) &mdash; <a href="/cybersecurity-support/">we can set this up</a>.</li>
             </ol>
@@ -14194,7 +14197,7 @@ def is_it_down():
       ("Why does half the internet go down at once?",
        "Because much of the web quietly runs on the same shared infrastructure &mdash; Cloudflare, AWS, Azure and a handful of DNS providers. When one of them has a bad day, thousands of unrelated websites break at the same time. That&rsquo;s why Cloudflare and Azure have their own cards on this page: if one of those shows red, the &lsquo;dozens of sites down&rsquo; mystery is solved."),
       ("What is a DDoS attack?",
-       "A Distributed Denial of Service attack floods a website or service with junk traffic from thousands of hijacked machines until real users can&rsquo;t get through. It targets <em>services</em>, not home users &mdash; nobody is DDoSing your router. If you run a business site and are threatened or attacked, don&rsquo;t pay: report it to Report Fraud (formerly Action Fraud) on 0300 123 2040 and talk to your host about protection (<a href=\"/cybersecurity-support/\">we can help</a>)."),
+       "A Distributed Denial of Service attack floods a website or service with junk traffic from thousands of hijacked machines until real users can&rsquo;t get through. It almost always targets <em>services</em>, not home users &mdash; your router is very unlikely to be the target. If you run a business site and are threatened or attacked, don&rsquo;t pay: report it to Report Fraud (formerly Action Fraud) on 0300 123 2040 and talk to your host about protection (<a href=\"/cybersecurity-support/\">we can help</a>)."),
       ("Who do I call when my broadband is down?",
        "Your provider &mdash; the main UK status checkers and support numbers are listed on this page. Check for a power cut first (call 105, free) and restart the router properly. If the provider says the line is fine but your computer, Wi&#8209;Fi or network still misbehaves, that&rsquo;s exactly what we fix &mdash; call 01202 775566."),
       ("Does turning the router off and on again actually help?",
@@ -14628,7 +14631,7 @@ SPECCHECK_APP_BAND = '''    <section class="section section--alt" aria-label="Ke
         <details class="kx-more">
           <summary>Reading by reading: what this page sees, and what the free app sees</summary>
           <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)"><table class="cmp-table cmp-table--vs"><thead><tr><th scope="col"><span class="sr-only">Feature</span></th><th>This page (your browser)</th><th>365 PC Manager (free app)</th></tr></thead><tbody>
-            <tr><th>Memory</th><td>A rounded figure, capped at 8&nbsp;GB however much is fitted</td><td class="hi">The exact amount fitted, and how much is in use right now</td></tr>
+            <tr><th>Memory</th><td>A rounded figure that stops at 32&nbsp;GB (8&nbsp;GB in older browsers)</td><td class="hi">The exact amount fitted, and how much is in use right now</td></tr>
             <tr><th>Processor</th><td>How many threads it has</td><td class="hi">Live processor and memory load, as graphs</td></tr>
             <tr><th>Storage</th><td>Only the space websites are allowed to use</td><td class="hi">Free space on the drive, and the drive&rsquo;s own SMART health</td></tr>
             <tr><th>Battery</th><td>Charge level and whether it is plugged in</td><td class="hi">Battery health &mdash; how much of its original capacity is left</td></tr>
@@ -14673,7 +14676,7 @@ SPECCHECK_APP_BAND = '''    <section class="section section--alt" aria-label="Ke
         </script>
         <ul class="security-grid" data-stagger>
           <li><h3>The minimums</h3><p>A compatible 64-bit processor &mdash; roughly Intel 8th generation or AMD Ryzen 2000 onwards &mdash; 4&nbsp;GB of memory, 64&nbsp;GB of storage, a DirectX 12 graphics chip and a 720p screen.</p></li>
-          <li><h3>The two deciders</h3><p><strong>TPM 2.0</strong> and <strong>Secure Boot</strong>. Both live in the firmware, not the browser. On Windows: Settings &rarr; Privacy &amp; security &rarr; Windows Security &rarr; Device security lists them as Security processor and Secure boot.</p></li>
+          <li><h3>The two deciders</h3><p><strong>TPM 2.0</strong> and <strong>Secure Boot</strong>. Both live in the firmware, not the browser. On Windows 10: Settings &rarr; Update &amp; Security &rarr; Windows Security &rarr; Device security lists them as Security processor and Secure boot. On Windows 11, Windows Security is under Privacy &amp; security instead.</p></li>
           <li><h3>Still on Windows 10?</h3><p>Free security updates ended in October 2025. Whatever the check says there is a route: an upgrade if it passes, a refurbished business machine if it does not, or Extended Security Updates while you decide &mdash; the three below, or <a href="/windows-10-end-of-life/">the full Windows 10 page</a>.</p></li>
         </ul>
         <!-- Jobs pass 4 (13 Sep 2026): the "cannot run Windows 11" outcome now routes to the upgrade service and the
@@ -14701,7 +14704,7 @@ SPECCHECK_APP_BAND = '''    <section class="section section--alt" aria-label="Ke
               <p class="w11-tag mono" style="margin:0;font-size:.7rem;letter-spacing:.06em;color:var(--cyan-soft,#6cc4f5)" hidden>LIKELY YOUR ROUTE</p>
               <p class="eyebrow mono" style="margin:0">// NOT READY TO CHANGE</p>
               <h3 style="margin:0;font-size:1.1rem">Stay safe on Windows 10 for now</h3>
-              <p style="margin:0;font-size:.92rem;line-height:1.55;color:var(--ink-2,#dfe9f7)">Microsoft&rsquo;s Extended Security Updates keep Windows 10 patched until 12 October 2027, free with a Microsoft account. We enrol it for you if the button will not appear.</p>
+              <p style="margin:0;font-size:.92rem;line-height:1.55;color:var(--ink-2,#dfe9f7)">Microsoft&rsquo;s Extended Security Updates keep Windows 10 patched until 12 October 2027, free when you back up your PC settings with a Microsoft account. We enrol it for you if the button will not appear.</p>
               <p style="margin:auto 0 0"><a class="button secondary" href="/windows-10-esu-free-enrolment-help/">Windows 10 ESU help</a></p>
             </div>
           </div>
@@ -14764,9 +14767,9 @@ def computer_spec_checker():
       ("Is any of this information sent to you?",
        "No &mdash; none of it. Everything on this page is read by <em>your own browser</em>, shown only to you, and vanishes when you close the tab. The only way we ever see your specs is if you download the sheet and choose to send it to us."),
       ("How much RAM do I actually have?",
-       "This page shows the rounded figure your browser is allowed to share, and browsers cap that at 8&nbsp;GB even on a machine with far more. For the exact amount on Windows, press <strong>Ctrl+Shift+Esc</strong> for Task Manager, choose <strong>Performance</strong>, then <strong>Memory</strong>. Or install the free <a href=\"/free-pc-health-check/\">365 PC Manager</a>, which shows the amount fitted and how much is in use."),
+       "This page shows the rounded figure your browser is allowed to share, and browsers stop at 32&nbsp;GB (older ones at 8&nbsp;GB), so a well-equipped machine can show less than is fitted. For the exact amount on Windows, press <strong>Ctrl+Shift+Esc</strong> for Task Manager, choose <strong>Performance</strong>, then <strong>Memory</strong>. Or install the free <a href=\"/free-pc-health-check/\">365 PC Manager</a>, which shows the amount fitted and how much is in use."),
       ("Can this page tell me whether my PC can run Windows 11?",
-       "Not on its own &mdash; a browser cannot read the two things that decide it, <strong>TPM 2.0</strong> and <strong>Secure Boot</strong>. Windows can: open Settings &rarr; Privacy &amp; security &rarr; Windows Security &rarr; Device security, where they appear as Security processor and Secure boot. Our <a href=\"/windows-11-upgrade-service/\">Windows 11 upgrade service</a> checks it for free and does the upgrade properly if it passes; if it falls short, a <a href=\"/dell-hardware/\">refurbished business Dell</a> from &pound;510 with your data moved across is the sensible replacement, and <a href=\"/windows-10-esu-free-enrolment-help/\">Windows 10 ESU</a> keeps it patched until October 2027 while you decide."),
+       "Not on its own &mdash; a browser cannot read the two things that decide it, <strong>TPM 2.0</strong> and <strong>Secure Boot</strong>. Windows can: open Settings &rarr; Update &amp; Security (Privacy &amp; security on Windows 11) &rarr; Windows Security &rarr; Device security, where they appear as Security processor and Secure boot. Our <a href=\"/windows-11-upgrade-service/\">Windows 11 upgrade service</a> checks it for free and does the upgrade properly if it passes; if it falls short, a <a href=\"/dell-hardware/\">refurbished business Dell</a> from &pound;510 with your data moved across is the sensible replacement, and <a href=\"/windows-10-esu-free-enrolment-help/\">Windows 10 ESU</a> keeps it patched until October 2027 while you decide."),
       ("Is it safe to run the benchmark on this page?",
        "Yes. It runs for about twenty seconds inside your browser using ordinary web features, works the processor, memory, graphics and storage hard for a moment, and installs nothing. The fan may spin up briefly, which is normal. Your score stays on your device unless you choose to download the score card or share it."),
       ("Why can&rsquo;t it show my exact RAM, CPU model or temperatures?",
@@ -14841,7 +14844,7 @@ def pc_benchmark():
     slug = "pc-benchmark"
     desc = "Free PC benchmark — six real tests of your computer's processor (single & all cores), encryption, memory, graphics and storage, live in your browser. Clear score out of 100, comparison scale, downloadable score card and honest upgrade advice. From 365 Techies, Dorset."
     faqs = [
-      ("How does a browser benchmark work?", "It runs six real workloads in your browser &mdash; heavy maths on one core and then across all of them (using web workers), hardware-accelerated SHA-256 encryption, large memory copies, a WebGL graphics stress test and browser storage reads and writes &mdash; each with a live readout as it runs. It&rsquo;s indicative rather than lab-grade, but it gives an honest picture of how your machine is performing."),
+      ("How does a browser benchmark work?", "It runs six real workloads in your browser &mdash; heavy maths on one core and then across all of them (using web workers), hardware-accelerated SHA-256 hashing (the maths behind secure websites), large memory copies, a WebGL graphics stress test and browser storage reads and writes &mdash; each with a live readout as it runs. It&rsquo;s indicative rather than lab-grade, but it gives an honest picture of how your machine is performing."),
       ("Can I share or keep my score?", "Yes &mdash; download your score card as an image to share or keep, or copy your results as text. Your browser also remembers your previous run, so when you benchmark again (say, after a tune-up or an SSD upgrade) you&rsquo;ll see exactly how many points you gained."),
       ("Is it safe? Will it harm my computer?", "Completely safe &mdash; it simply makes your computer work hard for about 20 seconds, like opening a big spreadsheet or playing a game. The fan may spin up briefly; nothing is installed, sent or stored."),
       ("Why is my score different from other benchmark tools?", "Every benchmark uses its own scale, and ours is a 0&ndash;100 scale of our own &mdash; so don&rsquo;t compare the number with native suites like Geekbench or Cinebench. Compare your machine against our bands, or re-run it after a tune-up to see the difference."),
@@ -14871,7 +14874,7 @@ def pc_benchmark():
       faq_html(faqs),
       tools_strip(["pcmapp", "gpubench", "speccheck", "pcbuild"], title="More free computer check-ups", alt=False),
       cta("Not happy with your score?",
-          "We speed up slow computers every week &mdash; deep tune-ups, SSD and memory upgrades, honest advice, no-fix-no-fee and a 12-month warranty. Or start fresh with a refurbished business-grade Dell from &pound;510.",
+          "We speed up slow computers &mdash; deep tune-ups, SSD and memory upgrades, honest advice, no-fix-no-fee and a 12-month warranty. Or start fresh with a refurbished business-grade Dell from &pound;510.",
           primary=("Make Mine Faster", "/contact/"), secondary=("Refurbished Dells", "/dell-hardware/")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
@@ -15400,7 +15403,7 @@ def free_tools_hub():
     content = "\n".join([
       hero(bc("Free Tools"), "// FREE IT TOOLS &middot; NO DOWNLOAD",
            'Free IT tools that run in your <em class="grad grad--cyan">browser</em>',
-           f"365 Techies offers {pos - 1} free IT tools that run entirely in your web browser &mdash; no download, no sign-up, nothing installed, and your passwords and files never leave your device. <a href=\"/website-checker/\">Check your website</a>, <a href=\"/broadband-speed-checker/\">test your broadband</a>, <a href=\"/password-breach-checker/\">see if a password&rsquo;s leaked</a>, <a href=\"/pc-benchmark/\">benchmark your PC</a> and more.",
+           f"365 Techies offers {pos - 1} free IT tools, almost all of which run entirely in your web browser &mdash; no download, no sign-up, nothing installed, and your passwords and files never leave your device. <a href=\"/website-checker/\">Check your website</a>, <a href=\"/broadband-speed-checker/\">test your broadband</a>, <a href=\"/password-breach-checker/\">see if a password&rsquo;s leaked</a>, <a href=\"/pc-benchmark/\">benchmark your PC</a> and more.",
            cta1=("Talk to a Techie", "/contact/"), cta2=("See Plans &amp; Prices", "/monthly-it-support/"),
            chips=["100% free","No download","Built in Dorset"], scene=HERO_SCENES.get("tools")),
       '''    <section class="section" aria-label="Search" style="padding-top:0">
