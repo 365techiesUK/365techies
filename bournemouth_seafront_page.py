@@ -87,7 +87,7 @@ _LEVELS = [
     ("trip", "lv-trip", "The Trip Back", "A boatload too many in a swell."),
     ("stunt", "lv-stunt", "The Stunt Stage", "A ramp course off Boscombe: airtime, height and rotation all score."),
     ("dolphins", "lv-dolphins-v2", "Dolphin Watch", "Find the pod, go gently, and they ride your bow."),
-    ("surfer", "lv-surf", "Pier Surf", "Paddle out beside Bournemouth Pier, duck the whitewater and catch three waves."),
+    ("surfer", "lv-surf-v2", "Pier Surf", "Paddle out beside Bournemouth Pier, duck the whitewater and catch three waves."),
     ("free", "lv-free", "Free ride", "Open water, nothing chasing you. Anywhere along the real coast."),
 ]
 
