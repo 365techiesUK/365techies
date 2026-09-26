@@ -22724,18 +22724,40 @@ def _printer_page_extras(d):
 # DELL_MACHINES with its guide price beside the real photo and the three buying steps; the page's own
 # sections, trust line and FAQ unchanged; three buyers' reviews. Components and styles are the hub's
 # (DELL_HUB_CSS, scoped to .dh), so no stylesheet bump.
-REFURB_LAPTOPS_V2 = 'refurbished-dell-laptops-bournemouth'
-_RL_TIERS = [
-    ("Latitude 3000", "hp-c-fix", "Latitude 3000 series", "Everyday budget laptops", "/refurbished-dell-latitude-3000/", "everyday"),
-    ("Latitude 5000", "hp-c-care", "Latitude 5000 series", "The business workhorse most people should buy", "/refurbished-dell-latitude-5000/", "the workhorse"),
-    ("Latitude 7000", "hp-c-biz", "Latitude 7000 series", "Premium ultralights, easy to carry", "/refurbished-dell-latitude-7000/", "premium ultralight"),
-]
+REFURB_V2 = {
+    'refurbished-dell-laptops-bournemouth': dict(
+        kind='laptop', tile_icon='laptop', noun='Latitudes', h2='Pick your Latitude', left='photo', uk=True,
+        tiers=[
+            ("Latitude 3000", "hp-c-fix", "Latitude 3000 series", "Everyday budget laptops", "/refurbished-dell-latitude-3000/", "everyday"),
+            ("Latitude 5000", "hp-c-care", "Latitude 5000 series", "The business workhorse most people should buy", "/refurbished-dell-latitude-5000/", "the workhorse"),
+            ("Latitude 7000", "hp-c-biz", "Latitude 7000 series", "Premium ultralights, easy to carry", "/refurbished-dell-latitude-7000/", "premium ultralight"),
+        ],
+        other=("monitor", "Rather a desktop?", "OptiPlex desktops, the same care", "desktop", "/refurbished-dell-desktops-dorset/")),
+    'refurbished-dell-desktops-dorset': dict(
+        kind='desktop', tile_icon='monitor', noun='OptiPlex desktops', h2='Pick your OptiPlex', left='sizes', uk=False,
+        tiers=[
+            ("OptiPlex 3000", "hp-c-fix", "OptiPlex 3000 series", "Entry business desktops, great value", "/refurbished-dell-optiplex-3000/", "entry"),
+            ("OptiPlex 5000", "hp-c-care", "OptiPlex 5000 series", "Mainstream, with room to grow", "/refurbished-dell-optiplex-5000/", "mainstream"),
+            ("OptiPlex 7000", "hp-c-biz", "OptiPlex 7000 series", "Premium, for heavier work", "/refurbished-dell-optiplex-7000/", "premium"),
+        ],
+        other=("laptop", "Rather a laptop?", "Business-grade Latitudes, the same care", "laptop", "/refurbished-dell-laptops-bournemouth/")),
+}
+REFURB_LAPTOPS_V2 = 'refurbished-dell-laptops-bournemouth'   # (kept: the first page to get this layout)
 RL_CSS = """
 .rl-groups{display:grid;gap:1.1rem;margin-top:1.2rem}
 .rl-group__h{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin:0 0 .5rem;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan-soft)}
 .rl-group__h a{color:var(--hp-soft);text-decoration:none;letter-spacing:.06em;text-transform:none;font-family:var(--font-body);font-size:.82rem;font-weight:600}
 .rl-group__h a:hover{color:#fff}
 .rl-group .dh-machines{margin:0}
+.rl-size{list-style:none;margin:.2rem 0 0;padding:0;display:grid;gap:.6rem}
+.rl-size li{display:grid;grid-template-columns:92px 1fr;grid-template-rows:auto auto;column-gap:.9rem;align-items:center;padding:.8rem .9rem;border-radius:16px;border:1px solid var(--hp-edge);background:var(--hp-card)}
+.rl-size__art{grid-row:1 / span 2}
+.rl-size__art svg{display:block;width:92px;height:auto}
+.rl-size b{font-family:var(--font-display);font-weight:600;font-size:1rem;color:var(--hp-ink)}
+.rl-size li > span:last-child{font-size:.84rem;line-height:1.45;color:var(--hp-soft)}
+.rl-size__more{margin:.8rem 0 0;font-size:.86rem;color:var(--hp-soft)}
+.rl-size__more a{color:var(--cyan-soft);font-weight:600}
+.rl-sizes .dh-kicker{margin-bottom:.6rem}
 @media (max-width:767px){
   .rl-clamp .prose{position:relative;max-height:24rem;overflow:hidden}
   .rl-clamp .prose::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6rem;background:linear-gradient(rgba(7,13,34,0),var(--bg))}
@@ -22763,18 +22785,38 @@ def _rl_from(series):
     return min(m[5] for m in DELL_MACHINES if m[2] == series)
 
 
-def refurb_laptops_v2(d, crumbs):
-    """-> (hero_html, top_html, reviews_html) for the refurbished Dell laptops page."""
+# OptiPlex bodies, drawn to relative scale beside a 22" monitor outline (the desktops page's own words)
+_RL_SIZES = [
+    ("Micro", "Tiny: hides behind a monitor or clips to the back of it. For a tidy home office or a shop counter.", (14, 14)),
+    ("Small Form Factor", "A slim upright box that still takes a few extras. The all-rounder for most desks.", (11, 30)),
+    ("Tower", "The roomiest and easiest to expand, for more demanding software or extra drives.", (16, 40)),
+]
+
+
+def _rl_size_svg(w, h):
+    return ('<svg viewBox="0 0 90 56" aria-hidden="true" focusable="false">'
+            '<rect x="4" y="4" width="54" height="34" rx="3" fill="none" stroke="rgba(160,190,230,.45)" stroke-width="1.6"/>'
+            '<path d="M31 38v8M22 47h18" stroke="rgba(160,190,230,.45)" stroke-width="1.6" stroke-linecap="round"/>'
+            f'<rect x="{84 - w}" y="{50 - h}" width="{w}" height="{h}" rx="2" fill="rgba(121,208,255,.18)" stroke="#79d0ff" stroke-width="1.6"/>'
+            f'<circle cx="{84 - w / 2}" cy="{50 - h + 4}" r="1.4" fill="#39d353"/>'
+            '<path d="M2 50h86" stroke="rgba(160,190,230,.3)" stroke-width="1.2"/></svg>')
+
+
+def refurb_v2(d, crumbs):
+    """-> (hero_html, top_html, reviews_html) for a refurbished Dell range page (laptops or desktops)."""
+    cfg = REFURB_V2[d['slug']]
     tiles = []
-    for series, c, title, blurb, href, _short in _RL_TIERS:
-        tiles.append(f'            <a class="hp-intent {c}" href="{href}"><span class="hp-ico">{_dh_ico("laptop")}</span>'
+    for series, c, title, blurb, href, _short in cfg['tiers']:
+        tiles.append(f'            <a class="hp-intent {c}" href="{href}"><span class="hp-ico">{_dh_ico(cfg["tile_icon"])}</span>'
                      f'<span class="hp-intent__t">{title}</span><span class="hp-intent__d">{blurb}</span>'
                      f'<span class="hp-intent__p">FROM &pound;{_rl_from(series)}</span></a>')
-    desk_from = min(m[5] for m in DELL_MACHINES if m[1] == 'desktop')
-    tiles.append(f'            <a class="hp-intent hp-c-buy" href="/refurbished-dell-desktops-dorset/"><span class="hp-ico">{_dh_ico("monitor")}</span>'
-                 f'<span class="hp-intent__t">Rather a desktop?</span><span class="hp-intent__d">OptiPlex desktops, the same care</span>'
-                 f'<span class="hp-intent__p">FROM &pound;{desk_from}</span></a>')
-    lap_from = min(m[5] for m in DELL_MACHINES if m[1] == 'laptop')
+    o_icon, o_title, o_blurb, o_kind, o_href = cfg['other']
+    o_from = min(m[5] for m in DELL_MACHINES if m[1] == o_kind)
+    tiles.append(f'            <a class="hp-intent hp-c-buy" href="{o_href}"><span class="hp-ico">{_dh_ico(o_icon)}</span>'
+                 f'<span class="hp-intent__t">{o_title}</span><span class="hp-intent__d">{o_blurb}</span>'
+                 f'<span class="hp-intent__p">FROM &pound;{o_from}</span></a>')
+    k_from = min(m[5] for m in DELL_MACHINES if m[1] == cfg['kind'])
+    tail = "We bring it to you to try, or deliver UK-wide." if cfg['uk'] else "We bring it to you and set it up."
     hero_html = f'''    <style>{" ".join(l.strip() for l in (DELL_HUB_CSS + RL_CSS).strip().splitlines())}</style>
     <section class="page-hero dh dh-hero" aria-label="Introduction">
       <div class="dh-hero__grid">
@@ -22782,7 +22824,7 @@ def refurb_laptops_v2(d, crumbs):
           <nav class="breadcrumb" aria-label="Breadcrumb">{crumbs}</nav>
           <p class="eyebrow mono">{d['eyebrow']}</p>
           <h1>{d['h1']}</h1>
-          <p class="lede">Tested ex-business Latitudes from &pound;{lap_from}, each with a new 1TB Samsung 990&nbsp;PRO, set up for you and backed by our 5-year guarantee on a 365 support plan. We bring it to you to try, or deliver UK-wide.</p>
+          <p class="lede">Tested ex-business {cfg['noun']} from &pound;{k_from}, each with a new 1TB Samsung 990&nbsp;PRO, set up for you and backed by our 5-year guarantee on a 365 support plan. {tail}</p>
           <div class="page-hero__cta">
             <a href="tel:+441202775566" class="button primary button--lg">Call 01202 775566</a>
             <a href="/dell-hardware/#pick" class="button secondary button--lg">Pick a machine</a>
@@ -22800,7 +22842,7 @@ def refurb_laptops_v2(d, crumbs):
     </section>'''
 
     groups = []
-    for series, _c, title, _b, href, short in _RL_TIERS:
+    for series, _c, title, _b, href, short in cfg['tiers']:
         ms = sorted((m for m in DELL_MACHINES if m[2] == series), key=lambda m: (m[5], m[3]))
         rows = "\n".join(
             f'              <li><a href="/dell-hardware/?model={m[0]}#pick"><b>{m[3]}</b><small>{m[4]}</small><em>&pound;{m[5]}<span>GUIDE</span></em></a></li>'
@@ -22811,6 +22853,29 @@ def refurb_laptops_v2(d, crumbs):
 {rows}
             </ul>
           </div>''')
+    steps = '''          <ol class="dh-steps">
+            <li><b>Pick a machine</b><span>Online, in about a minute</span></li>
+            <li><b>We check and quote</b><span>Availability and the exact spec, before you commit</span></li>
+            <li><b>We bring it to you</b><span>Try it at home or work, set up and ready</span></li>
+          </ol>'''
+    if cfg['left'] == 'photo':
+        left = f'''        <figure class="dh-photo">
+          <a class="dh-photo__frame" href="/dell-hardware/#spin"><img src="/images/spin/latitude-5520/spin_00.webp" width="1400" height="787" loading="lazy" decoding="async" alt="A refurbished Dell Latitude 5520 laptop, open, seen from the front with Windows 11 on the screen" /></a>
+          <figcaption>An example machine: a refurbished Latitude 5520 we photographed on 18 September 2026. <a href="/dell-hardware/#spin">Turn it round in 360&deg;</a></figcaption>
+{steps}
+        </figure>'''
+    else:
+        cards = "\n".join(
+            f'            <li><span class="rl-size__art">{_rl_size_svg(w, h)}</span><b>{name}</b><span>{blurb}</span></li>'
+            for name, blurb, (w, h) in _RL_SIZES)
+        left = f'''        <div class="dh-photo rl-sizes">
+          <p class="dh-kicker">Every OptiPlex comes in three sizes</p>
+          <ul class="rl-size">
+{cards}
+          </ul>
+          <p class="rl-size__more">Not sure which fits your desk? <a href="/dell-optiplex-micro-sff-tower-which-to-buy/">Micro vs SFF vs Tower, explained</a></p>
+{steps}
+        </div>'''
     top_html = f'''    <section class="dh dh-sec dh-proof" aria-label="What every refurbished Dell includes">
       <div class="dh-in">
         <ul class="dh-facts">
@@ -22824,18 +22889,10 @@ def refurb_laptops_v2(d, crumbs):
     </section>
     <section class="dh dh-sec" id="models" aria-labelledby="models-title">
       <div class="dh-in dh-buy">
-        <figure class="dh-photo">
-          <a class="dh-photo__frame" href="/dell-hardware/#spin"><img src="/images/spin/latitude-5520/spin_00.webp" width="1400" height="787" loading="lazy" decoding="async" alt="A refurbished Dell Latitude 5520 laptop, open, seen from the front with Windows 11 on the screen" /></a>
-          <figcaption>An example machine: a refurbished Latitude 5520 we photographed on 18 September 2026. <a href="/dell-hardware/#spin">Turn it round in 360&deg;</a></figcaption>
-          <ol class="dh-steps">
-            <li><b>Pick a machine</b><span>Online, in about a minute</span></li>
-            <li><b>We check and quote</b><span>Availability and the exact spec, before you commit</span></li>
-            <li><b>We bring it to you</b><span>Try it at home or work, set up and ready</span></li>
-          </ol>
-        </figure>
+{left}
         <div>
           <p class="dh-kicker">Guide prices &middot; set-up included</p>
-          <h2 class="dh-h2" id="models-title">Pick your Latitude</h2>
+          <h2 class="dh-h2" id="models-title">{cfg['h2']}</h2>
           <p class="dh-lede">Tap a machine to check it&rsquo;s available and get a quote. Not sure which? Tell us what you&rsquo;ll use it for and we&rsquo;ll match you &mdash; including when the cheaper one is the better buy.</p>
           <div class="rl-groups">
 {chr(10).join(groups)}
@@ -22857,6 +22914,9 @@ def refurb_laptops_v2(d, crumbs):
       </div>
     </section>'''
     return hero_html, top_html, reviews_html
+
+
+refurb_laptops_v2 = refurb_v2   # (old name)
 
 
 def build_new_page(d):
@@ -22950,8 +23010,8 @@ def build_new_page(d):
     _hero = hero(_bch, d['eyebrow'], d['h1'], hero_trust(d['lede']),
            cta1=tuple(d['primaryCta']), cta2=tuple(d['secondaryCta']), chips=list(d['chips']),
            scene=HERO_SCENES.get(_PACK_SCENE.get(d['slug'])))
-    if d['slug'] == REFURB_LAPTOPS_V2:   # 26 Sep 2026: models and prices up front, same H1 and sections
-        _hero, _rl_top, _rl_revs = refurb_laptops_v2(d, _bch)
+    if d['slug'] in REFURB_V2:   # 26 Sep 2026: models and prices up front, same H1 and sections
+        _hero, _rl_top, _rl_revs = refurb_v2(d, _bch)
         toc, sections = "", _rl_top + "\n" + sections + "\n" + RL_FOLD_JS + "\n" + _rl_revs
     content = "\n".join(x for x in [
       _hero,
