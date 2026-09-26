@@ -1234,22 +1234,7 @@ SEO_WAVE9_PAGES = [
                         'connects directly.</p>'},
                {'eyebrow': '/05 &mdash; THE FALLBACK',
                 'h2': 'Classic Outlook still works, and it is one toggle away',
-                'html': '<p>If the new Outlook will not take the account however carefully the '
-                        'settings are entered &mdash; it happens, and it is not you &mdash; switch '
-                        'back. The toggle at the top-right of the new Outlook returns you to '
-                        'classic Outlook, which adds provider accounts the way it always has and is '
-                        'still supported. Add the Virgin account there with the same manual IMAP '
-                        'settings and the same app password; classic Outlook needs it too. We have '
-                        'a separate guide to the switch, including what to do if the toggle has '
-                        'gone missing.</p><p>Two other things that often unstick a stubborn '
-                        'account. If it added but shows nothing, remove it and add it again from '
-                        'scratch rather than editing; the new Outlook hides half of an '
-                        'account&rsquo;s settings and editing rarely reaches the wrong one. And if '
-                        'the account adds but cannot send, the outgoing server is the culprit '
-                        'almost every time: port 465, SSL, and sign-in required with the app '
-                        'password, exactly as Virgin states.</p><p>If you would rather not spend an '
-                        'evening on it, this is a fifteen-minute job for us over a remote session, '
-                        'while you watch and keep the password to yourself.</p>'},
+                'html': '<p>If the new Outlook will not take the account however carefully the settings are entered &mdash; it happens, and it is not you &mdash; switch back. The toggle at the top-right of the new Outlook returns you to classic Outlook, which adds provider accounts the way it always has and is still supported. Add the Virgin account there with the same manual IMAP settings and the same app password; classic Outlook needs it too. We have a separate guide to the switch, including what to do if the toggle has gone missing.</p><p>Two other things that often unstick a stubborn account. If it added but shows nothing, remove it and add it again from scratch rather than editing; the new Outlook hides half of an account&rsquo;s settings and editing rarely reaches the wrong one. And if the account adds but cannot send, the outgoing server is the likely culprit: port 465, SSL, and sign-in required with the app password, exactly as Virgin states.</p><p>If you would rather not spend an evening on it, this is a fifteen-minute job for us over a remote session, while you watch and keep the password to yourself.</p>'},
                {'eyebrow': '/06 &mdash; THE BIGGER QUESTION',
                 'h2': 'Virgin email is moving to Junara: keep paying, or move?',
                 'html': '<p>Once Outlook is working again, spend five minutes on this, because '

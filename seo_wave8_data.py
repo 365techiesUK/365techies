@@ -628,33 +628,7 @@ SEO_WAVE8_PAGES = [
   'sections': [
    {'eyebrow': '/01 &mdash; WHY NOW',
     'h2': 'Why an account that worked for years stops on the phone',
-    'html': '<p>An email app on a phone does not look up how to reach your provider every '
-            'time. It asks once, when the account is added, and stores the answer: which '
-            'server to talk to, on which port, with which kind of security, using which '
-            'method. Then it uses that answer for years. Providers, meanwhile, change their '
-            'side &mdash; retiring old server names, switching off the unencrypted '
-            'connections that were normal a decade ago, moving the whole mail service to a '
-            'new platform &mdash; and TalkTalk has done all of those at one time or another. '
-            'A phone set up under the old instructions keeps knocking at a door that has '
-            'been bricked up.</p><p>Three things account for nearly every TalkTalk case on '
-            'Android.</p><ul><li><strong>The phone was set up with POP, not IMAP.</strong> '
-            'Older phones and older versions of the mail apps guessed at settings, and often '
-            'chose the old POP method. POP downloads mail to one device and can remove it '
-            'from the server, which is why email sometimes vanishes from the computer after '
-            'the phone has fetched it, or the other way round. It also stops working the '
-            'moment the provider retires the old server name it was pointed '
-            'at.</li><li><strong>The password changed, and the phone is still trying the old '
-            'one.</strong> TalkTalk has required password resets over the years, and if the '
-            'phone keeps presenting the old password it can lock the account for a while '
-            '&mdash; which then breaks the computer too, for an hour or so, and sends you '
-            'looking in the wrong place.</li><li><strong>The phone itself stopped the app '
-            'checking.</strong> Android is aggressive about battery. A mail app that has been '
-            'put to sleep by battery optimisation, or an account whose sync has been switched '
-            'off, simply stops fetching, and no server setting fixes that.</li></ul><p>One '
-            'more thing worth knowing: addresses ending <code>@talktalk.net</code>, '
-            '<code>@tiscali.co.uk</code> and <code>@lineone.net</code> are all the same '
-            'TalkTalk Mail service underneath, so everything on this page applies to all of '
-            'them.</p>'},
+    'html': '<p>An email app on a phone does not look up how to reach your provider every time. It asks once, when the account is added, and stores the answer: which server to talk to, on which port, with which kind of security, using which method. Then it uses that answer for years. Providers, meanwhile, change their side &mdash; retiring old server names, switching off the unencrypted connections that were normal a decade ago, moving the whole mail service to a new platform &mdash; and TalkTalk has done all of those at one time or another. A phone set up under the old instructions keeps knocking at a door that has been bricked up.</p><p>Three things account for many TalkTalk cases on Android.</p><ul><li><strong>The phone was set up with POP, not IMAP.</strong> Older phones and older versions of the mail apps guessed at settings, and often chose the old POP method. POP downloads mail to one device and can remove it from the server, which is why email sometimes vanishes from the computer after the phone has fetched it, or the other way round. It also stops working the moment the provider retires the old server name it was pointed at.</li><li><strong>The password changed, and the phone is still trying the old one.</strong> TalkTalk has required password resets over the years, and if the phone keeps presenting the old password it can lock the account for a while &mdash; which then breaks the computer too, for an hour or so, and sends you looking in the wrong place.</li><li><strong>The phone itself stopped the app checking.</strong> Android is aggressive about battery. A mail app that has been put to sleep by battery optimisation, or an account whose sync has been switched off, simply stops fetching, and no server setting fixes that.</li></ul><p>One more thing worth knowing: addresses ending <code>@talktalk.net</code>, <code>@tiscali.co.uk</code> and <code>@lineone.net</code> are all the same TalkTalk Mail service underneath, so everything on this page applies to all of them.</p>'},
    {'eyebrow': '/02 &mdash; PROVE WHICH SIDE',
     'h2': 'Two minutes that tell you whether it is the account or the phone',
     'html': '<p>Before touching any settings, find out where the fault is. Open a web browser '
@@ -724,22 +698,7 @@ SEO_WAVE8_PAGES = [
             'because both then look at the same mailbox on the server.</p>'},
    {'eyebrow': '/05 &mdash; THE BIGGER QUESTION',
     'h2': 'Is a broadband provider&rsquo;s email worth keeping?',
-    'html': '<p>Once the phone is working again, this is worth five minutes&rsquo; thought. '
-            'An email address that belongs to a broadband provider is tied to the broadband '
-            'account. Providers vary in what they do with the mailbox if you leave, and '
-            'policies change, so the honest advice is to check TalkTalk&rsquo;s current terms '
-            'rather than assume &mdash; but the general rule with any provider&rsquo;s email '
-            'is the same: it is not really yours, and it can become a reason you cannot '
-            'switch broadband even when you want to.</p><p>The alternative is an address '
-            'that is independent of who supplies your internet &mdash; Gmail or Outlook.com '
-            'for most people &mdash; with the old TalkTalk address kept alive and forwarding '
-            'into it while friends, banks and online shops are gradually moved across. It '
-            'does not have to happen in one go, and nothing needs to be lost. We have written '
-            'up the same move for other providers, and the pattern is identical; we also do '
-            'it for people, remotely while you watch, and set the phone up properly at the '
-            'same time.</p><p>None of that is urgent. Get the phone working first. But if '
-            'this is the second or third time the provider&rsquo;s email has stopped on a '
-            'device, that is the provider telling you something.</p>'}],
+    'html': '<p>Once the phone is working again, this is worth five minutes&rsquo; thought. An email address that belongs to a broadband provider is tied to the broadband account. If you leave TalkTalk, the mailbox now only carries on if you subscribe to TalkTalk&rsquo;s paid Everymail service &mdash; and the general rule with any provider&rsquo;s email is the same: it is not really yours, and it can become a reason you cannot switch broadband even when you want to.</p><p>The alternative is an address that is independent of who supplies your internet &mdash; Gmail or Outlook.com for most people &mdash; with the old TalkTalk address kept alive and forwarding into it while friends, banks and online shops are gradually moved across. It does not have to happen in one go, and nothing needs to be lost. We have written up the same move for other providers, and the pattern is identical; we also do it for people, remotely while you watch, and set the phone up properly at the same time.</p><p>None of that is urgent. Get the phone working first. But if this is the second or third time the provider&rsquo;s email has stopped on a device, that is the provider telling you something.</p>'}],
   'faqs': [
    {'q': 'What are the TalkTalk email settings for an Android phone?',
     'a': 'At the time of writing: choose IMAP, not POP; incoming server mail.talktalk.net on '
@@ -768,12 +727,7 @@ SEO_WAVE8_PAGES = [
          'works the same way. Either is better than an app that set the account up '
          'automatically years ago.'},
    {'q': 'Is TalkTalk email closing down?',
-    'a': 'We cannot point to an announcement that it is, and we would not want to guess. '
-         'What is always true of any broadband provider&rsquo;s email is that it belongs to '
-         'the broadband account rather than to you, and its future depends on the provider. '
-         'That is the reason, once the phone is working, to think about moving to an '
-         'independent address with the old one forwarding into it &mdash; gradually, with '
-         'nothing lost.'}],
+    'a': 'Not for current TalkTalk broadband customers &mdash; their email carries on as normal. But TalkTalk Mail has moved to Everymail, and former TalkTalk customers had to subscribe to keep their address: those who didn&rsquo;t lost the ability to send from 16 June 2026, and their accounts were closed, with all mail deleted, on 7 July 2026. What is always true of any broadband provider&rsquo;s email is that it belongs to the broadband account rather than to you, and its future depends on the provider. That is the reason, once the phone is working, to think about moving to an independent address with the old one forwarding into it &mdash; gradually, with nothing lost.'}],
   'chips': ['No fix, no fee', 'Rated 4.9 on Google', 'Trading since 1995'],
   'primaryCta': ['Get it looked at', '/contact/'],
   # 5 Sep 2026: the hand-off is to the SERVICE this visit is about, not a second phone link -

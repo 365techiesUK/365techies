@@ -397,13 +397,7 @@ SEO_WAVE7_PAGES = [{'slug': 'sage-instant-accounts-windows-11',
   'crumbName': 'Email After Acquisition',
   'eyebrow': '// BUSINESS IT',
   'h1': 'Taking over the email and domain after buying a business',
-  'lede': 'You have bought the business. Now you need the email working, and you have discovered '
-          'that nobody can quite say who holds the domain. It is one of the most common loose ends '
-          'in a small business sale, and it is very rarely a technical problem &mdash; it is a '
-          'question of who has which login, and whether they are still willing to answer the '
-          'phone. Here is how to work out what you actually acquired, what to ask the seller for '
-          'before you complete, and what your options are when the passwords have genuinely gone '
-          'missing.',
+  'lede': 'You have bought the business. Now you need the email working, and you have discovered that nobody can quite say who holds the domain. It is a common loose end in a small business sale, and it is very rarely a technical problem &mdash; it is a question of who has which login, and whether they are still willing to answer the phone. Here is how to work out what you actually acquired, what to ask the seller for before you complete, and what your options are when the passwords have genuinely gone missing.',
   'ctaHead': 'Bought a business and locked out of its email?',
   'ctaSub': 'We untangle domains and mailboxes for new owners across Bournemouth, Poole and Dorset '
             '&mdash; working out who holds what, and getting control back where it belongs. Call '
@@ -499,33 +493,7 @@ SEO_WAVE7_PAGES = [{'slug': 'sage-instant-accounts-windows-11',
                         'leverage.</p>'},
                {'eyebrow': '/05 &mdash; NO LOGINS',
                 'h2': 'When the seller genuinely cannot get in',
-                'html': '<p>This is the version of the problem we see most often when a new owner '
-                        'calls us. The domain was registered years ago by a web designer using '
-                        'their own account, or an IT provider set the mail platform up under their '
-                        'own provider account, or the only sign-in is a personal address the '
-                        'previous owner stopped using two phones ago. It is common, and it is '
-                        'often recoverable &mdash; and sometimes it is not, which is worth knowing '
-                        'early either way. Work through it in this order.</p><ul><li><strong>Ask, '
-                        'politely and early.</strong> Plenty of third parties hand things over '
-                        'without any fuss when a new owner approaches them properly, so start '
-                        'there rather than assuming the worst.</li><li><strong>Gather the evidence '
-                        'first.</strong> Some providers will look at a request like this and some '
-                        'will not, and it usually comes down to what you can show about the '
-                        'business&rsquo;s connection to the account. Pull the paperwork together '
-                        'before you start &mdash; old renewal invoices, the card that paid, '
-                        'correspondence, company records &mdash; because you will be asked for it '
-                        'and it is far harder to find later.</li><li><strong>Find the renewal '
-                        'date.</strong> A domain nobody is paying for eventually lapses and '
-                        'becomes available to anyone. Knowing the date turns a vague worry into a '
-                        'deadline you can plan around.</li><li><strong>Protect the day to day '
-                        'meanwhile.</strong> Even without full account access there are usually '
-                        'steps that keep mail reaching the business while the rest is '
-                        'untangled.</li></ul><p>If it turns into a dispute about ownership rather '
-                        'than a technical problem, that is your solicitor&rsquo;s ground, not '
-                        'ours. And in a small number of cases the pragmatic answer is a fresh '
-                        'domain and a planned change of address for customers &mdash; '
-                        'nobody&rsquo;s first choice, but better than an indefinite standstill. We '
-                        'will tell you plainly which of those you are looking at.</p>'}],
+                'html': '<p>This is the trickiest version of the problem. The domain was registered years ago by a web designer using their own account, or an IT provider set the mail platform up under their own provider account, or the only sign-in is a personal address the previous owner stopped using two phones ago. It is common, and it is often recoverable &mdash; and sometimes it is not, which is worth knowing early either way. Work through it in this order.</p><ul><li><strong>Ask, politely and early.</strong> Plenty of third parties hand things over without any fuss when a new owner approaches them properly, so start there rather than assuming the worst.</li><li><strong>Gather the evidence first.</strong> Some providers will look at a request like this and some will not, and it usually comes down to what you can show about the business&rsquo;s connection to the account. Pull the paperwork together before you start &mdash; old renewal invoices, the card that paid, correspondence, company records &mdash; because you will be asked for it and it is far harder to find later.</li><li><strong>Find the renewal date.</strong> A domain nobody is paying for eventually lapses and becomes available to anyone. Knowing the date turns a vague worry into a deadline you can plan around.</li><li><strong>Protect the day to day meanwhile.</strong> Even without full account access there are usually steps that keep mail reaching the business while the rest is untangled.</li></ul><p>If it turns into a dispute about ownership rather than a technical problem, that is your solicitor&rsquo;s ground, not ours. And in a small number of cases the pragmatic answer is a fresh domain and a planned change of address for customers &mdash; nobody&rsquo;s first choice, but better than an indefinite standstill. We will tell you plainly which of those you are looking at.</p>'}],
   'faqs': [{'q': 'How do I find out who a business domain is registered with?',
             'a': 'A public lookup will usually show which provider the domain is registered '
                  'through and when it is due for renewal, which is normally enough to know who you '
@@ -534,13 +502,7 @@ SEO_WAVE7_PAGES = [{'slug': 'sage-instant-accounts-windows-11',
                  'invoices in the business paperwork are frequently the quickest route to the '
                  'account itself. We can run those checks for you and explain what they show.'},
            {'q': 'The seller says the web designer holds the domain. What happens now?',
-            'a': 'In most cases a polite approach from the new owner settles it, and the designer '
-                 'either passes the account across or releases the domain. Where that does not '
-                 'happen, providers may consider a request like this, and it tends to rest on '
-                 'evidence linking the business to the account, so gather renewal invoices, '
-                 'payment records and correspondence before you start. If it becomes a dispute '
-                 'about who owns what, that is a matter for your solicitor rather than for us. '
-                 'Meanwhile, find the renewal date, because that is the clock you are working to.'},
+            'a': 'Often a polite approach from the new owner settles it, and the designer either passes the account across or releases the domain. Where that does not happen, providers may consider a request like this, and it tends to rest on evidence linking the business to the account, so gather renewal invoices, payment records and correspondence before you start. If it becomes a dispute about who owns what, that is a matter for your solicitor rather than for us. Meanwhile, find the renewal date, because that is the clock you are working to.'},
            {'q': 'Can we keep the same email addresses after buying the business?',
             'a': 'Almost always, yes, provided you end up in control of the domain. The addresses '
                  'themselves are only names on that domain, so once the domain sits in your '

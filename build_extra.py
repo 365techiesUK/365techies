@@ -23159,6 +23159,27 @@ def bt_outlook_v2(d, crumbs):
 EMAIL_MOVE_V2 = {VIRGIN_MOVE_V2: virgin_move_v2, JUNARA_SLUG: junara_v2, PLUSNET_MOVE_V2: plusnet_move_v2,
                  BT_OUTLOOK_V2: bt_outlook_v2}   # email pages with the intent-first first screen
 
+# 26 Sep 2026 (owner: "do all the email pages... just do the lot"): every Outlook / email help page gets the same
+# first screen as the Virgin, Plusnet and BT pages - two fixed choices (the page's own step helper, and our remote
+# fix) plus two picked for that page's problem, from email_tiles_data.py. A page without a step helper or closing
+# panel carries four tiles of its own there.
+from email_tiles_data import EMAIL_HERO_TILES
+_FIX_TILES = [("hp-c-fix", "book", "Fix it with me", "The steps on this page, one at a time", "FREE", "#fixflow"),
+              ("hp-c-care", "wrench", "Fix it for me", "We connect and sort it while you watch", "FROM &pound;20, AGREED FIRST", "#fix-help")]
+
+
+def email_fix_v2(d, crumbs):
+    own = [tuple(t) for t in EMAIL_HERO_TILES[d['slug']]]
+    full = len(own) == 2
+    cta2 = ("Fix it with me", "#fixflow") if full else tuple(d['secondaryCta'])
+    if cta2[1].startswith('tel:'):   # the first button is already the call
+        cta2 = ("Email help", "/email-support/")
+    return _email_hero(d, crumbs, d['lede'], cta2, (_FIX_TILES + own) if full else own), ""
+
+
+for _s in EMAIL_HERO_TILES:
+    EMAIL_MOVE_V2.setdefault(_s, email_fix_v2)
+
 
 def build_new_page(d):
     if d['slug'] == 'printer-disappeared-after-windows-update': d = _printer_page_extras(d)
