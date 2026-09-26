@@ -14,10 +14,13 @@ screenshots... like a premium page for the game or simulator")
 Laid out like a game's store page: a silent highlight loop beside the title, a facts strip, the nine
 levels as a picture gallery, the simulator with three silent loops, two stills and its own film, the
 trailer, then how to play and the spec. Every picture and clip is the game's own render:
-- media/lv-*.webp and hero-loop.mp4: the landscape trailer's CLEAN frames (365-efoil-game/tmp-tr201/
+- media/lv-*.webp and hero-loop-v2.mp4: the landscape trailer's CLEAN frames (365-efoil-game/tmp-tr201/
   film/final/out16 - rendered before captions were added), one per level. hero-poster = the loop's first frame.
 - media/sim-*.mp4 / .webp: the three ride-simulator Shorts and two stills from the ride-simulator film
   (tuning panel at 1:46, side-on instrument view at 1:51), captions included - they explain the physics.
+- v2 (26 Sep): the out16 dolphins shot was filmed at 0.55x, which the game shows with a skipped frame in ten
+  (judder). hero-loop-v2 and lv-dolphins-v2 use the smooth 0.5x take instead: out-dw2/cine16/S frames 1897-2068
+  (dolphins leaping alongside the RIB, pier and big wheel behind), per the game project.
 - media/trailer.mp4, ride-simulator.mp4: the finished films (music made in code, no licence), re-encoded
   for the web, preload="none" so they only download when someone presses play. When the owner uploads
   them to YouTube, swap these two for YouTube embeds and delete the files.
@@ -79,7 +82,7 @@ _LEVELS = [
     ("rescue", "lv-rescue", "Rescue mode", "Swimmers in trouble off the beach. Slow right down beside them."),
     ("trip", "lv-trip", "The Trip Back", "A boatload too many in a swell."),
     ("stunt", "lv-stunt", "The Stunt Stage", "A ramp course off Boscombe: airtime, height and rotation all score."),
-    ("dolphins", "lv-dolphins", "Dolphin Watch", "Find the pod, go gently, and they ride your bow."),
+    ("dolphins", "lv-dolphins-v2", "Dolphin Watch", "Find the pod, go gently, and they ride your bow."),
     ("free", "lv-free", "Free ride", "Open water, nothing chasing you. Anywhere along the real coast."),
 ]
 
@@ -239,7 +242,7 @@ def _body(crumbs):
           <div class="sfp-media">
             <div class="sfp-frame">
               <video class="sfp-auto" muted loop playsinline preload="none" poster="{_M}hero-poster.webp" aria-label="Highlights: the pier, the pirate raid, a stunt jump, the dolphins, a rescue and Old Harry Rocks">
-                <source src="{_M}hero-loop.mp4" type="video/mp4">
+                <source src="{_M}hero-loop-v2.mp4" type="video/mp4">
               </video>
               <span class="sfp-tag">Gameplay &middot; in your browser</span>
             </div>
