@@ -1390,6 +1390,11 @@ _wxp.register(_B365)
 # tools/bm-records/stats.json (Met Office MIDAS Open, Hurn, OGL); see the module header.
 import bournemouth_records_page as _rec
 _rec.register(_B365)
+# /bournemouth/games/seafront/ - the game's landing page, built here since 26 Sep 2026 so it carries the real site
+# header, footer and consent handling (owner: "make this page match all the other pages"). The game itself
+# (play/) is still deployed by the game project's tools/deploy-to-site.py. See the module header.
+import bournemouth_seafront_page as _sfl
+_sfl.register(_B365)
 
 
 # ============================================================================
