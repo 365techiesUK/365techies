@@ -220,3 +220,61 @@ def intent_tiles(tiles, indent="            "):
         indent + f'<a class="hp-intent {c}" href="{href}"><span class="hp-ico">{_dh_ico(i)}</span><span class="hp-intent__t">{t}</span>'
         f'<span class="hp-intent__d">{dd}</span><span class="hp-intent__p">{p}</span></a>'
         for c, i, t, dd, p, href in tiles)
+
+
+# ============================================ SHARED FIRST SCREEN (26 Sep 2026)
+# The intent-first first screen used across the site (homepage v3 standard): breadcrumb, H1, the page's own
+# lede, call first, the rating line, and four choice tiles beside it. build_extra's _email_hero is the same
+# markup; this copy lets build_pages / build_local pages use it without importing build_extra.
+def intent_hero(crumbs, eyebrow, h1, lede, cta1, cta2, tiles, question="What would you like to do?",
+                rating_note="Family-run since 1995 &middot; no fix, no fee"):
+    css = " ".join(l.strip() for l in DELL_HUB_CSS.strip().splitlines())
+    return f'''    <style>{css}</style>
+    <section class="page-hero dh dh-hero" aria-label="Introduction">
+      <div class="dh-hero__grid">
+        <div>
+          <nav class="breadcrumb" aria-label="Breadcrumb">{crumbs}</nav>
+          <p class="eyebrow mono">{eyebrow}</p>
+          <h1>{h1}</h1>
+          <p class="lede">{lede}</p>
+          <div class="page-hero__cta">
+            <a href="{cta1[1]}" class="button primary button--lg">{cta1[0]}</a>
+            <a href="{cta2[1]}" class="button secondary button--lg">{cta2[0]}</a>
+          </div>
+          <a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Rated 4.9 on Google</strong></span><span>{rating_note}</span></a>
+          <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
+        </div>
+        <nav class="hp-intents" aria-label="{question}">
+          <p class="hp-intents__q">{question}</p>
+          <div class="hp-intents__grid">
+{intent_tiles(tiles)}
+          </div>
+        </nav>
+      </div>
+    </section>'''
+
+
+def proof_strip(items):
+    """Four facts under the first screen: (colour class, big figure, small line)."""
+    lis = "\n".join(f'          <li class="{c}"><b>{b}</b><span>{s}</span></li>' for c, b, s in items)
+    return f'''    <section class="dh dh-sec dh-proof" aria-label="Why people choose us">
+      <div class="dh-in">
+        <ul class="dh-facts">
+{lis}
+        </ul>
+      </div>
+    </section>'''
+
+
+def quotes_block(kicker, h2, *names):
+    """Three review cards from reviews_data (the build checks every quote against it)."""
+    return f'''    <section class="dh dh-sec" aria-label="Reviews">
+      <div class="dh-in">
+        <p class="dh-kicker">{kicker}</p>
+        <h2 class="dh-h2">{h2}</h2>
+        <div class="dh-quotes">
+{_dell_hub_quotes(*names)}
+        </div>
+        <p style="margin:1.1rem 0 0"><a class="dh-link" href="/reviews/">Read more reviews &#8594;</a></p>
+      </div>
+    </section>'''

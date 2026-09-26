@@ -9,7 +9,7 @@ from office_cluster import _office_cluster_section
 from tool_seo_data import TOOL_TITLES, TOOL_SEO
 from snippets_data import SNIPPETS
 from dashboard_promo import plan_band as _dash_band
-from hub_ui import DELL_HUB_CSS, _dh_ico, _dell_hub_quotes   # intent-first layout pieces (26 Sep 2026)
+from hub_ui import DELL_HUB_CSS, _dh_ico, _dell_hub_quotes, intent_hero, proof_strip, quotes_block   # intent-first layout pieces (26 Sep 2026)
 TODAY = datetime.date.today().isoformat()
 
 # Cache-bust for search.min.js, derived from the CONTENT of js/search.js.
@@ -6463,12 +6463,19 @@ add(
    crumb(s, "About"), webpage(s, "About 365 Techies", "About 365 Techies — Bournemouth-based IT support for homes and businesses.", "AboutPage"),
  ]),
  content="\n".join([
-   hero(bc("About"), "// ABOUT US",
+   # 26 Sep 2026: the shared first screen (H1 and lede unchanged)
+   intent_hero(bc("About"), "// ABOUT US",
         'The IT support <em class="grad grad--cyan">experts</em>',
         "365 Techies is a family-run, Bournemouth-based IT support company established in 1995: Dell specialists, Microsoft partners and certified Microsoft Office Specialists. We help homes and small businesses across Dorset with friendly, jargon-free support they can rely on every month.",
-        cta1=("See Plans &amp; Prices", "/monthly-it-support/"), cta2=("Contact Us", "/contact/"),
-        chips=["Family-run since 1995", "Bournemouth-based", "Rated 4.9 on Google"]),
-   f'''    <section class="section" aria-label="Who we are">
+        ("Call 01202 775566", "tel:+441202775566"), ("See plans &amp; prices", "/monthly-it-support/"),
+        [("hp-c-fix", "user", "Meet the team", "The family behind 365 Techies", "WHO WE ARE", "/meet-the-team/"),
+         ("hp-c-care", "book", "Our story since 1995", "From our Winton training centre to today", "31 YEARS", "#who"),
+         ("hp-c-biz", "star", "What customers say", "Many have been with us for over a decade", "4.9 ON GOOGLE", "/reviews/"),
+         ("hp-c-buy", "home", "Classes and in-person help", "At Kinson Community Centre, by appointment", "IN PERSON", "#community")]),
+   proof_strip([("hp-c-fix", "1995", "a family business since"), ("hp-c-care", "2001", "a Dell reseller since"),
+                ("hp-c-buy", "6&nbsp;weeks", "between full services on every plan"),
+                ("hp-c-biz", "4.9<i aria-hidden=\"true\">&#9733;</i>", "average rating on Google")]),
+   f'''    <section class="section" aria-label="Who we are" id="who">
       <div class="wrap wrap--narrow prose" data-reveal>
         <p class="eyebrow mono">/01 — WHO WE ARE</p>
         <h2 class="section-title" data-title>Real people. Real fixes. No runaround.<span class="title-underline"></span></h2>
@@ -6480,7 +6487,7 @@ add(
       </div>
     </section>''',
    heritage_gallery(),
-   f'''    <section class="section" aria-label="Community IT support and group training">
+   f'''    <section class="section" aria-label="Community IT support and group training" id="community">
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// IN PERSON, WHEN IT&rsquo;S NEEDED</p>
@@ -6531,18 +6538,7 @@ add(
         <p class="lede lede--center" data-reveal style="margin-top:1.6rem">From a single laptop to a workshop full of diagnostic kit, it&rsquo;s the same careful, reliable support &mdash; and most of these relationships have lasted a decade or more.</p>
       </div>
     </section>''',
-   f'''    <section class="stats section--alt" aria-label="By the numbers">
-      <div class="stats__grid">
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="4.9" data-decimals="1">4.9</span></p><p class="stat__label mono">GOOGLE RATING</p></div>
-        <!-- A hardcoded review COUNT lived here. It goes stale every time we earn a
-             review, and it survived the 2026-07-31 sweep that stripped the counts
-             everywhere else because the number sits in a data-count ATTRIBUTE rather
-             than in visible text. The linked Google profile is the only source of
-             truth for how many; the 4.9 rating beside this is verified and stays. -->
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="28">28</span><span class="stat__suffix">+</span></p><p class="stat__label mono">DORSET AREAS</p></div>
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="6">6</span><span class="stat__suffix">wk</span></p><p class="stat__label mono">SERVICE CYCLE</p></div>
-      </div>
-    </section>''',
+   quotes_block("What customers say", "Customers stay with us for years", "David Hagner", "Heather", "Penny Hanford"),
    f'''    <section class="section" aria-label="Why choose us">
       <div class="wrap">
         <div class="section-head">
@@ -6576,11 +6572,19 @@ add(
        "contactType": "customer support", "areaServed": "GB", "availableLanguage": "en-GB"}]},
  ]),
  content="\n".join([
-   hero(bc("Contact"), "// GET IN TOUCH",
+   # 26 Sep 2026: the shared first screen (H1 and lede unchanged); the four ways to reach us as tiles
+   intent_hero(bc("Contact"), "// GET IN TOUCH",
         'How can we <em class="grad grad--cyan">help?</em>',
         "Whatever it is &mdash; a repair, a question, monthly support or just some honest advice &mdash; tell us and we&rsquo;ll sort it. Friendly, no-pressure, no jargon.",
-        cta1=("Call 01202 775566", "tel:+441202775566"), cta2=("Text us a message", "sms:+447520615332"),
-        chips=["Mon&ndash;Fri 9am&ndash;5pm", "Text only: 07520 615332", "Remote &amp; on-site"]),
+        ("Call 01202 775566", "tel:+441202775566"), ("Text 07520 615332", "sms:+447520615332"),
+        [("hp-c-fix", "phone", "Call us", "01202 775566, Mon&ndash;Fri 9am&ndash;5pm", "FASTEST", "tel:+441202775566"),
+         ("hp-c-care", "mail", "Send a message", "We reply within one working day", "THE FORM BELOW", "#contact-form"),
+         ("hp-c-biz", "calendar", "Book a time", "Pick a slot for a service or repair", "BOOK ONLINE", "/book-service/"),
+         ("hp-c-buy", "alert", "Urgent? Connect now", "SOS remote help on a Windows PC", "SOS", "/sos/")],
+        question="How would you like to reach us?", rating_note="Family-run since 1995 &middot; real people, no call centre"),
+   proof_strip([("hp-c-fix", "9&ndash;5", "Monday to Friday"), ("hp-c-care", "1&nbsp;day", "to reply to a message (working days)"),
+                ("hp-c-buy", "&pound;0", "to check the problem remotely"),
+                ("hp-c-biz", "4.9<i aria-hidden=\"true\">&#9733;</i>", "average rating on Google")]),
    f'''    <section class="section" aria-label="Contact details and form">
       <div class="wrap" id="message-sent" style="max-width:760px;margin:0 auto">
         <div class="message-sent__panel" role="status">
@@ -6589,7 +6593,7 @@ add(
         </div>
       </div>
       <div class="wrap contact-grid">
-        <form class="contact-form" data-reveal action="/api/form-relay.php" method="post">
+        <form class="contact-form" id="contact-form" data-reveal action="/api/form-relay.php" method="post">
           <input type="text" name="company_website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
           <label class="field"><span>Your name</span><input type="text" name="name" autocomplete="name" required /></label>
           <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" required /></label>
@@ -6635,6 +6639,7 @@ add(
             <li><span class="k">Email</span><span class="v"><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a></span></li>
             <li><span class="k">Hours</span><span class="v">Monday&ndash;Friday, 9am&ndash;5pm</span></li>
             <li><span class="k">Based in</span><span class="v">Bournemouth, Dorset</span></li>
+            <li><span class="k">Visiting</span><span class="v">No walk-in shop: we help remotely, collect computers for repair, and meet by appointment at Kinson Community Centre</span></li>
             <li><span class="k">Book online</span><span class="v"><a href="/book-service/">Book a service or repair &#8594;</a></span></li>
             <li><span class="k">Emergency</span><span class="v"><a href="/sos/" target="_blank" rel="noopener">SOS remote support &#8594;</a></span></li>
           </ul>
@@ -6646,6 +6651,7 @@ add(
         </div>
       </div>
     </section>''',
+   quotes_block("What customers say", "Quick to answer, easy to reach", "Roger Eede", "Maureen Drake", "Julie Collins"),
    PCM_BAND,
    cta("Prefer to just pick a plan?", "Browse monthly support for homes and businesses — clear pricing, no contracts, cancel anytime.",
        primary=("See Plans &amp; Prices", "/monthly-it-support/"), secondary=("See Home Plans &amp; Prices", "/home-it-support-plans/")),
