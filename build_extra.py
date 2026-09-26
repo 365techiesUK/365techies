@@ -23040,7 +23040,7 @@ def virgin_move_v2(d, crumbs):
     tiles = [
         ("hp-c-care", "mail", "Move it for me", "Every message and folder into Gmail, done remotely", "&pound;60 PER ADDRESS", "#move-for-me"),
         ("hp-c-fix", "book", "Do it myself", "The free step-by-step guide on this page", "FREE", "#fixflow"),
-        ("hp-c-biz", "clock", "Keep my Virgin address", "Sign up with Junara before your date", "PAID, PER ADDRESS", "#s2"),
+        ("hp-c-biz", "clock", "Keep my Virgin address", "Sign up with Junara before your date", "FREE YEAR, THEN PAID", "#s2"),
         ("hp-c-buy", "alert", "Is this Junara email real?", "Virgin&rsquo;s own emails have no sign-up link", "SCAM CHECK", "#s2"),
     ]
     tiles_html = "\n".join(
@@ -23054,7 +23054,7 @@ def virgin_move_v2(d, crumbs):
           <nav class="breadcrumb" aria-label="Breadcrumb">{crumbs}</nav>
           <p class="eyebrow mono">{d['eyebrow']}</p>
           <h1>{d['h1']}</h1>
-          <p class="lede">Virgin Media is handing its email to a company called Junara. To keep your address you have to sign up and pay Junara for each one &mdash; or move to free Gmail once. We can do the whole move for you for <strong>&pound;60 per address</strong>.</p>
+          <p class="lede">Virgin Media is handing its email to a company called Junara. To keep your address you sign up with Junara, and after any free first year you pay for each one &mdash; or move to free Gmail once. We can do the whole move for you for <strong>&pound;60 per address</strong>.</p>
           <div class="page-hero__cta">
             <a href="tel:+441202775566" class="button primary button--lg">Call 01202 775566</a>
             <a href="#fixflow" class="button secondary button--lg">Do it myself</a>
@@ -23088,7 +23088,7 @@ def virgin_move_v2(d, crumbs):
           </div>
           <div class="vm-alt">
             <p class="vm-alt__h">Or keep your Virgin address</p>
-            <p>Sign up with Junara before the date in the email Virgin sent you. It is paid, monthly or yearly, per address &mdash; and if you miss the date the mailbox is suspended, then deleted 120 days later.</p>
+            <p>Sign up with Junara before the date in the email Virgin sent you. If you still have Virgin broadband, TV or a landline the first 12 months are free (99p transfer fee), then it is paid, per mailbox; if you have left Virgin it is paid from the start. Miss the date and the mailbox is suspended, then deleted 120 days later.</p>
             <p class="vm-alt__h">Watch for fake Junara emails</p>
             <p>Virgin&rsquo;s own emails contain no sign-up link, and Virgin says never to pay through a phone call or an emailed link. Not sure? Call us before you click.</p>
             <p><a class="dh-link" href="#s2">What&rsquo;s happening, in full &#8594;</a></p>
