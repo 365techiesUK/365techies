@@ -22577,7 +22577,7 @@ FIX_FLOW_PAGES = {
         'sections': [(1, 'Two minutes that tell you whether it is the account or the phone'), (2, 'Remove the old account and add it back by hand'), (3, 'When the settings are right and it still fails')]},
     'virgin-media-email-wont-add-to-new-outlook': {'h2': 'Add the Virgin Media account, step by step', 'ask': 'Has the account added?', 'tip': 'Send yourself a test email to be sure it both sends and receives.',
         'h3s': 'Still refusing after every step? That is a remote job.',
-        'sections': [(1, 'Two minutes that tell you whether the account itself works'), (2, 'Enter the settings Virgin publishes, manually'), (3, 'Or use classic Outlook, which still adds it')]},
+        'sections': [(1, 'Two minutes that tell you whether the account itself works'), (2, 'Get the Virgin app password first'), (3, 'Enter the settings Virgin publishes, manually'), (4, 'Or use classic Outlook, which still adds it')]},
     'nas-drive-not-showing-after-windows-11-update': {'h2': 'Get the NAS back, step by step', 'ask': 'Can you see the NAS now?', 'tip': 'Open a file on it and save it back to be sure.',
         'h3s': 'Still missing after every step? That is a remote job.',
         'sections': [(1, 'Reach it by address: the answer tells you which fault you have'), (2, 'Put the Network view back'), (3, 'Make the lasting fix on the NAS itself')]},
