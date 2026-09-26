@@ -45,7 +45,7 @@
      it (it is hand-maintained on purpose). -->
 <link rel="canonical" href="https://365techies.co.uk/bournemouth/games/seafront/">
 <title>Seafront — a Bournemouth game</title>
-<meta name="description" content="A free browser game set on the real Bournemouth seafront. Ride past the pier, save it from a Viking raid, run the Dorset smuggling coast, or find the dolphins in the bay.">
+<meta name="description" content="A free browser game and ride simulator on the real Bournemouth seafront. Ride an eFoil, a jet ski or a RIB past the pier, save it from a Viking raid, run the Dorset smuggling coast, or find the dolphins in the bay.">
 <!-- >>> INSTALL
      The manifest makes this page installable; scope "./" covers the page AND play/, which is
      what lets the button live HERE while the installed app opens straight into the game.
@@ -61,7 +61,7 @@
      these a shared link is a bare URL, which is the thing most likely to stop it travelling. -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Seafront — a Bournemouth game">
-<meta property="og:description" content="A free browser game on the real Bournemouth seafront. No download, no sign-up.">
+<meta property="og:description" content="A free browser game and eFoil, jet ski and boat ride simulator on the real Bournemouth seafront. No download, no sign-up.">
 <!-- 24 Sep 2026: A NEW FILENAME, NOT AN OVERWRITE OF shot.jpg. The site root sets
      ExpiresByType image/jpeg "access plus 1 year" and play/.htaccess does not cover .jpg or
      this folder, so the old picture is cached hard - by the SiteGround proxy, by anyone who has
@@ -284,10 +284,37 @@
   graphics card, playing this draws about <strong>twelve watts</strong> more than leaving the
   machine idle &mdash; on a card rated for three hundred and fifty.</p>
 
-  <h2>Three craft</h2>
-  <p>An electric hydrofoil, a jet ski and a rigid inflatable, each with its own handling. The sea
-  is simulated rather than animated, so the swell you are riding is the swell the boat is
-  reacting to, and the coast is built from survey data rather than drawn by eye.</p>
+  <!-- >>> SIMULATOR (26 Sep 2026, owner: "so it's both a simulation and a game"). Every claim
+       below is read from the game's source, not from memory: the lift equation and ventilation
+       (src/plant.js), the tuning panel's sliders (src/params.js), the planing-hull model and its
+       hump / thrust lost when the prop or jet leaves the water (src/boats/hull.js), the sea
+       presets and the modal Poole Bay default (src/sea-state.js), and the keys T, G, C and , . for
+       panel, charts, camera and sea (src/main.js). "Not a training tool" is deliberate: the eFoil
+       has not yet been checked against a real board, so nothing here may claim it is accurate. -->
+  <h2>A ride simulator too</h2>
+  <p>Under the levels, Seafront is a physics simulation of an eFoil, a jet ski and a rigid
+  inflatable on the real Bournemouth water. Free ride has no score and no clock: pick a craft,
+  pick a sea, and ride.</p>
+  <ul>
+    <li><b>The eFoil flies on the lift equation</b>: water density, speed, wing area and angle of
+    attack. A small change in speed makes a big change in lift, so it is as touchy as the real
+    thing, and the game shows you the live figure. Bring the wing too close to the surface and it
+    ventilates and drops you.</li>
+    <li><b>The jet ski and the RIB are planing hulls.</b> They climb over the hump before they get
+    on the plane, lose drive when the prop or jet leaves the water, and pay for a hard turn in
+    speed.</li>
+    <li><b>The sea is simulated rather than animated</b>, so the swell you are riding is the swell
+    the boat is reacting to. The default is Poole Bay&rsquo;s most common sea, about half a metre
+    every four seconds from the south-south-west, and it goes from glassy calm to a two-metre
+    storm.</li>
+    <li><b>On a computer:</b> <kbd>T</kbd> opens the tuning panel (all-up weight, wing area, mast
+    length, motor power and more), <kbd>G</kbd> shows live charts of wing depth, lift and speed,
+    <kbd>,</kbd> and <kbd>.</kbd> change the sea, and <kbd>C</kbd> cycles the camera, including a
+    side-on instrument view.</li>
+  </ul>
+  <p>The coast is built from survey data rather than drawn by eye. It is a game built on real
+  physics, not a training tool.</p>
+  <!-- <<< SIMULATOR -->
 
   <footer>
     <p>Contains Environment Agency information &copy; Environment Agency and/or database right.</p>
