@@ -139,7 +139,7 @@ SERVICE_PAGES = [
    {
     "icon": "cloud",
     "title": "Remote or on-site",
-    "body": "Most infections we can clear remotely the same day over Splashtop SOS. If it's too far gone to connect, we'll collect it or visit you at home across Dorset."
+    "body": "Many infections can be cleared remotely the same day over Splashtop SOS. If it's too far gone to connect, we'll collect it or visit you at home across Dorset."
    },
    {
     "icon": "check",
@@ -177,7 +177,7 @@ SERVICE_PAGES = [
   "faqs": [
    {
     "q": "How quickly can you remove a virus?",
-    "a": "Often the same day. Most infections we can clear remotely over Splashtop SOS within a couple of hours of you calling. If the machine is too unstable to connect to, we'll arrange a quick collection or a home visit across Bournemouth, Poole and Dorset."
+    "a": "Often the same day. Many infections can be cleared remotely over Splashtop SOS. If the machine is too unstable to connect to, we'll arrange a quick collection or a home visit across Bournemouth, Poole and Dorset."
    },
    {
     "q": "I've got a pop-up saying my computer is infected and to call a number &mdash; is it real?",
@@ -237,7 +237,7 @@ SERVICE_PAGES = [
    {
     "icon": "lock",
     "title": "Secure setup &amp; guest network",
-    "body": "Strong WPA encryption, a sensible network name, a separate guest network so visitors never touch your main one, and the router's default admin password changed."
+    "body": "Strong WPA3 (or WPA2) encryption, a sensible network name, a separate guest network so visitors never touch your main one, and the router's default admin password changed."
    },
    {
     "icon": "home",
@@ -268,7 +268,7 @@ SERVICE_PAGES = [
    "Full on-site Wi-Fi survey and coverage plan before any kit is bought",
    "Supply, placement and tidy mounting of access points, mesh nodes and routers",
    "Ethernet cabling and wired backhaul for rock-solid, interference-free links",
-   "Secure configuration &mdash; WPA encryption, separate guest network, changed admin passwords",
+   "Secure configuration &mdash; WPA3/WPA2 encryption, separate guest network, changed admin passwords",
    "Connecting your Windows PCs, Android phones, printers and smart-home devices",
    "Room-by-room testing, handover and the option of ongoing support on a monthly plan"
   ],
@@ -542,7 +542,7 @@ SERVICE_PAGES = [
    {
     "icon": "spark",
     "title": "Slow laptop speed-ups",
-    "body": "Most slow laptops aren't worn out &mdash; they just need an SSD and more memory. A modern SSD upgrade is the single biggest speed boost an older laptop can get."
+    "body": "Many slow laptops aren't worn out &mdash; they just need an SSD and more memory. A modern SSD upgrade is the single biggest speed boost an older laptop can get."
    }
   ],
   "howItWorks": [
@@ -578,7 +578,7 @@ SERVICE_PAGES = [
    },
    {
     "q": "Can you replace a cracked laptop screen?",
-    "a": "Yes &mdash; cracked, smashed, flickering, dim or lined screens are one of the most common laptop repairs we do, along with broken or loose hinges. We source the correct panel for your specific model, quote clearly first, and back the work with our 12-month warranty."
+    "a": "Yes &mdash; cracked, smashed, flickering, dim or lined screens are repairs we handle regularly, along with broken or loose hinges. We source the correct panel for your specific model, quote clearly first, and back the work with our 12-month warranty."
    },
    {
     "q": "My laptop won't turn on or charge &mdash; can you fix it?",
@@ -586,7 +586,7 @@ SERVICE_PAGES = [
    },
    {
     "q": "I spilled a drink on my laptop &mdash; what should I do?",
-    "a": "Turn it off, unplug it, don't try to charge or switch it back on, and get it to us as soon as possible. Liquid causes corrosion over the following days, so acting fast gives the best chance of a clean recovery. We'll assess the damage and tell you honestly what's repairable."
+    "a": "Turn it off, unplug it, don't try to charge or switch it back on, and call us to collect it as soon as possible. Liquid causes corrosion over the following days, so acting fast gives the best chance of a clean recovery. We'll assess the damage and tell you honestly what's repairable."
    },
    {
     "q": "Will I lose my files when you repair my laptop?",
@@ -778,7 +778,7 @@ SERVICE_PAGES = [
    },
    {
     "q": "Do you deal with my broadband company for me?",
-    "a": "Yes &mdash; this is one of the things people thank us for most. Whether it's BT, Sky, Virgin Media, Plusnet, TalkTalk or Vodafone, we'll report faults, explain the technical side and stay on their case until it's resolved, so you don't have to navigate the menus and hold music."
+    "a": "Yes &mdash; happily. Whether it's BT, Sky, Virgin Media, Plusnet, TalkTalk or Vodafone, we'll report faults, explain the technical side and stay on their case until it's resolved, so you don't have to navigate the menus and hold music."
    },
    {
     "q": "What's the difference between broadband help and Wi-Fi support?",
@@ -810,7 +810,7 @@ SERVICE_PAGES = [
    " Same-day diagnosis",
    " Windows &amp; Android"
   ],
-  "intro": "<p>A slow computer is the single most common problem we&rsquo;re called about &mdash; and the most misunderstood. &ldquo;It&rsquo;s old, I&rsquo;ll have to buy a new one&rdquo; is the usual verdict, but it&rsquo;s rarely true. In the vast majority of cases a sluggish Windows laptop or desktop is slow for one of a handful of fixable reasons, and putting it right costs a fraction of a replacement.</p><p>This page is about one thing: getting your speed back. We&rsquo;ll explain <em>why</em> computers slow down, how we tell a five-minute fix from a worn-out part, and what we actually do to make yours quick again. It&rsquo;s a one-off repair with no subscription needed &mdash; though if you&rsquo;d rather it never slowed down in the first place, our <a href=\"/monthly-it-support/\">monthly plans</a> keep it tuned all year. We work on Windows PCs and laptops and Android tablets and phones (we don&rsquo;t cover Apple Mac, iPhone or iPad).</p>",
+  "intro": "<p>A slow computer is a common problem &mdash; and a much-misunderstood one. &ldquo;It&rsquo;s old, I&rsquo;ll have to buy a new one&rdquo; is the usual verdict, but it&rsquo;s rarely true. In the vast majority of cases a sluggish Windows laptop or desktop is slow for one of a handful of fixable reasons, and putting it right costs a fraction of a replacement.</p><p>This page is about one thing: getting your speed back. We&rsquo;ll explain <em>why</em> computers slow down, how we tell a five-minute fix from a worn-out part, and what we actually do to make yours quick again. It&rsquo;s a one-off repair with no subscription needed &mdash; though if you&rsquo;d rather it never slowed down in the first place, our <a href=\"/monthly-it-support/\">monthly plans</a> keep it tuned all year. We work on Windows PCs and laptops and Android tablets and phones (we don&rsquo;t cover Apple Mac, iPhone or iPad).</p>",
   "features": [
    {
     "icon": "clock",
@@ -830,7 +830,7 @@ SERVICE_PAGES = [
    {
     "icon": "bolt",
     "title": "Old mechanical hard drive",
-    "body": "A spinning hard drive is the number-one cause of slowness. Swapping it for an SSD typically makes an old laptop feel brand new &mdash; your files and Windows come across intact."
+    "body": "An old spinning hard drive is a big cause of slowness. Swapping it for an SSD typically makes an old laptop feel brand new &mdash; your files and Windows come across intact."
    },
    {
     "icon": "wrench",
@@ -872,7 +872,7 @@ SERVICE_PAGES = [
    },
    {
     "q": "Is it worth repairing a slow computer or should I just buy a new one?",
-    "a": "Most slow computers are well worth saving. An SSD and a little more memory will transform a machine that&rsquo;s five, six, even eight years old for a fraction of replacement cost. We&rsquo;ll always be honest, though &mdash; if yours genuinely isn&rsquo;t worth the spend we&rsquo;ll tell you, and can point you to a refurbished Dell instead. See our <a href=\"/dell-hardware/\">Dell laptops &amp; desktops</a>."
+    "a": "Many slow computers are well worth saving. An SSD and a little more memory will transform a machine that&rsquo;s five, six, even eight years old for a fraction of replacement cost. We&rsquo;ll always be honest, though &mdash; if yours genuinely isn&rsquo;t worth the spend we&rsquo;ll tell you, and can point you to a refurbished Dell instead. See our <a href=\"/dell-hardware/\">Dell laptops &amp; desktops</a>."
    },
    {
     "q": "Will speeding it up wipe my files and programs?",
@@ -1006,7 +1006,7 @@ SERVICE_PAGES = [
    "12-month warranty",
    "Free local collection"
   ],
-  "intro": "<p>A broken laptop screen is one of the most common &mdash; and most fixable &mdash; faults we see. Whether the glass is cracked after a drop, the picture has gone black but you can still hear Windows starting, or the display is flickering, dim or full of coloured lines, the screen itself can almost always be replaced without scrapping the whole laptop. Your files, your apps and your settings stay exactly where they are. If the screen <a href='/laptop-screen-flickers-then-goes-black/'>flickers and then goes black</a>, that pattern has its own likely causes &mdash; worth reading before you assume the worst.</p><p>This page is all about laptop displays specifically. We diagnose the real fault first &mdash; because a dark screen isn't always a broken panel &mdash; then quote clearly before we order any parts. We work on <strong>Windows laptops</strong> (we don't repair Apple MacBooks), and we cover Bournemouth, Poole, Christchurch and the wider Dorset and New Forest area with free local collection and return.</p>",
+  "intro": "<p>A broken laptop screen is a very fixable fault. Whether the glass is cracked after a drop, the picture has gone black but you can still hear Windows starting, or the display is flickering, dim or full of coloured lines, the screen itself can almost always be replaced without scrapping the whole laptop. Your files, your apps and your settings stay exactly where they are. If the screen <a href='/laptop-screen-flickers-then-goes-black/'>flickers and then goes black</a>, that pattern has its own likely causes &mdash; worth reading before you assume the worst.</p><p>This page is all about laptop displays specifically. We diagnose the real fault first &mdash; because a dark screen isn't always a broken panel &mdash; then quote clearly before we order any parts. We work on <strong>Windows laptops</strong> (we don't repair Apple MacBooks), and we cover Bournemouth, Poole, Christchurch and the wider Dorset and New Forest area with free local collection and return.</p>",
   "features": [
    {
     "icon": "monitor",
@@ -1268,7 +1268,7 @@ SERVICE_PAGES = [
    },
    {
     "q": "I've just moved house or changed broadband &mdash; can you set it all up?",
-    "a": "Yes, that's one of the most common reasons people call us. We'll get your new line and router working, reconnect every device, carry over your network name and passwords if you'd like, and make sure everything's secure in your new home before we leave."
+    "a": "Yes, happily. We'll get your new line and router working, reconnect every device, carry over your network name and passwords if you'd like, and make sure everything's secure in your new home before we leave."
    },
    {
     "q": "My Wi-Fi reaches some rooms but not others &mdash; is that this service?",
@@ -1305,7 +1305,7 @@ SERVICE_PAGES = [
    {
     "icon": "mail",
     "title": "Email, contacts &amp; calendars",
-    "body": "Every message, folder, contact and calendar entry carried across &mdash; including shared mailboxes, rules, signatures and recurring meetings most providers quietly drop."
+    "body": "Every message, folder, contact and calendar entry carried across &mdash; including shared mailboxes, rules, signatures and recurring meetings that are easy to lose in a move."
    },
    {
     "icon": "cloud",

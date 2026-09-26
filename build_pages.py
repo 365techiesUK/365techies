@@ -751,7 +751,7 @@ FOOTER = '''  <footer class="site-footer">
           <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Partner</span>
           <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>Microsoft Office Specialist</span>
           <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>Malwarebytes Partner</span>
-          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/></svg>NVIDIA &amp; Scan Partner</span>
+          <span class="partner-badge partner-badge--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8z"/></svg>Scan Partner</span>
           <a class="partner-badge partner-badge--gold" href="https://www.google.com/maps?cid=5924622613303465737" target="_blank" rel="noopener" title="See our 4.9-star reviews on Google"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.5 1.6 6.7L12 17l-6.2 3.6 1.6-6.7L2.2 8.9l6.9-.6z"/></svg>4.9 on Google</a>
           <a class="partner-badge partner-badge--green" href="/sustainability/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 20c0-9 7-16 16-16 0 9-7 16-16 16z"/><path d="M4 20C9 15 13 11 18 9"/></svg>Sustainable Dorset Member</a>
           <a class="partner-badge partner-badge--green" href="/help-in-dorset/" title="Patient computer &amp; tech help for older people — listed on Dorset's community help directory"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 21C8 17 3 13.5 3 8.8 3 6 5.2 4 7.8 4c1.7 0 3.2.9 4.2 2.4C13 4.9 14.5 4 16.2 4 18.8 4 21 6 21 8.8c0 4.7-5 8.2-9 12.2z"/></svg>Listed on #HelpAndKindness</a>
@@ -1003,6 +1003,14 @@ def _meta_desc(d, limit=158):
         tail = cut[amp:]
         if ";" not in tail and " " not in tail and len(tail) <= 8:
             cut = cut[:amp]
+    # A COMPLETE entity at the end: the rstrip below would eat its ';' ("&mdash&hellip;" on the courses band,
+    # 26 Sep 2026). Drop a trailing dash/separator entity; keep any other one intact.
+    ent = re.search(r"\s*&[#a-zA-Z0-9]+;$", cut)
+    if ent:
+        if ent.group(0).strip() in ("&mdash;", "&ndash;", "&middot;", "&amp;", "&bull;"):
+            cut = cut[:ent.start()]
+        else:
+            return cut + "&hellip;"
     return cut.rstrip(" ,.;:&-—") + "&hellip;"
 
 # Cookieless one-ping-per-pageview beacon. text/plain keeps the request
@@ -1760,7 +1768,7 @@ def uk_remote_band(alt=False):
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// WHEREVER YOU ARE IN THE UK</p>
           <h2 class="section-title section-title--center" data-title>Local in Dorset, remote across the whole UK<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Most problems are fixed securely online in minutes, so wherever you are in the UK you get the same friendly, expert help &mdash; usually within minutes. For hands-on work we visit across Bournemouth, Poole and Dorset. <a href="/remote-it-support/">See how remote support works &#8594;</a></p>
+          <p class="lede lede--center" data-reveal>Many problems can be fixed securely online, so wherever you are in the UK you get the same friendly, expert help. For hands-on work we visit across Bournemouth, Poole and Dorset. <a href="/remote-it-support/">See how remote support works &#8594;</a></p>
         </div>
       </div>
     </section>'''
@@ -3180,7 +3188,7 @@ DNS_TOOL = r'''    <section class="section" aria-label="DNS lookup" id="dnstool"
 TOOLS = {
   "website":      ("Website Checker", "/website-checker/", "Test any site&rsquo;s speed, SEO, security &amp; mobile-friendliness with Google&rsquo;s Lighthouse engine."),
   "emailsec":     ("Email Security Checker", "/email-security-checker/", "Could scammers spoof your email? Check your SPF, DKIM &amp; DMARC in seconds."),
-  "breach":       ("Password Breach Checker", "/password-breach-checker/", "Has your password leaked? Check privately against billions of breached passwords."),
+  "breach":       ("Password Breach Checker", "/password-breach-checker/", "Has your password leaked? Check privately against over a billion leaked passwords."),
   "pwgen":        ("Password Generator", "/password-generator/", "Create a strong random password or a memorable passphrase in one click."),
   "pwstrength":   ("Password Strength Checker", "/password-strength-checker/", "Test a password&rsquo;s strength privately, right in your browser."),
   "privacy":      ("Privacy Checker", "/what-websites-know/", "See exactly what any website can learn about you the moment you land on it."),
@@ -5127,10 +5135,11 @@ def tool_seo_html(slug, enh):
 # eyebrow, H1, lede and first two buttons are lifted out of its standard hero, so nothing the page says changes;
 # only the layout and the four choices are new. A page without the standard hero is left as it was.
 from tool_tiles_data import TOOL_HERO_TILES
+from other_tiles_data import OTHER_HERO_TILES   # 26 Sep 2026: the remaining guides, service and AI pages, same hook
 _HERO_RE = re.compile(r'    <section class="page-hero[^"]*"[^>]*>.*?</section>', re.S)
 
 
-def _tool_intent_hero(content, tiles):
+def _tool_intent_hero(content, tiles, rating_note=None):
     m = _HERO_RE.search(content)
     if not m:
         return content
@@ -5143,7 +5152,8 @@ def _tool_intent_hero(content, tiles):
     if not (crumbs and eyebrow and h1 and lede and len(btns) >= 2):
         return content
     new = intent_hero(crumbs.group(1).strip(), eyebrow.group(1).strip(), h1.group(1).strip(), lede.group(1).strip(),
-                      (btns[0][1].strip(), btns[0][0]), (btns[1][1].strip(), btns[1][0]), tiles)
+                      (btns[0][1].strip(), btns[0][0]), (btns[1][1].strip(), btns[1][0]), tiles,
+                      **({"rating_note": rating_note} if rating_note else {}))
     return content[:m.start()] + new + content[m.end():]
 
 
@@ -5151,6 +5161,9 @@ def add(**kw):
     _slug = kw.get("slug")
     if _slug in TOOL_HERO_TILES and isinstance(kw.get("content"), str):
         kw["content"] = _tool_intent_hero(kw["content"], TOOL_HERO_TILES[_slug])
+    elif _slug in OTHER_HERO_TILES and isinstance(kw.get("content"), str):
+        kw["content"] = _tool_intent_hero(kw["content"], OTHER_HERO_TILES[_slug],
+                                          "Family-run since 1995 &middot; real people, no call centre")
     if _slug in TOOL_TITLES:
         kw["title"] = TOOL_TITLES[_slug]
     _enh = TOOL_SEO.get(_slug)
@@ -5224,7 +5237,7 @@ add(
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/01 — THE IDEA</p>
           <h2 class="section-title" data-title>Stop waiting for things to break<span class="title-underline"></span></h2>
-          <p>Most people only call for IT help once something has already gone wrong — a slow laptop, a hacked email, a printer that won&rsquo;t play ball. By then it&rsquo;s stressful, urgent and often more expensive to fix.</p>
+          <p>Many people only call for IT help once something has already gone wrong — a slow laptop, a hacked email, a printer that won&rsquo;t play ball. By then it&rsquo;s stressful, urgent and often more expensive to fix.</p>
           <p><strong>Monthly IT support flips that around.</strong> For one predictable monthly cost you get regular maintenance, security checks, software updates and a friendly techie on hand. Problems are caught early or never happen at all.</p>
           <p>And you can <em>see</em> it working: our free <a href="/free-pc-health-check/">365 PC Manager app</a> sits quietly in your tray showing your PC&rsquo;s live health score. On a plan it also carries your service reminders, your written reports and one-tap help.</p>
         </div>
@@ -5383,7 +5396,7 @@ add(
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/02 — WHAT WE HELP WITH</p>
           <h2 class="section-title" data-title>Everyday tech, sorted<span class="title-underline"></span></h2>
-          <p>From a slow laptop to a printer that won&rsquo;t connect, we handle the everyday technology headaches so you don&rsquo;t have to. Most things are fixed remotely in minutes.</p>
+          <p>From a slow laptop to a printer that won&rsquo;t connect, we handle the everyday technology headaches so you don&rsquo;t have to. Many things can be fixed remotely, without a visit.</p>
           <p><strong>Every plan includes a <a href="/preventative-maintenance/">full computer service every six weeks</a></strong> — updates, clean-up, security and health checks — so your devices stay in great shape all year round. And you can <em>see</em> it working. Every service finishes with a <strong>written Service Report</strong> on your Desktop: what we did, how your computer scored for health and performance, and anything worth planning.</p>
         </div>
         <ul class="checklist" data-stagger>
@@ -5863,7 +5876,7 @@ add(
  content="\n".join([
    hero(bc("Remote IT Support"), "// UK-WIDE REMOTE SUPPORT",
         'UK-wide remote IT support, <em class="grad grad--cyan">in minutes</em>',
-        hero_trust("Wherever you are in the UK, most computer problems can be fixed remotely &mdash; no waiting in for an engineer. We connect securely over Splashtop SOS, you watch everything happen on screen, and access ends the moment we&rsquo;re done."),
+        hero_trust("Wherever you are in the UK, many computer problems can be fixed remotely &mdash; no waiting in for an engineer. We connect securely over Splashtop SOS, you watch everything happen on screen, and access ends the moment we&rsquo;re done."),
         cta1=("Get Remote Support", "/contact/"), cta2=("SOS Emergency Session", "/sos/"),
         chips=["Anywhere in the UK", "Encrypted &amp; secure", "Usually within minutes"], scene=HERO_SCENES.get("remote")),
    f'''    <section class="section" aria-label="Overview">
@@ -5872,7 +5885,7 @@ add(
           <p class="eyebrow mono">/01 — HOW IT WORKS</p>
           <h2 class="section-title" data-title>Secure help, on your screen<span class="title-underline"></span></h2>
           <p>When you need help, we send you a secure link. One click connects us to your screen so we can see exactly what you see and fix it there and then.</p>
-          <p><strong>You watch the whole session and stay in control</strong> — and the moment we finish, access ends automatically. It&rsquo;s the fastest, safest way to solve most IT problems.</p>
+          <p><strong>You watch the whole session and stay in control</strong> — and the moment we finish, access ends automatically. It&rsquo;s a fast, safe way to solve many IT problems.</p>
           <p>New to us? A senior techie connects first to confirm what&rsquo;s needed, then <strong>agrees the cost with you before any chargeable work</strong> &mdash; remote fixes start from &pound;20. Already on a <a href="/monthly-it-support/">monthly plan</a>? Remote support is included, with priority &mdash; just call, and if we don&rsquo;t answer, leave a message and we&rsquo;ll call you back.</p>
         </div>
         <ul class="checklist" data-stagger>
@@ -5893,7 +5906,7 @@ add(
        "          <p>Whether your computers are at home, in the office or out on the road, anywhere in the UK, we connect securely and look after them all from one place. Updates, security and quick fixes, with no one needing to visit.</p>\n          <p>You stay in control: every session is one <em>you</em> start, over an encrypted connection, and we always phone first.</p>",
        variant="home", label="LIVE VIEW &mdash; CONNECTED DEVICES"),
    faq_html([
-     ("Do you provide remote IT support across the whole of the UK?", "Yes &mdash; we&rsquo;re based in Dorset, but remote support isn&rsquo;t limited by distance. We help homes and businesses <strong>anywhere in the UK</strong> over a secure, encrypted Splashtop SOS connection, and we can usually fix the problem in minutes. For hands-on hardware work we also visit on-site &mdash; see our <a href=\"/it-support-dorset/\">IT support across Dorset</a> for every town we cover."),
+     ("Do you provide remote IT support across the whole of the UK?", "Yes &mdash; we&rsquo;re based in Dorset, but remote support isn&rsquo;t limited by distance. We help homes and businesses <strong>anywhere in the UK</strong> over a secure, encrypted Splashtop SOS connection, and we can often fix the problem without a visit. For hands-on hardware work we also visit on-site &mdash; see our <a href=\"/it-support-dorset/\">IT support across Dorset</a> for every town we cover."),
      ("Is remote support safe?", "Yes. Sessions run over Splashtop SOS — an encrypted, industry-standard remote support tool. You watch everything on screen and access ends the moment the session is over."),
      ("What can be fixed remotely?", "Most things: email problems, software issues, Microsoft 365, slow computers, printer setup and Windows updates. Even a scare like <a href=\"/onedrive-files-disappeared/\">OneDrive files that have vanished</a>, and general troubleshooting for home and business users."),
      ("How fast is it?", "Most remote sessions start within minutes during opening hours (Mon&ndash;Fri, 9am&ndash;5pm). Subscribers always jump the queue."),
@@ -6113,7 +6126,7 @@ add(
           <p class="lede lede--center" data-reveal>Antivirus protects your <strong>device</strong>; a VPN protects your <strong>data</strong> as it travels. The two work hand in hand &mdash; so we include <strong>Malwarebytes Privacy VPN</strong> as the privacy layer of your security stack, set up and managed by us.</p>
         </div>
         <div class="tile-grid" data-stagger>
-{tiles([("wifi","Safe on public Wi-Fi","Caf&eacute;, hotel and airport Wi-Fi is wide open. The VPN scrambles your connection so nobody on the network can snoop on what you&rsquo;re doing."),("eye","Browsing kept private","Even your own broadband provider can normally see the sites you visit &mdash; with the VPN on, where you go and what you do stays private."),("lock","Bank-grade encryption","Modern WireGuard&reg; encryption (256-bit ChaCha20) keeps everything you send scrambled and unreadable while it&rsquo;s in transit."),("pin","Choose your location","Pick from 150+ servers across 60+ locations worldwide (the UK included) to mask your IP and reach your own accounts when you&rsquo;re travelling."),("shield","Built-in kill switch","On Windows and Mac, if the VPN ever drops it can cut your connection rather than quietly leave you exposed."),("check","No-logs, independently audited","A strict no-logs policy &mdash; independently audited in 2026, with no evidence of user-activity logging found.")])}
+{tiles([("wifi","Safe on public Wi-Fi","Caf&eacute;, hotel and airport Wi-Fi is shared with strangers. The VPN scrambles your connection so nobody on the network can snoop on what you&rsquo;re doing."),("eye","Browsing kept private","Even your own broadband provider can normally see the sites you visit &mdash; with the VPN on, where you go and what you do stays private."),("lock","Bank-grade encryption","Modern WireGuard&reg; encryption (256-bit ChaCha20) keeps everything you send scrambled and unreadable while it&rsquo;s in transit."),("pin","Choose your location","Pick from 150+ servers across 60+ locations worldwide (the UK included) to mask your IP and reach your own accounts when you&rsquo;re travelling."),("shield","Built-in kill switch","On Windows and Mac, if the VPN ever drops it can cut your connection rather than quietly leave you exposed."),("check","No-logs, independently audited","A strict no-logs policy &mdash; independently audited in 2026, with no evidence of user-activity logging found.")])}
         </div>
         <p class="mono" style="text-align:center;max-width:64ch;margin:1.8rem auto 0;color:var(--muted)" data-reveal>Honest note: a VPN protects your data, not your device &mdash; it works alongside antivirus, and we&rsquo;d never promise it unblocks streaming services like Netflix or BBC iPlayer.</p>
         <p style="text-align:center;margin-top:1.4rem" data-reveal><a class="button secondary" href="/malwarebytes-premium/">See the full Privacy VPN guide &#8594;</a></p>
@@ -6443,7 +6456,7 @@ add(
  content="\n".join([
    hero(bc("Areas Covered"), "// WHERE WE WORK",
         'IT support across <em class="grad grad--cyan">Dorset</em>',
-        "We provide fast, secure remote support across the whole UK and Europe, and on-site help right across Bournemouth, Poole, the rest of Dorset and the New Forest — for homes, businesses and digital nomads alike.",
+        "We provide fast, secure remote support across the whole UK and Europe, and on-site help right across Bournemouth, Poole and the rest of Dorset (the New Forest and further out by arrangement) — for homes, businesses and digital nomads alike.",
         cta1=("See Plans &amp; Prices", "/monthly-it-support/"), cta2=("UK &amp; Europe", "/it-support-uk-europe/"),
         chips=["Remote across UK &amp; Europe", "On-site across Dorset", "Local, friendly techies"]),
    f'''    <section class="section" aria-label="Areas we cover">
@@ -6456,7 +6469,7 @@ add(
         <ul class="areas-grid" data-stagger>
 {area_links()}
         </ul>
-        <p class="lede lede--center" style="margin-top:2rem" data-reveal>We provide <a href="/it-support-dorset/">IT support across the whole of Dorset</a> and into Hampshire and the <a href="/it-support-new-forest/">New Forest</a> &mdash; including <a href="/it-support-lymington/">Lymington</a>, <a href="/it-support-new-milton/">New Milton</a> and <a href="/it-support-southampton/">Southampton</a> &mdash; on-site across the region, and fast, secure remote support <a href="/it-support-uk-europe/">across the entire UK &amp; Europe</a>, including <a href="/it-support-for-digital-nomads/">digital nomads</a> working anywhere in the world.</p>
+        <p class="lede lede--center" style="margin-top:2rem" data-reveal>We provide <a href="/it-support-dorset/">IT support across the whole of Dorset</a> and into Hampshire and the <a href="/it-support-new-forest/">New Forest</a> &mdash; including <a href="/it-support-lymington/">Lymington</a>, <a href="/it-support-new-milton/">New Milton</a> and <a href="/it-support-southampton/">Southampton</a> &mdash; on-site across Dorset (further out by arrangement), and fast, secure remote support <a href="/it-support-uk-europe/">across the entire UK &amp; Europe</a>, including <a href="/it-support-for-digital-nomads/">digital nomads</a> working anywhere in the world.</p>
         <div class="section-head" style="margin-top:3rem">
           <p class="eyebrow eyebrow--center mono" data-reveal>// NEW FOREST &amp; HAMPSHIRE</p>
           <h2 class="section-title section-title--center" data-title>Across the New Forest &amp; into Hampshire<span class="title-underline title-underline--center"></span></h2>

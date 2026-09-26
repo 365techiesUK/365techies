@@ -1,8 +1,8 @@
 {
  "365-ai-os": {
   "first": "2026-07-28",
-  "h": "91e724d2c7b0d42c",
-  "last": "2026-08-31"
+  "h": "631dbf7fda70351f",
+  "last": "2026-09-26"
  },
  "404": {
   "first": "2026-09-05",
@@ -16,13 +16,13 @@
  },
  "access-point-poe-af-at-upgrade-trap": {
   "first": "2026-07-28",
-  "h": "e997517c61f93ec5",
-  "last": "2026-08-31"
+  "h": "9a4d8b53682b81cc",
+  "last": "2026-09-26"
  },
  "access-points-dropping-off-controller": {
   "first": "2026-07-28",
-  "h": "125db67b1062e197",
-  "last": "2026-08-31"
+  "h": "cabbdf109ba1db30",
+  "last": "2026-09-26"
  },
  "accessibility-statement": {
   "first": "2026-07-28",
@@ -31,8 +31,8 @@
  },
  "accreditations": {
   "first": "2026-07-28",
-  "h": "4228da0a5bb13c9f",
-  "last": "2026-08-31"
+  "h": "cc561397e3000538",
+  "last": "2026-09-26"
  },
  "agentic-ai-systems": {
   "first": "2026-07-28",
@@ -40,12 +40,12 @@
  },
  "ai": {
   "first": "2026-08-07",
-  "h": "2788c8bec1547b50",
-  "last": "2026-08-31"
+  "h": "19bc5c5e0c61e625",
+  "last": "2026-09-26"
  },
  "ai-for-beginners-course": {
   "first": "2026-07-28",
-  "h": "70181eba7b18bf23",
+  "h": "c17a0e7287b006da",
   "last": "2026-09-26"
  },
  "ai-roi-calculator": {
@@ -63,8 +63,8 @@
  },
  "ai/agents": {
   "first": "2026-08-07",
-  "h": "ad1c862244b04289",
-  "last": "2026-08-31"
+  "h": "28939a8a01255d5d",
+  "last": "2026-09-26"
  },
  "ai/automations": {
   "first": "2026-08-07",
@@ -73,18 +73,18 @@
  },
  "ai/case-studies": {
   "first": "2026-08-10",
-  "h": "84786b8251eae8cf",
-  "last": "2026-09-13"
+  "h": "de330cb6bd482829",
+  "last": "2026-09-26"
  },
  "ai/consultancy": {
   "first": "2026-08-07",
-  "h": "d008de1062837252",
-  "last": "2026-08-31"
+  "h": "0f83e42d2922a2d0",
+  "last": "2026-09-26"
  },
  "ai/industries": {
   "first": "2026-08-07",
-  "h": "0f5d5755ea993d21",
-  "last": "2026-08-31"
+  "h": "2fc11822e53a18c0",
+  "last": "2026-09-26"
  },
  "ai/learn": {
   "first": "2026-08-07",
@@ -103,18 +103,18 @@
  },
  "ai/training": {
   "first": "2026-08-07",
-  "h": "d49646d319ef3f03",
-  "last": "2026-08-31"
+  "h": "f2c123357cf1e1cf",
+  "last": "2026-09-26"
  },
  "ai/voice-agents": {
   "first": "2026-08-07",
-  "h": "a70a9fb3ad8fec36",
-  "last": "2026-08-31"
+  "h": "f038c90e18f7c209",
+  "last": "2026-09-26"
  },
  "ai/voice-agents/cost": {
   "first": "2026-08-10",
-  "h": "80479eb8980f2590",
-  "last": "2026-08-31"
+  "h": "415e1827539acf34",
+  "last": "2026-09-26"
  },
  "alienware-dell-g-series-repair-bournemouth": {
   "first": "2026-07-28",
@@ -123,8 +123,8 @@
  },
  "android-phone-course-for-beginners": {
   "first": "2026-07-28",
-  "h": "d19dbb1799c242b1",
-  "last": "2026-09-13"
+  "h": "caf68fc4bf50b77d",
+  "last": "2026-09-26"
  },
  "are-dell-latitude-laptops-good": {
   "first": "2026-07-28",
@@ -133,13 +133,13 @@
  },
  "are-refurbished-laptops-any-good": {
   "first": "2026-06-19",
-  "h": "6ec4d9632fe327a4",
-  "last": "2026-09-05"
+  "h": "6d8bf46f08e86287",
+  "last": "2026-09-26"
  },
  "areas-covered": {
   "first": "2026-07-28",
-  "h": "6aa58c43b41554a3",
-  "last": "2026-08-31"
+  "h": "3d6de3dade9756bf",
+  "last": "2026-09-26"
  },
  "avoiding-tech-overwhelm": {
   "first": "2026-07-28",
@@ -148,7 +148,7 @@
  },
  "backup-support": {
   "first": "2026-07-28",
-  "h": "fb8267ca3d16cd81",
+  "h": "572c1d6d0a5e08ba",
   "last": "2026-09-26"
  },
  "basic-paye-tools-could-not-access-the-database": {
@@ -158,8 +158,8 @@
  },
  "book-a-collection": {
   "first": "2026-07-28",
-  "h": "be6623a7bd130fa1",
-  "last": "2026-09-13"
+  "h": "ba3f6406d307c911",
+  "last": "2026-09-26"
  },
  "book-service": {
   "first": "2026-07-28",
@@ -213,13 +213,13 @@
  },
  "break-fix-vs-managed-it": {
   "first": "2026-07-28",
-  "h": "5bd005214c149f79",
-  "last": "2026-09-13"
+  "h": "22cd82bb72974986",
+  "last": "2026-09-26"
  },
  "break-fix-vs-monthly-vs-in-house-it-support": {
   "first": "2026-06-16",
-  "h": "0477274ea916803e",
-  "last": "2026-08-31"
+  "h": "9a21b00d76bade23",
+  "last": "2026-09-26"
  },
  "broadband-checker": {
   "first": "2026-07-28",
@@ -233,8 +233,8 @@
  },
  "broadband-help": {
   "first": "2026-07-28",
-  "h": "76ee124fa6cc91e1",
-  "last": "2026-09-13"
+  "h": "3aaecd482950ec87",
+  "last": "2026-09-26"
  },
  "broadband-speed-checker": {
   "first": "2026-07-28",
@@ -253,8 +253,8 @@
  },
  "business-access-point-end-of-life": {
   "first": "2026-07-28",
-  "h": "4495870b045d6427",
-  "last": "2026-08-31"
+  "h": "b61cedcf7ec0ed84",
+  "last": "2026-09-26"
  },
  "business-broadband-connectivity": {
   "first": "2026-07-28",
@@ -313,8 +313,8 @@
  },
  "business-it-support-subscriptions": {
   "first": "2026-07-28",
-  "h": "db6e5f522515d417",
-  "last": "2026-09-14"
+  "h": "53e6bc4da5deb6ab",
+  "last": "2026-09-26"
  },
  "business-wifi-health-check-dorset": {
   "first": "2026-07-28",
@@ -343,18 +343,18 @@
  },
  "case-studies": {
   "first": "2026-07-28",
-  "h": "eb15b2a7feb41825",
-  "last": "2026-08-31"
+  "h": "8eddf5496e8ed61a",
+  "last": "2026-09-26"
  },
  "case-study-colin-clark-builders": {
   "first": "2026-07-28",
-  "h": "ea6677741e733f91",
-  "last": "2026-08-31"
+  "h": "12cd4bbe70f65371",
+  "last": "2026-09-26"
  },
  "case-study-signal-map": {
   "first": "2026-08-24",
-  "h": "c4b7899b84d37290",
-  "last": "2026-09-13"
+  "h": "aeeaa292115747f3",
+  "last": "2026-09-26"
  },
  "cctv-in-detached-garage-connect-to-house": {
   "first": "2026-07-28",
@@ -383,8 +383,8 @@
  },
  "cerbo-gx-not-connecting-to-vrm": {
   "first": "2026-08-10",
-  "h": "24ac1b6bb6d61fa2",
-  "last": "2026-08-31"
+  "h": "18d11efb0401125b",
+  "last": "2026-09-26"
  },
  "choosing-it-support": {
   "first": "2026-07-28",
@@ -393,23 +393,23 @@
  },
  "cisco-access-point-wont-join-controller": {
   "first": "2026-07-28",
-  "h": "73f6516942f01457",
-  "last": "2026-08-31"
+  "h": "d25a58eabe0261dc",
+  "last": "2026-09-26"
  },
  "cisco-aironet-end-of-life": {
   "first": "2026-07-28",
-  "h": "f06e1c5650f2a206",
-  "last": "2026-08-31"
+  "h": "f9c50b29d6930509",
+  "last": "2026-09-26"
  },
  "cloud-backup": {
   "first": "2026-07-28",
-  "h": "5c65c6f9c799bf59",
-  "last": "2026-09-13"
+  "h": "6ad7a88deace9af4",
+  "last": "2026-09-26"
  },
  "cloud-hosted-desktops": {
   "first": "2026-07-28",
-  "h": "9c0699b9cfdc8dde",
-  "last": "2026-08-31"
+  "h": "6d72fd0fdfb4cdd8",
+  "last": "2026-09-26"
  },
  "cloud-migration": {
   "first": "2026-07-28",
@@ -418,8 +418,8 @@
  },
  "cloud-vs-on-premise": {
   "first": "2026-07-28",
-  "h": "adf39750b7ca9f3c",
-  "last": "2026-09-13"
+  "h": "226fe05ff6a36964",
+  "last": "2026-09-26"
  },
  "cnc-machine-needs-windows-xp": {
   "first": "2026-09-05",
@@ -433,8 +433,8 @@
  },
  "computer-basics-course": {
   "first": "2026-07-28",
-  "h": "7267316d3e83ec36",
-  "last": "2026-09-13"
+  "h": "827aa7e241fe1a2c",
+  "last": "2026-09-26"
  },
  "computer-fault-checker": {
   "first": "2026-07-28",
@@ -448,8 +448,8 @@
  },
  "computer-help-for-seniors": {
   "first": "2026-07-28",
-  "h": "f7e16cde02821af5",
-  "last": "2026-09-13"
+  "h": "3b3549291e5f1240",
+  "last": "2026-09-26"
  },
  "computer-help-for-the-elderly-bournemouth": {
   "first": "2026-07-28",
@@ -628,13 +628,13 @@
  },
  "computer-tune-up": {
   "first": "2026-07-28",
-  "h": "59cbe6028706cbf8",
-  "last": "2026-09-13"
+  "h": "86a86bcab5851fc6",
+  "last": "2026-09-26"
  },
  "confident-video-calling": {
   "first": "2026-07-28",
-  "h": "b4d321b42a7fbb09",
-  "last": "2026-08-31"
+  "h": "62157ae9dba1fdc1",
+  "last": "2026-09-26"
  },
  "contact": {
   "first": "2026-07-28",
@@ -643,8 +643,8 @@
  },
  "content-creator-pcs": {
   "first": "2026-07-28",
-  "h": "064c706b782bd417",
-  "last": "2026-09-13"
+  "h": "60c5ac22dc9c5361",
+  "last": "2026-09-26"
  },
  "cookie-policy": {
   "first": "2026-07-28",
@@ -678,13 +678,13 @@
  },
  "custom-vrm-dashboards": {
   "first": "2026-07-28",
-  "h": "0e6fc631a779f3ba",
-  "last": "2026-09-13"
+  "h": "03153ae42a72b015",
+  "last": "2026-09-26"
  },
  "custom-wifi-dashboards": {
   "first": "2026-07-28",
-  "h": "e3801a87cdff3bda",
-  "last": "2026-08-31"
+  "h": "f2c9acdd25bb6316",
+  "last": "2026-09-26"
  },
  "customise-victron-vrm-dashboard": {
   "first": "2026-07-28",
@@ -698,18 +698,18 @@
  },
  "cyber-threats": {
   "first": "2026-07-28",
-  "h": "8f56fdfce8f6b5fd",
-  "last": "2026-08-31"
+  "h": "69016db45835d4c8",
+  "last": "2026-09-26"
  },
  "cybersecurity-checklist": {
   "first": "2026-07-28",
-  "h": "a8519d3aba536ca6",
-  "last": "2026-09-13"
+  "h": "c852778221af6638",
+  "last": "2026-09-26"
  },
  "cybersecurity-support": {
   "first": "2026-07-28",
-  "h": "1654eb731559bb91",
-  "last": "2026-09-13"
+  "h": "840dcec028bf4475",
+  "last": "2026-09-26"
  },
  "data-breaches": {
   "first": "2026-07-28",
@@ -718,12 +718,12 @@
  },
  "data-migration": {
   "first": "2026-07-28",
-  "h": "27f293df5a587313",
-  "last": "2026-09-13"
+  "h": "b5edb4141bf7310b",
+  "last": "2026-09-26"
  },
  "data-recovery": {
   "first": "2026-07-28",
-  "h": "158105bbd6ec798b",
+  "h": "ee8caede6d154b18",
   "last": "2026-09-26"
  },
  "dell-business-support-dorset": {
@@ -813,8 +813,8 @@
  },
  "dell-latitude-3520-guide": {
   "first": "2026-07-28",
-  "h": "a4b230438d3cf3f6",
-  "last": "2026-09-24"
+  "h": "e15c91d20fe893f4",
+  "last": "2026-09-26"
  },
  "dell-latitude-5000-guide": {
   "first": "2026-07-28",
@@ -892,8 +892,8 @@
  },
  "dell-optiplex-guide": {
   "first": "2026-07-28",
-  "h": "5b2d46a90f7c6d99",
-  "last": "2026-09-24"
+  "h": "6b787e44463323d6",
+  "last": "2026-09-26"
  },
  "dell-optiplex-micro-sff-tower-which-to-buy": {
   "first": "2026-07-28",
@@ -977,13 +977,13 @@
  },
  "digital-photos-course": {
   "first": "2026-07-28",
-  "h": "0a2c5b5764ed8166",
-  "last": "2026-09-13"
+  "h": "06511eaacd5d288c",
+  "last": "2026-09-26"
  },
  "disaster-recovery": {
   "first": "2026-07-28",
-  "h": "bf9ab265d969bacd",
-  "last": "2026-09-13"
+  "h": "3b2bd1c629473316",
+  "last": "2026-09-26"
  },
  "dns-lookup": {
   "first": "2026-07-28",
@@ -992,7 +992,8 @@
  },
  "do-i-need-a-vpn": {
   "first": "2026-09-18",
-  "h": "e8e9b340e45c0b9c"
+  "h": "22247bb2920dde06",
+  "last": "2026-09-26"
  },
  "domain-expiry-checker": {
   "first": "2026-07-28",
@@ -1006,13 +1007,13 @@
  },
  "email-basics-course": {
   "first": "2026-07-28",
-  "h": "994e69a79ef02808",
+  "h": "d401ec085585fe20",
   "last": "2026-09-26"
  },
  "email-migration": {
   "first": "2026-07-28",
-  "h": "5538e78020520003",
-  "last": "2026-09-13"
+  "h": "cae0b53059d9025a",
+  "last": "2026-09-26"
  },
  "email-security-checker": {
   "first": "2026-07-28",
@@ -1051,7 +1052,7 @@
  },
  "emergency-it-help": {
   "first": "2026-07-28",
-  "h": "86b7a150b10a01a6",
+  "h": "dabe68a6fb7953bd",
   "last": "2026-09-26"
  },
  "employee-left-dont-know-computer-password": {
@@ -1081,8 +1082,8 @@
  },
  "faqs": {
   "first": "2026-07-28",
-  "h": "088eaaab14df107c",
-  "last": "2026-09-13"
+  "h": "6c5e9e14ce966b04",
+  "last": "2026-09-26"
  },
  "ferrari-sd2-laptop-windows-xp": {
   "first": "2026-09-05",
@@ -1091,8 +1092,8 @@
  },
  "file-transfer": {
   "first": "2026-07-28",
-  "h": "b65bbe6d1291af99",
-  "last": "2026-09-13"
+  "h": "f2ae6f4dc117fbdd",
+  "last": "2026-09-26"
  },
  "files-missing-from-onedrive": {
   "first": "2026-07-28",
@@ -1101,8 +1102,8 @@
  },
  "firewall-licence-expired-what-happens": {
   "first": "2026-07-28",
-  "h": "2c87a2a92ca92ad3",
-  "last": "2026-08-31"
+  "h": "6bfe132a400771f6",
+  "last": "2026-09-26"
  },
  "fix-shared-folder-error-0x80004005": {
   "first": "2026-08-01",
@@ -1116,13 +1117,13 @@
  },
  "free-courses": {
   "first": "2026-07-28",
-  "h": "31e982bf985cb82b",
-  "last": "2026-09-13"
+  "h": "b1b61645e356e04a",
+  "last": "2026-09-26"
  },
  "free-it-health-check": {
   "first": "2026-07-28",
-  "h": "510a09f9341ec9b9",
-  "last": "2026-09-13"
+  "h": "4c5d53a60de86d60",
+  "last": "2026-09-26"
  },
  "free-pc-health-check": {
   "first": "2026-07-28",
@@ -1131,7 +1132,7 @@
  },
  "free-tools": {
   "first": "2026-07-28",
-  "h": "1ce1d7f3dee094b7",
+  "h": "7753d928983b1633",
   "last": "2026-09-26"
  },
  "gaming-pc-slow-wont-load-games": {
@@ -1146,8 +1147,8 @@
  },
  "gaming-pcs": {
   "first": "2026-07-28",
-  "h": "a12b3fa0468f0d79",
-  "last": "2026-09-13"
+  "h": "5bcacc1eaacc5848",
+  "last": "2026-09-26"
  },
  "gave-a-scammer-remote-access": {
   "first": "2026-07-28",
@@ -1156,8 +1157,8 @@
  },
  "gdpr-it-compliance": {
   "first": "2026-07-28",
-  "h": "e228ad39510c08a5",
-  "last": "2026-09-13"
+  "h": "f8ce1ecb9e57af68",
+  "last": "2026-09-26"
  },
  "glamping-power-monitoring": {
   "first": "2026-07-28",
@@ -1181,28 +1182,28 @@
  },
  "heatwave-tech-guide": {
   "first": "2026-07-28",
-  "h": "31e6dcc1fd9194d6",
-  "last": "2026-09-04"
+  "h": "faad0b32767e59ee",
+  "last": "2026-09-26"
  },
  "help-in-dorset": {
   "first": "2026-07-28",
-  "h": "e8ca9acb7a3323ea",
+  "h": "e9b2a52d07ad0099",
   "last": "2026-09-26"
  },
  "helping-a-relative-with-their-computer": {
   "first": "2026-07-28",
-  "h": "3ebec5bc3dd4775d",
-  "last": "2026-08-31"
+  "h": "755d6f61e8a4ba9e",
+  "last": "2026-09-26"
  },
  "home-assistant-victron-cerbo-gx": {
   "first": "2026-08-10",
-  "h": "e62f8d513a571f13",
-  "last": "2026-09-13"
+  "h": "e47a74fe56d5983e",
+  "last": "2026-09-26"
  },
  "home-cinema-entertainment": {
   "first": "2026-07-28",
-  "h": "fdc46bdcc2860439",
-  "last": "2026-09-13"
+  "h": "0c57a8b308787bcf",
+  "last": "2026-09-26"
  },
  "home-it-support-plans": {
   "first": "2026-07-28",
@@ -1211,13 +1212,13 @@
  },
  "home-it-support-subscriptions": {
   "first": "2026-07-28",
-  "h": "dce2a88938e0ae67",
-  "last": "2026-09-14"
+  "h": "5707020151c05fab",
+  "last": "2026-09-26"
  },
  "home-network-setup": {
   "first": "2026-07-28",
-  "h": "36564c36e9b317df",
-  "last": "2026-09-13"
+  "h": "8b024e009cb7e63a",
+  "last": "2026-09-26"
  },
  "how-long-do-dell-latitude-laptops-last": {
   "first": "2026-07-28",
@@ -1226,8 +1227,8 @@
  },
  "how-much-does-it-support-cost-uk-2026": {
   "first": "2026-06-16",
-  "h": "6657016036845e18",
-  "last": "2026-08-31"
+  "h": "e80c47719502b90d",
+  "last": "2026-09-26"
  },
  "how-onboarding-works": {
   "first": "2026-07-28",
@@ -1246,8 +1247,8 @@
  },
  "how-to-block-nuisance-calls-and-texts": {
   "first": "2026-06-16",
-  "h": "9754841c4e700c89",
-  "last": "2026-09-05"
+  "h": "e57830d4b15d1ced",
+  "last": "2026-09-26"
  },
  "how-to-choose-a-laptop": {
   "first": "2026-07-28",
@@ -1266,8 +1267,8 @@
  },
  "how-to-free-up-storage-space": {
   "first": "2026-06-16",
-  "h": "d25a51bbb2841e98",
-  "last": "2026-09-05"
+  "h": "9b146210537ec1a8",
+  "last": "2026-09-26"
  },
  "how-to-go-back-to-classic-outlook": {
   "first": "2026-07-28",
@@ -1310,18 +1311,18 @@
  },
  "how-to-scan-a-document": {
   "first": "2026-06-16",
-  "h": "a729993f05d87461",
-  "last": "2026-09-05"
+  "h": "cb5892ce43eae96b",
+  "last": "2026-09-26"
  },
  "how-to-secure-your-microsoft-365-account": {
   "first": "2026-06-16",
-  "h": "8453fbeb38f6c00e",
-  "last": "2026-09-13"
+  "h": "8c84cfc892818dd0",
+  "last": "2026-09-26"
  },
  "how-to-set-up-a-new-windows-computer": {
   "first": "2026-06-16",
-  "h": "171f1cccfdd36968",
-  "last": "2026-09-05"
+  "h": "e10ab1cc737429a3",
+  "last": "2026-09-26"
  },
  "how-to-set-up-a-printer": {
   "first": "2026-06-16",
@@ -1330,8 +1331,8 @@
  },
  "how-to-set-up-a-second-monitor": {
   "first": "2026-06-16",
-  "h": "f8d97edcf85764e6",
-  "last": "2026-09-05"
+  "h": "486b96dcffaaefb4",
+  "last": "2026-09-26"
  },
  "how-to-set-up-email-on-your-phone": {
   "first": "2026-06-16",
@@ -1340,13 +1341,13 @@
  },
  "how-to-set-up-two-factor-authentication": {
   "first": "2026-07-28",
-  "h": "3c053992f61c8615",
-  "last": "2026-08-31"
+  "h": "0f3253e7f86e0557",
+  "last": "2026-09-26"
  },
  "how-to-speed-up-a-slow-computer": {
   "first": "2026-06-16",
-  "h": "5958ce109ed2483d",
-  "last": "2026-09-05"
+  "h": "b83a4113b499cc2f",
+  "last": "2026-09-26"
  },
  "how-to-spot-a-fake-website": {
   "first": "2026-06-16",
@@ -1360,13 +1361,13 @@
  },
  "how-to-stop-spam-emails": {
   "first": "2026-06-16",
-  "h": "d1dedc7b923d3233",
-  "last": "2026-09-13"
+  "h": "ed6a65672028db0f",
+  "last": "2026-09-26"
  },
  "how-to-take-a-screenshot": {
   "first": "2026-06-16",
-  "h": "a64e5dda2fc5aa34",
-  "last": "2026-09-05"
+  "h": "466d37cac251d815",
+  "last": "2026-09-26"
  },
  "how-to-transfer-files-to-a-new-computer": {
   "first": "2026-06-16",
@@ -1385,13 +1386,13 @@
  },
  "how-to-use-microsoft-teams": {
   "first": "2026-06-16",
-  "h": "13251182987efdbe",
-  "last": "2026-08-31"
+  "h": "298aaa5ab69a3a7f",
+  "last": "2026-09-26"
  },
  "how-to-wipe-and-recycle-old-computer": {
   "first": "2026-07-28",
-  "h": "87a26580bb153a9b",
-  "last": "2026-08-31"
+  "h": "963d9c1eb9b69a45",
+  "last": "2026-09-26"
  },
  "how-we-price": {
   "first": "2026-07-28",
@@ -1405,7 +1406,7 @@
  },
  "i-think-ive-been-hacked": {
   "first": "2026-07-28",
-  "h": "7a939dcc772547f5",
+  "h": "dc084737efcd2610",
   "last": "2026-09-26"
  },
  "identity-theft": {
@@ -1425,18 +1426,18 @@
  },
  "is-it-safe-to-buy-a-refurbished-laptop": {
   "first": "2026-06-19",
-  "h": "78fcf4fabead0645",
-  "last": "2026-09-05"
+  "h": "ac523ff33bf3e1d5",
+  "last": "2026-09-26"
  },
  "is-my-ruckus-r510-too-old": {
   "first": "2026-07-28",
-  "h": "4e2cc430af9c76fe",
-  "last": "2026-08-31"
+  "h": "6ba7a4612c94b430",
+  "last": "2026-09-26"
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "2c530236d00155f2",
-  "last": "2026-09-13"
+  "h": "ef5e09313f54408e",
+  "last": "2026-09-26"
  },
  "it-health-check-tool": {
   "first": "2026-07-28",
@@ -1445,13 +1446,13 @@
  },
  "it-jargon-buster": {
   "first": "2026-07-28",
-  "h": "3edc44f5a64f6990",
-  "last": "2026-08-31"
+  "h": "fbfb731f57fd0aab",
+  "last": "2026-09-26"
  },
  "it-jargon-buster/app-vs-program": {
   "first": "2026-07-28",
-  "h": "31efb0684fccffe1",
-  "last": "2026-08-31"
+  "h": "7718199d78dd46c5",
+  "last": "2026-09-26"
  },
  "it-jargon-buster/bandwidth": {
   "first": "2026-07-28",
@@ -1460,13 +1461,13 @@
  },
  "it-jargon-buster/bios": {
   "first": "2026-07-28",
-  "h": "fecfcee1f4c312bb",
-  "last": "2026-08-31"
+  "h": "a1110931b83afeab",
+  "last": "2026-09-26"
  },
  "it-jargon-buster/cache": {
   "first": "2026-07-28",
-  "h": "585bffb7dc31fceb",
-  "last": "2026-08-31"
+  "h": "102560060022795d",
+  "last": "2026-09-26"
  },
  "it-jargon-buster/cookies": {
   "first": "2026-07-28",
@@ -1475,28 +1476,28 @@
  },
  "it-jargon-buster/cpu": {
   "first": "2026-07-28",
-  "h": "fde7216cab06e1e2",
-  "last": "2026-08-31"
+  "h": "2870533989e61de8",
+  "last": "2026-09-26"
  },
  "it-jargon-buster/driver": {
   "first": "2026-07-28",
-  "h": "66be8362f6d98847",
-  "last": "2026-08-31"
+  "h": "849bed7f5e6b4223",
+  "last": "2026-09-26"
  },
  "it-jargon-buster/ethernet": {
   "first": "2026-07-28",
-  "h": "9e9b958091b80410",
-  "last": "2026-08-31"
+  "h": "bc8c01cf4d536185",
+  "last": "2026-09-26"
  },
  "it-jargon-buster/firewall": {
   "first": "2026-07-28",
-  "h": "317aa8ebe5a07457",
-  "last": "2026-08-31"
+  "h": "f34baad7946b4c23",
+  "last": "2026-09-26"
  },
  "it-jargon-buster/hard-drive": {
   "first": "2026-07-28",
-  "h": "968fcfb49943acd3",
-  "last": "2026-08-31"
+  "h": "deacc95123487ced",
+  "last": "2026-09-26"
  },
  "it-jargon-buster/ip-address": {
   "first": "2026-07-28",
@@ -1505,43 +1506,43 @@
  },
  "it-jargon-buster/malware": {
   "first": "2026-07-28",
-  "h": "fed784518514a3c1",
-  "last": "2026-08-31"
+  "h": "aa3b4a326025b7c4",
+  "last": "2026-09-26"
  },
  "it-jargon-buster/megabytes-and-gigabytes": {
   "first": "2026-07-28",
-  "h": "624063831d679e3d",
-  "last": "2026-08-31"
+  "h": "cb6fba537834aa68",
+  "last": "2026-09-26"
  },
  "it-jargon-buster/modem": {
   "first": "2026-07-28",
-  "h": "5ae0f0e4b93b29f0",
-  "last": "2026-08-31"
+  "h": "097a08f479f9c26b",
+  "last": "2026-09-26"
  },
  "it-jargon-buster/operating-system": {
   "first": "2026-07-28",
-  "h": "e253883932ed73b8",
-  "last": "2026-08-31"
+  "h": "e710a448ad5ca2b0",
+  "last": "2026-09-26"
  },
  "it-jargon-buster/ram": {
   "first": "2026-07-28",
-  "h": "e517a6770263e97b",
-  "last": "2026-08-31"
+  "h": "44ac93647bc10cd1",
+  "last": "2026-09-26"
  },
  "it-jargon-buster/router": {
   "first": "2026-07-28",
-  "h": "2897d233ee2e0fb9",
-  "last": "2026-08-31"
+  "h": "c6de7b7a09802bef",
+  "last": "2026-09-26"
  },
  "it-jargon-buster/ssd": {
   "first": "2026-07-28",
-  "h": "7d3b84d752173cd5",
-  "last": "2026-08-31"
+  "h": "72466fb2d95ff533",
+  "last": "2026-09-26"
  },
  "it-jargon-buster/the-cloud": {
   "first": "2026-07-28",
-  "h": "964c00ab6676b37f",
-  "last": "2026-08-31"
+  "h": "f8be28d691751aa3",
+  "last": "2026-09-26"
  },
  "it-jargon-buster/web-browser": {
   "first": "2026-07-28",
@@ -1890,13 +1891,13 @@
  },
  "ive-been-scammed-what-to-do": {
   "first": "2026-07-28",
-  "h": "9eb9ab891d32419a",
+  "h": "7deeb4fb5d3cb767",
   "last": "2026-09-26"
  },
  "join": {
   "first": "2026-07-28",
-  "h": "7e0d682785637a4b",
-  "last": "2026-09-13"
+  "h": "fe4973ca0ebed7d9",
+  "last": "2026-09-26"
  },
  "landline-switch-off-help": {
   "first": "2026-07-28",
@@ -1910,8 +1911,8 @@
  },
  "laptop-repair": {
   "first": "2026-07-28",
-  "h": "67c49e9c2070900c",
-  "last": "2026-09-13"
+  "h": "e22e900daaeed586",
+  "last": "2026-09-26"
  },
  "laptop-screen-flickers-then-goes-black": {
   "first": "2026-08-01",
@@ -1920,8 +1921,8 @@
  },
  "laptop-screen-repair": {
   "first": "2026-07-28",
-  "h": "e689022e7c99e7cf",
-  "last": "2026-09-13"
+  "h": "640320b3ed09ecad",
+  "last": "2026-09-26"
  },
  "laptop-screen-repair-cost-bournemouth": {
   "first": "2026-07-28",
@@ -1975,8 +1976,8 @@
  },
  "lithium-battery-installs-dorset": {
   "first": "2026-07-28",
-  "h": "42cb8ea140a62c35",
-  "last": "2026-09-25"
+  "h": "e28306c762ef38cd",
+  "last": "2026-09-26"
  },
  "locked-out-microsoft-365-admin-account": {
   "first": "2026-07-28",
@@ -1985,7 +1986,7 @@
  },
  "lost-or-stolen-laptop-what-to-do": {
   "first": "2026-07-28",
-  "h": "70ce25f23a70a866",
+  "h": "52862e788c43b46f",
   "last": "2026-09-26"
  },
  "lost-or-stolen-phone-what-to-do": {
@@ -2000,13 +2001,13 @@
  },
  "malwarebytes-premium": {
   "first": "2026-07-28",
-  "h": "c2449c8db8541519",
-  "last": "2026-09-13"
+  "h": "990f2af86299c204",
+  "last": "2026-09-26"
  },
  "managed-it-support": {
   "first": "2026-07-28",
-  "h": "bcececa7ca444522",
-  "last": "2026-09-13"
+  "h": "0664f4c6ad449801",
+  "last": "2026-09-26"
  },
  "mapped-network-drive-keeps-disconnecting": {
   "first": "2026-07-28",
@@ -2015,13 +2016,13 @@
  },
  "meet-the-team": {
   "first": "2026-07-28",
-  "h": "55baff006202bdf6",
+  "h": "428a3ded7c7b67e2",
   "last": "2026-09-26"
  },
  "meraki-licence-expiry-what-happens": {
   "first": "2026-07-28",
-  "h": "ecbb22a67811ad02",
-  "last": "2026-08-31"
+  "h": "dae698f3f0c508bf",
+  "last": "2026-09-26"
  },
  "mesh-wifi-setup-guide": {
   "first": "2026-07-28",
@@ -2035,23 +2036,23 @@
  },
  "microsoft-365-backup-do-you-need-it": {
   "first": "2026-06-16",
-  "h": "5bfa673d95541546",
-  "last": "2026-09-13"
+  "h": "f8d4a256256d197a",
+  "last": "2026-09-26"
  },
  "microsoft-365-migration": {
   "first": "2026-07-28",
-  "h": "233a41c43ffb88cb",
-  "last": "2026-09-13"
+  "h": "7c79d1adc7ebd367",
+  "last": "2026-09-26"
  },
  "microsoft-365-support": {
   "first": "2026-07-28",
-  "h": "422dc8b74add669e",
-  "last": "2026-09-13"
+  "h": "6b655eafafd90c05",
+  "last": "2026-09-26"
  },
  "microsoft-365-vs-google-workspace": {
   "first": "2026-07-28",
-  "h": "c07506c3e0104cf2",
-  "last": "2026-09-13"
+  "h": "4ef2fd68c4f8583f",
+  "last": "2026-09-26"
  },
  "microsoft-office-unlicensed-product-error": {
   "first": "2026-07-28",
@@ -2065,8 +2066,8 @@
  },
  "minecraft-parental-controls": {
   "first": "2026-08-18",
-  "h": "c1adc5286a24c915",
-  "last": "2026-09-05"
+  "h": "7e8b0724fd5146f0",
+  "last": "2026-09-26"
  },
  "mobile-signal-check": {
   "first": "2026-08-17",
@@ -2080,7 +2081,7 @@
  },
  "monthly-it-support": {
   "first": "2026-07-28",
-  "h": "3090a29acdb99793",
+  "h": "5608056f64f452ad",
   "last": "2026-09-26"
  },
  "motorhome-hire-fleet-monitoring": {
@@ -2160,18 +2161,18 @@
  },
  "next-gen-home-dashboards": {
   "first": "2026-07-29",
-  "h": "c31d24215812261f",
-  "last": "2026-08-31"
+  "h": "a533e9379a7ae247",
+  "last": "2026-09-26"
  },
  "nhs-app-course": {
   "first": "2026-07-28",
-  "h": "3e119323921ea1ea",
+  "h": "9f02905c2739881d",
   "last": "2026-09-26"
  },
  "nintendo-switch-parental-controls": {
   "first": "2026-08-18",
-  "h": "ee3bddcd70928867",
-  "last": "2026-09-05"
+  "h": "b72a37576242bbd9",
+  "last": "2026-09-26"
  },
  "no-contract-it-support": {
   "first": "2026-07-28",
@@ -2190,8 +2191,8 @@
  },
  "off-grid-victron-energy": {
   "first": "2026-07-28",
-  "h": "7d4e9d79990c1375",
-  "last": "2026-09-25"
+  "h": "e068bc3f6a1ae6ac",
+  "last": "2026-09-26"
  },
  "office-moves-it-relocation": {
   "first": "2026-07-28",
@@ -2225,7 +2226,7 @@
  },
  "onedrive-full-cant-send-email": {
   "first": "2026-07-28",
-  "h": "eae6c57e4ab0b13b",
+  "h": "66605c4642d12b28",
   "last": "2026-09-26"
  },
  "onedrive-keeps-asking-to-sign-in": {
@@ -2250,22 +2251,22 @@
  },
  "onedrive-sharepoint-teams-explained": {
   "first": "2026-06-16",
-  "h": "52f8cfa96fd78b7f",
-  "last": "2026-09-13"
+  "h": "c842b9bb89a92ae1",
+  "last": "2026-09-26"
  },
  "online-banking-safely-course": {
   "first": "2026-07-28",
-  "h": "073a2af36672e7e3",
+  "h": "a781c4d18e95cd72",
   "last": "2026-09-26"
  },
  "online-safety": {
   "first": "2026-07-28",
-  "h": "93fb524818b69383",
+  "h": "f662122a49b2642d",
   "last": "2026-09-26"
  },
  "online-safety-course": {
   "first": "2026-07-28",
-  "h": "093e190f4e31c1a9",
+  "h": "91a9fd38e44cb413",
   "last": "2026-09-26"
  },
  "online-scams": {
@@ -2275,7 +2276,7 @@
  },
  "online-shopping-safely-course": {
   "first": "2026-07-28",
-  "h": "e01a1eb531ba8679",
+  "h": "c919fcd03e7f131f",
   "last": "2026-09-26"
  },
  "our-guarantees": {
@@ -2565,8 +2566,8 @@
  },
  "parents-guide-online-safety": {
   "first": "2026-08-18",
-  "h": "f38a4eda4bf0ff4f",
-  "last": "2026-09-05"
+  "h": "2b3d5019be9eb9a5",
+  "last": "2026-09-26"
  },
  "password-breach-checker": {
   "first": "2026-07-28",
@@ -2585,7 +2586,7 @@
  },
  "password-strength-checker": {
   "first": "2026-07-28",
-  "h": "9aac54105da32a44",
+  "h": "44ecb7783db73f0c",
   "last": "2026-09-26"
  },
  "pay": {
@@ -2615,8 +2616,8 @@
  },
  "playstation-parental-controls-uk": {
   "first": "2026-08-18",
-  "h": "af8df417957dcdbc",
-  "last": "2026-09-05"
+  "h": "b22a6d843dc1aa2a",
+  "last": "2026-09-26"
  },
  "plusnet-email-wont-add-to-new-outlook": {
   "first": "2026-07-28",
@@ -2640,8 +2641,8 @@
  },
  "pricing": {
   "first": "2026-07-28",
-  "h": "a9c86cc14a539268",
-  "last": "2026-09-13"
+  "h": "95f0d53f5effa871",
+  "last": "2026-09-26"
  },
  "printer-asking-for-admin-password": {
   "first": "2026-08-01",
@@ -2715,8 +2716,8 @@
  },
  "pstn-switch-off-business": {
   "first": "2026-07-28",
-  "h": "81dc17e965380ff2",
-  "last": "2026-08-31"
+  "h": "a813480f89dd01e0",
+  "last": "2026-09-26"
  },
  "qr-code-generator": {
   "first": "2026-07-28",
@@ -2735,12 +2736,12 @@
  },
  "ransomware": {
   "first": "2026-07-28",
-  "h": "a25954ce60810fba",
-  "last": "2026-08-31"
+  "h": "99799b87a6fd716c",
+  "last": "2026-09-26"
  },
  "ransomware-recovery": {
   "first": "2026-07-28",
-  "h": "f26e0fdf8283b8d6",
+  "h": "76d26712efd3f4ee",
   "last": "2026-09-26"
  },
  "recover-photos-deceased-relatives-laptop": {
@@ -2755,8 +2756,8 @@
  },
  "refer-a-friend": {
   "first": "2026-07-28",
-  "h": "166608af45398b73",
-  "last": "2026-08-31"
+  "h": "da3902ded0fd142f",
+  "last": "2026-09-26"
  },
  "refurbished-dell-desktops-dorset": {
   "first": "2026-07-28",
@@ -2805,23 +2806,23 @@
  },
  "refurbished-vs-new-laptop": {
   "first": "2026-06-19",
-  "h": "d645589b14d57f63",
-  "last": "2026-09-13"
+  "h": "4542a429813c410d",
+  "last": "2026-09-26"
  },
  "remote-access": {
   "first": "2026-07-28",
-  "h": "f5800e94e9592a85",
-  "last": "2026-09-13"
+  "h": "e8f6189da32c3be1",
+  "last": "2026-09-26"
  },
  "remote-it-support": {
   "first": "2026-07-28",
-  "h": "70774fe6ddfabb6c",
-  "last": "2026-09-13"
+  "h": "1d01de54090f794d",
+  "last": "2026-09-26"
  },
  "remote-support": {
   "first": "2026-07-28",
-  "h": "4c9819f1bec1418e",
-  "last": "2026-08-31"
+  "h": "44819b270e3e1f30",
+  "last": "2026-09-26"
  },
  "repair-or-replace-advisor": {
   "first": "2026-07-28",
@@ -2830,8 +2831,8 @@
  },
  "resources": {
   "first": "2026-07-28",
-  "h": "18af4464b56d1957",
-  "last": "2026-09-13"
+  "h": "37956efcf5fd9cae",
+  "last": "2026-09-26"
  },
  "restrict-staff-access-to-shared-folders-windows-11": {
   "first": "2026-07-28",
@@ -2840,8 +2841,8 @@
  },
  "reviews": {
   "first": "2026-07-28",
-  "h": "52ccf56bcbd95719",
-  "last": "2026-08-31"
+  "h": "798aef23c02c05ca",
+  "last": "2026-09-26"
  },
  "room-by-room-wifi-test": {
   "first": "2026-07-28",
@@ -2850,18 +2851,18 @@
  },
  "ruckus-access-point-end-of-life": {
   "first": "2026-07-28",
-  "h": "bbb528f3be23a093",
-  "last": "2026-09-13"
+  "h": "377fd768d52e38f5",
+  "last": "2026-09-26"
  },
  "ruckus-r510-unreliable-wifi-fix": {
   "first": "2026-07-28",
-  "h": "059387eeb520faae",
-  "last": "2026-08-31"
+  "h": "a853972662398e60",
+  "last": "2026-09-26"
  },
  "rural-and-farm-wifi-dorset": {
   "first": "2026-07-28",
-  "h": "1920ca22119e44ac",
-  "last": "2026-08-31"
+  "h": "ea0654d09ad765d5",
+  "last": "2026-09-26"
  },
  "safe-online-banking-for-beginners": {
   "first": "2026-07-28",
@@ -2905,8 +2906,8 @@
  },
  "screen-time-and-family-link-parental-controls": {
   "first": "2026-08-18",
-  "h": "9b9edf3834e84901",
-  "last": "2026-09-05"
+  "h": "4cf23f3f4000c414",
+  "last": "2026-09-26"
  },
  "second-hand-office-computers-poole": {
   "first": "2026-07-28",
@@ -2915,13 +2916,13 @@
  },
  "secure-it-disposal": {
   "first": "2026-07-28",
-  "h": "8961e3e9ab491e75",
-  "last": "2026-09-13"
+  "h": "51f43c21a25eaa94",
+  "last": "2026-09-26"
  },
  "security-awareness-training": {
   "first": "2026-07-28",
-  "h": "f3b28130d06a00a9",
-  "last": "2026-08-31"
+  "h": "9e63e840cd50f1cf",
+  "last": "2026-09-26"
  },
  "server-down-emergency-support": {
   "first": "2026-07-28",
@@ -2945,13 +2946,13 @@
  },
  "services": {
   "first": "2026-07-28",
-  "h": "fac3db38b40d618d",
-  "last": "2026-09-13"
+  "h": "6a77ccf696b6bc44",
+  "last": "2026-09-26"
  },
  "setting-up-a-computer-for-an-older-relative": {
   "first": "2026-07-28",
-  "h": "ec812b65d70246fe",
-  "last": "2026-08-31"
+  "h": "221dc5026ddc70d4",
+  "last": "2026-09-26"
  },
  "share-files-small-office-without-server": {
   "first": "2026-08-01",
@@ -2985,33 +2986,33 @@
  },
  "simplybook-addclient-value-is-required-error": {
   "first": "2026-07-28",
-  "h": "2a7debc7fb61dbaa",
-  "last": "2026-08-31"
+  "h": "33a579a620b644b4",
+  "last": "2026-09-26"
  },
  "simplybook-callback-url-not-working": {
   "first": "2026-07-28",
-  "h": "8604afe05ee9c8a0",
-  "last": "2026-08-31"
+  "h": "26d3527a1ba1ed5b",
+  "last": "2026-09-26"
  },
  "simplybook-custom-booking-page": {
   "first": "2026-07-28",
-  "h": "d5f21c2c7c048688",
-  "last": "2026-08-31"
+  "h": "62fca9ae51b12f57",
+  "last": "2026-09-26"
  },
  "simplybook-custom-email-notifications": {
   "first": "2026-07-28",
-  "h": "4e0844a6221f519f",
-  "last": "2026-08-31"
+  "h": "7c51ce2ab88effff",
+  "last": "2026-09-26"
  },
  "simplybook-integration": {
   "first": "2026-07-28",
-  "h": "35e134b2aa45ecf9",
-  "last": "2026-08-31"
+  "h": "fba1b1560e3d1f92",
+  "last": "2026-09-26"
  },
  "simplybook-integration-traps": {
   "first": "2026-07-28",
-  "h": "ee32149d1d10b6c1",
-  "last": "2026-08-31"
+  "h": "27bc50e61fc75360",
+  "last": "2026-09-26"
  },
  "sky-email-wont-add-to-new-outlook": {
   "first": "2026-07-28",
@@ -3020,8 +3021,8 @@
  },
  "slow-computer-repair": {
   "first": "2026-07-28",
-  "h": "7977ab144bb702bc",
-  "last": "2026-09-13"
+  "h": "2aac67acbd4429ad",
+  "last": "2026-09-26"
  },
  "slow-wordpress-site-fix-or-rebuild": {
   "first": "2026-07-28",
@@ -3045,8 +3046,8 @@
  },
  "smishing-and-vishing": {
   "first": "2026-07-28",
-  "h": "3528d907eb3c72e6",
-  "last": "2026-08-31"
+  "h": "b3699de584968a54",
+  "last": "2026-09-26"
  },
  "solar-battery-calculator": {
   "first": "2026-07-28",
@@ -3060,12 +3061,12 @@
  },
  "splashtop-business-guide": {
   "first": "2026-07-28",
-  "h": "02b38d148bff0945",
-  "last": "2026-08-31"
+  "h": "ae1f7acba7881ab9",
+  "last": "2026-09-26"
  },
  "spot-the-scam": {
   "first": "2026-07-28",
-  "h": "40a54bbb45c7a4a7",
+  "h": "393c2b12d149d289",
   "last": "2026-09-26"
  },
  "ssl-checker": {
@@ -3075,8 +3076,8 @@
  },
  "starlink-internet": {
   "first": "2026-07-28",
-  "h": "5f1b137877c9e8a1",
-  "last": "2026-09-13"
+  "h": "7bedad465eb23d50",
+  "last": "2026-09-26"
  },
  "static-site-vs-wordpress-small-business": {
   "first": "2026-07-28",
@@ -3145,8 +3146,8 @@
  },
  "threadripper-workstations": {
   "first": "2026-07-28",
-  "h": "5750ce99936a60ae",
-  "last": "2026-09-13"
+  "h": "3323889cde18c6c1",
+  "last": "2026-09-26"
  },
  "transfer-microsoft-365-when-owner-leaves": {
   "first": "2026-09-05",
@@ -3165,13 +3166,13 @@
  },
  "unitree-robots": {
   "first": "2026-07-28",
-  "h": "2101cac77d237af9",
-  "last": "2026-09-13"
+  "h": "6e838fb005b21212",
+  "last": "2026-09-26"
  },
  "unsupported-access-point-security-risk": {
   "first": "2026-07-28",
-  "h": "2fe6734929d86cb6",
-  "last": "2026-08-31"
+  "h": "1fa5ef6906a617da",
+  "last": "2026-09-26"
  },
  "using-ai-safely": {
   "first": "2026-07-28",
@@ -3180,8 +3181,8 @@
  },
  "van-signal-map": {
   "first": "2026-08-10",
-  "h": "a6f71e7c100bd265",
-  "last": "2026-09-08"
+  "h": "415aaa47711fe6e9",
+  "last": "2026-09-26"
  },
  "victron-boat-gps-tracking": {
   "first": "2026-07-28",
@@ -3240,7 +3241,7 @@
  },
  "virus-removal": {
   "first": "2026-07-28",
-  "h": "751651615c2cb390",
+  "h": "ab20cdf7012bb727",
   "last": "2026-09-26"
  },
  "virus-removal-christchurch": {
@@ -3255,13 +3256,13 @@
  },
  "web-care": {
   "first": "2026-07-28",
-  "h": "b4eee5f6023fd962",
-  "last": "2026-09-13"
+  "h": "2d5acd329e450ad4",
+  "last": "2026-09-26"
  },
  "web-design-hosting": {
   "first": "2026-07-28",
-  "h": "1126b37238318159",
-  "last": "2026-09-13"
+  "h": "1ab9eb3bd94eac36",
+  "last": "2026-09-26"
  },
  "web-designer-disappeared": {
   "first": "2026-07-28",
@@ -3295,18 +3296,18 @@
  },
  "website-rebuild": {
   "first": "2026-07-28",
-  "h": "03c7fd7eae8d6ef4",
-  "last": "2026-08-31"
+  "h": "b138e3cfdcb90e19",
+  "last": "2026-09-26"
  },
  "website-rebuild-case-study-beckox": {
   "first": "2026-08-13",
-  "h": "145973a6767747f0",
-  "last": "2026-08-31"
+  "h": "e2410431692ddef2",
+  "last": "2026-09-26"
  },
  "website-rebuild-seo-case-study": {
   "first": "2026-07-30",
-  "h": "ecee2bd28797a108",
-  "last": "2026-08-31"
+  "h": "347959a5e03de7cb",
+  "last": "2026-09-26"
  },
  "website-speed-local-seo": {
   "first": "2026-07-28",
@@ -3320,13 +3321,13 @@
  },
  "what-to-do-before-replacing-old-computer": {
   "first": "2026-06-16",
-  "h": "1a4eb6b0eac4692e",
-  "last": "2026-09-05"
+  "h": "1b7ff2f3afc4237e",
+  "last": "2026-09-26"
  },
  "what-to-do-when-an-employee-leaves": {
   "first": "2026-06-16",
-  "h": "c6da294be06ae43b",
-  "last": "2026-09-13"
+  "h": "ee86e9376ed45f29",
+  "last": "2026-09-26"
  },
  "what-websites-know": {
   "first": "2026-07-28",
@@ -3340,7 +3341,7 @@
  },
  "whatsapp-course-for-beginners": {
   "first": "2026-07-28",
-  "h": "fb5c71a31a77a474",
+  "h": "05dc80c6b605b441",
   "last": "2026-09-26"
  },
  "which-microsoft-365-plan": {
@@ -3360,8 +3361,8 @@
  },
  "why-choose-365-techies": {
   "first": "2026-07-28",
-  "h": "7e1be48a4737a28f",
-  "last": "2026-08-31"
+  "h": "77d761183b093499",
+  "last": "2026-09-26"
  },
  "why-computer-prices-have-gone-up": {
   "first": "2026-07-28",
@@ -3380,8 +3381,8 @@
  },
  "why-monthly-it-support-beats-per-repair": {
   "first": "2026-06-16",
-  "h": "3fa486c0ab7ee590",
-  "last": "2026-08-31"
+  "h": "99759af680ee8e94",
+  "last": "2026-09-26"
  },
  "why-windows-updates-break-things": {
   "first": "2026-06-16",
@@ -3390,8 +3391,8 @@
  },
  "wifi-controller-end-of-life": {
   "first": "2026-07-28",
-  "h": "651e69f4972e141b",
-  "last": "2026-08-31"
+  "h": "76db41bf05cc43f6",
+  "last": "2026-09-26"
  },
  "wifi-drops-moving-between-access-points": {
   "first": "2026-07-31",
@@ -3415,8 +3416,8 @@
  },
  "wifi-installation": {
   "first": "2026-07-28",
-  "h": "23a4eb18875c5756",
-  "last": "2026-09-13"
+  "h": "c7597e24461c9a31",
+  "last": "2026-09-26"
  },
  "wifi-keeps-dropping": {
   "first": "2026-07-31",
@@ -3460,13 +3461,13 @@
  },
  "windows-10-end-of-life": {
   "first": "2026-07-28",
-  "h": "586ef1c383ba79a3",
-  "last": "2026-09-13"
+  "h": "91298cbbfc5e11ef",
+  "last": "2026-09-26"
  },
  "windows-10-esu-business-cost": {
   "first": "2026-07-29",
-  "h": "6c8dda2b5c0476e0",
-  "last": "2026-08-31"
+  "h": "431757332268b976",
+  "last": "2026-09-26"
  },
  "windows-10-esu-free-enrolment-help": {
   "first": "2026-07-28",
@@ -3515,8 +3516,8 @@
  },
  "windows-reinstall": {
   "first": "2026-07-28",
-  "h": "49ee256c4bd3eefb",
-  "last": "2026-09-13"
+  "h": "dcf4e2871faec62d",
+  "last": "2026-09-26"
  },
  "wipe-deceased-relatives-laptop-pass-on": {
   "first": "2026-08-01",
@@ -3525,8 +3526,8 @@
  },
  "word-basics-course": {
   "first": "2026-09-05",
-  "h": "8d8be6936b856dfe",
-  "last": "2026-09-13"
+  "h": "5dd660cda2328664",
+  "last": "2026-09-26"
  },
  "working-from-a-campervan": {
   "first": "2026-08-13",
@@ -3545,8 +3546,8 @@
  },
  "xbox-parental-controls-uk": {
   "first": "2026-08-18",
-  "h": "1daa53be4ed646f5",
-  "last": "2026-09-05"
+  "h": "9ad71720d2b921c9",
+  "last": "2026-09-26"
  },
  "your-first-6-weekly-service": {
   "first": "2026-07-28",
@@ -3555,8 +3556,8 @@
  },
  "youtube-parental-controls": {
   "first": "2026-08-18",
-  "h": "3568304f4857aad6",
-  "last": "2026-09-05"
+  "h": "853869b728be9952",
+  "last": "2026-09-26"
  },
  "youve-been-hacked-email-bitcoin-scam": {
   "first": "2026-09-05",

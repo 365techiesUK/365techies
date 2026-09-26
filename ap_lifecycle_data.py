@@ -66,7 +66,7 @@ AP_MODELS = [
          phy="300 / 867 Mbps", ports="2 x 1GbE",
          poe="802.3af (10.5W max)", poe_af="af is its normal mode",
          wpa3="no", wpa3_note="",
-         eos_sale="2018-10-31", eos_support="2024-04-30",
+         eos_sale="2019-04-30", eos_support="2024-04-30",
          last_sw="SmartZone 5.2.x (AP zone) / ZoneDirector 10.4.x",
          replacement="R510", source="ruckus_eol"),
     dict(key="ruckus-r600", vendor="RUCKUS", model="R600", launched=CHECK,
@@ -106,7 +106,7 @@ AP_MODELS = [
          poe_af="2.4GHz drops to 2x4 at 19dBm/chain; 2nd Ethernet disabled; USB disabled",
          wpa3="yes", wpa3_note="On the current (2020) datasheet. The 2019 revision listed "
                                "no WPA3 - it arrived by firmware.",
-         eos_sale="2022-01-31", eos_support="2028-12-31",
+         eos_sale="2022-01-31", eos_support="2027-12-31",
          last_sw="SmartZone 6.1.x (AP zone) / ZoneDirector 10.5.x",
          replacement="R750", source="ruckus_eol"),
     dict(key="ruckus-r720", vendor="RUCKUS", model="R720", launched=CHECK,
@@ -231,9 +231,9 @@ AP_MODELS = [
          poe_af="Cisco's wording: if 802.3af PoE is the source of power, the USB port is disabled",
          wpa3="yes",
          wpa3_note="Delivered by the controller (AireOS 8.10.x or Catalyst 9800), not by the AP.",
-         eos_sale=CHECK, eos_support="2027-04-30",
-         eos_sw_maint=CHECK, eos_vuln="2027-04-30",
-         last_sw="", replacement="", source="cisco_eol"),
+         eos_sale="2022-05-01", eos_support="2027-04-30",
+         eos_sw_maint="2023-05-01", eos_vuln="2027-04-30",
+         last_sw="", replacement="", source="cisco_1830"),
     dict(key="cisco-1850", vendor="Cisco", model="Aironet 1850 (AIR-AP1852I/E)",
          launched="2015", launched_note="Announced 2 June 2015",
          wifi_gen="802.11ac Wave 2 (Wi-Fi 5)",
@@ -242,8 +242,8 @@ AP_MODELS = [
          poe="802.3at or Cisco Enhanced PoE (20.9W draw)",
          poe_af="802.3af cannot supply its 20.9W draw",
          wpa3=CHECK, wpa3_note="",
-         eos_sale=CHECK, eos_support=CHECK, eos_sw_maint=CHECK, eos_vuln=CHECK,
-         last_sw="", replacement="", source="cisco_eol"),
+         eos_sale="2022-05-01", eos_support="2027-04-30", eos_sw_maint="2023-05-01", eos_vuln="2027-04-30",
+         last_sw="", replacement="", source="cisco_1850"),
 ]
 
 # Controllers get their own small table — the pillar's central argument is that the
@@ -296,7 +296,11 @@ SOURCES = {
     "ruckus_eol": ("RUCKUS Hardware AP end-of-life table",
                    "https://support.ruckuswireless.com/end-of-life-tables"),
     "cisco_eol": ("Cisco end-of-sale and end-of-life bulletins",
-                  "https://www.cisco.com/c/en/us/products/wireless/access-points/eos-eol-notice-listing.html"),
+                  "https://www.cisco.com/c/en/us/products/eos-eol-listing.html"),
+    "cisco_1830": ("Cisco EoL bulletin: Aironet 1830 Series",
+                   "https://www.cisco.com/c/en/us/products/collateral/wireless/aironet-1830-series-access-points/aironet-1830-series-access-points-eol.html"),
+    "cisco_1850": ("Cisco EoL bulletin: Aironet 1850 Series",
+                   "https://www.cisco.com/c/en/us/products/collateral/wireless/aironet-1850-series-access-points/aironet-1850-series-access-points-eol.html"),
     "meraki_eol": ("Cisco Meraki end-of-life products and dates",
                    "https://documentation.meraki.com/General_Administration/Other_Topics/Meraki_End-of-Life_(EOL)_Products_and_Dates"),
     "meraki_lic": ("Cisco Meraki licensing documentation",
@@ -316,10 +320,10 @@ MERAKI_WIFI5_EOL = [
 # diary cannot drift away from the published content.
 REVIEW_DIARY = [
     ("2027-02-28", "RUCKUS R730 end of support"),
-    ("2027-04-30", "Cisco Aironet 1830 last date of support"),
+    ("2027-04-30", "Cisco Aironet 1830 and 1850 last date of support"),
     ("2027-08-31", "RUCKUS ZoneDirector 1200 end of support (reported, not vendor-published)"),
-    ("2027-12-31", "RUCKUS R610 and R720 end of support"),
-    ("2028-12-31", "RUCKUS R510, R710 and R320 end of support"),
+    ("2027-12-31", "RUCKUS R610, R710 and R720 end of support"),
+    ("2028-12-31", "RUCKUS R510 and R320 end of support"),
 ]
 
 DISCLAIMER = (
@@ -350,5 +354,7 @@ def state_of(eos_support, today=DATES_CHECKED):
     ty, tm, _ = (int(x) for x in today.split("-"))
     months = (y - ty) * 12 + (m - tm)
     if months <= 18:
-        return ("soon", "Ends in about %d months" % months)
+        # the month itself, not "in about N months": that was counted from the check date and went stale
+        return ("soon", "Ends %s %d" % (("January", "February", "March", "April", "May", "June", "July", "August",
+                                         "September", "October", "November", "December")[m - 1], y))
     return ("ok", "Supported")

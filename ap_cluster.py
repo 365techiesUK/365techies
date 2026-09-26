@@ -170,7 +170,7 @@ def table_patch_floors():
 
 def milestone_glossary():
     h = ['<div class="aptwrap"><table class="apt"><caption class="apt__cap">'
-         'The same word means different things to different vendors. This is where most '
+         'The same word means different things to different vendors. This is where '
          'costly misunderstandings start.</caption><thead><tr><th scope="col">Vendor</th>'
          '<th scope="col">Milestone</th><th scope="col">What it actually means</th>'
          '</tr></thead><tbody>']
@@ -200,7 +200,7 @@ SPOKES = [
     ("access-points-dropping-off-controller", "APs dropping off the controller",
      "A diagnostic order of play, cheapest check first."),
     ("wifi-controller-end-of-life", "Your controller is the real deadline",
-     "Not the access points. This is the one most people miss."),
+     "Not the access points. This is the one that&rsquo;s easy to miss."),
     ("meraki-licence-expiry-what-happens", "When a Meraki licence expires",
      "What actually happens &mdash; and what doesn&rsquo;t."),
     ("unsupported-access-point-security-risk", "Working but unpatched",

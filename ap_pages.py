@@ -28,7 +28,7 @@ def _page(slug, title, desc, h1, eyebrow, lede, body, chips=None, cta1=None, cta
              cta1=cta1 or ("Talk to a human: 01202 775566", "tel:+441202775566"),
              cta2=cta2 or ("Free Wi-Fi survey tool", "/wifi-signal-test/"),
              chips=chips or ["Vendor sources linked", "Dates checked " + D.DATES_CHECKED_HUMAN,
-                             "Independent &mdash; we sell no vendor&rsquo;s kit"]),
+                             "Independent &mdash; we don&rsquo;t resell this kit"]),
         '    <section class="section"><div class="wrap wrap--narrow prose" data-reveal>'
         + C.disclaimer_block() + '</div></section>',
         body,
@@ -105,7 +105,7 @@ def pillar():
         '<p class="eyebrow mono">/03 &mdash; WHAT THE WORDS MEAN</p>',
         '<h2 class="section-title" data-title>&ldquo;End of life&rdquo; is four different things'
         '<span class="title-underline"></span></h2>',
-        '<p>This is where most expensive misunderstandings begin. RUCKUS publishes three '
+        '<p>This is where expensive misunderstandings begin. RUCKUS publishes three '
         'milestones for access points; Cisco publishes seven. They do not line up, and the one '
         'everybody quotes &mdash; end of sale &mdash; is the one that matters least.</p>',
         C.milestone_glossary(),
@@ -122,7 +122,7 @@ def pillar():
         '<p>The right-hand columns are the ones worth your time. An access point running on '
         'less power than it wants does not fail, complain or show a warning. It reports as '
         'perfectly healthy while running with fewer aerials, a dead second network port and, on '
-        'some models, no USB and no IoT radio. It is the most commonly missed fault in business '
+        'some models, no USB and no IoT radio. It is an easy fault to miss in business '
         'Wi-Fi, and it costs nothing to check.</p>',
         C.table_specs(),
         '<p><a href="/access-point-poe-af-at-upgrade-trap/">The full PoE trap, explained</a> '
@@ -303,14 +303,14 @@ def s2_r510():
             ("The power trap in reverse",
              "RUCKUS marketed the R510 as running on existing 802.3af switches &mdash; so R510 "
              "estates usually sit on af-only switches. Every Wi-Fi 6 successor needs 802.3at. "
-             "<a href=\"/access-point-poe-af-at-upgrade-trap/\">That is the hidden cost of the "
-             "upgrade nobody quotes for.</a>"),
+             "<a href=\"/access-point-poe-af-at-upgrade-trap/\">That is the hidden cost that is "
+             "easy to leave out of a quote.</a>"),
         ]),
         '</div></section>',
         '    <section class="section"><div class="wrap wrap--narrow prose" data-reveal>',
         '<h2 class="section-title" data-title>So should you replace them?'
         '<span class="title-underline"></span></h2>',
-        '<p>Our honest position, and we sell no vendor&rsquo;s hardware, so take it as read that '
+        '<p>Our honest position, and we resell none of these vendors&rsquo; hardware, so take it as read that '
         'we have nothing to gain either way:</p>',
         checklist([
             "<strong>If they are patched, powered properly and the controller is supported</strong> "
@@ -359,7 +359,7 @@ def s3_cisco():
         '    <section class="section"><div class="wrap prose" data-reveal>',
         '<h2 class="section-title" data-title>Cisco Aironet: the dates, and the seven milestones'
         '<span class="title-underline"></span></h2>',
-        '<p>Cisco publishes more lifecycle milestones than anyone else, and the gaps between '
+        '<p>Cisco publishes a long list of lifecycle milestones, and the gaps between '
         'them matter. An access point can be past <em>End of Software Maintenance</em> &mdash; '
         'no more bug fixes &mdash; while still receiving security patches for years. Then that '
         'stops too. Those are two different risk positions and they deserve two different '
@@ -494,7 +494,7 @@ def s5_poe():
         '    <section class="section"><div class="wrap wrap--narrow prose" data-reveal>',
         '<h2 class="section-title" data-title>The quote says access points. The job is switches too.'
         '<span class="title-underline"></span></h2>',
-        '<p>This is the most expensive thing people miss when pricing a Wi-Fi refresh, and it is '
+        '<p>This is an easily missed cost when pricing a Wi-Fi refresh, and it is '
         'entirely knowable in advance.</p>',
         '<p>Older business access points were designed to run on standard Power over Ethernet '
         '(802.3af). Their modern replacements almost universally need the higher-power standard '
@@ -550,7 +550,7 @@ def s5_poe():
           "check that finds it in minutes.",
           'Replacing access points is <em class="grad grad--green">never just access points</em>',
           "// POWER OVER ETHERNET &middot; THE HIDDEN COST",
-          "The most expensive thing people miss when pricing a Wi-Fi refresh - and the "
+          "An easily missed cost when pricing a Wi-Fi refresh - and the "
           "five-minute check that tells you whether your existing access points are quietly "
           "running at half strength right now.",
           body)
@@ -569,8 +569,8 @@ def s6_dropping():
         'instead &mdash; the causes really are different.</p>',
         '<h2 class="section-title" data-title>An order of play, cheapest check first'
         '<span class="title-underline"></span></h2>',
-        '<p>Access points that go offline and come back are among the most misdiagnosed faults in '
-        'business IT, because the obvious answer &mdash; &ldquo;the Wi-Fi is bad&rdquo; &mdash; is '
+        '<p>Access points that go offline and come back are easy to '
+        'misdiagnose in business IT, because the obvious answer &mdash; &ldquo;the Wi-Fi is bad&rdquo; &mdash; is '
         'almost always the wrong one. Radio problems degrade. They do not disconnect to a '
         'timetable.</p>',
         checklist([
@@ -741,8 +741,8 @@ def s8_meraki():
         'to tell you there is one.</p>',
         '<p>In our own experience &mdash; and this is our field experience, not Meraki '
         'documentation &mdash; those reminders very often arrive at the mailbox of someone who '
-        'has left the business, or at the reseller who installed the kit years ago. That is the '
-        'single most common reason a Meraki network goes dark unexpectedly. Checking who receives '
+        'has left the business, or at the reseller who installed the kit years ago. That is how a '
+        'Meraki network can go dark without anyone expecting it. Checking who receives '
         'those emails takes two minutes and costs nothing.</p>',
         '</div></section>',
         '    <section class="section"><div class="wrap prose" data-reveal>',
@@ -946,7 +946,7 @@ def s11_r510_playbook():
         '<h2 class="section-title" data-title>Start here: is it actually the Wi-Fi?'
         '<span class="title-underline"></span></h2>',
         '<p>&ldquo;The Wi-Fi is unreliable&rdquo; is a symptom, not a diagnosis, and on a busy '
-        'floor it is wrong about half the time. Before you touch an access point, rule out the '
+        'floor it is often wrong. Before you touch an access point, rule out the '
         'three things that produce identical complaints:</p>',
         '<ol>',
         '<li><strong>The internet circuit, not the Wi-Fi.</strong> If a wired machine on the same '
@@ -975,8 +975,8 @@ def s11_r510_playbook():
         '<li><strong>Check firmware is uniform.</strong> A mixed-firmware estate produces '
         'intermittent, unrepeatable faults that waste weeks. Note the version on every AP before '
         'you change anything.</li>',
-        '<li><strong>Check what each AP negotiated for power.</strong> The single most '
-        'under-tested thing in the whole estate. Detail below.</li>',
+        '<li><strong>Check what each AP negotiated for power.</strong> Easy to '
+        'overlook, because the AP still looks fine. Detail below.</li>',
         '<li><strong>Check the switch&rsquo;s total PoE budget, not just the ports.</strong> Ports '
         'can each be within spec while the switch as a whole is oversubscribed.</li>',
         '<li><strong>Walk the cable.</strong> Length, category, patch panels, and any injectors '
@@ -997,8 +997,8 @@ def s11_r510_playbook():
         ' <section class="section"><div class="wrap wrap--narrow prose" data-reveal>',
         '<h2 class="section-title" data-title>Testing PoE properly'
         '<span class="title-underline"></span></h2>',
-        '<p>Most &ldquo;flaky access point&rdquo; jobs we are called to are power, and almost '
-        'nobody checks it, because the AP is lit up and joined so it looks fine. An access point '
+        '<p>&ldquo;Flaky access point&rdquo; faults often turn out to be power, and it is easily '
+        'overlooked, because the AP is lit up and joined so it looks fine. An access point '
         'that is up but under-powered behaves exactly like one that is failing.</p>',
         '<p><strong>What to measure, per port:</strong></p>',
         '<ul>',
@@ -1269,7 +1269,7 @@ def s11_r510_playbook():
         '<td>You throw away 18 working access points, the controller, and everyone&rsquo;s '
         'familiarity with it. Rarely the right answer when the incumbent is supported to 2028.</td></tr>',
         '</tbody></table></div>',
-        '<p>The pattern we see most often on floors this size: the estate is fine, the switches '
+        '<p>A pattern we see on floors this size: the estate is fine, the switches '
         'are the constraint, and the money is better spent on power and channel design than on '
         'access points.</p>',
         '</div></section>',
@@ -1512,7 +1512,7 @@ def s11_r510_playbook():
         '<p>That is not a clever method. It is just the one that works, and the reason problems '
         'like this get called unsolvable is almost always that somebody skipped a step and then '
         'could not tell which change caused what.</p>',
-        C.ap_field('The pattern we see most: an estate gets replaced because replacing it is the '
+        C.ap_field('A pattern we see: an estate gets replaced because replacing it is the '
                    'easiest thing to authorise. Diagnosis takes patience and an afternoon on the '
                    'floor with a laptop; a purchase order takes a signature. The purchase order '
                    'is quicker to approve and far more likely to disappoint.'),

@@ -299,7 +299,7 @@ def build():
     faqs = [
         ("What is wrong with the smart meter I already have?",
          "Nothing, except that it answers a question almost nobody asked. It shows electricity in "
-         "kilowatt-hours on a small display in the kitchen, and most people stop looking within a "
+         "kilowatt-hours on a small display in the kitchen, and plenty of people stop looking within a "
          "fortnight. It cannot tell you a camera stopped recording three weeks ago, that last "
          "night's backup failed, or that the freezer is climbing. A dashboard is not a bigger "
          "smart meter - it is the whole house on one screen."),
@@ -358,7 +358,7 @@ def build():
         ' <section class="section"><div class="wrap wrap--narrow prose" data-reveal>',
         '<h2 class="section-title" data-title>Why people turn this sort of thing off'
         '<span class="title-underline"></span></h2>',
-        '<p>Most people have already tried. An app per device, a notification for every passing '
+        '<p>Plenty of people have already tried. An app per device, a notification for every passing '
         'cat, four logins, and within a month everything is muted and nobody looks at any of '
         'it.</p>',
         '<p>We build them the other way round. <strong>The dashboard is quiet by default and only '
@@ -425,7 +425,7 @@ def build():
         '<p>We have been doing this in Dorset <strong>since 1995</strong>. We build the same kind '
         'of dashboards for <a href="/custom-vrm-dashboards/">Victron energy systems</a> worldwide, '
         'and for <a href="/custom-wifi-dashboards/">business wireless networks</a>. This is the '
-        'home version of work we already do every week.</p>',
+        'home version of work we already do.</p>',
         '<p>And the same honest caveat as the others: if we look at your house and conclude a '
         'dashboard would not add much, we will say so. It happens, and it costs you nothing to '
         'ask.</p>',

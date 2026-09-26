@@ -61,17 +61,17 @@ LICENCE_EXPIRY = [
                    "realising. Support is a separate subscription again &mdash; check both.",
          source="watchguard"),
     dict(key="sophos", vendor="Sophos", scope="Firewall XGS (base licence)",
-         verdict="FAILS OPEN &mdash; your firewall rules stop being applied",
+         verdict="FAILS OPEN at hardware end-of-life &mdash; your firewall rules stop being applied",
          severity="critical",
-         what_happens="This is the one nobody says out loud, and it is Sophos&rsquo; own "
-                      "documentation: when the base licence expires on hardware, "
+         what_happens="This is Sophos&rsquo; own documentation: the base licence on hardware "
+                      "expires when the appliance reaches end-of-life, and then "
                       "&ldquo;firewall rules aren&rsquo;t processed whether you&rsquo;ve "
                       "configured them to allow or block traffic. The firewall acts as a "
                       "router and masquerades all outbound traffic.&rdquo; NAT rules, "
                       "site-to-site tunnels, remote access points and wireless networks "
                       "stop working.",
          watch_out="Read that twice. Your <em>block</em> rules stop being processed too. "
-                   "A lapsed base licence turns a firewall into a router that lets "
+                   "An end-of-life appliance turns into a router that lets "
                    "everything out.",
          source="sophos"),
     dict(key="meraki", vendor="Cisco Meraki", scope="MX series",

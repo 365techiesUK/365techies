@@ -330,7 +330,7 @@ def build():
         '<span class="title-underline"></span></h2>',
         '<p>Every wireless controller draws you a coverage map, because coverage is easy to '
         'measure, easy to colour in, and reassuring to look at. Green everywhere, job done.</p>',
-        '<p>The trouble is that <strong>coverage is almost never the fault</strong>. A floor can '
+        '<p>The trouble is that <strong>coverage is often not the fault</strong>. A floor can '
         'have flawless signal in every corner and still be unusable at eleven in the morning, '
         'because the channel is full &mdash; of your own access points talking over each other, '
         'of the building next door, or of equipment nobody thought of as a radio at all.</p>',
@@ -344,7 +344,7 @@ def build():
         '<div class="table-wrap"><table class="table">',
         '<thead><tr><th>What we show</th><th>Why it earns its place</th></tr></thead><tbody>',
         '<tr><td><strong>Channel utilisation over time</strong></td>'
-        '<td>The single best predictor of complaints, and the one most often missing. It tells '
+        '<td>A strong predictor of complaints, and one that is often missing. It tells '
         'you the air is full an hour before anyone reports it.</td></tr>',
         '<tr><td><strong>PoE draw against switch budget</strong></td>'
         '<td>Shows headroom before you add the camera, the door controller or the next access '

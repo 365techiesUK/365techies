@@ -189,7 +189,7 @@ PLAYBOOKS = [
     "chips": [
         "Roaming is the client&rsquo;s decision",
         "Vendor-neutral",
-        "We sell no vendor&rsquo;s kit",
+        "We don&rsquo;t sell this kit",
     ],
     "cta_head": "Want someone to walk the floor with you?",
     "cta_sub": 'We survey multi-access-point sites across Dorset and Hampshire (priced before we come), and we will tell you honestly if the answer is configuration rather than hardware &mdash; that answer costs you nothing to hear.',

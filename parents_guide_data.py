@@ -34,7 +34,7 @@ DORSET_GUIDE = "https://www.dorset.police.uk/police-forces/dorset-police/areas/c
 
 _CTA_HEAD = "Rather we set it up on the actual devices?"
 _CTA_SUB = ("Call 01202 775566 or text 07520 615332, Mon&ndash;Fri 9&ndash;5. We&rsquo;ll set the controls up properly on your child&rsquo;s phone, tablet, console or PC "
-            "&mdash; remotely, or at home across Bournemouth, Poole, Christchurch &amp; Dorset &mdash; and show you where everything lives, so you&rsquo;re in charge afterwards, not us. "
+            "at home across Bournemouth, Poole, Christchurch &amp; Dorset (a Windows PC can also be done remotely) &mdash; and show you where everything lives, so you&rsquo;re in charge afterwards, not us. "
             "Free 15-minute phone chat first; no charge for advice.")
 
 # The "it's already gone wrong" ladder - the same on every page. Real, checked organisations.
@@ -74,9 +74,9 @@ PARENTS_PAGES.append({
  'crumbName': 'Parents&rsquo; Online Safety Guide',
  'eyebrow': '// PARENTS&rsquo; GUIDE &middot; CHECKED ' + CHECKED_ON.upper(),
  'h1': 'Parental controls, app by app &mdash; the steps as they are <em class="grad grad--cyan">today</em>',
- 'lede': ('Every app and console has parental controls. Almost nobody sets them up, because the menus move, the guides go stale, and it always seems like a job for a rainy Sunday. '
+ 'lede': ('Every app and console has parental controls. Plenty of families never get round to setting them up, because the menus move, the guides go stale, and it always seems like a job for a rainy Sunday. '
           'This is the guide we wish existed: <strong>one page per app, the exact menu names as they are right now, checked against the maker&rsquo;s own instructions on the date shown</strong>, '
-          'and honest about what a control does and doesn&rsquo;t do. Dorset Police published an excellent guide to the social apps this week &mdash; we&rsquo;ve linked it, and covered the things it doesn&rsquo;t: '
+          'and honest about what a control does and doesn&rsquo;t do. Dorset Police have published an excellent guide to the social apps &mdash; we&rsquo;ve linked it, and covered the things it doesn&rsquo;t: '
           'YouTube, the games consoles, Minecraft, and the phone-level controls that do more than any single app.'),
  'chips': ['Checked ' + CHECKED_ON, 'UK ages &amp; law', 'Family-run since 1995'],
  'primaryCta': ('Pick your child&rsquo;s apps', '#picker'), 'secondaryCta': ('Call 01202 775566', 'tel:+441202775566'),
@@ -123,7 +123,7 @@ PARENTS_PAGES.append({
   {'q': 'Why did you write this when Dorset Police just published a guide?', 'a': 'Because theirs is good and ours is different. Dorset Police cover the twelve social and chat apps thoroughly, in a PDF. We&rsquo;ve linked it and not repeated it. Ours covers what theirs doesn&rsquo;t &mdash; YouTube, the games consoles, Minecraft, and the phone-level controls &mdash; on the web, one page per app, with the date each page was checked. Use both.'},
   {'q': 'How do I know these steps are current?', 'a': f'Each page has a &ldquo;checked against the maker&rsquo;s own instructions&rdquo; box with the date ({CHECKED_ON} at launch) and links to the exact official help pages the steps came from. When an app changes, we update the page and the date. If you spot a step that no longer matches your screen, ring us and we&rsquo;ll fix it that day.'},
   {'q': 'My child is 15 and will just turn all this off. Is there any point?', 'a': 'Yes, but a different one. For a 15-year-old, controls are less about locking and more about defaults, visibility and a conversation: bedtime downtime that both of you agreed to, spending that asks first, and supervision they consented to (YouTube&rsquo;s teen supervision, for instance, is designed to be agreed by both sides). Google&rsquo;s own rule is that a supervised child needs parental approval to stop supervision until 18 &mdash; but the honest answer is that trust and talking do most of the work at that age.'},
-  {'q': 'Will you come and set this all up for us?', 'a': 'Yes &mdash; that&rsquo;s a normal job for us. Remotely, or at home across Bournemouth, Poole, Christchurch and Dorset. We set the controls up on the actual devices, write down where they live and what the passcodes are (for you, not us), and show you how to change them. Free 15-minute phone chat first on 01202 775566.'},
+  {'q': 'Will you come and set this all up for us?', 'a': 'Yes &mdash; at home across Bournemouth, Poole, Christchurch and Dorset; Windows PCs and Android phones can also be done remotely. We set the controls up on the actual devices, write down where they live and what the passcodes are (for you, not us), and show you how to change them. Free 15-minute phone chat first on 01202 775566.'},
   {'q': 'Is any of this a substitute for talking to my child?', 'a': 'No, and we&rsquo;d be lying if we said so. Controls remove accidents and buy time; the conversation is what keeps children safe. Dorset Police&rsquo;s guide and the NSPCC&rsquo;s online-safety pages are both good on how to have it.'},
  ],
  'crossLinksHtml': ('<p>Related: our free <a href="/online-safety-course/">Staying Safe Online course</a> (scams, passwords, shopping safely &mdash; for grown-ups), '
@@ -142,16 +142,16 @@ PARENTS_PAGES.append({
  'eyebrow': '// YOUTUBE &amp; YOUTUBE KIDS &middot; CHECKED ' + CHECKED_ON.upper(),
  'h1': 'YouTube parental controls &mdash; supervised accounts, YouTube Kids and <em class="grad grad--cyan">teen supervision</em>',
  'lede': ('YouTube is the app most under-13s use most, and it has three quite different setups depending on age: <strong>YouTube Kids</strong> (a separate, walled app), a <strong>supervised account</strong> on the main YouTube app with a content level you choose, '
-          'and &mdash; new &mdash; a <strong>supervised teen account</strong> that both parent and teenager agree to. Here&rsquo;s each one, with the menu names as Google prints them today, and the two things everyone gets wrong (the timer, and the age a supervised account switches to &ldquo;Most of YouTube&rdquo;).'),
+          'and &mdash; new &mdash; a <strong>supervised teen account</strong> that both parent and teenager agree to. Here&rsquo;s each one, with the menu names as Google prints them today, and the two things everyone gets wrong (the timer, and the age a supervised account can move to teen settings).'),
  'chips': ['Checked ' + CHECKED_ON, 'Under-13, and 13&ndash;17', 'Google&rsquo;s own steps'],
- 'primaryCta': ('Jump to the steps', '#step1'), 'secondaryCta': ('Call 01202 775566', 'tel:+441202775566'),
+ 'primaryCta': ('Jump to the steps', '#s2'), 'secondaryCta': ('Call 01202 775566', 'tel:+441202775566'),
  'ctaHead': _CTA_HEAD, 'ctaSub': _CTA_SUB,
  'schemaKind': 'article',
  'howToName': 'Set up YouTube for a child under 13 with a content level',
  'howToSteps': [
   {'name': 'Create the child&rsquo;s Google account in Family Link', 'text': 'In the Family Link app, select your child&rsquo;s profile at the top left, then Add child, and follow the on-screen steps, signing in with your own Google account to give consent.'},
   {'name': 'Choose YouTube Kids or a supervised YouTube experience', 'text': 'For an under-13 Google offers two options: the separate YouTube Kids app, or a supervised experience on the main YouTube app. Younger children: Kids. Older primary and up: supervised.'},
-  {'name': 'Pick the content level', 'text': 'In Family Link: your child > Controls > YouTube > Edit under YouTube settings (some app versions show Controls > Content restrictions > YouTube). Choose Explore (roughly 9+), Explore more (roughly 13+) or Most of YouTube (everything except 18+ and unsuitable content). Google sets no default, so choose deliberately.'},
+  {'name': 'Pick the content level', 'text': 'In Family Link: your child > Controls > YouTube > Edit under YouTube settings (some app versions show Controls > Content restrictions > YouTube). Choose Older children (roughly 9+), Teens (roughly 13+) or Older teenagers (roughly 16+). Google sets no default, so choose deliberately.'},
   {'name': 'Or set it from the YouTube app', 'text': 'Signed in as the parent: You (bottom right) > Settings > Family Centre > your child > Edit next to Content settings.'},
   {'name': 'Turn on the time tools', 'text': 'In Family Centre > Time management you can set take-a-break and bedtime reminders and a daily limit on the Shorts feed (from March 2026, that limit can be set to zero).'},
  ],
@@ -159,7 +159,7 @@ PARENTS_PAGES.append({
   {'eyebrow': '/01 &mdash; WHICH ONE?', 'h2': 'Three setups, by age', 'html': (
    '<ul>'
    '<li><strong>Roughly 4&ndash;8: YouTube Kids.</strong> A separate app with its own age bands (&ldquo;Preschool: ages 4 &amp; under&rdquo;, &ldquo;Younger: ages 5&ndash;8&rdquo;, &ldquo;Older: ages 9&ndash;12&rdquo;, or &ldquo;Approve content yourself&rdquo;), a passcode, a timer, and blocking. Search can be turned off entirely.</li>'
-   '<li><strong>Roughly 9&ndash;12: a supervised account on the main YouTube app.</strong> A real Google account, created by you in Family Link, with a content level: <strong>Explore</strong> (&ldquo;generally aligns with content ratings for viewers 9+&rdquo;), <strong>Explore more</strong> (13+), or <strong>Most of YouTube</strong> (&ldquo;almost all videos&rdquo; except 18+). Google sets <em>no default</em> &mdash; you choose. Supervised children on the upper two levels can read comments but not write them.</li>'
+   '<li><strong>Roughly 9&ndash;12: a supervised account on the main YouTube app.</strong> A real Google account, created by you in Family Link, with a content level: <strong>Older children</strong> (&ldquo;generally aligns with content ratings for viewers aged 9+&rdquo;), <strong>Teens</strong> (13+), or <strong>Older teenagers</strong> (16+). Google sets <em>no default</em> &mdash; you choose. Supervised children on the upper two levels can read comments but not write them.</li>'
    '<li><strong>13&ndash;17: a supervised teen account.</strong> New and worth knowing about: in the YouTube app, You &gt; Settings &gt; Family Centre &gt; <strong>Invite a teen</strong> &gt; Create invitation; the teen scans a QR code or link (they can equally invite you). Both sides have to agree, and either can turn it off. You then see the channels they own, their uploads, live-stream activity, comments and subscriptions, and can set take-a-break and bedtime reminders and a limit on Shorts scrolling.</li>'
    '</ul>'
    + _dorset_note('the social and chat apps')
@@ -178,7 +178,7 @@ PARENTS_PAGES.append({
    '<ol>'
    '<li><strong>Family Link app</strong> &gt; select your child at the top left &gt; <strong>Add child</strong> &gt; follow the steps and give consent by signing in as yourself. (On a new Android device, choose Create account at sign-in, enter the child&rsquo;s details, then sign in as parent to consent.)</li>'
    '<li>Choose <strong>YouTube Kids</strong> or the <strong>supervised experience</strong> when asked.</li>'
-   '<li>Content level: Family Link &gt; child &gt; <strong>Controls</strong> &gt; <strong>YouTube</strong> &gt; <strong>Edit</strong> under YouTube settings (newer builds: Controls &gt; Content restrictions &gt; YouTube). Pick Explore / Explore more / Most of YouTube.</li>'
+   '<li>Content level: Family Link &gt; child &gt; <strong>Controls</strong> &gt; <strong>YouTube</strong> &gt; <strong>Edit</strong> under YouTube settings (newer builds: Controls &gt; Content restrictions &gt; YouTube). Pick Older children / Teens / Older teenagers.</li>'
    '<li>Or from YouTube itself, signed in as the parent: <strong>You</strong> &gt; Settings &gt; <strong>Family Centre</strong> &gt; child &gt; Edit next to Content settings.</li>'
    '<li>Other supervised-account controls Google lists: block specific channels, clear or pause watch and search history, turn off autoplay; and under Family Centre&rsquo;s <strong>Time management</strong> tab, take-a-break and bedtime reminders and a daily Shorts limit.</li>'
    '</ol>'
@@ -202,7 +202,7 @@ PARENTS_PAGES.append({
   )},
  ],
  'faqs': [
-  {'q': 'YouTube Kids or a supervised account &mdash; which is safer?', 'a': 'Kids is more restrictive: a walled app with age bands, a passcode, a timer and search-off. A supervised account is the real YouTube with a content ceiling you choose (Explore, Explore more, Most of YouTube) &mdash; more content, more risk of something slipping through, but far less rebellion from a ten-year-old who feels &ldquo;too old for the baby app&rdquo;. Most families move from Kids to supervised around 8&ndash;10.'},
+  {'q': 'YouTube Kids or a supervised account &mdash; which is safer?', 'a': 'Kids is more restrictive: a walled app with age bands, a passcode, a timer and search-off. A supervised account is the real YouTube with a content ceiling you choose (Older children, Teens, Older teenagers) &mdash; more content, more risk of something slipping through, but far less rebellion from a ten-year-old who feels &ldquo;too old for the baby app&rdquo;. Many families move from Kids to supervised around 8&ndash;10.'},
   {'q': 'What&rsquo;s the default content level for a supervised account?', 'a': 'There isn&rsquo;t one &mdash; Google&rsquo;s own page says it sets no default, so you choose. If you skipped that screen, check it now: Family Link &gt; child &gt; Controls &gt; YouTube.'},
   {'q': 'Is the YouTube Kids maths sum a real lock?', 'a': 'No. It stops a five-year-old; it does not stop a nine-year-old. Set a custom four-digit passcode (Settings &gt; the sum &gt; Create passcode) &mdash; and write it down somewhere your child can&rsquo;t find, because Google&rsquo;s only reset is to reinstall the app.'},
   {'q': 'Can I see what my teenager watches?', 'a': 'With a supervised teen account you see the channels they own and upload to, their live-stream activity, comments and subscriptions &mdash; not a minute-by-minute watch history. It has to be agreed by both of you and either can switch it off, which is by design: it&rsquo;s visibility with consent, not surveillance.'},
@@ -225,7 +225,7 @@ PARENTS_PAGES.append({
  'lede': ('Xbox has one of the most complete family systems of any console &mdash; and one of the most confusing to find, because the same settings live in three places: the console, the <strong>Xbox Family Settings</strong> phone app, and <strong>family.microsoft.com</strong>. '
           'Here&rsquo;s the whole thing in the order that works, with the menu names as Microsoft prints them today, and the one step that <em>only</em> works on the console (giving consent for a child account).'),
  'chips': ['Checked ' + CHECKED_ON, 'Console, app &amp; web', 'Microsoft&rsquo;s own steps'],
- 'primaryCta': ('Jump to the steps', '#step1'), 'secondaryCta': ('Call 01202 775566', 'tel:+441202775566'),
+ 'primaryCta': ('Jump to the steps', '#s2'), 'secondaryCta': ('Call 01202 775566', 'tel:+441202775566'),
  'ctaHead': _CTA_HEAD, 'ctaSub': _CTA_SUB,
  'schemaKind': 'article',
  'howToName': 'Set up Xbox parental controls for a child',
@@ -296,7 +296,7 @@ PARENTS_PAGES.append({
  'lede': ('Sony&rsquo;s system is tidy once you know the shape: one adult is the <strong>family manager</strong>, each child under 18 gets their own <strong>child account</strong> under them, and every control &mdash; age level for games, a monthly spending limit (default &pound;0), chat and sharing, play time, even web browsing &mdash; is set per child from the console, from playstation.com, or from the <strong>PlayStation Family app</strong>. '
           'And then you lock the console so the settings can&rsquo;t be quietly undone. Here&rsquo;s each step with the menu names Sony prints today.'),
  'chips': ['Checked ' + CHECKED_ON, 'PS5 &amp; PS4', 'Sony&rsquo;s own steps'],
- 'primaryCta': ('Jump to the steps', '#step1'), 'secondaryCta': ('Call 01202 775566', 'tel:+441202775566'),
+ 'primaryCta': ('Jump to the steps', '#s2'), 'secondaryCta': ('Call 01202 775566', 'tel:+441202775566'),
  'ctaHead': _CTA_HEAD, 'ctaSub': _CTA_SUB,
  'schemaKind': 'article',
  'howToName': 'Set up PlayStation parental controls for a child',
@@ -338,7 +338,7 @@ PARENTS_PAGES.append({
  'faqs': [
   {'q': 'My child made a new user on the PS5 and got round everything. How?', 'a': 'Because User Creation and Guest Login was left allowed. PS5: Settings &gt; Family and Parental Controls &gt; PS5 Console Restrictions &gt; set it to Not Allowed and change the console restriction passcode. That single step is what makes the rest stick.'},
   {'q': 'What is the default spending limit on a child account?', 'a': '&pound;0 &mdash; and anything you raise it to is charged to the family manager&rsquo;s wallet, not to a card of the child&rsquo;s. Set a small monthly figure if you want to allow pocket-money purchases without an argument every time.'},
-  {'q': 'Play time keeps letting them finish the match. Is that a bug?', 'a': 'No &mdash; When Playtime Ends has two options: Notify Only (a warning, but play continues) or Log Out (it actually stops). Notify Only is the default many parents leave on without realising. Change it in Playtime Settings.'},
+  {'q': 'Play time keeps letting them finish the match. Is that a bug?', 'a': 'No &mdash; When Playtime Ends has two options: Notify Only (a warning, but play continues) or Log Out (it actually stops). Notify Only is easy to leave on without realising. Change it in Playtime Settings.'},
   {'q': 'Can I do all this from my phone?', 'a': 'Yes: the PlayStation Family app covers playtime schedules and extra-time requests, spending limits, age rating, communication and privacy, plus activity reports and what they&rsquo;re playing right now.'},
  ],
  'crossLinksHtml': '<p>Part of our <a href="/parents-guide-online-safety/">parents&rsquo; guide to parental controls</a>. Also: <a href="/xbox-parental-controls-uk/">Xbox</a>, <a href="/nintendo-switch-parental-controls/">Nintendo Switch</a>, and set the phone first: <a href="/screen-time-and-family-link-parental-controls/">Screen Time &amp; Family Link</a>.</p>',
@@ -358,7 +358,7 @@ PARENTS_PAGES.append({
  'lede': ('Nintendo&rsquo;s controls are the simplest of the three consoles &mdash; and the one that catches parents out is that <strong>they&rsquo;re set for the console, not the user</strong>: whatever you set applies to whoever picks it up. '
           'There&rsquo;s a free phone app (<strong>Nintendo Switch Parental Controls</strong>) that does play-time limits and bedtime beautifully, a console-side PIN for the restriction level, and one thing that lives elsewhere entirely: spending, which is on the Nintendo Account, not the console. Switch 2 uses the same app and menus, plus a new rule about GameChat for under-16s.'),
  'chips': ['Checked ' + CHECKED_ON, 'Switch &amp; Switch 2', 'Nintendo&rsquo;s own steps'],
- 'primaryCta': ('Jump to the steps', '#step1'), 'secondaryCta': ('Call 01202 775566', 'tel:+441202775566'),
+ 'primaryCta': ('Jump to the steps', '#s1'), 'secondaryCta': ('Call 01202 775566', 'tel:+441202775566'),
  'ctaHead': _CTA_HEAD, 'ctaSub': _CTA_SUB,
  'schemaKind': 'article',
  'howToName': 'Set up Nintendo Switch parental controls',
@@ -390,7 +390,7 @@ PARENTS_PAGES.append({
   )},
   {'eyebrow': '/03 &mdash; SPENDING, AND SWITCH 2', 'h2': 'eShop spending lives on the account, and the GameChat rule', 'html': (
    '<p><strong>Spending is not in the console PIN menu.</strong> It&rsquo;s on the Nintendo Account: sign in as the parent &gt; <strong>Family Group</strong> &gt; the child &gt; tick <strong>Spending Restrictions</strong> and/or <strong>Age-Based Purchase Restrictions</strong> &gt; Save changes. Parents create Nintendo Accounts for children aged 15 and under; a 16+ can have their own account added to the family group as supervised.</p>'
-   '<p><strong>Switch 2</strong> uses the same Parental Controls app and the same console menus &mdash; Nintendo says the app links with both consoles. What&rsquo;s new is <strong>GameChat</strong>, and Nintendo&rsquo;s rule is plain: for a child <strong>under 16</strong> to use it, a parent must first allow it in the Parental Controls app. Decide that deliberately; voice and video chat with strangers is the single biggest change the Switch 2 brings into a child&rsquo;s bedroom.</p>'
+   '<p><strong>Switch 2</strong> uses the same Parental Controls app and the same console menus &mdash; Nintendo says the app links with both consoles. What&rsquo;s new is <strong>GameChat</strong>, and Nintendo&rsquo;s rule is plain: for a child <strong>under 16</strong> to use it, a parent must first allow it in the Parental Controls app. Decide that deliberately; voice and video chat with friends is the biggest change the Switch 2 brings into a child&rsquo;s bedroom.</p>'
    + _sources([
      ('Nintendo UK: set up parental controls on Switch 2', 'https://www.nintendo.com/en-gb/Support/Parental-Controls/How-to-Set-Up-Adjust-or-Remove-Parental-Controls-on-Nintendo-Switch-2-2843839.html'),
      ('Nintendo UK: set up parental controls on Switch', 'https://www.nintendo.com/en-gb/Support/Parental-Controls/How-to-Set-Up-Adjust-or-Remove-Parental-Controls-on-Nintendo-Switch-1494771.html'),
@@ -402,7 +402,7 @@ PARENTS_PAGES.append({
   )},
  ],
  'faqs': [
-  {'q': 'The play-time limit stops me too. Can I set it per child?', 'a': 'No &mdash; Nintendo&rsquo;s controls are per console, not per user, so they apply to whoever picks it up. Most parents live with it, or turn the limit off for the day from the app when it&rsquo;s their turn.'},
+  {'q': 'The play-time limit stops me too. Can I set it per child?', 'a': 'No &mdash; Nintendo&rsquo;s controls are per console, not per user, so they apply to whoever picks it up. The workaround is to turn the limit off for the day from the app when it&rsquo;s your turn.'},
   {'q': 'Where do I stop eShop spending?', 'a': 'Not in the console PIN menu &mdash; on the Nintendo Account website: Family Group &gt; the child &gt; Spending Restrictions and/or Age-Based Purchase Restrictions.'},
   {'q': 'What&rsquo;s different on the Switch 2?', 'a': 'Same app, same menus. The new thing is GameChat (voice and video chat): for a child under 16 to use it a parent has to allow it in the Parental Controls app first. Decide that on purpose.'},
   {'q': 'What if my child works out the PIN?', 'a': 'Change it (4 to 8 digits &mdash; use eight, not four), and note the app tells you when settings are changed on the console. Nintendo also lets you reset a forgotten PIN through the app or their support pages.'},
@@ -424,7 +424,7 @@ PARENTS_PAGES.append({
  'lede': ('The thing that confuses every parent: <strong>Minecraft&rsquo;s parental controls aren&rsquo;t in Minecraft.</strong> Mojang&rsquo;s own words: &ldquo;Minecraft uses Microsoft and Xbox family safety features to manage parental controls even if you do not play Minecraft on an Xbox.&rdquo; '
           'So a child playing on an iPad, a phone or a PC is governed by the <em>Xbox privacy settings</em> on their Microsoft child account &mdash; multiplayer, chat, Realms, and Marketplace spending all live there. Here&rsquo;s where, plus the in-game chat settings that do exist.'),
  'chips': ['Checked ' + CHECKED_ON, 'Bedrock &amp; Java', 'Mojang &amp; Microsoft&rsquo;s own steps'],
- 'primaryCta': ('Jump to the steps', '#step1'), 'secondaryCta': ('Call 01202 775566', 'tel:+441202775566'),
+ 'primaryCta': ('Jump to the steps', '#s2'), 'secondaryCta': ('Call 01202 775566', 'tel:+441202775566'),
  'ctaHead': _CTA_HEAD, 'ctaSub': _CTA_SUB,
  'schemaKind': 'article',
  'howToName': 'Set up Minecraft parental controls for a child',
@@ -486,7 +486,7 @@ PARENTS_PAGES.append({
  'lede': ('If you do one thing from this whole guide, do this one. Apple&rsquo;s <strong>Screen Time</strong> and Google&rsquo;s <strong>Family Link</strong> sit underneath every app on the phone or tablet: downtime and bedtime, per-app limits, web filtering, purchase approval, who can message during the day and at night, and (on Apple) age ratings for everything installed. '
           'Ten minutes here does more than an hour inside individual apps &mdash; and both now default to safer settings for under-18s. Steps below are as Apple and Google print them today (Apple&rsquo;s pages reference iOS 26; Google&rsquo;s the current Family Link).'),
  'chips': ['Checked ' + CHECKED_ON, 'iOS 26 &amp; current Family Link', 'UK ages &amp; law'],
- 'primaryCta': ('Jump to the steps', '#step1'), 'secondaryCta': ('Call 01202 775566', 'tel:+441202775566'),
+ 'primaryCta': ('Jump to the steps', '#s2'), 'secondaryCta': ('Call 01202 775566', 'tel:+441202775566'),
  'ctaHead': _CTA_HEAD, 'ctaSub': _CTA_SUB,
  'schemaKind': 'article',
  'howToName': 'Set up device-level parental controls on a child&rsquo;s phone or tablet',

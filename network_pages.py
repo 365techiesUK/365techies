@@ -50,7 +50,7 @@ def _page(slug, title, desc, h1, eyebrow, lede, body, chips=None, cta1=None, cta
              cta1=cta1 or ("Talk to a techie: 01202 775566", "tel:+441202775566"),
              cta2=cta2 or ("Free Wi-Fi survey tool", "/wifi-signal-test/"),
              chips=chips or ["Vendor sources linked", "Checked " + N.DATES_CHECKED_HUMAN,
-                             "Independent &mdash; we sell no vendor&rsquo;s kit"]),
+                             "Independent &mdash; we don&rsquo;t resell this kit"]),
         '    <section class="section"><div class="wrap wrap--narrow prose" data-reveal>'
         + disclaimer() + '</div></section>',
         body,
@@ -100,7 +100,7 @@ def firewall_licence():
         '<p>The honest answer is that it depends entirely on whose box is on your wall, and '
         'the range is wider than most people expect &mdash; from &ldquo;nothing visible '
         'happens&rdquo; to &ldquo;the whole site loses internet&rdquo;. One vendor&rsquo;s '
-        'kit stops applying your firewall rules altogether and quietly becomes a router.</p>',
+        'kit, once past end-of-life, stops applying your firewall rules altogether and quietly becomes a router.</p>',
         '<p>Every description below is the vendor&rsquo;s own documented behaviour, linked to '
         'the source. We sell none of these products.</p>',
         stamp(),
@@ -128,8 +128,8 @@ def firewall_licence():
             "Co-termination and per-device fail closed after the grace period. Subscription "
             "keeps traffic flowing. It is the difference between an inconvenience and an "
             "outage, and it is worth ten minutes to check.",
-            "<strong>Check who receives the renewal emails.</strong> The single most common "
-            "reason a licence lapses unnoticed is that the notices go to someone who left, "
+            "<strong>Check who receives the renewal emails.</strong> A common way "
+            "a licence lapses unnoticed is that the notices go to someone who left, "
             "or to the company that installed the box years ago. Free to fix, today.",
             "<strong>Fortinet owners: check firmware separately.</strong> Without FortiCare "
             "you cannot apply firmware upgrades &mdash; so a lapse blocks the patch you will "

@@ -204,7 +204,7 @@ HA_VICTRON_PAGES = [
            '<li><strong>2.4&thinsp;GHz WiFi only.</strong> The Cerbo cannot see 5&thinsp;GHz-only networks. Phone hotspots are the usual culprit &mdash; recent iPhones hide the 2.4&thinsp;GHz band unless &ldquo;Maximise Compatibility&rdquo; is on.</li>'
            '</ul>'},
   {'eyebrow': 'Error #150', 'h2': 'What error #150 actually tells you',
-   'html': '<p>The dreaded <strong>&ldquo;connect error #150&rdquo;</strong> means: <em>I have a network, but I can&rsquo;t reach VRM&rsquo;s servers.</em> The Cerbo needs outbound HTTPS (port 443) and working DNS &mdash; nothing inbound, no port forwarding, ever. So #150 is nearly always the network being selective: guest WiFi blocking unfamiliar devices, a firewall allowing browsers but not machines, a captive portal waiting for a login the Cerbo can&rsquo;t give, or broken DNS.</p>'
+   'html': '<p>The dreaded <strong>&ldquo;connect error #150&rdquo;</strong> means: <em>I reached the internet, but the reply wasn&rsquo;t from VRM.</em> The Cerbo needs outbound ports 80 and 443 and working DNS &mdash; nothing inbound, no port forwarding, ever. Victron&rsquo;s manual says #150 almost always means a captive portal: a WiFi login page (hotel, marina, campsite) the Cerbo can never complete. A blocking firewall usually shows as #152, and broken DNS as #154.</p>'
            '<p>The fastest proof is a <strong>network swap</strong>: hotspot the Cerbo from your phone for five minutes. If VRM springs to life, the device was never the problem &mdash; the original network was.</p>'},
   {'eyebrow': 'Good news', 'h2': 'Mobile broadband, CGNAT and Starlink all work',
    'html': '<p>Worried that 4G/5G routers or Starlink can&rsquo;t run VRM because they use carrier-grade NAT and you can&rsquo;t port-forward? <strong>You don&rsquo;t need to.</strong> The Cerbo only ever dials out, so VRM works behind CGNAT without any configuration at all &mdash; our own van reports to VRM over a Three UK mobile connection from behind CGNAT, every day, while driving.</p>'
@@ -219,7 +219,7 @@ HA_VICTRON_PAGES = [
  ],
  'faqs': [
   {'q': 'What does Cerbo GX error #150 mean?',
-   'a': 'It means the Cerbo has a working network but cannot reach the VRM servers — usually blocked outbound HTTPS (port 443), broken DNS, or a captive-portal login page it can never complete. Prove it with a network swap: hotspot the Cerbo from your phone, and if VRM comes alive the original network was the blocker.'},
+   'a': 'It means the Cerbo got through to the internet but the reply did not come from VRM — almost always a captive-portal login page (hotel, marina or campsite WiFi) it can never complete. Prove it with a network swap: hotspot the Cerbo from your phone, and if VRM comes alive the original network was the blocker.'},
   {'q': 'Do I need port forwarding for VRM?',
    'a': 'No, never. The GX device only makes outbound connections, so VRM works behind any router, carrier-grade NAT, 4G/5G mobile broadband and Starlink with zero configuration. If a guide tells you to port-forward for VRM, it’s wrong.'},
   {'q': 'Will VRM work on a 4G/5G router or Starlink in a van or boat?',

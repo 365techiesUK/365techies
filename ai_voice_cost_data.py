@@ -214,7 +214,7 @@ PAGE = {
                "figure in writing before committing.")},
         {"q": "What happens if I go over my included minutes?",
          "a": ("On many plans you pay an overage rate &mdash; a per-minute charge for call time beyond "
-               "your allowance &mdash; and it&rsquo;s a common cause of a surprise bill. Ask any "
+               "your allowance &mdash; and it can turn a busy month into a surprise bill. Ask any "
                "provider for that rate in writing, next to the headline price. In our quotes, call "
                "minutes and telephony are itemised line by line, so you can see how usage is charged "
                "before you sign anything.")},

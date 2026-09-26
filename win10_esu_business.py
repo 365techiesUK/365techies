@@ -84,7 +84,7 @@ def build():
         ' <section class="section"><div class="wrap wrap--narrow prose" data-reveal>',
         '<h2 class="section-title" data-title>The number that changes the decision'
         '<span class="title-underline"></span></h2>',
-        '<p>Most businesses still running Windows 10 have settled on a plan that sounds sensible: '
+        '<p>Plenty of businesses still running Windows 10 settle on a plan that sounds sensible: '
         'buy a year of Extended Security Updates, deal with it next year. It is worth knowing what '
         'that actually costs before you commit to it, because the programme is not priced the way '
         'people assume.</p>',
@@ -131,7 +131,7 @@ def build():
         '<h2 class="section-title" data-title>If someone quoted you $30, they quoted the wrong '
         'programme<span class="title-underline"></span></h2>',
         '<p>There are two Windows 10 ESU programmes and they behave almost nothing alike. Getting '
-        'them confused is the single most common mistake we see.</p>',
+        'them confused is an easy, and expensive, mistake.</p>',
         '<div class="table-wrap"><table class="table">',
         '<thead><tr><th></th><th>Consumer ESU</th><th>Commercial ESU</th></tr></thead><tbody>',
         '<tr><td><strong>Cost</strong></td><td>Free if you sync PC settings, 1,000 Microsoft '

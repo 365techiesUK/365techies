@@ -274,7 +274,7 @@ def why_choose():
           <h2 class="section-title section-title--center" data-title>Reasons people stay for years<span class="title-underline title-underline--center"></span></h2>
         </div>
         <ul class="security-grid" data-stagger>
-{grid_cards([("Monthly support options","Predictable monthly cover for homes and businesses — not just emergency call-outs."),("Friendly, human help","A real, patient techie who explains things in plain English — never condescending."),("Fast remote support","Most issues solved remotely in minutes via secure Splashtop SOS."),("Local knowledge","Bournemouth-based, supporting Dorset homes and businesses for years."),("Home and business","One team that genuinely understands both home users and small businesses."),("Microsoft 365 experience","Deep, day-to-day experience with Outlook, Teams, OneDrive and business email."),("Security-focused","Practical protection and sensible advice built into everything we do."),("Clear communication","No jargon, no surprises — just honest, practical guidance you can act on.")])}
+{grid_cards([("Monthly support options","Predictable monthly cover for homes and businesses — not just emergency call-outs."),("Friendly, human help","A real, patient techie who explains things in plain English — never condescending."),("Fast remote support","Many issues solved remotely via secure Splashtop SOS."),("Local knowledge","Bournemouth-based, supporting Dorset homes and businesses for years."),("Home and business","One team that genuinely understands both home users and small businesses."),("Microsoft 365 experience","Deep, day-to-day experience with Outlook, Teams, OneDrive and business email."),("Security-focused","Practical protection and sensible advice built into everything we do."),("Clear communication","No jargon, no surprises — just honest, practical guidance you can act on.")])}
         </ul>
       </div>
     </section>''',
@@ -377,11 +377,11 @@ def faqs_page():
       ("Do you support home users?", "Yes — home users, families, retired users, students and home workers. We pride ourselves on patient, jargon-free help with everyday technology."),
       ("Do you support small businesses?", "Yes — sole traders, home offices and small businesses across Dorset, with Microsoft 365 management, cybersecurity, backups, staff support and more."),
       ("Can I cancel my plan?", "Yes. All plans are monthly and cancel-anytime, with no lock-in contract."),
-      ("Do you visit on-site?", "Most issues are solved remotely in minutes. When hands-on help is needed, we provide on-site visits across Bournemouth, Poole and the rest of Dorset."),
+      ("Do you visit on-site?", "Many issues can be solved remotely. When hands-on help is needed, we provide on-site visits across Bournemouth, Poole and the rest of Dorset."),
       ("Can you help with Microsoft 365?", "Absolutely — setup, migration, licensing, security and day-to-day support of Outlook, Teams, OneDrive, SharePoint and Exchange Online."),
       ("Can you help with cybersecurity?", "Yes — protection from scams, malware, ransomware and phishing, plus antivirus, multi-factor authentication, password security and backup checks."),
       ("Can you help with printers?", "Yes — printer setup, Wi-Fi printing, offline errors, drivers and scanning, for homes and offices."),
-      ("Can you help with slow computers?", "Yes — slow computers are one of the most common things we fix, usually remotely. A monthly plan keeps them fast with regular maintenance."),
+      ("Can you help with slow computers?", "Yes — slow computers are something we fix regularly, usually remotely. A monthly plan keeps them fast with regular maintenance."),
       ("How much does it cost?", "Home support is £18.25/month per computer and business support from £24.38/month per computer. Microsoft 365 can be added for £4.85/month per user. One-off repairs are also available with no subscription."),
       ("How quickly can you help?", "Most remote sessions start within minutes during opening hours, Monday to Friday, 9am to 5pm. Subscribers always jump the queue."),
       ("Do you offer no-fix-no-fee computer repairs?", "Yes. Every computer and laptop repair is no-fix-no-fee, so if we can't fix it you don't pay for the diagnosis, and it's backed by a 12-month warranty. We quote clearly before any chargeable work, with no call-out fee."),
@@ -4820,7 +4820,7 @@ def windows_10_eol():
         <p class="eyebrow eyebrow--center mono" data-reveal>// YOUR OPTIONS</p>
         <h2 class="section-title section-title--center" data-title>Three ways forward<span class="title-underline title-underline--center"></span></h2>
         <div class="blog-grid" data-stagger>
-          <a class="post-card" href="/windows-11-support/"><p class="post-card__cat">Best for most</p><h3>Upgrade to Windows 11</h3><p>If your PC is eligible, we&rsquo;ll upgrade it to Windows 11 free, safely and with your files intact.</p><span class="post-card__more">See upgrades &#8594;</span></a>
+          <a class="post-card" href="/windows-11-support/"><p class="post-card__cat">Best for most</p><h3>Upgrade to Windows 11</h3><p>If your PC is eligible, Windows 11 is a free upgrade &mdash; we&rsquo;ll do it safely, with your files intact.</p><span class="post-card__more">See upgrades &#8594;</span></a>
           <a class="post-card" href="/new-computer-setup/"><p class="post-card__cat">Fresh start</p><h3>New PC, set up for you</h3><p>If it&rsquo;s time for a new machine, we&rsquo;ll set it up, move everything across and recycle the old one.</p><span class="post-card__more">New computer setup &#8594;</span></a>
           <a class="post-card" href="/custom-pc-builds/"><p class="post-card__cat">Built to last</p><h3>Custom-built PC or Dell</h3><p>Need something more powerful? We build custom PCs and supply <a href="/dell-hardware/">Dell hardware</a> to suit.</p><span class="post-card__more">Custom PCs &#8594;</span></a>
         </div>
@@ -4833,7 +4833,7 @@ def windows_10_eol():
           <ul>
             <li><strong>End of support</strong> &mdash; the date a product stops getting free updates and fixes.</li>
             <li><strong>Security updates</strong> &mdash; free patches that close newly-found holes before criminals can use them.</li>
-            <li><strong>ESU (Extended Security Updates)</strong> &mdash; a paid way to buy limited extra time on Windows 10.</li>
+            <li><strong>ESU (Extended Security Updates)</strong> &mdash; a way to get limited extra time on Windows 10 &mdash; free for home users who sync their settings to a Microsoft account.</li>
             <li><strong>Windows 11</strong> &mdash; the current, fully-supported version &mdash; a free upgrade on eligible PCs.</li>
           </ul>"""
     content = "\n".join([
@@ -8487,7 +8487,7 @@ def web_design():
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/02 &mdash; FINDABILITY FIRST</p>
           <h2 class="section-title" data-title>A beautiful website nobody finds is a brochure in a drawer<span class="title-underline"></span></h2>
-          <p>In a study of four million Google searches, <a href="https://backlinko.com/google-ctr-stats" target="_blank" rel="noopener">barely 1 in 200 people clicked anything on page two</a>. Studies consistently show the top three results take between half and two-thirds of all clicks. If your site isn&rsquo;t findable, it may as well not exist &mdash; however lovely it looks.</p>
+          <p>In a study of four million Google search results, <a href="https://backlinko.com/google-ctr-stats" target="_blank" rel="noopener">fewer than 1 in 150 searchers clicked anything on page two</a>. Studies consistently show the top three results take between half and two-thirds of all clicks. If your site isn&rsquo;t findable, it may as well not exist &mdash; however lovely it looks.</p>
           <p><a href="https://developers.google.com/search/docs/appearance/page-experience" target="_blank" rel="noopener">Google confirms</a> that page experience signals like Core Web Vitals are used by its ranking systems. To be honest with you (as always): speed alone won&rsquo;t put you at #1 &mdash; Google says relevance comes first. But where competing local sites are otherwise similar, great page experience contributes &mdash; and that&rsquo;s the edge we build in from day one.</p>
           <p>And the field is genuinely weak: Google&rsquo;s own real-user data (the <a href="https://cwvtech.report/" target="_blank" rel="noopener">Core Web Vitals Technology Report</a>) shows fewer than half of WordPress sites &mdash; the platform much of the web is built on &mdash; pass Core Web Vitals, and a large share of Wix and Squarespace sites fail too. Those are real-visitor measurements, not lab scores. Don&rsquo;t take our word for it: test any site against ours, above.</p>
         </div>
@@ -8515,7 +8515,7 @@ def web_design():
         </ul>
         <div class="prose" data-reveal style="max-width:74ch;margin:2.2rem auto 0;text-align:center">
           <p>Paying agency prices isn&rsquo;t wrong &mdash; paying them <em>without proof</em> is. Plenty of expensive websites score poorly on the very tests Google publishes; you can check any of them &mdash; and the designer&rsquo;s own website &mdash; on this page in thirty seconds.</p>
-          <p><strong>Our promise is simpler:</strong> a fixed written quote up front, a site built to the same measurable standard as our own, hosting and email under the same roof &mdash; and a local team you can phone, text or visit. <a href="/contact/">Tell us what you need</a> and we&rsquo;ll give you a straight price.</p>
+          <p><strong>Our promise is simpler:</strong> a fixed written quote up front, a site built to the same measurable standard as our own, hosting and email under the same roof &mdash; and a local team you can phone or text. <a href="/contact/">Tell us what you need</a> and we&rsquo;ll give you a straight price.</p>
           <p>Already have a website that isn&rsquo;t pulling its weight? See our <a href="/website-rebuild/">website rebuild &amp; redesign service</a> &mdash; including the SEO-safe migration that keeps your Google rankings through the changeover.</p>
         </div>
       </div>
@@ -8674,13 +8674,13 @@ def web_care_page():
       ("Can you guarantee I&rsquo;ll rank number one?", "No, and please be wary of anyone who does. Nobody controls Google. What we <em>do</em> guarantee is the work: the page, the improvement, the hour of changes and the report, every month, or you don&rsquo;t pay for that month. Rankings are the aim &mdash; the work is the promise."),
       ("What about AI &mdash; ChatGPT, Google&rsquo;s AI answers?", "We build your site so AI assistants can read it and cite it properly &mdash; clean structure, clear answers, proper markup. It&rsquo;s included, not an extra. But we won&rsquo;t sell you an &ldquo;AI traffic&rdquo; package: for a local business, AI referrals are still a very small share of visits, and anyone quoting you big numbers for it is guessing."),
       ("What if I want to leave?", "You take everything and go, with our help. Your domain, hosting and Google accounts are in <strong>your</strong> name from day one &mdash; we never hold them. On request we hand over an <strong>Exit Pack</strong>: every page as a file, your content, your redirects and your Search Console access, plus a written summary of what we did. We&rsquo;ve <a href=\"/website-held-hostage/\">rescued enough people</a> from firms that work the other way."),
-      ("How long does a rebuild take, and will my Google traffic dip?", "Usually three to five weeks. And yes &mdash; be ready for a dip: when addresses change, Google takes time to recrawl, and a <strong>10&ndash;30% dip for two to six weeks is normal</strong>, even done perfectly. We put that in writing before you agree, map every old address to a new one, and leave the old site up while it settles. Anyone who tells you there&rsquo;s no dip has either not done it or isn&rsquo;t telling you."),
+      ("How long does a rebuild take, and will my Google traffic dip?", "Usually three to five weeks. And yes &mdash; be ready for a dip: when addresses change, Google takes time to recrawl, and a <strong>temporary dip lasting a few weeks is normal</strong>, even done perfectly. We put that in writing before you agree, map every old address to a new one, and leave the old site up while it settles. Anyone who tells you there&rsquo;s no dip has either not done it or isn&rsquo;t telling you."),
       ("Why would my IT company do my website?", "Because we&rsquo;re already the people you ring when something doesn&rsquo;t work &mdash; we know your business, and you already know we pick up. There&rsquo;s no handover between &ldquo;the IT lot&rdquo; and &ldquo;the website lot&rdquo;, and no finger-pointing. It&rsquo;s the same family firm that&rsquo;s been here since 1995."),
     ]
     content = "\n".join([
       hero(bc("Web Care"), "// GET FOUND, STAY FOUND",
            'A website nobody finds is just an <em class="grad grad--cyan">expensive business card</em>',
-           "Most small-business websites sit there doing nothing &mdash; no one checks whether Google can find them, nothing new is ever added, and no one reports back. 365 Web Care fixes that for &pound;125 a month: Search Console set up and watched, a new page every month, and a plain-English report showing exactly what moved. On the site you already have.",
+           "Plenty of small-business websites sit there doing nothing &mdash; no one checks whether Google can find them, nothing new is ever added, and no one reports back. 365 Web Care fixes that for &pound;125 a month: Search Console set up and watched, a new page every month, and a plain-English report showing exactly what moved. On the site you already have.",
            cta1=("Start from &pound;125/month", "/contact/?topic=web-care"), cta2=("See what you get", "#plans"),
            trustbar=True),
       f'''    <section class="section" aria-label="The real problem">
@@ -8693,7 +8693,7 @@ def web_care_page():
           <p>So we start there. Not with a rebuild you may not need.</p>
         </div>
         <ul class="checklist" data-stagger>
-{checklist(["Search Console set up &mdash; most sites have never had it","We see the searches you already show up for","A new page every month, on purpose","Real numbers, in plain English","No jargon, no dashboard you&rsquo;ll never log into","A local person who answers the phone"])}
+{checklist(["Search Console set up &mdash; many sites have never had it","We see the searches you already show up for","A new page every month, on purpose","Real numbers, in plain English","No jargon, no dashboard you&rsquo;ll never log into","A local person who answers the phone"])}
         </ul>
       </div>
     </section>''',
@@ -8702,7 +8702,7 @@ def web_care_page():
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>/02 &mdash; THREE PRICES, THAT&rsquo;S ALL</p>
           <h2 class="section-title section-title--center" data-title>Start small. Rebuild only if you need to<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Most people start with Care &amp; Search and stay there happily. The rebuild is there when your site is genuinely the thing holding you back &mdash; not before.</p>
+          <p class="lede lede--center" data-reveal>Start with Care &amp; Search; plenty of sites never need more. The rebuild is there when your site is genuinely the thing holding you back &mdash; not before.</p>
         </div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.1rem;align-items:start">
 {tiers}
@@ -8775,7 +8775,7 @@ def website_rebuild():
             "keyword & competitor research, and an SEO-safe migration — every old link 301-forwarded to a new optimised page. "
             "Bournemouth, Poole & Dorset.")
     faqs = [
-      ("Will I lose my Google rankings if I rebuild my website?", "Done properly, no — and this is the part most people get wrong. Google&rsquo;s own documentation says to map <em>every</em> old URL to its new equivalent with a permanent (301) redirect and keep those redirects live for at least a year; Google treats the redirect as a signal that the new page should take the old one&rsquo;s place in its index. Expect some temporary fluctuation while Google recrawls — its guidance says a medium-sized site takes a few weeks for most pages to move. We plan the redirect map before a single page is built, because that&rsquo;s exactly how we migrated our own site."),
+      ("Will I lose my Google rankings if I rebuild my website?", "Done properly, no — and this is the part that needs the most care. Google&rsquo;s own documentation says to map <em>every</em> old URL to its new equivalent with a permanent (301) redirect and keep those redirects live for at least a year; Google treats the redirect as a signal that the new page should take the old one&rsquo;s place in its index. Expect some temporary fluctuation while Google recrawls — its guidance says a medium-sized site takes a few weeks for most pages to move. We plan the redirect map before a single page is built, because that&rsquo;s exactly how we migrated our own site."),
       ("How long until a rebuilt website gets traffic?", "Honestly: weeks for Google to re-index, months for growth — and we&rsquo;d rather tell you that up front. Google says expect temporary ranking fluctuation during a move, and independent research by Ahrefs found fewer than 2% of newly published pages reach Google&rsquo;s top 10 within a year (the average #1 page is around five years old). A rebuild doesn&rsquo;t buy instant traffic — it removes the handbrake, and the growth compounds from there. Anyone promising you page 1 in 30 days is pricing in your disappointment."),
       ("Can you rebuild my WordPress website?", "Yes — happily. Our own website was WordPress before we rebuilt it, so we&rsquo;ve done this exact migration ourselves: every old URL mapped and 301-forwarded to a new, faster, search-optimised page, with Google Search Console watched daily through the changeover."),
       ("Do I have to change my domain or hosting?", "No — you keep your domain (changing it mid-rebuild adds months of settling time, so we&rsquo;d usually advise against it). Hosting-wise, we offer fast managed hosting as part of the service, but the migration method is the same either way."),
@@ -8785,7 +8785,7 @@ def website_rebuild():
     content = "\n".join([
       hero(bc("Website Rebuild"), "// NOT GETTING CALLS?",
            'Time for a <em class="grad grad--cyan">website rebuild</em> &mdash; without losing your Google rankings',
-           "If the phone isn&rsquo;t ringing, your website is usually the reason — too slow, awkward on phones, invisible on Google, or all three. We rebuild websites for Bournemouth, Poole and Dorset businesses the way we rebuilt our own: diagnosed with real data, rebuilt to measurable standards, and migrated safely so every old link forwards to a new, optimised page.",
+           "If the phone isn&rsquo;t ringing, your website may well be the reason — too slow, awkward on phones, invisible on Google, or all three. We rebuild websites for Bournemouth, Poole and Dorset businesses the way we rebuilt our own: diagnosed with real data, rebuilt to measurable standards, and migrated safely so every old link forwards to a new, optimised page.",
            cta1=("Rebuild &mdash; &pound;2,450 fixed", "/web-care/"), cta2=("Diagnose your site free", "#wctool"),
            chips=["Free live diagnosis below","SEO-safe migration &mdash; 301s done right","We rebuilt our own site this way"]),
       f'''    <section class="section" aria-label="Diagnose it first">
@@ -8909,7 +8909,7 @@ def services_overview():
         ("Plan Finder", "/plan-finder/", "Answer three quick questions and we&rsquo;ll recommend the right plan."),
       ]),
       ("Core IT services", [
-        ("Remote IT Support", "/remote-it-support/", "Fast, secure online help &mdash; most problems fixed in minutes."),
+        ("Remote IT Support", "/remote-it-support/", "Fast, secure online help &mdash; many problems fixed without a visit."),
         ("Remote Access", "/remote-access/", "Reach your own laptop or PC from anywhere with secure, fast Splashtop Business remote access."),
         ("Microsoft 365", "/microsoft-365-support/", "Outlook, Teams, OneDrive, SharePoint, licensing and migration."),
         ("Cybersecurity", "/cybersecurity-support/", "Protection from scams, malware, ransomware and phishing."),
@@ -8922,7 +8922,7 @@ def services_overview():
         ("Dell Laptops &amp; Desktops", "/dell-hardware/", "Refurbished, tested ex-business Dell Latitude laptops and OptiPlex desktops, supplied, set up and supported."),
         ("Custom-Built PCs", "/custom-pc-builds/", "Bespoke desktops for home, gaming, creative and business &mdash; built, tested and supported."),
         ("AMD Threadripper Workstations", "/threadripper-workstations/", "High-end Scan 3XS Threadripper workstations for video, 3D, CAD and AI &mdash; supplied &amp; supported."),
-        ("Gaming PCs", "/gaming-pcs/", "As an NVIDIA partner, custom GeForce RTX gaming PCs &mdash; built, set up &amp; supported."),
+        ("Gaming PCs", "/gaming-pcs/", "Custom NVIDIA GeForce RTX gaming PCs &mdash; built, set up &amp; supported."),
         ("Content Creator PCs &amp; Laptops", "/content-creator-pcs/", "NVIDIA Studio PCs and laptops for video, photo, design, music and 3D."),
         ("Cyber Essentials Help", "/cyber-essentials/", "Get Cyber Essentials certified with friendly, practical, guided help."),
         ("Disaster Recovery", "/disaster-recovery/", "Verified backups, ransomware rollback and rapid recovery to keep your business running."),
@@ -10562,7 +10562,7 @@ def malwarebytes():
       ("Will it let me watch Netflix or BBC iPlayer from abroad?", "We can&rsquo;t promise that, and we wouldn&rsquo;t advertise it. Streaming services like Netflix actively detect and block VPNs, and using one to get around their regional rules can breach their terms. BBC iPlayer is UK-only and a VPN doesn&rsquo;t change the TV Licence position. Please think of changing your location as a privacy feature, not a streaming unlocker."),
       ("Does the VPN keep a record of what I do online?", "Malwarebytes states it doesn&rsquo;t track, log or store your activity, and its servers run in memory with no hard disks. This was checked by an independent third-party audit in 2026, which found no evidence of user-activity logging. The only logs are local diagnostic ones that stay on your device unless you choose to share them with support."),
       ("Do you set it up and keep an eye on it?", "Yes — we install and configure Malwarebytes Premium on your devices, make sure it&rsquo;s working correctly, and monitor and maintain it as part of your monthly support plan, so the protection runs round the clock without you lifting a finger."),
-      ("Can I protect the whole family or team?", "Absolutely. Depending on the plan, Malwarebytes can cover multiple devices across your household or business &mdash; Windows PCs, Macs, Android phones and tablets, and iPhones and iPads &mdash; all set up and looked after by us."),
+      ("Can I protect the whole family or team?", "Absolutely. Depending on the plan, Malwarebytes can cover multiple devices across your household or business &mdash; Windows PCs, Macs, Android phones and tablets, and iPhones and iPads; we set up and look after the Windows PCs and Android devices."),
     ]
     content = "\n".join([
       hero(bc("Malwarebytes Premium"), "// MALWAREBYTES PARTNER",
@@ -10575,7 +10575,7 @@ def malwarebytes():
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/01 — WHY MALWAREBYTES</p>
           <h2 class="section-title" data-title>Award-winning protection, managed for you<span class="title-underline"></span></h2>
-          <p>The threats are relentless &mdash; ransomware, scam websites, dodgy downloads and phishing all aimed at your money and your data. Free antivirus rarely keeps up.</p>
+          <p>The threats are relentless &mdash; ransomware, scam websites, dodgy downloads and phishing all aimed at your money and your data. Free, built-in protection is good, but only if somebody checks it is still working.</p>
           <p><strong>As a Malwarebytes Partner</strong>, we supply Malwarebytes Premium &amp; VPN, set it up properly on your devices and keep it running &mdash; so you get genuine, modern protection that&rsquo;s actually looked after, not left to lapse.</p>
         </div>
         <ul class="checklist" data-stagger>
@@ -10602,7 +10602,7 @@ def malwarebytes():
         </div>
         <div class="prose" data-reveal style="max-width:74ch;margin:0 auto 2.4rem">
           <p>A VPN &mdash; short for <strong>Virtual Private Network</strong> &mdash; is a simple piece of software that creates a private, scrambled tunnel between your device and the internet. When it&rsquo;s switched on, everything you do online is encrypted on your device before it travels anywhere, so the network you&rsquo;re using (and anyone snooping on it) sees only a jumble of unreadable code instead of what you&rsquo;re actually doing. Malwarebytes Privacy VPN does exactly this, and it&rsquo;s easy to use on a Windows PC, a Mac, an Android phone or tablet, or an iPhone or iPad.</p>
-          <p>Why does it matter? Whenever you use free Wi-Fi at a caf&eacute;, hotel, airport or library, other people sharing that network could otherwise see what you&rsquo;re up to. Even at home, your broadband provider can see which websites you visit. A VPN puts a stop to that snooping by hiding both the content and the destinations of your browsing &mdash; the same kind of protection big businesses have used for years, now made friendly and affordable for everyday use. As a Malwarebytes Partner, we can set it up and look after it for you &mdash; or you can buy it yourself and we&rsquo;ll happily point you in the right direction.</p>
+          <p>Why does it matter? Whenever you use free Wi-Fi at a caf&eacute;, hotel, airport or library, whoever runs that network can otherwise see which sites you visit. Even at home, your broadband provider can see which websites you visit. A VPN puts a stop to that snooping by hiding both the content and the destinations of your browsing &mdash; the same kind of protection big businesses have used for years, now made friendly and affordable for everyday use. As a Malwarebytes Partner, we can set it up and look after it for you &mdash; or you can buy it yourself and we&rsquo;ll happily point you in the right direction.</p>
         </div>
         <div class="tile-grid" data-stagger>
 {tiles([("wifi","Safer on public Wi-Fi","On free Wi-Fi at a caf&eacute;, hotel or airport, it scrambles everything your device sends, so others on the network can&rsquo;t snoop on what you&rsquo;re doing."),("eye","Your broadband provider can&rsquo;t watch","Even at home, your internet provider can normally see the sites you visit. With the VPN on, it can no longer see where you go or what you do there."),("lock","Strong, modern encryption","It uses the modern WireGuard&reg; protocol with 256-bit ChaCha20 encryption to keep your data unreadable to anyone trying to intercept it."),("pin","Hides your IP &amp; rough location","Websites see the VPN server instead of you, masking your IP address and your general area &mdash; city or region level, never your street."),("shield","Built-in kill switch","On Windows and Mac, if the VPN ever drops, the kill switch can block your connection rather than quietly leaving you exposed."),("check","Independently audited no-logs","Malwarebytes says it doesn&rsquo;t track, log or store your activity &mdash; and an independent 2026 audit found no evidence of user-activity logging.")])}
@@ -10670,7 +10670,7 @@ def malwarebytes():
         <div class="prose" data-reveal style="text-align:center;max-width:62ch;margin:0 auto">
           <p class="eyebrow eyebrow--center mono">// PREFER TO DO IT YOURSELF?</p>
           <h2 class="section-title section-title--center" data-title>Rather buy it direct?<span class="title-underline title-underline--center"></span></h2>
-          <p>Most of our customers love having us set it up and look after it for them &mdash; but if you&rsquo;d rather buy and install Malwarebytes Premium yourself, you can get it straight from Malwarebytes:</p>
+          <p>Plenty of people prefer us to set it up and look after it for them &mdash; but if you&rsquo;d rather buy and install Malwarebytes Premium yourself, you can get it straight from Malwarebytes:</p>
         </div>
 {bp.affiliate_block("1101l99806", 728, 90)}
       </div>
@@ -10712,7 +10712,7 @@ def backup_recovery():
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/01 — WHY IT MATTERS</p>
           <h2 class="section-title" data-title>A backup you&rsquo;ve never tested isn&rsquo;t a backup<span class="title-underline"></span></h2>
-          <p>Most people only think about backups the day after they needed one. By then the photos, the accounts, the years of work &mdash; they&rsquo;re simply gone.</p>
+          <p>Too many people only think about backups the day after they needed one. By then the photos, the accounts, the years of work &mdash; they&rsquo;re simply gone.</p>
           <p><strong>We set up automatic, verified backups</strong> that run quietly in the background and that we check regularly &mdash; so your data is genuinely safe from failure, theft, accidents and ransomware.</p>
         </div>
         <ul class="checklist" data-stagger>
@@ -11103,7 +11103,7 @@ def unitree_robots():
           <h2 class="section-title section-title--center" data-title>Agile &lsquo;robot dogs&rsquo;<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="tile-grid" data-stagger>
-{tiles([("robot","Go2 &amp; Go2-W","Next-gen quadrupeds with advanced AI, real-time SLAM navigation and an open SDK. The Go2-W adds a wheel-leg hybrid drive &mdash; ideal for developers and researchers."),("shield","B2 &amp; B2-W","Heavy-duty quadrupeds with high-performance actuators and superior mobility for industrial, commercial and research use. B2-W adds wheel-leg capability."),("eye","A2","Industrial quadruped built for rugged terrain, autonomous inspections and mission-critical operations, with modular sensors and high payload."),("bolt","AS2 — coming soon","A compact industrial quadruped with enhanced payload and autonomy.")])}
+{tiles([("robot","Go2 &amp; Go2-W","Next-gen quadrupeds with advanced AI, real-time SLAM navigation and an open SDK. The Go2-W adds a wheel-leg hybrid drive &mdash; ideal for developers and researchers."),("shield","B2 &amp; B2-W","Heavy-duty quadrupeds with high-performance actuators and superior mobility for industrial, commercial and research use. B2-W adds wheel-leg capability."),("eye","A2","Industrial quadruped built for rugged terrain, autonomous inspections and mission-critical operations, with modular sensors and high payload."),("bolt","AS2 &amp; AS2-W","A compact industrial quadruped with enhanced payload and autonomy.")])}
         </div>
       </div>
     </section>''',
@@ -11295,7 +11295,7 @@ def threadripper_workstations():
       <div class="wrap">
         <div class="split-2">
           <div class="tile robot-card" data-reveal>{WORKSTATION_SVG}<h3>Threadripper workstations</h3><p>Custom-built 3XS towers with AMD Threadripper or Threadripper PRO &mdash; huge core counts for the heaviest creative, engineering and AI work.</p></div>
-          <div class="tile robot-card" data-reveal>{GPU_SVG}<h3>Professional NVIDIA graphics</h3><p>As an NVIDIA partner, we pair your workstation with the right professional GPU for rendering, AI and visualisation.</p></div>
+          <div class="tile robot-card" data-reveal>{GPU_SVG}<h3>Professional NVIDIA graphics</h3><p>We pair your workstation with the right professional NVIDIA GPU for rendering, AI and visualisation.</p></div>
         </div>
         <p class="lede lede--center" style="margin-top:1.6rem;font-size:.9rem;color:var(--faint)" data-reveal>Illustrative graphics &mdash; we&rsquo;ll spec the exact components for your workload.</p>
       </div>
@@ -11361,26 +11361,25 @@ threadripper_workstations()
 # ===================================================== GAMING PCS
 def gaming_pcs():
     slug = "gaming-pcs"
-    desc = "As an NVIDIA partner, 365 Techies supplies and supports custom NVIDIA GeForce RTX gaming PCs — built to your games and budget by Scan 3XS, set up, optimised and supported locally across Dorset."
+    desc = "365 Techies supplies and supports custom NVIDIA GeForce RTX gaming PCs — built to your games and budget by Scan 3XS, set up, optimised and supported locally across Dorset."
     faqs = [
-      ("Are you really an NVIDIA partner?", "Yes &mdash; we supply genuine NVIDIA GeForce RTX graphics in the gaming PCs we provide, and set them up and support them for you."),
       ("Do you build to my budget?", "Absolutely &mdash; from great-value gaming PCs to no-compromise flagship builds, specced around your games, monitor and budget."),
       ("Who builds the PCs?", "They&rsquo;re custom-built and stress-tested by Scan&rsquo;s award-winning 3XS Systems, and we set them up and support them locally."),
       ("Can you upgrade my existing gaming PC?", "Often yes &mdash; we can advise on and fit upgrades like a new GeForce RTX GPU, more memory or faster SSD storage."),
       ("Do they come ready to play?", "Yes &mdash; we deliver them set up, updated and optimised, with your data transferred across if you need it."),
     ]
     content = "\n".join([
-      hero(bc("Gaming PCs"), "// NVIDIA PARTNER &middot; GAMING PCS",
+      hero(bc("Gaming PCs"), "// NVIDIA GEFORCE RTX &middot; GAMING PCS",
            'NVIDIA-powered <em class="grad grad--cyan">gaming PCs</em>',
-           "As an NVIDIA partner, we supply and support custom gaming PCs powered by NVIDIA GeForce RTX &mdash; built to your games and budget by Scan&rsquo;s award-winning 3XS, then set up, optimised and supported by your local team.",
+           "We supply and support custom gaming PCs powered by NVIDIA GeForce RTX &mdash; built to your games and budget by Scan&rsquo;s award-winning 3XS, then set up, optimised and supported by your local team.",
            cta1=("Enquire About a Gaming PC", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
-           chips=["NVIDIA Partner","GeForce RTX power","Built &amp; supported"]),
+           chips=["GeForce RTX power","Built by Scan 3XS","Set up &amp; supported"]),
       f'''    <section class="section section--alt" aria-label="Gaming PC showcase">
 <h2 class="sr-only">Gaming PC showcase</h2>
       <div class="wrap">
         <div class="split-2">
           <div class="tile robot-card" data-reveal>{GAMING_SVG}<h3>Custom gaming rigs</h3><p>Built around your games, monitor and budget &mdash; from sleek value builds to no-compromise flagships, with proper cooling and clean cable management.</p></div>
-          <div class="tile robot-card" data-reveal>{GPU_SVG}<h3>NVIDIA GeForce RTX</h3><p>As an NVIDIA partner, we fit genuine GeForce RTX graphics &mdash; ray tracing, DLSS and the performance modern games demand.</p></div>
+          <div class="tile robot-card" data-reveal>{GPU_SVG}<h3>NVIDIA GeForce RTX</h3><p>We fit genuine NVIDIA GeForce RTX graphics &mdash; ray tracing, DLSS and the performance modern games demand.</p></div>
         </div>
         <p class="lede lede--center" style="margin-top:1.6rem;font-size:.9rem;color:var(--faint)" data-reveal>Illustrative graphics &mdash; we&rsquo;ll spec the exact build for your games and budget.</p>
       </div>
@@ -11391,7 +11390,7 @@ def gaming_pcs():
           <p class="eyebrow mono">/01 — GAME ON</p>
           <h2 class="section-title" data-title>Gaming PCs, done properly<span class="title-underline"></span></h2>
           <p>A great gaming PC is about getting the balance right &mdash; the right NVIDIA GeForce RTX graphics, CPU, memory and cooling for the games you actually play, at the resolution and frame rate you want.</p>
-          <p><strong>As an NVIDIA partner, we supply and support custom gaming PCs</strong>, built by Scan&rsquo;s award-winning 3XS and specced around your budget &mdash; then set up, optimised and looked after locally, so you can just play.</p>
+          <p><strong>We supply and support custom gaming PCs</strong>, built by Scan&rsquo;s award-winning 3XS and specced around your budget &mdash; then set up, optimised and looked after locally, so you can just play.</p>
         </div>
         <ul class="checklist" data-stagger>
 {checklist(["NVIDIA GeForce RTX graphics","Specced to your games &amp; budget","Built &amp; stress-tested by 3XS","High frame rates &amp; 4K","Ray tracing &amp; DLSS","Quiet, well-cooled builds","Set up, updated &amp; optimised","Local support &amp; upgrades"])}
@@ -11416,7 +11415,7 @@ def gaming_pcs():
           <h2 class="section-title section-title--center" data-title>NVIDIA power, local support<span class="title-underline title-underline--center"></span></h2>
         </div>
         <ul class="security-grid" data-stagger>
-{grid_cards([("NVIDIA Partner","Genuine NVIDIA GeForce RTX graphics, specced right for your games."),("GeForce RTX power","Ray tracing, DLSS and the performance modern titles demand."),("Built by Scan 3XS","Award-winning, custom-built and thoroughly stress-tested."),("Specced to your budget","From great-value rigs to no-compromise flagships."),("Set up &amp; optimised","Delivered ready to play, tuned, updated and clean."),("Local support &amp; upgrades","We support and upgrade it down the line &mdash; one local contact.")])}
+{grid_cards([("Genuine NVIDIA graphics","GeForce RTX graphics, specced right for your games."),("GeForce RTX power","Ray tracing, DLSS and the performance modern titles demand."),("Built by Scan 3XS","Award-winning, custom-built and thoroughly stress-tested."),("Specced to your budget","From great-value rigs to no-compromise flagships."),("Set up &amp; optimised","Delivered ready to play, tuned, updated and clean."),("Local support &amp; upgrades","We support and upgrade it down the line &mdash; one local contact.")])}
         </ul>
       </div>
     </section>''',
@@ -11424,7 +11423,7 @@ def gaming_pcs():
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>/04 — HOW IT WORKS</p>
         <h2 class="section-title section-title--center" data-title>From wishlist to first game<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Already own a gaming PC that has slowed down or stopped loading games? Most need a <a href="/gaming-pc-tune-up/">remote tune-up</a>, not a replacement.</p>
+          <p class="lede lede--center" data-reveal>Already own a gaming PC that has slowed down or stopped loading games? Many just need a <a href="/gaming-pc-tune-up/">remote tune-up</a>, not a replacement.</p>
         <ol class="how__steps">
 {steps([("We spec it","Tell us your games, monitor and budget &mdash; we design the ideal rig."),("We build it","Custom-built by Scan 3XS from quality components and stress-tested."),("We set up &amp; support","Delivered ready to play, optimised, with ongoing local support.")])}
         </ol>
@@ -11453,7 +11452,7 @@ def content_creator_pcs():
       ("Do you supply creator laptops too?", "Yes &mdash; powerful, colour-accurate laptops for editing and design on the move, as well as custom desktops for the studio."),
       ("Who builds the desktops?", "Custom-built and stress-tested by Scan&rsquo;s award-winning 3XS Systems, and we spec them to your software, set them up and support them locally."),
       ("Can you set it up with my creative software?", "Yes &mdash; we configure your machine, install and optimise your creative apps, transfer your projects, and support it ongoing."),
-      ("Are these NVIDIA Studio machines?", "We&rsquo;re an NVIDIA partner and fit NVIDIA Studio-class GeForce RTX graphics, ideal for accelerated rendering, AI tools and creative workflows."),
+      ("Are these NVIDIA Studio machines?", "We fit NVIDIA Studio-class GeForce RTX graphics, ideal for accelerated rendering, AI tools and creative workflows."),
     ]
     content = "\n".join([
       hero(bc("Content Creator PCs"), "// FOR CONTENT CREATORS",
@@ -11466,7 +11465,7 @@ def content_creator_pcs():
       <div class="wrap">
         <div class="split-2">
           <div class="tile robot-card" data-reveal>{LAPTOP_SVG}<h3>Creator laptops</h3><p>Powerful, colour-accurate laptops for editing, design and creating on the move &mdash; specced and set up around your apps.</p></div>
-          <div class="tile robot-card" data-reveal>{GPU_SVG}<h3>NVIDIA Studio graphics</h3><p>As an NVIDIA partner, we fit Studio-class GeForce RTX graphics for fast rendering, AI tools and smooth creative workflows.</p></div>
+          <div class="tile robot-card" data-reveal>{GPU_SVG}<h3>NVIDIA Studio graphics</h3><p>We fit NVIDIA Studio-class GeForce RTX graphics for fast rendering, AI tools and smooth creative workflows.</p></div>
         </div>
         <p class="lede lede--center" style="margin-top:1.6rem;font-size:.9rem;color:var(--faint)" data-reveal>Illustrative graphics &mdash; we&rsquo;ll spec the exact machine for your creative work.</p>
       </div>
@@ -11491,7 +11490,7 @@ def content_creator_pcs():
           <h2 class="section-title section-title--center" data-title>Power for every craft<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="tile-grid" data-stagger>
-{tiles([("monitor","Video editing","Smooth 4K and 8K editing and grading in Premiere, Resolve and Final Cut."),("spark","Photography &amp; design","Fast, colour-accurate work in Photoshop, Lightroom and Illustrator."),("bolt","Streaming","Game and stream, or go live, without dropping frames."),("cpu","3D &amp; motion","Render and animate faster in Blender, Cinema 4D and After Effects."),("flow","Music production","Low-latency, high-track-count production in your DAW."),("robot","AI creative tools","Accelerate AI-powered editing, upscaling and generation.")])}
+{tiles([("monitor","Video editing","Smooth 4K and 8K editing and grading in Premiere Pro and DaVinci Resolve."),("spark","Photography &amp; design","Fast, colour-accurate work in Photoshop, Lightroom and Illustrator."),("bolt","Streaming","Game and stream, or go live, without dropping frames."),("cpu","3D &amp; motion","Render and animate faster in Blender, Cinema 4D and After Effects."),("flow","Music production","Low-latency, high-track-count production in your DAW."),("robot","AI creative tools","Accelerate AI-powered editing, upscaling and generation.")])}
         </div>
       </div>
     </section>''',
@@ -11977,7 +11976,7 @@ def ai_os():
           <p class="eyebrow mono">/06 &mdash; BUILT IN-HOUSE</p>
           <h2 class="section-title" data-title>A genuine product, not a mock-up<span class="title-underline"></span></h2>
           <p>The 365 AI OS is something we&rsquo;ve actually built &mdash; a working prototype that shows what a modern, AI-powered workspace can be: sign-in, your own saved profile, real apps, and an assistant that does the work rather than just talking about it.</p>
-          <p>When others say &lsquo;AI OS&rsquo; they usually mean a chatbot or a rebranded web app. This is a <strong>genuine desktop you sign into</strong>, with a <strong>Claude-powered</strong> assistant that operates it &mdash; built and hosted in-house in Dorset, not aspirational branding.</p>
+          <p>An &lsquo;AI OS&rsquo; can mean anything from a chatbot to a rebranded web app. This is a <strong>genuine desktop you sign into</strong>, with a <strong>Claude-powered</strong> assistant that operates it &mdash; built and hosted in-house in Dorset, not aspirational branding.</p>
           <p>It&rsquo;s also a living demonstration of the <a href="/ai/agents/">custom agentic AI systems</a> we design and build for businesses, and it pairs naturally with our <a href="/ai/training/">AI training &amp; adoption</a> service. As with everything we do, it&rsquo;s built with security first &mdash; in line with our <a href="/cybersecurity-support/">cybersecurity</a> approach &mdash; and explained in plain English.</p>
           <p>It even includes a live <a href="/off-grid-victron-energy/">off-grid power dashboard</a> &mdash; read your Victron solar and battery system (charge, solar, loads and tank levels) from any browser, ideal for off-grid homes, campervans, motorhomes and boats.</p>
           <p>Want a version shaped around your business &mdash; your apps, your data, your brand? <a href="/contact/">Get in touch</a> and we&rsquo;ll show you what&rsquo;s possible.</p>
@@ -12953,7 +12952,7 @@ def dell_3520_guide():
           <h2 class="section-title section-title--center" data-title>Make the battery last years<span class="title-underline title-underline--center"></span></h2>
         </div>
         <ul class="security-grid" data-stagger>
-{grid_cards([("The 20&ndash;80 sweet spot","Batteries age fastest living at 100% or flat. Mostly plugged in? Set a charge limit around 80% in Dell Power Manager &mdash; we preset this on machines we supply."),("Heat is the enemy","Don&rsquo;t leave it in direct sun or a hot parked van &mdash; heat ages the battery more than use does. Charge it somewhere ventilated."),("Storing it a while?","Leave it around half charged and powered off &mdash; not full, not flat. Top it up every couple of months."),("On battery out and about","Lower the screen brightness (F11) and use the Balanced power mode &mdash; the two biggest levers for making a charge last.")])}
+{grid_cards([("The 20&ndash;80 sweet spot","Batteries age fastest living at 100% or flat. Mostly plugged in? Set a charge limit around 80% in Dell Power Manager &mdash; we preset this on machines we supply."),("Heat is the enemy","Don&rsquo;t leave it in direct sun or a hot parked van &mdash; heat ages the battery more than use does. Charge it somewhere ventilated."),("Storing it a while?","Leave it around half charged and powered off &mdash; not full, not flat. Top it up every couple of months."),("On battery out and about","Lower the screen brightness (F6) and use the Balanced power mode &mdash; the two biggest levers for making a charge last.")])}
         </ul>
       </div>
     </section>''',
@@ -12964,7 +12963,7 @@ def dell_3520_guide():
           <h2 class="section-title section-title--center" data-title>Function keys &amp; shortcuts<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="tile-grid" data-stagger>
-{tiles([("bolt","F1 &ndash; F3 &middot; Sound","Mute, volume down, volume up. If sound &lsquo;stops working&rsquo;, check F1 first &mdash; it usually did it."),("phone","F4 &middot; Mic mute","Mutes your microphone for calls &mdash; the little light means MUTED. The classic &lsquo;you&rsquo;re on mute&rsquo; key."),("monitor","F8 &middot; Second screen","Same as Win+P: choose Duplicate or Extend when a monitor, TV or projector is plugged in."),("sun","F11 / F12 &middot; Brightness","Screen brightness down / up &mdash; the biggest battery lever there is."),("spark","Fn + Esc &middot; Fn lock","Swaps whether the F-keys do the icons or classic F1&ndash;F12 &mdash; if your F-keys &lsquo;stopped working&rsquo;, this got pressed."),("lock","Win + L &middot; Lock it","Walking away? Win+L locks the screen instantly. Win+P = screens, Win+V = clipboard history &mdash; the three worth memorising.")])}
+{tiles([("bolt","F1 &ndash; F3 &middot; Sound","Mute, volume down, volume up. If sound &lsquo;stops working&rsquo;, check F1 first &mdash; it usually did it."),("phone","F4 &middot; Play/Pause","Pauses and restarts music or video. To mute your microphone on a call, use the mic button in Teams, Zoom or WhatsApp."),("monitor","F8 &middot; Second screen","Same as Win+P: choose Duplicate or Extend when a monitor, TV or projector is plugged in."),("sun","F6 / F7 &middot; Brightness","Screen brightness down / up &mdash; the biggest battery lever there is."),("spark","Fn + Esc &middot; Fn lock","Swaps whether the F-keys do the icons or classic F1&ndash;F12 &mdash; if your F-keys &lsquo;stopped working&rsquo;, this got pressed."),("lock","Win + L &middot; Lock it","Walking away? Win+L locks the screen instantly. Win+P = screens, Win+V = clipboard history &mdash; the three worth memorising.")])}
         </div>
         <p class="lede lede--center" style="font-size:.8rem;margin-top:1.2rem" data-reveal>Exact key layouts can vary slightly between configurations &mdash; the icons on the keys themselves are the truth.</p>
       </div>
@@ -13211,11 +13210,11 @@ def dell_optiplex_guide():
     desc = "The easy, animated owner's guide to Dell OptiPlex desktops — ports explained, dual monitors, surge & UPS advice, upgrades and quick fixes."
     faqs = [
       ("Can the OptiPlex run two monitors?", "Yes &mdash; most have <b>two DisplayPorts on the back</b>, so dual screens work out of the box. Monitor only has HDMI? A simple DisplayPort-to-HDMI cable sorts it. Plug both in, press Win+P, choose Extend, then drag the screens into the right order in Settings &#8594; Display."),
-      ("Can I upgrade it later?", "That&rsquo;s the OptiPlex party trick: the case opens without tools and takes more memory and storage easily. Machines we supply already have a brand-new SSD; adding RAM or a second drive later is a quick job we do all the time."),
+      ("Can I upgrade it later?", "That&rsquo;s the OptiPlex party trick: the case opens without tools and takes more memory and storage easily. Machines we supply already have a brand-new SSD; adding RAM or a second drive later is a quick job we can do for you."),
       ("Can I run a desktop in my campervan or off-grid?", "You can &mdash; small-form-factor models need a pure sine wave inverter and drink noticeably more than a laptop, while the tiny OptiPlex Micro can run from 12V via a DC&ndash;DC adapter. Our honest steer: off-grid is laptop territory &mdash; see the <a href=\"/dell-latitude-3520-guide/\">Latitude 3520 guide</a> for the efficient 12V USB-C setup."),
       ("What&rsquo;s the power lead called if I lose it?", "A &ldquo;kettle lead&rdquo; (properly: an IEC C13). Any office has a drawer full; any replacement fits. Push it in firmly &mdash; a half-seated one is a classic cause of &lsquo;dead&rsquo; computers."),
       ("The power light is flashing amber &mdash; what does it mean?", "That&rsquo;s the machine blinking a diagnostic code at you. Count the pattern (e.g. two blinks, pause, three blinks) and tell us &mdash; it identifies the fault before we&rsquo;ve even opened the case."),
-      ("Is this the desktop 365 Techies sells?", "Yes &mdash; refurbished business-grade OptiPlex desktops are half of what we supply (alongside Latitude laptops), from &pound;545: tested, securely wiped, new SSD, our own 5-year guarantee on a 365 support plan, set up ready to use. See <a href=\"/dell-hardware/\">refurbished Dells</a>."),
+      ("Is this the desktop 365 Techies sells?", "Yes &mdash; refurbished business-grade OptiPlex desktops are what we supply alongside Latitude laptops, from &pound;545: tested, securely wiped, new SSD, our own 5-year guarantee on a 365 support plan, set up ready to use. See <a href=\"/dell-hardware/\">refurbished Dells</a>."),
     ]
     content = "\n".join([
       hero(bc("Dell OptiPlex Guide"), "// THE EASY OWNER&rsquo;S GUIDE",
@@ -13231,7 +13230,7 @@ def dell_optiplex_guide():
           <h2 class="section-title section-title--center" data-title>Care &amp; upgrades<span class="title-underline title-underline--center"></span></h2>
         </div>
         <ul class="security-grid" data-stagger>
-{grid_cards([("Let it breathe","Vents need a few centimetres of clear space &mdash; not against the wall, not under the desk drift. Heat is what ages electronics."),("Dust it yearly","A can of compressed air through the vents (machine OFF) once a year keeps fans quiet and temperatures down. We do it as part of every service."),("Room to grow","OptiPlex cases open tool-free and take more memory and storage easily &mdash; a &pound;40 RAM stick years from now beats a new PC. That&rsquo;s an upgrade we do all the time."),("Sleep vs shutdown","Day to day, sleep is fine and instant. A proper restart once a week clears the cobwebs &mdash; and lets Windows updates actually finish.")])}
+{grid_cards([("Let it breathe","Vents need a few centimetres of clear space &mdash; not against the wall, not under the desk drift. Heat is what ages electronics."),("Dust it yearly","A can of compressed air through the vents (machine OFF) once a year keeps fans quiet and temperatures down. We do it as part of every service."),("Room to grow","OptiPlex cases open tool-free and take more memory and storage easily &mdash; a &pound;40 RAM stick years from now beats a new PC. That&rsquo;s an upgrade we can do for you."),("Sleep vs shutdown","Day to day, sleep is fine and instant. A proper restart once a week clears the cobwebs &mdash; and lets Windows updates actually finish.")])}
         </ul>
       </div>
     </section>''',
@@ -13249,7 +13248,7 @@ def dell_optiplex_guide():
       faq_html(faqs),
       tools_strip(["pcmapp", "speccheck", "pcbench", "pcbuild"], title="Free tools for your machine", alt=False),
       cta("This guide comes with the desktops we sell",
-          "Refurbished business-grade Dell OptiPlex &amp; Latitude from &pound;545 &mdash; tested, new SSD, securely wiped, 5-year guarantee, and set up ready to use. Plus a friendly techie on the end of the phone.",
+          "Refurbished business-grade Dell OptiPlex desktops from &pound;545 and Latitude laptops from &pound;510 &mdash; tested, new SSD, securely wiped, 5-year guarantee, and set up ready to use. Plus a friendly techie on the end of the phone.",
           primary=("See Refurbished Dells", "/dell-hardware/"), secondary=("See Plans &amp; Prices", "/monthly-it-support/")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
@@ -16746,7 +16745,6 @@ info_page(
         ("battery","GoCardless &amp; SiteGround","We build on trusted, FCA-regulated Direct Debit and premium managed hosting."),
         ("flow","Voipfone Phone Systems","We provide and support business phones on Voipfone, a multi-award-winning UK VoIP provider."),
         ("robot","Scan Partner","A Scan partner, supplying and supporting Unitree robots and high-end AMD Threadripper workstations built by Scan 3XS."),
-        ("spark","NVIDIA Partner","An NVIDIA partner, supplying and supporting NVIDIA GeForce RTX gaming PCs and professional graphics."),
         ("monitor","Richer Sounds Partner","A Richer Sounds Bournemouth partner for home cinema, 4K projectors and Dolby sound systems."),
         ("lock","Cyber Essentials Help","We help businesses meet the government-backed Cyber Essentials standard."),
       ]) + '''
@@ -16754,7 +16752,7 @@ info_page(
       </div>
     </section>''',
   inner="""          <h2>Why accreditations matter</h2>
-          <p>Accreditations and partnerships mean your technology is handled by people who are recognised, trained and trusted by the companies that make it. It&rsquo;s the difference between guesswork and genuine expertise.</p>
+          <p>Accreditations and partnerships mean you can check exactly who we work with and what we&rsquo;re qualified to do. It&rsquo;s the difference between guesswork and genuine expertise.</p>
           <p>Combined with three decades of hands-on experience since 1995, it&rsquo;s why Dorset homes and businesses trust us with the technology they rely on.</p>""",
   cta_args=("Experience expert IT support", "Put our expertise to work for your home or business.",
             ("See Plans &amp; Prices", "/monthly-it-support/"), ("Contact Us", "/contact/")),
@@ -17410,7 +17408,7 @@ info_page(
       </div>
     </section>''',
   inner="""          <h2>Need a hand applying any of this?</h2>
-          <p>Every guide and tool here is something we handle for our customers every day. If you&rsquo;d rather we just sorted it, get friendly monthly IT support for your home or business &mdash; or book a free IT health check.</p>""",
+          <p>Every guide and tool here covers something we can handle for you. If you&rsquo;d rather we just sorted it, get friendly monthly IT support for your home or business &mdash; or book a free IT health check.</p>""",
   cta_args=("Rather we just sorted it?", "Get friendly, proactive IT support from your local team &mdash; or start with a free health check.",
             ("See Plans &amp; Prices", "/monthly-it-support/"), ("Free IT Health Check", "/free-it-health-check/")),
 )
@@ -18692,12 +18690,12 @@ info_page(
           <h2 class="section-title section-title--center" data-title>Your next step, by type of scam<span class="title-underline title-underline--center"></span></h2>
         </div>
         <ul class="security-grid" data-stagger>
-{grid_cards([("Bank transfer / &lsquo;safe account&rsquo;","Call 159 now. Banks must consider reimbursing many authorised push-payment scams &mdash; report it and ask about their refund process."),("Card payment","Contact your card provider to stop the card and dispute the payment. You may be protected under chargeback or Section 75."),("Refund or &lsquo;tech support&rsquo; (remote access)","Disconnect the computer, change passwords from another device, and have it checked &mdash; they may have left something behind."),("Romance / online friend","Stop contact and stop sending money. It&rsquo;s painful but common &mdash; report it and tell someone you trust. There&rsquo;s no shame in it."),("Investment / crypto","Report to Report Fraud and the FCA. Don&rsquo;t pay any &lsquo;release fee&rsquo; to get money back &mdash; that&rsquo;s a second scam."),("Gift cards / vouchers","Keep the cards and receipts and report it &mdash; sometimes funds can be frozen if you act very fast.")])}
+{grid_cards([("Bank transfer / &lsquo;safe account&rsquo;","Call 159 now. Banks must now reimburse eligible authorised push-payment scam victims, up to &pound;85,000, &mdash; report it and ask about their refund process."),("Card payment","Contact your card provider to stop the card and dispute the payment. You may be protected under chargeback or Section 75."),("Refund or &lsquo;tech support&rsquo; (remote access)","Disconnect the computer, change passwords from another device, and have it checked &mdash; they may have left something behind."),("Romance / online friend","Stop contact and stop sending money. It&rsquo;s painful but common &mdash; report it and tell someone you trust. There&rsquo;s no shame in it."),("Investment / crypto","Report to Report Fraud and the FCA. Don&rsquo;t pay any &lsquo;release fee&rsquo; to get money back &mdash; that&rsquo;s a second scam."),("Gift cards / vouchers","Keep the cards and receipts and report it &mdash; sometimes funds can be frozen if you act very fast.")])}
         </ul>
       </div>
     </section>''',
   inner="""          <h2>Will I get my money back?</h2>
-          <p>Often, you can &mdash; especially if you act fast. Banks signed up to the industry code, and new rules on authorised push-payment scams, mean many victims are reimbursed. Report it to your bank straight away and ask exactly how their process works. For independent help, <a href="https://www.citizensadvice.org.uk/consumer/scams/check-if-something-might-be-a-scam/" target="_blank" rel="noopener">Citizens Advice</a> (consumer helpline 0808 223 1133) and <a href="https://www.which.co.uk/consumer-rights/advice/how-to-get-your-money-back-after-a-scam" target="_blank" rel="noopener">Which?</a> have clear, free guidance.</p>
+          <p>Often, you can &mdash; especially if you act fast. Since October 2024, rules on authorised push-payment scams mean banks must reimburse eligible victims of bank-transfer scams, up to &pound;85,000. Report it to your bank straight away and ask exactly how their process works. For independent help, <a href="https://www.citizensadvice.org.uk/consumer/scams/check-if-something-might-be-a-scam/" target="_blank" rel="noopener">Citizens Advice</a> (consumer helpline 0808 223 1133) and <a href="https://www.which.co.uk/consumer-rights/advice/how-to-get-your-money-back-after-a-scam" target="_blank" rel="noopener">Which?</a> have clear, free guidance.</p>
           <h2>In the first week</h2>
           <ul class="checklist">
             <li>Check your bank and card statements for anything you don&rsquo;t recognise.</li>
@@ -18766,7 +18764,7 @@ info_page(
           <ul class="checklist">
             <li><strong>Microsoft / Microsoft 365:</strong> <a href="https://account.microsoft.com/security" target="_blank" rel="noopener">account.microsoft.com/security</a> (see also our <a href="/how-to-secure-your-microsoft-365-account/">Microsoft 365 security guide</a>).</li>
             <li><strong>Google / Gmail:</strong> <a href="https://myaccount.google.com/security" target="_blank" rel="noopener">myaccount.google.com/security</a> &rarr; 2-Step Verification.</li>
-            <li><strong>Apple ID:</strong> Settings &rarr; your name &rarr; Sign-In &amp; Security &rarr; Two-Factor Authentication.</li>
+            <li><strong>Apple Account:</strong> Settings &rarr; your name &rarr; Sign-In &amp; Security &rarr; Two-Factor Authentication.</li>
             <li><strong>Facebook &amp; Instagram:</strong> Settings &rarr; Accounts Centre &rarr; Password and security.</li>
             <li><strong>Online banking:</strong> in your banking app or website&rsquo;s security settings &mdash; most banks now build this in.</li>
             <li><strong>WhatsApp:</strong> Settings &rarr; Account &rarr; Two-step verification.</li>
@@ -18826,7 +18824,7 @@ info_page(
           <ul class="checklist">
             <li><strong>Microsoft:</strong> <a href="https://account.microsoft.com/security" target="_blank" rel="noopener">account.microsoft.com/security</a></li>
             <li><strong>Google:</strong> <a href="https://myaccount.google.com/security" target="_blank" rel="noopener">myaccount.google.com/security</a></li>
-            <li><strong>Apple ID:</strong> <a href="https://support.apple.com/en-gb/HT201355" target="_blank" rel="noopener">Apple ID security</a></li>
+            <li><strong>Apple Account:</strong> <a href="https://support.apple.com/en-gb/HT201355" target="_blank" rel="noopener">Apple Account security</a></li>
             <li><strong>Facebook / Instagram:</strong> <a href="https://www.facebook.com/hacked" target="_blank" rel="noopener">facebook.com/hacked</a></li>
             <li><strong>National Cyber Security Centre:</strong> <a href="https://www.ncsc.gov.uk/guidance/recovering-a-hacked-account" target="_blank" rel="noopener">Recovering a hacked account</a></li>
           </ul>
@@ -18948,7 +18946,7 @@ info_page(
             <li>Turn on <strong>device encryption / BitLocker</strong> so your data is unreadable if the laptop is stolen.</li>
             <li>Back up to the cloud, so a lost laptop never means lost files &mdash; see <a href="/backup-support/">backup &amp; recovery</a>.</li>
             <li>Write down the <strong>make, model and serial number</strong> and keep them somewhere safe.</li>
-            <li>Out and about, never leave a laptop on show in a car &mdash; most are taken from vehicles and homes.</li>
+            <li>Out and about, never leave a laptop on show in a car, even for a minute.</li>
           </ul>
           <p>Want a hand setting any of this up, or replacing a stolen machine? We can recover your data from your backup and set up a tested <a href="/dell-hardware/">refurbished Dell from &pound;510</a>, ready to go.</p>""" + PRINT_BTN,
   faqs=[
@@ -19570,7 +19568,7 @@ info_page(
           <p>Here is the part worth understanding, because everything else follows from it: <strong>a VPN does not remove the need to trust somebody &mdash; it moves that trust.</strong> Without one, your broadband provider can see which sites you connect to. With one, it sees an encrypted connection to the VPN company &mdash; and the VPN company is now the one who could see where you go. You are choosing who to trust, which is exactly why a free app from a name you have never heard of is a bad trade.</p>
 
           <h2>Why the coffee-shop story has changed</h2>
-          <p>The warning that sold VPNs for a decade &mdash; a stranger on caf&eacute; Wi-Fi reading your banking password &mdash; is largely history. Nearly all web traffic is encrypted now: Google reports that <a href="https://blog.google/security/https-by-default/" target="_blank" rel="noopener">over 99% of pages loaded in Chrome on Mac, ChromeOS and Android use HTTPS, and 95% on Windows</a>, and from October 2026 Chrome will ask permission before opening a public site that is not encrypted at all. Your connection to your bank is already private, VPN or no VPN.</p>
+          <p>The warning that sold VPNs for a decade &mdash; a stranger on caf&eacute; Wi-Fi reading your banking password &mdash; is largely history. Nearly all web traffic is encrypted now: Google reports that <a href="https://blog.google/security/https-by-default/" target="_blank" rel="noopener">over 99% of public sites loaded in Chrome on Mac and Android use HTTPS, and 98% on Windows</a>, and from October 2026 Chrome will ask permission before opening a public site that is not encrypted at all. Your connection to your bank is already private, VPN or no VPN.</p>
           <p>What somebody running the network can still see is <em>which</em> sites you visit, and that is the gap a VPN closes. There is also the older, simpler risk: a hotspot named to look like the hotel&rsquo;s. A VPN protects you there, though so does the plain habit of checking the network name and using your phone&rsquo;s own data when in doubt.</p>
 
           <h2>When a VPN genuinely earns its place</h2>
@@ -19599,7 +19597,7 @@ info_page(
           <p>If you decide you need a VPN, pay for it. If the choice is a free VPN or no VPN, no VPN is usually the safer answer.</p>
 
           <h2>A VPN is not antivirus &mdash; they do different jobs</h2>
-          <p>This is the confusion we hear most often. Antivirus watches what arrives on your computer and stops it running. A VPN encrypts where your traffic goes. Neither does the other&rsquo;s job, and a VPN will not save you from clicking a scam link or downloading something nasty. If you are choosing protection, start with our <a href="/how-to-choose-antivirus/">plain-English guide to antivirus</a>, not with a VPN.</p>
+          <p>It is an easy confusion to make. Antivirus watches what arrives on your computer and stops it running. A VPN encrypts where your traffic goes. Neither does the other&rsquo;s job, and a VPN will not save you from clicking a scam link or downloading something nasty. If you are choosing protection, start with our <a href="/how-to-choose-antivirus/">plain-English guide to antivirus</a>, not with a VPN.</p>
 
           <h2>What we supply, and why we are telling you this</h2>
           <p>We are a Malwarebytes partner, and the protection we set up and manage &mdash; <a href="/malwarebytes-premium/">Malwarebytes Premium with its Privacy VPN</a> &mdash; includes a VPN. So we could have written the usual page telling everyone they need one.</p>
@@ -19739,7 +19737,7 @@ info_page(
   inner="""          <h2>Keep it simple &mdash; that&rsquo;s the kindest thing</h2>
           <p>The biggest favour you can do is to remove clutter. A clean desktop with large icons for the few things they actually use &mdash; email, video calls, the web, photos &mdash; is far less daunting than a screen full of things they&rsquo;ll never touch. Write a simple one-page note of how to do their favourite tasks, in their words.</p>
           <h2>Protect against scams from day one</h2>
-          <p>Older people are targeted most, so a little protection goes a long way: good security software, a chat about never giving anyone remote access who phones out of the blue, and our <a href="/spot-the-scam/">Spot the Scam</a> quiz to practise together. Remind them: <strong>a genuine technician calls first and is someone you arranged &mdash; we never cold-call demanding access.</strong></p>
+          <p>Scammers often target older people, so a little protection goes a long way: good security software, a chat about never giving anyone remote access who phones out of the blue, and our <a href="/spot-the-scam/">Spot the Scam</a> quiz to practise together. Remind them: <strong>a genuine technician calls first and is someone you arranged &mdash; we never cold-call demanding access.</strong></p>
           <h2>Setting up a new Windows 11 computer for an elderly parent</h2>
           <p>If the new machine is a Windows 11 laptop or desktop, give yourself an hour: sign in with their Microsoft account (write the password somewhere sensible), let it finish its first updates, turn on the accessibility settings above, and remove the pre-installed clutter before they ever see the desktop. Set their email, printer and video calling up properly on day one &mdash; those three cause most of the worried calls later.</p>
           <h2>Still on Windows 10? Plan the move kindly</h2>
@@ -19786,7 +19784,7 @@ info_page(
       </div>
     </section>''',
   inner="""          <h2>Helping elderly parents with technology from far away</h2>
-          <p>Most people reading this are helping elderly parents from far away &mdash; a different town, the other end of the country, sometimes abroad. Long-distance helping is genuinely hard: you can&rsquo;t see their screen, descriptions get muddled, and a five-minute fix becomes an hour of frustration for you both. The steps above make it workable; the two sections below make it sustainable.</p>
+          <p>Many people reading this are helping elderly parents from far away &mdash; a different town, the other end of the country, sometimes abroad. Long-distance helping is genuinely hard: you can&rsquo;t see their screen, descriptions get muddled, and a five-minute fix becomes an hour of frustration for you both. The steps above make it workable; the two sections below make it sustainable.</p>
           <h2>When to let us help instead</h2>
           <p>Helping family is lovely &mdash; but it can be stressful for both of you, especially over the phone. If something&rsquo;s fiddly, security-related, or simply wearing you both out, we&rsquo;re glad to step in as the patient, friendly expert. We support people right across the UK and Europe with secure <a href="/remote-it-support/">remote help</a>, and crucially, <strong>we always phone first and they watch everything on screen</strong> &mdash; the safe opposite of a scam. If your parents are in Dorset and you&rsquo;re not, our <a href="/computer-help-for-elderly-parents/">computer help for elderly parents</a> page explains how families arrange and pay for ongoing support from anywhere.</p>
           <h2>Set them up to need less help</h2>
@@ -19854,8 +19852,8 @@ def computer_help_for_seniors():
     desc="Friendly, patient computer help for older people - in one place. Plain-English guides on staying safe, accessibility, video calling, online banking and feeling confident with technology. From 365 Techies, a specialism since 1995."
     SENIOR_FAQS=[
       ("Will you explain things slowly and clearly?","Always. Patient, unhurried help is our specialism &mdash; we go at your pace, use plain English, and happily go over anything twice. There&rsquo;s no such thing as a silly question."),
-      ("Can my son or daughter arrange help on my behalf?","Yes &mdash; families often set up and pay for support for a parent, from anywhere in the country. Our <a href=\"/computer-help-for-elderly-parents/\">computer help for elderly parents</a> page is written just for them."),
-      ("I've forgotten my email password &mdash; can you help?","Yes, this is one of the most common things we sort out. We&rsquo;ll recover or reset your email safely, get it working on your devices again, and help you keep a sensible record so it&rsquo;s less stressful next time."),
+      ("Can my son or daughter arrange help on my behalf?","Yes &mdash; families can set up and pay for support for a parent, from anywhere in the country. Our <a href=\"/computer-help-for-elderly-parents/\">computer help for elderly parents</a> page is written just for them."),
+      ("I've forgotten my email password &mdash; can you help?","Yes, we can help with that. We&rsquo;ll recover or reset your email safely, get it working on your devices again, and help you keep a sensible record so it&rsquo;s less stressful next time."),
       ("How do I know a computer helper isn't a scammer?","A fair and important question. We <strong>always phone you first</strong> &mdash; we never cold-call, never use pop-ups, you watch everything we do on screen, and our access ends when the session ends. If anyone else rings out of the blue about your computer, put the phone down and call us on 01202 775566."),
       ("Do you run computer lessons for older people?","Yes &mdash; friendly group classes at the Kinson Community Centre in Bournemouth, plus patient one-to-one lessons online, and free courses you can do at your own pace. See our <a href=\"/computer-lessons-for-seniors-bournemouth/\">computer lessons for seniors</a> page, or call for the current timetable."),
       ("What does ongoing help cost?","Our home support plan is &pound;18.25 a month per computer &mdash; rolling monthly, cancel anytime. It covers help as often as you need it, with updates, security and backups quietly looked after for you."),
@@ -19919,7 +19917,7 @@ def computer_help_for_seniors():
           <p>And we always phone before we connect &mdash; so you&rsquo;re never surprised, and you can always tell us apart from a scammer.</p>
         </div>
         <ul class="checklist" data-stagger>
-{checklist(["Patient, unhurried help at your pace","The same friendly faces each time","Plain English, never jargon","Most help on your own screen, in minutes","We always call before we connect","A real person to ask &lsquo;is this safe?&rsquo;"])}
+{checklist(["Patient, unhurried help at your pace","The same friendly faces each time","Plain English, never jargon","Help on your own screen, with you watching","We always call before we connect","A real person to ask &lsquo;is this safe?&rsquo;"])}
         </ul>
       </div>
     </section>''',
@@ -21382,7 +21380,8 @@ def _course_card(o, badge_attrs=True):
         tag = tag[7:]
     lede = o["heroLede"]
     if len(lede) > 150:
-        lede = lede[:150].rsplit(" ", 1)[0].rstrip(" ,;") + "&hellip;"
+        # drop a trailing dash entity first: rstrip(";") on "&mdash;" left "&mdash&hellip;" on the course cards (26 Sep 2026)
+        lede = re.sub(r"\s*&(?:mdash|ndash|middot);$", "", lede[:150].rsplit(" ", 1)[0]).rstrip(" ,;") + "&hellip;"
     return ('          <a class="post-card" href="/' + o["slug"] + '/"' + attrs + '>'
             + _scene(o["slug"])
             + '<h3>' + o["icon"] + ' ' + o["courseTitle"] + '</h3><p>' + lede + '</p>'
@@ -23637,7 +23636,7 @@ def custom_dashboards():
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/08 &mdash; WORLDWIDE &middot; EXPATS</p>
           <h2 class="section-title" data-title>Off-grid in Spain, Portugal, France &mdash; supported in plain English<span class="title-underline"></span></h2>
-          <p>Thousands of English-speaking expats run Victron systems on villas, fincas, quintas and smallholdings across Europe &mdash; often a long way from the installer who fitted them. Because a custom dashboard is <strong>hosted on the web and built on the VRM cloud API, where you are doesn&rsquo;t matter</strong>: we design, build and support it remotely, from the UK, in plain English.</p>
+          <p>English-speaking expats run Victron systems on villas, fincas, quintas and smallholdings across Europe &mdash; often a long way from the installer who fitted them. Because a custom dashboard is <strong>hosted on the web and built on the VRM cloud API, where you are doesn&rsquo;t matter</strong>: we design, build and support it remotely, from the UK, in plain English.</p>
           <p>Check the batteries from the airport. Show a house-sitter one simple page. Get an alert before the freezer becomes a problem. And when you want changes, you deal with a real, family-run UK firm (est. 1995, rated 4.9 on Google) &mdash; not a forum thread.</p>
           <p class="mono" style="color:var(--muted)">We work UK office hours (Mon&ndash;Fri 9&ndash;5 UK time) and support customers by email, remote session and scheduled calls worldwide.</p>
         </div>
@@ -23694,7 +23693,7 @@ def custom_dashboards():
         ("Does this replace the VRM portal?", "No &mdash; and it shouldn&rsquo;t. VRM stays your system of record, with its alarms, history and remote console. Your custom dashboard reads the same data through Victron&rsquo;s official API and presents it your way, alongside VRM."),
         ("Do I need any new hardware?", "Usually not. If your system already reports to VRM (via a GX device such as a Cerbo GX), we can build from that today using a read-only API token. No site visit needed &mdash; anywhere in the world."),
         ("Is it safe? Can a dashboard change my system?", "We build with a read-only VRM access token, kept server-side &mdash; the dashboard can display your system but never control or change it. Optional password protection on the page itself if you want it private."),
-        ("Can you put several installations on one screen?", "Yes &mdash; that&rsquo;s one of the main reasons people come to us. Any number of sites, mixed hardware, one live page; VRM&rsquo;s own multi-site tools are a list view and a fleet dashboard that needs ten or more sites."),
+        ("Can you put several installations on one screen?", "Yes &mdash; it&rsquo;s one of the things a custom dashboard does best. Any number of sites, mixed hardware, one live page; VRM&rsquo;s own multi-site tools are a list view and a fleet dashboard that needs ten or more sites."),
         ("Can you include non-Victron equipment?", "Usually, yes &mdash; most modern kit exposes an API or feed we can read (other solar brands, sensors, weather, business data). Tell us what you run and we&rsquo;ll confirm feasibility honestly before you commit."),
         ("Can the dashboard live on my own website?", "Yes. We host by default, but if you&rsquo;d rather have it at your own address &mdash; say monitor.yourcompany.co.uk &mdash; you create a read-only VRM access token (two minutes; we send a plain-English walkthrough), add the subdomain in your hosting panel, and give us FTP or SFTP access to just that folder. The token sits in one server-side file, never appears in the page code, and you can revoke it &mdash; or our access &mdash; whenever you like. Your host just needs to run a small PHP relay, which nearly all ordinary shared hosting supports; if yours can&rsquo;t, we simply host it for you instead. It&rsquo;s the same architecture our own live van dashboards on this page run on."),
         ("What does a custom dashboard cost?", "Every dashboard is different, so we don&rsquo;t publish a one-size price &mdash; you get a free demo and a fixed written quote up front, including hosting and support, before any work starts."),
