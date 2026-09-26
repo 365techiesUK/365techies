@@ -237,7 +237,7 @@ def intent_tiles(tiles, indent="            "):
 # The intent-first first screen used across the site (homepage v3 standard): breadcrumb, H1, the page's own
 # lede, call first, the rating line, and four choice tiles beside it. build_extra's _email_hero is the same
 # markup; this copy lets build_pages / build_local pages use it without importing build_extra.
-def intent_hero(crumbs, eyebrow, h1, lede, cta1, cta2, tiles, question="What would you like to do?",
+def intent_hero(crumbs, eyebrow, h1, lede, cta1, cta2, tiles, question="What would you like to do?", rating_href="/reviews/",
                 rating_note="Family-run since 1995 &middot; no fix, no fee"):
     return f'''    <section class="page-hero dh dh-hero" aria-label="Introduction">
       <div class="dh-hero__grid">
@@ -250,7 +250,7 @@ def intent_hero(crumbs, eyebrow, h1, lede, cta1, cta2, tiles, question="What wou
             <a href="{cta1[1]}" class="button primary button--lg">{cta1[0]}</a>
             <a href="{cta2[1]}" class="button secondary button--lg">{cta2[0]}</a>
           </div>
-          <a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Rated 4.9 on Google</strong></span><span>{rating_note}</span></a>
+          <a class="dh-rating" href="{rating_href}"{' target="_blank" rel="noopener"' if rating_href.startswith("http") else ""}><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Rated 4.9 on Google</strong></span><span>{rating_note}</span></a>
           <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
         </div>
         <nav class="hp-intents" aria-label="{question}">

@@ -5138,6 +5138,7 @@ def tool_seo_html(slug, enh):
 # only the layout and the four choices are new. A page without the standard hero is left as it was.
 from tool_tiles_data import TOOL_HERO_TILES
 from other_tiles_data import OTHER_HERO_TILES   # 26 Sep 2026: the remaining guides, service and AI pages, same hook
+from local_tiles_data import LOCAL_HERO_TILES   # 26 Sep 2026: the 66 local town pages (templated per page type)
 _HERO_RE = re.compile(r'    <section class="page-hero[^"]*"[^>]*>.*?</section>', re.S)
 
 
@@ -5153,9 +5154,13 @@ def _tool_intent_hero(content, tiles, rating_note=None):
     btns = re.findall(r'<a href="([^"]+)" class="button[^"]*"[^>]*>(.*?)</a>', h, re.S)
     if not (crumbs and eyebrow and h1 and lede and len(btns) >= 2):
         return content
+    # a hero that linked its rating to the Google Business listing (the town pages' trust bar) keeps that link: on a local
+    # page the listing and its reviews are what rank, so it beats /reviews/ there (26 Sep 2026)
+    gbp = re.search(r'href="(https://www\.google\.com/maps/[^"]+)"', h)
     new = intent_hero(crumbs.group(1).strip(), eyebrow.group(1).strip(), h1.group(1).strip(), lede.group(1).strip(),
                       (btns[0][1].strip(), btns[0][0]), (btns[1][1].strip(), btns[1][0]), tiles,
-                      **({"rating_note": rating_note} if rating_note else {}))
+                      **({"rating_note": rating_note} if rating_note else {}),
+                      **({"rating_href": gbp.group(1).replace("&amp;", "&")} if gbp else {}))
     return content[:m.start()] + new + content[m.end():]
 
 
@@ -5163,6 +5168,9 @@ def add(**kw):
     _slug = kw.get("slug")
     if _slug in TOOL_HERO_TILES and isinstance(kw.get("content"), str):
         kw["content"] = _tool_intent_hero(kw["content"], TOOL_HERO_TILES[_slug])
+    elif _slug in LOCAL_HERO_TILES and isinstance(kw.get("content"), str):
+        kw["content"] = _tool_intent_hero(kw["content"], LOCAL_HERO_TILES[_slug],
+                                          "Family-run since 1995 &middot; real people, no call centre")
     elif _slug in OTHER_HERO_TILES and isinstance(kw.get("content"), str):
         kw["content"] = _tool_intent_hero(kw["content"], OTHER_HERO_TILES[_slug],
                                           "Family-run since 1995 &middot; real people, no call centre")
