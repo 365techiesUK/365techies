@@ -22110,7 +22110,7 @@ def fix_panel(d):
               else '<a class="dpan__link" href="/remote-support/">How remote help works</a>')
     if str(s_href).startswith('tel:') and 'tel:' in second:
         second = ''   # the page's own second link (in the footer line) is already the phone number
-    if d['slug'] in ('move-virgin-media-email-to-gmail', 'virgin-media-email-moving-to-junara'):   # the owner's price for this job (26 Sep 2026)
+    if d['slug'] in ('move-virgin-media-email-to-gmail', 'virgin-media-email-moving-to-junara', 'move-plusnet-email-to-gmail'):   # the owner's price for this job (26 Sep 2026)
         fix_tag = "We&rsquo;ll move it for you"
         fix_ticks = ('<li>&pound;60 per email address, agreed first</li>\n              <li>Every message and folder into Gmail</li>\n'
                      '              <li>We phone first, and you watch every step</li>')
@@ -23116,7 +23116,31 @@ def junara_v2(d, crumbs):
     return hero_html, offer_html
 
 
-EMAIL_MOVE_V2 = {VIRGIN_MOVE_V2: virgin_move_v2, JUNARA_SLUG: junara_v2}
+# Plusnet (26 Sep 2026): same first screen and box; Greenby facts from Greenby's own FAQ, read 26 Sep 2026.
+PLUSNET_MOVE_V2 = 'move-plusnet-email-to-gmail'
+FIX_FLOW_OVERRIDES[PLUSNET_MOVE_V2] = {'stuck_tail': FIX_FLOW_OVERRIDES[VIRGIN_MOVE_V2]['stuck_tail'],
+                                       'areas': FIX_FLOW_OVERRIDES[VIRGIN_MOVE_V2]['areas']}
+
+
+def plusnet_move_v2(d, crumbs):
+    hero_html = _email_hero(d, crumbs,
+        'Plusnet is closing its email service and moving mailboxes to a company called Greenby. You can keep your address with Greenby &mdash; free for two years if you still have Plusnet broadband, then paid &mdash; or move to free Gmail once. We can do the whole move for you for <strong>&pound;60 per address</strong>.',
+        ("Do it myself", "#fixflow"), [
+        ("hp-c-care", "mail", "Move it for me", "Every message and folder into Gmail, done remotely", "&pound;60 PER ADDRESS", "#move-for-me"),
+        ("hp-c-fix", "book", "Do it myself", "The free step-by-step guide on this page", "FREE", "#fixflow"),
+        ("hp-c-biz", "clock", "Keep my Plusnet address", "Greenby: free for 2 years with Plusnet broadband", "THEN PAID", "#s1"),
+        ("hp-c-buy", "alert", "Already left Plusnet?", "Greenby keeps it 30 days, then &pound;15 a year", "ACT SOONER", "#s1"),
+    ])
+    offer_html = email_move_box("Rather we just did it?", "We move your Plusnet email to Gmail for you", [
+        '<p class="vm-alt__h">Or keep it with Greenby</p>',
+        '<p>Unless you opt out, your mailbox moves to Greenby with the same address and settings. If you still have Plusnet broadband it is free for two years; if you have left Plusnet it stays live for 30 days after the move, then costs &pound;15 a year.</p>',
+        '<p class="vm-alt__h">Don&rsquo;t cancel your broadband first</p>',
+        '<p>Cancelling Plusnet broadband before your mailbox has moved closes the email with it. Move it, or copy it into Gmail, first.</p>',
+        '<p><a class="dh-link" href="#s1">What&rsquo;s happening, in full &#8594;</a></p>'])
+    return hero_html, offer_html
+
+
+EMAIL_MOVE_V2 = {VIRGIN_MOVE_V2: virgin_move_v2, JUNARA_SLUG: junara_v2, PLUSNET_MOVE_V2: plusnet_move_v2}
 
 
 def build_new_page(d):
