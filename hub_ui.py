@@ -163,3 +163,60 @@ def _dell_hub_quotes(*names):
                    f'<blockquote>&ldquo;{_dh_html.escape(q, quote=False)}&rdquo;</blockquote>'
                    f'<figcaption><strong>{_dh_html.escape(n, quote=False)}</strong> &middot; Google review</figcaption></figure>')
     return "\n".join(out)
+
+
+# ============================================ EMAIL MOVE BOX + CHOICE TILES (26 Sep 2026)
+# The owner's price for moving someone's email off a closing provider (Virgin Media and its old brands
+# blueyonder / ntlworld / virgin.net, and Plusnet) into Gmail: GBP 60 per email address, agreed before we
+# start, whichever route the job needs. One box, used by /move-virgin-media-email-to-gmail/, the Junara page
+# and /email-support/, so the price and promises can never drift apart between them.
+EMAIL_MOVE_TICKS = ("Every message and folder copied into Gmail",
+                    "Forwarding set up while the old address still works",
+                    "Checked on your computer, and your phone if you like",
+                    "Done remotely: we phone first, and you watch every step")
+EMAIL_MOVE_SMALL = "Agreed before we start &middot; no fix, no fee &middot; usually the same day, Mon&ndash;Fri 9&ndash;5"
+_EMAIL_MOVE_CSS = """      .vm-offer{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:1.1rem;margin-top:1.2rem}
+      .vm-price{padding:1.4rem 1.4rem 1.3rem;border-radius:24px;border:1px solid transparent;background:radial-gradient(90% 70% at 100% 0%,rgba(15,179,74,.18),transparent 65%) padding-box,linear-gradient(#0c1630,#0c1630) padding-box,linear-gradient(135deg,#7af08e,#0fb34a 45%,#1d97e3) border-box;box-shadow:0 34px 70px -38px rgba(15,179,74,.6)}
+      .vm-price__num{display:flex;align-items:baseline;gap:.5rem;margin:0}
+      .vm-price__num b{font-family:var(--font-display);font-weight:600;font-size:clamp(2.6rem,5vw,3.4rem);line-height:1;color:#fff}
+      .vm-price__num span{color:var(--hp-soft);font-size:1rem}
+      .vm-ticks{grid-template-columns:1fr;margin-top:1rem}
+      .vm-alt{padding:1.3rem 1.35rem;border-radius:24px;border:1px solid var(--hp-edge);background:var(--hp-card)}
+      .vm-alt p{margin:0 0 .8rem;font-size:.93rem;line-height:1.55;color:var(--hp-body)}
+      .vm-alt .vm-alt__h{margin:0 0 .35rem;font-family:var(--font-display);font-weight:600;font-size:1.05rem;color:var(--hp-ink)}
+      @media (max-width:860px){.vm-offer{grid-template-columns:1fr}}"""
+
+
+def email_move_box(kicker, h2, alt_lines, ticks=EMAIL_MOVE_TICKS, small=EMAIL_MOVE_SMALL):
+    """The GBP 60 'we move it for you' box (id move-for-me): price and ticks on the left, alt_lines (the
+    other choices, as <p> lines) on the right."""
+    lis = "\n".join("              <li>" + t + "</li>" for t in ticks)
+    alt = "\n".join("            " + l for l in alt_lines)
+    return ('    <section class="dh dh-sec" id="move-for-me" aria-labelledby="move-for-me-title">\n'
+            '      <div class="dh-in">\n'
+            '        <p class="dh-kicker">' + kicker + '</p>\n'
+            '        <h2 class="dh-h2" id="move-for-me-title">' + h2 + '</h2>\n'
+            '        <div class="vm-offer">\n'
+            '          <div class="vm-price hp-c-care">\n'
+            '            <p class="vm-price__num"><b>&pound;60</b><span>per email address</span></p>\n'
+            '            <ul class="dh-ticks vm-ticks">\n' + lis + '\n'
+            '            </ul>\n'
+            '            <p class="dh-small">' + small + '</p>\n'
+            '            <div class="dh-buy__cta"><a class="dh-btn" href="tel:+441202775566">Call 01202 775566</a>'
+            '<a class="dh-link" href="sms:+447520615332">Or text 07520 615332</a></div>\n'
+            '          </div>\n'
+            '          <div class="vm-alt">\n' + alt + '\n'
+            '          </div>\n'
+            '        </div>\n'
+            '      </div>\n'
+            '      <style>\n' + _EMAIL_MOVE_CSS + '\n'
+            '      </style>\n'
+            '    </section>')
+
+
+def intent_tiles(tiles, indent="            "):
+    """Choice tiles that go somewhere: (colour class, icon, title, line, tag, href)."""
+    return "\n".join(
+        indent + f'<a class="hp-intent {c}" href="{href}"><span class="hp-ico">{_dh_ico(i)}</span><span class="hp-intent__t">{t}</span>'
+        f'<span class="hp-intent__d">{dd}</span><span class="hp-intent__p">{p}</span></a>'
+        for c, i, t, dd, p, href in tiles)

@@ -25,7 +25,7 @@ from booking_app import BOOKING_APP   # our own booking UI (replaces the SimplyB
 from signal_area_data import SIGNAL_AREAS as _SIGA  # dated counts for the Dataset schema on the signal page
 from at_a_glance_data import AT_A_GLANCE
 from keep_bands_data import KEEP_BANDS   # 'stop it happening again' band words, per page (25 Sep 2026)
-from hub_ui import DELL_HUB_CSS, _DH_ICONS, _dh_ico, _dell_hub_quotes   # intent-first layout pieces (26 Sep 2026)
+from hub_ui import DELL_HUB_CSS, _DH_ICONS, _dh_ico, _dell_hub_quotes, email_move_box, intent_tiles   # intent-first layout pieces (26 Sep 2026)
 from projects_data import CCB_RELATIONSHIP, jt_html   # the journeys, one source of truth
 from latitude_pages_data import LATITUDE_PAGES, LATITUDE_COMPARE_TABLES
 from optiplex_pages_data import OPTIPLEX_PAGES, OPTIPLEX_COMPARE_TABLES
@@ -116,7 +116,7 @@ SPECIALIST = [
    step_items=[("We check","We confirm your PC is Windows 11-ready and advise honestly whether it&rsquo;s worth it."),("We upgrade","We back up your files and upgrade cleanly &mdash; no lost data, no nasty surprises."),("We support","We keep Windows 11 updated, fast and secure on your support plan.")]),
  dict(slug="email-support", scene="email", crumb_name="Email Support", notice=bp.apple_notice_for("email-support"),
    eyebrow="// EMAIL", h1='Email <em class="grad grad--cyan">support</em>',
-   lede="Outlook, Microsoft 365 and business email help — fix email that won't send or receive, sort passwords, set up new accounts and stop the spam, for homes and businesses.",
+   lede="Home and business email help for BT, Sky, TalkTalk, Plusnet and Virgin Media addresses, Outlook and Microsoft 365. We fix email that won't send or arrive, sort passwords, set up phones and tablets, and move your email somewhere safe when your provider closes it.",
    intro_head="Email that just works",
    intro_paras="<p>Email problems are one of the most common — and most stressful — tech headaches. When messages won&rsquo;t send, won&rsquo;t arrive, or your password stops working, it can bring everything to a halt.</p><p><strong>We fix it fast</strong>, set things up properly across your computer and phone, and help you spot the dodgy messages before they cause trouble.</p>",
    feats=["Outlook problems","Email not sending","Email not receiving","Password problems","Microsoft 365 email","Business email setup","Email migration","Spam &amp; junk filtering","Phishing email advice","Phone email setup"],
@@ -140,6 +140,8 @@ SPECIALIST = [
      ("/btinternet-email-wont-add-to-new-outlook/", "BT, Sky, Plusnet or Virgin email won&rsquo;t add to the new Outlook"),
      ("/virgin-media-email-wont-add-to-new-outlook/", "Virgin Media email won&rsquo;t add to the new Outlook"),
      ("/move-virgin-media-email-to-gmail/", "Moving your Virgin Media email to Gmail"),
+     ("/virgin-media-email-moving-to-junara/", "Virgin Media email is moving to Junara: keep it or move it?"),
+     ("/move-plusnet-email-to-gmail/", "Plusnet email is closing: moving it to Gmail"),
      ("/business-email-down-domain-expired/", "Business email stopped because the domain expired"),
      ("/transfer-microsoft-365-when-owner-leaves/", "Transferring Microsoft 365 when the owner leaves"),
      ("/take-over-email-domain-after-buying-business/", "Taking over the email and domain after buying a business"),
@@ -22108,7 +22110,7 @@ def fix_panel(d):
               else '<a class="dpan__link" href="/remote-support/">How remote help works</a>')
     if str(s_href).startswith('tel:') and 'tel:' in second:
         second = ''   # the page's own second link (in the footer line) is already the phone number
-    if d['slug'] == 'move-virgin-media-email-to-gmail':   # the owner's price for this job (26 Sep 2026)
+    if d['slug'] in ('move-virgin-media-email-to-gmail', 'virgin-media-email-moving-to-junara'):   # the owner's price for this job (26 Sep 2026)
         fix_tag = "We&rsquo;ll move it for you"
         fix_ticks = ('<li>&pound;60 per email address, agreed first</li>\n              <li>Every message and folder into Gmail</li>\n'
                      '              <li>We phone first, and you watch every step</li>')
@@ -23036,28 +23038,19 @@ FIX_FLOW_OVERRIDES[VIRGIN_MOVE_V2].update({
 })
 
 
-def virgin_move_v2(d, crumbs):
-    tiles = [
-        ("hp-c-care", "mail", "Move it for me", "Every message and folder into Gmail, done remotely", "&pound;60 PER ADDRESS", "#move-for-me"),
-        ("hp-c-fix", "book", "Do it myself", "The free step-by-step guide on this page", "FREE", "#fixflow"),
-        ("hp-c-biz", "clock", "Keep my Virgin address", "Sign up with Junara before your date", "FREE YEAR, THEN PAID", "#s2"),
-        ("hp-c-buy", "alert", "Is this Junara email real?", "Virgin&rsquo;s own emails have no sign-up link", "SCAM CHECK", "#s2"),
-    ]
-    tiles_html = "\n".join(
-        f'            <a class="hp-intent {c}" href="{href}"><span class="hp-ico">{_dh_ico(i)}</span><span class="hp-intent__t">{t}</span>'
-        f'<span class="hp-intent__d">{dd}</span><span class="hp-intent__p">{p}</span></a>'
-        for c, i, t, dd, p, href in tiles)
-    hero_html = f'''    <style>{" ".join(l.strip() for l in DELL_HUB_CSS.strip().splitlines())}</style>
+def _email_hero(d, crumbs, lede, cta2, tiles):
+    """First screen shared by the Virgin email pages: H1 unchanged, call first, four choices beside it."""
+    return f'''    <style>{" ".join(l.strip() for l in DELL_HUB_CSS.strip().splitlines())}</style>
     <section class="page-hero dh dh-hero" aria-label="Introduction">
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb">{crumbs}</nav>
           <p class="eyebrow mono">{d['eyebrow']}</p>
           <h1>{d['h1']}</h1>
-          <p class="lede">Virgin Media is handing its email to a company called Junara. To keep your address you sign up with Junara, and after any free first year you pay for each one &mdash; or move to free Gmail once. We can do the whole move for you for <strong>&pound;60 per address</strong>.</p>
+          <p class="lede">{lede}</p>
           <div class="page-hero__cta">
             <a href="tel:+441202775566" class="button primary button--lg">Call 01202 775566</a>
-            <a href="#fixflow" class="button secondary button--lg">Do it myself</a>
+            <a href="{cta2[1]}" class="button secondary button--lg">{cta2[0]}</a>
           </div>
           <a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Rated 4.9 on Google</strong></span><span>Family-run since 1995 &middot; no fix, no fee</span></a>
           <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
@@ -23065,50 +23058,65 @@ def virgin_move_v2(d, crumbs):
         <nav class="hp-intents" aria-label="What would you like to do?">
           <p class="hp-intents__q">What would you like to do?</p>
           <div class="hp-intents__grid">
-{tiles_html}
+{intent_tiles(tiles)}
           </div>
         </nav>
       </div>
     </section>'''
-    offer_html = f'''    <section class="dh dh-sec" id="move-for-me" aria-labelledby="move-for-me-title">
-      <div class="dh-in">
-        <p class="dh-kicker">Rather we just did it?</p>
-        <h2 class="dh-h2" id="move-for-me-title">We move your Virgin email to Gmail for you</h2>
-        <div class="vm-offer">
-          <div class="vm-price hp-c-care">
-            <p class="vm-price__num"><b>&pound;60</b><span>per email address</span></p>
-            <ul class="dh-ticks vm-ticks">
-              <li>Every message and folder copied into Gmail</li>
-              <li>Forwarding set up while the old address still works</li>
-              <li>Checked on your computer, and your phone if you like</li>
-              <li>Done remotely: we phone first, and you watch every step</li>
-            </ul>
-            <p class="dh-small">Agreed before we start &middot; no fix, no fee &middot; usually the same day, Mon&ndash;Fri 9&ndash;5</p>
-            <div class="dh-buy__cta"><a class="dh-btn" href="tel:+441202775566">Call 01202 775566</a><a class="dh-link" href="sms:+447520615332">Or text 07520 615332</a></div>
-          </div>
-          <div class="vm-alt">
-            <p class="vm-alt__h">Or keep your Virgin address</p>
-            <p>Sign up with Junara before the date in the email Virgin sent you. If you still have Virgin broadband, TV or a landline the first 12 months are free (99p transfer fee), then it is paid, per mailbox; if you have left Virgin it is paid from the start. Miss the date and the mailbox is suspended, then deleted 120 days later.</p>
-            <p class="vm-alt__h">Watch for fake Junara emails</p>
-            <p>Virgin&rsquo;s own emails contain no sign-up link, and Virgin says never to pay through a phone call or an emailed link. Not sure? Call us before you click.</p>
-            <p><a class="dh-link" href="#s2">What&rsquo;s happening, in full &#8594;</a></p>
-          </div>
-        </div>
-      </div>
-      <style>
-      .vm-offer{{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:1.1rem;margin-top:1.2rem}}
-      .vm-price{{padding:1.4rem 1.4rem 1.3rem;border-radius:24px;border:1px solid transparent;background:radial-gradient(90% 70% at 100% 0%,rgba(15,179,74,.18),transparent 65%) padding-box,linear-gradient(#0c1630,#0c1630) padding-box,linear-gradient(135deg,#7af08e,#0fb34a 45%,#1d97e3) border-box;box-shadow:0 34px 70px -38px rgba(15,179,74,.6)}}
-      .vm-price__num{{display:flex;align-items:baseline;gap:.5rem;margin:0}}
-      .vm-price__num b{{font-family:var(--font-display);font-weight:600;font-size:clamp(2.6rem,5vw,3.4rem);line-height:1;color:#fff}}
-      .vm-price__num span{{color:var(--hp-soft);font-size:1rem}}
-      .vm-ticks{{grid-template-columns:1fr;margin-top:1rem}}
-      .vm-alt{{padding:1.3rem 1.35rem;border-radius:24px;border:1px solid var(--hp-edge);background:var(--hp-card)}}
-      .vm-alt p{{margin:0 0 .8rem;font-size:.93rem;line-height:1.55;color:var(--hp-body)}}
-      .vm-alt .vm-alt__h{{margin:0 0 .35rem;font-family:var(--font-display);font-weight:600;font-size:1.05rem;color:var(--hp-ink)}}
-      @media (max-width:860px){{.vm-offer{{grid-template-columns:1fr}}}}
-      </style>
-    </section>'''
+
+
+def virgin_move_v2(d, crumbs):
+    hero_html = _email_hero(d, crumbs,
+        'Virgin Media is handing its email to a company called Junara. To keep your address you sign up with Junara, and after any free first year you pay for each one &mdash; or move to free Gmail once. We can do the whole move for you for <strong>&pound;60 per address</strong>.',
+        ("Do it myself", "#fixflow"), [
+        ("hp-c-care", "mail", "Move it for me", "Every message and folder into Gmail, done remotely", "&pound;60 PER ADDRESS", "#move-for-me"),
+        ("hp-c-fix", "book", "Do it myself", "The free step-by-step guide on this page", "FREE", "#fixflow"),
+        ("hp-c-biz", "clock", "Keep my Virgin address", "Sign up with Junara before your date", "FREE YEAR, THEN PAID", "/" + JUNARA_SLUG + "/#s3"),
+        ("hp-c-buy", "alert", "Is this Junara email real?", "Virgin&rsquo;s own emails have no sign-up link", "SCAM CHECK", "/" + JUNARA_SLUG + "/#s6"),
+    ])
+    offer_html = email_move_box("Rather we just did it?", "We move your Virgin email to Gmail for you", [
+        '<p class="vm-alt__h">Or keep your Virgin address</p>',
+        '<p>Sign up with Junara before the date in the email Virgin sent you. If you still have Virgin broadband, TV or a landline the first 12 months are free (99p transfer fee), then it is paid, per mailbox; if you have left Virgin it is paid from the start. Miss the date and the mailbox is suspended, then deleted 120 days later.</p>',
+        '<p class="vm-alt__h">Watch for fake Junara emails</p>',
+        '<p>Virgin&rsquo;s own emails contain no sign-up link, and Virgin says never to pay through a phone call or an emailed link. Not sure? Call us before you click.</p>',
+        '<p><a class="dh-link" href="#s2">What&rsquo;s happening, in full &#8594;</a></p>'])
     return hero_html, offer_html
+
+
+# ============================================ JUNARA PAGE (26 Sep 2026)
+# Owner: "do we have a page on blueyonder... people have only got like forty-five days... can people find us?"
+# Search Console (27 Aug-23 Sep): the Gmail page gets 47 clicks and 295 AI-feature impressions, but "Junara",
+# "blueyonder email closing" and "ntlworld email closing" are a new search wave that page does not answer:
+# it is the how-to, this is the decision (what is happening, cost, deadline, keep or move, scams).
+JUNARA_SLUG = 'virgin-media-email-moving-to-junara'
+FIX_FLOW_OVERRIDES[JUNARA_SLUG] = {   # the page's five steps as a to-do list, not a fault fix
+    'mode': 'seq', 'eyebrow': '// WHAT TO DO &middot; STEP BY STEP', 'h2': 'What to do, one step at a time',
+    'lede': 'The five steps from this page, one at a time. Tick each one off and it shows the next. Nothing here leaves your device.',
+    'ask': 'Done that step?', 'yes': 'Done, next step', 'no': 'I am stuck here',
+    'tip': 'Keep the email from Virgin somewhere safe: it has your date in it.', 'h3f': 'All done{mins}. Nice work.',
+    'h3s': 'Stuck on a step? We can do it with you.',
+    'stuck_what': 'Ring us and we will talk it through, or, with your permission, connect to your screen and do the move with you.',
+    'stuck_tail': FIX_FLOW_OVERRIDES[VIRGIN_MOVE_V2]['stuck_tail'], 'areas': FIX_FLOW_OVERRIDES[VIRGIN_MOVE_V2]['areas'],
+}
+
+
+def junara_v2(d, crumbs):
+    hero_html = _email_hero(d, crumbs, d['lede'], ("Keep it or move it?", "#s5"), [
+        ("hp-c-care", "mail", "Move it to Gmail for me", "Every message and folder, done remotely", "&pound;60 PER ADDRESS", "#move-for-me"),
+        ("hp-c-biz", "clock", "Keep my Virgin address", "Free for a year if you still have Virgin, then paid", "WHAT IT COSTS", "#s3"),
+        ("hp-c-fix", "calendar", "When is my deadline?", "At least 45 days from Virgin&rsquo;s first email", "45 + 120 DAYS", "#s4"),
+        ("hp-c-buy", "shield", "Is this Junara email real?", "Virgin&rsquo;s own emails have no sign-up link", "SCAM CHECK", "#s6"),
+    ])
+    offer_html = email_move_box("Rather we just did it?", "We move your Virgin email to Gmail for you", [
+        '<p class="vm-alt__h">Or keep it with Junara</p>',
+        '<p>If you still have Virgin broadband, TV or a landline, the first 12 months are free (99p transfer fee), then it is paid, per mailbox; if you have left Virgin it is paid from the start. Sign up before the date in your email from Virgin, typing junara.com in yourself.</p>',
+        '<p class="vm-alt__h">Rather do it yourself?</p>',
+        '<p>Our free guide takes you through copying every message and folder into Gmail, one step at a time.</p>',
+        '<p><a class="dh-link" href="/move-virgin-media-email-to-gmail/">Move Virgin email to Gmail yourself &#8594;</a></p>'])
+    return hero_html, offer_html
+
+
+EMAIL_MOVE_V2 = {VIRGIN_MOVE_V2: virgin_move_v2, JUNARA_SLUG: junara_v2}
 
 
 def build_new_page(d):
@@ -23202,8 +23210,8 @@ def build_new_page(d):
     _hero = hero(_bch, d['eyebrow'], d['h1'], hero_trust(d['lede']),
            cta1=tuple(d['primaryCta']), cta2=tuple(d['secondaryCta']), chips=list(d['chips']),
            scene=HERO_SCENES.get(_PACK_SCENE.get(d['slug'])))
-    if d['slug'] == VIRGIN_MOVE_V2:   # 26 Sep 2026: the owner's £60-per-address offer up front
-        _hero, _vm_offer = virgin_move_v2(d, _bch)
+    if d['slug'] in EMAIL_MOVE_V2:   # 26 Sep 2026: the owner's £60-per-address offer up front
+        _hero, _vm_offer = EMAIL_MOVE_V2[d['slug']](d, _bch)
         toc, sections = "", _vm_offer + "\n" + sections
     if d['slug'] in REFURB_V2:   # 26 Sep 2026: models and prices up front, same H1 and sections
         _hero, _rl_top, _rl_revs = refurb_v2(d, _bch)

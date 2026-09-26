@@ -674,7 +674,7 @@ def beach_reel_node(s):
 # ---- intent-first layout for the audience pages (26 Sep 2026): the same first screen as the homepage
 # and the service pages. The page's own four "how we help" tiles move into the panel beside the H1,
 # the phone comes first, then a proof strip; the reviews use the new cards. Words are each page's own.
-from hub_ui import DELL_HUB_CSS as _HUB_CSS, _DH_ICONS as _HUB_ICONS, _DH_A as _HUB_A, _dh_ico as _hub_ico
+from hub_ui import DELL_HUB_CSS as _HUB_CSS, _DH_ICONS as _HUB_ICONS, _DH_A as _HUB_A, _dh_ico as _hub_ico, email_move_box, intent_tiles
 _CUST_CSS = _HUB_CSS + """
 .dh div.hp-intent{cursor:default}
 .dh div.hp-intent:hover{transform:none;box-shadow:none;border-color:var(--hp-edge)}
@@ -688,12 +688,41 @@ def _cust_ico(name):
     return '<svg viewBox="0 0 24 24" %s aria-hidden="true" focusable="false">%s</svg>' % (_HUB_A, bp.IC[name])
 
 
-def _cust_hero(crumbs, eyebrow, h1, lede, chips, tile_items, cta1, cta2):
-    tiles = "\n".join(
+# 26 Sep 2026 (owner: "do the same for the personal email page"): a hub whose first screen offers choices
+# that go somewhere, instead of "How we help" tiles. (colour, icon, title, line, tag, href) per tile.
+CUST_INTENTS = {
+    "email-support": [
+        ("hp-c-biz", "mail", "Virgin Media email is closing", "Moving to Junara, blueyonder and ntlworld too", "KEEP IT OR MOVE IT?", "/virgin-media-email-moving-to-junara/"),
+        ("hp-c-fix", "cloud", "Plusnet email is closing", "Moving to Greenby: get your mail out first", "FREE GUIDE", "/move-plusnet-email-to-gmail/"),
+        ("hp-c-care", "wrench", "Move my email for me", "Every message and folder into Gmail", "&pound;60 PER ADDRESS", "#move-for-me"),
+        ("hp-c-buy", "alert", "Email won&rsquo;t send or arrive", "Outlook, BT, Sky, TalkTalk: fix it step by step", "FREE GUIDES", "#guides"),
+    ],
+}
+# ...and the box that goes straight under the first screen (the owner's GBP 60 per address, Virgin and Plusnet)
+CUST_OFFERS = {
+    "email-support": lambda: email_move_box("Email provider closing your address?", "We move your email to Gmail for you", [
+        '<p class="vm-alt__h">Virgin Media, blueyonder, ntlworld, virgin.net</p>',
+        '<p>Moving to Junara. Free for a year if you still have Virgin broadband, TV or a landline, then paid per mailbox; paid from the start if you have left Virgin.</p>',
+        '<p><a class="dh-link" href="/virgin-media-email-moving-to-junara/">Keep it or move it? &#8594;</a></p>',
+        '<p class="vm-alt__h">Plusnet (plus.com, plus.net)</p>',
+        '<p>Moving to a company called Greenby, in stages, so your date depends on when your mailbox is moved.</p>',
+        '<p><a class="dh-link" href="/move-plusnet-email-to-gmail/">Move Plusnet email to Gmail &#8594;</a></p>'],
+        ticks=("Virgin Media and Plusnet addresses, blueyonder and ntlworld included",
+               "Every message and folder copied into Gmail",
+               "Forwarding set up while the old address still works",
+               "Done remotely: we phone first, and you watch every step")),
+}
+
+
+def _cust_hero(crumbs, eyebrow, h1, lede, chips, tile_items, cta1, cta2, intents=None):
+    tiles = intent_tiles(intents) if intents else "\n".join(
         f'            <div class="hp-intent {_CUST_COLOURS[k % 4]}"><span class="hp-ico">{_cust_ico(ic)}</span>'
         f'<span class="hp-intent__t">{t}</span><span class="hp-intent__d">{d}</span></div>'
         for k, (ic, t, d) in enumerate(tile_items[:4]))
     extra = " &middot; ".join(chips[:2]) if chips else "Family-run since 1995"
+    _q = "What would you like to do?" if intents else "How we help"
+    _open = (f'<nav class="hp-intents" aria-label="{_q}">' if intents else f'<div class="hp-intents" role="group" aria-label="{_q}">')
+    _close = "</nav>" if intents else "</div>"
     write = ("" if "/contact/" in (cta1[1] + cta2[1]) else
              '<p class="dh-small" style="margin:.9rem 0 0">Prefer to write? <a class="dh-link" href="/contact/">Message us</a></p>' + chr(10) + '          ')
     return f'''    <style>{" ".join(l.strip() for l in _CUST_CSS.strip().splitlines())}</style>
@@ -711,12 +740,12 @@ def _cust_hero(crumbs, eyebrow, h1, lede, chips, tile_items, cta1, cta2):
           {write}<a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Rated 4.9 on Google</strong></span><span>{extra}</span></a>
           <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
         </div>
-        <div class="hp-intents" role="group" aria-label="How we help">
-          <p class="hp-intents__q">How we help</p>
+        {_open}
+          <p class="hp-intents__q">{_q}</p>
           <div class="hp-intents__grid">
 {tiles}
           </div>
-        </div>
+        {_close}
       </div>
     </section>
     <section class="dh dh-sec dh-proof" aria-label="Why people choose us">
@@ -762,7 +791,7 @@ def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_para
     _c1 = hero_cta1 or ("Call 01202 775566", "tel:+441202775566")
     _c2 = hero_cta2 or ("See plans &amp; prices", "/monthly-it-support/")
     sections = [
-      _cust_hero(_bch, eyebrow, h1, lede, chips, tile_items, _c1, _c2),
+      _cust_hero(_bch, eyebrow, h1, lede, chips, tile_items, _c1, _c2, CUST_INTENTS.get(slug)),
       f'''    <section class="section" aria-label="Overview">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
@@ -781,6 +810,8 @@ def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_para
         sections.insert(1, beach_reel_section("WATCH &middot; THE DESK IS OPTIONAL",
                         "Your IT just works, wherever you work",
                         "365 Techies reel &mdash; work from home, or from a Bournemouth beach"))
+    if slug in CUST_OFFERS:
+        sections.insert(1, CUST_OFFERS[slug]())
     if split:
         cards = ""
         for ct, cintro, citems in split:
@@ -812,7 +843,8 @@ def make_customer(i, slug, crumb_name, eyebrow, h1, lede, intro_head, intro_para
     # each other: a hub that names every guide is what gives them an inbound path.
     if guides:
         _gl = ''.join(f'<a href="{h}">{t}</a>' for h, t in guides)
-        sections.append(f"""    <section class="section" aria-label="Fix guides">
+        _gid = ' id="guides"' if slug in CUST_INTENTS else ''
+        sections.append(f"""    <section class="section" aria-label="Fix guides"{_gid}>
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow mono" data-reveal>// FIX IT YOURSELF FIRST</p>
