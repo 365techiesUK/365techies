@@ -2017,6 +2017,8 @@ function sr_body($first, $sr) {
     foreach (sr_drive_lines($asset) as $dl) $t .= '  Drive:         ' . $dl . "\r\n";
     if ($sr['os'] !== '') $t .= '  Windows:       ' . $sr['os'] . "\r\n";
     if ($sr['backup'] !== '') $t .= '  Backup:        ' . $sr['backup'] . "\r\n";
+    // isset: entries queued before the field existed have no 'cost' at all
+    if (isset($sr['cost']) && $sr['cost'] !== '') $t .= '  Running cost:  ' . $sr['cost'] . "\r\n";
     // Only a customer on a support plan is told when the next service is: to anyone else it
     // would promise a visit they do not pay for. A missing flag means NOT on a plan, so an
     // entry queued before this rule simply loses the line - the safe direction.
@@ -2071,6 +2073,7 @@ function sr_body_html($first, $sr, $famIntro = '', $famFoot = '') {
     foreach (sr_drive_lines($asset) as $dl) { $di++; $facts[$di === 1 ? 'Drive' : 'Drive ' . $di] = $dl; }
     if ($sr['os'] !== '') $facts['Windows'] = $sr['os'];
     if ($sr['backup'] !== '') $facts['Backup'] = $sr['backup'];
+    if (isset($sr['cost']) && $sr['cost'] !== '') $facts['Running cost'] = $sr['cost'];
     // support-plan customers only - see the note in sr_body()
     if (!empty($sr['pro'])) $facts['Next service'] = 'Around ' . date('j F', (int)$sr['next_ts']) . ' - we will be in touch, or move it in your portal';
     $blocks[] = rv_h_facts($facts);
@@ -2133,6 +2136,7 @@ function sr_sample() {
             array('Drive encryption', 'warn', 'BitLocker is on but no recovery key was found - worth saving one together'),
         ),
         'backup' => 'Windows Backup - last completed 2 September',
+        'cost' => 'About £9.53–£29 a year at a typical 30p a unit, on about 8.7 hours a day (estimated for this kind of PC)',
         'asset' => array(
             // the sample is already in the CLEANED shape sr_record stores (guarantee = text)
             'pc' => array('date' => '2024-03-14', 'num' => '1187', 'age' => '2 years 5 months',
@@ -2364,6 +2368,9 @@ function sr_record($key, $machine, $ts, $summary, $cust, $prev = array()) {
         'done' => $done, 'recs' => $recs, 'sec' => $sec,
         'asset' => sr_asset_clean(isset($summary['asset']) ? $summary['asset'] : null),
         'backup' => sr_clean(isset($summary['backup']) ? $summary['backup'] : '', 160),
+        // v4.4+: what the PC costs to run, worded by the tool from Windows' own on/off record (the app's
+        // "Power & running cost" sums). Empty from an older tool, or when Windows kept no record.
+        'cost' => sr_clean(isset($summary['cost']) ? $summary['cost'] : '', 160),
         'next_ts' => sr_next_ts(isset($summary['next']) ? $summary['next'] : '', $ts),
         // the same field the guarantee wording branches on, read once at upload time
         'pro' => ((string)(isset($cust['tier']) ? $cust['tier'] : 'free') === 'pro'),

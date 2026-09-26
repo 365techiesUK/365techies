@@ -313,5 +313,32 @@ $pr = sr_process(20);
 ok(q()['sr'][$fid . '-f']['st'] === 'skipped' && q()['sr'][$fid . '-f']['why'] === 'family_stopped', 'a relative who stopped their copies is skipped, never sent', json_encode($pr));
 ok(q()['sr'][$fid]['st'] === 'pending', "the customer's own report is untouched by the relative's stop");
 
+echo "\n-- running cost (PC Service Professional v4.4)\n";
+// the tool words it from Windows' own on/off record; the server only cleans, stores and prints it
+$cq = $summary; $cq['cost'] = 'About £249–£622 a year at a typical 30p a unit, on about 22.7 hours a day <b>(estimated for this kind of PC)</b>';
+sr_record($KEY, $MACHINE, $TS + 80, $cq, $cust);
+$ec = q()['sr'][$KH . '-' . $MACHINE . '-' . ($TS + 80)];
+ok($ec['cost'] === 'About £249–£622 a year at a typical 30p a unit, on about 22.7 hours a day (estimated for this kind of PC)', 'the running-cost line is stored with tags stripped, pound sign and dash intact', $ec['cost']);
+$ch = sr_body_html('Sofia', $ec); $ct = sr_body('Sofia', $ec);
+ok(strpos($ct, "  Running cost:  About £249–£622 a year at a typical 30p a unit, on about 22.7 hours a day (estimated for this kind of PC)\r\n") !== false, 'text carries the Running cost line, aligned with the other facts');
+ok(strpos($ch, '>Running cost</td>') !== false && strpos($ch, '>About £249–£622 a year at a typical 30p a unit, on about 22.7 hours a day (estimated for this kind of PC)</td>') !== false, 'HTML carries it as a fact row');
+ok(strpos($ct, 'Backup:') < strpos($ct, 'Running cost:') && strpos($ct, 'Running cost:') < strpos($ct, 'Next service:')
+   && strpos($ch, '>Backup</td>') < strpos($ch, '>Running cost</td>') && strpos($ch, '>Running cost</td>') < strpos($ch, '>Next service</td>'), 'both: it sits between Backup and Next service');
+ok(strpos($ch, '&lt;b&gt;') === false && strpos($ch, '<b>(estimated') === false, 'markup in the uploaded line never reaches the email');
+$lc = $summary; $lc['cost'] = str_repeat('x', 400);
+sr_record($KEY, $MACHINE, $TS + 81, $lc, $cust);
+ok(strlen(q()['sr'][$KH . '-' . $MACHINE . '-' . ($TS + 81)]['cost']) === 160, 'an over-long line is capped at 160 characters');
+ok($ent['cost'] === '' && strpos(sr_body('Sofia', $ent), 'Running cost') === false && strpos(sr_body_html('Sofia', $ent), 'Running cost') === false, 'an upload without the field (an older tool, or no on/off record) gets no line, nothing invented');
+$preCost = $ent; unset($preCost['cost']);
+$notices = array();
+set_error_handler(function ($no, $str) use (&$notices) { $notices[] = $str; return true; });
+$pt = sr_body('Sofia', $preCost); $ph = sr_body_html('Sofia', $preCost);
+restore_error_handler();
+ok(!$notices && strpos($pt, 'Running cost') === false && strpos($ph, 'Running cost') === false, 'an entry queued before the field existed renders cleanly, with no PHP notice', implode('; ', $notices));
+sr_record($KEY, $MACHINE, $TS + 82, $cq, $famCust);
+$fc = q()['sr'][$KH . '-' . $MACHINE . '-' . ($TS + 82) . '-f'];
+ok(strpos(sr_fam_body($fc, q()['salt']), 'Running cost:  About £249') !== false && strpos(sr_fam_body_html($fc, q()['salt']), '>Running cost</td>') !== false, 'the family copy carries the line too');
+ok(strpos(sr_body_html('Steve', sr_sample()), '>Running cost</td>') !== false && strpos(sr_body('Steve', sr_sample()), 'Running cost:  About') !== false, 'the ?test=report sample shows the line');
+
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);
