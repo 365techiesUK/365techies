@@ -209,6 +209,33 @@ if (($_POST['do'] ?? '') === 'email') {
         }
     }
 }
+
+/* A copy of each service report for a relative the customer names (v28 - replaces the app's Family view
+   invitation). Consent is not optional: the box must be ticked, and the date is stored with the address.
+   pcm-review.php queues no copy without it. The stop button (or a blank address) removes it; the relative
+   can also stop their own copies from a link in every copy. */
+if (($_POST['do'] ?? '') === 'reportcc') {
+    $k = $_POST['key'] ?? '';
+    if (isset($db['customers'][$k])) {
+        $who = (string)($db['customers'][$k]['name'] ?? 'that customer');
+        $fe = strtolower(trim(substr((string)($_POST['fem'] ?? ''), 0, 120)));
+        $fn = trim(mb_substr((string)preg_replace('/[^\p{L}\p{N} \'\-\.]/u', '', (string)($_POST['fname'] ?? '')), 0, 30));
+        if (!empty($_POST['clear']) || $fe === '') {
+            unset($db['customers'][$k]['report_cc']); save($DATA, $db);
+            $msg = "Report copies stopped for {$who}.";
+        } elseif (!filter_var($fe, FILTER_VALIDATE_EMAIL)) {
+            $msg = "That is not a valid email address, so nothing was changed.";
+        } elseif ($fe === strtolower(trim((string)($db['customers'][$k]['email'] ?? '')))) {
+            $msg = "That is {$who}'s own address - they already get the report.";
+        } elseif (empty($_POST['agreed'])) {
+            $msg = "Nothing saved: tick that {$who} has agreed. A copy of their report must never go to anyone without their say-so.";
+        } else {
+            $db['customers'][$k]['report_cc'] = array('email' => $fe, 'name' => $fn, 'ok' => gmdate('Y-m-d'), 'by' => 'staff console');
+            save($DATA, $db);
+            $msg = "From the next service, a copy of {$who}'s report goes to " . ($fn !== '' ? $fn . ' ' : '') . "({$fe}). {$who}'s own email will say a copy went.";
+        }
+    }
+}
 if (($_POST['do'] ?? '') === 'del') {
     $k=$_POST['key']??'';
     if (isset($db['customers'][$k])) {
@@ -853,6 +880,16 @@ $engRuns = is_array($engRuns) ? array_slice($engRuns, -12) : array();
     <form method=post class=inline style="margin-top:.35rem"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=email><input type=hidden name=key value="<?=h($key)?>">
     <input name=email type=email value="<?=h($c['email']??'')?>" style="width:185px;font-size:.75rem" placeholder="no email - add one" title="Every email we send this customer goes here: the service report, the review ask, booking confirmations. Leave blank to send them nothing."><button class=ghost>save</button></form>
     <?php if(empty($c['email'])): ?><div class=mach style="color:#e8a13c">no email &mdash; gets no service report</div><?php endif; ?>
+    <?php $rc = (isset($c['report_cc']) && is_array($c['report_cc'])) ? $c['report_cc'] : null; ?>
+    <?php if ($rc && !empty($rc['email'])): ?>
+      <div class=mach style="color:#86b6e8" title="A copy of each service report goes here. The customer agreed on this date; the relative can stop it from a link in every copy.">&#128231; report copy &rarr; <?=h(($rc['name'] ?? '') !== '' ? $rc['name'] . ' ' : '')?>(<?=h($rc['email'])?>) &middot; agreed <?=h($rc['ok'] ?? '')?>
+      <form method=post class=inline onsubmit="return confirm('Stop sending copies of this customer\'s service reports to this person?')"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=reportcc><input type=hidden name=key value="<?=h($key)?>"><input type=hidden name=clear value=1><button class=ghost>stop</button></form></div>
+    <?php else: ?>
+      <details class=mach><summary style="cursor:pointer">+ copy their reports to family</summary>
+      <form method=post style="margin-top:.3rem"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=reportcc><input type=hidden name=key value="<?=h($key)?>">
+      <input name=fname placeholder="first name" style="width:100px;font-size:.75rem"> <input name=fem type=email required placeholder="their email" style="width:170px;font-size:.75rem">
+      <label style="display:block;margin:.25rem 0"><input type=checkbox name=agreed value=1 required> <?=h($c['name'])?> has said yes</label><button class=ghost>save</button></form></details>
+    <?php endif; ?>
     <div class=mach>since <?=h($c['created']??'')?></div></td>
   <td><span class=key><?=h($key)?></span>
     <div class=mach style="margin-top:.45rem">Activation link (send to customer):</div>

@@ -2024,6 +2024,7 @@ function sr_body($first, $sr) {
     $t .= "\r\n"
         . 'Full report: ' . $sr['url'] . "\r\n"
         . "Your portal:  https://365techies.co.uk/portal/\r\n\r\n"
+        . (!empty($sr['cc_to']) ? 'A copy of this report has gone to ' . $sr['cc_to'] . ", as you asked. Want that\r\nstopped? Reply to this email or ring 01202 775566.\r\n\r\n" : '')
         . "Anything not behaving the way it should? Reply to this email or ring\r\n"
         . "01202 775566 and we will make it right.\r\n\r\n"
         . "You know who we are: 365 Techies is a local family business - Steve and\r\n"
@@ -2038,7 +2039,7 @@ function sr_body($first, $sr) {
 }
 
 /** HTML twin, on the house shell. Says exactly what the text says. */
-function sr_body_html($first, $sr) {
+function sr_body_html($first, $sr, $famIntro = '', $famFoot = '') {
     $score = isset($sr['score']) && $sr['score'] !== null ? (int)$sr['score'] : null;
     $verdict = $score !== null ? sr_verdict($score) : '';
     $blocks = array(
@@ -2076,6 +2077,8 @@ function sr_body_html($first, $sr) {
     $blocks[] = rv_h_cta('View the full report', $sr['url']);
     $blocks[] = '<p style="margin:14px 0 18px 0;font-size:14px;line-height:1.6;color:#7c8aa5 !important;text-align:center;">'
               . 'Also filed under Service reports in <a href="https://365techies.co.uk/portal/" style="color:#1266a8;font-weight:600;text-decoration:none;">your 365 portal</a>.</p>';
+    if (!empty($sr['cc_to'])) $blocks[] = rv_h_p('A copy of this report has gone to <strong style="color:#0b1226;">' . rv_h($sr['cc_to']) . '</strong>, as you asked. Want that stopped? Reply to this email or ring '
+              . '<a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202&nbsp;775566</a>.');
     $blocks[] = rv_h_p('Anything not behaving the way it should? Reply to this email or ring '
               . '<a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202&nbsp;775566</a> '
               . 'and we will make it right. That is the point of using a family firm.');
@@ -2086,10 +2089,17 @@ function sr_body_html($first, $sr) {
               . 'We will never ask for passwords or payment in an out-of-the-blue phone call or pop-up, and <strong style="color:#0b1226;">nobody rings on our behalf</strong>. '
               . 'If anyone does, however official they sound, hang up and ring us on '
               . '<a href="tel:+441202775566" style="color:#1266a8;font-weight:600;text-decoration:none;">01202&nbsp;775566</a>.');
+    // a relative's copy: the same report, with who asked for it on top and how to stop it underneath
+    if ($famIntro !== '') array_unshift($blocks, rv_h_note($famIntro));
+    if ($famFoot !== '') $blocks[] = '<p style="margin:14px 0 4px 0;font-size:13px;line-height:1.6;color:#7c8aa5 !important;">' . $famFoot . '</p>';
+    $whoFor = !empty($sr['fam']) ? rv_first(isset($sr['fam']['for']) ? $sr['fam']['for'] : '') : '';
+    if ($whoFor === 'there') $whoFor = '';
     return rv_html_shell(array(
-        'title' => 'Your service report',
+        'title' => $famIntro !== '' ? ($whoFor !== '' ? 'A copy of ' . $whoFor . "'s service report" : 'A copy of a service report') : 'Your service report',
         'eyebrow' => 'Service report · ' . date('j F Y', (int)$sr['ts']),   // the shell escapes this: a literal dot, never an entity
-        'heading' => (!empty($sr['selfrun']) ? 'Your self-run service is done' : 'Your six-weekly service is done'),
+        'heading' => $famIntro !== ''
+            ? (($whoFor !== '' ? $whoFor . "'s " : 'The ') . (!empty($sr['selfrun']) ? 'self-run service is done' : 'six-weekly service is done'))
+            : (!empty($sr['selfrun']) ? 'Your self-run service is done' : 'Your six-weekly service is done'),
         'preview' => ($score !== null ? $score . '% ' . $verdict . ' - ' : '') . (!empty($sr['selfrun']) ? 'what your self-run service did on your ' : 'what we did on your ') . ($sr['pc'] !== '' ? $sr['pc'] : 'computer') . ' today, and the one thing worth knowing.',
         'blocks' => $blocks,
         'after' => rv_h_referral(),
@@ -2363,6 +2373,19 @@ function sr_record($key, $machine, $ts, $summary, $cust, $prev = array()) {
         'url' => sr_link($kh, $machine, $ts, $exp, $q['salt']),
         'st' => 'pending', 'tries' => 0, 'made' => time(),
     );
+    // A copy for the relative the customer named (report_cc, set by staff once the customer has said yes).
+    // It is queued as its own entry so it is sent, retried and stopped on its own, and the customer's email
+    // says it went - nothing about this is hidden from the person whose PC it is.
+    $famCopy = false;
+    $fam = sr_family_cc($cust, $email);
+    if ($fam !== null && !isset($q['sr'][$id . '-f'])) {
+        $copy = $q['sr'][$id];
+        $copy['em'] = $fam['em'];
+        $copy['fam'] = array('to' => $fam['nm'], 'for' => $q['sr'][$id]['nm']);
+        $q['sr'][$id . '-f'] = $copy;
+        $q['sr'][$id]['cc_to'] = rv_first($fam['nm']) !== 'there' ? rv_first($fam['nm']) : 'your family member';
+        $famCopy = true;
+    }
     // ONE email per service: a pending visit record for the same person within 36 hours
     // of this report is superseded - the report email carries everything it would have.
     $sup = 0;
@@ -2374,7 +2397,58 @@ function sr_record($key, $machine, $ts, $summary, $cust, $prev = array()) {
     }
     rvq_save($q);
     rvq_close($lk);
-    return array('queued' => true, 'id' => $id, 'superseded' => $sup, 'score' => $score);
+    return array('queued' => true, 'id' => $id, 'superseded' => $sup, 'score' => $score, 'family' => $famCopy);
+}
+
+/* ---- a copy for a family member (v28). The owner's easier alternative to the app's Family view: a
+   relative the customer names gets each service report by email. Staff set report_cc in the admin
+   console ONLY once the customer has said yes; it records when and who, and no copy is queued without
+   that. The relative's email says who asked for it and carries its own one-click stop link, which
+   stops their copy only - the customer's own report is untouched. */
+function sr_family_cc($cust, $email) {
+    $f = (is_array($cust) && isset($cust['report_cc']) && is_array($cust['report_cc'])) ? $cust['report_cc'] : array();
+    $fe = strtolower(trim((string)(isset($f['email']) ? $f['email'] : '')));
+    if ($fe === '' || !filter_var($fe, FILTER_VALIDATE_EMAIL) || $fe === strtolower(trim((string)$email))) return null;
+    if (empty($f['ok'])) return null;   // no recorded consent, no copy
+    return array('em' => $fe, 'nm' => rv_clean_name(isset($f['name']) ? $f['name'] : ''));
+}
+function sr_fam_token($eh, $salt) { return substr(hash_hmac('sha256', 'famcopy|' . $eh, (string)$salt), 0, 24); }
+function sr_fam_stop_url($email, $salt) {
+    $eh = sha1(strtolower(trim((string)$email)));
+    return 'https://365techies.co.uk/api/pcm-review.php?fu=' . $eh . '&t=' . sr_fam_token($eh, $salt);
+}
+function sr_fam_names($sr) {
+    $to = rv_first(isset($sr['fam']['to']) ? $sr['fam']['to'] : '');
+    $for = rv_first(isset($sr['fam']['for']) ? $sr['fam']['for'] : '');
+    return array($to, $for === 'there' ? '' : $for);
+}
+function sr_fam_subject($sr) {
+    list($to, $for) = sr_fam_names($sr);
+    $pc = isset($sr['pc']) ? (string)$sr['pc'] : '';
+    return ($for !== '' ? $for . "'s" : 'A') . ' service report, sent at their request - ' . ($pc !== '' ? $pc . ', ' : '') . date('j F', (int)$sr['ts']);
+}
+function sr_fam_body($sr, $salt) {
+    list($to, $for) = sr_fam_names($sr);
+    $who = $for !== '' ? $for : 'Our customer';
+    return 'Hi ' . $to . ",\r\n\r\n"
+         . $who . ' asked us to send you a copy of each service report for their computer, so you' . "\r\n"
+         . "can see it is being looked after. Here it is, exactly as we sent it to " . ($for !== '' ? $for : 'them') . ".\r\n\r\n"
+         . "------------------------------------------------------------------------\r\n\r\n"
+         . sr_body($for !== '' ? $for : 'there', $sr)
+         . "\r\n------------------------------------------------------------------------\r\n"
+         . 'You are getting this because ' . $who . " asked us to copy you in. To stop your copies\r\n"
+         . '(it only stops yours): ' . sr_fam_stop_url(isset($sr['em']) ? $sr['em'] : '', $salt) . "\r\n"
+         . "Or just reply to this email, or ring 01202 775566.\r\n";
+}
+function sr_fam_body_html($sr, $salt) {
+    list($to, $for) = sr_fam_names($sr);
+    $who = $for !== '' ? $for : 'Our customer';
+    $intro = 'Hi ' . rv_h($to) . '. <strong style="color:#0b1226;">' . rv_h($who) . '</strong> asked us to send you a copy of each service report for their computer, '
+           . 'so you can see it is being looked after. Here it is, exactly as we sent it to ' . rv_h($for !== '' ? $for : 'them') . '.';
+    $foot = 'You are getting this because ' . rv_h($who) . ' asked us to copy you in. '
+          . '<a href="' . rv_h(sr_fam_stop_url(isset($sr['em']) ? $sr['em'] : '', $salt)) . '" style="color:#1266a8;font-weight:600;">Stop my copies</a> '
+          . '(only yours stop), or reply to this email, or ring 01202&nbsp;775566.';
+    return sr_body_html($for !== '' ? $for : 'there', $sr, $intro, $foot);
 }
 
 /* ---- send them. Mirrors dn_process: quiet hours, mark-before-send, release the
@@ -2388,8 +2462,10 @@ function sr_process($cap = 5) {
     if ((isset($q['srrun_ts']) ? $q['srrun_ts'] : 0) > time() - 60) { rvq_close($lk); return array('skip' => 'ran_recently'); }
     $q['srrun_ts'] = time();
     $picked = array(); $due = 0; $held = 0;
+    $salt = isset($q['salt']) ? (string)$q['salt'] : '';
     foreach ($q['sr'] as $id => $e) {
         $st = isset($e['st']) ? $e['st'] : 'pending';
+        if (!empty($e['fam']) && $st === 'pending' && isset($e['em']) && isset($q['famout'][sha1(strtolower(trim((string)$e['em'])))])) { $q['sr'][$id]['st'] = 'skipped'; $q['sr'][$id]['why'] = 'family_stopped'; continue; }
         $retryable = ($st === 'sending' && (isset($e['snd']) ? $e['snd'] : 0) < time() - 600 && (isset($e['tries']) ? $e['tries'] : 0) < 3);
         if ($st !== 'pending' && !$retryable) continue;
         if ((isset($e['tries']) ? $e['tries'] : 0) >= 3) continue;
@@ -2410,7 +2486,9 @@ function sr_process($cap = 5) {
     $sent = 0; $failed = 0; $names = array();
     foreach ($picked as $id => $p) {
         $first = rv_first(isset($p['nm']) ? $p['nm'] : '');
-        $ok = rv_send_raw($p['em'], sr_subject($p), sr_body($first, $p), '', '', sr_body_html($first, $p));
+        $ok = !empty($p['fam'])
+            ? rv_send_raw($p['em'], sr_fam_subject($p), sr_fam_body($p, $salt), '', '', sr_fam_body_html($p, $salt))
+            : rv_send_raw($p['em'], sr_subject($p), sr_body($first, $p), '', '', sr_body_html($first, $p));
         list($lk2, $q2) = rvq_open();
         if (!$lk2) continue;
         if (isset($q2['sr'][$id]) && (isset($q2['sr'][$id]['st']) ? $q2['sr'][$id]['st'] : '') === 'sending') {
@@ -2431,6 +2509,54 @@ if (!defined('RV_LIB')) {
     header('Content-Type: application/json; charset=utf-8');
     header('X-Robots-Tag: noindex, nofollow');
     header('Cache-Control: no-store');
+
+    /* A relative stopping their copies of someone's service reports. Same shape as the review
+       unsubscribe below: sha1(email) plus an HMAC, nothing identifiable in the URL, and a wrong token
+       does nothing. It stops only their copy; the customer keeps getting their own report. */
+    if (isset($_GET['fu']) || isset($_POST['fu'])) {
+        header('Content-Type: text/html; charset=utf-8');
+        $fh = preg_replace('/[^a-f0-9]/', '', (string)(isset($_POST['fu']) ? $_POST['fu'] : $_GET['fu']));
+        $ft = preg_replace('/[^a-f0-9]/', '', (string)(isset($_POST['t']) ? $_POST['t'] : (isset($_GET['t']) ? $_GET['t'] : '')));
+        // Opening the link only ASKS. Mail security scanners (Microsoft Safe Links and others) open links
+        // in emails by themselves, so a GET that acted would switch copies off with nobody clicking.
+        $isPost = (isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET') === 'POST';
+        $valid = false; $done = false;
+        if (strlen($fh) === 40 && $ft !== '') {
+            list($lk, $q) = rvq_open();
+            if ($lk) {
+                if (hash_equals(sr_fam_token($fh, isset($q['salt']) ? $q['salt'] : ''), $ft)) {
+                    $valid = true;
+                    if ($isPost) {
+                        if (!isset($q['famout']) || !is_array($q['famout'])) $q['famout'] = array();
+                        $q['famout'][$fh] = time();
+                        rvq_save($q);
+                        $done = true;
+                    }
+                }
+                rvq_close($lk);
+            }
+        }
+        if ($done) rv_slack(':bell: 365 mail: a family member stopped their copies of a customer\'s service reports (stop link) - clear report_cc on that customer in the admin console');
+        echo '<!doctype html><html lang="en"><head><meta charset="utf-8">'
+           . '<meta name="viewport" content="width=device-width,initial-scale=1">'
+           . '<meta name="robots" content="noindex,nofollow"><title>365 Techies</title>'
+           . '<style>body{font:16px/1.6 system-ui,-apple-system,"Segoe UI",Arial,sans-serif;'
+           . 'background:#070d22;color:#eaf4ff;max-width:34rem;margin:0 auto;padding:3rem 1.2rem}'
+           . 'a{color:#6cc4f5}button{font:inherit;font-weight:600;background:#1d97e3;color:#fff;border:0;border-radius:8px;padding:.7rem 1.3rem;cursor:pointer}</style></head><body>'
+           . ($done
+              ? '<h1>Done - your copies are switched off</h1><p>We will not send you copies of these service reports any more. '
+                . 'The person whose computer it is still gets their own, exactly as before.</p>'
+              : ($valid
+                  ? '<h1>Stop your copies of these service reports?</h1><p>You get a copy because someone asked us to send you one. '
+                    . 'This stops your copies only - they still get their own report.</p>'
+                    . '<form method="post"><input type="hidden" name="fu" value="' . $fh . '"><input type="hidden" name="t" value="' . $ft . '">'
+                    . '<button type="submit">Yes, stop my copies</button></form>'
+                  : '<h1>That link did not work</h1><p>It may have been broken by your email program. '
+                    . 'Just reply to the email, or call us on 01202 775566, and we will switch it off by hand.</p>'))
+           . '<p style="margin-top:2rem"><a href="https://365techies.co.uk/">365techies.co.uk</a> &middot; 01202 775566</p>'
+           . '</body></html>';
+        exit;
+    }
 
     /* Public one-click unsubscribe. No admin pass by design - that is the point.
        Carries only sha1(email) plus an HMAC over it, so nothing identifiable is in

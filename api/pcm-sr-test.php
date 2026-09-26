@@ -268,5 +268,50 @@ ok($mbrow !== null && $mbrow[1] === 'info' && strpos(sr_body_html('Steve', $smp)
 $nosec = $ent; $nosec['sec'] = array();
 ok(strpos(sr_body_html('Sofia', $nosec), '>Security<') === false && strpos(sr_body('Sofia', $nosec), "Security\r\n") === false, 'an older uploader with no security rows gets no Security section, not an empty one');
 
+
+echo "\n-- family copy of the report (v28)\n";
+$famCust = $cust + array('report_cc' => array('email' => 'Sarah.Relative@Example.com', 'name' => 'Sarah Relative', 'ok' => '2026-09-26', 'by' => 'staff console'));
+$rF = sr_record($KEY, $MACHINE, $TS + 70, $summary, $famCust);
+$fid = $KH . '-' . $MACHINE . '-' . ($TS + 70);
+$QF = q();
+ok(!empty($rF['queued']) && !empty($rF['family']), 'a consented report_cc queues a family copy', json_encode($rF));
+ok(isset($QF['sr'][$fid . '-f']) && $QF['sr'][$fid . '-f']['em'] === 'sarah.relative@example.com', 'the copy is its own entry, to the relative (lower-cased)');
+ok(isset($QF['sr'][$fid]) && $QF['sr'][$fid]['em'] === 'sofia.example@example.com', "the customer's entry still goes to the customer");
+ok(isset($QF['sr'][$fid]['cc_to']) && $QF['sr'][$fid]['cc_to'] === 'Sarah', 'the customer entry records that a copy went to Sarah');
+ok(empty($QF['sr'][$fid]['fam']) && !empty($QF['sr'][$fid . '-f']['fam']) && empty($QF['sr'][$fid . '-f']['cc_to']), 'only the copy is marked as a family copy');
+ok($QF['sr'][$fid . '-f']['url'] === $QF['sr'][$fid]['url'] && $QF['sr'][$fid . '-f']['score'] === $QF['sr'][$fid]['score'], 'the copy carries the same report and link');
+
+$rNo = sr_record($KEY, $MACHINE, $TS + 71, $summary, $cust + array('report_cc' => array('email' => 'sarah.relative@example.com', 'name' => 'Sarah')));
+ok(empty($rNo['family']) && !isset(q()['sr'][$KH . '-' . $MACHINE . '-' . ($TS + 71) . '-f']), 'no recorded consent: no copy');
+$rSame = sr_record($KEY, $MACHINE, $TS + 72, $summary, $cust + array('report_cc' => array('email' => 'sofia.example@example.com', 'ok' => '2026-09-26')));
+ok(empty($rSame['family']), "the customer's own address is never a second copy");
+$rBad = sr_record($KEY, $MACHINE, $TS + 73, $summary, $cust + array('report_cc' => array('email' => 'not an email', 'ok' => '2026-09-26')));
+ok(empty($rBad['family']), 'an invalid relative address queues nothing');
+$rDup = sr_record($KEY, $MACHINE, $TS + 70, $summary, $famCust);
+ok(empty($rDup['queued']) && count(array_filter(array_keys(q()['sr']), function ($k) use ($fid) { return strpos($k, $fid) === 0; })) === 2, 'a repeat upload does not queue a second copy');
+
+$pF = q()['sr'][$fid . '-f']; $pC = q()['sr'][$fid]; $salt = q()['salt'];
+$ft = sr_fam_body($pF, $salt); $fh = sr_fam_body_html($pF, $salt); $fs = sr_fam_subject($pF);
+ok(strpos($ft, 'Hi Sarah,') === 0, 'the copy greets the relative by first name');
+ok(strpos($ft, 'Sofia asked us to send you a copy') !== false && strpos($fh, 'Sofia</strong> asked us to send you a copy') !== false, 'both versions say who asked for it');
+ok(strpos($ft, 'Hi Sofia,') !== false && strpos($ft, 'Security') !== false, 'the text copy includes the report exactly as the customer got it');
+ok(strpos($fs, "Sofia's service report, sent at their request - Dell Latitude 3520") === 0, 'the subject says whose report it is and why it came', $fs);
+ok(strpos($fh, "Sofia&#039;s six-weekly service is done") !== false && strpos($fh, 'Your six-weekly service is done') === false, "the HTML copy's heading names the customer, not \"your\"");
+ok(strpos($ft, 'pcm-review.php?fu=') !== false && strpos($fh, 'pcm-review.php?fu=') !== false && strpos($fh, 'Stop my copies') !== false, 'both versions carry a stop link for the relative');
+ok(strpos($fh, '<script') === false, 'no markup from the uploader survives into the copy');
+ok(strpos(sr_body('Sofia', $pC), 'A copy of this report has gone to Sarah, as you asked.') !== false && strpos(sr_body_html('Sofia', $pC), 'has gone to <strong style="color:#0b1226;">Sarah</strong>') !== false, "the customer's own email says a copy went, in both versions");
+$noCc = $pC; unset($noCc['cc_to']);
+ok(strpos(sr_body('Sofia', $noCc), 'A copy of this report') === false && strpos(sr_body_html('Sofia', $noCc), 'A copy of this report') === false, 'no such line when no copy went');
+ok(strpos(sr_body('Sofia', $pC), '?fu=') === false && strpos(sr_body_html('Sofia', $pC), '?fu=') === false, "the customer's own email has no stop link (it is transactional)");
+
+$eh = sha1('sarah.relative@example.com');
+ok(preg_match('/\?fu=([a-f0-9]{40})&t=([a-f0-9]+)/', $ft, $m) === 1 && $m[1] === $eh && hash_equals(sr_fam_token($eh, $salt), $m[2]), 'the stop link token verifies for that address');
+ok(!hash_equals(sr_fam_token($eh, $salt), rv_unsub_token($eh, $salt)), 'a review-unsubscribe token is not a stop-copies token');
+
+list($lk, $q) = rvq_open(); $q['famout'][$eh] = time(); $q['srrun_ts'] = 0; rvq_save($q); rvq_close($lk);
+$pr = sr_process(20);
+ok(q()['sr'][$fid . '-f']['st'] === 'skipped' && q()['sr'][$fid . '-f']['why'] === 'family_stopped', 'a relative who stopped their copies is skipped, never sent', json_encode($pr));
+ok(q()['sr'][$fid]['st'] === 'pending', "the customer's own report is untouched by the relative's stop");
+
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);
