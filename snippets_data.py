@@ -50,7 +50,7 @@ SNIPPETS = {
     # ---- top of the funnel: Dell buying advice (the biggest impression block)
     "are-dell-latitude-laptops-good": {
         "title": "Are Dell Latitude Laptops Good? An Honest 2026 Verdict",
-        "desc": "Yes, with caveats. A 30-year Dell specialist on build quality, real lifespan, and why a refurbished Latitude beats a new budget laptop every time.",
+        "desc": "Yes, with caveats. A 25-year Dell specialist on build quality, real lifespan, and why a refurbished Latitude beats a new budget laptop every time.",
     },
     "dell-latitude-series-explained-3000-5000-7000": {
         # GSC 17 Aug: the head term "dell latitude" (671 imps, pos 7, 0 clicks) lands
@@ -404,7 +404,7 @@ SNIPPETS = {
         "desc": "How to embed a Victron VRM dashboard on your website with the built-in share iframe, its real limits, and a live custom alternative you can click through.",
     },
     "lithium-battery-installs-dorset": {
-        "desc": "Lithium LiFePO4 battery and power upgrades for motorhomes, campervans and boats across Dorset. Victron battery banks, solar and DC-DC charging, installed.",
+        "desc": "Lithium LiFePO4 battery and power upgrades for boats and off-grid buildings across Dorset. Victron battery banks, solar and DC-DC charging, installed.",
     },
     "unitree-robots": {
         "desc": "As a Scan partner, 365 Techies supplies, sets up and supports the full Unitree range: agile quadruped robot dogs (Go2, B2, A2) and humanoid robots.",

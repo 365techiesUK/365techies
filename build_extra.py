@@ -6735,13 +6735,6 @@ def case_studies():
            services=["Monthly plan","Updates","Antivirus","Maintenance"],
            quote=BY_NAME["Alan Bevis"],
            who="Alan Bevis &mdash; Monthly plan"),
-      dict(label="Off-grid &middot; campervan", headline="Power for life on the road, off the grid",
-           outcome="Reliable power anywhere, no hook-up",
-           challenge="A couple converting a campervan needed reliable power for the fridge, lights, laptops and devices &mdash; anywhere, with no hook-up.",
-           did="We designed and fitted a Victron Energy system: solar, a lithium battery bank, an inverter and DC-DC charging, with VRM remote monitoring so we can check it from afar.",
-           result="Dependable off-grid power wherever they park &mdash; and a system we can monitor and support remotely.",
-           services=["Victron Energy","Solar &amp; battery","VRM monitoring"],
-           quote="", who=""),
     ]
     def _ckind(l):
         l = l.lower()
@@ -7222,15 +7215,15 @@ OG_ROUTER = '''    <section class="section section--alt" id="og-router" aria-lab
         <div class="og-grid" data-stagger>
           <div class="og-card">
             <p class="og-tag">CAMPERVANS &amp; MOTORHOMES</p>
-            <h3>Silent power for van life</h3>
-            <p>Roof solar, a lithium leisure battery, a Victron MPPT and inverter, and DC-DC charging that tops up from the engine as you drive. Power for the fridge, lights, devices and induction hob, watched from your phone.</p>
-            <p class="og-go"><a href="/lithium-battery-installs-dorset/">Lithium &amp; solar installs &#8594;</a><a href="/solar-battery-calculator/">Size it first</a></p>
+            <h3>Planning power for van life?</h3>
+            <p>We don&rsquo;t fit campervan or motorhome conversions, but our free calculators size the leisure battery, solar and every cable and fuse, and we can set up remote monitoring for the system you build.</p>
+            <p class="og-go"><a href="/solar-battery-calculator/">Size it first &#8594;</a><a href="/victron-system-builder/">Build the parts list</a></p>
           </div>
           <div class="og-card">
             <p class="og-tag">BOATS &amp; MARINE</p>
             <h3>Know your state of charge afloat</h3>
             <p>12/24V lithium banks, inverter/chargers for shore power and underway, solar and marine-grade battery monitoring, so you&rsquo;re never caught out away from the pontoon.</p>
-            <p class="og-go"><a href="/contact/">Talk to us about your boat &#8594;</a><a href="/victron-boat-gps-tracking/">GPS &amp; Starlink at sea</a></p>
+            <p class="og-go"><a href="/lithium-battery-installs-dorset/">Lithium upgrades for boats &#8594;</a><a href="/victron-boat-gps-tracking/">GPS &amp; Starlink at sea</a></p>
           </div>
           <div class="og-card">
             <p class="og-tag">HOMES &amp; BACKUP POWER</p>
@@ -7308,19 +7301,19 @@ OG_HOW_TAIL = '''        </ol>
 
 def off_grid():
     slug = "off-grid-victron-energy"
-    desc = "Off-grid and backup power built on Victron Energy — design, supply, install and remote monitoring of solar, battery storage and inverters for homes, businesses, campervans, motorhomes and boats across Dorset, with live monitoring you can see in the 365 AI OS."
+    desc = "Off-grid and backup power built on Victron Energy — design, supply, install and remote monitoring of solar, battery storage and inverters for homes, businesses, boats and off-grid buildings across Dorset, with live monitoring you can see in the 365 AI OS."
     faqs = [
-      ("Do you install campervan and motorhome power systems?", "Yes — we design, supply and fit 12V solar, lithium batteries, inverters and DC-DC charging for campervans and motorhomes, all built on Victron Energy equipment."),
+      ("Do you install campervan and motorhome power systems?", "No &mdash; we&rsquo;re not a campervan or motorhome fit-out business. We design and fit Victron systems for homes, businesses, boats and off-grid buildings. For a van, our free <a href=\"/solar-battery-calculator/\">battery and solar calculator</a> sizes the system, and we can set up the remote monitoring."),
       ("Do you fit boat and marine power systems?", "Yes — reliable 12/24V lithium power, inverter/chargers, solar and proper battery monitoring for boats, built on Victron and kept an eye on remotely so you always know your state of charge."),
       ("What is Victron Energy?", "Victron Energy is a leading manufacturer of off-grid and mobile power equipment — inverters, solar charge controllers, batteries and monitoring — trusted worldwide for reliability."),
       ("Can I monitor my system remotely?", "Yes. We set up Victron's VRM remote monitoring so you and we can check performance, battery levels and faults from anywhere — a natural fit for an IT and monitoring company."),
       ("Can I see my off-grid power in the 365 AI OS?", "Yes — our <a href=\"/365-ai-os/\">365 AI OS</a> includes a live Off-Grid dashboard that reads your Victron VRM data (battery charge, solar, power draw, inverter state and tank levels) from any browser. Just sign in and open it, or ask the built-in assistant to &lsquo;open off-grid&rsquo;."),
-      ("Do you cover homes and businesses, not just vehicles?", "Absolutely — from whole-home off-grid and backup power to business energy resilience and garden-office power, as well as campervans, motorhomes and boats. We&rsquo;re your local <a href=\"/victron-installer-dorset/\">Victron installer in Dorset</a>."),
+      ("Do you cover homes and businesses, not just vehicles?", "Absolutely — from whole-home off-grid and backup power to business energy resilience and garden-office power, as well as boats and off-grid cabins. We&rsquo;re your local <a href=\"/victron-installer-dorset/\">Victron installer in Dorset</a>."),
     ]
     content = "\n".join([
       hero(bc("Off-Grid & Victron Energy"), "// OFF-GRID POWER",
            'Off-grid &amp; <em class="grad grad--green">Victron energy</em> solutions',
-           "Reliable off-grid and backup power for homes, businesses, campervans, motorhomes and boats — designed, supplied, installed and remotely monitored, built on trusted Victron Energy equipment. Our own support van runs on it: watch it live below.",
+           "Reliable off-grid and backup power for homes, businesses, boats and off-grid buildings — designed, supplied, installed and remotely monitored, built on trusted Victron Energy equipment. Our own support van runs on it: watch it live below.",
            cta1=("Get a Free Energy Consultation", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=["Victron Energy systems","Solar &amp; battery storage","Remote monitoring (VRM)"]),
       OG_ROUTER,
@@ -8435,7 +8428,7 @@ def off_grid():
     </section>''',
       faq_html(faqs),
       cta("Power your world, off the grid",
-          "Whether it&rsquo;s a campervan, a home or a business, let&rsquo;s design the right Victron energy system for you. Book a free, no-obligation consultation.",
+          "Whether it&rsquo;s a home, a business or a boat, let&rsquo;s design the right Victron energy system for you. Book a free, no-obligation consultation.",
           primary=("Get a Free Consultation", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
@@ -9107,7 +9100,7 @@ _DELL_CLUSTER = [
    ("dell-inspiron-desktop-windows-11", "Inspiron desktops &amp; Win 11", "The family tower or all-in-one &mdash; upgrade, repurpose or replace, honestly."),
  ]),
  ("Which Dell should I buy?", [
-   ("are-dell-latitude-laptops-good", "Are Latitudes any good?", "A 30-year Dell specialist&rsquo;s honest verdict on business-grade Latitudes."),
+   ("are-dell-latitude-laptops-good", "Are Latitudes any good?", "A 25-year Dell specialist&rsquo;s honest verdict on business-grade Latitudes."),
    ("how-long-do-dell-latitude-laptops-last", "How long do they last?", "Real-world lifespan &mdash; and the cheap fixes that add years."),
    ("dell-latitude-series-explained-3000-5000-7000", "Latitude 3000/5000/7000", "Which tier should you actually buy? The plain-English guide."),
    ("dell-optiplex-micro-sff-tower-which-to-buy", "OptiPlex Micro/SFF/Tower", "Which desktop body suits your job &mdash; the honest buyer&rsquo;s steer."),
@@ -9174,7 +9167,7 @@ def _dell_cluster_section(exclude=()):
             '        <div class="section-head">\n'
             '          <p class="eyebrow eyebrow--center mono" data-reveal>// EVERYTHING DELL &middot; DORSET&rsquo;S DELL SPECIALIST</p>\n'
             '          <h2 class="section-title section-title--center" data-title>Browse all our Dell help<span class="title-underline title-underline--center"></span></h2>\n'
-            '          <p class="lede lede--center" data-reveal>Thirty years with Dell, all in one place. Jump to what you need &mdash; or just <a href="/contact/">talk to a techie</a>.</p>\n'
+            '          <p class="lede lede--center" data-reveal>Twenty-five years with Dell, all in one place. Jump to what you need &mdash; or just <a href="/contact/">talk to a techie</a>.</p>\n'
             '        </div>\n'
             '        <nav class="dell-chips" aria-label="Jump to a Dell topic" data-reveal>\n' + chips + '        </nav>\n'
             + groups +
@@ -9802,7 +9795,7 @@ def _dell_hub_index(exclude=()):
                    f'          </details>\n')
     return ('    <section class="dh dh-sec section--alt" aria-labelledby="dell-help-title" id="dell-help">\n'
             '      <div class="dh-in">\n'
-            '        <p class="dh-kicker">Everything Dell &middot; 30 years of answers</p>\n'
+            '        <p class="dh-kicker">Everything Dell &middot; 25 years of answers</p>\n'
             '        <h2 class="dh-h2" id="dell-help-title">Browse all our Dell help</h2>\n'
             '        <p class="dh-lede">Fixes you can try yourself, repairs, buying advice and every Dell range &mdash; or just <a href="/contact/" class="dh-link">talk to a techie</a>.</p>\n'
             '        <nav class="dh-chips" aria-label="Jump to a Dell topic">\n' + chips + '        </nav>\n'
@@ -9898,7 +9891,7 @@ def dell_hardware():
            'Refurbished Dell Latitude laptops &amp; <em class="grad grad--cyan">OptiPlex desktops</em>',
            "Professionally refurbished, tested ex-business Dell: proper business-grade computers for a fraction of the price of new. Set up and supported by a real local firm you can phone, text or email, and that comes to you. Kinder on your wallet and the planet.",
            cta1=("Pick a machine &amp; get a quote", "#pick"), cta2=("Call 01202 775566", "tel:+441202775566"),
-           chips=["From &pound;510","New Samsung Pro SSD","5-year guarantee","Set up &amp; fully supported"], scene=HERO_SCENES.get("sales")),
+           chips=["From &pound;510","New Samsung Pro SSD","5-year guarantee on a plan","Set up &amp; fully supported"], scene=HERO_SCENES.get("sales")),
       responsive_video("WATCH &middot; REFURBISHED DELL IN ACTION", "See a refurbished Dell at work",
                        "/images/dell-reel-poster-wide.webp", "/images/dell-reel-poster-tall.webp",
                        "365 Techies refurbished Dell computers at home, at work and working remotely across Dorset"),
@@ -9916,18 +9909,18 @@ def dell_hardware():
           <p class="eyebrow mono">/01 — WHY REFURBISHED DELL</p>
           <h2 class="section-title" data-title>Proper grown-up kit, for a lot less<span class="title-underline"></span></h2>
           <p>There&rsquo;s a world of difference between a cheap new high-street laptop and a Dell Latitude or OptiPlex. The business range is built to work hard for years &mdash; tougher materials, better components and stronger security &mdash; and Dell&rsquo;s Latitude laptops are tested to military-standard durability methods.</p>
-          <p>Bought refurbished, that quality costs <strong>far less than new</strong> &mdash; often around 30&ndash;50% less &mdash; while still doing everything most homes and small businesses need. We&rsquo;ve been supplying refurbished Dell business laptops and PCs for <strong>over 30 years</strong>. We recommend the right model, spec, memory and storage, fit a <strong>brand-new Samsung Pro SSD</strong>, supply any accessories you need, set it all up and support it for years.</p>
+          <p>Bought refurbished, that quality costs <strong>far less than new</strong> &mdash; often around 30&ndash;50% less &mdash; while still doing everything most homes and small businesses need. We&rsquo;ve been supplying refurbished Dell business laptops and PCs for <strong>25 years</strong>. We recommend the right model, spec, memory and storage, fit a <strong>brand-new Samsung Pro SSD</strong>, supply any accessories you need, set it all up and support it for years.</p>
         </div>
         <ul class="checklist" data-stagger>
-{checklist(["Genuine ex-business Dell Latitude &amp; OptiPlex","Brand-new Samsung Pro SSD &mdash; 5-year guarantee","any remaining Dell warranty where applicable + our 5-year guarantee (with a support plan)","Desktops from &pound;545, laptops from &pound;510 &mdash; often 30&ndash;50% less than new","We recommend the right spec &amp; supply the accessories","Set up &amp; fully supported by your local team","Supplying refurbished Dell business kit for 30+ years","Full repair service if you ever break it"])}
+{checklist(["Genuine ex-business Dell Latitude &amp; OptiPlex","Brand-new Samsung Pro SSD &mdash; 5-year guarantee","any remaining Dell warranty where applicable + our 5-year guarantee (with a support plan)","Desktops from &pound;545, laptops from &pound;510 &mdash; often 30&ndash;50% less than new","We recommend the right spec &amp; supply the accessories","Set up &amp; fully supported by your local team","Supplying refurbished Dell business kit since 2001","Full repair service if you ever break it"])}
         </ul>
       </div>
     </section>''',
-      f'''    <section class="section" aria-label="Refurbishing Dell for over 30 years">
+      f'''    <section class="section" aria-label="Refurbishing Dell since 2001">
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// PROOF &mdash; NOT A POP-UP SELLER</p>
-          <h2 class="section-title section-title--center" data-title>We&rsquo;ve been refurbishing Dell for over 30 years<span class="title-underline title-underline--center"></span></h2>
+          <h2 class="section-title section-title--center" data-title>We&rsquo;ve been refurbishing Dell since 2001<span class="title-underline title-underline--center"></span></h2>
           <p class="lede lede--center" data-reveal>These photos are from our computer sales, service &amp; support centre in Moordown, Winton (2008&ndash;2017) &mdash; the same family firm, on the same phone number, still doing this today. They show the operation behind the machine you&rsquo;ll get: not a stock list, just decades of doing it properly.</p>
         </div>
         <div class="heritage-grid" data-stagger>
@@ -9971,7 +9964,7 @@ def dell_hardware():
             <h3>Covered every which way</h3>
             <p style="color:var(--muted);margin:0 0 1.1rem">These aren&rsquo;t marketplace gambles &mdash; every machine is protected several times over. And if you ever manage to break it, we run a full repair service too.</p>
             <ul class="checklist">
-{checklist(["<strong>any remaining Dell warranty where applicable</strong> &mdash; extendable if you need it","<strong>365 Techies 5-year guarantee</strong>","New Samsung Pro SSD &mdash; 5-year guarantee","Full repair service if you break it","Full support on any of our support plans","Family firm, here since 1995"])}
+{checklist(["<strong>any remaining Dell warranty where applicable</strong> &mdash; extendable if you need it","<strong>365 Techies 5-year guarantee</strong> on a support plan (12 months otherwise)","New Samsung Pro SSD &mdash; 5-year guarantee","Full repair service if you break it","Full support on any of our support plans","Family firm, here since 1995"])}
             </ul>
           </div>
           <div class="tile" data-reveal>
@@ -10258,7 +10251,7 @@ dell_hardware()
 # the /dell-hardware/ buying spoke.
 def dell_it_support_hub():
     slug = "dell-it-support-dorset"
-    desc = ("Independent Dell support, servicing & repair across Bournemouth, Poole & Dorset &mdash; 30+ years, "
+    desc = ("Independent Dell support, servicing & repair across Bournemouth, Poole & Dorset &mdash; 25 years, "
             "no call-out fee. Refurbished Dell from &pound;510. Call 01202 775566.")
     tiles = [
       ("hp-c-fix", "wrench", "Fix my Dell", "Won&rsquo;t boot, broken screen, worn battery", "NO FIX, NO FEE", "/dell-laptop-repair-bournemouth/"),
@@ -10286,7 +10279,7 @@ def dell_it_support_hub():
           <nav class="breadcrumb" aria-label="Breadcrumb">{bc("Dell")}</nav>
           <p class="eyebrow mono">// DORSET&rsquo;S INDEPENDENT DELL SPECIALIST &middot; SINCE 1995</p>
           <h1>Dell support, servicing &amp; repair across <em class="grad grad--cyan">Bournemouth, Poole &amp; Dorset</em></h1>
-          <p class="lede">A fix, a service or a replacement &mdash; from a family-run, independent Dell specialist who&rsquo;s supplied and supported Dell for homes and businesses for over 30 years.</p>
+          <p class="lede">A fix, a service or a replacement &mdash; from a family-run, independent Dell specialist who&rsquo;s supplied and supported Dell for homes and businesses since 2001.</p>
           <div class="page-hero__cta">
             <a href="tel:+441202775566" class="button primary button--lg">Call 01202 775566</a>
             <a href="/contact/" class="button secondary button--lg">Talk to a Techie</a>
@@ -10372,7 +10365,7 @@ def dell_it_support_hub():
         area = [{"@type": "AdministrativeArea", "name": "Bournemouth, Christchurch and Poole"},
                 {"@type": "AdministrativeArea", "name": "Dorset"}, {"@type": "AdministrativeArea", "name": "New Forest"}]
         svc = service(s, "Dell IT Support, Servicing & Repair",
-                      "Independent Dell support, servicing, emergency repair and refurbished Dell sales for homes and businesses across Bournemouth, Poole and Dorset, from a 30-year Dell specialist.",
+                      "Independent Dell support, servicing, emergency repair and refurbished Dell sales for homes and businesses across Bournemouth, Poole and Dorset, from a 25-year Dell specialist.",
                       "Dell computer support and repair", area=area)
         # NO aggregateRating/review on the Service node: Google Review-snippet rich results
         # do NOT allow review markup on type Service (GSC "Invalid object type for field
@@ -10515,7 +10508,7 @@ def refurbished_local():
         <div class="prose" data-reveal>
           <p class="eyebrow mono">/01 — LOCAL &amp; TRUSTED</p>
           <h2 class="section-title" data-title>Your local refurbished Dell specialists<span class="title-underline"></span></h2>
-          <p>For over 30 years we&rsquo;ve supplied refurbished Dell business laptops and PCs to homes and businesses across Dorset &mdash; proper business-grade Latitude laptops and OptiPlex desktops for a fraction of the price of new.</p>
+          <p>Since 2001 we&rsquo;ve supplied refurbished Dell business laptops and PCs to homes and businesses across Dorset &mdash; proper business-grade Latitude laptops and OptiPlex desktops for a fraction of the price of new.</p>
           <p>Unlike a faceless online seller, we&rsquo;re a real local family firm: we recommend the right machine, fit a brand-new Samsung Pro SSD, set it up, move your data across and support it for years &mdash; and you can phone, text or email us, or we&rsquo;ll come to you. New to the idea? See whether <a href="/are-refurbished-laptops-any-good/">refurbished laptops are any good</a>, or the full detail on our <a href="/dell-hardware/">refurbished Dell page</a>.</p>
         </div>
         <ul class="checklist" data-stagger>
@@ -11661,7 +11654,7 @@ def starlink_internet():
           <p><strong>We are not a Starlink dealer or reseller, and that is the point.</strong> We have no plan to push and no commission riding on your choice — so we will tell you which plan genuinely fits how you use it, whether you need it at all, and when something cheaper would do. Then we set it up, install the dish properly, sort your network and look after it. <strong>The subscription stays in your own name, so you keep control of it.</strong></p>
         </div>
         <ul class="checklist" data-stagger>
-{checklist(["Fast, low-latency broadband","Works almost anywhere","Great for rural areas &amp; not-spots","Residential &amp; roaming options","Supplied, installed &amp; supported","Pairs with off-grid power","Backup &amp; failover internet","No phone line needed"])}
+{checklist(["Fast, low-latency broadband","Works almost anywhere","Great for rural areas &amp; not-spots","Residential &amp; roaming options","Set up, installed &amp; supported","Pairs with off-grid power","Backup &amp; failover internet","No phone line needed"])}
         </ul>
       </div>
     </section>''',
@@ -15885,20 +15878,20 @@ repair_pages()
 # ===================================================== LEISURE & MARINE LITHIUM BATTERIES
 def battery_installs():
     slug = "lithium-battery-installs-dorset"
-    desc = "Lithium (LiFePO4) battery & power upgrades for motorhomes, campervans and boats across Dorset — Victron-based battery banks, solar & DC-DC charging, inverters and monitoring, designed, fitted and supported. Free survey, clear quote."
+    desc = "Lithium (LiFePO4) battery & power upgrades for boats and off-grid buildings across Dorset — Victron-based battery banks, solar & DC-DC charging, inverters and monitoring, designed, fitted and supported. Free survey, clear quote."
     faqs = [
-      ("Do you fit lithium batteries in motorhomes and campervans?", "Yes &mdash; we design and fit LiFePO4 lithium systems for motorhomes, campervans and conversions, built on Victron Energy, with solar, DC-DC charging, inverters and monitoring."),
+      ("Do you fit lithium batteries in campervans or motorhomes?", "No &mdash; we&rsquo;re not a campervan or motorhome fit-out business. We design and fit Victron systems for homes, businesses, boats and off-grid buildings. For a van, our free <a href=\"/solar-battery-calculator/\">battery and solar calculator</a> sizes the system, and we can set up the remote monitoring."),
       ("Can you upgrade a boat to lithium?", "Yes &mdash; we fit marine 12/24V lithium banks, inverter/chargers and monitoring for boats around Poole Harbour and the Dorset coast, designed for the marine environment."),
-      ("Why switch to lithium (LiFePO4)?", "Lithium gives you far more usable power, much lighter weight, faster charging and a far longer lifespan than lead-acid &mdash; ideal for living or working off-grid in a van or on the water."),
+      ("Why switch to lithium (LiFePO4)?", "Lithium gives you far more usable power, much lighter weight, faster charging and a far longer lifespan than lead-acid &mdash; ideal for living or working off-grid, on land or on the water."),
       ("Can I monitor it from my phone?", "Yes &mdash; we set up Victron monitoring so you can see your battery, solar and usage from your phone, or in our <a href=\"/365-ai-os/\">365 AI OS</a> off-grid dashboard."),
       ("How much does it cost?", "It depends on how much power you need and what you already have &mdash; we survey it and give you a clear, fixed quote first, with no surprises."),
     ]
     content = "\n".join([
-      hero(bc("Leisure &amp; Marine Batteries"), "// LITHIUM POWER UPGRADES",
-           'Lithium power for <em class="grad grad--green">vans &amp; boats</em>',
-           "More usable power, less weight and years more life &mdash; we design and fit Victron lithium (LiFePO4) systems for motorhomes, campervans and boats across Dorset, with solar, smart charging, inverters and monitoring. Free survey, clear quote, properly supported.",
+      hero(bc("Marine &amp; Off-Grid Batteries"), "// LITHIUM POWER UPGRADES",
+           'Lithium power for <em class="grad grad--green">boats &amp; off-grid</em>',
+           "More usable power, less weight and years more life &mdash; we design and fit Victron lithium (LiFePO4) systems for boats, cabins and off-grid buildings across Dorset, with solar, smart charging, inverters and monitoring. Free survey, clear quote, properly supported.",
            cta1=("Get a Free Survey", "/contact/"), cta2=("Off-Grid Energy", "/off-grid-victron-energy/"),
-           chips=["Victron LiFePO4","Vans, motorhomes &amp; boats","Free survey &amp; quote"]),
+           chips=["Victron LiFePO4","Boats &amp; off-grid buildings","Free survey &amp; quote"]),
       f'''    <section class="section" aria-label="What it is">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
@@ -15928,7 +15921,7 @@ def battery_installs():
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>/LIVE &mdash; WE RUN ONE OURSELVES</p>
           <h2 class="section-title section-title--center" data-title>Our van&rsquo;s lithium battery &mdash; live right now<span class="title-underline title-underline--center"></span></h2>
-          <p class="section-sub" data-reveal style="text-align:center;max-width:620px;margin:.6rem auto 0">This is the Victron LiFePO4 system in our own off-grid support van, reporting live &mdash; the same kit, design and monitoring we&rsquo;d build for you.</p>
+          <p class="section-sub" data-reveal style="text-align:center;max-width:620px;margin:.6rem auto 0">This is the Victron LiFePO4 system in our own off-grid support van, reporting live &mdash; the same kit and monitoring we fit on boats and off-grid buildings.</p>
         </div>
         <style>
         @keyframes vpulse{0%{box-shadow:0 0 0 0 rgba(57,211,83,.5)}70%{box-shadow:0 0 0 9px rgba(57,211,83,0)}100%{box-shadow:0 0 0 0 rgba(57,211,83,0)}}
@@ -16043,9 +16036,9 @@ def battery_installs():
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "Leisure & Marine Batteries"), webpage(s, "Lithium Battery Installs — Motorhomes, Campervans & Boats", _desc),
-                      service(s, "Lithium Battery & Power Installs", "Victron lithium (LiFePO4) battery, solar, inverter and monitoring installs for motorhomes, campervans and boats across Dorset.", "Leisure and marine power installation"),
+                      service(s, "Lithium Battery & Power Installs", "Victron lithium (LiFePO4) battery, solar, inverter and monitoring installs for boats and off-grid buildings across Dorset.", "Marine and off-grid power installation"),
                       faqpage(s, _faqs)])
-    add(slug=slug, title="Lithium Battery Installs Dorset | Motorhomes & Boats",
+    add(slug=slug, title="Lithium Battery Installs Dorset | Boats & Off-Grid",
         desc=desc, og_title="Lithium Battery Installs Dorset | 365 Techies", schema=schema, content=content)
 battery_installs()
 
@@ -16653,7 +16646,7 @@ _TEAM_POST = _bp.promise_strip(items=[_bp.PROMISE_CALL, _bp.PROMISE_ETA, _bp.PRO
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT WE ARE QUALIFIED IN</p>
-          <h2 class="section-title section-title--center" data-title>Thirty years of Microsoft and Dell<span class="title-underline title-underline--center"></span></h2>
+          <h2 class="section-title section-title--center" data-title>Microsoft since 1995, Dell since 2001<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="tile-grid" data-stagger>
 ''' + tiles([
@@ -19058,7 +19051,7 @@ info_page(
     ("Should I buy refurbished?","A good refurbished machine from a reputable seller can be excellent value &mdash; just check it has an SSD, enough memory and can run Windows 11. We actually supply <a href=\"/dell-hardware/\">refurbished, business-grade Dell laptops &amp; PCs</a> &mdash; tested, set up and backed by our own warranty &mdash; so we&rsquo;re happy to advise or match you one."),
     ("How do I recycle my old laptop?","Back up and wipe it first, then recycle it responsibly &mdash; see our guide to <a href=\"/how-to-wipe-and-recycle-old-computer/\">wiping and recycling an old computer</a>."),
     ("What is the best laptop for a home-office setup, and are refurbished ones any good?","For a home office running email, the web, video calls and office software, you do not need the latest or most expensive machine &mdash; aim for an SSD, plenty of memory and a screen size that suits your desk. A professionally refurbished, business-grade Dell Latitude or OptiPlex is often the sweet spot here: built for reliable all-day office use, fitted with a brand-new Samsung Pro SSD, and typically around 30&ndash;50% less than an equivalent new machine. See our guide on whether <a href=\"/are-refurbished-laptops-any-good/\">refurbished laptops are any good</a>."),
-    ("Where can I buy a good refurbished laptop near me?","If you are in Bournemouth, Poole, Christchurch or anywhere across Dorset, we supply professionally refurbished, tested ex-business Dell laptops and desktops from &pound;545 &mdash; each with a brand-new Samsung Pro SSD, a clean licensed copy of Windows, and any remaining Dell warranty where applicable and our own 5-year guarantee on a 365 support plan (with a support plan). See <a href=\"/refurbished-laptops-dorset/\">refurbished laptops in Dorset</a>, or call 01202 775566."),
+    ("Where can I buy a good refurbished laptop near me?","If you are in Bournemouth, Poole, Christchurch or anywhere across Dorset, we supply professionally refurbished, tested ex-business Dell laptops and desktops from &pound;545 &mdash; each with a brand-new Samsung Pro SSD, a clean licensed copy of Windows, and any remaining Dell warranty where applicable and our own 5-year guarantee on a 365 support plan. See <a href=\"/refurbished-laptops-dorset/\">refurbished laptops in Dorset</a>, or call 01202 775566."),
   ],
   cta_args=("Want a hand choosing?","Tell us how you&rsquo;ll use it and your budget, and we&rsquo;ll recommend the right computer &mdash; honestly, with no upselling &mdash; and set it all up for you.",
             ("New Computer Setup","/new-computer-setup/"), ("Talk to a Techie","/contact/")),

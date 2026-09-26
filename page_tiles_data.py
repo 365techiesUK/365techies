@@ -865,7 +865,7 @@ PAGE_HERO_TILES = {
  'victron-installer-dorset': [
   ('hp-c-fix', 'power', 'What we fit', 'Solar, lithium, MPPT, inverters and Cerbo GX', 'FULL VICTRON STACK', '#s2'),
   ('hp-c-care', 'gauge', 'Watch our van live', 'A real Victron system, streamed from VRM', 'LIVE, NOT STOCK PHOTOS', '#s3'),
-  ('hp-c-biz', 'home', 'Homes, vans and boats', 'Who we design Victron systems for', 'ACROSS DORSET', '#s4'),
+  ('hp-c-biz', 'home', 'Homes, boats and cabins', 'Who we design Victron systems for', 'ACROSS DORSET', '#s4'),
   ('hp-c-buy', 'wrench', 'Get a design and quote', 'Sized to your real energy use, quoted clearly', 'QUOTED FIRST', '/contact/'),
  ],
  'victron-vrm-api-dashboard': [

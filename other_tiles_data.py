@@ -686,7 +686,7 @@ OTHER_HERO_TILES = {
   ('hp-c-buy', 'home', 'Rather we set it up?', 'We set it up at home and show you where it all lives', 'PRICED BEFORE WE COME', 'tel:+441202775566'),
  ],
  'off-grid-victron-energy': [
-  ('hp-c-fix', 'power', 'What do I want to power?', 'Vans, boats, homes, businesses and cabins', 'PICK THE CLOSEST', '#og-router'),
+  ('hp-c-fix', 'power', 'What do I want to power?', 'Boats, homes, businesses and cabins', 'PICK THE CLOSEST', '#og-router'),
   ('hp-c-care', 'gauge', 'See our van&rsquo;s power live', 'The live dashboard from our own off-grid van', 'LIVE RIGHT NOW', '#vlive'),
   ('hp-c-biz', 'wrench', 'How big a system do I need?', 'Battery and solar sized from what you actually run', 'FREE CALCULATOR', '/solar-battery-calculator/'),
   ('hp-c-buy', 'phone', 'Talk through my system', 'Design, a fixed quote, installation and monitoring', 'FREE CONSULTATION', '/contact/'),

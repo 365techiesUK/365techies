@@ -137,7 +137,7 @@ TOOL_HERO_TILES = {
   ('hp-c-fix', 'power', 'Size your battery and solar', 'Tick what you run; get lithium and panel sizes', 'UK SUN FIGURES', '#solc'),
   ('hp-c-care', 'gauge', 'Turn it into a kit list', 'Four questions, a complete Victron parts list', 'FREE BUILDER', '/victron-system-builder/'),
   ('hp-c-biz', 'book', 'Lithium or AGM?', 'Why the AGM size is nearly double, and winter sun', 'HONEST ANSWERS', '#faq'),
-  ('hp-c-buy', 'wrench', 'Sized, supplied, fitted', 'Victron installs for vans, boats and cabins in Dorset', 'WE SURVEY FIRST', '/victron-installer-dorset/'),
+  ('hp-c-buy', 'wrench', 'Sized, supplied, fitted', 'Victron installs for boats, homes and cabins in Dorset', 'WE SURVEY FIRST', '/victron-installer-dorset/'),
  ],
  'spot-the-scam': [
   ('hp-c-fix', 'star', 'Could you spot a scam?', 'Six real-looking messages: scam or genuine?', 'ABOUT 2 MINUTES', '#sc'),

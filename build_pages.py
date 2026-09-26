@@ -4236,7 +4236,7 @@ SOLARCALC_TOOL = r'''    <section class="section" aria-label="Battery and solar 
           <p class="so-note">Indicative sizing at 12V with 15% system losses, lithium ~90% / AGM ~50% usable capacity, and UK peak-sun averages (~4.2h summer, ~2.5h spring/autumn). <strong>UK winter sun is closer to 1 hour</strong> &mdash; plan on hook-up or charging from the engine (B2B) if you&rsquo;re out in winter. Every setup is different; we&rsquo;ll size yours properly before anything is fitted.</p>
           <div class="so-fix">
             <h3>Sized. Supplied. Fitted. Monitored.</h3>
-            <p>We design and install Victron-based off-grid power &mdash; lithium, solar, B2B charging and remote monitoring &mdash; for campervans, boats and off-grid buildings across Dorset. Our own support van runs on it (watch it live).</p>
+            <p>We design and install Victron-based off-grid power &mdash; lithium, solar, B2B charging and remote monitoring &mdash; for boats, homes and off-grid buildings across Dorset. Our own support van runs on it (watch it live).</p>
             <div class="so-fix-cta"><a class="button primary" href="/off-grid-victron-energy/">See our off-grid work &#8594;</a><a class="button so-ghost" href="/contact/">Get a quote</a></div>
           </div>
         </div>
