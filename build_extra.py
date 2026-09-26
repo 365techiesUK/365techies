@@ -22072,6 +22072,80 @@ def dell_panel(slug):
     </section>''')
 
 
+
+# ============================================ FIX PANEL (26 Sep 2026)
+# The closing block of the fix pages: the page's own question and words on one side with how a
+# remote fix works (the claims are /remote-support/'s: checking is free, fixes from £20, nothing
+# chargeable until agreed, we phone first), and "stop it happening again" on the other (the keep
+# band's allowed claims: a full service every six weeks with a written report, every program kept
+# up to date, unlimited remote support; plans from £18.25). Same component as the Dell panel.
+# Which pages: every fix page - one with a guided fix flow or the "need this fixed right now?" SOS band -
+# except the Dell pages, which carry the Dell panel. Previewed on new-outlook-not-syncing, rolled out to all
+# fix pages on the owner's go-ahead (26 Sep 2026). FIX_PANEL_ON adds pages by hand if ever needed.
+FIX_PANEL_ON = {'new-outlook-not-syncing'}
+# keep their own closing band: not a computer fix (websites, lessons) or an on-site job (surveys, installs,
+# a CCTV visit), where "fixes from £20, watch every step" would be wrong
+FIX_PANEL_OFF = {'slow-wordpress-site-fix-or-rebuild', 'website-hacked-what-to-do', 'smartphone-lessons-for-seniors',
+                 'wifi-for-a-shepherds-hut', 'mesh-wifi-setup-guide', 'office-wifi-keeps-dropping-out',
+                 'cctv-not-working-after-changing-broadband'}
+# hardware faults: the fix side is the collection repair, never "remote help from £20"
+FIX_PANEL_HARDWARE = {'dell-xps-swollen-battery', 'dell-g15-overheating', 'laptop-stuck-on-logo-wont-boot'}
+
+
+def _use_fix_panel(d, ff):
+    s = d['slug']
+    if s in DELL_PANEL_FIX or s in _DELL_GUIDE_STOCK_SLUGS or s in FIX_PANEL_OFF:
+        return False
+    return bool(ff) or _wants_sos_band(s) or s in FIX_PANEL_ON
+
+FIX_PANEL_SCRIPT = DELL_PANEL_SCRIPT.replace("place:'dell_panel'", "place:'fix_panel'").replace('the Dell panel', 'the fix panel')
+
+
+def fix_panel(d):
+    p_label, p_href = d['primaryCta']
+    s_label, s_href = d['secondaryCta']
+    second = ('<a class="dpan__link" href="tel:+441202775566">Call 01202 775566</a>' if not str(p_href).startswith('tel:')
+              else '<a class="dpan__link" href="/remote-support/">How remote help works</a>')
+    if str(s_href).startswith('tel:') and 'tel:' in second:
+        second = ''   # the page's own second link (in the footer line) is already the phone number
+    if d['slug'] in FIX_PANEL_HARDWARE:   # hands-on repair: the collection promise, as on /computer-repairs/
+        fix_tag = "We&rsquo;ll get to the bottom of it"
+        fix_ticks = ('<li>Diagnosis first &mdash; no fix, no fee</li>\n              <li>Free local collection across Dorset</li>\n'
+                     '              <li>A clear price before we start</li>\n              <li>12-month warranty on the repair</li>')
+    else:
+        fix_tag = "We&rsquo;ll fix it with you"
+        fix_ticks = ('<li>Checking the problem is free</li>\n              <li>Fixes from &pound;20, agreed before we start</li>\n'
+                     '              <li>We phone first, and you watch every step</li>')
+    return ('    <style>' + " ".join(l.strip() for l in DELL_PANEL_CSS.strip().splitlines()) + ' .dpan .hp-c-care{--c1:#0fb34a;--c2:#7af08e}</style>\n'
+            f'''    <section class="dpan" aria-label="Still stuck? We will fix it" id="fix-help">
+      <div class="dpan__card">
+        <p class="dpan__kicker">// Still stuck?</p>
+        <h2 class="dpan__title">{d['ctaHead']}</h2>
+        <p class="dpan__lede">{d['ctaSub']}</p>
+        <div class="dpan__grid">
+          <div class="dpan__col hp-c-fix">
+            <p class="dpan__tag"><span class="dpan__ico">{_dh_ico("wrench")}</span>{fix_tag}</p>
+            <ul class="dpan__ticks">
+              {fix_ticks}
+            </ul>
+            <div class="dpan__cta"><a class="dpan__btn" href="{p_href}">{p_label}</a>{second}</div>
+          </div>
+          <div class="dpan__col hp-c-care">
+            <p class="dpan__tag"><span class="dpan__ico">{_dh_ico("shield")}</span>Stop it happening again</p>
+            <ul class="dpan__ticks">
+              <li>A full service every six weeks, written up</li>
+              <li>Every program kept up to date</li>
+              <li>Unlimited remote help when you need it</li>
+            </ul>
+            <p class="dpan__more">Plans from &pound;18.25 a month per computer &middot; cancel any time</p>
+            <div class="dpan__cta"><a class="dpan__btn" href="/monthly-it-support/">See plans &amp; prices</a><a class="dpan__link" href="/free-pc-health-check/">Or get our free app</a></div>
+          </div>
+        </div>
+        <p class="dpan__foot"><span>Mon&ndash;Fri 9&ndash;5 &middot; family-run since 1995 &middot; rated 4.9 on Google</span><a href="{s_href}">{s_label} &#8594;</a></p>
+      </div>
+{FIX_PANEL_SCRIPT}
+    </section>''')
+
 # Free-courses funnel: gentle/how-to/beginner pages promote the courses at the
 # END of the page (reader got their answer; now offer to build their confidence).
 # Never stacked with the SOS band - urgent pages stay urgent.
@@ -23044,7 +23118,8 @@ def build_new_page(d):
       cross,
       trust,
       faq_html(faqs),
-      cta(d['ctaHead'], d['ctaSub'], primary=tuple(d['primaryCta']), secondary=tuple(d['secondaryCta'])),
+      (fix_panel(d) if _use_fix_panel(d, _ff) else
+       cta(d['ctaHead'], d['ctaSub'], primary=tuple(d['primaryCta']), secondary=tuple(d['secondaryCta']))),
     ] if x)
     def schema(s, _d=d, _faqs=faqs, _hub=_hub):
         _c = bp.crumb_sub(s, _hub[0], _hub[1], _d['crumbName']) if _hub else crumb(s, _d['crumbName'])
