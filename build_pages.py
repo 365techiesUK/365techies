@@ -5489,6 +5489,80 @@ def plan_card(variant, badge, tag, name, desc, price, per, feats, cta_label, cta
             <a href="{cta_href}" class="button primary plan-card__cta"{' target="_blank" rel="noopener"' if is_link else ''}>{cta_label}</a>{note_html}
           </article>'''
 
+# ============================================ HOME PLANS v2 (26 Sep 2026)
+# The homepage "Look after it for me" tile lands here, and Home is the most popular plan (owner, 25 Sep).
+# It opened with "Get Started" (the form) and "Compare Plans", no phone. Now the intent-first layout:
+# H1 unchanged, call first, "Who is it for?" tiles, a proof strip, the plan cards straight after, how
+# it works (the owner-approved steps from the old homepage), plan customers' reviews, then the rest.
+def _home_plans_v2():
+    tiles = [
+        ("hp-c-care", "home", "Me and my family", "Every computer in the house, looked after", "FROM &pound;18.25/MONTH", "#plans"),
+        ("hp-c-fix", "cloud", "With Microsoft 365", "Outlook, Word, Excel and OneDrive, looked after too", "&pound;23.10/MONTH", "#compare"),
+        ("hp-c-buy", "user", "An older relative", "Patient, jargon-free help, and Family View for you", "NO JARGON, EVER", "/it-support-for-retired-users/"),
+        ("hp-c-biz", "briefcase", "Working from home", "Keep the laptop, Wi-Fi and email reliable", "UNLIMITED REMOTE HELP", "/it-support-for-home-workers/"),
+    ]
+    tiles_html = "\n".join(
+        f'            <a class="hp-intent {c}" href="{href}"><span class="hp-ico">{_dh_ico(i)}</span><span class="hp-intent__t">{t}</span>'
+        f'<span class="hp-intent__d">{d}</span><span class="hp-intent__p">{p}</span></a>'
+        for c, i, t, d, p, href in tiles)
+    hero_html = f'''    <style>{" ".join(l.strip() for l in DELL_HUB_CSS.strip().splitlines())}</style>
+    <section class="page-hero dh dh-hero" aria-label="Introduction">
+      <div class="dh-hero__grid">
+        <div>
+          <nav class="breadcrumb" aria-label="Breadcrumb">{bc("Home Support Plans")}</nav>
+          <p class="eyebrow mono">// HOME PLANS</p>
+          <h1>Home IT support <em class="grad grad--cyan">plans</em></h1>
+          <p class="lede">&pound;18.25 a month per computer: a full service every six weeks with a written report, unlimited remote help and your security and backups checked. Change or cancel any time.</p>
+          <div class="page-hero__cta">
+            <a href="tel:+441202775566" class="button primary button--lg">Call 01202 775566</a>
+            <a href="#plans" class="button secondary button--lg">See the plans</a>
+          </div>
+          <a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Rated 4.9 on Google</strong></span><span>Family-run since 1995 &middot; no contract</span></a>
+          <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
+        </div>
+        <nav class="hp-intents" aria-label="Who is it for?">
+          <p class="hp-intents__q">Who is it for?</p>
+          <div class="hp-intents__grid">
+{tiles_html}
+          </div>
+        </nav>
+      </div>
+    </section>'''
+    proof_html = '''    <section class="dh dh-sec dh-proof" aria-label="What every home plan includes">
+      <div class="dh-in">
+        <ul class="dh-facts">
+          <li class="hp-c-care"><b>6&nbsp;weeks</b><span>between full services, each with a written report</span></li>
+          <li class="hp-c-fix"><b>Unlimited</b><span>remote support, Monday to Friday</span></li>
+          <li class="hp-c-buy"><b>&pound;0</b><span>call-out fee for remote help</span></li>
+          <li class="hp-c-biz"><b>4.9<i aria-hidden="true">&#9733;</i></b><span>average rating on Google</span></li>
+        </ul>
+        <p class="dh-indep"><strong>No contract.</strong> Pay monthly by Direct Debit and cancel any time &mdash; people stay because it works, not because they&rsquo;re locked in.</p>
+      </div>
+    </section>'''
+    steps_html = '''    <section class="dh dh-sec" aria-labelledby="hp-how-title">
+      <div class="dh-in">
+        <p class="dh-kicker">Getting started</p>
+        <h2 class="dh-h2" id="hp-how-title">Up and running in three steps</h2>
+        <ol class="dh-steps" style="margin-top:1.2rem">
+          <li><b>Pick your plan</b><span>Monthly, no contract, cancel any time</span></li>
+          <li><b>We call, then connect</b><span>We phone first, then set everything up securely &mdash; you watch it happen</span></li>
+          <li><b>Covered, every month</b><span>A full service every six weeks, and a real person when you need one</span></li>
+        </ol>
+      </div>
+    </section>'''
+    reviews_html = f'''    <section class="dh dh-sec" aria-labelledby="hp-reviews-title">
+      <div class="dh-in">
+        <p class="dh-kicker">What plan customers say</p>
+        <h2 class="dh-h2" id="hp-reviews-title">Rated 4.9 on Google</h2>
+        <div class="dh-quotes">
+{_dell_hub_quotes("Alan Bevis", "Rosemary Allen", "David Hagner")}
+        </div>
+        <p style="margin:1.1rem 0 0;display:flex;flex-wrap:wrap;gap:.5rem 1.6rem"><a class="dh-link" href="/reviews/">Read all our reviews &#8594;</a><a class="dh-link" href="https://www.google.com/maps/place/?q=place_id:ChIJlTb8YRuic0gRCRczduB8OFI" target="_blank" rel="noopener">See them on Google &#8594;</a></p>
+      </div>
+    </section>'''
+    return hero_html, proof_html, steps_html, reviews_html
+_HP_HERO, _HP_PROOF, _HP_STEPS, _HP_REVIEWS = _home_plans_v2()
+
 add(
  slug="home-it-support-plans",
  title="Home IT Support Plans & Pricing | From £18.25/mo",
@@ -5499,12 +5573,9 @@ add(
    service(s, "Home IT Support Plans", "Monthly home IT support at £18.25 per computer, with optional Microsoft 365 at £4.85 per user.", "Home IT support"),
  ]),
  content="\n".join([
-   hero(bc("Home Support Plans"), "// HOME PLANS",
-        'Home IT support <em class="grad grad--cyan">plans</em>',
-        "Clear, simple monthly packages for home users and families. Pick the level of cover that suits you — and change or cancel any time.",
-        cta1=("Get Started", "/contact/"), cta2=("Compare Plans", "#compare"),
-        trustbar=True),
-   f'''    <section class="support-options" aria-label="Home support plans">
+   _HP_HERO,
+   _HP_PROOF,
+   f'''    <section class="support-options" id="plans" aria-label="Home support plans">
 <h2 class="sr-only">Home support plans</h2>
       <div class="plan-grid">
 {plan_card("home", None, "HOME SUPPORT", "Home IT Support", "Friendly cover for your computer &mdash; remote help, regular maintenance and security, all year round.", "&pound;18.25", ("","/mo per computer"), ["Support for your computer","Unlimited remote support","Full service every 6 weeks","Written Service Report each visit","Your own 365 dashboard","Security &amp; backup checks","Wi-Fi, printer &amp; email help","Loyalty discount on any fault work","Patient, jargon-free help"], "Set up Direct Debit", subscribe_href("home-support"), "Sets up <strong>one computer</strong> at &pound;18.25/mo. More than one? <a href=\"/contact/?topic=home-it-support\">Tell us</a> and we&rsquo;ll set the exact amount.")}
@@ -5513,6 +5584,7 @@ add(
       <p class="plans-note mono" data-reveal>// &pound;18.25/MO PER COMPUTER &middot; ADD MICROSOFT 365 FOR &pound;4.85/MO PER USER &middot; MORE THAN ONE COMPUTER? JUST TELL US</p>
       <p class="plans-note mono" data-reveal style="margin-top:.5rem"><a href="/our-guarantees/" style="color:var(--cyan)">&#10003; Cancel anytime, no contract &middot; No call-out fee for remote help &middot; Family-run since 1995 &mdash; see our guarantees</a></p>
     </section>''',
+   _HP_STEPS,
    f'''    <section class="section" aria-label="Popular add-ons">
       <div class="wrap">
         <div class="section-head">
@@ -5549,6 +5621,7 @@ add(
         </div>
       </div>
     </section>''',
+   _HP_REVIEWS,
    GC_NOTE,
    REMOTE_ACCESS_BAND,
    _dash_band("home", alt=True),
