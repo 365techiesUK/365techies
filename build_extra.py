@@ -22611,6 +22611,148 @@ def _printer_page_extras(d):
         '<a href="/monthly-it-support/">monthly support plans from &pound;18.25</a>, or <a href="/book-service/">book a visit</a>.</p>')
     return d
 
+# ============================================ REFURBISHED DELL LAPTOPS v2 (26 Sep 2026)
+# /refurbished-dell-laptops-bournemouth/ sold refurbished Latitudes without naming a single model or
+# price beyond "from £510". Same treatment as the Dell hub (v2): beside the unchanged H1, the three
+# Latitude ranges (and OptiPlex desktops) with their from-prices; then proof; then every Latitude in
+# DELL_MACHINES with its guide price beside the real photo and the three buying steps; the page's own
+# sections, trust line and FAQ unchanged; three buyers' reviews. Components and styles are the hub's
+# (DELL_HUB_CSS, scoped to .dh), so no stylesheet bump.
+REFURB_LAPTOPS_V2 = 'refurbished-dell-laptops-bournemouth'
+_RL_TIERS = [
+    ("Latitude 3000", "hp-c-fix", "Latitude 3000 series", "Everyday budget laptops", "/refurbished-dell-latitude-3000/", "everyday"),
+    ("Latitude 5000", "hp-c-care", "Latitude 5000 series", "The business workhorse most people should buy", "/refurbished-dell-latitude-5000/", "the workhorse"),
+    ("Latitude 7000", "hp-c-biz", "Latitude 7000 series", "Premium ultralights, easy to carry", "/refurbished-dell-latitude-7000/", "premium ultralight"),
+]
+RL_CSS = """
+.rl-groups{display:grid;gap:1.1rem;margin-top:1.2rem}
+.rl-group__h{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin:0 0 .5rem;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan-soft)}
+.rl-group__h a{color:var(--hp-soft);text-decoration:none;letter-spacing:.06em;text-transform:none;font-family:var(--font-body);font-size:.82rem;font-weight:600}
+.rl-group__h a:hover{color:#fff}
+.rl-group .dh-machines{margin:0}
+@media (max-width:767px){
+  .rl-clamp .prose{position:relative;max-height:24rem;overflow:hidden}
+  .rl-clamp .prose::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6rem;background:linear-gradient(rgba(7,13,34,0),var(--bg))}
+  .rl-clamp.is-open .prose{max-height:none;overflow:visible}
+  .rl-clamp.is-open .prose::after{display:none}
+  .rl-more-wrap{padding-top:0;padding-bottom:0}
+  .rl-more{display:inline-flex;align-items:center;gap:.4rem;margin:.9rem 0 0;padding:.6rem 1rem;border-radius:999px;border:1px solid rgba(125,190,240,.42);background:rgba(9,18,40,.6);color:#dfe9f7;font:600 .9rem var(--font-body);cursor:pointer}
+}
+"""
+RL_FOLD_JS = """<script>
+(function(){ if(!window.matchMedia||!matchMedia('(max-width:767px)').matches) return;
+  ['s1','s2','s3','s4','s5'].forEach(function(id){ var sec=document.getElementById(id); if(!sec) return;
+    var pr=sec.querySelector('.prose'); if(!pr||pr.scrollHeight<560) return;
+    sec.classList.add('rl-clamp');
+    var b=document.createElement('button'); b.type='button'; b.className='rl-more'; b.setAttribute('aria-expanded','false');
+    b.textContent='Read more'; var w=document.createElement('div'); w.className='wrap rl-more-wrap'; w.appendChild(b); pr.parentNode.insertBefore(w,pr.nextSibling);
+    b.addEventListener('click',function(){ var open=sec.classList.toggle('is-open'); b.setAttribute('aria-expanded',open?'true':'false');
+      b.textContent=open?'Show less':'Read more'; if(!open) sec.scrollIntoView({block:'start'}); });
+  });
+})();
+</script>"""
+
+
+def _rl_from(series):
+    return min(m[5] for m in DELL_MACHINES if m[2] == series)
+
+
+def refurb_laptops_v2(d, crumbs):
+    """-> (hero_html, top_html, reviews_html) for the refurbished Dell laptops page."""
+    tiles = []
+    for series, c, title, blurb, href, _short in _RL_TIERS:
+        tiles.append(f'            <a class="hp-intent {c}" href="{href}"><span class="hp-ico">{_dh_ico("laptop")}</span>'
+                     f'<span class="hp-intent__t">{title}</span><span class="hp-intent__d">{blurb}</span>'
+                     f'<span class="hp-intent__p">FROM &pound;{_rl_from(series)}</span></a>')
+    desk_from = min(m[5] for m in DELL_MACHINES if m[1] == 'desktop')
+    tiles.append(f'            <a class="hp-intent hp-c-buy" href="/refurbished-dell-desktops-dorset/"><span class="hp-ico">{_dh_ico("monitor")}</span>'
+                 f'<span class="hp-intent__t">Rather a desktop?</span><span class="hp-intent__d">OptiPlex desktops, the same care</span>'
+                 f'<span class="hp-intent__p">FROM &pound;{desk_from}</span></a>')
+    lap_from = min(m[5] for m in DELL_MACHINES if m[1] == 'laptop')
+    hero_html = f'''    <style>{" ".join(l.strip() for l in (DELL_HUB_CSS + RL_CSS).strip().splitlines())}</style>
+    <section class="page-hero dh dh-hero" aria-label="Introduction">
+      <div class="dh-hero__grid">
+        <div>
+          <nav class="breadcrumb" aria-label="Breadcrumb">{crumbs}</nav>
+          <p class="eyebrow mono">{d['eyebrow']}</p>
+          <h1>{d['h1']}</h1>
+          <p class="lede">Tested ex-business Latitudes from &pound;{lap_from}, each with a new 1TB Samsung 990&nbsp;PRO, set up for you and backed by our 5-year guarantee on a 365 support plan. We bring it to you to try, or deliver UK-wide.</p>
+          <div class="page-hero__cta">
+            <a href="tel:+441202775566" class="button primary button--lg">Call 01202 775566</a>
+            <a href="/dell-hardware/#pick" class="button secondary button--lg">Pick a machine</a>
+          </div>
+          <a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Rated 4.9 on Google</strong></span><span>Dell reseller since 2001 &middot; family-run since 1995</span></a>
+          <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
+        </div>
+        <nav class="hp-intents" aria-label="Which Dell suits you?">
+          <p class="hp-intents__q">Which Dell suits you?</p>
+          <div class="hp-intents__grid">
+{chr(10).join(tiles)}
+          </div>
+        </nav>
+      </div>
+    </section>'''
+
+    groups = []
+    for series, _c, title, _b, href, short in _RL_TIERS:
+        ms = sorted((m for m in DELL_MACHINES if m[2] == series), key=lambda m: (m[5], m[3]))
+        rows = "\n".join(
+            f'              <li><a href="/dell-hardware/?model={m[0]}#pick"><b>{m[3]}</b><small>{m[4]}</small><em>&pound;{m[5]}<span>GUIDE</span></em></a></li>'
+            for m in ms)
+        groups.append(f'''          <div class="rl-group">
+            <p class="rl-group__h"><span>{series} &middot; {short}</span><a href="{href}">About the {series} &#8594;</a></p>
+            <ul class="dh-machines">
+{rows}
+            </ul>
+          </div>''')
+    top_html = f'''    <section class="dh dh-sec dh-proof" aria-label="What every refurbished Dell includes">
+      <div class="dh-in">
+        <ul class="dh-facts">
+          <li class="hp-c-fix"><b>1TB</b><span>new Samsung 990 PRO in every one</span></li>
+          <li class="hp-c-care"><b>5&nbsp;years</b><span>our guarantee, on a 365 support plan</span></li>
+          <li class="hp-c-buy"><b>2001</b><span>a Dell reseller since</span></li>
+          <li class="hp-c-biz"><b>4.9<i aria-hidden="true">&#9733;</i></b><span>average rating on Google</span></li>
+        </ul>
+        <p class="dh-indep"><strong>Tested, wiped and set up.</strong> Every machine is fully tested and securely wiped, with a clean licensed copy of Windows. We set it up, move your files across and stay on hand afterwards &mdash; not a sealed box from a warehouse, and not a marketplace gamble.</p>
+      </div>
+    </section>
+    <section class="dh dh-sec" id="models" aria-labelledby="models-title">
+      <div class="dh-in dh-buy">
+        <figure class="dh-photo">
+          <a class="dh-photo__frame" href="/dell-hardware/#spin"><img src="/images/spin/latitude-5520/spin_00.webp" width="1400" height="787" loading="lazy" decoding="async" alt="A refurbished Dell Latitude 5520 laptop, open, seen from the front with Windows 11 on the screen" /></a>
+          <figcaption>An example machine: a refurbished Latitude 5520 we photographed on 18 September 2026. <a href="/dell-hardware/#spin">Turn it round in 360&deg;</a></figcaption>
+          <ol class="dh-steps">
+            <li><b>Pick a machine</b><span>Online, in about a minute</span></li>
+            <li><b>We check and quote</b><span>Availability and the exact spec, before you commit</span></li>
+            <li><b>We bring it to you</b><span>Try it at home or work, set up and ready</span></li>
+          </ol>
+        </figure>
+        <div>
+          <p class="dh-kicker">Guide prices &middot; set-up included</p>
+          <h2 class="dh-h2" id="models-title">Pick your Latitude</h2>
+          <p class="dh-lede">Tap a machine to check it&rsquo;s available and get a quote. Not sure which? Tell us what you&rsquo;ll use it for and we&rsquo;ll match you &mdash; including when the cheaper one is the better buy.</p>
+          <div class="rl-groups">
+{chr(10).join(groups)}
+          </div>
+          <div class="dh-buy__cta hp-c-buy"><a class="dh-btn" href="/dell-hardware/#pick">Pick a machine &amp; get a quote &#8594;</a><a class="dh-link" href="tel:+441202775566">Or call 01202 775566</a></div>
+          <p class="dh-small">Guide prices. Stock changes all the time, so we confirm the exact machine, specification and grade before you buy.</p>
+        </div>
+      </div>
+    </section>'''
+
+    reviews_html = f'''    <section class="dh dh-sec" aria-labelledby="rl-reviews-title">
+      <div class="dh-in">
+        <p class="dh-kicker">What buyers say</p>
+        <h2 class="dh-h2" id="rl-reviews-title">Rated 4.9 on Google</h2>
+        <div class="dh-quotes">
+{_dell_hub_quotes("Dean Robertson", "Heather", "Sheila Cutler")}
+        </div>
+        <p style="margin:1.1rem 0 0;display:flex;flex-wrap:wrap;gap:.5rem 1.6rem"><a class="dh-link" href="/reviews/">Read all our reviews &#8594;</a><a class="dh-link" href="https://www.google.com/maps?cid=5924622613303465737" target="_blank" rel="noopener">See them on Google &#8594;</a></p>
+      </div>
+    </section>'''
+    return hero_html, top_html, reviews_html
+
+
 def build_new_page(d):
     if d['slug'] == 'printer-disappeared-after-windows-update': d = _printer_page_extras(d)
     faqs = [(f['q'], f['a']) if isinstance(f, dict) else tuple(f) for f in d['faqs']]
@@ -22699,10 +22841,14 @@ def build_new_page(d):
     </section>'''
     _hub = _pack_hub(d['slug'])
     _bch = bp.bc_sub(_hub[0], '/' + _hub[1] + '/', d['crumbName']) if _hub else bc(d['crumbName'])
-    content = "\n".join(x for x in [
-      hero(_bch, d['eyebrow'], d['h1'], hero_trust(d['lede']),
+    _hero = hero(_bch, d['eyebrow'], d['h1'], hero_trust(d['lede']),
            cta1=tuple(d['primaryCta']), cta2=tuple(d['secondaryCta']), chips=list(d['chips']),
-           scene=HERO_SCENES.get(_PACK_SCENE.get(d['slug']))),
+           scene=HERO_SCENES.get(_PACK_SCENE.get(d['slug'])))
+    if d['slug'] == REFURB_LAPTOPS_V2:   # 26 Sep 2026: models and prices up front, same H1 and sections
+        _hero, _rl_top, _rl_revs = refurb_laptops_v2(d, _bch)
+        toc, sections = "", _rl_top + "\n" + sections + "\n" + RL_FOLD_JS + "\n" + _rl_revs
+    content = "\n".join(x for x in [
+      _hero,
       toc,
       _hubbox,
       sections,
