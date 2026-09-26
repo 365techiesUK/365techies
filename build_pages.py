@@ -3384,7 +3384,7 @@ FIX_FLOW_AREAS = ('Rather have it done for you? Remote help from &pound;20, or i
 def _fix_flow_section(cfg):
     """One guided flow section. cfg: eyebrow, h2, lede, rev_suffix, os (bool), count, steps_html (the <li>s),
     fixed_html / stuck_html (endings; '{mins}' becomes ' in about N minutes'), steps_text (plain, for Copy),
-    areas (default True: the visible towns line under the steps)."""
+    areas (default True: the visible towns line under the steps; a string replaces the line)."""
     os_attr = ' data-os="1"' if cfg.get('os') else ''
     return ('    <section class="section" aria-label="Fix it with me" id="fixflow">\n      <div class="wrap">\n' + FIX_FLOW_STYLE + '\n'
             '        <div class="section-head">\n'
@@ -3396,7 +3396,7 @@ def _fix_flow_section(cfg):
             '          <div class="ff-top"><span class="ff-os" id="ff-os">Checking which Windows you have&hellip;</span><button type="button" class="ff-oslink" id="ff-ostoggle" hidden>Not right? Switch to Windows 10</button><span class="ff-prog" id="ff-prog" aria-live="polite">STEP 1 OF ' + str(cfg['count']) + '</span></div>\n'
             '          <ol class="ff-steps" id="ff-steps">' + cfg['steps_html'] + '          </ol>\n'
             '          <div class="ff-end" id="ff-end" hidden></div>\n'
-            + (('          <p class="ff-areas">' + FIX_FLOW_AREAS + '</p>\n') if cfg.get('areas', True) else '') +
+            + (('          <p class="ff-areas">' + (cfg['areas'] if isinstance(cfg.get('areas'), str) else FIX_FLOW_AREAS) + '</p>\n') if cfg.get('areas', True) else '') +
             '          <template id="ff-tpl-fixed">' + cfg['fixed_html'] + '</template>\n'
             '          <template id="ff-tpl-stuck">' + cfg['stuck_html'] + '</template>\n'
             '          <template id="ff-tpl-text">' + cfg['steps_text'] + '</template>\n'

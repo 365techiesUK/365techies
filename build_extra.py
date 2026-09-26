@@ -22108,7 +22108,11 @@ def fix_panel(d):
               else '<a class="dpan__link" href="/remote-support/">How remote help works</a>')
     if str(s_href).startswith('tel:') and 'tel:' in second:
         second = ''   # the page's own second link (in the footer line) is already the phone number
-    if d['slug'] in FIX_PANEL_HARDWARE:   # hands-on repair: the collection promise, as on /computer-repairs/
+    if d['slug'] == 'move-virgin-media-email-to-gmail':   # the owner's price for this job (26 Sep 2026)
+        fix_tag = "We&rsquo;ll move it for you"
+        fix_ticks = ('<li>&pound;60 per email address, agreed first</li>\n              <li>Every message and folder into Gmail</li>\n'
+                     '              <li>We phone first, and you watch every step</li>')
+    elif d['slug'] in FIX_PANEL_HARDWARE:   # hands-on repair: the collection promise, as on /computer-repairs/
         fix_tag = "We&rsquo;ll get to the bottom of it"
         fix_ticks = ('<li>Diagnosis first &mdash; no fix, no fee</li>\n              <li>Free local collection across Dorset</li>\n'
                      '              <li>A clear price before we start</li>\n              <li>12-month warranty on the repair</li>')
@@ -23016,6 +23020,97 @@ def refurb_v2(d, crumbs):
 refurb_laptops_v2 = refurb_v2   # (old name)
 
 
+# ============================================ VIRGIN EMAIL MOVE v2 (26 Sep 2026)
+# /move-virgin-media-email-to-gmail/ brings ~47 search clicks a month and two paid jobs in September.
+# The owner set the price for doing it for people: £60 per email address. Same first screen as the other
+# pages: H1 unchanged, call first, four choices (move it for me, do it myself, keep my Virgin address,
+# is this Junara email real?), then the offer box. Junara facts: Virgin's help page, read 25 Sep 2026.
+VIRGIN_MOVE_V2 = 'move-virgin-media-email-to-gmail'
+FIX_FLOW_OVERRIDES[VIRGIN_MOVE_V2].update({
+    'stuck_tail': ' We do the whole move for &pound;60 per email address, agreed before we start.',
+    # the towns line keeps its links, with this job's own price instead of "remote help from £20"
+    'areas': ('Rather we did it for you? We move it for &pound;60 per email address, done remotely, for people across '
+              '<a href="/it-support-bournemouth/">Bournemouth</a>, <a href="/it-support-poole/">Poole</a>, '
+              '<a href="/it-support-christchurch/">Christchurch</a>, <a href="/it-support-ringwood/">Ringwood</a> '
+              'and the <a href="/it-support-new-forest/">New Forest</a>.'),
+})
+
+
+def virgin_move_v2(d, crumbs):
+    tiles = [
+        ("hp-c-care", "mail", "Move it for me", "Every message and folder into Gmail, done remotely", "&pound;60 PER ADDRESS", "#move-for-me"),
+        ("hp-c-fix", "book", "Do it myself", "The free step-by-step guide on this page", "FREE", "#fixflow"),
+        ("hp-c-biz", "clock", "Keep my Virgin address", "Sign up with Junara before your date", "PAID, PER ADDRESS", "#s2"),
+        ("hp-c-buy", "alert", "Is this Junara email real?", "Virgin&rsquo;s own emails have no sign-up link", "SCAM CHECK", "#s2"),
+    ]
+    tiles_html = "\n".join(
+        f'            <a class="hp-intent {c}" href="{href}"><span class="hp-ico">{_dh_ico(i)}</span><span class="hp-intent__t">{t}</span>'
+        f'<span class="hp-intent__d">{dd}</span><span class="hp-intent__p">{p}</span></a>'
+        for c, i, t, dd, p, href in tiles)
+    hero_html = f'''    <style>{" ".join(l.strip() for l in DELL_HUB_CSS.strip().splitlines())}</style>
+    <section class="page-hero dh dh-hero" aria-label="Introduction">
+      <div class="dh-hero__grid">
+        <div>
+          <nav class="breadcrumb" aria-label="Breadcrumb">{crumbs}</nav>
+          <p class="eyebrow mono">{d['eyebrow']}</p>
+          <h1>{d['h1']}</h1>
+          <p class="lede">Virgin Media is handing its email to a company called Junara. To keep your address you have to sign up and pay Junara for each one &mdash; or move to free Gmail once. We can do the whole move for you for <strong>&pound;60 per address</strong>.</p>
+          <div class="page-hero__cta">
+            <a href="tel:+441202775566" class="button primary button--lg">Call 01202 775566</a>
+            <a href="#fixflow" class="button secondary button--lg">Do it myself</a>
+          </div>
+          <a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Rated 4.9 on Google</strong></span><span>Family-run since 1995 &middot; no fix, no fee</span></a>
+          <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
+        </div>
+        <nav class="hp-intents" aria-label="What would you like to do?">
+          <p class="hp-intents__q">What would you like to do?</p>
+          <div class="hp-intents__grid">
+{tiles_html}
+          </div>
+        </nav>
+      </div>
+    </section>'''
+    offer_html = f'''    <section class="dh dh-sec" id="move-for-me" aria-labelledby="move-for-me-title">
+      <div class="dh-in">
+        <p class="dh-kicker">Rather we just did it?</p>
+        <h2 class="dh-h2" id="move-for-me-title">We move your Virgin email to Gmail for you</h2>
+        <div class="vm-offer">
+          <div class="vm-price hp-c-care">
+            <p class="vm-price__num"><b>&pound;60</b><span>per email address</span></p>
+            <ul class="dh-ticks vm-ticks">
+              <li>Every message and folder copied into Gmail</li>
+              <li>Forwarding set up while the old address still works</li>
+              <li>Checked on your computer, and your phone if you like</li>
+              <li>Done remotely: we phone first, and you watch every step</li>
+            </ul>
+            <p class="dh-small">Agreed before we start &middot; no fix, no fee &middot; usually the same day, Mon&ndash;Fri 9&ndash;5</p>
+            <div class="dh-buy__cta"><a class="dh-btn" href="tel:+441202775566">Call 01202 775566</a><a class="dh-link" href="sms:+447520615332">Or text 07520 615332</a></div>
+          </div>
+          <div class="vm-alt">
+            <p class="vm-alt__h">Or keep your Virgin address</p>
+            <p>Sign up with Junara before the date in the email Virgin sent you. It is paid, monthly or yearly, per address &mdash; and if you miss the date the mailbox is suspended, then deleted 120 days later.</p>
+            <p class="vm-alt__h">Watch for fake Junara emails</p>
+            <p>Virgin&rsquo;s own emails contain no sign-up link, and Virgin says never to pay through a phone call or an emailed link. Not sure? Call us before you click.</p>
+            <p><a class="dh-link" href="#s2">What&rsquo;s happening, in full &#8594;</a></p>
+          </div>
+        </div>
+      </div>
+      <style>
+      .vm-offer{{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:1.1rem;margin-top:1.2rem}}
+      .vm-price{{padding:1.4rem 1.4rem 1.3rem;border-radius:24px;border:1px solid transparent;background:radial-gradient(90% 70% at 100% 0%,rgba(15,179,74,.18),transparent 65%) padding-box,linear-gradient(#0c1630,#0c1630) padding-box,linear-gradient(135deg,#7af08e,#0fb34a 45%,#1d97e3) border-box;box-shadow:0 34px 70px -38px rgba(15,179,74,.6)}}
+      .vm-price__num{{display:flex;align-items:baseline;gap:.5rem;margin:0}}
+      .vm-price__num b{{font-family:var(--font-display);font-weight:600;font-size:clamp(2.6rem,5vw,3.4rem);line-height:1;color:#fff}}
+      .vm-price__num span{{color:var(--hp-soft);font-size:1rem}}
+      .vm-ticks{{grid-template-columns:1fr;margin-top:1rem}}
+      .vm-alt{{padding:1.3rem 1.35rem;border-radius:24px;border:1px solid var(--hp-edge);background:var(--hp-card)}}
+      .vm-alt p{{margin:0 0 .8rem;font-size:.93rem;line-height:1.55;color:var(--hp-body)}}
+      .vm-alt .vm-alt__h{{margin:0 0 .35rem;font-family:var(--font-display);font-weight:600;font-size:1.05rem;color:var(--hp-ink)}}
+      @media (max-width:860px){{.vm-offer{{grid-template-columns:1fr}}}}
+      </style>
+    </section>'''
+    return hero_html, offer_html
+
+
 def build_new_page(d):
     if d['slug'] == 'printer-disappeared-after-windows-update': d = _printer_page_extras(d)
     faqs = [(f['q'], f['a']) if isinstance(f, dict) else tuple(f) for f in d['faqs']]
@@ -23107,6 +23202,9 @@ def build_new_page(d):
     _hero = hero(_bch, d['eyebrow'], d['h1'], hero_trust(d['lede']),
            cta1=tuple(d['primaryCta']), cta2=tuple(d['secondaryCta']), chips=list(d['chips']),
            scene=HERO_SCENES.get(_PACK_SCENE.get(d['slug'])))
+    if d['slug'] == VIRGIN_MOVE_V2:   # 26 Sep 2026: the owner's £60-per-address offer up front
+        _hero, _vm_offer = virgin_move_v2(d, _bch)
+        toc, sections = "", _vm_offer + "\n" + sections
     if d['slug'] in REFURB_V2:   # 26 Sep 2026: models and prices up front, same H1 and sections
         _hero, _rl_top, _rl_revs = refurb_v2(d, _bch)
         toc, sections = "", _rl_top + "\n" + sections + "\n" + RL_FOLD_JS + "\n" + _rl_revs
