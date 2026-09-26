@@ -148,8 +148,8 @@
  },
  "backup-support": {
   "first": "2026-07-28",
-  "h": "ce26e234557656a2",
-  "last": "2026-09-13"
+  "h": "fb8267ca3d16cd81",
+  "last": "2026-09-26"
  },
  "basic-paye-tools-could-not-access-the-database": {
   "first": "2026-07-28",
@@ -663,7 +663,7 @@
  },
  "coverage-checker": {
   "first": "2026-07-28",
-  "h": "98f49440647377a7",
+  "h": "6085d18fce7f9fcf",
   "last": "2026-09-26"
  },
  "custom-pc-builder": {
@@ -1206,7 +1206,7 @@
  },
  "home-it-support-plans": {
   "first": "2026-07-28",
-  "h": "b3b15ae4adfdc59f",
+  "h": "4699e2d24c9202a7",
   "last": "2026-09-26"
  },
  "home-it-support-subscriptions": {
@@ -2015,8 +2015,8 @@
  },
  "meet-the-team": {
   "first": "2026-07-28",
-  "h": "7ba1c363d51ab6cd",
-  "last": "2026-09-13"
+  "h": "55baff006202bdf6",
+  "last": "2026-09-26"
  },
  "meraki-licence-expiry-what-happens": {
   "first": "2026-07-28",
@@ -2080,8 +2080,8 @@
  },
  "monthly-it-support": {
   "first": "2026-07-28",
-  "h": "c1c85d0383135cb8",
-  "last": "2026-09-25"
+  "h": "3090a29acdb99793",
+  "last": "2026-09-26"
  },
  "motorhome-hire-fleet-monitoring": {
   "first": "2026-07-28",

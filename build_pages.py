@@ -1733,7 +1733,7 @@ PROMISE_CALL = ("We call before we connect",
 PROMISE_ETA = ("We call when we&rsquo;re on our way",
   "For home and business visits we phone ahead to say we&rsquo;re on our way and give you an estimated arrival time &mdash; so you know exactly when to expect us.")
 PROMISE_SMS = ("Backup reminders by text",
-  "If you&rsquo;d like, we can send you a scheduled text message when your backup is due, reminding you to plug in your backup drive.")
+  "We set your backup to run daily, weekly or monthly, whichever suits you. If you&rsquo;d like, we&rsquo;ll text you a reminder to plug your backup drive in, timed to when it runs.")
 PROMISE_PEOPLE = ("The same friendly faces",
   "Because we&rsquo;re a family team, you deal with people who get to know you. We remember how you like your computer set up, especially as we service it every six weeks.")
 
@@ -5538,7 +5538,7 @@ def _home_plans_v2():
           <nav class="breadcrumb" aria-label="Breadcrumb">{bc("Home Support Plans")}</nav>
           <p class="eyebrow mono">// HOME PLANS</p>
           <h1>Home IT support <em class="grad grad--cyan">plans</em></h1>
-          <p class="lede">&pound;18.25 a month per computer: a full service every six weeks with a written report, unlimited remote help and your security and backups checked. Change or cancel any time.</p>
+          <p class="lede">&pound;18.25 a month per computer: a full service every six weeks with a written report, unlimited remote help, your security checked, and your backup set up and checked. Change or cancel any time.</p>
           <div class="page-hero__cta">
             <a href="tel:+441202775566" class="button primary button--lg">Call 01202 775566</a>
             <a href="#plans" class="button secondary button--lg">See the plans</a>
@@ -5604,7 +5604,7 @@ add(
    f'''    <section class="support-options" id="plans" aria-label="Home support plans">
 <h2 class="sr-only">Home support plans</h2>
       <div class="plan-grid">
-{plan_card("home", None, "HOME SUPPORT", "Home IT Support", "Friendly cover for your computer &mdash; remote help, regular maintenance and security, all year round.", "&pound;18.25", ("","/mo per computer"), ["Support for your computer","Unlimited remote support","Full service every 6 weeks","Written Service Report each visit","Your own 365 dashboard","Security &amp; backup checks","Wi-Fi, printer &amp; email help","Loyalty discount on any fault work","Patient, jargon-free help"], "Set up Direct Debit", subscribe_href("home-support"), "Sets up <strong>one computer</strong> at &pound;18.25/mo. More than one? <a href=\"/contact/?topic=home-it-support\">Tell us</a> and we&rsquo;ll set the exact amount.")}
+{plan_card("home", None, "HOME SUPPORT", "Home IT Support", "Friendly cover for your computer &mdash; remote help, regular maintenance and security, all year round.", "&pound;18.25", ("","/mo per computer"), ["Support for your computer","Unlimited remote support","Full service every 6 weeks","Written Service Report each visit","Your own 365 dashboard","Security &amp; backup checks","Backup set up, with reminder texts if you like","Wi-Fi, printer &amp; email help","Loyalty discount on any fault work","Patient, jargon-free help"], "Set up Direct Debit", subscribe_href("home-support"), "Sets up <strong>one computer</strong> at &pound;18.25/mo. More than one? <a href=\"/contact/?topic=home-it-support\">Tell us</a> and we&rsquo;ll set the exact amount.")}
 {plan_card("business", "&#9733; MOST POPULAR", "+ MICROSOFT 365", "Home Support + Microsoft 365", "Everything in Home IT Support, plus Microsoft 365 set up and looked after for you.", "&pound;23.10", ("","/mo per computer"), ["Everything in Home IT Support","Microsoft 365 set up &amp; supported","Outlook email &amp; Office apps","OneDrive backup help","One Microsoft 365 licence included","Extra licences &pound;4.85/mo each","Your own 365 dashboard"], "Set up Direct Debit", subscribe_href("home-support-365"), "Sets up <strong>one computer</strong> at &pound;23.10/mo (one Microsoft 365 licence). More computers or licences? <a href=\"/contact/?topic=home-it-support\">Tell us</a> and we&rsquo;ll set the exact amount.")}
       </div>
       <p class="plans-note mono" data-reveal>// &pound;18.25/MO PER COMPUTER &middot; ADD MICROSOFT 365 FOR &pound;4.85/MO PER USER &middot; MORE THAN ONE COMPUTER? JUST TELL US</p>
@@ -5638,6 +5638,7 @@ add(
               <tr><th scope="row">Written Service Report after every service</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
               <tr><th scope="row">Wi-Fi, printer &amp; email help</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
               <tr><th scope="row">Security &amp; backup checks</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+              <tr><th scope="row">Backup set up to run daily, weekly or monthly, with reminder texts if you like</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
               <tr><th scope="row">New device setup help</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
               <tr><th scope="row">Loyalty discount on any fault work</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
               <tr><th scope="row">Microsoft 365 (Outlook &amp; Office apps)</th><td class="no">&ndash;</td><td class="yes">&#10003;</td></tr>
