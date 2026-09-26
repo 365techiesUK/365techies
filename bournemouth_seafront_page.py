@@ -18,6 +18,10 @@ trailer, then how to play and the spec. Every picture and clip is the game's own
   film/final/out16 - rendered before captions were added), one per level. hero-poster = the loop's first frame.
 - media/sim-*.mp4 / .webp: the three ride-simulator Shorts and two stills from the ride-simulator film
   (tuning panel at 1:46, side-on instrument view at 1:51), captions included - they explain the physics.
+- v3 (26 Sep, owner: "more gameplay... more fun... making people want to play it"): hero-loop-v3.mp4 is the game
+  project's own 23 s gameplay cut (seven moments through the game camera with its HUD and banners: burning pier,
+  ramp jump, dolphins, SEIZED!, rescue tow, PIER SAVED!, eFoil lift-off), from drafts/social/seafront-hero-loop-v3/;
+  poster = its first frame. hero-loop-v2 / hero-poster retired.
 - v2 (26 Sep): the out16 dolphins shot was filmed at 0.55x, which the game shows with a skipped frame in ten
   (judder). hero-loop-v2 and lv-dolphins-v2 use the smooth 0.5x take instead: out-dw2/cine16/S frames 1897-2068
   (dolphins leaping alongside the RIB, pier and big wheel behind), per the game project.
@@ -71,7 +75,7 @@ _HEAD = '''
   </script>
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Seafront" />
-  <link rel="preload" as="image" href="/bournemouth/games/seafront/media/hero-poster.webp" />'''
+  <link rel="preload" as="image" href="/bournemouth/games/seafront/media/hero-poster-v3.webp" />'''
 
 # (slug-ish id, picture, name, one line) - the nine levels, in the game's own order
 _LEVELS = [
@@ -241,8 +245,8 @@ def _body(crumbs):
           </div>
           <div class="sfp-media">
             <div class="sfp-frame">
-              <video class="sfp-auto" muted loop playsinline preload="none" poster="{_M}hero-poster.webp" aria-label="Highlights: the pier, the pirate raid, a stunt jump, the dolphins, a rescue and Old Harry Rocks">
-                <source src="{_M}hero-loop-v2.mp4" type="video/mp4">
+              <video class="sfp-auto" muted loop playsinline preload="none" poster="{_M}hero-poster-v3.webp" aria-label="Gameplay: carving past the burning pier, a ramp jump, dolphins at the bow, seizing the smugglers&rsquo; ship, a rescue tow, saving the pier and the eFoil lifting off">
+                <source src="{_M}hero-loop-v3.mp4" type="video/mp4">
               </video>
               <span class="sfp-tag">Gameplay &middot; in your browser</span>
             </div>
