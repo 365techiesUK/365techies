@@ -31,6 +31,8 @@ api/pcm-paylink.json
 api/pcm-paylink.json.lock
 api/pcm-paylink.json.*.tmp
 api/pcm-paylink.log
+# Service reports: one per customer PC per service, full of customer detail - never in a public repo
+api/pcm-rep-*.html
 api/pcm-paylink-events.json
 api/pcm-paylink-events.json.*.tmp
 # Slack jobs poller: last-poll status (names the channel error) + log
