@@ -277,3 +277,46 @@ test('the source carries no control characters', () => {
   }
   assert.deepEqual(bad, [], `control characters found: ${JSON.stringify(bad.slice(0, 5))}`);
 });
+
+/* ------------------------------------------------------ KV write budget */
+
+test('KV BUDGET: out-of-area roadworks cost no per-message writes', async () => {
+  // 26 Sep 2026: the national feed spent the account-wide 1,000 KV writes a
+  // day within minutes, because every message - including the ones then thrown
+  // away as out of area - wrote four keys. The busy counters are now tallied
+  // in memory, so N filtered messages may cause at most ONE batched save.
+  const { dir, key, crt } = makeCert();
+  const pem = fs.readFileSync(crt, 'utf8');
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async () => new Response(pem);      // stands in for the SNS cert host
+  const env = envWith();
+  let puts = 0;
+  const realPut = env.ROADWORKS.put.bind(env.ROADWORKS);
+  env.ROADWORKS.put = async (k, v, o) => { puts++; return realPut(k, v, o); };
+  try {
+    const msg = {
+      Type: 'Notification', MessageId: 'budget-1', TopicArn: PERMIT_ARN,
+      Message: JSON.stringify({ highway_authority: 'Hampshire County Council', permit_reference_number: 'HX1' }),
+      Timestamp: '2026-09-26T00:00:00.000Z', SignatureVersion: '2',
+      SigningCertURL: 'https://sns.eu-west-2.amazonaws.com/SimpleNotificationService-test.pem',
+    };
+    const payload = path.join(dir, 'payload.txt');
+    const sigFile = path.join(dir, 'sig.bin');
+    fs.writeFileSync(payload, canonicalString(msg), 'utf8');
+    execFileSync('openssl', ['dgst', '-sha256', '-sign', key, '-out', sigFile, payload], { stdio: 'ignore' });
+    msg.Signature = fs.readFileSync(sigFile).toString('base64');
+
+    const N = 40;
+    for (let i = 0; i < N; i++) {
+      const res = await post(env, msg);
+      assert.equal(res.status, 200, `message ${i} should verify and be filtered out`);
+    }
+    // Before the fix: 4 writes each = 160. Now: at most one batched save
+    // (seen, filteredOut, lastSeen, authorities = 4 writes), whatever N is.
+    assert.ok(puts <= 4, `expected at most one batched save, got ${puts} KV writes for ${N} messages`);
+    assert.equal(await env.ROADWORKS.get('count:stored'), null, 'nothing out of area is stored');
+  } finally {
+    globalThis.fetch = realFetch;
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});

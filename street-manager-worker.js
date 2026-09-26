@@ -228,7 +228,7 @@ async function store(msg, env) {
 
   // Record every authority string we ever see, so the filter above can later
   // be tightened against real values rather than assumptions.
-  if (authority) await noteAuthority(env, authority);
+  if (authority) noteAuthority(authority);
 
   if (!OURS.test(authority)) {
     await bump(env, "filteredOut");
@@ -411,21 +411,65 @@ export function base64ToBytes(b64) {
 
 /* ---------------------------------------------------------------- bookkeeping */
 
+// ⚠️ KV WRITE BUDGET (26 Sep 2026). This Worker is subscribed to the NATIONAL
+// Street Manager topics, so AWS sends it every roadworks change in England and
+// it discards all but BCP/Dorset. It used to write to KV for every one of them:
+// the "seen" counter plus lastSeen (2), the authority tally (1) and the
+// "filteredOut" counter (1) - four writes for a message it then threw away.
+// That spent the ACCOUNT-WIDE free allowance (1,000 KV writes a day) within
+// minutes of midnight UTC, after which every KV write on the account failed -
+// the live-visitors collector included. Cloudflare emailed about it 26 Sep.
+//
+// So the busy counters are now tallied in memory and saved together at most
+// once per FLUSH_MS per isolate. Rare, important ones (the handshake, signature
+// failures, malformed input) are still saved at once, because those are what
+// /health exists to show during the 3-day confirmation window. Module state is
+// per isolate and is lost when Cloudflare recycles one, so the busy counts are a
+// lower bound and /health can lag them by up to FLUSH_MS - fine for "is the
+// feed alive", which is all they are for.
+const FLUSH_MS = 60 * 60 * 1000;
+const BATCHED = new Set(["seen", "filteredOut", "stored"]);
+const pending = { counts: {}, authorities: {}, lastSeen: null };
+let lastFlush = 0;   // 0: an isolate's first busy count saves at once, so a live feed shows quickly
+
 async function bump(env, key) {
+  if (BATCHED.has(key)) {
+    pending.counts[key] = (pending.counts[key] || 0) + 1;
+    if (key === "seen") pending.lastSeen = new Date().toISOString();
+    return maybeFlush(env);
+  }
   const k = `count:${key}`;
   const n = parseInt((await env.ROADWORKS.get(k)) || "0", 10) || 0;
   await env.ROADWORKS.put(k, String(n + 1));
-  if (key === "seen") await env.ROADWORKS.put("meta:lastSeen", new Date().toISOString());
 }
 
-async function noteAuthority(env, name) {
-  const cur = JSON.parse((await env.ROADWORKS.get("meta:authorities")) || "{}");
-  if (cur[name]) {
-    cur[name] += 1;
-  } else {
-    cur[name] = 1;
+function noteAuthority(name) {
+  pending.authorities[name] = (pending.authorities[name] || 0) + 1;
+}
+
+async function maybeFlush(env) {
+  if (Date.now() - lastFlush < FLUSH_MS) return;
+  lastFlush = Date.now();
+  const { counts, authorities, lastSeen } = pending;
+  pending.counts = {};
+  pending.authorities = {};
+  pending.lastSeen = null;
+  try {
+    for (const [key, add] of Object.entries(counts)) {
+      const k = `count:${key}`;
+      const n = parseInt((await env.ROADWORKS.get(k)) || "0", 10) || 0;
+      await env.ROADWORKS.put(k, String(n + add));
+    }
+    if (Object.keys(authorities).length) {
+      const cur = JSON.parse((await env.ROADWORKS.get("meta:authorities")) || "{}");
+      for (const [name, add] of Object.entries(authorities)) cur[name] = (cur[name] || 0) + add;
+      await env.ROADWORKS.put("meta:authorities", JSON.stringify(cur));
+    }
+    if (lastSeen) await env.ROADWORKS.put("meta:lastSeen", lastSeen);
+  } catch {
+    // A failed save must never become a 5xx: AWS would retry the message, and a
+    // retry costs more than a lost diagnostic count.
   }
-  await env.ROADWORKS.put("meta:authorities", JSON.stringify(cur));
 }
 
 async function addToIndex(env, ref) {
@@ -456,7 +500,7 @@ async function health(env) {
     lastSeen: await env.ROADWORKS.get("meta:lastSeen"),
     lastConfirm: JSON.parse((await env.ROADWORKS.get("meta:lastConfirm")) || "null"),
     authorities: JSON.parse((await env.ROADWORKS.get("meta:authorities")) || "{}"),
-    note: "counts.seen rising with confirmed=0 means the handshake has not completed",
+    note: "counts.seen rising with confirmed=0 means the handshake has not completed. seen, filteredOut, stored and authorities are saved at most hourly, so they can lag.",
   });
 }
 
