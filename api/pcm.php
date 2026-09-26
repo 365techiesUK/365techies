@@ -104,6 +104,19 @@ function pcm_json_body($raw) {
     return $in;
 }
 
+// The "next service" the APP is told. Nothing clears a booking once its date has passed - only a cancellation
+// or a new booking replaces it - so after every visit the app kept showing that visit as the next service
+// (the owner's DELL3520, 26 Sep 2026: "Next service: Mon 27 Jul" two months on). Three hours after the visit's
+// start it is answered as 'not booked yet' with no time. Words, not an empty string: apps up to v26 keep their
+// old date when "next" comes back empty, but show these words after "Next service:"; v28 reads them as no
+// booking and offers "tap Book a visit". The stored record is untouched, and the portal gets the raw fields
+// (it already hides a passed booking itself, and treats any "next" as booked).
+function pcm_next_out($c) {
+    $ts = intval(isset($c['next_ts']) ? $c['next_ts'] : 0);
+    if ($ts > 0 && $ts < time() - 3 * 3600) return array('not booked yet', 0);
+    return array((string)(isset($c['next']) ? $c['next'] : ''), $ts);
+}
+
 $raw = file_get_contents('php://input');
 $in = pcm_json_body($raw);
 if (!is_array($in)) out(array('ok'=>false,'error'=>'bad_request'));
@@ -125,7 +138,8 @@ if ($action === 'activate') {
     if ($machine !== '' && !isset($c['machines'][$machine]) && count($c['machines']) < 25)
         $c['machines'][$machine] = array('name'=>substr((string)($in['name']??''),0,60),'score'=>0,'verdict'=>'','seen'=>$now,'activated'=>$now);
     save($DATA,$db);
-    out(array('ok'=>true,'tier'=>$tier,'customer'=>$c['name'] ?? '','next'=>$c['next'] ?? ''));
+    list($nextOut) = pcm_next_out($c);
+    out(array('ok'=>true,'tier'=>$tier,'customer'=>$c['name'] ?? '','next'=>$nextOut));
 }
 
 if ($action === 'checkin') {
@@ -196,7 +210,8 @@ if ($action === 'checkin') {
                 (string)($c['addr']['city'] ?? ''), (string)($c['addr']['postcode'] ?? ''))))))
             : '');
     $detail['have'] = ($detail['tel'] !== '' || $detail['mobile'] !== '' || $detail['addr'] !== '');
-    out(array('ok'=>true,'tier'=>$tier,'next'=>$c['next'] ?? '','next_ts'=>intval($c['next_ts'] ?? 0),'ready'=>$ready,'fam'=>$fam,'fam_url'=>$famUrl,'detail'=>$detail,'msg_unread'=>$msgUnread) + $upd);
+    list($nextOut, $nextTsOut) = pcm_next_out($c);   // a visit that has passed is not the next service
+    out(array('ok'=>true,'tier'=>$tier,'next'=>$nextOut,'next_ts'=>$nextTsOut,'ready'=>$ready,'fam'=>$fam,'fam_url'=>$famUrl,'detail'=>$detail,'msg_unread'=>$msgUnread) + $upd);
 }
 
 // latest published app build, from the git-deployed manifest (downloads/pcm/version.json).
