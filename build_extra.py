@@ -10366,16 +10366,121 @@ def refurbished_local():
     desc = "Refurbished Dell Latitude laptops & OptiPlex PCs in Bournemouth, Poole & across Dorset — tested, fitted with a new Samsung Pro SSD, set up, supported and guaranteed by a local family firm since 1995."
     faqs = [
       ("Where can I buy a refurbished laptop near me in Dorset?", "365 Techies supplies refurbished Dell business laptops and PCs right across Bournemouth, Poole, Christchurch and the wider Dorset area &mdash; set up and supported locally. Tell us what you need and we&rsquo;ll match you one."),
-      ("Do you deliver, or do I collect?", "Whatever suits &mdash; collect locally, or we can deliver and set it up across Dorset. Much of the setup we can even do remotely once you&rsquo;re up and running."),
-      ("Are they new or refurbished?", "Professionally refurbished, tested ex-business Dell &mdash; each with a brand-new Samsung Pro SSD, graded A, B or C, and backed by any remaining Dell warranty where applicable plus our own 5-year guarantee on a 365 support plan (with a support plan). See our <a href=\"/dell-hardware/\">refurbished Dell page</a> for the full detail."),
+      ("Do you deliver, or do I collect?", "We come to you: we bring the machine to your home or business to see first, anywhere we cover, and set it up there &mdash; or deliver it. If it&rsquo;s easier, we can meet at the Kinson Community Centre by appointment. Much of the setup we can even do remotely once you&rsquo;re up and running."),
+      ("Are they new or refurbished?", "Professionally refurbished, tested ex-business Dell &mdash; each with a brand-new Samsung Pro SSD, graded A, B or C, and backed by any remaining Dell warranty where applicable plus our own 5-year guarantee on a 365 support plan. See our <a href=\"/dell-hardware/\">refurbished Dell page</a> for the full detail."),
       ("Which areas do you cover?", "Bournemouth, Poole, Christchurch, Ferndown, Wimborne, Wareham, Dorchester, Weymouth and across Dorset &mdash; remotely and on-site."),
     ]
+    # ---- v2 (26 Sep 2026): the hub layout - what they're after with prices beside the H1, proof, popular
+    # machines with guide prices beside the real photo, the page's own two sections, buyers' reviews, FAQ.
+    # This page gets few clicks but two of three refurbished-Dell quotes in September started here.
+    _rd_css = DELL_HUB_CSS + """
+.rl-groups{display:grid;gap:1.1rem;margin-top:1.2rem}
+.rl-group__h{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin:0 0 .5rem;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan-soft)}
+.rl-group__h a{color:var(--hp-soft);text-decoration:none;letter-spacing:.06em;text-transform:none;font-family:var(--font-body);font-size:.82rem;font-weight:600}
+.rl-group__h a:hover{color:#fff}
+.rl-group .dh-machines{margin:0}
+"""
+    _by = {m[0]: m for m in DELL_MACHINES}
+    _lap_from = min(m[5] for m in DELL_MACHINES if m[1] == 'laptop')
+    _desk_from = min(m[5] for m in DELL_MACHINES if m[1] == 'desktop')
+    _rd_tiles = [
+      ("hp-c-fix", "laptop", "A laptop", "Business-grade Latitudes, built for years of daily use", f"FROM &pound;{_lap_from}", "/refurbished-dell-laptops-bournemouth/"),
+      ("hp-c-care", "monitor", "A desktop", "OptiPlex desktops in Micro, SFF or Tower", f"FROM &pound;{_desk_from}", "/refurbished-dell-desktops-dorset/"),
+      ("hp-c-biz", "user", "Match me one", "Tell us your budget and what it&rsquo;s for; we pick", "NO OBLIGATION", "/dell-hardware/#match"),
+      ("hp-c-buy", "star", "Brand-new Dell", "Ordered to spec and set up, as a Dell reseller", "RESELLER SINCE 2001", "/dell-hardware/#new-dell"),
+    ]
+    _icons = {"laptop": _dh_ico("laptop"), "monitor": _dh_ico("monitor"),
+              "user": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg>',
+              "star": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5-4.8-4.6 6.6-.9z"/></svg>'}
+    _rd_tiles_html = "\n".join(
+      f'            <a class="hp-intent {c}" href="{href}"><span class="hp-ico">{_icons[i]}</span><span class="hp-intent__t">{t}</span>'
+      f'<span class="hp-intent__d">{d}</span><span class="hp-intent__p">{p}</span></a>'
+      for c, i, t, d, p, href in _rd_tiles)
+    _rd_hero = f'''    <style>{" ".join(l.strip() for l in _rd_css.strip().splitlines())}</style>
+    <section class="page-hero dh dh-hero" aria-label="Introduction">
+      <div class="dh-hero__grid">
+        <div>
+          <nav class="breadcrumb" aria-label="Breadcrumb">{bc("Refurbished Laptops in Dorset")}</nav>
+          <p class="eyebrow mono">// BOURNEMOUTH &middot; POOLE &middot; DORSET</p>
+          <h1>Refurbished laptops &amp; PCs in <em class="grad grad--cyan">Bournemouth, Poole &amp; Dorset</em></h1>
+          <p class="lede">Tested ex-business Dell laptops and desktops from &pound;{_lap_from}, each with a new 1TB Samsung 990&nbsp;PRO, set up and supported by your local family firm, here since 1995. We bring it to you to see first.</p>
+          <div class="page-hero__cta">
+            <a href="tel:+441202775566" class="button primary button--lg">Call 01202 775566</a>
+            <a href="/dell-hardware/#match" class="button secondary button--lg">Find me a refurbished Dell</a>
+          </div>
+          <a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Rated 4.9 on Google</strong></span><span>Kind on your wallet, and the planet</span></a>
+          <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
+        </div>
+        <nav class="hp-intents" aria-label="What are you after?">
+          <p class="hp-intents__q">What are you after?</p>
+          <div class="hp-intents__grid">
+{_rd_tiles_html}
+          </div>
+        </nav>
+      </div>
+    </section>'''
+    def _rd_rows(ids):
+        return "\n".join(
+          f'              <li><a href="/dell-hardware/?model={_by[i][0]}#pick"><b>{_by[i][3]}</b><small>{_by[i][4]}</small><em>&pound;{_by[i][5]}<span>GUIDE</span></em></a></li>'
+          for i in ids)
+    _rd_top = f'''    <section class="dh dh-sec dh-proof" aria-label="What every refurbished Dell includes">
+      <div class="dh-in">
+        <ul class="dh-facts">
+          <li class="hp-c-fix"><b>1TB</b><span>new Samsung 990 PRO in every one</span></li>
+          <li class="hp-c-care"><b>5&nbsp;years</b><span>our guarantee, on a 365 support plan</span></li>
+          <li class="hp-c-buy"><b>1995</b><span>a local family firm since</span></li>
+          <li class="hp-c-biz"><b>4.9<i aria-hidden="true">&#9733;</i></b><span>average rating on Google</span></li>
+        </ul>
+        <p class="dh-indep"><strong>Tested, wiped and set up.</strong> Every machine is fully tested and securely wiped, with a clean licensed copy of Windows. We set it up, move your files across and stay on hand afterwards.</p>
+      </div>
+    </section>
+    <section class="dh dh-sec" id="popular" aria-labelledby="popular-title">
+      <div class="dh-in dh-buy">
+        <figure class="dh-photo">
+          <a class="dh-photo__frame" href="/dell-hardware/#spin"><img src="/images/spin/latitude-5520/spin_00.webp" width="1400" height="787" loading="lazy" decoding="async" alt="A refurbished Dell Latitude 5520 laptop, open, seen from the front with Windows 11 on the screen" /></a>
+          <figcaption>An example machine: a refurbished Latitude 5520 we photographed on 18 September 2026. <a href="/dell-hardware/#spin">Turn it round in 360&deg;</a></figcaption>
+          <ol class="dh-steps">
+            <li><b>Pick a machine</b><span>Online, in about a minute</span></li>
+            <li><b>We check and quote</b><span>Availability and the exact spec, before you commit</span></li>
+            <li><b>We bring it to you</b><span>Try it at home or work, set up and ready</span></li>
+          </ol>
+        </figure>
+        <div>
+          <p class="dh-kicker">Guide prices &middot; set-up included</p>
+          <h2 class="dh-h2" id="popular-title">Popular refurbished Dells</h2>
+          <p class="dh-lede">Tap one to check it&rsquo;s available and get a quote &mdash; or tell us what you need and we&rsquo;ll match you.</p>
+          <div class="rl-groups">
+          <div class="rl-group">
+            <p class="rl-group__h"><span>Laptops &middot; Latitude</span><a href="/refurbished-dell-laptops-bournemouth/">All laptops &#8594;</a></p>
+            <ul class="dh-machines">
+{_rd_rows(["latitude-3420", "latitude-5430", "latitude-7420"])}
+            </ul>
+          </div>
+          <div class="rl-group">
+            <p class="rl-group__h"><span>Desktops &middot; OptiPlex</span><a href="/refurbished-dell-desktops-dorset/">All desktops &#8594;</a></p>
+            <ul class="dh-machines">
+{_rd_rows(["optiplex-3080", "optiplex-5080", "optiplex-7090"])}
+            </ul>
+          </div>
+          </div>
+          <div class="dh-buy__cta hp-c-buy"><a class="dh-btn" href="/dell-hardware/#pick">See everything &amp; get a quote &#8594;</a><a class="dh-link" href="tel:+441202775566">Or call 01202 775566</a></div>
+          <p class="dh-small">Guide prices. Stock changes all the time, so we confirm the exact machine, specification and grade before you buy.</p>
+        </div>
+      </div>
+    </section>'''
+    _rd_revs = f'''    <section class="dh dh-sec" aria-labelledby="rd-reviews-title">
+      <div class="dh-in">
+        <p class="dh-kicker">What buyers say</p>
+        <h2 class="dh-h2" id="rd-reviews-title">Rated 4.9 on Google</h2>
+        <div class="dh-quotes">
+{_dell_hub_quotes("Dean Robertson", "Heather", "Sheila Cutler")}
+        </div>
+        <p style="margin:1.1rem 0 0;display:flex;flex-wrap:wrap;gap:.5rem 1.6rem"><a class="dh-link" href="/reviews/">Read all our reviews &#8594;</a><a class="dh-link" href="https://www.google.com/maps?cid=5924622613303465737" target="_blank" rel="noopener">See them on Google &#8594;</a></p>
+      </div>
+    </section>'''
     content = "\n".join([
-      hero(bc("Refurbished Laptops in Dorset"), "// BOURNEMOUTH &middot; POOLE &middot; DORSET",
-           'Refurbished laptops &amp; PCs in <em class="grad grad--cyan">Bournemouth, Poole &amp; Dorset</em>',
-           "Affordable, reliable refurbished Dell business laptops and desktops &mdash; tested, fitted with a new Samsung Pro SSD, set up and supported by your local family firm, here since 1995. Kind on your wallet and the planet.",
-           cta1=("Find me a refurbished Dell", "/dell-hardware/#match"), cta2=("Call 01202 775566", "tel:+441202775566"),
-           chips=["Local since 1995","New Samsung Pro SSD","5-year guarantee"]),
+      _rd_hero,
+      _rd_top,
       f'''    <section class="section" aria-label="Local refurbished Dell">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
@@ -10385,7 +10490,7 @@ def refurbished_local():
           <p>Unlike a faceless online seller, we&rsquo;re a real local family firm: we recommend the right machine, fit a brand-new Samsung Pro SSD, set it up, move your data across and support it for years &mdash; and you can phone, text or email us, or we&rsquo;ll come to you. New to the idea? See whether <a href="/are-refurbished-laptops-any-good/">refurbished laptops are any good</a>, or the full detail on our <a href="/dell-hardware/">refurbished Dell page</a>.</p>
         </div>
         <ul class="checklist" data-stagger>
-{checklist(["Tested ex-business Dell Latitude &amp; OptiPlex","Brand-new Samsung Pro SSD (5-year guarantee)","Dell warranty + our own 5-year guarantee on a 365 support plan","Graded A, B or C &mdash; you know what you&rsquo;re getting","Set up, data moved across &amp; fully supported","Full repair service if you ever break it"])}
+{checklist(["Tested ex-business Dell Latitude &amp; OptiPlex","Brand-new Samsung Pro SSD (5-year guarantee)","Any remaining Dell warranty + our own 5-year guarantee on a 365 support plan","Graded A, B or C &mdash; you know what you&rsquo;re getting","Set up, data moved across &amp; fully supported","Full repair service if you ever break it"])}
         </ul>
       </div>
     </section>''',
@@ -10394,7 +10499,7 @@ def refurbished_local():
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>/02 — ACROSS DORSET</p>
           <h2 class="section-title section-title--center" data-title>Refurbished computers, supplied locally<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>We supply, set up and support refurbished Dell laptops and PCs right across the area &mdash; collect locally, or we&rsquo;ll deliver and set up for you.</p>
+          <p class="lede lede--center" data-reveal>We supply, set up and support refurbished Dell laptops and PCs right across the area &mdash; we bring it to you to see first, or deliver and set it up for you.</p>
         </div>
         <ul class="security-grid" data-stagger>
 {grid_cards([("Bournemouth &amp; Poole","Refurbished Dell laptops and PCs supplied and set up across Bournemouth, Poole and Christchurch."),("Across Dorset","Ferndown, Wimborne, Wareham, Dorchester, Weymouth and the surrounding towns and villages."),("Set up &amp; supported","We configure everything and can support it remotely, wherever you are in Dorset."),("Trade in your old one","We&rsquo;ll move your data across, then securely wipe and recycle your old machine &mdash; see <a href=\"/secure-it-disposal/\">secure IT disposal</a>.")])}
@@ -10402,6 +10507,7 @@ def refurbished_local():
         <p style="text-align:center;margin-top:1.8rem" data-reveal><a class="button secondary" href="/dell-hardware/">See all the detail on our refurbished Dell page &#8594;</a></p>
       </div>
     </section>''',
+      _rd_revs,
       faq_html(faqs),
       cta("Find your refurbished Dell",
           "Tell us what you need and we&rsquo;ll match you a tested, refurbished Dell &mdash; set up, supported and guaranteed, right here in Dorset.",
