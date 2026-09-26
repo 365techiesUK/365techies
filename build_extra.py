@@ -23140,7 +23140,24 @@ def plusnet_move_v2(d, crumbs):
     return hero_html, offer_html
 
 
-EMAIL_MOVE_V2 = {VIRGIN_MOVE_V2: virgin_move_v2, JUNARA_SLUG: junara_v2, PLUSNET_MOVE_V2: plusnet_move_v2}
+# BT (26 Sep 2026): a fix page, not a closing provider, so the same first screen without the move box.
+BT_OUTLOOK_V2 = 'btinternet-email-wont-add-to-new-outlook'
+
+
+def bt_outlook_v2(d, crumbs):
+    hero_html = _email_hero(d, crumbs,
+        'The new Outlook often refuses a btinternet.com address: the password rejected on a loop, or &lsquo;something went wrong&rsquo;. The fix is nearly always to add it by hand with BT&rsquo;s own settings and your normal BT email password &mdash; BT has no app passwords. Left BT broadband? Check your mailbox type first.',
+        ("Fix it with me", "#fixflow"), [
+        ("hp-c-fix", "book", "Fix it with me", "BT&rsquo;s own settings, one step at a time", "FREE", "#fixflow"),
+        ("hp-c-care", "wrench", "Fix it for me", "We connect and add it while you watch", "FROM &pound;20, AGREED FIRST", "#fix-help"),
+        ("hp-c-biz", "alert", "Left BT broadband?", "BT Basic email only works in a browser", "CHECK THIS FIRST", "#s4"),
+        ("hp-c-buy", "monitor", "Try classic Outlook", "It often adds BT email first time", "ONE TOGGLE", "#s5"),
+    ])
+    return hero_html, ""
+
+
+EMAIL_MOVE_V2 = {VIRGIN_MOVE_V2: virgin_move_v2, JUNARA_SLUG: junara_v2, PLUSNET_MOVE_V2: plusnet_move_v2,
+                 BT_OUTLOOK_V2: bt_outlook_v2}   # email pages with the intent-first first screen
 
 
 def build_new_page(d):

@@ -14,8 +14,8 @@ AT_A_GLANCE = {
  'btinternet-email-wont-add-to-new-outlook': [
   ('Most common cause', 'The new Outlook auto-detects the wrong settings &mdash; adding the account manually as IMAP usually fixes it.'),
   ('Settings to use', 'mail.btinternet.com for both servers &mdash; port 993 incoming, 465 outgoing, SSL/TLS on.'),
-  ('Which password?', 'Your normal BT email password &mdash; unless two-step verification is on, when BT has you generate an app-specific one.'),
-  ('Left BT broadband?', 'Your mailbox may have dropped to Basic (webmail only); BT&rsquo;s Premium Mail, around &pound;7.50 a month, restores app access.'),
+  ('Which password?', 'Your normal BT email password. BT has no app passwords; its two-step check is only for signing in to your BT account in a browser.'),
+  ('Left BT broadband?', 'Your mailbox may have dropped to Basic (webmail only); BT&rsquo;s Premium email, &pound;7.50 a month, keeps app access.'),
   ('Will I lose my emails?', 'No &mdash; IMAP keeps your mail on BT&rsquo;s servers, so re-adding the account deletes nothing.'),
   ('Can it be fixed remotely?', 'Yes &mdash; most BT email setups are done remotely, usually the same day, and it&rsquo;s no fix, no fee.'),
  ],
