@@ -1940,6 +1940,33 @@ function rv_h_security($rows) {
     return $h . '</table></td></tr></table>';
 }
 
+/** Programs check: programs the PC doesn't need, each with the factual reason from our list.
+ *  Each row = array(shown name, reason, 'remove'|'not_needed'). */
+function rv_h_progs($rows, $more = 0) {
+    if (!is_array($rows) || !$rows) return '';
+    $h = '<div style="font-size:13px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#7c8aa5 !important;margin:0 0 10px 0;">Programs worth a look</div>'
+       . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 8px 0;">';
+    $n = count($rows); $i = 0;
+    foreach ($rows as $r) {
+        $i++;
+        $label = rv_h(isset($r[0]) ? $r[0] : ''); $why = rv_h(isset($r[1]) ? $r[1] : '');
+        if ($label === '') continue;
+        $rm = isset($r[2]) && $r[2] === 'remove';
+        $border = $i < $n ? 'border-bottom:1px solid #edf1f7;' : '';
+        $h .= '<tr><td valign="top" width="30" style="width:30px;padding:9px 0;' . $border . '">'
+            . '<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>'
+            . '<td align="center" valign="middle" width="22" height="22" bgcolor="' . ($rm ? '#fdf0dc' : '#eef1f6') . '" style="width:22px;height:22px;background-color:' . ($rm ? '#fdf0dc' : '#eef1f6') . ';border-radius:11px;'
+            . 'font-size:13px;font-weight:700;line-height:22px;color:' . ($rm ? '#9a5b00' : '#5b6b8a') . ' !important;mso-line-height-rule:exactly;">' . ($rm ? '!' : '&ndash;') . '</td>'
+            . '</tr></table></td>'
+            . '<td valign="top" style="padding:9px 0 9px 8px;font-size:16px;line-height:1.5;color:#0b1226 !important;' . $border . '">'
+            . '<strong>' . $label . '</strong>' . ($why !== '' ? '<br><span style="font-size:14px;color:#5b6b8a !important;">' . $why . '</span>' : '')
+            . '</td></tr>';
+    }
+    $h .= '</table>';
+    return $h . rv_h_p(($more > 0 ? '&hellip;and ' . (int)$more . ' more in the full report. ' : '')
+        . '<span style="color:#3d4d6d;">None of these is needed. Want them gone? Just reply and we will remove them for you.</span>');
+}
+
 /** The "what we did" checklist. Each row = array(label, detail). */
 function rv_h_checks($title, $rows) {
     if (!is_array($rows) || !$rows) return '';
@@ -1993,6 +2020,13 @@ function sr_body($first, $sr) {
             $t .= '  ' . (isset($r[1], $mk[$r[1]]) ? $mk[$r[1]] : '[--]') . '  ' . $r[0] . (isset($r[2]) && $r[2] !== '' ? ' - ' . $r[2] : '') . "\r\n";
         }
         $t .= "\r\n";
+    }
+    // isset: entries queued before the programs check have no 'progs' at all
+    if (!empty($sr['progs'])) {
+        $t .= "Programs worth a look\r\n";
+        foreach ((array)$sr['progs'] as $r) if (isset($r[0]) && $r[0] !== '') $t .= '  ' . ((isset($r[2]) && $r[2] === 'remove') ? '[!!]' : '[--]') . '  ' . $r[0] . (isset($r[1]) && $r[1] !== '' ? ' - ' . $r[1] : '') . "\r\n";
+        if (!empty($sr['progs_more'])) $t .= '  ...and ' . (int)$sr['progs_more'] . " more in the full report\r\n";
+        $t .= "  None of these is needed. Want them gone? Reply and we will remove them for you.\r\n\r\n";
     }
     if (!empty($sr['done'])) {
         $t .= (!empty($sr['selfrun']) ? "What the service did today\r\n" : "What we did today\r\n");
@@ -2057,6 +2091,7 @@ function sr_body_html($first, $sr, $famIntro = '', $famFoot = '') {
     );
     if ($score !== null) $blocks[] = rv_h_score($score, $verdict, sr_delta($score, $sr['prev'], $sr['prev_ts']));
     if (!empty($sr['sec'])) $blocks[] = rv_h_security($sr['sec']);
+    if (!empty($sr['progs'])) $blocks[] = rv_h_progs($sr['progs'], isset($sr['progs_more']) ? (int)$sr['progs_more'] : 0);
     $blocks[] = rv_h_checks(!empty($sr['selfrun']) ? 'What the service did today' : 'What we did today', (array)$sr['done']);
     if (sr_apps_updated($sr)) $blocks[] = rv_h_p('<strong style="color:#0b1226;">Every program updated, not just Windows.</strong> Criminals now use AI to hunt for a single out-of-date program to use as a back door, so the service updates all the programs on your computer &ndash; not only Windows and Microsoft 365. Keeping everything current is one of the most important things it does.');
     if (!empty($sr['recs'])) {
@@ -2139,6 +2174,12 @@ function sr_sample() {
             array('Windows version', 'ok', 'Windows 11 - fully supported'),
             array('Drive encryption', 'warn', 'BitLocker is on but no recovery key was found - worth saving one together'),
         ),
+        // programs check sample: the FTC finding on Restoro (March 2024) and the lapsed-trial wording from the list
+        'progs' => array(
+            array('Restoro', 'Restoro is a \'PC repair\' program. In 2024 its maker and Reimage\'s paid US$26m to settle US Federal Trade Commission charges over fake Windows pop-ups and misleading scans; older people were particularly affected.', 'remove'),
+            array('McAfee LiveSafe', "Installed, but it isn't the program protecting this PC - usually a trial that has ended. Removing it stops its reminders and any clash with the one that is.", 'not_needed'),
+        ),
+        'progs_more' => 0,
         'backup' => 'Windows Backup - last completed 2 September',
         'cost' => 'About £9.53–£29 a year at a typical 30p a unit, on about 8.7 hours a day (estimated for this kind of PC)',
         'asset' => array(
@@ -2358,6 +2399,17 @@ function sr_record($key, $machine, $ts, $summary, $cust, $prev = array()) {
         $sec[] = array($lab, $state, sr_clean(isset($row[2]) ? $row[2] : '', 140));
         if (count($sec) >= 8) break;
     }
+    // programs check (evaluated by reportup against OUR list - see pcm-programs-lib.php): programs the PC doesn't need,
+    // as [shown name, reason, verdict]. Remote-access tools are never put in the customer's email (staff only).
+    $progs = array(); $progsMore = 0;
+    $pin = isset($summary['progs']['unneeded']) && is_array($summary['progs']['unneeded']) ? $summary['progs']['unneeded'] : array();
+    foreach ($pin as $u) {
+        if (!is_array($u)) continue;
+        $pn = sr_clean(isset($u['dn']) && (string)$u['dn'] !== '' ? $u['dn'] : (isset($u['name']) ? $u['name'] : ''), 60);
+        if ($pn === '') continue;
+        if (count($progs) >= 6) { $progsMore++; continue; }
+        $progs[] = array($pn, sr_clean(isset($u['reason']) ? $u['reason'] : '', 240), (isset($u['verdict']) && $u['verdict'] === 'remove') ? 'remove' : 'not_needed');
+    }
     $score = null;
     if (isset($summary['scoren']) && is_numeric($summary['scoren'])) $score = max(0, min(100, (int)$summary['scoren']));
     elseif (preg_match('/(\d{1,3})\s*%/', (string)(isset($summary['score']) ? $summary['score'] : ''), $sm)) $score = max(0, min(100, (int)$sm[1]));
@@ -2370,6 +2422,7 @@ function sr_record($key, $machine, $ts, $summary, $cust, $prev = array()) {
         'prev' => (isset($prev['score']) && $prev['score'] !== null) ? (int)$prev['score'] : null,
         'prev_ts' => isset($prev['ts']) ? (int)$prev['ts'] : 0,
         'done' => $done, 'recs' => $recs, 'sec' => $sec,
+        'progs' => $progs, 'progs_more' => $progsMore,
         'asset' => sr_asset_clean(isset($summary['asset']) ? $summary['asset'] : null),
         'backup' => sr_clean(isset($summary['backup']) ? $summary['backup'] : '', 160),
         // v4.4+: what the PC costs to run, worded by the tool from Windows' own on/off record (the app's

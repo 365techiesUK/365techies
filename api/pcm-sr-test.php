@@ -346,5 +346,27 @@ ok(strpos($html, '<td align="center" bgcolor="#1d97e3" style="background-color:#
 ok(strpos($html, '<span style="color:#ffffff;">View the full report</span></a>') !== false, 'the button words sit in a white span that Outlook\'s link colours cannot override');
 ok(substr_count((string)file_get_contents(__DIR__ . '/pcm-review.php'), 'mso-padding-alt:17px 38px') === 3, 'all three big buttons in the email code carry the fix (rv_h_cta and both portal-welcome templates)');
 
+echo "\n-- programs check (evaluated by reportup against our list)\n";
+$pg = array('unneeded' => array(), 'remote' => array(array('id' => 'anydesk', 'name' => 'AnyDesk', 'dn' => 'AnyDesk', 'verdict' => 'staff_only', 'reason' => '')));
+$pg['unneeded'][] = array('id' => 'restoro', 'name' => 'Restoro', 'dn' => 'Restoro', 'verdict' => 'remove', 'reason' => 'Restoro is a PC repair program. In 2024 its maker and Reimage paid US$26m to settle US Federal Trade Commission charges over fake Windows pop-ups and misleading scans.');
+for ($i = 1; $i <= 6; $i++) $pg['unneeded'][] = array('id' => 'x' . $i, 'name' => 'Tool ' . $i, 'dn' => 'Tool ' . $i . ' <b>Pro</b>', 'verdict' => 'weird', 'reason' => 'Not needed on a home PC.');
+sr_record($KEY, $MACHINE, $TS + 90, $summary + array('progs' => $pg), $cust);
+$pe = q()['sr'][$KH . '-' . $MACHINE . '-' . ($TS + 90)];
+ok(count($pe['progs']) === 6 && $pe['progs_more'] === 1, 'six programs kept, the seventh counted as more', json_encode(array(count($pe['progs']), $pe['progs_more'])));
+ok($pe['progs'][0][2] === 'remove' && $pe['progs'][1][2] === 'not_needed' && $pe['progs'][1][0] === 'Tool 1 Pro', 'verdict is a closed pair, names cleaned', json_encode($pe['progs'][1]));
+$pt = sr_body('Sofia', $pe); $ph = sr_body_html('Sofia', $pe);
+ok(strpos($pt, "Programs worth a look\r\n  [!!]  Restoro - Restoro is a PC repair program. In 2024") !== false && strpos($pt, '...and 1 more in the full report') !== false, 'the text email lists them, remove first', '');
+ok(strpos($ph, 'Programs worth a look') !== false && strpos($ph, '<strong>Restoro</strong>') !== false && strpos($ph, 'Want them gone?') !== false, 'the HTML email lists them');
+ok(strpos($pt . $ph, 'AnyDesk') === false, 'remote-access tools never reach the customer\'s email');
+$old = $pe; unset($old['progs'], $old['progs_more']);
+set_error_handler(function ($no, $str) { global $notices; $notices[] = $str; return true; }); $notices = array();
+$ot = sr_body('Sofia', $old); $oh = sr_body_html('Sofia', $old);
+restore_error_handler();
+ok(!$notices && strpos($ot . $oh, 'Programs worth a look') === false, 'an entry queued before the programs check renders cleanly, with no block and no notice', implode('; ', $notices));
+ok(strpos(sr_body_html('Steve', sr_sample()), 'Programs worth a look') !== false, 'the ?test=report sample shows the block');
+require_once __DIR__ . '/pcm-slack-lib.php';
+$sl = pcm_slack_prog_lines(array('progs' => $pg + array('active' => array('McAfee LiveSafe', 'Norton 360'))));
+ok(strpos($sl, 'Security: 2 programs protecting at once') !== false && strpos($sl, 'Remote-access tools installed (staff only') !== false && strpos($sl, 'AnyDesk') !== false, 'the staff Slack post carries the conflict and the remote tools', $sl);
+
 echo "\n" . ($fails ? $fails . ' FAILED' : 'all passed') . "\n";
 exit($fails ? 1 : 0);

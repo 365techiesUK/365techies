@@ -1,0 +1,3986 @@
+{
+ "ver": 1,
+ "updated": "2026-09-26",
+ "about": "365 Techies programs check: security programs, PC optimisers, driver updaters, adware and remote-access tools, each with a factual reason and its sources. Used by 365 PC Manager and PC Service Professional. Read-only: nothing is removed automatically.",
+ "rules": [
+  {
+   "id": "allow-acer-care-center",
+   "name": "Acer Care Center",
+   "publisher": "Acer Incorporated",
+   "cat": "allow",
+   "kind": "maker_tool",
+   "verdict": "ok",
+   "rx": "\\bcare\\s+cent(?:er|re)\\b",
+   "prx": "\\bacer\\b",
+   "scrx": "",
+   "reason": "",
+   "staff": "Acer's own preinstalled maintenance app: system info, hardware diagnostics, warranty, driver and software updates, recovery. 'Care Center Service' name not verified; publisher regex keeps matches to Acer. Never flag.",
+   "sources": [
+    {
+     "url": "https://community.acer.com/en/kb/articles/145-acer-care-center-overview",
+     "supports": "Acer's own overview of Acer Care Center (live page blocks automated fetchers)"
+    },
+    {
+     "url": "https://web.archive.org/web/20251110082641/https://community.acer.com/en/kb/articles/145-acer-care-center-overview",
+     "supports": "Archived copy: 'a pre-installed software application designed to help you maintain and optimize your Acer computer'; diagnostics, updates, recovery"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Acer Care Center",
+    "Care Center Service"
+   ]
+  },
+  {
+   "id": "allow-amd-software",
+   "name": "AMD Software: Adrenalin Edition / AMD Chipset Software",
+   "publisher": "Advanced Micro Devices, Inc.",
+   "cat": "allow",
+   "kind": "maker_tool",
+   "verdict": "ok",
+   "rx": "^amd (?:software|chipset software|radeon software)\\b",
+   "prx": "advanced micro devices|\\bamd\\b",
+   "scrx": "",
+   "reason": "",
+   "staff": "AMD's own graphics and chipset driver software, including its official auto-detect installer.",
+   "sources": [
+    {
+     "url": "https://www.amd.com/en/support/download/drivers.html",
+     "supports": "AMD's official drivers and support page (timed out on automated fetch, not re-read)"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "AMD Software",
+    "AMD Chipset Software",
+    "AMD Radeon Software"
+   ]
+  },
+  {
+   "id": "allow-dell-command-update",
+   "name": "Dell Command | Update / Dell Update",
+   "publisher": "Dell Inc.",
+   "cat": "allow",
+   "kind": "maker_tool",
+   "verdict": "ok",
+   "rx": "^dell (?:command \\| update|update)\\b",
+   "prx": "\\bdell\\b",
+   "scrx": "",
+   "reason": "",
+   "staff": "Dell's tool for BIOS, firmware, driver and application updates (Dell Command | Update for business PCs; Dell Update is the home version).",
+   "sources": [
+    {
+     "url": "https://www.dell.com/support/kbdoc/en-us/000177325/dell-command-update",
+     "supports": "Dell: Dell Command | Update 'simplifies the BIOS, firmware, driver, and application update experience'"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Dell Command | Update",
+    "Dell Command | Update for Windows Universal",
+    "Dell Update",
+    "Dell Update for Windows Universal"
+   ]
+  },
+  {
+   "id": "allow-dell-optimizer",
+   "name": "Dell Optimizer",
+   "publisher": "Dell",
+   "cat": "allow",
+   "kind": "maker_tool",
+   "verdict": "ok",
+   "rx": "\\bdell\\s+(?:precision\\s+)?optimi[sz]er\\b",
+   "prx": "\\bdell\\b",
+   "scrx": "",
+   "reason": "",
+   "staff": "Dell's own performance/power app, only for Dell PCs. Never flag despite 'Optimizer' in the name.",
+   "sources": [
+    {
+     "url": "https://www.dell.com/support/kbdoc/en-us/000128673/dell-optimizer-over-view-and-common-questions",
+     "supports": "Dell's own support page: Dell Optimizer 'is designed to only optimize the performance of a Dell computer'"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Dell Optimizer",
+    "Dell Precision Optimizer"
+   ]
+  },
+  {
+   "id": "allow-dell-supportassist",
+   "name": "Dell SupportAssist",
+   "publisher": "Dell Inc.",
+   "cat": "allow",
+   "kind": "maker_tool",
+   "verdict": "ok",
+   "rx": "^(?:dell )?supportassist",
+   "prx": "\\bdell\\b",
+   "scrx": "",
+   "reason": "",
+   "staff": "Dell's own support and update tool for home PCs. Keep it, and keep it updated.",
+   "sources": [
+    {
+     "url": "https://www.dell.com/en-uk/lp/supportassist-for-home-pcs",
+     "supports": "Dell's official SupportAssist page: identifies updates, detects hardware and software issues"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Microsoft: 'Avoid downloading drivers from any websites other than the manufacturer's official site'"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Dell SupportAssist",
+    "Dell SupportAssist Remediation",
+    "Dell SupportAssist OS Recovery Plugin for Dell Update",
+    "SupportAssist Recovery Assistant",
+    "Dell SupportAssistAgent"
+   ]
+  },
+  {
+   "id": "allow-hp-smart",
+   "name": "HP Smart",
+   "publisher": "HP Inc.",
+   "cat": "allow",
+   "kind": "maker_tool",
+   "verdict": "ok",
+   "rx": "^hp smart\\b",
+   "prx": "\\bhp\\b|hewlett",
+   "scrx": "",
+   "reason": "",
+   "staff": "HP's printer app, not a driver updater. Listed so it is never flagged. Store (MSIX) app, so usually not in the Uninstall keys.",
+   "sources": [
+    {
+     "url": "https://apps.microsoft.com/detail/9wzdncrfhwlh",
+     "supports": "HP Smart, published by HP, in the Microsoft Store"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "HP Smart"
+   ]
+  },
+  {
+   "id": "allow-hp-support-assistant",
+   "name": "HP Support Assistant",
+   "publisher": "HP Inc.",
+   "cat": "allow",
+   "kind": "maker_tool",
+   "verdict": "ok",
+   "rx": "^hp support (?:assistant|solutions framework)\\b",
+   "prx": "\\bhp\\b|hewlett",
+   "scrx": "",
+   "reason": "",
+   "staff": "HP's own support tool; provides HP firmware and driver updates.",
+   "sources": [
+    {
+     "url": "https://support.hp.com/us-en/help/hp-support-assistant",
+     "supports": "HP: 'automatic firmware and driver updates'"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "HP Support Assistant",
+    "HP Support Solutions Framework"
+   ]
+  },
+  {
+   "id": "allow-intel-dsa",
+   "name": "Intel Driver & Support Assistant",
+   "publisher": "Intel",
+   "cat": "allow",
+   "kind": "maker_tool",
+   "verdict": "ok",
+   "rx": "^intel.{0,4} driver ?(?:&|and) ?support assistant\\b",
+   "prx": "intel",
+   "scrx": "",
+   "reason": "",
+   "staff": "Intel's free tool for Intel graphics, Wi-Fi and Bluetooth drivers. '.{0,4}' allows for the (R) sign: 1 char in .NET, 2 bytes in PCRE without /u, 3 chars as '(R)'.",
+   "sources": [
+    {
+     "url": "https://www.intel.com/content/www/us/en/support/detect.html",
+     "supports": "Intel: 'The Intel® Driver & Support Assistant keeps your system up-to-date' for most Intel hardware"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Intel® Driver & Support Assistant",
+    "Intel(R) Driver & Support Assistant"
+   ]
+  },
+  {
+   "id": "allow-lenovo-vantage-system-update",
+   "name": "Lenovo Vantage / Lenovo System Update",
+   "publisher": "Lenovo",
+   "cat": "allow",
+   "kind": "maker_tool",
+   "verdict": "ok",
+   "rx": "^lenovo (?:vantage|commercial vantage|system update)\\b",
+   "prx": "lenovo",
+   "scrx": "",
+   "reason": "",
+   "staff": "Lenovo's own update tools for drivers, BIOS and apps. Vantage UI is a Store app; 'Lenovo Vantage Service' is the Win32 part that appears in Apps.",
+   "sources": [
+    {
+     "url": "https://apps.microsoft.com/detail/9wzdncrfj4mv",
+     "supports": "Lenovo Vantage, published by Lenovo, in the Microsoft Store"
+    },
+    {
+     "url": "https://support.lenovo.com/gb/en/solutions/ht003029-lenovo-system-update-update-drivers-bios-and-applications",
+     "supports": "Lenovo's official System Update page (drivers, BIOS, applications); returned 403 to automated fetch, not re-read"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Lenovo Vantage Service",
+    "Lenovo System Update",
+    "Lenovo Commercial Vantage"
+   ]
+  },
+  {
+   "id": "microsoft-defender",
+   "name": "Microsoft Defender Antivirus",
+   "publisher": "Microsoft Corporation",
+   "cat": "allow",
+   "kind": "builtin_antivirus",
+   "verdict": "ok",
+   "rx": "^microsoft defender(?: antivirus)?$",
+   "prx": "^microsoft corporation$",
+   "scrx": "^(?:windows defender|microsoft defender(?: antivirus)?)$",
+   "reason": "",
+   "staff": "Built into Windows 10/11; no Apps entry (example_names empty on purpose). Security Center lists it as 'Windows Defender'. It turns itself off automatically when another antivirus is installed, and can switch back on automatically if that product expires, is removed or stops protecting.",
+   "sources": [
+    {
+     "url": "https://learn.microsoft.com/en-us/defender-endpoint/microsoft-defender-antivirus-compatibility",
+     "supports": "Win10/11 with a non-Microsoft primary antivirus: Defender goes to disabled mode automatically (passive on Win11 if Smart App Control is on); it 'can be re-enabled automatically' if that product expires, is uninstalled or stops real-time protection; both active 'will impact performance and is not supported'"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960",
+     "supports": "'If you install a compatible non-Microsoft antivirus program Microsoft Defender antivirus will automatically turn itself off'"
+    },
+    {
+     "url": "https://learn.microsoft.com/en-us/answers/questions/1010071/av-status-rootsecuritycenter-missing",
+     "supports": "Example root\\SecurityCenter2 output: displayName 'Windows Defender' (productState 393472) and 'AVG Antivirus' (266240)"
+    }
+   ],
+   "confidence": "high",
+   "examples": []
+  },
+  {
+   "id": "allow-microsoft-pc-manager",
+   "name": "Microsoft PC Manager",
+   "publisher": "Microsoft Corporation",
+   "cat": "allow",
+   "kind": "microsoft_tool",
+   "verdict": "ok",
+   "rx": "\\bmicrosoft\\s+pc\\s+manager\\b",
+   "prx": "\\bmicrosoft\\b",
+   "scrx": "",
+   "reason": "",
+   "staff": "Microsoft's own optimiser; Microsoft's own performance-tips page points to it. It may be a Store app and so absent from the Uninstall keys. Allow-listed so any 'PC Manager' pattern never hits it.",
+   "sources": [
+    {
+     "url": "https://pcmanager.microsoft.com/en-us",
+     "supports": "Official Microsoft site for Microsoft PC Manager"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/experience/performance-optimization/tips-to-improve-pc-performance-in-windows",
+     "supports": "Microsoft support page recommends the PC Manager app"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Microsoft PC Manager"
+   ]
+  },
+  {
+   "id": "allow-msi-center",
+   "name": "MSI Center",
+   "publisher": "Micro-Star International",
+   "cat": "allow",
+   "kind": "maker_tool",
+   "verdict": "ok",
+   "rx": "^msi (?:center|dragon center|driver ?& ?app center|live update)\\b",
+   "prx": "msi|micro-star",
+   "scrx": "",
+   "reason": "",
+   "staff": "MSI's own utility; its Live Update feature supplies MSI drivers and BIOS.",
+   "sources": [
+    {
+     "url": "https://www.msi.com/Landing/MSI-Center",
+     "supports": "MSI's official MSI Center page (returned 403 to automated fetch, not re-read)"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "MSI Center",
+    "MSI Driver & App Center",
+    "MSI Dragon Center"
+   ]
+  },
+  {
+   "id": "allow-asus-myasus-armoury-crate",
+   "name": "MyASUS / Armoury Crate",
+   "publisher": "ASUSTeK Computer Inc.",
+   "cat": "allow",
+   "kind": "maker_tool",
+   "verdict": "ok",
+   "rx": "^(?:asus )?(?:myasus|armou?ry crate)\\b|^asus system control interface\\b",
+   "prx": "asus",
+   "scrx": "",
+   "reason": "",
+   "staff": "ASUS's own tools. MyASUS System Update installs BIOS, drivers and firmware; Armoury Crate is ASUS's motherboard/gaming utility. MyASUS is a Store app.",
+   "sources": [
+    {
+     "url": "https://www.asus.com/support/faq/1038301/",
+     "supports": "ASUS: MyASUS System Update updates BIOS, drivers and firmware; available from the Microsoft Store"
+    },
+    {
+     "url": "https://www.asus.com/supportonly/armoury%20crate/helpdesk_download/",
+     "supports": "ASUS official Armoury Crate download page"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "MyASUS",
+    "Armoury Crate",
+    "ARMOURY CRATE Lite Service",
+    "ASUS System Control Interface v3"
+   ]
+  },
+  {
+   "id": "allow-nvidia-app",
+   "name": "NVIDIA App / GeForce Experience",
+   "publisher": "NVIDIA Corporation",
+   "cat": "allow",
+   "kind": "maker_tool",
+   "verdict": "ok",
+   "rx": "^nvidia (?:app|geforce experience|graphics driver|control panel)\\b",
+   "prx": "nvidia",
+   "scrx": "",
+   "reason": "",
+   "staff": "NVIDIA's own driver companion apps. NVIDIA App is the current one; GeForce Experience is the older one. Both come from NVIDIA, so leave them.",
+   "sources": [
+    {
+     "url": "https://www.nvidia.com/en-gb/software/nvidia-app/",
+     "supports": "NVIDIA: 'Keep your PC up to date with the latest NVIDIA drivers and technology'"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "NVIDIA App",
+    "NVIDIA GeForce Experience 3.28.0.417",
+    "NVIDIA Graphics Driver 581.29"
+   ]
+  },
+  {
+   "id": "quick-assist",
+   "name": "Quick Assist (Windows)",
+   "publisher": "Microsoft Corporation",
+   "cat": "allow",
+   "kind": "remote_tool",
+   "verdict": "ok",
+   "rx": "^Quick Assist$",
+   "prx": "Microsoft",
+   "scrx": "",
+   "reason": "",
+   "staff": "Built into Windows (Store app, so usually absent from Uninstall keys). Microsoft (May 2024) saw Storm-1811 abuse it via fake IT-support calls and advises only letting a helper connect if you started the contact. Leave it installed.",
+   "sources": [
+    {
+     "url": "https://www.microsoft.com/en-us/security/blog/2024/05/15/threat-actors-misusing-quick-assist-in-social-engineering-attacks-leading-to-ransomware/",
+     "supports": "Storm-1811 misuse; 'Only allow a helper to connect to your device using Quick Assist if you initiated the interaction'"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Quick Assist"
+   ]
+  },
+  {
+   "id": "allow-realtek-audio",
+   "name": "Realtek audio / card reader drivers and Realtek Audio Console",
+   "publisher": "Realtek Semiconductor Corp.",
+   "cat": "allow",
+   "kind": "maker_tool",
+   "verdict": "ok",
+   "rx": "^realtek (?:audio (?:console|control)|high definition audio driver|audio driver|card reader|usb audio)\\b",
+   "prx": "realtek",
+   "scrx": "",
+   "reason": "",
+   "staff": "Chip-maker drivers, usually installed by the PC maker or Windows Update. Realtek Audio Console/Control is a Store app.",
+   "sources": [
+    {
+     "url": "https://apps.microsoft.com/detail/9p2b8mcsvpln",
+     "supports": "Realtek Audio Control, published by Realtek, in the Microsoft Store"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Realtek High Definition Audio Driver",
+    "Realtek Audio Driver",
+    "Realtek Card Reader",
+    "Realtek Audio Console"
+   ]
+  },
+  {
+   "id": "splashtop-365",
+   "name": "Splashtop (Streamer / SOS)",
+   "publisher": "Splashtop Inc.",
+   "cat": "allow",
+   "kind": "remote_tool",
+   "verdict": "ok",
+   "rx": "^Splashtop\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "",
+   "staff": "365 Techies' own remote-support tool (Splashtop Streamer / SOS). Do not flag. Confirm the Streamer is on 365's Splashtop account; if the customer doesn't know why it is there, check it as you would any remote tool.",
+   "sources": [
+    {
+     "url": "https://www.splashtop.com/",
+     "supports": "Vendor of Splashtop remote support and Streamer"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Splashtop Streamer",
+    "Splashtop Business",
+    "Splashtop Software Updater"
+   ]
+  },
+  {
+   "id": "allow-pc-health-check",
+   "name": "Windows PC Health Check",
+   "publisher": "Microsoft Corporation",
+   "cat": "allow",
+   "kind": "microsoft_tool",
+   "verdict": "ok",
+   "rx": "\\bpc\\s+health\\s+check\\b",
+   "prx": "\\bmicrosoft\\b",
+   "scrx": "",
+   "reason": "",
+   "staff": "Microsoft's own app (Windows 11 eligibility, battery, storage, startup time). Never flag.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/experience/compatibility/how-to-use-the-pc-health-check-app",
+     "supports": "Microsoft's PC Health Check app: Windows 11 eligibility, battery capacity and storage information"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Windows PC Health Check"
+   ]
+  },
+  {
+   "id": "360-total-security",
+   "name": "360 Total Security",
+   "publisher": "Beijing Qihu Keji Co., Ltd. (Qihoo 360)",
+   "cat": "security",
+   "kind": "realtime_suite",
+   "verdict": "not_needed",
+   "rx": "^360 ?total security(?: essential| premium)?(?:\\s+[\\d.]+)?\\s*$",
+   "prx": "",
+   "scrx": "\\b360 ?total security\\b",
+   "reason": "360 Total Security is a free antivirus from Qihoo 360. In 2015 independent test labs said the version Qihoo sent for testing was set up differently from the one customers get. Windows already includes Microsoft Defender.",
+   "staff": "Judgement call; no regulator finding on the product. 2015: AV-TEST withdrew its certifications after a joint statement with AV-Comparatives and Virus Bulletin. Qihoo 360 on the US Entity List since 5 June 2020. Premium adds Cleanup Pro and Driver Updater.",
+   "sources": [
+    {
+     "url": "https://www.theregister.com/2015/05/01/cheater_test_labs_out_av_vendor_for_using_rivals_engine/",
+     "supports": "Joint lab statement: Qihoo turned off its own engine and turned on Bitdefender's for testing, 'the opposite of what customers receive by default'; AV-TEST withdrew its 2015 certifications"
+    },
+    {
+     "url": "https://www.federalregister.gov/documents/2020/06/05/2020-10869/addition-of-entities-to-the-entity-list-revision-of-certain-entries-on-the-entity-list",
+     "supports": "Qihoo 360 Technology Company (China) and Qihoo 360 Technology Co. Ltd. added to the Entity List, published and effective 5 June 2020 (checked via the Federal Register full-text/API)"
+    },
+    {
+     "url": "https://www.360totalsecurity.com/en/",
+     "supports": "Publisher Beijing Qihu Keji Co., Ltd.; free Essential tier; Premium adds Cleanup Pro and Driver Updater"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960",
+     "supports": "Windows includes Microsoft Defender Antivirus"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "360 Total Security",
+    "360 Total Security Essential"
+   ]
+  },
+  {
+   "id": "avast-suite",
+   "name": "Avast Antivirus (Free Antivirus, Premium Security, Avast One)",
+   "publisher": "Avast Software (Gen Digital)",
+   "cat": "security",
+   "kind": "realtime_suite",
+   "verdict": "ok",
+   "rx": "^avast (?:free anti-?virus|premium security|one(?: (?:essential|silver|gold|platinum|individual|family))?|internet security|pro anti-?virus|anti-?virus|ultimate)\\s*$",
+   "prx": "^(?:avast|gen digital)",
+   "scrx": "\\bavast\\b",
+   "reason": "",
+   "staff": "If Apps uninstall fails use Avast Clear (avastclear.exe). FTC 2024: Avast to pay $16.5m and banned from selling or licensing browsing data for advertising; FTC said it collected it via its browser extensions and antivirus. Secure Browser, Cleanup, Driver Updater are separate entries.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960",
+     "supports": "Defender turns itself off when a compatible non-Microsoft antivirus is installed"
+    },
+    {
+     "url": "https://www.bitdefender.com/consumer/support/answer/2625/",
+     "supports": "Links Avast's removal tool avastclear.exe (avast.com's own uninstall-utility page returned 403 to the checker)"
+    },
+    {
+     "url": "https://www.ftc.gov/news-events/news/press-releases/2024/02/ftc-order-will-ban-avast-selling-browsing-data-advertising-purposes-require-it-pay-165-million-over",
+     "supports": "Avast to pay $16.5 million and prohibited from selling or licensing web browsing data for advertising; data gathered 'through the company's browser extensions and antivirus software'"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Avast Free Antivirus",
+    "Avast Premium Security",
+    "Avast One",
+    "Avast Internet Security",
+    "Avast Pro Antivirus"
+   ]
+  },
+  {
+   "id": "avast-secure-browser",
+   "name": "Avast Secure Browser",
+   "publisher": "Avast Software (Gen Digital)",
+   "cat": "security",
+   "kind": "bundled_addon",
+   "verdict": "not_needed",
+   "rx": "^avast secure browser\\s*$",
+   "prx": "^(?:avast|gen digital)",
+   "scrx": "",
+   "reason": "Avast Secure Browser is a web browser made by Avast. Windows already includes Microsoft Edge, which has Microsoft Defender SmartScreen built in, so you only need it if you use it.",
+   "staff": "Offered as an optional install in Avast's antivirus installer since 2016 (Wikipedia, citing Avast). If the customer uses it, export bookmarks and passwords first. Keep it if they chose it.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/edge/how-can-smartscreen-help-protect-me-in-microsoft-edge",
+     "supports": "Edge includes Microsoft Defender SmartScreen against phishing and malware sites"
+    },
+    {
+     "url": "https://en.wikipedia.org/wiki/Avast_Secure_Browser",
+     "supports": "'included for optional installation in the Avast Antivirus installer since 2016'; bundled with the free version from March 2016 (cites an Avast blog post)"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Avast Secure Browser"
+   ]
+  },
+  {
+   "id": "avg-suite",
+   "name": "AVG AntiVirus / AVG Internet Security",
+   "publisher": "AVG Technologies (Gen Digital)",
+   "cat": "security",
+   "kind": "realtime_suite",
+   "verdict": "ok",
+   "rx": "^avg (?:anti-?virus(?: free| pro)?|internet security|ultimate|protection(?: pro)?)\\s*$",
+   "prx": "^(?:avg|avast|gen digital)",
+   "scrx": "\\bavg\\b",
+   "reason": "",
+   "staff": "If Apps uninstall fails use the AVG Uninstall Tool (avg_av_clear.exe), which runs in Safe Mode. AVG TuneUp, Secure Browser and Secure VPN are separate Apps entries and are not matched here.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960",
+     "supports": "Defender turns itself off when a compatible non-Microsoft antivirus is installed"
+    },
+    {
+     "url": "https://support.avg.com/SupportArticleView?l=en&urlname=uninstall-avg-software-clear-remover",
+     "supports": "AVG Uninstall Tool (avg_av_clear.exe) removes AVG AntiVirus Free / Internet Security while Windows runs in Safe Mode"
+    },
+    {
+     "url": "https://learn.microsoft.com/en-us/answers/questions/1010071/av-status-rootsecuritycenter-missing",
+     "supports": "AVG registers in Security Center as 'AVG Antivirus'"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "AVG AntiVirus FREE",
+    "AVG Internet Security",
+    "AVG Ultimate"
+   ]
+  },
+  {
+   "id": "avira-suite",
+   "name": "Avira Security / Avira Antivirus",
+   "publisher": "Avira Operations GmbH (Gen Digital)",
+   "cat": "security",
+   "kind": "realtime_suite",
+   "verdict": "ok",
+   "rx": "^avira (?:security|anti-?virus(?: pro)?|free (?:anti-?virus|security(?: suite)?)|internet security(?: suite)?|total security(?: suite)?|prime)\\s*$",
+   "prx": "^avira",
+   "scrx": "\\bavira\\b",
+   "reason": "",
+   "staff": "Avira add-ons (Phantom VPN, Password Manager, System Speedup, Software Updater) are separate Apps entries and are not matched here. Avira's uninstall article (kbid 902) is linked from Bitdefender's list of uninstall tools.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960",
+     "supports": "Defender turns itself off when a compatible non-Microsoft antivirus is installed"
+    },
+    {
+     "url": "https://www.bitdefender.com/consumer/support/answer/2625/",
+     "supports": "Links Avira's uninstall support page avira.com/en/support-for-home-knowledgebase-detail/kbid/902 (that page returned 403 to the checker)"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Avira Security",
+    "Avira Antivirus",
+    "Avira Free Antivirus",
+    "Avira Free Security Suite"
+   ]
+  },
+  {
+   "id": "bitdefender-suite",
+   "name": "Bitdefender (Total Security, Antivirus Plus, Antivirus Free)",
+   "publisher": "Bitdefender",
+   "cat": "security",
+   "kind": "realtime_suite",
+   "verdict": "ok",
+   "rx": "^bitdefender (?:total security|internet security|anti-?virus(?: plus| free(?: edition)?)?|premium security|ultimate security|family pack)(?:\\s+[\\d.]+)?\\s*$",
+   "prx": "^bitdefender",
+   "scrx": "\\bbitdefender\\b",
+   "reason": "",
+   "staff": "If Apps uninstall fails use Bitdefender's uninstall tool for the product. Bitdefender Agent and VPN are separate Apps entries. Bitdefender itself says never to have more than one security solution installed at the same time.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960",
+     "supports": "Defender turns itself off when a compatible non-Microsoft antivirus is installed"
+    },
+    {
+     "url": "https://www.bitdefender.com/en-us/consumer/support/uninstall-products",
+     "supports": "Per-product uninstall tools for Antivirus Plus, Internet Security, Total Security"
+    },
+    {
+     "url": "https://www.bitdefender.com/consumer/support/answer/2625/",
+     "supports": "'Never have more than one security solution installed on your computer at the same time.'"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Bitdefender Total Security",
+    "Bitdefender Internet Security",
+    "Bitdefender Antivirus Plus",
+    "Bitdefender Antivirus Free",
+    "Bitdefender Premium Security"
+   ]
+  },
+  {
+   "id": "bullguard",
+   "name": "BullGuard (discontinued)",
+   "publisher": "BullGuard Ltd.",
+   "cat": "security",
+   "kind": "realtime_suite",
+   "verdict": "remove",
+   "rx": "^bullguard(?:\\s.*)?$",
+   "prx": "^bullguard",
+   "scrx": "\\bbullguard\\b",
+   "reason": "BullGuard has been discontinued: Norton says it no longer sells or supports BullGuard products. Once BullGuard is removed, Windows' built-in Microsoft Defender should switch back on.",
+   "staff": "Norton migrated BullGuard subscriptions to an equivalent Norton subscription at the same price, so a customer still paying may be entitled to Norton instead. Uninstall via Apps; BullGuard's uninstall guide is in Bitdefender's list. Check Windows Security afterwards.",
+   "sources": [
+    {
+     "url": "https://support.norton.com/sp/en/us/home/current/solutions/v20220725124626886",
+     "supports": "'We no longer sell or support BullGuard products and services'; subscription 'migrated to an equivalent Norton subscription, at the same price'"
+    },
+    {
+     "url": "https://learn.microsoft.com/en-us/defender-endpoint/microsoft-defender-antivirus-compatibility",
+     "supports": "Defender can be re-enabled automatically when the non-Microsoft antivirus is uninstalled or stops protecting"
+    },
+    {
+     "url": "https://www.bitdefender.com/consumer/support/answer/2625/",
+     "supports": "Links BullGuard's uninstall guide"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "BullGuard Internet Security",
+    "BullGuard Premium Protection",
+    "BullGuard Antivirus"
+   ]
+  },
+  {
+   "id": "comodo",
+   "name": "Comodo Internet Security / Comodo Antivirus",
+   "publisher": "COMODO Security Solutions",
+   "cat": "security",
+   "kind": "realtime_suite",
+   "verdict": "ok",
+   "rx": "^comodo (?:internet security(?: premium| pro| complete)?|anti-?virus(?: advanced)?)(?:\\s+[\\d.]+)?\\s*$",
+   "prx": "^(?:comodo|xcitium)",
+   "scrx": "\\bcomodo\\b",
+   "reason": "",
+   "staff": "Comodo's Dragon and IceDragon web browsers are not matched. Comodo uninstall help is listed in ESET's and Bitdefender's lists of antivirus removal tools.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960",
+     "supports": "Defender turns itself off when a compatible non-Microsoft antivirus is installed"
+    },
+    {
+     "url": "https://support.eset.com/en/kb146-uninstallers-removal-tools-for-common-windows-antivirus-software",
+     "supports": "Lists Comodo Internet Security uninstall guidance"
+    },
+    {
+     "url": "https://www.bitdefender.com/consumer/support/answer/2625/",
+     "supports": "Links Comodo Internet Security reinstall/removal help"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "COMODO Internet Security Premium",
+    "COMODO Antivirus",
+    "Comodo Internet Security"
+   ]
+  },
+  {
+   "id": "eset-suite",
+   "name": "ESET (ESET HOME Security, NOD32, Internet Security, Smart Security)",
+   "publisher": "ESET, spol. s r.o.",
+   "cat": "security",
+   "kind": "realtime_suite",
+   "verdict": "ok",
+   "rx": "^eset (?:security(?: (?:premium|ultimate))?|home security(?: (?:essential|premium|ultimate))?|nod32 anti-?virus|internet security|smart security(?: premium)?)(?:\\s+[\\d.]+)?\\s*$",
+   "prx": "^eset",
+   "scrx": "\\beset\\b",
+   "reason": "",
+   "staff": "In Apps, search 'ESET' (ESET's own guide). If that fails, ESET Uninstaller runs only in Safe Mode (KB2289); network adapter drivers may need reinstalling afterwards. Current home names include ESET HOME Security Essential/Premium/Ultimate.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960",
+     "supports": "Defender turns itself off when a compatible non-Microsoft antivirus is installed"
+    },
+    {
+     "url": "https://support.eset.com/en/kb5547-uninstall-your-eset-home-product-in-windows-10-and-later",
+     "supports": "Type 'ESET' in the Apps search, select the ESET app and Uninstall"
+    },
+    {
+     "url": "https://support.eset.com/en/kb2289-uninstall-eset-manually-using-the-eset-uninstaller-tool",
+     "supports": "ESET Uninstaller must be run in Safe Mode; 'you may be required to reinstall your network adapter drivers'"
+    },
+    {
+     "url": "https://www.eset.com/uk/home/online-scanner/",
+     "supports": "Names ESET HOME Security Premium as the current real-time product"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "ESET Security",
+    "ESET NOD32 Antivirus",
+    "ESET Internet Security",
+    "ESET Smart Security Premium"
+   ]
+  },
+  {
+   "id": "eset-online-scanner",
+   "name": "ESET Online Scanner",
+   "publisher": "ESET, spol. s r.o.",
+   "cat": "security",
+   "kind": "manual_scanner",
+   "verdict": "ok",
+   "rx": "^eset online scanner(?:\\s+[\\d.]+)?\\s*$",
+   "prx": "^eset",
+   "scrx": "",
+   "reason": "",
+   "staff": "On-demand only. Not the same as an ESET suite (separate entry).",
+   "sources": [
+    {
+     "url": "https://www.eset.com/uk/home/online-scanner/",
+     "supports": "'Quick, one-time malware check', 'completely free'; no real-time protection (that is in ESET HOME Security Premium)"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "ESET Online Scanner"
+   ]
+  },
+  {
+   "id": "f-secure",
+   "name": "F-Secure (incl. TalkTalk SuperSafe, Virgin Media Advanced Security)",
+   "publisher": "F-Secure Corporation",
+   "cat": "security",
+   "kind": "realtime_suite",
+   "verdict": "ok",
+   "rx": "^(?:f-secure(?: (?:total|safe|internet security|anti-?virus|client security))?|(?:talktalk )?supersafe(?: boost)?|virgin media (?:internet|advanced) security)(?:\\s+[\\d.]+)?\\s*$",
+   "prx": "^(?:f-secure|withsecure)",
+   "scrx": "\\bf-secure\\b|\\bsupersafe\\b|\\bvirgin media\\b",
+   "reason": "",
+   "staff": "TalkTalk SuperSafe is developed by F-Secure. Virgin Media Advanced Security (formerly Virgin Media Internet Security) is F-Secure and installs as F-Secure SAFE. If Apps uninstall fails use FsUninstallationTool.exe. FREEDOME VPN and ID Protection are not matched.",
+   "sources": [
+    {
+     "url": "https://help-centre.talktalk.co.uk/Broadband/Security/SuperSafe_Overview",
+     "supports": "SuperSafe is 'software developed by Internet security specialist F-Secure'; a paid add-on for TalkTalk broadband"
+    },
+    {
+     "url": "https://www.virginmedia.com/help/how-to/security/advanced-security",
+     "supports": "'F-Secure is our security partner and the driving force behind Advanced Security'; Advanced Security is the new name for Virgin Media Internet Security; Windows app referred to as F-Secure SAFE"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960",
+     "supports": "Defender turns itself off when a compatible non-Microsoft antivirus is installed"
+    },
+    {
+     "url": "https://www.bitdefender.com/consumer/support/answer/2625/",
+     "supports": "Links F-Secure's FsUninstallationTool.exe"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "F-Secure SAFE",
+    "F-Secure Total",
+    "F-Secure Internet Security",
+    "F-Secure Anti-Virus",
+    "F-Secure"
+   ]
+  },
+  {
+   "id": "g-data",
+   "name": "G DATA (Total Security, Internet Security, Antivirus)",
+   "publisher": "G DATA CyberDefense AG",
+   "cat": "security",
+   "kind": "realtime_suite",
+   "verdict": "ok",
+   "rx": "^g ?data (?:total security|internet security|anti-?virus|total protection)(?:\\s+[\\d.]+)?\\s*$",
+   "prx": "^g ?data",
+   "scrx": "\\bg ?data\\b",
+   "reason": "",
+   "staff": "If Apps uninstall fails use G DATA AVCleaner (linked from Bitdefender's list of uninstall tools).",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960",
+     "supports": "Defender turns itself off when a compatible non-Microsoft antivirus is installed"
+    },
+    {
+     "url": "https://www.bitdefender.com/consumer/support/answer/2625/",
+     "supports": "Links G DATA's AVCleaner_int.exe removal tool"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "G DATA Total Security",
+    "G DATA INTERNET SECURITY",
+    "G DATA ANTIVIRUS"
+   ]
+  },
+  {
+   "id": "hitmanpro",
+   "name": "HitmanPro",
+   "publisher": "Sophos (SurfRight)",
+   "cat": "security",
+   "kind": "manual_scanner",
+   "verdict": "ok",
+   "rx": "^hitmanpro(?:\\s+[\\d.]+)?\\s*$",
+   "prx": "^(?:sophos|surfright)",
+   "scrx": "",
+   "reason": "",
+   "staff": "On-demand scanner. HitmanPro.Alert is a different (real-time anti-exploit) product and is not matched.",
+   "sources": [
+    {
+     "url": "https://www.sophos.com/en-us/products/hitmanpro/hmp",
+     "supports": "'HitmanPro can be used all by itself or alongside another security product'; free 30-day trial"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "HitmanPro 3.8"
+   ]
+  },
+  {
+   "id": "trusteer-rapport",
+   "name": "IBM Trusteer Rapport",
+   "publisher": "IBM / Trusteer",
+   "cat": "security",
+   "kind": "bundled_addon",
+   "verdict": "not_needed",
+   "rx": "^(?:ibm (?:security )?)?trusteer (?:endpoint protection|rapport)(?:\\s.*)?$",
+   "prx": "trusteer|ibm",
+   "scrx": "",
+   "reason": "Trusteer Rapport is a bank security add-on from IBM. NatWest and RBS no longer offer it and suggest uninstalling it unless another bank you use still offers it.",
+   "staff": "Usually listed in Apps as 'Trusteer Endpoint Protection' (not confirmed from a primary source). NatWest and RBS have stopped offering it; ask which banks the customer uses before removing.",
+   "sources": [
+    {
+     "url": "https://www.natwest.com/support-centre/general-banking-information/general/why-is-brand-no-longer-offering-rapport.html",
+     "supports": "'we will no longer offer Trusteer Rapport software'; 'Unless you bank with another provider who offers Rapport, we suggest you uninstall the product.'"
+    },
+    {
+     "url": "https://www.rbs.co.uk/support-centre/general-banking-information/general/why-is-brand-no-longer-offering-rapport.html",
+     "supports": "RBS no longer offers Rapport and gives the same uninstall suggestion"
+    },
+    {
+     "url": "https://www.bitdefender.com/consumer/support/answer/2625/",
+     "supports": "Lists 'Trusteer Rapport (IBM)'"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Trusteer Endpoint Protection",
+    "IBM Security Trusteer Rapport"
+   ]
+  },
+  {
+   "id": "kaspersky-suite",
+   "name": "Kaspersky (Standard / Plus / Premium / Total Security)",
+   "publisher": "Kaspersky (AO Kaspersky Lab)",
+   "cat": "security",
+   "kind": "realtime_suite",
+   "verdict": "ok",
+   "rx": "^kaspersky (?:standard|plus|premium|total security|internet security|anti-?virus|free|security cloud(?: - (?:free|personal|family))?|small office security)(?:\\s+[\\d.]+)?\\s*$",
+   "prx": "^(?:ao )?kaspersky",
+   "scrx": "\\bkaspersky\\b",
+   "reason": "",
+   "staff": "US: BIS ban 20 Jun 2024; US updates ended 29 Sep 2024. UK NCSC (29 Mar 2022): home users may need to switch if sanctions stop updates. Check it still updates. kavremover deletes licence info: save the key or activation code first.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960",
+     "supports": "Defender turns itself off when a compatible non-Microsoft antivirus is installed"
+    },
+    {
+     "url": "https://www.ncsc.gov.uk/blog-post/use-of-russian-technology-products-services-following-invasion-ukraine",
+     "supports": "29 March 2022: personal use 'safe to turn on and use at the moment'; users 'may need to move to a new AV product' if sanctions stop updates"
+    },
+    {
+     "url": "https://www.bis.gov/press-release/commerce-department-prohibits-russian-kaspersky-software-u.s.-customers",
+     "supports": "Final Determination 20 June 2024; signature and codebase updates allowed only until 29 September 2024"
+    },
+    {
+     "url": "https://support.kaspersky.com/1464",
+     "supports": "kavremover deletes licence information: 'Make sure that the license key or activation code is saved before using the tool'"
+    },
+    {
+     "url": "https://support.kaspersky.com/12783",
+     "supports": "Current home products Kaspersky Standard, Plus, Premium; legacy Internet Security and Security Cloud"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Kaspersky Standard",
+    "Kaspersky Plus",
+    "Kaspersky Premium",
+    "Kaspersky Total Security",
+    "Kaspersky Internet Security",
+    "Kaspersky Anti-Virus",
+    "Kaspersky Free",
+    "Kaspersky Security Cloud - Free"
+   ]
+  },
+  {
+   "id": "malwarebytes",
+   "name": "Malwarebytes (Free scanner / Premium)",
+   "publisher": "Malwarebytes",
+   "cat": "security",
+   "kind": "manual_scanner",
+   "verdict": "ok",
+   "rx": "^malwarebytes(?: anti-malware)?(?: version [\\d.]+)?\\s*$",
+   "prx": "^malwarebytes",
+   "scrx": "\\bmalwarebytes\\b",
+   "reason": "",
+   "staff": "Free and Premium share one Apps entry. If Security Center lists Malwarebytes with real-time on, treat it as a real-time suite (Premium or trial); Defender then turns itself off. Removal: Malwarebytes Support Tool (MBST).",
+   "sources": [
+    {
+     "url": "https://www.malwarebytes.com/mwb-download",
+     "supports": "'Malwarebytes Free is a cleanup tool for cyberattacks that have already damaged a device'; Premium 'runs automatically on an ongoing basis'"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960",
+     "supports": "Defender turns itself off when a compatible non-Microsoft antivirus is installed"
+    },
+    {
+     "url": "https://www.bitdefender.com/consumer/support/answer/2625/",
+     "supports": "Links the Malwarebytes Support Tool (MBST) as its removal tool"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Malwarebytes version 5.2.4.155",
+    "Malwarebytes version 4.6.14.326",
+    "Malwarebytes Anti-Malware version 2.2.1.1043"
+   ]
+  },
+  {
+   "id": "mcafee-suite",
+   "name": "McAfee (LiveSafe, Total Protection, McAfee+)",
+   "publisher": "McAfee, LLC",
+   "cat": "security",
+   "kind": "realtime_suite",
+   "verdict": "ok",
+   "rx": "^mcafee(?:\\s+(?:livesafe|total protection|anti-?virus(?: plus)?|internet security|multi access)|\\+(?:\\s*(?:premium|advanced|ultimate|essential))?(?:\\s+(?:individual|family))?)?\\s*$",
+   "prx": "^mcafee",
+   "scrx": "\\bmcafee\\b",
+   "reason": "",
+   "staff": "Uninstall in Apps, then run McAfee's MCPR removal tool for leftovers. WebAdvisor and Security Scan Plus are separate entries. Dell preinstalls a 30-day LiveSafe trial on select PCs. CMA May 2021: McAfee undertook to let auto-renewed customers cancel for a pro-rata refund.",
+   "sources": [
+    {
+     "url": "https://www.dell.com/support/kbdoc/en-us/000193010/how-to-install-mcafee-livesafe-from-dell",
+     "supports": "'A 30-day trial of McAfee LiveSafe is provided automatically on select consumer and commercial Dell computers running Windows'"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960",
+     "supports": "Defender turns itself off when a compatible non-Microsoft antivirus is installed"
+    },
+    {
+     "url": "https://www.bitdefender.com/consumer/support/answer/2625/",
+     "supports": "Links McAfee's MCPR.exe removal tool; 'Never have more than one security solution installed on your computer at the same time'"
+    },
+    {
+     "url": "https://www.gov.uk/cma-cases/anti-virus-software",
+     "supports": "McAfee undertaking 25 May 2021: auto-renewed customers get an ongoing right to exit and obtain a pro-rata refund (no admission of wrongdoing)"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "McAfee LiveSafe",
+    "McAfee Total Protection",
+    "McAfee AntiVirus Plus",
+    "McAfee Internet Security",
+    "McAfee+",
+    "McAfee+ Premium",
+    "McAfee"
+   ]
+  },
+  {
+   "id": "mcafee-webadvisor",
+   "name": "McAfee WebAdvisor",
+   "publisher": "McAfee, LLC",
+   "cat": "security",
+   "kind": "bundled_addon",
+   "verdict": "not_needed",
+   "rx": "^mcafee\\s*(?:web ?advisor|site ?advisor)(?:\\s+[\\d.]+)?\\s*$",
+   "prx": "^mcafee",
+   "scrx": "",
+   "reason": "McAfee WebAdvisor is a free browser safety add-on, also included with McAfee's paid products. Microsoft Edge and Google Chrome already warn you about dangerous websites and downloads.",
+   "staff": "Only suggest removal when no McAfee suite is being kept (e.g. after a lapsed trial). Also check browser extensions and search settings. SiteAdvisor is its older name.",
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/McAfee_WebAdvisor",
+     "supports": "Free download from McAfee and bundled with McAfee AntiVirus Plus, Internet Security, Total Protection and McAfee+ plans; previously McAfee SiteAdvisor (secondary source; mcafee.com timed out for the checker too)"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/edge/how-can-smartscreen-help-protect-me-in-microsoft-edge",
+     "supports": "SmartScreen in Edge protects against 'phishing and malware sites and software' and screens downloads"
+    },
+    {
+     "url": "https://support.google.com/chrome/answer/9890866",
+     "supports": "Chrome Safe Browsing Standard protection 'is on by default' and warns about dangerous sites, downloads and extensions"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "McAfee WebAdvisor",
+    "McAfee SiteAdvisor"
+   ]
+  },
+  {
+   "id": "norton-suite",
+   "name": "Norton 360 / Norton Security (incl. BT Cyber Threat Protect)",
+   "publisher": "Gen Digital Inc. (NortonLifeLock)",
+   "cat": "security",
+   "kind": "realtime_suite",
+   "verdict": "ok",
+   "rx": "^(?:norton (?:360(?:\\s.*)?|security(?: (?:ultra|deluxe|premium|standard|with backup))?|anti-?virus(?: plus| basic)?|internet security)|bt virus protect(?:\\s.*)?|(?:bt )?cyber threat protect(?:\\s.*)?)\\s*$",
+   "prx": "^(?:norton|nortonlifelock|gen digital|symantec)",
+   "scrx": "\\bnorton\\b|\\bbt virus protect\\b|\\bcyber threat protect\\b",
+   "reason": "",
+   "staff": "If Apps uninstall fails use Norton's Remover tool, 'Remove' option. It cannot remove Norton Private Browser (separate entry). Uninstalling does not cancel the subscription. BT Cyber Threat Protect (was BT Virus Protect) is powered by Norton. CMA June 2021: refund rights on auto-renewals.",
+   "sources": [
+    {
+     "url": "https://www.bt.com/help/security/anti-virus-software/cyber-threat-protect-and-how-do-i-get-it",
+     "supports": "'Cyber Threat Protect is the new name for BT Virus Protect'; 'Powered by Norton'; available as standard to BT broadband customers"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960",
+     "supports": "Defender turns itself off when a compatible non-Microsoft antivirus is installed"
+    },
+    {
+     "url": "https://support.norton.com/sp/en/us/home/current/solutions/v60392881",
+     "supports": "Norton 360 Remover tool with 'Remove' only option and Safe Mode fallback; 'Uninstalling the application does not automatically cancel your subscription'"
+    },
+    {
+     "url": "https://support.norton.com/sp/en/us/home/current/solutions/v2023031322263778",
+     "supports": "'Norton Remove and Reinstall tool cannot be used to uninstall Norton Private Browser'"
+    },
+    {
+     "url": "https://www.gov.uk/government/news/norton-extends-refund-rights-after-cma-action",
+     "supports": "14 June 2021: customers whose contracts auto-renew can end them and seek refunds for the remaining months"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Norton 360",
+    "Norton 360 Deluxe",
+    "Norton Security",
+    "Norton AntiVirus Plus",
+    "Norton Internet Security",
+    "Norton Security Ultra"
+   ]
+  },
+  {
+   "id": "norton-private-browser",
+   "name": "Norton Private Browser",
+   "publisher": "Gen Digital Inc. (Norton)",
+   "cat": "security",
+   "kind": "bundled_addon",
+   "verdict": "not_needed",
+   "rx": "^norton (?:private|secure) browser\\s*$",
+   "prx": "^(?:norton|gen digital)",
+   "scrx": "",
+   "reason": "Norton Private Browser is a web browser made by Norton. Windows already includes Microsoft Edge, which has Microsoft Defender SmartScreen built in, so you only need it if you use it.",
+   "staff": "Uninstalling deletes bookmarks, passwords and history unless 'Also delete your browsing data' is unticked. Norton Remove and Reinstall cannot uninstall it. 'Norton Secure Browser' is matched as an older name (not confirmed on Norton's page).",
+   "sources": [
+    {
+     "url": "https://support.norton.com/sp/en/us/home/current/solutions/v2023031322263778",
+     "supports": "Browsing data (bookmarks, passwords, history) deleted by default on uninstall unless 'Also delete your browsing data' is unchecked; Remove and Reinstall tool cannot uninstall it"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/edge/how-can-smartscreen-help-protect-me-in-microsoft-edge",
+     "supports": "Edge includes Microsoft Defender SmartScreen"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Norton Private Browser"
+   ]
+  },
+  {
+   "id": "panda-dome",
+   "name": "Panda Dome / Panda Free Antivirus",
+   "publisher": "Panda Security (WatchGuard)",
+   "cat": "security",
+   "kind": "realtime_suite",
+   "verdict": "ok",
+   "rx": "^panda (?:dome(?: (?:essential|advanced|complete|premium|free))?|free anti-?virus|anti-?virus(?: pro)?|internet security|global protection|gold protection)(?:\\s+[\\d.]+)?\\s*$",
+   "prx": "^(?:panda|watchguard)",
+   "scrx": "\\bpanda\\b",
+   "reason": "",
+   "staff": "If Apps uninstall fails use the Panda Generic Uninstaller (Panda support card 82011). Panda Dome Passwords and Panda VPN are not matched.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960",
+     "supports": "Defender turns itself off when a compatible non-Microsoft antivirus is installed"
+    },
+    {
+     "url": "https://www.pandasecurity.com/support/card?id=82011",
+     "supports": "Panda Generic Uninstaller for Panda Dome when standard uninstall fails (redirects to techsearch.pandasecurity.com)"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Panda Dome",
+    "Panda Dome Essential",
+    "Panda Free Antivirus"
+   ]
+  },
+  {
+   "id": "segurazo",
+   "name": "Segurazo",
+   "publisher": "Segurazo",
+   "cat": "security",
+   "kind": "rogue",
+   "verdict": "remove",
+   "rx": "^(?:segurazo|santivirus)",
+   "prx": "",
+   "scrx": "^(?:segurazo|santivirus)",
+   "reason": "Segurazo is classed as a potentially unwanted application by the security firms Malwarebytes and Trend Micro. It is not needed: Windows includes Microsoft Defender.",
+   "staff": "Malwarebytes: recent variants must be removed in Safe Mode. Trend Micro: arrives dropped by other malware or downloaded unknowingly. Check browsers afterwards. 'SAntivirus' is matched as a reported later name, not confirmed by these sources.",
+   "sources": [
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-segurazo",
+     "supports": "Detected as PUP.Optional.Segurazo; appears in Programs and Features as 'Segurazo'; 'recent variants require this to be done in Safe Mode'"
+    },
+    {
+     "url": "https://www.trendmicro.com/vinfo/us/threat-encyclopedia/malware/PUA.Win32.Segurazo.K",
+     "supports": "Potentially Unwanted Application; arrives 'as a file dropped by other malware or as a file downloaded unknowingly by users'"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960",
+     "supports": "Windows includes Microsoft Defender Antivirus"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Segurazo"
+   ]
+  },
+  {
+   "id": "sophos-home",
+   "name": "Sophos Home",
+   "publisher": "Sophos Limited",
+   "cat": "security",
+   "kind": "realtime_suite",
+   "verdict": "ok",
+   "rx": "^sophos home(?:\\s+[\\d.]+)?\\s*$",
+   "prx": "^sophos",
+   "scrx": "\\bsophos\\b",
+   "reason": "",
+   "staff": "Uninstall via Settings > Apps. Business Sophos agents (work laptops) are not matched by name_regex; the SC pattern will still see them, which is intended.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960",
+     "supports": "Defender turns itself off when a compatible non-Microsoft antivirus is installed"
+    },
+    {
+     "url": "https://support.eset.com/en/kb146-uninstallers-removal-tools-for-common-windows-antivirus-software",
+     "supports": "Lists Sophos uninstall documentation among common antivirus removal tools"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Sophos Home"
+   ]
+  },
+  {
+   "id": "spybot",
+   "name": "Spybot - Search & Destroy",
+   "publisher": "Safer-Networking Ltd.",
+   "cat": "security",
+   "kind": "manual_scanner",
+   "verdict": "ok",
+   "rx": "^spybot\\s*-?\\s*search\\s*(?:&+|and)\\s*destroy(?:\\s.*)?$",
+   "prx": "safer-networking",
+   "scrx": "\\bspybot\\b",
+   "reason": "",
+   "staff": "Spybot Anti-Beacon is a separate privacy tool and is not matched. Paid Spybot editions include an antivirus and may register in Security Center, hence the sc_regex (unverified). Spybot's uninstall FAQ is linked from Bitdefender's list.",
+   "sources": [
+    {
+     "url": "https://www.safer-networking.org/products/",
+     "supports": "'Spybot fills the gap between Anti-Virus and complete protection by searching and destroying spyware, adware and other unwanted programs'; Free, Home and Professional editions; page also promotes an anti-virus"
+    },
+    {
+     "url": "https://www.bitdefender.com/consumer/support/answer/2625/",
+     "supports": "Links safer-networking.org/faq/how-to-uninstall-spybot-2/"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Spybot - Search & Destroy"
+   ]
+  },
+  {
+   "id": "superantispyware",
+   "name": "SUPERAntiSpyware",
+   "publisher": "SUPERAntiSpyware",
+   "cat": "security",
+   "kind": "manual_scanner",
+   "verdict": "ok",
+   "rx": "^superantispyware(?: (?:free|professional(?: x)?|pro(?: x)?)(?: edition)?)?(?:\\s+[\\d.]+)?\\s*$",
+   "prx": "",
+   "scrx": "",
+   "reason": "",
+   "staff": "Free edition is a manual scanner. The paid Professional X edition adds real-time protection; if a PC is slow, check it is not doubling up with a full suite.",
+   "sources": [
+    {
+     "url": "https://www.superantispyware.com/",
+     "supports": "'we work with your antivirus software, not against it'; 'Real-Time, Robust Protection' promoted for Professional X Edition"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "SUPERAntiSpyware",
+    "SUPERAntiSpyware Free Edition",
+    "SUPERAntiSpyware Professional X Edition"
+   ]
+  },
+  {
+   "id": "surfshark-antivirus",
+   "name": "Surfshark Antivirus",
+   "publisher": "Surfshark B.V.",
+   "cat": "security",
+   "kind": "realtime_suite",
+   "verdict": "ok",
+   "rx": "^surfshark anti-?virus(?:\\s+[\\d.]+)?\\s*$",
+   "prx": "^surfshark",
+   "scrx": "\\bsurfshark\\b",
+   "reason": "",
+   "staff": "Only sold inside Surfshark One (VPN, Alert, Search). The VPN is a separate app named 'Surfshark' and is not matched, so removing the antivirus need not remove the VPN the customer pays for.",
+   "sources": [
+    {
+     "url": "https://surfshark.com/antivirus",
+     "supports": "Scans 'in real time during downloads, installs, and usage'; 'Surfshark Antivirus only comes in the Surfshark One bundle with a VPN, Alert, and Search'"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960",
+     "supports": "Defender turns itself off when a compatible non-Microsoft antivirus is installed"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Surfshark Antivirus"
+   ]
+  },
+  {
+   "id": "totalav",
+   "name": "TotalAV",
+   "publisher": "TotalAV (Protected.net Group)",
+   "cat": "security",
+   "kind": "realtime_suite",
+   "verdict": "ok",
+   "rx": "^total ?av(?:\\s+[\\d.]+)?\\s*$",
+   "prx": "",
+   "scrx": "\\btotal ?av\\b",
+   "reason": "",
+   "staff": "Uninstall via Settings > Apps (TotalAV's own guide). Ask whether the customer pays for it and, if so, check renewal in their TotalAV account before removing. SC name not verified; sc_regex is vendor-based.",
+   "sources": [
+    {
+     "url": "https://help.totalav.com/__/tech/av/setup/-/av-setup-how-to-uninstall-av",
+     "supports": "TotalAV's own uninstall steps; the app appears as 'TotalAV' under Apps"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960",
+     "supports": "Defender turns itself off when a compatible non-Microsoft antivirus is installed"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "TotalAV"
+   ]
+  },
+  {
+   "id": "trend-micro-suite",
+   "name": "Trend Micro (Maximum Security, Internet Security, Antivirus+)",
+   "publisher": "Trend Micro Inc.",
+   "cat": "security",
+   "kind": "realtime_suite",
+   "verdict": "ok",
+   "rx": "^trend micro (?:maximum security|internet security|anti-?virus\\+?(?: security)?|premium security|titanium(?: \\w+)*)(?:\\s+[\\d.]+)?\\s*$",
+   "prx": "^(?:trend ?micro|trendlife)",
+   "scrx": "\\btrend ?micro\\b",
+   "reason": "",
+   "staff": "If Apps uninstall fails: Win+R, supporttool.exe, (C) Uninstall tab, Uninstall Software; copy the serial number first. Help is now at helpcenter.trendlife.com. Cleaner One Pro and Password Manager are not matched.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960",
+     "supports": "Defender turns itself off when a compatible non-Microsoft antivirus is installed"
+    },
+    {
+     "url": "https://helpcenter.trendlife.com/en-us/article/TMKA-18727/",
+     "supports": "Removing Maximum Security, Internet Security or Antivirus+ Security via supporttool.exe > (C) Uninstall > 1. Uninstall Software; copy serial number first"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Trend Micro Maximum Security",
+    "Trend Micro Internet Security",
+    "Trend Micro Antivirus+ Security",
+    "Trend Micro Premium Security",
+    "Trend Micro Titanium Maximum Security"
+   ]
+  },
+  {
+   "id": "webroot",
+   "name": "Webroot SecureAnywhere",
+   "publisher": "Webroot (OpenText)",
+   "cat": "security",
+   "kind": "realtime_suite",
+   "verdict": "ok",
+   "rx": "^webroot secureanywhere(?:\\s.*)?$",
+   "prx": "^(?:webroot|opentext)",
+   "scrx": "\\bwebroot\\b",
+   "reason": "",
+   "staff": "Uninstall via Programs and Features (appwiz.cpl), per Webroot's Windows guide. Installs managed from a Webroot business console need the business uninstall steps. Bitdefender's list links Webroot's CleanWDF.exe removal tool.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/turn-off-defender-antivirus-protection-in-windows-security-99e6004f-c54c-8509-773c-a4d776b77960",
+     "supports": "Defender turns itself off when a compatible non-Microsoft antivirus is installed"
+    },
+    {
+     "url": "https://answers.webroot.com/Webroot/ukp.aspx?pid=1&app=vw&vw=1&solutionid=3925",
+     "supports": "Windows uninstall: appwiz.cpl > Webroot SecureAnywhere > Uninstall; business installs managed by console have separate steps"
+    },
+    {
+     "url": "https://www.bitdefender.com/consumer/support/answer/2625/",
+     "supports": "Links Webroot's CleanWDF.exe"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Webroot SecureAnywhere"
+   ]
+  },
+  {
+   "id": "systweak-advanced-system-optimizer",
+   "name": "Advanced System Optimizer (Systweak)",
+   "publisher": "Systweak Software",
+   "cat": "optimiser",
+   "kind": "optimiser_suite",
+   "verdict": "not_needed",
+   "rx": "\\badvanced\\s+system\\s+optimi[sz]er\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Advanced System Optimizer (Systweak) is a tune-up program. Windows 10 and 11 already include free tools to clean up and speed up a PC, so it is not needed.",
+   "staff": "Defender PUA:Win32/Systweak (aliases include RegCleanPro, Symantec) and Malwarebytes PUP.Optional.Systweak are family-level and do not name ASO, so customer text says 'not needed' only. Staff may still advise removal.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/experience/performance-optimization/tips-to-improve-pc-performance-in-windows",
+     "supports": "Windows includes free clean-up and performance tools"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA:Win32/Systweak",
+     "supports": "Staff note: Defender PUA:Win32/Systweak (2016, updated 2017); aliases include RegCleanPro (Symantec)"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-systweak",
+     "supports": "Staff note: Malwarebytes PUP.Optional.Systweak family"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Advanced System Optimizer"
+   ]
+  },
+  {
+   "id": "advanced-system-repair-pro",
+   "name": "Advanced System Repair Pro",
+   "publisher": "Not confirmed",
+   "cat": "optimiser",
+   "kind": "pc_repair",
+   "verdict": "remove",
+   "rx": "\\badvanced\\s+system\\s+repair\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Advanced System Repair Pro is a 'PC repair' program. Malwarebytes detects it as a potentially unwanted program and says it is sometimes installed silently as part of a bundle.",
+   "staff": "Malwarebytes: PUP.Optional.AdvancedSystemRepair; silent bundle installs may flash a command prompt. Look for other items installed the same day. Publisher string not confirmed.",
+   "sources": [
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-advancedsystemrepair",
+     "supports": "PUP.Optional.AdvancedSystemRepair 'is sometimes silently installed as part of a bundle'; install folder 'Advanced System Repair Pro'"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Advanced System Repair Pro"
+   ]
+  },
+  {
+   "id": "ashampoo-winoptimizer",
+   "name": "Ashampoo WinOptimizer",
+   "publisher": "Ashampoo",
+   "cat": "optimiser",
+   "kind": "optimiser_suite",
+   "verdict": "not_needed",
+   "rx": "\\bashampoo\\s+win\\s*optimi[sz]er\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Ashampoo WinOptimizer is a tune-up program with a registry cleaner (Registry Optimizer), and Microsoft has said it does not support those. Windows 10 and 11 include free clean-up tools.",
+   "staff": "Registry Optimizer confirmed on Ashampoo's own page. No Microsoft detection found.",
+   "sources": [
+    {
+     "url": "https://www.ashampoo.com/en-us/winoptimizer",
+     "supports": "Maker's page: 'The integrated Registry Optimizer fixes invalid and orphaned entries in Windows Registry'"
+    },
+    {
+     "url": "https://web.archive.org/web/20260529043720/https://support.microsoft.com/en-us/topic/microsoft-support-policy-for-the-use-of-registry-cleaning-utilities-0485f4df-9520-3691-2461-7b0fd54e8b3a",
+     "supports": "Microsoft support policy KB2563254 (archived 29 May 2026): 'Microsoft does not support the use of registry cleaners'"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/experience/performance-optimization/tips-to-improve-pc-performance-in-windows",
+     "supports": "Windows includes free clean-up tools"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Ashampoo WinOptimizer 27",
+    "Ashampoo WinOptimizer FREE"
+   ]
+  },
+  {
+   "id": "auslogics-boostspeed",
+   "name": "Auslogics BoostSpeed / Registry Cleaner",
+   "publisher": "Auslogics",
+   "cat": "optimiser",
+   "kind": "optimiser_suite",
+   "verdict": "not_needed",
+   "rx": "\\bauslogics\\s+(?:boost\\s*speed|registry\\s+(?:cleaner|defrag))\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Auslogics BoostSpeed and Auslogics Registry Cleaner clean the Windows registry, and Microsoft has said it does not support registry cleaners. Windows 10 and 11 include free clean-up tools.",
+   "staff": "Defender has a vendor-level PUA:Win32/Auslogics (4 Jul 2017) that names no product, so customer text avoids it. Both products have free and paid editions. Auslogics Disk Defrag and Driver Updater are deliberately not matched.",
+   "sources": [
+    {
+     "url": "https://www.auslogics.com/en/software/boost-speed/registry-cleaner/",
+     "supports": "Maker's page: BoostSpeed will 'Remove invalid, empty or corrupt keys from the registry'; Free 'Basic registry cleanup', Pro 'Full registry cleanup'"
+    },
+    {
+     "url": "https://www.auslogics.com/en/software/registry-cleaner/",
+     "supports": "Maker's page: Auslogics Registry Cleaner 'identifies and repairs registry malfunctions'; free and Pro versions"
+    },
+    {
+     "url": "https://web.archive.org/web/20260529043720/https://support.microsoft.com/en-us/topic/microsoft-support-policy-for-the-use-of-registry-cleaning-utilities-0485f4df-9520-3691-2461-7b0fd54e8b3a",
+     "supports": "Microsoft support policy KB2563254 (archived 29 May 2026): 'Microsoft does not support the use of registry cleaners'"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/experience/performance-optimization/tips-to-improve-pc-performance-in-windows",
+     "supports": "Windows includes free clean-up tools"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA:Win32/Auslogics",
+     "supports": "Staff note: Defender vendor-level detection PUA:Win32/Auslogics, published 4 Jul 2017"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Auslogics BoostSpeed 13",
+    "Auslogics Registry Cleaner"
+   ]
+  },
+  {
+   "id": "avast-cleanup",
+   "name": "Avast Cleanup",
+   "publisher": "Avast Software",
+   "cat": "optimiser",
+   "kind": "optimiser_suite",
+   "verdict": "not_needed",
+   "rx": "\\bavast\\s+cleanup\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Avast Cleanup is a legitimate paid tune-up program, but it includes a registry cleaner, and Microsoft has said it does not support those. Windows 10 and 11 already include free clean-up tools.",
+   "staff": "Legitimate product from a major vendor. Customer text rests only on the registry-cleaner feature (Avast's own page) and Microsoft's registry-cleaner policy. No Microsoft detection.",
+   "sources": [
+    {
+     "url": "https://www.avast.com/c-registry-cleaner-tool",
+     "supports": "Avast's own page: 'Avast Cleanup's registry cleaner will fix broken registry items, repair errors, and streamline your Windows registry'; free trial"
+    },
+    {
+     "url": "https://web.archive.org/web/20260529043720/https://support.microsoft.com/en-us/topic/microsoft-support-policy-for-the-use-of-registry-cleaning-utilities-0485f4df-9520-3691-2461-7b0fd54e8b3a",
+     "supports": "Microsoft support policy KB2563254 (archived 29 May 2026): 'Microsoft does not support the use of registry cleaners'"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/experience/performance-optimization/tips-to-improve-pc-performance-in-windows",
+     "supports": "Windows includes free clean-up tools"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Avast Cleanup Premium",
+    "Avast Cleanup"
+   ]
+  },
+  {
+   "id": "avg-tuneup",
+   "name": "AVG TuneUp",
+   "publisher": "AVG Technologies",
+   "cat": "optimiser",
+   "kind": "optimiser_suite",
+   "verdict": "not_needed",
+   "rx": "\\bavg\\s+(?:pc\\s+)?tune\\s*-?\\s*up\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "AVG TuneUp is a legitimate paid tune-up program, but it includes a registry cleaner, and Microsoft has said it does not support those. Windows 10 and 11 already include free clean-up tools.",
+   "staff": "Legitimate product from a major vendor. Customer text rests only on the registry-cleaner feature (AVG's own page) and Microsoft's registry-cleaner policy. No Microsoft detection.",
+   "sources": [
+    {
+     "url": "https://www.avg.com/en/signal/registry-cleaner-tool",
+     "supports": "AVG's own page: 'AVG TuneUp - which includes one of the best registry cleaners on the market'; free trial"
+    },
+    {
+     "url": "https://web.archive.org/web/20260529043720/https://support.microsoft.com/en-us/topic/microsoft-support-policy-for-the-use-of-registry-cleaning-utilities-0485f4df-9520-3691-2461-7b0fd54e8b3a",
+     "supports": "Microsoft support policy KB2563254 (archived 29 May 2026): 'Microsoft does not support the use of registry cleaners'"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/experience/performance-optimization/tips-to-improve-pc-performance-in-windows",
+     "supports": "Windows includes free clean-up tools"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "AVG TuneUp",
+    "AVG PC TuneUp 2016"
+   ]
+  },
+  {
+   "id": "ccleaner",
+   "name": "CCleaner",
+   "publisher": "Piriform",
+   "cat": "optimiser",
+   "kind": "registry_cleaner",
+   "verdict": "not_needed",
+   "rx": "^ccleaner(?:\\s+(?:free|professional|pro|business|technician)(?:\\s+edition)?)?(?:\\s+v?\\d[\\d.]*)?$",
+   "prx": "",
+   "scrx": "",
+   "reason": "CCleaner is a legitimate program, but it includes a registry cleaner, and Microsoft has said it does not support those. Windows 10 and 11 can clear temporary files for free with Storage Sense.",
+   "staff": "Legitimate; be fair. Jul 2020: Defender flagged free/trial installers for bundling (PUA:Win32/CCleaner; encyclopedia entry PUA:Win32/PiriformBundler). Aug-Sep 2017: CCleaner 5.33.6162 32-bit and Cloud 1.07.3191 shipped a backdoor from official servers; 2.27m users.",
+   "sources": [
+    {
+     "url": "https://www.bleepingcomputer.com/news/microsoft/microsoft-now-detects-ccleaner-as-a-potentially-unwanted-application/",
+     "supports": "CCleaner is 'a junk file remover, Registry cleaner, and general Windows performance optimization utility'; 29 Jul 2020 Defender PUA:Win32/CCleaner for free-version installers bundling offers; Piriform called it a false positive"
+    },
+    {
+     "url": "https://web.archive.org/web/20260529043720/https://support.microsoft.com/en-us/topic/microsoft-support-policy-for-the-use-of-registry-cleaning-utilities-0485f4df-9520-3691-2461-7b0fd54e8b3a",
+     "supports": "Microsoft support policy KB2563254 (archived 29 May 2026): 'Microsoft does not support the use of registry cleaners'"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/manage-drive-space-with-storage-sense-654f6ada-7bfc-45e5-966b-e24aded96ad5",
+     "supports": "Storage Sense can automatically remove temporary files and Recycle Bin items"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FPiriformBundler",
+     "supports": "Staff note: PUA:Win32/PiriformBundler (27 Jul 2020, updated 3 Aug 2020) - free/trial installers of CCleaner, Defraggler, Recuva, Speccy bundled Chrome, Google Toolbar, Avast Free Antivirus, AVG Antivirus Free"
+    },
+    {
+     "url": "https://blog.talosintelligence.com/avast-distributes-malware/",
+     "supports": "Staff note: Cisco Talos, 18 Sep 2017 - signed CCleaner 5.33 (32-bit) and CCleaner Cloud 1.07.3191 carried a backdoor, hosted on CCleaner's download server (15 Aug-12 Sep 2017)"
+    },
+    {
+     "url": "https://blog.avast.com/update-to-the-ccleaner-5.33.6162-security-incident",
+     "supports": "Staff note: 2.27M users affected; version 5.33.6162"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "CCleaner",
+    "CCleaner Professional"
+   ]
+  },
+  {
+   "id": "fortect",
+   "name": "Fortect",
+   "publisher": "Fortect Ltd. (Tel Aviv, per its EULA)",
+   "cat": "optimiser",
+   "kind": "pc_repair",
+   "verdict": "remove",
+   "rx": "^fortect\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Fortect is a 'PC repair' program. Malwarebytes detects it as a potentially unwanted program and says such optimisers use exaggerated scan results. Windows 10 and 11 include free clean-up and security tools.",
+   "staff": "No reputable source links Fortect to Restoro/Reimage; its EULA names Fortect Ltd, Tel Aviv. Never tell customers it is the same firm. ThreatDown (Malwarebytes): PUP.Optional.Fortect. Verdict rests on that vendor detection only: medium confidence.",
+   "sources": [
+    {
+     "url": "https://www.threatdown.com/threat-detections/pup-optional-fortect/",
+     "supports": "PUP.Optional.Fortect, 'a so-called system optimizer called Fortect'; 'These so-called system optimizers use exaggerated scan results or sometimes even intentional false positives'; no mention of Restoro/Reimage"
+    },
+    {
+     "url": "https://www.fortect.com/eula/",
+     "supports": "Licensor is Fortect Ltd., reg. 51-657207-0, 14 Weizmann St., Tel Aviv-Yafo; no mention of Restoro/Reimage"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/experience/performance-optimization/tips-to-improve-pc-performance-in-windows",
+     "supports": "Windows includes free tools: Storage Sense, Disk Cleanup, Optimize Drives, startup apps, Windows Security"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/security/blog/2018/01/30/protecting-customers-from-being-intimidated-into-making-an-unnecessary-purchase/",
+     "supports": "Background: from 1 Mar 2018 Microsoft classes cleaner/optimiser programs that report errors in an exaggerated or alarming manner as unwanted software"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Fortect"
+   ]
+  },
+  {
+   "id": "glary-utilities",
+   "name": "Glary Utilities",
+   "publisher": "Glarysoft Ltd",
+   "cat": "optimiser",
+   "kind": "optimiser_suite",
+   "verdict": "not_needed",
+   "rx": "\\bglary\\s+utilities\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Glary Utilities is a tune-up program that includes a registry cleaner, and Microsoft has said it does not support those. Windows 10 and 11 already include free clean-up tools.",
+   "staff": "No Microsoft detection found. Verdict rests on the Registry Cleaner and Registry Repair modules (Glarysoft's own page) and Microsoft's policy.",
+   "sources": [
+    {
+     "url": "https://www.glarysoft.com/how-to/can-glary-utilities-help-with-windows-registry-cleaning-and-repair-a-complete-guide-for-windows-users/",
+     "supports": "Maker's page: Registry Cleaner module; 'One-Click Registry Cleaner' and 'Registry Repair'"
+    },
+    {
+     "url": "https://web.archive.org/web/20260529043720/https://support.microsoft.com/en-us/topic/microsoft-support-policy-for-the-use-of-registry-cleaning-utilities-0485f4df-9520-3691-2461-7b0fd54e8b3a",
+     "supports": "Microsoft support policy KB2563254 (archived 29 May 2026): 'Microsoft does not support the use of registry cleaners'"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/experience/performance-optimization/tips-to-improve-pc-performance-in-windows",
+     "supports": "Windows includes free clean-up tools"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Glary Utilities 6.13",
+    "Glary Utilities Pro 6"
+   ]
+  },
+  {
+   "id": "iobit-advanced-systemcare",
+   "name": "IObit Advanced SystemCare",
+   "publisher": "IObit",
+   "cat": "optimiser",
+   "kind": "optimiser_suite",
+   "verdict": "remove",
+   "rx": "\\badvanced\\s*system\\s*care\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Advanced SystemCare (IObit) is a PC tune-up program. Microsoft Defender detects it as a potentially unwanted app. It also includes a registry cleaner, and Microsoft has said it does not support those.",
+   "staff": "Defender PUA:Win32/AdvancedSystemCare (21 Aug 2023); Malwarebytes PUP.Optional.AdvancedSystemCare (IObit disputes it; the firms have feuded since 2010). Ultimate edition has a full antivirus engine: check Security Center. Also PUABundler:Win32/IOBitBundler (May 2023).",
+   "sources": [
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FAdvancedSystemCare",
+     "supports": "Microsoft Defender detection PUA:Win32/AdvancedSystemCare, published 21 Aug 2023"
+    },
+    {
+     "url": "https://www.iobit.com/en/advancedsystemcarefree.php",
+     "supports": "IObit's own page: Registry Cleaner feature ('removing invalid, outdated, and redundant entries'); Ultimate version includes 'a full-fledged antivirus engine'"
+    },
+    {
+     "url": "https://web.archive.org/web/20260529043720/https://support.microsoft.com/en-us/topic/microsoft-support-policy-for-the-use-of-registry-cleaning-utilities-0485f4df-9520-3691-2461-7b0fd54e8b3a",
+     "supports": "Microsoft support policy KB2563254 (archived 29 May 2026): 'Microsoft does not support the use of registry cleaners'"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-advancedsystemcare",
+     "supports": "Staff note: Malwarebytes PUP.Optional.AdvancedSystemCare, 'Advanced System Care by IObit'"
+    },
+    {
+     "url": "https://securitybrief.com.au/story/iobit-malwarebytes-spat-continues-legitimate-program-blacklisted-pup",
+     "supports": "Staff note (Apr 2017): IObit disputes the PUP classification; the firms have clashed 'since at least 2010'"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUABundler%3AWin32%2FIOBitBundler&threatId=362730",
+     "supports": "Staff note: Defender PUABundler:Win32/IOBitBundler, published 8 May 2023"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Advanced SystemCare",
+    "Advanced SystemCare 17",
+    "Advanced SystemCare Ultimate"
+   ]
+  },
+  {
+   "id": "iobit-smart-defrag",
+   "name": "IObit Smart Defrag",
+   "publisher": "IObit",
+   "cat": "optimiser",
+   "kind": "defragmenter",
+   "verdict": "not_needed",
+   "rx": "\\bsmart\\s*defrag\\b",
+   "prx": "\\biobit\\b",
+   "scrx": "",
+   "reason": "Smart Defrag (IObit) is a defragmenter. Windows 10 and 11 already optimise drives automatically once a week, so it is not needed.",
+   "staff": "Windows defrags hard drives and trims SSDs weekly by default (Optimise Drives). Flag only with IObit publisher. Defender has vendor-level IObit detections (PUA:Win32/IObit; PUABundler:Win32/IOBitBundler) that do not name this product.",
+   "sources": [
+    {
+     "url": "https://www.iobit.com/en/iobitsmartdefrag.php",
+     "supports": "Maker's page: 'Disk Defragmenter for Windows'"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/experience/storage-filemanagement/defragment-optimize-your-data-drives-in-windows",
+     "supports": "'By default, Windows automatically optimizes your drives once a week'"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FIObit",
+     "supports": "Staff note: Defender vendor-level detection PUA:Win32/IObit (18 Nov 2015)"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Smart Defrag 9",
+    "IObit Smart Defrag"
+   ]
+  },
+  {
+   "id": "iobit-uninstaller",
+   "name": "IObit Uninstaller",
+   "publisher": "IObit",
+   "cat": "optimiser",
+   "kind": "uninstaller",
+   "verdict": "not_needed",
+   "rx": "\\biobit\\s+uninstaller\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "IObit Uninstaller is a third-party uninstaller. Windows can already remove programs itself from Settings > Apps, so it is not needed.",
+   "staff": "An IObit Uninstaller forum thread (12 Apr 2021) reports Defender blocking the installer as PUA:Win32/IObit, but that detection is vendor-level and names no product, so customer text says 'not needed' only. Revo etc. are not flagged.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/uninstall-or-remove-apps-and-programs-in-windows-4b55f974-2cc6-2d2b-d092-5905080eaf98",
+     "supports": "Windows uninstalls apps via Start, Settings > Apps > Installed apps, or Control Panel"
+    },
+    {
+     "url": "https://web.archive.org/web/20241204112547/https://forums.iobit.com/topic/16505-puawin32iobit-microsoft-virus-protection-has-blocked-the-installation/",
+     "supports": "Staff note: IObit Uninstaller forum thread 'PUA:Win32/IOBit - Microsoft Virus protection has blocked the installation', 12 Apr 2021 (live URL blocks automated fetchers)"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FIObit",
+     "supports": "Staff note: Defender vendor-level detection PUA:Win32/IObit"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "IObit Uninstaller 14",
+    "IObit Uninstaller"
+   ]
+  },
+  {
+   "id": "iolo-system-mechanic",
+   "name": "iolo System Mechanic",
+   "publisher": "iolo technologies, LLC",
+   "cat": "optimiser",
+   "kind": "optimiser_suite",
+   "verdict": "not_needed",
+   "rx": "\\bsystem\\s+mechanic\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "System Mechanic (iolo) is a tune-up program that repairs the registry, and Microsoft has said it does not support registry cleaners. Windows 10 and 11 already include free clean-up tools.",
+   "staff": "Registry repair confirmed on iolo's site. Ultimate Defense adds antivirus (System Shield, Malware Killer), so check the security list too. No Microsoft detection found.",
+   "sources": [
+    {
+     "url": "https://www.iolo.com/resources/articles/complete-registry-optimization-with-system-mechanic/",
+     "supports": "Maker's page: 'Repair Registry Problems' removes invalid and obsolete data references from the registry"
+    },
+    {
+     "url": "https://www.iolo.com/products/system-mechanic/",
+     "supports": "Editions System Mechanic, Pro and Ultimate Defense; Ultimate Defense includes System Shield antivirus and Malware Killer"
+    },
+    {
+     "url": "https://web.archive.org/web/20260529043720/https://support.microsoft.com/en-us/topic/microsoft-support-policy-for-the-use-of-registry-cleaning-utilities-0485f4df-9520-3691-2461-7b0fd54e8b3a",
+     "supports": "Microsoft support policy KB2563254 (archived 29 May 2026): 'Microsoft does not support the use of registry cleaners'"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/experience/performance-optimization/tips-to-improve-pc-performance-in-windows",
+     "supports": "Windows includes free clean-up tools"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "System Mechanic",
+    "System Mechanic Pro",
+    "System Mechanic Ultimate Defense"
+   ]
+  },
+  {
+   "id": "norton-utilities",
+   "name": "Norton Utilities",
+   "publisher": "Norton (Gen Digital)",
+   "cat": "optimiser",
+   "kind": "optimiser_suite",
+   "verdict": "not_needed",
+   "rx": "\\bnorton\\s+utilities\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Norton Utilities is a legitimate paid tune-up program, but it cleans registry entries, and Microsoft has said it does not support registry cleaners. Windows 10 and 11 include free clean-up tools.",
+   "staff": "Legitimate Norton product; Norton's support article says Utilities Ultimate finds 'broken registry keys' to delete. Regex does not match Norton 360 or other Norton security products. No Microsoft detection.",
+   "sources": [
+    {
+     "url": "https://support.norton.com/sp/en/us/home/current/solutions/v20230412202434739",
+     "supports": "Norton's own article 'Cleaning up system junk with Norton Utilities Ultimate': 'identifies the broken registry keys that you can safely delete'"
+    },
+    {
+     "url": "https://web.archive.org/web/20260529043720/https://support.microsoft.com/en-us/topic/microsoft-support-policy-for-the-use-of-registry-cleaning-utilities-0485f4df-9520-3691-2461-7b0fd54e8b3a",
+     "supports": "Microsoft support policy KB2563254 (archived 29 May 2026): 'Microsoft does not support the use of registry cleaners'"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/experience/performance-optimization/tips-to-improve-pc-performance-in-windows",
+     "supports": "Windows includes free clean-up tools"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Norton Utilities Ultimate",
+    "Norton Utilities Premium"
+   ]
+  },
+  {
+   "id": "outbyte-pc-repair",
+   "name": "Outbyte PC Repair",
+   "publisher": "Outbyte Computing Ltd",
+   "cat": "optimiser",
+   "kind": "pc_repair",
+   "verdict": "remove",
+   "rx": "\\boutbyte\\s+pc\\s*repair\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Outbyte PC Repair is a 'PC repair' program. Malwarebytes detects it as potentially unwanted and says such programs charge for things of no value or already in Windows, such as defragmenting.",
+   "staff": "Malwarebytes PUP.Optional.Outbyte covers the Outbyte family. PC Repair is no longer on Outbyte's product list (Sep 2026), so these are legacy installs. Outbyte Driver Updater and AVarmor belong on the driver and security lists.",
+   "sources": [
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-outbyte",
+     "supports": "PUP.Optional.Outbyte: 'These programs ask money for services that are of no value or already included in Windows, for example defragmentation, driver updates, and registry cleaners'; initial scan shows many problems, then asks for the paid version"
+    },
+    {
+     "url": "https://outbyte.com/",
+     "supports": "Footer: Outbyte Computing Ltd.; current products listed are Outbyte Driver Updater and Outbyte AVarmor (PC Repair not listed)"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/experience/storage-filemanagement/defragment-optimize-your-data-drives-in-windows",
+     "supports": "'By default, Windows automatically optimizes your drives once a week'"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/security/blog/2018/01/30/protecting-customers-from-being-intimidated-into-making-an-unnecessary-purchase/",
+     "supports": "Background: Microsoft treats coercive cleaner/optimiser messaging as unwanted software"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Outbyte PC Repair"
+   ]
+  },
+  {
+   "id": "pc-accelerate",
+   "name": "PC Accelerate / PC Accelerate Pro",
+   "publisher": "Varies (not consistently shown)",
+   "cat": "optimiser",
+   "kind": "pc_optimiser",
+   "verdict": "remove",
+   "rx": "\\bpc\\s*accelerate\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "PC Accelerate is a 'speed up your PC' program. Microsoft Defender detects it as adware, and Malwarebytes detects it as a potentially unwanted program. Windows 10 and 11 include free clean-up tools.",
+   "staff": "Defender: Adware:Win32/PCAcceleratePro (5 Sep 2022). Malwarebytes: PUP.Optional.PCAcceleratePro, 'usually installed by users themselves under false pretences'. Publisher field varies, so match on name only.",
+   "sources": [
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=Adware:Win32/PCAcceleratePro",
+     "supports": "Microsoft Defender detection Adware:Win32/PCAcceleratePro, published 5 Sep 2022"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-pcacceleratepro",
+     "supports": "PUP.Optional.PCAcceleratePro, 'a system optimizer ... called PC Accelerate Pro'; 'usually installed by users themselves under false pretences'"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/experience/performance-optimization/tips-to-improve-pc-performance-in-windows",
+     "supports": "Windows includes free clean-up and performance tools"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "PC Accelerate Pro",
+    "PC Accelerate"
+   ]
+  },
+  {
+   "id": "pchelpsoft-pc-cleaner",
+   "name": "PC Cleaner (PC HelpSoft)",
+   "publisher": "PC HelpSoft",
+   "cat": "optimiser",
+   "kind": "pc_cleaner",
+   "verdict": "remove",
+   "rx": "\\bpc\\s*cleaner\\b",
+   "prx": "\\bpc\\s*helpsoft\\b",
+   "scrx": "",
+   "reason": "PC Cleaner by PC HelpSoft is a clean-up program. Malwarebytes detects it as a potentially unwanted program. Windows 10 and 11 can clear temporary files for free with Storage Sense.",
+   "staff": "Name is generic: flag ONLY when Publisher matches PC HelpSoft. Malwarebytes PUP.Optional.PCHelpSoft: installed 'based on false promises' or via bundle installers. PC HelpSoft Driver Updater belongs on the driver list.",
+   "sources": [
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-pchelpsoft",
+     "supports": "PUP.Optional.PCHelpSoft, a system optimiser marketed as 'PC Cleaner'; installed 'based on false promises' or as part of a bundle installer"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/manage-drive-space-with-storage-sense-654f6ada-7bfc-45e5-966b-e24aded96ad5",
+     "supports": "Storage Sense 'can automatically free up drive space ... like temporary files and items in your Recycle Bin'"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "PC Cleaner"
+   ]
+  },
+  {
+   "id": "regclean-pro",
+   "name": "RegClean Pro",
+   "publisher": "Systweak",
+   "cat": "optimiser",
+   "kind": "registry_cleaner",
+   "verdict": "remove",
+   "rx": "\\breg\\s*clean\\s*pro\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "RegClean Pro is a registry cleaner. Microsoft has said it does not support registry cleaners, and Malwarebytes says this one falsely reports registry errors to sell its full version.",
+   "staff": "Systweak product. Malwarebytes PUP.Optional.Systweak: 'originally presented itself as' RegClean Pro, falsely reports registry errors, arrives via bundlers, persists via Scheduled Tasks. Defender PUA:Win32/Systweak lists alias RegCleanPro (Symantec).",
+   "sources": [
+    {
+     "url": "https://web.archive.org/web/20260529043720/https://support.microsoft.com/en-us/topic/microsoft-support-policy-for-the-use-of-registry-cleaning-utilities-0485f4df-9520-3691-2461-7b0fd54e8b3a",
+     "supports": "Microsoft support policy KB2563254 (archived 29 May 2026): 'Microsoft does not support the use of registry cleaners'. Live URL now redirects to Windows help"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-systweak",
+     "supports": "'originally presented itself as the optimization software called RegClean Pro'; 'falsely shows users that it has found multiple errors in the registry'"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA:Win32/Systweak",
+     "supports": "Staff note: Defender PUA:Win32/Systweak with alias RegCleanPro (Symantec)"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "RegClean Pro"
+   ]
+  },
+  {
+   "id": "registry-reviver",
+   "name": "Registry Reviver",
+   "publisher": "ReviverSoft (Corel)",
+   "cat": "optimiser",
+   "kind": "registry_cleaner",
+   "verdict": "remove",
+   "rx": "\\bregistry\\s+reviver\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Registry Reviver is a registry cleaner. Microsoft has said it does not support registry cleaners, and Microsoft Defender detects this one as a potentially unwanted app.",
+   "staff": "Defender: PUA:Win32/RegistryReviver (16 Aug 2017). ReviverSoft brand, now owned by Corel per reviversoft.com.",
+   "sources": [
+    {
+     "url": "https://web.archive.org/web/20260529043720/https://support.microsoft.com/en-us/topic/microsoft-support-policy-for-the-use-of-registry-cleaning-utilities-0485f4df-9520-3691-2461-7b0fd54e8b3a",
+     "supports": "Microsoft support policy KB2563254 (archived 29 May 2026): 'Microsoft does not support the use of registry cleaners'"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA:Win32/RegistryReviver&ThreatID=239430",
+     "supports": "Microsoft Defender detection PUA:Win32/RegistryReviver, published 16 Aug 2017"
+    },
+    {
+     "url": "https://www.reviversoft.com/registry-reviver/",
+     "supports": "Maker's page: scans the Registry and repairs issues; Registry Optimizer; Corel Corporation copyright"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Registry Reviver"
+   ]
+  },
+  {
+   "id": "reimage-repair",
+   "name": "Reimage Repair",
+   "publisher": "Reimage Cyprus Limited",
+   "cat": "optimiser",
+   "kind": "pc_repair",
+   "verdict": "remove",
+   "rx": "^reimage\\b|\\bby\\s+reimage\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Reimage Repair is a 'PC repair' program. In 2024 its maker and Restoro's paid US$26m to settle US Federal Trade Commission charges over fake Windows pop-ups and misleading scans. Microsoft Defender flags it as unwanted.",
+   "staff": "Same FTC case as Restoro (X240021). Defender PUA:Win32/Reimage (2016, updated 2017; 'poor reputation'; file list includes eFixPro.exe). Regex also covers 'PC Scan & Repair by Reimage' (name not verified). Check for leftover remote-access tools.",
+   "sources": [
+    {
+     "url": "https://www.ftc.gov/news-events/news/press-releases/2024/03/tech-support-firms-will-pay-26-million-settle-ftc-charges-they-deceived-consumers-buying-repair",
+     "supports": "US$26m joint settlement by Restoro Cyprus and Reimage Cyprus; fake Microsoft Windows pop-ups; scans reported serious issues regardless of actual computer health"
+    },
+    {
+     "url": "https://www.ftc.gov/legal-library/browse/cases-proceedings/x240021-restoro-reimage",
+     "supports": "Reimage Cyprus Limited is a named defendant"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FReimage",
+     "supports": "Microsoft Defender PUA:Win32/Reimage (published 29 Jun 2016, updated 11 Jul 2017): 'stopped from running ... because it has a poor reputation'; eFixPro.exe listed"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Reimage Repair",
+    "PC Scan & Repair by Reimage"
+   ]
+  },
+  {
+   "id": "restoro",
+   "name": "Restoro",
+   "publisher": "Restoro Cyprus Limited",
+   "cat": "optimiser",
+   "kind": "pc_repair",
+   "verdict": "remove",
+   "rx": "^restoro\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Restoro is a 'PC repair' program. In 2024 its maker and Reimage's paid US$26m to settle US Federal Trade Commission charges over fake Windows pop-ups and misleading scans; older people were particularly affected.",
+   "staff": "FTC v. Restoro Cyprus Ltd and Reimage Cyprus Ltd (X240021): announced 14 Mar 2024, order signed 18 Mar 2024, US$26m; bans misrepresenting security or performance problems. Telemarketers went into customers' PCs, so check for leftover remote tools. Malwarebytes: PUP.Optional.Restoro.",
+   "sources": [
+    {
+     "url": "https://www.ftc.gov/news-events/news/press-releases/2024/03/tech-support-firms-will-pay-26-million-settle-ftc-charges-they-deceived-consumers-buying-repair",
+     "supports": "14 Mar 2024: the two firms 'will pay $26 million'; 'particularly older consumers'; 'fake Microsoft Windows pop-ups'; scans 'typically identified purported serious issues' regardless of the computers' actual health; telemarketers accessed consumers' computers"
+    },
+    {
+     "url": "https://www.ftc.gov/legal-library/browse/cases-proceedings/x240021-restoro-reimage",
+     "supports": "Case X240021 names Restoro Cyprus Limited and Reimage Cyprus Limited; stipulated order signed 18 Mar 2024; refunds announced 10 Mar 2025"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-restoro",
+     "supports": "Staff note: Malwarebytes detection PUP.Optional.Restoro"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Restoro"
+   ]
+  },
+  {
+   "id": "speedupmypc",
+   "name": "SpeedUpMyPC",
+   "publisher": "Uniblue Systems Limited (historically)",
+   "cat": "optimiser",
+   "kind": "pc_optimiser",
+   "verdict": "remove",
+   "rx": "\\bspeed\\s*up\\s*my\\s*pc\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "SpeedUpMyPC is a 'speed up your PC' program. Microsoft Defender detects it as a potentially unwanted app. Windows 10 and 11 already include free tools to clean up and speed up a PC.",
+   "staff": "Defender: PUA:Win32/SpeedUpMyPC (19 Mar 2018). Sold by Uniblue Systems Ltd around 2010 (archived Uniblue page). PUA:Win32/SpeedingUpMyPC is a separate detection; this regex does not match it.",
+   "sources": [
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA:Win32/SpeedUpMyPC&ThreatID=242711",
+     "supports": "Microsoft Defender detection PUA:Win32/SpeedUpMyPC, published 19 Mar 2018"
+    },
+    {
+     "url": "https://web.archive.org/web/20100328115047/http://www.uniblue.com:80/software/speedupmypc/",
+     "supports": "Staff note: archived 2010 page 'Uniblue SpeedUpMyPC 2010', copyright Uniblue Systems Limited"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA:Win32/SpeedingUpMyPC",
+     "supports": "Staff note: separate Defender detection PUA:Win32/SpeedingUpMyPC (2016, updated 2017)"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/experience/performance-optimization/tips-to-improve-pc-performance-in-windows",
+     "supports": "Windows includes free performance and clean-up tools"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "SpeedUpMyPC",
+    "Uniblue SpeedUpMyPC 2015"
+   ]
+  },
+  {
+   "id": "winthruster",
+   "name": "WinThruster",
+   "publisher": "Solvusoft",
+   "cat": "optimiser",
+   "kind": "registry_cleaner",
+   "verdict": "remove",
+   "rx": "\\bwin\\s*thruster\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "WinThruster is a registry cleaner from Solvusoft. Microsoft has said it does not support registry cleaners, and Malwarebytes detects WinThruster as a potentially unwanted program.",
+   "staff": "Solvusoft sells it as a US$29.97/yr subscription that repairs 'invalid references' in the registry. Malwarebytes: PUP.Optional.WinThruster (log shows publisher Solvusoft). Defender PUA:Win32/Solvusoft (Apr 2016) names no product: staff only.",
+   "sources": [
+    {
+     "url": "https://www.solvusoft.com/en/winthruster/",
+     "supports": "Maker's page: 'detects and repairs hundreds of invalid references that accumulate in your registry'; one-year subscription US$29.97"
+    },
+    {
+     "url": "https://web.archive.org/web/20260529043720/https://support.microsoft.com/en-us/topic/microsoft-support-policy-for-the-use-of-registry-cleaning-utilities-0485f4df-9520-3691-2461-7b0fd54e8b3a",
+     "supports": "Microsoft support policy KB2563254 (archived 29 May 2026): 'Microsoft does not support the use of registry cleaners'"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-winthruster",
+     "supports": "Malwarebytes detection PUP.Optional.WinThruster; traces show publisher Solvusoft"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FSolvusoft",
+     "supports": "Staff note: Defender PUA:Win32/Solvusoft, published 11 Apr 2016; does not name WinThruster"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "WinThruster"
+   ]
+  },
+  {
+   "id": "winzip-system-utilities",
+   "name": "WinZip System Utilities Suite / WinZip Disk Tools",
+   "publisher": "WinZip Computing (Corel)",
+   "cat": "optimiser",
+   "kind": "optimiser_suite",
+   "verdict": "remove",
+   "rx": "\\bwinzip\\s+(?:system\\s+utilities|disk\\s*tools)\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "WinZip System Utilities Suite and WinZip Disk Tools are PC clean-up programs, separate from the WinZip file tool. Malwarebytes detects both as potentially unwanted. Windows has free clean-up tools.",
+   "staff": "Not the WinZip archiver: regex hits only System Utilities Suite and Disk Tools. Malwarebytes: PUP.Optional.WinzipSystemUtilitiesSuite (slower boot and browsing) and PUP.Optional.WinZipDiskTools (publisher Corel / WinZip Computing).",
+   "sources": [
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-winzipsystemutilitiessuite",
+     "supports": "PUP.Optional.WinzipSystemUtilitiesSuite: 'a system optimizer that markets itself as a PC cleaner'; slows bootup and web browsing"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-winzipdisktools",
+     "supports": "PUP.Optional.WinZipDiskTools, a disk optimizer; publisher Corel Corporation / WinZip Computing"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/experience/performance-optimization/tips-to-improve-pc-performance-in-windows",
+     "supports": "Windows includes free clean-up tools"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "WinZip System Utilities Suite",
+    "WinZip Disk Tools"
+   ]
+  },
+  {
+   "id": "wise-care-365",
+   "name": "Wise Care 365",
+   "publisher": "WiseCleaner.com",
+   "cat": "optimiser",
+   "kind": "optimiser_suite",
+   "verdict": "remove",
+   "rx": "\\bwise\\s*care\\s*365\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Wise Care 365 is a tune-up program with a registry cleaner. Microsoft has said it does not support registry cleaners, and Microsoft Defender has detected Wise Care 365 as a potentially unwanted app.",
+   "staff": "Defender PUA:Win32/WiseCare published 20 Jul 2017; a Dec 2017 Microsoft Q&A answer quotes the 'poor reputation' block. Not confirmed that current builds are still detected, hence medium confidence. Registry cleaner confirmed on WiseCleaner's page.",
+   "sources": [
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FWiseCare",
+     "supports": "Microsoft Defender detection PUA:Win32/WiseCare, published 20 Jul 2017"
+    },
+    {
+     "url": "https://learn.microsoft.com/en-us/answers/questions/03198d82-4a0e-4d1e-86fc-e03fc530f454/why-windows-defender-deleted-wise-care-365?forum=windows-all",
+     "supports": "7 Dec 2017: Defender removed Wise Care 365 as PUA:Win32/WiseCare ('poor reputation')"
+    },
+    {
+     "url": "https://www.wisecleaner.com/wise-care-365.html",
+     "supports": "Maker's page: 'Remove invalid Windows registry entries'"
+    },
+    {
+     "url": "https://web.archive.org/web/20260529043720/https://support.microsoft.com/en-us/topic/microsoft-support-policy-for-the-use-of-registry-cleaning-utilities-0485f4df-9520-3691-2461-7b0fd54e8b3a",
+     "supports": "Microsoft support policy KB2563254 (archived 29 May 2026): 'Microsoft does not support the use of registry cleaners'"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Wise Care 365 version 6.7.5",
+    "Wise Care 365"
+   ]
+  },
+  {
+   "id": "wise-registry-cleaner",
+   "name": "Wise Registry Cleaner",
+   "publisher": "WiseCleaner.com",
+   "cat": "optimiser",
+   "kind": "registry_cleaner",
+   "verdict": "not_needed",
+   "rx": "\\bwise\\s+registry\\s+cleaner\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Wise Registry Cleaner is a registry cleaner. Microsoft has said it does not support registry cleaners and that problems they cause may need Windows to be reinstalled.",
+   "staff": "WiseCleaner product. No Microsoft detection found; verdict rests on Microsoft's registry-cleaner policy only. Wise Disk Cleaner is deliberately not matched.",
+   "sources": [
+    {
+     "url": "https://www.wisecleaner.com/wise-registry-cleaner.html",
+     "supports": "Maker's page: 'Safely clean up registry residues, fix Windows errors, and defragment invalid registries'"
+    },
+    {
+     "url": "https://web.archive.org/web/20260529043720/https://support.microsoft.com/en-us/topic/microsoft-support-policy-for-the-use-of-registry-cleaning-utilities-0485f4df-9520-3691-2461-7b0fd54e8b3a",
+     "supports": "Microsoft support policy KB2563254 (archived 29 May 2026): 'Microsoft does not support the use of registry cleaners'; issues 'might require users to reinstall the operating system'"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Wise Registry Cleaner 11",
+    "Wise Registry Cleaner"
+   ]
+  },
+  {
+   "id": "systweak-advanced-driver-updater",
+   "name": "Advanced Driver Updater",
+   "publisher": "Systweak Software",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "remove",
+   "rx": "^(?:systweak )?advanced driver updater\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Advanced Driver Updater is a driver updater from Systweak. Microsoft says Windows Update installs drivers for most hardware automatically, and Malwarebytes detects it as a potentially unwanted program.",
+   "staff": "Malwarebytes: PUP.Optional.AdvancedDriverUpdater, publisher Systweak Software (MB guide republished on Geekstogo, May 2020). MS PUA:Win32/Systweak lists Systweak Software as a signer but does not name this product. Check for other Systweak tools.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    },
+    {
+     "url": "https://www.geekstogo.com/forum/topic/374838-removal-instructions-for-advanced-driver-updater/",
+     "supports": "Malwarebytes guide republished with permission (May 2020): PUP.Optional.AdvancedDriverUpdater; DisplayName 'Advanced Driver Updater', publisher Systweak Software"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA:Win32/Systweak",
+     "supports": "Microsoft Defender PUA:Win32/Systweak lists signers Systweak Software and Systweak Inc. (staff context)"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Advanced Driver Updater",
+    "Systweak Advanced Driver Updater"
+   ]
+  },
+  {
+   "id": "ashampoo-driver-updater",
+   "name": "Ashampoo Driver Updater",
+   "publisher": "Ashampoo GmbH & Co. KG",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "not_needed",
+   "rx": "^ashampoo.{0,4} driver updater\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Ashampoo Driver Updater is a paid driver updater. Microsoft says Windows Update installs drivers for most hardware automatically, so a home PC does not need it.",
+   "staff": "Ashampoo sells it as a 1-year licence for up to 3 PCs. No MS or Malwarebytes PUA detection found. Other Ashampoo apps (Burning Studio etc.) are fine.",
+   "sources": [
+    {
+     "url": "https://www.ashampoo.com/en-us/driver-updater",
+     "supports": "Maker sells 'Ashampoo® Driver Updater' as a paid 1-year licence for up to 3 devices"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Ashampoo Driver Updater",
+    "Ashampoo® Driver Updater"
+   ]
+  },
+  {
+   "id": "auslogics-driver-updater",
+   "name": "Auslogics Driver Updater",
+   "publisher": "Auslogics Labs Pty Ltd",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "remove",
+   "rx": "^auslogics driver updater\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Auslogics Driver Updater is a third-party driver updater. Microsoft says Windows Update installs drivers for most hardware automatically, and Malwarebytes detects it as a potentially unwanted program.",
+   "staff": "Malwarebytes: PUP.Optional.AuslogicsDriverUpdater (scheduled task at logon, warning pop-ups). MS also has vendor-level PUA:Win32/Auslogics (2017, no product detail). Do not flag Auslogics Disk Defrag on this basis.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-auslogicsdriverupdater",
+     "supports": "Malwarebytes detects Auslogics Driver Updater (Auslogics Labs Pty Ltd) as PUP.Optional.AuslogicsDriverUpdater"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA:Win32/Auslogics",
+     "supports": "Microsoft Defender vendor-level PUA detection PUA:Win32/Auslogics (published 4 Jul 2017; staff context)"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Auslogics Driver Updater"
+   ]
+  },
+  {
+   "id": "avast-driver-updater",
+   "name": "Avast Driver Updater",
+   "publisher": "Gen Digital Inc. (Avast)",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "not_needed",
+   "rx": "^avast driver updater\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Avast Driver Updater is a separate paid subscription product. Microsoft says Windows Update installs drivers for most hardware automatically, so a home PC does not need it.",
+   "staff": "Avast FAQ: paid product needing its own subscription after the trial; not included in Avast Premium Security. No MS or Malwarebytes PUA detection found. Separate from Avast Antivirus; do not flag the antivirus because of it.",
+   "sources": [
+    {
+     "url": "https://support.avast.com/en-us/article/Driver-Updater-FAQ",
+     "supports": "Avast: 'a paid product that requires a subscription'; separate subscription, not included in Avast Premium Security"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Avast Driver Updater"
+   ]
+  },
+  {
+   "id": "avg-driver-updater",
+   "name": "AVG Driver Updater",
+   "publisher": "AVG (Gen Digital)",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "not_needed",
+   "rx": "^avg driver updater\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "AVG Driver Updater is a separate paid subscription product. Microsoft says Windows Update installs drivers for most hardware automatically, so a home PC does not need it.",
+   "staff": "AVG FAQ: paid product needing a subscription after the trial. No MS or Malwarebytes PUA detection found. Separate from AVG AntiVirus.",
+   "sources": [
+    {
+     "url": "https://support.avg.com/SupportArticleView?l=en&urlname=avg-driver-updater-faq",
+     "supports": "AVG: 'a paid product that requires a subscription to use' after the free trial"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "AVG Driver Updater"
+   ]
+  },
+  {
+   "id": "iobit-driver-booster",
+   "name": "Driver Booster",
+   "publisher": "IObit",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "remove",
+   "rx": "\\bdriver ?booster\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Driver Booster is a third-party driver updater. Microsoft says Windows Update installs drivers for most hardware automatically, and Microsoft Defender has a potentially unwanted app detection for it.",
+   "staff": "IObit. MS Defender: PUA:Win32/DriverBooster (Nov 2016) and vendor-wide PUA:Win32/IObit (Nov 2015). Malwarebytes: PUP.Optional.iObitDriverBooster. Energizer Softech sells a different 'Driver Booster', also a Malwarebytes PUP (PUP.Optional.DriverBooster); same advice.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Microsoft: 'Driver updates for most hardware devices in Windows are automatically downloaded and installed through Windows Update'"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA:Win32/DriverBooster",
+     "supports": "Microsoft Defender PUA detection PUA:Win32/DriverBooster (published 14 Nov 2016)"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA:Win32/IObit",
+     "supports": "Microsoft Defender vendor-level PUA detection PUA:Win32/IObit (published 18 Nov 2015)"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-iobitdriverbooster",
+     "supports": "Malwarebytes detects IObit Driver Booster as PUP.Optional.iObitDriverBooster"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-driverbooster",
+     "supports": "Malwarebytes PUP.Optional.DriverBooster is a different Driver Booster published by Energizer Softech"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Driver Booster 12",
+    "Driver Booster 11",
+    "IObit Driver Booster"
+   ]
+  },
+  {
+   "id": "driver-easy",
+   "name": "Driver Easy",
+   "publisher": "Easeware",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "remove",
+   "rx": "\\bdriver ?easy\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Driver Easy is a third-party driver updater. Microsoft says Windows Update installs drivers for most hardware automatically, and Microsoft Defender has a potentially unwanted app detection for it.",
+   "staff": "Easeware; uninstall key DriverEasy_is1, installs to Program Files\\Easeware\\DriverEasy. MS Defender: PUA:Win32/DriverEasy (Apr 2018). The MS page has only generic text, so do not claim any specific behaviour.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA:Win32/DriverEasy",
+     "supports": "Microsoft Defender PUA detection PUA:Win32/DriverEasy (published 5 Apr 2018)"
+    },
+    {
+     "url": "https://www.advanceduninstaller.com/Driver-Easy-5_6_12-0c9eeb9995004324fe1116d32011b0db-application.htm",
+     "supports": "Installed name 'Driver Easy 5.6.12' by Easeware, uninstall key DriverEasy_is1, folder C:\\Program Files\\Easeware\\DriverEasy"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Driver Easy 5.8.1",
+    "Driver Easy 5.6.12",
+    "DriverEasy 5.7.1"
+   ]
+  },
+  {
+   "id": "driver-genius",
+   "name": "Driver Genius",
+   "publisher": "Driver-Soft Inc. (not verified)",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "remove",
+   "rx": "\\bdriver ?genius\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Driver Genius is a third-party driver updater. Microsoft says Windows Update installs drivers for most hardware automatically, and Microsoft Defender has a potentially unwanted app detection for it.",
+   "staff": "MS Defender: PUA:Win32/DriverGenius (Aug 2023); the MS page has only generic text. Publisher string not verified, so match on the name only.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA:Win32/DriverGenius",
+     "supports": "Microsoft Defender PUA detection PUA:Win32/DriverGenius (published 21 Aug 2023)"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Driver Genius 23",
+    "Driver Genius Professional"
+   ]
+  },
+  {
+   "id": "driver-reviver",
+   "name": "Driver Reviver",
+   "publisher": "ReviverSoft (Corel Corporation)",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "remove",
+   "rx": "\\bdriver ?reviver\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Driver Reviver is a third-party driver updater. Microsoft says Windows Update installs drivers for most hardware automatically, and Microsoft Defender has a potentially unwanted app detection for it.",
+   "staff": "ReviverSoft; uninstall Publisher shows Corel Corporation. MS Defender: PUA:Win32/DriverReviver (Aug 2023). Malwarebytes: PUP.Optional.DriverReviver (MB guide republished on Geekstogo). PC Reviver is the same maker's optimiser (optimiser list).",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA:Win32/DriverReviver",
+     "supports": "Microsoft Defender PUA detection PUA:Win32/DriverReviver (published 21 Aug 2023)"
+    },
+    {
+     "url": "https://www.geekstogo.com/forum/topic/368708-removal-instructions-for-driver-reviver/",
+     "supports": "Malwarebytes guide republished with permission: PUP.Optional.DriverReviver; DisplayName 'Driver Reviver', publisher Corel Corporation"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Driver Reviver",
+    "ReviverSoft Driver Reviver"
+   ]
+  },
+  {
+   "id": "driver-support",
+   "name": "Driver Support / DriverSupport ONE",
+   "publisher": "Asurvio LP (trademark owner); Malwarebytes lists PC Drivers Headquarters LP",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "remove",
+   "rx": "^driver ?support(?: ?one)?(?: [0-9][0-9.]*)?$",
+   "prx": "",
+   "scrx": "",
+   "reason": "Driver Support is a subscription driver updater. Microsoft says Windows Update installs drivers for most hardware automatically, and the security company Malwarebytes detects it as a potentially unwanted program.",
+   "staff": "Maker's site: DriverSupport ONE is an ongoing service with a fee; trademarks of Asurvio LP. Malwarebytes: PUP.Optional.DriverSupport (publisher PC Drivers Headquarters LP; 'found problems' pop-ups, scheduled tasks). Help the customer cancel the subscription too.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-driversupport",
+     "supports": "Malwarebytes detects Driver Support as PUP.Optional.DriverSupport (pop-ups, scheduled tasks, services)"
+    },
+    {
+     "url": "https://www.driversupport.com/why-was-i-charged/",
+     "supports": "Maker states DriverSupport ONE is an ongoing service that charges a fee; trademarks of Asurvio LP"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Driver Support",
+    "DriverSupport ONE",
+    "Driver Support One"
+   ]
+  },
+  {
+   "id": "driver-talent",
+   "name": "Driver Talent",
+   "publisher": "OSToto Co., Ltd.",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "remove",
+   "rx": "\\bdriver ?talent\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Driver Talent is a third-party driver updater. Microsoft says Windows Update installs drivers for most hardware automatically, and Microsoft Defender has a potentially unwanted app detection for it.",
+   "staff": "OSToto Co., Ltd. MS Defender: PUA:Win32/DriverTalent (Aug 2023). Malwarebytes: PUP.Optional.DriveTheLife (names Driver Talent).",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA:Win32/DriverTalent",
+     "supports": "Microsoft Defender PUA detection PUA:Win32/DriverTalent (published 21 Aug 2023)"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-drivethelife",
+     "supports": "Malwarebytes detects Driver Talent (OSToto Co., Ltd.) as PUP.Optional.DriveTheLife"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Driver Talent",
+    "Driver Talent for Network Card"
+   ]
+  },
+  {
+   "id": "driver-whiz",
+   "name": "Driver Whiz / DriverRestore",
+   "publisher": "383 Media, Inc.",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "remove",
+   "rx": "\\bdriver ?whiz\\b|^driver ?restore\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Driver Whiz is a third-party driver updater. Microsoft says Windows Update installs drivers for most hardware automatically, and Microsoft Defender has a potentially unwanted app detection for it.",
+   "staff": "383 Media. MS PUA:Win32/DriverRestore names Driver Whiz and DriverRestore, signer '1NSTALL (383 MEDIA, INC.)'. Malwarebytes: PUP.Optional.383Media. Old (2016-17), so rare. A 'Driver Restore' match: confirm 383 Media.",
+   "sources": [
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA:Win32/DriverRestore",
+     "supports": "Microsoft Defender PUA:Win32/DriverRestore names Driver Whiz, DriverWhiz, DriverRestore; signer 1NSTALL (383 MEDIA, INC.)"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-383media",
+     "supports": "Malwarebytes detects Driver Whiz (383 Media Inc.) as PUP.Optional.383Media"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Driver Whiz",
+    "DriverWhiz",
+    "DriverRestore"
+   ]
+  },
+  {
+   "id": "solvusoft-driverdoc",
+   "name": "DriverDoc",
+   "publisher": "Solvusoft Corporation",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "remove",
+   "rx": "\\bdriverdoc\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "DriverDoc is a third-party driver updater. Microsoft says Windows Update installs drivers for most hardware automatically, and Microsoft Defender has a potentially unwanted app detection covering its installers.",
+   "staff": "MS PUA:Win32/Systweak lists DriverDoc, DriverDoc_2016_Setup.exe / Setup_DriverDoc.exe and signer Solvusoft Corporation. Separate vendor-level PUA:Win32/Solvusoft also exists. WinThruster (same MS page) belongs in the optimiser list.",
+   "sources": [
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA:Win32/Systweak",
+     "supports": "Microsoft PUA detection lists product DriverDoc, installer names DriverDoc_2016_Setup.exe and Setup_DriverDoc.exe, signer Solvusoft Corporation"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA:Win32/Solvusoft",
+     "supports": "Microsoft Defender vendor-level PUA detection PUA:Win32/Solvusoft (published 11 Apr 2016)"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "DriverDoc"
+   ]
+  },
+  {
+   "id": "driverfix",
+   "name": "DriverFix",
+   "publisher": "DriverFix, Inc.",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "remove",
+   "rx": "^driver ?fix\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "DriverFix is a third-party driver updater. Microsoft says Windows Update installs drivers for most hardware automatically, and the security company Malwarebytes detects it as a potentially unwanted program.",
+   "staff": "Publisher DriverFix, Inc. Malwarebytes: PUP.Optional.DriverFix; MB says driver updaters exaggerate scan results to sell a fix. No Microsoft encyclopedia entry (PUA:Win32/DriverFix returns 'couldn't find', Sep 2026).",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-driverfix",
+     "supports": "Malwarebytes detects DriverFix (publisher DriverFix, Inc) as PUP.Optional.DriverFix; says driver updaters exaggerate scan results"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "DriverFix"
+   ]
+  },
+  {
+   "id": "drivermax",
+   "name": "DriverMax",
+   "publisher": "Innovative Solutions",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "remove",
+   "rx": "\\bdrivermax\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "DriverMax is a third-party driver updater. Microsoft says Windows Update installs drivers for most hardware automatically, and the security company Malwarebytes detects it as a potentially unwanted program.",
+   "staff": "Innovative Solutions. Malwarebytes: PUP.Optional.DriverMax ('driver updater and system optimizer'). No MS encyclopedia entry found (Sep 2026).",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-drivermax",
+     "supports": "Malwarebytes detects DriverMax (Innovative Solutions) as PUP.Optional.DriverMax"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "DriverMax 16",
+    "DriverMax"
+   ]
+  },
+  {
+   "id": "driverpack-solution",
+   "name": "DriverPack Solution",
+   "publisher": "DriverPack (drp.su)",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "remove",
+   "rx": "^driverpack\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "DriverPack is a third-party driver installer. Microsoft says Windows Update installs drivers for most hardware automatically, and Microsoft Defender has potentially unwanted app detections for it, one for bundling.",
+   "staff": "drp.su. MS Defender: PUA:Win32/DriverPack (2016) and PUABundler:Win32/DriverPack (2021). Malwarebytes: PUP.Optional.DriverPack, 'bundles other software'. After removal, check for bundled extras such as browsers.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA:Win32/DriverPack",
+     "supports": "Microsoft Defender PUA detection PUA:Win32/DriverPack (published 2 Nov 2016)"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUABundler:Win32/DriverPack&ThreatID=311940",
+     "supports": "Microsoft Defender detection PUABundler:Win32/DriverPack (published 11 Oct 2021)"
+    },
+    {
+     "url": "https://learn.microsoft.com/en-us/defender-xdr/criteria",
+     "supports": "Microsoft's PUA 'Bundling software' category: software that offers to install other software not developed by the same entity"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-driverpack",
+     "supports": "Malwarebytes: DriverPack (drp.su) is a system optimizer that bundles other software"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "DriverPack Solution",
+    "DriverPack Notifier",
+    "DriverPack Cloud"
+   ]
+  },
+  {
+   "id": "slimware-driverupdate",
+   "name": "DriverUpdate (SlimWare)",
+   "publisher": "Slimware Utilities Holdings, Inc.",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "remove",
+   "rx": "^driverupdate\\b",
+   "prx": "slimware",
+   "scrx": "",
+   "reason": "DriverUpdate by SlimWare is a third-party driver updater. Microsoft says Windows Update installs drivers for most hardware automatically, and Malwarebytes detects it as a potentially unwanted program.",
+   "staff": "Slimware Utilities Holdings. Malwarebytes: PUP.Optional.DriverUpdate. MS PUA:Win32/Slimware is for SlimCleaner but names DriverUpdate as bundled with it. Name is generic: require publisher 'slimware' too. SlimCleaner goes in the optimiser list.",
+   "sources": [
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-driverupdate",
+     "supports": "Malwarebytes detects DriverUpdate (Slimware Utilities Holdings, Inc.) as PUP.Optional.DriverUpdate"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA:Win32/Slimware",
+     "supports": "Microsoft PUA:Win32/Slimware (SlimCleaner) says it usually comes bundled with applications such as 'DriverUpdate' (staff context)"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "DriverUpdate"
+   ]
+  },
+  {
+   "id": "norton-driver-updater",
+   "name": "Norton Driver Updater",
+   "publisher": "Gen Digital Inc. (Norton)",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "not_needed",
+   "rx": "^norton driver updater\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Norton Driver Updater is an add-on included with some Norton plans. Microsoft says Windows Update installs drivers for most hardware automatically, so a home PC does not need it.",
+   "staff": "Norton FAQ: downloaded from the Norton account when the plan includes it; can be installed without Norton's antivirus. Not a PUA. Removing it leaves Norton 360 in place.",
+   "sources": [
+    {
+     "url": "https://support.norton.com/sp/en/us/norton-driver-updater/current/solutions/v20230522171628273",
+     "supports": "Norton: available from the Norton account if the plan includes the entitlement; can be installed standalone"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Norton Driver Updater"
+   ]
+  },
+  {
+   "id": "outbyte-driver-updater",
+   "name": "Outbyte Driver Updater",
+   "publisher": "Outbyte",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "remove",
+   "rx": "^outbyte driver updater\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Outbyte Driver Updater is a third-party driver updater. Microsoft says Windows Update installs drivers for most hardware automatically, and Malwarebytes detects Outbyte software as potentially unwanted.",
+   "staff": "Malwarebytes PUP.Optional.Outbyte is a family detection: paid services already in Windows, e.g. driver updates; it does not name this product. MS has PUA:Win32/OutbytePCRepair (PC Repair, optimiser list); no MS entry for the driver updater.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-outbyte",
+     "supports": "Malwarebytes family detection PUP.Optional.Outbyte: programs asking money for services already in Windows, e.g. driver updates"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA:Win32/OutbytePCRepair",
+     "supports": "Microsoft Defender PUA detection for Outbyte PC Repair (staff context only)"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Outbyte Driver Updater"
+   ]
+  },
+  {
+   "id": "pc-helpsoft-driver-updater",
+   "name": "PC HelpSoft Driver Updater",
+   "publisher": "PC HelpSoft Labs Inc",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "remove",
+   "rx": "^pc ?helpsoft driver updater\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "PC HelpSoft Driver Updater is a third-party driver updater. Microsoft says Windows Update installs drivers for most hardware automatically, and Malwarebytes detects it as a potentially unwanted program.",
+   "staff": "Malwarebytes guide (republished on Geekstogo, 2021): detected as PUP.Optional.Avanquest. Uninstall entry seen: DisplayName 'PC HelpSoft Driver Updater v5.3.500', Publisher 'PC HelpSoft'. If the name is only 'Driver Updater', check the publisher by hand.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    },
+    {
+     "url": "https://www.geekstogo.com/forum/topic/375676-removal-instructions-for-pc-helpsoft-driver-updater/",
+     "supports": "Malwarebytes guide republished with permission: detected as PUP.Optional.Avanquest; DisplayName 'PC HelpSoft Driver Updater v5.3.500'"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "PC HelpSoft Driver Updater",
+    "PC HelpSoft Driver Updater v5.3.500"
+   ]
+  },
+  {
+   "id": "quick-driver-updater",
+   "name": "Quick Driver Updater",
+   "publisher": "Digital Protection Services S.R.L.",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "remove",
+   "rx": "^quick driver updater\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Quick Driver Updater is a third-party driver updater. Microsoft says Windows Update installs drivers for most hardware automatically, and Malwarebytes detects it as a potentially unwanted program.",
+   "staff": "Digital Protection Services S.R.L. Malwarebytes: PUP.Optional.QuickDriverUpdater (registration prompts, scheduled tasks 'Quick Driver Updater skipuac' and '_Logon').",
+   "sources": [
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-quickdriverupdater",
+     "supports": "Malwarebytes detects Quick Driver Updater (Digital Protection Services S.R.L.) as PUP.Optional.QuickDriverUpdater"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Quick Driver Updater"
+   ]
+  },
+  {
+   "id": "systweak-smart-driver-care",
+   "name": "Smart Driver Care",
+   "publisher": "Systweak Software",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "not_needed",
+   "rx": "^smart driver care\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Smart Driver Care is a third-party driver updater from Systweak. Microsoft says Windows Update installs drivers for most hardware automatically, so a home PC does not need it.",
+   "staff": "Systweak's own page lists the publisher as Systweak Software. No product-specific MS or Malwarebytes detection found (PUA:Win32/SmartDriverCare does not exist). PUA:Win32/Systweak does not name it, so not_needed, not remove.",
+   "sources": [
+    {
+     "url": "https://www.systweak.com/blogs/smart-driver-care-review/",
+     "supports": "Systweak's page: 'Publisher: Systweak Software'; describes it as a driver updater tool"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Smart Driver Care"
+   ]
+  },
+  {
+   "id": "tweakbit-driver-updater",
+   "name": "TweakBit Driver Updater",
+   "publisher": "TweakBit",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "remove",
+   "rx": "^tweakbit driver updater\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "TweakBit Driver Updater is a driver updater. Microsoft says Windows Update installs drivers for most hardware automatically, and Microsoft Defender has a potentially unwanted app detection for TweakBit software.",
+   "staff": "MS Defender: PUA:Win32/TweakBit (Aug 2019). Vendor-level, no product detail, so the customer wording says 'TweakBit software'. TweakBit PCRepairKit and similar belong in the optimiser list.",
+   "sources": [
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA:Win32/TweakBit",
+     "supports": "Microsoft Defender PUA detection PUA:Win32/TweakBit (published 30 Aug 2019)"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "TweakBit Driver Updater"
+   ]
+  },
+  {
+   "id": "winzip-driver-updater",
+   "name": "WinZip Driver Updater",
+   "publisher": "Corel Corporation",
+   "cat": "driver_updater",
+   "kind": "driver_updater",
+   "verdict": "remove",
+   "rx": "^winzip driver updater\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "WinZip Driver Updater is a driver updater, separate from the WinZip file tool. Microsoft says Windows Update installs drivers for most hardware automatically, and Malwarebytes detects it as potentially unwanted.",
+   "staff": "Corel. Malwarebytes: PUP.Optional.WinZipDriverUpdater (scheduled tasks). Do NOT flag WinZip itself; the regex needs the words 'Driver Updater'.",
+   "sources": [
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-winzipdriverupdater",
+     "supports": "Malwarebytes detects WinZip Driver Updater (Corel Corporation) as PUP.Optional.WinZipDriverUpdater"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/update-drivers-through-device-manager-in-windows-ec62f46c-ff14-c91d-eead-d7126dc1f7b6",
+     "supports": "Windows Update automatically downloads and installs drivers for most hardware"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "WinZip Driver Updater"
+   ]
+  },
+  {
+   "id": "ask-toolbar",
+   "name": "Ask Toolbar",
+   "publisher": "APN / Ask.com",
+   "cat": "adware",
+   "kind": "search_hijacker",
+   "verdict": "remove",
+   "rx": "^Ask(?:\\.com)? Toolbar\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "In 2015 Microsoft classed older versions of the Ask Toolbar as unwanted software because they limit your control over your search provider. The toolbar is not needed.",
+   "staff": "Microsoft reclassified all but the then-latest version as unwanted in June 2015 (Threatpost, Help Net Security). Any copy still installed is many years old. Remove and reset the browser search engine.",
+   "sources": [
+    {
+     "url": "https://threatpost.com/microsoft-classifies-ask-toolbar-as-unwanted-software/113299/",
+     "supports": "12 June 2015: Microsoft classed all but the latest Ask Toolbar as unwanted; 'can restrict or limit your control over your search provider'"
+    },
+    {
+     "url": "https://www.helpnetsecurity.com/2015/06/12/microsoft-flags-ask-toolbar-as-unwanted-and-dangerous/",
+     "supports": "Second report of the same Microsoft decision"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Ask Toolbar",
+    "Ask Toolbar Updater"
+   ]
+  },
+  {
+   "id": "browser-assistant-realistic-media",
+   "name": "Browser Assistant (Realistic Media)",
+   "publisher": "Realistic Media Inc.",
+   "cat": "adware",
+   "kind": "adware",
+   "verdict": "remove",
+   "rx": "^Browser ?Assistant\\b",
+   "prx": "Realistic Media|Astral Media",
+   "scrx": "",
+   "reason": "Microsoft Defender detects Browser Assistant as adware (Adware:Win32/BrowserAssistant). Malwarebytes says this family shows extra adverts in your web browser. Windows does not need it.",
+   "staff": "Malwarebytes: Adware.BrowserAssistant (family signed by Astral Media Inc.) and Trojan.BrowserAssistant.PS (installer signed by Realistic Media Inc.; BrowserAssistant.lnk in Startup). Publisher regex required: the name is generic.",
+   "sources": [
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=Adware:Win32/BrowserAssistant&threatId=276531",
+     "supports": "Microsoft Defender detection Adware:Win32/BrowserAssistant, published 19 July 2020"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/adware-browserassistant",
+     "supports": "Adware family signed by Astral Media Inc.; shows adverts not from the sites visited"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/trojan-browserassistant-ps",
+     "supports": "Installer signed by Realistic Media Inc.; startup shortcuts; installed as part of bundlers"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Browser Assistant"
+   ]
+  },
+  {
+   "id": "bytefence",
+   "name": "ByteFence Anti-Malware",
+   "publisher": "ByteFence",
+   "cat": "adware",
+   "kind": "pua_antimalware",
+   "verdict": "remove",
+   "rx": "^ByteFence\\b",
+   "prx": "",
+   "scrx": "ByteFence",
+   "reason": "Microsoft Defender detects ByteFence as a potentially unwanted app (PUA:Win32/ByteFence). Windows already includes Microsoft Defender antivirus, so it is not needed.",
+   "staff": "Microsoft PUA:Win32/ByteFence (published July 2018). If it also registers in Security Center (unverified) it would duplicate Defender, so the security-programs check may flag it too. Check the rest of the list for other bundled apps.",
+   "sources": [
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FByteFence",
+     "supports": "Microsoft Defender detection PUA:Win32/ByteFence, published 3 July 2018"
+    },
+    {
+     "url": "https://support.microsoft.com/en-us/windows/protect-your-pc-from-potentially-unwanted-applications-c7668a25-174e-3b78-0191-faf0607f7a6e",
+     "supports": "Windows Security has built-in reputation-based protection against PUAs"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "ByteFence Anti-Malware",
+    "ByteFence"
+   ]
+  },
+  {
+   "id": "crystal-pdf",
+   "name": "Crystal PDF",
+   "publisher": "unknown",
+   "cat": "adware",
+   "kind": "pdf_infostealer",
+   "verdict": "remove",
+   "rx": "^Crystal ?PDF\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Microsoft's security team reports that Crystal PDF is an information stealer that takes saved sign-ins and cookies from Chrome and Firefox. It should be removed and browser-saved passwords changed.",
+   "staff": "Microsoft Security blog (2 Feb 2026): spread by Google Ads and SEO poisoning, persists via scheduled tasks. CIS (Oct 2025) calls it a .NET loader with no real PDF function. Uninstall DisplayName not confirmed; also check Task Scheduler for CrystalPDF tasks.",
+   "sources": [
+    {
+     "url": "https://www.microsoft.com/en-us/security/blog/2026/02/02/infostealers-without-borders-macos-python-stealers-and-platform-abuse/",
+     "supports": "Microsoft: malware masquerading as 'Crystal PDF' functions as an information stealer taking cookies, session data and credential caches from Firefox and Chrome; scheduled-task persistence; malvertising and SEO poisoning via Google Ads"
+    },
+    {
+     "url": "https://portal.cisecurity.org/insights/articles/malicious%20crystal%20pdf%20converter%20detected%20on%20sltt%20networks",
+     "supports": "CIS: staged .NET loader masquerading as a PDF converter; malvertising/SEO poisoning (alerts late Oct 2025)"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Crystal PDF",
+    "CrystalPDF"
+   ]
+  },
+  {
+   "id": "epi-browser",
+   "name": "Epi Browser (EpiBrowser)",
+   "publisher": "unknown (varies)",
+   "cat": "adware",
+   "kind": "infostealer_family",
+   "verdict": "remove",
+   "rx": "^Epi ?Browser\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Trend Micro researchers list Epi Browser among look-alike apps in a campaign that secretly sends browser data to attackers. It is not needed and should be removed.",
+   "staff": "Trend Micro 'EvilAI' (Sept 2025) lists App Suite, Epi Browser, JustAskJacky, Manual Finder, OneStart, PDF Editor and Recipe Lister; the family copies Chrome/Edge browser data and persists via scheduled tasks. Remove, then reset browser-saved passwords.",
+   "sources": [
+    {
+     "url": "https://www.trendaisecurity.com/en-us/resources-insights/trendai-security-blog/evilai",
+     "supports": "Epi Browser named in the EvilAI campaign that exfiltrates browser data"
+    },
+    {
+     "url": "https://thehackernews.com/2025/09/evilai-malware-masquerades-as-ai-tools.html",
+     "supports": "Tech press summary listing Epi Browser and related apps"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "EpiBrowser",
+    "Epi Browser"
+   ]
+  },
+  {
+   "id": "hola-vpn",
+   "name": "Hola VPN / Hola Browser",
+   "publisher": "Hola Networks",
+   "cat": "adware",
+   "kind": "p2p_vpn",
+   "verdict": "remove",
+   "rx": "^Hola\\b",
+   "prx": "Hola",
+   "scrx": "",
+   "reason": "Hola's own FAQ says its free version works by using some of your PC's resources and internet connection when you are not using it. Microsoft Defender detects it as a potentially unwanted app.",
+   "staff": "Microsoft PUA:Win32/Hola (2017). In 2015 Hola sold free users' bandwidth through sister service Luminati (now Bright Data) and it was used to attack 8chan (PCWorld). Browser-extension installs will not show in Apps; check browsers too.",
+   "sources": [
+    {
+     "url": "https://hola.org/faq",
+     "supports": "Free version is 'in exchange for safely using some of your device's resources (WiFi and very limited cellular data), on Windows and Android only when you are not using your device'; points commercial users to Bright Data"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FHola",
+     "supports": "Microsoft Defender detection PUA:Win32/Hola, published 4 Oct 2017"
+    },
+    {
+     "url": "https://www.pcworld.com/article/427726/ultra-popular-hola-vpn-extension-sold-your-bandwidth-for-use-in-a-botnet-attack.html",
+     "supports": "2015 Luminati bandwidth sale and 8chan attack (staff note)"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Hola",
+    "Hola VPN",
+    "Hola Browser",
+    "Hola Better Internet"
+   ]
+  },
+  {
+   "id": "justaskjacky-recipelister",
+   "name": "JustAskJacky / Recipe Lister",
+   "publisher": "unknown (varies)",
+   "cat": "adware",
+   "kind": "infostealer_family",
+   "verdict": "remove",
+   "rx": "^(?:Just ?Ask ?Jacky|Recipe ?Lister)\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Trend Micro researchers list this app among look-alike apps in a campaign that secretly sends browser data to attackers. It is not needed and should be removed.",
+   "staff": "Same EvilAI/TamperedChef family as ManualFinder and OneStart (Trend Micro, Sept 2025), which persists via scheduled tasks and copies browser data. Remove, clear leftover scheduled tasks, reset browser-saved passwords. Uninstall DisplayName not verified.",
+   "sources": [
+    {
+     "url": "https://www.trendaisecurity.com/en-us/resources-insights/trendai-security-blog/evilai",
+     "supports": "JustAskJacky and Recipe Lister named in the EvilAI campaign; scheduled-task persistence; browser data copied"
+    },
+    {
+     "url": "https://thehackernews.com/2025/09/evilai-malware-masquerades-as-ai-tools.html",
+     "supports": "Tech press summary listing JustAskJacky and Recipe Lister"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "JustAskJacky",
+    "RecipeLister",
+    "Recipe Lister"
+   ]
+  },
+  {
+   "id": "manualfinder",
+   "name": "ManualFinder",
+   "publisher": "unknown (varies)",
+   "cat": "adware",
+   "kind": "infostealer_family",
+   "verdict": "remove",
+   "rx": "^Manual ?Finder\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Trend Micro researchers list ManualFinder among look-alike apps in a campaign that secretly sends browser data to attackers. It is not needed and should be removed.",
+   "staff": "G DATA (Sept 2025) ties ManualFinder to the same actors as OneStart and AppSuite PDF Editor. Trend Micro says the family copies Chrome/Edge browser data and persists via scheduled tasks. Remove, check Task Scheduler, reset browser-saved passwords.",
+   "sources": [
+    {
+     "url": "https://www.trendaisecurity.com/en-us/resources-insights/trendai-security-blog/evilai",
+     "supports": "Manual Finder named in the EvilAI campaign; copies Edge/Chrome 'Web Data' and 'Preferences'; scheduled-task persistence (old trendmicro.com URL now redirects here)"
+    },
+    {
+     "url": "https://blog.gdatasoftware.com/2025/09/38262-appsuite-onestart-deception",
+     "supports": "Same actors behind OneStart, ManualFinder and AppSuite"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "ManualFinder",
+    "Manual Finder"
+   ]
+  },
+  {
+   "id": "onelaunch",
+   "name": "OneLaunch",
+   "publisher": "OneLaunch",
+   "cat": "adware",
+   "kind": "search_dock",
+   "verdict": "remove",
+   "rx": "^OneLaunch\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Malwarebytes classes OneLaunch as a potentially unwanted program because its installer changes browser settings without the user's consent. Windows does not need it.",
+   "staff": "Malwarebytes: PUP.Optional.OneLaunch (plus a .SILENTCF variant). No Microsoft Defender encyclopedia entry found (checked Sept 2026). After uninstalling, check browser home page, search engine and startup entries.",
+   "sources": [
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-onelaunch",
+     "supports": "Malwarebytes PUP classification; 'The OneLaunch installer changes browser settings without user consent'"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-onelaunch-silentcf",
+     "supports": "Separate PUP.Optional.OneLaunch.SILENTCF detection"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "OneLaunch"
+   ]
+  },
+  {
+   "id": "onestart",
+   "name": "OneStart (OneStart.ai)",
+   "publisher": "OneStart",
+   "cat": "adware",
+   "kind": "bundled_browser",
+   "verdict": "remove",
+   "rx": "^OneStart(?:\\.ai)?\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "OneStart is an extra web browser that can arrive bundled with other downloads. Microsoft Defender detects it as a potentially unwanted app (PUA:Win32/OneStart).",
+   "staff": "Microsoft PUA:Win32/OneStart (May 2025); Malwarebytes PUP.Optional.OneStart. G DATA (Sept 2025) says the same actors run OneStart, ManualFinder and AppSuite PDF Editor. Check %LOCALAPPDATA%\\OneStart.ai and Run keys after removal.",
+   "sources": [
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?name=PUA%3AWin32%2FOneStart&threatid=449704",
+     "supports": "Microsoft Defender detection PUA:Win32/OneStart, published 20 May 2025"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-onestart",
+     "supports": "'may be installed as part of a bundler'; shows adverts; %LOCALAPPDATA%\\OneStart.ai"
+    },
+    {
+     "url": "https://blog.gdatasoftware.com/2025/09/38262-appsuite-onestart-deception",
+     "supports": "Same actors behind OneStart, ManualFinder and AppSuite (16 Sept 2025)"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "OneStart",
+    "OneStart.ai"
+   ]
+  },
+  {
+   "id": "pc-app-store",
+   "name": "PC App Store",
+   "publisher": "PC App Store",
+   "cat": "adware",
+   "kind": "adware_store",
+   "verdict": "remove",
+   "rx": "^PC ?App ?Store\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Microsoft Defender detects PC App Store as potentially unwanted advertising software (PUAAdvertising:Win32/PCAppStore). Windows already has the Microsoft Store for installing apps.",
+   "staff": "Microsoft PUAAdvertising:Win32/PCAppStore (Aug 2023). A third-party store, not the Microsoft Store. Check startup entries after removal.",
+   "sources": [
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUAAdvertising%3AWin32%2FPCAppStore&ThreatID=368759",
+     "supports": "Microsoft Defender detection PUAAdvertising:Win32/PCAppStore, published 7 Aug 2023"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "PC App Store",
+    "PCAppStore"
+   ]
+  },
+  {
+   "id": "appsuite-pdf-editor",
+   "name": "PDF Editor by AppSuite (AppSuite PDF Editor)",
+   "publisher": "AppSuite",
+   "cat": "adware",
+   "kind": "pdf_infostealer",
+   "verdict": "remove",
+   "rx": "^(?:PDF Editor|AppSuite)\\b",
+   "prx": "AppSuite|ECHO Infini|GLINT By J|Summit Nexus",
+   "scrx": "",
+   "reason": "Security researchers at Truesec and WithSecure found this PDF Editor began stealing passwords and cookies saved in web browsers in August 2025. Remove it and change passwords saved in your browser.",
+   "staff": "TamperedChef family: worked as a PDF editor, then from 21 Aug 2025 stole browser logins and cookies (Truesec, WithSecure). Signers ECHO Infini, GLINT By J, Summit Nexus. Defender has BrowserModifier:MSIL/TamperedChef. Remove, then reset passwords from a clean device.",
+   "sources": [
+    {
+     "url": "https://www.truesec.com/hub/blog/tamperedchef-the-bad-pdf-editor",
+     "supports": "Harvests credentials and web cookies; activated 21 Aug 2025; signer names; installs 'PDF Editor.exe'"
+    },
+    {
+     "url": "https://www.withsecure.com/en/resources-hub/w-labs/tamperedchef/",
+     "supports": "'began stealing browser credentials'; autorun persistence; assume browser-stored credentials compromised, rotate them"
+    },
+    {
+     "url": "https://www.sophos.com/en-us/blog/tamperedchef-serves-bad-ads-with-infostealers-as-the-main-course",
+     "supports": "Promoted via Google Ads; UK about 14% of victims"
+    },
+    {
+     "url": "https://www.bleepingcomputer.com/news/security/tamperedchef-infostealer-delivered-through-fraudulent-pdf-editor/",
+     "supports": "Tech press coverage of the infostealer"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=BrowserModifier:MSIL/TamperedChef",
+     "supports": "Microsoft Defender detection BrowserModifier:MSIL/TamperedChef (published 13 Feb 2026) for the family (staff note only)"
+    },
+    {
+     "url": "https://www.advanceduninstaller.com/PDF-Editor-1_0_28-07c4555846a04563a9f22059cb9bd24e-application.htm",
+     "supports": "DisplayName evidence only: 'PDF Editor 1.0.28' developed by AppSuite"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "PDF Editor 1.0.28",
+    "PDF Editor",
+    "AppSuite PDF Editor"
+   ]
+  },
+  {
+   "id": "pdf-spark",
+   "name": "PDF Spark",
+   "publisher": "Mainstay Crypto LLC",
+   "cat": "adware",
+   "kind": "pdf_adware",
+   "verdict": "remove",
+   "rx": "^PDF ?Spark\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Microsoft Defender detects PDF Spark as a potentially unwanted app (PUA:Win32/PDFSpark). Malwarebytes says it is usually installed by clicking the wrong download button or bundled with other software.",
+   "staff": "Microsoft PUA:Win32/PDFSpark (Nov 2025); Malwarebytes PUP.Optional.SparkOnSoft, publisher Mainstay Crypto LLC. Typical source: misleading 'download' buttons on file-conversion sites.",
+   "sources": [
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FPDFSpark",
+     "supports": "Microsoft Defender detection PUA:Win32/PDFSpark, published 28 Nov 2025"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-sparkonsoft",
+     "supports": "Publisher Mainstay Crypto LLC; 'usually installed by users themselves after they clicked another download button than intended or as bundleware'"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "PDF Spark",
+    "PDFSpark"
+   ]
+  },
+  {
+   "id": "search-protect-conduit",
+   "name": "Search Protect (by Conduit)",
+   "publisher": "Conduit / Client Connect",
+   "cat": "adware",
+   "kind": "search_hijacker",
+   "verdict": "remove",
+   "rx": "^Search ?Protect\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Microsoft Defender detects Search Protect as a potentially unwanted app. F-Secure says it forces your browser to use Conduit's search and stops other programs changing that setting back.",
+   "staff": "Microsoft PUA:Win32/SearchProtect (2016). Legacy Conduit toolware still seen on older PCs. F-Secure notes its uninstaller does not revert registry changes, so reset browser home page and search engine afterwards.",
+   "sources": [
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FSearchProtect",
+     "supports": "Microsoft Defender detection PUA:Win32/SearchProtect, published 12 Apr 2016"
+    },
+    {
+     "url": "https://www.f-secure.com/sw-desc/application-w32-searchprotect",
+     "supports": "Forces Conduit Search; prevents other programs changing browser settings; uninstaller leaves registry changes; bundled"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Search Protect",
+    "Search Protect by conduit",
+    "SearchProtect"
+   ]
+  },
+  {
+   "id": "shift-browser",
+   "name": "Shift Browser",
+   "publisher": "Shift Technologies Inc",
+   "cat": "adware",
+   "kind": "bundled_browser",
+   "verdict": "remove",
+   "rx": "^Shift(?: Browser)?\\b",
+   "prx": "Shift Technologies|Redbrick",
+   "scrx": "",
+   "reason": "Shift is an extra web browser. Malwarebytes classes it as a potentially unwanted program and says it is promoted through confusing adverts on sites offering manuals, recipes and templates.",
+   "staff": "Malwarebytes: PUP.Optional.ShiftBrowser (since Oct 2024, per Heimdal). Heimdal (Sept 2026) saw it arrive via malvertising as installers named like 'shift - pdf_*.exe' posing as PDF tools, signed Shift Technologies Inc. Publisher regex needed: 'Shift' alone is too generic.",
+   "sources": [
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-shiftbrowser",
+     "supports": "PUP classification; 'promoted through confusing advertisements on sites where people might search for manuals, recipes, templates'"
+    },
+    {
+     "url": "https://heimdalsecurity.com/blog/shift-browser-signed-adware-fingerprints-endpoint-before-payload/",
+     "supports": "Signer Shift Technologies Inc; malvertising; installer names posing as PDF tools; Malwarebytes PUP since Oct 2024 (page updated 7 Sept 2026)"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Shift",
+    "Shift Browser"
+   ]
+  },
+  {
+   "id": "utorrent",
+   "name": "uTorrent",
+   "publisher": "BitTorrent Inc.",
+   "cat": "adware",
+   "kind": "bundleware",
+   "verdict": "not_needed",
+   "rx": "^(?:µ|μ|u)Torrent\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Microsoft Defender detects uTorrent as a potentially unwanted app (PUA:Win32/Utorrent). It is file-sharing software that most home PCs do not need.",
+   "staff": "Microsoft detections PUA:Win32/Utorrent (2017) and PUA:Win32/uTorrent!pz (2023). The customer may use it knowingly; ask before removing and check what else was installed alongside it.",
+   "sources": [
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FUtorrent",
+     "supports": "Microsoft Defender detection PUA:Win32/Utorrent, published 6 Feb 2017"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FuTorrent%21pz&threatId=407464",
+     "supports": "Microsoft PUA:Win32/uTorrent!pz, published 15 Sept 2023"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "µTorrent",
+    "uTorrent",
+    "µTorrent Web"
+   ]
+  },
+  {
+   "id": "wajam",
+   "name": "Wajam / Social2Search",
+   "publisher": "Wajam Internet Technologies",
+   "cat": "adware",
+   "kind": "adware",
+   "verdict": "remove",
+   "rx": "^(?:Wajam|Social2Search)\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Canada's Privacy Commissioner found in 2017 that Wajam (later Social2Search) was installed and collected personal data without meaningful consent. Microsoft Defender detects it as advertising software.",
+   "staff": "Legacy (mid-2010s) but can linger on old PCs. OPC Report of Findings #2017-002 also covers Social2Search and notes uninstall barriers. Microsoft detection: PUAAdvertising:Win32/Wajam (2021). Later rebrands may not match.",
+   "sources": [
+    {
+     "url": "https://www.priv.gc.ca/en/opc-actions-and-decisions/investigations/investigations-into-businesses/2017/pipeda-2017-002/",
+     "supports": "Regulator finding (17 Aug 2017): installation and collection of personal information 'without meaningful consent'; PIPEDA breaches; uninstall barriers; Social2Search rebrand"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUAAdvertising:Win32/Wajam",
+     "supports": "Microsoft Defender detection PUAAdvertising:Win32/Wajam, published 11 Oct 2021"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Wajam",
+    "Social2Search"
+   ]
+  },
+  {
+   "id": "wave-browser",
+   "name": "Wave Browser",
+   "publisher": "Wavesor Software",
+   "cat": "adware",
+   "kind": "bundled_browser",
+   "verdict": "remove",
+   "rx": "^Wave ?Browser\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Wave Browser is an extra web browser. Malwarebytes classes it as a potentially unwanted program and says it is also spread through channels that install it without the user's consent.",
+   "staff": "Malwarebytes: PUP.Optional.Wave; publisher Wavesor Software. No Microsoft Defender encyclopedia entry found (checked Sept 2026). After uninstalling, check Task Scheduler and startup entries for leftover Wave/Wavesor updaters and reset the default browser.",
+   "sources": [
+    {
+     "url": "https://www.malwarebytes.com/blog/detections/pup-optional-wave",
+     "supports": "PUP classification, Wavesor Software, 'spread through distribution channels that install the browser without user consent'"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Wave Browser",
+    "WaveBrowser"
+   ]
+  },
+  {
+   "id": "web-companion",
+   "name": "Web Companion (Adaware / Lavasoft)",
+   "publisher": "Lavasoft / Adaware",
+   "cat": "adware",
+   "kind": "bundled_addon",
+   "verdict": "remove",
+   "rx": "^(?:Adaware |Lavasoft )?Web ?Companion\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Microsoft Defender detects Web Companion as a potentially unwanted app (PUA:Win32/WebCompanion). Windows does not need it.",
+   "staff": "Microsoft PUA:Win32/WebCompanion (Aug 2023). Publisher shows as Lavasoft or Adaware. Adaware's own antivirus is handled by the security list, not this entry.",
+   "sources": [
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FWebCompanion&threatId=403868",
+     "supports": "Microsoft Defender detection PUA:Win32/WebCompanion, published 21 Aug 2023"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "Web Companion",
+    "Adaware Web Companion"
+   ]
+  },
+  {
+   "id": "webdiscover-browser",
+   "name": "WebDiscover Browser",
+   "publisher": "WebDiscover",
+   "cat": "adware",
+   "kind": "bundled_browser",
+   "verdict": "remove",
+   "rx": "^WebDiscover(?: ?Browser)?\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Microsoft Defender detects WebDiscover as a potentially unwanted app (PUA:Win32/WebDiscover). BleepingComputer notes it comes with free programs that did not clearly say it would be installed.",
+   "staff": "Chromium-based browser plus a desktop search bar routing searches via safestsearches.com (BleepingComputer). Install folder WebDiscoverBrowser; uninstall key is a GUID ending _is1. Reset search settings after removal.",
+   "sources": [
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FWebDiscover",
+     "supports": "Microsoft Defender detection PUA:Win32/WebDiscover, published 21 Aug 2023"
+    },
+    {
+     "url": "https://www.bleepingcomputer.com/virus-removal/remove-webdiscover",
+     "supports": "PUP; Chromium-based; installed by free programs that did not adequately disclose it; safestsearches.com redirect; _is1 uninstall key"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "WebDiscover Browser",
+    "WebDiscover Browser 2"
+   ]
+  },
+  {
+   "id": "webnavigator-browser",
+   "name": "WebNavigatorBrowser",
+   "publisher": "Better Cloud Solutions LTD",
+   "cat": "adware",
+   "kind": "bundled_browser",
+   "verdict": "remove",
+   "rx": "^Web ?Navigator ?Browser\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Microsoft Defender detects WebNavigatorBrowser as a potentially unwanted app. CrowdStrike found it makes itself the default browser, changes the home page and adds adverts to searches.",
+   "staff": "Microsoft PUA:Win32/WebNavigatorBrowser (Dec 2020); Malwarebytes PUP.Optional.WebNavigator (SearchDimension hijacker family). Signed Better Cloud Solutions LTD; data under %LOCALAPPDATA%\\WebNavigatorBrowser; scheduled task 'BetterCloudSolutions'.",
+   "sources": [
+    {
+     "url": "https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=PUA%3AWin32%2FWebNavigatorBrowser&ThreatID=287735",
+     "supports": "Microsoft Defender detection PUA:Win32/WebNavigatorBrowser, published 17 Dec 2020"
+    },
+    {
+     "url": "https://www.crowdstrike.com/en-us/blog/webnavigationbrowser-adware-analysis-and-recommendations/",
+     "supports": "Forcibly changes default browser and other browsers' home page; hijacks searches with injected adverts; signer; scheduled task"
+    },
+    {
+     "url": "https://www.malwarebytes.com/blog/adware/2020/12/searchdimension-search-hijackers",
+     "supports": "SearchDimension family's Chromium-based browsers detected as PUP.Optional.WebNavigator"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "WebNavigatorBrowser",
+    "WebNavigator Browser"
+   ]
+  },
+  {
+   "id": "aeroadmin",
+   "name": "AeroAdmin",
+   "publisher": "AeroAdmin",
+   "cat": "remote_access",
+   "kind": "remote_tool",
+   "verdict": "staff_only",
+   "rx": "^AeroAdmin\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "",
+   "staff": "Portable remote-control tool; AeroAdmin's own site warns not to give access to unknown callers. It normally runs without installing, so this only catches unattended-access installs. Treat any copy the customer can't explain as suspect.",
+   "sources": [
+    {
+     "url": "https://www.aeroadmin.com/en/",
+     "supports": "'Don't give access to unknown callers!'; 'No installation and configuration required'"
+    },
+    {
+     "url": "https://consumer.ftc.gov/articles/how-spot-avoid-and-report-tech-support-scams",
+     "supports": "Tech support impersonators ask for remote access to your computer"
+    }
+   ],
+   "confidence": "low",
+   "examples": [
+    "AeroAdmin"
+   ]
+  },
+  {
+   "id": "ammyy-admin",
+   "name": "Ammyy Admin",
+   "publisher": "Ammyy",
+   "cat": "remote_access",
+   "kind": "remote_tool",
+   "verdict": "staff_only",
+   "rx": "^Ammyy\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "",
+   "staff": "Ammyy has warned since 2012 that fake 'Microsoft' callers use Ammyy Admin (ESET). Its website was also compromised to serve malware (ESET; Kaspersky via The Register, 2016). May run without installing, so it can be missed here. Any copy on a home PC warrants questions.",
+   "sources": [
+    {
+     "url": "https://www.ammyy.com/en/admin_mu.html",
+     "supports": "Vendor: a call claiming to be 'Microsoft' asking to fix things via Ammyy Admin 'is definitely a scam'"
+    },
+    {
+     "url": "https://www.welivesecurity.com/2012/08/24/ammyy-warning-against-tech-support-scams/",
+     "supports": "ESET (Aug 2012) on Ammyy's tech support scam warning"
+    },
+    {
+     "url": "https://www.theregister.com/2016/07/19/ammyy_abused_by_trojan_slingers/",
+     "supports": "Kaspersky: attackers used the Ammyy website to add malware to the installer (2016)"
+    },
+    {
+     "url": "https://www.eset.com/afr/about/newsroom/press-releases-afr/research/operation-buhtrap-ammyy00/",
+     "supports": "ESET: visitors to ammyy.com downloaded an installer bundled with malware"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Ammyy Admin"
+   ]
+  },
+  {
+   "id": "anydesk",
+   "name": "AnyDesk",
+   "publisher": "AnyDesk Software GmbH",
+   "cat": "remote_access",
+   "kind": "remote_tool",
+   "verdict": "staff_only",
+   "rx": "^AnyDesk\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "",
+   "staff": "Which? lists AnyDesk among tools misused in remote-access scams; CISA documented portable AnyDesk in a bank refund scam. Ask who installed it and why. If an unknown caller: check bank activity, change passwords, uninstall. Portable copies won't show here.",
+   "sources": [
+    {
+     "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-025a",
+     "supports": "Portable AnyDesk and ScreenConnect used in a refund scam that altered the victim's bank summary"
+    },
+    {
+     "url": "https://www.which.co.uk/news/article/remote-access-scams-the-call-that-could-wipe-out-your-life-savings-aUojD8g58hNe",
+     "supports": "AnyDesk among tools misused by scammers (UK, Nov 2020)"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "AnyDesk"
+   ]
+  },
+  {
+   "id": "atera-agent",
+   "name": "Atera agent",
+   "publisher": "Atera Networks",
+   "cat": "remote_access",
+   "kind": "rmm_agent",
+   "verdict": "staff_only",
+   "rx": "^Atera ?Agent\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "",
+   "staff": "IT-provider management agent. In Proofpoint's network detections (Mar 2025) Atera came second to TeamViewer among RMM tools. Normal if the customer's IT provider uses Atera; otherwise treat as unauthorised access.",
+   "sources": [
+    {
+     "url": "https://www.proofpoint.com/us/blog/threat-insight/remote-monitoring-and-management-rmm-tooling-increasingly-attackers-first-choice",
+     "supports": "'the most prominent RMM appearing in network activity is TeamViewer, followed by Atera'"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "AteraAgent"
+   ]
+  },
+  {
+   "id": "chrome-remote-desktop",
+   "name": "Chrome Remote Desktop host",
+   "publisher": "Google LLC",
+   "cat": "remote_access",
+   "kind": "remote_tool",
+   "verdict": "staff_only",
+   "rx": "^Chrome Remote Desktop(?: Host)?\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "",
+   "staff": "Google's help says whoever you share with gets full access to apps, files, emails, documents and history. AhnLab (Dec 2023) reported the Kimsuky group installing the host to control infected PCs. A one-time code read out to a caller hands over control. Ask the customer.",
+   "sources": [
+    {
+     "url": "https://support.google.com/chrome/answer/1649523?hl=en&co=GENIE.Platform%3DDesktop",
+     "supports": "'They'll have full access to your apps, files, emails, documents, and history'; one-time access codes"
+    },
+    {
+     "url": "https://asec.ahnlab.com/en/59834/",
+     "supports": "Kimsuky installed the Chrome Remote Desktop host to control infected systems (8 Dec 2023)"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Chrome Remote Desktop Host"
+   ]
+  },
+  {
+   "id": "screenconnect",
+   "name": "ConnectWise ScreenConnect client",
+   "publisher": "ScreenConnect Software / ConnectWise",
+   "cat": "remote_access",
+   "kind": "remote_tool",
+   "verdict": "staff_only",
+   "rx": "^(?:(?:ConnectWise )?ScreenConnect|ConnectWise Control) Client\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "",
+   "staff": "CISA (2023) documented it in a bank refund scam; Proofpoint (2025) saw it far more often in criminal campaigns from mid-2024; Microsoft saw Storm-1811 install it after Quick Assist calls. The code in brackets differs per server. Remove unless a known IT provider owns it.",
+   "sources": [
+    {
+     "url": "https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-025a",
+     "supports": "ScreenConnect used in a refund scam"
+    },
+    {
+     "url": "https://www.proofpoint.com/us/blog/threat-insight/remote-monitoring-and-management-rmm-tooling-increasingly-attackers-first-choice",
+     "supports": "ScreenConnect appearing much more frequently in campaign data since mid-2024"
+    },
+    {
+     "url": "https://www.microsoft.com/en-us/security/blog/2024/05/15/threat-actors-misusing-quick-assist-in-social-engineering-attacks-leading-to-ransomware/",
+     "supports": "ScreenConnect deployed after Quick Assist social-engineering calls"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "ScreenConnect Client (a1b2c3d4e5f6a7b8)",
+    "ConnectWise Control Client (a1b2c3d4e5f6a7b8)"
+   ]
+  },
+  {
+   "id": "logmein-goto",
+   "name": "LogMeIn / GoTo Resolve / GoToAssist",
+   "publisher": "GoTo (formerly LogMeIn)",
+   "cat": "remote_access",
+   "kind": "remote_tool",
+   "verdict": "staff_only",
+   "rx": "^(?:LogMeIn(?:$| (?:Rescue|Resolve|Client|Pro)\\b)|GoTo ?Resolve\\b|GoToAssist\\b)",
+   "prx": "",
+   "scrx": "",
+   "reason": "",
+   "staff": "Which? lists LogMeIn and GoToAssist among tools scammers misuse; Proofpoint (Nov 2025) saw criminals drop LogMeIn Resolve. Regex deliberately skips LogMeIn Hamachi (a VPN). Ask whether a known IT firm uses it.",
+   "sources": [
+    {
+     "url": "https://www.which.co.uk/news/article/remote-access-scams-the-call-that-could-wipe-out-your-life-savings-aUojD8g58hNe",
+     "supports": "LogMeIn and GoToAssist misused by scammers"
+    },
+    {
+     "url": "https://www.proofpoint.com/us/blog/threat-insight/remote-access-real-cargo-cybercriminals-targeting-trucking-and-logistics",
+     "supports": "Criminals delivered LogMeIn Resolve, ScreenConnect, SimpleHelp and others (3 Nov 2025)"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "LogMeIn",
+    "LogMeIn Rescue",
+    "GoTo Resolve",
+    "GoToAssist"
+   ]
+  },
+  {
+   "id": "netsupport-manager",
+   "name": "NetSupport Manager",
+   "publisher": "NetSupport Ltd",
+   "cat": "remote_access",
+   "kind": "remote_tool",
+   "verdict": "staff_only",
+   "rx": "^NetSupport Manager\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "",
+   "staff": "Microsoft saw Storm-1811 install NetSupport Manager after fake IT-support calls; AhnLab and Proofpoint report long-running criminal abuse. Legitimate in schools and businesses (NetSupport School is not matched). On a home PC, investigate.",
+   "sources": [
+    {
+     "url": "https://www.microsoft.com/en-us/security/blog/2024/05/15/threat-actors-misusing-quick-assist-in-social-engineering-attacks-leading-to-ransomware/",
+     "supports": "NetSupport Manager deployed after vishing / Quick Assist access"
+    },
+    {
+     "url": "https://asec.ahnlab.com/en/59834/",
+     "supports": "Threat actors abuse NetSupport"
+    },
+    {
+     "url": "https://www.proofpoint.com/us/blog/threat-insight/remote-monitoring-and-management-rmm-tooling-increasingly-attackers-first-choice",
+     "supports": "NetSupport among TOAD payloads"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "NetSupport Manager"
+   ]
+  },
+  {
+   "id": "rustdesk",
+   "name": "RustDesk",
+   "publisher": "Purslane Ltd / RustDesk",
+   "cat": "remote_access",
+   "kind": "remote_tool",
+   "verdict": "staff_only",
+   "rx": "^RustDesk\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "",
+   "staff": "RustDesk itself (July 2026) says scammers phone victims and persuade them to install it; it temporarily unpublished its Android app from Google Play in 2023 over this. Open source and used by hobbyists too: ask the customer.",
+   "sources": [
+    {
+     "url": "https://rustdesk.com/blog/rustdesk-and-remote-access-scams/",
+     "supports": "Vendor statement (6 July 2026) on scammer misuse; Google Play unpublishing in Sept 2023"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "RustDesk"
+   ]
+  },
+  {
+   "id": "simplehelp",
+   "name": "SimpleHelp",
+   "publisher": "SimpleHelp Ltd",
+   "cat": "remote_access",
+   "kind": "remote_tool",
+   "verdict": "staff_only",
+   "rx": "^SimpleHelp\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "",
+   "staff": "Proofpoint (Nov 2025) saw criminals install SimpleHelp alongside ScreenConnect in intrusions. Rare on a home PC: ask who installed it. Uninstall DisplayName not confirmed.",
+   "sources": [
+    {
+     "url": "https://www.proofpoint.com/us/blog/threat-insight/remote-access-real-cargo-cybercriminals-targeting-trucking-and-logistics",
+     "supports": "SimpleHelp delivered by criminals; PDQ Connect installing ScreenConnect and SimpleHelp"
+    }
+   ],
+   "confidence": "low",
+   "examples": [
+    "SimpleHelp"
+   ]
+  },
+  {
+   "id": "supremo",
+   "name": "Supremo Remote Desktop",
+   "publisher": "Nanosystems S.r.l.",
+   "cat": "remote_access",
+   "kind": "remote_tool",
+   "verdict": "staff_only",
+   "rx": "^Supremo\\b",
+   "prx": "Nanosystems",
+   "scrx": "",
+   "reason": "",
+   "staff": "Nanosystems remote-control tool. Wikipedia (citing Ars Technica, 2013) says it has been abused in tech support scams to take control and move money. Publisher regex required because 'Supremo' is a common word. Ask who installed it.",
+   "sources": [
+    {
+     "url": "https://en.wikipedia.org/wiki/Supremo_(app)",
+     "supports": "Supremo abused by scammers to control victims' PCs and steal money (cites Ars Technica, 25 Nov 2013)"
+    }
+   ],
+   "confidence": "low",
+   "examples": [
+    "Supremo"
+   ]
+  },
+  {
+   "id": "teamviewer",
+   "name": "TeamViewer",
+   "publisher": "TeamViewer Germany GmbH",
+   "cat": "remote_access",
+   "kind": "remote_tool",
+   "verdict": "staff_only",
+   "rx": "^TeamViewer\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "",
+   "staff": "The tool Which? found most often reported as misused by scammers. TeamViewer says it provides no support services itself and warns against granting access after unsolicited calls. Often legitimate (family help): ask the customer.",
+   "sources": [
+    {
+     "url": "https://www.teamviewer.com/en-us/global/support/knowledge-base/teamviewer-remote/security/teamviewer-and-scamming/",
+     "supports": "'TeamViewer does not provide remote support services of any kind'; be careful with unsolicited phone calls"
+    },
+    {
+     "url": "https://www.which.co.uk/news/article/remote-access-scams-the-call-that-could-wipe-out-your-life-savings-aUojD8g58hNe",
+     "supports": "TeamViewer the brand most often reported as misused"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "TeamViewer",
+    "TeamViewer 15",
+    "TeamViewer Host"
+   ]
+  },
+  {
+   "id": "ultraviewer",
+   "name": "UltraViewer",
+   "publisher": "DucFabulous",
+   "cat": "remote_access",
+   "kind": "remote_tool",
+   "verdict": "staff_only",
+   "rx": "^UltraViewer\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "",
+   "staff": "UltraViewer's own site says scammers pose as tech support, get it installed and then get into bank accounts. Proofpoint lists it among tools pushed in phone-led (TOAD) attacks. Rarely needed on a UK home PC: ask who installed it.",
+   "sources": [
+    {
+     "url": "https://www.ultraviewer.net/en/200000150-how-to-avoid-remote-scams.html",
+     "supports": "Vendor: scammers impersonate tech support and use UltraViewer to reach bank accounts"
+    },
+    {
+     "url": "https://www.proofpoint.com/us/blog/threat-insight/remote-monitoring-and-management-rmm-tooling-increasingly-attackers-first-choice",
+     "supports": "UltraViewer among TOAD payloads (Mar 2025)"
+    }
+   ],
+   "confidence": "high",
+   "examples": [
+    "UltraViewer",
+    "UltraViewer version 6.6"
+   ]
+  },
+  {
+   "id": "zoho-assist",
+   "name": "Zoho Assist",
+   "publisher": "Zoho Corporation",
+   "cat": "remote_access",
+   "kind": "remote_tool",
+   "verdict": "staff_only",
+   "rx": "^Zoho ?Assist\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "",
+   "staff": "Legitimate support tool. Proofpoint lists Zoho among remote tools pushed in phone-led (TOAD) attacks. Ask who installed it. Uninstall DisplayName not confirmed.",
+   "sources": [
+    {
+     "url": "https://www.proofpoint.com/us/blog/threat-insight/remote-monitoring-and-management-rmm-tooling-increasingly-attackers-first-choice",
+     "supports": "Zoho among TOAD payloads"
+    }
+   ],
+   "confidence": "medium",
+   "examples": [
+    "Zoho Assist",
+    "Zoho Assist Unattended Agent"
+   ]
+  }
+ ]
+}

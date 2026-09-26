@@ -222,6 +222,23 @@ function slk_report_channel() {
 // The six-weekly Service Report, as the team sees it: a short summary and the report itself.
 // Text-only when the file cannot go (missing scope, channel by name, size, network) - the
 // team must still hear that a service happened. Returns what happened, for the tool's log.
+// Programs check for the team (reportup evaluates the uploaded inventory against our list): two security programs
+// at once, programs the PC doesn't need, and remote-access tools - the last is for staff only, never the customer.
+function pcm_slack_prog_lines($summary) {
+    $p = isset($summary['progs']) && is_array($summary['progs']) ? $summary['progs'] : null;
+    if (!$p) return '';
+    $t = '';
+    $act = array_map('strval', (array)($p['active'] ?? array()));
+    if (count($act) >= 2) $t .= 'Security: ' . count($act) . ' programs protecting at once - ' . slk_plain(substr(implode(', ', $act), 0, 120)) . "\n";
+    $un = array();
+    foreach ((array)($p['unneeded'] ?? array()) as $u) if (is_array($u)) $un[] = slk_plain(substr((string)($u['dn'] ?? ''), 0, 60)) . (($u['verdict'] ?? '') === 'remove' ? ' (remove)' : '');
+    if ($un) $t .= 'Programs not needed: ' . implode(', ', array_slice($un, 0, 8)) . (count($un) > 8 ? ' +' . (count($un) - 8) . ' more' : '') . "\n";
+    $rm = array();
+    foreach ((array)($p['remote'] ?? array()) as $u) if (is_array($u)) $rm[] = slk_plain(substr((string)($u['dn'] ?? ''), 0, 60));
+    if ($rm) $t .= ':warning: Remote-access tools installed (staff only - ask who installed them): ' . implode(', ', array_slice($rm, 0, 6)) . "\n";
+    return $t;
+}
+
 function pcm_service_report_to_slack($cust, $machine, $ts, $html, $summary) {
     if (!slk_ready()) return array('posted' => false, 'file' => false, 'error' => 'not_configured');
     $chan = slk_report_channel();
@@ -252,6 +269,7 @@ function pcm_service_report_to_slack($cust, $machine, $ts, $html, $summary) {
           . ($os !== '' ? 'OS: ' . slk_plain(substr($os, 0, 80)) . "\n" : '')
           . ($score !== '' ? 'Score: ' . slk_plain(substr($score, 0, 40)) . "\n" : '')
           . ($notes ? "Top notes:\n- " . implode("\n- ", $notes) . "\n" : '')
+          . pcm_slack_prog_lines($summary)
           // ServicePass "Resend last report" (17 Sep 2026): the service ran earlier and its first upload failed
           . (!empty($summary['resent']) ? '_Resent from the PC: this report is from ' . slk_plain(substr((string)$summary['resent'], 0, 40)) . " - its first upload did not reach the portal._\n" : '')
           . 'In the portal: Service reports' . ($mname !== '' ? ' on ' . slk_plain($mname) : '') . ' (staff: open the customer, view as, Service reports).';

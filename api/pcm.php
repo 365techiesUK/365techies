@@ -130,11 +130,30 @@ function pcm_news_out($db, $tier) {
                  'news_text' => (string)($n['text'] ?? ''), 'news_url' => (string)($n['url'] ?? ''));
 }
 
+require_once __DIR__ . '/pcm-programs-lib.php';   // programs check: the list + the matching (top-level scope on purpose)
+
 $raw = file_get_contents('php://input');
 $in = pcm_json_body($raw);
 if (!is_array($in)) out(array('ok'=>false,'error'=>'bad_request'));
 
 $action  = isset($in['action'])  ? preg_replace('/[^a-z]/','',$in['action']) : '';
+
+// the list itself - public, the same for everyone, so no key and no customer data are involved (before the data lock)
+if ($action === 'progrules') {
+    $p = pcm_prog_rules();
+    if (!$p) out(array('ok'=>false,'error'=>'unavailable'));
+    out(array('ok'=>true,'ver'=>$p['ver'],'rules'=>$p['rules']));
+}
+// PC Service Professional's check for its own report: the installed programs and Windows' register of security
+// programs in, findings out. Pure computation on what it sends - no key, nothing stored, reasons from our list.
+if ($action === 'progcheck') {
+    $p = pcm_prog_rules();
+    if (!$p) out(array('ok'=>false,'error'=>'unavailable'));
+    $inst = array();
+    foreach ((array)($in['items'] ?? array()) as $it) { if (is_array($it) && isset($it[0])) $inst[] = array(substr((string)$it[0], 0, 120), substr((string)($it[1] ?? ''), 0, 80)); if (count($inst) >= 400) break; }
+    $r = pcm_prog_eval($inst, pcm_prog_av_in($in['av'] ?? null), $p['rules']);
+    out(array('ok'=>true,'ver'=>$p['ver']) + $r);
+}
 $key     = isset($in['key'])      ? strtoupper(preg_replace('/[^A-Za-z0-9\-]/','',$in['key'])) : '';
 $machine = isset($in['machine'])  ? preg_replace('/[^a-f0-9]/','',substr($in['machine'],0,32)) : '';
 
@@ -157,7 +176,7 @@ if ($action === 'activate') {
 
 if ($action === 'checkin') {
     $upd = pcm_update_info();   // latest app build (ver/url/sha) - sent to every check-in, keyed or not
-    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>true,'tier'=>'free') + $upd + pcm_news_out($db, 'free')); // key gone => downgrade
+    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>true,'tier'=>'free') + $upd + pcm_news_out($db, 'free') + pcm_prog_ver()); // key gone => downgrade
     $c =& $db['customers'][$key];
     $tier = ($c['tier'] ?? 'free');
     if ($machine !== '') {
@@ -224,7 +243,7 @@ if ($action === 'checkin') {
             : '');
     $detail['have'] = ($detail['tel'] !== '' || $detail['mobile'] !== '' || $detail['addr'] !== '');
     list($nextOut, $nextTsOut) = pcm_next_out($c);   // a visit that has passed is not the next service
-    out(array('ok'=>true,'tier'=>$tier,'next'=>$nextOut,'next_ts'=>$nextTsOut,'ready'=>$ready,'fam'=>$fam,'fam_url'=>$famUrl,'detail'=>$detail,'msg_unread'=>$msgUnread) + $upd + pcm_news_out($db, $tier === 'pro' ? 'pro' : 'free'));
+    out(array('ok'=>true,'tier'=>$tier,'next'=>$nextOut,'next_ts'=>$nextTsOut,'ready'=>$ready,'fam'=>$fam,'fam_url'=>$famUrl,'detail'=>$detail,'msg_unread'=>$msgUnread) + $upd + pcm_news_out($db, $tier === 'pro' ? 'pro' : 'free') + pcm_prog_ver());
 }
 
 // latest published app build, from the git-deployed manifest (downloads/pcm/version.json).
@@ -807,6 +826,11 @@ if ($action === 'reportup') {
         // software inventory (P0): store the snapshot, capped + sanitised
         $swIn = pcm_software_in(isset($sumr['software']) ? $sumr['software'] : null);
         if ($swIn !== null) $mrec['sw'] = $swIn;
+        // programs check on what this service uploaded (v4.11 also sends summary.av, Windows' register of security
+        // programs). The findings and their wording come from OUR list, never from the PC: anything it sent is dropped.
+        unset($sumr['progs']);
+        if (isset($sumr['software']) && is_array($sumr['software']) && pcm_prog_rules())
+            $sumr['progs'] = pcm_prog_eval(pcm_prog_from_software($sumr['software']), pcm_prog_av_in($sumr['av'] ?? null));
         // the tool normally asked (action=asset) minutes ago; only look now if nobody has this week
         $have = isset($mrec['asset']['computed']) && (time() - (int)$mrec['asset']['computed']) < 7 * 86400;
         if (!$have && ($modelIn !== '' || $drivesIn)) {
