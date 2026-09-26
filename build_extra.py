@@ -25,6 +25,7 @@ from booking_app import BOOKING_APP   # our own booking UI (replaces the SimplyB
 from signal_area_data import SIGNAL_AREAS as _SIGA  # dated counts for the Dataset schema on the signal page
 from at_a_glance_data import AT_A_GLANCE
 from keep_bands_data import KEEP_BANDS   # 'stop it happening again' band words, per page (25 Sep 2026)
+from hub_ui import DELL_HUB_CSS, _DH_ICONS, _dh_ico, _dell_hub_quotes   # intent-first layout pieces (26 Sep 2026)
 from projects_data import CCB_RELATIONSHIP, jt_html   # the journeys, one source of truth
 from latitude_pages_data import LATITUDE_PAGES, LATITUDE_COMPARE_TABLES
 from optiplex_pages_data import OPTIPLEX_PAGES, OPTIPLEX_COMPARE_TABLES
@@ -596,7 +597,74 @@ def pcm_landing():
       })();
     </script>'''
     get_or_waitlist_html = _live_get if PCM_LIVE else _waitlist
-    content = "\n".join([
+    # ---- v2 (26 Sep 2026): 1,988 search impressions at ~12 in 28 days, 2 clicks; the download sat
+    # 15,900 px down behind 17 sections. Now the homepage layout: H1 unchanged, download first, tiles
+    # for the four things people come for, a proof strip, then the download, the real screenshots and
+    # the reel; the long sections follow unchanged and fold to a "Read more" preview on phones.
+    _pcm_tiles = [
+      ("hp-c-fix", "gauge", "Check my PC&rsquo;s health", "A health score in plain English", "FREE &middot; NO SIGN-UP", "#download"),
+      ("hp-c-teal", "wifi", "Test my broadband", "The app tests your connection too", "BUILT IN", "#broadband"),
+      ("hp-c-biz", "monitor", "How fast is my PC?", "Benchmark it in your browser", "IN YOUR BROWSER", "#benchtool"),
+      ("hp-c-care", "shield", "Keep it up to date for me", "A full service every 6 weeks, written up", "ON A PLAN FROM &pound;18.25", "#six-weekly-service"),
+    ]
+    _pcm_tiles_html = "\n".join(
+      f'            <a class="hp-intent {c}" href="{href}"><span class="hp-ico">{_dh_ico(i)}</span><span class="hp-intent__t">{t}</span>'
+      f'<span class="hp-intent__d">{d}</span><span class="hp-intent__p">{p}</span></a>'
+      for c, i, t, d, p, href in _pcm_tiles)
+    _pcm_c1 = ("Download free for Windows", "#download") if PCM_LIVE else ("Join the free waitlist", "#waitlist")
+    _pcm_hero = f'''    <style>{" ".join(l.strip() for l in DELL_HUB_CSS.strip().splitlines())}</style>
+    <section class="page-hero dh dh-hero" aria-label="Introduction">
+      <div class="dh-hero__grid">
+        <div>
+          <nav class="breadcrumb" aria-label="Breadcrumb">{bc("Free PC Health Check")}</nav>
+          <p class="eyebrow mono">// THE MUST-HAVE WINDOWS APP &middot; FREE &middot; {"SIGNED &amp; LIVE" if PCM_LIVE else "COMING SOON"}</p>
+          <h1>Your PC&rsquo;s health, <em class="grad grad--cyan">at a glance</em></h1>
+          <p class="lede">365 PC Manager is the free app that shows your computer&rsquo;s health in plain English &mdash; <strong>no fake errors, no scare tactics, nothing to buy</strong>. On a 365 support plan it keeps your PC up to date and secure, and writes up every service.</p>
+          <div class="page-hero__cta">
+            <a href="{_pcm_c1[1]}" class="button primary button--lg">{_pcm_c1[0]}</a>
+            <a href="tel:+441202775566" class="button secondary button--lg">Call 01202 775566</a>
+          </div>
+          <a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Rated 4.9 on Google</strong></span><span>Made in Dorset &middot; {"signed by 365 Techies Ltd" if PCM_LIVE else "coming soon"}</span></a>
+          <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
+        </div>
+        <nav class="hp-intents" aria-label="What would you like to do?">
+          <p class="hp-intents__q">What would you like to do?</p>
+          <div class="hp-intents__grid">
+{_pcm_tiles_html}
+          </div>
+        </nav>
+      </div>
+    </section>'''
+    _pcm_proof = '''    <section class="dh dh-sec dh-proof" aria-label="The deal, in four facts">
+      <div class="dh-in">
+        <ul class="dh-facts">
+          <li class="hp-c-care"><b>&pound;0</b><span>free for everyone, no sign-up</span></li>
+          <li class="hp-c-fix"><b>Signed</b><span>digitally, by 365 Techies Ltd</span></li>
+          <li class="hp-c-buy"><b>0</b><span>fake errors, and nothing to buy</span></li>
+          <li class="hp-c-biz"><b>4.9<i aria-hidden="true">&#9733;</i></b><span>the firm behind it, on Google</span></li>
+        </ul>
+      </div>
+    </section>'''
+    _pcm_fold = """    <style>@media (max-width:767px){
+  [data-hw-fold].is-clamped > .wrap{position:relative;max-height:26rem;overflow:hidden}
+  [data-hw-fold].is-clamped > .wrap::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6rem;background:linear-gradient(rgba(7,13,34,0),var(--bg))}
+  [data-hw-fold].is-open > .wrap{max-height:none;overflow:visible}
+  [data-hw-fold].is-open > .wrap::after{display:none}
+  .hw-more{display:inline-flex;align-items:center;margin:.9rem 0 0;padding:.6rem 1rem;border-radius:999px;border:1px solid rgba(125,190,240,.42);background:rgba(9,18,40,.6);color:#dfe9f7;font:600 .9rem var(--font-body);cursor:pointer}
+}</style>
+    <script>
+    (function(){ if(!window.matchMedia||!matchMedia('(max-width:767px)').matches) return;
+      [].slice.call(document.querySelectorAll('[data-hw-fold]')).forEach(function(sec){
+        var w=sec.querySelector(':scope > .wrap'); if(!w||w.scrollHeight<600) return;
+        sec.classList.add('is-clamped');
+        var b=document.createElement('button'); b.type='button'; b.className='hw-more'; b.setAttribute('aria-expanded','false'); b.textContent='Read more';
+        var box=document.createElement('div'); box.className='wrap'; box.appendChild(b); w.parentNode.insertBefore(box,w.nextSibling);
+        b.addEventListener('click',function(){ var open=sec.classList.toggle('is-open'); b.setAttribute('aria-expanded',open?'true':'false');
+          b.textContent=open?'Show less':'Read more'; if(!open) sec.scrollIntoView({block:'start'}); });
+      });
+    })();
+    </script>"""
+    _blocks = [
       hero(bc("Free PC Health Check"), "// THE MUST-HAVE WINDOWS APP &middot; FREE &middot; " + ("SIGNED &amp; LIVE" if PCM_LIVE else "COMING SOON"),
            'Your PC&rsquo;s health, <em class="grad grad--cyan">at a glance</em>',
            "Meet 365 PC Manager &mdash; the must-have free app for any Windows PC. It shows your computer&rsquo;s health in plain English, with <strong>no fake errors and no scare tactics</strong>. Put the PC on a 365 support plan and the app becomes the front door to the six-weekly service that keeps it <strong>up to date and secure</strong>: every program updated, not just Windows, and the whole thing written up for you. " + ("<strong>Free to download now &mdash; digitally signed by 365 Techies Ltd, so Windows knows it&rsquo;s ours.</strong>" if PCM_LIVE else "<strong>Launching soon &mdash; join the waitlist and we&rsquo;ll set it up for you free, by hand, when it&rsquo;s ready.</strong>") + "",
@@ -955,7 +1023,7 @@ def pcm_landing():
     </div>
     <script>
       (function(){
-        var bar=document.getElementById('pcmbar'), x=document.getElementById('pcmbarx'), cta=document.getElementById('pcmbarcta'), wl=document.getElementById('waitlist'); if(!bar) return;
+        var bar=document.getElementById('pcmbar'), x=document.getElementById('pcmbarx'), cta=document.getElementById('pcmbarcta'), wl=document.getElementById('waitlist')||document.getElementById('download'); if(!bar) return;
         var dismissed=false, reduce=false; try{reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;}catch(e){}
         if(reduce) bar.style.transition='none';
         if(x) x.addEventListener('click', function(){ dismissed=true; bar.style.transform='translateY(130%)'; });
@@ -968,7 +1036,17 @@ def pcm_landing():
         window.addEventListener('scroll', upd, {passive:true}); window.addEventListener('resize', upd, {passive:true}); upd();
       })();
     </script>'''),
-    ])
+    ]
+    _marks = {0: 'page-hero', 1: 'id="must-have"', 2: 'id="six-weekly-service"', 4: 'The app in action', 10: 'What it looks like',
+              15: 'id="broadband"', 17: ('id="download"' if PCM_LIVE else 'id="waitlist"'), 18: 'faq', 20: 'cta', 21: 'pcmbar'}
+    assert len(_blocks) == 22, len(_blocks)
+    for _i, _m in _marks.items():
+        assert _m in _blocks[_i], (_i, _m)
+    for _i in (1, 2, 5, 6, 7, 8, 9, 11, 12, 13, 14):
+        assert _blocks[_i].lstrip().startswith('<section '), _i
+        _blocks[_i] = _blocks[_i].replace('<section ', '<section data-hw-fold ', 1)
+    _order = [17, 10, 4, 1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21]
+    content = "\n".join([_pcm_hero, _pcm_proof] + [_blocks[i] for i in _order] + [_pcm_fold])
     def schema(s, _desc=desc, _faqs=faqs):
         app = {"@type": "SoftwareApplication", "@id": f"{SITE}/{s}/#app",
                "name": "365 PC Manager", "operatingSystem": "Windows 10, Windows 11",
