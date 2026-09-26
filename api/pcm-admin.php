@@ -188,6 +188,32 @@ if (($_POST['do'] ?? '') === 'engpindel') {
 if (($_POST['do'] ?? '') === 'next') {
     $k=$_POST['key']??''; if (isset($db['customers'][$k])) { $db['customers'][$k]['next']=trim(substr((string)($_POST['next']??''),0,40)); save($DATA,$db); $msg="Next-service date updated."; }
 }
+// "News from 365" (app v28): one short notice on the app's Home page. The house rules are enforced here, not
+// just hoped for: plain text only, short, a link only to our own site, and a fresh id on every save so an
+// edited notice shows again to people who dismissed the old one. Nothing is sent to any app until it is saved.
+if (($_POST['do'] ?? '') === 'news') {
+    $title = trim(preg_replace('/\s+/', ' ', strip_tags((string)($_POST['news_title'] ?? ''))));
+    $text  = trim(preg_replace('/\s+/', ' ', strip_tags((string)($_POST['news_text'] ?? ''))));
+    $url   = trim((string)($_POST['news_url'] ?? ''));
+    $who   = (($_POST['news_who'] ?? 'all') === 'pro') ? 'pro' : 'all';
+    $untilIn = trim((string)($_POST['news_until'] ?? ''));
+    $until = 0;
+    if ($untilIn !== '' && preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $untilIn, $um)) $until = mktime(23, 59, 59, (int)$um[2], (int)$um[3], (int)$um[1]);
+    $chars = function ($s) { return function_exists('mb_strlen') ? mb_strlen($s, 'UTF-8') : strlen($s); };
+    if ($title === '' || $chars($title) > 60) { $msg = 'The notice needs a heading of up to 60 characters - nothing was changed.'; }
+    elseif ($chars($text) > 240) { $msg = 'Keep the notice text to 240 characters so it fits on the app\'s Home page - nothing was changed.'; }
+    elseif ($url !== '' && !preg_match('~^https://365techies\.co\.uk/[A-Za-z0-9/_\-.?=&#%]*$~', $url)) { $msg = 'The link must be a page on https://365techies.co.uk/ - nothing was changed.'; }
+    elseif ($untilIn !== '' && !$until) { $msg = 'The end date must look like 2026-10-31 - nothing was changed.'; }
+    elseif ($until && $until < time()) { $msg = 'That end date has already passed - nothing was changed.'; }
+    else {
+        $db['news'] = array('id' => time(), 'title' => $title, 'text' => $text, 'url' => $url, 'who' => $who, 'until' => $until, 'set' => gmdate('Y-m-d H:i'));
+        save($DATA,$db);
+        $msg = 'Notice saved. Apps pick it up at their next hourly check-in' . ($who === 'pro' ? ' (support-plan customers only)' : '') . ($until ? ', and it stops showing after ' . date('j M Y', $until) : '') . '.';
+    }
+}
+if (($_POST['do'] ?? '') === 'newsclear') {
+    unset($db['news']); save($DATA,$db); $msg = 'Notice removed - apps stop showing it at their next check-in.';
+}
 // The address every customer-facing message goes to: the six-weekly service report, the
 // review ask, booking confirmations. It could only be set when the record was CREATED, so
 // a record made before we asked for one, or made by a portal sign-in, had no way to get one
@@ -644,6 +670,37 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
   </tbody></table>
 </div>
 <?php endif; ?>
+
+<?php $news = (isset($db['news']) && is_array($db['news'])) ? $db['news'] : null;
+      $newsLive = $news && (empty($news['until']) || (int)$news['until'] >= time()); ?>
+<div style="background:#0d1a2e;border:1px solid #2a5b8f;border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.5rem">
+  <h2 style="margin:0 0 .3rem;font-size:1rem;color:#86b6e8">&#128240; News from 365 &mdash; the notice on the app&rsquo;s Home page</h2>
+  <p style="color:#9fb5d3;font-size:.82rem;margin:0 0 .7rem">
+    One short notice at a time, shown until each customer dismisses it. Use it for things customers need to know
+    (an email provider change, a Windows deadline, a scam doing the rounds) &mdash; never adverts. Apps pick a change up
+    within the hour. Saving again, even with the same words, shows it again to everyone.
+  </p>
+  <?php if ($news): ?>
+    <div style="background:#0b1226;border:1px solid #2a3b63;border-radius:10px;padding:.7rem .9rem;margin-bottom:.8rem">
+      <div style="font-size:.75rem;color:<?= $newsLive ? '#39d353' : '#e0b341' ?>"><?= $newsLive ? 'SHOWING NOW' : 'ENDED - no longer sent' ?> &middot; <?= ($news['who'] ?? 'all') === 'pro' ? 'support-plan customers' : 'everyone' ?><?= !empty($news['until']) ? ' &middot; until ' . h(date('j M Y', (int)$news['until'])) : '' ?> &middot; saved <?= h($news['set'] ?? '') ?> UTC</div>
+      <div style="font-weight:700;margin-top:.3rem"><?= h($news['title'] ?? '') ?></div>
+      <div style="color:#c9d6ea;font-size:.9rem"><?= h($news['text'] ?? '') ?></div>
+      <?php if (!empty($news['url'])): ?><div style="font-size:.8rem;margin-top:.2rem"><a href="<?= h($news['url']) ?>" target="_blank" rel="noopener"><?= h($news['url']) ?></a></div><?php endif; ?>
+      <form method=post class=inline style="display:block;margin-top:.5rem"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=newsclear><button class=ghost onclick="return confirm('Remove this notice from every app?')">Remove the notice</button></form>
+    </div>
+  <?php endif; ?>
+  <form method=post style="display:grid;grid-template-columns:1fr;gap:.5rem;max-width:640px">
+    <input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=news>
+    <input name=news_title maxlength=60 placeholder="Heading (up to 60 characters)" value="<?= h($news['title'] ?? '') ?>">
+    <textarea name=news_text maxlength=240 rows=3 placeholder="The notice (up to 240 characters, plain text)" style="background:#0b1226;color:#fff;border:1px solid #2a3b63;border-radius:8px;padding:.5rem;font:inherit"><?= h($news['text'] ?? '') ?></textarea>
+    <input name=news_url placeholder="Optional link - a page on https://365techies.co.uk/" value="<?= h($news['url'] ?? '') ?>">
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;align-items:center">
+      <select name=news_who><option value=all<?= ($news['who'] ?? 'all') === 'all' ? ' selected' : '' ?>>Everyone with the app</option><option value=pro<?= ($news['who'] ?? '') === 'pro' ? ' selected' : '' ?>>Support-plan customers only</option></select>
+      <label style="color:#9fb5d3;font-size:.8rem">Stop showing after <input type=date name=news_until value="<?= !empty($news['until']) ? h(date('Y-m-d', (int)$news['until'])) : '' ?>"></label>
+      <button>Save the notice</button>
+    </div>
+  </form>
+</div>
 
 <div style="background:#0d1a2e;border:1px solid #2a5b8f;border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.5rem">
   <h2 style="margin:0 0 .3rem;font-size:1rem;color:#86b6e8">&#128235; Portal launch email</h2>

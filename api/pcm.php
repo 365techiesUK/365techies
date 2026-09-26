@@ -117,6 +117,19 @@ function pcm_next_out($c) {
     return array((string)(isset($c['next']) ? $c['next'] : ''), $ts);
 }
 
+// "News from 365" (app v28): ONE short notice the owner sets in pcm-admin, shown on the app's Home page until the
+// customer dismisses it. Sent on every check-in as flat fields (the app's reader is flat). Nothing is sent when no
+// notice is set, when it has passed its end date, or when it is for plan customers and this PC is not on a plan.
+// The id changes every time the notice is saved, so an edited notice shows again to people who dismissed the old one.
+function pcm_news_out($db, $tier) {
+    $n = (isset($db['news']) && is_array($db['news'])) ? $db['news'] : null;
+    if (!$n || empty($n['id']) || (string)($n['title'] ?? '') === '') return array();
+    if (!empty($n['until']) && intval($n['until']) < time()) return array();
+    if (($n['who'] ?? 'all') === 'pro' && $tier !== 'pro') return array();
+    return array('news_id' => (string)intval($n['id']), 'news_title' => (string)$n['title'],
+                 'news_text' => (string)($n['text'] ?? ''), 'news_url' => (string)($n['url'] ?? ''));
+}
+
 $raw = file_get_contents('php://input');
 $in = pcm_json_body($raw);
 if (!is_array($in)) out(array('ok'=>false,'error'=>'bad_request'));
@@ -144,7 +157,7 @@ if ($action === 'activate') {
 
 if ($action === 'checkin') {
     $upd = pcm_update_info();   // latest app build (ver/url/sha) - sent to every check-in, keyed or not
-    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>true,'tier'=>'free') + $upd); // key gone => downgrade
+    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>true,'tier'=>'free') + $upd + pcm_news_out($db, 'free')); // key gone => downgrade
     $c =& $db['customers'][$key];
     $tier = ($c['tier'] ?? 'free');
     if ($machine !== '') {
@@ -211,7 +224,7 @@ if ($action === 'checkin') {
             : '');
     $detail['have'] = ($detail['tel'] !== '' || $detail['mobile'] !== '' || $detail['addr'] !== '');
     list($nextOut, $nextTsOut) = pcm_next_out($c);   // a visit that has passed is not the next service
-    out(array('ok'=>true,'tier'=>$tier,'next'=>$nextOut,'next_ts'=>$nextTsOut,'ready'=>$ready,'fam'=>$fam,'fam_url'=>$famUrl,'detail'=>$detail,'msg_unread'=>$msgUnread) + $upd);
+    out(array('ok'=>true,'tier'=>$tier,'next'=>$nextOut,'next_ts'=>$nextTsOut,'ready'=>$ready,'fam'=>$fam,'fam_url'=>$famUrl,'detail'=>$detail,'msg_unread'=>$msgUnread) + $upd + pcm_news_out($db, $tier === 'pro' ? 'pro' : 'free'));
 }
 
 // latest published app build, from the git-deployed manifest (downloads/pcm/version.json).
