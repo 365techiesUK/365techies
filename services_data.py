@@ -42,7 +42,7 @@ SERVICE_PAGES = [
    {
     "icon": "lock",
     "title": "Ransomware-encrypted files",
-    "body": "Files locked or renamed by ransomware. We help you isolate the device, identify the strain and recover from clean backups where they exist. Never pay first &mdash; talk to us, and report it to Action Fraud and the NCSC."
+    "body": "Files locked or renamed by ransomware. We help you isolate the device, identify the strain and recover from clean backups where they exist. Never pay first &mdash; talk to us, and report it to Report Fraud and the NCSC."
    }
   ],
   "howItWorks": [
@@ -181,7 +181,7 @@ SERVICE_PAGES = [
    },
    {
     "q": "I've got a pop-up saying my computer is infected and to call a number &mdash; is it real?",
-    "a": "Almost certainly not. Genuine virus warnings don't tell you to phone a number or pay over the phone &mdash; that's a classic scam (Action Fraud and the NCSC both warn about it). Don't call the number, don't let anyone you didn't contact take control of your PC, and don't pay. Close the page if you can, or just ring us on 01202 775566 and we'll check it properly."
+    "a": "Almost certainly not. Genuine virus warnings don't tell you to phone a number or pay over the phone &mdash; that's a classic scam (Report Fraud and the NCSC both warn about it). Don't call the number, don't let anyone you didn't contact take control of your PC, and don't pay. Close the page if you can, or just ring us on 01202 775566 and we'll check it properly."
    },
    {
     "q": "Will I lose my files, photos or documents?",
@@ -658,7 +658,7 @@ SERVICE_PAGES = [
    },
    {
     "title": "3. Report &amp; protect",
-    "desc": "We help you report the incident to Action Fraud and, for businesses with a personal-data breach, understand your ICO obligations. Then we close the door it came through with proper backups, security and updates so it can't happen again."
+    "desc": "We help you report the incident to Report Fraud and, for businesses with a personal-data breach, understand your ICO obligations. Then we close the door it came through with proper backups, security and updates so it can't happen again."
    }
   ],
   "whatWeDo": [
@@ -666,7 +666,7 @@ SERVICE_PAGES = [
    "Restore encrypted files from verified local, offline or Microsoft 365 cloud backups",
    "Wipe and rebuild infected Windows computers from clean, trusted installs",
    "Eradicate the malware and find and close the entry point it used to get in",
-   "Help you report to Action Fraud and meet ICO breach obligations for a business data breach",
+   "Help you report to Report Fraud and meet ICO breach obligations for a business data breach",
    "Set up proper backups, security and updates so you're protected against the next attempt"
   ],
   "faqs": [
@@ -680,7 +680,7 @@ SERVICE_PAGES = [
    },
    {
     "q": "Should I pay the ransom to get my data back?",
-    "a": "We strongly advise against it, and so do Action Fraud and the NCSC. Paying funds organised crime, marks you as someone who'll pay again, and offers no guarantee the criminals will actually unlock your files &mdash; many people pay and still get nothing. We focus on recovering from backups and rebuilding instead."
+    "a": "We strongly advise against it, and so do Report Fraud and the NCSC. Paying funds organised crime, marks you as someone who'll pay again, and offers no guarantee the criminals will actually unlock your files &mdash; many people pay and still get nothing. We focus on recovering from backups and rebuilding instead."
    },
    {
     "q": "How long does ransomware recovery take?",
@@ -688,7 +688,7 @@ SERVICE_PAGES = [
    },
    {
     "q": "Do I have to report a ransomware attack?",
-    "a": "Anyone can and should report it to Action Fraud (the UK's national fraud and cybercrime reporting centre). If you're a business and personal data has been lost or exposed, you may also have a legal duty to notify the ICO, usually within 72 hours. We'll help you understand your obligations &mdash; see our GDPR IT compliance page &mdash; but we help you meet them; we don't act as your legal adviser."
+    "a": "Anyone can and should report it to Report Fraud (the UK's national fraud and cybercrime reporting centre). If you're a business and personal data has been lost or exposed, you may also have a legal duty to notify the ICO, usually within 72 hours. We'll help you understand your obligations &mdash; see our GDPR IT compliance page &mdash; but we help you meet them; we don't act as your legal adviser."
    }
   ],
   "relatedSlugs": [
