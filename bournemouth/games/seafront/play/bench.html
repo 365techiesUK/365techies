@@ -173,7 +173,7 @@
   // hands paddling, the board, the next wave - which goes under the water with every duck-dive (b29-b33). Between
   // waves the rider glances across at the pier, on the game's clock so every PC films the same glances: eased in and
   // out over a second, only while lying on the board above the water, dropped at once when a dive starts.
-  var GLANCES = [[3, 7], [14.5, 18], [26, 29.5], [38, 41.5], [50, 53.5]];
+  var GLANCES = [[5.6, 8.6], [12.2, 15.2], [19.5, 25], [30, 34], [41, 45], [53, 57]];
   function glanceAt(t) {
     for (var i = 0; i < GLANCES.length; i++) {
       var g = GLANCES[i]; if (t >= g[0] && t <= g[1]) { var x = Math.min(t - g[0], g[1] - t); return x >= 1 ? 1 : x * x * (3 - 2 * x); }
@@ -198,8 +198,17 @@
     // through the rider's own eyes (the level's own start), and the run from its start
     E.setCamera('fpv');
     SF.again();
-
     var C = { t0: E.sim.time, g: 0, dives: 0, lastState: -1, shot: 'eyes' };
+    // THE TAKE STARTS WITH THE TIMING (27 Sep, b35). The big-day surf breaks 206 m out and the level starts 38 m
+    // inside it; from there, with the sea's clock at 0, the set brings three big walls of whitewater (duck-dives at
+    // about 3, 10 and 16 s) and then the lull, out toward the back with the pier. The first 10 s of the page are the
+    // warm-up, not timed - so the level is started again 1 s before the timing begins, and the timed 25 s are those
+    // dives. A restart puts the sea's clock back to 0 too, so every PC films the same take.
+    C.roll = function () {
+      SF.again();
+      L.sample = driver(E, SF);
+      C.t0 = E.sim.time; C.g = 0; C.dives = 0; C.lastState = -1;
+    };
     var of = Hb._fpv.bind(Hb);
     Hb._fpv = function (cam, dt) {
       of(cam, dt);                        // the game's own first-person framing, under the water on a dive
@@ -220,7 +229,7 @@
         if (C.g > 0.3) C.shot = 'pier';
       }
     };
-    w.__bench = { C: C };   // read-only look-in for testing
+    w.__bench = { C: C };   // look-in for testing, and C.roll for the take
     return true;
   }
 
@@ -258,6 +267,7 @@
         try { ready = !!(w.efoil && w.efoil.craft && w.efoil.craft.hull && w.efoil.sim && w.efoilSurfer && w.efoilSurfer.active); } catch (e) { ready = false; }
         if (ready) { try { if (film(w)) scene = 'surf'; } catch (e) { scene = 'attract'; } }
         if (!ready && performance.now() - tf < 15000) return setTimeout(tryFilm, 250);
+        if (scene === 'surf') setTimeout(function () { try { w.__bench.C.roll(); } catch (e) { } }, WARM - 1000);
         setTimeout(function () { measure(w); }, WARM);
       })();
     }
