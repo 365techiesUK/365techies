@@ -29180,7 +29180,7 @@ def write_portal_page():
   }
   // ---- Live view (27 Sep 2026): who is on the sites right now. /api/visitors.php (staff only) reads the visitors-live
   // Worker; one poll every 90 s feeds the staff bar pill, the strip at the top of Today and the Live tab. Places are
-  // rough (from each visitor's internet provider); "Dorset & around" = BH and DT postcodes. No names, no cookies.
+  // rough (from each visitor's internet provider); "Dorset & around" = BH, DT, SO and SP postcodes. No names, no cookies.
   var NXL = { d: null, at: 0, site: 'all', sel: null, view: 'dorset', map: null, mini: null, layer: null, miniLayer: null, titles: null, loading: null, show: null, fsBound: false };
   var NXL_WARM = { '/book-service/': 'On the booking page', '/contact/': 'On the contact page', '/pay/': 'On the pay page',
     '/pricing/': 'Looking at prices', '/home-it-support-plans/': 'Looking at plans', '/business-it-support-plans/': 'Looking at plans',
@@ -29321,7 +29321,7 @@ def write_portal_page():
       var r = x.r;
       return '<button type="button" class="nx-lvrow' + (x.warm ? ' nx-lvrow--warm' : '') + '" data-k="' + esc(x.key) + '" data-la="' + (r.la === null ? '' : r.la) + '" data-lo="' + (r.lo === null ? '' : r.lo) + '" aria-pressed="' + (NXL.sel === x.key ? 'true' : 'false') + '">'
         + '<span class="nx-lvrow__a"><i class="' + nxlDotClass(x) + '"></i><b>' + esc(nxlPlace(x)) + '</b>'
-        + (r.local ? '<span class="nx-lvtag nx-lvtag--local">Dorset</span>' : '')
+        + (r.local ? '<span class="nx-lvtag nx-lvtag--local">Local</span>' : '')
         + (x.site !== 't365' ? '<span class="nx-lvtag nx-lvtag--site">' + esc(x.siteName) + '</span>' : '')
         + (x.warm ? '<span class="nx-lvtag nx-lvtag--warm">' + esc(x.warm) + '</span>' : '')
         + '<span class="nx-lvrow__t">' + nxlMins(r.since) + '</span></span>'
@@ -29431,7 +29431,7 @@ def write_portal_page():
       + '<div class="nx-lvmap" id="nxLvMap" role="region" aria-label="Map of where visitors are"></div>'
       + '<div class="nx-lvlegend"><span><i class="nx-mkdot"></i>Visitor</span><span><i class="nx-mkdot nx-mkdot--warm"></i>On a booking, contact, price or plan page</span>'
       + '<span><i class="nx-mkdot nx-mkdot--other"></i>Colin Clark Builders or Beckox</span><span id="nxLvAbroad"></span></div>'
-      + '<p class="quiet" style="margin:.5rem 0 0;font-size:.95rem">Places are rough: they come from each visitor\\u2019s internet provider, so a phone can show up as London. Dorset & around = BH and DT postcodes.</p>'
+      + '<p class="quiet" style="margin:.5rem 0 0;font-size:.95rem">Places are rough: they come from each visitor\\u2019s internet provider, so a phone can show up as London. Dorset & around = BH, DT, SO and SP postcodes (Dorset, the New Forest, Southampton, Salisbury).</p>'
       + '</section>'
       + '<section class="card" aria-label="Who is on now"><div class="nx-h2row"><h2>Who\\u2019s on now</h2><span class="quiet" id="nxLvN"></span></div>'
       + '<div class="nx-lvsrc" id="nxLvSrc"></div><div class="nx-lvrows" id="nxLvRows"></div></section>'

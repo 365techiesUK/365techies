@@ -83,13 +83,14 @@ function sourceOf(ref, email) {
   return h.replace(/[^a-z0-9.-]/g, "");   // another website, e.g. yell.com
 }
 
-// "Dorset & around": a BH or DT postcode area; with no postcode, within ~45 km of Bournemouth
+// "Dorset & around": a BH, DT, SO or SP postcode area (Dorset, the New Forest, Southampton, Salisbury, Shaftesbury);
+// with no postcode, within ~55 km of Bournemouth
 const HOME = [50.7192, -1.8808];
 function isLocal(area, la, lo) {
-  if (area) return area === "BH" || area === "DT";
+  if (area) return area === "BH" || area === "DT" || area === "SO" || area === "SP";
   if (la === null || lo === null) return false;
   const dy = (la - HOME[0]) * 111.2, dx = (lo - HOME[1]) * 111.2 * Math.cos(HOME[0] * Math.PI / 180);
-  return Math.sqrt(dx * dx + dy * dy) <= 45;
+  return Math.sqrt(dx * dx + dy * dy) <= 55;
 }
 function num2(v) { const n = parseFloat(v); return isFinite(n) ? Math.round(n * 100) / 100 : null; }
 
