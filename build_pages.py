@@ -5764,8 +5764,10 @@ add(
    service(s, "Business IT Support Plans", "Starter, Standard and Premium monthly business IT support packages.", "Business IT support"),
  ]),
  content="\n".join([
-   _BPL_HERO,
-   _BPL_PROOF,
+   # 27 Sep 2026 task-first pass: a short heading, then the plans; the tiles and proof strip repeated the plan facts
+   task_head(bc("Business Support Plans"), 'Business IT support <em class="grad grad--green">plans</em>',
+        "Monthly plans from &pound;24.38 per computer, no lock-in. Remote fixes in minutes, on-site across Dorset with no call-out fee, and Microsoft 365, backups and security looked after for you. Pay monthly by Direct Debit and cancel any time.",
+        trust=['<a href="/reviews/">&#9733; Rated 4.9 on Google</a>', "Family-run since 1995", "No call-out fee on-site in Dorset"]),
    f'''    <section class="support-options" id="plans" aria-label="Business support plans">
 <h2 class="sr-only">Business support plans</h2>
       <div class="plan-grid plan-grid--3">
@@ -5815,7 +5817,8 @@ add(
     </section>''',
    _BPL_REVIEWS,
    GC_NOTE,
-   f'''    <section class="section" aria-label="IT support by industry">
+   f'''    <section class="section" id="trades" aria-label="IT support by industry">
+      <style>#trades .related__links{{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.45rem}} #trades .related__links a{{margin:0}} @media(max-width:1000px){{#trades .related__links{{grid-template-columns:repeat(3,minmax(0,1fr))}}}} @media(max-width:700px){{#trades .related__links{{grid-template-columns:repeat(2,minmax(0,1fr))}}}}</style>
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow mono" data-reveal>// BY INDUSTRY</p>
@@ -5826,11 +5829,7 @@ add(
         </div>
       </div>
     </section>''',
-   REMOTE_ACCESS_BAND,
-   _dash_band("business", alt=True),
-   PCM_BAND,
-   cta("Choose a business plan", "Tell us how many people you need to cover and how you work — we&rsquo;ll put together the right plan and a clear quote.",
-       primary=("Get a quote", "/contact/?topic=business-it-support"), secondary=("Call 01202 775566", "tel:+441202775566"), whats_next=True),
+   '''    <p class="taskmore">Also on every plan: your own 365 estate dashboard (<a href="/join/">try it free</a>, or see <a href="/custom-wifi-dashboards/">the business demo</a>), the free <a href="/free-pc-health-check/">365 PC Manager app</a> on every computer, and <a href="/splashtop-business-guide/">secure access to your own PC from anywhere</a>. Moving from another provider? <a href="/switching-it-provider/">We handle the switch</a>. See <a href="/your-first-6-weekly-service/">what your first 6-weekly service looks like</a> and your <a href="/portal/">customer portal</a>. Not sure which plan fits? <a href="/contact/?topic=business-it-support">Get a quote</a> or call <a href="tel:+441202775566">01202 775566</a>.</p>''',
  ]),
 )
 
