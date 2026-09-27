@@ -16767,123 +16767,104 @@ info_page(
             ("See Plans &amp; Prices", "/monthly-it-support/"), ("Contact Us", "/contact/")),
 )
 
-# ---- Pricing
-info_page(
-  slug="pricing", crumb_name="Pricing", eyebrow="// PRICING",
-  h1='Simple, honest <em class="grad grad--green">pricing</em>',
-  lede="Clear monthly pricing with no hidden fees and no long contracts. Home support is £18.25/month per computer and business support from £24.38/month per computer, with Microsoft 365 at £4.85/month per user — plus one-off help when you need it.",
-  desc="365 Techies pricing — transparent monthly IT support: homes £18.25/month per computer, business from £24.38/month per computer, Microsoft 365 £4.85/month per user. No contracts; one-off repairs quoted up front.",
-  chips=["&pound;18.25/mo per computer","No contracts","No hidden fees"],
-  pre='''    <section class="section" aria-label="Transparent pricing">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// NO &ldquo;REQUEST A QUOTE&rdquo;</p>
-          <h2 class="section-title section-title--center" data-title>We publish our prices. Most don&rsquo;t.<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Ring round local IT firms and you&rsquo;ll mostly get &ldquo;request a quote.&rdquo; We think that&rsquo;s backwards. Our prices are right here &mdash; <strong>&pound;18.25/month per computer</strong> for homes, <strong>from &pound;24.38</strong> for business and <strong>&pound;4.85/user</strong> for Microsoft 365. Decide in your own time, with no sales call and no pressure.</p>
-        </div>
-      </div>
-    </section>
-    <section class="stats" aria-label="By the numbers">
-      <div class="stats__grid">
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="4.9" data-decimals="1">4.9</span></p><p class="stat__label mono">GOOGLE RATING</p></div>
-        <!-- A hardcoded review COUNT lived here. It goes stale every time we earn a
-             review, and it survived the 2026-07-31 sweep that stripped the counts
-             everywhere else because the number sits in a data-count ATTRIBUTE rather
-             than in visible text. The linked Google profile is the only source of
-             truth for how many; the 4.9 rating beside this is verified and stays. -->
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="30">30</span><span class="stat__suffix">+ yrs</span></p><p class="stat__label mono">SINCE 1995</p></div>
-        <div class="stat" data-reveal><p class="stat__value"><span class="stat-num" data-count="28">28</span><span class="stat__suffix">+</span></p><p class="stat__label mono">AREAS COVERED</p></div>
-      </div>
-      <p class="stats__note mono">12-month repair warranty &middot; No-fix-no-fee repairs &middot; No long contracts</p>
-    </section>
-    <section class="section" aria-label="Compare plans">
-      <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// COMPARE PLANS</p>
-        <h2 class="section-title section-title--center" data-title>What&rsquo;s included, at a glance<span class="title-underline title-underline--center"></span></h2>
-        <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)" data-reveal>
-          <table class="cmp-table">
-            <thead><tr><th>Feature</th><th>Home Support</th><th>Home + Microsoft 365</th><th>Business</th></tr></thead>
-            <tbody>
-              <tr><th>Friendly remote support</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
-              <tr><th>Full service every 6 weeks</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td>Ongoing</td></tr>
-              <tr><th>Security &amp; backup checks</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
-              <tr><th>Wi-Fi, printer &amp; email help</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
-              <tr><th>Microsoft 365 (Outlook &amp; Office apps)</th><td class="no">&ndash;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
-              <tr><th>Priced per computer</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
-              <tr><th>Cybersecurity &amp; backups managed</th><td>Advice</td><td>Advice</td><td class="yes">&#10003;</td></tr>
-              <tr><th>On-site help (Dorset)</th><td>On request</td><td>On request</td><td class="yes">&#10003;</td></tr>
-              <tr class="cmp-price"><th>From</th><td>&pound;18.25<span>/mo per computer</span></td><td>&pound;23.10<span>/mo per computer</span></td><td>from &pound;24.38<span>/mo per computer</span></td></tr>
-              <tr class="cmp-cta"><td></td><td><a href="/home-it-support-plans/">Home plans</a></td><td><a href="/home-it-support-plans/">Home plans</a></td><td><a href="/business-it-support-plans/">Business plans</a></td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="cmp-foot mono" data-reveal>Full response targets are set out in our <a href="/service-level-agreement/">Service Level Agreement</a>. Not sure which fits? Try the <a href="/plan-finder/">Plan Finder</a>.</p>
-      </div>
-    </section>
-    <section class="section section--alt" aria-label="What is included">
-      <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// NO SURPRISES</p>
-        <h2 class="section-title section-title--center" data-title>What&rsquo;s included vs charged separately<span class="title-underline title-underline--center"></span></h2>
-        <div class="incl-grid" data-stagger>
-          <div class="incl incl--yes">
-            <h3>Included in your plan</h3>
-            <ul>
-              <li>Friendly remote support</li>
-              <li>Regular maintenance &amp; health checks</li>
-              <li>Security &amp; backup setup and monitoring</li>
-              <li>Microsoft 365 support (on relevant plans)</li>
-              <li>Honest, jargon-free advice whenever you need it</li>
-              <li>No call-out fee for remote help</li>
-            </ul>
-          </div>
-          <div class="incl incl--sep">
-            <h3>Quoted separately (so there are no surprises)</h3>
-            <ul>
-              <li>New hardware &amp; software licences</li>
-              <li>Large one-off projects &amp; migrations</li>
-              <li>On-site visits outside your plan</li>
-              <li>Third-party or specialist supplier costs</li>
-            </ul>
-          </div>
-        </div>
-        <p class="cmp-foot mono" data-reveal>We always agree any extra cost with you up front &mdash; never a surprise bill.</p>
-        <p class="lede lede--center" data-reveal style="margin-top:1.2rem">Looking after a <strong>website</strong> too? Those prices are published as well &mdash; <a href="/web-care/">website care from &pound;125/month, rebuilds &pound;2,450 fixed</a>.</p>
-      </div>
-    </section>
-    <section class="section" aria-label="How we compare">
-      <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// HOW WE COMPARE</p>
-        <h2 class="section-title section-title--center" data-title>Monthly support vs the alternatives<span class="title-underline title-underline--center"></span></h2>
-        <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)" data-reveal>
-          <table class="cmp-table cmp-table--vs">
-            <thead><tr><th scope="col"><span class="sr-only">Feature</span></th><th>Pay-per-fix</th><th>Typical national MSP</th><th>365 Techies</th></tr></thead>
-            <tbody>
-              <tr><th>Cost</th><td>&pound;0 until it breaks &mdash; then big bills</td><td>Premium + long contracts</td><td class="hi">From &pound;18.25/mo, no contract</td></tr>
-              <tr><th>Proactive maintenance</th><td class="no">&ndash;</td><td class="yes">&#10003;</td><td class="yes hi">&#10003;</td></tr>
-              <tr><th>Local &amp; on-site in Dorset</th><td>Sometimes</td><td>Often remote-only</td><td class="hi">Yes &mdash; local team</td></tr>
-              <tr><th>Contract</th><td>None</td><td>12&ndash;36 months typical</td><td class="hi">Rolling, cancel anytime</td></tr>
-              <tr><th>Talk to a real person</th><td>Varies</td><td>Call centre / tickets</td><td class="hi">Friendly local techies</td></tr>
-              <tr><th>Covers homes too</th><td>Varies</td><td>Usually business-only</td><td class="hi">Homes &amp; businesses</td></tr>
-              <tr><th>Published prices</th><td class="no">&ndash;</td><td>Rarely</td><td class="yes hi">&#10003; on this page</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="cmp-foot mono" data-reveal>A fair, general comparison &mdash; every provider differs. <a href="/why-choose-365-techies/">Why choose us</a> &middot; <a href="/switching-it-provider/">Switching is easy</a></p>
-      </div>
-    </section>''',
-  inner="""          <h2>Monthly home plans</h2>
-          <p>Friendly monthly support for homes and families at <strong>&pound;18.25/month per computer</strong>, with Microsoft 365 available for <strong>&pound;4.85/month per user</strong>. See the full breakdown on our <a href="/home-it-support-plans/">home support plans</a> page.</p>
-          <h2>Monthly business plans</h2>
-          <p>Reliable support for sole traders and small businesses from <strong>&pound;24.38/month per computer</strong>, tailored to your team. See our <a href="/business-it-support-plans/">business support plans</a> page.</p>
-          <h2>One-off help</h2>
-          <p>Need a one-off repair or project with no subscription? We&rsquo;ll quote it clearly and fairly before we start &mdash; just ask.</p>
-          <h2>Not sure what you need?</h2>
-          <p>Try our 30-second <a href="/plan-finder/">Plan Finder</a>, or <a href="/contact/">get in touch</a> for a no-obligation chat and quote.</p>""",
-  cta_args=("Get a quote or pick a plan", "Honest pricing, no surprises &mdash; find the right fit in minutes.",
-            ("Try the Plan Finder", "/plan-finder/"), ("Get a Quote", "/contact/")),
+# ---- Pricing (27 Sep 2026 revamp: the prices first. The old page said the prices four or five times as sentences and
+# never showed a price list; "Monthly home plans" began 4,631 px down. Every price and promise below is one it made.)
+_PRICING_CSS = r"""      <style>
+        .prhead{padding:calc(var(--header-h) + var(--ticker-h) + 1.5rem) var(--pad-x) 0}
+        .prhead__in{max-width:1180px;margin:0 auto}
+        .prhead .breadcrumb{margin:0 0 .9rem}
+        .prhead__h{font-family:var(--font-display);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);line-height:1.06;margin:0 0 .6rem}
+        .prhead__lede{color:var(--muted);font-size:1.06rem;line-height:1.55;margin:0 0 .75rem;max-width:48rem}
+        .prhead__trust{display:flex;flex-wrap:wrap;gap:.35rem 1.2rem;margin:0;font-size:.8rem;letter-spacing:.03em;color:#9fb5d3}
+        .prhead__trust a{color:#9fb5d3;text-decoration:none}
+        .prhead .page-hero__byline{margin-top:.55rem}
+        .section.prmain{padding-top:2.2rem;padding-bottom:2.4rem}
+        .prcards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;max-width:1180px;margin:0 auto}
+        .prcard{position:relative;display:flex;flex-direction:column;padding:1.35rem 1.3rem 1.2rem;border-radius:18px;border:1px solid var(--line);background:var(--glass)}
+        .prcard--pop{border-color:rgba(0,206,27,.55);background:linear-gradient(160deg,rgba(0,206,27,.08),rgba(0,206,27,0) 60%),var(--glass);box-shadow:0 20px 50px rgba(0,0,0,.35)}
+        .prcard__tag{position:absolute;top:-.72rem;left:1.2rem;padding:.16rem .6rem;border-radius:999px;background:#00ce1b;color:#04130a;font:700 .68rem/1.3 var(--font-mono);letter-spacing:.08em}
+        .prcard__name{font-family:var(--font-display);font-size:1.15rem;margin:0 0 .15rem}
+        .prcard__for{color:var(--muted);font-size:.92rem;margin:0 0 .85rem;line-height:1.45}
+        .prcard__price{display:flex;align-items:baseline;gap:.35rem;flex-wrap:wrap;margin:0}
+        .prcard__price b{font-family:var(--font-display);font-size:2.3rem;line-height:1.05;color:var(--ink)}
+        .prcard__price small{color:var(--muted);font-size:.9rem}
+        .prcard__price--word b{font-size:1.75rem;line-height:1.15}
+        .prcard__per{color:var(--muted);font-size:.9rem;margin:.2rem 0 .95rem}
+        .prcard ul{list-style:none;margin:0 0 1.15rem;padding:0;display:grid;gap:.45rem;flex:1 1 auto;align-content:start}
+        .prcard li{position:relative;padding-left:1.4rem;font-size:.95rem;line-height:1.45;color:var(--ink-2,#dfe9f7)}
+        .prcard li::before{content:"\2713";position:absolute;left:0;top:0;color:#00ce1b;font-weight:700}
+        .prcard .button{width:100%;justify-content:center;text-align:center}
+        .prcard__alt{margin:.55rem 0 0;text-align:center;font-size:.9rem}
+        .prcard__alt a{color:var(--cyan-soft)}
+        .prnote{text-align:center;color:var(--muted);margin:1.4rem auto 0;max-width:56rem;font-size:.98rem;line-height:1.6}
+        .prnote a{color:var(--cyan-soft)}
+        .prmore{text-align:center;margin:0 auto;padding:0 var(--pad-x) 2.6rem;color:var(--muted);font-size:.95rem}
+        .prmore a{color:var(--cyan-soft)}
+        @media(max-width:1100px){.prcards{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.3rem 1rem}}
+        @media(max-width:620px){.prcards{grid-template-columns:1fr}.prcard__price b{font-size:2.1rem}}
+      </style>"""
 
-  post=_dash_band("both", alt=True),
-)
+def pricing_page():
+    slug = "pricing"
+    desc = "365 Techies pricing — transparent monthly IT support: homes £18.25/month per computer, business from £24.38/month per computer, Microsoft 365 £4.85/month per user. No contracts; one-off repairs quoted up front."
+    head = f"""    <section class="prhead" aria-label="Pricing">
+      <div class="wrap"><div class="prhead__in">
+        <nav class="breadcrumb" aria-label="Breadcrumb">{bc("Pricing")}</nav>
+        <h1 class="prhead__h">Simple, honest <em class="grad grad--green">pricing</em></h1>
+        <p class="prhead__lede">We publish our prices, so there&rsquo;s no &ldquo;request a quote&rdquo; and no sales call. Rolling monthly plans with no long contracts and no hidden fees, plus one-off help when you need it.</p>
+        <p class="prhead__trust mono"><a href="/reviews/">&#9733; Rated 4.9 on Google</a><span>Family-run since 1995</span><span>Cancel anytime</span></p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
+      </div></div>
+    </section>"""
+    cards = """    <section class="section prmain" aria-label="Prices">
+      <div class="wrap">
+        <div class="prcards">
+          <article class="prcard prcard--pop">
+            <span class="prcard__tag">MOST POPULAR</span>
+            <h2 class="prcard__name">Home Support</h2>
+            <p class="prcard__for">For homes and families</p>
+            <p class="prcard__price"><b>&pound;18.25</b></p>
+            <p class="prcard__per">a month per computer</p>
+            <ul><li>Friendly remote support</li><li>A full service every 6 weeks</li><li>Security &amp; backup checks</li><li>Wi-Fi, printer &amp; email help</li></ul>
+            <a class="button primary" href="/home-it-support-plans/">See home plans</a>
+          </article>
+          <article class="prcard">
+            <h2 class="prcard__name">Home + Microsoft 365</h2>
+            <p class="prcard__for">Home Support with Microsoft 365 at &pound;4.85 a user</p>
+            <p class="prcard__price"><b>&pound;23.10</b></p>
+            <p class="prcard__per">a month per computer</p>
+            <ul><li>Everything in Home Support</li><li>Microsoft 365: Outlook and the Office apps</li></ul>
+            <a class="button secondary" href="/home-it-support-plans/">See home plans</a>
+          </article>
+          <article class="prcard">
+            <h2 class="prcard__name">Business</h2>
+            <p class="prcard__for">For sole traders and small businesses</p>
+            <p class="prcard__price"><small>from</small><b>&pound;24.38</b></p>
+            <p class="prcard__per">a month per computer</p>
+            <ul><li>Ongoing maintenance</li><li>Cybersecurity &amp; backups managed</li><li>On-site help in Dorset</li><li>Microsoft 365 support</li></ul>
+            <a class="button secondary" href="/business-it-support-plans/">See business plans</a>
+          </article>
+          <article class="prcard">
+            <h2 class="prcard__name">One-off help</h2>
+            <p class="prcard__for">A repair or a project, with no subscription</p>
+            <p class="prcard__price prcard__price--word"><b>Quoted first</b></p>
+            <p class="prcard__per">priced and agreed before any work starts</p>
+            <ul><li>No-fix-no-fee repairs</li><li>12-month repair warranty</li><li>Never a surprise bill</li></ul>
+            <a class="button secondary" href="/contact/">Ask for a quote</a>
+            <p class="prcard__alt"><a href="/book-service/">or book a repair online</a></p>
+          </article>
+        </div>
+        <p class="prnote">Not sure which fits? Try the 30-second <a href="/plan-finder/">Plan Finder</a>, see <a href="/monthly-it-support/">how monthly support works</a>, or call <a href="tel:+441202775566">01202 775566</a>.</p>
+      </div>
+""" + _PRICING_CSS + """
+    </section>"""
+    more = """    <p class="prmore">More: <a href="/why-choose-365-techies/">why choose us</a> &middot; <a href="/switching-it-provider/">switching is easy</a> &middot; <a href="/service-level-agreement/">our Service Level Agreement</a></p>"""
+    content = "\n".join([head, cards, '    <section class="section" aria-label="Compare plans">\n      <div class="wrap">\n        <p class="eyebrow eyebrow--center mono" data-reveal>// COMPARE PLANS</p>\n        <h2 class="section-title section-title--center" data-title>What&rsquo;s included, at a glance<span class="title-underline title-underline--center"></span></h2>\n        <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)" data-reveal>\n          <table class="cmp-table">\n            <thead><tr><th>Feature</th><th>Home Support</th><th>Home + Microsoft 365</th><th>Business</th></tr></thead>\n            <tbody>\n              <tr><th>Friendly remote support</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>\n              <tr><th>Full service every 6 weeks</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td>Ongoing</td></tr>\n              <tr><th>Security &amp; backup checks</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>\n              <tr><th>Wi-Fi, printer &amp; email help</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>\n              <tr><th>Microsoft 365 (Outlook &amp; Office apps)</th><td class="no">&ndash;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>\n              <tr><th>Priced per computer</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>\n              <tr><th>Cybersecurity &amp; backups managed</th><td>Advice</td><td>Advice</td><td class="yes">&#10003;</td></tr>\n              <tr><th>On-site help (Dorset)</th><td>On request</td><td>On request</td><td class="yes">&#10003;</td></tr>\n              <tr class="cmp-price"><th>From</th><td>&pound;18.25<span>/mo per computer</span></td><td>&pound;23.10<span>/mo per computer</span></td><td>from &pound;24.38<span>/mo per computer</span></td></tr>\n              <tr class="cmp-cta"><td></td><td><a href="/home-it-support-plans/">Home plans</a></td><td><a href="/home-it-support-plans/">Home plans</a></td><td><a href="/business-it-support-plans/">Business plans</a></td></tr>\n            </tbody>\n          </table>\n        </div>\n        <p class="cmp-foot mono" data-reveal>Full response targets are set out in our <a href="/service-level-agreement/">Service Level Agreement</a>. Not sure which fits? Try the <a href="/plan-finder/">Plan Finder</a>.</p>\n      </div>\n    </section>\n', '    <section class="section section--alt" aria-label="What is included">\n      <div class="wrap">\n        <p class="eyebrow eyebrow--center mono" data-reveal>// NO SURPRISES</p>\n        <h2 class="section-title section-title--center" data-title>What&rsquo;s included vs charged separately<span class="title-underline title-underline--center"></span></h2>\n        <div class="incl-grid" data-stagger>\n          <div class="incl incl--yes">\n            <h3>Included in your plan</h3>\n            <ul>\n              <li>Friendly remote support</li>\n              <li>Regular maintenance &amp; health checks</li>\n              <li>Security &amp; backup setup and monitoring</li>\n              <li>Microsoft 365 support (on relevant plans)</li>\n              <li>Honest, jargon-free advice whenever you need it</li>\n              <li>No call-out fee for remote help</li>\n              <li>Your own 365 dashboard: backups, health and your next visit on one screen (<a href="/join/">try it free</a>; demos for <a href="/next-gen-home-dashboards/">homes</a> and <a href="/custom-wifi-dashboards/">businesses</a>)</li>\n            </ul>\n          </div>\n          <div class="incl incl--sep">\n            <h3>Quoted separately (so there are no surprises)</h3>\n            <ul>\n              <li>New hardware &amp; software licences</li>\n              <li>Large one-off projects &amp; migrations</li>\n              <li>On-site visits outside your plan</li>\n              <li>Third-party or specialist supplier costs</li>\n            </ul>\n          </div>\n        </div>\n        <p class="cmp-foot mono" data-reveal>We always agree any extra cost with you up front &mdash; never a surprise bill.</p>\n        <p class="lede lede--center" data-reveal style="margin-top:1.2rem">Looking after a <strong>website</strong> too? Those prices are published as well &mdash; <a href="/web-care/">website care from &pound;125/month, rebuilds &pound;2,450 fixed</a>.</p>\n      </div>\n    </section>\n', more])
+    def schema(s, _d=desc):
+        return graph([crumb(s, "Pricing"), webpage(s, "Pricing", _d)])
+    add(slug=slug, title="Pricing | 365 Techies", desc=desc, og_title="Pricing | 365 Techies", schema=schema, content=content)
+
+pricing_page()
 
 # ---- Free IT Health Check
 # 13 Sep 2026 (SEO audit item 5): expanded from 275 words. Fifteen pages and the nav send people here; it now says
