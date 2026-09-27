@@ -74,9 +74,11 @@
   var BOOT_LIMIT = 90000;    // slow broadband: the game is a few MB
   var st = document.getElementById('st');
   var f = document.getElementById('g');
-  // the wave size (the game's own dial: 1 = the modelled Bournemouth bank, ~1.15 m; 1.8 "a big day"; 2.4 the top step,
-  // ~2.8 m - the one used: a wall of whitewater fills the view before each dive, and six dives in 35 s against four)
-  var SURF = Math.max(1, Math.min(2.4, +(q.get('surf') || 2.4)));
+  // the wave size (the game's own dial: 1 = the modelled Bournemouth bank, ~1.15 m; 1.8 "a big day"; 2.4 the top step
+  // of the in-game control, ~2.8 m; 3 the most the sea model takes, ~3.45 m - sea.js setSurf clamps there). Owner, after
+  // watching 2.4: "can we have bigger waves?" -> 3. Same break line and rhythm (six dives in 35 s), taller walls of
+  // whitewater before each dive. Beyond 3 would mean changing the game itself.
+  var SURF = Math.max(1, Math.min(3, +(q.get('surf') || 3)));
   f.src = './?clean=1&sound=0&mode=surfer&surf=' + SURF;
   var t0 = performance.now();
   var scene = 'attract';
