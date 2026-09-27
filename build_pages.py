@@ -5621,8 +5621,10 @@ add(
    service(s, "Home IT Support Plans", "Monthly home IT support at £18.25 per computer, with optional Microsoft 365 at £4.85 per user.", "Home IT support"),
  ]),
  content="\n".join([
-   _HP_HERO,
-   _HP_PROOF,
+   # 27 Sep 2026 task-first pass: a short heading, then the plans; the tiles and proof strip repeated the plan facts
+   task_head(bc("Home Support Plans"), 'Home IT support <em class="grad grad--cyan">plans</em>',
+        "&pound;18.25 a month per computer: a full service every six weeks with a written report, unlimited remote help, your security checked, and your backup set up and checked. Change or cancel any time.",
+        trust=['<a href="/reviews/">&#9733; Rated 4.9 on Google</a>', "Family-run since 1995", "No contract"]),
    f'''    <section class="support-options" id="plans" aria-label="Home support plans">
 <h2 class="sr-only">Home support plans</h2>
       <div class="plan-grid">
@@ -5672,11 +5674,7 @@ add(
     </section>''',
    _HP_REVIEWS,
    GC_NOTE,
-   REMOTE_ACCESS_BAND,
-   _dash_band("home", alt=True),
-   PCM_BAND,
-   cta("Pick a home support plan", "Not sure which plan fits? Tell us a bit about your setup and we&rsquo;ll recommend the right one — no pressure.",
-       primary=("Get Started", "/contact/"), secondary=("Call 01202 775566", "tel:+441202775566"), whats_next=True),
+   '''    <p class="taskmore">Also on every plan: your own 365 dashboard (<a href="/join/">try it free</a>, or see <a href="/next-gen-home-dashboards/">the home demo</a>), the free <a href="/free-pc-health-check/">365 PC Manager app</a>, your <a href="/portal/">customer portal</a> and, if you want it, <a href="/splashtop-business-guide/">your own PC from anywhere</a>. See <a href="/your-first-6-weekly-service/">what your first 6-weekly service looks like</a>, and how we help <a href="/it-support-for-retired-users/">retired people</a> and <a href="/it-support-for-home-workers/">home workers</a>. Not sure which plan fits? <a href="/contact/">Tell us about your setup</a> or call <a href="tel:+441202775566">01202 775566</a>.</p>''',
  ]),
 )
 

@@ -16820,7 +16820,6 @@ def pricing_page():
       <div class="wrap">
         <div class="prcards">
           <article class="prcard prcard--pop">
-            <span class="prcard__tag">MOST POPULAR</span>
             <h2 class="prcard__name">Home Support</h2>
             <p class="prcard__for">For homes and families</p>
             <p class="prcard__price"><b>&pound;18.25</b></p>
