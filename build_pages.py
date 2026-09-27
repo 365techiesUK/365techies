@@ -209,6 +209,7 @@ WHATSAPP_LINK = ("https://wa.me/" + WHATSAPP_NUMBER) if WHATSAPP_NUMBER else ""
 WA_FOOTER = (f'<br /><a href="{WHATSAPP_LINK}" target="_blank" rel="noopener">WhatsApp us</a>') if WHATSAPP_NUMBER else ""
 WA_MENU = (f'<br /><a href="{WHATSAPP_LINK}" target="_blank" rel="noopener">WhatsApp us</a>') if WHATSAPP_NUMBER else ""
 WA_CONTACT_ROW = (f'<li><span class="k">WhatsApp</span><span class="v"><a href="{WHATSAPP_LINK}" target="_blank" rel="noopener">Chat on WhatsApp &#8594;</a></span></li>') if WHATSAPP_NUMBER else ""
+WA_CWAY = (f'\n          <a class="cway" href="{WHATSAPP_LINK}" target="_blank" rel="noopener"><span class="cway__i" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"/></svg></span><span class="cway__t"><b>WhatsApp</b><span>Chat with us on WhatsApp</span></span></a>') if WHATSAPP_NUMBER else ""
 
 # GoCardless Direct Debit subscription links (paste the hosted payment-link URL
 # from your GoCardless dashboard for each plan; empty = route to /contact/).
@@ -6633,20 +6634,18 @@ add(
        "contactType": "customer support", "areaServed": "GB", "availableLanguage": "en-GB"}]},
  ]),
  content="\n".join([
-   # 26 Sep 2026: the shared first screen (H1 and lede unchanged); the four ways to reach us as tiles
-   intent_hero(bc("Contact"), "// GET IN TOUCH",
-        'How can we <em class="grad grad--cyan">help?</em>',
-        "Whatever it is &mdash; a repair, a question, monthly support or just some honest advice &mdash; tell us and we&rsquo;ll sort it. Friendly, no-pressure, no jargon.",
-        ("Call 01202 775566", "tel:+441202775566"), ("Text 07520 615332", "sms:+447520615332"),
-        [("hp-c-fix", "phone", "Call us", "01202 775566, Mon&ndash;Fri 9am&ndash;5pm", "FASTEST", "tel:+441202775566"),
-         ("hp-c-care", "mail", "Send a message", "We reply within one working day", "THE FORM BELOW", "#contact-form"),
-         ("hp-c-biz", "calendar", "Book a time", "Pick a slot for a service or repair", "BOOK ONLINE", "/book-service/"),
-         ("hp-c-buy", "alert", "Urgent? Connect now", "SOS remote help on a Windows PC", "SOS", "/sos/")],
-        question="How would you like to reach us?", rating_note="Family-run since 1995 &middot; real people, no call centre"),
-   proof_strip([("hp-c-fix", "9&ndash;5", "Monday to Friday"), ("hp-c-care", "1&nbsp;day", "to reply to a message (working days)"),
-                ("hp-c-buy", "&pound;0", "to check the problem remotely"),
-                ("hp-c-biz", "4.9<i aria-hidden=\"true\">&#9733;</i>", "average rating on Google")]),
-   f'''    <section class="section" aria-label="Contact details and form">
+   # 27 Sep 2026 revamp: the form on the first screens, the other ways beside it, then the reviews. The four tiles, the
+   # proof strip, the empty map (a pin for a business with no walk-in shop), the PC Manager band and the plan CTA went.
+   f'''    <section class="pghead" aria-label="Contact">
+      <div class="wrap"><div class="pghead__in">
+        <nav class="breadcrumb" aria-label="Breadcrumb">{bc("Contact")}</nav>
+        <h1 class="pghead__h">How can we <em class="grad grad--cyan">help?</em></h1>
+        <p class="pghead__lede">A repair, a question, monthly support or just some honest advice &mdash; call, text or send a message and a real person in Bournemouth will sort it. Friendly, no pressure, no jargon.</p>
+        <p class="pghead__trust mono"><span>&#9733; Rated 4.9 on Google</span><span>Family-run since 1995</span><span>Real people, no call centre</span></p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
+      </div></div>
+    </section>''',
+   f'''    <section class="section cmain" aria-label="Contact details and form">
       <div class="wrap" id="message-sent" style="max-width:760px;margin:0 auto">
         <div class="message-sent__panel" role="status">
           <h2 style="margin:0 0 .5rem">&#10003; Thank you &mdash; your message is in.</h2>
@@ -6654,6 +6653,9 @@ add(
         </div>
       </div>
       <div class="wrap contact-grid">
+        <div>
+          <h2 class="cmain__h">Send us a message</h2>
+          <p class="cmain__sub">We reply within one working day (Mon&ndash;Fri, 9am&ndash;5pm).</p>
         <form class="contact-form" id="contact-form" data-reveal action="/api/form-relay.php" method="post">
           <input type="text" name="company_website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
           <label class="field"><span>Your name</span><input type="text" name="name" autocomplete="name" required /></label>
@@ -6690,32 +6692,46 @@ add(
           <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.75rem">// GOES STRAIGHT TO OUR FAMILY TEAM &middot; WE REPLY WITHIN ONE WORKING DAY (MON&ndash;FRI)</p>
           <p style="margin-top:.6rem;color:var(--muted);font-size:.85rem">Prefer email? Write to <a href="mailto:help@365techies.co.uk" style="color:var(--cyan)">help@365techies.co.uk</a> directly.</p>
         </form>
-        <div data-reveal>
-          <p class="eyebrow mono">// DIRECT</p>
-          <h2 class="section-title" data-title>Talk to a techie<span class="title-underline"></span></h2>
-          <ul class="contact-info">
-            <li><span class="k">Phone</span><span class="v"><a href="tel:+441202775566">01202 775566</a></span></li>
-            <li><span class="k">Text only</span><span class="v"><a href="sms:+447520615332">07520 615332</a> &middot; <span style="color:var(--muted)">prefer to text? message us anytime</span></span></li>
-            {WA_CONTACT_ROW}
-            <li><span class="k">Email</span><span class="v"><a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a></span></li>
-            <li><span class="k">Hours</span><span class="v">Monday&ndash;Friday, 9am&ndash;5pm</span></li>
-            <li><span class="k">Based in</span><span class="v">Bournemouth, Dorset</span></li>
-            <li><span class="k">Visiting</span><span class="v">No walk-in shop: we help remotely, collect computers for repair, and meet by appointment at Kinson Community Centre</span></li>
-            <li><span class="k">Book online</span><span class="v"><a href="/book-service/">Book a service or repair &#8594;</a></span></li>
-            <li><span class="k">Emergency</span><span class="v"><a href="/sos/" target="_blank" rel="noopener">SOS remote support &#8594;</a></span></li>
-          </ul>
         </div>
+        <aside class="cways" aria-label="Other ways to reach us">
+          <h2 class="cmain__h">Or reach us directly</h2>
+          <a class="cway" href="tel:+441202775566"><span class="cway__i" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></span><span class="cway__t"><b>Call 01202 775566</b><span>Mon&ndash;Fri, 9am&ndash;5pm &middot; the fastest way</span></span></a>
+          <a class="cway" href="sms:+447520615332"><span class="cway__i" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"/></svg></span><span class="cway__t"><b>Text 07520 615332</b><span>Text only &middot; message us any time</span></span></a>{WA_CWAY}
+          <a class="cway" href="mailto:help@365techies.co.uk"><span class="cway__i" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></span><span class="cway__t"><b>help@365techies.co.uk</b><span>We reply within one working day</span></span></a>
+          <a class="cway" href="/book-service/"><span class="cway__i" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><span class="cway__t"><b>Book a visit online</b><span>Pick a time for a service or repair</span></span></a>
+          <a class="cway cway--sos" href="/sos/" target="_blank" rel="noopener"><span class="cway__i" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="cway__t"><b>Urgent? SOS remote help</b><span>Let us connect to a Windows PC now</span></span></a>
+          <p class="cways__note">Based in Bournemouth, Dorset. There&rsquo;s no walk-in shop: we help remotely, collect computers for repair, and meet by appointment at Kinson Community Centre.</p>
+          <p class="cways__note">Looking for prices? <a href="/monthly-it-support/">See plans &amp; prices &#8594;</a></p>
+        </aside>
       </div>
-      <div class="wrap" style="margin-top:2.4rem">
-        <div style="border-radius:16px;overflow:hidden;border:1px solid rgba(125,170,220,0.18);max-width:1000px;margin:0 auto" data-reveal>
-          <iframe title="365 Techies location &mdash; Bournemouth, Dorset" src="https://www.google.com/maps?q=365%20Techies%2C%20Bournemouth%2C%20Dorset&amp;output=embed" width="100%" height="320" style="border:0;display:block" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-        </div>
-      </div>
+      <style>
+        .pghead{{padding:calc(var(--header-h) + var(--ticker-h) + 1.5rem) var(--pad-x) 0}}
+        .pghead__in{{max-width:1180px;margin:0 auto}}
+        .pghead .breadcrumb{{margin:0 0 .9rem}}
+        .pghead__h{{font-family:var(--font-display);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);line-height:1.06;margin:0 0 .6rem}}
+        .pghead__lede{{color:var(--muted);font-size:1.06rem;line-height:1.55;margin:0 0 .75rem;max-width:46rem}}
+        .pghead__trust{{display:flex;flex-wrap:wrap;gap:.35rem 1.2rem;margin:0;font-size:.8rem;letter-spacing:.03em;color:#9fb5d3}}
+        .pghead .page-hero__byline{{margin-top:.55rem}}
+        .section.cmain{{padding-top:1.6rem}}
+        .cmain__h{{font-family:var(--font-display);font-size:1.35rem;margin:0 0 .3rem}}
+        .cmain__sub{{color:var(--muted);margin:0 0 1rem;font-size:.98rem}}
+        .cways{{display:flex;flex-direction:column;gap:.55rem}}
+        .cways .cmain__h{{margin-bottom:.45rem}}
+        .cway{{display:flex;align-items:center;gap:.85rem;min-height:64px;padding:.75rem .95rem;border-radius:14px;border:1px solid var(--line);background:var(--glass);color:var(--ink);text-decoration:none;transition:border-color .2s,background .2s,transform .2s}}
+        .cway:hover,.cway:focus-visible{{border-color:var(--cyan);background:rgba(29,151,227,.08);transform:translateY(-1px)}}
+        .cway:focus-visible{{outline:2px solid var(--cyan-soft);outline-offset:2px}}
+        .cway__i{{flex:0 0 40px;width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:rgba(29,151,227,.14);color:#6cc4f5}}
+        .cway__t{{display:flex;flex-direction:column;gap:.1rem;min-width:0}}
+        .cway__t b{{font-size:1.02rem;overflow-wrap:anywhere}}
+        .cway__t span{{color:var(--muted);font-size:.9rem}}
+        .cway--sos .cway__i{{background:rgba(232,34,46,.14);color:#ff8a8f}}
+        .cways__note{{margin:.35rem 0 0;color:var(--muted);font-size:.92rem;line-height:1.55}}
+        .cways__note a{{color:var(--cyan-soft)}}
+        @media(max-width:900px){{.cways{{margin-top:.4rem}}}}
+        @media(prefers-reduced-motion:reduce){{.cway:hover{{transform:none}}}}
+      </style>
     </section>''',
    quotes_block("What customers say", "Quick to answer, easy to reach", "Roger Eede", "Maureen Drake", "Julie Collins"),
-   PCM_BAND,
-   cta("Prefer to just pick a plan?", "Browse monthly support for homes and businesses — clear pricing, no contracts, cancel anytime.",
-       primary=("See Plans &amp; Prices", "/monthly-it-support/"), secondary=("See Home Plans &amp; Prices", "/home-it-support-plans/")),
  ]),
 )
 
