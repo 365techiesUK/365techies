@@ -79,6 +79,9 @@ _CD_DIRTY = [False]
 # Strip what legitimately changes on every build, so a rebuild with no edits is a no-op.
 _VOLATILE = [
     (_cdre.compile(r'"dateModified":\s*"[^"]*"'), '"dateModified":"X"'),
+    # 27 Sep 2026: the live-visitors beacon (VIS_BEACON) is plumbing, not content - switching it on
+    # must not re-date ~630 pages. Same reasoning as the analytics ID below.
+    (_cdre.compile(r'\s*<script>\(function\(\)\{try\{if\(navigator\.doNotTrack==="1"\)return;.*?</script>', _cdre.S), ''),
     # The analytics measurement ID is plumbing, not content. Swapping it (5 Sep 2026, when the
     # site turned out to be feeding a property nobody could open) must not tell Google that
     # ~700 pages changed today.
@@ -190,7 +193,7 @@ AI_OS_URL = ""
 # Empty = no beacon is emitted anywhere. Set to the deployed Worker URL (no
 # trailing slash) and rebuild; the staff portal's "Live on the sites" card reads
 # the same Worker via api/visitors.php + the server-only api/visitors-key.php.
-VISITORS_WORKER = ""
+VISITORS_WORKER = "https://visitors-live.steve-2d4.workers.dev"   # live visitors ON 27 Sep 2026 (owner); KV free tier: see visitors-live-worker.js
 # Public URL of the deployed broadband-coverage proxy (the AI OS server's
 # /api/broadband endpoint). When set, the broadband checker shows live Ofcom
 # coverage for the entered postcode. Leave empty ("") for signposting only.
@@ -1018,6 +1021,7 @@ def _meta_desc(d, limit=158):
 # Respects Do Not Track. Emitted only when VISITORS_WORKER is configured.
 VIS_BEACON = "" if not VISITORS_WORKER else (
     '  <script>(function(){try{if(navigator.doNotTrack==="1")return;'
+    'if(/bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit/i.test(navigator.userAgent))return;'
     'fetch("' + VISITORS_WORKER + '/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},'
     'body:JSON.stringify({site:"t365",path:location.pathname}),keepalive:true});}catch(e){}})();</script>\n')
 
