@@ -30620,7 +30620,7 @@ def write_portal_page():
                    "Sign in to the 365 Techies customer portal - your plan, your computers' health, your visits.",
                    "365 Techies customer portal", schema, content)
     html = html.replace('<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />',
-                        '<meta name="robots" content="noindex, nofollow" />\\n  <meta name="referrer" content="no-referrer" />', 1)
+                        '<meta name="robots" content="noindex, nofollow" />\n  <meta name="referrer" content="no-referrer" />', 1)
     # The portal - and ONLY the portal - is worth installing. The site-wide
     # manifest declares display:"browser" on purpose: a phone offering to install
     # the MARKETING site produced a prompt the owner himself mistook for a third
