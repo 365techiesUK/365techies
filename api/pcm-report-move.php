@@ -86,6 +86,9 @@ function mv_summary($html) {
     return $s;
 }
 function mv_own($name) { return (bool)preg_match('/^365\s/i', trim((string)$name)); }
+// A service report: the type pcm.php stored with it decides (service / selfrun). Only a report stored before types were
+// kept (no type) is judged by its own header. The first plan run left out ten "untyped-looking" reports this way.
+function mv_is_service($it, $s) { return $it['kind'] === 'service' || $it['kind'] === 'selfrun' || ($it['kind'] === '' && $s['service']); }
 
 function mv_text($it, $s) {
     $c = $it['cust'];
@@ -113,9 +116,11 @@ if (isset($_GET['plan'])) {
     $rows = array(); $post = 0; $own = 0; $notsvc = 0;
     foreach ($items as $it) {
         $s = mv_summary((string)@file_get_contents($it['file']));
-        $why = !$s['service'] ? 'not a service report' : (mv_own($s['customer']) ? 'our own machine' : '');
+        $why = !mv_is_service($it, $s) ? 'not a service report' : (mv_own($s['customer']) ? 'our own machine' : '');
         if ($why === '') $post++; elseif ($why === 'our own machine') $own++; else $notsvc++;
-        $rows[] = date('Y-m-d H:i', $it['ts']) . ' ' . ($s['selfrun'] ? 'self-run' : 'visit') . ($why !== '' ? ' - left out: ' . $why : '');
+        $rows[] = date('Y-m-d H:i', $it['ts']) . ' ' . ($s['selfrun'] ? 'self-run' : 'visit') . ' [type ' . ($it['kind'] !== '' ? $it['kind'] : 'none')
+                . ', header ' . ($s['service'] ? 'service' : 'other') . ', ' . ($s['score'] !== '' ? 'scored' : 'no score') . ']'
+                . ($why !== '' ? ' - left out: ' . $why : '');
     }
     mv_out(array('ok' => true, 'to_post' => $post, 'own_left_out' => $own, 'not_service' => $notsvc, 'rows' => $rows));
 }
@@ -138,7 +143,7 @@ $posted = 0; $errors = array(); $own = 0; $todo = array();
 foreach ($items as $it) {
     $html = (string)@file_get_contents($it['file']);
     $s = mv_summary($html);
-    if (!$s['service']) continue;
+    if (!mv_is_service($it, $s)) continue;
     if (mv_own($s['customer'])) { $own++; continue; }
     if (!isset($st['done'][$it['id']])) $todo[] = array($it, $html, $s);
 }
