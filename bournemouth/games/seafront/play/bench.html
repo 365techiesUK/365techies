@@ -9,7 +9,9 @@
      run part of our game, like surfing by Bournemouth Pier, and have frames per second as the benchmark".
      PC Service Professional opens THIS page in its own Microsoft Edge window (a throwaway profile, frame cap off)
      and reads the result from the window title - nothing is sent anywhere and nothing is stored:
-       365BENCH|v1|ok|avg=71.8|low1=48.2|frames=1795|secs=25.0|w=1280|h=720|scene=surf|gpu=ANGLE (Intel, ...)
+       365BENCH|v1|ok|avg=71.8|low1=48.2|frames=1795|secs=25.0|w=1280|h=720|scene=surf|build=b36|gpu=ANGLE (Intel, ...)
+     build= is the game build that was drawn: the page times whichever build is live, and a game release can change
+     the load (b36 drew the big-day sea on a grid ~5x denser), so results from different builds are not comparable.
        365BENCH|v1|err|<why>
      A FILM, NOT A GAME (27 Sep, owner: "we don't want it to be playable ... it's not going to be probably someone
      in front of the computer ... just do like a cinematic path"). First the dolphins off the pier; then, the same
@@ -296,13 +298,15 @@
       var wsum = 0; for (var j = 0; j < worst.length; j++) wsum += worst[j];
       var low1 = 1000 / (wsum / worst.length);
       var cv = canvasOf(w);
+      // which game build was drawn (play/index.html loads bNN/src/main.js)
+      var build = ''; try { var sc = w.document.querySelector('script[type=module][src]'); var bm = sc && /\/(b\d+)\//.exec(sc.src); if (bm) build = bm[1]; } catch (e) { }
       // diagnostics: the long frames, and when in the run they came (hitches from loading vs steady slowness)
       var longs = [], el = 0, maxIv = 0;
       for (var k = 0; k < iv.length; k++) { el += iv[k]; if (iv[k] > maxIv) maxIv = iv[k]; if (iv[k] > 50 && longs.length < 8) longs.push(Math.round(iv[k]) + '@' + (el / 1000).toFixed(1)); }
       var p99 = iv.slice().sort(function (a, b) { return a - b; })[Math.floor(iv.length * 0.99)];
       done('365BENCH|v1|ok|avg=' + avg.toFixed(1) + '|low1=' + low1.toFixed(1) + '|p99ms=' + p99.toFixed(1) + '|maxms=' + Math.round(maxIv)
         + '|long=' + longs.join(',') + '|frames=' + iv.length + '|secs=' + secs.toFixed(1)
-        + '|w=' + (cv ? cv.width : 0) + '|h=' + (cv ? cv.height : 0) + '|scene=' + scene + '|gpu=' + gpu,
+        + '|w=' + (cv ? cv.width : 0) + '|h=' + (cv ? cv.height : 0) + '|scene=' + scene + '|build=' + build + '|gpu=' + gpu,
         Math.round(avg) + ' frames a second – done');
     }, RUN);
   }
