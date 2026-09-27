@@ -1834,8 +1834,8 @@ if ($action === 'book') {
         db_save($dbR); db_close($lkR);
         pcm_slack_say(":handshake: *A referral!* " . bk_clean($snap['name'] !== '' ? $snap['name'] : $snap['email'])
             . ' says they were recommended by *' . bk_clean($refby) . "*\n"
-            . "> :arrow_right: Give " . bk_clean($snap['name'] !== '' ? $snap['name'] : 'them') . " a free Computer Service & Health Check on this visit\n"
-            . "> :arrow_right: Give " . bk_clean($refby) . " a month free on their support plan (or £15 off their next visit if they are not on a plan)\n"
+            . "> :arrow_right: Give " . bk_clean($snap['name'] !== '' ? $snap['name'] : 'them') . " their first month on a support plan free (it includes this first Computer Service & Health Check)\n"
+            . "> :arrow_right: Give " . bk_clean($refby) . " a month free on their support plan\n"
             . '> Booked for ' . $pretty);
     }
     // Count this booking ACTION for the 24h rate limit. Deliberately counts actions, not

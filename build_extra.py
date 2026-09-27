@@ -11707,14 +11707,14 @@ starlink_internet()
 def refer_a_friend():
     slug = "refer-a-friend"
     # SCHEME (owner-decided 2026-07-26, must match the booking page + referral cards +
-    # job-done email): the FRIEND gets their first Computer Service & Health Check free;
-    # the REFERRER gets a month free on their support plan (or £15 off their next
-    # visit if they are not on a plan). Reviews are NEVER mentioned here - rewarding a
+    # job-done email): the FRIEND gets their first month on a support plan free (it includes their first Computer
+    # Service & Health Check); owner 27 Sep 2026 - both sides get a month free, the old GBP 15 option is gone;
+    # the REFERRER gets a month free on their support plan. Reviews are NEVER mentioned here - rewarding a
     # recommendation is lawful, rewarding a review is not.
-    desc = "Refer a friend to 365 Techies: their first Computer Service & Health Check is free, and you get a month free on your support plan. Friends, family or businesses across Dorset - just ask them to mention your name."
+    desc = "Refer a friend to 365 Techies: you both get a month free. Their first month on a support plan is free, and you get a month free on yours. Friends, family or businesses across Dorset - just ask them to mention your name."
     faqs = [
-      ("What does my friend get?", "Their first Computer Service &amp; Health Check is completely free &mdash; a proper service and tune-up with everything explained in plain English, not a sales visit."),
-      ("What do I get?", "A month free on your monthly support plan. Not on a plan? We&rsquo;ll take &pound;15 off your next visit instead &mdash; nobody misses out."),
+      ("What does my friend get?", "Their first month on a support plan free &mdash; including their first full Computer Service &amp; Health Check, a proper service and tune-up with everything explained in plain English. Cancel any time."),
+      ("What do I get?", "A month free on your monthly support plan, every time a friend you sent joins."),
       ("Do they have to mention me?", "Yes please &mdash; that&rsquo;s how we know who to thank. There&rsquo;s a &ldquo;Did someone recommend us?&rdquo; box when they book online, or they can simply say your name on the phone."),
       ("How many people can I refer?", "As many as you like &mdash; there&rsquo;s no limit. Every friend whose first visit happens earns you another free month."),
       ("When do I get my free month?", "Once your friend&rsquo;s first visit has taken place, we credit it to your plan &mdash; we&rsquo;ll let you know when we do."),
@@ -11723,9 +11723,9 @@ def refer_a_friend():
     content = "\n".join([
       hero(bc("Refer a Friend"), "// REFER A FRIEND",
            'Refer a friend, <em class="grad grad--green">you both win</em>',
-           "Know someone battling their computer? Their <strong>first Computer Service &amp; Health Check is free</strong> &mdash; and when their visit&rsquo;s done, <strong>you get a month free</strong> on your support plan. Our way of saying a proper thank you.",
-           cta1=("Book Their Free First Service", "/book-service/"), cta2=("Call 01202 775566", "tel:+441202775566"),
-           chips=["Friend&rsquo;s first service free","A month free for you","No limit on referrals"]),
+           "Know someone battling their computer? <strong>You both get a month free</strong>: their first month on a support plan, including their first full Computer Service &amp; Health Check, and a month free on yours. Our way of saying a proper thank you.",
+           cta1=("Book Their First Service", "/book-service/"), cta2=("Call 01202 775566", "tel:+441202775566"),
+           chips=["A month free for them","A month free for you","No limit on referrals"]),
       f'''    <section class="section" aria-label="How it works">
       <div class="wrap">
         <div class="section-head">
@@ -11733,7 +11733,7 @@ def refer_a_friend():
           <h2 class="section-title section-title--center" data-title>Three easy steps, two happy people<span class="title-underline title-underline--center"></span></h2>
         </div>
         <ol class="how__steps">
-{steps([("Pass on our number","Give them one of our cards or just our number, 01202 775566 &mdash; and tell them to mention your name."),("They get their first service free","Their first Computer Service &amp; Health Check is on us. They can book it online in about a minute, or ring us."),("You get a month free","Once their visit&rsquo;s done, we credit a month free to your support plan &mdash; or &pound;15 off your next visit if you&rsquo;re not on one.")])}
+{steps([("Pass on our number","Give them one of our cards or just our number, 01202 775566 &mdash; and tell them to mention your name."),("They get a month free","Their first month on a support plan is on us, including their first full Computer Service &amp; Health Check. They can book online in about a minute, or ring us."),("You get a month free","Once their first visit&rsquo;s done, we credit a month free to your support plan.")])}
         </ol>
       </div>
     </section>''',
@@ -11746,16 +11746,16 @@ def refer_a_friend():
         <div class="split-2">
           <div class="tile" data-reveal>
             <h3>What your friend gets</h3>
-            <p style="color:var(--muted);margin:0 0 1.1rem">A completely free first Computer Service &amp; Health Check &mdash; their machine backed up, secured, sped up and explained in plain English. No obligation, no sales pitch.</p>
+            <p style="color:var(--muted);margin:0 0 1.1rem">Their first month on a support plan free, starting with a full Computer Service &amp; Health Check &mdash; their machine backed up, secured, sped up and explained in plain English. Cancel any time, no sales pitch.</p>
             <ul class="checklist">
-{checklist(["First Computer Service &amp; Health Check free","Friendly, jargon-free support","A team rated 4.9 on Google","We phone before we arrive or connect"])}
+{checklist(["First month on a support plan free","Friendly, jargon-free support","A team rated 4.9 on Google","We phone before we arrive or connect"])}
             </ul>
           </div>
           <div class="tile" data-reveal>
             <h3>What you get</h3>
             <p style="color:var(--muted);margin:0 0 1.1rem">A month free on your support plan every time a friend you sent has their first visit &mdash; with no limit on how many friends you share us with.</p>
             <ul class="checklist">
-{checklist(["A month free, every referral","Not on a plan? &pound;15 off your next visit","No limit &mdash; refer as many as you like","A genuine thank-you from us"])}
+{checklist(["A month free, every referral","Your friend gets a month free too","No limit &mdash; refer as many as you like","A genuine thank-you from us"])}
             </ul>
           </div>
         </div>
@@ -11774,8 +11774,8 @@ def refer_a_friend():
     </section>''',
       faq_html(faqs),
       cta("Know someone who needs us?",
-          "Their first Computer Service &amp; Health Check is free &mdash; and you get a month free when it&rsquo;s done. Just make sure they mention your name.",
-          primary=("Book Their Free First Service", "/book-service/"), secondary=("Call 01202 775566", "tel:+441202775566")),
+          "You both get a month free: their first month on a support plan, and a month on yours. Just make sure they mention your name.",
+          primary=("Book Their First Service", "/book-service/"), secondary=("Call 01202 775566", "tel:+441202775566")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "Refer a Friend"), webpage(s, "Refer a Friend", _desc), faqpage(s, _faqs)])

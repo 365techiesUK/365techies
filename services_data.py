@@ -70,7 +70,7 @@ SERVICE_PAGES = [
   "faqs": [
    {
     "q": "Can you get the photos off a deceased relative&rsquo;s laptop?",
-    "a": "Yes &mdash; gently, privately and entirely at your own pace. We recover photos and documents from a loved one&rsquo;s Windows laptop even without the password, and can wipe the machine afterwards if you wish. See <a href=\"/recover-photos-deceased-relatives-laptop/\">getting photos off a deceased relative&rsquo;s laptop</a>."
+    "a": "Yes &mdash; gently, privately and entirely at your own pace. We recover photos and documents from a loved one&rsquo;s Windows laptop even without the password (unless the drive is encrypted with BitLocker, which needs its recovery key &mdash; we check that first), and can wipe the machine afterwards if you wish. See <a href=\"/recover-photos-deceased-relatives-laptop/\">getting photos off a deceased relative&rsquo;s laptop</a>."
    },
    {
     "q": "My hard drive is clicking or won't show up &mdash; what should I do right now?",

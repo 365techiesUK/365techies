@@ -342,7 +342,7 @@ BOOKING_APP = r'''    <section class="section section--alt" id="book" aria-label
             // need it, and this is the single question that makes referrals countable.
             '<label class="bk__field"><span>Did someone recommend us? <em class="bk__opt">(optional)</em></span>' +
             '<input id="bkref" type="text" autocomplete="off" placeholder="Their name &mdash; we&rsquo;d like to thank them" value="' + esc(S.refby) + '"></label>' +
-            '<p class="bk__note" style="margin:-.35rem 0 .9rem">If a friend sent you, your first Computer Service &amp; Health Check is on us &mdash; and they get a month free on their support plan.</p>' +
+            '<p class="bk__note" style="margin:-.35rem 0 .9rem">If a friend sent you, your first month on a support plan is on us &mdash; and they get a month free on theirs.</p>' +
             '<label class="bk__opts"><input type="checkbox" id="bksh"' + (S.shared ? ' checked' : '') + '><span>I&rsquo;m using a shared or public computer (we&rsquo;ll sign you out quickly)</span></label>' +
             '<label class="bk__opts"><input type="checkbox" id="bkm"' + (S.mk ? ' checked' : '') + '><span>Send me the occasional plain-English tip on staying safe online. No spam, unsubscribe any time.</span></label>' +
             '<div class="bk__row"><button type="button" class="bk__btn" id="bkgo">Send my code</button><button type="button" class="bk__back" id="bkb">&#8592; Pick another time</button></div>' +
