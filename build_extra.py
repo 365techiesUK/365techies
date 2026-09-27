@@ -418,52 +418,29 @@ def book_service():
       ("Do I need an account to book?", "There's no password to invent. You pick a time, then we email you a 6-digit code to check we've got your address right. That also creates your customer portal, where you can manage the appointment afterwards. Next time you book, you're already signed in."),
       ("Will I know when you're coming?", "Yes — for on-site visits we phone you when we're on our way and give you an estimated arrival time, so you know exactly when to expect us. For remote sessions we call before we connect to check you're ready, and we never connect out of the blue."),
     ]
-    content = "\n".join([
-      hero(bc("Book a Service"), "// ONLINE BOOKING",
-           'Book your <em class="grad grad--cyan">servicing appointment</em>',
-           "Manage your computer servicing online — book a service, repair, security check or new-device setup at a time that suits you, and reschedule or cancel whenever you need to.",
-           cta1=("Pick a Time Below", "#book"),
-           cta2=("Call 01202 775566", "tel:+441202775566"),
-           chips=["Live availability","Reschedule or cancel anytime","Remote or on-site"]),
-      f'''    <section class="section" aria-label="What you can book">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT YOU CAN BOOK</p>
-          <h2 class="section-title section-title--center" data-title>Appointments for homes and businesses<span class="title-underline title-underline--center"></span></h2>
-        </div>
-        <div class="tile-grid" data-stagger>
-{tiles([("monitor","Computer service","A full health-check and tune-up to keep your machine fast and safe."),("wrench","Repairs","Diagnose and fix slow, broken or misbehaving computers and laptops."),("home","New device setup","Get a new computer set up properly, with your files moved across."),("shield","Security check","A review of your protection, updates and backups."),("briefcase","Business visit","On-site support and servicing for your team across Dorset."),("bolt","Remote session","A scheduled remote support session at a time that suits you.")])}
-        </div>
-      </div>
-    </section>''',
-      BOOKING_APP,
-      f'''    <section class="how" aria-label="How booking works">
-      <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// HOW IT WORKS</p>
-        <h2 class="section-title section-title--center" data-title>Booking in four simple steps<span class="title-underline title-underline--center"></span></h2>
-        <ol class="how__steps">
-{steps([("Choose a service","Pick the type of appointment and a time that works for you."),("Confirm your details","We email you a 6-digit code to check we&rsquo;ve got your address right &mdash; that also sets up your portal. Booked before? You&rsquo;re already signed in."),("Manage it anytime","Move or cancel the appointment in your portal in a couple of taps &mdash; or just ring us."),("We call ahead","For on-site visits we phone to say we&rsquo;re on our way and give you an ETA &mdash; and for remote sessions we call before we connect.")])}
+    # 27 Sep 2026 revamp: the booker straight under a short heading; the tiles, the four steps, the promise strip, the
+    # "our own build" box and the closing CTA all repeated each other and pushed the booker 1,760 px down.
+    head = f"""    <section class="bkhead" aria-label="Book a service">
+      <div class="wrap"><div class="bkhead__in">
+        <nav class="breadcrumb" aria-label="Breadcrumb">{bc("Book a Service")}</nav>
+        <h1 class="bkhead__h">Book a computer service or repair</h1>
+        <p class="bkhead__lede">Choose what you need and a time that suits you. It takes about a minute, and we&rsquo;ll phone before we arrive &mdash; or before we connect, for a remote session.</p>
+        <p class="bkhead__trust mono"><span>&#9733; Rated 4.9 on Google</span><span>Family-run in Bournemouth since 1995</span><span>Rather talk? <a href="tel:+441202775566">01202 775566</a></span></p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
+      </div></div>
+    </section>"""
+    nxt = """    <section class="section bknext" aria-label="What happens next">
+      <div class="wrap"><div class="bknext__in">
+        <h2 class="bknext__h">What happens next</h2>
+        <ol class="bknext__list">
+          <li><b>We check it&rsquo;s you</b><span>A 6-digit code by email confirms your address and sets up your customer portal. Booked before? You&rsquo;re already signed in.</span></li>
+          <li><b>We phone ahead</b><span>Before we arrive, or before we connect for a remote session. Never out of the blue.</span></li>
+          <li><b>Change it any time</b><span>Move or cancel in your portal in a couple of taps, or just ring 01202 775566.</span></li>
         </ol>
-      </div>
-    </section>''',
-      promise_strip(items=[PROMISE_ETA, PROMISE_CALL, PROMISE_PEOPLE], alt=True),
-      # this page IS the portfolio piece for the integration service - say so once,
-      # quietly, at the bottom where it interests the right reader and nobody else
-      '''    <section class="section" aria-label="How this booking page is built">
-      <div class="wrap">
-        <div class="callout" data-reveal style="max-width:880px;margin:0 auto">
-          <p class="eyebrow mono" style="margin:0 0 .45rem">// FOR THE CURIOUS</p>
-          <h2 style="margin:0 0 .45rem">This page is our own build</h2>
-          <p style="margin:0;color:var(--muted)">Everything above &mdash; the services, the live availability, the confirmation emails and the customer portal behind it &mdash; runs on our own code. The scheduling engine underneath is SimplyBook.me, kept deliberately invisible. If you run a booking system and want your customers to see <em>your</em> brand rather than a widget, we&rsquo;ve written up <a href="/simplybook-integration/">how we did it, and what it takes</a>. That includes several things the official documentation gets wrong.</p>
-        </div>
-      </div>
-    </section>''',
-      faq_html(faqs),
-      cta("Not sure what you need?",
-          "Call us on 01202 775566 or start a live chat and a friendly techie will help you book the right appointment.",
-          primary=("Pick a Time Above", "#book"),
-          secondary=("Call 01202 775566", "tel:+441202775566")),
-    ])
+        <p class="bknext__aside">Run a booking system for your own business? <a href="/simplybook-integration/">See how we built this page</a>.</p>
+      </div></div>
+    </section>"""
+    content = "\n".join([head, BOOKING_APP, nxt, faq_html(faqs)])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "Book a Service"), webpage(s, "Book a Computer Service or Repair", _desc),
                       service(s, "Computer Servicing Appointments", "Online booking for computer servicing, repairs, setup and on-site visits across Dorset.", "Computer servicing"),

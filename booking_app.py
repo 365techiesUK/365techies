@@ -23,15 +23,9 @@ HARD-WON RULES (adversarial review, 2026-07-25 - do not regress):
    in api/pcm-review.php.
 """
 
-BOOKING_APP = r'''    <section class="section section--alt" id="book" aria-label="Online booking">
+BOOKING_APP = r'''    <section class="section bkwrap" id="book" aria-label="Online booking">
       <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// BOOK ONLINE</p>
-          <h2 class="section-title section-title--center" data-title>Pick a time that suits you<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Live availability from our own diary. Book in about a minute &mdash; and you&rsquo;ll get a customer portal to manage it in.</p>
-        </div>
-
-        <div class="bk" id="bk" data-reveal>
+        <div class="bk" id="bk">
           <ol class="bk__rail" id="bkrail" aria-label="Booking steps">
             <li class="bk__railstep is-on" data-s="1"><span aria-hidden="true">1</span>Service</li>
             <li class="bk__railstep" data-s="2"><span aria-hidden="true">2</span>Time</li>
@@ -49,8 +43,7 @@ BOOKING_APP = r'''    <section class="section section--alt" id="book" aria-label
           </div>
 
           <p class="bk__foot">
-            Rather talk to a person? Call <a href="tel:+441202775566"><strong>01202&nbsp;775566</strong></a> &mdash;
-            a real local techie will book it with you.
+            Rather talk to a person? Call <a href="tel:+441202775566"><strong>01202&nbsp;775566</strong></a> and a local techie will book it with you.
           </p>
         </div>
 
@@ -73,12 +66,36 @@ BOOKING_APP = r'''    <section class="section section--alt" id="book" aria-label
         .bk__h{font:700 1.15rem/1.3 var(--font-display);margin:0 0 .25rem}
         .bk__h:focus{outline:none}
         .bk__sub{color:var(--muted);font-size:.9rem;margin:0 0 1.1rem}
-        .bk__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.7rem}
-        .bk__svc{text-align:left;background:rgba(255,255,255,.03);border:1px solid rgba(125,170,220,.42);border-radius:14px;padding:.9rem 1rem;min-height:64px;cursor:pointer;color:inherit;font:inherit;transition:transform .2s,border-color .2s,background .2s}
+        .bk__grp{margin:0 0 1.15rem}
+        .bk__gh{display:flex;align-items:center;gap:.5rem;margin:0 0 .55rem;font:600 .78rem/1.2 var(--font-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--cyan-soft)}
+        .bk__gh svg{flex:0 0 auto}
+        .bk__list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.55rem}
+        .bk__svc{display:flex;align-items:center;gap:.8rem;width:100%;text-align:left;background:rgba(255,255,255,.03);border:1px solid rgba(125,170,220,.42);border-radius:14px;padding:.8rem .9rem;min-height:64px;cursor:pointer;color:inherit;font:inherit;transition:transform .2s,border-color .2s,background .2s}
         .bk__svc:hover,.bk__svc:focus-visible{transform:translateY(-2px);border-color:var(--cyan);background:rgba(29,151,227,.09);outline:2px solid var(--cyan-soft);outline-offset:2px}
-        .bk__svc strong{display:block;font-size:1rem;margin-bottom:.15rem}
-        .bk__svcd{display:block;color:var(--muted);font-size:.84rem;line-height:1.45;margin:.1rem 0 .3rem}
-        .bk__svc em{font-style:normal;color:var(--muted);font-size:.82rem;font-family:var(--font-mono)}
+        .bk__svct{flex:1 1 auto;min-width:0}
+        .bk__svc strong{display:block;font-size:1rem;line-height:1.3;margin:0 0 .12rem}
+        .bk__svcd{display:block;color:var(--muted);font-size:.88rem;line-height:1.4}
+        .bk__svc em{flex:0 0 auto;font-style:normal;color:var(--muted);font-size:.78rem;font-family:var(--font-mono);white-space:nowrap}
+        .bk__arr{flex:0 0 auto;color:var(--cyan-soft);font-size:1.05rem;transition:transform .2s}
+        .bk__svc:hover .bk__arr{transform:translateX(3px)}
+        .section.bkwrap{padding-top:1.3rem;padding-bottom:2.2rem}
+        .bkhead{padding:calc(var(--header-h) + var(--ticker-h) + 1.5rem) var(--pad-x) 0}
+        .bkhead__in,.bknext__in{max-width:900px;margin:0 auto}
+        .bkhead .breadcrumb{margin:0 0 .9rem}
+        .bkhead__h{font-family:var(--font-display);font-weight:600;font-size:clamp(1.9rem,4.2vw,2.8rem);line-height:1.08;margin:0 0 .6rem;text-wrap:balance}
+        .bkhead__lede{color:var(--muted);font-size:1.06rem;line-height:1.55;margin:0 0 .75rem;max-width:44rem}
+        .bkhead__trust{display:flex;flex-wrap:wrap;gap:.35rem 1.2rem;margin:0;font-size:.8rem;letter-spacing:.03em;color:#9fb5d3}
+        .bkhead__trust a{color:var(--cyan-soft)}
+        .bkhead .page-hero__byline{margin-top:.55rem}
+        .section.bknext{padding-top:.4rem;padding-bottom:1.6rem}
+        .bknext__h{font-family:var(--font-display);font-size:1.3rem;margin:0 0 .8rem}
+        .bknext__list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.8rem}
+        .bknext__list li{padding:1rem 1.1rem;border-radius:14px;border:1px solid var(--line);background:var(--glass)}
+        .bknext__list b{display:block;font-family:var(--font-display);font-size:1rem;margin:0 0 .3rem}
+        .bknext__list span{color:var(--muted);font-size:.93rem;line-height:1.5}
+        .bknext__aside{margin:.9rem 0 0;color:var(--muted);font-size:.88rem}
+        .bknext__aside a{color:var(--cyan-soft)}
+        @media(max-width:760px){.bk__list{grid-template-columns:1fr}.bknext__list{grid-template-columns:1fr}}
         .bk__days{display:flex;gap:.45rem;overflow-x:auto;padding:.15rem .15rem .7rem;scrollbar-width:thin}
         .bk__day{flex:0 0 auto;min-width:82px;min-height:56px;text-align:center;background:rgba(255,255,255,.03);border:1px solid rgba(125,170,220,.42);border-radius:12px;padding:.55rem .5rem;cursor:pointer;color:inherit;font:inherit;transition:background .2s,border-color .2s}
         .bk__day:hover,.bk__day:focus-visible{border-color:var(--cyan);outline:2px solid var(--cyan-soft);outline-offset:2px}
@@ -121,7 +138,7 @@ BOOKING_APP = r'''    <section class="section section--alt" id="book" aria-label
         @keyframes bksh{0%{background-position:200% 0}100%{background-position:-200% 0}}
         @keyframes bktick{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
         @media(max-width:560px){.bk__rail li{font-size:.72rem;padding:.7rem .2rem;gap:.3rem}.bk__rail li span{width:20px;height:20px;font-size:.68rem}.bk__panel{padding:1.1rem .85rem}}
-        @media(prefers-reduced-motion:reduce){.bk__sk,.bk__tick{animation:none}.bk__svc:hover,.bk__btn:hover{transform:none}}
+        @media(prefers-reduced-motion:reduce){.bk__sk,.bk__tick{animation:none}.bk__svc:hover,.bk__btn:hover,.bk__svc:hover .bk__arr{transform:none}}
       </style>
 
       <script>
@@ -183,6 +200,17 @@ BOOKING_APP = r'''    <section class="section section--alt" id="book" aria-label
           busyFlag = true; say(msg);
           P.innerHTML = '<div class="bk__load"><span class="bk__sk"></span><span class="bk__sk"></span><span class="bk__sk"></span><p class="bk__loadtx">' + esc(msg) + '</p></div>';
         }
+        function toApp() {
+          var bk = document.getElementById('bk'); if (!bk) return;
+          var hd = document.querySelector('.site-header');
+          var off = (hd ? Math.max(0, hd.getBoundingClientRect().bottom) : 90) + 12;
+          var top = bk.getBoundingClientRect().top;
+          if (top < off - 4 || top > window.innerHeight * 0.45) {
+            var y = window.pageYOffset + top - off;
+            var rm = false; try { rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+            try { window.scrollTo({ top: y, behavior: rm ? 'auto' : 'smooth' }); } catch (e) { window.scrollTo(0, y); }
+          }
+        }
         function focusH(sel) {
           var h = P.querySelector(sel || '.bk__h');
           if (h) { if (!h.hasAttribute('tabindex')) h.setAttribute('tabindex', '-1'); try { h.focus({ preventScroll: true }); } catch (e) {} }
@@ -190,7 +218,7 @@ BOOKING_APP = r'''    <section class="section section--alt" id="book" aria-label
         // retry resumes where it FAILED - never dumps the customer back to step 1 having
         // silently thrown away the service and time they already chose
         function oops(msg, retry, label) {
-          busyFlag = false; say(msg);
+          busyFlag = false; say(msg); toApp();
           P.innerHTML = '<p class="bk__h">Sorry &mdash; that didn&rsquo;t work</p><p class="bk__empty">' + esc(msg) + '</p>' +
             '<p class="bk__note">Please call <a href="tel:+441202775566"><strong>01202 775566</strong></a> and we&rsquo;ll book it with you in a minute &mdash; it takes us about the same time.</p>' +
             '<div class="bk__row"><button class="bk__btn" id="bkretry">' + esc(label || 'Try again') + '</button></div>';
@@ -214,20 +242,65 @@ BOOKING_APP = r'''    <section class="section section--alt" id="book" aria-label
         }
 
         // ---------- step 1: service ----------
-        function step1() {
+        // grouped the way people think about it: someone comes to you, we connect remotely, or "not sure yet".
+        // Keyed on the service NAME (the owner renames them in the diary), so a new service lands in a sensible group.
+        function grpOf(n) {
+          n = String(n).toLowerCase();
+          if (/quote|not sure|chat/.test(n)) return 'ask';
+          if (/remote|quick fix|online/.test(n)) return 'remote';
+          return 'visit';
+        }
+        function rankOf(n) {
+          n = String(n).toLowerCase();
+          var order = [/service|health/, /repair/, /setup|set up|new computer/, /security|backup/, /business/, /emergency|urgent/, /remote/, /quick fix/];
+          for (var i = 0; i < order.length; i++) if (order[i].test(n)) return i;
+          return 50;
+        }
+        function shortDesc(s) {
+          var d = String(s.desc || '').replace(/\s*(\.\.\.|\u2026)\s*$/, '').trim();
+          var m = d.match(/^[\s\S]*?[.!?](?=\s|$)/); if (m) d = m[0];
+          if (d.length > 110) {
+            // cut at a natural pause (a dash or a comma) rather than mid-phrase; a word boundary only as a last resort
+            var cut = d.slice(0, 110), p = Math.max(cut.lastIndexOf(' \u2014 '), cut.lastIndexOf(' - '), cut.lastIndexOf(', '));
+            d = p > 50 ? cut.slice(0, p) : cut.replace(/\s+\S*$/, '') + '\u2026';
+          }
+          if (!d && /emergency|urgent/i.test(s.name)) d = 'Urgent help at your home or business, as soon as we can get to you.';
+          return d;
+        }
+        function minsShort(m) {
+          if (!m) return '1 hr';
+          if (m < 60) return m + ' min';
+          var h = Math.floor(m / 60), r = m % 60;
+          return h + (h === 1 ? ' hr' : ' hrs') + (r ? ' ' + r + ' min' : '');
+        }
+        var GRP = [
+          ['visit', 'At your home or business', '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>'],
+          ['remote', 'Remote: we connect to your computer', '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>'],
+          ['ask', 'Not sure what you need?', '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"/></svg>']
+        ];
+        function step1(user) {
+          if (user) toApp();
           rail(1); loading('Loading our services…');
           post({ action: 'pubservices' }).then(function (r) {
             if (!r || !r.ok || !r.services || !r.services.length) return oops(r && r.error === 'busy' ? netMsg(r) : 'We couldn’t load the list of services just now.', step1);
             busyFlag = false; say('Step 1 of 4. Choose a service.');
             try { if (window.gtag && localStorage.getItem('tt_internal') !== '1') gtag('event', 'booking_start', {}); } catch (e) {}
-            var h = '<p class="bk__h">What can we help with?</p><p class="bk__sub">Choose the appointment that fits best &mdash; not sure? Pick the closest and we&rsquo;ll sort it on the day.</p><div class="bk__grid">';
-            for (var i = 0; i < r.services.length; i++) {
-              var s = r.services[i];
-              h += '<button type="button" class="bk__svc" data-id="' + (+s.id) + '" data-n="' + esc(s.name) + '" data-m="' + (+s.mins) + '"><strong>' + esc(s.name) + '</strong>'
-                 + (s.desc ? '<span class="bk__svcd">' + esc(s.desc) + '</span>' : '')
-                 + '<em>about ' + esc(minsTxt(+s.mins)) + '</em></button>';
+            var list = r.services.slice().sort(function (a, b) { return rankOf(a.name) - rankOf(b.name); });
+            var h = '<p class="bk__h">What do you need?</p><p class="bk__sub">Pick the closest &mdash; we&rsquo;ll sort out the details with you.</p>';
+            for (var g = 0; g < GRP.length; g++) {
+              var key = GRP[g][0], items = [];
+              for (var q = 0; q < list.length; q++) if (grpOf(list[q].name) === key) items.push(list[q]);
+              if (!items.length) continue;
+              h += '<div class="bk__grp" role="group" aria-label="' + esc(GRP[g][1]) + '"><p class="bk__gh">' + GRP[g][2] + esc(GRP[g][1]) + '</p><div class="bk__list">';
+              for (var i = 0; i < items.length; i++) {
+                var s = items[i], sd = shortDesc(s);
+                h += '<button type="button" class="bk__svc" data-id="' + (+s.id) + '" data-n="' + esc(s.name) + '" data-m="' + (+s.mins) + '">'
+                   + '<span class="bk__svct"><strong>' + esc(s.name) + '</strong>' + (sd ? '<span class="bk__svcd">' + esc(sd) + '</span>' : '') + '</span>'
+                   + '<em>' + esc(minsShort(+s.mins)) + '</em><span class="bk__arr" aria-hidden="true">&#8594;</span></button>';
+              }
+              h += '</div></div>';
             }
-            h += '</div><p class="bk__note">Every visit includes our promises: we phone before we arrive or connect, and the diagnosis is always free.</p>';
+            h += '<p class="bk__note">Every visit: we phone before we arrive or connect, and the diagnosis is free.</p>';
             P.innerHTML = h;
             var bs = P.querySelectorAll('.bk__svc');
             for (var j = 0; j < bs.length; j++) bs[j].onclick = function () {
@@ -240,7 +313,7 @@ BOOKING_APP = r'''    <section class="section section--alt" id="book" aria-label
 
         // ---------- step 2: time ----------
         function step2(fresh) {
-          rail(2); loading('Finding your free appointments…');
+          rail(2); loading('Finding your free appointments…'); toApp();
           var q = { action: 'pubslots', eventId: S.svcId };
           if (fresh) q.fresh = 1;
           post(q).then(function (r) {
@@ -303,7 +376,7 @@ BOOKING_APP = r'''    <section class="section section--alt" id="book" aria-label
           return '<div class="bk__pick"><b>' + esc(S.svcName) + '</b><br>' + esc(whenTxt()) + ' &middot; about ' + esc(minsTxt(S.mins)) + '</div>';
         }
         function step3(msg) {
-          rail(3); busyFlag = false;
+          rail(3); busyFlag = false; toApp();
           try { if (window.gtag && localStorage.getItem('tt_internal') !== '1') gtag('event', 'booking_slot_picked', {}); } catch (e) {}
           var s = sess();
           if (s && s.wtoken) {
@@ -388,7 +461,7 @@ BOOKING_APP = r'''    <section class="section section--alt" id="book" aria-label
           }, function () { busyFlag = false; go.disabled = false; go.textContent = 'Send my code'; err.textContent = 'We couldn’t reach our system just now.'; });
         }
         function codeBox(already) {
-          rail(3); say('Check your email for a 6-digit code.');
+          rail(3); say('Check your email for a 6-digit code.'); toApp();
           P.innerHTML = pickBox() +
             '<p class="bk__h">Check your email</p><p class="bk__sub">' + (already ? 'We&rsquo;ve already sent a code to ' : 'We&rsquo;ve sent a 6-digit code to ') +
             '<strong>' + esc(S.email) + '</strong> from <strong>info@365techies.co.uk</strong>. It usually lands within a minute &mdash; please check your junk folder too.</p>' +
@@ -495,7 +568,7 @@ BOOKING_APP = r'''    <section class="section section--alt" id="book" aria-label
             }, function () { oops('We couldn’t reach our booking system just now.', function () { doBook(wtoken); }, 'Try that booking again'); });
         }
         function step4(r) {
-          rail(4);
+          rail(4); toApp();
           var pend = !!(r && r.pending);
           say(pend ? 'Booking requested.' : 'You are booked in.');
           var rep = (r && r.repeats) ? +r.repeats : 0;
@@ -512,7 +585,7 @@ BOOKING_APP = r'''    <section class="section section--alt" id="book" aria-label
             '<p class="bk__note"><strong>What happens next:</strong> we&rsquo;ll phone you before we arrive &mdash; or before we connect, for a remote session. We never turn up or connect out of the blue.</p>' +
             '<div class="bk__row"><a class="bk__btn" href="/portal/">Open your customer portal</a><button type="button" class="bk__back" id="bkb">Book something else</button></div>' +
             '<p class="bk__note">Your portal is where you can move or cancel this appointment, see any reports we write for you, and use our free tools.</p>';
-          document.getElementById('bkb').onclick = function () { S.date = ''; S.time = ''; S.note = ''; step1(); };
+          document.getElementById('bkb').onclick = function () { S.date = ''; S.time = ''; S.note = ''; step1(true); };
           focusH();
           try { if (window.gtag && localStorage.getItem('tt_internal') !== '1') gtag('event', 'booking_complete', { service: S.svcName }); } catch (e) {}
         }
