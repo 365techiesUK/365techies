@@ -9,7 +9,9 @@
      run part of our game, like surfing by Bournemouth Pier, and have frames per second as the benchmark".
      PC Service Professional opens THIS page in its own Microsoft Edge window (a throwaway profile, frame cap off)
      and reads the result from the window title - nothing is sent anywhere and nothing is stored:
-       365BENCH|v1|ok|avg=71.8|low1=48.2|frames=1795|secs=25.0|w=1280|h=720|scene=surf|build=b41|gfx=full|gpu=ANGLE (Intel, ...)
+       365BENCH|v1|ok|avg=71.8|low1=48.2|frames=1795|secs=25.0|w=1280|h=720|scene=surf|build=b43|gfx=high|adapted=0|why=auto: Intel Iris graphics|gpu=ANGLE (Intel, ...)
+     gfx= the look the game chose for this PC (full|high|lite), adapted= 1 if it stepped down before the timed take,
+     late if during it, 0 if not; why= the game's reason. Only compare figures drawn at the same look and build.
      build= is the game build that was drawn: the page times whichever build is live, and a game release can change
      the load (b36 drew the big-day sea on a grid ~5x denser), so results from different builds are not comparable.
        365BENCH|v1|err|<why>
@@ -74,6 +76,7 @@
   var WARM = 10000;          // after the film starts: shaders compile and textures stream in - not counted (a 4 s warm-up
                              // left 100-170 ms hitches 3.7-6.8 s into the run on an RTX 3090, 26 Sep)
   var BOOT_LIMIT = 90000;    // slow broadband: the game is a few MB
+  var SETTLE_MAX = 8000;     // the most the timed take waits beyond WARM for the game's own choice of look to settle
   var st = document.getElementById('st');
   var f = document.getElementById('g');
   // the wave size (the game's own dial: 1 = the modelled Bournemouth bank, ~1.15 m; 1.8 "a big day"; 2.4 the top step
@@ -85,11 +88,14 @@
   // first version of this test) instead of the surf film, to tell "this scene is heavy" from "this PC's graphics are
   // slow". The DELL3520 drew the surf film at 4-5 frames a second at 3x AND at 2.4x.
   var FILM = q.get('film') !== '0';
-  // ?gfx= - THE FULL LOOK ON EVERY PC (27 Sep, owner, once b40 had fixed the Iris Xe slowdown: "Full detail on every
-  // PC"). From b37 the game picks a light look for itself on Intel integrated graphics; a benchmark has to give every
-  // machine the same work, or results do not compare. ?gfx=auto lets the game choose and ?gfx=lite times the light
-  // look - diagnostics only. The look actually drawn comes back as gfx= in the result.
-  var GFX = /^(full|lite|auto)$/.test(q.get('gfx') || '') ? q.get('gfx') : 'full';
+  // ?gfx= - THE GAME CHOOSES THE LOOK, AS IT WOULD FOR A PLAYER (27 Sep, owner: "can we get it that it auto detects
+  // what graphics card it is and runs the relevant test which will actually run on their system ... so basically
+  // everyone sees basically what the game would be like even if it is lower quality on their system"). An hour
+  // earlier the owner had chosen the full look on every PC (5a6e0940); this replaces that. The game reads the
+  // graphics chip's name and picks full, high or lite, and may step down once if its choice runs slowly - see settle
+  // below. The look drawn comes back in the result (gfx=, adapted=, why=), so a figure is only compared with others on
+  // the same look. ?gfx=full|high|lite force one - diagnostics only.
+  var GFX = /^(full|high|lite|auto)$/.test(q.get('gfx') || '') ? q.get('gfx') : 'auto';
   var GQ = GFX === 'auto' ? '' : '&gfx=' + GFX;
   f.src = FILM ? './?clean=1&sound=0&mode=surfer&surf=' + SURF + GQ : './?clean=1&sound=0' + GQ;
   var t0 = performance.now();
@@ -279,12 +285,28 @@
         try { ready = !!(w.efoil && w.efoil.craft && w.efoil.craft.hull && w.efoil.sim && (!FILM || (w.efoilSurfer && w.efoilSurfer.active))); } catch (e) { ready = false; }
         if (ready && FILM) { try { if (film(w)) scene = 'surf'; } catch (e) { scene = 'attract'; } }
         if (!ready && performance.now() - tf < 15000) return setTimeout(tryFilm, 250);
-        if (scene === 'surf') setTimeout(function () { try { w.__bench.C.roll(); } catch (e) { } }, WARM - 1000);
-        setTimeout(function () { measure(w); }, WARM);
+        // settle: the game may step its own choice of look down once, a few seconds in, when it runs slowly - part of
+        // what a player on this PC gets. The timed take waits until the game says its choice is final
+        // (window.__gfx.settled === false means not yet; a build without the flag counts as settled), SETTLE_MAX at most.
+        var tw = performance.now();
+        setTimeout(function go() {
+          var settled = true; try { settled = !(w.__gfx && w.__gfx.settled === false); } catch (e) { settled = true; }
+          if (!settled && performance.now() - tw < WARM - 1000 + SETTLE_MAX) return setTimeout(go, 250);
+          if (scene === 'surf') { try { w.__bench.C.roll(); } catch (e) { } }
+          setTimeout(function () { measure(w); }, 1000);
+        }, WARM - 1000);
       })();
     }
     if (waited > BOOT_LIMIT) return done('365BENCH|v1|err|the game did not start within ' + Math.round(BOOT_LIMIT / 1000) + ' s' + (gpu ? '' : ' (no WebGL)'), 'the game did not start');
     setTimeout(waitBoot, 250);
+  }
+
+  // the look the game drew, from its own record (window.__gfx, b37 on): tier full|high|lite, whether it stepped down
+  // mid-run, and why it chose as it did ("auto: Intel Iris graphics") - no bars, it goes in the result line
+  function lookOf(w) {
+    var g = null; try { g = w.__gfx || null; } catch (e) { g = null; }
+    return { tier: g && /^(full|high|lite)$/.test(g.tier) ? g.tier : '', adapted: !!(g && g.adapted),
+      why: g && g.reason ? String(g.reason).replace(/[|\r\n]/g, '/').slice(0, 60) : '' };
   }
 
   function measure(w) {
@@ -292,6 +314,7 @@
     function tick(ts) { if (stop) return; times.push(ts); w.requestAnimationFrame(tick); }
     try { w.requestAnimationFrame(tick); } catch (e) { return done('365BENCH|v1|err|could not time the game', 'could not time the game'); }
     var tStart = performance.now();
+    var ad0 = lookOf(w).adapted;   // stepped down before the take (the settled look was timed), or during it
     var live = setInterval(function () {
       var n = times.length, s = (performance.now() - tStart) / 1000;
       if (n > 1) st.textContent = Math.round((n - 1) / ((times[n - 1] - times[0]) / 1000)) + ' frames a second – ' + Math.max(0, Math.ceil(RUN / 1000 - s)) + ' s to go';
@@ -311,14 +334,14 @@
       // which game build was drawn (play/index.html loads bNN/src/main.js)
       var build = ''; try { var sc = w.document.querySelector('script[type=module][src]'); var bm = sc && /\/(b\d+)\//.exec(sc.src); if (bm) build = bm[1]; } catch (e) { }
       // which look was drawn - the game's own record of it (b37 on; empty from an older build)
-      var look = ''; try { if (w.__gfx && /^(full|lite)$/.test(w.__gfx.tier)) look = w.__gfx.tier; } catch (e) { }
+      var L = lookOf(w), adapted = L.adapted ? (ad0 ? '1' : 'late') : '0';
       // diagnostics: the long frames, and when in the run they came (hitches from loading vs steady slowness)
       var longs = [], el = 0, maxIv = 0;
       for (var k = 0; k < iv.length; k++) { el += iv[k]; if (iv[k] > maxIv) maxIv = iv[k]; if (iv[k] > 50 && longs.length < 8) longs.push(Math.round(iv[k]) + '@' + (el / 1000).toFixed(1)); }
       var p99 = iv.slice().sort(function (a, b) { return a - b; })[Math.floor(iv.length * 0.99)];
       done('365BENCH|v1|ok|avg=' + avg.toFixed(1) + '|low1=' + low1.toFixed(1) + '|p99ms=' + p99.toFixed(1) + '|maxms=' + Math.round(maxIv)
         + '|long=' + longs.join(',') + '|frames=' + iv.length + '|secs=' + secs.toFixed(1)
-        + '|w=' + (cv ? cv.width : 0) + '|h=' + (cv ? cv.height : 0) + '|scene=' + scene + '|build=' + build + '|gfx=' + look + '|gpu=' + gpu,
+        + '|w=' + (cv ? cv.width : 0) + '|h=' + (cv ? cv.height : 0) + '|scene=' + scene + '|build=' + build + '|gfx=' + L.tier + '|adapted=' + adapted + '|why=' + L.why + '|gpu=' + gpu,
         Math.round(avg) + ' frames a second – done');
     }, RUN);
   }
