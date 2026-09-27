@@ -8,8 +8,9 @@
  * Config (server-only, gitignored + denied): api/visitors-key.php
  *     <?php $VIS_URL='https://<worker-url>'; $VIS_TOKEN='<the VIS_TOKEN secret>';
  *
- * A 15-second shared cache file keeps several staff pollers from multiplying
- * KV reads on the Worker's free tier. NO closing tag in this file.
+ * ONE call for all three sites (the Worker's /live?site=all answers from a single KV list) and a
+ * 90-second shared cache: at most 960 KV lists a day even if a staff screen stays open round the
+ * clock, inside the free tier's 1,000. NO closing tag in this file.
  */
 error_reporting(0);
 header('Content-Type: application/json; charset=utf-8');
@@ -40,23 +41,24 @@ if ($u === '' || $k === '') { echo json_encode(array('ok' => false, 'error' => '
 
 $CACHE = __DIR__ . '/visitors-cache.json';
 $c = @json_decode((string)@file_get_contents($CACHE), true);
-if (is_array($c) && isset($c['t']) && (time() - (int)$c['t']) < 15) {
+if (is_array($c) && isset($c['t']) && (time() - (int)$c['t']) < 90) {
     echo json_encode($c['data']); exit;
 }
 
 $out = array('ok' => true, 'at' => time(), 'sites' => array());
+$ch = curl_init($u . '/live?site=all&auth=' . rawurlencode($k));
+curl_setopt_array($ch, array(CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 6,
+    CURLOPT_CONNECTTIMEOUT => 4, CURLOPT_PROTOCOLS => CURLPROTO_HTTPS));
+$body = curl_exec($ch);
+$code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
+$j = json_decode((string)$body, true);
 foreach (array('t365' => '365techies.co.uk', 'ccb' => 'colinclarkbuilders.co.uk', 'beckox' => 'beckox.co.uk') as $key => $label) {
-    $ch = curl_init($u . '/live?site=' . $key . '&auth=' . rawurlencode($k));
-    curl_setopt_array($ch, array(CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 6,
-        CURLOPT_CONNECTTIMEOUT => 4, CURLOPT_PROTOCOLS => CURLPROTO_HTTPS));
-    $body = curl_exec($ch);
-    $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    $j = json_decode((string)$body, true);
-    if ($code === 200 && is_array($j) && !empty($j['ok'])) {
-        $out['sites'][$key] = array('label' => $label, 'visitors' => (int)$j['visitors'],
-            'pages' => isset($j['pages']) ? $j['pages'] : array(),
-            'places' => isset($j['places']) ? $j['places'] : array());
+    $sj = ($code === 200 && is_array($j) && !empty($j['ok']) && isset($j['sites'][$key])) ? $j['sites'][$key] : null;
+    if ($sj) {
+        $out['sites'][$key] = array('label' => $label, 'visitors' => (int)$sj['visitors'],
+            'pages' => isset($sj['pages']) ? $sj['pages'] : array(),
+            'places' => isset($sj['places']) ? $sj['places'] : array());
     } else {
         $out['sites'][$key] = array('label' => $label, 'visitors' => -1, 'error' => 'unreachable');
     }

@@ -29034,11 +29034,11 @@ def write_portal_page():
     grid.appendChild(colA); grid.appendChild(colB);
     panels.today.appendChild(kp); panels.today.appendChild(grid);
     if (diary) colA.appendChild(diary);
-    [sos, worth].forEach(function (c) { if (c) colB.appendChild(c); });
+    [sos, worth, live].forEach(function (c) { if (c) colB.appendChild(c); });
     [lic, act].forEach(function (c) { if (c) panels.customers.appendChild(c); });
     if (fleet) panels.computers.appendChild(fleet);
     if (invq) panels.invoices.appendChild(invq);
-    [qbo, invp, geo, live].forEach(function (c) { if (c) panels.setup.appendChild(c); });
+    [qbo, invp, geo].forEach(function (c) { if (c) panels.setup.appendChild(c); });
     // the consoles are used every day, so their buttons ride in the tab bar instead of a card at the bottom
     if (quick) {
       var cons = bar.querySelector('.nx-cons');
@@ -29141,7 +29141,7 @@ def write_portal_page():
         + '<a class="btn sm ghost" href="/book-service/" target="_blank" rel="noopener">Booking page</a></div>'
         + '<p class="quiet">Everything opens in a new tab - this page stays put. The consoles sign in with your staff session, no passphrase. Comms inbox = voicemails + texts, threaded per customer; AI pipeline = every AI enquiry from /ai/.</p></div>';
       h += '<div class="card"><h2>\\ud83c\\udf10 Live on the sites</h2><div id="vislive" class="quiet">Loading\\u2026</div>'
-        + '<p class="quiet" style="margin-top:.5rem">Cookieless first-party count, refreshed every 30s \\u2013 visitors active in the last 5 minutes, what they\\u2019re reading and roughly where from.</p></div>';
+        + '<p class="quiet" style="margin-top:.5rem">Cookieless first-party count, refreshed every 90 seconds \\u2013 visitors active in the last 5 minutes, what they\\u2019re reading and roughly where from.</p></div>';
       h += '<div class="card"><h2>PC Manager licences</h2><div class="tblwrap"><table><tr><th>Customer</th><th>Plan</th><th>PCs</th><th>Worst PC</th><th>Seen</th><th>App</th><th></th></tr>';
       (d.customers || []).sort(function (a, b) { return (b.seen || '').localeCompare(a.seen || ''); }).forEach(function (c) {
         h += '<tr><td><strong>' + esc(c.name) + '</strong>' + (c.fam ? ' \\ud83d\\udc6a' : '') + '<br /><span class="quiet mono" id="kv' + esc(c.id) + '">' + esc(c.keymask) + '</span> <button class="sm ghost kb" data-cid="' + esc(c.id) + '" title="Show + copy their activation key">\\ud83d\\udd11 Key</button> <button class="sm ghost vw" data-cid="' + esc(c.id) + '" title="View the portal as this customer">\\ud83d\\udc41 View as</button></td>'
@@ -29184,10 +29184,13 @@ def write_portal_page():
       invitePlansSetup();
       geoSetup();
       loadInvq();
+      // every 90 s, and only while someone can see it: Cloudflare's free tier allows 1,000 KV lists a day
       var visiv = setInterval(function () {
-        if (!document.getElementById('vislive')) { clearInterval(visiv); return; }
+        var vc = document.getElementById('vislive');
+        if (!vc) { clearInterval(visiv); return; }
+        if (document.hidden || !vc.offsetParent) return;
         loadVis();
-      }, 30000);
+      }, 90000);
       // keep the inbox fresh while the console is open; the interval dies with the card
       var sqiv = setInterval(function () {
         if (!document.getElementById('sosqcard')) { clearInterval(sqiv); return; }

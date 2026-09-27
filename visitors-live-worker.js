@@ -108,7 +108,8 @@ async function ping(request, env) {
   const existing = await env.VISITS.get(key, "json");
   const now = Math.floor(Date.now() / 1000);
   if (!existing || now - (existing.t || 0) > 60) {
-    await env.VISITS.put(key, JSON.stringify({ p: path, c: city, ct: country, t: now }), { expirationTtl: 300 });
+    // the same facts ride in the key's metadata, so /live can read everything from ONE list call
+    await env.VISITS.put(key, JSON.stringify({ p: path, c: city, ct: country, t: now }), { expirationTtl: 300, metadata: { p: path, c: city, ct: country } });
   }
   return json({ ok: true }, 200, headers);
 }
@@ -119,6 +120,28 @@ async function live(request, env, url) {
   }
   if (!env.VISITS) return json({ ok: false, error: "no-kv" }, 500, {});
   const site = String(url.searchParams.get("site") || "");
+  // site=all: every site from ONE list call and no per-key reads (free tier: 1,000 lists/day, account-wide)
+  if (site === "all") {
+    const out = {};
+    for (const s of Object.keys(SITES)) out[s] = { seen: new Set(), pages: {}, places: {} };
+    let cur;
+    do {
+      const res = await env.VISITS.list({ prefix: "live:", cursor: cur, limit: 1000 });
+      for (const k of res.keys) {
+        const bits = k.name.split(":"), o = out[bits[1]];
+        const v = k.metadata || (await env.VISITS.get(k.name, "json"));
+        if (!o || !v) continue;
+        o.seen.add(bits[2]);
+        o.pages[v.p] = (o.pages[v.p] || 0) + 1;
+        const where = v.c ? v.c + ", " + v.ct : v.ct || "?";
+        o.places[where] = (o.places[where] || 0) + 1;
+      }
+      cur = res.list_complete ? null : res.cursor;
+    } while (cur);
+    const sites = {};
+    for (const s of Object.keys(out)) sites[s] = { visitors: out[s].seen.size, pages: out[s].pages, places: out[s].places };
+    return json({ ok: true, at: Math.floor(Date.now() / 1000), sites }, 200, {});
+  }
   if (!SITES[site]) return json({ ok: false, error: "site" }, 400, {});
 
   const now = Math.floor(Date.now() / 1000);
