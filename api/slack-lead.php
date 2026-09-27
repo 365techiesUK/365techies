@@ -86,13 +86,17 @@ if ($phone !== '')   $fields[] = ['type' => 'mrkdwn', 'text' => "*Phone:*\n" . e
 if ($company !== '') $fields[] = ['type' => 'mrkdwn', 'text' => "*Company:*\n" . esc($company)];
 if ($topic !== '')   $fields[] = ['type' => 'mrkdwn', 'text' => "*Needs help with:*\n" . esc($topic)];
 
-$blocks = [['type' => 'header', 'text' => ['type' => 'plain_text', 'text' => '🔔 New website enquiry', 'emoji' => true]]];
+// PC Service Professional's last resort, when neither the portal nor pcm.php reportnote took its service report (an
+// unknown licence, or the website half down): it is not an enquiry, so it must not be headed like one (27 Sep 2026)
+$isReport = ($page === 'ServicePass');
+$blocks = [['type' => 'header', 'text' => ['type' => 'plain_text', 'text' => $isReport ? '⚠️ Service report not in the portal' : '🔔 New website enquiry', 'emoji' => true]]];
 if ($fields) $blocks[] = ['type' => 'section', 'fields' => array_slice($fields, 0, 10)];
 if ($msg !== '') $blocks[] = ['type' => 'section', 'text' => ['type' => 'mrkdwn', 'text' => "*Message:*\n>" . str_replace("\n", "\n>", esc($msg))]];
 $ctx = 'via ' . ($page !== '' ? esc($page) : '365techies.co.uk') . ' · ' . date('H:i, D j M');
 $blocks[] = ['type' => 'context', 'elements' => [['type' => 'mrkdwn', 'text' => $ctx]]];
 
-$summary = 'New website enquiry' . ($name !== '' ? ' from ' . $name : '') . ($email !== '' ? ' <' . $email . '>' : '');
+$summary = $isReport ? ('Service report not in the portal' . ($name !== '' ? ' - ' . $name : ''))
+    : ('New website enquiry' . ($name !== '' ? ' from ' . $name : '') . ($email !== '' ? ' <' . $email . '>' : ''));
 $payload = json_encode(['text' => $summary, 'blocks' => $blocks, 'unfurl_links' => false]);
 
 $ch = curl_init($HOOK);

@@ -680,6 +680,18 @@ function rv_slack($text) {
         CURLOPT_POSTFIELDS => json_encode(array('text' => (string)$text))));
     @curl_exec($ch); curl_close($ch);
 }
+// Service-report lines go to the service reports channel beside the reports themselves (owner, 27 Sep 2026: one
+// channel for service reports), through the Slack app - the same channel pcm_service_report_to_slack posts to. The
+// webhook above (#365-job-tracker) only when the app is not set up or refuses, so a line is never lost.
+function rv_slack_reports($text) {
+    $lib = __DIR__ . '/pcm-slack-lib.php';
+    if (!function_exists('slk_call') && file_exists($lib)) require_once $lib;   // functions only: safe inside a function
+    if (function_exists('slk_ready') && slk_ready() && function_exists('slk_report_channel')) {
+        $r = slk_call('chat.postMessage', array('channel' => slk_report_channel(), 'text' => (string)$text));
+        if (!empty($r['ok'])) return;
+    }
+    rv_slack($text);
+}
 
 /* ==========================================================================
    BACKFILL - the customers the booking pipeline never reaches
@@ -2562,7 +2574,7 @@ function sr_process($cap = 5) {
         rvq_save($q2);
         rvq_close($lk2);
     }
-    if ($sent > 0 || $failed > 0) rv_slack(':clipboard: 365 mail: service report emails sent ' . $sent . rv_name_list($names) . ($failed ? (', FAILED ' . $failed . ' - check pcm-review') : ''));
+    if ($sent > 0 || $failed > 0) rv_slack_reports(':clipboard: 365 mail: service report emails sent ' . $sent . rv_name_list($names) . ($failed ? (', FAILED ' . $failed . ' - check pcm-review') : ''));
     return array('mode' => 'live', 'due' => $due, 'held_pre_flip' => $held, 'sent' => $sent, 'failed' => $failed);
 }
 

@@ -858,6 +858,30 @@ if ($action === 'reportup') {
     out(array('ok'=>true, 'kind'=>$kind, 'ts'=>$rts, 'slack'=>$slack, 'email'=>$email));
 }
 
+// PC Service Professional's notice that a service report did NOT reach the portal (27 Sep 2026, owner: "can we just have
+// like a service report channel on Slack and then just post it to there"). It goes to the service reports channel through
+// the Slack app, beside the reports themselves - it used to go through the website-enquiry webhook to #365-job-tracker,
+// headed "New website enquiry". Text only, built here from short capped fields, and only for a licence we know, so the
+// channel is not open to anyone. An unknown licence is exactly when the tool falls back to that webhook itself.
+if ($action === 'reportnote') {
+    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
+    $esc = function ($s) { return str_replace(array('&', '<', '>'), array('&amp;', '&lt;', '&gt;'), (string)$s); };
+    $cn = pcm_txt(isset($db['customers'][$key]['name']) ? $db['customers'][$key]['name'] : '', 80);
+    $pcn = pcm_txt($in['computer'] ?? '', 80);
+    $lines = array(':warning: *Service report not in the portal* - ' . $esc($cn !== '' ? $cn : ($pcn !== '' ? $pcn : 'unknown customer')) . ($cn !== '' && $pcn !== '' ? ' (' . $esc($pcn) . ')' : ''));
+    foreach (array('pc' => 'PC', 'os' => 'OS', 'score' => 'Score') as $f => $label) { $v = pcm_txt($in[$f] ?? '', 160); if ($v !== '') $lines[] = $label . ': ' . $esc($v); }
+    $notes = array();
+    foreach (array_slice(is_array($in['notes'] ?? null) ? $in['notes'] : array(), 0, 3) as $n) { $n = pcm_txt($n, 400); if ($n !== '') $notes[] = '- ' . $esc($n); }
+    if ($notes) $lines[] = "Top notes:\n" . implode("\n", $notes);
+    $v = pcm_txt($in['file'] ?? '', 160); if ($v !== '') $lines[] = 'Report left on Desktop: ' . $esc($v);
+    $v = pcm_txt($in['why'] ?? '', 400); $lines[] = 'Why it is not in the portal: ' . $esc($v !== '' ? $v : 'not given');
+    if (!empty($in['saved'])) $lines[] = '_Saved on that PC: open PC Service Professional there and press Resend last report._';
+    require_once __DIR__ . '/pcm-slack-lib.php';   // top-level scope on purpose (php-include-scope-trap)
+    if (!slk_ready()) out(array('ok'=>false,'error'=>'slack_not_configured'));
+    $r = slk_call('chat.postMessage', array('channel' => slk_report_channel(), 'text' => implode("\n", $lines)));
+    out(array('ok' => !empty($r['ok']), 'error' => empty($r['ok']) ? (string)($r['error'] ?? 'unknown') : ''));
+}
+
 // portal: ask a machine for a fresh health check (the app's minute-poll picks it up)
 if ($action === 'runcheck') {
     $wt = isset($in['wtoken']) ? preg_replace('/[^a-f0-9]/','', (string)$in['wtoken']) : '';
