@@ -24350,7 +24350,8 @@ def write_portal_page():
       radial-gradient(90% 120% at 100% 8%, rgba(0,206,27,.13), transparent 60%),
       linear-gradient(160deg,#101c3c,#0b1327 62%);
     border:1px solid #2b3f6d; border-radius:20px; padding:1.5rem 1.6rem 1.35rem; margin-bottom:1rem;
-    box-shadow:0 22px 60px rgba(0,0,0,.42); animation:p365fadeUp .6s ease both; }
+    box-shadow:0 22px 60px rgba(0,0,0,.42); animation:p365fadeUp .6s ease both;
+    min-height:0; justify-content:flex-start; }   /* the site's marketing .hero (styles.css) is min-height:100svh + flex-centred; without this the welcome card filled the whole first screen */
   #p365app .hero::after { content:''; position:absolute; inset:-40% -10% auto -10%; height:80%;
     background:radial-gradient(closest-side, rgba(29,151,227,.16), transparent);
     animation:p365drift 14s ease-in-out infinite alternate; pointer-events:none; }
