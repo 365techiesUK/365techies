@@ -1022,6 +1022,8 @@ def _meta_desc(d, limit=158):
 VIS_BEACON = "" if not VISITORS_WORKER else (
     '  <script>(function(){try{if(navigator.doNotTrack==="1")return;'
     'if(/bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit/i.test(navigator.userAgent))return;'
+    # staff are not visitors: a trusted staff device, or a live staff / view-as session, sends no ping
+    'try{if(localStorage.getItem("p365staffdev")||/"staff":true|"back":/.test((localStorage.getItem("p365")||"")+(sessionStorage.getItem("p365s")||"")))return;}catch(e){}'
     'fetch("' + VISITORS_WORKER + '/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},'
     'body:JSON.stringify({site:"t365",path:location.pathname}),keepalive:true});}catch(e){}})();</script>\n')
 

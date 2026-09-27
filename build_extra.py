@@ -25091,6 +25091,7 @@ def write_portal_page():
   try { S = JSON.parse(sessionStorage.getItem('p365s') || 'null') || JSON.parse(localStorage.getItem('p365') || '{}'); } catch (e) { S = {}; }
   function saveS() {
     try {
+      if (S.staff && S.trust) localStorage.setItem('p365staffdev', '1');   // staff's own device: the live-visitors ping skips it
       if (S.staff && S.trust && !S.back) { localStorage.setItem('p365', JSON.stringify(S)); sessionStorage.removeItem('p365s'); }   // trusted admin device - persists across restarts
       else if (S.staff || S.back) { sessionStorage.setItem('p365s', JSON.stringify(S)); localStorage.removeItem('p365'); }           // this-session admin / view-as - cleared on close
       else if (S.wtoken) { localStorage.setItem('p365', JSON.stringify(S)); sessionStorage.removeItem('p365s'); }                    // customer - persists
@@ -29067,6 +29068,7 @@ def write_portal_page():
     show(panels[t0] ? t0 : 'today');
   }
   function showStaff() {
+    try { if (S.trust) localStorage.setItem('p365staffdev', '1'); } catch (e) {}   // already signed in before the marker existed
     el.innerHTML = topRow('365 staff') + '<p class="lede">Loading\\u2026</p>';
     bindOut();
     post(BK, { action: 'staffcustomers', stoken: S.stoken, machine: mid() }).then(function (d) {

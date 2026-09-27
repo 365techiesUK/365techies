@@ -707,9 +707,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 27 Sep 2026 &middot; 71ce00a960</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 27 Sep 2026 &middot; 6d13ddfe9a</p><script>
 (function () {
-  var P365BUILD = '71ce00a960';
+  var P365BUILD = '6d13ddfe9a';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -1627,6 +1627,7 @@
   try { S = JSON.parse(sessionStorage.getItem('p365s') || 'null') || JSON.parse(localStorage.getItem('p365') || '{}'); } catch (e) { S = {}; }
   function saveS() {
     try {
+      if (S.staff && S.trust) localStorage.setItem('p365staffdev', '1');   // staff's own device: the live-visitors ping skips it
       if (S.staff && S.trust && !S.back) { localStorage.setItem('p365', JSON.stringify(S)); sessionStorage.removeItem('p365s'); }   // trusted admin device - persists across restarts
       else if (S.staff || S.back) { sessionStorage.setItem('p365s', JSON.stringify(S)); localStorage.removeItem('p365'); }           // this-session admin / view-as - cleared on close
       else if (S.wtoken) { localStorage.setItem('p365', JSON.stringify(S)); sessionStorage.removeItem('p365s'); }                    // customer - persists
@@ -5603,6 +5604,7 @@
     show(panels[t0] ? t0 : 'today');
   }
   function showStaff() {
+    try { if (S.trust) localStorage.setItem('p365staffdev', '1'); } catch (e) {}   // already signed in before the marker existed
     el.innerHTML = topRow('365 staff') + '<p class="lede">Loading\u2026</p>';
     bindOut();
     post(BK, { action: 'staffcustomers', stoken: S.stoken, machine: mid() }).then(function (d) {
@@ -7564,6 +7566,6 @@
     });
   })();
   </script>
-  <script>(function(){try{if(navigator.doNotTrack==="1")return;if(/bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit/i.test(navigator.userAgent))return;fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify({site:"t365",path:location.pathname}),keepalive:true});}catch(e){}})();</script>
+  <script>(function(){try{if(navigator.doNotTrack==="1")return;if(/bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit/i.test(navigator.userAgent))return;try{if(localStorage.getItem("p365staffdev")||/"staff":true|"back":/.test((localStorage.getItem("p365")||"")+(sessionStorage.getItem("p365s")||"")))return;}catch(e){}fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify({site:"t365",path:location.pathname}),keepalive:true});}catch(e){}})();</script>
 </body>
 </html>
