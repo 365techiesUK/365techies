@@ -68,9 +68,28 @@ if ($why !== '') $out['why'] = $why;
 foreach (array('t365' => '365techies.co.uk', 'ccb' => 'colinclarkbuilders.co.uk', 'beckox' => 'beckox.co.uk') as $key => $label) {
     $sj = ($code === 200 && is_array($j) && !empty($j['ok']) && isset($j['sites'][$key])) ? $j['sites'][$key] : null;
     if ($sj) {
+        // one row per visitor for the Live view (the Worker sends them once it runs the Live-view code)
+        $rows = array();
+        foreach ((isset($sj['rows']) && is_array($sj['rows'])) ? array_slice($sj['rows'], 0, 100) : array() as $r) {
+            if (!is_array($r)) continue;
+            $pg = array();
+            foreach ((isset($r['pages']) && is_array($r['pages'])) ? array_slice($r['pages'], -12) : array() as $p) $pg[] = substr((string)$p, 0, 200);
+            $rows[] = array(
+                'id' => preg_replace('/[^a-f0-9]/', '', (string)(isset($r['id']) ? $r['id'] : '')),
+                'place' => substr((string)(isset($r['place']) ? $r['place'] : ''), 0, 60),
+                'ct' => preg_replace('/[^A-Z]/', '', substr((string)(isset($r['ct']) ? $r['ct'] : ''), 0, 2)),
+                'la' => (isset($r['la']) && is_numeric($r['la'])) ? round((float)$r['la'], 2) : null,
+                'lo' => (isset($r['lo']) && is_numeric($r['lo'])) ? round((float)$r['lo'], 2) : null,
+                'local' => !empty($r['local']),
+                'src' => (isset($r['src']) && $r['src'] !== null) ? substr((string)$r['src'], 0, 60) : null,
+                'pages' => $pg,
+                'since' => isset($r['since']) ? (int)$r['since'] : null,
+                'ago' => isset($r['ago']) ? (int)$r['ago'] : null);
+        }
         $out['sites'][$key] = array('label' => $label, 'visitors' => (int)$sj['visitors'],
             'pages' => isset($sj['pages']) ? $sj['pages'] : array(),
-            'places' => isset($sj['places']) ? $sj['places'] : array());
+            'places' => isset($sj['places']) ? $sj['places'] : array(),
+            'rows' => $rows, 'hasRows' => isset($sj['rows']));
     } else {
         $out['sites'][$key] = array('label' => $label, 'visitors' => -1, 'error' => 'unreachable');
     }

@@ -684,7 +684,7 @@
   </aside>
 
   <main id="main">
-<div class="nx-bar"><div class="nx-bar__in"><a class="nx-brand" href="/" aria-label="365 Techies home page"><span class="nx-logo">365</span><span class="nx-bname">365 Techies</span></a><span class="nx-sep" aria-hidden="true"></span><span class="nx-where">Your portal</span><span class="nx-sp"></span><a class="nx-call" href="tel:+441202775566" aria-label="Call 365 Techies on 01202 775566"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5fe07a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg><span>01202 775566</span></a></div></div><section class="section" style="padding-top:1.6rem;padding-bottom:0"><div class="wrap" style="max-width:1120px"><div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript><p style="color:#9fb5d3">Loading the portal&hellip;</p></div><div id="p365inst" hidden style="text-align:center;margin:1rem 0 0"><button type="button" id="p365instb" style="background:transparent;border:1px solid #2a3b63;color:#9fb5d3;border-radius:999px;padding:.5rem 1rem;font:inherit;font-size:.85rem;cursor:pointer">&#128241;&nbsp; Put 365 Techies on your home screen</button><p style="font-size:.75rem;color:#9fb5d3;opacity:.7;margin:.4rem 0 0">Opens straight to your visits and messages. No app store.</p></div><script>
+<div class="nx-bar"><div class="nx-bar__in"><a class="nx-brand" href="/" aria-label="365 Techies home page"><span class="nx-logo">365</span><span class="nx-bname">365 Techies</span></a><span class="nx-sep" aria-hidden="true"></span><span class="nx-where">Your portal</span><span class="nx-sp"></span><a class="nx-live" id="nxLivePill" href="#" hidden aria-label="Live: who is on the sites now"></a><a class="nx-call" href="tel:+441202775566" aria-label="Call 365 Techies on 01202 775566"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5fe07a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg><span>01202 775566</span></a></div></div><section class="section" style="padding-top:1.6rem;padding-bottom:0"><div class="wrap" style="max-width:1120px"><div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript><p style="color:#9fb5d3">Loading the portal&hellip;</p></div><div id="p365inst" hidden style="text-align:center;margin:1rem 0 0"><button type="button" id="p365instb" style="background:transparent;border:1px solid #2a3b63;color:#9fb5d3;border-radius:999px;padding:.5rem 1rem;font:inherit;font-size:.85rem;cursor:pointer">&#128241;&nbsp; Put 365 Techies on your home screen</button><p style="font-size:.75rem;color:#9fb5d3;opacity:.7;margin:.4rem 0 0">Opens straight to your visits and messages. No app store.</p></div><script>
 (function () {
   // Suppress the browser's own banner, keep the event, and let the customer
   // decide. Nothing renders unless the browser fires this - so no dead button
@@ -707,9 +707,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 27 Sep 2026 &middot; 6d13ddfe9a</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 27 Sep 2026 &middot; 7b9dcba1b7</p><script>
 (function () {
-  var P365BUILD = '6d13ddfe9a';
+  var P365BUILD = '7b9dcba1b7';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -1619,6 +1619,105 @@
   #p365app .nx-today, .p365ov .nx-today { display:grid; grid-template-columns:minmax(0,1.45fr) minmax(0,1fr); gap:1rem; align-items:start; }
   #p365app details.nx-how > summary, .p365ov details.nx-how > summary { cursor:pointer; color:#86b6e8; font-size:.92rem; margin:.1rem 0 .5rem; }
   @media (max-width:900px) { #p365app .nx-today, .p365ov .nx-today { grid-template-columns:1fr; } #p365app .nx-kpis, .p365ov .nx-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  
+  .nx-live { display:flex; align-items:center; gap:.55rem; min-height:44px; box-sizing:border-box; padding:0 .5rem 0 .85rem; border-radius:999px; background:rgba(0,206,27,.10); border:1px solid rgba(0,206,27,.38); color:#eaf4ff; text-decoration:none; font-weight:600; font-size:.95rem; white-space:nowrap; }
+  .nx-live[hidden] { display:none; }
+  .nx-live:hover, .nx-live:focus-visible { border-color:#00ce1b; color:#eaf4ff; }
+  .nx-live__w { padding:.2rem .6rem; border-radius:999px; background:rgba(255,180,0,.16); color:#ffc940; font-size:.82rem; }
+  .nx-ldot { display:inline-block; width:9px; height:9px; border-radius:50%; background:#00ce1b; flex:0 0 9px; animation:nxlpulse 2s ease-out infinite; }
+  .nx-ldot--off { background:#e0b341; animation:none; }
+  @keyframes nxlpulse { 0% { box-shadow:0 0 0 0 rgba(0,206,27,.55); } 70% { box-shadow:0 0 0 8px rgba(0,206,27,0); } 100% { box-shadow:0 0 0 0 rgba(0,206,27,0); } }
+  @keyframes nxlping { 0% { transform:scale(1); opacity:.8; } 100% { transform:scale(2.6); opacity:0; } }
+  @media (max-width:640px) { .nx-live__t { display:none; } .nx-live { padding:0 .45rem 0 .7rem; } }
+  #p365app button.nx-stab .nx-ldot, .p365ov button.nx-stab .nx-ldot { margin-right:.45rem; vertical-align:middle; }
+  #p365app .nx-lcount, .p365ov .nx-lcount { margin-left:.45rem; padding:.05rem .5rem; border-radius:999px; background:#1a2748; color:#c4d6ee; font-size:.8rem; }
+  #p365app .nx-lcount:empty, .p365ov .nx-lcount:empty { display:none; }
+  #p365app button.nx-stab[aria-pressed="true"] .nx-lcount, .p365ov button.nx-stab[aria-pressed="true"] .nx-lcount { background:#1d97e3; color:#fff; }
+  #p365app .nx-lstrip, .p365ov .nx-lstrip { display:grid; grid-template-columns:260px minmax(0,1fr) minmax(0,300px); gap:1.2rem; align-items:center; padding:.8rem 1rem .8rem .8rem; margin:0 0 1rem; border-radius:16px; background:#0d1631; border:1px solid rgba(0,206,27,.30); }
+  #p365app .nx-lsmap, .p365ov .nx-lsmap { width:260px; height:165px; border-radius:12px; overflow:hidden; border:1px solid #1f2c4a; background:#0b1430; cursor:pointer; }
+  #p365app .nx-lslive, .p365ov .nx-lslive { display:flex; align-items:center; gap:.5rem; margin:0 0 .4rem; font-family:var(--font-mono, monospace); font-size:.8rem; letter-spacing:.08em; text-transform:uppercase; color:#5fe07a; }
+  #p365app .nx-lsbig, .p365ov .nx-lsbig { display:flex; flex-wrap:wrap; align-items:baseline; gap:.3rem .9rem; margin:0 0 .55rem; }
+  #p365app .nx-lsbig b, .p365ov .nx-lsbig b { font-family:var(--font-display, sans-serif); font-weight:600; font-size:2.2rem; line-height:1.05; }
+  #p365app .nx-lsbig span, .p365ov .nx-lsbig span { color:#c4d6ee; }
+  #p365app .nx-lswarm, .p365ov .nx-lswarm { display:flex; align-items:center; gap:.55rem; flex-wrap:wrap; padding:.5rem .75rem; border-radius:12px; background:rgba(255,180,0,.08); border:1px solid rgba(255,180,0,.40); color:#f4e3b5; font-size:.95rem; }
+  #p365app .nx-lswarm b, .p365ov .nx-lswarm b { color:#ffd36b; }
+  #p365app .nx-lswarm strong, .p365ov .nx-lswarm strong { color:#eaf4ff; }
+  #p365app .nx-lspages, .p365ov .nx-lspages { list-style:none; margin:.35rem 0 .7rem; padding:0; display:flex; flex-direction:column; gap:.25rem; font-size:.95rem; }
+  #p365app .nx-lspages li, .p365ov .nx-lspages li { display:flex; justify-content:space-between; gap:.8rem; }
+  #p365app .nx-lspages li span:last-child, .p365ov .nx-lspages li span:last-child { color:#9fb5d3; font-family:var(--font-mono, monospace); font-size:.85rem; }
+  #p365app button.nx-lsopen, .p365ov button.nx-lsopen { width:100%; min-height:44px; margin:0; border-radius:12px; }
+  #p365app .nx-lv, .p365ov .nx-lv { display:flex; flex-direction:column; gap:1rem; }
+  #p365app .nx-lv:fullscreen, .p365ov .nx-lv:fullscreen { background:#050a1c; padding:1.2rem 1.5rem; overflow:auto; }
+  #p365app .nx-lvhead, .p365ov .nx-lvhead { display:flex; justify-content:space-between; align-items:flex-end; gap:1rem; flex-wrap:wrap; }
+  #p365app .nx-lvh, .p365ov .nx-lvh { margin:0; font-family:var(--font-display, sans-serif); font-weight:600; font-size:1.9rem; line-height:1.1; }
+  #p365app .nx-lvchips, .p365ov .nx-lvchips { display:flex; gap:.45rem; flex-wrap:wrap; }
+  #p365app button.nx-lvchip, .p365ov button.nx-lvchip { display:flex; align-items:center; gap:.5rem; min-height:44px; margin:0; padding:0 .7rem 0 1rem; border-radius:999px; background:#0d1631; border:1px solid #2a3a5e; color:#c4d6ee; font-weight:600; font-size:.95rem; }
+  #p365app button.nx-lvchip span, .p365ov button.nx-lvchip span { padding:.05rem .5rem; border-radius:999px; background:#1a2748; color:#9fb5d3; font-size:.8rem; }
+  #p365app button.nx-lvchip[aria-pressed="true"], .p365ov button.nx-lvchip[aria-pressed="true"] { background:#1d97e3; border-color:#1d97e3; color:#fff; }
+  #p365app button.nx-lvchip[aria-pressed="true"] span, .p365ov button.nx-lvchip[aria-pressed="true"] span { background:rgba(255,255,255,.22); color:#fff; }
+  #p365app .nx-lvk, .p365ov .nx-lvk { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.7rem; }
+  #p365app .nx-lvk > div, .p365ov .nx-lvk > div { display:flex; flex-direction:column; gap:.3rem; padding:.85rem 1rem; border-radius:14px; background:#0d1631; border:1px solid #1f2c4a; }
+  #p365app .nx-lvk b, .p365ov .nx-lvk b { font-family:var(--font-display, sans-serif); font-size:1.9rem; line-height:1; }
+  #p365app .nx-lvk span, .p365ov .nx-lvk span { font-size:.95rem; color:#9fb5d3; }
+  #p365app .nx-lvk .nx-lvk--local b, .p365ov .nx-lvk .nx-lvk--local b { color:#6cc4f5; }
+  #p365app .nx-lvk .nx-lvk--warm, .p365ov .nx-lvk .nx-lvk--warm { background:rgba(255,180,0,.07); border-color:#6b5320; }
+  #p365app .nx-lvk .nx-lvk--warm b, .p365ov .nx-lvk .nx-lvk--warm b { color:#ffc940; }
+  #p365app .nx-lvgrid, .p365ov .nx-lvgrid { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:1rem; align-items:start; }
+  #p365app .nx-lvgrid > .card, .p365ov .nx-lvgrid > .card { margin:0; }
+  #p365app .nx-lvmap, .p365ov .nx-lvmap { height:560px; border-radius:12px; overflow:hidden; border:1px solid #1f2c4a; background:#0b1430; }
+  #p365app .nx-lv:fullscreen .nx-lvmap, .p365ov .nx-lv:fullscreen .nx-lvmap { height:max(360px, calc(100vh - 460px)); }
+  #p365app .nx-lv:fullscreen .nx-lvrows, .p365ov .nx-lv:fullscreen .nx-lvrows { max-height:max(360px, calc(100vh - 470px)); }
+  #p365app .nx-lvmap .leaflet-tile-pane, #p365app .nx-lsmap .leaflet-tile-pane, .p365ov .nx-lvmap .leaflet-tile-pane, .p365ov .nx-lsmap .leaflet-tile-pane { filter:url(#nxNavy); }
+  #p365app .nx-lsmap .leaflet-control-attribution, .p365ov .nx-lsmap .leaflet-control-attribution { font-size:9px; padding:0 4px; }
+  @media (max-width:640px) { .nx-bar__in:has(.nx-live:not([hidden])) .nx-where { display:none; } }
+  #p365app .leaflet-container, .p365ov .leaflet-container { font-family:inherit; background:#0b1430; }
+  #p365app .nx-lvviews, .p365ov .nx-lvviews { display:flex; gap:.4rem; flex-wrap:wrap; }
+  #p365app button.nx-lvview, .p365ov button.nx-lvview { min-height:44px; margin:0; padding:0 .9rem; border-radius:10px; background:transparent; border:1px solid #2a3a5e; color:#c4d6ee; font-weight:600; font-size:.92rem; }
+  #p365app button.nx-lvview[aria-pressed="true"], .p365ov button.nx-lvview[aria-pressed="true"] { background:#16213f; border-color:#1d97e3; color:#fff; }
+  #p365app .nx-lvlegend, .p365ov .nx-lvlegend { display:flex; flex-wrap:wrap; align-items:center; gap:.4rem 1.1rem; margin-top:.7rem; font-size:.9rem; color:#9fb5d3; }
+  #p365app .nx-lvlegend span, .p365ov .nx-lvlegend span { display:flex; align-items:center; gap:.45rem; }
+  #p365app .nx-mkdot, .p365ov .nx-mkdot { display:inline-block; width:11px; height:11px; box-sizing:border-box; border-radius:50%; background:#1d97e3; border:2px solid #eaf4ff; flex:0 0 11px; }
+  #p365app .nx-mkdot--warm, .p365ov .nx-mkdot--warm { background:#ffb400; border-color:#fff3cf; }
+  #p365app .nx-mkdot--other, .p365ov .nx-mkdot--other { background:#070d22; border:2.5px solid #6cc4f5; }
+  #p365app .nx-mkdot--abroad, .p365ov .nx-mkdot--abroad { background:#7f95a8; }
+  #p365app .nx-mk, .p365ov .nx-mk { display:grid; place-items:center; width:100%; height:100%; box-sizing:border-box; border-radius:50%; background:#1d97e3; border:2.5px solid #eaf4ff; color:#fff; font-weight:700; font-size:12px; line-height:1; box-shadow:0 2px 8px rgba(0,0,0,.55); position:relative; }
+  #p365app .nx-mk--warm, .p365ov .nx-mk--warm { background:#ffb400; border-color:#fff3cf; color:#2a1c00; }
+  #p365app .nx-mk--warm::after, .p365ov .nx-mk--warm::after { content:""; position:absolute; inset:-3px; border-radius:50%; background:rgba(255,180,0,.5); animation:nxlping 1.8s ease-out infinite; z-index:-1; }
+  #p365app .nx-mk--other, .p365ov .nx-mk--other { background:#070d22; border:3px solid #6cc4f5; color:#8fd0f7; }
+  #p365app .nx-mk--sel, .p365ov .nx-mk--sel { box-shadow:0 0 0 5px rgba(108,196,245,.5), 0 2px 8px rgba(0,0,0,.55); }
+  #p365app .leaflet-tooltip.nx-lvtip, .p365ov .leaflet-tooltip.nx-lvtip { background:#0d1631; color:#eaf4ff; border:1px solid #2a3a5e; border-radius:10px; box-shadow:0 6px 20px rgba(0,0,0,.5); font-size:.9rem; padding:.45rem .65rem; }
+  #p365app .leaflet-tooltip-top.nx-lvtip::before, .p365ov .leaflet-tooltip-top.nx-lvtip::before { border-top-color:#2a3a5e; }
+  #p365app .nx-lvtip hr, .p365ov .nx-lvtip hr { border:0; border-top:1px solid #2a3a5e; margin:.35rem 0; }
+  #p365app .nx-lvsrc, .p365ov .nx-lvsrc { display:flex; flex-direction:column; gap:.45rem; margin:.2rem 0 .8rem; }
+  #p365app .nx-lvbar, .p365ov .nx-lvbar { display:flex; height:10px; border-radius:999px; overflow:hidden; gap:2px; background:#16213f; }
+  #p365app .nx-lvkey, .p365ov .nx-lvkey { display:flex; flex-wrap:wrap; gap:.3rem 1rem; font-size:.9rem; color:#c4d6ee; }
+  #p365app .nx-lvkey span, .p365ov .nx-lvkey span { display:flex; align-items:center; gap:.4rem; }
+  #p365app .nx-lvkey i, .p365ov .nx-lvkey i { width:10px; height:10px; border-radius:3px; display:inline-block; }
+  #p365app .nx-lvrows, .p365ov .nx-lvrows { display:flex; flex-direction:column; gap:.4rem; max-height:640px; overflow-y:auto; }
+  #p365app button.nx-lvrow, .p365ov button.nx-lvrow { display:flex; flex-direction:column; align-items:stretch; gap:.35rem; width:100%; margin:0; padding:.55rem .75rem; border-radius:12px; text-align:left; background:#0f1937; border:1px solid #1c2947; color:#eaf4ff; font-weight:400; box-shadow:none; }
+  #p365app button.nx-lvrow[aria-pressed="true"], .p365ov button.nx-lvrow[aria-pressed="true"] { background:#132048; border-color:#1d97e3; }
+  #p365app button.nx-lvrow.nx-lvrow--warm, .p365ov button.nx-lvrow.nx-lvrow--warm { background:rgba(255,180,0,.07); border-color:rgba(255,180,0,.40); }
+  #p365app button.nx-lvrow.nx-lvrow--warm[aria-pressed="true"], .p365ov button.nx-lvrow.nx-lvrow--warm[aria-pressed="true"] { border-color:#ffc940; }
+  #p365app .nx-lvrow__a, .p365ov .nx-lvrow__a { display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; }
+  #p365app .nx-lvrow__a b, .p365ov .nx-lvrow__a b { font-size:1rem; }
+  #p365app .nx-lvrow__t, .p365ov .nx-lvrow__t { margin-left:auto; font-family:var(--font-mono, monospace); font-size:.82rem; color:#9fb5d3; }
+  #p365app .nx-lvrow__b, .p365ov .nx-lvrow__b { display:flex; align-items:center; flex-wrap:wrap; gap:.35rem; padding-left:1.2rem; font-size:.95rem; color:#9fb5d3; }
+  #p365app .nx-lvrow__b strong, .p365ov .nx-lvrow__b strong { color:#eaf4ff; font-weight:600; }
+  #p365app .nx-lvtag, .p365ov .nx-lvtag { padding:.1rem .5rem; border-radius:999px; font-size:.8rem; font-weight:600; }
+  #p365app .nx-lvtag--local, .p365ov .nx-lvtag--local { background:rgba(29,151,227,.16); color:#8fd0f7; }
+  #p365app .nx-lvtag--warm, .p365ov .nx-lvtag--warm { background:rgba(255,180,0,.18); color:#ffc940; }
+  #p365app .nx-lvtag--site, .p365ov .nx-lvtag--site { border:1px solid #6cc4f5; color:#8fd0f7; }
+  #p365app .nx-lvsrctag, .p365ov .nx-lvsrctag { padding:.05rem .45rem; border-radius:6px; font-size:.8rem; font-weight:600; color:#eaf4ff; }
+  #p365app .nx-lvnote, .p365ov .nx-lvnote { margin:.2rem 0 .6rem; padding:.6rem .8rem; border-radius:10px; background:#16213f; color:#c4d6ee; font-size:.95rem; }
+  @media (max-width:900px) {
+    #p365app .nx-lstrip, .p365ov .nx-lstrip { grid-template-columns:1fr; gap:.8rem; }
+    #p365app .nx-lsmap, .p365ov .nx-lsmap { display:none; }
+    #p365app .nx-lvgrid, .p365ov .nx-lvgrid { grid-template-columns:1fr; }
+    #p365app .nx-lvk, .p365ov .nx-lvk { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    #p365app .nx-lvmap, .p365ov .nx-lvmap { height:340px; }
+    #p365app .nx-lvrows, .p365ov .nx-lvrows { max-height:none; }
+  }
+  @media (prefers-reduced-motion:reduce) { .nx-ldot, #p365app .nx-mk--warm::after, .p365ov .nx-mk--warm::after { animation:none; } }
 </style><script>
 (function () {
   var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php', CONN = '/api/pcm-connect.php', FEEDS = '/api/pcm-feeds.php', WCHK = '/api/pcm-wcheck.php', MSG = '/api/pcm-msg.php', QBO = '/api/pcm-qbo.php', JOBS = '/api/pcm-jobs.php', INVITE = '/api/pcm-invite.php', PAY = '/api/pcm-paylink.php', GEO = '/api/pcm-geo.php', INVQ = '/api/pcm-invq.php';
@@ -4013,7 +4112,10 @@
   }
 
   // ---------- sign-in ----------
-  function nxWhere(txt) { var w = document.querySelector('.nx-where'); if (w) w.textContent = txt; }
+  function nxWhere(txt) {
+    var w = document.querySelector('.nx-where'); if (w) w.textContent = txt;
+    var lp = document.getElementById('nxLivePill'); if (lp && txt !== 'Staff area') lp.hidden = true;
+  }
   function showSignin(msg) {
     el.classList.add('nx-narrow'); nxWhere('Your portal');
     el.innerHTML = '<h1>Your 365 portal</h1>'
@@ -5558,18 +5660,25 @@
     var diary = cardOf('dday'), sos = cardOf('sosqcard'), invq = cardOf('invqcard'), worth = cardOf('worthcall'), fleet = cardOf('ffleet'),
         act = cardOf('ab'), qbo = cardOf('qbosetup'), invp = cardOf('inviteplans'), geo = cardOf('geocard'), quick = cardOf('pcmadm'), live = cardOf('vislive'), lic = null;
     Array.prototype.forEach.call(root.querySelectorAll('.card > h2'), function (h2) { if (/PC Manager licences/.test(h2.textContent)) lic = h2.parentNode; });
-    var TABS = [['today', 'Today'], ['customers', 'Customers'], ['computers', 'Computers'], ['invoices', 'Invoices'], ['setup', 'Setup']];
+    var TABS = [['today', 'Today'], ['live', 'Live'], ['customers', 'Customers'], ['computers', 'Computers'], ['invoices', 'Invoices'], ['setup', 'Setup']];
     var bar = document.createElement('div'); bar.className = 'nx-sbar';
     bar.innerHTML = '<nav class="nx-stabs" aria-label="Staff sections">' + TABS.map(function (x) { return '<button type="button" class="nx-stab" data-tab="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</nav><div class="nx-cons"></div>';
+    var ltab = bar.querySelector('.nx-stab[data-tab="live"]');
+    if (ltab) ltab.innerHTML = '<span class="nx-ldot"></span>Live<span class="nx-lcount" id="nxLiveTabN"></span>';
     var kp = document.createElement('div'); kp.className = 'nx-kpis';
     kp.innerHTML = [['kVis', 'visits today', 'today'], ['kSos', 'SOS codes waiting', 'today'], ['kPcs', 'computers worth a call', 'today'], ['kInv', 'jobs in the last 30 days', 'invoices']]
       .map(function (k) { return '<button type="button" class="nx-kpi" id="' + k[0] + '" data-go="' + k[2] + '"><b>&ndash;</b><span>' + k[1] + '</span></button>'; }).join('');
     var panels = {};
     TABS.forEach(function (x) { var p = document.createElement('section'); p.className = 'nx-panel'; p.setAttribute('data-tab', x[0]); p.setAttribute('aria-label', x[1]); panels[x[0]] = p; });
+    // the Live view: its own tab, plus a strip at the top of Today (maps are rebuilt with the page)
+    NXL.map = NXL.mini = NXL.layer = NXL.miniLayer = null; NXL.view = 'dorset'; NXL.sel = null;
+    panels.live.id = 'nxLivePanel'; panels.live.innerHTML = nxlTabHTML();
+    var lstrip = document.createElement('section'); lstrip.className = 'nx-lstrip'; lstrip.id = 'nxLStrip';
+    lstrip.setAttribute('aria-label', 'Live on the sites'); lstrip.innerHTML = nxlStripHTML();
     var grid = document.createElement('div'); grid.className = 'nx-today';
     var colA = document.createElement('div'), colB = document.createElement('div');
     grid.appendChild(colA); grid.appendChild(colB);
-    panels.today.appendChild(kp); panels.today.appendChild(grid);
+    panels.today.appendChild(lstrip); panels.today.appendChild(kp); panels.today.appendChild(grid);
     if (diary) colA.appendChild(diary);
     [sos, worth, live].forEach(function (c) { if (c) colB.appendChild(c); });
     [lic, act].forEach(function (c) { if (c) panels.customers.appendChild(c); });
@@ -5590,6 +5699,7 @@
       TABS.forEach(function (x) { panels[x[0]].hidden = x[0] !== tab; });
       Array.prototype.forEach.call(bar.querySelectorAll('.nx-stab'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-tab') === tab ? 'true' : 'false'); });
       try { sessionStorage.setItem('p365tab', tab); } catch (e) {}
+      nxlShown(tab);
     }
     Array.prototype.forEach.call(bar.querySelectorAll('.nx-stab'), function (b) { b.onclick = function () { show(b.getAttribute('data-tab')); }; });
     Array.prototype.forEach.call(kp.querySelectorAll('.nx-kpi'), function (b) {
@@ -5600,8 +5710,315 @@
         if (tg && tg.offsetParent) tg.scrollIntoView({ behavior: 'smooth', block: 'start' });
       };
     });
+    NXL.show = show; nxlBind(); nxlRender();
     var t0 = 'today'; try { t0 = sessionStorage.getItem('p365tab') || 'today'; } catch (e) {}
     show(panels[t0] ? t0 : 'today');
+  }
+  // ---- Live view (27 Sep 2026): who is on the sites right now. /api/visitors.php (staff only) reads the visitors-live
+  // Worker; one poll every 90 s feeds the staff bar pill, the strip at the top of Today and the Live tab. Places are
+  // rough (from each visitor's internet provider); "Dorset & around" = BH and DT postcodes. No names, no cookies.
+  var NXL = { d: null, at: 0, site: 'all', sel: null, view: 'dorset', map: null, mini: null, layer: null, miniLayer: null, titles: null, loading: null, show: null, fsBound: false };
+  var NXL_WARM = { '/book-service/': 'On the booking page', '/contact/': 'On the contact page', '/pay/': 'On the pay page',
+    '/pricing/': 'Looking at prices', '/home-it-support-plans/': 'Looking at plans', '/business-it-support-plans/': 'Looking at plans',
+    '/monthly-it-support/': 'Looking at plans', '/plan-finder/': 'Choosing a plan', '/dell-support-plans/': 'Looking at plans' };
+  var NXL_SITES = [['all', 'All sites'], ['t365', '365techies.co.uk'], ['ccb', 'Colin Clark Builders'], ['beckox', 'Beckox']];
+  var NXL_SRC = { 'Google': '#1d97e3', 'Bing': '#3fb4f0', 'Other search': '#5b8fd6', 'Facebook': '#8a74e8', 'Instagram': '#c05fd0',
+    'Email': '#16b3bd', 'Direct': '#7f95a8', 'AI assistant': '#e0a13a', 'X': '#9aa9c4', 'LinkedIn': '#3b82c4', 'YouTube': '#d9534f', 'Nextdoor': '#3aa76d', 'TikTok': '#c04b7a' };
+  var NXL_VIEWS = { dorset: [[50.45, -2.95], [51.0, -1.6]], uk: [[49.9, -8.2], [58.7, 1.9]] };
+  // re-tones the dark map into the portal's navy: brightness -> a navy ramp (land darkest, sea lighter, labels pale blue)
+  function nxlDefs() {
+    if (document.getElementById('nxNavyDefs')) return;
+    var dv = document.createElement('div'); dv.id = 'nxNavyDefs'; dv.setAttribute('aria-hidden', 'true');
+    dv.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
+    dv.innerHTML = '<svg width="0" height="0" focusable="false"><filter id="nxNavy" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="'
+      + '0.2035 0.6844 0.0691 0 -0.072 0.2334 0.7853 0.0793 0 -0.054 0.2655 0.8933 0.0902 0 0.038 0 0 0 1 0"></feColorMatrix></filter></svg>';
+    document.body.appendChild(dv);
+  }
+  function nxlSet(id, html) { var e = document.getElementById(id); if (e) e.innerHTML = html; }
+  function nxlClock() { var t = new Date(NXL.at || Date.now()); return ('0' + t.getHours()).slice(-2) + ':' + ('0' + t.getMinutes()).slice(-2); }
+  function nxlMins(sec) { if (sec === null || sec === undefined) return ''; if (sec < 45) return 'just now'; return Math.max(1, Math.round(sec / 60)) + ' min'; }
+  function nxlTitles() {
+    if (NXL.titles) return;
+    NXL.titles = {};
+    fetch('/search-index.json').then(function (r) { return r.json(); }).then(function (j) {
+      (j.pages || []).forEach(function (p) { NXL.titles['/' + (p.u ? p.u + '/' : '')] = String(p.t || '').split(' | ')[0].split(' \u2014 ')[0].split(': ')[0]; });
+      nxlRender();
+    }).catch(function () {});
+  }
+  function nxlPage(site, p) {
+    p = String(p || '/');
+    if (p === '/') return 'Home page';
+    if (site === 't365') {
+      if (p === '/portal/') return 'Customer portal';
+      if (NXL.titles && NXL.titles[p]) return NXL.titles[p];
+    }
+    var seg = p.split('/').filter(Boolean).pop() || p;
+    seg = seg.split('-').join(' ');
+    return seg.charAt(0).toUpperCase() + seg.slice(1);
+  }
+  function nxlRows() {
+    var d = NXL.d, out = [];
+    if (!d || !d.sites) return out;
+    Object.keys(d.sites).forEach(function (k) {
+      var sv = d.sites[k];
+      (sv.rows || []).forEach(function (r) {
+        var pages = r.pages || [], last = pages.length ? pages[pages.length - 1] : '';
+        out.push({ site: k, siteName: sv.label, key: k + ':' + r.id, r: r, abroad: !!(r.ct && r.ct !== 'GB'), warm: k === 't365' && NXL_WARM[last] ? NXL_WARM[last] : '' });
+      });
+    });
+    // warm first, then Dorset & around, then the rest of the UK, then abroad; the most recently active first in each
+    var rank = function (x) { return x.warm ? 0 : x.r.local ? 1 : x.abroad ? 3 : 2; };
+    out.sort(function (a, b) { return rank(a) - rank(b) || (a.r.ago || 0) - (b.r.ago || 0); });
+    return out;
+  }
+  function nxlOn(site) {
+    var d = NXL.d, n = 0;
+    if (!d || !d.sites) return 0;
+    Object.keys(d.sites).forEach(function (k) { if ((site === 'all' || site === k) && d.sites[k].visitors > 0) n += d.sites[k].visitors; });
+    return n;
+  }
+  function nxlProblem() {
+    var d = NXL.d;
+    if (!d) return '';
+    if (!d.ok) return d.error === 'not-configured' ? 'The live view is not set up on the server yet.' : 'The live view could not load (' + (d.error || 'no answer') + ').';
+    return d.why || '';
+  }
+  function nxlPlace(x) {
+    var r = x.r, c = r.place || '';
+    if (x.abroad) {
+      var nm = r.ct;
+      try { nm = new Intl.DisplayNames(['en-GB'], { type: 'region' }).of(r.ct) || r.ct; } catch (e) {}
+      return c ? c + ', ' + nm : nm;
+    }
+    return c || 'Somewhere in the UK';
+  }
+  function nxlJourney(x) {
+    var all = x.r.pages || [], p = all.slice(-4);
+    var h = p.map(function (u, i) { var tt = esc(nxlPage(x.site, u)); return i === p.length - 1 ? '<strong>' + tt + '</strong>' : tt; }).join(' <span aria-hidden="true">\u2192</span> ');
+    return (all.length > p.length ? '\u2026 ' : '') + h;
+  }
+  function nxlSrcTag(src) {
+    if (!src) return '';
+    var c = NXL_SRC[src] || '#5b6c8f';
+    return '<span class="nx-lvsrctag" style="background:' + c + '33;border:1px solid ' + c + '99">' + esc(src) + '</span>';
+  }
+  function nxlDotClass(x) { return 'nx-mkdot' + (x.warm ? ' nx-mkdot--warm' : x.site !== 't365' ? ' nx-mkdot--other' : x.abroad ? ' nx-mkdot--abroad' : ''); }
+  function nxlRender() { nxlPill(); nxlStrip(); nxlTab(); }
+  function nxlPill() {
+    var p = document.getElementById('nxLivePill'); if (!p) return;
+    if (!document.getElementById('nxLivePanel')) { p.hidden = true; return; }
+    var bad = nxlProblem(), on = nxlOn('all'), warm = nxlRows().filter(function (x) { return x.warm; }).length;
+    p.hidden = false;
+    p.innerHTML = '<span class="nx-ldot' + (bad ? ' nx-ldot--off' : '') + '"></span>'
+      + (bad ? '<span>Live: check</span>' : '<span>' + on + ' on<span class="nx-live__t"> the sites</span> now</span>')
+      + (warm && !bad ? '<span class="nx-live__w">' + warm + ' warm</span>' : '');
+    var tb = document.getElementById('nxLiveTabN'); if (tb) tb.textContent = bad ? '!' : String(on);
+  }
+  function nxlStrip() {
+    if (!document.getElementById('nxLStrip')) return;
+    var d = NXL.d, bad = nxlProblem(), rows = nxlRows(), on = nxlOn('all');
+    var local = rows.filter(function (x) { return x.r.local; }).length, abroad = rows.filter(function (x) { return x.abroad; }).length;
+    var uk = rows.length - local - abroad;
+    nxlSet('nxLsUpd', d ? 'updated ' + nxlClock() : 'loading\u2026');
+    nxlSet('nxLsN', d ? (bad && !d.ok ? '\u2013' : on + ' on the sites') : '\u2013');
+    nxlSet('nxLsSub', bad ? esc(bad) : (rows.length ? local + ' in Dorset & around \u00b7 ' + uk + ' elsewhere in the UK' + (abroad ? ' \u00b7 ' + abroad + ' abroad' : '') : (d && on === 0 ? 'Nobody on right now' : '')));
+    var w = rows.filter(function (x) { return x.warm; })[0];
+    nxlSet('nxLsWarm', w ? '<div class="nx-lswarm"><i class="nx-mkdot nx-mkdot--warm"></i><b>Warm:</b><span>someone '
+      + (w.r.place ? 'in <strong>' + esc(nxlPlace(w)) + '</strong> ' : '') + (w.r.src ? 'came from ' + esc(w.r.src) + ' and ' : '')
+      + 'is <strong>' + esc(w.warm.charAt(0).toLowerCase() + w.warm.slice(1)) + '</strong> now</span></div>' : '');
+    // what is being read: each visitor's current page; with an older Worker, the page counts
+    var cnt = {}, names = {};
+    if (rows.length) rows.forEach(function (x) { var u = (x.r.pages || []).slice(-1)[0] || '/'; var k = x.site + u; cnt[k] = (cnt[k] || 0) + 1; names[k] = nxlPage(x.site, u); });
+    else if (d && d.sites && d.sites.t365 && d.sites.t365.pages) Object.keys(d.sites.t365.pages).forEach(function (u) { cnt['t365' + u] = d.sites.t365.pages[u]; names['t365' + u] = nxlPage('t365', u); });
+    var top = Object.keys(cnt).sort(function (a, b) { return cnt[b] - cnt[a]; }).slice(0, 4);
+    nxlSet('nxLsPages', top.length ? top.map(function (k) { return '<li><span>' + esc(names[k]) + '</span><span>\u00d7' + cnt[k] + '</span></li>'; }).join('') : '<li><span class="quiet">Nothing right now</span></li>');
+  }
+  function nxlTab() {
+    if (!document.getElementById('nxLv')) return;
+    var d = NXL.d, site = NXL.site, bad = nxlProblem();
+    var rows = nxlRows().filter(function (x) { return site === 'all' || x.site === site; });
+    nxlSet('nxLvChips', NXL_SITES.map(function (s) {
+      return '<button type="button" class="nx-lvchip" data-site="' + s[0] + '" aria-pressed="' + (s[0] === site ? 'true' : 'false') + '">' + esc(s[1]) + '<span>' + nxlOn(s[0]) + '</span></button>';
+    }).join(''));
+    nxlSet('nxLvUpd', d ? (bad ? '<strong style="color:#e0b341">' + esc(bad) + '</strong>' : 'Updated ' + nxlClock() + ' \u00b7 refreshes every 90 seconds \u00b7 staff visits not counted') : 'Loading\u2026');
+    var on = nxlOn(site), local = rows.filter(function (x) { return x.r.local; }).length, warm = rows.filter(function (x) { return x.warm; });
+    var sc = {}; rows.forEach(function (x) { if (x.r.src) sc[x.r.src] = (sc[x.r.src] || 0) + 1; });
+    var srcs = Object.keys(sc).sort(function (a, b) { return sc[b] - sc[a]; });
+    nxlSet('nxLvK', '<div><b>' + on + '</b><span>on ' + (site === 'all' ? 'the sites' : 'the site') + ' now</span></div>'
+      + '<div class="nx-lvk--local"><b>' + local + '</b><span>in Dorset & around</span></div>'
+      + '<div class="' + (warm.length ? 'nx-lvk--warm' : '') + '"><b>' + warm.length + '</b><span>' + (warm.length === 1 ? 'warm: ' + esc(warm[0].warm.toLowerCase()) : warm.length ? 'warm: on booking, contact, price or plan pages' : 'on a booking, contact, price or plan page') + '</span></div>'
+      + '<div><b>' + (srcs.length ? sc[srcs[0]] + ' of ' + rows.length : '0') + '</b><span>' + (srcs.length ? 'came from ' + esc(srcs[0]) : 'where they came from') + '</span></div>');
+    nxlSet('nxLvN', rows.length ? rows.length + (rows.length === 1 ? ' visitor' : ' visitors') : '');
+    nxlSet('nxLvSrc', srcs.length ? '<div class="nx-lvbar">' + srcs.map(function (s) { return '<span style="flex-grow:' + sc[s] + ';background:' + (NXL_SRC[s] || '#5b6c8f') + '"></span>'; }).join('') + '</div>'
+      + '<div class="nx-lvkey">' + srcs.map(function (s) { return '<span><i style="background:' + (NXL_SRC[s] || '#5b6c8f') + '"></i>' + esc(s) + ' <b>' + sc[s] + '</b></span>'; }).join('') + '</div>' : '');
+    var old = d && d.ok && d.sites && Object.keys(d.sites).some(function (k) { return d.sites[k].visitors > 0 && !d.sites[k].hasRows; });
+    var h = old ? '<p class="nx-lvnote">The Cloudflare counter is still running its old code, so this shows counts only. Paste the new visitors-live-worker.js into the visitors-live Worker to see the map and each visitor.</p>' : '';
+    h += rows.map(function (x) {
+      var r = x.r;
+      return '<button type="button" class="nx-lvrow' + (x.warm ? ' nx-lvrow--warm' : '') + '" data-k="' + esc(x.key) + '" data-la="' + (r.la === null ? '' : r.la) + '" data-lo="' + (r.lo === null ? '' : r.lo) + '" aria-pressed="' + (NXL.sel === x.key ? 'true' : 'false') + '">'
+        + '<span class="nx-lvrow__a"><i class="' + nxlDotClass(x) + '"></i><b>' + esc(nxlPlace(x)) + '</b>'
+        + (r.local ? '<span class="nx-lvtag nx-lvtag--local">Dorset</span>' : '')
+        + (x.site !== 't365' ? '<span class="nx-lvtag nx-lvtag--site">' + esc(x.siteName) + '</span>' : '')
+        + (x.warm ? '<span class="nx-lvtag nx-lvtag--warm">' + esc(x.warm) + '</span>' : '')
+        + '<span class="nx-lvrow__t">' + nxlMins(r.since) + '</span></span>'
+        + '<span class="nx-lvrow__b">' + nxlSrcTag(r.src) + nxlJourney(x) + '</span></button>';
+    }).join('');
+    if (!rows.length && d && d.ok) h += '<p class="quiet" style="margin:.4rem .2rem">' + (on ? 'Visitors are on, but the counter is not sending their details yet.' : 'Nobody on ' + (site === 'all' ? 'the sites' : 'this site') + ' right now.') + '</p>';
+    nxlSet('nxLvRows', h);
+    var ab = rows.filter(function (x) { return x.abroad; });
+    nxlSet('nxLvAbroad', ab.length ? '<i class="nx-mkdot nx-mkdot--abroad"></i>' + ab.length + ' abroad: ' + esc(ab.slice(0, 3).map(nxlPlace).join(' \u00b7 ')) : '');
+    nxlMarkers();
+  }
+  function nxlGroups(rows) {
+    var g = {}, out = [];
+    rows.forEach(function (x) {
+      if (x.r.la === null || x.r.lo === null || x.r.la === undefined || x.abroad) return;
+      var k = Number(x.r.la).toFixed(2) + ',' + Number(x.r.lo).toFixed(2);
+      if (!g[k]) { g[k] = { la: Number(x.r.la), lo: Number(x.r.lo), list: [] }; out.push(g[k]); }
+      g[k].list.push(x);
+    });
+    return out;
+  }
+  function nxlIcon(grp) {
+    var n = grp.list.length, warm = grp.list.some(function (x) { return x.warm; });
+    var other = grp.list.every(function (x) { return x.site !== 't365'; }), sel = grp.list.some(function (x) { return x.key === NXL.sel; });
+    var sz = n > 1 ? 26 : 18;
+    return L.divIcon({ className: 'nx-mkwrap', html: '<span class="nx-mk' + (warm ? ' nx-mk--warm' : other ? ' nx-mk--other' : '') + (sel ? ' nx-mk--sel' : '') + '">' + (n > 1 ? n : '') + '</span>',
+      iconSize: [sz, sz], iconAnchor: [sz / 2, sz / 2] });
+  }
+  function nxlMarkers() {
+    if (!window.L) return;
+    var all = nxlRows(), site = NXL.site;
+    if (NXL.map) {
+      if (NXL.layer) NXL.layer.remove();
+      NXL.layer = L.layerGroup().addTo(NXL.map);
+      nxlGroups(all.filter(function (x) { return site === 'all' || x.site === site; })).forEach(function (g) {
+        var tip = g.list.map(function (x) { return '<b>' + esc(nxlPlace(x)) + '</b>' + (x.r.src ? ' \u00b7 ' + esc(x.r.src) : '') + '<br>' + esc(nxlPage(x.site, (x.r.pages || []).slice(-1)[0])); }).join('<hr>');
+        L.marker([g.la, g.lo], { icon: nxlIcon(g), keyboard: false, riseOnHover: true, zIndexOffset: g.list.some(function (x) { return x.warm; }) ? 1000 : 0 })
+          .bindTooltip(tip, { direction: 'top', offset: [0, -12], className: 'nx-lvtip' })
+          .on('click', function () { NXL.sel = g.list[0].key; nxlTab(); })
+          .addTo(NXL.layer);
+      });
+    }
+    if (NXL.mini) {
+      if (NXL.miniLayer) NXL.miniLayer.remove();
+      NXL.miniLayer = L.layerGroup().addTo(NXL.mini);
+      nxlGroups(all.filter(function (x) { return x.r.local; })).forEach(function (g) { L.marker([g.la, g.lo], { icon: nxlIcon(g), keyboard: false, interactive: false }).addTo(NXL.miniLayer); });
+    }
+  }
+  function nxlLeaflet(cb) {
+    if (window.L && window.protomapsL) { cb(); return; }
+    if (NXL.loading) { NXL.loading.push(cb); return; }
+    NXL.loading = [cb];
+    if (!document.querySelector('link[href="/vendor/leaflet/leaflet.css"]')) { var css = document.createElement('link'); css.rel = 'stylesheet'; css.href = '/vendor/leaflet/leaflet.css'; document.head.appendChild(css); }
+    var srcs = (window.L ? [] : ['/vendor/leaflet/leaflet.js']).concat(['/vendor/protomaps/protomaps-leaflet.js']);
+    (function next(i) {
+      if (i >= srcs.length) { var q = NXL.loading; NXL.loading = null; q.forEach(function (f) { try { f(); } catch (e) {} }); return; }
+      var sc = document.createElement('script'); sc.src = srcs[i];
+      sc.onload = function () { next(i + 1); }; sc.onerror = function () { NXL.loading = null; };
+      document.head.appendChild(sc);
+    })(0);
+  }
+  function nxlMap(id, mini) {
+    var box = document.getElementById(id); if (!box || !window.L || !window.protomapsL) return null;
+    nxlDefs();
+    var map = L.map(box, { zoomControl: !mini, attributionControl: true, dragging: !mini, scrollWheelZoom: false, doubleClickZoom: !mini, touchZoom: !mini, boxZoom: false, keyboard: !mini, zoomSnap: 0.25 });
+    map.attributionControl.setPrefix(false);
+    // our own self-hosted map (the signal checker's), dark style; the small map drops the town names
+    var probe = protomapsL.leafletLayer({ url: '/vendor/protomaps/uk.pmtiles', flavor: 'dark' });
+    var base = { paintRules: probe.paintRules, labelRules: mini ? [] : probe.labelRules, backgroundColor: probe.backgroundColor };
+    protomapsL.leafletLayer(Object.assign({ url: '/vendor/protomaps/uk.pmtiles', maxDataZoom: 10, attribution: '' }, base)).addTo(map);
+    protomapsL.leafletLayer(Object.assign({ url: '/vendor/protomaps/southcoast.pmtiles', maxDataZoom: 14, minZoom: 11, bounds: [[50.45, -2.98], [51.15, -0.90]],
+      attribution: '\u00a9 <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> \u00b7 <a href="https://protomaps.com">Protomaps</a>' }, base)).addTo(map);
+    map.fitBounds(NXL_VIEWS[mini ? 'dorset' : NXL.view]);
+    return map;
+  }
+  function nxlOpenTab() {
+    nxlTitles();
+    nxlLeaflet(function () {
+      if (!document.getElementById('nxLvMap')) return;
+      if (!NXL.map) NXL.map = nxlMap('nxLvMap', false);
+      else setTimeout(function () { if (NXL.map) NXL.map.invalidateSize(); }, 30);
+      nxlMarkers();
+    });
+  }
+  function nxlMini() {
+    nxlTitles();
+    if (!document.getElementById('nxLsMap') || window.matchMedia('(max-width: 900px)').matches) return;
+    nxlLeaflet(function () {
+      if (!document.getElementById('nxLsMap')) return;
+      if (!NXL.mini) NXL.mini = nxlMap('nxLsMap', true);
+      else setTimeout(function () { if (NXL.mini) { NXL.mini.invalidateSize(); NXL.mini.fitBounds(NXL_VIEWS.dorset); } }, 30);
+      nxlMarkers();
+    });
+  }
+  function nxlShown(tab) { if (tab === 'live') nxlOpenTab(); if (tab === 'today') nxlMini(); }
+  function nxlTabHTML() {
+    return '<div class="nx-lv" id="nxLv">'
+      + '<div class="nx-lvhead"><div><p class="nx-eyebrow">Live \u00b7 the last 5 minutes</p><h2 class="nx-lvh">Live on the sites</h2>'
+      + '<p class="quiet" id="nxLvUpd" style="margin:.35rem 0 0">Loading\u2026</p></div>'
+      + '<div class="nx-lvchips" role="group" aria-label="Which site" id="nxLvChips"></div></div>'
+      + '<div class="nx-lvk" id="nxLvK"></div>'
+      + '<div class="nx-lvgrid">'
+      + '<section class="card" aria-label="Where they are"><div class="nx-h2row"><h2>Where they are</h2><div class="nx-lvviews">'
+      + '<button type="button" class="nx-lvview" data-v="dorset" aria-pressed="true">Dorset</button>'
+      + '<button type="button" class="nx-lvview" data-v="uk" aria-pressed="false">Whole UK</button>'
+      + '<button type="button" class="nx-lvview" id="nxLvFs">Full screen</button></div></div>'
+      + '<div class="nx-lvmap" id="nxLvMap" role="region" aria-label="Map of where visitors are"></div>'
+      + '<div class="nx-lvlegend"><span><i class="nx-mkdot"></i>Visitor</span><span><i class="nx-mkdot nx-mkdot--warm"></i>On a booking, contact, price or plan page</span>'
+      + '<span><i class="nx-mkdot nx-mkdot--other"></i>Colin Clark Builders or Beckox</span><span id="nxLvAbroad"></span></div>'
+      + '<p class="quiet" style="margin:.5rem 0 0;font-size:.95rem">Places are rough: they come from each visitor\u2019s internet provider, so a phone can show up as London. Dorset & around = BH and DT postcodes.</p>'
+      + '</section>'
+      + '<section class="card" aria-label="Who is on now"><div class="nx-h2row"><h2>Who\u2019s on now</h2><span class="quiet" id="nxLvN"></span></div>'
+      + '<div class="nx-lvsrc" id="nxLvSrc"></div><div class="nx-lvrows" id="nxLvRows"></div></section>'
+      + '</div>'
+      + '<p class="quiet" style="font-size:.95rem;margin:0">Cookieless and anonymous: no names, rough town only, forgotten after 5 minutes. Staff visits are not counted. Refreshes every 90 seconds.</p>'
+      + '</div>';
+  }
+  function nxlStripHTML() {
+    return '<div class="nx-lsmap" id="nxLsMap" title="Open the Live view"></div>'
+      + '<div><p class="nx-lslive"><span class="nx-ldot"></span>Live now \u00b7 <span id="nxLsUpd">loading\u2026</span></p>'
+      + '<p class="nx-lsbig"><b id="nxLsN">\u2013</b><span id="nxLsSub"></span></p><div id="nxLsWarm"></div></div>'
+      + '<div><p class="quiet" style="margin:0;font-size:.95rem">Being read right now</p><ul class="nx-lspages" id="nxLsPages"></ul>'
+      + '<button type="button" class="nx-lsopen" id="nxLsOpen">Open the Live view \u2192</button></div>';
+  }
+  function nxlGo() { if (NXL.show) { NXL.show('live'); window.scrollTo(0, 0); } }
+  function nxlBind() {
+    var pill = document.getElementById('nxLivePill'); if (pill) pill.onclick = function (e) { e.preventDefault(); nxlGo(); };
+    var ob = document.getElementById('nxLsOpen'); if (ob) ob.onclick = nxlGo;
+    var mm = document.getElementById('nxLsMap'); if (mm) mm.onclick = nxlGo;
+    var lv = document.getElementById('nxLv'); if (!lv) return;
+    lv.addEventListener('click', function (e) {
+      var b = e.target && e.target.closest ? e.target.closest('button') : null; if (!b || !lv.contains(b)) return;
+      if (b.classList.contains('nx-lvchip')) { NXL.site = b.getAttribute('data-site'); nxlTab(); return; }
+      if (b.classList.contains('nx-lvrow')) {
+        NXL.sel = b.getAttribute('data-k');
+        var la = parseFloat(b.getAttribute('data-la')), lo = parseFloat(b.getAttribute('data-lo'));
+        if (NXL.map && isFinite(la) && isFinite(lo)) NXL.map.panTo([la, lo]);
+        nxlTab(); return;
+      }
+      if (b.id === 'nxLvFs') { if (document.fullscreenElement) document.exitFullscreen(); else if (lv.requestFullscreen) lv.requestFullscreen(); return; }
+      var v = b.getAttribute('data-v');
+      if (v && NXL_VIEWS[v]) {
+        NXL.view = v;
+        Array.prototype.forEach.call(lv.querySelectorAll('.nx-lvview[data-v]'), function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        if (NXL.map) NXL.map.fitBounds(NXL_VIEWS[v]);
+      }
+    });
+    if (!NXL.fsBound) {
+      NXL.fsBound = true;
+      document.addEventListener('fullscreenchange', function () {
+        var fb = document.getElementById('nxLvFs'); if (fb) fb.textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen';
+        setTimeout(function () { if (NXL.map) { NXL.map.invalidateSize(); NXL.map.fitBounds(NXL_VIEWS[NXL.view]); } }, 200);
+      });
+    }
+  }
+  function nxlLoad() {
+    fetch('/api/visitors.php', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify({ stoken: S.stoken, machine: mid() }) })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { NXL.d = d; NXL.at = Date.now(); nxlRender(); })
+      .catch(function () { NXL.d = { ok: false, error: 'no answer' }; nxlRender(); });
   }
   function showStaff() {
     try { if (S.trust) localStorage.setItem('p365staffdev', '1'); } catch (e) {}   // already signed in before the marker existed
@@ -5678,8 +6095,6 @@
         + '<button class="sm ghost" id="aipipe">\ud83e\udd16 AI pipeline</button>'
         + '<a class="btn sm ghost" href="/book-service/" target="_blank" rel="noopener">Booking page</a></div>'
         + '<p class="quiet">Everything opens in a new tab - this page stays put. The consoles sign in with your staff session, no passphrase. Comms inbox = voicemails + texts, threaded per customer; AI pipeline = every AI enquiry from /ai/.</p></div>';
-      h += '<div class="card"><h2>\ud83c\udf10 Live on the sites</h2><div id="vislive" class="quiet">Loading\u2026</div>'
-        + '<p class="quiet" style="margin-top:.5rem">Cookieless first-party count, refreshed every 90 seconds \u2013 visitors active in the last 5 minutes, what they\u2019re reading and roughly where from.</p></div>';
       h += '<div class="card"><h2>PC Manager licences</h2><div class="tblwrap"><table><tr><th>Customer</th><th>Plan</th><th>PCs</th><th>Worst PC</th><th>Seen</th><th>App</th><th></th></tr>';
       (d.customers || []).sort(function (a, b) { return (b.seen || '').localeCompare(a.seen || ''); }).forEach(function (c) {
         h += '<tr><td><strong>' + esc(c.name) + '</strong>' + (c.fam ? ' \ud83d\udc6a' : '') + '<br /><span class="quiet mono" id="kv' + esc(c.id) + '">' + esc(c.keymask) + '</span> <button class="sm ghost kb" data-cid="' + esc(c.id) + '" title="Show + copy their activation key">\ud83d\udd11 Key</button> <button class="sm ghost vw" data-cid="' + esc(c.id) + '" title="View the portal as this customer">\ud83d\udc41 View as</button></td>'
@@ -5695,41 +6110,19 @@
       el.innerHTML = h;
       bindOut();
       nxStaffLayout();
-      function loadVis() {
-        fetch('/api/visitors.php', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-               body: JSON.stringify({ stoken: S.stoken, machine: mid() }) })
-          .then(function (r) { return r.json(); }).then(function (d) {
-            var vl = document.getElementById('vislive'); if (!vl) return;
-            if (!d || !d.ok) { vl.textContent = 'Live view not configured yet \u2013 the collector Worker needs deploying (see visitors-live-worker.js).'; return; }
-            var vh = '';
-            Object.keys(d.sites).forEach(function (k) {
-              var sv = d.sites[k];
-              if (sv.visitors < 0) { vh += '<div><strong>' + esc(sv.label) + '</strong> \u2014 <span class="quiet">unreachable</span></div>'; return; }
-              var pg = Object.keys(sv.pages || {}).sort(function (a, b) { return sv.pages[b] - sv.pages[a]; }).slice(0, 4)
-                .map(function (p) { return esc(p) + ' \u00d7' + sv.pages[p]; }).join(' \u00b7 ');
-              var pl = Object.keys(sv.places || {}).slice(0, 4).map(esc).join(' \u00b7 ');
-              vh += '<div style="margin-bottom:.5rem"><strong>' + esc(sv.label) + '</strong> \u2014 ' + sv.visitors + ' on now'
-                  + (pg ? '<br><span class="quiet">' + pg + '</span>' : '')
-                  + (pl ? '<br><span class="quiet">' + pl + '</span>' : '') + '</div>';
-            });
-            // the server says why when Cloudflare won't answer (password, old code, no store...)
-            if (d.why) vh += '<p class="quiet" style="margin-top:.5rem"><strong>Why:</strong> ' + esc(d.why) + '</p>';
-            vl.innerHTML = vh || '<span class="quiet">Nobody on right now.</span>';
-          }).catch(function () {});
-      }
       loadDiary(); loadFleet();
       loadSosq();
-      loadVis();
+      nxlLoad();
       qboSetup();
       invitePlansSetup();
       geoSetup();
       loadInvq();
-      // every 90 s, and only while someone can see it: Cloudflare's free tier allows 1,000 KV lists a day
+      // every 90 s while the staff area is open and on screen: the pill shows on every tab. The server's shared 90 s
+      // cache means at most 960 Cloudflare lists a day however many staff screens are open (free tier: 1,000).
       var visiv = setInterval(function () {
-        var vc = document.getElementById('vislive');
-        if (!vc) { clearInterval(visiv); return; }
-        if (document.hidden || !vc.offsetParent) return;
-        loadVis();
+        if (!document.getElementById('nxLivePanel')) { clearInterval(visiv); return; }
+        if (document.hidden) return;
+        nxlLoad();
       }, 90000);
       // keep the inbox fresh while the console is open; the interval dies with the card
       var sqiv = setInterval(function () {
@@ -7566,6 +7959,6 @@
     });
   })();
   </script>
-  <script>(function(){try{if(navigator.doNotTrack==="1")return;if(/bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit/i.test(navigator.userAgent))return;try{if(localStorage.getItem("p365staffdev")||/"staff":true|"back":/.test((localStorage.getItem("p365")||"")+(sessionStorage.getItem("p365s")||"")))return;}catch(e){}fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify({site:"t365",path:location.pathname}),keepalive:true});}catch(e){}})();</script>
+  <script>(function(){try{if(navigator.doNotTrack==="1")return;if(/bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit/i.test(navigator.userAgent))return;try{if(localStorage.getItem("p365staffdev")||/"staff":true|"back":/.test((localStorage.getItem("p365")||"")+(sessionStorage.getItem("p365s")||"")))return;}catch(e){}fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify({site:"t365",path:location.pathname,ref:(function(){try{return new URL(document.referrer).hostname}catch(e){return""}})(),em:/utm_medium=e-?mail|utm_source=(e-?mail|newsletter|hubspot)/i.test(location.search)?1:0}),keepalive:true});}catch(e){}})();</script>
 </body>
 </html>

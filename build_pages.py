@@ -1025,7 +1025,10 @@ VIS_BEACON = "" if not VISITORS_WORKER else (
     # staff are not visitors: a trusted staff device, or a live staff / view-as session, sends no ping
     'try{if(localStorage.getItem("p365staffdev")||/"staff":true|"back":/.test((localStorage.getItem("p365")||"")+(sessionStorage.getItem("p365s")||"")))return;}catch(e){}'
     'fetch("' + VISITORS_WORKER + '/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},'
-    'body:JSON.stringify({site:"t365",path:location.pathname}),keepalive:true});}catch(e){}})();</script>\n')
+    'body:JSON.stringify({site:"t365",path:location.pathname,'
+    # where they came from: the referrer's host only (never its path or search words); em = one of our email links
+    'ref:(function(){try{return new URL(document.referrer).hostname}catch(e){return""}})(),'
+    'em:/utm_medium=e-?mail|utm_source=(e-?mail|newsletter|hubspot)/i.test(location.search)?1:0}),keepalive:true});}catch(e){}})();</script>\n')
 
 
 def page(slug, title, desc, og_title, schema_json, content, og_image=None, robots=None):
