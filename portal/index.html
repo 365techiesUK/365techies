@@ -684,7 +684,7 @@
   </aside>
 
   <main id="main">
-<section class="section" style="padding-top:6.5rem"><div class="wrap" style="max-width:880px"><div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript><p style="color:#9fb5d3">Loading the portal&hellip;</p></div><div id="p365inst" hidden style="text-align:center;margin:1rem 0 0"><button type="button" id="p365instb" style="background:transparent;border:1px solid #2a3b63;color:#9fb5d3;border-radius:999px;padding:.5rem 1rem;font:inherit;font-size:.85rem;cursor:pointer">&#128241;&nbsp; Put 365 Techies on your home screen</button><p style="font-size:.75rem;color:#9fb5d3;opacity:.7;margin:.4rem 0 0">Opens straight to your visits and messages. No app store.</p></div><script>
+<div class="nx-bar"><div class="nx-bar__in"><a class="nx-brand" href="/" aria-label="365 Techies home page"><span class="nx-logo">365</span><span class="nx-bname">365 Techies</span></a><span class="nx-sep" aria-hidden="true"></span><span class="nx-where">Your portal</span><span class="nx-sp"></span><a class="nx-call" href="tel:+441202775566" aria-label="Call 365 Techies on 01202 775566"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5fe07a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg><span>01202 775566</span></a></div></div><section class="section" style="padding-top:1.6rem;padding-bottom:0"><div class="wrap" style="max-width:1120px"><div id="p365app"><noscript><p>The customer portal needs JavaScript switched on. Or just ring us: 01202 775566.</p></noscript><p style="color:#9fb5d3">Loading the portal&hellip;</p></div><div id="p365inst" hidden style="text-align:center;margin:1rem 0 0"><button type="button" id="p365instb" style="background:transparent;border:1px solid #2a3b63;color:#9fb5d3;border-radius:999px;padding:.5rem 1rem;font:inherit;font-size:.85rem;cursor:pointer">&#128241;&nbsp; Put 365 Techies on your home screen</button><p style="font-size:.75rem;color:#9fb5d3;opacity:.7;margin:.4rem 0 0">Opens straight to your visits and messages. No app store.</p></div><script>
 (function () {
   // Suppress the browser's own banner, keep the event, and let the customer
   // decide. Nothing renders unless the browser fires this - so no dead button
@@ -707,9 +707,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 27 Sep 2026 &middot; d00b8309f4</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 27 Sep 2026 &middot; 44ec757f46</p><script>
 (function () {
-  var P365BUILD = 'd00b8309f4';
+  var P365BUILD = '44ec757f46';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -768,7 +768,7 @@
   setInterval(check, 120000);   // 2 min, not 5: build-id.json is ~100 bytes, and the wait after a deploy felt like failure
   check();
 })();
-</script></div></section><style>
+</script></div><div class="nx-foot"><span>365 Techies &middot; family-run in Bournemouth since 1995 &middot; Mon&ndash;Fri 9&ndash;5</span><span class="nx-foot__l"><a href="/">365techies.co.uk</a><a href="/privacy-policy/">Privacy</a><a href="/terms/">Terms</a><a href="tel:+441202775566">01202 775566</a></span></div></section><style>
   
   #p365app, .p365ov { --pink:#0b1226; --ppanel:#0d1530; --pline:#2a3b63; --pcyan:#1d97e3; --psoft:#86b6e8; --pgood:#00ce1b; --pwarn:#e0b341; --pbad:#e8637e; --pmut:#9fb5d3; --pwhite:#f0f5fc; }
   #p365app .card, .p365ov .card { background:var(--ppanel); border:1px solid var(--pline); border-radius:14px; padding:1.05rem 1.15rem; margin-bottom:.95rem; }
@@ -1515,6 +1515,110 @@
     #p365app .ds__t, #p365app .ds__bar2 i, .p365ov .ds__t, .p365ov .ds__bar2 i { transition:none; }
     #p365app .ds__t.fresh, .p365ov .ds__t.fresh { animation:none; }
   }
+  
+  .site-header, .mobile-menu, .site-footer, .mobile-cta-bar { display:none !important; }
+  body { padding-bottom:0 !important; }
+  .nx-bar { position:sticky; top:0; z-index:40; background:rgba(7,13,34,.93); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px); border-bottom:1px solid #1c2947; }
+  .nx-bar__in { max-width:1120px; margin:0 auto; padding:0 1.25rem; height:64px; display:flex; align-items:center; gap:.85rem; }
+  .nx-brand { display:flex; align-items:center; gap:.7rem; color:#eaf4ff; text-decoration:none; }
+  .nx-logo { width:34px; height:34px; border-radius:8px; background:#1d97e3; color:#fff; display:grid; place-items:center; font-family:var(--font-display, sans-serif); font-weight:700; font-size:15px; }
+  .nx-bname { font-family:var(--font-display, sans-serif); font-weight:600; font-size:1.15rem; }
+  .nx-sep { width:1px; height:22px; background:#2a3a5e; }
+  .nx-where { color:#9fb5d3; font-size:1rem; }
+  .nx-sp { flex:1; }
+  .nx-call { display:flex; align-items:center; gap:.5rem; min-height:44px; padding:0 1rem; border-radius:999px; border:1px solid #2a3a5e; color:#eaf4ff; text-decoration:none; font-weight:600; }
+  .nx-call:hover { border-color:#1d97e3; }
+  .nx-foot { max-width:1120px; margin:2.2rem auto 0; padding:1.2rem 1.25rem 1.8rem; border-top:1px solid #1c2947; display:flex; flex-wrap:wrap; gap:.6rem 1.4rem; justify-content:space-between; color:#9fb5d3; font-size:.92rem; }
+  .nx-foot__l { display:flex; flex-wrap:wrap; gap:.4rem 1.2rem; }
+  .nx-foot a { color:#86b6e8; }
+  @media (max-width:640px) { .nx-bname, .nx-sep { display:none; } .nx-call span { display:none; } .nx-call { width:44px; padding:0; justify-content:center; } }
+  #p365app.nx-narrow, .p365ov.nx-narrow { max-width:720px; margin:0 auto; }
+  #p365app .card, .p365ov .card { background:#0d1631; border-color:#1f2c4a; border-radius:16px; padding:1.2rem 1.3rem; scroll-margin-top:84px; }
+  #p365app .card h2, .p365ov .card h2 { font-size:1.08rem; }
+  #p365app .nx-hi, .p365ov .nx-hi { display:flex; justify-content:space-between; align-items:flex-start; gap:1.2rem; margin:.3rem 0 1.5rem; }
+  #p365app .nx-eyebrow, .p365ov .nx-eyebrow { margin:0 0 .45rem; font-family:var(--font-mono, monospace); font-size:.8rem; letter-spacing:.08em; color:#5cb8f0; text-transform:uppercase; }
+  #p365app h1.nx-h1, .p365ov h1.nx-h1 { font-family:var(--font-display, sans-serif); font-weight:600; font-size:clamp(1.9rem, 4.2vw, 2.7rem); line-height:1.08; margin:0 0 .55rem; }
+  #p365app .nx-say, .p365ov .nx-say { margin:0; font-size:1.1rem; color:#c4d6ee; max-width:44rem; line-height:1.5; }
+  #p365app .nx-hi__side, .p365ov .nx-hi__side { display:flex; flex-direction:column; align-items:flex-end; gap:.7rem; flex:0 0 auto; }
+  #p365app .nx-trust, .p365ov .nx-trust { display:flex; align-items:center; gap:.55rem; padding:.55rem .9rem; border-radius:12px; background:rgba(0,206,27,.08); border:1px solid rgba(0,206,27,.35); font-size:.92rem; color:#dfe9f7; }
+  @media (min-width:901px) { #p365app .nx-trust, .p365ov .nx-trust { white-space:nowrap; } }
+  #p365app .nx-top__main #msgCard, .p365ov .nx-top__main #msgCard { margin:.9rem 0 0; }
+  
+  #p365app #mybk .tline, .p365ov #mybk .tline { display:block; padding:.85rem 0 0; margin-top:.85rem; border-top:1px solid #1c2947; border-bottom:0; }
+  #p365app #mybk .ttime, .p365ov #mybk .ttime { display:none; }
+  #p365app #mybk .tline .bknote, .p365ov #mybk .tline .bknote { margin-top:.3rem; }
+  #p365app #mybk .tline > div:last-child, .p365ov #mybk .tline > div:last-child { margin-top:.55rem; }
+  #p365app .nx-trust i, .p365ov .nx-trust i { width:9px; height:9px; border-radius:50%; background:#00ce1b; flex:0 0 9px; }
+  #p365app .nx-top, .p365ov .nx-top { display:grid; grid-template-columns:minmax(0,1.7fr) minmax(0,1fr); gap:1.2rem; align-items:start; margin-bottom:1.1rem; }
+  #p365app h2.nx-h2, .p365ov h2.nx-h2 { font-size:1.05rem; font-weight:600; color:#c4d6ee; margin:0 0 .75rem; }
+  #p365app .nx-h2row, .p365ov .nx-h2row { display:flex; justify-content:space-between; align-items:baseline; gap:1rem; flex-wrap:wrap; }
+  #p365app .nx-note, .p365ov .nx-note { font-size:.9rem; color:#9fb5d3; margin-bottom:.75rem; }
+  #p365app .nx-tiles, .p365ov .nx-tiles { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.8rem; }
+  #p365app button.nx-tile, .p365ov button.nx-tile { display:flex; gap:1rem; align-items:flex-start; text-align:left; padding:1.1rem; border-radius:16px; margin:0; min-height:96px; color:#eaf4ff; background:linear-gradient(160deg, var(--nxt, rgba(29,151,227,.16)), rgba(15,25,52,.7)); border:1px solid var(--nxb, #24406b); font-weight:400; }
+  #p365app button.nx-tile:hover, .p365ov button.nx-tile:hover { filter:brightness(1.12); }
+  #p365app button.nx-tile:focus-visible, #p365app button.nx-kpi:focus-visible, #p365app button.nx-stab:focus-visible, .p365ov button.nx-tile:focus-visible, .p365ov button.nx-kpi:focus-visible, .p365ov button.nx-stab:focus-visible { outline:2px solid #5cb8f0; outline-offset:2px; }
+  #p365app .nx-tile__i, .p365ov .nx-tile__i { flex:0 0 46px; width:46px; height:46px; border-radius:12px; display:grid; place-items:center; background:var(--nxi, #1d97e3); }
+  #p365app .nx-tile__t, .p365ov .nx-tile__t { display:block; font-size:1.12rem; font-weight:700; margin-bottom:.2rem; }
+  #p365app .nx-tile__d, .p365ov .nx-tile__d { display:block; font-size:.95rem; color:#9fb5d3; line-height:1.4; }
+  #p365app .nx-tile--help, .p365ov .nx-tile--help { --nxt:rgba(232,99,126,.16); --nxb:#5a2c45; --nxi:#d2475f; }
+  #p365app .nx-tile--msg, .p365ov .nx-tile--msg { --nxt:rgba(0,206,27,.12); --nxb:#1f4a36; --nxi:#0f9b2a; }
+  #p365app .nx-tile--rep, .p365ov .nx-tile--rep { --nxt:rgba(160,120,240,.14); --nxb:#3a3466; --nxi:#6b56c9; }
+  #p365app .nx-visits .card, .p365ov .nx-visits .card { margin:0; border-color:#24406b; }
+  #p365app .nx-vfoot, .p365ov .nx-vfoot { margin-top:.8rem; }
+  #p365app .nx-pcs, .p365ov .nx-pcs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.8rem; margin-bottom:.8rem; }
+  #p365app #nxPcs, .p365ov #nxPcs { scroll-margin-top:84px; margin-bottom:1rem; }
+  #p365app .nx-pc, .p365ov .nx-pc { background:#0d1631; border:1px solid #1f2c4a; border-radius:16px; padding:1.2rem; display:flex; flex-direction:column; gap:.9rem; }
+  #p365app .nx-pc--warn, .p365ov .nx-pc--warn { border-color:#4d3f1f; }
+  #p365app .nx-pc--bad, .p365ov .nx-pc--bad { border-color:#5a2c45; }
+  #p365app .nx-pc__top, .p365ov .nx-pc__top { display:flex; gap:1rem; align-items:center; }
+  #p365app .nx-ring, .p365ov .nx-ring { position:relative; flex:0 0 72px; width:72px; height:72px; }
+  #p365app .nx-ring svg, .p365ov .nx-ring svg { transform:rotate(-90deg); display:block; }
+  #p365app .nx-ring b, .p365ov .nx-ring b { position:absolute; inset:0; display:grid; place-items:center; font-size:1.15rem; color:#eaf4ff; }
+  #p365app .nx-ring circle, .p365ov .nx-ring circle { transition:stroke-dasharray 1.1s ease; }
+  #p365app .nx-pc__name, .p365ov .nx-pc__name { font-size:1.15rem; font-weight:700; color:#eaf4ff; }
+  #p365app .nx-pc__v, .p365ov .nx-pc__v { font-weight:600; }
+  #p365app .nx-pc__meta, .p365ov .nx-pc__meta { font-size:.9rem; color:#9fb5d3; }
+  #p365app .nx-chips, .p365ov .nx-chips { display:flex; flex-wrap:wrap; gap:.45rem; }
+  #p365app .nx-chip, .p365ov .nx-chip { font-size:.88rem; padding:.3rem .7rem; border-radius:999px; background:rgba(0,206,27,.1); color:#7fe392; }
+  #p365app .nx-chip.w, .p365ov .nx-chip.w { background:rgba(224,179,65,.12); color:#f0c65a; }
+  #p365app .nx-chip.b, .p365ov .nx-chip.b { background:rgba(232,99,126,.14); color:#f19aab; }
+  #p365app .nx-pc__foot, .p365ov .nx-pc__foot { display:flex; justify-content:space-between; align-items:center; gap:.75rem; flex-wrap:wrap; padding-top:.85rem; border-top:1px solid #1c2947; }
+  #p365app .nx-pc__todo, .p365ov .nx-pc__todo { font-size:.98rem; color:#c4d6ee; flex:1 1 14rem; line-height:1.45; }
+  #p365app .nx-pc__acts, .p365ov .nx-pc__acts { display:flex; gap:.5rem; flex-wrap:wrap; }
+  #p365app details.nx-more, .p365ov details.nx-more { margin:0 0 .4rem; }
+  #p365app details.nx-more > summary, .p365ov details.nx-more > summary { cursor:pointer; color:#86b6e8; font-weight:600; padding:.55rem 0; }
+  #p365app .nx-fb, .p365ov .nx-fb { margin:.4rem 0 .6rem; }
+  #p365app .nx-trio, .p365ov .nx-trio { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.8rem; margin-bottom:.95rem; }
+  #p365app .nx-trio > .card, .p365ov .nx-trio > .card { margin:0; display:flex; flex-direction:column; gap:.45rem; }
+  #p365app .nx-k, .p365ov .nx-k { font-family:var(--font-mono, monospace); font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:#9fb5d3; margin:0 0 .15rem; }
+  #p365app .nx-big, .p365ov .nx-big { font-size:1.15rem; font-weight:700; color:#eaf4ff; margin:0; }
+  #p365app .nx-line, .p365ov .nx-line { margin:0; color:#c4d6ee; line-height:1.5; }
+  #p365app .nx-links, .p365ov .nx-links { display:flex; flex-direction:column; gap:.55rem; align-items:flex-start; }
+  #p365app .nx-links a, #p365app button.nx-link, .p365ov .nx-links a, .p365ov button.nx-link { color:#5cb8f0; font-weight:600; font-size:1rem; }
+  #p365app button.nx-link, .p365ov button.nx-link { background:none; border:0; padding:0; margin:0; text-decoration:underline; text-align:left; min-height:0; cursor:pointer; }
+  #p365app .nx-review, .p365ov .nx-review { border-style:dashed; }
+  @media (max-width:900px) { #p365app .nx-top, .p365ov .nx-top { grid-template-columns:1fr; } #p365app .nx-visits, .p365ov .nx-visits { order:-1; } #p365app .nx-trio, .p365ov .nx-trio { grid-template-columns:1fr; } }
+  @media (max-width:700px) { #p365app .nx-pcs, .p365ov .nx-pcs { grid-template-columns:1fr; } #p365app .nx-hi, .p365ov .nx-hi { flex-direction:column; } #p365app .nx-hi__side, .p365ov .nx-hi__side { align-items:flex-start; flex-direction:row-reverse; flex-wrap:wrap; } }
+  @media (max-width:520px) { #p365app button.nx-tile, .p365ov button.nx-tile { flex-direction:column; gap:.6rem; min-height:112px; } #p365app .nx-tile__d, .p365ov .nx-tile__d { display:none; } }
+  
+  #p365app .nx-sbar, .p365ov .nx-sbar { display:flex; align-items:center; justify-content:space-between; gap:.8rem; flex-wrap:wrap; border-bottom:1px solid #1c2947; margin:0 0 1.1rem; }
+  #p365app .nx-stabs, .p365ov .nx-stabs { display:flex; gap:.2rem; overflow-x:auto; }
+  #p365app button.nx-stab, .p365ov button.nx-stab { background:none; border:0; border-bottom:3px solid transparent; border-radius:0; color:#9fb5d3; font-weight:600; font-size:1rem; padding:.8rem 1rem; margin:0; min-height:44px; white-space:nowrap; }
+  #p365app button.nx-stab[aria-pressed="true"], .p365ov button.nx-stab[aria-pressed="true"] { color:#eaf4ff; border-bottom-color:#1d97e3; }
+  #p365app .nx-cons, .p365ov .nx-cons { display:flex; gap:.4rem; flex-wrap:wrap; padding:.4rem 0; }
+  #p365app .nx-cons > a, #p365app .nx-cons > button, .p365ov .nx-cons > a, .p365ov .nx-cons > button { margin:0; min-height:38px; padding:.45rem .8rem; font-size:.88rem; }
+  #p365app .nx-kpis, .p365ov .nx-kpis { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.7rem; margin:0 0 1rem; }
+  #p365app button.nx-kpi, .p365ov button.nx-kpi { display:flex; flex-direction:column; align-items:flex-start; gap:.25rem; margin:0; padding:.9rem 1rem; border-radius:14px; background:#0d1631; border:1px solid #1f2c4a; color:#eaf4ff; text-align:left; font-weight:400; }
+  #p365app button.nx-kpi b, .p365ov button.nx-kpi b { font-size:1.9rem; line-height:1; }
+  #p365app button.nx-kpi span, .p365ov button.nx-kpi span { font-size:.9rem; color:#9fb5d3; }
+  #p365app button.nx-kpi.nx-kpi--on, .p365ov button.nx-kpi.nx-kpi--on { border-color:#24406b; }
+  #p365app #kSos.nx-kpi--on, .p365ov #kSos.nx-kpi--on { border-color:rgba(232,99,126,.6); }
+  #p365app #kSos.nx-kpi--on b, .p365ov #kSos.nx-kpi--on b { color:#f19aab; }
+  #p365app #kPcs.nx-kpi--on, .p365ov #kPcs.nx-kpi--on { border-color:#4d3f1f; }
+  #p365app #kPcs.nx-kpi--on b, .p365ov #kPcs.nx-kpi--on b { color:#f0c65a; }
+  #p365app .nx-today, .p365ov .nx-today { display:grid; grid-template-columns:minmax(0,1.45fr) minmax(0,1fr); gap:1rem; align-items:start; }
+  #p365app details.nx-how > summary, .p365ov details.nx-how > summary { cursor:pointer; color:#86b6e8; font-size:.92rem; margin:.1rem 0 .5rem; }
+  @media (max-width:900px) { #p365app .nx-today, .p365ov .nx-today { grid-template-columns:1fr; } #p365app .nx-kpis, .p365ov .nx-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 </style><script>
 (function () {
   var BK = '/api/pcm-booking.php', PCM = '/api/pcm.php', DASH = '/api/pcm-dash.php', TEAM = '/api/pcm-team.php', CONN = '/api/pcm-connect.php', FEEDS = '/api/pcm-feeds.php', WCHK = '/api/pcm-wcheck.php', MSG = '/api/pcm-msg.php', QBO = '/api/pcm-qbo.php', JOBS = '/api/pcm-jobs.php', INVITE = '/api/pcm-invite.php', PAY = '/api/pcm-paylink.php', GEO = '/api/pcm-geo.php', INVQ = '/api/pcm-invq.php';
@@ -1668,6 +1772,7 @@
     // journey card captured before the count landed, and banks a WiFi-blind snapshot -
     // which makes the next visit rediscover a survey saved months ago and celebrate it.
     if (force && jSettled) return;
+    if (!document.querySelector('#p365app .jrn')) { jSettled = true; return; }   // no journey on screen (plan customers)
     if (!jSettled && !JW.loaded && !force) return;
     if (S.back) { jSettled = true; return; }   // staff viewing a customer: never celebrate, never store
     // Never let confetti land on top of an open tool. Hold it and replay from ovShut().
@@ -3755,47 +3860,90 @@
     if (d < 14) return 'next week';
     return 'in ' + Math.round(d / 7) + ' weeks';
   }
+  // 27 Sep 2026 refresh: the welcome says how things are in one plain sentence; the rings live on each computer's
+  // card below. No #heroArc any more, so heroAnim() returns at once (it checks).
   function heroBlock(d, primary) {
     var name = esc((d.name || '').split(' ')[0] || 'there');
-    var when = d.next_ts ? whenPhrase(d.next_ts) : '';
-    var ringScore = primary ? parseInt(primary.score, 10) : null;
-    var col = primary ? (ringScore >= 80 ? 'var(--pgood)' : (ringScore >= 55 ? 'var(--pwarn)' : 'var(--pbad)')) : 'var(--pcyan)';
-    var verdict, note;
-    if (primary) {
-      verdict = ringScore >= 80 ? 'Everything looks well' : (ringScore >= 55 ? 'A couple of things worth a look' : 'Your PC needs some attention');
-      note = esc(primary.name) + (primary.verdict ? ' \u00b7 ' + esc(primary.verdict) : '');
-    } else if (d.next_ts) {
-      verdict = 'You\u2019re all set';
-      note = 'We\u2019ll ring you before we arrive \u2014 we never turn up out of the blue.';
-    } else {
-      verdict = 'Welcome to your 365 portal';
-      note = 'Everything we do for you lives here \u2014 book a visit, see your reports, and use our free tools whenever you like.';
-    }
-    var circ = 2 * Math.PI * 48;
-    var pct = primary ? ringScore : 100;
-    var h = '<div class="hero"><div class="hero__top"><div>'
-      + '<h1 class="hero__hi">' + greetWord() + ', ' + name + '</h1>'
-      + '<p class="hero__sub">' + (d.tier === 'pro' ? 'You\u2019re on 365 support \u00b7 we look after this for you' : 'Your 365 Club membership \u00b7 free, forever') + '</p>'
-      + '</div><button class="sm ghost" id="sout">Sign out</button></div>'
-      + '<div class="hero__body">'
-      + '<div class="hero__ring"><svg width="112" height="112" viewBox="0 0 112 112" aria-hidden="true">'
-      + '<circle cx="56" cy="56" r="48" fill="none" stroke="rgba(125,170,220,.18)" stroke-width="9"/>'
-      + '<circle id="heroArc" cx="56" cy="56" r="48" fill="none" stroke="' + col + '" stroke-width="9" stroke-linecap="round" stroke-dasharray="0 ' + circ.toFixed(1) + '"/>'
-      + '</svg><b id="heroNum" style="color:' + col + '">' + (primary ? '0' : '\u2713') + '</b>'
-      + (primary ? '<i>health</i>' : '<i>member</i>') + '</div>'
-      + '<div class="hero__say"><p class="hero__verdict">' + verdict + '</p>'
-      + '<p class="hero__note">' + note + '</p>'
-      + (d.next ? '<div class="hero__when">\ud83d\udcc5 Next visit <b>' + esc(d.next) + '</b>'
-                  + (when ? ' <span class="hero__cd">' + when + '</span>' : '') + '</div>' : '')
-      + '</div></div>'
-      + '<div class="qacts">'
-      + '<button type="button" class="qact" id="qbook"><span>\ud83d\udcc5</span>Book a visit</button>'
-      + '<button type="button" class="qact sos" id="qsos"><span>\ud83c\udd98</span>Remote help</button>'
-      + '<button type="button" class="qact" id="qwifi"><span>\ud83d\udcf6</span>Test my WiFi</button>'
-      + '<button type="button" class="qact" id="qdash"><span>\ud83c\udf9b</span>Dashboard studio</button>'
-      + '<a class="qact" href="tel:+441202775566"><span>\ud83d\udcde</span>Call us</a>'
+    var all = d.machines || [], ms = all.filter(function (m) { return !m.fresh; });
+    var plan = d.tier === 'pro' ? (d.plan === 'business' ? '365 Business support' : '365 Home support') : '365 Club &middot; free membership';
+    var eyebrow = plan + (all.length ? ' &middot; ' + all.length + (all.length === 1 ? ' computer' : ' computers') : '');
+    var say;
+    if (ms.length) {
+      var ok = ms.filter(function (m) { return m.score >= 80; }), need = ms.filter(function (m) { return m.score < 80; });
+      if (!need.length) say = ms.length === 1 ? esc(ms[0].name) + ' looks well. Nothing needs doing right now.' : 'All ' + ms.length + ' of your computers look well. Nothing needs doing right now.';
+      else {
+        var parts = [];
+        if (ok.length === 1) parts.push(esc(ok[0].name) + ' is healthy.');
+        else if (ok.length > 1) parts.push(ok.length + ' of your computers are healthy.');
+        parts.push((need.length === 1 ? esc(need[0].name) + ' needs' : need.length + ' computers need') + ' a look' + (d.tier === 'pro' && d.next ? ', and we&rsquo;ll sort it at your next visit.' : '.'));
+        say = parts.join(' ');
+      }
+    } else if (d.next_ts) say = 'You&rsquo;re all set. We&rsquo;ll ring you before we arrive &mdash; we never turn up out of the blue.';
+    else say = d.tier === 'pro' ? 'Everything we do for you lives here: your visits, your computers and your reports.' : 'Welcome to your 365 portal. Book a visit, see your reports and use our free tools whenever you like.';
+    return '<div class="nx-hi"><div>'
+      + '<p class="nx-eyebrow">// ' + eyebrow + '</p>'
+      + '<h1 class="nx-h1">' + greetWord() + ', ' + name + '</h1>'
+      + '<p class="nx-say">' + say + '</p></div>'
+      + '<div class="nx-hi__side"><button class="sm ghost" id="sout">Sign out</button>'
+      + (d.tier === 'pro' ? '<div class="nx-trust"><i></i>Backups, updates and security checked every six weeks</div>' : '')
       + '</div></div>';
-    return h;
+  }
+  function nxIco(k) {
+    var p = { cal: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+              help: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><path d="M4.9 4.9l4.3 4.3M14.8 14.8l4.3 4.3M14.8 9.2l4.3-4.3M4.9 19.1l4.3-4.3"/>',
+              msg: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+              rep: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/>' }[k];
+    return '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>';
+  }
+  // the four things people come to do - the same tiles as the website's first screen
+  function nxTiles(d) {
+    var last = 0;
+    (d.machines || []).forEach(function (m) { (m.reps || []).forEach(function (x) { if (x > last) last = x; }); });
+    var lastTxt = last ? 'Latest: ' + new Date(last * 1000).getDate() + ' ' + MON[new Date(last * 1000).getMonth()] : (d.tier === 'pro' ? 'Written up after every service' : 'Your reports appear here');
+    function tile(id, cls, ico, title, sub) {
+      return '<button type="button" class="nx-tile' + cls + '" id="' + id + '"><span class="nx-tile__i">' + nxIco(ico) + '</span>'
+        + '<span><span class="nx-tile__t">' + title + '</span><span class="nx-tile__d">' + sub + '</span></span></button>';
+    }
+    return '<div class="nx-tiles">'
+      + tile('qbook', '', 'cal', d.next ? 'Book or move a visit' : 'Book a visit', d.next ? 'Next: ' + esc(d.next) : 'Pick a service and a time that suits you')
+      + tile('qsos', ' nx-tile--help', 'help', 'Get help now', 'A techie on your screen in minutes')
+      + tile('qmsg', ' nx-tile--msg', 'msg', 'Message us', 'About your computers, visits or bill')
+      + tile('qreps', ' nx-tile--rep', 'rep', 'Your service reports', lastTxt)
+      + '</div>';
+  }
+  // one compact card per computer: score, verdict, plain labels, and what happens next
+  function nxPc(d, m) {
+    var C = 2 * Math.PI * 31;
+    if (m.fresh) return '<div class="nx-pc"><div class="nx-pc__top"><div class="nx-ring"><svg width="72" height="72" viewBox="0 0 76 76"><circle cx="38" cy="38" r="31" fill="none" stroke="#1c2947" stroke-width="7"/></svg><b>\u2013</b></div>'
+      + '<div><div class="nx-pc__name">' + esc(m.name) + '</div><div class="nx-pc__meta">Its first health check is on the way</div></div></div></div>';
+    var cls = m.score >= 80 ? '' : (m.score >= 55 ? ' nx-pc--warn' : ' nx-pc--bad');
+    var col = m.score >= 80 ? '#00ce1b' : (m.score >= 55 ? '#e0b341' : '#e8637e');
+    var vcol = m.score >= 80 ? '#5fe07a' : (m.score >= 55 ? '#f0c65a' : '#f19aab');
+    var verdict = m.verdict || (m.score >= 80 ? 'Healthy' : (m.score >= 55 ? 'Needs a look' : 'Needs attention'));
+    var chips = [];
+    if (m.avoff) chips.push(['b', 'Antivirus off']); else if (m.avon) chips.push(['', 'Antivirus on']);
+    chips.push(m.backup ? ['', 'Backup on'] : ['w', 'No backup seen']);
+    chips.push(m.disk >= 85 ? ['w', 'Drive ' + m.disk + '% full'] : ['', Math.max(0, 100 - (m.disk || 0)) + '% free']);
+    if (m.reboot) chips.push(['w', 'Restart due']);
+    if (m.w10) chips.push(['w', 'Windows 10']);
+    var pro = d.tier === 'pro', todo;
+    if (m.avoff) todo = 'Antivirus is switched off. Ring us and we&rsquo;ll get it back on.';
+    else if (!m.backup) todo = pro ? 'No backup seen. We&rsquo;ll check it and set one up at your next service.' : 'No backup seen. One failure could lose your photos and files.';
+    else if (m.disk >= 85) todo = pro ? 'The drive is nearly full. We&rsquo;ll free up space at your next service.' : 'The drive is nearly full &mdash; worth a tidy-up.';
+    else if (m.reboot) todo = 'A restart will finish installing Windows updates.';
+    else if (m.w10) todo = pro ? 'Windows 10 &mdash; we&rsquo;ll talk you through the options at your next visit.' : 'Windows 10 &mdash; ask us about your options.';
+    else todo = 'Nothing needs doing right now.';
+    var rt = (m.reps || []).slice(-1)[0], repB = '';
+    if (rt) { var rd = new Date(rt * 1000); repB = '<button class="sm ghost repb" data-pc="' + esc(m.id) + '" data-ts="' + rt + '">Report, ' + rd.getDate() + ' ' + MON[rd.getMonth()] + '</button>'; }
+    return '<div class="nx-pc' + cls + '"><div class="nx-pc__top"><div class="nx-ring"><svg width="72" height="72" viewBox="0 0 76 76" aria-hidden="true">'
+      + '<circle cx="38" cy="38" r="31" fill="none" stroke="#1c2947" stroke-width="7"/>'
+      + '<circle cx="38" cy="38" r="31" fill="none" stroke="' + col + '" stroke-width="7" stroke-linecap="round" stroke-dasharray="0 ' + C.toFixed(1) + '" data-dash="' + (C * m.score / 100).toFixed(1) + ' ' + C.toFixed(1) + '"/></svg>'
+      + '<b aria-label="Health ' + m.score + ' out of 100">' + m.score + '</b></div>'
+      + '<div><div class="nx-pc__name">' + esc(m.name) + '</div><div class="nx-pc__v" style="color:' + vcol + '">' + esc(verdict) + '</div>'
+      + '<div class="nx-pc__meta">Checked ' + seenTxt(m.seen) + ' &middot; Windows ' + (m.w10 ? '10' : '11') + '</div></div></div>'
+      + '<div class="nx-chips">' + chips.map(function (c) { return '<span class="nx-chip' + (c[0] ? ' ' + c[0] : '') + '">' + c[1] + '</span>'; }).join('') + '</div>'
+      + '<div class="nx-pc__foot"><span class="nx-pc__todo">' + todo + '</span><span class="nx-pc__acts">' + repB
+      + '<button class="sm ghost rcb" data-pc="' + esc(m.id) + '" title="Ask this PC for a fresh health check">Check now</button></span></div></div>';
   }
   function heroAnim(primary) {
     var arc = document.getElementById('heroArc'), num = document.getElementById('heroNum');
@@ -3864,7 +4012,9 @@
   }
 
   // ---------- sign-in ----------
+  function nxWhere(txt) { var w = document.querySelector('.nx-where'); if (w) w.textContent = txt; }
   function showSignin(msg) {
+    el.classList.add('nx-narrow'); nxWhere('Your portal');
     el.innerHTML = '<h1>Your 365 portal</h1>'
       + '<p class="lede">No passwords needed - we email or text a 6-digit code, then <strong>this computer stays signed in</strong> so you won\u2019t keep re-doing it. New to 365? The same box joins you free, no card details.</p>'
       + '<div class="card"><h2>Sign in or join free</h2>'
@@ -4226,6 +4376,7 @@
   }
 
   function showDash() {
+    el.classList.remove('nx-narrow'); nxWhere(S.back ? 'Seeing what a customer sees' : 'Your portal');
     el.innerHTML = topRow('Hello' + (S.name ? ' ' + esc(S.name.split(' ')[0]) : '')) + '<p class="lede">Loading your dashboard\u2026</p>';
     bindOut();
     post(PCM, { action: 'overview', wtoken: S.wtoken, machine: mid() }).then(function (d) {
@@ -4257,18 +4408,19 @@
       // ~3,400px of things that talk AT them. Visits and Message Us now sit
       // directly under the hero, and everything below is in descending order of
       // "can the customer act on it".
-      h += '<div class="card" id="visitsCard"><h2>\ud83d\udcc5 Your visits</h2>'
-        + '<div id="mybk"><p class="quiet">Loading your visits\u2026</p></div>'
+      // 27 Sep 2026 refresh: the four jobs on the left, the next visit on the right (first on a phone)
+      var nxVisits = '<div class="nx-visits"><h2 class="nx-h2">' + (d.next ? 'Your next visit' : 'Your visits') + '</h2><div class="card" id="visitsCard">'
+        + '<div id="mybk"><p class="quiet">Loading your visits&hellip;</p></div>'
         + '<div class="nbwiz" id="cbwiz" style="display:none"></div>'
-        + '<div class="row" style="border:0">'
-        + '<button class="sm" id="cbopen">\ud83d\udcc5 Book a service</button>'
-        + '<button class="sm ghost" id="cbsos">\ud83c\udd98 Remote help</button>'
-        + '<a class="btn sm ghost" href="tel:+441202775566">Call 01202 775566</a></div></div>';
-      h += '<div class="card" id="msgCard"><h2>\ud83d\udcac Message us</h2>'
+        + '<div class="nx-vfoot"><button class="sm ghost" id="cbopen">' + (d.next ? 'Book another visit' : 'Book a visit') + '</button></div></div></div>';
+      h += '<div class="nx-top"><div class="nx-top__main"><h2 class="nx-h2">What would you like to do?</h2>' + nxTiles(d);
+      h += '<div class="card" id="msgCard"><h2>Message us</h2>'
         + '<p class="quiet">Ask us anything about your computers, your bookings or your bill \u2014 '
         + 'it goes straight to the team. Urgent? Ring <a href="tel:+441202775566">01202 775566</a>.</p>'
         + '<div id="msgBox"><p class="quiet">Loading\u2026</p></div></div>';
-      var jrn = journeyCard(d);
+      h += '</div>' + nxVisits + '</div>';   // closes .nx-top__main, then the visits column, then .nx-top
+      // plan customers are past onboarding: the points journey is for members finding their feet
+      var jrn = d.tier === 'pro' ? { html: '', pts: 0 } : journeyCard(d);
       h += jrn.html;
       if (S.back) h = '<div class="card" style="border-color:rgba(29,151,227,.55);padding:.6rem .9rem"><div class="row" style="border:0;padding:0"><span class="quiet" style="margin:0">\ud83d\udc41 You\u2019re viewing the portal as <strong>' + esc(d.name || 'this customer') + '</strong> - exactly what they see.</span><button class="sm" id="backstaff">\u2190 Back to staff</button></div></div>' + h;
       if (d.pending) h += '<div class="card" style="border-color:rgba(224,179,65,.5)"><p class="quiet">We can see a support plan registered to this email. For security we link it to your web login by hand - it usually appears within a day. Need it sooner? Ring 01202 775566.</p></div>';
@@ -4280,40 +4432,36 @@
       var freshJoiner = !d.machines.length && !d.next;
       // primary PC gets the next-gen 3D hero up top; any others listed compactly beneath
       var ngPrimary = heroPrimary;
-      if (ngPrimary) {
-        // One line, not a 300px manifesto: the beta framing stays honest (the
-        // app IS early, and feedback genuinely matters) without lecturing every
-        // customer on every visit.
-        h += '<div class="card" style="padding:.55rem .9rem"><div class="row" style="border:0;padding:0">'
-          + '<span class="quiet" style="margin:0">\ud83e\uddea <strong>Early preview</strong> of 365 PC Manager \u2014 your feedback shapes it.</span>'
-          + '<span id="pcmfb"><button class="sm ghost" id="pcmfbopen">\ud83d\udcac Feedback</button></span></div></div>';
-        h += ngHero(d, ngPrimary);
-        var ngOthers = d.machines.filter(function (mm) { return mm.id !== ngPrimary.id; });
-        if (ngOthers.length) h += '<div class="ngh2">Your other computers</div><div class="card">' + ngOthers.map(machineRow).join('') + '</div>';
+      if (d.machines.length) {
+        h += '<div id="nxPcs"><div class="nx-h2row"><h2 class="nx-h2">Your computers</h2><span class="nx-note">Checked by 365 PC Manager every hour</span></div>'
+          + '<div class="nx-pcs">' + d.machines.map(function (m) { return nxPc(d, m); }).join('') + '</div>';
+        // the full panel (recommendations, protection, 90-day trend, reports, the permission ledger) stays one tap away
+        if (ngPrimary) h += '<details class="nx-more"><summary>Full health details for ' + esc(ngPrimary.name) + '</summary>' + ngHero(d, ngPrimary)
+          + '<div class="nx-fb"><span id="pcmfb"><button class="sm ghost" id="pcmfbopen">Tell us what you think of 365 PC Manager</button></span></div></details>';
+        h += '</div>';
       } else {
-        // The install-the-app ask lives HERE, in the one place it has a reason
-        // to exist: a customer whose computers we cannot see yet. It used to be
-        // a separate "Quick browser check-up" card shown to EVERYONE - 280px of
-        // navigator chips followed by a paragraph explaining the chips were
-        // inadequate. If the card's own copy has to apologise for the card, the
-        // card is wrong.
-        h += '<div class="card"><h2>Your computers</h2>';
-        if (!d.machines.length) h += '<p class="quiet">None checking in yet. The free <a href="/free-pc-health-check/" target="_blank">365 PC Manager</a> app shows your computer\u2019s health here \u2014 drive, backup, battery, scams \u2014 and <strong>we install it for you</strong>.</p>'
-          + '<button class="sm" id="appreq"' + (d.appreq ? ' disabled' : '') + '>' + (d.appreq ? '\u2713 Requested - we\u2019ll be in touch' : '\u2b07 Install the app for me') + '</button>';
-        h += d.machines.map(machineRow).join('') + '</div>';
+        // the install-the-app ask lives only here, for a customer whose computers we cannot see yet
+        h += '<div class="card" id="nxPcs"><h2>Your computers</h2>'
+          + '<p class="quiet">None checking in yet. The free <a href="/free-pc-health-check/" target="_blank">365 PC Manager</a> app shows your computer&rsquo;s health here &mdash; drive, backup, battery, scams &mdash; and <strong>we install it for you</strong>.</p>'
+          + '<button class="sm" id="appreq"' + (d.appreq ? ' disabled' : '') + '>' + (d.appreq ? '&#10003; Requested &ndash; we&rsquo;ll be in touch' : 'Install the app for me') + '</button></div>';
       }
       h += tmStaffNote(d);
       h += tmCard(d);
-      h += '<div class="card"><h2>Your membership</h2><div class="row"><span class="pill ' + (d.tier === 'pro' ? 'pro">On 365 support' : 'free">365 member (free)') + '</span>'
-        + (d.next ? '<span>Next service: <strong>' + esc(d.next) + '</strong></span>' : '<span class="quiet">No service booked - <a href="#" id="cbbook">book one</a>.</span>') + '</div>';
+      var crsAll = null;
+      d.machines.forEach(function (m) { if (m.crs && (!crsAll || parseInt(m.crs, 10) > parseInt(crsAll.crs, 10))) crsAll = m; });
+      var nxPlan = '<div class="card"><p class="nx-k">Your plan</p>'
+        + '<p class="nx-big">' + (d.tier === 'pro' ? (d.plan === 'business' ? '365 Business support' : '365 Home support') : '365 Club &middot; free') + '</p>'
+        + '<p class="nx-line">' + (d.tier === 'pro' ? 'A full service every six weeks, written up each time.' : 'Free, for good. Book a visit whenever you need one.') + '</p>'
+        + (d.next ? '' : '<p class="nx-line">No service booked &mdash; <a href="#" id="cbbook">book one</a>.</p>');
       if (d.gc) {
-        h += d.gc.active
-          ? '<div class="row"><span class="big">\u00a3' + d.gc.amount.toFixed(2) + '</span><span>' + esc(d.gc.name) + ' by Direct Debit'
-            + (d.gc.nextchg ? ' \u00b7 next collection ' + esc(d.gc.nextchg) : '') + '</span></div>'
-            + (d.gc.lastdate ? '<p class="quiet">Last payment: \u00a3' + d.gc.lastamt.toFixed(2) + ' on ' + esc(d.gc.lastdate) + ' (' + esc(d.gc.laststatus) + ')</p>' : '')
+        nxPlan += d.gc.active
+          ? '<p class="nx-line">&pound;' + d.gc.amount.toFixed(2) + ' &middot; ' + esc(d.gc.name) + ' by Direct Debit' + (d.gc.nextchg ? ' &middot; next collection ' + esc(d.gc.nextchg) : '') + '</p>'
+            + (d.gc.lastdate ? '<p class="quiet">Last payment: &pound;' + d.gc.lastamt.toFixed(2) + ' on ' + esc(d.gc.lastdate) + ' (' + esc(d.gc.laststatus) + ')</p>' : '')
           : '<p class="quiet">No active Direct Debit found for this email.</p>';
       }
-      h += '</div>';
+      if (d.tier !== 'pro') nxPlan += '<p class="nx-line"><a href="/home-it-support-plans/" target="_blank" rel="noopener">See our support plans</a></p>';
+      nxPlan += '</div>';
+      var nxDet = '';
       /* Where we send an engineer and where the invoice goes. Shown only to the
          account holder - the server refuses a team member, so offering it to one
          would only be inviting a refusal. Never mandatory: plenty of our work is
@@ -4322,7 +4470,7 @@
         var A = d.addr || {}, P = d.phones || {};
         var hasA = !!(A.line1 || A.city || A.postcode);
         var hasP = !!(P.tel || P.mobile);
-        h += '<div class="card"><h2>\ud83c\udfe0 Your details</h2><div id="myaddr">'
+        nxDet = '<div class="card"><p class="nx-k">Your details</p><div id="myaddr">'
           + (hasA
              ? '<p class="addrshow">' + [A.line1, A.line2, A.city, A.postcode].filter(function (x) { return x && String(x).trim(); }).map(esc).join('<br>') + '</p>'
              : '<p class="quiet">We don’t have your address yet. Adding it saves us asking when we come out to you — and saves you a phone call when we invoice.</p>')
@@ -4342,13 +4490,19 @@
           + '<p><button class="btn sm ghost" id="addred">' + ((hasA || hasP) ? 'Change your details' : 'Add your details') + '</button></p>'
           + '</div></div>';
       }
+      var nxFree = '<div class="card"><p class="nx-k">' + (d.tier === 'pro' ? 'Free with your plan' : 'Free for members') + '</p><div class="nx-links">'
+        + '<a href="/free-tools/" target="_blank" rel="noopener">Free courses' + (crsAll && crsAll.crs ? ' &middot; ' + esc(crsAll.crs.split('/')[0]) + ' of ' + esc(crsAll.crs.split('/')[1] || '11') + ' done' : ', at your own pace') + '</a>'
+        + '<button type="button" class="nx-link" id="qwifi">Check your WiFi, room by room</button>'
+        + '<button type="button" class="nx-link" id="qdash">Your dashboard studio</button>'
+        + '</div></div>';
+      h += '<div class="nx-trio">' + nxPlan + nxDet + nxFree + '</div>';
       // Saved site surveys belong to the account, not to an individual employee, and
       // the server refuses them for a company staff member - so showing this card to
       // one would only be inviting a refusal.
       // Broadband: the six-weekly service speed test, logged per visit from 365 PC
       // Manager (Service tab, "Test my broadband"). A line speed is a property of the
       // premises, so team members see it too. Only shown once there is a reading.
-      h += '<div class="card" id="mybb-card" hidden><h2>\ud83c\udf10 Your broadband</h2><div id="mybb"><p class="quiet">Loading…</p></div>'
+      h += '<div class="card" id="mybb-card" hidden><h2>Your broadband</h2><div id="mybb"><p class="quiet">Loading…</p></div>'
         + '<p class="quiet">Measured on this connection at each service visit from <strong>365 PC Manager</strong> (Service tab \u2192 Test my broadband), so we can tell a line that has slowed from a PC that has. Wired-to-router readings are the honest line figure; Wi-Fi readings measure your Wi-Fi.</p></div>';
       /* Invoices, read from our accounts system. Account holder only - billing
          is theirs, and the server refuses a team member outright. The card stays
@@ -4356,35 +4510,20 @@
          one invoice, so a customer who has never been invoiced is not shown an
          empty ledger. */
       if (!d.member)
-        h += '<div class="card" id="myinv-card" hidden><h2>\ud83e\uddfe Your invoices</h2><div id="myinv"><p class="quiet">Loading…</p></div></div>';
+        h += '<div class="card" id="myinv-card" hidden><h2>Your invoices</h2><div id="myinv"><p class="quiet">Loading…</p></div></div>';
       if (!(d.member && !tmIsBoss()))
-      h += '<div class="card"><h2>📶 Your WiFi surveys</h2><div id="mywifi"><p class="quiet">Loading…</p></div>'
+      h += '<div class="card"><h2>Your WiFi surveys</h2><div id="mywifi"><p class="quiet">Loading…</p></div>'
         + '<p class="quiet">Surveys you save from our free <a href="/wifi-signal-test/" target="_blank" rel="noopener">WiFi Optimizer</a> live here on your account — rooms, history and photos — so you can restore them on any device and our team can see them when they help you. '
         + '<label style="display:inline;color:var(--psoft);cursor:pointer;text-decoration:underline">Upload a survey file<input type="file" id="mywifi-up" accept=".json,application/json" hidden /></label></p></div>';
       // The playable dashboard. Free for every member, sample data, and the card says
       // "sample" before it says anything else - see the note above ovDash().
-      h += '<div class="card"><h2>\ud83c\udf9b Your dashboard'
+      h += '<div class="card"><h2>Your dashboard'
         + (d.tier === 'pro' ? ' <span class="pill pro" style="font-size:.68rem">' + (d.plan === 'business' ? 'Business' : 'Home') + ' \u00b7 included</span>'
                             : ' <span class="pill free" style="font-size:.68rem">Free to play with</span>') + '</h2>'
         + '<div id="dsCard"><p class="quiet">Loading\u2026</p></div>'
         + '<p class="quiet">One screen for the things you would otherwise open five apps to check. Tiles marked <strong>live</strong> read your own account; '
         + 'the rest are samples of what we could connect &mdash; and making one of those real is a build we quote for, after checking it can actually be read.</p></div>';
-      // the learning card renders for EVERY member from day one - /join/ promises the
-      // every free course, so a brand-new member's dashboard must visibly deliver them
-      var crsAll = null;
-      d.machines.forEach(function (m) { if (m.crs && (!crsAll || parseInt(m.crs, 10) > parseInt(crsAll.crs, 10))) crsAll = m; });
-      if (crsAll && crsAll.crs) {
-        var done = crsAll.crs.split('/')[0], tot = crsAll.crs.split('/')[1] || '11';
-        h += '<div class="card"><h2>\ud83c\udf93 Your 365 learning</h2>'
-          + '<p class="quiet" style="margin:0 0 .3rem"><strong style="color:var(--pwhite)">' + esc(done) + ' of ' + esc(tot) + '</strong> free courses completed'
-          + (parseInt(done, 10) > 0 && crsAll.crst ? ' - well done!' : '') + '</p>'
-          + (crsAll.crst ? '<div class="chips">' + crsAll.crst.split('|').map(function (t) { return '<span class="chip g">\u2713 ' + esc(t) + '</span>'; }).join('') + '</div>' : '')
-          + '<p class="quiet">Carry on inside 365 PC Manager (Learn tab) or <a href="/free-tools/" target="_blank" rel="noopener">our free courses online</a>.</p></div>';
-      } else {
-        h += '<div class="card"><h2>\ud83c\udf93 Your 365 learning</h2>'
-          + '<p class="quiet" style="margin:0 0 .3rem">Every one of our <strong style="color:var(--pwhite)">free courses</strong> is yours - stay safe online, master video calls, get more from your tech. At your own pace, with a printable certificate at the end of each.</p>'
-          + '<p class="quiet"><a href="/online-safety-course/" target="_blank" rel="noopener">Start with online safety</a> \u00b7 <a href="/free-tools/" target="_blank" rel="noopener">see all the courses</a></p></div>';
-      }
+      // (the learning card is now a line in the "Free with your plan" card above)
       if (d.fam) h += '<div class="card"><h2>Family view</h2><p class="quiet">\u2713 Shared with ' + esc(d.fam) + ' - manage it from the app on your PC.</p></div>';
       // WEBSITE PROJECTS - now a single slim strip, per the 2026-08-01 audit
       // (the full journey timeline was ~1,700px of marketing on a service page,
@@ -4398,14 +4537,14 @@
       // be clutter for the many to explain a feature to the few. The prompt to
       // go and save one lives inside the projects card's footer instead, where
       // there is a reason to care.
-      h += '<div class="card" id="wchkCard" hidden><h2>\ud83d\udcc8 Your saved website checks</h2>'
+      h += '<div class="card" id="wchkCard" hidden><h2>Your saved website checks</h2>'
         + '<div id="wchk"></div></div>';
-      h += unlockCard(d);
+      if (d.tier !== 'pro') h += unlockCard(d);   // plan customers already have it all - no need to list it back to them
       // Established members get a gentle, UNCONDITIONAL review ask (never shown to a
       // brand-new joiner, who has nothing to review yet). Reviews are the strongest
       // owner-controllable local-pack signal; the portal is a touchpoint the email
       // can't reach. No incentive is offered - that would be unlawful.
-      if (!freshJoiner) h += '<div class="card"><h2>\u2b50 Happy with us?</h2>'
+      if (!freshJoiner) h += '<div class="card nx-review"><h2>Happy with us?</h2>'
         + '<p class="quiet" style="margin:0 0 .55rem">A quick Google review takes about thirty seconds, and it is genuinely how other local people find a firm that answers the phone. We read every single one.</p>'
         + '<div class="row" style="border:0"><a class="btn sm" href="/leave-a-review/" target="_blank" rel="noopener">Leave a review</a>'
         + '<a class="btn sm ghost" href="/refer-a-friend/" target="_blank" rel="noopener">Recommend us to a friend</a></div>'
@@ -4430,6 +4569,15 @@
       if (qd) qd.onclick = ovDash;
       var qs = document.getElementById('qsos');
       if (qs) qs.onclick = ovSos;
+      var nxRm = false; try { nxRm = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+      var qm = document.getElementById('qmsg');
+      if (qm) qm.onclick = function () {
+        var mc = document.getElementById('msgCard'); if (!mc) return;
+        mc.scrollIntoView({ behavior: nxRm ? 'auto' : 'smooth', block: 'start' });
+        var tx = document.getElementById('msgText'); if (tx) setTimeout(function () { try { tx.focus({ preventScroll: true }); } catch (e) {} }, 450);
+      };
+      var qr = document.getElementById('qreps');
+      if (qr) qr.onclick = function () { var pc = document.getElementById('nxPcs'); if (pc) pc.scrollIntoView({ behavior: nxRm ? 'auto' : 'smooth', block: 'start' }); };
       var cs = document.getElementById('cbsos');
       if (cs) cs.onclick = ovSos;
       if (ngPrimary) ngAnim(ngPrimary);
@@ -4886,7 +5034,7 @@
   })();
   function renderBookings(list) {
     var box = document.getElementById('mybk'); if (!box) return;
-    if (!list.length) { box.innerHTML = '<p class="quiet">No upcoming visits booked. Tap \u201cBook a service\u201d and we\u2019ll come to you.</p>'; return; }
+    if (!list.length) { box.innerHTML = '<p class="quiet">No visits booked yet. Use <strong>Book a visit</strong> and we&rsquo;ll come to you, or help remotely.</p>'; return; }
     // A company staff member cannot move or cancel the firm's bookings - the
     // server refuses it. Showing them buttons that walk them into a failure
     // is worse than telling them who can, before they press anything.
@@ -5302,6 +5450,7 @@
     post(BK, { action: 'soslist', stoken: S.stoken, machine: mid() }).then(function (d) {
       if (!d || !d.ok) return;
       var list = d.codes || [];
+      nxKpi('kSos', list.length);
       if (!list.length) { card.style.display = 'none'; box.innerHTML = ''; return; }
       var h = '<p class="quiet" style="margin:.1rem 0 .6rem">Typed into the portal by the customer \u2014 enter it in your Splashtop Business app. Codes expire after 15 minutes.</p>';
       list.forEach(function (c) {
@@ -5386,6 +5535,73 @@
     go();
   }
 
+  // ---------- 27 Sep 2026 refresh: staff tabs + today at a glance ----------
+  // showStaff() builds exactly the cards it always did; this MOVES them into tab panels afterwards, so every id and
+  // handler is untouched. A card this does not know about stays visible on Today rather than vanishing.
+  function nxKpi(id, n) {
+    var e = document.getElementById(id); if (!e) return;
+    var b = e.querySelector('b'); if (b) b.textContent = n;
+    e.classList.toggle('nx-kpi--on', n > 0);
+  }
+  function nxKpiVisits() {
+    var e = document.getElementById('kVis'); if (!e) return;
+    var td = todayIso(), today = (AG || []).filter(function (b) { return b.d === td; });
+    var done = today.filter(function (b) { return b.st === 'completed'; }).length;
+    nxKpi('kVis', today.length);
+    var sp = e.querySelector('span'); if (sp) sp.textContent = 'visits today' + (done ? ' · ' + done + ' done' : '');
+  }
+  function nxStaffLayout() {
+    var root = el; if (!root) return;
+    nxWhere('Staff area');
+    function cardOf(id) { var n = document.getElementById(id); return n ? (n.classList.contains('card') ? n : n.closest('.card')) : null; }
+    var diary = cardOf('dday'), sos = cardOf('sosqcard'), invq = cardOf('invqcard'), worth = cardOf('worthcall'), fleet = cardOf('ffleet'),
+        act = cardOf('ab'), qbo = cardOf('qbosetup'), invp = cardOf('inviteplans'), geo = cardOf('geocard'), quick = cardOf('pcmadm'), live = cardOf('vislive'), lic = null;
+    Array.prototype.forEach.call(root.querySelectorAll('.card > h2'), function (h2) { if (/PC Manager licences/.test(h2.textContent)) lic = h2.parentNode; });
+    var TABS = [['today', 'Today'], ['customers', 'Customers'], ['computers', 'Computers'], ['invoices', 'Invoices'], ['setup', 'Setup']];
+    var bar = document.createElement('div'); bar.className = 'nx-sbar';
+    bar.innerHTML = '<nav class="nx-stabs" aria-label="Staff sections">' + TABS.map(function (x) { return '<button type="button" class="nx-stab" data-tab="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</nav><div class="nx-cons"></div>';
+    var kp = document.createElement('div'); kp.className = 'nx-kpis';
+    kp.innerHTML = [['kVis', 'visits today', 'today'], ['kSos', 'SOS codes waiting', 'today'], ['kPcs', 'computers worth a call', 'today'], ['kInv', 'jobs in the last 30 days', 'invoices']]
+      .map(function (k) { return '<button type="button" class="nx-kpi" id="' + k[0] + '" data-go="' + k[2] + '"><b>&ndash;</b><span>' + k[1] + '</span></button>'; }).join('');
+    var panels = {};
+    TABS.forEach(function (x) { var p = document.createElement('section'); p.className = 'nx-panel'; p.setAttribute('data-tab', x[0]); p.setAttribute('aria-label', x[1]); panels[x[0]] = p; });
+    var grid = document.createElement('div'); grid.className = 'nx-today';
+    var colA = document.createElement('div'), colB = document.createElement('div');
+    grid.appendChild(colA); grid.appendChild(colB);
+    panels.today.appendChild(kp); panels.today.appendChild(grid);
+    if (diary) colA.appendChild(diary);
+    [sos, worth].forEach(function (c) { if (c) colB.appendChild(c); });
+    [lic, act].forEach(function (c) { if (c) panels.customers.appendChild(c); });
+    if (fleet) panels.computers.appendChild(fleet);
+    if (invq) panels.invoices.appendChild(invq);
+    [qbo, invp, geo, live].forEach(function (c) { if (c) panels.setup.appendChild(c); });
+    // the consoles are used every day, so their buttons ride in the tab bar instead of a card at the bottom
+    if (quick) {
+      var cons = bar.querySelector('.nx-cons');
+      Array.prototype.slice.call(quick.querySelectorAll('.row > a, .row > button')).forEach(function (b) { cons.appendChild(b); });
+      if (quick.parentNode) quick.parentNode.removeChild(quick);
+    }
+    var top = root.querySelector('.ptop'), anchor = top ? top.nextSibling : root.firstChild;
+    root.insertBefore(bar, anchor);
+    TABS.forEach(function (x) { root.insertBefore(panels[x[0]], anchor); });
+    Array.prototype.slice.call(root.children).forEach(function (c) { if (c.classList && c.classList.contains('card')) panels.today.appendChild(c); });
+    function show(tab) {
+      TABS.forEach(function (x) { panels[x[0]].hidden = x[0] !== tab; });
+      Array.prototype.forEach.call(bar.querySelectorAll('.nx-stab'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-tab') === tab ? 'true' : 'false'); });
+      try { sessionStorage.setItem('p365tab', tab); } catch (e) {}
+    }
+    Array.prototype.forEach.call(bar.querySelectorAll('.nx-stab'), function (b) { b.onclick = function () { show(b.getAttribute('data-tab')); }; });
+    Array.prototype.forEach.call(kp.querySelectorAll('.nx-kpi'), function (b) {
+      b.onclick = function () {
+        var go = b.getAttribute('data-go');
+        if (go !== 'today') { show(go); return; }
+        var tg = b.id === 'kSos' ? sos : (b.id === 'kPcs' ? worth : diary);
+        if (tg && tg.offsetParent) tg.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      };
+    });
+    var t0 = 'today'; try { t0 = sessionStorage.getItem('p365tab') || 'today'; } catch (e) {}
+    show(panels[t0] ? t0 : 'today');
+  }
   function showStaff() {
     el.innerHTML = topRow('365 staff') + '<p class="lede">Loading\u2026</p>';
     bindOut();
@@ -5420,7 +5636,7 @@
          agreed", and PC Manager services on non-plan customers, with each one's invoice
          raised for review. First card on purpose: it is the money. */
       h += '<div class="card" id="invqcard" style="border-left:4px solid var(--pwarn)"><h2>\ud83e\uddfe This month\u2019s jobs \u2192 invoices</h2>'
-        + '<p class="quiet" style="margin:.1rem 0 .6rem">Every job from the last 30 days \u2014 the \u201cNew Job In\u201d posts in #sos-jobs-in-out, the console\u2019s \u201cQuote agreed\u201d, and services run through 365 PC Manager for people not on a plan \u2014 and where its invoice stands. Three steps for each: 1 raise the invoice, 2 check the PDF, 3 approve &amp; send \u2014 every row shows the step it is on and the button for it. The service drop-down is your QuickBooks Products &amp; Services list: pick one and its description and list price go on the invoice; a Slack job type that matches a service name does the same by itself. Invoices are raised for you; nothing is sent until you check the PDF and approve it.</p>'
+        + '<details class="nx-how"><summary>How this works</summary><p class="quiet" style="margin:.4rem 0 .6rem">Every job from the last 30 days \u2014 the \u201cNew Job In\u201d posts in #sos-jobs-in-out, the console\u2019s \u201cQuote agreed\u201d, and services run through 365 PC Manager for people not on a plan \u2014 and where its invoice stands. Three steps for each: 1 raise the invoice, 2 check the PDF, 3 approve &amp; send \u2014 every row shows the step it is on and the button for it. The service drop-down is your QuickBooks Products &amp; Services list: pick one and its description and list price go on the invoice; a Slack job type that matches a service name does the same by itself. Invoices are raised for you; nothing is sent until you check the PDF and approve it.</p></details>'
         + '<div id="invq"><p class="quiet">Checking QuickBooks\u2026</p></div></div>';
       h += '<div class="card" style="border-left:4px solid var(--pwarn)"><h2>\ud83d\udcde Worth a call today</h2>'
         + '<p class="quiet" style="margin:.1rem 0 .6rem">The PCs that could do with a friendly call \u2014 ranked by what needs attention. Proactive care, before they even ring us.</p>'
@@ -5462,19 +5678,21 @@
         + '<p class="quiet">Everything opens in a new tab - this page stays put. The consoles sign in with your staff session, no passphrase. Comms inbox = voicemails + texts, threaded per customer; AI pipeline = every AI enquiry from /ai/.</p></div>';
       h += '<div class="card"><h2>\ud83c\udf10 Live on the sites</h2><div id="vislive" class="quiet">Loading\u2026</div>'
         + '<p class="quiet" style="margin-top:.5rem">Cookieless first-party count, refreshed every 30s \u2013 visitors active in the last 5 minutes, what they\u2019re reading and roughly where from.</p></div>';
-      h += '<div class="card"><h2>PC Manager licences</h2><div class="tblwrap"><table><tr><th>Customer</th><th>Plan</th><th>PCs</th><th>Health</th><th>Seen</th><th>App</th><th></th></tr>';
+      h += '<div class="card"><h2>PC Manager licences</h2><div class="tblwrap"><table><tr><th>Customer</th><th>Plan</th><th>PCs</th><th>Worst PC</th><th>Seen</th><th>App</th><th></th></tr>';
       (d.customers || []).sort(function (a, b) { return (b.seen || '').localeCompare(a.seen || ''); }).forEach(function (c) {
-        h += '<tr><td><strong>' + esc(c.name) + '</strong>' + (c.fam ? ' \ud83d\udc6a' : '') + '<br /><span class="quiet mono" id="kv' + esc(c.id) + '">' + esc(c.keymask) + '</span> <button class="sm ghost kb" data-cid="' + esc(c.id) + '" title="Show + copy their activation key">\ud83d\udd11</button> <button class="sm ghost vw" data-cid="' + esc(c.id) + '" title="View the portal as this customer">\ud83d\udc41</button></td>'
+        h += '<tr><td><strong>' + esc(c.name) + '</strong>' + (c.fam ? ' \ud83d\udc6a' : '') + '<br /><span class="quiet mono" id="kv' + esc(c.id) + '">' + esc(c.keymask) + '</span> <button class="sm ghost kb" data-cid="' + esc(c.id) + '" title="Show + copy their activation key">\ud83d\udd11 Key</button> <button class="sm ghost vw" data-cid="' + esc(c.id) + '" title="View the portal as this customer">\ud83d\udc41 View as</button></td>'
           + '<td><span class="pill ' + (c.tier === 'pro' ? 'pro">Pro' : 'free">Free') + '</span></td>'
           + '<td>' + c.pcs + '</td>'
           + '<td>' + (c.worst < 0 ? '\u2014' : '<span class="' + (c.worst >= 80 ? 'ok' : 'wn') + '">' + c.worst + '%</span>') + '</td>'
           + '<td>' + seenTxt(c.seen) + '</td>'
           + '<td>' + (c.ver ? 'v' + c.ver : '\u2014') + '</td>'
-          + '<td style="white-space:nowrap"><button class="sm ghost tf" data-cid="' + esc(c.id) + '" data-to="' + (c.tier === 'pro' ? 'free' : 'pro') + '" data-nm="' + esc(c.name) + '">\u2192 ' + (c.tier === 'pro' ? 'Free' : 'Pro') + '</button> <button class="sm ghost xd" data-cid="' + esc(c.id) + '" data-nm="' + esc(c.name) + '" data-pcs="' + c.pcs + '" title="Delete this record" style="color:var(--pbad)">\u2715</button></td></tr>';
+          + '<td style="white-space:nowrap"><button class="sm ghost tf" data-cid="' + esc(c.id) + '" data-to="' + (c.tier === 'pro' ? 'free' : 'pro') + '" data-nm="' + esc(c.name) + '">\u2192 ' + (c.tier === 'pro' ? 'Free' : 'Pro') + '</button> <button class="sm ghost xd" data-cid="' + esc(c.id) + '" data-nm="' + esc(c.name) + '" data-pcs="' + c.pcs + '" title="Delete this record" style="color:var(--pbad)">\u2715 Delete</button></td></tr>';
       });
       h += '</table></div></div>';
+      el.classList.remove('nx-narrow');
       el.innerHTML = h;
       bindOut();
+      nxStaffLayout();
       function loadVis() {
         fetch('/api/visitors.php', { method: 'POST', headers: { 'Content-Type': 'application/json' },
                body: JSON.stringify({ stoken: S.stoken, machine: mid() }) })
@@ -5613,6 +5831,7 @@
         return;
       }
       AG = d.bookings || [];
+      nxKpiVisits();
       if (!selDay) selDay = todayIso();
       buildStrip(); renderDay(selDay);
       startDiaryPoll();
@@ -5919,6 +6138,7 @@
   var INVQ_WHY = { no_email: 'needs an email address \u2014 type it here, or add it to the Slack post or its thread and it will pick it up', bad_email: 'that email address doesn\u2019t look right', no_desc: 'needs a description of the work', large: 'over \u00a32,000 \u2014 raise this one by hand in QuickBooks', no_amount: 'no price yet', invoiced_in_slack: 'marked invoiced in Slack \u2014 left alone' };
   function renderInvq(box, r) {
     var jobs = r.jobs || [], waiting = r.waiting || [], older = r.older || [];
+    nxKpi('kInv', jobs.length);
     var note = (r.stale ? '<p class="quiet">QuickBooks didn\u2019t answer just now \u2014 this is the last picture it gave us.</p>' : '')
       + (r.live === false ? '<p class="quiet">\u26a0 QuickBooks is in dry-run on the server, so invoices can\u2019t be raised from here yet.</p>' : '')
       + (r.only_key ? '<p class="quiet">\u26a0 QuickBooks is limited to one test customer on the server (QBO_ONLY_KEY), so nothing is raised automatically yet.</p>' : '');
@@ -6809,6 +7029,7 @@
     var box = document.getElementById('worthcall'); if (!box) return;
     var items = (FLEET || []).filter(function (m) { return !m.fresh && attentionScore(m) > 0; })
       .sort(function (a, b) { return attentionScore(b) - attentionScore(a); }).slice(0, 12);
+    nxKpi('kPcs', items.length);
     if (!items.length) { box.innerHTML = '<p class="quiet">\u2713 All quiet - every PC with the app looks healthy. Nothing needs a call today. \ud83c\udf89</p>'; return; }
     var hh = '';
     items.forEach(function (m) {
