@@ -21669,17 +21669,17 @@ def pay_page():
       </div>
     </section>'''
     content = "\n".join([
-      hero(bc("Pay Us"), "// PAYING US IS SIMPLE",
-           'A simple, safe way to <em class="grad grad--cyan">pay us</em>',
-           "Thank you for choosing a small family business. The price is always agreed <strong>before</strong> the work starts, you never need an account or an app, and if you&rsquo;d rather sort it together we&rsquo;re one phone call away.",
-           cta1=("Call 01202 775566", "tel:+441202775566"), cta2=("Ways to pay below", "#ways"),
-           chips=["Price agreed before work starts", "No account or app needed", "Real people if you need us"]),
+      # 27 Sep 2026 task-first pass: the ways to pay on the first screen, under a short heading
+      bp.task_head(bc("Pay Us"), 'A simple, safe way to <em class="grad grad--cyan">pay us</em>',
+           "Thank you for choosing a small family business. The price is always agreed <strong>before</strong> the work starts, you never need an account or an app, and if you&rsquo;d rather sort it together we&rsquo;re one phone call away on <a href=\"tel:+441202775566\">01202 775566</a>.",
+           trust=["Price agreed before work starts", "No account or app needed", "Real people if you need us"]),
       f'''    <section class="section" aria-label="Ways to pay" id="ways">
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// WAYS TO PAY</p>
           <h2 class="section-title section-title--center" data-title>Choose whichever suits you<span class="title-underline title-underline--center"></span></h2>
         </div>
+        <style>#ways .section-head{{margin-bottom:1.1rem}} #ways .section-title{{font-size:clamp(1.6rem,3vw,2.2rem)}}</style>
         <div class="split-2">
 {tiles_html}
         </div>
@@ -21716,9 +21716,6 @@ def pay_page():
       </div>
     </section>''',
       faq_html(faqs),
-      cta("Anything unclear? Just ask.",
-          "A real, friendly person will help you pay in whichever way suits you &mdash; no rush, no jargon, no silly questions.",
-          primary=("Call 01202 775566", "tel:+441202775566"), secondary=("Text 07520 615332", "sms:+447520615332")),
     ])
     def schema(s, _desc=desc, _faqs=faqs):
         return graph([crumb(s, "Pay Us"), webpage(s, "Pay 365 Techies", _desc), faqpage(s, _faqs)])
