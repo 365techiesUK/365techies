@@ -171,6 +171,10 @@ api/broadband-compare-rate.json.tmp
 # Street Manager: the Cloudflare Worker read token, the polled cache and
 # the rate counter. The Worker receives the SNS push; this side only reads.
 api/street-manager-key.php
+# Live visitors (visitors-live-worker.js): the Worker address + read token, and the 90 s shared cache
+api/visitors-key.php
+api/visitors-cache.json
+api/visitors-cache.json.tmp
 api/street-manager-cache.json
 api/street-manager-cache.json.tmp
 api/street-manager-rate.json
