@@ -81,7 +81,11 @@
   // watching 2.4: "can we have bigger waves?" -> 3. Same break line and rhythm (six dives in 35 s), taller walls of
   // whitewater before each dive. Beyond 3 would mean changing the game itself.
   var SURF = Math.max(1, Math.min(3, +(q.get('surf') || 3)));
-  f.src = './?clean=1&sound=0&mode=surfer&surf=' + SURF;
+  // ?film=0 - a DIAGNOSTIC (27 Sep): time the game's plain start (free ride, the eFoil demo, the default sea - the
+  // first version of this test) instead of the surf film, to tell "this scene is heavy" from "this PC's graphics are
+  // slow". The DELL3520 drew the surf film at 4-5 frames a second at 3x AND at 2.4x.
+  var FILM = q.get('film') !== '0';
+  f.src = FILM ? './?clean=1&sound=0&mode=surfer&surf=' + SURF : './?clean=1&sound=0';
   var t0 = performance.now();
   var scene = 'attract';
 
@@ -266,8 +270,8 @@
       var tf = performance.now();
       return (function tryFilm() {
         var ready = false;
-        try { ready = !!(w.efoil && w.efoil.craft && w.efoil.craft.hull && w.efoil.sim && w.efoilSurfer && w.efoilSurfer.active); } catch (e) { ready = false; }
-        if (ready) { try { if (film(w)) scene = 'surf'; } catch (e) { scene = 'attract'; } }
+        try { ready = !!(w.efoil && w.efoil.craft && w.efoil.craft.hull && w.efoil.sim && (!FILM || (w.efoilSurfer && w.efoilSurfer.active))); } catch (e) { ready = false; }
+        if (ready && FILM) { try { if (film(w)) scene = 'surf'; } catch (e) { scene = 'attract'; } }
         if (!ready && performance.now() - tf < 15000) return setTimeout(tryFilm, 250);
         if (scene === 'surf') setTimeout(function () { try { w.__bench.C.roll(); } catch (e) { } }, WARM - 1000);
         setTimeout(function () { measure(w); }, WARM);
