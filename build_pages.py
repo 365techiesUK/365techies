@@ -1603,6 +1603,36 @@ def hero(crumbs_html, eyebrow, h1_html, lede, cta1=("See Plans &amp; Prices", "/
 def bc(name):
     return f'<a href="/">Home</a> <span>/</span> <span aria-current="page">{name}</span>'
 
+# 27 Sep 2026: TASK pages (book, contact, prices, plans, pay) open with this compact heading and put the task itself
+# straight under it. The intent-first hero kept each page's own sections underneath, which on a task page pushed the
+# task further down (plans 6,919 px down on a phone). Same breadcrumb, H1 and byline as hero(); no buttons, no tiles.
+def task_head(crumbs_html, h1_html, lede, trust=None):
+    trust = trust or ['<a href="/reviews/">&#9733; Rated 4.9 on Google</a>', "Family-run since 1995", "Cancel anytime"]
+    tr = "".join(f"<span>{x}</span>" for x in trust)
+    return f"""    <section class="taskhead" aria-label="Introduction">
+      <div class="wrap"><div class="taskhead__in">
+        <nav class="breadcrumb" aria-label="Breadcrumb">{crumbs_html}</nav>
+        <h1 class="taskhead__h">{h1_html}</h1>
+        <p class="taskhead__lede">{lede}</p>
+        <p class="taskhead__trust mono">{tr}</p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
+      </div></div>
+      <style>
+        .taskhead{{padding:calc(var(--header-h) + var(--ticker-h) + 1.5rem) var(--pad-x) 0}}
+        .taskhead__in{{max-width:1180px;margin:0 auto}}
+        .taskhead .breadcrumb{{margin:0 0 .9rem}}
+        .taskhead__h{{font-family:var(--font-display);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);line-height:1.06;margin:0 0 .6rem}}
+        .taskhead__lede{{color:var(--muted);font-size:1.06rem;line-height:1.55;margin:0 0 .75rem;max-width:48rem}}
+        .taskhead__lede a{{color:var(--cyan-soft)}}
+        .taskhead__trust{{display:flex;flex-wrap:wrap;gap:.35rem 1.2rem;margin:0;font-size:.8rem;letter-spacing:.03em;color:#9fb5d3}}
+        .taskhead__trust a{{color:#9fb5d3;text-decoration:none}}
+        .taskhead .page-hero__byline{{margin-top:.55rem}}
+        .taskhead + .section{{padding-top:2rem}}
+        .taskmore{{text-align:center;margin:0 auto;padding:0 var(--pad-x) 2.6rem;color:var(--muted);font-size:.95rem;line-height:1.7;max-width:62rem}}
+        .taskmore a{{color:var(--cyan-soft)}}
+      </style>
+    </section>"""
+
 def bc_sub(parent_name, parent_href, name):
     return f'<a href="/">Home</a> <span>/</span> <a href="{parent_href}">{parent_name}</a> <span>/</span> <span aria-current="page">{name}</span>'
 
@@ -5248,53 +5278,13 @@ add(
    ]),
  ]),
  content="\n".join([
-   hero(bc("Monthly IT Support"), "// MONTHLY SUBSCRIPTIONS",
-        'Monthly IT support <em class="grad grad--cyan">subscriptions</em>',
-        hero_trust("Reliable monthly IT support for homes and businesses — remote help, regular maintenance, security checks and friendly technical support whenever you need it. £18.25 a month per computer, cancel anytime."),
-        cta1=("See Plans &amp; Prices", "#plans"), cta2=("Call 01202 775566", "tel:+441202775566"),
-        chips=["&pound;18.25/mo per computer", "Full service every 6 weeks", "Cancel anytime"], scene=HERO_SCENES.get("how3")),
-   uk_remote_band(alt=True),
-   f'''    <section class="section" aria-label="What is monthly IT support">
-      <div class="wrap split-2">
-        <div class="prose" data-reveal>
-          <p class="eyebrow mono">/01 — THE IDEA</p>
-          <h2 class="section-title" data-title>Stop waiting for things to break<span class="title-underline"></span></h2>
-          <p>Many people only call for IT help once something has already gone wrong — a slow laptop, a hacked email, a printer that won&rsquo;t play ball. By then it&rsquo;s stressful, urgent and often more expensive to fix.</p>
-          <p><strong>Monthly IT support flips that around.</strong> For one predictable monthly cost you get regular maintenance, security checks, software updates and a friendly techie on hand. Problems are caught early or never happen at all.</p>
-          <p>And you can <em>see</em> it working: our free <a href="/free-pc-health-check/">365 PC Manager app</a> sits quietly in your tray showing your PC&rsquo;s live health score. On a plan it also carries your service reminders, your written reports and one-tap help.</p>
-        </div>
-        <ul class="checklist" data-stagger>
-{checklist(["Unlimited remote support","Full computer service every 6 weeks","Written Service Report after every service","Antivirus &amp; web protection","Windows &amp; software updates","Microsoft 365 help","Security &amp; backup checks","Priority response","One predictable monthly cost"])}
-        </ul>
-      </div>
-    </section>''',
-   f'''    <section class="section section--alt" aria-label="Who it is for">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/02 — WHO IT&rsquo;S FOR</p>
-          <h2 class="section-title section-title--center" data-title>Built for homes and growing businesses<span class="title-underline title-underline--center"></span></h2>
-        </div>
-        <div class="tile-grid" data-stagger>
-{tiles([("home","Home users &amp; families","Friendly, patient help for everyday computers, laptops, printers and online accounts."),("user","Home workers","Keep email, Microsoft 365, Wi-Fi and devices working so you can stay productive at home."),("briefcase","Sole traders","Affordable cover so your computer, email and cloud systems just keep working."),("users","Small businesses","Like having your own IT department — without the cost of employing IT staff."),("bolt","Growing businesses","Scalable support, onboarding, security planning and technology advice as you grow."),("clock","Retired users","Unhurried, jargon-free help with laptops, email, photos, scams and online safety.")])}
-        </div>
-      </div>
-    </section>''',
-   f'''    <section class="section" aria-label="What is included">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/03 — EVERY MONTH</p>
-          <h2 class="section-title section-title--center" data-title>What&rsquo;s included every month<span class="title-underline title-underline--center"></span></h2>
-        </div>
-        <ul class="security-grid" data-stagger>
-{grid_cards([("Regular maintenance","A full computer service every six weeks to keep devices fast, clean and healthy. Each one ends with a <a href=\"/free-pc-health-check/#six-weekly-service\">written Service Report</a>, emailed to you and saved in your portal: what we did, how the machine scored, what to plan for."),("Unlimited remote support","Secure help over Splashtop SOS, usually within minutes during opening hours."),("Security &amp; protection","Antivirus, web protection, patching and a real human to ask &lsquo;is this email safe?&rsquo;"),("Microsoft 365 help","Outlook, Teams, OneDrive and licensing — set up and kept working for you."),("Backup checks","Backups verified regularly &mdash; and we can text you a reminder to plug in your backup drive when one&rsquo;s due."),("Friendly advice","Plain-English guidance on new devices, software and staying safe online."),("Our loyalty promise","Once you&rsquo;re up and running we keep it that way &mdash; and if a fault ever does crop up, any work you need is <strong>discounted</strong> because you&rsquo;re on support.")])}
-        </ul>
-        <p class="mono" style="text-align:center;margin-top:1.6rem"><a href="/preventative-maintenance/" style="color:var(--cyan)">See exactly what our 6-weekly preventative maintenance includes &#8594;</a></p>
-      </div>
-    </section>''',
+   # 27 Sep 2026 task-first pass: the plans straight under a short heading (they were 6,919 px down on a phone)
+   task_head(bc("Monthly IT Support"), 'Monthly IT support <em class="grad grad--cyan">subscriptions</em>',
+        "Reliable monthly IT support for homes and businesses: remote help, regular maintenance, security checks and a friendly techie whenever you need one, from &pound;18.25 a month per computer. We visit across Bournemouth, Poole and Dorset, and <a href=\"/remote-it-support/\">help remotely</a> anywhere in the UK."),
    f'''    <section class="section section--alt" id="plans" aria-label="Home or business">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/04 — CHOOSE YOUR PATH</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>// PICK A PLAN</p>
           <h2 class="section-title section-title--center" data-title>Home or business support<span class="title-underline title-underline--center"></span></h2>
         </div>
         <style>
@@ -5305,6 +5295,8 @@ add(
         #plans .plan-card--home.is-featured .plan-card__tag{{color:var(--green)}}
         #plans .plan-card--business.is-plain{{border:1px solid rgba(125,170,220,.16);background:linear-gradient(165deg,rgba(13,27,52,.72),rgba(7,15,32,.82));box-shadow:var(--shadow-2)}}
         #plans .plan-card--business.is-plain .plan-card__tag{{color:var(--cyan)}}
+        #plans .section-head{{margin-bottom:1.2rem}}
+        #plans .section-title{{font-size:clamp(1.7rem,3.2vw,2.3rem)}}
         </style>
         <div class="plan-grid">
           <article class="plan-card plan-card--home is-featured" data-reveal>
@@ -5342,31 +5334,28 @@ add(
         <p class="plans-note mono" data-reveal>// NO LOCK-IN &middot; CANCEL ANYTIME &middot; FULL COMPUTER SERVICE EVERY 6 WEEKS &middot; LOYALTY DISCOUNT ON ANY FAULT WORK</p>
       </div>
     </section>''',
-   f'''    <section class="section" aria-label="Why subscription saves money">
-      <div class="wrap split-2 split-2--flip">
-        <ul class="checklist" data-stagger>
-{checklist(["Catch problems before they become expensive","No surprise call-out fees","Faster, priority response","Devices last longer with regular care","Better security means fewer disasters","Predictable budgeting — one monthly cost"])}
-        </ul>
-        <div class="prose" data-reveal>
-          <p class="eyebrow mono">/05 — THE MATHS</p>
-          <h2 class="section-title" data-title>Why a subscription saves money<span class="title-underline"></span></h2>
-          <p>A single emergency repair, lost files or a security incident can cost far more than a year of monthly support. Regular maintenance keeps small issues small.</p>
-          <p>You also save the hidden costs — the lost hours, the stress, and the &ldquo;I&rsquo;ll deal with it later&rdquo; that turns into a crisis. <strong>Prevention is cheaper than cure.</strong></p>
+   f'''    <section class="section" aria-label="What is included">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// EVERY MONTH</p>
+          <h2 class="section-title section-title--center" data-title>What&rsquo;s included every month<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>One predictable monthly cost instead of a bill every time something breaks: problems are caught early, devices last longer, and a single emergency repair can cost more than a year of support.</p>
         </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("Regular maintenance","A full computer service every six weeks to keep devices fast, clean and healthy. Each one ends with a <a href=\"/free-pc-health-check/#six-weekly-service\">written Service Report</a>, emailed to you and saved in your portal: what we did, how the machine scored, what to plan for."),("Unlimited remote support","Secure help over Splashtop SOS, usually within minutes during opening hours."),("Security &amp; protection","Antivirus, web protection, patching and a real human to ask &lsquo;is this email safe?&rsquo;"),("Microsoft 365 help","Outlook, Teams, OneDrive and licensing — set up and kept working for you."),("Backup checks","Backups verified regularly &mdash; and we can text you a reminder to plug in your backup drive when one&rsquo;s due."),("Friendly advice","Plain-English guidance on new devices, software and staying safe online."),("Our loyalty promise","Once you&rsquo;re up and running we keep it that way &mdash; and if a fault ever does crop up, any work you need is <strong>discounted</strong> because you&rsquo;re on support.")])}
+        </ul>
+        <p class="mono" style="text-align:center;margin-top:1.6rem"><a href="/preventative-maintenance/" style="color:var(--cyan)">See exactly what our 6-weekly preventative maintenance includes &#8594;</a></p>
       </div>
     </section>''',
    f'''    <section class="how section--alt" aria-label="How remote support works">
       <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>/06 — HOW IT WORKS</p>
+        <p class="eyebrow eyebrow--center mono" data-reveal>// HOW IT WORKS</p>
         <h2 class="section-title section-title--center" data-title>Up and running in 15 minutes<span class="title-underline title-underline--center"></span></h2>
         <ol class="how__steps">
 {steps([("Pick your plan","Choose a home or business plan. Monthly rolling, no contracts, cancel anytime."),("We call, then connect","We phone to check you&rsquo;re ready, then connect securely via Splashtop SOS &mdash; you watch everything on screen."),("Covered every month","Maintenance, protection and a friendly techie on hand, every single month.")])}
         </ol>
       </div>
     </section>''',
-   promise_strip(),
-   _dash_band("both", alt=True),
-   PCM_BAND,
    faq_html([
      ("What is monthly IT support?", "Monthly IT support is a subscription: ongoing help, regular maintenance, security checks and priority response for one predictable monthly cost. You stop paying per repair when something breaks."),
      ("How much does it cost?", "Home support is &pound;18.25/month per computer, and business support starts from &pound;24.38/month per computer. Microsoft 365 can be added for &pound;4.85/month per user. Every plan includes a full computer service every six weeks, finished with a <a href=\"/free-pc-health-check/#six-weekly-service\">written Service Report</a>. It is emailed to you, saved in your portal and left on your Desktop, covering what we did, how the computer scored, and anything worth planning."),
@@ -5374,9 +5363,7 @@ add(
      ("Do you support both homes and businesses?", "Yes. We support home users, home workers, sole traders and small businesses across Bournemouth, Poole and the rest of Dorset."),
      ("What is it like dealing with you day to day?", "Friendly and unhurried. We phone before we connect for a remote session or a full computer service, and we call ahead with an arrival time when we&rsquo;re visiting. If you&rsquo;d like, we can text you a reminder when your backup&rsquo;s due. Because we&rsquo;re a family team, you deal with the same familiar people who get to know how you like things set up."),
    ]),
-   REMOTE_ACCESS_BAND,
-   cta("Start your monthly support plan", "Join the Dorset homes and businesses who never worry about IT. Pick a plan, or talk to a friendly techie first.",
-       primary=("See Home Plans &amp; Prices", "/home-it-support-plans/"), secondary=("See Business Plans &amp; Prices", "/business-it-support-plans/")),
+   '''    <p class="taskmore">Also on every plan: your own 365 dashboard (<a href="/join/">try it free</a>, or see the demos for <a href="/next-gen-home-dashboards/">homes</a> and <a href="/custom-wifi-dashboards/">businesses</a>), the free <a href="/free-pc-health-check/">365 PC Manager app</a>, your <a href="/portal/">customer portal</a> and, if you want it, <a href="/splashtop-business-guide/">your own PC from anywhere</a>. New to it? See <a href="/your-first-6-weekly-service/">what your first 6-weekly service looks like</a>, or <a href="/contact/">talk to a techie first</a>.</p>''',
  ]),
 )
 
