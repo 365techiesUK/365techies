@@ -3251,21 +3251,22 @@ PCM_SOON = not PCM_LIVE
 PCM_BAND = '''    <section class="section section--alt" aria-label="365 PC Manager on your plan">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
-          <p class="eyebrow mono">// FREE WITH EVERY PLAN</p>
+          <p class="eyebrow mono">// NEW VERSION 28 &middot; FREE WITH EVERY PLAN</p>
           <h2 class="section-title" data-title>365 PC Manager, on your PC<span class="title-underline"></span></h2>
-          <p>Our own free Windows app &mdash; digitally signed in our name &mdash; shows your PC&rsquo;s health in plain English: drive condition, memory, protection, backup, and an honest verdict. Anyone can use it, and we think every Windows PC should have it. <strong>On a plan it does more: it keeps your computer up to date and secure.</strong></p>
+          <p>Our own free Windows app &mdash; digitally signed in our name &mdash; shows your PC&rsquo;s health in plain English: drive condition, memory, protection, backup, Windows updates, risky programs and network settings, and an honest verdict. Anyone can use it, and we think every Windows PC should have it. <strong>On a plan it does more: it keeps your computer up to date and secure.</strong></p>
           <p>At every service we run a real <a href="/free-pc-health-check/#broadband">broadband speed test</a> from your machine and keep it with your record. Next visit, we can see whether your line has quietly got worse. No other local IT firm we can find will even show you your broadband speed &mdash; let alone track it visit to visit.</p>
-          <p>On a plan, every six-weekly service updates <strong>every program on the computer, not just Windows and Office</strong> &mdash; an out-of-date program is the back door criminals now hunt for with AI &mdash; and ends with a written <a href="/your-first-6-weekly-service/">Service Report</a>: what we did, how the machine scored, and anything worth planning. It is emailed to you, saved in your portal and left on your Desktop. And we keep an eye on the machines we look after between visits, so problems get caught before they bite. We can&rsquo;t find another IT support company in Dorset that gives its customers an app of its own.</p>
+          <p>On a plan, every six-weekly service updates <strong>every program on the computer, not just Windows and Office</strong> &mdash; an out-of-date program is the back door criminals now hunt for with AI &mdash; checks your network&rsquo;s safety, and ends with a written <a href="/your-first-6-weekly-service/">Service Report</a>: what we did, how the machine scored, and anything worth planning. It is emailed to you, saved in your portal and left on your Desktop. And we keep an eye on the machines we look after between visits, so problems get caught before they bite. We can&rsquo;t find another IT support company in Dorset that gives its customers an app of its own.</p>
           <div class="hero__actions" style="margin-top:1.2rem">
             <a class="button primary" href="/free-pc-health-check/">Get the free app &#8594;</a>
             <a class="button secondary" href="/portal/">See your dashboard</a>
           </div>
         </div>
         <div data-reveal>
-          <img src="/images/pcm-laptop-report-v21.webp" alt="A 365 Techies Service Report open on a laptop, with the app&rsquo;s health score" width="1040" height="810" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:14px;margin-bottom:1rem">
+          <img src="/images/pcm-laptop-health-v28.webp" alt="365 PC Manager on a laptop: the health score and what to do next" width="1040" height="810" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:14px;margin-bottom:1rem">
         <ul class="checklist" data-stagger>
           <li>Free forever, no sign-up, uninstall any time</li>
           <li>Every program kept up to date, not just Windows</li>
+          <li>Your network&rsquo;s safety checked at every service</li>
           <li>Broadband speed measured at every visit</li>
           <li>Every written Service Report in one place</li>
           <li>Your next visit &mdash; move or cancel it yourself</li>
@@ -3546,6 +3547,7 @@ KEEP_BAND_APP = [
     "Exact memory, drive health and free space",
     "Whether antivirus is on and a backup actually exists",
     "Battery wear, and when Windows is waiting for a restart",
+    "Risky programs, network openings and missed Windows updates",
 ]
 
 
@@ -3567,7 +3569,7 @@ def keep_band(cfg):
     if cfg.get("app", True):
         app = f'''
           <div class="kb-card kb-app" data-reveal>
-            <a class="kb-shot" href="/free-pc-health-check/" aria-label="See 365 PC Manager, the free app"><img src="/images/pcm-laptop-health-v26.webp" width="2080" height="1620" alt="365 PC Manager health tab - live health score ring, verdict and system glance" loading="lazy" decoding="async"></a>
+            <a class="kb-shot" href="/free-pc-health-check/" aria-label="See 365 PC Manager, the free app"><img src="/images/pcm-laptop-health-v28.webp" width="2080" height="1620" alt="365 PC Manager Home - the health score, what to do next and the PC at a glance" loading="lazy" decoding="async"></a>
             <p class="kb-tag">FREE APP &middot; WINDOWS &middot; REAL SCREENSHOT</p>
             <h3>{cfg.get("app_h3", "See how this PC is really doing")}</h3>
             <ul class="kb-list">{li(cfg.get("app_list", KEEP_BAND_APP))}</ul>

@@ -500,17 +500,20 @@ if not PCM_DOWNLOAD_URL or not _os_pcm.path.exists(_pcm_exe):
 PCM_FILESIZE = "%.1fMB" % (_os_pcm.path.getsize(_pcm_exe) / 1048576.0)
 PCM_LIVE = bp.PCM_LIVE and bool(PCM_DOWNLOAD_URL)   # the switch lives in build_pages.PCM_LIVE (one truth for cards + page); the URL must also be set. Everything "coming soon"/waitlist on this page keys off this.
 
+_PCM_V28_CSS = '.pcm-new{display:inline-flex;align-items:center;gap:.6rem;margin:0 0 .85rem;padding:.3rem .85rem .3rem .32rem;border-radius:999px;border:1px solid rgba(0,206,27,.38);background:rgba(0,206,27,.07);color:var(--ink);font-size:.86rem;font-weight:600;line-height:1.3;text-decoration:none;max-width:100%;transition:border-color .2s,background .2s} .pcm-new b{flex:0 0 auto;padding:.16rem .55rem;border-radius:999px;background:#00ce1b;color:#04130a;font:700 .68rem var(--font-mono);letter-spacing:.08em} .pcm-new span{min-width:0} .pcm-new__s{display:none} @media(max-width:600px){.pcm-new__l{display:none}.pcm-new__s{display:inline}} .pcm-new i{font-style:normal;color:#00ce1b;transition:transform .2s} .pcm-new:hover{border-color:rgba(0,206,27,.7);background:rgba(0,206,27,.12)} .pcm-new:hover i{transform:translateX(3px)} .pcm-new:focus-visible{outline:2px solid #00ce1b;outline-offset:3px} .pnew{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.1rem;max-width:1120px;margin:1.8rem auto 0} .pnew__card{display:flex;flex-direction:column;border-radius:16px;overflow:hidden;background:var(--glass);border:1px solid var(--line);transition:border-color .3s,transform .3s} .pnew__card:hover{border-color:rgba(0,206,27,.4);transform:translateY(-4px)} .pnew__shot{position:relative;background:#0b1226;border-bottom:1px solid var(--line);aspect-ratio:684/345;overflow:hidden} .pnew__shot img{display:block;width:100%;height:100%;object-fit:cover;object-position:top left} .pnew__shot::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34%;background:linear-gradient(rgba(11,18,38,0),rgba(11,18,38,.6));pointer-events:none} .pnew__txt{padding:1.05rem 1.2rem 1.25rem} .pnew__tag{display:inline-block;margin-bottom:.45rem;padding:.12rem .5rem;border-radius:999px;border:1px solid rgba(0,206,27,.45);color:#00ce1b;font:700 .66rem var(--font-mono);letter-spacing:.09em} .pnew__tag--up{border-color:rgba(92,184,240,.55);color:#5cb8f0} .pnew__txt h3{font-family:var(--font-display);font-size:1.15rem;margin:0 0 .4rem;color:var(--ink)} .pnew__txt p{margin:0;color:var(--muted);font-size:.95rem;line-height:1.55} .pnew__foot{text-align:center;color:var(--faint);font-size:.72rem;margin:1rem 0 0} .pkeep{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;max-width:1000px;margin:1.8rem auto 0} .pkeep__col{border-radius:16px;padding:1.3rem 1.4rem 1.4rem;border:1px solid var(--line);background:var(--glass)} .pkeep__col--keep{border-color:rgba(0,206,27,.45);background:linear-gradient(160deg,rgba(0,206,27,.1),rgba(0,206,27,.02) 60%),var(--glass);box-shadow:0 24px 60px rgba(0,0,0,.35)} .pkeep__h{margin:0 0 .8rem;font-size:.74rem;letter-spacing:.08em;color:var(--faint)} .pkeep__col--keep .pkeep__h{color:#00ce1b} .pkeep ul{list-style:none;margin:0;padding:0;display:grid;gap:.7rem} .pkeep li{position:relative;padding-left:1.7rem;color:var(--muted);font-size:.98rem;line-height:1.5} .pkeep__col--keep li{color:var(--ink)} .pkeep li::before{position:absolute;left:0;top:.02rem;width:1.15rem;height:1.15rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700} .pkeep__col--wait li::before{content:"\\2715";color:#e8637e;background:rgba(232,99,126,.12)} .pkeep__col--keep li::before{content:"\\2713";color:#04130a;background:#00ce1b} .pkeep__price{text-align:center;margin:1.5rem 0 0;color:var(--muted)} .pkeep__price b{color:var(--ink)} @media(max-width:900px){.pnew{grid-template-columns:repeat(2,minmax(0,1fr))}} @media(max-width:700px){.pkeep{grid-template-columns:1fr}} @media(max-width:600px){.pnew{grid-template-columns:1fr;gap:.7rem}.pnew__card{flex-direction:row;align-items:stretch}.pnew__shot{flex:0 0 38%;aspect-ratio:auto;border-bottom:0;border-right:1px solid var(--line)}.pnew__txt{padding:.75rem .85rem .85rem}.pnew__tag{margin-bottom:.3rem}.pnew__txt h3{font-size:1rem;margin-bottom:.25rem}.pnew__txt p{font-size:.86rem;line-height:1.45}} @media(prefers-reduced-motion:reduce){.pnew__card,.pcm-new i{transition:none}.pnew__card:hover{transform:none}}'
+_PCM_WHATSNEW = '    <section class="section" aria-label="New in version 28" id="whats-new">\n      <div class="wrap">\n        <div class="section-head">\n          <p class="eyebrow eyebrow--center mono" data-reveal>// NEW &middot; VERSION 28 &middot; A FREE UPDATE</p>\n          <h2 class="section-title section-title--center" data-title>Five new checks, and every drive at a glance<span class="title-underline title-underline--center"></span></h2>\n          <p class="lede lede--center" data-reveal>Version 28 looks further than ever before: at your network, your programs, Windows Update, your printers and your OneDrive backup, and now at every drive. It explains what it finds in plain English and changes nothing unless you tap. <strong>Already have the app? It updates itself.</strong></p>\n        </div>\n        <div class="pnew" data-stagger>\n          <article class="pnew__card">\n            <div class="pnew__shot"><img src="/images/pcm-new-network-v28.webp" width="684" height="345" alt="365 PC Manager&rsquo;s Network safety page: firewall on, nothing opened by the router, Remote Desktop and old SMB1 file sharing off, nothing waiting for remote connections" loading="lazy" decoding="async"></div>\n            <div class="pnew__txt"><span class="pnew__tag">NEW</span><h3>Network safety</h3><p>Checks your firewall is on, asks your router what it has opened to this PC, and flags Remote Desktop, old file sharing and remote-control programs left open.</p></div>\n          </article>\n          <article class="pnew__card">\n            <div class="pnew__shot"><img src="/images/pcm-new-programs-v28.webp" width="684" height="345" alt="The Programs check page: Malwarebytes protecting in real time, Microsoft Defender standing by, and 124 installed programs looked through" loading="lazy" decoding="async"></div>\n            <div class="pnew__txt"><span class="pnew__tag">NEW</span><h3>Programs check</h3><p>Spots two security programs fighting each other, plus tune-up tools, driver updaters and adware a home PC doesn&rsquo;t need. Nothing is removed without you.</p></div>\n          </article>\n          <article class="pnew__card">\n            <div class="pnew__shot"><img src="/images/pcm-new-updates-v28.webp" width="684" height="345" alt="The Windows Update page: Windows is getting its monthly updates, with the most recent updates listed as installed" loading="lazy" decoding="async"></div>\n            <div class="pnew__txt"><span class="pnew__tag">NEW</span><h3>Windows Update</h3><p>Reads Windows&rsquo; own update history to show whether the monthly updates are really arriving, and flags one that keeps failing.</p></div>\n          </article>\n          <article class="pnew__card">\n            <div class="pnew__shot"><img src="/images/pcm-new-printers-v28.webp" width="684" height="345" alt="The Printers page: the default printer ready and nothing stuck in the queue" loading="lazy" decoding="async"></div>\n            <div class="pnew__txt"><span class="pnew__tag">NEW</span><h3>Printers</h3><p>Shows each printer&rsquo;s state in plain English and clears documents stuck in the queue.</p></div>\n          </article>\n          <article class="pnew__card">\n            <div class="pnew__shot"><img src="/images/pcm-new-onedrive-v28.webp" width="684" height="345" alt="The Backup page suggesting OneDrive folder backup for the Desktop, Documents and Pictures, with the steps to switch it on" loading="lazy" decoding="async"></div>\n            <div class="pnew__txt"><span class="pnew__tag">NEW</span><h3>OneDrive folder backup</h3><p>Have Microsoft 365? It checks OneDrive is really backing up your Desktop, Documents and Pictures, and shows you how to switch it on.</p></div>\n          </article>\n          <article class="pnew__card">\n            <div class="pnew__shot"><img src="/images/pcm-new-drives-v28.webp" width="684" height="345" alt="The Storage and space page: every drive with how full it is, and buttons to clear temporary files or scan for the biggest files" loading="lazy" decoding="async"></div>\n            <div class="pnew__txt"><span class="pnew__tag pnew__tag--up">IMPROVED</span><h3>Every drive</h3><p>Every drive at a glance, the biggest files on each, and a safe way to move them to a drive with room &mdash; each copy checked before the original goes.</p></div>\n          </article>\n        </div>\n        <p class="pnew__foot mono" data-reveal>// REAL SCREENS FROM VERSION 28 ON OUR OFFICE PC &middot; NOTHING MOCKED UP</p>\n        <p style="text-align:center;margin:1.3rem 0 0" data-reveal><a class="button primary" href="#download">Download version 28 free</a> <a class="button secondary" href="#must-have">Keep it maintained for me</a></p>\n      </div>\n    </section>'
+
 def pcm_landing():
     slug = "free-pc-health-check"
     desc = ("365 PC Manager - a free, honest PC health check app for Windows 10 &amp; 11 from a Dorset family firm: health score, one-tap boost, no fake errors or scare tactics. " + ("Free download - digitally signed by 365 Techies Ltd." if PCM_LIVE else "Launching soon - join the waitlist."))
     faqs = [
-      ("Is the 365 PC Manager app really free?", "Yes &mdash; the health score, live performance graphs, one-tap boost, startup and storage tools are free forever, no sign-up. If you go on a 365 support plan we unlock the extra bits (priority help, backup checks and more), but you never have to."),
+      ("Is the 365 PC Manager app really free?", "Yes &mdash; the health score, network safety and programs checks, Windows Update and printer checks, live performance graphs, one-tap boost, startup and storage tools are free forever, no sign-up. If you go on a 365 support plan we unlock the extra bits (priority help, backup checks and more), but you never have to."),
       ("What is the written Service Report?", "After every six-weekly service on a support plan we write up what we found and what we did. That means your computer&rsquo;s health score and how it moved since last time, and the security position on the day (Windows updates, firewall, antivirus and drive encryption, each read rather than assumed). It also records every drive&rsquo;s hours, temperature and wear, whether your backup ran and how much room is left, and how long any guarantee has to run. It is emailed to you, kept in your portal for good, and left on your Desktop."),
-      ("How often is my computer serviced on a plan?", "About every six weeks. Each service applies Windows, driver and application updates, runs a security check and a system file check, and checks your backup and every drive. It measures your broadband speed from the machine and clears out temporary files, the same routine for a home laptop as for a business fleet."),
+      ("How often is my computer serviced on a plan?", "About every six weeks. Each service applies Windows, driver and application updates, runs a security check, a network safety check and a system file check, and checks your programs, your backup and every drive. It measures your broadband speed from the machine and clears out temporary files, the same routine for a home laptop as for a business fleet."),
       ("Can I show the Service Report to my bank or insurer?", "Yes. Each report is dated and kept on file. If a bank or insurer asks whether your computer was protected and up to date, you can show what was checked, what was updated and when: a record of the reasonable care you took. It is the same kind of write-up we produce for a customer&rsquo;s bank after a scam, only here it exists before anything goes wrong. It is evidence of care, not a guarantee of any outcome."),
       ("Will it slow my PC down?", "No. It&rsquo;s tiny and sits quietly in your system tray. In the background it does three small things. It checks your health score about once an hour, watches the clock for any service reminder you&rsquo;ve set, and quietly updates itself when a new version is out (only ever while the window is closed). None of that is anything you&rsquo;d feel. The live performance graphs run only while you&rsquo;re watching them."),
       ("Is it safe to install?", "Yes. It reads your PC&rsquo;s health (memory, disk, antivirus, backup) and changes nothing unless you tap a button. The one exception is entirely your choice. Support-plan customers can switch on &ldquo;let 365 run safe maintenance&rdquo;, which lets us run a short fixed list of harmless tidy-up jobs without ringing you first: clearing temporary files, flushing the network cache, collecting a diagnostics summary. It&rsquo;s off unless you turn it on, and you can turn it off again any time. We&rsquo;re 365 Techies, a family-run Dorset IT firm here since 1995, rated 4.9 on Google."),
-      ("Does 365 PC Manager keep my computer secure?", "The free app shows you where you stand &mdash; antivirus, backup, drive and memory &mdash; and never pretends to be more than that; it is not an antivirus. Being on a 365 support plan is what keeps a computer up to date and secure: every six weeks every program on it is updated, not just Windows and Microsoft 365, the security position is read and written down, and the backup is checked. Criminals now use AI to hunt for a single out-of-date program to use as a back door, so keeping everything current is the point of the service."),
+      ("Does 365 PC Manager keep my computer secure?", "The free app shows you where you stand &mdash; antivirus, backup, drive, memory, risky programs and network settings, all checked on your PC and not sent to us &mdash; and never pretends to be more than that; it is not an antivirus. Being on a 365 support plan is what keeps a computer up to date and secure: every six weeks every program on it is updated, not just Windows and Microsoft 365, the security position is read and written down, your network&rsquo;s safety is checked, and the backup is checked. Criminals now use AI to hunt for a single out-of-date program to use as a back door, so keeping everything current is the point of the service."),
       ("Does it send my information anywhere?", "Yes, a little &mdash; here&rsquo;s exactly what. Once an hour it contacts us with your PC&rsquo;s health score and the basics behind it. That is whether antivirus and backup are on, how full the disk is, battery health, the PC name you chose and an anonymous ID for the machine. That is how every copy stays up to date, and how we spot a problem on a customer&rsquo;s machine before it bites. It never sends your files, photos, emails, browsing or passwords. If you&rsquo;re on a plan we tie it to your account so we can help proactively; if you&rsquo;re not, it isn&rsquo;t linked to a customer record. ""Run the broadband test and your connection is checked against an outside service to name your provider &mdash; see our <a href=\"/privacy-policy/\">privacy policy</a>."),
       ("What does &lsquo;Boost&rsquo; actually do?", "It safely clears the temporary-file clutter Windows leaves behind and refreshes memory &mdash; a quick pick-me-up when your PC feels sluggish. It never touches your documents, photos or programs."),
       (("How do I get it, and is the download safe?", "It&rsquo;s live: tap <a href=\"#download\">Download free for Windows</a>, open it, and it installs in a couple of clicks &mdash; then it lives in your Start menu like any other program, and you can remove it any time from Settings &gt; Apps. The download is <strong>digitally signed by 365 Techies Ltd</strong> (a Microsoft-issued certificate), so Windows shows our name as the publisher rather than &ldquo;unknown&rdquo;. If you&rsquo;d rather we set it up for you, ring 01202 775566 and we&rsquo;ll do it free, by hand.") if PCM_LIVE else ("When does it launch, and how do I get it?", "It&rsquo;s in final testing now. Join the <a href=\"#waitlist\">waitlist</a> and we&rsquo;ll email you the download the moment it&rsquo;s ready &mdash; and if you&rsquo;d rather not install it yourself, we&rsquo;ll happily set it up for you free, by hand, when it&rsquo;s ready. We won&rsquo;t promise a date until it&rsquo;s genuinely ready; we&rsquo;d rather ship it right than rush it.")),
@@ -614,14 +617,15 @@ def pcm_landing():
       f'<span class="hp-intent__d">{d}</span><span class="hp-intent__p">{p}</span></a>'
       for c, i, t, d, p, href in _pcm_tiles)
     _pcm_c1 = ("Download free for Windows", "#download") if PCM_LIVE else ("Join the free waitlist", "#waitlist")
-    _pcm_hero = f'''    <style>{" ".join(l.strip() for l in DELL_HUB_CSS.strip().splitlines())}</style>
+    _pcm_hero = f'''    <style>{" ".join(l.strip() for l in DELL_HUB_CSS.strip().splitlines())}{_PCM_V28_CSS}</style>
     <section class="page-hero dh dh-hero" aria-label="Introduction">
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb">{bc("Free PC Health Check")}</nav>
+          <a class="pcm-new" href="#whats-new"><b>NEW</b><span class="pcm-new__l">Version 28: network safety, programs &amp; Windows Update checks</span><span class="pcm-new__s">Version 28: five new checks</span><i aria-hidden="true">&rarr;</i></a>
           <p class="eyebrow mono">// THE MUST-HAVE WINDOWS APP &middot; FREE &middot; {"SIGNED &amp; LIVE" if PCM_LIVE else "COMING SOON"}</p>
           <h1>Your PC&rsquo;s health, <em class="grad grad--cyan">at a glance</em></h1>
-          <p class="lede">365 PC Manager is the free app that shows your computer&rsquo;s health in plain English &mdash; <strong>no fake errors, no scare tactics, nothing to buy</strong>. On a 365 support plan it keeps your PC up to date and secure, and writes up every service.</p>
+          <p class="lede">365 PC Manager is the free app that shows your computer&rsquo;s health in plain English, from your network safety to programs you&rsquo;re better without &mdash; <strong>no fake errors, no scare tactics, nothing to buy</strong>. On a 365 support plan it keeps your PC up to date and secure, and writes up every service.</p>
           <div class="page-hero__cta">
             <a href="{_pcm_c1[1]}" class="button primary button--lg">{_pcm_c1[0]}</a>
             <a href="tel:+441202775566" class="button secondary button--lg">Call 01202 775566</a>
@@ -672,19 +676,35 @@ def pcm_landing():
            "Meet 365 PC Manager &mdash; the must-have free app for any Windows PC. It shows your computer&rsquo;s health in plain English, with <strong>no fake errors and no scare tactics</strong>. Put the PC on a 365 support plan and the app becomes the front door to the six-weekly service that keeps it <strong>up to date and secure</strong>: every program updated, not just Windows, and the whole thing written up for you. " + ("<strong>Free to download now &mdash; digitally signed by 365 Techies Ltd, so Windows knows it&rsquo;s ours.</strong>" if PCM_LIVE else "<strong>Launching soon &mdash; join the waitlist and we&rsquo;ll set it up for you free, by hand, when it&rsquo;s ready.</strong>") + "",
            cta1=(("Download free for Windows", "#download") if PCM_LIVE else ("Join the free waitlist", "#waitlist")), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=["Free forever", "Up to date &amp; secure on a plan", "Written report every service", "Made in Dorset", ("Signed by 365 Techies Ltd" if PCM_LIVE else "Coming soon")]),
-      '''    <section class="section" aria-label="Why 365 PC Manager is a must-have" id="must-have">
+      '''    <section class="section" aria-label="Don&rsquo;t wait for it to fail: keep it maintained" id="must-have">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// WHY IT IS A MUST-HAVE</p>
-          <h2 class="section-title section-title--center" data-title>Free for everyone. On a plan, it keeps you up to date and secure<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Criminals now use AI to hunt for one out-of-date program on a computer and use it as a back door. Windows Update on its own does not close that door &mdash; the programs around Windows do. That is the gap a 365 support plan closes, every six weeks, with the app as the front door.</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>// DON&rsquo;T WAIT FOR IT TO FAIL</p>
+          <h2 class="section-title section-title--center" data-title>Keep it maintained, not rescued<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>The free app shows you where you stand. A 365 support plan keeps it right: every six weeks your computer is serviced, every program is brought up to date and your network is checked, before anything fails or anyone gets in. Criminals now use AI to hunt for one out-of-date program to use as a back door, and Windows Update on its own does not close it.</p>
         </div>
-        <div class="tile-grid" data-stagger>
-''' + tiles([("robot", "Every program updated, not just Windows", "Browsers, Office, Zoom, Reader and the rest are brought up to date at every service, so there is no out-of-date program left for anyone to use as a way in."),
-             ("shield", "Security read and written down", "Antivirus, firewall, drive encryption and backup are checked as found on the day, and the Service Report is emailed to you and kept in your portal."),
-             ("handshake", "A real techie one tap away", "Help, your next service and your reports live in the app, and a real person in Bournemouth answers the phone. From &pound;18.25 a month per computer at home, &pound;24.38 for business.")]) + '''
+        <div class="pkeep" data-stagger>
+          <div class="pkeep__col pkeep__col--wait">
+            <p class="pkeep__h mono">// WAIT UNTIL IT BREAKS</p>
+            <ul>
+              <li>Programs go months without an update, each one a way in</li>
+              <li>A router opening or Remote Desktop left on goes unnoticed</li>
+              <li>The backup quietly stopped, and you find out when the drive dies</li>
+              <li>You pay for the emergency, and lose the day to it</li>
+            </ul>
+          </div>
+          <div class="pkeep__col pkeep__col--keep">
+            <p class="pkeep__h mono">// MAINTAINED EVERY SIX WEEKS</p>
+            <ul>
+              <li>Windows, drivers and every program brought up to date</li>
+              <li>Your network checked at every service: firewall, router openings, Remote Desktop</li>
+              <li>Security programs, your backup and every drive checked</li>
+              <li>Written up each time, emailed to you and kept in your portal</li>
+            </ul>
+          </div>
         </div>
-        <p style="text-align:center;margin:1.4rem 0 0" data-reveal><a class="button primary" href="/monthly-it-support/">See support plans &#8594;</a> <a class="button secondary" href="#download">Get the free app</a></p>
+        <p class="pkeep__price" data-reveal>Home <b>&pound;18.25</b> a month per computer &middot; business from <b>&pound;24.38</b> &middot; a real techie in Bournemouth one tap away in the app</p>
+        <p style="text-align:center;margin:1.4rem 0 0" data-reveal><a class="button primary" href="/monthly-it-support/">See support plans &#8594;</a> <a class="button secondary" href="#six-weekly-service">What every service covers</a></p>
       </div>
     </section>''',
       '''    <section class="section section--alt" aria-label="The six-weekly service and its written report" id="six-weekly-service">
@@ -711,7 +731,8 @@ def pcm_landing():
           <li><h3>Windows updates</h3><p>Installed and verified &mdash; including the ones that fail quietly in the background.</p></li>
           <li><h3>Driver updates</h3><p>Chipset, graphics, network and the maker&rsquo;s own drivers &mdash; the ones Windows Update leaves behind.</p></li>
           <li><h3>Application updates</h3><p>Every program on the computer, not just Windows and Office &mdash; browsers, Zoom, Reader and the rest. An out-of-date program is the back door criminals now hunt for with AI; this is the step that keeps you ahead of them.</p></li>
-          <li><h3>Security check</h3><p>Antivirus state, firewall, drive encryption and a scan &mdash; each read on the day and written down as found.</p></li>
+          <li><h3>Security check</h3><p>Antivirus, firewall, drive encryption and a scan, plus a programs check for security software that clashes and tools you don&rsquo;t need &mdash; each read on the day and written down as found.</p></li>
+          <li><h3>Network safety</h3><p>Your router asked what it has opened to the internet, and Remote Desktop, old file sharing and remote-control programs checked &mdash; every service, so a setting that changes gets noticed.</p></li>
           <li><h3>System file check</h3><p>Windows verified against itself and repaired where it can be, so faults are caught before they cost you a morning.</p></li>
           <li><h3>Backup checked</h3><p>Whether last night&rsquo;s backup actually ran, and how much room is left before the drive quietly stops protecting you.</p></li>
           <li><h3>Broadband speed test</h3><p>Measured from your machine and compared with your last visit, so a line that has slipped gets noticed by us first.</p></li>
@@ -778,14 +799,14 @@ def pcm_landing():
       <div aria-hidden="true" style="position:absolute;left:50%;top:6%;transform:translateX(-50%);width:78%;height:64%;background:radial-gradient(ellipse at center,rgba(29,151,227,.22),rgba(29,151,227,0) 70%);filter:blur(46px);pointer-events:none;z-index:0"></div>
       <div class="wrap" style="max-width:1000px;position:relative;z-index:1">
         <div data-reveal style="position:relative;border-radius:20px;overflow:hidden;border:1px solid rgba(125,170,220,.3);box-shadow:0 34px 80px rgba(0,0,0,.55)">
-          <video id="pcmreel" muted loop playsinline preload="none" poster="/images/pcm-reel-poster-v21-960.webp" width="1920" height="1080" aria-label="365 PC Manager in action: brand intro, the health score climbing to 88 percent, then one-tap boost" style="width:100%;height:auto;display:block;background:#0a1226">
-            <source src="/images/pcm-reel-v21.mp4" type="video/mp4" />
+          <video id="pcmreel" muted loop playsinline preload="none" poster="/images/pcm-reel-poster-v28-960.webp" width="1920" height="1080" aria-label="365 PC Manager in action: the health score, then the network safety, programs, Windows Update and storage checks" style="width:100%;height:auto;display:block;background:#0a1226">
+            <source src="/images/pcm-reel-v28.mp4" type="video/mp4" />
           </video>
           <button type="button" id="pcmreelplay" aria-label="Play the 365 PC Manager showcase" style="position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(7,13,34,.28);border:0;cursor:pointer">
             <span style="width:76px;height:76px;border-radius:50%;background:rgba(29,151,227,.94);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.9rem;padding-left:6px;box-shadow:0 12px 32px rgba(0,0,0,.45)">&#9654;</span>
           </button>
         </div>
-        <p class="mono" style="font-size:.72rem;color:var(--muted);margin:.85rem 0 0;text-align:center">The real app, recorded &mdash; brand intro &rarr; live Health score &rarr; one-tap Boost. Nothing mocked up.</p>
+        <p class="mono" style="font-size:.72rem;color:var(--muted);margin:.85rem 0 0;text-align:center">The real app, recorded &mdash; health score &rarr; network safety &rarr; programs check &rarr; Windows Update &rarr; every drive. Nothing mocked up.</p>
       </div>
       <script>
         (function(){
@@ -811,10 +832,13 @@ def pcm_landing():
         </div>
         <div class="tile-grid" data-stagger>
 ''' + tiles([("shield","Health score","A clear 0&ndash;100 score and plain-English notes on anything worth sorting."),
+             ("wifi","Network safety","Checks your firewall, anything your router has opened to this PC, Remote Desktop, old SMB1 file sharing and remote-control tools."),
+             ("lock","Programs check","Spots two security programs fighting, protection that has stopped updating, and tune-up tools, driver updaters and adware a home PC doesn&rsquo;t need."),
+             ("windows","Windows Update &amp; printers","Whether Windows is getting its monthly updates, and which printers have a problem or documents stuck in the queue."),
              ("bolt","One-tap boost","Clears the clutter and refreshes memory when things feel sluggish."),
              ("monitor","Live performance","CPU, memory, disk and network graphs that update live &mdash; like Task Manager, but friendlier."),
-             ("wrench","Startup &amp; storage","See what starts with Windows and where your space has gone."),
-             ("home","Backup &amp; safety check","Know at a glance whether your files are backed up and protected."),
+             ("wrench","Startup &amp; every drive","See what starts with Windows, every drive at a glance, your biggest files, and move them to a drive with room."),
+             ("home","Backup &amp; OneDrive check","Know whether your files are really backed up, OneDrive folder backup included, and what to do if they aren&rsquo;t."),
              ("bell","Service visits &amp; reminders","Book or change your service in-app, with friendly Windows reminders before each visit."),
              ("check","Written service reports","After every service: what we did, your score and honest advice &mdash; emailed to you, saved in your portal and left on your Desktop."),
              ("bolt","Help in one tap","Stuck? Reach a real local techie without hunting for the number.")]) + '''
@@ -841,22 +865,22 @@ def pcm_landing():
           <h2 class="section-title" data-title>Your service visits, sorted from the app<span class="title-underline"></span></h2>
           <p><strong>Book, change or cancel your computer service</strong> right inside the app &mdash; real available slots, no phoning around (unless you want to; we do like a chat).</p>
           <p>Then the app quietly takes care of the rest. You get a <strong>Windows notification the day before</strong> with a countdown to your visit, and another <strong>15 minutes before</strong> reminding you to plug your backup drive in. One tap tells us <em>&ldquo;I&rsquo;m ready, come on in&rdquo;</em> when you&rsquo;re happy for us to connect.</p>
-          <p>And after every service, a <strong>written report lands on your Desktop</strong>: what we did, how your PC scored, and honest advice and recommendations in plain English. Proof, not promises.</p>
+          <p>And after every service you get a <strong>written report</strong>: what we did, how your PC scored, and honest advice and recommendations in plain English. It is emailed to you, saved in your portal and left on your Desktop. Proof, not promises.</p>
         </div>
         <figure style="margin:0" data-reveal>
-          <img width="2080" height="1620" src="/images/pcm-laptop-booking-v26.webp" alt="365 PC Manager booking tab on a laptop - signed in on a support plan, choose a PC service visit or remote help, then pick a day and a time slot" loading="lazy" decoding="async" style="width:100%;height:auto;display:block" />
+          <img width="2080" height="1620" src="/images/pcm-laptop-booking-v28.webp" alt="365 PC Manager booking on a laptop - signed in on a support plan, your appointments with change and cancel, then book a visit by day (demo account)" loading="lazy" decoding="async" style="width:100%;height:auto;display:block" />
         </figure>
       </div>
     </section>''',
       '''    <section class="section" aria-label="Power, solar and smart home">
       <div class="wrap split-2">
         <figure style="margin:0" data-reveal>
-          <img width="2080" height="1620" src="/images/pcm-laptop-energy-v21.webp" alt="365 PC Manager power tab on a laptop - live wattage with yearly running cost, Victron VRM off-grid section and Home Assistant smart home section" loading="lazy" decoding="async" style="width:100%;height:auto;display:block" />
+          <img width="2080" height="1620" src="/images/pcm-laptop-power-v28.webp" alt="365 PC Manager Power and running cost on a laptop - hours switched on, the estimated yearly running cost, and what letting it sleep would save" loading="lazy" decoding="async" style="width:100%;height:auto;display:block" />
         </figure>
         <div class="prose" data-reveal>
           <p class="eyebrow mono">// POWER, SOLAR &amp; SMART HOME</p>
           <h2 class="section-title" data-title>See what your PC really costs to run<span class="title-underline"></span></h2>
-          <p>On a laptop the app measures <strong>live watts from the battery</strong> and works out roughly what the machine costs to run a year. It uses <em>your</em> electricity tariff, which you can set in a tap.</p>
+          <p>The app works out how many hours your PC is switched on and roughly what that costs a year at <em>your</em> electricity price, then shows what letting it <strong>sleep when nobody&rsquo;s using it</strong> would save. On a laptop it reads <strong>live watts from the battery</strong> and the battery&rsquo;s health; on a desktop, a plug-in energy meter reading makes the figures exact.</p>
           <p>Off-grid or on solar? <strong>Link your Victron VRM</strong> and see your live solar, battery and usage right in the app &mdash; the same <a href="/custom-vrm-dashboards/">custom Victron dashboards</a> we design and fit worldwide. Run Home Assistant? Link it and see at a glance that your smart home is online and healthy.</p>
         </div>
       </div>
@@ -880,22 +904,30 @@ def pcm_landing():
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// WHAT IT LOOKS LIKE</p>
           <h2 class="section-title section-title--center" data-title>Real screenshots &mdash; this is the actual app<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Nothing mocked up &mdash; these were captured on our own Dell Latitude.</p>
+          <p class="lede lede--center" data-reveal>Nothing mocked up &mdash; this is the app itself, captured on our own office PC. File names in the Storage picture are blurred, and Booking shows our demo account.</p>
         </div>
         <div id="pcmtour" data-reveal style="margin-top:1.2rem;max-width:860px;margin-left:auto;margin-right:auto">
           <div role="tablist" aria-label="App screenshots" style="display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-bottom:1rem">
-            <button type="button" role="tab" aria-selected="true" aria-controls="tour-panel" class="pcmtour__tab" data-i="0">Health</button>
-            <button type="button" role="tab" aria-selected="false" aria-controls="tour-panel" class="pcmtour__tab" data-i="1">Boost</button>
-            <button type="button" role="tab" aria-selected="false" aria-controls="tour-panel" class="pcmtour__tab" data-i="2">Report</button>
-            <button type="button" role="tab" aria-selected="false" aria-controls="tour-panel" class="pcmtour__tab" data-i="3">Booking</button>
-            <button type="button" role="tab" aria-selected="false" aria-controls="tour-panel" class="pcmtour__tab" data-i="4">Performance</button>
+            <button type="button" role="tab" aria-selected="true" aria-controls="tour-panel" class="pcmtour__tab" data-i="0">Home</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tour-panel" class="pcmtour__tab" data-i="1">Network safety</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tour-panel" class="pcmtour__tab" data-i="2">Programs</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tour-panel" class="pcmtour__tab" data-i="3">Windows Update</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tour-panel" class="pcmtour__tab" data-i="4">Storage</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tour-panel" class="pcmtour__tab" data-i="5">Tools</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tour-panel" class="pcmtour__tab" data-i="6">Service</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tour-panel" class="pcmtour__tab" data-i="7">Booking</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tour-panel" class="pcmtour__tab" data-i="8">Performance</button>
           </div>
           <div id="tour-panel" role="tabpanel" style="position:relative;aspect-ratio:2080/1620;border-radius:14px;overflow:hidden;border:1px solid rgba(125,170,220,.25);box-shadow:0 24px 60px rgba(0,0,0,.45);background:#0a1226">
-            <img data-i="0" src="/images/pcm-laptop-health-v26.webp" width="2080" height="1620" alt="365 PC Manager health tab - live health score ring, verdict and system glance" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:1;transition:opacity .28s ease" />
-            <img data-i="1" src="/images/pcm-laptop-boost-v26.webp" width="2080" height="1620" alt="365 PC Manager boost tab - live memory graph and one-tap boost" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
-            <img data-i="2" src="/images/pcm-laptop-report-v26.webp" width="2080" height="1620" alt="365 PC Manager service tab - the free full health-check report" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
-            <img data-i="3" src="/images/pcm-laptop-booking-v26.webp" width="2080" height="1620" alt="365 PC Manager booking tab - book, change and cancel visits" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
-            <img data-i="4" src="/images/pcm-laptop-perf-v26.webp" width="2080" height="1620" alt="365 PC Manager performance tab - live processor, memory and graphics graphs" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
+            <img data-i="0" src="/images/pcm-laptop-health-v28.webp" width="2080" height="1620" alt="365 PC Manager Home - the health score, what to do next and the PC at a glance" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:1;transition:opacity .28s ease" />
+            <img data-i="1" src="/images/pcm-laptop-network-v28.webp" width="2080" height="1620" alt="365 PC Manager Network safety - firewall, router openings, Remote Desktop, old SMB1 file sharing and remote-control tools" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
+            <img data-i="2" src="/images/pcm-laptop-programs-v28.webp" width="2080" height="1620" alt="365 PC Manager Programs check - the security programs on duty, and tune-up tools, driver updaters and adware a home PC doesn&rsquo;t need" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
+            <img data-i="3" src="/images/pcm-laptop-updates-v28.webp" width="2080" height="1620" alt="365 PC Manager Windows Update - whether the monthly updates are arriving, with the most recent ones listed" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
+            <img data-i="4" src="/images/pcm-laptop-space-v28.webp" width="2080" height="1620" alt="365 PC Manager Storage and space - every drive at a glance and the biggest files, with Move to a drive that has room (file names blurred)" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
+            <img data-i="5" src="/images/pcm-laptop-tools-v28.webp" width="2080" height="1620" alt="365 PC Manager Tools - performance, boost, startup, space, backup, power, Windows Update and printers in one place" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
+            <img data-i="6" src="/images/pcm-laptop-service-v28.webp" width="2080" height="1620" alt="365 PC Manager Health check and service - the free full health check, tune-up and report, and a broadband test" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
+            <img data-i="7" src="/images/pcm-laptop-booking-v28.webp" width="2080" height="1620" alt="365 PC Manager booking on a support plan - your appointments with change and cancel, then book a visit by day (demo account)" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
+            <img data-i="8" src="/images/pcm-laptop-perf-v28.webp" width="2080" height="1620" alt="365 PC Manager Performance - live processor, memory, disk and network graphs" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .28s ease" />
           </div>
           <p class="mono" id="tour-cap" aria-live="polite" style="text-align:center;color:var(--muted);font-size:.75rem;margin:.75rem 0 0">Your health score, at a glance</p>
         </div>
@@ -911,7 +943,7 @@ def pcm_landing():
           var tabs=[].slice.call(root.querySelectorAll('[role=tab]'));
           var imgs=[].slice.call(root.querySelectorAll('#tour-panel img'));
           var cap=document.getElementById('tour-cap');
-          var caps=['Your health score, at a glance','One-tap boost, with live graphs','A full health-check report on your Desktop','Book & manage visits from the app','Live processor, memory and graphics graphs'];
+          var caps=['Your health score, and what to do next','Network safety: firewall, router, Remote Desktop and more','Programs check: security programs and unwanted extras','Is Windows getting its monthly updates?','Every drive, your biggest files, and room to move them','All the tools in one place','A free full health check, and your service','Book and manage visits from the app','Live processor, memory, disk and network graphs'];
           function sel(i){
             tabs.forEach(function(t,j){ t.setAttribute('aria-selected', j===i?'true':'false'); t.tabIndex = j===i?0:-1; });
             imgs.forEach(function(m){ m.style.opacity = (parseInt(m.getAttribute('data-i'),10)===i)?'1':'0'; });
@@ -942,9 +974,12 @@ def pcm_landing():
             <tr><td>Drive health &amp; condition</td><td>The drive&rsquo;s own self-check (SMART) &mdash; the earliest warning most drives give before failing</td></tr>
             <tr><td>How old your PC is</td><td>An honest age estimate from the processor generation, and what that means for its future</td></tr>
             <tr><td>Memory</td><td>How much you have, the most this machine can take, and whether a top-up is worth it</td></tr>
-            <tr><td>Backup</td><td>Whether a backup is genuinely running &mdash; not just installed</td></tr>
+            <tr><td>Backup</td><td>Whether a backup is genuinely running &mdash; not just installed &mdash; including OneDrive folder backup</td></tr>
             <tr><td>Antivirus &amp; updates</td><td>Whether real-time protection is on and updates have finished</td></tr>
-            <tr><td>Storage &amp; startup</td><td>Where your space went and what slows your start-up</td></tr>
+            <tr><td>Storage &amp; startup</td><td>Every drive at a glance, where your space went, and what slows your start-up</td></tr>
+            <tr><td>Programs</td><td>Two security programs fighting, protection that has stopped updating, and tune-up tools, driver updaters and adware a home PC doesn&rsquo;t need</td></tr>
+            <tr><td>Network safety</td><td>Whether the firewall is on, anything your router has opened to this PC, Remote Desktop, old SMB1 file sharing and remote-control tools</td></tr>
+            <tr><td>Windows Update &amp; printers</td><td>Whether the monthly updates are arriving, and printers with a problem or documents stuck in the queue</td></tr>
             <tr><td>Value for money</td><td>What machines like yours typically cost new, and your honest cost-per-week so far</td></tr>
           </tbody>
         </table></div>
@@ -968,7 +1003,7 @@ def pcm_landing():
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>// EASY TO MIX UP</p>
           <h2 class="section-title section-title--center" data-title>Is this Microsoft&rsquo;s &ldquo;PC Health Check&rdquo; or &ldquo;PC Manager&rdquo;?<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>No &mdash; similar names, different things. Microsoft&rsquo;s <strong>PC Health Check</strong> mainly answers one question: can this PC run Windows 11? Microsoft&rsquo;s <strong>PC Manager</strong> clean-up utility <strong>isn&rsquo;t officially available to download in the UK</strong>: it has been region-limited out of the UK Microsoft Store for years (as of mid-2026). <strong>365 PC Manager</strong> is different. Made in Dorset for UK users, it is a plain-English health check of the things that actually catch people out: drive health, backup, protection, age and value. Your data stays on your PC, and a real local techie is one tap away when you want a human.</p>
+          <p class="lede lede--center" data-reveal>No &mdash; similar names, different things. Microsoft&rsquo;s <strong>PC Health Check</strong> mainly answers one question: can this PC run Windows 11? Microsoft&rsquo;s <strong>PC Manager</strong> clean-up utility <strong>isn&rsquo;t officially available to download in the UK</strong>: it has been region-limited out of the UK Microsoft Store for years (as of mid-2026). <strong>365 PC Manager</strong> is different. Made in Dorset for UK users, it is a plain-English health check of the things that actually catch people out: drive health, backup, protection, risky programs, network openings, missed Windows updates, age and value. Your data stays on your PC, and a real local techie is one tap away when you want a human.</p>
         </div>
       </div>
     </section>''',
@@ -1044,25 +1079,26 @@ def pcm_landing():
     assert len(_blocks) == 22, len(_blocks)
     for _i, _m in _marks.items():
         assert _m in _blocks[_i], (_i, _m)
-    for _i in (1, 2, 5, 6, 7, 8, 9, 11, 12, 13, 14):
+    for _i in (2, 5, 6, 7, 8, 9, 11, 12, 13, 14):   # 1 (keep it maintained) stays open on phones: the wait-vs-maintained comparison is the point
         assert _blocks[_i].lstrip().startswith('<section '), _i
         _blocks[_i] = _blocks[_i].replace('<section ', '<section data-hw-fold ', 1)
-    _order = [17, 10, 4, 1, 2, 3, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21]
+    _blocks.append(_PCM_WHATSNEW)   # 22: New in version 28 (27 Sep 2026)
+    _order = [17, 22, 4, 1, 2, 10, 3, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21]
     content = "\n".join([_pcm_hero, _pcm_proof] + [_blocks[i] for i in _order] + [_pcm_fold])
     def schema(s, _desc=desc, _faqs=faqs):
         app = {"@type": "SoftwareApplication", "@id": f"{SITE}/{s}/#app",
                "name": "365 PC Manager", "operatingSystem": "Windows 10, Windows 11",
                "applicationCategory": "UtilitiesApplication",
-               "description": "Free PC health check app for Windows by 365 Techies (a real Bournemouth family IT firm): a plain-English health score, drive (SMART) health, one-tap boost, live performance graphs, backup and startup checks, and an honest report - no fake errors, no scare tactics. " + ("Free download, digitally signed by 365 Techies Ltd." if PCM_LIVE else "Launching soon; join the waitlist."),
+               "description": "Free PC health check app for Windows by 365 Techies (a real Bournemouth family IT firm): a plain-English health score, network safety, programs, Windows Update and printer checks, drive (SMART) health on every drive, one-tap boost, live performance graphs, backup (including OneDrive folder backup) and startup checks, and an honest report - no fake errors, no scare tactics. " + ("Free download, digitally signed by 365 Techies Ltd." if PCM_LIVE else "Launching soon; join the waitlist."),
                "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP", "availability": ("https://schema.org/InStock" if PCM_LIVE else "https://schema.org/PreOrder")},
                **({"downloadUrl": PCM_DOWNLOAD_URL, "softwareVersion": PCM_VERSION, "fileSize": PCM_FILESIZE} if PCM_LIVE else {}),   # derived from version.json + the exe on disk - retyping these is how they came to advertise 1.0.18/326KB while v20 shipped
-               "screenshot": [SITE + "/images/pcm-laptop-health-v26.webp", SITE + "/images/pcm-laptop-boost-v26.webp", SITE + "/images/pcm-laptop-report-v26.webp"],
+               "screenshot": [SITE + "/images/pcm-laptop-health-v28.webp", SITE + "/images/pcm-laptop-network-v28.webp", SITE + "/images/pcm-laptop-programs-v28.webp", SITE + "/images/pcm-laptop-service-v28.webp"],
                "provider": {"@id": SITE + "/#business"}, "url": f"{SITE}/{s}/"}
         # The six-weekly service is a real, priced service this page now sells; describe it
         # as one. Offers reuse the plan page's own figures (from £18.25) so the two nodes
         # can never disagree, and the URL points at the section that describes it.
         svc = service(s, "Six-weekly PC service with written Service Report",
-                      "A full computer service every six weeks on a 365 Techies support plan: Windows, driver and application updates, a security check, a system file check, backup and drive health checks, a broadband speed test and a tune-up, each written up in a Service Report that is emailed to the customer and kept in their portal. Home £18.25 per computer per month; business from £24.38.",
+                      "A full computer service every six weeks on a 365 Techies support plan: Windows, driver and application updates, a security check, a network safety check, a system file check, backup and drive health checks, a broadband speed test and a tune-up, each written up in a Service Report that is emailed to the customer and kept in their portal. Home £18.25 per computer per month; business from £24.38.",
                       stype="Computer servicing and maintenance")
         svc["offers"] = bp._from("18.25", "per computer per month", SITE + "/monthly-it-support/")
         svc["url"] = f"{SITE}/{s}/#six-weekly-service"
@@ -1073,7 +1109,7 @@ def pcm_landing():
                       faqpage(s, _faqs)])
     add(slug=slug, title="Free PC Health Check for Windows | 365 PC Manager",
         desc=desc, og_title="Free PC Health Check - 365 PC Manager | 365 Techies", schema=schema, content=content,
-        og_image=bp.SITE + "/images/pcm-og-v21.jpg")
+        og_image=bp.SITE + "/images/pcm-og-v28.jpg")
 pcm_landing()
 
 # ===================================================== 365 WIFI OPTIMIZER (live signal finder)
@@ -14594,7 +14630,7 @@ SPECCHECK_APP_BAND = '''    <section class="section section--alt" aria-label="Ke
         </div>
         <div class="kx">
           <div class="kx__card kx__card--app" data-reveal>
-            <a class="kx__shot" href="/free-pc-health-check/" aria-label="See 365 PC Manager, the free app"><img src="/images/pcm-laptop-health-v26.webp" width="2080" height="1620" alt="365 PC Manager health tab - live health score ring, verdict and system glance" loading="lazy" decoding="async"></a>
+            <a class="kx__shot" href="/free-pc-health-check/" aria-label="See 365 PC Manager, the free app"><img src="/images/pcm-laptop-health-v28.webp" width="2080" height="1620" alt="365 PC Manager Home - the health score, what to do next and the PC at a glance" loading="lazy" decoding="async"></a>
             <p class="kx__tag mono">FREE &middot; WINDOWS &middot; REAL SCREENSHOT</p>
             <h3>See the inside with 365 PC Manager</h3>
             <ul class="kx__list">
@@ -14602,6 +14638,7 @@ SPECCHECK_APP_BAND = '''    <section class="section section--alt" aria-label="Ke
               <li>Drive health and free space, before a failing drive takes your files with it</li>
               <li>Battery wear: how much of its original capacity is left</li>
               <li>Whether antivirus is on, and whether a backup actually exists</li>
+              <li>Programs a home PC doesn&rsquo;t need, and anything your network has left open</li>
               <li>A one-tap tune-up and a real broadband speed test</li>
             </ul>
             <p class="kx__fine">Digitally signed by 365 Techies Ltd. No fake errors, no scare tactics, uninstall any time. It shows you where you stand; it isn&rsquo;t an antivirus.</p>
@@ -14626,10 +14663,12 @@ SPECCHECK_APP_BAND = '''    <section class="section section--alt" aria-label="Ke
           <div class="cmp-wrap" tabindex="0" role="group" aria-label="Comparison table (scrolls sideways on a small screen)"><table class="cmp-table cmp-table--vs"><thead><tr><th scope="col"><span class="sr-only">Feature</span></th><th>This page (your browser)</th><th>365 PC Manager (free app)</th></tr></thead><tbody>
             <tr><th>Memory</th><td>A rounded figure that stops at 32&nbsp;GB (8&nbsp;GB in older browsers)</td><td class="hi">The exact amount fitted, and how much is in use right now</td></tr>
             <tr><th>Processor</th><td>How many threads it has</td><td class="hi">Live processor and memory load, as graphs</td></tr>
-            <tr><th>Storage</th><td>Only the space websites are allowed to use</td><td class="hi">Free space on the drive, and the drive&rsquo;s own SMART health</td></tr>
+            <tr><th>Storage</th><td>Only the space websites are allowed to use</td><td class="hi">Every drive and its free space, your biggest files, and each drive&rsquo;s own SMART health</td></tr>
             <tr><th>Battery</th><td>Charge level and whether it is plugged in</td><td class="hi">Battery health &mdash; how much of its original capacity is left</td></tr>
             <tr><th>Protection &amp; backup</th><td>Nothing &mdash; a browser cannot see them</td><td class="hi">Whether antivirus is on, and whether a backup actually exists</td></tr>
-            <tr><th>Windows</th><td>The version family</td><td class="hi">The edition, whether a restart is waiting, and days since the last one</td></tr>
+            <tr><th>Windows</th><td>The version family</td><td class="hi">The edition, whether the monthly updates are arriving, and whether a restart is waiting</td></tr>
+            <tr><th>Programs</th><td>Nothing &mdash; a browser cannot see them</td><td class="hi">Two security programs fighting, and tune-up tools or driver updaters a home PC doesn&rsquo;t need</td></tr>
+            <tr><th>Network</th><td>Nothing &mdash; a browser cannot see it</td><td class="hi">The firewall, anything your router has opened to this PC, Remote Desktop and old SMB1 file sharing</td></tr>
             <tr><th>Broadband</th><td>An estimate from the connection type</td><td class="hi">A real measured speed test, kept so you can compare later</td></tr>
           </tbody></table></div>
         </details>
@@ -16889,7 +16928,7 @@ info_page(
           <h2>How it works</h2>
           <p>For a Windows PC we do it remotely. We ring you first, you sit at the computer, and we look together through our encrypted remote-support tool. Nothing is installed without asking and nothing is changed without telling you. We do not need your passwords: you type them in yourself if something needs signing into.</p>
           <p>For a business it usually starts with a conversation before we look at any machine. What you rely on, where your data lives, who holds the admin account for Microsoft 365, and what would happen tomorrow if a laptop was lost or an email account was taken over.</p>
-          <p>Prefer to start yourself? Try our free <a href="/it-health-check-tool/">instant IT Health Check tool</a> &mdash; answer a few quick questions and get a score out of 100 and a personalised action plan on the spot. Or our free <a href="/free-pc-health-check/">365 PC Manager app</a> (free, digitally signed) will read a Windows PC&rsquo;s real health: drive condition, backup, protection and age. It puts a plain-English report on your Desktop. <a href="/free-pc-health-check/">Download it free</a> &mdash; it installs in a couple of clicks and uninstalls just as easily.</p>
+          <p>Prefer to start yourself? Try our free <a href="/it-health-check-tool/">instant IT Health Check tool</a> &mdash; answer a few quick questions and get a score out of 100 and a personalised action plan on the spot. Or our free <a href="/free-pc-health-check/">365 PC Manager app</a> (free, digitally signed) will read a Windows PC&rsquo;s real health: drive condition, backup, protection, risky programs, network settings and age. It puts a plain-English report on your Desktop. <a href="/free-pc-health-check/">Download it free</a> &mdash; it installs in a couple of clicks and uninstalls just as easily.</p>
           <h2>What you get</h2>
           <p>A short, plain-English report: what is fine, what needs attention, and what we would do first if it were ours &mdash; with <strong>absolutely no pressure to sign up</strong>. Some people take the report and sort things themselves, some ask us to fix the one thing that worried them, and some join a plan. All three are fine by us.</p>
           <h2>Who it&rsquo;s for</h2>
