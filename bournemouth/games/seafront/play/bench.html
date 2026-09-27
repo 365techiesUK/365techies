@@ -24,6 +24,13 @@
        - the cameras keep the pier in the picture: wide from the beach side, side-on with the pier behind, from
          ahead with the town and the pier behind, and the rider's own eyes; every duck-dive goes UNDER the water -
          through the rider's own eyes (the game's own dive camera), or from below when the water is deep enough.
+     SAME MORNING, second pass (owner: "bigger waves ... only the view of the actual surfer, through their eyes, so you see
+     them paddling and going under the waves ... and see Bournemouth Pier in the view ... a frames per second counter ...
+     more dramatic and cinematic"): the surf is turned up (?surf=, the game's own wave-size dial), the whole film is the
+     rider's own eyes (the game's first-person camera, which goes under with every duck-dive), the paddle-out angles a
+     little toward the pier and the rider glances across at it between waves, a live frames-a-second counter sits top
+     right, and black widescreen bars frame it (overlays only: the game still draws the whole picture, so the load is
+     the same as without them).
      The mouse, keys, touch and game controllers reach nothing: a shield covers the frame, focus is kept out of it,
      and the game's input is this page's driver. If a later build no longer has the handles used here, the game's
      own start runs instead and the result says scene=attract - the frame rate is still real. -->
@@ -31,23 +38,33 @@
   html, body { margin: 0; height: 100%; background: #0b1226; overflow: hidden; }
   iframe { border: 0; width: 100%; height: 100%; display: block; }
   #shield { position: fixed; inset: 0; z-index: 2; cursor: none; background: transparent; }
-  #cap { position: fixed; left: 0; right: 0; bottom: 0; z-index: 3; padding: 9px 16px; font: 600 15px/1.3 "Segoe UI", system-ui, sans-serif;
-         color: #fff; background: rgba(11, 18, 38, .72); pointer-events: none; }
+  #cap { position: fixed; left: 0; right: 0; bottom: 0; z-index: 3; padding: 21px 16px; font: 600 15px/1.3 "Segoe UI", system-ui, sans-serif;
+         color: #fff; background: transparent; pointer-events: none; text-align: center; }
   #st { color: #7fd0ff; font-weight: 400; margin-left: 8px; }
   /* whose game this is, in the corner the whole time (owner, 27 Sep) */
-  #badge { position: fixed; left: 14px; top: 12px; z-index: 3; display: flex; align-items: center; gap: 10px; padding: 8px 16px 8px 9px;
+  #badge { position: fixed; left: 14px; top: 6px; z-index: 3; display: flex; align-items: center; gap: 10px; padding: 8px 16px 8px 9px;
            border-radius: 14px; background: rgba(7, 13, 34, .62); border: 1px solid rgba(125, 170, 220, .28); pointer-events: none;
            font-family: "Segoe UI", system-ui, sans-serif; box-shadow: 0 4px 18px rgba(0, 0, 0, .25); }
   #badge img { width: 34px; height: 34px; display: block; }
+  /* widescreen bars - overlays only, the game still draws the full frame underneath */
+  .bar { position: fixed; left: 0; right: 0; height: 64px; background: #000; z-index: 2; pointer-events: none; }
+  #bar-t { top: 0; } #bar-b { bottom: 0; }
+  /* the live frame rate */
+  #fps { position: fixed; right: 16px; top: 10px; z-index: 3; pointer-events: none; text-align: right; font-family: "Segoe UI", system-ui, sans-serif;
+         padding: 4px 14px 5px; border-radius: 12px; background: rgba(7, 13, 34, .62); border: 1px solid rgba(125, 170, 220, .28); }
+  #fps b { display: block; font: 800 26px/1.05 Consolas, "Cascadia Mono", monospace; color: #39d353; letter-spacing: .02em; }
+  #fps span { display: block; font-size: 11px; font-weight: 700; letter-spacing: .14em; color: #8fa3bd; }
   #badge b { display: block; color: #fff; font-size: 19px; font-weight: 800; letter-spacing: .16em; line-height: 1.1; }
   #badge span { display: block; color: #7fd0ff; font-size: 12.5px; font-weight: 600; letter-spacing: .02em; margin-top: 1px; }
 </style>
 </head>
 <body>
-<iframe id="g" src="./?clean=1&amp;sound=0&amp;mode=surfer" title="Seafront game" tabindex="-1"></iframe>
+<iframe id="g" title="Seafront game" tabindex="-1"></iframe>
 <div id="shield" aria-hidden="true"></div>
+<div class="bar" id="bar-t" aria-hidden="true"></div><div class="bar" id="bar-b" aria-hidden="true"></div>
+<div id="fps"><b id="fpsn">&ndash;</b><span>FRAMES / SEC</span></div>
 <div id="badge"><img src="/favicon.svg" alt=""><div><b>SEAFRONT</b><span>a Bournemouth game by 365 Techies</span></div></div>
-<div id="cap">365 Techies graphics test &ndash; paddling out at Bournemouth Pier <span id="st">loading the game&hellip;</span></div>
+<div id="cap">365 Techies graphics test &ndash; paddling out at Bournemouth Pier on a big day <span id="st">loading the game&hellip;</span></div>
 <script>
 (function () {
   var q = new URLSearchParams(location.search);
@@ -57,6 +74,10 @@
   var BOOT_LIMIT = 90000;    // slow broadband: the game is a few MB
   var st = document.getElementById('st');
   var f = document.getElementById('g');
+  // the wave size (the game's own dial: 1 = the modelled Bournemouth bank, ~1.15 m; 1.8 "a big day"; 2.4 the top step,
+  // ~2.8 m - the one used: a wall of whitewater fills the view before each dive, and six dives in 35 s against four)
+  var SURF = Math.max(1, Math.min(2.4, +(q.get('surf') || 2.4)));
+  f.src = './?clean=1&sound=0&mode=surfer&surf=' + SURF;
   var t0 = performance.now();
   var scene = 'attract';
 
@@ -104,7 +125,9 @@
       }
       if (B.state === 0 || B.state === 1) {
         if (D.ph === 'out') {
-          var hp = SF.home(); steer(Math.atan2(hp[1] - B.z, hp[0] - B.x)); thr = 1;
+          // out through the break, angled a little toward the pier so it stays in the rider's view (owner: "see
+          // Bournemouth Pier in the view") - the point just past the break, moved 18 m toward the pier
+          var hp = SF.home(), pw = SF.pierward || Math.PI; steer(Math.atan2(hp[1] + Math.sin(pw) * 18 - B.z, hp[0] + Math.cos(pw) * 18 - B.x)); thr = 1;
           var p = SF.probe(B.x, B.z + 4);
           var here = w.amp > 0.2 && w.brk > 0.5 && w.chi > -1.1 && w.chi < -0.05;
           if ((here || (p.brk > 0.25 && p.chi > -1.4 && p.chi < 0.2 && p.amp > 0.2)) && B.state === 0 && B.cool <= 0) boost = 1;
@@ -128,83 +151,76 @@
     return function () { if ((D.tick++ & 1) === 0) decide(); return out; };
   }
 
-  // THE CAMERAS, cut on the game's own clock so every PC films the same sequence. World-fixed directions, so the
-  // pier (66 m west of the surf) stays where the shot put it: +z is out to sea here, SF.pierward points at the pier.
-  //   A wide, from the beach side and away from the pier, looking out past the rider - the pier alongside
-  //   S side-on, low, from the side away from the pier - the pier behind the rider
-  //   F from out to sea, looking back at the rider - the town, the cliffs and the pier behind
-  //   P the rider's own eyes (the game's own first-person camera): the hands, the board, the next wave
-  // and every duck-dive is its own shot, under the water.
-  var CUTS = [[0, 'A'], [6, 'P'], [12, 'S'], [18, 'F'], [24, 'A'], [30, 'S'], [36, 'P'], [42, 'F']];
-  var LOOP = ['A', 'S', 'P', 'F'];
-  function shotAt(t) {
-    if (t >= 48) return LOOP[Math.floor((t - 48) / 6) % LOOP.length];
-    var s = 'A'; for (var i = 0; i < CUTS.length; i++) if (t >= CUTS[i][0]) s = CUTS[i][1]; return s;
+  // THE CAMERA IS THE RIDER'S OWN EYES, the whole way (owner, second pass): the game's own first-person view - the
+  // hands paddling, the board, the next wave - which goes under the water with every duck-dive (b29-b33). Between
+  // waves the rider glances across at the pier, on the game's clock so every PC films the same glances: eased in and
+  // out over a second, only while lying on the board above the water, dropped at once when a dive starts.
+  var GLANCES = [[3, 7], [14.5, 18], [26, 29.5], [38, 41.5], [50, 53.5]];
+  function glanceAt(t) {
+    for (var i = 0; i < GLANCES.length; i++) {
+      var g = GLANCES[i]; if (t >= g[0] && t <= g[1]) { var x = Math.min(t - g[0], g[1] - t); return x >= 1 ? 1 : x * x * (3 - 2 * x); }
+    }
+    return 0;
   }
+  // the pier head's end of the pier - the zip-wire tower and the theatre (dolphin-pod.js PIER_A..PIER_B, 85% along)
+  var PIER_LOOK = [-209.7, -110.1, 4];
 
   function film(w) {
     var E = w.efoil, Hb = E && E.craft, V = E && E.view3d, L = E && E.live, SF = w.efoilSurfer;
     if (!E || !Hb || !V || !L || !E.sim || !SF || !SF.active) return false;
-    if (typeof Hb._surfCam !== 'function' || typeof Hb._pov !== 'function' || typeof L.sample !== 'function' || typeof E.setCamera !== 'function') return false;
+    if (typeof Hb._fpv !== 'function' || typeof L.sample !== 'function' || typeof E.setCamera !== 'function') return false;
     if (typeof SF.board !== 'function' || typeof SF.again !== 'function' || typeof SF.probe !== 'function' || typeof SF.dAt !== 'function' || typeof SF.home !== 'function') return false;
     try { if (SF.hud && SF.hud.hideIntro) SF.hud.hideIntro(); } catch (e) { }
     // the only input the board hears from now on; no game controller reaches the page
     L.sample = driver(E, SF);
     try { w.navigator.getGamepads = function () { return []; }; } catch (e) { }
     try { if (V.setMotion) V.setMotion('off'); } catch (e) { }
-    // film cameras sit where the shot puts them - not pulled in off the pier as a player's camera is (film.mjs)
-    if (typeof Hb._unclip === 'function') Hb._unclip = function () { };
-    // a message the underwater camera leaves when the water is too shallow has no place in a film
+    // no message on screen: the film is pictures only
     try { if (Hb.o && typeof Hb.o.toast === 'function') Hb.o.toast = function () { }; } catch (e) { }
-    // watched from outside (the game starts the level through the rider's eyes), and the run from its start
-    E.setCamera('chase');
+    // through the rider's own eyes (the level's own start), and the run from its start
+    E.setCamera('fpv');
     SF.again();
 
-    var sea = E.sim.sea;
-    var pd = [Math.cos(SF.pierward || Math.PI), Math.sin(SF.pierward || Math.PI)], ad = [-pd[0], -pd[1]];
-    var C = { t0: E.sim.time, shot: null, R: null, dives: 0, lastState: -1, diveKind: null };
-    var os = Hb._surfCam.bind(Hb);
-    function look(cam, x, y, z) {
-      cam.yaw = Math.atan2(z - cam.z, x - cam.x); cam.pitch = Math.atan2(y - cam.y, Math.hypot(x - cam.x, z - cam.z));
-      var Lk = Hb._surfLook; if (Lk) { Lk.x = x; Lk.y = y; Lk.z = z; }
-    }
-    function aimAlong(cam) {   // keep the game's look point on the view line (it re-aims its dynamics at it)
-      var cp = Math.cos(cam.pitch), Lk = Hb._surfLook;
-      if (Lk) { Lk.x = cam.x + Math.cos(cam.yaw) * cp * 3; Lk.z = cam.z + Math.sin(cam.yaw) * cp * 3; Lk.y = cam.y + Math.sin(cam.pitch) * 3; }
-    }
-    Hb._surfCam = function (cam, dt) {
-      os(cam, dt);                        // the game's own framing - and its duck-dive decision (Hb._diving)
+    var C = { t0: E.sim.time, g: 0, dives: 0, lastState: -1, shot: 'eyes' };
+    var of = Hb._fpv.bind(Hb);
+    Hb._fpv = function (cam, dt) {
+      of(cam, dt);                        // the game's own first-person framing, under the water on a dive
       dt = Math.max(1 / 240, Math.min(0.1, dt || 1 / 60));
-      var h = Hb.hull, t = E.sim.time - C.t0;
-      // the rider, smoothed: the board bobs on every wave and a camera nailed to it would too
-      if (!C.R) C.R = { x: h.x, y: h.y, z: h.z };
-      var k = 1 - Math.exp(-dt * 3);
-      C.R.x += (h.x - C.R.x) * k; C.R.z += (h.z - C.R.z) * k; C.R.y += (h.y - C.R.y) * (1 - Math.exp(-dt * 1.5));
-      // EVERY DUCK-DIVE GOES UNDER. Alternate dives are seen from below the surface when the water is deep enough
-      // for the game's underwater camera (it needs 1.15 m of still water; the paddle-out starts in about 1 m);
-      // the rest through the rider's own eyes, the camera the game itself cuts to (b29-b31).
-      if (h.state === 1 && C.lastState !== 1) { C.dives++; C.diveKind = (C.dives % 2 === 0) ? 'U' : 'P'; Hb._uc = {}; }
+      var h = Hb.hull, t = E.sim.time - C.t0, below = !!(Hb._pS && Hb._pS.below);
+      if (h.state === 1 && C.lastState !== 1) C.dives++;
       C.lastState = h.state;
-      if (Hb._diving) {
-        if (C.diveKind === 'U' && Hb._underCam(cam, dt)) { Hb._povOn = false; V.fovY = 64 * Math.PI / 180; aimAlong(cam); C.shot = 'U'; return; }
-        C.shot = 'D'; return;             // the rider's eyes, as the game framed them above
+      C.shot = below ? 'under' : 'eyes';
+      if (!Hb._povOn) return;
+      var want = (h.state === 0 && !below) ? glanceAt(t) : 0;
+      C.g += (want - C.g) * (1 - Math.exp(-dt * (want > C.g ? 2.5 : 7)));
+      if (C.g > 0.002) {
+        var py = Math.atan2(PIER_LOOK[1] - cam.z, PIER_LOOK[0] - cam.x);
+        var dy = wrap(py - cam.yaw); dy = Math.max(-1.1, Math.min(1.1, dy));
+        cam.yaw += dy * C.g;
+        var pp = Math.atan2(PIER_LOOK[2] - cam.y, Math.hypot(PIER_LOOK[0] - cam.x, PIER_LOOK[1] - cam.z));
+        cam.pitch += (pp - cam.pitch) * C.g * 0.6;
+        if (C.g > 0.3) C.shot = 'pier';
       }
-      var name = shotAt(t);
-      if (name === 'P') { if (Hb._pov(cam, dt)) { C.shot = 'P'; return; } name = 'S'; }
-      Hb._povOn = false;
-      var R = C.R, p, tg, fov;
-      if (name === 'A') { p = [R.x - 0 * 13 + ad[0] * 7, R.z - 13 + ad[1] * 7, R.y + 4.2]; tg = [R.x + pd[0] * 8, R.z + 12 + pd[1] * 8, R.y + 0.2]; fov = 58; }
-      else if (name === 'S') { p = [R.x + ad[0] * 8.5, R.z + 1.5 + ad[1] * 8.5, R.y + 1.4]; tg = [R.x, R.z, R.y + 0.35]; fov = 52; }
-      else { p = [R.x + ad[0] * 5, R.z + 8 + ad[1] * 5, R.y + 1.6]; tg = [R.x, R.z, R.y + 0.3]; fov = 55; }
-      cam.x = p[0]; cam.z = p[1]; cam.y = p[2];
-      // never in the water, whatever a wave does under the lens
-      if (sea && sea.sample) { var wy = sea.sample(cam.x, cam.z, E.sim.time, 0, 3).height; if (cam.y < wy + 0.5) cam.y = wy + 0.5; }
-      look(cam, tg[0], tg[2], tg[1]);
-      V.fovY = fov * Math.PI / 180;
-      C.shot = name;
     };
-    w.__bench = { C: C, shotAt: shotAt };   // read-only look-in for testing
+    w.__bench = { C: C };   // read-only look-in for testing
     return true;
+  }
+
+  // THE LIVE COUNTER (owner: "a frames per second counter on it, so we can see what sort of speed it's getting"): the
+  // frames the game drew in the last second, four times a second. It rides the game's own requestAnimationFrame, as
+  // the measurement does - two tiny callbacks a frame, nothing drawn in the game.
+  var fpsEl = document.getElementById('fpsn');
+  function startCounter(w) {
+    var ts = [];
+    function tickF(t) { ts.push(t); while (ts.length > 1 && t - ts[0] > 1000) ts.shift(); try { w.requestAnimationFrame(tickF); } catch (e) { } }
+    try { w.requestAnimationFrame(tickF); } catch (e) { return; }
+    setInterval(function () {
+      if (ts.length < 2) return;
+      var span = (ts[ts.length - 1] - ts[0]) / 1000; if (span <= 0) return;
+      var fps = Math.round((ts.length - 1) / span);   // the colour follows the number shown (29.6 reads 30, and is amber)
+      fpsEl.textContent = String(fps);
+      fpsEl.style.color = fps >= 55 ? '#39d353' : fps >= 30 ? '#e0b341' : '#e8637e';
+    }, 250);
   }
 
   function waitBoot() {
@@ -217,6 +233,7 @@
       // the game draws before all of it has set up (window.efoil comes last): keep trying for 15 s, and start the
       // warm-up clock once the film is rolling - or once it is given up on, when the game's own start is timed
       st.textContent = 'warming up…';
+      startCounter(w);
       var tf = performance.now();
       return (function tryFilm() {
         var ready = false;
