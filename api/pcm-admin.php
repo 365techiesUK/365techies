@@ -54,10 +54,11 @@ $CSRF = $_SESSION['csrf'];
 if (($_POST['do'] ?? '') !== '' && !hash_equals($CSRF, (string)($_POST['csrf'] ?? ''))) { http_response_code(403); exit('bad token'); }
 if (empty($_SESSION['pcm_ok'])) {
     echo '<!doctype html><meta name=viewport content="width=device-width,initial-scale=1"><title>365 PC Manager admin</title>';
-    echo '<body style="font-family:system-ui;background:#0b1226;color:#eef;display:grid;place-items:center;height:100vh;margin:0">';
-    echo '<form method=post style="background:#0d1530;padding:2rem;border-radius:14px;border:1px solid #2a3b63;min-width:300px">';
-    echo '<h2 style="margin:0 0 1rem">365 PC Manager</h2><input type=password name=pass placeholder=Passphrase autofocus style="width:100%;padding:.7rem;border-radius:8px;border:1px solid #2a3b63;background:#0b1226;color:#fff;box-sizing:border-box">';
-    echo '<button style="margin-top:1rem;width:100%;padding:.7rem;border:0;border-radius:8px;background:#1d97e3;color:#fff;font-size:1rem;cursor:pointer">Sign in</button></form>';
+    echo '<body style="font-family:system-ui,Segoe UI,sans-serif;background:#070d22;color:#eaf4ff;display:grid;place-items:center;min-height:100vh;margin:0;padding:1rem;box-sizing:border-box">';
+    echo '<form method=post style="background:#0d1631;padding:2rem;border-radius:16px;border:1px solid #1f2c4a;width:100%;max-width:360px;box-sizing:border-box">';
+    echo '<div style="display:flex;align-items:center;gap:.7rem;margin:0 0 1.2rem"><span style="width:34px;height:34px;border-radius:8px;background:#1d97e3;display:grid;place-items:center;font-weight:700;font-size:15px">365</span><h2 style="margin:0;font-size:1.2rem">PC Manager console</h2></div><input type=password name=pass placeholder=Passphrase autofocus style="width:100%;padding:.7rem;border-radius:8px;border:1px solid #2a3b63;background:#0b1226;color:#fff;box-sizing:border-box">';
+    echo '<button style="margin-top:1rem;width:100%;padding:.7rem;border:0;border-radius:8px;background:#1d97e3;color:#fff;font-size:1rem;cursor:pointer">Sign in</button>';
+    echo '<p style="margin:1.1rem 0 0;color:#9fb5d3;font-size:.88rem;line-height:1.5">No passphrase to hand? Sign in to the <a href="/portal/" style="color:#5cb8f0">portal</a> as staff and press <strong>Full PCM console</strong> &mdash; it opens this page already signed in.</p></form>';
     exit;
 }
 
@@ -619,24 +620,77 @@ foreach($cust as $key=>$c){
     }
 }
 ?><!doctype html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
-<title>365 PC Manager — customers</title><style>
-:root{color-scheme:dark}body{font-family:system-ui,Segoe UI,sans-serif;background:#0b1226;color:#eef2f8;margin:0;padding:1.5rem}
-a{color:#86b6e8}h1{font-size:1.3rem;margin:0}.top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1rem}
-.kpis{display:flex;gap:1rem;flex-wrap:wrap;margin:.5rem 0 1.4rem}.kpi{background:#0d1530;border:1px solid #2a3b63;border-radius:12px;padding:.8rem 1.2rem;min-width:110px}
-.kpi b{font-size:1.5rem;display:block}.kpi span{color:#9fb5d3;font-size:.8rem}
-.msg{background:#0e2a17;border:1px solid #1e7a3a;color:#c6f6d5;padding:.7rem 1rem;border-radius:10px;margin-bottom:1rem;font-family:ui-monospace,monospace;font-size:.85rem}
-form.inline{display:inline}input,select,button{font:inherit}input,select{background:#0b1226;color:#fff;border:1px solid #2a3b63;border-radius:8px;padding:.5rem}
-button{background:#1d97e3;color:#fff;border:0;border-radius:8px;padding:.5rem .9rem;cursor:pointer}button.ghost{background:#22304f}button.warn{background:#7a2b2b}
-table{width:100%;border-collapse:collapse;margin-top:.5rem}th,td{text-align:left;padding:.6rem .5rem;border-bottom:1px solid #1c2748;font-size:.9rem;vertical-align:top}
-th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em}
-.key{font-family:ui-monospace,monospace;background:#0d1530;padding:.15rem .4rem;border-radius:6px;border:1px solid #2a3b63}
-.pill{padding:.15rem .5rem;border-radius:99px;font-size:.72rem}.pro{background:rgba(0,206,27,.16);color:#39d353}.free{background:#22304f;color:#9fb5d3}
-.mach{color:#9fb5d3;font-size:.8rem;margin-top:.3rem}.dot{display:inline-block;width:8px;height:8px;border-radius:99px;margin-right:.3rem}
-.add{background:#0d1530;border:1px solid #2a3b63;border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.5rem;display:grid;grid-template-columns:1fr 1fr auto auto auto;gap:.7rem;align-items:end}
-.add label{display:block;font-size:.75rem;color:#9fb5d3;margin-bottom:.2rem}
-@media(max-width:720px){.add{grid-template-columns:1fr 1fr}}
+<title>365 PC Manager console</title><style>
+@font-face{font-family:"Clash Display";font-weight:600;font-display:swap;src:url(/fonts/clash-display-600.woff2) format("woff2")}
+@font-face{font-family:Archivo;font-weight:400;font-display:swap;src:url(/fonts/archivo-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:Archivo;font-weight:600;font-display:swap;src:url(/fonts/archivo-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:Archivo;font-weight:700;font-display:swap;src:url(/fonts/archivo-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-weight:400;font-display:swap;src:url(/fonts/ibm-plex-mono-latin-400-normal.woff2) format("woff2")}
+:root{color-scheme:dark}
+body{font-family:Archivo,system-ui,"Segoe UI",sans-serif;background:#070d22;color:#eaf4ff;margin:0;font-size:15px;line-height:1.45}
+a{color:#5cb8f0}
+.bar{position:sticky;top:0;z-index:20;background:rgba(7,13,34,.94);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid #1c2947}
+.bar__in{max-width:1240px;margin:0 auto;padding:.5rem 1.25rem;min-height:52px;display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
+.logo{width:34px;height:34px;border-radius:8px;background:#1d97e3;color:#fff;display:grid;place-items:center;font-family:"Clash Display",Archivo,sans-serif;font-weight:700;font-size:15px}
+.bname{font-family:"Clash Display",Archivo,sans-serif;font-weight:600;font-size:1.1rem}
+.where{color:#9fb5d3}
+.sp{flex:1}
+.barlinks{display:flex;gap:.4rem;flex-wrap:wrap}
+.barlinks a{display:inline-flex;align-items:center;min-height:38px;padding:0 .85rem;border-radius:999px;border:1px solid #2a3a5e;color:#eaf4ff;text-decoration:none;font-weight:600;font-size:.88rem}
+.barlinks a:hover{border-color:#1d97e3}
+.nav{max-width:1240px;margin:0 auto;padding:0 1.25rem;display:flex;gap:.1rem;overflow-x:auto}
+.nav a{padding:.6rem .8rem;color:#9fb5d3;text-decoration:none;font-weight:600;font-size:.92rem;white-space:nowrap;border-bottom:3px solid transparent}
+.nav a:hover,.nav a:focus-visible{color:#eaf4ff;border-bottom-color:#1d97e3}
+.nav a b{display:inline-block;margin-left:.35rem;padding:0 .45rem;border-radius:999px;background:#24406b;color:#fff;font-size:.72rem;line-height:1.5}
+.nav a.hot b{background:#d2475f}
+.wrap{max-width:1240px;margin:0 auto;padding:1.4rem 1.25rem 2.5rem}
+h1{font-family:"Clash Display",Archivo,sans-serif;font-weight:600;font-size:1.7rem;margin:0}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.7rem;margin:.9rem 0 1.3rem}
+.kpi{background:#0d1631;border:1px solid #1f2c4a;border-radius:14px;padding:.85rem 1rem}
+.kpi b{font-size:1.8rem;display:block;line-height:1.15}.kpi span{color:#9fb5d3;font-size:.85rem}
+.msg{background:#0e2a17;border:1px solid #1e7a3a;color:#c6f6d5;padding:.75rem 1rem;border-radius:12px;margin-bottom:1rem;font-size:.92rem}
+.sec{background:#0d1631;border:1px solid #1f2c4a;border-radius:16px;padding:1.1rem 1.25rem;margin-bottom:1.1rem;scroll-margin-top:110px}
+.sec--alert{border-color:#5a2c45;background:linear-gradient(160deg,rgba(232,99,126,.08),#0d1631 55%)}
+.sec--ask{border-color:#24406b}
+h2.sh{font-size:1.1rem;font-weight:700;margin:0 0 .35rem;color:#eaf4ff}
+h2.sh small{font-weight:600;color:#9fb5d3;font-size:.9rem;margin-left:.3rem}
+form.inline{display:inline}
+input,select,button,textarea{font:inherit}
+input,select,textarea{background:#0a1128;color:#eaf4ff;border:1px solid #2a3a5e;border-radius:9px;padding:.55rem .65rem}
+input:focus,select:focus,textarea:focus{outline:2px solid #1d97e3;outline-offset:1px}
+button{background:#1d97e3;color:#fff;border:0;border-radius:9px;padding:.5rem .95rem;cursor:pointer;font-weight:600;min-height:36px}
+button.ghost{background:transparent;border:1px solid #2a3a5e;color:#c4d6ee}
+button.warn{background:#8e2f3d}
+button:hover{filter:brightness(1.1)}
+button:focus-visible,a:focus-visible{outline:2px solid #5cb8f0;outline-offset:2px}
+table{width:100%;border-collapse:collapse;margin-top:.5rem}
+th,td{text-align:left;padding:.65rem .55rem;border-bottom:1px solid #1c2947;font-size:.92rem;vertical-align:top}
+th{color:#9fb5d3;font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-family:"IBM Plex Mono",ui-monospace,monospace}
+tbody tr:hover td{background:rgba(29,151,227,.04)}
+.tblwrap{overflow-x:auto}
+.key{font-family:"IBM Plex Mono",ui-monospace,monospace;background:#0a1128;padding:.15rem .45rem;border-radius:6px;border:1px solid #2a3a5e}
+.pill{padding:.18rem .55rem;border-radius:99px;font-size:.74rem;font-weight:600}.pro{background:rgba(0,206,27,.14);color:#5fe07a}.free{background:#1a2544;color:#9fb5d3}
+.mach{color:#9fb5d3;font-size:.84rem;margin-top:.3rem}.dot{display:inline-block;width:8px;height:8px;border-radius:99px;margin-right:.3rem}
+.add{display:grid;grid-template-columns:1.3fr 1.3fr .8fr 1fr auto;gap:.7rem;align-items:end;padding:.9rem 1rem;border:1px dashed #2a3a5e;border-radius:12px;margin:.7rem 0 .4rem}
+.add label{display:block;font-size:.76rem;color:#9fb5d3;margin-bottom:.25rem}
+.add input,.add select{width:100%;box-sizing:border-box}
+#customers td:nth-child(5){min-width:13rem}#customers td:last-child{min-width:12rem;white-space:normal !important}
+#customers td:last-child form.inline{display:inline-block;margin:0 .3rem .4rem 0}
+#customers td input{max-width:100%;box-sizing:border-box}
+@media(max-width:820px){.add{grid-template-columns:1fr 1fr}.where{display:none}.wrap{padding-top:1rem}.sec table{display:block;overflow-x:auto}}
 </style></head><body>
-<div class=top><h1>365 PC Manager — customers</h1><div style="display:flex;gap:1rem;align-items:center"><a href="tm-admin.php">&#9993; Text messages</a><a href="?export=1&amp;csrf=<?= htmlspecialchars($CSRF) ?>" title="Download every customer store as one zip - keep it somewhere off this server">&#8681; Export data</a><a href="?logout=1">Sign out</a></div></div>
+<header class=bar><div class=bar__in>
+  <span class=logo>365</span><span class=bname>365 Techies</span><span class=where>PC Manager console</span><span class=sp></span>
+  <nav class=barlinks aria-label="Console links"><a href="/portal/">Staff area</a><a href="tm-admin.php">Text messages</a><a href="?export=1&amp;csrf=<?= htmlspecialchars($CSRF) ?>" title="Download every customer store as one zip - keep it somewhere off this server">Export data</a><a href="?logout=1">Sign out</a></nav>
+</div>
+<nav class=nav aria-label="Console sections">
+  <?php if($calls): ?><a class=hot href="#calls">Worth a call<b><?=count($calls)?></b></a><?php endif; ?>
+  <?php if($pendings): ?><a class=hot href="#signins">Sign-in requests<b><?=count($pendings)?></b></a><?php endif; ?>
+  <a href="#customers">Customers<b><?=count($cust)?></b></a><a href="#news">News from 365</a><a href="#engineers">Engineer mode</a><a href="#email">Portal email</a>
+  <?php if($online): ?><a href="#online">Signed in now<b><?=count($online)?></b></a><?php endif; ?>
+</nav></header>
+<main class=wrap>
+<h1>Customers &amp; PC Manager</h1>
 <div class=kpis>
  <div class=kpi><b><?=count($cust)?></b><span>customers</span></div>
  <div class=kpi><b><?=$pcs?></b><span>machines</span></div>
@@ -646,35 +700,129 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
 </div>
 <?php if($msg) echo '<div class=msg>'.h($msg).'</div>'; ?>
 
-<?php if($online): ?>
-<div style="background:#0d1a2e;border:1px solid #2a5b8f;border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.5rem">
-  <h2 style="margin:0 0 .3rem;font-size:1rem;color:#86b6e8">&#128100; Signed in to the portal &mdash; <?=count($online)?> customer(s)</h2>
-  <p style="color:#9fb5d3;font-size:.82rem;margin:0 0 .7rem">
-    Sessions last a year and renew every visit, so this is everyone who can open their portal
-    without signing in again. &ldquo;Last opened&rdquo; is genuinely the last time they used it.
-  </p>
-  <table style="margin-top:0"><thead><tr><th>Customer</th><th>Plan</th><th>Devices</th><th>Last opened</th><th>Had the email?</th></tr></thead><tbody>
-  <?php foreach($online as $ok => $o):
-        $ago = $o['last'] ? time() - $o['last'] : 0;
-        $lbl = !$o['last'] ? 'unknown'
-             : ($ago < 900 ? 'now' : ($ago < 3600 ? round($ago/60).' min ago'
-             : ($ago < 172800 ? round($ago/3600).' hr ago' : round($ago/86400).' days ago'))); ?>
+<?php if($calls): ?>
+<div class="sec sec--alert" id=calls>
+  <h2 class=sh>Worth a call today <small><?=count($calls)?> machine(s) flagged something</small></h2>
+  <table style="margin-top:0"><thead><tr><th>Customer</th><th>Plan</th><th>Machine</th><th>Why</th><th></th></tr></thead><tbody>
+  <?php foreach($calls as $ca): ?>
     <tr>
-      <td><strong><?=h($o['name'])?></strong><?php if($o['gone']): ?><div class=mach style="color:#e8637e">customer record deleted &mdash; stale session</div><?php endif; ?></td>
-      <td><span class="pill <?=$o['tier']==='pro'?'pro">On support':'free">Free'?></span></td>
-      <td><?=(int)$o['n']?></td>
-      <td<?=$ago && $ago<900?' style="color:#39d353;font-weight:700"':''?>><?=h($lbl)?></td>
-      <td class=mach><?=$o['welcomed']?'yes':'<span style="color:#e0b341">not yet</span>'?></td>
+      <td><strong><?=h($ca['name'])?></strong><?php if($ca['email'])echo '<div class=mach>'.h($ca['email']).'</div>';?></td>
+      <td><span class="pill <?=$ca['tier']==='pro'?'pro':'free'?>"><?=$ca['tier']==='pro'?'On support':'Free'?></span></td>
+      <td><?=h($ca['pc'])?></td>
+      <td style="color:#ffb4a2"><?=h($ca['why'])?></td>
+      <td><?php if($ca['email'])echo '<a href="mailto:'.h($ca['email']).'?subject=Your%20PC%20flagged%20something">email</a>';?></td>
+    </tr>
+  <?php endforeach; ?>
+  </tbody></table>
+  <p style="color:#c99;font-size:.78rem;margin:.6rem 0 0">Free-tier machines here are warm upsell leads &mdash; a quick call fixing the flag is the natural way into a support plan.</p>
+</div>
+<?php endif; ?>
+<?php if($pendings): ?>
+<div class="sec sec--ask" id=signins>
+  <h2 class=sh>Sign-in requests <small><?=count($pendings)?> to confirm</small></h2>
+  <p style="color:#9fb5d3;font-size:.82rem;margin:0 0 .6rem">Someone signed into the app with a booking account whose email matches one of your <strong>Pro</strong> customers. Approving switches their app to support mode. Only approve if you recognise them as that customer.</p>
+  <table style="margin-top:0"><thead><tr><th>Signed in as</th><th>Matches your Pro customer</th><th>When</th><th></th></tr></thead><tbody>
+  <?php foreach($pendings as $pn): ?>
+    <tr>
+      <td><strong><?=h($pn['sbname']?:$pn['email'])?></strong><div class=mach><?=h($pn['email'])?></div></td>
+      <td><?=h($pn['name'])?></td>
+      <td class=mach><?=h($pn['ts'])?></td>
+      <td style="white-space:nowrap">
+        <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=approve><input type=hidden name=key value="<?=h($pn['orig'])?>"><input type=hidden name=link value="<?=h($pn['link'])?>"><button>&#10003; Approve as Pro</button></form>
+        <form method=post class=inline onsubmit="return confirm('Dismiss this sign-in request? They keep free booking access.')"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=dismiss><input type=hidden name=key value="<?=h($pn['orig'])?>"><button class=ghost>dismiss</button></form>
+      </td>
     </tr>
   <?php endforeach; ?>
   </tbody></table>
 </div>
 <?php endif; ?>
+<div class=sec id=customers>
+<h2 class=sh>Customers <small>add one, or find their key, plan and machines below</small></h2>
+<form method=post class=add>
+  <div><label>Customer / business name</label><input name=name required placeholder="e.g. Mrs Wilson"></div>
+  <div><label>Email (optional)</label><input name=email type=email placeholder="name@example.com"></div>
+  <div><label>On support?</label><select name=tier><option value=pro>Pro (on support)</option><option value=free>Free</option></select></div>
+  <div><label>Next service (optional)</label><input name=next placeholder="Fri 28 Aug 2026"></div>
+  <div><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=add><button>+ Add &amp; make key</button></div>
+</form>
+<div class=tblwrap><table><thead><tr><th>Customer</th><th>Key</th><th>Plan</th><th>Next service</th><th>Machines &amp; health</th><th></th></tr></thead><tbody>
+<?php foreach($cust as $key=>$c): if(!empty($c['merged_into'])) continue; /* retired after approval */ ?>
+<tr>
+  <td><strong><?=h($c['name'])?></strong><?php if(!empty($c['via']) && $c['via']==='signin')echo ' <span class="pill free" style="font-size:.66rem">signed in</span>';?>
+    <form method=post class=inline style="margin-top:.35rem"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=email><input type=hidden name=key value="<?=h($key)?>">
+    <input name=email type=email value="<?=h($c['email']??'')?>" style="width:185px;font-size:.75rem" placeholder="no email - add one" title="Every email we send this customer goes here: the service report, the review ask, booking confirmations. Leave blank to send them nothing."><button class=ghost>save</button></form>
+    <?php if(empty($c['email'])): ?><div class=mach style="color:#e8a13c">no email &mdash; gets no service report</div><?php endif; ?>
+    <?php $rc = (isset($c['report_cc']) && is_array($c['report_cc'])) ? $c['report_cc'] : null; ?>
+    <?php if ($rc && !empty($rc['email'])): ?>
+      <div class=mach style="color:#86b6e8" title="A copy of each service report goes here. The customer agreed on this date; the relative can stop it from a link in every copy.">&#128231; report copy &rarr; <?=h(($rc['name'] ?? '') !== '' ? $rc['name'] . ' ' : '')?>(<?=h($rc['email'])?>) &middot; agreed <?=h($rc['ok'] ?? '')?>
+      <form method=post class=inline onsubmit="return confirm('Stop sending copies of this customer\'s service reports to this person?')"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=reportcc><input type=hidden name=key value="<?=h($key)?>"><input type=hidden name=clear value=1><button class=ghost>stop</button></form></div>
+    <?php else: ?>
+      <details class=mach><summary style="cursor:pointer">+ copy their reports to family</summary>
+      <form method=post style="margin-top:.3rem"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=reportcc><input type=hidden name=key value="<?=h($key)?>">
+      <input name=fname placeholder="first name" style="width:100px;font-size:.75rem"> <input name=fem type=email required placeholder="their email" style="width:170px;font-size:.75rem">
+      <label style="display:block;margin:.25rem 0"><input type=checkbox name=agreed value=1 required> <?=h($c['name'])?> has said yes</label><button class=ghost>save</button></form></details>
+    <?php endif; ?>
+    <div class=mach>since <?=h($c['created']??'')?></div></td>
+  <td><span class=key><?=h($key)?></span>
+    <div class=mach style="margin-top:.45rem">Activation link (send to customer):</div>
+    <div style="display:flex;gap:.3rem;margin-top:.2rem;align-items:center">
+      <input class=alink readonly value="365pcm://activate/<?=h($key)?>" onfocus="this.select()" style="width:190px;font-family:ui-monospace,monospace;font-size:.7rem;padding:.25rem .4rem">
+      <button type=button class="ghost copybtn" data-link="365pcm://activate/<?=h($key)?>" style="padding:.3rem .6rem;font-size:.75rem">Copy</button>
+      <?php if(!empty($c['email'])): ?><a class=ghost style="padding:.3rem .6rem;font-size:.75rem;text-decoration:none;border-radius:8px" href="mailto:<?=h($c['email'])?>?subject=<?=rawurlencode('Activate 365 PC Manager on your PC')?>&body=<?=rawurlencode("Hi,\n\nClick this link on the PC you'd like on support and it'll activate 365 PC Manager for you:\n\n365pcm://activate/".$key."\n\n(If nothing happens, open 365 PC Manager, go to Help & Shop, tap \"Go on support / enter key\" and paste this code: ".$key.")\n\nThanks,\n365 Techies · 01202 775566")?>">Email</a><?php endif; ?>
+    </div>
+  </td>
+  <td><span class="pill <?=($c['tier']??'free')==='pro'?'pro':'free'?>"><?=($c['tier']??'free')==='pro'?'On support':'Free'?></span>
+    <?php if(($c['tier']??'free')==='pro'): $pl=(($c['plan']??'home')==='business')?'business':'home'; ?>
+    <div style="margin-top:.3rem"><span class=mach><?=$pl==='business'?'🏢 Business':'🏠 Home'?> dashboard</span></div>
+    <?php endif; ?>
+  </td>
+  <td>
+    <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=next><input type=hidden name=key value="<?=h($key)?>">
+    <input name=next value="<?=h($c['next']??'')?>" style="width:130px" placeholder="—"><button class=ghost>save</button></form>
+  </td>
+  <td>
+    <?php $ms=$c['machines']??array(); if(!$ms) echo '<span class=mach>none activated yet</span>';
+      $latestVer=0; $vj=@json_decode((string)@file_get_contents(__DIR__.'/../downloads/pcm/version.json'),true); if(is_array($vj)) $latestVer=intval($vj['ver']??0);
+      foreach($ms as $id=>$m){ $sc=intval($m['score']??0); $col=$sc>=80?'#39d353':($sc>=55?'#e0b341':'#e8637e');
+        $seen=$m['seen']??''; $fresh=substr($seen,0,10)===$today;
+        $mv=intval($m['ver']??0);
+        $vchip = $mv>0 ? ' · <span style="opacity:.75;color:'.(($latestVer>0&&$mv<$latestVer)?'#e0b341':'#8fa3bd').'">app v'.$mv.(($latestVer>0&&$mv<$latestVer)?' (v'.$latestVer.' out - updates itself)':'').'</span>' : '';
+        $kh = substr(hash('sha256', $key), 0, 12);
+        $shotLink = (!empty($m['shot']) && is_readable(__DIR__.'/pcm-sos-'.$kh.'-'.$id.'.jpg')) ? ' · <a href="pcm-admin.php?shot='.h($kh.'-'.$id).'" target=_blank style="color:#1d97e3">📸 their screen ('.h($m['shot']).')</a>' : '';
+        echo '<div class=mach><span class=dot style="background:'.$col.'"></span><strong style="color:#eef">'.h($m['name']?:$id).'</strong> — '.$sc.'% '.h($m['verdict']??'').' <span style="opacity:.6">· seen '.h($seen).($fresh?' ✓':'').(!empty($m['help'])?' · 🆘 '.h($m['help']):'').'</span>'.$vchip.$shotLink.'</div>';
+      } ?>
+  </td>
+  <td style="white-space:nowrap">
+    <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=tier><input type=hidden name=key value="<?=h($key)?>"><button class=ghost><?=($c['tier']??'free')==='pro'?'→ Free':'→ Support'?></button></form>
+    <?php if(($c['tier']??'free')==='pro'): ?>
+      <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=plan><input type=hidden name=key value="<?=h($key)?>"><button class=ghost title="Which dashboard their portal builds: Business adds the estate tiles"><?=(($c['plan']??'home')==='business')?'→ 🏠 Home':'→ 🏢 Business'?></button></form>
+    <?php endif; ?>
+    <?php if(!empty($c['ready_confirm'])): ?>
+      <span class="pill pro" title="confirmed <?=h($c['ready_confirm'])?>">✓ ready</span>
+      <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=readyclear><input type=hidden name=key value="<?=h($key)?>"><button class=ghost>clear</button></form>
+    <?php elseif(!empty($c['ready_ask'])): ?>
+      <span class="pill free" title="asked <?=h($c['ready_ask'])?>">…awaiting</span>
+    <?php else: ?>
+      <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=readyask><input type=hidden name=key value="<?=h($key)?>"><button class=ghost title="Ask their app to confirm the PC is on and ready to connect">📶 ready?</button></form>
+    <?php endif; ?>
+    <?php if (!empty($c['family']['name'])): ?>
+      <span class="pill free" title="family view active since <?=h($c['family']['created']??'')?>">👪 <?=h($c['family']['name'])?></span>
+      <form method=post class=inline onsubmit="return confirm('Revoke family view? Their share link stops working immediately.')"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=famstop><input type=hidden name=key value="<?=h($key)?>"><button class=ghost>revoke</button></form>
+    <?php endif; ?>
+    <?php $shOn = intval($c['shield_ts']??0) > 0 && (time()-intval($c['shield_ts']??0)) < 900; ?>
+    <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=shield><input type=hidden name=key value="<?=h($key)?>"><button class=ghost title="About to ring them? Their app will say to expect a caller with this code - proves it's really us"><?= $shOn ? '📞 code '.h($c['shield_code']??'') : '📞 verify call' ?></button></form>
+    <form method=post class=inline onsubmit="return confirm('Remove this customer, all their machines, and their stored WiFi surveys and screenshots?')"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=del><input type=hidden name=key value="<?=h($key)?>"><button class=warn>×</button></form>
+  </td>
+</tr>
+<?php endforeach; if(!$cust) echo '<tr><td colspan=6 style="color:#9fb5d3;padding:2rem;text-align:center">No customers yet — add your first above.</td></tr>'; ?>
+</tbody></table></div>
+<p style="color:#9fb5d3;font-size:.8rem;margin-top:1.5rem">Easiest way to put a customer on support: copy their <strong>activation link</strong> above and send it (email button, or paste into a Splashtop chat / text). They click it on their PC and 365 PC Manager activates itself. Or they can open <em>Help &amp; Shop</em> in the app, tap <em>Go on support / enter key</em>, and paste the key. Toggle a customer to Free and their app quietly drops back to free mode on its next check-in.</p>
+</div>
 
 <?php $news = (isset($db['news']) && is_array($db['news'])) ? $db['news'] : null;
       $newsLive = $news && (empty($news['until']) || (int)$news['until'] >= time()); ?>
-<div style="background:#0d1a2e;border:1px solid #2a5b8f;border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.5rem">
-  <h2 style="margin:0 0 .3rem;font-size:1rem;color:#86b6e8">&#128240; News from 365 &mdash; the notice on the app&rsquo;s Home page</h2>
+<div class=sec id=news>
+  <h2 class=sh>News from 365 <small>the notice on the app&rsquo;s Home page</small></h2>
   <p style="color:#9fb5d3;font-size:.82rem;margin:0 0 .7rem">
     One short notice at a time, shown until each customer dismisses it. Use it for things customers need to know
     (an email provider change, a Windows deadline, a scam doing the rounds) &mdash; never adverts. Apps pick a change up
@@ -702,8 +850,54 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
   </form>
 </div>
 
-<div style="background:#0d1a2e;border:1px solid #2a5b8f;border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.5rem">
-  <h2 style="margin:0 0 .3rem;font-size:1rem;color:#86b6e8">&#128235; Portal launch email</h2>
+<?php
+/* Engineer mode: the PIN that unlocks ONE service on a PC that is not on a plan, and the log of runs.
+   The PIN is only ever stored hashed, so this can show who has one and when it was set, never what it is. */
+$engPins = json_decode((string)@file_get_contents(__DIR__ . '/pcm-engineer-secret.json'), true);
+$engPins = (is_array($engPins) && isset($engPins['pins']) && is_array($engPins['pins'])) ? $engPins['pins'] : array();
+$engRuns = json_decode((string)@file_get_contents(__DIR__ . '/pcm-engineer-runs.json'), true);
+$engRuns = is_array($engRuns) ? array_slice($engRuns, -12) : array();
+?>
+<div class=sec id=engineers>
+  <h2 class=sh>Engineer mode <small>one-off services</small></h2>
+  <p style="color:#9fb5d3;font-size:.82rem;margin:0 0 .6rem">The PIN an engineer types into 365 PC Manager to run <strong>one</strong> full service, with a report, on a PC that is <strong>not</strong> on a support plan. Setting a PIN replaces that engineer's old one. Letters and numbers only. It is stored as a hash: write it down when you set it, because it cannot be shown again.</p>
+  <form method=post class=inline style="margin:0 0 .8rem">
+    <input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=engpin>
+    <input name=engwho placeholder="Engineer name" style="padding:.45rem;border-radius:8px;border:1px solid #2a3b63;background:#0b1226;color:#fff;width:150px">
+    <input name=engpin placeholder="New PIN (8+ letters/numbers)" autocomplete=off style="padding:.45rem;border-radius:8px;border:1px solid #2a3b63;background:#0b1226;color:#fff;width:190px">
+    <button>Set PIN</button>
+  </form>
+  <?php if($engPins): ?>
+  <table style="margin-top:0"><thead><tr><th>Engineer</th><th>PIN set</th><th></th></tr></thead><tbody>
+    <?php foreach($engPins as $ep): ?>
+    <tr>
+      <td><strong><?=h((string)($ep['who'] ?? ''))?></strong></td>
+      <td class=mach><?=h((string)($ep['set'] ?? ''))?></td>
+      <td><form method=post class=inline onsubmit="return confirm('Remove this engineer\'s PIN? They will not be able to start a one-off service.')"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=engpindel><input type=hidden name=engwho value="<?=h((string)($ep['who'] ?? ''))?>"><button style="background:#3a1c1c;border-color:#7a3b2b">Remove</button></form></td>
+    </tr>
+    <?php endforeach; ?>
+  </tbody></table>
+  <?php else: ?>
+  <p style="color:#ffb4a2;font-size:.82rem;margin:0">No PIN set, so engineer mode is closed &mdash; the app refuses every attempt until one exists.</p>
+  <?php endif; ?>
+  <?php if($engRuns): ?>
+  <h3 style="margin:1rem 0 .3rem;font-size:.9rem;color:#86b6e8">Last attempts</h3>
+  <table style="margin-top:0"><thead><tr><th>When</th><th>Engineer</th><th>Customer</th><th>PC</th><th>Result</th></tr></thead><tbody>
+    <?php foreach(array_reverse($engRuns) as $er): ?>
+    <tr>
+      <td class=mach><?=h(gmdate('d M H:i', (int)($er['t'] ?? 0)))?></td>
+      <td><?=h((string)($er['who'] ?? '&mdash;'))?></td>
+      <td><?=h((string)($er['cust'] ?? ''))?><?php if(!empty($er['email'])): ?><div class=mach><?=h((string)$er['email'])?></div><?php endif; ?></td>
+      <td class=mach><?=h((string)($er['pc'] ?? ''))?></td>
+      <td><?= !empty($er['ok']) ? '<span style="color:#7bd88f">service served</span>' : '<span style="color:#ffb4a2">' . h(str_replace('_', ' ', (string)($er['why'] ?? 'refused'))) . '</span>' ?></td>
+    </tr>
+    <?php endforeach; ?>
+  </tbody></table>
+  <?php endif; ?>
+</div>
+
+<div class=sec id=email>
+  <h2 class=sh>Portal launch email</h2>
   <p style="color:#9fb5d3;font-size:.82rem;margin:0 0 .7rem">
     A one&#8209;off for customers who were <strong>already signed in</strong> before the new portal existed &mdash;
     they never get the automatic welcome, because that only fires when a portal session is first created and
@@ -841,167 +1035,32 @@ th{color:#9fb5d3;font-weight:600;font-size:.75rem;text-transform:uppercase;lette
 <?php endif; ?>
 </div>
 
-<?php
-/* Engineer mode: the PIN that unlocks ONE service on a PC that is not on a plan, and the log of runs.
-   The PIN is only ever stored hashed, so this can show who has one and when it was set, never what it is. */
-$engPins = json_decode((string)@file_get_contents(__DIR__ . '/pcm-engineer-secret.json'), true);
-$engPins = (is_array($engPins) && isset($engPins['pins']) && is_array($engPins['pins'])) ? $engPins['pins'] : array();
-$engRuns = json_decode((string)@file_get_contents(__DIR__ . '/pcm-engineer-runs.json'), true);
-$engRuns = is_array($engRuns) ? array_slice($engRuns, -12) : array();
-?>
-<div style="background:#0d1a2e;border:1px solid #2a5b8f;border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.5rem">
-  <h2 style="margin:0 0 .3rem;font-size:1rem;color:#86b6e8">&#128295; Engineer mode &mdash; one-off services</h2>
-  <p style="color:#9fb5d3;font-size:.82rem;margin:0 0 .6rem">The PIN an engineer types into 365 PC Manager to run <strong>one</strong> full service, with a report, on a PC that is <strong>not</strong> on a support plan. Setting a PIN replaces that engineer's old one. Letters and numbers only. It is stored as a hash: write it down when you set it, because it cannot be shown again.</p>
-  <form method=post class=inline style="margin:0 0 .8rem">
-    <input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=engpin>
-    <input name=engwho placeholder="Engineer name" style="padding:.45rem;border-radius:8px;border:1px solid #2a3b63;background:#0b1226;color:#fff;width:150px">
-    <input name=engpin placeholder="New PIN (8+ letters/numbers)" autocomplete=off style="padding:.45rem;border-radius:8px;border:1px solid #2a3b63;background:#0b1226;color:#fff;width:190px">
-    <button>Set PIN</button>
-  </form>
-  <?php if($engPins): ?>
-  <table style="margin-top:0"><thead><tr><th>Engineer</th><th>PIN set</th><th></th></tr></thead><tbody>
-    <?php foreach($engPins as $ep): ?>
+<?php if($online): ?>
+<div class=sec id=online>
+  <h2 class=sh>Signed in to the portal <small><?=count($online)?> customer(s)</small></h2>
+  <p style="color:#9fb5d3;font-size:.82rem;margin:0 0 .7rem">
+    Sessions last a year and renew every visit, so this is everyone who can open their portal
+    without signing in again. &ldquo;Last opened&rdquo; is genuinely the last time they used it.
+  </p>
+  <table style="margin-top:0"><thead><tr><th>Customer</th><th>Plan</th><th>Devices</th><th>Last opened</th><th>Had the email?</th></tr></thead><tbody>
+  <?php foreach($online as $ok => $o):
+        $ago = $o['last'] ? time() - $o['last'] : 0;
+        $lbl = !$o['last'] ? 'unknown'
+             : ($ago < 900 ? 'now' : ($ago < 3600 ? round($ago/60).' min ago'
+             : ($ago < 172800 ? round($ago/3600).' hr ago' : round($ago/86400).' days ago'))); ?>
     <tr>
-      <td><strong><?=h((string)($ep['who'] ?? ''))?></strong></td>
-      <td class=mach><?=h((string)($ep['set'] ?? ''))?></td>
-      <td><form method=post class=inline onsubmit="return confirm('Remove this engineer\'s PIN? They will not be able to start a one-off service.')"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=engpindel><input type=hidden name=engwho value="<?=h((string)($ep['who'] ?? ''))?>"><button style="background:#3a1c1c;border-color:#7a3b2b">Remove</button></form></td>
+      <td><strong><?=h($o['name'])?></strong><?php if($o['gone']): ?><div class=mach style="color:#e8637e">customer record deleted &mdash; stale session</div><?php endif; ?></td>
+      <td><span class="pill <?=$o['tier']==='pro'?'pro">On support':'free">Free'?></span></td>
+      <td><?=(int)$o['n']?></td>
+      <td<?=$ago && $ago<900?' style="color:#39d353;font-weight:700"':''?>><?=h($lbl)?></td>
+      <td class=mach><?=$o['welcomed']?'yes':'<span style="color:#e0b341">not yet</span>'?></td>
     </tr>
-    <?php endforeach; ?>
+  <?php endforeach; ?>
   </tbody></table>
-  <?php else: ?>
-  <p style="color:#ffb4a2;font-size:.82rem;margin:0">No PIN set, so engineer mode is closed &mdash; the app refuses every attempt until one exists.</p>
-  <?php endif; ?>
-  <?php if($engRuns): ?>
-  <h3 style="margin:1rem 0 .3rem;font-size:.9rem;color:#86b6e8">Last attempts</h3>
-  <table style="margin-top:0"><thead><tr><th>When</th><th>Engineer</th><th>Customer</th><th>PC</th><th>Result</th></tr></thead><tbody>
-    <?php foreach(array_reverse($engRuns) as $er): ?>
-    <tr>
-      <td class=mach><?=h(gmdate('d M H:i', (int)($er['t'] ?? 0)))?></td>
-      <td><?=h((string)($er['who'] ?? '&mdash;'))?></td>
-      <td><?=h((string)($er['cust'] ?? ''))?><?php if(!empty($er['email'])): ?><div class=mach><?=h((string)$er['email'])?></div><?php endif; ?></td>
-      <td class=mach><?=h((string)($er['pc'] ?? ''))?></td>
-      <td><?= !empty($er['ok']) ? '<span style="color:#7bd88f">service served</span>' : '<span style="color:#ffb4a2">' . h(str_replace('_', ' ', (string)($er['why'] ?? 'refused'))) . '</span>' ?></td>
-    </tr>
-    <?php endforeach; ?>
-  </tbody></table>
-  <?php endif; ?>
 </div>
+<?php endif; ?>
 
-<?php if($pendings): ?>
-<div style="background:#0d1a2e;border:1px solid #2a5b8f;border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.5rem">
-  <h2 style="margin:0 0 .3rem;font-size:1rem;color:#86b6e8">&#128273; Sign-in requests &mdash; <?=count($pendings)?> to confirm</h2>
-  <p style="color:#9fb5d3;font-size:.82rem;margin:0 0 .6rem">Someone signed into the app with a booking account whose email matches one of your <strong>Pro</strong> customers. Approving switches their app to support mode. Only approve if you recognise them as that customer.</p>
-  <table style="margin-top:0"><thead><tr><th>Signed in as</th><th>Matches your Pro customer</th><th>When</th><th></th></tr></thead><tbody>
-  <?php foreach($pendings as $pn): ?>
-    <tr>
-      <td><strong><?=h($pn['sbname']?:$pn['email'])?></strong><div class=mach><?=h($pn['email'])?></div></td>
-      <td><?=h($pn['name'])?></td>
-      <td class=mach><?=h($pn['ts'])?></td>
-      <td style="white-space:nowrap">
-        <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=approve><input type=hidden name=key value="<?=h($pn['orig'])?>"><input type=hidden name=link value="<?=h($pn['link'])?>"><button>&#10003; Approve as Pro</button></form>
-        <form method=post class=inline onsubmit="return confirm('Dismiss this sign-in request? They keep free booking access.')"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=dismiss><input type=hidden name=key value="<?=h($pn['orig'])?>"><button class=ghost>dismiss</button></form>
-      </td>
-    </tr>
-  <?php endforeach; ?>
-  </tbody></table>
-</div>
-<?php endif; ?>
-<?php if($calls): ?>
-<div style="background:#1a0e0e;border:1px solid #7a3b2b;border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.5rem">
-  <h2 style="margin:0 0 .6rem;font-size:1rem;color:#ffb4a2">&#9742; Worth a call today &mdash; <?=count($calls)?> machine(s) flagged something</h2>
-  <table style="margin-top:0"><thead><tr><th>Customer</th><th>Plan</th><th>Machine</th><th>Why</th><th></th></tr></thead><tbody>
-  <?php foreach($calls as $ca): ?>
-    <tr>
-      <td><strong><?=h($ca['name'])?></strong><?php if($ca['email'])echo '<div class=mach>'.h($ca['email']).'</div>';?></td>
-      <td><span class="pill <?=$ca['tier']==='pro'?'pro':'free'?>"><?=$ca['tier']==='pro'?'On support':'Free'?></span></td>
-      <td><?=h($ca['pc'])?></td>
-      <td style="color:#ffb4a2"><?=h($ca['why'])?></td>
-      <td><?php if($ca['email'])echo '<a href="mailto:'.h($ca['email']).'?subject=Your%20PC%20flagged%20something">email</a>';?></td>
-    </tr>
-  <?php endforeach; ?>
-  </tbody></table>
-  <p style="color:#c99;font-size:.78rem;margin:.6rem 0 0">Free-tier machines here are warm upsell leads &mdash; a quick call fixing the flag is the natural way into a support plan.</p>
-</div>
-<?php endif; ?>
-<form method=post class=add>
-  <div><label>Customer / business name</label><input name=name required placeholder="e.g. Mrs Wilson"></div>
-  <div><label>Email (optional)</label><input name=email type=email placeholder="name@example.com"></div>
-  <div><label>On support?</label><select name=tier><option value=pro>Pro (on support)</option><option value=free>Free</option></select></div>
-  <div><label>Next service (optional)</label><input name=next placeholder="Fri 28 Aug 2026"></div>
-  <div><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=add><button>+ Add &amp; make key</button></div>
-</form>
-<table><thead><tr><th>Customer</th><th>Key</th><th>Plan</th><th>Next service</th><th>Machines &amp; health</th><th></th></tr></thead><tbody>
-<?php foreach($cust as $key=>$c): if(!empty($c['merged_into'])) continue; /* retired after approval */ ?>
-<tr>
-  <td><strong><?=h($c['name'])?></strong><?php if(!empty($c['via']) && $c['via']==='signin')echo ' <span class="pill free" style="font-size:.66rem">signed in</span>';?>
-    <form method=post class=inline style="margin-top:.35rem"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=email><input type=hidden name=key value="<?=h($key)?>">
-    <input name=email type=email value="<?=h($c['email']??'')?>" style="width:185px;font-size:.75rem" placeholder="no email - add one" title="Every email we send this customer goes here: the service report, the review ask, booking confirmations. Leave blank to send them nothing."><button class=ghost>save</button></form>
-    <?php if(empty($c['email'])): ?><div class=mach style="color:#e8a13c">no email &mdash; gets no service report</div><?php endif; ?>
-    <?php $rc = (isset($c['report_cc']) && is_array($c['report_cc'])) ? $c['report_cc'] : null; ?>
-    <?php if ($rc && !empty($rc['email'])): ?>
-      <div class=mach style="color:#86b6e8" title="A copy of each service report goes here. The customer agreed on this date; the relative can stop it from a link in every copy.">&#128231; report copy &rarr; <?=h(($rc['name'] ?? '') !== '' ? $rc['name'] . ' ' : '')?>(<?=h($rc['email'])?>) &middot; agreed <?=h($rc['ok'] ?? '')?>
-      <form method=post class=inline onsubmit="return confirm('Stop sending copies of this customer\'s service reports to this person?')"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=reportcc><input type=hidden name=key value="<?=h($key)?>"><input type=hidden name=clear value=1><button class=ghost>stop</button></form></div>
-    <?php else: ?>
-      <details class=mach><summary style="cursor:pointer">+ copy their reports to family</summary>
-      <form method=post style="margin-top:.3rem"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=reportcc><input type=hidden name=key value="<?=h($key)?>">
-      <input name=fname placeholder="first name" style="width:100px;font-size:.75rem"> <input name=fem type=email required placeholder="their email" style="width:170px;font-size:.75rem">
-      <label style="display:block;margin:.25rem 0"><input type=checkbox name=agreed value=1 required> <?=h($c['name'])?> has said yes</label><button class=ghost>save</button></form></details>
-    <?php endif; ?>
-    <div class=mach>since <?=h($c['created']??'')?></div></td>
-  <td><span class=key><?=h($key)?></span>
-    <div class=mach style="margin-top:.45rem">Activation link (send to customer):</div>
-    <div style="display:flex;gap:.3rem;margin-top:.2rem;align-items:center">
-      <input class=alink readonly value="365pcm://activate/<?=h($key)?>" onfocus="this.select()" style="width:190px;font-family:ui-monospace,monospace;font-size:.7rem;padding:.25rem .4rem">
-      <button type=button class="ghost copybtn" data-link="365pcm://activate/<?=h($key)?>" style="padding:.3rem .6rem;font-size:.75rem">Copy</button>
-      <?php if(!empty($c['email'])): ?><a class=ghost style="padding:.3rem .6rem;font-size:.75rem;text-decoration:none;border-radius:8px" href="mailto:<?=h($c['email'])?>?subject=<?=rawurlencode('Activate 365 PC Manager on your PC')?>&body=<?=rawurlencode("Hi,\n\nClick this link on the PC you'd like on support and it'll activate 365 PC Manager for you:\n\n365pcm://activate/".$key."\n\n(If nothing happens, open 365 PC Manager, go to Help & Shop, tap \"Go on support / enter key\" and paste this code: ".$key.")\n\nThanks,\n365 Techies · 01202 775566")?>">Email</a><?php endif; ?>
-    </div>
-  </td>
-  <td><span class="pill <?=($c['tier']??'free')==='pro'?'pro':'free'?>"><?=($c['tier']??'free')==='pro'?'On support':'Free'?></span>
-    <?php if(($c['tier']??'free')==='pro'): $pl=(($c['plan']??'home')==='business')?'business':'home'; ?>
-    <div style="margin-top:.3rem"><span class=mach><?=$pl==='business'?'🏢 Business':'🏠 Home'?> dashboard</span></div>
-    <?php endif; ?>
-  </td>
-  <td>
-    <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=next><input type=hidden name=key value="<?=h($key)?>">
-    <input name=next value="<?=h($c['next']??'')?>" style="width:130px" placeholder="—"><button class=ghost>save</button></form>
-  </td>
-  <td>
-    <?php $ms=$c['machines']??array(); if(!$ms) echo '<span class=mach>none activated yet</span>';
-      $latestVer=0; $vj=@json_decode((string)@file_get_contents(__DIR__.'/../downloads/pcm/version.json'),true); if(is_array($vj)) $latestVer=intval($vj['ver']??0);
-      foreach($ms as $id=>$m){ $sc=intval($m['score']??0); $col=$sc>=80?'#39d353':($sc>=55?'#e0b341':'#e8637e');
-        $seen=$m['seen']??''; $fresh=substr($seen,0,10)===$today;
-        $mv=intval($m['ver']??0);
-        $vchip = $mv>0 ? ' · <span style="opacity:.75;color:'.(($latestVer>0&&$mv<$latestVer)?'#e0b341':'#8fa3bd').'">app v'.$mv.(($latestVer>0&&$mv<$latestVer)?' (v'.$latestVer.' out - updates itself)':'').'</span>' : '';
-        $kh = substr(hash('sha256', $key), 0, 12);
-        $shotLink = (!empty($m['shot']) && is_readable(__DIR__.'/pcm-sos-'.$kh.'-'.$id.'.jpg')) ? ' · <a href="pcm-admin.php?shot='.h($kh.'-'.$id).'" target=_blank style="color:#1d97e3">📸 their screen ('.h($m['shot']).')</a>' : '';
-        echo '<div class=mach><span class=dot style="background:'.$col.'"></span><strong style="color:#eef">'.h($m['name']?:$id).'</strong> — '.$sc.'% '.h($m['verdict']??'').' <span style="opacity:.6">· seen '.h($seen).($fresh?' ✓':'').(!empty($m['help'])?' · 🆘 '.h($m['help']):'').'</span>'.$vchip.$shotLink.'</div>';
-      } ?>
-  </td>
-  <td style="white-space:nowrap">
-    <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=tier><input type=hidden name=key value="<?=h($key)?>"><button class=ghost><?=($c['tier']??'free')==='pro'?'→ Free':'→ Support'?></button></form>
-    <?php if(($c['tier']??'free')==='pro'): ?>
-      <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=plan><input type=hidden name=key value="<?=h($key)?>"><button class=ghost title="Which dashboard their portal builds: Business adds the estate tiles"><?=(($c['plan']??'home')==='business')?'→ 🏠 Home':'→ 🏢 Business'?></button></form>
-    <?php endif; ?>
-    <?php if(!empty($c['ready_confirm'])): ?>
-      <span class="pill pro" title="confirmed <?=h($c['ready_confirm'])?>">✓ ready</span>
-      <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=readyclear><input type=hidden name=key value="<?=h($key)?>"><button class=ghost>clear</button></form>
-    <?php elseif(!empty($c['ready_ask'])): ?>
-      <span class="pill free" title="asked <?=h($c['ready_ask'])?>">…awaiting</span>
-    <?php else: ?>
-      <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=readyask><input type=hidden name=key value="<?=h($key)?>"><button class=ghost title="Ask their app to confirm the PC is on and ready to connect">📶 ready?</button></form>
-    <?php endif; ?>
-    <?php if (!empty($c['family']['name'])): ?>
-      <span class="pill free" title="family view active since <?=h($c['family']['created']??'')?>">👪 <?=h($c['family']['name'])?></span>
-      <form method=post class=inline onsubmit="return confirm('Revoke family view? Their share link stops working immediately.')"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=famstop><input type=hidden name=key value="<?=h($key)?>"><button class=ghost>revoke</button></form>
-    <?php endif; ?>
-    <?php $shOn = intval($c['shield_ts']??0) > 0 && (time()-intval($c['shield_ts']??0)) < 900; ?>
-    <form method=post class=inline><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=shield><input type=hidden name=key value="<?=h($key)?>"><button class=ghost title="About to ring them? Their app will say to expect a caller with this code - proves it's really us"><?= $shOn ? '📞 code '.h($c['shield_code']??'') : '📞 verify call' ?></button></form>
-    <form method=post class=inline onsubmit="return confirm('Remove this customer, all their machines, and their stored WiFi surveys and screenshots?')"><input type=hidden name=csrf value="<?=h($CSRF)?>"><input type=hidden name=do value=del><input type=hidden name=key value="<?=h($key)?>"><button class=warn>×</button></form>
-  </td>
-</tr>
-<?php endforeach; if(!$cust) echo '<tr><td colspan=6 style="color:#9fb5d3;padding:2rem;text-align:center">No customers yet — add your first above.</td></tr>'; ?>
-</tbody></table>
-<p style="color:#9fb5d3;font-size:.8rem;margin-top:1.5rem">Easiest way to put a customer on support: copy their <strong>activation link</strong> above and send it (email button, or paste into a Splashtop chat / text). They click it on their PC and 365 PC Manager activates itself. Or they can open <em>Help &amp; Shop</em> in the app, tap <em>Go on support / enter key</em>, and paste the key. Toggle a customer to Free and their app quietly drops back to free mode on its next check-in.</p>
+</main>
 <script>
 document.querySelectorAll('.copybtn').forEach(function(b){
   b.addEventListener('click', function(){
