@@ -707,9 +707,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 27 Sep 2026 &middot; 11534673b3</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 27 Sep 2026 &middot; 71ce00a960</p><script>
 (function () {
-  var P365BUILD = '11534673b3';
+  var P365BUILD = '71ce00a960';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -5710,6 +5710,8 @@
                   + (pg ? '<br><span class="quiet">' + pg + '</span>' : '')
                   + (pl ? '<br><span class="quiet">' + pl + '</span>' : '') + '</div>';
             });
+            // the server says why when Cloudflare won't answer (password, old code, no store...)
+            if (d.why) vh += '<p class="quiet" style="margin-top:.5rem"><strong>Why:</strong> ' + esc(d.why) + '</p>';
             vl.innerHTML = vh || '<span class="quiet">Nobody on right now.</span>';
           }).catch(function () {});
       }

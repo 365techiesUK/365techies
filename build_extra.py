@@ -29174,6 +29174,8 @@ def write_portal_page():
                   + (pg ? '<br><span class="quiet">' + pg + '</span>' : '')
                   + (pl ? '<br><span class="quiet">' + pl + '</span>' : '') + '</div>';
             });
+            // the server says why when Cloudflare won't answer (password, old code, no store...)
+            if (d.why) vh += '<p class="quiet" style="margin-top:.5rem"><strong>Why:</strong> ' + esc(d.why) + '</p>';
             vl.innerHTML = vh || '<span class="quiet">Nobody on right now.</span>';
           }).catch(function () {});
       }
