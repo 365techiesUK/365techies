@@ -113,6 +113,13 @@
   // for a wave that lifts you, paddle for it, pop up when it carries you and ride it along the face toward the pier.
   // It only drives - the sea and the board (src/boats/surfboard.js) decide everything. Asked every other 1/120 s
   // tick, so its presses last exactly as they did in the film rig (60 a second), whatever the frame rate.
+  // BOURNEMOUTH PIER as a line (dolphin-pod.js PIER_A..PIER_B). Owner, watching it: "why does he surf into the pier
+  // and actually get stuck by the pier?" - the film rig's ride went ALONG the wave toward the pier (the trailer wanted
+  // the pier behind the rider), 66 m from the spawn, and this page's paddle-out leaned that way too. Now the ride goes
+  // the other way along the wave, the lean toward the pier stops at 50 m, and inside 40 m every phase steers away.
+  function pierDist(x, z) { var ax = -224.2, az = -245.3, bx = 17.0, bz = 159.1; var u = Math.max(0, Math.min(1, ((x - ax) * bx + (z - az) * bz) / (bx * bx + bz * bz))); return Math.hypot(x - ax - bx * u, z - az - bz * u); }
+  var PIER_NEAR = 40, PIER_LEAN = 50;
+
   function driver(E, SF) {
     var D = { ph: 'out', pt: 0, held: 0, last: 0, tick: 0 };
     var out = { lean: 0, turn: 0, throttle: 0, boost: 0, brake: 0 };
@@ -120,23 +127,26 @@
       var B = SF.board(), w = B.wave, tt = E.sim.time;
       var thr = 0, turn = 0, boost = 0;
       var steer = function (hd) { var e = wrap(hd - B.heading); turn = Math.max(-1, Math.min(1, e * 2.5)); return Math.abs(e); };
-      var d = SF.dAt(B.x, B.z), shore = -Math.PI / 2;
+      var d = SF.dAt(B.x, B.z), shore = -Math.PI / 2, pw = SF.pierward || Math.PI, pdist = pierDist(B.x, B.z);
+      var away = shore - 0.55 * wrap(pw - shore);   // along the wave AWAY from the pier, toward the beach
       if (D.last !== B.state) {
         if ((D.last === 2 || D.last === 3) && B.state === 0) D.ph = d > SF.onset + 4 ? 'turn' : 'out';
+        if (B.state === 2) D.rideT0 = tt;
         D.last = B.state;
       }
       if (B.state === 0 || B.state === 1) {
         if (D.ph === 'out') {
           // out through the break, angled a little toward the pier so it stays in the rider's view (owner: "see
           // Bournemouth Pier in the view") - the point just past the break, moved 18 m toward the pier
-          var hp = SF.home(), pw = SF.pierward || Math.PI; steer(Math.atan2(hp[1] + Math.sin(pw) * 18 - B.z, hp[0] + Math.cos(pw) * 18 - B.x)); thr = 1;
+          var hp = SF.home(), lean = pdist > PIER_LEAN ? 18 : (pdist < PIER_NEAR ? -20 : 0);
+          steer(Math.atan2(hp[1] + Math.sin(pw) * lean - B.z, hp[0] + Math.cos(pw) * lean - B.x)); thr = 1;
           var p = SF.probe(B.x, B.z + 4);
           var here = w.amp > 0.2 && w.brk > 0.5 && w.chi > -1.1 && w.chi < -0.05;
           if ((here || (p.brk > 0.25 && p.chi > -1.4 && p.chi < 0.2 && p.amp > 0.2)) && B.state === 0 && B.cool <= 0) boost = 1;
           if (d > SF.onset + 8) D.ph = 'turn';
-        } else if (D.ph === 'turn') { if (steer(shore) < 0.15) D.ph = 'wait'; }
+        } else if (D.ph === 'turn') { if (steer(pdist < PIER_NEAR ? away : shore) < 0.15) D.ph = 'wait'; }
         else if (D.ph === 'wait') {
-          steer(shore);
+          steer(pdist < PIER_NEAR ? away : shore);
           var p2 = SF.probe(B.x, B.z + 10);
           if (p2.amp > 0.3 && p2.chi > -1.2 && p2.chi < -0.2) { D.ph = 'paddle'; D.pt = tt; }
           if (d < SF.onset - 30) D.ph = 'out';
@@ -145,7 +155,13 @@
           if (B.u >= B.spec.popU && w.face && B.cool <= 0) boost = 1;
           if (!w.face && B.u < 1.2 && tt - D.pt > 4) D.ph = 'wait';
         }
-      } else if (B.state === 2) steer(shore + 0.55 * wrap(SF.pierward - shore));
+      } else if (B.state === 2) {
+        steer(away);
+        // KICK OUT like a surfer does, long before the beach: 12 s into the ride, or 55 m inside the break - the
+        // board's own kick-out (the same press that pops you up), then paddle back out through the waves. Left to
+        // itself a big-day ride ran 38 s to 15 m off the sand (27 Sep).
+        if (tt - (D.rideT0 || tt) > 12 || d < SF.onset - 55) boost = 1;
+      }
       if (boost && D.held) boost = 0;
       D.held = boost;
       out.throttle = thr; out.turn = turn; out.boost = boost;
