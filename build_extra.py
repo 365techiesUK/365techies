@@ -16819,21 +16819,23 @@ def pricing_page():
     cards = """    <section class="section prmain" aria-label="Prices">
       <div class="wrap">
         <div class="prcards">
-          <article class="prcard prcard--pop">
+          <article class="prcard">
             <h2 class="prcard__name">Home Support</h2>
             <p class="prcard__for">For homes and families</p>
             <p class="prcard__price"><b>&pound;18.25</b></p>
             <p class="prcard__per">a month per computer</p>
             <ul><li>Friendly remote support</li><li>A full service every 6 weeks</li><li>Security &amp; backup checks</li><li>Wi-Fi, printer &amp; email help</li></ul>
-            <a class="button primary" href="/home-it-support-plans/">See home plans</a>
+            <a class="button secondary" href="/home-it-support-plans/">See home plans</a>
           </article>
-          <article class="prcard">
+          <!-- MOST POPULAR: Home + Microsoft 365 (owner, 28 Sep 2026). Home outsells business; within home, this one. -->
+          <article class="prcard prcard--pop">
+            <span class="prcard__tag">MOST POPULAR</span>
             <h2 class="prcard__name">Home + Microsoft 365</h2>
             <p class="prcard__for">Home Support with Microsoft 365 at &pound;4.85 a user</p>
             <p class="prcard__price"><b>&pound;23.10</b></p>
             <p class="prcard__per">a month per computer</p>
             <ul><li>Everything in Home Support</li><li>Microsoft 365: Outlook and the Office apps</li></ul>
-            <a class="button secondary" href="/home-it-support-plans/">See home plans</a>
+            <a class="button primary" href="/home-it-support-plans/">See home plans</a>
           </article>
           <article class="prcard">
             <h2 class="prcard__name">Business</h2>
