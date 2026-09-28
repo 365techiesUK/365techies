@@ -30859,15 +30859,74 @@ def write_portal_page():
     if (m.latest && m.ver && m.ver < m.latest) s += 4;
     return s;
   }
+  // Hide / Show again on "Worth a call today": saved on the server for every member of staff, then the list redraws
+  function wireWcHide(box) {
+    function setHidden(btn, hide) {
+      var cid = btn.getAttribute('data-cid'), pc = btn.getAttribute('data-pc');
+      if (hide && !confirm('Hide ' + btn.getAttribute('data-label') + ' from “Worth a call today”?\\n\\nIt stays in the fleet and everywhere else - this only takes it off the call list. You can bring it back from “hidden from this list” underneath.')) return;
+      btn.disabled = true;
+      post(BK, { action: 'staffwchide', stoken: S.stoken, machine: mid(), cid: cid, pc: pc, hide: hide ? 1 : 0 })
+        .then(function (r) {
+          if (!r || !r.ok) { btn.disabled = false; alert('Couldn’t save that - try again.'); return; }
+          (FLEET || []).forEach(function (m) {
+            if (m.cid === cid && m.mid === pc) { m.wch = hide; m.wchby = hide ? (S.email || '') : ''; m.wchts = hide ? Math.floor(Date.now() / 1000) : 0; }
+          });
+          renderWorthCall();
+        }).catch(function () { btn.disabled = false; alert('Couldn’t reach the server.'); });
+    }
+    Array.prototype.forEach.call(box.querySelectorAll('.wchide'), function (b) { b.onclick = function () { setHidden(b, true); }; });
+    // Listed twice - merge: the server previews (which entry it keeps - the one seen most recently), staff confirm, it merges
+    Array.prototype.forEach.call(box.querySelectorAll('.wcmerge'), function (b) {
+      b.onclick = function () {
+        var q = { action: 'staffmergepc', stoken: S.stoken, machine: mid(), cid: b.getAttribute('data-cid'), pc: b.getAttribute('data-pc'), other: b.getAttribute('data-other') };
+        b.disabled = true;
+        var side = function (x) { return 'app v' + (x.ver || '?') + ', last seen ' + (x.seen ? seenTxt(x.seen) : 'never') + ', ' + x.reports + ' report' + (x.reports === 1 ? '' : 's'); };
+        post(BK, q).then(function (p) {
+          if (!p || !p.ok) { b.disabled = false; alert(p && p.error === 'not_same_customer' ? 'These two are on different licences, so they can’t be merged here.' : 'Couldn’t check the two entries - try again.'); return; }
+          var k = p.preview.keep, dr = p.preview.drop;
+          if (!confirm(k.name + ' is listed twice for this customer.\\n\\nKeep: ' + side(k) + '\\nFold in: ' + side(dr)
+            + '\\n\\nThe older entry’s reports, diagnostics log and SOS picture move into the one we keep, then it is removed. Report links already emailed keep working.\\n\\nMerge them?')) { b.disabled = false; return; }
+          q.go = 1;
+          return post(BK, q).then(function (r) {
+            if (!r || !r.ok) { b.disabled = false; alert('Couldn’t merge them (' + ((r && r.error) || 'no reply') + ') - nothing was changed.'); return; }
+            alert('Merged – ' + k.name + ' is one entry now, with ' + (r.reports_moved || 0) + ' report' + (r.reports_moved === 1 ? '' : 's') + ' moved across.');
+            loadFleet();
+          });
+        }).catch(function () { b.disabled = false; alert('Couldn’t reach the server.'); });
+      };
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('.wcunhide'), function (b) { b.onclick = function () { setHidden(b, false); }; });
+  }
   function renderWorthCall() {
     var box = document.getElementById('worthcall'); if (!box) return;
-    var items = (FLEET || []).filter(function (m) { return !m.fresh && attentionScore(m) > 0; })
+    // Hidden by staff (owner, 28 Sep 2026: "an option to basically hide various machines ... some are like our own
+    // machines, and some are like custom machines, which aren't on the support") - kept on the server
+    // (pcm-booking.php staffwchide), so every member of staff sees the same list. Only this list listens to it.
+    var hidden = (FLEET || []).filter(function (m) { return m.wch; });
+    var items = (FLEET || []).filter(function (m) { return !m.fresh && !m.wch && attentionScore(m) > 0; })
       .sort(function (a, b) { return attentionScore(b) - attentionScore(a); }).slice(0, 12);
     nxKpi('kPcs', items.length);
-    if (!items.length) { box.innerHTML = '<p class="quiet">\\u2713 All quiet - every PC with the app looks healthy. Nothing needs a call today. \\ud83c\\udf89</p>'; return; }
+    var hidTxt = '';
+    if (hidden.length) {
+      hidTxt = '<details class="nx-how" style="margin-top:.7rem"><summary>' + hidden.length + ' hidden from this list</summary>';
+      hidden.forEach(function (m) {
+        var when = m.wchts ? new Date(m.wchts * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '';
+        hidTxt += '<div class="tline" style="align-items:center"><div class="tblock"><strong>' + esc(m.cust || 'Customer') + '</strong> \\u00b7 <span class="quiet" style="margin:0">' + esc(m.name) + '</span>'
+          + '<div class="quiet" style="margin:.1rem 0 0;font-size:.85rem">hidden' + (m.wchby ? ' by ' + esc(m.wchby) : '') + (when ? ' on ' + esc(when) : '') + '</div></div>'
+          + '<button class="sm ghost wcunhide" data-cid="' + esc(m.cid) + '" data-pc="' + esc(m.mid) + '">Show again</button></div>';
+      });
+      hidTxt += '</details>';
+    }
+    if (!items.length) {
+      box.innerHTML = (hidden.length ? '<p class="quiet">\\u2713 Nothing else needs a call today.</p>'
+        : '<p class="quiet">\\u2713 All quiet - every PC with the app looks healthy. Nothing needs a call today. \\ud83c\\udf89</p>') + hidTxt;
+      wireWcHide(box); return;
+    }
     var hh = '';
     items.forEach(function (m) {
       var sev = attentionScore(m);
+      // the same PC listed twice under one customer (same name, another machine id) - a Windows reset or reinstall
+      var twin = (FLEET || []).filter(function (o) { return o !== m && o.cid === m.cid && o.mid !== m.mid && String(o.name || '').trim().toLowerCase() === String(m.name || '').trim().toLowerCase(); })[0];
       var dot = sev >= 60 ? 'var(--pbad)' : (sev >= 30 ? 'var(--pwarn)' : 'var(--psoft)');
       var chips = (m.warns || []).map(function (w) { return '<span class="chip ' + (w[0] === 'b' ? 'b' : 'w') + '">' + w[1] + '</span>'; }).join('');
       hh += '<div class="tline"><span class="ttime" style="flex:0 0 14px;padding-top:.35rem"><span class="dot" style="background:' + dot + '"></span></span>'
@@ -30875,9 +30934,13 @@ def write_portal_page():
         + '<div class="chips">' + chips + '<span class="chip">seen ' + seenTxt(m.seen) + '</span></div></div>'
         + '<div style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">'
         + (m.phone ? '<a class="btn sm" href="tel:' + esc(m.phone.replace(/\\s/g, '')) + '">\\ud83d\\udcde Call</a>' : '')
-        + '<button class="sm ghost wcview" data-cid="' + esc(m.cid) + '">\\ud83d\\udc41 View</button></div></div>';
+        + '<button class="sm ghost wcview" data-cid="' + esc(m.cid) + '">\\ud83d\\udc41 View</button>'
+        + '<button class="sm ghost wchide" data-cid="' + esc(m.cid) + '" data-pc="' + esc(m.mid) + '" data-label="' + esc((m.cust || 'Customer') + ' \\u00b7 ' + m.name) + '" title="Take this PC off this list - for our own machines or ones not on support">Hide</button>'
+        + (twin ? '<button class="sm ghost wcmerge" data-cid="' + esc(m.cid) + '" data-pc="' + esc(m.mid) + '" data-other="' + esc(twin.mid) + '" title="This customer has this PC listed twice - usually after Windows was reset or reinstalled">Listed twice \\u2013 merge</button>' : '')
+        + '</div></div>';
     });
-    box.innerHTML = hh;
+    box.innerHTML = hh + hidTxt;
+    wireWcHide(box);
     Array.prototype.forEach.call(box.querySelectorAll('.wcview'), function (btn) {
       btn.onclick = function () {
         btn.disabled = true;
