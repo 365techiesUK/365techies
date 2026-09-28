@@ -2743,6 +2743,85 @@ if ($action === 'staffwchide') {
     out(array('ok' => true, 'hidden' => $hide));
 }
 
+// staff: merge a PC that is listed twice under one customer into one entry (owner, 28 Sep 2026: "can we merge the two
+// Tim Emblem entries into one"). The app names a PC by a hash of Windows' MachineGuid, so a Windows reset or reinstall
+// makes the same PC a second entry. go=0 previews, go=1 merges. The entry seen most recently is kept; the other's
+// service reports, diagnostics log and SOS picture move into it (files renamed, never deleted - a clashing report
+// timestamp moves on a second, as reportup does), its report history joins the kept one's, and it is removed.
+// Report links already emailed carry the old machine id inside their signature, so pcm_mid_alias records old -> kept
+// and pcm-report.php follows it. Both machines must be under the SAME customer: two licences are a customer merge.
+if ($action === 'staffmergepc') {
+    $tok = need_staff();
+    $cid2 = preg_replace('/[^a-f0-9]/', '', (string)(isset($in['cid']) ? $in['cid'] : ''));
+    $pa = preg_replace('/[^a-f0-9]/', '', substr((string)(isset($in['pc']) ? $in['pc'] : ''), 0, 32));
+    $pb = preg_replace('/[^a-f0-9]/', '', substr((string)(isset($in['other']) ? $in['other'] : ''), 0, 32));
+    $go = !empty($in['go']);
+    if ($pa === '' || $pb === '' || $pa === $pb) fail('same_machine');
+    list($lk, $db) = db_open();
+    $byEmail = isset($db['staff'][$tok]['login']) ? (string)$db['staff'][$tok]['login'] : 'staff';
+    $found = '';
+    foreach ($db['customers'] as $k2 => $c2) {
+        if (!empty($c2['merged_into'])) continue;
+        if (substr(sha1('365cid|' . $k2), 0, 12) === $cid2) { $found = $k2; break; }
+    }
+    if ($found === '' || !isset($db['customers'][$found]['machines'][$pa]) || !isset($db['customers'][$found]['machines'][$pb])) { db_close($lk); fail('not_same_customer'); }
+    $ms =& $db['customers'][$found]['machines'];
+    // keep the one seen most recently ('Y-m-d H:i' strings sort as times)
+    $keep = strcmp((string)($ms[$pa]['seen'] ?? ''), (string)($ms[$pb]['seen'] ?? '')) >= 0 ? $pa : $pb;
+    $drop = $keep === $pa ? $pb : $pa;
+    $kh = substr(hash('sha256', $found), 0, 12);
+    $K =& $ms[$keep]; $D = $ms[$drop];
+    $dreps = array_map('intval', isset($D['reps']) && is_array($D['reps']) ? $D['reps'] : array());
+    $side = function ($m) { return array('name' => (string)($m['name'] ?? 'PC'), 'seen' => (string)($m['seen'] ?? ''), 'ver' => intval($m['ver'] ?? 0),
+        'reports' => count(isset($m['reps']) && is_array($m['reps']) ? $m['reps'] : array())); };
+    $plan = array('keep' => $side($K) + array('pc' => $keep), 'drop' => $side($D) + array('pc' => $drop));
+    if (!$go) { unset($K, $ms); db_close($lk); out(array('ok' => true, 'preview' => $plan)); }
+
+    // 1. the files - every rename checked, and undone if any fails, before the database changes
+    $kreps = array_map('intval', isset($K['reps']) && is_array($K['reps']) ? $K['reps'] : array());
+    $done = array(); $map = array();
+    foreach ($dreps as $ts) {
+        $src = __DIR__ . '/pcm-rep-' . $kh . '-' . $drop . '-' . $ts . '.html';
+        if (!is_file($src)) continue;   // pruned long ago: nothing to carry
+        $nts = $ts;
+        while (in_array($nts, $kreps, true) || in_array($nts, $map, true) || file_exists(__DIR__ . '/pcm-rep-' . $kh . '-' . $keep . '-' . $nts . '.html')) $nts++;
+        $dst = __DIR__ . '/pcm-rep-' . $kh . '-' . $keep . '-' . $nts . '.html';
+        if (!@rename($src, $dst)) {
+            foreach (array_reverse($done) as $pair) @rename($pair[1], $pair[0]);
+            unset($K, $ms); db_close($lk); fail('move_failed');
+        }
+        $done[] = array($src, $dst); $map[$ts] = $nts;
+    }
+    $extra = array();
+    if (!empty($D['logf']) && empty($K['logf']) && is_file(__DIR__ . '/' . basename((string)$D['logf']))) {
+        $nl = str_replace('-' . $drop . '-', '-' . $keep . '-', basename((string)$D['logf']));
+        if (@rename(__DIR__ . '/' . basename((string)$D['logf']), __DIR__ . '/' . $nl)) { $K['logf'] = $nl; $extra[] = 'log'; }
+    }
+    if (!empty($D['shot']) && empty($K['shot']) && is_file(__DIR__ . '/pcm-sos-' . $kh . '-' . $drop . '.jpg')) {
+        if (@rename(__DIR__ . '/pcm-sos-' . $kh . '-' . $drop . '.jpg', __DIR__ . '/pcm-sos-' . $kh . '-' . $keep . '.jpg')) { $K['shot'] = $D['shot']; $extra[] = 'sos'; }
+    }
+    // 2. the report history joins the kept entry
+    foreach (array('repk', 'repm', 'reph') as $f) if (!isset($K[$f]) || !is_array($K[$f])) $K[$f] = array();
+    $K['reps'] = $kreps;
+    foreach ($map as $ts => $nts) {
+        $K['reps'][] = $nts;
+        foreach (array('repk', 'repm', 'reph') as $f) if (isset($D[$f][(string)$ts])) $K[$f][(string)$nts] = $D[$f][(string)$ts];
+    }
+    sort($K['reps']);
+    if (!empty($D['activated']) && (empty($K['activated']) || strcmp((string)$D['activated'], (string)$K['activated']) < 0)) $K['activated'] = $D['activated'];
+    if (empty($K['asset']) && !empty($D['asset'])) $K['asset'] = $D['asset'];
+    if (!isset($K['merged']) || !is_array($K['merged'])) $K['merged'] = array();
+    $K['merged'][] = array('from' => $drop, 'name' => (string)($D['name'] ?? ''), 'ver' => intval($D['ver'] ?? 0), 'seen' => (string)($D['seen'] ?? ''), 'by' => $byEmail, 'at' => time());
+    unset($K);
+    unset($ms[$drop]);
+    unset($ms);
+    // 3. emailed report links name the old machine: send them to the kept one
+    if (!isset($db['pcm_mid_alias']) || !is_array($db['pcm_mid_alias'])) $db['pcm_mid_alias'] = array();
+    $db['pcm_mid_alias'][$kh . '-' . $drop] = array('to' => $keep, 'ts' => $map);
+    db_save($db); db_close($lk);
+    out(array('ok' => true, 'merged' => $plan, 'reports_moved' => count($map), 'also' => $extra));
+}
+
 // staff: queue a SAFE maintenance command onto one machine. Never a command string - only a
 // fixed id from the allow-list, which the app maps to a hard-coded routine. Refused unless the
 // customer has switched on remote maintenance in their app. Every queued command records who

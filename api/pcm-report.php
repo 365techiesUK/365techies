@@ -23,6 +23,17 @@ header('X-Content-Type-Options: nosniff');
 $t = isset($_GET['t']) ? (string)$_GET['t'] : '';
 $v = ($t !== '' && strlen($t) < 600) ? sr_token_verify($t, rv_salt()) : null;
 $f = $v ? __DIR__ . '/pcm-rep-' . $v['kh'] . '-' . $v['machine'] . '-' . $v['ts'] . '.html' : '';
+// A PC listed twice and merged by staff (pcm-booking.php staffmergepc) moved its reports to the kept entry. The link
+// was signed with the old machine id, so follow the merge's forwarding note - the signature itself is unchanged.
+if ($v && !is_file($f)) {
+    $adb = json_decode((string)@file_get_contents(__DIR__ . '/pcm-data.json'), true);
+    $al = is_array($adb) && isset($adb['pcm_mid_alias'][$v['kh'] . '-' . $v['machine']]) ? $adb['pcm_mid_alias'][$v['kh'] . '-' . $v['machine']] : null;
+    if (is_array($al) && !empty($al['to'])) {
+        $nts = isset($al['ts'][(string)$v['ts']]) ? (int)$al['ts'][(string)$v['ts']] : (int)$v['ts'];
+        $f2 = __DIR__ . '/pcm-rep-' . $v['kh'] . '-' . preg_replace('/[^a-f0-9]/', '', (string)$al['to']) . '-' . $nts . '.html';
+        if (is_file($f2)) $f = $f2;
+    }
+}
 
 if (!$v || !is_file($f)) {
     http_response_code(404);

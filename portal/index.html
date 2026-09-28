@@ -7441,6 +7441,26 @@
         }).catch(function () { btn.disabled = false; alert('Couldn’t reach the server.'); });
     }
     Array.prototype.forEach.call(box.querySelectorAll('.wchide'), function (b) { b.onclick = function () { setHidden(b, true); }; });
+    // Listed twice - merge: the server previews (which entry it keeps - the one seen most recently), staff confirm, it merges
+    Array.prototype.forEach.call(box.querySelectorAll('.wcmerge'), function (b) {
+      b.onclick = function () {
+        var q = { action: 'staffmergepc', stoken: S.stoken, machine: mid(), cid: b.getAttribute('data-cid'), pc: b.getAttribute('data-pc'), other: b.getAttribute('data-other') };
+        b.disabled = true;
+        var side = function (x) { return 'app v' + (x.ver || '?') + ', last seen ' + (x.seen ? seenTxt(x.seen) : 'never') + ', ' + x.reports + ' report' + (x.reports === 1 ? '' : 's'); };
+        post(BK, q).then(function (p) {
+          if (!p || !p.ok) { b.disabled = false; alert(p && p.error === 'not_same_customer' ? 'These two are on different licences, so they can’t be merged here.' : 'Couldn’t check the two entries - try again.'); return; }
+          var k = p.preview.keep, dr = p.preview.drop;
+          if (!confirm(k.name + ' is listed twice for this customer.\n\nKeep: ' + side(k) + '\nFold in: ' + side(dr)
+            + '\n\nThe older entry’s reports, diagnostics log and SOS picture move into the one we keep, then it is removed. Report links already emailed keep working.\n\nMerge them?')) { b.disabled = false; return; }
+          q.go = 1;
+          return post(BK, q).then(function (r) {
+            if (!r || !r.ok) { b.disabled = false; alert('Couldn’t merge them (' + ((r && r.error) || 'no reply') + ') - nothing was changed.'); return; }
+            alert('Merged – ' + k.name + ' is one entry now, with ' + (r.reports_moved || 0) + ' report' + (r.reports_moved === 1 ? '' : 's') + ' moved across.');
+            loadFleet();
+          });
+        }).catch(function () { b.disabled = false; alert('Couldn’t reach the server.'); });
+      };
+    });
     Array.prototype.forEach.call(box.querySelectorAll('.wcunhide'), function (b) { b.onclick = function () { setHidden(b, false); }; });
   }
   function renderWorthCall() {
@@ -7471,6 +7491,8 @@
     var hh = '';
     items.forEach(function (m) {
       var sev = attentionScore(m);
+      // the same PC listed twice under one customer (same name, another machine id) - a Windows reset or reinstall
+      var twin = (FLEET || []).filter(function (o) { return o !== m && o.cid === m.cid && o.mid !== m.mid && String(o.name || '').trim().toLowerCase() === String(m.name || '').trim().toLowerCase(); })[0];
       var dot = sev >= 60 ? 'var(--pbad)' : (sev >= 30 ? 'var(--pwarn)' : 'var(--psoft)');
       var chips = (m.warns || []).map(function (w) { return '<span class="chip ' + (w[0] === 'b' ? 'b' : 'w') + '">' + w[1] + '</span>'; }).join('');
       hh += '<div class="tline"><span class="ttime" style="flex:0 0 14px;padding-top:.35rem"><span class="dot" style="background:' + dot + '"></span></span>'
@@ -7479,7 +7501,9 @@
         + '<div style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">'
         + (m.phone ? '<a class="btn sm" href="tel:' + esc(m.phone.replace(/\s/g, '')) + '">\ud83d\udcde Call</a>' : '')
         + '<button class="sm ghost wcview" data-cid="' + esc(m.cid) + '">\ud83d\udc41 View</button>'
-        + '<button class="sm ghost wchide" data-cid="' + esc(m.cid) + '" data-pc="' + esc(m.mid) + '" data-label="' + esc((m.cust || 'Customer') + ' \u00b7 ' + m.name) + '" title="Take this PC off this list - for our own machines or ones not on support">Hide</button></div></div>';
+        + '<button class="sm ghost wchide" data-cid="' + esc(m.cid) + '" data-pc="' + esc(m.mid) + '" data-label="' + esc((m.cust || 'Customer') + ' \u00b7 ' + m.name) + '" title="Take this PC off this list - for our own machines or ones not on support">Hide</button>'
+        + (twin ? '<button class="sm ghost wcmerge" data-cid="' + esc(m.cid) + '" data-pc="' + esc(m.mid) + '" data-other="' + esc(twin.mid) + '" title="This customer has this PC listed twice - usually after Windows was reset or reinstalled">Listed twice \u2013 merge</button>' : '')
+        + '</div></div>';
     });
     box.innerHTML = hh + hidTxt;
     wireWcHide(box);
