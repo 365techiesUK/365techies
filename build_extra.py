@@ -16383,13 +16383,19 @@ for _c in GAP_SERVICES:
 def _prose(inner):
     return f'    <section class="section">\n      <div class="wrap">\n        <div class="prose" data-reveal>\n{inner}\n        </div>\n      </div>\n    </section>'
 
-def info_page(slug, crumb_name, h1, eyebrow, lede, desc, inner, title=None, chips=None, faqs=None, cta_args=None, pre=None, og_title=None, hero_cta1=None, hero_cta2=None, post=None, robots=None):
+def info_page(slug, crumb_name, h1, eyebrow, lede, desc, inner, title=None, chips=None, faqs=None, cta_args=None, pre=None, og_title=None, hero_cta1=None, hero_cta2=None, post=None, robots=None, task=False):
     """`pre` and `post` take raw full-width <section> HTML either side of the
-    prose; `inner` is wrapped in _prose() and so cannot hold a section itself."""
+    prose; `inner` is wrapped in _prose() and so cannot hold a section itself.
+    task=True (28 Sep 2026): a page whose job is a form or a download gets the short shared task header
+    (bp.task_head: crumbs, H1, lede, the chips as its trust line) so `pre` - the job - starts on the first phone
+    screen. The hero buttons and the shared four-tile first screen are skipped; the page must carry those links."""
     hk = {}
     if hero_cta1: hk["cta1"] = hero_cta1
     if hero_cta2: hk["cta2"] = hero_cta2
-    parts = [hero(bc(crumb_name), eyebrow, h1, lede, chips=chips or [], **hk)]
+    if task:
+        parts = [bp.task_head(bc(crumb_name), h1, lede, trust=(['<a href="/reviews/">&#9733; Rated 4.9 on Google</a>'] + chips) if chips else None)]
+    else:
+        parts = [hero(bc(crumb_name), eyebrow, h1, lede, chips=chips or [], **hk)]
     if pre:
         parts.append(pre)
     if inner:
@@ -17212,29 +17218,13 @@ info_page(
   h1='Book a free <em class="grad grad--cyan">collection</em>',
   lede="Computer playing up and need hands-on help? Book a convenient collection from anywhere in the areas we cover — we'll diagnose, fix and get it back to you, with no-fix-no-fee on diagnosis.",
   desc="Book a free computer or laptop collection with 365 Techies in Bournemouth, Poole and Dorset. We collect, diagnose, repair and return your device — no-fix-no-fee on diagnosis.",
-  chips=["Free local collection","No-fix-no-fee","Local to Dorset"],
+  chips=["Free local collection","No-fix-no-fee","Local to Dorset", '<a href="tel:+441202775566">Or call 01202 775566</a>'],
+  task=True,   # 28 Sep 2026: the form first (was 2,612 px down on a phone)
   hero_cta1=("Request a Collection", "#book"), hero_cta2=("Call 01202 775566", "tel:+441202775566"),
-  pre='''    <section class="section section--alt" aria-label="How collection works">
-      <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>// HOW IT WORKS</p>
-        <h2 class="section-title section-title--center" data-title>Sorted in four simple steps<span class="title-underline title-underline--center"></span></h2>
-        <ol class="how__steps">
-''' + steps([
-        ("Tell us about it","Fill in the form below or call us &mdash; tell us the device and the problem."),
-        ("We collect","We arrange a convenient collection from your home or business, anywhere in the areas we cover."),
-        ("We diagnose &amp; fix","We diagnose it (no-fix-no-fee) and, with your go-ahead, carry out the repair."),
-        ("Back to you","We return your device fully working, with a warranty on the repair."),
-      ]) + '''
-        </ol>
-      </div>
-    </section>
-    <section class="section" id="book" aria-label="Request a collection">
+  pre='''    <section class="section" id="book" aria-label="Request a collection">
       <div class="wrap" style="max-width:700px;margin:0 auto">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// REQUEST IT</p>
-          <h2 class="section-title section-title--center" data-title>Request a collection<span class="title-underline title-underline--center"></span></h2>
-        </div>
-        <form class="contact-form" data-reveal action="/api/form-relay.php" method="post">
+        <h2 class="section-title section-title--center" style="font-size:clamp(1.45rem,3vw,2rem);margin:0 0 1rem">Request a collection</h2>
+        <form class="contact-form" action="/api/form-relay.php" method="post">
           <input type="text" name="company_website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
           <label class="field"><span>Your name</span><input type="text" name="name" autocomplete="name" required /></label>
           <label class="field"><span>Email</span><input type="email" name="email" autocomplete="email" required /></label>
@@ -17243,6 +17233,20 @@ info_page(
           <button type="submit" class="button primary button--lg" style="width:100%">Send Your Request</button>
           <p class="form-status mono" role="status" style="margin-top:1rem;color:var(--faint);font-size:.75rem">// GOES STRAIGHT TO OUR FAMILY TEAM &middot; WE REPLY WITHIN ONE WORKING DAY (MON&ndash;FRI)</p>
         </form>
+      </div>
+    </section>
+    <section class="section section--alt" aria-label="How collection works">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>// HOW IT WORKS</p>
+        <h2 class="section-title section-title--center" data-title>Sorted in four simple steps<span class="title-underline title-underline--center"></span></h2>
+        <ol class="how__steps">
+''' + steps([
+        ("Tell us about it","Fill in the form above or call us &mdash; tell us the device and the problem."),
+        ("We collect","We arrange a convenient collection from your home or business, anywhere in the areas we cover."),
+        ("We diagnose &amp; fix","We diagnose it (no-fix-no-fee) and, with your go-ahead, carry out the repair."),
+        ("Back to you","We return your device fully working, with a warranty on the repair."),
+      ]) + '''
+        </ol>
       </div>
     </section>''',
   inner="""          <h2>What we repair</h2>
@@ -17937,32 +17941,22 @@ def sos_page():
             "the 9-digit code over the phone. Big, simple steps — we stay on the line the whole way.")
     steps_css = "font-size:1.05rem;line-height:1.65"
     content = "\n".join([
-      hero(bc("SOS Remote Support"), "// SOS &middot; WE&rsquo;LL DO THIS TOGETHER",
-           'Let&rsquo;s get you <em class="grad grad--green">connected</em>',
-           "Best done while you&rsquo;re on the phone with us &mdash; we&rsquo;ll talk you through every step and you&rsquo;ll see everything we do. Not on the phone yet? Call <strong>01202 775566</strong> first and we&rsquo;ll do it together.",
-           cta1=("Start Step 1 Below", "#step1"), cta2=("Call 01202 775566", "tel:+441202775566"),
-           chips=["We stay on the phone with you", "Nothing installs permanently", "You watch everything"]),
-      '''    <section class="section" aria-label="New to 365 Techies">
-      <div class="wrap" style="max-width:860px;margin:0 auto">
-        <div class="repairs__card" data-reveal style="border-color:rgba(29,151,227,.4);flex-direction:column;align-items:flex-start;gap:1.4rem">
-          <div>
-            <p class="eyebrow mono">// NEW TO 365 TECHIES?</p>
-            <h2 class="repairs__title" style="max-width:none">We check the fault for free &mdash; then quote before we fix</h2>
-            <p class="lede">The <strong>only</strong> thing that&rsquo;s free is connecting in to check the problem, so a senior techie can give you a <strong>realistic quote</strong> &mdash; what needs doing, how long it&rsquo;ll take and what it&rsquo;ll cost. The fix itself is quoted up front and only done once you&rsquo;ve agreed the price. We never charge for a fix you haven&rsquo;t approved.</p>
-          </div>
-          <a href="/remote-support/" class="button primary">See pricing &amp; how it works</a>
-        </div>
-      </div>
-    </section>''',
+      # 28 Sep 2026 task-first: the download is the job, so Step 1 sits straight under a short header (was ~1,800 px
+      # down on a phone). The chips are the trust line; the "new to us" card moved below Step 3 with a one-line pointer here.
+      bp.task_head(bc("SOS Remote Support"), 'Let&rsquo;s get you <em class="grad grad--green">connected</em>',
+           "Best done while you&rsquo;re on the phone with us &mdash; we talk you through every step and you see everything we do. Not on the phone yet? Call <a href=\"tel:+441202775566\"><strong>01202 775566</strong></a> first.",
+           trust=["We stay on the phone with you", "Nothing installs permanently", "You watch everything",
+                  '<a href="#new-to-us">New to us? Checking the fault is free</a>']),
       f'''    <section class="section section--alt" id="step1" aria-label="Step 1 — download">
       <div class="wrap" style="max-width:820px;margin:0 auto;text-align:center">
-        <p class="eyebrow eyebrow--center mono" data-reveal>STEP 1 OF 3</p>
-        <h2 class="section-title section-title--center" data-title>Download the support tool<span class="title-underline title-underline--center"></span></h2>
-        <p class="lede lede--center" data-reveal style="{steps_css}" id="sos-dl-lede">Press the big green button. A small program downloads &mdash; it doesn&rsquo;t install anything permanent on your computer.</p>
-        <p style="margin:1.6rem 0 0.8rem" data-reveal>
+        <p class="eyebrow eyebrow--center mono" style="margin-bottom:.4rem">STEP 1 OF 3</p>
+        <h2 class="section-title section-title--center" style="font-size:clamp(1.55rem,3.2vw,2.2rem);margin-bottom:.7rem">Download the support tool</h2>
+        <style>@media (max-width:600px){{#sos-dl{{padding:1rem 1.1rem!important;font-size:1.05rem!important}}}}</style>
+        <p style="margin:.4rem 0 0.8rem">
           <a class="button primary button--lg" id="sos-dl" href="{SOS_DL_WIN}" data-win="{SOS_DL_WIN}" data-mac="{SOS_DL_MAC}" data-android="{SOS_DL_ANDROID}" data-ios="{SOS_DL_IOS}" style="font-size:1.15rem;padding:1.1rem 2.4rem">&#11015;&#65039; Download the Support Tool</a>
         </p>
         <p class="mono" id="sos-dl-status" style="color:var(--muted);font-size:0.8rem" aria-live="polite">// FOR WINDOWS COMPUTERS &amp; LAPTOPS &middot; ABOUT 20&nbsp;MB</p>
+        <p class="lede lede--center" style="{steps_css};margin:1rem auto 0" id="sos-dl-lede">Press the big green button. A small program downloads &mdash; it doesn&rsquo;t install anything permanent on your computer.</p>
         <p style="color:var(--muted);margin-top:1.4rem;font-size:0.95rem" data-reveal id="sos-dl-others">Not the right one for your device? Pick yours:
           <a href="{SOS_DL_WIN}">Windows</a>{(' &middot; <a href="' + SOS_DL_MAC + '">Mac</a>') if SOS_MAC else ''}{(' &middot; <a href="' + SOS_DL_ANDROID + '" target="_blank" rel="noopener">Android</a> &middot; <a href="' + SOS_DL_IOS + '" target="_blank" rel="noopener">iPhone &amp; iPad</a>') if SOS_MOBILE else ''}{'' if (SOS_MAC and SOS_MOBILE) else (' &middot; <strong>' + ('phone or tablet' if SOS_MAC else ('Mac' if SOS_MOBILE else 'Mac, phone or tablet')) + '?</strong> <a href="tel:+441202775566">Ring us</a> and we&rsquo;ll help by phone')}</p>
       </div>
@@ -18004,7 +17998,19 @@ def sos_page():
         </div>
       </div>
     </section>''',
-      '''    <section class="section" aria-label="Safety and trouble-shooting">
+      '''    <section class="section" id="new-to-us" aria-label="New to 365 Techies">
+      <div class="wrap" style="max-width:860px;margin:0 auto">
+        <div class="repairs__card" data-reveal style="border-color:rgba(29,151,227,.4);flex-direction:column;align-items:flex-start;gap:1.4rem">
+          <div>
+            <p class="eyebrow mono">// NEW TO 365 TECHIES?</p>
+            <h2 class="repairs__title" style="max-width:none">We check the fault for free &mdash; then quote before we fix</h2>
+            <p class="lede">The <strong>only</strong> thing that&rsquo;s free is connecting in to check the problem, so a senior techie can give you a <strong>realistic quote</strong> &mdash; what needs doing, how long it&rsquo;ll take and what it&rsquo;ll cost. The fix itself is quoted up front and only done once you&rsquo;ve agreed the price. We never charge for a fix you haven&rsquo;t approved.</p>
+          </div>
+          <a href="/remote-support/" class="button primary">See pricing &amp; how it works</a>
+        </div>
+      </div>
+    </section>''',
+      '''    <section class="section section--alt" aria-label="Safety and trouble-shooting">
       <div class="wrap">
         <div class="tile-grid" data-stagger style="max-width:900px;margin:0 auto">
           <div class="tile"><h3>&#128274; Is this safe?</h3><p>Yes. Sessions are encrypted, the one-time code is your permission, and we never connect out of the blue &mdash; a session only ever starts while we&rsquo;re talking to you, handled personally by a senior techie.</p></div>
@@ -18019,7 +18025,7 @@ def sos_page():
         </div>
       </div>
     </section>''',
-      (f'''    <section class="section section--alt" id="streamer" aria-label="Streamer install for support-plan customers">
+      (f'''    <section class="section" id="streamer" aria-label="Streamer install for support-plan customers">
       <div class="wrap" style="max-width:820px;margin:0 auto;text-align:center">
         <p class="eyebrow eyebrow--center mono" data-reveal>// ON A SUPPORT PLAN? &middot; ONLY IF WE&rsquo;VE ASKED YOU TO</p>
         <h2 class="section-title section-title--center" data-title>Setting up ongoing access &mdash; the Streamer<span class="title-underline title-underline--center"></span></h2>
