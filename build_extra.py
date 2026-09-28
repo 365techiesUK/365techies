@@ -21033,6 +21033,7 @@ COURSE_SAFETY = r'''    <section class="section" aria-label="Free online safety 
       #oscourse .osc-fb.oops{background:rgba(241,196,15,.1);border:1px solid rgba(241,196,15,.35)}
       #oscourse .osc-fb b{color:#fff}
       #oscourse .osc-actions{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center;margin-top:1.6rem}
+      #oscourse .osc-actions--top{margin:0 0 1.4rem}
       #oscourse .osc-btn{border:0;border-radius:13px;padding:.95rem 1.8rem;font:inherit;font-size:1.05rem;font-weight:700;cursor:pointer;background:var(--cyan,#1d97e3);color:#04121a}
       #oscourse .osc-btn.ghost{background:transparent;color:#eaf0ff;border:1.5px solid var(--line,rgba(125,170,220,.3))}
       #oscourse .osc-btn:disabled{opacity:.45;cursor:not-allowed}
@@ -21106,10 +21107,11 @@ COURSE_SAFETY = r'''    <section class="section" aria-label="Free online safety 
           state.phase='intro'; stepEl.textContent='Free course'; setBar();
           var rows=MODULES.map(function(m,i){ return '<div class="osc-modrow"><span class="n">'+(i+1)+'</span>'+m.title+'</div>'; }).join('');
           var resume = (saved&&saved.m>0&&saved.m<MODULES.length)?'<div class="osc-actions"><button class="osc-btn" id="osc-resume">Continue where I left off</button><button class="osc-btn ghost" id="osc-restart">Start again</button></div>':'<div class="osc-actions"><button class="osc-btn" id="osc-begin">Start the course &#8594;</button></div>';
-          h('<div class="osc-card"><div class="osc-ico">&#128737;&#65039;</div><h2 class="osc-h">Staying safe online</h2><p class="osc-tag">Free &middot; 6 short lessons &middot; about 10 minutes</p><div class="osc-body"><p>A friendly, jargon-free course to help you spot scams and stay safe online &mdash; whatever your confidence with computers. Read a short lesson, try a quick &ldquo;what would you do?&rdquo;, and collect your certificate at the end. Nothing to install, and you can stop and come back any time.</p></div>'+
+          var top=(saved&&saved.m>0&&saved.m<MODULES.length)?'<div class="osc-actions osc-actions--top"><button class="osc-btn" data-osc="resume">Continue where I left off &#8594;</button></div>':'<div class="osc-actions osc-actions--top"><button class="osc-btn" data-osc="begin">Start the course &#8594;</button></div>';
+          h('<div class="osc-card"><div class="osc-ico">&#128737;&#65039;</div><h2 class="osc-h">Staying safe online</h2><p class="osc-tag">Free &middot; 6 short lessons &middot; about 10 minutes</p>'+top+'<div class="osc-body"><p>A friendly, jargon-free course to help you spot scams and stay safe online &mdash; whatever your confidence with computers. Read a short lesson, try a quick &ldquo;what would you do?&rdquo;, and collect your certificate at the end. Nothing to install, and you can stop and come back any time.</p></div>'+
             '<div class="osc-mods">'+rows+'</div>'+resume+'<p class="osc-note">Made by 365 Techies &mdash; friendly, family-run IT support in Dorset since 1995. Nothing you type here is stored or sent to us.</p></div>');
-          var b=stage.querySelector('#osc-begin'); if(b) b.onclick=function(){ state.m=0; state.score=0; lesson(); };
-          var r=stage.querySelector('#osc-resume'); if(r) r.onclick=function(){ state.m=saved.m; state.score=saved.score||0; lesson(); };
+          var bb=stage.querySelectorAll('#osc-begin,[data-osc="begin"]'); for(var bi=0;bi<bb.length;bi++) bb[bi].onclick=function(){ state.m=0; state.score=0; lesson(); };
+          var rr=stage.querySelectorAll('#osc-resume,[data-osc="resume"]'); for(var ri=0;ri<rr.length;ri++) rr[ri].onclick=function(){ state.m=saved.m; state.score=saved.score||0; lesson(); };
           var rs=stage.querySelector('#osc-restart'); if(rs) rs.onclick=function(){ state.m=0; state.score=0; lesson(); };
         }
         function lesson(){
@@ -21254,10 +21256,11 @@ _COURSE_RUNTIME = r'''
           state.phase='intro'; stepEl.textContent='Free course'; setBar();
           var rows=MODULES.map(function(m,i){ return '<div class="osc-modrow"><span class="n">'+(i+1)+'</span>'+m.title+'</div>'; }).join('');
           var resume=(saved&&saved.m>0&&saved.m<MODULES.length)?'<div class="osc-actions"><button class="osc-btn" id="osc-resume">Continue where I left off</button><button class="osc-btn ghost" id="osc-restart">Start again</button></div>':'<div class="osc-actions"><button class="osc-btn" id="osc-begin">Start the course &#8594;</button></div>';
-          h('<div class="osc-card"><div class="osc-ico">'+CFG.icon+'</div><h2 class="osc-h">'+CFG.courseTitle+'</h2><p class="osc-tag">'+CFG.tagline+'</p><div class="osc-body">'+CFG.introBody+'</div>'+
+          var top=(saved&&saved.m>0&&saved.m<MODULES.length)?'<div class="osc-actions osc-actions--top"><button class="osc-btn" data-osc="resume">Continue where I left off &#8594;</button></div>':'<div class="osc-actions osc-actions--top"><button class="osc-btn" data-osc="begin">Start the course &#8594;</button></div>';
+          h('<div class="osc-card"><div class="osc-ico">'+CFG.icon+'</div><h2 class="osc-h">'+CFG.courseTitle+'</h2><p class="osc-tag">'+CFG.tagline+'</p>'+top+'<div class="osc-body">'+CFG.introBody+'</div>'+
             '<div class="osc-mods">'+rows+'</div>'+resume+'<p class="osc-note">Made by 365 Techies &mdash; friendly, family-run IT support in Dorset since 1995. Nothing you type here is stored or sent to us.</p></div>');
-          var b=stage.querySelector('#osc-begin'); if(b) b.onclick=function(){ state.m=0; state.score=0; lesson(); };
-          var r=stage.querySelector('#osc-resume'); if(r) r.onclick=function(){ state.m=saved.m; state.score=saved.score||0; lesson(); };
+          var bb=stage.querySelectorAll('#osc-begin,[data-osc="begin"]'); for(var bi=0;bi<bb.length;bi++) bb[bi].onclick=function(){ state.m=0; state.score=0; lesson(); };
+          var rr=stage.querySelectorAll('#osc-resume,[data-osc="resume"]'); for(var ri=0;ri<rr.length;ri++) rr[ri].onclick=function(){ state.m=saved.m; state.score=saved.score||0; lesson(); };
           var rs=stage.querySelector('#osc-restart'); if(rs) rs.onclick=function(){ state.m=0; state.score=0; lesson(); };
         }
         function lesson(){
