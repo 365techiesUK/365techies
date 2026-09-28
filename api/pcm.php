@@ -198,6 +198,18 @@ if ($action === 'checkin') {
         // opting OUT of remote maintenance clears any queued commands, so a command the customer
         // just revoked can never resurrect and run when they later opt back in.
         if (empty($in['rmaint'])) unset($c['machines'][$machine]['cmdq']);
+        // PC Manager v29+: the last jobs it ran (the full service inside the app, ...) for the portal's "What we've done".
+        // Replaced whole each check-in; an older app never sends it, so its machines keep whatever they had.
+        if (isset($in['jobs']) && is_array($in['jobs'])) {
+            $jl = array();
+            foreach (array_slice($in['jobs'], -10) as $J) {
+                if (!is_array($J)) continue;
+                $how = (string)($J['how'] ?? '');
+                $jl[] = array('ts'=>max(0, intval($J['ts'] ?? 0)), 'job'=>substr(preg_replace('/[^a-z]/', '', (string)($J['job'] ?? '')), 0, 16),
+                    'ok'=>!empty($J['ok']), 'how'=>in_array($how, array('self', 'tech', 'visit'), true) ? $how : '');
+            }
+            $c['machines'][$machine]['jobs'] = $jl;
+        }
         // software count from the app (P0, decision A): a cheap between-visits freshness signal.
         // The full list arrives with the six-weekly service; here we only refresh the total.
         if (isset($in['swc'])) {
@@ -395,6 +407,7 @@ if ($action === 'overview') {
             'crs'=>(string)($m['crs'] ?? ''), 'crst'=>(string)($m['crst'] ?? ''),
             'hist'=>isset($m['hist']) && is_array($m['hist']) ? array_slice($m['hist'], -60) : array(),
             'log'=>$log,
+            'jobs'=>isset($m['jobs']) && is_array($m['jobs']) ? $m['jobs'] : array(),   // v29: stored sanitised at check-in
             'sw'=>(isset($m['sw']) && is_array($m['sw'])) ? array('count'=>intval($m['sw']['count'] ?? 0), 'updated'=>intval($m['sw']['updated'] ?? 0), 'outdated'=>intval($m['sw']['outdated'] ?? 0), 'ts'=>intval($m['sw']['ts'] ?? 0)) : null,
             'reps'=>isset($m['reps']) && is_array($m['reps']) ? $m['reps'] : array(),
             'repk'=>isset($m['repk']) && is_array($m['repk']) ? $m['repk'] : array());   // ts => 'service' for six-weekly reports

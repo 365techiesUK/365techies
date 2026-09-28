@@ -707,9 +707,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 28 Sep 2026 &middot; 4a0c98ad2c</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 28 Sep 2026 &middot; 5962b3ed40</p><script>
 (function () {
-  var P365BUILD = '4a0c98ad2c';
+  var P365BUILD = '5962b3ed40';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -4370,11 +4370,19 @@
     h += '<div class="ngh2">Your reports</div><div class="ngc">' + (repShelf || '<div class="ngseen">No reports here yet. Your first written Service Report appears after your next six-weekly service and is emailed to you at the same time; the app’s own health reports appear when you make one.</div>') + '</div>';
     h += '<div class="ngh2">What we\u2019ve done \u2014 with your permission</div><div class="ngc ngledger ng-s6">'
       + '<div class="lh"><div><div style="font-weight:650;color:var(--pwhite)">Let 365 run safe maintenance</div><div class="ngseen">' + (m.rmaint ? 'On - you\u2019re always in control' : 'Off - you decide if we ever do') + ' \u00b7 set in the app on your PC</div></div><div class="ngsw ' + (m.rmaint ? 'on' : 'off') + '" title="Turn this on or off inside 365 PC Manager on your PC"><i></i></div></div>';
-    if (m.log && m.log.length) {
-      h += m.log.slice().reverse().map(function (L) {
+    // PC Manager v29: the jobs it has run (m.jobs - the full service, for now) sit in the same ledger as the
+    // maintenance actions, newest first, each saying who started it
+    var led = (m.log || []).map(function (L) { return { ts: L.ts || 0, ok: L.ok, h: ngAct(L.act) + (L.ok ? '' : ' (didn\u2019t complete)'), y: 'you approved this' }; })
+      .concat((m.jobs || []).map(function (J) {
+        return { ts: J.ts || 0, ok: J.ok, h: (J.job === 'service' ? 'Your full 365 service' : J.job === 'mailmove' ? 'Moved your email to Gmail' : 'Ran a 365 job') + (J.ok ? '' : ' (didn\u2019t run)'),
+          y: J.how === 'self' ? 'you started it' : J.how === 'tech' ? 'a 365 techie, connected with you' : J.how === 'visit' ? 'at your booked visit' : 'from 365 PC Manager' };
+      }))
+      .sort(function (a, b) { return b.ts - a.ts; }).slice(0, 10);
+    if (led.length) {
+      h += led.map(function (L) {
         var ld = new Date((L.ts || 0) * 1000);
         var when = L.ts ? (ld.getDate() + ' ' + MON[ld.getMonth()] + ' ' + ('0' + ld.getHours()).slice(-2) + ':' + ('0' + ld.getMinutes()).slice(-2)) : '';
-        return '<div class="row"><span class="dot ' + (L.ok ? 'ok' : 'no') + '"></span><div><div class="h">' + esc(ngAct(L.act)) + (L.ok ? '' : ' (didn\u2019t complete)') + '</div><div class="m">' + esc(when) + ' \u00b7 <span class="y">you approved this</span></div></div></div>';
+        return '<div class="row"><span class="dot ' + (L.ok ? 'ok' : 'no') + '"></span><div><div class="h">' + esc(L.h) + '</div><div class="m">' + esc(when) + ' \u00b7 <span class="y">' + esc(L.y) + '</span></div></div></div>';
       }).join('');
     } else {
       h += '<div class="row" style="border:0"><span class="dot ok"></span><div><div class="h">Nothing run yet</div><div class="m">When you allow it, every safe action we take appears here - timestamped, tied to your yes.</div></div></div>';
