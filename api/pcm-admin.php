@@ -603,7 +603,7 @@ foreach($cust as $key=>$c){
         if(intval($m['diskpct']??0)>=92) $reasons[]='disk '.$m['diskpct'].'% full';
         if(intval($m['score']??100)<55) $reasons[]='health '.$m['score'].'%';
         if(!empty($m['w10']) && ($c['tier']??'free')!=='pro') $reasons[]='still on Windows 10';
-        if($reasons){
+        if($reasons && empty($m['wc_hide'])){   // hidden by staff from the call list (portal: Worth a call today > Hide)
             $sev = (($m['av']??'')==='OFF'?100:0) + ((isset($m['backup'])&&!$m['backup'])?40:0) + (100-intval($m['score']??100));
             $calls[]=array('name'=>$c['name']??'','email'=>$c['email']??'','tier'=>$c['tier']??'free','pc'=>$m['name']?:$id,'why'=>implode(', ',$reasons),'sev'=>$sev,'seen'=>$m['seen']??'');
         }

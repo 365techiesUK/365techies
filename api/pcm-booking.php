@@ -2707,11 +2707,40 @@ if ($action === 'stafffleet') {
                 'ver' => intval(isset($m['ver']) ? $m['ver'] : 0),
                 'batt' => intval(isset($m['batt']) ? $m['batt'] : 0),
                 'help' => (string)(isset($m['help']) ? $m['help'] : ''),
+                // hidden from "Worth a call today" by staff (staffwchide) - who and when, so a hidden PC is never a mystery
+                'wch' => !empty($m['wc_hide']),
+                'wchby' => (string)(isset($m['wc_hide']['by']) ? $m['wc_hide']['by'] : ''),
+                'wchts' => intval(isset($m['wc_hide']['ts']) ? $m['wc_hide']['ts'] : 0),
                 'fresh' => !isset($m['diskpct']));
             if (count($ms) >= 600) break 2;
         }
     }
     out(array('ok' => true, 'latest' => $latest, 'machines' => $ms, 'now' => gmdate('Y-m-d H:i')));
+}
+
+// staff: hide one machine from "Worth a call today", or bring it back (owner, 28 Sep 2026: "can we have an option to
+// basically hide various machines if we feel like it? Because some are like our own machines, and some are like custom
+// machines, which aren't on the support"). Only the call lists listen to it - the portal's and the PCM console's; the
+// machine stays in the fleet, its reports, the customer's portal and everything else. Who hid it and when are kept on
+// the machine. hide=0 clears it.
+if ($action === 'staffwchide') {
+    $tok = need_staff();
+    $cid2 = preg_replace('/[^a-f0-9]/', '', (string)(isset($in['cid']) ? $in['cid'] : ''));
+    $pc   = preg_replace('/[^a-f0-9]/', '', substr((string)(isset($in['pc']) ? $in['pc'] : ''), 0, 32));
+    $hide = !empty($in['hide']);
+    list($lk, $db) = db_open();
+    $byEmail = isset($db['staff'][$tok]['login']) ? (string)$db['staff'][$tok]['login'] : 'staff';
+    $found = '';
+    foreach ($db['customers'] as $k2 => $c2) {
+        if (!empty($c2['merged_into'])) continue;
+        if (substr(sha1('365cid|' . $k2), 0, 12) === $cid2) { $found = $k2; break; }
+    }
+    if ($found === '' || !isset($db['customers'][$found]['machines'][$pc])) { db_close($lk); fail('unknown_machine'); }
+    $mm =& $db['customers'][$found]['machines'][$pc];
+    if ($hide) $mm['wc_hide'] = array('by' => $byEmail, 'ts' => time()); else unset($mm['wc_hide']);
+    unset($mm);
+    db_save($db); db_close($lk);
+    out(array('ok' => true, 'hidden' => $hide));
 }
 
 // staff: queue a SAFE maintenance command onto one machine. Never a command string - only a
