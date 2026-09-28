@@ -2004,8 +2004,15 @@ if ($action === 'booknote') {
 // Security is equivalent to reading the code aloud - plus attribution, since
 // every submission is tied to a signed-in member.
 if ($action === 'soscode') {
-    $snap = web_snapshot();
-    if (!empty($snap['viewas'])) fail('not_you');   // staff impersonating a customer must not file codes
+    // the portal (web session) - or, since 365 PC Manager v29, the app itself: its "Let a techie connect" button opens
+    // Splashtop SOS and the customer types the code into the app (its licence key + a machine registered to it).
+    // The portal never sends a key, so its cookie sign-in path is unchanged.
+    $fromApp = ($key !== '' && (!isset($in['wtoken']) || (string)$in['wtoken'] === ''));
+    if ($fromApp) { $snap = customer_snapshot(); $snap['key'] = $key; }
+    else {
+        $snap = web_snapshot();
+        if (!empty($snap['viewas'])) fail('not_you');   // staff impersonating a customer must not file codes
+    }
     $code = preg_replace('/\D/', '', (string)(isset($in['code']) ? $in['code'] : ''));
     if (strlen($code) !== 9) fail('bad_code');
     list($lk, $db) = db_open();
@@ -2019,7 +2026,7 @@ if ($action === 'soscode') {
         'name' => $snap['name'], 'email' => $snap['email'], 'code' => $code, 'ts' => $now, 'seen' => 0);
     db_save($db); db_close($lk);
     pcm_slack_say(':sos: *' . bk_clean($snap['name'] !== '' ? $snap['name'] : $snap['email'])
-        . '* has typed in their SOS session code - open the staff console (Portal → staff sign-in) to see it. It expires in 15 minutes.');
+        . '* has typed in their SOS session code' . ($fromApp ? ' in 365 PC Manager' : '') . ' - open the staff console (Portal → staff sign-in) to see it. It expires in 15 minutes.');
     out(array('ok' => true));
 }
 
