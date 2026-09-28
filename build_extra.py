@@ -23056,21 +23056,35 @@ def _email_hero(d, crumbs, lede, cta2, tiles):
     </section>'''
 
 
+# 28 Sep 2026 (owner): "we want customers to contact us to do the mail move for them for £60 which includes a full pc
+# service with report"; "tell people about the issues and that we have built our own tool 365 Mail Mover"; "we don't
+# wish to tell them how to do it". So the box says what they get, never how the tool works.
+VIRGIN_MOVE_TICKS = ("Every message and folder into Gmail, with the original dates",
+                     "No Virgin app password needed: our own 365 Mail Mover",
+                     "A full PC service included, with a written health report",
+                     "Forwarding set up, and checked on your phone if you like",
+                     "Done remotely: we phone first, and you watch us start")
+VIRGIN_MOVE_SMALL = "Agreed before we start &middot; no fix, no fee &middot; we can usually start the same day, Mon&ndash;Fri 9&ndash;5"
+
+
 def virgin_move_v2(d, crumbs):
     hero_html = _email_hero(d, crumbs,
-        'Virgin Media is handing its email to a company called Junara. To keep your address you sign up with Junara, and after any free first year you pay for each one &mdash; or move to free Gmail once. We can do the whole move for you for <strong>&pound;60 per address</strong>.',
+        'Virgin Media is handing its email to a company called Junara. To keep your address you sign up with Junara, and after any free first year you pay for each one &mdash; or move to free Gmail once. We do the whole move for you for <strong>&pound;60 per address</strong>, with a full PC service included &mdash; even if Virgin won&rsquo;t give you an app password.',
         ("Do it myself", "#fixflow"), [
-        ("hp-c-care", "mail", "Move it for me", "Every message and folder into Gmail, done remotely", "&pound;60 PER ADDRESS", "#move-for-me"),
+        ("hp-c-care", "mail", "Move it for me", "Every folder into Gmail, plus a full PC service", "&pound;60 PER ADDRESS", "#move-for-me"),
         ("hp-c-fix", "book", "Do it myself", "The free step-by-step guide on this page", "FREE", "#fixflow"),
         ("hp-c-biz", "clock", "Keep my Virgin address", "Sign up with Junara before your date", "FREE YEAR, THEN PAID", "/" + JUNARA_SLUG + "/#s3"),
         ("hp-c-buy", "alert", "Is this Junara email real?", "Virgin&rsquo;s own emails have no sign-up link", "SCAM CHECK", "/" + JUNARA_SLUG + "/#s6"),
     ])
     offer_html = email_move_box("Rather we just did it?", "We move your Virgin email to Gmail for you", [
+        '<p class="vm-alt__h">No app password? Gmail keeps stopping?</p>',
+        '<p>Since the Virgin Media O2 ID change, Virgin often won&rsquo;t give an app password &mdash; especially for a second mailbox &mdash; and Gmail accepts only about 500 MB a day copied in, so big moves stop part-way. We built our own tool, the 365 Mail Mover, for both. <a class="dh-link" href="#s8">More about it &#8594;</a></p>',
         '<p class="vm-alt__h">Or keep your Virgin address</p>',
         '<p>Sign up with Junara before the date in the email Virgin sent you. If you still have Virgin broadband, TV or a landline the first 12 months are free (99p transfer fee), then it is paid, per mailbox; if you have left Virgin it is paid from the start. Miss the date and the mailbox is suspended, then deleted 120 days later.</p>',
         '<p class="vm-alt__h">Watch for fake Junara emails</p>',
         '<p>Virgin&rsquo;s own emails contain no sign-up link, and Virgin says never to pay through a phone call or an emailed link. Not sure? Call us before you click.</p>',
-        '<p><a class="dh-link" href="#s2">What&rsquo;s happening, in full &#8594;</a></p>'])
+        '<p><a class="dh-link" href="#s2">What&rsquo;s happening, in full &#8594;</a></p>'],
+        ticks=VIRGIN_MOVE_TICKS, small=VIRGIN_MOVE_SMALL)
     return hero_html, offer_html
 
 
@@ -23093,7 +23107,7 @@ FIX_FLOW_OVERRIDES[JUNARA_SLUG] = {   # the page's five steps as a to-do list, n
 
 def junara_v2(d, crumbs):
     hero_html = _email_hero(d, crumbs, d['lede'], ("Keep it or move it?", "#s5"), [
-        ("hp-c-care", "mail", "Move it to Gmail for me", "Every message and folder, done remotely", "&pound;60 PER ADDRESS", "#move-for-me"),
+        ("hp-c-care", "mail", "Move it to Gmail for me", "Every folder, plus a full PC service", "&pound;60 PER ADDRESS", "#move-for-me"),
         ("hp-c-biz", "clock", "Keep my Virgin address", "Free for a year if you still have Virgin, then paid", "WHAT IT COSTS", "#s3"),
         ("hp-c-fix", "calendar", "When is my deadline?", "At least 45 days from Virgin&rsquo;s first email", "45 + 120 DAYS", "#s4"),
         ("hp-c-buy", "shield", "Is this Junara email real?", "Virgin&rsquo;s own emails have no sign-up link", "SCAM CHECK", "#s6"),
@@ -23103,7 +23117,8 @@ def junara_v2(d, crumbs):
         '<p>If you still have Virgin broadband, TV or a landline, the first 12 months are free (99p transfer fee), then it is paid, per mailbox; if you have left Virgin it is paid from the start. Sign up before the date in your email from Virgin, typing junara.com in yourself.</p>',
         '<p class="vm-alt__h">Rather do it yourself?</p>',
         '<p>Our free guide takes you through copying every message and folder into Gmail, one step at a time.</p>',
-        '<p><a class="dh-link" href="/move-virgin-media-email-to-gmail/">Move Virgin email to Gmail yourself &#8594;</a></p>'])
+        '<p><a class="dh-link" href="/move-virgin-media-email-to-gmail/">Move Virgin email to Gmail yourself &#8594;</a></p>'],
+        ticks=VIRGIN_MOVE_TICKS, small=VIRGIN_MOVE_SMALL)
     return hero_html, offer_html
 
 

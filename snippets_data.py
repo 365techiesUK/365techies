@@ -283,7 +283,7 @@ SNIPPETS = {
 
     # ---- email migrations
     "move-virgin-media-email-to-gmail": {
-        "desc": "Moving Virgin Media, ntlworld or blueyonder email to Gmail before your mailbox closes? The safe, folder-keeping way to do it, step by step.",
+        "desc": "Moving Virgin Media, ntlworld or blueyonder email to Gmail? We move it for you for £60, even with no app password, with a full PC service included.",
     },
     "move-plusnet-email-to-gmail": {
         "desc": "Plusnet is closing its email service and moving mailboxes to Greenby. How to move your Plusnet email and years of messages to Gmail before you lose them.",

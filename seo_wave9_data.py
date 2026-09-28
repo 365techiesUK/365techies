@@ -1207,7 +1207,9 @@ SEO_WAVE9_PAGES = [
                         'normal password in Outlook will not get round it, however many times '
                         'Outlook is reinstalled: Virgin&rsquo;s settings page is clear that email '
                         'programs need the app password. Your mail is safe meanwhile, because '
-                        'webmail still opens with the normal password. Call us on <strong>01202 '
+                        'webmail still opens with the normal password &mdash; and if you are moving to Gmail anyway, '
+                        'we built our own tool, the <a href="/move-virgin-media-email-to-gmail/#s8">365 Mail Mover</a>, that '
+                        'moves it into Gmail without an app password. Call us on <strong>01202 '
                         '775566</strong> and we will look at it with you before any charge.</p>'},
                {'eyebrow': '/04 &mdash; ADD IT BY HAND',
                 'h2': 'The settings Virgin publishes, entered manually',
@@ -1283,7 +1285,8 @@ SEO_WAVE9_PAGES = [
                  'Since Virgin moved logins to the Virgin Media O2 ID, many people report the '
                  'option missing altogether. Your normal password will not work in Outlook instead. '
                  'Webmail still opens with the normal password, so your mail is safe; call us on '
-                 '01202 775566 and we will look at it with you.'},
+                 '01202 775566 and we will look at it with you.'
+                 ' Moving to Gmail anyway? We built our own tool, the 365 Mail Mover, that moves a mailbox into Gmail without an app password.'},
            {'q': 'Do ntlworld and blueyonder addresses use the same settings?',
             'a': 'They are older Virgin brands whose email now runs through Virgin Media&rsquo;s '
                  'service, so they use the same servers, the same manual IMAP setup and the same '
