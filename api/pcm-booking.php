@@ -2870,9 +2870,36 @@ if ($action === 'staffcmdlog') {
         out(array('ok' => true, 'rmaint' => !empty($m['rmaint']),
             'pending' => $pend,
             'log' => isset($m['cmdlog']) && is_array($m['cmdlog']) ? array_slice($m['cmdlog'], -20) : array(),
-            'haslog' => !empty($m['logf']), 'logts' => intval(isset($m['logts']) ? $m['logts'] : 0)));
+            'haslog' => !empty($m['logf']), 'logts' => intval(isset($m['logts']) ? $m['logts'] : 0),
+            // v29 email move (365 Mail Mover inside the app): the staff switch, who set it, and where the move is
+            'mm' => !empty($m['mailmove']), 'mmby' => (string)(isset($m['mailmove']['by']) ? $m['mailmove']['by'] : ''),
+            'mmts' => intval(isset($m['mailmove']['ts']) ? $m['mailmove']['ts'] : 0), 'mmdone' => intval(isset($m['mailmove_done']) ? $m['mailmove_done'] : 0),
+            'mmst' => isset($m['mmst']) && is_array($m['mmst']) ? $m['mmst'] : null, 'ver' => intval(isset($m['ver']) ? $m['ver'] : 0)));
     }
     fail('unknown_customer');
+}
+
+// staff: switch the email move (365 Mail Mover inside PC Manager v29) on or off for one PC. On = the app shows its
+// "Email move" page at its next check-in and pcm-mailmover.php will hand it the signed Mail Mover. It switches itself
+// off when the app reports the move finished (pcm.php check-in).
+if ($action === 'staffmailmove') {
+    $tok = need_staff();
+    $cid2 = preg_replace('/[^a-f0-9]/', '', (string)(isset($in['cid']) ? $in['cid'] : ''));
+    $pc   = preg_replace('/[^a-f0-9]/', '', substr((string)(isset($in['pc']) ? $in['pc'] : ''), 0, 32));
+    $on = !empty($in['on']);
+    list($lk, $db) = db_open();
+    $byEmail = isset($db['staff'][$tok]['login']) ? (string)$db['staff'][$tok]['login'] : 'staff';
+    $found = '';
+    foreach ($db['customers'] as $k2 => $c2) {
+        if (!empty($c2['merged_into'])) continue;
+        if (substr(sha1('365cid|' . $k2), 0, 12) === $cid2) { $found = $k2; break; }
+    }
+    if ($found === '' || !isset($db['customers'][$found]['machines'][$pc])) { db_close($lk); fail('unknown_machine'); }
+    $mm =& $db['customers'][$found]['machines'][$pc];
+    if ($on) $mm['mailmove'] = array('by' => $byEmail, 'ts' => time()); else unset($mm['mailmove']);
+    unset($mm);
+    db_save($db); db_close($lk);
+    out(array('ok' => true, 'on' => $on));
 }
 
 // staff: read the plain-text diagnostic bundle a machine uploaded via collectlogs.

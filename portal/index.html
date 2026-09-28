@@ -707,9 +707,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 28 Sep 2026 &middot; 5962b3ed40</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 28 Sep 2026 &middot; 3a2c532383</p><script>
 (function () {
-  var P365BUILD = '5962b3ed40';
+  var P365BUILD = '3a2c532383';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -7635,9 +7635,36 @@
       var pend = (d.pending || []).length;
       if (pend) hh += '<p class="quiet" style="margin-top:.5rem">\u23f3 ' + pend + ' job' + (pend > 1 ? 's' : '') + ' waiting for the PC to pick up\u2026</p>';
       hh += renderTuneLog(d.log);
+      // v29 email move (365 Mail Mover inside PC Manager): the staff switch, and where the move has got to
+      hh += '<div class="tgroup" style="margin:.9rem 0 .2rem">\ud83d\udce7 Email move (365 Mail Mover)</div>';
+      if (!(d.ver >= 29)) {
+        hh += '<p class="quiet" style="margin:.1rem 0 0">Needs 365 PC Manager v29 on this PC' + (d.ver ? ' (it has v' + d.ver + ')' : '') + '. Until then use the standalone Mail Mover.</p>';
+      } else {
+        var mst = d.mmst;
+        hh += '<p class="quiet" style="margin:.1rem 0 .35rem">' + (d.mm
+          ? 'On' + (d.mmby ? ' \u2014 switched on by ' + esc(d.mmby) : '') + '. The app shows its Email move page at its next check-in (within about 15 minutes).'
+          : 'Off. Switch it on for the \u00a360 email move: the app then shows an Email move page on this PC \u2014 run it with the customer, over Splashtop.') + '</p>';
+        if (mst && mst.phase) {
+          var mtxt = mst.phase === 'export' ? 'Copying off Virgin: ' + mst.done + ' of ' + mst.total + ' messages'
+            : mst.phase === 'upload' ? 'In Gmail: ' + mst.done + ' of ' + mst.total + ' messages'
+            : mst.phase === 'finished' ? 'Finished: ' + mst.done + ' messages in Gmail'
+            : 'Stopped';
+          hh += '<p style="margin:.1rem 0 .35rem">' + esc(mtxt + (mst.note ? ' \u2014 ' + mst.note : '')) + (mst.ts ? ' <span class="quiet">(' + esc(agoTxt(mst.ts)) + ')</span>' : '') + '</p>';
+        }
+        if (d.mmdone && !d.mm) hh += '<p class="quiet" style="margin:.1rem 0 .35rem">Finished on ' + esc(new Date(d.mmdone * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })) + ' \u2014 it switched itself off. Switch it on again for a top-up.</p>';
+        hh += '<button class="sm' + (d.mm ? ' ghost' : '') + '" id="tmm">' + (d.mm ? 'Switch the email move off' : 'Switch the email move on') + '</button>';
+      }
       b.innerHTML = hh;
       Array.prototype.forEach.call(b.querySelectorAll('.tact'), function (btn) { btn.onclick = function () { tuneRun(m, btn.getAttribute('data-act'), btn); }; });
       var vl = document.getElementById('tviewlog'); if (vl) vl.onclick = function () { tuneViewLog(m, vl); };
+      var mmb = document.getElementById('tmm');
+      if (mmb) mmb.onclick = function () {
+        mmb.disabled = true;
+        post(BK, { action: 'staffmailmove', stoken: S.stoken, machine: mid(), cid: m.cid, pc: m.mid, on: d.mm ? 0 : 1 }).then(function (r) {
+          if (!r || !r.ok) { mmb.disabled = false; alert('Couldn\u2019t save that - try again.'); return; }
+          tuneRefresh(m);
+        }).catch(function () { mmb.disabled = false; alert('Couldn\u2019t reach the server.'); });
+      };
     }).catch(function () { var b = document.getElementById('tbody'); if (b) b.innerHTML = '<p class="quiet">Couldn\u2019t reach the server.</p>'; });
   }
   function renderTuneLog(log) {

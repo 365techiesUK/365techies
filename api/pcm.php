@@ -210,6 +210,21 @@ if ($action === 'checkin') {
             }
             $c['machines'][$machine]['jobs'] = $jl;
         }
+        // v29: where an email move (365 Mail Mover inside the app) has got to. Numbers and a short note only - no
+        // addresses. When it says finished, the staff switch turns itself off (owner's plan: "switches itself off when
+        // done"); staff switch it on again for a top-up.
+        if (isset($in['mmst']) && is_array($in['mmst'])) {
+            $ms0 = $in['mmst'];
+            $ph0 = (string)($ms0['phase'] ?? '');
+            $mst = array('phase'=>in_array($ph0, array('export', 'upload', 'finished', 'stopped'), true) ? $ph0 : '',
+                'done'=>max(0, intval($ms0['done'] ?? 0)), 'total'=>max(0, intval($ms0['total'] ?? 0)),
+                'note'=>substr(preg_replace('/[^\x20-\x7E]/', '', (string)($ms0['note'] ?? '')), 0, 120), 'ts'=>max(0, intval($ms0['ts'] ?? 0)));
+            $c['machines'][$machine]['mmst'] = $mst;
+            if ($mst['phase'] === 'finished' && !empty($c['machines'][$machine]['mailmove'])) {
+                unset($c['machines'][$machine]['mailmove']);
+                $c['machines'][$machine]['mailmove_done'] = $now;
+            }
+        }
         // software count from the app (P0, decision A): a cheap between-visits freshness signal.
         // The full list arrives with the six-weekly service; here we only refresh the total.
         if (isset($in['swc'])) {
@@ -255,7 +270,9 @@ if ($action === 'checkin') {
             : '');
     $detail['have'] = ($detail['tel'] !== '' || $detail['mobile'] !== '' || $detail['addr'] !== '');
     list($nextOut, $nextTsOut) = pcm_next_out($c);   // a visit that has passed is not the next service
-    out(array('ok'=>true,'tier'=>$tier,'next'=>$nextOut,'next_ts'=>$nextTsOut,'ready'=>$ready,'fam'=>$fam,'fam_url'=>$famUrl,'detail'=>$detail,'msg_unread'=>$msgUnread) + $upd + pcm_news_out($db, $tier === 'pro' ? 'pro' : 'free') + pcm_prog_ver());
+    // v29: staff have switched the email move (365 Mail Mover) on for this PC - the app shows its page
+    $mmOn = ($machine !== '' && !empty($c['machines'][$machine]['mailmove'])) ? 1 : 0;
+    out(array('ok'=>true,'tier'=>$tier,'next'=>$nextOut,'next_ts'=>$nextTsOut,'ready'=>$ready,'fam'=>$fam,'fam_url'=>$famUrl,'detail'=>$detail,'msg_unread'=>$msgUnread,'mm'=>$mmOn) + $upd + pcm_news_out($db, $tier === 'pro' ? 'pro' : 'free') + pcm_prog_ver());
 }
 
 // latest published app build, from the git-deployed manifest (downloads/pcm/version.json).

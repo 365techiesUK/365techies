@@ -73,6 +73,7 @@ api/vrm-weather-cache.json
 api/vrm-weather-cache.json.tmp
 api/pass-secret.php
 api/servicepass-payload.ps1
+api/mailmover-payload.ps1
 api/pass-used.json
 api/pcm-data.json
 api/pcm-admin-secret.php
