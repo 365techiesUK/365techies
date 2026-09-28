@@ -5474,150 +5474,7 @@ add(
  ]),
 )
 
-# ============================================================ HOME IT SUPPORT SUBSCRIPTIONS
-add(
- slug="home-it-support-subscriptions",
- title="Home IT Support Subscriptions | Monthly Computer Support",
- desc="Monthly home IT support subscriptions for home users, families, home workers and retired users in Dorset. Help with computers, laptops, printers, email, Wi-Fi, Microsoft 365 and security — £18.25/month per computer.",
- og_title="Home IT Support Subscriptions | 365 Techies",
- schema=lambda s: graph([
-   crumb(s, "Home IT Support"), webpage(s, "Home IT Support Subscriptions", "Monthly home IT support for home users, families and home workers in Dorset."),
-   service(s, "Home IT Support", "Friendly monthly computer support for homes, families, home workers and retired users.", "Home IT support"),
-   faqpage(s, [
-     ("Who is home IT support for?", "Home users, families, retired and disabled people, students and home workers who want patient, jargon-free help with their everyday technology. Supporting retired and disabled people is one of our specialisms."),
-     ("What does home IT support cover?", "Computers and laptops, printers, Wi-Fi, email, Microsoft 365, Windows updates, security checks, slow-computer fixes, backups, new device setup and scam-prevention advice."),
-     ("How quickly can you help?", "Most remote sessions start within minutes during opening hours (Mon–Fri, 9am–5pm), and subscribers always jump the queue."),
-   ]),
- ]),
- content="\n".join([
-   hero(bc("Home IT Support"), "// FOR HOMES",
-        'Home IT support <em class="grad grad--cyan">subscriptions</em>',
-        "Friendly monthly computer support for your home. Help with computers, laptops, printers, email, Wi-Fi, Microsoft 365, online accounts and security — patient, jargon-free and one message away.",
-        cta1=("See Home Plans &amp; Prices", "/home-it-support-plans/"), cta2=("Talk to a techie", "/contact/"),
-        chips=["&pound;18.25/mo per computer", "Patient, jargon-free help", "Full service every 6 weeks"], scene=HERO_SCENES.get("home")),
-   f'''    <section class="section" aria-label="Who it is for">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/01 — IDEAL FOR</p>
-          <h2 class="section-title section-title--center" data-title>Help that feels human<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Perfect for anyone who wants reliable tech help without the jargon or the wait.</p>
-        </div>
-        <div class="tile-grid" data-stagger>
-{tiles([("home","Home users","Everyday help keeping your computer fast, safe and working the way it should."),("users","Families","Cover for multiple computers, tablets, printers and online accounts under one plan."),("user","Home workers","Reliable email, Microsoft 365, Wi-Fi and devices so you can work without interruptions."),("clock","Retired users","Unhurried, friendly help with laptops, email, photos, video calls and online safety."),("shield","Less-confident users","No silly questions. We explain everything clearly and keep you protected."),("monitor","Students","Get assignments saved, backed up and devices running smoothly all term.")])}
-        </div>
-      </div>
-    </section>''',
-   f'''    <section class="section section--alt" aria-label="What is included">
-      <div class="wrap split-2">
-        <div class="prose" data-reveal>
-          <p class="eyebrow mono">/02 — WHAT WE HELP WITH</p>
-          <h2 class="section-title" data-title>Everyday tech, sorted<span class="title-underline"></span></h2>
-          <p>From a slow laptop to a printer that won&rsquo;t connect, we handle the everyday technology headaches so you don&rsquo;t have to. Many things can be fixed remotely, without a visit.</p>
-          <p><strong>Every plan includes a <a href="/preventative-maintenance/">full computer service every six weeks</a></strong> — updates, clean-up, security and health checks — so your devices stay in great shape all year round. And you can <em>see</em> it working. Every service finishes with a <strong>written Service Report</strong> on your Desktop: what we did, how your computer scored for health and performance, and anything worth planning.</p>
-        </div>
-        <ul class="checklist" data-stagger>
-{checklist(["Remote computer support","Laptop &amp; desktop help","Email setup &amp; repair","Printer troubleshooting","Wi-Fi help","Microsoft 365 support","Windows updates","Security checks","Slow computer fixes","Backup advice","New device setup","Loyalty discount on any fault work","Scam &amp; fraud prevention"])}
-        </ul>
-      </div>
-    </section>''',
-   f'''    <section class="how" aria-label="How it works">
-      <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>/03 — GETTING STARTED</p>
-        <h2 class="section-title section-title--center" data-title>Help in three simple steps<span class="title-underline title-underline--center"></span></h2>
-        <ol class="how__steps">
-{steps([("Tell us your setup","Each computer is &pound;18.25/mo, with Microsoft 365 available for &pound;4.85/mo per user. Monthly, no contract, cancel anytime."),("We get you set up","A quick secure connection and a friendly welcome — usually within minutes."),("Relax — you&rsquo;re covered","Message us any time you&rsquo;re stuck, and we&rsquo;ll keep everything healthy each month.")])}
-        </ol>
-      </div>
-    </section>''',
-   reviews_block(pick("Alan Bevis", "Free Spirit", "Cordelia Cutler")),
-   _dash_band("home", alt=True),
-   PCM_BAND,
-   faq_html([
-     ("Who is home IT support for?", "Home users, families, retired and disabled people, students and home workers who want patient, jargon-free help with their everyday technology. Supporting retired and disabled people is one of our specialisms."),
-     ("What does it cover?", "Computers and laptops, printers, Wi-Fi, email, Microsoft 365, Windows updates, security checks, slow-computer fixes, backups, new device setup and scam-prevention advice."),
-     ("How quickly can you help?", "Most remote sessions start within minutes during opening hours (Mon&ndash;Fri, 9am&ndash;5pm), and subscribers always jump the queue."),
-     ("Do I need to be good with computers?", "Not at all. We explain everything in plain English and there&rsquo;s no such thing as a silly question."),
-   ]),
-   REMOTE_ACCESS_BAND,
-   cta("Get monthly home IT support", "Pick a home plan and get friendly, reliable help every month — or talk to a techie first.",
-       primary=("See Home Plans &amp; Prices", "/home-it-support-plans/"), secondary=("Call 01202 775566", "tel:+441202775566")),
- ]),
-)
-
-# ============================================================ BUSINESS IT SUPPORT SUBSCRIPTIONS
-add(
- slug="business-it-support-subscriptions",
- title="Business IT Support Subscriptions Bournemouth | 365 Techies",
- desc="Monthly business IT support subscriptions for sole traders and small businesses in Bournemouth, Poole and Dorset. Microsoft 365, cybersecurity, backups, staff support and remote help — without employing in-house IT.",
- og_title="Business IT Support Subscriptions | 365 Techies",
- schema=lambda s: graph([
-   crumb(s, "Business IT Support"), webpage(s, "Business IT Support Subscriptions", "Monthly business IT support for sole traders and small businesses in Dorset."),
-   service(s, "Business IT Support", "Monthly IT support for small businesses — Microsoft 365, security, backups and staff support.", "Business IT support"),
-   faqpage(s, [
-     ("Who is business IT support for?", "Sole traders, home offices and small businesses — including estate agents, accountants, consultants, trades and retail — who need reliable IT without employing full-time staff."),
-     ("What does business IT support include?", "Remote support, staff support, Microsoft 365 administration, Outlook/Teams/OneDrive/SharePoint help, cybersecurity checks, Windows updates, backup checks, new PC setup, user onboarding and leaver checks."),
-     ("Do you offer on-site support?", "Yes — we provide on-site support across Bournemouth, Poole and the rest of Dorset alongside fast remote help."),
-   ]),
- ]),
- content="\n".join([
-   hero(bc("Business IT Support"), "// BUSINESS IT SUPPORT &middot; BOURNEMOUTH &amp; DORSET",
-        'Business IT support <em class="grad grad--green">subscriptions</em>',
-        "Reliable monthly IT support for sole traders and small businesses — Microsoft 365, cybersecurity, backups and staff support, all proactively managed for you. Like having your own IT department, without the cost of employing one. Rated 4.9 on Google, family-run since 1995.",
-        cta1=("See Business Plans &amp; Prices", "/business-it-support-plans/"), cta2=("Book a chat", "/contact/"),
-        chips=["Your outsourced IT team", "From &pound;24.38/mo per computer", "Remote &amp; on-site across Dorset"], scene=HERO_SCENES.get("business")),
-   uk_remote_band(alt=True),
-   f'''    <section class="section" aria-label="Who it is for">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>/01 — IDEAL FOR</p>
-          <h2 class="section-title section-title--center" data-title>Small business, serious support<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>For businesses that need dependable IT but don&rsquo;t want the cost of employing an in-house IT person.</p>
-        </div>
-        <div class="tile-grid" data-stagger>
-{tiles([("briefcase","Sole traders","Keep your computer, email, phone and cloud systems working reliably for one low monthly cost."),("users","Small businesses","Full IT cover for your team — devices, email, security and backups, all looked after."),("home","Home offices","Professional support for the home-based business that can&rsquo;t afford downtime."),("monitor","Estate agents &amp; retail","Keep point-of-sale, Wi-Fi, email and devices running every trading day."),("user","Accountants &amp; consultants","Secure, compliant systems and Microsoft 365 kept in perfect order."),("bolt","Trades &amp; services","Practical, no-nonsense IT support that fits around how you actually work.")])}
-        </div>
-      </div>
-    </section>''',
-   f'''    <section class="section section--alt" aria-label="What is included">
-      <div class="wrap split-2">
-        <div class="prose" data-reveal>
-          <p class="eyebrow mono">/02 — WHAT&rsquo;S INCLUDED</p>
-          <h2 class="section-title" data-title>Your outsourced IT department<span class="title-underline"></span></h2>
-          <p>As your Managed Service Provider, we look after the technology so you can get on with running your business. From onboarding a new starter to locking down security, it&rsquo;s all proactively managed for you.</p>
-          <p><strong>Microsoft 365, security and backups — managed, monitored and maintained</strong> — with a real techie on the end of the phone whenever your team needs one.</p>
-          <p>Need a steer on the bigger decisions? Our <a href="/business-it-consultancy/">business IT consultancy</a> gives you a virtual IT manager and a clear, plain-English technology plan.</p>
-          <p>Planning ahead? See our plain-English guides to <a href="/pstn-switch-off-business/">the PSTN switch-off for business</a> and <a href="/windows-10-esu-business-cost/">what Windows 10 ESU costs a business</a>.</p>
-        </div>
-        <ul class="checklist" data-stagger>
-{checklist(["Remote IT support","Staff support","Microsoft 365 administration","Outlook &amp; email help","Teams, OneDrive &amp; SharePoint","Cybersecurity checks","Windows updates","Backup checks","New PC setup","User onboarding","Leaver account checks","Loyalty discount on any fault work","Printer &amp; network support"])}
-        </ul>
-      </div>
-    </section>''',
-   f'''    <section class="how" aria-label="How it works">
-      <div class="wrap">
-        <p class="eyebrow eyebrow--center mono" data-reveal>/03 — HOW WE WORK</p>
-        <h2 class="section-title section-title--center" data-title>Onboarding made painless<span class="title-underline title-underline--center"></span></h2>
-        <ol class="how__steps">
-{steps([("Quick IT review","We learn your setup, devices and priorities — no jargon, no disruption."),("Secure setup","We connect your team&rsquo;s devices, tidy up Microsoft 365 and lock down security."),("Ongoing support","Priority help, monitoring and monthly maintenance keep your business running.")])}
-        </ol>
-      </div>
-    </section>''',
-   reviews_block(pick("JAR Accountants", "Hardie", "Sarah Austin")),
-   _dash_band("business", alt=True),
-   PCM_BAND,
-   faq_html([
-     ("Who is business IT support for?", "Sole traders, home offices and small businesses — estate agents, accountants, consultants, trades and retail — who need reliable IT without employing full-time staff."),
-     ("What does it include?", "Remote support, staff support, Microsoft 365 administration, Outlook/Teams/OneDrive/SharePoint help, cybersecurity checks, Windows updates, backup checks, new PC setup, user onboarding and leaver checks."),
-     ("Do you offer on-site support?", "Yes — we provide on-site support across Bournemouth, Poole and the rest of Dorset alongside fast remote help."),
-     ("Can you support Microsoft 365?", "Absolutely — licensing, migration, security and day-to-day administration of Outlook, Teams, OneDrive, SharePoint and Exchange Online."),
-   ]),
-   REMOTE_ACCESS_BAND,
-   cta("Choose a business IT support plan", "Give your team reliable, secure IT for one predictable monthly cost. Pick a plan or book a quick chat.",
-       primary=("See Business Plans &amp; Prices", "/business-it-support-plans/"), secondary=("Book a chat", "/contact/")),
- ]),
-)
-
-# ============================================================ HOME IT SUPPORT PLANS
+# ============================================================ PLAN CARDS (home + business plans and subscriptions pages)
 def plan_card(variant, badge, tag, name, desc, price, per, feats, cta_label, cta_href, cta_note=""):
     badge_html = f'\n            <p class="plan-card__badge mono">{badge}</p>' if badge else ""
     # Only promise "Set up Direct Debit" when there's a real GoCardless link; otherwise the button
@@ -5643,6 +5500,178 @@ def plan_card(variant, badge, tag, name, desc, price, per, feats, cta_label, cta
             </ul>
             <a href="{cta_href}" class="button primary plan-card__cta"{' target="_blank" rel="noopener"' if is_link else ''}>{cta_label}</a>{note_html}
           </article>'''
+
+
+# 28 Sep 2026: the plan cards live here ONCE - the plans pages and the subscriptions pages all print these, so a
+# price or feature can never differ between them.
+def home_plan_cards():
+    return "\n".join([
+      plan_card("home", None, "HOME SUPPORT", "Home IT Support", "Friendly cover for your computer &mdash; remote help, regular maintenance and security, all year round.", "&pound;18.25", ("","/mo per computer"), ["Support for your computer","Unlimited remote support","Full service every 6 weeks","Written Service Report each visit","Your own 365 dashboard","Security &amp; backup checks","Backup set up, with reminder texts if you like","Wi-Fi, printer &amp; email help","Loyalty discount on any fault work","Patient, jargon-free help"], "Set up Direct Debit", subscribe_href("home-support"), "Sets up <strong>one computer</strong> at &pound;18.25/mo. More than one? <a href=\"/contact/?topic=home-it-support\">Tell us</a> and we&rsquo;ll set the exact amount."),
+      plan_card("business", "&#9733; MOST POPULAR", "+ MICROSOFT 365", "Home Support + Microsoft 365", "Everything in Home IT Support, plus Microsoft 365 set up and looked after for you.", "&pound;23.10", ("","/mo per computer"), ["Everything in Home IT Support","Microsoft 365 set up &amp; supported","Outlook email &amp; Office apps","OneDrive backup help","One Microsoft 365 licence included","Extra licences &pound;4.85/mo each","Your own 365 dashboard"], "Set up Direct Debit", subscribe_href("home-support-365"), "Sets up <strong>one computer</strong> at &pound;23.10/mo (one Microsoft 365 licence). More computers or licences? <a href=\"/contact/?topic=home-it-support\">Tell us</a> and we&rsquo;ll set the exact amount."),
+    ])
+
+
+def biz_plan_cards(popular=True):
+    """popular=False leaves the MOST POPULAR badge off Business Standard (owner has not confirmed it - the
+    subscriptions page does not repeat an unconfirmed claim; the plans page keeps what it had)."""
+    std = plan_card("business", "&#9733; MOST POPULAR", "STANDARD", "Business Standard", "For small businesses needing regular IT support.", "", ("SAME FROM-PRICE AS STARTER","&mdash; you choose the service level"), ["<strong>Steps up from Starter: Microsoft 365 administration, backup checks &amp; new-user setup</strong>","Support for multiple users","Outlook, Teams &amp; OneDrive","Cybersecurity guidance","Monthly maintenance","Written Service Report each service","Your own 365 estate dashboard"], "Get a Standard quote", "/contact/?topic=business-it-support")
+    if not popular:
+        std = std.replace('\n            <p class="plan-card__badge mono">&#9733; MOST POPULAR</p>', "")
+    return "\n".join([
+      plan_card("business", None, "STARTER", "Business Starter", "For sole traders and very small businesses.", "&pound;24.38", ("FROM","/mo per computer"), ["Support for 1&ndash;3 computers","Remote IT support","Email support","Microsoft 365 help","Basic security checks","Loyalty discount on any fault work","Computer maintenance with written Service Reports","Your own 365 estate dashboard"], "Set up Direct Debit", subscribe_href("business-starter")),
+      std,
+      plan_card("business", None, "PREMIUM", "Business Premium", "For businesses that rely on IT every day.", "", ("SAME FROM-PRICE AS STARTER","&mdash; you choose the service level"), ["<strong>Steps up from Standard: priority response, on-site included &amp; full 365 management</strong>","Cybersecurity &amp; backup planning","Staff onboarding &amp; offboarding","Device setup &amp; technology planning","Your own 365 estate dashboard"], "Get a Premium quote", "/contact/?topic=business-it-support"),
+    ])
+
+
+# ============================================================ HOME IT SUPPORT SUBSCRIPTIONS
+add(
+ slug="home-it-support-subscriptions",
+ title="Home IT Support Subscriptions | Monthly Computer Support",
+ desc="Monthly home IT support subscriptions for home users, families, home workers and retired users in Dorset. Help with computers, laptops, printers, email, Wi-Fi, Microsoft 365 and security — £18.25/month per computer.",
+ og_title="Home IT Support Subscriptions | 365 Techies",
+ schema=lambda s: graph([
+   crumb(s, "Home IT Support"), webpage(s, "Home IT Support Subscriptions", "Monthly home IT support for home users, families and home workers in Dorset."),
+   service(s, "Home IT Support", "Friendly monthly computer support for homes, families, home workers and retired users.", "Home IT support"),
+   faqpage(s, [
+     ("Who is home IT support for?", "Home users, families, retired and disabled people, students and home workers who want patient, jargon-free help with their everyday technology. Supporting retired and disabled people is one of our specialisms."),
+     ("What does home IT support cover?", "Computers and laptops, printers, Wi-Fi, email, Microsoft 365, Windows updates, security checks, slow-computer fixes, backups, new device setup and scam-prevention advice."),
+     ("How quickly can you help?", "Most remote sessions start within minutes during opening hours (Mon–Fri, 9am–5pm), and subscribers always jump the queue."),
+   ]),
+ ]),
+ content="\n".join([
+   # 28 Sep 2026 (site-wide check, item 5): the plans straight under a short heading - on a phone there were no prices
+   # until ~13,500 px, under three advert bands (their links are in the .taskmore line at the end)
+   task_head(bc("Home IT Support"), 'Home IT support <em class="grad grad--cyan">subscriptions</em>',
+        "Friendly monthly computer support for your home. Help with computers, laptops, printers, email, Wi-Fi, Microsoft 365, online accounts and security — patient, jargon-free and one message away.",
+        trust=['<a href="/reviews/">&#9733; Rated 4.9 on Google</a>', "&pound;18.25/mo per computer", "Patient, jargon-free help", "Full service every 6 weeks"]),
+   f'''    <section class="support-options" id="plans" aria-label="Home support plans">
+<h2 class="sr-only">Home support plans</h2>
+      <div class="plan-grid">
+{home_plan_cards()}
+      </div>
+      <p class="plans-note mono" data-reveal>// NO CONTRACT &middot; CANCEL ANYTIME &middot; MORE THAN ONE COMPUTER? JUST TELL US &middot; <a href="/home-it-support-plans/#compare" style="color:var(--cyan)">COMPARE THE PLANS</a></p>
+    </section>''',
+   f'''    <section class="section section--alt" aria-label="What is included">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/02 — WHAT WE HELP WITH</p>
+          <h2 class="section-title" data-title>Everyday tech, sorted<span class="title-underline"></span></h2>
+          <p>From a slow laptop to a printer that won&rsquo;t connect, we handle the everyday technology headaches so you don&rsquo;t have to. Many things can be fixed remotely, without a visit.</p>
+          <p><strong>Every plan includes a <a href="/preventative-maintenance/">full computer service every six weeks</a></strong> — updates, clean-up, security and health checks — so your devices stay in great shape all year round. And you can <em>see</em> it working. Every service finishes with a <strong>written Service Report</strong> on your Desktop: what we did, how your computer scored for health and performance, and anything worth planning.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Remote computer support","Laptop &amp; desktop help","Email setup &amp; repair","Printer troubleshooting","Wi-Fi help","Microsoft 365 support","Windows updates","Security checks","Slow computer fixes","Backup advice","New device setup","Loyalty discount on any fault work","Scam &amp; fraud prevention"])}
+        </ul>
+      </div>
+    </section>''',
+   f'''    <section class="section" aria-label="Who it is for">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/01 — IDEAL FOR</p>
+          <h2 class="section-title section-title--center" data-title>Help that feels human<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Perfect for anyone who wants reliable tech help without the jargon or the wait.</p>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("home","Home users","Everyday help keeping your computer fast, safe and working the way it should."),("users","Families","Cover for multiple computers, tablets, printers and online accounts under one plan."),("user","Home workers","Reliable email, Microsoft 365, Wi-Fi and devices so you can work without interruptions."),("clock","Retired users","Unhurried, friendly help with laptops, email, photos, video calls and online safety."),("shield","Less-confident users","No silly questions. We explain everything clearly and keep you protected."),("monitor","Students","Get assignments saved, backed up and devices running smoothly all term.")])}
+        </div>
+      </div>
+    </section>''',
+   f'''    <section class="how" aria-label="How it works">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>/03 — GETTING STARTED</p>
+        <h2 class="section-title section-title--center" data-title>Help in three simple steps<span class="title-underline title-underline--center"></span></h2>
+        <ol class="how__steps">
+{steps([("Tell us your setup","Each computer is &pound;18.25/mo, with Microsoft 365 available for &pound;4.85/mo per user. Monthly, no contract, cancel anytime."),("We get you set up","A quick secure connection and a friendly welcome — usually within minutes."),("Relax — you&rsquo;re covered","Message us any time you&rsquo;re stuck, and we&rsquo;ll keep everything healthy each month.")])}
+        </ol>
+      </div>
+    </section>''',
+   reviews_block(pick("Alan Bevis", "Free Spirit", "Cordelia Cutler")),
+   faq_html([
+     ("Who is home IT support for?", "Home users, families, retired and disabled people, students and home workers who want patient, jargon-free help with their everyday technology. Supporting retired and disabled people is one of our specialisms."),
+     ("What does it cover?", "Computers and laptops, printers, Wi-Fi, email, Microsoft 365, Windows updates, security checks, slow-computer fixes, backups, new device setup and scam-prevention advice."),
+     ("How quickly can you help?", "Most remote sessions start within minutes during opening hours (Mon&ndash;Fri, 9am&ndash;5pm), and subscribers always jump the queue."),
+     ("Do I need to be good with computers?", "Not at all. We explain everything in plain English and there&rsquo;s no such thing as a silly question."),
+   ]),
+   '''    <p class="taskmore">Also on every plan: your own 365 dashboard (<a href="/join/">try it free</a>, or <a href="/next-gen-home-dashboards/">see the home demo</a>), the free <a href="/free-pc-health-check/">365 PC Manager app</a>, your <a href="/portal/">customer portal</a> and, if you want it, <a href="/splashtop-business-guide/">your own PC from anywhere</a>. New to it? See <a href="/your-first-6-weekly-service/">what your first 6-weekly service looks like</a>, compare <a href="/home-it-support-plans/">the home plans in detail</a>, or <a href="/contact/">talk to a techie first</a> on <a href="tel:+441202775566">01202 775566</a>.</p>''',
+ ]),
+)
+
+# ============================================================ BUSINESS IT SUPPORT SUBSCRIPTIONS
+add(
+ slug="business-it-support-subscriptions",
+ title="Business IT Support Subscriptions Bournemouth | 365 Techies",
+ desc="Monthly business IT support subscriptions for sole traders and small businesses in Bournemouth, Poole and Dorset. Microsoft 365, cybersecurity, backups, staff support and remote help — without employing in-house IT.",
+ og_title="Business IT Support Subscriptions | 365 Techies",
+ schema=lambda s: graph([
+   crumb(s, "Business IT Support"), webpage(s, "Business IT Support Subscriptions", "Monthly business IT support for sole traders and small businesses in Dorset."),
+   service(s, "Business IT Support", "Monthly IT support for small businesses — Microsoft 365, security, backups and staff support.", "Business IT support"),
+   faqpage(s, [
+     ("Who is business IT support for?", "Sole traders, home offices and small businesses — including estate agents, accountants, consultants, trades and retail — who need reliable IT without employing full-time staff."),
+     ("What does business IT support include?", "Remote support, staff support, Microsoft 365 administration, Outlook/Teams/OneDrive/SharePoint help, cybersecurity checks, Windows updates, backup checks, new PC setup, user onboarding and leaver checks."),
+     ("Do you offer on-site support?", "Yes — we provide on-site support across Bournemouth, Poole and the rest of Dorset alongside fast remote help."),
+   ]),
+ ]),
+ content="\n".join([
+   # 28 Sep 2026 (site-wide check, item 5): the plans straight under a short heading - on a phone there were no prices
+   # until ~14,200 px, under four advert bands (their links are in the .taskmore line at the end)
+   task_head(bc("Business IT Support"), 'Business IT support <em class="grad grad--green">subscriptions</em>',
+        "Reliable monthly IT support for sole traders and small businesses — Microsoft 365, cybersecurity, backups and staff support, all proactively managed for you. Like having your own IT department, without the cost of employing one.",
+        trust=['<a href="/reviews/">&#9733; Rated 4.9 on Google</a>', "Family-run since 1995", "From &pound;24.38/mo per computer", "Remote &amp; on-site across Dorset"]),
+   f'''    <section class="support-options" id="plans" aria-label="Business support plans">
+<h2 class="sr-only">Business support plans</h2>
+      <div class="plan-grid plan-grid--3">
+{biz_plan_cards(popular=False)}
+      </div>
+      <p class="plans-note mono" data-reveal>// FROM &pound;24.38/MO PER COMPUTER &middot; NO LOCK-IN &middot; TELL US YOUR SETUP FOR A QUOTE &middot; <a href="/business-it-support-plans/#compare" style="color:var(--cyan)">COMPARE THE PLANS</a></p>
+    </section>''',
+   f'''    <section class="section section--alt" aria-label="What is included">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">/02 — WHAT&rsquo;S INCLUDED</p>
+          <h2 class="section-title" data-title>Your outsourced IT department<span class="title-underline"></span></h2>
+          <p>As your Managed Service Provider, we look after the technology so you can get on with running your business. From onboarding a new starter to locking down security, it&rsquo;s all proactively managed for you.</p>
+          <p><strong>Microsoft 365, security and backups — managed, monitored and maintained</strong> — with a real techie on the end of the phone whenever your team needs one.</p>
+          <p>Need a steer on the bigger decisions? Our <a href="/business-it-consultancy/">business IT consultancy</a> gives you a virtual IT manager and a clear, plain-English technology plan.</p>
+          <p>Planning ahead? See our plain-English guides to <a href="/pstn-switch-off-business/">the PSTN switch-off for business</a> and <a href="/windows-10-esu-business-cost/">what Windows 10 ESU costs a business</a>.</p>
+        </div>
+        <ul class="checklist" data-stagger>
+{checklist(["Remote IT support","Staff support","Microsoft 365 administration","Outlook &amp; email help","Teams, OneDrive &amp; SharePoint","Cybersecurity checks","Windows updates","Backup checks","New PC setup","User onboarding","Leaver account checks","Loyalty discount on any fault work","Printer &amp; network support"])}
+        </ul>
+      </div>
+    </section>''',
+   f'''    <section class="section" aria-label="Who it is for">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>/01 — IDEAL FOR</p>
+          <h2 class="section-title section-title--center" data-title>Small business, serious support<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>For businesses that need dependable IT but don&rsquo;t want the cost of employing an in-house IT person.</p>
+        </div>
+        <div class="tile-grid" data-stagger>
+{tiles([("briefcase","Sole traders","Keep your computer, email, phone and cloud systems working reliably for one low monthly cost."),("users","Small businesses","Full IT cover for your team — devices, email, security and backups, all looked after."),("home","Home offices","Professional support for the home-based business that can&rsquo;t afford downtime."),("monitor","Estate agents &amp; retail","Keep point-of-sale, Wi-Fi, email and devices running every trading day."),("user","Accountants &amp; consultants","Secure, compliant systems and Microsoft 365 kept in perfect order."),("bolt","Trades &amp; services","Practical, no-nonsense IT support that fits around how you actually work.")])}
+        </div>
+      </div>
+    </section>''',
+   f'''    <section class="how" aria-label="How it works">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--center mono" data-reveal>/03 — HOW WE WORK</p>
+        <h2 class="section-title section-title--center" data-title>Onboarding made painless<span class="title-underline title-underline--center"></span></h2>
+        <ol class="how__steps">
+{steps([("Quick IT review","We learn your setup, devices and priorities — no jargon, no disruption."),("Secure setup","We connect your team&rsquo;s devices, tidy up Microsoft 365 and lock down security."),("Ongoing support","Priority help, monitoring and monthly maintenance keep your business running.")])}
+        </ol>
+      </div>
+    </section>''',
+   reviews_block(pick("JAR Accountants", "Hardie", "Sarah Austin")),
+   faq_html([
+     ("Who is business IT support for?", "Sole traders, home offices and small businesses — estate agents, accountants, consultants, trades and retail — who need reliable IT without employing full-time staff."),
+     ("What does it include?", "Remote support, staff support, Microsoft 365 administration, Outlook/Teams/OneDrive/SharePoint help, cybersecurity checks, Windows updates, backup checks, new PC setup, user onboarding and leaver checks."),
+     ("Do you offer on-site support?", "Yes — we provide on-site support across Bournemouth, Poole and the rest of Dorset alongside fast remote help."),
+     ("Can you support Microsoft 365?", "Absolutely — licensing, migration, security and day-to-day administration of Outlook, Teams, OneDrive, SharePoint and Exchange Online."),
+   ]),
+   '''    <p class="taskmore">Also on every plan: your own 365 estate dashboard (<a href="/join/">try it free</a>, or <a href="/custom-wifi-dashboards/">see the business demo</a>), the free <a href="/free-pc-health-check/">365 PC Manager app</a> on every computer, your <a href="/portal/">customer portal</a> and <a href="/splashtop-business-guide/">your own PCs from anywhere</a>. We visit across Dorset and <a href="/remote-it-support/">help remotely anywhere in the UK</a>. New to it? See <a href="/your-first-6-weekly-service/">what your first 6-weekly service looks like</a>, compare <a href="/business-it-support-plans/">the business plans in detail</a>, <a href="/plan-finder/">let the Plan Finder pick one</a>, or <a href="/contact/">book a chat</a>.</p>''',
+ ]),
+)
+
 
 # ============================================ HOME PLANS v2 (26 Sep 2026)
 # The homepage "Look after it for me" tile lands here, and Home is the most popular plan (owner, 25 Sep).
@@ -5735,8 +5764,7 @@ add(
    f'''    <section class="support-options" id="plans" aria-label="Home support plans">
 <h2 class="sr-only">Home support plans</h2>
       <div class="plan-grid">
-{plan_card("home", None, "HOME SUPPORT", "Home IT Support", "Friendly cover for your computer &mdash; remote help, regular maintenance and security, all year round.", "&pound;18.25", ("","/mo per computer"), ["Support for your computer","Unlimited remote support","Full service every 6 weeks","Written Service Report each visit","Your own 365 dashboard","Security &amp; backup checks","Backup set up, with reminder texts if you like","Wi-Fi, printer &amp; email help","Loyalty discount on any fault work","Patient, jargon-free help"], "Set up Direct Debit", subscribe_href("home-support"), "Sets up <strong>one computer</strong> at &pound;18.25/mo. More than one? <a href=\"/contact/?topic=home-it-support\">Tell us</a> and we&rsquo;ll set the exact amount.")}
-{plan_card("business", "&#9733; MOST POPULAR", "+ MICROSOFT 365", "Home Support + Microsoft 365", "Everything in Home IT Support, plus Microsoft 365 set up and looked after for you.", "&pound;23.10", ("","/mo per computer"), ["Everything in Home IT Support","Microsoft 365 set up &amp; supported","Outlook email &amp; Office apps","OneDrive backup help","One Microsoft 365 licence included","Extra licences &pound;4.85/mo each","Your own 365 dashboard"], "Set up Direct Debit", subscribe_href("home-support-365"), "Sets up <strong>one computer</strong> at &pound;23.10/mo (one Microsoft 365 licence). More computers or licences? <a href=\"/contact/?topic=home-it-support\">Tell us</a> and we&rsquo;ll set the exact amount.")}
+{home_plan_cards()}
       </div>
       <p class="plans-note mono" data-reveal>// &pound;18.25/MO PER COMPUTER &middot; ADD MICROSOFT 365 FOR &pound;4.85/MO PER USER &middot; MORE THAN ONE COMPUTER? JUST TELL US</p>
       <p class="plans-note mono" data-reveal style="margin-top:.5rem"><a href="/our-guarantees/" style="color:var(--cyan)">&#10003; Cancel anytime, no contract &middot; No call-out fee for remote help &middot; Family-run since 1995 &mdash; see our guarantees</a></p>
@@ -5876,9 +5904,7 @@ add(
    f'''    <section class="support-options" id="plans" aria-label="Business support plans">
 <h2 class="sr-only">Business support plans</h2>
       <div class="plan-grid plan-grid--3">
-{plan_card("business", None, "STARTER", "Business Starter", "For sole traders and very small businesses.", "&pound;24.38", ("FROM","/mo per computer"), ["Support for 1&ndash;3 computers","Remote IT support","Email support","Microsoft 365 help","Basic security checks","Loyalty discount on any fault work","Computer maintenance with written Service Reports","Your own 365 estate dashboard"], "Set up Direct Debit", subscribe_href("business-starter"))}
-{plan_card("business", "&#9733; MOST POPULAR", "STANDARD", "Business Standard", "For small businesses needing regular IT support.", "", ("SAME FROM-PRICE AS STARTER","&mdash; you choose the service level"), ["<strong>Steps up from Starter: Microsoft 365 administration, backup checks &amp; new-user setup</strong>","Support for multiple users","Outlook, Teams &amp; OneDrive","Cybersecurity guidance","Monthly maintenance","Written Service Report each service","Your own 365 estate dashboard"], "Get a Standard quote", "/contact/?topic=business-it-support")}
-{plan_card("business", None, "PREMIUM", "Business Premium", "For businesses that rely on IT every day.", "", ("SAME FROM-PRICE AS STARTER","&mdash; you choose the service level"), ["<strong>Steps up from Standard: priority response, on-site included &amp; full 365 management</strong>","Cybersecurity &amp; backup planning","Staff onboarding &amp; offboarding","Device setup &amp; technology planning","Your own 365 estate dashboard"], "Get a Premium quote", "/contact/?topic=business-it-support")}
+{biz_plan_cards()}
       </div>
       <p class="plans-note mono" data-reveal>// FROM &pound;24.38/MO PER COMPUTER &middot; NO LOCK-IN &middot; TELL US YOUR SETUP FOR A QUOTE</p>
       <p class="plans-note mono" data-reveal style="margin-top:.5rem"><a href="/our-guarantees/" style="color:var(--cyan)">&#10003; No lock-in, cancel anytime &middot; No-fix-no-fee repairs &middot; Family-run since 1995 &mdash; see our guarantees</a></p>
@@ -6029,7 +6055,9 @@ add(
      ("What if it can&rsquo;t be fixed remotely?", "Some jobs need hands-on work &mdash; a failing drive, a cracked screen or a machine that won&rsquo;t power on. If so, we&rsquo;ll either <a href=\"/book-a-collection/\">collect your computer or laptop</a> or come to you on-site, and <strong>either way you&rsquo;re quoted for the work before we start</strong>. For an on-site call-out we arrange the day and time with you first and phone ahead with an ETA &mdash; we never just turn up. We cover Bournemouth, Poole, Christchurch and across Dorset."),
    ]),
    promise_strip(items=[PROMISE_CALL, PROMISE_PEOPLE, PROMISE_ETA]),
-   REMOTE_ACCESS_BAND,
+   # 28 Sep 2026 (site-wide check, item 6): the "Your PC, from anywhere" band (Splashtop Business for plan customers,
+   # a different thing from the help this page offers) is a line now, not a full-screen band
+   '''    <p style="text-align:center;margin:0 auto;padding:2.2rem var(--pad-x) 2.4rem;color:var(--muted);font-size:.95rem;line-height:1.7;max-width:62rem">On a plan and want to reach your own PC while you&rsquo;re away? See <a href="/splashtop-business-guide/" style="color:var(--cyan-soft)">your PC, from anywhere</a>.</p>''',
    tools_strip(["isitdown", "speed", "healthcheck", "faultcheck"], title="While you wait &mdash; try our free tools"),
    cta("Need help right now?", "Start a secure remote session, or join a monthly plan so help is always one message away.",
        primary=("Get Remote Support", "/contact/"), secondary=("See Plans &amp; Prices", "/monthly-it-support/")),
