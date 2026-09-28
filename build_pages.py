@@ -5212,6 +5212,12 @@ def _tool_intent_hero(content, tiles, rating_note=None):
 # row with the page's other choices - its tiles minus any that only jumped to the tool, plus any top button not already
 # among them - so no link is lost. The Free Tools hub keeps the tiles first screen: choosing a tool is its job.
 TOOL_TASK_FIRST = set(TOOL_HERO_TILES) - {"free-tools"}
+# Item 4, same day: the free courses the same way - the course itself (#oscourse) straight under the header. The
+# Free Courses hub keeps its first screen (picking a course is its job).
+COURSE_TASK_FIRST = {"ai-for-beginners-course", "android-phone-course-for-beginners", "computer-basics-course",
+                     "digital-photos-course", "email-basics-course", "nhs-app-course", "online-banking-safely-course",
+                     "online-safety-course", "online-shopping-safely-course", "whatsapp-course-for-beginners",
+                     "word-basics-course", "windows-11-course-for-beginners", "video-calling-course-for-beginners"}
 _TOOL_TRUST = ['<a href="/reviews/">&#9733; Rated 4.9 on Google</a>', "Family-run since 1995", "No fix, no fee"]
 _TOOLNEXT_CSS = """      <style>
         .toolnext{padding-block:1.6rem 2.4rem}
@@ -5246,7 +5252,7 @@ def _section_end(s, start):
     return -1
 
 
-def _tool_task_first(content, tiles, slug=None):
+def _tool_task_first(content, tiles, slug=None, trust=None):
     m = _HERO_RE.search(content)
     if not m:
         return content
@@ -5297,7 +5303,9 @@ def _tool_task_first(content, tiles, slug=None):
       </div>
 {_TOOLNEXT_CSS}
     </section>''' if keep or also else ""
-    head = task_head(crumbs.group(1).strip(), h1.group(1).strip(), lede.group(1).strip(), trust=_TOOL_TRUST)
+    if trust == "chips":   # the courses: the Google rating, then the hero's own dot-chips ("100% free", "7 short lessons"...)
+        trust = [_TOOL_TRUST[0]] + [c.strip() for c in re.findall(r'<li>&#9679; (.*?)</li>', h, re.S)]
+    head = task_head(crumbs.group(1).strip(), h1.group(1).strip(), lede.group(1).strip(), trust=trust or _TOOL_TRUST)
     return content[:m.start()] + head + content[m.end():s0] + tool + nxt + content[e0:]
 
 
@@ -5307,6 +5315,8 @@ def add(**kw):
         kw["content"] = _tool_task_first(kw["content"], TOOL_HERO_TILES[_slug], _slug)
     elif _slug in TOOL_HERO_TILES and isinstance(kw.get("content"), str):
         kw["content"] = _tool_intent_hero(kw["content"], TOOL_HERO_TILES[_slug])
+    elif _slug in COURSE_TASK_FIRST and isinstance(kw.get("content"), str):
+        kw["content"] = _tool_task_first(kw["content"], OTHER_HERO_TILES.get(_slug, []), _slug, trust="chips")
     elif _slug in LOCAL_HERO_TILES and isinstance(kw.get("content"), str):
         kw["content"] = _tool_intent_hero(kw["content"], LOCAL_HERO_TILES[_slug],
                                           "Family-run since 1995 &middot; real people, no call centre")
