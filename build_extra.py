@@ -16511,6 +16511,7 @@ _PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
 
 info_page(
   slug="privacy-policy", crumb_name="Privacy Policy", eyebrow="// PRIVACY",
+  hero_cta1=('Contact us', '/contact/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Privacy <em class="grad grad--cyan">policy</em>',
   lede="How 365 Techies Limited collects, uses and protects your personal information, and the rights you have over your data.",
   desc="Privacy policy for 365 Techies Limited &mdash; how we collect, use, store and protect your personal data, who we share it with, how long we keep it, and your rights under UK data protection law.",
@@ -16523,6 +16524,7 @@ info_page(
 # ---- Terms of Service
 info_page(
   slug="terms", crumb_name="Terms of Service", eyebrow="// TERMS",
+  hero_cta1=('Contact us', '/contact/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Terms of <em class="grad grad--cyan">service</em>',
   lede="The terms on which 365 Techies Limited provides IT support and services to home and business customers.",
   desc="Terms of service for 365 Techies Limited — how we provide IT support and services, plans and payment, your responsibilities, and our mutual commitments.",
@@ -16588,6 +16590,7 @@ info_page(
 # ---- Cookie Policy
 info_page(
   slug="cookie-policy", crumb_name="Cookie Policy", eyebrow="// COOKIES",
+  hero_cta1=('Contact us', '/contact/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Cookie <em class="grad grad--cyan">policy</em>',
   lede="What cookies are, how our website uses them, and how you can control them.",
   desc="Cookie policy for 365 Techies — the cookies our website uses, why, and how to manage them in your browser.",
@@ -16614,6 +16617,7 @@ info_page(
 # ---- Our Guarantees
 info_page(
   slug="our-guarantees", crumb_name="Our Guarantees", eyebrow="// OUR PROMISE",
+  hero_cta1=('See plans &amp; prices', '/pricing/'), hero_cta2=('Book a service or repair', '/book-service/'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Our <em class="grad grad--green">guarantees</em>',
   lede="The promises we make to every 365 Techies customer — clear, honest and built on three decades of looking after Dorset homes and businesses.",
   desc="The 365 Techies service guarantees — fast response, clear pricing, no contracts, plain English, secure support and a satisfaction promise for homes and businesses.",
@@ -16708,6 +16712,7 @@ _TEAM_POST = _bp.promise_strip(items=[_bp.PROMISE_CALL, _bp.PROMISE_ETA, _bp.PRO
 
 info_page(
   slug="meet-the-team", crumb_name="Meet the Team", eyebrow="// THE TEAM",
+  hero_cta1=('Call 01202 775566', 'tel:+441202775566'), hero_cta2=('Contact us', '/contact/'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Meet the <em class="grad grad--cyan">team</em>',
   lede="The people behind 365 Techies: a small family-run team that has looked after Dorset&rsquo;s computers since 1995, and still answers its own phone.",
   desc="Meet the family-run team behind 365 Techies: who answers the phone, how we work on every job, what we are qualified in and where to find us in Bournemouth. Since 1995.",
@@ -16735,6 +16740,7 @@ info_page(
 # ---- Accreditations & Partners
 info_page(
   slug="accreditations", crumb_name="Accreditations & Partners", eyebrow="// ACCREDITATIONS",
+  hero_cta1=('See our services', '/services/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Accreditations &amp; <em class="grad grad--cyan">partners</em>',
   lede="The accreditations, partnerships and standards behind 365 Techies — so you know your technology is in expert, trusted hands.",
   desc="365 Techies accreditations and partners — Microsoft Partner and Office Specialists, Dell specialists, Malwarebytes Partner, Sustainable Dorset member, and the trusted tools we build on.",
@@ -16909,6 +16915,7 @@ info_page(
 # answers the real question, what you need to hold before you switch, in the terms /it-provider-gone-bust/ uses.
 info_page(
   slug="switching-it-provider", crumb_name="Switching IT Provider", eyebrow="// SWITCHING IS EASY",
+  hero_cta1=('Call 01202 775566', 'tel:+441202775566'), hero_cta2=('See plans &amp; prices', '/pricing/'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Switching is <em class="grad grad--cyan">easy</em>',
   lede="Thinking of moving your IT support to 365 Techies? It&rsquo;s simpler than you think — we handle the handover so you barely notice the change, except that things start working better.",
   desc="Switching IT support provider to 365 Techies is easy — we manage the whole handover with no downtime, so the move is smooth and stress-free for your home or business.",
@@ -16958,6 +16965,7 @@ info_page(
 # ---- IT support cost guide
 info_page(
   slug="it-support-cost-guide", crumb_name="IT Support Cost Guide", eyebrow="// COST GUIDE",
+  hero_cta1=('See our prices', '/pricing/'), hero_cta2=('Try the Plan Finder', '/plan-finder/'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='IT support <em class="grad grad--cyan">cost guide</em>',
   lede="How much does IT support cost? A clear, honest guide to what you can expect to pay — and why monthly support usually works out cheaper than paying per problem.",
   desc="A clear guide to IT support costs in the UK — what affects pricing, monthly support vs pay-per-fix, typical price ranges, and how 365 Techies' transparent pricing works.",
@@ -17093,6 +17101,7 @@ it_jargon_buster()
 # ---- Cybersecurity checklist
 info_page(
   slug="cybersecurity-checklist", crumb_name="Cybersecurity Checklist", eyebrow="// FREE CHECKLIST",
+  hero_cta1=('Book a free IT health check', '/free-it-health-check/'), hero_cta2=('See cybersecurity support', '/cybersecurity-support/'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Free cybersecurity <em class="grad grad--green">checklist</em>',
   lede="Ten practical steps to protect yourself and your business online. Work through them yourself — or let us handle the lot as part of a support plan.",
   desc="A free cybersecurity checklist from 365 Techies — ten practical steps to protect your home or business from scams, malware and ransomware. Do it yourself or let us handle it.",
@@ -17120,6 +17129,7 @@ info_page(
 # ---- System status
 info_page(
   slug="system-status", crumb_name="System Status", eyebrow="// SYSTEM STATUS",
+  hero_cta1=('Call 01202 775566', 'tel:+441202775566'), hero_cta2=('Get remote help now (SOS)', '/sos/'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='System <em class="grad grad--green">status</em>',
   lede="The current status of 365 Techies services, and how to reach us fast if you&rsquo;re having a problem.",
   desc="365 Techies system status — current service status and how to get fast help, including emergency remote support via Splashtop SOS.",
@@ -17142,6 +17152,7 @@ info_page(
 # ---- Support Portal / Raise a Ticket
 info_page(
   slug="support-portal", crumb_name="Support Portal", eyebrow="// SUPPORT PORTAL",
+  hero_cta1=('Open your portal', '/portal/'), hero_cta2=('Start remote help (SOS)', '/sos/'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Get help, <em class="grad grad--green">fast</em>',
   lede="Need a hand? Raise a support ticket, start a secure remote session or call us — whatever suits you. Subscribers always jump the queue.",
   desc="365 Techies support portal — raise a support ticket, start secure remote support or call us. Fast, friendly IT help for homes and businesses across Dorset.",
@@ -17247,6 +17258,7 @@ info_page(
 # ---- Service Level Agreement (SLA)
 info_page(
   slug="service-level-agreement", crumb_name="Service Level Agreement", eyebrow="// SLA",
+  hero_cta1=('See plans &amp; prices', '/pricing/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Service Level <em class="grad grad--green">Agreement</em>',
   lede="Clear, honest commitments on how quickly we respond and how we keep your IT running — the service levels you can rely on from 365 Techies.",
   desc="365 Techies Service Level Agreement (SLA) — support hours, priority levels, target response and resolution times, service availability and escalation for our monthly support customers.",
@@ -17315,6 +17327,7 @@ info_page(
 # ---- Resources hub
 info_page(
   slug="resources", crumb_name="Resources & Guides", eyebrow="// RESOURCES",
+  hero_cta1=('See our free tools', '/free-tools/'), hero_cta2=('Take a free course', '/free-courses/'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Resources &amp; <em class="grad grad--cyan">guides</em>',
   lede="Free, practical IT resources from 365 Techies &mdash; plain-English guides, checklists, a cost guide, a jargon buster and a free IT health check to help you get the most from your technology.",
   desc="Free IT resources and guides from 365 Techies — IT advice articles, cyber threats explained, a cybersecurity checklist, IT cost guide, A-Z jargon buster, plan finder and a free IT health check.",
@@ -17409,6 +17422,7 @@ info_page(
 # ---- Using AI Safely (beginner guide)
 info_page(
   slug="using-ai-safely", crumb_name="Using AI Safely", eyebrow="// EVERYDAY AI",
+  hero_cta1=('Ask a techie', '/contact/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Using AI <em class="grad grad--cyan">safely</em>',
   lede="AI tools like Copilot, ChatGPT, Gemini and Claude can save you hours &mdash; if you use them wisely. Here&rsquo;s a friendly, plain-English guide to getting real value from AI without putting your data or yourself at risk.",
   desc="A beginner-friendly, plain-English guide to using AI (Microsoft Copilot, ChatGPT, Gemini, Claude) safely — what it can and can't do, the golden rules, AI scams to watch for, and when to use it. From 365 Techies.",
@@ -17443,6 +17457,7 @@ info_page(
 # ---- Plain-English hub
 info_page(
   slug="plain-english", crumb_name="Tech in Plain English", eyebrow="// NO JARGON",
+  hero_cta1=('See home plans', '/home-it-support-plans/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Tech in <em class="grad grad--green">plain English</em>',
   lede="Technology shouldn&rsquo;t need a dictionary. Here are the things people ask us about most, explained simply &mdash; no jargon, just what it means and why it matters for you.",
   desc="The most common IT terms and services explained in plain English by 365 Techies — backups, online security, Microsoft 365, remote support, monthly support and the cloud, with no jargon.",
@@ -17469,6 +17484,7 @@ info_page(
 # ---- Pre-call / get-ready checklists (print-friendly)
 info_page(
   slug="pre-call-checklists", crumb_name="Get-Ready Checklists", eyebrow="// FEEL PREPARED",
+  hero_cta1=('Book a service or repair', '/book-service/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Get-ready <em class="grad grad--cyan">checklists</em>',
   lede="Getting in touch can feel daunting if tech isn&rsquo;t your thing. These quick checklists help you feel prepared and get sorted faster &mdash; print them or keep them handy.",
   desc="Friendly, print-friendly checklists from 365 Techies to help you prepare before calling for remote support, booking a repair, sorting Microsoft 365 or setting up a new computer.",
@@ -17511,6 +17527,7 @@ info_page(
 # ---- Our values / how we work
 info_page(
   slug="our-values", crumb_name="Our Values", eyebrow="// HOW WE WORK",
+  hero_cta1=('See plans &amp; prices', '/pricing/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='How we work &amp; <em class="grad grad--green">what we promise</em>',
   lede="We&rsquo;re a family-run team, not a faceless call-centre &mdash; and we&rsquo;ve looked after Dorset&rsquo;s homes and businesses since 1995. Here&rsquo;s how we work, and the promises behind it.",
   desc="The values behind 365 Techies — how our family-run Dorset IT team works (The 365 Way) and our promises: no upsell, honest independent advice, repair before replace, no problem too small, and plain English always.",
@@ -17539,6 +17556,7 @@ info_page(
 # ---- Buyer's guide: choosing an IT support company
 info_page(
   slug="choosing-it-support", crumb_name="How to Choose IT Support", eyebrow="// BUYER&rsquo;S GUIDE",
+  hero_cta1=('See plans &amp; prices', '/pricing/'), hero_cta2=('Try the Plan Finder', '/plan-finder/'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='How to choose an <em class="grad grad--cyan">IT support company</em>',
   lede="Choosing who looks after your technology is a big decision &mdash; they&rsquo;ll have access to your devices, data and accounts. Here are the questions worth asking any firm before you commit (and, honestly, how we answer them).",
   desc="A free buyer's guide from 365 Techies: 10 questions to ask before choosing an IT support company in Dorset — contracts, response times, who helps you, upselling, what's included, backups, security, guarantees and switching.",
@@ -17567,6 +17585,7 @@ info_page(
 # ---- Category comparison: local vs big-box vs DIY
 info_page(
   slug="independent-it-support", crumb_name="Local vs the Alternatives", eyebrow="// HONEST COMPARISON",
+  hero_cta1=('See plans &amp; prices', '/pricing/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Local IT support vs <em class="grad grad--cyan">the alternatives</em>',
   lede="Should you use a local independent IT firm, a big-box repair desk, or just muddle through with DIY tools? Here&rsquo;s an honest, plain-English comparison so you can choose what&rsquo;s genuinely right for you.",
   desc="An honest comparison of local independent IT support vs big-box repair desks vs DIY remote tools — who helps you, speed, repair-vs-replace honesty, prevention and cost — plus the signs your current IT setup is letting you down.",
@@ -17645,6 +17664,7 @@ _retired_page(
 # ---- Disaster Recovery & Business Continuity
 info_page(
   slug="disaster-recovery", crumb_name="Disaster Recovery & Business Continuity", eyebrow="// DISASTER RECOVERY",
+  hero_cta1=('See business plans', '/business-it-support-plans/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Disaster recovery &amp; <em class="grad grad--green">business continuity</em>',
   lede="When the worst happens &mdash; ransomware, hardware failure, fire or flood &mdash; we get you back up and running fast. Disaster recovery and business continuity for homes and businesses across Dorset.",
   desc="Disaster recovery and business continuity from 365 Techies — verified backups, ransomware rollback, rapid recovery, cloud failover and a practical continuity plan for businesses across Dorset.",
@@ -17680,6 +17700,7 @@ info_page(
 # ---- GDPR & IT Compliance
 info_page(
   slug="gdpr-it-compliance", crumb_name="GDPR & IT Compliance", eyebrow="// DATA PROTECTION",
+  hero_cta1=('See business plans', '/business-it-support-plans/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='GDPR &amp; <em class="grad grad--cyan">IT compliance</em>',
   lede="The practical IT side of staying compliant &mdash; security, access control, backups and policies that keep your business and your customers&rsquo; data safe and meet your data-protection obligations.",
   desc="GDPR and IT compliance support from 365 Techies — practical data security, access control, MFA, encryption, backups, breach readiness and Microsoft 365 compliance for businesses across Dorset.",
@@ -17719,6 +17740,7 @@ info_page(
 # ---- Accessibility Statement
 info_page(
   slug="accessibility-statement", crumb_name="Accessibility Statement", eyebrow="// ACCESSIBILITY",
+  hero_cta1=('Contact us', '/contact/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Accessibility <em class="grad grad--cyan">statement</em>',
   lede="We want everyone to be able to use our website and our services — especially as supporting disabled and retired people is one of our specialisms.",
   desc="365 Techies accessibility statement — our commitment to an accessible website, the measures we've taken, and how to get help if you're having any difficulty.",
@@ -18723,6 +18745,7 @@ info_page(
 # ============================================================ GUIDE: HOW TO SET UP 2FA
 info_page(
   slug="how-to-set-up-two-factor-authentication", crumb_name="Set Up Two-Factor Authentication", eyebrow="// PLAIN-ENGLISH HOW-TO",
+  hero_cta1=('Ask us to set it up', '/contact/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='How to set up <em class="grad grad--cyan">two-factor authentication</em>',
   lede="Two-factor authentication (2FA) is the single best thing you can do to keep your accounts safe &mdash; even if someone learns your password. Here&rsquo;s how it works, and how to switch it on, in plain English.",
   desc="A plain-English guide to two-factor authentication (2FA): what it is, the best methods (passkeys, authenticator apps, SMS), and how to turn it on for Microsoft, Google, Apple, Facebook, banking and WhatsApp. From 365 Techies.",
@@ -18859,6 +18882,7 @@ def _lost_phone_flow():
 
 info_page(
   slug="lost-or-stolen-phone-what-to-do", crumb_name="Lost or Stolen Phone", eyebrow="// DO THESE NOW",
+  hero_cta1=('Call 01202 775566', 'tel:+441202775566'), hero_cta2=('Been scammed? What to do', '/ive-been-scammed-what-to-do/'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Lost or stolen phone? <em class="grad grad--green">Do these things now</em>',
   lede="Your phone holds your photos, email, banking and security codes &mdash; so a lost or stolen one feels frightening. Work calmly through these steps and you&rsquo;ll protect what matters.",
   desc="Lost or stolen phone? Step-by-step: use Find My to lock or erase it, bar the SIM and block the handset, change key passwords, and report it. Plus how to handle 2FA codes. Plain-English help from 365 Techies.",
@@ -18905,6 +18929,7 @@ PRINT_BTN = '''          <p class="no-print" style="text-align:center;margin-top
 # ============================================================ GUIDE: LOST OR STOLEN LAPTOP
 info_page(
   slug="lost-or-stolen-laptop-what-to-do", crumb_name="Lost or Stolen Laptop", eyebrow="// DO THESE NOW",
+  hero_cta1=('Call 01202 775566', 'tel:+441202775566'), hero_cta2=('Book a service or repair', '/book-service/'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Lost or stolen laptop? <em class="grad grad--green">Do these things now</em>',
   lede="Your laptop holds your photos, email, banking and work &mdash; so losing it, or having it stolen, feels awful. Work calmly through these steps to protect what matters. And don&rsquo;t lose hope: sometimes, as one of our customers found, you even get it back.",
   desc="Lost or stolen laptop? Step-by-step UK help: lock it with Find my device, change your key passwords, report it to the police for a crime reference, and protect your data. Plain-English help from 365 Techies, Dorset.",
@@ -18955,6 +18980,7 @@ info_page(
 # ============================================================ GUIDE: WINDOWS ACCESSIBILITY FEATURES
 info_page(
   slug="windows-accessibility-features-guide", crumb_name="Windows Accessibility Features", eyebrow="// PLAIN-ENGLISH HOW-TO",
+  hero_cta1=('Book a visit to set it up', '/book-service/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Turn on Windows <em class="grad grad--cyan">accessibility features</em>',
   lede="Your computer has a whole set of free tools to make it easier to see, hear and use &mdash; and they&rsquo;re already built in. Here&rsquo;s how to switch on the ones that help, in plain English.",
   desc="A plain-English guide to the free accessibility features built into Windows - larger text, Magnifier, high contrast, Narrator, voice typing, captions and more - with simple steps. From 365 Techies, accessibility specialists.",
@@ -19007,6 +19033,7 @@ info_page(
 # ============================================================ GUIDE: HOW TO CHOOSE A LAPTOP
 info_page(
   slug="how-to-choose-a-laptop", crumb_name="How to Choose a Laptop", eyebrow="// BUYER&rsquo;S GUIDE",
+  hero_cta1=('See refurbished Dell laptops', '/refurbished-dell-laptops-bournemouth/'), hero_cta2=('Ask us to help you choose', '/contact/'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='How to choose a <em class="grad grad--cyan">laptop or desktop</em>',
   lede="You don&rsquo;t need to understand the jargon to choose well &mdash; you just need to know how you&rsquo;ll use it. Here&rsquo;s a plain-English buyer&rsquo;s guide, with no sales pitch.",
   desc="A plain-English guide to choosing a laptop or desktop: the five things that actually matter (processor, RAM, SSD, screen, battery), laptop vs desktop vs all-in-one, and Windows 11 readiness. Impartial advice from 365 Techies.",
@@ -19060,6 +19087,7 @@ info_page(
 # ============================================================ GUIDE: WIPE & RECYCLE AN OLD COMPUTER
 info_page(
   slug="how-to-wipe-and-recycle-old-computer", crumb_name="Wipe &amp; Recycle an Old Computer", eyebrow="// DATA + RECYCLING",
+  hero_cta1=('Ask us to wipe it for you', '/contact/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='How to safely <em class="grad grad--green">wipe &amp; recycle</em> an old computer',
   lede="Before that old laptop leaves the house, get your data off it properly &mdash; then pass it on responsibly. Here&rsquo;s how to do both, simply and safely.",
   desc="How to safely wipe an old computer before selling or recycling it (Windows reset, why delete isn't enough, SSD vs hard drive) and where to recycle it responsibly in the UK (WEEE, Recycle Now). From 365 Techies.",
@@ -19103,6 +19131,7 @@ info_page(
 # ============================================================ GUIDE: SAFE ONLINE BANKING FOR BEGINNERS
 info_page(
   slug="safe-online-banking-for-beginners", crumb_name="Safe Online Banking", eyebrow="// CONFIDENCE GUIDE",
+  hero_cta1=('See home plans', '/home-it-support-plans/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Safe online banking <em class="grad grad--green">for beginners</em>',
   lede="Online banking is genuinely safe when you follow a few simple habits &mdash; and it can make life much easier. Here&rsquo;s how to bank online with confidence, written for people who&rsquo;d rather be careful.",
   desc="Is online banking safe? Yes - here's how to do it confidently: set up safely, the golden rules every time, how to spot a banking scam, and what to do if something feels wrong. A reassuring beginner's guide from 365 Techies.",
@@ -19150,6 +19179,7 @@ info_page(
 # ============================================================ GUIDE: AVOIDING TECH OVERWHELM
 info_page(
   slug="avoiding-tech-overwhelm", crumb_name="Avoiding Tech Overwhelm", eyebrow="// A GENTLE GUIDE",
+  hero_cta1=('See home plans', '/home-it-support-plans/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Avoiding tech overwhelm &mdash; <em class="grad grad--cyan">feeling in control</em>',
   lede="If technology sometimes makes you feel anxious, behind, or as though everyone else got a manual you didn&rsquo;t &mdash; you are not alone, and you are not too old or &lsquo;not clever enough&rsquo;. Here are some gentle, practical ways to feel calmer and more in control.",
   desc="Feeling overwhelmed by technology? A warm, reassuring guide with small, practical habits to feel calmer and more in control - for anyone who finds tech stressful. From 365 Techies, patient IT support since 1995.",
@@ -19189,6 +19219,7 @@ info_page(
 # ============================================================ TRUST: YOUR FIRST 6-WEEKLY SERVICE
 info_page(
   slug="your-first-6-weekly-service", crumb_name="Your First 6-Weekly Service", eyebrow="// WHAT TO EXPECT",
+  hero_cta1=('See home plans', '/home-it-support-plans/'), hero_cta2=('Book your first service', '/book-service/'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='What happens on your <em class="grad grad--green">first 6-weekly service</em>',
   lede="Nervous about someone connecting to your computer? That&rsquo;s completely understandable. Here&rsquo;s exactly what your first included service feels like &mdash; so there are no surprises, and you&rsquo;re always in control.",
   desc="A step-by-step walkthrough of what your first 6-weekly computer service with 365 Techies actually feels like - the friendly call first, watching everything on screen, and nothing for you to do. Reassuring and honest.",
@@ -19243,6 +19274,7 @@ info_page(
 # ============================================================ TRUST: HOW WE PRICE
 info_page(
   slug="how-we-price", crumb_name="How We Price", eyebrow="// HOW WE PRICE",
+  hero_cta1=('See our prices', '/pricing/'), hero_cta2=('Try the Plan Finder', '/plan-finder/'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='How we price &mdash; and why <em class="grad grad--cyan">cheapest isn&rsquo;t always best</em>',
   lede="Good IT support should be easy to understand and easy to budget for. Here&rsquo;s an honest look at what shapes the price &mdash; and why the cheapest quote often ends up costing more.",
   desc="An honest, plain-English explanation of how 365 Techies prices IT support: one predictable monthly fee, what drives the cost, what's always included, and why the cheapest quote can cost more in the long run.",
@@ -19535,6 +19567,7 @@ what_would_you_lose()
 # never promise it unblocks streaming, never imply a VPN is antivirus, never promise a location change works.
 info_page(
   slug="do-i-need-a-vpn", crumb_name="Do I Need a VPN?", eyebrow="// HONEST GUIDE",
+  hero_cta1=('See Malwarebytes &amp; VPN', '/malwarebytes-premium/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Do you <em class="grad grad--cyan">really</em> need a VPN?',
   lede="Short answer: at home, most people don&rsquo;t. Away from home, sometimes. Here is what a VPN actually does, what it cannot do whatever the adverts say, and how to decide &mdash; from a firm that supplies one and would still rather you knew the truth.",
   desc="Do you need a VPN? A plain-English guide: what a VPN does and does not do, when it is worth having, why free ones are risky, and what we supply. Honest advice from 365 Techies.",
@@ -19625,6 +19658,7 @@ info_page(
 # ============================================================ GUIDE: HOW TO CHOOSE ANTIVIRUS
 info_page(
   slug="how-to-choose-antivirus", crumb_name="How to Choose Antivirus", eyebrow="// BUYER&rsquo;S GUIDE",
+  hero_cta1=('See Malwarebytes &amp; VPN', '/malwarebytes-premium/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='How to choose <em class="grad grad--green">antivirus &amp; online protection</em>',
   lede="There are dozens of security products all claiming to be the best. Here&rsquo;s a plain-English guide to what actually matters &mdash; and what&rsquo;s a waste of money &mdash; so you can choose with confidence.",
   desc="A plain-English guide to choosing antivirus and online protection: what good security really includes, free vs paid, whether you need a VPN, and the features that matter. Impartial advice from 365 Techies.",
@@ -19668,6 +19702,7 @@ info_page(
 # ============================================================ GUIDE: HOW TO CHOOSE BROADBAND
 info_page(
   slug="how-to-choose-broadband", crumb_name="How to Choose Broadband", eyebrow="// BUYER&rsquo;S GUIDE",
+  hero_cta1=('Test your broadband', '/broadband-speed-checker/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='How to choose <em class="grad grad--cyan">broadband</em>',
   lede="Fibre, part-fibre, mobile or satellite &mdash; broadband has more options than ever, and the adverts don&rsquo;t make it clearer. Here&rsquo;s how to pick the right one for your home or business, in plain English.",
   desc="A plain-English guide to choosing broadband: the connection types explained (FTTP full fibre, FTTC, 4G/5G, Starlink), how much speed you really need, and what to watch for. Impartial advice from 365 Techies, Dorset.",
@@ -19710,6 +19745,7 @@ info_page(
 # ============================================================ GUIDE: SETTING UP A COMPUTER FOR AN OLDER RELATIVE
 info_page(
   slug="setting-up-a-computer-for-an-older-relative", crumb_name="Computer for an Older Relative", eyebrow="// A KIND HEAD-START",
+  hero_cta1=('See home plans', '/home-it-support-plans/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Setting up a computer or tablet for <em class="grad grad--cyan">an older relative</em>',
   lede="A little thought at the start saves a lot of worried phone calls later. Here&rsquo;s how to set up a computer or tablet so an older relative can use it happily, safely and with confidence.",
   desc="How to set up a computer or tablet for an older relative: choosing a simple device, making it easy to see and use, keeping it safe from scams, and arranging help. A warm, practical guide from 365 Techies.",
@@ -19750,6 +19786,7 @@ info_page(
 # ============================================================ GUIDE: HELPING A RELATIVE REMOTELY
 info_page(
   slug="helping-a-relative-with-their-computer", crumb_name="Helping a Relative Remotely", eyebrow="// FROM A DISTANCE",
+  hero_cta1=('See home plans', '/home-it-support-plans/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Helping a relative with their computer <em class="grad grad--green">from a distance</em>',
   lede="When family live far away, helping with their computer can feel impossible &mdash; and there&rsquo;s a scam to watch for too. Here&rsquo;s how to help safely, and when to call in a patient professional.",
   desc="How to safely help an older relative with their computer remotely - the right tools, what to watch for, and the remote-access scam to avoid. Plus when to let a patient professional help. From 365 Techies.",
@@ -19795,6 +19832,7 @@ info_page(
 # ============================================================ GUIDE: CONFIDENT VIDEO CALLING
 info_page(
   slug="confident-video-calling", crumb_name="Confident Video Calling", eyebrow="// SEE THE FAMILY",
+  hero_cta1=('See home plans', '/home-it-support-plans/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Confident <em class="grad grad--cyan">video calling</em>',
   lede="Seeing the family on screen is one of the loveliest things technology does &mdash; and it&rsquo;s easier than it looks. Here&rsquo;s a gentle guide to making video calls with confidence, on whatever device you have.",
   desc="A plain-English guide to video calling for beginners: which app to use, how to make and answer a call, and simple tips for a good call. Warm, jargon-free help from 365 Techies, Dorset.",
@@ -19930,6 +19968,7 @@ computer_help_for_seniors()
 # ============================================================ TRUST: SUSTAINABILITY
 info_page(
   slug="sustainability", crumb_name="Sustainability", eyebrow="// SUSTAINABILITY",
+  hero_cta1=('See refurbished Dell laptops', '/refurbished-dell-laptops-bournemouth/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Greener IT, the <em class="grad grad--green">Dorset</em> way',
   lede="Good IT support and looking after the planet pull in the same direction: keep technology working longer, waste less, and dispose of it responsibly. As a Sustainable Dorset member, that&rsquo;s simply how we work.",
   desc="How 365 Techies works more sustainably - repair before replace, extending the life of computers, secure wiping and responsible recycling, and Sustainable Dorset membership. Greener IT support in Dorset.",
@@ -19965,6 +20004,7 @@ info_page(
 # ============================================================ COMPARISON: MICROSOFT 365 VS GOOGLE WORKSPACE
 info_page(
   slug="microsoft-365-vs-google-workspace", crumb_name="Microsoft 365 vs Google Workspace", eyebrow="// EVEN-HANDED COMPARISON",
+  hero_cta1=('See Microsoft 365 support', '/microsoft-365-support/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Microsoft 365 vs <em class="grad grad--cyan">Google Workspace</em>',
   lede="Which email and office suite is right for your business? Here&rsquo;s a fair, plain-English comparison of Microsoft 365 and Google Workspace &mdash; and we genuinely support both, so we&rsquo;ve no axe to grind.",
   desc="An even-handed comparison of Microsoft 365 vs Google Workspace for business - desktop apps, offline working, email, video, storage and security - to help you choose. From 365 Techies, who support both.",
@@ -20009,6 +20049,7 @@ info_page(
 # ============================================================ COMPARISON: BREAK-FIX VS MANAGED IT
 info_page(
   slug="break-fix-vs-managed-it", crumb_name="Break-Fix vs Managed IT", eyebrow="// DECISION GUIDE",
+  hero_cta1=('See plans &amp; prices', '/pricing/'), hero_cta2=('Book a one-off repair', '/book-service/'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Break-fix vs <em class="grad grad--green">managed IT support</em>',
   lede="Pay per repair, or a fixed monthly fee for ongoing cover? Here&rsquo;s a clear, side-by-side look at break-fix versus managed IT support &mdash; so you can see which genuinely fits.",
   desc="Break-fix vs managed IT support compared: when you call, cost predictability, prevention and monitoring, security upkeep and which suits you. A clear, plain-English decision guide from 365 Techies.",
@@ -20237,6 +20278,7 @@ server_or_cloud_picker()
 # ============================================================ TRUST: HOW ONBOARDING WORKS
 info_page(
   slug="how-onboarding-works", crumb_name="How Onboarding Works", eyebrow="// GETTING STARTED",
+  hero_cta1=('See plans &amp; prices', '/pricing/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='How it works when you <em class="grad grad--cyan">join us</em>',
   lede="Wondering what actually happens when you sign up &mdash; and what you&rsquo;ll have to do? Almost nothing, as it turns out. Here&rsquo;s the friendly, no-surprises journey from hello to settled in.",
   desc="What happens when you become a 365 Techies customer - from your first hello to settling into the 6-weekly rhythm. A calm, no-jargon walkthrough of onboarding, with nothing technical for you to do.",
@@ -20313,6 +20355,7 @@ def spring_clean_hub():
 # ============================================================ COMPARISON: CLOUD VS ON-PREMISE
 info_page(
   slug="cloud-vs-on-premise", crumb_name="Cloud vs On-Premise", eyebrow="// DECISION GUIDE",
+  hero_cta1=('See business plans', '/business-it-support-plans/'), hero_cta2=('Call 01202 775566', 'tel:+441202775566'),   # 28 Sep 2026: its own buttons, not the defaults
   h1='Cloud vs <em class="grad grad--cyan">on-premise server</em>',
   lede="Should your business run on the cloud, a server in the office, or a mix of both? Here&rsquo;s a clear, plain-English comparison to help you weigh it up &mdash; with no jargon and no agenda.",
   desc="Cloud vs on-premise server compared for small businesses: upfront and ongoing cost, remote access, maintenance, scaling and control - to help you choose. Plain-English guide from 365 Techies, Dorset.",
