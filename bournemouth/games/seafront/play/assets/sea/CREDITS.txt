@@ -1,0 +1,19 @@
+SEAFRONT - PIER SURF: the recorded sea (added 28 Sep 2026, build b55)
+
+These files are cut from field recordings (tmp-audit/realsea/prep-sea-assets.py). Licences checked
+on 28 Sep 2026 on the Freesound sound pages and the Pixabay item pages.
+
+bed.mp3    "Breaking Waves at Wrightsville Beach" by Worldsday
+           https://freesound.org/people/Worldsday/sounds/449983/          CC0 1.0 (public domain)
+close.mp3  "Waves, Atlantic ocean, surf, crashes, close up, beach, PEI, 2011" by TRP
+           https://freesound.org/people/TRP/sounds/577325/                CC0 1.0 (public domain)
+shots.mp3  wave crashes from the TRP recording above;
+           "Water splash" by speedygonzo  https://freesound.org/people/speedygonzo/sounds/235725/  CC0 1.0
+           "Water splash" by nilbul       https://freesound.org/people/nilbul/sounds/404829/       CC0 1.0
+           "Creek Swimming" by JazzyBay   https://freesound.org/people/JazzyBay/sounds/435055/     CC0 1.0
+gulls.mp3  "Sea gently lapping waves far away seagulls" by JonathanSlatterMusic
+           https://pixabay.com/sound-effects/nature-sea-gently-lapping-waves-far-away-seagulls-486892/
+           Pixabay Content License (free to use in a work like this game; not to be redistributed on its own)
+
+The Freesound recordings were obtained through Pixabay, which re-hosts them (the "freesound_community"
+account); the originals above are what their licences come from.
