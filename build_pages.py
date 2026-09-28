@@ -5511,16 +5511,12 @@ def home_plan_cards():
     ])
 
 
-def biz_plan_cards(popular=True):
-    """popular=False leaves the MOST POPULAR badge off Business Standard (owner has not confirmed it - the
-    subscriptions page does not repeat an unconfirmed claim; the plans page keeps what it had)."""
-    std = plan_card("business", "&#9733; MOST POPULAR", "STANDARD", "Business Standard", "For small businesses needing regular IT support.", "", ("SAME FROM-PRICE AS STARTER","&mdash; you choose the service level"), ["<strong>Steps up from Starter: Microsoft 365 administration, backup checks &amp; new-user setup</strong>","Support for multiple users","Outlook, Teams &amp; OneDrive","Cybersecurity guidance","Monthly maintenance","Written Service Report each service","Your own 365 estate dashboard"], "Get a Standard quote", "/contact/?topic=business-it-support")
-    if not popular:
-        std = std.replace('\n            <p class="plan-card__badge mono">&#9733; MOST POPULAR</p>', "")
+def biz_plan_cards():
+    # MOST POPULAR = Business Premium (owner, 29 Sep 2026; every business still gets a custom quote)
     return "\n".join([
-      plan_card("business", None, "STARTER", "Business Starter", "For sole traders and very small businesses.", "&pound;24.38", ("FROM","/mo per computer"), ["Support for 1&ndash;3 computers","Remote IT support","Email support","Microsoft 365 help","Basic security checks","Loyalty discount on any fault work","Computer maintenance with written Service Reports","Your own 365 estate dashboard"], "Set up Direct Debit", subscribe_href("business-starter")),
-      std,
-      plan_card("business", None, "PREMIUM", "Business Premium", "For businesses that rely on IT every day.", "", ("SAME FROM-PRICE AS STARTER","&mdash; you choose the service level"), ["<strong>Steps up from Standard: priority response, on-site included &amp; full 365 management</strong>","Cybersecurity &amp; backup planning","Staff onboarding &amp; offboarding","Device setup &amp; technology planning","Your own 365 estate dashboard"], "Get a Premium quote", "/contact/?topic=business-it-support"),
+      plan_card("business", None, "STARTER", "Business Starter", "For sole traders and very small businesses.", "&pound;24.38", ("FROM","/mo per computer"), ["Support for 1&ndash;3 computers","Remote IT support","Email support","Microsoft 365 help","Basic security checks","Loyalty discount on any fault work","Computer maintenance with written Service Reports","Your own 365 estate dashboard"], "Set up Direct Debit", GOCARDLESS.get("business-starter") or "/contact/?topic=business-it-support"),   # no DD link: a quote, on the business topic
+      plan_card("business", None, "STANDARD", "Business Standard", "For small businesses needing regular IT support.", "", ("SAME FROM-PRICE AS STARTER","&mdash; you choose the service level"), ["<strong>Steps up from Starter: Microsoft 365 administration, backup checks &amp; new-user setup</strong>","Support for multiple users","Outlook, Teams &amp; OneDrive","Cybersecurity guidance","Monthly maintenance","Written Service Report each service","Your own 365 estate dashboard"], "Get a Standard quote", "/contact/?topic=business-it-support"),
+      plan_card("business", "&#9733; MOST POPULAR", "PREMIUM", "Business Premium", "For businesses that rely on IT every day.", "", ("SAME FROM-PRICE AS STARTER","&mdash; you choose the service level"), ["<strong>Steps up from Standard: priority response, on-site included &amp; full 365 management</strong>","Cybersecurity &amp; backup planning","Staff onboarding &amp; offboarding","Device setup &amp; technology planning","Your own 365 estate dashboard"], "Get a Premium quote", "/contact/?topic=business-it-support"),
     ])
 
 
@@ -5621,7 +5617,7 @@ add(
    f'''    <section class="support-options" id="plans" aria-label="Business support plans">
 <h2 class="sr-only">Business support plans</h2>
       <div class="plan-grid plan-grid--3">
-{biz_plan_cards(popular=False)}
+{biz_plan_cards()}
       </div>
       <p class="plans-note mono" data-reveal>// FROM &pound;24.38/MO PER COMPUTER &middot; NO LOCK-IN &middot; TELL US YOUR SETUP FOR A QUOTE &middot; <a href="/business-it-support-plans/#compare" style="color:var(--cyan)">COMPARE THE PLANS</a></p>
     </section>''',
@@ -5930,7 +5926,7 @@ add(
         </div>
         <div class="price-table-wrap" tabindex="0" role="group" aria-label="Price table (scrolls sideways on a small screen)" data-reveal>
           <table class="price-table">
-            <thead><tr><th scope="col">Feature</th><th scope="col">Starter</th><th scope="col" class="pop">Standard</th><th scope="col">Premium</th></tr></thead>
+            <thead><tr><th scope="col">Feature</th><th scope="col">Starter</th><th scope="col">Standard</th><th scope="col" class="pop">Premium</th></tr></thead>
             <tbody>
               <tr><th scope="row">Computers</th><td>1&ndash;3</td><td>Multiple</td><td>Multiple</td></tr>
               <tr><th scope="row">Remote support</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
