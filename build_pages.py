@@ -9,7 +9,7 @@ from office_cluster import _office_cluster_section
 from tool_seo_data import TOOL_TITLES, TOOL_SEO
 from snippets_data import SNIPPETS
 from dashboard_promo import plan_band as _dash_band
-from hub_ui import DELL_HUB_CSS, _dh_ico, _dell_hub_quotes, intent_hero, proof_strip, quotes_block   # intent-first layout pieces (26 Sep 2026)
+from hub_ui import DELL_HUB_CSS, _dh_ico, _dell_hub_quotes, intent_hero, intent_tiles, proof_strip, quotes_block   # intent-first layout pieces (26 Sep 2026)
 TODAY = datetime.date.today().isoformat()
 
 # Cache-bust for search.min.js, derived from the CONTENT of js/search.js.
@@ -5206,9 +5206,106 @@ def _tool_intent_hero(content, tiles, rating_note=None):
     return content[:m.start()] + new + content[m.end():]
 
 
+# 28 Sep 2026 (owner: "yes, do them all in that order" - site-wide check, item 3). On a phone the shared first screen
+# filled the whole screen on every tool page, and the tool started 1,200-2,300 px down under a second copy of the
+# heading. Tools now open like the task pages: the short task header, the tool straight under it, then a "What next?"
+# row with the page's other choices - its tiles minus any that only jumped to the tool, plus any top button not already
+# among them - so no link is lost. The Free Tools hub keeps the tiles first screen: choosing a tool is its job.
+TOOL_TASK_FIRST = set(TOOL_HERO_TILES) - {"free-tools"}
+_TOOL_TRUST = ['<a href="/reviews/">&#9733; Rated 4.9 on Google</a>', "Family-run since 1995", "No fix, no fee"]
+_TOOLNEXT_CSS = """      <style>
+        .toolnext{padding-block:1.6rem 2.4rem}
+        .toolnext__in{max-width:1180px;margin:0 auto}
+        .toolnext .hp-intents__q{font-size:1.15rem;margin:0 0 .75rem}
+        @media (min-width:900px){.dh .toolnext__grid--3{grid-template-columns:repeat(3,minmax(0,1fr))}.dh .toolnext__grid--4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+        .toolnext__also{margin:.95rem 0 0;color:var(--hp-soft);font-size:.95rem;line-height:1.7}
+        .toolnext__also a{color:var(--cyan-soft)}
+        .toolfirst__head{margin-bottom:1.3rem}
+        .toolfirst__head .toolfirst__h2{font-size:clamp(1.35rem,2.6vw,1.85rem);margin:0 0 .45rem}
+        .toolfirst__head .toolfirst__lede{font-size:1rem;margin-top:0}
+      </style>"""
+
+
+# What a tool's own heading block keeps (default: nothing - it re-said the header). Read page by page, 28 Sep 2026.
+_TOOL_HEAD_KEEP = {
+    "custom-pc-builder": ("lede",),          # the gaming PC tune-up pointer (a link) is not in the header
+    "is-it-down": ("h2", "lede"),            # "First: is your connection OK?" is step 1 of the tool itself
+    "computer-spec-checker": ("h2",),        # "Scanning your computer... live" labels the live scan
+    "website-checker": ("lede",),            # only its last sentence is new (below)
+}
+_TOOL_LEDE_FROM = {"website-checker": "Every check also shows"}   # "...compares to our own website - we lead by example"
+
+
+def _section_end(s, start):
+    """Index just past the </section> closing the <section> that starts at `start` (sections may nest)."""
+    depth = 0
+    for m in re.finditer(r"<section\b|</section>", s[start:]):
+        depth += -1 if m.group(0) == "</section>" else 1
+        if depth == 0:
+            return start + m.end()
+    return -1
+
+
+def _tool_task_first(content, tiles, slug=None):
+    m = _HERO_RE.search(content)
+    if not m:
+        return content
+    h = m.group(0)
+    crumbs = re.search(r'<nav class="breadcrumb"[^>]*>(.*?)</nav>', h, re.S)
+    h1 = re.search(r'<h1[^>]*>(.*?)</h1>', h, re.S)
+    lede = re.search(r'<p class="lede[^"]*"[^>]*>(.*?)</p>', h, re.S)
+    btns = re.findall(r'<a href="([^"]+)" class="button[^"]*"[^>]*>(.*?)</a>', h, re.S)
+    s0 = content.find("<section", m.end())
+    e0 = _section_end(content, s0) if s0 >= 0 else -1
+    if not (crumbs and h1 and lede) or e0 < 0:
+        return content
+    tool = content[s0:e0]
+    ids = set(re.findall(r'\bid="([^"]+)"', tool))
+    # the tool's own heading block (eyebrow, heading, lede) mostly re-said the page's H1 and lede in other words, so
+    # right under the header it goes - except the lines only it carries (_TOOL_HEAD_KEEP, checked page by page)
+    sh = re.search(r'<div class="section-head">(.*?)</div>', tool, re.S)
+    if sh and sh.start() < 400:
+        keep_what = _TOOL_HEAD_KEEP.get(slug, ())
+        inner = sh.group(1)
+        h2 = re.search(r'<h2[^>]*>(.*?)</h2>', inner, re.S)
+        tl = re.search(r'<p class="lede[^"]*"[^>]*>(.*?)</p>', inner, re.S)
+        parts = []
+        if h2 and "h2" in keep_what:
+            h2txt = re.sub(r'<span class="title-underline[^"]*"></span>', "", h2.group(1)).strip()
+            parts.append(f'<h2 class="section-title section-title--center toolfirst__h2">{h2txt}</h2>')
+        if tl and "lede" in keep_what:
+            ltxt = tl.group(1).strip()
+            frm = _TOOL_LEDE_FROM.get(slug)
+            if frm and frm in ltxt:
+                ltxt = ltxt[ltxt.index(frm):]
+            parts.append(f'<p class="lede lede--center toolfirst__lede">{ltxt}</p>')
+        new_head = ('<div class="section-head toolfirst__head">' + "".join(parts) + '</div>') if parts else ""
+        tool = tool[:sh.start()] + new_head + tool[sh.end():]
+    keep = [t for t in tiles if not (t[5].startswith("#") and t[5][1:] in ids)]
+    have = {t[5] for t in keep}
+    also = [(txt.strip(), href) for href, txt in btns if not (href.startswith("#") and href[1:] in ids) and href not in have]
+    also_html = ("\n        <p class=\"toolnext__also\">Also: " + " &middot; ".join(f'<a href="{hr}">{tx}</a>' for tx, hr in also) + "</p>") if also else ""
+    nxt = f'''
+    <section class="dh dh-sec toolnext" aria-label="What next">
+      <div class="toolnext__in">
+        <nav class="hp-intents" aria-label="What next?">
+          <p class="hp-intents__q">What next?</p>
+          <div class="hp-intents__grid toolnext__grid toolnext__grid--{len(keep)}">
+{intent_tiles(keep)}
+          </div>
+        </nav>{also_html}
+      </div>
+{_TOOLNEXT_CSS}
+    </section>''' if keep or also else ""
+    head = task_head(crumbs.group(1).strip(), h1.group(1).strip(), lede.group(1).strip(), trust=_TOOL_TRUST)
+    return content[:m.start()] + head + content[m.end():s0] + tool + nxt + content[e0:]
+
+
 def add(**kw):
     _slug = kw.get("slug")
-    if _slug in TOOL_HERO_TILES and isinstance(kw.get("content"), str):
+    if _slug in TOOL_TASK_FIRST and isinstance(kw.get("content"), str):
+        kw["content"] = _tool_task_first(kw["content"], TOOL_HERO_TILES[_slug], _slug)
+    elif _slug in TOOL_HERO_TILES and isinstance(kw.get("content"), str):
         kw["content"] = _tool_intent_hero(kw["content"], TOOL_HERO_TILES[_slug])
     elif _slug in LOCAL_HERO_TILES and isinstance(kw.get("content"), str):
         kw["content"] = _tool_intent_hero(kw["content"], LOCAL_HERO_TILES[_slug],

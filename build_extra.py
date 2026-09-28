@@ -1107,7 +1107,9 @@ def wifi_optimizer():
     content = "\n".join([
       hero(bc("WiFi Signal Test"), "// FREE TOOL &middot; LIVE &amp; ANIMATED",
            'Test your WiFi <em class="grad grad--cyan">room by room</em> &mdash; home, business or anywhere',
-           "Meet the <strong>365 WiFi Optimizer</strong> &mdash; a survey that plays like a game. Pick <strong>Home, Business or Anywhere</strong>, walk from room to room while it measures your connection live, and every room gets a real download <em>and</em> upload test, a star rating and honest advice. Finish with a <strong>branded PDF report</strong> anyone can understand, keep several sites on one dashboard, and map mobile signal with Signal Hunter when you work on the move. It all <strong>saves on your device as you go</strong>.",
+           # 28 Sep 2026: the first sentence only - on a phone the whole intro ran to 11 lines above the survey; the rest now
+           # sits under the survey (end of #finder)
+           "Meet the <strong>365 WiFi Optimizer</strong> &mdash; a survey that plays like a game. Pick <strong>Home, Business or Anywhere</strong>, walk from room to room while it measures your connection live, and every room gets a real download <em>and</em> upload test, a star rating and honest advice.",
            cta1=("Start the live test", "#finder"), cta2=("Call 01202 775566", "tel:+441202775566"),
            chips=["Home &middot; Business &middot; Anywhere", "Star-rated PDF report", "Free &middot; saves as you go"]),
       '''    <section class="section" aria-label="Live signal finder" id="finder" style="padding-top:.6rem">
@@ -1343,6 +1345,7 @@ def wifi_optimizer():
             <p class="wq__note mono" style="margin-top:.7rem">Map &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors. Every pin links to Google Maps for directions. Community pins are anonymous, rounded to ~11&nbsp;m, and place-type only.</p>
           </div>
         </div>
+        <p class="lede lede--center" style="margin:1.8rem auto 0;max-width:46rem">Finish with a <strong>branded PDF report</strong> anyone can understand, keep several sites on one dashboard, and map mobile signal with Signal Hunter when you work on the move. It all <strong>saves on your device as you go</strong>.</p>
         <div class="wq__burst" id="wn-burst" aria-hidden="true"></div>
       </div>
     </section>''',
@@ -15413,7 +15416,7 @@ def free_tools_hub():
       hero(bc("Free Tools"), "// FREE IT TOOLS &middot; NO DOWNLOAD",
            'Free IT tools that run in your <em class="grad grad--cyan">browser</em>',
            f"365 Techies offers {pos - 1} free IT tools, almost all of which run entirely in your web browser &mdash; no download, no sign-up, nothing installed, and your passwords and files never leave your device. <a href=\"/website-checker/\">Check your website</a>, <a href=\"/broadband-speed-checker/\">test your broadband</a>, <a href=\"/password-breach-checker/\">see if a password&rsquo;s leaked</a>, <a href=\"/pc-benchmark/\">benchmark your PC</a> and more.",
-           cta1=("Talk to a Techie", "/contact/"), cta2=("See Plans &amp; Prices", "/monthly-it-support/"),
+           cta1=("Browse all the tools", "#all-tools"), cta2=("Talk to a Techie", "/contact/"),   # 28 Sep 2026: the page's job, not the plans button
            chips=["100% free","No download","Built in Dorset"], scene=HERO_SCENES.get("tools")),
       '''    <section class="section" aria-label="Search" style="padding-top:0">
       <div class="wrap" style="display:flex;justify-content:center">
@@ -15424,7 +15427,7 @@ def free_tools_hub():
         </button>
       </div>
     </section>''',
-      f'''    <section class="blog-section" aria-label="All free tools">
+      f'''    <section class="blog-section" id="all-tools" aria-label="All free tools">
       <div class="wrap">
 {sections}      </div>
     </section>''',

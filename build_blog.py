@@ -538,7 +538,7 @@ def hub():
       hero(f'<a href="/">Home</a> <span>/</span> <span aria-current="page">IT Advice</span>',
            "// IT ADVICE HUB", 'IT advice <em class="grad grad--cyan">that actually helps</em>',
            "Helpful, jargon-free guides on getting the most from your technology — monthly support, home computers, business IT, Microsoft 365, cybersecurity and Windows. Tools, checklists and buyer&rsquo;s guides live in the <a href=\"/resources/\">resources hub</a>.",
-           cta1=("See Plans &amp; Prices", "/monthly-it-support/"), cta2=("Contact Us", "/contact/"),
+           cta1=("Ask a techie", "/contact/"), cta2=("Call 01202 775566", "tel:+441202775566"),   # 28 Sep 2026: not the template's plans button
            chips=["Plain English", "Practical tips", "Updated regularly"]),
       f'''    <section class="section" style="padding-bottom:0" aria-label="Filter advice">
       <div class="wrap">

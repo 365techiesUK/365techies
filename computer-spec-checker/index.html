@@ -287,7 +287,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-09-27"
+      "dateModified": "2026-09-28"
     },
     {
       "@type": "WebApplication",
@@ -841,38 +841,32 @@
   </aside>
 
   <main id="main">
-    <section class="page-hero dh dh-hero" aria-label="Introduction">
-      <div class="dh-hero__grid">
-        <div>
-          <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">PC Hardware Checker</span></nav>
-          <p class="eyebrow mono">// FREE HARDWARE CHECKER</p>
-          <h1>What&rsquo;s inside <em class="grad grad--cyan">this machine?</em></h1>
-          <p class="lede">One click, zero downloads: your operating system, graphics card, cores, screen, memory, battery and network &mdash; read live in your browser, never sent to us, with a plain-English verdict on what needs attention and a spec sheet you can save.</p>
-          <div class="page-hero__cta">
-            <a href="#spc" class="button primary button--lg">See my results</a>
-            <a href="#benchtool" class="button secondary button--lg">Benchmark it</a>
-          </div>
-          <a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Rated 4.9 on Google</strong></span><span>Family-run since 1995 &middot; no fix, no fee</span></a>
-          <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 27 September 2026</p>
-        </div>
-        <nav class="hp-intents" aria-label="What would you like to do?">
-          <p class="hp-intents__q">What would you like to do?</p>
-          <div class="hp-intents__grid">
-            <a class="hp-intent hp-c-fix" href="#spc"><span class="hp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="3.5" width="20" height="13.5" rx="2.5"/><path d="M8 21h8M12 17v4"/></svg></span><span class="hp-intent__t">What&rsquo;s inside this PC?</span><span class="hp-intent__d">Your specs read live in your browser, never sent to us</span><span class="hp-intent__p">NO DOWNLOAD</span></a>
-            <a class="hp-intent hp-c-care" href="#benchtool"><span class="hp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 14l4-4"/><path d="M3.5 18a9 9 0 1 1 17 0"/></svg></span><span class="hp-intent__t">How fast is it, really?</span><span class="hp-intent__d">Six live tests, one score you can compare</span><span class="hp-intent__p">ABOUT 20 SECONDS</span></a>
-            <a class="hp-intent hp-c-biz" href="#windows-11"><span class="hp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.3 2.6a1 1 0 0 1-.9 1.4H3.6a1 1 0 0 1-.9-1.4L4 16"/></svg></span><span class="hp-intent__t">Can it run Windows 11?</span><span class="hp-intent__d">The two deciders, and a route whatever the answer</span><span class="hp-intent__p">STILL ON WINDOWS 10?</span></a>
-            <a class="hp-intent hp-c-buy" href="#beyond-browser"><span class="hp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 13c0 5-3.5 7.5-7.7 9a1 1 0 0 1-.6 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.2-2.7a1.2 1.2 0 0 1 1.6 0C14.5 3.8 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M9 12l2 2 4-4"/></svg></span><span class="hp-intent__t">See what a browser can&rsquo;t</span><span class="hp-intent__d">Exact memory, drive health and battery wear</span><span class="hp-intent__p">FREE WINDOWS APP</span></a>
-          </div>
-        </nav>
-      </div>
+    <section class="taskhead" aria-label="Introduction">
+      <div class="wrap"><div class="taskhead__in">
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <span aria-current="page">PC Hardware Checker</span></nav>
+        <h1 class="taskhead__h">What&rsquo;s inside <em class="grad grad--cyan">this machine?</em></h1>
+        <p class="taskhead__lede">One click, zero downloads: your operating system, graphics card, cores, screen, memory, battery and network &mdash; read live in your browser, never sent to us, with a plain-English verdict on what needs attention and a spec sheet you can save.</p>
+        <p class="taskhead__trust mono"><span><a href="/reviews/">&#9733; Rated 4.9 on Google</a></span><span>Family-run since 1995</span><span>No fix, no fee</span></p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 28 September 2026</p>
+      </div></div>
+      <style>
+        .taskhead{padding:calc(var(--header-h) + var(--ticker-h) + 1.5rem) var(--pad-x) 0}
+        .taskhead__in{max-width:1180px;margin:0 auto}
+        .taskhead .breadcrumb{margin:0 0 .9rem}
+        .taskhead__h{font-family:var(--font-display);font-weight:600;font-size:clamp(2rem,4.4vw,3rem);line-height:1.06;margin:0 0 .6rem}
+        .taskhead__lede{color:var(--muted);font-size:1.06rem;line-height:1.55;margin:0 0 .75rem;max-width:48rem}
+        .taskhead__lede a{color:var(--cyan-soft)}
+        .taskhead__trust{display:flex;flex-wrap:wrap;gap:.35rem 1.2rem;margin:0;font-size:.8rem;letter-spacing:.03em;color:#9fb5d3}
+        .taskhead__trust a{color:#9fb5d3;text-decoration:none}
+        .taskhead .page-hero__byline{margin-top:.55rem}
+        .taskhead + .section{padding-top:2rem}
+        .taskmore{text-align:center;margin:0 auto;padding:0 var(--pad-x) 2.6rem;color:var(--muted);font-size:.95rem;line-height:1.7;max-width:62rem}
+        .taskmore a{color:var(--cyan-soft)}
+      </style>
     </section>
     <section class="section" aria-label="PC spec checker" id="spectool">
       <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// YOUR MACHINE, REVEALED</p>
-          <h2 class="section-title section-title--center" data-title>Scanning your computer&hellip; live<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Your browser is reading this machine <strong>right now</strong>. Nothing is sent to us, and it all disappears when you leave.</p>
-        </div>
+        <div class="section-head toolfirst__head"><h2 class="section-title section-title--center toolfirst__h2">Scanning your computer&hellip; live</h2></div>
         <div id="spc" data-reveal>
           <ol class="spc-steps" id="spc-steps" aria-label="Scan, benchmark, share">
             <li class="spc-step is-on" data-step="scan"><span class="spc-step__n">01</span><span class="spc-step__t">Scan</span><span class="spc-step__s">what is inside</span></li>
@@ -965,6 +959,29 @@
       @media(prefers-reduced-motion:reduce){#spc *,#spc *::after{animation:none!important;transition:none!important}#spc .spc-card{opacity:1;transform:none}}
       </style>
       <script src="/js/spec-checker.min.js?v=87bf7d57" defer></script>
+    </section>
+    <section class="dh dh-sec toolnext" aria-label="What next">
+      <div class="toolnext__in">
+        <nav class="hp-intents" aria-label="What next?">
+          <p class="hp-intents__q">What next?</p>
+          <div class="hp-intents__grid toolnext__grid toolnext__grid--3">
+            <a class="hp-intent hp-c-care" href="#benchtool"><span class="hp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 14l4-4"/><path d="M3.5 18a9 9 0 1 1 17 0"/></svg></span><span class="hp-intent__t">How fast is it, really?</span><span class="hp-intent__d">Six live tests, one score you can compare</span><span class="hp-intent__p">ABOUT 20 SECONDS</span></a>
+            <a class="hp-intent hp-c-biz" href="#windows-11"><span class="hp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 16V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9m16 0H4m16 0 1.3 2.6a1 1 0 0 1-.9 1.4H3.6a1 1 0 0 1-.9-1.4L4 16"/></svg></span><span class="hp-intent__t">Can it run Windows 11?</span><span class="hp-intent__d">The two deciders, and a route whatever the answer</span><span class="hp-intent__p">STILL ON WINDOWS 10?</span></a>
+            <a class="hp-intent hp-c-buy" href="#beyond-browser"><span class="hp-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 13c0 5-3.5 7.5-7.7 9a1 1 0 0 1-.6 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.2-2.7a1.2 1.2 0 0 1 1.6 0C14.5 3.8 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M9 12l2 2 4-4"/></svg></span><span class="hp-intent__t">See what a browser can&rsquo;t</span><span class="hp-intent__d">Exact memory, drive health and battery wear</span><span class="hp-intent__p">FREE WINDOWS APP</span></a>
+          </div>
+        </nav>
+      </div>
+      <style>
+        .toolnext{padding-block:1.6rem 2.4rem}
+        .toolnext__in{max-width:1180px;margin:0 auto}
+        .toolnext .hp-intents__q{font-size:1.15rem;margin:0 0 .75rem}
+        @media (min-width:900px){.dh .toolnext__grid--3{grid-template-columns:repeat(3,minmax(0,1fr))}.dh .toolnext__grid--4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+        .toolnext__also{margin:.95rem 0 0;color:var(--hp-soft);font-size:.95rem;line-height:1.7}
+        .toolnext__also a{color:var(--cyan-soft)}
+        .toolfirst__head{margin-bottom:1.3rem}
+        .toolfirst__head .toolfirst__h2{font-size:clamp(1.35rem,2.6vw,1.85rem);margin:0 0 .45rem}
+        .toolfirst__head .toolfirst__lede{font-size:1rem;margin-top:0}
+      </style>
     </section>
     <section class="section section--alt" aria-label="Keep it fast and safe" id="beyond-browser">
       <div class="wrap">
