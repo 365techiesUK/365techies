@@ -16875,6 +16875,8 @@ info_page(
   lede="Not sure where you stand? Book a free, no-obligation IT health check. We&rsquo;ll review your security, backups, updates and performance and send you a clear, jargon-free report.",
   desc="Book a free, no-obligation IT health check from 365 Techies — we review your security, backups, updates and performance and send a clear, jargon-free report. No pressure to sign up.",
   chips=["100% free","No obligation","Clear report"],
+  # 27 Sep 2026: without these the page fell back to hero()'s default "See Plans & Prices" / "Get Support Today"
+  hero_cta1=("Book your free health check", "/book-service/"), hero_cta2=("Call 01202 775566", "tel:+441202775566"),
   inner="""          <h2>What we check</h2>
           <ul>
             <li><strong>Security</strong> &mdash; whether real protection is running and up to date, whether Windows itself is still supported (Windows 10 left support in October 2025), whether the accounts that matter (email, Microsoft 365, banking) sit behind multi-factor authentication, and whether anything is on the machine that should not be.</li>
@@ -16887,7 +16889,7 @@ info_page(
           <p>For a business it usually starts with a conversation before we look at any machine. What you rely on, where your data lives, who holds the admin account for Microsoft 365, and what would happen tomorrow if a laptop was lost or an email account was taken over.</p>
           <p>Prefer to start yourself? Try our free <a href="/it-health-check-tool/">instant IT Health Check tool</a> &mdash; answer a few quick questions and get a score out of 100 and a personalised action plan on the spot. Or our free <a href="/free-pc-health-check/">365 PC Manager app</a> (free, digitally signed) will read a Windows PC&rsquo;s real health: drive condition, backup, protection, risky programs, network settings and age. It puts a plain-English report on your Desktop. <a href="/free-pc-health-check/">Download it free</a> &mdash; it installs in a couple of clicks and uninstalls just as easily.</p>
           <h2>What you get</h2>
-          <p>A short, plain-English report: what is fine, what needs attention, and what we would do first if it were ours &mdash; with <strong>absolutely no pressure to sign up</strong>. Some people take the report and sort things themselves, some ask us to fix the one thing that worried them, and some join a plan. All three are fine by us.</p>
+          <p>A short, plain-English report: what is fine, what needs attention, and what we would do first if it were ours &mdash; with <strong>absolutely no pressure to sign up</strong>. Some people take the report and sort things themselves, some ask us to fix the one thing that worried them, and some join <a href="/monthly-it-support/">a plan</a>. All three are fine by us.</p>
           <h2>Who it&rsquo;s for</h2>
           <p>Home users and businesses alike &mdash; whether you&rsquo;re worried about security, frustrated by slow tech, or just want peace of mind.</p>""",
   faqs=[
@@ -23937,13 +23939,14 @@ info_page(
   chips=["No card", "No catch", "One minute"],
   hero_cta1=("Join free", "/portal/"),
   hero_cta2=("See what&rsquo;s included", "#included"),
-  pre=_join_referred + _join_value + _join_compare + _join_how,
-  inner="""          <h2>Is it really free? Honestly, yes.</h2>
-          <p>The 365 Club costs nothing and always will. There&rsquo;s no card to enter, no trial that quietly starts charging, and no obligation to ever buy anything. We built it because the sooner we can see how your computer is really doing, the easier it is to help &mdash; and because a bit of good advice and a few handy tools shouldn&rsquo;t cost you a penny.</p>
-          <h2>A plain, honest word on what&rsquo;s free</h2>
+  # 27 Sep 2026 task-first pass: how to join and what's included straight after the hero; the value tiles, the
+  # "is it really free" prose (FAQ 1), the dashboard band and the closing CTA repeated them
+  pre=_join_how + _join_compare + _join_referred,
+  inner="""          <h2>A plain, honest word on what&rsquo;s free</h2>
           <p>The free 365 PC Manager app <strong>watches and reports</strong> on your PC&rsquo;s health &mdash; it doesn&rsquo;t secretly fix things or remove viruses on its own. The actual servicing, tune-ups and unlimited remote help come with a <a href="/monthly-it-support/">support plan</a>. The app is for Windows PCs; if you&rsquo;re on a Mac we&rsquo;re still happy to help &mdash; just give us a ring. And the instant browser check-up on your dashboard only reads what a web browser can see &mdash; the app sees the fuller picture.</p>
           <h2>Already a support customer?</h2>
-          <p>Then you already have all of this &mdash; just <a href="/portal/">sign in</a> with a code to reach your portal and manage your bookings.</p>""",
+          <p>Then you already have all of this &mdash; just <a href="/portal/">sign in</a> with a code to reach your portal and manage your bookings.</p>
+          <p>While you&rsquo;re in, you can build your own dashboard in the portal&rsquo;s dashboard studio &mdash; see the demos for <a href="/next-gen-home-dashboards/">homes</a> and <a href="/custom-wifi-dashboards/">businesses</a>. Rather talk first? <a href="/contact/">Get in touch</a> or call <a href="tel:+441202775566">01202 775566</a>.</p>""",
   faqs=[
   ("Is it really free? What&rsquo;s the catch?", "There&rsquo;s genuinely no catch. The 365 Club is free forever, with no card details and no obligation. You can stay on the free membership for as long as you like."),
     ("Do I need to buy anything?", "No. You can join, run a health check, read your reports and take the free courses without spending anything. A paid support plan is there if and when you want a techie to actually service your PC and help whenever you&rsquo;re stuck."),
@@ -23952,10 +23955,6 @@ info_page(
     ("Can I upgrade to a support plan later?", "Any time &mdash; and there&rsquo;s no contract, so you can change your mind. Home support is &pound;18.25/month per computer by Direct Debit; see the <a href=\"/home-it-support-plans/\">plans</a>."),
     ("Does the app work on a Mac?", "The 365 PC Manager app is for Windows PCs. We still support Macs &mdash; just give us a call on 01202 775566 and we&rsquo;ll help."),
   ],
-  cta_args=("Ready when you are", "Join the 365 Club in about a minute &mdash; free, no card, no catch.",
-            ("Join free", "/portal/"), ("Talk to us first", "/contact/")),
-
-  post=_dash_join(),
 )
 
 def write_family_page():

@@ -6235,7 +6235,9 @@ def repair_town_links():
                       for town, slug, _n, _it in REPAIR_TOWNS)
     items += '\n          <li><a href="/computer-repair-westbourne/">Computer Repair Westbourne</a></li>'
     items += '\n          <li><a href="/computer-repair-kinson/">Computer Repair Kinson</a></li>' 
-    return f'''    <section class="section section--alt" aria-label="Computer repair by town">
+    # 27 Sep 2026: two columns on a phone (one column made these 30 links ~2,500 px tall)
+    return f'''    <section class="section section--alt" id="repair-towns" aria-label="Computer repair by town">
+      <style>@media(max-width:700px){{#repair-towns .areas-grid{{grid-template-columns:repeat(2,minmax(0,1fr));gap:.45rem}} #repair-towns .areas-grid a{{font-size:.9rem}}}}</style>
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>/03 &mdash; COMPUTER REPAIR NEAR YOU</p>
