@@ -31131,7 +31131,7 @@ def write_portal_page():
       } else {
         var mst = d.mmst;
         hh += '<p class="quiet" style="margin:.1rem 0 .35rem">' + (d.mm
-          ? 'On' + (d.mmby ? ' \\u2014 switched on by ' + esc(d.mmby) : '') + '. The app shows its Email move page at its next check-in (within about 15 minutes).'
+          ? 'On' + (d.mmby ? ' \\u2014 switched on by ' + esc(d.mmby) : '') + '. The app shows its Email move page within about a minute while the PC is on (Tools \\u2192 Email move).'
           : 'Off. Switch it on for the \\u00a360 email move: the app then shows an Email move page on this PC \\u2014 run it with the customer, over Splashtop.') + '</p>';
         if (mst && mst.phase) {
           var mtxt = mst.phase === 'export' ? 'Copying off Virgin: ' + mst.done + ' of ' + mst.total + ' messages'

@@ -2904,6 +2904,9 @@ if ($action === 'staffmailmove') {
     if ($found === '' || !isset($db['customers'][$found]['machines'][$pc])) { db_close($lk); fail('unknown_machine'); }
     $mm =& $db['customers'][$found]['machines'][$pc];
     if ($on) $mm['mailmove'] = array('by' => $byEmail, 'ts' => time()); else unset($mm['mailmove']);
+    // ask the app for a check-in now (its minute-poll sees req_check - pcm.php shield), so the page appears or goes within
+    // about a minute instead of at the hourly check-in
+    $mm['req_check'] = time();
     unset($mm);
     db_save($db); db_close($lk);
     out(array('ok' => true, 'on' => $on));

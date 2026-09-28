@@ -270,7 +270,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-09-28"
+      "dateModified": "2026-09-29"
     }
   ]
 }
@@ -707,9 +707,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 28 Sep 2026 &middot; 3a2c532383</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 29 Sep 2026 &middot; 5cc60d2ed4</p><script>
 (function () {
-  var P365BUILD = '3a2c532383';
+  var P365BUILD = '5cc60d2ed4';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -7642,7 +7642,7 @@
       } else {
         var mst = d.mmst;
         hh += '<p class="quiet" style="margin:.1rem 0 .35rem">' + (d.mm
-          ? 'On' + (d.mmby ? ' \u2014 switched on by ' + esc(d.mmby) : '') + '. The app shows its Email move page at its next check-in (within about 15 minutes).'
+          ? 'On' + (d.mmby ? ' \u2014 switched on by ' + esc(d.mmby) : '') + '. The app shows its Email move page within about a minute while the PC is on (Tools \u2192 Email move).'
           : 'Off. Switch it on for the \u00a360 email move: the app then shows an Email move page on this PC \u2014 run it with the customer, over Splashtop.') + '</p>';
         if (mst && mst.phase) {
           var mtxt = mst.phase === 'export' ? 'Copying off Virgin: ' + mst.done + ' of ' + mst.total + ' messages'
