@@ -14,6 +14,8 @@
  *   servicepass-payload.ps1  (the actual Service Pass script, uploaded via SiteGround)
  *
  * On success  -> 200, text/plain, the watermarked PowerShell script (large; the app runs it elevated).
+ *                PC Manager v29+ ({..., ver: 29, st}) gets the code-signed script byte for byte instead, with
+ *                X-365-SelfRun / X-365-Stamp headers, and runs it inside itself only if the signature is 365 Techies Ltd.
  * On refusal  -> 200, text/plain, a short "# not on support" line (NOT the script) so the app
  *                shows the friendly "on support only" message rather than a network error.
  */
@@ -87,6 +89,18 @@ function svc_visit_now($c, $rows, $now) {
 }
 $visitNow = svc_visit_now($c, isset($db['sbv']) ? $db['sbv'] : array(), time());
 
+// 365 PC Manager v29+ runs the service INSIDE itself and only runs a file signed by 365 Techies Ltd, so it gets the signed
+// payload untouched and the launch facts in headers (V29-PLAN.md). It also says when we are connected over Splashtop right
+// now ('st': "sos" = Splashtop SOS open; "streamer" = 365's Streamer reports a viewer connected): owner, 28 Sep 2026 -
+// a service started while we are connected is the technician's service, headed like one, not "SELF-RUN".
+$appVer = isset($in['ver']) ? (int)$in['ver'] : 0;
+$st = (isset($in['st']) && in_array($in['st'], array('sos', 'streamer'), true)) ? $in['st'] : '';
+$technician = $visitNow || $st !== '';
+$how = $visitNow ? 'booked visit' : ($st === 'sos' ? 'technician (Splashtop SOS)' : ($st === 'streamer' ? 'technician (Splashtop)' : 'self-run'));
+$signedPayload = strpos((string)file_get_contents($payload), "\n# SIG # Begin signature block") !== false;
+// a v29 app refuses an unsigned file, so never hand it one (the owner uploads a signed payload: SETUP-PASS.md)
+if ($appVer >= 29 && !$signedPayload) { http_response_code(503); deny('temporarily unavailable'); }
+
 // stamp the run for the owner's admin view, best-effort (never block the service on a write).
 $lk = @fopen($DATA . '.lock', 'c');
 if ($lk) @flock($lk, LOCK_EX);
@@ -95,14 +109,23 @@ $db2 = json_decode($rawDb2, true);
 if (is_array($db2) && isset($db2['customers'][$key]['machines'][$machine])) {
     $db2['customers'][$key]['machines'][$machine]['fullservice'] = gmdate('Y-m-d H:i');
     // consumed by pcm.php reportup: the next service report from this PC is tagged self-run - not during a booked visit
-    if (!$visitNow) $db2['customers'][$key]['machines'][$machine]['selfrun_served'] = time();
+    if (!$technician) $db2['customers'][$key]['machines'][$machine]['selfrun_served'] = time();
     else unset($db2['customers'][$key]['machines'][$machine]['selfrun_served']);
     $tmp = $DATA . '.' . getmypid() . '.tmp';
     if (@file_put_contents($tmp, json_encode($db2, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $DATA);
 }
 if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); }
 
-// serve, watermarked. Strip any UTF-8 BOM (a mid-file BOM breaks PowerShell's parse).
+if ($appVer >= 29) {
+    // byte for byte: the signature covers every byte, BOM included. The app passes these as -SelfRun / -Stamp
+    // (Service Pass v4.25+) after checking the signature.
+    header('X-365-SelfRun: ' . ($technician ? '0' : '1'));
+    header('X-365-Stamp: full service - served ' . gmdate('Y-m-d H:i') . ' UTC - customer ' . $key . ' - machine ' . substr($machine, 0, 8) . ' - ' . $how);
+    readfile($payload);
+    exit;
+}
+
+// PC Manager v28 and older: serve, watermarked. Strip any UTF-8 BOM (a mid-file BOM breaks PowerShell's parse).
 $code = (string)file_get_contents($payload);
 if (substr($code, 0, 3) === "\xEF\xBB\xBF") { $code = substr($code, 3); }
 // v4.25: the payload is code-signed, but this route still edits it (the line below and $inject) for 365 PC Manager
