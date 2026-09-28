@@ -105,6 +105,12 @@ if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); }
 // serve, watermarked. Strip any UTF-8 BOM (a mid-file BOM breaks PowerShell's parse).
 $code = (string)file_get_contents($payload);
 if (substr($code, 0, 3) === "\xEF\xBB\xBF") { $code = substr($code, 3); }
+// v4.25: the payload is code-signed, but this route still edits it (the line below and $inject) for 365 PC Manager
+// v28, which cannot pass -SelfRun/-Stamp yet. A signed script that has been edited looks TAMPERED to antivirus -
+// worse than unsigned - so drop the signature block and serve it plain, exactly as before signing.
+$sig = strpos($code, "\r\n# SIG # Begin signature block");
+if ($sig === false) { $sig = strpos($code, "\n# SIG # Begin signature block"); }
+if ($sig !== false) { $code = substr($code, 0, $sig) . (substr($code, $sig, 2) === "\r\n" ? "\r\n" : "\n"); }
 echo "# 365 Techies full service - served " . gmdate('Y-m-d H:i') . " UTC - customer " . $key . " - machine " . substr($machine, 0, 8) . " - " . ($visitNow ? "booked visit" : "self-run") . "\n";
 // Tell the script it is being run by the customer, not a technician: v3.8+ reads this and
 // declares selfrun in its report summary, so the portal, Slack and the email say so.

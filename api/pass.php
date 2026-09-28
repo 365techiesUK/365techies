@@ -51,10 +51,14 @@ foreach ($used as $k => $v) { if ($v < $cut) unset($used[$k]); }
 if (!isset($used[$key])) { $used[$key] = $nowM; }
 @file_put_contents($usedFile, json_encode($used), LOCK_EX);
 
-// serve, watermarked. Strip any UTF-8 BOM from the payload: prepending the watermark
-// would push the BOM mid-file, which corrupts PowerShell's parse ("Unexpected attribute
-// 'CmdletBinding'") and kills the app instantly.
+// v4.25 (28 Sep 2026): serve the payload EXACTLY as it is on disk. It is code-signed by 365 Techies Ltd, and any
+// change - the watermark line this used to prepend, or stripping the BOM - breaks the signature, so antivirus would
+// see a tampered signed script. The session goes in a header instead, and New-PassToken.ps1 passes it to the script
+// as -Stamp. (Only an UNSIGNED payload still gets the old comment line, BOM stripped first as before: prepending in
+// front of a BOM pushes it mid-file and corrupts PowerShell's parse, "Unexpected attribute 'CmdletBinding'".)
 $code = (string)file_get_contents($payload);
+header('X-365-Session: ' . $key);
+if (strpos($code, "\n# SIG # Begin signature block") !== false) { echo $code; exit; }
 if (substr($code, 0, 3) === "\xEF\xBB\xBF") { $code = substr($code, 3); }
 echo "# 365 Techies Service Pass - served " . gmdate('Y-m-d H:i') . " UTC - session " . $key . "\n";
 echo $code;
