@@ -74,6 +74,8 @@ api/vrm-weather-cache.json.tmp
 api/pass-secret.php
 api/servicepass-payload.ps1
 api/mailmover-payload.ps1
+# the free Virgin email tools' daily rate counter = sha1("pcm-mailmove-rate").json (api/pcm-mailmove-lib.php)
+api/a73630561fad55b14e18294125fc3c07e891854d.json
 api/pass-used.json
 api/pcm-data.json
 api/pcm-admin-secret.php
