@@ -131,6 +131,7 @@ function pcm_news_out($db, $tier) {
 }
 
 require_once __DIR__ . '/pcm-programs-lib.php';   // programs check: the list + the matching (top-level scope on purpose)
+require_once __DIR__ . '/pcm-gate.php';            // 29 Sep 2026: the minute poll answered by .htaccess while nothing waits
 
 $raw = file_get_contents('php://input');
 $in = pcm_json_body($raw);
@@ -160,6 +161,7 @@ $machine = isset($in['machine'])  ? preg_replace('/[^a-f0-9]/','',substr($in['ma
 $db_lock = db_lock($DATA); // held until this request exits; serialises read-modify-write
 $db = load($DATA);
 $now = gmdate('Y-m-d H:i');
+pcm_gate_mark_sb($db, $key);   // an SB key's 67-byte "services" post must keep reaching PHP from this address (pcm-gate.php)
 
 if ($action === 'activate') {
     if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
@@ -677,6 +679,7 @@ if ($action === 'shield') {
     if ($ts > 0 && (time() - $ts) < 900 && !empty($c['shield_code'])) {
         $resp['code'] = (string)$c['shield_code']; $resp['ask'] = $ts;
     }
+    pcm_gate_sync($db);   // nothing left waiting for any PC -> .htaccess answers the next polls itself (pcm-gate.php)
     out($resp);
 }
 
@@ -923,6 +926,7 @@ if ($action === 'runcheck') {
     if (!isset($db['customers'][$key]['machines'][$mid2])) out(array('ok'=>false,'error'=>'unknown_machine'));
     $db['customers'][$key]['machines'][$mid2]['req_check'] = time();
     save($DATA,$db);
+    pcm_gate_sync($db);   // let the minute polls through until the PC has picked it up (pcm-gate.php)
     out(array('ok'=>true));
 }
 

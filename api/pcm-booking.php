@@ -38,6 +38,7 @@ $THROTTLE = __DIR__ . '/pcm-throttle.json';
    and the file then does nothing while reporting success. That exact bug ran in
    pcm-review.php for months. Nothing here is optional; do not move it. */
 require_once __DIR__ . '/pcm-bkpend-lib.php';
+require_once __DIR__ . '/pcm-gate.php';   // 29 Sep 2026: queued work opens the minute-poll gate (see that file)
 // Safe-maintenance allow-list - MUST match pcm.php. Only these fixed ids can be queued; the app
 // maps each to a hard-coded, non-destructive routine and ignores anything else. See pcm.php note.
 $PCM_CMDS = array('flushdns','cleartemp','collectlogs');
@@ -2856,6 +2857,7 @@ if ($action === 'staffcmd') {
     $mm['cmdq'][] = array('id' => $id, 'act' => $act, 'by' => $byEmail, 'ts' => time());
     unset($mm);
     db_save($db); db_close($lk);
+    pcm_gate_sync($db);   // the PC's minute poll must reach PHP to collect it (pcm-gate.php)
     out(array('ok' => true, 'id' => $id));
 }
 
@@ -2909,6 +2911,7 @@ if ($action === 'staffmailmove') {
     $mm['req_check'] = time();
     unset($mm);
     db_save($db); db_close($lk);
+    pcm_gate_sync($db);   // the PC's minute poll must reach PHP to see req_check (pcm-gate.php)
     out(array('ok' => true, 'on' => $on));
 }
 

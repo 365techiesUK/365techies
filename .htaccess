@@ -16,6 +16,29 @@ RewriteCond %{HTTPS} off
 RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
 RewriteRule ^ https://365techies.co.uk%{REQUEST_URI} [L,R=301]
 
+# --- PC Manager's minute poll, answered here without PHP while nothing is waiting (29 Sep 2026) ---
+# Every linked PC posts {"action":"shield"} to /api/pcm.php once a minute: ~80% of the plan's PHP executions (SiteGround
+# allows 4,000 an hour). The app reads 204 as "nothing waiting". Recognised by the app's exact user agent and the exact
+# size of that post: 65 bytes (12-character SB key) or 67 (14-character key). A 12-character key's "services" post is
+# also 67, so 67 from an address api/pcm-gate.php has marked (.pcmgate/sb/<ip>) always goes through. Nothing is
+# answered here while .pcmgate/open exists (a call code, check request or job is waiting) or until PHP has armed the
+# gate (.pcmgate/armed). Switch off: create api/.pcmgate/disarm, or delete api/.pcmgate/armed. See api/pcm-gate.php.
+RewriteCond %{REQUEST_METHOD} =POST
+RewriteCond %{HTTP_USER_AGENT} "=Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+RewriteCond %{HTTP:Content-Length} =65
+RewriteCond %{DOCUMENT_ROOT}/api/.pcmgate/armed -f
+RewriteCond %{DOCUMENT_ROOT}/api/.pcmgate/open !-f
+RewriteRule ^api/pcm\.php$ - [R=204,L]
+RewriteCond %{REQUEST_METHOD} =POST
+RewriteCond %{HTTP_USER_AGENT} "=Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+RewriteCond %{HTTP:Content-Length} =67
+RewriteCond %{DOCUMENT_ROOT}/api/.pcmgate/armed -f
+RewriteCond %{DOCUMENT_ROOT}/api/.pcmgate/open !-f
+RewriteCond %{DOCUMENT_ROOT}/api/.pcmgate/sb/%{REMOTE_ADDR} !-f
+RewriteRule ^api/pcm\.php$ - [R=204,L]
+# the gate's flag files are not for the web (they name customers' addresses)
+RewriteRule ^api/\.pcmgate(/|$) - [F]
+
 # --- Old WordPress AMP URLs (/slug/amp/ or ?amp) -> canonical non-AMP page ---
 # The new static site has no AMP. Strip the AMP path-suffix or query param so old
 # AMP pages still in Google's index resolve to the real page (then through the

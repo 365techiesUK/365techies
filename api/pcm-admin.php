@@ -319,6 +319,8 @@ if (($_POST['do'] ?? '') === 'shield') {
         $db['customers'][$k]['shield_code'] = $code;
         $db['customers'][$k]['shield_ts'] = time();
         save($DATA,$db);
+        require_once __DIR__ . '/pcm-gate.php';
+        pcm_gate_sync($db);   // open the gate so their minute poll reaches PHP and collects the code (pcm-gate.php)
         $msg = "📞 Code {$code} set for {$db['customers'][$k]['name']} — give their app up to a minute to show it (it only appears while their PC is on with the app running). When they answer, SAY CODE {$code} to them FIRST — never ask them to read it to you. Valid 15 min.";
     }
 }
