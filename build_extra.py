@@ -29577,7 +29577,11 @@ def write_portal_page():
     var warmKeys = (site === 'all' || site === 't365') ? NXL_WARM : null;
     var known = s.known || 0;
     h += '<div class="nx-lvstg">'
-      + '<div><h3>Towns <span>rough, from the internet provider</span></h3>' + nxlTop(s.places, s.visitors, function (it) { return esc(it.k.replace(/, GB$/, '')) + (it.local ? '<i class="nx-lvtag nx-lvtag--local">Local</i>' : /, [A-Z]{2}$/.test(it.k) ? '<i class="nx-lvtag" style="border:1px solid #2a3a5e;color:#9fb5d3">' + esc(it.k.slice(-2)) + '</i>' : ''); }) + '</div>'
+      + '<div><h3>Towns <span>rough, from the internet provider</span></h3>' + nxlTop(s.places, s.visitors, function (it) {
+          // "London" plain (the UK is the default), "St. Louis" with a US chip, Dorset & around with Local
+          var abroad = /, [A-Z]{2}$/.test(it.k) && !/, GB$/.test(it.k);
+          return esc(it.k.replace(/, [A-Z]{2}$/, '')) + (it.local ? '<i class="nx-lvtag nx-lvtag--local">Local</i>' : abroad ? '<i class="nx-lvtag" style="border:1px solid #2a3a5e;color:#9fb5d3">' + esc(it.k.slice(-2)) + '</i>' : '');
+        }) + '</div>'
       + '<div><h3>Pages <span>each visitor once</span></h3>' + nxlTop(s.pages, s.visitors, pageName, warmKeys) + '</div>'
       + '<div><h3>Systems <span>' + (known && s.visitors ? 'known for ' + nxlPct(known, s.visitors) : 'from Chrome and Edge: Windows 10 or 11') + '</span></h3>'
       + (s.dv && s.dv.length ? '<div class="nx-lvbar">' + s.dv.map(function (it) { return '<span style="flex-grow:' + it.n + ';background:' + (NXL_DEV[it.k] ? NXL_DEV[it.k][1] : '#5b6c8f') + '"></span>'; }).join('') + '</div>'
