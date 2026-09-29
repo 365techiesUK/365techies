@@ -707,9 +707,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 29 Sep 2026 &middot; 5cc60d2ed4</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 29 Sep 2026 &middot; 5fb1ecbcd4</p><script>
 (function () {
-  var P365BUILD = '5cc60d2ed4';
+  var P365BUILD = '5fb1ecbcd4';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -2308,6 +2308,12 @@
         if (!sosFirst) setTimeout(function () { var hh = document.getElementById('sosH'); if (hh) try { hh.focus(); } catch (e) {} }, 120);
         sosFirst = false;
       }
+      function sApple() {   // owner 29 Sep 2026: no Apple support, so no call to make either
+        show('<div class="sos__step"><span class="sos__big" aria-hidden="true">\ud83d\udcbb</span>'
+          + '<h3 class="sos__h" id="sosH" tabindex="-1">We don\u2019t support Apple devices</h3>'
+          + '<p class="sos__p">Our remote support is for <b>Windows computers and laptops</b>, so we can\u2019t help on an Apple Mac, iPhone or iPad.</p>'
+          + '<p class="sos__p" style="font-size:.95rem">Is the problem on your <b>Windows PC</b>? Open this on that one instead.</p></div>');
+      }
       function s0() {   // first: the phone. Every session starts as a conversation.
         show(dots(0, 4)
           + '<div class="sos__step"><span class="sos__big ring" aria-hidden="true">\ud83d\udcde</span>'
@@ -2420,7 +2426,7 @@
           });
         };
       }
-      s0();
+      if ((plat === 'mac' && !SOS_MAC) || (plat === 'ios' && !SOS_MOBILE)) sApple(); else s0();
     });
   }
 

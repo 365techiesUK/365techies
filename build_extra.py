@@ -16783,7 +16783,7 @@ info_page(
   chips=["Family-run since 1995","Friendly &amp; patient","Local to Dorset"],
   inner="""          <h2>A small family team, since 1995</h2>
           <p>365 Techies has been a family-run business since 1995. There is no call centre and no script: when you ring <a href="tel:+441202775566">01202 775566</a> you reach one of the same few people who looked after you last time, who knows how your computer is set up and what you use it for. Many of our customers have been with us for fifteen or twenty years, and some since the dial-up days.</p>
-          <p>We look after homes, families, retired and disabled people, sole traders and small businesses across Dorset, and remotely across the UK and Europe. Windows PCs and Android are what we specialise in. The one exception is anything that lives on an account rather than a device, such as a locked Microsoft 365 account, which we sort out from our end whatever you own.</p>
+          <p>We look after homes, families, retired and disabled people, sole traders and small businesses across Dorset, and remotely across the UK and Europe. Windows PCs and Android are what we specialise in; we don&rsquo;t support Apple Macs, iPads or iPhones.</p>
           <h2>What you can expect from us</h2>
           <p>Plain English, patience, and no such thing as a silly question. We explain what is wrong and what we are going to do about it before we do it. Before any remote session or a full service we ring you first, so you are never surprised by someone connecting to your computer; if we are coming out to you, we ring on the way with a time. If your backup is due, we can remind you by text to plug the drive in.</p>
           <p>Every monthly plan includes a full service every six weeks, done remotely, which is how we come to know each customer&rsquo;s setup so well: we see the same computers every six weeks, year after year, and we notice when something is not right before you do.</p>
@@ -16795,7 +16795,7 @@ info_page(
     ("Will I speak to the same person each time?","Yes. We are a small family team, so you deal with the same few people year after year, and we remember how you like your computer set up."),
     ("Is there a call centre?","No. You ring 01202 775566 and reach us directly, Monday to Friday, 9am to 5pm. Outside those hours, email help@365techies.co.uk and we reply when we open."),
     ("Can I meet you in person?","Yes, by appointment at the Kinson Community Centre, or we come to you. We are not a walk-in shop, so please ring first rather than turning up: we are often out with customers."),
-    ("Do you support Apple Macs, iPads and iPhones?","Our remote support covers Windows PCs, and we specialise in Windows and Android. Anything that lives on an account rather than a device, such as a locked Microsoft 365 account, we handle from our end whatever you own."),
+    ("Do you support Apple Macs, iPads and iPhones?","No. Our remote support covers Windows PCs, and we specialise in Windows and Android. We don&rsquo;t support Apple Macs, iPads or iPhones."),
   ],
   cta_args=("Talk to a real techie", "Friendly, expert help from a team that&rsquo;s been here since 1995.",
             ("Contact Us", "/contact/"), ("Why Choose Us", "/why-choose-365-techies/")),
@@ -16966,7 +16966,7 @@ info_page(
           <p>Home users and businesses alike &mdash; whether you&rsquo;re worried about security, frustrated by slow tech, or just want peace of mind.</p>""",
   faqs=[
     ("Is it really free?","Yes, with no obligation. If you want us to fix something we find, we quote it first; the check itself costs nothing."),
-    ("Does it work on a Mac?","The remote check covers Windows PCs. On a Mac, iPad or iPhone we can still review the account side: email, Microsoft 365 and any backup that lives in the cloud."),
+    ("Does it work on a Mac?","No. The remote check is for Windows PCs, and we don&rsquo;t support Apple Macs, iPads or iPhones."),
     ("Will you try to sell me a plan?","We will tell you what a plan would cover if it fits what we found, and leave it there. The report is yours either way."),
     ("What do I need ready?","The computer switched on and online, and yourself at the keyboard. We ring before we connect, so you will never find us on your computer unannounced."),
   ],
@@ -18016,7 +18016,7 @@ def sos_page():
         <p class="mono" id="sos-dl-status" style="color:var(--muted);font-size:0.8rem" aria-live="polite">// FOR WINDOWS COMPUTERS &amp; LAPTOPS &middot; ABOUT 20&nbsp;MB</p>
         <p class="lede lede--center" style="{steps_css};margin:1rem auto 0" id="sos-dl-lede">Press the big green button. A small program downloads &mdash; it doesn&rsquo;t install anything permanent on your computer.</p>
         <p style="color:var(--muted);margin-top:1.4rem;font-size:0.95rem" data-reveal id="sos-dl-others">Not the right one for your device? Pick yours:
-          <a href="{SOS_DL_WIN}">Windows</a>{(' &middot; <a href="' + SOS_DL_MAC + '">Mac</a>') if SOS_MAC else ''}{(' &middot; <a href="' + SOS_DL_ANDROID + '" target="_blank" rel="noopener">Android</a> &middot; <a href="' + SOS_DL_IOS + '" target="_blank" rel="noopener">iPhone &amp; iPad</a>') if SOS_MOBILE else ''}{'' if (SOS_MAC and SOS_MOBILE) else (' &middot; <strong>' + ('phone or tablet' if SOS_MAC else ('Mac' if SOS_MOBILE else 'Mac, phone or tablet')) + '?</strong> <a href="tel:+441202775566">Ring us</a> and we&rsquo;ll help by phone')}</p>
+          <a href="{SOS_DL_WIN}">Windows</a>{(' &middot; <a href="' + SOS_DL_MAC + '">Mac</a>') if SOS_MAC else ''}{(' &middot; <a href="' + SOS_DL_ANDROID + '" target="_blank" rel="noopener">Android</a> &middot; <a href="' + SOS_DL_IOS + '" target="_blank" rel="noopener">iPhone &amp; iPad</a>') if SOS_MOBILE else ''}{'' if SOS_MOBILE else ' &middot; <strong>Android phone or tablet?</strong> <a href="tel:+441202775566">Ring us</a> and we&rsquo;ll help by phone.'}{'' if SOS_MAC else ' We don&rsquo;t support Apple Macs, iPhones or iPads.'}</p>
       </div>
     </section>''',
       f'''    <section class="section" aria-label="Step 2 — open it">
@@ -18038,6 +18038,10 @@ def sos_page():
         <div class="prose sos-os" data-os="ios" hidden style="text-align:left;max-width:640px;margin:0 auto;{steps_css}">
           <p>When it&rsquo;s installed, tap <strong>Open</strong>. The app shows your number straight away.</p>
           <p>After you&rsquo;ve read us the number, tap <strong>Start Broadcast</strong> and we can see your screen. <strong>On iPhone and iPad we can see, but not touch</strong> &mdash; Apple doesn&rsquo;t allow anyone to take control &mdash; so we&rsquo;ll guide you through each tap. It works well.</p>
+        </div>
+        <div class="prose sos-os" data-os="apple" hidden style="text-align:left;max-width:640px;margin:0 auto;{steps_css}">
+          <p><strong>We don&rsquo;t support Apple Macs, iPhones or iPads.</strong> Our remote support is for Windows computers and laptops. On an Apple device, <a href="https://support.apple.com/en-gb" rel="noopener" target="_blank">Apple&rsquo;s own support</a> is the place to start.</p>
+          <p>If the problem is actually on your <strong>Windows computer</strong>, open this page on that one instead and the download will be waiting.</p>
         </div>
         <div class="prose sos-os" data-os="phone" hidden style="text-align:left;max-width:640px;margin:0 auto;{steps_css}">
           <p><strong>Nothing to download on this device.</strong> Just ring us on <a href="tel:+441202775566">01202 775566</a> and we&rsquo;ll sort it together, step by step, at your pace.</p>
@@ -18078,7 +18082,7 @@ def sos_page():
             if (SOS_MAC and SOS_MOBILE) else
             "Windows computers and Apple Macs &mdash; we can see the screen and take control with your permission. <strong>Phones and tablets</strong> we help by phone: ring us and we&rsquo;ll talk you through it step by step."
             if SOS_MAC else
-            "Windows computers and laptops &mdash; we can see the screen and take control with your permission. <strong>Macs, phones and tablets</strong> we help by phone: ring us and we&rsquo;ll talk you through it step by step."
+            "Windows computers and laptops &mdash; we can see the screen and take control with your permission. <strong>Android phones and tablets</strong> we help by phone: ring us and we&rsquo;ll talk you through it step by step. We don&rsquo;t support Apple Macs, iPhones or iPads."
           ) + '''</p></div>
         </div>
       </div>
@@ -18111,8 +18115,8 @@ def sos_page():
         if (/Android/i.test(ua)) os = "android";
         else if (/iPhone|iPad|iPod/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) os = "ios";
         else if (/Macintosh/.test(ua)) os = "mac";
-        if (!MOBILE && (os === "android" || os === "ios")) os = "phone";
-        if (!MAC && os === "mac") os = "phone";
+        if (!MOBILE && os === "android") os = "phone";
+        if ((!MOBILE && os === "ios") || (!MAC && os === "mac")) os = "apple";   /* owner 29 Sep 2026: no Apple support */
         var a = document.getElementById("sos-dl");
         var st = document.getElementById("sos-dl-status");
         var lede = document.getElementById("sos-dl-lede");
@@ -18123,10 +18127,12 @@ def sos_page():
           mac:     ["\\u2b07\\ufe0f Download the Support Tool for Mac", "// FOR APPLE MACS \\u00b7 ABOUT 30\\u00a0MB", "Press the big green button. A small program downloads \\u2014 it doesn\\u2019t install anything permanent on your Mac."],
           android: ["\\u25b6 Get the app on Google Play", "// FOR ANDROID PHONES & TABLETS \\u00b7 FREE OFFICIAL APP", "Tap the big green button \\u2014 it opens the Splashtop SOS app on Google Play. Install it like any other app."],
           ios:     ["\\u25b6 Get the app on the App Store", "// FOR IPHONES & IPADS \\u00b7 FREE OFFICIAL APP", "Tap the big green button \\u2014 it opens the Splashtop SOS app on the App Store. Install it like any other app."],
+          apple:   ["", "// APPLE MAC, IPHONE OR IPAD \\u00b7 NOT SUPPORTED", "Our remote support is for Windows computers and laptops, so we can\\u2019t help on an Apple Mac, iPhone or iPad. If the problem is on your Windows PC, open this page on that one and the download will be waiting."],
           phone:   ["\\ud83d\\udcde Ring us \\u2014 01202 775566", "// ON THIS DEVICE WE HELP YOU BY PHONE \\u00b7 NOTHING TO DOWNLOAD", "We can\\u2019t connect to this device remotely yet, so there\\u2019s nothing to download here \\u2014 but we can still help. Press the big green button to ring us and we\\u2019ll talk you through it, step by step."]
         }[os];
         if (os === "phone") url = "tel:+441202775566";
         a.href = url; a.textContent = L[0];
+        if (os === "apple") a.style.display = "none";
         if (os === "android" || os === "ios") { a.target = "_blank"; a.rel = "noopener"; }
         if (st) st.textContent = L[1];
         if (lede) lede.textContent = L[2];
@@ -18147,6 +18153,11 @@ def sos_page():
       cta("Rather we just talked you through it?", "That&rsquo;s what we&rsquo;re here for. Ring us and we&rsquo;ll do every step together, at your pace.",
           primary=("Call 01202 775566", "tel:+441202775566"), secondary=("Text us: 07520 615332", "sms:+447520615332")),
     ])
+    # owner 29 Sep 2026, no Apple support: while a gate is off, its device's steps stay out of the page, not just hidden
+    if not SOS_MAC:
+        content = re.sub(r'\s*<div class="prose sos-os" data-os="mac" hidden.*?</div>', '', content, count=1, flags=re.S)
+    if not SOS_MOBILE:
+        content = re.sub(r'\s*<div class="prose sos-os" data-os="ios" hidden.*?</div>', '', content, count=1, flags=re.S)
     def schema(s, _d=desc):
         return graph([crumb(s, "SOS Remote Support"), webpage(s, "SOS Remote Support", _d)])
     add(slug=slug, title="SOS Remote Support — Get Connected | 365 Techies",
@@ -24084,7 +24095,7 @@ info_page(
   # "is it really free" prose (FAQ 1), the dashboard band and the closing CTA repeated them
   pre=_join_how + _join_compare + _join_referred,
   inner="""          <h2>A plain, honest word on what&rsquo;s free</h2>
-          <p>The free 365 PC Manager app <strong>watches and reports</strong> on your PC&rsquo;s health &mdash; it doesn&rsquo;t secretly fix things or remove viruses on its own. The actual servicing, tune-ups and unlimited remote help come with a <a href="/monthly-it-support/">support plan</a>. The app is for Windows PCs; if you&rsquo;re on a Mac we&rsquo;re still happy to help &mdash; just give us a ring. And the instant browser check-up on your dashboard only reads what a web browser can see &mdash; the app sees the fuller picture.</p>
+          <p>The free 365 PC Manager app <strong>watches and reports</strong> on your PC&rsquo;s health &mdash; it doesn&rsquo;t secretly fix things or remove viruses on its own. The actual servicing, tune-ups and unlimited remote help come with a <a href="/monthly-it-support/">support plan</a>. The app is for Windows PCs, and so is our support: we don&rsquo;t support Apple Macs. And the instant browser check-up on your dashboard only reads what a web browser can see &mdash; the app sees the fuller picture.</p>
           <h2>Already a support customer?</h2>
           <p>Then you already have all of this &mdash; just <a href="/portal/">sign in</a> with a code to reach your portal and manage your bookings.</p>
           <p>While you&rsquo;re in, you can build your own dashboard in the portal&rsquo;s dashboard studio &mdash; see the demos for <a href="/next-gen-home-dashboards/">homes</a> and <a href="/custom-wifi-dashboards/">businesses</a>. Rather talk first? <a href="/contact/">Get in touch</a> or call <a href="tel:+441202775566">01202 775566</a>.</p>""",
@@ -24094,7 +24105,7 @@ info_page(
     ("How do I sign in &mdash; do I need a password?", "No passwords. You type in your name and email, we email you a 6-digit code from info@365techies.co.uk, and you type that in. This computer then stays signed in, so it&rsquo;s a one-off. Once we have your mobile, you can choose a text instead."),
     ("Is my information safe?", "Yes. We never sell your data, and joining needs nothing more than your name and email &mdash; plus a phone number if you&rsquo;re new, so we can ring you before we ever connect. See our <a href=\"/privacy-policy/\">privacy policy</a> for the detail."),
     ("Can I upgrade to a support plan later?", "Any time &mdash; and there&rsquo;s no contract, so you can change your mind. Home support is &pound;18.25/month per computer by Direct Debit; see the <a href=\"/home-it-support-plans/\">plans</a>."),
-    ("Does the app work on a Mac?", "The 365 PC Manager app is for Windows PCs. We still support Macs &mdash; just give us a call on 01202 775566 and we&rsquo;ll help."),
+    ("Does the app work on a Mac?", "No. The 365 PC Manager app is for Windows PCs, and so is our support: we don&rsquo;t support Apple Macs, iPads or iPhones."),
   ],
 )
 
@@ -25866,6 +25877,12 @@ def write_portal_page():
         if (!sosFirst) setTimeout(function () { var hh = document.getElementById('sosH'); if (hh) try { hh.focus(); } catch (e) {} }, 120);
         sosFirst = false;
       }
+      function sApple() {   // owner 29 Sep 2026: no Apple support, so no call to make either
+        show('<div class="sos__step"><span class="sos__big" aria-hidden="true">\\ud83d\\udcbb</span>'
+          + '<h3 class="sos__h" id="sosH" tabindex="-1">We don\\u2019t support Apple devices</h3>'
+          + '<p class="sos__p">Our remote support is for <b>Windows computers and laptops</b>, so we can\\u2019t help on an Apple Mac, iPhone or iPad.</p>'
+          + '<p class="sos__p" style="font-size:.95rem">Is the problem on your <b>Windows PC</b>? Open this on that one instead.</p></div>');
+      }
       function s0() {   // first: the phone. Every session starts as a conversation.
         show(dots(0, 4)
           + '<div class="sos__step"><span class="sos__big ring" aria-hidden="true">\\ud83d\\udcde</span>'
@@ -25978,7 +25995,7 @@ def write_portal_page():
           });
         };
       }
-      s0();
+      if ((plat === 'mac' && !SOS_MAC) || (plat === 'ios' && !SOS_MOBILE)) sApple(); else s0();
     });
   }
 

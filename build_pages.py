@@ -1413,17 +1413,19 @@ WORLDWIDE_AREA = [{"@type": "Country", "name": "United Kingdom"}, {"@type": "Pla
 # ---- "Windows PCs only" notice for the Outlook pages (owner, 12 Sep 2026). Two truths, kept apart on purpose:
 # Apple forbids third-party remote CONTROL of an iPad or iPhone (a real Apple restriction, see the device matrix
 # in memory), while a Mac is simply outside our remote-support cover. Never claim Apple blocks Mac support.
+# Owner, 29 Sep 2026: no exceptions for Apple devices, not even account-side jobs ("whatever job we do, we'll have
+# to remote connect at some point and we can't with Mac"), so the boxes no longer offer any.
 _APPLE_HELP_OUTLOOK = '<a href="https://support.microsoft.com/en-gb/outlook" rel="noopener" target="_blank">Microsoft&rsquo;s own Outlook help</a>'
 _APPLE_HELP_MAIL = '<a href="https://support.apple.com/mail" rel="noopener" target="_blank">Apple&rsquo;s own Mail help</a>'
 _APPLE_HELP_ONEDRIVE = '<a href="https://support.microsoft.com/en-gb/onedrive" rel="noopener" target="_blank">Microsoft&rsquo;s own OneDrive help</a>'
 _APPLE_NOTICE_PC = ('<div class="callout callout--info" id="apple-note" style="padding:1.05rem 1.3rem">'
     '<p class="eyebrow mono" style="margin:0 0 .35rem">// WINDOWS PCS ONLY</p>'
     '<p style="margin:0;font-size:.98rem"><strong>We do not support {what} on Apple Macs, iPads or iPhones.</strong> Apple does not allow our remote-support tool to take control of an iPad or iPhone (an Apple restriction), and our remote support covers Windows PCs only. On an Apple device, {help} is the place to start. '
-    'One exception: anything that lives on the account rather than the device, such as recovering a locked account or setting up Microsoft 365, we do from our end whatever you own. <a href="tel:+441202775566">Ring 01202 775566</a>.</p></div>')
+    '</p></div>')
 _APPLE_NOTICE_PHONE = ('<div class="callout callout--info" id="apple-note" style="padding:1.05rem 1.3rem">'
     '<p class="eyebrow mono" style="margin:0 0 .35rem">// ANDROID AND WINDOWS, NOT APPLE</p>'
     '<p style="margin:0;font-size:.98rem"><strong>We do not support {what} on iPhones or iPads.</strong> Apple does not allow our remote-support tool to take control of them (an Apple restriction), so we cannot fix it for you from here. On an iPhone or iPad, {help} is the place to start. '
-    'One exception: anything that lives on the account rather than the phone, such as recovering a locked account or setting up Microsoft 365, we do from our end whatever you own. <a href="tel:+441202775566">Ring 01202 775566</a>.</p></div>')
+    '</p></div>')
 # email pages that are not device support: courses, tools, the scam funnel, a SimplyBook how-to, the migration service
 # and two admin/legal explainers. Owner asked for "the email pages" on 12 Sep 2026; these were left out and reported.
 _APPLE_NOTICE_SKIP = {'email-basics-course', 'email-security-checker', 'email-signature-generator',
