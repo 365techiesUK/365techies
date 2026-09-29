@@ -35,7 +35,7 @@ VM_US_TICKS = ("Every message and folder into Gmail, with the original dates",
                "A full service of your PC, with a written health report",
                "Forwarding set up, and checked on your phone if you like",
                "Done remotely: we phone first, and you watch us start")
-VM_US_SMALL = "Agreed before we start &middot; no fix, no fee &middot; we can usually start the same day, Mon&ndash;Fri 9&ndash;5"
+VM_US_SMALL = "For Windows PCs &middot; agreed before we start &middot; no fix, no fee &middot; we can usually start the same day, Mon&ndash;Fri 9&ndash;5"
 
 _VMC_CSS = """
 .vmc{padding:1.3rem var(--pad-x) 2.4rem}
@@ -122,7 +122,7 @@ def virgin_choices(setup_url, also_html="", how_href="/" + VIRGIN_TOOL_SLUG + "/
           <{h} class="vmc__h">Do it yourself, free, with 365&nbsp;PC&nbsp;Manager</{h}>
           <p class="vmc__d">Our free app moves your Virgin email into Gmail for you, no Virgin app password needed.</p>
           <p class="vmc__cta"><a class="button primary button--lg" href="{setup_url}" download data-vmc-dl><span class="vmc__dl-l">Download free for Windows</span><span class="vmc__dl-s">Download free</span> &#8595;</a></p>
-          <p class="vmc__note">For Windows PCs. You&rsquo;ll need a Gmail account and a <a href="/{GAPP_SLUG}/">Google app password</a>. On a Mac? <a href="tel:+441202775566">Call us</a>.</p>
+          <p class="vmc__note">For Windows PCs. You&rsquo;ll need a Gmail account and a <a href="/{GAPP_SLUG}/">Google app password</a>. Not for Macs.</p>
           <ul class="vmc__list">
             <li><b>Check my Virgin email:</b> every folder, how many emails, how big, and how many days the move will take. It only reads.</li>
             <li><b>Move it to Gmail myself:</b> folders and dates kept. Gmail takes about 500&nbsp;MB a day, so a big mailbox takes a few days &mdash; it carries on by itself.</li>
@@ -262,8 +262,9 @@ TOOL_FAQS = [
      "No, it moves your email and folders. If you keep contacts in Virgin&rsquo;s webmail and want them in Gmail too, ring "
      "us and we will help you bring them across."),
     ("Does it work on a Mac, iPad or phone?",
-     "No. 365 PC Manager is a Windows app, for Windows 10 and 11 desktops and laptops. On a Mac, or with only a phone or "
-     "tablet, ring us on 01202 775566: the move itself happens between the two email accounts, so we can do it for you."),
+     "No. 365 PC Manager is a Windows app, for Windows 10 and 11 desktops and laptops. Our &pound;60 move is done by "
+     "connecting to your PC, and our remote support covers Windows PCs only, so we can&rsquo;t do it on a Mac, iPad or "
+     "phone either."),
     ("A new Chrome window says &lsquo;Sign in to Chrome&rsquo;. Should I?",
      "No need: just ignore it. The app opens its own separate browser window for the Virgin sign-in, so it never touches "
      "your normal browser or its saved passwords, and it tidies that window away afterwards."),
@@ -373,7 +374,7 @@ def virgin_tool_page(setup_url):
           <p>Don&rsquo;t have a Gmail account yet? Make one free with Google first, and use a password you don&rsquo;t use anywhere else. Want to keep your Virgin address instead? That means signing up with Junara: <a href="{JUNARA}#s3">what it costs</a>.</p>
         </div>
         <ul class="checklist" data-stagger>
-          <li><strong>A Windows 10 or 11 PC</strong>, desktop or laptop. On a Mac? <a href="tel:+441202775566">Call us</a>.</li>
+          <li><strong>A Windows 10 or 11 PC</strong>, desktop or laptop. It doesn&rsquo;t run on a Mac.</li>
           <li><strong>Google Chrome or Microsoft Edge</strong> on it. Edge comes with Windows, so you almost certainly have it.</li>
           <li><strong>Your Virgin email address and its normal password</strong>, the one you use for Virgin webmail. Not an app password.</li>
           <li><strong>A Gmail account with 2-Step Verification on</strong>, and a <a href="/{GAPP_SLUG}/">Google app password</a> for it.</li>
@@ -423,7 +424,7 @@ def virgin_tool_page(setup_url):
         <div class="prose" data-reveal style="max-width:760px;margin:0 auto">
           <p>Anyone with a <strong>virginmedia.com, blueyonder.co.uk, ntlworld.com or virgin.net</strong> address who wants their email in Gmail. Virgin is handing all four to a company called Junara: to keep the address you sign up with Junara and pay for each mailbox after any free period, or you move it once, to an address that stays yours whoever supplies your broadband. <a href="{JUNARA}">What is happening, and your deadline</a>.</p>
           <p>It works <strong>without a Virgin app password</strong>, so it suits the many people who can&rsquo;t get one since the Virgin Media O2 ID change &mdash; most often for a second mailbox on the account.</p>
-          <p>It is for <strong>Windows PCs only</strong>. On a Mac, or with only a phone or tablet, <a href="tel:+441202775566">ring us</a>. If your Virgin mailbox is already suspended, ring us before you start. Plusnet address? That is a different move: <a href="/move-plusnet-email-to-gmail/">Plusnet email to Gmail</a>.</p>
+          <p>It is for <strong>Windows PCs only</strong>, and so is our remote support: we don&rsquo;t support Macs, iPads or iPhones. If your Virgin mailbox is already suspended, ring us before you start. Plusnet address? That is a different move: <a href="/move-plusnet-email-to-gmail/">Plusnet email to Gmail</a>.</p>
         </div>
       </div>
     </section>'''
