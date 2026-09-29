@@ -704,6 +704,7 @@ CUST_OFFERS = {
         '<p class="vm-alt__h">Virgin Media, blueyonder, ntlworld, virgin.net</p>',
         '<p>Moving to Junara. Free for a year if you still have Virgin broadband, TV or a landline, then paid per mailbox; paid from the start if you have left Virgin.</p>',
         '<p><a class="dh-link" href="/virgin-media-email-moving-to-junara/">Keep it or move it? &#8594;</a></p>',
+        '<p><a class="dh-link" href="/virgin-email-mover/">Or move it to Gmail yourself, free, with our app &#8594;</a></p>',
         '<p class="vm-alt__h">Plusnet (plus.com, plus.net)</p>',
         '<p>Moving to a company called Greenby, in stages, so your date depends on when your mailbox is moved.</p>',
         '<p><a class="dh-link" href="/move-plusnet-email-to-gmail/">Move Plusnet email to Gmail &#8594;</a></p>'],

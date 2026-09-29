@@ -141,6 +141,9 @@ SPECIALIST = [
      ("/virgin-media-email-wont-add-to-new-outlook/", "Virgin Media email won&rsquo;t add to the new Outlook"),
      ("/move-virgin-media-email-to-gmail/", "Moving your Virgin Media email to Gmail"),
      ("/virgin-media-email-moving-to-junara/", "Virgin Media email is moving to Junara: keep it or move it?"),
+     ("/virgin-email-mover/", "Move Virgin Media email to Gmail free, with our app"),
+     ("/how-to-make-a-google-app-password/", "Making a Google app password"),
+     ("/change-your-email-address-everywhere/", "Changed your email address? Update it everywhere"),
      ("/move-plusnet-email-to-gmail/", "Plusnet email is closing: moving it to Gmail"),
      ("/business-email-down-domain-expired/", "Business email stopped because the domain expired"),
      ("/transfer-microsoft-365-when-owner-leaves/", "Transferring Microsoft 365 when the owner leaves"),
@@ -476,9 +479,34 @@ if not PCM_DOWNLOAD_URL or not _os_pcm.path.exists(_pcm_exe):
         "    Build it with 365-pc-manager/installer/build-installer.ps1 -Sign ***\n" % (PCM_DOWNLOAD_URL or "(nothing)"))
 PCM_FILESIZE = "%.1fMB" % (_os_pcm.path.getsize(_pcm_exe) / 1048576.0)
 PCM_LIVE = bp.PCM_LIVE and bool(PCM_DOWNLOAD_URL)   # the switch lives in build_pages.PCM_LIVE (one truth for cards + page); the URL must also be set. Everything "coming soon"/waitlist on this page keys off this.
+# 29 Sep 2026 (launch branch virgin-launch): the free Virgin email tools ship in 365 PC Manager v30. Every Virgin page's
+# download button (virgin_launch.py) uses THIS one link, so launch day changes it here and nowhere else. It does not
+# follow version.json on purpose: the installer version.json names today does not have the Virgin tools.
+PCM_SETUP_V30 = "/downloads/pcm/365-pc-manager-setup-v30.exe"
+if not _os_pcm.path.exists(_os_pcm.path.join(_pcm_dir, PCM_SETUP_V30.rsplit("/", 1)[-1])):
+    print("  NOTE: %s is not in downloads/pcm/ yet: the Virgin pages' download button 404s until it is." % PCM_SETUP_V30)
 
 _PCM_V28_CSS = '.pcm-new{display:inline-flex;align-items:center;gap:.6rem;margin:0 0 .85rem;padding:.3rem .85rem .3rem .32rem;border-radius:999px;border:1px solid rgba(0,206,27,.38);background:rgba(0,206,27,.07);color:var(--ink);font-size:.86rem;font-weight:600;line-height:1.3;text-decoration:none;max-width:100%;transition:border-color .2s,background .2s} .pcm-new b{flex:0 0 auto;padding:.16rem .55rem;border-radius:999px;background:#00ce1b;color:#04130a;font:700 .68rem var(--font-mono);letter-spacing:.08em} .pcm-new span{min-width:0} .pcm-new__s{display:none} @media(max-width:600px){.pcm-new__l{display:none}.pcm-new__s{display:inline}} .pcm-new i{font-style:normal;color:#00ce1b;transition:transform .2s} .pcm-new:hover{border-color:rgba(0,206,27,.7);background:rgba(0,206,27,.12)} .pcm-new:hover i{transform:translateX(3px)} .pcm-new:focus-visible{outline:2px solid #00ce1b;outline-offset:3px} .pnew{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.1rem;max-width:1120px;margin:1.8rem auto 0} .pnew__card{display:flex;flex-direction:column;border-radius:16px;overflow:hidden;background:var(--glass);border:1px solid var(--line);transition:border-color .3s,transform .3s} .pnew__card:hover{border-color:rgba(0,206,27,.4);transform:translateY(-4px)} .pnew__shot{position:relative;background:#0b1226;border-bottom:1px solid var(--line);aspect-ratio:684/345;overflow:hidden} .pnew__shot img{display:block;width:100%;height:100%;object-fit:cover;object-position:top left} .pnew__shot::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34%;background:linear-gradient(rgba(11,18,38,0),rgba(11,18,38,.6));pointer-events:none} .pnew__txt{padding:1.05rem 1.2rem 1.25rem} .pnew__tag{display:inline-block;margin-bottom:.45rem;padding:.12rem .5rem;border-radius:999px;border:1px solid rgba(0,206,27,.45);color:#00ce1b;font:700 .66rem var(--font-mono);letter-spacing:.09em} .pnew__tag--up{border-color:rgba(92,184,240,.55);color:#5cb8f0} .pnew__txt h3{font-family:var(--font-display);font-size:1.15rem;margin:0 0 .4rem;color:var(--ink)} .pnew__txt p{margin:0;color:var(--muted);font-size:.95rem;line-height:1.55} .pnew__foot{text-align:center;color:var(--faint);font-size:.72rem;margin:1rem 0 0} .pnew__card--wide{grid-column:1/-1;flex-direction:row;align-items:stretch} .pnew__card--wide .pnew__shot{flex:0 0 50%;border-bottom:0;border-right:1px solid var(--line)} .pnew__card--wide .pnew__txt{display:flex;flex-direction:column;justify-content:center;padding:1.3rem 1.6rem} .pnew__card--wide .pnew__tag{align-self:flex-start} .pnew__card--wide .pnew__txt h3{font-size:1.4rem} .pnew__card--wide .pnew__txt p{font-size:1rem} @media(max-width:600px){.pnew__card--wide .pnew__shot{flex-basis:38%}.pnew__card--wide .pnew__txt{padding:.75rem .85rem .85rem}.pnew__card--wide .pnew__txt h3{font-size:1rem}.pnew__card--wide .pnew__txt p{font-size:.86rem}} .pkeep{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;max-width:1000px;margin:1.8rem auto 0} .pkeep__col{border-radius:16px;padding:1.3rem 1.4rem 1.4rem;border:1px solid var(--line);background:var(--glass)} .pkeep__col--keep{border-color:rgba(0,206,27,.45);background:linear-gradient(160deg,rgba(0,206,27,.1),rgba(0,206,27,.02) 60%),var(--glass);box-shadow:0 24px 60px rgba(0,0,0,.35)} .pkeep__h{margin:0 0 .8rem;font-size:.74rem;letter-spacing:.08em;color:var(--faint)} .pkeep__col--keep .pkeep__h{color:#00ce1b} .pkeep ul{list-style:none;margin:0;padding:0;display:grid;gap:.7rem} .pkeep li{position:relative;padding-left:1.7rem;color:var(--muted);font-size:.98rem;line-height:1.5} .pkeep__col--keep li{color:var(--ink)} .pkeep li::before{position:absolute;left:0;top:.02rem;width:1.15rem;height:1.15rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700} .pkeep__col--wait li::before{content:"\\2715";color:#e8637e;background:rgba(232,99,126,.12)} .pkeep__col--keep li::before{content:"\\2713";color:#04130a;background:#00ce1b} .pkeep__price{text-align:center;margin:1.5rem 0 0;color:var(--muted)} .pkeep__price b{color:var(--ink)} @media(max-width:900px){.pnew{grid-template-columns:repeat(2,minmax(0,1fr))}} @media(max-width:700px){.pkeep{grid-template-columns:1fr}} @media(max-width:600px){.pnew{grid-template-columns:1fr;gap:.7rem}.pnew__card{flex-direction:row;align-items:stretch}.pnew__shot{flex:0 0 38%;aspect-ratio:auto;border-bottom:0;border-right:1px solid var(--line)}.pnew__txt{padding:.75rem .85rem .85rem}.pnew__tag{margin-bottom:.3rem}.pnew__txt h3{font-size:1rem;margin-bottom:.25rem}.pnew__txt p{font-size:.86rem;line-height:1.45}} @media(prefers-reduced-motion:reduce){.pnew__card,.pcm-new i{transition:none}.pnew__card:hover{transform:none}}'
 _PCM_WHATSNEW = '    <section class="section" aria-label="New in version 28" id="whats-new">\n      <div class="wrap">\n        <div class="section-head">\n          <p class="eyebrow eyebrow--center mono" data-reveal>// NEW &middot; VERSION 28 &middot; A FREE UPDATE</p>\n          <h2 class="section-title section-title--center" data-title>Running costs and five new checks<span class="title-underline title-underline--center"></span></h2>\n          <p class="lede lede--center" data-reveal>Version 28 looks further than ever before: at your network, your programs, Windows Update, your printers and your OneDrive backup, at every drive, and at what your PC costs to run. It explains what it finds in plain English and changes nothing unless you tap. <strong>Already have the app? It updates itself.</strong></p>\n        </div>\n        <div class="pnew" data-stagger>\n          <article class="pnew__card pnew__card--wide">\n            <div class="pnew__shot"><img src="/images/pcm-new-power-v28.webp" width="684" height="345" alt="365 PC Manager&rsquo;s Power &amp; running cost page on our office PC: on for 613 hours in the last 30 days, left on overnight 24 times, roughly &pound;226&ndash;&pound;565 a year at 30p a unit, and a button to let it sleep after 30 minutes" loading="lazy" decoding="async"></div>\n            <div class="pnew__txt"><span class="pnew__tag">NEW</span><h3>Power &amp; running cost</h3><p>How many hours your PC was switched on in the last 30 days, the nights it was left on, and roughly what that costs a year at <em>your</em> electricity price. One tap lets it sleep when nobody&rsquo;s using it &mdash; it wakes with a touch of the mouse. Got a plug-in energy meter? Enter its reading and the figures become exact.</p></div>\n          </article>\n          <article class="pnew__card">\n            <div class="pnew__shot"><img src="/images/pcm-new-network-v28.webp" width="684" height="345" alt="365 PC Manager&rsquo;s Network safety page: firewall on, nothing opened by the router, Remote Desktop and old SMB1 file sharing off, nothing waiting for remote connections" loading="lazy" decoding="async"></div>\n            <div class="pnew__txt"><span class="pnew__tag">NEW</span><h3>Network safety</h3><p>Checks your firewall is on, asks your router what it has opened to this PC, and flags Remote Desktop, old file sharing and remote-control programs left open.</p></div>\n          </article>\n          <article class="pnew__card">\n            <div class="pnew__shot"><img src="/images/pcm-new-programs-v28.webp" width="684" height="345" alt="The Programs check page: Malwarebytes protecting in real time, Microsoft Defender standing by, and 124 installed programs looked through" loading="lazy" decoding="async"></div>\n            <div class="pnew__txt"><span class="pnew__tag">NEW</span><h3>Programs check</h3><p>Spots two security programs fighting each other, plus tune-up tools, driver updaters and adware a home PC doesn&rsquo;t need. Nothing is removed without you.</p></div>\n          </article>\n          <article class="pnew__card">\n            <div class="pnew__shot"><img src="/images/pcm-new-updates-v28.webp" width="684" height="345" alt="The Windows Update page: Windows is getting its monthly updates, with the most recent updates listed as installed" loading="lazy" decoding="async"></div>\n            <div class="pnew__txt"><span class="pnew__tag">NEW</span><h3>Windows Update</h3><p>Reads Windows&rsquo; own update history to show whether the monthly updates are really arriving, and flags one that keeps failing.</p></div>\n          </article>\n          <article class="pnew__card">\n            <div class="pnew__shot"><img src="/images/pcm-new-printers-v28.webp" width="684" height="345" alt="The Printers page: the default printer ready and nothing stuck in the queue" loading="lazy" decoding="async"></div>\n            <div class="pnew__txt"><span class="pnew__tag">NEW</span><h3>Printers</h3><p>Shows each printer&rsquo;s state in plain English and clears documents stuck in the queue.</p></div>\n          </article>\n          <article class="pnew__card">\n            <div class="pnew__shot"><img src="/images/pcm-new-onedrive-v28.webp" width="684" height="345" alt="The Backup page suggesting OneDrive folder backup for the Desktop, Documents and Pictures, with the steps to switch it on" loading="lazy" decoding="async"></div>\n            <div class="pnew__txt"><span class="pnew__tag">NEW</span><h3>OneDrive folder backup</h3><p>Have Microsoft 365? It checks OneDrive is really backing up your Desktop, Documents and Pictures, and shows you how to switch it on.</p></div>\n          </article>\n          <article class="pnew__card">\n            <div class="pnew__shot"><img src="/images/pcm-new-drives-v28.webp" width="684" height="345" alt="The Storage and space page: every drive with how full it is, and buttons to clear temporary files or scan for the biggest files" loading="lazy" decoding="async"></div>\n            <div class="pnew__txt"><span class="pnew__tag pnew__tag--up">IMPROVED</span><h3>Every drive</h3><p>Every drive at a glance, the biggest files on each, and a safe way to move them to a drive with room &mdash; each copy checked before the original goes.</p></div>\n          </article>\n        </div>\n        <p class="pnew__foot mono" data-reveal>// REAL SCREENS FROM VERSION 28 ON OUR OFFICE PC &middot; NOTHING MOCKED UP</p>\n        <p style="text-align:center;margin:1.3rem 0 0" data-reveal><a class="button primary" href="#download">Download version 28 free</a> <a class="button secondary" href="#must-have">Keep it maintained for me</a></p>\n      </div>\n    </section>'
+
+# 29 Sep 2026 (launch branch virgin-launch): the free Virgin email tools in v30, straight after the download. The details
+# and the download for them live on /virgin-email-mover/ (virgin_launch.py); this is the app page's own note of them.
+_PCM_VIRGIN = '''    <section class="section section--alt" aria-label="Free Virgin Media email tools" id="virgin-email">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// NEW &middot; FREE &middot; VIRGIN MEDIA EMAIL</p>
+          <h2 class="section-title section-title--center" data-title>Virgin Media email closing? Move it to Gmail, free<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Virgin is handing virginmedia.com, blueyonder, ntlworld and virgin.net email to a company called Junara, and keeping an address means paying for it. 365 PC Manager now checks your Virgin mailbox and moves it into Gmail for you &mdash; free, and without a Virgin app password.</p>
+        </div>
+        <ul class="security-grid" data-stagger>
+          <li><h3>Check my Virgin email</h3><p>Every folder, how many emails, how big, and how many days the move will take. It only reads.</p></li>
+          <li><h3>Move it to Gmail myself</h3><p>Folders and dates kept. Gmail takes about 500&nbsp;MB a day, so a big mailbox takes a few days &mdash; it carries on by itself. You need a <a href="/how-to-make-a-google-app-password/">Google app password</a>.</p></li>
+          <li><h3>Where your address is used</h3><p>The companies that email you, so you can change your address with each one.</p></li>
+          <li><h3>Stuck? We&rsquo;ll do it for you</h3><p>&pound;60 per email address, agreed before we start, with a full PC service and written report included.</p></li>
+        </ul>
+        <p style="text-align:center;margin-top:1.4rem" data-reveal><a class="button primary" href="/virgin-email-mover/">How the free email move works &#8594;</a> <a class="button secondary" href="/virgin-media-email-moving-to-junara/">Keep it or move it?</a></p>
+      </div>
+    </section>'''
 
 def pcm_landing():
     slug = "free-pc-health-check"
@@ -492,6 +520,7 @@ def pcm_landing():
       ("Is it safe to install?", "Yes. It reads your PC&rsquo;s health (memory, disk, antivirus, backup) and changes nothing unless you tap a button. The one exception is entirely your choice. Support-plan customers can switch on &ldquo;let 365 run safe maintenance&rdquo;, which lets us run a short fixed list of harmless tidy-up jobs without ringing you first: clearing temporary files, flushing the network cache, collecting a diagnostics summary. It&rsquo;s off unless you turn it on, and you can turn it off again any time. We&rsquo;re 365 Techies, a family-run Dorset IT firm here since 1995, rated 4.9 on Google."),
       ("Does 365 PC Manager keep my computer secure?", "The free app shows you where you stand &mdash; antivirus, backup, drive, memory, risky programs and network settings, all checked on your PC and not sent to us &mdash; and never pretends to be more than that; it is not an antivirus. Being on a 365 support plan is what keeps a computer up to date and secure: every six weeks every program on it is updated, not just Windows and Microsoft 365, the security position is read and written down, your network&rsquo;s safety is checked, and the backup is checked. Criminals now use AI to hunt for a single out-of-date program to use as a back door, so keeping everything current is the point of the service."),
       ("Does it send my information anywhere?", "Yes, a little &mdash; here&rsquo;s exactly what. Once an hour it contacts us with your PC&rsquo;s health score and the basics behind it. That is whether antivirus and backup are on, how full the disk is, battery health, the PC name you chose and an anonymous ID for the machine. That is how every copy stays up to date, and how we spot a problem on a customer&rsquo;s machine before it bites. It never sends your files, photos, emails, browsing or passwords. If you&rsquo;re on a plan we tie it to your account so we can help proactively; if you&rsquo;re not, it isn&rsquo;t linked to a customer record. ""Run the broadband test and your connection is checked against an outside service to name your provider &mdash; see our <a href=\"/privacy-policy/\">privacy policy</a>."),
+      ("Can 365 PC Manager move my Virgin Media email to Gmail?", "Yes, free, with no sign-up. It checks your virginmedia.com, blueyonder, ntlworld or virgin.net mailbox (every folder, how many emails, how big), moves it into Gmail without a Virgin app password &mdash; you need a Gmail account with a Google app password &mdash; and lists the companies that email you, so you can change your address with each one. Gmail accepts about 500 MB a day this way, so a big mailbox takes a few days; it carries on by itself. Stuck? We do it for you for &pound;60 per email address, with a full PC service included. <a href=\"/virgin-email-mover/\">How it works</a>."),
       ("What does &lsquo;Boost&rsquo; actually do?", "It safely clears the temporary-file clutter Windows leaves behind and refreshes memory &mdash; a quick pick-me-up when your PC feels sluggish. It never touches your documents, photos or programs."),
       (("How do I get it, and is the download safe?", "It&rsquo;s live: tap <a href=\"#download\">Download free for Windows</a>, open it, and it installs in a couple of clicks &mdash; then it lives in your Start menu like any other program, and you can remove it any time from Settings &gt; Apps. The download is <strong>digitally signed by 365 Techies Ltd</strong> (a Microsoft-issued certificate), so Windows shows our name as the publisher rather than &ldquo;unknown&rdquo;. If you&rsquo;d rather we set it up for you, ring 01202 775566 and we&rsquo;ll do it free, by hand.") if PCM_LIVE else ("When does it launch, and how do I get it?", "It&rsquo;s in final testing now. Join the <a href=\"#waitlist\">waitlist</a> and we&rsquo;ll email you the download the moment it&rsquo;s ready &mdash; and if you&rsquo;d rather not install it yourself, we&rsquo;ll happily set it up for you free, by hand, when it&rsquo;s ready. We won&rsquo;t promise a date until it&rsquo;s genuinely ready; we&rsquo;d rather ship it right than rush it.")),
       ("Why can&rsquo;t I download Microsoft&rsquo;s PC Manager in the UK?", "Microsoft hasn&rsquo;t made its &ldquo;PC Manager&rdquo; utility officially available in the UK Microsoft Store &mdash; it has been region-limited for years (still, as of mid-2026). If what you actually wanted was a friendly Windows health check and tidy-up from someone you can phone, that&rsquo;s exactly what our free 365 PC Manager is. Made in Dorset, works right here, and your data stays on your PC."),
@@ -599,7 +628,7 @@ def pcm_landing():
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb">{bc("Free PC Health Check")}</nav>
-          <a class="pcm-new" href="#whats-new"><b>NEW</b><span class="pcm-new__l">Version 28: what your PC costs to run, and five new checks</span><span class="pcm-new__s">Version 28: running costs &amp; checks</span><i aria-hidden="true">&rarr;</i></a>
+          <a class="pcm-new" href="#virgin-email"><b>NEW</b><span class="pcm-new__l">Free: check your Virgin Media email and move it to Gmail</span><span class="pcm-new__s">Free: move Virgin email to Gmail</span><i aria-hidden="true">&rarr;</i></a>
           <p class="eyebrow mono">// THE MUST-HAVE WINDOWS APP &middot; FREE &middot; {"SIGNED &amp; LIVE" if PCM_LIVE else "COMING SOON"}</p>
           <h1>Your PC&rsquo;s health, <em class="grad grad--cyan">at a glance</em></h1>
           <p class="lede">365 PC Manager is the free app that shows your computer&rsquo;s health in plain English, from your network safety to programs you&rsquo;re better without &mdash; <strong>no fake errors, no scare tactics, nothing to buy</strong>. On a 365 support plan it keeps your PC up to date and secure, and writes up every service.</p>
@@ -818,7 +847,8 @@ def pcm_landing():
              ("home","Backup &amp; OneDrive check","Know whether your files are really backed up, OneDrive folder backup included, and what to do if they aren&rsquo;t."),
              ("bell","Service visits &amp; reminders","Book or change your service in-app, with friendly Windows reminders before each visit."),
              ("check","Written service reports","After every service: what we did, your score and honest advice &mdash; emailed to you, saved in your portal and left on your Desktop."),
-             ("bolt","Help in one tap","Stuck? Reach a real local techie without hunting for the number.")]) + '''
+             ("bolt","Help in one tap","Stuck? Reach a real local techie without hunting for the number."),
+             ("mail","Virgin email: check &amp; move","Check a Virgin Media, blueyonder, ntlworld or virgin.net mailbox and <a href=\"/virgin-email-mover/\">move it to Gmail, free</a> &mdash; no Virgin app password needed.")]) + '''
         </div>
       </div>
     </section>''',
@@ -1060,13 +1090,14 @@ def pcm_landing():
         assert _blocks[_i].lstrip().startswith('<section '), _i
         _blocks[_i] = _blocks[_i].replace('<section ', '<section data-hw-fold ', 1)
     _blocks.append(_PCM_WHATSNEW)   # 22: New in version 28 (27 Sep 2026)
-    _order = [17, 22, 4, 1, 2, 10, 3, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21]
+    _blocks.append(_PCM_VIRGIN)     # 23: the free Virgin email tools (launch branch virgin-launch, 29 Sep 2026)
+    _order = [17, 23, 22, 4, 1, 2, 10, 3, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21]
     content = "\n".join([_pcm_hero, _pcm_proof] + [_blocks[i] for i in _order] + [_pcm_fold])
     def schema(s, _desc=desc, _faqs=faqs):
         app = {"@type": "SoftwareApplication", "@id": f"{SITE}/{s}/#app",
                "name": "365 PC Manager", "operatingSystem": "Windows 10, Windows 11",
                "applicationCategory": "UtilitiesApplication",
-               "description": "Free PC health check app for Windows by 365 Techies (a real Bournemouth family IT firm): a plain-English health score, network safety, programs, Windows Update and printer checks, drive (SMART) health on every drive, one-tap boost, live performance graphs, backup (including OneDrive folder backup) and startup checks, and an honest report - no fake errors, no scare tactics. " + ("Free download, digitally signed by 365 Techies Ltd." if PCM_LIVE else "Launching soon; join the waitlist."),
+               "description": "Free PC health check app for Windows by 365 Techies (a real Bournemouth family IT firm): a plain-English health score, network safety, programs, Windows Update and printer checks, drive (SMART) health on every drive, one-tap boost, live performance graphs, backup (including OneDrive folder backup) and startup checks, and an honest report - no fake errors, no scare tactics. Free tools to check a Virgin Media, blueyonder, ntlworld or virgin.net mailbox and move it to Gmail. " + ("Free download, digitally signed by 365 Techies Ltd." if PCM_LIVE else "Launching soon; join the waitlist."),
                "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP", "availability": ("https://schema.org/InStock" if PCM_LIVE else "https://schema.org/PreOrder")},
                **({"downloadUrl": PCM_DOWNLOAD_URL, "softwareVersion": PCM_VERSION, "fileSize": PCM_FILESIZE} if PCM_LIVE else {}),   # derived from version.json + the exe on disk - retyping these is how they came to advertise 1.0.18/326KB while v20 shipped
                "screenshot": [SITE + "/images/pcm-laptop-health-v28.webp", SITE + "/images/pcm-laptop-network-v28.webp", SITE + "/images/pcm-laptop-programs-v28.webp", SITE + "/images/pcm-laptop-service-v28.webp"],
@@ -22186,6 +22217,9 @@ def fix_panel(d):
         fix_tag = "We&rsquo;ll move it for you"
         fix_ticks = ('<li>&pound;60 per email address, agreed first</li>\n              <li>Every message and folder into Gmail</li>\n'
                      '              <li>We phone first, and you watch every step</li>')
+        if d['slug'] != 'move-plusnet-email-to-gmail':   # 29 Sep 2026: the Virgin move includes a full PC service (owner's price)
+            fix_ticks = ('<li>&pound;60 per email address, agreed first</li>\n              <li>Every message and folder into Gmail</li>\n'
+                         '              <li>A full PC service and written report included</li>')
     elif d['slug'] in FIX_PANEL_HARDWARE:   # hands-on repair: the collection promise, as on /computer-repairs/
         fix_tag = "We&rsquo;ll get to the bottom of it"
         fix_ticks = ('<li>Diagnosis first &mdash; no fix, no fee</li>\n              <li>Free local collection across Dorset</li>\n'
@@ -23099,8 +23133,13 @@ refurb_laptops_v2 = refurb_v2   # (old name)
 # The owner set the price for doing it for people: £60 per email address. Same first screen as the other
 # pages: H1 unchanged, call first, four choices (move it for me, do it myself, keep my Virgin address,
 # is this Junara email real?), then the offer box. Junara facts: Virgin's help page, read 25 Sep 2026.
+import virgin_launch as _VL   # 29 Sep 2026 launch: the free Virgin email tools (two choices, the tool page, the guides)
 VIRGIN_MOVE_V2 = 'move-virgin-media-email-to-gmail'
 FIX_FLOW_OVERRIDES[VIRGIN_MOVE_V2].update({
+    # 29 Sep 2026: the free app is the do-it-yourself choice now; these steps are the by-hand way, kept because it ranks
+    'eyebrow': '// BY HAND &middot; STEP BY STEP', 'h2': 'Or move it by hand with Thunderbird, one step at a time',
+    'lede': ('The by-hand way from this guide, one step at a time. It needs a Virgin app password: if you can&rsquo;t get one, '
+             'the <a href="#do-it-free">free app</a> doesn&rsquo;t need it. Tick each step off and it shows the next. Nothing here leaves your device.'),
     'stuck_tail': ' We do the whole move for &pound;60 per email address, agreed before we start.',
     # the towns line keeps its links, with this job's own price instead of "remote help from £20"
     'areas': ('Rather we did it for you? We move it for &pound;60 per email address, done remotely, for people across '
@@ -23139,34 +23178,22 @@ def _email_hero(d, crumbs, lede, cta2, tiles):
 
 # 28 Sep 2026 (owner): "we want customers to contact us to do the mail move for them for £60 which includes a full pc
 # service with report"; "tell people about the issues and that we have built our own tool 365 Mail Mover"; "we don't
-# wish to tell them how to do it". So the box says what they get, never how the tool works.
-VIRGIN_MOVE_TICKS = ("Every message and folder into Gmail, with the original dates",
-                     "No Virgin app password needed: our own 365 Mail Mover",
-                     "A full PC service included, with a written health report",
-                     "Forwarding set up, and checked on your phone if you like",
-                     "Done remotely: we phone first, and you watch us start")
-VIRGIN_MOVE_SMALL = "Agreed before we start &middot; no fix, no fee &middot; we can usually start the same day, Mon&ndash;Fri 9&ndash;5"
+# wish to tell them how to do it". 29 Sep 2026: the owner made the tool itself free in 365 PC Manager v30, so the Virgin
+# pages now offer both - its box of promises is virgin_launch.VM_US_TICKS / VM_US_SMALL.
 
 
 def virgin_move_v2(d, crumbs):
-    hero_html = _email_hero(d, crumbs,
-        'Virgin Media is handing its email to a company called Junara. To keep your address you sign up with Junara, and after any free first year you pay for each one &mdash; or move to free Gmail once. We do the whole move for you for <strong>&pound;60 per address</strong>, with a full PC service included &mdash; even if Virgin won&rsquo;t give you an app password.',
-        ("Do it myself", "#fixflow"), [
-        ("hp-c-care", "mail", "Move it for me", "Every folder into Gmail, plus a full PC service", "&pound;60 PER ADDRESS", "#move-for-me"),
-        ("hp-c-fix", "book", "Do it myself", "The free step-by-step guide on this page", "FREE", "#fixflow"),
-        ("hp-c-biz", "clock", "Keep my Virgin address", "Sign up with Junara before your date", "FREE YEAR, THEN PAID", "/" + JUNARA_SLUG + "/#s3"),
-        ("hp-c-buy", "alert", "Is this Junara email real?", "Virgin&rsquo;s own emails have no sign-up link", "SCAM CHECK", "/" + JUNARA_SLUG + "/#s6"),
-    ])
-    offer_html = email_move_box("Rather we just did it?", "We move your Virgin email to Gmail for you", [
-        '<p class="vm-alt__h">No app password? Gmail keeps stopping?</p>',
-        '<p>Since the Virgin Media O2 ID change, Virgin often won&rsquo;t give an app password &mdash; especially for a second mailbox &mdash; and Gmail accepts only about 500 MB a day copied in, so big moves stop part-way. We built our own tool, the 365 Mail Mover, for both. <a class="dh-link" href="#s8">More about it &#8594;</a></p>',
-        '<p class="vm-alt__h">Or keep your Virgin address</p>',
-        '<p>Sign up with Junara before the date in the email Virgin sent you. If you still have Virgin broadband, TV or a landline the first 12 months are free (99p transfer fee), then it is paid, per mailbox; if you have left Virgin it is paid from the start. Miss the date and the mailbox is suspended, then deleted 120 days later.</p>',
-        '<p class="vm-alt__h">Watch for fake Junara emails</p>',
-        '<p>Virgin&rsquo;s own emails contain no sign-up link, and Virgin says never to pay through a phone call or an emailed link. Not sure? Call us before you click.</p>',
-        '<p><a class="dh-link" href="#s2">What&rsquo;s happening, in full &#8594;</a></p>'],
-        ticks=VIRGIN_MOVE_TICKS, small=VIRGIN_MOVE_SMALL)
-    return hero_html, offer_html
+    # 29 Sep 2026 (launch branch virgin-launch): task-first. The two choices - do it yourself, free, with 365 PC Manager
+    # v30, or let us do it for GBP 60 including a full PC service - sit straight under a short header, so the download is
+    # on the first phone screen. Every link the old first screen and offer box carried is in the line under them.
+    head = bp.task_head(crumbs, d['h1'],
+        'Keeping your Virgin address means paying Junara once any free year ends. Or move it to Gmail, free, once:',
+        trust=_VL.TASK_TRUST)
+    also = ('Or: <a href="#fixflow">move it by hand with Thunderbird</a> (needs a Virgin app password) &middot; '
+            '<a href="/' + JUNARA_SLUG + '/#s3">keep your Virgin address with Junara</a> &middot; '
+            '<a href="/' + JUNARA_SLUG + '/#s6">is this Junara email real?</a> &middot; '
+            '<a href="#s2">what&rsquo;s happening, in full</a> &middot; <a href="#s8">no Virgin app password?</a>')
+    return head + "\n" + _VL.virgin_choices(PCM_SETUP_V30, also_html=also), ""
 
 
 # ============================================ JUNARA PAGE (26 Sep 2026)
@@ -23187,20 +23214,16 @@ FIX_FLOW_OVERRIDES[JUNARA_SLUG] = {   # the page's five steps as a to-do list, n
 
 
 def junara_v2(d, crumbs):
-    hero_html = _email_hero(d, crumbs, d['lede'], ("Keep it or move it?", "#s5"), [
-        ("hp-c-care", "mail", "Move it to Gmail for me", "Every folder, plus a full PC service", "&pound;60 PER ADDRESS", "#move-for-me"),
-        ("hp-c-biz", "clock", "Keep my Virgin address", "Free for a year if you still have Virgin, then paid", "WHAT IT COSTS", "#s3"),
-        ("hp-c-fix", "calendar", "When is my deadline?", "At least 45 days from Virgin&rsquo;s first email", "45 + 120 DAYS", "#s4"),
-        ("hp-c-buy", "shield", "Is this Junara email real?", "Virgin&rsquo;s own emails have no sign-up link", "SCAM CHECK", "#s6"),
-    ])
-    offer_html = email_move_box("Rather we just did it?", "We move your Virgin email to Gmail for you", [
-        '<p class="vm-alt__h">Or keep it with Junara</p>',
-        '<p>If you still have Virgin broadband, TV or a landline, the first 12 months are free (99p transfer fee), then it is paid, per mailbox; if you have left Virgin it is paid from the start. Sign up before the date in your email from Virgin, typing junara.com in yourself.</p>',
-        '<p class="vm-alt__h">Rather do it yourself?</p>',
-        '<p>Our free guide takes you through copying every message and folder into Gmail, one step at a time.</p>',
-        '<p><a class="dh-link" href="/move-virgin-media-email-to-gmail/">Move Virgin email to Gmail yourself &#8594;</a></p>'],
-        ticks=VIRGIN_MOVE_TICKS, small=VIRGIN_MOVE_SMALL)
-    return hero_html, offer_html
+    # 29 Sep 2026 (launch + the coordinator's SEO brief): cost is what people search for, so the answer is the first line;
+    # then the two choices (free app / GBP 60), then the facts table with a source on every row. Links kept from the old
+    # first screen and box: #move-for-me, #s3, #s4, #s5, #s6 and the Gmail how-to.
+    head = bp.task_head(crumbs, d['h1'],
+        'Junara is taking over all Virgin Media email. Keeping your address is free for 12 months if you still have '
+        'Virgin (plus 99p), then paid per mailbox. Or move it to Gmail, free:', trust=_VL.TASK_TRUST)
+    also = ('Rather keep your Virgin address? <a href="#s3">What Junara costs</a> &middot; <a href="#s4">your deadline</a> &middot; '
+            '<a href="#s5">keep it or move it?</a> &middot; <a href="#s6">is this Junara email real?</a> &middot; '
+            '<a href="/move-virgin-media-email-to-gmail/">move it to Gmail by hand</a>')
+    return head + "\n" + _VL.virgin_choices(PCM_SETUP_V30, also_html=also) + "\n" + _VL.junara_facts_html(), ""
 
 
 # Plusnet (26 Sep 2026): same first screen and box; Greenby facts from Greenby's own FAQ, read 26 Sep 2026.
@@ -23245,6 +23268,15 @@ def bt_outlook_v2(d, crumbs):
 
 EMAIL_MOVE_V2 = {VIRGIN_MOVE_V2: virgin_move_v2, JUNARA_SLUG: junara_v2, PLUSNET_MOVE_V2: plusnet_move_v2,
                  BT_OUTLOOK_V2: bt_outlook_v2}   # email pages with the intent-first first screen
+# 29 Sep 2026 launch: the two help guides for the free Virgin email tools open with the short task header and their
+# steps; no SOS band, fix flow, fix panel or iPhone notice (they are how-tos about accounts, not a PC fault).
+from virgin_guides_data import VIRGIN_GUIDE_PAGES
+for _g in VIRGIN_GUIDE_PAGES:
+    EMAIL_MOVE_V2[_g['slug']] = _VL.guide_task_head
+_SOS_EXCLUDE.update((_VL.GAPP_SLUG, _VL.ADDR_SLUG))
+FIX_FLOW_AUTO_SKIP.add(_VL.ADDR_SLUG)
+FIX_PANEL_OFF.update((_VL.GAPP_SLUG, _VL.ADDR_SLUG))
+bp._APPLE_NOTICE_SKIP.add(_VL.ADDR_SLUG)
 
 # 26 Sep 2026 (owner: "do all the email pages... just do the lot"): every Outlook / email help page gets the same
 # first screen as the Virgin, Plusnet and BT pages - two fixed choices (the page's own step helper, and our remote
@@ -23879,6 +23911,10 @@ custom_dashboards()
 
 for _np in NEW_PAGES:
     build_new_page(_np)
+
+for _np in VIRGIN_GUIDE_PAGES:   # 29 Sep 2026 launch: Google app password + change your address everywhere
+    build_new_page(_np)
+_VL.virgin_tool_page(PCM_SETUP_V30)   # /virgin-email-mover/
 
 # Parents' online-safety guide: hub + the six platforms Dorset Police's guide skips
 # (data + the "checked against the maker's own instructions" discipline live in

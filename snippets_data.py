@@ -283,7 +283,14 @@ SNIPPETS = {
 
     # ---- email migrations
     "move-virgin-media-email-to-gmail": {
-        "desc": "Moving Virgin Media, ntlworld or blueyonder email to Gmail? We move it for you for £60, even with no app password, with a full PC service included.",
+        # 29 Sep 2026 launch: the move is free with 365 PC Manager v30; the GBP 60 done-for-you stays
+        "desc": "Move Virgin Media, ntlworld or blueyonder email to Gmail free with our Windows app, no Virgin app password. Or we do it for £60 with a full PC service.",
+    },
+    "virgin-media-email-moving-to-junara": {
+        # 29 Sep 2026 (Search Console, 24 h): "junara email cost" and its variants are the biggest query group on this
+        # page (~200 impressions a day at position ~9, almost no clicks). Lead with the cost; the H1 stays.
+        "title": "Junara Email Cost for Virgin Media: Deadline &amp; Free Move",
+        "desc": "Junara is free for 12 months if you still have Virgin (plus 99p), 18 with extra support, then paid per mailbox. Your deadline, fake emails, or move free.",
     },
     "move-plusnet-email-to-gmail": {
         "desc": "Plusnet is closing its email service and moving mailboxes to Greenby. How to move your Plusnet email and years of messages to Gmail before you lose them.",

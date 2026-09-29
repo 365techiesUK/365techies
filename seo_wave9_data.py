@@ -1316,7 +1316,8 @@ SEO_WAVE9_PAGES = [
   'schemaKind': 'service',
   'crossLinksHtml': '<p><strong>Related guides:</strong> <a '
                     'href="/move-virgin-media-email-to-gmail/">Moving Virgin Media email to '
-                    'Gmail</a> &middot; <a href="/virgin-media-email-moving-to-junara/">Virgin '
+                    'Gmail</a> &middot; <a href="/virgin-email-mover/">Move Virgin email to Gmail '
+                    'free, with our app</a> &middot; <a href="/virgin-media-email-moving-to-junara/">Virgin '
                     'Media email is moving to Junara</a> &middot; <a '
                     'href="/how-to-go-back-to-classic-outlook/">Going back to classic Outlook</a> '
                     '&middot; <a href="/outlook-cant-add-account-new-outlook/">New Outlook '
