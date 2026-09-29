@@ -122,7 +122,7 @@ def virgin_choices(setup_url, also_html="", how_href="/" + VIRGIN_TOOL_SLUG + "/
           <{h} class="vmc__h">Do it yourself, free, with 365&nbsp;PC&nbsp;Manager</{h}>
           <p class="vmc__d">Our free app moves your Virgin email into Gmail for you, no Virgin app password needed.</p>
           <p class="vmc__cta"><a class="button primary button--lg" href="{setup_url}" download data-vmc-dl><span class="vmc__dl-l">Download free for Windows</span><span class="vmc__dl-s">Download free</span> &#8595;</a></p>
-          <p class="vmc__note">For Windows PCs. You&rsquo;ll need a Gmail account and a <a href="/{GAPP_SLUG}/">Google app password</a>. Not for Macs.</p>
+          <p class="vmc__note">For Windows PCs. You&rsquo;ll need a Gmail account and a <a href="/{GAPP_SLUG}/">Google app password</a>. Not for Macs. If Virgin won&rsquo;t let you sign in, press &lsquo;Stuck? We&rsquo;ll do it for you&rsquo; in the app or <a href="tel:+441202775566">ring us</a>, and we&rsquo;ll move it for you.</p>
           <ul class="vmc__list">
             <li><b>Check my Virgin email:</b> every folder, how many emails, how big, and how many days the move will take. It only reads.</li>
             <li><b>Move it to Gmail myself:</b> folders and dates kept. Gmail takes about 500&nbsp;MB a day, so a big mailbox takes a few days &mdash; it carries on by itself.</li>
@@ -265,6 +265,13 @@ TOOL_FAQS = [
      "No. 365 PC Manager is a Windows app, for Windows 10 and 11 desktops and laptops. Our &pound;60 move is done by "
      "connecting to your PC, and our remote support covers Windows PCs only, so we can&rsquo;t do it on a Mac, iPad or "
      "phone either."),
+    # 29 Sep 2026: the first real-Virgin sign-in in the app's own window was paused by Virgin's check (ref IDF-12B)
+    ("Virgin says it can&rsquo;t sign me in just now. What do I do?",
+     "That is Virgin&rsquo;s own security check. Virgin now signs people in with the Virgin Media O2 ID, and it sometimes "
+     "pauses a sign-in from a browser window it hasn&rsquo;t seen before. Don&rsquo;t keep trying, and don&rsquo;t press "
+     "Register: press &lsquo;Stuck? We&rsquo;ll do it for you&rsquo; in the app, or ring 01202 775566, and we move it for "
+     "you &mdash; &pound;60 per email address, agreed before we start, including a full service of your PC with a written "
+     "report."),
     ("A new Chrome window says &lsquo;Sign in to Chrome&rsquo;. Should I?",
      "No need: just ignore it. The app opens its own separate browser window for the Virgin sign-in, so it never touches "
      "your normal browser or its saved passwords, and it tidies that window away afterwards."),
@@ -281,7 +288,7 @@ TOOL_FAQS = [
 
 TOOL_STEPS = [
     ("Download and install 365 PC Manager", "It is free, with no sign-up. If Windows shows a blue &lsquo;protected your PC&rsquo; box, click More info and check the publisher says 365 Techies Ltd."),
-    ("Choose Check my Virgin email", "A browser window opens at Virgin&rsquo;s webmail. Sign in with your Virgin address and its normal password. You then see every folder, how many emails, the size, and how many days the move will take. Nothing is changed."),
+    ("Choose Check my Virgin email", "A browser window opens at Virgin&rsquo;s webmail. Type your Virgin address on Virgin&rsquo;s page, then its normal password. If Virgin asks you to register, or says it can&rsquo;t sign you in just now, stop there and press &lsquo;Stuck? We&rsquo;ll do it for you&rsquo;. Once you&rsquo;re in, you see every folder, how many emails, the size, and how many days the move will take. Nothing is changed."),
     ("Make a Google app password", "On the Gmail account you are moving to: switch on 2-Step Verification, then make an app password."),
     ("Choose Move it to Gmail myself", "Type in your Gmail address and the app password, and start. It copies your mail to the PC, then sends it into Gmail, about 500 MB a day, carrying on by itself. Leave the PC on if you can."),
     ("Check it arrived", "When it finishes, the app counts each folder in Gmail against the original. Your folders are labels under &lsquo;Virgin Media&rsquo;."),
