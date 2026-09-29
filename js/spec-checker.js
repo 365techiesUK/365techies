@@ -287,7 +287,7 @@
       else row('warn','No 3D graphics detected','Hardware acceleration is switched off in the browser, or the graphics driver is missing. Either one makes a machine feel slow.');
       if(dm!=null){
         /* Chrome and Edge report 2, 4, 8, 16 or 32 (they stopped at 8 until 2026), rounded to the nearest step */
-        var appx=(kind==='win'?' The free app below shows exactly how much is fitted and in use.':'');
+        var appx=(kind==='win'?' The free app shows exactly how much is fitted, and how many slots are free.':'');
         if(dm>=32) row('good','32 GB or more of memory','The most a browser will report, so there may be more.'+appx);
         else if(dm>=16) row('good','About 16 GB of memory','Plenty for everyday use, photo editing and most games. Browsers round this figure to the nearest step.'+appx);
         else if(dm>=8) row('good','About 8 GB of memory','Enough for everyday use. Browsers round this figure, and older ones stop at 8 GB, so there may be more.'+appx);
@@ -316,7 +316,16 @@
       +(open?callBtn+'<span class="spc-nx__hint"><i class="spc-dot"></i>Lines open now</span>'
             :'<a class="button '+(fixFirst?'primary':'secondary')+'" href="/book-service/" data-cta="book">Book a time</a><a class="spc-nx__link" href="tel:+441202775566" data-cta="call">01202 775566</a><span class="spc-nx__hint">phones Mon&ndash;Fri 9&ndash;5</span>')
       +'</div></div>':'';
-    var app=kind==='win'?'<div class="spc-nx spc-nx--app"><b>See the inside, free</b><p>365 PC Manager reads what this page can&rsquo;t: exact memory, drive health, battery wear, antivirus and backup, plus risky programs and network settings. Signed by 365 Techies Ltd, no fake scares, and it doesn&rsquo;t pretend to be an antivirus.</p><div class="spc-nx__row"><a class="button '+(fixFirst&&help?'secondary':'primary')+'" href="/free-pc-health-check/#download" data-cta="app">Get the free app for Windows</a></div></div>':'';
+    /* 29 Sep 2026 (owner: promote the app properly on this page): the app's This PC page is the rest of this very
+       spec, so the card says so, downloads the signed installer in one click (the page passes its address in
+       data-setup, so a new version needs no JS change) and shows the real screen. Windows only. */
+    var setup=box.getAttribute('data-setup')||'', direct=setup.indexOf('/downloads/')===0;
+    var app=kind==='win'?'<div class="spc-nx spc-nx--app"><b>See all of this PC, free</b><p>A browser is only allowed to see part of a computer. The free 365 PC Manager app reads the rest straight from Windows:</p>'
+      +'<ul class="spc-nx__list"><li>The exact memory, and how many slots are free</li><li>Every drive, and its health</li><li>Every graphics card</li><li>Whether it can run Windows 11: the security chip, Secure Boot and the processor</li></ul>'
+      +'<p>Plus a free full health check, with a report on your Desktop. Signed by 365 Techies Ltd, no fake scares.</p>'
+      +'<div class="spc-nx__row"><a class="button '+(fixFirst&&help?'secondary':'primary')+'" href="'+(direct?setup:'/free-pc-health-check/#download')+'"'+(direct?' download':'')+' data-cta="app" data-dl="spec_result">Download free for Windows &#8595;</a><a class="spc-nx__link" href="#beyond-browser" data-cta="app-more">What it shows</a></div>'
+      +'<a class="spc-nx__shot" href="#beyond-browser" aria-label="What 365 PC Manager shows"><img src="/images/pcm-thispc-v30-1200.webp" width="1200" height="935" alt="365 PC Manager&rsquo;s This PC page on an example Dell Latitude 7490: its processor, 8 GB in 1 of 2 memory slots, a drive warning and a Windows 11 check" loading="lazy" decoding="async"></a>'
+      +'<p class="spc-nx__cap mono">A REAL SCREEN FROM THE APP &middot; EXAMPLE LAPTOP</p></div>':'';
     if(fixFirst){ nx.push(help,app); } else { nx.push(app,help); }
     if(kind==='mobile') nx.push('<div class="spc-nx"><b>Check your computer instead</b><p>Send this page to yourself, then open it on the PC or laptop you want to check.</p><div class="spc-nx__row"><button type="button" class="button primary" data-cta="send" data-ttshare data-share-title="Free PC Hardware Checker" data-share-text="Open this on the computer you want to check:">Send it to my computer</button></div></div>');
     if(uk&&kind!=='mobile') nx.push('<p class="spc-nx__plan">Keep it that way: on a <a href="/home-it-support-plans/" data-cta="plan">support plan</a> every program is updated every six weeks and the backup is checked. Home &pound;18.25 a month per computer, <a href="/business-it-support-plans/" data-cta="plan-biz">business</a> from &pound;24.38.</p>');
@@ -329,8 +338,14 @@
   }
   /* measurement: which next step people take from the result, and from the app band further down */
   document.addEventListener('click',function(e){
-    var a=e.target.closest&&e.target.closest('#spc-report [data-cta], #beyond-browser a[href]'); if(!a) return;
-    try{ if(typeof gtag==='function'&&localStorage.getItem('tt_internal')!=='1') gtag('event','plan_cta',{place:a.closest('#spc-report')?'spec_result':'spec_app_band',target:a.getAttribute('data-cta')||a.getAttribute('href'),worst:lastWorst,page:location.pathname}); }catch(x){}
+    var a=e.target.closest&&e.target.closest('#spc-report [data-cta], #beyond-browser a[href], #windows-11 a[data-dl]'); if(!a) return;
+    try{
+      if(typeof gtag==='function'&&localStorage.getItem('tt_internal')!=='1'){
+        gtag('event','plan_cta',{place:a.closest('#spc-report')?'spec_result':(a.closest('#windows-11')?'spec_w11':'spec_app_band'),target:a.getAttribute('data-cta')||a.getAttribute('href'),worst:lastWorst,page:location.pathname});
+        /* the same event the Virgin pages send, so app downloads from every page count together (29 Sep 2026) */
+        if(a.hasAttribute('data-dl')) gtag('event','pcm_download_click',{page:location.pathname,place:a.getAttribute('data-dl')});
+      }
+    }catch(x){}
   },true);
   /* ---------- export ---------- */
   function sheetText(){

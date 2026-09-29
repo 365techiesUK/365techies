@@ -14299,7 +14299,7 @@ SPECCHECK_TOOL = r'''    <section class="section" aria-label="PC spec checker" i
             <p class="spc-scanline mono" id="spc-scanline">Warming up the scanner&hellip;</p>
             <p class="spc-verdict" id="spc-verdict" hidden></p>
             <p class="sr-only" id="spc-live" aria-live="polite"></p>
-            <div class="spc-rep" id="spc-report" hidden></div>
+            <div class="spc-rep" id="spc-report" data-setup="__PCMSETUP__" hidden></div>
             <div class="spc-actions" id="spc-actions" hidden>
               <button type="button" class="button secondary" id="spc-bench">Benchmark this machine &#9889;</button>
               <button type="button" class="button secondary" id="spc-dl">Download my spec sheet</button>
@@ -14358,6 +14358,12 @@ SPECCHECK_TOOL = r'''    <section class="section" aria-label="PC spec checker" i
       #spc .spc-nx__hint{font-size:.76rem;color:var(--muted,#9fb5d3);display:inline-flex;align-items:center;gap:.4rem}
       #spc .spc-dot{width:.5rem;height:.5rem;border-radius:50%;background:#2ecc71;box-shadow:0 0 0 3px rgba(46,204,113,.2)}
       #spc .spc-nx__plan{margin:0;font-size:.8rem;line-height:1.55;color:var(--muted,#9fb5d3)}
+      #spc .spc-nx__list{list-style:none;margin:.5rem 0 0;padding:0;display:grid;gap:.25rem;font-size:.85rem;line-height:1.5;color:var(--ink-2,#dfe9f7)}
+      #spc .spc-nx__list li{position:relative;padding-left:1.3rem}
+      #spc .spc-nx__list li::before{content:"\2713";position:absolute;left:0;top:0;font-weight:700;color:var(--cyan-soft,#6cc4f5)}
+      #spc .spc-nx__shot{display:block;margin-top:.85rem;border-radius:10px;overflow:hidden}
+      #spc .spc-nx__shot img{display:block;width:100%;height:auto}
+      #spc .spc-nx p.spc-nx__cap{margin:.3rem 0 0;font-size:.66rem;letter-spacing:.05em;color:var(--muted,#9fb5d3)}
       @media(max-width:860px){#spc .spc-rep{grid-template-columns:1fr}}
       @media(max-width:560px){#spc .spc-g{grid-template-columns:1fr;gap:.4rem}#spc .spc-nx__row .button{width:100%;text-align:center}}
       #spc .spc-actions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1rem}
@@ -14382,7 +14388,7 @@ SPECCHECK_TOOL = r'''    <section class="section" aria-label="PC spec checker" i
       </style>
       <script src="/js/spec-checker.min.js?v=__SPECV__" defer></script>
     </section>'''
-SPECCHECK_TOOL = SPECCHECK_TOOL.replace("__SPECV__", bp.SPECV)
+SPECCHECK_TOOL = SPECCHECK_TOOL.replace("__SPECV__", bp.SPECV).replace("__PCMSETUP__", PCM_SETUP_V30)   # the result's one-click app download
 
 # The page's own next step (owner, 2026-09-12: it is the site's best organic page and never
 # mentioned the app). Every "app" cell below is something 365 PC Manager genuinely shows on
@@ -14620,7 +14626,7 @@ SPECCHECK_APP_BAND = '''    <section class="section section--alt" aria-label="Ke
         #beyond-browser .kx__list li::before{content:"\\2713";position:absolute;left:0;top:0;font-weight:700;color:var(--cyan-soft,#6cc4f5)}
         #beyond-browser .kx__card--plan .kx__list li::before{color:#5fe39a}
         #beyond-browser .kx__rep{margin:0}
-        #beyond-browser .kx__rep a{display:block;position:relative;border-radius:11px;overflow:hidden;border:1px solid rgba(125,170,220,.22);aspect-ratio:1230/600;background:#0c1733}
+        #beyond-browser .kx__rep a{display:block;position:relative;border-radius:11px;overflow:hidden;border:1px solid rgba(125,170,220,.22);aspect-ratio:1200/820;background:#0c1733}
         #beyond-browser .kx__rep a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34%;background:linear-gradient(to top,#0c1733,rgba(12,23,51,0))}
         #beyond-browser .kx__rep img{display:block;width:100%;height:auto}
         #beyond-browser .kx__rep figcaption{margin-top:.45rem;font-size:.64rem;letter-spacing:.06em;line-height:1.5;color:var(--muted,#9fb5d3)}
@@ -14653,19 +14659,21 @@ SPECCHECK_APP_BAND = '''    <section class="section section--alt" aria-label="Ke
         </div>
         <div class="kx">
           <div class="kx__card kx__card--app" data-reveal>
-            <a class="kx__shot" href="/free-pc-health-check/" aria-label="See 365 PC Manager, the free app"><img src="/images/pcm-laptop-health-v28.webp" width="2080" height="1620" alt="365 PC Manager Home - the health score, what to do next and the PC at a glance" loading="lazy" decoding="async"></a>
-            <p class="kx__tag mono">FREE &middot; WINDOWS &middot; REAL SCREENSHOT</p>
-            <h3>See the inside with 365 PC Manager</h3>
+            <!-- 29 Sep 2026: the app's own This PC page (v30, customer view, the app's built-in EXAMPLE laptop) - the rest
+                 of the spec a browser can't read - and a one-click download of the signed installer. -->
+            <a class="kx__shot" href="/free-pc-health-check/" aria-label="See 365 PC Manager, the free app"><img src="/images/pcm-thispc-v30-1200.webp" srcset="/images/pcm-thispc-v30-1200.webp 1200w, /images/pcm-thispc-v30.webp 2080w" sizes="(max-width:880px) 100vw, 580px" width="1200" height="935" alt="365 PC Manager&rsquo;s This PC page on an example Dell Latitude 7490: its processor, 8 GB in 1 of 2 memory slots, a drive warning, the graphics, Windows 10 and a Windows 11 check" loading="lazy" decoding="async"></a>
+            <p class="kx__tag mono">FREE &middot; WINDOWS &middot; A REAL SCREEN, EXAMPLE LAPTOP</p>
+            <h3>See all of this PC with 365 PC Manager</h3>
             <ul class="kx__list">
-              <li>The exact memory fitted, and how much is in use, on a live graph</li>
+              <li>The full spec from Windows itself: the exact processor, memory and free slots, every drive and graphics card</li>
+              <li>A straight answer on Windows 11: the security chip, Secure Boot and the processor</li>
               <li>Drive health and free space, before a failing drive takes your files with it</li>
               <li>Battery wear: how much of its original capacity is left</li>
               <li>Whether antivirus is on, and whether a backup actually exists</li>
-              <li>Programs a home PC doesn&rsquo;t need, and anything your network has left open</li>
-              <li>A one-tap tune-up and a real broadband speed test</li>
+              <li>A free full health check, with a report on your Desktop</li>
             </ul>
             <p class="kx__fine">Digitally signed by 365 Techies Ltd. No fake errors, no scare tactics, uninstall any time. It shows you where you stand; it isn&rsquo;t an antivirus.</p>
-            <p class="kx__cta"><a class="button primary" href="/free-pc-health-check/#download">Get the free app for Windows &#8594;</a></p>
+            <p class="kx__cta"><a class="button primary" href="__PCMSETUP__" download data-dl="spec_app_band">Download free for Windows &#8595;</a><a class="button secondary" href="/free-pc-health-check/">More about the app</a></p>
           </div>
           <div class="kx__card kx__card--plan" data-reveal>
             <p class="kx__tag mono">SUPPORT PLAN &middot; WE DO IT FOR YOU</p>
@@ -14674,8 +14682,9 @@ SPECCHECK_APP_BAND = '''    <section class="section section--alt" aria-label="Ke
               <li>Every program on it updated, not just Windows and Microsoft 365</li>
               <li>Antivirus, firewall, drive encryption and backup checked and written down in a dated report you can show a bank or insurer</li>
               <li>Unlimited remote support, so you can check with us before you click on anything that looks odd</li>
+              <li>The full 365 service in the app: run it yourself whenever you like, or we run it for you</li>
             </ul>
-            <figure class="kx__rep"><a href="/free-pc-health-check/#six-weekly-service"><img src="/images/pcm-report-computer-v1.webp" width="1230" height="1008" alt="The This computer section of a 365 Service Report: make and model, guarantee, Windows 11 Home 24H2, Intel Core i5-1145G7, Iris Xe graphics, 8 GB at 3200 MHz with one of two slots free" loading="lazy" decoding="async"></a><figcaption class="mono">// SAMPLE SERVICE REPORT &middot; REAL TEMPLATE, EXAMPLE DATA &middot; THE FULL SPEC A BROWSER CAN&rsquo;T READ</figcaption></figure>
+            <figure class="kx__rep"><a href="/free-pc-health-check/#six-weekly-service"><img src="/images/pcm-report-service-v427.webp" width="1200" height="1624" alt="A 365 Service Report: an overall 81% Very good, scores for storage, memory, processor, graphics, software, protection, stability and battery, then what the service did: backup, updates, clean-up, broadband test and more" loading="lazy" decoding="async"></a><figcaption class="mono">// SAMPLE SERVICE REPORT &middot; REAL TEMPLATE, EXAMPLE DATA &middot; WHAT EVERY FULL SERVICE ENDS WITH</figcaption></figure>
             <p class="kx__price"><b>&pound;18.25</b> a month per computer at home &middot; business from <b>&pound;24.38</b>. Rolling monthly, no lock-in.</p>
             <p class="kx__cta"><a class="button primary" href="/home-it-support-plans/">Home plans</a><a class="button secondary" href="/business-it-support-plans/">Business plans</a></p>
             <p class="kx__fine">Something wrong right now and not on a plan? We check the fault free, then quote before we fix: <a href="tel:+441202775566">01202 775566</a>, Monday to Friday 9 to 5.</p>
@@ -14734,6 +14743,28 @@ SPECCHECK_APP_BAND = '''    <section class="section section--alt" aria-label="Ke
           <li><h3>The two deciders</h3><p><strong>TPM 2.0</strong> and <strong>Secure Boot</strong>. Both live in the firmware, not the browser. On Windows 10: Settings &rarr; Update &amp; Security &rarr; Windows Security &rarr; Device security lists them as Security processor and Secure boot. On Windows 11, Windows Security is under Privacy &amp; security instead.</p></li>
           <li><h3>Still on Windows 10?</h3><p>Free security updates ended in October 2025. Whatever the check says there is a route: an upgrade if it passes, a refurbished business machine if it does not, or Extended Security Updates while you decide &mdash; the three below, or <a href="/windows-10-end-of-life/">the full Windows 10 page</a>.</p></li>
         </ul>
+        <!-- 29 Sep 2026: the one question a browser can't answer, the app can - its This PC page reads the three deciders
+             and says it in plain words (the screen is the app's built-in EXAMPLE laptop). -->
+        <style>
+        #windows-11 .w11-app{margin:1.4rem 0 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:1.1rem;align-items:center;padding:1.1rem;border-radius:16px;border:1px solid rgba(108,196,245,.45);background:linear-gradient(160deg,rgba(29,151,227,.13),rgba(255,255,255,.02) 65%)}
+        #windows-11 .w11-app__shot{display:block;border-radius:10px;overflow:hidden}
+        #windows-11 .w11-app__shot img{display:block;width:100%;height:auto}
+        #windows-11 .w11-app h3{margin:.3rem 0 .45rem;font-size:1.2rem;line-height:1.3}
+        #windows-11 .w11-app p{margin:0;font-size:.93rem;line-height:1.55;color:var(--ink-2,#dfe9f7)}
+        #windows-11 .w11-app .w11-app__cta{margin-top:.8rem;display:flex;flex-wrap:wrap;gap:.6rem}
+        #windows-11 .w11-app .w11-app__cta .button{margin:0}
+        #windows-11 .w11-app .eyebrow{margin:0}
+        @media(max-width:760px){#windows-11 .w11-app{grid-template-columns:1fr}#windows-11 .w11-app__cta .button{width:100%;text-align:center}}
+        </style>
+        <div class="w11-app" data-reveal>
+          <a class="w11-app__shot" href="/free-pc-health-check/" aria-label="See 365 PC Manager, the free app"><img src="/images/pcm-thispc-win11-v30-1200.webp" width="1200" height="935" alt="365 PC Manager&rsquo;s Windows 11 check on an example laptop: security chip TPM 2.0 yes, Secure Boot off - usually a setting we can switch on, processor new enough" loading="lazy" decoding="async"></a>
+          <div>
+            <p class="eyebrow mono">// FIND OUT FOR CERTAIN &middot; FREE &middot; WINDOWS</p>
+            <h3>Get a straight answer in a minute</h3>
+            <p>The free 365 PC Manager reads the security chip, Secure Boot and the processor from Windows itself, and tells you in plain words whether this PC can move to Windows 11 &mdash; and what to do if one setting is in the way.</p>
+            <p class="w11-app__cta"><a class="button primary" href="__PCMSETUP__" download data-dl="spec_w11">Download free for Windows &#8595;</a></p>
+          </div>
+        </div>
         <!-- Jobs pass 4 (13 Sep 2026): the "cannot run Windows 11" outcome now routes to the upgrade service and the
              refurbished Dells as plainly as the app cross-sell above routes to the app. The scan's graphics string gives an
              honest CPU-era hint (Intel integrated graphics only; the same map the Dell picker uses) that orders the cards. -->
@@ -14814,6 +14845,8 @@ SPECCHECK_APP_BAND = '''    <section class="section section--alt" aria-label="Ke
 _W11_MARK = '    <section class="section" aria-label="Can this PC run Windows 11" id="windows-11">'
 SPECCHECK_APP_BAND, SPECCHECK_W11_BAND = SPECCHECK_APP_BAND.split(_W11_MARK, 1)
 SPECCHECK_W11_BAND = _W11_MARK.replace('class="section"', 'class="section section--alt"') + SPECCHECK_W11_BAND   # alt: it now follows the plain benchmark band
+SPECCHECK_APP_BAND = SPECCHECK_APP_BAND.replace("__PCMSETUP__", PCM_SETUP_V30)   # one-click download of the signed installer
+SPECCHECK_W11_BAND = SPECCHECK_W11_BAND.replace("__PCMSETUP__", PCM_SETUP_V30)
 
 def computer_spec_checker():
     slug = "computer-spec-checker"
@@ -14824,7 +14857,7 @@ def computer_spec_checker():
       ("How much RAM do I actually have?",
        "This page shows the rounded figure your browser is allowed to share, and browsers stop at 32&nbsp;GB (older ones at 8&nbsp;GB), so a well-equipped machine can show less than is fitted. For the exact amount on Windows, press <strong>Ctrl+Shift+Esc</strong> for Task Manager, choose <strong>Performance</strong>, then <strong>Memory</strong>. Or install the free <a href=\"/free-pc-health-check/\">365 PC Manager</a>, which shows the amount fitted and how much is in use."),
       ("Can this page tell me whether my PC can run Windows 11?",
-       "Not on its own &mdash; a browser cannot read the two things that decide it, <strong>TPM 2.0</strong> and <strong>Secure Boot</strong>. Windows can: open Settings &rarr; Update &amp; Security (Privacy &amp; security on Windows 11) &rarr; Windows Security &rarr; Device security, where they appear as Security processor and Secure boot. Our <a href=\"/windows-11-upgrade-service/\">Windows 11 upgrade service</a> checks it for free and does the upgrade properly if it passes; if it falls short, a <a href=\"/dell-hardware/\">refurbished business Dell</a> from &pound;510 with your data moved across is the sensible replacement, and <a href=\"/windows-10-esu-free-enrolment-help/\">Windows 10 ESU</a> keeps it patched until October 2027 while you decide."),
+       "Not on its own &mdash; a browser cannot read the two things that decide it, <strong>TPM 2.0</strong> and <strong>Secure Boot</strong>. Windows can: open Settings &rarr; Update &amp; Security (Privacy &amp; security on Windows 11) &rarr; Windows Security &rarr; Device security, where they appear as Security processor and Secure boot. Or install the free <a href=\"/free-pc-health-check/\">365 PC Manager</a>: its This PC page reads the security chip, Secure Boot and the processor and gives you a straight answer. Our <a href=\"/windows-11-upgrade-service/\">Windows 11 upgrade service</a> checks it for free and does the upgrade properly if it passes; if it falls short, a <a href=\"/dell-hardware/\">refurbished business Dell</a> from &pound;510 with your data moved across is the sensible replacement, and <a href=\"/windows-10-esu-free-enrolment-help/\">Windows 10 ESU</a> keeps it patched until October 2027 while you decide."),
       ("Is it safe to run the benchmark on this page?",
        "Yes. It runs for about twenty seconds inside your browser using ordinary web features, works the processor, memory, graphics and storage hard for a moment, and installs nothing. The fan may spin up briefly, which is normal. Your score stays on your device unless you choose to download the score card or share it."),
       ("Why can&rsquo;t it show my exact RAM, CPU model or temperatures?",
