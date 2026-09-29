@@ -116,7 +116,15 @@ function vis_shape($code, $j, $cerr) {
 // ---------------------------------------------------------------- the tally
 function vis_empty_day() {
     return array('visitors' => 0, 'local' => 0, 'uk' => 0, 'abroad' => 0, 'warm' => 0,
-        'places' => array(), 'placesLocal' => array(), 'os' => array(), 'dv' => array(), 'br' => array(), 'src' => array(), 'pages' => array());
+        'places' => array(), 'placesLocal' => array(), 'os' => array(), 'dv' => array(), 'br' => array(), 'src' => array(), 'pages' => array(),
+        'byCountry' => array());   // 30 Sep 2026: per country {visitors, pages, src, os, dv} - what visitors from each country read
+}
+// the per-country block of a day's rollup (at most 60 countries a day; beyond that, "Other")
+function &vis_bc(array &$d, $cc) {
+    if (!isset($d['byCountry']) || !is_array($d['byCountry'])) $d['byCountry'] = array();
+    if (!isset($d['byCountry'][$cc]) && count($d['byCountry']) >= 60) $cc = 'Other';
+    if (!isset($d['byCountry'][$cc])) $d['byCountry'][$cc] = array('visitors' => 0, 'pages' => array(), 'src' => array(), 'os' => array(), 'dv' => array());
+    return $d['byCountry'][$cc];
 }
 function vis_bump(array &$map, $key, $cap) {   // a counter with a cap: beyond it, new keys fold into "Other"
     $key = (string)$key;
@@ -145,10 +153,12 @@ function vis_fold(array $store, array $live, $now) {
             $id = preg_replace('/[^a-f0-9]/', '', (string)(isset($r['id']) ? $r['id'] : ''));
             if ($id === '') continue;
             $sk = $site . ':' . $id;
+            $ct = (string)(isset($r['ct']) ? $r['ct'] : '');
+            $cc = preg_match('/^[A-Z]{2}$/', $ct) ? $ct : 'Unknown';
             if (!isset($seen[$sk])) {
-                $seen[$sk] = array('p' => array(), 'd' => 0, 'w' => 0);
+                $seen[$sk] = array('p' => array(), 'd' => 0, 'w' => 0, 'c' => $cc);
                 $d['visitors']++;
-                $ct = (string)(isset($r['ct']) ? $r['ct'] : '');
+                $bc = &vis_bc($d, $cc); $bc['visitors']++; unset($bc);
                 $local = !empty($r['local']);
                 if ($local) $d['local']++; elseif ($ct !== '' && $ct !== 'GB') $d['abroad']++; else $d['uk']++;
                 $place = (string)(isset($r['place']) ? $r['place'] : '');
@@ -157,8 +167,11 @@ function vis_fold(array $store, array $live, $now) {
                 if ($local) vis_bump($d['placesLocal'], $where, 500);
                 $src = (isset($r['src']) && $r['src'] !== null && (string)$r['src'] !== '') ? (string)$r['src'] : 'Unknown';
                 vis_bump($d['src'], $src, 100);
+                $bc = &vis_bc($d, $cc); vis_bump($bc['src'], $src, 50); unset($bc);
             }
             $s = &$seen[$sk];
+            if (empty($s['c'])) $s['c'] = $cc;   // an entry from before countries were kept per visitor
+            $vc = (string)$s['c'];
             // the device, the first time it is known
             if (!$s['d'] && isset($r['dev']) && is_array($r['dev']) && ((string)(isset($r['dev']['os']) ? $r['dev']['os'] : '') !== '' || (string)(isset($r['dev']['dv']) ? $r['dev']['dv'] : '') !== '')) {
                 $s['d'] = 1;
@@ -166,6 +179,10 @@ function vis_fold(array $store, array $live, $now) {
                 vis_bump($d['os'], $os !== '' ? $os : 'Unknown system', 50);
                 if (!empty($r['dev']['dv'])) vis_bump($d['dv'], (string)$r['dev']['dv'], 5);
                 if (!empty($r['dev']['br'])) vis_bump($d['br'], (string)$r['dev']['br'], 100);
+                $bc = &vis_bc($d, $vc);
+                vis_bump($bc['os'], $os !== '' ? $os : 'Unknown system', 30);
+                if (!empty($r['dev']['dv'])) vis_bump($bc['dv'], (string)$r['dev']['dv'], 5);
+                unset($bc);
             }
             // pages: each once per visitor per day
             foreach ((isset($r['pages']) && is_array($r['pages'])) ? $r['pages'] : array() as $p) {
@@ -174,6 +191,7 @@ function vis_fold(array $store, array $live, $now) {
                 if (count($s['p']) >= 40) break;
                 $s['p'][$p] = 1;
                 vis_bump($d['pages'], $p, 500);
+                $bc = &vis_bc($d, $vc); vis_bump($bc['pages'], $p, 200); unset($bc);
                 if ($site === 't365' && !$s['w'] && isset($warm[$p])) { $s['w'] = 1; $d['warm']++; }
             }
             unset($s);
@@ -236,8 +254,25 @@ function vis_period(array $store, array $days, $site) {
                 if (!isset($d[$f]) || !is_array($d[$f])) continue;
                 foreach ($d[$f] as $k => $v) $sum[$f][$k] = (isset($sum[$f][$k]) ? $sum[$f][$k] : 0) + (int)$v;
             }
+            foreach ((isset($d['byCountry']) && is_array($d['byCountry'])) ? $d['byCountry'] : array() as $cc => $b) {
+                if (!is_array($b)) continue;
+                if (!isset($sum['byCountry'][$cc])) $sum['byCountry'][$cc] = array('visitors' => 0, 'pages' => array(), 'src' => array(), 'os' => array(), 'dv' => array());
+                $sum['byCountry'][$cc]['visitors'] += (int)(isset($b['visitors']) ? $b['visitors'] : 0);
+                foreach (array('pages', 'src', 'os', 'dv') as $f) {
+                    if (!isset($b[$f]) || !is_array($b[$f])) continue;
+                    foreach ($b[$f] as $k => $v) $sum['byCountry'][$cc][$f][$k] = (isset($sum['byCountry'][$cc][$f][$k]) ? $sum['byCountry'][$cc][$f][$k] : 0) + (int)$v;
+                }
+            }
         }
         if ($any) $covered++;
+    }
+    // per country (the busiest 8, Other never listed): what visitors from there read, where they came from, what on
+    $perCountry = array(); $ccv = array();
+    foreach ($sum['byCountry'] as $cc => $b) $ccv[$cc] = (int)$b['visitors'];
+    foreach (vis_top($ccv, 8) as $c) {
+        $b = $sum['byCountry'][$c['k']];
+        $perCountry[] = array('k' => $c['k'], 'n' => $c['n'], 'pages' => vis_top($b['pages'], 8), 'src' => vis_top($b['src'], 5),
+            'os' => vis_top($b['os'], 6), 'dv' => vis_top($b['dv'], 3), 'known' => array_sum($b['dv']));
     }
     $places = array();
     foreach (vis_top($sum['places'], 10) as $p) {
@@ -252,7 +287,8 @@ function vis_period(array $store, array $days, $site) {
         $countries[$cc] = (isset($countries[$cc]) ? $countries[$cc] : 0) + (int)$n;
     }
     return array('visitors' => $sum['visitors'], 'local' => $sum['local'], 'uk' => $sum['uk'], 'abroad' => $sum['abroad'], 'warm' => $sum['warm'],
-        'days' => $covered, 'places' => $places, 'countries' => vis_top($countries, 12), 'pages' => vis_top($sum['pages'], 10), 'os' => vis_top($sum['os'], 12),
+        'days' => $covered, 'places' => $places, 'countries' => vis_top($countries, 12), 'perCountry' => $perCountry,
+        'pages' => vis_top($sum['pages'], 10), 'os' => vis_top($sum['os'], 12),
         'dv' => vis_top($sum['dv'], 3), 'br' => vis_top($sum['br'], 8), 'src' => vis_top($sum['src'], 10),
         'known' => array_sum($sum['dv']));   // visitors whose device is known (the share the device lists cover)
 }

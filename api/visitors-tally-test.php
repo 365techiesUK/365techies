@@ -83,6 +83,25 @@ check($cc['GB'] === 4 && $cc['IE'] === 1 && $t7['countries'][0]['k'] === 'GB' &&
 $sBare = vis_fold(array(), live($T, array(row('ffff0001', '', 'FR', false, 'Google', null, array('/')), row('ffff0002', '', '', false, 'Google', null, array('/')))), $T);
 $cb = array(); foreach (vis_stats($sBare, $T)['sites']['t365']['today']['countries'] as $c) $cb[$c['k']] = $c['n'];
 check($cb['FR'] === 1 && $cb['Unknown'] === 1, 'no town: the bare country code counts; nothing known = Unknown', json_encode($cb));
+echo "E2 per country: what visitors from each country read, where from, what on\n";
+$pc = array(); foreach ($t7['perCountry'] as $c) $pc[$c['k']] = $c;
+check(isset($pc['GB']) && isset($pc['IE']) && count($pc) === 2 && $t7['perCountry'][0]['k'] === 'GB', 'GB and IE, busiest first', json_encode(array_keys($pc)));
+check($pc['GB']['n'] === 4 && $pc['IE']['n'] === 1, 'visitors per country 4 / 1', json_encode(array($pc['GB']['n'], $pc['IE']['n'])));
+$gbp = array(); foreach ($pc['GB']['pages'] as $p) $gbp[$p['k']] = $p['n'];
+check($gbp['/'] === 3 && $gbp['/pricing/'] === 1 && $gbp['/contact/'] === 1 && $gbp['/book-service/'] === 2 && !isset($gbp['/x/']), 'GB pages: / 3 (Dublin\'s / is not among them), pricing, contact, booking 2', json_encode($gbp));
+$iep = array(); foreach ($pc['IE']['pages'] as $p) $iep[$p['k']] = $p['n'];
+check($iep['/'] === 1 && count($iep) === 1, 'IE pages: / once', json_encode($iep));
+$gbs = array(); foreach ($pc['GB']['src'] as $p) $gbs[$p['k']] = $p['n'];
+check($gbs['Google'] === 2 && $gbs['Direct'] === 1 && $gbs['Unknown'] === 1 && $pc['IE']['src'][0]['k'] === 'Bing', 'sources per country', json_encode($gbs));
+$gbo = array(); foreach ($pc['GB']['os'] as $p) $gbo[$p['k']] = $p['n'];
+check($gbo['Windows 11'] === 2 && $gbo['iPhone'] === 1 && $gbo['Android'] === 1 && $pc['IE']['os'][0]['k'] === 'Android', 'systems per country (London\'s device, known later, went to GB)', json_encode($gbo));
+$gbd = array(); foreach ($pc['GB']['dv'] as $p) $gbd[$p['k']] = $p['n'];
+check($pc['GB']['known'] === 4 && $gbd['phone'] === 2 && $gbd['pc'] === 2, 'device share per country: 4 known, 2 phones, 2 PCs', json_encode($gbd));
+$sOld = vis_fold(array(), live($T, array(row('gggg0001', 'Poole', 'GB', true, 'Google', null, array('/')))), $T);
+unset($sOld['seen'][$DAY]['t365:gggg0001']['c']);   // a store written before countries were kept per visitor
+$sOld = vis_fold($sOld, live($T + 60, array(row('gggg0001', 'Poole', 'GB', true, 'Google', $WIN11, array('/', '/a/')))), $T + 60);
+$ob = $sOld['days'][$DAY]['t365']['byCountry']['GB'];
+check($ob['visitors'] === 1 && $ob['pages']['/a/'] === 1 && $ob['os']['Windows 11'] === 1, 'an older seen entry still attributes later pages and devices by the row\'s country', json_encode($ob));
 check($t7['pages'][0]['k'] === '/' && $t7['pages'][0]['n'] === 4, 'top page / with 4', json_encode($t7['pages']));
 $os = array(); foreach ($t7['os'] as $o) $os[$o['k']] = $o['n'];
 check($os['Windows 11'] === 2 && $os['Android'] === 2 && $os['iPhone'] === 1 && $t7['known'] === 5, 'systems and the known-device count', json_encode($t7['os']));

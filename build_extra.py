@@ -25327,13 +25327,16 @@ def write_portal_page():
   #p365app ol.nx-lvtop li.nx-lvtop--warm u { background:#ffb400; }
   #p365app .nx-lvst .nx-lvbar { margin:.2rem 0 .3rem; }
   #p365app .nx-lvstnote { margin:.9rem 0 0; font-size:.9rem; color:#7f95a8; }
+  /* 30 Sep 2026: by country - a chip per country, then what visitors from there read / came from / are on */
+  #p365app .nx-lvcc-h { margin:1.2rem 0 .5rem; padding-top:1rem; border-top:1px solid #1f2c4a; }
+  #p365app .nx-lvstg--3 { grid-template-columns:repeat(3,minmax(0,1fr)); margin-top:.7rem; }
   #p365app .nx-lvnote { margin:.2rem 0 .6rem; padding:.6rem .8rem; border-radius:10px; background:#16213f; color:#c4d6ee; font-size:.95rem; }
   @media (max-width:900px) {
     #p365app .nx-lstrip { grid-template-columns:1fr; gap:.8rem; }
     #p365app .nx-lsmap { display:none; }
     #p365app .nx-lvgrid { grid-template-columns:1fr; }
     #p365app .nx-lvk { grid-template-columns:repeat(2,minmax(0,1fr)); }
-    #p365app .nx-lvstg { grid-template-columns:1fr; }
+    #p365app .nx-lvstg, #p365app .nx-lvstg--3 { grid-template-columns:1fr; }
     #p365app .nx-lvmap { height:340px; }
     #p365app .nx-lvrows { max-height:none; }
   }
@@ -29353,7 +29356,7 @@ def write_portal_page():
   // Worker; one poll every 90 s feeds the staff bar pill, the strip at the top of Today and the Live tab. Places are
   // rough (from each visitor's internet provider); "Dorset & around" = BH, DT, SO and SP postcodes. No names, no cookies.
   var NXL = { d: null, at: 0, site: 'all', sel: null, view: 'dorset', map: null, mini: null, layer: null, miniLayer: null, titles: null, loading: null, show: null, fsBound: false,
-    st: null, stAt: 0, stBusy: false, per: 'd7' };   // 29 Sep 2026: the statistics (where the views come from) and the period shown
+    st: null, stAt: 0, stBusy: false, per: 'd7', cc: '' };   // 29 Sep 2026: the statistics (where the views come from), the period and the country shown
   var NXL_WARM = { '/book-service/': 'On the booking page', '/contact/': 'On the contact page', '/pay/': 'On the pay page',
     '/pricing/': 'Looking at prices', '/home-it-support-plans/': 'Looking at plans', '/business-it-support-plans/': 'Looking at plans',
     '/monthly-it-support/': 'Looking at plans', '/plan-finder/': 'Choosing a plan', '/dell-support-plans/': 'Looking at plans' };
@@ -29548,6 +29551,10 @@ def write_portal_page():
       .catch(function () { NXL.st = { ok: false, error: 'no answer' }; NXL.stAt = Date.now(); NXL.stBusy = false; nxlStats(); });
   }
   function nxlPct(n, of) { return of > 0 ? Math.round(100 * n / of) + '%' : ''; }
+  function nxlCountry(cc) {   // "GB" -> "United Kingdom"; the tally's "Unknown" -> "Not known"
+    if (!cc || cc === 'Unknown') return 'Not known';
+    try { return new Intl.DisplayNames(['en-GB'], { type: 'region' }).of(cc) || cc; } catch (e) { return cc; }
+  }
   function nxlTop(items, of, name, warmKeys) {   // a top-10 list: name, count, share, and a bar under each
     if (!items || !items.length) return '<p class="quiet" style="margin:.2rem .4rem">Nothing yet</p>';
     var max = items[0].n || 1;
@@ -29583,12 +29590,7 @@ def write_portal_page():
           return esc(it.k.replace(/, [A-Z]{2}$/, '')) + (it.local ? '<i class="nx-lvtag nx-lvtag--local">Local</i>' : abroad ? '<i class="nx-lvtag" style="border:1px solid #2a3a5e;color:#9fb5d3">' + esc(it.k.slice(-2)) + '</i>' : '');
         })
       // 30 Sep 2026: countries (from the towns' country codes), named in full
-      + '<h3 style="margin-top:.8rem">Countries</h3>' + nxlTop(s.countries, s.visitors, function (it) {
-          var nm = it.k;
-          if (it.k === 'Unknown') nm = 'Not known';
-          else { try { nm = new Intl.DisplayNames(['en-GB'], { type: 'region' }).of(it.k) || it.k; } catch (e) {} }
-          return esc(nm);
-        }) + '</div>'
+      + '<h3 style="margin-top:.8rem">Countries</h3>' + nxlTop(s.countries, s.visitors, function (it) { return esc(nxlCountry(it.k)); }) + '</div>'
       + '<div><h3>Pages <span>each visitor once</span></h3>' + nxlTop(s.pages, s.visitors, pageName, warmKeys) + '</div>'
       + '<div><h3>Systems <span>' + (known && s.visitors ? 'known for ' + nxlPct(known, s.visitors) : 'from Chrome and Edge: Windows 10 or 11') + '</span></h3>'
       + (s.dv && s.dv.length ? '<div class="nx-lvbar">' + s.dv.map(function (it) { return '<span style="flex-grow:' + it.n + ';background:' + (NXL_DEV[it.k] ? NXL_DEV[it.k][1] : '#5b6c8f') + '"></span>'; }).join('') + '</div>'
@@ -29597,6 +29599,22 @@ def write_portal_page():
       + '<div><h3>Where they came from</h3>' + nxlTop(s.src, s.visitors, function (it) { return nxlSrcTag(it.k) || esc(it.k); })
       + (s.br && s.br.length ? '<h3 style="margin-top:.8rem">Browsers</h3>' + nxlTop(s.br.slice(0, 5), known, function (it) { return esc(it.k); }) : '') + '</div>'
       + '</div>';
+    // 30 Sep 2026: by country - what visitors from each country read, where they came from, what they are on
+    var pcs = s.perCountry || [];
+    if (pcs.length) {
+      var cur = pcs.filter(function (c) { return c.k === NXL.cc; })[0] || pcs[0];
+      h += '<h3 class="nx-lvcc-h">By country <span>what visitors from each country read, and where they came from</span></h3>'
+        + '<div class="nx-lvchips" role="group" aria-label="Country">' + pcs.map(function (c) {
+            return '<button type="button" class="nx-lvchip nx-lvcc" data-cc="' + esc(c.k) + '" aria-pressed="' + (c.k === cur.k ? 'true' : 'false') + '">' + esc(nxlCountry(c.k)) + '<span>' + c.n + '</span></button>';
+          }).join('') + '</div>'
+        + '<div class="nx-lvstg nx-lvstg--3">'
+        + '<div><h3>Pages <span>' + cur.n + (cur.n === 1 ? ' visitor' : ' visitors') + ' from ' + esc(nxlCountry(cur.k)) + '</span></h3>' + nxlTop(cur.pages, cur.n, pageName, warmKeys) + '</div>'
+        + '<div><h3>Where they came from</h3>' + nxlTop(cur.src, cur.n, function (it) { return nxlSrcTag(it.k) || esc(it.k); }) + '</div>'
+        + '<div><h3>Systems' + (cur.known && cur.n ? ' <span>known for ' + nxlPct(cur.known, cur.n) + '</span>' : '') + '</h3>'
+        + (cur.dv && cur.dv.length ? '<div class="nx-lvkey" style="margin-bottom:.4rem">' + cur.dv.map(function (it) { return '<span><i style="background:' + (NXL_DEV[it.k] ? NXL_DEV[it.k][1] : '#5b6c8f') + '"></i>' + (NXL_DEV[it.k] ? NXL_DEV[it.k][0] : esc(it.k)) + ' <b>' + it.n + '</b></span>'; }).join('') + '</div>' : '')
+        + nxlTop(cur.os, cur.known, function (it) { return esc(it.k); }) + '</div>'
+        + '</div>';
+    }
     var since = st.since ? (function () { var p = st.since.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); })() : '';
     h += '<p class="nx-lvstnote">Counted on our server from the live view' + (since ? ' since ' + esc(since) : '') + (s.days ? ' \\u00b7 ' + s.days + (s.days === 1 ? ' day' : ' days') + ' with visitors' : '') + ' \\u00b7 each visitor once a day, each page once per visitor \\u00b7 a visitor between two polls can be missed \\u00b7 no names, no cookies.</p>';
     box.innerHTML = h;
@@ -29731,6 +29749,7 @@ def write_portal_page():
       var b = e.target && e.target.closest ? e.target.closest('button') : null; if (!b || !lv.contains(b)) return;
       if (b.classList.contains('nx-lvchip')) { NXL.site = b.getAttribute('data-site'); nxlTab(); return; }
       if (b.classList.contains('nx-lvper')) { NXL.per = b.getAttribute('data-p') || 'd7'; nxlStats(); return; }
+      if (b.classList.contains('nx-lvcc')) { NXL.cc = b.getAttribute('data-cc') || ''; nxlStats(); return; }
       if (b.classList.contains('nx-lvrow')) {
         NXL.sel = b.getAttribute('data-k');
         var la = parseFloat(b.getAttribute('data-la')), lo = parseFloat(b.getAttribute('data-lo'));
