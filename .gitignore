@@ -180,6 +180,10 @@ api/street-manager-key.php
 api/visitors-key.php
 api/visitors-cache.json
 api/visitors-cache.json.tmp
+# 29 Sep 2026: the statistics store (where the views come from), its lock and its temp files
+api/visitors-stats.json
+api/visitors-stats.json.lock
+api/visitors-stats.json.*.tmp
 api/street-manager-cache.json
 api/street-manager-cache.json.tmp
 api/street-manager-rate.json

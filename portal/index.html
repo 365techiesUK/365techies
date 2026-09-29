@@ -707,9 +707,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 29 Sep 2026 &middot; 7ed2f87c06</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 29 Sep 2026 &middot; 1a23a4b7e3</p><script>
 (function () {
-  var P365BUILD = '7ed2f87c06';
+  var P365BUILD = '1a23a4b7e3';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -1710,12 +1710,28 @@
   #p365app .nx-lvsrctag, .p365ov .nx-lvsrctag { padding:.05rem .45rem; border-radius:6px; font-size:.8rem; font-weight:600; color:#eaf4ff; }
   #p365app .nx-lvrow__d, .p365ov .nx-lvrow__d { padding-left:1.2rem; font-size:.85rem; color:#7f95a8; }
   #p365app .nx-lvdev, .p365ov .nx-lvdev { display:flex; flex-direction:column; gap:.35rem; margin:-.3rem 0 .8rem; }
+  
+  #p365app .nx-lvst, .p365ov .nx-lvst { margin:1rem 0 0; }
+  #p365app .nx-lvst .nx-lvk, .p365ov .nx-lvst .nx-lvk { margin:.2rem 0 1rem; }
+  #p365app .nx-lvstg, .p365ov .nx-lvstg { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem 1.4rem; }
+  #p365app .nx-lvstg h3, .p365ov .nx-lvstg h3 { margin:0 0 .4rem; font-size:1rem; color:#c4d6ee; display:flex; align-items:baseline; justify-content:space-between; gap:.6rem; }
+  #p365app .nx-lvstg h3 span, .p365ov .nx-lvstg h3 span { font-weight:400; font-size:.85rem; color:#7f95a8; }
+  #p365app ol.nx-lvtop, .p365ov ol.nx-lvtop { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.15rem; }
+  #p365app ol.nx-lvtop li, .p365ov ol.nx-lvtop li { position:relative; display:grid; grid-template-columns:minmax(0,1fr) auto auto; align-items:center; gap:.6rem; padding:.3rem .45rem .4rem; border-radius:8px; font-size:.95rem; color:#eaf4ff; overflow:hidden; }
+  #p365app ol.nx-lvtop li > span, .p365ov ol.nx-lvtop li > span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:flex; align-items:center; gap:.4rem; min-width:0; }
+  #p365app ol.nx-lvtop li b, .p365ov ol.nx-lvtop li b { font-family:var(--font-mono, monospace); font-size:.92rem; }
+  #p365app ol.nx-lvtop li em, .p365ov ol.nx-lvtop li em { font-style:normal; font-size:.82rem; color:#7f95a8; min-width:2.6rem; text-align:right; }
+  #p365app ol.nx-lvtop li u, .p365ov ol.nx-lvtop li u { position:absolute; left:0; bottom:0; height:3px; background:#1d97e3; opacity:.55; border-radius:2px; text-decoration:none; }
+  #p365app ol.nx-lvtop li.nx-lvtop--warm u, .p365ov ol.nx-lvtop li.nx-lvtop--warm u { background:#ffb400; }
+  #p365app .nx-lvst .nx-lvbar, .p365ov .nx-lvst .nx-lvbar { margin:.2rem 0 .3rem; }
+  #p365app .nx-lvstnote, .p365ov .nx-lvstnote { margin:.9rem 0 0; font-size:.9rem; color:#7f95a8; }
   #p365app .nx-lvnote, .p365ov .nx-lvnote { margin:.2rem 0 .6rem; padding:.6rem .8rem; border-radius:10px; background:#16213f; color:#c4d6ee; font-size:.95rem; }
   @media (max-width:900px) {
     #p365app .nx-lstrip, .p365ov .nx-lstrip { grid-template-columns:1fr; gap:.8rem; }
     #p365app .nx-lsmap, .p365ov .nx-lsmap { display:none; }
     #p365app .nx-lvgrid, .p365ov .nx-lvgrid { grid-template-columns:1fr; }
     #p365app .nx-lvk, .p365ov .nx-lvk { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    #p365app .nx-lvstg, .p365ov .nx-lvstg { grid-template-columns:1fr; }
     #p365app .nx-lvmap, .p365ov .nx-lvmap { height:340px; }
     #p365app .nx-lvrows, .p365ov .nx-lvrows { max-height:none; }
   }
@@ -5733,7 +5749,8 @@
   // ---- Live view (27 Sep 2026): who is on the sites right now. /api/visitors.php (staff only) reads the visitors-live
   // Worker; one poll every 90 s feeds the staff bar pill, the strip at the top of Today and the Live tab. Places are
   // rough (from each visitor's internet provider); "Dorset & around" = BH, DT, SO and SP postcodes. No names, no cookies.
-  var NXL = { d: null, at: 0, site: 'all', sel: null, view: 'dorset', map: null, mini: null, layer: null, miniLayer: null, titles: null, loading: null, show: null, fsBound: false };
+  var NXL = { d: null, at: 0, site: 'all', sel: null, view: 'dorset', map: null, mini: null, layer: null, miniLayer: null, titles: null, loading: null, show: null, fsBound: false,
+    st: null, stAt: 0, stBusy: false, per: 'd7' };   // 29 Sep 2026: the statistics (where the views come from) and the period shown
   var NXL_WARM = { '/book-service/': 'On the booking page', '/contact/': 'On the contact page', '/pay/': 'On the pay page',
     '/pricing/': 'Looking at prices', '/home-it-support-plans/': 'Looking at plans', '/business-it-support-plans/': 'Looking at plans',
     '/monthly-it-support/': 'Looking at plans', '/plan-finder/': 'Choosing a plan', '/dell-support-plans/': 'Looking at plans' };
@@ -5914,6 +5931,61 @@
     var ab = rows.filter(function (x) { return x.abroad; });
     nxlSet('nxLvAbroad', ab.length ? '<i class="nx-mkdot nx-mkdot--abroad"></i>' + ab.length + ' abroad: ' + esc(ab.slice(0, 3).map(nxlPlace).join(' \u00b7 ')) : '');
     nxlMarkers();
+    nxlStats();
+  }
+  // ---- 29 Sep 2026: where the views come from - today / 7 / 30 days, tallied on our server from the live counter
+  // (api/visitors-stats.php; each visitor once a day). Loaded when the Live tab opens, refreshed every 5 minutes.
+  function nxlStatsLoad(force) {
+    if (!document.getElementById('nxLvSt') || NXL.stBusy) return;
+    if (!force && NXL.stAt && Date.now() - NXL.stAt < 300000) return;
+    NXL.stBusy = true;
+    fetch('/api/visitors-stats.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ stoken: S.stoken, machine: mid() }) })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { NXL.st = d; NXL.stAt = Date.now(); NXL.stBusy = false; nxlStats(); })
+      .catch(function () { NXL.st = { ok: false, error: 'no answer' }; NXL.stAt = Date.now(); NXL.stBusy = false; nxlStats(); });
+  }
+  function nxlPct(n, of) { return of > 0 ? Math.round(100 * n / of) + '%' : ''; }
+  function nxlTop(items, of, name, warmKeys) {   // a top-10 list: name, count, share, and a bar under each
+    if (!items || !items.length) return '<p class="quiet" style="margin:.2rem .4rem">Nothing yet</p>';
+    var max = items[0].n || 1;
+    return '<ol class="nx-lvtop">' + items.map(function (it) {
+      var warm = warmKeys && warmKeys[it.k];
+      return '<li' + (warm ? ' class="nx-lvtop--warm"' : '') + '><span>' + name(it) + '</span><b>' + it.n + '</b><em>' + nxlPct(it.n, of) + '</em><u style="width:' + Math.max(2, Math.round(100 * it.n / max)) + '%"></u></li>';
+    }).join('') + '</ol>';
+  }
+  function nxlStats() {
+    var box = document.getElementById('nxLvStBody'); if (!box) return;
+    var st = NXL.st, site = NXL.site, per = NXL.per;
+    Array.prototype.forEach.call(document.querySelectorAll('#nxLvSt .nx-lvper'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-p') === per ? 'true' : 'false'); });
+    if (!st) { box.innerHTML = '<p class="quiet">Loading\u2026</p>'; return; }
+    if (!st.ok) { box.innerHTML = '<p class="quiet">The statistics could not load (' + esc(st.error || 'no answer') + ').</p>'; return; }
+    var s = st.sites && st.sites[site] && st.sites[site][per];
+    if (!s) { box.innerHTML = '<p class="quiet">Nothing counted yet.</p>'; return; }
+    var perName = per === 'today' ? 'today' : per === 'd7' ? 'in the last 7 days' : 'in the last 30 days';
+    var siteName = site === 'all' ? 'the sites' : (NXL_SITES.filter(function (x) { return x[0] === site; })[0] || ['', 'the site'])[1];
+    var topSrc = s.src && s.src[0], topOs = s.os && s.os[0];
+    var h = '<div class="nx-lvk">'
+      + '<div><b>' + s.visitors + '</b><span>' + (s.visitors === 1 ? 'visitor' : 'visitors') + ' ' + perName + ' on ' + esc(siteName) + '</span></div>'
+      + '<div class="nx-lvk--local"><b>' + s.local + '</b><span>in Dorset & around' + (s.visitors ? ' \u00b7 ' + nxlPct(s.local, s.visitors) : '') + '</span></div>'
+      + '<div class="' + (s.warm ? 'nx-lvk--warm' : '') + '"><b>' + s.warm + '</b><span>reached a booking, contact, price or plan page</span></div>'
+      + '<div><b>' + (topSrc ? nxlPct(topSrc.n, s.visitors) : '\u2013') + '</b><span>' + (topSrc ? 'came from ' + esc(topSrc.k) : 'where they came from') + '</span></div>'
+      + '</div>';
+    var pageName = function (it) { return esc(site === 'all' || site === 't365' ? nxlPage('t365', it.k) : it.k); };
+    var warmKeys = (site === 'all' || site === 't365') ? NXL_WARM : null;
+    var known = s.known || 0;
+    h += '<div class="nx-lvstg">'
+      + '<div><h3>Towns <span>rough, from the internet provider</span></h3>' + nxlTop(s.places, s.visitors, function (it) { return esc(it.k.replace(/, GB$/, '')) + (it.local ? '<i class="nx-lvtag nx-lvtag--local">Local</i>' : /, [A-Z]{2}$/.test(it.k) ? '<i class="nx-lvtag" style="border:1px solid #2a3a5e;color:#9fb5d3">' + esc(it.k.slice(-2)) + '</i>' : ''); }) + '</div>'
+      + '<div><h3>Pages <span>each visitor once</span></h3>' + nxlTop(s.pages, s.visitors, pageName, warmKeys) + '</div>'
+      + '<div><h3>Systems <span>' + (known && s.visitors ? 'known for ' + nxlPct(known, s.visitors) : 'from Chrome and Edge: Windows 10 or 11') + '</span></h3>'
+      + (s.dv && s.dv.length ? '<div class="nx-lvbar">' + s.dv.map(function (it) { return '<span style="flex-grow:' + it.n + ';background:' + (NXL_DEV[it.k] ? NXL_DEV[it.k][1] : '#5b6c8f') + '"></span>'; }).join('') + '</div>'
+        + '<div class="nx-lvkey" style="margin-bottom:.5rem">' + s.dv.map(function (it) { return '<span><i style="background:' + (NXL_DEV[it.k] ? NXL_DEV[it.k][1] : '#5b6c8f') + '"></i>' + (NXL_DEV[it.k] ? NXL_DEV[it.k][0] : esc(it.k)) + ' <b>' + it.n + '</b></span>'; }).join('') + '</div>' : '')
+      + nxlTop(s.os, known, function (it) { return esc(it.k); }) + '</div>'
+      + '<div><h3>Where they came from</h3>' + nxlTop(s.src, s.visitors, function (it) { return nxlSrcTag(it.k) || esc(it.k); })
+      + (s.br && s.br.length ? '<h3 style="margin-top:.8rem">Browsers</h3>' + nxlTop(s.br.slice(0, 5), known, function (it) { return esc(it.k); }) : '') + '</div>'
+      + '</div>';
+    var since = st.since ? (function () { var p = st.since.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); })() : '';
+    h += '<p class="nx-lvstnote">Counted on our server from the live view' + (since ? ' since ' + esc(since) : '') + (s.days ? ' \u00b7 ' + s.days + (s.days === 1 ? ' day' : ' days') + ' with visitors' : '') + ' \u00b7 each visitor once a day, each page once per visitor \u00b7 a visitor between two polls can be missed \u00b7 no names, no cookies.</p>';
+    box.innerHTML = h;
   }
   function nxlGroups(rows) {
     var g = {}, out = [];
@@ -5981,6 +6053,7 @@
   }
   function nxlOpenTab() {
     nxlTitles();
+    nxlStatsLoad(false);
     nxlLeaflet(function () {
       if (!document.getElementById('nxLvMap')) return;
       if (!NXL.map) NXL.map = nxlMap('nxLvMap', false);
@@ -6018,7 +6091,13 @@
       + '<section class="card" aria-label="Who is on now"><div class="nx-h2row"><h2>Who\u2019s on now</h2><span class="quiet" id="nxLvN"></span></div>'
       + '<div class="nx-lvsrc" id="nxLvSrc"></div><div class="nx-lvdev" id="nxLvDev"></div><div class="nx-lvrows" id="nxLvRows"></div></section>'
       + '</div>'
-      + '<p class="quiet" style="font-size:.95rem;margin:0">Cookieless and anonymous: no names, rough town only, the kind of device and browser (what any website sees; Windows 10 or 11 only from Chrome and Edge), forgotten after 5 minutes. Staff visits are not counted. Refreshes every 90 seconds.</p>'
+      + '<section class="card nx-lvst" id="nxLvSt" aria-label="Where the views come from"><div class="nx-h2row"><h2>Where the views come from</h2>'
+      + '<div class="nx-lvviews" role="group" aria-label="Period">'
+      + '<button type="button" class="nx-lvview nx-lvper" data-p="today" aria-pressed="false">Today</button>'
+      + '<button type="button" class="nx-lvview nx-lvper" data-p="d7" aria-pressed="true">7 days</button>'
+      + '<button type="button" class="nx-lvview nx-lvper" data-p="d30" aria-pressed="false">30 days</button></div></div>'
+      + '<div id="nxLvStBody"><p class="quiet">Loading\u2026</p></div></section>'
+      + '<p class="quiet" style="font-size:.95rem;margin:1rem 0 0">Cookieless and anonymous: no names, rough town only, the kind of device and browser (what any website sees; Windows 10 or 11 only from Chrome and Edge), forgotten after 5 minutes. Staff visits are not counted. Refreshes every 90 seconds.</p>'
       + '</div>';
   }
   function nxlStripHTML() {
@@ -6037,6 +6116,7 @@
     lv.addEventListener('click', function (e) {
       var b = e.target && e.target.closest ? e.target.closest('button') : null; if (!b || !lv.contains(b)) return;
       if (b.classList.contains('nx-lvchip')) { NXL.site = b.getAttribute('data-site'); nxlTab(); return; }
+      if (b.classList.contains('nx-lvper')) { NXL.per = b.getAttribute('data-p') || 'd7'; nxlStats(); return; }
       if (b.classList.contains('nx-lvrow')) {
         NXL.sel = b.getAttribute('data-k');
         var la = parseFloat(b.getAttribute('data-la')), lo = parseFloat(b.getAttribute('data-lo'));
@@ -6063,7 +6143,7 @@
     fetch('/api/visitors.php', { method: 'POST', headers: { 'Content-Type': 'application/json' },
            body: JSON.stringify({ stoken: S.stoken, machine: mid() }) })
       .then(function (r) { return r.json(); })
-      .then(function (d) { NXL.d = d; NXL.at = Date.now(); nxlRender(); })
+      .then(function (d) { NXL.d = d; NXL.at = Date.now(); nxlRender(); nxlStatsLoad(false); })
       .catch(function () { NXL.d = { ok: false, error: 'no answer' }; nxlRender(); });
   }
   function showStaff() {

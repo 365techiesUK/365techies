@@ -356,7 +356,9 @@ ErrorDocument 404 /404.html
 </FilesMatch>
 # Live-visitors: the Worker read token is a credential; the cache is internal.
 # visitors.php itself stays served - it authenticates per request.
-<FilesMatch "^(visitors-key\.php|visitors-cache\.json(\..*)?)$">
+# 29 Sep 2026: the statistics store, its library, its test and its cron are never URLs either
+# (visitors.php and visitors-stats.php stay served - both authenticate per request).
+<FilesMatch "^(visitors-key\.php|visitors-cache\.json(\..*)?|visitors-stats\.json(\..*)?|visitors-tally-lib\.php|visitors-tally-test\.php|visitors-cron\.php)$">
   Require all denied
 </FilesMatch>
 # Signal map + van telemetry stores. THESE WERE PUBLICLY READABLE UNTIL 2026-09-01
