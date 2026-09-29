@@ -43,8 +43,11 @@ if (!defined('DORSET_SHIPS_LIB')) {
     define('SHIPS_HOME_N', 51.00);
     define('SHIPS_FAR_MIN_KN', 1.0);
     define('SHIPS_STALE_MS', 30 * 60 * 1000);   // a vessel silent this long leaves the snapshot (dev-proxy parity)
-    define('SHIPS_SILENCE_MS', 180 * 1000);     // no AIS message for this long reads as 'stale'
-    define('SHIPS_POLL_DEAD_MS', 5 * 60 * 1000); // no poll for this long reads as 'down' (the cron is not running)
+    // 29 Sep 2026: widened for a 5-minute cron (30 s listen). SiteGround bills the whole time the poller holds the
+    // socket, and a 50 s-of-every-60 poller was most of the account's CPU-seconds quota. Worst normal gap between
+    // messages is now ~4.5 min, so 7 min = one late run tolerated before 'stale'; 12 min = two missed runs = 'down'.
+    define('SHIPS_SILENCE_MS', 7 * 60 * 1000);  // no AIS message for this long reads as 'stale'
+    define('SHIPS_POLL_DEAD_MS', 12 * 60 * 1000); // no poll for this long reads as 'down' (the cron is not running)
     define('SHIPS_TRACK_SAMPLES', 64);
     define('SHIPS_TRACK_MIN_GAP_SEC', 30);
     define('SHIPS_TRACK_MIN_MOVE_M', 25);

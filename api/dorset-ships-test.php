@@ -83,12 +83,15 @@ ok(ships_status($s, $T0, false)['status'] === 'missing-key', 'no key -> missing-
 ok(ships_status($s, $T0, true)['status'] === 'idle', 'key but never polled -> idle');
 $s['poll']['lastPollAt'] = $T0 - 30000; $s['poll']['lastMessageAt'] = $T0 - 40000;
 ok(ships_status($s, $T0, true)['status'] === 'live', 'polled 30 s ago with a message 40 s ago -> live');
-$s['poll']['lastMessageAt'] = $T0 - 4 * 60000;
+// 29 Sep 2026: thresholds widened for the 5-minute cron (stale after 7 min silent, down after 12 min with no poll)
+$s['poll']['lastPollAt'] = $T0 - 4.5 * 60000; $s['poll']['lastMessageAt'] = $T0 - 4.5 * 60000;
+ok(ships_status($s, $T0, true)['status'] === 'live', 'the normal 4.5 min gap between 5-minute runs -> still live');
+$s['poll']['lastPollAt'] = $T0 - 30000; $s['poll']['lastMessageAt'] = $T0 - 8 * 60000;
 $h = ships_status($s, $T0, true);
-ok($h['status'] === 'stale' && $h['silentForMs'] === 4 * 60000, 'no message for 4 min -> stale with silentForMs', json_encode($h));
-$s['poll']['lastPollAt'] = $T0 - 6 * 60000; $s['poll']['failures'] = 3;
+ok($h['status'] === 'stale' && $h['silentForMs'] === 8 * 60000, 'no message for 8 min -> stale with silentForMs', json_encode($h));
+$s['poll']['lastPollAt'] = $T0 - 13 * 60000; $s['poll']['failures'] = 3;
 $h = ships_status($s, $T0, true);
-ok($h['status'] === 'down' && $h['reconnectAttempt'] === 3 && strpos($h['error'], 'poller has not run') === 0, 'no poll for 6 min -> down', json_encode($h));
+ok($h['status'] === 'down' && $h['reconnectAttempt'] === 3 && strpos($h['error'], 'poller has not run') === 0, 'no poll for 13 min -> down', json_encode($h));
 $s['poll']['authFailed'] = true;
 ok(ships_status($s, $T0, true)['status'] === 'auth-failed', 'rejected key -> auth-failed');
 

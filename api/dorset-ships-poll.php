@@ -3,9 +3,10 @@
  * Ships and ferries — the poller. CRON ONLY, never a URL (.htaccess denies it,
  * and the SAPI check below refuses anything but the command line).
  *
- * Every minute, SiteGround Site Tools -> Cron Jobs:
- *   php -q /home/customer/www/365techies.co.uk/public_html/api/dorset-ships-poll.php
- *   interval: * * * * *
+ * SiteGround Site Tools -> Devs -> Cron Jobs (29 Sep 2026: every 5 minutes, 30 s listen - SiteGround counts the
+ * whole time the socket is held as CPU seconds, so a 50 s-every-minute poller used most of the plan's quota):
+ *   php -q /home/customer/www/365techies.co.uk/public_html/api/dorset-ships-poll.php --seconds=30 --every=300
+ *   interval: every 5 minutes (minute field 0,5,10,...,55; the hours/days fields all *)
  *
  * What one run does: takes a lock (so overlapping runs cannot double-connect
  * against AISStream's connection limit), opens the websocket, subscribes to the
@@ -18,7 +19,8 @@
  * honest 'missing-key' store and exits 0, so the map says "not configured"
  * rather than nothing.
  *
- * Arguments: --seconds=50 (listen window, 10..55).  Exit 0 on success, 1 on a
+ * Arguments: --seconds=50 (listen window, 10..55), --every=120 (seconds between cron runs,
+ * for the map's 'next update' time; match the cron interval).  Exit 0 on success, 1 on a
  * failed capture, 2 when locked out or not configured.
  */
 if (PHP_SAPI !== 'cli') { http_response_code(403); exit("cli only\n"); }
@@ -27,7 +29,11 @@ require __DIR__ . '/dorset-lib.php';
 require __DIR__ . '/dorset-ships-lib.php';
 
 $seconds = 50;
-foreach ($argv as $a) if (preg_match('/^--seconds=(\d+)$/', $a, $m)) $seconds = max(10, min(55, (int)$m[1]));
+$every = 120;   // the cron's interval in seconds (*/2 until 29 Sep 2026; pass --every=300 with */5)
+foreach ($argv as $a) {
+    if (preg_match('/^--seconds=(\d+)$/', $a, $m)) $seconds = max(10, min(55, (int)$m[1]));
+    if (preg_match('/^--every=(\d+)$/', $a, $m)) $every = max(60, min(3600, (int)$m[1]));
+}
 
 $keys = dorset_keys();
 $apiKey = isset($keys['aisstream']) ? trim((string)$keys['aisstream']) : '';
@@ -56,7 +62,7 @@ $report = ships_capture($apiKey, $seconds, $store);
 $endMs = (int)round(microtime(true) * 1000);
 ships_prune($store, $endMs);
 $store['poll']['lastPollAt'] = $endMs;
-$store['poll']['nextAttemptAt'] = $endMs + 60000;
+$store['poll']['nextAttemptAt'] = $nowMs + $every * 1000;   // the next cron run starts $every s after this one did
 $store['poll']['authFailed'] = !empty($report['authFailed']);
 $store['poll']['lastMessages'] = $report['messages'];
 $store['poll']['lastFrames'] = $report['frames'];
