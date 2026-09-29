@@ -13,8 +13,13 @@
  *     so it cannot be reversed, rotates daily, and the raw IP is never stored;
  *   - only page path, city, country, a city-level position, the postcode AREA
  *     letters (BH, DT...), where the visit came from (a site NAME such as
- *     Google or Facebook - never a path or search words) and a timestamp are
- *     kept - for 5 minutes;
+ *     Google or Facebook - never a path or search words), a timestamp and
+ *     (29 Sep 2026) the kind of device - phone, tablet or PC; the system
+ *     (Windows 11, iPhone...), the browser and its major version, a screen
+ *     size band, dark mode, the language - are kept, for 5 minutes. The
+ *     device facts are what any web server sees anyway (the User-Agent),
+ *     plus the Windows version Chrome and Edge give when asked; never the
+ *     full User-Agent string, a phone model or a screen's exact size;
  *   - the beacon respects Do Not Track and skips staff devices.
  *
  * ARCHITECTURE NOTE: the Worker is TRANSPORT, not the system of record (the
@@ -94,6 +99,66 @@ function isLocal(area, la, lo) {
 }
 function num2(v) { const n = parseFloat(v); return isFinite(n) ? Math.round(n * 100) / 100 : null; }
 
+// 29 Sep 2026: what the visitor is on, from the User-Agent every server sees plus a few coarse facts the beacon adds:
+//   pv  Windows' platformVersion from Chrome/Edge client hints ("15.0.0"; 13+ = Windows 11, 1-12 = Windows 10) - the
+//       User-Agent itself has said "Windows NT 10.0" for every Windows since 2021
+//   t   touch points (an iPad in Safari's desktop mode says "Macintosh" but has touch)
+//   mb  navigator.userAgentData.mobile (1/0) when the browser has it
+//   sw  screen width in CSS px -> a band only ("s" under 600, "m" under 1100, "l")
+//   dk  dark mode 1/0;  lg  language ("en-GB")
+// -> { os, br, dv, sc, dk, lg }: short strings the portal shows as "Windows 11 · Edge 140 · PC · large screen".
+// The shapes below are the reduced/frozen User-Agents browsers send today; unknown ones fall back to plain words.
+export function deviceOf(ua, body) {
+  ua = String(ua || "").slice(0, 400);
+  body = body && typeof body === "object" ? body : {};
+  const touch = Math.max(0, parseInt(body.t, 10) || 0);
+  const mobile = body.mb === 1 || body.mb === "1" ? true : body.mb === 0 || body.mb === "0" ? false : null;
+  const sw = parseInt(body.sw, 10) || 0;
+  const pvMajor = parseInt(String(body.pv || "").split(".")[0], 10);
+  const m = (re) => { const x = re.exec(ua); return x ? x[1] : ""; };
+
+  // the system
+  let os = "", dv = "pc";
+  if (/iPhone|iPod/.test(ua)) { os = "iPhone"; dv = "phone"; }
+  else if (/iPad/.test(ua) || (/Macintosh/.test(ua) && touch > 1)) { os = "iPad"; dv = "tablet"; }
+  else if (/Android/.test(ua)) { os = "Android"; dv = /Mobile/.test(ua) ? "phone" : "tablet"; }
+  else if (/Windows Phone/.test(ua)) { os = "Windows Phone"; dv = "phone"; }
+  else if (/Windows NT 10\.0/.test(ua)) {
+    os = isFinite(pvMajor) && pvMajor >= 13 ? "Windows 11" : isFinite(pvMajor) && pvMajor >= 1 ? "Windows 10" : "Windows";
+  }
+  else if (/Windows NT 6\.3/.test(ua)) os = "Windows 8.1";
+  else if (/Windows NT 6\.2/.test(ua)) os = "Windows 8";
+  else if (/Windows NT 6\.1/.test(ua)) os = "Windows 7";
+  else if (/Windows/.test(ua)) os = "Windows";
+  else if (/CrOS/.test(ua)) os = "ChromeOS";
+  else if (/Macintosh|Mac OS X/.test(ua)) os = "Mac";
+  else if (/Linux|X11/.test(ua)) os = "Linux";
+  else os = "";
+  if (mobile === true && dv === "pc") dv = "phone";
+  if (dv === "pc" && os === "" && touch > 0 && sw > 0 && sw < 600) dv = "phone";   // an unknown system on a small touch screen
+  if (dv === "pc" && os === "" && !/Chrome|Safari|Firefox|Edg|OPR|Trident/.test(ua) && mobile === null && touch === 0) dv = "";   // nothing to go on: say nothing
+
+  // the browser and its major version (on iPhone/iPad every browser is WebKit with its own tag)
+  let br = "";
+  const v = (tag) => { const x = m(new RegExp(tag + "/(\\d+)")); return x ? " " + x : ""; };
+  if (/EdgiOS\//.test(ua)) br = "Edge" + v("EdgiOS");
+  else if (/CriOS\//.test(ua)) br = "Chrome" + v("CriOS");
+  else if (/FxiOS\//.test(ua)) br = "Firefox" + v("FxiOS");
+  else if (/Edg\//.test(ua)) br = "Edge" + v("Edg");
+  else if (/SamsungBrowser\//.test(ua)) br = "Samsung Internet" + v("SamsungBrowser");
+  else if (/OPR\//.test(ua)) br = "Opera" + v("OPR");
+  else if (/Firefox\//.test(ua)) br = "Firefox" + v("Firefox");
+  else if (/Chrome\//.test(ua)) br = "Chrome" + v("Chrome");
+  else if (/Version\/\d+.*Safari\//.test(ua)) br = "Safari" + v("Version");
+  else if (/Safari\//.test(ua)) br = "Safari";
+  else if (/MSIE |Trident\//.test(ua)) br = "Internet Explorer";
+
+  const sc = sw > 0 ? (sw < 600 ? "s" : sw < 1100 ? "m" : "l") : "";
+  const dk = body.dk === 1 || body.dk === "1" ? 1 : 0;
+  const lg = String(body.lg || "").replace(/[^A-Za-z-]/g, "").slice(0, 12);
+  return { os: os.slice(0, 20), br: br.slice(0, 24), dv, sc, dk, lg };
+}
+
 function corsFor(request) {
   const origin = request.headers.get("Origin") || "";
   const allowed = Object.values(SITES).flat().includes(origin) ? origin : "";
@@ -152,7 +217,8 @@ async function ping(request, env) {
   if (!existing || now - (existing.t || 0) > 60) {
     // a reload or a hop back keeps the source this page first arrived with
     const s = src ? src : ((existing && existing.s) || src);
-    const m = { p: path, c: city, ct: country, t: now, la, lo, a: area, s };
+    const d = deviceOf(ua, body);
+    const m = { p: path, c: city, ct: country, t: now, la, lo, a: area, s, os: d.os, br: d.br, dv: d.dv, sc: d.sc, dk: d.dk, lg: d.lg };
     // the same facts ride in the key's metadata, so /live can read everything from ONE list call
     await env.VISITS.put(key, JSON.stringify(m), { expirationTtl: 300, metadata: m });
   }
@@ -193,10 +259,13 @@ async function live(request, env, url) {
         const last = hits[hits.length - 1], first = hits[0];
         const la = typeof last.la === "number" ? last.la : null, lo = typeof last.lo === "number" ? last.lo : null;
         const srcHit = hits.find((h) => h.s);
+        // the device: the newest hit that knows it (an older Worker's hits carry none)
+        const devHit = [...hits].reverse().find((h) => h.dv || h.os || h.br);
         return {
           id: vh.slice(0, 8), place: last.c || "", ct: last.ct || "", la, lo,
           local: isLocal(last.a || "", la, lo),
           src: srcHit ? srcHit.s : null,
+          dev: devHit ? { os: devHit.os || "", br: devHit.br || "", dv: devHit.dv || "", sc: devHit.sc || "", dk: devHit.dk ? 1 : 0, lg: devHit.lg || "" } : null,
           pages: hits.map((h) => h.p).slice(-12),
           since: first.t ? Math.max(0, now - first.t) : null,
           ago: last.t ? Math.max(0, now - last.t) : null,

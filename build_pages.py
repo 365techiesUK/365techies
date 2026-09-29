@@ -1025,11 +1025,19 @@ VIS_BEACON = "" if not VISITORS_WORKER else (
     'if(/bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit/i.test(navigator.userAgent))return;'
     # staff are not visitors: a trusted staff device, or a live staff / view-as session, sends no ping
     'try{if(localStorage.getItem("p365staffdev")||/"staff":true|"back":/.test((localStorage.getItem("p365")||"")+(sessionStorage.getItem("p365s")||"")))return;}catch(e){}'
-    'fetch("' + VISITORS_WORKER + '/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},'
-    'body:JSON.stringify({site:"t365",path:location.pathname,'
+    # 29 Sep 2026: what they are on, coarsely - touch points, screen width (the Worker keeps a band only), dark mode,
+    # language, the mobile flag, and on Windows the version Chrome/Edge give through client hints (pv: 13+ = Windows 11;
+    # the User-Agent has said "Windows NT 10.0" for every Windows since 2021). The hint is asynchronous, so the ping
+    # waits for it up to 400 ms and then goes without it; it goes exactly once either way.
+    'var u=navigator.userAgentData,b={site:"t365",path:location.pathname,'
     # where they came from: the referrer's host only (never its path or search words); em = one of our email links
     'ref:(function(){try{return new URL(document.referrer).hostname}catch(e){return""}})(),'
-    'em:/utm_medium=e-?mail|utm_source=(e-?mail|newsletter|hubspot)/i.test(location.search)?1:0}),keepalive:true});}catch(e){}})();</script>\n')
+    'em:/utm_medium=e-?mail|utm_source=(e-?mail|newsletter|hubspot)/i.test(location.search)?1:0,'
+    't:navigator.maxTouchPoints||0,sw:(screen&&screen.width)||0,dk:(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?1:0,'
+    'lg:String(navigator.language||"").slice(0,12)},sent=false;if(u&&typeof u.mobile==="boolean")b.mb=u.mobile?1:0;'
+    'var go=function(){if(sent)return;sent=true;try{fetch("' + VISITORS_WORKER + '/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(b),keepalive:true});}catch(e){}};'
+    'if(u&&u.getHighEntropyValues&&/Windows/.test(navigator.userAgent)){u.getHighEntropyValues(["platformVersion"]).then(function(h){b.pv=String((h&&h.platformVersion)||"").slice(0,12);go();},go);setTimeout(go,400);}else go();'
+    '}catch(e){}})();</script>\n')
 
 
 def page(slug, title, desc, og_title, schema_json, content, og_image=None, robots=None):

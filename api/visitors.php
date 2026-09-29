@@ -82,6 +82,14 @@ foreach (array('t365' => '365techies.co.uk', 'ccb' => 'colinclarkbuilders.co.uk'
                 'lo' => (isset($r['lo']) && is_numeric($r['lo'])) ? round((float)$r['lo'], 2) : null,
                 'local' => !empty($r['local']),
                 'src' => (isset($r['src']) && $r['src'] !== null) ? substr((string)$r['src'], 0, 60) : null,
+                // 29 Sep 2026: what they are on (the Worker's deviceOf: short words only; null from an older Worker)
+                'dev' => (isset($r['dev']) && is_array($r['dev'])) ? array(
+                    'os' => preg_replace('/[^A-Za-z0-9 .]/', '', substr((string)(isset($r['dev']['os']) ? $r['dev']['os'] : ''), 0, 20)),
+                    'br' => preg_replace('/[^A-Za-z0-9 .]/', '', substr((string)(isset($r['dev']['br']) ? $r['dev']['br'] : ''), 0, 24)),
+                    'dv' => in_array((string)(isset($r['dev']['dv']) ? $r['dev']['dv'] : ''), array('phone', 'tablet', 'pc'), true) ? (string)$r['dev']['dv'] : '',
+                    'sc' => in_array((string)(isset($r['dev']['sc']) ? $r['dev']['sc'] : ''), array('s', 'm', 'l'), true) ? (string)$r['dev']['sc'] : '',
+                    'dk' => !empty($r['dev']['dk']) ? 1 : 0,
+                    'lg' => preg_replace('/[^A-Za-z-]/', '', substr((string)(isset($r['dev']['lg']) ? $r['dev']['lg'] : ''), 0, 12))) : null,
                 'pages' => $pg,
                 'since' => isset($r['since']) ? (int)$r['since'] : null,
                 'ago' => isset($r['ago']) ? (int)$r['ago'] : null);

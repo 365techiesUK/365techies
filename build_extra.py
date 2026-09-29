@@ -16550,6 +16550,7 @@ _PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
             <li><strong>Account and billing information</strong> needed to manage your plan and collect payment.</li>
             <li><strong>From the 365 PC Manager app</strong>, if you install it: the machine&rsquo;s health check-in (a machine identifier, Windows version, disk and memory state), and &mdash; on a support plan &mdash; the result of the broadband speed test we run at each service visit (download, upload, response time, wired or Wi-Fi, and your provider), kept on your service record so we can tell a slowing line from a slowing PC. Screen captures are only ever sent if you choose to send one. If you use Family View, the mobile number you enter for your trusted contact is stored so we can text them the reminder you asked for.</li>
             <li><strong>Website analytics</strong>, only after you accept analytics cookies. If you start a booking and do not finish it, we keep the phone number you entered for 24 hours so we can help you complete it, and your browser stores which page and campaign brought you here so an enquiry can be attributed correctly.</li>
+            <li><strong>A live count of who is on the site right now</strong>, without cookies or anything stored on your device: the page being read, a rough town from your internet provider, where the visit came from (Google, Facebook and so on &mdash; never what was searched for), and the kind of device &mdash; phone, tablet or PC, the system and the browser, as any website sees. No names or IP addresses are kept, and it is all forgotten after five minutes.</li>
           </ul>
 
           <h2>How we use your information</h2>
@@ -25309,6 +25310,8 @@ def write_portal_page():
   #p365app .nx-lvtag--warm { background:rgba(255,180,0,.18); color:#ffc940; }
   #p365app .nx-lvtag--site { border:1px solid #6cc4f5; color:#8fd0f7; }
   #p365app .nx-lvsrctag { padding:.05rem .45rem; border-radius:6px; font-size:.8rem; font-weight:600; color:#eaf4ff; }
+  #p365app .nx-lvrow__d { padding-left:1.2rem; font-size:.85rem; color:#7f95a8; }
+  #p365app .nx-lvdev { display:flex; flex-direction:column; gap:.35rem; margin:-.3rem 0 .8rem; }
   #p365app .nx-lvnote { margin:.2rem 0 .6rem; padding:.6rem .8rem; border-radius:10px; background:#16213f; color:#c4d6ee; font-size:.95rem; }
   @media (max-width:900px) {
     #p365app .nx-lstrip { grid-template-columns:1fr; gap:.8rem; }
@@ -29341,6 +29344,28 @@ def write_portal_page():
   var NXL_SRC = { 'Google': '#1d97e3', 'Bing': '#3fb4f0', 'Other search': '#5b8fd6', 'Facebook': '#8a74e8', 'Instagram': '#c05fd0',
     'Email': '#16b3bd', 'Direct': '#7f95a8', 'AI assistant': '#e0a13a', 'X': '#9aa9c4', 'LinkedIn': '#3b82c4', 'YouTube': '#d9534f', 'Nextdoor': '#3aa76d', 'TikTok': '#c04b7a' };
   var NXL_VIEWS = { dorset: [[50.45, -2.95], [51.0, -1.6]], uk: [[49.9, -8.2], [58.7, 1.9]] };
+  // 29 Sep 2026: what each visitor is on (the Worker's dev: os, br, dv, sc, dk, lg - short words, or null from an older Worker)
+  var NXL_DEV = { phone: ['Phone', '#6cc4f5'], tablet: ['Tablet', '#8a74e8'], pc: ['PC', '#1d97e3'] };
+  function nxlDevWords(r) {   // ["Windows 11", "Edge 140", "PC", "large screen", "dark mode", "Polish"]
+    var d = r && r.dev; if (!d) return [];
+    var w = [];
+    if (d.os) w.push(d.os);
+    if (d.br) w.push(d.br);
+    if (d.dv && NXL_DEV[d.dv]) w.push(NXL_DEV[d.dv][0]);
+    if (d.sc) w.push({ s: 'small', m: 'medium', l: 'large' }[d.sc] + ' screen');
+    if (d.dk) w.push('dark mode');
+    if (d.lg && !/^en(-|$)/i.test(d.lg)) { var nm = d.lg; try { nm = new Intl.DisplayNames(['en-GB'], { type: 'language' }).of(d.lg) || d.lg; } catch (e) {} w.push(nm); }
+    return w;
+  }
+  function nxlDevLine(r) { var w = nxlDevWords(r); return w.length ? esc(w.join(' \\u00b7 ')) : ''; }
+  function nxlDevShort(r) {   // "an iPhone", "a Windows 11 PC", "an Android phone", "a Mac" - for a sentence
+    var d = r && r.dev; if (!d || (!d.os && !d.dv)) return '';
+    var os = d.os === 'ChromeOS' ? 'Chromebook' : d.os, dv = d.dv, s;
+    if (os === 'iPhone' || os === 'iPad' || os === 'Mac' || os === 'Chromebook' || os === 'Linux') s = os;
+    else if (os) s = os + (dv === 'phone' ? ' phone' : dv === 'tablet' ? ' tablet' : ' PC');
+    else s = dv === 'pc' ? 'PC' : dv;
+    return (/^[aeiou]/i.test(s) ? 'an ' : 'a ') + s;
+  }
   // re-tones the dark map into the portal's navy: brightness -> a navy ramp (land darkest, sea lighter, labels pale blue)
   function nxlDefs() {
     if (document.getElementById('nxNavyDefs')) return;
@@ -29440,7 +29465,7 @@ def write_portal_page():
     nxlSet('nxLsSub', bad ? esc(bad) : (rows.length ? local + ' in Dorset & around \\u00b7 ' + uk + ' elsewhere in the UK' + (abroad ? ' \\u00b7 ' + abroad + ' abroad' : '') : (d && on === 0 ? 'Nobody on right now' : '')));
     var w = rows.filter(function (x) { return x.warm; })[0];
     nxlSet('nxLsWarm', w ? '<div class="nx-lswarm"><i class="nx-mkdot nx-mkdot--warm"></i><b>Warm:</b><span>someone '
-      + (w.r.place ? 'in <strong>' + esc(nxlPlace(w)) + '</strong> ' : '') + (w.r.src ? 'came from ' + esc(w.r.src) + ' and ' : '')
+      + (w.r.place ? 'in <strong>' + esc(nxlPlace(w)) + '</strong> ' : '') + (nxlDevShort(w.r) ? 'on ' + esc(nxlDevShort(w.r)) + ' ' : '') + (w.r.src ? 'came from ' + esc(w.r.src) + ' and ' : '')
       + 'is <strong>' + esc(w.warm.charAt(0).toLowerCase() + w.warm.slice(1)) + '</strong> now</span></div>' : '');
     // what is being read: each visitor's current page; with an older Worker, the page counts
     var cnt = {}, names = {};
@@ -29477,8 +29502,16 @@ def write_portal_page():
         + (x.site !== 't365' ? '<span class="nx-lvtag nx-lvtag--site">' + esc(x.siteName) + '</span>' : '')
         + (x.warm ? '<span class="nx-lvtag nx-lvtag--warm">' + esc(x.warm) + '</span>' : '')
         + '<span class="nx-lvrow__t">' + nxlMins(r.since) + '</span></span>'
-        + '<span class="nx-lvrow__b">' + nxlSrcTag(r.src) + nxlJourney(x) + '</span></button>';
+        + '<span class="nx-lvrow__b">' + nxlSrcTag(r.src) + nxlJourney(x) + '</span>'
+        + (nxlDevLine(r) ? '<span class="nx-lvrow__d">' + nxlDevLine(r) + '</span>' : '') + '</button>';
     }).join('');
+    // what they are on: phones / tablets / PCs as a bar, then the systems, counted among those on now
+    var dc = {}, oc = {};
+    rows.forEach(function (x) { var d = x.r.dev; if (!d) return; if (d.dv && NXL_DEV[d.dv]) dc[d.dv] = (dc[d.dv] || 0) + 1; if (d.os) oc[d.os] = (oc[d.os] || 0) + 1; });
+    var dks = Object.keys(dc).sort(function (a, b) { return dc[b] - dc[a]; }), oks = Object.keys(oc).sort(function (a, b) { return oc[b] - oc[a]; });
+    nxlSet('nxLvDev', dks.length ? '<div class="nx-lvbar">' + dks.map(function (k) { return '<span style="flex-grow:' + dc[k] + ';background:' + NXL_DEV[k][1] + '"></span>'; }).join('') + '</div>'
+      + '<div class="nx-lvkey">' + dks.map(function (k) { return '<span><i style="background:' + NXL_DEV[k][1] + '"></i>' + NXL_DEV[k][0] + ' <b>' + dc[k] + '</b></span>'; }).join('') + '</div>'
+      + (oks.length ? '<div class="nx-lvkey" style="color:#9fb5d3">' + oks.map(function (k) { return '<span>' + esc(k) + ' <b>' + oc[k] + '</b></span>'; }).join('') + '</div>' : '') : '');
     if (!rows.length && d && d.ok) h += '<p class="quiet" style="margin:.4rem .2rem">' + (on ? 'Visitors are on, but the counter is not sending their details yet.' : 'Nobody on ' + (site === 'all' ? 'the sites' : 'this site') + ' right now.') + '</p>';
     nxlSet('nxLvRows', h);
     var ab = rows.filter(function (x) { return x.abroad; });
@@ -29509,7 +29542,7 @@ def write_portal_page():
       if (NXL.layer) NXL.layer.remove();
       NXL.layer = L.layerGroup().addTo(NXL.map);
       nxlGroups(all.filter(function (x) { return site === 'all' || x.site === site; })).forEach(function (g) {
-        var tip = g.list.map(function (x) { return '<b>' + esc(nxlPlace(x)) + '</b>' + (x.r.src ? ' \\u00b7 ' + esc(x.r.src) : '') + '<br>' + esc(nxlPage(x.site, (x.r.pages || []).slice(-1)[0])); }).join('<hr>');
+        var tip = g.list.map(function (x) { return '<b>' + esc(nxlPlace(x)) + '</b>' + (x.r.src ? ' \\u00b7 ' + esc(x.r.src) : '') + '<br>' + esc(nxlPage(x.site, (x.r.pages || []).slice(-1)[0])) + (nxlDevLine(x.r) ? '<br><span style="color:#9fb5d3">' + nxlDevLine(x.r) + '</span>' : ''); }).join('<hr>');
         L.marker([g.la, g.lo], { icon: nxlIcon(g), keyboard: false, riseOnHover: true, zIndexOffset: g.list.some(function (x) { return x.warm; }) ? 1000 : 0 })
           .bindTooltip(tip, { direction: 'top', offset: [0, -12], className: 'nx-lvtip' })
           .on('click', function () { NXL.sel = g.list[0].key; nxlTab(); })
@@ -29586,9 +29619,9 @@ def write_portal_page():
       + '<p class="quiet" style="margin:.5rem 0 0;font-size:.95rem">Places are rough: they come from each visitor\\u2019s internet provider, so a phone can show up as London. Dorset & around = BH, DT, SO and SP postcodes (Dorset, the New Forest, Southampton, Salisbury).</p>'
       + '</section>'
       + '<section class="card" aria-label="Who is on now"><div class="nx-h2row"><h2>Who\\u2019s on now</h2><span class="quiet" id="nxLvN"></span></div>'
-      + '<div class="nx-lvsrc" id="nxLvSrc"></div><div class="nx-lvrows" id="nxLvRows"></div></section>'
+      + '<div class="nx-lvsrc" id="nxLvSrc"></div><div class="nx-lvdev" id="nxLvDev"></div><div class="nx-lvrows" id="nxLvRows"></div></section>'
       + '</div>'
-      + '<p class="quiet" style="font-size:.95rem;margin:0">Cookieless and anonymous: no names, rough town only, forgotten after 5 minutes. Staff visits are not counted. Refreshes every 90 seconds.</p>'
+      + '<p class="quiet" style="font-size:.95rem;margin:0">Cookieless and anonymous: no names, rough town only, the kind of device and browser (what any website sees; Windows 10 or 11 only from Chrome and Edge), forgotten after 5 minutes. Staff visits are not counted. Refreshes every 90 seconds.</p>'
       + '</div>';
   }
   function nxlStripHTML() {
