@@ -59,6 +59,13 @@ _VMC_CSS = """
 .vmc__more{margin:auto 0 0;padding-top:1rem}
 .vmc__also{margin:1.1rem 0 0;font-size:.94rem;line-height:1.7;color:var(--hp-soft)}
 @media (max-width:860px){.vmc__grid{grid-template-columns:1fr}}
+.vmc__shots{margin:1.4rem 0 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.1rem}
+.vmc__shots figure,.vms__grid figure{margin:0}
+.vmc__shots img,.vms__grid img{display:block;width:100%;height:auto;border-radius:16px}
+.vmc__shots figcaption,.vms__grid figcaption{margin:.45rem .3rem 0;font-size:.9rem;line-height:1.45;color:var(--hp-soft)}
+.vmc__shots figcaption b,.vms__grid figcaption b{color:var(--hp-ink)}
+.vmc__shotnote{margin:.8rem 0 0;font-size:.85rem;line-height:1.5;color:var(--hp-soft)}
+@media (max-width:600px){.vmc__shots{grid-template-columns:1fr}.vmc__shots figure+figure{display:none}}
 .vmc__dl-s{display:none}
 @media (max-width:600px){.vmc{padding-top:.8rem}.vmc__card{padding:1rem 1rem 1.05rem;border-radius:20px}.vmc__tag{display:none}.vmc__cta{margin:.8rem 0 .5rem}.vmc__cta .button{flex:1 1 100%;text-align:center;justify-content:center}.vmc__dl-l{display:none}.vmc__dl-s{display:inline}}
 @media (max-width:600px){.taskhead__trust span:nth-child(n+3){display:none}.taskhead__lede{margin-bottom:.55rem}}
@@ -70,13 +77,43 @@ _VMC_JS = """    <script>
     </script>"""
 
 
+# Screens from 365 PC Manager v30 (29 Sep 2026): real renders of the app's own Virgin page with its made-up sample mailbox
+# (yourname@virginmedia.com - never a customer's), in the laptop frame. Each has a 1200-wide and a 2080-wide file.
+# Made by scratchpad pcm/frame_v30_virgin.py; the share card by pcm/og_virgin_v30.py.
+VIRGIN_SHOTS = {
+    "check": ("Check my Virgin email", "How many emails, how big, and how many days the move will take. It only reads.",
+              "365 PC Manager&rsquo;s Virgin email check: 37,150 emails, 2.6 GB, about 6 days to move into Gmail (a sample mailbox)"),
+    "move": ("Move it to Gmail myself", "It carries on by itself, about 500&nbsp;MB a day. Switch the PC off and it carries on when it&rsquo;s back on.",
+             "365 PC Manager putting Virgin email into Gmail: 8,400 of 37,150 emails in Gmail, with a Pause button (a sample mailbox)"),
+    "done": ("When it has finished", "Every folder counted in Gmail against Virgin, so you can see it all arrived.",
+             "365 PC Manager when the move has finished: every folder arrived in Gmail, counted folder by folder (a sample mailbox)"),
+    "where": ("Where your address is used", "The companies that email you, to tick off as you change your address with each one.",
+              "365 PC Manager&rsquo;s list of where your Virgin address is used: banks and other companies, with how many emails each sent (a sample mailbox)"),
+}
+VIRGIN_OG = "/images/pcm-virgin-og-v30.jpg"
+
+
+def virgin_shot(key, sizes):
+    t, x, alt = VIRGIN_SHOTS[key]
+    return (f'<img src="/images/pcm-virgin-{key}-v30-1200.webp" srcset="/images/pcm-virgin-{key}-v30-1200.webp 1200w, '
+            f'/images/pcm-virgin-{key}-v30.webp 2080w" sizes="{sizes}" width="1200" height="935" alt="{alt}" loading="lazy" decoding="async">')
+
+
 def virgin_choices(setup_url, also_html="", how_href="/" + VIRGIN_TOOL_SLUG + "/", how_label="How it works, and what you need",
-                   heading_level=2):
+                   heading_level=2, shots=True):
     """The two choices side by side (one above the other on a phone, the free one first). The GBP 60 card keeps the
-    id move-for-me that the pages' own links point at; the free card is #do-it-free."""
+    id move-for-me that the pages' own links point at; the free card is #do-it-free. shots: two app screens under them
+    (the check and the move; one on a phone) - the tool page shows all four in its own section instead."""
     h = "h%d" % heading_level
     ticks = "\n".join("            <li>%s</li>" % t for t in VM_US_TICKS)
     also = ('\n    <p class="vmc__also">' + also_html + '</p>') if also_html else ""
+    if shots:
+        figs = "\n".join(f'        <figure>{virgin_shot(k, "(max-width:600px) 100vw, (max-width:1240px) 48vw, 580px")}'
+                         f'<figcaption><b>{VIRGIN_SHOTS[k][0]}</b> &middot; {VIRGIN_SHOTS[k][1]}</figcaption></figure>'
+                         for k in ("check", "move"))
+        also += (f'\n      <div class="vmc__shots" aria-label="What the free app looks like">\n{figs}\n      </div>'
+                 f'\n      <p class="vmc__shotnote">Real screens from 365 PC Manager, with a made-up sample mailbox. '
+                 f'<a href="/{VIRGIN_TOOL_SLUG}/#screens">See every screen &#8594;</a></p>')
     return f'''    <section class="dh vmc" id="choose" aria-label="Two ways to move your Virgin email">
     <div class="vmc__in">
       <div class="vmc__grid">
@@ -261,7 +298,7 @@ def virgin_tool_page(setup_url):
                         "Our free Windows app checks your Virgin Media, blueyonder, ntlworld or virgin.net mailbox and moves it to "
                         "Gmail, no Virgin app password needed. Or we do it for you:",
                         trust=TASK_TRUST[:2] + ["Signed by 365 Techies Ltd", "Windows 10 &amp; 11"])
-    choices = virgin_choices(setup_url, how_href="#how", how_label="How to use it, step by step",
+    choices = virgin_choices(setup_url, how_href="#how", how_label="How to use it, step by step", shots=False,
         also_html=('Deciding whether to keep your Virgin address? <a href="' + JUNARA + '">Keep it or move it</a> &middot; '
                    'moving by hand instead: <a href="' + GMAIL_PAGE + '">the Thunderbird guide</a> &middot; '
                    '<a href="#need">what you need</a> &middot; <a href="#safety">is it safe?</a>'))
@@ -273,6 +310,9 @@ def virgin_tool_page(setup_url):
     ]
     cards_html = "\n".join(
         f'          <li class="{c}"><span class="hp-ico">{_dh_ico(i)}</span><h3>{t}</h3><p>{x}</p></li>' for c, i, t, x in cards)
+    shots_html = "\n".join(f'          <figure>{virgin_shot(k, "(max-width:700px) 100vw, (max-width:1240px) 48vw, 580px")}'
+                           f'<figcaption><b>{VIRGIN_SHOTS[k][0]}</b> &middot; {VIRGIN_SHOTS[k][1]}</figcaption></figure>'
+                           for k in ("check", "move", "done", "where"))
     what = f'''    <section class="dh dh-sec vmt" id="what" aria-labelledby="what-title">
       <div class="dh-in">
         <p class="dh-kicker">What it does</p>
@@ -281,8 +321,17 @@ def virgin_tool_page(setup_url):
         <ul class="vmt__cards">
 {cards_html}
         </ul>
+        <h3 class="vms__h" id="screens">What you see on screen</h3>
+        <p class="vms__note">Real screens from the app, with a made-up sample mailbox: yourname@virginmedia.com.</p>
+        <div class="vms__grid">
+{shots_html}
+        </div>
       </div>
       <style>
+        .vms__h{{font-family:var(--font-display);font-weight:600;font-size:clamp(1.2rem,2.2vw,1.45rem);margin:2.2rem 0 .3rem;color:var(--hp-ink);scroll-margin-top:90px}}
+        .vms__note{{margin:0;font-size:.92rem;color:var(--hp-soft)}}
+        .vms__grid{{margin:1rem 0 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.4rem 1.2rem}}
+        @media (max-width:700px){{.vms__grid{{grid-template-columns:1fr}}}}
         .vmt__cards{{list-style:none;margin:1.4rem 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem}}
         .vmt__cards li{{padding:1.15rem 1.2rem;border-radius:20px;border:1px solid var(--hp-edge);background:var(--hp-card)}}
         .vmt__cards .hp-ico{{--s:44px;margin-bottom:.7rem}}
@@ -405,8 +454,8 @@ def virgin_tool_page(setup_url):
                              primary=("Call 01202 775566", "tel:+441202775566"), secondary=("Text us: 07520 615332", "sms:+447520615332"))])
 
     def schema(s, _d=desc, _n=name):
-        return bp.graph([bp.crumb_sub(s, "Email Support", "email-support", _n), bp.webpage(s, _n, _d),
+        return bp.graph([bp.crumb_sub(s, "Email Support", "email-support", _n), bp.webpage(s, _n, _d, image=VIRGIN_OG),
                          bp.howto_node(s, "How to move Virgin Media email to Gmail with 365 PC Manager", [(t, x) for t, x in TOOL_STEPS]),
                          bp.faqpage(s, TOOL_FAQS)])
     bp.add(slug=slug, title="Move Virgin Media Email to Gmail Free, No App Password", desc=desc,
-        og_title="Move your Virgin Media email to Gmail, free", schema=schema, content=content)
+        og_title="Move your Virgin Media email to Gmail, free", schema=schema, content=content, og_image=VIRGIN_OG)
