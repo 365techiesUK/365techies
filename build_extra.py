@@ -29581,6 +29581,13 @@ def write_portal_page():
           // "London" plain (the UK is the default), "St. Louis" with a US chip, Dorset & around with Local
           var abroad = /, [A-Z]{2}$/.test(it.k) && !/, GB$/.test(it.k);
           return esc(it.k.replace(/, [A-Z]{2}$/, '')) + (it.local ? '<i class="nx-lvtag nx-lvtag--local">Local</i>' : abroad ? '<i class="nx-lvtag" style="border:1px solid #2a3a5e;color:#9fb5d3">' + esc(it.k.slice(-2)) + '</i>' : '');
+        })
+      // 30 Sep 2026: countries (from the towns' country codes), named in full
+      + '<h3 style="margin-top:.8rem">Countries</h3>' + nxlTop(s.countries, s.visitors, function (it) {
+          var nm = it.k;
+          if (it.k === 'Unknown') nm = 'Not known';
+          else { try { nm = new Intl.DisplayNames(['en-GB'], { type: 'region' }).of(it.k) || it.k; } catch (e) {} }
+          return esc(nm);
         }) + '</div>'
       + '<div><h3>Pages <span>each visitor once</span></h3>' + nxlTop(s.pages, s.visitors, pageName, warmKeys) + '</div>'
       + '<div><h3>Systems <span>' + (known && s.visitors ? 'known for ' + nxlPct(known, s.visitors) : 'from Chrome and Edge: Windows 10 or 11') + '</span></h3>'

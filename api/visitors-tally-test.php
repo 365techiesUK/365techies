@@ -78,6 +78,11 @@ check($all7['days'] === 2 && $st['sites']['ccb']['d7']['visitors'] === 1 && $st[
 $pl = array(); foreach ($t7['places'] as $p) $pl[$p['k']] = $p;
 check(isset($pl['Southampton, GB']) && $pl['Southampton, GB']['local'] === true && $pl['London, GB']['local'] === false && $pl['Dublin, IE']['local'] === false, 'towns with their local flag', json_encode($t7['places']));
 check($t7['places'][0]['n'] >= $t7['places'][1]['n'], 'busiest first');
+$cc = array(); foreach ($t7['countries'] as $c) $cc[$c['k']] = $c['n'];
+check($cc['GB'] === 4 && $cc['IE'] === 1 && $t7['countries'][0]['k'] === 'GB' && count($cc) === 2, 'countries from the towns: GB 4, IE 1', json_encode($t7['countries']));
+$sBare = vis_fold(array(), live($T, array(row('ffff0001', '', 'FR', false, 'Google', null, array('/')), row('ffff0002', '', '', false, 'Google', null, array('/')))), $T);
+$cb = array(); foreach (vis_stats($sBare, $T)['sites']['t365']['today']['countries'] as $c) $cb[$c['k']] = $c['n'];
+check($cb['FR'] === 1 && $cb['Unknown'] === 1, 'no town: the bare country code counts; nothing known = Unknown', json_encode($cb));
 check($t7['pages'][0]['k'] === '/' && $t7['pages'][0]['n'] === 4, 'top page / with 4', json_encode($t7['pages']));
 $os = array(); foreach ($t7['os'] as $o) $os[$o['k']] = $o['n'];
 check($os['Windows 11'] === 2 && $os['Android'] === 2 && $os['iPhone'] === 1 && $t7['known'] === 5, 'systems and the known-device count', json_encode($t7['os']));

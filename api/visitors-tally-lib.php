@@ -244,8 +244,15 @@ function vis_period(array $store, array $days, $site) {
         $lo = isset($sum['placesLocal'][$p['k']]) ? (int)$sum['placesLocal'][$p['k']] : 0;
         $places[] = array('k' => $p['k'], 'n' => $p['n'], 'local' => $lo * 2 >= $p['n'] && $lo > 0);
     }
+    // 30 Sep 2026: countries, from the towns' country codes ("Poole, GB" -> GB; a bare "GB" when no town was known)
+    $countries = array();
+    foreach ($sum['places'] as $k => $n) {
+        if ($k === 'Other') continue;
+        $cc = preg_match('/, ([A-Z]{2})$/', (string)$k, $cm) ? $cm[1] : (preg_match('/^[A-Z]{2}$/', (string)$k) ? (string)$k : 'Unknown');
+        $countries[$cc] = (isset($countries[$cc]) ? $countries[$cc] : 0) + (int)$n;
+    }
     return array('visitors' => $sum['visitors'], 'local' => $sum['local'], 'uk' => $sum['uk'], 'abroad' => $sum['abroad'], 'warm' => $sum['warm'],
-        'days' => $covered, 'places' => $places, 'pages' => vis_top($sum['pages'], 10), 'os' => vis_top($sum['os'], 12),
+        'days' => $covered, 'places' => $places, 'countries' => vis_top($countries, 12), 'pages' => vis_top($sum['pages'], 10), 'os' => vis_top($sum['os'], 12),
         'dv' => vis_top($sum['dv'], 3), 'br' => vis_top($sum['br'], 8), 'src' => vis_top($sum['src'], 10),
         'known' => array_sum($sum['dv']));   // visitors whose device is known (the share the device lists cover)
 }
