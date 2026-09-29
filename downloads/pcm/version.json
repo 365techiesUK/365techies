@@ -1,11 +1,11 @@
 {
-  "ver": 28,
-  "version": "1.0.28",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v28.exe",
-  "sha256": "fd0a9fd5fc9cbaadb7841afe851284d11284a238ae4c10be84c29374c6146790",
-  "notes": "New checks for your PC: Windows Update health, your printers, OneDrive backup of your folders, security programs that clash and programs a home PC doesn't need, and your network's safety. Storage & space now shows every drive and can move big files to a drive with room. News from 365 on the Home page. Signed by 365 Techies Ltd.",
+  "ver": 30,
+  "version": "1.0.30",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v30.exe",
+  "sha256": "4e86c7993a84866ae1c71ae893bf19f712841a4fbb175f2597fdc6ae91621281",
+  "notes": "New, and free for everyone: Virgin Media, Blueyonder, ntlworld or virgin.net email? Tools > Virgin email checks your mailbox, helps you move it into Gmail yourself - it carries on by itself each day - and lists the companies that use your address so you can change it. Stuck? We'll do it for you for £60. Also new: your full 365 service runs inside the app, This PC shows what's inside your computer and whether it's ready for Windows 11, What we've done lists every job we run on your PC, and Let 365 in opens a secure connection for your techie in one click. The app also keeps itself up to date more reliably. Signed by 365 Techies Ltd.",
   "installer": {
-    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v28.exe",
-    "sha256": "4b7acc829360954cff3674b08623735a604d88b65ebea0734e1df61250bdfed4"
+    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v30.exe",
+    "sha256": "e1e113f42c2579185fbec05272fbd2ca89fc2ade967b3ea3000c8b590b8d60e5"
   }
 }
