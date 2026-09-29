@@ -287,7 +287,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-09-26"
+      "dateModified": "2026-09-29"
     },
     {
       "@type": "Service",
@@ -774,7 +774,7 @@
             <a href="/off-grid-victron-energy/" class="button secondary button--lg">Off-Grid Energy</a>
           </div>
           <a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Rated 4.9 on Google</strong></span><span>Family-run since 1995 &middot; real people, no call centre</span></a>
-          <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 26 September 2026</p>
+          <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 29 September 2026</p>
         </div>
         <nav class="hp-intents" aria-label="What would you like to do?">
           <p class="hp-intents__q">What would you like to do?</p>
@@ -880,6 +880,15 @@
           var RATE=0.48, STANDING=0.60;
           var SAMPLE={sample:true,soc:97,battState:"charging",battW:31,pvW:114,yieldLifetime:489.9,kwh30:49.6};
           var el=document.getElementById("vmini"); if(!el) return;
+          /* 29 Sep 2026: SiteGround counts every second a PHP script is connected, so the live feed only runs while someone
+             is watching: tab visible, this panel on screen, and a touch, scroll or key in the last 10 minutes. */
+          var gOn=true, gAct=Date.now(), gSse=null;
+          function watching(){ return !document.hidden && gOn && Date.now()-gAct<600000; }
+          function gSync(){ var w=watching(); if(gSse) gSse(w); if(w) tick(); }
+          try{ if(window.IntersectionObserver) new IntersectionObserver(function(en){ gOn=en[0].isIntersecting; gSync(); },{rootMargin:"200px"}).observe(el); }catch(e){}
+          ["pointerdown","keydown","scroll","touchstart","wheel"].forEach(function(ty){ window.addEventListener(ty,function(){ var was=watching(); gAct=Date.now(); if(!was) gSync(); },{passive:true}); });
+          document.addEventListener("visibilitychange", gSync);
+          setInterval(function(){ if(gSse && !watching()) gSse(false); }, 30000);
           var RC=351.9, cur={}, reduce=false; try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
           function q(s){return el.querySelector(s);}
           function tw(sel,key,to,fmt){ var n=q(sel); if(!n) return; if(to==null){n.textContent="—";return;} var f=(cur[key]==null?to:cur[key]); cur[key]=to; if(reduce||f===to){n.textContent=fmt(to);return;} var t0=null; function st(ts){if(t0===null)t0=ts;var p=Math.min(1,(ts-t0)/700);var e=1-Math.pow(1-p,3);n.textContent=fmt(f+(to-f)*e);if(p<1)requestAnimationFrame(st);} requestAnimationFrame(st); }
@@ -902,15 +911,18 @@
           var lastJ=null, sseOn=0, lastRest=0;
           function apply(j){ lastJ=j; render(j); }
           function tick(){ if(!PROXY){ render(SAMPLE); return; }
+            if(!watching()) return; /* nobody looking: no request (29 Sep 2026) */
             if(sseOn && Date.now()-lastRest<15000) return;
             fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ lastRest=Date.now(); apply((j&&j.ok)?j:SAMPLE); }).catch(function(){ if(!sseOn) apply(SAMPLE); });
           }
           tick(); setInterval(tick, 1000);
           if(PROXY && window.EventSource){ try{
-            var es=new EventSource(PROXY.replace("vrm.php","vrm-live.php"));
-            es.onmessage=function(ev){ try{ var d=JSON.parse(ev.data); if(!d||!d.live||!lastJ||lastJ.sample) return; sseOn=1;
+            var es=null;
+            var onLive=function(ev){ try{ var d=JSON.parse(ev.data); if(!d||!d.live||!lastJ||lastJ.sample) return; sseOn=1;
               for(var k in d){ if(k!=="live") lastJ[k]=d[k]; } render(lastJ);
             }catch(e){} };
+            gSse=function(on){ if(on&&!es){ es=new EventSource(PROXY.replace("vrm.php","vrm-live.php")); es.onmessage=onLive; } else if(!on&&es){ es.close(); es=null; } };
+            gSse(watching());
           }catch(e){} }
         })();
         </script>

@@ -287,7 +287,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-09-26"
+      "dateModified": "2026-09-29"
     },
     {
       "@type": "Service",
@@ -782,7 +782,7 @@
             <a href="/contact/" class="button secondary button--lg">Get a Free Energy Consultation</a>
           </div>
           <a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Rated 4.9 on Google</strong></span><span>Family-run since 1995 &middot; real people, no call centre</span></a>
-          <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 26 September 2026</p>
+          <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 29 September 2026</p>
         </div>
         <nav class="hp-intents" aria-label="What would you like to do?">
           <p class="hp-intents__q">What would you like to do?</p>
@@ -1468,6 +1468,15 @@
         orion:{state:"Off",why:"No/low input power",inV:12.4,inW:0,outI:0,lifeAh:9533},
         ledger:{pb:0.9,pc:0.7,bc:0.4}};
       var el=document.getElementById("vlive"); if(!el) return;
+      /* 29 Sep 2026: SiteGround counts every second a PHP script is connected, so the live feed only runs while someone
+         is watching: tab visible, this panel on screen, and a touch, scroll or key in the last 10 minutes. */
+      var gOn=true, gAct=Date.now(), gSse=null;
+      function watching(){ return !document.hidden && gOn && Date.now()-gAct<600000; }
+      function gSync(){ var w=watching(); if(gSse) gSse(w); if(w) tick(); }
+      try{ if(window.IntersectionObserver) new IntersectionObserver(function(en){ gOn=en[0].isIntersecting; gSync(); },{rootMargin:"200px"}).observe(el); }catch(e){}
+      ["pointerdown","keydown","scroll","touchstart","wheel"].forEach(function(ty){ window.addEventListener(ty,function(){ var was=watching(); gAct=Date.now(); if(!was) gSync(); },{passive:true}); });
+      document.addEventListener("visibilitychange", gSync);
+      setInterval(function(){ if(gSse && !watching()) gSse(false); }, 30000);
       var RC=439.82, reduce=false;   /* 240-degree speedo arc on the r=105 gauge */
       try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
       var cur={}, tanksSig=null, histKind=null, histSig=null, histData=null, histMode="solar";
@@ -1849,6 +1858,7 @@
       function apply(j){ lastJ=j; render(j); }
       function tick(){
         if(!window.fetch){ if(!sampled){sampled=true;render(SAMPLE);} return; }
+        if(!watching()) return; /* nobody looking: no request (29 Sep 2026) */
         if(busy) return; /* never pile up requests on slow connections */
         if(sseAlive() && Date.now()-lastRest<15000) return; /* SSE carries the hot values; REST tops up the rest every 15s */
         busy=true;
@@ -1923,9 +1933,9 @@
       loadWx(); setInterval(loadWx, 1800000);
       /* realtime overlay: same per-second MQTT stream the official Victron apps use, bridged server-side */
       if(PROXY && window.EventSource){ try{
-        var es=new EventSource(PROXY.replace("vrm.php","vrm-live.php"));
+        var es=null;
         var SM={0:"Off",1:"Low power",2:"Fault",3:"Bulk",4:"Absorption",5:"Float",6:"Storage",7:"Equalize",245:"Wake-up",246:"Repeated absorption",247:"Auto equalize",248:"BatterySafe",250:"Blocked",252:"External control"};
-        es.onmessage=function(ev){ try{ var d=JSON.parse(ev.data); if(!d||!d.live||!lastJ||lastJ.sample) return; lastSse=Date.now();
+        var onLive=function(ev){ try{ var d=JSON.parse(ev.data); if(!d||!d.live||!lastJ||lastJ.sample) return; lastSse=Date.now();
           for(var k in d){
             if(k==="live") continue;
             if(k==="ttgS"){ lastJ.timeToGo=(d[k]<0||d[k]>=863900)?null:d[k]/3600; } /* -1 sentinel = charging (infinite); 0 stays 0 h */
@@ -1938,6 +1948,8 @@
           lastJ.updated=Math.floor(Date.now()/1000);   /* freshness = the realtime stream, not VRM's 15-min logger */
           render(lastJ);
         }catch(e){} };
+        gSse=function(on){ if(on&&!es){ es=new EventSource(PROXY.replace("vrm.php","vrm-live.php")); es.onmessage=onLive; } else if(!on&&es){ es.close(); es=null; } };
+        gSse(watching());
       }catch(e){} }
     })();
     </script>

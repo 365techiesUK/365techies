@@ -287,7 +287,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-09-26"
+      "dateModified": "2026-09-29"
     },
     {
       "@type": "Service",
@@ -808,7 +808,7 @@
             <a href="tel:+441202775566" class="button secondary button--lg">Call +44 1202 775566</a>
           </div>
           <a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Rated 4.9 on Google</strong></span><span>Family-run since 1995 &middot; real people, no call centre</span></a>
-          <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 26 September 2026</p>
+          <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 29 September 2026</p>
         </div>
         <nav class="hp-intents" aria-label="What would you like to do?">
           <p class="hp-intents__q">What would you like to do?</p>
@@ -891,6 +891,15 @@
           var PROXY="/api/vrm.php", RATE=0.48, STANDING=0.60;
           var SAMPLE={sample:true,soc:97,battState:"charging",battW:31,pvW:114,timeToGo:null,yieldToday:1.4,kwh30:49.6,tanks:[{type:"fresh",level:72},{type:"waste",level:31}]};
           var el=document.getElementById("vdash"); if(!el) return;
+          /* 29 Sep 2026: SiteGround counts every second a PHP script is connected, so the live feed only runs while someone
+             is watching: tab visible, this panel on screen, and a touch, scroll or key in the last 10 minutes. */
+          var gOn=true, gAct=Date.now(), gSse=null;
+          function watching(){ return !document.hidden && gOn && Date.now()-gAct<600000; }
+          function gSync(){ var w=watching(); if(gSse) gSse(w); if(w) tick(); }
+          try{ if(window.IntersectionObserver) new IntersectionObserver(function(en){ gOn=en[0].isIntersecting; gSync(); },{rootMargin:"200px"}).observe(el); }catch(e){}
+          ["pointerdown","keydown","scroll","touchstart","wheel"].forEach(function(ty){ window.addEventListener(ty,function(){ var was=watching(); gAct=Date.now(); if(!was) gSync(); },{passive:true}); });
+          document.addEventListener("visibilitychange", gSync);
+          setInterval(function(){ if(gSse && !watching()) gSse(false); }, 30000);
           var cur={}, reduce=false; try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
           function q(s){return el.querySelector(s);}
           function tw(sel,key,to,fmt){ var n=q(sel); if(!n) return; if(to==null){n.textContent="\u2014";return;} var f=(cur[key]==null?to:cur[key]); cur[key]=to; if(reduce||f===to){n.textContent=fmt(to);return;} var t0=null; (function st(ts){ if(t0===null){t0=ts||performance.now();} var now=ts||performance.now(); var p=Math.min(1,(now-t0)/650); var e=1-Math.pow(1-p,3); n.textContent=fmt(f+(to-f)*e); if(p<1) requestAnimationFrame(st); })(performance.now());}
@@ -914,7 +923,7 @@
             el.classList.toggle("vdash--sample",!!s.sample);
             window.__vdashLast = s;
           }
-          function tick(){ fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ render((j&&j.ok)?j:SAMPLE); }).catch(function(){ render(SAMPLE); }); }
+          function tick(){ if(!watching()) return; fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ render((j&&j.ok)?j:SAMPLE); }).catch(function(){ render(SAMPLE); }); }
           tick(); setInterval(tick, 3000);
         })();
         </script>

@@ -7927,6 +7927,15 @@ def off_grid():
         orion:{state:"Off",why:"No/low input power",inV:12.4,inW:0,outI:0,lifeAh:9533},
         ledger:{pb:0.9,pc:0.7,bc:0.4}};
       var el=document.getElementById("vlive"); if(!el) return;
+      /* 29 Sep 2026: SiteGround counts every second a PHP script is connected, so the live feed only runs while someone
+         is watching: tab visible, this panel on screen, and a touch, scroll or key in the last 10 minutes. */
+      var gOn=true, gAct=Date.now(), gSse=null;
+      function watching(){ return !document.hidden && gOn && Date.now()-gAct<600000; }
+      function gSync(){ var w=watching(); if(gSse) gSse(w); if(w) tick(); }
+      try{ if(window.IntersectionObserver) new IntersectionObserver(function(en){ gOn=en[0].isIntersecting; gSync(); },{rootMargin:"200px"}).observe(el); }catch(e){}
+      ["pointerdown","keydown","scroll","touchstart","wheel"].forEach(function(ty){ window.addEventListener(ty,function(){ var was=watching(); gAct=Date.now(); if(!was) gSync(); },{passive:true}); });
+      document.addEventListener("visibilitychange", gSync);
+      setInterval(function(){ if(gSse && !watching()) gSse(false); }, 30000);
       var RC=439.82, reduce=false;   /* 240-degree speedo arc on the r=105 gauge */
       try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
       var cur={}, tanksSig=null, histKind=null, histSig=null, histData=null, histMode="solar";
@@ -8308,6 +8317,7 @@ def off_grid():
       function apply(j){ lastJ=j; render(j); }
       function tick(){
         if(!window.fetch){ if(!sampled){sampled=true;render(SAMPLE);} return; }
+        if(!watching()) return; /* nobody looking: no request (29 Sep 2026) */
         if(busy) return; /* never pile up requests on slow connections */
         if(sseAlive() && Date.now()-lastRest<15000) return; /* SSE carries the hot values; REST tops up the rest every 15s */
         busy=true;
@@ -8382,9 +8392,9 @@ def off_grid():
       loadWx(); setInterval(loadWx, 1800000);
       /* realtime overlay: same per-second MQTT stream the official Victron apps use, bridged server-side */
       if(PROXY && window.EventSource){ try{
-        var es=new EventSource(PROXY.replace("vrm.php","vrm-live.php"));
+        var es=null;
         var SM={0:"Off",1:"Low power",2:"Fault",3:"Bulk",4:"Absorption",5:"Float",6:"Storage",7:"Equalize",245:"Wake-up",246:"Repeated absorption",247:"Auto equalize",248:"BatterySafe",250:"Blocked",252:"External control"};
-        es.onmessage=function(ev){ try{ var d=JSON.parse(ev.data); if(!d||!d.live||!lastJ||lastJ.sample) return; lastSse=Date.now();
+        var onLive=function(ev){ try{ var d=JSON.parse(ev.data); if(!d||!d.live||!lastJ||lastJ.sample) return; lastSse=Date.now();
           for(var k in d){
             if(k==="live") continue;
             if(k==="ttgS"){ lastJ.timeToGo=(d[k]<0||d[k]>=863900)?null:d[k]/3600; } /* -1 sentinel = charging (infinite); 0 stays 0 h */
@@ -8397,6 +8407,8 @@ def off_grid():
           lastJ.updated=Math.floor(Date.now()/1000);   /* freshness = the realtime stream, not VRM's 15-min logger */
           render(lastJ);
         }catch(e){} };
+        gSse=function(on){ if(on&&!es){ es=new EventSource(PROXY.replace("vrm.php","vrm-live.php")); es.onmessage=onLive; } else if(!on&&es){ es.close(); es=null; } };
+        gSse(watching());
       }catch(e){} }
     })();
     </script>''',
@@ -15992,6 +16004,15 @@ def battery_installs():
           var RATE=0.48, STANDING=0.60;
           var SAMPLE={sample:true,soc:97,battState:"charging",battW:31,pvW:114,yieldLifetime:489.9,kwh30:49.6};
           var el=document.getElementById("vmini"); if(!el) return;
+          /* 29 Sep 2026: SiteGround counts every second a PHP script is connected, so the live feed only runs while someone
+             is watching: tab visible, this panel on screen, and a touch, scroll or key in the last 10 minutes. */
+          var gOn=true, gAct=Date.now(), gSse=null;
+          function watching(){ return !document.hidden && gOn && Date.now()-gAct<600000; }
+          function gSync(){ var w=watching(); if(gSse) gSse(w); if(w) tick(); }
+          try{ if(window.IntersectionObserver) new IntersectionObserver(function(en){ gOn=en[0].isIntersecting; gSync(); },{rootMargin:"200px"}).observe(el); }catch(e){}
+          ["pointerdown","keydown","scroll","touchstart","wheel"].forEach(function(ty){ window.addEventListener(ty,function(){ var was=watching(); gAct=Date.now(); if(!was) gSync(); },{passive:true}); });
+          document.addEventListener("visibilitychange", gSync);
+          setInterval(function(){ if(gSse && !watching()) gSse(false); }, 30000);
           var RC=351.9, cur={}, reduce=false; try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
           function q(s){return el.querySelector(s);}
           function tw(sel,key,to,fmt){ var n=q(sel); if(!n) return; if(to==null){n.textContent="—";return;} var f=(cur[key]==null?to:cur[key]); cur[key]=to; if(reduce||f===to){n.textContent=fmt(to);return;} var t0=null; function st(ts){if(t0===null)t0=ts;var p=Math.min(1,(ts-t0)/700);var e=1-Math.pow(1-p,3);n.textContent=fmt(f+(to-f)*e);if(p<1)requestAnimationFrame(st);} requestAnimationFrame(st); }
@@ -16014,15 +16035,18 @@ def battery_installs():
           var lastJ=null, sseOn=0, lastRest=0;
           function apply(j){ lastJ=j; render(j); }
           function tick(){ if(!PROXY){ render(SAMPLE); return; }
+            if(!watching()) return; /* nobody looking: no request (29 Sep 2026) */
             if(sseOn && Date.now()-lastRest<15000) return;
             fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ lastRest=Date.now(); apply((j&&j.ok)?j:SAMPLE); }).catch(function(){ if(!sseOn) apply(SAMPLE); });
           }
           tick(); setInterval(tick, 1000);
           if(PROXY && window.EventSource){ try{
-            var es=new EventSource(PROXY.replace("vrm.php","vrm-live.php"));
-            es.onmessage=function(ev){ try{ var d=JSON.parse(ev.data); if(!d||!d.live||!lastJ||lastJ.sample) return; sseOn=1;
+            var es=null;
+            var onLive=function(ev){ try{ var d=JSON.parse(ev.data); if(!d||!d.live||!lastJ||lastJ.sample) return; sseOn=1;
               for(var k in d){ if(k!=="live") lastJ[k]=d[k]; } render(lastJ);
             }catch(e){} };
+            gSse=function(on){ if(on&&!es){ es=new EventSource(PROXY.replace("vrm.php","vrm-live.php")); es.onmessage=onLive; } else if(!on&&es){ es.close(); es=null; } };
+            gSse(watching());
           }catch(e){} }
         })();
         </script>
@@ -23446,6 +23470,15 @@ def custom_dashboards():
           var PROXY="/api/vrm.php", RATE=0.48, STANDING=0.60;
           var SAMPLE={sample:true,soc:97,battState:"charging",battW:31,pvW:114,timeToGo:null,yieldToday:1.4,kwh30:49.6,tanks:[{type:"fresh",level:72},{type:"waste",level:31}]};
           var el=document.getElementById("vdash"); if(!el) return;
+          /* 29 Sep 2026: SiteGround counts every second a PHP script is connected, so the live feed only runs while someone
+             is watching: tab visible, this panel on screen, and a touch, scroll or key in the last 10 minutes. */
+          var gOn=true, gAct=Date.now(), gSse=null;
+          function watching(){ return !document.hidden && gOn && Date.now()-gAct<600000; }
+          function gSync(){ var w=watching(); if(gSse) gSse(w); if(w) tick(); }
+          try{ if(window.IntersectionObserver) new IntersectionObserver(function(en){ gOn=en[0].isIntersecting; gSync(); },{rootMargin:"200px"}).observe(el); }catch(e){}
+          ["pointerdown","keydown","scroll","touchstart","wheel"].forEach(function(ty){ window.addEventListener(ty,function(){ var was=watching(); gAct=Date.now(); if(!was) gSync(); },{passive:true}); });
+          document.addEventListener("visibilitychange", gSync);
+          setInterval(function(){ if(gSse && !watching()) gSse(false); }, 30000);
           var cur={}, reduce=false; try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
           function q(s){return el.querySelector(s);}
           function tw(sel,key,to,fmt){ var n=q(sel); if(!n) return; if(to==null){n.textContent="\\u2014";return;} var f=(cur[key]==null?to:cur[key]); cur[key]=to; if(reduce||f===to){n.textContent=fmt(to);return;} var t0=null; (function st(ts){ if(t0===null){t0=ts||performance.now();} var now=ts||performance.now(); var p=Math.min(1,(now-t0)/650); var e=1-Math.pow(1-p,3); n.textContent=fmt(f+(to-f)*e); if(p<1) requestAnimationFrame(st); })(performance.now());}
@@ -23469,7 +23502,7 @@ def custom_dashboards():
             el.classList.toggle("vdash--sample",!!s.sample);
             window.__vdashLast = s;
           }
-          function tick(){ fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ render((j&&j.ok)?j:SAMPLE); }).catch(function(){ render(SAMPLE); }); }
+          function tick(){ if(!watching()) return; fetch(PROXY,{cache:"no-store"}).then(function(r){return r.json();}).then(function(j){ render((j&&j.ok)?j:SAMPLE); }).catch(function(){ render(SAMPLE); }); }
           tick(); setInterval(tick, 3000);
         })();
         </script>
