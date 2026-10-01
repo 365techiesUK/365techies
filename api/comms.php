@@ -41,8 +41,10 @@ if (isset($_POST['stoken']) && empty($_SESSION['pcm_ok'])) {
             session_regenerate_id(true); $_SESSION['pcm_ok'] = 1;
         }
     }
-    // expired/unknown token -> say so, instead of a mute passphrase prompt
-    header('Location: comms.php' . (empty($_SESSION['pcm_ok']) ? '?sso=expired' : '')); exit;
+    // expired/unknown token -> say so, instead of a mute passphrase prompt; signed in -> the thread a Slack link asked for
+    $wantN = (!empty($_SESSION['pcm_ok']) && !empty($_SESSION['comms_n'])) ? '?n=' . rawurlencode((string)$_SESSION['comms_n']) : '';
+    unset($_SESSION['comms_n']);
+    header('Location: comms.php' . (empty($_SESSION['pcm_ok']) ? '?sso=expired' : $wantN)); exit;
 }
 if (isset($_GET['logout'])) { session_destroy(); header('Location: comms.php'); exit; }
 if (empty($_SESSION['csrf'])) $_SESSION['csrf'] = bin2hex(random_bytes(16));
@@ -54,6 +56,8 @@ if (empty($_SESSION['pcm_ok'])) {
     // Only plain GETs bounce; ?sso=... (the explained-failure card) and
     // ?login=1 (deliberate passphrase entry) render the sign-in card instead.
     if ($_SERVER['REQUEST_METHOD'] === 'GET' && !isset($_GET['sso']) && !isset($_GET['login'])) {
+        // 1 Oct 2026: a Slack voicemail link names one caller (?n=); remember it across the portal sign-in bounce
+        if (isset($_GET['n'])) $_SESSION['comms_n'] = substr(preg_replace('/[^0-9+]/', '', (string)$_GET['n']), 0, 20);
         header('Location: /portal/?console=comms'); exit;
     }
     echo '<!doctype html><meta name=viewport content="width=device-width,initial-scale=1"><title>365 comms inbox</title>';
@@ -99,6 +103,11 @@ if ((isset($_POST['do']) ? $_POST['do'] : '') === 'review') {
     if (!empty($rr['ok'])) $msg = 'Review text sent' . (!empty($rr['dry']) ? ' (dry run)' : '') . '.';
     else $err = h($rr['error']);
 }
+/* 1 Oct 2026: called them back? one press clears every text and voicemail from that number */
+if ((isset($_POST['do']) ? $_POST['do'] : '') === 'handledall') {
+    $nh = comms_handle_number(preg_replace('/[^0-9+]/', '', (string)(isset($_POST['n']) ? $_POST['n'] : '')), 'staff');
+    $msg = $nh . ' marked handled.';
+}
 if ((isset($_POST['do']) ? $_POST['do'] : '') === 'handled') {
     comms_set_handled((string)(isset($_POST['id']) ? $_POST['id'] : ''), !empty($_POST['on']), 'staff');
     $msg = 'Updated.';
@@ -142,7 +151,11 @@ if ($sel !== '' && isset($threads[$sel])) {
     $match = end($th)['match'];
     $who = ($match['status'] === 'MATCH') ? $match['name'] : (($match['status'] === 'MULTIPLE') ? 'Possible: ' . $match['name'] : 'Unknown caller');
     echo '<div class=card><h2 style="margin:0 0 .4rem;font-size:1.05rem">' . h($who) . ' <span class=mono style="font-size:.85rem">' . h($sel) . '</span></h2>';
+    $openN = 0;
+    foreach ($th as $it0) if (empty($it0['handled']) && $it0['type'] !== 'sms_out') $openN++;
     echo '<p style="margin:.2rem 0 .8rem"><a href="tel:' . h($sel) . '"><button>&#128222; Call back</button></a>'
+       . ($openN > 1 ? ' <form method=post style="display:inline"><input type=hidden name=do value=handledall><input type=hidden name=csrf value="' . $CSRF . '">'
+          . '<input type=hidden name=n value="' . h($sel) . '"><button style="background:#223258">Mark all ' . $openN . ' handled</button></form>' : '')
        . ($match['status'] === 'MATCH' ? ' <span class="tag tag--match">customer: ' . h($match['name']) . '</span>' : '')
        . ($match['status'] === 'MULTIPLE' ? ' <span class=tag>multiple possible matches &mdash; verify before assuming</span>' : '') . '</p>';
     foreach ($th as $it) {
@@ -153,6 +166,14 @@ if ($sel !== '' && isset($threads[$sel])) {
         echo nl2br(h($it['body']));
         if ($it['type'] === 'voicemail' && $it['audio'] !== '') {
             echo '<div style="margin-top:.45rem"><audio controls preload=none style="width:100%;max-width:420px" src="comms.php?audio=' . h($it['audio']) . '"></audio></div>';
+        } elseif ($it['type'] === 'voicemail') {
+            // 1 Oct 2026: say why there is nothing to play, instead of an empty bubble
+            $why = (string)(isset($it['audio_why']) ? $it['audio_why'] : '');
+            echo '<div class=meta style="margin-top:.45rem;color:#ffd38a">'
+               . ($why === '' && empty($it['audio_tried']) ? 'Looking for the recording &mdash; press Check now in a moment.'
+                  : 'No recording: ' . h($why !== '' ? $why : 'none came with the email')
+                    . (strpos($why, 'no recording in the email') === 0 ? '. Switch on <b>Include attachment</b> for this voicemail box in the Voipfone control panel, and new voicemails will play here and in Slack.' : ''))
+               . '</div>';
         }
         if (empty($it['handled']) && $it['type'] !== 'sms_out') {
             echo '<form method=post style="margin-top:.4rem"><input type=hidden name=do value=handled><input type=hidden name=csrf value="' . $CSRF . '">'

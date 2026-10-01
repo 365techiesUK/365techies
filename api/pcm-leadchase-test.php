@@ -115,5 +115,46 @@ $m3 = lc_message(lc_due(array(bot($wed, 'New website enquiry from <b>Bad</b> & C
 check(strpos($m3, '&lt;b&gt;') !== false || strpos($m3, '<b>') === false, 'a name cannot inject Slack markup', $m3);
 check(lc_message(array(), array(), at('2026-10-02 12:00')) === '', 'nothing due = no message');
 
+echo "F  voicemail recordings, the catch-up import, one line per caller (1 Oct 2026 evening)\n";
+$up = array('type' => 'message', 'subtype' => 'file_share', 'user' => 'UBOT', 'ts' => sprintf('%.6f', at('2026-10-02 10:00')),
+    'text' => ":telephone_receiver: Voicemail from +447700900150 (0:31)\nPlay it above. Call back, or open the thread: <https://365techies.co.uk/api/comms.php?n=%2B447700900150|comms inbox>",
+    'files' => array(array('name' => 'voicemail-447700900150.mp3')));
+$l = lc_lead($up);
+check($l && $l['kind'] === 'voicemail' && $l['number'] === '+447700900150', "the app's recording post is a voicemail lead", json_encode($l));
+check(lc_lead(array('type' => 'message', 'subtype' => 'file_share', 'user' => 'U1', 'ts' => '1790000000.000100', 'text' => 'photo of the PC')) === null, "a person's own file is never a lead");
+// tonight's catch-up: posts at 21:40 for voicemails left days earlier
+$post = at('2026-10-01 21:40:45');
+$cu = bot($post, ":telephone_receiver: Voicemail from Cordelia Example (+447700900151)\nListen + call back from the portal comms inbox (/api/comms.php).");
+$inb = array(array('type' => 'voicemail', 'number' => '+447700900151', 'at' => gmdate('c', at('2026-09-30 11:20')), 'stored_at' => gmdate('c', $post - 1), 'handled' => false));
+$r = lc_due(array($cu), $inb, array(), at('2026-10-02 09:05'));
+check(count($r['due']) === 1 && $r['due'][0]['level'] === 2 && (int)$r['due'][0]['t'] === at('2026-09-30 11:20'), 'a caught-up voicemail is dated when it was left, not when it was posted', json_encode($r['due']));
+$msgCu = lc_message($r['due'], array(), at('2026-10-02 09:05'));
+check(strpos($msgCu, 'Wed 30 Sep 11:20') !== false && strpos($msgCu, '*still waiting*') !== false, 'and says so', $msgCu);
+$inb[0]['handled'] = true;
+check(count(lc_due(array($cu), $inb, array(), at('2026-10-02 09:05'))['due']) === 0, 'marked handled in the inbox (matched by when it was stored): not listed');
+$inbOld = array(array('type' => 'voicemail', 'number' => '+447700900151', 'at' => gmdate('c', at('2026-09-23 11:20')), 'stored_at' => gmdate('c', $post), 'handled' => false));
+check(count(lc_due(array($cu), $inbOld, array(), at('2026-10-02 09:05'))['due']) === 0, 'left more than 7 days ago: not listed');
+$inbTexted = array($inbOld[0], array('type' => 'sms_out', 'number' => '+447700900151', 'at' => gmdate('c', at('2026-09-30 12:00'))));
+$inbTexted[0]['at'] = gmdate('c', at('2026-09-30 11:20'));
+check(count(lc_due(array($cu), $inbTexted, array(), at('2026-10-02 09:05'))['due']) === 0, 'texted back after the voicemail: answered');
+// one caller, three voicemails = one line; a text from them is its own line
+$v1 = bot(at('2026-10-02 09:10'), "\xF0\x9F\x93\x9E Voicemail from +447700900152\nOpen"); $v2 = bot(at('2026-10-02 09:40'), "\xF0\x9F\x93\x9E Voicemail from +447700900152\nOpen");
+$v3 = bot(at('2026-10-02 10:05'), "\xF0\x9F\x93\x9E Voicemail from +447700900152\nOpen");
+$tx = bot(at('2026-10-02 10:06'), ":speech_balloon: Text from +447700900152 (not a number we hold): please ring me about my laptop\nReply from");
+$st3 = array('nudged' => array());
+$r = lc_due(array($v3, $tx, $v2, $v1), array(), $st3, at('2026-10-02 12:15'));
+$vl = array_values(array_filter($r['due'], function ($d) { return $d['lead']['kind'] === 'voicemail'; }));
+check(count($r['due']) === 2 && count($vl) === 1 && $vl[0]['count'] === 3 && $vl[0]['ts'] === $v3['ts'], 'three voicemails from one caller = one line (newest linked), the text its own', json_encode($r['due']));
+$m3v = lc_message($r['due'], array(), at('2026-10-02 12:15'));
+check(strpos($m3v, '*Voicemail x3:* +447700900152 (latest Fri 2 Oct 10:05') !== false, 'the line counts them', $m3v);
+$st3 = lc_record($st3, $r['due'], at('2026-10-02 12:15'));
+check(isset($st3['nudged'][$v1['ts']], $st3['nudged'][$v2['ts']], $st3['nudged'][$v3['ts']]), 'every voicemail in the line is remembered');
+check(count(lc_due(array($v3, $tx, $v2, $v1), array(), $st3, at('2026-10-02 13:00'))['due']) === 0, 'so the line is not repeated');
+$v4 = bot(at('2026-10-02 13:30'), "\xF0\x9F\x93\x9E Voicemail from +447700900152\nOpen");
+$r = lc_due(array($v4, $v3, $tx, $v2, $v1), array(), $st3, at('2026-10-02 15:00'));
+check(count($r['due']) === 0, 'a fourth voicemail joins the line already listed: no new line until the next level', json_encode($r['due']));
+$r = lc_due(array($v4, $v3, $tx, $v2, $v1), array(), $st3, at('2026-10-05 10:00'));
+check(count($r['due']) === 1 && $r['due'][0]['level'] === 2 && $r['due'][0]['count'] === 4, 'after a working day the caller is listed once more (the text, 7h54 of working time, is not due yet)', json_encode($r['due']));
+
 echo "\n" . ($fails ? "pcm-leadchase-test: $fails FAILED\n" : "pcm-leadchase-test: all passed\n");
 exit($fails ? 1 : 0);

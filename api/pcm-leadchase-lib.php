@@ -66,15 +66,19 @@ function lc_number($s) {
 /* Classify one #365-job-tracker message. Returns null (not a lead) or array(kind, label, who, number). */
 function lc_lead($m) {
     if (!is_array($m) || empty($m['ts'])) return null;
-    // only posts our app or webhook made; a person's message in the channel is not a lead
-    if (empty($m['bot_id']) && (!isset($m['subtype']) || $m['subtype'] !== 'bot_message')) return null;
-    if (isset($m['subtype']) && !in_array($m['subtype'], array('bot_message', ''), true)) return null;
+    // only posts our app or webhook made; a person's message in the channel is not a lead. A voicemail RECORDING
+    // (comms_vm_announce, 1 Oct 2026) is a file share from the app - accepted for voicemails only, below.
+    $sub = isset($m['subtype']) ? (string)$m['subtype'] : '';
+    $isBot = !empty($m['bot_id']) || $sub === 'bot_message';
+    if ($sub !== '' && $sub !== 'bot_message' && $sub !== 'file_share') return null;
+    if (!$isBot && $sub !== 'file_share') return null;
     $text = isset($m['text']) ? (string)$m['text'] : '';
     $all = lc_all_text($m);
     if (stripos($all, '[INTERNAL TEST]') !== false) return null;
     if (stripos($text, 'Service report not in the portal') !== false) return null;
     $plain = trim(preg_replace('/^(:[a-z0-9_+\-]+:|[^\x00-\x7F]+)\s*/u', '', $text));   // drop a leading emoji
     $plain = str_replace(array('*', '_'), '', $plain);
+    if (!$isBot && !preg_match('/^Voicemail from /', $plain)) return null;   // a person's own file is never a lead
 
     if (preg_match('/^New website enquiry(?: from (.+?))?(?: <[^>]*>)?\s*$/s', strtok($plain, "\n"), $mm)) {
         $who = isset($mm[1]) ? trim(preg_replace('/<mailto:[^|>]*\|([^>]*)>/', '$1', $mm[1])) : '';
@@ -115,20 +119,43 @@ function lc_lead($m) {
     return null;
 }
 
-/* Answered? Any reaction, any thread reply; for texts and voicemails, the inbox's own record too.
-   $inbox: comms items (type, number, at ISO, handled). */
+/* The comms inbox item behind a text or voicemail post: same number, and stored when the post went out (stored_at,
+   within 5 minutes) or - for older items without it - received then (at, within 15). A catch-up import posts days-old
+   voicemails all at once, so stored_at is what ties a post to its item. null when none. */
+function lc_inbox_item($m, $lead, $inbox) {
+    if (($lead['kind'] !== 'text' && $lead['kind'] !== 'voicemail') || $lead['number'] === '' || !is_array($inbox)) return null;
+    $t = (float)$m['ts'];
+    $want = $lead['kind'] === 'text' ? 'sms_in' : 'voicemail';
+    $best = null; $bestGap = 1e9;
+    foreach ($inbox as $it) {
+        if (!is_array($it) || ($it['number'] ?? '') !== $lead['number'] || ($it['type'] ?? '') !== $want) continue;
+        $st = strtotime((string)($it['stored_at'] ?? ''));
+        $at = strtotime((string)($it['at'] ?? ''));
+        $gap = ($st !== false && abs($st - $t) <= 300) ? abs($st - $t) : (($at !== false && abs($at - $t) <= 900) ? abs($at - $t) + 300 : 1e9);
+        if ($gap < $bestGap) { $best = $it; $bestGap = $gap; }
+    }
+    return $best;
+}
+
+/* When it really happened: the voicemail's or text's own time when the inbox knows it, else the post's. */
+function lc_real_time($m, $item) {
+    $at = $item ? strtotime((string)($item['at'] ?? '')) : false;
+    return ($at !== false && $at > 0 && $at <= (float)$m['ts'] + 60) ? (float)$at : (float)$m['ts'];
+}
+
+/* Answered? Any reaction, any thread reply; for texts and voicemails, the inbox's own record too: that item marked
+   handled, or a text sent back to the number after it arrived. $inbox: comms items. */
 function lc_answered($m, $lead, $inbox) {
     if (!empty($m['reactions'])) return true;
     if (!empty($m['reply_count'])) return true;
     if (($lead['kind'] === 'text' || $lead['kind'] === 'voicemail') && $lead['number'] !== '' && is_array($inbox)) {
-        $t = (float)$m['ts'];
+        $item = lc_inbox_item($m, $lead, $inbox);
+        if ($item && !empty($item['handled'])) return true;
+        $t = lc_real_time($m, $item);
         foreach ($inbox as $it) {
-            if (!is_array($it) || !isset($it['number']) || $it['number'] !== $lead['number']) continue;
-            $at = strtotime((string)(isset($it['at']) ? $it['at'] : ''));
-            if ($at === false) continue;
-            $type = isset($it['type']) ? $it['type'] : '';
-            if ($type === 'sms_out' && $at >= $t - 60) return true;                        // we texted back
-            if (($type === 'sms_in' || $type === 'voicemail') && abs($at - $t) <= 900 && !empty($it['handled'])) return true;
+            if (!is_array($it) || ($it['number'] ?? '') !== $lead['number'] || ($it['type'] ?? '') !== 'sms_out') continue;
+            $at = strtotime((string)($it['at'] ?? ''));
+            if ($at !== false && $at >= $t - 60) return true;                               // we texted back
         }
     }
     return false;
@@ -171,22 +198,35 @@ function lc_level($ts, $now) {
 }
 
 /* The decision for one sweep. $msgs: conversations.history messages; $state['nudged'][ts] = level already listed.
-   Returns array(due => [ [ts, lead, level, work] ...], open => count of unanswered leads seen). */
+   Voicemails and texts from one number are ONE line (a caller who rang five times needs one call back).
+   Returns array(due => [ [ts (newest post), tss (every post in the line), t (when it happened), lead, level, work,
+   count] ...] oldest first, open => unanswered leads seen). */
 function lc_due($msgs, $inbox, $state, $now) {
-    $due = array(); $open = 0;
+    $open = 0; $groups = array();
     $nudged = (isset($state['nudged']) && is_array($state['nudged'])) ? $state['nudged'] : array();
     foreach ((array)$msgs as $m) {
         $lead = lc_lead($m);
         if (!$lead) continue;
         $ts = (string)$m['ts'];
-        if ($now - (float)$ts > LC_MAX_AGE) continue;
+        $t = lc_real_time($m, lc_inbox_item($m, $lead, $inbox));
+        if ($now - $t > LC_MAX_AGE) continue;
         if (lc_answered($m, $lead, $inbox)) continue;
         $open++;
-        $lvl = lc_level((float)$ts, $now);
         $had = isset($nudged[$ts]) ? (int)(is_array($nudged[$ts]) ? $nudged[$ts]['l'] : $nudged[$ts]) : 0;
-        if ($lvl > $had) $due[] = array('ts' => $ts, 'lead' => $lead, 'level' => $lvl, 'work' => lc_work_secs((float)$ts, $now));
+        $key = (($lead['kind'] === 'voicemail' || $lead['kind'] === 'text') && $lead['number'] !== '') ? $lead['kind'] . '|' . $lead['number'] : 'ts|' . $ts;
+        $groups[$key][] = array('ts' => $ts, 't' => $t, 'lead' => $lead, 'lvl' => lc_level($t, $now), 'had' => $had);
     }
-    usort($due, function ($a, $b) { return strcmp($a['ts'], $b['ts']); });   // oldest first
+    $due = array();
+    foreach ($groups as $g) {
+        usort($g, function ($a, $b) { return $a['t'] < $b['t'] ? -1 : ($a['t'] > $b['t'] ? 1 : 0); });
+        $lvl = 0; $fresh = false;
+        foreach ($g as $c) { $lvl = max($lvl, $c['lvl']); if ($c['lvl'] > $c['had']) $fresh = true; }
+        if (!$fresh) continue;
+        $last = $g[count($g) - 1];
+        $due[] = array('ts' => $last['ts'], 'tss' => array_map(function ($c) { return $c['ts']; }, $g), 't' => $last['t'],
+            'first' => $g[0]['t'], 'lead' => $last['lead'], 'level' => $lvl, 'work' => lc_work_secs($g[0]['t'], $now), 'count' => count($g));
+    }
+    usort($due, function ($a, $b) { return $a['first'] < $b['first'] ? -1 : ($a['first'] > $b['first'] ? 1 : 0); });   // oldest first
     return array('due' => $due, 'open' => $open);
 }
 
@@ -203,10 +243,12 @@ function lc_message($due, $links, $now) {
     $esc = function ($s) { return str_replace(array('&', '<', '>'), array('&amp;', '&lt;', '&gt;'), (string)$s); };
     $lines = array();
     foreach (array_slice($due, 0, LC_MAX_LINES) as $d) {
-        $when = (new DateTime('@' . (int)(float)$d['ts']))->setTimezone($tz)->format('D j M H:i');
+        $when = (new DateTime('@' . (int)(isset($d['t']) ? $d['t'] : (float)$d['ts'])))->setTimezone($tz)->format('D j M H:i');
         $link = isset($links[$d['ts']]) && $links[$d['ts']] !== '' ? ' <' . $links[$d['ts']] . '|open>' : '';
-        $lines[] = "\xE2\x80\xA2 " . ($d['level'] >= 2 ? '*still waiting* - ' : '') . '*' . $esc($d['lead']['label']) . ':* '
-            . $esc($d['lead']['who']) . ' (' . $when . ', ' . lc_age_words($d['work']) . ')' . $link;
+        $n = isset($d['count']) ? (int)$d['count'] : 1;
+        $label = $d['lead']['label'] . ($n > 1 ? ' x' . $n : '');
+        $lines[] = "\xE2\x80\xA2 " . ($d['level'] >= 2 ? '*still waiting* - ' : '') . '*' . $esc($label) . ':* '
+            . $esc($d['lead']['who']) . ' (' . ($n > 1 ? 'latest ' : '') . $when . ', ' . lc_age_words($d['work']) . ')' . $link;
     }
     $more = count($due) - count($lines);
     return ":alarm_clock: *Not answered yet* - add a :white_check_mark: to the post, or reply in its thread, once someone has been in touch:\n"
@@ -216,7 +258,7 @@ function lc_message($due, $links, $now) {
 /* Remember what was listed; forget anything past the age limit. */
 function lc_record($state, $due, $now) {
     if (!isset($state['nudged']) || !is_array($state['nudged'])) $state['nudged'] = array();
-    foreach ($due as $d) $state['nudged'][$d['ts']] = array('l' => (int)$d['level'], 'at' => (int)$now);
+    foreach ($due as $d) foreach ((isset($d['tss']) ? $d['tss'] : array($d['ts'])) as $ts) $state['nudged'][$ts] = array('l' => (int)$d['level'], 'at' => (int)$now);
     foreach (array_keys($state['nudged']) as $ts) if ($now - (float)$ts > LC_MAX_AGE + 86400) unset($state['nudged'][$ts]);
     return $state;
 }

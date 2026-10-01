@@ -285,6 +285,139 @@ function comms_vm_config() {
 }
 
 define('VM_LOOKBACK_DAYS', 7);   // first-activation flood guard
+define('COMMS_SLACK_CHANNEL', 'C0B4TD439FB');   // #365-job-tracker, where the webhook posts (voicemail recordings go here too)
+
+/* 1 Oct 2026: every leaf part of an email however deeply nested - a recording can sit inside a multipart/mixed under
+   a multipart/alternative, where the first poller (one level only) never looked. [sec, type, sub, name, enc, bytes] */
+function comms_vm_parts($s, $prefix = '') {
+    $out = array();
+    if (is_object($s) && isset($s->parts) && is_array($s->parts) && $s->parts) {
+        foreach ($s->parts as $i => $p) {
+            $sec = ($prefix === '' ? '' : $prefix . '.') . ($i + 1);
+            if (isset($p->parts) && is_array($p->parts) && $p->parts) $out = array_merge($out, comms_vm_parts($p, $sec));
+            else $out[] = comms_vm_part_info($p, $sec);
+        }
+    } elseif (is_object($s)) {
+        $out[] = comms_vm_part_info($s, $prefix === '' ? '1' : $prefix);   // a single-part email: its body is section 1
+    }
+    return $out;
+}
+function comms_vm_part_info($p, $sec) {
+    $name = '';
+    foreach (array('dparameters', 'parameters') as $f) {
+        if (isset($p->$f) && is_array($p->$f)) foreach ($p->$f as $x) {
+            if (isset($x->attribute, $x->value) && preg_match('/^(filename|name)\*?$/i', (string)$x->attribute) && $name === '') $name = (string)$x->value;
+        }
+    }
+    $types = array('TEXT', 'MULTIPART', 'MESSAGE', 'APPLICATION', 'AUDIO', 'IMAGE', 'VIDEO', 'MODEL', 'OTHER');
+    $t = isset($p->type) ? (int)$p->type : 0;
+    return array('sec' => (string)$sec, 'type' => isset($types[$t]) ? $types[$t] : 'OTHER', 'sub' => strtoupper((string)(isset($p->subtype) ? $p->subtype : '')),
+        'name' => $name, 'enc' => isset($p->encoding) ? (int)$p->encoding : 0, 'bytes' => isset($p->bytes) ? (int)$p->bytes : 0);
+}
+/* Is this part the recording? 'mp3', 'wav' or '' (the inbox and its deny rule serve those two only). */
+function comms_vm_audio_ext($pi) {
+    if (preg_match('/\.(mp3|wav)$/i', (string)$pi['name'], $m)) return strtolower($m[1]);
+    if ($pi['type'] === 'AUDIO' || $pi['type'] === 'APPLICATION') {
+        if (preg_match('/^(MPEG|MP3|MPEG3|X-MPEG|X-MP3|MPG)$/', $pi['sub'])) return 'mp3';
+        if (preg_match('/^(WAV|X-WAV|WAVE|VND\.WAVE|X-PN-WAV)$/', $pi['sub'])) return 'wav';
+    }
+    return '';
+}
+function comms_vm_decode($raw, $enc) {
+    if ((int)$enc === 3) return (string)base64_decode($raw);
+    if ((int)$enc === 4) return quoted_printable_decode($raw);
+    return (string)$raw;
+}
+/* The recording, the text and the length from one voicemail email; $uid names the saved file. 'why' says what the
+   email held when there was no recording (e.g. "text/plain, text/html" = Voipfone's Include attachment is off). */
+function comms_vm_extract($im, $msgno, $uid) {
+    $struct = @imap_fetchstructure($im, $msgno);
+    $audio = ''; $plain = ''; $html = ''; $seen = array();
+    foreach (comms_vm_parts($struct) as $pi) {
+        $seen[] = strtolower($pi['type'] . '/' . $pi['sub']) . ($pi['name'] !== '' ? ' "' . $pi['name'] . '"' : '');
+        $ext = comms_vm_audio_ext($pi);
+        if ($ext !== '') {
+            if ($audio !== '') continue;
+            $raw = comms_vm_decode((string)@imap_fetchbody($im, $msgno, $pi['sec']), $pi['enc']);
+            if (strlen($raw) > 200) {
+                $name = 'vm-audio-VM' . (int)$uid . '.' . $ext;
+                if (@file_put_contents(__DIR__ . '/' . $name, $raw, LOCK_EX) !== false) $audio = $name;
+            }
+        } elseif ($pi['type'] === 'TEXT' && $pi['sub'] === 'PLAIN' && $plain === '') {
+            $plain = comms_vm_decode((string)@imap_fetchbody($im, $msgno, $pi['sec']), $pi['enc']);
+        } elseif ($pi['type'] === 'TEXT' && $pi['sub'] === 'HTML' && $html === '') {
+            $h = comms_vm_decode((string)@imap_fetchbody($im, $msgno, $pi['sec']), $pi['enc']);
+            $html = trim(html_entity_decode(strip_tags(preg_replace('/<(br|\/p|\/div|\/tr)\b[^>]*>/i', "\n", $h)), ENT_QUOTES, 'UTF-8'));
+        }
+    }
+    $body = $plain !== '' ? $plain : $html;
+    $dur = preg_match('/(?:duration|length)[^0-9]{0,8}([0-9]{1,2}:[0-9]{2}(?::[0-9]{2})?|\d{1,4}\s*s(?:ec(?:ond)?s?)?\b)/i', $body, $m) ? trim($m[1]) : '';
+    return array('audio' => $audio, 'body' => $body, 'duration' => $dur,
+        'why' => $audio === '' ? 'no recording in the email (it holds: ' . ($seen ? implode(', ', array_slice($seen, 0, 6)) : 'nothing readable') . ')' : '');
+}
+
+/* Tell the team about a new voicemail: the recording itself into #365-job-tracker when there is one (Slack plays it
+   inline, on a phone too), else - or if the upload is refused - one line with a link straight to that caller's thread. */
+function comms_vm_announce($who, $e164, $duration, $audioFile, $why) {
+    $link = 'https://365techies.co.uk/api/comms.php?n=' . rawurlencode($e164);
+    $line = "\xF0\x9F\x93\x9E Voicemail from " . $who . ($duration !== '' ? ' (' . $duration . ')' : '');
+    if ($audioFile !== '' && is_file(__DIR__ . '/' . $audioFile)) {
+        if (!function_exists('slk_upload_file')) @include_once __DIR__ . '/pcm-slack-lib.php';
+        if (function_exists('slk_upload_file')) {
+            $bytes = (string)@file_get_contents(__DIR__ . '/' . $audioFile);
+            $ext = pathinfo($audioFile, PATHINFO_EXTENSION);
+            $r = slk_upload_file(COMMS_SLACK_CHANNEL, $bytes, 'voicemail-' . preg_replace('/[^0-9]/', '', $e164) . '.' . $ext,
+                'Voicemail from ' . $who, $line . "\nPlay it above. Call back, or open the thread: <" . $link . '|comms inbox>');
+            if (!empty($r['ok'])) return true;
+        }
+        return comms_slack($line . "\n<" . $link . '|Play it and call back> (comms inbox)');
+    }
+    return comms_slack($line . "\n<" . $link . '|Open the comms inbox thread> to call back.'
+        . ($why !== '' ? "\n_No recording came with Voipfone's email - switch on Include attachment for this voicemail box in the Voipfone control panel._" : ''));
+}
+
+/* Voicemails stored without their recording (the first poller looked one level deep only): look again, once each,
+   up to $limit a run. Nothing is posted to Slack for these - they are old news; the inbox gains the player. */
+function comms_vm_refetch($limit = 15) {
+    $cfg = comms_vm_config();
+    if (!$cfg || !function_exists('imap_open')) return array('skipped' => 1);
+    list($ok, $todo) = comms_locked(function ($d) {
+        $t = array();
+        foreach ($d['items'] as $it) {
+            if (($it['type'] ?? '') !== 'voicemail' || ($it['audio'] ?? '') !== '' || !empty($it['audio_tried'])) continue;
+            if (preg_match('/^vm-(\d+)-(\d+)$/', (string)($it['ext_id'] ?? ''), $m)) $t[] = array($it['id'], (int)$m[1], (int)$m[2]);
+        }
+        return array('__result' => $t);
+    });
+    if (!$ok || !$todo) return array('refetched' => 0);
+    $mbox = '{' . $cfg['host'] . ':993/imap/ssl/novalidate-cert}' . $cfg['folder'];
+    $im = @imap_open($mbox, $cfg['user'], $cfg['pass'], OP_READONLY, 1);
+    if (!$im) return array('error' => 'imap-connect');
+    $status = @imap_status($im, $mbox, SA_UIDVALIDITY);
+    $validity = ($status && isset($status->uidvalidity)) ? (int)$status->uidvalidity : 0;
+    $got = array();
+    foreach (array_slice($todo, 0, $limit) as $t) {
+        list($id, $val, $uid) = $t;
+        if ($val !== $validity) { $got[$id] = array('audio' => '', 'duration' => '', 'why' => 'the mailbox was renumbered'); continue; }
+        $msgno = (int)@imap_msgno($im, $uid);
+        if ($msgno <= 0) { $got[$id] = array('audio' => '', 'duration' => '', 'why' => 'no longer in the voicemail mailbox'); continue; }
+        $got[$id] = comms_vm_extract($im, $msgno, $uid);
+    }
+    @imap_close($im);
+    $n = 0;
+    comms_locked(function ($d) use ($got, &$n) {
+        foreach ($d['items'] as $i => $it) {
+            if (!isset($got[$it['id']])) continue;
+            $x = $got[$it['id']];
+            $d['items'][$i]['audio_tried'] = 1;
+            if ($x['audio'] !== '') { $d['items'][$i]['audio'] = $x['audio']; $n++; }
+            if (($it['duration'] ?? '') === '' && $x['duration'] !== '') $d['items'][$i]['duration'] = $x['duration'];
+            $d['items'][$i]['audio_why'] = $x['why'];
+        }
+        return array('__data' => $d, '__result' => true);
+    });
+    return array('refetched' => count($got), 'with_audio' => $n);
+}
 
 function comms_vm_poll() {
     $cfg = comms_vm_config();
@@ -325,38 +458,10 @@ function comms_vm_poll() {
             // caller number: first UK-looking digit run in the subject, else body
             $caller = '';
             if (preg_match('/(\+?44\d{9,10}|0\d{9,10})/', preg_replace('/[\s\-()]/', '', $subject), $m)) $caller = $m[1];
-            $bodyText = '';
-            $struct = @imap_fetchstructure($im, $msgno);
-            $audioFile = ''; $duration = '';
-            if ($struct && isset($struct->parts) && is_array($struct->parts)) {
-                foreach ($struct->parts as $pi => $part) {
-                    $sec = (string)($pi + 1);
-                    $isAudio = (isset($part->subtype) && preg_match('/^(MPEG|MP3|WAV|X-WAV|OGG)$/i', $part->subtype))
-                        || (isset($part->dparameters) && is_array($part->dparameters) && array_filter($part->dparameters,
-                            function ($p) { return isset($p->value) && preg_match('/\.(mp3|wav)$/i', $p->value); }));
-                    if ($isAudio && $audioFile === '') {
-                        $raw = (string)@imap_fetchbody($im, $msgno, $sec);
-                        $enc = isset($part->encoding) ? (int)$part->encoding : 0;
-                        if ($enc === 3) $raw = base64_decode($raw);
-                        elseif ($enc === 4) $raw = quoted_printable_decode($raw);
-                        $ext = (isset($part->subtype) && preg_match('/wav/i', $part->subtype)) ? 'wav' : 'mp3';
-                        if (strlen($raw) > 200) {
-                            $name = 'vm-audio-VM' . $uid . '.' . $ext;
-                            if (@file_put_contents(__DIR__ . '/' . $name, $raw, LOCK_EX) !== false) $audioFile = $name;
-                        }
-                    } elseif (isset($part->subtype) && strtoupper($part->subtype) === 'PLAIN' && $bodyText === '') {
-                        $raw = (string)@imap_fetchbody($im, $msgno, $sec);
-                        $enc = isset($part->encoding) ? (int)$part->encoding : 0;
-                        if ($enc === 3) $raw = base64_decode($raw);
-                        elseif ($enc === 4) $raw = quoted_printable_decode($raw);
-                        $bodyText = $raw;
-                    }
-                }
-            } else {
-                $bodyText = (string)@imap_body($im, $msgno);
-            }
+            // 1 Oct 2026: the whole email, however nested (comms_vm_extract), and what it held when no recording came
+            $x = comms_vm_extract($im, $msgno, $uid);
+            $bodyText = $x['body']; $audioFile = $x['audio']; $duration = $x['duration'];
             if ($caller === '' && preg_match('/(\+?44\d{9,10}|0\d{9,10})/', preg_replace('/[\s\-()]/', '', $bodyText), $m2)) $caller = $m2[1];
-            if (preg_match('/duration[^0-9]{0,5}([0-9]{1,2}:[0-9]{2}|\d{1,3}\s*sec)/i', $bodyText, $m3)) $duration = $m3[1];
 
             $e164 = tm_number($caller);
             $match = comms_match_customer($e164);
@@ -364,15 +469,14 @@ function comms_vm_poll() {
                 'type' => 'voicemail', 'ext_id' => 'vm-' . $validity . '-' . $uid, 'at' => $when,
                 'number' => $e164 !== '' ? $e164 : ($caller !== '' ? $caller : 'unknown'),
                 'body' => 'Voicemail' . ($subject !== '' ? ' - ' . mb_substr($subject, 0, 120) : ''),
-                'audio' => $audioFile, 'duration' => $duration,
+                'audio' => $audioFile, 'duration' => $duration, 'audio_tried' => 1, 'audio_why' => $x['why'],
                 'match' => $match, 'handled' => false, 'handled_by' => '', 'handled_at' => '',
             ));
             if ($uid > $maxUid) $maxUid = $uid;
             if ($ok && empty($res['duplicate'])) {
                 $new++;
                 $who = $match['status'] === 'MATCH' ? $match['name'] . ' (' . $e164 . ')' : ($e164 !== '' ? $e164 : 'unknown caller');
-                comms_slack("\xF0\x9F\x93\x9E Voicemail from " . $who . ($duration !== '' ? ' (' . $duration . ')' : '')
-                    . "\nListen + call back from the portal comms inbox (/api/comms.php).");
+                comms_vm_announce($who, $e164 !== '' ? $e164 : $caller, $duration, $audioFile, $x['why']);
             }
         }
     }
@@ -463,5 +567,7 @@ function comms_sweep() {
     $out = array();
     $out['sms'] = comms_sms_poll();
     $out['vm'] = comms_vm_poll();
+    // 1 Oct 2026: recordings the first poller missed (it looked one level into the email only)
+    $out['vm_audio'] = comms_vm_refetch(15);
     return $out;
 }
