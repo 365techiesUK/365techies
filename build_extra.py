@@ -29306,7 +29306,8 @@ def write_portal_page():
     nxWhere('Staff area');
     function cardOf(id) { var n = document.getElementById(id); return n ? (n.classList.contains('card') ? n : n.closest('.card')) : null; }
     var diary = cardOf('dday'), sos = cardOf('sosqcard'), invq = cardOf('invqcard'), worth = cardOf('worthcall'), fleet = cardOf('ffleet'),
-        act = cardOf('ab'), qbo = cardOf('qbosetup'), invp = cardOf('inviteplans'), geo = cardOf('geocard'), quick = cardOf('pcmadm'), live = cardOf('vislive'), lic = null;
+        act = cardOf('ab'), qbo = cardOf('qbosetup'), invp = cardOf('inviteplans'), geo = cardOf('geocard'), quick = cardOf('pcmadm'), live = cardOf('vislive'), lic = null,
+        inst = cardOf('instbox');   // 1 Oct 2026: PC Manager installs, under the fleet
     Array.prototype.forEach.call(root.querySelectorAll('.card > h2'), function (h2) { if (/PC Manager licences/.test(h2.textContent)) lic = h2.parentNode; });
     var TABS = [['today', 'Today'], ['live', 'Live'], ['customers', 'Customers'], ['computers', 'Computers'], ['invoices', 'Invoices'], ['setup', 'Setup']];
     var bar = document.createElement('div'); bar.className = 'nx-sbar';
@@ -29331,6 +29332,7 @@ def write_portal_page():
     [sos, worth, live].forEach(function (c) { if (c) colB.appendChild(c); });
     [lic, act].forEach(function (c) { if (c) panels.customers.appendChild(c); });
     if (fleet) panels.computers.appendChild(fleet);
+    if (inst) panels.computers.appendChild(inst);
     if (invq) panels.invoices.appendChild(invq);
     [qbo, invp, geo].forEach(function (c) { if (c) panels.setup.appendChild(c); });
     // the consoles are used every day, so their buttons ride in the tab bar instead of a card at the bottom
