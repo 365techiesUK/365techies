@@ -247,6 +247,10 @@ function lc_message($due, $links, $now) {
         $link = isset($links[$d['ts']]) && $links[$d['ts']] !== '' ? ' <' . $links[$d['ts']] . '|open>' : '';
         $n = isset($d['count']) ? (int)$d['count'] : 1;
         $label = $d['lead']['label'] . ($n > 1 ? ' x' . $n : '');
+        // a voicemail or text: straight to that caller's inbox thread, where the recording plays and replies go
+        if (($d['lead']['kind'] === 'voicemail' || $d['lead']['kind'] === 'text') && $d['lead']['number'] !== '') {
+            $link .= ' <https://365techies.co.uk/api/comms.php?n=' . rawurlencode($d['lead']['number']) . '|' . ($d['lead']['kind'] === 'voicemail' ? 'play it' : 'reply') . '>';
+        }
         $lines[] = "\xE2\x80\xA2 " . ($d['level'] >= 2 ? '*still waiting* - ' : '') . '*' . $esc($label) . ':* '
             . $esc($d['lead']['who']) . ' (' . ($n > 1 ? 'latest ' : '') . $when . ', ' . lc_age_words($d['work']) . ')' . $link;
     }

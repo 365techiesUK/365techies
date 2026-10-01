@@ -323,6 +323,65 @@ function comms_vm_audio_ext($pi) {
     }
     return '';
 }
+/* ---- 1 Oct 2026: what kind of WAV a recording is, and plain PCM out of the telephone ones ----
+   Phone systems often send 8 kHz A-law or mu-law (G.711) WAVs. Browsers and Slack play PCM WAV; G.711 is turned
+   into 16-bit PCM here (a lossless table look-up). GSM 6.10 and ADPCM cannot be played in a browser: the inbox says so
+   and offers the download, which Windows plays. Returns null when $bytes is not a WAV. */
+function comms_wav_info($bytes) {
+    $b = (string)$bytes;
+    if (strlen($b) < 28 || substr($b, 0, 4) !== 'RIFF' || substr($b, 8, 4) !== 'WAVE') return null;
+    $pos = 12; $fmt = null; $dataSize = null; $dataOff = null;
+    while ($pos + 8 <= strlen($b)) {
+        $id = substr($b, $pos, 4); $sz = unpack('V', substr($b, $pos + 4, 4))[1];
+        if ($id === 'fmt ' && $pos + 8 + 16 <= strlen($b)) {
+            $f = unpack('vtag/vch/Vrate/Vbyterate/valign/vbits', substr($b, $pos + 8, 16));
+            if ($f['tag'] === 0xFFFE && $sz >= 26 && $pos + 8 + 26 <= strlen($b)) $f['tag'] = unpack('v', substr($b, $pos + 8 + 24, 2))[1];   // WAVE_FORMAT_EXTENSIBLE
+            $fmt = $f;
+        } elseif ($id === 'data') { $dataSize = $sz; $dataOff = $pos + 8; break; }
+        $pos += 8 + $sz + ($sz & 1);
+    }
+    if (!$fmt) return null;
+    $names = array(1 => 'PCM', 3 => 'float', 6 => 'A-law', 7 => 'mu-law', 2 => 'MS ADPCM', 0x11 => 'IMA ADPCM', 0x31 => 'GSM 6.10', 0x55 => 'MP3');
+    $tag = (int)$fmt['tag'];
+    return array('tag' => $tag, 'codec' => (isset($names[$tag]) ? $names[$tag] : 'format ' . $tag) . ', ' . round($fmt['rate'] / 1000, 1) . ' kHz',
+        'playable' => $tag === 1 || $tag === 3, 'g711' => $tag === 6 || $tag === 7, 'ch' => (int)$fmt['ch'], 'rate' => (int)$fmt['rate'],
+        'bits' => (int)$fmt['bits'], 'data_off' => $dataOff, 'data_size' => $dataSize,
+        'secs' => ($dataSize !== null && $fmt['byterate'] > 0) ? (int)round($dataSize / $fmt['byterate']) : null);
+}
+function comms_g711_sample($v, $alaw) {
+    if ($alaw) {
+        $v ^= 0x55; $t = ($v & 0x0F) << 4; $seg = ($v & 0x70) >> 4;
+        if ($seg === 0) $t += 8; elseif ($seg === 1) $t += 0x108; else { $t += 0x108; $t <<= $seg - 1; }
+        return ($v & 0x80) ? $t : -$t;
+    }
+    $v = ~$v & 0xFF; $t = (($v & 0x0F) << 3) + 0x84; $t <<= ($v & 0x70) >> 4;
+    return ($v & 0x80) ? (0x84 - $t) : ($t - 0x84);
+}
+/* A G.711 WAV as a 16-bit PCM WAV (same rate and channels), or null when it is not one. */
+function comms_wav_pcm16($bytes) {
+    $i = comms_wav_info($bytes);
+    if (!$i || !$i['g711'] || $i['data_off'] === null) return null;
+    $data = substr((string)$bytes, $i['data_off'], $i['data_size'] !== null ? $i['data_size'] : PHP_INT_MAX);
+    $map = array();
+    for ($k = 0; $k < 256; $k++) $map[chr($k)] = pack('v', comms_g711_sample($k, $i['tag'] === 6) & 0xFFFF);
+    $pcm = strtr($data, $map);
+    $ch = max(1, $i['ch']); $rate = max(1, $i['rate']);
+    return 'RIFF' . pack('V', 36 + strlen($pcm)) . 'WAVE' . 'fmt ' . pack('VvvVVvv', 16, 1, $ch, $rate, $rate * $ch * 2, $ch * 2, 16)
+        . 'data' . pack('V', strlen($pcm)) . $pcm;
+}
+/* Rewrite a saved G.711 recording as PCM, once (later calls see PCM and do nothing). */
+function comms_wav_fix_file($path) {
+    $head = (string)@file_get_contents($path, false, null, 0, 4096);
+    $i = comms_wav_info($head);
+    if (!$i || !$i['g711']) return false;
+    $pcm = comms_wav_pcm16((string)@file_get_contents($path));
+    if ($pcm === null) return false;
+    $tmp = $path . '.' . getmypid() . '.tmp';
+    if (@file_put_contents($tmp, $pcm, LOCK_EX) === false) return false;
+    if (!@rename($tmp, $path)) { @unlink($path); if (!@rename($tmp, $path)) { @unlink($tmp); return false; } }
+    return true;
+}
+
 function comms_vm_decode($raw, $enc) {
     if ((int)$enc === 3) return (string)base64_decode($raw);
     if ((int)$enc === 4) return quoted_printable_decode($raw);
@@ -332,13 +391,18 @@ function comms_vm_decode($raw, $enc) {
    email held when there was no recording (e.g. "text/plain, text/html" = Voipfone's Include attachment is off). */
 function comms_vm_extract($im, $msgno, $uid) {
     $struct = @imap_fetchstructure($im, $msgno);
-    $audio = ''; $plain = ''; $html = ''; $seen = array();
+    $audio = ''; $plain = ''; $html = ''; $seen = array(); $wavSecs = null;
     foreach (comms_vm_parts($struct) as $pi) {
         $seen[] = strtolower($pi['type'] . '/' . $pi['sub']) . ($pi['name'] !== '' ? ' "' . $pi['name'] . '"' : '');
         $ext = comms_vm_audio_ext($pi);
         if ($ext !== '') {
             if ($audio !== '') continue;
             $raw = comms_vm_decode((string)@imap_fetchbody($im, $msgno, $pi['sec']), $pi['enc']);
+            if ($ext === 'wav') {
+                $wi = comms_wav_info($raw);
+                if ($wi && $wi['g711']) { $pcm = comms_wav_pcm16($raw); if ($pcm !== null) $raw = $pcm; }   // playable everywhere
+                if ($wi && $wi['secs'] !== null && $wi['secs'] > 0) $wavSecs = $wi['secs'];
+            }
             if (strlen($raw) > 200) {
                 $name = 'vm-audio-VM' . (int)$uid . '.' . $ext;
                 if (@file_put_contents(__DIR__ . '/' . $name, $raw, LOCK_EX) !== false) $audio = $name;
@@ -352,6 +416,7 @@ function comms_vm_extract($im, $msgno, $uid) {
     }
     $body = $plain !== '' ? $plain : $html;
     $dur = preg_match('/(?:duration|length)[^0-9]{0,8}([0-9]{1,2}:[0-9]{2}(?::[0-9]{2})?|\d{1,4}\s*s(?:ec(?:ond)?s?)?\b)/i', $body, $m) ? trim($m[1]) : '';
+    if ($dur === '' && $wavSecs) $dur = intdiv((int)$wavSecs, 60) . ':' . str_pad((string)((int)$wavSecs % 60), 2, '0', STR_PAD_LEFT);   // the length, from the recording itself
     return array('audio' => $audio, 'body' => $body, 'duration' => $dur,
         'why' => $audio === '' ? 'no recording in the email (it holds: ' . ($seen ? implode(', ', array_slice($seen, 0, 6)) : 'nothing readable') . ')' : '');
 }

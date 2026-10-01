@@ -147,6 +147,7 @@ $vl = array_values(array_filter($r['due'], function ($d) { return $d['lead']['ki
 check(count($r['due']) === 2 && count($vl) === 1 && $vl[0]['count'] === 3 && $vl[0]['ts'] === $v3['ts'], 'three voicemails from one caller = one line (newest linked), the text its own', json_encode($r['due']));
 $m3v = lc_message($r['due'], array(), at('2026-10-02 12:15'));
 check(strpos($m3v, '*Voicemail x3:* +447700900152 (latest Fri 2 Oct 10:05') !== false, 'the line counts them', $m3v);
+check(strpos($m3v, '<https://365techies.co.uk/api/comms.php?n=%2B447700900152|play it>') !== false && strpos($m3v, '|reply>') !== false, 'voicemail lines link to the thread to play it; text lines to reply', $m3v);
 $st3 = lc_record($st3, $r['due'], at('2026-10-02 12:15'));
 check(isset($st3['nudged'][$v1['ts']], $st3['nudged'][$v2['ts']], $st3['nudged'][$v3['ts']]), 'every voicemail in the line is remembered');
 check(count(lc_due(array($v3, $tx, $v2, $v1), array(), $st3, at('2026-10-02 13:00'))['due']) === 0, 'so the line is not repeated');

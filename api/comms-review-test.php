@@ -76,5 +76,41 @@ check(strpos($src2, 'slk_upload_file(COMMS_SLACK_CHANNEL') !== false && strpos($
 check(strpos($src2, "\$out['vm_audio'] = comms_vm_refetch(15);") !== false, 'each sweep looks again for recordings the first poller missed');
 check(defined('COMMS_SLACK_CHANNEL') && COMMS_SLACK_CHANNEL === 'C0B4TD439FB', 'the recordings go to #365-job-tracker');
 
+echo "F  telephone WAVs made playable; the inbox links open the thread (1 Oct 2026, late)\n";
+function wav($tag, $rate, $ch, $bits, $data, $extensible = false) {
+    $align = $ch * max(1, intdiv($bits, 8)); $fmt = pack('vvVVvv', $extensible ? 0xFFFE : $tag, $ch, $rate, $rate * $align, $align, $bits);
+    if ($extensible) $fmt .= pack('vvV', 22, $bits, 0) . pack('v', $tag) . str_repeat("\0", 14);
+    $body = 'WAVE' . 'fmt ' . pack('V', strlen($fmt)) . $fmt . 'LIST' . pack('V', 4) . 'INFO' . 'data' . pack('V', strlen($data)) . $data;
+    return 'RIFF' . pack('V', strlen($body)) . $body;
+}
+$mu = wav(7, 8000, 1, 8, str_repeat("\xFF\x00\x80\x7F", 4000));        // 16,000 samples = 2 seconds
+$i = comms_wav_info($mu);
+check($i && $i['tag'] === 7 && $i['g711'] && !$i['playable'] && $i['secs'] === 2 && strpos($i['codec'], 'mu-law, 8 kHz') === 0, 'a mu-law 8 kHz WAV is recognised (past a LIST chunk), 2 seconds', json_encode($i));
+$pcm = comms_wav_pcm16($mu);
+$pi2 = comms_wav_info($pcm);
+check($pi2 && $pi2['tag'] === 1 && $pi2['playable'] && $pi2['bits'] === 16 && $pi2['rate'] === 8000 && $pi2['secs'] === 2, 'turned into 16-bit PCM, same rate and length', json_encode($pi2));
+$s = unpack('v4', substr($pcm, 44, 8));
+$sv = array_map(function ($x) { return $x >= 32768 ? $x - 65536 : $x; }, array_values($s));
+check($sv === array(0, -32124, 32124, 0), 'mu-law values decode to the standard (0xFF=0, 0x00=-32124, 0x80=32124, 0x7F=0)', json_encode($sv));
+check(comms_g711_sample(0xD5, true) === 8 && comms_g711_sample(0x55, true) === -8 && comms_g711_sample(0x2A, true) === -32256, 'A-law values decode to the standard');
+$al = wav(6, 8000, 1, 8, str_repeat("\xD5", 800), true);
+$ai = comms_wav_info($al);
+check($ai && $ai['tag'] === 6 && $ai['g711'], 'an A-law WAV in the "extensible" layout is recognised', json_encode($ai));
+check(comms_wav_info(comms_wav_pcm16($al))['playable'] === true, '...and converted');
+$gsm = comms_wav_info(wav(0x31, 8000, 1, 0, str_repeat("\0", 650)));
+check($gsm && !$gsm['playable'] && !$gsm['g711'] && strpos($gsm['codec'], 'GSM 6.10') === 0, 'GSM 6.10 is named and marked not playable in a browser (the inbox offers the download)');
+check(comms_wav_info(wav(1, 16000, 1, 16, str_repeat("\0\0", 16000)))['playable'] === true && comms_wav_pcm16(wav(1, 8000, 1, 16, "\0\0")) === null, 'PCM is left alone');
+check(comms_wav_info('ID3' . str_repeat("\0", 100)) === null && comms_wav_info('') === null, 'not a WAV = null');
+$tmpw = sys_get_temp_dir() . '/cr-test-' . getmypid() . '.wav';
+file_put_contents($tmpw, $mu);
+check(comms_wav_fix_file($tmpw) === true && comms_wav_info(file_get_contents($tmpw))['playable'] && comms_wav_fix_file($tmpw) === false, 'a saved mu-law file is rewritten as PCM once, then left alone');
+@unlink($tmpw);
+$pg = (string)file_get_contents(__DIR__ . '/comms.php');
+check(strpos($pg, '<a href="?n=\' . rawurlencode($num) . \'">') !== false && strpos($pg, "if (\$rawN !== '' && \$rawN[0] === ' ') \$rawN = '+' . ltrim(\$rawN);") !== false,
+    'list links encode the "+", and a "+" that arrived as a space is read back');
+check(strpos($pg, "header('Accept-Ranges: bytes');") !== false && strpos($pg, 'http_response_code(206)') !== false && strpos($pg, 'comms_wav_fix_file($path)') !== false,
+    'the audio route answers byte ranges (iPhones need them) and converts telephone WAVs before serving');
+check(strpos($pg, 'Download the recording') !== false && strpos($pg, '<audio controls preload=none style="height:32px') !== false, 'a download link, and a player right in the list');
+
 echo "\n" . ($fails ? "comms-review-test: $fails FAILED\n" : "comms-review-test: all passed\n");
 exit($fails ? 1 : 0);

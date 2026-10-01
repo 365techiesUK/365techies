@@ -57,7 +57,7 @@ if (empty($_SESSION['pcm_ok'])) {
     // ?login=1 (deliberate passphrase entry) render the sign-in card instead.
     if ($_SERVER['REQUEST_METHOD'] === 'GET' && !isset($_GET['sso']) && !isset($_GET['login'])) {
         // 1 Oct 2026: a Slack voicemail link names one caller (?n=); remember it across the portal sign-in bounce
-        if (isset($_GET['n'])) $_SESSION['comms_n'] = substr(preg_replace('/[^0-9+]/', '', (string)$_GET['n']), 0, 20);
+        if (isset($_GET['n'])) { $nb = (string)$_GET['n']; if ($nb !== '' && $nb[0] === ' ') $nb = '+' . ltrim($nb); $_SESSION['comms_n'] = substr(preg_replace('/[^0-9+]/', '', $nb), 0, 20); }
         header('Location: /portal/?console=comms'); exit;
     }
     echo '<!doctype html><meta name=viewport content="width=device-width,initial-scale=1"><title>365 comms inbox</title>';
@@ -78,10 +78,27 @@ if (empty($_SESSION['pcm_ok'])) {
 if (isset($_GET['audio'])) {
     $f = (string)$_GET['audio'];
     if (!preg_match('/^vm-audio-[A-Za-z0-9\-]+\.(mp3|wav)$/', $f) || !is_file(__DIR__ . '/' . $f)) { http_response_code(404); exit('no'); }
+    $path = __DIR__ . '/' . $f;
+    // 1 Oct 2026: telephone WAVs are often A-law or mu-law, which browsers will not play - turned into plain PCM once
+    if (substr($f, -3) === 'wav') comms_wav_fix_file($path);
+    clearstatcache(true, $path);
+    $size = (int)filesize($path);
     header('Content-Type: ' . (substr($f, -3) === 'wav' ? 'audio/wav' : 'audio/mpeg'));
-    header('Cache-Control: no-store');
-    header('Content-Length: ' . filesize(__DIR__ . '/' . $f));
-    readfile(__DIR__ . '/' . $f);
+    header('Cache-Control: private, no-store');
+    header('Accept-Ranges: bytes');
+    if (!empty($_GET['dl'])) header('Content-Disposition: attachment; filename="voicemail-' . preg_replace('/[^A-Za-z0-9]/', '', substr($f, 9, -4)) . '.' . substr($f, -3) . '"');
+    // byte ranges: an iPhone will not play audio from a server that ignores them
+    $start = 0; $end = $size - 1;
+    if (isset($_SERVER['HTTP_RANGE']) && preg_match('/^bytes=(\d*)-(\d*)$/', trim((string)$_SERVER['HTTP_RANGE']), $rm) && $size > 0) {
+        if ($rm[1] === '' && $rm[2] !== '') { $start = max(0, $size - (int)$rm[2]); }
+        else { $start = (int)$rm[1]; if ($rm[2] !== '') $end = min($end, (int)$rm[2]); }
+        if ($start > $end || $start >= $size) { http_response_code(416); header('Content-Range: bytes */' . $size); exit; }
+        http_response_code(206);
+        header('Content-Range: bytes ' . $start . '-' . $end . '/' . $size);
+    }
+    header('Content-Length: ' . ($end - $start + 1));
+    $fh = @fopen($path, 'rb');
+    if ($fh) { fseek($fh, $start); $left = $end - $start + 1; while ($left > 0 && !feof($fh)) { $chunk = fread($fh, min(65536, $left)); echo $chunk; $left -= strlen($chunk); } fclose($fh); }
     exit;
 }
 
@@ -127,7 +144,12 @@ foreach ($items as $it) {
 }
 uasort($threads, function ($a, $b) { return strcmp(end($b)['at'], end($a)['at']); });
 
-$sel = isset($_GET['n']) ? preg_replace('/[^0-9+a-z]/i', '', (string)$_GET['n']) : '';
+/* 1 Oct 2026: a "+" in a query string arrives as a space, so ?n=+447... (every list link until today) read as
+   "447..." and no thread ever opened - the voicemail player lives in the thread. Links are encoded now, and a bare
+   leading space is read back as the "+" it was. */
+$rawN = isset($_GET['n']) ? (string)$_GET['n'] : '';
+if ($rawN !== '' && $rawN[0] === ' ') $rawN = '+' . ltrim($rawN);
+$sel = preg_replace('/[^0-9+a-z]/i', '', $rawN);
 
 echo '<!doctype html><meta name=viewport content="width=device-width,initial-scale=1"><title>365 comms inbox</title>';
 echo '<body style="font-family:system-ui;background:#0b1226;color:#eef;margin:0;padding:1.2rem 1.5rem">';
@@ -165,7 +187,13 @@ if ($sel !== '' && isset($threads[$sel])) {
            . (!empty($it['handled']) ? ' &middot; handled' : '') . '</div>';
         echo nl2br(h($it['body']));
         if ($it['type'] === 'voicemail' && $it['audio'] !== '') {
-            echo '<div style="margin-top:.45rem"><audio controls preload=none style="width:100%;max-width:420px" src="comms.php?audio=' . h($it['audio']) . '"></audio></div>';
+            // the player, a download (plays in any media player whatever the format) and what the file is
+            if (substr($it['audio'], -3) === 'wav') comms_wav_fix_file(__DIR__ . '/' . $it['audio']);   // telephone WAV -> PCM before it is described
+            $wi = comms_wav_info((string)@file_get_contents(__DIR__ . '/' . $it['audio'], false, null, 0, 4096));
+            echo '<div style="margin-top:.45rem"><audio controls preload=metadata style="width:100%;max-width:420px" src="comms.php?audio=' . h($it['audio']) . '"></audio>'
+               . '<div class=meta style="margin-top:.2rem"><a href="comms.php?audio=' . h($it['audio']) . '&amp;dl=1">Download the recording</a>'
+               . ($wi ? ' &middot; WAV ' . h($wi['codec']) . ($wi['playable'] ? '' : ' &mdash; browsers cannot play this kind of WAV: use Download (Windows plays it), or set Voipfone to send MP3') : ' &middot; ' . h(strtoupper(pathinfo($it['audio'], PATHINFO_EXTENSION))))
+               . '</div></div>';
         } elseif ($it['type'] === 'voicemail') {
             // 1 Oct 2026: say why there is nothing to play, instead of an empty bubble
             $why = (string)(isset($it['audio_why']) ? $it['audio_why'] : '');
@@ -217,11 +245,19 @@ if ($sel !== '' && isset($threads[$sel])) {
         $unhandled = 0;
         foreach ($th as $it) if (empty($it['handled']) && $it['type'] !== 'sms_out') $unhandled++;
         $who = $match['status'] === 'MATCH' ? $match['name'] : $num;
-        echo '<tr style="border-top:1px solid #223258"><td style="padding:.45rem .6rem"><a href="?n=' . h($num) . '">' . h($who) . '</a>'
+        echo '<tr style="border-top:1px solid #223258"><td style="padding:.45rem .6rem"><a href="?n=' . rawurlencode($num) . '">' . h($who) . '</a>'
            . ($match['status'] === 'MATCH' ? ' <span class="tag tag--match">customer</span>' : '')
            . ($unhandled ? ' <span class="tag tag--new">' . $unhandled . ' new</span>' : '') . '</td>';
         echo '<td class=mono style="padding:.45rem .6rem;white-space:nowrap">' . h(substr($lastIt['at'], 0, 16)) . '</td>';
-        echo '<td style="padding:.45rem .6rem">' . h($lastIt['type']) . ': ' . h(mb_substr(preg_replace('/\s+/', ' ', $lastIt['body']), 0, 70)) . '</td>';
+        // 1 Oct 2026: the newest voicemail plays right here in the list; otherwise the item, in words
+        if ($lastIt['type'] === 'voicemail' && $lastIt['audio'] !== '') {
+            echo '<td style="padding:.3rem .6rem"><span class=meta style="margin-right:.4rem">Voicemail' . ($lastIt['duration'] !== '' ? ' &middot; ' . h($lastIt['duration']) : '') . '</span>'
+               . '<audio controls preload=none style="height:32px;vertical-align:middle;max-width:260px" src="comms.php?audio=' . h($lastIt['audio']) . '"></audio></td>';
+        } else {
+            $label = $lastIt['type'] === 'voicemail' ? 'Voicemail' . ($lastIt['duration'] !== '' ? ' (' . h($lastIt['duration']) . ')' : '') . ' &mdash; open to see why there is no recording'
+                : h($lastIt['type'] === 'sms_in' ? 'Text' : ($lastIt['type'] === 'sms_out' ? 'We texted' : $lastIt['type'])) . ': ' . h(mb_substr(preg_replace('/\s+/', ' ', $lastIt['body']), 0, 70));
+            echo '<td style="padding:.45rem .6rem">' . $label . '</td>';
+        }
         echo '<td style="padding:.45rem .6rem"><a href="tel:' . h($num) . '">call</a></td></tr>';
     }
     if (!$threads) echo '<tr><td style="padding:.6rem" colspan=4>Nothing yet &mdash; voicemails and texts appear here as the crons pick them up.</td></tr>';
