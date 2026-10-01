@@ -23233,13 +23233,15 @@ def virgin_move_v2(d, crumbs):
     # v30, or let us do it for GBP 60 including a full PC service - sit straight under a short header, so the download is
     # on the first phone screen. Every link the old first screen and offer box carried is in the line under them.
     head = bp.task_head(crumbs, d['h1'],
-        'Keeping your Virgin address means paying Junara once any free year ends. Or move it to Gmail, free, once:',
+        'Keeping your Virgin address means paying Junara once any free year ends. Or move it to Gmail once and keep it free: '
+        'we can do it for you, or <a href="#do-it-free">you can do it yourself</a>.',
         trust=_VL.TASK_TRUST)
     also = ('Or: <a href="#fixflow">move it by hand with Thunderbird</a> (needs a Virgin app password) &middot; '
             '<a href="/' + JUNARA_SLUG + '/#s3">keep your Virgin address with Junara</a> &middot; '
             '<a href="/' + JUNARA_SLUG + '/#s6">is this Junara email real?</a> &middot; '
             '<a href="#s2">what&rsquo;s happening, in full</a> &middot; <a href="#s8">no Virgin app password?</a>')
-    return head + "\n" + _VL.virgin_choices(PCM_SETUP_V30, also_html=also), ""
+    # 1 Oct 2026: the GBP 60 move leads on the two Virgin search pages (the funnel read's one change for October)
+    return head + "\n" + _VL.virgin_choices(PCM_SETUP_V30, also_html=also, paid_first=True), ""
 
 
 # ============================================ JUNARA PAGE (26 Sep 2026)
@@ -23264,12 +23266,13 @@ def junara_v2(d, crumbs):
     # then the two choices (free app / GBP 60), then the facts table with a source on every row. Links kept from the old
     # first screen and box: #move-for-me, #s3, #s4, #s5, #s6 and the Gmail how-to.
     head = bp.task_head(crumbs, d['h1'],
-        'Junara is taking over all Virgin Media email. Keeping your address is free for 12 months if you still have '
-        'Virgin (plus 99p), then paid per mailbox. Or move it to Gmail, free:', trust=_VL.TASK_TRUST)
+        'Junara is taking over all Virgin Media email, blueyonder and ntlworld addresses too. Keeping your address is free '
+        'for 12 months if you still have Virgin (plus 99p), then paid per mailbox. Or move it to Gmail once and keep it free: '
+        'we can do it for you, or <a href="#do-it-free">you can do it yourself</a>.', trust=_VL.TASK_TRUST)
     also = ('Rather keep your Virgin address? <a href="#s3">What Junara costs</a> &middot; <a href="#s4">your deadline</a> &middot; '
             '<a href="#s5">keep it or move it?</a> &middot; <a href="#s6">is this Junara email real?</a> &middot; '
             '<a href="/move-virgin-media-email-to-gmail/">move it to Gmail by hand</a>')
-    return head + "\n" + _VL.virgin_choices(PCM_SETUP_V30, also_html=also) + "\n" + _VL.junara_facts_html(), ""
+    return head + "\n" + _VL.virgin_choices(PCM_SETUP_V30, also_html=also, paid_first=True) + "\n" + _VL.junara_facts_html(), ""
 
 
 # Plusnet (26 Sep 2026): same first screen and box; Greenby facts from Greenby's own FAQ, read 26 Sep 2026.

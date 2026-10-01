@@ -44,7 +44,7 @@ _VMC_CSS = """
 .vmc__in{max-width:1180px;margin:0 auto}
 .vmc__grid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:1.1rem;align-items:stretch}
 .vmc__card{display:flex;flex-direction:column;padding:1.35rem 1.4rem 1.3rem;border-radius:24px;border:1px solid var(--hp-edge);background:radial-gradient(110% 80% at 100% 0%,color-mix(in srgb,var(--c1) 16%,transparent),transparent 62%),var(--hp-card)}
-.vmc__card--diy{border-color:color-mix(in srgb,var(--c1) 58%,transparent);box-shadow:0 34px 70px -40px color-mix(in srgb,var(--c1) 85%,transparent)}
+.vmc__card--lead{border-color:color-mix(in srgb,var(--c1) 58%,transparent);box-shadow:0 34px 70px -40px color-mix(in srgb,var(--c1) 85%,transparent)}
 .vmc__tag{display:flex;align-items:center;gap:.6rem;margin:0 0 .6rem;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;line-height:1.35;color:color-mix(in srgb,var(--c2) 85%,#fff)}
 .vmc__h{font-family:var(--font-display);font-weight:600;font-size:clamp(1.3rem,2.3vw,1.72rem);line-height:1.16;margin:0 0 .45rem;color:var(--hp-ink);text-wrap:balance}
 .vmc__h b{color:#fff;font-weight:700}
@@ -113,10 +113,14 @@ def virgin_shot(key, sizes):
 
 
 def virgin_choices(setup_url, also_html="", how_href="/" + VIRGIN_TOOL_SLUG + "/", how_label="How it works, and what you need",
-                   heading_level=2, shots=True):
+                   heading_level=2, shots=True, paid_first=False):
     """The two choices side by side (one above the other on a phone, the free one first). The GBP 60 card keeps the
     id move-for-me that the pages' own links point at; the free card is #do-it-free. shots: two app screens under them
-    (the check and the move; one on a phone) - the tool page shows all four in its own section instead."""
+    (the check and the move; one on a phone) - the tool page shows all four in its own section instead.
+    paid_first (1 Oct 2026, the funnel read's one change for October, owner "do it now"): the GBP 60 move leads - first
+    card, the glow, Text as the first button (texts are the biggest enquiry channel) and "Windows PCs only" in its
+    opening line (one of three email-move enquiries was turned away as iPad/iPhone only). The free app card follows,
+    its download a secondary button. The two Virgin search pages use it; the app's own page keeps the free card first."""
     h = "h%d" % heading_level
     ticks = "\n".join("            <li>%s</li>" % t for t in VM_US_TICKS)
     also = ('\n    <p class="vmc__also">' + also_html + '</p>') if also_html else ""
@@ -127,14 +131,24 @@ def virgin_choices(setup_url, also_html="", how_href="/" + VIRGIN_TOOL_SLUG + "/
         also += (f'\n      <div class="vmc__shots" aria-label="What the free app looks like">\n{figs}\n      </div>'
                  f'\n      <p class="vmc__shotnote">Real screens from 365 PC Manager, with a made-up sample mailbox. '
                  f'<a href="/{VIRGIN_TOOL_SLUG}/#screens">See every screen &#8594;</a></p>')
-    return f'''    <section class="dh vmc" id="choose" aria-label="Two ways to move your Virgin email">
-    <div class="vmc__in">
-      <div class="vmc__grid">
-        <div class="vmc__card vmc__card--diy hp-c-fix" id="do-it-free">
+    diy_lead = "" if paid_first else " vmc__card--lead"
+    dl_btn = "secondary" if paid_first else "primary"
+    diy_or = "Or do" if paid_first else "Do"
+    if paid_first:
+        paid_d = ("We move every folder into Gmail for you, remotely. <b>For Windows PCs only.</b> No app passwords, no settings, "
+                  "nothing to learn, and the price includes a full service of your PC with a written report.")
+        paid_cta = ('<a class="button primary button--lg" href="sms:+447520615332">Text 07520 615332</a>'
+                    '<a class="button secondary button--lg" href="tel:+441202775566">Call 01202 775566</a>')
+    else:
+        paid_d = ("No app passwords, no settings, nothing to learn. We move every folder into Gmail for you, remotely, and the "
+                  "price includes a full service of your PC with a written report.")
+        paid_cta = ('<a class="button secondary button--lg" href="tel:+441202775566">Call 01202 775566</a>'
+                    '<a class="dh-link" href="sms:+447520615332">Or text 07520 615332</a>')
+    diy = f'''        <div class="vmc__card vmc__card--diy{diy_lead} hp-c-fix" id="do-it-free">
           <p class="vmc__tag"><span class="hp-ico hp-ico--sm">{_dh_ico("monitor")}</span>FREE &middot; NO SIGN-UP &middot; FOR WINDOWS PCs</p>
-          <{h} class="vmc__h">Do it yourself, free, with 365&nbsp;PC&nbsp;Manager</{h}>
+          <{h} class="vmc__h">{diy_or} it yourself, free, with 365&nbsp;PC&nbsp;Manager</{h}>
           <p class="vmc__d">Our free app moves your Virgin email into Gmail for you, no Virgin app password needed.</p>
-          <p class="vmc__cta"><a class="button primary button--lg" href="{setup_url}" download data-vmc-dl><span class="vmc__dl-l">Download free for Windows</span><span class="vmc__dl-s">Download free</span> &#8595;</a></p>
+          <p class="vmc__cta"><a class="button {dl_btn} button--lg" href="{setup_url}" download data-vmc-dl><span class="vmc__dl-l">Download free for Windows</span><span class="vmc__dl-s">Download free</span> &#8595;</a></p>
           <p class="vmc__note">For Windows PCs. You&rsquo;ll need a Gmail account and a <a href="/{GAPP_SLUG}/">Google app password</a>. Not for Macs. If Virgin won&rsquo;t let you sign in, press &lsquo;Stuck? We&rsquo;ll do it for you&rsquo; in the app or <a href="tel:+441202775566">ring us</a>, and we&rsquo;ll move it for you.</p>
           <ul class="vmc__list">
             <li><b>Check my Virgin email:</b> every folder, how many emails, how big, and how many days the move will take. It only reads.</li>
@@ -143,12 +157,12 @@ def virgin_choices(setup_url, also_html="", how_href="/" + VIRGIN_TOOL_SLUG + "/
             <li><b>Stuck? We&rsquo;ll do it for you:</b> one tap asks us to ring you back.</li>
           </ul>
           <p class="vmc__more"><a class="dh-link" href="{how_href}">{how_label} &#8594;</a></p>
-        </div>
-        <div class="vmc__card hp-c-care" id="move-for-me">
+        </div>'''
+    paid = f'''        <div class="vmc__card{" vmc__card--lead" if paid_first else ""} hp-c-care" id="move-for-me">
           <p class="vmc__tag"><span class="hp-ico hp-ico--sm">{_dh_ico("phone")}</span>DONE FOR YOU &middot; AGREED BEFORE WE START</p>
           <{h} class="vmc__h">Let us do it: <b>&pound;60</b> per email address</{h}>
-          <p class="vmc__d">No app passwords, no settings, nothing to learn. We move every folder into Gmail for you, remotely, and the price includes a full service of your PC with a written report.</p>
-          <p class="vmc__cta"><a class="button secondary button--lg" href="tel:+441202775566">Call 01202 775566</a><a class="dh-link" href="sms:+447520615332">Or text 07520 615332</a></p>
+          <p class="vmc__d">{paid_d}</p>
+          <p class="vmc__cta">{paid_cta}</p>
           <form class="contact-form vmc__form" method="post" action="/api/form-relay.php" data-ga-event="virgin_move_request" data-success="{VM_FORM_OK}">
             <p class="vmc__formh">Or leave your number and we&rsquo;ll ring you</p>
             <input type="hidden" name="topic" value="Virgin email move (&pound;60 per address)" />
@@ -167,7 +181,12 @@ def virgin_choices(setup_url, also_html="", how_href="/" + VIRGIN_TOOL_SLUG + "/
 {ticks}
           </ul>
           <p class="vmc__small">{VM_US_SMALL}</p>
-        </div>
+        </div>'''
+    cards = (paid + "\n" + diy) if paid_first else (diy + "\n" + paid)
+    return f'''    <section class="dh vmc" id="choose" aria-label="Two ways to move your Virgin email">
+    <div class="vmc__in">
+      <div class="vmc__grid">
+{cards}
       </div>{also}
     </div>
     <style>{" ".join(l.strip() for l in _VMC_CSS.strip().splitlines())}</style>
