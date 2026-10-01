@@ -423,22 +423,29 @@ function comms_vm_extract($im, $msgno, $uid) {
 
 /* Tell the team about a new voicemail: the recording itself into #365-job-tracker when there is one (Slack plays it
    inline, on a phone too), else - or if the upload is refused - one line with a link straight to that caller's thread. */
-function comms_vm_announce($who, $e164, $duration, $audioFile, $why) {
+/* Returns array(ok, how: 'file'|'link', error: why a file was refused). $line overrides the opening line - a re-post of
+   an old voicemail must not read "Voicemail from", or the lead reminders would chase it as new. */
+function comms_vm_announce($who, $e164, $duration, $audioFile, $why, $line = '') {
     $link = 'https://365techies.co.uk/api/comms.php?n=' . rawurlencode($e164);
-    $line = "\xF0\x9F\x93\x9E Voicemail from " . $who . ($duration !== '' ? ' (' . $duration . ')' : '');
+    if ($line === '') $line = "\xF0\x9F\x93\x9E Voicemail from " . $who . ($duration !== '' ? ' (' . $duration . ')' : '');
+    $err = '';
     if ($audioFile !== '' && is_file(__DIR__ . '/' . $audioFile)) {
+        if (substr($audioFile, -3) === 'wav') comms_wav_fix_file(__DIR__ . '/' . $audioFile);   // Slack plays PCM, not telephone A-law/mu-law
         if (!function_exists('slk_upload_file')) @include_once __DIR__ . '/pcm-slack-lib.php';
         if (function_exists('slk_upload_file')) {
             $bytes = (string)@file_get_contents(__DIR__ . '/' . $audioFile);
             $ext = pathinfo($audioFile, PATHINFO_EXTENSION);
             $r = slk_upload_file(COMMS_SLACK_CHANNEL, $bytes, 'voicemail-' . preg_replace('/[^0-9]/', '', $e164) . '.' . $ext,
                 'Voicemail from ' . $who, $line . "\nPlay it above. Call back, or open the thread: <" . $link . '|comms inbox>');
-            if (!empty($r['ok'])) return true;
-        }
-        return comms_slack($line . "\n<" . $link . '|Play it and call back> (comms inbox)');
+            if (!empty($r['ok'])) return array('ok' => true, 'how' => 'file', 'error' => '');
+            $err = (string)(isset($r['error']) ? $r['error'] : 'unknown');
+        } else $err = 'no Slack library';
+        $ok = comms_slack($line . "\n<" . $link . '|Play it and call back> (comms inbox)');
+        return array('ok' => $ok, 'how' => 'link', 'error' => $err);
     }
-    return comms_slack($line . "\n<" . $link . '|Open the comms inbox thread> to call back.'
+    $ok = comms_slack($line . "\n<" . $link . '|Open the comms inbox thread> to call back.'
         . ($why !== '' ? "\n_No recording came with Voipfone's email - switch on Include attachment for this voicemail box in the Voipfone control panel._" : ''));
+    return array('ok' => $ok, 'how' => 'link', 'error' => 'no recording');
 }
 
 /* Voicemails stored without their recording (the first poller looked one level deep only): look again, once each,

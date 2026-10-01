@@ -120,6 +120,23 @@ if ((isset($_POST['do']) ? $_POST['do'] : '') === 'review') {
     if (!empty($rr['ok'])) $msg = 'Review text sent' . (!empty($rr['dry']) ? ' (dry run)' : '') . '.';
     else $err = h($rr['error']);
 }
+/* 1 Oct 2026: an older voicemail's recording into Slack on request (new ones go there by themselves). The line says
+   "Recording", not "Voicemail from", so the lead reminders do not chase a re-post as a new voicemail. */
+if ((isset($_POST['do']) ? $_POST['do'] : '') === 'vmslack') {
+    $vid = (string)(isset($_POST['id']) ? $_POST['id'] : '');
+    list($okV, $vit) = comms_locked(function ($d) use ($vid) { foreach ($d['items'] as $it) if ($it['id'] === $vid) return array('__result' => $it); return array('__result' => null); });
+    if (!$okV || !$vit || $vit['type'] !== 'voicemail' || $vit['audio'] === '') { $err = 'That voicemail has no recording to post.'; }
+    else {
+        $vm = $vit['match'];
+        $vwho = (isset($vm['status']) && $vm['status'] === 'MATCH') ? $vm['name'] . ' (' . $vit['number'] . ')' : $vit['number'];
+        $vwhen = date('D j M H:i', (int)strtotime($vit['at']));
+        $rv = comms_vm_announce($vwho, $vit['number'], $vit['duration'], $vit['audio'], '',
+            "\xE2\x96\xB6 Recording of the voicemail from " . $vwho . ', left ' . $vwhen . ($vit['duration'] !== '' ? ' (' . $vit['duration'] . ')' : ''));
+        if (!empty($rv['ok']) && $rv['how'] === 'file') $msg = 'Posted to Slack - it plays in #365-job-tracker.';
+        elseif (!empty($rv['ok'])) $err = 'Slack would not take the file (' . h($rv['error']) . '), so a link to this thread went instead. If it says missing_scope, the 365 Slack app needs the files:write permission.';
+        else $err = 'Slack did not answer - try again in a minute.';
+    }
+}
 /* 1 Oct 2026: called them back? one press clears every text and voicemail from that number */
 if ((isset($_POST['do']) ? $_POST['do'] : '') === 'handledall') {
     $nh = comms_handle_number(preg_replace('/[^0-9+]/', '', (string)(isset($_POST['n']) ? $_POST['n'] : '')), 'staff');
@@ -192,6 +209,8 @@ if ($sel !== '' && isset($threads[$sel])) {
             $wi = comms_wav_info((string)@file_get_contents(__DIR__ . '/' . $it['audio'], false, null, 0, 4096));
             echo '<div style="margin-top:.45rem"><audio controls preload=metadata style="width:100%;max-width:420px" src="comms.php?audio=' . h($it['audio']) . '"></audio>'
                . '<div class=meta style="margin-top:.2rem"><a href="comms.php?audio=' . h($it['audio']) . '&amp;dl=1">Download the recording</a>'
+               . ' &middot; <form method=post style="display:inline"><input type=hidden name=do value=vmslack><input type=hidden name=csrf value="' . $CSRF . '">'
+               . '<input type=hidden name=id value="' . h($it['id']) . '"><button style="background:none;border:0;padding:0;color:#6fc7ff;font-size:inherit;cursor:pointer;text-decoration:underline">Post the recording to Slack</button></form>'
                . ($wi ? ' &middot; WAV ' . h($wi['codec']) . ($wi['playable'] ? '' : ' &mdash; browsers cannot play this kind of WAV: use Download (Windows plays it), or set Voipfone to send MP3') : ' &middot; ' . h(strtoupper(pathinfo($it['audio'], PATHINFO_EXTENSION))))
                . '</div></div>';
         } elseif ($it['type'] === 'voicemail') {
@@ -211,9 +230,9 @@ if ($sel !== '' && isset($threads[$sel])) {
         echo '</div>';
     }
     if (preg_match('/^\+447\d{9}$/', $sel)) {
-        echo '<form method=post style="margin-top:.8rem;display:grid;gap:.5rem;max-width:640px">'
+        echo '<form method=post id=reply style="margin-top:.8rem;display:grid;gap:.5rem;max-width:640px">'
            . '<input type=hidden name=do value=reply><input type=hidden name=csrf value="' . $CSRF . '"><input type=hidden name=to value="' . h($sel) . '">'
-           . '<textarea name=text rows=3 placeholder="Reply by text from the 365 Techies number&hellip;"></textarea>'
+           . '<textarea name=text rows=3' . (!empty($_GET['r']) ? ' autofocus' : '') . ' placeholder="Reply by text from the 365 Techies number (07520 615332)&hellip;"></textarea>'
            . '<button>Send text</button></form>';
         // the review text: once a year per number (Google allows one review per person)
         $rvAt = comms_review_sent_at($sel, $items);
@@ -258,7 +277,9 @@ if ($sel !== '' && isset($threads[$sel])) {
                 : h($lastIt['type'] === 'sms_in' ? 'Text' : ($lastIt['type'] === 'sms_out' ? 'We texted' : $lastIt['type'])) . ': ' . h(mb_substr(preg_replace('/\s+/', ' ', $lastIt['body']), 0, 70));
             echo '<td style="padding:.45rem .6rem">' . $label . '</td>';
         }
-        echo '<td style="padding:.45rem .6rem"><a href="tel:' . h($num) . '">call</a></td></tr>';
+        // 1 Oct 2026: reply by text straight from the list (opens the thread with the reply box ready) - UK mobiles only
+        echo '<td style="padding:.45rem .6rem;white-space:nowrap"><a href="tel:' . h($num) . '">call</a>'
+           . (preg_match('/^\+447\d{9}$/', $num) ? ' &middot; <a href="?n=' . rawurlencode($num) . '&amp;r=1#reply">reply</a>' : '') . '</td></tr>';
     }
     if (!$threads) echo '<tr><td style="padding:.6rem" colspan=4>Nothing yet &mdash; voicemails and texts appear here as the crons pick them up.</td></tr>';
     echo '</table></div>';

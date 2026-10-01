@@ -122,6 +122,8 @@ $up = array('type' => 'message', 'subtype' => 'file_share', 'user' => 'UBOT', 't
 $l = lc_lead($up);
 check($l && $l['kind'] === 'voicemail' && $l['number'] === '+447700900150', "the app's recording post is a voicemail lead", json_encode($l));
 check(lc_lead(array('type' => 'message', 'subtype' => 'file_share', 'user' => 'U1', 'ts' => '1790000000.000100', 'text' => 'photo of the PC')) === null, "a person's own file is never a lead");
+check(lc_lead(array('type' => 'message', 'subtype' => 'file_share', 'bot_id' => 'B1', 'ts' => '1790000000.000200', 'text' => "â¶ Recording of the voicemail from Margaret Example (+447700900153), left Wed 30 Sep 15:52
+Play it above.")) === null, 'a re-posted recording of an old voicemail is not a new lead');
 // tonight's catch-up: posts at 21:40 for voicemails left days earlier
 $post = at('2026-10-01 21:40:45');
 $cu = bot($post, ":telephone_receiver: Voicemail from Cordelia Example (+447700900151)\nListen + call back from the portal comms inbox (/api/comms.php).");

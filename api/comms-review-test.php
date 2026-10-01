@@ -110,6 +110,8 @@ check(strpos($pg, '<a href="?n=\' . rawurlencode($num) . \'">') !== false && str
     'list links encode the "+", and a "+" that arrived as a space is read back');
 check(strpos($pg, "header('Accept-Ranges: bytes');") !== false && strpos($pg, 'http_response_code(206)') !== false && strpos($pg, 'comms_wav_fix_file($path)') !== false,
     'the audio route answers byte ranges (iPhones need them) and converts telephone WAVs before serving');
+check(strpos($pg, "name=do value=vmslack") !== false && strpos($pg, 'Recording of the voicemail from') !== false, 'an older voicemail can be posted to Slack, worded so the reminders do not chase it');
+check(strpos($pg, '&amp;r=1#reply">reply</a>') !== false && strpos($pg, 'id=reply') !== false, 'the list has a reply link that opens the reply box');
 check(strpos($pg, 'Download the recording') !== false && strpos($pg, '<audio controls preload=none style="height:32px') !== false, 'a download link, and a player right in the list');
 
 echo "\n" . ($fails ? "comms-review-test: $fails FAILED\n" : "comms-review-test: all passed\n");
