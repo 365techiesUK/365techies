@@ -270,6 +270,11 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(pcm-slackjobs-(lib|sweep|test)\.php|pcm-slackjobs-status\.json(\..*)?|pcm-slackjobs\.log)$">
   Require all denied
 </FilesMatch>
+# Lead reminders (1 Oct 2026): run from tm-cron.php, list unanswered leads in #365-job-tracker. The library, the
+# sweep and both test suites are include/CLI-only; the state file holds Slack message times. Nothing here is a URL.
+<FilesMatch "^(pcm-leadchase(-lib|-test)?\.php|pcm-leadchase\.json(\..*)?|pcm-leadchase\.off|comms-review-test\.php)$">
+  Require all denied
+</FilesMatch>
 # Bournemouth weather record books (22 Sep 2026): the per-date record table is read by
 # bm-wx.php on the server (it is public Met Office data, but 300 KB nobody's browser
 # needs); the library and its test are include/CLI-only.

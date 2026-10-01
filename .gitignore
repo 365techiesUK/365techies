@@ -39,6 +39,9 @@ api/pcm-paylink-events.json.*.tmp
 api/pcm-slackjobs-status.json
 api/pcm-slackjobs-status.json.*.tmp
 api/pcm-slackjobs.log
+api/pcm-leadchase.json
+api/pcm-leadchase.json.*.tmp
+api/pcm-leadchase.off
 # Invoice review queue: held ids, send log, cached rows (names + emails + amounts)
 api/pcm-invq.json
 api/pcm-invq.json.lock

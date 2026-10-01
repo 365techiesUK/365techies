@@ -386,19 +386,76 @@ function comms_vm_poll() {
     return array('new' => $new, 'examined' => $examined);
 }
 
-/* Staff reply: send the SMS through the guarded tm_send and thread the copy. */
-function comms_send_sms($to, $text, $actor) {
+/* Staff reply: send the SMS through the guarded tm_send and thread the copy. $tag marks a special send ('review').
+   1 Oct 2026: a reply IS handling the conversation, so the number's earlier unhandled texts and voicemails are marked
+   handled too (the lead reminders and the inbox's "new" count read that flag). */
+function comms_send_sms($to, $text, $actor, $tag = '') {
     $e164 = tm_number($to);
-    $r = tm_send($e164, $text, 'comms:' . $actor);
+    $r = tm_send($e164, $text, 'comms:' . $actor . ($tag !== '' ? ':' . $tag : ''));
     if (!empty($r['ok'])) {
-        comms_add_item(array(
+        $item = array(
             'type' => 'sms_out', 'ext_id' => 'out-' . (isset($r['id']) ? $r['id'] : uniqid()), 'at' => gmdate('c'),
             'number' => $e164, 'body' => (string)$text, 'audio' => '', 'duration' => '',
             'match' => comms_match_customer($e164),
             'handled' => true, 'handled_by' => $actor, 'handled_at' => gmdate('c'),
-        ));
+        );
+        if ($tag !== '') $item['tag'] = $tag;
+        comms_add_item($item);
+        if ($tag !== 'review') comms_handle_number($e164, $actor . ' (replied by text)');
     }
     return $r;
+}
+
+/* Mark every unhandled text and voicemail from one number handled. Returns how many. */
+function comms_handle_number($e164, $actor) {
+    $res = comms_locked(function ($data) use ($e164, $actor) {
+        $n = 0;
+        foreach ($data['items'] as $i => $it) {
+            if ($it['number'] !== $e164 || !empty($it['handled'])) continue;
+            if ($it['type'] !== 'sms_in' && $it['type'] !== 'voicemail') continue;
+            $data['items'][$i]['handled'] = true;
+            $data['items'][$i]['handled_by'] = $actor;
+            $data['items'][$i]['handled_at'] = gmdate('c');
+            $n++;
+        }
+        return $n ? array('__data' => $data, '__result' => $n) : array('__result' => 0);
+    });
+    return is_array($res) ? (int)$res[1] : 0;
+}
+
+/* ---- 1 Oct 2026: the review text ------------------------------------------------------------------------------
+   For jobs SimplyBook never saw (phone, remote, Dell sales, email moves): staff press one button and this goes from
+   the 365 Techies number. Same wording rules as the review email (pcm-review.php rv_body): UNCONDITIONAL - no "if you
+   were happy" (Google bans selectively asking for good reviews), no incentive (unlawful). One text, 7-bit, under 160
+   characters so it is one part. Google allows ONE review per person, so a number is sent it at most once a year. */
+define('COMMS_REVIEW_TEXT', 'Thanks for choosing 365 Techies. Would you leave us a quick Google review? It takes 30 seconds and helps local people find us: 365techies.co.uk/review');
+define('COMMS_REVIEW_COOLDOWN', 365 * 86400);
+
+/* When this number was last sent the review text (unix time), or 0. */
+function comms_review_sent_at($e164, $items) {
+    $last = 0;
+    foreach ((array)$items as $it) {
+        if (!is_array($it) || ($it['type'] ?? '') !== 'sms_out' || ($it['tag'] ?? '') !== 'review' || ($it['number'] ?? '') !== $e164) continue;
+        $t = strtotime((string)($it['at'] ?? ''));
+        if ($t !== false && $t > $last) $last = $t;
+    }
+    return $last;
+}
+
+/* Send the review text, once a year per number. Returns array(ok, error|'', dry). */
+function comms_send_review($to, $actor, $now = null) {
+    $now = $now === null ? time() : (int)$now;
+    $e164 = tm_number($to);
+    if ($e164 === '' || !tm_is_mobile($e164)) return array('ok' => false, 'error' => 'That is not a UK mobile number.');
+    list($ok, $items) = comms_locked(function ($d) { return array('__result' => $d['items']); });
+    if (!$ok) return array('ok' => false, 'error' => 'The inbox is busy, try again in a moment.');
+    $last = comms_review_sent_at($e164, $items);
+    if ($last && $now - $last < COMMS_REVIEW_COOLDOWN) {
+        return array('ok' => false, 'error' => 'Already sent to this number on ' . gmdate('j M Y', $last) . ' - Google allows one review per person, so it is not sent twice in a year.');
+    }
+    $r = comms_send_sms($e164, COMMS_REVIEW_TEXT, $actor, 'review');
+    if (!empty($r['ok'])) comms_slack(":star: Review text sent to " . $e164 . (!empty($r['dry']) ? ' (dry run)' : '') . ' from the comms inbox.');
+    return array('ok' => !empty($r['ok']), 'error' => !empty($r['ok']) ? '' : (string)($r['error'] ?? 'send failed'), 'dry' => !empty($r['dry']));
 }
 
 /* The cron entry point - each poller isolated so one failure never stops the other. */

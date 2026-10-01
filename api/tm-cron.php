@@ -95,6 +95,12 @@ $pl = paylink_sweep();
 require_once __DIR__ . '/pcm-slackjobs-sweep.php';
 $sj = sj_poll();
 
+/* Lead reminders (1 Oct 2026): enquiries, Dell quotes, call-backs, voicemails and new-number texts in #365-job-tracker
+   that nobody has answered after 2 working hours are listed once in that channel (again after a working day). Read-only
+   against Slack apart from that one message; working hours only; a clean no-op until the bot can read the channel. */
+require_once __DIR__ . '/pcm-leadchase.php';
+try { $lc = lc_sweep(); } catch (Throwable $e) { $lc = array('ok' => false, 'error' => 'exception'); }
+
 require_once __DIR__ . '/pcm-invq-sweep.php';
 $iq = invq_morning();
 

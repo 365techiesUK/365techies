@@ -93,6 +93,12 @@ if ((isset($_POST['do']) ? $_POST['do'] : '') === 'reply') {
         else $err = 'Send failed: ' . h(isset($r['error']) ? $r['error'] : '?');
     }
 }
+/* 1 Oct 2026: the review text, for any finished job (comms_send_review: once a year per number, unconditional wording) */
+if ((isset($_POST['do']) ? $_POST['do'] : '') === 'review') {
+    $rr = comms_send_review((string)(isset($_POST['to']) ? $_POST['to'] : ''), 'staff');
+    if (!empty($rr['ok'])) $msg = 'Review text sent' . (!empty($rr['dry']) ? ' (dry run)' : '') . '.';
+    else $err = h($rr['error']);
+}
 if ((isset($_POST['do']) ? $_POST['do'] : '') === 'handled') {
     comms_set_handled((string)(isset($_POST['id']) ? $_POST['id'] : ''), !empty($_POST['on']), 'staff');
     $msg = 'Updated.';
@@ -160,11 +166,28 @@ if ($sel !== '' && isset($threads[$sel])) {
            . '<input type=hidden name=do value=reply><input type=hidden name=csrf value="' . $CSRF . '"><input type=hidden name=to value="' . h($sel) . '">'
            . '<textarea name=text rows=3 placeholder="Reply by text from the 365 Techies number&hellip;"></textarea>'
            . '<button>Send text</button></form>';
+        // the review text: once a year per number (Google allows one review per person)
+        $rvAt = comms_review_sent_at($sel, $items);
+        if ($rvAt && time() - $rvAt < COMMS_REVIEW_COOLDOWN) {
+            echo '<p class=meta style="margin-top:.7rem">&#11088; Review text sent ' . h(gmdate('j M Y', $rvAt)) . ' &mdash; not sent again within a year.</p>';
+        } else {
+            echo '<form method=post style="margin-top:.7rem" onsubmit="return confirm(\'Send the Google review text to ' . h($sel) . '?\')">'
+               . '<input type=hidden name=do value=review><input type=hidden name=csrf value="' . $CSRF . '"><input type=hidden name=to value="' . h($sel) . '">'
+               . '<button style="background:#2a8f5b">&#11088; Ask for a Google review</button>'
+               . '<span class=meta style="margin-left:.6rem">&ldquo;' . h(COMMS_REVIEW_TEXT) . '&rdquo;</span></form>';
+        }
     } else {
         echo '<p class=meta style="margin-top:.8rem">Replies by text need a UK mobile &mdash; this number isn&rsquo;t one, so it&rsquo;s call-back only.</p>';
     }
     echo '<p style="margin-top: .8rem"><a href="comms.php">&larr; back to the inbox</a></p></div>';
 } else {
+    // 1 Oct 2026: ask any finished job for a review, even one that never texted us (phone, remote, Dell, email moves)
+    echo '<div class=card><form method=post style="display:flex;flex-wrap:wrap;gap:.5rem;align-items:center" onsubmit="return confirm(\'Send the Google review text to \' + this.to.value + \'?\')">'
+       . '<input type=hidden name=do value=review><input type=hidden name=csrf value="' . $CSRF . '">'
+       . '<label for=rvto style="font-weight:600">&#11088; Finished a job? Ask for a Google review by text:</label>'
+       . '<input id=rvto name=to type=tel inputmode=tel placeholder="07&hellip; mobile" required style="width:12rem">'
+       . '<button style="background:#2a8f5b">Send review text</button>'
+       . '<span class=meta style="flex-basis:100%">&ldquo;' . h(COMMS_REVIEW_TEXT) . '&rdquo; &middot; once a year per number</span></form></div>';
     echo '<div class=card><table style="border-collapse:collapse;width:100%;font-size:.9rem">';
     echo '<tr><th style="text-align:left;padding:.4rem .6rem;color:#9fb3dd">Who</th><th style="text-align:left;padding:.4rem .6rem;color:#9fb3dd">Last</th><th style="text-align:left;padding:.4rem .6rem;color:#9fb3dd">Latest item</th><th></th></tr>';
     foreach ($threads as $num => $th) {
