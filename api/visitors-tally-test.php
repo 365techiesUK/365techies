@@ -163,5 +163,26 @@ $us = array_values(array_filter($a['perCountry'], function ($x) { return $x['k']
 check(count($us) === 1 && $us[0]['acts']['dl'] === 1 && $us[0]['acts']['call'] === 0, 'actions per country', json_encode($us));
 check(vis_act_kind('/~dl/pcm/') === 'dl' && vis_act_kind('/~lead/x/') === 'lead' && vis_act_kind('/~calling/') === '' && vis_act_kind('/call/') === '', 'only the four ping paths are actions');
 
+echo "I  data centres and VPNs: counted once a day as automated, nothing else (1 Oct 2026)\n";
+$bot = row('dddd0001', 'Ashburn', 'US', false, 'Direct', $WIN11, array('/', '/pricing/', '/~call/'));
+$bot['dc'] = true; $bot['org'] = 'Amazon.com, Inc.';
+$s = vis_fold(array(), live($T, array($bot, row('dddd0002', 'Poole', 'GB', true, 'Google', $IPH, array('/')))), $T);
+$d = $s['days'][$DAY]['t365'];
+check($d['visitors'] === 1 && $d['auto'] === 1, 'the person counted, the data centre counted apart', json_encode(array($d['visitors'], $d['auto'])));
+check(!isset($d['places']['Ashburn, US']) && !isset($d['pages']['/pricing/']) && !isset($d['src']['Direct']) && $d['warm'] === 0 && !isset($d['byCountry']['US']), 'nothing else about it kept: no town, page, source, warm or country', json_encode($d));
+check(!isset($d['os']['Windows 11']) && $d['abroad'] === 0, 'no system and not "abroad"');
+$s = vis_fold($s, live($T + 300, array($bot)), $T + 300);
+check($s['days'][$DAY]['t365']['auto'] === 1, 'once a day, however often it is seen');
+$st = vis_stats($s, $T + 300);
+check($st['sites']['all']['today']['auto'] === 1 && $st['sites']['t365']['d7']['auto'] === 1 && $st['sites']['all']['today']['visitors'] === 1, 'the periods carry the automated count');
+$old = vis_stats(array('v' => 1, 'since' => $DAY, 'days' => array($DAY => array('t365' => array('visitors' => 3, 'local' => 0, 'uk' => 3, 'abroad' => 0, 'warm' => 0)))), $T);
+check($old['sites']['all']['today']['auto'] === 0 && $old['sites']['all']['today']['visitors'] === 3, 'a day stored before the flag reads as 0 automated');
+$sh = vis_shape(200, array('ok' => true, 'at' => $T, 'sites' => array('t365' => array('visitors' => 1, 'auto' => 1, 'pages' => array(), 'places' => array(), 'rows' => array(
+    array('id' => 'dddd0001', 'dc' => 1, 'org' => 'Amazon.com, Inc.<script>' . str_repeat('x', 60), 'pages' => array('/')),
+    array('id' => 'dddd0002', 'org' => 'Virgin Media Limited', 'pages' => array('/')))))), '');
+$r0 = $sh['sites']['t365']['rows'][0]; $r1 = $sh['sites']['t365']['rows'][1];
+check($r0['dc'] === true && strpos($r0['org'], 'Amazon.com, Inc.script') === 0 && strlen($r0['org']) === 40 && $sh['sites']['t365']['auto'] === 1, 'vis_shape: the flag, a bounded network name and the count ride through', json_encode($r0));
+check($r1['dc'] === false && $r1['org'] === '', 'vis_shape: a person\'s network is never passed on', json_encode($r1));
+
 echo "\n" . ($fails ? "visitors-tally-test: $fails FAILED\n" : "visitors-tally-test: all passed\n");
 exit($fails ? 1 : 0);

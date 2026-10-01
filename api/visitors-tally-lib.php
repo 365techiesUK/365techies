@@ -129,10 +129,13 @@ function vis_shape($code, $j, $cerr) {
                         'dk' => !empty($r['dev']['dk']) ? 1 : 0,
                         'lg' => preg_replace('/[^A-Za-z-]/', '', substr((string)(isset($r['dev']['lg']) ? $r['dev']['lg'] : ''), 0, 12))) : null,
                     'pages' => $pg,
+                    // 1 Oct 2026: a data centre or VPN (the Worker's dc) and that network's name - a company, never a person's
+                    'dc' => !empty($r['dc']),
+                    'org' => !empty($r['dc']) ? substr(preg_replace('/[^A-Za-z0-9 .,&()-]/', '', (string)(isset($r['org']) ? $r['org'] : '')), 0, 40) : '',
                     'since' => isset($r['since']) ? (int)$r['since'] : null,
                     'ago' => isset($r['ago']) ? (int)$r['ago'] : null);
             }
-            $out['sites'][$key] = array('label' => $label, 'visitors' => (int)$sj['visitors'],
+            $out['sites'][$key] = array('label' => $label, 'visitors' => (int)$sj['visitors'], 'auto' => (int)(isset($sj['auto']) ? $sj['auto'] : 0),
                 'pages' => isset($sj['pages']) ? $sj['pages'] : array(),
                 'places' => isset($sj['places']) ? $sj['places'] : array(),
                 'rows' => $rows, 'hasRows' => isset($sj['rows']));
@@ -147,7 +150,8 @@ function vis_shape($code, $j, $cerr) {
 function vis_empty_day() {
     return array('visitors' => 0, 'local' => 0, 'uk' => 0, 'abroad' => 0, 'warm' => 0,
         'places' => array(), 'placesLocal' => array(), 'os' => array(), 'dv' => array(), 'br' => array(), 'src' => array(), 'pages' => array(),
-        'byCountry' => array());   // 30 Sep 2026: per country {visitors, pages, src, os, dv} - what visitors from each country read
+        'byCountry' => array(),
+        'auto' => 0);   // 1 Oct 2026: visitors from data centres and VPNs (mostly automated) - counted, nothing else kept   // 30 Sep 2026: per country {visitors, pages, src, os, dv} - what visitors from each country read
 }
 // the per-country block of a day's rollup (at most 60 countries a day; beyond that, "Other")
 function &vis_bc(array &$d, $cc) {
@@ -183,6 +187,12 @@ function vis_fold(array $store, array $live, $now) {
             $id = preg_replace('/[^a-f0-9]/', '', (string)(isset($r['id']) ? $r['id'] : ''));
             if ($id === '') continue;
             $sk = $site . ':' . $id;
+            // 1 Oct 2026: a data centre or VPN - counted once a day as automated, and left out of everything else
+            if (!empty($r['dc'])) {
+                if (!isset($seen[$sk])) { $seen[$sk] = array('p' => array(), 'd' => 1, 'w' => 0, 'c' => '', 'dc' => 1); $d['auto'] = (int)(isset($d['auto']) ? $d['auto'] : 0) + 1; }
+                continue;
+            }
+            if (isset($seen[$sk]['dc'])) continue;   // (the Worker never mixes the two for one visitor; belt and braces)
             $ct = (string)(isset($r['ct']) ? $r['ct'] : '');
             $cc = preg_match('/^[A-Z]{2}$/', $ct) ? $ct : 'Unknown';
             if (!isset($seen[$sk])) {
@@ -280,7 +290,7 @@ function vis_period(array $store, array $days, $site) {
             if ($site !== 'all' && $sk !== $site) continue;
             if (!is_array($d)) continue;
             $any = true;
-            foreach (array('visitors', 'local', 'uk', 'abroad', 'warm') as $f) $sum[$f] += (int)(isset($d[$f]) ? $d[$f] : 0);
+            foreach (array('visitors', 'local', 'uk', 'abroad', 'warm', 'auto') as $f) $sum[$f] += (int)(isset($d[$f]) ? $d[$f] : 0);
             foreach (array('places', 'placesLocal', 'os', 'dv', 'br', 'src', 'pages') as $f) {
                 if (!isset($d[$f]) || !is_array($d[$f])) continue;
                 foreach ($d[$f] as $k => $v) $sum[$f][$k] = (isset($sum[$f][$k]) ? $sum[$f][$k] : 0) + (int)$v;
@@ -319,7 +329,7 @@ function vis_period(array $store, array $days, $site) {
         $countries[$cc] = (isset($countries[$cc]) ? $countries[$cc] : 0) + (int)$n;
     }
     $acts = vis_actions($sum['pages']);
-    return array('visitors' => $sum['visitors'], 'local' => $sum['local'], 'uk' => $sum['uk'], 'abroad' => $sum['abroad'], 'warm' => $sum['warm'],
+    return array('visitors' => $sum['visitors'], 'local' => $sum['local'], 'uk' => $sum['uk'], 'abroad' => $sum['abroad'], 'warm' => $sum['warm'], 'auto' => $sum['auto'],
         'days' => $covered, 'places' => $places, 'countries' => vis_top($countries, 12), 'perCountry' => $perCountry,
         'pages' => vis_top(vis_reads($sum['pages']), 10), 'os' => vis_top($sum['os'], 12),
         'acts' => $acts['n'], 'actFrom' => $acts['from'],

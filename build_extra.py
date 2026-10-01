@@ -25317,6 +25317,11 @@ def write_portal_page():
   #p365app .nx-lvrow__b strong { color:#eaf4ff; font-weight:600; }
   #p365app .nx-lvtag { padding:.1rem .5rem; border-radius:999px; font-size:.8rem; font-weight:600; }
   #p365app .nx-lvtag--local { background:rgba(29,151,227,.16); color:#8fd0f7; }
+  /* 1 Oct 2026: visits from data centres and VPNs, when shown */
+  #p365app .nx-lvrow--dc { opacity:.62; }
+  #p365app .nx-lvtag--dc { border:1px solid #3a4a6b; color:#9fb5d3; }
+  #p365app .nx-lvdcbtn { margin-left:.35rem; padding:.15rem .6rem; border-radius:999px; border:1px solid #2a3a5e; background:transparent; color:#9fb5d3; font:inherit; font-size:.85rem; cursor:pointer; }
+  #p365app .nx-lvdcbtn:hover, #p365app .nx-lvdcbtn:focus-visible { color:#eaf4ff; border-color:#4a6aa0; }
   #p365app .nx-lvtag--warm { background:rgba(255,180,0,.18); color:#ffc940; }
   #p365app .nx-lvtag--site { border:1px solid #6cc4f5; color:#8fd0f7; }
   #p365app .nx-lvsrctag { padding:.05rem .45rem; border-radius:6px; font-size:.8rem; font-weight:600; color:#eaf4ff; }
@@ -29443,22 +29448,30 @@ def write_portal_page():
     seg = seg.split('-').join(' ');
     return seg.charAt(0).toUpperCase() + seg.slice(1);
   }
-  function nxlRows() {
+  // withDc: include visits from data centres and VPNs (the Worker's dc, 1 Oct 2026) - hidden unless asked for
+  function nxlRows(withDc) {
     var d = NXL.d, out = [];
     if (!d || !d.sites) return out;
     Object.keys(d.sites).forEach(function (k) {
       var sv = d.sites[k];
       (sv.rows || []).forEach(function (r) {
+        if (r.dc && !withDc) return;
         var pages = r.pages || [], last = pages.length ? pages[pages.length - 1] : '';
         // warm: on a booking, price or plan page now, or a Call/Text tap or an enquiry at any point in the visit
         var acted = ''; pages.forEach(function (p) { var w = /^\\/~(call|text|lead)\\//.test(p) ? nxlWarm(p) : ''; if (w) acted = w; });
-        out.push({ site: k, siteName: sv.label, key: k + ':' + r.id, r: r, abroad: !!(r.ct && r.ct !== 'GB'), warm: k === 't365' ? (acted || nxlWarm(last)) : '' });
+        out.push({ site: k, siteName: sv.label, key: k + ':' + r.id, r: r, abroad: !!(r.ct && r.ct !== 'GB'), warm: k === 't365' && !r.dc ? (acted || nxlWarm(last)) : '' });
       });
     });
     // warm first, then Dorset & around, then the rest of the UK, then abroad; the most recently active first in each
-    var rank = function (x) { return x.warm ? 0 : x.r.local ? 1 : x.abroad ? 3 : 2; };
+    var rank = function (x) { return x.r.dc ? 4 : x.warm ? 0 : x.r.local ? 1 : x.abroad ? 3 : 2; };
     out.sort(function (a, b) { return rank(a) - rank(b) || (a.r.ago || 0) - (b.r.ago || 0); });
     return out;
+  }
+  function nxlAuto(site) {   // visitors from data centres and VPNs on now (left out of nxlOn)
+    var d = NXL.d, n = 0;
+    if (!d || !d.sites) return 0;
+    Object.keys(d.sites).forEach(function (k) { if ((site === 'all' || site === k) && d.sites[k].auto > 0) n += d.sites[k].auto; });
+    return n;
   }
   function nxlOn(site) {
     var d = NXL.d, n = 0;
@@ -29525,11 +29538,13 @@ def write_portal_page():
   function nxlTab() {
     if (!document.getElementById('nxLv')) return;
     var d = NXL.d, site = NXL.site, bad = nxlProblem();
-    var rows = nxlRows().filter(function (x) { return site === 'all' || x.site === site; });
+    var rowsAll = nxlRows(NXL.showDc).filter(function (x) { return site === 'all' || x.site === site; });
+    var rows = rowsAll.filter(function (x) { return !x.r.dc; }), autoN = nxlAuto(site);
     nxlSet('nxLvChips', NXL_SITES.map(function (s) {
       return '<button type="button" class="nx-lvchip" data-site="' + s[0] + '" aria-pressed="' + (s[0] === site ? 'true' : 'false') + '">' + esc(s[1]) + '<span>' + nxlOn(s[0]) + '</span></button>';
     }).join(''));
-    nxlSet('nxLvUpd', d ? (bad ? '<strong style="color:#e0b341">' + esc(bad) + '</strong>' : 'Updated ' + nxlClock() + ' \\u00b7 refreshes every 90 seconds \\u00b7 staff visits not counted') : 'Loading\\u2026');
+    nxlSet('nxLvUpd', d ? (bad ? '<strong style="color:#e0b341">' + esc(bad) + '</strong>' : 'Updated ' + nxlClock() + ' \\u00b7 refreshes every 90 seconds \\u00b7 staff visits not counted'
+      + (autoN ? ' \\u00b7 ' + autoN + ' from data centres or VPNs not counted (mostly automated) <button type="button" class="nx-lvdcbtn" id="nxLvDcBtn" aria-pressed="' + (NXL.showDc ? 'true' : 'false') + '">' + (NXL.showDc ? 'Hide them' : 'Show them') + '</button>' : '')) : 'Loading\\u2026');
     var on = nxlOn(site), local = rows.filter(function (x) { return x.r.local; }).length, warm = rows.filter(function (x) { return x.warm; });
     var sc = {}; rows.forEach(function (x) { if (x.r.src) sc[x.r.src] = (sc[x.r.src] || 0) + 1; });
     var srcs = Object.keys(sc).sort(function (a, b) { return sc[b] - sc[a]; });
@@ -29542,13 +29557,14 @@ def write_portal_page():
       + '<div class="nx-lvkey">' + srcs.map(function (s) { return '<span><i style="background:' + (NXL_SRC[s] || '#5b6c8f') + '"></i>' + esc(s) + ' <b>' + sc[s] + '</b></span>'; }).join('') + '</div>' : '');
     var old = d && d.ok && d.sites && Object.keys(d.sites).some(function (k) { return d.sites[k].visitors > 0 && !d.sites[k].hasRows; });
     var h = old ? '<p class="nx-lvnote">The Cloudflare counter is still running its old code, so this shows counts only. Paste the new visitors-live-worker.js into the visitors-live Worker to see the map and each visitor.</p>' : '';
-    h += rows.map(function (x) {
+    h += rowsAll.map(function (x) {
       var r = x.r;
-      return '<button type="button" class="nx-lvrow' + (x.warm ? ' nx-lvrow--warm' : '') + '" data-k="' + esc(x.key) + '" data-la="' + (r.la === null ? '' : r.la) + '" data-lo="' + (r.lo === null ? '' : r.lo) + '" aria-pressed="' + (NXL.sel === x.key ? 'true' : 'false') + '">'
+      return '<button type="button" class="nx-lvrow' + (x.warm ? ' nx-lvrow--warm' : '') + (r.dc ? ' nx-lvrow--dc' : '') + '" data-k="' + esc(x.key) + '" data-la="' + (r.la === null ? '' : r.la) + '" data-lo="' + (r.lo === null ? '' : r.lo) + '" aria-pressed="' + (NXL.sel === x.key ? 'true' : 'false') + '">'
         + '<span class="nx-lvrow__a"><i class="' + nxlDotClass(x) + '"></i><b>' + esc(nxlPlace(x)) + '</b>'
         + (r.local ? '<span class="nx-lvtag nx-lvtag--local">Local</span>' : '')
         + (x.site !== 't365' ? '<span class="nx-lvtag nx-lvtag--site">' + esc(x.siteName) + '</span>' : '')
         + (x.warm ? '<span class="nx-lvtag nx-lvtag--warm">' + esc(x.warm) + '</span>' : '')
+        + (r.dc ? '<span class="nx-lvtag nx-lvtag--dc">Data centre or VPN' + (r.org ? ' \\u00b7 ' + esc(r.org) : '') + '</span>' : '')
         + '<span class="nx-lvrow__t">' + nxlMins(r.since) + '</span></span>'
         + '<span class="nx-lvrow__b">' + nxlSrcTag(r.src) + nxlJourney(x) + '</span>'
         + (nxlDevLine(r) ? '<span class="nx-lvrow__d">' + nxlDevLine(r) + '</span>' : '') + '</button>';
@@ -29560,7 +29576,7 @@ def write_portal_page():
     nxlSet('nxLvDev', dks.length ? '<div class="nx-lvbar">' + dks.map(function (k) { return '<span style="flex-grow:' + dc[k] + ';background:' + NXL_DEV[k][1] + '"></span>'; }).join('') + '</div>'
       + '<div class="nx-lvkey">' + dks.map(function (k) { return '<span><i style="background:' + NXL_DEV[k][1] + '"></i>' + NXL_DEV[k][0] + ' <b>' + dc[k] + '</b></span>'; }).join('') + '</div>'
       + (oks.length ? '<div class="nx-lvkey" style="color:#9fb5d3">' + oks.map(function (k) { return '<span>' + esc(k) + ' <b>' + oc[k] + '</b></span>'; }).join('') + '</div>' : '') : '');
-    if (!rows.length && d && d.ok) h += '<p class="quiet" style="margin:.4rem .2rem">' + (on ? 'Visitors are on, but the counter is not sending their details yet.' : 'Nobody on ' + (site === 'all' ? 'the sites' : 'this site') + ' right now.') + '</p>';
+    if (!rowsAll.length && d && d.ok) h += '<p class="quiet" style="margin:.4rem .2rem">' + (on ? 'Visitors are on, but the counter is not sending their details yet.' : 'Nobody on ' + (site === 'all' ? 'the sites' : 'this site') + ' right now.') + '</p>';
     nxlSet('nxLvRows', h);
     var ab = rows.filter(function (x) { return x.abroad; });
     nxlSet('nxLvAbroad', ab.length ? '<i class="nx-mkdot nx-mkdot--abroad"></i>' + ab.length + ' abroad: ' + esc(ab.slice(0, 3).map(nxlPlace).join(' \\u00b7 ')) : '');
@@ -29662,7 +29678,8 @@ def write_portal_page():
         + '</div>';
     }
     var since = st.since ? (function () { var p = st.since.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); })() : '';
-    h += '<p class="nx-lvstnote">Counted on our server from the live view' + (since ? ' since ' + esc(since) : '') + (s.days ? ' \\u00b7 ' + s.days + (s.days === 1 ? ' day' : ' days') + ' with visitors' : '') + ' \\u00b7 each visitor once a day, each page once per visitor \\u00b7 a visitor between two polls can be missed \\u00b7 no names, no cookies.</p>';
+    h += '<p class="nx-lvstnote">Counted on our server from the live view' + (since ? ' since ' + esc(since) : '')
+      + (s.auto ? ' \\u00b7 <b>' + s.auto + '</b> ' + (s.auto === 1 ? 'visit' : 'visits') + ' from data centres or VPNs left out (mostly automated: SEO tools, AI agents, monitors)' : '') + (s.days ? ' \\u00b7 ' + s.days + (s.days === 1 ? ' day' : ' days') + ' with visitors' : '') + ' \\u00b7 each visitor once a day, each page once per visitor \\u00b7 a visitor between two polls can be missed \\u00b7 no names, no cookies.</p>';
     box.innerHTML = h;
   }
   function nxlGroups(rows) {
@@ -29797,6 +29814,7 @@ def write_portal_page():
       if (b.classList.contains('nx-lvcc')) { NXL.cc = b.getAttribute('data-cc') || ''; nxlStats(); return; }
       if (b.classList.contains('nx-lvchip') && b.hasAttribute('data-site')) { NXL.site = b.getAttribute('data-site'); nxlTab(); return; }
       if (b.classList.contains('nx-lvper')) { NXL.per = b.getAttribute('data-p') || 'd7'; nxlStats(); return; }
+      if (b.id === 'nxLvDcBtn') { NXL.showDc = !NXL.showDc; nxlTab(); return; }
       if (b.classList.contains('nx-lvrow')) {
         NXL.sel = b.getAttribute('data-k');
         var la = parseFloat(b.getAttribute('data-la')), lo = parseFloat(b.getAttribute('data-lo'));

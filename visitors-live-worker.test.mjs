@@ -4,7 +4,7 @@
 // Run: node --test visitors-live-worker.test.mjs
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import worker, { deviceOf } from './visitors-live-worker.js';
+import worker, { deviceOf, dataCentre } from './visitors-live-worker.js';
 
 /* ------------------------------------------------------------ a fake KV with metadata, as Workers KV has */
 function fakeKv() {
@@ -34,11 +34,14 @@ const UA_SAMSUNG = 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML
 const UA_CROS = 'Mozilla/5.0 (X11; CrOS x86_64 14541.0.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36';
 const UA_LINUX_FX = 'Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0';
 
-const ping = (env, body, ua = UA_WIN_EDGE, cf = {}) => worker.fetch(new Request('https://w.example/ping', {
-  method: 'POST', body: JSON.stringify(body),
-  headers: { Origin: ORIGIN, 'User-Agent': ua, 'CF-Connecting-IP': '203.0.113.9', 'Content-Type': 'text/plain' },
-  cf,
-}), env);
+const ping = (env, body, ua = UA_WIN_EDGE, cf = {}, ip = '203.0.113.9') => {
+  const req = new Request('https://w.example/ping', {
+    method: 'POST', body: JSON.stringify(body),
+    headers: { Origin: ORIGIN, 'User-Agent': ua, 'CF-Connecting-IP': ip, 'Content-Type': 'text/plain' },
+  });
+  Object.defineProperty(req, 'cf', { value: cf });   // what Cloudflare attaches; Node's Request has none
+  return worker.fetch(req, env);
+};
 // Node's Request has no .cf: the Worker reads request.cf || {} (city etc. empty here) - fine for these tests
 const live = (env) => worker.fetch(new Request('https://w.example/live?site=all&auth=tok'), env).then((r) => r.json());
 
@@ -140,4 +143,54 @@ test('the beacon\'s extra fields never change the write count (one put per visit
   await ping(env, { site: 't365', path: '/x/', ref: '', pv: '15.0.0', sw: 1920 });
   await ping(env, { site: 't365', path: '/x/', ref: '', pv: '15.0.0', sw: 1920 });
   assert.equal(env.VISITS.puts, 1);
+});
+
+/* ------------------------------------------------------------ 1 Oct 2026: data centres and VPNs */
+test('dataCentre: cloud and hosting networks yes; home broadband, mobile and privacy relays no', () => {
+  for (const [asn, org] of [[16509, 'Amazon.com, Inc.'], [0, 'Amazon Technologies Inc.'], [396982, ''], [8075, 'Microsoft Corporation'],
+    [0, 'DigitalOcean, LLC'], [0, 'OVH SAS'], [0, 'Hetzner Online GmbH'], [0, 'Akamai Connected Cloud'], [0, 'Contabo GmbH'],
+    [0, 'M247 Europe SRL'], [0, 'Datacamp Limited'], [0, 'Some Hosting Ltd'], [0, 'Example Datacenter LLC'], [0, 'Servers.com, Inc.']]) {
+    assert.equal(dataCentre(asn, org), true, asn + ' ' + org);
+  }
+  for (const [asn, org] of [[2856, 'British Telecommunications PLC'], [5089, 'Virgin Media Limited'], [5607, 'Sky UK Limited'],
+    [13285, 'TalkTalk Communications Limited'], [25135, 'Vodafone Limited'], [12576, 'EE Limited'], [206067, 'Hutchison 3G UK Limited'],
+    [35228, 'Telefonica UK Limited'], [13037, 'Zen Internet Ltd'], [56478, 'Hyperoptic Ltd'], [7922, 'Comcast Cable Communications, LLC'],
+    [21928, 'T-Mobile USA, Inc.'], [16591, 'Google Fiber Inc.'], [14593, 'Space Exploration Technologies Corporation'],
+    [13335, 'Cloudflare, Inc.'], [36183, 'Akamai Technologies, Inc.'], [54113, 'Fastly, Inc.'], [714, 'Apple Inc.'], [0, ''], [undefined, undefined]]) {
+    assert.equal(dataCentre(asn, org), false, asn + ' ' + org);
+  }
+});
+
+test('a data-centre visit: one entry per visitor (newest page), its network named, outside the count of people', async () => {
+  const env = { VISITS: fakeKv(), VIS_TOKEN: 'tok' };
+  const AWS = { asn: 16509, asOrganization: 'Amazon.com, Inc.', country: 'US', city: 'Ashburn' };
+  await ping(env, { site: 't365', path: '/a/', ref: '' }, UA_WIN_CHROME, AWS, '198.51.100.7');
+  await ping(env, { site: 't365', path: '/b/', ref: '' }, UA_WIN_CHROME, AWS, '198.51.100.7');   // within the minute: no write
+  assert.equal(env.VISITS.puts, 1);
+  const keys = [...env.VISITS._m.keys()];
+  assert.equal(keys.length, 1);
+  assert.match(keys[0], /:dc$/);
+  const meta = env.VISITS._m.get(keys[0]).metadata;
+  assert.deepEqual([meta.dc, meta.org, meta.p], [1, 'Amazon.com, Inc.', '/a/']);
+  // a person on Virgin Media at the same time
+  await ping(env, { site: 't365', path: '/contact/', ref: 'www.google.com' }, UA_IPHONE, { asn: 5089, asOrganization: 'Virgin Media Limited', country: 'GB', city: 'Poole' });
+  const j = await live(env);
+  const t = j.sites.t365;
+  assert.equal(t.visitors, 1);
+  assert.equal(t.auto, 1);
+  assert.deepEqual(t.pages, { '/contact/': 1 });
+  assert.deepEqual(Object.keys(t.places), ['Poole, GB']);
+  assert.equal(t.rows.length, 2);
+  assert.equal(t.rows[0].dc, undefined);           // the person first
+  assert.equal(t.rows[1].dc, 1);
+  assert.equal(t.rows[1].org, 'Amazon.com, Inc.');
+  assert.ok(!('org' in t.rows[0]));                // a person's network is never kept
+  const one = await worker.fetch(new Request('https://w.example/live?site=t365&auth=tok'), env).then((r) => r.json());
+  assert.equal(one.visitors, 1);
+});
+
+test('the data-centre metadata stays under KV\'s 1,024-byte limit too', () => {
+  const m = { p: '/' + 'p'.repeat(199), c: 'c'.repeat(60), ct: 'GB', t: 1759140000, la: -50.12, lo: -180.12, a: 'BH',
+    s: 's'.repeat(80), os: 'o'.repeat(20), br: 'b'.repeat(24), dv: 'tablet', sc: 'l', dk: 1, lg: 'l'.repeat(12), dc: 1, org: 'g'.repeat(40) };
+  assert.ok(JSON.stringify(m).length < 1024, JSON.stringify(m).length);
 });
