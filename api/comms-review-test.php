@@ -114,27 +114,44 @@ check(strpos($pg, "name=do value=vmslack") !== false && strpos($pg, 'Recording o
 check(strpos($pg, '&amp;r=1#reply">reply</a>') !== false && strpos($pg, 'id=reply') !== false, 'the list has a reply link that opens the reply box');
 check(strpos($pg, 'Download the recording') !== false && strpos($pg, '<audio controls preload=none style="height:32px') !== false, 'a download link, and a player right in the list');
 
-echo "G  the portal card's data and play links (1 Oct 2026, late)\n";
+echo "G  the portal card: texts | voicemails, a name and number on each, signed play links (1 Oct 2026, late)\n";
 $k = 'test-secret';
 $items = array(
     array('id' => '1', 'type' => 'voicemail', 'number' => '+447700900170', 'at' => '2026-10-01T10:00:00+00:00', 'audio' => 'vm-audio-VM9.wav', 'duration' => '0:40', 'handled' => false, 'match' => array('status' => 'MATCH', 'name' => 'Ann Example')),
     array('id' => '2', 'type' => 'sms_out', 'number' => '+447700900170', 'at' => '2026-10-01T10:05:00+00:00', 'body' => 'Calling you now', 'handled' => true, 'match' => array('status' => 'MATCH', 'name' => 'Ann Example')),
     array('id' => '3', 'type' => 'sms_in', 'number' => '+447700900171', 'at' => '2026-10-01T11:00:00+00:00', 'body' => 'Can you help?', 'handled' => false, 'match' => array('status' => 'NO_MATCH', 'name' => '')),
-    array('id' => '4', 'type' => 'voicemail', 'number' => '+441202745516', 'at' => '2026-09-30T09:00:00+00:00', 'audio' => '', 'audio_why' => 'no recording in the email', 'handled' => true, 'match' => array('status' => 'NO_MATCH', 'name' => '')),
+    array('id' => '4', 'type' => 'voicemail', 'number' => '+441202745516', 'at' => '2026-09-30T09:00:00+00:00', 'audio' => '', 'audio_why' => 'no recording in the email', 'handled' => true, 'match' => array('status' => 'NO_MATCH', 'name' => '', 'vm_name' => 'Bob Caller')),
+    array('id' => '5', 'type' => 'sms_in', 'number' => '+447700900172', 'at' => '2026-09-29T09:00:00+00:00', 'body' => 'Thanks', 'handled' => false, 'match' => array('status' => 'NO_MATCH', 'name' => '', 'tm_name' => 'Cath Contact')),
+    array('id' => '6', 'type' => 'voicemail', 'number' => '+447700900171', 'at' => '2026-10-01T12:00:00+00:00', 'audio' => 'vm-audio-VM10.mp3', 'duration' => '', 'handled' => false, 'match' => array('status' => 'NO_MATCH', 'name' => '')),
 );
-$t = comms_threads($items, $k, strtotime('2026-10-01T12:00:00Z'));
-check($t['total'] === 3 && $t['open'] === 2 && $t['threads'][0]['n'] === '+447700900171', 'one entry per caller, newest first, open callers counted', json_encode($t));
-$ann = $t['threads'][1];
-check($ann['who'] === 'Ann Example' && $ann['cust'] && $ann['mobile'] && $ann['open'] === 1 && count($ann['items']) === 2, 'a customer: named, a mobile, one to answer, both items', json_encode($ann));
-$au = $ann['items'][0]['audio'];
+$names = array('+447700900171' => array('name' => 'Dan Textmagic', 'src' => 'textmagic', 'at' => 1));
+$b = comms_board($items, $names, $k, strtotime('2026-10-01T12:30:00Z'));
+check(count($b['texts']) === 3 && count($b['vms']) === 3 && $b['total_texts'] === 3 && $b['total_vms'] === 3, 'texts and voicemails are separate lists', json_encode(array(count($b['texts']), count($b['vms']))));
+check($b['vms'][0]['id'] === '6' && $b['vms'][1]['id'] === '1' && $b['vms'][2]['id'] === '4', 'voicemails newest first, each on its own');
+check($b['texts'][0]['n'] === '+447700900171' && $b['texts'][1]['n'] === '+447700900170', 'texts: one conversation per number, newest first');
+check($b['open_texts'] === 2 && $b['open_vms'] === 2 && $b['open'] === 3, 'open counts: 2 numbers with texts to answer, 2 voicemails not done, 3 numbers in all', json_encode(array($b['open_texts'], $b['open_vms'], $b['open'])));
+$v1 = $b['vms'][1];
+check($v1['who'] === 'Ann Example' && $v1['src'] === 'customer' && $v1['n'] === '+447700900170' && $v1['mobile'], 'a voicemail carries the name, where it came from and the number', json_encode($v1));
+check($b['vms'][0]['who'] === 'Dan Textmagic' && $b['vms'][0]['src'] === 'textmagic', 'a name from the Textmagic contact list');
+check($b['vms'][2]['who'] === 'Bob Caller' && $b['vms'][2]['src'] === 'voipfone' && !$b['vms'][2]['mobile'] && $b['vms'][2]['why'] === 'no recording in the email', 'a name from the phone system; a landline; no recording says why');
+$cath = array_values(array_filter($b['texts'], function ($t) { return $t['n'] === '+447700900172'; }))[0];
+check($cath['who'] === 'Cath Contact' && $cath['src'] === 'textmagic', "a name Textmagic gave with the text itself");
+check(comms_name_for('+447700900199', array('status' => 'MULTIPLE', 'name' => 'A / B'), array()) === array('Possibly A / B', 'possible') && comms_name_for('+447700900199', array(), array()) === array('', ''), 'possible matches say so; nobody = no name');
+check(comms_name_for('+447700900170', array('status' => 'MATCH', 'name' => 'Ann Example'), array('+447700900170' => array('name' => 'Other', 'src' => 'textmagic'))) === array('Ann Example', 'customer'), 'our own customer record wins over Textmagic');
+$au = $v1['audio'];
 check(preg_match('#^/api/comms-api\.php\?a=vm-audio-VM9\.wav&e=(\d+)&s=([a-f0-9]{32})$#', $au, $am) === 1 && hash_equals(comms_audio_sig('vm-audio-VM9.wav', (int)$am[1], $k), $am[2]), 'the play link is signed with the server secret', $au);
 check(!hash_equals(comms_audio_sig('vm-audio-VM9.wav', (int)$am[1], 'other'), $am[2]) && !hash_equals(comms_audio_sig('vm-audio-VM8.wav', (int)$am[1], $k), $am[2]), 'a different secret or file does not match');
-check((int)$am[1] === strtotime('2026-10-01T12:00:00Z') + 3 * 3600, 'and lasts three hours');
-$land = $t['threads'][2];
-check(!$land['mobile'] && $land['open'] === 0 && $land['items'][0]['why'] === 'no recording in the email' && $land['items'][0]['audio'] === '', 'a landline: no reply by text; a voicemail with no recording says why');
-check($ann['items'][1]['type'] === 'sms_out' && $ann['items'][1]['body'] === 'Calling you now' && $ann['items'][0]['body'] === '', 'our reply shows; a voicemail carries no email text');
+check((int)$am[1] === strtotime('2026-10-01T12:30:00Z') + 3 * 3600, 'and lasts three hours');
+check(strpos(json_encode($b), '"vm-audio-') === false, 'no recording file name leaves except inside its signed link');
+$ann = array_values(array_filter($b['texts'], function ($t) { return $t['n'] === '+447700900170'; }))[0];
+check($ann['open'] === 0 && count($ann['items']) === 1 && $ann['items'][0]['type'] === 'sms_out', "a voicemail is not in the texts column; our reply is");
 $api = (string)file_get_contents(__DIR__ . '/comms-api.php');
 check(strpos($api, 'vis_staff_ok($in, __DIR__)') !== false && strpos($api, "\$e < time() || !hash_equals(comms_audio_sig(") !== false, 'the card API needs the portal staff session; a play link must be unexpired and signed');
+check(strpos($api, "comms_set_handled(\$id, true, 'portal')") !== false && strpos($api, "array('sms_in')") !== false, 'Done: one voicemail by id, or a caller\'s texts only');
+$lib = (string)file_get_contents(__DIR__ . '/comms-lib.php');
+check(strpos($lib, "\$out['names'] = comms_names_refresh(10);") !== false && strpos($lib, "\$out['vm_slack'] = comms_vm_slack_backfill(8);") !== false, 'each sweep looks up 10 names and attaches up to 8 recordings under their Slack lines');
+check(strpos($lib, "'https://rest.textmagic.com/api/v2/contacts/phone/' . preg_replace('/\\D/', '', \$e164)") !== false, 'Textmagic is asked by number');
+check(strpos((string)file_get_contents(__DIR__ . '/pcm-slack-lib.php'), "array('thread_ts' => (string)\$thread)") !== false, 'a recording can go under its own Slack line');
 
 echo "\n" . ($fails ? "comms-review-test: $fails FAILED\n" : "comms-review-test: all passed\n");
 exit($fails ? 1 : 0);

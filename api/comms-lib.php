@@ -416,6 +416,8 @@ function comms_vm_extract($im, $msgno, $uid) {
     }
     $body = $plain !== '' ? $plain : $html;
     $dur = preg_match('/(?:duration|length)[^0-9]{0,8}([0-9]{1,2}:[0-9]{2}(?::[0-9]{2})?|\d{1,4}\s*s(?:ec(?:ond)?s?)?\b)/i', $body, $m) ? trim($m[1]) : '';
+    // Asterisk's own wording ("a 0:42 long message"), which Voipfone's emails may keep
+    if ($dur === '' && preg_match('/\ba (\d{1,2}:\d{2}) long message/i', $body, $m)) $dur = $m[1];
     if ($dur === '' && $wavSecs) $dur = intdiv((int)$wavSecs, 60) . ':' . str_pad((string)((int)$wavSecs % 60), 2, '0', STR_PAD_LEFT);   // the length, from the recording itself
     return array('audio' => $audio, 'body' => $body, 'duration' => $dur,
         'why' => $audio === '' ? 'no recording in the email (it holds: ' . ($seen ? implode(', ', array_slice($seen, 0, 6)) : 'nothing readable') . ')' : '');
@@ -537,6 +539,8 @@ function comms_vm_poll() {
 
             $e164 = tm_number($caller);
             $match = comms_match_customer($e164);
+            // 1 Oct 2026 (late): a caller name the phone system gave ("Ann Example" <07700...>), shown when we hold no better one
+            if (preg_match('/"([^"<>]{2,40})"\s*<\+?\d[\d ]{8,15}>/', $subject . "\n" . $bodyText, $vn) && !preg_match('/^\d|mailbox|\*/i', trim($vn[1]))) $match['vm_name'] = mb_substr(trim($vn[1]), 0, 60);
             list($ok, $res) = comms_add_item(array(
                 'type' => 'voicemail', 'ext_id' => 'vm-' . $validity . '-' . $uid, 'at' => $when,
                 'number' => $e164 !== '' ? $e164 : ($caller !== '' ? $caller : 'unknown'),
@@ -583,12 +587,12 @@ function comms_send_sms($to, $text, $actor, $tag = '') {
 }
 
 /* Mark every unhandled text and voicemail from one number handled. Returns how many. */
-function comms_handle_number($e164, $actor) {
-    $res = comms_locked(function ($data) use ($e164, $actor) {
+function comms_handle_number($e164, $actor, $types = array('sms_in', 'voicemail')) {   // $types: 'Done' on the texts column clears texts only
+    $res = comms_locked(function ($data) use ($e164, $actor, $types) {
         $n = 0;
         foreach ($data['items'] as $i => $it) {
             if ($it['number'] !== $e164 || !empty($it['handled'])) continue;
-            if ($it['type'] !== 'sms_in' && $it['type'] !== 'voicemail') continue;
+            if (!in_array($it['type'], $types, true)) continue;
             $data['items'][$i]['handled'] = true;
             $data['items'][$i]['handled_by'] = $actor;
             $data['items'][$i]['handled_at'] = gmdate('c');
@@ -674,38 +678,157 @@ function comms_audio_url($file, $key, $now = null) {
     return '/api/comms-api.php?a=' . rawurlencode($file) . '&e=' . $exp . '&s=' . comms_audio_sig($file, $exp, $key);
 }
 
-/* The inbox as the portal shows it: one entry per caller, newest first, each with its last few items and how many are
-   still to answer. $limit callers; 'open' counts every caller. Bodies trimmed; no audio file names leave, only links. */
-function comms_threads($items, $key, $now = null, $limit = 30, $perThread = 4) {
+/* ---- 1 Oct 2026 (late): a name for every number ----
+   Our customer records first (comms_match_customer - re-run, because customers are added after their first text), then
+   the Textmagic contact list (GET /api/v2/contacts/phone/{number}), then a caller name Voipfone put in its email.
+   Cached in the store's checkpoints['names'] so the portal never waits on Textmagic: a name for 30 days, "nobody" for 7. */
+function comms_tm_contact_name($e164) {   // -> array(answered, name); answered=false means try again later
+    list($u, $k) = tm_creds();
+    if ($u === '' || $k === '' || $e164 === '') return array(false, '');
+    $ch = curl_init('https://rest.textmagic.com/api/v2/contacts/phone/' . preg_replace('/\D/', '', $e164));
+    curl_setopt_array($ch, array(CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 10, CURLOPT_CONNECTTIMEOUT => 6,
+        CURLOPT_HTTPHEADER => array('X-TM-Username: ' . $u, 'X-TM-Key: ' . $k), CURLOPT_PROTOCOLS => CURLPROTO_HTTPS));
+    $body = curl_exec($ch); $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE); curl_close($ch);
+    if ($code === 404) return array(true, '');
+    if ($code < 200 || $code >= 300) return array(false, '');
+    $j = json_decode((string)$body, true);
+    if (!is_array($j)) return array(false, '');
+    $nm = trim(preg_replace('/\s+/', ' ', (string)($j['firstName'] ?? '') . ' ' . (string)($j['lastName'] ?? '')));
+    if ($nm === '' && !empty($j['companyName'])) $nm = (string)$j['companyName'];
+    return array(true, mb_substr(trim(preg_replace('/[\x00-\x1F\x7F]+/', ' ', $nm)), 0, 60));
+}
+function comms_names_refresh($limit = 10, $now = null) {
     $now = $now === null ? time() : (int)$now;
-    $by = array();
+    list($ok, $snap) = comms_locked(function ($d) { return array('__result' => array('items' => $d['items'], 'names' => $d['checkpoints']['names'] ?? array())); });
+    if (!$ok) return array('error' => 'busy');
+    $names = is_array($snap['names']) ? $snap['names'] : array();
+    $todo = array();
+    foreach (array_reverse((array)$snap['items']) as $it) {   // the newest callers first
+        $n = (string)($it['number'] ?? '');
+        if ($n === '' || $n[0] !== '+' || isset($todo[$n]) || ($it['match']['status'] ?? '') === 'MATCH') continue;
+        $c = $names[$n] ?? null;
+        if ($c && $now - (int)($c['at'] ?? 0) < ((string)($c['name'] ?? '') !== '' ? 30 : 7) * 86400) continue;
+        $todo[$n] = 1;
+        if (count($todo) >= $limit) break;
+    }
+    $got = array();
+    foreach (array_keys($todo) as $n) {
+        $m = comms_match_customer($n);
+        if ($m['status'] === 'MATCH') { $got[$n] = array('name' => (string)$m['name'], 'src' => 'customer', 'at' => $now); continue; }
+        list($answered, $nm) = comms_tm_contact_name($n);
+        if ($answered) $got[$n] = array('name' => $nm, 'src' => $nm !== '' ? 'textmagic' : '', 'at' => $now);
+    }
+    if ($got) comms_locked(function ($d) use ($got) {
+        if (!isset($d['checkpoints']['names']) || !is_array($d['checkpoints']['names'])) $d['checkpoints']['names'] = array();
+        foreach ($got as $n => $v) $d['checkpoints']['names'][$n] = $v;
+        return array('__data' => $d, '__result' => true);
+    });
+    return array('looked_up' => count($todo), 'named' => count(array_filter($got, function ($v) { return $v['name'] !== ''; })));
+}
+/* The name to show for a number, and where it came from: customer | textmagic | voipfone | possible | '' (none). */
+function comms_name_for($n, $match, $names) {
+    $m = is_array($match) ? $match : array();
+    if (($m['status'] ?? '') === 'MATCH') return array((string)$m['name'], 'customer');
+    if (is_array($names) && isset($names[$n]['name']) && (string)$names[$n]['name'] !== '') return array((string)$names[$n]['name'], (string)($names[$n]['src'] ?? 'textmagic'));
+    if (!empty($m['tm_name'])) return array((string)$m['tm_name'], 'textmagic');
+    if (!empty($m['vm_name'])) return array((string)$m['vm_name'], 'voipfone');
+    if (($m['status'] ?? '') === 'MULTIPLE') return array('Possibly ' . (string)$m['name'], 'possible');
+    return array('', '');
+}
+
+/* The inbox as the portal's two columns show it (1 Oct 2026, owner: "text messages down one side and the voicemails
+   on the other"): 'texts' = one conversation per number (its last 4 texts, in and out), newest first; 'vms' = every
+   voicemail, newest first, each on its own with the caller's name and number. Bodies trimmed; no audio file names
+   leave, only signed links. open_texts = numbers with a text to answer; open_vms = voicemails not done; open = numbers
+   with anything to answer (the Today tile). */
+function comms_board($items, $names, $key, $now = null, $limit = 30) {
+    $now = $now === null ? time() : (int)$now;
+    $mob = function ($n) { return (bool)preg_match('/^\+447\d{9}$/', (string)$n); };
+    $byText = array(); $vms = array(); $openNums = array(); $lastMatch = array();
     foreach ((array)$items as $it) {
         if (!is_array($it) || !isset($it['number'], $it['type'])) continue;
-        $by[(string)$it['number']][] = $it;
+        $n = (string)$it['number'];
+        if (isset($it['match']) && is_array($it['match'])) $lastMatch[$n] = $it['match'];
+        if (empty($it['handled']) && $it['type'] !== 'sms_out') $openNums[$n] = 1;
+        if ($it['type'] === 'voicemail') $vms[] = $it;
+        elseif ($it['type'] === 'sms_in' || $it['type'] === 'sms_out') $byText[$n][] = $it;
     }
-    $out = array(); $openAll = 0;
-    foreach ($by as $num => $th) {
+    $texts = array(); $openTexts = 0;
+    foreach ($byText as $n => $th) {
         usort($th, function ($a, $b) { return strcmp((string)($a['at'] ?? ''), (string)($b['at'] ?? '')); });
-        $open = 0;
-        foreach ($th as $it) if (empty($it['handled']) && $it['type'] !== 'sms_out') $open++;
-        if ($open) $openAll++;
-        $last = $th[count($th) - 1];
-        $m = isset($last['match']) && is_array($last['match']) ? $last['match'] : array();
-        $isCust = ($m['status'] ?? '') === 'MATCH';
+        $open = 0; foreach ($th as $it) if ($it['type'] === 'sms_in' && empty($it['handled'])) $open++;
+        if ($open) $openTexts++;
+        list($who, $src) = comms_name_for($n, $lastMatch[$n] ?? array(), $names);
         $rows = array();
-        foreach (array_slice($th, -$perThread) as $it) {
-            $audio = (string)($it['audio'] ?? '');
-            $rows[] = array('id' => (string)($it['id'] ?? ''), 'type' => (string)$it['type'], 'at' => (string)($it['at'] ?? ''),
-                'body' => $it['type'] === 'voicemail' ? '' : mb_substr((string)($it['body'] ?? ''), 0, 400),
-                'dur' => (string)($it['duration'] ?? ''), 'audio' => $audio !== '' ? comms_audio_url($audio, $key, $now) : '',
-                'why' => $it['type'] === 'voicemail' && $audio === '' ? (string)($it['audio_why'] ?? '') : '',
-                'done' => !empty($it['handled']), 'review' => ($it['tag'] ?? '') === 'review');
-        }
-        $out[] = array('n' => (string)$num, 'who' => $isCust ? (string)$m['name'] : (($m['status'] ?? '') === 'MULTIPLE' ? 'Possibly ' . (string)$m['name'] : ''),
-            'cust' => $isCust, 'mobile' => (bool)preg_match('/^\+447\d{9}$/', (string)$num), 'open' => $open, 'last' => (string)($last['at'] ?? ''), 'items' => $rows);
+        foreach (array_slice($th, -4) as $it) $rows[] = array('id' => (string)($it['id'] ?? ''), 'type' => (string)$it['type'], 'at' => (string)($it['at'] ?? ''),
+            'body' => mb_substr((string)($it['body'] ?? ''), 0, 400), 'done' => !empty($it['handled']), 'review' => ($it['tag'] ?? '') === 'review');
+        $texts[] = array('n' => (string)$n, 'who' => $who, 'src' => $src, 'mobile' => $mob($n), 'open' => $open, 'last' => (string)($th[count($th) - 1]['at'] ?? ''), 'items' => $rows);
     }
-    usort($out, function ($a, $b) { return strcmp($b['last'], $a['last']); });
-    return array('threads' => array_slice($out, 0, $limit), 'open' => $openAll, 'total' => count($out));
+    usort($texts, function ($a, $b) { return strcmp($b['last'], $a['last']); });
+    usort($vms, function ($a, $b) { return strcmp((string)($b['at'] ?? ''), (string)($a['at'] ?? '')); });
+    $openVms = 0; $vout = array();
+    foreach ($vms as $it) {
+        if (empty($it['handled'])) $openVms++;
+        if (count($vout) >= $limit) continue;
+        $n = (string)$it['number'];
+        list($who, $src) = comms_name_for($n, $it['match'] ?? array(), $names);
+        $audio = (string)($it['audio'] ?? '');
+        $vout[] = array('id' => (string)($it['id'] ?? ''), 'n' => $n, 'who' => $who, 'src' => $src, 'mobile' => $mob($n), 'at' => (string)($it['at'] ?? ''),
+            'dur' => (string)($it['duration'] ?? ''), 'audio' => $audio !== '' ? comms_audio_url($audio, $key, $now) : '',
+            'why' => $audio === '' ? (string)($it['audio_why'] ?? '') : '', 'done' => !empty($it['handled']));
+    }
+    return array('texts' => array_slice($texts, 0, $limit), 'vms' => $vout, 'open_texts' => $openTexts, 'open_vms' => $openVms,
+        'open' => count($openNums), 'total_texts' => count($texts), 'total_vms' => count($vms));
+}
+
+/* Tonight's catch-up (and any voicemail whose Slack line went out without its recording): the recording goes into
+   that line's own thread in #365-job-tracker, so the old posts play too. Up to $limit a run, once each. The lead
+   reminders do not count the app's own thread replies as an answer (pcm-leadchase-lib lc_answered). */
+function comms_vm_slack_backfill($limit = 8, $now = null) {
+    $now = $now === null ? time() : (int)$now;
+    list($ok, $items) = comms_locked(function ($d) { return array('__result' => $d['items']); });
+    if (!$ok) return array('error' => 'busy');
+    $todo = array();
+    foreach ((array)$items as $it) {
+        if (($it['type'] ?? '') !== 'voicemail' || (string)($it['audio'] ?? '') === '' || isset($it['slack_audio'])) continue;
+        $st = strtotime((string)($it['stored_at'] ?? ''));
+        if ($st === false || $now - $st > 10 * 86400) continue;
+        $todo[] = $it;
+    }
+    if (!$todo) return array('posted' => 0);
+    if (!function_exists('slk_upload_file')) @include_once __DIR__ . '/pcm-slack-lib.php';
+    if (!function_exists('slk_call_form')) return array('error' => 'no Slack library');
+    $r = slk_call_form('conversations.history', array('channel' => COMMS_SLACK_CHANNEL, 'oldest' => (string)($now - 11 * 86400), 'limit' => 200), 10);
+    if (empty($r['ok'])) return array('error' => (string)($r['error'] ?? 'unknown'));
+    $posts = (array)($r['messages'] ?? array());
+    usort($todo, function ($a, $b) { return strcmp((string)$a['stored_at'], (string)$b['stored_at']); });
+    $used = array(); $marks = array(); $posted = 0; $err = '';
+    foreach ($todo as $it) {
+        if ($posted >= $limit) break;
+        $st = strtotime((string)$it['stored_at']); $best = null; $gap = 301;
+        foreach ($posts as $p) {
+            $ts = (string)($p['ts'] ?? ''); $t = (string)($p['text'] ?? '');
+            if ($ts === '' || isset($used[$ts]) || strpos($t, 'Voicemail from') === false || strpos($t, (string)$it['number']) === false) continue;
+            $g = abs((float)$ts - $st);
+            if ($g < $gap) { $gap = $g; $best = $p; }
+        }
+        if (!$best) { $marks[$it['id']] = array('slack_audio' => -1); continue; }   // no line to attach to: leave it
+        $used[(string)$best['ts']] = 1;
+        if (!empty($best['files'])) { $marks[$it['id']] = array('slack_audio' => 1, 'slack_ts' => (string)$best['ts']); continue; }   // already a recording
+        $path = __DIR__ . '/' . $it['audio'];
+        if (!is_file($path)) { $marks[$it['id']] = array('slack_audio' => -1); continue; }
+        if (substr($path, -3) === 'wav') comms_wav_fix_file($path);
+        $who = (($it['match']['status'] ?? '') === 'MATCH' ? $it['match']['name'] . ' (' . $it['number'] . ')' : $it['number']);
+        $up = slk_upload_file(COMMS_SLACK_CHANNEL, (string)@file_get_contents($path), 'voicemail-' . preg_replace('/[^0-9]/', '', $it['number']) . '.' . pathinfo($path, PATHINFO_EXTENSION),
+            'Voicemail from ' . $who, "\xE2\x96\xB6 The recording" . ((string)($it['duration'] ?? '') !== '' ? ' (' . $it['duration'] . ')' : ''), (string)$best['ts']);
+        if (!empty($up['ok'])) { $marks[$it['id']] = array('slack_audio' => 1, 'slack_ts' => (string)$best['ts']); $posted++; }
+        else { $err = (string)($up['error'] ?? 'unknown'); break; }   // a missing permission will not fix itself this run
+    }
+    if ($marks) comms_locked(function ($d) use ($marks) {
+        foreach ($d['items'] as $i => $x) if (isset($marks[$x['id']])) foreach ($marks[$x['id']] as $k => $v) $d['items'][$i][$k] = $v;
+        return array('__data' => $d, '__result' => true);
+    });
+    return array('posted' => $posted, 'checked' => count($marks)) + ($err !== '' ? array('error' => $err) : array());
 }
 
 function comms_sweep() {
@@ -714,5 +837,8 @@ function comms_sweep() {
     $out['vm'] = comms_vm_poll();
     // 1 Oct 2026: recordings the first poller missed (it looked one level into the email only)
     $out['vm_audio'] = comms_vm_refetch(15);
+    // 1 Oct 2026 (late): names from our records / Textmagic, and recordings under tonight's Slack lines
+    $out['names'] = comms_names_refresh(10);
+    $out['vm_slack'] = comms_vm_slack_backfill(8);
     return $out;
 }

@@ -64,6 +64,8 @@ check(lc_answered($dell + array('reactions' => array(array('name' => 'white_chec
 check(lc_answered($dell + array('reactions' => array(array('name' => 'eyes', 'count' => 1))), lc_lead($dell), array()), 'any reaction answers it (someone has it)');
 check(lc_answered($dell + array('reply_count' => 1), lc_lead($dell), array()), 'a thread reply answers it');
 check(!lc_answered($dell, lc_lead($dell), array()), 'nothing = not answered');
+check(!lc_answered($dell + array('reply_count' => 1, 'reply_users' => array('U0BJCHP9G3W')), lc_lead($dell), array()), "the app's own reply (a voicemail recording) is not an answer");
+check(lc_answered($dell + array('reply_count' => 2, 'reply_users' => array('U0BJCHP9G3W', 'UBQSJND44')), lc_lead($dell), array()), 'a person replying is');
 $tl = lc_lead($txt); $tts = (float)$txt['ts'];
 check(lc_answered($txt, $tl, array(array('type' => 'sms_out', 'number' => '+447700900127', 'at' => gmdate('c', $tts + 600)))), 'a text back from the inbox answers a text');
 check(!lc_answered($txt, $tl, array(array('type' => 'sms_out', 'number' => '+447700900127', 'at' => gmdate('c', $tts - 3600)))), 'an older text to them does not');

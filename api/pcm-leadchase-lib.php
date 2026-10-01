@@ -145,9 +145,15 @@ function lc_real_time($m, $item) {
 
 /* Answered? Any reaction, any thread reply; for texts and voicemails, the inbox's own record too: that item marked
    handled, or a text sent back to the number after it arrived. $inbox: comms items. */
-function lc_answered($m, $lead, $inbox) {
+// the 365 techies app's own Slack user: its replies (a voicemail's recording posted under the line) are not an answer
+define('LC_BOT_USERS', 'U0BJCHP9G3W');
+function lc_answered($m, $lead, $inbox, $bots = null) {
     if (!empty($m['reactions'])) return true;
-    if (!empty($m['reply_count'])) return true;
+    if (!empty($m['reply_count'])) {
+        $bots = $bots === null ? explode(',', LC_BOT_USERS) : (array)$bots;
+        $people = isset($m['reply_users']) && is_array($m['reply_users']) ? array_diff($m['reply_users'], $bots) : array('?');
+        if ($people) return true;   // someone replied (or Slack did not say who: count it, as before)
+    }
     if (($lead['kind'] === 'text' || $lead['kind'] === 'voicemail') && $lead['number'] !== '' && is_array($inbox)) {
         $item = lc_inbox_item($m, $lead, $inbox);
         if ($item && !empty($item['handled'])) return true;

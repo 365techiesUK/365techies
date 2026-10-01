@@ -25237,6 +25237,15 @@ def write_portal_page():
   #p365app .cm-note--bad { color:#ffb3a4; }
   #p365app .cm-open { margin-left:.4rem; font-size:.85rem; font-weight:600; color:#f0c65a; }
   #p365app .cm-open--ok { color:var(--pgood); }
+  #p365app .cm-cols { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:0 1.6rem; }
+  #p365app .cm-col h3 { display:flex; align-items:baseline; gap:.6rem; margin:.2rem 0 .3rem; padding-bottom:.45rem; border-bottom:1px solid var(--pline); font-size:1.05rem; color:var(--pwhite); }
+  #p365app .cm-col h3 span { font-size:.85rem; font-weight:600; color:#f0c65a; }
+  #p365app .cm-more { margin-top:.4rem; }
+  #p365app .cm-col h3 + .cm-th { border-top:0; padding-top:.35rem; }
+  #p365app .cm-tag--soft { border-color:#3a4a6b; color:var(--psoft); }
+  #p365app .cm-th--vm audio { display:block; width:100%; max-width:440px; height:40px; margin-top:.4rem; }
+  #p365app .cm-th--done { opacity:.7; }
+  @media (max-width:900px) { #p365app .cm-cols { grid-template-columns:1fr; gap:1rem; } }
   #p365app .cm-th { border-top:1px solid var(--pline); padding:.75rem 0 .8rem; }
   #p365app .cm-th:first-child { border-top:0; padding-top:.15rem; }
   #p365app .cm-hd { display:flex; flex-wrap:wrap; align-items:baseline; gap:.3rem .5rem; font-size:1rem; color:var(--pwhite); }
@@ -29368,9 +29377,11 @@ def write_portal_page():
     var grid = document.createElement('div'); grid.className = 'nx-today';
     var colA = document.createElement('div'), colB = document.createElement('div');
     grid.appendChild(colA); grid.appendChild(colB);
-    panels.today.appendChild(lstrip); panels.today.appendChild(kp); panels.today.appendChild(grid);
+    panels.today.appendChild(lstrip); panels.today.appendChild(kp);
+    if (comms) panels.today.appendChild(comms);   // 1 Oct 2026 (late): full width, texts | voicemails side by side
+    panels.today.appendChild(grid);
     if (diary) colA.appendChild(diary);
-    [sos, comms, live].forEach(function (c) { if (c) colB.appendChild(c); });   // 1 Oct 2026: calls & texts where Worth a call was
+    [sos, live].forEach(function (c) { if (c) colB.appendChild(c); });
     [lic, act].forEach(function (c) { if (c) panels.customers.appendChild(c); });
     if (worth) panels.computers.appendChild(worth);
     if (fleet) panels.computers.appendChild(fleet);
@@ -31391,7 +31402,7 @@ def write_portal_page():
   // (api/pcm-installs.php). Default view: everyone NOT on a plan, as the owner asked.
   var INST = { who: 'free', d: null };
   // ---- 1 Oct 2026: Calls & texts - the comms inbox (voicemails + texts) on Today, through api/comms-api.php ----
-  var CM = { d: null, all: false, rep: '', draft: '', busy: false };
+  var CM = { d: null, allT: false, allV: false, rep: '', draft: '', busy: false };
   function cmWhen(iso) {
     var t = Date.parse(iso || ''); if (isNaN(t)) return '';
     var d = new Date(t), td = new Date(); td.setHours(0, 0, 0, 0);
@@ -31417,30 +31428,44 @@ def write_portal_page():
       .then(function (d) { CM.busy = false; CM.d = d; if (act === 'reply' && d && d.ok && !d.err) { CM.rep = ''; CM.draft = ''; } renderComms(); })
       .catch(function () { CM.busy = false; CM.d = CM.d && CM.d.ok ? CM.d : { ok: false, error: 'no answer' }; renderComms(); if (note) { note.className = 'cm-note cm-note--bad'; note.textContent = 'No answer from the server - try again.'; } });
   }
-  function cmItem(it) {
-    var when = cmWhen(it.at);
-    if (it.type === 'voicemail') {
-      return '<div class="cm-it cm-it--vm' + (it.done ? ' cm-it--done' : '') + '"><span class="cm-k">\\ud83d\\udcde Voicemail' + (it.dur ? ' \\u00b7 ' + esc(it.dur) : '') + ' \\u00b7 ' + esc(when) + (it.done ? ' \\u00b7 done' : '') + '</span>'
-        + (it.audio ? '<audio controls preload="none" src="' + esc(it.audio) + '"></audio>' : '<p class="quiet" style="margin:.2rem 0 0">' + (it.why ? 'No recording: ' + esc(it.why) : 'Looking for the recording\\u2026') + '</p>') + '</div>';
-    }
-    var out = it.type === 'sms_out';
-    return '<div class="cm-it' + (out ? ' cm-it--out' : '') + (it.done && !out ? ' cm-it--done' : '') + '"><span class="cm-k">' + (out ? (it.review ? '\\u2b50 Review text sent' : 'We texted') : '\\ud83d\\udcac Text') + ' \\u00b7 ' + esc(when) + (it.done && !out ? ' \\u00b7 done' : '') + '</span>'
-      + '<p>' + esc(it.body) + '</p></div>';
+  // 1 Oct 2026 (late, owner): "two columns - text messages down one side and the voicemails on the other", with the
+  // number on every one and a name wherever our records, Textmagic or the phone system has one
+  var CM_SRC = { customer: 'customer', textmagic: 'Textmagic contact', voipfone: 'from the phone system', possible: '' };
+  function cmWho(x) {   // the name (or the number) in bold, then the number, then where the name came from
+    return '<b>' + esc(x.who || x.n) + '</b>' + (x.who ? '<span class="cm-num">' + esc(x.n) + '</span>' : '')
+      + (x.src && CM_SRC[x.src] ? '<span class="cm-tag' + (x.src === 'customer' ? '' : ' cm-tag--soft') + '">' + CM_SRC[x.src] + '</span>' : '');
   }
-  function cmThread(t) {
-    var h = '<div class="cm-th' + (t.open ? ' cm-th--open' : '') + '">'
-      + '<div class="cm-hd"><b>' + esc(t.who || t.n) + '</b>' + (t.cust ? '<span class="cm-tag">customer</span>' : '') + (t.who ? '<span class="cm-num">' + esc(t.n) + '</span>' : '')
+  function cmReplyBox(key, n, who) {
+    if (CM.rep !== key) return '';
+    return '<div class="cm-rep"><label for="cmtxt" class="cm-k">A text from 07520 615332 to ' + esc(who || n) + ' (' + esc(n) + ')</label>'
+      + '<textarea id="cmtxt" maxlength="600">' + esc(CM.draft) + '</textarea>'
+      + '<div><button type="button" class="sm" data-cms="' + esc(n) + '">Send text</button><button type="button" class="sm ghost" data-cmx="1">Cancel</button></div></div>';
+  }
+  function cmText(t) {   // one conversation per number
+    var key = 't:' + t.n;
+    return '<div class="cm-th' + (t.open ? ' cm-th--open' : '') + '"><div class="cm-hd">' + cmWho(t)
       + (t.open ? '<span class="cm-new">' + t.open + ' new</span>' : '') + '<span class="cm-t">' + esc(cmWhen(t.last)) + '</span></div>'
-      + (t.items || []).map(cmItem).join('')
+      + (t.items || []).map(function (it) {
+          var out = it.type === 'sms_out';
+          return '<div class="cm-it' + (out ? ' cm-it--out' : '') + (it.done && !out ? ' cm-it--done' : '') + '"><span class="cm-k">'
+            + (out ? (it.review ? '\\u2b50 Review text sent' : 'We texted') : 'From ' + esc(t.n)) + ' \\u00b7 ' + esc(cmWhen(it.at)) + (it.done && !out ? ' \\u00b7 done' : '') + '</span>'
+            + '<p>' + esc(it.body) + '</p></div>';
+        }).join('')
       + '<div class="cm-act"><a class="btn sm" href="tel:' + esc(t.n) + '">\\ud83d\\udcde Call</a>'
-      + (t.mobile ? '<button type="button" class="sm ghost" data-cmr="' + esc(t.n) + '">Reply by text</button>' : '')
-      + (t.open ? '<button type="button" class="sm ghost" data-cmd="' + esc(t.n) + '">Done</button>' : '') + '</div>';
-    if (CM.rep === t.n) {
-      h += '<div class="cm-rep"><label for="cmtxt" class="cm-k">A text from 07520 615332 to ' + esc(t.who || t.n) + '</label>'
-        + '<textarea id="cmtxt" maxlength="600">' + esc(CM.draft) + '</textarea>'
-        + '<div><button type="button" class="sm" data-cms="' + esc(t.n) + '">Send text</button><button type="button" class="sm ghost" data-cmx="1">Cancel</button></div></div>';
-    }
-    return h + '</div>';
+      + (t.mobile ? '<button type="button" class="sm ghost" data-cmr="' + esc(key) + '">Reply</button>' : '')
+      + (t.open ? '<button type="button" class="sm ghost" data-cmd="' + esc(t.n) + '">Done</button>' : '') + '</div>'
+      + cmReplyBox(key, t.n, t.who) + '</div>';
+  }
+  function cmVoicemail(v) {   // each voicemail on its own
+    var key = 'v:' + v.id;
+    return '<div class="cm-th cm-th--vm' + (v.done ? ' cm-th--done' : ' cm-th--open') + '"><div class="cm-hd">' + cmWho(v)
+      + '<span class="cm-t">' + esc(cmWhen(v.at)) + (v.dur ? ' \\u00b7 ' + esc(v.dur) : '') + (v.done ? ' \\u00b7 done' : '') + '</span></div>'
+      + (v.audio ? '<audio controls preload="none" src="' + esc(v.audio) + '"></audio>'
+         : '<p class="quiet" style="margin:.35rem 0 0">' + (v.why ? 'No recording: ' + esc(v.why) : 'Looking for the recording\\u2026') + '</p>')
+      + '<div class="cm-act"><a class="btn sm" href="tel:' + esc(v.n) + '">\\ud83d\\udcde Call back</a>'
+      + (v.mobile ? '<button type="button" class="sm ghost" data-cmr="' + esc(key) + '">Text back</button>' : '')
+      + (v.done ? '' : '<button type="button" class="sm ghost" data-cmid="' + esc(v.id) + '">Done</button>') + '</div>'
+      + cmReplyBox(key, v.n, v.who) + '</div>';
   }
   function renderComms() {
     var box = document.getElementById('cmbox'); if (!box) return;
@@ -31454,10 +31479,15 @@ def write_portal_page():
     nxKpi('kMsg', d.open || 0);
     if (op) { op.textContent = d.open ? d.open + ' to answer' : 'all answered'; op.className = 'cm-open' + (d.open ? '' : ' cm-open--ok'); }
     if (note && (d.note || d.err)) { note.className = 'cm-note' + (d.err ? ' cm-note--bad' : ''); note.textContent = d.err || d.note; }
-    var list = d.threads || [], shown = CM.all ? list : list.slice(0, 8);
-    box.innerHTML = (shown.length ? shown.map(cmThread).join('') : '<p class="quiet">No voicemails or texts yet.</p>')
-      + (list.length > shown.length ? '<button type="button" class="sm ghost" id="cmmore">Show all ' + list.length + '</button>' : '')
-      + '<p class="quiet" style="margin-top:.7rem">Older messages and the review text: <a href="#" id="cmfull">the full comms inbox</a>.</p>';
+    var tx = d.texts || [], vm = d.vms || [], tShow = CM.allT ? tx : tx.slice(0, 6), vShow = CM.allV ? vm : vm.slice(0, 6);
+    box.innerHTML = '<div class="cm-cols">'
+      + '<section class="cm-col" aria-label="Texts"><h3>\\ud83d\\udcac Texts <span>' + (d.open_texts ? d.open_texts + ' to answer' : 'all answered') + '</span></h3>'
+      + (tShow.length ? tShow.map(cmText).join('') : '<p class="quiet">No texts yet.</p>')
+      + (tx.length > tShow.length ? '<button type="button" class="sm ghost cm-more" id="cmmoret">Show all ' + (d.total_texts || tx.length) + ' texts</button>' : '') + '</section>'
+      + '<section class="cm-col" aria-label="Voicemails"><h3>\\ud83d\\udcde Voicemails <span>' + (d.open_vms ? d.open_vms + ' not done' : 'all done') + '</span></h3>'
+      + (vShow.length ? vShow.map(cmVoicemail).join('') : '<p class="quiet">No voicemails yet.</p>')
+      + (vm.length > vShow.length ? '<button type="button" class="sm ghost cm-more" id="cmmorev">Show all ' + vm.length + ' voicemails</button>' : '') + '</section>'
+      + '</div><p class="quiet" style="margin-top:.7rem">Older messages and the review text: <a href="#" id="cmfull">the full comms inbox</a>.</p>';
     if (CM.rep) { var t2 = document.getElementById('cmtxt'); if (t2) { t2.focus(); t2.setSelectionRange(t2.value.length, t2.value.length); } }
   }
   function cmBind() {
@@ -31466,11 +31496,13 @@ def write_portal_page():
     card.addEventListener('click', function (e) {
       var b = e.target && e.target.closest ? e.target.closest('button, a') : null; if (!b || !card.contains(b)) return;
       if (b.id === 'cmcheck') { loadComms('check'); return; }
-      if (b.id === 'cmmore') { CM.all = true; renderComms(); return; }
+      if (b.id === 'cmmoret') { CM.allT = true; renderComms(); return; }
+      if (b.id === 'cmmorev') { CM.allV = true; renderComms(); return; }
       if (b.id === 'cmfull') { e.preventDefault(); var ca = document.getElementById('commsadm'); if (ca) ca.click(); return; }
       if (b.hasAttribute('data-cmr')) { CM.rep = b.getAttribute('data-cmr'); CM.draft = ''; renderComms(); return; }
       if (b.hasAttribute('data-cmx')) { CM.rep = ''; CM.draft = ''; renderComms(); return; }
-      if (b.hasAttribute('data-cmd')) { loadComms('done', { n: b.getAttribute('data-cmd') }); return; }
+      if (b.hasAttribute('data-cmd')) { loadComms('done', { n: b.getAttribute('data-cmd'), kind: 'text' }); return; }   // that caller's texts
+      if (b.hasAttribute('data-cmid')) { loadComms('done', { id: b.getAttribute('data-cmid') }); return; }        // one voicemail
       if (b.hasAttribute('data-cms')) {
         var ta = document.getElementById('cmtxt'), txt = ta ? ta.value.trim() : '';
         var note = document.getElementById('cmnote');

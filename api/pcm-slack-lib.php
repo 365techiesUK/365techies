@@ -184,7 +184,7 @@ function slk_call_form($method, $args, $timeout = 6) {
     $d = json_decode($body, true);
     return is_array($d) ? $d : array('ok' => false, 'error' => 'bad_json');
 }
-function slk_upload_file($channel, $bytes, $filename, $title, $comment) {
+function slk_upload_file($channel, $bytes, $filename, $title, $comment, $thread = '') {   // $thread: reply under that message (1 Oct 2026)
     $c = slk_creds();
     if ($c[0] === '') return array('ok' => false, 'error' => 'not_configured');
     if ($channel === '') return array('ok' => false, 'error' => 'no_channel');
@@ -207,7 +207,7 @@ function slk_upload_file($channel, $bytes, $filename, $title, $comment) {
         'files' => array(array('id' => (string)$r1['file_id'], 'title' => (string)$title)),
         'channel_id' => (string)$channel,
         'initial_comment' => (string)$comment,
-    ), 12);
+    ) + ($thread !== '' ? array('thread_ts' => (string)$thread) : array()), 12);
     if (empty($r3['ok'])) return array('ok' => false, 'error' => 'complete:' . (string)($r3['error'] ?? 'unknown'));
     return array('ok' => true);
 }

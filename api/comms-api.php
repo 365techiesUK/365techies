@@ -6,12 +6,13 @@
  *
  * POST JSON {stoken, machine, do}: the portal's own staff session (vis_staff_ok - the same check as the Live view and
  * the installs card; a console session works too).
- *   do=list   -> {ok, threads: [{n, who, cust, mobile, open, last, items: [{id, type, at, body, dur, audio, why, done,
- *                review}]}], open, total}   (comms_threads: newest caller first, last 4 items each)
+ *   do=list   -> {ok, texts: [{n, who, src, mobile, open, last, items}], vms: [{id, n, who, src, mobile, at, dur, audio, why, done}],
+ *                open, open_texts, open_vms, total_texts, total_vms}   (comms_board: the two columns, newest first; names
+ *                from our customer records, then Textmagic contacts, then the phone system - src says which)
  *   do=check  -> runs the comms sweep now (new texts from Textmagic, new voicemails from the mailbox), then the list
  *   do=reply  {n, text} -> a text from the 365 Techies number (comms_send_sms: marks that caller's texts and voicemails
  *                answered), then the list
- *   do=done   {n} -> every text and voicemail from that number marked handled, then the list
+ *   do=done   {id} one voicemail | {n, kind:'text'} that number's texts | {n} everything from it -> marked handled
  * GET ?a=<recording>&e=<expiry>&s=<signature> -> the recording itself (comms_stream_audio), for the card's players.
  *   The link is signed with the server-only admin secret and lasts 3 hours, so an <audio> element needs no cookie.
  *
@@ -60,11 +61,15 @@ if ($do === 'check') {
         else $err = 'The text did not send: ' . (string)($r['error'] ?? 'unknown') . '.';
     }
 } elseif ($do === 'done') {
+    // one voicemail ({id}), or a caller's texts ({n, kind: 'text'}), or everything from a number ({n})
+    $id = preg_replace('/[^A-Za-z0-9\-]/', '', (string)($in['id'] ?? ''));
     $n = $num($in['n'] ?? '');
-    $k = $n !== '' ? comms_handle_number($n, 'portal') : 0;
+    if ($id !== '') { $k = comms_set_handled($id, true, 'portal'); $k = is_array($k) ? !empty($k[1]) : (bool)$k; }
+    else $k = $n !== '' ? comms_handle_number($n, 'portal', ($in['kind'] ?? '') === 'text' ? array('sms_in') : array('sms_in', 'voicemail')) : 0;
     $note = $k ? 'Marked done.' : 'Nothing left to mark.';
 }
-list($ok, $items) = comms_locked(function ($d) { return array('__result' => $d['items']); });
+list($ok, $snap) = comms_locked(function ($d) { return array('__result' => array('items' => $d['items'], 'names' => $d['checkpoints']['names'] ?? array())); });
 if (!$ok) ca_out(array('ok' => false, 'error' => 'busy'));
-$t = comms_threads($items, $PCM_ADMIN_PASS);
-ca_out(array('ok' => true, 'threads' => $t['threads'], 'open' => $t['open'], 'total' => $t['total'], 'note' => $note, 'err' => $err, 'at' => time()));
+$b = comms_board($snap['items'], $snap['names'], $PCM_ADMIN_PASS);
+ca_out(array('ok' => true, 'texts' => $b['texts'], 'vms' => $b['vms'], 'open' => $b['open'], 'open_texts' => $b['open_texts'], 'open_vms' => $b['open_vms'],
+    'total_texts' => $b['total_texts'], 'total_vms' => $b['total_vms'], 'note' => $note, 'err' => $err, 'at' => time()));
