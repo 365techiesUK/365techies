@@ -356,6 +356,11 @@ ErrorDocument 404 /404.html
 </FilesMatch>
 # Live-visitors: the Worker read token is a credential; the cache is internal.
 # visitors.php itself stays served - it authenticates per request.
+# 1 Oct 2026: Cloudflare Worker sources are pasted into the dashboard, never served from here (one was uploaded by an
+# earlier deploy before deploy.yml excluded it; public code with no secrets, but not ours to hand out)
+<FilesMatch "^(slack-jobs|visitors-live|street-manager)-worker\.js$">
+  Require all denied
+</FilesMatch>
 # 1 Oct 2026: 365 PC Manager installs - the store, its library and test, the country lookup and its tables
 # (pcm-installs.php stays served - it authenticates per request)
 <FilesMatch "^(pcm-installs\.json(\..*)?|pcm-installs-lib\.php|pcm-installs-test\.php|pcm-geoip-lib\.php|geo[46]\.bin)$">
