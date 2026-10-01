@@ -112,6 +112,10 @@ _VOLATILE = [
     # 13 Sep 2026 (nav audit item 4): the footer is navigation, not content. The whole block is stripped so
     # a footer edit never re-dates 718 pages; the stored hashes were re-based once with this rule in place.
     (_cdre.compile(r'<footer class="site-footer">.*?</footer>', _cdre.S), ''),
+    # 2 Oct 2026 (nav tidy): the header menu and the phone menu are navigation too - stripped whole, like the footer,
+    # so reorganising them never re-dates 712 pages. Re-based once with REBASE_HASHES=1 before the menus changed.
+    (_cdre.compile(r'<nav class="desktop-nav".*?</nav>', _cdre.S), ''),
+    (_cdre.compile(r'<aside class="mobile-menu".*?</aside>', _cdre.S), ''),
     (_cdre.compile(r'\s*<p class="page-hero__byline[^>]*>.*?</p>', _cdre.S), ''),   # the byline (and its indentation): constant text + a stamped date
     (_cdre.compile(r'\s*<div class="cookie-banner"[^>]*>.*?</div>\s*</div>', _cdre.S), ''),   # the cookie banner is chrome: its wording changed on 13 Sep 2026 and re-dated 703 pages before this rule
     # 14 Sep 2026 (performance audit item 1): the content-visibility hook on <main> is plumbing, not content.
@@ -150,6 +154,11 @@ def note_content(slug, html):
     elif "h" not in rec:                              # git-seeded post - adopt baseline,
         rec["h"] = h                                  # keep the real date from git
         _CD_DIRTY[0] = True
+    elif rec["h"] != h and os.environ.get("REBASE_HASHES") == "1":
+        # one-off re-base after a new _VOLATILE rule (2 Oct 2026): adopt the new hash, keep the real date.
+        # Run it ONLY on a build whose content did not change, or a genuine change goes unrecorded.
+        rec["h"] = h
+        _CD_DIRTY[0] = True
     elif rec["h"] != h:                               # genuine, observed change
         rec["last"] = TODAY
         rec["h"] = h
@@ -179,7 +188,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "116"   # bumped 2026-09-26: the shared first-screen CSS moved into styles.css (was inlined in 520 pages) + compact phone tiles (site audit items 2 + 4). Earlier: v115 2026-09-25: phone footer folds into accordions + badge grid (it was 8,316 px at 390 wide). Earlier: v114 2026-09-14 (2nd): accessibility audit (tooltip box, breadcrumb contrast, focus ring, reveal on focus, clip). Earlier: v113 2026-09-14: performance audit (scenes paused off screen, content-visibility on phones, self-hosted body fonts, compositor glows). Earlier: v112 2026-09-13 (9th): inline form messages + jargon-term hint (UX audit item 6). Earlier: v111 2026-09-13 (8th): the phone cookie banner as one strip (UX audit item 4). Earlier: v110 2026-09-13 (7th): 12px floor for readable phone text (UX audit item 3). Earlier: v109 2026-09-13 (6th): tap-target padding on breadcrumb/towns/byline links (UX audit item 2); also retires v108, whose URL was requested before the file landed. Earlier: v108 2026-09-13 (5th): phone heroes under one screen (UX audit item 1). Earlier: v107 2026-09-13 (4th): the hero byline (.page-hero__byline). Earlier: v106 2026-09-13 (3rd): metric-matched local fallback fonts (size-adjust/ascent/descent overrides) so the web-font swap moves nothing; the lab home CLS of 0.169 was entirely the swap (SEO audit item 6). Earlier: v105 2026-09-13 (2nd): the phone cookie banner pins under the header, not over the hero Call button. Earlier: v104 2026-09-13: the Text size pill is an icon at bottom-right on phones (nav audit: it covered the hero Call button). Earlier: v103 2026-09-07: scam alert in the strip + homepage band, strip re-timed to 85s. Earlier: v102 2026-09-05 (3rd): mobile-menu contact links lifted to a 44px tap target. Earlier the same day: v101 = the >=1960 header expand moved to 2040 so "Contact" is never clipped. Earlier the same day: v100 = the A+ text steps hand the nav to the hamburger instead of clipping it (nav audit). Earlier: v99 2026-09-02: hero console card no longer tilted. Earlier: v98   # bumped 2026-09-02 again: v97 was poisoned in the SiteGround proxy by a pre-completion page load (old CSS cached under the new URL for browsers; curl variants showed MISS). NEVER load a page carrying a new ?v= until the deploy run is completed+success. v97 = 2026-09-02 (live-map launcher + overlay).   # bumped 2026-09-02 (Bournemouth365 live-map launcher + overlay). Earlier: v96 2026-08-27 (skip-link could not be outgrown by the a11y ladder). Earlier: v95 2026-08-19 (proof bar replaces the duplicate reviews teaser). Earlier: v94 2026-08-17 (status strip rebuild). Earlier the same day: v88 was poisoned in the SiteGround proxy by a pre-deploy probe (see deploy-hash-sync-blindspot); NEVER request a new ?v= URL before the deploy that ships it is confirmed complete
+CSSV = "117"   # bumped 2026-10-02: the menus reorganised (nav check) - Services, Free Tools and Get Help open as three-column panels (.dropdown--mega). Earlier: v116 2026-09-26: the shared first-screen CSS moved into styles.css (was inlined in 520 pages) + compact phone tiles (site audit items 2 + 4). Earlier: v115 2026-09-25: phone footer folds into accordions + badge grid (it was 8,316 px at 390 wide). Earlier: v114 2026-09-14 (2nd): accessibility audit (tooltip box, breadcrumb contrast, focus ring, reveal on focus, clip). Earlier: v113 2026-09-14: performance audit (scenes paused off screen, content-visibility on phones, self-hosted body fonts, compositor glows). Earlier: v112 2026-09-13 (9th): inline form messages + jargon-term hint (UX audit item 6). Earlier: v111 2026-09-13 (8th): the phone cookie banner as one strip (UX audit item 4). Earlier: v110 2026-09-13 (7th): 12px floor for readable phone text (UX audit item 3). Earlier: v109 2026-09-13 (6th): tap-target padding on breadcrumb/towns/byline links (UX audit item 2); also retires v108, whose URL was requested before the file landed. Earlier: v108 2026-09-13 (5th): phone heroes under one screen (UX audit item 1). Earlier: v107 2026-09-13 (4th): the hero byline (.page-hero__byline). Earlier: v106 2026-09-13 (3rd): metric-matched local fallback fonts (size-adjust/ascent/descent overrides) so the web-font swap moves nothing; the lab home CLS of 0.169 was entirely the swap (SEO audit item 6). Earlier: v105 2026-09-13 (2nd): the phone cookie banner pins under the header, not over the hero Call button. Earlier: v104 2026-09-13: the Text size pill is an icon at bottom-right on phones (nav audit: it covered the hero Call button). Earlier: v103 2026-09-07: scam alert in the strip + homepage band, strip re-timed to 85s. Earlier: v102 2026-09-05 (3rd): mobile-menu contact links lifted to a 44px tap target. Earlier the same day: v101 = the >=1960 header expand moved to 2040 so "Contact" is never clipped. Earlier the same day: v100 = the A+ text steps hand the nav to the hamburger instead of clipping it (nav audit). Earlier: v99 2026-09-02: hero console card no longer tilted. Earlier: v98   # bumped 2026-09-02 again: v97 was poisoned in the SiteGround proxy by a pre-completion page load (old CSS cached under the new URL for browsers; curl variants showed MISS). NEVER load a page carrying a new ?v= until the deploy run is completed+success. v97 = 2026-09-02 (live-map launcher + overlay).   # bumped 2026-09-02 (Bournemouth365 live-map launcher + overlay). Earlier: v96 2026-08-27 (skip-link could not be outgrown by the a11y ladder). Earlier: v95 2026-08-19 (proof bar replaces the duplicate reviews teaser). Earlier: v94 2026-08-17 (status strip rebuild). Earlier the same day: v88 was poisoned in the SiteGround proxy by a pre-deploy probe (see deploy-hash-sync-blindspot); NEVER request a new ?v= URL before the deploy that ships it is confirmed complete
 HERITAGE_DIMS = {'heritage-01.jpg': (1400, 787), 'heritage-02.jpg': (787, 1400), 'heritage-03.jpg': (1400, 787), 'heritage-04.jpg': (1400, 787), 'heritage-05.jpg': (787, 1400), 'heritage-07.jpg': (1400, 787), 'heritage-kinson.jpg': (1200, 710), 'heritage-moordown.jpg': (1400, 788), 'heritage-stock.jpg': (1400, 788), 'heritage-storefront.jpg': (1024, 683)}
 try:
     from hero_scenes import SCENES as HERO_SCENES
@@ -311,6 +320,215 @@ IC = {
 def ico(name, cls="tile__ico"):
     return f'<svg class="{cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{IC[name]}</svg>'
 
+# ---- the site menus (2 Oct 2026 nav check) ----
+# Owner: "I can't find any of the Virgin Media pages ... the nav needs to be a little bit more organised ... a bit more
+# straight to the point so we can find the stuff. I can't find any of the pages that we've done." So:
+#  - ONE list feeds both the desktop menu and the phone menu (they were two hand-kept copies of ~130 links);
+#  - every page is named for what it IS: the spec checker was "PC Hardware Checker", the Wi-Fi room survey "365 WiFi
+#    Optimizer", the campervan 4G/5G map "Bournemouth Signal Map" (beside the real mobile signal check), and
+#    "Bournemouth in 3D" was the live map again under a second name;
+#  - a page appears once per menu (the PC Manager app was in three of them);
+#  - the Virgin Media / Plusnet email pages and the fix-it hubs (printer, Outlook, OneDrive, Windows 11, all guides)
+#    are in the menu at all - none of them were;
+#  - Services, Free Tools and Get Help open as one wide panel in three columns (.dropdown--mega) instead of a 620px
+#    list that scrolled inside itself and hid its own bottom half.
+# A menu is (label, href, panel). panel None = a plain link. Otherwise {"cols": [[group, ...], ...]} with an optional
+# "all": (text, href) link across the top; one column = an ordinary dropdown, three = the wide panel.
+# A group is (heading or None, [(text, href), ...]). Text is HTML (entities, not raw ampersands).
+NAV_MENUS = [
+    ("Dell", "/dell-it-support-dorset/", None),
+    ("For Home", "/home-it-support-subscriptions/", {"cols": [[(None, [
+        ("Home IT Support", "/home-it-support-subscriptions/"),
+        ("Home Support Plans", "/home-it-support-plans/"),
+        ("365 PC Manager &mdash; free app", "/free-pc-health-check/"),
+        ("Help for Seniors", "/computer-help-for-seniors/"),
+        ("Families", "/family-it-support/"),
+        ("Home Workers", "/it-support-for-home-workers/"),
+        ("Retired Users", "/it-support-for-retired-users/"),
+        ("Disabled People", "/it-support-for-disabled-people/"),
+        ("Free Courses", "/free-courses/"),
+        ("Parents&rsquo; Online Safety Guide", "/parents-guide-online-safety/"),
+    ])]]}),
+    ("For Business", "/business-it-support-subscriptions/", {"cols": [[(None, [
+        ("Business IT Support", "/business-it-support-subscriptions/"),
+        ("Business Support Plans", "/business-it-support-plans/"),
+        ("Small Businesses", "/small-business-it-support/"),
+        ("Sole Traders", "/it-support-for-sole-traders/"),
+        ("Schools &amp; Education", "/it-support-for-education/"),
+        ("IT Support by Industry", "/it-support-by-industry/"),
+        ("Business WiFi", "/business-wifi-installation/"),
+        ("Broadband Emergency Plan", "/business-continuity-internet/"),
+        ("Switching to Us", "/switching-it-provider/"),
+    ])]]}),
+    ("Services", "/services/", {"all": ("All Services", "/services/"), "cols": [
+        [("Everyday support", [
+            ("Remote IT Support", "/remote-it-support/"),
+            ("Computer Repairs", "/computer-repairs/"),
+            ("Preventative Maintenance", "/preventative-maintenance/"),
+            ("Cybersecurity", "/cybersecurity-support/"),
+            ("Backup Support", "/backup-support/"),
+            ("Printer Support", "/printer-support/"),
+            ("Windows 11 Upgrade", "/windows-11-upgrade-service/"),
+        ])],
+        [("Email &amp; Microsoft 365", [
+            ("Email Support", "/email-support/"),
+            ("Microsoft 365", "/microsoft-365-support/"),
+            ("Virgin Media Email Move", "/move-virgin-media-email-to-gmail/"),
+            ("Email Migration", "/email-migration/"),
+        ]), ("Computers", [
+            ("Dell Laptops &amp; Desktops", "/dell-hardware/"),
+            ("Custom-Built PCs", "/custom-pc-builds/"),
+        ])],
+        [("Wi-Fi &amp; internet", [
+            ("Wi-Fi Support", "/wifi-support/"),
+            ("Starlink Internet", "/starlink-internet/"),
+            ("365 Emergency Internet", "/emergency-internet/"),
+        ]), ("Web, AI &amp; off-grid", [
+            ("AI &amp; Automation", "/ai/"),
+            ("Website Design &amp; Hosting", "/web-design-hosting/"),
+            ("365 Web Care", "/web-care/"),
+            ("Off-Grid &amp; Victron Energy", "/off-grid-victron-energy/"),
+            ("Custom VRM Dashboards", "/custom-vrm-dashboards/"),
+        ])],
+    ]}),
+    ("Free Tools", "/free-tools/", {"all": ("All Free Tools", "/free-tools/"), "cols": [
+        [("Check your computer", [
+            ("PC Spec Checker", "/computer-spec-checker/"),
+            ("PC Speed Test", "/pc-benchmark/"),
+            ("365 PC Manager &mdash; free app", "/free-pc-health-check/"),
+            ("PC Build Budget Planner", "/custom-pc-builder/"),
+        ]), ("Local &amp; specialist", [
+            ("Bournemouth Live Map", "/bournemouth/live-map/"),
+            ("Victron Cable &amp; Fuse Sizer", "/victron-system-builder/"),
+        ])],
+        [("Internet &amp; signal", [
+            ("Broadband Speed Test", "/broadband-speed-checker/"),
+            ("Wi-Fi Signal Test", "/wifi-signal-test/"),
+            ("Wi-Fi QR Code Maker", "/wifi-qr-code-generator/"),
+            ("Check Your Mobile Signal", "/mobile-signal-check/"),
+            ("Campervan 4G/5G Map", "/van-signal-map/"),
+            ("Is It Down? Live Status", "/is-it-down/"),
+            ("Website Speed Checker", "/website-checker/"),
+        ])],
+        [("Stay safe online", [
+            ("Email Security Checker", "/email-security-checker/"),
+            ("Password Breach Checker", "/password-breach-checker/"),
+            ("Link Safety Checker", "/link-safety-checker/"),
+            ("Spot the Scam Quiz", "/spot-the-scam/"),
+            ("Free Online Safety Course", "/online-safety-course/"),
+        ]), ("Email", [
+            ("Free Virgin Email Mover", "/virgin-email-mover/"),
+        ])],
+    ]}),
+    ("Get Help", "/book-service/", {"all": ("Contact Us", "/contact/"), "cols": [
+        [("Help right now", [
+            ("I&rsquo;ve Been Scammed &mdash; What To Do", "/ive-been-scammed-what-to-do/"),
+            ("Start Remote Support", "/remote-support/"),
+            ("Emergency IT Help", "/emergency-it-help/"),
+            ("Scam Pop-up Help", "/scam-pop-up-help-poole/"),
+        ]), ("Book &amp; pay", [
+            ("Book a Service", "/book-service/"),
+            ("Book a Collection", "/book-a-collection/"),
+            ("Quick Quote", "/quick-quote/"),
+            ("Pay Us", "/pay/"),
+        ])],
+        [("Email changes", [
+            ("Virgin Media Email Changes", "/virgin-media-email-moving-to-junara/"),
+            ("Move Virgin Email to Gmail", "/move-virgin-media-email-to-gmail/"),
+            ("Free Virgin Email Mover", "/virgin-email-mover/"),
+            ("Plusnet Email Closing", "/move-plusnet-email-to-gmail/"),
+        ]), ("Plans", [
+            ("Monthly IT Support", "/monthly-it-support/"),
+            ("Plan Finder", "/plan-finder/"),
+        ])],
+        [("Fix it yourself", [
+            ("Printer Problems", "/printer-support/"),
+            ("Outlook Problems", "/outlook-problems/"),
+            ("OneDrive Problems", "/onedrive-problems/"),
+            ("Windows 11 Help", "/windows-11-support/"),
+            ("Slow Wi-Fi?", "/wifi-troubleshooting/"),
+            ("Broadband Down?", "/broadband-down/"),
+            ("All Guides &amp; Advice &#8594;", "/it-advice/"),
+        ])],
+    ]}),
+    ("Pricing", "/pricing/", None),
+    ("About", "/about/", {"mobile": "About &amp; Trust", "cols": [[
+        ("Who we are", [
+            ("About 365 Techies", "/about/"),
+            ("Meet the Team", "/meet-the-team/"),
+            ("Why Choose Us", "/why-choose-365-techies/"),
+        ]), ("Proof", [
+            ("Reviews", "/reviews/"),
+            ("Case Studies", "/case-studies/"),
+            ("Our Guarantees", "/our-guarantees/"),
+            ("Accreditations", "/accreditations/"),
+        ]), ("Where we work", [
+            ("Areas Covered", "/areas-covered/"),
+        ]),
+    ]]}),
+    ("Contact", "/contact/", None),
+]
+_NAV_CARET = '<svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
+
+
+def _nav_groups(groups, pad, first_sep=True):
+    out = []
+    for i, (head, links) in enumerate(groups):
+        if head:
+            sep = " dropdown__label--sep" if (i or first_sep) else ""
+            out.append(f'{pad}<span class="dropdown__label{sep}">{head}</span>')
+        out += [f'{pad}<a href="{href}">{text}</a>' for text, href in links]
+    return out
+
+
+def nav_desktop_html():
+    """The header menu bar, from NAV_MENUS."""
+    out = ['      <nav class="desktop-nav" aria-label="Primary">']
+    for label, href, panel in NAV_MENUS:
+        if not panel:
+            out.append(f'        <a href="{href}">{label}</a>')
+            continue
+        mega = len(panel["cols"]) > 1
+        out.append(f'        <div class="nav-item has-dropdown{" nav-item--mega" if mega else ""}">')
+        out.append(f'          <a href="{href}" aria-haspopup="true">{label}')
+        out.append(f'            {_NAV_CARET}')
+        out.append('          </a>')
+        out.append(f'          <div class="dropdown{" dropdown--mega" if mega else ""}">')
+        if "all" in panel:
+            t, h = panel["all"]
+            out.append(f'            <a class="dropdown__all" href="{h}">{t} &#8594;</a>')
+        if mega:
+            for col in panel["cols"]:
+                out.append('            <div class="dropdown__col">')
+                out += _nav_groups(col, "              ", first_sep=False)
+                out.append('            </div>')
+        else:
+            out += _nav_groups(panel["cols"][0], "            ")
+        out.append('          </div>')
+        out.append('        </div>')
+    out.append('      </nav>')
+    return "\n".join(out)
+
+
+def nav_mobile_groups():
+    """The phone menu's fold-out groups, from the same NAV_MENUS (plain links sit above them, by hand)."""
+    out = []
+    for label, href, panel in NAV_MENUS:
+        if not panel:
+            continue
+        out.append('      <details class="m-group">')
+        out.append(f'        <summary>{panel.get("mobile", label)}</summary>')
+        out.append('        <div class="m-group__links">')
+        if "all" in panel:
+            t, h = panel["all"]
+            out.append(f'          <a href="{h}">{t} &#8594;</a>')
+        for col in panel["cols"]:
+            out += _nav_groups(col, "          ")
+        out.append('        </div>')
+        out.append('      </details>')
+    return "\n".join(out)
+
+
 # ---- shared chrome ----
 HEADER = '''  <header class="site-header">
     <div class="status-ticker">
@@ -332,147 +550,7 @@ HEADER = '''  <header class="site-header">
         </svg>
         <span class="logo__text"><em>365</em>techies</span>
       </a>
-      <nav class="desktop-nav" aria-label="Primary">
-        <a href="/dell-it-support-dorset/">Dell</a>
-        <div class="nav-item has-dropdown">
-          <a href="/home-it-support-subscriptions/" aria-haspopup="true">For Home
-            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-          </a>
-          <div class="dropdown">
-            <a href="/home-it-support-subscriptions/">Home IT Support</a>
-            <a href="/home-it-support-plans/">Home Support Plans</a>
-            <a href="/free-pc-health-check/">365 PC Manager app &mdash; free</a>
-            <a href="/it-support-for-home-workers/">Home Workers</a>
-            <a href="/family-it-support/">Families</a>
-            <a href="/it-support-for-retired-users/">Retired Users</a>
-            <a href="/it-support-for-disabled-people/">Disabled People</a>
-            <a href="/computer-help-for-seniors/">Help for Seniors</a>
-            <a href="/free-courses/">Free Courses</a>
-            <a href="/parents-guide-online-safety/">Parents&rsquo; Online Safety Guide</a>
-          </div>
-        </div>
-        <div class="nav-item has-dropdown">
-          <a href="/business-it-support-subscriptions/" aria-haspopup="true">For Business
-            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-          </a>
-          <div class="dropdown">
-            <a href="/business-it-support-subscriptions/">Business IT Support</a>
-            <a href="/business-it-support-plans/">Business Support Plans</a>
-            <a href="/free-pc-health-check/">365 PC Manager app &mdash; free</a>
-            <a href="/small-business-it-support/">Small Businesses</a>
-            <a href="/it-support-for-sole-traders/">Sole Traders</a>
-            <a href="/it-support-for-education/">Schools &amp; Education</a>
-            <a href="/it-support-by-industry/">IT Support by Industry</a>
-            <a href="/business-wifi-installation/">Business WiFi</a>
-            <a href="/business-continuity-internet/">Broadband Emergency Plan</a>
-          </div>
-        </div>
-        <div class="nav-item has-dropdown">
-          <a href="/services/" aria-haspopup="true">Services
-            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-          </a>
-          <div class="dropdown">
-            <a href="/services/">All Services &#8594;</a>
-            <span class="dropdown__label dropdown__label--sep">Everyday support</span>
-            <a href="/remote-it-support/">Remote IT Support</a>
-            <a href="/computer-repairs/">Computer Repairs</a>
-            <a href="/preventative-maintenance/">Preventative Maintenance</a>
-            <a href="/microsoft-365-support/">Microsoft 365</a>
-            <a href="/cybersecurity-support/">Cybersecurity</a>
-            <a href="/email-support/">Email Support</a>
-            <a href="/printer-support/">Printer Support</a>
-            <a href="/backup-support/">Backup Support</a>
-            <span class="dropdown__label dropdown__label--sep">WiFi &amp; internet</span>
-            <a href="/wifi-support/">Wi-Fi Support</a>
-            <a href="/starlink-internet/">Starlink Internet</a>
-            <a href="/emergency-internet/">365 Emergency Internet</a>
-            <span class="dropdown__label dropdown__label--sep">Computers &amp; hardware</span>
-            <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
-            <a href="/custom-pc-builds/">Custom-Built PCs</a>
-            <span class="dropdown__label dropdown__label--sep">Web, AI &amp; off-grid</span>
-            <a href="/ai/">AI &amp; Automation</a>
-            <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
-            <a href="/web-care/">365 Web Care</a>
-            <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
-            <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
-          </div>
-        </div>
-        <div class="nav-item has-dropdown">
-          <a href="/free-tools/" aria-haspopup="true">Free Tools
-            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-          </a>
-          <div class="dropdown">
-            <a href="/free-tools/">All Free Tools &#8594;</a>
-            <span class="dropdown__label dropdown__label--sep">Test your setup</span>
-            <a href="/broadband-speed-checker/">Broadband Speed Test</a>
-            <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
-            <a href="/van-signal-map/">Bournemouth Signal Map</a>
-            <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
-            <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
-            <a href="/bournemouth/live-map/#map">Bournemouth in 3D</a>
-            <a href="/pc-benchmark/">PC Benchmark</a>
-            <a href="/computer-spec-checker/">PC Hardware Checker</a>
-            <a href="/website-checker/">Website Checker</a>
-            <a href="/is-it-down/">Is It Down? Status Checker</a>
-            <span class="dropdown__label dropdown__label--sep">Stay safe</span>
-            <a href="/email-security-checker/">Email Security Checker</a>
-            <a href="/password-breach-checker/">Password Breach Checker</a>
-            <a href="/link-safety-checker/">Link Safety Checker</a>
-            <a href="/spot-the-scam/">Spot the Scam Quiz</a>
-            <a href="/online-safety-course/">Free Online Safety Course</a>
-            <span class="dropdown__label dropdown__label--sep">Apps &amp; builders</span>
-            <a href="/free-pc-health-check/">365 PC Manager app</a>
-            <a href="/custom-pc-builder/">Custom PC Builder</a>
-            <a href="/victron-system-builder/">Victron System Builder</a>
-            <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
-          </div>
-        </div>
-        <div class="nav-item has-dropdown">
-          <a href="/book-service/" aria-haspopup="true">Get Help
-            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-          </a>
-          <div class="dropdown">
-            <a href="/contact/">Contact Us &#8594;</a>
-            <span class="dropdown__label dropdown__label--sep">Right now</span>
-            <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed &mdash; What To Do</a>
-            <a href="/remote-support/">Start Remote Support</a>
-            <a href="/emergency-it-help/">Emergency IT Help</a>
-            <a href="/scam-pop-up-help-poole/">Scam Pop-up Help</a>
-            <span class="dropdown__label dropdown__label--sep">Book &amp; pay</span>
-            <a href="/book-service/">Book a Service</a>
-            <a href="/book-a-collection/">Book a Collection</a>
-            <a href="/quick-quote/">Quick Quote</a>
-            <a href="/pay/">Pay Us</a>
-            <span class="dropdown__label dropdown__label--sep">Plans &amp; pricing</span>
-            <a href="/monthly-it-support/">Monthly IT Support</a>
-            <a href="/plan-finder/">Plan Finder</a>
-            <a href="/switching-it-provider/">Switching to Us</a>
-            <span class="dropdown__label dropdown__label--sep">Fix it yourself</span>
-            <a href="/wifi-troubleshooting/">WiFi Troubleshooting</a>
-            <a href="/broadband-down/">Broadband Down? Start Here</a>
-          </div>
-        </div>
-        <a href="/pricing/">Pricing</a>
-        <div class="nav-item has-dropdown">
-          <a href="/about/" aria-haspopup="true">About
-            <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-          </a>
-          <div class="dropdown">
-            <span class="dropdown__label dropdown__label--sep">Who we are</span>
-            <a href="/about/">About 365 Techies</a>
-            <a href="/meet-the-team/">Meet the Team</a>
-            <a href="/why-choose-365-techies/">Why Choose Us</a>
-            <span class="dropdown__label dropdown__label--sep">Proof</span>
-            <a href="/reviews/">Reviews</a>
-            <a href="/case-studies/">Case Studies</a>
-            <a href="/our-guarantees/">Our Guarantees</a>
-            <a href="/accreditations/">Accreditations</a>
-            <span class="dropdown__label dropdown__label--sep">Where we work</span>
-            <a href="/areas-covered/">Areas Covered</a>
-          </div>
-        </div>
-        <a href="/contact/">Contact</a>
-      </nav>
+''' + nav_desktop_html() + '''
       <div class="header-actions">
         <button type="button" class="nav-search" data-search-open aria-label="Search this website" aria-keyshortcuts="/ Control+K">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
@@ -535,130 +613,7 @@ HEADER = '''  <header class="site-header">
       <a href="/pricing/">Pricing</a>
       <a href="/contact/">Contact</a>
       <a href="/portal/" class="m-signin">Sign in or join free</a>
-      <details class="m-group">
-        <summary>For Home</summary>
-        <div class="m-group__links">
-          <a href="/home-it-support-subscriptions/">Home IT Support</a>
-          <a href="/home-it-support-plans/">Home Support Plans</a>
-          <a href="/free-pc-health-check/">365 PC Manager app &mdash; free</a>
-          <a href="/it-support-for-home-workers/">Home Workers</a>
-          <a href="/family-it-support/">Families</a>
-          <a href="/it-support-for-retired-users/">Retired Users</a>
-          <a href="/it-support-for-disabled-people/">Disabled People</a>
-          <a href="/computer-help-for-seniors/">Help for Seniors</a>
-          <a href="/free-courses/">Free Courses</a>
-          <a href="/parents-guide-online-safety/">Parents&rsquo; Online Safety Guide</a>
-        </div>
-      </details>
-      <details class="m-group">
-        <summary>For Business</summary>
-        <div class="m-group__links">
-          <a href="/business-it-support-subscriptions/">Business IT Support</a>
-          <a href="/business-it-support-plans/">Business Support Plans</a>
-          <a href="/free-pc-health-check/">365 PC Manager app &mdash; free</a>
-          <a href="/small-business-it-support/">Small Businesses</a>
-          <a href="/it-support-for-sole-traders/">Sole Traders</a>
-          <a href="/it-support-for-education/">Schools &amp; Education</a>
-          <a href="/it-support-by-industry/">IT Support by Industry</a>
-          <a href="/business-wifi-installation/">Business WiFi</a>
-          <a href="/business-continuity-internet/">Broadband Emergency Plan</a>
-        </div>
-      </details>
-      <details class="m-group">
-        <summary>Services</summary>
-        <div class="m-group__links">
-          <a href="/services/">All Services &#8594;</a>
-          <span class="dropdown__label dropdown__label--sep">Everyday support</span>
-          <a href="/remote-it-support/">Remote IT Support</a>
-          <a href="/computer-repairs/">Computer Repairs</a>
-          <a href="/preventative-maintenance/">Preventative Maintenance</a>
-          <a href="/microsoft-365-support/">Microsoft 365</a>
-          <a href="/cybersecurity-support/">Cybersecurity</a>
-          <a href="/email-support/">Email Support</a>
-          <a href="/printer-support/">Printer Support</a>
-          <a href="/backup-support/">Backup Support</a>
-          <span class="dropdown__label dropdown__label--sep">WiFi &amp; internet</span>
-          <a href="/wifi-support/">Wi-Fi Support</a>
-          <a href="/starlink-internet/">Starlink Internet</a>
-          <a href="/emergency-internet/">365 Emergency Internet</a>
-          <span class="dropdown__label dropdown__label--sep">Computers &amp; hardware</span>
-          <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
-          <a href="/custom-pc-builds/">Custom-Built PCs</a>
-          <span class="dropdown__label dropdown__label--sep">Web, AI &amp; off-grid</span>
-          <a href="/ai/">AI &amp; Automation</a>
-          <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
-          <a href="/web-care/">365 Web Care</a>
-          <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
-          <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
-        </div>
-      </details>
-      <details class="m-group">
-        <summary>Free Tools</summary>
-        <div class="m-group__links">
-          <a href="/free-tools/">All Free Tools &#8594;</a>
-          <span class="dropdown__label dropdown__label--sep">Test your setup</span>
-          <a href="/broadband-speed-checker/">Broadband Speed Test</a>
-          <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
-          <a href="/van-signal-map/">Bournemouth Signal Map</a>
-          <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
-          <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
-          <a href="/bournemouth/live-map/#map">Bournemouth in 3D</a>
-          <a href="/pc-benchmark/">PC Benchmark</a>
-          <a href="/computer-spec-checker/">PC Hardware Checker</a>
-          <a href="/website-checker/">Website Checker</a>
-          <a href="/is-it-down/">Is It Down? Status Checker</a>
-          <span class="dropdown__label dropdown__label--sep">Stay safe</span>
-          <a href="/email-security-checker/">Email Security Checker</a>
-          <a href="/password-breach-checker/">Password Breach Checker</a>
-          <a href="/link-safety-checker/">Link Safety Checker</a>
-          <a href="/spot-the-scam/">Spot the Scam Quiz</a>
-          <a href="/online-safety-course/">Free Online Safety Course</a>
-          <span class="dropdown__label dropdown__label--sep">Apps &amp; builders</span>
-          <a href="/free-pc-health-check/">365 PC Manager app</a>
-          <a href="/custom-pc-builder/">Custom PC Builder</a>
-          <a href="/victron-system-builder/">Victron System Builder</a>
-          <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
-        </div>
-      </details>
-      <details class="m-group">
-        <summary>Get Help</summary>
-        <div class="m-group__links">
-          <a href="/contact/">Contact Us &#8594;</a>
-          <span class="dropdown__label dropdown__label--sep">Right now</span>
-          <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed &mdash; What To Do</a>
-          <a href="/remote-support/">Start Remote Support</a>
-          <a href="/emergency-it-help/">Emergency IT Help</a>
-          <a href="/scam-pop-up-help-poole/">Scam Pop-up Help</a>
-          <span class="dropdown__label dropdown__label--sep">Book &amp; pay</span>
-          <a href="/book-service/">Book a Service</a>
-          <a href="/book-a-collection/">Book a Collection</a>
-          <a href="/quick-quote/">Quick Quote</a>
-          <a href="/pay/">Pay Us</a>
-          <span class="dropdown__label dropdown__label--sep">Plans &amp; pricing</span>
-          <a href="/monthly-it-support/">Monthly IT Support</a>
-          <a href="/plan-finder/">Plan Finder</a>
-          <a href="/switching-it-provider/">Switching to Us</a>
-          <span class="dropdown__label dropdown__label--sep">Fix it yourself</span>
-          <a href="/wifi-troubleshooting/">WiFi Troubleshooting</a>
-          <a href="/broadband-down/">Broadband Down? Start Here</a>
-        </div>
-      </details>
-      <details class="m-group">
-        <summary>About &amp; Trust</summary>
-        <div class="m-group__links">
-          <span class="dropdown__label dropdown__label--sep">Who we are</span>
-          <a href="/about/">About 365 Techies</a>
-          <a href="/meet-the-team/">Meet the Team</a>
-          <a href="/why-choose-365-techies/">Why Choose Us</a>
-          <span class="dropdown__label dropdown__label--sep">Proof</span>
-          <a href="/reviews/">Reviews</a>
-          <a href="/case-studies/">Case Studies</a>
-          <a href="/our-guarantees/">Our Guarantees</a>
-          <a href="/accreditations/">Accreditations</a>
-          <span class="dropdown__label dropdown__label--sep">Where we work</span>
-          <a href="/areas-covered/">Areas Covered</a>
-        </div>
-      </details>
+''' + nav_mobile_groups() + '''
       <details class="m-group">
         <summary>Resources &amp; Info</summary>
         <div class="m-group__links">
@@ -776,6 +731,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/scam-pop-up-help-poole/">Scam Pop-up Help (Poole)</a>
         <a href="/virus-removal-christchurch/">Virus Removal (Christchurch)</a>
         <a href="/outlook-problems/">Outlook Problems &amp; Fixes</a>
+        <a href="/virgin-media-email-moving-to-junara/">Virgin Media Email Changes</a>
         <a href="/support-portal/">Support Portal</a>
         <a href="/splashtop-business-guide/">Remote Access Guide</a>
         <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
@@ -801,29 +757,28 @@ FOOTER = '''  <footer class="site-footer">
         <div class="footer-fold__body">
         <a href="/free-courses/">Free Courses</a>
         <a href="/free-tools/">All Free Tools &#8594;</a>
-        <a href="/free-pc-health-check/">365 PC Manager app</a>
+        <a href="/free-pc-health-check/">365 PC Manager &mdash; free app</a>
         <a href="/online-safety-course/">Free Online Safety Course</a>
         <a href="/broadband-speed-checker/">Broadband Speed Test</a>
-        <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
-        <a href="/van-signal-map/">Bournemouth Signal Map</a>
+        <a href="/wifi-signal-test/">Wi-Fi Signal Test</a>
+        <a href="/van-signal-map/">Campervan 4G/5G Map</a>
         <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
         <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
-        <a href="/bournemouth/live-map/#map">Bournemouth in 3D</a>
-        <a href="/pc-benchmark/">PC Benchmark</a>
-        <a href="/website-checker/">Website Checker</a>
+        <a href="/pc-benchmark/">PC Speed Test</a>
+        <a href="/website-checker/">Website Speed Checker</a>
         <a href="/email-security-checker/">Email Security Checker</a>
         <a href="/password-breach-checker/">Password Breach Checker</a>
         <a href="/link-safety-checker/">Link Safety Checker</a>
         <a href="/password-generator/">Password Generator</a>
-        <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
-        <a href="/custom-pc-builder/">Custom PC Builder</a>
-        <a href="/victron-system-builder/">Victron System Builder</a>
+        <a href="/wifi-qr-code-generator/">Wi-Fi QR Code Maker</a>
+        <a href="/custom-pc-builder/">PC Build Budget Planner</a>
+        <a href="/victron-system-builder/">Victron Cable &amp; Fuse Sizer</a>
         <a href="/solar-battery-calculator/">Battery &amp; Solar Calculator</a>
         <a href="/cost-calculator/">Cost Calculator</a>
         <a href="/plan-finder/">Plan Finder</a>
         <a href="/spot-the-scam/">Spot the Scam Quiz</a>
-        <a href="/is-it-down/">Is It Down? Status Checker</a>
-        <a href="/computer-spec-checker/">PC Hardware Checker</a>
+        <a href="/is-it-down/">Is It Down? Live Status</a>
+        <a href="/computer-spec-checker/">PC Spec Checker</a>
         </div>
         </details>
       </nav>

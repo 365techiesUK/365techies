@@ -395,11 +395,13 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
 .nav-item { position: relative; }
 .dropdown {
   position: absolute; top: 100%; left: 0;
-  min-width: 230px;
+  min-width: 260px;
   max-height: min(74vh, 620px); overflow-y: auto;
   padding: 0.85rem 0.5rem 0.5rem;
   border-radius: var(--r-md);
-  background: rgba(7, 15, 32, 0.92);
+  /* 0.92 let the hero text read straight through the menu (2 Oct 2026 nav check): the blur below does nothing
+     inside .site-header, which has its own backdrop-filter, so the panel has to be nearly solid on its own. */
+  background: rgba(7, 15, 32, 0.985);
   -webkit-backdrop-filter: blur(22px);
   backdrop-filter: blur(22px);
   border: 1px solid var(--line);
@@ -417,10 +419,32 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
   display: block;
   padding: 0.65rem 0.9rem;
   border-radius: var(--r-sm);
-  font-size: 0.95rem; color: var(--ink-3);
+  font-size: 0.95rem; line-height: 1.3; color: var(--ink-3);
   transition: background-color 0.2s ease, color 0.2s ease, padding-left 0.2s ease;
 }
 .dropdown a:hover { background: rgba(29, 151, 227, 0.1); color: #fff; padding-left: 1.15rem; }
+
+/* Wide menus (2 Oct 2026 nav check): Services, Free Tools and Get Help open as one panel in three columns instead
+   of a 620px list that scrolled inside itself and hid its bottom half. The item is position:static, so the panel
+   hangs from .desktop-nav itself and spans it - it can never run past the bar's clip-path edges (see the safety
+   net above). The entrance tween in main.js / interior.js leaves translate(0,0) on each item, and ANY transform
+   makes the item the panel's containing block again, so top-level items keep no transform at all. */
+.desktop-nav { position: relative; }
+.desktop-nav > a, .desktop-nav > .nav-item { transform: none !important; }
+.nav-item--mega { position: static; }
+.dropdown--mega {
+  left: 0; right: 0; margin-inline: auto; max-width: 1040px; min-width: 0;
+  max-height: min(84vh, 720px);
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 0.5rem; align-content: start;
+  padding: 0.55rem 0.55rem 0.6rem;
+}
+.dropdown__col { display: flex; flex-direction: column; min-width: 0; }
+.dropdown--mega a { padding: 0.5rem 0.8rem; }
+.dropdown--mega .dropdown__label { padding-top: 0.6rem; }
+.dropdown--mega .dropdown__label--sep { margin-top: 0.4rem; padding-top: 0.7rem; }
+.dropdown .dropdown__all { grid-column: 1 / -1; font-weight: 600; color: var(--cyan);
+  border-bottom: 1px solid rgba(125, 170, 220, 0.12); border-radius: var(--r-sm) var(--r-sm) 0 0; margin-bottom: 0.15rem; }
+.dropdown .dropdown__all:hover { color: #fff; }
 
 .nav-cta {
   margin-left: 0.9rem;
