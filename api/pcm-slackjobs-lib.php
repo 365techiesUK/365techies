@@ -204,15 +204,67 @@ function sj_pick($val, $options) {
    parent post is skipped; the first of each wins. Pure - the poller feeds it the
    replies it fetched. */
 function sj_replies_extract($messages, $parentTs) {
-    $out = array('price' => 0.0, 'email' => '');
+    /* 1 Oct 2026: a Workflow Builder post belongs to the workflow, so nobody can edit it. Corrections are typed as
+       labelled replies instead - "Address: 8 Copsewood Avenue", "Postcode: BH8 9NG", "Contact number: 07..." or
+       "Email: x@y.com" - and the LAST labelled one wins (a later reply corrects an earlier). A bare email or £ price
+       with no label keeps the old rule: the first wins. A bare line of text is never taken as an address. */
+    $out = array('price' => 0.0, 'email' => '', 'email_by' => '', 'addr' => '', 'postcode' => '', 'phone' => '');
+    $labelledEmail = '';
     foreach ((array)$messages as $m) {
         if (!is_array($m) || (string)(isset($m['ts']) ? $m['ts'] : '') === (string)$parentTs) continue;
         $t = (string)(isset($m['text']) ? $m['text'] : '');
         if ($out['price'] <= 0) $out['price'] = sj_price($t);
-        if ($out['email'] === '') $out['email'] = sj_email(sj_clean($t, 4000));
-        if ($out['price'] > 0 && $out['email'] !== '') break;
+        if ($out['email'] === '') { $out['email'] = sj_email(sj_clean($t, 4000)); if ($out['email'] !== '') $out['email_by'] = 'bare'; }
+        $F = sj_reply_fields($t);
+        if ($F['address'] !== '') $out['addr'] = sj_clean($F['address'], 200);
+        if ($F['postcode'] !== '') $out['postcode'] = sj_clean($F['postcode'], 12);
+        if ($F['phone'] !== '') { $p2 = sj_phone($F['phone']); if ($p2 !== '') $out['phone'] = $p2; }
+        if ($F['email'] !== '') { $e2 = sj_email($F['email']); if ($e2 !== '') $labelledEmail = $e2; }
+    }
+    if ($labelledEmail !== '') { $out['email'] = $labelledEmail; $out['email_by'] = 'label'; }
+    return $out;
+}
+/* The labelled fields in one typed reply - "Postcode: BH8 9NG", and just as happily "sorry, postcode: BH8 9NG"
+   (a few words may come before the label; the value runs to the end of the line). The last of each wins. */
+function sj_reply_fields($text) {
+    $out = array('address' => '', 'postcode' => '', 'phone' => '', 'email' => '');
+    foreach (preg_split('/\r\n|\r|\n/', (string)$text) as $ln) {
+        $ln = sj_clean($ln, 400);
+        if ($ln === '' || strpos($ln, ':') === false) continue;
+        if (!preg_match('/^(?:[\w,\'.!-]+\s+){0,3}(address|post\s*code|contact number|phone(?: number)?|mobile|tel|e-?mail)\s*:\s*(.+)$/i', $ln, $m)) continue;
+        $k = strtolower(preg_replace('/\s+/', '', $m[1])); $v = trim($m[2]);
+        if ($v === '') continue;
+        if ($k === 'address') $out['address'] = $v;
+        elseif ($k === 'postcode') $out['postcode'] = $v;
+        elseif ($k === 'email' || $k === 'e-mail') $out['email'] = $v;
+        else $out['phone'] = $v;
     }
     return $out;
+}
+
+/* Put what a thread said onto the job (pure). A labelled address, postcode, phone or email from the thread
+   outranks the parent post (the post cannot be edited; the thread is where corrections live); a price fills a
+   blank one. What the thread gave is kept on the job ('thread') so the next poll's re-parse of the parent cannot
+   undo it, with the reply count it was read at ('thread_seen') so the poller reads the thread again only when
+   new replies have appeared. */
+function sj_apply_thread($job, $x, $replyCount) {
+    $x = array_merge(array('price' => 0.0, 'email' => '', 'email_by' => '', 'addr' => '', 'postcode' => '', 'phone' => ''), (array)$x);
+    if ((float)$job['amount'] <= 0 && (float)$x['price'] > 0) { $job['amount'] = (float)$x['price']; $job['amount_by'] = 'slack'; }
+    if ($x['email'] !== '' && ((string)$job['email'] === '' || $x['email_by'] === 'label')) $job['email'] = $x['email'];
+    if ($x['addr'] !== '' || $x['postcode'] !== '') {
+        // the job's addr is "address postcode" as one line: take the old postcode off before putting the new on
+        $base = (string)$job['addr']; $oldPc = (string)$job['postcode'];
+        if ($oldPc !== '' && preg_match('/\s*' . preg_quote($oldPc, '/') . '$/i', $base)) $base = trim(preg_replace('/\s*' . preg_quote($oldPc, '/') . '$/i', '', $base));
+        if ($x['addr'] !== '') $base = $x['addr'];
+        $pc = $x['postcode'] !== '' ? $x['postcode'] : $oldPc;
+        if ($pc !== '' && preg_match('/' . preg_quote($pc, '/') . '\s*$/i', $base)) $pc2 = ''; else $pc2 = $pc;   // typed inside the address already
+        $job['addr'] = sj_clean(trim($base . ($pc2 !== '' ? ' ' . $pc2 : '')), 200); $job['postcode'] = $pc;
+    }
+    if ($x['phone'] !== '') $job['phone'] = $x['phone'];
+    $job['thread'] = array('addr' => $x['addr'], 'postcode' => $x['postcode'], 'phone' => $x['phone'],
+                           'email' => ($x['email_by'] === 'label' ? $x['email'] : ''));
+    $job['thread_seen'] = (int)$replyCount;
+    return $job;
 }
 
 /* "Invoiced? (Y/N) 4905/799" -> array(kind, value): none | yes | number */
@@ -339,6 +391,14 @@ function sj_merge($old, $new) {
     if (!is_array($old)) return $new;
     $keep = $old;
     foreach (array('name', 'email', 'phone', 'addr', 'postcode', 'note', 'kind', 'status', 'invoice_doc', 'invoiced_in_slack', 'slack', 'ts') as $k) $keep[$k] = $new[$k];
+    /* 1 Oct 2026: corrections typed in the thread stand over the parent's original text. A poll that re-read the
+       thread brings them in $new; one that did not re-applies what the job already holds. */
+    if (isset($new['thread']) && is_array($new['thread'])) { $keep['thread'] = $new['thread']; $keep['thread_seen'] = (int)(isset($new['thread_seen']) ? $new['thread_seen'] : 0); }
+    elseif (isset($old['thread']) && is_array($old['thread'])) {
+        $th = $old['thread'];
+        $keep = sj_apply_thread($keep, array('addr' => $th['addr'], 'postcode' => $th['postcode'], 'phone' => $th['phone'],
+            'email' => $th['email'], 'email_by' => ($th['email'] !== '' ? 'label' : ''), 'price' => 0.0), (int)(isset($old['thread_seen']) ? $old['thread_seen'] : 0));
+    }
     // an email a person typed in the portal outranks whatever the post has (usually nothing)
     if ((string)(isset($old['email_by']) ? $old['email_by'] : '') === 'staff' && (string)(isset($old['email']) ? $old['email'] : '') !== '') $keep['email'] = $old['email'];
     // an email that reached the job from its thread never vanishes because one poll could not read the thread

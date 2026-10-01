@@ -137,16 +137,49 @@ $REPLIES = array(
 );
 $x = sj_replies_extract($REPLIES, '1789794361.365689');
 ok($x['email'] === 'colin.sutton@example.com' && $x['price'] === 45.0, 'first email and first price from the replies, mailto unwrapped', json_encode($x));
-ok(sj_replies_extract(array($REPLIES[0]), '1789794361.365689') === array('price' => 0.0, 'email' => ''), 'the parent alone yields nothing (its own £30 is read from the post, not here)');
-ok(sj_replies_extract(array(array('ts' => '2.0', 'text' => 'no details yet')), '1.0') === array('price' => 0.0, 'email' => ''), 'a reply with neither gives nothing');
+$NONE = array('price' => 0.0, 'email' => '', 'email_by' => '', 'addr' => '', 'postcode' => '', 'phone' => '');
+ok(sj_replies_extract(array($REPLIES[0]), '1789794361.365689') === $NONE, 'the parent alone yields nothing (its own £30 is read from the post, not here)');
+ok(sj_replies_extract(array(array('ts' => '2.0', 'text' => 'no details yet')), '1.0') === $NONE, 'a reply with neither gives nothing');
 ok(sj_replies_extract(array(array('ts' => '2.0', 'text' => 'test@gmail.com'), array('ts' => '3.0', 'text' => 'other@x.com')), '1.0')['email'] === 'test@gmail.com', 'a bare address in a reply is enough; the first wins');
+
+echo "-- corrections typed in the thread (1 Oct 2026: a workflow's post cannot be edited, so David replies)\n";
+$DAVINA = "*Customer name*\nDavina Gahan\n*Address*\n\n*Postcode*\n\n*Contact number*\n07584168898\n*Email*\n<mailto:davinagahn@hotmail.com|davinagahn@hotmail.com>\n*Job type*\n\n*Issue*\nMS 365 Lost password\n*Assigned to*\n\n*Priority*\n\n*Price £.*\n";
+$dj = sj_job(array('ts' => '1790863500.000100', 'text' => $DAVINA, 'reply_count' => 0), 'C0C3VGP1SJC', 1790863600);
+ok($dj && $dj['addr'] === '' && $dj['postcode'] === '' && $dj['phone'] === '07584168898', 'the post as posted: no address, no postcode', json_encode(array($dj['addr'], $dj['postcode'])));
+$TH = array(
+    array('ts' => '1790863500.000100', 'text' => $DAVINA),
+    array('ts' => '1790863600.000100', 'text' => "Address: 8 Copsewood Avenue, Bournemouth\nPostcode: BH8 9NG"),
+    array('ts' => '1790863700.000100', 'text' => 'sorry, Postcode: BH8 9NH'),
+    array('ts' => '1790863800.000100', 'text' => 'Contact number: 07584 168 899'),
+);
+$x = sj_replies_extract($TH, '1790863500.000100');
+ok($x['addr'] === '8 Copsewood Avenue, Bournemouth' && $x['postcode'] === 'BH8 9NH' && $x['phone'] === '07584168899', 'labelled address, the LAST postcode, a corrected phone', json_encode($x));
+ok($x['email'] === '' && $x['price'] === 0.0, 'nothing else invented from them', json_encode($x));
+$dj2 = sj_apply_thread($dj, $x, 3);
+ok($dj2['addr'] === '8 Copsewood Avenue, Bournemouth BH8 9NH' && $dj2['postcode'] === 'BH8 9NH' && $dj2['phone'] === '07584168899' && $dj2['thread_seen'] === 3, 'applied: one address line with the postcode, phone, read at 3 replies', json_encode(array($dj2['addr'], $dj2['postcode'], $dj2['phone'])));
+ok($dj2['email'] === 'davinagahn@hotmail.com' && $dj2['amount'] === 0.0, 'the post\'s email and price untouched', json_encode(array($dj2['email'], $dj2['amount'])));
+// the next poll re-parses the parent (still no address) WITHOUT re-reading the thread: the correction stands
+$dj3 = sj_merge($dj2, sj_job(array('ts' => '1790863500.000100', 'text' => $DAVINA, 'reply_count' => 3), 'C0C3VGP1SJC', 1790863900));
+ok($dj3['addr'] === '8 Copsewood Avenue, Bournemouth BH8 9NH' && $dj3['postcode'] === 'BH8 9NH' && $dj3['phone'] === '07584168899' && $dj3['thread_seen'] === 3, 'a re-parse of the parent keeps the thread\'s corrections', json_encode(array($dj3['addr'], $dj3['phone'])));
+// a poll that DID re-read the thread (a 4th reply) brings the newer corrections in
+$x4 = sj_replies_extract(array_merge($TH, array(array('ts' => '1790863900.000100', 'text' => 'Email: davina.gahan@gmail.com'))), '1790863500.000100');
+$dj4 = sj_merge($dj3, sj_apply_thread(sj_job(array('ts' => '1790863500.000100', 'text' => $DAVINA, 'reply_count' => 4), 'C0C3VGP1SJC', 1790864000), $x4, 4));
+ok($dj4['email'] === 'davina.gahan@gmail.com' && $dj4['addr'] === '8 Copsewood Avenue, Bournemouth BH8 9NH' && $dj4['thread_seen'] === 4, 'a labelled Email: reply replaces the post\'s email; the address stays', json_encode(array($dj4['email'], $dj4['addr'])));
+// a postcode typed inside the address line is not doubled; an address-only correction keeps the post's postcode
+$y = sj_apply_thread(array_merge($dj, array('postcode' => 'BH1 1AA', 'addr' => 'Old Road BH1 1AA')), array('addr' => '2 New Road, Poole BH14 8AB', 'postcode' => 'BH14 8AB'), 1);
+ok($y['addr'] === '2 New Road, Poole BH14 8AB' && $y['postcode'] === 'BH14 8AB', 'a postcode already inside the address is not doubled', $y['addr']);
+$z = sj_apply_thread(array_merge($dj, array('postcode' => 'BH1 1AA', 'addr' => 'Old Road BH1 1AA')), array('addr' => '3 Other Road'), 1);
+ok($z['addr'] === '3 Other Road BH1 1AA' && $z['postcode'] === 'BH1 1AA', 'an address-only correction keeps the post\'s postcode', $z['addr']);
+ok(sj_replies_extract(array(array('ts' => '2.0', 'text' => '8 Copsewood Avenue BH8 9NG')), '1.0')['addr'] === '', 'a bare line is never taken as an address - it needs the label');
+$st = sj_apply_thread(array_merge($dj, array('email' => 'typed@portal.example', 'email_by' => 'staff')), array('email' => 'bare@x.com', 'email_by' => 'bare'), 1);
+ok($st['email'] === 'typed@portal.example', 'a bare email in the thread never replaces one the post or a person gave');
 
 echo "-- the poller and the cron, at source level\n";
 $SW = (string)file_get_contents(__DIR__ . '/pcm-slackjobs-sweep.php');
 ok(strpos($SW, '?' . '>') === false, 'no closing tag');
 ok(strpos($SW, "'conversations.history'") !== false && strpos($SW, "'conversations.replies'") !== false && !preg_match("/'chat\.postMessage'|'chat\.update'|'chat\.delete'/", $SW), 'reads Slack, never writes to it');
 ok(strpos($SW, 'SJ_MIN_GAP') !== false && strpos($SW, 'SJ_MAX_THREADS') !== false, 'polls are rate-limited and thread reads bounded');
-ok(strpos($SW, "(\$job['amount'] <= 0 || \$job['email'] === '') && !empty(\$m['reply_count'])") !== false && strpos($SW, "sj_replies_extract(\$r['messages'], \$ts)") !== false, 'a thread is read only when the post left the price or the email blank, and only through the pure extractor');
+ok(strpos($SW, "\$rc > \$readAt && \$threads < SJ_MAX_THREADS") !== false && strpos($SW, "sj_replies_extract(\$r['messages'], \$ts)") !== false && strpos($SW, "if (\$x['error'] === '') \$job = sj_apply_thread(\$job, \$x, \$rc);") !== false, 'a thread is read only when it has replies not read before, a few per tick; a failed read is tried again, not marked read'); // was: 'a thread is read only when the post left the price or the email blank, and only through the pure extractor');
 ok(strpos($SW, "'thread_error' => \$out['thread_error']") !== false && strpos($SW, "sj_log('replies ' . \$ts . ' failed: '") !== false, 'a failed thread read is written to the status file and the log, never swallowed');
 ok(strpos($SW, "slk_call_form('conversations.replies'") !== false && strpos($SW, "slk_call('conversations.replies'") === false, 'thread replies are requested form-encoded: Slack answers invalid_arguments to a JSON body (live, 22 Sep)');
 ok(strpos($SW, "\$j['desc_by'] = 'slack_out'") !== false, 'a Job Out description is marked as such so the merge keeps it');

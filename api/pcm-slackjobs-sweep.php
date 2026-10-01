@@ -67,22 +67,33 @@ function sj_jobs_locked($fn) {
 }
 
 /* Prices are often typed in the thread ("£60 agreed"), not the post, and so is a
-   missing email ("Email: x@y.com" as a reply, 22 Sep). Only read a thread when the
-   post itself left one of those blank. */
+   missing email ("Email: x@y.com" as a reply, 22 Sep). 1 Oct 2026: and corrections -
+   a workflow's post cannot be edited, so "Address: ..." / "Postcode: ..." / "Contact
+   number: ..." typed as replies are taken too. A thread is read when it has replies
+   the poller has not read yet (its reply count grew), a few per tick. */
 function sj_thread_extras($channel, $ts) {
     /* FORM-encoded, not JSON: conversations.replies ignores a JSON body and answers
        invalid_arguments (seen live 22 Sep 2026, 16:30 - the console's red line). */
+    $none = array('price' => 0.0, 'email' => '', 'email_by' => '', 'addr' => '', 'postcode' => '', 'phone' => '', 'error' => '');
     $r = slk_call_form('conversations.replies', array('channel' => $channel, 'ts' => $ts, 'limit' => 50), 8);
     if (empty($r['ok'])) {
         $e = (string)(isset($r['error']) ? $r['error'] : 'unknown');
         sj_log('replies ' . $ts . ' failed: ' . $e);
-        return array('price' => 0.0, 'email' => '', 'error' => $e);
+        $none['error'] = $e; return $none;
     }
-    if (empty($r['messages'])) return array('price' => 0.0, 'email' => '', 'error' => '');
+    if (empty($r['messages'])) return $none;
     $x = sj_replies_extract($r['messages'], $ts);
     $x['error'] = '';
-    sj_log('replies ' . $ts . ': ' . count($r['messages']) . ' msgs, price ' . $x['price'] . ', email ' . ($x['email'] !== '' ? 'found' : 'none'));
+    sj_log('replies ' . $ts . ': ' . count($r['messages']) . ' msgs, price ' . $x['price'] . ', email ' . ($x['email'] !== '' ? 'found' : 'none')
+        . ($x['addr'] !== '' || $x['postcode'] !== '' || $x['phone'] !== '' ? ', corrections' : ''));
     return $x;
+}
+/* The stored jobs by id - what each thread was last read at (thread_seen). */
+function sj_jobs_index() {
+    $d = @json_decode((string)@file_get_contents(SJ_JOBS), true);
+    $ix = array();
+    foreach ((isset($d['jobs']) && is_array($d['jobs'])) ? $d['jobs'] : array() as $j) if (is_array($j) && isset($j['id'])) $ix[(string)$j['id']] = $j;
+    return $ix;
 }
 
 /* Merge a "Job Out" post into its job: the same email if the post carries one, else
@@ -139,18 +150,20 @@ function sj_poll($now = null) {
            it belongs to, which may have arrived in the same read. */
         $msgs = array_values(array_filter((array)(isset($r['messages']) ? $r['messages'] : array()), 'is_array'));
         usort($msgs, function ($a, $b) { return strcmp((string)(isset($a['ts']) ? $a['ts'] : ''), (string)(isset($b['ts']) ? $b['ts'] : '')); });
-        $outs = array();
+        $outs = array(); $known = sj_jobs_index();
         foreach ($msgs as $m) {
             $out['seen']++;
             if (sj_is_out(isset($m['text']) ? $m['text'] : '')) { $outs[] = $m; continue; }
             $job = sj_job($m, $chan, $now);
             if (!$job) continue;
-            if (($job['amount'] <= 0 || $job['email'] === '') && !empty($m['reply_count']) && $threads < SJ_MAX_THREADS) {
+            /* the thread: read when it has replies this poller has not read (a correction, a price, an email) */
+            $rc = (int)(isset($m['reply_count']) ? $m['reply_count'] : 0);
+            $readAt = isset($known[$job['id']]['thread_seen']) ? (int)$known[$job['id']]['thread_seen'] : 0;
+            if ($rc > $readAt && $threads < SJ_MAX_THREADS) {
                 $threads++; $out['threads']++;
                 $x = sj_thread_extras($chan, (string)$m['ts']);
                 if ($x['error'] !== '' && $out['thread_error'] === '') $out['thread_error'] = $x['error'];   // surfaced in the console
-                if ($job['amount'] <= 0 && $x['price'] > 0) { $job['amount'] = $x['price']; $job['amount_by'] = 'slack'; }
-                if ($job['email'] === '' && $x['email'] !== '') $job['email'] = $x['email'];
+                if ($x['error'] === '') $job = sj_apply_thread($job, $x, $rc);   // a failed read leaves thread_seen alone: tried again next tick
             }
             $res = sj_jobs_locked(function ($d) use ($job) {
                 foreach ($d['jobs'] as $i => $old) {
