@@ -132,6 +132,7 @@ function pcm_news_out($db, $tier) {
 
 require_once __DIR__ . '/pcm-programs-lib.php';   // programs check: the list + the matching (top-level scope on purpose)
 require_once __DIR__ . '/pcm-gate.php';            // 29 Sep 2026: the minute poll answered by .htaccess while nothing waits
+require_once __DIR__ . '/pcm-installs-lib.php';    // 1 Oct 2026: installs counted from check-ins (top-level scope on purpose)
 
 $raw = file_get_contents('php://input');
 $in = pcm_json_body($raw);
@@ -178,6 +179,13 @@ if ($action === 'activate') {
 
 if ($action === 'checkin') {
     $upd = pcm_update_info();   // latest app build (ver/url/sha) - sent to every check-in, keyed or not
+    // 1 Oct 2026: count the install, linked or not (pcm-installs-lib.php) - at most one write a day per install, and
+    // never in the way of the answer
+    try {
+        $instLinked = ($key !== '' && isset($db['customers'][$key]));
+        inst_note($machine, (int)($in['ver'] ?? 0), !empty($in['w10']), $instLinked,
+            $instLinked && (($db['customers'][$key]['tier'] ?? 'free') === 'pro'), (string)($_SERVER['REMOTE_ADDR'] ?? ''));
+    } catch (Throwable $e) { }
     if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>true,'tier'=>'free') + $upd + pcm_news_out($db, 'free') + pcm_prog_ver()); // key gone => downgrade
     $c =& $db['customers'][$key];
     $tier = ($c['tier'] ?? 'free');

@@ -270,7 +270,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-09-30"
+      "dateModified": "2026-10-01"
     }
   ]
 }
@@ -707,9 +707,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 30 Sep 2026 &middot; de3a7ce9c0</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 01 Oct 2026 &middot; 6b3b916960</p><script>
 (function () {
-  var P365BUILD = 'de3a7ce9c0';
+  var P365BUILD = '6b3b916960';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -881,6 +881,15 @@
   #p365app .ftabs, .p365ov .ftabs { display:flex; gap:.35rem; margin:.2rem 0 .55rem; flex-wrap:wrap; }
   #p365app .ftabs button, .p365ov .ftabs button { margin:0; padding:.32rem .68rem; font-size: 0.85rem; background:transparent; border:1px solid var(--pline); color:var(--pmut); }
   #p365app .ftabs button.on, .p365ov .ftabs button.on { background:var(--pcyan); border-color:var(--pcyan); color:#06101f; }
+  
+  #p365app .instbars, .p365ov .instbars { display:flex; align-items:flex-end; gap:2px; height:42px; }
+  #p365app .instbars span, .p365ov .instbars span { flex:1; min-width:3px; background:var(--pcyan); border-radius:2px 2px 0 0; opacity:.85; }
+  #p365app .instgrid, .p365ov .instgrid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem 1.5rem; margin-top:.9rem; }
+  #p365app .instgrid h3, .p365ov .instgrid h3 { margin:0 0 .35rem; font-size:1rem; }
+  #p365app .instgrid table, .p365ov .instgrid table { width:100%; border-collapse:collapse; }
+  #p365app .instgrid td, .p365ov .instgrid td { padding:.2rem .3rem; border-bottom:1px solid var(--pline); }
+  #p365app .instgrid td.num, .p365ov .instgrid td.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  @media (max-width:700px) { #p365app .instgrid, .p365ov .instgrid { grid-template-columns:1fr; } }
   #p365app .chip.b, .p365ov .chip.b { color:var(--pbad); border-color:rgba(232,99,126,.4); }
   #p365app .dot, .p365ov .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:.3rem; }
   #p365app .amenu, .p365ov .amenu { position:relative; }
@@ -5806,6 +5815,7 @@
   function nxlPage(site, p) {
     p = String(p || '/');
     if (p === '/') return 'Home page';
+    if (p === '/~dl/pcm/') return '\u2b07 PC Manager download (click)';   // the beacon's download ping (1 Oct 2026)
     if (site === 't365') {
       if (p === '/portal/') return 'Customer portal';
       if (NXL.titles && NXL.titles[p]) return NXL.titles[p];
@@ -6219,6 +6229,8 @@
       h += '<div class="card"><h2>\ud83d\udda5 PC Manager fleet</h2>'
         + '<div class="stats" id="fstats"></div>'
         + '<div class="ftabs" id="ftabs"></div><div class="tblwrap" id="ffleet"><p class="quiet">Loading the fleet\u2026</p></div></div>';
+      // 1 Oct 2026: every install, linked or not, counted from the app's own hourly check-in (api/pcm-installs.php)
+      h += '<div class="card"><h2>\ud83d\udcc8 PC Manager installs</h2><div id="instbox"><p class="quiet">Counting\u2026</p></div></div>';
       h += '<div class="card"><h2>\u26a1 Activate a customer\u2019s PC Manager</h2>'
         + '<label>Customer name</label><input id="an" />'
         + '<label>Email (optional - links their booking login + Direct Debit)</label><input id="ae" type="email" />'
@@ -6266,7 +6278,7 @@
       el.innerHTML = h;
       bindOut();
       nxStaffLayout();
-      loadDiary(); loadFleet();
+      loadDiary(); loadFleet(); loadInstalls();
       loadSosq();
       nxlLoad();
       qboSetup();
@@ -7675,6 +7687,49 @@
       };
     });
   }
+  // ---- 1 Oct 2026: PC Manager installs - every copy checks in hourly, linked or not; this counts them
+  // (api/pcm-installs.php). Default view: everyone NOT on a plan, as the owner asked.
+  var INST = { who: 'free', d: null };
+  function loadInstalls() {
+    var box = document.getElementById('instbox'); if (!box) return;
+    post('/api/pcm-installs.php', { stoken: S.stoken, machine: mid(), who: INST.who })
+      .then(function (d) { INST.d = d; renderInstalls(); })
+      .catch(function () { INST.d = { ok: false }; renderInstalls(); });
+  }
+  function instCountry(c) {
+    if (!c || c === '--') return 'Not known';
+    try { return new Intl.DisplayNames(['en-GB'], { type: 'region' }).of(c) || c; } catch (e) { return c; }
+  }
+  function renderInstalls() {
+    var box = document.getElementById('instbox'); if (!box) return;
+    var d = INST.d;
+    var tabs = [['free', 'Not on a plan'], ['unlinked', 'Never linked to us'], ['plan', 'On a plan'], ['all', 'All']];
+    var h = '<div class="ftabs">' + tabs.map(function (t) { return '<button data-iw="' + t[0] + '"' + (INST.who === t[0] ? ' class="on"' : '') + '>' + t[1] + '</button>'; }).join('') + '</div>';
+    if (!d || !d.ok) {
+      box.innerHTML = h + '<p class="quiet">Couldn\u2019t load the install count - refresh to retry.</p>';
+    } else {
+      var dl = d.downloads || { d7: 0, d30: 0 };
+      h += '<div class="stats">'
+        + '<div class="stat"><b>' + d.total + '</b><span>installs</span></div>'
+        + '<div class="stat g"><b>' + d.active7 + '</b><span>used this week</span></div>'
+        + '<div class="stat"><b>' + d.new7 + '</b><span>new this week</span></div>'
+        + '<div class="stat"><b>' + d.newToday + '</b><span>new today</span></div>'
+        + '<div class="stat"><b>' + dl.d7 + '</b><span>download clicks this week</span></div></div>';
+      var max = 1; (d.daily || []).forEach(function (x) { if (x.n > max) max = x.n; });
+      h += '<p class="quiet" style="margin:.7rem 0 .3rem">New installs, last 30 days</p><div class="instbars">'
+        + (d.daily || []).map(function (x) { return '<span title="' + esc(x.d) + ': ' + x.n + '" style="height:' + Math.max(2, Math.round(40 * x.n / max)) + 'px"></span>'; }).join('') + '</div>';
+      h += '<div class="instgrid"><div><h3>Countries</h3>'
+        + ((d.countries || []).length ? '<table>' + d.countries.map(function (c) { return '<tr><td>' + esc(instCountry(c.k)) + '</td><td class="num"><b>' + c.n + '</b></td><td class="num quiet">' + c.a7 + ' this week</td></tr>'; }).join('') + '</table>' : '<p class="quiet">None yet</p>')
+        + '</div><div><h3>Versions</h3>'
+        + ((d.versions || []).length ? '<table>' + d.versions.map(function (v) { return '<tr><td>v' + v.k + '</td><td class="num"><b>' + v.n + '</b></td></tr>'; }).join('') + '</table>' : '<p class="quiet">None yet</p>')
+        + '<p class="quiet" style="margin:.6rem 0 0">On Windows 10: <b>' + d.w10 + '</b> of ' + d.total + '</p>'
+        + '<p class="quiet" style="margin:.2rem 0 0">Every install: ' + d.unlinked + ' never linked \u00b7 ' + d.linked + ' linked but free \u00b7 ' + d.plan + ' on a plan</p>'
+        + '<p class="quiet" style="margin:.2rem 0 0">Download clicks, 30 days: <b>' + dl.d30 + '</b></p></div></div>';
+      h += '<p class="quiet" style="font-size:.9rem;margin:.7rem 0 0">Counted from the app\u2019s own hourly check-in' + (d.since ? ' since ' + esc(d.since) : '') + '. Counting began on 1 Oct 2026, so copies already in use show up as \u201cnew\u201d the first time they start after that. A download click is a click on a download button (the live view, each visitor once a day) - not every click becomes an install. Countries come from the internet connection at check-in; no names or addresses are kept.</p>';
+      box.innerHTML = h;
+    }
+    Array.prototype.forEach.call(box.querySelectorAll('[data-iw]'), function (b) { b.onclick = function () { INST.who = b.getAttribute('data-iw'); loadInstalls(); }; });
+  }
   function loadFleet() {
     post(BK, { action: 'stafffleet', stoken: S.stoken, machine: mid() }).then(function (d) {
       var fv = document.getElementById('ffleet'); if (!fv) return;
@@ -8205,6 +8260,6 @@
     });
   })();
   </script>
-  <script>(function(){try{if(navigator.doNotTrack==="1")return;if(/bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit/i.test(navigator.userAgent))return;try{if(localStorage.getItem("p365staffdev")||/"staff":true|"back":/.test((localStorage.getItem("p365")||"")+(sessionStorage.getItem("p365s")||"")))return;}catch(e){}var u=navigator.userAgentData,b={site:"t365",path:location.pathname,ref:(function(){try{return new URL(document.referrer).hostname}catch(e){return""}})(),em:/utm_medium=e-?mail|utm_source=(e-?mail|newsletter|hubspot)/i.test(location.search)?1:0,t:navigator.maxTouchPoints||0,sw:(screen&&screen.width)||0,dk:(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?1:0,lg:String(navigator.language||"").slice(0,12)},sent=false;if(u&&typeof u.mobile==="boolean")b.mb=u.mobile?1:0;var go=function(){if(sent)return;sent=true;try{fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(b),keepalive:true});}catch(e){}};if(u&&u.getHighEntropyValues&&/Windows/.test(navigator.userAgent)){u.getHighEntropyValues(["platformVersion"]).then(function(h){b.pv=String((h&&h.platformVersion)||"").slice(0,12);go();},go);setTimeout(go,400);}else go();}catch(e){}})();</script>
+  <script>(function(){try{if(navigator.doNotTrack==="1")return;if(/bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit/i.test(navigator.userAgent))return;try{if(localStorage.getItem("p365staffdev")||/"staff":true|"back":/.test((localStorage.getItem("p365")||"")+(sessionStorage.getItem("p365s")||"")))return;}catch(e){}var u=navigator.userAgentData,b={site:"t365",path:location.pathname,ref:(function(){try{return new URL(document.referrer).hostname}catch(e){return""}})(),em:/utm_medium=e-?mail|utm_source=(e-?mail|newsletter|hubspot)/i.test(location.search)?1:0,t:navigator.maxTouchPoints||0,sw:(screen&&screen.width)||0,dk:(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?1:0,lg:String(navigator.language||"").slice(0,12)},sent=false;if(u&&typeof u.mobile==="boolean")b.mb=u.mobile?1:0;var go=function(){if(sent)return;sent=true;try{fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(b),keepalive:true});}catch(e){}};if(u&&u.getHighEntropyValues&&/Windows/.test(navigator.userAgent)){u.getHighEntropyValues(["platformVersion"]).then(function(h){b.pv=String((h&&h.platformVersion)||"").slice(0,12);go();},go);setTimeout(go,400);}else go();document.addEventListener("click",function(ev){try{var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");if(!a||!/365-pc-manager-setup[^\/?#]*\.exe([?#]|$)/i.test(a.getAttribute("href")||""))return;var d=JSON.parse(JSON.stringify(b));d.path="/~dl/pcm/";d.ref=location.hostname;d.em=0;fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(d),keepalive:true});}catch(e){}},true);}catch(e){}})();</script>
 </body>
 </html>

@@ -57,6 +57,7 @@ jobs:
         safe-browsing-proxy.js
         visitors-live-worker.js
         street-manager-worker.js
+        slack-jobs-worker.js
         **/*.test.mjs
         **/*.test.php
         LICENSE*

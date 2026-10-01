@@ -1037,6 +1037,12 @@ VIS_BEACON = "" if not VISITORS_WORKER else (
     'lg:String(navigator.language||"").slice(0,12)},sent=false;if(u&&typeof u.mobile==="boolean")b.mb=u.mobile?1:0;'
     'var go=function(){if(sent)return;sent=true;try{fetch("' + VISITORS_WORKER + '/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(b),keepalive:true});}catch(e){}};'
     'if(u&&u.getHighEntropyValues&&/Windows/.test(navigator.userAgent)){u.getHighEntropyValues(["platformVersion"]).then(function(h){b.pv=String((h&&h.platformVersion)||"").slice(0,12);go();},go);setTimeout(go,400);}else go();'
+    # 1 Oct 2026: a click on a 365 PC Manager download (the installer .exe, any page) is one more ping, to the page
+    # "/~dl/pcm/", so the live view and its statistics count download clicks by country and device like any page
+    'document.addEventListener("click",function(ev){try{var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");'
+    'if(!a||!/365-pc-manager-setup[^\\/?#]*\\.exe([?#]|$)/i.test(a.getAttribute("href")||""))return;'
+    'var d=JSON.parse(JSON.stringify(b));d.path="/~dl/pcm/";d.ref=location.hostname;d.em=0;'
+    'fetch("' + VISITORS_WORKER + '/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(d),keepalive:true});}catch(e){}},true);'
     '}catch(e){}})();</script>\n')
 
 
