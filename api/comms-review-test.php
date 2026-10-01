@@ -153,5 +153,31 @@ check(strpos($lib, "\$out['names'] = comms_names_refresh(10);") !== false && str
 check(strpos($lib, "'https://rest.textmagic.com/api/v2/contacts/phone/' . preg_replace('/\\D/', '', \$e164)") !== false, 'Textmagic is asked by number');
 check(strpos((string)file_get_contents(__DIR__ . '/pcm-slack-lib.php'), "array('thread_ts' => (string)\$thread)") !== false, 'a recording can go under its own Slack line');
 
+echo "H  Slack and the portal share each message: notes, ticks, names (1 Oct 2026, late)\n";
+check(comms_is_phoneish('447581166044') && comms_is_phoneish('+44 7581 166044') && !comms_is_phoneish('Ann Example') && !comms_is_phoneish('Flat 3'), 'a "name" that is only a number is spotted');
+check(comms_name_for('+447581166044', array('status' => 'NO_MATCH'), array('+447581166044' => array('name' => '447581166044', 'src' => 'textmagic'))) === array('', ''), 'a Textmagic contact saved under its own number shows as just the number (owner screenshot, 1 Oct)');
+check(comms_name_for('+447581166044', array('status' => 'NO_MATCH', 'tm_name' => '+447581166044'), array()) === array('', ''), '...and the same for a number-only name that came with the text');
+check(comms_staff_name('steve@365techies.co.uk') === 'Steve' && comms_staff_name('david@365techies.co.uk') === 'David' && comms_staff_name('info@365techies.co.uk') === 'David' && comms_staff_name('') === 'Staff', 'portal notes are signed with the first name of the staff email');
+check(comms_post_kind(":telephone_receiver: Voicemail from +447700900180\nListen") === 'voicemail' && comms_post_kind(":speech_balloon: Text from +447700900181 (not a number we hold): hi") === 'sms_in' && comms_post_kind(':white_check_mark: Booking confirmed') === '', 'Slack posts are recognised as a voicemail or a text');
+$itn = array(
+    array('id' => 't1', 'type' => 'sms_in', 'number' => '+447700900190', 'at' => '2026-10-01T09:00:00+00:00', 'body' => 'Hi', 'handled' => false, 'match' => array(),
+          'notes' => array(array('by' => 'David', 'src' => 'slack', 'at' => '2026-10-01T09:10:00+00:00', 'text' => 'I will ring her'))),
+    array('id' => 't2', 'type' => 'sms_out', 'number' => '+447700900190', 'at' => '2026-10-01T09:20:00+00:00', 'body' => 'Calling now', 'handled' => true, 'match' => array()),
+    array('id' => 't3', 'type' => 'sms_in', 'number' => '+447700900190', 'at' => '2026-10-01T09:30:00+00:00', 'body' => 'Thanks', 'handled' => false, 'match' => array(),
+          'notes' => array(array('by' => 'Steve', 'src' => 'portal', 'at' => '2026-10-01T09:35:00+00:00', 'text' => 'Booked for Tuesday'))),
+    array('id' => 'v9', 'type' => 'voicemail', 'number' => '+447700900191', 'at' => '2026-10-01T08:00:00+00:00', 'audio' => '', 'handled' => false, 'match' => array(),
+          'notes' => array(array('by' => 'Steve', 'src' => 'portal', 'at' => '2026-10-01T08:30:00+00:00', 'text' => 'No answer, try later'))),
+);
+$bn = comms_board($itn, array(), 'k', strtotime('2026-10-01T10:00:00Z'));
+$tc = $bn['texts'][0];
+check($tc['note_id'] === 't3' && count($tc['notes']) === 2 && $tc['notes'][0]['by'] === 'David' && $tc['notes'][0]['src'] === 'slack' && $tc['notes'][1]['text'] === 'Booked for Tuesday',
+    "a conversation shows every item's notes in order, and a new note goes on its latest text", json_encode($tc));
+check($bn['vms'][0]['note_id'] === 'v9' && $bn['vms'][0]['notes'][0]['text'] === 'No answer, try later', 'a voicemail carries its own notes');
+$lib2 = (string)file_get_contents(__DIR__ . '/comms-lib.php');
+check(strpos($lib2, "\$out['slack'] = comms_slack_sync(12);") !== false, 'each sweep links posts, brings thread replies back as notes and takes ticks as done');
+check(strpos($lib2, "if ((string)(\$m['user'] ?? '') === COMMS_BOT_USER || !empty(\$m['bot_id'])) continue;") !== false, "the app's own thread replies (recordings, portal notes) never come back as notes");
+$api2 = (string)file_get_contents(__DIR__ . '/comms-api.php');
+check(strpos($api2, "\$do === 'note'") !== false && strpos($api2, 'comms_add_note($id') !== false && strpos($api2, 'comms_slack_tick($it[\'slack_ts\'])') !== false, 'the card can add a note, and Done ticks the Slack post');
+
 echo "\n" . ($fails ? "comms-review-test: $fails FAILED\n" : "comms-review-test: all passed\n");
 exit($fails ? 1 : 0);

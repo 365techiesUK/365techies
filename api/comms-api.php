@@ -12,6 +12,8 @@
  *   do=check  -> runs the comms sweep now (new texts from Textmagic, new voicemails from the mailbox), then the list
  *   do=reply  {n, text} -> a text from the 365 Techies number (comms_send_sms: marks that caller's texts and voicemails
  *                answered), then the list
+ *   do=note   {id, text} -> a note into that item's Slack thread (#365-job-tracker) and onto the item; replies typed in the
+ *                thread come back as notes (comms_slack_sync, every sweep)
  *   do=done   {id} one voicemail | {n, kind:'text'} that number's texts | {n} everything from it -> marked handled
  * GET ?a=<recording>&e=<expiry>&s=<signature> -> the recording itself (comms_stream_audio), for the card's players.
  *   The link is signed with the server-only admin secret and lasts 3 hours, so an <audio> element needs no cookie.
@@ -60,6 +62,16 @@ if ($do === 'check') {
         if (!empty($r['ok'])) $note = 'Text sent' . (!empty($r['dry']) ? ' (dry run)' : '') . '.';
         else $err = 'The text did not send: ' . (string)($r['error'] ?? 'unknown') . '.';
     }
+} elseif ($do === 'note') {
+    // 1 Oct 2026 (late): a note on a text or voicemail - into its Slack thread in #365-job-tracker, and kept here
+    $id = preg_replace('/[^A-Za-z0-9\-]/', '', (string)($in['id'] ?? ''));
+    $tokS = preg_replace('/[^a-f0-9]/', '', (string)($in['stoken'] ?? ''));
+    $dbS = @json_decode((string)@file_get_contents(__DIR__ . '/pcm-data.json'), true);
+    $by = comms_staff_name((string)($dbS['staff'][$tokS]['email'] ?? ''));
+    $rn = comms_add_note($id, (string)($in['text'] ?? ''), $by);
+    if (!empty($rn['ok']) && empty($rn['error'])) $note = 'Note added - it is in the Slack thread too.';
+    elseif (!empty($rn['ok'])) $err = $rn['error'];
+    else $err = $rn['error'];
 } elseif ($do === 'done') {
     // one voicemail ({id}), or a caller's texts ({n, kind: 'text'}), or everything from a number ({n})
     $id = preg_replace('/[^A-Za-z0-9\-]/', '', (string)($in['id'] ?? ''));
@@ -67,6 +79,17 @@ if ($do === 'check') {
     if ($id !== '') { $k = comms_set_handled($id, true, 'portal'); $k = is_array($k) ? !empty($k[1]) : (bool)$k; }
     else $k = $n !== '' ? comms_handle_number($n, 'portal', ($in['kind'] ?? '') === 'text' ? array('sms_in') : array('sms_in', 'voicemail')) : 0;
     $note = $k ? 'Marked done.' : 'Nothing left to mark.';
+    // and a tick on each one's Slack post, so the channel shows it is dealt with (best effort, up to 8)
+    if ($k) {
+        list($okT, $its) = comms_locked(function ($d) { return array('__result' => $d['items']); });
+        $ticks = 0;
+        foreach ($okT ? $its : array() as $it) {
+            if ($ticks >= 8 || empty($it['slack_ts']) || empty($it['handled']) || ($it['handled_by'] ?? '') !== 'portal') continue;
+            if ($id !== '' ? $it['id'] !== $id : $it['number'] !== $n) continue;
+            if (strtotime((string)($it['handled_at'] ?? '')) < time() - 120) continue;
+            comms_slack_tick($it['slack_ts']); $ticks++;
+        }
+    }
 }
 list($ok, $snap) = comms_locked(function ($d) { return array('__result' => array('items' => $d['items'], 'names' => $d['checkpoints']['names'] ?? array())); });
 if (!$ok) ca_out(array('ok' => false, 'error' => 'busy'));

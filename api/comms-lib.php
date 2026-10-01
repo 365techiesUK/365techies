@@ -695,6 +695,7 @@ function comms_tm_contact_name($e164) {   // -> array(answered, name); answered=
     if (!is_array($j)) return array(false, '');
     $nm = trim(preg_replace('/\s+/', ' ', (string)($j['firstName'] ?? '') . ' ' . (string)($j['lastName'] ?? '')));
     if ($nm === '' && !empty($j['companyName'])) $nm = (string)$j['companyName'];
+    if (comms_is_phoneish($nm)) $nm = '';   // a contact saved under its own number has no name
     return array(true, mb_substr(trim(preg_replace('/[\x00-\x1F\x7F]+/', ' ', $nm)), 0, 60));
 }
 function comms_names_refresh($limit = 10, $now = null) {
@@ -729,8 +730,8 @@ function comms_names_refresh($limit = 10, $now = null) {
 function comms_name_for($n, $match, $names) {
     $m = is_array($match) ? $match : array();
     if (($m['status'] ?? '') === 'MATCH') return array((string)$m['name'], 'customer');
-    if (is_array($names) && isset($names[$n]['name']) && (string)$names[$n]['name'] !== '') return array((string)$names[$n]['name'], (string)($names[$n]['src'] ?? 'textmagic'));
-    if (!empty($m['tm_name'])) return array((string)$m['tm_name'], 'textmagic');
+    if (is_array($names) && isset($names[$n]['name']) && (string)$names[$n]['name'] !== '' && !comms_is_phoneish($names[$n]['name'])) return array((string)$names[$n]['name'], (string)($names[$n]['src'] ?? 'textmagic'));
+    if (!empty($m['tm_name']) && !comms_is_phoneish($m['tm_name'])) return array((string)$m['tm_name'], 'textmagic');
     if (!empty($m['vm_name'])) return array((string)$m['vm_name'], 'voipfone');
     if (($m['status'] ?? '') === 'MULTIPLE') return array('Possibly ' . (string)$m['name'], 'possible');
     return array('', '');
@@ -741,6 +742,11 @@ function comms_name_for($n, $match, $names) {
    voicemail, newest first, each on its own with the caller's name and number. Bodies trimmed; no audio file names
    leave, only signed links. open_texts = numbers with a text to answer; open_vms = voicemails not done; open = numbers
    with anything to answer (the Today tile). */
+function comms_notes_out($notes) {   // the last 4, trimmed, for the card
+    $o = array();
+    foreach (array_slice((array)$notes, -4) as $nt) $o[] = array('by' => (string)($nt['by'] ?? ''), 'src' => (string)($nt['src'] ?? ''), 'at' => (string)($nt['at'] ?? ''), 'text' => mb_substr((string)($nt['text'] ?? ''), 0, 500));
+    return $o;
+}
 function comms_board($items, $names, $key, $now = null, $limit = 30) {
     $now = $now === null ? time() : (int)$now;
     $mob = function ($n) { return (bool)preg_match('/^\+447\d{9}$/', (string)$n); };
@@ -762,7 +768,11 @@ function comms_board($items, $names, $key, $now = null, $limit = 30) {
         $rows = array();
         foreach (array_slice($th, -4) as $it) $rows[] = array('id' => (string)($it['id'] ?? ''), 'type' => (string)$it['type'], 'at' => (string)($it['at'] ?? ''),
             'body' => mb_substr((string)($it['body'] ?? ''), 0, 400), 'done' => !empty($it['handled']), 'review' => ($it['tag'] ?? '') === 'review');
-        $texts[] = array('n' => (string)$n, 'who' => $who, 'src' => $src, 'mobile' => $mob($n), 'open' => $open, 'last' => (string)($th[count($th) - 1]['at'] ?? ''), 'items' => $rows);
+        $notes = array(); $noteId = '';
+        foreach ($th as $it) { foreach ((array)($it['notes'] ?? array()) as $nt) $notes[] = $nt; if ($it['type'] === 'sms_in') $noteId = (string)($it['id'] ?? ''); }
+        usort($notes, function ($a, $b) { return strcmp((string)($a['at'] ?? ''), (string)($b['at'] ?? '')); });
+        $texts[] = array('n' => (string)$n, 'who' => $who, 'src' => $src, 'mobile' => $mob($n), 'open' => $open, 'last' => (string)($th[count($th) - 1]['at'] ?? ''), 'items' => $rows,
+            'notes' => comms_notes_out($notes), 'note_id' => $noteId);
     }
     usort($texts, function ($a, $b) { return strcmp($b['last'], $a['last']); });
     usort($vms, function ($a, $b) { return strcmp((string)($b['at'] ?? ''), (string)($a['at'] ?? '')); });
@@ -775,7 +785,8 @@ function comms_board($items, $names, $key, $now = null, $limit = 30) {
         $audio = (string)($it['audio'] ?? '');
         $vout[] = array('id' => (string)($it['id'] ?? ''), 'n' => $n, 'who' => $who, 'src' => $src, 'mobile' => $mob($n), 'at' => (string)($it['at'] ?? ''),
             'dur' => (string)($it['duration'] ?? ''), 'audio' => $audio !== '' ? comms_audio_url($audio, $key, $now) : '',
-            'why' => $audio === '' ? (string)($it['audio_why'] ?? '') : '', 'done' => !empty($it['handled']));
+            'why' => $audio === '' ? (string)($it['audio_why'] ?? '') : '', 'done' => !empty($it['handled']),
+            'notes' => comms_notes_out((array)($it['notes'] ?? array())), 'note_id' => (string)($it['id'] ?? ''));
     }
     return array('texts' => array_slice($texts, 0, $limit), 'vms' => $vout, 'open_texts' => $openTexts, 'open_vms' => $openVms,
         'open' => count($openNums), 'total_texts' => count($texts), 'total_vms' => count($vms));
@@ -831,6 +842,160 @@ function comms_vm_slack_backfill($limit = 8, $now = null) {
     return array('posted' => $posted, 'checked' => count($marks)) + ($err !== '' ? array('error' => $err) : array());
 }
 
+/* ---- 1 Oct 2026 (late): each text and voicemail shared between Slack and the portal ----
+   Owner: "comment on them in the portal and it will appear in the same post in Slack ... then we've got history of it
+   in Slack and we've got it in the portal as well." Each item learns its #365-job-tracker post (slack_ts: same kind,
+   same number, posted within 5 minutes of when the item was stored). A note typed in the portal goes into that post's
+   thread; replies typed in the thread come back as notes; Done in the portal puts a tick on the post; a tick on the
+   post marks it done in the portal. Notes: item['notes'] = [{by, src: portal|slack, at, text, ts}]. */
+define('COMMS_BOT_USER', 'U0BJCHP9G3W');   // the 365 techies app's own Slack user (its replies are recordings or portal notes)
+function comms_is_phoneish($s) { return (bool)preg_match('/^[\s+()\-.\d]{6,}$/', trim((string)$s)); }
+function comms_slack_people() { return array('UBQSJND44' => 'Steve', 'UBQ7UE0G4' => 'David'); }   // fallback when Slack will not say
+function comms_staff_name($email) {   // steve@365techies.co.uk -> Steve; info@ (David's Slack account) -> David
+    $l = strtolower((string)strstr((string)$email . '@', '@', true));
+    if ($l === '' ) return 'Staff';
+    if ($l === 'info') return 'David';
+    return ucfirst(preg_replace('/[^a-z].*$/', '', $l)) ?: 'Staff';
+}
+function comms_slack_lib() {
+    if (!function_exists('slk_call_form')) @include_once __DIR__ . '/pcm-slack-lib.php';
+    return function_exists('slk_call_form') && function_exists('slk_call');
+}
+/* Who wrote a Slack reply: users.info (cached), else the team list, else "Slack". */
+function comms_slack_name($uid, &$cache) {
+    $uid = (string)$uid;
+    if ($uid === '') return 'Slack';
+    if (isset($cache[$uid])) return $cache[$uid];
+    $people = comms_slack_people(); $nm = '';
+    $r = slk_call_form('users.info', array('user' => $uid), 5);
+    if (!empty($r['ok']) && !empty($r['user'])) {
+        $pr = $r['user']['profile'] ?? array();
+        $nm = trim((string)($pr['display_name'] ?? '')) ?: trim((string)($pr['real_name'] ?? '')) ?: trim((string)($r['user']['real_name'] ?? ''));
+        if (strtolower($nm) === 'info') $nm = '';
+    }
+    if ($nm === '' && isset($people[$uid])) $nm = $people[$uid];
+    return $cache[$uid] = ($nm !== '' ? mb_substr($nm, 0, 40) : 'Slack');
+}
+/* Which post is this item's: "Text from" / "Voicemail from" + the number (or "unknown caller"), nearest in time. */
+function comms_post_kind($text) {
+    $t = (string)$text;
+    if (strpos($t, 'Voicemail from ') !== false) return 'voicemail';
+    if (strpos($t, 'Text from ') !== false) return 'sms_in';
+    return '';
+}
+function comms_slack_sync($maxReplies = 12, $now = null) {
+    $now = $now === null ? time() : (int)$now;
+    if (!comms_slack_lib()) return array('error' => 'no Slack library');
+    $posts = array(); $cursor = '';
+    for ($pg = 0; $pg < 2; $pg++) {
+        $args = array('channel' => COMMS_SLACK_CHANNEL, 'oldest' => (string)($now - 8 * 86400), 'limit' => 200);
+        if ($cursor !== '') $args['cursor'] = $cursor;
+        $r = slk_call_form('conversations.history', $args, 10);
+        if (empty($r['ok'])) return array('error' => (string)($r['error'] ?? 'unknown'));
+        foreach ((array)($r['messages'] ?? array()) as $m) if (comms_post_kind($m['text'] ?? '') !== '') $posts[(string)$m['ts']] = $m;
+        $cursor = (string)($r['response_metadata']['next_cursor'] ?? '');
+        if ($cursor === '' || empty($r['has_more'])) break;
+    }
+    list($ok, $snap) = comms_locked(function ($d) { return array('__result' => array('items' => $d['items'], 'users' => $d['checkpoints']['slack_users'] ?? array())); });
+    if (!$ok) return array('error' => 'busy');
+    $users = is_array($snap['users']) ? $snap['users'] : array();
+    $used = array(); $set = array(); $fetch = array();
+    foreach ((array)$snap['items'] as $it) if (!empty($it['slack_ts'])) $used[(string)$it['slack_ts']] = 1;
+    foreach ((array)$snap['items'] as $it) {
+        $type = (string)($it['type'] ?? '');
+        if ($type !== 'sms_in' && $type !== 'voicemail') continue;
+        $ts = (string)($it['slack_ts'] ?? '');
+        if ($ts === '') {   // learn the post
+            $st = strtotime((string)($it['stored_at'] ?? ''));
+            if ($st === false || $now - $st > 8 * 86400) continue;
+            $num = (string)($it['number'] ?? ''); $best = ''; $gap = 301;
+            foreach ($posts as $pts => $p) {
+                if (isset($used[$pts]) || comms_post_kind($p['text'] ?? '') !== $type) continue;
+                $t = (string)($p['text'] ?? '');
+                if (strpos($t, $num) === false && !($num === 'unknown' && strpos($t, 'unknown caller') !== false)) continue;
+                $g = abs((float)$pts - $st);
+                if ($g < $gap) { $gap = $g; $best = $pts; }
+            }
+            if ($best === '') continue;
+            $used[$best] = 1; $ts = $best; $set[$it['id']]['slack_ts'] = $ts;
+        }
+        if (!isset($posts[$ts])) continue;
+        $p = $posts[$ts];
+        // a tick on the post (by a person) = done here too
+        if (empty($it['handled'])) foreach ((array)($p['reactions'] ?? array()) as $rx) {
+            if (!in_array((string)($rx['name'] ?? ''), array('white_check_mark', 'heavy_check_mark', 'ballot_box_with_check'), true)) continue;
+            $by = array_diff((array)($rx['users'] ?? array()), array(COMMS_BOT_USER));
+            if ($by) { $set[$it['id']]['handled'] = true; $set[$it['id']]['handled_by'] = 'Slack (' . comms_slack_name(reset($by), $users) . ')'; $set[$it['id']]['handled_at'] = gmdate('c', $now); break; }
+        }
+        $rc = (int)($p['reply_count'] ?? 0);
+        if ($rc > (int)($it['slack_rc'] ?? 0) && count($fetch) < $maxReplies) $fetch[$it['id']] = array($ts, $rc, $it['notes'] ?? array());
+    }
+    $added = 0;
+    foreach ($fetch as $id => $f) {
+        list($ts, $rc, $have) = $f;
+        $r = slk_call_form('conversations.replies', array('channel' => COMMS_SLACK_CHANNEL, 'ts' => $ts, 'limit' => 50), 10);
+        if (empty($r['ok'])) continue;
+        $seen = array(); foreach ((array)$have as $nt) if (!empty($nt['ts'])) $seen[(string)$nt['ts']] = 1;
+        $notes = (array)$have;
+        foreach ((array)($r['messages'] ?? array()) as $m) {
+            $mts = (string)($m['ts'] ?? '');
+            if ($mts === '' || $mts === $ts || isset($seen[$mts])) continue;
+            if ((string)($m['user'] ?? '') === COMMS_BOT_USER || !empty($m['bot_id'])) continue;   // the app's own: recordings, portal notes
+            $txt = function_exists('slk_plain') ? slk_plain((string)($m['text'] ?? '')) : (string)($m['text'] ?? '');
+            if ($txt === '' && !empty($m['files'])) $txt = '(a file)';
+            if ($txt === '') continue;
+            $notes[] = array('by' => comms_slack_name((string)($m['user'] ?? ''), $users), 'src' => 'slack', 'at' => gmdate('c', (int)(float)$mts), 'text' => mb_substr($txt, 0, 1000), 'ts' => $mts);
+            $added++;
+        }
+        $set[$id]['notes'] = array_slice($notes, -30);
+        $set[$id]['slack_rc'] = $rc;
+    }
+    if ($set || $users !== ($snap['users'] ?? array())) comms_locked(function ($d) use ($set, $users) {
+        foreach ($d['items'] as $i => $x) if (isset($set[$x['id']])) foreach ($set[$x['id']] as $k => $v) $d['items'][$i][$k] = $v;
+        $d['checkpoints']['slack_users'] = $users;
+        return array('__data' => $d, '__result' => true);
+    });
+    return array('linked' => count(array_filter($set, function ($v) { return isset($v['slack_ts']); })), 'notes' => $added,
+        'ticked' => count(array_filter($set, function ($v) { return !empty($v['handled']); })));
+}
+/* A note from the portal: into the item's Slack thread (a new post if it never had one) and onto the item. */
+function comms_add_note($id, $text, $by, $now = null) {
+    $now = $now === null ? time() : (int)$now;
+    $text = trim(preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', (string)$text));
+    if ($text === '') return array('ok' => false, 'error' => 'Type the note first.');
+    $text = mb_substr($text, 0, 1000);
+    $find = function () use ($id) { list($ok, $it) = comms_locked(function ($d) use ($id) { foreach ($d['items'] as $x) if ($x['id'] === $id) return array('__result' => $x); return array('__result' => null); }); return $ok ? $it : null; };
+    $it = $find();
+    if (!$it) return array('ok' => false, 'error' => 'That message has gone - reload.');
+    if (!comms_slack_lib()) return array('ok' => false, 'error' => 'Slack is not set up on the server.');
+    if (empty($it['slack_ts'])) { comms_slack_sync(0, $now); $it = $find(); }
+    $esc = function ($s) { return str_replace(array('&', '<', '>'), array('&amp;', '&lt;', '&gt;'), (string)$s); };
+    $who = (($it['match']['status'] ?? '') === 'MATCH' ? $it['match']['name'] . ' (' . $it['number'] . ')' : (string)$it['number']);
+    $body = "\xF0\x9F\x93\x9D *" . $esc($by) . "* (portal): " . $esc($text);
+    $args = array('channel' => COMMS_SLACK_CHANNEL, 'text' => $body, 'unfurl_links' => false);
+    $newPost = empty($it['slack_ts']);
+    if ($newPost) $args['text'] = "\xF0\x9F\x93\x9D Note on the " . ($it['type'] === 'voicemail' ? 'voicemail' : 'text') . ' from ' . $esc($who) . ' - *' . $esc($by) . '*: ' . $esc($text);
+    else $args['thread_ts'] = (string)$it['slack_ts'];
+    $r = slk_call('chat.postMessage', $args, 8);
+    $ts = !empty($r['ok']) ? (string)($r['ts'] ?? '') : '';
+    $note = array('by' => (string)$by, 'src' => 'portal', 'at' => gmdate('c', $now), 'text' => $text, 'ts' => $ts);
+    comms_locked(function ($d) use ($id, $note, $newPost, $ts) {
+        foreach ($d['items'] as $i => $x) if ($x['id'] === $id) {
+            $n = isset($x['notes']) && is_array($x['notes']) ? $x['notes'] : array();
+            $n[] = $note; $d['items'][$i]['notes'] = array_slice($n, -30);
+            if ($newPost && $ts !== '') { $d['items'][$i]['slack_ts'] = $ts; $d['items'][$i]['slack_rc'] = 0; }
+        }
+        return array('__data' => $d, '__result' => true);
+    });
+    return array('ok' => true, 'slack' => $ts !== '', 'error' => $ts !== '' ? '' : 'Saved here, but Slack did not take it (' . (string)($r['error'] ?? 'no answer') . ').');
+}
+/* Done in the portal -> a tick on the Slack post (best effort: needs the reactions:write permission). */
+function comms_slack_tick($ts) {
+    if ((string)$ts === '' || !comms_slack_lib()) return false;
+    $r = slk_call_form('reactions.add', array('channel' => COMMS_SLACK_CHANNEL, 'timestamp' => (string)$ts, 'name' => 'white_check_mark'), 5);
+    return !empty($r['ok']) || (($r['error'] ?? '') === 'already_reacted');
+}
+
 function comms_sweep() {
     $out = array();
     $out['sms'] = comms_sms_poll();
@@ -840,5 +1005,6 @@ function comms_sweep() {
     // 1 Oct 2026 (late): names from our records / Textmagic, and recordings under tonight's Slack lines
     $out['names'] = comms_names_refresh(10);
     $out['vm_slack'] = comms_vm_slack_backfill(8);
+    $out['slack'] = comms_slack_sync(12);   // posts <-> items, thread replies -> notes, ticks -> done
     return $out;
 }
