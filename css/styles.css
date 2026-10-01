@@ -2079,6 +2079,15 @@ body.lf-fullscreen .a11y, body.lf-fullscreen .mobile-cta-bar { display: none !im
   .a11y__togglelabel { display: none; }
   .a11y__panel { left: auto; right: 0; }
 }
+/* 2 Oct 2026 (owner): with the phone menu open, the bottom-right button sat on the menu's own arrows (the Get Help
+   chevron at 390x844, another row on other heights). The dock it normally clears is hidden then, so it drops to the
+   bottom of the dimmed strip LEFT of the menu panel (100vw - min(86vw, 380px): 55px at 390, 50 at 360), centred in
+   it, and its panel opens rightwards over the menu. At 320 the strip is 45px, so it overlaps only the menu's 2rem
+   left padding. It stays on screen: it is an accessibility control. Tablets are unaffected (left-hand pill). */
+@media (max-width: 767px) {
+  body.menu-open .a11y { right: auto; left: max(2px, calc((100vw - min(86vw, 380px) - 48px) / 2)); bottom: calc(14px + env(safe-area-inset-bottom)); }
+  body.menu-open .a11y__panel { left: 0; right: auto; }
+}
 .a11y__title { margin: 0 0 0.2rem; color: var(--muted); }
 .a11y__rowsize { display: flex; align-items: center; justify-content: space-between; color: var(--ink); font-size: 0.95rem; }
 .a11y__btns { display: inline-flex; gap: 0.4rem; }
