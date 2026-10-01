@@ -707,9 +707,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 01 Oct 2026 &middot; 9ce84425e1</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 01 Oct 2026 &middot; cc8a05d81c</p><script>
 (function () {
-  var P365BUILD = '9ce84425e1';
+  var P365BUILD = 'cc8a05d81c';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -1623,6 +1623,33 @@
   #p365app button.nx-kpi.nx-kpi--on, .p365ov button.nx-kpi.nx-kpi--on { border-color:#24406b; }
   #p365app #kSos.nx-kpi--on, .p365ov #kSos.nx-kpi--on { border-color:rgba(232,99,126,.6); }
   #p365app #kSos.nx-kpi--on b, .p365ov #kSos.nx-kpi--on b { color:#f19aab; }
+  #p365app #kPcs.nx-kpi--on, #p365app #kMsg.nx-kpi--on, .p365ov #kPcs.nx-kpi--on, .p365ov #kMsg.nx-kpi--on { border-color:#4d3f1f; }
+  #p365app #kMsg.nx-kpi--on b, .p365ov #kMsg.nx-kpi--on b { color:#f0c65a; }
+  
+  #p365app .cm-bar, .p365ov .cm-bar { display:flex; align-items:center; flex-wrap:wrap; gap:.4rem .8rem; margin:-.1rem 0 .5rem; }
+  #p365app .cm-note, .p365ov .cm-note { font-size:.95rem; color:var(--psoft); }
+  #p365app .cm-note--bad, .p365ov .cm-note--bad { color:#ffb3a4; }
+  #p365app .cm-open, .p365ov .cm-open { margin-left:.4rem; font-size:.85rem; font-weight:600; color:#f0c65a; }
+  #p365app .cm-open--ok, .p365ov .cm-open--ok { color:var(--pgood); }
+  #p365app .cm-th, .p365ov .cm-th { border-top:1px solid var(--pline); padding:.75rem 0 .8rem; }
+  #p365app .cm-th:first-child, .p365ov .cm-th:first-child { border-top:0; padding-top:.15rem; }
+  #p365app .cm-hd, .p365ov .cm-hd { display:flex; flex-wrap:wrap; align-items:baseline; gap:.3rem .5rem; font-size:1rem; color:var(--pwhite); }
+  #p365app .cm-num, .p365ov .cm-num { font-family:var(--font-mono, monospace); font-size:.85rem; color:var(--pmut); }
+  #p365app .cm-tag, .p365ov .cm-tag { font-size:.78rem; padding:.1rem .5rem; border-radius:999px; border:1px solid #2a8f5b; color:#9fe7bf; }
+  #p365app .cm-new, .p365ov .cm-new { font-size:.78rem; padding:.1rem .5rem; border-radius:999px; border:1px solid #e3b71d; color:#ffe9a8; }
+  #p365app .cm-t, .p365ov .cm-t { margin-left:auto; font-size:.85rem; color:var(--pmut); white-space:nowrap; }
+  #p365app .cm-it, .p365ov .cm-it { margin:.45rem 0 0; padding:.5rem .7rem; border-radius:10px; background:rgba(255,255,255,.03); border:1px solid rgba(125,170,220,.16); }
+  #p365app .cm-it--vm, .p365ov .cm-it--vm { border-color:rgba(138,93,227,.5); }
+  #p365app .cm-it--out, .p365ov .cm-it--out { margin-left:1.5rem; border-color:rgba(29,151,227,.45); }
+  #p365app .cm-it--done, .p365ov .cm-it--done { opacity:.72; }
+  #p365app .cm-k, .p365ov .cm-k { display:block; font-size:.82rem; color:var(--pmut); }
+  #p365app .cm-it p, .p365ov .cm-it p { margin:.2rem 0 0; font-size:.95rem; line-height:1.45; color:var(--pwhite); overflow-wrap:anywhere; }
+  #p365app .cm-it audio, .p365ov .cm-it audio { display:block; width:100%; max-width:440px; height:40px; margin-top:.35rem; }
+  #p365app .cm-act, .p365ov .cm-act { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:.6rem; }
+  #p365app .cm-act .btn, #p365app .cm-act button, #p365app .cm-rep button, .p365ov .cm-act .btn, .p365ov .cm-act button, .p365ov .cm-rep button { margin:0; min-height:44px; }
+  #p365app .cm-rep, .p365ov .cm-rep { display:grid; gap:.5rem; margin-top:.6rem; }
+  #p365app .cm-rep textarea, .p365ov .cm-rep textarea { width:100%; min-height:5.2rem; padding:.62rem .7rem; border-radius:9px; border:1px solid var(--pline); background:var(--pink); color:var(--pwhite); font:inherit; font-size:1rem; resize:vertical; box-sizing:border-box; }
+  #p365app .cm-rep div, .p365ov .cm-rep div { display:flex; gap:.5rem; flex-wrap:wrap; }
   #p365app #kPcs.nx-kpi--on, .p365ov #kPcs.nx-kpi--on { border-color:#4d3f1f; }
   #p365app #kPcs.nx-kpi--on b, .p365ov #kPcs.nx-kpi--on b { color:#f0c65a; }
   #p365app .nx-today, .p365ov .nx-today { display:grid; grid-template-columns:minmax(0,1.45fr) minmax(0,1fr); gap:1rem; align-items:start; }
@@ -5712,7 +5739,7 @@
     var root = el; if (!root) return;
     nxWhere('Staff area');
     function cardOf(id) { var n = document.getElementById(id); return n ? (n.classList.contains('card') ? n : n.closest('.card')) : null; }
-    var diary = cardOf('dday'), sos = cardOf('sosqcard'), invq = cardOf('invqcard'), worth = cardOf('worthcall'), fleet = cardOf('ffleet'),
+    var diary = cardOf('dday'), sos = cardOf('sosqcard'), invq = cardOf('invqcard'), worth = cardOf('worthcall'), fleet = cardOf('ffleet'), comms = cardOf('cmbox'),
         act = cardOf('ab'), qbo = cardOf('qbosetup'), invp = cardOf('inviteplans'), geo = cardOf('geocard'), quick = cardOf('pcmadm'), live = cardOf('vislive'), lic = null,
         inst = cardOf('instbox');   // 1 Oct 2026: PC Manager installs, under the fleet
     Array.prototype.forEach.call(root.querySelectorAll('.card > h2'), function (h2) { if (/PC Manager licences/.test(h2.textContent)) lic = h2.parentNode; });
@@ -5722,7 +5749,7 @@
     var ltab = bar.querySelector('.nx-stab[data-tab="live"]');
     if (ltab) ltab.innerHTML = '<span class="nx-ldot"></span>Live<span class="nx-lcount" id="nxLiveTabN"></span>';
     var kp = document.createElement('div'); kp.className = 'nx-kpis';
-    kp.innerHTML = [['kVis', 'visits today', 'today'], ['kSos', 'SOS codes waiting', 'today'], ['kPcs', 'computers worth a call', 'today'], ['kInv', 'jobs in the last 30 days', 'invoices']]
+    kp.innerHTML = [['kVis', 'visits today', 'today'], ['kSos', 'SOS codes waiting', 'today'], ['kMsg', 'calls & texts to answer', 'today'], ['kInv', 'jobs in the last 30 days', 'invoices']]
       .map(function (k) { return '<button type="button" class="nx-kpi" id="' + k[0] + '" data-go="' + k[2] + '"><b>&ndash;</b><span>' + k[1] + '</span></button>'; }).join('');
     var panels = {};
     TABS.forEach(function (x) { var p = document.createElement('section'); p.className = 'nx-panel'; p.setAttribute('data-tab', x[0]); p.setAttribute('aria-label', x[1]); panels[x[0]] = p; });
@@ -5736,8 +5763,9 @@
     grid.appendChild(colA); grid.appendChild(colB);
     panels.today.appendChild(lstrip); panels.today.appendChild(kp); panels.today.appendChild(grid);
     if (diary) colA.appendChild(diary);
-    [sos, worth, live].forEach(function (c) { if (c) colB.appendChild(c); });
+    [sos, comms, live].forEach(function (c) { if (c) colB.appendChild(c); });   // 1 Oct 2026: calls & texts where Worth a call was
     [lic, act].forEach(function (c) { if (c) panels.customers.appendChild(c); });
+    if (worth) panels.computers.appendChild(worth);
     if (fleet) panels.computers.appendChild(fleet);
     if (inst) panels.computers.appendChild(inst);
     if (invq) panels.invoices.appendChild(invq);
@@ -5763,7 +5791,7 @@
       b.onclick = function () {
         var go = b.getAttribute('data-go');
         if (go !== 'today') { show(go); return; }
-        var tg = b.id === 'kSos' ? sos : (b.id === 'kPcs' ? worth : diary);
+        var tg = b.id === 'kSos' ? sos : (b.id === 'kMsg' ? comms : diary);
         if (tg && tg.offsetParent) tg.scrollIntoView({ behavior: 'smooth', block: 'start' });
       };
     });
@@ -6277,6 +6305,11 @@
       h += '<div class="card" id="invqcard" style="border-left:4px solid var(--pwarn)"><h2>\ud83e\uddfe This month\u2019s jobs \u2192 invoices</h2>'
         + '<details class="nx-how"><summary>How this works</summary><p class="quiet" style="margin:.4rem 0 .6rem">Every job from the last 30 days \u2014 the \u201cNew Job In\u201d posts in #sos-jobs-in-out, the console\u2019s \u201cQuote agreed\u201d, and services run through 365 PC Manager for people not on a plan \u2014 and where its invoice stands. Three steps for each: 1 raise the invoice, 2 check the PDF, 3 approve &amp; send \u2014 every row shows the step it is on and the button for it. The service drop-down is your QuickBooks Products &amp; Services list: pick one and its description and list price go on the invoice; a Slack job type that matches a service name does the same by itself. Invoices are raised for you; nothing is sent until you check the PDF and approve it.</p></details>'
         + '<div id="invq"><p class="quiet">Checking QuickBooks\u2026</p></div></div>';
+      /* 1 Oct 2026 (owner): voicemails and texts on Today, in the portal session - no passphrase. api/comms-api.php;
+         the full inbox (history, review texts) stays a console button. */
+      h += '<div class="card" id="cmcard" style="border-left:4px solid var(--pcyan)"><h2>\ud83d\udcde Calls &amp; texts <span class="cm-open" id="cmopen"></span></h2>'
+        + '<div class="cm-bar"><button class="sm ghost" id="cmcheck">Check for new</button><span class="cm-note" id="cmnote" aria-live="polite"></span></div>'
+        + '<div id="cmbox"><p class="quiet">Loading voicemails and texts\u2026</p></div></div>';
       h += '<div class="card" style="border-left:4px solid var(--pwarn)"><h2>\ud83d\udcde Worth a call today</h2>'
         + '<p class="quiet" style="margin:.1rem 0 .6rem">The PCs that could do with a friendly call \u2014 ranked by what needs attention. Proactive care, before they even ring us.</p>'
         + '<div id="worthcall"><p class="quiet">Checking the fleet\u2026</p></div></div>';
@@ -6332,7 +6365,7 @@
       el.innerHTML = h;
       bindOut();
       nxStaffLayout();
-      loadDiary(); loadFleet(); loadInstalls();
+      loadDiary(); loadFleet(); loadInstalls(); cmBind(); loadComms('list');
       loadSosq();
       nxlLoad();
       qboSetup();
@@ -6345,6 +6378,12 @@
         if (!document.getElementById('nxLivePanel')) { clearInterval(visiv); return; }
         if (document.hidden) return;
         nxlLoad();
+      }, 90000);
+      // 1 Oct 2026: Calls & texts, every 90 s while on screen (the cron fills the store every 15 min; Check for new = now)
+      var cmiv = setInterval(function () {
+        if (!document.getElementById('cmcard')) { clearInterval(cmiv); return; }
+        if (document.hidden) return;
+        loadComms('list', null, true);
       }, 90000);
       // keep the inbox fresh while the console is open; the interval dies with the card
       var sqiv = setInterval(function () {
@@ -7744,6 +7783,96 @@
   // ---- 1 Oct 2026: PC Manager installs - every copy checks in hourly, linked or not; this counts them
   // (api/pcm-installs.php). Default view: everyone NOT on a plan, as the owner asked.
   var INST = { who: 'free', d: null };
+  // ---- 1 Oct 2026: Calls & texts - the comms inbox (voicemails + texts) on Today, through api/comms-api.php ----
+  var CM = { d: null, all: false, rep: '', draft: '', busy: false };
+  function cmWhen(iso) {
+    var t = Date.parse(iso || ''); if (isNaN(t)) return '';
+    var d = new Date(t), td = new Date(); td.setHours(0, 0, 0, 0);
+    var day = new Date(t); day.setHours(0, 0, 0, 0);
+    var hm = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2), diff = Math.round((td - day) / 86400000);
+    return diff === 0 ? 'Today ' + hm : diff === 1 ? 'Yesterday ' + hm : d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }) + ' ' + hm;
+  }
+  function cmBusyNow() {   // never redraw under someone: a recording playing, or a reply being typed
+    var box = document.getElementById('cmbox'); if (!box) return false;
+    var playing = Array.prototype.some.call(box.querySelectorAll('audio'), function (a) { return !a.paused && !a.ended; });
+    var typing = document.activeElement && document.activeElement.id === 'cmtxt';
+    return playing || typing;
+  }
+  function loadComms(act, extra, quiet) {
+    if (CM.busy || !document.getElementById('cmbox')) return;
+    if (quiet && cmBusyNow()) return;
+    var body = { stoken: S.stoken, machine: mid(), do: act || 'list' };
+    if (extra) Object.keys(extra).forEach(function (k) { body[k] = extra[k]; });
+    CM.busy = true;
+    var note = document.getElementById('cmnote');
+    if (act === 'check' && note) { note.className = 'cm-note'; note.textContent = 'Checking for new voicemails and texts\u2026'; }
+    post('/api/comms-api.php', body)
+      .then(function (d) { CM.busy = false; CM.d = d; if (act === 'reply' && d && d.ok && !d.err) { CM.rep = ''; CM.draft = ''; } renderComms(); })
+      .catch(function () { CM.busy = false; CM.d = CM.d && CM.d.ok ? CM.d : { ok: false, error: 'no answer' }; renderComms(); if (note) { note.className = 'cm-note cm-note--bad'; note.textContent = 'No answer from the server - try again.'; } });
+  }
+  function cmItem(it) {
+    var when = cmWhen(it.at);
+    if (it.type === 'voicemail') {
+      return '<div class="cm-it cm-it--vm' + (it.done ? ' cm-it--done' : '') + '"><span class="cm-k">\ud83d\udcde Voicemail' + (it.dur ? ' \u00b7 ' + esc(it.dur) : '') + ' \u00b7 ' + esc(when) + (it.done ? ' \u00b7 done' : '') + '</span>'
+        + (it.audio ? '<audio controls preload="none" src="' + esc(it.audio) + '"></audio>' : '<p class="quiet" style="margin:.2rem 0 0">' + (it.why ? 'No recording: ' + esc(it.why) : 'Looking for the recording\u2026') + '</p>') + '</div>';
+    }
+    var out = it.type === 'sms_out';
+    return '<div class="cm-it' + (out ? ' cm-it--out' : '') + (it.done && !out ? ' cm-it--done' : '') + '"><span class="cm-k">' + (out ? (it.review ? '\u2b50 Review text sent' : 'We texted') : '\ud83d\udcac Text') + ' \u00b7 ' + esc(when) + (it.done && !out ? ' \u00b7 done' : '') + '</span>'
+      + '<p>' + esc(it.body) + '</p></div>';
+  }
+  function cmThread(t) {
+    var h = '<div class="cm-th' + (t.open ? ' cm-th--open' : '') + '">'
+      + '<div class="cm-hd"><b>' + esc(t.who || t.n) + '</b>' + (t.cust ? '<span class="cm-tag">customer</span>' : '') + (t.who ? '<span class="cm-num">' + esc(t.n) + '</span>' : '')
+      + (t.open ? '<span class="cm-new">' + t.open + ' new</span>' : '') + '<span class="cm-t">' + esc(cmWhen(t.last)) + '</span></div>'
+      + (t.items || []).map(cmItem).join('')
+      + '<div class="cm-act"><a class="btn sm" href="tel:' + esc(t.n) + '">\ud83d\udcde Call</a>'
+      + (t.mobile ? '<button type="button" class="sm ghost" data-cmr="' + esc(t.n) + '">Reply by text</button>' : '')
+      + (t.open ? '<button type="button" class="sm ghost" data-cmd="' + esc(t.n) + '">Done</button>' : '') + '</div>';
+    if (CM.rep === t.n) {
+      h += '<div class="cm-rep"><label for="cmtxt" class="cm-k">A text from 07520 615332 to ' + esc(t.who || t.n) + '</label>'
+        + '<textarea id="cmtxt" maxlength="600">' + esc(CM.draft) + '</textarea>'
+        + '<div><button type="button" class="sm" data-cms="' + esc(t.n) + '">Send text</button><button type="button" class="sm ghost" data-cmx="1">Cancel</button></div></div>';
+    }
+    return h + '</div>';
+  }
+  function renderComms() {
+    var box = document.getElementById('cmbox'); if (!box) return;
+    var ta = document.getElementById('cmtxt'); if (ta) CM.draft = ta.value;
+    var d = CM.d, note = document.getElementById('cmnote'), op = document.getElementById('cmopen');
+    if (!d) { box.innerHTML = '<p class="quiet">Loading voicemails and texts\u2026</p>'; return; }
+    if (!d.ok) {
+      box.innerHTML = '<p class="quiet">' + (d.error === 'auth' ? 'Your staff session has expired \u2014 sign out and in again.' : 'Voicemails and texts could not load (' + esc(d.error || 'no answer') + ').') + '</p>';
+      return;
+    }
+    nxKpi('kMsg', d.open || 0);
+    if (op) { op.textContent = d.open ? d.open + ' to answer' : 'all answered'; op.className = 'cm-open' + (d.open ? '' : ' cm-open--ok'); }
+    if (note && (d.note || d.err)) { note.className = 'cm-note' + (d.err ? ' cm-note--bad' : ''); note.textContent = d.err || d.note; }
+    var list = d.threads || [], shown = CM.all ? list : list.slice(0, 8);
+    box.innerHTML = (shown.length ? shown.map(cmThread).join('') : '<p class="quiet">No voicemails or texts yet.</p>')
+      + (list.length > shown.length ? '<button type="button" class="sm ghost" id="cmmore">Show all ' + list.length + '</button>' : '')
+      + '<p class="quiet" style="margin-top:.7rem">Older messages and the review text: <a href="#" id="cmfull">the full comms inbox</a>.</p>';
+    if (CM.rep) { var t2 = document.getElementById('cmtxt'); if (t2) { t2.focus(); t2.setSelectionRange(t2.value.length, t2.value.length); } }
+  }
+  function cmBind() {
+    var card = document.getElementById('cmcard'); if (!card || card.getAttribute('data-bound')) return;
+    card.setAttribute('data-bound', '1');
+    card.addEventListener('click', function (e) {
+      var b = e.target && e.target.closest ? e.target.closest('button, a') : null; if (!b || !card.contains(b)) return;
+      if (b.id === 'cmcheck') { loadComms('check'); return; }
+      if (b.id === 'cmmore') { CM.all = true; renderComms(); return; }
+      if (b.id === 'cmfull') { e.preventDefault(); var ca = document.getElementById('commsadm'); if (ca) ca.click(); return; }
+      if (b.hasAttribute('data-cmr')) { CM.rep = b.getAttribute('data-cmr'); CM.draft = ''; renderComms(); return; }
+      if (b.hasAttribute('data-cmx')) { CM.rep = ''; CM.draft = ''; renderComms(); return; }
+      if (b.hasAttribute('data-cmd')) { loadComms('done', { n: b.getAttribute('data-cmd') }); return; }
+      if (b.hasAttribute('data-cms')) {
+        var ta = document.getElementById('cmtxt'), txt = ta ? ta.value.trim() : '';
+        var note = document.getElementById('cmnote');
+        if (!txt) { if (note) { note.className = 'cm-note cm-note--bad'; note.textContent = 'Type the text first.'; } return; }
+        CM.draft = txt; b.disabled = true; b.textContent = 'Sending\u2026';
+        loadComms('reply', { n: b.getAttribute('data-cms'), text: txt });
+      }
+    });
+  }
   function loadInstalls() {
     var box = document.getElementById('instbox'); if (!box) return;
     post('/api/pcm-installs.php', { stoken: S.stoken, machine: mid(), who: INST.who })

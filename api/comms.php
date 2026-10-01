@@ -78,28 +78,8 @@ if (empty($_SESSION['pcm_ok'])) {
 if (isset($_GET['audio'])) {
     $f = (string)$_GET['audio'];
     if (!preg_match('/^vm-audio-[A-Za-z0-9\-]+\.(mp3|wav)$/', $f) || !is_file(__DIR__ . '/' . $f)) { http_response_code(404); exit('no'); }
-    $path = __DIR__ . '/' . $f;
-    // 1 Oct 2026: telephone WAVs are often A-law or mu-law, which browsers will not play - turned into plain PCM once
-    if (substr($f, -3) === 'wav') comms_wav_fix_file($path);
-    clearstatcache(true, $path);
-    $size = (int)filesize($path);
-    header('Content-Type: ' . (substr($f, -3) === 'wav' ? 'audio/wav' : 'audio/mpeg'));
-    header('Cache-Control: private, no-store');
-    header('Accept-Ranges: bytes');
-    if (!empty($_GET['dl'])) header('Content-Disposition: attachment; filename="voicemail-' . preg_replace('/[^A-Za-z0-9]/', '', substr($f, 9, -4)) . '.' . substr($f, -3) . '"');
-    // byte ranges: an iPhone will not play audio from a server that ignores them
-    $start = 0; $end = $size - 1;
-    if (isset($_SERVER['HTTP_RANGE']) && preg_match('/^bytes=(\d*)-(\d*)$/', trim((string)$_SERVER['HTTP_RANGE']), $rm) && $size > 0) {
-        if ($rm[1] === '' && $rm[2] !== '') { $start = max(0, $size - (int)$rm[2]); }
-        else { $start = (int)$rm[1]; if ($rm[2] !== '') $end = min($end, (int)$rm[2]); }
-        if ($start > $end || $start >= $size) { http_response_code(416); header('Content-Range: bytes */' . $size); exit; }
-        http_response_code(206);
-        header('Content-Range: bytes ' . $start . '-' . $end . '/' . $size);
-    }
-    header('Content-Length: ' . ($end - $start + 1));
-    $fh = @fopen($path, 'rb');
-    if ($fh) { fseek($fh, $start); $left = $end - $start + 1; while ($left > 0 && !feof($fh)) { $chunk = fread($fh, min(65536, $left)); echo $chunk; $left -= strlen($chunk); } fclose($fh); }
-    exit;
+    // telephone WAV -> PCM, byte ranges (iPhones), download name: comms_stream_audio, shared with the portal card
+    comms_stream_audio(__DIR__ . '/' . $f, !empty($_GET['dl']));
 }
 
 header('Cache-Control: no-store');

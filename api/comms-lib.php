@@ -635,6 +635,79 @@ function comms_send_review($to, $actor, $now = null) {
 }
 
 /* The cron entry point - each poller isolated so one failure never stops the other. */
+/* ---- 1 Oct 2026: the portal's "Calls & texts" card (api/comms-api.php) and the console share these ---- */
+
+/* Send a saved recording: telephone WAVs converted to PCM first, byte ranges answered (an iPhone will not play audio
+   from a server that ignores them), and a download name when asked. Exits. */
+function comms_stream_audio($path, $download = false) {
+    $f = basename($path);
+    if (!preg_match('/^vm-audio-[A-Za-z0-9\-]+\.(mp3|wav)$/', $f) || !is_file($path)) { http_response_code(404); exit('no'); }
+    if (substr($f, -3) === 'wav') comms_wav_fix_file($path);
+    clearstatcache(true, $path);
+    $size = (int)filesize($path);
+    header('Content-Type: ' . (substr($f, -3) === 'wav' ? 'audio/wav' : 'audio/mpeg'));
+    header('Cache-Control: private, no-store');
+    header('Accept-Ranges: bytes');
+    header('X-Robots-Tag: noindex, nofollow');
+    if ($download) header('Content-Disposition: attachment; filename="voicemail-' . preg_replace('/[^A-Za-z0-9]/', '', substr($f, 9, -4)) . '.' . substr($f, -3) . '"');
+    $start = 0; $end = $size - 1;
+    if (isset($_SERVER['HTTP_RANGE']) && preg_match('/^bytes=(\d*)-(\d*)$/', trim((string)$_SERVER['HTTP_RANGE']), $rm) && $size > 0) {
+        if ($rm[1] === '' && $rm[2] !== '') { $start = max(0, $size - (int)$rm[2]); }
+        else { $start = (int)$rm[1]; if ($rm[2] !== '') $end = min($end, (int)$rm[2]); }
+        if ($start > $end || $start >= $size) { http_response_code(416); header('Content-Range: bytes */' . $size); exit; }
+        http_response_code(206);
+        header('Content-Range: bytes ' . $start . '-' . $end . '/' . $size);
+    }
+    header('Content-Length: ' . ($end - $start + 1));
+    $fh = @fopen($path, 'rb');
+    if ($fh) { fseek($fh, $start); $left = $end - $start + 1; while ($left > 0 && !feof($fh)) { $chunk = fread($fh, min(65536, $left)); echo $chunk; $left -= strlen($chunk); } fclose($fh); }
+    exit;
+}
+
+/* A play link the portal can put straight into an <audio> element (no cookie, no POST): the file, an expiry and a
+   signature keyed on the server-only admin secret. */
+function comms_audio_sig($file, $exp, $key) {
+    return substr(hash_hmac('sha256', (string)$file . '|' . (int)$exp, 'comms-audio|' . (string)$key), 0, 32);
+}
+function comms_audio_url($file, $key, $now = null) {
+    $exp = ($now === null ? time() : (int)$now) + 3 * 3600;
+    return '/api/comms-api.php?a=' . rawurlencode($file) . '&e=' . $exp . '&s=' . comms_audio_sig($file, $exp, $key);
+}
+
+/* The inbox as the portal shows it: one entry per caller, newest first, each with its last few items and how many are
+   still to answer. $limit callers; 'open' counts every caller. Bodies trimmed; no audio file names leave, only links. */
+function comms_threads($items, $key, $now = null, $limit = 30, $perThread = 4) {
+    $now = $now === null ? time() : (int)$now;
+    $by = array();
+    foreach ((array)$items as $it) {
+        if (!is_array($it) || !isset($it['number'], $it['type'])) continue;
+        $by[(string)$it['number']][] = $it;
+    }
+    $out = array(); $openAll = 0;
+    foreach ($by as $num => $th) {
+        usort($th, function ($a, $b) { return strcmp((string)($a['at'] ?? ''), (string)($b['at'] ?? '')); });
+        $open = 0;
+        foreach ($th as $it) if (empty($it['handled']) && $it['type'] !== 'sms_out') $open++;
+        if ($open) $openAll++;
+        $last = $th[count($th) - 1];
+        $m = isset($last['match']) && is_array($last['match']) ? $last['match'] : array();
+        $isCust = ($m['status'] ?? '') === 'MATCH';
+        $rows = array();
+        foreach (array_slice($th, -$perThread) as $it) {
+            $audio = (string)($it['audio'] ?? '');
+            $rows[] = array('id' => (string)($it['id'] ?? ''), 'type' => (string)$it['type'], 'at' => (string)($it['at'] ?? ''),
+                'body' => $it['type'] === 'voicemail' ? '' : mb_substr((string)($it['body'] ?? ''), 0, 400),
+                'dur' => (string)($it['duration'] ?? ''), 'audio' => $audio !== '' ? comms_audio_url($audio, $key, $now) : '',
+                'why' => $it['type'] === 'voicemail' && $audio === '' ? (string)($it['audio_why'] ?? '') : '',
+                'done' => !empty($it['handled']), 'review' => ($it['tag'] ?? '') === 'review');
+        }
+        $out[] = array('n' => (string)$num, 'who' => $isCust ? (string)$m['name'] : (($m['status'] ?? '') === 'MULTIPLE' ? 'Possibly ' . (string)$m['name'] : ''),
+            'cust' => $isCust, 'mobile' => (bool)preg_match('/^\+447\d{9}$/', (string)$num), 'open' => $open, 'last' => (string)($last['at'] ?? ''), 'items' => $rows);
+    }
+    usort($out, function ($a, $b) { return strcmp($b['last'], $a['last']); });
+    return array('threads' => array_slice($out, 0, $limit), 'open' => $openAll, 'total' => count($out));
+}
+
 function comms_sweep() {
     $out = array();
     $out['sms'] = comms_sms_poll();

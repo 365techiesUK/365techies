@@ -108,11 +108,33 @@ check(comms_wav_fix_file($tmpw) === true && comms_wav_info(file_get_contents($tm
 $pg = (string)file_get_contents(__DIR__ . '/comms.php');
 check(strpos($pg, '<a href="?n=\' . rawurlencode($num) . \'">') !== false && strpos($pg, "if (\$rawN !== '' && \$rawN[0] === ' ') \$rawN = '+' . ltrim(\$rawN);") !== false,
     'list links encode the "+", and a "+" that arrived as a space is read back');
-check(strpos($pg, "header('Accept-Ranges: bytes');") !== false && strpos($pg, 'http_response_code(206)') !== false && strpos($pg, 'comms_wav_fix_file($path)') !== false,
+check(strpos($src2 = (string)file_get_contents(__DIR__ . '/comms-lib.php'), "header('Accept-Ranges: bytes');") !== false && strpos($src2, 'http_response_code(206)') !== false && strpos($src2, 'comms_wav_fix_file($path)') !== false && strpos($pg, 'comms_stream_audio(') !== false,
     'the audio route answers byte ranges (iPhones need them) and converts telephone WAVs before serving');
 check(strpos($pg, "name=do value=vmslack") !== false && strpos($pg, 'Recording of the voicemail from') !== false, 'an older voicemail can be posted to Slack, worded so the reminders do not chase it');
 check(strpos($pg, '&amp;r=1#reply">reply</a>') !== false && strpos($pg, 'id=reply') !== false, 'the list has a reply link that opens the reply box');
 check(strpos($pg, 'Download the recording') !== false && strpos($pg, '<audio controls preload=none style="height:32px') !== false, 'a download link, and a player right in the list');
+
+echo "G  the portal card's data and play links (1 Oct 2026, late)\n";
+$k = 'test-secret';
+$items = array(
+    array('id' => '1', 'type' => 'voicemail', 'number' => '+447700900170', 'at' => '2026-10-01T10:00:00+00:00', 'audio' => 'vm-audio-VM9.wav', 'duration' => '0:40', 'handled' => false, 'match' => array('status' => 'MATCH', 'name' => 'Ann Example')),
+    array('id' => '2', 'type' => 'sms_out', 'number' => '+447700900170', 'at' => '2026-10-01T10:05:00+00:00', 'body' => 'Calling you now', 'handled' => true, 'match' => array('status' => 'MATCH', 'name' => 'Ann Example')),
+    array('id' => '3', 'type' => 'sms_in', 'number' => '+447700900171', 'at' => '2026-10-01T11:00:00+00:00', 'body' => 'Can you help?', 'handled' => false, 'match' => array('status' => 'NO_MATCH', 'name' => '')),
+    array('id' => '4', 'type' => 'voicemail', 'number' => '+441202745516', 'at' => '2026-09-30T09:00:00+00:00', 'audio' => '', 'audio_why' => 'no recording in the email', 'handled' => true, 'match' => array('status' => 'NO_MATCH', 'name' => '')),
+);
+$t = comms_threads($items, $k, strtotime('2026-10-01T12:00:00Z'));
+check($t['total'] === 3 && $t['open'] === 2 && $t['threads'][0]['n'] === '+447700900171', 'one entry per caller, newest first, open callers counted', json_encode($t));
+$ann = $t['threads'][1];
+check($ann['who'] === 'Ann Example' && $ann['cust'] && $ann['mobile'] && $ann['open'] === 1 && count($ann['items']) === 2, 'a customer: named, a mobile, one to answer, both items', json_encode($ann));
+$au = $ann['items'][0]['audio'];
+check(preg_match('#^/api/comms-api\.php\?a=vm-audio-VM9\.wav&e=(\d+)&s=([a-f0-9]{32})$#', $au, $am) === 1 && hash_equals(comms_audio_sig('vm-audio-VM9.wav', (int)$am[1], $k), $am[2]), 'the play link is signed with the server secret', $au);
+check(!hash_equals(comms_audio_sig('vm-audio-VM9.wav', (int)$am[1], 'other'), $am[2]) && !hash_equals(comms_audio_sig('vm-audio-VM8.wav', (int)$am[1], $k), $am[2]), 'a different secret or file does not match');
+check((int)$am[1] === strtotime('2026-10-01T12:00:00Z') + 3 * 3600, 'and lasts three hours');
+$land = $t['threads'][2];
+check(!$land['mobile'] && $land['open'] === 0 && $land['items'][0]['why'] === 'no recording in the email' && $land['items'][0]['audio'] === '', 'a landline: no reply by text; a voicemail with no recording says why');
+check($ann['items'][1]['type'] === 'sms_out' && $ann['items'][1]['body'] === 'Calling you now' && $ann['items'][0]['body'] === '', 'our reply shows; a voicemail carries no email text');
+$api = (string)file_get_contents(__DIR__ . '/comms-api.php');
+check(strpos($api, 'vis_staff_ok($in, __DIR__)') !== false && strpos($api, "\$e < time() || !hash_equals(comms_audio_sig(") !== false, 'the card API needs the portal staff session; a play link must be unexpired and signed');
 
 echo "\n" . ($fails ? "comms-review-test: $fails FAILED\n" : "comms-review-test: all passed\n");
 exit($fails ? 1 : 0);
