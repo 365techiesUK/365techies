@@ -707,9 +707,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 01 Oct 2026 &middot; 2020e0431d</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 01 Oct 2026 &middot; a96e441ca5</p><script>
 (function () {
-  var P365BUILD = '2020e0431d';
+  var P365BUILD = 'a96e441ca5';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -1737,6 +1737,12 @@
   
   #p365app .nx-lvcc-h, .p365ov .nx-lvcc-h { margin:1.2rem 0 .5rem; padding-top:1rem; border-top:1px solid #1f2c4a; }
   #p365app .nx-lvstg--3, .p365ov .nx-lvstg--3 { grid-template-columns:repeat(3,minmax(0,1fr)); margin-top:.7rem; }
+  
+  #p365app .nx-lvk--acts, .p365ov .nx-lvk--acts { margin:.2rem 0 .8rem; }
+  #p365app .nx-lvact, .p365ov .nx-lvact { margin:0 0 1rem; }
+  #p365app .nx-lvact h3, .p365ov .nx-lvact h3 { margin:0 0 .4rem; font-size:1rem; color:#c4d6ee; }
+  #p365app .nx-lvtag--act, .p365ov .nx-lvtag--act { border:1px solid #6b5320; color:#ffc940; font-style:normal; }
+  #p365app .nx-lvactline, .p365ov .nx-lvactline { margin:.5rem .45rem 0; font-size:.9rem; color:#9fb5d3; }
   #p365app .nx-lvnote, .p365ov .nx-lvnote { margin:.2rem 0 .6rem; padding:.6rem .8rem; border-radius:10px; background:#16213f; color:#c4d6ee; font-size:.95rem; }
   @media (max-width:900px) {
     #p365app .nx-lstrip, .p365ov .nx-lstrip { grid-template-columns:1fr; gap:.8rem; }
@@ -5768,6 +5774,10 @@
   var NXL_WARM = { '/book-service/': 'On the booking page', '/contact/': 'On the contact page', '/pay/': 'On the pay page',
     '/pricing/': 'Looking at prices', '/home-it-support-plans/': 'Looking at plans', '/business-it-support-plans/': 'Looking at plans',
     '/monthly-it-support/': 'Looking at plans', '/plan-finder/': 'Choosing a plan', '/dell-support-plans/': 'Looking at plans' };
+  // 1 Oct 2026: what visitors DO (the beacon's action pings): [short name, Live view line, warm label]
+  var NXL_ACT = { dl: ['Downloads', '\u2b07 Downloaded PC Manager', ''], call: ['Tapped Call', '\u260e Tapped Call', 'Tapped Call'],
+    text: ['Tapped Text', '\u2709 Tapped Text', 'Tapped Text'], lead: ['Sent the form', '\u2714 Sent an enquiry', 'Sent an enquiry'] };
+  function nxlWarm(p) { var m = /^\/~(call|text|lead)\//.exec(String(p || '')); return m ? NXL_ACT[m[1]][2] : (NXL_WARM[p] || ''); }
   var NXL_SITES = [['all', 'All sites'], ['t365', '365techies.co.uk'], ['ccb', 'Colin Clark Builders'], ['beckox', 'Beckox']];
   var NXL_SRC = { 'Google': '#1d97e3', 'Bing': '#3fb4f0', 'Other search': '#5b8fd6', 'Facebook': '#8a74e8', 'Instagram': '#c05fd0',
     'Email': '#16b3bd', 'Direct': '#7f95a8', 'AI assistant': '#e0a13a', 'X': '#9aa9c4', 'LinkedIn': '#3b82c4', 'YouTube': '#d9534f', 'Nextdoor': '#3aa76d', 'TikTok': '#c04b7a' };
@@ -5818,6 +5828,9 @@
     p = String(p || '/');
     if (p === '/') return 'Home page';
     if (p === '/~dl/pcm/') return '\u2b07 PC Manager download (click)';   // the beacon's download ping (1 Oct 2026)
+    // the beacon's other action pings (1 Oct 2026): /~call/<page>, /~text/<page>, /~lead/<page>
+    var act = /^\/~(call|text|lead)(\/.*)$/.exec(p);
+    if (act) return NXL_ACT[act[1]][1] + ' \u00b7 ' + nxlPage(site, act[2]);
     if (site === 't365') {
       if (p === '/portal/') return 'Customer portal';
       if (NXL.titles && NXL.titles[p]) return NXL.titles[p];
@@ -5833,7 +5846,9 @@
       var sv = d.sites[k];
       (sv.rows || []).forEach(function (r) {
         var pages = r.pages || [], last = pages.length ? pages[pages.length - 1] : '';
-        out.push({ site: k, siteName: sv.label, key: k + ':' + r.id, r: r, abroad: !!(r.ct && r.ct !== 'GB'), warm: k === 't365' && NXL_WARM[last] ? NXL_WARM[last] : '' });
+        // warm: on a booking, price or plan page now, or a Call/Text tap or an enquiry at any point in the visit
+        var acted = ''; pages.forEach(function (p) { var w = /^\/~(call|text|lead)\//.test(p) ? nxlWarm(p) : ''; if (w) acted = w; });
+        out.push({ site: k, siteName: sv.label, key: k + ':' + r.id, r: r, abroad: !!(r.ct && r.ct !== 'GB'), warm: k === 't365' ? (acted || nxlWarm(last)) : '' });
       });
     });
     // warm first, then Dorset & around, then the rest of the UK, then abroad; the most recently active first in each
@@ -5959,6 +5974,13 @@
       .then(function (d) { NXL.st = d; NXL.stAt = Date.now(); NXL.stBusy = false; nxlStats(); })
       .catch(function () { NXL.st = { ok: false, error: 'no answer' }; NXL.stAt = Date.now(); NXL.stBusy = false; nxlStats(); });
   }
+  // "2 calls \u00b7 1 form"; withNone: "No calls, texts, forms or downloads" when there were none (a country's line)
+  function nxlActWords(a, withNone) {
+    var w = [['call', 'call', 'calls'], ['text', 'text', 'texts'], ['lead', 'form', 'forms']];
+    if (withNone) w.push(['dl', 'download', 'downloads']);
+    var out = w.filter(function (x) { return a[x[0]]; }).map(function (x) { return a[x[0]] + ' ' + (a[x[0]] === 1 ? x[1] : x[2]); });
+    return out.length ? out.join(' \u00b7 ') : (withNone ? 'No calls, texts, forms or downloads' : '');
+  }
   function nxlPct(n, of) { return of > 0 ? Math.round(100 * n / of) + '%' : ''; }
   function nxlCountry(cc) {   // "GB" -> "United Kingdom"; the tally's "Unknown" -> "Not known"
     if (!cc || cc === 'Unknown') return 'Not known';
@@ -5987,12 +6009,21 @@
     var h = '<div class="nx-lvk">'
       + '<div><b>' + s.visitors + '</b><span>' + (s.visitors === 1 ? 'visitor' : 'visitors') + ' ' + perName + ' on ' + esc(siteName) + '</span></div>'
       + '<div class="nx-lvk--local"><b>' + s.local + '</b><span>in Dorset & around' + (s.visitors ? ' \u00b7 ' + nxlPct(s.local, s.visitors) : '') + '</span></div>'
-      + '<div class="' + (s.warm ? 'nx-lvk--warm' : '') + '"><b>' + s.warm + '</b><span>reached a booking, contact, price or plan page</span></div>'
+      + '<div class="' + (s.warm ? 'nx-lvk--warm' : '') + '"><b>' + s.warm + '</b><span>warm: tapped Call or Text, sent a form, or reached a booking, price or plan page</span></div>'
       + '<div><b>' + (topSrc ? nxlPct(topSrc.n, s.visitors) : '\u2013') + '</b><span>' + (topSrc ? 'came from ' + esc(topSrc.k) : 'where they came from') + '</span></div>'
       + '</div>';
     var pageName = function (it) { return esc(site === 'all' || site === 't365' ? nxlPage('t365', it.k) : it.k); };
     var warmKeys = (site === 'all' || site === 't365') ? NXL_WARM : null;
     var known = s.known || 0;
+    // 1 Oct 2026: what they did - Call and Text taps, enquiries sent, PC Manager download clicks (the beacon's action pings)
+    var ac = s.acts || {}, acN = (ac.call || 0) + (ac.text || 0) + (ac.lead || 0);
+    h += '<h3 class="nx-lvcc-h">What they did <span>each visitor once a day \u00b7 counted from 1 Oct 2026</span></h3>'
+      + '<div class="nx-lvk nx-lvk--acts">' + ['call', 'text', 'lead', 'dl'].map(function (k) {
+          return '<div' + (k !== 'dl' && ac[k] ? ' class="nx-lvk--warm"' : '') + '><b>' + (ac[k] || 0) + '</b><span>' + NXL_ACT[k][0] + '</span></div>';
+        }).join('') + '</div>'
+      + (s.actFrom && s.actFrom.length ? '<div class="nx-lvact"><h3>Which page they called, texted or sent the form from</h3>' + nxlTop(s.actFrom, acN, function (it) {
+          return pageName(it) + '<i class="nx-lvtag nx-lvtag--act">' + nxlActWords(it, false) + '</i>';
+        }) + '</div>' : '');
     h += '<div class="nx-lvstg">'
       + '<div><h3>Towns <span>rough, from the internet provider</span></h3>' + nxlTop(s.places, s.visitors, function (it) {
           // "London" plain (the UK is the default), "St. Louis" with a US chip, Dorset & around with Local
@@ -6018,7 +6049,8 @@
             return '<button type="button" class="nx-lvchip nx-lvcc" data-cc="' + esc(c.k) + '" aria-pressed="' + (c.k === cur.k ? 'true' : 'false') + '">' + esc(nxlCountry(c.k)) + '<span>' + c.n + '</span></button>';
           }).join('') + '</div>'
         + '<div class="nx-lvstg nx-lvstg--3">'
-        + '<div><h3>Pages <span>' + cur.n + (cur.n === 1 ? ' visitor' : ' visitors') + ' from ' + esc(nxlCountry(cur.k)) + '</span></h3>' + nxlTop(cur.pages, cur.n, pageName, warmKeys) + '</div>'
+        + '<div><h3>Pages <span>' + cur.n + (cur.n === 1 ? ' visitor' : ' visitors') + ' from ' + esc(nxlCountry(cur.k)) + '</span></h3>' + nxlTop(cur.pages, cur.n, pageName, warmKeys)
+          + '<p class="nx-lvactline">' + (cur.acts ? nxlActWords(cur.acts, true) : '') + '</p></div>'
         + '<div><h3>Where they came from</h3>' + nxlTop(cur.src, cur.n, function (it) { return nxlSrcTag(it.k) || esc(it.k); }) + '</div>'
         + '<div><h3>Systems' + (cur.known && cur.n ? ' <span>known for ' + nxlPct(cur.known, cur.n) + '</span>' : '') + '</h3>'
         + (cur.dv && cur.dv.length ? '<div class="nx-lvkey" style="margin-bottom:.4rem">' + cur.dv.map(function (it) { return '<span><i style="background:' + (NXL_DEV[it.k] ? NXL_DEV[it.k][1] : '#5b6c8f') + '"></i>' + (NXL_DEV[it.k] ? NXL_DEV[it.k][0] : esc(it.k)) + ' <b>' + it.n + '</b></span>'; }).join('') + '</div>' : '')
@@ -8232,7 +8264,7 @@
   </div>
   <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=13" defer></script>
-  <script src="/js/forms.min.js?v=11" defer></script>
+  <script src="/js/forms.min.js?v=12" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->
   <script>
@@ -8264,6 +8296,6 @@
     });
   })();
   </script>
-  <script>(function(){try{if(navigator.doNotTrack==="1")return;if(/bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit/i.test(navigator.userAgent))return;try{if(localStorage.getItem("p365staffdev")||/"staff":true|"back":/.test((localStorage.getItem("p365")||"")+(sessionStorage.getItem("p365s")||"")))return;}catch(e){}var u=navigator.userAgentData,b={site:"t365",path:location.pathname,ref:(function(){try{return new URL(document.referrer).hostname}catch(e){return""}})(),em:/utm_medium=e-?mail|utm_source=(e-?mail|newsletter|hubspot)/i.test(location.search)?1:0,t:navigator.maxTouchPoints||0,sw:(screen&&screen.width)||0,dk:(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?1:0,lg:String(navigator.language||"").slice(0,12)},sent=false;if(u&&typeof u.mobile==="boolean")b.mb=u.mobile?1:0;var go=function(){if(sent)return;sent=true;try{fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(b),keepalive:true});}catch(e){}};if(u&&u.getHighEntropyValues&&/Windows/.test(navigator.userAgent)){u.getHighEntropyValues(["platformVersion"]).then(function(h){b.pv=String((h&&h.platformVersion)||"").slice(0,12);go();},go);setTimeout(go,400);}else go();document.addEventListener("click",function(ev){try{var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");if(!a||!/365-pc-manager-setup[^\/?#]*\.exe([?#]|$)/i.test(a.getAttribute("href")||""))return;var d=JSON.parse(JSON.stringify(b));d.path="/~dl/pcm/";d.ref=location.hostname;d.em=0;fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(d),keepalive:true});}catch(e){}},true);}catch(e){}})();</script>
+  <script>(function(){try{if(navigator.doNotTrack==="1")return;if(/bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit/i.test(navigator.userAgent))return;try{if(localStorage.getItem("p365staffdev")||/"staff":true|"back":/.test((localStorage.getItem("p365")||"")+(sessionStorage.getItem("p365s")||"")))return;}catch(e){}var u=navigator.userAgentData,b={site:"t365",path:location.pathname,ref:(function(){try{return new URL(document.referrer).hostname}catch(e){return""}})(),em:/utm_medium=e-?mail|utm_source=(e-?mail|newsletter|hubspot)/i.test(location.search)?1:0,t:navigator.maxTouchPoints||0,sw:(screen&&screen.width)||0,dk:(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?1:0,lg:String(navigator.language||"").slice(0,12)},sent=false;if(u&&typeof u.mobile==="boolean")b.mb=u.mobile?1:0;var go=function(){if(sent)return;sent=true;try{fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(b),keepalive:true});}catch(e){}};if(u&&u.getHighEntropyValues&&/Windows/.test(navigator.userAgent)){u.getHighEntropyValues(["platformVersion"]).then(function(h){b.pv=String((h&&h.platformVersion)||"").slice(0,12);go();},go);setTimeout(go,400);}else go();var tap=function(k){try{var d=JSON.parse(JSON.stringify(b));d.path=k;d.ref=location.hostname;d.em=0;fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(d),keepalive:true});}catch(e){}};document.addEventListener("click",function(ev){try{var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");if(!a)return;var h=a.getAttribute("href")||"";if(/365-pc-manager-setup[^\/?#]*\.exe([?#]|$)/i.test(h))tap("/~dl/pcm/");else if(/^tel:/i.test(h))tap("/~call"+location.pathname);else if(/^sms:/i.test(h))tap("/~text"+location.pathname);}catch(e){}},true);document.addEventListener("tt:lead",function(){tap("/~lead"+location.pathname);});}catch(e){}})();</script>
 </body>
 </html>

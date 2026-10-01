@@ -1038,11 +1038,16 @@ VIS_BEACON = "" if not VISITORS_WORKER else (
     'var go=function(){if(sent)return;sent=true;try{fetch("' + VISITORS_WORKER + '/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(b),keepalive:true});}catch(e){}};'
     'if(u&&u.getHighEntropyValues&&/Windows/.test(navigator.userAgent)){u.getHighEntropyValues(["platformVersion"]).then(function(h){b.pv=String((h&&h.platformVersion)||"").slice(0,12);go();},go);setTimeout(go,400);}else go();'
     # 1 Oct 2026: a click on a 365 PC Manager download (the installer .exe, any page) is one more ping, to the page
-    # "/~dl/pcm/", so the live view and its statistics count download clicks by country and device like any page
-    'document.addEventListener("click",function(ev){try{var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");'
-    'if(!a||!/365-pc-manager-setup[^\\/?#]*\\.exe([?#]|$)/i.test(a.getAttribute("href")||""))return;'
-    'var d=JSON.parse(JSON.stringify(b));d.path="/~dl/pcm/";d.ref=location.hostname;d.em=0;'
-    'fetch("' + VISITORS_WORKER + '/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(d),keepalive:true});}catch(e){}},true);'
+    # "/~dl/pcm/", so the live view and its statistics count download clicks by country and device like any page.
+    # Later the same day, the other things a visitor can DO: a tap on a Call link (tel:) is /~call/<page>, on a Text
+    # link (sms:) /~text/<page>, and an enquiry form that went through (js/forms.js fires tt:lead) /~lead/<page>.
+    # The tally counts them once per visitor per day like pages; the portal shows them as Actions.
+    'var tap=function(k){try{var d=JSON.parse(JSON.stringify(b));d.path=k;d.ref=location.hostname;d.em=0;'
+    'fetch("' + VISITORS_WORKER + '/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(d),keepalive:true});}catch(e){}};'
+    'document.addEventListener("click",function(ev){try{var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");if(!a)return;'
+    'var h=a.getAttribute("href")||"";if(/365-pc-manager-setup[^\\/?#]*\\.exe([?#]|$)/i.test(h))tap("/~dl/pcm/");'
+    'else if(/^tel:/i.test(h))tap("/~call"+location.pathname);else if(/^sms:/i.test(h))tap("/~text"+location.pathname);}catch(e){}},true);'
+    'document.addEventListener("tt:lead",function(){tap("/~lead"+location.pathname);});'
     '}catch(e){}})();</script>\n')
 
 
@@ -1257,7 +1262,7 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None, robot
   </div>
   <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=13" defer></script>
-  <script src="/js/forms.min.js?v=11" defer></script>
+  <script src="/js/forms.min.js?v=12" defer></script>
   <script src="/js/search.min.js?v={SEARCHV}" defer></script>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->
   <script>

@@ -1362,6 +1362,22 @@ if os.path.exists(_hp):
         if _have_addr != bp.BUSINESS_NODE["address"]:
             _hout = _hout[:_am.start()] + '"address": ' + _json.dumps(bp.BUSINESS_NODE["address"], ensure_ascii=False) + _hout[_am.end():]
             _hchanged.append("business address")
+    # 1 Oct 2026: the live-visitors beacon travels with the template too. The homepage kept a hand copy from 27 Sep,
+    # so the busiest page sent no device, no download clicks and no Call/Text taps. It is the one <script> that opens
+    # with the Do Not Track check (the _VOLATILE key); copied whole from 404.html, or removed if the template has none.
+    _bkey = '<script>(function(){try{if(navigator.doNotTrack==="1")return;'
+    def _beacon(html):
+        i = html.find(_bkey)
+        if i < 0: return None
+        j = html.find("</script>", i)
+        return html[i:j + 9] if j >= 0 else None
+    _bwant, _bhave = _beacon(_ref), _beacon(_hout)
+    if _bwant and _bhave and _bwant != _bhave:
+        _hout = _hout.replace(_bhave, _bwant, 1); _hchanged.append("visitor beacon")
+    elif _bwant and not _bhave:
+        _hout = _hout.replace("</body>", "  " + _bwant + "\n</body>", 1); _hchanged.append("visitor beacon (added)")
+    elif _bhave and not _bwant:
+        _hout = _hout.replace(_bhave, "", 1); _hchanged.append("visitor beacon (removed)")
     if _hout != _hsrc:
         open(_hp, "w", encoding="utf-8").write(_hout)
         print("  homepage: synced from the template -> " + ", ".join(_hchanged))

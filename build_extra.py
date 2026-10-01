@@ -25340,6 +25340,12 @@ def write_portal_page():
   /* 30 Sep 2026: by country - a chip per country, then what visitors from there read / came from / are on */
   #p365app .nx-lvcc-h { margin:1.2rem 0 .5rem; padding-top:1rem; border-top:1px solid #1f2c4a; }
   #p365app .nx-lvstg--3 { grid-template-columns:repeat(3,minmax(0,1fr)); margin-top:.7rem; }
+  /* 1 Oct 2026: what they did - the action counts and the pages they acted from */
+  #p365app .nx-lvk--acts { margin:.2rem 0 .8rem; }
+  #p365app .nx-lvact { margin:0 0 1rem; }
+  #p365app .nx-lvact h3 { margin:0 0 .4rem; font-size:1rem; color:#c4d6ee; }
+  #p365app .nx-lvtag--act { border:1px solid #6b5320; color:#ffc940; font-style:normal; }
+  #p365app .nx-lvactline { margin:.5rem .45rem 0; font-size:.9rem; color:#9fb5d3; }
   #p365app .nx-lvnote { margin:.2rem 0 .6rem; padding:.6rem .8rem; border-radius:10px; background:#16213f; color:#c4d6ee; font-size:.95rem; }
   @media (max-width:900px) {
     #p365app .nx-lstrip { grid-template-columns:1fr; gap:.8rem; }
@@ -29372,6 +29378,10 @@ def write_portal_page():
   var NXL_WARM = { '/book-service/': 'On the booking page', '/contact/': 'On the contact page', '/pay/': 'On the pay page',
     '/pricing/': 'Looking at prices', '/home-it-support-plans/': 'Looking at plans', '/business-it-support-plans/': 'Looking at plans',
     '/monthly-it-support/': 'Looking at plans', '/plan-finder/': 'Choosing a plan', '/dell-support-plans/': 'Looking at plans' };
+  // 1 Oct 2026: what visitors DO (the beacon's action pings): [short name, Live view line, warm label]
+  var NXL_ACT = { dl: ['Downloads', '\\u2b07 Downloaded PC Manager', ''], call: ['Tapped Call', '\\u260e Tapped Call', 'Tapped Call'],
+    text: ['Tapped Text', '\\u2709 Tapped Text', 'Tapped Text'], lead: ['Sent the form', '\\u2714 Sent an enquiry', 'Sent an enquiry'] };
+  function nxlWarm(p) { var m = /^\\/~(call|text|lead)\\//.exec(String(p || '')); return m ? NXL_ACT[m[1]][2] : (NXL_WARM[p] || ''); }
   var NXL_SITES = [['all', 'All sites'], ['t365', '365techies.co.uk'], ['ccb', 'Colin Clark Builders'], ['beckox', 'Beckox']];
   var NXL_SRC = { 'Google': '#1d97e3', 'Bing': '#3fb4f0', 'Other search': '#5b8fd6', 'Facebook': '#8a74e8', 'Instagram': '#c05fd0',
     'Email': '#16b3bd', 'Direct': '#7f95a8', 'AI assistant': '#e0a13a', 'X': '#9aa9c4', 'LinkedIn': '#3b82c4', 'YouTube': '#d9534f', 'Nextdoor': '#3aa76d', 'TikTok': '#c04b7a' };
@@ -29422,6 +29432,9 @@ def write_portal_page():
     p = String(p || '/');
     if (p === '/') return 'Home page';
     if (p === '/~dl/pcm/') return '\\u2b07 PC Manager download (click)';   // the beacon's download ping (1 Oct 2026)
+    // the beacon's other action pings (1 Oct 2026): /~call/<page>, /~text/<page>, /~lead/<page>
+    var act = /^\\/~(call|text|lead)(\\/.*)$/.exec(p);
+    if (act) return NXL_ACT[act[1]][1] + ' \\u00b7 ' + nxlPage(site, act[2]);
     if (site === 't365') {
       if (p === '/portal/') return 'Customer portal';
       if (NXL.titles && NXL.titles[p]) return NXL.titles[p];
@@ -29437,7 +29450,9 @@ def write_portal_page():
       var sv = d.sites[k];
       (sv.rows || []).forEach(function (r) {
         var pages = r.pages || [], last = pages.length ? pages[pages.length - 1] : '';
-        out.push({ site: k, siteName: sv.label, key: k + ':' + r.id, r: r, abroad: !!(r.ct && r.ct !== 'GB'), warm: k === 't365' && NXL_WARM[last] ? NXL_WARM[last] : '' });
+        // warm: on a booking, price or plan page now, or a Call/Text tap or an enquiry at any point in the visit
+        var acted = ''; pages.forEach(function (p) { var w = /^\\/~(call|text|lead)\\//.test(p) ? nxlWarm(p) : ''; if (w) acted = w; });
+        out.push({ site: k, siteName: sv.label, key: k + ':' + r.id, r: r, abroad: !!(r.ct && r.ct !== 'GB'), warm: k === 't365' ? (acted || nxlWarm(last)) : '' });
       });
     });
     // warm first, then Dorset & around, then the rest of the UK, then abroad; the most recently active first in each
@@ -29563,6 +29578,13 @@ def write_portal_page():
       .then(function (d) { NXL.st = d; NXL.stAt = Date.now(); NXL.stBusy = false; nxlStats(); })
       .catch(function () { NXL.st = { ok: false, error: 'no answer' }; NXL.stAt = Date.now(); NXL.stBusy = false; nxlStats(); });
   }
+  // "2 calls \\u00b7 1 form"; withNone: "No calls, texts, forms or downloads" when there were none (a country's line)
+  function nxlActWords(a, withNone) {
+    var w = [['call', 'call', 'calls'], ['text', 'text', 'texts'], ['lead', 'form', 'forms']];
+    if (withNone) w.push(['dl', 'download', 'downloads']);
+    var out = w.filter(function (x) { return a[x[0]]; }).map(function (x) { return a[x[0]] + ' ' + (a[x[0]] === 1 ? x[1] : x[2]); });
+    return out.length ? out.join(' \\u00b7 ') : (withNone ? 'No calls, texts, forms or downloads' : '');
+  }
   function nxlPct(n, of) { return of > 0 ? Math.round(100 * n / of) + '%' : ''; }
   function nxlCountry(cc) {   // "GB" -> "United Kingdom"; the tally's "Unknown" -> "Not known"
     if (!cc || cc === 'Unknown') return 'Not known';
@@ -29591,12 +29613,21 @@ def write_portal_page():
     var h = '<div class="nx-lvk">'
       + '<div><b>' + s.visitors + '</b><span>' + (s.visitors === 1 ? 'visitor' : 'visitors') + ' ' + perName + ' on ' + esc(siteName) + '</span></div>'
       + '<div class="nx-lvk--local"><b>' + s.local + '</b><span>in Dorset & around' + (s.visitors ? ' \\u00b7 ' + nxlPct(s.local, s.visitors) : '') + '</span></div>'
-      + '<div class="' + (s.warm ? 'nx-lvk--warm' : '') + '"><b>' + s.warm + '</b><span>reached a booking, contact, price or plan page</span></div>'
+      + '<div class="' + (s.warm ? 'nx-lvk--warm' : '') + '"><b>' + s.warm + '</b><span>warm: tapped Call or Text, sent a form, or reached a booking, price or plan page</span></div>'
       + '<div><b>' + (topSrc ? nxlPct(topSrc.n, s.visitors) : '\\u2013') + '</b><span>' + (topSrc ? 'came from ' + esc(topSrc.k) : 'where they came from') + '</span></div>'
       + '</div>';
     var pageName = function (it) { return esc(site === 'all' || site === 't365' ? nxlPage('t365', it.k) : it.k); };
     var warmKeys = (site === 'all' || site === 't365') ? NXL_WARM : null;
     var known = s.known || 0;
+    // 1 Oct 2026: what they did - Call and Text taps, enquiries sent, PC Manager download clicks (the beacon's action pings)
+    var ac = s.acts || {}, acN = (ac.call || 0) + (ac.text || 0) + (ac.lead || 0);
+    h += '<h3 class="nx-lvcc-h">What they did <span>each visitor once a day \\u00b7 counted from 1 Oct 2026</span></h3>'
+      + '<div class="nx-lvk nx-lvk--acts">' + ['call', 'text', 'lead', 'dl'].map(function (k) {
+          return '<div' + (k !== 'dl' && ac[k] ? ' class="nx-lvk--warm"' : '') + '><b>' + (ac[k] || 0) + '</b><span>' + NXL_ACT[k][0] + '</span></div>';
+        }).join('') + '</div>'
+      + (s.actFrom && s.actFrom.length ? '<div class="nx-lvact"><h3>Which page they called, texted or sent the form from</h3>' + nxlTop(s.actFrom, acN, function (it) {
+          return pageName(it) + '<i class="nx-lvtag nx-lvtag--act">' + nxlActWords(it, false) + '</i>';
+        }) + '</div>' : '');
     h += '<div class="nx-lvstg">'
       + '<div><h3>Towns <span>rough, from the internet provider</span></h3>' + nxlTop(s.places, s.visitors, function (it) {
           // "London" plain (the UK is the default), "St. Louis" with a US chip, Dorset & around with Local
@@ -29622,7 +29653,8 @@ def write_portal_page():
             return '<button type="button" class="nx-lvchip nx-lvcc" data-cc="' + esc(c.k) + '" aria-pressed="' + (c.k === cur.k ? 'true' : 'false') + '">' + esc(nxlCountry(c.k)) + '<span>' + c.n + '</span></button>';
           }).join('') + '</div>'
         + '<div class="nx-lvstg nx-lvstg--3">'
-        + '<div><h3>Pages <span>' + cur.n + (cur.n === 1 ? ' visitor' : ' visitors') + ' from ' + esc(nxlCountry(cur.k)) + '</span></h3>' + nxlTop(cur.pages, cur.n, pageName, warmKeys) + '</div>'
+        + '<div><h3>Pages <span>' + cur.n + (cur.n === 1 ? ' visitor' : ' visitors') + ' from ' + esc(nxlCountry(cur.k)) + '</span></h3>' + nxlTop(cur.pages, cur.n, pageName, warmKeys)
+          + '<p class="nx-lvactline">' + (cur.acts ? nxlActWords(cur.acts, true) : '') + '</p></div>'
         + '<div><h3>Where they came from</h3>' + nxlTop(cur.src, cur.n, function (it) { return nxlSrcTag(it.k) || esc(it.k); }) + '</div>'
         + '<div><h3>Systems' + (cur.known && cur.n ? ' <span>known for ' + nxlPct(cur.known, cur.n) + '</span>' : '') + '</h3>'
         + (cur.dv && cur.dv.length ? '<div class="nx-lvkey" style="margin-bottom:.4rem">' + cur.dv.map(function (it) { return '<span><i style="background:' + (NXL_DEV[it.k] ? NXL_DEV[it.k][1] : '#5b6c8f') + '"></i>' + (NXL_DEV[it.k] ? NXL_DEV[it.k][0] : esc(it.k)) + ' <b>' + it.n + '</b></span>'; }).join('') + '</div>' : '')

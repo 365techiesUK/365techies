@@ -36,6 +36,8 @@ VM_US_TICKS = ("Every message and folder into Gmail, with the original dates",
                "Forwarding set up, and checked on your phone if you like",
                "Done remotely: we phone first, and you watch us start")
 VM_US_SMALL = "For Windows PCs &middot; agreed before we start &middot; no fix, no fee &middot; we can usually start the same day, Mon&ndash;Fri 9&ndash;5"
+# 1 Oct 2026: the card's ring-me-back form (js/forms.js posts it to the Slack lead relay; GA4 virgin_move_request)
+VM_FORM_OK = "&#10003; Got it, thank you. We&rsquo;ll ring you, Mon&ndash;Fri 9&ndash;5. Nothing is booked until we&rsquo;ve spoken."
 
 _VMC_CSS = """
 .vmc{padding:1.3rem var(--pad-x) 2.4rem}
@@ -67,6 +69,17 @@ _VMC_CSS = """
 .vmc__shotnote{margin:.8rem 0 0;font-size:.85rem;line-height:1.5;color:var(--hp-soft)}
 @media (max-width:600px){.vmc__shots{grid-template-columns:1fr}.vmc__shots figure+figure{display:none}}
 .vmc__dl-s{display:none}
+.vmc__form{position:relative;margin:.35rem 0 0;padding:.95rem 1rem 1rem;border-radius:18px;border:1px solid var(--hp-edge);background:color-mix(in srgb,var(--hp-card) 70%,#000)}
+.vmc__formh{margin:0 0 .7rem;font-weight:600;font-size:1rem;line-height:1.35;color:var(--hp-ink)}
+.vmc__fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem .8rem}
+.vmc__fields .field{margin:0;gap:.3rem}
+.vmc__fields .field>span{margin:0;font-size:.86rem}
+.vmc__fields .field input,.vmc__fields .field select{padding:.7rem .85rem;min-height:46px}
+.vmc__send{width:100%;margin:.85rem 0 0;justify-content:center}
+.vmc__status{margin:.6rem 0 0;font-size:.9rem;line-height:1.45}
+.vmc__status:empty{display:none}
+.vmc__formnote{margin:.55rem 0 0;font-size:.8rem;line-height:1.45;color:var(--hp-soft)}
+@media (max-width:420px){.vmc__fields .vmc__wide{grid-column:1/-1}}
 @media (max-width:600px){.vmc{padding-top:.8rem}.vmc__card{padding:1rem 1rem 1.05rem;border-radius:20px}.vmc__tag{display:none}.vmc__cta{margin:.8rem 0 .5rem}.vmc__cta .button{flex:1 1 100%;text-align:center;justify-content:center}.vmc__dl-l{display:none}.vmc__dl-s{display:inline}}
 @media (max-width:600px){.taskhead__trust span:nth-child(n+3){display:none}.taskhead__lede{margin-bottom:.55rem}}
 """
@@ -134,8 +147,22 @@ def virgin_choices(setup_url, also_html="", how_href="/" + VIRGIN_TOOL_SLUG + "/
         <div class="vmc__card hp-c-care" id="move-for-me">
           <p class="vmc__tag"><span class="hp-ico hp-ico--sm">{_dh_ico("phone")}</span>DONE FOR YOU &middot; AGREED BEFORE WE START</p>
           <{h} class="vmc__h">Let us do it: <b>&pound;60</b> per email address</{h}>
-          <p class="vmc__d">We move every folder into Gmail for you, remotely. The price includes a full service of your PC, with a written report.</p>
+          <p class="vmc__d">No app passwords, no settings, nothing to learn. We move every folder into Gmail for you, remotely, and the price includes a full service of your PC with a written report.</p>
           <p class="vmc__cta"><a class="button secondary button--lg" href="tel:+441202775566">Call 01202 775566</a><a class="dh-link" href="sms:+447520615332">Or text 07520 615332</a></p>
+          <form class="contact-form vmc__form" method="post" action="/api/form-relay.php" data-ga-event="virgin_move_request" data-success="{VM_FORM_OK}">
+            <p class="vmc__formh">Or leave your number and we&rsquo;ll ring you</p>
+            <input type="hidden" name="topic" value="Virgin email move (&pound;60 per address)" />
+            <input type="text" name="company_website" tabindex="-1" autocomplete="one-time-code" style="position:absolute;left:-5000px" aria-hidden="true" />
+            <div class="vmc__fields">
+              <label class="field vmc__wide"><span>Your name</span><input type="text" name="name" id="vmc-name" autocomplete="name" required /></label>
+              <label class="field vmc__wide"><span>Phone number</span><input type="tel" name="phone" id="vmc-phone" autocomplete="tel" inputmode="tel" required /></label>
+              <label class="field"><span>Email addresses</span><select name="virgin_addresses" id="vmc-count"><option>1</option><option>2</option><option>3 or more</option></select></label>
+              <label class="field"><span>Best time</span><select name="best_time" id="vmc-when"><option>Any time</option><option>Morning</option><option>Afternoon</option></select></label>
+            </div>
+            <button type="submit" class="button primary vmc__send">Ring me back</button>
+            <p class="form-status vmc__status" role="status"></p>
+            <p class="vmc__formnote">Nothing is booked and nothing to pay until we&rsquo;ve spoken. We only use your number to ring you about this.</p>
+          </form>
           <ul class="vmc__list">
 {ticks}
           </ul>

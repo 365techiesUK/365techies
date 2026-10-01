@@ -141,5 +141,27 @@ check(strpos(vis_shape(0, null, 'Could not resolve host')['why'], 'could not rea
 check(strpos(vis_shape(400, array('error' => 'site'), '')['why'], 'older code') !== false, '400 site -> older code');
 check(vis_shape(200, array('ok' => true), '')['why'] === 'Cloudflare answered HTTP 200.', 'a 200 without sites -> HTTP 200');
 
+echo "H  actions: download clicks, Call and Text taps, enquiries sent (1 Oct 2026)\n";
+$J = '/virgin-media-email-moving-to-junara/';
+$s = vis_fold(array(), live($T, array(
+    row('cccc0001', 'Poole', 'GB', true, 'Google', $IPH, array($J, '/~call' . $J)),
+    row('cccc0002', 'Leeds', 'GB', false, 'Google', $WIN11, array($J, '/~lead' . $J, '/~dl/pcm/')),
+    row('cccc0003', 'Austin', 'US', false, 'Direct', $WIN11, array('/', '/~dl/pcm/')),
+    row('cccc0004', 'Bristol', 'GB', false, 'Bing', $ANDR, array('/contact/', '/~text/contact/', '/~call/')),
+)), $T);
+$d = $s['days'][$DAY]['t365'];
+check($d['warm'] === 3, 'a call, a text or an enquiry makes a visitor warm; a download alone does not', $d['warm']);
+$s = vis_fold($s, live($T + 60, array(row('cccc0001', 'Poole', 'GB', true, 'Google', $IPH, array($J, '/~call' . $J, '/~call' . $J)))), $T + 60);
+$st = vis_stats($s, $T + 60); $a = $st['sites']['all']['today'];
+check($a['acts'] === array('dl' => 2, 'call' => 2, 'text' => 1, 'lead' => 1), 'actions counted, each visitor once a day', json_encode($a['acts']));
+check($a['actFrom'][0]['k'] === $J && $a['actFrom'][0]['n'] === 2 && $a['actFrom'][0]['call'] === 1 && $a['actFrom'][0]['lead'] === 1, 'where they acted: the Junara page first', json_encode($a['actFrom']));
+$home = array_values(array_filter($a['actFrom'], function ($x) { return $x['k'] === '/'; }));
+check(count($home) === 1 && $home[0]['call'] === 1, 'a Call tap on the home page is from /', json_encode($a['actFrom']));
+$keys = array_map(function ($x) { return $x['k']; }, $a['pages']);
+check(!in_array('/~dl/pcm/', $keys, true) && !in_array('/~call' . $J, $keys, true) && in_array($J, $keys, true), 'the Pages list shows reading only', json_encode($keys));
+$us = array_values(array_filter($a['perCountry'], function ($x) { return $x['k'] === 'US'; }));
+check(count($us) === 1 && $us[0]['acts']['dl'] === 1 && $us[0]['acts']['call'] === 0, 'actions per country', json_encode($us));
+check(vis_act_kind('/~dl/pcm/') === 'dl' && vis_act_kind('/~lead/x/') === 'lead' && vis_act_kind('/~calling/') === '' && vis_act_kind('/call/') === '', 'only the four ping paths are actions');
+
 echo "\n" . ($fails ? "visitors-tally-test: $fails FAILED\n" : "visitors-tally-test: all passed\n");
 exit($fails ? 1 : 0);

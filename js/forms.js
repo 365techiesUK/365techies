@@ -47,6 +47,7 @@
     var name = String(el.name || "").toLowerCase(); var lab = fieldLabel(el).toLowerCase();
     if (name === "name") return "Please add your name.";
     if (name === "email" || el.type === "email") return "Please add your email so we can reply.";
+    if (name === "phone" || el.type === "tel") return "Please add a phone number so we can ring you.";
     if (name === "message" || el.tagName === "TEXTAREA") return "Please tell us how we can help.";
     return lab ? "Please fill in " + lab + "." : "Please fill in this field.";
   }
@@ -59,6 +60,9 @@
     }
     var em = form.querySelector('[name="email"]');
     if (em && String(em.value || "").trim() && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(em.value).trim())) problems.push([em, "That email doesn’t look right — please check it."]);
+    /* 1 Oct 2026: a phone number that is filled in needs enough digits to ring (a UK number has 10 or 11) */
+    var ph = form.querySelector('[name="phone"]');
+    if (ph && String(ph.value || "").trim() && String(ph.value).replace(/\D/g, "").length < 9) problems.push([ph, "That number looks too short. Please check it."]);
     return problems;
   }
   function attach(form) {
@@ -199,6 +203,8 @@
               });
             }
           } catch (gerr) {}
+          /* 1 Oct 2026: tell the page an enquiry went through (the visitor beacon counts it as /~lead/<page>) */
+          try { document.dispatchEvent(new CustomEvent("tt:lead", { detail: { topic: topic || "" } })); } catch (le) {}
           form.reset();
           delete form.dataset.slackSent;
           delete form.dataset.slackOk;

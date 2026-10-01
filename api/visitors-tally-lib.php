@@ -27,6 +27,36 @@ function vis_warm_paths() {
     return array('/book-service/', '/contact/', '/pay/', '/pricing/', '/home-it-support-plans/', '/business-it-support-plans/',
         '/monthly-it-support/', '/plan-finder/', '/dell-support-plans/');
 }
+// 1 Oct 2026: the beacon's action pings - /~dl/pcm/ (a PC Manager download click), /~call/<page>, /~text/<page>,
+// /~lead/<page> (an enquiry form sent). Returns dl, call, text or lead; '' for an ordinary page.
+function vis_act_kind($p) {
+    return preg_match('#^/~(dl|call|text|lead)/#', (string)$p, $m) ? $m[1] : '';
+}
+// the actions in a page-count map: how many of each (each visitor once a day), and the pages the calls, texts and
+// enquiries came from (the page path after the kind; a download says nothing about its page)
+function vis_actions(array $pages, $nFrom = 8) {
+    $acts = array('dl' => 0, 'call' => 0, 'text' => 0, 'lead' => 0); $from = array();
+    foreach ($pages as $k => $n) {
+        $kind = vis_act_kind($k);
+        if ($kind === '') continue;
+        $acts[$kind] += (int)$n;
+        if ($kind === 'dl') continue;
+        $src = substr((string)$k, strlen($kind) + 2);
+        if ($src === '' || $src[0] !== '/') $src = '/';
+        if (!isset($from[$src])) $from[$src] = array('call' => 0, 'text' => 0, 'lead' => 0, 'n' => 0);
+        $from[$src][$kind] += (int)$n; $from[$src]['n'] += (int)$n;
+    }
+    uasort($from, function ($x, $y) { return $y['n'] - $x['n']; });
+    $list = array();
+    foreach (array_slice($from, 0, $nFrom, true) as $k => $v) $list[] = array('k' => (string)$k, 'n' => $v['n'], 'call' => $v['call'], 'text' => $v['text'], 'lead' => $v['lead']);
+    return array('n' => $acts, 'from' => $list);
+}
+// a page-count map without the action pings (the Pages lists show what people read)
+function vis_reads(array $pages) {
+    $out = array();
+    foreach ($pages as $k => $n) if (vis_act_kind($k) === '') $out[$k] = $n;
+    return $out;
+}
 function vis_sites() { return array('t365' => '365techies.co.uk', 'ccb' => 'colinclarkbuilders.co.uk', 'beckox' => 'beckox.co.uk'); }
 
 // ---------------------------------------------------------------- the staff check (visitors.php and visitors-stats.php)
@@ -192,7 +222,8 @@ function vis_fold(array $store, array $live, $now) {
                 $s['p'][$p] = 1;
                 vis_bump($d['pages'], $p, 500);
                 $bc = &vis_bc($d, $vc); vis_bump($bc['pages'], $p, 200); unset($bc);
-                if ($site === 't365' && !$s['w'] && isset($warm[$p])) { $s['w'] = 1; $d['warm']++; }
+                // 1 Oct 2026: a tap on Call or Text, or an enquiry sent (the beacon's /~call/, /~text/, /~lead/ pings), is warm too
+                if ($site === 't365' && !$s['w'] && (isset($warm[$p]) || vis_act_kind($p) === 'call' || vis_act_kind($p) === 'text' || vis_act_kind($p) === 'lead')) { $s['w'] = 1; $d['warm']++; }
             }
             unset($s);
         }
@@ -271,7 +302,8 @@ function vis_period(array $store, array $days, $site) {
     foreach ($sum['byCountry'] as $cc => $b) $ccv[$cc] = (int)$b['visitors'];
     foreach (vis_top($ccv, 8) as $c) {
         $b = $sum['byCountry'][$c['k']];
-        $perCountry[] = array('k' => $c['k'], 'n' => $c['n'], 'pages' => vis_top($b['pages'], 8), 'src' => vis_top($b['src'], 5),
+        $ba = vis_actions($b['pages'], 4);
+        $perCountry[] = array('k' => $c['k'], 'n' => $c['n'], 'pages' => vis_top(vis_reads($b['pages']), 8), 'src' => vis_top($b['src'], 5), 'acts' => $ba['n'],
             'os' => vis_top($b['os'], 6), 'dv' => vis_top($b['dv'], 3), 'known' => array_sum($b['dv']));
     }
     $places = array();
@@ -286,9 +318,11 @@ function vis_period(array $store, array $days, $site) {
         $cc = preg_match('/, ([A-Z]{2})$/', (string)$k, $cm) ? $cm[1] : (preg_match('/^[A-Z]{2}$/', (string)$k) ? (string)$k : 'Unknown');
         $countries[$cc] = (isset($countries[$cc]) ? $countries[$cc] : 0) + (int)$n;
     }
+    $acts = vis_actions($sum['pages']);
     return array('visitors' => $sum['visitors'], 'local' => $sum['local'], 'uk' => $sum['uk'], 'abroad' => $sum['abroad'], 'warm' => $sum['warm'],
         'days' => $covered, 'places' => $places, 'countries' => vis_top($countries, 12), 'perCountry' => $perCountry,
-        'pages' => vis_top($sum['pages'], 10), 'os' => vis_top($sum['os'], 12),
+        'pages' => vis_top(vis_reads($sum['pages']), 10), 'os' => vis_top($sum['os'], 12),
+        'acts' => $acts['n'], 'actFrom' => $acts['from'],
         'dv' => vis_top($sum['dv'], 3), 'br' => vis_top($sum['br'], 8), 'src' => vis_top($sum['src'], 10),
         'known' => array_sum($sum['dv']));   // visitors whose device is known (the share the device lists cover)
 }
