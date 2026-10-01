@@ -118,6 +118,8 @@ function sj_lines($text) {
        lines and contain colons). Lines outside any block are hand-typed rows. */
     $rows = array(); $cur = ''; $buf = array();
     foreach (preg_split('/\r\n|\r|\n/', (string)$text) as $raw) {
+        // 1 Oct 2026: our bot's card ends with "_Edited by david · 1 Oct, 14:20_" - the end of the last block, not part of its answer
+        if (preg_match('/^_?Edited by /i', trim($raw))) { if ($cur !== '') { $rows[] = array($cur, implode(' ', $buf)); $cur = ''; $buf = array(); } continue; }
         $k = sj_block_label($raw);
         if ($k !== '') { if ($cur !== '') $rows[] = array($cur, implode(' ', $buf)); $cur = $k; $buf = array(); continue; }
         if ($cur !== '') { $buf[] = $raw; continue; }

@@ -174,6 +174,19 @@ ok(sj_replies_extract(array(array('ts' => '2.0', 'text' => '8 Copsewood Avenue B
 $st = sj_apply_thread(array_merge($dj, array('email' => 'typed@portal.example', 'email_by' => 'staff')), array('email' => 'bare@x.com', 'email_by' => 'bare'), 1);
 ok($st['email'] === 'typed@portal.example', 'a bare email in the thread never replaces one the post or a person gave');
 
+echo "-- a card posted by our own bot (slack-jobs-worker.js, 1 Oct 2026): the same layout, read the same way\n";
+// pinned to the byte in slack-jobs-worker.test.mjs (CARD) - if the Worker's layout drifts, one of the two fails
+$BOTCARD = ":inbox_tray: *New job in*\n*Customer name*\nDavina Gahan\n*Address*\n8 Copsewood Avenue, Bournemouth\n*Postcode*\nBH8 9NG\n*Contact number*\n07584168898\n*Email*\ndavinagahn@hotmail.com\n*Job type*\nRemote\n*Issue*\nMS 365 Lost password. Waiting for reply from MS to restore the password\n*Assigned to*\nSteve\n*Priority*\nMedium\n*Price £.*\n60";
+ok(sj_is_job($BOTCARD) && !sj_is_out($BOTCARD), 'the bot card is a job, not a completion');
+$bc = sj_parse($BOTCARD);
+ok($bc['name'] === 'Davina Gahan' && $bc['addr'] === '8 Copsewood Avenue, Bournemouth BH8 9NG' && $bc['postcode'] === 'BH8 9NG' && $bc['phone'] === '07584168898' && $bc['email'] === 'davinagahn@hotmail.com', 'name, address + postcode, phone, email', json_encode(array($bc['name'], $bc['addr'], $bc['phone'], $bc['email'])));
+ok($bc['type'] === 'remote' && $bc['priority'] === 'medium' && $bc['price'] === 60.0 && $bc['issue'] === 'MS 365 Lost password. Waiting for reply from MS to restore the password' && $bc['assigned'] === 'Steve', 'type, priority, price, issue, assigned', json_encode(array($bc['type'], $bc['priority'], $bc['price'], $bc['assigned'])));
+$bcj = sj_job(array('ts' => '1790900000.000100', 'text' => $BOTCARD . "\n_Edited by david · 1 Oct, 14:20_"), 'C0C3VGP1SJC', 1790900100);
+ok($bcj && $bcj['amount'] === 60.0 && $bcj['status'] === 'quoted' && $bcj['desc'] === 'MS 365 Lost password. Waiting for reply from MS to restore the password', 'an edited card (the edited-by line) still reads as the job', json_encode(array($bcj['amount'], $bcj['status'])));
+$BOTEMPTY = ":inbox_tray: *New job in*\n*Customer name*\nJoan Baker\n*Address*\n\n*Postcode*\n\n*Contact number*\n\n*Email*\n\n*Job type*\n\n*Issue*\n\n*Assigned to*\n\n*Priority*\n\n*Price £.*\n";
+$be = sj_parse($BOTEMPTY);
+ok(sj_is_job($BOTEMPTY) && $be['name'] === 'Joan Baker' && $be['addr'] === '' && $be['price'] === 0.0 && $be['type'] === '', 'a card with only the name: a job with blanks, no price invented', json_encode($be));
+
 echo "-- the poller and the cron, at source level\n";
 $SW = (string)file_get_contents(__DIR__ . '/pcm-slackjobs-sweep.php');
 ok(strpos($SW, '?' . '>') === false, 'no closing tag');
