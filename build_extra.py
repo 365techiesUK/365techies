@@ -29578,7 +29578,8 @@ def write_portal_page():
   }
   function nxlStats() {
     var box = document.getElementById('nxLvStBody'); if (!box) return;
-    var st = NXL.st, site = NXL.site, per = NXL.per;
+    var st = NXL.st, per = NXL.per;
+    var site = (NXL.site && st && st.sites && st.sites[NXL.site]) ? NXL.site : 'all';   // never a blank card for an unknown site
     Array.prototype.forEach.call(document.querySelectorAll('#nxLvSt .nx-lvper'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-p') === per ? 'true' : 'false'); });
     if (!st) { box.innerHTML = '<p class="quiet">Loading\\u2026</p>'; return; }
     if (!st.ok) { box.innerHTML = '<p class="quiet">The statistics could not load (' + esc(st.error || 'no answer') + ').</p>'; return; }
@@ -29760,9 +29761,10 @@ def write_portal_page():
     var lv = document.getElementById('nxLv'); if (!lv) return;
     lv.addEventListener('click', function (e) {
       var b = e.target && e.target.closest ? e.target.closest('button') : null; if (!b || !lv.contains(b)) return;
-      if (b.classList.contains('nx-lvchip')) { NXL.site = b.getAttribute('data-site'); nxlTab(); return; }
-      if (b.classList.contains('nx-lvper')) { NXL.per = b.getAttribute('data-p') || 'd7'; nxlStats(); return; }
+      // a country chip (By country) wears the site chips' style too: it must be caught first, or it reads as a site called nothing
       if (b.classList.contains('nx-lvcc')) { NXL.cc = b.getAttribute('data-cc') || ''; nxlStats(); return; }
+      if (b.classList.contains('nx-lvchip') && b.hasAttribute('data-site')) { NXL.site = b.getAttribute('data-site'); nxlTab(); return; }
+      if (b.classList.contains('nx-lvper')) { NXL.per = b.getAttribute('data-p') || 'd7'; nxlStats(); return; }
       if (b.classList.contains('nx-lvrow')) {
         NXL.sel = b.getAttribute('data-k');
         var la = parseFloat(b.getAttribute('data-la')), lo = parseFloat(b.getAttribute('data-lo'));
