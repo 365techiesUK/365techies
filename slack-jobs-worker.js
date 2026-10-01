@@ -41,8 +41,8 @@ const CHANNEL = "C0C3VGP1SJC";   // #sos-jobs-in-out - cards always go here, whi
 // the card's fields, in the order the Workflow Builder form posted them (the reader knows these labels)
 const FIELDS = [
   ["name", "Customer name"], ["address", "Address"], ["postcode", "Postcode"], ["phone", "Contact number"],
-  ["email", "Email"], ["jobtype", "Job type"], ["issue", "Issue"], ["assigned", "Assigned to"],
-  ["priority", "Priority"], ["price", "Price £."],
+  ["mobile", "Mobile phone"], ["email", "Email"], ["website", "Website address"], ["jobtype", "Job type"],
+  ["issue", "Issue"], ["assigned", "Assigned to"], ["priority", "Priority"], ["price", "Price £."],
 ];
 const JOB_TYPES = ["Remote", "On-site", "Hardware"];
 const PRIORITIES = ["Low", "Medium", "High"];
@@ -167,7 +167,9 @@ export function modalView(v, privateMetadata) {
       input("address", "Address", { optional: true }),
       input("postcode", "Postcode", { optional: true }),
       input("phone", "Contact number", { optional: true }),
+      input("mobile", "Mobile phone", { optional: true }),
       input("email", "Email", { optional: true }),
+      input("website", "Website address", { optional: true, placeholder: "www.example.co.uk" }),
       select("jobtype", "Job type", JOB_TYPES),
       input("issue", "Issue", { optional: true, multiline: true }),
       input("assigned", "Assigned to", { optional: true }),
@@ -184,6 +186,7 @@ export function readSubmission(view) {
     v[key] = v[key].trim();
   }
   if (v.price) v.price = v.price.replace(/^£\s*/, "");
+  if (v.website) v.website = v.website.replace(/^https?:\/\//i, "").replace(/\/$/, "");   // the address as a person would say it
   return v;
 }
 export function validate(v) {
@@ -191,6 +194,7 @@ export function validate(v) {
   if (!v.name) errors.name = "Please put the customer's name.";
   if (v.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email)) errors.email = "That doesn't look like an email address.";
   if (v.price && !/^\d+(\.\d{1,2})?$/.test(v.price)) errors.price = "Just the number, e.g. 60 or 45.50.";
+  if (v.website && !/^[a-z0-9.-]+\.[a-z]{2,}(\/\S*)?$/i.test(v.website.replace(/^https?:\/\//i, ""))) errors.website = "That doesn't look like a website address (e.g. www.example.co.uk).";
   return errors;
 }
 
