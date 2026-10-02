@@ -28,6 +28,14 @@ GAPP_SLUG = "how-to-make-a-google-app-password"
 ADDR_SLUG = "change-your-email-address-everywhere"
 JUNARA = "/virgin-media-email-moving-to-junara/"
 GMAIL_PAGE = "/move-virgin-media-email-to-gmail/"
+# The 365 Email Mover browser add-on (Chrome Web Store item gfhaolhbpbjdfjgacpehimkjjnhcipjd, submitted 2 Oct 2026): it
+# copies the mailbox in the customer's OWN browser, where they are already signed in, for when Virgin refuses the sign-in in
+# the window the app opens ("can't sign you in just now", IDF-12B). 365 PC Manager then moves that copy into Gmail
+# (Mail Mover v2.4 reads it from Downloads). EMPTY until Google approves the item - its store page is a dead end before
+# that. Once approved, set it to "https://chromewebstore.google.com/detail/gfhaolhbpbjdfjgacpehimkjjnhcipjd" and rebuild
+# (the same day: api/pcm.php PCM_MM_ADDON_URL, which switches on the app's own "Add to Chrome" button). It then shows in
+# the free card on every Virgin page and as its own section on the tool page.
+EMAIL_MOVER_ADDON_URL = ""
 
 # the owner's GBP 60 move: what they get (the same promises the pages made before the free app, plus the PC service)
 VM_US_TICKS = ("Every message and folder into Gmail, with the original dates",
@@ -112,6 +120,15 @@ def virgin_shot(key, sizes):
             f'/images/pcm-virgin-{key}-v30.webp 2080w" sizes="{sizes}" width="1200" height="935" alt="{alt}" loading="lazy" decoding="async">')
 
 
+def _vmc_stuck():
+    """The free card's last line: what to do when Virgin won't let them sign in (the add-on first, once it is live)."""
+    if EMAIL_MOVER_ADDON_URL:
+        return ('If Virgin won&rsquo;t let you sign in, <a href="' + EMAIL_MOVER_ADDON_URL + '" target="_blank" rel="noopener">copy your email from the Chrome you already use</a> '
+                'with our free 365 Email Mover add-on, or press &lsquo;Stuck? We&rsquo;ll do it for you&rsquo; and we&rsquo;ll move it for you.')
+    return ('If Virgin won&rsquo;t let you sign in, press &lsquo;Stuck? We&rsquo;ll do it for you&rsquo; in the app or <a href="tel:+441202775566">ring us</a>, '
+            'and we&rsquo;ll move it for you.')
+
+
 def virgin_choices(setup_url, also_html="", how_href="/" + VIRGIN_TOOL_SLUG + "/", how_label="How it works, and what you need",
                    heading_level=2, shots=True, paid_first=False):
     """The two choices side by side (one above the other on a phone, the free one first). The GBP 60 card keeps the
@@ -149,7 +166,7 @@ def virgin_choices(setup_url, also_html="", how_href="/" + VIRGIN_TOOL_SLUG + "/
           <{h} class="vmc__h">{diy_or} it yourself, free, with 365&nbsp;PC&nbsp;Manager</{h}>
           <p class="vmc__d">Our free app moves your Virgin email into Gmail for you, no Virgin app password needed.</p>
           <p class="vmc__cta"><a class="button {dl_btn} button--lg" href="{setup_url}" download data-vmc-dl><span class="vmc__dl-l">Download free for Windows</span><span class="vmc__dl-s">Download free</span> &#8595;</a></p>
-          <p class="vmc__note">For Windows PCs. You&rsquo;ll need a Gmail account and a <a href="/{GAPP_SLUG}/">Google app password</a>. Not for Macs. If Virgin won&rsquo;t let you sign in, press &lsquo;Stuck? We&rsquo;ll do it for you&rsquo; in the app or <a href="tel:+441202775566">ring us</a>, and we&rsquo;ll move it for you.</p>
+          <p class="vmc__note">For Windows PCs. You&rsquo;ll need a Gmail account and a <a href="/{GAPP_SLUG}/">Google app password</a>. Not for Macs. {_vmc_stuck()}</p>
           <ul class="vmc__list">
             <li><b>Check my Virgin email:</b> every folder, how many emails, how big, and how many days the move will take. It only reads.</li>
             <li><b>Move it to Gmail myself:</b> folders and dates kept. Gmail takes about 500&nbsp;MB a day, so a big mailbox takes a few days &mdash; it carries on by itself.</li>
@@ -451,6 +468,23 @@ def virgin_tool_page(setup_url):
         </div>
       </div>
     </section>'''
+    addon = (f'''    <section class="section" id="addon" aria-label="If Virgin won't let you sign in">
+      <div class="wrap split-2">
+        <div class="prose" data-reveal>
+          <p class="eyebrow mono">// IF VIRGIN WON&rsquo;T LET YOU SIGN IN</p>
+          <h2 class="section-title" data-title>Copy it from the Chrome you already use<span class="title-underline"></span></h2>
+          <p>Virgin sometimes refuses a sign-in in a new window (&ldquo;Sorry, we can&rsquo;t sign you in just now&rdquo;). If you already read your Virgin email in Chrome, our free <strong>365 Email Mover</strong> add-on copies it from there instead &mdash; you&rsquo;re already signed in, so there&rsquo;s nothing to sign in to. 365 PC Manager then moves that copy into Gmail as usual.</p>
+          <p><a class="button primary" href="{EMAIL_MOVER_ADDON_URL}" target="_blank" rel="noopener" style="text-decoration:none">Add the Email Mover to Chrome &#8599;</a></p>
+          <p style="color:var(--muted);font-size:.92rem">Free, made by us. It works only on Virgin Media&rsquo;s webmail, never changes anything in your mailbox, and sends nothing to us &mdash; the copy goes into your Downloads folder.</p>
+        </div>
+        <div class="prose" data-reveal><ol>
+          <li><strong>Add it to Chrome</strong> (or Microsoft Edge) from the Chrome Web Store.</li>
+          <li><strong>Open your Virgin email in Chrome</strong> as usual, click the 365 Email Mover button and press <em>Check my mailbox first</em>, then <em>Copy my email to this PC</em>. Leave the tab open until it says it has finished.</li>
+          <li><strong>In 365 PC Manager, choose Check my Virgin email.</strong> It finds the copy in your Downloads folder and reads it, with no Virgin sign-in.</li>
+          <li><strong>Then choose Move it to Gmail myself,</strong> with your Gmail address and Google app password, as in the steps above.</li>
+        </ol></div>
+      </div>
+    </section>''') if EMAIL_MOVER_ADDON_URL else ""
     safety = '''    <section class="section section--alt" id="safety" aria-label="Is it safe?">
       <div class="wrap split-2">
         <div class="prose" data-reveal>
@@ -503,7 +537,7 @@ def virgin_tool_page(setup_url):
         <p><strong>Related guides:</strong> <a href="{JUNARA}">Virgin Media email is moving to Junara: keep it or move it?</a> &middot; <a href="{GMAIL_PAGE}">Moving Virgin Media email to Gmail, step by step</a> &middot; <a href="/{GAPP_SLUG}/">How to make a Google app password</a> &middot; <a href="/{ADDR_SLUG}/">Change your email address everywhere</a> &middot; <a href="/virgin-media-email-wont-add-to-new-outlook/">Virgin Media email and the new Outlook</a> &middot; <a href="/email-support/">Email support</a></p>
       </div>
     </section>'''
-    content = "\n".join([head, choices, what, how_long, need, how, safety, who, download, related, bp.faq_html(TOOL_FAQS),
+    content = "\n".join([x for x in (head, choices, what, how_long, need, how, addon) if x] + [safety, who, download, related, bp.faq_html(TOOL_FAQS),
                          bp.cta("Rather we just did it for you?", "We move every folder into Gmail for you, remotely, for &pound;60 per email address, agreed before we start &mdash; and it includes a full service of your PC with a written report.",
                              primary=("Call 01202 775566", "tel:+441202775566"), secondary=("Text us: 07520 615332", "sms:+447520615332"))])
 
