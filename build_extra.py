@@ -16554,6 +16554,15 @@ _PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
             <li><strong>A count of 365 PC Manager installs.</strong> The app checks with us for updates when it starts and every hour, whether or not you have linked it to us. For copies that are not linked, we keep only an anonymous install number, the app version, whether the PC runs Windows 10, the days it was first and last seen, and the country &mdash; worked out from the internet address at that moment; the address itself is not kept. Country data: IP geolocation by <a href="https://db-ip.com" rel="noopener">DB-IP</a>, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a>.</li>
           </ul>
 
+          <h2>Moving your email: the 365 Email Mover add-on and 365 PC Manager</h2>
+          <p>If you use our email move (for example from Virgin Media to Gmail):</p>
+          <ul>
+            <li><strong>The 365 Email Mover browser add-on</strong> reads your mailbox inside your own browser, where you are already signed in, and saves a copy of your emails to the Downloads folder on your own PC. It does not send your emails, your contacts or your password to us or to anyone else. To carry on after an interruption it keeps its progress &mdash; which folders and emails it has copied, the counts, and the mailbox address &mdash; in your browser&rsquo;s own storage on your PC; removing the add-on deletes that. It works only on the Virgin Media webmail site, and it never changes, moves or deletes anything in your mailbox.</li>
+            <li><strong>365 PC Manager</strong> then copies those emails from your PC into your Gmail account, signing in with the Gmail app password you give it. That password is stored encrypted on your PC and is never sent to us. While a move runs, the app tells us only how far it has got &mdash; numbers, never email addresses or the content of your emails &mdash; so we can help if it gets stuck.</li>
+            <li><strong>The copy in your Downloads folder</strong> stays on your PC until you delete it.</li>
+            <li>If you press <strong>&ldquo;Stuck? We&rsquo;ll do it for you&rdquo;</strong>, the details you enter (your name, phone number, email addresses and the size of your mailbox) come to us so we can ring you.</li>
+          </ul>
+
           <h2>How we use your information</h2>
           <ul>
             <li>To provide, manage and improve our IT support and services.</li>
