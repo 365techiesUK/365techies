@@ -23381,6 +23381,9 @@ def build_new_page(d):
     _blocks = [_sec_block(s, i) for i, s in enumerate(d['sections'])]
     if d['slug'] in VICTRON_CRED_SLUGS:
         _blocks.insert(0, VICTRON_CRED_BAND)
+    # the 365 Get Help add-on, once its store page is live (build_pages.GET_HELP_ADDON_URL; empty = nothing)
+    if bp.GH_BAND and d['slug'] == 'scam-pop-up-help-poole':
+        _blocks.append(bp.GH_BAND)
     # help-ASAP funnel: problem-intent pages get the SOS band right after section 1
     if _wants_sos_band(d['slug']) and len(_blocks) > 1:
         _blocks.insert(1, bp.SOS_BAND)

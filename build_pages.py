@@ -218,6 +218,23 @@ WHATSAPP_LINK = ("https://wa.me/" + WHATSAPP_NUMBER) if WHATSAPP_NUMBER else ""
 WA_FOOTER = (f'<br /><a href="{WHATSAPP_LINK}" target="_blank" rel="noopener">WhatsApp us</a>') if WHATSAPP_NUMBER else ""
 WA_MENU = (f'<br /><a href="{WHATSAPP_LINK}" target="_blank" rel="noopener">WhatsApp us</a>') if WHATSAPP_NUMBER else ""
 WA_CONTACT_ROW = (f'<li><span class="k">WhatsApp</span><span class="v"><a href="{WHATSAPP_LINK}" target="_blank" rel="noopener">Chat on WhatsApp &#8594;</a></span></li>') if WHATSAPP_NUMBER else ""
+# The 365 Get Help browser add-on ("Ring me back" from any web page; Chrome Web Store item
+# iojhdcdcblphmeebjkobnigbdkioloej, submitted 2 Oct 2026). EMPTY until Google approves it: before that the store page
+# says the item isn't available, so no link is published. Once approved, set it to
+# "https://chromewebstore.google.com/detail/iojhdcdcblphmeebjkobnigbdkioloej" and rebuild - the contact page's
+# "Or reach us directly" list and the scam pop-up guide (build_extra.build_new_page) then show it.
+GET_HELP_ADDON_URL = ""
+GH_CWAY = (f'\n          <a class="cway" href="{GET_HELP_ADDON_URL}" target="_blank" rel="noopener"><span class="cway__i" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/><path d="M10 8.5a2 2 0 1 1 2.7 1.9c-.5.2-.7.6-.7 1.1v.5M12 14h.01"/></svg></span><span class="cway__t"><b>Add our Get Help button</b><span>Ask us to ring back from any web page &middot; Chrome &amp; Edge</span></span></a>') if GET_HELP_ADDON_URL else ""
+GH_BAND = (f'''    <section class="section" aria-label="The 365 Get Help button">
+      <div class="wrap" style="max-width:860px;margin:0 auto">
+        <div style="padding:1.2rem 1.3rem;border-radius:14px;border:1px solid rgba(125,170,220,.25);background:rgba(255,255,255,.03)">
+          <h2 style="margin:0 0 .5rem;font-size:1.25rem">Next time, ask us from your browser</h2>
+          <p style="margin:0 0 .7rem">Add our free <b>365 Get Help</b> button to Chrome or Microsoft Edge. If a scary warning appears, click it, pick what&rsquo;s wrong and type your number, and we&rsquo;ll ring you back. It also tells you what to do until we do.</p>
+          <p style="margin:0 0 .6rem"><a class="button primary" href="{GET_HELP_ADDON_URL}" target="_blank" rel="noopener">Add to Chrome &#8599;</a></p>
+          <p style="margin:0;color:var(--muted);font-size:.9rem">Made by us. It sends nothing until you press &ldquo;Ring me back&rdquo;, and it can&rsquo;t read what&rsquo;s on your web pages.</p>
+        </div>
+      </div>
+    </section>''') if GET_HELP_ADDON_URL else ""
 WA_CWAY = (f'\n          <a class="cway" href="{WHATSAPP_LINK}" target="_blank" rel="noopener"><span class="cway__i" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"/></svg></span><span class="cway__t"><b>WhatsApp</b><span>Chat with us on WhatsApp</span></span></a>') if WHATSAPP_NUMBER else ""
 
 # GoCardless Direct Debit subscription links (paste the hosted payment-link URL
@@ -6792,7 +6809,7 @@ add(
           <a class="cway" href="sms:+447520615332"><span class="cway__i" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"/></svg></span><span class="cway__t"><b>Text 07520 615332</b><span>Text only &middot; message us any time</span></span></a>{WA_CWAY}
           <a class="cway" href="mailto:help@365techies.co.uk"><span class="cway__i" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></span><span class="cway__t"><b>help@365techies.co.uk</b><span>We reply within one working day</span></span></a>
           <a class="cway" href="/book-service/"><span class="cway__i" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span><span class="cway__t"><b>Book a visit online</b><span>Pick a time for a service or repair</span></span></a>
-          <a class="cway cway--sos" href="/sos/" target="_blank" rel="noopener"><span class="cway__i" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="cway__t"><b>Urgent? SOS remote help</b><span>Let us connect to a Windows PC now</span></span></a>
+          <a class="cway cway--sos" href="/sos/" target="_blank" rel="noopener"><span class="cway__i" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="cway__t"><b>Urgent? SOS remote help</b><span>Let us connect to a Windows PC now</span></span></a>{GH_CWAY}
           <p class="cways__note">Based in Bournemouth, Dorset. There&rsquo;s no walk-in shop: we help remotely, collect computers for repair, and meet by appointment at Kinson Community Centre.</p>
           <p class="cways__note">Looking for prices? <a href="/monthly-it-support/">See plans &amp; prices &#8594;</a></p>
         </aside>
