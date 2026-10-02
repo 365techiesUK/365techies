@@ -74,7 +74,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=114" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=118" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -112,7 +112,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=114&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=118&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -312,7 +312,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/bournemouth/media/og-weather.jpg"
       },
-      "dateModified": "2026-09-24",
+      "dateModified": "2026-10-02",
       "publisher": {
         "@id": "https://365techies.co.uk/bournemouth/#organization"
       }
@@ -450,12 +450,12 @@
           <div class="dropdown">
             <a href="/home-it-support-subscriptions/">Home IT Support</a>
             <a href="/home-it-support-plans/">Home Support Plans</a>
-            <a href="/free-pc-health-check/">365 PC Manager app &mdash; free</a>
-            <a href="/it-support-for-home-workers/">Home Workers</a>
+            <a href="/free-pc-health-check/">365 PC Manager &mdash; free app</a>
+            <a href="/computer-help-for-seniors/">Help for Seniors</a>
             <a href="/family-it-support/">Families</a>
+            <a href="/it-support-for-home-workers/">Home Workers</a>
             <a href="/it-support-for-retired-users/">Retired Users</a>
             <a href="/it-support-for-disabled-people/">Disabled People</a>
-            <a href="/computer-help-for-seniors/">Help for Seniors</a>
             <a href="/free-courses/">Free Courses</a>
             <a href="/parents-guide-online-safety/">Parents&rsquo; Online Safety Guide</a>
           </div>
@@ -467,98 +467,131 @@
           <div class="dropdown">
             <a href="/business-it-support-subscriptions/">Business IT Support</a>
             <a href="/business-it-support-plans/">Business Support Plans</a>
-            <a href="/free-pc-health-check/">365 PC Manager app &mdash; free</a>
             <a href="/small-business-it-support/">Small Businesses</a>
             <a href="/it-support-for-sole-traders/">Sole Traders</a>
             <a href="/it-support-for-education/">Schools &amp; Education</a>
             <a href="/it-support-by-industry/">IT Support by Industry</a>
             <a href="/business-wifi-installation/">Business WiFi</a>
             <a href="/business-continuity-internet/">Broadband Emergency Plan</a>
+            <a href="/switching-it-provider/">Switching to Us</a>
           </div>
         </div>
-        <div class="nav-item has-dropdown">
+        <div class="nav-item has-dropdown nav-item--mega">
           <a href="/services/" aria-haspopup="true">Services
             <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
           </a>
-          <div class="dropdown">
-            <a href="/services/">All Services &#8594;</a>
-            <span class="dropdown__label dropdown__label--sep">Everyday support</span>
-            <a href="/remote-it-support/">Remote IT Support</a>
-            <a href="/computer-repairs/">Computer Repairs</a>
-            <a href="/preventative-maintenance/">Preventative Maintenance</a>
-            <a href="/microsoft-365-support/">Microsoft 365</a>
-            <a href="/cybersecurity-support/">Cybersecurity</a>
-            <a href="/email-support/">Email Support</a>
-            <a href="/printer-support/">Printer Support</a>
-            <a href="/backup-support/">Backup Support</a>
-            <span class="dropdown__label dropdown__label--sep">WiFi &amp; internet</span>
-            <a href="/wifi-support/">Wi-Fi Support</a>
-            <a href="/starlink-internet/">Starlink Internet</a>
-            <a href="/emergency-internet/">365 Emergency Internet</a>
-            <span class="dropdown__label dropdown__label--sep">Computers &amp; hardware</span>
-            <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
-            <a href="/custom-pc-builds/">Custom-Built PCs</a>
-            <span class="dropdown__label dropdown__label--sep">Web, AI &amp; off-grid</span>
-            <a href="/ai/">AI &amp; Automation</a>
-            <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
-            <a href="/web-care/">365 Web Care</a>
-            <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
-            <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+          <div class="dropdown dropdown--mega">
+            <a class="dropdown__all" href="/services/">All Services &#8594;</a>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Everyday support</span>
+              <a href="/remote-it-support/">Remote IT Support</a>
+              <a href="/computer-repairs/">Computer Repairs</a>
+              <a href="/preventative-maintenance/">Preventative Maintenance</a>
+              <a href="/cybersecurity-support/">Cybersecurity</a>
+              <a href="/backup-support/">Backup Support</a>
+              <a href="/printer-support/">Printer Support</a>
+              <a href="/windows-11-upgrade-service/">Windows 11 Upgrade</a>
+            </div>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Email &amp; Microsoft 365</span>
+              <a href="/email-support/">Email Support</a>
+              <a href="/microsoft-365-support/">Microsoft 365</a>
+              <a href="/move-virgin-media-email-to-gmail/">Virgin Media Email Move</a>
+              <a href="/email-migration/">Email Migration</a>
+              <span class="dropdown__label dropdown__label--sep">Computers</span>
+              <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+              <a href="/custom-pc-builds/">Custom-Built PCs</a>
+            </div>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Wi-Fi &amp; internet</span>
+              <a href="/wifi-support/">Wi-Fi Support</a>
+              <a href="/starlink-internet/">Starlink Internet</a>
+              <a href="/emergency-internet/">365 Emergency Internet</a>
+              <span class="dropdown__label dropdown__label--sep">Web, AI &amp; off-grid</span>
+              <a href="/ai/">AI &amp; Automation</a>
+              <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
+              <a href="/web-care/">365 Web Care</a>
+              <a href="/off-grid-victron-energy/">Off-Grid &amp; Victron Energy</a>
+              <a href="/custom-vrm-dashboards/">Custom VRM Dashboards</a>
+            </div>
           </div>
         </div>
-        <div class="nav-item has-dropdown">
+        <div class="nav-item has-dropdown nav-item--mega">
           <a href="/free-tools/" aria-haspopup="true">Free Tools
             <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
           </a>
-          <div class="dropdown">
-            <a href="/free-tools/">All Free Tools &#8594;</a>
-            <span class="dropdown__label dropdown__label--sep">Test your setup</span>
-            <a href="/broadband-speed-checker/">Broadband Speed Test</a>
-            <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
-            <a href="/van-signal-map/">Bournemouth Signal Map</a>
-            <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
-            <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
-            <a href="/bournemouth/live-map/#map">Bournemouth in 3D</a>
-            <a href="/pc-benchmark/">PC Benchmark</a>
-            <a href="/computer-spec-checker/">PC Hardware Checker</a>
-            <a href="/website-checker/">Website Checker</a>
-            <a href="/is-it-down/">Is It Down? Status Checker</a>
-            <span class="dropdown__label dropdown__label--sep">Stay safe</span>
-            <a href="/email-security-checker/">Email Security Checker</a>
-            <a href="/password-breach-checker/">Password Breach Checker</a>
-            <a href="/link-safety-checker/">Link Safety Checker</a>
-            <a href="/spot-the-scam/">Spot the Scam Quiz</a>
-            <a href="/online-safety-course/">Free Online Safety Course</a>
-            <span class="dropdown__label dropdown__label--sep">Apps &amp; builders</span>
-            <a href="/free-pc-health-check/">365 PC Manager app</a>
-            <a href="/custom-pc-builder/">Custom PC Builder</a>
-            <a href="/victron-system-builder/">Victron System Builder</a>
-            <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+          <div class="dropdown dropdown--mega">
+            <a class="dropdown__all" href="/free-tools/">All Free Tools &#8594;</a>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Check your computer</span>
+              <a href="/computer-spec-checker/">PC Spec Checker</a>
+              <a href="/pc-benchmark/">PC Speed Test</a>
+              <a href="/free-pc-health-check/">365 PC Manager &mdash; free app</a>
+              <a href="/custom-pc-builder/">PC Build Budget Planner</a>
+              <span class="dropdown__label dropdown__label--sep">Local &amp; specialist</span>
+              <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
+              <a href="/victron-system-builder/">Victron Cable &amp; Fuse Sizer</a>
+            </div>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Internet &amp; signal</span>
+              <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+              <a href="/wifi-signal-test/">Wi-Fi Signal Test</a>
+              <a href="/wifi-qr-code-generator/">Wi-Fi QR Code Maker</a>
+              <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+              <a href="/van-signal-map/">Campervan 4G/5G Map</a>
+              <a href="/is-it-down/">Is It Down? Live Status</a>
+              <a href="/website-checker/">Website Speed Checker</a>
+            </div>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Stay safe online</span>
+              <a href="/email-security-checker/">Email Security Checker</a>
+              <a href="/password-breach-checker/">Password Breach Checker</a>
+              <a href="/link-safety-checker/">Link Safety Checker</a>
+              <a href="/spot-the-scam/">Spot the Scam Quiz</a>
+              <a href="/online-safety-course/">Free Online Safety Course</a>
+              <span class="dropdown__label dropdown__label--sep">Email</span>
+              <a href="/virgin-email-mover/">Free Virgin Email Mover</a>
+            </div>
           </div>
         </div>
-        <div class="nav-item has-dropdown">
+        <div class="nav-item has-dropdown nav-item--mega">
           <a href="/book-service/" aria-haspopup="true">Get Help
             <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
           </a>
-          <div class="dropdown">
-            <a href="/contact/">Contact Us &#8594;</a>
-            <span class="dropdown__label dropdown__label--sep">Right now</span>
-            <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed &mdash; What To Do</a>
-            <a href="/remote-support/">Start Remote Support</a>
-            <a href="/emergency-it-help/">Emergency IT Help</a>
-            <a href="/scam-pop-up-help-poole/">Scam Pop-up Help</a>
-            <span class="dropdown__label dropdown__label--sep">Book &amp; pay</span>
-            <a href="/book-service/">Book a Service</a>
-            <a href="/book-a-collection/">Book a Collection</a>
-            <a href="/quick-quote/">Quick Quote</a>
-            <a href="/pay/">Pay Us</a>
-            <span class="dropdown__label dropdown__label--sep">Plans &amp; pricing</span>
-            <a href="/monthly-it-support/">Monthly IT Support</a>
-            <a href="/plan-finder/">Plan Finder</a>
-            <a href="/switching-it-provider/">Switching to Us</a>
-            <span class="dropdown__label dropdown__label--sep">Fix it yourself</span>
-            <a href="/wifi-troubleshooting/">WiFi Troubleshooting</a>
-            <a href="/broadband-down/">Broadband Down? Start Here</a>
+          <div class="dropdown dropdown--mega">
+            <a class="dropdown__all" href="/contact/">Contact Us &#8594;</a>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Help right now</span>
+              <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed &mdash; What To Do</a>
+              <a href="/remote-support/">Start Remote Support</a>
+              <a href="/emergency-it-help/">Emergency IT Help</a>
+              <a href="/scam-pop-up-help-poole/">Scam Pop-up Help</a>
+              <span class="dropdown__label dropdown__label--sep">Book &amp; pay</span>
+              <a href="/book-service/">Book a Service</a>
+              <a href="/book-a-collection/">Book a Collection</a>
+              <a href="/quick-quote/">Quick Quote</a>
+              <a href="/pay/">Pay Us</a>
+            </div>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Email changes</span>
+              <a href="/virgin-media-email-moving-to-junara/">Virgin Media Email Changes</a>
+              <a href="/move-virgin-media-email-to-gmail/">Move Virgin Email to Gmail</a>
+              <a href="/virgin-email-mover/">Free Virgin Email Mover</a>
+              <a href="/move-plusnet-email-to-gmail/">Plusnet Email Closing</a>
+              <span class="dropdown__label dropdown__label--sep">Plans</span>
+              <a href="/monthly-it-support/">Monthly IT Support</a>
+              <a href="/plan-finder/">Plan Finder</a>
+            </div>
+            <div class="dropdown__col">
+              <span class="dropdown__label">Fix it yourself</span>
+              <a href="/printer-support/">Printer Problems</a>
+              <a href="/outlook-problems/">Outlook Problems</a>
+              <a href="/onedrive-problems/">OneDrive Problems</a>
+              <a href="/windows-11-support/">Windows 11 Help</a>
+              <a href="/wifi-troubleshooting/">Slow Wi-Fi?</a>
+              <a href="/broadband-down/">Broadband Down?</a>
+              <a href="/it-advice/">All Guides &amp; Advice &#8594;</a>
+            </div>
           </div>
         </div>
         <a href="/pricing/">Pricing</a>
@@ -649,12 +682,12 @@
         <div class="m-group__links">
           <a href="/home-it-support-subscriptions/">Home IT Support</a>
           <a href="/home-it-support-plans/">Home Support Plans</a>
-          <a href="/free-pc-health-check/">365 PC Manager app &mdash; free</a>
-          <a href="/it-support-for-home-workers/">Home Workers</a>
+          <a href="/free-pc-health-check/">365 PC Manager &mdash; free app</a>
+          <a href="/computer-help-for-seniors/">Help for Seniors</a>
           <a href="/family-it-support/">Families</a>
+          <a href="/it-support-for-home-workers/">Home Workers</a>
           <a href="/it-support-for-retired-users/">Retired Users</a>
           <a href="/it-support-for-disabled-people/">Disabled People</a>
-          <a href="/computer-help-for-seniors/">Help for Seniors</a>
           <a href="/free-courses/">Free Courses</a>
           <a href="/parents-guide-online-safety/">Parents&rsquo; Online Safety Guide</a>
         </div>
@@ -664,13 +697,13 @@
         <div class="m-group__links">
           <a href="/business-it-support-subscriptions/">Business IT Support</a>
           <a href="/business-it-support-plans/">Business Support Plans</a>
-          <a href="/free-pc-health-check/">365 PC Manager app &mdash; free</a>
           <a href="/small-business-it-support/">Small Businesses</a>
           <a href="/it-support-for-sole-traders/">Sole Traders</a>
           <a href="/it-support-for-education/">Schools &amp; Education</a>
           <a href="/it-support-by-industry/">IT Support by Industry</a>
           <a href="/business-wifi-installation/">Business WiFi</a>
           <a href="/business-continuity-internet/">Broadband Emergency Plan</a>
+          <a href="/switching-it-provider/">Switching to Us</a>
         </div>
       </details>
       <details class="m-group">
@@ -681,18 +714,22 @@
           <a href="/remote-it-support/">Remote IT Support</a>
           <a href="/computer-repairs/">Computer Repairs</a>
           <a href="/preventative-maintenance/">Preventative Maintenance</a>
-          <a href="/microsoft-365-support/">Microsoft 365</a>
           <a href="/cybersecurity-support/">Cybersecurity</a>
-          <a href="/email-support/">Email Support</a>
-          <a href="/printer-support/">Printer Support</a>
           <a href="/backup-support/">Backup Support</a>
-          <span class="dropdown__label dropdown__label--sep">WiFi &amp; internet</span>
+          <a href="/printer-support/">Printer Support</a>
+          <a href="/windows-11-upgrade-service/">Windows 11 Upgrade</a>
+          <span class="dropdown__label dropdown__label--sep">Email &amp; Microsoft 365</span>
+          <a href="/email-support/">Email Support</a>
+          <a href="/microsoft-365-support/">Microsoft 365</a>
+          <a href="/move-virgin-media-email-to-gmail/">Virgin Media Email Move</a>
+          <a href="/email-migration/">Email Migration</a>
+          <span class="dropdown__label dropdown__label--sep">Computers</span>
+          <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
+          <a href="/custom-pc-builds/">Custom-Built PCs</a>
+          <span class="dropdown__label dropdown__label--sep">Wi-Fi &amp; internet</span>
           <a href="/wifi-support/">Wi-Fi Support</a>
           <a href="/starlink-internet/">Starlink Internet</a>
           <a href="/emergency-internet/">365 Emergency Internet</a>
-          <span class="dropdown__label dropdown__label--sep">Computers &amp; hardware</span>
-          <a href="/dell-hardware/">Dell Laptops &amp; Desktops</a>
-          <a href="/custom-pc-builds/">Custom-Built PCs</a>
           <span class="dropdown__label dropdown__label--sep">Web, AI &amp; off-grid</span>
           <a href="/ai/">AI &amp; Automation</a>
           <a href="/web-design-hosting/">Website Design &amp; Hosting</a>
@@ -705,35 +742,37 @@
         <summary>Free Tools</summary>
         <div class="m-group__links">
           <a href="/free-tools/">All Free Tools &#8594;</a>
-          <span class="dropdown__label dropdown__label--sep">Test your setup</span>
-          <a href="/broadband-speed-checker/">Broadband Speed Test</a>
-          <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
-          <a href="/van-signal-map/">Bournemouth Signal Map</a>
-          <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+          <span class="dropdown__label dropdown__label--sep">Check your computer</span>
+          <a href="/computer-spec-checker/">PC Spec Checker</a>
+          <a href="/pc-benchmark/">PC Speed Test</a>
+          <a href="/free-pc-health-check/">365 PC Manager &mdash; free app</a>
+          <a href="/custom-pc-builder/">PC Build Budget Planner</a>
+          <span class="dropdown__label dropdown__label--sep">Local &amp; specialist</span>
           <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
-          <a href="/bournemouth/live-map/#map">Bournemouth in 3D</a>
-          <a href="/pc-benchmark/">PC Benchmark</a>
-          <a href="/computer-spec-checker/">PC Hardware Checker</a>
-          <a href="/website-checker/">Website Checker</a>
-          <a href="/is-it-down/">Is It Down? Status Checker</a>
-          <span class="dropdown__label dropdown__label--sep">Stay safe</span>
+          <a href="/victron-system-builder/">Victron Cable &amp; Fuse Sizer</a>
+          <span class="dropdown__label dropdown__label--sep">Internet &amp; signal</span>
+          <a href="/broadband-speed-checker/">Broadband Speed Test</a>
+          <a href="/wifi-signal-test/">Wi-Fi Signal Test</a>
+          <a href="/wifi-qr-code-generator/">Wi-Fi QR Code Maker</a>
+          <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
+          <a href="/van-signal-map/">Campervan 4G/5G Map</a>
+          <a href="/is-it-down/">Is It Down? Live Status</a>
+          <a href="/website-checker/">Website Speed Checker</a>
+          <span class="dropdown__label dropdown__label--sep">Stay safe online</span>
           <a href="/email-security-checker/">Email Security Checker</a>
           <a href="/password-breach-checker/">Password Breach Checker</a>
           <a href="/link-safety-checker/">Link Safety Checker</a>
           <a href="/spot-the-scam/">Spot the Scam Quiz</a>
           <a href="/online-safety-course/">Free Online Safety Course</a>
-          <span class="dropdown__label dropdown__label--sep">Apps &amp; builders</span>
-          <a href="/free-pc-health-check/">365 PC Manager app</a>
-          <a href="/custom-pc-builder/">Custom PC Builder</a>
-          <a href="/victron-system-builder/">Victron System Builder</a>
-          <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
+          <span class="dropdown__label dropdown__label--sep">Email</span>
+          <a href="/virgin-email-mover/">Free Virgin Email Mover</a>
         </div>
       </details>
       <details class="m-group">
         <summary>Get Help</summary>
         <div class="m-group__links">
           <a href="/contact/">Contact Us &#8594;</a>
-          <span class="dropdown__label dropdown__label--sep">Right now</span>
+          <span class="dropdown__label dropdown__label--sep">Help right now</span>
           <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve Been Scammed &mdash; What To Do</a>
           <a href="/remote-support/">Start Remote Support</a>
           <a href="/emergency-it-help/">Emergency IT Help</a>
@@ -743,13 +782,22 @@
           <a href="/book-a-collection/">Book a Collection</a>
           <a href="/quick-quote/">Quick Quote</a>
           <a href="/pay/">Pay Us</a>
-          <span class="dropdown__label dropdown__label--sep">Plans &amp; pricing</span>
+          <span class="dropdown__label dropdown__label--sep">Email changes</span>
+          <a href="/virgin-media-email-moving-to-junara/">Virgin Media Email Changes</a>
+          <a href="/move-virgin-media-email-to-gmail/">Move Virgin Email to Gmail</a>
+          <a href="/virgin-email-mover/">Free Virgin Email Mover</a>
+          <a href="/move-plusnet-email-to-gmail/">Plusnet Email Closing</a>
+          <span class="dropdown__label dropdown__label--sep">Plans</span>
           <a href="/monthly-it-support/">Monthly IT Support</a>
           <a href="/plan-finder/">Plan Finder</a>
-          <a href="/switching-it-provider/">Switching to Us</a>
           <span class="dropdown__label dropdown__label--sep">Fix it yourself</span>
-          <a href="/wifi-troubleshooting/">WiFi Troubleshooting</a>
-          <a href="/broadband-down/">Broadband Down? Start Here</a>
+          <a href="/printer-support/">Printer Problems</a>
+          <a href="/outlook-problems/">Outlook Problems</a>
+          <a href="/onedrive-problems/">OneDrive Problems</a>
+          <a href="/windows-11-support/">Windows 11 Help</a>
+          <a href="/wifi-troubleshooting/">Slow Wi-Fi?</a>
+          <a href="/broadband-down/">Broadband Down?</a>
+          <a href="/it-advice/">All Guides &amp; Advice &#8594;</a>
         </div>
       </details>
       <details class="m-group">
@@ -807,7 +855,7 @@
           <a href="#swim" class="button secondary button--lg">Can you swim today?</a>
         </div>
         <ul class="page-hero__chips mono"><li>&#9679; Measured, not modelled</li><li>&#9679; Every reading timestamped</li><li>&#9679; Updated through the day</li></ul>
-        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 24 September 2026</p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 2 October 2026</p>
       </div>
     </section>
     <section class="section b365" id="now" aria-label="Live sea conditions">
@@ -915,21 +963,21 @@
           <p>The tide curve above often shows something tide tables flatten out: a long <em>stand</em> around high water, sometimes a visible double hump. It is not a faulty gauge &mdash; it is the English Channel&rsquo;s geometry. The Channel behaves as a standing-wave system with a node near this coast, and in shallow water the tide&rsquo;s harmonics distort the simple twice-a-day curve: Christchurch Harbour gets a true double high water on each tide, and Poole shows double highs at springs and a long stand at neaps (Humphreys, <em>Salinity and Tides in Poole Harbour</em>, Proceedings in Marine Science, 2005). Bournemouth sits between the two. Practical upshot: high water hangs around for hours &mdash; generous for swimmers, and the reason the beach can feel narrow all afternoon.</p>
 
           <h2 id="sewage">Is sewage being discharged into the sea at Bournemouth today?</h2>
-          <p class="b365-verdict" id="st-sewage"><!--ssr:sewage-->No &mdash; none of the 11 monitored storm overflows around Bournemouth was reporting a discharge (Wessex Water monitors, checked 09:13).<!--/ssr:sewage--></p>
-          <p class="mono" id="st-baked-note"><!--ssr:bakednote-->Statuses as read at 09:13 on 24 September 2026; they refresh live when this page opens.<!--/ssr:bakednote--></p>
+          <p class="b365-verdict" id="st-sewage"><!--ssr:sewage-->No &mdash; none of the 11 monitored storm overflows around Bournemouth was reporting a discharge (Wessex Water monitors, checked 23:13).<!--/ssr:sewage--></p>
+          <p class="mono" id="st-baked-note"><!--ssr:bakednote-->Statuses as read at 23:13 on 2 October 2026; they refresh live when this page opens.<!--/ssr:bakednote--></p>
           <p>How that is known: Wessex Water fits every storm overflow around the bay with a monitor that reports a discharge starting or stopping within the hour, and this page reads those monitors every twenty minutes. &ldquo;No discharge&rdquo; means exactly that &mdash; the monitor has not recorded one &mdash; and is not a statement that the water is clean. The Environment Agency&rsquo;s daily pollution-risk forecast, beach by beach below, is the other half of the answer; after heavy rain it is worth checking both before you go in. Every monitored outfall in Bournemouth, Christchurch and Poole is drawn on the <a href="/bournemouth/live-map/">live map</a>, with the beaches and their forecasts alongside.</p>
 
           <h2 id="quality">Is the water at Bournemouth beach clean? Beach by beach</h2>
           <p>The Environment Agency classifies seven bathing waters along this seafront &mdash; Alum Chine, Durley Chine, Bournemouth Pier, Boscombe Pier, Manor Steps, Fisherman&rsquo;s Walk and Southbourne &mdash; and samples each through the May&ndash;September season. In season it also issues a daily pollution-risk forecast. The live panel above summarises; this table is per beach:</p>
           <table>
             <thead><tr><th>Beach</th><th>Classification</th><th>Today&rsquo;s risk forecast</th><th>Affected by heavy rain?</th><th>Nearest outfall monitor</th><th>On the map</th></tr></thead>
-            <tbody id="st-sites"><!--ssr:sites--><tr><td>Alum Chine</td><td>Excellent (2025)</td><td>normal</td><td>no</td><td>no discharge &middot; 1.0 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7111&amp;lon=-1.8954&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr>
-<tr><td>Durley Chine</td><td>Excellent (2025)</td><td>normal</td><td>no</td><td>no discharge &middot; 1.2 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7131&amp;lon=-1.8887&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr>
-<tr><td>Bournemouth Pier</td><td>Excellent (2025)</td><td>normal</td><td>no</td><td>no discharge &middot; 0.5 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7155&amp;lon=-1.8759&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr>
-<tr><td>Boscombe Pier</td><td>Excellent (2025)</td><td>normal</td><td>yes</td><td>no discharge &middot; 0.7 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7195&amp;lon=-1.8440&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr>
-<tr><td>Manor Steps</td><td>Excellent (2025)</td><td>normal</td><td>yes</td><td>no discharge &middot; 0.8 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7203&amp;lon=-1.8323&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr>
-<tr><td>Fisherman's Walk</td><td>Excellent (2025)</td><td>normal</td><td>no</td><td>no discharge &middot; 0.6 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7207&amp;lon=-1.8169&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr>
-<tr><td>Southbourne</td><td>Excellent (2025)</td><td>normal</td><td>no</td><td>no discharge &middot; 1.2 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7190&amp;lon=-1.7917&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr><!--/ssr:sites--></tbody>
+            <tbody id="st-sites"><!--ssr:sites--><tr><td>Alum Chine</td><td>Excellent (2025)</td><td>&mdash;</td><td>no</td><td>no discharge &middot; 1.0 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7111&amp;lon=-1.8954&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr>
+<tr><td>Durley Chine</td><td>Excellent (2025)</td><td>&mdash;</td><td>no</td><td>no discharge &middot; 1.2 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7131&amp;lon=-1.8887&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr>
+<tr><td>Bournemouth Pier</td><td>Excellent (2025)</td><td>&mdash;</td><td>no</td><td>no discharge &middot; 0.5 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7155&amp;lon=-1.8759&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr>
+<tr><td>Boscombe Pier</td><td>Excellent (2025)</td><td>&mdash;</td><td>yes</td><td>no discharge &middot; 0.7 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7195&amp;lon=-1.8440&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr>
+<tr><td>Manor Steps</td><td>Excellent (2025)</td><td>&mdash;</td><td>yes</td><td>no discharge &middot; 0.8 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7203&amp;lon=-1.8323&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr>
+<tr><td>Fisherman's Walk</td><td>Excellent (2025)</td><td>&mdash;</td><td>no</td><td>no discharge &middot; 0.6 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7207&amp;lon=-1.8169&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr>
+<tr><td>Southbourne</td><td>Excellent (2025)</td><td>&mdash;</td><td>no</td><td>no discharge &middot; 1.2 km away</td><td><a href='/bournemouth/live-map/app/#lat=50.7190&amp;lon=-1.7917&amp;alt=2500&amp;v=2&amp;l=v'>Show on map</a></td></tr><!--/ssr:sites--></tbody>
           </table>
           <p>&ldquo;Affected by heavy rain&rdquo; is the Environment Agency&rsquo;s own flag: at those beaches, water quality can dip temporarily after a downpour. That is also what the storm-overflow tile above watches &mdash; Wessex Water&rsquo;s live monitors on this stretch of coast, the same feed behind the national Storm Overflow Hub, updated every few minutes. Our honest advice matches the EA&rsquo;s: after heavy rain, give it a day.</p>
 
@@ -1404,7 +1452,8 @@
   </main>
   <footer class="site-footer">
     <div class="footer-areas">
-      <p class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</p>
+      <details class="footer-fold" open>
+      <summary class="footer-areas__head mono">// AREAS WE COVER &mdash; DORSET, NEW FOREST &amp; HAMPSHIRE</summary>
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>
@@ -1430,6 +1479,7 @@
         <a href="/it-support-southampton/">Southampton</a>
         <a class="footer-areas__all" href="/areas-covered/">View all areas &#8594;</a>
       </nav>
+      </details>
     </div>
     <div class="site-footer__grid">
       <div class="site-footer__brand">
@@ -1458,7 +1508,9 @@
         </div>
       </div>
       <nav aria-label="Support links">
-        <p class="site-footer__head mono">SUPPORT</p>
+        <details class="footer-fold" open>
+        <summary class="site-footer__head mono">SUPPORT</summary>
+        <div class="footer-fold__body">
         <a href="/join/">Join the 365 Club &mdash; Free</a>
         <a href="/book-service/">Book a Service</a>
         <a href="/book-a-collection/">Book a Collection</a>
@@ -1470,6 +1522,7 @@
         <a href="/scam-pop-up-help-poole/">Scam Pop-up Help (Poole)</a>
         <a href="/virus-removal-christchurch/">Virus Removal (Christchurch)</a>
         <a href="/outlook-problems/">Outlook Problems &amp; Fixes</a>
+        <a href="/virgin-media-email-moving-to-junara/">Virgin Media Email Changes</a>
         <a href="/support-portal/">Support Portal</a>
         <a href="/splashtop-business-guide/">Remote Access Guide</a>
         <a href="/dell-latitude-3520-guide/">Dell Laptop Guide</a>
@@ -1486,37 +1539,44 @@
         <a href="/pricing/">Pricing</a>
         <a href="/quick-quote/">Quick Quote</a>
         <a href="/free-it-health-check/">Free IT Health Check</a>
+        </div>
+        </details>
       </nav>
       <nav aria-label="Free tools links">
-        <p class="site-footer__head mono">FREE TOOLS</p>
+        <details class="footer-fold" open>
+        <summary class="site-footer__head mono">FREE TOOLS</summary>
+        <div class="footer-fold__body">
         <a href="/free-courses/">Free Courses</a>
         <a href="/free-tools/">All Free Tools &#8594;</a>
-        <a href="/free-pc-health-check/">365 PC Manager app</a>
+        <a href="/free-pc-health-check/">365 PC Manager &mdash; free app</a>
         <a href="/online-safety-course/">Free Online Safety Course</a>
         <a href="/broadband-speed-checker/">Broadband Speed Test</a>
-        <a href="/wifi-signal-test/">365 WiFi Optimizer</a>
-        <a href="/van-signal-map/">Bournemouth Signal Map</a>
+        <a href="/wifi-signal-test/">Wi-Fi Signal Test</a>
+        <a href="/van-signal-map/">Campervan 4G/5G Map</a>
         <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
         <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
-        <a href="/bournemouth/live-map/#map">Bournemouth in 3D</a>
-        <a href="/pc-benchmark/">PC Benchmark</a>
-        <a href="/website-checker/">Website Checker</a>
+        <a href="/pc-benchmark/">PC Speed Test</a>
+        <a href="/website-checker/">Website Speed Checker</a>
         <a href="/email-security-checker/">Email Security Checker</a>
         <a href="/password-breach-checker/">Password Breach Checker</a>
         <a href="/link-safety-checker/">Link Safety Checker</a>
         <a href="/password-generator/">Password Generator</a>
-        <a href="/wifi-qr-code-generator/">Wi-Fi QR Generator</a>
-        <a href="/custom-pc-builder/">Custom PC Builder</a>
-        <a href="/victron-system-builder/">Victron System Builder</a>
+        <a href="/wifi-qr-code-generator/">Wi-Fi QR Code Maker</a>
+        <a href="/custom-pc-builder/">PC Build Budget Planner</a>
+        <a href="/victron-system-builder/">Victron Cable &amp; Fuse Sizer</a>
         <a href="/solar-battery-calculator/">Battery &amp; Solar Calculator</a>
         <a href="/cost-calculator/">Cost Calculator</a>
         <a href="/plan-finder/">Plan Finder</a>
         <a href="/spot-the-scam/">Spot the Scam Quiz</a>
-        <a href="/is-it-down/">Is It Down? Status Checker</a>
-        <a href="/computer-spec-checker/">PC Hardware Checker</a>
+        <a href="/is-it-down/">Is It Down? Live Status</a>
+        <a href="/computer-spec-checker/">PC Spec Checker</a>
+        </div>
+        </details>
       </nav>
       <nav aria-label="Services links">
-        <p class="site-footer__head mono">SERVICES</p>
+        <details class="footer-fold" open>
+        <summary class="site-footer__head mono">SERVICES</summary>
+        <div class="footer-fold__body">
         <a href="/services/">All Services</a>
         <a href="/it-support-by-industry/">IT Support by Industry</a>
         <p class="site-footer__subhead mono">Support &amp; security</p>
@@ -1584,9 +1644,13 @@
         <a href="/it-support-for-manufacturing/">Manufacturing &amp; Engineering</a>
         <a href="/it-support-for-nurseries-dorset/">Nurseries &amp; Childcare</a>
         <a href="/it-support-for-churches-faith/">Churches &amp; Faith Groups</a>
+        </div>
+        </details>
       </nav>
       <nav aria-label="Who we help links">
-        <p class="site-footer__head mono">WHO WE HELP</p>
+        <details class="footer-fold" open>
+        <summary class="site-footer__head mono">WHO WE HELP</summary>
+        <div class="footer-fold__body">
         <a href="/family-it-support/">Families</a>
         <a href="/it-support-for-retired-users/">Retired Users</a>
         <a href="/it-support-for-disabled-people/">Disabled People</a>
@@ -1595,9 +1659,13 @@
         <a href="/it-support-for-digital-nomads/">Digital Nomads</a>
         <a href="/it-support-for-sole-traders/">Sole Traders</a>
         <a href="/small-business-it-support/">Small Businesses</a>
+        </div>
+        </details>
       </nav>
       <nav aria-label="Company links">
-        <p class="site-footer__head mono">COMPANY</p>
+        <details class="footer-fold" open>
+        <summary class="site-footer__head mono">COMPANY</summary>
+        <div class="footer-fold__body">
         <a href="/about/">About</a>
         <a href="/meet-the-team/">Meet the Team</a>
         <a href="/why-choose-365-techies/">Why Choose Us</a>
@@ -1616,6 +1684,8 @@
         <a href="tel:+441202775566">01202 775566</a>
         <a href="sms:+447520615332">Text only: 07520 615332</a>
         <a href="mailto:help@365techies.co.uk">help@365techies.co.uk</a>
+        </div>
+        </details>
       </nav>
     </div>
     <nav class="site-footer__legal-links mono" aria-label="Legal and policies">
@@ -1628,6 +1698,28 @@
       <a href="/system-status/">System Status</a>
     </nav>
     <p class="site-footer__legal mono">&copy; 2026 365 TECHIES LIMITED &middot; REGISTERED IN ENGLAND &amp; WALES 11073501 &middot; ALL SYSTEMS OPERATIONAL <span class="pulse-dot pulse-dot--green"></span></p>
+    <script>
+    /* Below 768px the areas list and the five link columns fold into accordions. They ship open, so with
+       no script (and to crawlers) every link is in plain view; this closes them on phones only. From 768px
+       up they stay open and each summary is inert: out of the tab order, a click on it does nothing, and
+       CSS draws it as the plain column heading it replaced, so the desktop footer is unchanged. */
+    (function () {
+      var f = document.currentScript.parentNode, m = matchMedia("(max-width: 767px)"),
+          d = f.querySelectorAll("details.footer-fold");
+      function fold() {
+        for (var i = 0; i < d.length; i++) {
+          d[i].open = !m.matches;
+          if (m.matches) d[i].firstElementChild.removeAttribute("tabindex");
+          else d[i].firstElementChild.setAttribute("tabindex", "-1");
+        }
+      }
+      fold();
+      if (m.addEventListener) m.addEventListener("change", fold); else if (m.addListener) m.addListener(fold);
+      f.addEventListener("click", function (e) {
+        if (!m.matches && e.target.closest && e.target.closest(".footer-fold > summary")) e.preventDefault();
+      });
+    })();
+    </script>
   </footer>
 
   <nav class="mobile-cta-bar" aria-label="Quick contact">
@@ -1651,7 +1743,7 @@
   </div>
   <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=13" defer></script>
-  <script src="/js/forms.min.js?v=11" defer></script>
+  <script src="/js/forms.min.js?v=12" defer></script>
   <script src="/js/search.min.js?v=654de821" defer></script>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->
   <script>
@@ -1683,5 +1775,6 @@
     });
   })();
   </script>
+  <script>(function(){try{if(navigator.doNotTrack==="1")return;if(/bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit/i.test(navigator.userAgent))return;try{if(localStorage.getItem("p365staffdev")||/"staff":true|"back":/.test((localStorage.getItem("p365")||"")+(sessionStorage.getItem("p365s")||"")))return;}catch(e){}var u=navigator.userAgentData,b={site:"t365",path:location.pathname,ref:(function(){try{return new URL(document.referrer).hostname}catch(e){return""}})(),em:/utm_medium=e-?mail|utm_source=(e-?mail|newsletter|hubspot)/i.test(location.search)?1:0,t:navigator.maxTouchPoints||0,sw:(screen&&screen.width)||0,dk:(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?1:0,lg:String(navigator.language||"").slice(0,12)},sent=false;if(u&&typeof u.mobile==="boolean")b.mb=u.mobile?1:0;var go=function(){if(sent)return;sent=true;try{fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(b),keepalive:true});}catch(e){}};if(u&&u.getHighEntropyValues&&/Windows/.test(navigator.userAgent)){u.getHighEntropyValues(["platformVersion"]).then(function(h){b.pv=String((h&&h.platformVersion)||"").slice(0,12);go();},go);setTimeout(go,400);}else go();var tap=function(k){try{var d=JSON.parse(JSON.stringify(b));d.path=k;d.ref=location.hostname;d.em=0;fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(d),keepalive:true});}catch(e){}};document.addEventListener("click",function(ev){try{var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");if(!a)return;var h=a.getAttribute("href")||"";if(/365-pc-manager-setup[^\/?#]*\.exe([?#]|$)/i.test(h))tap("/~dl/pcm/");else if(/^tel:/i.test(h))tap("/~call"+location.pathname);else if(/^sms:/i.test(h))tap("/~text"+location.pathname);}catch(e){}},true);document.addEventListener("tt:lead",function(){tap("/~lead"+location.pathname);});}catch(e){}})();</script>
 </body>
 </html>

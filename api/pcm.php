@@ -216,6 +216,11 @@ if ($action === 'checkin') {
         // opting OUT of remote maintenance clears any queued commands, so a command the customer
         // just revoked can never resurrect and run when they later opt back in.
         if (empty($in['rmaint'])) unset($c['machines'][$machine]['cmdq']);
+        // PC Manager v31+: the Windows version ("24H2") and the Secure Boot 2023 certificate status (Updated / InProgress /
+        // NotStarted / Error, "nosb" = Secure Boot off or none, "" = Windows hasn't said), so the portal can list plan PCs
+        // still waiting. Only a v31+ app sends them; an older app's check-in leaves what was there.
+        if (isset($in['wv'])) $c['machines'][$machine]['wv'] = substr(preg_replace('/[^A-Za-z0-9]/', '', (string)$in['wv']), 0, 8);
+        if (isset($in['sbc'])) { $sbc = (string)$in['sbc']; $c['machines'][$machine]['sbc'] = in_array($sbc, array('Updated', 'InProgress', 'NotStarted', 'Error', 'nosb', ''), true) ? $sbc : ''; }
         // PC Manager v29+: the last jobs it ran (the full service inside the app, ...) for the portal's "What we've done".
         // Replaced whole each check-in; an older app never sends it, so its machines keep whatever they had.
         if (isset($in['jobs']) && is_array($in['jobs'])) {
@@ -439,6 +444,7 @@ if ($action === 'overview') {
             'id'=>(string)$id, 'batt'=>intval($m['batt'] ?? 0),
             'avon'=>($avr==='on'), 'avoff'=>($avr==='off'), 'w10'=>!empty($m['w10']),
             'reboot'=>!empty($m['reboot']), 'rmaint'=>!empty($m['rmaint']),
+            'wv'=>(string)($m['wv'] ?? ''), 'sbc'=>(string)($m['sbc'] ?? ''),   // v31: stored sanitised at check-in
             'crs'=>(string)($m['crs'] ?? ''), 'crst'=>(string)($m['crst'] ?? ''),
             'hist'=>isset($m['hist']) && is_array($m['hist']) ? array_slice($m['hist'], -60) : array(),
             'log'=>$log,

@@ -5966,6 +5966,100 @@ NEW_PAGES = [{'slug': 'windows-11-upgrade-service',
                     'something nasty was left behind, see our <a href="/virus-removal/">virus and malware removal</a> service. Sharpen your defences with our free <a href="/spot-the-scam/">Spot the '
                     'Scam quiz</a> and free <a href="/online-safety-course/">online safety course</a>. Worried on someone else\'s behalf? See <a href="/worried-about-a-parent-being-scammed/">worried '
                     'about a parent being scammed</a>, or just <a href="/contact/">get in touch</a>.</p>'},
+ {'slug': 'fake-im-not-a-robot-scam',
+  'title': 'Fake “I’m Not a Robot” Said Press Windows + R? | 365 Techies',
+  'metaDesc': "A website said press Windows + R and paste to prove you're not a robot? It's a scam that runs password-stealing software. What to do now, in plain English.",
+  'ogTitle': 'A Website Said Press Windows + R and Paste? It\'s a Scam — What to Do',
+  'crumbName': 'Fake “I’m Not a Robot” Scam',
+  'eyebrow': 'Fake &ldquo;I&rsquo;m not a robot&rdquo; check · plain-English help',
+  'h1': 'A website told you to <em class="grad grad--cyan">press Windows + R and paste</em>? It\'s a scam — here\'s what to do',
+  'lede': 'No real &ldquo;I&rsquo;m not a robot&rdquo; check ever asks you to press keys or paste anything. If you haven&rsquo;t done it, close the page and you&rsquo;re fine. If you already did, '
+          'don&rsquo;t panic — work through the steps below, and change your passwords from your phone, not this computer.',
+  'chips': ['Real checks never ask you to paste', 'We phone first — never pop-ups', 'Family-run since 1995'],
+  'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
+  'secondaryCta': ['Money taken? Start here', '/ive-been-scammed-what-to-do/'],
+  'ctaHead': "Already pasted it? Ring us and we'll check the computer with you",
+  'ctaSub': 'A real local person answers, stays calm with you and checks the computer properly — remotely while you watch every move, or with a home visit across Bournemouth, Poole, '
+            'Christchurch and Dorset (priced before we come, and we always call with an ETA first). Mon–Fri 9am–5pm, usually same day. Family-run since 1995.',
+  'sections': [{'eyebrow': '// HOW THE TRICK WORKS',
+                'h2': 'How the fake &ldquo;I&rsquo;m not a robot&rdquo; check works',
+                'html': '<p>You reach a website — from a search result, an advert or a link — and it shows what looks like the familiar &ldquo;I&rsquo;m not a robot&rdquo; or &ldquo;Verify you are '
+                        'human&rdquo; box, sometimes dressed up to look like Google or Cloudflare. When you tick it, the page quietly copies a command to your clipboard, then shows some '
+                        '&ldquo;verification steps&rdquo;:</p><ol><li>Press the <strong>Windows key</strong> and <strong>R</strong> together.</li><li>Press <strong>Ctrl</strong> and '
+                        '<strong>V</strong>.</li><li>Press <strong>Enter</strong>.</li></ol><p>Those three steps open Windows&rsquo; Run box, paste the scammer&rsquo;s command into it and run it. '
+                        'The command downloads a program from the internet and starts it. Most often it is one that steals the passwords saved in your web browser and the &ldquo;stay signed '
+                        'in&rdquo; logins for your email and shopping sites. Nothing seems to happen on screen, which is why people carry on as normal.</p><p><strong>The rule that protects you:</strong> '
+                        'a real &ldquo;I&rsquo;m not a robot&rdquo; check only ever asks you to tick a box or pick out pictures. It never asks you to press keys, open anything or paste anything. '
+                        'If a website asks you to, close it.</p>'},
+               {'eyebrow': '// OTHER DISGUISES',
+                'h2': 'The same trick in other disguises',
+                'html': '<p>The wording changes every few weeks. These are the versions doing the rounds:</p><ul><li><strong>&ldquo;Press Windows + X, then I&rdquo;.</strong> This opens Windows&rsquo; '
+                        'Terminal instead of the Run box, then asks you to paste and press Enter. Same scam.</li><li><strong>A &ldquo;code&rdquo; for File Explorer.</strong> The page asks you to open '
+                        'File Explorer, click in the address bar at the top and paste a &ldquo;file path&rdquo; or &ldquo;verification code&rdquo;. What you paste is a command, not a path.</li>'
+                        '<li><strong>A fake Windows Update screen.</strong> A full-screen page in your browser that looks like Windows updating, then asks you to press keys to &ldquo;finish&rdquo;. '
+                        'Real Windows updates never ask you to paste anything.</li><li><strong>A &ldquo;fix&rdquo; to copy and paste.</strong> A message says a page won&rsquo;t load or your browser '
+                        'needs fixing, and offers a fix you copy into Windows.</li></ul><p>Whatever the wording, the warning sign is the same: <strong>a web page asking you to paste something '
+                        'into Windows</strong>. Nothing genuine works that way. If it asked you to click &ldquo;Allow&rdquo; instead, that is a different trick: it lets the site send pop-up '
+                        'warnings — see <a href="/scam-pop-up-help-poole/">scam pop-ups</a>.</p>'},
+               {'eyebrow': '// ALREADY DID IT?',
+                'h2': 'Already pressed Enter? Do these steps now, in order',
+                'html': '<p>Steps 1 to 4 need no technical skill and don&rsquo;t need us — start straight away, whatever the time of day.</p><ol><li><strong>Disconnect the computer from the '
+                        'internet.</strong> Turn off the Wi-Fi or unplug the cable. Leave it off until the computer has been checked.</li><li><strong>Change your passwords from your phone or '
+                        'another device — never this computer.</strong> Your email first (whoever has your email can reset everything else), then online banking, shopping sites and anything '
+                        'else you were signed in to on this computer.</li><li><strong>Sign out everywhere.</strong> These programs take the &ldquo;stay signed in&rdquo; logins as well as '
+                        'passwords, so a new password on its own may not shut them out. In your email and other important accounts, look under Security for &ldquo;sign out of all '
+                        'devices&rdquo; and use it after changing the password. Then switch on two-step verification.</li><li><strong>Ring your bank if you bank on this computer.</strong> '
+                        'Dial <strong>159</strong> — it connects you safely to most UK banks — and tell them a password-stealing program may have run. They can watch the account.</li>'
+                        '<li><strong>Have the computer checked before you use it for anything important.</strong> Some of these programs stay and start again after a restart, and some '
+                        'leave others behind. You can&rsquo;t tell by looking. <a href="tel:+441202775566">Call us on 01202 775566</a> and we&rsquo;ll take it from there.</li></ol>'},
+               {'eyebrow': '// WHO TO TELL',
+                'h2': 'Who to tell',
+                'html': '<ul><li><strong>The scam website:</strong> report it to the National Cyber Security Centre&rsquo;s <a href="https://www.ncsc.gov.uk/section/about-this-website/report-scam-website" '
+                        'rel="noopener">Report a suspicious website</a> page, so it can be taken down.</li><li><strong>A scam text</strong> that led you there: forward it free to <strong>7726</strong>. '
+                        '<strong>A scam email:</strong> forward it to <strong>report@phishing.gov.uk</strong>.</li><li><strong>If money was taken or bank details were stolen:</strong> ring your bank '
+                        'on <strong>159</strong> first, then Report Fraud (formerly Action Fraud) on <strong>0300 123 2040</strong>. That covers England, Wales and Northern Ireland — in Scotland, '
+                        'ring Police Scotland on <strong>101</strong>.</li></ul><p>For the full money-and-reporting side, see <a href="/ive-been-scammed-what-to-do/">I&rsquo;ve been scammed — what to '
+                        'do</a>.</p>'},
+               {'eyebrow': '// HOW WE HELP',
+                'h2': 'How we check the computer',
+                'html': '<p>When you call, a patient local person answers — the same familiar faces every time, never a call centre. Here&rsquo;s what we do:</p><ul><li><strong>Find what ran.</strong> '
+                        'We look for the program the command fetched and anything it set up to start again — start-up entries, scheduled tasks and extra browser add-ons — and remove it.</li>'
+                        '<li><strong>Check your protection is really on.</strong> Some of these programs tell Windows Security to ignore the folder they hide in. We check nothing has been '
+                        'switched off or told to look away.</li><li><strong>Help you lock your accounts down.</strong> Passwords changed from your phone, in the right order, with &ldquo;sign out '
+                        'everywhere&rdquo; and two-step verification switched on.</li><li><strong>Explain it in plain English.</strong> What we found, what it means and what we did — no jargon, no '
+                        'lectures.</li></ul><p>Most checks are done remotely in one session while you watch every move on your own screen. If you&rsquo;d rather nobody connected remotely for '
+                        'now, we do home visits across Bournemouth, Poole, Christchurch and Dorset, priced before we come. If your bank wants evidence the computer has been checked, see our '
+                        '<a href="/scam-recovery/">scam recovery service</a>.</p>'}],
+  'faqs': [{'q': 'I ticked the box but didn\'t press any keys — am I safe?',
+            'a': "Yes, almost certainly. Ticking the box only copied some text to your clipboard. Nothing runs unless it is pasted into Windows and Enter is pressed. Close the page, and copy "
+                 "any ordinary word to replace what's on the clipboard. If the page asked you to click 'Allow', that lets it send pop-up warnings, which you can switch off in the browser."},
+           {'q': 'I pasted it and pressed Enter but nothing happened — did it work?',
+            'a': "Probably, yes. The command runs in the background and closes itself, so nothing seems to happen. Treat it as if it worked: disconnect from the internet, change your "
+                 "passwords from your phone, sign out everywhere, and have the computer checked."},
+           {'q': 'Will my antivirus have stopped it?',
+            'a': "Sometimes, but don't rely on it. The command uses programs that are built into Windows, and the scammers change it every few days, so new versions often get past antivirus "
+                 "at first. Some even tell Windows Security to ignore the folder they hide in. Have the computer checked before you bank or shop on it again."},
+           {'q': 'Why would a website I trust show this?',
+            'a': "It wouldn't on purpose. Scammers put the fake check on websites they have broken into, on adverts and on pages that turn up in search results, so it can appear on a site "
+                 "you've used before. The site isn't asking — the scammer is."},
+           {'q': 'Can you check the computer remotely after this?',
+            'a': "Yes. You call us (or we phone you at an agreed time — never out of the blue), and we can only connect when you read us the code shown on your own screen. You watch the "
+                 "whole session, you can end it at any moment, and our access ends when we're done. If you'd rather nobody connected for now, we'll visit instead."}],
+  'schemaKind': 'howto',
+  'howToName': "What to do if you pasted a command from a fake 'I'm not a robot' check",
+  'howToSteps': [{'name': 'Disconnect the computer from the internet',
+                  'text': 'Turn off the Wi-Fi or unplug the network cable, and leave it off until the computer has been checked.'},
+                 {'name': 'Change your passwords from another device',
+                  'text': 'Use your phone or another computer, never this one. Change your email password first, then online banking, shopping sites and anything else you were signed in to.'},
+                 {'name': 'Sign out everywhere',
+                  'text': "These programs steal the 'stay signed in' logins as well as passwords. In each important account, use 'sign out of all devices' after changing the password, then "
+                          'switch on two-step verification.'},
+                 {'name': 'Ring your bank if you bank on this computer',
+                  'text': 'Dial 159, which connects you safely to most UK banks, and tell them a password-stealing program may have run.'},
+                 {'name': 'Have the computer checked',
+                  'text': "Some of these programs start again after a restart or leave others behind, and you can't tell by looking. Have it checked before you use it for anything important."}],
+  'crossLinksHtml': '<p>Related help: <a href="/ive-been-scammed-what-to-do/">I\'ve been scammed — what to do</a>, <a href="/scam-pop-up-help-poole/">scam pop-ups</a>, <a '
+                    'href="/gave-a-scammer-remote-access/">I gave a scammer remote access</a>, <a href="/phishing/">phishing</a> and our free <a href="/spot-the-scam/">Spot the Scam quiz</a>.</p>'},
  {'slug': 'worried-about-a-parent-being-scammed',
   'title': 'Worried a Parent Is Being Scammed? What to Do | 365 Techies',
   'metaDesc': 'Worried your mum or dad is being scammed online? Signs to spot, how to raise it kindly, and the steps to take today — with patient local help in Dorset.',
