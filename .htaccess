@@ -313,6 +313,11 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(pcm-mailmove-lib\.php|pcm-mailmove-test\.php)$">
   Require all denied
 </FilesMatch>
+# The 365 Get Help browser add-on (2 Oct 2026): pcm-gethelp.php stays served (the add-on posts to it); its library
+# and CLI test are never URLs. It shares the Virgin tools' sha1-named rate counter.
+<FilesMatch "^(pcm-gethelp-lib\.php|pcm-gethelp-test\.php)$">
+  Require all denied
+</FilesMatch>
 # The GoCardless webhook endpoint secret. gocardless-webhook.php itself MUST stay
 # served - it is the URL GoCardless posts to - and it trusts nothing without this.
 <Files "gocardless-webhook-secret.php">

@@ -100,6 +100,10 @@ function lc_lead($m) {
     if (preg_match('/^Virgin email move: please ring (.+?) on (.+)$/m', $plain, $mm)) {
         return array('kind' => 'callback', 'label' => 'Email move call-back', 'who' => trim($mm[1]) . ' (' . trim($mm[2]) . ')', 'number' => lc_number($all));
     }
+    // the 365 Get Help browser add-on's "Ring me back" (pcm-gethelp.php, 2 Oct 2026)
+    if (preg_match('/^Get Help button: please ring (.+?) on (.+)$/m', $plain, $mm)) {
+        return array('kind' => 'callback', 'label' => 'Get Help button', 'who' => trim($mm[1]) . ' (' . trim($mm[2]) . ')', 'number' => lc_number($all));
+    }
     if (preg_match('/^Booking started but never finished\s*-\s*(.+)$/m', $plain, $mm)) {
         return array('kind' => 'callback', 'label' => 'Unfinished booking', 'who' => trim(strtok($mm[1], "\n")), 'number' => lc_number($all));
     }

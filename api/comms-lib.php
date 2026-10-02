@@ -1130,6 +1130,14 @@ function comms_lead_from_post($m) {
         $bits = array();
         foreach (array('Virgin address', 'Mailbox', 'Got as far as') as $lb) { $x = comms_lead_field($all, array($lb)); if ($x !== '') $bits[] = $lb . ': ' . $x; }
         $body = $bits ? implode("\n", $bits) : 'Asked us to ring them about moving their Virgin email.';
+    } elseif ($lead['label'] === 'Get Help button') {
+        // the 365 Get Help add-on (pcm-gethelp-lib.php gh_card): the page they were on is another site's, so it goes in
+        // the message as text - never the "via" page, which is one of ours
+        $topic = 'Get Help button in their browser' . ($topic !== '' ? ' - ' . $topic : '');
+        $on = trim(str_replace('`', '', comms_lead_field($all, array('Page they were on'))));
+        if ($body === '') $body = 'Asked us to ring them back.';
+        if ($on !== '') $body .= "\nThey were on: " . $on;
+        $page = '';
     }
     $email = preg_match('/[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}/', $email, $mm) ? strtolower($mm[0]) : '';
     $num = tm_number($phone);
