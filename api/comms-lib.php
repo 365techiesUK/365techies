@@ -750,10 +750,15 @@ function comms_notes_out($notes) {   // the last 4, trimmed, for the card
 function comms_board($items, $names, $key, $now = null, $limit = 30) {
     $now = $now === null ? time() : (int)$now;
     $mob = function ($n) { return (bool)preg_match('/^\+447\d{9}$/', (string)$n); };
-    $byText = array(); $vms = array(); $openNums = array(); $lastMatch = array();
+    $byText = array(); $vms = array(); $openNums = array(); $lastMatch = array(); $webs = array();
     foreach ((array)$items as $it) {
         if (!is_array($it) || !isset($it['number'], $it['type'])) continue;
         $n = (string)$it['number'];
+        if ($it['type'] === 'web') {   // 2 Oct 2026: a website enquiry or call-back request; one with no number is its own person
+            $webs[] = $it;
+            if (empty($it['handled'])) $openNums[$n !== '' ? $n : 'web:' . (string)($it['id'] ?? '')] = 1;
+            continue;
+        }
         if (isset($it['match']) && is_array($it['match'])) $lastMatch[$n] = $it['match'];
         if (empty($it['handled']) && $it['type'] !== 'sms_out') $openNums[$n] = 1;
         if ($it['type'] === 'voicemail') $vms[] = $it;
@@ -788,8 +793,26 @@ function comms_board($items, $names, $key, $now = null, $limit = 30) {
             'why' => $audio === '' ? (string)($it['audio_why'] ?? '') : '', 'done' => !empty($it['handled']),
             'notes' => comms_notes_out((array)($it['notes'] ?? array())), 'note_id' => (string)($it['id'] ?? ''));
     }
-    return array('texts' => array_slice($texts, 0, $limit), 'vms' => $vout, 'open_texts' => $openTexts, 'open_vms' => $openVms,
-        'open' => count($openNums), 'total_texts' => count($texts), 'total_vms' => count($vms));
+    // 2 Oct 2026: website enquiries and call-back requests, newest first, each on its own. The name is the one THEY typed;
+    // "cust" says when the number is also a customer we hold (or a job we wrote up).
+    usort($webs, function ($a, $b) { return strcmp((string)($b['at'] ?? ''), (string)($a['at'] ?? '')); });
+    $openWebs = 0; $wout = array();
+    foreach ($webs as $it) {
+        if (empty($it['handled'])) $openWebs++;
+        if (count($wout) >= $limit) continue;
+        $n = (string)$it['number']; $L = is_array($it['lead'] ?? null) ? $it['lead'] : array();
+        list($known, $ksrc) = $n !== '' ? comms_name_for($n, $it['match'] ?? array(), $names) : array('', '');
+        $typed = (string)($L['name'] ?? '');
+        $wout[] = array('id' => (string)($it['id'] ?? ''), 'kind' => (string)($L['kind'] ?? 'web'), 'label' => (string)($L['label'] ?? 'Website enquiry'),
+            'who' => $typed !== '' ? $typed : $known, 'src' => $typed !== '' ? 'form' : $ksrc,
+            'cust' => ($ksrc === 'customer' || $ksrc === 'job') ? $known : '', 'cust_src' => ($ksrc === 'customer' || $ksrc === 'job') ? $ksrc : '',
+            'n' => $n, 'mobile' => $mob($n), 'email' => (string)($L['email'] ?? ''), 'phone' => (string)($L['phone'] ?? ''),
+            'company' => (string)($L['company'] ?? ''), 'topic' => (string)($L['topic'] ?? ''), 'page' => (string)($L['page'] ?? ''),
+            'body' => mb_substr((string)($it['body'] ?? ''), 0, 1200), 'at' => (string)($it['at'] ?? ''), 'done' => !empty($it['handled']),
+            'notes' => comms_notes_out((array)($it['notes'] ?? array())), 'note_id' => (string)($it['id'] ?? ''));
+    }
+    return array('texts' => array_slice($texts, 0, $limit), 'vms' => $vout, 'webs' => $wout, 'open_texts' => $openTexts, 'open_vms' => $openVms, 'open_webs' => $openWebs,
+        'open' => count($openNums), 'total_texts' => count($texts), 'total_vms' => count($vms), 'total_webs' => count($webs));
 }
 
 /* Tonight's catch-up (and any voicemail whose Slack line went out without its recording): the recording goes into
@@ -886,15 +909,29 @@ function comms_post_kind($text) {
 function comms_slack_sync($maxReplies = 12, $now = null) {
     $now = $now === null ? time() : (int)$now;
     if (!comms_slack_lib()) return array('error' => 'no Slack library');
-    $posts = array(); $cursor = '';
+    $posts = array(); $cursor = ''; $leads = array();
     for ($pg = 0; $pg < 2; $pg++) {
         $args = array('channel' => COMMS_SLACK_CHANNEL, 'oldest' => (string)($now - 8 * 86400), 'limit' => 200);
         if ($cursor !== '') $args['cursor'] = $cursor;
         $r = slk_call_form('conversations.history', $args, 10);
         if (empty($r['ok'])) return array('error' => (string)($r['error'] ?? 'unknown'));
-        foreach ((array)($r['messages'] ?? array()) as $m) if (comms_post_kind($m['text'] ?? '') !== '') $posts[(string)$m['ts']] = $m;
+        foreach ((array)($r['messages'] ?? array()) as $m) {
+            if (comms_post_kind($m['text'] ?? '') !== '') $posts[(string)$m['ts']] = $m;
+            elseif (($L = comms_lead_from_post($m)) !== null) { $posts[(string)$m['ts']] = $m; $leads[] = array($L, $m); }   // 2 Oct 2026: website enquiries etc.
+        }
         $cursor = (string)($r['response_metadata']['next_cursor'] ?? '');
         if ($cursor === '' || empty($r['has_more'])) break;
+    }
+    // 2 Oct 2026: each lead post not yet in the inbox comes in now, linked to its post (comms_add_item dedupes on ext_id)
+    $imported = 0;
+    if ($leads) {
+        list($okI, $have) = comms_locked(function ($d) { $x = array(); foreach ($d['items'] as $it) if (($it['type'] ?? '') === 'web') $x[(string)$it['ext_id']] = 1; return array('__result' => $x); });
+        usort($leads, function ($a, $b) { return strcmp($a[0]['ts'], $b[0]['ts']); });   // oldest first, like every other import
+        foreach ($okI ? $leads : array() as $pair) {
+            if (isset($have['slack-' . $pair[0]['ts']])) continue;
+            list($okA, $res) = comms_add_item(comms_lead_item($pair[0], $pair[1], $now));
+            if ($okA && empty($res['duplicate'])) $imported++;
+        }
     }
     list($ok, $snap) = comms_locked(function ($d) { return array('__result' => array('items' => $d['items'], 'users' => $d['checkpoints']['slack_users'] ?? array())); });
     if (!$ok) return array('error' => 'busy');
@@ -903,7 +940,7 @@ function comms_slack_sync($maxReplies = 12, $now = null) {
     foreach ((array)$snap['items'] as $it) if (!empty($it['slack_ts'])) $used[(string)$it['slack_ts']] = 1;
     foreach ((array)$snap['items'] as $it) {
         $type = (string)($it['type'] ?? '');
-        if ($type !== 'sms_in' && $type !== 'voicemail') continue;
+        if ($type !== 'sms_in' && $type !== 'voicemail' && $type !== 'web') continue;   // web: linked when it came in
         $ts = (string)($it['slack_ts'] ?? '');
         if ($ts === '') {   // learn the post
             $st = strtotime((string)($it['stored_at'] ?? ''));
@@ -956,7 +993,7 @@ function comms_slack_sync($maxReplies = 12, $now = null) {
         return array('__data' => $d, '__result' => true);
     });
     return array('linked' => count(array_filter($set, function ($v) { return isset($v['slack_ts']); })), 'notes' => $added,
-        'ticked' => count(array_filter($set, function ($v) { return !empty($v['handled']); })));
+        'ticked' => count(array_filter($set, function ($v) { return !empty($v['handled']); })), 'enquiries' => $imported);
 }
 /* A note from the portal: into the item's Slack thread (a new post if it never had one) and onto the item. */
 function comms_add_note($id, $text, $by, $now = null) {
@@ -989,6 +1026,130 @@ function comms_add_note($id, $text, $by, $now = null) {
     });
     return array('ok' => true, 'slack' => $ts !== '', 'error' => $ts !== '' ? '' : 'Saved here, but Slack did not take it (' . (string)($r['error'] ?? 'no answer') . ').');
 }
+/* ---- 2 Oct 2026: website enquiries (and every other lead) in the same inbox ----
+   Owner: "with inquiries that come in from the web page will they turn up in there as well? ... could it all be like a
+   sort of inbox for everything, all communications that come in from everywhere, just turns up in there." They did not:
+   a website enquiry went to HubSpot and to #365-job-tracker and was stored nowhere the portal reads. Every kind of lead
+   already posts to that channel - the lead reminders' list (pcm-leadchase-lib lc_lead): the contact forms, the Dell
+   picker and the Virgin GBP 60 ring-me-back (slack-lead.php), the no-JS fallback (form-relay.php), AI enquiries
+   (ai-lead.php), PC Manager's "please ring" (pcm-mailmove-lib.php) and unfinished bookings (pcm-bkpend-lib.php) - and
+   comms_slack_sync reads that channel every sweep. So the sweep takes each lead post in as an item of type 'web',
+   linked to its post from the start: notes, thread replies and ticks then work exactly as they do for texts and
+   voicemails. A post already answered in Slack (any reaction, or a reply from a person - lc_answered) arrives done.
+   item['lead'] = {kind: web|callback, label, name, email, phone, company, topic, page}; body = what they wrote. */
+require_once __DIR__ . '/pcm-leadchase-lib.php';   // lc_lead(), lc_all_text(), lc_answered()
+
+function comms_lead_unwrap($s) {   // Slack's own wrapping and escaping, off
+    $s = (string)$s;
+    $s = preg_replace('/<mailto:([^|>]+)\|[^>]*>/i', '$1', $s);
+    $s = preg_replace('/<mailto:([^>]+)>/i', '$1', $s);
+    $s = preg_replace('/<tel:([^|>]+)\|[^>]*>/i', '$1', $s);
+    $s = preg_replace('/<tel:([^>]+)>/i', '$1', $s);
+    $s = preg_replace('/<(https?:[^|>]+)\|([^>]*)>/i', '$2', $s);
+    $s = preg_replace('/<(https?:[^>|]+)>/i', '$1', $s);
+    return str_replace(array('&lt;', '&gt;', '&amp;'), array('<', '>', '&'), $s);
+}
+/* A box: "*Label:*" with the answer on the next line (the Block Kit cards), or "Label: answer" on one line (the no-JS
+   fallback and the Virgin card's plain lines). First label that has an answer wins. */
+function comms_lead_field($all, $labels) {
+    foreach ((array)$labels as $lb) {
+        $q = preg_quote($lb, '/');
+        if (preg_match('/\*' . $q . ':\*[ \t]*\n[ \t]*([^\n]+)/i', $all, $m) && trim(str_replace('*', '', $m[1])) !== '') return trim(str_replace('*', '', $m[1]));
+        if (preg_match('/^[ \t>]*' . $q . ':[ \t]*([^\n]+)$/mi', $all, $m) && trim(str_replace('*', '', $m[1])) !== '') return trim(str_replace('*', '', $m[1]));
+    }
+    return '';
+}
+function comms_lead_quote($all, $label) {   // "*Message:*" then ">line" lines -> the lines
+    if (!preg_match('/\*' . preg_quote($label, '/') . ':\*[ \t]*\n((?:[ \t]*>[^\n]*(?:\n|$))+)/i', $all, $m)) return '';
+    return trim(preg_replace('/^[ \t]*>[ \t]?/m', '', $m[1]));
+}
+/* One #365-job-tracker message -> the lead's details, or null when it is not a web enquiry or call-back request. */
+function comms_lead_from_post($m) {
+    $lead = lc_lead($m);
+    if (!$lead || ($lead['kind'] !== 'web' && $lead['kind'] !== 'callback') || empty($m['ts'])) return null;
+    $all = comms_lead_unwrap(lc_all_text($m));
+    $name = comms_lead_field($all, array('Name'));
+    $email = comms_lead_field($all, array('Email'));
+    $phone = comms_lead_field($all, array('Phone', 'Contact number'));
+    $company = comms_lead_field($all, array('Company'));
+    $topic = comms_lead_field($all, array('Needs help with', 'Topic', 'Category'));
+    $body = comms_lead_quote($all, 'Message');
+    if ($body === '') $body = comms_lead_quote($all, 'Problem');
+    if ($body === '') $body = comms_lead_field($all, array('Message'));
+    $page = preg_match('#\bvia (/[^\s\x{00B7}]*)#u', $all, $pm) ? $pm[1] : comms_lead_field($all, array('Page'));
+    if (preg_match('~^https?://[^/]+(/[^\s?#]*)~i', $page, $pu)) $page = $pu[1];
+    if ($lead['label'] === 'Unfinished booking') {
+        // ":telephone_receiver: *Booking started but never finished* - Joan Baker on *07700 900123*\n> joan@x.com - wanted: ... - slot: ..."
+        if (preg_match('/never finished\*?\s*-\s*([^\n]+)/', $all, $bm)) {
+            $rest = trim(str_replace('*', '', $bm[1]));
+            if (preg_match('/^(.*?)\s+on\s+([+0-9][0-9 ()+\-]{6,})$/', $rest, $x)) { $name = trim($x[1]); $phone = trim($x[2]); }
+            else $name = trim(preg_replace('/\s*\(no phone given\)\s*$/', '', $rest));
+        }
+        if (preg_match('/\n>\s*([^\n]+)/', $all, $em)) {
+            $l2 = trim($em[1]);
+            if (preg_match('/^(\S+@\S+?)(?=\s+-\s|$)/', $l2, $ee)) $email = $ee[1];
+            if (preg_match('/wanted:\s*(.+?)(?=\s+-\s+slot:|$)/', $l2, $ww)) $topic = 'Wanted: ' . trim($ww[1]);
+            if (preg_match('/slot:\s*(.+)$/', $l2, $ss)) $body = 'Picked a slot: ' . trim($ss[1]) . '. Sent a code and never came back to finish.';
+        }
+        if ($body === '') $body = 'Started a booking and never finished it.';
+        if (strpos($name, '@') !== false) { if ($email === '') $email = $name; $name = ''; }
+    } elseif ($lead['label'] === 'Email move call-back') {
+        $topic = 'Virgin email move - pressed "Stuck? We\'ll do it for you" in PC Manager';
+        $bits = array();
+        foreach (array('Virgin address', 'Mailbox', 'Got as far as') as $lb) { $x = comms_lead_field($all, array($lb)); if ($x !== '') $bits[] = $lb . ': ' . $x; }
+        $body = $bits ? implode("\n", $bits) : 'Asked us to ring them about moving their Virgin email.';
+    }
+    $email = preg_match('/[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}/', $email, $mm) ? strtolower($mm[0]) : '';
+    $num = tm_number($phone);
+    if ($num === '') $num = (string)$lead['number'];
+    $cut = function ($s, $n) { return function_exists('mb_substr') ? mb_substr(trim((string)$s), 0, $n) : substr(trim((string)$s), 0, $n); };
+    if ($name === '' && $lead['who'] !== 'no name given' && $lead['kind'] === 'web' && strpos($lead['who'], '@') === false) $name = $lead['who'];
+    return array('kind' => $lead['kind'], 'label' => $lead['label'], 'name' => $cut($name, 90), 'email' => $cut($email, 160), 'phone' => $cut($phone, 40),
+        'number' => $num, 'company' => $cut($company, 120), 'topic' => $cut($topic, 160), 'body' => $cut($body, 2500), 'page' => $cut($page, 200), 'ts' => (string)$m['ts']);
+}
+/* The inbox item for a lead post. */
+function comms_lead_item($L, $m, $now = null) {
+    $now = $now === null ? time() : (int)$now;
+    $answered = lc_answered($m, array('kind' => $L['kind'], 'number' => $L['number']), null);
+    $match = $L['number'] !== '' ? comms_match_customer($L['number']) : array('status' => 'NOT_CHECKED', 'name' => '', 'cid' => '', 'why' => 'no phone number given');
+    return array('type' => 'web', 'ext_id' => 'slack-' . $L['ts'], 'at' => gmdate('c', (int)(float)$L['ts']), 'number' => $L['number'],
+        'body' => $L['body'], 'audio' => '', 'duration' => '', 'match' => $match,
+        'handled' => $answered, 'handled_by' => $answered ? 'Slack' : '', 'handled_at' => $answered ? gmdate('c', $now) : '',
+        'slack_ts' => $L['ts'], 'slack_rc' => 0,
+        'lead' => array('kind' => $L['kind'], 'label' => $L['label'], 'name' => $L['name'], 'email' => $L['email'], 'phone' => $L['phone'],
+                        'company' => $L['company'], 'topic' => $L['topic'], 'page' => $L['page']));
+}
+
+/* ---- 2 Oct 2026: a name from the job list ----
+   A customer written up with "New job in" (Slack or the portal's New customer) is a person we know: their texts and
+   voicemails should carry the name. Number -> {name, src: job} from pcm-jobs.json (phone and mobile), the newest job
+   winning. A name staff typed outranks the Textmagic address book; our customer records outrank both (comms_name_for). */
+function comms_job_names($file = null) {
+    $f = $file !== null ? $file : __DIR__ . '/pcm-jobs.json';
+    $d = @json_decode((string)@file_get_contents($f), true);
+    $jobs = (isset($d['jobs']) && is_array($d['jobs'])) ? $d['jobs'] : array();
+    usort($jobs, function ($a, $b) { return (int)(is_array($a) && isset($a['ts']) ? $a['ts'] : 0) - (int)(is_array($b) && isset($b['ts']) ? $b['ts'] : 0); });
+    $out = array();
+    foreach ($jobs as $j) {
+        if (!is_array($j)) continue;
+        $nm = trim((string)(isset($j['name']) ? $j['name'] : ''));
+        if ($nm === '' || comms_is_phoneish($nm)) continue;
+        foreach (array('phone', 'mobile') as $k) {
+            $n = tm_number((string)(isset($j[$k]) ? $j[$k] : ''));
+            if ($n !== '') $out[$n] = array('name' => function_exists('mb_substr') ? mb_substr($nm, 0, 60) : substr($nm, 0, 60), 'src' => 'job');
+        }
+    }
+    return $out;
+}
+function comms_names_with_jobs($names, $jobNames) {
+    $names = is_array($names) ? $names : array();
+    foreach ((array)$jobNames as $n => $v) {
+        if (isset($names[$n]['src']) && $names[$n]['src'] === 'customer' && (string)($names[$n]['name'] ?? '') !== '') continue;
+        $names[$n] = $v;
+    }
+    return $names;
+}
+
 /* Done in the portal -> a tick on the Slack post (best effort: needs the reactions:write permission). */
 function comms_slack_tick($ts) {
     if ((string)$ts === '' || !comms_slack_lib()) return false;

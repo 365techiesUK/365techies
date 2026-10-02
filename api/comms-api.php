@@ -14,7 +14,13 @@
  *                answered), then the list
  *   do=note   {id, text} -> a note into that item's Slack thread (#365-job-tracker) and onto the item; replies typed in the
  *                thread come back as notes (comms_slack_sync, every sweep)
- *   do=done   {id} one voicemail | {n, kind:'text'} that number's texts | {n} everything from it -> marked handled
+ *   do=done   {id} one voicemail or enquiry | {n, kind:'text'} that number's texts | {n} everything from it -> marked handled
+ *   do=newjob {v: {name, address, postcode, phone, mobile, email, website, jobtype, issue, assigned, priority, price}, from?}
+ *             -> 2 Oct 2026, "New customer": the Slack "New job in" card posted to #sos-jobs-in-out and the job saved at
+ *                once (pcm-newjob-lib.php); {from: an item id} also notes it in that item's own Slack thread. Answers
+ *                job: {id, name, phone, mobile, email, slack} or job: {errors: {box: message}}, then the list.
+ *   list also carries webs: website enquiries and call-back requests from #365-job-tracker (comms_lead_*, 2 Oct 2026),
+ *             and names from the job list (comms_job_names).
  * GET ?a=<recording>&e=<expiry>&s=<signature> -> the recording itself (comms_stream_audio), for the card's players.
  *   The link is signed with the server-only admin secret and lasts 3 hours, so an <audio> element needs no cookie.
  *
@@ -46,12 +52,16 @@ if (!is_array($in)) $in = array();
 if (!vis_staff_ok($in, __DIR__)) { http_response_code(403); ca_out(array('ok' => false, 'error' => 'auth')); }
 
 $do = (string)($in['do'] ?? 'list');
-$note = ''; $err = '';
+$note = ''; $err = ''; $jobOut = null;
 $num = function ($raw) { $r = (string)$raw; if ($r !== '' && $r[0] === ' ') $r = '+' . ltrim($r); return substr(preg_replace('/[^0-9+]/', '', $r), 0, 20); };
 if ($do === 'check') {
     $sw = comms_sweep();
-    $nt = (int)($sw['sms']['new'] ?? 0); $nv = (int)($sw['vm']['new'] ?? 0);
-    $note = ($nt || $nv) ? trim(($nv ? $nv . ' new voicemail' . ($nv === 1 ? '' : 's') : '') . ($nt && $nv ? ', ' : '') . ($nt ? $nt . ' new text' . ($nt === 1 ? '' : 's') : '')) : 'Nothing new.';
+    $nt = (int)($sw['sms']['new'] ?? 0); $nv = (int)($sw['vm']['new'] ?? 0); $nw = (int)($sw['slack']['enquiries'] ?? 0);
+    $bits = array();
+    if ($nv) $bits[] = $nv . ' new voicemail' . ($nv === 1 ? '' : 's');
+    if ($nt) $bits[] = $nt . ' new text' . ($nt === 1 ? '' : 's');
+    if ($nw) $bits[] = $nw . ' new enquir' . ($nw === 1 ? 'y' : 'ies');   // 2 Oct 2026: website enquiries and call-back requests
+    $note = $bits ? implode(', ', $bits) : 'Nothing new.';
     if (!empty($sw['vm']['error'])) $err = 'Voicemail mailbox: ' . $sw['vm']['error'];
 } elseif ($do === 'reply') {
     $n = $num($in['n'] ?? ''); $text = trim((string)($in['text'] ?? ''));
@@ -72,6 +82,33 @@ if ($do === 'check') {
     if (!empty($rn['ok']) && empty($rn['error'])) $note = 'Note added - it is in the Slack thread too.';
     elseif (!empty($rn['ok'])) $err = $rn['error'];
     else $err = $rn['error'];
+} elseif ($do === 'newjob') {
+    // 2 Oct 2026 (owner): "shouldn't there be a new customer button, like we've done in Slack" - the same "New job in"
+    // card, posted to #sos-jobs-in-out, and the job saved at once (pcm-newjob-lib.php). From a text, voicemail or
+    // website enquiry ({from: item id}) the item's own Slack thread gets a note saying so.
+    require_once __DIR__ . '/pcm-newjob-lib.php';
+    $tokS = preg_replace('/[^a-f0-9]/', '', (string)($in['stoken'] ?? ''));
+    $dbS = @json_decode((string)@file_get_contents(__DIR__ . '/pcm-data.json'), true);
+    $by = comms_staff_name((string)($dbS['staff'][$tokS]['email'] ?? ''));
+    $from = preg_replace('/[^A-Za-z0-9\-]/', '', (string)($in['from'] ?? ''));
+    $fromIt = null;
+    if ($from !== '') { list($okF, $fromIt) = comms_locked(function ($d) use ($from) { foreach ($d['items'] as $x) if ($x['id'] === $from) return array('__result' => $x); return array('__result' => null); }); }
+    $uk = function ($n) { return strpos((string)$n, '+44') === 0 ? '0' . substr((string)$n, 3) : (string)$n; };
+    $fromLabel = '';
+    if ($fromIt) {
+        $t = (string)$fromIt['type'];
+        $fromLabel = ($t === 'voicemail' ? 'a voicemail' : ($t === 'web' ? 'a ' . strtolower((string)($fromIt['lead']['label'] ?? 'website enquiry')) : 'a text'))
+            . ((string)$fromIt['number'] !== '' ? ' from ' . $uk($fromIt['number']) : '');
+    }
+    $rj = nj_create((array)($in['v'] ?? array()), $by, $fromLabel, $fromIt ? array('comms' => $fromIt['id']) : array());
+    if (empty($rj['ok'])) { $err = (string)$rj['error']; $jobOut = array('errors' => (array)($rj['errors'] ?? array())); }
+    else {
+        $jobOut = array('id' => $rj['id'], 'name' => $rj['name'], 'phone' => $rj['phone'], 'mobile' => $rj['mobile'], 'email' => $rj['email'], 'slack' => $rj['slack']);
+        $note = $rj['name'] . ' is in the job list' . ($rj['slack'] ? ', and the New job in card is in #sos-jobs-in-out.' : '.')
+            . ($rj['saved'] ? '' : ' (The job list was busy - it will pick the card up from Slack within 15 minutes.)');
+        if (!$rj['slack']) $err = 'Saved in the portal, but Slack did not take the card (' . $rj['slack_error'] . ').';
+        if ($fromIt) comms_add_note($fromIt['id'], 'Made a customer record: ' . $rj['name'] . ($rj['slack'] ? ' (New job in posted to #sos-jobs-in-out)' : ''), $by);
+    }
 } elseif ($do === 'done') {
     // one voicemail ({id}), or a caller's texts ({n, kind: 'text'}), or everything from a number ({n})
     $id = preg_replace('/[^A-Za-z0-9\-]/', '', (string)($in['id'] ?? ''));
@@ -93,6 +130,8 @@ if ($do === 'check') {
 }
 list($ok, $snap) = comms_locked(function ($d) { return array('__result' => array('items' => $d['items'], 'names' => $d['checkpoints']['names'] ?? array())); });
 if (!$ok) ca_out(array('ok' => false, 'error' => 'busy'));
-$b = comms_board($snap['items'], $snap['names'], $PCM_ADMIN_PASS);
-ca_out(array('ok' => true, 'texts' => $b['texts'], 'vms' => $b['vms'], 'open' => $b['open'], 'open_texts' => $b['open_texts'], 'open_vms' => $b['open_vms'],
-    'total_texts' => $b['total_texts'], 'total_vms' => $b['total_vms'], 'note' => $note, 'err' => $err, 'at' => time()));
+// 2 Oct 2026: people written up as a job (Slack's New job in, or New customer here) are named by it
+$b = comms_board($snap['items'], comms_names_with_jobs($snap['names'], comms_job_names()), $PCM_ADMIN_PASS);
+ca_out(array('ok' => true, 'texts' => $b['texts'], 'vms' => $b['vms'], 'webs' => $b['webs'], 'open' => $b['open'], 'open_texts' => $b['open_texts'], 'open_vms' => $b['open_vms'],
+    'open_webs' => $b['open_webs'], 'total_texts' => $b['total_texts'], 'total_vms' => $b['total_vms'], 'total_webs' => $b['total_webs'],
+    'note' => $note, 'err' => $err, 'job' => $jobOut, 'at' => time()));

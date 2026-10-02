@@ -275,6 +275,11 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(pcm-leadchase(-lib|-test)?\.php|pcm-leadchase\.json(\..*)?|pcm-leadchase\.off|comms-review-test\.php)$">
   Require all denied
 </FilesMatch>
+# New customer from the portal (2 Oct 2026): pcm-newjob-lib.php is include-only (comms-api.php uses it); the two
+# test suites are CLI-only. Nothing here is a URL.
+<FilesMatch "^(pcm-newjob-(lib|test)\.php|comms-leads-test\.php)$">
+  Require all denied
+</FilesMatch>
 # Bournemouth weather record books (22 Sep 2026): the per-date record table is read by
 # bm-wx.php on the server (it is public Met Office data, but 300 KB nobody's browser
 # needs); the library and its test are include/CLI-only.

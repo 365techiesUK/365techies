@@ -25273,6 +25273,30 @@ def write_portal_page():
   @media (max-width:900px) { #p365app .nx-today--3 { grid-template-columns:1fr; } }
   #p365app .cm-card .cm-th:first-child { border-top:0; padding-top:.2rem; }
   #p365app .cm-notes { margin:.45rem 0 0; padding:.1rem 0 0 .7rem; border-left:3px solid rgba(240,198,90,.5); display:grid; gap:.35rem; }
+  #p365app .cm-filter { display:flex; flex-wrap:wrap; gap:.4rem; margin:-.1rem 0 .7rem; }
+  #p365app .cm-filter button { margin:0; min-height:40px; padding:.4rem .75rem; font-size:.88rem; }
+  #p365app .cm-filter button.on { background:var(--pcyan); border-color:var(--pcyan); color:#06101f; }
+  #p365app .cm-fn { display:inline-block; min-width:1.5em; margin-left:.35rem; padding:0 .35em; border-radius:999px; background:rgba(240,198,90,.2); color:#ffe9a8; font-size:.8rem; text-align:center; }
+  #p365app .cm-filter button.on .cm-fn { background:rgba(6,16,31,.18); color:#06101f; }
+  #p365app .cm-tag--web { border-color:#b8862e; color:#ffd89a; }
+  #p365app .cm-it--web { border-color:rgba(240,198,90,.32); }
+  #p365app .cm-it--web p { white-space:pre-line; }
+  #p365app .cm-it--web .cm-k a { color:var(--pcyan); overflow-wrap:anywhere; }
+  #p365app .nc-dlg { max-width:720px; }
+  #p365app #ncmask { padding-bottom:11rem; }   /* the site's cookie banner (fixed, z 1200, outside <main>'s stacking layer) can sit over Save until it is answered: room to scroll Save clear of it */
+  #p365app .nc-top { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; }
+  #p365app .nc-top p { margin:.35rem 0 0; }
+  #p365app .nc-top button { flex:0 0 auto; }
+  #p365app .nc-grid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:0 1rem; margin-top:.3rem; }
+  #p365app .nc-f--wide { grid-column:1 / -1; }
+  #p365app .nc-grid textarea { width:100%; min-height:6rem; padding:.62rem .7rem; border-radius:9px; border:1px solid var(--pline); background:var(--pink); color:var(--pwhite); font:inherit; font-size:1rem; resize:vertical; box-sizing:border-box; }
+  #p365app .nc-req { margin-left:.3rem; font-size:.78rem; color:#f0c65a; }
+  #p365app .nc-err { display:block; margin-top:.25rem; font-size:.88rem; color:#ffb3a4; }
+  #p365app .nc-err:empty { display:none; }
+  #p365app .nc-act { display:flex; flex-wrap:wrap; gap:.6rem; margin-top:1.1rem; }
+  #p365app .nc-act button { margin:0; min-height:44px; }
+  #p365app .nc-ok { margin:.7rem 0 .4rem; font-size:1.05rem; color:var(--pgood); }
+  @media (max-width:640px) { #p365app .nc-grid { grid-template-columns:1fr; } }
   #p365app .cm-ni { margin:0; font-size:.95rem; line-height:1.45; color:var(--pwhite); overflow-wrap:anywhere; }
   #p365app .cm-ni .cm-k { display:block; }
   #p365app details.nx-how > summary { cursor:pointer; color:#86b6e8; font-size:.92rem; margin:.1rem 0 .5rem; }
@@ -29372,7 +29396,7 @@ def write_portal_page():
     var ltab = bar.querySelector('.nx-stab[data-tab="live"]');
     if (ltab) ltab.innerHTML = '<span class="nx-ldot"></span>Live<span class="nx-lcount" id="nxLiveTabN"></span>';
     var kp = document.createElement('div'); kp.className = 'nx-kpis';
-    kp.innerHTML = [['kVis', 'visits today', 'today'], ['kSos', 'SOS codes waiting', 'today'], ['kMsg', 'calls & texts to answer', 'today'], ['kInv', 'jobs in the last 30 days', 'invoices']]
+    kp.innerHTML = [['kVis', 'visits today', 'today'], ['kSos', 'SOS codes waiting', 'today'], ['kMsg', 'calls, texts & enquiries to answer', 'today'], ['kInv', 'jobs in the last 30 days', 'invoices']]
       .map(function (k) { return '<button type="button" class="nx-kpi" id="' + k[0] + '" data-go="' + k[2] + '"><b>&ndash;</b><span>' + k[1] + '</span></button>'; }).join('');
     var panels = {};
     TABS.forEach(function (x) { var p = document.createElement('section'); p.className = 'nx-panel'; p.setAttribute('data-tab', x[0]); p.setAttribute('aria-label', x[1]); panels[x[0]] = p; });
@@ -29936,8 +29960,10 @@ def write_portal_page():
         + '<div id="invq"><p class="quiet">Checking QuickBooks\\u2026</p></div></div>';
       /* 1 Oct 2026 (owner): voicemails and texts on Today, in the portal session - no passphrase. api/comms-api.php;
          the full inbox (history, review texts) stays a console button. */
-      h += '<div class="card cm-card" id="cmcard" style="border-left:4px solid var(--pcyan)"><h2>\\ud83d\\udcac Texts <span class="cm-open" id="cmopent"></span></h2>'
-        + '<div id="cmbox"><p class="quiet">Loading texts\\u2026</p></div></div>';
+      // 2 Oct 2026 (owner): "an inbox for everything" - Texts became Messages: the texts and every website enquiry,
+      // Dell quote, AI enquiry, PC Manager call-back request and unfinished booking (from #365-job-tracker), newest first
+      h += '<div class="card cm-card" id="cmcard" style="border-left:4px solid var(--pcyan)"><h2>\\ud83d\\udcac Messages <span class="cm-open" id="cmopent"></span></h2>'
+        + '<div id="cmbox"><p class="quiet">Loading texts and enquiries\\u2026</p></div></div>';
       h += '<div class="card cm-card" id="cmvcard" style="border-left:4px solid #8a5de3"><h2>\\ud83d\\udcde Voicemails <span class="cm-open" id="cmopenv"></span></h2>'
         + '<div class="cm-bar"><button class="sm ghost" id="cmcheck">Check for new</button><span class="cm-note" id="cmnote" aria-live="polite"></span></div>'
         + '<div id="cmvbox"><p class="quiet">Loading voicemails\\u2026</p></div></div>';
@@ -29975,6 +30001,7 @@ def write_portal_page():
         + '<p style="margin:.5rem 0 0"><button class="sm ghost" id="geogo">Count by postcode</button></p>'
         + '<div id="geobox"></div></div>';
       h += '<div class="card"><h2>Quick links</h2><div class="row">'
+        + '<button class="sm" id="ncopen">\\u2795 New customer</button>'   // 2 Oct 2026: like Slack's "New job in" (ncOpen)
         + '<a class="btn sm ghost" href="https://365techies.secure.simplybook.it/v2/management/" target="_blank" rel="noopener">SimplyBook admin</a>'
         + '<button class="sm ghost" id="pcmadm">Full PCM console</button>'
         + '<button class="sm ghost" id="commsadm">\\ud83d\\udcde Comms inbox</button>'
@@ -30036,6 +30063,7 @@ def write_portal_page():
       };
       document.getElementById('pcmadm').onclick = function () { ssoOpen('/api/pcm-admin.php'); };
       document.getElementById('commsadm').onclick = function () { ssoOpen('/api/comms.php'); };
+      document.getElementById('ncopen').onclick = function () { ncOpen({ assigned: cmMe() }); };
       document.getElementById('aipipe').onclick = function () { ssoOpen('/api/ai-admin.php'); };
       document.getElementById('ab').onclick = function () {
         var b = this; b.disabled = true; document.getElementById('aerr').textContent = '';
@@ -31415,7 +31443,7 @@ def write_portal_page():
   // (api/pcm-installs.php). Default view: everyone NOT on a plan, as the owner asked.
   var INST = { who: 'free', d: null };
   // ---- 1 Oct 2026: Calls & texts - the comms inbox (voicemails + texts) on Today, through api/comms-api.php ----
-  var CM = { d: null, allT: false, allV: false, rep: '', draft: '', note: '', ndraft: '', busy: false };
+  var CM = { d: null, allT: false, allV: false, rep: '', draft: '', note: '', ndraft: '', busy: false, f: 'all' };
   function cmWhen(iso) {
     var t = Date.parse(iso || ''); if (isNaN(t)) return '';
     var d = new Date(t), td = new Date(); td.setHours(0, 0, 0, 0);
@@ -31448,10 +31476,10 @@ def write_portal_page():
   }
   // 1 Oct 2026 (late, owner): "two columns - text messages down one side and the voicemails on the other", with the
   // number on every one and a name wherever our records, Textmagic or the phone system has one
-  var CM_SRC = { customer: 'customer', textmagic: 'Textmagic contact', voipfone: 'from the phone system', possible: '' };
+  var CM_SRC = { customer: 'customer', job: 'job record', textmagic: 'Textmagic contact', voipfone: 'from the phone system', possible: '' };
   function cmWho(x) {   // the name (or the number) in bold, then the number, then where the name came from
     return '<b>' + esc(x.who || x.n) + '</b>' + (x.who ? '<span class="cm-num">' + esc(x.n) + '</span>' : '')
-      + (x.src && CM_SRC[x.src] ? '<span class="cm-tag' + (x.src === 'customer' ? '' : ' cm-tag--soft') + '">' + CM_SRC[x.src] + '</span>' : '');
+      + (x.src && CM_SRC[x.src] ? '<span class="cm-tag' + (x.src === 'customer' || x.src === 'job' ? '' : ' cm-tag--soft') + '">' + CM_SRC[x.src] + '</span>' : '');
   }
   function cmReplyBox(key, n, who) {
     if (CM.rep !== key) return '';
@@ -31485,6 +31513,7 @@ def write_portal_page():
       + cmNotes(t.notes)
       + '<div class="cm-act"><a class="btn sm" href="tel:' + esc(t.n) + '">\\ud83d\\udcde Call</a>'
       + (t.mobile ? '<button type="button" class="sm ghost" data-cmr="' + esc(key) + '">Reply</button>' : '')
+      + cmNewBtn(key, t.src === 'customer' || t.src === 'job' ? t.who : '')
       + (t.note_id ? '<button type="button" class="sm ghost" data-cmn="' + esc(key) + '">Note</button>' : '')
       + (t.open ? '<button type="button" class="sm ghost" data-cmd="' + esc(t.n) + '">Done</button>' : '') + '</div>'
       + cmReplyBox(key, t.n, t.who) + cmNoteBox(key, t.note_id) + '</div>';
@@ -31498,9 +31527,158 @@ def write_portal_page():
       + cmNotes(v.notes)
       + '<div class="cm-act"><a class="btn sm" href="tel:' + esc(v.n) + '">\\ud83d\\udcde Call back</a>'
       + (v.mobile ? '<button type="button" class="sm ghost" data-cmr="' + esc(key) + '">Text back</button>' : '')
+      + cmNewBtn(key, v.src === 'customer' || v.src === 'job' ? v.who : '')
       + '<button type="button" class="sm ghost" data-cmn="' + esc(key) + '">Note</button>'
       + (v.done ? '' : '<button type="button" class="sm ghost" data-cmid="' + esc(v.id) + '">Done</button>') + '</div>'
       + cmReplyBox(key, v.n, v.who) + cmNoteBox(key, v.id) + '</div>';
+  }
+  // ---- 2 Oct 2026 (owner): "will inquiries from the web page turn up in there as well? ... a sort of inbox for
+  // everything". Website enquiries, Dell quotes, AI enquiries, PC Manager's "please ring" and unfinished bookings come
+  // in from #365-job-tracker (comms-lib comms_lead_*) and share the Messages column with the texts.
+  function cmUk(n) {   // +447584168898 -> 07584 168898, as people say it
+    n = String(n || ''); if (n.indexOf('+44') !== 0) return n;
+    var d = '0' + n.slice(3);
+    return /^07\\d{9}$/.test(d) ? d.slice(0, 5) + ' ' + d.slice(5) : d;
+  }
+  function cmMe() {   // the staff member's first name, as the server signs notes (comms_staff_name)
+    var l = String(S.email || '').split('@')[0].toLowerCase();
+    if (l === 'info') return 'David';
+    l = l.replace(/[^a-z].*$/, '');
+    return l ? l.charAt(0).toUpperCase() + l.slice(1) : '';
+  }
+  function cmNewBtn(key, known) {   // "New customer" - or "New job" when we already know them
+    return '<button type="button" class="sm ghost" data-cmc="' + esc(key) + '" data-known="' + esc(known || '') + '">' + (known ? '\\u2795 New job' : '\\u2795 New customer') + '</button>';
+  }
+  function cmWeb(w) {   // one website enquiry or call-back request, on its own
+    var key = 'w:' + w.id;
+    var hd = '<b>' + esc(w.who || (w.n ? cmUk(w.n) : (w.email || 'No name given'))) + '</b>'
+      + (w.who && w.n ? '<span class="cm-num">' + esc(w.n) + '</span>' : '')
+      + '<span class="cm-tag cm-tag--web">' + esc(w.label || 'Website enquiry') + '</span>'
+      + (w.cust ? '<span class="cm-tag">' + (w.cust_src === 'job' ? 'job record: ' : 'customer: ') + esc(w.cust) + '</span>' : '');
+    var meta = [];
+    if (w.email) meta.push('<a href="mailto:' + esc(w.email) + '">' + esc(w.email) + '</a>');
+    if (w.company) meta.push(esc(w.company));
+    if (w.page) meta.push('on ' + esc(w.page));
+    return '<div class="cm-th cm-th--web' + (w.done ? ' cm-th--done' : ' cm-th--open') + '"><div class="cm-hd">' + hd
+      + '<span class="cm-t">' + esc(cmWhen(w.at)) + (w.done ? ' \\u00b7 done' : '') + '</span></div>'
+      + '<div class="cm-it cm-it--web"><span class="cm-k">' + esc(w.topic || 'What they wrote') + (meta.length ? ' \\u00b7 ' + meta.join(' \\u00b7 ') : '') + '</span>'
+      + (w.body ? '<p>' + esc(w.body) + '</p>' : '') + '</div>'
+      + cmNotes(w.notes)
+      + '<div class="cm-act">' + (w.n ? '<a class="btn sm" href="tel:' + esc(w.n) + '">\\ud83d\\udcde Call</a>' : '')
+      + (w.mobile ? '<button type="button" class="sm ghost" data-cmr="' + esc(key) + '">Text</button>' : '')
+      + (w.email ? '<a class="btn sm ghost" href="mailto:' + esc(w.email) + '?subject=' + encodeURIComponent('Your enquiry to 365 Techies') + '">Email</a>' : '')
+      + cmNewBtn(key, w.cust)
+      + '<button type="button" class="sm ghost" data-cmn="' + esc(key) + '">Note</button>'
+      + (w.done ? '' : '<button type="button" class="sm ghost" data-cmid="' + esc(w.id) + '">Done</button>') + '</div>'
+      + cmReplyBox(key, w.n, w.who) + cmNoteBox(key, w.id) + '</div>';
+  }
+  /* New customer (2 Oct 2026, owner: "shouldn't there be a new customer button, like we've done in Slack ... we've got
+     their mobile number then, and all we need is their name"). The same boxes as Slack's "New job in" form; saving posts
+     that card to #sos-jobs-in-out and puts the job in the job list at once (comms-api do=newjob -> pcm-newjob-lib.php).
+     From a message, the boxes are filled from it and a note goes into that message's own Slack thread. */
+  function cmPrefill(key) {
+    var d = CM.d || {}, k = key.slice(0, 1), id = key.slice(2), p = { assigned: cmMe(), from: '' }, num = '';
+    var named = function (x) { return x.who && x.src !== 'possible' ? x.who : ''; };
+    if (k === 't') {
+      var t = (d.texts || []).filter(function (x) { return x.n === id; })[0]; if (!t) return p;
+      num = t.n; p.name = named(t); p.from = t.note_id || '';
+      var last = (t.items || []).filter(function (it) { return it.type === 'sms_in'; }).pop();
+      p.issue = last ? 'Texted ' + cmWhen(last.at) + ' - ' + last.body : '';   // not "23:45: " - the Slack reader strips :45: as an emoji code
+      p.from_label = 'the text from ' + cmUk(t.n);
+    } else if (k === 'v') {
+      var v = (d.vms || []).filter(function (x) { return x.id === id; })[0]; if (!v) return p;
+      num = v.n; p.name = named(v); p.from = v.id;
+      p.issue = 'Left a voicemail ' + cmWhen(v.at) + (v.dur ? ' (' + v.dur + ')' : '');
+      p.from_label = 'the voicemail from ' + cmUk(v.n);
+    } else if (k === 'w') {
+      var w = (d.webs || []).filter(function (x) { return x.id === id; })[0]; if (!w) return p;
+      num = w.n; p.name = w.who || ''; p.email = w.email || ''; p.from = w.id;
+      p.issue = (w.topic ? w.topic + ': ' : '') + (w.body || '');
+      p.from_label = 'the ' + String(w.label || 'website enquiry').toLowerCase() + (w.who ? ' from ' + w.who : '');
+      if (!num && w.phone) p.phone = w.phone;
+    }
+    if (num) { if (/^\\+447\\d{9}$/.test(num)) p.mobile = cmUk(num); else p.phone = cmUk(num); }
+    return p;
+  }
+  var NC = { pre: null, busy: false, ret: null };
+  var NC_F = [['name', 'Customer name', 'text', 1], ['address', 'Address'], ['postcode', 'Postcode'], ['phone', 'Contact number', 'tel'],
+    ['mobile', 'Mobile phone', 'tel'], ['email', 'Email', 'email'], ['website', 'Website address'], ['jobtype', 'Job type', ['Remote', 'On-site', 'Hardware']],
+    ['issue', 'Issue', 'area'], ['assigned', 'Assigned to'], ['priority', 'Priority', ['Low', 'Medium', 'High']], ['price', 'Price \\u00a3']];
+  function ncKey(e) { if (e.key === 'Escape') ncClose(); }
+  function ncClose() {
+    var x = document.getElementById('ncmask'); if (x && x.parentNode) x.parentNode.removeChild(x);
+    document.removeEventListener('keydown', ncKey);
+    if (NC.ret && NC.ret.focus && document.body.contains(NC.ret)) { try { NC.ret.focus(); } catch (e) {} }
+  }
+  function ncOpen(pre) {
+    ncClose();
+    NC.pre = pre || { assigned: cmMe() }; NC.busy = false; NC.ret = document.activeElement;
+    var known = NC.pre.known || '';
+    var boxes = NC_F.map(function (x) {
+      var id = 'nc_' + x[0], v = NC.pre[x[0]] || '', t = x[2] || 'text', wide = x[0] === 'name' || t === 'area';
+      var lab = '<label for="' + id + '">' + x[1] + (x[3] ? ' <span class="nc-req">needed</span>' : '') + '</label>', err = '<span class="nc-err" id="' + id + '_e"></span>';
+      if (Array.isArray(t)) return '<div class="nc-f">' + lab + '<select id="' + id + '"><option value="">\\u2014</option>'
+        + t.map(function (o) { return '<option' + (o === v ? ' selected' : '') + '>' + o + '</option>'; }).join('') + '</select>' + err + '</div>';
+      if (t === 'area') return '<div class="nc-f nc-f--wide">' + lab + '<textarea id="' + id + '" maxlength="1500">' + esc(v) + '</textarea>' + err + '</div>';
+      return '<div class="nc-f' + (wide ? ' nc-f--wide' : '') + '">' + lab + '<input id="' + id + '" type="' + t + '" value="' + esc(v) + '" autocomplete="off"'
+        + (x[0] === 'price' ? ' inputmode="decimal" placeholder="60"' : '') + (x[0] === 'website' ? ' placeholder="www.example.co.uk"' : '') + ' />' + err + '</div>';
+    }).join('');
+    var mask = document.createElement('div'); mask.className = 'tmask'; mask.id = 'ncmask';
+    mask.innerHTML = '<div class="tmodal nc-dlg" role="dialog" aria-modal="true" aria-labelledby="nch">'
+      + '<div class="nc-top"><div><h3 id="nch">' + (known ? 'New job for ' + esc(known) : 'New customer') + '</h3>'
+      + '<p class="quiet">The same boxes as Slack\\u2019s \\u201cNew job in\\u201d: saving posts that card to #sos-jobs-in-out and puts the job in the job list straight away.'
+      + (NC.pre.from_label ? ' Filled in from ' + esc(NC.pre.from_label) + ' \\u2014 a note goes into its Slack thread too.' : '') + '</p></div>'
+      + '<button type="button" class="sm ghost" id="ncx" aria-label="Close">\\u2715</button></div>'
+      + '<div id="ncbody"><div class="nc-grid">' + boxes + '</div>'
+      + '<div class="err" id="ncerr" aria-live="polite"></div>'
+      + '<div class="nc-act"><button type="button" id="ncsave">Save customer</button><button type="button" class="ghost" id="nccancel">Cancel</button></div></div></div>';
+    el.appendChild(mask);
+    document.getElementById('ncx').onclick = ncClose;
+    document.getElementById('nccancel').onclick = ncClose;
+    document.getElementById('ncsave').onclick = ncSave;
+    document.addEventListener('keydown', ncKey);
+    var first = document.getElementById(NC.pre.name ? 'nc_address' : 'nc_name'); if (first) first.focus();
+  }
+  function ncSave() {
+    if (NC.busy) return;
+    var v = {}, er = document.getElementById('ncerr'), b = document.getElementById('ncsave');
+    NC_F.forEach(function (x) { var e2 = document.getElementById('nc_' + x[0]); v[x[0]] = e2 ? e2.value : ''; var s2 = document.getElementById('nc_' + x[0] + '_e'); if (s2) s2.textContent = ''; });
+    er.textContent = '';
+    if (!v.name.trim()) { document.getElementById('nc_name_e').textContent = 'Please put the customer\\u2019s name.'; document.getElementById('nc_name').focus(); return; }
+    NC.busy = true; b.disabled = true; b.textContent = 'Saving\\u2026';
+    post('/api/comms-api.php', { stoken: S.stoken, machine: mid(), do: 'newjob', v: v, from: NC.pre.from || '' })
+      .then(function (d) {
+        NC.busy = false;
+        if (d && d.ok && d.job && d.job.id) { CM.d = d; renderComms(); ncDone(d.job, d.err || ''); return; }
+        b.disabled = false; b.textContent = 'Save customer';
+        var errs = (d && d.job && d.job.errors) || {}, firstBad = '';
+        Object.keys(errs).forEach(function (k) { var s3 = document.getElementById('nc_' + k + '_e'); if (s3) { s3.textContent = errs[k]; if (!firstBad) firstBad = k; } });
+        if (firstBad) { var fb = document.getElementById('nc_' + firstBad); if (fb) fb.focus(); }
+        er.textContent = d && d.error === 'auth' ? 'Your staff session has expired \\u2014 sign out and in again.' : (d && (d.err || d.error)) || 'No answer from the server \\u2014 try again.';
+      })
+      .catch(function () {
+        NC.busy = false; b.disabled = false; b.textContent = 'Save customer';
+        er.textContent = 'No answer from the server. Look in #sos-jobs-in-out before trying again, in case it went through.';
+      });
+  }
+  function ncDone(j, warn) {
+    var body = document.getElementById('ncbody'); if (!body) return;
+    document.getElementById('nch').textContent = 'Saved: ' + j.name;
+    var intro = document.querySelector('#ncmask .nc-top p'); if (intro) intro.style.display = 'none';   // the how-it-works line has done its job
+    body.innerHTML = '<p class="nc-ok">\\u2714 ' + esc(j.name) + ' is in the job list' + (j.slack ? ', and the \\u201cNew job in\\u201d card is in #sos-jobs-in-out.' : '.') + '</p>'
+      + (warn ? '<p class="err">' + esc(warn) + '</p>' : '')
+      + '<p class="quiet">' + (j.mobile || j.phone ? 'Their texts and voicemails now show their name. ' : '') + 'The job is in the Invoices tab, ready to invoice once it\\u2019s done.</p>'
+      + '<div class="nc-act"><button type="button" id="ncbook">\\ud83d\\udcc5 Book them in the diary</button><button type="button" class="ghost" id="ncok">Close</button></div>';
+    document.getElementById('ncok').onclick = ncClose;
+    document.getElementById('ncbook').onclick = function () { ncClose(); ncBook(j); };
+    document.getElementById('ncbook').focus();
+  }
+  function ncBook(j) {   // straight into the diary's Book a new job, at "What service?"
+    var w = document.getElementById('nbwiz'); if (!w) return;
+    if (NXL.show) NXL.show('today');
+    NB = { cid: 0, cname: j.name, cphone: j.mobile || j.phone || '', cemail: j.email || '', svc: 0, svcName: '', date: '', time: '' };
+    w.style.display = 'block'; wizWhat();
+    w.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   function renderComms() {
     var box = document.getElementById('cmbox'), vbox = document.getElementById('cmvbox'); if (!box) return;
@@ -31514,12 +31692,22 @@ def write_portal_page():
       return;
     }
     nxKpi('kMsg', d.open || 0);
-    if (ot) { ot.textContent = d.open_texts ? d.open_texts + ' to answer' : 'all answered'; ot.className = 'cm-open' + (d.open_texts ? '' : ' cm-open--ok'); }
+    var openM = (d.open_texts || 0) + (d.open_webs || 0);
+    if (ot) { ot.textContent = openM ? openM + ' to answer' : 'all answered'; ot.className = 'cm-open' + (openM ? '' : ' cm-open--ok'); }
     if (ov) { ov.textContent = d.open_vms ? d.open_vms + ' not done' : 'all done'; ov.className = 'cm-open' + (d.open_vms ? '' : ' cm-open--ok'); }
     if (note && (d.note || d.err)) { note.className = 'cm-note' + (d.err ? ' cm-note--bad' : ''); note.textContent = d.err || d.note; }
-    var tx = d.texts || [], vm = d.vms || [], tShow = CM.allT ? tx : tx.slice(0, 6), vShow = CM.allV ? vm : vm.slice(0, 6);
-    box.innerHTML = (tShow.length ? tShow.map(cmText).join('') : '<p class="quiet">No texts yet.</p>')
-      + (tx.length > tShow.length ? '<button type="button" class="sm ghost cm-more" id="cmmoret">Show all ' + (d.total_texts || tx.length) + ' texts</button>' : '')
+    var tx = d.texts || [], wb = d.webs || [], vm = d.vms || [], vShow = CM.allV ? vm : vm.slice(0, 6);
+    var msgs = (CM.f === 'w' ? [] : tx.map(function (t) { return { k: 't', at: t.last, x: t }; }))
+      .concat(CM.f === 't' ? [] : wb.map(function (w) { return { k: 'w', at: w.at, x: w }; }));
+    msgs.sort(function (a, b) { return (Date.parse(b.at) || 0) - (Date.parse(a.at) || 0); });
+    var mShow = CM.allT ? msgs : msgs.slice(0, 6);
+    var chips = '<div class="cm-filter" role="group" aria-label="Show">' + [['all', 'All', openM], ['t', 'Texts', d.open_texts || 0], ['w', 'Website &amp; call-backs', d.open_webs || 0]].map(function (c) {
+        return '<button type="button" class="sm ghost' + (CM.f === c[0] ? ' on' : '') + '" data-cmf="' + c[0] + '" aria-pressed="' + (CM.f === c[0] ? 'true' : 'false') + '">' + c[1]
+          + (c[2] ? '<span class="cm-fn">' + c[2] + '</span>' : '') + '</button>';
+      }).join('') + '</div>';
+    box.innerHTML = chips + (mShow.length ? mShow.map(function (m) { return m.k === 't' ? cmText(m.x) : cmWeb(m.x); }).join('')
+        : '<p class="quiet">' + (CM.f === 'w' ? 'No website enquiries in the last week.' : CM.f === 't' ? 'No texts yet.' : 'No texts or enquiries yet.') + '</p>')
+      + (msgs.length > mShow.length ? '<button type="button" class="sm ghost cm-more" id="cmmoret">Show all ' + msgs.length + '</button>' : '')
       + '<p class="quiet" style="margin-top:.7rem">Older messages and the review text: <a href="#" id="cmfull">the full comms inbox</a>.</p>';
     if (vbox) vbox.innerHTML = (vShow.length ? vShow.map(cmVoicemail).join('') : '<p class="quiet">No voicemails yet.</p>')
       + (vm.length > vShow.length ? '<button type="button" class="sm ghost cm-more" id="cmmorev">Show all ' + vm.length + ' voicemails</button>' : '');
@@ -31536,6 +31724,8 @@ def write_portal_page():
       if (b.id === 'cmmoret') { CM.allT = true; renderComms(); return; }
       if (b.id === 'cmmorev') { CM.allV = true; renderComms(); return; }
       if (b.id === 'cmfull') { e.preventDefault(); var ca = document.getElementById('commsadm'); if (ca) ca.click(); return; }
+      if (b.hasAttribute('data-cmf')) { CM.f = b.getAttribute('data-cmf'); CM.allT = false; renderComms(); return; }
+      if (b.hasAttribute('data-cmc')) { var pre = cmPrefill(b.getAttribute('data-cmc')); pre.known = b.getAttribute('data-known') || ''; ncOpen(pre); return; }
       if (b.hasAttribute('data-cmr')) { CM.rep = b.getAttribute('data-cmr'); CM.draft = ''; CM.note = ''; renderComms(); return; }
       if (b.hasAttribute('data-cmn')) { CM.note = b.getAttribute('data-cmn'); CM.ndraft = ''; CM.rep = ''; renderComms(); return; }
       if (b.hasAttribute('data-cmx')) { CM.rep = ''; CM.draft = ''; CM.note = ''; CM.ndraft = ''; renderComms(); return; }

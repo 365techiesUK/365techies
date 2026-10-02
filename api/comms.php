@@ -137,6 +137,9 @@ if (!$okAll) $items = array();
 /* thread by number */
 $threads = array();
 foreach ($items as $it) {
+    // 2 Oct 2026: website enquiries live on the portal's Today page (Messages) and in Slack; many carry no number,
+    // and this page is threaded by number, so they are left out here rather than lumped under a blank one
+    if (($it['type'] ?? '') === 'web') continue;
     $threads[$it['number']][] = $it;
 }
 uasort($threads, function ($a, $b) { return strcmp(end($b)['at'], end($a)['at']); });

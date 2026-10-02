@@ -154,6 +154,11 @@ function lc_answered($m, $lead, $inbox, $bots = null) {
         $people = isset($m['reply_users']) && is_array($m['reply_users']) ? array_diff($m['reply_users'], $bots) : array('?');
         if ($people) return true;   // someone replied (or Slack did not say who: count it, as before)
     }
+    /* 2 Oct 2026: website enquiries and call-back requests are inbox items too now (comms-lib comms_lead_item), linked to
+       their post by slack_ts: Done in the portal is an answer even when the tick on the post could not be added. */
+    if (($lead['kind'] === 'web' || $lead['kind'] === 'callback') && is_array($inbox)) {
+        foreach ($inbox as $it) if (is_array($it) && ($it['type'] ?? '') === 'web' && (string)($it['slack_ts'] ?? '') === (string)$m['ts'] && !empty($it['handled'])) return true;
+    }
     if (($lead['kind'] === 'text' || $lead['kind'] === 'voicemail') && $lead['number'] !== '' && is_array($inbox)) {
         $item = lc_inbox_item($m, $lead, $inbox);
         if ($item && !empty($item['handled'])) return true;
