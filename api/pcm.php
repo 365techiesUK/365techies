@@ -130,6 +130,14 @@ function pcm_news_out($db, $tier) {
                  'news_text' => (string)($n['text'] ?? ''), 'news_url' => (string)($n['url'] ?? ''));
 }
 
+// The 365 Email Mover browser add-on (app v31 on): its Chrome Web Store page goes to every app on every check-in, and
+// the app then offers "Add to Chrome" on its Virgin email page. EMPTY until the store has approved it (item
+// gfhaolhbpbjdfjgacpehimkjjnhcipjd, submitted 2 Oct 2026): an unapproved item's page is a dead end. When it is live, set
+// it to 'https://chromewebstore.google.com/detail/gfhaolhbpbjdfjgacpehimkjjnhcipjd' and push. The app only takes a
+// https://chromewebstore.google.com/detail/ link; an empty value takes the button away again.
+const PCM_MM_ADDON_URL = '';
+function pcm_mm_addon_out() { return PCM_MM_ADDON_URL !== '' ? array('mm_addon' => PCM_MM_ADDON_URL) : array(); }
+
 require_once __DIR__ . '/pcm-programs-lib.php';   // programs check: the list + the matching (top-level scope on purpose)
 require_once __DIR__ . '/pcm-gate.php';            // 29 Sep 2026: the minute poll answered by .htaccess while nothing waits
 require_once __DIR__ . '/pcm-installs-lib.php';    // 1 Oct 2026: installs counted from check-ins (top-level scope on purpose)
@@ -186,7 +194,7 @@ if ($action === 'checkin') {
         inst_note($machine, (int)($in['ver'] ?? 0), !empty($in['w10']), $instLinked,
             $instLinked && (($db['customers'][$key]['tier'] ?? 'free') === 'pro'), (string)($_SERVER['REMOTE_ADDR'] ?? ''));
     } catch (Throwable $e) { }
-    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>true,'tier'=>'free') + $upd + pcm_news_out($db, 'free') + pcm_prog_ver()); // key gone => downgrade
+    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>true,'tier'=>'free') + $upd + pcm_news_out($db, 'free') + pcm_prog_ver() + pcm_mm_addon_out()); // key gone => downgrade
     $c =& $db['customers'][$key];
     $tier = ($c['tier'] ?? 'free');
     if ($machine !== '') {
@@ -282,7 +290,7 @@ if ($action === 'checkin') {
     list($nextOut, $nextTsOut) = pcm_next_out($c);   // a visit that has passed is not the next service
     // v29: staff have switched the email move (365 Mail Mover) on for this PC - the app shows its page
     $mmOn = ($machine !== '' && !empty($c['machines'][$machine]['mailmove'])) ? 1 : 0;
-    out(array('ok'=>true,'tier'=>$tier,'next'=>$nextOut,'next_ts'=>$nextTsOut,'ready'=>$ready,'fam'=>$fam,'fam_url'=>$famUrl,'detail'=>$detail,'msg_unread'=>$msgUnread,'mm'=>$mmOn) + $upd + pcm_news_out($db, $tier === 'pro' ? 'pro' : 'free') + pcm_prog_ver());
+    out(array('ok'=>true,'tier'=>$tier,'next'=>$nextOut,'next_ts'=>$nextTsOut,'ready'=>$ready,'fam'=>$fam,'fam_url'=>$famUrl,'detail'=>$detail,'msg_unread'=>$msgUnread,'mm'=>$mmOn) + $upd + pcm_news_out($db, $tier === 'pro' ? 'pro' : 'free') + pcm_prog_ver() + pcm_mm_addon_out());
 }
 
 // latest published app build, from the git-deployed manifest (downloads/pcm/version.json).
