@@ -20,7 +20,8 @@
  *                once (pcm-newjob-lib.php); {from: an item id} also notes it in that item's own Slack thread. Answers
  *                job: {id, name, phone, mobile, email, slack} or job: {errors: {box: message}}, then the list.
  *   list also carries webs: website enquiries and call-back requests from #365-job-tracker (comms_lead_*, 2 Oct 2026),
- *             and names from the job list (comms_job_names).
+ *             and names from the job list (comms_job_names); mails: emails from people in the company mailboxes
+ *             (comms-mail-lib.php, 2 Oct 2026) and mailboxes: each one's last look [{box, at, new, left_out, replied, error}].
  * GET ?a=<recording>&e=<expiry>&s=<signature> -> the recording itself (comms_stream_audio), for the card's players.
  *   The link is signed with the server-only admin secret and lasts 3 hours, so an <audio> element needs no cookie.
  *
@@ -61,6 +62,9 @@ if ($do === 'check') {
     if ($nv) $bits[] = $nv . ' new voicemail' . ($nv === 1 ? '' : 's');
     if ($nt) $bits[] = $nt . ' new text' . ($nt === 1 ? '' : 's');
     if ($nw) $bits[] = $nw . ' new enquir' . ($nw === 1 ? 'y' : 'ies');   // 2 Oct 2026: website enquiries and call-back requests
+    $ne = (int)($sw['mail']['new'] ?? 0);
+    if ($ne) $bits[] = $ne . ' new email' . ($ne === 1 ? '' : 's');   // 2 Oct 2026: emails from people (comms-mail-lib.php)
+    foreach ((array)($sw['mail']['boxes'] ?? array()) as $bk => $bx) if (!empty($bx['error']) && $err === '') $err = 'Mailbox ' . $bk . ': ' . $bx['error'];
     $note = $bits ? implode(', ', $bits) : 'Nothing new.';
     if (!empty($sw['vm']['error'])) $err = 'Voicemail mailbox: ' . $sw['vm']['error'];
 } elseif ($do === 'reply') {
@@ -97,8 +101,8 @@ if ($do === 'check') {
     $fromLabel = '';
     if ($fromIt) {
         $t = (string)$fromIt['type'];
-        $fromLabel = ($t === 'voicemail' ? 'a voicemail' : ($t === 'web' ? 'a ' . strtolower((string)($fromIt['lead']['label'] ?? 'website enquiry')) : 'a text'))
-            . ((string)$fromIt['number'] !== '' ? ' from ' . $uk($fromIt['number']) : '');
+        $fromLabel = ($t === 'voicemail' ? 'a voicemail' : ($t === 'web' ? 'a ' . strtolower((string)($fromIt['lead']['label'] ?? 'website enquiry')) : ($t === 'email' ? 'an email' : 'a text')))
+            . ($t === 'email' ? ' from ' . (string)($fromIt['mail']['from'] ?? '') : ((string)$fromIt['number'] !== '' ? ' from ' . $uk($fromIt['number']) : ''));
     }
     $rj = nj_create((array)($in['v'] ?? array()), $by, $fromLabel, $fromIt ? array('comms' => $fromIt['id']) : array());
     if (empty($rj['ok'])) { $err = (string)$rj['error']; $jobOut = array('errors' => (array)($rj['errors'] ?? array())); }
@@ -128,10 +132,20 @@ if ($do === 'check') {
         }
     }
 }
-list($ok, $snap) = comms_locked(function ($d) { return array('__result' => array('items' => $d['items'], 'names' => $d['checkpoints']['names'] ?? array())); });
+list($ok, $snap) = comms_locked(function ($d) { return array('__result' => array('items' => $d['items'], 'names' => $d['checkpoints']['names'] ?? array(),
+    'mailstat' => $d['checkpoints']['mail_status'] ?? array())); });
 if (!$ok) ca_out(array('ok' => false, 'error' => 'busy'));
 // 2 Oct 2026: people written up as a job (Slack's New job in, or New customer here) are named by it
-$b = comms_board($snap['items'], comms_names_with_jobs($snap['names'], comms_job_names()), $PCM_ADMIN_PASS);
-ca_out(array('ok' => true, 'texts' => $b['texts'], 'vms' => $b['vms'], 'webs' => $b['webs'], 'open' => $b['open'], 'open_texts' => $b['open_texts'], 'open_vms' => $b['open_vms'],
-    'open_webs' => $b['open_webs'], 'total_texts' => $b['total_texts'], 'total_vms' => $b['total_vms'], 'total_webs' => $b['total_webs'],
+// ... and emails from people we hold are named by our records or the job list (comms_mail_known_map: 'mail:<address>')
+$b = comms_board($snap['items'], comms_names_with_jobs(comms_names_with_jobs($snap['names'], comms_job_names()), comms_mail_known_map()), $PCM_ADMIN_PASS);
+// 2 Oct 2026: each mailbox's last look - when, how many came in, how many were left out and why - so the card can say so
+$boxes = array();
+foreach (comms_mail_config() as $bx) {
+    $st = is_array($snap['mailstat'][$bx['key']] ?? null) ? $snap['mailstat'][$bx['key']] : array();
+    $boxes[] = array('box' => $bx['key'], 'at' => (int)($st['at'] ?? 0), 'new' => (int)($st['new'] ?? 0), 'left_out' => (array)($st['left_out'] ?? array()),
+        'replied' => (int)($st['replied'] ?? 0), 'error' => (string)($st['error'] ?? ''));
+}
+ca_out(array('ok' => true, 'texts' => $b['texts'], 'vms' => $b['vms'], 'webs' => $b['webs'], 'mails' => $b['mails'], 'open' => $b['open'], 'open_texts' => $b['open_texts'], 'open_vms' => $b['open_vms'],
+    'open_webs' => $b['open_webs'], 'open_mails' => $b['open_mails'], 'total_texts' => $b['total_texts'], 'total_vms' => $b['total_vms'], 'total_webs' => $b['total_webs'],
+    'total_mails' => $b['total_mails'], 'mailboxes' => $boxes,
     'note' => $note, 'err' => $err, 'job' => $jobOut, 'at' => time()));

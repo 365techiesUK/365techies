@@ -35,8 +35,9 @@
 
 require_once __DIR__ . '/tm-lib.php';   // tm_number(), tm_send(), tm_creds()
 
-define('COMMS_FILE', __DIR__ . '/comms-data.json');
-define('COMMS_LOCK', __DIR__ . '/comms-data.json.lock');
+// a test suite may point these at a temp file before including this library (comms-mail-test.php, 2 Oct 2026)
+if (!defined('COMMS_FILE')) define('COMMS_FILE', __DIR__ . '/comms-data.json');
+if (!defined('COMMS_LOCK')) define('COMMS_LOCK', __DIR__ . '/comms-data.json.lock');
 define('COMMS_MAX_ITEMS', 800);
 
 function comms_locked($fn) {
@@ -311,8 +312,11 @@ function comms_vm_part_info($p, $sec) {
     }
     $types = array('TEXT', 'MULTIPART', 'MESSAGE', 'APPLICATION', 'AUDIO', 'IMAGE', 'VIDEO', 'MODEL', 'OTHER');
     $t = isset($p->type) ? (int)$p->type : 0;
+    $charset = '';   // 2 Oct 2026, for emails: the text's character set, and attachment vs inline
+    if (isset($p->parameters) && is_array($p->parameters)) foreach ($p->parameters as $x) if (isset($x->attribute, $x->value) && strcasecmp((string)$x->attribute, 'charset') === 0) $charset = (string)$x->value;
+    $disp = (!empty($p->ifdisposition) && isset($p->disposition)) ? strtoupper((string)$p->disposition) : '';
     return array('sec' => (string)$sec, 'type' => isset($types[$t]) ? $types[$t] : 'OTHER', 'sub' => strtoupper((string)(isset($p->subtype) ? $p->subtype : '')),
-        'name' => $name, 'enc' => isset($p->encoding) ? (int)$p->encoding : 0, 'bytes' => isset($p->bytes) ? (int)$p->bytes : 0);
+        'name' => $name, 'enc' => isset($p->encoding) ? (int)$p->encoding : 0, 'bytes' => isset($p->bytes) ? (int)$p->bytes : 0, 'charset' => $charset, 'disp' => $disp);
 }
 /* Is this part the recording? 'mp3', 'wav' or '' (the inbox and its deny rule serve those two only). */
 function comms_vm_audio_ext($pi) {
@@ -750,13 +754,18 @@ function comms_notes_out($notes) {   // the last 4, trimmed, for the card
 function comms_board($items, $names, $key, $now = null, $limit = 30) {
     $now = $now === null ? time() : (int)$now;
     $mob = function ($n) { return (bool)preg_match('/^\+447\d{9}$/', (string)$n); };
-    $byText = array(); $vms = array(); $openNums = array(); $lastMatch = array(); $webs = array();
+    $byText = array(); $vms = array(); $openNums = array(); $lastMatch = array(); $webs = array(); $mails = array();
     foreach ((array)$items as $it) {
         if (!is_array($it) || !isset($it['number'], $it['type'])) continue;
         $n = (string)$it['number'];
         if ($it['type'] === 'web') {   // 2 Oct 2026: a website enquiry or call-back request; one with no number is its own person
             $webs[] = $it;
             if (empty($it['handled'])) $openNums[$n !== '' ? $n : 'web:' . (string)($it['id'] ?? '')] = 1;
+            continue;
+        }
+        if ($it['type'] === 'email') {   // 2 Oct 2026: an email; the sender is the person when it carries no number
+            $mails[] = $it;
+            if (empty($it['handled'])) $openNums[$n !== '' ? $n : 'mail:' . (string)($it['mail']['from'] ?? $it['id'])] = 1;
             continue;
         }
         if (isset($it['match']) && is_array($it['match'])) $lastMatch[$n] = $it['match'];
@@ -811,8 +820,27 @@ function comms_board($items, $names, $key, $now = null, $limit = 30) {
             'body' => mb_substr((string)($it['body'] ?? ''), 0, 1200), 'at' => (string)($it['at'] ?? ''), 'done' => !empty($it['handled']),
             'notes' => comms_notes_out((array)($it['notes'] ?? array())), 'note_id' => (string)($it['id'] ?? ''));
     }
-    return array('texts' => array_slice($texts, 0, $limit), 'vms' => $vout, 'webs' => $wout, 'open_texts' => $openTexts, 'open_vms' => $openVms, 'open_webs' => $openWebs,
-        'open' => count($openNums), 'total_texts' => count($texts), 'total_vms' => count($vms), 'total_webs' => count($webs));
+    // 2 Oct 2026: emails, newest first, each on its own: who (the name in their From line, else the address), the subject,
+    // what they wrote, attachment names; "cust" when the address (or a number in it) is someone we hold
+    usort($mails, function ($a, $b) { return strcmp((string)($b['at'] ?? ''), (string)($a['at'] ?? '')); });
+    $openMails = 0; $mout = array();
+    foreach ($mails as $it) {
+        if (empty($it['handled'])) $openMails++;
+        if (count($mout) >= $limit) continue;
+        $M = is_array($it['mail'] ?? null) ? $it['mail'] : array(); $addr = (string)($M['from'] ?? ''); $n = (string)$it['number'];
+        $k = $names['mail:' . $addr] ?? (is_array($M['known'] ?? null) ? $M['known'] : null);
+        if (!$k && $n !== '') { list($kn, $ks) = comms_name_for($n, array(), $names); if ($ks === 'customer' || $ks === 'job') $k = array('name' => $kn, 'src' => $ks); }
+        $mout[] = array('id' => (string)($it['id'] ?? ''), 'who' => (string)($M['name'] ?? '') !== '' ? (string)$M['name'] : $addr, 'addr' => $addr,
+            'reply' => (string)($M['reply_to'] ?? '') !== '' ? (string)$M['reply_to'] : $addr, 'box' => (string)($M['box'] ?? ''),
+            'subject' => (string)($M['subject'] ?? ''), 'attach' => array_values((array)($M['attach'] ?? array())),
+            'cust' => $k ? (string)$k['name'] : '', 'cust_src' => $k ? (string)$k['src'] : '',
+            'n' => $n, 'mobile' => $mob($n), 'body' => mb_substr((string)($it['body'] ?? ''), 0, 1500), 'at' => (string)($it['at'] ?? ''),
+            'done' => !empty($it['handled']), 'done_by' => (string)($it['handled_by'] ?? ''),
+            'notes' => comms_notes_out((array)($it['notes'] ?? array())), 'note_id' => (string)($it['id'] ?? ''));
+    }
+    return array('texts' => array_slice($texts, 0, $limit), 'vms' => $vout, 'webs' => $wout, 'mails' => $mout, 'open_texts' => $openTexts, 'open_vms' => $openVms,
+        'open_webs' => $openWebs, 'open_mails' => $openMails,
+        'open' => count($openNums), 'total_texts' => count($texts), 'total_vms' => count($vms), 'total_webs' => count($webs), 'total_mails' => count($mails));
 }
 
 /* Tonight's catch-up (and any voicemail whose Slack line went out without its recording): the recording goes into
@@ -904,6 +932,7 @@ function comms_post_kind($text) {
     $t = (string)$text;
     if (strpos($t, 'Voicemail from ') !== false) return 'voicemail';
     if (strpos($t, 'Text from ') !== false) return 'sms_in';
+    if (strpos($t, 'Email from ') !== false) return 'email';   // 2 Oct 2026
     return '';
 }
 function comms_slack_sync($maxReplies = 12, $now = null) {
@@ -940,12 +969,13 @@ function comms_slack_sync($maxReplies = 12, $now = null) {
     foreach ((array)$snap['items'] as $it) if (!empty($it['slack_ts'])) $used[(string)$it['slack_ts']] = 1;
     foreach ((array)$snap['items'] as $it) {
         $type = (string)($it['type'] ?? '');
-        if ($type !== 'sms_in' && $type !== 'voicemail' && $type !== 'web') continue;   // web: linked when it came in
+        if ($type !== 'sms_in' && $type !== 'voicemail' && $type !== 'web' && $type !== 'email') continue;   // web: linked when it came in
         $ts = (string)($it['slack_ts'] ?? '');
         if ($ts === '') {   // learn the post
             $st = strtotime((string)($it['stored_at'] ?? ''));
             if ($st === false || $now - $st > 8 * 86400) continue;
-            $num = (string)($it['number'] ?? ''); $best = ''; $gap = 301;
+            $num = $type === 'email' ? (string)($it['mail']['from'] ?? '') : (string)($it['number'] ?? ''); $best = ''; $gap = 301;
+            if ($num === '') continue;
             foreach ($posts as $pts => $p) {
                 if (isset($used[$pts]) || comms_post_kind($p['text'] ?? '') !== $type) continue;
                 $t = (string)($p['text'] ?? '');
@@ -1008,10 +1038,11 @@ function comms_add_note($id, $text, $by, $now = null) {
     if (empty($it['slack_ts'])) { comms_slack_sync(0, $now); $it = $find(); }
     $esc = function ($s) { return str_replace(array('&', '<', '>'), array('&amp;', '&lt;', '&gt;'), (string)$s); };
     $who = (($it['match']['status'] ?? '') === 'MATCH' ? $it['match']['name'] . ' (' . $it['number'] . ')' : (string)$it['number']);
+    if (($it['type'] ?? '') === 'email') $who = trim((string)($it['mail']['name'] ?? '') . ' <' . (string)($it['mail']['from'] ?? '') . '>');
     $body = "\xF0\x9F\x93\x9D *" . $esc($by) . "* (portal): " . $esc($text);
     $args = array('channel' => COMMS_SLACK_CHANNEL, 'text' => $body, 'unfurl_links' => false);
     $newPost = empty($it['slack_ts']);
-    if ($newPost) $args['text'] = "\xF0\x9F\x93\x9D Note on the " . ($it['type'] === 'voicemail' ? 'voicemail' : 'text') . ' from ' . $esc($who) . ' - *' . $esc($by) . '*: ' . $esc($text);
+    if ($newPost) $args['text'] = "\xF0\x9F\x93\x9D Note on the " . ($it['type'] === 'voicemail' ? 'voicemail' : ($it['type'] === 'email' ? 'email' : 'text')) . ' from ' . $esc($who) . ' - *' . $esc($by) . '*: ' . $esc($text);
     else $args['thread_ts'] = (string)$it['slack_ts'];
     $r = slk_call('chat.postMessage', $args, 8);
     $ts = !empty($r['ok']) ? (string)($r['ts'] ?? '') : '';
@@ -1038,6 +1069,7 @@ function comms_add_note($id, $text, $by, $now = null) {
    voicemails. A post already answered in Slack (any reaction, or a reply from a person - lc_answered) arrives done.
    item['lead'] = {kind: web|callback, label, name, email, phone, company, topic, page}; body = what they wrote. */
 require_once __DIR__ . '/pcm-leadchase-lib.php';   // lc_lead(), lc_all_text(), lc_answered()
+require_once __DIR__ . '/comms-mail-lib.php';       // 2 Oct 2026: emails from the company mailboxes (comms_mail_poll)
 
 function comms_lead_unwrap($s) {   // Slack's own wrapping and escaping, off
     $s = (string)$s;
@@ -1161,6 +1193,7 @@ function comms_sweep() {
     $out = array();
     $out['sms'] = comms_sms_poll();
     $out['vm'] = comms_vm_poll();
+    $out['mail'] = comms_mail_poll();   // 2 Oct 2026: emails from people, from mail-imap.php's mailboxes
     // 1 Oct 2026: recordings the first poller missed (it looked one level into the email only)
     $out['vm_audio'] = comms_vm_refetch(15);
     // 1 Oct 2026 (late): names from our records / Textmagic, and recordings under tonight's Slack lines

@@ -25279,6 +25279,12 @@ def write_portal_page():
   #p365app .cm-fn { display:inline-block; min-width:1.5em; margin-left:.35rem; padding:0 .35em; border-radius:999px; background:rgba(240,198,90,.2); color:#ffe9a8; font-size:.8rem; text-align:center; }
   #p365app .cm-filter button.on .cm-fn { background:rgba(6,16,31,.18); color:#06101f; }
   #p365app .cm-tag--web { border-color:#b8862e; color:#ffd89a; }
+  #p365app .cm-tag--mail { border-color:#4a78c2; color:#b9d4ff; }
+  #p365app .cm-it--mail { border-color:rgba(74,120,194,.45); }
+  #p365app .cm-it--mail p { white-space:pre-line; }
+  #p365app .cm-it--mail .cm-subj { font-weight:700; margin-top:.15rem; }
+  #p365app .cm-mstat { margin:-.2rem 0 .7rem; font-size:.88rem; line-height:1.5; color:var(--pmut); }
+  #p365app .cm-mbad { color:#ffb3a4; }
   #p365app .cm-it--web { border-color:rgba(240,198,90,.32); }
   #p365app .cm-it--web p { white-space:pre-line; }
   #p365app .cm-it--web .cm-k a { color:var(--pcyan); overflow-wrap:anywhere; }
@@ -29396,7 +29402,7 @@ def write_portal_page():
     var ltab = bar.querySelector('.nx-stab[data-tab="live"]');
     if (ltab) ltab.innerHTML = '<span class="nx-ldot"></span>Live<span class="nx-lcount" id="nxLiveTabN"></span>';
     var kp = document.createElement('div'); kp.className = 'nx-kpis';
-    kp.innerHTML = [['kVis', 'visits today', 'today'], ['kSos', 'SOS codes waiting', 'today'], ['kMsg', 'calls, texts & enquiries to answer', 'today'], ['kInv', 'jobs in the last 30 days', 'invoices']]
+    kp.innerHTML = [['kVis', 'visits today', 'today'], ['kSos', 'SOS codes waiting', 'today'], ['kMsg', 'calls & messages to answer', 'today'], ['kInv', 'jobs in the last 30 days', 'invoices']]
       .map(function (k) { return '<button type="button" class="nx-kpi" id="' + k[0] + '" data-go="' + k[2] + '"><b>&ndash;</b><span>' + k[1] + '</span></button>'; }).join('');
     var panels = {};
     TABS.forEach(function (x) { var p = document.createElement('section'); p.className = 'nx-panel'; p.setAttribute('data-tab', x[0]); p.setAttribute('aria-label', x[1]); panels[x[0]] = p; });
@@ -29960,10 +29966,11 @@ def write_portal_page():
         + '<div id="invq"><p class="quiet">Checking QuickBooks\\u2026</p></div></div>';
       /* 1 Oct 2026 (owner): voicemails and texts on Today, in the portal session - no passphrase. api/comms-api.php;
          the full inbox (history, review texts) stays a console button. */
-      // 2 Oct 2026 (owner): "an inbox for everything" - Texts became Messages: the texts and every website enquiry,
-      // Dell quote, AI enquiry, PC Manager call-back request and unfinished booking (from #365-job-tracker), newest first
+      // 2 Oct 2026 (owner): "an inbox for everything" - Texts became Messages: the texts, emails from people (the company
+      // mailboxes, comms-mail-lib.php) and every website enquiry, Dell quote, AI enquiry, PC Manager call-back request and
+      // unfinished booking (from #365-job-tracker), newest first
       h += '<div class="card cm-card" id="cmcard" style="border-left:4px solid var(--pcyan)"><h2>\\ud83d\\udcac Messages <span class="cm-open" id="cmopent"></span></h2>'
-        + '<div id="cmbox"><p class="quiet">Loading texts and enquiries\\u2026</p></div></div>';
+        + '<div id="cmbox"><p class="quiet">Loading texts, emails and enquiries\\u2026</p></div></div>';
       h += '<div class="card cm-card" id="cmvcard" style="border-left:4px solid #8a5de3"><h2>\\ud83d\\udcde Voicemails <span class="cm-open" id="cmopenv"></span></h2>'
         + '<div class="cm-bar"><button class="sm ghost" id="cmcheck">Check for new</button><span class="cm-note" id="cmnote" aria-live="polite"></span></div>'
         + '<div id="cmvbox"><p class="quiet">Loading voicemails\\u2026</p></div></div>';
@@ -31572,6 +31579,45 @@ def write_portal_page():
       + (w.done ? '' : '<button type="button" class="sm ghost" data-cmid="' + esc(w.id) + '">Done</button>') + '</div>'
       + cmReplyBox(key, w.n, w.who) + cmNoteBox(key, w.id) + '</div>';
   }
+  // 2 Oct 2026 (owner: "yes add the emails too"): emails from people in the company mailboxes. Reply opens a new email to
+  // them in this PC's email program; a reply sent from Outlook itself marks the email done here on the next look.
+  function cmMail(m) {
+    var key = 'm:' + m.id;
+    var hd = '<b>' + esc(m.who || m.addr) + '</b>' + (m.who && m.who !== m.addr ? '<span class="cm-num">' + esc(m.addr) + '</span>' : '')
+      + '<span class="cm-tag cm-tag--mail">Email</span>'
+      + (m.cust ? '<span class="cm-tag">' + (m.cust_src === 'job' ? 'job record: ' : 'customer: ') + esc(m.cust) + '</span>' : '');
+    var meta = ['to ' + esc(String(m.box || '').split('@')[0]) + '@'];
+    if (m.attach && m.attach.length) meta.push('\\ud83d\\udcce ' + (m.attach.length === 1 ? esc(m.attach[0]) : m.attach.length + ' attachments: ' + esc(m.attach.join(', '))));
+    var body = String(m.body || ''), cut = body.length > 700;
+    var subj = String(m.subject || ''), re = /^re:/i.test(subj) ? subj : 'Re: ' + subj;
+    return '<div class="cm-th cm-th--mail' + (m.done ? ' cm-th--done' : ' cm-th--open') + '"><div class="cm-hd">' + hd
+      + '<span class="cm-t">' + esc(cmWhen(m.at)) + (m.done ? ' \\u00b7 ' + (m.done_by === 'replied from the mailbox' ? 'replied' : 'done') : '') + '</span></div>'
+      + '<div class="cm-it cm-it--mail"><span class="cm-k">' + meta.join(' \\u00b7 ') + '</span>'
+      + (subj ? '<p class="cm-subj">' + esc(subj) + '</p>' : '')
+      + (body ? '<p>' + esc(cut ? body.slice(0, 700) + '\\u2026' : body) + '</p>' : '<p class="quiet">No text \\u2014 open it in your mailbox.</p>')
+      + (cut ? '<span class="cm-k">The rest is in the email in your mailbox.</span>' : '') + '</div>'
+      + cmNotes(m.notes)
+      + '<div class="cm-act"><a class="btn sm" href="mailto:' + esc(m.reply || m.addr) + '?subject=' + encodeURIComponent(re) + '" title="A new email to them in your email program. Press Done when it is sorted.">\\u2709 Reply</a>'
+      + (m.n ? '<a class="btn sm ghost" href="tel:' + esc(m.n) + '">\\ud83d\\udcde Call</a>' : '')
+      + (m.mobile ? '<button type="button" class="sm ghost" data-cmr="' + esc(key) + '">Text</button>' : '')
+      + cmNewBtn(key, m.cust)
+      + '<button type="button" class="sm ghost" data-cmn="' + esc(key) + '">Note</button>'
+      + (m.done ? '' : '<button type="button" class="sm ghost" data-cmid="' + esc(m.id) + '">Done</button>') + '</div>'
+      + cmReplyBox(key, m.n, m.who) + cmNoteBox(key, m.id) + '</div>';
+  }
+  function cmMailStat(d) {   // each mailbox's last look and today's totals, so it is plain the emails are being read
+    var bx = d.mailboxes || [];
+    if (!bx.length) return '<p class="cm-mstat">\\u2709 Emails are not connected yet \\u2014 the mailbox settings file (api/mail-imap.php) is not on the server.</p>';
+    return '<p class="cm-mstat">' + bx.map(function (b) {
+      var who = esc(String(b.box || '').split('/')[0]);
+      if (b.error) return '<span class="cm-mbad">\\u2709 ' + who + ': ' + esc(b.error) + '</span>';
+      if (!b.at) return '\\u2709 ' + who + ': not looked at yet (every 15 minutes, or Check for new)';
+      var lo = b.left_out || {}, n = 0, parts = [];
+      Object.keys(lo).forEach(function (k) { n += lo[k]; parts.push(lo[k] + ' ' + k); });
+      return '\\u2709 ' + who + ' \\u00b7 checked ' + esc(cmWhen(new Date(b.at * 1000).toISOString())) + ' \\u00b7 today ' + (b.new || 0) + ' in'
+        + (n ? ', ' + n + ' left out (' + esc(parts.join(', ')) + ')' : '') + (b.replied ? ', ' + b.replied + ' answered in Outlook' : '');
+    }).join('<br />') + '</p>';
+  }
   /* New customer (2 Oct 2026, owner: "shouldn't there be a new customer button, like we've done in Slack ... we've got
      their mobile number then, and all we need is their name"). The same boxes as Slack's "New job in" form; saving posts
      that card to #sos-jobs-in-out and puts the job in the job list at once (comms-api do=newjob -> pcm-newjob-lib.php).
@@ -31596,6 +31642,11 @@ def write_portal_page():
       p.issue = (w.topic ? w.topic + ': ' : '') + (w.body || '');
       p.from_label = 'the ' + String(w.label || 'website enquiry').toLowerCase() + (w.who ? ' from ' + w.who : '');
       if (!num && w.phone) p.phone = w.phone;
+    } else if (k === 'm') {
+      var e = (d.mails || []).filter(function (x) { return x.id === id; })[0]; if (!e) return p;
+      num = e.n; p.name = e.who && e.who !== e.addr ? e.who : ''; p.email = e.reply || e.addr; p.from = e.id;
+      p.issue = 'Emailed ' + cmWhen(e.at) + (e.subject ? ' - ' + e.subject : '') + (e.body ? '\\n' + String(e.body).slice(0, 600) : '');
+      p.from_label = 'the email from ' + (e.who || e.addr);
     }
     if (num) { if (/^\\+447\\d{9}$/.test(num)) p.mobile = cmUk(num); else p.phone = cmUk(num); }
     return p;
@@ -31692,21 +31743,23 @@ def write_portal_page():
       return;
     }
     nxKpi('kMsg', d.open || 0);
-    var openM = (d.open_texts || 0) + (d.open_webs || 0);
+    var openM = (d.open_texts || 0) + (d.open_webs || 0) + (d.open_mails || 0);
     if (ot) { ot.textContent = openM ? openM + ' to answer' : 'all answered'; ot.className = 'cm-open' + (openM ? '' : ' cm-open--ok'); }
     if (ov) { ov.textContent = d.open_vms ? d.open_vms + ' not done' : 'all done'; ov.className = 'cm-open' + (d.open_vms ? '' : ' cm-open--ok'); }
     if (note && (d.note || d.err)) { note.className = 'cm-note' + (d.err ? ' cm-note--bad' : ''); note.textContent = d.err || d.note; }
-    var tx = d.texts || [], wb = d.webs || [], vm = d.vms || [], vShow = CM.allV ? vm : vm.slice(0, 6);
-    var msgs = (CM.f === 'w' ? [] : tx.map(function (t) { return { k: 't', at: t.last, x: t }; }))
-      .concat(CM.f === 't' ? [] : wb.map(function (w) { return { k: 'w', at: w.at, x: w }; }));
+    var tx = d.texts || [], wb = d.webs || [], ml = d.mails || [], vm = d.vms || [], vShow = CM.allV ? vm : vm.slice(0, 6);
+    var msgs = (CM.f === 'all' || CM.f === 't' ? tx.map(function (t) { return { k: 't', at: t.last, x: t }; }) : [])
+      .concat(CM.f === 'all' || CM.f === 'm' ? ml.map(function (m) { return { k: 'm', at: m.at, x: m }; }) : [])
+      .concat(CM.f === 'all' || CM.f === 'w' ? wb.map(function (w) { return { k: 'w', at: w.at, x: w }; }) : []);
     msgs.sort(function (a, b) { return (Date.parse(b.at) || 0) - (Date.parse(a.at) || 0); });
     var mShow = CM.allT ? msgs : msgs.slice(0, 6);
-    var chips = '<div class="cm-filter" role="group" aria-label="Show">' + [['all', 'All', openM], ['t', 'Texts', d.open_texts || 0], ['w', 'Website &amp; call-backs', d.open_webs || 0]].map(function (c) {
+    var chips = '<div class="cm-filter" role="group" aria-label="Show">' + [['all', 'All', openM], ['t', 'Texts', d.open_texts || 0], ['m', 'Emails', d.open_mails || 0], ['w', 'Website &amp; call-backs', d.open_webs || 0]].map(function (c) {
         return '<button type="button" class="sm ghost' + (CM.f === c[0] ? ' on' : '') + '" data-cmf="' + c[0] + '" aria-pressed="' + (CM.f === c[0] ? 'true' : 'false') + '">' + c[1]
           + (c[2] ? '<span class="cm-fn">' + c[2] + '</span>' : '') + '</button>';
       }).join('') + '</div>';
-    box.innerHTML = chips + (mShow.length ? mShow.map(function (m) { return m.k === 't' ? cmText(m.x) : cmWeb(m.x); }).join('')
-        : '<p class="quiet">' + (CM.f === 'w' ? 'No website enquiries in the last week.' : CM.f === 't' ? 'No texts yet.' : 'No texts or enquiries yet.') + '</p>')
+    box.innerHTML = chips + (CM.f === 'all' || CM.f === 'm' ? cmMailStat(d) : '')
+      + (mShow.length ? mShow.map(function (m) { return m.k === 't' ? cmText(m.x) : m.k === 'm' ? cmMail(m.x) : cmWeb(m.x); }).join('')
+        : '<p class="quiet">' + (CM.f === 'w' ? 'No website enquiries in the last week.' : CM.f === 't' ? 'No texts yet.' : CM.f === 'm' ? 'No emails from people yet.' : 'No texts, emails or enquiries yet.') + '</p>')
       + (msgs.length > mShow.length ? '<button type="button" class="sm ghost cm-more" id="cmmoret">Show all ' + msgs.length + '</button>' : '')
       + '<p class="quiet" style="margin-top:.7rem">Older messages and the review text: <a href="#" id="cmfull">the full comms inbox</a>.</p>';
     if (vbox) vbox.innerHTML = (vShow.length ? vShow.map(cmVoicemail).join('') : '<p class="quiet">No voicemails yet.</p>')
