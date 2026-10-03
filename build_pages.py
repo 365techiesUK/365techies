@@ -5655,7 +5655,7 @@ add(
      ("Who is business IT support for?", "Sole traders, home offices and small businesses — estate agents, accountants, consultants, trades and retail — who need reliable IT without employing full-time staff."),
      ("What does it include?", "Remote support, staff support, Microsoft 365 administration, Outlook/Teams/OneDrive/SharePoint help, cybersecurity checks, Windows updates, backup checks, new PC setup, user onboarding and leaver checks."),
      ("Do you offer on-site support?", "Yes — we provide on-site support across Bournemouth, Poole and the rest of Dorset alongside fast remote help."),
-     ("Can you support Microsoft 365?", "Absolutely — licensing, migration, security and day-to-day administration of Outlook, Teams, OneDrive, SharePoint and Exchange Online."),
+     ("Can you support Microsoft 365?", "Absolutely — licensing, migration, security and day-to-day administration of Outlook, Teams, OneDrive, SharePoint and Exchange Online. Not sure which plan you need? Our <a href=\"/which-microsoft-365-plan/\">Microsoft 365 plan picker</a> compares Business Basic, Standard and Premium in plain English."),
    ]),
    '''    <p class="taskmore">Also on every plan: your own 365 estate dashboard (<a href="/join/">try it free</a>, or <a href="/custom-wifi-dashboards/">see the business demo</a>), the free <a href="/free-pc-health-check/">365 PC Manager app</a> on every computer, your <a href="/portal/">customer portal</a> and <a href="/splashtop-business-guide/">your own PCs from anywhere</a>. We visit across Dorset and <a href="/remote-it-support/">help remotely anywhere in the UK</a>. New to it? See <a href="/your-first-6-weekly-service/">what your first 6-weekly service looks like</a>, compare <a href="/business-it-support-plans/">the business plans in detail</a>, <a href="/plan-finder/">let the Plan Finder pick one</a>, or <a href="/contact/">book a chat</a>.</p>''',
  ]),
@@ -5907,7 +5907,7 @@ add(
           <h2 class="section-title section-title--center" data-title>Add extra protection any time<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="tile-grid" data-stagger>
-{tiles([("cloud","Microsoft 365","Email, Office apps &amp; OneDrive on the right business plan &mdash; priced per plan, set up &amp; supported. <a href=\"/microsoft-365-support/\">See Microsoft 365 &#8594;</a>"),("shield","Managed cybersecurity","Layered, monitored protection &mdash; MFA, patching &amp; verified backups. <a href=\"/cybersecurity-support/\">See cybersecurity &#8594;</a>"),("globe","Malwarebytes Premium &amp; VPN","Endpoint protection with a VPN for staff on the move. <a href=\"/malwarebytes-premium/\">See Malwarebytes &amp; VPN &#8594;</a>")])}
+{tiles([("cloud","Microsoft 365","Email, Office apps &amp; OneDrive on the right business plan &mdash; <a href=\"/which-microsoft-365-plan/\">priced per plan</a>, set up &amp; supported. <a href=\"/microsoft-365-support/\">See Microsoft 365 &#8594;</a>"),("shield","Managed cybersecurity","Layered, monitored protection &mdash; MFA, patching &amp; verified backups. <a href=\"/cybersecurity-support/\">See cybersecurity &#8594;</a>"),("globe","Malwarebytes Premium &amp; VPN","Endpoint protection with a VPN for staff on the move. <a href=\"/malwarebytes-premium/\">See Malwarebytes &amp; VPN &#8594;</a>")])}
         </div>
       </div>
     </section>''',
@@ -6089,7 +6089,7 @@ add(
         # Jobs pass, 13 Sep 2026: position 1.7 for "microsoft 365 support dorset" with zero clicks.
         # The first screen now says the jobs, the real prices and the number; the heritage paragraph
         # that used to be the lede sits in the overview below, word for word.
-        hero_trust("Setup, email migration, licensing, admin lockouts and the everyday Outlook, Teams and OneDrive problems, for Bournemouth, Poole and Dorset homes and businesses. Home Microsoft 365 with us is &pound;4.85 per user a month, business plans are priced per plan, remote fixes start at &pound;20, and there is no call-out fee on site."),
+        hero_trust("Setup, email migration, licensing, admin lockouts and the everyday Outlook, Teams and OneDrive problems, for Bournemouth, Poole and Dorset homes and businesses. Home Microsoft 365 with us is &pound;4.85 per user a month, business plans are <a href=\"/which-microsoft-365-plan/\">priced per plan</a>, remote fixes start at &pound;20, and there is no call-out fee on site."),
         cta1=("Call 01202 775566", "tel:+441202775566"), cta2=("Get Microsoft 365 Support", "/contact/"),
         chips=["Microsoft Partner", "Office Specialists", "Setup, migration &amp; security"], scene=HERO_SCENES.get("m365")),
    f'''    <section class="section" aria-label="Overview">
