@@ -13,6 +13,7 @@ $SECRET = __DIR__ . '/pcm-admin-secret.php';
 $DATA   = __DIR__ . '/pcm-data.json';
 if (!file_exists($SECRET)) { http_response_code(503); exit('Not configured: create api/pcm-admin-secret.php'); }
 require $SECRET; // $PCM_ADMIN_PASS
+require_once __DIR__ . '/visitors-tally-lib.php';   // vis_staff_rec_ok() - the staff token rule
 
 // Abort on a present-but-unparseable file rather than returning an empty DB - otherwise a torn
 // concurrent read could make the next save() persist an empty set and wipe every customer.
@@ -40,8 +41,7 @@ if (isset($_POST['stoken']) && empty($_SESSION['pcm_ok'])) {
     if ($tokS !== '') {
         $dbT = load($DATA);
         $sS = isset($dbT['staff'][$tokS]) ? $dbT['staff'][$tokS] : null;
-        if ($sS && (time() - intval($sS['ts'] ?? 0)) < 43200 && (time() - intval($sS['iat'] ?? 0)) < 43200
-            && (empty($sS['machine']) || $sS['machine'] === $macS)) {
+        if (vis_staff_rec_ok($sS, $macS)) {   // the portal's own rule (visitors-tally-lib.php)
             session_regenerate_id(true); $_SESSION['pcm_ok'] = 1;
         }
     }

@@ -27,6 +27,7 @@ $PCMDATA = __DIR__ . '/pcm-data.json';
 if (!file_exists($SECRET)) { http_response_code(503); exit('Not configured: create api/pcm-admin-secret.php'); }
 require $SECRET; // $PCM_ADMIN_PASS
 require __DIR__ . '/ai-lead-lib.php';
+require_once __DIR__ . '/visitors-tally-lib.php';   // vis_staff_rec_ok() - the staff token rule
 
 function h($s) { return htmlspecialchars((string)$s, ENT_QUOTES); }
 
@@ -38,8 +39,7 @@ if (isset($_POST['stoken']) && empty($_SESSION['pcm_ok'])) {
     if ($tokS !== '') {
         $dbT = @json_decode((string)@file_get_contents($PCMDATA), true);
         $sS = (is_array($dbT) && isset($dbT['staff'][$tokS])) ? $dbT['staff'][$tokS] : null;
-        if ($sS && (time() - intval(isset($sS['ts']) ? $sS['ts'] : 0)) < 43200 && (time() - intval(isset($sS['iat']) ? $sS['iat'] : 0)) < 43200
-            && (empty($sS['machine']) || $sS['machine'] === $macS)) {
+        if (vis_staff_rec_ok($sS, $macS)) {   // the portal's own rule (visitors-tally-lib.php)
             session_regenerate_id(true); $_SESSION['pcm_ok'] = 1;
         }
     }

@@ -60,14 +60,26 @@ function vis_reads(array $pages) {
 function vis_sites() { return array('t365' => '365techies.co.uk', 'ccb' => 'colinclarkbuilders.co.uk', 'beckox' => 'beckox.co.uk'); }
 
 // ---------------------------------------------------------------- the staff check (visitors.php and visitors-stats.php)
+// ONE rule for a portal staff token - the same as need_staff() in pcm-booking.php (3 Oct 2026). Signed in on your own
+// computer ("trust") = 30 days since it was last used, 90 days at most; a shared computer = 12 hours; always bound to
+// the computer it was made on. These checks used a flat 12 hours from sign-in, so on a trusted sign-in the staff area
+// kept working while the Live view, statistics, Calls & texts, installs and the three consoles said "auth" /
+// "session expired" after 12 hours. Every check of a staff token outside pcm-booking.php comes here.
+function vis_staff_rec_ok($sS, $macS) {
+    if (!is_array($sS)) return false;
+    $slide = !empty($sS['trust']) ? 2592000 : 43200;
+    $cap   = !empty($sS['trust']) ? 7776000 : 43200;
+    return (time() - intval(isset($sS['ts']) ? $sS['ts'] : 0)) < $slide
+        && (time() - intval(isset($sS['iat']) ? $sS['iat'] : 0)) < $cap
+        && !empty($sS['machine']) && $sS['machine'] === (string)$macS;
+}
 function vis_staff_ok(array $in, $dir) {
     $tokS = preg_replace('/[^a-f0-9]/', '', (string)(isset($in['stoken']) ? $in['stoken'] : ''));
     $macS = preg_replace('/[^a-f0-9]/', '', substr((string)(isset($in['machine']) ? $in['machine'] : ''), 0, 32));
     if ($tokS !== '') {
         $dbT = @json_decode((string)@file_get_contents($dir . '/pcm-data.json'), true);
         $sS = (is_array($dbT) && isset($dbT['staff'][$tokS])) ? $dbT['staff'][$tokS] : null;
-        if ($sS && (time() - intval(isset($sS['ts']) ? $sS['ts'] : 0)) < 43200 && (time() - intval(isset($sS['iat']) ? $sS['iat'] : 0)) < 43200
-            && (empty($sS['machine']) || $sS['machine'] === $macS)) return true;
+        if (vis_staff_rec_ok($sS, $macS)) return true;
     }
     @session_start();
     return !empty($_SESSION['pcm_ok']);   // a console session works too
