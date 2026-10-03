@@ -9,7 +9,7 @@
     { "id": "spider", "title": "Spider", "icon": "🕷", "cat": "Card games", "url": "https://365techies.co.uk/games/spider/",
       "sub": "Build each suit from King to Ace. One suit is easy; two or four for a challenge." },
     { "id": "invaders", "title": "365 Invaders", "icon": "👾", "cat": "Arcade", "url": "https://365techies.co.uk/games/invaders/",
-      "sub": "80s arcade shooting with our own pixel invaders. Gentle speed for beginners; Classic and Fast for experts." },
+      "sub": "Our own 80s arcade shooter, with power-ups, combos and a Mothership boss. A gentle speed for beginners." },
     { "id": "seafront", "title": "Seafront", "icon": "🌊", "cat": "Seafront", "url": "https://365techies.co.uk/bournemouth/games/seafront/play/",
       "sub": "Ride an eFoil, jet ski or RIB along the real Bournemouth seafront. Best on a newer PC." }
   ]

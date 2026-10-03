@@ -209,7 +209,8 @@
     if (P.dead) g.drawImage(SPR.shipBoom[(Math.floor(P.dead / 6)) & 1], Math.round(P.x), E.PY);
     else if (!W.over && !(W.hold > 0 && (W.hold >> 2) & 1)) g.drawImage(SPR.ship, Math.round(P.x), E.PY);
     // shots
-    if (W.shot) { g.fillStyle = COL.shot; g.fillRect(W.shot.x, Math.round(W.shot.y), 1, 4); }
+    W.fx.length = 0;   // where things happened: only the Enhanced picture uses it
+    W.shots.forEach(function (s) { g.fillStyle = COL.shot; g.fillRect(Math.round(s.x), Math.round(s.y), 1, 4); });
     W.bombs.forEach(function (B) { var fr = SPR.bombs[B.kind]; g.drawImage(fr[(B.f >> 3) % fr.length], Math.round(B.x), Math.round(B.y)); });
     // the ground and the spare ships
     // the score along the top, the old arcade way (the bar stays one row, so the screen gets the height)
@@ -240,13 +241,31 @@
     }
   }
 
+  // Enhanced (3 Oct 2026, the default): power-ups, combos, the Mothership, a glowing hi-res picture and fuller sound -
+  // enhanced.js. Retro: the plain game as it first went live, drawn small and blown up. Each keeps its own best scores.
+  var X = window.InvEnh, current = null;
+  var reducedMotion = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
   A.start({
     id: 'invaders', store: 'inv365', title: '365 Invaders', width: E.WIDTH, height: E.HEIGHT,
     speeds: { options: [[1, 'Gentle'], [2, 'Classic'], [3, 'Fast']], def: 1 },
-    newWorld: function (speed) { return E.newWorld(speed); },
-    step: E.step, draw: draw, hud: E.hud, sound: sound,
+    settings: [
+      { key: 'style', type: 'seg', label: 'Game', small: 'Enhanced has power-ups, combos and a Mothership every fifth wave. Retro is the plain game. Changes from your next game.',
+        options: [['enh', 'Enhanced'], ['retro', 'Retro']], def: 'enh' },
+      { key: 'music', type: 'switch', label: 'Music', small: 'A low space hum that builds as the invaders come down (Enhanced).', def: true },
+      { key: 'shake', type: 'switch', label: 'Screen shake', small: 'The screen shakes when something big blows up (Enhanced).', def: !reducedMotion }
+    ],
+    newWorld: function (speed, set) { current = E.newWorld(speed, null, set && set.style === 'retro' ? 'classic' : 'enh'); return current; },
+    hires: function (set, W) { return W ? W.enh : set.style !== 'retro'; },
+    step: E.step, hud: E.hud,
+    draw: function (g, W, t, mode, info) { current = W; return W.enh ? X.draw(g, W, t, mode, info) : draw(g, W, t, mode, info); },
+    sound: function (name, kit, e) { return current && current.enh ? X.sound(name, kit, e) : sound(name, kit, e); },
+    frameAudio: X.frameAudio,
+    quietSay: function (W) { return W.enh; },   // Enhanced draws its own banners and labels
+    statKey: function (W) { return (W.enh ? 'e' : 'v') + W.speed; },
+    statKeyFor: function (set, speed) { return (set.style === 'retro' ? 'v' : 'e') + speed; },
+    styleName: function (set) { return set.style === 'retro' ? 'Retro' : 'Enhanced'; },
     overText: function (W) { return W.landed ? 'They landed!' : 'Game over'; },
-    titleText: 'Stop the invaders before they reach the ground. Shoot them all and a new wave comes &mdash; a little closer each time.',
+    titleText: 'Stop the invaders before they reach the ground. Catch the falling capsules for <b>rapid fire</b>, a <b>spread shot</b> or a <b>shield</b> &mdash; and watch out for the Mothership.',
     keysText: '<b>&larr; &rarr;</b> or the mouse to move &middot; <b>Space</b> or click to fire &middot; <b>P</b> to pause',
     touchText: 'Tap <b>&#9664; &#9654;</b> to move and <b>Fire</b> to shoot &mdash; or drag on the screen',
     legend: [
@@ -261,7 +280,10 @@
       '<b>Fire</b> with the <b>Space bar</b>, a mouse click or the Fire button. One shot at a time, so make each one count.',
       '<b>Hide behind the green shields.</b> They wear away when they are hit, from either side.',
       '<b>Points:</b> 10, 20 or 30 for an invader (the higher up, the more) and 50 to 300 for the red mystery ship across the top. An extra life at 1,500 points.',
-      '<b>Speed</b> is in Settings: <b>Gentle</b> is slower with five lives, <b>Classic</b> is the old arcade pace, <b>Fast</b> is for experts.',
+      '<b>Capsules</b> sometimes fall when an invader is hit. Catch one with your ship: <b>R</b> rapid fire (two quicker shots), <b>S</b> spread shot (three at once), <b>+</b> a shield bubble that takes one hit.',
+      '<b>Combos:</b> hit six in a row without missing for double points, then triple and four times. A miss starts it again.',
+      '<b>The Mothership</b> arrives every fifth wave. Keep hitting it &mdash; watch its bar at the top. A wave cleared without losing a ship is worth 500 more, and there is an extra life every 5,000 points.',
+      '<b>Settings:</b> <b>Speed</b> &mdash; Gentle is slower with five lives, Classic is the old arcade pace, Fast is for experts. <b>Game</b> &mdash; Enhanced, or Retro for the plain game without the extras.',
       '<b>P</b> pauses. The game also pauses itself if you click away to another window.'
     ]
   });

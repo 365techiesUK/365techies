@@ -36,8 +36,14 @@
     function load(k, d) { try { var v = localStorage.getItem(D.store + ':' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
     function save(k, v) { try { localStorage.setItem(D.store + ':' + k, JSON.stringify(v)); } catch (e) {} }
     var SET = { speed: D.speeds.def, sound: true };
+    var EXTRA = D.settings || [];   // the game's own settings: {key, type: 'seg'|'switch', label, small, options, def}
+    EXTRA.forEach(function (o) { SET[o.key] = o.def; });
     (function () { var s = load('settings', null); if (s && typeof s === 'object') for (var k in SET) if (k in s) SET[k] = s[k]; })();
     if (!D.speeds.options.some(function (o) { return o[0] === SET.speed; })) SET.speed = D.speeds.def;
+    EXTRA.forEach(function (o) { if (o.type === 'seg' && !o.options.some(function (x) { return x[0] === SET[o.key]; })) SET[o.key] = o.def; });
+    // which best-score slot a game counts towards (a game with styles keeps each style's scores apart)
+    function skey(w) { return D.statKey ? D.statKey(w) : 'v' + w.speed; }
+    function skeyFor(speed) { return D.statKeyFor ? D.statKeyFor(SET, speed) : 'v' + speed; }
     function blank() { return { v: 1, played: 0, waves: 0, best: {}, daily: {} }; }
     var ST = blank();
     (function () { var s = load('stats', null); if (s && s.v === 1) for (var k in ST) if (k in s) ST[k] = s[k]; })();
@@ -131,10 +137,18 @@
         if (n === 8) acc = 0;   // a slow PC: drop the backlog rather than race to catch up
       } else acc = 0;
       draw(t);
+      if (D.frameAudio && W) { try { D.frameAudio(W, KIT, mode, SET); } catch (e) {} }   // music that follows the game
     }
     function draw(t) {
       if (!W) return;
-      bg.save(); D.draw(bg, W, t || 0, mode, { best: Math.max(W.score || 0, (ST.best['v' + W.speed] || {}).score || 0) }); bg.restore();
+      var info = { best: Math.max(W.score || 0, (ST.best[skey(W)] || {}).score || 0), set: SET };
+      if (D.hires && D.hires(SET, W)) {   // the game draws straight onto the screen at full sharpness (it is told the scale)
+        g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+        info.scale = cv.width / D.width; info.dw = cv.width; info.dh = cv.height;
+        g.save(); D.draw(g, W, t || 0, mode, info); g.restore();
+        return;
+      }
+      bg.save(); D.draw(bg, W, t || 0, mode, info); bg.restore();
       g.setTransform(1, 0, 0, 1, 0, 0);
       var dev = cv.width / D.width;   // screen pixels per game pixel
       if (Math.abs(dev - Math.round(dev)) < 0.02 || dev < 1) { g.imageSmoothingEnabled = false; g.drawImage(buf, 0, 0, cv.width, cv.height); }
@@ -151,7 +165,7 @@
         for (var i = 0; i < ev.length; i++) {
           var e = ev[i];
           if (typeof e === 'string') sfx(e);
-          else if (e && e.say) say(e.say);
+          else if (e && e.say) say(e.say, !!(D.quietSay && D.quietSay(W)));   // a game that shows its own messages on screen keeps these for screen readers only
           else if (e && e.sfx) sfx(e.sfx, e);
         }
         ev.length = 0;
@@ -161,7 +175,7 @@
     }
     var lastHud = '';
     function hud() {
-      var h = D.hud(W), b = (ST.best['v' + W.speed] || {}).score || 0, key = h.score + '|' + h.lives + '|' + h.wave + '|' + b;
+      var h = D.hud(W), b = (ST.best[skey(W)] || {}).score || 0, key = h.score + '|' + h.lives + '|' + h.wave + '|' + b;
       if (key === lastHud) return; lastHud = key;
       $('vScore').textContent = h.score; $('vBest').textContent = Math.max(b, h.score); $('vLives').textContent = h.lives; $('vWave').textContent = h.wave;
     }
@@ -169,7 +183,7 @@
     // ------------------------------------------------------------ game states
     function begin() {
       closeSheets();
-      W = D.newWorld(SET.speed);
+      W = D.newWorld(SET.speed, SET);
       mode = 'play'; acc = 0; last = 0; input.fire = false;
       showOverlay('');
       $('bPause').disabled = false; setPauseBtn();
@@ -190,7 +204,7 @@
     function setPauseBtn() { var p = mode === 'paused'; $('bPause').innerHTML = (p ? ICON.play : ICON.pause) + '<span class="lbl">' + (p ? 'Carry on' : 'Pause') + '</span>'; }
     function gameOver() {
       mode = 'over';
-      var h = D.hud(W), key = 'v' + W.speed, b = ST.best[key] || (ST.best[key] = {}), badges = [], d = today();
+      var h = D.hud(W), key = skey(W), b = ST.best[key] || (ST.best[key] = {}), badges = [], d = today();
       ST.played++; ST.waves += Math.max(0, h.wave - 1);
       if (ST.played === 1) badges.push('Your first game!');
       if (b.score == null || h.score > b.score) { if (b.score != null && h.score > 0) badges.push('Your best score yet!'); b.score = h.score; }
@@ -210,33 +224,55 @@
     window.addEventListener('blur', function () { pause(); });
 
     // ------------------------------------------------------------ sound: made on the spot, nothing downloaded
-    var AC = null, NOISE = null;
+    var AC = null, NOISE = null, BUS = null, VERB = null;
     function ac() {
       if (!SET.sound || !gestured) return null;
-      try { if (!AC) { var C = window.AudioContext || window.webkitAudioContext; if (!C) return null; AC = new C(); } if (AC.state === 'suspended') AC.resume(); } catch (e) { return null; }
+      try { if (!AC) { var C = window.AudioContext || window.webkitAudioContext; if (!C) return null; AC = new C(); chain(AC); } if (AC.state === 'suspended') AC.resume(); } catch (e) { return null; }
       return AC;
     }
+    // everything plays through one gentle limiter (so a big explosion never distorts), with an echo send for size
+    function chain(a) {
+      try {
+        var comp = a.createDynamicsCompressor();
+        comp.threshold.value = -14; comp.knee.value = 10; comp.ratio.value = 4; comp.attack.value = 0.004; comp.release.value = 0.2;
+        BUS = a.createGain(); BUS.gain.value = 0.9; BUS.connect(comp); comp.connect(a.destination);
+        var room = a.createConvolver(), len = Math.floor(a.sampleRate * 1.6), ir = a.createBuffer(2, len, a.sampleRate);
+        for (var c = 0; c < 2; c++) { var d = ir.getChannelData(c); for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6); }
+        room.buffer = ir; VERB = a.createGain(); VERB.gain.value = 0.32; VERB.connect(room); room.connect(BUS);
+      } catch (e) { BUS = a.destination; VERB = null; }
+    }
+    function route(a, node, opts) {   // opts.pan: -1 (left) .. 1 (right); opts.verb: how much echo
+      var out = node;
+      if (opts.pan && a.createStereoPanner) { var p = a.createStereoPanner(); p.pan.value = Math.max(-1, Math.min(1, opts.pan)); node.connect(p); out = p; }
+      out.connect(BUS || a.destination);
+      if (opts.verb && VERB) { var s = a.createGain(); s.gain.value = opts.verb; out.connect(s); s.connect(VERB); }
+    }
     var KIT = {
-      tone: function (freq, dur, gain, opts) {   // opts: {type, to (slide to this pitch), when (seconds from now)}
+      tone: function (freq, dur, gain, opts) {   // opts: {type, to (slide to this pitch), when (seconds from now), pan, verb, attack}
         var a = ac(); if (!a) return; opts = opts || {};
         try {
           var t = a.currentTime + (opts.when || 0), o = a.createOscillator(), gn = a.createGain();
           o.type = opts.type || 'square'; o.frequency.setValueAtTime(freq, t);
+          if (opts.detune) o.detune.setValueAtTime(opts.detune, t);
           if (opts.to) o.frequency.exponentialRampToValueAtTime(opts.to, t + dur);
-          gn.gain.setValueAtTime(0.0001, t); gn.gain.exponentialRampToValueAtTime(gain, t + 0.01); gn.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-          o.connect(gn); gn.connect(a.destination); o.start(t); o.stop(t + dur + 0.03);
+          gn.gain.setValueAtTime(0.0001, t); gn.gain.exponentialRampToValueAtTime(gain, t + (opts.attack || 0.01)); gn.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+          o.connect(gn); route(a, gn, opts); o.start(t); o.stop(t + dur + 0.03);
         } catch (e) {}
       },
-      noise: function (dur, gain, freq) {
-        var a = ac(); if (!a) return;
+      noise: function (dur, gain, freq, opts) {   // opts: {type: lowpass|bandpass|highpass, q, to (end frequency), when, pan, verb}
+        var a = ac(); if (!a) return; opts = opts || {};
         try {
           if (!NOISE) { var len = Math.floor(a.sampleRate * 1.5), dd; NOISE = a.createBuffer(1, len, a.sampleRate); dd = NOISE.getChannelData(0); for (var i = 0; i < len; i++) dd[i] = Math.random() * 2 - 1; }
-          var t = a.currentTime, s = a.createBufferSource(), f = a.createBiquadFilter(), gn = a.createGain();
-          s.buffer = NOISE; f.type = 'lowpass'; f.frequency.setValueAtTime(freq || 3000, t); f.frequency.exponentialRampToValueAtTime(120, t + dur);
+          var t = a.currentTime + (opts.when || 0), s = a.createBufferSource(), f = a.createBiquadFilter(), gn = a.createGain();
+          s.buffer = NOISE; f.type = opts.type || 'lowpass'; if (opts.q) f.Q.value = opts.q;
+          f.frequency.setValueAtTime(freq || 3000, t); f.frequency.exponentialRampToValueAtTime(opts.to || 120, t + dur);
           gn.gain.setValueAtTime(gain, t); gn.gain.exponentialRampToValueAtTime(0.0008, t + dur);
-          s.connect(f); f.connect(gn); gn.connect(a.destination); s.start(t, Math.random() * 0.3); s.stop(t + dur + 0.03);
+          s.connect(f); f.connect(gn); route(a, gn, opts); s.start(t, Math.random() * 0.3); s.stop(t + dur + 0.03);
         } catch (e) {}
-      }
+      },
+      ctx: function () { return ac(); },          // for a game's own long-running sounds (music)
+      existing: function () { return AC; },       // ...and to fade them out even when sound has just been switched off
+      bus: function () { return BUS; }
     };
     function sfx(name, e) { if (!SET.sound) return; if (name === 'pause') { KIT.tone(440, 0.08, 0.04, { type: 'triangle' }); return; } D.sound(name, KIT, e); }
 
@@ -253,26 +289,29 @@
       var t = e.target;
       if (t.closest && t.closest('[data-close]')) { closeSheets(); return; }
       if (t.classList && t.classList.contains('scrim')) { closeSheets(); return; }
-      var b = t.closest ? t.closest('[data-speed],[data-set]') : null; if (!b) return;
+      var b = t.closest ? t.closest('[data-speed],[data-set],[data-opt]') : null; if (!b) return;
       if (b.hasAttribute('data-speed')) SET.speed = +b.getAttribute('data-speed');
+      else if (b.hasAttribute('data-opt')) SET[b.getAttribute('data-opt')] = b.getAttribute('data-val');
       else { var k = b.getAttribute('data-set'); SET[k] = !SET[k]; }
       save('settings', SET); sync();
-      if (mode === 'title' && W) { W = D.newWorld(SET.speed); W.demo = true; lastHud = ''; hud(); }
+      if (mode === 'title' && W) { W = D.newWorld(SET.speed, SET); W.demo = true; lastHud = ''; hud(); }
     });
     function speedName(v) { var o = D.speeds.options.filter(function (x) { return x[0] === v; })[0]; return o ? o[1] : ''; }
     function sync() {
       Array.prototype.forEach.call(document.querySelectorAll('[data-speed]'), function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-speed') === SET.speed)); });
       Array.prototype.forEach.call(document.querySelectorAll('[data-set]'), function (b) { b.setAttribute('aria-checked', String(!!SET[b.getAttribute('data-set')])); });
-      $('tSpeed').textContent = speedName(SET.speed);
+      Array.prototype.forEach.call(document.querySelectorAll('[data-opt]'), function (b) { b.setAttribute('aria-pressed', String(SET[b.getAttribute('data-opt')] === b.getAttribute('data-val'))); });
+      $('tSpeed').textContent = speedName(SET.speed) + (D.styleName ? ' · ' + D.styleName(SET) : '');
     }
     function tile(v, label) { return '<div class="tile"><b>' + esc(v) + '</b><span>' + esc(label) + '</span></div>'; }
     function openStats() {
       var out = '', d = today();
       D.speeds.options.forEach(function (o) {
-        var b = ST.best['v' + o[0]] || {};
+        var b = ST.best[skeyFor(o[0])] || {};
         out += tile(b.score == null ? '–' : b.score, o[1] + ': best score') + tile(b.wave == null ? '–' : b.wave, o[1] + ': furthest wave');
       });
       $('sTiles').innerHTML = tile(ST.played, 'Games played') + tile(ST.waves, 'Waves cleared') + tile(ST.daily[d] == null ? '–' : ST.daily[d], 'Today’s best') + out;
+      $('sWhich').textContent = D.styleName ? ' Best scores shown for the ' + D.styleName(SET) + ' game (change it in Settings).' : '';
       openD('dStats');
     }
     $('bNew').onclick = function () { begin(); };
@@ -289,11 +328,11 @@
     if (!document.fullscreenEnabled) $('bFull').hidden = true;
     document.addEventListener('fullscreenchange', function () { $('bFullL').textContent = document.fullscreenElement ? 'Leave full screen' : 'Full screen'; setTimeout(fit, 150); });
     var sayT = 0;
-    function say(t) { var el = $('toast'); if (!t) return; el.textContent = t; el.classList.add('on'); clearTimeout(sayT); sayT = setTimeout(function () { el.classList.remove('on'); }, Math.min(6000, 1600 + t.length * 50)); }
+    function say(t, quiet) { var el = $('toast'); if (!t) return; el.textContent = t; el.classList.toggle('quiet', !!quiet); el.classList.add('on'); clearTimeout(sayT); sayT = setTimeout(function () { el.classList.remove('on'); }, Math.min(6000, 1600 + t.length * 50)); }
 
     // ------------------------------------------------------------ start: the title screen, with the invaders drawn behind it
     sync();
-    W = D.newWorld(SET.speed); W.demo = true; hud();
+    W = D.newWorld(SET.speed, SET); W.demo = true; hud();
     $('bPause').disabled = true;
     showOverlay('title');
     fit();
@@ -303,6 +342,13 @@
     function buildUI() {
       var tb = function (id, icon, label, title, cls) { return '<button class="tb' + (cls ? ' ' + cls : '') + '" id="' + id + '" type="button" title="' + esc(title) + '">' + ICON[icon] + '<span class="lbl"' + (id === 'bFull' ? ' id="bFullL"' : '') + '>' + esc(label) + '</span></button>'; };
       var speeds = D.speeds.options.map(function (o) { return '<button type="button" data-speed="' + o[0] + '">' + esc(o[1]) + '</button>'; }).join('');
+      var row = function (o) {   // one of the game's own settings
+        if (o.type === 'seg') return '<div class="set"><div><label>' + esc(o.label) + '</label><small>' + esc(o.small || '') + '</small></div><div class="seg" role="group" aria-label="' + esc(o.label) + '">'
+          + o.options.map(function (x) { return '<button type="button" data-opt="' + esc(o.key) + '" data-val="' + esc(x[0]) + '">' + esc(x[1]) + '</button>'; }).join('') + '</div></div>';
+        return '<div class="set"><div><label id="l_' + esc(o.key) + '">' + esc(o.label) + '</label><small>' + esc(o.small || '') + '</small></div><button class="sw" type="button" role="switch" aria-labelledby="l_' + esc(o.key) + '" data-set="' + esc(o.key) + '"></button></div>';
+      };
+      var segRows = (D.settings || []).filter(function (o) { return o.type === 'seg'; }).map(row).join('');
+      var swRows = (D.settings || []).filter(function (o) { return o.type !== 'seg'; }).map(row).join('');
       var legend = (D.legend || []).map(function (l, i) { return '<li><span class="lg" data-lg="' + i + '"></span>' + esc(l.text) + '</li>'; }).join('');
       var html = '<div id="app" class="arcade"><header class="bar"><div class="brand"><b>365</b><span>' + esc(D.title.replace(/^365 /, '')) + '</span></div>'
         + '<div class="info"><div class="chip"><small>Score</small><span id="vScore">0</span></div><div class="chip"><small>Best</small><span id="vBest">0</span></div>'
@@ -320,9 +366,11 @@
         + '<ul class="badges" id="oBadges"></ul><div class="row"><button class="btn go wide big" id="oPlay" type="button">' + ICON.play + ' Play again</button><button class="btn wide" id="oStats" type="button">My scores</button></div></div></div>'
         + '</div><div class="pad" id="pad"><button type="button" data-pad="left" aria-label="Move left">&#9664;</button><button type="button" data-pad="fire" class="fire">Fire</button><button type="button" data-pad="right" aria-label="Move right">&#9654;</button></div>'
         + '</main></div><div id="toast" role="status" aria-live="polite"></div>'
-        + sheet('dStats', 'My scores', '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere.</p><div class="tiles" id="sTiles"></div><div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>')
+        + sheet('dStats', 'My scores', '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere.<span id="sWhich"></span></p><div class="tiles" id="sTiles"></div><div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>')
         + sheet('dSet', 'Settings', '<div class="set"><div><label>Speed</label><small>Gentle is slower, with more lives. Changes from your next game.</small></div><div class="seg" role="group" aria-label="Speed">' + speeds + '</div></div>'
-          + '<div class="set"><div><label id="l_sound">Sounds</label><small>80s arcade bleeps, made in the game.</small></div><button class="sw" type="button" role="switch" aria-labelledby="l_sound" data-set="sound"></button></div>'
+          + segRows
+          + '<div class="set"><div><label id="l_sound">Sounds</label><small>Arcade sound effects, made in the game.</small></div><button class="sw" type="button" role="switch" aria-labelledby="l_sound" data-set="sound"></button></div>'
+          + swRows
           + '<p class="foot">' + esc(D.title) + ' is made by <a href="https://365techies.co.uk/" target="_blank" rel="noopener">365 Techies</a> in Bournemouth. No adverts, no sign-in, nothing to install. Computer playing up? Ring us on <b>01202 775566</b>.</p>'
           + '<div class="row"><button class="btn go wide" type="button" data-close>Done</button></div>')
         + sheet('dHelp', 'How to play', '<ol class="how">' + (D.help || []).map(function (h) { return '<li>' + h + '</li>'; }).join('') + '</ol><div class="row"><button class="btn go wide" type="button" data-close>Got it</button></div>')

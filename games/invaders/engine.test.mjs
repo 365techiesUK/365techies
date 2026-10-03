@@ -75,7 +75,7 @@ test('a shot kills an invader and scores its row: 30 / 20 / 10', () => {
     W.shields = [];
     W.sp = { ...W.sp, rate: 0 };       // hold the formation still
     E.step(W, { fire: true });
-    assert.ok(W.shot, 'fired');
+    assert.equal(W.shots.length, 1, 'fired');
     play(W, 80);
     assert.equal(v.alive, false);
     assert.equal(W.score, pts);
@@ -86,14 +86,14 @@ test('one shot at a time', () => {
   const W = E.newWorld(2, 1); toPlay(W);
   W.sp = { ...W.sp, rate: 0 }; W.bombT = 1e9;
   E.step(W, { fire: true });
-  const first = W.shot;
+  const first = W.shots[0];
   E.step(W, { fire: true });
-  assert.equal(W.shot, first);
+  assert.equal(W.shots.length, 1); assert.equal(W.shots[0], first);
   assert.equal(W.shotsFired, 1);
   // a press too quick to last a whole step still fires (the cabinet latches it as tap)
   const V = E.newWorld(2, 1); toPlay(V); V.sp = { ...V.sp, rate: 0 }; V.bombT = 1e9;
   E.step(V, { tap: true });
-  assert.ok(V.shot);
+  assert.equal(V.shots.length, 1);
 });
 
 test('shots wear holes in the shields, from below and from above', () => {
@@ -103,7 +103,7 @@ test('shots wear holes in the shields, from below and from above', () => {
   W.player.x = S.x + 11 - 6;
   E.step(W, { fire: true });
   play(W, 20);
-  assert.equal(W.shot, null, 'the shot stopped in the shield');
+  assert.equal(W.shots.length, 0, 'the shot stopped in the shield');
   const after = S.px.reduce((a, b) => a + b, 0);
   assert.ok(after < before, 'pixels knocked out');
   W.bombs.push({ x: S.x + 4, y: S.y - 10, kind: 0, f: 0 });

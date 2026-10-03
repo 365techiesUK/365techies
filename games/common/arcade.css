@@ -46,6 +46,8 @@ body.arcade-sky::before {   /* a few faint stars round the screen */
 body.touchy .k-touch { display: block; }
 body.touchy .k-keys { display: none; }
 .btn.danger { background: #a3242f; border-color: #a3242f; }
+/* the game's own messages, when it draws them on the screen itself: still read out by a screen reader, not shown twice */
+#toast.quiet { width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* big buttons for a tablet or phone */
 .pad { display: none; flex: none; gap: 12px; width: min(560px, 100%); padding-bottom: env(safe-area-inset-bottom, 0px); }
