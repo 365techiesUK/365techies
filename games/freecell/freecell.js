@@ -59,6 +59,35 @@
     if (to.p === 'c') out.say = 'Put it in a free cell for now';
     return out;
   }
+  // when a move is refused, say why in plain words (owner, 3 Oct 2026)
+  var WORD = ['', 'Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King'];
+  var SUITS = ['spades', 'hearts', 'diamonds', 'clubs'];
+  function whyNot(S, from, to) {
+    var cards = picked(S, from); if (!cards.length) return 'No move for that card yet';
+    var c = cards[0], r = E.rank(c);
+    if (to && to.p === 'c') return cards.length > 1 ? 'A free cell holds just one card' : 'That free cell is full';
+    if (to && to.p === 'f') {
+      if (cards.length > 1) return 'Only one card at a time goes up to a pile';
+      var f = S.found[to.i]; if (!f.length) return 'Each pile starts with an Ace';
+      var t = f[f.length - 1];
+      return E.rank(t) === 13 ? 'That pile is finished' : 'Each pile goes up in one suit - this one needs the ' + WORD[E.rank(t) + 1] + ' of ' + SUITS[E.suit(t)] + ' next';
+    }
+    if (to && to.p === 't') {
+      var col = S.tab[to.i];
+      if (col.length) {
+        var tc = col[col.length - 1];
+        if (!(E.red(tc) !== E.red(c) && E.rank(tc) === r + 1))
+          return r === 13 ? 'A King can only go in an empty column' : 'A ' + (E.red(c) ? 'red ' : 'black ') + WORD[r] + ' goes on a ' + (E.red(c) ? 'black ' : 'red ') + WORD[r + 1];
+      }
+      var room = E.maxMove(S, !col.length);
+      if (cards.length > room) return 'Not enough room to move ' + cards.length + ' cards together - ' + room + ' can move now. Free up a cell or a column first';
+    }
+    return 'No move for that card yet - a free cell may help';
+  }
+  function cantPick(S, c) {
+    for (var f = 0; f < 4; f++) if (S.found[f].indexOf(c) >= 0) return 'In FreeCell, cards stay on the piles once they are up';
+    return 'Only cards on the end of a column that run down in order, red and black, can move - move the cards on top first';
+  }
   function valid(s) {
     var seen = {}, n = 0;
     try {
@@ -73,6 +102,7 @@
     id: 'freecell', store: 'fc365', title: 'FreeCell', cards: 52, hasStock: false,
     face: function (c) { return { r: E.rank(c), s: E.suit(c) }; },
     E: E, layout: layout, positions: positions, where: where, picked: picked, targets: targets, hintLights: hintLights, valid: valid,
+    whyNot: whyNot, cantPick: cantPick,
     autoNext: function (S, keepDown) { return E.autoMove(S, keepDown); },
     deals: function () { return WIN; },
     winnableSmall: 'Every deal from 1 to 32,000 except #11982 can be won - the same numbers as Windows FreeCell.',

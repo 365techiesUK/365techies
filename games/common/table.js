@@ -10,7 +10,8 @@
  * slots: [{key, x, y, cls, text}]}, positions(S, L) -> {card: {x, y, z, up, pile}}, where(S, c) -> {p:'stock'} | from |
  * null, picked(S, from), targets(S, from, L, P) -> [{to, x, y}], dealOrder(S), deckPos(L), cascade(S, L) -> [{c, x, y}],
  * hintLights(S, m) -> {cards, slots}, optional: variant, deals(v), daily(v), autoNext(S, keepDown), slotHtml(key, S),
- * winBonus(S, secs), describe(S), help, valid(s), faceKey(S), noTap(from), bestLabel(v).
+ * winBonus(S, secs), describe(S), help, valid(s), faceKey(S), noTap(from), bestLabel(v), whyNot(S, from, to|null) and
+ * cantPick(S, c) - a plain-words reason when a move is refused or a card won't lift.
  * Every timed step checks `gen` (bumped by a new game, or Undo while cards are still moving) and stops if it changed. */
 (function () {
   'use strict';
@@ -151,7 +152,7 @@
       unhint();
       if (hit.classList.contains('slot')) { if (hit.getAttribute('data-slot') === 'stock') { e.preventDefault(); act({ t: 'draw' }); } return; }
       var c = +hit.getAttribute('data-c'), from = D.where(S, c);
-      if (!from) return;
+      if (!from) { var why = D.cantPick ? D.cantPick(S, c) : ''; if (why) { nope(hit); say(why); } return; }   // say why it won't lift
       e.preventDefault();
       if (from.p === 'stock') { act({ t: 'draw' }); return; }
       var cards = D.picked(S, from);
@@ -174,9 +175,13 @@
       if (!drag || e.pointerId !== drag.id) return;
       var d = drag; drag = null;
       if (!d.moved) { tap(d); return; }
-      var m = dropTarget(d);
+      var drop = dropTarget(d);
       d.cards.forEach(function (k) { cardEl[k].classList.remove('drag'); });
-      if (m) act(m); else { render(); sfx('nope'); }
+      if (drop.m) act(drop.m);
+      else {   // it slides back - and the player is told why, in plain words (owner, 3 Oct 2026: Kings "just come back")
+        render(); sfx('nope');
+        say(D.whyNot ? D.whyNot(S, d.from, drop.near) : 'That card can’t go there');
+      }
     });
     board.addEventListener('pointercancel', function () { if (!drag) return; var d = drag; drag = null; d.cards.forEach(function (k) { cardEl[k].classList.remove('drag'); }); render(); });
     board.addEventListener('contextmenu', function (e) { e.preventDefault(); });
@@ -184,17 +189,19 @@
       if (D.noTap && D.noTap(d.from)) return;   // e.g. cards come down from the piles by dragging only
       var m = E.smartMove(S, d.from);
       if (m) act(m);
-      else { nope(cardEl[d.c]); sfx('nope'); say('No move for that card yet'); }
+      else { nope(cardEl[d.c]); sfx('nope'); say(D.whyNot ? D.whyNot(S, d.from, null) : 'No move for that card yet'); }
     }
-    function dropTarget(d) {   // the legal place the dragged card overlaps most
-      var b = d.base[0], x = b.x + d.dx, y = b.y + d.dy, best = null, bestA = 0;
+    function dropTarget(d) {   // the legal place the dragged card overlaps most; near = the place it overlaps most at all
+      var b = d.base[0], x = b.x + d.dx, y = b.y + d.dy, best = null, bestA = 0, near = null, nearA = 0;
       D.targets(S, d.from, L, lastP).forEach(function (t) {
         var ox = Math.min(x + L.cw, t.x + L.cw) - Math.max(x, t.x), oy = Math.min(y + L.ch, t.y + L.ch) - Math.max(y, t.y);
-        if (ox <= 0 || oy <= 0 || ox * oy <= bestA) return;
+        if (ox <= 0 || oy <= 0) return;
+        if (ox * oy > nearA) { nearA = ox * oy; near = t.to; }
+        if (ox * oy <= bestA) return;
         var m = { t: 'move', from: d.from, to: t.to };
         if (E.legal(S, m)) { best = m; bestA = ox * oy; }
       });
-      return best;
+      return { m: best, near: near };
     }
     function nope(el) { if (!el) return; el.classList.remove('nope'); void el.offsetWidth; el.classList.add('nope'); setTimeout(function () { el.classList.remove('nope'); }, 360); }
     function pop(c) { var el = cardEl[c]; if (!el) return; setTimeout(function () { el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); setTimeout(function () { el.classList.remove('pop'); }, 380); }, 240); }
@@ -561,7 +568,7 @@
     function say(t) {
       var el = $('toast'); if (!t) return;
       el.textContent = t; el.classList.add('on'); clearTimeout(sayT);
-      sayT = setTimeout(function () { el.classList.remove('on'); }, 2300);
+      sayT = setTimeout(function () { el.classList.remove('on'); }, Math.min(7000, 1800 + t.length * 55));   // time to read it
     }
     function persist() {
       save('game', { s: S, g: { undo: G.undo.slice(-60), ms: G.ms, mode: G.mode, day: G.day, started: G.started, counted: G.counted, undid: G.undid } });

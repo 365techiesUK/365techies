@@ -78,6 +78,34 @@
     else { var col = S.tab[m.to.i]; if (col.length) out.cards.push(col[col.length - 1].c); else out.slots.push('t' + m.to.i); }
     return out;
   }
+  // 3 Oct 2026 (owner, on the Dell: the Kings "just come back"): when a move is refused, say why in plain words
+  var WORD = ['', 'Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King'];
+  function colour(c) { return E.red(c) ? 'red' : 'black'; }
+  function pileNeeds(S, to) {
+    var f = S.found[to.i];
+    if (!f.length) return 'Each pile starts with an Ace';
+    var t = f[f.length - 1];
+    return E.rank(t) === 13 ? 'That pile is finished' : 'Each pile goes up in one suit - this one needs the ' + WORD[E.rank(t) + 1] + ' of ' + E.SUIT_NAME[E.suit(t)] + ' next';
+  }
+  function whyNot(S, from, to) {
+    var cards = picked(S, from); if (!cards.length) return 'No move for that card yet';
+    var c = cards[0], r = E.rank(c), empty = S.tab.some(function (col) { return !col.length; });
+    var king = 'A King can only go in an empty column - move every card out of a column first';
+    if (to && to.p === 'f') return cards.length > 1 ? 'Only one card at a time goes up to a pile' : pileNeeds(S, to);
+    if (to && to.p === 't') {
+      var col = S.tab[to.i];
+      if (!col.length) return 'Only a King can go in an empty column';
+      if (r === 13) return king;
+      return 'A ' + colour(c) + ' ' + WORD[r] + ' goes on a ' + (E.red(c) ? 'black' : 'red') + ' ' + WORD[r + 1];
+    }
+    if (r === 13 && !empty) return king;   // a tap with nowhere to go
+    return 'No move for that card yet - try turning over a card from the deck';
+  }
+  function cantPick(S, c) {
+    if (S.waste.indexOf(c) >= 0) return 'Only the top card of that pile can be played';
+    for (var t = 0; t < 7; t++) for (var k = 0; k < S.tab[t].length; k++) if (S.tab[t][k].c === c && !S.tab[t][k].up) return 'This card turns over once the cards on top of it have moved';
+    return '';
+  }
   function valid(s) {
     var n = 0, seen = {};
     try {
@@ -92,6 +120,7 @@
     id: 'solitaire', store: 'sol365', title: 'Solitaire', cards: 52, hasStock: true,
     face: function (c) { return { r: E.rank(c), s: E.suit(c) }; },
     E: E, layout: layout, positions: positions, where: where, picked: picked, targets: targets, autoNext: autoNext, hintLights: hintLights, valid: valid,
+    whyNot: whyNot, cantPick: cantPick,
     variant: { key: 'draw', label: 'Cards to turn over', small: 'One is easier. Changes from your next game.', options: [[1, 'One'], [3, 'Three']], def: 1,
                newLabel: function (v) { return v === 3 ? 'Turn three cards' : 'Turn one card'; }, statKey: function (v) { return 'd' + v; },
                bestLabel: function (v) { return v === 3 ? 'three cards' : 'one card'; } },

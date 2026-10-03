@@ -59,6 +59,19 @@
     if (col.length) out.cards.push(col[col.length - 1].c); else out.slots.push('t' + m.to.i);
     return out;
   }
+  // when a move is refused, say why in plain words (owner, 3 Oct 2026)
+  var WORD = ['', 'Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King'];
+  function whyNot(S, from, to) {
+    var cards = picked(S, from); if (!cards.length) return 'No move for that card yet';
+    var r = E.rank(cards[0]);
+    if (to && to.p === 't' && S.tab[to.i].length) return r === 13 ? 'A King can only go in an empty column' : 'A ' + WORD[r] + ' goes on any ' + WORD[r + 1] + ', whatever its suit';
+    return 'No move for that card yet';
+  }
+  function cantPick(S, c) {
+    for (var t = 0; t < 10; t++) for (var k = 0; k < S.tab[t].length; k++) if (S.tab[t][k].c === c)
+      return S.tab[t][k].up ? 'Only cards running down in order in one suit move together - move the cards on top first' : 'This card turns over once the cards on top of it have moved';
+    return '';
+  }
   function valid(s) {
     var seen = {}, n = 0;
     try {
@@ -74,6 +87,7 @@
     face: function (c, S) { return { r: E.rank(c), s: E.suitOf(c, S ? S.suits : 1) }; },
     faceKey: function (S) { return 'sp' + (S ? S.suits : 1); },
     E: E, layout: layout, positions: positions, where: where, picked: picked, targets: targets, hintLights: hintLights, valid: valid,
+    whyNot: whyNot, cantPick: cantPick,
     variant: { key: 'suits', label: 'Suits', small: 'One suit is the easiest. Changes from your next game.', options: [[1, 'One'], [2, 'Two'], [4, 'Four']], def: 1,
                newLabel: function (v) { return v === 1 ? 'One suit (easiest)' : v === 2 ? 'Two suits' : 'Four suits (hardest)'; },
                statKey: function (v) { return 's' + v; }, bestLabel: function (v) { return NAMES[v]; } },
