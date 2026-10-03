@@ -270,7 +270,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-10-02"
+      "dateModified": "2026-10-03"
     }
   ]
 }
@@ -755,9 +755,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 03 Oct 2026 &middot; dbb9e271d0</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 03 Oct 2026 &middot; fc38a27f04</p><script>
 (function () {
-  var P365BUILD = 'dbb9e271d0';
+  var P365BUILD = 'fc38a27f04';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -1687,6 +1687,9 @@
   #p365app .cm-tag--soft, .p365ov .cm-tag--soft { border-color:#3a4a6b; color:var(--psoft); }
   #p365app .cm-th--vm audio, .p365ov .cm-th--vm audio { display:block; width:100%; max-width:440px; height:40px; margin-top:.4rem; }
   #p365app .cm-th--done, .p365ov .cm-th--done { opacity:.7; }
+  #p365app .cm-th--leaving, .p365ov .cm-th--leaving { opacity:.3; transition:opacity .2s; pointer-events:none; }
+  #p365app .cm-clear, .p365ov .cm-clear { margin:.7rem 0 .3rem; color:var(--pgood); font-weight:600; }
+  #p365app .cm-undo, .p365ov .cm-undo { position:fixed; left:50%; bottom:1.2rem; transform:translateX(-50%); z-index:60; display:flex; align-items:center; gap:.9rem; padding:.55rem .6rem .55rem 1rem; border-radius:12px; background:#13203a; border:1px solid var(--pline); box-shadow:0 10px 28px rgba(0,0,0,.5); color:var(--pwhite); font-size:1rem; }
   @media (max-width:900px) { #p365app .cm-cols, .p365ov .cm-cols { grid-template-columns:1fr; gap:1rem; } }
   #p365app .cm-th, .p365ov .cm-th { border-top:1px solid var(--pline); padding:.75rem 0 .8rem; }
   #p365app .cm-th:first-child, .p365ov .cm-th:first-child { border-top:0; padding-top:.15rem; }
@@ -7891,7 +7894,7 @@
   // (api/pcm-installs.php). Default view: everyone NOT on a plan, as the owner asked.
   var INST = { who: 'free', d: null };
   // ---- 1 Oct 2026: Calls & texts - the comms inbox (voicemails + texts) on Today, through api/comms-api.php ----
-  var CM = { d: null, allT: false, allV: false, rep: '', draft: '', note: '', ndraft: '', busy: false, f: 'all' };
+  var CM = { d: null, allT: false, allV: false, rep: '', draft: '', note: '', ndraft: '', busy: false, f: 'all', doneT: false, doneV: false, undo: null, undoT: 0 };
   function cmWhen(iso) {
     var t = Date.parse(iso || ''); if (isNaN(t)) return '';
     var d = new Date(t), td = new Date(); td.setHours(0, 0, 0, 0);
@@ -7918,6 +7921,8 @@
         CM.busy = false; CM.d = d;
         if (act === 'reply' && d && d.ok && !d.err) { CM.rep = ''; CM.draft = ''; }
         if (act === 'note' && d && d.ok && !d.err) { CM.note = ''; CM.ndraft = ''; }
+        if (act === 'done' && d && d.ok && !d.err && /^Marked done/.test(d.note || '')) cmUndoShow(extra);
+        if (act === 'undone') cmUndoHide();
         renderComms();
       })
       .catch(function () { CM.busy = false; CM.d = CM.d && CM.d.ok ? CM.d : { ok: false, error: 'no answer' }; renderComms(); if (note) { note.className = 'cm-note cm-note--bad'; note.textContent = 'No answer from the server - try again.'; } });
@@ -8188,10 +8193,17 @@
     if (ot) { ot.textContent = openM ? openM + ' to answer' : 'all answered'; ot.className = 'cm-open' + (openM ? '' : ' cm-open--ok'); }
     if (ov) { ov.textContent = d.open_vms ? d.open_vms + ' not done' : 'all done'; ov.className = 'cm-open' + (d.open_vms ? '' : ' cm-open--ok'); }
     if (note && (d.note || d.err)) { note.className = 'cm-note' + (d.err ? ' cm-note--bad' : ''); note.textContent = d.err || d.note; }
-    var tx = d.texts || [], wb = d.webs || [], ml = d.mails || [], vm = d.vms || [], vShow = CM.allV ? vm : vm.slice(0, 6);
+    // 3 Oct 2026 (owner, for David): each list is what is STILL TO ANSWER - Done takes an item off and the next one moves
+    // up; "Show done" brings the finished ones back (greyed) so nothing is lost
+    var tx = d.texts || [], wb = d.webs || [], ml = d.mails || [], vmAll = d.vms || [];
+    var vDone = vmAll.filter(function (v) { return v.done; }).length;
+    var vm = CM.doneV ? vmAll : vmAll.filter(function (v) { return !v.done; }), vShow = CM.allV ? vm : vm.slice(0, 6);
     var msgs = (CM.f === 'all' || CM.f === 't' ? tx.map(function (t) { return { k: 't', at: t.last, x: t }; }) : [])
       .concat(CM.f === 'all' || CM.f === 'm' ? ml.map(function (m) { return { k: 'm', at: m.at, x: m }; }) : [])
       .concat(CM.f === 'all' || CM.f === 'w' ? wb.map(function (w) { return { k: 'w', at: w.at, x: w }; }) : []);
+    var cmOpen = function (m) { return m.k === 't' ? m.x.open > 0 : !m.x.done; };
+    var mDone = msgs.filter(function (m) { return !cmOpen(m); }).length;
+    if (!CM.doneT) msgs = msgs.filter(cmOpen);
     msgs.sort(function (a, b) { return (Date.parse(b.at) || 0) - (Date.parse(a.at) || 0); });
     var mShow = CM.allT ? msgs : msgs.slice(0, 6);
     var chips = '<div class="cm-filter" role="group" aria-label="Show">' + [['all', 'All', openM], ['t', 'Texts', d.open_texts || 0], ['m', 'Emails', d.open_mails || 0], ['w', 'Website &amp; call-backs', d.open_webs || 0]].map(function (c) {
@@ -8200,14 +8212,31 @@
       }).join('') + '</div>';
     box.innerHTML = chips + (CM.f === 'all' || CM.f === 'm' ? cmMailStat(d) : '')
       + (mShow.length ? mShow.map(function (m) { return m.k === 't' ? cmText(m.x) : m.k === 'm' ? cmMail(m.x) : cmWeb(m.x); }).join('')
-        : '<p class="quiet">' + (CM.f === 'w' ? 'No website enquiries in the last week.' : CM.f === 't' ? 'No texts yet.' : CM.f === 'm' ? 'No emails from people yet.' : 'No texts, emails or enquiries yet.') + '</p>')
+        : (mDone && !CM.doneT ? '<p class="cm-clear">\u2714 ' + (CM.f === 'w' ? 'No website enquiries waiting.' : CM.f === 't' ? 'No texts waiting.' : CM.f === 'm' ? 'No emails waiting.' : 'All answered \u2014 nothing waiting.') + '</p>'
+          : '<p class="quiet">' + (CM.f === 'w' ? 'No website enquiries in the last week.' : CM.f === 't' ? 'No texts yet.' : CM.f === 'm' ? 'No emails from people yet.' : 'No texts, emails or enquiries yet.') + '</p>'))
       + (msgs.length > mShow.length ? '<button type="button" class="sm ghost cm-more" id="cmmoret">Show all ' + msgs.length + '</button>' : '')
+      + (mDone ? '<button type="button" class="sm ghost cm-more" id="cmdonet">' + (CM.doneT ? 'Hide done' : 'Show done (' + mDone + ')') + '</button>' : '')
       + '<p class="quiet" style="margin-top:.7rem">Older messages and the review text: <a href="#" id="cmfull">the full comms inbox</a>.</p>';
-    if (vbox) vbox.innerHTML = (vShow.length ? vShow.map(cmVoicemail).join('') : '<p class="quiet">No voicemails yet.</p>')
-      + (vm.length > vShow.length ? '<button type="button" class="sm ghost cm-more" id="cmmorev">Show all ' + vm.length + ' voicemails</button>' : '');
+    if (vbox) vbox.innerHTML = (vShow.length ? vShow.map(cmVoicemail).join('')
+        : (vDone && !CM.doneV ? '<p class="cm-clear">\u2714 All done \u2014 no voicemails waiting.</p>' : '<p class="quiet">No voicemails yet.</p>'))
+      + (vm.length > vShow.length ? '<button type="button" class="sm ghost cm-more" id="cmmorev">Show all ' + vm.length + ' voicemails</button>' : '')
+      + (vDone ? '<button type="button" class="sm ghost cm-more" id="cmdonev">' + (CM.doneV ? 'Hide done' : 'Show done (' + vDone + ')') + '</button>' : '');
     if (CM.rep) { var t2 = document.getElementById('cmtxt'); if (t2) { t2.focus(); t2.setSelectionRange(t2.value.length, t2.value.length); } }
     if (CM.note) { var t3 = document.getElementById('cmnotetxt'); if (t3) { t3.focus(); t3.setSelectionRange(t3.value.length, t3.value.length); } }
   }
+  function cmLeaving(b) { var th = b.closest ? b.closest('.cm-th') : null; if (th) th.classList.add('cm-th--leaving'); }
+  // 3 Oct 2026: a Done can be taken back for 8 seconds (the server allows it for 10 minutes, portal Dones only)
+  function cmUndoShow(what) {
+    cmUndoHide();
+    if (!what) return;
+    CM.undo = what;
+    var t = document.createElement('div'); t.id = 'cmundo'; t.className = 'cm-undo'; t.setAttribute('role', 'status');
+    t.innerHTML = '<span>\u2714 Marked done</span><button type="button" class="sm" id="cmundob">Undo</button>';
+    el.appendChild(t);
+    document.getElementById('cmundob').onclick = function () { var u = CM.undo; cmUndoHide(); if (u) loadComms('undone', u); };
+    CM.undoT = setTimeout(cmUndoHide, 8000);
+  }
+  function cmUndoHide() { clearTimeout(CM.undoT); CM.undo = null; var t = document.getElementById('cmundo'); if (t && t.parentNode) t.parentNode.removeChild(t); }
   function cmBind() { ['cmcard', 'cmvcard'].forEach(cmBindCard); }
   function cmBindCard(cid) {
     var card = document.getElementById(cid); if (!card || card.getAttribute('data-bound')) return;
@@ -8217,6 +8246,8 @@
       if (b.id === 'cmcheck') { loadComms('check'); return; }
       if (b.id === 'cmmoret') { CM.allT = true; renderComms(); return; }
       if (b.id === 'cmmorev') { CM.allV = true; renderComms(); return; }
+      if (b.id === 'cmdonet') { CM.doneT = !CM.doneT; renderComms(); return; }
+      if (b.id === 'cmdonev') { CM.doneV = !CM.doneV; renderComms(); return; }
       if (b.id === 'cmfull') { e.preventDefault(); var ca = document.getElementById('commsadm'); if (ca) ca.click(); return; }
       if (b.hasAttribute('data-cmf')) { CM.f = b.getAttribute('data-cmf'); CM.allT = false; renderComms(); return; }
       if (b.hasAttribute('data-cmc')) { var pre = cmPrefill(b.getAttribute('data-cmc')); pre.known = b.getAttribute('data-known') || ''; ncOpen(pre); return; }
@@ -8230,8 +8261,8 @@
         loadComms('note', { id: b.getAttribute('data-cmns'), text: ntx });
         return;
       }
-      if (b.hasAttribute('data-cmd')) { loadComms('done', { n: b.getAttribute('data-cmd'), kind: 'text' }); return; }   // that caller's texts
-      if (b.hasAttribute('data-cmid')) { loadComms('done', { id: b.getAttribute('data-cmid') }); return; }        // one voicemail
+      if (b.hasAttribute('data-cmd')) { if (CM.busy) return; cmLeaving(b); loadComms('done', { n: b.getAttribute('data-cmd'), kind: 'text' }); return; }   // that caller's texts
+      if (b.hasAttribute('data-cmid')) { if (CM.busy) return; cmLeaving(b); loadComms('done', { id: b.getAttribute('data-cmid') }); return; }        // one item
       if (b.hasAttribute('data-cms')) {
         var ta = document.getElementById('cmtxt'), txt = ta ? ta.value.trim() : '';
         var note = document.getElementById('cmnote');

@@ -131,6 +131,29 @@ if ($do === 'check') {
             comms_slack_tick($it['slack_ts']); $ticks++;
         }
     }
+} elseif ($do === 'undone') {
+    // 3 Oct 2026 (owner, for David): the Undo after a Done - the same item, or that caller's texts, back on the list.
+    // Only what the PORTAL marked done in the last 10 minutes, so an Undo never reopens something closed in Slack,
+    // by a reply from Outlook, or long ago.
+    $id = preg_replace('/[^A-Za-z0-9\-]/', '', (string)($in['id'] ?? ''));
+    $n = $num($in['n'] ?? '');
+    $types = ($in['kind'] ?? '') === 'text' ? array('sms_in') : array('sms_in', 'voicemail');
+    list($okU, $back) = comms_locked(function ($d) use ($id, $n, $types) {
+        $ts = array(); $cut = time() - 600;
+        foreach ($d['items'] as $i => $it) {
+            if (empty($it['handled']) || ($it['handled_by'] ?? '') !== 'portal') continue;
+            if (strtotime((string)($it['handled_at'] ?? '')) < $cut) continue;
+            if ($id !== '' ? $it['id'] !== $id : ($n === '' || $it['number'] !== $n || !in_array($it['type'], $types, true))) continue;
+            $d['items'][$i]['handled'] = false; $d['items'][$i]['handled_by'] = ''; $d['items'][$i]['handled_at'] = '';
+            $ts[] = (string)($it['slack_ts'] ?? '');
+        }
+        return $ts ? array('__data' => $d, '__result' => $ts) : array('__result' => array());
+    });
+    if (!$okU) { $err = 'The list was busy - press Undo again.'; $back = array(); }
+    $back = is_array($back) ? $back : array();
+    if ($okU) $note = $back ? 'Back on the list.' : 'Too late to undo that one - it is under Show done.';
+    $unticks = 0;
+    foreach ($back as $t) if ($t !== '' && $unticks < 8) { comms_slack_untick($t); $unticks++; }
 }
 list($ok, $snap) = comms_locked(function ($d) { return array('__result' => array('items' => $d['items'], 'names' => $d['checkpoints']['names'] ?? array(),
     'mailstat' => $d['checkpoints']['mail_status'] ?? array())); });

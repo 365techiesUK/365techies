@@ -1196,6 +1196,13 @@ function comms_slack_tick($ts) {
     $r = slk_call_form('reactions.add', array('channel' => COMMS_SLACK_CHANNEL, 'timestamp' => (string)$ts, 'name' => 'white_check_mark'), 5);
     return !empty($r['ok']) || (($r['error'] ?? '') === 'already_reacted');
 }
+// 3 Oct 2026: Undo in the portal takes OUR tick back off the post. reactions.remove only ever removes the caller's own
+// reaction, so a tick a person added stays (and the sweep still reads a person's tick as done).
+function comms_slack_untick($ts) {
+    if ((string)$ts === '' || !comms_slack_lib()) return false;
+    $r = slk_call_form('reactions.remove', array('channel' => COMMS_SLACK_CHANNEL, 'timestamp' => (string)$ts, 'name' => 'white_check_mark'), 5);
+    return !empty($r['ok']) || (($r['error'] ?? '') === 'no_reaction');
+}
 
 function comms_sweep() {
     $out = array();
