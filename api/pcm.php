@@ -221,6 +221,10 @@ if ($action === 'checkin') {
         // still waiting. Only a v31+ app sends them; an older app's check-in leaves what was there.
         if (isset($in['wv'])) $c['machines'][$machine]['wv'] = substr(preg_replace('/[^A-Za-z0-9]/', '', (string)$in['wv']), 0, 8);
         if (isset($in['sbc'])) { $sbc = (string)$in['sbc']; $c['machines'][$machine]['sbc'] = in_array($sbc, array('Updated', 'InProgress', 'NotStarted', 'Error', 'nosb', ''), true) ? $sbc : ''; }
+        // PC Manager v32+: which Office and whether its licence is good, "<id>:<state>:<valid until yyyyMMdd>", e.g.
+        // "O365HomePremRetail:licensed:20261216" (state licensed / grace / lapsed / nolicence / "" = can't tell).
+        // No email or account id is ever sent. Only a v32+ app sends it; an older app's check-in leaves what was there.
+        if (isset($in['ofc'])) { $ofc = (string)$in['ofc']; $c['machines'][$machine]['ofc'] = preg_match('/^[A-Za-z0-9]{0,40}:(licensed|grace|lapsed|nolicence|):[0-9]{0,8}$/', $ofc) ? $ofc : ''; }
         // PC Manager v29+: the last jobs it ran (the full service inside the app, ...) for the portal's "What we've done".
         // Replaced whole each check-in; an older app never sends it, so its machines keep whatever they had.
         if (isset($in['jobs']) && is_array($in['jobs'])) {
@@ -445,6 +449,7 @@ if ($action === 'overview') {
             'avon'=>($avr==='on'), 'avoff'=>($avr==='off'), 'w10'=>!empty($m['w10']),
             'reboot'=>!empty($m['reboot']), 'rmaint'=>!empty($m['rmaint']),
             'wv'=>(string)($m['wv'] ?? ''), 'sbc'=>(string)($m['sbc'] ?? ''),   // v31: stored sanitised at check-in
+            'ofc'=>(string)($m['ofc'] ?? ''),   // v32: Office licence, stored sanitised at check-in
             'crs'=>(string)($m['crs'] ?? ''), 'crst'=>(string)($m['crst'] ?? ''),
             'hist'=>isset($m['hist']) && is_array($m['hist']) ? array_slice($m['hist'], -60) : array(),
             'log'=>$log,
