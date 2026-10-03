@@ -233,6 +233,15 @@
           }
         });
       }
+      /* ?product=Keeper%20Business (the software-we-supply cards) starts the message, so the Slack card says what
+         was asked about. Plain text into .value - never markup - and only into an empty box. */
+      var pr = new URLSearchParams(location.search).get("product");
+      if (pr) {
+        pr = pr.replace(/[\u0000-\u001f<>]/g, "").slice(0, 80);
+        document.querySelectorAll('form.contact-form textarea[name="message"]').forEach(function (ta) {
+          if (!ta.value) ta.value = "I'd like to know more about: " + pr + "\n\n";
+        });
+      }
     } catch (perr) {}
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);

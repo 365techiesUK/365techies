@@ -671,6 +671,11 @@ def mb_affiliate(creative_id, w, h, alt="Malwarebytes Premium &mdash; trusted pr
     return (f'<a class="affiliate-banner" href="https://prf.hn/click/camref:{MB_CAMREF}/creativeref:{creative_id}" '
             f'target="_blank" rel="sponsored noopener"><img src="https://creative.prf.hn/source/camref:{MB_CAMREF}/creativeref:{creative_id}" '
             f'width="{w}" height="{h}" loading="lazy" decoding="async" alt="{alt}" /></a>')
+def mb_from_us_block(lead):
+    # 3 Oct 2026 (owner): Malwarebytes is sold through us now, not the affiliate link - homes from our Malwarebytes
+    # reseller account, businesses as ThreatDown through Pax8. The product name rides to the contact form's message.
+    return (f'    <div class="affiliate-cta" data-reveal><p class="affiliate-lead">{lead}</p>'
+            f'<a class="button primary" href="/contact/?topic=software-we-supply&amp;product=Malwarebytes">Ask us about Malwarebytes</a></div>')
 def affiliate_block(creative_id, w, h, lead=""):
     lead_html = f'<p class="affiliate-lead">{lead}</p>' if lead else ""
     return (f'    <div class="affiliate-cta" data-reveal>{lead_html}{mb_affiliate(creative_id, w, h)}'
@@ -1234,7 +1239,7 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None, robot
   </div>
   <script type="module" src="/js/interior.min.js?v=22"></script>
   <script src="/js/a11y.min.js?v=13" defer></script>
-  <script src="/js/forms.min.js?v=12" defer></script>
+  <script src="/js/forms.min.js?v=13" defer></script>
   <script src="/js/search.min.js?v={SEARCHV}" defer></script>
   <!-- Consent-gated chat / analytics (HubSpot loads only after consent) -->
   <script>
@@ -5173,6 +5178,7 @@ def tool_seo_html(slug, enh):
 # only the layout and the four choices are new. A page without the standard hero is left as it was.
 from tool_tiles_data import TOOL_HERO_TILES
 from other_tiles_data import OTHER_HERO_TILES   # 26 Sep 2026: the remaining guides, service and AI pages, same hook
+import software_offers as _SWO                   # 3 Oct 2026: products and prices we supply (Pax8), placed by add()
 from local_tiles_data import LOCAL_HERO_TILES   # 26 Sep 2026: the 66 local town pages (templated per page type)
 _HERO_RE = re.compile(r'    <section class="page-hero[^"]*"[^>]*>.*?</section>', re.S)
 
@@ -5358,6 +5364,9 @@ def add(**kw):
             kw["title"] = _sn["title"]
         if _sn.get("desc"):
             kw["desc"] = _sn["desc"]
+    # 3 Oct 2026: software we supply (software_offers.py - the ONE place its products and prices live), just above the FAQs
+    if _slug in _SWO.PAGE_OFFERS and isinstance(kw.get("content"), str):
+        kw["content"] = _SWO.insert(_slug, kw["content"])
     PAGES.append(kw)
 
 # ============================================================ MONTHLY IT SUPPORT
@@ -6786,6 +6795,7 @@ add(
                 <option>Free business IT review</option>
                 <option>Email security &amp; spoofing test</option>
                 <option>Microsoft 365</option>
+                <option>Software we supply: Microsoft 365, backup, security, passwords</option>
                 <option>Website design or hosting</option>
                 <option>Website rebuild / Web Care</option>
                 <option>AI &amp; custom software</option>

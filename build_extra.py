@@ -10717,14 +10717,14 @@ def malwarebytes():
         </ol>
       </div>
     </section>''',
-      f'''    <section class="section section--alt" aria-label="Prefer to buy it yourself">
+      f'''    <section class="section section--alt" aria-label="Order Malwarebytes from us">
       <div class="wrap">
         <div class="prose" data-reveal style="text-align:center;max-width:62ch;margin:0 auto">
-          <p class="eyebrow eyebrow--center mono">// PREFER TO DO IT YOURSELF?</p>
-          <h2 class="section-title section-title--center" data-title>Rather buy it direct?<span class="title-underline title-underline--center"></span></h2>
-          <p>Plenty of people prefer us to set it up and look after it for them &mdash; but if you&rsquo;d rather buy and install Malwarebytes Premium yourself, you can get it straight from Malwarebytes:</p>
+          <p class="eyebrow eyebrow--center mono">// ORDER IT FROM US</p>
+          <h2 class="section-title section-title--center" data-title>Get Malwarebytes through us<span class="title-underline title-underline--center"></span></h2>
+          <p>We&rsquo;re a Malwarebytes reseller. We supply it for home computers and, as ThreatDown, for businesses &mdash; installed properly on every device and kept an eye on by us. Ask us for today&rsquo;s price.</p>
         </div>
-{bp.affiliate_block("1101l99806", 728, 90)}
+        <p style="text-align:center;margin-top:1.2rem"><a class="button primary" href="/contact/?topic=software-we-supply&amp;product=Malwarebytes%20Premium">Ask us for a price</a></p>
       </div>
     </section>''',
       faq_html(faqs),
@@ -18316,7 +18316,7 @@ def make_threat(slug, name, h1, lede, desc, what_html, signs, protect, ifhit, fa
         </ul>
       </div>
     </section>''',
-      bp.affiliate_block("1011l100231", 728, 90, lead="Our partner Malwarebytes Premium blocks threats like this in real time &mdash; prefer to protect your own device?"),
+      bp.mb_from_us_block("Malwarebytes blocks threats like this in real time. We supply it for homes and businesses, install it properly and keep an eye on it &mdash; ask us for today&rsquo;s price."),
       f'''    <section class="how" aria-label="If you have been hit">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>/03 — IF YOU&rsquo;VE BEEN HIT</p>
