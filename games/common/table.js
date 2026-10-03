@@ -53,7 +53,7 @@
     // ------------------------------------------------------------ what this browser remembers (per game)
     function load(k, d) { try { var v = localStorage.getItem(D.store + ':' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
     function save(k, v) { try { localStorage.setItem(D.store + ':' + k, JSON.stringify(v)); } catch (e) {} }
-    var SET = { winnable: true, auto: true, sound: true, timer: true, felt: 'green', seenHelp: false };
+    var SET = { winnable: true, auto: true, sound: true, timer: true, felt: 'green', back: 'navy', fx: true, seenHelp: false };
     if (V) SET[V.key] = V.def;
     (function () { var s = load('settings', null); if (s && typeof s === 'object') for (var k in SET) if (k in s) SET[k] = s[k]; })();
     if (V && !V.options.some(function (o) { return o[0] === SET[V.key]; })) SET[V.key] = V.def;
@@ -81,7 +81,7 @@
         return '<span class="pip' + (p[1] > 50 ? ' dn' : '') + '" style="left:' + p[0] + '%;top:' + p[1] + '%">' + su + '</span>';
       }).join('') + '</div>';
       el.innerHTML = '<div class="wig"><div class="flip"><div class="face front"><span class="idx' + (r === 10 ? ' ten' : '') + '">' + RANK_CH[r]
-        + '</span><span class="sui">' + su + '</span>' + mid + '</div><div class="face back"></div></div></div>';
+        + '</span><span class="sui">' + su + '</span>' + mid + '<span class="cor"><i>' + su + '</i></span></div><div class="face back"></div></div></div>';
       return el;
     }
     function faces() {   // (re)draw the faces when the game's card set changes (Spider's one, two or four suits)
@@ -124,16 +124,32 @@
         if (!instant && old && old.pile !== p.pile) {   // flying to another pile: on top of everything until it lands
           el.style.zIndex = 2000 + p.z; clearTimeout(el._zt);
           el._zt = setTimeout((function (e) { return function () { e.style.zIndex = e._z; e._zt = 0; }; })(el), 320);
+          flyOn(el);
         } else if (!el._zt) el.style.zIndex = p.z;
+        if (!instant && old && !old.up && p.up) shineOn(el);   // turned face up: it catches the light
       }
       lastP = P;
       if (D.slotHtml) for (var k in slotEl) { var h = D.slotHtml(k, S); if (h != null) { slotEl[k].setAttribute('data-html', '1'); if (slotEl[k]._h !== h) { slotEl[k].innerHTML = h; slotEl[k]._h = h; } } }
       if (instant) { void board.offsetWidth; board.classList.remove('instant'); }
       bar();
     }
+    // a card lifts, tilts and settles as it flies; a card turned over catches the light (Extra effects)
+    function flyOn(el) {
+      if (!SET.fx || reduce) return;
+      el.classList.remove('fly'); void el.offsetWidth; el.classList.add('fly');
+      clearTimeout(el._ft); el._ft = setTimeout(function () { el.classList.remove('fly'); }, 420);
+    }
+    function shineOn(el) {
+      if (!SET.fx || reduce) return;
+      clearTimeout(el._st); el.classList.remove('shine');
+      el._st = setTimeout(function () { el.classList.add('shine'); el._st = setTimeout(function () { el.classList.remove('shine'); }, 800); }, 240);
+    }
+    var shownScore = null;
     function bar() {
       $('vMoves').textContent = S.moves;
       $('vScore').textContent = S.score;
+      if (shownScore != null && S.score > shownScore && SET.fx && !reduce) { var vs = $('vScore'); vs.classList.remove('bump'); void vs.offsetWidth; vs.classList.add('bump'); }
+      shownScore = S.score;
       $('vTime').textContent = clock(G.ms);
       $('chipTime').style.display = SET.timer ? '' : 'none';
       $('bUndo').disabled = !G.undo.length;
@@ -167,23 +183,65 @@
         if (Math.abs(dx) + Math.abs(dy) < 8) return;
         drag.moved = true;
         drag.cards.forEach(function (k, i) { var el = cardEl[k]; clearTimeout(el._zt); el._zt = 0; el.classList.add('drag'); el.style.zIndex = 3000 + i; });
+        drag.pos = drag.base.map(function (b) { return { x: b.x, y: b.y }; });
+        showCan(drag);
+        sfx('lift');
       }
       drag.dx = dx; drag.dy = dy;
-      drag.cards.forEach(function (k, i) { var b = drag.base[i]; cardEl[k].style.transform = 'translate3d(' + (b.x + dx) + 'px,' + (b.y + dy) + 'px,0)'; });
+      if (SET.fx && !reduce) { if (!dragRAF) dragRAF = requestAnimationFrame(dragLoop); }   // the stack trails and tilts (dragLoop)
+      else drag.cards.forEach(function (k, i) { var b = drag.base[i]; cardEl[k].style.transform = 'translate3d(' + (b.x + dx) + 'px,' + (b.y + dy) + 'px,0)'; });
     });
+    // a stack in the hand: the top card follows the finger exactly, the ones under it a moment behind, all tilting
+    // with the movement - like holding real cards
+    var dragRAF = 0;
+    function dragLoop() {
+      dragRAF = 0;
+      var d = drag; if (!d || !d.moved) return;
+      var vx = d.dx - (d.pdx == null ? d.dx : d.pdx); d.pdx = d.dx; d.vs = (d.vs || 0) * 0.72 + vx * 0.28;
+      var tilt = Math.max(-11, Math.min(11, d.vs * 0.9)), settled = Math.abs(d.vs) < 0.05;
+      d.cards.forEach(function (k, i) {
+        var b = d.base[i], tx = b.x + d.dx, ty = b.y + d.dy, p = d.pos[i], f = i === 0 ? 1 : 0.45;
+        p.x += (tx - p.x) * f; p.y += (ty - p.y) * f;
+        if (Math.abs(tx - p.x) > 0.3 || Math.abs(ty - p.y) > 0.3) settled = false;
+        cardEl[k].style.transform = 'translate3d(' + p.x.toFixed(1) + 'px,' + p.y.toFixed(1) + 'px,0)';
+        cardEl[k].firstChild.style.transform = 'scale(1.05) rotate(' + (tilt * (1 - i * 0.12) - 1).toFixed(2) + 'deg)';
+      });
+      if (!settled) dragRAF = requestAnimationFrame(dragLoop);
+    }
+    function endDragLook(d) {
+      if (dragRAF) { cancelAnimationFrame(dragRAF); dragRAF = 0; }
+      d.cards.forEach(function (k) { cardEl[k].classList.remove('drag'); cardEl[k].firstChild.style.transform = ''; });
+      hideCan();
+    }
+    // while a card is dragged, the places it may legally go glow (a modern touch, and a help to anyone unsure)
+    var canEls = [];
+    function showCan(d) {
+      hideCan();
+      D.targets(S, d.from, L, lastP).forEach(function (t) {
+        if (!E.legal(S, { t: 'move', from: d.from, to: t.to })) return;
+        var best = null, bz = -1;
+        for (var c = 0; c < D.cards; c++) {
+          var q = lastP[c];
+          if (q && d.cards.indexOf(c) < 0 && Math.abs(q.x - t.x) < 0.5 && Math.abs(q.y - t.y) < 0.5 && q.z > bz && cardEl[c].style.display !== 'none') { best = cardEl[c]; bz = q.z; }
+        }
+        if (!best) (L.slots || []).forEach(function (s) { if (!best && Math.abs(s.x - t.x) < 0.5 && Math.abs(s.y - t.y) < 0.5) best = slotEl[s.key]; });
+        if (best) { best.classList.add('can'); canEls.push(best); }
+      });
+    }
+    function hideCan() { canEls.forEach(function (el) { el.classList.remove('can'); }); canEls = []; }
     board.addEventListener('pointerup', function (e) {
       if (!drag || e.pointerId !== drag.id) return;
       var d = drag; drag = null;
       if (!d.moved) { tap(d); return; }
       var drop = dropTarget(d);
-      d.cards.forEach(function (k) { cardEl[k].classList.remove('drag'); });
+      endDragLook(d);
       if (drop.m) act(drop.m);
       else {   // it slides back - and the player is told why, in plain words (owner, 3 Oct 2026: Kings "just come back")
         render(); sfx('nope');
         say(D.whyNot ? D.whyNot(S, d.from, drop.near) : 'That card can’t go there');
       }
     });
-    board.addEventListener('pointercancel', function () { if (!drag) return; var d = drag; drag = null; d.cards.forEach(function (k) { cardEl[k].classList.remove('drag'); }); render(); });
+    board.addEventListener('pointercancel', function () { if (!drag) return; var d = drag; drag = null; if (d.moved) endDragLook(d); render(); });
     board.addEventListener('contextmenu', function (e) { e.preventDefault(); });
     function tap(d) {
       if (D.noTap && D.noTap(d.from)) return;   // e.g. cards come down from the piles by dragging only
@@ -220,13 +278,82 @@
       render();
       after();
     }
+    var foundRun = 0;   // cards in a row to the piles: the chime climbs
     function effects(fx) {
-      if (fx.t === 'draw') sfx(fx.recycled ? 'shuffle' : (fx.dealt ? 'deal' : 'flip'));
-      else if (fx.toFound) { sfx('found'); (fx.popCards || fx.cards).forEach(pop); }
-      else sfx('place');
+      if (fx.t === 'draw') { foundRun = 0; sfx(fx.recycled ? 'shuffle' : (fx.dealt ? 'deal' : 'flip')); }
+      else if (fx.toFound) { foundRun++; sfx('found', foundRun); (fx.popCards || fx.cards).forEach(pop); celebrate(fx); }
+      else { foundRun = 0; sfx('slide'); setTimeout(function () { sfx('place'); }, 230); }
       if (fx.flipped && fx.flipped.length) setTimeout(function () { sfx('flip'); }, 140);
       if (fx.say) say(fx.say);
     }
+    // a card reaching the piles: gold sparkles where it lands and the points it earned floating up; a whole suit
+    // finished: a bigger burst and a little fanfare
+    function celebrate(fx) {
+      var cards = fx.popCards || fx.cards, last = cards[cards.length - 1], gained = shownScore == null ? 0 : S.score - shownScore;
+      var whole = (fx.popCards && fx.popCards.length >= 13) || (cards.length === 1 && D.face(last, S).r === 13), my = gen;
+      setTimeout(function () {
+        if (my !== gen || !cardEl[last]) return;
+        var r = cardEl[last].getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+        if (SET.fx && !reduce) {
+          Spark.burst(cx, cy, whole ? 70 : 16, whole ? ['#ffe08a', '#ffffff', '#ffb347', '#8ff0ff', '#ff8ad8'] : ['#ffe08a', '#ffffff', '#ffd257'], whole ? 5.5 : 2.6, whole ? 90 : 46);
+          Spark.ring(cx, cy, whole ? r.width * 1.4 : r.width * 0.7, '#ffe08a', whole ? 40 : 22);
+        }
+        if (gained > 0 && SET.fx && !reduce) {
+          var f = document.createElement('div'); f.className = 'floatpts'; f.textContent = '+' + gained;
+          f.style.left = cx + 'px'; f.style.top = (r.top - 8) + 'px';
+          document.body.appendChild(f); setTimeout(function () { f.remove(); }, 1200);
+        }
+        if (whole) { sfx('suit'); if (SET.fx && !reduce) pop(last); }
+      }, 260);
+    }
+
+    // ------------------------------------------------------------ sparkles: a light layer over the table, running only while there are any
+    var Spark = (function () {
+      var cv = null, x = null, P = [], RINGS = [], run = 0, dpr = 1, DOT = {};
+      function ensure() {
+        if (!cv) { cv = $('spark'); x = cv.getContext('2d'); }
+        var w = window.innerWidth, h = window.innerHeight, want = Math.min(2, window.devicePixelRatio || 1);
+        if (cv.width !== Math.ceil(w * want) || cv.height !== Math.ceil(h * want)) { dpr = want; cv.width = Math.ceil(w * dpr); cv.height = Math.ceil(h * dpr); cv.style.width = w + 'px'; cv.style.height = h + 'px'; }
+      }
+      function dot(col) {
+        if (DOT[col]) return DOT[col];
+        var c = document.createElement('canvas'); c.width = c.height = 32; var g = c.getContext('2d'), gr = g.createRadialGradient(16, 16, 0, 16, 16, 16);
+        gr.addColorStop(0, '#ffffff'); gr.addColorStop(0.25, col); gr.addColorStop(1, 'rgba(0,0,0,0)'); g.fillStyle = gr; g.fillRect(0, 0, 32, 32);
+        return (DOT[col] = c);
+      }
+      function burst(px, py, n, cols, spd, life, o) {
+        ensure(); o = o || {};
+        for (var i = 0; i < n && P.length < 1400; i++) {
+          var a = o.up ? -Math.PI / 2 + (Math.random() - 0.5) * 2.2 : Math.random() * Math.PI * 2, v = spd * (0.3 + Math.random() * 0.9);
+          P.push({ x: px, y: py, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: life * (0.6 + Math.random() * 0.6), max: life, col: cols[i % cols.length],
+            s: (o.size || 7) * (0.6 + Math.random() * 0.8), g: o.grav == null ? 0.06 : o.grav, star: Math.random() < 0.35 });
+        }
+        go();
+      }
+      function ring(px, py, r1, col, life) { ensure(); RINGS.push({ x: px, y: py, r1: r1, col: col, life: life, max: life }); go(); }
+      function go() { if (!run) run = requestAnimationFrame(frame); }
+      function frame() {
+        run = 0;
+        x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, cv.width, cv.height);
+        x.globalCompositeOperation = 'lighter';
+        for (var i = P.length - 1; i >= 0; i--) {
+          var p = P[i]; p.vx *= 0.975; p.vy = p.vy * 0.975 + p.g; p.x += p.vx; p.y += p.vy;
+          if (--p.life <= 0) { P.splice(i, 1); continue; }
+          var a = Math.min(1, p.life / p.max * 1.5), s = p.s * (0.5 + 0.5 * p.life / p.max);
+          x.globalAlpha = a; x.drawImage(dot(p.col), p.x - s, p.y - s, s * 2, s * 2);
+          if (p.star) { x.fillStyle = '#ffffff'; x.fillRect(p.x - s * 0.9, p.y - 0.6, s * 1.8, 1.2); x.fillRect(p.x - 0.6, p.y - s * 0.9, 1.2, s * 1.8); }
+        }
+        for (i = RINGS.length - 1; i >= 0; i--) {
+          var r = RINGS[i], k = 1 - r.life / r.max;
+          if (--r.life <= 0) { RINGS.splice(i, 1); continue; }
+          x.globalAlpha = (1 - k) * 0.8; x.strokeStyle = r.col; x.lineWidth = 3 * (1 - k) + 1;
+          x.beginPath(); x.arc(r.x, r.y, r.r1 * (1 - Math.pow(1 - k, 3)), 0, Math.PI * 2); x.stroke();
+        }
+        x.globalAlpha = 1; x.globalCompositeOperation = 'source-over';
+        if (P.length || RINGS.length || Spark.keep) run = requestAnimationFrame(frame);
+      }
+      return { burst: burst, ring: ring, go: go, keep: false, clear: function () { P = []; RINGS = []; } };
+    })();
     function after() {
       if (S.won) return win();
       if (SET.auto && D.autoNext) {
@@ -331,8 +458,9 @@
           if (my !== gen) return;
           var p = P[c], el = cardEl[c];
           el.style.zIndex = 600 + k; el.style.transform = 'translate3d(' + p.x + 'px,' + p.y + 'px,0)';
+          flyOn(el);
           if (k % 2 === 0) sfx('deal');
-          if (p.up) setTimeout(function () { if (my === gen) el.classList.remove('down'); }, 200);
+          if (p.up) setTimeout(function () { if (my === gen) { el.classList.remove('down'); shineOn(el); } }, 200);
         }, 80 + k * step);
       });
       setTimeout(function () { if (my !== gen) return; busy = false; render(); }, 80 + order.length * step + 420);
@@ -373,22 +501,54 @@
     }
     // the classic finish: the cards leap off the piles and bounce away, leaving trails
     var imgCache = {};
-    function cardImg(c) {
+    function cardImg(c) {   // the card as a picture for the bouncing finish: the same paper, border, corners and centre
       var key = c + ':' + L.cw + ':' + faceKey; if (imgCache[key]) return imgCache[key];
       var f = D.face(c, S), dpr = Math.min(2, window.devicePixelRatio || 1), w = L.cw, h = L.ch, cv = document.createElement('canvas');
       cv.width = Math.ceil(w * dpr); cv.height = Math.ceil(h * dpr);
       var x = cv.getContext('2d'); x.scale(dpr, dpr);
-      var r = w * 0.08, su = SUIT_CH[f.s] + TXT;
-      x.beginPath(); x.moveTo(r, 0.5); x.arcTo(w - 0.5, 0.5, w - 0.5, h - 0.5, r); x.arcTo(w - 0.5, h - 0.5, 0.5, h - 0.5, r); x.arcTo(0.5, h - 0.5, 0.5, 0.5, r); x.arcTo(0.5, 0.5, w - 0.5, 0.5, r); x.closePath();
-      x.fillStyle = '#fffdf7'; x.fill(); x.strokeStyle = '#bdb7a6'; x.lineWidth = 1; x.stroke();
-      x.fillStyle = (f.s === 1 || f.s === 2) ? '#c6152f' : '#17191f';
-      x.textBaseline = 'top'; x.textAlign = 'left';
+      var r = w * 0.08, su = SUIT_CH[f.s] + TXT, red = f.s === 1 || f.s === 2, ink = red ? '#c6152f' : '#17191f';
+      function rr(ix, iy, iw, ih, rad) { x.beginPath(); x.moveTo(ix + rad, iy); x.arcTo(ix + iw, iy, ix + iw, iy + ih, rad); x.arcTo(ix + iw, iy + ih, ix, iy + ih, rad); x.arcTo(ix, iy + ih, ix, iy, rad); x.arcTo(ix, iy, ix + iw, iy, rad); x.closePath(); }
+      var pg = x.createRadialGradient(w * 0.3, h * 0.12, 0, w * 0.3, h * 0.12, h);
+      pg.addColorStop(0, '#ffffff'); pg.addColorStop(0.45, '#fffdf8'); pg.addColorStop(1, '#f1ebdc');
+      rr(0.5, 0.5, w - 1, h - 1, r); x.fillStyle = pg; x.fill(); x.strokeStyle = '#bdb7a6'; x.lineWidth = 1; x.stroke();
+      rr(w * 0.035, w * 0.035, w - w * 0.07, h - w * 0.07, r * 0.7); x.strokeStyle = 'rgba(0,0,0,0.08)'; x.stroke();
+      x.fillStyle = ink; x.textBaseline = 'top'; x.textAlign = 'left';
       x.font = '700 ' + Math.round(w * 0.32) + 'px Archivo, Arial, sans-serif'; x.fillText(RANK_CH[f.r], w * 0.05, h * 0.03);
       x.textAlign = 'right'; x.font = Math.round(w * 0.29) + 'px "Segoe UI Symbol", Arial, sans-serif'; x.fillText(su, w * 0.95, h * 0.03);
-      x.textAlign = 'center'; x.textBaseline = 'middle'; x.font = Math.round(w * 0.56) + 'px "Segoe UI Symbol", Arial, sans-serif'; x.fillText(su, w / 2, h * 0.64);
+      x.save(); x.translate(w * 0.9, h * 0.95); x.rotate(Math.PI); x.textAlign = 'center'; x.textBaseline = 'top';
+      x.font = '700 ' + Math.round(w * 0.14) + 'px Archivo, Arial, sans-serif'; x.fillText(RANK_CH[f.r], 0, 0);
+      x.font = Math.round(w * 0.13) + 'px "Segoe UI Symbol", Arial, sans-serif'; x.fillText(su, 0, w * 0.15); x.restore();
+      x.textAlign = 'center'; x.textBaseline = 'middle';
+      if (f.r > 10) {   // a gold frame with the letter
+        var fx0 = w * 0.13, fy0 = h * 0.31, fw = w * 0.74, fh = h * 0.58;
+        x.fillStyle = red ? 'rgba(198,21,47,0.08)' : 'rgba(23,25,31,0.07)'; rr(fx0, fy0, fw, fh, w * 0.05); x.fill();
+        x.lineWidth = w * 0.022; x.strokeStyle = '#c9a227'; x.stroke();
+        x.fillStyle = ink; x.font = '700 ' + Math.round(w * 0.4) + 'px Georgia, serif'; x.fillText(RANK_CH[f.r], w / 2, h * 0.56);
+        x.font = Math.round(w * 0.17) + 'px "Segoe UI Symbol", Arial, sans-serif'; x.fillText(su, w / 2, h * 0.78);
+      } else { x.fillStyle = ink; x.font = Math.round(w * 0.56) + 'px "Segoe UI Symbol", Arial, sans-serif'; x.fillText(su, w / 2, h * 0.64); }
       return (imgCache[key] = cv);
     }
+    // fireworks over the bouncing cards
+    var fwT = 0;
+    function fireworks(on) {
+      clearInterval(fwT); fwT = 0;
+      var big = $('winBig');
+      if (!on) { Spark.keep = false; $('spark').style.zIndex = ''; big.hidden = true; return; }
+      $('spark').style.zIndex = '4550';
+      big.innerHTML = 'You won!<small>' + esc(D.title) + (S.moves ? ' in ' + S.moves + ' moves' : '') + '</small>'; big.hidden = false;
+      if (!SET.fx) return;
+      var cols = [['#ffe08a', '#ffffff', '#ffb347'], ['#ff8ad8', '#ffffff', '#ff4fc8'], ['#8ff0ff', '#ffffff', '#3fe0ff'], ['#9dff9a', '#ffffff', '#5cff8a']];
+      var shoot = function () {
+        var cx = window.innerWidth * (0.15 + Math.random() * 0.7), cy = window.innerHeight * (0.12 + Math.random() * 0.35);
+        Spark.burst(cx, cy, 60, cols[Math.floor(Math.random() * cols.length)], 5.2, 85, { grav: 0.05, size: 6 });
+        Spark.ring(cx, cy, 60, '#ffffff', 24);
+        sfx('firework');
+      };
+      shoot(); fwT = setInterval(shoot, 650);
+    }
     function cascade(done) {
+      fireworks(true);
+      var finishCascade = done; done = function () { fireworks(false); finishCascade(); };
       if (reduce) { done(); return; }
       var cv = $('fx'), tip = $('fxhint'), dpr = Math.min(2, window.devicePixelRatio || 1), W = window.innerWidth, H = window.innerHeight;
       cv.hidden = false; cv.classList.add('on'); cv.style.opacity = '1'; cv.style.transition = '';
@@ -427,43 +587,60 @@
     }
 
     // ------------------------------------------------------------ sound: soft, made on the spot, nothing downloaded
-    var AC = null, NOISE = null;
+    var AC = null, NOISE = null, OUT = null, ROOM = null;
     function ac() {
       if (!SET.sound || !gestured) return null;
       try {
-        if (!AC) { var C = window.AudioContext || window.webkitAudioContext; if (!C) return null; AC = new C(); }
+        if (!AC) {
+          var C = window.AudioContext || window.webkitAudioContext; if (!C) return null; AC = new C();
+          // one gentle limiter for everything, and a soft room echo for the chimes
+          var comp = AC.createDynamicsCompressor(); comp.threshold.value = -16; comp.ratio.value = 3.5; comp.attack.value = 0.005; comp.release.value = 0.2;
+          OUT = AC.createGain(); OUT.gain.value = 0.95; OUT.connect(comp); comp.connect(AC.destination);
+          try {
+            var cv = AC.createConvolver(), len = Math.floor(AC.sampleRate * 1.3), ir = AC.createBuffer(2, len, AC.sampleRate);
+            for (var ch = 0; ch < 2; ch++) { var dd = ir.getChannelData(ch); for (var j = 0; j < len; j++) dd[j] = (Math.random() * 2 - 1) * Math.pow(1 - j / len, 2.8); }
+            cv.buffer = ir; ROOM = AC.createGain(); ROOM.gain.value = 0.28; ROOM.connect(cv); cv.connect(OUT);
+          } catch (er) { ROOM = null; }
+        }
         if (AC.state === 'suspended') AC.resume();
       } catch (e) { return null; }
       return AC;
     }
-    function tick(freq, dur, gain, q) {
+    function out(a, node, verb) { node.connect(OUT || a.destination); if (verb && ROOM) { var s = a.createGain(); s.gain.value = verb; node.connect(s); s.connect(ROOM); } }
+    function tick(freq, dur, gain, q, when, to, type) {   // a filtered burst of noise: cards on felt
       var a = ac(); if (!a) return;
       try {
-        if (!NOISE) { var len = Math.floor(a.sampleRate * 0.3); NOISE = a.createBuffer(1, len, a.sampleRate); var d = NOISE.getChannelData(0); for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1; }
-        var t = a.currentTime, s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
-        s.buffer = NOISE; f.type = 'bandpass'; f.frequency.value = freq; f.Q.value = q || 1;
+        if (!NOISE) { var len = Math.floor(a.sampleRate * 0.5); NOISE = a.createBuffer(1, len, a.sampleRate); var d = NOISE.getChannelData(0); for (var i = 0; i < len; i++) d[i] = Math.random() * 2 - 1; }
+        var t = a.currentTime + (when || 0), s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+        s.buffer = NOISE; f.type = type || 'bandpass'; f.frequency.setValueAtTime(freq, t); if (to) f.frequency.exponentialRampToValueAtTime(to, t + dur); f.Q.value = q || 1;
         g.gain.setValueAtTime(gain, t); g.gain.exponentialRampToValueAtTime(0.0008, t + dur);
-        s.connect(f); f.connect(g); g.connect(a.destination); s.start(t, Math.random() * 0.2); s.stop(t + dur + 0.03);
+        s.connect(f); f.connect(g); out(a, g); s.start(t, Math.random() * 0.3); s.stop(t + dur + 0.03);
       } catch (e) {}
     }
-    function tone(freq, dur, gain, when, type) {
+    function tone(freq, dur, gain, when, type, verb) {
       var a = ac(); if (!a) return;
       try {
         var t = a.currentTime + (when || 0), o = a.createOscillator(), g = a.createGain();
         o.type = type || 'sine'; o.frequency.value = freq;
-        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-        o.connect(g); g.connect(a.destination); o.start(t); o.stop(t + dur + 0.03);
+        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+        o.connect(g); out(a, g, verb); o.start(t); o.stop(t + dur + 0.03);
       } catch (e) {}
     }
-    function sfx(k) {
+    var CHIME = [1047, 1175, 1319, 1397, 1568, 1760, 1976, 2093, 2349, 2637, 2794, 3136];   // up the scale, one card at a time
+    function sfx(k, n) {
       if (!SET.sound) return;
-      if (k === 'place') tick(1300, 0.07, 0.55, 0.9);
-      else if (k === 'flip') tick(2900, 0.05, 0.35, 1.4);
-      else if (k === 'deal') tick(2100, 0.045, 0.28, 1.2);
-      else if (k === 'shuffle') { for (var i = 0; i < 6; i++) setTimeout(function () { tick(2500, 0.04, 0.22, 1.2); }, i * 32); }
-      else if (k === 'found') { tick(1500, 0.05, 0.35, 1); tone(988, 0.16, 0.05, 0.02); tone(1319, 0.24, 0.04, 0.08); }
+      var i;
+      if (k === 'place') { tick(700, 0.07, 0.6, 0.7, 0, 0, 'lowpass'); tone(150, 0.06, 0.05); }
+      else if (k === 'slide') tick(2600, 0.16, 0.16, 0.8, 0, 900);
+      else if (k === 'lift') tick(1800, 0.06, 0.12, 1.2, 0, 3000);
+      else if (k === 'flip') { tick(3300, 0.04, 0.32, 1.6); tick(1600, 0.03, 0.18, 1); }
+      else if (k === 'deal') tick(2300, 0.05, 0.26, 1.3, 0, 1400);
+      else if (k === 'shuffle') { for (i = 0; i < 14; i++) tick(1800 + Math.random() * 1600, 0.035, 0.16, 1.3, i * 0.03); tick(900, 0.25, 0.12, 0.8, 0.45, 0, 'lowpass'); }
+      else if (k === 'found') { var f = CHIME[Math.min(CHIME.length - 1, Math.max(0, (n || 1) - 1))]; tick(5200, 0.05, 0.2, 2); tone(f, 0.55, 0.045, 0.01, 'sine', 0.5); tone(f * 2, 0.3, 0.015, 0.02, 'triangle', 0.3); }
+      else if (k === 'suit') [1047, 1319, 1568, 2093].forEach(function (fq, j) { tone(fq, 0.6, 0.045, 0.08 + j * 0.08, 'triangle', 0.55); });
       else if (k === 'nope') tone(196, 0.13, 0.06, 0, 'triangle');
-      else if (k === 'win') [523, 659, 784, 1047, 1319].forEach(function (f, j) { tone(f, 0.38, 0.06, j * 0.1, 'triangle'); });
+      else if (k === 'firework') { tick(900, 0.5, 0.22, 0.6, 0, 120, 'lowpass'); tone(70, 0.3, 0.08, 0, 'sine'); for (i = 0; i < 6; i++) tick(5000 + Math.random() * 3000, 0.04, 0.05, 3, 0.25 + Math.random() * 0.35); }
+      else if (k === 'win') { [523, 659, 784, 1047, 1319].forEach(function (fq, j) { tone(fq, 0.5, 0.06, j * 0.11, 'triangle', 0.5); tone(fq / 2, 0.5, 0.03, j * 0.11, 'sine'); }); tone(1568, 1.2, 0.05, 0.6, 'sine', 0.7); }
     }
 
     // ------------------------------------------------------------ pop-up sheets
@@ -518,12 +695,14 @@
       if (V) Array.prototype.forEach.call(document.querySelectorAll('[data-var]'), function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-var') === SET[V.key])); });
       Array.prototype.forEach.call(document.querySelectorAll('[data-set]'), function (b) { b.setAttribute('aria-checked', String(!!SET[b.getAttribute('data-set')])); });
       Array.prototype.forEach.call(document.querySelectorAll('[data-felt]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-felt') === SET.felt)); });
-      document.body.className = 'felt-' + SET.felt;
+      Array.prototype.forEach.call(document.querySelectorAll('[data-back]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-back') === SET.back)); });
+      document.body.className = 'felt-' + SET.felt + ' back-' + SET.back + (SET.fx ? '' : ' nofx');
     }
     document.addEventListener('click', function (e) {
-      var b = e.target.closest ? e.target.closest('[data-var],[data-set],[data-felt]') : null; if (!b) return;
+      var b = e.target.closest ? e.target.closest('[data-var],[data-set],[data-felt],[data-back]') : null; if (!b) return;
       if (b.hasAttribute('data-var')) SET[V.key] = +b.getAttribute('data-var');
       else if (b.hasAttribute('data-set')) { var k = b.getAttribute('data-set'); SET[k] = !SET[k]; if (k === 'timer') bar(); }
+      else if (b.hasAttribute('data-back')) SET.back = b.getAttribute('data-back');
       else SET.felt = b.getAttribute('data-felt');
       save('settings', SET); syncControls();
     });
@@ -615,7 +794,7 @@
         + tb('bStats', 'stats', 'My scores', 'My scores') + tb('bSet', 'set', 'Settings', 'Settings') + tb('bHelp', 'help', 'How to play', 'How to play') + tb('bFull', 'full', 'Full screen', 'Full screen (F)') + '</nav></header>'
         + '<main id="board" aria-label="The card table"></main></div>'
         + '<div id="stuck" hidden role="status"><span>' + esc(D.stuckText || 'No more moves found.') + '</span><button class="btn" type="button" id="stUndo">Undo</button><button class="btn go" type="button" id="stNew">New game</button></div>'
-        + '<div id="toast" role="status" aria-live="polite"></div><canvas id="fx" hidden></canvas><div id="fxhint" hidden>Tap anywhere to carry on</div>'
+        + '<div id="toast" role="status" aria-live="polite"></div><canvas id="spark" aria-hidden="true"></canvas><canvas id="fx" hidden></canvas><div id="winBig" hidden aria-hidden="true"></div><div id="fxhint" hidden>Tap anywhere to carry on</div>'
         + sheet('dNew', 'New game', '<p class="soft" id="dNewNote"></p>' + (V ? '<div class="seg" role="group" aria-label="' + esc(V.label) + '">' + vNew + '</div>' : '')
           + '<div class="choice"><button class="btn go" type="button" id="nDeal">New deal<small id="nDealS">A fresh shuffle</small></button>'
           + '<button class="btn" type="button" id="nDaily">Today&rsquo;s deal<small id="nDailyS">The same deal for everyone today</small></button>'
@@ -628,8 +807,11 @@
         + sheet('dSet', 'Settings', (V ? '<div class="set"><div><label>' + esc(V.label) + '</label><small>' + esc(V.small || 'Changes from your next game.') + '</small></div><div class="seg" role="group" aria-label="' + esc(V.label) + '">' + v + '</div></div>' : '')
           + (D.deals ? sw('winnable', 'Deals you can always win', D.winnableSmall || 'Every deal has been played through to a win.') : '')
           + (D.autoNext ? sw('auto', 'Move cards up to the piles for me', 'When it&rsquo;s plainly safe to.') : '')
-          + sw('sound', 'Sounds', 'Soft clicks as the cards move.') + sw('timer', 'Show the clock', 'It still keeps your best time.')
-          + '<div class="set"><div><label>Table colour</label></div><div class="felts" role="group" aria-label="Table colour"><button type="button" data-felt="green" style="background:#1f7a45" aria-label="Green"></button><button type="button" data-felt="blue" style="background:#1f5f9c" aria-label="Blue"></button><button type="button" data-felt="red" style="background:#8e2537" aria-label="Red"></button><button type="button" data-felt="slate" style="background:#45526a" aria-label="Grey"></button></div></div>'
+          + sw('sound', 'Sounds', 'Soft card sounds and chimes.') + sw('timer', 'Show the clock', 'It still keeps your best time.')
+          + sw('fx', 'Extra effects', 'Sparkles, cards that lift as they move, fireworks when you win. Switch off on a slower computer.')
+          + '<div class="set"><div><label>Table</label></div><div class="felts" role="group" aria-label="Table"><button type="button" data-felt="green" style="background:#1f7a45" aria-label="Green baize"></button><button type="button" data-felt="blue" style="background:#1f5f9c" aria-label="Blue"></button><button type="button" data-felt="red" style="background:#8e2537" aria-label="Red"></button><button type="button" data-felt="slate" style="background:#45526a" aria-label="Grey"></button>'
+          + '<button type="button" data-felt="oak" style="background:repeating-linear-gradient(91deg,#6b4220 0 3px,#7a4c26 3px 6px)" aria-label="Oak table"></button><button type="button" data-felt="night" style="background:radial-gradient(#2a3670,#060918)" aria-label="Night"></button></div></div>'
+          + '<div class="set"><div><label>Card backs</label></div><div class="backs" role="group" aria-label="Card backs"><button type="button" data-back="navy" style="background:linear-gradient(155deg,#17447a,#0a2245)" aria-label="365 navy"></button><button type="button" data-back="royal" style="background:linear-gradient(155deg,#8e1d2c,#4a0712)" aria-label="Royal red"></button><button type="button" data-back="sea" style="background:linear-gradient(180deg,#ff9a6a,#ffcf8a 30%,#2aa3c4 52%,#0b5e86)" aria-label="Seaside"></button></div></div>'
           + '<p class="foot">' + esc(D.title) + ' is made by <a href="https://365techies.co.uk/" target="_blank" rel="noopener">365 Techies</a> in Bournemouth. No adverts, no sign-in, nothing to install. Computer playing up? Ring us on <b>01202 775566</b>.</p>'
           + '<div class="row"><button class="btn go wide" type="button" data-close>Done</button></div>')
         + sheet('dHelp', 'How to play', '<ol class="how">' + (D.help || []).map(function (h) { return '<li>' + h + '</li>'; }).join('') + '</ol>'
