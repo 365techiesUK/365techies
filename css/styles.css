@@ -1304,6 +1304,9 @@ body.menu-open { overflow: hidden; }
 .faq[open] .faq__icon::after { transform: rotate(90deg); }
 .faq__ans { padding: 0 1.4rem 1.3rem; }
 .faq__ans p { color: var(--muted); font-size: 0.95rem; }
+/* 3 Oct 2026: links in FAQ answers looked exactly like the text around them (same colour, no underline) - styled as .prose a */
+.faq__ans a { color: var(--cyan); text-decoration: underline; text-underline-offset: 2px; }
+.faq__ans a:hover { color: #fff; }
 
 /* ==========================================================================
    REPAIRS

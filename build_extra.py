@@ -10719,10 +10719,10 @@ def malwarebytes():
     </section>''',
       f'''    <section class="section section--alt" aria-label="Order Malwarebytes from us">
       <div class="wrap">
-        <div class="prose" data-reveal style="text-align:center;max-width:62ch;margin:0 auto">
-          <p class="eyebrow eyebrow--center mono">// ORDER IT FROM US</p>
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// ORDER IT FROM US</p>
           <h2 class="section-title section-title--center" data-title>Get Malwarebytes through us<span class="title-underline title-underline--center"></span></h2>
-          <p>We&rsquo;re a Malwarebytes reseller. We supply it for home computers and, as ThreatDown, for businesses &mdash; installed properly on every device and kept an eye on by us. Ask us for today&rsquo;s price.</p>
+          <p class="lede lede--center" data-reveal>We&rsquo;re a Malwarebytes reseller. We supply it for home computers and, as ThreatDown, for businesses &mdash; installed properly on every device and kept an eye on by us. Ask us for today&rsquo;s price.</p>
         </div>
         <p style="text-align:center;margin-top:1.2rem"><a class="button primary" href="/contact/?topic=software-we-supply&amp;product=Malwarebytes%20Premium">Ask us for a price</a></p>
       </div>

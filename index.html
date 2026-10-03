@@ -96,7 +96,7 @@
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="/fonts/clash-display-700.woff2" as="font" type="font/woff2" crossorigin />
 
-  <link rel="stylesheet" href="css/styles.min.css?v=118" />
+  <link rel="stylesheet" href="css/styles.min.css?v=119" />
   <style>/* Emergency styles - see the SENTINEL rule at the foot of styles.css.
     ⚠️ This homepage is hand-maintained: keep this block in step with the copy in
     build_pages.py that every generated page gets. */
@@ -125,7 +125,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=118&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=119&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
