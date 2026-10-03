@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Solitaire - free, no adverts | 365 Techies</title>
+<!-- 3 Oct 2026: hand-made game page (not built by build_blog.py). noindex and off the sitemap and menus until the
+     owner says it goes public; PC Manager v33 will open it in its own window from a Games menu. -->
+<meta name="robots" content="noindex" />
+<meta name="description" content="Klondike Solitaire with big, clear cards: no adverts, no sign-in, nothing to install. Tap a card to move it, undo as often as you like, and beat your own best." />
+<meta name="theme-color" content="#0f4a2a" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="preload" href="/fonts/archivo-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin />
+<style>
+@font-face { font-family: "Archivo"; font-style: normal; font-weight: 500; font-display: swap; src: url("/fonts/archivo-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "Archivo"; font-style: normal; font-weight: 700; font-display: swap; src: url("/fonts/archivo-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "Clash Display"; font-style: normal; font-weight: 600; font-display: swap; src: url("/fonts/clash-display-600.woff2") format("woff2"); }
+
+:root {
+  --felt-a: #1f7a45; --felt-b: #0b3d20; --felt-ink: #eaf5ec; --bar: rgba(3, 22, 11, .55); --bar-line: rgba(255, 255, 255, .12);
+  --btn: rgba(255, 255, 255, .1); --btn-hi: rgba(255, 255, 255, .2); --gold: #ffd257; --cyan: #22c3ee;
+  --card: #fffdf7; --card-edge: #d8d2c3; --red: #c6152f; --black: #17191f; --slot: rgba(255, 255, 255, .22);
+  --sheet: #fbfaf5; --sheet-ink: #15211a; --sheet-soft: #5b6b60; --sheet-line: #e2ded2; --primary: #146c3a; --primary-ink: #fff;
+  --cw: 90px; --ch: 126px;
+}
+body.felt-blue { --felt-a: #1f5f9c; --felt-b: #0a2547; --primary: #1a5da3; }
+body.felt-red { --felt-a: #8e2537; --felt-b: #3b0c16; --primary: #8e2537; }
+body.felt-slate { --felt-a: #45526a; --felt-b: #141a25; --primary: #34465f; }
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  overflow: hidden; color: var(--felt-ink); font: 500 16px/1.4 Archivo, "Segoe UI", system-ui, sans-serif;
+  background: radial-gradient(120% 90% at 50% 30%, var(--felt-a), var(--felt-b)); background-color: var(--felt-b);
+  -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none;
+}
+/* a faint woven texture, like real baize */
+body::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; opacity: .22; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+}
+#app { position: fixed; inset: 0; display: flex; flex-direction: column; }
+
+/* ---------- the bar along the top ---------- */
+.bar {
+  position: relative; z-index: 3000; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px;
+  padding: max(8px, env(safe-area-inset-top, 0px)) 14px 8px; background: var(--bar); border-bottom: 1px solid var(--bar-line);
+  backdrop-filter: blur(6px);
+}
+.brand { display: flex; align-items: center; gap: 9px; font: 600 21px/1 "Clash Display", Archivo, sans-serif; letter-spacing: .01em; white-space: nowrap; }
+.brand b { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 9px; background: var(--cyan); color: #04212c; font: 700 14px/1 Archivo, sans-serif; letter-spacing: -.02em; }
+.info { display: flex; gap: 6px; font-variant-numeric: tabular-nums; }
+.chip { display: flex; flex-direction: column; align-items: center; min-width: 64px; padding: 3px 10px; border-radius: 10px; background: rgba(0, 0, 0, .18); }
+.chip small { font-size: 12px; opacity: .75; letter-spacing: .04em; text-transform: uppercase; }
+.chip span { font: 700 18px/1.15 Archivo, sans-serif; }
+.tools { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
+.tb {
+  display: inline-flex; align-items: center; gap: 7px; min-height: 46px; padding: 0 14px; border: 0; border-radius: 12px;
+  background: var(--btn); color: var(--felt-ink); font: 700 16px/1 Archivo, sans-serif; cursor: pointer; transition: background .15s, transform .1s;
+}
+.tb:hover { background: var(--btn-hi); }
+.tb:active { transform: scale(.97); }
+.tb:disabled { opacity: .45; cursor: default; }
+.tb svg { width: 22px; height: 22px; flex: none; }
+.tb.main { background: var(--gold); color: #2a2000; }
+.tb.main:hover { background: #ffe08a; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+@media (max-width: 1180px) { .tb .lbl-x { display: none; } }
+@media (max-width: 860px) { .tb { padding: 0 11px; } .tb .lbl { display: none; } .brand span { display: none; } .chip { min-width: 54px; padding: 2px 7px; } }
+
+/* ---------- the table ---------- */
+#board { position: relative; flex: 1; overflow: hidden; touch-action: none; }
+.slot {
+  position: absolute; left: 0; top: 0; width: var(--cw); height: var(--ch); border-radius: calc(var(--cw) * .08);
+  border: 2px solid var(--slot); background: rgba(0, 0, 0, .1); display: grid; place-items: center;
+  color: rgba(255, 255, 255, .32); font: 700 calc(var(--cw) * .36) / 1 Archivo, sans-serif;
+}
+.slot.stock { cursor: pointer; }
+.slot.stock svg { width: 46%; height: 46%; opacity: .8; }
+.slot.hint, .card.hint .front, .card.hint .back { box-shadow: 0 0 0 4px var(--gold), 0 0 22px 6px rgba(255, 210, 87, .7) !important; }
+
+.card { position: absolute; left: 0; top: 0; width: var(--cw); height: var(--ch); transition: transform .26s cubic-bezier(.2, .8, .25, 1); will-change: transform; cursor: pointer; }
+.card .wig { position: absolute; inset: 0; transition: transform .15s; }
+.card .flip { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .32s cubic-bezier(.3, .7, .3, 1); }
+.card.down .flip { transform: rotateY(180deg); }
+.face { position: absolute; inset: 0; border-radius: calc(var(--cw) * .08); -webkit-backface-visibility: hidden; backface-visibility: hidden; overflow: hidden; }
+.front { background: var(--card); box-shadow: 0 0 0 1px var(--card-edge) inset, 0 1px 2px rgba(0, 0, 0, .35), 0 3px 8px rgba(0, 0, 0, .12); }
+.red .front { color: var(--red); }
+.blk .front { color: var(--black); }
+.card.drag { transition: none; }
+.card.drag .wig { transform: scale(1.04) rotate(-1deg); }
+.card.drag .front { box-shadow: 0 0 0 1px var(--card-edge) inset, 0 14px 30px rgba(0, 0, 0, .45); }
+.card.nope .wig { animation: nope .32s; }
+@keyframes nope { 20% { transform: translateX(-6px) } 45% { transform: translateX(5px) } 70% { transform: translateX(-3px) } 100% { transform: none } }
+.card.pop .wig { animation: pop .34s; }
+@keyframes pop { 40% { transform: scale(1.09) } 100% { transform: none } }
+
+/* the corner: big enough to read when the cards overlap in a column */
+.idx { position: absolute; left: 5%; top: 2.5%; font: 700 calc(var(--cw) * .32) / 1 Archivo, "Arial Narrow", sans-serif; letter-spacing: -.05em; }
+.idx.ten { letter-spacing: -.09em; font-size: calc(var(--cw) * .29); }
+.sui { position: absolute; right: 5%; top: 2.5%; font: calc(var(--cw) * .29) / 1 "Segoe UI Symbol", "Apple Symbols", Archivo, sans-serif; }
+.pips { position: absolute; left: 17%; right: 17%; top: 37%; bottom: 9%; }
+.pip { position: absolute; transform: translate(-50%, -50%); font: calc(var(--cw) * .2) / 1 "Segoe UI Symbol", "Apple Symbols", Archivo, sans-serif; }
+.pip.dn { transform: translate(-50%, -50%) rotate(180deg); }
+.r9 .pip, .r10 .pip { font-size: calc(var(--cw) * .17); }
+.ace { position: absolute; left: 0; right: 0; top: 30%; bottom: 4%; display: grid; place-items: center; font: calc(var(--cw) * .62) / 1 "Segoe UI Symbol", "Apple Symbols", Archivo, sans-serif; }
+.ace i { position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%); font: 700 calc(var(--cw) * .1) / 1 Archivo, sans-serif; font-style: normal; color: #fff; letter-spacing: -.02em; }
+.court { position: absolute; left: 13%; right: 13%; top: 31%; bottom: 6%; border-radius: calc(var(--cw) * .05); border: 2px solid currentColor;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2%;
+  background: linear-gradient(170deg, rgba(255, 210, 87, .28), rgba(255, 255, 255, 0) 60%), repeating-linear-gradient(135deg, rgba(0, 0, 0, .035) 0 3px, transparent 3px 7px); }
+.red .court { background-color: rgba(198, 21, 47, .06); }
+.blk .court { background-color: rgba(23, 25, 31, .05); }
+.court svg { width: 46%; height: auto; fill: currentColor; }
+.court b { font: 700 calc(var(--cw) * .34) / 1 Georgia, "Times New Roman", serif; }
+.court em { font: calc(var(--cw) * .17) / 1 "Segoe UI Symbol", Archivo, sans-serif; font-style: normal; }
+
+/* the back: 365 navy and cyan */
+.back {
+  transform: rotateY(180deg); border: calc(var(--cw) * .045) solid #fbfaf4;
+  background:
+    repeating-linear-gradient(45deg, rgba(34, 195, 238, .28) 0 2px, transparent 2px 10px),
+    repeating-linear-gradient(-45deg, rgba(34, 195, 238, .28) 0 2px, transparent 2px 10px),
+    linear-gradient(155deg, #17447a, #0a2245);
+  box-shadow: 0 0 0 1px #cfc9b8, 0 1px 2px rgba(0, 0, 0, .35), 0 3px 8px rgba(0, 0, 0, .12);
+}
+.back::after {
+  content: "365"; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  padding: 4% 9%; border-radius: 999px; background: #0a2245; border: 2px solid var(--cyan);
+  color: var(--cyan); font: 700 calc(var(--cw) * .2) / 1 Archivo, sans-serif; letter-spacing: -.03em;
+}
+
+/* the board turns instant while it is laid out again (resize, first draw) */
+.instant .card, .instant .card .flip { transition: none !important; }
+@media (prefers-reduced-motion: reduce) { .card, .card .flip { transition-duration: .01s !important; } .card .wig { animation: none !important; } }
+
+/* ---------- messages ---------- */
+#toast {
+  position: fixed; left: 50%; bottom: max(18px, env(safe-area-inset-bottom, 0px)); z-index: 4000; transform: translate(-50%, 30px); opacity: 0;
+  padding: 12px 20px; border-radius: 14px; background: rgba(8, 20, 12, .92); color: #fff; font: 700 17px/1.3 Archivo, sans-serif;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .4); transition: opacity .2s, transform .2s; pointer-events: none; max-width: calc(100vw - 32px); text-align: center;
+}
+#toast.on { opacity: 1; transform: translate(-50%, 0); }
+#stuck {
+  position: fixed; left: 50%; bottom: max(18px, env(safe-area-inset-bottom, 0px)); z-index: 3500; transform: translateX(-50%);
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 14px; padding: 12px 14px 12px 20px; border-radius: 16px;
+  background: var(--sheet); color: var(--sheet-ink); box-shadow: 0 14px 40px rgba(0, 0, 0, .45); max-width: calc(100vw - 32px); font-weight: 700;
+}
+#stuck[hidden] { display: none; }
+
+/* ---------- the pop-up sheets ---------- */
+.scrim { position: fixed; inset: 0; z-index: 5000; display: grid; place-items: center; padding: 16px; background: rgba(2, 12, 6, .55); backdrop-filter: blur(3px); }
+.scrim[hidden] { display: none; }
+.sheet {
+  width: min(560px, 100%); max-height: calc(100% - 8px); overflow: auto; padding: 24px 24px 20px; border-radius: 20px;
+  background: var(--sheet); color: var(--sheet-ink); box-shadow: 0 24px 70px rgba(0, 0, 0, .5); -webkit-user-select: text; user-select: text;
+}
+.sheet h2 { margin: 0 0 4px; font: 600 28px/1.15 "Clash Display", Archivo, sans-serif; text-wrap: balance; }
+.sheet p { margin: 0 0 12px; }
+.sheet .soft { color: var(--sheet-soft); font-size: 15px; }
+.sheet .row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 20px; border-radius: 14px;
+  border: 2px solid var(--sheet-line); background: #fff; color: var(--sheet-ink); font: 700 17px/1.1 Archivo, sans-serif; cursor: pointer;
+}
+.btn:hover { border-color: #c9c3b3; }
+.btn.go { background: var(--primary); border-color: var(--primary); color: var(--primary-ink); }
+.btn.go:hover { filter: brightness(1.08); }
+.btn.wide { flex: 1 1 200px; }
+.choice { display: grid; gap: 10px; margin-top: 14px; }
+.choice .btn { justify-content: flex-start; text-align: left; min-height: 64px; }
+.choice .btn small { display: block; font-weight: 500; font-size: 14px; color: var(--sheet-soft); margin-top: 3px; }
+.choice .btn.go small { color: rgba(255, 255, 255, .85); }
+.seg { display: inline-flex; padding: 4px; border-radius: 14px; background: #ece8dc; gap: 4px; }
+.seg button { min-height: 44px; padding: 0 16px; border: 0; border-radius: 10px; background: transparent; font: 700 16px Archivo, sans-serif; color: var(--sheet-ink); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .15); }
+.set { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 13px 0; border-top: 1px solid var(--sheet-line); }
+.set:first-of-type { border-top: 0; }
+.set label { font-weight: 700; }
+.set small { display: block; color: var(--sheet-soft); font-weight: 500; font-size: 14px; }
+.sw { position: relative; flex: none; width: 58px; height: 34px; border-radius: 999px; border: 0; background: #cfcab9; cursor: pointer; transition: background .2s; }
+.sw::after { content: ""; position: absolute; left: 4px; top: 4px; width: 26px; height: 26px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .3); transition: transform .2s; }
+.sw[aria-checked="true"] { background: var(--primary); }
+.sw[aria-checked="true"]::after { transform: translateX(24px); }
+.felts { display: flex; gap: 10px; }
+.felts button { width: 42px; height: 42px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; }
+.felts button[aria-pressed="true"] { border-color: var(--sheet-ink); }
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 14px 0 4px; }
+.tile { padding: 12px 10px; border-radius: 14px; background: #f0ede3; text-align: center; }
+.tile b { display: block; font: 700 26px/1.1 Archivo, sans-serif; font-variant-numeric: tabular-nums; }
+.tile span { font-size: 14px; color: var(--sheet-soft); }
+@media (max-width: 460px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .sheet { padding: 20px 16px 16px; } }
+.badges { display: grid; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
+.badges li { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 12px; background: #fff4cf; color: #5a4200; font-weight: 700; }
+.badges li::before { content: "\2605"; color: #e0a600; font-size: 20px; }
+.week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin: 10px 0 2px; text-align: center; }
+.week div { padding: 8px 0 6px; border-radius: 10px; background: #f0ede3; font-size: 13px; color: var(--sheet-soft); }
+.week div b { display: block; font-size: 20px; line-height: 1.2; color: #c9c3b3; }
+.week div.won b { color: var(--primary); }
+.week div.today { outline: 2px solid var(--primary); }
+.how { margin: 8px 0 0; padding-left: 20px; }
+.how li { margin: 0 0 8px; }
+.foot { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--sheet-line); font-size: 14px; color: var(--sheet-soft); }
+.foot a { color: var(--primary); font-weight: 700; }
+
+#fx { position: fixed; inset: 0; z-index: 4500; pointer-events: none; }
+#fx.on { pointer-events: auto; cursor: pointer; }
+#fxhint { position: fixed; left: 50%; bottom: 22px; z-index: 4600; transform: translateX(-50%); padding: 8px 16px; border-radius: 999px; background: rgba(0, 0, 0, .55); font-weight: 700; pointer-events: none; }
+#fxhint[hidden] { display: none; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body class="felt-green">
+<div id="app">
+  <header class="bar">
+    <div class="brand"><b>365</b><span>Solitaire</span></div>
+    <div class="info" aria-live="off">
+      <div class="chip" id="chipTime"><small>Time</small><span id="vTime">0:00</span></div>
+      <div class="chip"><small>Moves</small><span id="vMoves">0</span></div>
+      <div class="chip"><small>Score</small><span id="vScore">0</span></div>
+    </div>
+    <nav class="tools" aria-label="Game">
+      <button class="tb main" id="bNew" type="button" title="New game (N)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="11" height="15" rx="2"/><path d="M9 21h9a2 2 0 0 0 2-2V8"/><path d="M9.5 8v5M7 10.5h5"/></svg><span class="lbl">New game</span></button>
+      <button class="tb" id="bUndo" type="button" title="Undo (U or Ctrl+Z)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span class="lbl">Undo</span></button>
+      <button class="tb" id="bHint" type="button" title="Show me a move (H)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></svg><span class="lbl">Hint</span></button>
+      <button class="tb" id="bStats" type="button" title="My scores"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg><span class="lbl">My scores</span></button>
+      <button class="tb" id="bSet" type="button" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="lbl">Settings</span></button>
+      <button class="tb" id="bHelp" type="button" title="How to play"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M9.2 9.2a2.9 2.9 0 0 1 5.6 1c0 1.9-2.8 2.6-2.8 4.3M12 17.6h.01"/></svg><span class="lbl">How to play</span></button>
+      <button class="tb" id="bFull" type="button" title="Full screen (F)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg><span class="lbl" id="bFullL">Full screen</span></button>
+    </nav>
+  </header>
+  <main id="board" aria-label="The card table"></main>
+</div>
+
+<div id="stuck" hidden role="status"><span>No more moves found.</span><button class="btn" type="button" id="stUndo">Undo</button><button class="btn go" type="button" id="stNew">New game</button></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<canvas id="fx" hidden></canvas>
+<div id="fxhint" hidden>Tap anywhere to carry on</div>
+
+<!-- New game -->
+<div class="scrim" id="dNew" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dNewH">
+  <h2 id="dNewH">New game</h2>
+  <p class="soft" id="dNewNote"></p>
+  <div class="seg" role="group" aria-label="Cards to turn over"><button type="button" data-draw="1">Turn one card</button><button type="button" data-draw="3">Turn three cards</button></div>
+  <div class="choice">
+    <button class="btn go" type="button" id="nDeal">New deal<small id="nDealS">A fresh shuffle</small></button>
+    <button class="btn" type="button" id="nDaily">Today&rsquo;s deal<small id="nDailyS">The same deal for everyone today</small></button>
+    <button class="btn" type="button" id="nAgain">Play this deal again<small id="nAgainS">Start the same cards from the beginning</small></button>
+  </div>
+  <div class="row"><button class="btn wide" type="button" data-close>Keep playing</button></div>
+</div></div>
+
+<!-- Won -->
+<div class="scrim" id="dWin" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dWinH">
+  <h2 id="dWinH">You won!</h2>
+  <p class="soft" id="dWinSub"></p>
+  <div class="tiles"><div class="tile"><b id="wTime">0:00</b><span>Time</span></div><div class="tile"><b id="wMoves">0</b><span>Moves</span></div><div class="tile"><b id="wScore">0</b><span>Score</span></div></div>
+  <ul class="badges" id="wBadges"></ul>
+  <div class="row"><button class="btn go wide" type="button" id="wAgain">Play again</button><button class="btn wide" type="button" id="wDaily">Today&rsquo;s deal</button><button class="btn wide" type="button" id="wStats">My scores</button></div>
+</div></div>
+
+<!-- My scores -->
+<div class="scrim" id="dStats" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dStatsH">
+  <h2 id="dStatsH">My scores</h2>
+  <p class="soft">Kept on this computer only &mdash; nothing is sent anywhere.</p>
+  <div class="tiles" id="sTiles"></div>
+  <h3 style="margin:16px 0 0;font-size:18px">Today&rsquo;s deal this week</h3>
+  <div class="week" id="sWeek"></div>
+  <div class="tiles" id="sBest"></div>
+  <div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>
+</div></div>
+
+<!-- Settings -->
+<div class="scrim" id="dSet" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dSetH">
+  <h2 id="dSetH">Settings</h2>
+  <div class="set"><div><label>Cards to turn over</label><small>One is easier. Changes from your next game.</small></div><div class="seg" role="group" aria-label="Cards to turn over"><button type="button" data-draw="1">One</button><button type="button" data-draw="3">Three</button></div></div>
+  <div class="set"><div><label id="lWin">Deals you can always win</label><small>Every deal has been played through to a win.</small></div><button class="sw" type="button" role="switch" aria-labelledby="lWin" data-set="winnable"></button></div>
+  <div class="set"><div><label id="lAuto">Move cards up to the piles for me</label><small>When it&rsquo;s plainly safe to.</small></div><button class="sw" type="button" role="switch" aria-labelledby="lAuto" data-set="auto"></button></div>
+  <div class="set"><div><label id="lSnd">Sounds</label><small>Soft clicks as the cards move.</small></div><button class="sw" type="button" role="switch" aria-labelledby="lSnd" data-set="sound"></button></div>
+  <div class="set"><div><label id="lTim">Show the clock</label><small>It still keeps your best time.</small></div><button class="sw" type="button" role="switch" aria-labelledby="lTim" data-set="timer"></button></div>
+  <div class="set"><div><label>Table colour</label></div><div class="felts" role="group" aria-label="Table colour">
+    <button type="button" data-felt="green" style="background:#1f7a45" aria-label="Green"></button><button type="button" data-felt="blue" style="background:#1f5f9c" aria-label="Blue"></button>
+    <button type="button" data-felt="red" style="background:#8e2537" aria-label="Red"></button><button type="button" data-felt="slate" style="background:#45526a" aria-label="Grey"></button></div></div>
+  <p class="foot">365 Solitaire is made by <a href="https://365techies.co.uk/" target="_blank" rel="noopener">365 Techies</a> in Bournemouth. No adverts, no sign-in, nothing to install. Computer playing up? Ring us on <b>01202 775566</b>.</p>
+  <div class="row"><button class="btn go wide" type="button" data-close>Done</button></div>
+</div></div>
+
+<!-- How to play -->
+<div class="scrim" id="dHelp" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dHelpH">
+  <h2 id="dHelpH">How to play</h2>
+  <ol class="how">
+    <li><b>The aim:</b> build the four piles at the top, one for each suit, from Ace up to King.</li>
+    <li><b>In the seven columns</b>, put each card on one a step higher of the other colour &mdash; a red 6 on a black 7.</li>
+    <li><b>Tap a card</b> and it moves to the best place for it. You can drag cards too, if you prefer.</li>
+    <li><b>Tap the deck</b> at the top left to turn over new cards. When it&rsquo;s empty, tap it to start again.</li>
+    <li><b>Only a King</b> can go in an empty column.</li>
+    <li>Stuck? Press <b>Hint</b> and the next move lights up. <b>Undo</b> takes back as many moves as you like.</li>
+  </ol>
+  <p class="soft">Keys, if you like them: N new game, U undo, H hint, space turns the deck, F full screen.</p>
+  <div class="row"><button class="btn go wide" type="button" data-close>Let&rsquo;s play</button></div>
+</div></div>
+
+<!-- Clear scores -->
+<div class="scrim" id="dReset" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dResetH">
+  <h2 id="dResetH">Clear my scores?</h2>
+  <p>Your games won, streaks and best times on this computer go back to nothing. This can&rsquo;t be undone.</p>
+  <div class="row"><button class="btn wide" type="button" data-close>Keep them</button><button class="btn go wide" type="button" id="rYes" style="background:#a3242f;border-color:#a3242f">Clear them</button></div>
+</div></div>
+
+<script src="engine.js?v=1"></script>
+<script src="deals.js?v=1"></script>
+<script src="solitaire.js?v=1"></script>
+<!-- the site's cookie-free visitor count (the same snippet as every page): counts that the game was opened -->
+<script>(function(){try{if(navigator.doNotTrack==="1")return;if(/bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit/i.test(navigator.userAgent))return;try{if(localStorage.getItem("p365staffdev")||/"staff":true|"back":/.test((localStorage.getItem("p365")||"")+(sessionStorage.getItem("p365s")||"")))return;}catch(e){}var u=navigator.userAgentData,b={site:"t365",path:location.pathname,ref:(function(){try{return new URL(document.referrer).hostname}catch(e){return""}})(),em:/utm_medium=e-?mail|utm_source=(e-?mail|newsletter|hubspot)/i.test(location.search)?1:0,t:navigator.maxTouchPoints||0,sw:(screen&&screen.width)||0,dk:(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?1:0,lg:String(navigator.language||"").slice(0,12)},sent=false;if(u&&typeof u.mobile==="boolean")b.mb=u.mobile?1:0;var go=function(){if(sent)return;sent=true;try{fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(b),keepalive:true});}catch(e){}};if(u&&u.getHighEntropyValues&&/Windows/.test(navigator.userAgent)){u.getHighEntropyValues(["platformVersion"]).then(function(h){b.pv=String((h&&h.platformVersion)||"").slice(0,12);go();},go);setTimeout(go,400);}else go();var tap=function(k){try{var d=JSON.parse(JSON.stringify(b));d.path=k;d.ref=location.hostname;d.em=0;fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(d),keepalive:true});}catch(e){}};document.addEventListener("click",function(ev){try{var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");if(!a)return;var h=a.getAttribute("href")||"";if(/365-pc-manager-setup[^\/?#]*\.exe([?#]|$)/i.test(h))tap("/~dl/pcm/");else if(/^tel:/i.test(h))tap("/~call"+location.pathname);else if(/^sms:/i.test(h))tap("/~text"+location.pathname);}catch(e){}},true);document.addEventListener("tt:lead",function(){tap("/~lead"+location.pathname);});}catch(e){}})();</script>
+</body>
+</html>
