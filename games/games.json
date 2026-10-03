@@ -4,10 +4,10 @@
   "games": [
     { "id": "solitaire", "title": "Solitaire", "icon": "🃏", "cat": "Card games", "url": "https://365techies.co.uk/games/solitaire/",
       "sub": "The classic patience, with big clear cards. Every deal can be won." },
-    { "id": "freecell", "title": "FreeCell", "icon": "♣", "cat": "Card games", "soon": true,
-      "sub": "Coming soon - every card face up from the start" },
-    { "id": "spider", "title": "Spider", "icon": "🕷", "cat": "Card games", "soon": true,
-      "sub": "Coming soon - play with one, two or four suits" },
+    { "id": "freecell", "title": "FreeCell", "icon": "♣", "cat": "Card games", "url": "https://365techies.co.uk/games/freecell/",
+      "sub": "Every card face up from the start, so you can plan. The same deals as Windows." },
+    { "id": "spider", "title": "Spider", "icon": "🕷", "cat": "Card games", "url": "https://365techies.co.uk/games/spider/",
+      "sub": "Build each suit from King to Ace. One suit is easy; two or four for a challenge." },
     { "id": "seafront", "title": "Seafront", "icon": "🌊", "cat": "Seafront", "url": "https://365techies.co.uk/bournemouth/games/seafront/play/",
       "sub": "Ride an eFoil, jet ski or RIB along the real Bournemouth seafront. Best on a newer PC." }
   ]

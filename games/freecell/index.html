@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Solitaire - free, no adverts | 365 Techies</title>
+<title>FreeCell - free, no adverts | 365 Techies</title>
 <!-- 3 Oct 2026: hand-made game page (not built by build_blog.py). noindex and off the sitemap and menus until the
-     owner says it goes public; PC Manager's Games menu (v32) opens it in its own window. -->
+     owner says it goes public; PC Manager's Games menu opens it in its own window. -->
 <meta name="robots" content="noindex" />
-<meta name="description" content="Klondike Solitaire with big, clear cards: no adverts, no sign-in, nothing to install. Tap a card to move it, undo as often as you like, and beat your own best." />
+<meta name="description" content="FreeCell with big, clear cards and the same deal numbers as Windows: no adverts, no sign-in, nothing to install. Tap a card to move it and undo as often as you like." />
 <meta name="theme-color" content="#0f4a2a" />
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -15,11 +15,10 @@
 <link rel="stylesheet" href="../common/table.css?v=2" />
 </head>
 <body class="felt-green">
-<!-- the bar, the table and the pop-up sheets are drawn by ../common/table.js (shared with FreeCell and Spider) -->
+<!-- the bar, the table and the pop-up sheets are drawn by ../common/table.js (shared with the other card games) -->
 <script src="engine.js?v=1"></script>
-<script src="deals.js?v=1"></script>
 <script src="../common/table.js?v=2"></script>
-<script src="solitaire.js?v=2"></script>
+<script src="freecell.js?v=1"></script>
 <!-- the site's cookie-free visitor count (the same snippet as every page): counts that the game was opened -->
 <script>(function(){try{if(navigator.doNotTrack==="1")return;if(/bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit/i.test(navigator.userAgent))return;try{if(localStorage.getItem("p365staffdev")||/"staff":true|"back":/.test((localStorage.getItem("p365")||"")+(sessionStorage.getItem("p365s")||"")))return;}catch(e){}var u=navigator.userAgentData,b={site:"t365",path:location.pathname,ref:(function(){try{return new URL(document.referrer).hostname}catch(e){return""}})(),em:/utm_medium=e-?mail|utm_source=(e-?mail|newsletter|hubspot)/i.test(location.search)?1:0,t:navigator.maxTouchPoints||0,sw:(screen&&screen.width)||0,dk:(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?1:0,lg:String(navigator.language||"").slice(0,12)},sent=false;if(u&&typeof u.mobile==="boolean")b.mb=u.mobile?1:0;var go=function(){if(sent)return;sent=true;try{fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(b),keepalive:true});}catch(e){}};if(u&&u.getHighEntropyValues&&/Windows/.test(navigator.userAgent)){u.getHighEntropyValues(["platformVersion"]).then(function(h){b.pv=String((h&&h.platformVersion)||"").slice(0,12);go();},go);setTimeout(go,400);}else go();var tap=function(k){try{var d=JSON.parse(JSON.stringify(b));d.path=k;d.ref=location.hostname;d.em=0;fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(d),keepalive:true});}catch(e){}};document.addEventListener("click",function(ev){try{var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");if(!a)return;var h=a.getAttribute("href")||"";if(/365-pc-manager-setup[^\/?#]*\.exe([?#]|$)/i.test(h))tap("/~dl/pcm/");else if(/^tel:/i.test(h))tap("/~call"+location.pathname);else if(/^sms:/i.test(h))tap("/~text"+location.pathname);}catch(e){}},true);document.addEventListener("tt:lead",function(){tap("/~lead"+location.pathname);});}catch(e){}})();</script>
 </body>
