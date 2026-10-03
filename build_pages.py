@@ -223,7 +223,7 @@ WA_CONTACT_ROW = (f'<li><span class="k">WhatsApp</span><span class="v"><a href="
 # says the item isn't available, so no link is published. Once approved, set it to
 # "https://chromewebstore.google.com/detail/iojhdcdcblphmeebjkobnigbdkioloej" and rebuild - the contact page's
 # "Or reach us directly" list and the scam pop-up guide (build_extra.build_new_page) then show it.
-GET_HELP_ADDON_URL = ""
+GET_HELP_ADDON_URL = "https://chromewebstore.google.com/detail/iojhdcdcblphmeebjkobnigbdkioloej"
 GH_CWAY = (f'\n          <a class="cway" href="{GET_HELP_ADDON_URL}" target="_blank" rel="noopener"><span class="cway__i" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/><path d="M10 8.5a2 2 0 1 1 2.7 1.9c-.5.2-.7.6-.7 1.1v.5M12 14h.01"/></svg></span><span class="cway__t"><b>Add our Get Help button</b><span>Ask us to ring back from any web page &middot; Chrome &amp; Edge</span></span></a>') if GET_HELP_ADDON_URL else ""
 GH_BAND = (f'''    <section class="section" aria-label="The 365 Get Help button">
       <div class="wrap" style="max-width:860px;margin:0 auto">
