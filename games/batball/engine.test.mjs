@@ -19,7 +19,6 @@ const bot = (W) => { const lo = W.balls.filter((b) => !b.stuck && b.vy > 0).sort
 
 test('every level is 13 bricks across, uses known bricks, has something to break, and no wall of steel blocks the way', () => {
   const known = new Set(['.', ...Object.keys(E.POINTS)]);
-  assert.equal(E.LEVELS.length, 12);
   E.LEVELS.forEach((L) => {
     L.map.forEach((row, i) => {
       assert.equal(row.length, 13, L.name + ' row ' + i);
@@ -27,9 +26,104 @@ test('every level is 13 bricks across, uses known bricks, has something to break
       assert.ok(!/^x{13}$/.test(row), L.name + ' row ' + i + ' is solid steel');
     });
     assert.ok(L.map.join('').replace(/[.x]/g, '').length > 0, L.name + ' has breakable bricks');
+    if (L.move) L.map.forEach((row, i) => assert.ok(row[0] === '.' && row[12] === '.', L.name + ' slides, so its outer columns must be clear (row ' + i + ')'));
   });
-  assert.equal(E.LEVELS.filter((L) => L.boss).length, 1);
-  assert.ok(E.LEVELS[9].boss, 'level 10 is the Mothership');
+  assert.equal(E.LEVELS.length, 20);
+  assert.equal(E.LEVELS.filter((L) => L.boss).length, 2);
+  assert.ok(E.LEVELS[9].boss && E.LEVELS[19].boss, 'levels 10 and 20 are the Mothership');
+  assert.ok(E.LEVELS.some((L) => L.map.join('').includes('e')), 'there are explosive bricks');
+  assert.ok(E.LEVELS.filter((L) => L.move).length >= 2, 'and sliding formations');
+});
+
+test('an explosive brick blows up the bricks round it, and sets off the next explosive', () => {
+  const W = E.newWorld(2, 1); toPlay(W); quiet(W); clearBricks(W);
+  const e1 = brickAt(W, 6, 6, 'e'), n1 = brickAt(W, 5, 6, 'r'), n2 = brickAt(W, 6, 7, 'g'), e2 = brickAt(W, 7, 7, 'e'), far = brickAt(W, 8, 8, 'b'), steel = brickAt(W, 6, 5, 'x');
+  brickAt(W, 0, 0, 'w');
+  const b = W.balls[0]; b.stuck = false; b.x = e1.x + 6; b.y = e1.y + 12; b.vx = 0; b.vy = -2;
+  play(W, 60, { mouseX: 20 });
+  assert.equal(e1.alive, false); assert.equal(n1.alive, false); assert.equal(n2.alive, false);
+  assert.equal(e2.alive, false, 'the second explosive went too');
+  assert.equal(far.alive, false, 'and took its own neighbour - a chain');
+  assert.equal(steel.alive, true, 'steel stands');
+});
+
+test('Blast: the next three hits explode; Net: a lost ball bounces back once', () => {
+  const W = E.newWorld(2, 1); toPlay(W); quiet(W); clearBricks(W);
+  E.collect(W, { kind: 'B', x: 112, y: 230 }); assert.equal(W.blast, 3);
+  const a = brickAt(W, 6, 6, 'w'), n = brickAt(W, 6, 7, 'w'); brickAt(W, 0, 0, 'w');
+  const b = W.balls[0]; b.stuck = false; b.x = a.x + 6; b.y = a.y + 12; b.vx = 0; b.vy = -2;
+  play(W, 30, { mouseX: 20 });
+  assert.equal(n.alive, false, 'the blast took the neighbour'); assert.equal(W.blast, 2);
+  E.collect(W, { kind: 'N', x: 112, y: 230 }); assert.equal(W.net, true);
+  b.x = 20; b.y = 240; b.vx = 0; b.vy = 2;
+  play(W, 6, { mouseX: 200 });
+  assert.ok(b.vy < 0, 'saved by the net'); assert.equal(W.net, false, 'used up');
+  const lives = W.lives; b.x = 20; b.y = 245; b.vx = 0; b.vy = 3;
+  play(W, 10, { mouseX: 200 });
+  assert.equal(W.lives, lives - 1, 'the next one is lost');
+});
+
+test('a moving bat steers the ball', () => {
+  const angle = (vx) => {
+    const W = E.newWorld(2, 1); toPlay(W); quiet(W); clearBricks(W); brickAt(W, 0, 0, 'w');
+    // the bat arrives under the ball's middle on the step it lands, moving at vx
+    const b = W.balls[0]; b.stuck = false; W.bat.x = 112 - vx; b.x = 110; b.y = E.BAT_Y - 5; b.vx = 0; b.vy = 2;
+    E.step(W, { mouseX: 112 });
+    assert.ok(b.vy < 0, 'it bounced');
+    return Math.atan2(b.vx, -b.vy);
+  };
+  assert.ok(angle(8) > angle(0) + 0.1, 'moving right sends it further right');
+  assert.ok(angle(-8) < angle(0) - 0.1, 'moving left, further left');
+});
+
+test('a sliding formation moves the bricks, and a ball it runs into is carried out', () => {
+  const W = E.newWorld(2, 1); while (W.level < 4) E.nextLevel(W);
+  assert.equal(W.levelName, 'INVADER'); assert.ok(W.moveAmp > 0);
+  toPlay(W); quiet(W);
+  const br = W.bricks.find((x) => x.alive), x0 = br.x;
+  play(W, 120, { mouseX: 112 });
+  assert.notEqual(br.x, x0, 'the bricks slid');
+  assert.ok(Math.abs(br.x - br.bx) <= 15);
+  // a ball sitting where the bricks are about to be
+  const b = W.balls[0]; b.stuck = false; b.vx = 0; b.vy = -0.0001;
+  const target = W.bricks.find((x) => x.alive && x.t !== 'x');
+  b.x = target.x - 4 + (W.shift < 0 ? 0 : 16); b.y = target.y + 2;
+  for (let i = 0; i < 60; i++) { E.step(W, { mouseX: 112 }); W.events.length = 0; assert.equal(E.bricksAt(W, b.x, b.y, 4, 4).filter((x) => x.alive).length <= 1, true); }
+});
+
+test('the last brick freezes the action for a moment', () => {
+  const W = E.newWorld(2, 1); toPlay(W); quiet(W); clearBricks(W);
+  const last = brickAt(W, 6, 6, 'w');
+  const b = W.balls[0]; b.stuck = false; b.x = last.x + 6; b.y = last.y + 12; b.vx = 0; b.vy = -2;
+  for (let i = 0; i < 10 && last.alive; i++) E.step(W, { mouseX: 112 });
+  assert.equal(last.alive, false);
+  assert.ok(W.freeze > 0, 'frozen');
+  const y = b.y; E.step(W, { mouseX: 112 });
+  assert.equal(b.y, y, 'nothing moves while frozen');
+});
+
+test('a long run is praised and the multiplier reaches x5', () => {
+  const W = E.newWorld(2, 1); toPlay(W); quiet(W); clearBricks(W); brickAt(W, 0, 12, 'w');
+  const said = [];
+  for (let i = 0; i < 17; i++) {
+    const br = brickAt(W, 6 + (i % 3), i % 10 + 1, 'w');
+    const b = W.balls[0]; b.stuck = false; b.x = br.x + 6; b.y = br.y + 12; b.vx = 0; b.vy = -2;
+    for (let f = 0; f < 8; f++) { E.step(W, { mouseX: 20 }); W.fx.forEach((x) => { if (x.k === 'praise') said.push(x.text); }); W.fx.length = 0; W.events.length = 0; }
+  }
+  assert.ok(W.volley >= 17);
+  assert.equal(W.mult, 5);
+  assert.deepEqual(said, ['NICE!', 'GREAT!', 'AMAZING!']);
+});
+
+test('level 20 is the fierce Mothership: tougher, and calls in escorts when hurt', () => {
+  const W = E.newWorld(2, 3);
+  while (W.level < 20) E.nextLevel(W);
+  assert.equal(W.levelName, 'MOTHERSHIP II'); assert.ok(W.boss.fierce);
+  const V = E.newWorld(2, 3); while (V.level < 10) E.nextLevel(V);
+  assert.ok(W.boss.max > V.boss.max, 'more strength than the first');
+  toPlay(W); W.boss.hp = Math.floor(W.boss.max / 2) - 1; W.enemyT = 1; W.boss.fireT = 1e9;
+  E.step(W, { mouseX: 112 });
+  assert.equal(W.enemies.length, 1, 'an escort');
 });
 
 test('a new game: level 1, the ball on the bat, lives by speed', () => {
