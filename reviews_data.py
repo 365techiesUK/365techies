@@ -264,6 +264,11 @@ REVIEWS = [
  # No full stop at the end on Google either - rule 2 (their terminator, not
  # ours) means it stays that way here.
  ("Robina Craweford", "Have used 365 for years now. Always there if there is an issue, which is dealt with swiftly"),
+ # NEW 2026-10-03 (owner: "yes add the reviews to the website") - both 5 stars, both complete on Google (no
+ # "...More" cut), captured from Google Search's own reviews dialog sorted Newest. Richard's capitals are his.
+ # Gate: tools_check_reviews.py against seo-research/reviews/gbp-paste-2026-10-03.txt.
+ ("Colin Sutton", "David and Steve guided me through the process, which all went smoothly. Everything was explained in detail before they went ahead. Very pleased with the outcome. Would definitely use them again."),
+ ("Richard Lawrence", "A BIG THANK YOU to the 365 team for many years of expert advice and support. It is hard to keep up with the pace of tech these days, so having a team that you trust to contact when you need help is so important. 365 are always there with help and patience when needed."),
 ]
 
 # Checked character-by-character against the live Google profile on 2026-08-01.
@@ -291,6 +296,8 @@ VERIFIED = {
     # rendering of the review text, read programmatically - not a human paste)
     # and gated through tools_check_reviews.py the same day
     "Victoria", "Stephanie Smith", "Kevin Flight", "Robina Craweford",
+    # verified 2026-10-03 the same way (Google Search's reviews dialog, read programmatically) and gated
+    "Colin Sutton", "Richard Lawrence",
 }
 
 # WITHDRAWN 2026-08-01 - deliberately NOT published, do not re-add without
