@@ -1,6 +1,6 @@
 {
   "v": 1,
-  "note": "The games PC Manager lists (Games menu, v32+). The app opens only https://365techies.co.uk/games/... and /bournemouth/games/... addresses; cat must be one of: Card games, Puzzles, Seafront. soon = shown as Coming soon, not playable. Keep sub under 120 characters.",
+  "note": "The games PC Manager lists (Games menu, v32+). The app opens only https://365techies.co.uk/games/... and /bournemouth/games/... addresses. The sections are the cat values, in the order they first appear (v32 build a47cd33 on): plain words, letters first, 30 characters at most. soon = shown as Coming soon, not playable. Keep sub under 120 characters.",
   "games": [
     { "id": "solitaire", "title": "Solitaire", "icon": "🃏", "cat": "Card games", "url": "https://365techies.co.uk/games/solitaire/",
       "sub": "The classic patience, with big clear cards. Every deal can be won." },
@@ -8,6 +8,8 @@
       "sub": "Every card face up from the start, so you can plan. The same deals as Windows." },
     { "id": "spider", "title": "Spider", "icon": "🕷", "cat": "Card games", "url": "https://365techies.co.uk/games/spider/",
       "sub": "Build each suit from King to Ace. One suit is easy; two or four for a challenge." },
+    { "id": "invaders", "title": "365 Invaders", "icon": "👾", "cat": "Arcade", "url": "https://365techies.co.uk/games/invaders/",
+      "sub": "80s arcade shooting with our own pixel invaders. Gentle speed for beginners; Classic and Fast for experts." },
     { "id": "seafront", "title": "Seafront", "icon": "🌊", "cat": "Seafront", "url": "https://365techies.co.uk/bournemouth/games/seafront/play/",
       "sub": "Ride an eFoil, jet ski or RIB along the real Bournemouth seafront. Best on a newer PC." }
   ]
