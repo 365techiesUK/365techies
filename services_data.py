@@ -4,15 +4,15 @@ SERVICE_PAGES = [
   "slug": "data-recovery",
   "crumbName": "Data Recovery",
   "eyebrow": "// DATA RECOVERY",
-  "h1": "Data Recovery in <em class=\"grad grad--cyan\">Bournemouth &amp; Dorset</em>",
-  "lede": "Lost your photos, documents or business files? Whether a hard drive has failed, a file was deleted by mistake, or a drive has suddenly become unreadable, we'll calmly assess what's recoverable and get back what we can. Honest, plain-English help for Windows and Android &mdash; across Bournemouth, Poole, Christchurch and Dorset.",
-  "metaDesc": "Data recovery in Bournemouth, Poole &amp; Dorset. Failed drives, deleted files, corrupted or unreadable disks, dead laptops &amp; memory cards &mdash; Windows &amp; Android. Honest assessment first.",
+  "h1": "Data recovery in <em class=\"grad grad--cyan\">Bournemouth &amp; Poole</em>",
+  "lede": "Lost your photos, documents or business files? Whether a hard drive has failed, a file was deleted by mistake, or a drive has suddenly become unreadable, we'll calmly assess what's recoverable and get back what we can. Honest, plain-English help for Windows and Android from a local team in Bournemouth &mdash; covering Poole, Christchurch and the rest of Dorset.",
+  "metaDesc": "Data recovery in Bournemouth &amp; Poole. Failed drives, deleted files, corrupted or unreadable disks, dead laptops &amp; memory cards &mdash; Windows &amp; Android. Honest assessment first.",
   "chips": [
    "Failed &amp; clicking drives",
    "Deleted &amp; lost files",
    "Corrupted or RAW drives"
   ],
-  "intro": "<p>Losing your data is one of the most stressful things that can happen with a computer &mdash; a lifetime of family photos, your accounts, your coursework or a customer database, all seemingly gone in a moment. Take a breath. In many cases the data is still there and can be recovered, but the most important thing is to <strong>stop using the device straight away</strong> so nothing gets overwritten.</p><p>Data recovery is the job of getting back files you can no longer reach &mdash; whether the drive has physically failed, become corrupted or unreadable, or the files were deleted, formatted or lost past the point the Recycle Bin can help. It's different from setting up <a href=\"/backup-support/\">backups</a> (which prevents the problem) or planning whole-business <a href=\"/disaster-recovery/\">disaster recovery</a> (which gets a whole organisation running again). This page is about the here-and-now: <em>I've lost something important and I need it back.</em> We'll tell you honestly what's likely recoverable, what it involves, and when a specialist clean-room lab is the right next step &mdash; before you spend a penny on the recovery itself.</p>",
+  "intro": "<p>Losing your data is one of the most stressful things that can happen with a computer &mdash; a lifetime of family photos, your accounts, your coursework or a customer database, all seemingly gone in a moment. Take a breath. In many cases the data is still there and can be recovered, but the most important thing is to <strong>stop using the device straight away</strong> so nothing gets overwritten.</p><p>Data recovery is the job of getting back files you can no longer reach &mdash; whether the drive has physically failed, become corrupted or unreadable, or the files were deleted, formatted or lost past the point the Recycle Bin can help. It's different from setting up <a href=\"/backup-support/\">backups</a> (which prevents the problem) or planning whole-business <a href=\"/disaster-recovery/\">disaster recovery</a> (which gets a whole organisation running again). This page is about the here-and-now: <em>I've lost something important and I need it back.</em> We'll tell you honestly what's likely recoverable, what it involves, and when a specialist clean-room lab is the right next step &mdash; before you spend a penny on the recovery itself.</p><h3>Two checks we make before anyone touches your drive</h3><p><strong>1. Did it click, grind or get dropped?</strong> If so, it stays switched off. A drive with a physical fault only has so many spin-ups left, and every one spent &ldquo;just checking&rdquo; can turn a recoverable drive into a lost one. We send those to a specialist clean-room lab unpowered.</p><p><strong>2. Is it encrypted?</strong> Many Windows 11 laptops encrypt their drive automatically (BitLocker or device encryption), and some external drives encrypt inside the case. Without the recovery key nobody can read the data &mdash; not us, not a lab &mdash; and an encrypted drive can look exactly like a blank or corrupted one. So we check first, and help you find the key, which is often saved in your Microsoft account.</p><h3>Local to Bournemouth and Poole</h3><p>We&rsquo;re a family-run team based in Bournemouth. We can <a href=\"/book-a-collection/\">collect your computer or drive</a> from home or work anywhere in Bournemouth, Poole, Christchurch and across Dorset. Simple jobs on a computer that still works &mdash; files deleted by mistake, say &mdash; can often be done remotely: remote jobs start from &pound;20 and are agreed before we start. Bigger recoveries are quoted per job, and we&rsquo;re not VAT registered, so there&rsquo;s nothing to add.</p>",
   "features": [
    {
     "icon": "server",
@@ -82,7 +82,11 @@ SERVICE_PAGES = [
    },
    {
     "q": "How much does data recovery cost?",
-    "a": "It depends entirely on what's wrong &mdash; a deleted file is a very different job from a drive with a failed head assembly. Because of that we never quote a one-size price. We assess your device first and give you a clear quote for the recovery before any work begins, and our initial assessment is no fix, no fee. For physical failures that need a clean-room lab, we'll get you a price from our specialist partner so you can decide."
+    "a": "It depends entirely on what's wrong &mdash; a deleted file is a very different job from a drive with a failed head assembly. Because of that we never quote a one-size price. We assess your device first and give you a clear quote for the recovery before any work begins, and our initial assessment is no fix, no fee. Remote jobs on a computer that still works start from &pound;20. For physical failures that need a clean-room lab, we'll get you a price from our specialist partner so you can decide."
+   },
+   {
+    "q": "Do you do data recovery in Bournemouth and Poole?",
+    "a": "Yes. We&rsquo;re based in Bournemouth and help homes and businesses across Bournemouth, Poole, Christchurch and Dorset. We can collect the computer or drive, or help remotely when the computer still works. If the drive is clicking or has been dropped, keep it switched off and call 01202 775566 first."
    },
    {
     "q": "Do you do clean-room recovery yourselves?",
@@ -571,6 +575,10 @@ SERVICE_PAGES = [
    {
     "q": "My laptop won&rsquo;t turn on at all &mdash; no lights, nothing. Is it dead?",
     "a": "Often not &mdash; a completely dead laptop is frequently the charger, the charging port or a drained battery rather than the motherboard. Work through our guide to <a href=\"/laptop-wont-turn-on-no-lights/\">a laptop that won&rsquo;t turn on with no lights</a> &mdash; including what to check after <a href=\"/will-a-power-cut-damage-my-computer/\">a power cut</a> &mdash; and if it stays dead we&rsquo;ll diagnose it properly, no fix no fee."
+   },
+   {
+    "q": "How much does a laptop repair cost?",
+    "a": "Diagnosis is free, and you get a clear price before any work starts. Remote fixes start from &pound;20, a full Windows reinstall with your files backed up and put back is &pound;149, and screens, batteries and other parts are quoted for your exact model. Collection is free across Bournemouth, Poole and Dorset, and if we can&rsquo;t fix it you pay nothing. We&rsquo;re not VAT registered, so there&rsquo;s nothing to add."
    },
    {
     "q": "Is it worth repairing my laptop or should I replace it?",

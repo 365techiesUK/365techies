@@ -15859,7 +15859,7 @@ def repair_pages():
         return [(t, s) for _d, t, s in scored[:n]]
     wa_repair = (f' You can also <a href="{bp.WHATSAPP_LINK}" target="_blank" rel="noopener">send it on WhatsApp</a>.') if bp.WHATSAPP_NUMBER else ""
     for town, slug, nearby, it_slug in REPAIRS:
-        desc = f"Broken or slow computer in {town}? Free collection, 12-month warranty — and if we can't fix it, you pay nothing. Family-run since 1995 · 4.9 on Google."
+        desc = f"Broken or slow computer in {town}? Remote fixes from £20, free collection and a 12-month warranty. If we can't fix it, you pay nothing. Family-run since 1995."
         loc = bp.LOCAL_CONTENT.get(town, {})
         local_section = (f'''    <section class="section" aria-label="Local computer repair in {town}">
       <div class="wrap">
@@ -15870,7 +15870,7 @@ def repair_pages():
     </section>''') if loc.get("intro") else ""
         faqs = [
           (f"Do you repair computers and laptops in {town}?", f"Yes &mdash; we repair PCs and laptops for homes and businesses across {town} and the surrounding area ({nearby}). We can help remotely, visit you at home, or collect the machine."),
-          ("How much does a computer repair cost?", "It depends on the problem &mdash; we diagnose it and give you a clear price before any work, with no call-out fee and no surprise bills. Many issues are fixed quickly and remotely."),
+          ("How much does a computer repair cost?", "Diagnosis is free, and we give you a clear price before any work, with no call-out fee and no surprise bills. Remote fixes start from &pound;20; a full Windows reinstall with your files backed up and put back is &pound;149; screens, drives and other parts are quoted for your exact model. If we can&rsquo;t fix it, you pay nothing. We&rsquo;re not VAT registered, so there&rsquo;s nothing to add."),
           ("Is it worth repairing or replacing my computer?", "We&rsquo;ll tell you honestly &mdash; sometimes a small upgrade like an SSD gives an old machine years more life; sometimes a replacement is better value. Try our <a href=\"/repair-or-replace-advisor/\">repair or replace advisor</a>."),
           ("Why is my computer so slow?", "Usually clutter, too many start-up programs, low disk space, missed updates or a failing drive. We&rsquo;ll find the cause and speed it up &mdash; and a <a href=\"/monthly-it-support/\">monthly plan</a> keeps it fast with a full service every six weeks."),
           (f"Can you come to my home in {town}?", f"Yes &mdash; we offer home visits across {town}, and for any visit we phone ahead with an estimated arrival time so you know exactly when to expect us. We can also fix many things remotely."),
@@ -15903,6 +15903,25 @@ def repair_pages():
         <div class="prose" data-reveal style="text-align:center;max-width:64ch;margin:0 auto">
           <p><strong>Not sure what&rsquo;s wrong?</strong> Text a photo of the error message or your laptop or PC to <a href="{bp.TEXT_SMS}">{bp.TEXT_DISPLAY}</a> and we&rsquo;ll tell you what&rsquo;s likely up and what it&rsquo;ll take to fix &mdash; text only, no call needed.{wa_repair}</p>
         </div>
+      </div>
+    </section>''',
+          # 3 Oct 2026 (owner: "yes do 1 to 3"): real prices on every town repair page - the repair pages ranking
+          # above us are thin and price-free (local-rivals-compare-2026-10-03.md). Only owner-confirmed figures here.
+          f'''    <section class="section section--alt" aria-label="Repair prices in {town}">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// PRICES</p>
+          <h2 class="section-title section-title--center" data-title>Computer repair prices in {town}<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Real prices, agreed before any work starts. We&rsquo;re not VAT registered, so there&rsquo;s nothing to add.</p>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("Diagnosis: free","We find out what&rsquo;s wrong first and give you a clear price. If we can&rsquo;t fix it, you pay nothing."),
+             ("Remote fixes: from &pound;20","Many problems are fixed over a secure remote session, priced on the job and agreed before we start."),
+             ("Windows reinstall: &pound;149","A full clean install with your files backed up and put back &mdash; about four hours of work."),
+             ("Collection: free",f"We collect your computer or laptop in {town} and bring it back when it&rsquo;s fixed. <a href=\"/book-a-collection/\">Book a collection</a>."),
+             ("Screens, drives &amp; parts: quoted first","Priced for your exact model before any work starts, so there are no surprises."),
+             ("12-month warranty","Every repair we do is covered for 12 months.")])}
+        </ul>
       </div>
     </section>''',
           f'''    <section class="section" aria-label="What we fix">
@@ -16287,9 +16306,9 @@ def gap_service(c):
 GAP_SERVICES = [
  {
   "slug": "business-it-consultancy", "crumb": "IT Consultancy",
-  "eyebrow": "// IT CONSULTANCY &amp; STRATEGY",
-  "h1": 'Business IT <em class="grad grad--cyan">consultancy</em>',
-  "lede": "Plain-English IT advice and a clear technology plan for your business &mdash; like having your own IT director, without the salary. We help Dorset small businesses choose the right systems, budget sensibly and stop firefighting.",
+  "eyebrow": "// IT CONSULTANCY &middot; BOURNEMOUTH, POOLE &amp; DORSET",
+  "h1": 'IT consultancy for <em class="grad grad--cyan">Dorset</em> businesses',
+  "lede": "Plain-English IT advice and a clear technology plan for your business &mdash; like having your own IT director, without the salary. We&rsquo;re based in Bournemouth and help small businesses in Poole, Christchurch and across Dorset choose the right systems, budget sensibly and stop firefighting.",
   "chips": ["Plain-English advice", "Your virtual IT manager", "No jargon, no pressure"],
   "cta1": ("Book a Free IT Review", "/contact/"), "cta2": ("Business IT Support", "/business-it-support-subscriptions/"),
   "why_eyebrow": "WHY IT MATTERS", "why_title": "Technology that fits your business",
@@ -16307,10 +16326,11 @@ GAP_SERVICES = [
     ("What is a virtual IT manager?", "It&rsquo;s an outside IT expert who acts as your part-time IT director &mdash; planning, advising and overseeing your technology &mdash; for a fraction of the cost of hiring someone full time."),
     ("Do I have to be a support customer?", "No &mdash; we offer standalone IT consultancy and reviews. Many businesses start with a review, then move onto a support plan."),
     ("Is the advice independent?", "Yes &mdash; we recommend what&rsquo;s right for you, in plain English, with no pressure. We&rsquo;ll happily tell you when you don&rsquo;t need to spend."),
-    ("How much does it cost?", "An initial IT review is free and no-obligation. Ongoing consultancy is quoted clearly up front to suit how much help you want.")],
+    ("How much does it cost?", "An initial IT review is free and no-obligation. Ongoing consultancy is quoted clearly up front to suit how much help you want."),
+    ("Do you offer IT consultancy across Dorset?", "Yes. We&rsquo;re a family-run team based in Bournemouth, working with small businesses in Poole, Christchurch, Wimborne, Ferndown, Dorchester and across Dorset &mdash; in person at your office or remotely, whichever suits.")],
   "cta_title": "Let&rsquo;s make sense of your IT", "cta_text": "Book a free, no-obligation IT review and we&rsquo;ll give you a clear, plain-English plan &mdash; no jargon, no pressure.",
   "svc_name": "Business IT Consultancy", "svc_desc": "IT strategy, planning and virtual IT manager services for small businesses across Dorset — independent, plain-English advice.", "svc_type": "IT consultancy",
-  "title": "Business IT Consultancy & Virtual IT Manager | Dorset | 365 Techies",
+  "title": "IT Consultancy Dorset | Virtual IT Manager for Small Firms",
   "og_title": "Business IT Consultancy | 365 Techies",
   "desc": "Independent, plain-English business IT consultancy across Bournemouth, Poole and Dorset — IT strategy, planning and a virtual IT manager for small businesses. Free, no-obligation IT review.",
  },

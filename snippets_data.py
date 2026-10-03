@@ -248,7 +248,8 @@ SNIPPETS = {
         "desc": "Shared folders stopped working after the Windows 11 24H2 update? It is the new SMB signing and guest-access security. The safe way to get back in.",
     },
     "data-recovery": {
-        "desc": "Data recovery in Bournemouth, Poole and Dorset. Failed drives, deleted files, unreadable disks, dead laptops and memory cards. Call us on 01202 775566.",
+        "title": "Data Recovery Bournemouth &amp; Poole | Hard Drives &amp; Laptops",
+        "desc": "Data recovery in Bournemouth and Poole: deleted files, failed or clicking drives, dead laptops and SD cards. Honest odds and a clear quote before we start.",
     },
     "how-to-recover-deleted-files": {
         "desc": "Deleted something important by accident? Do not panic. There are several places to look, and acting quickly gives you the best chance of getting it back.",
@@ -798,7 +799,8 @@ SNIPPETS = {
         "title": "How We Price IT Support (and Why Cheapest Isn't Best)",
     },
     "business-it-consultancy": {
-        "title": "Business IT Consultancy &amp; Virtual IT Manager, Dorset",
+        "title": "IT Consultancy Dorset | Virtual IT Manager for Small Firms",
+        "desc": "IT consultancy for small businesses in Bournemouth, Poole and across Dorset: a plain-English IT plan and a virtual IT manager. Free IT review to start.",
     },
     "lost-or-stolen-phone-what-to-do": {
         "title": "Lost or Stolen Phone? Do These Things Now (UK Guide)",
