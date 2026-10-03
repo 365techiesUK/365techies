@@ -16,7 +16,7 @@
 - Home IT support: £18.25/month per computer; add Microsoft 365 for £4.85/month per user
 - Business IT support: from £24.38/month per computer (tailored to the team)
 - One-off computer & laptop repairs: no subscription — free diagnosis, no-fix-no-fee, 12-month warranty, no call-out fee
-- Microsoft 365: £4.85 per user/month
+- Microsoft 365 for home users: £4.85 per user/month (business plans are priced per plan)
 - AI voice receptionist: from £95/month — other AI services: monthly service subscription, with the one-off design/build quoted by complexity
 
 ## Pages
@@ -215,7 +215,7 @@
 - [Our Guarantees | 365 Techies](https://365techies.co.uk/our-guarantees/): The 365 Techies service guarantees — fast response, clear pricing, no contracts, plain English, secure support and a satisfaction promise for homes and businesses.
 - [Meet the Team | 365 Techies](https://365techies.co.uk/meet-the-team/): Meet the team behind 365 Techies, a family-run IT support business in Bournemouth looking after Dorset homes and businesses with patience since 1995.
 - [Accreditations & Partners | 365 Techies](https://365techies.co.uk/accreditations/): 365 Techies accreditations and partners: Microsoft Partner and Office Specialists, Dell specialists, Malwarebytes Partner and Sustainable Dorset member.
-- [IT Support Pricing: From £18.25 a Month Per Computer](https://365techies.co.uk/pricing/): Transparent monthly IT support: homes £18.25 per computer, business from £24.38 per computer, Microsoft 365 £4.85 per user. No call-out fee, ever.
+- [IT Support Pricing: From £18.25 a Month Per Computer](https://365techies.co.uk/pricing/): Transparent monthly IT support: homes £18.25 per computer (Microsoft 365 £4.85 per user), business from £24.38 per computer. No call-out fee, ever.
 - [Free IT Health Check | 365 Techies](https://365techies.co.uk/free-it-health-check/): Book a free, no-obligation IT health check from 365 Techies — we review your security, backups, updates and performance and send a clear, jargon-free report. No pressure to sign up.
 - [Switching IT Provider | 365 Techies](https://365techies.co.uk/switching-it-provider/): Switching IT support provider to 365 Techies is easy — we manage the whole handover with no downtime, so the move is smooth and stress-free for your home or business.
 - [IT Support Cost Guide | 365 Techies](https://365techies.co.uk/it-support-cost-guide/): What IT support costs in the UK, what moves the price, monthly support against paying per fix, and how to read a quote before you sign it.

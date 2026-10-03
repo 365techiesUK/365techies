@@ -564,7 +564,7 @@ SNIPPETS = {
     # these earn fewer impressions than the pages above but they are the ones
     # that convert, so a snippet that stops mid-sentence costs a customer
     # rather than a pageview. Prices here are the real published per-PC
-    # GoCardless figures only: home 18.25, business from 24.38, MS365 4.85.
+    # GoCardless figures only: home 18.25, business from 24.38, MS365 4.85 (home only).
     # Never a rounded guess, never VAT-inclusive - the firm is not VAT
     # registered. See the pricing-truth note before touching a number.
     # ================================================================
@@ -672,7 +672,7 @@ SNIPPETS = {
         # 5 Sep 2026: position 57.8 on 393 impressions, titled just "Pricing". The real
         # price in the title is the honest signal for a pricing page; the body already states it.
         "title": "IT Support Pricing: From &pound;18.25 a Month Per Computer",
-        "desc": "Transparent monthly IT support: homes £18.25 per computer, business from £24.38 per computer, Microsoft 365 £4.85 per user. No call-out fee, ever.",
+        "desc": "Transparent monthly IT support: homes £18.25 per computer (Microsoft 365 £4.85 per user), business from £24.38 per computer. No call-out fee, ever.",
     },
     "pstn-switch-off-business": {
         "title": "PSTN Switch-Off: The Business Lines That Aren't Phones",

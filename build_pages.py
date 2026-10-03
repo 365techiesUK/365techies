@@ -1358,7 +1358,7 @@ def webpage(slug, title, desc, wtype="WebPage", about=None, image=None):
 # ⚠️ PRICES IN SCHEMA MUST MATCH THE PAGE BODY, AND ONLY THESE PAGES CARRY ONE.
 # Every figure below is the price the page itself prints (checked 2026-09-05 against the
 # built HTML) - the same real prices as pricing-truth: home 18.25 / 23.10 per computer per
-# month, business from 24.38, Microsoft 365 4.85 per user per month, remote fixes from 20.
+# month, business from 24.38, Microsoft 365 4.85 per user per month (home only - no Offer since 3 Oct 2026), remote fixes from 20.
 # An Offer in the schema is how AI answers and rich results read a price; without it the
 # plan pages had Service + FAQ nodes and no machine-readable price at all. If a page's
 # price changes, change it HERE THE SAME DAY or the schema lies. No web-care entry on
@@ -1383,7 +1383,7 @@ SERVICE_OFFERS = {
     "monthly-it-support":               lambda u: _from("18.25", "per computer per month", u),
     "small-business-it-support":        lambda u: _from("24.38", "per computer per month", u),
     "remote-it-support":                lambda u: _from("20", "per remote fix", u),
-    "microsoft-365-support":            lambda u: _offer("4.85", "per user per month", u),
+    # "microsoft-365-support": no Offer - 4.85 is home Microsoft 365 only and that page serves businesses too; business plans are priced per plan (owner, 3 Oct 2026)
 }
 def service(slug, name, desc, stype=None, area=None):
     n = {"@type": "Service", "@id": f"{SITE}/{slug}/#service", "name": name, "description": desc,
@@ -5371,7 +5371,7 @@ add(
    service(s, "Monthly IT Support", "Subscription IT support with regular maintenance, security checks and unlimited remote help.", "IT support subscription"),
    faqpage(s, [
      ("What is monthly IT support?", "Monthly IT support is a subscription: ongoing help, regular maintenance, security checks and priority response for one predictable monthly cost. You stop paying per repair when something breaks."),
-     ("How much does monthly IT support cost?", "Home support is £18.25/month per computer, and business support starts from £24.38/month per computer. Microsoft 365 can be added for £4.85/month per user. Every plan includes a full computer service every six weeks, finished with a <a href=\"/free-pc-health-check/#six-weekly-service\">written Service Report</a>. It is emailed to you, saved in your portal and left on your Desktop, covering what we did, how the computer scored, and anything worth planning."),
+     ("How much does monthly IT support cost?", "Home support is £18.25/month per computer, and business support starts from £24.38/month per computer. Microsoft 365 can be added to a home plan for £4.85/month per user. Every plan includes a full computer service every six weeks, finished with a <a href=\"/free-pc-health-check/#six-weekly-service\">written Service Report</a>. It is emailed to you, saved in your portal and left on your Desktop, covering what we did, how the computer scored, and anything worth planning."),
      ("Can I cancel my plan?", "Yes. Plans are monthly and cancel-anytime with no lock-in contract."),
      ("Do you support homes and businesses?", "Yes — we support home users, home workers, sole traders and small businesses across Bournemouth, Poole and Dorset."),
      ("What is it like dealing with you day to day?", "Friendly and unhurried. We phone before we connect for a remote session or a full computer service, we call ahead with an estimated arrival time when we're visiting you, and if you'd like, we can send you a text reminder when your backup is due. Because we're a family team, you deal with the same familiar people who get to know how you like things set up."),
@@ -5458,7 +5458,7 @@ add(
     </section>''',
    faq_html([
      ("What is monthly IT support?", "Monthly IT support is a subscription: ongoing help, regular maintenance, security checks and priority response for one predictable monthly cost. You stop paying per repair when something breaks."),
-     ("How much does it cost?", "Home support is &pound;18.25/month per computer, and business support starts from &pound;24.38/month per computer. Microsoft 365 can be added for &pound;4.85/month per user. Every plan includes a full computer service every six weeks, finished with a <a href=\"/free-pc-health-check/#six-weekly-service\">written Service Report</a>. It is emailed to you, saved in your portal and left on your Desktop, covering what we did, how the computer scored, and anything worth planning."),
+     ("How much does it cost?", "Home support is &pound;18.25/month per computer, and business support starts from &pound;24.38/month per computer. Microsoft 365 can be added to a home plan for &pound;4.85/month per user. Every plan includes a full computer service every six weeks, finished with a <a href=\"/free-pc-health-check/#six-weekly-service\">written Service Report</a>. It is emailed to you, saved in your portal and left on your Desktop, covering what we did, how the computer scored, and anything worth planning."),
      ("Can I cancel my plan?", "Yes — plans are monthly and cancel-anytime with no lock-in contract."),
      ("Do you support both homes and businesses?", "Yes. We support home users, home workers, sole traders and small businesses across Bournemouth, Poole and the rest of Dorset."),
      ("What is it like dealing with you day to day?", "Friendly and unhurried. We phone before we connect for a remote session or a full computer service, and we call ahead with an arrival time when we&rsquo;re visiting. If you&rsquo;d like, we can text you a reminder when your backup&rsquo;s due. Because we&rsquo;re a family team, you deal with the same familiar people who get to know how you like things set up."),
@@ -5811,7 +5811,7 @@ def _business_plans_v2():
     tiles = [
         ("hp-c-fix", "user", "Just me, or a few computers", "Sole traders and very small businesses", "FROM &pound;24.38/MONTH", "#plans"),
         ("hp-c-care", "briefcase", "A growing team", "Microsoft 365 admin, backup checks and new-user setup", "SAME FROM-PRICE", "#plans"),
-        ("hp-c-biz", "cloud", "Microsoft 365, sorted", "Email, Teams and OneDrive set up and looked after", "&pound;4.85/USER A MONTH", "/microsoft-365-support/"),
+        ("hp-c-biz", "cloud", "Microsoft 365, sorted", "Email, Teams and OneDrive set up and looked after", "PRICED PER PLAN", "/microsoft-365-support/"),
         ("hp-c-buy", "shield", "Switching provider", "We handle the move, with no downtime", "WE HANDLE IT", "/switching-it-provider/"),
     ]
     tiles_html = "\n".join(
@@ -5907,7 +5907,7 @@ add(
           <h2 class="section-title section-title--center" data-title>Add extra protection any time<span class="title-underline title-underline--center"></span></h2>
         </div>
         <div class="tile-grid" data-stagger>
-{tiles([("cloud","Microsoft 365","Email, Office apps &amp; OneDrive &mdash; &pound;4.85/mo per user, set up &amp; supported. <a href=\"/microsoft-365-support/\">See Microsoft 365 &#8594;</a>"),("shield","Managed cybersecurity","Layered, monitored protection &mdash; MFA, patching &amp; verified backups. <a href=\"/cybersecurity-support/\">See cybersecurity &#8594;</a>"),("globe","Malwarebytes Premium &amp; VPN","Endpoint protection with a VPN for staff on the move. <a href=\"/malwarebytes-premium/\">See Malwarebytes &amp; VPN &#8594;</a>")])}
+{tiles([("cloud","Microsoft 365","Email, Office apps &amp; OneDrive on the right business plan &mdash; priced per plan, set up &amp; supported. <a href=\"/microsoft-365-support/\">See Microsoft 365 &#8594;</a>"),("shield","Managed cybersecurity","Layered, monitored protection &mdash; MFA, patching &amp; verified backups. <a href=\"/cybersecurity-support/\">See cybersecurity &#8594;</a>"),("globe","Malwarebytes Premium &amp; VPN","Endpoint protection with a VPN for staff on the move. <a href=\"/malwarebytes-premium/\">See Malwarebytes &amp; VPN &#8594;</a>")])}
         </div>
       </div>
     </section>''',
@@ -6066,7 +6066,7 @@ M365_FAQS = [
   ("Are you a local Office 365 installer in Bournemouth and Poole?", "Yes, we&rsquo;re a hands-on Office 365 and Microsoft 365 installer for Bournemouth, Poole and across Dorset. We install and set up Office 365 on your PCs and laptops, migrate your email, and get Outlook, Teams and OneDrive working, remotely or on-site."),
   ("Do you provide Microsoft 365 support in Bournemouth and Poole?", "Yes &mdash; Microsoft 365 support for Bournemouth and Poole homes and businesses: setup, migration, licensing, security and everyday help, with fast remote support and on-site visits when you need them."),
   ("We&rsquo;re locked out of our Microsoft 365 admin account &mdash; can you help?", "Yes &mdash; orphaned tenants are more common than you&rsquo;d think: the one admin leaves, or the password dies with an old phone. Our guide to <a href=\"/locked-out-microsoft-365-admin-account/\">recovering a locked-out Microsoft 365 admin account</a> covers the real routes back in &mdash; and we&rsquo;ll drive the whole recovery for you."),
-  ("How much does Microsoft 365 support cost?", "Microsoft 365 is &pound;4.85 per user per month with us, set up and supported &mdash; the same figure that appears on our plan pages. That covers the licence and our support for it; if you already have licences elsewhere, we can support those on a plan instead. Every price on this site is the real one, and we are not VAT registered, so there is nothing to add."),
+  ("How much does Microsoft 365 support cost?", "For home users, Microsoft 365 is &pound;4.85 per user per month with us, set up and supported &mdash; the same figure that appears on our home plan pages. For businesses we price the right business plan (Basic, Standard or Premium) with you. If you already have licences elsewhere, we can support those on a plan instead. Every price on this site is the real one, and we are not VAT registered, so there is nothing to add."),
 ]
 add(
  slug="microsoft-365-support",
@@ -6089,7 +6089,7 @@ add(
         # Jobs pass, 13 Sep 2026: position 1.7 for "microsoft 365 support dorset" with zero clicks.
         # The first screen now says the jobs, the real prices and the number; the heritage paragraph
         # that used to be the lede sits in the overview below, word for word.
-        hero_trust("Setup, email migration, licensing, admin lockouts and the everyday Outlook, Teams and OneDrive problems, for Bournemouth, Poole and Dorset homes and businesses. Microsoft 365 with us is &pound;4.85 per user a month, remote fixes start at &pound;20, and there is no call-out fee on site."),
+        hero_trust("Setup, email migration, licensing, admin lockouts and the everyday Outlook, Teams and OneDrive problems, for Bournemouth, Poole and Dorset homes and businesses. Home Microsoft 365 with us is &pound;4.85 per user a month, business plans are priced per plan, remote fixes start at &pound;20, and there is no call-out fee on site."),
         cta1=("Call 01202 775566", "tel:+441202775566"), cta2=("Get Microsoft 365 Support", "/contact/"),
         chips=["Microsoft Partner", "Office Specialists", "Setup, migration &amp; security"], scene=HERO_SCENES.get("m365")),
    f'''    <section class="section" aria-label="Overview">

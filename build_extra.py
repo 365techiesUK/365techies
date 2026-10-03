@@ -385,7 +385,7 @@ def faqs_page():
       ("Can you help with cybersecurity?", "Yes — protection from scams, malware, ransomware and phishing, plus antivirus, multi-factor authentication, password security and backup checks."),
       ("Can you help with printers?", "Yes — printer setup, Wi-Fi printing, offline errors, drivers and scanning, for homes and offices."),
       ("Can you help with slow computers?", "Yes — slow computers are something we fix regularly, usually remotely. A monthly plan keeps them fast with regular maintenance."),
-      ("How much does it cost?", "Home support is £18.25/month per computer and business support from £24.38/month per computer. Microsoft 365 can be added for £4.85/month per user. One-off repairs are also available with no subscription."),
+      ("How much does it cost?", "Home support is £18.25/month per computer and business support from £24.38/month per computer. Microsoft 365 can be added to a home plan for £4.85/month per user. One-off repairs are also available with no subscription."),
       ("How quickly can you help?", "Most remote sessions start within minutes during opening hours, Monday to Friday, 9am to 5pm. Subscribers always jump the queue."),
       ("Do you offer no-fix-no-fee computer repairs?", "Yes. Every computer and laptop repair is no-fix-no-fee, so if we can't fix it you don't pay for the diagnosis, and it's backed by a 12-month warranty. We quote clearly before any chargeable work, with no call-out fee."),
       ("Do you support Apple Macs?", "We're Windows and Android specialists, the platforms most UK homes and businesses run, so we focus there to give you genuine, in-depth expertise rather than being a jack-of-all-trades. We don't support Apple Macs."),
@@ -12070,7 +12070,7 @@ def cost_calculator():
       ("Are these the exact prices I&rsquo;ll pay?", "They&rsquo;re accurate guide prices taken straight from our published plans, so what you see is what you&rsquo;d expect to pay. We always confirm the exact figure with you before anything starts &mdash; no hidden call-out fees, no surprises."),
       ("What&rsquo;s included in every plan?", "Every monthly plan includes a full computer service every six weeks, remote help, regular maintenance and security checks. We also call before we connect, call ahead with an ETA for visits, and you deal with the same friendly faces. See <a href=\"/monthly-it-support/\">monthly IT support</a>."),
       ("How is business support priced?", "Business support is priced per computer, from &pound;24.38 per computer, per month. For larger teams we tailor a plan to how you actually work (email, hosting, users) &mdash; the calculator shows an indicative figure, then we give you a clear fixed quote."),
-      ("How much is Microsoft 365?", "Microsoft 365 is &pound;4.85 per user, per month, added to your plan for the people who need it &mdash; and we help you choose the right licence with no upselling. Not sure which? Try our <a href=\"/which-microsoft-365-plan/\">Microsoft 365 plan picker</a>."),
+      ("How much is Microsoft 365?", "For home users, Microsoft 365 is &pound;4.85 per user, per month, added to your plan for the people who need it. For businesses we price the right Microsoft 365 business plan with you &mdash; with no upselling. Not sure which? Try our <a href=\"/which-microsoft-365-plan/\">Microsoft 365 plan picker</a>."),
       ("Do I have to commit to a contract?", "No &mdash; every plan is monthly and cancel-anytime. There&rsquo;s no long lock-in."),
     ]
     calc = r'''    <section class="section" aria-label="Cost calculator">
@@ -12093,10 +12093,10 @@ def cost_calculator():
               </div>
               <div id="cc-biz-fields" hidden>
                 <div class="cc-field"><label>Computers / laptops <output id="cc-users">1</output></label><input type="range" id="cc-users-r" min="1" max="25" value="1" aria-label="Computers needing support"></div>
-                <p class="cc-note">Business support is priced per computer (from &pound;24.38/month) &mdash; tailored to how your team works.</p>
+                <p class="cc-note">Business support is priced per computer (from &pound;24.38/month) &mdash; tailored to how your team works. Microsoft 365 business plans are priced per plan and added to your quote.</p>
               </div>
               <div>
-                <p class="cc-label">Microsoft 365 licences <span>(optional)</span></p>
+                <p class="cc-label" id="cc-m365-label">Microsoft 365 for home <span>(optional)</span></p>
                 <div id="cc-m365"></div>
               </div>
             </div>
@@ -12171,6 +12171,7 @@ def cost_calculator():
           root.querySelectorAll('.cc-tabs button').forEach(function(x){x.classList.toggle('is-active',x===t);x.setAttribute('aria-selected',x===t);});
           root.querySelector('#cc-home-fields').hidden=(state.mode!=='home');
           root.querySelector('#cc-biz-fields').hidden=(state.mode!=='business');
+          root.querySelector('#cc-m365-label').parentNode.hidden=(state.mode!=='home');
           render();
         };});
         function render(){
@@ -12184,7 +12185,7 @@ def cost_calculator():
             lines.push({l:'Business support · '+state.users+' computer'+(state.users>1?'s':''),v:'from '+money(bt)});
             ctaLabel='Get a tailored quote';ctaHref='/contact/';
           }
-          if(state.m365>0){var mt=M365_PER*state.m365;total+=mt;lines.push({l:'Microsoft 365 × '+state.m365,v:money(mt)});}
+          if(state.mode==='home'&&state.m365>0){var mt=M365_PER*state.m365;total+=mt;lines.push({l:'Microsoft 365 × '+state.m365,v:money(mt)});}
           var prefix=fromFlag?'from ':'';
           root.querySelector('#cc-total').textContent=prefix+money(total);
           var ul=root.querySelector('#cc-lines'); ul.innerHTML='';
@@ -12192,7 +12193,7 @@ def cost_calculator():
           var tl=document.createElement('li'); tl.style.cssText='border-top:1px solid rgba(255,255,255,.12);margin-top:.35rem;padding-top:.55rem;font-size:1rem';
           var ts=document.createElement('span');ts.innerHTML='<b>Total per month</b>';var tb=document.createElement('b');tb.textContent=prefix+money(total);tl.appendChild(ts);tl.appendChild(tb);ul.appendChild(tl);
           var cta=root.querySelector('#cc-cta'); cta.textContent=ctaLabel; cta.href=ctaHref;
-          var msgs=['Real prices from our live plans &mdash; &pound;18.25/mo per computer for home, from &pound;24.38/mo per computer for business, plus &pound;4.85/mo per Microsoft 365 user. We confirm your exact figure before anything starts; every plan includes a full service every 6 weeks and is cancel-anytime.'];
+          var msgs=['Real prices from our live plans &mdash; &pound;18.25/mo per computer for home (plus &pound;4.85/mo per Microsoft 365 user), from &pound;24.38/mo per computer for business. We confirm your exact figure before anything starts; every plan includes a full service every 6 weeks and is cancel-anytime.'];
           if(fromFlag) msgs.push('Business plans are tailored to how you work (email, hosting, users), so the figure above is a starting guide.');
           root.querySelector('#cc-note').innerHTML=msgs.join(' ');
         }
@@ -16929,7 +16930,7 @@ _PRICING_CSS = r"""      <style>
 
 def pricing_page():
     slug = "pricing"
-    desc = "365 Techies pricing — transparent monthly IT support: homes £18.25/month per computer, business from £24.38/month per computer, Microsoft 365 £4.85/month per user. No contracts; one-off repairs quoted up front."
+    desc = "365 Techies pricing — transparent monthly IT support: homes £18.25/month per computer (Microsoft 365 £4.85/month per user), business from £24.38/month per computer. No contracts; one-off repairs quoted up front."
     head = f"""    <section class="prhead" aria-label="Pricing">
       <div class="wrap"><div class="prhead__in">
         <nav class="breadcrumb" aria-label="Breadcrumb">{bc("Pricing")}</nav>
@@ -17109,7 +17110,7 @@ info_page(
           <h2>Typical price ranges</h2>
           <p>For homes, monthly support typically starts around &pound;15&ndash;&pound;25 per month. For small businesses it&rsquo;s usually priced per user or per device, scaling with your team. One-off repairs are quoted based on the work involved.</p>
           <h2>Our pricing</h2>
-          <p>We keep it simple: home support from <strong>&pound;18.25/month per computer</strong>, business support from <strong>&pound;24.38/month per computer</strong>, plus Microsoft 365 at <strong>&pound;4.85/month per user</strong> &mdash; no contracts and no hidden fees. See our <a href="/pricing/">pricing</a> page or try the <a href="/plan-finder/">Plan Finder</a>.</p>""",
+          <p>We keep it simple: home support from <strong>&pound;18.25/month per computer</strong> (Microsoft 365 for home users <strong>&pound;4.85/month per user</strong>), business support from <strong>&pound;24.38/month per computer</strong> &mdash; no contracts and no hidden fees. See our <a href="/pricing/">pricing</a> page or try the <a href="/plan-finder/">Plan Finder</a>.</p>""",
   faqs=[
     ("Is monthly IT support worth it?","For most people, yes &mdash; it spreads the cost, includes regular maintenance and catches problems before they become expensive emergencies."),
     ("Do you charge call-out fees?","Most support is remote with no call-out fee. On-site visits across Dorset are arranged when hands-on help is needed."),
@@ -20970,7 +20971,7 @@ BIZ_SERVICES = [
   ],
   "faqs": [
     ("What are managed IT services?", "Managed IT services mean we look after your business technology proactively for a fixed monthly cost, rather than only fixing things when they break. That covers day-to-day support, monitoring and maintenance, Microsoft 365, cybersecurity, backups, and advice &mdash; so your IT just works and you can budget for it."),
-    ("How much do business IT services in Poole cost?", "Business IT support starts from &pound;24.38 per computer per month, with Microsoft 365 licences from &pound;4.85 per user per month. There are no call-out fees and no long tie-ins &mdash; just one predictable monthly cost per computer. See our <a href=\"/business-it-support-subscriptions/\">business IT support plans</a> for what&rsquo;s included."),
+    ("How much do business IT services in Poole cost?", "Business IT support starts from &pound;24.38 per computer per month; Microsoft 365 business plans are priced per plan. There are no call-out fees and no long tie-ins &mdash; just one predictable monthly cost per computer. See our <a href=\"/business-it-support-subscriptions/\">business IT support plans</a> for what&rsquo;s included."),
     ("Do you provide on-site IT services in Poole?", "Yes. Most issues are fixed remotely in minutes, and we provide on-site visits right across Poole &mdash; from the Quay and Hamworthy to Canford Heath, Broadstone and Upton &mdash; whenever hands-on help is needed, with no call-out fee."),
     ("Can you look after our server and network?", "Yes &mdash; we design, install, monitor and support <a href=\"/server-network-support/\">servers, networks, switches and business Wi-Fi</a>, keeping them fast, secure and reliable, whether you have one server or several sites to link together."),
     ("What about cybersecurity and Cyber Essentials?", "Cybersecurity is built into every plan &mdash; layered protection from ransomware, phishing and scams, plus multi-factor authentication and verified backups. We also help Poole businesses achieve <a href=\"/cyber-essentials/\">Cyber Essentials</a> certification, which many customers and contracts now require."),
@@ -21000,7 +21001,7 @@ BIZ_SERVICES = [
   "faqs": [
     ("What are managed IT services?", "Managed IT services mean we look after your business technology proactively for a fixed monthly cost, rather than only fixing things when they break. That covers day-to-day support, monitoring and maintenance, Microsoft 365, cybersecurity, backups and advice &mdash; so your IT just works and you can budget for it."),
     ("Do you provide IT solutions for Bournemouth businesses?", "Yes &mdash; we design, deliver and manage complete IT solutions for Bournemouth businesses: Microsoft 365, cybersecurity and Cyber Essentials, servers and networks, cloud and hosted desktops, backup, and business connectivity, all matched to how your business works and supported under one roof."),
-    ("How much do business IT services in Bournemouth cost?", "Business IT support starts from &pound;24.38 per computer per month, with Microsoft 365 licences from &pound;4.85 per user per month. No call-out fees and no long tie-ins &mdash; just one predictable monthly cost per computer. See our <a href=\"/business-it-support-subscriptions/\">business IT support plans</a> for the detail."),
+    ("How much do business IT services in Bournemouth cost?", "Business IT support starts from &pound;24.38 per computer per month; Microsoft 365 business plans are priced per plan. No call-out fees and no long tie-ins &mdash; just one predictable monthly cost per computer. See our <a href=\"/business-it-support-subscriptions/\">business IT support plans</a> for the detail."),
     ("Do you provide on-site IT services in Bournemouth?", "Yes. Most issues are fixed remotely in minutes, and we provide on-site visits across Bournemouth &mdash; the town centre, Boscombe, Winton, Charminster and Southbourne &mdash; whenever hands-on help is needed, with no call-out fee."),
     ("What about cybersecurity and Cyber Essentials?", "Cybersecurity is built into every plan &mdash; layered protection from ransomware, phishing and scams, multi-factor authentication and verified backups. We also help Bournemouth businesses achieve <a href=\"/cyber-essentials/\">Cyber Essentials</a> certification, which many customers and contracts now require."),
     ("Can you look after our server, network and Microsoft 365?", "Yes &mdash; <a href=\"/server-network-support/\">servers, networks and business Wi-Fi</a> plus full <a href=\"/microsoft-365-support/\">Microsoft 365</a> setup, migration and support (Outlook, Teams, OneDrive and SharePoint), all monitored and looked after for you."),
@@ -21072,7 +21073,7 @@ def business_it_services(d):
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">/04 &mdash; SIMPLE PRICING</p>
         <h2 class="section-title" data-title>One predictable monthly cost<span class="title-underline"></span></h2>
-        <p>Business IT support starts from <strong>&pound;24.38 per computer per month</strong>, and Microsoft 365 licences from <strong>&pound;4.85 per user per month</strong>. No call-out fees, no long tie-ins and no jargon &mdash; just proactive support and maintenance for your team, for a cost you can budget for.</p>
+        <p>Business IT support starts from <strong>&pound;24.38 per computer per month</strong>; Microsoft 365 business plans are priced per plan. No call-out fees, no long tie-ins and no jargon &mdash; just proactive support and maintenance for your team, for a cost you can budget for.</p>
         <p>See our <a href="/business-it-support-subscriptions/">business IT support plans</a> for what&rsquo;s included, <a href="/business-it-support-plans/">compare the plans</a>, or explore day-to-day <a href="/{twin}/">IT support in {town}</a>.</p>
       </div>
     </section>''',
@@ -22478,7 +22479,7 @@ REFURB_SUPPORT_BAND = '''    <section class="section" aria-label="Setup, guarant
           <tr><th>Best for</th><td>Confident users</td><td>A properly settled-in start</td><td class="hi">Never worrying about your computer again</td></tr>
         </tbody></table></div>
         <div class="prose" style="max-width:760px;margin:1.6rem auto 0" data-reveal>
-          <p><strong>Our honest advice: the support plan is the best value of the three</strong> &mdash; and not because we sell it. The guarantee alone is five times longer, problems get caught at the six-weekly service before they cost you a morning, your backups are actually checked rather than assumed, and one avoided emergency pays for months of cover. Plans are rolling monthly with no lock-in &mdash; see <a href="/home-it-support-plans/">home plans</a> and <a href="/business-it-support-plans/">business plans</a>, or add <a href="/microsoft-365-support/">Microsoft 365</a> at &pound;4.85 per user, per month.</p>
+          <p><strong>Our honest advice: the support plan is the best value of the three</strong> &mdash; and not because we sell it. The guarantee alone is five times longer, problems get caught at the six-weekly service before they cost you a morning, your backups are actually checked rather than assumed, and one avoided emergency pays for months of cover. Plans are rolling monthly with no lock-in &mdash; see <a href="/home-it-support-plans/">home plans</a> and <a href="/business-it-support-plans/">business plans</a>, or add <a href="/microsoft-365-support/">Microsoft 365</a> to a home plan at &pound;4.85 per user, per month.</p>
         </div>
       </div>
     </section>'''

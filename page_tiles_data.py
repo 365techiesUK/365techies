@@ -54,7 +54,7 @@ PAGE_HERO_TILES = {
   ('hp-c-fix', 'briefcase', 'What the plan covers', 'Servers, networks, Microsoft 365 and security', 'FROM &pound;24.38 A PC', '#s1'),
   ('hp-c-care', 'wrench', 'Switching IT provider?', 'Free health check, then a fixed monthly quote', 'NO LOCK-IN', '#s2'),
   ('hp-c-biz', 'star', 'Business plans and prices', 'Simple per-PC pricing, rolling monthly', 'CANCEL ANYTIME', '/business-it-support-plans/'),
-  ('hp-c-buy', 'mail', 'Microsoft 365 and email', 'Mailboxes, Teams and security, per user', '&pound;4.85 A USER', '/microsoft-365-support/'),
+  ('hp-c-buy', 'mail', 'Microsoft 365 and email', 'Mailboxes, Teams and security, per user', 'PRICED PER PLAN', '/microsoft-365-support/'),
  ],
  'business-it-support-new-forest': [
   ('hp-c-fix', 'briefcase', 'What we look after', 'Servers, Microsoft 365, security and backups', 'FULLY MANAGED', '#s2'),

@@ -40,7 +40,7 @@ _OFFICE_CLUSTER = [
    ("how-to-secure-your-microsoft-365-account", "Secure your 365 account", "The checks that stop a hijack before it starts."),
  ]),
  ("Microsoft 365 for business", [
-   ("microsoft-365-support", "Microsoft 365, managed", "Set up, migrated, secured and supported &mdash; from &pound;4.85 per user."),
+   ("microsoft-365-support", "Microsoft 365, managed", "Set up, migrated, secured and supported &mdash; priced per plan."),
    ("former-it-provider-controls-microsoft-365", "Reclaim your Microsoft 365", "When the old IT company still holds your keys."),
    ("microsoft-365-migration", "Microsoft 365 migration", "Moving mail and files without the drama."),
    ("microsoft-365-backup-do-you-need-it", "Do you need 365 backup?", "The honest answer about what Microsoft does and doesn&rsquo;t keep."),

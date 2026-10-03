@@ -59,8 +59,8 @@ KEEP_BANDS = {
             "Every program updated every six weeks, Microsoft&nbsp;365 included",
             "Antivirus, firewall, drive encryption and backup checked and written down in a dated Service Report",
         ],
-        "price": ("<b>&pound;18.25</b> a month per computer at home &middot; business from <b>&pound;24.38</b>, plus <b>&pound;4.85</b> per "
-                  "Microsoft&nbsp;365 user added to your plan. Rolling monthly, no lock-in."),
+        "price": ("<b>&pound;18.25</b> a month per computer at home, plus <b>&pound;4.85</b> per "
+                  "Microsoft&nbsp;365 user &middot; business from <b>&pound;24.38</b>. Rolling monthly, no lock-in."),
     },
     "wifi-signal-test": {
         "id": "keep-it",

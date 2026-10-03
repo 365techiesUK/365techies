@@ -50,7 +50,7 @@ add a canonical /customer-dashboard/ page and a nav item (re-measure
 .nav-sos first, the header has a tight fit).
 
 Prices are the real published per-PC figures only: home 18.25, business
-from 24.38, Microsoft 365 4.85 per user. The firm is not VAT registered, so
+from 24.38, Microsoft 365 4.85 per user (home only). The firm is not VAT registered, so
 no figure here is ever VAT-inclusive.
 
 LAYOUT NOTE

@@ -287,7 +287,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-09-28"
+      "dateModified": "2026-10-03"
     },
     {
       "@type": "FAQPage",
@@ -322,7 +322,7 @@
           "name": "How much is Microsoft 365?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Microsoft 365 is &pound;4.85 per user, per month, added to your plan for the people who need it &mdash; and we help you choose the right licence with no upselling. Not sure which? Try our <a href=\"/which-microsoft-365-plan/\">Microsoft 365 plan picker</a>."
+            "text": "For home users, Microsoft 365 is &pound;4.85 per user, per month, added to your plan for the people who need it. For businesses we price the right Microsoft 365 business plan with you &mdash; with no upselling. Not sure which? Try our <a href=\"/which-microsoft-365-plan/\">Microsoft 365 plan picker</a>."
           }
         },
         {
@@ -338,7 +338,7 @@
           "name": "How much is managed IT support per computer in the UK?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "With 365 Techies it is &pound;18.25 per month per computer for home support and from &pound;24.38 per month per computer for business support, with Microsoft 365 an optional &pound;4.85 per user per month. The calculator multiplies these by the number of computers you choose so you see a real monthly total, not a generic estimate."
+            "text": "With 365 Techies it is &pound;18.25 per month per computer for home support and from &pound;24.38 per month per computer for business support, with Microsoft 365 an optional &pound;4.85 per user per month on a home plan. The calculator multiplies these by the number of computers you choose so you see a real monthly total, not a generic estimate."
           }
         },
         {
@@ -380,7 +380,7 @@
           "@type": "HowToStep",
           "position": 3,
           "name": "Add Microsoft 365 if needed",
-          "text": "Use the + and &minus; buttons to add a Microsoft 365 licence (&pound;4.85/user per month) for each person who needs one &mdash; leave it at zero if not."
+          "text": "Use the + and &minus; buttons to add a home Microsoft 365 licence (&pound;4.85/user per month) for each person who needs one &mdash; leave it at zero if not."
         },
         {
           "@type": "HowToStep",
@@ -877,7 +877,7 @@
         <h1 class="taskhead__h">See your monthly cost in <em class="grad grad--cyan">seconds</em></h1>
         <p class="taskhead__lede">Move the sliders to match your home or business &mdash; how many computers, and any Microsoft 365 licences &mdash; and watch a clear monthly total appear. Real prices straight from our live plans, with no obligation.</p>
         <p class="taskhead__trust mono"><span><a href="/reviews/">&#9733; Rated 4.9 on Google</a></span><span>Family-run since 1995</span><span>No fix, no fee</span></p>
-        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 28 September 2026</p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 3 October 2026</p>
       </div></div>
       <style>
         .taskhead{padding:calc(var(--header-h) + var(--ticker-h) + 1.5rem) var(--pad-x) 0}
@@ -910,10 +910,10 @@
               </div>
               <div id="cc-biz-fields" hidden>
                 <div class="cc-field"><label>Computers / laptops <output id="cc-users">1</output></label><input type="range" id="cc-users-r" min="1" max="25" value="1" aria-label="Computers needing support"></div>
-                <p class="cc-note">Business support is priced per computer (from &pound;24.38/month) &mdash; tailored to how your team works.</p>
+                <p class="cc-note">Business support is priced per computer (from &pound;24.38/month) &mdash; tailored to how your team works. Microsoft 365 business plans are priced per plan and added to your quote.</p>
               </div>
               <div>
-                <p class="cc-label">Microsoft 365 licences <span>(optional)</span></p>
+                <p class="cc-label" id="cc-m365-label">Microsoft 365 for home <span>(optional)</span></p>
                 <div id="cc-m365"></div>
               </div>
             </div>
@@ -988,6 +988,7 @@
           root.querySelectorAll('.cc-tabs button').forEach(function(x){x.classList.toggle('is-active',x===t);x.setAttribute('aria-selected',x===t);});
           root.querySelector('#cc-home-fields').hidden=(state.mode!=='home');
           root.querySelector('#cc-biz-fields').hidden=(state.mode!=='business');
+          root.querySelector('#cc-m365-label').parentNode.hidden=(state.mode!=='home');
           render();
         };});
         function render(){
@@ -1001,7 +1002,7 @@
             lines.push({l:'Business support · '+state.users+' computer'+(state.users>1?'s':''),v:'from '+money(bt)});
             ctaLabel='Get a tailored quote';ctaHref='/contact/';
           }
-          if(state.m365>0){var mt=M365_PER*state.m365;total+=mt;lines.push({l:'Microsoft 365 × '+state.m365,v:money(mt)});}
+          if(state.mode==='home'&&state.m365>0){var mt=M365_PER*state.m365;total+=mt;lines.push({l:'Microsoft 365 × '+state.m365,v:money(mt)});}
           var prefix=fromFlag?'from ':'';
           root.querySelector('#cc-total').textContent=prefix+money(total);
           var ul=root.querySelector('#cc-lines'); ul.innerHTML='';
@@ -1009,7 +1010,7 @@
           var tl=document.createElement('li'); tl.style.cssText='border-top:1px solid rgba(255,255,255,.12);margin-top:.35rem;padding-top:.55rem;font-size:1rem';
           var ts=document.createElement('span');ts.innerHTML='<b>Total per month</b>';var tb=document.createElement('b');tb.textContent=prefix+money(total);tl.appendChild(ts);tl.appendChild(tb);ul.appendChild(tl);
           var cta=root.querySelector('#cc-cta'); cta.textContent=ctaLabel; cta.href=ctaHref;
-          var msgs=['Real prices from our live plans &mdash; &pound;18.25/mo per computer for home, from &pound;24.38/mo per computer for business, plus &pound;4.85/mo per Microsoft 365 user. We confirm your exact figure before anything starts; every plan includes a full service every 6 weeks and is cancel-anytime.'];
+          var msgs=['Real prices from our live plans &mdash; &pound;18.25/mo per computer for home (plus &pound;4.85/mo per Microsoft 365 user), from &pound;24.38/mo per computer for business. We confirm your exact figure before anything starts; every plan includes a full service every 6 weeks and is cancel-anytime.'];
           if(fromFlag) msgs.push('Business plans are tailored to how you work (email, hosting, users), so the figure above is a starting guide.');
           root.querySelector('#cc-note').innerHTML=msgs.join(' ');
         }
@@ -1073,7 +1074,7 @@
         </details>
         <details class="faq" data-reveal>
           <summary>How much is Microsoft 365?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p>Microsoft 365 is &pound;4.85 per user, per month, added to your plan for the people who need it &mdash; and we help you choose the right licence with no upselling. Not sure which? Try our <a href="/which-microsoft-365-plan/">Microsoft 365 plan picker</a>.</p></div>
+          <div class="faq__ans"><p>For home users, Microsoft 365 is &pound;4.85 per user, per month, added to your plan for the people who need it. For businesses we price the right Microsoft 365 business plan with you &mdash; with no upselling. Not sure which? Try our <a href="/which-microsoft-365-plan/">Microsoft 365 plan picker</a>.</p></div>
         </details>
         <details class="faq" data-reveal>
           <summary>Do I have to commit to a contract?<span class="faq__icon" aria-hidden="true"></span></summary>
@@ -1097,18 +1098,18 @@
       <div class="wrap prose" data-reveal>
         <p class="eyebrow mono">// HOW IT WORKS</p>
         <h2 class="section-title" data-title>How to work out your managed IT support cost per computer<span class="title-underline"></span></h2>
-        <p class="lede"><strong>365 Techies&rsquo; managed IT support is priced per computer &mdash; home support is &pound;18.25/month per computer and business support from &pound;24.38/month per computer, with optional Microsoft 365 at &pound;4.85 per user &mdash; and this calculator adds them up live as you set the number of computers and licences.</strong></p>
+        <p class="lede"><strong>365 Techies&rsquo; managed IT support is priced per computer &mdash; home support is &pound;18.25/month per computer (with optional Microsoft 365 at &pound;4.85 per user) and business support from &pound;24.38/month per computer &mdash; and this calculator adds them up live as you set the number of computers and licences.</strong></p>
         <h3>Step by step</h3>
         <ol data-stagger>
           <li><strong>Choose home or business</strong> &mdash; Pick the Home &amp; Family or Business tab at the top of the calculator &mdash; each uses its own per-computer price.</li>
           <li><strong>Set your computers</strong> &mdash; Slide to the number of computers or laptops you need supported (home goes 1&ndash;10, business 1&ndash;25). The monthly total updates instantly.</li>
-          <li><strong>Add Microsoft 365 if needed</strong> &mdash; Use the + and &minus; buttons to add a Microsoft 365 licence (&pound;4.85/user per month) for each person who needs one &mdash; leave it at zero if not.</li>
+          <li><strong>Add Microsoft 365 if needed</strong> &mdash; Use the + and &minus; buttons to add a home Microsoft 365 licence (&pound;4.85/user per month) for each person who needs one &mdash; leave it at zero if not.</li>
           <li><strong>Read your monthly total</strong> &mdash; The summary panel shows a line-by-line breakdown and a clear per-month total &mdash; business figures show as a &lsquo;from&rsquo; guide because larger teams are tailored.</li>
           <li><strong>Confirm the exact figure</strong> &mdash; Every plan is cancel-anytime and includes a full computer service every six weeks; tap through to view plans or talk to us and we&rsquo;ll confirm your exact price before anything starts.</li>
         </ol>
         <h3 class="mono" style="opacity:.7">Good to know</h3>
           <h3>How much is managed IT support per computer in the UK?</h3>
-          <p>With 365 Techies it is &pound;18.25 per month per computer for home support and from &pound;24.38 per month per computer for business support, with Microsoft 365 an optional &pound;4.85 per user per month. The calculator multiplies these by the number of computers you choose so you see a real monthly total, not a generic estimate.</p>
+          <p>With 365 Techies it is &pound;18.25 per month per computer for home support and from &pound;24.38 per month per computer for business support, with Microsoft 365 an optional &pound;4.85 per user per month on a home plan. The calculator multiplies these by the number of computers you choose so you see a real monthly total, not a generic estimate.</p>
           <h3>Does the cost calculator give an exact quote?</h3>
           <p>It gives accurate guide prices taken straight from our live per-computer plans, so it is what you would expect to pay. Business totals show as a &lsquo;from&rsquo; figure because larger teams are tailored to how you work (email, hosting, users); we always confirm the exact figure before anything starts, with no hidden call-out fees.</p>
           <h3>Is there a minimum contract for per-computer IT support?</h3>

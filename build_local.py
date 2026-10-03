@@ -288,7 +288,7 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
     faqs = [
       (f"Do you provide IT support in {town}?", f"Yes — 365 Techies provides remote and on-site IT support for homes and businesses in {town} and the wider {region} area, with monthly plans from £18.25 per computer."),
       (f"Can you visit me in {town}?", f"Yes. Most issues are fixed remotely in minutes, and we provide on-site visits across {town} and the wider {region} when hands-on help is needed."),
-      ("What does monthly IT support cost?", "Home support is £18.25/month per computer and business support from £24.38/month per computer, with Microsoft 365 at £4.85/month per user and one-off repairs also available."),
+      ("What does monthly IT support cost?", "Home support is £18.25/month per computer and business support from £24.38/month per computer. Home plans can add Microsoft 365 at £4.85/month per user, and one-off repairs are also available."),
       ("Is remote support secure?", "Yes — sessions run over encrypted Splashtop SOS, you watch everything on screen, and access ends the moment the session does."),
       (f"What can you help {town} customers with?", "Computers and laptops, email, Microsoft 365, Wi-Fi, printers, security, backups, new device setup, virus removal and slow-computer fixes — for homes and businesses alike."),
       (f"Are you a local IT company in {town}?", f"Yes. 365 Techies is a family-run local IT company, established in 1995. We provide IT support, IT services and computer &amp; laptop repairs for homes and businesses across {town} and the wider {region} area."),
