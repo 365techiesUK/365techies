@@ -481,8 +481,8 @@ SNIPPETS = {
         "desc": "Cloud and hosted desktops for small businesses across Bournemouth, Poole and Dorset. Windows 365 and Azure Virtual Desktop, set up and managed for you.",
     },
     "cybersecurity-support": {
-        "title": "Cyber Security for Businesses | Bournemouth &amp; Dorset",
-        "desc": "Cyber security services for businesses and homes across Bournemouth, Poole and Dorset. Protection from ransomware, phishing, scams and malware, with MFA.",
+        "title": "Cyber Security Bournemouth, Poole &amp; Dorset | Small Business",
+        "desc": "Cyber security for small businesses in Bournemouth, Poole and Dorset, with prices on the page: antivirus, email filtering, staff training and passwords.",
     },
     "how-to-go-back-to-classic-outlook": {
         "desc": "Want to go back to classic Outlook from new Outlook? Turn off the toggle in the top-right corner. If it is missing, use the Help tab or the Start menu.",
@@ -644,9 +644,6 @@ SNIPPETS = {
     },
     "home-network-setup": {
         "desc": "Home network setup in Bournemouth, Poole, Christchurch and Dorset. We configure your router, connect every device and secure the lot, on site or remotely.",
-    },
-    "how-much-does-it-support-cost-uk-2026": {
-        "desc": "A clear, honest guide to what IT support costs in the UK in 2026: typical ranges for homes and businesses, what drives the price, and what to check.",
     },
     "independent-it-support": {
         "desc": "An honest comparison of local independent IT support against big-box repair desks and DIY remote tools: who actually helps you, speed, and repair honesty.",
@@ -1029,7 +1026,8 @@ SNIPPETS = {
         "desc": "Test your real broadband speed live, download, upload and ping, then see the speed your household needs and what to do if you are falling short. Free.",
     },
     "it-support-cost-guide": {
-        "desc": "What IT support costs in the UK, what moves the price, monthly support against paying per fix, and how to read a quote before you sign it.",
+        "title": "How Much Does IT Support Cost? Real Dorset Prices (2026)",
+        "desc": "What IT support costs, with our real prices: homes £18.25 and businesses from £24.38 a month per computer, no VAT. Per user or per computer, compared.",
     },
     "case-study-signal-map": {
         "title": "Case Study: A Live Signal-Mapping Platform for Dorset",

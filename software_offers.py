@@ -22,9 +22,17 @@ PRODUCTS = {
     "defender": dict(
         name="Microsoft Defender for Business", price="2.75", per="per person a month", soon=True,
         what="Microsoft&rsquo;s business antivirus and threat protection for your PCs, Macs, phones and tablets. Already included in Business Premium."),
+    # Malwarebytes prices: owner, 3 Oct 2026 ("still all four"). Set against Malwarebytes' own UK prices that day:
+    # Standard 1 device GBP 29.99/yr, Plus 3 devices + VPN GBP 69.98/yr, ThreatDown Core GBP 4.75/device/month (5-device minimum).
+    "mb-home": dict(
+        name="Malwarebytes for your home computer", price="2.50", per="per computer a month",
+        what="Malwarebytes antivirus with scam and ad blocking, installed by us and checked at every service. The same price every year."),
+    "mb-home-vpn": dict(
+        name="Malwarebytes with Privacy VPN", price="5.85", per="a month for up to 3 devices",
+        what="Malwarebytes on up to three computers, phones or tablets, plus the Privacy VPN for safer browsing on public Wi-Fi."),
     "threatdown": dict(
-        name="Malwarebytes for business (ThreatDown)", price=None, per="per computer a month",
-        what="The business edition of Malwarebytes: real-time protection on every computer, run from one central console."),
+        name="Malwarebytes for business (ThreatDown)", price="4.50", per="per computer a month",
+        what="The business edition of Malwarebytes: real-time protection on every computer, run from one central console and watched by us."),
     "acronis-pc": dict(
         name="Acronis computer backup", price="12.00", per="per computer a month, 100&nbsp;GB included",
         what="Backs up the whole computer to the cloud, so a single file or the entire machine can be restored. Need more than 100&nbsp;GB? We&rsquo;ll quote."),
@@ -66,7 +74,76 @@ PAGE_OFFERS = {
         "A typical small office: Microsoft 365 Business Standard (&pound;12.50), computer backup (&pound;12.00) and Keeper passwords (&pound;3.50) &mdash; <strong>&pound;28.00 per person a month</strong> for the software, alongside your support plan."),
     "small-business-it-support": ("// ADD TO YOUR PLAN", "Software we supply and look after", _BIZ_LEDE,
         ["m365-standard", "acronis-pc", "keeper", "defender", "threatdown", "proofpoint"], ""),
+    "malwarebytes-premium": ("// ORDER IT FROM US", "Get Malwarebytes through us",
+        "We&rsquo;re a Malwarebytes reseller. We install it properly on every device and keep an eye on it for you &mdash; for homes, and as ThreatDown for businesses.",
+        ["mb-home", "mb-home-vpn", "threatdown"], ""),
 }
+
+# Support + software bundles (owner, 3 Oct 2026: "Business Care" GBP 35 and "Business Care Plus" GBP 45, per person with
+# one computer each, no VAT). Set against the published local MSP packages of GBP 35 / GBP 45 + VAT per user. The
+# "bought separately" figure is summed from the parts, so it can never drift from the prices above.
+SUPPORT_FROM = "24.38"   # business support, per computer a month (pricing-truth)
+BUNDLES = {
+    "business-care": dict(
+        name="Business Care", price="35.00",
+        desc="IT support and Microsoft 365 for one person, in one monthly price.",
+        parts=[("Business IT support, remote fixes included", SUPPORT_FROM),
+               ("Microsoft 365 Business Standard licence: email, Teams and the full Office apps", PRODUCTS["m365-standard"]["price"])],
+        extras=["Full computer service every 6 weeks, with a written Service Report"]),
+    "business-care-plus": dict(
+        name="Business Care Plus", price="45.00",
+        desc="Everything a small office needs to stay protected, in one monthly price.",
+        parts=[("Business IT support, remote fixes included", SUPPORT_FROM),
+               ("Microsoft 365 Business Premium licence: Standard plus Microsoft&rsquo;s business security", PRODUCTS["m365-premium"]["price"]),
+               ("Microsoft 365 backup of email, OneDrive, SharePoint and Teams", PRODUCTS["acronis-m365"]["price"]),
+               ("Staff security training with practice phishing emails", PRODUCTS["usecure"]["price"])],
+        extras=["Full computer service every 6 weeks, with a written Service Report"]),
+}
+
+def _bundle_card(key):
+    b = BUNDLES[key]
+    separately = sum(float(p) for _, p in b["parts"])
+    items = "\n".join(f'              <li>{label} <span class="swb-was">normally &pound;{price}</span></li>' for label, price in b["parts"])
+    items += "\n" + "\n".join(f'              <li>{x}</li>' for x in b["extras"])
+    href = "/contact/?topic=business-it-support&amp;product=" + quote(b["name"])
+    return (f'          <article class="swb-card">\n'
+            f'            <span class="swo-tag">AVAILABLE SOON</span>\n'
+            f'            <h3 class="swb-name">{b["name"]}</h3>\n'
+            f'            <p class="swb-desc">{b["desc"]}</p>\n'
+            f'            <p class="swb-price"><b>&pound;{b["price"]}</b><span>per person a month, one computer each &middot; no VAT to add</span></p>\n'
+            f'            <ul class="swb-list">\n{items}\n            </ul>\n'
+            f'            <p class="swb-save">Bought separately: &pound;{separately:.2f}. You save &pound;{separately - float(b["price"]):.2f} a month per person.</p>\n'
+            f'            <a class="button primary" href="{href}" aria-label="Register interest: {b["name"]}">Register interest</a>\n'
+            f'          </article>')
+
+def bundles_section():
+    cards = "\n".join(_bundle_card(k) for k in BUNDLES)
+    return f'''    <section class="section swb" id="bundles" aria-label="Support and Microsoft 365 bundles">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// SUPPORT + SOFTWARE TOGETHER</p>
+          <h2 class="section-title section-title--center" data-title>Business Care bundles<span class="title-underline title-underline--center"></span></h2>
+          <p class="lede lede--center" data-reveal>Your IT support and your Microsoft 365 in one price per person, with remote fixes included. We&rsquo;re not VAT registered, so the price you see is the price you pay.</p>
+        </div>
+        <div class="swb-grid">
+{cards}
+        </div>
+        <p class="swo-note">The Microsoft 365 part starts as soon as our Microsoft distributor set-up completes &mdash; register your interest now and we&rsquo;ll be in touch. Microsoft 365 licences are on a 12-month term. Extra computers without a licence are &pound;{SUPPORT_FROM} a month each. On-site visits, parts and new set-ups are quoted before we start.</p>
+      </div>
+      <style>
+      .swb-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.1rem;max-width:900px;margin:0 auto}}
+      .swb-card{{display:flex;flex-direction:column;gap:.65rem;padding:1.4rem 1.4rem 1.5rem;border:1px solid rgba(255,255,255,.14);border-radius:18px;background:rgba(255,255,255,.035)}}
+      .swb-name{{margin:0;font-size:1.3rem}}
+      .swb-desc{{margin:0;color:var(--muted,#9aa6c2);font-size:.95rem;line-height:1.5}}
+      .swb-price{{margin:.1rem 0;display:flex;flex-direction:column}}
+      .swb-price b{{font-size:2.1rem;line-height:1.1;color:var(--cyan,#37c2c2);font-variant-numeric:tabular-nums}}
+      .swb-price span{{font-size:.84rem;color:var(--muted,#9aa6c2)}}
+      .swb-list{{margin:0;padding-left:1.1rem;display:flex;flex-direction:column;gap:.45rem;font-size:.95rem;line-height:1.45;flex:1}}
+      .swb-was{{display:block;font-size:.8rem;color:var(--muted,#9aa6c2)}}
+      .swb-save{{margin:.2rem 0 .3rem;font-size:.88rem;color:var(--green,#00ce1b)}}
+      .swb-card .button{{align-self:flex-start;white-space:nowrap}}
+      </style>
+    </section>'''
 
 CONTACT = "/contact/?topic=software-we-supply&amp;product="
 

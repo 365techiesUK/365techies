@@ -385,12 +385,6 @@ OTHER_HERO_TILES = {
   ('hp-c-biz', 'book', 'Do I need mesh Wi-Fi?', 'Mesh systems explained in plain English', 'PLAIN ENGLISH', '/mesh-wifi-systems-uk/'),
   ('hp-c-buy', 'wrench', 'Set up my network for me', 'A clear quote up front, before any chargeable work', 'GET A QUOTE', '/contact/'),
  ],
- 'how-much-does-it-support-cost-uk-2026': [
-  ('hp-c-fix', 'home', 'What do you charge?', 'Home &pound;18.25, business from &pound;24.38 a month', 'PUBLISHED PRICES', '/pricing/'),
-  ('hp-c-care', 'star', 'Which plan suits me?', 'A few questions, and the right plan for you', 'PLAN FINDER', '/plan-finder/'),
-  ('hp-c-biz', 'alert', 'Is cheap IT support worse?', 'Hidden costs and what to compare, answered', 'STRAIGHT ANSWERS', '#faq'),
-  ('hp-c-buy', 'briefcase', 'Get a price for my setup', 'An honest, tailored quote for your home or business', 'QUICK QUOTE', '/quick-quote/'),
- ],
  'how-to-block-nuisance-calls-and-texts': [
   ('hp-c-fix', 'phone', 'Stop the nuisance calls', 'Block, silence and report them', 'STEP BY STEP', '#faq'),
   ('hp-c-care', 'alert', 'Is it a scam text?', 'How scam texts and calls work', 'SMISHING &amp; VISHING', '/smishing-and-vishing/'),

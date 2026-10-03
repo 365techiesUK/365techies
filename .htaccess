@@ -110,6 +110,9 @@ RewriteRule ^microsoft-365-vs-gmail-for-small-businesses/?$ /microsoft-365-vs-go
 RewriteRule ^spring-clean-your-computer/?$ /how-to-speed-up-a-slow-computer/ [R=301,L]
 RewriteRule ^back-to-school-it/?$ /family-it-support/ [R=301,L]
 RewriteRule ^it-cost-worksheet/?$ /it-support-cost-guide/ [R=301,L]
+# 2026-10-03: the blog cost post merged into the cost guide (owner: "still all four"); two pages on one
+# question, 6 impressions against the guide's 135. Keep >= 1 year.
+RewriteRule ^how-much-does-it-support-cost-uk-2026/?$ /it-support-cost-guide/ [R=301,L]
 # 2026-08-31, post-freeze baseline review: the last true duplicate pair.
 # /agentic-ai-systems/ and /ai/agents/ were both live, both self-canonical and
 # both in the sitemap for the same intent; the legacy page held 292 impressions

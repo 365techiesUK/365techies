@@ -5434,13 +5434,13 @@ add(
               <li>Microsoft 365 management</li>
               <li>Cybersecurity &amp; backups</li>
               <li>Staff onboarding &amp; advice</li>
-              <li>Loyalty discount on any fault work</li>
+              <li><strong>Remote fixes included</strong></li>
             </ul>
             <a href="/business-it-support-plans/" class="button primary plan-card__cta">See Business Plans &amp; Prices</a>
             <p class="mono" style="text-align:center;margin-top:.7rem;color:var(--faint);font-size:.75rem;letter-spacing:.1em">DIRECT DEBIT BY GOCARDLESS &middot; CANCEL ANYTIME</p>
           </article>
         </div>
-        <p class="plans-note mono" data-reveal>// NO LOCK-IN &middot; CANCEL ANYTIME &middot; FULL COMPUTER SERVICE EVERY 6 WEEKS &middot; LOYALTY DISCOUNT ON ANY FAULT WORK</p>
+        <p class="plans-note mono" data-reveal>// NO LOCK-IN &middot; CANCEL ANYTIME &middot; FULL COMPUTER SERVICE EVERY 6 WEEKS &middot; BUSINESS: REMOTE FIXES INCLUDED &middot; HOME: LOYALTY DISCOUNT ON FAULT WORK</p>
       </div>
     </section>''',
    f'''    <section class="section" aria-label="What is included">
@@ -5451,7 +5451,7 @@ add(
           <p class="lede lede--center" data-reveal>One predictable monthly cost instead of a bill every time something breaks: problems are caught early, devices last longer, and a single emergency repair can cost more than a year of support.</p>
         </div>
         <ul class="security-grid" data-stagger>
-{grid_cards([("Regular maintenance","A full computer service every six weeks to keep devices fast, clean and healthy. Each one ends with a <a href=\"/free-pc-health-check/#six-weekly-service\">written Service Report</a>, emailed to you and saved in your portal: what we did, how the machine scored, what to plan for."),("Unlimited remote support","Secure help over Splashtop SOS, usually within minutes during opening hours."),("Security &amp; protection","Antivirus, web protection, patching and a real human to ask &lsquo;is this email safe?&rsquo;"),("Microsoft 365 help","Outlook, Teams, OneDrive and licensing — set up and kept working for you."),("Backup checks","Backups verified regularly &mdash; and we can text you a reminder to plug in your backup drive when one&rsquo;s due."),("Friendly advice","Plain-English guidance on new devices, software and staying safe online."),("Our loyalty promise","Once you&rsquo;re up and running we keep it that way &mdash; and if a fault ever does crop up, any work you need is <strong>discounted</strong> because you&rsquo;re on support.")])}
+{grid_cards([("Regular maintenance","A full computer service every six weeks to keep devices fast, clean and healthy. Each one ends with a <a href=\"/free-pc-health-check/#six-weekly-service\">written Service Report</a>, emailed to you and saved in your portal: what we did, how the machine scored, what to plan for."),("Unlimited remote support","Secure help over Splashtop SOS, usually within minutes during opening hours."),("Security &amp; protection","Antivirus, web protection, patching and a real human to ask &lsquo;is this email safe?&rsquo;"),("Microsoft 365 help","Outlook, Teams, OneDrive and licensing — set up and kept working for you."),("Backup checks","Backups verified regularly &mdash; and we can text you a reminder to plug in your backup drive when one&rsquo;s due."),("Friendly advice","Plain-English guidance on new devices, software and staying safe online."),("Our loyalty promise","Once you&rsquo;re up and running we keep it that way &mdash; and if a fault ever does crop up, any work you need is <strong>discounted</strong> because you&rsquo;re on support. On a business plan, <strong>remote fixes are included</strong>.")])}
         </ul>
         <p class="mono" style="text-align:center;margin-top:1.6rem"><a href="/preventative-maintenance/" style="color:var(--cyan)">See exactly what our 6-weekly preventative maintenance includes &#8594;</a></p>
       </div>
@@ -5516,7 +5516,7 @@ def home_plan_cards():
 def biz_plan_cards():
     # MOST POPULAR = Business Premium (owner, 29 Sep 2026; every business still gets a custom quote)
     return "\n".join([
-      plan_card("business", None, "STARTER", "Business Starter", "For sole traders and very small businesses.", "&pound;24.38", ("FROM","/mo per computer"), ["Support for 1&ndash;3 computers","Remote IT support","Email support","Microsoft 365 help","Basic security checks","Loyalty discount on any fault work","Computer maintenance with written Service Reports","Your own 365 estate dashboard"], "Set up Direct Debit", GOCARDLESS.get("business-starter") or "/contact/?topic=business-it-support"),   # no DD link: a quote, on the business topic
+      plan_card("business", None, "STARTER", "Business Starter", "For sole traders and very small businesses.", "&pound;24.38", ("FROM","/mo per computer"), ["Support for 1&ndash;3 computers","<strong>Remote fixes included</strong>","Email support","Microsoft 365 help","Basic security checks","Loyalty discount on on-site &amp; hardware work","Computer maintenance with written Service Reports","Your own 365 estate dashboard"], "Set up Direct Debit", GOCARDLESS.get("business-starter") or "/contact/?topic=business-it-support"),   # no DD link: a quote, on the business topic
       plan_card("business", None, "STANDARD", "Business Standard", "For small businesses needing regular IT support.", "", ("SAME FROM-PRICE AS STARTER","&mdash; you choose the service level"), ["<strong>Steps up from Starter: Microsoft 365 administration, backup checks &amp; new-user setup</strong>","Support for multiple users","Outlook, Teams &amp; OneDrive","Cybersecurity guidance","Monthly maintenance","Written Service Report each service","Your own 365 estate dashboard"], "Get a Standard quote", "/contact/?topic=business-it-support"),
       plan_card("business", "&#9733; MOST POPULAR", "PREMIUM", "Business Premium", "For businesses that rely on IT every day.", "", ("SAME FROM-PRICE AS STARTER","&mdash; you choose the service level"), ["<strong>Steps up from Standard: priority response, on-site included &amp; full 365 management</strong>","Cybersecurity &amp; backup planning","Staff onboarding &amp; offboarding","Device setup &amp; technology planning","Your own 365 estate dashboard"], "Get a Premium quote", "/contact/?topic=business-it-support"),
     ])
@@ -5634,7 +5634,7 @@ add(
           <p>Planning ahead? See our plain-English guides to <a href="/pstn-switch-off-business/">the PSTN switch-off for business</a> and <a href="/windows-10-esu-business-cost/">what Windows 10 ESU costs a business</a>.</p>
         </div>
         <ul class="checklist" data-stagger>
-{checklist(["Remote IT support","Staff support","Microsoft 365 administration","Outlook &amp; email help","Teams, OneDrive &amp; SharePoint","Cybersecurity checks","Windows updates","Backup checks","New PC setup","User onboarding","Leaver account checks","Loyalty discount on any fault work","Printer &amp; network support"])}
+{checklist(["Remote IT support","Staff support","Microsoft 365 administration","Outlook &amp; email help","Teams, OneDrive &amp; SharePoint","Cybersecurity checks","Windows updates","Backup checks","New PC setup","User onboarding","Leaver account checks","Remote fixes included","Loyalty discount on on-site &amp; hardware work","Printer &amp; network support"])}
         </ul>
       </div>
     </section>''',
@@ -5834,7 +5834,7 @@ def _business_plans_v2():
           <nav class="breadcrumb" aria-label="Breadcrumb">{bc("Business Support Plans")}</nav>
           <p class="eyebrow mono">// BUSINESS PLANS</p>
           <h1>Business IT support <em class="grad grad--green">plans</em></h1>
-          <p class="lede">Monthly plans from &pound;24.38 per computer, no lock-in. Remote fixes in minutes, on-site across Dorset with no call-out fee, and Microsoft 365, backups and security looked after for you. From a single user to a busy team &mdash; choose the cover that fits, and grow when you&rsquo;re ready.</p>
+          <p class="lede">Monthly plans from &pound;24.38 per computer, no lock-in. Remote fixes included and usually done in minutes, on-site across Dorset with no call-out fee, and Microsoft 365, backups and security looked after for you. From a single user to a busy team &mdash; choose the cover that fits, and grow when you&rsquo;re ready.</p>
           <div class="page-hero__cta">
             <a href="tel:+441202775566" class="button primary button--lg">Call 01202 775566</a>
             <a href="/contact/?topic=business-it-support" class="button secondary button--lg">Get a quote</a>
@@ -5897,7 +5897,7 @@ add(
  content="\n".join([
    # 27 Sep 2026 task-first pass: a short heading, then the plans; the tiles and proof strip repeated the plan facts
    task_head(bc("Business Support Plans"), 'Business IT support <em class="grad grad--green">plans</em>',
-        "Monthly plans from &pound;24.38 per computer, no lock-in. Remote fixes in minutes, on-site across Dorset with no call-out fee, and Microsoft 365, backups and security looked after for you. Pay monthly by Direct Debit and cancel any time.",
+        "Monthly plans from &pound;24.38 per computer, no lock-in. Remote fixes included and usually done in minutes, on-site across Dorset with no call-out fee, and Microsoft 365, backups and security looked after for you. Pay monthly by Direct Debit and cancel any time.",
         trust=['<a href="/reviews/">&#9733; Rated 4.9 on Google</a>', "Family-run since 1995", "No call-out fee on-site in Dorset"]),
    f'''    <section class="support-options" id="plans" aria-label="Business support plans">
 <h2 class="sr-only">Business support plans</h2>
@@ -5908,6 +5908,7 @@ add(
       <p class="plans-note mono" data-reveal style="margin-top:.5rem"><a href="/our-guarantees/" style="color:var(--cyan)">&#10003; No lock-in, cancel anytime &middot; No-fix-no-fee repairs &middot; Family-run since 1995 &mdash; see our guarantees</a></p>
       <p data-reveal style="text-align:center;max-width:62ch;margin:1.4rem auto 0;color:var(--muted)">From a home office to a supercar workshop: since 2016 we&rsquo;ve looked after <a href="https://www.emblemsportscars.com/" target="_blank" rel="noopener">Emblem Sports Cars</a>, Poole&rsquo;s Ferrari, Maserati &amp; Lamborghini specialists &mdash; diagnostic systems and all. We tailor support to your trade too &mdash; see <a href="/it-support-by-industry/">IT support by industry</a>.</p>
     </section>''',
+   _SWO.bundles_section(),   # Business Care GBP 35 / Care Plus GBP 45 (owner, 3 Oct 2026) - prices live in software_offers.py
    _BPL_STEPS,
    f'''    <section class="section" aria-label="Popular add-ons">
       <div class="wrap">
@@ -5932,7 +5933,8 @@ add(
             <tbody>
               <tr><th scope="row">Computers</th><td>1&ndash;3</td><td>Multiple</td><td>Multiple</td></tr>
               <tr><th scope="row">Remote support</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
-              <tr><th scope="row">Loyalty discount on any fault work</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+              <tr><th scope="row">Remote fixes included</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+              <tr><th scope="row">Loyalty discount on on-site &amp; hardware work</th><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
               <tr><th scope="row">Microsoft 365</th><td>Help</td><td>Administration</td><td>Full management</td></tr>
               <tr><th scope="row">Cybersecurity</th><td>Basic checks</td><td>Guidance</td><td>Planning</td></tr>
               <tr><th scope="row">Backup checks</th><td class="no">&ndash;</td><td class="yes">&#10003;</td><td>+ recovery planning</td></tr>
@@ -6006,7 +6008,7 @@ add(
      ("Is remote support safe?", "Yes. Sessions run over Splashtop SOS — an encrypted, industry-standard remote support tool. You watch everything on screen and access ends the moment the session is over."),
      ("What can be fixed remotely?", "Most things: email problems, software issues, Microsoft 365, slow computers, printer setup and Windows updates. Even a scare like <a href=\"/onedrive-files-disappeared/\">OneDrive files that have vanished</a>, and general troubleshooting for home and business users."),
      ("How fast is remote support?", "Most remote sessions start within minutes during opening hours (Mon–Fri, 9am–5pm), and subscribers always jump the queue."),
-     ("How much does a remote fix cost?", "Remote fix jobs are priced on difficulty and the time they take, starting from £20 — and the price is agreed with you before any chargeable work. Every pay-as-you-go job also includes 30 days of follow-up remote support plus a health check at 30 days. As an example, a full Windows clean install with all your data backed up and restored takes about 4 hours and is £149. On a monthly plan your computer is kept maintained and running, with priority support included and any fault work discounted (our customer loyalty promise)."),
+     ("How much does a remote fix cost?", "Remote fix jobs are priced on difficulty and the time they take, starting from £20 — and the price is agreed with you before any chargeable work. Every pay-as-you-go job also includes 30 days of follow-up remote support plus a health check at 30 days. As an example, a full Windows clean install with all your data backed up and restored takes about 4 hours and is £149. On a monthly plan your computer is kept maintained and running, with priority support included and any fault work discounted (our customer loyalty promise); on a business plan, remote fixes are included."),
      ("Will you connect to my computer without warning?", "No. We always phone you first to say we're ready and to check you're ready before we connect. We never connect out of the blue, and a remote session can only start when you open our support tool and read us its one-time code, which begins an encrypted Splashtop SOS session."),
    ]),
  ]),
@@ -6047,7 +6049,7 @@ add(
      ("Is remote support safe?", "Yes. Sessions run over Splashtop SOS — an encrypted, industry-standard remote support tool. You watch everything on screen and access ends the moment the session is over."),
      ("What can be fixed remotely?", "Most things: email problems, software issues, Microsoft 365, slow computers, printer setup and Windows updates. Even a scare like <a href=\"/onedrive-files-disappeared/\">OneDrive files that have vanished</a>, and general troubleshooting for home and business users."),
      ("How fast is it?", "Most remote sessions start within minutes during opening hours (Mon&ndash;Fri, 9am&ndash;5pm). Subscribers always jump the queue."),
-     ("How much does a remote fix cost?", "Remote fix jobs are priced on difficulty and the time they take, <strong>starting from &pound;20</strong>. A senior techie connects first to confirm what&rsquo;s needed and agrees the price with you before any chargeable work. Every pay-as-you-go job also includes <strong>30 days&rsquo; follow-up remote support</strong> and a <strong>health check at 30 days</strong>. As an example, a full Windows clean install with all your data backed up and restored (about 4 hours) is <strong>&pound;149</strong>. On a <a href=\"/monthly-it-support/\">monthly plan</a> your computer is kept maintained and running, with priority support included and any fault work <strong>discounted</strong> &mdash; our customer loyalty promise."),
+     ("How much does a remote fix cost?", "Remote fix jobs are priced on difficulty and the time they take, <strong>starting from &pound;20</strong>. A senior techie connects first to confirm what&rsquo;s needed and agrees the price with you before any chargeable work. Every pay-as-you-go job also includes <strong>30 days&rsquo; follow-up remote support</strong> and a <strong>health check at 30 days</strong>. As an example, a full Windows clean install with all your data backed up and restored (about 4 hours) is <strong>&pound;149</strong>. On a <a href=\"/monthly-it-support/\">monthly plan</a> your computer is kept maintained and running, with priority support included and any fault work <strong>discounted</strong> &mdash; our customer loyalty promise. On a business plan, remote fixes are included."),
      ("Will you connect to my computer without warning?", "No &mdash; we always phone you first to say we&rsquo;re ready and to check you&rsquo;re ready before we connect. We never connect out of the blue, and a session can only start when you open our support tool and read us its code."),
      ("Should I let someone remote into my computer?", "Only when you trust them and <em>you</em> started it. A genuine session (like ours over Splashtop SOS) only begins when you click a link you asked for, and we always phone first to check you&rsquo;re ready. If someone rings out of the blue claiming to be Microsoft, BT or your bank and asks for remote access, hang up &mdash; that&rsquo;s a scam. See our <a href=\"/spot-the-scam/\">Spot the Scam</a> guide."),
      ("What if it can&rsquo;t be fixed remotely?", "Some jobs need hands-on work &mdash; a failing drive, a cracked screen or a machine that won&rsquo;t power on. If so, we&rsquo;ll either <a href=\"/book-a-collection/\">collect your computer or laptop</a> or come to you on-site, and <strong>either way you&rsquo;re quoted for the work before we start</strong>. For an on-site call-out we arrange the day and time with you first and phone ahead with an ETA &mdash; we never just turn up. We cover Bournemouth, Poole, Christchurch and across Dorset."),
@@ -6207,28 +6209,29 @@ add(
 # ============================================================ CYBERSECURITY SUPPORT
 CYBER_FAQS = [
   ("What makes this &lsquo;the ultimate&rsquo; security?", "It&rsquo;s layered. Instead of relying on one tool, we stack multiple defences &mdash; endpoint protection, email filtering, patching, multi-factor authentication, backups and monitoring &mdash; all set up, managed and watched by us. If one layer is bypassed, the next one catches it."),
-  ("Do you use Malwarebytes?", "Yes &mdash; as a Malwarebytes Partner we deploy Malwarebytes Premium with VPN as the endpoint layer of your security stack, set up and managed by us. See our <a href=\"/malwarebytes-premium/\">Malwarebytes Premium &amp; VPN</a> page."),
+  ("Do you use Malwarebytes?", "Yes &mdash; as a Malwarebytes Partner we deploy Malwarebytes as the endpoint layer of your security stack, set up and managed by us: <strong>&pound;2.50 a month</strong> for a home computer, and ThreatDown, the business edition, at <strong>&pound;4.50 per computer a month</strong>. See our <a href=\"/malwarebytes-premium/\">Malwarebytes Premium &amp; VPN</a> page."),
   ("What does the VPN add to my security?", "The VPN (Malwarebytes Privacy VPN) encrypts your internet connection so your browsing stays private &mdash; vital on public Wi-Fi, where others on the network could otherwise snoop. It also hides your location and even lets you choose which country you appear to browse from. Antivirus protects your <em>device</em>; the VPN protects your <em>data</em> as it travels &mdash; the two work hand in hand. See our <a href=\"/malwarebytes-premium/\">Privacy VPN guide</a>."),
   ("How do you protect against scams and viruses?", "We set up endpoint protection and web filtering, keep everything patched, filter phishing email, and give you a real human to ask whether a message is safe before you click."),
   ("Do you offer multi-factor authentication?", "Yes &mdash; we set up multi-factor authentication (MFA) and password managers the painless way, for home and business accounts, so a stolen password isn&rsquo;t enough to get in."),
   ("Can you review our business security?", "Yes &mdash; we provide plain-English business security reviews covering devices, email, backups, passwords, access and staff awareness, with clear recommendations. If your firewall&rsquo;s licence is up for renewal, see <a href=\"/firewall-licence-expired-what-happens/\">what happens when a firewall licence expires</a>."),
   ("I think I&rsquo;ve been hacked &mdash; can you help?", "Yes. Contact us straight away &mdash; see our <a href=\"/business-hacked-emergency-help/\">emergency help for a hacked business</a>. We&rsquo;ll help lock down your accounts, clean up affected devices, restore from backup if needed and stop it happening again."),
+  ("How much does cyber security cost for a small business?", "Our prices are on this page, per person a month with no VAT to add: staff security training &pound;1.75, email filtering &pound;2.75, the Keeper password manager &pound;3.50 and ThreatDown business antivirus &pound;4.50 per computer. Most small offices start with two or three of these alongside a <a href=\"/business-it-support-plans/\">business support plan</a>, from &pound;24.38 per computer with remote fixes included."),
   ("Do you provide cyber security for small businesses in Dorset?", "Yes: layered, managed protection sized for small businesses right across Dorset, Bournemouth and Poole. Endpoint security, email filtering, MFA, patching, verified backups and monitoring, with a real local person to call. Pair it with <a href=\"/cyber-essentials/\">Cyber Essentials certification</a>."),
 ]
 add(
  slug="cybersecurity-support",
- title="Cyber Security Services for Businesses | Bournemouth & Dorset",
- desc="Cyber security services for businesses and homes across Bournemouth, Poole and Dorset — protection from ransomware, phishing, scams and malware, with MFA, verified backups and Cyber Essentials. Rated 4.9 on Google, since 1995.",
- og_title="Cyber Security Services | Bournemouth & Dorset",
+ title="Cyber Security Bournemouth, Poole & Dorset | Small Business",
+ desc="Cyber security for small businesses in Bournemouth, Poole and Dorset, with prices on the page: antivirus, email filtering, staff training and passwords.",
+ og_title="Cyber Security for Small Businesses | Bournemouth, Poole & Dorset",
  schema=lambda s: graph([
-   crumb(s, "Cybersecurity"), webpage(s, "Cybersecurity Support", "The ultimate layered cybersecurity for homes and small businesses across Dorset."),
+   crumb(s, "Cybersecurity"), webpage(s, "Cyber Security for Small Businesses in Bournemouth, Poole & Dorset", "Layered, managed cyber security for small businesses (and homes) in Bournemouth, Poole and across Dorset, with published prices."),
    service(s, "Cybersecurity Support", "Layered, always-on protection from ransomware, phishing, scams and malware for homes and businesses across Dorset.", "Cybersecurity"),
    faqpage(s, CYBER_FAQS),
  ]),
  content="\n".join([
-   hero(bc("Cybersecurity"), "// THE ULTIMATE SECURITY",
-        'Cyber security <em class="grad grad--green">services</em> for Dorset',
-        hero_trust("Cyber security services for businesses and homes across Bournemouth, Poole and Dorset. Ransomware, scams and phishing don&rsquo;t care whether you&rsquo;re a family or a business &mdash; they just look for the easy way in. We close every door with layered, always-on protection that&rsquo;s set up, managed and watched over by us. The protection runs round the clock, and the people answer Monday to Friday, 9 to 5."),
+   hero(bc("Cybersecurity"), "// CYBER SECURITY &middot; BOURNEMOUTH, POOLE &amp; DORSET",
+        'Cyber security for small businesses in <em class="grad grad--green">Bournemouth, Poole &amp; Dorset</em>',
+        hero_trust("Ransomware, scams and phishing emails look for the easy way in, and small businesses are often the easiest. We close the doors with layered protection &mdash; business antivirus, email filtering, multi-factor sign-in, backups and staff training &mdash; set up and looked after by a local team, with <a href=\"#software\">our prices on this page</a>. Homes too. The protection runs round the clock, and the people answer Monday to Friday, 9 to 5."),
         cta1=("Get Protected", "/contact/"), cta2=("Free IT Health Check", "/contact/"),
         chips=["Malwarebytes Partner", "Layered defence", "Monitored 24/7"], scene=HERO_SCENES.get("cyber")),
    f'''    <section class="section" aria-label="Why it matters">
@@ -6316,13 +6319,32 @@ add(
         </ol>
       </div>
     </section>''',
+   # 3 Oct 2026: local section for "cyber security Bournemouth / Poole / Dorset" - page 1 for those searches is
+   # mostly jobs and university courses, so a real local business answer has room (rejuvenate-compare-2026-10-03.md)
+   f'''    <section class="section" id="local" aria-label="Cyber security in Bournemouth, Poole and Dorset">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow--center mono" data-reveal>// LOCAL TO YOU</p>
+          <h2 class="section-title section-title--center" data-title>Cyber security help in Bournemouth, Poole and across Dorset<span class="title-underline title-underline--center"></span></h2>
+        </div>
+        <ul class="security-grid" data-stagger>
+{grid_cards([("A small local team","We&rsquo;re a family-run firm based in Bournemouth, looking after businesses in Poole, Christchurch, Wimborne, Ferndown and across Dorset since 1995. You speak to the people who do the work."),
+             ("Help the same day","Most security work is done remotely and usually the same day: locking down a hacked email account, cleaning a computer, switching on multi-factor sign-in. On a <a href=\"/business-it-support-plans/\">business plan</a>, remote fixes are included."),
+             ("On-site when it&rsquo;s needed","Routers, Wi-Fi and new computers sometimes need a visit. We come to you anywhere in Dorset, with the work quoted before we start."),
+             ("Prices you can see","Business antivirus, email filtering, staff training and password managers are priced <a href=\"#software\">on this page</a>, per person a month. We&rsquo;re not VAT registered, so there&rsquo;s nothing to add."),
+             ("Cyber Essentials","Need it for a contract or your insurer? We get your computers and accounts ready and help you through the <a href=\"/cyber-essentials/\">Cyber Essentials</a> application."),
+             ("Been hacked?","Call 01202 775566 now. See <a href=\"/business-hacked-emergency-help/\">emergency help for a hacked business</a> for what to do in the first hour.")])}
+        </ul>
+        <p style="text-align:center;margin-top:1.6rem" data-reveal>IT support near you: <a href="/it-support-bournemouth/">Bournemouth</a> &middot; <a href="/it-support-poole/">Poole</a> &middot; <a href="/it-support-christchurch/">Christchurch</a> &middot; <a href="/it-support-wimborne/">Wimborne</a> &middot; <a href="/it-support-dorset/">all of Dorset</a></p>
+      </div>
+    </section>''',
    net_map_section("// ALWAYS WATCHING", "Your whole network, watched over",
        "          <p>Behind every plan sits proactive, always-on protection &mdash; antivirus, patching, backups and monitoring working together across every device, watched over by us day and night.</p>\n          <p>If something looks wrong, we usually catch it early &mdash; often before you&rsquo;d ever notice.</p>",
        variant="business", label="LIVE VIEW &mdash; YOUR NETWORK"),
    faq_html(CYBER_FAQS),
    tools_strip(["emailsec", "breach", "scamlink", "pwgen"], title="Check yourself &mdash; free security tools", lede_text="Run our free security checks right now and see where you stand.", alt=False),
    cta("Get the ultimate protection",
-       "Layered, always-on security &mdash; set up, managed and monitored by your local team, and included in every monthly plan.",
+       "Layered, always-on security &mdash; set up, managed and monitored by your local team in Bournemouth, Poole and across Dorset.",
        primary=("Get Protected", "/contact/"), secondary=("See Plans &amp; Prices", "/monthly-it-support/")),
  ]),
 )

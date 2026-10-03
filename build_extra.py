@@ -10608,6 +10608,7 @@ def malwarebytes():
     desc = "365 Techies is a Malwarebytes Partner. We set up and manage Malwarebytes Premium with VPN for homes and businesses across Dorset — award-winning protection against malware, ransomware and online threats, running round the clock and looked after by us."
     faqs = [
       ("Are you really a Malwarebytes partner?", "Yes — 365 Techies is a Malwarebytes Partner, so we can supply, set up and manage Malwarebytes Premium for our home and business customers and look after it on your support plan."),
+      ("How much does Malwarebytes cost through you?", "For a home computer it&rsquo;s <strong>&pound;2.50 a month</strong>, or <strong>&pound;5.85 a month</strong> for up to three devices with the Privacy VPN. For businesses we supply ThreatDown, the business edition of Malwarebytes, at <strong>&pound;4.50 per computer a month</strong>. We install it, check it at every service, and the price stays the same every year. We&rsquo;re not VAT registered, so there&rsquo;s no VAT to add."),
       ("What does Malwarebytes Premium actually protect against?", "Malware, ransomware, viruses, spyware, malicious and scam websites, and zero-day exploits. It works alongside Windows to stop threats before they take hold, with real-time protection running quietly in the background."),
       ("What is the VPN for?", "The VPN (Malwarebytes Privacy VPN) encrypts your internet connection so your browsing stays private &mdash; especially on public Wi-Fi in caf&eacute;s, hotels and airports, where others on the network could otherwise see what you&rsquo;re doing. It hides both what you look at and where you go online, masks your location, and even lets you choose which country you appear to browse from. Think of it as privacy for your data &mdash; the perfect partner to the antivirus that protects your device."),
       ("Is the VPN the same as antivirus &mdash; do I still need both?", "They&rsquo;re different, and they work best together. The VPN protects your data as it travels across the internet, but it won&rsquo;t stop viruses, ransomware or scam downloads. Malwarebytes itself recommends using the VPN alongside proper antivirus &mdash; so the VPN looks after your data and the security software looks after your device."),
@@ -10717,16 +10718,7 @@ def malwarebytes():
         </ol>
       </div>
     </section>''',
-      f'''    <section class="section section--alt" aria-label="Order Malwarebytes from us">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// ORDER IT FROM US</p>
-          <h2 class="section-title section-title--center" data-title>Get Malwarebytes through us<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>We&rsquo;re a Malwarebytes reseller. We supply it for home computers and, as ThreatDown, for businesses &mdash; installed properly on every device and kept an eye on by us. Ask us for today&rsquo;s price.</p>
-        </div>
-        <p style="text-align:center;margin-top:1.2rem"><a class="button primary" href="/contact/?topic=software-we-supply&amp;product=Malwarebytes%20Premium">Ask us for a price</a></p>
-      </div>
-    </section>''',
+      # the "Get Malwarebytes through us" price cards are inserted here, above the FAQs, from software_offers.py
       faq_html(faqs),
       cta("Stay safe online with Malwarebytes",
           "Talk to your local Malwarebytes Partner about Premium &amp; VPN protection for your home or business.",
@@ -16966,7 +16958,7 @@ def pricing_page():
             <p class="prcard__for">For sole traders and small businesses</p>
             <p class="prcard__price"><small>from</small><b>&pound;24.38</b></p>
             <p class="prcard__per">a month per computer</p>
-            <ul><li>Ongoing maintenance</li><li>Cybersecurity &amp; backups managed</li><li>On-site help in Dorset</li><li>Microsoft 365 support</li></ul>
+            <ul><li>Remote fixes included</li><li>Ongoing maintenance</li><li>Cybersecurity &amp; backups managed</li><li>On-site help in Dorset</li><li>With Microsoft 365: <a href="/business-it-support-plans/#bundles">Business Care from &pound;35</a></li></ul>
             <a class="button secondary" href="/business-it-support-plans/">See business plans</a>
           </article>
           <article class="prcard">
@@ -17081,20 +17073,38 @@ info_page(
 )
 
 # ---- IT support cost guide
+# 3 Oct 2026 (owner: "still all four"): the blog post "How Much Should IT Support Cost? UK 2026 Guide" merged in here
+# (its URL 301s to this page). Leads with our real prices - the one thing a cost search wants and few local firms show.
 info_page(
   slug="it-support-cost-guide", crumb_name="IT Support Cost Guide", eyebrow="// COST GUIDE",
   hero_cta1=('See our prices', '/pricing/'), hero_cta2=('Try the Plan Finder', '/plan-finder/'),   # 28 Sep 2026: its own buttons, not the defaults
-  h1='IT support <em class="grad grad--cyan">cost guide</em>',
-  lede="How much does IT support cost? A clear, honest guide to what you can expect to pay — and why monthly support usually works out cheaper than paying per problem.",
-  desc="A clear guide to IT support costs in the UK — what affects pricing, monthly support vs pay-per-fix, typical price ranges, and how 365 Techies' transparent pricing works.",
-  chips=["Honest &amp; clear","No jargon","Real ranges"],
-  inner="""          <h2>What affects the cost of IT support?</h2>
+  h1='How much does IT support <em class="grad grad--cyan">cost?</em>',
+  lede="Our real prices first, then what moves the price, per user against per computer, VAT, and what to check before you sign anything.",
+  desc="What IT support costs, with our real prices: homes £18.25 and businesses from £24.38 a month per computer, no VAT. Per user or per computer, and what to check.",
+  chips=["Real prices","No VAT to add","No lock-in"],
+  inner="""          <h2>What we charge</h2>
+          <p>These are the prices our customers pay. We&rsquo;re not VAT registered, so there&rsquo;s no VAT to add.</p>
           <ul>
-            <li>Whether you&rsquo;re a home user or a business, and how many devices and users you have.</li>
+            <li><strong>Home support: &pound;18.25 a month per computer.</strong> A full service every 6 weeks, remote help, and a loyalty discount on any fault work. Microsoft 365 for home users is &pound;4.85 a month per person. <a href="/home-it-support-plans/">Home plans</a></li>
+            <li><strong>Business support: from &pound;24.38 a month per computer, with remote fixes included.</strong> On-site visits, parts and new set-ups are quoted before we start. <a href="/business-it-support-plans/">Business plans</a></li>
+            <li><strong>Business Care: &pound;35 per person a month</strong> for support plus a Microsoft 365 Business Standard licence, or <strong>Business Care Plus at &pound;45</strong> with Business Premium, Microsoft 365 backup and staff security training. <a href="/business-it-support-plans/#bundles">The bundles</a></li>
+            <li><strong>One-off remote fixes: from &pound;20</strong>, priced on the job and agreed before any chargeable work. A full Windows reinstall with your files backed up and put back takes about four hours and is &pound;149. <a href="/remote-support/">Remote support</a></li>
+            <li><strong>Security and backup software</strong>, per month: Malwarebytes &pound;2.50 for a home computer, ThreatDown business antivirus &pound;4.50 per computer, the Keeper password manager &pound;3.50 per person, computer backup &pound;12.00. <a href="/cybersecurity-support/#software">Security prices</a></li>
+          </ul>
+          <h2>Per computer or per person?</h2>
+          <p>Most managed IT companies price <strong>per person</strong> (they say &ldquo;per user&rdquo;). We price <strong>per computer</strong>. If three people share two computers, you pay for two. If one person has a desktop and a laptop, per person can come out cheaper &mdash; ask us and we&rsquo;ll work it out both ways for you.</p>
+          <h2>Check whether the price includes VAT</h2>
+          <p>Many IT companies show prices <strong>plus VAT</strong>. If your business is VAT registered you can claim that back, so compare prices before VAT. If you&rsquo;re not VAT registered &mdash; plenty of sole traders, charities and small firms aren&rsquo;t &mdash; the VAT is a real cost: &pound;35 plus VAT is &pound;42. Our prices have no VAT on top.</p>
+          <h2>What affects the cost of IT support?</h2>
+          <ul>
+            <li>Whether you&rsquo;re a home user or a business, and how many devices and people you have.</li>
             <li>Whether you choose a monthly plan or pay per problem.</li>
             <li>The level of cover &mdash; from basic help to fully managed security, backups and Microsoft 365.</li>
+            <li>Whether fixes are included in the monthly price, or charged on top.</li>
             <li>Whether support is remote (usually cheaper and faster) or on-site.</li>
           </ul>
+          <h2>Watch for the costs that aren&rsquo;t in the headline price</h2>
+          <p>Ask what is <em>not</em> included: call-out fees, out-of-hours charges, project work such as new computers or an office move, Microsoft 365 licences, and long contracts that are hard to leave. We publish our prices, keep plans rolling month to month, and agree any extra cost with you before the work starts.</p>
           <h2>Before you ask anyone for a quote</h2>
           <p>Any IT company, us included, can quote faster and more fairly when you can answer five things. Jot them down first:</p>
           <ol>
@@ -17105,16 +17115,15 @@ info_page(
             <li><strong>What is your biggest worry?</strong> Losing data, scams, slow computers, downtime.</li>
           </ol>
           <p>Two more worth knowing: whether you have working, tested backups, and whether you are tied into a contract now and when it ends.</p>
-          <h2>Monthly support vs pay-per-fix</h2>
-          <p>Paying per problem feels cheaper until something goes wrong &mdash; then a single emergency repair can cost more than months of cover. <strong>Monthly support spreads the cost, catches problems early and includes maintenance</strong>, which usually works out cheaper and far less stressful overall.</p>
-          <h2>Typical price ranges</h2>
-          <p>For homes, monthly support typically starts around &pound;15&ndash;&pound;25 per month. For small businesses it&rsquo;s usually priced per user or per device, scaling with your team. One-off repairs are quoted based on the work involved.</p>
-          <h2>Our pricing</h2>
-          <p>We keep it simple: home support from <strong>&pound;18.25/month per computer</strong> (Microsoft 365 for home users <strong>&pound;4.85/month per user</strong>), business support from <strong>&pound;24.38/month per computer</strong> &mdash; no contracts and no hidden fees. See our <a href="/pricing/">pricing</a> page or try the <a href="/plan-finder/">Plan Finder</a>.</p>""",
+          <h2>Monthly support or pay per fix?</h2>
+          <p>Paying per problem feels cheaper until something goes wrong &mdash; then a single emergency repair can cost more than months of cover. <strong>Monthly support spreads the cost, catches problems early and includes maintenance</strong>, which usually works out cheaper and far less stressful overall.</p>""",
   faqs=[
+    ("Are your prices plus VAT?","No. We&rsquo;re not VAT registered, so the price you see is the price you pay."),
     ("Is monthly IT support worth it?","For most people, yes &mdash; it spreads the cost, includes regular maintenance and catches problems before they become expensive emergencies."),
     ("Do you charge call-out fees?","Most support is remote with no call-out fee. On-site visits across Dorset are arranged when hands-on help is needed."),
     ("Can I just pay when something breaks?","Yes &mdash; we offer one-off repairs with no subscription, quoted up front. Many customers then move to a plan to avoid future problems."),
+    ("Is cheaper IT support worse?","Not always &mdash; but very low prices often leave out the work that prevents problems: monitoring, updates and backups. Compare what is included, not just the headline figure."),
+    ("How can I get an exact price for my setup?","Tell us a little about your home or business and we&rsquo;ll give you an honest, tailored quote &mdash; try our under-a-minute <a href=\"/quick-quote/\">Quick Quote</a>."),
   ],
   cta_args=("Get a clear quote", "Honest pricing with no surprises &mdash; find the right fit for you.",
             ("Try the Plan Finder", "/plan-finder/"), ("Get a Quote", "/contact/")),
@@ -17959,6 +17968,7 @@ info_page(
               <li><strong>Priority</strong> support &mdash; just call and jump the queue</li>
               <li>Fully-managed servicing on set days &mdash; change it any time</li>
               <li><strong>Loyalty promise:</strong> if something does go wrong, any work you need is <strong>discounted</strong></li>
+              <li><strong>Business plans:</strong> remote fixes included</li>
             </ul>
             <a href="/monthly-it-support/" class="button primary plan-card__cta">See Plans &amp; Prices</a>
           </article>
@@ -17976,7 +17986,7 @@ info_page(
         ("Priority support","Plan members jump the queue &mdash; your problem gets looked at first."),
         ("Health check &amp; service included","Once you&rsquo;re up and running, a full computer health check and service is included &mdash; plus a full service <strong>every 6 weeks</strong> to keep everything sweet."),
         ("Servicing, fully managed","Your regular computer servicing appointments are booked and managed for you &mdash; check or change a date or time whenever you need. Remote servicing runs Mon, Tue &amp; Thu, 10am&ndash;1pm."),
-        ("Our loyalty promise","If something ever does go wrong while you&rsquo;re on support, any work you need is <strong>discounted</strong> &mdash; our way of saying thank you for staying with us."),
+        ("Our loyalty promise","If something ever does go wrong while you&rsquo;re on support, any work you need is <strong>discounted</strong> &mdash; our way of saying thank you for staying with us. On a business plan, remote fixes are <strong>included</strong>."),
       ]) + '''
         </ul>
         <div class="prose" data-reveal style="max-width:70ch;margin:1.9rem auto 0;text-align:center">
@@ -18006,7 +18016,7 @@ info_page(
     ("What does a bigger job like a Windows reinstall cost?", "It&rsquo;s priced on how long it takes. As a worked example, a full <strong>Windows clean install</strong> with all your data backed up and restored takes about <strong>4 hours and is &pound;149</strong>. You&rsquo;ll always get the price agreed before we start."),
     ("Do I get any follow-up after a one-off remote fix?", "Yes &mdash; every pay-as-you-go remote job includes <strong>30 days of follow-up remote support</strong> to help sort any further issues on the same problem, plus a <strong>free system health check at 30 days</strong> to make sure everything&rsquo;s still running well."),
     ("When can I book remote servicing on a plan?", "Remote servicing for support customers runs <strong>Mondays, Tuesdays and Thursdays, 10am&ndash;1pm</strong>. Business customers can also book <strong>evening slots, 5pm&ndash;7pm</strong> &mdash; we recommend after-hours servicing so there&rsquo;s no disruption during the working day. You can view or change your appointment any time."),
-    ("Is everything free once I&rsquo;m on a plan?", "Your plan keeps your computer maintained and running smoothly &mdash; a full health check and service are <strong>included</strong>, plus a full service every 6 weeks, priority support and fully-managed servicing. It&rsquo;s about keeping a working machine hassle-free, a bit like servicing a car. And if a genuine fault ever does crop up, any work you need is <strong>discounted</strong> because you&rsquo;re on support &mdash; that&rsquo;s our customer loyalty promise."),
+    ("Is everything free once I&rsquo;m on a plan?", "Your plan keeps your computer maintained and running smoothly &mdash; a full health check and service are <strong>included</strong>, plus a full service every 6 weeks, priority support and fully-managed servicing. It&rsquo;s about keeping a working machine hassle-free, a bit like servicing a car. And if a genuine fault ever does crop up, any work you need is <strong>discounted</strong> because you&rsquo;re on support &mdash; that&rsquo;s our customer loyalty promise. On a <a href=\"/business-it-support-plans/\">business plan</a>, remote fixes are <strong>included</strong>; on-site visits, parts and new set-ups are quoted first, with the same discount."),
     ("What if it can&rsquo;t be fixed remotely?", "Some jobs need hands-on work. If so, we&rsquo;ll either <a href=\"/book-a-collection/\">collect your computer or laptop</a> or come to you on-site &mdash; and <strong>either way you&rsquo;re quoted for the work before we start</strong>. For an on-site call-out we arrange the day and time with you first and phone ahead with an ETA; we never just turn up. Collections and visits cover Bournemouth, Poole, Christchurch and across Dorset."),
   ],
   cta_args=("Prefer to book ahead?", "Not an emergency? Book a convenient time and we&rsquo;ll call you.",
@@ -18316,7 +18326,7 @@ def make_threat(slug, name, h1, lede, desc, what_html, signs, protect, ifhit, fa
         </ul>
       </div>
     </section>''',
-      bp.mb_from_us_block("Malwarebytes blocks threats like this in real time. We supply it for homes and businesses, install it properly and keep an eye on it &mdash; ask us for today&rsquo;s price."),
+      bp.mb_from_us_block("Malwarebytes blocks threats like this in real time. We supply it, install it properly and keep an eye on it: &pound;2.50 a month for a home computer, or &pound;4.50 per computer a month for businesses."),
       f'''    <section class="how" aria-label="If you have been hit">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>/03 — IF YOU&rsquo;VE BEEN HIT</p>
