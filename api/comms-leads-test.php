@@ -148,7 +148,7 @@ check(comms_name_for('+447700900161', array('status' => 'MATCH', 'name' => 'Matc
 echo "G  at source level\n";
 $lib = (string)file_get_contents(__DIR__ . '/comms-lib.php');
 check(strpos($lib, "elseif ((\$L = comms_lead_from_post(\$m)) !== null) { \$posts[(string)\$m['ts']] = \$m; \$leads[] = array(\$L, \$m); }") !== false, 'the sweep reads enquiry posts from the same history it already fetches');
-check(strpos($lib, "comms_add_item(comms_lead_item(\$pair[0], \$pair[1], \$now))") !== false && strpos($lib, "if (isset(\$have['slack-' . \$pair[0]['ts']])) continue;") !== false, 'each comes in once (keyed by its post)');
+check(strpos($lib, "comms_add_item(comms_lead_item(\$pair[0], \$pair[1], \$now, \$bk))") !== false && strpos($lib, "if (isset(\$have['slack-' . \$pair[0]['ts']])) continue;") !== false, 'each comes in once (keyed by its post)');
 check(strpos($lib, "if (\$type !== 'sms_in' && \$type !== 'voicemail' && \$type !== 'web' && \$type !== 'email') continue;") !== false, 'enquiries (and emails) get ticks and thread replies like texts and voicemails');
 $api = (string)file_get_contents(__DIR__ . '/comms-api.php');
 check(strpos($api, "'webs' => \$b['webs']") !== false && strpos($api, 'comms_names_with_jobs($snap[\'names\'], comms_job_names())') !== false, 'the portal API sends the enquiries and the job names');

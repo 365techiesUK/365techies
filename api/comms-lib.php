@@ -818,6 +818,7 @@ function comms_board($items, $names, $key, $now = null, $limit = 30) {
             'n' => $n, 'mobile' => $mob($n), 'email' => (string)($L['email'] ?? ''), 'phone' => (string)($L['phone'] ?? ''),
             'company' => (string)($L['company'] ?? ''), 'topic' => (string)($L['topic'] ?? ''), 'page' => (string)($L['page'] ?? ''),
             'body' => mb_substr((string)($it['body'] ?? ''), 0, 1200), 'at' => (string)($it['at'] ?? ''), 'done' => !empty($it['handled']),
+            'done_by' => (string)($it['handled_by'] ?? ''), 'block_dom' => comms_block_domain_ok((string)($L['email'] ?? '')),
             'notes' => comms_notes_out((array)($it['notes'] ?? array())), 'note_id' => (string)($it['id'] ?? ''));
     }
     // 2 Oct 2026: emails, newest first, each on its own: who (the name in their From line, else the address), the subject,
@@ -835,7 +836,7 @@ function comms_board($items, $names, $key, $now = null, $limit = 30) {
             'subject' => (string)($M['subject'] ?? ''), 'attach' => array_values((array)($M['attach'] ?? array())),
             'cust' => $k ? (string)$k['name'] : '', 'cust_src' => $k ? (string)$k['src'] : '',
             'n' => $n, 'mobile' => $mob($n), 'body' => mb_substr((string)($it['body'] ?? ''), 0, 1500), 'at' => (string)($it['at'] ?? ''),
-            'done' => !empty($it['handled']), 'done_by' => (string)($it['handled_by'] ?? ''),
+            'done' => !empty($it['handled']), 'done_by' => (string)($it['handled_by'] ?? ''), 'block_dom' => comms_block_domain_ok($addr),
             'notes' => comms_notes_out((array)($it['notes'] ?? array())), 'note_id' => (string)($it['id'] ?? ''));
     }
     return array('texts' => array_slice($texts, 0, $limit), 'vms' => $vout, 'webs' => $wout, 'mails' => $mout, 'open_texts' => $openTexts, 'open_vms' => $openVms,
@@ -956,9 +957,12 @@ function comms_slack_sync($maxReplies = 12, $now = null) {
     if ($leads) {
         list($okI, $have) = comms_locked(function ($d) { $x = array(); foreach ($d['items'] as $it) if (($it['type'] ?? '') === 'web') $x[(string)$it['ext_id']] = 1; return array('__result' => $x); });
         usort($leads, function ($a, $b) { return strcmp($a[0]['ts'], $b[0]['ts']); });   // oldest first, like every other import
+        $blocked = comms_blocked_list(); $knownM = null;   // 3 Oct 2026: a blocked sender's enquiry arrives already done
         foreach ($okI ? $leads : array() as $pair) {
             if (isset($have['slack-' . $pair[0]['ts']])) continue;
-            list($okA, $res) = comms_add_item(comms_lead_item($pair[0], $pair[1], $now));
+            $bk = $blocked ? comms_is_blocked($pair[0]['email'], $blocked) : '';
+            if ($bk !== '') { if ($knownM === null) $knownM = comms_mail_known_map(); if (isset($knownM['mail:' . $pair[0]['email']])) $bk = ''; }
+            list($okA, $res) = comms_add_item(comms_lead_item($pair[0], $pair[1], $now, $bk));
             if ($okA && empty($res['duplicate'])) $imported++;
         }
     }
@@ -1148,13 +1152,14 @@ function comms_lead_from_post($m) {
         'number' => $num, 'company' => $cut($company, 120), 'topic' => $cut($topic, 160), 'body' => $cut($body, 2500), 'page' => $cut($page, 200), 'ts' => (string)$m['ts']);
 }
 /* The inbox item for a lead post. */
-function comms_lead_item($L, $m, $now = null) {
+function comms_lead_item($L, $m, $now = null, $blockedBy = '') {
     $now = $now === null ? time() : (int)$now;
     $answered = lc_answered($m, array('kind' => $L['kind'], 'number' => $L['number']), null);
     $match = $L['number'] !== '' ? comms_match_customer($L['number']) : array('status' => 'NOT_CHECKED', 'name' => '', 'cid' => '', 'why' => 'no phone number given');
+    $blk = !$answered && (string)$blockedBy !== '' && ($match['status'] ?? '') !== 'MATCH';   // a blocked sender (never a customer)
     return array('type' => 'web', 'ext_id' => 'slack-' . $L['ts'], 'at' => gmdate('c', (int)(float)$L['ts']), 'number' => $L['number'],
         'body' => $L['body'], 'audio' => '', 'duration' => '', 'match' => $match,
-        'handled' => $answered, 'handled_by' => $answered ? 'Slack' : '', 'handled_at' => $answered ? gmdate('c', $now) : '',
+        'handled' => $answered || $blk, 'handled_by' => $answered ? 'Slack' : ($blk ? 'blocked' : ''), 'handled_at' => ($answered || $blk) ? gmdate('c', $now) : '',
         'slack_ts' => $L['ts'], 'slack_rc' => 0,
         'lead' => array('kind' => $L['kind'], 'label' => $L['label'], 'name' => $L['name'], 'email' => $L['email'], 'phone' => $L['phone'],
                         'company' => $L['company'], 'topic' => $L['topic'], 'page' => $L['page']));
@@ -1202,6 +1207,66 @@ function comms_slack_untick($ts) {
     if ((string)$ts === '' || !comms_slack_lib()) return false;
     $r = slk_call_form('reactions.remove', array('channel' => COMMS_SLACK_CHANNEL, 'timestamp' => (string)$ts, 'name' => 'white_check_mark'), 5);
     return !empty($r['ok']) || (($r['error'] ?? '') === 'no_reaction');
+}
+
+/* ---- 3 Oct 2026: blocked senders (owner: "add the block this sender button") ----------------------------------------
+   Staff block a sender from the portal: one address ('x@y.com') or everyone at a domain ('@y.com'), kept in
+   checkpoints['blocked'] = {key: {by, at}}. A blocked sender's new emails are left out ("blocked by you", counted like
+   the other reasons) and a website enquiry from that address arrives already done. Someone we hold - a customer or a
+   job - always gets through, and a whole personal-mail domain (gmail, outlook, btinternet...) can never be blocked:
+   customers write from those. Nothing in the mailbox is touched; Outlook still has everything. */
+function comms_block_personal_domains() {
+    return array('gmail.com', 'googlemail.com', 'outlook.com', 'outlook.co.uk', 'hotmail.com', 'hotmail.co.uk', 'hotmail.fr', 'live.com', 'live.co.uk',
+        'msn.com', 'yahoo.com', 'yahoo.co.uk', 'ymail.com', 'rocketmail.com', 'icloud.com', 'me.com', 'mac.com', 'aol.com', 'aol.co.uk', 'aim.com',
+        'btinternet.com', 'btopenworld.com', 'talk21.com', 'btconnect.com', 'sky.com', 'virginmedia.com', 'virgin.net', 'ntlworld.com', 'blueyonder.co.uk',
+        'talktalk.net', 'tiscali.co.uk', 'plus.net', 'plusnet.com', 'zen.co.uk', 'protonmail.com', 'proton.me', 'pm.me', 'gmx.com', 'gmx.co.uk',
+        'mail.com', 'fsmail.net', 'orange.net', 'wanadoo.co.uk', 'o2.co.uk', 'tesco.net', 'eclipse.co.uk', 'onetel.com', 'freeserve.co.uk',
+        'madasafish.com', 'uwclub.net', 'f2s.com', 'supanet.com', 'lineone.net', 'waitrose.com', 'yandex.com', 'zoho.com', 'hushmail.com');
+}
+// the key a block is stored under: the address, or '@domain' for everyone there ('' if it is not an email address)
+function comms_block_key($addr, $scope = 'addr') {
+    $a = strtolower(trim((string)$addr));
+    if (!preg_match('/^[^\s@]+@([a-z0-9.\-]+\.[a-z]{2,})$/', $a, $m)) return '';
+    return $scope === 'domain' ? '@' . $m[1] : $a;
+}
+// the domain a sender's whole firm could be blocked under, or '' when that is not allowed (personal mail, our own)
+function comms_block_domain_ok($addr) {
+    $k = comms_block_key($addr, 'domain'); if ($k === '') return '';
+    $dom = substr($k, 1);
+    foreach (array_merge(comms_block_personal_domains(), array('365techies.co.uk', '365-computers.com')) as $p) if ($dom === $p || substr($dom, -strlen($p) - 1) === '.' . $p) return '';
+    return $dom;
+}
+// which block (key) covers this address, '' if none; a domain block covers its subdomains too
+function comms_is_blocked($addr, $blocked) {
+    $a = strtolower(trim((string)$addr));
+    if ($a === '' || !is_array($blocked) || !$blocked) return '';
+    if (isset($blocked[$a])) return $a;
+    $at = strrchr($a, '@'); if ($at === false) return '';
+    $dom = substr($at, 1);
+    foreach ($blocked as $k => $v) {
+        $k = (string)$k;
+        if ($k === '' || $k[0] !== '@') continue;
+        $bd = substr($k, 1);
+        if ($dom === $bd || substr($dom, -strlen($bd) - 1) === '.' . $bd) return $k;
+    }
+    return '';
+}
+function comms_blocked_list() {
+    list($ok, $b) = comms_locked(function ($d) { return array('__result' => (isset($d['checkpoints']['blocked']) && is_array($d['checkpoints']['blocked'])) ? $d['checkpoints']['blocked'] : array()); });
+    return ($ok && is_array($b)) ? $b : array();
+}
+// the blocked list as the portal shows it, newest first: [{key, by, at}]
+function comms_blocked_out($b) {
+    $out = array();
+    foreach (is_array($b) ? $b : array() as $k => $v) $out[] = array('key' => (string)$k, 'by' => (string)($v['by'] ?? ''), 'at' => (string)($v['at'] ?? ''));
+    usort($out, function ($a, $c) { return strcmp($c['at'], $a['at']); });
+    return $out;
+}
+// the sender address of an inbox item that can be blocked: an email's From, or the address typed into a website form
+function comms_item_sender($it) {
+    if (($it['type'] ?? '') === 'email') return strtolower((string)($it['mail']['from'] ?? ''));
+    if (($it['type'] ?? '') === 'web') return strtolower((string)($it['lead']['email'] ?? ''));
+    return '';
 }
 
 function comms_sweep() {

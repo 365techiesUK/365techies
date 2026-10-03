@@ -247,9 +247,10 @@ function comms_mail_extract($io, $msgno) {
     $text = ($plain !== null && trim($plain) !== '') ? $plain : (string)$html;
     return array('text' => comms_mail_strip($text), 'attach' => $attach);
 }
-function comms_mail_poll_box($box, $io, $now = null, $announce = null, $known = null) {
+function comms_mail_poll_box($box, $io, $now = null, $announce = null, $known = null, $blocked = null) {
     $now = $now === null ? time() : (int)$now;
     $known = is_array($known) ? $known : comms_mail_known_map();
+    $blocked = is_array($blocked) ? $blocked : comms_blocked_list();   // 3 Oct 2026: senders staff blocked in the portal
     $validity = (int)call_user_func($io['validity']);
     list($okc, $cp) = comms_locked(function ($d) use ($box) { return array('__result' => isset($d['checkpoints']['mail'][$box['key']]) ? $d['checkpoints']['mail'][$box['key']] : null); });
     if (!$okc) return array('error' => 'busy');
@@ -267,6 +268,7 @@ function comms_mail_poll_box($box, $io, $now = null, $announce = null, $known = 
         $m = comms_mail_head(call_user_func($io['header'], $msgno));
         $k = isset($known['mail:' . $m['from']]) ? $known['mail:' . $m['from']] : null;
         $why = comms_mail_skip($m, $k);
+        if ($why === '' && !$k && comms_is_blocked($m['from'], $blocked) !== '') $why = 'blocked by you';   // never someone we hold
         if ($why !== '') { $left[$why] = (isset($left[$why]) ? $left[$why] : 0) + 1; continue; }
         $x = comms_mail_extract($io, $msgno);
         $num = comms_mail_phone($x['text']);

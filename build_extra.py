@@ -25300,6 +25300,8 @@ def write_portal_page():
   #p365app .cm-th--done { opacity:.7; }
   #p365app .cm-th--leaving { opacity:.3; transition:opacity .2s; pointer-events:none; }
   #p365app .cm-clear { margin:.7rem 0 .3rem; color:var(--pgood); font-weight:600; }
+  #p365app .cm-blkl { display:grid; gap:.4rem; margin:.2rem 0 .7rem; padding:.55rem .75rem; border:1px solid var(--pline); border-radius:10px; }
+  #p365app .cm-blkl > div { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:.4rem .8rem; }
   #p365app .cm-undo { position:fixed; left:50%; bottom:1.2rem; transform:translateX(-50%); z-index:60; display:flex; align-items:center; gap:.9rem; padding:.55rem .6rem .55rem 1rem; border-radius:12px; background:#13203a; border:1px solid var(--pline); box-shadow:0 10px 28px rgba(0,0,0,.5); color:var(--pwhite); font-size:1rem; }
   @media (max-width:900px) { #p365app .cm-cols { grid-template-columns:1fr; gap:1rem; } }
   #p365app .cm-th { border-top:1px solid var(--pline); padding:.75rem 0 .8rem; }
@@ -31506,7 +31508,7 @@ def write_portal_page():
   // (api/pcm-installs.php). Default view: everyone NOT on a plan, as the owner asked.
   var INST = { who: 'free', d: null };
   // ---- 1 Oct 2026: Calls & texts - the comms inbox (voicemails + texts) on Today, through api/comms-api.php ----
-  var CM = { d: null, allT: false, allV: false, rep: '', draft: '', note: '', ndraft: '', busy: false, f: 'all', doneT: false, doneV: false, undo: null, undoT: 0 };
+  var CM = { d: null, allT: false, allV: false, rep: '', draft: '', note: '', ndraft: '', busy: false, f: 'all', doneT: false, doneV: false, undo: null, undoT: 0, blk: '', showBlk: false };
   function cmWhen(iso) {
     var t = Date.parse(iso || ''); if (isNaN(t)) return '';
     var d = new Date(t), td = new Date(); td.setHours(0, 0, 0, 0);
@@ -31534,7 +31536,8 @@ def write_portal_page():
         if (act === 'reply' && d && d.ok && !d.err) { CM.rep = ''; CM.draft = ''; }
         if (act === 'note' && d && d.ok && !d.err) { CM.note = ''; CM.ndraft = ''; }
         if (act === 'done' && d && d.ok && !d.err && /^Marked done/.test(d.note || '')) cmUndoShow(extra);
-        if (act === 'undone') cmUndoHide();
+        if (act === 'block' && d && d.ok && !d.err && d.block_key) { CM.blk = ''; cmUndoShow({ act: 'unblock', key: d.block_key, reopen: 1 }, 'Blocked'); }
+        if (act === 'undone' || act === 'unblock') cmUndoHide();
         renderComms();
       })
       .catch(function () { CM.busy = false; CM.d = CM.d && CM.d.ok ? CM.d : { ok: false, error: 'no answer' }; renderComms(); if (note) { note.className = 'cm-note cm-note--bad'; note.textContent = 'No answer from the server - try again.'; } });
@@ -31625,7 +31628,7 @@ def write_portal_page():
     if (w.company) meta.push(esc(w.company));
     if (w.page) meta.push('on ' + esc(w.page));
     return '<div class="cm-th cm-th--web' + (w.done ? ' cm-th--done' : ' cm-th--open') + '"><div class="cm-hd">' + hd
-      + '<span class="cm-t">' + esc(cmWhen(w.at)) + (w.done ? ' \\u00b7 done' : '') + '</span></div>'
+      + '<span class="cm-t">' + esc(cmWhen(w.at)) + (w.done ? ' \\u00b7 ' + (w.done_by === 'blocked' ? 'blocked' : 'done') : '') + '</span></div>'
       + '<div class="cm-it cm-it--web"><span class="cm-k">' + esc(w.topic || 'What they wrote') + (meta.length ? ' \\u00b7 ' + meta.join(' \\u00b7 ') : '') + '</span>'
       + (w.body ? '<p>' + esc(w.body) + '</p>' : '') + '</div>'
       + cmNotes(w.notes)
@@ -31634,8 +31637,9 @@ def write_portal_page():
       + (w.email ? '<a class="btn sm ghost" href="mailto:' + esc(w.email) + '?subject=' + encodeURIComponent('Your enquiry to 365 Techies') + '">Email</a>' : '')
       + cmNewBtn(key, w.cust)
       + '<button type="button" class="sm ghost" data-cmn="' + esc(key) + '">Note</button>'
+      + (w.done || w.cust || !w.email ? '' : '<button type="button" class="sm ghost" data-cmb="' + esc(key) + '">Block</button>')
       + (w.done ? '' : '<button type="button" class="sm ghost" data-cmid="' + esc(w.id) + '">Done</button>') + '</div>'
-      + cmReplyBox(key, w.n, w.who) + cmNoteBox(key, w.id) + '</div>';
+      + cmReplyBox(key, w.n, w.who) + cmNoteBox(key, w.id) + cmBlockBox(key, w.id, w.email, w.block_dom) + '</div>';
   }
   // 2 Oct 2026 (owner: "yes add the emails too"): emails from people in the company mailboxes. Reply opens a new email to
   // them in this PC's email program; a reply sent from Outlook itself marks the email done here on the next look.
@@ -31649,7 +31653,7 @@ def write_portal_page():
     var body = String(m.body || ''), cut = body.length > 700;
     var subj = String(m.subject || ''), re = /^re:/i.test(subj) ? subj : 'Re: ' + subj;
     return '<div class="cm-th cm-th--mail' + (m.done ? ' cm-th--done' : ' cm-th--open') + '"><div class="cm-hd">' + hd
-      + '<span class="cm-t">' + esc(cmWhen(m.at)) + (m.done ? ' \\u00b7 ' + (m.done_by === 'replied from the mailbox' ? 'replied' : 'done') : '') + '</span></div>'
+      + '<span class="cm-t">' + esc(cmWhen(m.at)) + (m.done ? ' \\u00b7 ' + (m.done_by === 'replied from the mailbox' ? 'replied' : m.done_by === 'blocked' ? 'blocked' : 'done') : '') + '</span></div>'
       + '<div class="cm-it cm-it--mail"><span class="cm-k">' + meta.join(' \\u00b7 ') + '</span>'
       + (subj ? '<p class="cm-subj">' + esc(subj) + '</p>' : '')
       + (body ? '<p>' + esc(cut ? body.slice(0, 700) + '\\u2026' : body) + '</p>' : '<p class="quiet">No text \\u2014 open it in your mailbox.</p>')
@@ -31660,8 +31664,26 @@ def write_portal_page():
       + (m.mobile ? '<button type="button" class="sm ghost" data-cmr="' + esc(key) + '">Text</button>' : '')
       + cmNewBtn(key, m.cust)
       + '<button type="button" class="sm ghost" data-cmn="' + esc(key) + '">Note</button>'
+      + (m.done || m.cust || !m.addr ? '' : '<button type="button" class="sm ghost" data-cmb="' + esc(key) + '">Block</button>')
       + (m.done ? '' : '<button type="button" class="sm ghost" data-cmid="' + esc(m.id) + '">Done</button>') + '</div>'
-      + cmReplyBox(key, m.n, m.who) + cmNoteBox(key, m.id) + '</div>';
+      + cmReplyBox(key, m.n, m.who) + cmNoteBox(key, m.id) + cmBlockBox(key, m.id, m.addr, m.block_dom) + '</div>';
+  }
+  // 3 Oct 2026 (owner: "add the block this sender button"): one address, or everyone at a firm - never someone we hold
+  function cmBlockBox(key, id, addr, dom) {
+    if (CM.blk !== key) return '';
+    return '<div class="cm-rep"><span class="cm-k">Block this sender? What they send stops showing here and in Slack. Nothing changes in Outlook, and you can unblock them any time.</span>'
+      + '<div><button type="button" class="sm" data-cmbk="' + esc(id) + '" data-scope="addr">Block ' + esc(addr) + '</button>'
+      + (dom ? '<button type="button" class="sm ghost" data-cmbk="' + esc(id) + '" data-scope="domain">Block everyone at ' + esc(dom) + '</button>' : '')
+      + '<button type="button" class="sm ghost" data-cmx="1">Cancel</button></div></div>';
+  }
+  function cmBlocked(d) {
+    var bl = d.blocked || []; if (!bl.length) return '';
+    var lab = function (k) { return k.charAt(0) === '@' ? 'everyone at ' + k.slice(1) : k; };
+    return '<p class="cm-mstat">\\u26d4 ' + bl.length + ' blocked sender' + (bl.length === 1 ? '' : 's') + ' \\u00b7 <a href="#" data-cmbl="1">' + (CM.showBlk ? 'hide them' : 'see them') + '</a></p>'
+      + (CM.showBlk ? '<div class="cm-blkl">' + bl.map(function (x) {
+          return '<div><span><b>' + esc(lab(x.key)) + '</b> <span class="cm-k">blocked' + (x.by ? ' by ' + esc(x.by) : '') + (x.at ? ' \\u00b7 ' + esc(cmWhen(x.at)) : '') + '</span></span>'
+            + '<button type="button" class="sm ghost" data-cmub="' + esc(x.key) + '">Unblock</button></div>';
+        }).join('') + '</div>' : '');
   }
   function cmMailStat(d) {   // each mailbox's last look and today's totals, so it is plain the emails are being read
     var bx = d.mailboxes || [];
@@ -31822,7 +31844,7 @@ def write_portal_page():
         return '<button type="button" class="sm ghost' + (CM.f === c[0] ? ' on' : '') + '" data-cmf="' + c[0] + '" aria-pressed="' + (CM.f === c[0] ? 'true' : 'false') + '">' + c[1]
           + (c[2] ? '<span class="cm-fn">' + c[2] + '</span>' : '') + '</button>';
       }).join('') + '</div>';
-    box.innerHTML = chips + (CM.f === 'all' || CM.f === 'm' ? cmMailStat(d) : '')
+    box.innerHTML = chips + (CM.f === 'all' || CM.f === 'm' ? cmMailStat(d) : '') + (CM.f !== 't' ? cmBlocked(d) : '')
       + (mShow.length ? mShow.map(function (m) { return m.k === 't' ? cmText(m.x) : m.k === 'm' ? cmMail(m.x) : cmWeb(m.x); }).join('')
         : (mDone && !CM.doneT ? '<p class="cm-clear">\\u2714 ' + (CM.f === 'w' ? 'No website enquiries waiting.' : CM.f === 't' ? 'No texts waiting.' : CM.f === 'm' ? 'No emails waiting.' : 'All answered \\u2014 nothing waiting.') + '</p>'
           : '<p class="quiet">' + (CM.f === 'w' ? 'No website enquiries in the last week.' : CM.f === 't' ? 'No texts yet.' : CM.f === 'm' ? 'No emails from people yet.' : 'No texts, emails or enquiries yet.') + '</p>'))
@@ -31838,14 +31860,14 @@ def write_portal_page():
   }
   function cmLeaving(b) { var th = b.closest ? b.closest('.cm-th') : null; if (th) th.classList.add('cm-th--leaving'); }
   // 3 Oct 2026: a Done can be taken back for 8 seconds (the server allows it for 10 minutes, portal Dones only)
-  function cmUndoShow(what) {
+  function cmUndoShow(what, label) {
     cmUndoHide();
     if (!what) return;
     CM.undo = what;
     var t = document.createElement('div'); t.id = 'cmundo'; t.className = 'cm-undo'; t.setAttribute('role', 'status');
-    t.innerHTML = '<span>\\u2714 Marked done</span><button type="button" class="sm" id="cmundob">Undo</button>';
+    t.innerHTML = '<span>' + (label === 'Blocked' ? '\\u26d4 Blocked' : '\\u2714 Marked done') + '</span><button type="button" class="sm" id="cmundob">Undo</button>';
     el.appendChild(t);
-    document.getElementById('cmundob').onclick = function () { var u = CM.undo; cmUndoHide(); if (u) loadComms('undone', u); };
+    document.getElementById('cmundob').onclick = function () { var u = CM.undo; cmUndoHide(); if (u) loadComms(u.act || 'undone', u); };
     CM.undoT = setTimeout(cmUndoHide, 8000);
   }
   function cmUndoHide() { clearTimeout(CM.undoT); CM.undo = null; var t = document.getElementById('cmundo'); if (t && t.parentNode) t.parentNode.removeChild(t); }
@@ -31863,9 +31885,13 @@ def write_portal_page():
       if (b.id === 'cmfull') { e.preventDefault(); var ca = document.getElementById('commsadm'); if (ca) ca.click(); return; }
       if (b.hasAttribute('data-cmf')) { CM.f = b.getAttribute('data-cmf'); CM.allT = false; renderComms(); return; }
       if (b.hasAttribute('data-cmc')) { var pre = cmPrefill(b.getAttribute('data-cmc')); pre.known = b.getAttribute('data-known') || ''; ncOpen(pre); return; }
-      if (b.hasAttribute('data-cmr')) { CM.rep = b.getAttribute('data-cmr'); CM.draft = ''; CM.note = ''; renderComms(); return; }
-      if (b.hasAttribute('data-cmn')) { CM.note = b.getAttribute('data-cmn'); CM.ndraft = ''; CM.rep = ''; renderComms(); return; }
-      if (b.hasAttribute('data-cmx')) { CM.rep = ''; CM.draft = ''; CM.note = ''; CM.ndraft = ''; renderComms(); return; }
+      if (b.hasAttribute('data-cmr')) { CM.rep = b.getAttribute('data-cmr'); CM.draft = ''; CM.note = ''; CM.blk = ''; renderComms(); return; }
+      if (b.hasAttribute('data-cmn')) { CM.note = b.getAttribute('data-cmn'); CM.ndraft = ''; CM.rep = ''; CM.blk = ''; renderComms(); return; }
+      if (b.hasAttribute('data-cmx')) { CM.rep = ''; CM.draft = ''; CM.note = ''; CM.ndraft = ''; CM.blk = ''; renderComms(); return; }
+      if (b.hasAttribute('data-cmb')) { CM.blk = b.getAttribute('data-cmb'); CM.rep = ''; CM.note = ''; renderComms(); return; }
+      if (b.hasAttribute('data-cmbk')) { if (CM.busy) return; cmLeaving(b); loadComms('block', { id: b.getAttribute('data-cmbk'), scope: b.getAttribute('data-scope') }); return; }
+      if (b.hasAttribute('data-cmbl')) { e.preventDefault(); CM.showBlk = !CM.showBlk; renderComms(); return; }
+      if (b.hasAttribute('data-cmub')) { if (CM.busy) return; b.disabled = true; loadComms('unblock', { key: b.getAttribute('data-cmub') }); return; }
       if (b.hasAttribute('data-cmns')) {
         var tn = document.getElementById('cmnotetxt'), ntx = tn ? tn.value.trim() : '', nn = document.getElementById('cmnote');
         if (!ntx) { if (nn) { nn.className = 'cm-note cm-note--bad'; nn.textContent = 'Type the note first.'; } return; }

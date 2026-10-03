@@ -53,7 +53,7 @@ if (!is_array($in)) $in = array();
 if (!vis_staff_ok($in, __DIR__)) { http_response_code(403); ca_out(array('ok' => false, 'error' => 'auth')); }
 
 $do = (string)($in['do'] ?? 'list');
-$note = ''; $err = ''; $jobOut = null;
+$note = ''; $err = ''; $jobOut = null; $blockKey = '';
 $num = function ($raw) { $r = (string)$raw; if ($r !== '' && $r[0] === ' ') $r = '+' . ltrim($r); return substr(preg_replace('/[^0-9+]/', '', $r), 0, 20); };
 if ($do === 'check') {
     $sw = comms_sweep();
@@ -81,7 +81,7 @@ if ($do === 'check') {
     $id = preg_replace('/[^A-Za-z0-9\-]/', '', (string)($in['id'] ?? ''));
     $tokS = preg_replace('/[^a-f0-9]/', '', (string)($in['stoken'] ?? ''));
     $dbS = @json_decode((string)@file_get_contents(__DIR__ . '/pcm-data.json'), true);
-    $by = comms_staff_name((string)($dbS['staff'][$tokS]['email'] ?? ''));
+    $by = comms_staff_name((string)($dbS['staff'][$tokS]['login'] ?? $dbS['staff'][$tokS]['email'] ?? ''));
     $rn = comms_add_note($id, (string)($in['text'] ?? ''), $by);
     if (!empty($rn['ok']) && empty($rn['error'])) $note = 'Note added - it is in the Slack thread too.';
     elseif (!empty($rn['ok'])) $err = $rn['error'];
@@ -93,7 +93,7 @@ if ($do === 'check') {
     require_once __DIR__ . '/pcm-newjob-lib.php';
     $tokS = preg_replace('/[^a-f0-9]/', '', (string)($in['stoken'] ?? ''));
     $dbS = @json_decode((string)@file_get_contents(__DIR__ . '/pcm-data.json'), true);
-    $by = comms_staff_name((string)($dbS['staff'][$tokS]['email'] ?? ''));
+    $by = comms_staff_name((string)($dbS['staff'][$tokS]['login'] ?? $dbS['staff'][$tokS]['email'] ?? ''));
     $from = preg_replace('/[^A-Za-z0-9\-]/', '', (string)($in['from'] ?? ''));
     $fromIt = null;
     if ($from !== '') { list($okF, $fromIt) = comms_locked(function ($d) use ($from) { foreach ($d['items'] as $x) if ($x['id'] === $from) return array('__result' => $x); return array('__result' => null); }); }
@@ -154,9 +154,72 @@ if ($do === 'check') {
     if ($okU) $note = $back ? 'Back on the list.' : 'Too late to undo that one - it is under Show done.';
     $unticks = 0;
     foreach ($back as $t) if ($t !== '' && $unticks < 8) { comms_slack_untick($t); $unticks++; }
+} elseif ($do === 'block') {
+    // 3 Oct 2026 (owner: "add the block this sender button"): an email's sender, or the address typed into a website form.
+    // scope 'addr' = that address; 'domain' = everyone at their firm (never a personal-mail domain). Never someone we
+    // hold. Their open items here are cleared at once (done, by 'blocked'); later ones are left out as they arrive.
+    $id = preg_replace('/[^A-Za-z0-9\-]/', '', (string)($in['id'] ?? ''));
+    $scope = ($in['scope'] ?? '') === 'domain' ? 'domain' : 'addr';
+    list($okF, $it) = comms_locked(function ($d) use ($id) { foreach ($d['items'] as $x) if ($x['id'] === $id) return array('__result' => $x); return array('__result' => null); });
+    $addr = is_array($it) ? comms_item_sender($it) : '';
+    $known = comms_mail_known_map();
+    $key = comms_block_key($addr, $scope);
+    if (!$okF) $err = 'The list was busy - press Block again.';
+    elseif (!is_array($it) || $addr === '' || $key === '') $err = 'There is no email address on that one to block.';
+    elseif (isset($known['mail:' . $addr]) || (($it['match']['status'] ?? '') === 'MATCH')) $err = $addr . ' is someone we hold - not blocked.';
+    elseif ($scope === 'domain' && comms_block_domain_ok($addr) === '') $err = 'Everyone at ' . substr(strrchr($addr, '@'), 1) . ' can\'t be blocked - customers use it. Block just the address instead.';
+    else {
+        $tokS = preg_replace('/[^a-f0-9]/', '', (string)($in['stoken'] ?? ''));
+        $dbS = @json_decode((string)@file_get_contents(__DIR__ . '/pcm-data.json'), true);
+        $by = comms_staff_name((string)($dbS['staff'][$tokS]['login'] ?? $dbS['staff'][$tokS]['email'] ?? ''));
+        list($okB, $cleared) = comms_locked(function ($d) use ($key, $by, $known) {
+            if (!isset($d['checkpoints']['blocked']) || !is_array($d['checkpoints']['blocked'])) $d['checkpoints']['blocked'] = array();
+            $d['checkpoints']['blocked'][$key] = array('by' => $by, 'at' => gmdate('c'));
+            $bl = array($key => 1); $ts = array();
+            foreach ($d['items'] as $i => $x) {
+                if (!empty($x['handled'])) continue;
+                $s = comms_item_sender($x);
+                if ($s === '' || isset($known['mail:' . $s]) || comms_is_blocked($s, $bl) === '') continue;
+                $d['items'][$i]['handled'] = true; $d['items'][$i]['handled_by'] = 'blocked'; $d['items'][$i]['handled_at'] = gmdate('c');
+                $ts[] = (string)($x['slack_ts'] ?? '');
+            }
+            return array('__data' => $d, '__result' => $ts);
+        });
+        if (!$okB) $err = 'The list was busy - press Block again.';
+        else {
+            $n = count((array)$cleared);
+            $note = 'Blocked ' . ($scope === 'domain' ? 'everyone at ' . substr($key, 1) : $key) . ' - ' . $n . ' cleared from the list. Outlook still has them.';
+            $blockKey = $key;
+            $ticks = 0;
+            foreach ((array)$cleared as $t) if ($t !== '' && $ticks < 8) { comms_slack_tick($t); $ticks++; }
+        }
+    }
+} elseif ($do === 'unblock') {
+    // the Undo after a Block (reopen = 1: what that block cleared in the last 10 minutes comes back), or Unblock in the list
+    $key = strtolower(trim((string)($in['key'] ?? '')));
+    $reopen = !empty($in['reopen']);
+    list($okU, $back) = comms_locked(function ($d) use ($key, $reopen) {
+        if (!isset($d['checkpoints']['blocked'][$key])) return array('__result' => false);
+        unset($d['checkpoints']['blocked'][$key]);
+        $ts = array(); $cut = time() - 600; $bl = array($key => 1);
+        if ($reopen) foreach ($d['items'] as $i => $x) {
+            if (empty($x['handled']) || ($x['handled_by'] ?? '') !== 'blocked' || strtotime((string)($x['handled_at'] ?? '')) < $cut) continue;
+            if (comms_is_blocked(comms_item_sender($x), $bl) === '') continue;
+            $d['items'][$i]['handled'] = false; $d['items'][$i]['handled_by'] = ''; $d['items'][$i]['handled_at'] = '';
+            $ts[] = (string)($x['slack_ts'] ?? '');
+        }
+        return array('__data' => $d, '__result' => $ts);
+    });
+    if (!$okU) $err = 'The list was busy - try again.';
+    elseif ($back === false) $note = 'That sender was not blocked.';
+    else {
+        $note = 'Unblocked ' . ($key !== '' && $key[0] === '@' ? 'everyone at ' . substr($key, 1) : $key) . ($reopen && $back ? ' - back on the list.' : '.');
+        $unticks = 0;
+        foreach ((array)$back as $t) if ($t !== '' && $unticks < 8) { comms_slack_untick($t); $unticks++; }
+    }
 }
 list($ok, $snap) = comms_locked(function ($d) { return array('__result' => array('items' => $d['items'], 'names' => $d['checkpoints']['names'] ?? array(),
-    'mailstat' => $d['checkpoints']['mail_status'] ?? array())); });
+    'mailstat' => $d['checkpoints']['mail_status'] ?? array(), 'blocked' => $d['checkpoints']['blocked'] ?? array())); });
 if (!$ok) ca_out(array('ok' => false, 'error' => 'busy'));
 // 2 Oct 2026: people written up as a job (Slack's New job in, or New customer here) are named by it
 // ... and emails from people we hold are named by our records or the job list (comms_mail_known_map: 'mail:<address>')
@@ -171,4 +234,5 @@ foreach (comms_mail_config() as $bx) {
 ca_out(array('ok' => true, 'texts' => $b['texts'], 'vms' => $b['vms'], 'webs' => $b['webs'], 'mails' => $b['mails'], 'open' => $b['open'], 'open_texts' => $b['open_texts'], 'open_vms' => $b['open_vms'],
     'open_webs' => $b['open_webs'], 'open_mails' => $b['open_mails'], 'total_texts' => $b['total_texts'], 'total_vms' => $b['total_vms'], 'total_webs' => $b['total_webs'],
     'total_mails' => $b['total_mails'], 'mailboxes' => $boxes,
+    'blocked' => comms_blocked_out($snap['blocked']), 'block_key' => $blockKey,
     'note' => $note, 'err' => $err, 'job' => $jobOut, 'at' => time()));
