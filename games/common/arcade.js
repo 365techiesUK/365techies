@@ -42,6 +42,7 @@
     if (!D.speeds.options.some(function (o) { return o[0] === SET.speed; })) SET.speed = D.speeds.def;
     EXTRA.forEach(function (o) { if (o.type === 'seg' && !o.options.some(function (x) { return x[0] === SET[o.key]; })) SET[o.key] = o.def; });
     // which best-score slot a game counts towards (a game with styles keeps each style's scores apart)
+    var WORD = D.waveWord || 'wave', WORDC = WORD.charAt(0).toUpperCase() + WORD.slice(1);   // what a game calls its stages
     function skey(w) { return D.statKey ? D.statKey(w) : 'v' + w.speed; }
     function skeyFor(speed) { return D.statKeyFor ? D.statKeyFor(SET, speed) : 'v' + speed; }
     function blank() { return { v: 1, played: 0, waves: 0, best: {}, daily: {} }; }
@@ -208,7 +209,7 @@
       ST.played++; ST.waves += Math.max(0, h.wave - 1);
       if (ST.played === 1) badges.push('Your first game!');
       if (b.score == null || h.score > b.score) { if (b.score != null && h.score > 0) badges.push('Your best score yet!'); b.score = h.score; }
-      if (b.wave == null || h.wave > b.wave) { if (b.wave != null && h.wave > 1) badges.push('Your furthest yet: wave ' + h.wave); b.wave = h.wave; }
+      if (b.wave == null || h.wave > b.wave) { if (b.wave != null && h.wave > 1) badges.push('Your furthest yet: ' + WORD + ' ' + h.wave); b.wave = h.wave; }
       if (ST.daily[d] == null || h.score > ST.daily[d]) ST.daily[d] = h.score;
       var keep = Object.keys(ST.daily).sort().slice(-60), nd = {}; keep.forEach(function (k) { nd[k] = ST.daily[k]; }); ST.daily = nd;
       save('stats', ST);
@@ -308,9 +309,9 @@
       var out = '', d = today();
       D.speeds.options.forEach(function (o) {
         var b = ST.best[skeyFor(o[0])] || {};
-        out += tile(b.score == null ? '–' : b.score, o[1] + ': best score') + tile(b.wave == null ? '–' : b.wave, o[1] + ': furthest wave');
+        out += tile(b.score == null ? '–' : b.score, o[1] + ': best score') + tile(b.wave == null ? '–' : b.wave, o[1] + ': furthest ' + WORD);
       });
-      $('sTiles').innerHTML = tile(ST.played, 'Games played') + tile(ST.waves, 'Waves cleared') + tile(ST.daily[d] == null ? '–' : ST.daily[d], 'Today’s best') + out;
+      $('sTiles').innerHTML = tile(ST.played, 'Games played') + tile(ST.waves, WORDC + 's cleared') + tile(ST.daily[d] == null ? '–' : ST.daily[d], 'Today’s best') + out;
       $('sWhich').textContent = D.styleName ? ' Best scores shown for the ' + D.styleName(SET) + ' game (change it in Settings).' : '';
       openD('dStats');
     }
@@ -352,7 +353,7 @@
       var legend = (D.legend || []).map(function (l, i) { return '<li><span class="lg" data-lg="' + i + '"></span>' + esc(l.text) + '</li>'; }).join('');
       var html = '<div id="app" class="arcade"><header class="bar"><div class="brand"><b>365</b><span>' + esc(D.title.replace(/^365 /, '')) + '</span></div>'
         + '<div class="info"><div class="chip"><small>Score</small><span id="vScore">0</span></div><div class="chip"><small>Best</small><span id="vBest">0</span></div>'
-        + '<div class="chip"><small>Lives</small><span id="vLives">0</span></div><div class="chip"><small>Wave</small><span id="vWave">1</span></div></div>'
+        + '<div class="chip"><small>Lives</small><span id="vLives">0</span></div><div class="chip"><small>' + WORDC + '</small><span id="vWave">1</span></div></div>'
         + '<nav class="tools" aria-label="Game">' + tb('bNew', 'new', 'New game', 'New game (N)', 'main') + tb('bPause', 'pause', 'Pause', 'Pause (P)') + tb('bStats', 'stats', 'My scores', 'My scores')
         + tb('bSet', 'set', 'Settings', 'Settings') + tb('bHelp', 'help', 'How to play', 'How to play') + tb('bFull', 'full', 'Full screen', 'Full screen (F)') + '</nav></header>'
         + '<main id="stage"><div id="screenwrap"><canvas id="screen" tabindex="-1" aria-label="' + esc(D.title) + ' game screen"></canvas>'
@@ -362,7 +363,7 @@
         + (D.keysText ? '<p class="soft k-keys">' + D.keysText + '</p>' : '') + (D.touchText ? '<p class="soft k-touch">' + D.touchText + '</p>' : '')
         + '<p class="soft">Speed: <b id="tSpeed"></b> &middot; change it in Settings</p></div></div>'
         + '<div class="ov" id="ov_paused" hidden><div class="ovbox"><h2>Paused</h2><p>Take your time &mdash; the game waits for you.</p><button class="btn go big" id="pGo" type="button">' + ICON.play + ' Carry on</button></div></div>'
-        + '<div class="ov" id="ov_over" hidden><div class="ovbox"><h2 id="oWhy">Game over</h2><div class="tiles"><div class="tile"><b id="oScore">0</b><span>Score</span></div><div class="tile"><b id="oWave">1</b><span>Wave</span></div><div class="tile"><b id="oBest">0</b><span>Your best</span></div></div>'
+        + '<div class="ov" id="ov_over" hidden><div class="ovbox"><h2 id="oWhy">Game over</h2><div class="tiles"><div class="tile"><b id="oScore">0</b><span>Score</span></div><div class="tile"><b id="oWave">1</b><span>' + WORDC + '</span></div><div class="tile"><b id="oBest">0</b><span>Your best</span></div></div>'
         + '<ul class="badges" id="oBadges"></ul><div class="row"><button class="btn go wide big" id="oPlay" type="button">' + ICON.play + ' Play again</button><button class="btn wide" id="oStats" type="button">My scores</button></div></div></div>'
         + '</div><div class="pad" id="pad"><button type="button" data-pad="left" aria-label="Move left">&#9664;</button><button type="button" data-pad="fire" class="fire">Fire</button><button type="button" data-pad="right" aria-label="Move right">&#9654;</button></div>'
         + '</main></div><div id="toast" role="status" aria-live="polite"></div>'
