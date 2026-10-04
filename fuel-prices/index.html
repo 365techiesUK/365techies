@@ -306,7 +306,7 @@
           "name": "How up to date are the prices?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "We fetch fresh prices every half hour, and the line under the map says exactly when. Each price shows the time the forecourt set it. A price a forecourt has not confirmed for more than six weeks is left out rather than shown as current, and so is one far from every other in the country (more than 15% below or 30% above the UK average), which is almost always a typing mistake. If our own copy is more than three hours old the page says so. Prices can change at any time, so always check the pump before you fill up."
+            "text": "We fetch fresh prices every half hour, and the line under the map says exactly when. Each price shows the time the forecourt set it. A price a forecourt has not confirmed for more than six weeks is left out rather than shown as current, and so is one far from every other in the country (more than 15% below or 30% above the UK average), which is almost always a typing mistake. The cheapest in the whole UK counts only prices set in the last two weeks: an older price may still be right, but nobody should drive across the country on the strength of it. If our own copy is more than three hours old the page says so. Prices can change at any time, so always check the pump before you fill up."
           }
         },
         {
@@ -1211,14 +1211,14 @@
           <div class="ff-card"><h3>The four nations</h3><div id="ff-nations" class="ff-bars"></div><p class="ff-note">Average (median) price in each, against the UK average (the line in the middle).</p></div>
           <div class="ff-card"><h3>Cheapest areas</h3><ol id="ff-cheap-areas" class="ff-areas"></ol><p class="ff-note">Average price by postcode area.</p></div>
           <div class="ff-card"><h3>Dearest areas</h3><ol id="ff-dear-areas" class="ff-areas"></ol><p class="ff-note">Average price by postcode area.</p></div>
-          <div class="ff-card ff-wide"><h3>Cheapest forecourts in the UK right now</h3><ol id="ff-top10" class="ff-top"></ol><p class="ff-note">Tap one to see it on the map.</p></div>
+          <div class="ff-card ff-wide"><h3>Cheapest forecourts in the UK right now</h3><ol id="ff-top10" class="ff-top"></ol><p class="ff-note">Prices set in the last two weeks. Tap one to see it on the map.</p></div>
         </div>
       </div>
     </section>
     <script src="/vendor/leaflet/leaflet.js" defer></script>
     <script src="/vendor/protomaps/protomaps-leaflet.js" defer></script>
     <script src="/vendor/leaflet/touch-friendly.js?v=20260819c" defer></script>
-    <script src="/js/fuel-finder.js?v=11" defer></script>
+    <script src="/js/fuel-finder.js?v=12" defer></script>
     <section class="section">
       <div class="wrap">
         <div class="prose" data-reveal>
@@ -1228,7 +1228,7 @@
           <p>The three numbers at the top are the cheapest price, the average, and what a full tank costs. Pick your vehicle in that box &mdash; a motorbike, a small or family car, an SUV, a van, a motorhome, a 7.5-tonne lorry or a 44-tonne HGV, or type your own tank size &mdash; and every price on the page shows the bill. The &ldquo;what it costs to fill up&rdquo; table puts every vehicle side by side at today&rsquo;s average price of unleaded and diesel.</p>
           <p>Further down: which supermarket has the cheapest fuel today, against the big fuel brands; whether prices are going up or down, with the government&rsquo;s weekly figures back to 2003, the record highs and how much of the price is tax; and the UK picture, comparing England, Scotland, Wales and Northern Ireland and the cheapest and dearest postcode areas &mdash; with yours, if you searched by postcode. In Dorset? Our <a href="/bournemouth/fuel-prices/">Bournemouth, Poole and Christchurch fuel prices</a> page opens on the town.</p>
           <h2>Where the prices come from</h2>
-          <p>Since February 2026 every fuel retailer in the UK must report a price change to the government within 30 minutes, under the Motor Fuel Price (Open Data) Regulations 2025. The government publishes them as open data through its Fuel Finder service, and we fetch them every half hour. Every price shows when the forecourt set it, and one not confirmed for six weeks is left out rather than shown as current.</p>
+          <p>Since February 2026 every fuel retailer in the UK must report a price change to the government within 30 minutes, under the Motor Fuel Price (Open Data) Regulations 2025. The government publishes them as open data through its Fuel Finder service, and we fetch them every half hour. Every price shows when the forecourt set it, and one not confirmed for six weeks is left out rather than shown as current. The cheapest in the whole UK counts only prices set in the last two weeks.</p>
           <p>We&rsquo;re 365 Techies, a family-run IT support business in Bournemouth. We built this because fuel is costing everyone a fortune and the data is free &mdash; there are no adverts and nothing to sign up to.</p>
         </div>
       </div>
@@ -1244,7 +1244,7 @@
         </details>
         <details class="faq" data-reveal>
           <summary>How up to date are the prices?<span class="faq__icon" aria-hidden="true"></span></summary>
-          <div class="faq__ans"><p>We fetch fresh prices every half hour, and the line under the map says exactly when. Each price shows the time the forecourt set it. A price a forecourt has not confirmed for more than six weeks is left out rather than shown as current, and so is one far from every other in the country (more than 15% below or 30% above the UK average), which is almost always a typing mistake. If our own copy is more than three hours old the page says so. Prices can change at any time, so always check the pump before you fill up.</p></div>
+          <div class="faq__ans"><p>We fetch fresh prices every half hour, and the line under the map says exactly when. Each price shows the time the forecourt set it. A price a forecourt has not confirmed for more than six weeks is left out rather than shown as current, and so is one far from every other in the country (more than 15% below or 30% above the UK average), which is almost always a typing mistake. The cheapest in the whole UK counts only prices set in the last two weeks: an older price may still be right, but nobody should drive across the country on the strength of it. If our own copy is more than three hours old the page says so. Prices can change at any time, so always check the pump before you fill up.</p></div>
         </details>
         <details class="faq" data-reveal>
           <summary>Does the page know where I am?<span class="faq__icon" aria-hidden="true"></span></summary>

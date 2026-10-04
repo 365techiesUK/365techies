@@ -12,7 +12,7 @@ as they scroll into view, the location button pulses while it searches, and a sk
 A device set to reduce motion gets none of it (CSS below + the script checks the same setting).
 """
 
-JS_V = "11"
+JS_V = "12"
 
 import html as _html
 import json as _json
@@ -376,7 +376,7 @@ def tool(mode, radius, home=None):
           <div class="ff-card"><h3>The four nations</h3><div id="ff-nations" class="ff-bars"></div><p class="ff-note">Average (median) price in each, against the UK average (the line in the middle).</p></div>
           <div class="ff-card"><h3>Cheapest areas</h3><ol id="ff-cheap-areas" class="ff-areas"></ol><p class="ff-note">Average price by postcode area.</p></div>
           <div class="ff-card"><h3>Dearest areas</h3><ol id="ff-dear-areas" class="ff-areas"></ol><p class="ff-note">Average price by postcode area.</p></div>
-          <div class="ff-card ff-wide"><h3>Cheapest forecourts in the UK right now</h3><ol id="ff-top10" class="ff-top"></ol><p class="ff-note">Tap one to see it on the map.</p></div>
+          <div class="ff-card ff-wide"><h3>Cheapest forecourts in the UK right now</h3><ol id="ff-top10" class="ff-top"></ol><p class="ff-note">Prices set in the last two weeks. Tap one to see it on the map.</p></div>
         </div>
       </div>
     </section>
@@ -411,8 +411,10 @@ def faqs(where):
          "We fetch fresh prices every half hour, and the line under the map says exactly when. Each price shows the time the "
          "forecourt set it. A price a forecourt has not confirmed for more than six weeks is left out rather than shown as "
          "current, and so is one far from every other in the country (more than 15% below or 30% above the UK average), "
-         "which is almost always a typing mistake. If our own copy is more than three hours old the page says so. Prices can "
-         "change at any time, so always check the pump before you fill up."),
+         "which is almost always a typing mistake. The cheapest in the whole UK counts only prices set in the last two weeks: "
+         "an older price may still be right, but nobody should drive across the country on the strength of it. If our own "
+         "copy is more than three hours old the page says so. Prices can change at any time, so always check the pump "
+         "before you fill up."),
         ("Does the page know where I am?",
          "Only roughly, and only if you tap Use my location. Your phone gives the page your position; the page asks our server "
          "for prices around a point rounded to about 10 km and works out the exact distances itself, so your exact location is "

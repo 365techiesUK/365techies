@@ -102,9 +102,9 @@ function bmfssr_uk($stats, $meta, $areas) {
         . '<thead><tr><th scope="col">Fuel</th><th scope="col">UK average</th><th scope="col">Cheapest</th><th scope="col">Forecourts</th></tr></thead><tbody>';
     foreach (array('E10', 'B7', 'E5', 'SDV') as $f) {
         if (!isset($F[$f])) continue;
-        $h .= '<tr><th scope="row">' . $name[$f] . '</th><td>' . bmfssr_p($F[$f]['uk']['med']) . '</td><td>' . bmfssr_p($F[$f]['uk']['min']) . '</td><td>' . number_format($F[$f]['uk']['n']) . '</td></tr>';
+        $h .= '<tr><th scope="row">' . $name[$f] . '</th><td>' . bmfssr_p($F[$f]['uk']['med']) . '</td><td>' . bmfssr_pc($F[$f]['uk']['min']) . '</td><td>' . number_format($F[$f]['uk']['n']) . '</td></tr>';
     }
-    $h .= '</tbody></table></div>';
+    $h .= '</tbody></table></div><p class="ff-note">Average: the median of every forecourt&rsquo;s current price. Cheapest: prices set in the last two weeks only.</p>';
     // the four nations
     $nat = array('E' => 'England', 'S' => 'Scotland', 'W' => 'Wales', 'N' => 'Northern Ireland');
     $h .= '<div class="ff-twocol"><div><h3>England, Scotland, Wales and Northern Ireland</h3><div class="ff-tablewrap"><table class="ff-table">'

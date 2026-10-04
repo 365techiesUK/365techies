@@ -56,6 +56,11 @@ if (!defined('BMFUEL_FF_MAXAGE')) define('BMFUEL_FF_MAXAGE', 45 * 86400); // a p
 if (!defined('BMFUEL_FF_PARSE_V')) define('BMFUEL_FF_PARSE_V', 5);      // version of the stored lists (3: whole UK; 4: addresses de-duplicated; 5: Costco, Waitrose, Circle K, Maxol)
 if (!defined('BMFUEL_KEEP_OFFICIAL')) define('BMFUEL_KEEP_OFFICIAL', 12 * 3600);  // official data kept through an outage
 if (!defined('BMFUEL_TOP')) define('BMFUEL_TOP', 200);                  // forecourts in a "cheapest" answer
+// "Cheapest in the UK" counts only prices set in the last two weeks (owner, 4 Oct 2026: "yes limit cheapest in the UK to
+// two weeks"). On 4 Oct the UK's cheapest unleaded was a Northern Ireland price set on 2 September, while the UK average
+// had risen 12p in a month. Averages still use every price up to BMFUEL_FF_MAXAGE; a local "near you" list shows each
+// price with its date.
+if (!defined('BMFUEL_UK_FRESH')) define('BMFUEL_UK_FRESH', 14 * 86400);
 
 function bmfuel_area() { return array(-8.7, 49.8, 2.0, 61.0); }   // W, S, E, N: the UK, Northern Ireland and Shetland included
 
@@ -504,14 +509,19 @@ function bm_fuel_publish($all, $mode, $sources, $now) {
     }
     $stats = array('fetched_at' => $now, 'fuels' => array());
     foreach (array('E10', 'E5', 'B7', 'SDV') as $f) {
-        $have = array(); $uk = array(); $co = array(); $ar = array();
+        $have = array(); $uk = array(); $co = array(); $ar = array();   // $have: the cheapest-in-the-UK candidates (fresh)
+        $ukf = array(); $cof = array(); $arf = array();                 // the same, fresh prices only, for the lowest figures
         foreach ($all as $s) {
             if (!isset($s['p'][$f])) continue;
             $p = $s['p'][$f];
-            $have[] = $s; $uk[] = $p;
-            $co[isset($s['co']) ? $s['co'] : 'E'][] = $p;
+            $c = isset($s['co']) ? $s['co'] : 'E';
             $a = bmfuel_pc_area($s['pc']);
+            $uk[] = $p; $co[$c][] = $p;
             if ($a !== '') $ar[$a][] = $p;
+            if (empty($s['pt'][$f]) || $now - (int)$s['pt'][$f] <= BMFUEL_UK_FRESH) {   // no date known: cannot judge, kept
+                $have[] = $s; $ukf[] = $p; $cof[$c][] = $p;
+                if ($a !== '') $arf[$a][] = $p;
+            }
         }
         if (!$uk) continue;
         usort($have, function ($x, $y) use ($f) {
@@ -522,11 +532,11 @@ function bm_fuel_publish($all, $mode, $sources, $now) {
         $top = array_slice($have, 0, BMFUEL_TOP);
         bmfuel_json_save('top-' . $f . '.json', $top);
         $cs = array();
-        foreach ($co as $k => $v) $cs[$k] = array('n' => count($v), 'med' => bmfuel_median($v), 'min' => min($v));
+        foreach ($co as $k => $v) $cs[$k] = array('n' => count($v), 'med' => bmfuel_median($v), 'min' => isset($cof[$k]) ? min($cof[$k]) : null);
         $as = array();
-        foreach ($ar as $k => $v) if (count($v) >= 3) $as[$k] = array(count($v), bmfuel_median($v), min($v));
+        foreach ($ar as $k => $v) if (count($v) >= 3) $as[$k] = array(count($v), bmfuel_median($v), isset($arf[$k]) ? min($arf[$k]) : null);
         $stats['fuels'][$f] = array(
-            'uk' => array('n' => count($uk), 'med' => bmfuel_median($uk), 'min' => min($uk), 'max' => max($uk),
+            'uk' => array('n' => count($uk), 'med' => bmfuel_median($uk), 'min' => $ukf ? min($ukf) : null, 'max' => max($uk),
                           'avg' => round(array_sum($uk) / count($uk), 1)),
             'co' => $cs, 'areas' => $as, 'top' => array_slice($top, 0, 10),
         );

@@ -325,7 +325,7 @@
     box.hidden = false;
     var fl = FUEL[st.fuel].toLowerCase();
     $('ff-uk-h').innerHTML = 'The UK picture for ' + fl;
-    $('ff-uk-sub').innerHTML = S.uk.n.toLocaleString('en-GB') + ' forecourts reporting a ' + fl + ' price. UK average <b>' + p1(S.uk.med) + 'p</b>, cheapest <b>' + p1(S.uk.min) + 'p</b>.';
+    $('ff-uk-sub').innerHTML = S.uk.n.toLocaleString('en-GB') + ' forecourts reporting a ' + fl + ' price. UK average <b>' + p1(S.uk.med) + 'p</b>' + (S.uk.min != null ? ', cheapest <b>' + p1(S.uk.min) + 'p</b> (prices set in the last two weeks)' : '') + '.';
     // Bars grow left (cheaper) or right (dearer) from the UK average, sized by the pence difference on a scale of at least
     // +/-10p - an axis that does not start at the average would make a 7p gap look three times as big.
     var co = ['E', 'S', 'W', 'N'].filter(function (k) { return S.co[k]; });
