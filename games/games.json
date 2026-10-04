@@ -17,7 +17,7 @@
     { "id": "batball", "title": "365 Bat & Ball", "icon": "🏓", "cat": "Arcade", "url": "https://365techies.co.uk/games/batball/",
       "sub": "Knock out the bricks: 20 levels, exploding bricks, lasers, three balls, two Motherships and a Hall of Fame." },
     { "id": "eclipse", "title": "365 Eclipse", "icon": "✈️", "cat": "Arcade", "url": "https://365techies.co.uk/games/eclipse/", "pic": 2,
-      "sub": "A 3D jet shooter: seven stages from harbour to orbit, four fighters, red and blue guns, medals and huge bosses." },
+      "sub": "A 3D jet shooter: seven stages from harbour to orbit, four fighters, new guns and rockets to catch, and huge bosses." },
     { "id": "seafront", "title": "Seafront", "icon": "🌊", "cat": "Seafront", "url": "https://365techies.co.uk/bournemouth/games/seafront/play/",
       "sub": "Ride an eFoil, jet ski or RIB along the real Bournemouth seafront. Best on a newer PC." }
   ]

@@ -4,14 +4,18 @@
  * No drawing here (eclipse.js and world3d.js draw it), so the tests run it in node. 60 steps a second; the game's own
  * pixels on a 240 x 320 screen, y down.
  *
- *  Fighters  Swift (fast; twin vulcan / piercing lance), Striker (all-round; spread / twin laser), Titan (slow and
- *            tough; heavy cannon / wave beam), Wraith (forward-swept wings; scatter / homing thunder). Each has its own
- *            missiles (from power 3) and its own charge attack.
- *  Weapons   RED and BLUE power items: catch one and the weapon powers up (to 8); catch the other colour and you
- *            switch to it. The items turn from one colour to the other as they drift, so you pick.
- *  Charge    hold the fire button (Space, the mouse button or Charge) and the meter fills; let go when it's full.
+ *  Firing    only while you press fire (Space, the mouse button or Fire), shot by shot; a quick tap fires sooner than
+ *            holding. Owner, 5 Oct: "I don't like the shooting all the time ... different bonuses, different rockets
+ *            and different fire ... a bit like Galaxians".
+ *  Pods      lettered pods. GUNS (square): V Vulcan, S Spread, L Laser (goes on through), T Thunder (bends to its
+ *            target) - the same letter again powers the gun up (to 4); another letter swaps guns and keeps the power.
+ *            ROCKETS (round), fired alongside the gun: R Rockets (a blast where they hit), H Homing, C Cluster (bursts
+ *            into a ring of blasts). BONUSES (six-sided): B Bomb, + Shield, W Wingman, x2 double points for 20 s.
+ *            Shoot down a whole flight of planes and the last one leaves a pod.
+ *  Fighters  Swift (the quickest; Vulcan), Striker (all-round; Spread and Rockets), Titan (slow, with a shield;
+ *            Laser), Wraith (Thunder and Homing).
  *  Bombs     the second button: a carpet of blasts that clears the bullets. Up to 7.
- *  Wingmen   W items: up to two small jets that fly with you and fire too (lost if you are hit).
+ *  Wingmen   W pods: up to two small jets that fly with you and fire when you do (lost if you are hit).
  *  Medals    ground targets leave medals; catch them one after another and each is worth more (100 up to 10,000);
  *            miss one and the value starts again.
  *  Bonuses   QUICK KILL (shot down before it fires), GRAZE (a bullet passing close), and at the end of each stage
@@ -31,13 +35,19 @@
     3: { name: 'Fast', lives: 3, shield: 0, bspd: 1.08, brate: 1.1, ehp: 1.12, inv: 110 }
   };
   var SHIPS = {
-    swift: { name: 'Swift', speed: 2.9, bombs: 2, red: 'twin', blue: 'lance', sub: 'micro', charge: 'lance' },
-    striker: { name: 'Striker', speed: 2.4, bombs: 2, red: 'spread', blue: 'laser', sub: 'rocket', charge: 'salvo' },
-    titan: { name: 'Titan', speed: 1.95, bombs: 3, red: 'cannon', blue: 'wave', sub: 'homing', charge: 'napalm' },
-    wraith: { name: 'Wraith', speed: 2.6, bombs: 2, red: 'scatter', blue: 'thunder', sub: 'homing', charge: 'storm' }
+    swift: { name: 'Swift', speed: 2.9, bombs: 2, gun: 'V', rk: null, shield: 0 },
+    striker: { name: 'Striker', speed: 2.4, bombs: 2, gun: 'S', rk: 'R', shield: 0 },
+    titan: { name: 'Titan', speed: 1.95, bombs: 3, gun: 'L', rk: null, shield: 1 },
+    wraith: { name: 'Wraith', speed: 2.6, bombs: 2, gun: 'T', rk: 'H', shield: 0 }
   };
+  // the pods. A P in a drop list (and the pod a whole flight leaves) is the next one from a shuffled bag of these
+  var GUNS = { V: 'VULCAN', S: 'SPREAD', L: 'LASER', T: 'THUNDER' };
+  var RKTS = { R: 'ROCKETS', H: 'HOMING', C: 'CLUSTER' };
+  var BONUS = { B: 'BOMB', D: 'SHIELD', W: 'WINGMAN', X: 'DOUBLE SCORE' };
+  var BAG = ['V', 'S', 'L', 'T', 'S', 'L', 'T', 'R', 'H', 'C', 'R', 'H', 'C', 'D', 'X', 'B'];
+  var FLIGHTS = { vee: 1, line: 1, swoop: 1, drones: 1, inters: 1, behind: 1 };   // formations that count as a flight
   var MEDALS = [100, 200, 400, 800, 1600, 3200, 6400, 10000];
-  var HIT_R = 2.4, GRAZE_R = 11, EXTRA_EVERY = 500000, MAXP = 8, CHARGE = 56;
+  var HIT_R = 2.4, GRAZE_R = 11, EXTRA_EVERY = 500000, MAXLV = 4, X2_TIME = 1200;
   // what each enemy is: hit points, size, points, how it shoots, what it leaves. air / ground (ground and sea ride the
   // scrolling land); quick: worth a QUICK KILL bonus; still: stands where it was built
   var TYPES = {
@@ -158,7 +168,9 @@
     var W = {
       diff: diff, d: d, shipId: ship, ship: sh, rng: rngOf(seed == null ? (Date.now() ^ (Math.random() * 1e9)) : seed),
       score: 0, lives: d.lives, frame: 0, events: [], fx: [], over: false, loop: 0, stageIdx: -1, stageNo: 0, nextExtra: EXTRA_EVERY,
-      p: { x: WIDTH / 2, y: HEIGHT - 44, inv: 0, shield: d.shield, power: 1, col: 'red', bombs: sh.bombs, dead: 0, fireT: 0, misT: 0, vx: 0, vy: 0, charge: 0, wing: [], lance: 0 },
+      p: { x: WIDTH / 2, y: HEIGHT - 44, inv: 0, shield: d.shield + sh.shield, gun: sh.gun, glv: 1, rk: sh.rk, rlv: sh.rk ? 1 : 0, bombs: sh.bombs, dead: 0,
+           fireT: 0, cad: 8, rkT: 0, rside: 1, x2: 0, vx: 0, vy: 0, wing: [] },
+      bag: [], flights: {},
       shots: [], enemies: [], bullets: [], items: [], beams: [], marks: [],
       medal: 0, graze: 0, clock: 0, si: 0, dist: 0, vs: 0, phase: 'intro', phaseT: 150, boss: null, mid: null,
       bombT: 0, bombX: 0, bombY: 0, freeze: 0, deaths: 0, stageDeaths: 0, touchAnchor: null, id: 0, st: null
@@ -172,7 +184,7 @@
     W.stageNo++;
     var S = STAGES[W.stageIdx];
     W.stage = S; W.clock = 0; W.si = 0; W.boss = null; W.mid = null; W.stageDeaths = 0; W.vs = S.scroll; W.dist = 0;
-    W.enemies = []; W.bullets = []; W.beams = []; W.items = []; W.marks = [];
+    W.enemies = []; W.bullets = []; W.beams = []; W.items = []; W.marks = []; W.flights = {};
     W.st = { foes: 0, killed: 0, medals: 0, caught: 0, quick: 0 };
     W.phase = 'intro'; W.phaseT = 150;
     ev(W, { sfx: 'stage' }); say(W, 'Stage ' + W.stageNo + ': ' + cap(S.name));
@@ -366,48 +378,51 @@
   function addBeam(W, x, y) { W.beams.push({ x: x, y: y, warn: 60, life: 44, w: 9 }); ev(W, { sfx: 'beamwarn', x: x }); }
 
   // ---------------------------------------------------------------- the player's weapons
-  function weapon(W) { return W.p.col === 'red' ? W.ship.red : W.ship.blue; }
   function shot(W, x, y, ang, sp, dmg, kind, extra) {
     var s = { x: x, y: y, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, dmg: dmg, kind: kind };
     if (extra) for (var k in extra) s[k] = extra[k];
     W.shots.push(s); return s;
   }
   var UP = -Math.PI / 2;
-  function fire(W, x, y, lv, mini) {   // the main gun from (x, y) at power lv; a wingman fires a smaller version
-    var w = weapon(W), i, n;
-    if (mini) lv = Math.min(3, lv);
-    if (w === 'twin') { n = [2, 2, 3, 3, 4, 4, 5, 5][lv - 1]; for (i = 0; i < n; i++) shot(W, x + (i - (n - 1) / 2) * 4.5, y - 8, UP + (i - (n - 1) / 2) * 0.03, 9, 1.3, 'vulcan'); return 4; }
-    if (w === 'spread') { n = [3, 3, 5, 5, 7, 7, 9, 9][lv - 1]; var sp = [0.18, 0.3, 0.42, 0.54, 0.66, 0.76, 0.86, 0.96][lv - 1]; for (i = 0; i < n; i++) shot(W, x, y - 8, UP + (i / (n - 1) - 0.5) * sp, 7.6, 1.05, 'vulcan'); return 5; }
-    if (w === 'cannon') { n = [1, 2, 3, 3, 4, 5, 5, 6][lv - 1]; for (i = 0; i < n; i++) shot(W, x + (i - (n - 1) / 2) * 6, y - 6, UP + (n > 1 ? (i / (n - 1) - 0.5) * 0.42 : 0), 6.2, 2.6, 'shell'); return 7; }
-    if (w === 'scatter') {
-      n = [3, 4, 5, 6, 7, 8, 9, 10][lv - 1];
-      for (i = 0; i < n; i++) shot(W, x, y - 8, UP + (i / (n - 1) - 0.5) * 0.7, 7.4, 1.0, 'vulcan');
-      if (lv >= 4) { shot(W, x - 6, y, Math.PI * 0.75 + Math.PI, 6, 0.9, 'vulcan'); shot(W, x + 6, y, -Math.PI * 0.25, 6, 0.9, 'vulcan'); }
-      return 5;
+  function fire(W, x, y, mini) {   // one round from the gun at (x, y); returns the steps until the next. A wingman fires one small bolt
+    var p = W.p, g = p.gun, lv = p.glv, i, n, o;
+    if (mini) { shot(W, x, y - 6, UP, 8.5, 1.1, g === 'L' ? 'laser' : g === 'T' ? 'thunder' : 'vulcan', g === 'L' ? { w: 2.4, hit: {} } : g === 'T' ? { life: 60 } : null); return 0; }
+    if (g === 'V') {   // VULCAN: quick bolts straight ahead, one more each level (fanning a little at 4)
+      n = lv + 1;
+      for (i = 0; i < n; i++) { o = i - (n - 1) / 2; shot(W, x + o * 5, y - 9 + Math.abs(o) * 2, UP + (lv >= 4 ? o * 0.06 : 0), 9, 1.9, 'vulcan'); }
+      return 7;
     }
-    if (w === 'lance') { var wid = [3, 4, 5, 6, 7, 8, 9, 10][lv - 1]; shot(W, x, y - 12, UP, 10, 1.25 + lv * 0.12, 'lance', { w: wid, hit: {} }); return 3; }
-    if (w === 'laser') { n = lv >= 6 ? 4 : lv >= 3 ? 3 : 2; for (i = 0; i < n; i++) shot(W, x + (i - (n - 1) / 2) * 7, y - 10, UP, 9.5, 1.35 + lv * 0.08, 'laser'); return 4; }
-    if (w === 'wave') { var ww = 6 + lv * 3; shot(W, x, y - 10, UP, 6.5, 2.2 + lv * 0.15, 'wave', { w: ww, hit: {} }); return 8; }
-    // thunder: lightning that bends to the nearest target
-    n = [2, 2, 3, 3, 4, 4, 5, 6][lv - 1];
-    for (i = 0; i < n; i++) shot(W, x + (i - (n - 1) / 2) * 6, y - 6, UP + (i - (n - 1) / 2) * 0.35, 6.5, 1.5 + lv * 0.1, 'thunder', { life: 70 });
-    return 7;
+    if (g === 'S') {   // SPREAD: a fan that widens
+      n = [3, 5, 5, 7][lv - 1]; var sp = [0.34, 0.5, 0.72, 0.92][lv - 1];
+      for (i = 0; i < n; i++) shot(W, x, y - 8, UP + (i / (n - 1) - 0.5) * sp, 7.6, 1.6, 'spread');
+      return 9;
+    }
+    if (g === 'L') {   // LASER: long bolts that go on through everything in their way
+      n = [1, 2, 2, 3][lv - 1]; var dm = [5, 4.6, 5.6, 4.6][lv - 1], wd = [3.4, 3.4, 5, 5][lv - 1];
+      for (i = 0; i < n; i++) shot(W, x + (i - (n - 1) / 2) * 8, y - 12, UP, 10, dm, 'laser', { w: wd, hit: {} });
+      return 10;
+    }
+    // THUNDER: bolts of lightning that bend to the nearest target
+    n = lv + 1;
+    for (i = 0; i < n; i++) { o = i - (n - 1) / 2; shot(W, x + o * 6, y - 6, UP + o * 0.4, 6.5, 2.6, 'thunder', { life: 70 }); }
+    return 12;
   }
-  function missiles(W) {   // each fighter's own missiles, from power 3
-    var p = W.p, sub = W.ship.sub, lv = p.power;
-    if (lv < 3 || --p.misT > 0) return;
-    if (sub === 'micro') { p.misT = 14; for (var i = 0; i < (lv >= 6 ? 4 : 2); i++) shot(W, p.x + (i % 2 ? 6 : -6), p.y, i % 2 ? -1.2 : -1.94, 4.5, 1.2, 'homing', { life: 90 }); }
-    else if (sub === 'rocket') { p.misT = 18; var k = lv >= 6 ? 2 : 1; for (var j = 0; j < k; j++) { shot(W, p.x - 10 - j * 6, p.y, UP, 5.5, 3.2, 'rocket'); shot(W, p.x + 10 + j * 6, p.y, UP, 5.5, 3.2, 'rocket'); } }
-    else { p.misT = 22; for (var m = 0; m < (lv >= 6 ? 4 : 2); m++) shot(W, p.x + (m % 2 ? 9 : -9), p.y + 2, m % 2 ? -0.6 : -2.5, 2.4, 3.4, 'homing', { life: 140 }); }
-    ev(W, { sfx: 'missile', x: p.x });
-  }
-  function chargeAttack(W) {
-    var p = W.p, c = W.ship.charge, i;
-    if (c === 'lance') { p.lance = 54; fx(W, { k: 'charge', x: p.x, y: p.y, c: c }); }
-    else if (c === 'salvo') { for (i = 0; i < 14; i++) { var a = UP + (i / 13 - 0.5) * 2.4; shot(W, p.x, p.y, a, 3.2, 6, 'homing', { life: 160 }); } fx(W, { k: 'charge', x: p.x, y: p.y, c: c }); }
-    else if (c === 'napalm') { shot(W, p.x, p.y - 10, UP, 4, 4, 'napalm', { life: 34 }); fx(W, { k: 'charge', x: p.x, y: p.y, c: c }); }
-    else { for (i = 0; i < 16; i++) { var b = i * Math.PI * 2 / 16; shot(W, p.x, p.y, b, 3, 5, 'thunder', { life: 120 }); } fx(W, { k: 'charge', x: p.x, y: p.y, c: c }); }
-    ev(W, { sfx: 'chargefire', c: c });
+  function rockets(W) {   // the rockets go with the gun, while you fire
+    var p = W.p, k = p.rk, lv = p.rlv, j;
+    if (!k || p.rkT > 0) return;
+    if (k === 'R') {   // ROCKETS: straight up, faster and faster, with a blast where they hit
+      p.rkT = [24, 22, 20, 18][lv - 1];
+      var bl = { blast: 15 + lv * 2, bdmg: 3 };
+      if (lv === 1) { p.rside = -p.rside; shot(W, p.x + p.rside * 10, p.y, UP, 2.2, 4, 'rocket', bl); }
+      else for (j = 0; j < (lv >= 3 ? 2 : 1); j++) { shot(W, p.x - 10 - j * 7, p.y + j * 4, UP, 2.2, 4, 'rocket', bl); shot(W, p.x + 10 + j * 7, p.y + j * 4, UP, 2.2, 4, 'rocket', bl); }
+    } else if (k === 'H') {   // HOMING: missiles that curl round to the nearest enemy
+      p.rkT = [30, 26, 26, 22][lv - 1];
+      for (j = 0; j < (lv >= 3 ? 4 : 2); j++) shot(W, p.x + (j % 2 ? 9 : -9), p.y + 2, j % 2 ? -0.6 - (j >> 1) * 0.3 : -2.54 + (j >> 1) * 0.3, 2.4, 3.4, 'homing', { life: 150 });
+    } else {   // CLUSTER: a shell that bursts into a ring of blasts
+      p.rkT = [44, 38, 34, 30][lv - 1];
+      shot(W, p.x, p.y - 8, UP, 4.6, 3, 'cluster', { life: 30, n: [5, 6, 8, 10][lv - 1] });
+    }
+    ev(W, { sfx: 'missile', k: k, x: p.x });
   }
   function nearestTarget(W, x, y) {
     var best = null, bd = 1e9;
@@ -423,28 +438,36 @@
         if (tg) { var a = Math.atan2(tg.y - s.y, tg.x - s.x), cur = Math.atan2(s.vy, s.vx), d = Math.atan2(Math.sin(a - cur), Math.cos(a - cur)), turn = s.kind === 'thunder' ? 0.2 : 0.11; cur += clamp(d, -turn, turn); var sp = Math.min(s.kind === 'thunder' ? 8 : 6, Math.hypot(s.vx, s.vy) + 0.3); s.vx = Math.cos(cur) * sp; s.vy = Math.sin(cur) * sp; }
         else s.vy -= 0.25;
       }
-      if (s.life != null && --s.life <= 0) { if (s.kind === 'napalm') napalm(W, s.x, s.y); W.shots.splice(i, 1); continue; }
+      if (s.kind === 'rocket') s.vy = Math.max(-9, s.vy * 1.07);   // a rocket gathers speed
+      if (s.life != null && --s.life <= 0) { if (s.kind === 'cluster') burst(W, s); W.shots.splice(i, 1); continue; }
       s.x += s.vx; s.y += s.vy;
       if (s.y < -20 || s.y > HEIGHT + 20 || s.x < -20 || s.x > WIDTH + 20) { W.shots.splice(i, 1); continue; }
-      if (shotHits(W, s)) { if (s.kind === 'napalm') napalm(W, s.x, s.y); W.shots.splice(i, 1); }
+      if (shotHits(W, s)) { if (s.blast) blast(W, s); else if (s.kind === 'cluster') burst(W, s); W.shots.splice(i, 1); }
     }
   }
-  function napalm(W, x, y) {   // the Titan's charge: a fireball that burns everything near it
-    fx(W, { k: 'napalm', x: x, y: y }); ev(W, { sfx: 'bigboom', x: x });
-    areaDamage(W, x, y, 56, 70);
+  function blast(W, s) {   // a rocket's blast
+    fx(W, { k: 'boom', x: s.x, y: s.y, size: 1, rkt: true }); ev(W, { sfx: 'rkt', x: s.x });
+    areaDamage(W, s.x, s.y, s.blast, s.bdmg);
+  }
+  function burst(W, s) {   // a cluster shell: a ring of small blasts
+    for (var i = 0; i < s.n; i++) {
+      var a = i * Math.PI * 2 / s.n, bx = s.x + Math.cos(a) * 20, by = s.y + Math.sin(a) * 15;
+      fx(W, { k: 'boom', x: bx, y: by, size: 1, rkt: true }); areaDamage(W, bx, by, 11, 2.6);
+    }
+    ev(W, { sfx: 'cluster', x: s.x });
   }
   function areaDamage(W, x, y, r, dmg) {
     W.enemies.forEach(function (e) { if (e.hp > 0 && !e.under && Math.hypot(e.x - x, e.y - y) < r + e.r) damage(W, e, dmg); });
     if (W.boss && !W.boss.dead) W.boss.parts.forEach(function (q) { if (q.alive && Math.hypot(q.x - x, q.y - y) < r + q.r) bossPartHit(W, q, dmg * 0.6); });
   }
   function shotHits(W, s) {
-    var wide = s.kind === 'lance' || s.kind === 'wave' ? s.w / 2 : s.kind === 'shell' ? 3 : 1.5;
+    var wide = s.w ? s.w / 2 : s.kind === 'rocket' || s.kind === 'cluster' ? 2.5 : 1.5;
     for (var j = 0; j < W.enemies.length; j++) {
       var e = W.enemies[j]; if (e.hp <= 0 || e.y < -8 || e.under) continue;
       if (s.hit && s.hit[e.id]) continue;
       if (Math.abs(e.x - s.x) < e.r + wide && Math.abs(e.y - s.y) < e.r + 5) {
         damage(W, e, s.dmg); fx(W, { k: 'hit', x: s.x, y: e.y + e.r * 0.6, kind: s.kind });
-        if (s.hit) { s.hit[e.id] = 1; continue; }   // a lance or a wave goes on through
+        if (s.hit) { s.hit[e.id] = 1; continue; }   // a laser goes on through
         return true;
       }
     }
@@ -462,12 +485,12 @@
     if (e.hp <= 0) return;
     e.hp -= dmg; e.flash = 3;
     if (e.hp > 0) return;
-    var T = TYPES[e.type], pts = T.score * (1 + W.loop);
+    var T = TYPES[e.type], x2 = W.p.x2 > 0 ? 2 : 1, pts = T.score * (1 + W.loop) * x2;
     addScore(W, pts);
     if (e.type !== 'rocket') W.st.killed++;
     // QUICK KILL: shot down before it fired, soon after it came into view
     if (T.quick && !e.fired && e.seen >= 0 && W.frame - e.seen < 70) {
-      var q = 500 * (1 + W.loop) * (T.ground ? 1 : 1); addScore(W, q); W.st.quick++;
+      var q = 500 * (1 + W.loop) * x2; addScore(W, q); W.st.quick++;
       fx(W, { k: 'quick', x: e.x, y: e.y, pts: q }); ev(W, { sfx: 'quick' });
     }
     ev(W, { sfx: e.r >= 15 ? 'bigboom' : 'boom', x: e.x, size: e.r });
@@ -475,12 +498,31 @@
     if (T.drop) dropItems(W, e.x, e.y, T.drop);
     if (e.carry) dropItems(W, e.x, e.y, e.carry);
     if (e === W.mid) { W.mid = null; W.freeze = 12; fx(W, { k: 'points', x: e.x, y: e.y, pts: pts }); }
+    if (e.fl) flightDown(W, e);
+  }
+  function tagFlight(W, from) {   // the planes a formation just sent are one flight
+    var n = W.enemies.length - from; if (n < 3) return;
+    var id = ++W.id; W.flights[id] = { n: n, left: n, broken: false };
+    for (var i = from; i < W.enemies.length; i++) W.enemies[i].fl = id;
+  }
+  function flightDown(W, e) {   // the whole flight shot down: a bonus, and the last plane leaves a pod
+    var fl = W.flights[e.fl]; if (!fl || --fl.left > 0) return;
+    delete W.flights[e.fl];
+    if (fl.broken) return;
+    var pts = 300 * fl.n * (1 + W.loop); addScore(W, pts);
+    ev(W, { sfx: 'flight' }); fx(W, { k: 'flight', x: e.x, y: e.y, pts: pts });
+    dropItems(W, e.x, e.y, 'P');
+  }
+  function nextPod(W) {
+    if (!W.p.rk && W.rng() < 0.5) return 'RHC'.charAt(Math.floor(W.rng() * 3));   // no rockets yet: they come sooner
+    if (!W.bag.length) { W.bag = BAG.slice(); for (var i = W.bag.length - 1; i > 0; i--) { var j = Math.floor(W.rng() * (i + 1)), t = W.bag[i]; W.bag[i] = W.bag[j]; W.bag[j] = t; } }
+    return W.bag.pop();
   }
   function dropItems(W, x, y, kinds) {
     for (var i = 0; i < kinds.length; i++) {
       var k = kinds.charAt(i), dx = (i - (kinds.length - 1) / 2) * 12;
       if (k === 'M') W.items.push({ x: x + dx, y: y, vx: 0, vy: 0, kind: 'M', t: 0, ground: true });
-      else W.items.push({ x: x + dx, y: y, vx: (W.rng() < 0.5 ? -1 : 1) * (0.5 + W.rng() * 0.4), vy: -0.6, kind: k, t: 0, col: W.p.col === 'red' ? 'blue' : 'red', bounces: 0 });
+      else W.items.push({ x: x + dx, y: y, vx: (W.rng() < 0.5 ? -1 : 1) * (0.4 + W.rng() * 0.4), vy: -0.6, kind: k === 'P' ? nextPod(W) : k, t: 0, bounces: 0 });
     }
   }
 
@@ -532,16 +574,17 @@
       ev(W, { sfx: 'shield' }); say(W, p.shield ? 'Shield hit - ' + p.shield + ' left' : 'Shield gone!'); fx(W, { k: 'shieldhit', x: p.x, y: p.y, left: p.shield });
       return;
     }
-    p.dead = 90; W.lives--; W.deaths++; W.stageDeaths++; p.charge = 0; p.lance = 0;
+    p.dead = 90; W.lives--; W.deaths++; W.stageDeaths++; p.x2 = 0;
     W.bullets = W.bullets.filter(function (b) { return Math.hypot(b.x - p.x, b.y - p.y) > 70; });
     ev(W, { sfx: 'die', x: p.x }); fx(W, { k: 'die', x: p.x, y: p.y });
-    // some of the power, and the wingmen, are lost where the ship went down
-    if (p.power > 1) W.items.push({ x: p.x, y: p.y, vx: 0.7, vy: -1.6, kind: 'P', t: 0, col: p.col, bounces: 0 });
+    // a level of power and the wingmen are lost; the gun's pod falls where the ship went down, to be caught again
+    W.items.push({ x: p.x, y: p.y, vx: 0.7, vy: -1.6, kind: p.gun, t: 0, bounces: 0 });
     p.wing.forEach(function (w) { fx(W, { k: 'boom', x: w.x, y: w.y, size: 1 }); }); p.wing = [];
   }
   function respawn(W) {
     var p = W.p;
-    p.x = WIDTH / 2; p.y = HEIGHT - 34; p.inv = W.d.inv; p.power = Math.max(1, p.power - 2); p.bombs = Math.max(p.bombs, W.ship.bombs); p.shield = W.d.shield;
+    p.x = WIDTH / 2; p.y = HEIGHT - 34; p.inv = W.d.inv; p.glv = Math.max(1, p.glv - 1); if (p.rk) p.rlv = Math.max(1, p.rlv - 1);
+    p.bombs = Math.max(p.bombs, W.ship.bombs); p.shield = Math.max(p.shield, W.d.shield + W.ship.shield);
     ev(W, { sfx: 'respawn' }); fx(W, { k: 'respawn', x: p.x, y: p.y });
   }
   function addScore(W, pts) {
@@ -558,20 +601,23 @@
     var p = W.p;
     W.dist += W.vs * (W.phase === 'clear' ? 2.5 : 1);
     if (p.inv) p.inv--;
+    if (p.x2 > 0 && W.phase !== 'clear') p.x2--;
     if (p.dead) {
       if (--p.dead === 0) { if (W.lives <= 0) { W.over = true; ev(W, { sfx: 'over' }); return; } respawn(W); }
     } else {
       movePlayer(W, input);
       if (input.altTap) bomb(W);
-      // hold the fire button to charge; let go when it's full
-      if (input.fire && W.phase !== 'clear') { if (p.charge < CHARGE) { p.charge++; if (p.charge === CHARGE) ev(W, { sfx: 'charged' }); } }
-      else { if (p.charge >= CHARGE) chargeAttack(W); p.charge = 0; }
-      if (--p.fireT <= 0 && W.phase !== 'clear') {
-        p.fireT = fire(W, p.x, p.y, p.power, false);
-        p.wing.forEach(function (w) { fire(W, w.x, w.y, p.power, true); });
+      // the gun fires only while you press; a fresh press fires at once, so quick taps beat holding
+      if (p.fireT > 0) p.fireT--;
+      if (p.rkT > 0) p.rkT--;
+      var want = (input.fire || input.tap) && W.phase !== 'clear';
+      if (want && input.tap && p.fireT <= p.cad * 0.5) p.fireT = 0;
+      if (want && p.fireT <= 0) {
+        p.cad = p.fireT = fire(W, p.x, p.y, false);
+        p.wing.forEach(function (w) { fire(W, w.x, w.y, true); });
+        ev(W, { sfx: 'shot', g: p.gun, x: p.x });
       }
-      if (W.phase !== 'clear') missiles(W);
-      if (p.lance > 0) { p.lance--; lanceStep(W); }
+      if (want) rockets(W);
     }
     if (W.phase === 'intro') { if (--W.phaseT <= 0) W.phase = 'play'; }
     else if (W.phase === 'clear') { if (--W.phaseT <= 0) nextStage(W); }
@@ -579,7 +625,7 @@
     if (W.phase === 'play' && !W.mid && !W.boss) {
       W.clock++;
       var sc = W.stage.script;
-      while (W.si < sc.length && sc[W.si][0] <= W.clock) { var s = sc[W.si++]; FORM[s[1]](W, s[2]); }
+      while (W.si < sc.length && sc[W.si][0] <= W.clock) { var s = sc[W.si++], from = W.enemies.length; FORM[s[1]](W, s[2]); if (FLIGHTS[s[1]]) tagFlight(W, from); }
     }
     bombStep(W);
     moveEnemies(W);
@@ -591,13 +637,6 @@
     W.enemies = W.enemies.filter(function (e) { return e.hp > 0 && !e.gone; });
     W.marks.forEach(function (m) { m.y += W.vs; }); W.marks = W.marks.filter(function (m) { return m.y < HEIGHT + 40; });
   }
-  function lanceStep(W) {   // the Swift's charge: a great beam straight up from the ship
-    var p = W.p;
-    W.bullets = W.bullets.filter(function (b) { var hit = Math.abs(b.x - p.x) < 14 && b.y < p.y; if (hit) fx(W, { k: 'pop', x: b.x, y: b.y }); return !hit; });
-    W.enemies.forEach(function (e) { if (e.hp > 0 && !e.under && Math.abs(e.x - p.x) < 14 + e.r && e.y < p.y) damage(W, e, 1.6); });
-    if (W.boss && !W.boss.dead) W.boss.parts.forEach(function (q) { if (q.alive && Math.abs(q.x - p.x) < 14 + q.r && q.y < p.y) bossPartHit(W, q, 1.3); });
-  }
-
   function moveEnemies(W) {
     var p = W.p;
     W.enemies.forEach(function (e) {
@@ -646,7 +685,7 @@
       if (T.turret || e.type === 'mid') e.tur = Math.atan2(p.y - e.y, p.x - e.x);
       if (e.seen < 0 && e.y > 2 && e.y < HEIGHT && e.x > 0 && e.x < WIDTH) e.seen = W.frame;
       if (e.y > HEIGHT + 40 || e.y < -70 || e.x < -50 || e.x > WIDTH + 50) {
-        if (e.t > 40 || (m.m === 'up' && e.y < -70)) { e.gone = true; if (e === W.mid) W.mid = null; }
+        if (e.t > 40 || (m.m === 'up' && e.y < -70)) { e.gone = true; if (e === W.mid) W.mid = null; if (e.fl && W.flights[e.fl]) W.flights[e.fl].broken = true; }
         return;
       }
       // shooting
@@ -702,13 +741,12 @@
       var it = W.items[i];
       it.t++;
       if (it.kind === 'M') { it.y += W.vs; }   // a medal lies on the ground and slides down with it
-      else {   // power items drift and bounce off the sides a while, turning red - blue - red
+      else {   // a pod drifts down slowly, bouncing off the sides
         it.vy = Math.min(0.55, it.vy + 0.02); it.x += it.vx; it.y += it.vy;
         if ((it.x < 10 && it.vx < 0) || (it.x > WIDTH - 10 && it.vx > 0)) { it.vx = -it.vx; it.bounces++; }
-        if (it.kind === 'P' && it.t % 110 === 0) it.col = it.col === 'red' ? 'blue' : 'red';
       }
-      var dx = p.x - it.x, dy = p.y - it.y, d = Math.hypot(dx, dy);
-      if (!p.dead && d < 30 && d > 0.1) { it.x += dx / d * 2.4; it.y += dy / d * 2.4; }   // drawn to the ship when close
+      var dx = p.x - it.x, dy = p.y - it.y, d = Math.hypot(dx, dy), mag = it.kind === 'M' ? 30 : 16;
+      if (!p.dead && d < mag && d > 0.1) { it.x += dx / d * 2.4; it.y += dy / d * 2.4; }   // drawn to the ship when close (a pod only when very close, so you can pick)
       if (!p.dead && d < 11) { W.items.splice(i, 1); pickUp(W, it); continue; }
       if (it.y > HEIGHT + 10) {
         W.items.splice(i, 1);
@@ -717,29 +755,38 @@
     }
   }
   function pickUp(W, it) {
-    var p = W.p;
-    if (it.kind === 'P') {
-      var sw = it.col !== p.col;
-      p.col = it.col;
-      if (p.power < MAXP) { p.power++; ev(W, { sfx: 'power' }); fx(W, { k: 'item', x: it.x, y: it.y, text: p.power === MAXP ? 'MAX POWER' : sw ? (p.col === 'red' ? 'RED' : 'BLUE') : 'POWER UP', kind: 'P', col: p.col }); }
-      else { addScore(W, 5000); ev(W, { sfx: 'medal', n: 6 }); fx(W, { k: 'item', x: it.x, y: it.y, text: sw ? (p.col === 'red' ? 'RED' : 'BLUE') : '5000', kind: 'P', col: p.col }); }
-    } else if (it.kind === 'B') {
-      if (p.bombs < 7) p.bombs++; else addScore(W, 5000);
-      ev(W, { sfx: 'power' }); fx(W, { k: 'item', x: it.x, y: it.y, text: 'BOMB', kind: 'B' });
-    } else if (it.kind === 'W') {
+    var p = W.p, k = it.kind, txt;
+    if (GUNS[k]) {   // a gun: the same one powers up; another swaps, keeping the power
+      if (p.gun !== k) { p.gun = k; txt = GUNS[k] + (p.glv > 1 ? ' ' + p.glv : ''); }
+      else if (p.glv < MAXLV) { p.glv++; txt = GUNS[k] + (p.glv === MAXLV ? ' MAX' : ' ' + p.glv); }
+      else { addScore(W, 5000); txt = '5000'; }
+      ev(W, { sfx: 'power' });
+    } else if (RKTS[k]) {
+      if (p.rk !== k) { p.rk = k; p.rlv = Math.max(1, p.rlv); txt = RKTS[k] + (p.rlv > 1 ? ' ' + p.rlv : ''); }
+      else if (p.rlv < MAXLV) { p.rlv++; txt = RKTS[k] + (p.rlv === MAXLV ? ' MAX' : ' ' + p.rlv); }
+      else { addScore(W, 5000); txt = '5000'; }
+      p.rkT = 0; ev(W, { sfx: 'power' });
+    } else if (k === 'B') { if (p.bombs < 7) p.bombs++; else addScore(W, 5000); txt = 'BOMB'; ev(W, { sfx: 'power' }); }
+    else if (k === 'D') { if (p.shield < 3) p.shield++; else addScore(W, 5000); txt = 'SHIELD'; ev(W, { sfx: 'shieldup' }); }
+    else if (k === 'X') { p.x2 = X2_TIME; txt = 'DOUBLE SCORE'; ev(W, { sfx: 'power' }); say(W, 'Double points for 20 seconds!'); }
+    else if (k === 'W') {
       if (p.wing.length < 2) { p.wing.push({ x: p.x, y: p.y + 20 }); say(W, 'Wingman joined!'); } else addScore(W, 10000);
-      ev(W, { sfx: 'power' }); fx(W, { k: 'item', x: it.x, y: it.y, text: 'WINGMAN', kind: 'W' });
-    } else {
-      var v = MEDALS[Math.min(MEDALS.length - 1, W.medal)] * (1 + W.loop);
+      txt = 'WINGMAN'; ev(W, { sfx: 'power' });
+    } else {   // a medal
+      var v = MEDALS[Math.min(MEDALS.length - 1, W.medal)] * (1 + W.loop) * (p.x2 > 0 ? 2 : 1);
       W.medal++; W.st.caught++; addScore(W, v);
       ev(W, { sfx: 'medal', n: W.medal }); fx(W, { k: 'item', x: it.x, y: it.y, text: String(v), kind: 'M', v: v });
+      return;
     }
+    fx(W, { k: 'item', x: it.x, y: it.y, text: txt, kind: k });
   }
   function stageClear(W) {
     var st = W.st, rate = st.foes ? st.killed / st.foes : 1, mrate = st.medals ? st.caught / st.medals : 1;
     var bonus = Math.round(rate * 50000 + mrate * 30000) * (1 + W.loop) + (W.stageDeaths === 0 ? 50000 : 0) + (rate >= 0.999 ? 100000 : 0);
     addScore(W, bonus);
-    W.phase = 'clear'; W.phaseT = 300; W.items.forEach(function (it) { if (it.kind !== 'M') pickUp(W, it); }); W.items = [];
+    W.phase = 'clear'; W.phaseT = 300;
+    // the pods still about are yours - but not one that would swap your gun or rockets
+    W.items.forEach(function (it) { if (it.kind !== 'M' && !(GUNS[it.kind] && it.kind !== W.p.gun) && !(RKTS[it.kind] && it.kind !== W.p.rk)) pickUp(W, it); }); W.items = [];
     W.vs = W.stage.scroll;
     ev(W, { sfx: 'clear' }); say(W, 'Stage clear! +' + bonus);
     fx(W, { k: 'clear', n: W.stageNo, pts: bonus, perfect: W.stageDeaths === 0, rate: Math.round(rate * 100), mrate: Math.round(mrate * 100), quick: st.quick });
@@ -748,7 +795,8 @@
   function hud(W) { return { score: W.score, lives: Math.max(0, W.lives), wave: W.stageNo }; }
 
   return {
-    WIDTH: WIDTH, HEIGHT: HEIGHT, DIFF: DIFF, SHIPS: SHIPS, TYPES: TYPES, STAGES: STAGES, BOSSES: BOSSES, MEDALS: MEDALS, HIT_R: HIT_R, GRAZE_R: GRAZE_R, CHARGE: CHARGE, MAXP: MAXP,
+    WIDTH: WIDTH, HEIGHT: HEIGHT, DIFF: DIFF, SHIPS: SHIPS, TYPES: TYPES, STAGES: STAGES, BOSSES: BOSSES, MEDALS: MEDALS, HIT_R: HIT_R, GRAZE_R: GRAZE_R, MAXLV: MAXLV, X2_TIME: X2_TIME,
+    GUNS: GUNS, RKTS: RKTS, BONUS: BONUS, FLIGHTS: FLIGHTS,
     newWorld: newWorld, step: step, hud: hud, spawn: spawn, makeBoss: makeBoss, nextStage: nextStage, bomb: bomb, pickUp: pickUp, damage: damage, FORM: FORM
   };
 });

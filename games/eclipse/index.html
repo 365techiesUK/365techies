@@ -6,17 +6,17 @@
 <title>365 Eclipse - free, no adverts | 365 Techies</title>
 <!-- 4 Oct 2026: hand-made game page (not built by build_blog.py). Our own vertical-scrolling jet shooter, rebuilt the
      same day in 3D (three.js r185 from games/common/vendor/) in the style of the 90s arcade jet shooters: seven stages,
-     four fighters, red / blue power-ups, charge shots, wingmen, medals and multi-part bosses - our own name, art and sounds.
+     four fighters, fire when you press, lettered gun / rocket / bonus pods, wingmen, medals and multi-part bosses - our own name, art and sounds.
      noindex and off the sitemap and menus until the owner says it goes public; PC Manager's Games menu (Arcade section)
      opens it in its own window. -->
 <meta name="robots" content="noindex" />
-<meta name="description" content="365 Eclipse: a 3D jet shooter - seven stages from harbour to orbit, four fighters, red and blue guns, medals, wingmen and huge bosses. No adverts, no sign-in." />
+<meta name="description" content="365 Eclipse: a 3D jet shooter - seven stages from harbour to orbit, four fighters, guns and rockets to catch, and huge bosses. No adverts, no sign-in." />
 <!-- 4 Oct 2026: what WhatsApp, Facebook and email show when someone shares this game (games/common/social.js) -->
 <link rel="canonical" href="https://365techies.co.uk/games/eclipse/" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="365 Techies" />
 <meta property="og:title" content="365 Eclipse &ndash; free, no adverts" />
-<meta property="og:description" content="365 Eclipse: a 3D jet shooter - seven stages from harbour to orbit, four fighters, red and blue guns, medals, wingmen and huge bosses. No adverts, no sign-in." />
+<meta property="og:description" content="365 Eclipse: a 3D jet shooter - seven stages from harbour to orbit, four fighters, guns and rockets to catch, and huge bosses. No adverts, no sign-in." />
 <meta property="og:url" content="https://365techies.co.uk/games/eclipse/" />
 <meta property="og:image" content="https://365techies.co.uk/games/img/eclipse-share-v2.jpg" />
 <meta property="og:image:width" content="1200" />
@@ -32,13 +32,13 @@
 </head>
 <body class="arcade-sky">
 <!-- the bar, the game screen and the pop-up sheets are drawn by ../common/arcade.js (the arcade cabinet) -->
-<script src="engine.js?v=2"></script>
+<script src="engine.js?v=3"></script>
 <script src="../common/social.js?v=3"></script>
 <script src="../common/hof.js?v=2"></script>
 <script src="../common/arcade.js?v=7"></script>
 <script src="../common/arcade-fx.js?v=1"></script>
 <!-- 5 Oct 2026: the 3D picture (three.js, ../common/vendor/three-r185) - a module, so it runs after the scripts above -->
-<script type="module" src="eclipse.js?v=2"></script>
+<script type="module" src="eclipse.js?v=3"></script>
 <!-- the site's cookie-free visitor count (the same snippet as every page): counts that the game was opened -->
 <script>(function(){try{if(navigator.doNotTrack==="1")return;if(/bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit/i.test(navigator.userAgent))return;try{if(localStorage.getItem("p365staffdev")||/"staff":true|"back":/.test((localStorage.getItem("p365")||"")+(sessionStorage.getItem("p365s")||"")))return;}catch(e){}var u=navigator.userAgentData,b={site:"t365",path:location.pathname,ref:(function(){try{return new URL(document.referrer).hostname}catch(e){return""}})(),em:/utm_medium=e-?mail|utm_source=(e-?mail|newsletter|hubspot)/i.test(location.search)?1:0,t:navigator.maxTouchPoints||0,sw:(screen&&screen.width)||0,dk:(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?1:0,lg:String(navigator.language||"").slice(0,12)},sent=false;if(u&&typeof u.mobile==="boolean")b.mb=u.mobile?1:0;var go=function(){if(sent)return;sent=true;try{fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(b),keepalive:true});}catch(e){}};if(u&&u.getHighEntropyValues&&/Windows/.test(navigator.userAgent)){u.getHighEntropyValues(["platformVersion"]).then(function(h){b.pv=String((h&&h.platformVersion)||"").slice(0,12);go();},go);setTimeout(go,400);}else go();var tap=function(k){try{var d=JSON.parse(JSON.stringify(b));d.path=k;d.ref=location.hostname;d.em=0;fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(d),keepalive:true});}catch(e){}};document.addEventListener("click",function(ev){try{var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");if(!a)return;var h=a.getAttribute("href")||"";if(/365-pc-manager-setup[^\/?#]*\.exe([?#]|$)/i.test(h))tap("/~dl/pcm/");else if(/^tel:/i.test(h))tap("/~call"+location.pathname);else if(/^sms:/i.test(h))tap("/~text"+location.pathname);}catch(e){}},true);document.addEventListener("tt:lead",function(){tap("/~lead"+location.pathname);});}catch(e){}})();</script>
 </body>
