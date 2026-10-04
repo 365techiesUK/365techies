@@ -4,11 +4,20 @@
  *
  * SOURCES
  *   official  The government's Fuel Finder feed (DESNZ, Motor Fuel Price (Open Data) Regulations 2025): every UK
- *             forecourt must report a price change within 30 minutes. Open Government Licence v3.0. Needs an OAuth
- *             client from developer.fuel-finder.service.gov.uk (owner's GOV.UK One Login) saved on the SERVER ONLY as
+ *             forecourt must report a price change within 30 minutes. Open Government Licence v3.0. OAuth client
+ *             (owner's GOV.UK One Login, www.developer.fuel-finder.service.gov.uk) saved on the SERVER ONLY as
  *             bm-fuel-store/fuelfinder-key.php:  <?php return array('client_id' => '...', 'client_secret' => '...');
- *             Its endpoints and field names sit behind that sign-in, so the adapter is wired once the real response
- *             can be seen (the sea page's met-station rule: never code against a guessed shape).
+ *             Wired 4 Oct 2026 from the portal's own OpenAPI files (/fuel-finder/api/openapi/info-recipent.en.json and
+ *             access-token.en.json), and the host checked live with fake credentials (401 / 403). The guide pages also
+ *             name auth./api.fuelfinder.service.gov.uk - those hosts do not exist; the OpenAPI host does.
+ *               token   POST {BMFUEL_FF_BASE}oauth/generate_access_token  JSON {client_id, client_secret}
+ *                       -> {success, data:{access_token, expires_in, ...}}  (cached in the store until near expiry)
+ *               pfs     GET {BMFUEL_FF_BASE}pfs?batch-number=N            500 forecourts a batch
+ *               prices  GET {BMFUEL_FF_BASE}pfs/fuel-prices?batch-number=N[&effective-start-timestamp=Y-m-d H:i:s]
+ *             The spec shows responses both bare ([...]) and wrapped ({data:[...]}), prices as text and as numbers:
+ *             both are accepted. Limits (dev guidelines): 100 requests/min, ONE at a time; a 429 stops the run.
+ *             Load: forecourts and prices in full once a day; between those, only price CHANGES (one request, usually)
+ *             with an hour's overlap because a forecourt has 30 minutes to report a change.
  *   preview   The retailers' own JSON feeds from the CMA's 2023 interim scheme. Real prices, but PARTIAL: on 4 Oct 2026
  *             Tesco, Sainsbury's and BP refused, Morrisons listed one station (Gibraltar), Rontec had frozen in May.
  *             Used only until the official feed is wired, and the page says so in a banner - a "cheapest near you"
@@ -30,10 +39,14 @@ if (!defined('BMFUEL_TTL'))    define('BMFUEL_TTL', 30 * 60);       // refresh c
 if (!defined('BMFUEL_STALE'))  define('BMFUEL_STALE', 3 * 3600);    // our fetch older than this = say so on the page
 if (!defined('BMFUEL_FROZEN')) define('BMFUEL_FROZEN', 72 * 3600);  // a feed not updated for this long is left out
 if (!defined('BMFUEL_BACKOFF')) define('BMFUEL_BACKOFF', 6 * 3600); // a failed feed is not asked again for this long
+if (!defined('BMFUEL_FF_BASE')) define('BMFUEL_FF_BASE', 'https://www.fuel-finder.service.gov.uk/api/v1/');
+if (!defined('BMFUEL_FF_FULL')) define('BMFUEL_FF_FULL', 24 * 3600);   // full forecourt + price download this often
+if (!defined('BMFUEL_FF_OVERLAP')) define('BMFUEL_FF_OVERLAP', 3600);  // price-change look-back beyond the last fetch
+if (!defined('BMFUEL_FF_GAP_US')) define('BMFUEL_FF_GAP_US', 700000);  // pause between requests: < 100 a minute
 
 function bmfuel_area() { return array(-2.98, 50.45, -0.90, 51.15); }   // W, S, E, N
 
-function bmfuel_dir() { return __DIR__ . '/bm-fuel-store/'; }
+function bmfuel_dir() { return defined('BMFUEL_DIR') ? BMFUEL_DIR : __DIR__ . '/bm-fuel-store/'; }   // BMFUEL_DIR: tests only
 
 function bmfuel_json_load($name) {
     $f = bmfuel_dir() . $name;
@@ -164,10 +177,143 @@ function bmfuel_official_key() {
     return (is_array($k) && !empty($k['client_id']) && !empty($k['client_secret'])) ? $k : null;
 }
 
+/* An access token, reused from the store until two minutes before it expires. Never logged or echoed. */
+function bmfuel_ff_token($key, $now, $fresh = false) {
+    $t = bmfuel_json_load('ff-token.json');
+    if (!$fresh && !empty($t['access_token']) && (int)$t['exp'] > $now + 120) return array($t['access_token'], null);
+    list($code, $body) = bmfuel_http(BMFUEL_FF_BASE . 'oauth/generate_access_token', 20, array('Content-Type: application/json'),
+                                     json_encode(array('client_id' => $key['client_id'], 'client_secret' => $key['client_secret'])));
+    $j = $body ? json_decode($body, true) : null;
+    $d = (is_array($j) && isset($j['data']) && is_array($j['data'])) ? $j['data'] : $j;
+    if (!is_array($d) || empty($d['access_token'])) return array(null, 'token refused' . ($code ? ' (' . $code . ')' : ''));
+    $exp = $now + (isset($d['expires_in']) ? max(300, (int)$d['expires_in']) : 3600);
+    bmfuel_json_save('ff-token.json', array('access_token' => $d['access_token'], 'exp' => $exp));
+    return array($d['access_token'], null);
+}
+
+/* The rows of one response, whether the API sends a bare list or wraps it in {data: [...]} (the spec shows both). */
+function bmfuel_ff_rows($j) {
+    if (!is_array($j)) return null;
+    if (array_keys($j) === range(0, count($j) - 1) || $j === array()) return $j;
+    if (isset($j['data']) && is_array($j['data'])) return bmfuel_ff_rows($j['data']);
+    return null;
+}
+
+/* Every batch of one endpoint, one request at a time. Returns array(rows, error). */
+function bmfuel_ff_all($path, $query, &$token, $key, $now) {
+    $rows = array();
+    for ($n = 1; $n <= 40; $n++) {                       // 40 x 500 = 20,000 forecourts: far beyond the UK's ~8,300
+        if ($n > 1) usleep(BMFUEL_FF_GAP_US);
+        $url = BMFUEL_FF_BASE . $path . '?batch-number=' . $n . $query;
+        list($code, $body) = bmfuel_http($url, 30, array('Authorization: Bearer ' . $token));
+        if ($code === 401 || $code === 403) {            // token expired early: one fresh token, then this batch again
+            list($token, $err) = bmfuel_ff_token($key, $now, true);
+            if (!$token) return array(null, $err);
+            list($code, $body) = bmfuel_http($url, 30, array('Authorization: Bearer ' . $token));
+        }
+        if ($code === 429) return array(null, 'rate limited (429) at batch ' . $n);
+        if ($code === 404 && $n > 1) break;              // past the last batch, if the API says so with a 404
+        $page = $body ? bmfuel_ff_rows(json_decode($body, true)) : null;
+        if ($page === null) return array(null, $path . ' batch ' . $n . ' failed' . ($code ? ' (' . $code . ')' : ''));
+        foreach ($page as $r) $rows[] = $r;
+        if (count($page) < 500) break;                   // a short batch is the last one
+    }
+    return array($rows, null);
+}
+
+function bmfuel_ff_time($s) {
+    if (!is_string($s) || $s === '') return null;
+    $t = strtotime($s);                                  // ISO 8601 with Z: UTC
+    return $t ? $t : null;
+}
+
+/* Forecourts in our area, keyed by node_id. Closed ones (temporarily for 3+ days, or permanently) are dropped. */
+function bmfuel_ff_stations($rows) {
+    list($W, $S, $E, $N) = bmfuel_area();
+    $out = array();
+    foreach ($rows as $r) {
+        if (!is_array($r) || empty($r['node_id']) || !isset($r['location']['latitude'], $r['location']['longitude'])) continue;
+        $la = (float)$r['location']['latitude']; $lo = (float)$r['location']['longitude'];
+        if ($lo < $W || $lo > $E || $la < $S || $la > $N) continue;
+        if (!empty($r['temporary_closure']) || !empty($r['permanent_closure'])) continue;
+        $l = $r['location'];
+        $addr = array();
+        foreach (array('address_line_1', 'address_line_2', 'city') as $k) if (!empty($l[$k])) $addr[] = trim($l[$k]);
+        $brand = bmfuel_tidy_case(!empty($r['brand_name']) ? $r['brand_name'] : (isset($r['trading_name']) ? $r['trading_name'] : ''));
+        $name = bmfuel_tidy_case(isset($r['trading_name']) ? $r['trading_name'] : '');
+        $out[(string)$r['node_id']] = array(
+            'b' => $brand,
+            'n' => (strcasecmp($name, $brand) === 0) ? '' : $name,
+            'a' => bmfuel_tidy_case(implode(', ', array_unique($addr))),
+            'pc' => strtoupper(trim(isset($l['postcode']) ? (string)$l['postcode'] : '')),
+            'la' => round($la, 6), 'lo' => round($lo, 6),
+        );
+    }
+    return $out;
+}
+
+/* Price rows merged into $prices[node_id][fuel] = [pence, effective unix time], for forecourts we keep only. */
+function bmfuel_ff_merge_prices(&$prices, $rows, $keep) {
+    static $map = array('E10' => 'E10', 'E5' => 'E5', 'B7_STANDARD' => 'B7', 'B7' => 'B7', 'B7_PREMIUM' => 'SDV');
+    foreach ($rows as $r) {
+        if (!is_array($r) || empty($r['node_id']) || !isset($keep[(string)$r['node_id']]) || empty($r['fuel_prices']) || !is_array($r['fuel_prices'])) continue;
+        $id = (string)$r['node_id'];
+        foreach ($r['fuel_prices'] as $f) {
+            $ft = isset($f['fuel_type']) ? strtoupper((string)$f['fuel_type']) : '';
+            if (!isset($map[$ft])) continue;                       // B10 and HVO: not shown on the page yet
+            $p = bmfuel_price(isset($f['price']) ? $f['price'] : null);
+            if ($p === null) continue;
+            $t = bmfuel_ff_time(isset($f['price_change_effective_timestamp']) ? $f['price_change_effective_timestamp']
+                                                                          : (isset($f['price_last_updated']) ? $f['price_last_updated'] : ''));
+            $old = isset($prices[$id][$map[$ft]]) ? $prices[$id][$map[$ft]] : null;
+            if ($old && $t && $old[1] && $old[1] > $t) continue;   // never let an older price replace a newer one
+            $prices[$id][$map[$ft]] = array($p, $t);
+        }
+    }
+}
+
 function bmfuel_src_official($now) {
-    if (!bmfuel_official_key()) return array('ok' => false, 'error' => 'not configured', 'stations' => array());
-    // Deliberately not guessed: wired against the real token + forecourt + price responses once the key exists.
-    return array('ok' => false, 'error' => 'key saved - adapter not wired yet', 'stations' => array());
+    $key = bmfuel_official_key();
+    if (!$key) return array('ok' => false, 'error' => 'not configured', 'stations' => array());
+    list($token, $err) = bmfuel_ff_token($key, $now);
+    if (!$token) return array('ok' => false, 'error' => $err, 'stations' => array());
+
+    $st = bmfuel_json_load('ff-stations.json');
+    if (empty($st['nodes']) || $now - (int)$st['t'] > BMFUEL_FF_FULL) {
+        list($rows, $err) = bmfuel_ff_all('pfs', '', $token, $key, $now);
+        if ($rows === null && empty($st['nodes'])) return array('ok' => false, 'error' => $err, 'stations' => array());
+        if ($rows !== null) { $st = array('t' => $now, 'nodes' => bmfuel_ff_stations($rows)); bmfuel_json_save('ff-stations.json', $st); }
+        usleep(BMFUEL_FF_GAP_US);
+    }
+    $nodes = $st['nodes'];
+
+    $pr = bmfuel_json_load('ff-prices.json');
+    $prices = isset($pr['p']) && is_array($pr['p']) ? $pr['p'] : array();
+    if (!$prices || $now - (int)(isset($pr['full']) ? $pr['full'] : 0) > BMFUEL_FF_FULL) {
+        $prices = array();
+        list($rows, $err) = bmfuel_ff_all('pfs/fuel-prices', '', $token, $key, $now);
+        if ($rows === null) return array('ok' => false, 'error' => $err, 'stations' => array());
+        bmfuel_ff_merge_prices($prices, $rows, $nodes);
+        $pr = array('full' => $now, 'last' => $now, 'p' => $prices);
+    } else {
+        $since = gmdate('Y-m-d H:i:s', (int)$pr['last'] - BMFUEL_FF_OVERLAP);
+        list($rows, $err) = bmfuel_ff_all('pfs/fuel-prices', '&effective-start-timestamp=' . rawurlencode($since), $token, $key, $now);
+        if ($rows === null) return array('ok' => false, 'error' => $err, 'stations' => array());
+        bmfuel_ff_merge_prices($prices, $rows, $nodes);
+        $pr['last'] = $now; $pr['p'] = $prices;
+    }
+    bmfuel_json_save('ff-prices.json', $pr);
+
+    $out = array();
+    foreach ($nodes as $id => $s) {
+        if (empty($prices[$id])) continue;
+        $p = array(); $pt = array(); $t = null;
+        foreach ($prices[$id] as $f => $v) { $p[$f] = $v[0]; $pt[$f] = $v[1]; if ($v[1] && (!$t || $v[1] > $t)) $t = $v[1]; }
+        $out[] = array('id' => 'ff:' . substr($id, 0, 16), 'b' => $s['b'], 'n' => $s['n'], 'a' => $s['a'], 'pc' => $s['pc'],
+                       'la' => $s['la'], 'lo' => $s['lo'], 'p' => $p, 'pt' => $pt, 's' => 'official', 't' => $t);
+    }
+    return array('ok' => (bool)$out, 'error' => $out ? null : 'no priced forecourts in the area', 'updated' => $now,
+                 'stations' => $out, 'n' => count($out), 'total' => count($nodes));
 }
 
 /* ---------- build ---------- */
@@ -196,7 +342,11 @@ function bmfuel_dedupe($all) {
 function bm_fuel_refresh($force = false) {
     $now = time();
     $beat = bmfuel_json_load('beat.json');
-    if (!$force && !empty($beat['t']) && $now - (int)$beat['t'] < BMFUEL_TTL) return array('ok' => true, 'skipped' => 'ttl');
+    // A key file saved or replaced since the last run makes this run due at once: uploading the key shows results at
+    // the next cron tick, not up to half an hour later.
+    $kf = bmfuel_dir() . 'fuelfinder-key.php';
+    $keyNew = file_exists($kf) && !empty($beat['t']) && @filemtime($kf) > (int)$beat['t'];
+    if (!$force && !$keyNew && !empty($beat['t']) && $now - (int)$beat['t'] < BMFUEL_TTL) return array('ok' => true, 'skipped' => 'ttl');
     if (!is_dir(bmfuel_dir())) @mkdir(bmfuel_dir(), 0755, true);
     $lk = @fopen(bmfuel_dir() . 'refresh.lock', 'c');
     if (!$lk || !@flock($lk, LOCK_EX | LOCK_NB)) return array('ok' => true, 'skipped' => 'locked');
@@ -205,6 +355,7 @@ function bm_fuel_refresh($force = false) {
         $sources = array(); $all = array();
         $off = bmfuel_src_official($now);
         $sources[] = array('id' => 'official', 'label' => 'Fuel Finder (official)', 'ok' => $off['ok'], 'n' => count($off['stations']),
+                           'total' => isset($off['total']) ? $off['total'] : 0,
                            'updated' => isset($off['updated']) ? $off['updated'] : null, 'error' => isset($off['error']) ? $off['error'] : null);
         if ($off['ok'] && $off['stations']) {
             $mode = 'official'; $all = $off['stations'];

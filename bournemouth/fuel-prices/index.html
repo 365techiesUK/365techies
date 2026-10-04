@@ -1017,8 +1017,8 @@
       }
 
       function popup(s){
-        var rows='';['E10','E5','B7','SDV'].forEach(function(f){if(s.p[f]!=null)rows+='<br>'+FUEL_NAME[f]+': <b>'+s.p[f].toFixed(1)+'p</b>';});
-        return '<b>'+esc(s.b)+'</b><br>'+esc(s.a)+(s.pc?', '+esc(s.pc):'')+rows+
+        var rows='';['E10','E5','B7','SDV'].forEach(function(f){if(s.p[f]!=null)rows+='<br>'+FUEL_NAME[f]+': <b>'+s.p[f].toFixed(1)+'p</b>'+(s.pt&&s.pt[f]?' <small>from '+hm(s.pt[f])+'</small>':'');});
+        return '<b>'+esc(s.b)+'</b>'+(s.n?'<br>'+esc(s.n):'')+'<br>'+esc(s.a)+(s.pc?', '+esc(s.pc):'')+rows+
           '<br><a href="https://www.google.com/maps/dir/?api=1&destination='+s.la+','+s.lo+'" target="_blank" rel="noopener">Directions</a>';
       }
 
@@ -1045,7 +1045,7 @@
           return '<li class="bfp-item'+(i===0?' best':'')+'" tabindex="0" data-id="'+esc(x.s.id)+'">'+
             '<span class="bfp-rank">'+(i+1)+'</span><span class="bfp-name">'+esc(x.s.b)+'</span>'+
             '<span class="bfp-price">'+x.p.toFixed(1)+'p</span>'+
-            '<span class="bfp-addr">'+esc(x.s.a)+'</span><span class="bfp-meta">'+x.d.toFixed(1)+' mi</span>'+
+            '<span class="bfp-addr">'+esc(x.s.a)+(x.s.pt&&x.s.pt[fuel]?' &middot; price from '+hm(x.s.pt[fuel]):'')+'</span><span class="bfp-meta">'+x.d.toFixed(1)+' mi</span>'+
             '<span class="bfp-dir"><a href="https://www.google.com/maps/dir/?api=1&destination='+x.s.la+','+x.s.lo+'" target="_blank" rel="noopener">Directions</a></span></li>';}).join('');
         drawMap(r);
       }
