@@ -31,7 +31,7 @@ VEHICLES = [
     {"k": "van", "name": "Van", "say": "a van", "l": 80, "fuel": "any"},
     {"k": "motorhome", "name": "Motorhome", "say": "a motorhome", "l": 90, "fuel": "any"},
     {"k": "lorry", "name": "7.5-tonne lorry", "say": "a 7.5-tonne lorry", "l": 150, "fuel": "diesel"},
-    {"k": "hgv", "name": "HGV (44-tonne artic)", "say": "an HGV", "l": 500, "fuel": "diesel"},
+    {"k": "hgv", "name": "44-tonne HGV", "say": "an HGV", "l": 500, "fuel": "diesel"},
 ]
 
 # Postcode areas by name, for "cheapest and dearest areas" (script AND server read data-areas, as above).
