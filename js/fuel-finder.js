@@ -11,7 +11,15 @@
   var root = document.getElementById('ff');
   if (!root) return;
   var API = '/api/bm-fuel.php';
-  var TANK = 55;                                     // litres in a typical family car's tank
+  /* Owner, 4 Oct: "different tank sizes ... a car might be 55 litres ... a van more like 80 litres ... really simple so
+     people can see roughly how much it'll cost them to fill up and how much they're saving". Typical tanks: a small
+     hatchback 40-45 L, a family hatchback 50-55 L, an SUV or big estate 60-70 L, a Transit or Crafter 75-80 L. */
+  var TANKS = [
+    { k: 'small', name: 'Small car', l: 40 },
+    { k: 'family', name: 'Family car', l: 55 },
+    { k: 'suv', name: 'SUV / estate', l: 70 },
+    { k: 'van', name: 'Van', l: 80 }
+  ];
   var FUEL = { E10: 'Unleaded', B7: 'Diesel', E5: 'Super unleaded', SDV: 'Premium diesel' };
   var NATION = { E: 'England', S: 'Scotland', W: 'Wales', N: 'Northern Ireland' };
   var AREA = { AB: 'Aberdeen', AL: 'St Albans', B: 'Birmingham', BA: 'Bath', BB: 'Blackburn', BD: 'Bradford', BH: 'Bournemouth',
@@ -42,7 +50,11 @@
     centre: HOME,                                      // {la, lo, label, acc?, area?, co?} or null on the UK page at first
     meta: null, stats: null, list: [], shown: 15, cut: false, around: null
   };
+  st.tank = 'family';
   try { var f0 = localStorage.getItem('ff-fuel'); if (FUEL[f0]) st.fuel = f0; } catch (e) {}
+  try { var k0 = localStorage.getItem('ff-tank'); if (k0 && TANKS.some(function (t) { return t.k === k0; })) st.tank = k0; } catch (e) {}
+  function tank() { for (var i = 0; i < TANKS.length; i++) if (TANKS[i].k === st.tank) return TANKS[i]; return TANKS[1]; }
+  function pounds(pence, litres) { return '&pound;' + (pence * litres / 100).toFixed(2); }
 
   var $ = function (id) { return document.getElementById(id); };
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -132,32 +144,55 @@
       chip = '<span class="ff-chip">' + uk.n.toLocaleString('en-GB') + ' forecourts reporting</span>';
     }
     t2.querySelector('.ff-ts').innerHTML = chip;
-    if (st.r === 'uk') {
-      // Whole UK: "save against the UK average" would mean driving to Northern Ireland, so instead the gap between the
-      // cheapest and dearest postcode areas - true, and the number people share.
-      var A = st.stats && st.stats.fuels[st.fuel] ? st.stats.fuels[st.fuel].areas : null, lo = null, hi = null;
-      for (var a in (A || {})) { if (!lo || A[a][1] < A[lo][1]) lo = a; if (!hi || A[a][1] > A[hi][1]) hi = a; }
-      if (!lo || !hi) { t3.hidden = true; }
-      else {
-        t3.querySelector('.ff-tl').innerHTML = 'Gap on a ' + TANK + '-litre tank between the cheapest and dearest areas';
-        countUp(t3.querySelector('.ff-num b'), (A[hi][1] - A[lo][1]) * TANK / 100);
-        t3.querySelector('.ff-ts').innerHTML = esc(areaName(lo)) + ' ' + p1(A[lo][1]) + 'p, ' + esc(areaName(hi)) + ' ' + p1(A[hi][1]) + 'p (averages)';
-      }
-    } else {
-      var save = med != null ? Math.max(0, med - best.p) : 0;
-      t3.querySelector('.ff-tl').innerHTML = 'Fill a ' + TANK + '-litre tank at the cheapest';
-      countUp(t3.querySelector('.ff-num b'), save * TANK / 100);
-      t3.querySelector('.ff-ts').innerHTML = 'saved against the average price near ' + (st.centre === HOME ? esc(HOME.label) : 'you');
-    }
+    fillTile(best, med);
     [t1, t2, t3].forEach(replay);
   }
+
+  /* The fill-up box: what a full tank costs for the vehicle picked, and what that saves. Whole UK: "save against the UK
+     average" would mean driving to Northern Ireland, so it shows the UK-average bill and the range across areas. */
+  function fillTile(best, med) {
+    var t3 = $('ff-t3'), T = tank(), what = 'a ' + T.name.toLowerCase() + ' (' + T.l + ' litres)';
+    var num = t3.querySelector('.ff-num b'), sub = t3.querySelector('.ff-ts');
+    if (st.r === 'uk') {
+      var F = st.stats && st.stats.fuels[st.fuel], A = F ? F.areas : null, lo = null, hi = null;
+      for (var a in (A || {})) { if (!lo || A[a][1] < A[lo][1]) lo = a; if (!hi || A[a][1] > A[hi][1]) hi = a; }
+      if (!F) { t3.hidden = true; return; }
+      t3.querySelector('.ff-tl').innerHTML = 'Fill ' + what + ' at the UK average price';
+      countUp(num, F.uk.med * T.l / 100);
+      sub.innerHTML = lo && hi ? 'From <b>' + pounds(A[lo][1], T.l) + '</b> in ' + esc(areaName(lo)) + ' to <b>' + pounds(A[hi][1], T.l) + '</b> in ' + esc(areaName(hi)) + ', going by each area&rsquo;s average.' : '';
+    } else {
+      var where = st.centre === HOME ? 'near ' + esc(HOME.label) : 'near you';
+      t3.querySelector('.ff-tl').innerHTML = 'Fill ' + what + ' at the cheapest';
+      countUp(num, best.p * T.l / 100);
+      var save = med != null ? (med - best.p) * T.l / 100 : 0;
+      sub.innerHTML = save >= 0.005
+        ? '<b>&pound;' + save.toFixed(2) + ' less</b> than at the average price ' + where + ' (' + pounds(med, T.l) + ')'
+        : 'The same as the average price ' + where + '.';
+    }
+    t3.hidden = false;
+  }
+
+  function tankButtons() {
+    var box = $('ff-tanks'); if (!box) return;
+    box.innerHTML = TANKS.map(function (t) {
+      return '<button type="button" data-k="' + t.k + '" aria-pressed="' + (t.k === st.tank) + '">' + t.name + ' <small>' + t.l + '&nbsp;L</small></button>';
+    }).join('');
+    box.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      st.tank = b.getAttribute('data-k');
+      try { localStorage.setItem('ff-tank', st.tank); } catch (er) {}
+      [].forEach.call(box.querySelectorAll('button'), function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      if (st.list.length) { fillTile(st.list[0], st.r === 'uk' ? null : currentMedian()); renderList(); }
+    });
+  }
+  function currentMedian() { return st.cut && st.around ? st.around.med : median(st.list.map(function (x) { return x.p; })); }
 
   /* ---- the list ---- */
   function row(x, i) {
     var s = x.s, t = s.pt && s.pt[st.fuel] ? ' &middot; price from ' + hm(s.pt[st.fuel]) : '';
     return '<li class="ff-item' + (i === 0 ? ' best' : '') + '" tabindex="0" data-i="' + i + '" style="animation-delay:' + Math.min(i, 14) * 35 + 'ms">' +
       '<span class="ff-rank">' + (i + 1) + '</span><span class="ff-name">' + esc(s.b) + (s.n ? '<small>' + esc(s.n) + '</small>' : '') + '</span>' +
-      '<span class="ff-price">' + p1(x.p) + 'p</span>' +
+      '<span class="ff-price">' + p1(x.p) + 'p<small>' + pounds(x.p, tank().l) + ' a tank</small></span>' +
       '<span class="ff-addr">' + esc(s.a) + (s.pc ? ', ' + esc(s.pc) : '') + t + '</span>' +
       '<span class="ff-meta">' + (x.d != null ? x.d.toFixed(1) + ' mi' : '') + '</span>' +
       '<span class="ff-dir"><a href="' + dirUrl(s) + '" target="_blank" rel="noopener">Directions</a></span></li>';
@@ -192,13 +227,15 @@
   function popup(s) {
     var rows = '';
     ['E10', 'E5', 'B7', 'SDV'].forEach(function (f) { if (s.p[f] != null) rows += '<br>' + FUEL[f] + ': <b>' + p1(s.p[f]) + 'p</b>' + (s.pt && s.pt[f] ? ' <small>from ' + hm(s.pt[f]) + '</small>' : ''); });
-    return '<b>' + esc(s.b) + '</b>' + (s.n ? '<br>' + esc(s.n) : '') + '<br>' + esc(s.a) + (s.pc ? ', ' + esc(s.pc) : '') + rows +
+    var T = tank(), fill = s.p[st.fuel] != null ? '<br>Fill a ' + T.name.toLowerCase() + ' (' + T.l + ' L) with ' + FUEL[st.fuel].toLowerCase() + ': <b>' + pounds(s.p[st.fuel], T.l) + '</b>' : '';
+    return '<b>' + esc(s.b) + '</b>' + (s.n ? '<br>' + esc(s.n) : '') + '<br>' + esc(s.a) + (s.pc ? ', ' + esc(s.pc) : '') + rows + fill +
       '<br><a href="' + dirUrl(s) + '" target="_blank" rel="noopener">Directions</a>';
   }
+  function pop(s) { return function () { return popup(s); }; }   // built when opened: always the current vehicle and fuel
   function pin(x, i) {
     return L.marker([x.s.la, x.s.lo], { icon: L.divIcon({ className: 'ff-pin' + (i === 0 ? ' best' : ''), iconSize: null,
       html: '<span style="animation-delay:' + (still ? 0 : Math.min(i, 30) * 25) + 'ms">' + p1(x.p) + '</span>' }),
-      zIndexOffset: i === 0 ? 1000 : -i, title: x.s.b + ' ' + p1(x.p) + 'p' }).bindPopup(popup(x.s));
+      zIndexOffset: i === 0 ? 1000 : -i, title: x.s.b + ' ' + p1(x.p) + 'p' }).bindPopup(pop(x.s));
   }
   function drawMap() {
     if (!ensureMap()) return setTimeout(drawMap, 250);
@@ -213,7 +250,7 @@
       else {
         var k = hi > lo ? (x.p - lo) / (hi - lo) : 0;
         m = L.circleMarker([x.s.la, x.s.lo], { radius: 6, weight: 1, color: '#04121a', fillOpacity: .9,
-          fillColor: k < .33 ? '#4fd8c4' : (k < .66 ? '#e8c35a' : '#ffb066') }).bindPopup(popup(x.s));
+          fillColor: k < .33 ? '#4fd8c4' : (k < .66 ? '#e8c35a' : '#ffb066') }).bindPopup(pop(x.s));
       }
       layer.addLayer(m); markers[i] = m;
     }
@@ -231,11 +268,13 @@
   function focus(i, s) {
     if (!ensureMap()) return;
     var m = i != null ? markers[i] : null;
-    if (!m && s) { if (temp) map.removeLayer(temp); temp = L.marker([s.la, s.lo]).bindPopup(popup(s)).addTo(map); m = temp; }
+    if (!m && s) { if (temp) map.removeLayer(temp); temp = L.marker([s.la, s.lo]).bindPopup(pop(s)).addTo(map); m = temp; }
     if (!m) return;
-    var go = function () { m.openPopup(); };
+    // The popup opens when the fly-to lands, or after 1.5 s whatever happens: animation frames do not run in a background
+    // tab, so "moveend" may never come.
+    var done = false, go = function () { if (done) return; done = true; m.openPopup(); };
     if (still) { map.setView(m.getLatLng(), Math.max(map.getZoom(), 13)); go(); }
-    else { map.once('moveend', go); map.flyTo(m.getLatLng(), Math.max(map.getZoom(), 13), { duration: .8 }); }
+    else { map.once('moveend', go); map.flyTo(m.getLatLng(), Math.max(map.getZoom(), 13), { duration: .8 }); setTimeout(go, 1500); }
     if (window.innerWidth <= 860) $('ff-map').scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'center' });
   }
 
@@ -397,6 +436,7 @@
     get('?stats=1').then(function (j) { if (j && j.ok) { st.stats = j; if (st.list.length) tiles(); renderUk(); } }, function () {});
   }
   pressFuel();
+  tankButtons();
   loadStats();
   update();
 })();

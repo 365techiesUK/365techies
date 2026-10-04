@@ -12,7 +12,7 @@ as they scroll into view, the location button pulses while it searches, and a sk
 A device set to reduce motion gets none of it (CSS below + the script checks the same setting).
 """
 
-JS_V = "4"
+JS_V = "5"
 
 HEAD = '''
   <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
@@ -45,6 +45,14 @@ HEAD = '''
     .ff-num{margin:.2rem 0;font-size:clamp(1.9rem,6.5vw,2.7rem);font-weight:800;line-height:1.05;color:var(--ff-foam);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
     .ff-num small{font-size:.45em;font-weight:600;color:var(--ff-mute);margin-left:.1em}
     .ff-ts{margin:0;color:var(--ff-mute);font-size:.84rem;line-height:1.4}
+    .ff-ts b{color:var(--ff-foam)}
+    .ff-tanks{display:flex;flex-wrap:wrap;gap:.35rem;margin:.65rem 0 0}
+    .ff-tanks button{min-height:44px;padding:.3rem .75rem;border-radius:999px;border:1px solid var(--ff-line);background:transparent;color:var(--ff-foam);font:inherit;font-size:.84rem;cursor:pointer;transition:background .2s,border-color .2s,color .2s,transform .15s}
+    .ff-tanks button:active{transform:scale(.96)}
+    .ff-tanks button small{color:var(--ff-mute);font-size:.78rem}
+    .ff-tanks button[aria-pressed="true"]{background:var(--ff-dusk);border-color:var(--ff-dusk);color:var(--ff-ink);font-weight:700}
+    .ff-tanks button[aria-pressed="true"] small{color:var(--ff-ink)}
+    @media (max-width:600px){.ff-t3{grid-column:1 / -1}}
     .ff-chip{display:inline-block;padding:.15rem .55rem;border-radius:999px;border:1px solid var(--ff-line);font-size:.8rem;color:var(--ff-foam)}
     .ff-chip.ff-good{border-color:var(--ff-surf);color:var(--ff-surf)}
     .ff-chip.ff-bad{border-color:var(--ff-dusk);color:var(--ff-dusk)}
@@ -61,6 +69,7 @@ HEAD = '''
     .ff-addr{color:var(--ff-mute);font-size:.86rem;grid-column:2;overflow-wrap:anywhere}
     .ff-price{font-size:1.35rem;font-weight:800;color:var(--ff-foam);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
     .ff-item.best .ff-price{color:var(--ff-surf)}
+    .ff-price small{display:block;font-size:.72rem;font-weight:500;color:var(--ff-mute);letter-spacing:0}
     .ff-meta{grid-column:3;text-align:right;color:var(--ff-mute);font-size:.82rem;white-space:nowrap}
     .ff-dir{grid-column:2 / 4;font-size:.9rem}
     .ff-dir a{color:var(--ff-surf);display:inline-block;padding:.2rem 0}
@@ -121,8 +130,8 @@ def tool(mode, radius, home=None):
     home_attrs = ''
     if home:
         home_attrs = f' data-home-lat="{home[0]}" data-home-lon="{home[1]}" data-home-label="{home[2]}"'
-    tile = lambda i, cls, pre, dp: (f'<div class="ff-tile {cls}" id="ff-t{i}" hidden><p class="ff-tl"></p>'
-                                    f'<p class="ff-num">{pre}<b data-dp="{dp}">&nbsp;</b>{"" if pre else "<small>p</small>"}</p><p class="ff-ts"></p></div>')
+    tile = lambda i, cls, pre, dp, extra="": (f'<div class="ff-tile {cls}" id="ff-t{i}" hidden><p class="ff-tl"></p>'
+                                    f'<p class="ff-num">{pre}<b data-dp="{dp}">&nbsp;</b>{"" if pre else "<small>p</small>"}</p><p class="ff-ts"></p>{extra}</div>')
     return f'''    <section class="section ff-sec" id="finder" aria-label="Find the cheapest fuel">
       <div class="wrap">
         <div id="ff" class="ff" data-mode="{mode}" data-radius="{radius}"{home_attrs}>
@@ -149,7 +158,7 @@ def tool(mode, radius, home=None):
           <div class="ff-tiles" aria-live="polite">
             {tile(1, "ff-t1", "", 1)}
             {tile(2, "ff-t2", "", 1)}
-            {tile(3, "ff-t3", "&pound;", 2)}
+            {tile(3, "ff-t3", "&pound;", 2, '<div class="ff-tanks" id="ff-tanks" role="group" aria-label="Your vehicle"></div>')}
           </div>
           <div class="ff-grid">
             <ol id="ff-list" class="ff-list" aria-label="Cheapest first"></ol>
@@ -197,11 +206,13 @@ def faqs(where):
          "for prices around a point rounded to about 10 km and works out the exact distances itself, so your exact location is "
          "never sent to us. A postcode is looked up through our own server, which asks the free postcodes.io service and "
          "keeps no record of it."),
-        ("How is the saving worked out?",
-         "It is the difference between the cheapest price and the average (median) price in the same area, multiplied by "
-         "55 litres, about a family car&rsquo;s tank. Your own saving depends on your tank and how far you drive to get it. "
-         "When you are looking at the whole UK, that box shows instead the gap between the cheapest and dearest postcode "
-         "areas&rsquo; average prices on the same tank."),
+        ("How are the fill-up cost and the saving worked out?",
+         "Pick your vehicle: a small car (about 40 litres), a family car (55), an SUV or estate (70) or a van such as a "
+         "Transit or Crafter (80). The fill-up cost is that many litres at the price shown, from empty; most people top up "
+         "from a quarter of a tank, so their bill is a little less. The saving is the same tank at the cheapest price against "
+         "the average (median) price in the area you are looking at. For the whole UK, the box shows a tank at the UK average "
+         "price and the range from the cheapest postcode area to the dearest, because the cheapest single forecourt in the "
+         "country is rarely one you would drive to."),
         ("Why might the price at the pump be different?",
          "Forecourts change prices during the day, and a change reaches the data a little after it reaches the pump. The "
          "price on the pump is the one you pay."),
