@@ -53,7 +53,13 @@ body::before {
 .tb.main:hover { background: #ffe08a; }
 :focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 @media (max-width: 1180px) { .tb .lbl-x { display: none; } }
+/* 4 Oct 2026: the bar keeps to one row - the less-used buttons drop their words first (Share, Feedback, Full screen, then
+   My scores and Settings); their names still show on hover, and screen readers still read them */
+@media (max-width: 1240px) { .tb.tb2 { padding: 0 11px; } .tb.tb2 .lbl { display: none; } }
+@media (max-width: 1020px) { .tb.tb3 { padding: 0 11px; } .tb.tb3 .lbl { display: none; } }
 @media (max-width: 860px) { .tb { padding: 0 11px; } .tb .lbl { display: none; } .brand span { display: none; } .chip { min-width: 54px; padding: 2px 7px; } }
+/* a phone: the icon buttons a little narrower (still 44 px tall), so Share and Feedback fit without a second row */
+@media (max-width: 480px) { .tools { gap: 3px; } .tb, .tb.tb2, .tb.tb3 { padding: 0 7px; } }
 
 /* ---------- the table ---------- */
 /* 4 Oct 2026 - the "made today" revamp (owner: "if Solitaire was made like today ... almost like a triple A game"):

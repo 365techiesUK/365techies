@@ -40,6 +40,8 @@
     stats: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>',
     set: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
     help: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M9.2 9.2a2.9 2.9 0 0 1 5.6 1c0 1.9-2.8 2.6-2.8 4.3M12 17.6h.01"/></svg>',
+    share: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="m8.3 10.8 7.4-4.3M8.3 13.2l7.4 4.3"/></svg>',
+    feedback: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5a2.5 2.5 0 0 1-2.5 2.5H9l-5 4V6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5z"/><path d="M9 9.5h.01M15 9.5h.01M9.2 12.6a3.6 3.6 0 0 0 5.6 0"/></svg>',
     full: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>'
   };
   function esc(s) { return String(s).replace(/[&<>"]/g, function (m) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]; }); }
@@ -429,6 +431,7 @@
       recordLoss();
       var v = V ? SET[V.key] : 0, seed, day = '';
       if (mode === 'again') { seed = S.seed; v = vOf(S); day = G.mode === 'daily' ? G.day : ''; mode = day ? 'daily' : 'deal'; }
+      else if (mode === 'shared') { seed = shared.seed; v = shared.v; mode = 'deal'; }
       else if (mode === 'daily') { day = today(); seed = dailySeed(v); }
       else seed = pickSeed(v);
       S = E.deal(seed, v);
@@ -720,6 +723,18 @@
     $('wAgain').onclick = function () { newGame('deal'); };
     $('wDaily').onclick = function () { newGame('daily'); };
     $('wStats').onclick = openStats;
+    // sharing and feedback (social.js): the bar's two buttons, and the challenge on the win card - the same cards for a friend
+    if (window.GameSocial) GameSocial.init({ id: D.id, title: D.title });
+    $('bShare').onclick = function () { if (window.GameSocial) GameSocial.share(); };
+    $('bFeed').onclick = function () { if (window.GameSocial) GameSocial.openFeedback('feedback'); };
+    if (!window.GameSocial) { $('bShare').hidden = true; $('bFeed').hidden = true; $('wShare').hidden = true; }
+    $('wShare').onclick = function () {
+      if (!window.GameSocial || !S) return;
+      var secs = Math.max(1, Math.round(G.ms / 1000)), daily = G.mode === 'daily';
+      var text = 'I won ' + (daily ? 'today’s ' + D.title + ' deal' : D.title + ' deal #' + S.seed) + ' in ' + clock(secs * 1000) + (S.moves ? ' with ' + S.moves + ' moves' : '')
+        + ' – can you beat me? Play the same cards, free with no adverts:';
+      GameSocial.share({ text: text, query: '?deal=' + S.seed + (V ? '&v=' + vOf(S) : '') });
+    };
     $('stUndo').onclick = undo;
     $('stNew').onclick = openNew;
     $('sReset').onclick = function () { openD('dReset'); };
@@ -730,6 +745,7 @@
     document.addEventListener('fullscreenchange', function () { $('bFullL').textContent = document.fullscreenElement ? 'Leave full screen' : 'Full screen'; });
     document.addEventListener('keydown', function (e) {
       gestured = true;
+      if (e.defaultPrevented || (window.GameSocial && GameSocial.isOpen())) return;   // typing feedback, or a key the share / feedback sheet used
       if (e.key === 'Escape') { if (openSheet) closeSheets(); return; }
       if (openSheet || e.altKey) return;
       var k = (e.key || '').toLowerCase();
@@ -755,7 +771,7 @@
     var lastTick = Date.now();
     setInterval(function () {
       var now = Date.now(), d = Math.min(2000, now - lastTick); lastTick = now;
-      if (!G || !G.started || S.won || document.hidden || openSheet) return;
+      if (!G || !G.started || S.won || document.hidden || openSheet || (window.GameSocial && GameSocial.isOpen())) return;
       G.ms += d;
       $('vTime').textContent = clock(G.ms);
     }, 1000);
@@ -766,6 +782,13 @@
 
     // ------------------------------------------------------------ start
     syncControls();
+    // a friend's challenge: ?deal=48213 (and &v= for Solitaire's draw or Spider's suits) opens exactly those cards
+    var shared = null;
+    try {
+      var q = new URLSearchParams(location.search), dn = parseInt(q.get('deal'), 10), dv = parseInt(q.get('v'), 10);
+      if (dn > 0 && dn < 10000000) shared = { seed: dn, v: V ? (V.options.some(function (o) { return o[0] === dv; }) ? dv : SET[V.key]) : 0 };
+      if (q.has('deal') && window.history && history.replaceState) history.replaceState(null, '', location.pathname);   // a reload carries on, not restarts
+    } catch (e) {}
     var saved = load('game', null);
     if (saved && saved.s && saved.g && !saved.s.won && D.valid(saved.s)) {
       S = saved.s; G = newG(saved.g.mode, saved.g.day);
@@ -777,6 +800,7 @@
       faces(); layout();
       newGame('deal');
     }
+    if (shared) { newGame('shared'); say('Deal #' + shared.seed + ' – the same cards your friend played. Good luck!'); }
     if (!SET.seenHelp) { SET.seenHelp = true; save('settings', SET); openD('dHelp'); }
     // read-only, for the tests (and later PC Manager): the game as it stands, and whether an automatic run is going
     var hook = { get state() { return E.clone(S); }, get busy() { return busy || !!drag; }, get won() { return !!(S && S.won); } };
@@ -791,7 +815,8 @@
       var html = '<div id="app"><header class="bar"><div class="brand"><b>365</b><span>' + esc(D.title) + '</span></div>'
         + '<div class="info" aria-live="off"><div class="chip" id="chipTime"><small>Time</small><span id="vTime">0:00</span></div><div class="chip"><small>Moves</small><span id="vMoves">0</span></div><div class="chip"><small>Score</small><span id="vScore">0</span></div></div>'
         + '<nav class="tools" aria-label="Game">' + tb('bNew', 'new', 'New game', 'New game (N)', 'main') + tb('bUndo', 'undo', 'Undo', 'Undo (U or Ctrl+Z)') + tb('bHint', 'hint', 'Hint', 'Show me a move (H)')
-        + tb('bStats', 'stats', 'My scores', 'My scores') + tb('bSet', 'set', 'Settings', 'Settings') + tb('bHelp', 'help', 'How to play', 'How to play') + tb('bFull', 'full', 'Full screen', 'Full screen (F)') + '</nav></header>'
+        + tb('bStats', 'stats', 'My scores', 'My scores', 'tb3') + tb('bSet', 'set', 'Settings', 'Settings', 'tb3') + tb('bHelp', 'help', 'How to play', 'How to play')
+        + tb('bShare', 'share', 'Share', 'Share this game with a friend', 'tb2') + tb('bFeed', 'feedback', 'Feedback', 'Tell us what you think, or ask for a new game', 'tb2') + tb('bFull', 'full', 'Full screen', 'Full screen (F)', 'tb2') + '</nav></header>'
         + '<main id="board" aria-label="The card table"></main></div>'
         + '<div id="stuck" hidden role="status"><span>' + esc(D.stuckText || 'No more moves found.') + '</span><button class="btn" type="button" id="stUndo">Undo</button><button class="btn go" type="button" id="stNew">New game</button></div>'
         + '<div id="toast" role="status" aria-live="polite"></div><canvas id="spark" aria-hidden="true"></canvas><canvas id="fx" hidden></canvas><div id="winBig" hidden aria-hidden="true"></div><div id="fxhint" hidden>Tap anywhere to carry on</div>'
@@ -801,7 +826,7 @@
           + '<button class="btn" type="button" id="nAgain">Play this deal again<small id="nAgainS">Start the same cards from the beginning</small></button></div>'
           + '<div class="row"><button class="btn wide" type="button" data-close>Keep playing</button></div>')
         + sheet('dWin', 'You won!', '<p class="soft" id="dWinSub"></p><div class="tiles"><div class="tile"><b id="wTime">0:00</b><span>Time</span></div><div class="tile"><b id="wMoves">0</b><span>Moves</span></div><div class="tile"><b id="wScore">0</b><span>Score</span></div></div>'
-          + '<ul class="badges" id="wBadges"></ul><div class="row"><button class="btn go wide" type="button" id="wAgain">Play again</button><button class="btn wide" type="button" id="wDaily">Today&rsquo;s deal</button><button class="btn wide" type="button" id="wStats">My scores</button></div>')
+          + '<ul class="badges" id="wBadges"></ul><div class="row"><button class="btn go wide" type="button" id="wAgain">Play again</button><button class="btn wide" type="button" id="wShare">Challenge a friend</button><button class="btn wide" type="button" id="wDaily">Today&rsquo;s deal</button><button class="btn wide" type="button" id="wStats">My scores</button></div>')
         + sheet('dStats', 'My scores', '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere.</p><div class="tiles" id="sTiles"></div><h3 style="margin:16px 0 0;font-size:18px">Today&rsquo;s deal this week</h3><div class="week" id="sWeek"></div><div class="tiles" id="sBest"></div>'
           + '<div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>')
         + sheet('dSet', 'Settings', (V ? '<div class="set"><div><label>' + esc(V.label) + '</label><small>' + esc(V.small || 'Changes from your next game.') + '</small></div><div class="seg" role="group" aria-label="' + esc(V.label) + '">' + v + '</div></div>' : '')

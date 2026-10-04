@@ -265,3 +265,9 @@ api/pcm-engineer-runs.json.tmp
 # Met Office MIDAS Open raw files (OGL) live only on this PC; api/bm-records.json is what ships
 tools/bm-records/midas/
 tools/bm-records/midas-weather/
+
+# 365 Games feedback store, rate counter and lock (4 Oct 2026) - runtime state, never committed (and denied in .htaccess)
+api/game-feedback.json
+api/game-feedback.json.*.tmp
+api/game-feedback-rate.json
+api/game-feedback.lock

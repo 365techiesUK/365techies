@@ -121,7 +121,14 @@ _CSS = """      <style>
           background:var(--cyan);color:#fff;font-weight:700;font-size:1rem}
         a.gh-link:hover .gh-play{background:#2aa8f2}
         .gh-play--soon{background:rgba(255,255,255,.1);color:var(--muted)}
-        .gh-pcm{margin:2.4rem 0 0;padding:1.2rem 1.3rem;border-radius:var(--r-lg);border:1px solid var(--line);background:var(--glass);
+        .gh-ask{margin:2.6rem 0 0;padding:1.5rem 1.4rem;border-radius:var(--r-lg);border:1px solid rgba(108,196,245,.35);
+          background:linear-gradient(135deg,rgba(29,151,227,.16),rgba(12,20,44,.7));display:flex;flex-wrap:wrap;align-items:center;gap:1.1rem 2rem}
+        .gh-ask h2{font-family:var(--font-display);font-weight:600;font-size:clamp(1.4rem,2.6vw,1.8rem);margin:0 0 .4rem}
+        .gh-ask p{margin:0;color:var(--muted);line-height:1.55;max-width:40rem}
+        .gh-ask__txt{flex:1 1 24rem}
+        .gh-ask__btns{display:flex;flex-wrap:wrap;gap:.7rem}
+        .gh-ask__btns .button{min-height:48px}
+        .gh-pcm{margin:1.4rem 0 0;padding:1.2rem 1.3rem;border-radius:var(--r-lg);border:1px solid var(--line);background:var(--glass);
           display:flex;flex-wrap:wrap;align-items:center;gap:.8rem 1.4rem}
         .gh-pcm p{margin:0;flex:1 1 22rem;color:var(--muted);line-height:1.55}
         .gh-pcm b{color:var(--ink)}
@@ -140,9 +147,28 @@ def _pcm_line():
             "About 365 PC Manager &rarr;")
 
 
+# 4 Oct 2026 (owner: "a feedback button or where they can request a game ... each game is in development"): the same
+# Share / Feedback / Request sheets as inside the games (games/common/social.js, which brings its own styles)
+_ASK = """      <div class="gh-ask" id="ask">
+        <div class="gh-ask__txt"><h2>Help us make the next one</h2>
+          <p>Every game here is still being made. Tell us what you&rsquo;d like &mdash; a new game, more levels, an easier setting &mdash; and the ideas people ask for most are the ones we build next. If we make yours, we can email you to say it&rsquo;s ready.</p></div>
+        <div class="gh-ask__btns">
+          <button type="button" class="button primary" id="ghAsk">Ask us to make a game</button>
+          <button type="button" class="button secondary" id="ghFeed">Tell us what you think</button>
+          <button type="button" class="button secondary" id="ghShare">Share these games</button>
+        </div>
+      </div>
+      <script src="/games/common/social.js?v=1"></script>
+      <script>(function(){if(!window.GameSocial){var a=document.getElementById("ask");if(a)a.hidden=true;return;}
+        GameSocial.init({id:"games",title:"365 Games"});
+        document.getElementById("ghAsk").onclick=function(){GameSocial.openFeedback("request");};
+        document.getElementById("ghFeed").onclick=function(){GameSocial.openFeedback("feedback");};
+        document.getElementById("ghShare").onclick=function(){GameSocial.share();};})();</script>"""
+
+
 def _pre():
     words, link = _pcm_line()
-    return ('    <section class="section gh" aria-label="The games">\n' + _CSS + '\n      <div class="wrap">\n' + _cards()
+    return ('    <section class="section gh" aria-label="The games">\n' + _CSS + '\n      <div class="wrap">\n' + _cards() + '\n' + _ASK
             + '\n      <div class="gh-pcm"><p>%s</p><a href="/free-pc-health-check/">%s</a></div>\n      </div>\n    </section>' % (words, link))
 
 
@@ -180,5 +206,8 @@ info_page(
               ("Get Help", "/contact/"), ("Call 01202 775566", "tel:+441202775566")),
     robots=None if PUBLIC else "noindex,follow",
 )
+_page = next(p for p in bp.PAGES if p.get("slug") == "games")
 # while hidden, the page stays out of the site's own search as well (build_blog skips pages marked nosearch)
-next(p for p in bp.PAGES if p.get("slug") == "games")["nosearch"] = not PUBLIC
+_page["nosearch"] = not PUBLIC
+# what WhatsApp / Facebook show when the page is shared: the six games on one picture (made 4 Oct, scratchpad make_share_cards.py)
+_page["og_image"] = "/games/img/games-share-v1.jpg"

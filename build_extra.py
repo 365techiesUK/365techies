@@ -16585,6 +16585,16 @@ _PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
             <li>Your request comes to our team&rsquo;s message channel so we can ring you back. We use it only for that, and handle it like any other enquiry, as described below.</li>
           </ul>
 
+          <h2>Our free games</h2>
+          <p>Our free games keep your scores and settings in your browser on your own computer &mdash; they are never sent to us. Opening a game is counted like any other page (see the live count above), once a day for each game.</p>
+          <ul>
+            <li>If you send us <strong>feedback or ask for a game</strong>, what you write comes to our team&rsquo;s message channel, and we keep it for up to 12 months to help us improve the games. Your first name, town and email address are all optional.</li>
+            <li>We mention your first name and town (for example &ldquo;asked for by Jean in Poole&rdquo;) only if you tick the box that says we may.</li>
+            <li>We use your email address only to reply to you or, if you ticked the box, to tell you when what you asked for is ready &mdash; never for marketing.</li>
+            <li>So that one computer cannot send a flood of messages, we keep a scrambled code made from your internet address for one day; the address itself is not kept.</li>
+            <li><strong>Sharing a game</strong> opens WhatsApp, Facebook or your email in the usual way. We see nothing of what you share or who you share it with.</li>
+          </ul>
+
           <h2>How we use your information</h2>
           <ul>
             <li>To provide, manage and improve our IT support and services.</li>

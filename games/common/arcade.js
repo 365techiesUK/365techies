@@ -18,6 +18,8 @@
     stats: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>',
     set: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
     help: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M9.2 9.2a2.9 2.9 0 0 1 5.6 1c0 1.9-2.8 2.6-2.8 4.3M12 17.6h.01"/></svg>',
+    share: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="m8.3 10.8 7.4-4.3M8.3 13.2l7.4 4.3"/></svg>',
+    feedback: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5a2.5 2.5 0 0 1-2.5 2.5H9l-5 4V6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5z"/><path d="M9 9.5h.01M15 9.5h.01M9.2 12.6a3.6 3.6 0 0 0 5.6 0"/></svg>',
     full: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>',
     'new': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>'
   };
@@ -83,6 +85,7 @@
     input.alt = false; input.altTap = false; input.mouseY = null; input.touch = false; input.tx = null; input.ty = null;
     document.addEventListener('keydown', function (e) {
       gestured = true;
+      if (e.defaultPrevented || (window.GameSocial && GameSocial.isOpen())) return;   // typing feedback, or a key the share / feedback sheet used
       if (e.key === 'Escape' && openSheet) { closeSheets(); return; }
       if (openSheet || e.altKey || e.ctrlKey || e.metaKey) return;
       var k = (e.key || '').toLowerCase();
@@ -339,6 +342,16 @@
     $('bHelp').onclick = function () { openD('dHelp'); };
     $('oPlay').onclick = begin; $('tPlay').onclick = begin; $('pGo').onclick = resume;
     $('oStats').onclick = openStats;
+    // sharing and feedback (social.js): the bar's two buttons and the challenge on the game-over card; opening either pauses a game
+    if (window.GameSocial) GameSocial.init({ id: D.id, title: D.title, onOpen: function () { if (mode === 'play') pause(); } });
+    $('bShare').onclick = function () { if (window.GameSocial) GameSocial.share(); };
+    $('bFeed').onclick = function () { if (window.GameSocial) GameSocial.openFeedback('feedback'); };
+    if (!window.GameSocial) { $('bShare').hidden = true; $('bFeed').hidden = true; $('oShare').hidden = true; }
+    $('oShare').onclick = function () {
+      if (!window.GameSocial || !W) return;
+      var h = D.hud(W);
+      GameSocial.share({ text: 'I scored ' + Number(h.score).toLocaleString('en-GB') + ' on ' + D.title + ' (' + WORD + ' ' + h.wave + ') – can you beat it? Free, no adverts:' });
+    };
     $('sReset').onclick = function () { openD('dReset'); };
     $('rYes').onclick = function () { ST = blank(); save('stats', ST); closeSheets(); say('Your scores have been cleared'); lastHud = ''; if (W) hud(); };
     function toggleFull() { try { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen(); } catch (e) {} }
@@ -371,8 +384,9 @@
       var html = '<div id="app" class="arcade"><header class="bar"><div class="brand"><b>365</b><span>' + esc(D.title.replace(/^365 /, '')) + '</span></div>'
         + '<div class="info"><div class="chip"><small>Score</small><span id="vScore">0</span></div><div class="chip"><small>Best</small><span id="vBest">0</span></div>'
         + '<div class="chip"><small>Lives</small><span id="vLives">0</span></div><div class="chip"><small>' + WORDC + '</small><span id="vWave">1</span></div></div>'
-        + '<nav class="tools" aria-label="Game">' + tb('bNew', 'new', 'New game', 'New game (N)', 'main') + tb('bPause', 'pause', 'Pause', 'Pause (P)') + tb('bStats', 'stats', 'My scores', 'My scores')
-        + tb('bSet', 'set', 'Settings', 'Settings') + tb('bHelp', 'help', 'How to play', 'How to play') + tb('bFull', 'full', 'Full screen', 'Full screen (F)') + '</nav></header>'
+        + '<nav class="tools" aria-label="Game">' + tb('bNew', 'new', 'New game', 'New game (N)', 'main') + tb('bPause', 'pause', 'Pause', 'Pause (P)') + tb('bStats', 'stats', 'My scores', 'My scores', 'tb3')
+        + tb('bSet', 'set', 'Settings', 'Settings', 'tb3') + tb('bHelp', 'help', 'How to play', 'How to play')
+        + tb('bShare', 'share', 'Share', 'Share this game with a friend', 'tb2') + tb('bFeed', 'feedback', 'Feedback', 'Tell us what you think, or ask for a new game', 'tb2') + tb('bFull', 'full', 'Full screen', 'Full screen (F)', 'tb2') + '</nav></header>'
         + '<main id="stage"><div id="screenwrap"><canvas id="screen" tabindex="-1" aria-label="' + esc(D.title) + ' game screen"></canvas>'
         + '<div class="ov" id="ov_title"><div class="ovbox"><h1>' + esc(D.title) + '</h1>' + (legend ? '<ul class="legend">' + legend + '</ul>' : '')
         + '<p>' + (D.titleText || '') + '</p>'
@@ -382,7 +396,7 @@
         + '<p class="soft">Speed: <b id="tSpeed"></b> &middot; change it in Settings</p></div></div>'
         + '<div class="ov" id="ov_paused" hidden><div class="ovbox"><h2>Paused</h2><p>Take your time &mdash; the game waits for you.</p><button class="btn go big" id="pGo" type="button">' + ICON.play + ' Carry on</button></div></div>'
         + '<div class="ov" id="ov_over" hidden><div class="ovbox"><h2 id="oWhy">Game over</h2><div class="tiles"><div class="tile"><b id="oScore">0</b><span>Score</span></div><div class="tile"><b id="oWave">1</b><span>' + WORDC + '</span></div><div class="tile"><b id="oBest">0</b><span>Your best</span></div></div>'
-        + '<ul class="badges" id="oBadges"></ul><div class="row"><button class="btn go wide big" id="oPlay" type="button">' + ICON.play + ' Play again</button><button class="btn wide" id="oStats" type="button">My scores</button></div></div></div>'
+        + '<ul class="badges" id="oBadges"></ul><div class="row"><button class="btn go wide big" id="oPlay" type="button">' + ICON.play + ' Play again</button><button class="btn wide" id="oShare" type="button">Challenge a friend</button><button class="btn wide" id="oStats" type="button">My scores</button></div></div></div>'
         + '</div><div class="pad" id="pad">' + (D.pad ? D.pad.map(function (b) { return '<button type="button" data-pad="' + b.act + '" class="' + (b.cls || '') + '">' + esc(b.label) + '</button>'; }).join('')
           : '<button type="button" data-pad="left" aria-label="Move left">&#9664;</button><button type="button" data-pad="fire" class="fire">Fire</button><button type="button" data-pad="right" aria-label="Move right">&#9654;</button>') + '</div>'
         + '</main></div><div id="toast" role="status" aria-live="polite"></div>'

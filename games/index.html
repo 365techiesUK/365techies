@@ -56,13 +56,13 @@
   <meta property="og:url" content="https://365techies.co.uk/games/" />
   <meta property="og:title" content="Free games, no adverts | 365 Techies" />
   <meta property="og:description" content="Free Solitaire, FreeCell, Spider and arcade games from 365 Techies in Bournemouth - no adverts, no sign-in, nothing to install. Play in your browser on a PC, tablet or phone." />
-  <meta property="og:image" content="https://365techies.co.uk/og-image.jpg" />
+  <meta property="og:image" content="https://365techies.co.uk/games/img/games-share-v1.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Free games, no adverts | 365 Techies" />
   <meta name="twitter:description" content="Free Solitaire, FreeCell, Spider and arcade games from 365 Techies in Bournemouth - no adverts, no sign-in, nothing to install. Play in your browser on a PC, tablet or phone." />
-  <meta name="twitter:image" content="https://365techies.co.uk/og-image.jpg" />
+  <meta name="twitter:image" content="https://365techies.co.uk/games/img/games-share-v1.jpg" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <!-- ?v= bumps past SiteGround's proxy cache. Learned the hard way 2026-08-01:
@@ -844,7 +844,14 @@
           background:var(--cyan);color:#fff;font-weight:700;font-size:1rem}
         a.gh-link:hover .gh-play{background:#2aa8f2}
         .gh-play--soon{background:rgba(255,255,255,.1);color:var(--muted)}
-        .gh-pcm{margin:2.4rem 0 0;padding:1.2rem 1.3rem;border-radius:var(--r-lg);border:1px solid var(--line);background:var(--glass);
+        .gh-ask{margin:2.6rem 0 0;padding:1.5rem 1.4rem;border-radius:var(--r-lg);border:1px solid rgba(108,196,245,.35);
+          background:linear-gradient(135deg,rgba(29,151,227,.16),rgba(12,20,44,.7));display:flex;flex-wrap:wrap;align-items:center;gap:1.1rem 2rem}
+        .gh-ask h2{font-family:var(--font-display);font-weight:600;font-size:clamp(1.4rem,2.6vw,1.8rem);margin:0 0 .4rem}
+        .gh-ask p{margin:0;color:var(--muted);line-height:1.55;max-width:40rem}
+        .gh-ask__txt{flex:1 1 24rem}
+        .gh-ask__btns{display:flex;flex-wrap:wrap;gap:.7rem}
+        .gh-ask__btns .button{min-height:48px}
+        .gh-pcm{margin:1.4rem 0 0;padding:1.2rem 1.3rem;border-radius:var(--r-lg);border:1px solid var(--line);background:var(--glass);
           display:flex;flex-wrap:wrap;align-items:center;gap:.8rem 1.4rem}
         .gh-pcm p{margin:0;flex:1 1 22rem;color:var(--muted);line-height:1.55}
         .gh-pcm b{color:var(--ink)}
@@ -868,6 +875,21 @@
       <ul class="gh-grid" role="list">
         <li class="gh-card"><a class="gh-link" href="/bournemouth/games/seafront/play/"><span class="gh-art"><img src="/bournemouth/games/seafront/media/lv-pirate.webp" alt="" width="800" height="600" decoding="async" loading="lazy" /></span><span class="gh-body"><span class="gh-title">Seafront</span><span class="gh-sub">Ride an eFoil, jet ski or RIB along the real Bournemouth seafront. Best on a newer PC.</span><span class="gh-play">Play <span aria-hidden="true">&rarr;</span></span></span></a></li>
       </ul>
+      <div class="gh-ask" id="ask">
+        <div class="gh-ask__txt"><h2>Help us make the next one</h2>
+          <p>Every game here is still being made. Tell us what you&rsquo;d like &mdash; a new game, more levels, an easier setting &mdash; and the ideas people ask for most are the ones we build next. If we make yours, we can email you to say it&rsquo;s ready.</p></div>
+        <div class="gh-ask__btns">
+          <button type="button" class="button primary" id="ghAsk">Ask us to make a game</button>
+          <button type="button" class="button secondary" id="ghFeed">Tell us what you think</button>
+          <button type="button" class="button secondary" id="ghShare">Share these games</button>
+        </div>
+      </div>
+      <script src="/games/common/social.js?v=1"></script>
+      <script>(function(){if(!window.GameSocial){var a=document.getElementById("ask");if(a)a.hidden=true;return;}
+        GameSocial.init({id:"games",title:"365 Games"});
+        document.getElementById("ghAsk").onclick=function(){GameSocial.openFeedback("request");};
+        document.getElementById("ghFeed").onclick=function(){GameSocial.openFeedback("feedback");};
+        document.getElementById("ghShare").onclick=function(){GameSocial.share();};})();</script>
       <div class="gh-pcm"><p><b>Coming soon to 365 PC Manager:</b> a Games menu that opens each game in its own window, away from your web browser. 365 PC Manager is our free app for Windows that keeps an eye on your computer.</p><a href="/free-pc-health-check/">About 365 PC Manager &rarr;</a></div>
       </div>
     </section>
