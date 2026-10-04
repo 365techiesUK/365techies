@@ -4,7 +4,7 @@
  * like Poole or Bournemouth"; picks: open to EVERYONE, a "365 member" badge for signed-in customers, initials + town
  * (never a full postcode), only with the player's own "show me" tick.
  *
- * Solitaire first. Two races, both on deals that are the same for everyone, so they are fair:
+ * Solitaire and FreeCell (4 Oct). Two races per game, both on deals that are the same for everyone, so they are fair:
  *   daily  - Today's deal at each level (Easy 1, Normal 3, Hard 5, Expert 7): fastest win.
  *   sprint - Today's 3-minute sprint (turn one): most cards up to the piles in three minutes.
  * Every score is PROVED: the game sends its moves and games-sol-lib.php replays them from the deal number with the same
@@ -29,7 +29,12 @@ $HOF_STORE = __DIR__ . '/games-hof.json';
 $HOF_LOCK  = __DIR__ . '/games-hof.lock';
 $HOF_RATE  = __DIR__ . '/games-hof-rate.json';
 $HOF_KEEP  = 2 * 365 * 86400;
-require_once __DIR__ . '/games-sol-lib.php';
+// the card games with a Hall of Fame: how each one deals today's races and replays a game (the rules, copied from the
+// browser line for line, in games-*-lib.php). One player - one set of initials and a town - across every game.
+$HOF_GAMES = array(
+    'solitaire' => array('lib' => 'games-sol-lib.php', 'replay' => 'sol_replay', 'daily' => 'sol_daily_seed', 'sprint' => 'sol_sprint_seed', 'count' => 'sol_found_count', 'sprintLv' => 1),
+    'freecell'  => array('lib' => 'games-fc-lib.php',  'replay' => 'fc_replay',  'daily' => 'fc_daily_seed',  'sprint' => 'fc_sprint_seed',  'count' => 'fc_found_count',  'sprintLv' => 1),
+);
 
 function hof_out($a, $code = 200) { http_response_code($code); echo json_encode($a, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); exit; }
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') hof_out(array('ok' => false, 'error' => 'method'), 405);
@@ -38,7 +43,15 @@ if ($src !== '' && strpos($src, '365techies.co.uk') === false && !preg_match('#^
 $in = json_decode((string)file_get_contents('php://input', false, null, 0, 65536), true);
 if (!is_array($in)) hof_out(array('ok' => false, 'error' => 'bad-input'), 400);
 $action = isset($in['action']) ? preg_replace('/[^a-z]/', '', (string)$in['action']) : '';
-if (!isset($in['game']) || $in['game'] !== 'solitaire') hof_out(array('ok' => false, 'error' => 'game'), 400);
+$GAME = isset($in['game']) ? (string)$in['game'] : '';
+if (!isset($HOF_GAMES[$GAME])) hof_out(array('ok' => false, 'error' => 'game'), 400);
+$G = $HOF_GAMES[$GAME];
+require_once __DIR__ . '/' . $G['lib'];
+function hof_day_number($ymd) {   // days since 1 Jan 2026 - the games' own day count (table.js dayNumber)
+    if (!preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', (string)$ymd, $m)) return null;
+    return intdiv(gmmktime(0, 0, 0, (int)$m[2], (int)$m[3], (int)$m[1]) - gmmktime(0, 0, 0, 1, 1, 2026), 86400);
+}
+function hof_g($e) { return isset($e['g']) ? $e['g'] : 'solitaire'; }   // entries from before 4 Oct afternoon are Solitaire's
 
 // ---- the towns a player can pick (and the ones a customer's postcode maps to)
 $HOF_TOWNS = array('Bournemouth', 'Poole', 'Christchurch', 'Highcliffe', 'Ferndown', 'West Moors', 'Wimborne', 'Broadstone', 'Corfe Mullen',
@@ -110,20 +123,20 @@ $LV_POINTS = array(1 => 100, 3 => 150, 5 => 250, 7 => 400);
 function hof_points($e) { global $LV_POINTS; return $LV_POINTS[$e['lv']] + max(0, 200 - intdiv((int)$e['secs'], 3)); }
 
 // the boards: rows of {rank, ini, town, v (the score as shown), sub, m (member), you}
-function hof_board($all, $board, $lv, $town, $me) {
+function hof_board($all, $board, $lv, $town, $me, $game) {
     $today = date('Y-m-d'); $rows = array(); $byP = array();
     $pl = $all['players'];
     if ($board === 'week') {
         $week = date('o-W');
         foreach ($all['entries'] as $e) {
-            if ($e['mode'] !== 'daily' || date('o-W', strtotime($e['day'] . ' 12:00')) !== $week || !isset($pl[$e['p']])) continue;
+            if (hof_g($e) !== $game || $e['mode'] !== 'daily' || date('o-W', strtotime($e['day'] . ' 12:00')) !== $week || !isset($pl[$e['p']])) continue;
             if (!isset($byP[$e['p']])) $byP[$e['p']] = array('pts' => 0, 'wins' => 0);
             $byP[$e['p']]['pts'] += hof_points($e); $byP[$e['p']]['wins']++;
         }
         foreach ($byP as $p => $x) $rows[] = array('p' => $p, 'k1' => -$x['pts'], 'k2' => -$x['wins'], 'v' => number_format($x['pts']) . ' pts', 'sub' => $x['wins'] . ($x['wins'] === 1 ? ' deal won' : ' deals won'));
     } else {
         foreach ($all['entries'] as $e) {
-            if (!isset($pl[$e['p']])) continue;
+            if (!isset($pl[$e['p']]) || hof_g($e) !== $game) continue;
             if ($board === 'sprint') { if ($e['mode'] !== 'sprint' || $e['day'] !== $today) continue; }
             else {
                 if ($e['mode'] !== 'daily' || (int)$e['lv'] !== $lv) continue;
@@ -177,7 +190,7 @@ if ($action === 'board') {
     $all = hof_load($HOF_STORE);
     $me = $P && isset($all['players'][$P['id']]) && $all['players'][$P['id']]['kh'] === $P['kh'] ? $P['id'] : null;
     if ($board === 'town' && $town === '' && $me) $town = $all['players'][$me]['town'];
-    $b = hof_board($all, $board, $lv, $town, $me);
+    $b = hof_board($all, $board, $lv, $town, $me, $GAME);
     hof_out(array('ok' => true, 'board' => $board, 'lv' => $lv, 'town' => $town, 'today' => date('Y-m-d')) + $b);
 }
 
@@ -188,15 +201,15 @@ if ($action === 'submit' || $action === 'rename' || $action === 'forget') {
 
 if ($action === 'submit') {
     $mode = isset($in['mode']) && $in['mode'] === 'sprint' ? 'sprint' : 'daily';
-    if ($mode === 'sprint') $lv = 1;
+    if ($mode === 'sprint') $lv = $G['sprintLv'];
     $day = isset($in['day']) ? (string)$in['day'] : '';
-    $n = sol_day_number($day); $todayN = sol_day_number(date('Y-m-d'));
+    $n = hof_day_number($day); $todayN = hof_day_number(date('Y-m-d'));
     if ($n === null || abs($n - $todayN) > 1) hof_out(array('ok' => false, 'error' => 'day'), 400);   // the player's own calendar day, give or take one
-    $seed = $mode === 'sprint' ? sol_sprint_seed($n) : sol_daily_seed($n, $lv);
+    $seed = $mode === 'sprint' ? call_user_func($G['sprint'], $n) : call_user_func($G['daily'], $n, $lv);
     $log = isset($in['log']) && is_array($in['log']) ? $in['log'] : array();
-    $s = sol_replay($seed, $lv, $log);
+    $s = call_user_func($G['replay'], $seed, $lv, $log);
     if ($s === null) hof_out(array('ok' => false, 'error' => 'replay'), 400);
-    $secs = isset($in['secs']) ? (int)$in['secs'] : 0; $moves = count($log); $cards = sol_found_count($s);
+    $secs = isset($in['secs']) ? (int)$in['secs'] : 0; $moves = count($log); $cards = call_user_func($G['count'], $s);
     if ($mode === 'daily') {
         if (!$s['won']) hof_out(array('ok' => false, 'error' => 'not-won'), 400);
         if ($secs < max(25, (int)ceil($moves * 0.2)) || $secs > 4 * 3600) hof_out(array('ok' => false, 'error' => 'time'), 400);
@@ -218,10 +231,10 @@ if ($action === 'submit') {
     $all['players'][$P['id']] = array('kh' => $P['kh'], 'ini' => $ini, 'town' => $town, 'member' => $mem !== null, 't' => time());
     $cut = time() - $HOF_KEEP;
     $all['entries'] = array_values(array_filter($all['entries'], function ($e) use ($cut) { return (int)$e['t'] >= $cut; }));
-    $new = array('p' => $P['id'], 'mode' => $mode, 'lv' => $lv, 'day' => $day, 'secs' => $secs, 'moves' => $moves, 'cards' => $cards, 't' => time());
+    $new = array('p' => $P['id'], 'g' => $GAME, 'mode' => $mode, 'lv' => $lv, 'day' => $day, 'secs' => $secs, 'moves' => $moves, 'cards' => $cards, 't' => time());
     $improved = true; $found = false;
     foreach ($all['entries'] as $i => $e) {
-        if ($e['p'] !== $P['id'] || $e['mode'] !== $mode || (int)$e['lv'] !== $lv || $e['day'] !== $day) continue;
+        if ($e['p'] !== $P['id'] || hof_g($e) !== $GAME || $e['mode'] !== $mode || (int)$e['lv'] !== $lv || $e['day'] !== $day) continue;
         $found = true;
         $better = $mode === 'sprint' ? ($cards > $e['cards'] || ($cards === $e['cards'] && $secs < $e['secs'])) : ($secs < $e['secs'] || ($secs === $e['secs'] && $moves < $e['moves']));
         if ($better) $all['entries'][$i] = $new; else $improved = false;
@@ -231,8 +244,8 @@ if ($action === 'submit') {
     $ok = hof_save($HOF_STORE, $all);
     if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); }
     if (!$ok) hof_out(array('ok' => false, 'error' => 'store'), 500);
-    $b = hof_board($all, $mode === 'sprint' ? 'sprint' : 'today', $lv, '', $P['id']);
-    $t = $mode === 'daily' ? hof_board($all, 'town', $lv, $town, $P['id']) : null;
+    $b = hof_board($all, $mode === 'sprint' ? 'sprint' : 'today', $lv, '', $P['id'], $GAME);
+    $t = $mode === 'daily' ? hof_board($all, 'town', $lv, $town, $P['id'], $GAME) : null;
     hof_out(array('ok' => true, 'improved' => $improved, 'ini' => $ini, 'town' => $town, 'member' => $mem !== null, 'rank' => $b['mine'] ? $b['mine']['rank'] : null, 'count' => $b['count'],
         'townRank' => $t && $t['mine'] ? $t['mine']['rank'] : null, 'townCount' => $t ? $t['count'] : 0) + array('rows' => $b['rows']));
 }

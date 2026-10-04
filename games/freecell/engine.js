@@ -5,7 +5,10 @@
  * The deals are Microsoft FreeCell's - the same shuffle (Rosetta Code, "Deal cards for FreeCell"), so Deal #1 here is
  * Game #1 there. Every deal from 1 to 32000 can be won except #11982.
  * A card is 0-51 in our numbering (suit * 13 + rank - 1, as in Solitaire): suit 0 spades, 1 hearts, 2 diamonds, 3 clubs.
- * The page loads this as window.FcEngine; the tests require() it. */
+ * The page loads this as window.FcEngine; the tests require() it.
+ * 4 Oct 2026 - levels (owner: "levels ... so they can pick hardness"): deal(seed, lv) with lv 1 Easy and 3 Normal (four
+ * free cells - Easy IS the game as it always was), 5 Hard (three free cells) and 7 Expert (two). s.ncell = how many of
+ * the four cells can be used; the others stay locked (null, but never a place to put a card). */
 (function (root) {
   'use strict';
   function suit(c) { return (c / 13) | 0; }
@@ -27,13 +30,15 @@
     }
     return cards.map(fromMs);
   }
-  function deal(seed) {
+  var NCELL = { 1: 4, 3: 4, 5: 3, 7: 2 };
+  function deal(seed, lv) {
+    lv = NCELL[lv] ? lv : 1;
     var order = msOrder(seed), tab = [[], [], [], [], [], [], [], []];
     order.forEach(function (c, k) { tab[k % 8].push(c); });
-    return { seed: seed, tab: tab, cells: [null, null, null, null], found: [[], [], [], []], moves: 0, score: 0, won: false };
+    return { seed: seed, lv: lv, ncell: NCELL[lv], tab: tab, cells: [null, null, null, null], found: [[], [], [], []], moves: 0, score: 0, won: false };
   }
   function clone(s) {
-    return { seed: s.seed, tab: s.tab.map(function (c) { return c.slice(); }), cells: s.cells.slice(), found: s.found.map(function (f) { return f.slice(); }),
+    return { seed: s.seed, lv: s.lv || 1, ncell: s.ncell || 4, tab: s.tab.map(function (c) { return c.slice(); }), cells: s.cells.slice(), found: s.found.map(function (f) { return f.slice(); }),
              moves: s.moves, score: s.score, won: s.won };
   }
 
@@ -67,7 +72,9 @@
     for (var k = col.length - 1; k > 0; k--) { var a = col[k], b = col[k - 1]; if (red(a) !== red(b) && rank(b) === rank(a) + 1) n++; else break; }
     return n;
   }
-  function freeCells(s) { var n = 0; for (var i = 0; i < 4; i++) if (s.cells[i] === null) n++; return n; }
+  function cellsOf(s) { return s.ncell || 4; }
+  function freeCells(s) { var n = 0; for (var i = 0; i < cellsOf(s); i++) if (s.cells[i] === null) n++; return n; }
+  function firstCell(s) { for (var i = 0; i < cellsOf(s); i++) if (s.cells[i] === null) return i; return -1; }
   function emptyCols(s) { var n = 0; for (var i = 0; i < 8; i++) if (!s.tab[i].length) n++; return n; }
   function maxMove(s, toEmpty) { return (freeCells(s) + 1) * Math.pow(2, Math.max(0, emptyCols(s) - (toEmpty ? 1 : 0))); }
 
@@ -83,7 +90,7 @@
     if (s.won || !m || m.t !== 'move' || !m.from || !m.to) return false;
     var cards = picked(s, m.from); if (!cards.length) return false;
     var to = m.to;
-    if (to.p === 'c') return cards.length === 1 && to.i >= 0 && to.i < 4 && s.cells[to.i] === null && m.from.p !== 'c';
+    if (to.p === 'c') return cards.length === 1 && to.i >= 0 && to.i < cellsOf(s) && s.cells[to.i] === null && m.from.p !== 'c';
     if (to.p === 'f') { var f = s.found[to.i]; return !!f && cards.length === 1 && canFound(cards[0], f) && (f.length > 0 || foundFor(s, cards[0]) >= 0); }
     if (to.p === 't') {
       if (m.from.p === 't' && m.from.i === to.i) return false;
@@ -152,7 +159,7 @@
       var c = s.cells[i]; if (c === null) continue;
       for (j = 0; j < 8; j++) { var mc = { t: 'move', from: { p: 'c', i: i }, to: { p: 't', i: j } }; if (legal(s, mc)) out.push({ m: mc, w: s.tab[j].length ? 60 : 15 }); }
     }
-    var cell = s.cells.indexOf(null);
+    var cell = firstCell(s);
     if (cell >= 0) for (i = 0; i < 8; i++) {
       var cl = s.tab[i]; if (!cl.length) continue;
       var u = cl.length > 1 ? cl[cl.length - 2] : null;
@@ -172,7 +179,7 @@
     for (i = 0; i < 8; i++) { if (from.p === 't' && from.i === i) continue; var m = { t: 'move', from: from, to: { p: 't', i: i } }; if (s.tab[i].length && legal(s, m)) return m; }
     var whole = from.p === 't' && s.tab[from.i].length === cards.length;
     if (!whole) for (i = 0; i < 8; i++) { var me = { t: 'move', from: from, to: { p: 't', i: i } }; if (!s.tab[i].length && legal(s, me)) return me; }
-    if (cards.length === 1 && from.p === 't') { var cell = s.cells.indexOf(null); if (cell >= 0) return { t: 'move', from: from, to: { p: 'c', i: cell } }; }
+    if (cards.length === 1 && from.p === 't') { var cell = firstCell(s); if (cell >= 0) return { t: 'move', from: from, to: { p: 'c', i: cell } }; }
     return null;
   }
 
@@ -189,7 +196,17 @@
     return best;
   }
 
-  var api = { deal: deal, msOrder: msOrder, clone: clone, legal: legal, apply: apply, picked: picked, runLen: runLen, maxMove: maxMove,
+  // a move as a short string, for the Hall of Fame (the server replays them - api/games-fc-lib.php): FROM>TO with
+  // FROM = c<cell> | t<column>.<cards> and TO = c<cell> | f<pile> | t<column>, e.g. "t3.2>t5", "c0>f2"
+  function code(m) { return (m.from.p === 'c' ? 'c' + m.from.i : 't' + m.from.i + '.' + (m.from.n || 1)) + '>' + m.to.p + m.to.i; }
+  function decode(c) {
+    var x = /^(c[0-3]|t[0-7]\.\d{1,2})>([cft])([0-7])$/.exec(String(c)); if (!x) return null;
+    if ((x[2] === 'c' || x[2] === 'f') && +x[3] > 3) return null;
+    var from = x[1].charAt(0) === 'c' ? { p: 'c', i: +x[1].charAt(1) } : { p: 't', i: +x[1].charAt(1), n: +x[1].split('.')[1] };
+    return { t: 'move', from: from, to: { p: x[2], i: +x[3] } };
+  }
+
+  var api = { deal: deal, msOrder: msOrder, clone: clone, code: code, decode: decode, NCELL: NCELL, freeCells: freeCells, firstCell: firstCell, emptyCols: emptyCols, legal: legal, apply: apply, picked: picked, runLen: runLen, maxMove: maxMove,
               autoMove: autoMove, safeToFound: safeToFound, foundFor: foundFor, canStack: canStack, canFound: canFound,
               hint: hint, stuck: stuck, smartMove: smartMove, allMoves: allMoves, finishable: finishable, finishStep: finishStep,
               suit: suit, rank: rank, red: red };

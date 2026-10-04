@@ -36,6 +36,11 @@
   var SKY = [['#9fd8ff', '#e9f6ff'], ['#8ec9f5', '#ffe9c7'], ['#7fb4e8', '#ffd9a8'], ['#9ad4ff', '#fff2cc'], ['#6fa8dc', '#cfe9d6'],
     ['#8cc8f0', '#f1fbff'], ['#9bc9ec', '#ffe2b8'], ['#6a86c4', '#f7c99b'], ['#4f6fb3', '#f6a97a'], ['#2e3f86', '#ff8a5c']];
   function scene(c) {
+    if (C.data.scenes && C.data.scenes[c] != null) {   // a game that brings its own drawings (FreeCell, Spider): its sky, then its landmark
+      var k = (C.data.skies && C.data.skies[c]) || SKY[c % SKY.length], gid = 'jyd' + c;
+      return '<svg viewBox="0 0 720 190" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + k[0] + '"/><stop offset="1" stop-color="' + k[1] + '"/></linearGradient></defs>'
+        + '<rect width="720" height="190" fill="url(#' + gid + ')"/>' + C.data.scenes[c] + '</svg>';
+    }
     var s = SKY[c % SKY.length], id = 'jy' + c;
     var g = '<defs><linearGradient id="' + id + 's" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + s[0] + '"/><stop offset="1" stop-color="' + s[1] + '"/></linearGradient>'
       + '<linearGradient id="' + id + 'w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f8fc0"/><stop offset="1" stop-color="#14567f"/></linearGradient></defs>'
@@ -166,7 +171,7 @@
   function draw() {
     var p = prog(), tot = total(), cur = -1, i;
     for (i = 0; i < L().length; i++) if (!p.stars[i] && unlocked(i)) { cur = i; break; }
-    $('jySub').textContent = C.title + ' · ' + tot.stars + ' of ' + tot.max + ' stars · ' + L().length + ' levels along the Dorset coast';
+    $('jySub').textContent = C.title + ' · ' + tot.stars + ' of ' + tot.max + ' stars · ' + L().length + ' levels ' + (C.data.where || 'along the Dorset coast');
     setTimeout(function () { $('jyBar').style.width = Math.round(100 * tot.stars / tot.max) + '%'; }, 60);
     var w = Math.min(728, $('jyScroll').clientWidth || 700) - 32, out = '';
     C.data.chapters.forEach(function (name, c) {

@@ -3,7 +3,17 @@
  * "Deals you can always win" list is simply those. This file only says where things sit and how a card is picked up. */
 (function () {
   'use strict';
-  var E = window.FcEngine;
+  var E = window.FcEngine, FD = window.FC_DEALS || { c3: [], c2: [] };
+  // 4 Oct 2026 - levels: 1 Easy (four cells, Undo + Hint - the game as it always was, so its scores carry on), 3 Normal
+  // (four cells, no Hint), 5 Hard (three cells), 7 Expert (two cells, no Undo). Hard and Expert deal only from the deals
+  // tools/freecell/solver.cjs has won with that many cells (deals.js).
+  var LV = {
+    1: { name: 'Easy', stars: 1, stat: 'all', line: 'Four free cells \u00b7 Undo and Hint' },
+    3: { name: 'Normal', stars: 2, stat: 'lv3', line: 'Four free cells \u00b7 Undo, no Hint' },
+    5: { name: 'Hard', stars: 3, stat: 'lv5', line: 'Only three free cells \u00b7 no Hint' },
+    7: { name: 'Expert', stars: 4, stat: 'lv7', line: 'Only two free cells \u00b7 no Undo, no Hint' }
+  };
+  function lvOf(S) { return LV[S.lv] ? S.lv : 1; }
   var WIN = []; for (var n = 1; n <= 32000; n++) if (n !== 11982) WIN.push(n);
 
   function colX(L, i) { return L.left + i * (L.cw + L.gap); }
@@ -45,7 +55,7 @@
   function targets(S, from, L, P) {
     var out = [], i;
     if (picked(S, from).length === 1) {
-      for (i = 0; i < 4; i++) out.push({ to: { p: 'c', i: i }, x: colX(L, i), y: L.top });
+      for (i = 0; i < (S.ncell || 4); i++) out.push({ to: { p: 'c', i: i }, x: colX(L, i), y: L.top });   // locked cells are never a place to drop
       for (i = 0; i < 4; i++) out.push({ to: { p: 'f', i: i }, x: colX(L, 4 + i), y: L.top });
     }
     for (i = 0; i < 8; i++) { var col = S.tab[i]; out.push({ to: { p: 't', i: i }, x: colX(L, i), y: col.length ? P[col[col.length - 1]].y : L.tabY }); }
@@ -95,7 +105,10 @@
       s.cells.forEach(function (c) { if (c !== null) { seen[c] = 1; n++; } });
       s.found.forEach(function (f) { f.forEach(function (c) { seen[c] = 1; n++; }); });
     } catch (e) { return false; }
-    return n === 52 && Object.keys(seen).length === 52 && s.tab.length === 8 && s.cells.length === 4;
+    if (!(n === 52 && Object.keys(seen).length === 52 && s.tab.length === 8 && s.cells.length === 4)) return false;
+    if (!LV[s.lv]) s.lv = 1;                            // saved before 4 Oct: the four-cell game
+    if (typeof s.ncell !== 'number') s.ncell = E.NCELL[s.lv];
+    return true;
   }
 
   Table365.start({
@@ -104,8 +117,23 @@
     E: E, layout: layout, positions: positions, where: where, picked: picked, targets: targets, hintLights: hintLights, valid: valid,
     whyNot: whyNot, cantPick: cantPick,
     autoNext: function (S, keepDown) { return E.autoMove(S, keepDown); },
-    deals: function () { return WIN; },
-    winnableSmall: 'Every deal from 1 to 32,000 except #11982 can be won - the same numbers as Windows FreeCell.',
+    variant: { key: 'lv', stateKey: 'lv', label: 'Difficulty', small: 'Changes from your next game.', options: [[1, 'Easy'], [3, 'Normal'], [5, 'Hard'], [7, 'Expert']], def: 1,
+               newLabel: function (v) { return LV[v] ? LV[v].name : 'Easy'; }, info: function (v) { return LV[v] ? LV[v].line : ''; },
+               stars: function (v) { return LV[v] ? LV[v].stars : 1; },
+               statKey: function (v) { return LV[v] ? LV[v].stat : 'all'; }, bestLabel: function (v) { return LV[v] ? LV[v].name.toLowerCase() : 'easy'; } },
+    deals: function (v) { return v === 5 && FD.c3.length ? FD.c3 : v === 7 && FD.c2.length ? FD.c2 : WIN; },
+    rules: function (S) { var v = lvOf(S); return { undo: v !== 7, hint: v === 1 }; },
+    winBonus: function (S, secs) { return Math.round((100 + Math.max(0, 1200 - secs) / 2) * ({ 1: 1, 3: 1.25, 5: 1.6, 7: 2 }[lvOf(S)] || 1)); },
+    describe: function (S) { return LV[lvOf(S)].name + ' level' + (S.ncell < 4 ? ' \u00b7 ' + S.ncell + ' free cells' : ''); },
+    slotHtml: function (key, S) { return key.charAt(0) === 'c' ? (+key.charAt(1) >= (S.ncell || 4) ? '<span class="spent" title="Locked at this level">&#128274;</span>' : '') : null; },
+    // the Hall of Fame, the 3-minute sprint and the Journey (games/common/hof.js, journey.js; api/games-hof.php replays
+    // every win with api/games-fc-lib.php). ⚠ sprintSeed must match fc_sprint_seed there.
+    hof: true, sprintLevel: 1,
+    sprintSeed: function (n) { return WIN[((n * 104729 + 17) % WIN.length + WIN.length) % WIN.length]; },
+    foundCount: function (S) { return S.found[0].length + S.found[1].length + S.found[2].length + S.found[3].length; },
+    journey: window.FC_JOURNEY ? Object.assign({ where: 'through inland Dorset to the sea' }, window.FC_JOURNEY) : null,
+    journeyLevelName: function (lv) { return LV[lv] ? LV[lv].name + ' \u00b7 ' + LV[lv].line : ''; },
+    winnableSmall: 'With four free cells every deal from 1 to 32,000 can be won except #11982 - the same numbers as Windows FreeCell. Hard and Expert use deals our solver has won with three or two cells.',
     anySeed: function () { return 1 + Math.floor(Math.random() * 1000000); },
     dealOrder: function (S) { var o = [], r, c; for (r = 0; r < 7; r++) for (c = 0; c < 8; c++) if (r < S.tab[c].length) o.push(S.tab[c][r]); return o; },
     deckPos: function (L) { return { x: Math.round(L.W / 2 - L.cw / 2), y: L.top }; },
@@ -116,6 +144,7 @@
       '<b>Every card is face up</b> from the start, so you can plan ahead &mdash; almost every deal can be won.',
       '<b>In the eight columns</b>, put each card on one a step higher of the other colour &mdash; a red 6 on a black 7.',
       '<b>The four free cells</b> at the top left each hold one card while you get it out of the way.',
+      '<b>Pick how hard</b> under <b>New game</b>: <b>Easy</b> has Hint; <b>Normal</b> has none; <b>Hard</b> gives you only three free cells and <b>Expert</b> two, with no Undo. Harder levels score more.',
       '<b>Any card</b> can go in an empty column. Several cards in order move together when there is room to do it.',
       '<b>Tap a card</b> and it goes to the best place for it &mdash; a free cell if nothing else fits. Dragging works too.',
       'Stuck? Press <b>Hint</b>. <b>Undo</b> takes back as many moves as you like.'
