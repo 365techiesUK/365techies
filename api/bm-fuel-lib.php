@@ -534,16 +534,17 @@ function bm_fuel_publish($all, $mode, $sources, $now) {
     /* By brand (owner 4 Oct: "which supermarket has the cheapest fuel"): every brand with 10+ forecourts, and every
        supermarket however few; then the supermarkets taken together against every other forecourt. Per fuel:
        array(forecourts, median, lowest). */
-    $bp = array(); $bn = array(); $gp = array();
+    $bp = array(); $bn = array(); $gp = array(); $bni = array();
     foreach ($all as $s) {
         $b = $s['b']; $bn[$b] = isset($bn[$b]) ? $bn[$b] + 1 : 1;
+        if (isset($s['co']) && $s['co'] === 'N') $bni[$b] = isset($bni[$b]) ? $bni[$b] + 1 : 1;   // Northern Ireland, where fuel is cheapest
         $g = bmfuel_is_super($b) ? 'super' : 'other';
         foreach ($s['p'] as $f => $p) { $bp[$b][$f][] = $p; $gp[$g][$f][] = $p; }
     }
     $brands = array();
     foreach ($bn as $b => $n) {
         if ($n < 10 && !bmfuel_is_super($b)) continue;
-        $row = array('n' => $n, 'super' => bmfuel_is_super($b));
+        $row = array('n' => $n, 'super' => bmfuel_is_super($b), 'ni' => isset($bni[$b]) ? $bni[$b] : 0);
         foreach ($bp[$b] as $f => $v) $row[$f] = array(count($v), bmfuel_median($v), min($v));
         $brands[$b] = $row;
     }

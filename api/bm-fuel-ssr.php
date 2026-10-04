@@ -184,7 +184,9 @@ function bmfssr_lowest($rows, $f) {
 function bmfssr_brand_rows($rows, $first) {
     $h = '';
     foreach ($rows as $b => $x) {
-        $h .= '<tr><th scope="row">' . bmfssr_esc($b) . ($b === 'Costco' ? ' <small>members only</small>' : '') . '</th><td>' . bmfssr_pc(bmfssr_med($x, 'E10'))
+        // a brand that trades mostly in Northern Ireland (Maxol, Solo...) tops a UK league because fuel is cheapest there: say so
+        $tag = $b === 'Costco' ? 'members only' : ((!empty($x['ni']) && $x['ni'] * 2 > $x['n']) ? 'mostly Northern Ireland' : '');
+        $h .= '<tr><th scope="row">' . bmfssr_esc($b) . ($tag ? ' <small>' . $tag . '</small>' : '') . '</th><td>' . bmfssr_pc(bmfssr_med($x, 'E10'))
             . '</td><td>' . bmfssr_pc(bmfssr_med($x, 'B7')) . '</td><td>' . number_format($x['n']) . '</td></tr>';
     }
     return '<div class="ff-tablewrap"><table class="ff-table"><thead><tr><th scope="col">' . $first . '</th><th scope="col">Unleaded</th><th scope="col">Diesel</th>'
