@@ -12,7 +12,7 @@ function fakeKv() {
   return {
     _m: m, puts: 0,
     async get(k, type) { const e = m.get(k); if (!e) return null; return type === 'json' ? JSON.parse(e.value) : e.value; },
-    async put(k, v, opts) { this.puts++; m.set(k, { value: String(v), metadata: opts && opts.metadata }); },
+    async put(k, v, opts) { this.puts++; m.set(k, { value: String(v), metadata: opts && opts.metadata, ttl: opts && opts.expirationTtl }); },
     async list({ prefix, cursor, limit }) {
       const keys = [...m.keys()].filter((k) => k.startsWith(prefix || '')).map((name) => ({ name, metadata: m.get(name).metadata }));
       return { keys, list_complete: true, cursor: undefined };
@@ -193,4 +193,92 @@ test('the data-centre metadata stays under KV\'s 1,024-byte limit too', () => {
   const m = { p: '/' + 'p'.repeat(199), c: 'c'.repeat(60), ct: 'GB', t: 1759140000, la: -50.12, lo: -180.12, a: 'BH',
     s: 's'.repeat(80), os: 'o'.repeat(20), br: 'b'.repeat(24), dv: 'tablet', sc: 'l', dk: 1, lg: 'l'.repeat(12), dc: 1, org: 'g'.repeat(40) };
   assert.ok(JSON.stringify(m).length < 1024, JSON.stringify(m).length);
+});
+
+/* ------------------------------------------------------------ 4 Oct 2026: game pages count a player once a day */
+// move a stored entry back in time, as if it had been written `ago` seconds earlier
+function age(env, path, ago) {
+  for (const [k, e] of env.VISITS._m) {
+    const v = JSON.parse(e.value);
+    if (v.p !== path) continue;
+    v.t = Math.floor(Date.now() / 1000) - ago;
+    env.VISITS._m.set(k, { ...e, value: JSON.stringify(v), metadata: { ...e.metadata, t: v.t } });
+  }
+}
+const entryFor = (env, path) => [...env.VISITS._m.values()].find((e) => JSON.parse(e.value).p === path);
+
+test('a game page: one write per player per game per day, kept until midnight UTC; other pages unchanged', async () => {
+  const env = { VISITS: fakeKv(), VIS_TOKEN: 'tok' };
+  await ping(env, { site: 't365', path: '/games/solitaire/', ref: '' });
+  assert.equal(env.VISITS.puts, 1);
+  const e = entryFor(env, '/games/solitaire/');
+  assert.equal(e.metadata.g, 1);
+  const toMidnight = 86400 - (Math.floor(Date.now() / 1000) % 86400);
+  assert.ok(e.ttl >= 300 && e.ttl <= Math.max(300, toMidnight), 'ttl ' + e.ttl);
+  // the same player opens Solitaire again ten minutes later, and again after lunch: nothing more is written
+  age(env, '/games/solitaire/', 600);
+  await ping(env, { site: 't365', path: '/games/solitaire/', ref: '' });
+  age(env, '/games/solitaire/', 4 * 3600);
+  await ping(env, { site: 't365', path: '/games/solitaire/', ref: '' });
+  assert.equal(env.VISITS.puts, 1);
+  // another game counts once too
+  await ping(env, { site: 't365', path: '/games/freecell/', ref: '' });
+  await ping(env, { site: 't365', path: '/games/freecell/', ref: '' });
+  assert.equal(env.VISITS.puts, 2);
+  // an ordinary page still writes again after a minute, for 5 minutes, as before
+  await ping(env, { site: 't365', path: '/contact/', ref: '' });
+  assert.equal(entryFor(env, '/contact/').ttl, 300);
+  assert.equal(entryFor(env, '/contact/').metadata.g, undefined);
+  age(env, '/contact/', 61);
+  await ping(env, { site: 't365', path: '/contact/', ref: '' });
+  assert.equal(env.VISITS.puts, 4);
+  // a different player (another network) is counted for the same game
+  await ping(env, { site: 't365', path: '/games/solitaire/', ref: '' }, UA_IPHONE, {}, '198.51.100.20');
+  assert.equal(env.VISITS.puts, 5);
+});
+
+test('which pages are games: each game and Seafront\'s play page; not the Games page or anything else', async () => {
+  const env = { VISITS: fakeKv(), VIS_TOKEN: 'tok' };
+  for (const p of ['/games/eclipse/', '/games/batball/', '/bournemouth/games/seafront/play/']) {
+    await ping(env, { site: 't365', path: p, ref: '' });
+    assert.equal(entryFor(env, p).metadata.g, 1, p);
+  }
+  for (const p of ['/games/', '/bournemouth/games/seafront/', '/gaming-pcs/', '/games/solitaire/extra/', '/x/games/solitaire/']) {
+    await ping(env, { site: 't365', path: p, ref: '' });
+    assert.equal(entryFor(env, p).metadata.g, undefined, p);
+    assert.equal(entryFor(env, p).ttl, 300, p);
+  }
+});
+
+test('/live shows a game player for about 5 minutes after they open the game, then not (both /live forms)', async () => {
+  const env = { VISITS: fakeKv(), VIS_TOKEN: 'tok' };
+  await ping(env, { site: 't365', path: '/games/eclipse/', ref: '' });
+  let j = await live(env);
+  assert.equal(j.sites.t365.visitors, 1);
+  assert.deepEqual(j.sites.t365.pages, { '/games/eclipse/': 1 });
+  assert.equal(j.sites.t365.rows.length, 1);
+  age(env, '/games/eclipse/', 340);   // still on now a little past 5 minutes (the tally reads every 5)
+  j = await live(env);
+  assert.equal(j.sites.t365.visitors, 1);
+  age(env, '/games/eclipse/', 361);
+  j = await live(env);
+  assert.equal(j.sites.t365.visitors, 0);
+  assert.deepEqual(j.sites.t365.pages, {});
+  assert.equal(j.sites.t365.rows.length, 0);
+  const one = await worker.fetch(new Request('https://w.example/live?site=t365&auth=tok'), env).then((r) => r.json());
+  assert.equal(one.visitors, 0);
+  // the same visitor on an ordinary page meanwhile is still "on now"
+  await ping(env, { site: 't365', path: '/contact/', ref: '' });
+  j = await live(env);
+  assert.equal(j.sites.t365.visitors, 1);
+  assert.deepEqual(j.sites.t365.rows[0].pages, ['/contact/']);
+});
+
+test('a data-centre visit to a game is still one :dc entry for 5 minutes (never a day-long one)', async () => {
+  const env = { VISITS: fakeKv(), VIS_TOKEN: 'tok' };
+  await ping(env, { site: 't365', path: '/games/spider/', ref: '' }, UA_WIN_CHROME, { asn: 16509, asOrganization: 'Amazon.com, Inc.' }, '198.51.100.7');
+  const [k] = [...env.VISITS._m.keys()];
+  assert.match(k, /:dc$/);
+  assert.equal(env.VISITS._m.get(k).ttl, 300);
+  assert.equal(env.VISITS._m.get(k).metadata.g, undefined);
 });

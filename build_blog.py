@@ -8,6 +8,7 @@ from hub_ui import intent_hero
 from playbook_tiles_data import PLAYBOOK_HERO_TILES   # 26 Sep 2026: the shared first screen on chosen posts
 import build_local      # registers 12 local/customer pages
 import build_extra      # registers 9 specialist/trust pages
+import games_hub_page   # /games/ - every free game on one page, from games/games.json (4 Oct 2026; hidden until the owner says)
 import simplybook_cluster  # SimplyBook integration pillar + 5 firsthand technical guides
 import wifi_dashboards      # custom business Wi-Fi/mesh dashboard service page + live demo
 import victron_business     # Victron for business: resilience, carbon, HMRC-sourced tax position
@@ -718,6 +719,8 @@ LLMS_HEADER = """# 365 Techies
 llms_lines = [LLMS_HEADER, "## Pages\n",
               "- [365 Techies — IT Support & Computer Repair, Bournemouth & Dorset](https://365techies.co.uk/): Friendly IT support and computer repairs for homes and businesses across Bournemouth, Poole and Dorset — rated 4.9 on Google, family-run since 1995."]
 for _p in bp.PAGES:
+    if _p.get("nosearch"):   # a page kept hidden for now (e.g. /games/) is not offered to AI tools either
+        continue
     llms_lines.append("- [%s](https://365techies.co.uk/%s/): %s" % (_clean(_p["title"]), _p["slug"], _clean(_p.get("desc", ""))))
 with open(os.path.join(bp.BASE, "llms.txt"), "w", encoding="utf-8") as f:
     f.write("\n".join(llms_lines) + "\n")
@@ -771,7 +774,7 @@ _sindex = [{"u": "", "t": "365 Techies — IT Support & Computer Repair", "c": "
             "d": "Friendly IT support and computer repairs for homes and businesses across Bournemouth, Poole and Dorset.", "h": "home"}]
 for _p in bp.PAGES:
     _sl = _p.get("slug")
-    if not _sl:
+    if not _sl or _p.get("nosearch"):   # nosearch: a page kept out of the site's own search (e.g. /games/ while hidden)
         continue
     _sindex.append({"u": _sl, "t": _s_title(_p.get("title", "")), "c": _s_cat(_sl),
                     "d": _s_txt(_p.get("desc", ""))[:170], "h": _s_headings(_p.get("content", ""))})

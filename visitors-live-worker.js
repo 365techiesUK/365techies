@@ -28,7 +28,8 @@
  * ARCHITECTURE NOTE: the Worker is TRANSPORT, not the system of record (the
  * house rule). It holds only the rolling 5-minute window; any history/
  * aggregation lives server-side with us, fed by polling /live. KV free tier
- * allows ~1k writes/day ≈ 1k page views/day across all sites — fine today;
+ * allows ~1k writes/day ≈ 1k page views/day across all sites — fine today
+ * (a game page: one write per player per game per day, see GAME_PATH);
  * if the sites outgrow it, the $5/mo Workers plan lifts it to 1M/day.
  *
  * DEPLOY (Cloudflare dashboard, ~3 minutes — same routine as the VRM proxy):
@@ -42,6 +43,17 @@
  *          <?php $VIS_URL='https://<worker-url>'; $VIS_TOKEN='<same secret>';
  *      (gitignored + .htaccess-denied, like every other key file.)
  */
+
+// 4 Oct 2026: a GAME page counts each player once a day per game. A game stays open for an hour of play and players
+// come back to it all day, so one write per opening could spend the free tier's 1,000 writes a day (account-wide) on
+// the games alone. The entry lives until the visitor key itself changes (midnight UTC) and a repeat opening that day
+// writes nothing; /live still treats it as "on now" only for the usual 5 minutes after it was written. Nothing is
+// stored on the player's device - the visitor key is the same daily hash as every other page uses.
+const GAME_PATH = /^\/games\/[a-z0-9-]+\/$|^\/bournemouth\/games\/[a-z0-9-]+\/play\/$/;
+const LIVE_S = 300;
+// a game entry counts as "on now" a minute longer than 5 minutes, so the 5-minute tally on our server never misses a
+// player between two of its reads (an ordinary page's entry gets the same slack from KV, which deletes a little late)
+const GAME_LIVE_S = 360;
 
 const SITES = {
   t365: ["https://365techies.co.uk", "https://www.365techies.co.uk"],
@@ -262,14 +274,18 @@ async function ping(request, env) {
   const key = "live:" + site + ":" + vhash + ":" + (dc ? "dc" : (await sha256hex(path)).slice(0, 10));
   const existing = await env.VISITS.get(key, "json");
   const now = Math.floor(Date.now() / 1000);
-  if (!existing || now - (existing.t || 0) > 60) {
+  const game = !dc && GAME_PATH.test(path);   // a game: once a day (see GAME_PATH)
+  if (game ? !existing : (!existing || now - (existing.t || 0) > 60)) {
     // a reload or a hop back keeps the source this page first arrived with
     const s = src ? src : ((existing && existing.s) || src);
     const d = deviceOf(ua, body);
     const m = { p: path, c: city, ct: country, t: now, la, lo, a: area, s, os: d.os, br: d.br, dv: d.dv, sc: d.sc, dk: d.dk, lg: d.lg };
     if (dc) { m.dc = 1; m.org = String(cf.asOrganization || ("AS" + (cf.asn || "?"))).replace(/[^A-Za-z0-9 .,&()-]/g, "").slice(0, 40); }
+    if (game) m.g = 1;
+    // a game's entry stays until midnight UTC, when the visitor key changes anyway; every other page's for 5 minutes
+    const ttl = game ? Math.max(LIVE_S, 86400 - (now % 86400)) : LIVE_S;
     // the same facts ride in the key's metadata, so /live can read everything from ONE list call
-    await env.VISITS.put(key, JSON.stringify(m), { expirationTtl: 300, metadata: m });
+    await env.VISITS.put(key, JSON.stringify(m), { expirationTtl: ttl, metadata: m });
   }
   return json({ ok: true }, 200, headers);
 }
@@ -284,6 +300,7 @@ async function live(request, env, url) {
   if (site === "all") {
     const out = {};
     for (const s of Object.keys(SITES)) out[s] = { seen: new Set(), auto: new Set(), pages: {}, places: {}, vis: {} };
+    const now = Math.floor(Date.now() / 1000);
     let cur;
     do {
       const res = await env.VISITS.list({ prefix: "live:", cursor: cur, limit: 1000 });
@@ -291,6 +308,7 @@ async function live(request, env, url) {
         const bits = k.name.split(":"), o = out[bits[1]];
         const v = k.metadata || (await env.VISITS.get(k.name, "json"));
         if (!o || !v) continue;
+        if (v.g && now - (v.t || 0) > GAME_LIVE_S) continue;   // a game player counted earlier today: not "on now"
         // a data centre or VPN: its own row, outside the counts of people
         if (v.dc) { o.auto.add(bits[2]); (o.vis[bits[2]] || (o.vis[bits[2]] = [])).push(v); continue; }
         o.seen.add(bits[2]);
@@ -302,7 +320,6 @@ async function live(request, env, url) {
       }
       cur = res.list_complete ? null : res.cursor;
     } while (cur);
-    const now = Math.floor(Date.now() / 1000);
     const sites = {};
     for (const s of Object.keys(out)) {
       const rows = Object.keys(out[s].vis).map((vh) => {
@@ -343,6 +360,7 @@ async function live(request, env, url) {
     for (const k of res.keys) {
       const v = await env.VISITS.get(k.name, "json");
       if (!v || v.dc) continue;   // data centres and VPNs are not people
+      if (v.g && now - (v.t || 0) > GAME_LIVE_S) continue;   // a game player counted earlier today: not "on now"
       const vhash = k.name.split(":")[2];
       seen.add(vhash);
       pages[v.p] = (pages[v.p] || 0) + 1;
