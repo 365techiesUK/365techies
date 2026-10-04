@@ -492,7 +492,9 @@
   function enc(s) { return encodeURIComponent(s); }
   // Slides in on the next frames, with a timer as well: frames do not run in a background tab, and a panel left at
   // opacity 0 would be invisible but still in the way.
+  // Moved to <body> first: inside the site's <main> (z-index 2) a panel draws UNDER the phone Call/Book/Text bar.
   function openSheet(el) {
+    if (el.parentNode !== document.body) document.body.appendChild(el);
     el.hidden = false;
     var on = function () { el.classList.add('on'); };
     requestAnimationFrame(function () { requestAnimationFrame(on); });

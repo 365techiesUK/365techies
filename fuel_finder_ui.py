@@ -12,7 +12,7 @@ as they scroll into view, the location button pulses while it searches, and a sk
 A device set to reduce motion gets none of it (CSS below + the script checks the same setting).
 """
 
-JS_V = "9"
+JS_V = "10"
 
 import html as _html
 import json as _json
@@ -77,7 +77,7 @@ _ADD_SVG = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-w
 HEAD = '''
   <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
   <style>
-    .ff{--ff-deep:#0a1420;--ff-water:#10202f;--ff-line:#1d3346;--ff-foam:#e8f1f2;--ff-mute:#8ea3b5;--ff-surf:#4fd8c4;--ff-dusk:#ffb066;--ff-ink:#04121a}
+    .ff,.ff-sheet{--ff-deep:#0a1420;--ff-water:#10202f;--ff-line:#1d3346;--ff-foam:#e8f1f2;--ff-mute:#8ea3b5;--ff-surf:#4fd8c4;--ff-dusk:#ffb066;--ff-ink:#04121a}
     .ff-sec .wrap{max-width:1120px}
     .ff-controls{display:grid;gap:.75rem;margin:0 0 1rem}
     .ff-fuels{display:flex;flex-wrap:wrap;gap:.5rem}
@@ -199,6 +199,10 @@ HEAD = '''
     .ff-pill--add:hover{background:rgba(255,176,102,.16)}
     .ff-sheet{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:1310;max-width:540px;margin:0 auto;display:grid;grid-template-columns:auto minmax(0,1fr);gap:.8rem;align-items:start;padding:1rem 2.6rem 1rem 1rem;border-radius:18px;border:1px solid var(--ff-line);background:#0e1d2c;color:var(--ff-foam);box-shadow:0 18px 50px rgba(0,0,0,.55);transform:translateY(24px);opacity:0;transition:transform .32s cubic-bezier(.2,.7,.2,1),opacity .32s}
     .ff-sheet.on{transform:none;opacity:1}
+    /* the script moves both panels to <body> (the site's <main> is z-index 2, which kept them UNDER the phone's
+       Call/Book/Text bar); on a phone they sit just above that bar, which is 4.6rem tall (styles.css). Seen 4 Oct. */
+    @media (max-width:767px){.ff-sheet{bottom:calc(4.6rem + 10px + env(safe-area-inset-bottom));max-height:calc(100vh - 4.6rem - 24px);overflow-y:auto}}
+    @media (max-width:1024px) and (max-height:500px) and (orientation:landscape){.ff-sheet{bottom:calc(10px + env(safe-area-inset-bottom))}}
     .ff-sheet[hidden],.ff-actions[hidden],[data-ffa2hs][hidden]{display:none!important}
     .ff-sheet-ic{width:52px;height:52px;border-radius:13px;background:url(/images/fuel-icon-192-v1.png) center/cover;box-shadow:0 4px 14px rgba(0,0,0,.4)}
     .ff-sheet-h{margin:0;font-weight:700;font-size:1.02rem;line-height:1.3}
