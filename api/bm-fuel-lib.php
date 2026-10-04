@@ -43,6 +43,8 @@ if (!defined('BMFUEL_FF_BASE')) define('BMFUEL_FF_BASE', 'https://www.fuel-finde
 if (!defined('BMFUEL_FF_FULL')) define('BMFUEL_FF_FULL', 24 * 3600);   // full forecourt + price download this often
 if (!defined('BMFUEL_FF_OVERLAP')) define('BMFUEL_FF_OVERLAP', 3600);  // price-change look-back beyond the last fetch
 if (!defined('BMFUEL_FF_GAP_US')) define('BMFUEL_FF_GAP_US', 700000);  // pause between requests: < 100 a minute
+if (!defined('BMFUEL_FF_MAXAGE')) define('BMFUEL_FF_MAXAGE', 45 * 86400); // a price unconfirmed this long is left out
+if (!defined('BMFUEL_FF_PARSE_V')) define('BMFUEL_FF_PARSE_V', 2);      // version of the stored forecourt list's tidying
 
 function bmfuel_area() { return array(-2.98, 50.45, -0.90, 51.15); }   // W, S, E, N
 
@@ -132,9 +134,43 @@ function bmfuel_parse_uk_time($s) {
 function bmfuel_tidy_case($s) {
     $s = trim(preg_replace('/\s+/', ' ', (string)$s));
     if ($s === '') return '';
-    // A SHOUTED word of four or more letters -> Title case, word by word ("Barrack Road, CHRISTCHURCH"); short codes
-    // like BP, MFG and A31 and postcodes (BH23 2BJ - digits break the run) stay as they are.
-    return preg_replace_callback("/\\b[A-Z][A-Z']{3,}\\b/", function ($m) { return ucfirst(strtolower($m[0])); }, $s);
+    if (strtolower($s) === $s) return ucwords($s);   // "lockerley motors ltd" -> "Lockerley Motors Ltd"
+    // A SHOUTED word -> Title case, word by word ("Barrack RD, CHRISTCHURCH" -> "Barrack Rd, Christchurch"). Real codes
+    // stay as they are: BP, MFG, EG, UK; road numbers (A31) and postcodes (BH23 2BJ) contain digits so never match.
+    $s = preg_replace_callback("/\\b[A-Z][A-Z']+\\b/", function ($m) {
+        return in_array($m[0], array('BP', 'MFG', 'EG', 'UK', 'BWOC'), true) ? $m[0] : ucfirst(strtolower($m[0]));
+    }, $s);
+    return preg_replace_callback('/(?<=\\S) (Of|And) (?=\\S)/', function ($m) { return ' ' . strtolower($m[1]) . ' '; }, $s);   // "Isle of Wight"
+}
+
+/* The brand a driver knows, from whatever the forecourt typed: "Asda Bournemouth Express Petrol" -> Asda,
+   "St Michaels Garage Ltd (BP)" -> BP, "Sainsburys" -> Sainsbury's. Unknown brands are kept as typed (tidied). */
+function bmfuel_brand($raw) {
+    $b = bmfuel_tidy_case($raw);
+    static $known = array(
+        '/^asda\b/i' => 'Asda', "/^sainsbury'?s?\\b/i" => "Sainsbury's", '/^tesco\b/i' => 'Tesco', '/^morrisons?\b/i' => 'Morrisons',
+        '/^esso\b/i' => 'Esso', '/^shell\b/i' => 'Shell', '/^texaco\b/i' => 'Texaco', '/^jet\b/i' => 'Jet', '/^murco\b/i' => 'Murco',
+        '/^gulf\b/i' => 'Gulf', '/^valero\b/i' => 'Valero', '/^eg on the move\b/i' => 'EG On The Move', '/^bwoc$/i' => 'BWOC',
+        '/^bp\b|\(bp\)$/i' => 'BP', '/^co-?op\b/i' => 'Co-op', '/^moto\b/i' => 'Moto', '/^applegreen\b/i' => 'Applegreen',
+    );
+    foreach ($known as $re => $name) if (preg_match($re, $b)) return $name;
+    return $b;
+}
+
+/* An address from its parts: a company line ("Tesco Stores Ltd") is not where the forecourt is, so it is dropped, and a
+   bare house number joins the street after it ("771, Castle Lane East" -> "771 Castle Lane East"). */
+function bmfuel_address($parts) {
+    $out = array();
+    foreach ($parts as $p) {
+        foreach (explode(',', (string)$p) as $seg) {
+            $seg = bmfuel_tidy_case($seg);
+            if ($seg === '' || preg_match('/\b(ltd|limited|plc)\b/i', $seg)) continue;
+            $n = count($out);
+            if ($n && preg_match('/^\d+[A-Za-z]?$/', $out[$n - 1])) $out[$n - 1] .= ' ' . $seg;
+            elseif (!$n || strcasecmp($out[$n - 1], $seg) !== 0) $out[] = $seg;
+        }
+    }
+    return implode(', ', $out);
 }
 
 function bmfuel_price($v) {
@@ -250,12 +286,13 @@ function bmfuel_ff_stations($rows) {
         $l = $r['location'];
         $addr = array();
         foreach (array('address_line_1', 'address_line_2', 'city') as $k) if (!empty($l[$k])) $addr[] = trim($l[$k]);
-        $brand = bmfuel_tidy_case(!empty($r['brand_name']) ? $r['brand_name'] : (isset($r['trading_name']) ? $r['trading_name'] : ''));
-        $name = bmfuel_tidy_case(isset($r['trading_name']) ? $r['trading_name'] : '');
+        $rawBrand = !empty($r['brand_name']) ? $r['brand_name'] : (isset($r['trading_name']) ? $r['trading_name'] : '');
+        $brand = bmfuel_brand($rawBrand);
+        $name = bmfuel_tidy_case(!empty($r['trading_name']) ? $r['trading_name'] : $rawBrand);
         $out[(string)$r['node_id']] = array(
             'b' => $brand,
             'n' => (strcasecmp($name, $brand) === 0) ? '' : $name,
-            'a' => bmfuel_tidy_case(implode(', ', array_unique($addr))),
+            'a' => bmfuel_address($addr),
             'pc' => strtoupper(trim(isset($l['postcode']) ? (string)$l['postcode'] : '')),
             'la' => round($la, 6), 'lo' => round($lo, 6),
         );
@@ -290,10 +327,12 @@ function bmfuel_src_official($now) {
     if (!$token) return array('ok' => false, 'error' => $err, 'stations' => array());
 
     $st = bmfuel_json_load('ff-stations.json');
-    if (empty($st['nodes']) || $now - (int)$st['t'] > BMFUEL_FF_FULL) {
+    // BMFUEL_FF_PARSE_V: bump when bmfuel_ff_stations() changes how it tidies names/addresses, so the stored list is
+    // rebuilt at the next run instead of waiting up to a day.
+    if (empty($st['nodes']) || !isset($st['v']) || (int)$st['v'] !== BMFUEL_FF_PARSE_V || $now - (int)$st['t'] > BMFUEL_FF_FULL) {
         list($rows, $err) = bmfuel_ff_all('pfs', '', $token, $key, $now);
         if ($rows === null && empty($st['nodes'])) return array('ok' => false, 'error' => $err, 'stations' => array());
-        if ($rows !== null) { $st = array('t' => $now, 'nodes' => bmfuel_ff_stations($rows)); bmfuel_json_save('ff-stations.json', $st); }
+        if ($rows !== null) { $st = array('v' => BMFUEL_FF_PARSE_V, 't' => $now, 'nodes' => bmfuel_ff_stations($rows)); bmfuel_json_save('ff-stations.json', $st); }
         usleep(BMFUEL_FF_GAP_US);
     }
     $nodes = $st['nodes'];
@@ -319,7 +358,13 @@ function bmfuel_src_official($now) {
     foreach ($nodes as $id => $s) {
         if (empty($prices[$id])) continue;
         $p = array(); $pt = array(); $t = null;
-        foreach ($prices[$id] as $f => $v) { $p[$f] = $v[0]; $pt[$f] = $v[1]; if ($v[1] && (!$t || $v[1] > $t)) $t = $v[1]; }
+        foreach ($prices[$id] as $f => $v) {
+            // A price not confirmed for BMFUEL_FF_MAXAGE is treated as not reported: on 4 Oct two village garages showed
+            // prices 165 and 187 days old (apparently no longer reporting) - never let one top "cheapest near you".
+            if ($v[1] && $now - $v[1] > BMFUEL_FF_MAXAGE) continue;
+            $p[$f] = $v[0]; $pt[$f] = $v[1]; if ($v[1] && (!$t || $v[1] > $t)) $t = $v[1];
+        }
+        if (!$p) continue;
         $out[] = array('id' => 'ff:' . substr($id, 0, 16), 'b' => $s['b'], 'n' => $s['n'], 'a' => $s['a'], 'pc' => $s['pc'],
                        'la' => $s['la'], 'lo' => $s['lo'], 'p' => $p, 'pt' => $pt, 's' => 'official', 't' => $t);
     }

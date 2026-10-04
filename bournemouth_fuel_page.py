@@ -26,7 +26,7 @@ _SLUG = "bournemouth/fuel-prices"
 PUBLIC = False
 # Flip to True in the same commit that wires the official adapter in api/bm-fuel-lib.php: the FAQ's source answer
 # and the attribution line follow it.
-OFFICIAL = False
+OFFICIAL = True   # 4 Oct 2026: the live server pulled 290 forecourts from Fuel Finder at 19:30
 
 _TITLE = "Cheapest Petrol & Diesel Near Bournemouth: Live Prices"
 _DESC = ("The cheapest petrol and diesel near you in Bournemouth, Poole, Christchurch and around: live pump prices, "
@@ -277,9 +277,10 @@ def _faqs():
     return [
         ("Where do these prices come from?", src),
         ("How up to date are the prices?",
-         "We fetch fresh prices every half hour, and the line under the map says exactly when, along with how old each "
-         "list was when we fetched it. If our copy is more than three hours old the page says so. Prices can change at any "
-         "time, so always check the pump before you fill up."),
+         "We fetch fresh prices every half hour, and the line under the map says exactly when. Each price shows the time "
+         "the forecourt set it. A price a forecourt has not confirmed for more than six weeks is left out rather than shown "
+         "as current, and if our own copy is more than three hours old the page says so. Prices can change at any time, so "
+         "always check the pump before you fill up."),
         ("Does the page know where I am?",
          "Only on your own phone or computer. When you tap Use my location, your browser gives the page your position and the "
          "page works out the distances itself from a list of every station in the area; your location is never sent to us. "
