@@ -15,10 +15,10 @@
      people can see roughly how much it'll cost them to fill up and how much they're saving". Typical tanks: a small
      hatchback 40-45 L, a family hatchback 50-55 L, an SUV or big estate 60-70 L, a Transit or Crafter 75-80 L. */
   var TANKS = [
-    { k: 'small', name: 'Small car', l: 40 },
-    { k: 'family', name: 'Family car', l: 55 },
-    { k: 'suv', name: 'SUV / estate', l: 70 },
-    { k: 'van', name: 'Van', l: 80 }
+    { k: 'small', name: 'Small car', say: 'a small car', l: 40 },
+    { k: 'family', name: 'Family car', say: 'a family car', l: 55 },
+    { k: 'suv', name: 'SUV / estate', say: 'an SUV or estate', l: 70 },
+    { k: 'van', name: 'Van', say: 'a van', l: 80 }
   ];
   var FUEL = { E10: 'Unleaded', B7: 'Diesel', E5: 'Super unleaded', SDV: 'Premium diesel' };
   var NATION = { E: 'England', S: 'Scotland', W: 'Wales', N: 'Northern Ireland' };
@@ -151,7 +151,7 @@
   /* The fill-up box: what a full tank costs for the vehicle picked, and what that saves. Whole UK: "save against the UK
      average" would mean driving to Northern Ireland, so it shows the UK-average bill and the range across areas. */
   function fillTile(best, med) {
-    var t3 = $('ff-t3'), T = tank(), what = 'a ' + T.name.toLowerCase() + ' (' + T.l + ' litres)';
+    var t3 = $('ff-t3'), T = tank(), what = T.say + ' (' + T.l + ' litres)';
     var num = t3.querySelector('.ff-num b'), sub = t3.querySelector('.ff-ts');
     if (st.r === 'uk') {
       var F = st.stats && st.stats.fuels[st.fuel], A = F ? F.areas : null, lo = null, hi = null;
@@ -227,7 +227,7 @@
   function popup(s) {
     var rows = '';
     ['E10', 'E5', 'B7', 'SDV'].forEach(function (f) { if (s.p[f] != null) rows += '<br>' + FUEL[f] + ': <b>' + p1(s.p[f]) + 'p</b>' + (s.pt && s.pt[f] ? ' <small>from ' + hm(s.pt[f]) + '</small>' : ''); });
-    var T = tank(), fill = s.p[st.fuel] != null ? '<br>Fill a ' + T.name.toLowerCase() + ' (' + T.l + ' L) with ' + FUEL[st.fuel].toLowerCase() + ': <b>' + pounds(s.p[st.fuel], T.l) + '</b>' : '';
+    var T = tank(), fill = s.p[st.fuel] != null ? '<br>Fill ' + T.say + ' (' + T.l + ' L) with ' + FUEL[st.fuel].toLowerCase() + ': <b>' + pounds(s.p[st.fuel], T.l) + '</b>' : '';
     return '<b>' + esc(s.b) + '</b>' + (s.n ? '<br>' + esc(s.n) : '') + '<br>' + esc(s.a) + (s.pc ? ', ' + esc(s.pc) : '') + rows + fill +
       '<br><a href="' + dirUrl(s) + '" target="_blank" rel="noopener">Directions</a>';
   }
