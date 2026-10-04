@@ -2,7 +2,8 @@
  * sheets as the card games (table.css, plus arcade.css), and underneath them: a fixed 60-steps-a-second game loop drawn
  * at the game's own small size and blown up with crisp square pixels, keyboard / mouse / touch controls, Pause (also when
  * the window loses focus), sounds made on the spot, a Gentle / Classic / Fast speed, and personal scores kept in this
- * browser only. Nothing is sent anywhere.
+ * browser only. The Hall of Fame (hof.js, 4 Oct 2026): each game asks the server for a one-off ticket as it starts (the
+ * ticket holds the game and the time, nothing about the player); a score is sent only if the player joins at game over.
  *
  * The game's def supplies: id, store, title, width, height (the game's own pixels), speeds {options, def}, newWorld(speed),
  * step(world, input), draw(g, world, t), hud(world) -> {score, lives, wave}, sound(name, kit, event), help (list), and
@@ -86,7 +87,7 @@
     input.alt = false; input.altTap = false; input.mouseY = null; input.touch = false; input.tx = null; input.ty = null;
     document.addEventListener('keydown', function (e) {
       gestured = true;
-      if (e.defaultPrevented || (window.GameSocial && GameSocial.isOpen())) return;   // typing feedback, or a key the share / feedback sheet used
+      if (e.defaultPrevented || (window.GameSocial && GameSocial.isOpen()) || (window.HallOfFame && HallOfFame.isOpen())) return;   // typing feedback or initials, or a key a sheet used
       if (e.key === 'Escape' && openSheet) { closeSheets(); return; }
       if (openSheet || e.altKey || e.ctrlKey || e.metaKey) return;
       var k = (e.key || '').toLowerCase();
@@ -155,7 +156,7 @@
       if (mode === 'play') {
         acc += dt;
         var n = 0;
-        while (acc >= STEP && n < 8) { D.step(W, input); input.tap = false; input.altTap = false; acc -= STEP; n++; handle(); if (mode !== 'play') break; }
+        while (acc >= STEP && n < 8) { D.step(W, input); played++; input.tap = false; input.altTap = false; acc -= STEP; n++; handle(); if (mode !== 'play') break; }
         if (n === 8) acc = 0;   // a slow PC: drop the backlog rather than race to catch up
       } else acc = 0;
       draw(t);
@@ -203,8 +204,10 @@
     }
 
     // ------------------------------------------------------------ game states
+    var played = 0, runP = null;   // steps played this game (paused time never counts), and its Hall of Fame ticket
     function begin() {
       closeSheets();
+      played = 0; runP = window.HallOfFame && D.hof !== false ? HallOfFame.run() : null;
       W = D.newWorld(SET.speed, SET);
       mode = 'play'; acc = 0; last = 0; input.fire = false;
       showOverlay('');
@@ -239,6 +242,8 @@
       $('oWhy').textContent = D.overText ? D.overText(W) : 'Game over';
       $('oBadges').innerHTML = badges.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('');
       showOverlay('over'); lastHud = ''; hud();
+      if (runP && h.score > 0) HallOfFame.score($('oHof'), { lv: key, score: h.score, wave: h.wave, secs: Math.round(played / 60), run: runP });
+      else $('oHof').hidden = true;
       setTimeout(function () { if (mode === 'over') try { $('oPlay').focus({ preventScroll: true }); } catch (e) {} }, 600);
     }
     function showOverlay(which) { ['title', 'paused', 'over'].forEach(function (k) { $('ov_' + k).hidden = k !== which; }); }
@@ -343,6 +348,23 @@
     $('bHelp').onclick = function () { openD('dHelp'); };
     $('oPlay').onclick = begin; $('tPlay').onclick = begin; $('pGo').onclick = resume;
     $('oStats').onclick = openStats;
+    // the Hall of Fame: one player across all our games; the boards are this game's speeds
+    if (window.HallOfFame && D.hof !== false) {
+      HallOfFame.init({ game: D.id, title: D.title, kind: 'arcade', levels: D.hofLevels || D.speeds.options.map(function (o) { return ['v' + o[0], o[1]]; }),
+        level: function () { return skeyFor(SET.speed); }, sfx: function () { sfx('extra'); },
+        onOpen: function () { if (mode === 'play') pause(); }, onPlay: function () { begin(); } });
+      $('tHof').onclick = $('sHof').onclick = function () { closeSheets(); HallOfFame.open({ lv: skeyFor(SET.speed) }); };
+      // the title screen: today's top score at the player's speed - something to aim at
+      (function () {
+        var k = skeyFor(SET.speed), o = (D.hofLevels || []).filter(function (x) { return x[0] === k; })[0], name = o ? o[1] : speedName(SET.speed);
+        HallOfFame.top(k).then(function (r) {
+          var el = $('tTop'); if (r === null || !el) return;
+          el.innerHTML = r ? '&#127942; Today&rsquo;s top score at ' + esc(name) + ': <b>' + esc(r.v) + '</b> &mdash; ' + esc(String(r.ini).split('').join('.')) + '. from ' + esc(r.town)
+            : '&#127942; No one has set a score at ' + esc(name) + ' today &mdash; be the first!';
+          el.hidden = false;
+        });
+      })();
+    } else { $('tHof').hidden = true; $('sHof').hidden = true; }
     // sharing and feedback (social.js): the bar's two buttons and the challenge on the game-over card; opening either pauses a game
     if (window.GameSocial) GameSocial.init({ id: D.id, title: D.title, onOpen: function () { if (mode === 'play') pause(); } });
     $('bShare').onclick = function () { if (window.GameSocial) GameSocial.share(); };
@@ -393,16 +415,17 @@
         + '<div class="ov" id="ov_title"><div class="ovbox"><h1>' + esc(D.title) + '</h1>' + (legend ? '<ul class="legend">' + legend + '</ul>' : '')
         + '<p>' + (D.titleText || '') + '</p>'
         + (D.picker ? '<div class="picker" role="group" aria-label="' + esc(D.picker.label) + '">' + D.picker.options.map(function (o) { return '<button type="button" data-opt="' + esc(D.picker.key) + '" data-val="' + esc(o[0]) + '"><b>' + esc(o[1]) + '</b><small>' + esc(o[2] || '') + '</small></button>'; }).join('') + '</div>' : '')
-        + '<button class="btn go big" id="tPlay" type="button">' + ICON.play + ' Play</button>'
+        + '<div class="trow"><button class="btn go big" id="tPlay" type="button">' + ICON.play + ' Play</button><button class="btn big hofb" id="tHof" type="button">&#127942; Hall of Fame</button></div>'
+        + '<p class="ttop" id="tTop" hidden></p>'
         + (D.keysText ? '<p class="soft k-keys">' + D.keysText + '</p>' : '') + (D.touchText ? '<p class="soft k-touch">' + D.touchText + '</p>' : '')
         + '<p class="soft">Speed: <b id="tSpeed"></b> &middot; change it in Settings</p></div></div>'
         + '<div class="ov" id="ov_paused" hidden><div class="ovbox"><h2>Paused</h2><p>Take your time &mdash; the game waits for you.</p><button class="btn go big" id="pGo" type="button">' + ICON.play + ' Carry on</button></div></div>'
         + '<div class="ov" id="ov_over" hidden><div class="ovbox"><h2 id="oWhy">Game over</h2><div class="tiles"><div class="tile"><b id="oScore">0</b><span>Score</span></div><div class="tile"><b id="oWave">1</b><span>' + WORDC + '</span></div><div class="tile"><b id="oBest">0</b><span>Your best</span></div></div>'
-        + '<ul class="badges" id="oBadges"></ul><div class="row"><button class="btn go wide big" id="oPlay" type="button">' + ICON.play + ' Play again</button><button class="btn wide" id="oShare" type="button">Challenge a friend</button><button class="btn wide" id="oStats" type="button">My scores</button></div></div></div>'
+        + '<ul class="badges" id="oBadges"></ul><div id="oHof" hidden></div><div class="row"><button class="btn go wide big" id="oPlay" type="button">' + ICON.play + ' Play again</button><button class="btn wide" id="oShare" type="button">Challenge a friend</button><button class="btn wide" id="oStats" type="button">My scores</button></div></div></div>'
         + '</div><div class="pad" id="pad">' + (D.pad ? D.pad.map(function (b) { return '<button type="button" data-pad="' + b.act + '" class="' + (b.cls || '') + '">' + esc(b.label) + '</button>'; }).join('')
           : '<button type="button" data-pad="left" aria-label="Move left">&#9664;</button><button type="button" data-pad="fire" class="fire">Fire</button><button type="button" data-pad="right" aria-label="Move right">&#9654;</button>') + '</div>'
         + '</main></div><div id="toast" role="status" aria-live="polite"></div>'
-        + sheet('dStats', 'My scores', '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere.<span id="sWhich"></span></p><div class="tiles" id="sTiles"></div><div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>')
+        + sheet('dStats', 'My scores', '<p class="soft">Kept on this computer only. The Hall of Fame shows only the scores you choose to put in it.<span id="sWhich"></span></p><div class="tiles" id="sTiles"></div><div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn wide hofb" type="button" id="sHof">&#127942; Hall of Fame</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>')
         + sheet('dSet', 'Settings', '<div class="set"><div><label>Speed</label><small>Gentle is slower, with more lives. Changes from your next game.</small></div><div class="seg" role="group" aria-label="Speed">' + speeds + '</div></div>'
           + segRows
           + '<div class="set"><div><label id="l_sound">Sounds</label><small>Arcade sound effects, made in the game.</small></div><button class="sw" type="button" role="switch" aria-labelledby="l_sound" data-set="sound"></button></div>'

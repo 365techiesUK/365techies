@@ -34,6 +34,16 @@ body.arcade-sky::before {   /* a few faint stars round the screen */
 .ovbox .btn.big { min-height: 58px; padding: 0 30px; font-size: 20px; margin: 6px 0 4px; }
 .ovbox .btn svg { width: 22px; height: 22px; }
 .ovbox .row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+/* the title screen's Play and Hall of Fame side by side; the Hall of Fame's gold (hof.js draws its own sheets) */
+.ovbox .trow { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 6px 0 4px; }
+.ovbox .trow .btn.big { margin: 0; }
+#app .btn.hofb, .scrim .btn.hofb { border-color: rgba(255, 210, 87, .6); color: #ffd257; }
+#app .btn.hofb:hover, .scrim .btn.hofb:hover { background: rgba(255, 210, 87, .12); }
+#oHof { margin-top: 4px; }
+.ovbox .ttop { margin: 8px 0 2px; color: #ffe8a3; font-size: 14.5px; }
+.ovbox .ttop b { color: #ffd257; font-variant-numeric: tabular-nums; }
+#oHof .hf-res { margin-top: 8px; padding: 12px; }
+#oHof .hf-res .big { font-size: 38px; }
 .ovbox .tiles { margin: 10px 0 2px; }
 .ovbox .tile { background: rgba(255, 255, 255, .08); }
 .ovbox .tile span { color: #a9b7d6; }

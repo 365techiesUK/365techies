@@ -276,3 +276,6 @@ api/games-hof.json
 api/games-hof.json.*.tmp
 api/games-hof-rate.json
 api/games-hof.lock
+api/games-hof-runs.json
+api/games-hof-runrate.json
+api/games-hof-runs.lock

@@ -263,6 +263,8 @@
     quietSay: function (W) { return W.enh; },   // Enhanced draws its own banners and labels
     statKey: function (W) { return (W.enh ? 'e' : 'v') + W.speed; },
     statKeyFor: function (set, speed) { return (set.style === 'retro' ? 'v' : 'e') + speed; },
+    // the Hall of Fame's boards: the same slots as My scores (Enhanced e1-e3, Retro v1-v3)
+    hofLevels: [['e1', 'Gentle'], ['e2', 'Classic'], ['e3', 'Fast'], ['v1', 'Retro · Gentle'], ['v2', 'Retro · Classic'], ['v3', 'Retro · Fast']],
     styleName: function (set) { return set.style === 'retro' ? 'Retro' : 'Enhanced'; },
     overText: function (W) { return W.landed ? 'They landed!' : 'Game over'; },
     titleText: 'Stop the invaders before they reach the ground. Catch the falling capsules for <b>rapid fire</b>, a <b>spread shot</b> or a <b>shield</b> &mdash; and watch out for the Mothership.',

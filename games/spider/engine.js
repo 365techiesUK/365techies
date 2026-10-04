@@ -6,6 +6,9 @@
  * (spades and hearts), then four.
  * Points as in Windows Spider: start at 500, lose 1 a move, gain 100 for each suit cleared.
  * A card is 0-103: rank = card % 13 + 1; its suit depends on the game's suits (see suitOf).
+ * Levels (4 Oct 2026): lv 1 Easy = one suit, 3 Normal = two suits, 5 Hard = four suits, 7 Expert = four suits with no
+ * Undo (the page enforces that). deal() also takes the old 1 / 2 / 4 suits, so a game saved before then carries on.
+ * The shuffle never depends on the level, so deal #n has the same cards in the same places at every level.
  * The page loads this as window.SpEngine; the tests require() it. */
 (function (root) {
   'use strict';
@@ -23,8 +26,10 @@
       return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
   }
-  function deal(seed, suits) {
-    suits = suits === 2 || suits === 4 ? suits : 1;
+  var SUITS = { 1: 1, 3: 2, 5: 4, 7: 4 };
+  function lvOf(v) { return v === 2 ? 3 : v === 4 ? 5 : SUITS[v] ? v : 1; }   // 2 and 4: the suits a game saved before 4 Oct asked for
+  function deal(seed, v) {
+    var lv = lvOf(v), suits = SUITS[lv];
     var d = [], r = rng(seed), i, j, t;
     for (i = 0; i < 104; i++) d.push(i);
     for (i = 103; i > 0; i--) { j = Math.floor(r() * (i + 1)); t = d[i]; d[i] = d[j]; d[j] = t; }
@@ -32,10 +37,10 @@
     for (col = 0; col < 10; col++) tab.push([]);
     for (row = 0; row < 6; row++) for (col = 0; col < 10; col++) if (row < (col < 4 ? 6 : 5)) tab[col].push({ c: d[p++], up: false });
     for (col = 0; col < 10; col++) tab[col][tab[col].length - 1].up = true;
-    return { seed: seed, suits: suits, tab: tab, stock: d.slice(p), done: [], moves: 0, score: 500, won: false };
+    return { seed: seed, lv: lv, suits: suits, tab: tab, stock: d.slice(p), done: [], moves: 0, score: 500, won: false };
   }
   function clone(s) {
-    return { seed: s.seed, suits: s.suits, tab: s.tab.map(function (col) { return col.map(function (x) { return { c: x.c, up: x.up }; }); }),
+    return { seed: s.seed, lv: s.lv, suits: s.suits, tab: s.tab.map(function (col) { return col.map(function (x) { return { c: x.c, up: x.up }; }); }),
              stock: s.stock.slice(), done: s.done.map(function (r) { return r.slice(); }), moves: s.moves, score: s.score, won: s.won };
   }
   // the cards on top that run down in order in one suit (they move together)
@@ -149,7 +154,21 @@
     return bestW > 0 ? best : null;
   }
 
-  var api = { deal: deal, clone: clone, legal: legal, apply: apply, picked: picked, runLen: runLen, canDeal: canDeal, emptyCols: emptyCols,
+  // a move as a short code for the Hall of Fame's replay (api/games-sp-lib.php reads the same codes): d = deal, t3.2>t5
+  function code(m) { return m.t === 'draw' ? 'd' : 't' + m.from.i + '.' + (m.from.n || 1) + '>t' + m.to.i; }
+  function decode(c) {
+    if (c === 'd') return { t: 'draw' };
+    var x = /^t(\d)\.(\d{1,2})>t(\d)$/.exec(String(c)); if (!x) return null;
+    return { t: 'move', from: { p: 't', i: +x[1], n: +x[2] }, to: { p: 't', i: +x[3] } };
+  }
+  // the sprint's count: cards cleared, plus every face-up card sitting on the next card up in its own suit
+  function inOrder(s) {
+    var n = s.done.length * 13;
+    s.tab.forEach(function (col) { for (var k = 1; k < col.length; k++) { var a = col[k], b = col[k - 1]; if (a.up && b.up && suitOf(a.c, s.suits) === suitOf(b.c, s.suits) && rank(b.c) === rank(a.c) + 1) n++; } });
+    return n;
+  }
+
+  var api = { deal: deal, lvOf: lvOf, SUITS: SUITS, code: code, decode: decode, inOrder: inOrder, clone: clone, legal: legal, apply: apply, picked: picked, runLen: runLen, canDeal: canDeal, emptyCols: emptyCols,
               goodMoves: goodMoves, hint: hint, stuck: stuck, smartMove: smartMove, rank: rank, suitOf: suitOf };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.SpEngine = api;

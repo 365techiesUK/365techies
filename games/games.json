@@ -7,13 +7,13 @@
     { "id": "freecell", "title": "FreeCell", "icon": "♣", "cat": "Card games", "url": "https://365techies.co.uk/games/freecell/",
       "sub": "Every card face up, so you can plan. Four levels, today's deal, a Hall of Fame and a 100-level Journey through Dorset." },
     { "id": "spider", "title": "Spider", "icon": "🕷", "cat": "Card games", "url": "https://365techies.co.uk/games/spider/",
-      "sub": "Build each suit from King to Ace. One suit is easy; two or four for a challenge." },
+      "sub": "Build each suit from King to Ace. Four levels from one suit to four, today's deal, a Hall of Fame and a 100-level Journey along the Jurassic Coast." },
     { "id": "invaders", "title": "365 Invaders", "icon": "👾", "cat": "Arcade", "url": "https://365techies.co.uk/games/invaders/",
-      "sub": "Our own 80s arcade shooter, with power-ups, combos and a Mothership boss. A gentle speed for beginners." },
+      "sub": "Our own 80s arcade shooter, with power-ups, combos and a Mothership boss. A gentle speed for beginners, and a Hall of Fame." },
     { "id": "batball", "title": "365 Bat & Ball", "icon": "🏓", "cat": "Arcade", "url": "https://365techies.co.uk/games/batball/",
-      "sub": "Knock out the bricks with a bat and ball. 20 levels, exploding bricks, lasers, three balls and two Motherships." },
+      "sub": "Knock out the bricks with a bat and ball. 20 levels, exploding bricks, lasers, three balls, two Motherships and a Hall of Fame." },
     { "id": "eclipse", "title": "365 Eclipse", "icon": "🌗", "cat": "Arcade", "url": "https://365techies.co.uk/games/eclipse/",
-      "sub": "A space shooter: switch between light and dark to soak up bullets, chain your kills and beat three huge bosses." },
+      "sub": "A space shooter: switch between light and dark to soak up bullets, chain your kills, beat three huge bosses and make the Hall of Fame." },
     { "id": "seafront", "title": "Seafront", "icon": "🌊", "cat": "Seafront", "url": "https://365techies.co.uk/bournemouth/games/seafront/play/",
       "sub": "Ride an eFoil, jet ski or RIB along the real Bournemouth seafront. Best on a newer PC." }
   ]

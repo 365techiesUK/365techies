@@ -16,7 +16,14 @@
  * customer (the portal's web session, checked by the canonical portal_session_check) gets their initials and town from
  * their account and the member badge. Nothing else about them is ever shown.
  *
- * Actions (POST JSON): whoami, submit, board, rename, forget. Store: games-hof.json (denied in .htaccess), 2 years.
+ * The arcade games (Invaders, Bat & Ball, Eclipse; 4 Oct) can't be replayed here - they run 60 steps a second on live
+ * keys - so a score is checked another way: the game asks for a one-off ticket when a game STARTS (action run; the
+ * ticket holds only the game and the time), and the score must come back on that ticket, once, with no more play time
+ * than has really passed and no more points than that game can score in that time. Boards: the highest score today /
+ * this week / ever / in your town, at each speed.
+ *
+ * Actions (POST JSON): whoami, submit, board, rename, forget, run. Store: games-hof.json (denied in .htaccess), 2 years;
+ * tickets: games-hof-runs.json, 12 hours.
  * NO closing tag in this file.
  */
 error_reporting(0);
@@ -34,7 +41,17 @@ $HOF_KEEP  = 2 * 365 * 86400;
 $HOF_GAMES = array(
     'solitaire' => array('lib' => 'games-sol-lib.php', 'replay' => 'sol_replay', 'daily' => 'sol_daily_seed', 'sprint' => 'sol_sprint_seed', 'count' => 'sol_found_count', 'sprintLv' => 1),
     'freecell'  => array('lib' => 'games-fc-lib.php',  'replay' => 'fc_replay',  'daily' => 'fc_daily_seed',  'sprint' => 'fc_sprint_seed',  'count' => 'fc_found_count',  'sprintLv' => 1),
+    'spider'    => array('lib' => 'games-sp-lib.php',  'replay' => 'sp_replay',  'daily' => 'sp_daily_seed',  'sprint' => 'sp_sprint_seed',  'count' => 'sp_found_count',  'sprintLv' => 1),
 );
+// the arcade games: their speeds (the game's own score slots, arcade.js skey) and the most points a second of play can
+// bring, plus a margin - generous, so a great game is never refused; the ticket's clock is what really holds a score down
+$HOF_ARCADE = array(
+    'invaders' => array('lvs' => array('e1' => 'Gentle', 'e2' => 'Classic', 'e3' => 'Fast', 'v1' => 'Retro · Gentle', 'v2' => 'Retro · Classic', 'v3' => 'Retro · Fast'), 'rate' => 1000, 'base' => 5000, 'word' => 'wave'),
+    'batball'  => array('lvs' => array('v1' => 'Gentle', 'v2' => 'Classic', 'v3' => 'Fast'), 'rate' => 1500, 'base' => 10000, 'word' => 'level'),
+    'eclipse'  => array('lvs' => array('v1' => 'Gentle', 'v2' => 'Classic', 'v3' => 'Fast'), 'rate' => 20000, 'base' => 100000, 'word' => 'stage'),
+);
+$HOF_RUNS = __DIR__ . '/games-hof-runs.json';
+$HOF_RUNLOCK = __DIR__ . '/games-hof-runs.lock';
 
 function hof_out($a, $code = 200) { http_response_code($code); echo json_encode($a, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); exit; }
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') hof_out(array('ok' => false, 'error' => 'method'), 405);
@@ -44,9 +61,10 @@ $in = json_decode((string)file_get_contents('php://input', false, null, 0, 65536
 if (!is_array($in)) hof_out(array('ok' => false, 'error' => 'bad-input'), 400);
 $action = isset($in['action']) ? preg_replace('/[^a-z]/', '', (string)$in['action']) : '';
 $GAME = isset($in['game']) ? (string)$in['game'] : '';
-if (!isset($HOF_GAMES[$GAME])) hof_out(array('ok' => false, 'error' => 'game'), 400);
-$G = $HOF_GAMES[$GAME];
-require_once __DIR__ . '/' . $G['lib'];
+$ARC = isset($HOF_ARCADE[$GAME]) ? $HOF_ARCADE[$GAME] : null;
+if (!isset($HOF_GAMES[$GAME]) && !$ARC) hof_out(array('ok' => false, 'error' => 'game'), 400);
+$G = $ARC ? null : $HOF_GAMES[$GAME];
+if ($G) require_once __DIR__ . '/' . $G['lib'];
 function hof_day_number($ymd) {   // days since 1 Jan 2026 - the games' own day count (table.js dayNumber)
     if (!preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', (string)$ymd, $m)) return null;
     return intdiv(gmmktime(0, 0, 0, (int)$m[2], (int)$m[3], (int)$m[1]) - gmmktime(0, 0, 0, 1, 1, 2026), 86400);
@@ -144,7 +162,7 @@ function hof_board($all, $board, $lv, $town, $me, $game) {
                 if ($board === 'town' && $pl[$e['p']]['town'] !== $town) continue;
             }
             $r = $board === 'sprint'
-                ? array('p' => $e['p'], 'k1' => -$e['cards'], 'k2' => $e['secs'], 'v' => $e['cards'] . ($e['cards'] === 52 ? ' cards - all of them!' : ' cards'), 'sub' => hof_mmss($e['secs']))
+                ? array('p' => $e['p'], 'k1' => -$e['cards'], 'k2' => $e['secs'], 'v' => $e['cards'] . ($e['cards'] === ($game === 'spider' ? 104 : 52) ? ' cards - all of them!' : ' cards'), 'sub' => hof_mmss($e['secs']))
                 : array('p' => $e['p'], 'k1' => $e['secs'], 'k2' => $e['moves'], 'v' => hof_mmss($e['secs']), 'sub' => $e['moves'] . ' moves' . ($board === 'alltime' ? ' · ' . date('j M Y', strtotime($e['day'] . ' 12:00')) : ''));
             if (!isset($byP[$e['p']]) || $r['k1'] < $byP[$e['p']]['k1'] || ($r['k1'] === $byP[$e['p']]['k1'] && $r['k2'] < $byP[$e['p']]['k2'])) $byP[$e['p']] = $r;   // each player once: their best
         }
@@ -161,21 +179,62 @@ function hof_board($all, $board, $lv, $town, $me, $game) {
     return array('rows' => $out, 'count' => count($rows), 'mine' => $mine);
 }
 
+// an arcade game's boards: the highest score (each player once, their best), today / this week / ever / today in a town
+function hof_arcade_board($all, $board, $lk, $town, $me, $game, $word) {
+    $today = date('Y-m-d'); $week = date('o-W'); $pl = $all['players']; $byP = array();
+    foreach ($all['entries'] as $e) {
+        if (!isset($pl[$e['p']]) || hof_g($e) !== $game || $e['mode'] !== 'score' || $e['lv'] !== $lk) continue;
+        if (($board === 'today' || $board === 'town') && $e['day'] !== $today) continue;
+        if ($board === 'week' && date('o-W', strtotime($e['day'] . ' 12:00')) !== $week) continue;
+        if ($board === 'town' && $pl[$e['p']]['town'] !== $town) continue;
+        $r = array('p' => $e['p'], 'k1' => -$e['score'], 'k2' => $e['t'], 'v' => number_format($e['score']),
+            'sub' => $word . ' ' . $e['wave'] . ($board === 'alltime' || $board === 'week' ? ' · ' . date('j M' . ($board === 'alltime' ? ' Y' : ''), strtotime($e['day'] . ' 12:00')) : ''));
+        if (!isset($byP[$e['p']]) || $r['k1'] < $byP[$e['p']]['k1'] || ($r['k1'] === $byP[$e['p']]['k1'] && $r['k2'] < $byP[$e['p']]['k2'])) $byP[$e['p']] = $r;
+    }
+    $rows = array_values($byP);
+    usort($rows, function ($a, $b) { return $a['k1'] === $b['k1'] ? ($a['k2'] === $b['k2'] ? strcmp($a['p'], $b['p']) : ($a['k2'] < $b['k2'] ? -1 : 1)) : ($a['k1'] < $b['k1'] ? -1 : 1); });
+    $out = array(); $mine = null;
+    foreach ($rows as $i => $r) {
+        $p = $pl[$r['p']];
+        $row = array('rank' => $i + 1, 'ini' => $p['ini'], 'town' => $p['town'], 'v' => $r['v'], 'sub' => $r['sub'], 'm' => !empty($p['member']), 'you' => $me !== null && $r['p'] === $me);
+        if ($i < 20) $out[] = $row;
+        if ($row['you']) $mine = $row;
+    }
+    return array('rows' => $out, 'count' => count($rows), 'mine' => $mine);
+}
+
 // ---- rate limits (per visitor per day, and in all) for anything that writes
-function hof_rate($file) {
+function hof_rate($file, $per = 60, $most = 5000) {
     $day = date('Y-m-d'); $ip = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
     $who = substr(hash('sha256', $ip . '|' . $day . '|365-hof'), 0, 16);
     $r = @json_decode((string)@file_get_contents($file), true);
     if (!is_array($r) || !isset($r['day']) || $r['day'] !== $day) $r = array('day' => $day, 'all' => 0, 'v' => array());
     $n = isset($r['v'][$who]) ? (int)$r['v'][$who] : 0;
-    if ($n >= 60 || (int)$r['all'] >= 5000) return false;
+    if ($n >= $per || (int)$r['all'] >= $most) return false;
     $r['v'][$who] = $n + 1; $r['all'] = (int)$r['all'] + 1;
     @file_put_contents($file, json_encode($r), LOCK_EX);
     return true;
 }
 
 $P = hof_player($in);
-$lv = isset($in['lv']) ? (int)$in['lv'] : 1; if (!isset($LV_NAME[$lv])) $lv = 1;
+if ($ARC) { $lv = isset($in['lv']) && is_string($in['lv']) && isset($ARC['lvs'][$in['lv']]) ? $in['lv'] : key($ARC['lvs']); }   // an arcade speed, e.g. 'v2'
+else { $lv = isset($in['lv']) ? (int)$in['lv'] : 1; if (!isset($LV_NAME[$lv])) $lv = 1; }
+
+// ---- an arcade game starting: a one-off ticket (the game and the time - nothing about the player)
+if ($action === 'run') {
+    if (!$ARC) hof_out(array('ok' => false, 'error' => 'game'), 400);
+    if (!hof_rate(__DIR__ . '/games-hof-runrate.json', 600, 40000)) hof_out(array('ok' => false, 'error' => 'rate'), 429);
+    $id = bin2hex(random_bytes(12));
+    $lk = @fopen($HOF_RUNLOCK, 'c'); if ($lk) @flock($lk, LOCK_EX);
+    $runs = @json_decode((string)@file_get_contents($HOF_RUNS), true); if (!is_array($runs)) $runs = array();
+    $cut = time() - 12 * 3600;
+    foreach ($runs as $k => $r) if ((int)$r[1] < $cut) unset($runs[$k]);
+    if (count($runs) > 4000) $runs = array_slice($runs, -4000, null, true);
+    $runs[$id] = array($GAME, time());
+    @file_put_contents($HOF_RUNS, json_encode($runs));
+    if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); }
+    hof_out(array('ok' => true, 'run' => $id));
+}
 
 if ($action === 'whoami') {
     $mem = hof_member($in, $HOF_TOWNS);
@@ -190,13 +249,63 @@ if ($action === 'board') {
     $all = hof_load($HOF_STORE);
     $me = $P && isset($all['players'][$P['id']]) && $all['players'][$P['id']]['kh'] === $P['kh'] ? $P['id'] : null;
     if ($board === 'town' && $town === '' && $me) $town = $all['players'][$me]['town'];
-    $b = hof_board($all, $board, $lv, $town, $me, $GAME);
+    $b = $ARC ? hof_arcade_board($all, $board === 'sprint' ? 'today' : $board, $lv, $town, $me, $GAME, $ARC['word']) : hof_board($all, $board, $lv, $town, $me, $GAME);
     hof_out(array('ok' => true, 'board' => $board, 'lv' => $lv, 'town' => $town, 'today' => date('Y-m-d')) + $b);
 }
 
 if ($action === 'submit' || $action === 'rename' || $action === 'forget') {
     if (!$P) hof_out(array('ok' => false, 'error' => 'player'), 400);
     if (!hof_rate($HOF_RATE)) hof_out(array('ok' => false, 'error' => 'rate'), 429);
+}
+
+// who a submitted score belongs to on the board: a signed-in customer's own initials and town, or what they typed
+function hof_who($in, $towns) {
+    $mem = hof_member($in, $towns);
+    if ($mem && $mem['ini'] !== '') return array($mem['ini'], $mem['town'] !== '' ? $mem['town'] : (isset($in['town']) && in_array($in['town'], $towns, true) ? $in['town'] : 'Elsewhere in the UK'), true);
+    $ini = hof_ini(isset($in['ini']) ? $in['ini'] : '');
+    $town = isset($in['town']) && in_array($in['town'], $towns, true) ? $in['town'] : '';
+    if ($ini === '') hof_out(array('ok' => false, 'error' => 'ini'), 400);
+    if ($town === '') hof_out(array('ok' => false, 'error' => 'town'), 400);
+    return array($ini, $town, false);
+}
+
+if ($action === 'submit' && $ARC) {
+    $score = isset($in['score']) ? (int)$in['score'] : 0; $wave = isset($in['wave']) ? (int)$in['wave'] : 0; $secs = isset($in['secs']) ? (int)$in['secs'] : 0;
+    $run = isset($in['run']) ? preg_replace('/[^a-f0-9]/', '', (string)$in['run']) : '';
+    // the ticket: this game's, not used before, and the play time no longer than the time that has really passed since
+    $lk = @fopen($HOF_RUNLOCK, 'c'); if ($lk) @flock($lk, LOCK_EX);
+    $runs = @json_decode((string)@file_get_contents($HOF_RUNS), true); if (!is_array($runs)) $runs = array();
+    $t = $run !== '' && isset($runs[$run]) && $runs[$run][0] === $GAME ? (int)$runs[$run][1] : 0;
+    if ($t) { unset($runs[$run]); @file_put_contents($HOF_RUNS, json_encode($runs)); }
+    if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); }
+    if (!$t) hof_out(array('ok' => false, 'error' => 'run'), 400);
+    if ($score < 1 || $wave < 1 || $secs < 3 || $secs > time() - $t + 10 || $secs > 6 * 3600) hof_out(array('ok' => false, 'error' => 'time'), 400);
+    if ($score > $ARC['rate'] * $secs + $ARC['base'] || $wave > intdiv($secs, 2) + 5) hof_out(array('ok' => false, 'error' => 'time'), 400);
+    list($ini, $town, $isMem) = hof_who($in, $HOF_TOWNS);
+    $day = date('Y-m-d');
+    $lk = @fopen($HOF_LOCK, 'c'); if ($lk) @flock($lk, LOCK_EX);
+    $all = hof_load($HOF_STORE);
+    if (isset($all['players'][$P['id']]) && $all['players'][$P['id']]['kh'] !== $P['kh']) { if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); } hof_out(array('ok' => false, 'error' => 'player'), 403); }
+    $all['players'][$P['id']] = array('kh' => $P['kh'], 'ini' => $ini, 'town' => $town, 'member' => $isMem, 't' => time());
+    $cut = time() - $HOF_KEEP;
+    $all['entries'] = array_values(array_filter($all['entries'], function ($e) use ($cut) { return (int)$e['t'] >= $cut; }));
+    $new = array('p' => $P['id'], 'g' => $GAME, 'mode' => 'score', 'lv' => $lv, 'day' => $day, 'score' => $score, 'wave' => $wave, 'secs' => $secs, 't' => time());
+    $improved = true; $found = false;
+    foreach ($all['entries'] as $i => $e) {   // one entry a day for each player at each speed: their best
+        if ($e['p'] !== $P['id'] || hof_g($e) !== $GAME || $e['mode'] !== 'score' || $e['lv'] !== $lv || $e['day'] !== $day) continue;
+        $found = true;
+        if ($score > $e['score']) $all['entries'][$i] = $new; else $improved = false;
+    }
+    if (!$found) $all['entries'][] = $new;
+    if (count($all['entries']) > 60000) $all['entries'] = array_slice($all['entries'], -60000);
+    $ok = hof_save($HOF_STORE, $all);
+    if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); }
+    if (!$ok) hof_out(array('ok' => false, 'error' => 'store'), 500);
+    $b = hof_arcade_board($all, 'today', $lv, '', $P['id'], $GAME, $ARC['word']);
+    $tb = hof_arcade_board($all, 'town', $lv, $town, $P['id'], $GAME, $ARC['word']);
+    $ab = hof_arcade_board($all, 'alltime', $lv, '', $P['id'], $GAME, $ARC['word']);
+    hof_out(array('ok' => true, 'improved' => $improved, 'ini' => $ini, 'town' => $town, 'member' => $isMem, 'rank' => $b['mine'] ? $b['mine']['rank'] : null, 'count' => $b['count'],
+        'townRank' => $tb['mine'] ? $tb['mine']['rank'] : null, 'townCount' => $tb['count'], 'everRank' => $ab['mine'] ? $ab['mine']['rank'] : null, 'everCount' => $ab['count']));
 }
 
 if ($action === 'submit') {

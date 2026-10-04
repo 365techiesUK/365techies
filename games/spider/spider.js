@@ -3,8 +3,20 @@
  * only says where things sit and how cards are picked up; the table does the rest. */
 (function () {
   'use strict';
-  var E = window.SpEngine;
+  var E = window.SpEngine, SD = window.SP_DEALS || { s1: [], s2: [], s4: [] };
   var NAMES = { 1: 'one suit', 2: 'two suits', 4: 'four suits' };
+  // 4 Oct 2026 - levels: 1 Easy (one suit), 3 Normal (two suits), 5 Hard (four suits, no Hint), 7 Expert (four suits, no Undo,
+  // no Hint). The stat keys are the old s1 / s2 / s4, so everyone's scores from before carry on. Today's deal, the Hall of Fame
+  // and the Journey only use deals tools/spider/solver.cjs has won (deals.js).
+  var LV = {
+    1: { name: 'Easy', stars: 1, stat: 's1', line: 'One suit \u00b7 Undo and Hint' },
+    3: { name: 'Normal', stars: 2, stat: 's2', line: 'Two suits \u00b7 Undo and Hint' },
+    5: { name: 'Hard', stars: 3, stat: 's4', line: 'All four suits \u00b7 no Hint' },
+    7: { name: 'Expert', stars: 4, stat: 'x', line: 'All four suits \u00b7 no Undo, no Hint' }
+  };
+  function lvOf(S) { return LV[S.lv] ? S.lv : E.lvOf(S.suits); }
+  // the suits setting from before 4 Oct (1 / 2 / 4) becomes the matching level, before the table reads it
+  try { var st = JSON.parse(localStorage.getItem('sp365:settings') || 'null'); if (st && (st.suits === 2 || st.suits === 4)) { st.suits = E.lvOf(st.suits); localStorage.setItem('sp365:settings', JSON.stringify(st)); } } catch (e) {}
 
   function colX(L, i) { return L.left + i * (L.cw + L.gap); }
   function layout(W, H) {
@@ -79,7 +91,9 @@
       s.stock.forEach(function (c) { seen[c] = 1; n++; });
       s.done.forEach(function (r) { r.forEach(function (c) { seen[c] = 1; n++; }); });
     } catch (e) { return false; }
-    return n === 104 && Object.keys(seen).length === 104 && s.tab.length === 10 && (s.suits === 1 || s.suits === 2 || s.suits === 4);
+    if (!(n === 104 && Object.keys(seen).length === 104 && s.tab.length === 10 && (s.suits === 1 || s.suits === 2 || s.suits === 4))) return false;
+    if (!LV[s.lv]) s.lv = E.lvOf(s.suits);                 // saved before 4 Oct: one, two or four suits
+    return true;
   }
 
   Table365.start({
@@ -88,15 +102,29 @@
     faceKey: function (S) { return 'sp' + (S ? S.suits : 1); },
     E: E, layout: layout, positions: positions, where: where, picked: picked, targets: targets, hintLights: hintLights, valid: valid,
     whyNot: whyNot, cantPick: cantPick,
-    variant: { key: 'suits', label: 'Suits', small: 'One suit is the easiest. Changes from your next game.', options: [[1, 'One'], [2, 'Two'], [4, 'Four']], def: 1,
-               newLabel: function (v) { return v === 1 ? 'One suit (easiest)' : v === 2 ? 'Two suits' : 'Four suits (hardest)'; },
-               statKey: function (v) { return 's' + v; }, bestLabel: function (v) { return NAMES[v]; } },
+    variant: { key: 'suits', stateKey: 'lv', label: 'Difficulty', small: 'Changes from your next game.', options: [[1, 'Easy'], [3, 'Normal'], [5, 'Hard'], [7, 'Expert']], def: 1,
+               newLabel: function (v) { return LV[v] ? LV[v].name : 'Easy'; }, info: function (v) { return LV[v] ? LV[v].line : ''; },
+               stars: function (v) { return LV[v] ? LV[v].stars : 1; },
+               statKey: function (v) { return LV[v] ? LV[v].stat : 's1'; }, bestLabel: function (v) { return LV[v] ? LV[v].name.toLowerCase() : 'easy'; } },
+    deals: function (v) { var l = v === 1 ? SD.s1 : v === 3 ? SD.s2 : SD.s4; return l && l.length ? l : null; },
+    rules: function (S) { var v = lvOf(S); return { undo: v !== 7, hint: v <= 3 }; },
     dealOrder: function (S) { var o = [], r, c; for (r = 0; r < 6; r++) for (c = 0; c < 10; c++) if (r < S.tab[c].length) o.push(S.tab[c][r].c); return o; },
     deckPos: function (L) { return { x: colX(L, 0), y: L.top }; },
     cascade: function (S, L) { var q = []; S.done.forEach(function (run, k) { run.slice().reverse().forEach(function (c) { q.push({ c: c, x: colX(L, 2 + k), y: L.top }); }); }); return q; },
     winBonus: function () { return 0; },   // Windows Spider's points: 500, less 1 a move, 100 a suit
+    // the Hall of Fame, the 3-minute sprint and the Journey (games/common/hof.js, journey.js; api/games-hof.php replays every
+    // win with api/games-sp-lib.php). ⚠ sprintSeed must match sp_sprint_seed there; foundCount must match sp_found_count.
+    hof: true, sprintLevel: 1,
+    clockMins: function (S) { return { 1: 10, 3: 15, 5: 25, 7: 25 }[lvOf(S)] || 10; },
+    clockText: 'Win a fresh deal in 10 minutes (15 with two suits, 25 with four)',
+    sprintSeed: function (n) { var l = SD.s1.length ? SD.s1 : [1]; return l[((n * 104729 + 17) % l.length + l.length) % l.length]; },
+    foundCount: function (S) { return E.inOrder(S); },
+    sprintWords: { pill: 'cards in order', sub: 'in suit order', line: 'As many cards in suit order as you can', board: 'the most cards in suit order in three minutes (13 for each suit cleared)' },
+    journey: window.SP_JOURNEY ? Object.assign({ where: 'along the Jurassic Coast to Lyme Regis' }, window.SP_JOURNEY) : null,
+    journeyLevelName: function (lv) { return LV[lv] ? LV[lv].name + ' \u00b7 ' + LV[lv].line : ''; },
+    winnableSmall: 'Deals our solver has won at that level, checked move by move.',
     noDrawSay: function (S) { return S.stock.length ? 'Every column needs a card before you can deal' : 'There are no more cards to deal'; },
-    describe: function (S) { return NAMES[S.suits]; },
+    describe: function (S) { return LV[lvOf(S)].name + ' level \u00b7 ' + NAMES[S.suits]; },
     stuckText: 'No more moves found.',
     help: [
       '<b>The aim:</b> make a run from King down to Ace in one suit. A finished run clears itself off the table &mdash; clear eight to win.',
@@ -104,8 +132,8 @@
       '<b>Cards move together</b> only when they run down in order in one suit.',
       '<b>Tap the deck</b> at the top left to deal a new card onto every column. Every column needs a card first.',
       '<b>Any card</b> can go in an empty column.',
-      '<b>One suit</b> is the easiest way to start. Choose two or four suits under New game for more of a challenge.',
-      'Stuck? Press <b>Hint</b>. <b>Undo</b> takes back as many moves as you like.'
+      '<b>Pick how hard</b> under <b>New game</b>: <b>Easy</b> is one suit, <b>Normal</b> two, <b>Hard</b> all four with no Hint, and <b>Expert</b> all four with no Undo.',
+      'Stuck? Press <b>Hint</b> (Easy and Normal). <b>Undo</b> takes back as many moves as you like, except at Expert.'
     ]
   });
 })();

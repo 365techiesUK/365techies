@@ -185,7 +185,9 @@ _FAQS = [
     ("Can I play on a tablet or phone?",
      "Yes. The card games are made for touch: tap a card and it moves to the best place for it. The arcade games show big buttons under the screen on a tablet or phone."),
     ("Are my scores saved?",
-     "Your scores and settings are kept in your web browser on that computer, and they&rsquo;re never sent to us. Like every page on our site, we count visits without cookies &mdash; see our <a href=\"/privacy-policy/\">privacy policy</a>."),
+     "Your scores and settings are kept in your web browser on that computer. They&rsquo;re only sent to us if you choose to put a score in the Hall of Fame. Like every page on our site, we count visits without cookies &mdash; see our <a href=\"/privacy-policy/\">privacy policy</a>."),
+    ("What is the Hall of Fame?",
+     "Our card and arcade games each have one. Win Today&rsquo;s deal in a card game, or finish a game in the arcade, and you can put your initials and town in it to see where you rank in Dorset and beyond. Only your initials and town are ever shown &mdash; never your name &mdash; and you can take them off at any time. 365 customers signed in on that computer get a 365 member badge."),
     ("The arcade games are too fast for me &mdash; can I slow them down?",
      "Yes. Every arcade game has a <b>Gentle</b> speed (it&rsquo;s the one they start on), with a slower pace and more lives. Change it any time in the game&rsquo;s Settings."),
 ]

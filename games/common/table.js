@@ -52,6 +52,8 @@
     var $ = function (id) { return document.getElementById(id); };
     var reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
     var V = D.variant || null;   // e.g. Solitaire's one or three cards, Spider's suits
+    // what the sprint counts, in this game's words (Spider counts cards in suit order, not cards up to the piles)
+    var SPW = D.sprintWords || { pill: 'cards up', sub: 'up to the piles', line: 'As many cards up as you can', board: 'the most cards up to the piles in three minutes' };
 
     // ------------------------------------------------------------ what this browser remembers (per game)
     function load(k, d) { try { var v = localStorage.getItem(D.store + ':' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
@@ -72,7 +74,7 @@
     function newG(mode, day) {
       // log: the moves, as codes (Solitaire's E.code), so the Hall of Fame can replay a win; limit: a challenge's clock
       return { undo: [], ms: 0, mode: mode || 'deal', day: day || '', started: false, counted: false, undid: 0, keepDown: null, log: [],
-               limit: mode === 'clock' ? 300000 : mode === 'sprint' ? 180000 : 0, timeUp: false, over: false };
+               limit: mode === 'clock' ? (D.clockMins ? D.clockMins(S) : 5) * 60000 : mode === 'sprint' ? 180000 : 0, timeUp: false, over: false };   // Spider's clock is longer
     }
     function logMove(m) { if (E.code && G && G.log) { G.log.push(E.code(m)); if (G.log.length > 3000) G.log.length = 3000; } }
 
@@ -437,14 +439,14 @@
       el.hidden = false;
       el.className = 'chal' + (left <= 30000 && !G.timeUp ? ' hurry' : '') + (G.timeUp ? ' done' : '');
       el.innerHTML = '<span class="ci" aria-hidden="true">' + (sp ? '&#9889;' : '&#9201;') + '</span><b>' + (G.timeUp ? (sp ? 'Sprint over' : 'Time&rsquo;s up') : clock(left + 999)) + '</b>'
-        + '<span class="cl">' + (sp ? foundCount() + ' cards up' : (G.timeUp ? 'keep playing for fun' : 'to beat the clock')) + '</span>';
+        + '<span class="cl">' + (sp ? foundCount() + ' ' + SPW.pill : (G.timeUp ? 'keep playing for fun' : 'to beat the clock')) + '</span>';
     }
     function timeUp() {
       G.timeUp = true; chal(); persist();
       if (G.mode === 'sprint') {   // three minutes: the game stops and the cards are counted
         G.over = true; busy = false; gen++; hideStuck(); unhint(); sfx('win');
         var cards = foundCount();
-        $('spCards').textContent = cards; $('spSub').textContent = 'Today\u2019s 3-minute sprint \u00b7 ' + (cards === 1 ? '1 card' : cards + ' cards') + ' up to the piles';
+        $('spCards').textContent = cards; $('spSub').textContent = 'Today\u2019s 3-minute sprint \u00b7 ' + (cards === 1 ? '1 card' : cards + ' cards') + ' ' + SPW.sub;
         openD('dSprint');
         if (window.HallOfFame && D.hof && cards > 0) HallOfFame.sprint($('spHof'), { day: G.day, secs: Math.round(G.limit / 1000), log: G.log, cards: cards });
         else $('spHof').hidden = true;
@@ -723,7 +725,7 @@
       $('nDealS').textContent = SET.winnable && D.deals ? 'A fresh shuffle you can win' : 'A fresh shuffle';
       $('nDailyS').textContent = (dd && dd.won ? 'Done today ✔ — play it again if you like' : 'The same deal for everyone today') + (D.hof ? ' · race the Hall of Fame' : '');
       $('nAgainS').textContent = 'Deal #' + S.seed + ', from the beginning';
-      if (window.Journey && D.journey && $('nJourS')) { var jt = Journey.total(); $('nJourS').textContent = Journey.count() + ' levels along the Dorset coast \u00b7 \u2605 ' + jt.stars + ' of ' + jt.max; }
+      if (window.Journey && D.journey && $('nJourS')) { var jt = Journey.total(); $('nJourS').textContent = Journey.count() + ' levels ' + (D.journey.where || 'along the Dorset coast') + ' \u00b7 \u2605 ' + jt.stars + ' of ' + jt.max; }
       syncControls();
       openD('dNew');
     }
@@ -793,7 +795,7 @@
           onWin: function (n) { if (n === 3 && SET.fx && !reduce) { var r = document.querySelector('#wJour .bigst'); if (r) { var b = r.getBoundingClientRect(); setTimeout(function () { Spark.burst(b.left + b.width / 2, b.top + b.height / 2, 80, ['#ffe08a', '#ffffff', '#ffb347'], 6, 90); }, 1100); } } } });
         $('nJourney').onclick = function () { closeSheets(); Journey.open(); };
       }
-      if (window.HallOfFame) HallOfFame.init({ game: D.id, title: D.title, levels: V ? V.options.map(function (o) { return [o[0], V.newLabel ? V.newLabel(o[0]) : o[1]]; }) : [[0, '']],
+      if (window.HallOfFame) HallOfFame.init({ game: D.id, title: D.title, sprintBoard: SPW.board, levels: V ? V.options.map(function (o) { return [o[0], V.newLabel ? V.newLabel(o[0]) : o[1]]; }) : [[0, '']],
         level: function () { return V ? SET[V.key] : 0; }, sfx: function (k, n) { sfx(k, n); },
         burst: function (x, y, place) { if (SET.fx && !reduce) { Spark.burst(x, y, place === 1 ? 90 : 50, ['#ffe08a', '#ffffff', '#ffb347', '#8ff0ff'], 6, 90); Spark.ring(x, y, 120, '#ffe08a', 40); } },
         onPlay: function (m) { newGame(m === 'sprint' ? 'sprint' : 'daily'); } });
@@ -910,8 +912,8 @@
           + '<div class="choice"><button class="btn go" type="button" id="nDeal">New deal<small id="nDealS">A fresh shuffle</small></button>'
           + '<button class="btn" type="button" id="nDaily">Today&rsquo;s deal<small id="nDailyS">The same deal for everyone today</small></button>'
           + '<button class="btn" type="button" id="nAgain">Play this deal again<small id="nAgainS">Start the same cards from the beginning</small></button></div>'
-          + (D.hof ? '<p class="chalh">Challenges</p><div class="choice chals">' + (D.journey ? '<button class="btn jourbtn" type="button" id="nJourney">&#129517; The Journey<small id="nJourS">100 levels along the Dorset coast</small></button>' : '') + '<button class="btn" type="button" id="nClock">&#9201; Beat the clock<small>Win a fresh deal in 5 minutes, at your level</small></button>'
-            + '<button class="btn" type="button" id="nSprint">&#9889; 3-minute sprint<small>As many cards up as you can &middot; the same deal for everyone today</small></button>'
+          + (D.hof ? '<p class="chalh">Challenges</p><div class="choice chals">' + (D.journey ? '<button class="btn jourbtn" type="button" id="nJourney">&#129517; The Journey<small id="nJourS">100 levels ' + esc(D.journey.where || 'along the Dorset coast') + '</small></button>' : '') + '<button class="btn" type="button" id="nClock">&#9201; Beat the clock<small>' + (D.clockText || 'Win a fresh deal in 5 minutes, at your level') + '</small></button>'
+            + '<button class="btn" type="button" id="nSprint">&#9889; 3-minute sprint<small>' + SPW.line + ' &middot; the same deal for everyone today</small></button>'
             + '<button class="btn hofbtn" type="button" id="nHof">&#127942; Hall of Fame<small>Who&rsquo;s fastest today &mdash; in Dorset and beyond</small></button></div>' : '')
           + '<div class="row"><button class="btn wide" type="button" data-close>Keep playing</button></div>')
         + sheet('dWin', 'You won!', '<p class="soft" id="dWinSub"></p><div class="tiles"><div class="tile"><b id="wTime">0:00</b><span>Time</span></div><div class="tile"><b id="wMoves">0</b><span>Moves</span></div><div class="tile"><b id="wScore">0</b><span>Score</span></div></div>'
