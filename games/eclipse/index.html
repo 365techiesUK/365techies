@@ -3,12 +3,13 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>365 Invaders - free, no adverts | 365 Techies</title>
-<!-- 3 Oct 2026: hand-made game page (not built by build_blog.py). Our own game in the style of the 1978 arcade classics:
-     our own name, pixel art and sounds. noindex and off the sitemap and menus until the owner says it goes public;
-     PC Manager's Games menu (Arcade section) opens it in its own window. -->
+<title>365 Eclipse - free, no adverts | 365 Techies</title>
+<!-- 4 Oct 2026: hand-made game page (not built by build_blog.py). Our own vertical-scrolling shooter: a light / dark
+     ship that soaks up bullets of its own colour, chains, medals and multi-part bosses - our own name, art and sounds.
+     noindex and off the sitemap and menus until the owner says it goes public; PC Manager's Games menu (Arcade section)
+     opens it in its own window. -->
 <meta name="robots" content="noindex" />
-<meta name="description" content="365 Invaders: an 80s-style arcade shooter with power-ups, combos and a Mothership, and a gentle speed for beginners. No adverts, no sign-in, nothing to install - your best scores stay on your computer." />
+<meta name="description" content="365 Eclipse: a vertical-scrolling space shooter. Switch your ship between light and dark to soak up bullets, chain your kills, catch the medals and take on three huge bosses - with a gentle speed for beginners. No adverts, no sign-in, nothing to install." />
 <meta name="theme-color" content="#000000" />
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -18,10 +19,10 @@
 </head>
 <body class="arcade-sky">
 <!-- the bar, the game screen and the pop-up sheets are drawn by ../common/arcade.js (the arcade cabinet) -->
-<script src="engine.js?v=2"></script>
+<script src="engine.js?v=1"></script>
 <script src="../common/arcade.js?v=4"></script>
-<script src="enhanced.js?v=1"></script>
-<script src="invaders.js?v=2"></script>
+<script src="../common/arcade-fx.js?v=1"></script>
+<script src="eclipse.js?v=1"></script>
 <!-- the site's cookie-free visitor count (the same snippet as every page): counts that the game was opened -->
 <script>(function(){try{if(navigator.doNotTrack==="1")return;if(/bot|crawl|spider|slurp|headless|lighthouse|preview|facebookexternalhit/i.test(navigator.userAgent))return;try{if(localStorage.getItem("p365staffdev")||/"staff":true|"back":/.test((localStorage.getItem("p365")||"")+(sessionStorage.getItem("p365s")||"")))return;}catch(e){}var u=navigator.userAgentData,b={site:"t365",path:location.pathname,ref:(function(){try{return new URL(document.referrer).hostname}catch(e){return""}})(),em:/utm_medium=e-?mail|utm_source=(e-?mail|newsletter|hubspot)/i.test(location.search)?1:0,t:navigator.maxTouchPoints||0,sw:(screen&&screen.width)||0,dk:(window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)?1:0,lg:String(navigator.language||"").slice(0,12)},sent=false;if(u&&typeof u.mobile==="boolean")b.mb=u.mobile?1:0;var go=function(){if(sent)return;sent=true;try{fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(b),keepalive:true});}catch(e){}};if(u&&u.getHighEntropyValues&&/Windows/.test(navigator.userAgent)){u.getHighEntropyValues(["platformVersion"]).then(function(h){b.pv=String((h&&h.platformVersion)||"").slice(0,12);go();},go);setTimeout(go,400);}else go();var tap=function(k){try{var d=JSON.parse(JSON.stringify(b));d.path=k;d.ref=location.hostname;d.em=0;fetch("https://visitors-live.steve-2d4.workers.dev/ping",{method:"POST",headers:{"Content-Type":"text/plain;charset=UTF-8"},body:JSON.stringify(d),keepalive:true});}catch(e){}};document.addEventListener("click",function(ev){try{var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");if(!a)return;var h=a.getAttribute("href")||"";if(/365-pc-manager-setup[^\/?#]*\.exe([?#]|$)/i.test(h))tap("/~dl/pcm/");else if(/^tel:/i.test(h))tap("/~call"+location.pathname);else if(/^sms:/i.test(h))tap("/~text"+location.pathname);}catch(e){}},true);document.addEventListener("tt:lead",function(){tap("/~lead"+location.pathname);});}catch(e){}})();</script>
 </body>

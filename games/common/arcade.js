@@ -78,6 +78,9 @@
 
     // ------------------------------------------------------------ controls: keyboard, mouse, touch
     var KEYS = { arrowleft: 'left', a: 'left', arrowright: 'right', d: 'right', ' ': 'fire', arrowup: 'up', w: 'up', arrowdown: 'down', s: 'down' };
+    // a game with a second action (D.alt) gets it on B, X, Shift, the right mouse button and its own touch button
+    if (D.alt) { KEYS.b = 'alt'; KEYS.x = 'alt'; KEYS.shift = 'alt'; }
+    input.alt = false; input.altTap = false; input.mouseY = null; input.touch = false; input.tx = null; input.ty = null;
     document.addEventListener('keydown', function (e) {
       gestured = true;
       if (e.key === 'Escape' && openSheet) { closeSheets(); return; }
@@ -92,29 +95,43 @@
       e.preventDefault();   // Space never presses whichever button has focus, arrows never scroll
       if (mode === 'title' || mode === 'over') { if (a === 'fire') begin(); return; }
       if (mode === 'paused') { if (a === 'fire') resume(); return; }
-      input[a] = true; if (a === 'fire') input.tap = true; if (a === 'left' || a === 'right') input.mouseX = null;
+      input[a] = true; if (a === 'fire') input.tap = true; if (a === 'alt') input.altTap = true;
+      if (a === 'left' || a === 'right' || a === 'up' || a === 'down') { input.mouseX = null; input.mouseY = null; }
     });
     document.addEventListener('keyup', function (e) { var a = KEYS[(e.key || '').toLowerCase()]; if (a) { input[a] = false; e.preventDefault(); } });
     function logicalX(clientX) { var r = cv.getBoundingClientRect(); return (clientX - r.left) / r.width * D.width; }
+    function logicalY(clientY) { var r = cv.getBoundingClientRect(); return (clientY - r.top) / r.height * D.height; }
     var touching = null;
     stage.addEventListener('pointermove', function (e) {
-      if (e.pointerType === 'mouse' || touching === e.pointerId) input.mouseX = logicalX(e.clientX);
+      if (e.pointerType === 'mouse') { input.mouseX = logicalX(e.clientX); input.mouseY = logicalY(e.clientY); }
+      else if (touching === e.pointerId) {
+        if (D.touchMove) { input.tx = logicalX(e.clientX); input.ty = logicalY(e.clientY); }
+        else input.mouseX = logicalX(e.clientX);
+      }
     });
     cv.addEventListener('pointerdown', function (e) {
       gestured = true;
       if (mode === 'title' || mode === 'over') { begin(); return; }
       if (mode === 'paused') { resume(); return; }
-      input.mouseX = logicalX(e.clientX); input.fire = true; input.tap = true;
-      if (e.pointerType !== 'mouse') touching = e.pointerId;   // a finger on the screen: the ship follows it and fires
+      if (e.pointerType === 'mouse' && e.button === 2 && D.alt) { input.alt = true; input.altTap = true; e.preventDefault(); return; }
+      if (e.pointerType !== 'mouse' && D.touchMove) {   // a finger on the screen only steers (the buttons do the rest)
+        touching = e.pointerId; input.touch = true; input.tx = logicalX(e.clientX); input.ty = logicalY(e.clientY);
+      } else {
+        input.mouseX = logicalX(e.clientX); input.mouseY = logicalY(e.clientY); input.fire = true; input.tap = true;
+        if (e.pointerType !== 'mouse') touching = e.pointerId;   // a finger on the screen: the ship follows it and fires
+      }
       try { cv.setPointerCapture(e.pointerId); } catch (er) {}
       e.preventDefault();
     });
-    function lift(e) { if (e.pointerType !== 'mouse' && touching === e.pointerId) { touching = null; input.mouseX = null; } input.fire = false; }
+    function lift(e) {
+      if (e.pointerType !== 'mouse' && touching === e.pointerId) { touching = null; input.mouseX = null; input.touch = false; input.tx = null; input.ty = null; }
+      if (e.button === 2) input.alt = false; else input.fire = false;
+    }
     cv.addEventListener('pointerup', lift); cv.addEventListener('pointercancel', lift);
     cv.addEventListener('contextmenu', function (e) { e.preventDefault(); });
     Array.prototype.forEach.call(document.querySelectorAll('[data-pad]'), function (b) {
       var a = b.getAttribute('data-pad');
-      var on = function (e) { e.preventDefault(); gestured = true; if (mode === 'title' || mode === 'over') { if (a === 'fire') begin(); return; } if (mode === 'paused') { resume(); return; } input[a] = true; if (a === 'fire') input.tap = true; input.mouseX = null; b.classList.add('on'); };
+      var on = function (e) { e.preventDefault(); gestured = true; if (mode === 'title' || mode === 'over') { if (a === 'fire') begin(); return; } if (mode === 'paused') { resume(); return; } input[a] = true; if (a === 'fire') input.tap = true; if (a === 'alt') input.altTap = true; if (!D.touchMove) input.mouseX = null; b.classList.add('on'); };
       var off = function (e) { e.preventDefault(); input[a] = false; b.classList.remove('on'); };
       b.addEventListener('pointerdown', on); b.addEventListener('pointerup', off); b.addEventListener('pointercancel', off); b.addEventListener('pointerleave', off);
       b.addEventListener('contextmenu', function (e) { e.preventDefault(); });
@@ -134,7 +151,7 @@
       if (mode === 'play') {
         acc += dt;
         var n = 0;
-        while (acc >= STEP && n < 8) { D.step(W, input); input.tap = false; acc -= STEP; n++; handle(); if (mode !== 'play') break; }
+        while (acc >= STEP && n < 8) { D.step(W, input); input.tap = false; input.altTap = false; acc -= STEP; n++; handle(); if (mode !== 'play') break; }
         if (n === 8) acc = 0;   // a slow PC: drop the backlog rather than race to catch up
       } else acc = 0;
       draw(t);
@@ -194,7 +211,7 @@
     function togglePause() { if (mode === 'play') pause(); else if (mode === 'paused') resume(); }
     function pause() {
       if (mode !== 'play') return;
-      mode = 'paused'; input.left = input.right = input.fire = input.up = input.down = false;
+      mode = 'paused'; input.left = input.right = input.fire = input.up = input.down = input.alt = false;
       setPauseBtn(); showOverlay('paused'); sfx('pause');
     }
     function resume() {
@@ -359,13 +376,15 @@
         + '<main id="stage"><div id="screenwrap"><canvas id="screen" tabindex="-1" aria-label="' + esc(D.title) + ' game screen"></canvas>'
         + '<div class="ov" id="ov_title"><div class="ovbox"><h1>' + esc(D.title) + '</h1>' + (legend ? '<ul class="legend">' + legend + '</ul>' : '')
         + '<p>' + (D.titleText || '') + '</p>'
+        + (D.picker ? '<div class="picker" role="group" aria-label="' + esc(D.picker.label) + '">' + D.picker.options.map(function (o) { return '<button type="button" data-opt="' + esc(D.picker.key) + '" data-val="' + esc(o[0]) + '"><b>' + esc(o[1]) + '</b><small>' + esc(o[2] || '') + '</small></button>'; }).join('') + '</div>' : '')
         + '<button class="btn go big" id="tPlay" type="button">' + ICON.play + ' Play</button>'
         + (D.keysText ? '<p class="soft k-keys">' + D.keysText + '</p>' : '') + (D.touchText ? '<p class="soft k-touch">' + D.touchText + '</p>' : '')
         + '<p class="soft">Speed: <b id="tSpeed"></b> &middot; change it in Settings</p></div></div>'
         + '<div class="ov" id="ov_paused" hidden><div class="ovbox"><h2>Paused</h2><p>Take your time &mdash; the game waits for you.</p><button class="btn go big" id="pGo" type="button">' + ICON.play + ' Carry on</button></div></div>'
         + '<div class="ov" id="ov_over" hidden><div class="ovbox"><h2 id="oWhy">Game over</h2><div class="tiles"><div class="tile"><b id="oScore">0</b><span>Score</span></div><div class="tile"><b id="oWave">1</b><span>' + WORDC + '</span></div><div class="tile"><b id="oBest">0</b><span>Your best</span></div></div>'
         + '<ul class="badges" id="oBadges"></ul><div class="row"><button class="btn go wide big" id="oPlay" type="button">' + ICON.play + ' Play again</button><button class="btn wide" id="oStats" type="button">My scores</button></div></div></div>'
-        + '</div><div class="pad" id="pad"><button type="button" data-pad="left" aria-label="Move left">&#9664;</button><button type="button" data-pad="fire" class="fire">Fire</button><button type="button" data-pad="right" aria-label="Move right">&#9654;</button></div>'
+        + '</div><div class="pad" id="pad">' + (D.pad ? D.pad.map(function (b) { return '<button type="button" data-pad="' + b.act + '" class="' + (b.cls || '') + '">' + esc(b.label) + '</button>'; }).join('')
+          : '<button type="button" data-pad="left" aria-label="Move left">&#9664;</button><button type="button" data-pad="fire" class="fire">Fire</button><button type="button" data-pad="right" aria-label="Move right">&#9654;</button>') + '</div>'
         + '</main></div><div id="toast" role="status" aria-live="polite"></div>'
         + sheet('dStats', 'My scores', '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere.<span id="sWhich"></span></p><div class="tiles" id="sTiles"></div><div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>')
         + sheet('dSet', 'Settings', '<div class="set"><div><label>Speed</label><small>Gentle is slower, with more lives. Changes from your next game.</small></div><div class="seg" role="group" aria-label="Speed">' + speeds + '</div></div>'

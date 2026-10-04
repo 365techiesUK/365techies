@@ -64,3 +64,10 @@ body.touchy .pad { display: flex; }
 .arcade .info { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 @media (max-width: 520px) { .ovbox { padding: 14px 14px 12px; } .ovbox p { font-size: 15px; } .legend { font-size: 13px; } }
 @media (prefers-reduced-motion: reduce) { #toast { transition: none; } }
+/* a choice on the title card (365 Eclipse's ships): big buttons with a line under each */
+.picker { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; margin: 10px 0 4px; }
+.picker button { display: flex; flex-direction: column; gap: 3px; padding: 8px 6px; border-radius: 12px; border: 2px solid rgba(255, 255, 255, .18);
+  background: rgba(255, 255, 255, .06); color: #eef4ff; cursor: pointer; font: 700 15px/1.1 Archivo, sans-serif; text-align: center; }
+.picker button small { font: 500 12px/1.25 Archivo, sans-serif; color: #a9b7d6; }
+.picker button[aria-pressed="true"] { border-color: #7fe8ff; background: rgba(127, 232, 255, .16); box-shadow: 0 0 14px rgba(127, 232, 255, .35); }
+.pad button.alt { flex: 1.2; background: rgba(255, 180, 60, .2); border-color: rgba(255, 190, 90, .6); font-size: 20px; text-transform: uppercase; letter-spacing: .04em; }
