@@ -75,9 +75,17 @@
   function dirUrl(s) { return 'https://www.google.com/maps/dir/?api=1&destination=' + s.la + ',' + s.lo; }
 
   /* ---- data ---- */
+  /* Every request gives up after 20 s: a reply that never comes (a deploy mid-upload, a dropped phone signal) must end
+     in a message, never in "Looking up..." for ever. */
+  function getJSON(url, opts) {
+    opts = opts || {};
+    var ctl = window.AbortController ? new AbortController() : null, timer;
+    if (ctl) { opts.signal = ctl.signal; timer = setTimeout(function () { ctl.abort(); }, 20000); }
+    return fetch(url, opts).then(function (r) { clearTimeout(timer); return r.json(); }, function (e) { clearTimeout(timer); throw e; });
+  }
   var cache = {};
   function get(q) {
-    if (!cache[q]) cache[q] = fetch(API + q).then(function (r) { return r.json(); }).then(function (j) { if (!j || !j.ok) delete cache[q]; return j; },
+    if (!cache[q]) cache[q] = getJSON(API + q).then(function (j) { if (!j || !j.ok) delete cache[q]; return j; },
       function (e) { delete cache[q]; throw e; });
     return cache[q];
   }
@@ -292,8 +300,16 @@
       : '?near=1&lat=' + round1(st.centre.la) + '&lon=' + round1(st.centre.lo) + '&r=' + st.r + '&f=' + f;
     get(q).then(function (j) {
       if (my !== seq) return;
-      if (!j || !j.ok) { status(j && j.error === 'warming up' ? 'Today&rsquo;s prices are being collected. Please try again in a few minutes.' : 'Prices are not available just now. Please try again in a few minutes.'); $('ff-list').innerHTML = ''; return; }
+      if (!j || !j.ok) {
+        // Prices being collected (a new day's first run): look again every 30 s and fill in by itself.
+        var warm = j && j.error === 'warming up';
+        status(warm ? 'Today&rsquo;s prices are being collected &mdash; this page will fill in by itself in a minute or two.' : 'Prices are not available just now. Please try again in a few minutes.');
+        $('ff-list').innerHTML = '';
+        if (warm) setTimeout(function () { if (my === seq) update(); }, 30000);
+        return;
+      }
       st.meta = j; sources(j);
+      if (!st.stats) loadStats();
       var c = st.centre, L2 = (j.stations || []).map(function (s) {
         return { s: s, p: s.p[f], d: c && c.la != null && c !== null ? miles(c.la, c.lo, s.la, s.lo) : null };
       });
@@ -342,8 +358,8 @@
     e.preventDefault();
     var v = $('ff-pc').value.trim(); if (!v) return;
     status('Looking up ' + esc(v.toUpperCase()) + '&hellip;');
-    fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pc: v }) })
-      .then(function (r) { return r.json(); }).then(function (j) {
+    getJSON(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pc: v }) })
+      .then(function (j) {
         if (!j.ok) { status(j.error === 'format' ? 'That does not look like a postcode. Try one like BH8 8DQ, or just BH8.' : 'We could not find that postcode. Check it, or try just the first part, like BH8.'); return; }
         if (!j.in_area) { status(esc(j.pc) + ' is outside the UK, so there are no prices for it.'); return; }
         var a = areaOf(j.pc);
@@ -364,7 +380,10 @@
   }
 
   /* ---- start ---- */
+  function loadStats() {
+    get('?stats=1').then(function (j) { if (j && j.ok) { st.stats = j; if (st.list.length) tiles(); renderUk(); } }, function () {});
+  }
   pressFuel();
-  get('?stats=1').then(function (j) { if (j && j.ok) { st.stats = j; if (st.list.length) tiles(); renderUk(); } }, function () {});
+  loadStats();
   update();
 })();

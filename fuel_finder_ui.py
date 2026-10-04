@@ -12,7 +12,7 @@ as they scroll into view, the location button pulses while it searches, and a sk
 A device set to reduce motion gets none of it (CSS below + the script checks the same setting).
 """
 
-JS_V = "2"
+JS_V = "3"
 
 HEAD = '''
   <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
