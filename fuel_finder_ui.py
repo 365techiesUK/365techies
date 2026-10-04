@@ -12,7 +12,50 @@ as they scroll into view, the location button pulses while it searches, and a sk
 A device set to reduce motion gets none of it (CSS below + the script checks the same setting).
 """
 
-JS_V = "7"
+JS_V = "9"
+
+import html as _html
+import json as _json
+
+# ONE list of vehicles, read by the page script (data-vehicles) AND by the server render (api/bm-fuel-ssr.php reads the
+# same attribute out of the built page). Owner, 4 Oct: "small car ... family car ... van ... could you also have lorry
+# or HGV ... expand that ... as a proper tool". Typical tanks, said as "about" on the page: motorbikes 12-20 L, small
+# hatchbacks 40-45, family hatchbacks 50-55, SUVs and big estates 60-70, Transit/Crafter vans 75-80, motorhomes on a
+# Ducato base 75-90, 7.5-tonne lorries 150-200, 44-tonne artic tractor units 400-680 (twin tanks to 1,000+).
+# fuel: "petrol" | "diesel" | "any" - a lorry is never shown an unleaded bill, a motorbike never a diesel one.
+VEHICLES = [
+    {"k": "moto", "name": "Motorbike", "say": "a motorbike", "l": 15, "fuel": "petrol"},
+    {"k": "small", "name": "Small car", "say": "a small car", "l": 40, "fuel": "any"},
+    {"k": "family", "name": "Family car", "say": "a family car", "l": 55, "fuel": "any"},
+    {"k": "suv", "name": "SUV / estate", "say": "an SUV or estate", "l": 70, "fuel": "any"},
+    {"k": "van", "name": "Van", "say": "a van", "l": 80, "fuel": "any"},
+    {"k": "motorhome", "name": "Motorhome", "say": "a motorhome", "l": 90, "fuel": "any"},
+    {"k": "lorry", "name": "7.5-tonne lorry", "say": "a 7.5-tonne lorry", "l": 150, "fuel": "diesel"},
+    {"k": "hgv", "name": "HGV (44-tonne artic)", "say": "an HGV", "l": 500, "fuel": "diesel"},
+]
+
+# Postcode areas by name, for "cheapest and dearest areas" (script AND server read data-areas, as above).
+AREAS = {"AB": "Aberdeen", "AL": "St Albans", "B": "Birmingham", "BA": "Bath", "BB": "Blackburn", "BD": "Bradford", "BH": "Bournemouth",
+    "BL": "Bolton", "BN": "Brighton", "BR": "Bromley", "BS": "Bristol", "BT": "Belfast", "CA": "Carlisle", "CB": "Cambridge", "CF": "Cardiff",
+    "CH": "Chester", "CM": "Chelmsford", "CO": "Colchester", "CR": "Croydon", "CT": "Canterbury", "CV": "Coventry", "CW": "Crewe", "DA": "Dartford",
+    "DD": "Dundee", "DE": "Derby", "DG": "Dumfries", "DH": "Durham", "DL": "Darlington", "DN": "Doncaster", "DT": "Dorchester", "DY": "Dudley",
+    "E": "East London", "EC": "Central London", "EH": "Edinburgh", "EN": "Enfield", "EX": "Exeter", "FK": "Falkirk", "FY": "Blackpool",
+    "G": "Glasgow", "GL": "Gloucester", "GU": "Guildford", "HA": "Harrow", "HD": "Huddersfield", "HG": "Harrogate", "HP": "Hemel Hempstead",
+    "HR": "Hereford", "HS": "Outer Hebrides", "HU": "Hull", "HX": "Halifax", "IG": "Ilford", "IP": "Ipswich", "IV": "Inverness", "KA": "Kilmarnock",
+    "KT": "Kingston upon Thames", "KW": "Kirkwall", "KY": "Kirkcaldy", "L": "Liverpool", "LA": "Lancaster", "LD": "Llandrindod Wells",
+    "LE": "Leicester", "LL": "Llandudno", "LN": "Lincoln", "LS": "Leeds", "LU": "Luton", "M": "Manchester", "ME": "Medway", "MK": "Milton Keynes",
+    "ML": "Motherwell", "N": "North London", "NE": "Newcastle", "NG": "Nottingham", "NN": "Northampton", "NP": "Newport", "NR": "Norwich",
+    "NW": "North West London", "OL": "Oldham", "OX": "Oxford", "PA": "Paisley", "PE": "Peterborough", "PH": "Perth", "PL": "Plymouth",
+    "PO": "Portsmouth", "PR": "Preston", "RG": "Reading", "RH": "Redhill", "RM": "Romford", "S": "Sheffield", "SA": "Swansea",
+    "SE": "South East London", "SG": "Stevenage", "SK": "Stockport", "SL": "Slough", "SM": "Sutton", "SN": "Swindon", "SO": "Southampton",
+    "SP": "Salisbury", "SR": "Sunderland", "SS": "Southend", "ST": "Stoke-on-Trent", "SW": "South West London", "SY": "Shrewsbury",
+    "TA": "Taunton", "TD": "Galashiels", "TF": "Telford", "TN": "Tonbridge", "TQ": "Torquay", "TR": "Truro", "TS": "Teesside", "TW": "Twickenham",
+    "UB": "Southall", "W": "West London", "WA": "Warrington", "WC": "Central London", "WD": "Watford", "WF": "Wakefield", "WN": "Wigan",
+    "WR": "Worcester", "WS": "Walsall", "WV": "Wolverhampton", "YO": "York", "ZE": "Shetland"}
+
+
+def _attr_json(v):
+    return _html.escape(_json.dumps(v, separators=(",", ":")), quote=True)
 
 # Home-screen identity (owner 4 Oct: "share ... and add it to their phone ... so they can find it easily"). Icons drawn by
 # the 4 Oct scratchpad make_fuel_icons.py: a teal pump on dark navy. ⚠ Never overwrite one in place (images are cached a
@@ -63,12 +106,27 @@ HEAD = '''
     .ff-num small{font-size:.45em;font-weight:600;color:var(--ff-mute);margin-left:.1em}
     .ff-ts{margin:0;color:var(--ff-mute);font-size:.84rem;line-height:1.4}
     .ff-ts b{color:var(--ff-foam)}
-    .ff-tanks{display:flex;flex-wrap:wrap;gap:.35rem;margin:.65rem 0 0}
-    .ff-tanks button{min-height:44px;padding:.3rem .75rem;border-radius:999px;border:1px solid var(--ff-line);background:transparent;color:var(--ff-foam);font:inherit;font-size:.84rem;cursor:pointer;transition:background .2s,border-color .2s,color .2s,transform .15s}
-    .ff-tanks button:active{transform:scale(.96)}
-    .ff-tanks button small{color:var(--ff-mute);font-size:.78rem}
-    .ff-tanks button[aria-pressed="true"]{background:var(--ff-dusk);border-color:var(--ff-dusk);color:var(--ff-ink);font-weight:700}
-    .ff-tanks button[aria-pressed="true"] small{color:var(--ff-ink)}
+    .ff-t3.nofit .ff-cur{display:none}
+    .ff-veh{display:flex;flex-wrap:wrap;gap:.45rem;align-items:center;margin:.65rem 0 0}
+    .ff-veh select{flex:1 1 12rem;min-height:44px;border-radius:12px;border:1px solid var(--ff-dusk);background:rgba(255,176,102,.08);color:var(--ff-foam);font:inherit;font-size:.95rem;padding:.45rem .7rem}
+    .ff-veh select option{background:#0e1d2c;color:var(--ff-foam)}
+    .ff-own{display:inline-flex;align-items:center;gap:.4rem;color:var(--ff-mute);font-size:.9rem}
+    .ff-own[hidden]{display:none}
+    .ff-own input{width:6.5rem;min-height:44px;border-radius:12px;border:1px solid var(--ff-line);background:var(--ff-water);color:var(--ff-foam);font:inherit;font-size:1rem;padding:.4rem .6rem}
+    .ff-tablewrap{overflow-x:auto;border:1px solid var(--ff-line);border-radius:16px;background:var(--ff-water)}
+    .ff-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:.95rem}
+    .ff-table th,.ff-table td{padding:.6rem .8rem;border-bottom:1px solid var(--ff-line);text-align:left;vertical-align:top}
+    .ff-table tbody tr:last-child td,.ff-table tbody tr:last-child th{border-bottom:0}
+    .ff-table thead th{font-family:var(--mono,ui-monospace,monospace);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ff-mute);font-weight:600}
+    .ff-table td small,.ff-table th small{display:block;color:var(--ff-mute);font-size:.78rem;font-weight:400}
+    .ff-table tbody th{font-weight:600;color:var(--ff-foam)}
+    .ff-table .ff-na{color:var(--ff-mute)}
+    .ff-table tr.mine th,.ff-table tr.mine td{background:rgba(255,176,102,.07)}
+    .ff-today h2{margin-top:0}
+    .ff-today h3{font-size:1.05rem;margin:1.4rem 0 .6rem}
+    .ff-today p{max-width:72ch}
+    .ff-twocol{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+    .ff-stamp{font-family:var(--mono,ui-monospace,monospace);font-size:.8rem;color:var(--ff-mute)}
     @media (max-width:600px){.ff-t3{grid-column:1 / -1}}
     .ff-chip{display:inline-block;padding:.15rem .55rem;border-radius:999px;border:1px solid var(--ff-line);font-size:.8rem;color:var(--ff-foam)}
     .ff-chip.ff-good{border-color:var(--ff-surf);color:var(--ff-surf)}
@@ -176,10 +234,10 @@ def tool(mode, radius, home=None):
     if home:
         home_attrs = f' data-home-lat="{home[0]}" data-home-lon="{home[1]}" data-home-label="{home[2]}"'
     tile = lambda i, cls, pre, dp, extra="": (f'<div class="ff-tile {cls}" id="ff-t{i}" hidden><p class="ff-tl"></p>'
-                                    f'<p class="ff-num">{pre}<b data-dp="{dp}">&nbsp;</b>{"" if pre else "<small>p</small>"}</p><p class="ff-ts"></p>{extra}</div>')
+                                    f'<p class="ff-num">{('<span class="ff-cur">' + pre + '</span>') if pre else ''}<b data-dp="{dp}">&nbsp;</b>{"" if pre else "<small>p</small>"}</p><p class="ff-ts"></p>{extra}</div>')
     return f'''    <section class="section ff-sec" id="finder" aria-label="Find the cheapest fuel">
       <div class="wrap">
-        <div id="ff" class="ff" data-mode="{mode}" data-radius="{radius}"{home_attrs}>
+        <div id="ff" class="ff" data-mode="{mode}" data-radius="{radius}"{home_attrs} data-vehicles="{_attr_json(VEHICLES)}" data-areas="{_attr_json(AREAS)}">
           <div class="ff-controls">
             <div class="ff-fuels" role="group" aria-label="Fuel">
               <button type="button" data-f="E10" aria-pressed="true">Unleaded</button>
@@ -203,7 +261,8 @@ def tool(mode, radius, home=None):
           <div class="ff-tiles" aria-live="polite">
             {tile(1, "ff-t1", "", 1)}
             {tile(2, "ff-t2", "", 1)}
-            {tile(3, "ff-t3", "&pound;", 2, '<div class="ff-tanks" id="ff-tanks" role="group" aria-label="Your vehicle"></div>')}
+            {tile(3, "ff-t3", "&pound;", 2, '<div class="ff-veh"><label for="ff-vehicle" class="sr-only">Your vehicle</label><select id="ff-vehicle"></select>'
+                  '<span class="ff-own" id="ff-own-wrap" hidden><label for="ff-own">Litres</label><input id="ff-own" type="number" inputmode="numeric" min="5" max="1500" step="1" value="60" /></span></div>')}
           </div>
           <div class="ff-actions" id="ff-actions" hidden>
             <button type="button" class="ff-pill" data-ffshare>{_SHARE_SVG}Share</button>
@@ -237,6 +296,22 @@ def tool(mode, radius, home=None):
         </div>
       </div>
     </section>
+    <section class="section ff-sec" id="ff-fill-sec" aria-labelledby="ff-fill-h">
+      <div class="wrap ff">
+        <h2 id="ff-fill-h">What it costs to fill up</h2>
+        <p class="ff-note" id="ff-fill-sub" style="margin-top:0">A full tank from empty, at the average price of unleaded and diesel.</p>
+        <div class="ff-tablewrap"><table class="ff-table" id="ff-fill">
+          <thead><tr><th scope="col">Vehicle</th><th scope="col">Tank</th><th scope="col">Unleaded</th><th scope="col">Diesel</th></tr></thead>
+          <tbody id="ff-fill-body"><!--ssr:fill--></tbody>
+        </table></div>
+        <p class="ff-note">Tank sizes are typical for each kind of vehicle; yours is in the handbook. Most people top up from about a quarter of a tank, so their bill is a little less. Lorries run on diesel and motorbikes on petrol, so those show one price.</p>
+      </div>
+    </section>
+    <section class="section ff-sec" id="ff-today-sec" aria-labelledby="ff-today-h">
+      <div class="wrap ff ff-today">
+        <!--ssr:today-->
+      </div>
+    </section>
     <section class="section ff-sec" id="ff-uk" hidden aria-labelledby="ff-uk-h">
       <div class="wrap ff">
         <h2 id="ff-uk-h">The UK picture</h2>
@@ -254,6 +329,18 @@ def tool(mode, radius, home=None):
     <script src="/vendor/protomaps/protomaps-leaflet.js" defer></script>
     <script src="/vendor/leaflet/touch-friendly.js?v=20260819c" defer></script>
     <script src="/js/fuel-finder.js?v={JS_V}" defer></script>'''
+
+
+def web_app(url, name, desc, publisher_id):
+    """The tool as a WebApplication node (what it is, that it is free, who runs it) - for search engines and AI answers."""
+    return {"@type": "WebApplication", "@id": url + "#app", "name": name, "url": url, "description": desc,
+            "applicationCategory": "TravelApplication", "operatingSystem": "Any (web browser)", "isAccessibleForFree": True,
+            "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP"},
+            "featureList": ["Live pump prices from every UK forecourt (government Fuel Finder data)",
+                            "Cheapest first, by postcode or location, 2 to 100 miles or the whole UK",
+                            "Fill-up cost for a motorbike, car, van, motorhome, 7.5-tonne lorry or HGV",
+                            "Average prices by nation and postcode area"],
+            "publisher": {"@id": publisher_id}}
 
 
 def faqs(where):
@@ -274,13 +361,28 @@ def faqs(where):
          "for prices around a point rounded to about 10 km and works out the exact distances itself, so your exact location is "
          "never sent to us. A postcode is looked up through our own server, which asks the free postcodes.io service and "
          "keeps no record of it."),
+        ("What is the average price of petrol and diesel in the UK today?",
+         "The figures in the &ldquo;fuel prices today&rdquo; section of this page are worked out from every forecourt "
+         "reporting to the government&rsquo;s Fuel Finder service and are updated every half hour. The average is the "
+         "median: half the forecourts charge less and half more, so a handful of motorway services cannot drag it up. The "
+         "table also shows the cheapest price in the country and how many forecourts reported each fuel."),
+        ("How much does it cost to fill up a car, a van or an HGV?",
+         "The &ldquo;what it costs to fill up&rdquo; table shows every kind of vehicle at today&rsquo;s average price of "
+         "unleaded and diesel. Typical tanks: a motorbike about 15 litres, a small car 40, a family car 55, an SUV or estate "
+         "70, a van such as a Transit or Crafter 80, a motorhome 90, a 7.5-tonne lorry 150 and a 44-tonne HGV about 500 "
+         "(some artics carry twin tanks of 1,000 litres or more). Pick yours in the fill-up box, or type your own tank size, "
+         "and every price on the page shows what a full tank costs."),
+        ("Where is fuel cheapest in the UK?",
+         "It changes day to day, so the &ldquo;fuel prices today&rdquo; section compares England, Scotland, Wales and "
+         "Northern Ireland and lists the cheapest and dearest postcode areas from today&rsquo;s prices; Northern Ireland "
+         "has had the lowest averages in the data we have seen. Supermarket forecourts are often the cheapest locally, and "
+         "motorway services the dearest."),
         ("How are the fill-up cost and the saving worked out?",
-         "Pick your vehicle: a small car (about 40 litres), a family car (55), an SUV or estate (70) or a van such as a "
-         "Transit or Crafter (80). The fill-up cost is that many litres at the price shown, from empty; most people top up "
-         "from a quarter of a tank, so their bill is a little less. The saving is the same tank at the cheapest price against "
-         "the average (median) price in the area you are looking at. For the whole UK, the box shows a tank at the UK average "
+         "The fill-up cost is your vehicle&rsquo;s tank, in litres, at the price shown, from empty; most people top up from a "
+         "quarter of a tank, so their bill is a little less. The saving is the same tank at the cheapest price against the "
+         "average (median) price in the area you are looking at. For the whole UK, the box shows a tank at the UK average "
          "price and the range from the cheapest postcode area to the dearest, because the cheapest single forecourt in the "
-         "country is rarely one you would drive to."),
+         "country is rarely one you would drive to. Lorries are only shown diesel bills and motorbikes petrol."),
         ("Why might the price at the pump be different?",
          "Forecourts change prices during the day, and a change reaches the data a little after it reaches the pump. The "
          "price on the pump is the one you pay."),

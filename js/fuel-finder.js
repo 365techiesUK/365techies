@@ -11,34 +11,13 @@
   var root = document.getElementById('ff');
   if (!root) return;
   var API = '/api/bm-fuel.php';
-  /* Owner, 4 Oct: "different tank sizes ... a car might be 55 litres ... a van more like 80 litres ... really simple so
-     people can see roughly how much it'll cost them to fill up and how much they're saving". Typical tanks: a small
-     hatchback 40-45 L, a family hatchback 50-55 L, an SUV or big estate 60-70 L, a Transit or Crafter 75-80 L. */
-  var TANKS = [
-    { k: 'small', name: 'Small car', say: 'a small car', l: 40 },
-    { k: 'family', name: 'Family car', say: 'a family car', l: 55 },
-    { k: 'suv', name: 'SUV / estate', say: 'an SUV or estate', l: 70 },
-    { k: 'van', name: 'Van', say: 'a van', l: 80 }
-  ];
+  /* The vehicles and the postcode-area names come from the page (fuel_finder_ui.VEHICLES / AREAS, written into
+     data-vehicles / data-areas), the same lists the server render reads - one list, never two that drift apart. */
   var FUEL = { E10: 'Unleaded', B7: 'Diesel', E5: 'Super unleaded', SDV: 'Premium diesel' };
   var NATION = { E: 'England', S: 'Scotland', W: 'Wales', N: 'Northern Ireland' };
-  var AREA = { AB: 'Aberdeen', AL: 'St Albans', B: 'Birmingham', BA: 'Bath', BB: 'Blackburn', BD: 'Bradford', BH: 'Bournemouth',
-    BL: 'Bolton', BN: 'Brighton', BR: 'Bromley', BS: 'Bristol', BT: 'Belfast', CA: 'Carlisle', CB: 'Cambridge', CF: 'Cardiff',
-    CH: 'Chester', CM: 'Chelmsford', CO: 'Colchester', CR: 'Croydon', CT: 'Canterbury', CV: 'Coventry', CW: 'Crewe', DA: 'Dartford',
-    DD: 'Dundee', DE: 'Derby', DG: 'Dumfries', DH: 'Durham', DL: 'Darlington', DN: 'Doncaster', DT: 'Dorchester', DY: 'Dudley',
-    E: 'East London', EC: 'Central London', EH: 'Edinburgh', EN: 'Enfield', EX: 'Exeter', FK: 'Falkirk', FY: 'Blackpool',
-    G: 'Glasgow', GL: 'Gloucester', GU: 'Guildford', HA: 'Harrow', HD: 'Huddersfield', HG: 'Harrogate', HP: 'Hemel Hempstead',
-    HR: 'Hereford', HS: 'Outer Hebrides', HU: 'Hull', HX: 'Halifax', IG: 'Ilford', IP: 'Ipswich', IV: 'Inverness', KA: 'Kilmarnock',
-    KT: 'Kingston upon Thames', KW: 'Kirkwall', KY: 'Kirkcaldy', L: 'Liverpool', LA: 'Lancaster', LD: 'Llandrindod Wells',
-    LE: 'Leicester', LL: 'Llandudno', LN: 'Lincoln', LS: 'Leeds', LU: 'Luton', M: 'Manchester', ME: 'Medway', MK: 'Milton Keynes',
-    ML: 'Motherwell', N: 'North London', NE: 'Newcastle', NG: 'Nottingham', NN: 'Northampton', NP: 'Newport', NR: 'Norwich',
-    NW: 'North West London', OL: 'Oldham', OX: 'Oxford', PA: 'Paisley', PE: 'Peterborough', PH: 'Perth', PL: 'Plymouth',
-    PO: 'Portsmouth', PR: 'Preston', RG: 'Reading', RH: 'Redhill', RM: 'Romford', S: 'Sheffield', SA: 'Swansea',
-    SE: 'South East London', SG: 'Stevenage', SK: 'Stockport', SL: 'Slough', SM: 'Sutton', SN: 'Swindon', SO: 'Southampton',
-    SP: 'Salisbury', SR: 'Sunderland', SS: 'Southend', ST: 'Stoke-on-Trent', SW: 'South West London', SY: 'Shrewsbury',
-    TA: 'Taunton', TD: 'Galashiels', TF: 'Telford', TN: 'Tonbridge', TQ: 'Torquay', TR: 'Truro', TS: 'Teesside', TW: 'Twickenham',
-    UB: 'Southall', W: 'West London', WA: 'Warrington', WC: 'Central London', WD: 'Watford', WF: 'Wakefield', WN: 'Wigan',
-    WR: 'Worcester', WS: 'Walsall', WV: 'Wolverhampton', YO: 'York', ZE: 'Shetland' };
+  var VEH = [], AREA = {};
+  try { VEH = JSON.parse(root.getAttribute('data-vehicles')) || []; } catch (e) {}
+  try { AREA = JSON.parse(root.getAttribute('data-areas')) || {}; } catch (e) {}
   var RADII = [2, 5, 10, 20, 50, 100];
   var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -50,11 +29,23 @@
     centre: HOME,                                      // {la, lo, label, acc?, area?, co?} or null on the UK page at first
     meta: null, stats: null, list: [], shown: 15, cut: false, around: null
   };
-  st.tank = 'family';
+  st.tank = 'family'; st.own = 60;
   try { var f0 = localStorage.getItem('ff-fuel'); if (FUEL[f0]) st.fuel = f0; } catch (e) {}
-  try { var k0 = localStorage.getItem('ff-tank'); if (k0 && TANKS.some(function (t) { return t.k === k0; })) st.tank = k0; } catch (e) {}
-  function tank() { for (var i = 0; i < TANKS.length; i++) if (TANKS[i].k === st.tank) return TANKS[i]; return TANKS[1]; }
-  function pounds(pence, litres) { return '&pound;' + (pence * litres / 100).toFixed(2); }
+  try {
+    var k0 = localStorage.getItem('ff-tank'); if (k0 && (k0 === 'own' || VEH.some(function (t) { return t.k === k0; }))) st.tank = k0;
+    var o0 = +localStorage.getItem('ff-own'); if (o0 >= 5 && o0 <= 1500) st.own = o0;
+  } catch (e) {}
+  function tank() {
+    if (st.tank === 'own') return { k: 'own', name: 'Your own tank', say: 'your tank', l: st.own, fuel: 'any' };
+    for (var i = 0; i < VEH.length; i++) if (VEH[i].k === st.tank) return VEH[i];
+    return VEH[2] || { k: 'family', name: 'Family car', say: 'a family car', l: 55, fuel: 'any' };
+  }
+  // a lorry never gets an unleaded bill, a motorbike never a diesel one
+  function fits(v, f) { return v.fuel === 'any' || (v.fuel === 'petrol' ? (f === 'E10' || f === 'E5') : (f === 'B7' || f === 'SDV')); }
+  // £1,014.50, not £1014.50 (an HGV tank) - the same as the server render
+  // rounded half-up like PHP's number_format (toFixed would make 26.235 -> 26.23 and disagree with the server's 26.24)
+  function money(v) { var s = (Math.round((+v + Number.EPSILON) * 100) / 100).toFixed(2), p = s.split('.'); return p[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + p[1]; }
+  function pounds(pence, litres) { return '&pound;' + money(pence * litres / 100); }
 
   var $ = function (id) { return document.getElementById(id); };
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -105,7 +96,7 @@
   /* ---- animation helpers (all skipped when the device asks for reduced motion) ---- */
   function countUp(el, to) {
     var from = parseFloat(el.getAttribute('data-v')); el.setAttribute('data-v', to);
-    var dp = +(el.getAttribute('data-dp') || 1), fmt = function (v) { return (+v).toFixed(dp); };
+    var dp = +(el.getAttribute('data-dp') || 1), fmt = function (v) { return dp === 2 ? money(v) : (+v).toFixed(dp); };
     // The real number is always there: animation frames do not run in a background tab, so the count-up is a bonus on
     // top, and a timer puts the final figure in place whatever happens to the frames.
     if (still || document.hidden || !el.offsetParent) { el.textContent = fmt(to); return; }
@@ -152,47 +143,94 @@
      average" would mean driving to Northern Ireland, so it shows the UK-average bill and the range across areas. */
   function fillTile(best, med) {
     var t3 = $('ff-t3'), T = tank(), what = T.say + ' (' + T.l + ' litres)';
-    var num = t3.querySelector('.ff-num b'), sub = t3.querySelector('.ff-ts');
+    var num = t3.querySelector('.ff-num b'), sub = t3.querySelector('.ff-ts'), tl = t3.querySelector('.ff-tl');
+    t3.hidden = false;
+    t3.classList.toggle('nofit', !fits(T, st.fuel));  // hides the pound sign beside a dash
+    if (!fits(T, st.fuel)) {                          // e.g. an HGV with unleaded picked
+      tl.innerHTML = 'Fill ' + what;
+      num.textContent = '–'; num.removeAttribute('data-v');
+      sub.innerHTML = T.name + ' runs on ' + (T.fuel === 'diesel' ? 'diesel: tap <b>Diesel</b> above' : 'petrol: tap <b>Unleaded</b> above') + ' to see its bill.';
+      return;
+    }
     if (st.r === 'uk') {
       var F = st.stats && st.stats.fuels[st.fuel], A = F ? F.areas : null, lo = null, hi = null;
       for (var a in (A || {})) { if (!lo || A[a][1] < A[lo][1]) lo = a; if (!hi || A[a][1] > A[hi][1]) hi = a; }
       if (!F) { t3.hidden = true; return; }
-      t3.querySelector('.ff-tl').innerHTML = 'Fill ' + what + ' at the UK average price';
+      tl.innerHTML = 'Fill ' + what + ' at the UK average price';
       countUp(num, F.uk.med * T.l / 100);
       sub.innerHTML = lo && hi ? 'From <b>' + pounds(A[lo][1], T.l) + '</b> in ' + esc(areaName(lo)) + ' to <b>' + pounds(A[hi][1], T.l) + '</b> in ' + esc(areaName(hi)) + ', going by each area&rsquo;s average.' : '';
     } else {
       var where = st.centre === HOME ? 'near ' + esc(HOME.label) : 'near you';
-      t3.querySelector('.ff-tl').innerHTML = 'Fill ' + what + ' at the cheapest';
+      tl.innerHTML = 'Fill ' + what + ' at the cheapest';
       countUp(num, best.p * T.l / 100);
       var save = med != null ? (med - best.p) * T.l / 100 : 0;
       sub.innerHTML = save >= 0.005
         ? '<b>&pound;' + save.toFixed(2) + ' less</b> than at the average price ' + where + ' (' + pounds(med, T.l) + ')'
         : 'The same as the average price ' + where + '.';
     }
-    t3.hidden = false;
   }
 
-  function tankButtons() {
-    var box = $('ff-tanks'); if (!box) return;
-    box.innerHTML = TANKS.map(function (t) {
-      return '<button type="button" data-k="' + t.k + '" aria-pressed="' + (t.k === st.tank) + '">' + t.name + ' <small>' + t.l + '&nbsp;L</small></button>';
-    }).join('');
-    box.addEventListener('click', function (e) {
-      var b = e.target.closest('button'); if (!b) return;
-      st.tank = b.getAttribute('data-k');
-      try { localStorage.setItem('ff-tank', st.tank); } catch (er) {}
-      [].forEach.call(box.querySelectorAll('button'), function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+  /* The vehicle menu in the fill-up box: every vehicle, plus "your own tank size" with a litres box. Remembered. */
+  function vehicleMenu() {
+    var sel = $('ff-vehicle'), own = $('ff-own'), wrap = $('ff-own-wrap'); if (!sel) return;
+    sel.innerHTML = VEH.map(function (v) { return '<option value="' + v.k + '">' + esc(v.name) + ' (about ' + v.l + ' litres)</option>'; }).join('') +
+      '<option value="own">Your own tank size&hellip;</option>';
+    sel.value = st.tank; own.value = st.own; wrap.hidden = st.tank !== 'own';
+    var redraw = function () {
       if (st.list.length) { fillTile(st.list[0], st.r === 'uk' ? null : currentMedian()); renderList(); }
+      fillTable();
+    };
+    sel.addEventListener('change', function () {
+      st.tank = sel.value; wrap.hidden = st.tank !== 'own';
+      try { localStorage.setItem('ff-tank', st.tank); } catch (er) {}
+      if (st.tank === 'own') try { own.focus(); } catch (er) {}
+      redraw();
+    });
+    own.addEventListener('input', function () {
+      var v = Math.round(+own.value); if (!(v >= 5 && v <= 1500)) return;
+      st.own = v; try { localStorage.setItem('ff-own', String(v)); } catch (er) {}
+      redraw();
     });
   }
   function currentMedian() { return st.cut && st.around ? st.around.med : median(st.list.map(function (x) { return x.p; })); }
+
+  /* "What it costs to fill up": every vehicle at the average unleaded and diesel price for the area on screen (the
+     server fills it first, for search engines; this keeps it in step once someone picks an area). */
+  var fillSeq = 0;
+  function fillTable() {
+    var body = $('ff-fill-body'); if (!body) return;
+    var my = ++fillSeq;
+    var done = function (e10, b7, label) {
+      if (my !== fillSeq || e10 == null && b7 == null) return;
+      $('ff-fill-sub').innerHTML = 'A full tank from empty at the average price ' + label + ': unleaded <b>' + (e10 != null ? p1(e10) + 'p' : 'not known') +
+        '</b>, diesel <b>' + (b7 != null ? p1(b7) + 'p' : 'not known') + '</b> a litre.';
+      var rows = VEH.slice(); if (st.tank === 'own') rows.push(tank());
+      body.innerHTML = rows.map(function (v) {
+        var cell = function (f, p) { return fits(v, f) && p != null ? '<td>' + pounds(p, v.l) + '</td>' : '<td class="ff-na">&ndash;</td>'; };
+        return '<tr' + (v.k === st.tank ? ' class="mine"' : '') + '><th scope="row">' + esc(v.name) + '</th><td>' + v.l + '&nbsp;L</td>' +
+          cell('E10', e10) + cell('B7', b7) + '</tr>';
+      }).join('');
+    };
+    if (st.r === 'uk' || !st.centre) {
+      var S = st.stats && st.stats.fuels;
+      if (S) done(S.E10 ? S.E10.uk.med : null, S.B7 ? S.B7.uk.med : null, 'across the UK');
+      return;
+    }
+    var c = st.centre, base = '?near=1&lat=' + round1(c.la) + '&lon=' + round1(c.lo) + '&r=' + st.r + '&f=';
+    var med = function (j) {
+      if (!j || !j.ok) return null;
+      if (j.cut && j.around) return j.around.med;
+      return median((j.stations || []).filter(function (s) { return miles(c.la, c.lo, s.la, s.lo) <= st.r; }).map(function (s) { return s.p[j.f]; }));
+    };
+    Promise.all([get(base + 'E10'), get(base + 'B7')]).then(function (r) { done(med(r[0]), med(r[1]), scope()); }, function () {});
+  }
 
   /* ---- the list ---- */
   function row(x, i) {
     var s = x.s, t = s.pt && s.pt[st.fuel] ? ' &middot; price from ' + hm(s.pt[st.fuel]) : '';
     return '<li class="ff-item' + (i === 0 ? ' best' : '') + '" tabindex="0" data-i="' + i + '" style="animation-delay:' + Math.min(i, 14) * 35 + 'ms">' +
       '<span class="ff-rank">' + (i + 1) + '</span><span class="ff-name">' + esc(s.b) + (s.n ? '<small>' + esc(s.n) + '</small>' : '') + '</span>' +
-      '<span class="ff-price">' + p1(x.p) + 'p<small>' + pounds(x.p, tank().l) + ' a tank</small></span>' +
+      '<span class="ff-price">' + p1(x.p) + 'p' + (fits(tank(), st.fuel) ? '<small>' + pounds(x.p, tank().l) + ' a tank</small>' : '') + '</span>' +
       '<span class="ff-addr">' + esc(s.a) + (s.pc ? ', ' + esc(s.pc) : '') + t + '</span>' +
       '<span class="ff-meta">' + (x.d != null ? x.d.toFixed(1) + ' mi' : '') + '</span>' +
       '<span class="ff-dir"><a href="' + dirUrl(s) + '" target="_blank" rel="noopener">Directions</a></span></li>';
@@ -227,7 +265,7 @@
   function popup(s) {
     var rows = '';
     ['E10', 'E5', 'B7', 'SDV'].forEach(function (f) { if (s.p[f] != null) rows += '<br>' + FUEL[f] + ': <b>' + p1(s.p[f]) + 'p</b>' + (s.pt && s.pt[f] ? ' <small>from ' + hm(s.pt[f]) + '</small>' : ''); });
-    var T = tank(), fill = s.p[st.fuel] != null ? '<br>Fill ' + T.say + ' (' + T.l + ' L) with ' + FUEL[st.fuel].toLowerCase() + ': <b>' + pounds(s.p[st.fuel], T.l) + '</b>' : '';
+    var T = tank(), fill = s.p[st.fuel] != null && fits(T, st.fuel) ? '<br>Fill ' + T.say + ' (' + T.l + ' L) with ' + FUEL[st.fuel].toLowerCase() + ': <b>' + pounds(s.p[st.fuel], T.l) + '</b>' : '';
     return '<b>' + esc(s.b) + '</b>' + (s.n ? '<br>' + esc(s.n) : '') + '<br>' + esc(s.a) + (s.pc ? ', ' + esc(s.pc) : '') + rows + fill +
       '<br><a href="' + dirUrl(s) + '" target="_blank" rel="noopener">Directions</a>';
   }
@@ -375,6 +413,7 @@
           (st.cut && st.around ? 'about ' + st.around.n.toLocaleString('en-GB') + ' forecourts, cheapest first.' : n + ' forecourt' + (n === 1 ? '' : 's') + '.'));
       renderList(); tiles(); drawMap(); renderUk();
       $('ff-actions').hidden = !st.list.length;
+      fillTable();
     }, function () { if (my === seq) { status('Prices could not be loaded. Please check your connection and try again.'); $('ff-list').innerHTML = ''; } });
   }
 
@@ -591,10 +630,10 @@
   })();
 
   function loadStats() {
-    get('?stats=1').then(function (j) { if (j && j.ok) { st.stats = j; if (st.list.length) tiles(); renderUk(); } }, function () {});
+    get('?stats=1').then(function (j) { if (j && j.ok) { st.stats = j; if (st.list.length) tiles(); renderUk(); fillTable(); } }, function () {});
   }
   pressFuel();
-  tankButtons();
+  vehicleMenu();
   loadStats();
   update();
 })();
