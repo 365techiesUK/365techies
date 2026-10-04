@@ -16,7 +16,7 @@ const rep = (n, f) => Array.apply(null, Array(n)).map((_, i) => f(i)).join('');
 const SCENES = [
   // Osmington White Horse: King George III riding, cut in the chalk of the hill above Weymouth
   CLOUDS + '<path d="M0 112 Q120 92 260 104 T720 100 L720 130 L0 130 Z" fill="#a8c79a" opacity=".8"/><path d="M0 160 Q170 52 400 58 T720 128 L720 190 L0 190 Z" fill="#7fae5a"/>'
-    + '<g fill="#fbfaf4"><ellipse cx="360" cy="96" rx="44" ry="14"/><path d="M396 92 L414 66 L424 70 L408 98 Z"/><ellipse cx="424" cy="66" rx="12" ry="6" transform="rotate(-25 424 66)"/>'
+    + '<g fill="#fbfaf4"><ellipse cx="360" cy="96" rx="44" ry="14"/><path d="M390 90 Q398 70 412 62 L420 70 Q408 80 404 98 Z"/><path d="M410 60 Q422 56 432 66 L440 78 Q436 84 430 80 L422 72 Z"/><path d="M412 60 L414 50 L419 59 Z"/>'
     + '<rect x="326" y="104" width="6" height="26"/><rect x="340" y="106" width="6" height="24"/><rect x="376" y="106" width="6" height="24"/><rect x="390" y="104" width="6" height="26"/>'
     + '<path d="M318 92 Q300 100 304 120 L310 120 Q308 104 322 98 Z"/><circle cx="360" cy="62" r="7"/><path d="M354 68 L366 68 L370 88 L350 88 Z"/></g>'
 ];
