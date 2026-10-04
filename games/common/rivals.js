@@ -13,6 +13,8 @@
  * fx(fx, K) -> sounds and words for what happened, over(S), result(S) -> {won, title, sub, tiles, badges, best},
  * chips(S) -> [[label, value]], dealOrder(S), hintShow(S, m, U) -> {cards, say}, newHand(S, U), help, bestTiles.
  * U is what you are in the middle of choosing (Hearts: the cards to pass; Gin: knocking) - it is saved with the game.
+ * The Hall of Fame (5 Oct 2026; D.hof, D.hofWhat): your moves are logged as E.code(m) (G.log, saved with the game); a win
+ * of Today's match sends them, and the server replays the whole match - the computer players too - before it counts.
  * Every timed step checks `gen` (bumped by a new game) and stops if it changed. */
 (function () {
   'use strict';
@@ -35,7 +37,7 @@
     (function () { var s = load('stats', null); if (s && s.v === 1) for (var k in ST) if (k in s) ST[k] = s[k]; if (!ST.best || typeof ST.best !== 'object') ST.best = {}; })();
 
     var S = null, G = null, U = {}, busy = false, gen = 0, goT = 0;
-    function newG(mode, day) { return { mode: mode || 'match', day: day || '', started: false, counted: false, ms: 0 }; }
+    function newG(mode, day) { return { mode: mode || 'match', day: day || '', started: false, counted: false, ms: 0, log: [], lg: true }; }   // lg: logged from the start
 
     // ------------------------------------------------------------ the page
     buildUI();
@@ -131,7 +133,7 @@
     function act(m, mine) {
       var fx = E.apply(S, m);
       if (!fx) { sfx('nope'); render(); return false; }
-      if (mine) G.started = true;
+      if (mine) { G.started = true; if (E.code && G.log) G.log.push(E.code(m)); }
       if (fx.t === 'next') { U = {}; if (D.newHand) D.newHand(S, U); dealOut(); effects(fx); persist(); return fx; }
       effects(fx); render(); persist();
       if (D.over(S)) matchOver(); else go();
@@ -149,7 +151,7 @@
         if (!fx) { busy = false; render(); return; }
         effects(fx); render(); persist();
         if (D.over(S)) { busy = false; matchOver(); } else go();
-      }, reduce ? 60 : Math.round(D.wait(S, m) * SPEED[SET.speed]));
+      }, reduce ? 300 : Math.round(D.wait(S, m) * SPEED[SET.speed]));   // (never quicker than the Hall of Fame allows: 0.2 s a move)
     }
     function effects(fx) {
       var K = { sfx: sfx, say: say, burst: burstAt, cardEl: cardEl };
@@ -259,6 +261,8 @@
         $('oBadges').innerHTML = badges.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('');
         $('oDaily').hidden = !!(ST.daily[today()]);
         openD('dOver');
+        var hb = $('oHof'); hb.hidden = true; hb.innerHTML = '';
+        if (window.HallOfFame && D.hof && G.mode === 'daily' && r.won && G.lg) HallOfFame.daily(hb, { day: G.day, lv: S.lv, secs: Math.max(1, Math.round(G.ms / 1000)), log: G.log });
       }, r.won ? 900 : 700);
     }
 
@@ -400,7 +404,7 @@
     function openNew() {
       var inPlay = G && G.started && !D.over(S), dd = ST.daily[today()];
       $('dNewNote').textContent = inPlay ? 'The match you’re playing will count as not won.' : 'Choose how good the other players are, then deal.';
-      $('nDailyS').textContent = dd ? 'Done today ✔ — play it again if you like' : 'The same cards for everyone today';
+      $('nDailyS').textContent = (dd ? 'Done today ✔ — play it again if you like' : 'The same cards for everyone today') + (D.hof ? ' · race the Hall of Fame' : '');
       $('nAgainS').textContent = 'Match #' + S.seed + ', from the first hand';
       syncControls(); openD('dNew');
     }
@@ -448,6 +452,14 @@
     $('oAgain').onclick = function () { newGame('match'); };
     $('oDaily').onclick = function () { newGame('daily'); };
     $('oStats').onclick = openStats;
+    if (D.hof && window.HallOfFame) {
+      var hofOpen = function () { closeSheets(); HallOfFame.open({}); };
+      $('nHof').onclick = hofOpen; $('sHof').onclick = hofOpen;
+      HallOfFame.init({ game: D.id, title: D.title, kind: 'match', what: D.hofWhat || {}, levels: LVS.options.map(function (o) { return [o[0], o[1]]; }),
+        level: function () { return SET.lv; }, sfx: function (k) { sfx(k === 'suit' ? 'fanfare' : 'chime', 3); },
+        burst: function (x, y, place) { if (SET.fx && !reduce) { Spark.burst(x, y, place === 1 ? 90 : 50, ['#ffe08a', '#ffffff', '#ffb347', '#8ff0ff'], 6, 90); Spark.ring(x, y, 120, '#ffe08a', 40); } },
+        onPlay: function () { newGame('daily'); } });
+    }
     if (window.GameSocial) GameSocial.init({ id: D.id, title: D.title });
     $('bShare').onclick = function () { if (window.GameSocial) GameSocial.share(); };
     $('bGames').onclick = function () { if (window.GameSocial && GameSocial.openGames) GameSocial.openGames(); else location.href = '/games/'; };
@@ -466,7 +478,7 @@
     document.addEventListener('fullscreenchange', function () { $('bFullL').textContent = document.fullscreenElement ? 'Leave full screen' : 'Full screen'; });
     document.addEventListener('keydown', function (e) {
       gestured = true;
-      if (e.defaultPrevented || (window.GameSocial && GameSocial.isOpen())) return;
+      if (e.defaultPrevented || (window.GameSocial && GameSocial.isOpen()) || (window.HallOfFame && HallOfFame.isOpen())) return;   // typing feedback or initials
       if (e.key === 'Escape') { if (openSheet) closeSheets(); return; }
       if (openSheet || e.altKey || e.ctrlKey || e.metaKey) return;
       var k = (e.key || '').toLowerCase();
@@ -482,7 +494,7 @@
     }
     function persist() { if (S) save('game', { s: S, g: G, u: U }); }
     var lastTick = Date.now();
-    setInterval(function () { var now = Date.now(), d = Math.min(2000, now - lastTick); lastTick = now; if (G && G.started && S && !D.over(S) && !document.hidden && !openSheet) G.ms += d; }, 1000);
+    setInterval(function () { var now = Date.now(), d = Math.min(2000, now - lastTick); lastTick = now; if (G && G.started && S && !D.over(S) && !document.hidden && !openSheet && !(window.HallOfFame && HallOfFame.isOpen())) G.ms += d; }, 1000);
     document.addEventListener('visibilitychange', function () { if (document.hidden) persist(); });
     window.addEventListener('pagehide', persist);
     var rz = 0;
@@ -499,6 +511,7 @@
     var saved = load('game', null);
     if (!shared && saved && saved.s && saved.g && E.valid(saved.s) && !D.over(saved.s)) {
       S = saved.s; G = newG(saved.g.mode, saved.g.day); G.started = !!saved.g.started; G.counted = !!saved.g.counted; G.ms = +saved.g.ms || 0;
+      G.log = Array.isArray(saved.g.log) ? saved.g.log : []; G.lg = !!saved.g.lg;   // a game saved before moves were logged can't go to the Hall of Fame
       U = saved.u && typeof saved.u === 'object' ? saved.u : {};
       layout(); render(true); go();
     } else if (shared) { S = E.newMatch(shared.seed, shared.v); G = newG(); layout(); newGame('shared'); say('Match #' + shared.seed + ' – the same cards your friend played. Good luck!'); }
@@ -526,10 +539,11 @@
           + '<div class="choice"><button class="btn go" type="button" id="nDeal">New match<small>Fresh cards</small></button>'
           + '<button class="btn" type="button" id="nDaily">Today&rsquo;s match<small id="nDailyS">The same cards for everyone today</small></button>'
           + '<button class="btn" type="button" id="nAgain">Play this match again<small id="nAgainS"></small></button></div>'
+          + (D.hof ? '<div class="choice chals"><button class="btn hofbtn" type="button" id="nHof">&#127942; Hall of Fame<small>Today&rsquo;s match: the best wins in Dorset and beyond</small></button></div>' : '')
           + '<div class="row"><button class="btn wide" type="button" data-close>Keep playing</button></div>')
-        + sheet('dOver', 'You won!', '<p class="soft" id="oSub"></p><div class="tiles" id="oTiles"></div><ul class="badges" id="oBadges"></ul>'
+        + sheet('dOver', 'You won!', '<p class="soft" id="oSub"></p><div class="tiles" id="oTiles"></div><ul class="badges" id="oBadges"></ul><div id="oHof" hidden></div>'
           + '<div class="row"><button class="btn go wide" type="button" id="oAgain">New match</button><button class="btn wide" type="button" id="oShare">Challenge a friend</button><button class="btn wide" type="button" id="oDaily">Today&rsquo;s match</button><button class="btn wide" type="button" id="oStats">My scores</button></div>')
-        + sheet('dStats', 'My scores', '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere.</p><div class="tiles" id="sTiles"></div><div class="tiles" id="sBest"></div>'
+        + sheet('dStats', 'My scores', (D.hof ? '<button class="btn hofbtn wide" type="button" id="sHof" style="width:100%;margin:2px 0 12px">&#127942; The Hall of Fame<small>Today&rsquo;s match: the best wins, this week, all time</small></button>' : '') + '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere unless you join the Hall of Fame.</p><div class="tiles" id="sTiles"></div><div class="tiles" id="sBest"></div>'
           + '<div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>')
         + sheet('dSet', 'Settings', '<div class="set"><div><label>How fast the others play</label><small>Slow gives you time to watch every card.</small></div><div class="seg" role="group" aria-label="How fast the others play"><button type="button" data-speed="1">Slow</button><button type="button" data-speed="2">Normal</button><button type="button" data-speed="3">Quick</button></div></div>'
           + sw('sound', 'Sounds', 'Soft card sounds and chimes.') + sw('fx', 'Extra effects', 'Sparkles and fireworks when you win. Switch off on a slower computer.')

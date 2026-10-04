@@ -9,6 +9,9 @@
  * The arcade games (kind: 'arcade', levels = their speeds, e.g. [['v1','Gentle'],...]):
  *   HallOfFame.run()                         when a game starts: asks the server for a one-off ticket (a promise of it)
  *   HallOfFame.score(box, { lv, score, wave, secs, run })   at game over: fills the game-over card's box, sends the score
+ * The card games against the computer (kind: 'match'; Hearts, Gin Rummy, Cribbage, Whist - 5 Oct 2026): Today's match
+ * at each level, sent with HallOfFame.daily() after a win; no sprint; what: {today, alltime, town} says how the boards
+ * are ranked (each game its own measure). The server replays the whole match, the computer players' moves too.
  *
  * The server (api/games-hof.php) REPLAYS every card-game win from its moves before it counts, so the boards can be
  * trusted; an arcade score must come back on its own game's ticket, in no less real time than it claims.
@@ -38,6 +41,8 @@
   function whoami() { return who ? Promise.resolve(who) : call({ action: 'whoami' }).then(function (j) { if (j && j.ok) who = j; return j; }); }
   function lvVal(s) { return /^\d+$/.test(String(s)) ? +s : String(s); }   // card levels are numbers, arcade speeds keys like 'v2'
   function arcade() { return C.kind === 'arcade'; }
+  function match() { return C.kind === 'match'; }
+  function dealWord() { return match() ? 'match' : 'deal'; }
   function fmt(n) { return Number(n || 0).toLocaleString('en-GB'); }
   function lvName(v) { var o = C.levels.filter(function (x) { return x[0] === v; })[0]; return o ? o[1] : ''; }
   function mono(ini) { return esc(String(ini || '?').split('').join('.')) + '.'; }
@@ -115,7 +120,7 @@
       + '<div class="hf-head">' + CUP + '<div><h2 id="hfH">Hall of Fame</h2><p id="hfSub"></p></div></div>'
       + '<div class="hf-tabs" role="group" aria-label="Which board">'
       + '<button type="button" data-hftab="today">Today</button><button type="button" data-hftab="week">This week</button><button type="button" data-hftab="alltime">All time</button>'
-      + (arcade() ? '' : '<button type="button" data-hftab="sprint">3-minute sprint</button>') + '<button type="button" data-hftab="town">My town</button></div>'
+      + (arcade() || match() ? '' : '<button type="button" data-hftab="sprint">3-minute sprint</button>') + '<button type="button" data-hftab="town">My town</button></div>'
       + '<div class="hf-lvs" id="hfLvs" role="group" aria-label="Level">' + lvls + '</div>'
       + '<p class="hf-note" id="hfWhat" style="margin:0 0 10px"></p>'
       + '<ol class="hf-list" id="hfList" aria-live="polite"></ol>'
@@ -162,11 +167,17 @@
     alltime: 'The highest scores ever at this speed.',
     town: 'Today&rsquo;s highest scores at this speed, just for your town.'
   };
+  var WHAT_MATCH = {
+    today: 'Today&rsquo;s match at this level &mdash; the same cards for everyone.',
+    week: 'Points for every one of Today&rsquo;s matches won this week &mdash; more for a harder level.',
+    alltime: 'The best wins of Today&rsquo;s match, ever, at this level.',
+    town: 'Today&rsquo;s match at this level, just for your town.'
+  };
   function draw() {
     Array.prototype.forEach.call(document.querySelectorAll('[data-hftab]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-hftab') === tab)); });
     Array.prototype.forEach.call(document.querySelectorAll('[data-hflv]'), function (b) { b.setAttribute('aria-pressed', String(lvVal(b.getAttribute('data-hflv')) === lv)); });
     $('hfLvs').hidden = !arcade() && (tab === 'week' || tab === 'sprint');
-    $('hfWhat').innerHTML = arcade() ? WHAT_ARC[tab] : tab === 'sprint' && C.sprintBoard ? 'Today&rsquo;s 3-minute sprint: ' + C.sprintBoard + '.' : WHAT[tab];
+    $('hfWhat').innerHTML = arcade() ? WHAT_ARC[tab] : match() ? WHAT_MATCH[tab] + (C.what && C.what[tab] ? ' ' + C.what[tab] : '') : tab === 'sprint' && C.sprintBoard ? 'Today&rsquo;s 3-minute sprint: ' + C.sprintBoard + '.' : WHAT[tab];
     $('hfSub').textContent = C.title + ' · ' + (tab === 'town' && who && who.town ? who.town : 'Dorset and beyond');
     var my = ++req, list = $('hfList');
     list.innerHTML = '<li class="hf-empty">Loading the scores&hellip;</li>';
@@ -181,7 +192,7 @@
         } else if (!j.rows.length) {
           var play = tab === 'sprint' ? 'sprint' : (tab === 'week' || tab === 'alltime' || tab === 'today' || tab === 'town') ? 'daily' : '';
           list.innerHTML = '<li class="hf-empty"><span>' + (tab === 'sprint' ? 'No one has run today&rsquo;s sprint yet.' : tab === 'week' ? 'No wins yet this week.' : 'No one has won it yet &mdash; be the first!') + '</span>'
-            + (C.onPlay && play ? '<button class="hf-btn gold" type="button" data-hfplay="' + play + '">' + (play === 'sprint' ? 'Run today&rsquo;s sprint' : 'Play today&rsquo;s deal') + '</button>' : '') + '</li>';
+            + (C.onPlay && play ? '<button class="hf-btn gold" type="button" data-hfplay="' + play + '">' + (play === 'sprint' ? 'Run today&rsquo;s sprint' : 'Play today&rsquo;s ' + dealWord()) + '</button>' : '') + '</li>';
         } else {
           var out = j.rows.map(rowHtml);
           if (j.mine && j.mine.rank > j.rows.length) out.push('<li class="hf-sep" aria-hidden="true">&middot; &middot; &middot;</li>', rowHtml(j.mine, j.rows.length));
@@ -203,7 +214,7 @@
         + ' <button class="hf-link" type="button" id="hfForget">Take my name off</button>';
       if ($('hfRename')) $('hfRename').onclick = function () { join({ rename: true }); };
       $('hfForget').onclick = forget;
-    } else f.innerHTML = (arcade() ? 'Finish a game to join the Hall of Fame.' : 'Win Today&rsquo;s deal or run the 3-minute sprint to join the Hall of Fame.') + (who && who.member ? ' You&rsquo;re signed in, so you&rsquo;ll show with the <span class="hf-mem">365 MEMBER</span> badge.' : '');
+    } else f.innerHTML = (arcade() ? 'Finish a game to join the Hall of Fame.' : match() ? 'Win Today&rsquo;s match to join the Hall of Fame.' : 'Win Today&rsquo;s deal or run the 3-minute sprint to join the Hall of Fame.') + (who && who.member ? ' You&rsquo;re signed in, so you&rsquo;ll show with the <span class="hf-mem">365 MEMBER</span> badge.' : '');
   }
   function forget() {
     if (!window.confirm('Take your initials and all your scores off the Hall of Fame? This can’t be undone.')) return;
@@ -280,7 +291,7 @@
     var p = load();
     if (!p || !p.ini) {   // not joined yet: ask, right here
       box.innerHTML = '<div class="hf-res">' + CUP.replace('class="hf-cup"', 'class="hf-cup" style="width:46px;height:46px"')
-        + '<p style="font-weight:700;color:#fff">' + (body.mode === 'score' ? 'You scored ' + fmt(body.score) + '!' : body.mode === 'sprint' ? body.cards + ' cards in three minutes!' : 'You won today&rsquo;s ' + esc(lvName(body.lv)) + ' deal!') + '</p>'
+        + '<p style="font-weight:700;color:#fff">' + (body.mode === 'score' ? 'You scored ' + fmt(body.score) + '!' : body.mode === 'sprint' ? body.cards + ' cards in three minutes!' : 'You won today&rsquo;s ' + esc(lvName(body.lv)) + ' ' + dealWord() + '!') + '</p>'
         + '<p>Put your initials in the Hall of Fame and see where you rank in Dorset.</p>'
         + '<div class="hf-row2"><button class="hf-btn gold" type="button" id="hfJoinBtn">Join the Hall of Fame</button></div></div>';
       $('hfJoinBtn').onclick = function () { join().then(function (yes) { if (yes) send(box, body); }); };
@@ -293,7 +304,7 @@
     box.innerHTML = '<div class="hf-res"><p style="margin:0">Checking your ' + (body.mode === 'sprint' ? 'sprint' : body.mode === 'score' ? 'score' : 'win') + ' and sending it to the Hall of Fame&hellip;</p></div>';
     call(Object.assign({ action: 'submit', ini: p.ini, town: p.town }, body)).then(function (j) {
       if (!j || !j.ok) {
-        var why = { ini: 'Those initials can’t be used - choose others.', town: 'Choose your town first.', rate: 'That’s plenty for today - try again tomorrow!', offline: 'No internet connection - your win is still saved on this computer.', day: 'That deal is from another day.', replay: 'That game couldn’t be checked, so it wasn’t added.', run: 'That game couldn’t be checked (was the internet off when it started?), so it wasn’t added.', 'not-won': 'That game couldn’t be checked, so it wasn’t added.', time: 'That time couldn’t be checked, so it wasn’t added.' }[j && j.error] || 'The Hall of Fame didn’t answer - try again later.';
+        var why = { ini: 'Those initials can’t be used - choose others.', town: 'Choose your town first.', rate: 'That’s plenty for today - try again tomorrow!', offline: 'No internet connection - your win is still saved on this computer.', day: 'That ' + dealWord() + ' is from another day.', replay: 'That game couldn’t be checked, so it wasn’t added.', run: 'That game couldn’t be checked (was the internet off when it started?), so it wasn’t added.', 'not-won': 'That game couldn’t be checked, so it wasn’t added.', time: 'That time couldn’t be checked, so it wasn’t added.' }[j && j.error] || 'The Hall of Fame didn’t answer - try again later.';
         box.innerHTML = '<div class="hf-res"><p style="margin:0">' + esc(why) + '</p>' + (j && (j.error === 'ini' || j.error === 'town') ? '<div class="hf-row2"><button class="hf-btn gold" type="button" id="hfFix">Change my initials</button></div>' : '') + '</div>';
         if ($('hfFix')) $('hfFix').onclick = function () { try { var pl = load(); pl.ini = ''; save(pl); } catch (e) {} result(box, body); };
         return;
@@ -302,6 +313,7 @@
       var place = j.rank, of = j.count, town = j.townRank && j.townCount > 1 ? ' &middot; #' + j.townRank + ' of ' + j.townCount + ' in ' + esc(j.town) : (j.townRank === 1 ? ' &middot; first in ' + esc(j.town) + '!' : '');
       box.innerHTML = '<div class="hf-res"><span class="big" id="hfBig">#' + place + '</span>'
         + '<p><b style="color:#fff">' + (body.mode === 'sprint' ? 'in today&rsquo;s sprint' : 'today at ' + esc(lvName(body.lv))) + '</b> of ' + of + (of === 1 ? ' player' : ' players') + town + '</p>'
+        + (j.v && match() ? '<p>Your win: <b style="color:#ffd257">' + esc(j.v) + '</b></p>' : '')
         + (body.mode === 'score' && j.everRank && j.everRank <= 10 && j.everCount > 1 && j.improved !== false ? '<p>&#11088; <b style="color:#ffd257">#' + j.everRank + ' of all time</b> at this speed!</p>' : '')
         + (j.improved === false ? '<p>Your best today still stands.</p>' : '')
         + '<div class="hf-row2"><button class="hf-btn gold" type="button" id="hfSee">See the Hall of Fame</button></div></div>';

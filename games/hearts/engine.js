@@ -202,13 +202,14 @@
     if (lv >= 5) {
       [CL, DI].map(function (s) { return h.filter(function (c) { return suit(c) === s && c !== TWO_C; }); })
         .filter(function (l) { return l.length && l.length <= 3 - out.length; })
-        .sort(function (a, b) { return a.length - b.length; })
+        .sort(function (a, b) { return a.length - b.length || suit(b[0]) - suit(a[0]); })   // (clubs first on a tie)
         .slice(0, 1).forEach(function (l) { l.forEach(take); });
     }
     // then the highest hearts, then the highest of anything
     h.filter(function (c) { return suit(c) === HE && hi(c) >= 10; }).sort(function (a, b) { return hi(b) - hi(a); }).forEach(take);
-    h.slice().sort(function (a, b) { return hi(b) - hi(a) || (suit(a) === SP ? -1 : 1); }).forEach(function (c) { if (!(suit(c) === SP && hi(c) < 12)) take(c); });
-    h.slice().sort(function (a, b) { return hi(b) - hi(a); }).forEach(take);
+    // (every sort here gives one order only - the server replays these choices exactly: api/games-he-lib.php)
+    h.slice().sort(function (a, b) { return hi(b) - hi(a) || (suit(a) === SP ? 0 : 1) - (suit(b) === SP ? 0 : 1) || a - b; }).forEach(function (c) { if (!(suit(c) === SP && hi(c) < 12)) take(c); });
+    h.slice().sort(function (a, b) { return hi(b) - hi(a) || a - b; }).forEach(take);
     return out;
   }
   // a hand worth trying to take every point with (Expert): long, high hearts and the top spades
@@ -329,6 +330,8 @@
     var k = S.lv; S.lv = 5; var c = ai(S, 0); S.lv = k;
     return { t: 'play', c: c };
   }
+  // a move as a short code for the Hall of Fame's log (the server replays it: api/games-he-lib.php he_decode)
+  function code(m) { return m.t === 'pass' ? 'P' + m.cards.join('.') : m.t === 'play' ? 'c' + m.c : m.t === 'next' ? 'N' : '?'; }
   function valid(S) {
     return !!(S && S.v === 1 && Array.isArray(S.hands) && S.hands.length === 4 && Array.isArray(S.scores) && LV[S.lv] && ['pass', 'play', 'handEnd', 'over'].indexOf(S.phase) >= 0);
   }
@@ -336,6 +339,6 @@
   return {
     SP: SP, HE: HE, DI: DI, CL: CL, QS: QS, TWO_C: TWO_C, LV: LV, NAMES: NAMES, DIR: DIR, SUIT_NAME: SUIT_NAME,
     suit: suit, rank: rank, hi: hi, pts: pts, clone: clone, sortHand: sortHand, newMatch: newMatch, legal: legal, whyNot: whyNot,
-    apply: apply, auto: auto, ai: ai, aiPass: aiPass, hint: hint, passTo: passTo, winnerOf: winnerOf, valid: valid, moonHand: moonHand
+    apply: apply, auto: auto, ai: ai, aiPass: aiPass, hint: hint, code: code, passTo: passTo, winnerOf: winnerOf, valid: valid, moonHand: moonHand
   };
 });

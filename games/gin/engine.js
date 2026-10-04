@@ -287,6 +287,8 @@
     var m = S.phase === 'draw' ? { t: 'draw', from: aiDraw(S, 0) } : S.phase === 'discard' ? aiThrow(S, 0) : null;
     S.lv = k; return m;
   }
+  // a move as a short code for the Hall of Fame's log (the server replays it: api/games-gr-lib.php)
+  function code(m) { return m.t === 'draw' ? (m.from === 'pile' ? 'D' : 'S') : m.t === 'discard' ? 'c' + m.c : m.t === 'knock' ? 'K' + m.c : m.t === 'next' ? 'N' : '?'; }
   function valid(S) {
     return !!(S && S.v === 1 && Array.isArray(S.hands) && S.hands.length === 2 && Array.isArray(S.stock) && Array.isArray(S.pile) && LV[S.lv] && ['draw', 'discard', 'handEnd', 'over'].indexOf(S.phase) >= 0);
   }
@@ -302,6 +304,6 @@
     LV: LV, SUIT_NAME: SUIT_NAME, KNOCK: KNOCK, GIN_BONUS: GIN_BONUS, UNDERCUT: UNDERCUT, GAME_BONUS: GAME_BONUS, LINE_BONUS: LINE_BONUS,
     suit: suit, rank: rank, val: val, clone: clone, allMelds: allMelds, best: best, deadwood: deadwood, defend: defend, discards: discards,
     newMatch: newMatch, canDraw: canDraw, canThrow: canThrow, knockable: knockable, apply: apply, auto: auto, aiDraw: aiDraw, aiThrow: aiThrow,
-    hint: hint, valid: valid, arrange: arrange
+    hint: hint, valid: valid, arrange: arrange, code: code
   };
 });

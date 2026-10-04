@@ -195,6 +195,7 @@
 
   Rivals365.start({
     id: 'hearts', store: 'he365', title: 'Hearts', cards: 52, E: E,
+    hof: true, hofWhat: { today: 'Lowest winning score first.', alltime: 'The lowest winning scores ever.', town: 'Lowest winning score first.' },   // the Hall of Fame: Today's match (5 Oct 2026)
     face: function (c) { return { r: E.rank(c), s: E.suit(c) }; },
     levels: {
       options: [[1, 'Easy'], [3, 'Normal'], [5, 'Hard'], [7, 'Expert']], def: 3,

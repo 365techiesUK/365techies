@@ -384,7 +384,7 @@ ErrorDocument 404 /404.html
 </FilesMatch>
 # 365 Games Hall of Fame (4 Oct 2026): the store (players' initials, towns, key hashes, scores), the rate counter and
 # the lock (and the arcade's game tickets, games-hof-runs*) are internal; the games-*-lib.php rule copies are include-only. games-hof.php itself stays served - it is the public endpoint.
-<FilesMatch "^(games-hof(-[a-z]+)?\.json(\..*)?|games-hof(-runs)?\.lock|games-(sol|fc|sp|tp|py)-lib\.php)$">
+<FilesMatch "^(games-hof(-[a-z]+)?\.json(\..*)?|games-hof(-runs)?\.lock|games-(sol|fc|sp|tp|py|he|gr|cr|wh)-lib\.php)$">
   Require all denied
 </FilesMatch>
 # Comms hub: the inbox store holds message bodies + full numbers, the IMAP

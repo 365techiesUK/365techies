@@ -152,6 +152,7 @@
 
   Rivals365.start({
     id: 'whist', store: 'wh365', title: 'Whist', cards: 52, E: E,
+    hof: true, hofWhat: { today: 'Fewest hands to win the rubber first.', alltime: 'The quickest rubbers ever, in hands.', town: 'Fewest hands to win the rubber first.' },   // the Hall of Fame: Today's match (5 Oct 2026)
     face: function (c) { return { r: E.rank(c), s: E.suit(c) }; },
     levels: {
       options: [[1, 'Easy'], [3, 'Normal'], [5, 'Hard'], [7, 'Expert']], def: 3,

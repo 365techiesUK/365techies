@@ -279,11 +279,13 @@
     else if (S.phase === 'peg' && S.turn === 0 && legal(S, 0).length) m = { t: 'play', c: aiPlay(S, 0) };
     S.lv = k; return m;
   }
+  // a move as a short code for the Hall of Fame's log (the server replays it: api/games-cr-lib.php)
+  function code(m) { return m.t === 'discard' ? 'C' + m.cards.join('.') : m.t === 'play' ? 'c' + m.c : m.t === 'count' ? 'T' : m.t === 'next' ? 'N' : '?'; }
   function valid(S) {
     return !!(S && S.v === 1 && Array.isArray(S.hands) && S.hands.length === 2 && Array.isArray(S.scores) && LV[S.lv] && ['discard', 'peg', 'show', 'handEnd', 'over'].indexOf(S.phase) >= 0);
   }
   return {
     LV: LV, GAME: GAME, suit: suit, rank: rank, val: val, clone: clone, score: score, pegPoints: pegPoints, newMatch: newMatch,
-    legal: legal, apply: apply, auto: auto, aiDiscard: aiDiscard, aiPlay: aiPlay, hint: hint, valid: valid
+    legal: legal, apply: apply, auto: auto, aiDiscard: aiDiscard, aiPlay: aiPlay, hint: hint, valid: valid, code: code
   };
 });

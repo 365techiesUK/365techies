@@ -22,6 +22,12 @@
  * than has really passed and no more points than that game can score in that time. Boards: the highest score today /
  * this week / ever / in your town, at each speed.
  *
+ * The card games against the computer (Hearts, Gin Rummy, Cribbage, Whist; 5 Oct): Today's match at each level, the same
+ * cards for everyone. The server replays the WHOLE match from the player's own moves - the computer players' moves too,
+ * with line-for-line copies of their play (games-he/gr/cr/wh-lib.php, each pinned to the browser by a parity test) - so
+ * only a real win counts. Ranked by each game's own measure: Hearts the lowest winning score, Gin Rummy and Cribbage the
+ * biggest winning margin, Whist the fewest hands to win the rubber.
+ *
  * Actions (POST JSON): whoami, submit, board, rename, forget, run. Store: games-hof.json (denied in .htaccess), 2 years;
  * tickets: games-hof-runs.json, 12 hours.
  * NO closing tag in this file.
@@ -45,6 +51,13 @@ $HOF_GAMES = array(
     'tripeaks'  => array('lib' => 'games-tp-lib.php',  'replay' => 'tp_replay',  'daily' => 'tp_daily_seed',  'sprint' => 'tp_sprint_seed',  'count' => 'tp_found_count',  'sprintLv' => 1, 'minSecs' => 15, 'perMove' => 0.3),
     'pyramid'   => array('lib' => 'games-py-lib.php',  'replay' => 'py_replay',  'daily' => 'py_daily_seed',  'sprint' => 'py_sprint_seed',  'count' => 'py_found_count',  'sprintLv' => 1, 'minSecs' => 15, 'perMove' => 0.3),
 );
+// the card games against the computer: how a match is replayed, and how a win is measured (low: smaller is better)
+$HOF_MATCH = array(
+    'hearts'   => array('lib' => 'games-he-lib.php', 'replay' => 'he_replay', 'low' => true),
+    'gin'      => array('lib' => 'games-gr-lib.php', 'replay' => 'gr_replay', 'low' => false),
+    'cribbage' => array('lib' => 'games-cr-lib.php', 'replay' => 'cr_replay', 'low' => false),
+    'whist'    => array('lib' => 'games-wh-lib.php', 'replay' => 'wh_replay', 'low' => true),
+);
 // the arcade games: their speeds (the game's own score slots, arcade.js skey) and the most points a second of play can
 // bring, plus a margin - generous, so a great game is never refused; the ticket's clock is what really holds a score down
 $HOF_ARCADE = array(
@@ -65,9 +78,19 @@ if (!is_array($in)) hof_out(array('ok' => false, 'error' => 'bad-input'), 400);
 $action = isset($in['action']) ? preg_replace('/[^a-z]/', '', (string)$in['action']) : '';
 $GAME = isset($in['game']) ? (string)$in['game'] : '';
 $ARC = isset($HOF_ARCADE[$GAME]) ? $HOF_ARCADE[$GAME] : null;
-if (!isset($HOF_GAMES[$GAME]) && !$ARC) hof_out(array('ok' => false, 'error' => 'game'), 400);
-$G = $ARC ? null : $HOF_GAMES[$GAME];
+$MATCH = isset($HOF_MATCH[$GAME]) ? $HOF_MATCH[$GAME] : null;
+if (!isset($HOF_GAMES[$GAME]) && !$ARC && !$MATCH) hof_out(array('ok' => false, 'error' => 'game'), 400);
+$G = $ARC || $MATCH ? null : $HOF_GAMES[$GAME];
 if ($G) require_once __DIR__ . '/' . $G['lib'];
+if ($MATCH) require_once __DIR__ . '/' . $MATCH['lib'];
+// Today's match: one deal number for everyone today, at every level (games/common/rivals.js newGame('daily'))
+function hof_match_seed($n) { return 900000 + (($n * 7919) % 90000 + 90000) % 90000; }
+// a match win as shown on a board: Hearts "12 points", Gin Rummy / Cribbage "by 34", Whist "6 hands"
+function hof_match_v($game, $e) {
+    if ($game === 'hearts') return $e['pts'] . ($e['pts'] === 1 ? ' point' : ' points');
+    if ($game === 'whist') return $e['pts'] . ' hands';
+    return 'by ' . number_format($e['pts']);
+}
 function hof_day_number($ymd) {   // days since 1 Jan 2026 - the games' own day count (table.js dayNumber)
     if (!preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', (string)$ymd, $m)) return null;
     return intdiv(gmmktime(0, 0, 0, (int)$m[2], (int)$m[3], (int)$m[1]) - gmmktime(0, 0, 0, 1, 1, 2026), 86400);
@@ -145,6 +168,8 @@ function hof_points($e) { global $LV_POINTS; return $LV_POINTS[$e['lv']] + max(0
 
 // the boards: rows of {rank, ini, town, v (the score as shown), sub, m (member), you}
 function hof_board($all, $board, $lv, $town, $me, $game) {
+    global $HOF_MATCH;
+    $M = isset($HOF_MATCH[$game]) ? $HOF_MATCH[$game] : null;   // a game against the computer: ranked by its own measure
     $today = date('Y-m-d'); $rows = array(); $byP = array();
     $pl = $all['players'];
     if ($board === 'week') {
@@ -164,9 +189,12 @@ function hof_board($all, $board, $lv, $town, $me, $game) {
                 if ($board !== 'alltime' && $e['day'] !== $today) continue;
                 if ($board === 'town' && $pl[$e['p']]['town'] !== $town) continue;
             }
-            $r = $board === 'sprint'
+            $r = $M
+                ? array('p' => $e['p'], 'k1' => $M['low'] ? $e['pts'] : -$e['pts'], 'k2' => $e['secs'], 'v' => hof_match_v($game, $e),
+                    'sub' => hof_mmss($e['secs']) . ($game === 'hearts' || $game === 'gin' ? ' · ' . $e['hands'] . ' hands' : '') . ($board === 'alltime' ? ' · ' . date('j M Y', strtotime($e['day'] . ' 12:00')) : ''))
+                : ($board === 'sprint'
                 ? array('p' => $e['p'], 'k1' => -$e['cards'], 'k2' => $e['secs'], 'v' => $e['cards'] . ($e['cards'] === ($game === 'spider' ? 104 : ($game === 'tripeaks' || $game === 'pyramid' ? 28 : 52)) ? ' cards - all of them!' : ' cards'), 'sub' => hof_mmss($e['secs']))
-                : array('p' => $e['p'], 'k1' => $e['secs'], 'k2' => $e['moves'], 'v' => hof_mmss($e['secs']), 'sub' => $e['moves'] . ' moves' . ($board === 'alltime' ? ' · ' . date('j M Y', strtotime($e['day'] . ' 12:00')) : ''));
+                : array('p' => $e['p'], 'k1' => $e['secs'], 'k2' => $e['moves'], 'v' => hof_mmss($e['secs']), 'sub' => $e['moves'] . ' moves' . ($board === 'alltime' ? ' · ' . date('j M Y', strtotime($e['day'] . ' 12:00')) : '')));
             if (!isset($byP[$e['p']]) || $r['k1'] < $byP[$e['p']]['k1'] || ($r['k1'] === $byP[$e['p']]['k1'] && $r['k2'] < $byP[$e['p']]['k2'])) $byP[$e['p']] = $r;   // each player once: their best
         }
         $rows = array_values($byP);
@@ -309,6 +337,47 @@ if ($action === 'submit' && $ARC) {
     $ab = hof_arcade_board($all, 'alltime', $lv, '', $P['id'], $GAME, $ARC['word']);
     hof_out(array('ok' => true, 'improved' => $improved, 'ini' => $ini, 'town' => $town, 'member' => $isMem, 'rank' => $b['mine'] ? $b['mine']['rank'] : null, 'count' => $b['count'],
         'townRank' => $tb['mine'] ? $tb['mine']['rank'] : null, 'townCount' => $tb['count'], 'everRank' => $ab['mine'] ? $ab['mine']['rank'] : null, 'everCount' => $ab['count']));
+}
+
+if ($action === 'submit' && $MATCH) {   // a win of Today's match, replayed in full - the computer players' moves too
+    $day = isset($in['day']) ? (string)$in['day'] : '';
+    $n = hof_day_number($day); $todayN = hof_day_number(date('Y-m-d'));
+    if ($n === null || abs($n - $todayN) > 1) hof_out(array('ok' => false, 'error' => 'day'), 400);
+    $log = isset($in['log']) && is_array($in['log']) ? array_slice($in['log'], 0, 2001) : array();
+    if (count($log) < 5 || count($log) > 2000) hof_out(array('ok' => false, 'error' => 'replay'), 400);
+    @set_time_limit(60);
+    $r = call_user_func($MATCH['replay'], hof_match_seed($n), $lv, $log);
+    if ($r === null) hof_out(array('ok' => false, 'error' => 'replay'), 400);
+    if (!$r['won']) hof_out(array('ok' => false, 'error' => 'not-won'), 400);
+    // no quicker than it can be played: every computer move waits at least a fifth of a second, every move of yours a third
+    $secs = isset($in['secs']) ? (int)$in['secs'] : 0;
+    $floor = max(30, (int)ceil($r['auto'] * 0.2 + $r['human'] * 0.35));
+    if ($secs < $floor || $secs > 6 * 3600) hof_out(array('ok' => false, 'error' => 'time'), 400);
+    list($ini, $town, $isMem) = hof_who($in, $HOF_TOWNS);
+    $pts = (int)$r['pts'];
+    $lk = @fopen($HOF_LOCK, 'c'); if ($lk) @flock($lk, LOCK_EX);
+    $all = hof_load($HOF_STORE);
+    if (isset($all['players'][$P['id']]) && $all['players'][$P['id']]['kh'] !== $P['kh']) { if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); } hof_out(array('ok' => false, 'error' => 'player'), 403); }
+    $all['players'][$P['id']] = array('kh' => $P['kh'], 'ini' => $ini, 'town' => $town, 'member' => $isMem, 't' => time());
+    $cut = time() - $HOF_KEEP;
+    $all['entries'] = array_values(array_filter($all['entries'], function ($e) use ($cut) { return (int)$e['t'] >= $cut; }));
+    $new = array('p' => $P['id'], 'g' => $GAME, 'mode' => 'daily', 'lv' => $lv, 'day' => $day, 'secs' => $secs, 'moves' => $r['human'], 'pts' => $pts, 'hands' => $r['hands'], 't' => time());
+    $improved = true; $found = false;
+    foreach ($all['entries'] as $i => $e) {   // one entry a day for each player at each level: their best
+        if ($e['p'] !== $P['id'] || hof_g($e) !== $GAME || $e['mode'] !== 'daily' || (int)$e['lv'] !== $lv || $e['day'] !== $day) continue;
+        $found = true;
+        $better = $MATCH['low'] ? ($pts < $e['pts'] || ($pts === $e['pts'] && $secs < $e['secs'])) : ($pts > $e['pts'] || ($pts === $e['pts'] && $secs < $e['secs']));
+        if ($better) $all['entries'][$i] = $new; else $improved = false;
+    }
+    if (!$found) $all['entries'][] = $new;
+    if (count($all['entries']) > 60000) $all['entries'] = array_slice($all['entries'], -60000);
+    $ok = hof_save($HOF_STORE, $all);
+    if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); }
+    if (!$ok) hof_out(array('ok' => false, 'error' => 'store'), 500);
+    $b = hof_board($all, 'today', $lv, '', $P['id'], $GAME);
+    $t = hof_board($all, 'town', $lv, $town, $P['id'], $GAME);
+    hof_out(array('ok' => true, 'improved' => $improved, 'ini' => $ini, 'town' => $town, 'member' => $isMem, 'rank' => $b['mine'] ? $b['mine']['rank'] : null, 'count' => $b['count'],
+        'townRank' => $t['mine'] ? $t['mine']['rank'] : null, 'townCount' => $t['count'], 'v' => hof_match_v($GAME, $new)) + array('rows' => $b['rows']));
 }
 
 if ($action === 'submit') {

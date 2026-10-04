@@ -215,6 +215,7 @@
 
   Rivals365.start({
     id: 'cribbage', store: 'cr365', title: 'Cribbage', cards: 52, E: E,
+    hof: true, hofWhat: { today: 'Biggest winning margin first: 121 against Sam&rsquo;s score.', alltime: 'The biggest winning margins ever.', town: 'Biggest winning margin first: 121 against Sam&rsquo;s score.' },   // the Hall of Fame: Today's match (5 Oct 2026)
     face: function (c) { return { r: E.rank(c), s: E.suit(c) }; },
     levels: {
       options: [[1, 'Easy'], [3, 'Normal'], [5, 'Hard'], [7, 'Expert']], def: 3,

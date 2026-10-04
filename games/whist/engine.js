@@ -237,11 +237,13 @@
     var k = S.lv; S.lv = 5; var c = ai(S, 0); S.lv = k;
     return { t: 'play', c: c };
   }
+  // a move as a short code for the Hall of Fame's log (the server replays it: api/games-wh-lib.php)
+  function code(m) { return m.t === 'play' ? 'c' + m.c : m.t === 'next' ? 'N' : '?'; }
   function valid(S) {
     return !!(S && S.v === 1 && Array.isArray(S.hands) && S.hands.length === 4 && LV[S.lv] && ['play', 'handEnd', 'over'].indexOf(S.phase) >= 0);
   }
   return {
     LV: LV, NAMES: NAMES, SUIT_NAME: SUIT_NAME, GAME: GAME, suit: suit, rank: rank, hi: hi, team: team, clone: clone, sortHand: sortHand,
-    newMatch: newMatch, legal: legal, whyNot: whyNot, winnerOf: winnerOf, apply: apply, auto: auto, ai: ai, hint: hint, valid: valid
+    newMatch: newMatch, legal: legal, whyNot: whyNot, winnerOf: winnerOf, apply: apply, auto: auto, ai: ai, hint: hint, valid: valid, code: code
   };
 });
