@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Cache-Control: no-store');
     $in = json_decode((string)file_get_contents('php://input'), true);
     $pc = (is_array($in) && isset($in['pc'])) ? substr((string)$in['pc'], 0, 12) : '';
-    echo json_encode(bm_fuel_postcode($pc));
+    echo bmfuel_json(bm_fuel_postcode($pc));
     exit;
 }
 
@@ -28,7 +28,7 @@ if (!$c['ok']) {                       // first visit after a deploy: nothing st
     $c = bm_fuel_public();
 }
 header('Cache-Control: public, max-age=300');
-echo json_encode($c);
+echo bmfuel_json($c);
 
 $beat = bmfuel_json_load('beat.json');
 if (empty($beat['t']) || time() - (int)$beat['t'] > 75 * 60) {

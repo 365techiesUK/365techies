@@ -54,11 +54,22 @@ function bmfuel_json_load($name) {
     return is_array($c) ? $c : array();
 }
 
+/* SiteGround's PHP has serialize_precision = 17, so json_encode writes 178.9 as 178.900000000000005684...: correct to
+   the eye after rounding, but the data was 2-3x the size (44 KB for 98 stations, measured 4 Oct). Shortest form here
+   only; the setting is put back so the other cron jobs sharing the run are untouched. */
+function bmfuel_json($v) {
+    $was = ini_get('serialize_precision');
+    @ini_set('serialize_precision', '-1');
+    $s = json_encode($v);
+    @ini_set('serialize_precision', $was);
+    return $s;
+}
+
 function bmfuel_json_save($name, $data) {
     if (!is_dir(bmfuel_dir())) @mkdir(bmfuel_dir(), 0755, true);
     $f = bmfuel_dir() . $name;
     $tmp = $f . '.' . getmypid() . '.tmp';
-    if (@file_put_contents($tmp, json_encode($data), LOCK_EX) !== false) @rename($tmp, $f);
+    if (@file_put_contents($tmp, bmfuel_json($data), LOCK_EX) !== false) @rename($tmp, $f);
 }
 
 function bmfuel_http($url, $timeout = 15, $headers = array(), $post = null) {
