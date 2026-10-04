@@ -681,7 +681,10 @@ function bm_fuel_refresh($force = false) {
     $kf = bmfuel_dir() . 'fuelfinder-key.php';
     $keyNew = file_exists($kf) && !empty($beat['t']) && @filemtime($kf) > (int)$beat['t'];
     $noMeta = !file_exists(bmfuel_dir() . 'meta.json');                // first run of a new store layout: do it now
-    if (!$force && !$keyNew && !$noMeta && !empty($beat['t']) && $now - (int)$beat['t'] < BMFUEL_TTL) return array('ok' => true, 'skipped' => 'ttl');
+    // Two minutes' slack: cron ticks every 15 minutes and a run's start drifts by seconds, so a strict 30 minutes skipped
+    // the tick just short of it and prices refreshed every 45 minutes, not the half hour the page promises (seen 4 Oct:
+    // fetched 22:15:17, the 22:45 tick skipped).
+    if (!$force && !$keyNew && !$noMeta && !empty($beat['t']) && $now - (int)$beat['t'] < BMFUEL_TTL - 120) return array('ok' => true, 'skipped' => 'ttl');
     if (!is_dir(bmfuel_dir())) @mkdir(bmfuel_dir(), 0755, true);
     $lk = @fopen(bmfuel_dir() . 'refresh.lock', 'c');
     if (!$lk || !@flock($lk, LOCK_EX | LOCK_NB)) return array('ok' => true, 'skipped' => 'locked');
