@@ -288,7 +288,22 @@
     return null;
   }
 
-  var api = { deal: deal, clone: clone, canRecycle: canRecycle, LIMIT: LIMIT, shuffled: shuffled, legal: legal, apply: apply, autoMove: autoMove, smartMove: smartMove,
+  // 4 Oct 2026 - a move as a short string, for the Hall of Fame: the game sends its moves and the server replays them
+  // with the same rules (api/games-sol-lib.php) to check the win is real. 'd' turns the deck; otherwise FROM>TO with
+  // FROM = w (the waste) | f<pile> | t<column>.<cards> and TO = f<pile> | t<column>, e.g. "t3.2>t5", "w>f0".
+  function code(m) {
+    if (m.t === 'draw') return 'd';
+    var f = m.from.p === 'w' ? 'w' : m.from.p === 'f' ? 'f' + m.from.i : 't' + m.from.i + '.' + (m.from.n || 1);
+    return f + '>' + m.to.p + m.to.i;
+  }
+  function decode(c) {
+    if (c === 'd') return { t: 'draw' };
+    var x = /^(w|f[0-3]|t[0-6]\.\d{1,2})>([ft])([0-6])$/.exec(String(c)); if (!x) return null;
+    var from = x[1] === 'w' ? { p: 'w' } : x[1].charAt(0) === 'f' ? { p: 'f', i: +x[1].charAt(1) } : { p: 't', i: +x[1].charAt(1), n: +x[1].split('.')[1] };
+    return { t: 'move', from: from, to: { p: x[2], i: +x[3] } };
+  }
+
+  var api = { deal: deal, clone: clone, canRecycle: canRecycle, LIMIT: LIMIT, code: code, decode: decode, shuffled: shuffled, legal: legal, apply: apply, autoMove: autoMove, smartMove: smartMove,
               goodMoves: goodMoves, hint: hint, stuck: stuck, finishable: finishable, finishStep: finishStep, reachable: reachable,
               foundFor: foundFor, canStack: canStack, canFound: canFound, runLen: runLen, safeToFound: safeToFound,
               suit: suit, rank: rank, red: red, name: name, SUIT_CH: SUIT_CH, SUIT_NAME: SUIT_NAME, RANK_CH: RANK_CH };

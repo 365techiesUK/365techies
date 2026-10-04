@@ -382,6 +382,11 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(game-feedback(-rate)?\.json(\..*)?|game-feedback\.lock)$">
   Require all denied
 </FilesMatch>
+# 365 Games Hall of Fame (4 Oct 2026): the store (players' initials, towns, key hashes, scores), the rate counter and
+# the lock are internal; games-sol-lib.php is include-only. games-hof.php itself stays served - it is the public endpoint.
+<FilesMatch "^(games-hof(-rate)?\.json(\..*)?|games-hof\.lock|games-sol-lib\.php)$">
+  Require all denied
+</FilesMatch>
 # Comms hub: the inbox store holds message bodies + full numbers, the IMAP
 # config is a credential, and voicemail audio is customer voice - all denied.
 # Audio is streamed ONLY through the staff-authed comms.php console.

@@ -69,7 +69,12 @@
     function rules() { var r = D.rules && S ? D.rules(S) : null; return { undo: !r || r.undo !== false, hint: !r || r.hint !== false }; }
 
     var S = null, G = null, busy = false, gen = 0;
-    function newG(mode, day) { return { undo: [], ms: 0, mode: mode || 'deal', day: day || '', started: false, counted: false, undid: 0, keepDown: null }; }
+    function newG(mode, day) {
+      // log: the moves, as codes (Solitaire's E.code), so the Hall of Fame can replay a win; limit: a challenge's clock
+      return { undo: [], ms: 0, mode: mode || 'deal', day: day || '', started: false, counted: false, undid: 0, keepDown: null, log: [],
+               limit: mode === 'clock' ? 300000 : mode === 'sprint' ? 180000 : 0, timeUp: false, over: false };
+    }
+    function logMove(m) { if (E.code && G && G.log) { G.log.push(E.code(m)); if (G.log.length > 3000) G.log.length = 3000; } }
 
     // ------------------------------------------------------------ the page
     buildUI();
@@ -274,11 +279,12 @@
 
     // ------------------------------------------------------------ making moves
     function act(m) {
-      if (busy || !S || S.won) return;
-      var snap = { s: E.clone(S), ms: G.ms };
+      if (busy || !S || S.won || G.over) return;
+      var snap = { s: E.clone(S), ms: G.ms, n: G.log ? G.log.length : 0 };
       var fx = E.apply(S, m);
       if (!fx) { if (fx === null && m.t === 'draw' && D.noDrawSay) say(D.noDrawSay(S)); sfx('nope'); render(); return; }
       G.undo.push(snap); if (G.undo.length > 400) G.undo.shift();
+      logMove(m);
       G.started = true;
       G.keepDown = m.t === 'move' && m.from && m.from.p === 'f' ? fx.cards[0] : null;   // taken down on purpose: not straight back up
       hideStuck(); unhint();
@@ -370,7 +376,7 @@
         if (m) {
           busy = true;
           var my = gen;
-          setTimeout(function () { if (my !== gen) return; busy = false; var fx = E.apply(S, m); if (fx) { effects(fx); render(); } after(); }, reduce ? 0 : 170);
+          setTimeout(function () { if (my !== gen) return; busy = false; var fx = E.apply(S, m); if (fx) { logMove(m); effects(fx); render(); } after(); }, reduce ? 0 : 170);
           return;
         }
       }
@@ -384,7 +390,7 @@
       var m = E.finishStep(S);
       if (!m || ++finSteps > 900) { busy = false; persist(); return; }
       var fx = E.apply(S, m);
-      if (fx) { effects(fx); render(); }
+      if (fx) { logMove(m); effects(fx); render(); }
       if (S.won) { busy = false; return win(); }
       setTimeout(function () { finish(my); }, reduce ? 0 : (m.t === 'draw' ? 50 : 105));
     }
@@ -394,6 +400,7 @@
       if (busy) { gen++; busy = false; }   // cards still moving by themselves: stop them; the step comes back whole
       var u = G.undo.pop();
       S = u.s; G.undid++; G.keepDown = null;
+      if (G.log) G.log.length = Math.min(G.log.length, u.n || 0);
       hideStuck(); unhint(); sfx('place');
       render(); persist();
     }
@@ -414,6 +421,28 @@
     }
     function unhint() { clearTimeout(hintT); Array.prototype.forEach.call(board.querySelectorAll('.hint'), function (e) { e.classList.remove('hint'); }); }
     function showStuck() { $('stuck').hidden = false; }
+    // ------------------------------------------------------------ the challenges (4 Oct 2026): Beat the clock, the 3-minute sprint
+    function foundCount() { return D.foundCount ? D.foundCount(S) : 0; }
+    function chal() {
+      var el = $('chal'); if (!el) return;
+      if (!G || !G.limit || S.won) { el.hidden = true; return; }
+      var left = Math.max(0, G.limit - G.ms), sp = G.mode === 'sprint';
+      el.hidden = false;
+      el.className = 'chal' + (left <= 30000 && !G.timeUp ? ' hurry' : '') + (G.timeUp ? ' done' : '');
+      el.innerHTML = '<span class="ci" aria-hidden="true">' + (sp ? '&#9889;' : '&#9201;') + '</span><b>' + (G.timeUp ? (sp ? 'Sprint over' : 'Time&rsquo;s up') : clock(left + 999)) + '</b>'
+        + '<span class="cl">' + (sp ? foundCount() + ' cards up' : (G.timeUp ? 'keep playing for fun' : 'to beat the clock')) + '</span>';
+    }
+    function timeUp() {
+      G.timeUp = true; chal(); persist();
+      if (G.mode === 'sprint') {   // three minutes: the game stops and the cards are counted
+        G.over = true; busy = false; gen++; hideStuck(); unhint(); sfx('win');
+        var cards = foundCount();
+        $('spCards').textContent = cards; $('spSub').textContent = 'Today\u2019s 3-minute sprint \u00b7 ' + (cards === 1 ? '1 card' : cards + ' cards') + ' up to the piles';
+        openD('dSprint');
+        if (window.HallOfFame && D.hof && cards > 0) HallOfFame.sprint($('spHof'), { day: G.day, secs: Math.round(G.limit / 1000), log: G.log, cards: cards });
+        else $('spHof').hidden = true;
+      } else { sfx('nope'); say('Time\u2019s up! The clock won this one \u2013 but you can keep playing.'); }
+    }
     function hideStuck() { $('stuck').hidden = true; }
 
     // ------------------------------------------------------------ new games
@@ -439,7 +468,8 @@
       gen++; busy = false;   // stop anything still running from the last game
       recordLoss();
       var v = V ? SET[V.key] : 0, seed, day = '';
-      if (mode === 'again') { seed = S.seed; v = vOf(S); day = G.mode === 'daily' ? G.day : ''; mode = day ? 'daily' : 'deal'; }
+      if (mode === 'again') { seed = S.seed; v = vOf(S); mode = G.mode === 'daily' || G.mode === 'sprint' || G.mode === 'clock' ? G.mode : 'deal'; day = mode === 'daily' || mode === 'sprint' ? G.day : ''; }
+      else if (mode === 'sprint') { day = today(); seed = D.sprintSeed ? D.sprintSeed(dayNumber(new Date())) : pickSeed(v); v = D.sprintLevel || v; }   // the same deal for everyone today
       else if (mode === 'shared') { seed = shared.seed; v = shared.v; mode = 'deal'; }
       else if (mode === 'daily') { day = today(); seed = dailySeed(v); }
       else seed = pickSeed(v);
@@ -447,7 +477,7 @@
       G = newG(mode, day);
       ST.recent.push(seed); if (ST.recent.length > 60) ST.recent.shift();
       save('stats', ST);
-      closeSheets(); hideStuck(); unhint();
+      closeSheets(); hideStuck(); unhint(); chal();
       faces(); layout();
       dealOut();
       persist();
@@ -500,6 +530,7 @@
       if (b.moves == null || S.moves < b.moves) { if (b.moves != null) badges.push('Your fewest moves yet!'); b.moves = S.moves; }
       if (b.score == null || S.score > b.score) { if (b.score != null) badges.push('Your best score yet!'); b.score = S.score; }
       if (!G.undid) badges.push('Won without using Undo');
+      if (G.mode === 'clock' && !G.timeUp) { ST.clocks = (ST.clocks || 0) + 1; badges.push('Beat the clock with ' + clock(G.limit - G.ms) + ' to spare!'); }
       if (G.mode === 'daily' && G.day) { ST.daily[G.day] = { won: 1, t: secs, m: S.moves, d: vOf(S) }; badges.push('Today’s deal: done!'); }
       save('stats', ST);
       return { secs: secs, badges: badges };
@@ -509,7 +540,10 @@
       $('wTime').textContent = clock(rec.secs * 1000); $('wMoves').textContent = S.moves; $('wScore').textContent = S.score;
       $('wBadges').innerHTML = rec.badges.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('');
       $('wDaily').hidden = !!(ST.daily[today()] && ST.daily[today()].won);
-      openD('dWin');
+      chal(); openD('dWin');
+      var hb = $('wHof'); hb.hidden = true; hb.innerHTML = '';
+      if (window.HallOfFame && D.hof && G.mode === 'daily') HallOfFame.daily(hb, { day: G.day, lv: vOf(S), secs: rec.secs, log: G.log });
+      else if (window.HallOfFame && D.hof && G.mode === 'sprint' && !G.timeUp) HallOfFame.sprint(hb, { day: G.day, secs: rec.secs, log: G.log, cards: foundCount() });
     }
     // the classic finish: the cards leap off the piles and bounce away, leaving trails
     var imgCache = {};
@@ -676,7 +710,7 @@
       var inPlay = G.started && !S.won, dd = ST.daily[today()];
       $('dNewNote').textContent = inPlay ? 'The game you’re playing will count as not won.' : 'Choose how you’d like to play.';
       $('nDealS').textContent = SET.winnable && D.deals ? 'A fresh shuffle you can win' : 'A fresh shuffle';
-      $('nDailyS').textContent = dd && dd.won ? 'Done today ✔ — play it again if you like' : 'The same deal for everyone today';
+      $('nDailyS').textContent = (dd && dd.won ? 'Done today ✔ — play it again if you like' : 'The same deal for everyone today') + (D.hof ? ' · race the Hall of Fame' : '');
       $('nAgainS').textContent = 'Deal #' + S.seed + ', from the beginning';
       syncControls();
       openD('dNew');
@@ -686,7 +720,7 @@
       var rate = ST.played ? Math.round(100 * ST.won / ST.played) + '%' : '–', days = 0, k;
       for (k in ST.daily) if (ST.daily[k] && ST.daily[k].won) days++;
       $('sTiles').innerHTML = tile(ST.won, 'Games won') + tile(rate, 'Win rate') + tile(ST.played, 'Games played')
-        + tile(ST.streak, 'Winning streak') + tile(ST.bestStreak, 'Longest streak') + tile(days, 'Today’s deals done');
+        + tile(ST.streak, 'Winning streak') + tile(ST.bestStreak, 'Longest streak') + tile(days, 'Today’s deals done') + (D.hof ? tile(ST.clocks || 0, 'Clocks beaten') : '');
       var wk = '', d = new Date(), names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
       for (var i = 6; i >= 0; i--) {
         var x = new Date(d.getFullYear(), d.getMonth(), d.getDate() - i), key = today(x), won = ST.daily[key] && ST.daily[key].won;
@@ -732,6 +766,19 @@
     $('wAgain').onclick = function () { newGame('deal'); };
     $('wDaily').onclick = function () { newGame('daily'); };
     $('wStats').onclick = openStats;
+    if (D.hof) {
+      $('nClock').onclick = function () { newGame('clock'); };
+      $('nSprint').onclick = function () { newGame('sprint'); };
+      var hofOpen = function (o) { closeSheets(); if (window.HallOfFame) HallOfFame.open(o || {}); };
+      $('nHof').onclick = function () { hofOpen(); };
+      $('sHof').onclick = function () { hofOpen(); };
+      $('spHofB').onclick = function () { hofOpen({ board: 'sprint' }); };
+      $('spNew').onclick = openNew;
+      if (window.HallOfFame) HallOfFame.init({ game: D.id, title: D.title, levels: V ? V.options.map(function (o) { return [o[0], V.newLabel ? V.newLabel(o[0]) : o[1]]; }) : [[0, '']],
+        level: function () { return V ? SET[V.key] : 0; }, sfx: function (k, n) { sfx(k, n); },
+        burst: function (x, y, place) { if (SET.fx && !reduce) { Spark.burst(x, y, place === 1 ? 90 : 50, ['#ffe08a', '#ffffff', '#ffb347', '#8ff0ff'], 6, 90); Spark.ring(x, y, 120, '#ffe08a', 40); } },
+        onPlay: function (m) { newGame(m === 'sprint' ? 'sprint' : 'daily'); } });
+    }
     // sharing and feedback (social.js): the bar's two buttons, and the challenge on the win card - the same cards for a friend
     if (window.GameSocial) GameSocial.init({ id: D.id, title: D.title });
     $('bShare').onclick = function () { if (window.GameSocial) GameSocial.share(); };
@@ -756,7 +803,7 @@
     document.addEventListener('fullscreenchange', function () { $('bFullL').textContent = document.fullscreenElement ? 'Leave full screen' : 'Full screen'; });
     document.addEventListener('keydown', function (e) {
       gestured = true;
-      if (e.defaultPrevented || (window.GameSocial && GameSocial.isOpen())) return;   // typing feedback, or a key the share / feedback sheet used
+      if (e.defaultPrevented || (window.GameSocial && GameSocial.isOpen()) || (window.HallOfFame && HallOfFame.isOpen())) return;   // typing feedback / initials, or a key a sheet used
       if (e.key === 'Escape') { if (openSheet) closeSheets(); return; }
       if (openSheet || e.altKey) return;
       var k = (e.key || '').toLowerCase();
@@ -777,13 +824,14 @@
       sayT = setTimeout(function () { el.classList.remove('on'); }, Math.min(7000, 1800 + t.length * 55));   // time to read it
     }
     function persist() {
-      save('game', { s: S, g: { undo: G.undo.slice(-60), ms: G.ms, mode: G.mode, day: G.day, started: G.started, counted: G.counted, undid: G.undid } });
+      save('game', { s: S, g: { undo: G.undo.slice(-60), ms: G.ms, mode: G.mode, day: G.day, started: G.started, counted: G.counted, undid: G.undid, log: G.log || [], timeUp: G.timeUp, over: G.over } });
     }
     var lastTick = Date.now();
     setInterval(function () {
       var now = Date.now(), d = Math.min(2000, now - lastTick); lastTick = now;
-      if (!G || !G.started || S.won || document.hidden || openSheet || (window.GameSocial && GameSocial.isOpen())) return;
+      if (!G || !G.started || S.won || G.over || document.hidden || openSheet || (window.GameSocial && GameSocial.isOpen()) || (window.HallOfFame && HallOfFame.isOpen())) return;
       G.ms += d;
+      if (G.limit) { chal(); if (G.ms >= G.limit && !G.timeUp) timeUp(); }
       $('vTime').textContent = clock(G.ms);
     }, 1000);
     document.addEventListener('visibilitychange', function () { if (document.hidden && S) persist(); });
@@ -804,6 +852,7 @@
     if (saved && saved.s && saved.g && !saved.s.won && D.valid(saved.s)) {
       S = saved.s; G = newG(saved.g.mode, saved.g.day);
       G.undo = Array.isArray(saved.g.undo) ? saved.g.undo : []; G.ms = +saved.g.ms || 0; G.started = !!saved.g.started; G.counted = !!saved.g.counted; G.undid = +saved.g.undid || 0;
+      G.log = Array.isArray(saved.g.log) ? saved.g.log : []; G.timeUp = !!saved.g.timeUp; G.over = !!saved.g.over;
       faces(); layout(); render(true);
       if (G.started && E.stuck(S)) showStuck();
     } else {
@@ -835,15 +884,20 @@
         + tb('bShare', 'share', 'Share', 'Share this game with a friend', 'tb2') + tb('bFeed', 'feedback', 'Feedback', 'Tell us what you think, or ask for a new game', 'tb2') + tb('bFull', 'full', 'Full screen', 'Full screen (F)', 'tb2') + '</nav></header>'
         + '<main id="board" aria-label="The card table"></main></div>'
         + '<div id="stuck" hidden role="status"><span>' + esc(D.stuckText || 'No more moves found.') + '</span><button class="btn" type="button" id="stUndo">Undo</button><button class="btn go" type="button" id="stNew">New game</button></div>'
-        + '<div id="toast" role="status" aria-live="polite"></div><canvas id="spark" aria-hidden="true"></canvas><canvas id="fx" hidden></canvas><div id="winBig" hidden aria-hidden="true"></div><div id="fxhint" hidden>Tap anywhere to carry on</div>'
+        + '<div id="chal" class="chal" hidden role="timer" aria-live="off"></div><div id="toast" role="status" aria-live="polite"></div><canvas id="spark" aria-hidden="true"></canvas><canvas id="fx" hidden></canvas><div id="winBig" hidden aria-hidden="true"></div><div id="fxhint" hidden>Tap anywhere to carry on</div>'
         + sheet('dNew', 'New game', '<p class="soft" id="dNewNote"></p>' + (V ? (V.info ? '<div class="lvls" role="group" aria-label="' + esc(V.label) + '">' + vNew + '</div>' : '<div class="seg" role="group" aria-label="' + esc(V.label) + '">' + vNew + '</div>') : '')
           + '<div class="choice"><button class="btn go" type="button" id="nDeal">New deal<small id="nDealS">A fresh shuffle</small></button>'
           + '<button class="btn" type="button" id="nDaily">Today&rsquo;s deal<small id="nDailyS">The same deal for everyone today</small></button>'
           + '<button class="btn" type="button" id="nAgain">Play this deal again<small id="nAgainS">Start the same cards from the beginning</small></button></div>'
+          + (D.hof ? '<p class="chalh">Challenges</p><div class="choice chals"><button class="btn" type="button" id="nClock">&#9201; Beat the clock<small>Win a fresh deal in 5 minutes, at your level</small></button>'
+            + '<button class="btn" type="button" id="nSprint">&#9889; 3-minute sprint<small>As many cards up as you can &middot; the same deal for everyone today</small></button>'
+            + '<button class="btn hofbtn" type="button" id="nHof">&#127942; Hall of Fame<small>Who&rsquo;s fastest today &mdash; in Dorset and beyond</small></button></div>' : '')
           + '<div class="row"><button class="btn wide" type="button" data-close>Keep playing</button></div>')
         + sheet('dWin', 'You won!', '<p class="soft" id="dWinSub"></p><div class="tiles"><div class="tile"><b id="wTime">0:00</b><span>Time</span></div><div class="tile"><b id="wMoves">0</b><span>Moves</span></div><div class="tile"><b id="wScore">0</b><span>Score</span></div></div>'
-          + '<ul class="badges" id="wBadges"></ul><div class="row"><button class="btn go wide" type="button" id="wAgain">Play again</button><button class="btn wide" type="button" id="wShare">Challenge a friend</button><button class="btn wide" type="button" id="wDaily">Today&rsquo;s deal</button><button class="btn wide" type="button" id="wStats">My scores</button></div>')
-        + sheet('dStats', 'My scores', '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere.</p><div class="tiles" id="sTiles"></div><h3 style="margin:16px 0 0;font-size:18px">Today&rsquo;s deal this week</h3><div class="week" id="sWeek"></div><div class="tiles" id="sBest"></div>'
+          + '<ul class="badges" id="wBadges"></ul><div id="wHof" hidden></div><div class="row"><button class="btn go wide" type="button" id="wAgain">Play again</button><button class="btn wide" type="button" id="wShare">Challenge a friend</button><button class="btn wide" type="button" id="wDaily">Today&rsquo;s deal</button><button class="btn wide" type="button" id="wStats">My scores</button></div>')
+        + sheet('dSprint', 'Time\u2019s up!', '<p class="soft" id="spSub"></p><div class="tiles"><div class="tile"><b id="spCards">0</b><span>Cards up</span></div></div><div id="spHof"></div>'
+          + '<div class="row"><button class="btn go wide" type="button" id="spNew">New game</button><button class="btn wide" type="button" id="spHofB">Hall of Fame</button></div>')
+        + sheet('dStats', 'My scores', (D.hof ? '<button class="btn hofbtn wide" type="button" id="sHof" style="width:100%;margin:2px 0 12px">&#127942; The Hall of Fame<small>Today&rsquo;s fastest, this week&rsquo;s best, all time</small></button>' : '') + '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere.</p><div class="tiles" id="sTiles"></div><h3 style="margin:16px 0 0;font-size:18px">Today&rsquo;s deal this week</h3><div class="week" id="sWeek"></div><div class="tiles" id="sBest"></div>'
           + '<div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>')
         + sheet('dSet', 'Settings', (V ? '<div class="set"><div><label>' + esc(V.label) + '</label><small>' + esc(V.small || 'Changes from your next game.') + '</small></div><div class="seg" role="group" aria-label="' + esc(V.label) + '">' + v + '</div></div>' : '')
           + (D.deals ? sw('winnable', 'Deals you can always win', D.winnableSmall || 'Every deal has been played through to a win.') : '')

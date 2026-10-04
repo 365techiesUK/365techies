@@ -140,6 +140,11 @@
                stars: function (v) { return LV[v] ? LV[v].stars : 1; },
                statKey: function (v) { return LV[v] ? LV[v].stat : 'd1'; }, bestLabel: function (v) { return LV[v] ? LV[v].name.toLowerCase() : 'easy'; } },
     deals: DEALS ? function (v) { return v === 1 ? DEALS.d1 : v === 3 ? DEALS.d3 : null; } : null,   // Hard and Expert: any deal at all
+    // 4 Oct 2026 - the Hall of Fame (games/common/hof.js + api/games-hof.php) and its two races: Today's deal, and the
+    // 3-minute sprint on one turn-one deal for everyone. ⚠ sprintSeed must match sol_sprint_seed in api/games-sol-lib.php.
+    hof: true, sprintLevel: 1,
+    sprintSeed: function (n) { var l = DEALS && DEALS.d1; return l && l.length ? l[((n * 104729 + 17) % l.length + l.length) % l.length] : 700000 + ((n % 90000) + 90000) % 90000; },
+    foundCount: function (S) { return S.found[0].length + S.found[1].length + S.found[2].length + S.found[3].length; },
     winnableSmall: 'On Easy and Normal, every deal has been played through to a win first. Hard and Expert can be any deal.',
     rules: function (S) { var v = lvOf(S); return { undo: v !== 7, hint: v === 1 || v === 3 }; },
     noDrawSay: function (S) { return !S.stock.length && S.waste.length ? 'That was your last time through the deck at ' + LV[lvOf(S)].name + ' level' : ''; },

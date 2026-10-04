@@ -271,3 +271,8 @@ api/game-feedback.json
 api/game-feedback.json.*.tmp
 api/game-feedback-rate.json
 api/game-feedback.lock
+# 365 Games Hall of Fame store, rate counter and lock (4 Oct 2026) - runtime state, never committed (and denied in .htaccess)
+api/games-hof.json
+api/games-hof.json.*.tmp
+api/games-hof-rate.json
+api/games-hof.lock

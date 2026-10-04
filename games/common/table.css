@@ -327,3 +327,28 @@ body.nofx .lvls button { animation: none; } body.nofx .lvls button[aria-pressed=
 .slot.stock .spent { display: grid; place-items: center; width: 100%; height: 100%; font: 700 calc(var(--cw) * .32) / 1 Archivo, sans-serif; color: rgba(255, 255, 255, .45); }
 /* a phone: Full screen gives way to Games (phones rarely use it, and iPhones can't) */
 @media (max-width: 480px) { #bFull { display: none; } }
+
+/* ---------- 4 Oct 2026: challenges and the Hall of Fame (Solitaire) ---------- */
+.chalh { margin: 18px 0 0; font: 700 13px/1 Archivo, sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--sheet-soft); }
+.chals { margin-top: 8px; }
+.btn.hofbtn { background: linear-gradient(180deg, #fff3c4, #ffd257 60%, #e8b030); border-color: #d9a520; color: #2a1d00; }
+.btn.hofbtn small { color: #5a4300 !important; }
+.btn.hofbtn:hover { filter: brightness(1.05); border-color: #b8860b; }
+/* the challenge clock, over the table */
+.chal {
+  position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 60; transform: translateX(-50%);
+  display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px 8px 12px; border-radius: 999px; pointer-events: none;
+  background: rgba(8, 20, 40, .82); color: #fff; border: 1px solid rgba(255, 210, 87, .55); box-shadow: 0 8px 24px rgba(0, 0, 0, .35), 0 0 18px rgba(255, 210, 87, .2);
+  font: 700 15px/1 Archivo, sans-serif; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); animation: chalIn .4s cubic-bezier(.2, .9, .3, 1.2);
+}
+.chal[hidden] { display: none; }
+.chal .ci { font-size: 18px; }
+.chal b { font: 800 22px/1 Archivo, sans-serif; font-variant-numeric: tabular-nums; color: #ffd257; min-width: 3.2ch; }
+.chal .cl { color: #cfd8ef; font-weight: 600; }
+.chal.hurry { border-color: #ff6b6b; box-shadow: 0 8px 24px rgba(0, 0, 0, .35), 0 0 22px rgba(255, 90, 90, .45); animation: chalIn .4s, chalPulse 1s ease-in-out infinite; }
+.chal.hurry b { color: #ff8a8a; }
+.chal.done { opacity: .85; border-color: rgba(255, 255, 255, .3); box-shadow: none; animation: none; }
+.chal.done b { color: #cfd8ef; }
+@keyframes chalIn { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } }
+@keyframes chalPulse { 0%, 100% { transform: translate(-50%, 0) scale(1); } 50% { transform: translate(-50%, 0) scale(1.05); } }
+@media (prefers-reduced-motion: reduce) { .chal, .chal.hurry { animation: none; } }
