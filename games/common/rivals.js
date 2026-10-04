@@ -132,7 +132,7 @@
       var fx = E.apply(S, m);
       if (!fx) { sfx('nope'); render(); return false; }
       if (mine) G.started = true;
-      if (fx.t === 'next') { U = {}; if (D.newHand) D.newHand(S, U); dealOut(); persist(); return fx; }
+      if (fx.t === 'next') { U = {}; if (D.newHand) D.newHand(S, U); dealOut(); effects(fx); persist(); return fx; }
       effects(fx); render(); persist();
       if (D.over(S)) matchOver(); else go();
       return fx;
@@ -202,6 +202,7 @@
       closeSheets(); layout();
       sfx('shuffle');
       dealOut();
+      effects({ t: 'deal' });   // a game may say something about the first deal (Whist: what trumps are)
       persist();
     }
     function dealOut() {   // every card starts on the deck, then they fly out one by one

@@ -29,7 +29,7 @@
     L.panel = { x: Math.round((W - pw) / 2), y: Math.round(Math.max(northBot + 40, L.cy - ch * 0.95)), w: pw };
     return L;
   }
-  var TRICK_AT = [[0, 0.3], [-0.62, 0], [0, -0.3], [0.62, 0]];   // each seat's card in the middle, in card widths / heights
+  var TRICK_AT = [[0, 0.53], [-1.08, 0], [0, -0.53], [1.08, 0]];   // each seat's card in the middle, in card widths / heights
   var TRICK_ROT = [2, -5, 3, 6];
   function pileAt(L, p) {   // where the tricks someone has taken are kept
     if (p === 0) return { x: L.W - L.gap - L.cw * 0.7, y: L.handY - L.ch * 0.62 };

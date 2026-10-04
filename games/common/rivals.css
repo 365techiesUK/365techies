@@ -20,6 +20,9 @@
 .rv-plate.mini { font-size: 13px; padding: 3px 10px 3px 4px; } .rv-plate.mini .av { width: 24px; height: 24px; font-size: 12px; }
 .rv-plate.tag { padding: 4px 12px; background: rgba(0, 0, 0, .42); font-size: 14px; }
 .rv-plate.tag.gold { color: #2a2000; background: var(--gold); }
+.rv-plate.tag.count { font-size: 17px; padding: 6px 14px; }
+.rv-plate.board { padding: 0; background: none; box-shadow: 0 6px 16px rgba(0, 0, 0, .3); border-radius: 10px; }
+.rv-plate.board svg { display: block; }
 .rv-slot { position: absolute; left: 0; top: 0; width: var(--cw); height: var(--ch); border-radius: calc(var(--cw) * .08);
   border: 2px dashed rgba(255, 255, 255, .28); background: rgba(0, 0, 0, .1); }
 
