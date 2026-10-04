@@ -68,6 +68,11 @@ $wx = bm_weather_refresh();
 require_once __DIR__ . '/bm-wx-lib.php';
 $wxp = bm_wx_refresh();
 
+/* Bournemouth365 fuel prices (4 Oct 2026). Same placement, same reason. Rate-limited inside (BMFUEL_TTL, 30 min);
+   a feed that failed is left alone for 6 hours, so a normal tick is a few seconds or a no-op. */
+require_once __DIR__ . '/bm-fuel-lib.php';
+try { $fuel = bm_fuel_refresh(); } catch (Throwable $e) { $fuel = array('ok' => false, 'error' => 'exception'); }
+
 /* Comms hub: inbound texts (Textmagic replies) + the Voipfone voicemail relay
    mailbox. Same placement, same reason: the inbox must keep filling whatever
    state the scheduled-SMS account is in. Each poller no-ops cleanly when its

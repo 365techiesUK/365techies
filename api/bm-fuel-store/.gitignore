@@ -1,0 +1,4 @@
+# Runtime files and the server-only Fuel Finder key never go in git (the repo is public).
+*
+!.gitignore
+!.htaccess

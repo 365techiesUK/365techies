@@ -1,0 +1,3 @@
+# Bournemouth365 fuel prices runtime store (stations.json, beat.json, refresh.lock, the server-only
+# fuelfinder-key.php). Never served directly: api/bm-fuel.php reads stations.json.
+Require all denied

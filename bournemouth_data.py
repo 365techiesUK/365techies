@@ -1396,6 +1396,11 @@ _rec.register(_B365)
 import bournemouth_seafront_page as _sfl
 _sfl.register(_B365)
 
+# /bournemouth/fuel-prices/ - the cheapest petrol and diesel near you (4 Oct 2026). HIDDEN (noindex + nosearch) until
+# the official Fuel Finder feed is wired; see bournemouth_fuel_page.py and api/bm-fuel-lib.php.
+import bournemouth_fuel_page as _fuel
+_fuel.register(_B365)
+
 
 # ============================================================================
 # PAGE 4: /bournemouth/beach-parking/ - the honest guide. Everything here is
