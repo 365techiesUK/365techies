@@ -1,5 +1,9 @@
 /* 365 Solitaire - the rules, with no screen code (3 Oct 2026). Klondike: 7 columns, 4 piles to build up by suit
  * from Ace to King, turn one card or three from the stock, as many passes as you like.
+ * 4 Oct 2026 - difficulty levels (owner: "levels ... so they can pick hardness"): deal(seed, lv) where lv is
+ *   1 Easy (turn one), 3 Normal (turn three) - the old draw counts, so saved games and scores carry on - and
+ *   5 Hard (turn three, three times through the deck), 7 Expert (turn three, once through). s.limit = how many times
+ *   through the deck are allowed (0 = no limit); s.passes counts the turn-overs so far.
  * The page loads this as window.SolEngine; the tests and tools/solitaire/make-deals.cjs require() it.
  * A card is a number 0-51: suit = card / 13 (0 spades, 1 hearts, 2 diamonds, 3 clubs), rank = card % 13 + 1. */
 (function (root) {
@@ -33,21 +37,25 @@
   }
 
   // A game. tab[col] = [{c, up}] bottom to top; stock/waste/found[f] = card numbers, last = top.
-  function deal(seed, draw) {
+  var LIMIT = { 1: 0, 3: 0, 5: 3, 7: 1 };
+  function deal(seed, lv) {
+    lv = LIMIT.hasOwnProperty(lv) ? lv : (lv === 3 ? 3 : 1);
     var d = shuffled(seed), p = 0, tab = [], row, col;
     for (col = 0; col < 7; col++) tab.push([]);
     for (row = 0; row < 7; row++) for (col = row; col < 7; col++) tab[col].push({ c: d[p++], up: col === row });
-    return { seed: seed, draw: draw === 3 ? 3 : 1, tab: tab, stock: d.slice(p), waste: [], found: [[], [], [], []],
+    return { seed: seed, draw: lv === 1 ? 1 : 3, lv: lv, limit: LIMIT[lv], tab: tab, stock: d.slice(p), waste: [], found: [[], [], [], []],
              moves: 0, score: 0, passes: 0, undos: 0, won: false };
   }
   function clone(s) {
-    return { seed: s.seed, draw: s.draw,
+    return { seed: s.seed, draw: s.draw, lv: s.lv || s.draw, limit: s.limit || 0,
              tab: s.tab.map(function (col) { return col.map(function (x) { return { c: x.c, up: x.up }; }); }),
              stock: s.stock.slice(), waste: s.waste.slice(), found: s.found.map(function (f) { return f.slice(); }),
              moves: s.moves, score: s.score, passes: s.passes, undos: s.undos, won: s.won };
   }
 
   function top(a) { return a.length ? a[a.length - 1] : undefined; }
+  // turning the deck over again: always, unless the level allows only so many times through (Hard 3, Expert 1)
+  function canRecycle(s) { return !s.limit || s.passes + 1 < s.limit; }
   function canStack(card, col) {   // onto a tableau column
     if (!col.length) return rank(card) === 13;
     var t = col[col.length - 1];
@@ -82,7 +90,7 @@
 
   function legal(s, m) {
     if (s.won) return false;
-    if (m.t === 'draw') return s.stock.length > 0 || s.waste.length > 0;
+    if (m.t === 'draw') return s.stock.length > 0 || (s.waste.length > 0 && canRecycle(s));
     if (m.t !== 'move' || !m.from || !m.to) return false;
     var cards = picked(s, m.from);
     if (!cards.length) return false;
@@ -110,6 +118,7 @@
       } else {
         while (s.waste.length) s.stock.push(s.waste.pop());
         s.passes++; fx.recycled = true;
+        if (s.limit) fx.left = s.limit - 1 - s.passes;   // turn-overs still allowed after this one (Hard, Expert)
       }
       s.moves++;
       return fx;
@@ -229,12 +238,12 @@
 
   // the cards that could become the waste top by turning the stock over and over (draw 1: all; draw 3: every third)
   function reachable(s) {
-    var stock = s.stock.slice(), waste = s.waste.slice(), seen = {}, out = [], guard = 0, total = stock.length + waste.length;
+    var stock = s.stock.slice(), waste = s.waste.slice(), seen = {}, out = [], guard = 0, total = stock.length + waste.length, passes = s.passes;
     if (!total) return out;
     if (waste.length) { out.push(top(waste)); seen[top(waste)] = 1; }
     while (guard++ < 2 * total + 4) {
       if (stock.length) { var k = Math.min(s.draw, stock.length); for (var i = 0; i < k; i++) waste.push(stock.pop()); }
-      else { while (waste.length) stock.push(waste.pop()); continue; }
+      else { if (s.limit && passes + 1 >= s.limit) break; passes++; while (waste.length) stock.push(waste.pop()); continue; }
       var t = top(waste); if (!seen[t]) { seen[t] = 1; out.push(t); }
     }
     return out;
@@ -262,7 +271,7 @@
   function finishable(s) {
     if (s.won) return false;
     for (var i = 0; i < 7; i++) for (var j = 0; j < s.tab[i].length; j++) if (!s.tab[i][j].up) return false;
-    return (s.stock.length === 0 && s.waste.length === 0) || s.draw === 1;
+    return (s.stock.length === 0 && s.waste.length === 0) || (s.draw === 1 && !s.limit);
   }
   // the next move of the automatic finish: any card up to a pile, else turn the stock
   function finishStep(s) {
@@ -275,11 +284,11 @@
       if (f >= 0 && rank(c) < bestR) { bestR = rank(c); bestI = i; }
     }
     if (bestI >= 0) return { t: 'move', from: { p: 't', i: bestI, n: 1 }, to: { p: 'f', i: foundFor(s, top(s.tab[bestI]).c) } };
-    if (s.stock.length || s.waste.length) return { t: 'draw' };
+    if (s.stock.length || (s.waste.length && canRecycle(s))) return { t: 'draw' };
     return null;
   }
 
-  var api = { deal: deal, clone: clone, shuffled: shuffled, legal: legal, apply: apply, autoMove: autoMove, smartMove: smartMove,
+  var api = { deal: deal, clone: clone, canRecycle: canRecycle, LIMIT: LIMIT, shuffled: shuffled, legal: legal, apply: apply, autoMove: autoMove, smartMove: smartMove,
               goodMoves: goodMoves, hint: hint, stuck: stuck, finishable: finishable, finishStep: finishStep, reachable: reachable,
               foundFor: foundFor, canStack: canStack, canFound: canFound, runLen: runLen, safeToFound: safeToFound,
               suit: suit, rank: rank, red: red, name: name, SUIT_CH: SUIT_CH, SUIT_NAME: SUIT_NAME, RANK_CH: RANK_CH };

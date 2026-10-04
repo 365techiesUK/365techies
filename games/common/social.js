@@ -52,7 +52,24 @@
     + '.gs-small{margin:14px 0 0;font-size:14px;color:#5b6b60}.gs-small a,.gs-sheet a.gs-a{color:#146c3a}'
     + '.gs-link{margin:12px 0 0;padding:0;border:0;background:none;color:#146c3a;font:700 16px Archivo,"Segoe UI",sans-serif;text-decoration:underline;cursor:pointer}'
     + '.gs-trap{position:absolute!important;left:-9999px!important;width:1px;height:1px;opacity:0}'
-    + '@media (max-width:460px){.gs-sheet{padding:20px 16px 16px}.gs-two{grid-template-columns:1fr}.gs-opts{grid-template-columns:1fr}}';
+    + '.gs-sheet.gs-wide{width:min(780px,100%)}'
+    + '.gs-cat{margin:16px 0 8px;font:700 13px/1 Archivo,"Segoe UI",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5b6b60}'
+    + '.gs-games{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}'
+    + '.gs-game{position:relative;display:flex;flex-direction:column;border-radius:16px;overflow:hidden;border:2px solid #e2ded2;background:#fff;color:#15211a;text-decoration:none;cursor:pointer;text-align:left;padding:0;font:inherit;'
+    + 'animation:gsIn .45s cubic-bezier(.2,.9,.3,1.15) both;animation-delay:calc(var(--i,0) * 45ms);transition:transform .16s ease,box-shadow .2s,border-color .16s}'
+    + '.gs-game:hover{transform:translateY(-3px);border-color:#c9c3b3;box-shadow:0 12px 26px rgba(20,40,30,.16)}'
+    + '.gs-game:focus-visible{outline:3px solid #22a3ee;outline-offset:2px}'
+    + '.gs-game img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;background:#0b1422;transition:transform .35s ease}'
+    + '.gs-game:hover img{transform:scale(1.05)}'
+    + '.gs-game b{display:block;padding:9px 11px 2px;font:700 16px/1.2 Archivo,"Segoe UI",sans-serif}'
+    + '.gs-game small{display:block;padding:0 11px 11px;font:500 13px/1.35 Archivo,"Segoe UI",sans-serif;color:#5b6b60}'
+    + '.gs-game.gs-now{border-color:#146c3a;box-shadow:0 0 0 2px #146c3a inset}'
+    + '.gs-game .gs-badge{position:absolute;top:8px;left:8px;padding:4px 9px;border-radius:999px;background:#146c3a;color:#fff;font:700 12px/1 Archivo,"Segoe UI",sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.3)}'
+    + '.gs-more{display:inline-block;margin-top:14px;color:#146c3a;font-weight:700}'
+    + '@keyframes gsIn{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}'
+    + '@media (prefers-reduced-motion:reduce){.gs-game{animation:none;transition:none}.gs-game:hover,.gs-game:hover img{transform:none}}'
+    + '@media (max-width:640px){.gs-games{grid-template-columns:repeat(2,minmax(0,1fr))}}'
+    + '@media (max-width:460px){.gs-sheet{padding:20px 16px 16px}.gs-two{grid-template-columns:1fr}.gs-opts{grid-template-columns:1fr}.gs-game small{display:none}}';
 
   function build() {
     if (built) return; built = true;
@@ -67,6 +84,10 @@
       + '<button class="gs-opt" id="gsMore" type="button" hidden>' + ICON.more + 'Other ways&hellip;</button>'
       + '</div><p class="gs-done" id="gsDone" role="status" aria-live="polite"></p>'
       + '<p class="gs-soft" style="margin:6px 0 0">What they&rsquo;ll get:</p><p class="gs-msg" id="gsMsg"></p>'
+      + '<div class="gs-row"><button class="gs-btn" type="button" data-gs-close>Close</button></div></div></div>'
+      + '<div class="gs-scrim" id="gsGames" hidden><div class="gs-sheet gs-wide" role="dialog" aria-modal="true" aria-labelledby="gsGamesH">'
+      + '<h2 id="gsGamesH">Our games</h2><p class="gs-soft">All free, with no adverts. Tap one to play.</p><div id="gsGamesList"></div>'
+      + '<a class="gs-more" href="/games/">See them all on the Games page &rarr;</a>'
       + '<div class="gs-row"><button class="gs-btn" type="button" data-gs-close>Close</button></div></div></div>'
       + '<div class="gs-scrim" id="gsFeed" hidden><div class="gs-sheet" role="dialog" aria-modal="true" aria-labelledby="gsFeedH">'
       + '<form id="gsForm" novalidate><h2 id="gsFeedH">Tell us what you think</h2><p class="gs-soft" id="gsFeedSub"></p>'
@@ -209,13 +230,44 @@
       .catch(function () { if (done) return; done = true; clearTimeout(timer); fail('Sorry, that didn’t send – is the internet connected? Please try again.'); });
   }
 
+  // ------------------------------------------------------------ the games menu (4 Oct 2026, owner: "they can pick other games from within the game")
+  // The list is games/games.json - the same one PC Manager and the Games page read. Addresses become paths, so the menu
+  // stays on the site the player is on (and inside PC Manager's window).
+  var GAMES = null;
+  function gamePic(g) { return g.id === 'seafront' ? '/bournemouth/games/seafront/media/lv-pirate.webp' : '/games/img/' + g.id + '-v1.webp'; }
+  function gamePath(u) { return String(u || '').replace(/^https?:\/\/(www\.)?365techies\.co\.uk/, ''); }
+  var CAT = { 'Card games': 'Card games', 'Arcade': 'Arcade games', 'Seafront': 'Made in Bournemouth' };
+  function drawGames() {
+    var by = {}, order = [], i = 0;
+    GAMES.forEach(function (g) { if (!by[g.cat]) { by[g.cat] = []; order.push(g.cat); } by[g.cat].push(g); });
+    $('gsGamesList').innerHTML = order.map(function (c) {
+      return '<p class="gs-cat">' + esc(CAT[c] || c) + '</p><div class="gs-games">' + by[c].map(function (g) {
+        var now = g.id === CFG.id, inner = '<img src="' + gamePic(g) + '" alt="" loading="lazy" decoding="async" width="800" height="600" />'
+          + (now ? '<span class="gs-badge">Playing now</span>' : '') + '<b>' + esc(g.title) + '</b><small>' + esc(g.sub || '') + '</small>';
+        return now ? '<button type="button" class="gs-game gs-now" data-gs-close style="--i:' + (i++) + '">' + inner + '</button>'
+          : '<a class="gs-game" href="' + esc(gamePath(g.url)) + '" style="--i:' + (i++) + '">' + inner + '</a>';
+      }).join('') + '</div>';
+    }).join('');
+  }
+  function openGames() {
+    build();
+    if (GAMES) drawGames();
+    else {
+      $('gsGamesList').innerHTML = '<p class="gs-soft">Loading the games…</p>';
+      fetch('/games/games.json', { cache: 'no-cache' }).then(function (r) { return r.json(); })
+        .then(function (j) { GAMES = (j && j.games) || []; if (openEl && openEl.id === 'gsGames') drawGames(); })
+        .catch(function () { $('gsGamesList').innerHTML = '<p class="gs-soft">The list didn’t load &mdash; <a class="gs-a" href="/games/">see the Games page</a>.</p>'; });
+    }
+    show('gsGames');
+  }
+
   // ------------------------------------------------------------ the sheets themselves
   function show(id) {
     if (openEl && openEl.id !== id) openEl.hidden = true;
     var wasOpen = !!openEl;
     openEl = $(id); openEl.hidden = false;
     if (!wasOpen) { lastFocus = document.activeElement; if (CFG.onOpen) try { CFG.onOpen(); } catch (e) {} }
-    var f = openEl.querySelector(id === 'gsFeed' ? '.gs-mood:not([hidden]), textarea' : '.gs-opt');
+    var f = openEl.querySelector(id === 'gsFeed' ? '.gs-mood:not([hidden]), textarea' : id === 'gsGames' ? '.gs-row .gs-btn' : '.gs-opt');
     if (id === 'gsFeed' && $('gsMoods').hidden) f = $('gsText');
     if (f) try { f.focus({ preventScroll: true }); } catch (e) {}
   }
@@ -228,7 +280,7 @@
 
   window.GameSocial = {
     init: function (cfg) { for (var k in cfg) CFG[k] = cfg[k]; },
-    share: share, openFeedback: openFeedback, close: close,
+    share: share, openFeedback: openFeedback, openGames: openGames, close: close,
     isOpen: function () { return !!openEl; }
   };
 })();

@@ -113,31 +113,51 @@
       s.found.forEach(function (f) { f.forEach(function (c) { seen[c] = 1; n++; }); });
       s.tab.forEach(function (col) { col.forEach(function (o) { seen[o.c] = 1; n++; }); });
     } catch (e) { return false; }
-    return n === 52 && Object.keys(seen).length === 52 && (s.draw === 1 || s.draw === 3);
+    if (!(n === 52 && Object.keys(seen).length === 52 && (s.draw === 1 || s.draw === 3))) return false;
+    if (!LV[s.lv]) s.lv = s.draw;                          // saved before 4 Oct: the old one-card / three-card game
+    if (typeof s.limit !== 'number') s.limit = E.LIMIT[s.lv] || 0;
+    return true;
   }
+
+  // 4 Oct 2026 - difficulty (owner: "levels ... so they can pick hardness ... easy, and all that business"). The values are
+  // the engine's: 1 and 3 are the old one-card and three-card games, so saved games, settings, scores (best.d1 / best.d3)
+  // and shared links carry on unchanged.
+  var LV = {
+    1: { name: 'Easy', stars: 1, stat: 'd1', line: 'Turn one card · every deal can be won · Undo and Hint' },
+    3: { name: 'Normal', stars: 2, stat: 'd3', line: 'Turn three cards · every deal can be won · Undo and Hint' },
+    5: { name: 'Hard', stars: 3, stat: 'h', line: 'Turn three · three times through the deck · no Hint · not every deal can be won' },
+    7: { name: 'Expert', stars: 4, stat: 'x', line: 'Turn three · once through the deck · no Undo, no Hint' }
+  };
+  function lvOf(S) { return LV[S.lv] ? S.lv : (S.draw === 3 ? 3 : 1); }
 
   Table365.start({
     id: 'solitaire', store: 'sol365', title: 'Solitaire', cards: 52, hasStock: true,
     face: function (c) { return { r: E.rank(c), s: E.suit(c) }; },
     E: E, layout: layout, positions: positions, where: where, picked: picked, targets: targets, autoNext: autoNext, hintLights: hintLights, valid: valid,
     whyNot: whyNot, cantPick: cantPick,
-    variant: { key: 'draw', label: 'Cards to turn over', small: 'One is easier. Changes from your next game.', options: [[1, 'One'], [3, 'Three']], def: 1,
-               newLabel: function (v) { return v === 3 ? 'Turn three cards' : 'Turn one card'; }, statKey: function (v) { return 'd' + v; },
-               bestLabel: function (v) { return v === 3 ? 'three cards' : 'one card'; } },
-    deals: DEALS ? function (v) { return DEALS['d' + v]; } : null,
+    variant: { key: 'draw', stateKey: 'lv', label: 'Difficulty', small: 'Changes from your next game.', options: [[1, 'Easy'], [3, 'Normal'], [5, 'Hard'], [7, 'Expert']], def: 1,
+               newLabel: function (v) { return LV[v] ? LV[v].name : 'Easy'; }, info: function (v) { return LV[v] ? LV[v].line : ''; },
+               stars: function (v) { return LV[v] ? LV[v].stars : 1; },
+               statKey: function (v) { return LV[v] ? LV[v].stat : 'd1'; }, bestLabel: function (v) { return LV[v] ? LV[v].name.toLowerCase() : 'easy'; } },
+    deals: DEALS ? function (v) { return v === 1 ? DEALS.d1 : v === 3 ? DEALS.d3 : null; } : null,   // Hard and Expert: any deal at all
+    winnableSmall: 'On Easy and Normal, every deal has been played through to a win first. Hard and Expert can be any deal.',
+    rules: function (S) { var v = lvOf(S); return { undo: v !== 7, hint: v === 1 || v === 3 }; },
+    noDrawSay: function (S) { return !S.stock.length && S.waste.length ? 'That was your last time through the deck at ' + LV[lvOf(S)].name + ' level' : ''; },
+    winBonus: function (S, secs) { return Math.round((100 + Math.max(0, 1200 - secs) / 2) * ({ 1: 1, 3: 1.25, 5: 1.6, 7: 2 }[lvOf(S)] || 1)); },
     dealOrder: function (S) { var o = [], row, col; for (row = 0; row < 7; row++) for (col = row; col < 7; col++) o.push(S.tab[col][row].c); return o; },
     deckPos: function (L) { return { x: colX(L, 0), y: L.top }; },
     cascade: function (S, L) { var q = [], r, f; for (r = 13; r >= 1; r--) for (f = 0; f < 4; f++) { var c = S.found[f][r - 1]; if (c != null) q.push({ c: c, x: colX(L, 3 + f), y: L.top }); } return q; },
-    slotHtml: function (key, S) { return key === 'stock' ? (!S.stock.length && S.waste.length ? Table365.RECYCLE : '') : null; },
+    slotHtml: function (key, S) { return key === 'stock' ? (!S.stock.length && S.waste.length ? (E.canRecycle(S) ? Table365.RECYCLE : '<span class="spent" title="No more times through the deck">&#10005;</span>') : '') : null; },
     noTap: function (from) { return from.p === 'f'; },
-    describe: function (S) { return S.draw === 3 ? 'turning three cards' : 'turning one card'; },
+    describe: function (S) { return LV[lvOf(S)].name + ' level'; },
     help: [
       '<b>The aim:</b> build the four piles at the top, one for each suit, from Ace up to King.',
       '<b>In the seven columns</b>, put each card on one a step higher of the other colour &mdash; a red 6 on a black 7.',
       '<b>Tap a card</b> and it moves to the best place for it. You can drag cards too, if you prefer.',
       '<b>Tap the deck</b> at the top left to turn over new cards. When it&rsquo;s empty, tap it to start again.',
+      '<b>Pick how hard</b> under <b>New game</b>: <b>Easy</b> turns one card at a time; <b>Normal</b> turns three; <b>Hard</b> lets you go through the deck only three times, with no Hint; <b>Expert</b> only once, with no Undo or Hint. Harder levels score more.',
       '<b>Only a King</b> can go in an empty column.',
-      'Stuck? Press <b>Hint</b> and the next move lights up. <b>Undo</b> takes back as many moves as you like.'
+      'Stuck? Press <b>Hint</b> and the next move lights up. <b>Undo</b> takes back as many moves as you like (on Easy and Normal).'
     ]
   });
 })();

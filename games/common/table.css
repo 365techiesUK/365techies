@@ -55,8 +55,8 @@ body::before {
 @media (max-width: 1180px) { .tb .lbl-x { display: none; } }
 /* 4 Oct 2026: the bar keeps to one row - the less-used buttons drop their words first (Share, Feedback, Full screen, then
    My scores and Settings); their names still show on hover, and screen readers still read them */
-@media (max-width: 1240px) { .tb.tb2 { padding: 0 11px; } .tb.tb2 .lbl { display: none; } }
-@media (max-width: 1020px) { .tb.tb3 { padding: 0 11px; } .tb.tb3 .lbl { display: none; } }
+@media (max-width: 1400px) { .tb.tb2 { padding: 0 11px; } .tb.tb2 .lbl { display: none; } }
+@media (max-width: 1100px) { .tb.tb3 { padding: 0 11px; } .tb.tb3 .lbl { display: none; } }
 @media (max-width: 860px) { .tb { padding: 0 11px; } .tb .lbl { display: none; } .brand span { display: none; } .chip { min-width: 54px; padding: 2px 7px; } }
 /* a phone: the icon buttons a little narrower (still 44 px tall), so Share and Feedback fit without a second row */
 @media (max-width: 480px) { .tools { gap: 3px; } .tb, .tb.tb2, .tb.tb3 { padding: 0 7px; } }
@@ -298,3 +298,32 @@ body.felt-oak::before, body.felt-night::before { opacity: .12; }
 .slot.cell::after { content: ""; }
 .slot.done { border-color: rgba(255, 210, 87, .35); color: rgba(255, 210, 87, .45); font-size: calc(var(--cw) * .2); }
 .slot.stock .left { position: absolute; right: 6%; bottom: 4%; font: 700 calc(var(--cw) * .18) / 1 Archivo, sans-serif; color: rgba(255, 255, 255, .7); }
+
+/* ---------- 4 Oct 2026: difficulty levels in New game (Solitaire) - a card per level, stars for how hard ---------- */
+.lvls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 6px 0 2px; }
+.lvls button {
+  position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 12px 14px 13px; min-height: 92px; text-align: left;
+  border-radius: 16px; border: 2px solid var(--sheet-line); background: #fff; color: var(--sheet-ink); cursor: pointer; overflow: hidden;
+  font: 700 18px/1.1 Archivo, sans-serif; transition: transform .16s ease, border-color .16s, box-shadow .2s, background .2s;
+  animation: lvIn .42s cubic-bezier(.2, .9, .3, 1.2) both; animation-delay: calc(var(--i, 0) * 55ms);
+}
+.lvls button:hover { transform: translateY(-2px); border-color: #c9c3b3; box-shadow: 0 8px 18px rgba(20, 40, 30, .12); }
+.lvls button small { font: 500 14px/1.35 Archivo, sans-serif; color: var(--sheet-soft); }
+.lvls .lvtop { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 8px; }
+.lvls .lvst { display: inline-flex; gap: 3px; }
+.lvls .lvst i { width: 13px; height: 13px; background: #ddd8ca; clip-path: polygon(50% 0, 62% 35%, 100% 38%, 70% 60%, 80% 100%, 50% 78%, 20% 100%, 30% 60%, 0 38%, 38% 35%); }
+.lvls .lvst i.on { background: linear-gradient(160deg, #ffe08a, #e0a400); }
+.lvls button[aria-pressed="true"] { border-color: var(--primary); background: linear-gradient(160deg, #ffffff, #eef7f1); box-shadow: 0 0 0 2px var(--primary) inset, 0 10px 24px rgba(20, 108, 58, .18); }
+.lvls button[aria-pressed="true"]::after {   /* a slow shine across the chosen level */
+  content: ""; position: absolute; inset: -40% auto -40% -60%; width: 40%; transform: rotate(18deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .75), transparent); animation: lvShine 2.8s ease-in-out infinite;
+}
+@keyframes lvIn { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: none; } }
+@keyframes lvShine { 0%, 55% { left: -60%; } 100% { left: 130%; } }
+@media (max-width: 460px) { .lvls { grid-template-columns: 1fr; } .lvls button { min-height: 0; } }
+@media (prefers-reduced-motion: reduce) { .lvls button { animation: none; } .lvls button[aria-pressed="true"]::after { display: none; } }
+body.nofx .lvls button { animation: none; } body.nofx .lvls button[aria-pressed="true"]::after { display: none; }
+/* the deck can't be turned over again (Hard / Expert): a quiet cross instead of the turn-over arrow */
+.slot.stock .spent { display: grid; place-items: center; width: 100%; height: 100%; font: 700 calc(var(--cw) * .32) / 1 Archivo, sans-serif; color: rgba(255, 255, 255, .45); }
+/* a phone: Full screen gives way to Games (phones rarely use it, and iPhones can't) */
+@media (max-width: 480px) { #bFull { display: none; } }

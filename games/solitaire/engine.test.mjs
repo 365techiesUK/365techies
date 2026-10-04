@@ -139,3 +139,50 @@ test('cards are never lost or doubled through a whole solved game', () => {
   for (const m of r.moves) { assert.ok(E.apply(s, m)); assert.equal(count(s), 52); }
   assert.equal(s.won, true);
 });
+
+// 4 Oct 2026: difficulty levels - 1 Easy (turn one), 3 Normal (turn three), 5 Hard (three times through), 7 Expert (once through)
+test('levels: Easy and Normal are the old one-card and three-card games, unlimited', () => {
+  const e = E.deal(42, 1), n = E.deal(42, 3);
+  assert.deepEqual([e.draw, e.lv, e.limit, n.draw, n.lv, n.limit], [1, 1, 0, 3, 3, 0]);
+  assert.deepEqual(e.tab, n.tab);   // the same deal number is the same cards at every level
+  const old = E.deal(42, 2);        // anything unknown falls back to Easy, as the old code did
+  assert.deepEqual([old.draw, old.lv], [1, 1]);
+});
+const throughOnce = (s) => { let guard = 0; while (s.stock.length && guard++ < 60) E.apply(s, { t: 'draw' }); };
+test('Hard: the deck can be turned over twice more (three times through), then no more', () => {
+  const s = E.deal(42, 5);
+  assert.deepEqual([s.draw, s.limit], [3, 3]);
+  for (let pass = 1; pass <= 3; pass++) {
+    throughOnce(s);
+    assert.equal(s.stock.length, 0);
+    if (pass < 3) { assert.ok(E.legal(s, { t: 'draw' }), 'turn over after pass ' + pass); E.apply(s, { t: 'draw' }); }
+  }
+  assert.equal(s.passes, 2);
+  assert.equal(E.legal(s, { t: 'draw' }), false, 'a fourth time through is refused');
+  assert.equal(E.apply(s, { t: 'draw' }), null);
+  assert.equal(E.canRecycle(s), false);
+});
+test('Expert: once through the deck, and the hint never suggests turning over a spent deck', () => {
+  const s = E.deal(42, 7);
+  throughOnce(s);
+  assert.equal(E.legal(s, { t: 'draw' }), false);
+  const h = E.hint(s);
+  assert.ok(h === null || h.t === 'move', 'hint: ' + JSON.stringify(h));
+  // only the cards still reachable count: the waste top, nothing from a deck that cannot be turned again
+  assert.deepEqual(E.reachable(s), s.waste.length ? [s.waste[s.waste.length - 1]] : []);
+});
+test('levels survive clone (Undo) and old saved games without a level still work', () => {
+  const s = E.deal(9, 5); E.apply(s, { t: 'draw' });
+  const c = E.clone(s);
+  assert.deepEqual([c.lv, c.limit, c.passes], [5, 3, 0]);
+  const legacy = E.deal(9, 3); delete legacy.lv; delete legacy.limit;   // saved before 4 Oct
+  const lc = E.clone(legacy);
+  assert.deepEqual([lc.lv, lc.limit], [3, 0]);
+  throughOnce(legacy); assert.ok(E.legal(legacy, { t: 'draw' }), 'an old game turns over freely');
+});
+test('finishing off: Easy with cards left in the deck still finishes; Hard does not assume it can', () => {
+  const easy = { seed: 0, draw: 1, lv: 1, limit: 0, tab: [[], [], [], [], [], [], []], stock: [1], waste: [], found: [[0], [], [], []], moves: 0, score: 0, passes: 0, undos: 0, won: false };
+  assert.equal(E.finishable(easy), true);
+  const hard = Object.assign({}, easy, { draw: 3, lv: 5, limit: 3 });
+  assert.equal(E.finishable(hard), false);
+});

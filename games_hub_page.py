@@ -159,7 +159,7 @@ _ASK = """      <div class="gh-ask" id="ask">
           <button type="button" class="button secondary" id="ghShare">Share these games</button>
         </div>
       </div>
-      <script src="/games/common/social.js?v=1"></script>
+      <script src="/games/common/social.js?v=2"></script>
       <script>(function(){if(!window.GameSocial){var a=document.getElementById("ask");if(a)a.hidden=true;return;}
         GameSocial.init({id:"games",title:"365 Games"});
         document.getElementById("ghAsk").onclick=function(){GameSocial.openFeedback("request");};
