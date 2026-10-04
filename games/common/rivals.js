@@ -508,6 +508,12 @@
       if (dn > 0 && dn < 10000000) shared = { seed: dn, v: LVS.options.some(function (o) { return o[0] === dv; }) ? dv : SET.lv };
       if (q.has('deal') && window.history && history.replaceState) history.replaceState(null, '', location.pathname);
     } catch (e) {}
+    // from the Games page: ?daily=1 plays Today's match, ?hof=1 opens the Hall of Fame
+    var ask = {};
+    try {
+      var qa = new URLSearchParams(location.search); ask.daily = qa.get('daily') === '1'; ask.hof = qa.get('hof') === '1';
+      if ((qa.has('daily') || qa.has('hof')) && window.history && history.replaceState) history.replaceState(null, '', location.pathname);
+    } catch (e) {}
     var saved = load('game', null);
     if (!shared && saved && saved.s && saved.g && E.valid(saved.s) && !D.over(saved.s)) {
       S = saved.s; G = newG(saved.g.mode, saved.g.day); G.started = !!saved.g.started; G.counted = !!saved.g.counted; G.ms = +saved.g.ms || 0;
@@ -516,7 +522,9 @@
       layout(); render(true); go();
     } else if (shared) { S = E.newMatch(shared.seed, shared.v); G = newG(); layout(); newGame('shared'); say('Match #' + shared.seed + ' – the same cards your friend played. Good luck!'); }
     else { S = E.newMatch(1, SET.lv); G = newG(); layout(); newGame('match'); }
-    if (!SET.seenHelp) { SET.seenHelp = true; save('settings', SET); openD('dHelp'); }
+    if (!shared && ask.daily && !(G.mode === 'daily' && G.day === today())) newGame('daily');   // today's match already under way: carry on with it
+    if (!SET.seenHelp) { SET.seenHelp = true; save('settings', SET); if (!ask.hof) openD('dHelp'); }
+    if (ask.hof && D.hof && window.HallOfFame) { closeSheets(); HallOfFame.open({}); }
     // read-only, for the tests (and PC Manager): the game as it stands, and whether the computer is mid-turn
     window.GAME365 = { get state() { return E.clone(S); }, get busy() { return busy; }, get ui() { return JSON.parse(JSON.stringify(U)); }, get won() { return !!(S && D.over(S) && D.result(S).won); } };
 

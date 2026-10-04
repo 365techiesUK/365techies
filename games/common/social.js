@@ -52,24 +52,40 @@
     + '.gs-small{margin:14px 0 0;font-size:14px;color:#5b6b60}.gs-small a,.gs-sheet a.gs-a{color:#146c3a}'
     + '.gs-link{margin:12px 0 0;padding:0;border:0;background:none;color:#146c3a;font:700 16px Archivo,"Segoe UI",sans-serif;text-decoration:underline;cursor:pointer}'
     + '.gs-trap{position:absolute!important;left:-9999px!important;width:1px;height:1px;opacity:0}'
-    + '.gs-sheet.gs-wide{width:min(780px,100%)}'
-    + '.gs-cat{margin:16px 0 8px;font:700 13px/1 Archivo,"Segoe UI",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5b6b60}'
-    + '.gs-games{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}'
-    + '.gs-game{position:relative;display:flex;flex-direction:column;border-radius:16px;overflow:hidden;border:2px solid #e2ded2;background:#fff;color:#15211a;text-decoration:none;cursor:pointer;text-align:left;padding:0;font:inherit;'
-    + 'animation:gsIn .45s cubic-bezier(.2,.9,.3,1.15) both;animation-delay:calc(var(--i,0) * 45ms);transition:transform .16s ease,box-shadow .2s,border-color .16s}'
-    + '.gs-game:hover{transform:translateY(-3px);border-color:#c9c3b3;box-shadow:0 12px 26px rgba(20,40,30,.16)}'
+    + '.gs-sheet.gs-wide{width:min(860px,100%)}'
+    + '.gs-sheet .gs-cat{margin:18px 0 9px;font:700 13px/1 Archivo,"Segoe UI",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#5b6b60}'
+    // the games menu (4 Oct 2026, after Microsoft's Solitaire app): each game a tile with its own coloured title bar and
+    // its cover - colours, glyph and cover come from games.json "look"
+    + '.gs-games{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}'
+    + '.gs-games.gs-tallg{grid-template-columns:repeat(5,minmax(0,1fr))}'
+    + '.gs-games.gs-oneg .gs-game{grid-column:span 2}'
+    + '.gs-game{--c1:#146c3a;--c2:#0b3d20;position:relative;display:flex;flex-direction:column;border-radius:14px;overflow:hidden;border:0;background:var(--c2);color:#fff;text-decoration:none;cursor:pointer;text-align:left;padding:0;font:inherit;'
+    + 'box-shadow:0 0 0 1px rgba(0,0,0,.06),0 6px 16px rgba(20,30,40,.2);animation:gsIn .45s cubic-bezier(.2,.9,.3,1.15) both;animation-delay:calc(var(--i,0) * 40ms);transition:transform .16s ease,box-shadow .2s}'
+    + '.gs-game:hover{transform:translateY(-4px);box-shadow:0 0 0 2px var(--c1),0 16px 30px rgba(20,30,40,.3)}'
     + '.gs-game:focus-visible{outline:3px solid #22a3ee;outline-offset:2px}'
-    + '.gs-game img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;background:#0b1422;transition:transform .35s ease}'
+    + '.gs-bar{display:flex;align-items:center;gap:6px;min-height:34px;padding:6px 9px;background:var(--c1);background:linear-gradient(180deg,color-mix(in srgb,var(--c1) 88%,#fff),var(--c1) 55%,color-mix(in srgb,var(--c1) 78%,#000));box-shadow:0 1px 0 rgba(255,255,255,.25) inset}'
+    + '.gs-bar svg{flex:none;width:17px;height:17px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35))}'
+    + '.gs-bar b{font:700 14.5px/1.15 Archivo,"Segoe UI",sans-serif;text-shadow:0 1px 2px rgba(0,0,0,.35)}'
+    + '.gs-art{position:relative;display:block;overflow:hidden;background:var(--c2)}'
+    + '.gs-art::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,rgba(255,255,255,0) 30%,rgba(255,255,255,.3) 48%,rgba(255,255,255,0) 62%);transform:translateX(-130%);transition:transform .7s ease}'
+    + '.gs-game:hover .gs-art::after{transform:translateX(130%)}'
+    + '.gs-game img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;transition:transform .35s ease}'
+    + '.gs-tallg .gs-game img{aspect-ratio:600/780}'
     + '.gs-game:hover img{transform:scale(1.05)}'
-    + '.gs-game b{display:block;padding:9px 11px 2px;font:700 16px/1.2 Archivo,"Segoe UI",sans-serif}'
-    + '.gs-game small{display:block;padding:0 11px 11px;font:500 13px/1.35 Archivo,"Segoe UI",sans-serif;color:#5b6b60}'
-    + '.gs-game.gs-now{border-color:#146c3a;box-shadow:0 0 0 2px #146c3a inset}'
-    + '.gs-game .gs-badge{position:absolute;top:8px;left:8px;padding:4px 9px;border-radius:999px;background:#146c3a;color:#fff;font:700 12px/1 Archivo,"Segoe UI",sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.3)}'
+    + '.gs-game.gs-now{box-shadow:0 0 0 3px #ffd257,0 6px 16px rgba(20,30,40,.25)}'
+    + '.gs-game .gs-badge{position:absolute;top:7px;left:7px;padding:4px 8px;border-radius:999px;background:#ffd257;color:#3b2a00;font:800 12px/1 Archivo,"Segoe UI",sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.35)}'
+    // the Daily challenges tile (it opens the Games page's Daily challenges): a calendar page, drawn here
+    + '.gs-daily .gs-bar{container-type:inline-size}.gs-daily .gs-bar b{font-size:min(14.5px,calc((100cqi - 41px) / 8.9))}'
+    + '.gs-art.gs-cal{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;aspect-ratio:600/780;padding:10px;background:radial-gradient(circle at 50% 40%,#ffcf4d 0,#e39b00 40%,#7a4b00 100%)}'
+    + '.gs-cal span{display:flex;flex-direction:column;align-items:center;width:76%;border-radius:10px;overflow:hidden;background:#fffdf7;color:#2a1d00;box-shadow:0 8px 18px rgba(60,30,0,.45);transform:rotate(-3deg)}'
+    + '.gs-cal em{align-self:stretch;padding:5px 0;background:#d42a2a;color:#fff;text-align:center;font:800 11px/1 Archivo,"Segoe UI",sans-serif;letter-spacing:.1em;text-transform:uppercase;font-style:normal}'
+    + '.gs-cal strong{padding:4px 0 6px;font:600 40px/1 "Clash Display",Archivo,"Segoe UI",sans-serif}'
+    + '.gs-cal small{color:#fff;font:700 12.5px/1.25 Archivo,"Segoe UI",sans-serif;text-align:center;text-shadow:0 1px 2px rgba(0,0,0,.45)}'
     + '.gs-more{display:inline-block;margin-top:14px;color:#146c3a;font-weight:700}'
     + '@keyframes gsIn{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}'
-    + '@media (prefers-reduced-motion:reduce){.gs-game{animation:none;transition:none}.gs-game:hover,.gs-game:hover img{transform:none}}'
-    + '@media (max-width:640px){.gs-games{grid-template-columns:repeat(2,minmax(0,1fr))}}'
-    + '@media (max-width:460px){.gs-sheet{padding:20px 16px 16px}.gs-two{grid-template-columns:1fr}.gs-opts{grid-template-columns:1fr}.gs-game small{display:none}}';
+    + '@media (prefers-reduced-motion:reduce){.gs-game{animation:none;transition:none}.gs-game:hover,.gs-game:hover img{transform:none}.gs-art::after{display:none}}'
+    + '@media (max-width:700px){.gs-games,.gs-games.gs-tallg{grid-template-columns:repeat(2,minmax(0,1fr))}}'
+    + '@media (max-width:460px){.gs-sheet{padding:20px 16px 16px}.gs-two{grid-template-columns:1fr}.gs-opts{grid-template-columns:1fr}.gs-games{gap:10px}}';
 
   function build() {
     if (built) return; built = true;
@@ -88,6 +104,8 @@
       + '<div class="gs-scrim" id="gsGames" hidden><div class="gs-sheet gs-wide" role="dialog" aria-modal="true" aria-labelledby="gsGamesH">'
       + '<h2 id="gsGamesH">Our games</h2><p class="gs-soft">All free, with no adverts. Tap one to play.</p><div id="gsGamesList"></div>'
       + '<a class="gs-more" href="/games/">See them all on the Games page &rarr;</a>'
+      + '<div class="gs-row"><button class="gs-btn" type="button" data-gs-close>Close</button></div></div></div>'
+      + '<div class="gs-scrim" id="gsAny" hidden><div class="gs-sheet" role="dialog" aria-modal="true" aria-labelledby="gsAnyH"><h2 id="gsAnyH"></h2><div id="gsAnyB"></div>'
       + '<div class="gs-row"><button class="gs-btn" type="button" data-gs-close>Close</button></div></div></div>'
       + '<div class="gs-scrim" id="gsFeed" hidden><div class="gs-sheet" role="dialog" aria-modal="true" aria-labelledby="gsFeedH">'
       + '<form id="gsForm" novalidate><h2 id="gsFeedH">Tell us what you think</h2><p class="gs-soft" id="gsFeedSub"></p>'
@@ -233,21 +251,47 @@
   // ------------------------------------------------------------ the games menu (4 Oct 2026, owner: "they can pick other games from within the game")
   // The list is games/games.json - the same one PC Manager and the Games page read. Addresses become paths, so the menu
   // stays on the site the player is on (and inside PC Manager's window).
-  var GAMES = null;
-  function gamePic(g) { return g.id === 'seafront' ? '/bournemouth/games/seafront/media/lv-pirate.webp' : '/games/img/' + g.id + '-v' + (g.pic || 1) + '.webp'; }   // pic: a new picture's number (images cache for a year)
+  // Each game's "look" in games.json gives its tile: colours (c1 the title bar, c2 the deep shade), a white glyph for the
+  // bar, and for a card game "cover" - its portrait cover picture (games/img/covers/<id>-v<cover>.svg, our own art).
+  var GAMES = null, HEX = /^#[0-9a-f]{6}$/i;
+  var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  var DAILY = { c1: '#c98a00', c2: '#4a3000', glyph: '<path d="M6 3h2v2h8V3h2v2h1.5A1.5 1.5 0 0 1 21 6.5v13a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5v-13A1.5 1.5 0 0 1 4.5 5H6zM5 9v10h14V9z"/><path d="m12 10.4 1.2 2.4 2.6.4-1.9 1.8.5 2.6-2.4-1.2-2.4 1.2.5-2.6-1.9-1.8 2.6-.4z"/>' };
+  function gamePic(g) {   // pic / cover: a new picture's number (images cache for a year)
+    var L = g.look || {};
+    if (L.cover) return '/games/img/covers/' + g.id + '-v' + L.cover + '.svg';
+    return g.id === 'seafront' ? '/bournemouth/games/seafront/media/lv-pirate.webp' : '/games/img/' + g.id + '-v' + (g.pic || 1) + '.webp';
+  }
   function gamePath(u) { return String(u || '').replace(/^https?:\/\/(www\.)?365techies\.co\.uk/, ''); }
+  function tileStyle(L, i) { return '--i:' + i + (HEX.test(L.c1 || '') && HEX.test(L.c2 || '') ? ';--c1:' + L.c1 + ';--c2:' + L.c2 : ''); }
+  function bar(L, title) { return '<span class="gs-bar">' + (L.glyph ? '<svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true">' + L.glyph + '</svg>' : '') + '<b>' + esc(title) + '</b></span>'; }
   var CAT = { 'Card games': 'Card games', 'Arcade': 'Arcade games', 'Seafront': 'Made in Bournemouth' };
   function drawGames() {
     var by = {}, order = [], i = 0;
     GAMES.forEach(function (g) { if (!by[g.cat]) { by[g.cat] = []; order.push(g.cat); } by[g.cat].push(g); });
     $('gsGamesList').innerHTML = order.map(function (c) {
-      return '<p class="gs-cat">' + esc(CAT[c] || c) + '</p><div class="gs-games">' + by[c].map(function (g) {
-        var now = g.id === CFG.id, inner = '<img src="' + gamePic(g) + '" alt="" loading="lazy" decoding="async" width="800" height="600" />'
-          + (now ? '<span class="gs-badge">Playing now</span>' : '') + '<b>' + esc(g.title) + '</b><small>' + esc(g.sub || '') + '</small>';
-        return now ? '<button type="button" class="gs-game gs-now" data-gs-close style="--i:' + (i++) + '">' + inner + '</button>'
-          : '<a class="gs-game" href="' + esc(gamePath(g.url)) + '" style="--i:' + (i++) + '">' + inner + '</a>';
-      }).join('') + '</div>';
+      var list = by[c], tall = list.some(function (g) { return g.look && g.look.cover; });
+      var tiles = list.map(function (g) {
+        var L = g.look || {}, now = g.id === CFG.id, t = !!L.cover;
+        var inner = bar(L, g.title) + '<span class="gs-art"><img src="' + gamePic(g) + '" alt="" loading="lazy" decoding="async" width="' + (t ? 600 : 800) + '" height="' + (t ? 780 : 600) + '" />'
+          + (now ? '<span class="gs-badge">Playing now</span>' : '') + '</span>';
+        return now ? '<button type="button" class="gs-game gs-now" data-gs-close style="' + tileStyle(L, i++) + '">' + inner + '</button>'
+          : '<a class="gs-game" href="' + esc(gamePath(g.url)) + '" title="' + esc(g.sub || '') + '" style="' + tileStyle(L, i++) + '">' + inner + '</a>';
+      });
+      if (tall) {   // the card games' 10th tile: Today's deal in every card game, on the Games page
+        var d = new Date();
+        tiles.push('<a class="gs-game gs-daily" href="/games/#daily" style="' + tileStyle(DAILY, i++) + '">' + bar(DAILY, 'Daily challenges')
+          + '<span class="gs-art gs-cal"><span><em>' + MONTHS[d.getMonth()] + '</em><strong>' + d.getDate() + '</strong></span><small>Today&rsquo;s deal in every card game</small></span></a>');
+      }
+      return '<p class="gs-cat">' + esc(CAT[c] || c) + '</p><div class="gs-games' + (tall ? ' gs-tallg' : list.length === 1 ? ' gs-oneg' : '') + '">' + tiles.join('') + '</div>';
     }).join('');
+  }
+  // a sheet of the page's own (the Games page's Daily challenges and Hall of Fame): GameSocial.sheet({ title, html, wide })
+  function sheet(o) {
+    build(); o = o || {};
+    $('gsAnyH').textContent = o.title || ''; $('gsAnyB').innerHTML = o.html || '';
+    var box = $('gsAny').firstChild; box.classList.toggle('gs-wide', !!o.wide); box.scrollTop = 0;
+    show('gsAny');
+    return $('gsAnyB');
   }
   function openGames() {
     build();
@@ -267,7 +311,7 @@
     var wasOpen = !!openEl;
     openEl = $(id); openEl.hidden = false;
     if (!wasOpen) { lastFocus = document.activeElement; if (CFG.onOpen) try { CFG.onOpen(); } catch (e) {} }
-    var f = openEl.querySelector(id === 'gsFeed' ? '.gs-mood:not([hidden]), textarea' : id === 'gsGames' ? '.gs-row .gs-btn' : '.gs-opt');
+    var f = openEl.querySelector(id === 'gsFeed' ? '.gs-mood:not([hidden]), textarea' : id === 'gsGames' || id === 'gsAny' ? '.gs-row .gs-btn' : '.gs-opt');
     if (id === 'gsFeed' && $('gsMoods').hidden) f = $('gsText');
     if (f) try { f.focus({ preventScroll: true }); } catch (e) {}
   }
@@ -280,7 +324,7 @@
 
   window.GameSocial = {
     init: function (cfg) { for (var k in cfg) CFG[k] = cfg[k]; },
-    share: share, openFeedback: openFeedback, openGames: openGames, close: close,
+    share: share, openFeedback: openFeedback, openGames: openGames, sheet: sheet, close: close,
     isOpen: function () { return !!openEl; }
   };
 })();
