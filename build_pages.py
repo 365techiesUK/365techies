@@ -364,6 +364,7 @@ NAV_MENUS = [
         ("Retired Users", "/it-support-for-retired-users/"),
         ("Disabled People", "/it-support-for-disabled-people/"),
         ("Free Courses", "/free-courses/"),
+        ("Free Games &mdash; no adverts", "/games/"),
         ("Parents&rsquo; Online Safety Guide", "/parents-guide-online-safety/"),
     ])]]}),
     ("For Business", "/business-it-support-subscriptions/", {"cols": [[(None, [
@@ -409,7 +410,9 @@ NAV_MENUS = [
         ])],
     ]}),
     ("Free Tools", "/free-tools/", {"all": ("All Free Tools", "/free-tools/"), "cols": [
-        [("Check your computer", [
+        [("Games", [
+            ("Free Games &mdash; no adverts", "/games/"),   # 4 Oct 2026, owner: "put the games page in the nav"
+        ]), ("Check your computer", [
             ("PC Spec Checker", "/computer-spec-checker/"),
             ("PC Speed Test", "/pc-benchmark/"),
             ("365 PC Manager &mdash; free app", "/free-pc-health-check/"),
