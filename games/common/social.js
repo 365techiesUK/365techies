@@ -234,7 +234,7 @@
   // The list is games/games.json - the same one PC Manager and the Games page read. Addresses become paths, so the menu
   // stays on the site the player is on (and inside PC Manager's window).
   var GAMES = null;
-  function gamePic(g) { return g.id === 'seafront' ? '/bournemouth/games/seafront/media/lv-pirate.webp' : '/games/img/' + g.id + '-v1.webp'; }
+  function gamePic(g) { return g.id === 'seafront' ? '/bournemouth/games/seafront/media/lv-pirate.webp' : '/games/img/' + g.id + '-v' + (g.pic || 1) + '.webp'; }   // pic: a new picture's number (images cache for a year)
   function gamePath(u) { return String(u || '').replace(/^https?:\/\/(www\.)?365techies\.co\.uk/, ''); }
   var CAT = { 'Card games': 'Card games', 'Arcade': 'Arcade games', 'Seafront': 'Made in Bournemouth' };
   function drawGames() {

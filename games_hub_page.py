@@ -11,7 +11,7 @@ every game carries the 365 Techies name and phone number.
 
 ONE LIST
 The cards are built from games/games.json - the same file 365 PC Manager's Games menu reads (Games.cs). Add a
-game there, rebuild, and the website and the app both show it. Pictures: games/img/<id>-v1.webp (800 x 600,
+game there, rebuild, and the website and the app both show it. Pictures: games/img/<id>-v1.webp, or -v<pic> when games.json gives "pic" (800 x 600,
 the game's own screen, made by the scratchpad games-thumbs.cjs of the 4 Oct session); a game without one shows
 its icon instead. ⚠ Never overwrite a picture in place (images are cached for a year): give a new one -v2.
 
@@ -63,7 +63,7 @@ def _path(url):   # our own address, as a path (so the page works on a test copy
 def _picture(g):
     if g["id"] in _IMG_ELSEWHERE:
         return _IMG_ELSEWHERE[g["id"]]
-    rel = "games/img/%s-v1.webp" % g["id"]
+    rel = "games/img/%s-v%d.webp" % (g["id"], g.get("pic", 1))   # "pic": 2 in games.json = a new picture (images cache for a year)
     return "/" + rel if os.path.exists(os.path.join(_ROOT, rel.replace("/", os.sep))) else None
 
 
@@ -159,7 +159,7 @@ _ASK = """      <div class="gh-ask" id="ask">
           <button type="button" class="button secondary" id="ghShare">Share these games</button>
         </div>
       </div>
-      <script src="/games/common/social.js?v=2"></script>
+      <script src="/games/common/social.js?v=3"></script>
       <script>(function(){if(!window.GameSocial){var a=document.getElementById("ask");if(a)a.hidden=true;return;}
         GameSocial.init({id:"games",title:"365 Games"});
         document.getElementById("ghAsk").onclick=function(){GameSocial.openFeedback("request");};

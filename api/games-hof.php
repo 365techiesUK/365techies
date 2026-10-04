@@ -50,7 +50,8 @@ $HOF_GAMES = array(
 $HOF_ARCADE = array(
     'invaders' => array('lvs' => array('e1' => 'Gentle', 'e2' => 'Classic', 'e3' => 'Fast', 'v1' => 'Retro · Gentle', 'v2' => 'Retro · Classic', 'v3' => 'Retro · Fast'), 'rate' => 1000, 'base' => 5000, 'word' => 'wave'),
     'batball'  => array('lvs' => array('v1' => 'Gentle', 'v2' => 'Classic', 'v3' => 'Fast'), 'rate' => 1500, 'base' => 10000, 'word' => 'level'),
-    'eclipse'  => array('lvs' => array('v1' => 'Gentle', 'v2' => 'Classic', 'v3' => 'Fast'), 'rate' => 20000, 'base' => 100000, 'word' => 'stage'),
+    // (the 3D Eclipse of 4 Oct: an invincible bot that takes every medal and power item scores ~15,500 a second over two loops)
+    'eclipse'  => array('lvs' => array('v1' => 'Gentle', 'v2' => 'Classic', 'v3' => 'Fast'), 'rate' => 30000, 'base' => 100000, 'word' => 'stage'),
 );
 $HOF_RUNS = __DIR__ . '/games-hof-runs.json';
 $HOF_RUNLOCK = __DIR__ . '/games-hof-runs.lock';
