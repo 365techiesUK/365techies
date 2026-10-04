@@ -50,6 +50,17 @@
     full: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>'
   };
   function esc(s) { return String(s).replace(/[&<>"]/g, function (m) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]; }); }
+  // one card's face and back, as classes and inner markup (shared with games/common/rivals.js, 5 Oct 2026)
+  function cardMarkup(r, s) {
+    var su = SUIT_CH[s] + TXT, red = s === 1 || s === 2, mid;
+    if (r === 1) mid = '<div class="ace">' + su + (s === 0 ? '<i>365</i>' : '') + '</div>';
+    else if (r > 10) mid = '<div class="court">' + COURT[r] + '<b>' + RANK_CH[r] + '</b><em>' + su + '</em></div>';
+    else mid = '<div class="pips">' + PIPS[r].map(function (p) {
+      return '<span class="pip' + (p[1] > 50 ? ' dn' : '') + '" style="left:' + p[0] + '%;top:' + p[1] + '%">' + su + '</span>';
+    }).join('') + '</div>';
+    return { cls: (red ? 'red' : 'blk') + ' r' + r, html: '<div class="wig"><div class="flip"><div class="face front"><span class="idx' + (r === 10 ? ' ten' : '') + '">' + RANK_CH[r]
+      + '</span><span class="sui">' + su + '</span>' + mid + '<span class="cor"><i>' + su + '</i></span></div><div class="face back"></div></div></div>' };
+  }
 
   function start(D) {
     var E = D.E;
@@ -87,17 +98,11 @@
     var board = $('board');
     var cardEl = [], slotEl = {}, faceKey = '';
     function makeCard(c) {
-      var f = D.face(c, S), r = f.r, su = SUIT_CH[f.s] + TXT, red = f.s === 1 || f.s === 2, el = cardEl[c] || document.createElement('div'), mid;
-      el.className = 'card down ' + (red ? 'red' : 'blk') + ' r' + r;
+      var f = D.face(c, S), k = cardMarkup(f.r, f.s), el = cardEl[c] || document.createElement('div');
+      el.className = 'card down ' + k.cls;
       el.setAttribute('data-c', c);
       el.setAttribute('aria-hidden', 'true');
-      if (r === 1) mid = '<div class="ace">' + su + (f.s === 0 ? '<i>365</i>' : '') + '</div>';
-      else if (r > 10) mid = '<div class="court">' + COURT[r] + '<b>' + RANK_CH[r] + '</b><em>' + su + '</em></div>';
-      else mid = '<div class="pips">' + PIPS[r].map(function (p) {
-        return '<span class="pip' + (p[1] > 50 ? ' dn' : '') + '" style="left:' + p[0] + '%;top:' + p[1] + '%">' + su + '</span>';
-      }).join('') + '</div>';
-      el.innerHTML = '<div class="wig"><div class="flip"><div class="face front"><span class="idx' + (r === 10 ? ' ten' : '') + '">' + RANK_CH[r]
-        + '</span><span class="sui">' + su + '</span>' + mid + '<span class="cor"><i>' + su + '</i></span></div><div class="face back"></div></div></div>';
+      el.innerHTML = k.html;
       return el;
     }
     function faces() {   // (re)draw the faces when the game's card set changes (Spider's one, two or four suits)
@@ -973,5 +978,5 @@
     function sw(key, label, small) { return '<div class="set"><div><label id="l_' + key + '">' + label + '</label><small>' + small + '</small></div><button class="sw" type="button" role="switch" aria-labelledby="l_' + key + '" data-set="' + key + '"></button></div>'; }
   }
 
-  window.Table365 = { start: start, RECYCLE: RECYCLE };
+  window.Table365 = { start: start, RECYCLE: RECYCLE, ICON: ICON, cardMarkup: cardMarkup, esc: esc, SUIT_CH: SUIT_CH, RANK_CH: RANK_CH, TXT: TXT };
 })();
