@@ -374,6 +374,7 @@
         : 'Cheapest ' + FUEL[f].toLowerCase() + ' ' + scope() + (c && c.acc ? ' (accurate to about ' + c.acc + ' m)' : '') + ': ' +
           (st.cut && st.around ? 'about ' + st.around.n.toLocaleString('en-GB') + ' forecourts, cheapest first.' : n + ' forecourt' + (n === 1 ? '' : 's') + '.'));
       renderList(); tiles(); drawMap(); renderUk();
+      $('ff-actions').hidden = !st.list.length;
     }, function () { if (my === seq) { status('Prices could not be loaded. Please check your connection and try again.'); $('ff-list').innerHTML = ''; } });
   }
 
@@ -393,6 +394,7 @@
     st.centre = c;
     if (st.r === 'uk' && d.mode === 'uk') { st.r = 10; sel.value = '10'; }           // UK page: a location means "near me"
     update();
+    if (a2hs) a2hs.searched();                                                       // the home-screen offer, once useful
   }
   var gps = $('ff-gps');
   gps.addEventListener('click', function () {
@@ -432,6 +434,162 @@
   }
 
   /* ---- start ---- */
+  /* ---- share + keep it on the home screen (owner, 4 Oct: "share so people can share it ... and add it to their phone
+     so they can find it easily"). The same approach as the B365 weather page: the phone's own share sheet where there is
+     one, otherwise a panel; Android's install prompt, the iPhone steps, "open in your browser" inside Facebook's in-app
+     browser (it cannot add to a home screen), and bookmark/install on a computer. ---- */
+  var UA = navigator.userAgent || '';
+  var IOS = /iPad|iPhone|iPod/.test(UA) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var ANDROID = /Android/i.test(UA), INAPP = /FBAN|FBAV|FB_IAB|FBIOS|Instagram|Messenger/i.test(UA);
+  var IOS_OTHER = /CriOS|FxiOS|EdgiOS/.test(UA), SAMSUNG = /SamsungBrowser/i.test(UA);
+  var COARSE = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+  var PHONE = IOS || ANDROID || (window.matchMedia && window.matchMedia('(max-width: 767px)').matches);
+  var APP = d.mode === 'uk' ? 'Fuel Prices' : 'B365 Fuel';
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsPut(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function track(name, extra) {
+    try { if (typeof window.gtag === 'function' && lsGet('tt_internal') !== '1') window.gtag('event', name, extra || {}); } catch (e) {}
+  }
+  function enc(s) { return encodeURIComponent(s); }
+  // Slides in on the next frames, with a timer as well: frames do not run in a background tab, and a panel left at
+  // opacity 0 would be invisible but still in the way.
+  function openSheet(el) {
+    el.hidden = false;
+    var on = function () { el.classList.add('on'); };
+    requestAnimationFrame(function () { requestAnimationFrame(on); });
+    setTimeout(on, 80);
+  }
+  function closeSheet(el) { el.classList.remove('on'); setTimeout(function () { el.hidden = true; }, still ? 0 : 320); }
+
+  function shareContent() {
+    var url = location.origin + location.pathname, x = st.list[0], f = FUEL[st.fuel].toLowerCase(), text;
+    if (x) {
+      var where = st.r === 'uk' ? 'in the UK' : (st.centre === HOME ? 'near ' + HOME.label.replace(/ town centre$/, '') : 'near me');
+      text = 'Cheapest ' + f + ' ' + where + ' right now: ' + p1(x.p) + 'p at ' + x.s.b + (x.s.a ? ', ' + x.s.a.split(', ')[0] : '') +
+        '.\nLive prices from every UK forecourt, free, no adverts:';
+    } else {
+      text = 'Live petrol and diesel prices from every UK forecourt, cheapest first. Free, no adverts:';
+    }
+    return { title: 'The cheapest petrol and diesel near you', text: text, url: url };
+  }
+  var SICON = {
+    whatsapp: '<i style="background:#25d366;color:#fff"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.4 14.1c-.2.6-1.3 1.2-1.8 1.3-.5.1-1 .1-3.3-.8-2.8-1.1-4.5-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2.1 1-2.4c.3-.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.3 0 .5l-.3.5-.4.5c-.1.1-.3.3-.1.6.2.3.7 1.2 1.6 2 1.1 1 2 1.3 2.3 1.4.3.1.5.1.6-.1l.8-1c.2-.3.4-.2.6-.1l1.8.9c.3.1.4.2.5.3.1.2.1.7-.1 1.3z"/></svg></i>',
+    facebook: '<i style="background:#1877f2;color:#fff"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.5 1.6-1.5h1.7V4.4c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.2v2.3H7.5V14h2.7v8h3.3z"/></svg></i>',
+    x: '<i style="background:#000;color:#fff;border:1px solid #333"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.8 3h3l-6.6 7.5L22 21h-6.1l-4.8-6.2L5.6 21h-3l7-8L2 3h6.2l4.3 5.7L17.8 3zm-1.1 16.2h1.7L7.4 4.7H5.6l11.1 14.5z"/></svg></i>',
+    email: '<i style="background:#2a86c4;color:#fff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></i>',
+    sms: '<i style="background:#7fd8a8;color:#08131e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5z"/></svg></i>',
+    copy: '<i style="background:#ffd76a;color:#08131e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></i>'
+  };
+  function sharePanel(c) {
+    var sheet = $('ff-share'), grid = $('ff-share-grid'), full = c.text + '\n' + c.url;
+    $('ff-share-text').textContent = full;
+    $('ff-share-done').textContent = '';
+    var links = [
+      ['whatsapp', 'WhatsApp', 'https://wa.me/?text=' + enc(full)],
+      ['facebook', 'Facebook', 'https://www.facebook.com/sharer/sharer.php?u=' + enc(c.url)],
+      ['x', 'X', 'https://twitter.com/intent/tweet?text=' + enc(c.text) + '&url=' + enc(c.url)],
+      ['email', 'Email', 'mailto:?subject=' + enc(c.title) + '&body=' + enc(full)]
+    ];
+    if (IOS || ANDROID) links.push(['sms', 'Text message', 'sms:' + (IOS ? '&' : '?') + 'body=' + enc(full)]);
+    grid.innerHTML = links.map(function (l) {
+      return '<a href="' + l[2] + '" data-m="' + l[0] + '"' + (/^https/.test(l[2]) ? ' target="_blank" rel="noopener"' : '') + '>' + SICON[l[0]] + l[1] + '</a>';
+    }).join('') + '<button type="button" data-copy>' + SICON.copy + 'Copy link</button>';
+    [].forEach.call(grid.querySelectorAll('a'), function (a) { a.addEventListener('click', function () { track('fuel_share', { method: a.getAttribute('data-m') }); }); });
+    grid.querySelector('[data-copy]').addEventListener('click', function () {
+      var done = function () { $('ff-share-done').textContent = 'Link copied'; track('fuel_share', { method: 'copy' }); };
+      function fallback() {
+        var ta = document.createElement('textarea'); ta.value = c.url; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); done(); } catch (e) { $('ff-share-done').textContent = c.url; }
+        ta.parentNode.removeChild(ta);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(c.url).then(done, fallback); else fallback();
+    });
+    openSheet(sheet);
+    var first = grid.querySelector('a'); if (first) try { first.focus({ preventScroll: true }); } catch (e) {}
+  }
+  root.addEventListener('click', function (e) {
+    var b = e.target && e.target.closest ? e.target.closest('[data-ffshare]') : null;
+    if (!b) return;
+    e.preventDefault();
+    var c = shareContent();
+    if (navigator.share && (COARSE || IOS || ANDROID)) {
+      navigator.share({ title: c.title, text: c.text, url: c.url }).then(function () { track('fuel_share', { method: 'native' }); },
+        function (err) { if (err && err.name !== 'AbortError') sharePanel(c); });
+      return;
+    }
+    sharePanel(c);
+  });
+  $('ff-share-x').addEventListener('click', function () { closeSheet($('ff-share')); });
+
+  var a2hs = (function () {
+    var sheet = $('ff-a2hs'), how = $('ff-a2hs-how'), deferred = null, fired = false;
+    var standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+    var SH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="Share"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
+    var PL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 8v8M8 12h8"/></svg>';
+    function pills(show) { [].forEach.call(root.querySelectorAll('[data-ffa2hs]'), function (b) { b.hidden = !show; }); }
+    function label() {
+      var t = PHONE ? 'Add to home screen' : (deferred ? 'Install as an app' : 'Save this page');
+      [].forEach.call(root.querySelectorAll('.ff-a2hs-label'), function (s) { s.textContent = t; });
+      $('ff-a2hs-add').textContent = PHONE ? 'Add to home screen' : (deferred ? 'Install' : 'Show me how');
+    }
+    function steps() {
+      if (INAPP) return '<b>You&rsquo;re in Facebook&rsquo;s built-in browser</b>, which can&rsquo;t add pages to your home screen. Tap <b>&#8943;</b> at the top right, choose <b>' + (IOS ? 'Open in Safari' : 'Open in browser') + '</b>, then tap <b>Add to home screen</b> again from there.';
+      if (IOS && IOS_OTHER) return 'Tap the <b>Share</b> button ' + SH + ' by the address bar, then <b>Add to Home Screen</b>.';
+      if (IOS) return '1. Tap the <b>Share</b> button ' + SH + ' in Safari&rsquo;s toolbar.<br>2. Scroll down and tap <b>Add to Home Screen</b> ' + PL + '.<br>3. Tap <b>Add</b>. The ' + APP + ' icon opens straight to this page.';
+      if (SAMSUNG) return 'Tap the <b>menu</b> (&#9776;, bottom right), then <b>Add page to</b> &rarr; <b>Home screen</b>.';
+      if (ANDROID) return 'Tap the <b>&#8942;</b> menu at the top right and choose <b>Add to home screen</b> (or <b>Install app</b>).';
+      return 'Press <b>' + (/Mac/.test(navigator.platform) ? '&#8984;' : 'Ctrl') + ' + D</b> to bookmark this page, or use your browser&rsquo;s menu to <b>install</b> it as an app.';
+    }
+    function open(auto) {
+      if (!auto) { how.innerHTML = steps(); how.hidden = !!deferred; } else how.hidden = true;
+      openSheet(sheet);
+      track(auto ? 'fuel_a2hs_offer' : 'fuel_a2hs_open');
+    }
+    function add() {
+      track('fuel_a2hs_click');
+      if (deferred) {
+        var dp = deferred; deferred = null; dp.prompt();
+        dp.userChoice.then(function (r) { if (r && r.outcome === 'accepted') { lsPut('ff_a2hs_added', '1'); pills(false); closeSheet(sheet); } label(); });
+        return;
+      }
+      how.innerHTML = steps(); how.hidden = false;
+    }
+    if (standalone || lsGet('ff_a2hs_added')) { pills(false); if (standalone) track('fuel_opened_from_home_screen'); return { searched: function () {} }; }
+    label();
+    window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferred = e; label(); });
+    window.addEventListener('appinstalled', function () { lsPut('ff_a2hs_added', '1'); pills(false); closeSheet(sheet); track('fuel_a2hs_installed'); });
+    root.addEventListener('click', function (e) {
+      var t = e.target && e.target.closest ? e.target.closest('[data-ffa2hs]') : null;
+      if (!t) return;
+      e.preventDefault();
+      if (deferred) add(); else open(false);
+    });
+    $('ff-a2hs-add').addEventListener('click', add);
+    $('ff-a2hs-no').addEventListener('click', function () { lsPut('ff_a2hs_off', String(Date.now())); closeSheet(sheet); track('fuel_a2hs_dismiss'); });
+    $('ff-a2hs-x').addEventListener('click', function () { lsPut('ff_a2hs_off', String(Date.now())); closeSheet(sheet); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      if (!sheet.hidden) closeSheet(sheet);
+      if (!$('ff-share').hidden) closeSheet($('ff-share'));
+    });
+    /* The offer, phones only, once per visit, after the page has been useful: 6 s after a postcode or location search, or
+       45 s on the page (10 s into a return visit). "Not now" keeps it away for 30 days. */
+    function invite() {
+      if (fired || !PHONE || !sheet.hidden) return;
+      var off = +(lsGet('ff_a2hs_off') || 0);
+      if (off && Date.now() - off < 30 * 864e5) return;
+      try { if (sessionStorage.getItem('ff_a2hs_shown')) return; } catch (e) {}
+      if (document.hidden) { document.addEventListener('visibilitychange', function once() { if (!document.hidden) { document.removeEventListener('visibilitychange', once); invite(); } }); return; }
+      fired = true;
+      try { sessionStorage.setItem('ff_a2hs_shown', '1'); } catch (e) {}
+      open(true);
+    }
+    var visits = (+lsGet('ff_visits') || 0) + 1; lsPut('ff_visits', String(visits));
+    if (PHONE) setTimeout(invite, visits >= 2 ? 10000 : 45000);
+    return { searched: function () { if (PHONE) setTimeout(invite, 6000); } };
+  })();
+
   function loadStats() {
     get('?stats=1').then(function (j) { if (j && j.ok) { st.stats = j; if (st.list.length) tiles(); renderUk(); } }, function () {});
   }

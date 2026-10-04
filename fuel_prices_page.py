@@ -31,7 +31,10 @@ _INNER = '''
 
 _FAQS = ui.faqs("anywhere in the UK by postcode or your location,")
 
-bp.HEAD_EXTRA[_SLUG] = ui.HEAD
+bp.HEAD_EXTRA[_SLUG] = ui.HEAD + ui.app_head("Fuel Prices")
+# its own home-screen identity (owner 4 Oct: "add it to their phone ... so they can find it easily")
+bp.MANIFEST_FOR[_SLUG] = "/fuel-prices/app.webmanifest?v=1"
+bp.TOUCH_ICON_FOR[_SLUG] = ui.TOUCH_ICON
 
 info_page(
     slug=_SLUG, crumb_name="Fuel Prices",

@@ -12,7 +12,24 @@ as they scroll into view, the location button pulses while it searches, and a sk
 A device set to reduce motion gets none of it (CSS below + the script checks the same setting).
 """
 
-JS_V = "6"
+JS_V = "7"
+
+# Home-screen identity (owner 4 Oct: "share ... and add it to their phone ... so they can find it easily"). Icons drawn by
+# the 4 Oct scratchpad make_fuel_icons.py: a teal pump on dark navy. ⚠ Never overwrite one in place (images are cached a
+# year): draw a -v2. Each page has its own app.webmanifest (its own name and scope).
+TOUCH_ICON = "/images/fuel-icon-180-v1.png"
+
+
+def app_head(short_name):
+    """What iPhones call the page on the home screen (they read this before the manifest), and the bar colour."""
+    return (f'\n  <meta name="apple-mobile-web-app-title" content="{short_name}" />'
+            '\n  <meta name="theme-color" content="#0a1420" />')
+
+_SHARE_SVG = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" '
+              'stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/>'
+              '<path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>')
+_ADD_SVG = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" '
+            'aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 8v8M8 12h8"/></svg>')
 
 HEAD = '''
   <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
@@ -115,6 +132,34 @@ HEAD = '''
       .ff-where select{width:100%}
       .ff-bar{grid-template-columns:6.2rem minmax(0,1fr) auto}
     }
+    .ff-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin:0 0 1rem}
+    .ff-pill{display:inline-flex;align-items:center;gap:.45rem;min-height:44px;padding:0 1.05rem;border-radius:999px;border:1px solid rgba(79,216,196,.5);background:rgba(79,216,196,.08);color:var(--ff-foam);font:inherit;font-size:.92rem;font-weight:600;cursor:pointer;transition:background .2s,transform .15s}
+    .ff-pill:hover{background:rgba(79,216,196,.16)}
+    .ff-pill:active{transform:scale(.97)}
+    .ff-pill svg{width:18px;height:18px}
+    .ff-pill--add{border-color:rgba(255,176,102,.55);background:rgba(255,176,102,.08)}
+    .ff-pill--add:hover{background:rgba(255,176,102,.16)}
+    .ff-sheet{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:1310;max-width:540px;margin:0 auto;display:grid;grid-template-columns:auto minmax(0,1fr);gap:.8rem;align-items:start;padding:1rem 2.6rem 1rem 1rem;border-radius:18px;border:1px solid var(--ff-line);background:#0e1d2c;color:var(--ff-foam);box-shadow:0 18px 50px rgba(0,0,0,.55);transform:translateY(24px);opacity:0;transition:transform .32s cubic-bezier(.2,.7,.2,1),opacity .32s}
+    .ff-sheet.on{transform:none;opacity:1}
+    .ff-sheet[hidden],.ff-actions[hidden],[data-ffa2hs][hidden]{display:none!important}
+    .ff-sheet-ic{width:52px;height:52px;border-radius:13px;background:url(/images/fuel-icon-192-v1.png) center/cover;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+    .ff-sheet-h{margin:0;font-weight:700;font-size:1.02rem;line-height:1.3}
+    .ff-sheet-sub{margin:.2rem 0 0;color:var(--ff-mute);font-size:.9rem;line-height:1.45}
+    .ff-sheet-how{margin:.6rem 0 0;padding:.65rem .75rem;border-radius:12px;background:rgba(255,255,255,.05);font-size:.92rem;line-height:1.55}
+    .ff-sheet-how svg{width:1.1em;height:1.1em;vertical-align:-.18em}
+    .ff-sheet-btns{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem}
+    .ff-sheet-add{min-height:44px;padding:0 1.1rem;border:0;border-radius:999px;background:linear-gradient(135deg,#8ff3e4,var(--ff-surf));color:var(--ff-ink);font:inherit;font-weight:700;cursor:pointer}
+    .ff-sheet-no{min-height:44px;padding:0 1rem;border:1px solid var(--ff-line);border-radius:999px;background:transparent;color:var(--ff-foam);font:inherit;cursor:pointer}
+    .ff-sheet-x{position:absolute;top:.35rem;right:.35rem;width:44px;height:44px;border:0;background:transparent;color:var(--ff-mute);font-size:1.6rem;line-height:1;cursor:pointer}
+    .ff-sheet--share{grid-template-columns:1fr}
+    .ff-share-text{margin:.35rem 0 0;padding:.6rem .7rem;border-radius:12px;background:rgba(255,255,255,.05);color:var(--ff-mute);font-size:.86rem;line-height:1.5;max-height:7.5em;overflow:auto;white-space:pre-line}
+    .ff-share-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem;margin-top:.7rem}
+    .ff-share-grid a,.ff-share-grid button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3rem;min-height:68px;padding:.4rem;border-radius:14px;border:1px solid var(--ff-line);background:rgba(255,255,255,.03);color:var(--ff-foam);font:inherit;font-size:.82rem;text-decoration:none;cursor:pointer}
+    .ff-share-grid a:hover,.ff-share-grid button:hover{border-color:var(--ff-surf)}
+    .ff-share-grid i{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;font-style:normal}
+    .ff-share-grid svg{width:17px;height:17px}
+    .ff-share-done{margin:.5rem 0 0;color:var(--ff-surf);font-size:.88rem;min-height:1.2em}
+    .ff-pill:focus-visible,.ff-sheet button:focus-visible,.ff-share-grid a:focus-visible{outline:2px solid var(--ff-surf);outline-offset:2px}
     @keyframes ffIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
     @keyframes ffPop{from{opacity:.35;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}
     @keyframes ffDrop{0%{opacity:0;transform:translate(-50%,-260%)}70%{opacity:1;transform:translate(-50%,-92%)}100%{transform:translate(-50%,-100%)}}
@@ -160,12 +205,35 @@ def tool(mode, radius, home=None):
             {tile(2, "ff-t2", "", 1)}
             {tile(3, "ff-t3", "&pound;", 2, '<div class="ff-tanks" id="ff-tanks" role="group" aria-label="Your vehicle"></div>')}
           </div>
+          <div class="ff-actions" id="ff-actions" hidden>
+            <button type="button" class="ff-pill" data-ffshare>{_SHARE_SVG}Share</button>
+            <button type="button" class="ff-pill ff-pill--add" data-ffa2hs>{_ADD_SVG}<span class="ff-a2hs-label">Add to home screen</span></button>
+          </div>
           <div class="ff-grid">
             <ol id="ff-list" class="ff-list" aria-label="Cheapest first"></ol>
             <div class="ff-mapwrap"><div id="ff-map" role="region" aria-label="Map of the forecourts"></div></div>
           </div>
           <p id="ff-src" class="ff-note"></p>
           <p class="ff-note">Your exact location stays on your phone: the page asks our server only for prices around a point rounded to about 10&nbsp;km, then works out the distances itself. A postcode is looked up through our own server and is not stored.</p>
+          <div class="ff-sheet" id="ff-a2hs" role="dialog" aria-labelledby="ff-a2hs-h" hidden>
+            <span class="ff-sheet-ic" aria-hidden="true"></span>
+            <div class="ff-sheet-body">
+              <p class="ff-sheet-h" id="ff-a2hs-h">Keep the cheapest fuel one tap away</p>
+              <p class="ff-sheet-sub">Put it on your home screen: live prices near you, straight from an icon.</p>
+              <div class="ff-sheet-how" id="ff-a2hs-how" aria-live="polite" hidden></div>
+              <div class="ff-sheet-btns"><button type="button" class="ff-sheet-add" id="ff-a2hs-add">Add to home screen</button><button type="button" class="ff-sheet-no" id="ff-a2hs-no">Not now</button></div>
+            </div>
+            <button type="button" class="ff-sheet-x" id="ff-a2hs-x" aria-label="Close">&times;</button>
+          </div>
+          <div class="ff-sheet ff-sheet--share" id="ff-share" role="dialog" aria-labelledby="ff-share-h" hidden>
+            <div class="ff-sheet-body">
+              <p class="ff-sheet-h" id="ff-share-h">Share</p>
+              <p class="ff-share-text" id="ff-share-text"></p>
+              <div class="ff-share-grid" id="ff-share-grid"></div>
+              <p class="ff-share-done" id="ff-share-done" aria-live="polite"></p>
+            </div>
+            <button type="button" class="ff-sheet-x" id="ff-share-x" aria-label="Close">&times;</button>
+          </div>
         </div>
       </div>
     </section>

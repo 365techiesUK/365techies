@@ -72,7 +72,10 @@ def _schema(s):
 
 
 def register(b365_band):
-    _bp.HEAD_EXTRA[_SLUG] = _ui.HEAD + _PHONE
+    _bp.HEAD_EXTRA[_SLUG] = _ui.HEAD + _PHONE + _ui.app_head("B365 Fuel")
+    # its own home-screen identity (owner 4 Oct: "add it to their phone ... so they can find it easily")
+    _bp.MANIFEST_FOR[_SLUG] = "/bournemouth/fuel-prices/app.webmanifest?v=1"
+    _bp.TOUCH_ICON_FOR[_SLUG] = _ui.TOUCH_ICON
     add(
         slug=_SLUG,
         title=_TITLE,
