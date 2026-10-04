@@ -438,6 +438,8 @@ NAV_MENUS = [
             ("Free Online Safety Course", "/online-safety-course/"),
         ]), ("Email", [
             ("Free Virgin Email Mover", "/virgin-email-mover/"),
+        ]), ("On the road", [
+            ("UK Fuel Prices", "/fuel-prices/"),   # 4 Oct 2026, owner: "go public"
         ])],
     ]}),
     ("Get Help", "/book-service/", {"all": ("Contact Us", "/contact/"), "cols": [
@@ -790,6 +792,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/van-signal-map/">Campervan 4G/5G Map</a>
         <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
         <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
+        <a href="/fuel-prices/">UK Fuel Prices</a>
         <a href="/pc-benchmark/">PC Speed Test</a>
         <a href="/website-checker/">Website Speed Checker</a>
         <a href="/email-security-checker/">Email Security Checker</a>
@@ -3241,6 +3244,7 @@ TOOLS = {
   "speed":        ("Live Broadband Speed Test", "/broadband-speed-checker/", "Measure your real download, upload and ping right now on a live animated gauge."),
   "wifisig":      ("365 WiFi Optimizer", "/wifi-signal-test/", "Walk around your home and watch the signal get stronger or weaker live &mdash; find your best spot, then get honest advice."),
   "vanmap":       ("Campervan Signal Map", "/van-signal-map/", "Real 4G/5G speeds our own campervan measured around Bournemouth &mdash; and the spots that tested fastest for working on the road."),
+  "fuel":         ("UK Fuel Prices", "/fuel-prices/", "The cheapest petrol and diesel near you from every UK forecourt, which supermarket is cheapest today, and whether prices are going up or down."),
   "livemap":      ("Bournemouth Live Map", "/bournemouth/live-map/", "Live buses, traffic and road closures, flood warnings and today&rsquo;s sea water status for every beach, on one free map of Bournemouth, Christchurch and Poole &mdash; the 3D city loads on request."),
   "sigcheck":     ("Mobile Signal Check", "/mobile-signal-check/", "Test your phone&rsquo;s mobile data right where you&rsquo;re standing and see how it compares with other readings from your area."),
   "wifiqr":       ("Wi-Fi QR Code Generator", "/wifi-qr-code-generator/", "Make a QR code guests scan to join your Wi-Fi &mdash; no typing the password."),

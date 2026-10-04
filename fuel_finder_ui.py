@@ -12,7 +12,7 @@ as they scroll into view, the location button pulses while it searches, and a sk
 A device set to reduce motion gets none of it (CSS below + the script checks the same setting).
 """
 
-JS_V = "10"
+JS_V = "11"
 
 import html as _html
 import json as _json
@@ -121,12 +121,39 @@ HEAD = '''
     .ff-table td small,.ff-table th small{display:block;color:var(--ff-mute);font-size:.78rem;font-weight:400}
     .ff-table tbody th{font-weight:600;color:var(--ff-foam)}
     .ff-table .ff-na{color:var(--ff-mute)}
+    @media (max-width:430px){.ff-table th,.ff-table td{padding:.55rem .5rem}.ff-table thead th{letter-spacing:.02em}}
     .ff-table tr.mine th,.ff-table tr.mine td{background:rgba(255,176,102,.07)}
     .ff-today h2{margin-top:0}
     .ff-today h3{font-size:1.05rem;margin:1.4rem 0 .6rem}
     .ff-today p{max-width:72ch}
     .ff-twocol{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
     .ff-stamp{font-family:var(--mono,ui-monospace,monospace);font-size:.8rem;color:var(--ff-mute)}
+    .ff-answer{font-size:1.06rem;line-height:1.65}
+    .ff-weeks small.up{color:var(--ff-dusk)}
+    .ff-weeks small.dn{color:var(--ff-surf)}
+    /* "are fuel prices going up or down": drawn by the script at the box's own width (readable labels on a phone) */
+    .ff-trend{margin:1.2rem 0 1.2rem;padding:1rem 1rem .8rem;border:1px solid var(--ff-line);border-radius:16px;background:var(--ff-water)}
+    .ff-ranges{display:flex;flex-wrap:wrap;gap:.4rem;margin:0 0 .7rem}
+    .ff-ranges[hidden],.ff-ranges button[hidden]{display:none}
+    .ff-ranges button{min-height:40px;padding:0 .9rem;border-radius:999px;border:1px solid var(--ff-line);background:transparent;color:var(--ff-foam);font:inherit;font-size:.88rem;cursor:pointer;transition:background .2s,color .2s}
+    .ff-ranges button[aria-pressed="true"]{background:var(--ff-surf);border-color:var(--ff-surf);color:var(--ff-ink);font-weight:700}
+    .ff-chart{position:relative;min-height:240px;outline:none;touch-action:pan-y}
+    .ff-chart:focus-visible{box-shadow:0 0 0 2px var(--ff-surf);border-radius:8px}
+    .ff-chart svg{display:block;width:100%;overflow:visible}
+    .ff-chart .gl{stroke:var(--ff-line);stroke-width:1}
+    .ff-chart text{fill:var(--ff-mute);font-size:11px;font-family:var(--mono,ui-monospace,monospace)}
+    .ff-chart .lu,.ff-chart .ld{fill:none;stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round}
+    .ff-chart .lu{stroke:var(--ff-surf)}
+    .ff-chart .ld{stroke:var(--ff-dusk)}
+    .ff-chart .rec{fill:var(--ff-foam);font-size:10.5px}
+    .ff-chart .cx{stroke:var(--ff-foam);stroke-width:1;opacity:.45}
+    .ff-chart.pre .lu,.ff-chart.pre .ld{stroke-dasharray:1;stroke-dashoffset:1}
+    .ff-chart.go .lu,.ff-chart.go .ld{stroke-dasharray:1;stroke-dashoffset:0;transition:stroke-dashoffset 1.5s cubic-bezier(.2,.7,.2,1)}
+    .ff-chart .ff-wait{position:absolute;inset:0;display:grid;place-items:center;color:var(--ff-mute);font-size:.9rem}
+    .ff-tip{position:absolute;top:0;z-index:2;pointer-events:none;padding:.35rem .6rem;border:1px solid var(--ff-line);border-radius:10px;background:#0e1d2c;color:var(--ff-foam);font-size:.8rem;line-height:1.45;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+    .ff-tip b{font-variant-numeric:tabular-nums}
+    .ff-legend{display:flex;flex-wrap:wrap;gap:.4rem 1.1rem;margin:.6rem 0 0;color:var(--ff-mute);font-size:.86rem}
+    .ff-legend i{display:inline-block;width:16px;height:3px;margin-right:.4rem;border-radius:2px;vertical-align:middle}
     @media (max-width:600px){.ff-t3{grid-column:1 / -1}}
     .ff-chip{display:inline-block;padding:.15rem .55rem;border-radius:999px;border:1px solid var(--ff-line);font-size:.8rem;color:var(--ff-foam)}
     .ff-chip.ff-good{border-color:var(--ff-surf);color:var(--ff-surf)}
@@ -316,6 +343,30 @@ def tool(mode, radius, home=None):
         <!--ssr:today-->
       </div>
     </section>
+    <section class="section ff-sec" id="ff-brands-sec" hidden aria-labelledby="ff-brands-h">
+      <div class="wrap ff ff-today">
+        <!--ssr:brands-->
+      </div>
+    </section>
+    <section class="section ff-sec" id="ff-trend-sec" aria-labelledby="ff-trend-h">
+      <div class="wrap ff ff-today">
+        <h2 id="ff-trend-h">Are fuel prices going up or down?</h2>
+        <!--ssr:trend-->
+        <div class="ff-trend" id="ff-trend">
+          <div class="ff-ranges" id="ff-ranges" role="group" aria-label="How far back" hidden>
+            <button type="button" data-range="days" aria-pressed="false" hidden>Day by day</button>
+            <button type="button" data-range="13" aria-pressed="false">3 months</button>
+            <button type="button" data-range="52" aria-pressed="true">1 year</button>
+            <button type="button" data-range="260" aria-pressed="false">5 years</button>
+            <button type="button" data-range="all" aria-pressed="false">Since 2003</button>
+          </div>
+          <div class="ff-chart" id="ff-chart" tabindex="0" aria-describedby="ff-chart-note"><p class="ff-wait">Loading the chart&hellip;</p></div>
+          <p class="ff-legend"><span><i style="background:var(--ff-surf)"></i>Unleaded petrol</span><span><i style="background:var(--ff-dusk)"></i>Diesel</span></p>
+          <p class="ff-note" id="ff-chart-note" style="margin-top:.4rem">UK average pump price, pence a litre. Tap or hover over the chart for any week; on a keyboard, use the arrow keys.</p>
+        </div>
+        <!--ssr:trend2-->
+      </div>
+    </section>
     <section class="section ff-sec" id="ff-uk" hidden aria-labelledby="ff-uk-h">
       <div class="wrap ff">
         <h2 id="ff-uk-h">The UK picture</h2>
@@ -343,7 +394,9 @@ def web_app(url, name, desc, publisher_id):
             "featureList": ["Live pump prices from every UK forecourt (government Fuel Finder data)",
                             "Cheapest first, by postcode or location, 2 to 100 miles or the whole UK",
                             "Fill-up cost for a motorbike, car, van, motorhome, 7.5-tonne lorry or HGV",
-                            "Average prices by nation and postcode area"],
+                            "Average prices by nation and postcode area",
+                            "Which supermarket has the cheapest fuel, across the UK and around Bournemouth",
+                            "Are prices going up or down: the government's weekly UK averages since 2003, the records and the tax share"],
             "publisher": {"@id": publisher_id}}
 
 
@@ -381,6 +434,21 @@ def faqs(where):
          "Northern Ireland and lists the cheapest and dearest postcode areas from today&rsquo;s prices; Northern Ireland "
          "has had the lowest averages in the data we have seen. Supermarket forecourts are often the cheapest locally, and "
          "motorway services the dearest."),
+        ("Which supermarket has the cheapest fuel?",
+         "It changes from day to day, so the &ldquo;which supermarket has the cheapest fuel&rdquo; section of this page ranks "
+         "Asda, Tesco, Sainsbury&rsquo;s, Morrisons and the others by today&rsquo;s average price at their forecourts, from the "
+         "government&rsquo;s Fuel Finder data, next to the big fuel brands such as BP, Shell and Esso, and says how much cheaper "
+         "the supermarkets are taken together. Costco forecourts are for members only. A brand&rsquo;s forecourts are often run "
+         "by different companies, so the cheapest one near you may not belong to the cheapest brand: the finder shows each one."),
+        ("Are fuel prices going up or down?",
+         "The &ldquo;going up or down&rdquo; section answers it from the government&rsquo;s weekly UK average pump prices, "
+         "published every Tuesday: this week against last week, four weeks ago and a year ago, with the record highs and a "
+         "chart going back to June 2003. It also gives the day-on-day change from our own daily figures for every forecourt, "
+         "recorded since 4 October 2026."),
+        ("How much of the price of petrol is tax?",
+         "Two taxes make up a large part of it: fuel duty, a fixed amount a litre set by the government, and VAT at 20% on top "
+         "of the whole price, duty included. Because duty is a fixed amount, its share falls as prices rise. The &ldquo;going up "
+         "or down&rdquo; section works out this week&rsquo;s split from the government&rsquo;s own weekly figures."),
         ("How are the fill-up cost and the saving worked out?",
          "The fill-up cost is your vehicle&rsquo;s tank, in litres, at the price shown, from empty; most people top up from a "
          "quarter of a tank, so their bill is a little less. The saving is the same tank at the cheapest price against the "

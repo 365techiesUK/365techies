@@ -42,7 +42,7 @@
   <title>UK Fuel Prices Today: Cheapest Petrol & Diesel Near You | 365 Techies</title>
   <meta name="description" content="UK fuel prices today from every forecourt: the average price of petrol and diesel, the cheapest near you by postcode, and what a tank costs for a car, van or&hellip;" />
   <link rel="canonical" href="https://365techies.co.uk/fuel-prices/" />
-  <meta name="robots" content="noindex,follow" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <meta name="author" content="365 Techies Limited" />
   <meta name="geo.region" content="GB-BCP" />
   <meta name="geo.placename" content="Bournemouth, Dorset" />
@@ -56,13 +56,13 @@
   <meta property="og:url" content="https://365techies.co.uk/fuel-prices/" />
   <meta property="og:title" content="UK fuel prices today: the cheapest petrol and diesel near you" />
   <meta property="og:description" content="UK fuel prices today from every forecourt: the average price of petrol and diesel, the cheapest near you by postcode, and what a tank costs for a car, van or HGV. Free, no adverts." />
-  <meta property="og:image" content="https://365techies.co.uk/og-image.jpg" />
+  <meta property="og:image" content="https://365techies.co.uk/images/og-fuel-prices-uk-v1.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="UK fuel prices today: the cheapest petrol and diesel near you" />
   <meta name="twitter:description" content="UK fuel prices today from every forecourt: the average price of petrol and diesel, the cheapest near you by postcode, and what a tank costs for a car, van or HGV. Free, no adverts." />
-  <meta name="twitter:image" content="https://365techies.co.uk/og-image.jpg" />
+  <meta name="twitter:image" content="https://365techies.co.uk/images/og-fuel-prices-uk-v1.jpg" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/images/fuel-icon-180-v1.png" />
   <!-- ?v= bumps past SiteGround's proxy cache. Learned the hard way 2026-08-01:
@@ -343,6 +343,30 @@
         },
         {
           "@type": "Question",
+          "name": "Which supermarket has the cheapest fuel?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It changes from day to day, so the &ldquo;which supermarket has the cheapest fuel&rdquo; section of this page ranks Asda, Tesco, Sainsbury&rsquo;s, Morrisons and the others by today&rsquo;s average price at their forecourts, from the government&rsquo;s Fuel Finder data, next to the big fuel brands such as BP, Shell and Esso, and says how much cheaper the supermarkets are taken together. Costco forecourts are for members only. A brand&rsquo;s forecourts are often run by different companies, so the cheapest one near you may not belong to the cheapest brand: the finder shows each one."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Are fuel prices going up or down?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The &ldquo;going up or down&rdquo; section answers it from the government&rsquo;s weekly UK average pump prices, published every Tuesday: this week against last week, four weeks ago and a year ago, with the record highs and a chart going back to June 2003. It also gives the day-on-day change from our own daily figures for every forecourt, recorded since 4 October 2026."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much of the price of petrol is tax?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Two taxes make up a large part of it: fuel duty, a fixed amount a litre set by the government, and VAT at 20% on top of the whole price, duty included. Because duty is a fixed amount, its share falls as prices rise. The &ldquo;going up or down&rdquo; section works out this week&rsquo;s split from the government&rsquo;s own weekly figures."
+          }
+        },
+        {
+          "@type": "Question",
           "name": "How are the fill-up cost and the saving worked out?",
           "acceptedAnswer": {
             "@type": "Answer",
@@ -393,7 +417,9 @@
         "Live pump prices from every UK forecourt (government Fuel Finder data)",
         "Cheapest first, by postcode or location, 2 to 100 miles or the whole UK",
         "Fill-up cost for a motorbike, car, van, motorhome, 7.5-tonne lorry or HGV",
-        "Average prices by nation and postcode area"
+        "Average prices by nation and postcode area",
+        "Which supermarket has the cheapest fuel, across the UK and around Bournemouth",
+        "Are prices going up or down: the government's weekly UK averages since 2003, the records and the tax share"
       ],
       "publisher": {
         "@id": "https://365techies.co.uk/#business"
@@ -470,12 +496,39 @@
     .ff-table td small,.ff-table th small{display:block;color:var(--ff-mute);font-size:.78rem;font-weight:400}
     .ff-table tbody th{font-weight:600;color:var(--ff-foam)}
     .ff-table .ff-na{color:var(--ff-mute)}
+    @media (max-width:430px){.ff-table th,.ff-table td{padding:.55rem .5rem}.ff-table thead th{letter-spacing:.02em}}
     .ff-table tr.mine th,.ff-table tr.mine td{background:rgba(255,176,102,.07)}
     .ff-today h2{margin-top:0}
     .ff-today h3{font-size:1.05rem;margin:1.4rem 0 .6rem}
     .ff-today p{max-width:72ch}
     .ff-twocol{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
     .ff-stamp{font-family:var(--mono,ui-monospace,monospace);font-size:.8rem;color:var(--ff-mute)}
+    .ff-answer{font-size:1.06rem;line-height:1.65}
+    .ff-weeks small.up{color:var(--ff-dusk)}
+    .ff-weeks small.dn{color:var(--ff-surf)}
+    /* "are fuel prices going up or down": drawn by the script at the box's own width (readable labels on a phone) */
+    .ff-trend{margin:1.2rem 0 1.2rem;padding:1rem 1rem .8rem;border:1px solid var(--ff-line);border-radius:16px;background:var(--ff-water)}
+    .ff-ranges{display:flex;flex-wrap:wrap;gap:.4rem;margin:0 0 .7rem}
+    .ff-ranges[hidden],.ff-ranges button[hidden]{display:none}
+    .ff-ranges button{min-height:40px;padding:0 .9rem;border-radius:999px;border:1px solid var(--ff-line);background:transparent;color:var(--ff-foam);font:inherit;font-size:.88rem;cursor:pointer;transition:background .2s,color .2s}
+    .ff-ranges button[aria-pressed="true"]{background:var(--ff-surf);border-color:var(--ff-surf);color:var(--ff-ink);font-weight:700}
+    .ff-chart{position:relative;min-height:240px;outline:none;touch-action:pan-y}
+    .ff-chart:focus-visible{box-shadow:0 0 0 2px var(--ff-surf);border-radius:8px}
+    .ff-chart svg{display:block;width:100%;overflow:visible}
+    .ff-chart .gl{stroke:var(--ff-line);stroke-width:1}
+    .ff-chart text{fill:var(--ff-mute);font-size:11px;font-family:var(--mono,ui-monospace,monospace)}
+    .ff-chart .lu,.ff-chart .ld{fill:none;stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round}
+    .ff-chart .lu{stroke:var(--ff-surf)}
+    .ff-chart .ld{stroke:var(--ff-dusk)}
+    .ff-chart .rec{fill:var(--ff-foam);font-size:10.5px}
+    .ff-chart .cx{stroke:var(--ff-foam);stroke-width:1;opacity:.45}
+    .ff-chart.pre .lu,.ff-chart.pre .ld{stroke-dasharray:1;stroke-dashoffset:1}
+    .ff-chart.go .lu,.ff-chart.go .ld{stroke-dasharray:1;stroke-dashoffset:0;transition:stroke-dashoffset 1.5s cubic-bezier(.2,.7,.2,1)}
+    .ff-chart .ff-wait{position:absolute;inset:0;display:grid;place-items:center;color:var(--ff-mute);font-size:.9rem}
+    .ff-tip{position:absolute;top:0;z-index:2;pointer-events:none;padding:.35rem .6rem;border:1px solid var(--ff-line);border-radius:10px;background:#0e1d2c;color:var(--ff-foam);font-size:.8rem;line-height:1.45;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+    .ff-tip b{font-variant-numeric:tabular-nums}
+    .ff-legend{display:flex;flex-wrap:wrap;gap:.4rem 1.1rem;margin:.6rem 0 0;color:var(--ff-mute);font-size:.86rem}
+    .ff-legend i{display:inline-block;width:16px;height:3px;margin-right:.4rem;border-radius:2px;vertical-align:middle}
     @media (max-width:600px){.ff-t3{grid-column:1 / -1}}
     .ff-chip{display:inline-block;padding:.15rem .55rem;border-radius:999px;border:1px solid var(--ff-line);font-size:.8rem;color:var(--ff-foam)}
     .ff-chip.ff-good{border-color:var(--ff-surf);color:var(--ff-surf)}
@@ -726,6 +779,8 @@
               <a href="/online-safety-course/">Free Online Safety Course</a>
               <span class="dropdown__label dropdown__label--sep">Email</span>
               <a href="/virgin-email-mover/">Free Virgin Email Mover</a>
+              <span class="dropdown__label dropdown__label--sep">On the road</span>
+              <a href="/fuel-prices/">UK Fuel Prices</a>
             </div>
           </div>
         </div>
@@ -944,6 +999,8 @@
           <a href="/online-safety-course/">Free Online Safety Course</a>
           <span class="dropdown__label dropdown__label--sep">Email</span>
           <a href="/virgin-email-mover/">Free Virgin Email Mover</a>
+          <span class="dropdown__label dropdown__label--sep">On the road</span>
+          <a href="/fuel-prices/">UK Fuel Prices</a>
         </div>
       </details>
       <details class="m-group">
@@ -1121,6 +1178,30 @@
         <!--ssr:today-->
       </div>
     </section>
+    <section class="section ff-sec" id="ff-brands-sec" hidden aria-labelledby="ff-brands-h">
+      <div class="wrap ff ff-today">
+        <!--ssr:brands-->
+      </div>
+    </section>
+    <section class="section ff-sec" id="ff-trend-sec" aria-labelledby="ff-trend-h">
+      <div class="wrap ff ff-today">
+        <h2 id="ff-trend-h">Are fuel prices going up or down?</h2>
+        <!--ssr:trend-->
+        <div class="ff-trend" id="ff-trend">
+          <div class="ff-ranges" id="ff-ranges" role="group" aria-label="How far back" hidden>
+            <button type="button" data-range="days" aria-pressed="false" hidden>Day by day</button>
+            <button type="button" data-range="13" aria-pressed="false">3 months</button>
+            <button type="button" data-range="52" aria-pressed="true">1 year</button>
+            <button type="button" data-range="260" aria-pressed="false">5 years</button>
+            <button type="button" data-range="all" aria-pressed="false">Since 2003</button>
+          </div>
+          <div class="ff-chart" id="ff-chart" tabindex="0" aria-describedby="ff-chart-note"><p class="ff-wait">Loading the chart&hellip;</p></div>
+          <p class="ff-legend"><span><i style="background:var(--ff-surf)"></i>Unleaded petrol</span><span><i style="background:var(--ff-dusk)"></i>Diesel</span></p>
+          <p class="ff-note" id="ff-chart-note" style="margin-top:.4rem">UK average pump price, pence a litre. Tap or hover over the chart for any week; on a keyboard, use the arrow keys.</p>
+        </div>
+        <!--ssr:trend2-->
+      </div>
+    </section>
     <section class="section ff-sec" id="ff-uk" hidden aria-labelledby="ff-uk-h">
       <div class="wrap ff">
         <h2 id="ff-uk-h">The UK picture</h2>
@@ -1137,7 +1218,7 @@
     <script src="/vendor/leaflet/leaflet.js" defer></script>
     <script src="/vendor/protomaps/protomaps-leaflet.js" defer></script>
     <script src="/vendor/leaflet/touch-friendly.js?v=20260819c" defer></script>
-    <script src="/js/fuel-finder.js?v=10" defer></script>
+    <script src="/js/fuel-finder.js?v=11" defer></script>
     <section class="section">
       <div class="wrap">
         <div class="prose" data-reveal>
@@ -1145,7 +1226,7 @@
           <h2>How it works</h2>
           <p>The page opens on the cheapest forecourts in the whole UK for the fuel you pick. Tap <strong>Use my location</strong> or type a postcode and it shows the cheapest within 10 miles of you instead; the distance menu goes from 2 miles to 100, or back to the whole UK. Tap a forecourt to see it on the map with all its prices, or <strong>Directions</strong> to open your maps app.</p>
           <p>The three numbers at the top are the cheapest price, the average, and what a full tank costs. Pick your vehicle in that box &mdash; a motorbike, a small or family car, an SUV, a van, a motorhome, a 7.5-tonne lorry or a 44-tonne HGV, or type your own tank size &mdash; and every price on the page shows the bill. The &ldquo;what it costs to fill up&rdquo; table puts every vehicle side by side at today&rsquo;s average price of unleaded and diesel.</p>
-          <p>Underneath, the UK picture compares England, Scotland, Wales and Northern Ireland, and the cheapest and dearest postcode areas &mdash; with yours, if you searched by postcode. In Dorset? Our <a href="/bournemouth/fuel-prices/">Bournemouth, Poole and Christchurch fuel prices</a> page opens on the town.</p>
+          <p>Further down: which supermarket has the cheapest fuel today, against the big fuel brands; whether prices are going up or down, with the government&rsquo;s weekly figures back to 2003, the record highs and how much of the price is tax; and the UK picture, comparing England, Scotland, Wales and Northern Ireland and the cheapest and dearest postcode areas &mdash; with yours, if you searched by postcode. In Dorset? Our <a href="/bournemouth/fuel-prices/">Bournemouth, Poole and Christchurch fuel prices</a> page opens on the town.</p>
           <h2>Where the prices come from</h2>
           <p>Since February 2026 every fuel retailer in the UK must report a price change to the government within 30 minutes, under the Motor Fuel Price (Open Data) Regulations 2025. The government publishes them as open data through its Fuel Finder service, and we fetch them every half hour. Every price shows when the forecourt set it, and one not confirmed for six weeks is left out rather than shown as current.</p>
           <p>We&rsquo;re 365 Techies, a family-run IT support business in Bournemouth. We built this because fuel is costing everyone a fortune and the data is free &mdash; there are no adverts and nothing to sign up to.</p>
@@ -1180,6 +1261,18 @@
         <details class="faq" data-reveal>
           <summary>Where is fuel cheapest in the UK?<span class="faq__icon" aria-hidden="true"></span></summary>
           <div class="faq__ans"><p>It changes day to day, so the &ldquo;fuel prices today&rdquo; section compares England, Scotland, Wales and Northern Ireland and lists the cheapest and dearest postcode areas from today&rsquo;s prices; Northern Ireland has had the lowest averages in the data we have seen. Supermarket forecourts are often the cheapest locally, and motorway services the dearest.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Which supermarket has the cheapest fuel?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>It changes from day to day, so the &ldquo;which supermarket has the cheapest fuel&rdquo; section of this page ranks Asda, Tesco, Sainsbury&rsquo;s, Morrisons and the others by today&rsquo;s average price at their forecourts, from the government&rsquo;s Fuel Finder data, next to the big fuel brands such as BP, Shell and Esso, and says how much cheaper the supermarkets are taken together. Costco forecourts are for members only. A brand&rsquo;s forecourts are often run by different companies, so the cheapest one near you may not belong to the cheapest brand: the finder shows each one.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>Are fuel prices going up or down?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>The &ldquo;going up or down&rdquo; section answers it from the government&rsquo;s weekly UK average pump prices, published every Tuesday: this week against last week, four weeks ago and a year ago, with the record highs and a chart going back to June 2003. It also gives the day-on-day change from our own daily figures for every forecourt, recorded since 4 October 2026.</p></div>
+        </details>
+        <details class="faq" data-reveal>
+          <summary>How much of the price of petrol is tax?<span class="faq__icon" aria-hidden="true"></span></summary>
+          <div class="faq__ans"><p>Two taxes make up a large part of it: fuel duty, a fixed amount a litre set by the government, and VAT at 20% on top of the whole price, duty included. Because duty is a fixed amount, its share falls as prices rise. The &ldquo;going up or down&rdquo; section works out this week&rsquo;s split from the government&rsquo;s own weekly figures.</p></div>
         </details>
         <details class="faq" data-reveal>
           <summary>How are the fill-up cost and the saving worked out?<span class="faq__icon" aria-hidden="true"></span></summary>
@@ -1318,6 +1411,7 @@
         <a href="/van-signal-map/">Campervan 4G/5G Map</a>
         <a href="/mobile-signal-check/">Check Your Mobile Signal</a>
         <a href="/bournemouth/live-map/">Bournemouth Live Map</a>
+        <a href="/fuel-prices/">UK Fuel Prices</a>
         <a href="/pc-benchmark/">PC Speed Test</a>
         <a href="/website-checker/">Website Speed Checker</a>
         <a href="/email-security-checker/">Email Security Checker</a>

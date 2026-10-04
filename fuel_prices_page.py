@@ -11,21 +11,22 @@ and js/fuel-finder.js; data from api/bm-fuel.php (the government's Fuel Finder f
 SEO, honestly: "cheapest petrol near me" is held by Google Maps and sites with a page per forecourt. This is a useful
 free tool that brings people to the site and that posts can link to; no per-forecourt pages ([[no-thin-pages]]).
 
-HIDDEN until the owner says go: PUBLIC = False -> noindex (so not in sitemap.xml) + nosearch. When it goes public, add
-it to the Free Tools menu (NAV_MENUS in build_pages.py) and the footer's FREE TOOLS column.
+PUBLIC since 4 Oct 2026 (owner: "Yes, go public and do two and three"): in the sitemap, the site search and llms.txt,
+the Free Tools menu (NAV_MENUS in build_pages.py) and the footer's FREE TOOLS column. Same day: "which supermarket has the
+cheapest fuel" and "are fuel prices going up or down" (the government's weekly series since 2003 + our own daily record).
 """
 import build_pages as bp
 from build_extra import info_page
 import fuel_finder_ui as ui
 
-PUBLIC = False
+PUBLIC = True
 _SLUG = "fuel-prices"
 
 _INNER = '''
           <h2>How it works</h2>
           <p>The page opens on the cheapest forecourts in the whole UK for the fuel you pick. Tap <strong>Use my location</strong> or type a postcode and it shows the cheapest within 10 miles of you instead; the distance menu goes from 2 miles to 100, or back to the whole UK. Tap a forecourt to see it on the map with all its prices, or <strong>Directions</strong> to open your maps app.</p>
           <p>The three numbers at the top are the cheapest price, the average, and what a full tank costs. Pick your vehicle in that box &mdash; a motorbike, a small or family car, an SUV, a van, a motorhome, a 7.5-tonne lorry or a 44-tonne HGV, or type your own tank size &mdash; and every price on the page shows the bill. The &ldquo;what it costs to fill up&rdquo; table puts every vehicle side by side at today&rsquo;s average price of unleaded and diesel.</p>
-          <p>Underneath, the UK picture compares England, Scotland, Wales and Northern Ireland, and the cheapest and dearest postcode areas &mdash; with yours, if you searched by postcode. In Dorset? Our <a href="/bournemouth/fuel-prices/">Bournemouth, Poole and Christchurch fuel prices</a> page opens on the town.</p>
+          <p>Further down: which supermarket has the cheapest fuel today, against the big fuel brands; whether prices are going up or down, with the government&rsquo;s weekly figures back to 2003, the record highs and how much of the price is tax; and the UK picture, comparing England, Scotland, Wales and Northern Ireland and the cheapest and dearest postcode areas &mdash; with yours, if you searched by postcode. In Dorset? Our <a href="/bournemouth/fuel-prices/">Bournemouth, Poole and Christchurch fuel prices</a> page opens on the town.</p>
           <h2>Where the prices come from</h2>
           <p>Since February 2026 every fuel retailer in the UK must report a price change to the government within 30 minutes, under the Motor Fuel Price (Open Data) Regulations 2025. The government publishes them as open data through its Fuel Finder service, and we fetch them every half hour. Every price shows when the forecourt set it, and one not confirmed for six weeks is left out rather than shown as current.</p>
           <p>We&rsquo;re 365 Techies, a family-run IT support business in Bournemouth. We built this because fuel is costing everyone a fortune and the data is free &mdash; there are no adverts and nothing to sign up to.</p>'''
@@ -56,6 +57,7 @@ info_page(
 )
 _page = next(p for p in bp.PAGES if p.get("slug") == _SLUG)
 _page["nosearch"] = not PUBLIC
+_page["og_image"] = bp.SITE + "/images/og-fuel-prices-uk-v1.jpg"   # a real screenshot of the page (4 Oct)
 
 # The tool itself in the page's schema graph (info_page builds crumb + WebPage + FAQPage; this adds the WebApplication).
 import json as _json

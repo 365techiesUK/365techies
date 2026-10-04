@@ -325,7 +325,7 @@ _B365 = '''    <section class="section" aria-label="About Bournemouth365">
         </div>
         <div class="prose" data-reveal>
           <p>These pages are the web home of our <a href="https://www.facebook.com/bournemouth365" target="_blank" rel="noopener">Bournemouth365 Facebook page</a>, where 39,000 of you watch the seafront with us every day. Here: the seafront&rsquo;s weather, tide times and rain radar, the sea measured live, an honest guide to beach parking, and the best sunrise and sunset spots &mdash; photographed by us, not stock.</p>
-          <p class="mono" style="margin-bottom:.6rem"><a href="/bournemouth/">Bournemouth365 home</a> &middot; <a href="/bournemouth/weather/">Weather, tides &amp; radar</a> &middot; <a href="/bournemouth/live-map/">Live map: traffic, buses, sea</a> &middot; <a href="/bournemouth/sea-today/">The sea right now</a> &middot; <a href="/bournemouth/fireworks/">Friday fireworks</a> &middot; <a href="/bournemouth/sunrise-sunset/">Sunrise &amp; sunset</a> &middot; <a href="/bournemouth/beach-parking/">Beach parking</a> &middot; <a href="/van-signal-map/">Mobile signal map</a> &middot; <a href="/bournemouth/games/seafront/">Seafront: the game</a></p>
+          <p class="mono" style="margin-bottom:.6rem"><a href="/bournemouth/">Bournemouth365 home</a> &middot; <a href="/bournemouth/weather/">Weather, tides &amp; radar</a> &middot; <a href="/bournemouth/live-map/">Live map: traffic, buses, sea</a> &middot; <a href="/bournemouth/sea-today/">The sea right now</a> &middot; <a href="/bournemouth/fireworks/">Friday fireworks</a> &middot; <a href="/bournemouth/sunrise-sunset/">Sunrise &amp; sunset</a> &middot; <a href="/bournemouth/beach-parking/">Beach parking</a> &middot; <a href="/bournemouth/fuel-prices/">Fuel prices</a> &middot; <a href="/van-signal-map/">Mobile signal map</a> &middot; <a href="/bournemouth/games/seafront/">Seafront: the game</a></p>
           <p class="mono">Built in Bournemouth by <a href="/">365 Techies</a> &mdash; the family firm that has looked after the town&rsquo;s computers since 1995.</p>
           <p class="b365-foot">No ads. No paywall. No consent wall. Built to load fast on beach 4G.</p>
         </div>
@@ -1276,6 +1276,11 @@ _HUB_CARDS = [
     ("/bournemouth/weather/", "/bournemouth/media/og-weather.jpg",
      "Weather, tide times &amp; rain radar", "The seafront forecast hour by hour and ten days out, tide times checked against the gauge on the pier, rain radar and satellite loops every 15 minutes, and the wind measured at the airport &mdash; every number labelled with where it came from.",
      "Bournemouth Pier seen from the water&rsquo;s edge on a bright day, with waves breaking in front of it"),
+    # 4 Oct 2026 (owner: "go public"): the fuel finder. Its picture is a real screenshot of the page (the live-map card's
+    # precedent), not a stock forecourt.
+    ("/bournemouth/fuel-prices/", "/images/og-fuel-prices-b365-v1.jpg",
+     "Petrol &amp; diesel prices today", "The cheapest fuel in Bournemouth, Poole and Christchurch from every forecourt, which supermarket is cheapest, and what a tank costs for a car, van or lorry &mdash; live from the government&rsquo;s Fuel Finder data.",
+     "The fuel prices page: the cheapest unleaded near Bournemouth town centre, the local average, the cost of a family car tank, and forecourt prices on a map of Bournemouth and Poole"),
     ("/bournemouth/sunrise-sunset/", "/bournemouth/media/beach-sunrise.jpg",
      "Sunrise &amp; sunset times, and where to watch", "Today&rsquo;s times computed for the seafront, and every good spot to watch from &mdash; photographed by us, not stock.",
      "The sun just above the sea off Bournemouth beach, with the cliff, beach huts and a tower block along the shore"),

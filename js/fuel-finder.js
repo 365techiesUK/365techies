@@ -634,6 +634,146 @@
   function loadStats() {
     get('?stats=1').then(function (j) { if (j && j.ok) { st.stats = j; if (st.list.length) tiles(); renderUk(); fillTable(); } }, function () {});
   }
+  /* ---- are fuel prices going up or down? (owner 4 Oct: "do two and three") ----
+     The answer, the records and the last eight weeks are in the HTML (api/bm-fuel-ssr.php). This draws the government's
+     weekly UK averages (June 2003 on) and, once there is a week of it, our own day-by-day line from every forecourt, at
+     the box's own width so the labels stay readable on a phone. The figures are fetched only when the chart nears the
+     screen, and the lines draw themselves in when it is on screen. */
+  (function () {
+    var box = $('ff-chart'), ranges = $('ff-ranges');
+    if (!box || !ranges) return;
+    var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var LOCAL = d.mode === 'local', data = null, range = '52', pts = [], geo = null, sel = -1, seen = false, lastW = 0;
+    function day(s) { var p = s.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+    function label(dt, yr) { return dt.getDate() + ' ' + MON[dt.getMonth()] + (yr ? ' ' + dt.getFullYear() : ''); }
+    function daily() {
+      var i = LOCAL ? 3 : 1;
+      return (data.days || []).filter(function (x) { return x[i] != null && x[i + 1] != null; }).map(function (x) { return [x[0], x[i], x[i + 1]]; });
+    }
+    function series() { return range === 'days' ? daily() : (range === 'all' ? data.weeks : data.weeks.slice(-(+range + 1))); }
+    function pp(v) { return (+v).toFixed(range === 'days' ? 1 : 2) + 'p'; }
+    function when(p) { return (range === 'days' ? '' : 'Week of ') + label(day(p[0]), true); }
+    function summary() {
+      var a = pts[0], b = pts[pts.length - 1];
+      return (range === 'days' ? 'Average pump prices at every forecourt' + (LOCAL ? ' around Bournemouth' : ' in the UK') + ', day by day, from '
+        : 'UK average pump prices, week by week, from the week of ') + label(day(a[0]), true) + ' to ' + label(day(b[0]), true) +
+        ': unleaded from ' + pp(a[1]) + ' to ' + pp(b[1]) + ', diesel from ' + pp(a[2]) + ' to ' + pp(b[2]) + '.';
+    }
+    function nice(lo, hi) {
+      var steps = [1, 2, 5, 10, 20, 25, 50], s = 50, t = [];
+      for (var k = 0; k < steps.length; k++) if ((hi - lo) / steps[k] <= 6) { s = steps[k]; break; }
+      lo = Math.floor(lo / s) * s; hi = Math.ceil(hi / s) * s;
+      for (var v = lo; v <= hi + 1e-9; v += s) t.push(v);
+      return { lo: lo, hi: hi, t: t };
+    }
+    function draw(animate) {
+      pts = series(); sel = -1;
+      var n = pts.length;
+      if (n < 2) { box.innerHTML = '<p class="ff-wait">Not enough figures yet.</p>'; return; }
+      var W = Math.max(260, box.clientWidth), H = W < 520 ? 240 : 300, L = 42, R = 12, T = 18, B = 26;
+      lastW = box.clientWidth;
+      var lo = Infinity, hi = -Infinity, top = 0;
+      pts.forEach(function (p, i) { lo = Math.min(lo, p[1], p[2]); hi = Math.max(hi, p[1], p[2]); if (Math.max(p[1], p[2]) > Math.max(pts[top][1], pts[top][2])) top = i; });
+      var y = nice(lo - .5, hi + .5);
+      var X = function (i) { return L + (W - L - R) * i / (n - 1); };
+      var Y = function (v) { return T + (H - T - B) * (1 - (v - y.lo) / (y.hi - y.lo)); };
+      geo = { X: X, Y: Y, L: L, R: R, W: W, H: H, T: T, B: B, n: n };
+      var s = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(summary()) + '">';
+      y.t.forEach(function (v) {
+        var yy = Y(v).toFixed(1);
+        s += '<line class="gl" x1="' + L + '" x2="' + (W - R) + '" y1="' + yy + '" y2="' + yy + '"/><text x="' + (L - 6) + '" y="' + (+yy + 4) + '" text-anchor="end">' + v + 'p</text>';
+      });
+      // x labels: each day, each month or each year, thinned to fit the width
+      var ticks = [], byYear = range === 'all' || range === '260', last = null;
+      for (var i = 0; i < n; i++) {
+        var dt = day(pts[i][0]), key = range === 'days' ? i : (byYear ? dt.getFullYear() : dt.getFullYear() * 12 + dt.getMonth());
+        if (range === 'days' || (last !== null && key !== last)) ticks.push([i, dt]);
+        last = key;
+      }
+      var every = Math.max(1, Math.ceil(ticks.length / Math.max(2, Math.floor((W - L - R) / (byYear ? 44 : 56)))));
+      ticks.forEach(function (t, k) {
+        if (k % every) return;
+        var m = t[1].getMonth(), txt = byYear ? String(t[1].getFullYear()) : (range === 'days' ? label(t[1]) : MON[m] + (m === 0 ? ' ' + String(t[1].getFullYear()).slice(2) : ''));
+        s += '<text x="' + X(t[0]).toFixed(1) + '" y="' + (H - 7) + '" text-anchor="middle">' + txt + '</text>';
+      });
+      var pu = '', pd = '';
+      pts.forEach(function (p, i) { var x = X(i).toFixed(1); pu += (i ? 'L' : 'M') + x + ',' + Y(p[1]).toFixed(1); pd += (i ? 'L' : 'M') + x + ',' + Y(p[2]).toFixed(1); });
+      s += '<path class="ld" pathLength="1" d="' + pd + '"/><path class="lu" pathLength="1" d="' + pu + '"/>';
+      // the peak of what is on screen, named (on the long views it is the July 2022 record)
+      if (range !== 'days' && top > 0 && top < n - 1) {
+        var pk = pts[top], tx = Math.max(L + 70, Math.min(W - R - 70, X(top)));
+        s += '<text class="rec" x="' + tx.toFixed(1) + '" y="' + Math.max(11, Y(Math.max(pk[1], pk[2])) - 7).toFixed(1) + '" text-anchor="middle">Peak ' +
+          pp(Math.max(pk[1], pk[2])) + ', ' + MON[day(pk[0]).getMonth()] + ' ' + day(pk[0]).getFullYear() + '</text>';
+      }
+      var e = pts[n - 1];
+      s += '<circle cx="' + X(n - 1).toFixed(1) + '" cy="' + Y(e[2]).toFixed(1) + '" r="3.5" fill="var(--ff-dusk)"/><circle cx="' + X(n - 1).toFixed(1) + '" cy="' + Y(e[1]).toFixed(1) + '" r="3.5" fill="var(--ff-surf)"/>';
+      s += '<g class="hov" visibility="hidden"><line class="cx" y1="' + T + '" y2="' + (H - B) + '"/><circle class="hd" r="4.5" fill="var(--ff-dusk)" stroke="#0e1d2c" stroke-width="2"/>' +
+        '<circle class="hu" r="4.5" fill="var(--ff-surf)" stroke="#0e1d2c" stroke-width="2"/></g></svg><div class="ff-tip" hidden></div>';
+      box.innerHTML = s;
+      box.className = 'ff-chart';
+      if (animate && !still) {
+        box.classList.add('pre');
+        var go = function () { box.classList.add('go'); setTimeout(function () { box.className = 'ff-chart'; }, 1700); };
+        if (seen) setTimeout(go, 30); else box.setAttribute('data-wait', '1');
+      }
+    }
+    function show(i) {
+      if (!geo || !pts[i]) return;
+      sel = i;
+      var p = pts[i], x = geo.X(i), g = box.querySelector('.hov'), tip = box.querySelector('.ff-tip');
+      g.setAttribute('visibility', 'visible');
+      var ln = g.querySelector('line'); ln.setAttribute('x1', x); ln.setAttribute('x2', x);
+      g.querySelector('.hu').setAttribute('cx', x); g.querySelector('.hu').setAttribute('cy', geo.Y(p[1]));
+      g.querySelector('.hd').setAttribute('cx', x); g.querySelector('.hd').setAttribute('cy', geo.Y(p[2]));
+      tip.innerHTML = esc(when(p)) + '<br><span style="color:var(--ff-surf)">Unleaded</span> <b>' + pp(p[1]) + '</b> &nbsp;<span style="color:var(--ff-dusk)">Diesel</span> <b>' + pp(p[2]) + '</b>';
+      tip.hidden = false;
+      var w = tip.offsetWidth, hi = Math.min(geo.Y(p[1]), geo.Y(p[2]));
+      tip.style.left = Math.max(0, Math.min(geo.W - w, x - w / 2)) + 'px';
+      // never over the week it describes: high prices sit near the top, so the box drops to the bottom of the chart
+      tip.style.top = (hi < geo.T + tip.offsetHeight + 10 ? geo.H - geo.B - tip.offsetHeight - 6 : 0) + 'px';
+    }
+    function hide() { sel = -1; var g = box.querySelector('.hov'), tip = box.querySelector('.ff-tip'); if (g) g.setAttribute('visibility', 'hidden'); if (tip) tip.hidden = true; }
+    function at(cx) { var svg = box.querySelector('svg'); if (!svg || !geo) return -1; var r = svg.getBoundingClientRect(); return Math.max(0, Math.min(geo.n - 1, Math.round((cx - r.left - geo.L) / (geo.W - geo.L - geo.R) * (geo.n - 1)))); }
+    box.addEventListener('pointermove', function (e) { var i = at(e.clientX); if (i >= 0) show(i); });
+    box.addEventListener('pointerdown', function (e) { var i = at(e.clientX); if (i >= 0) show(i); });
+    box.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') hide(); });
+    box.addEventListener('keydown', function (e) {
+      if (!geo) return;
+      var k = e.key, i = sel < 0 ? geo.n - 1 : sel;
+      if (k === 'ArrowLeft') i = Math.max(0, i - 1); else if (k === 'ArrowRight') i = Math.min(geo.n - 1, i + 1);
+      else if (k === 'Home') i = 0; else if (k === 'End') i = geo.n - 1; else if (k === 'Escape') { hide(); return; } else return;
+      e.preventDefault(); show(i);
+    });
+    ranges.addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('button[data-range]') : null;
+      if (!b || !data) return;
+      range = b.getAttribute('data-range');
+      [].forEach.call(ranges.querySelectorAll('button'), function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      draw(true); track('fuel_trend_range', { range: range });
+    });
+    var rt;
+    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { if (data && box.clientWidth !== lastW) draw(false); }, 200); });
+    function load() {
+      get('?trend=1').then(function (j) {
+        if (!j || !j.ok || !j.weeks || j.weeks.length < 60) { box.innerHTML = '<p class="ff-wait">The chart is not available just now.</p>'; return; }
+        data = j;
+        if (daily().length >= 7) ranges.querySelector('[data-range="days"]').hidden = false;
+        ranges.hidden = false;
+        draw(true);
+      }, function () { box.innerHTML = '<p class="ff-wait">The chart could not load just now.</p>'; });
+    }
+    function onScreen() {
+      seen = true;
+      if (box.getAttribute('data-wait')) { box.removeAttribute('data-wait'); box.classList.add('go'); setTimeout(function () { box.className = 'ff-chart'; }, 1700); }
+    }
+    if ('IntersectionObserver' in window) {
+      var near = new IntersectionObserver(function (es) { if (es.some(function (x) { return x.isIntersecting; })) { near.disconnect(); load(); } }, { rootMargin: '600px 0px' });
+      near.observe(box);
+      var vis = new IntersectionObserver(function (es) { if (es.some(function (x) { return x.isIntersecting; })) { vis.disconnect(); onScreen(); } }, { threshold: .35 });
+      vis.observe(box);
+    } else { seen = true; load(); }
+  })();
+
   pressFuel();
   vehicleMenu();
   loadStats();

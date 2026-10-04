@@ -4,6 +4,8 @@
  *   GET ?near=1&lat=50.7&lon=-1.9&r=10&f=E10   the cheapest within r miles (lat/lon arrive rounded to 0.1 degree)
  *   GET ?top=1&f=B7                           the cheapest in the whole UK
  *   GET ?stats=1                              the UK, the four nations and every postcode area, all fuels
+ *   GET ?trend=1                              going up or down: the government's weekly UK averages since 2003 and our
+ *                                             own daily medians (from 4 Oct 2026)
  *   GET                                       when the prices were fetched, and from where
  *   POST {"pc": "BH8 8DQ"}                    a postcode or district -> map position (postcodes.io). POST so the
  *                                             postcode never sits in an access log; nothing here stores it.
@@ -32,6 +34,8 @@ if (isset($_GET['near'])) {
     $out = bm_fuel_top($f);
 } elseif (isset($_GET['stats'])) {
     $out = bm_fuel_stats();
+} elseif (isset($_GET['trend'])) {
+    $out = bm_fuel_trend();
 } else {
     $out = bm_fuel_meta();
 }

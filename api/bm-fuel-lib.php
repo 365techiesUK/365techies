@@ -36,8 +36,11 @@
  * all ~8,300. bm_fuel_publish() writes, each run:
  *   cells/c_<lat>_<lon>.json  the forecourts in each 1-degree square (a "near me" answer reads only the squares it needs)
  *   top-<fuel>.json           the 200 cheapest in the UK for that fuel
- *   stats.json                per fuel: UK, the four nations and every postcode area (count, median, lowest) + top 10
+ *   stats.json                per fuel: UK, the four nations and every postcode area (count, median, lowest) + top 10;
+ *                             by brand (10+ forecourts, and every supermarket); supermarkets against the rest
  *   meta.json                 mode, when fetched, the source list
+ *   history.json              one line a day from every forecourt (UK + around Bournemouth), from 4 Oct 2026
+ *   desnz.json                the government's weekly UK averages since 2003 (bmfuel_desnz_refresh, every 6 hours)
  * A visitor's position reaches the server rounded to 0.1 degree (about 10 km); the page works out exact distances.
  */
 
@@ -50,7 +53,7 @@ if (!defined('BMFUEL_FF_FULL')) define('BMFUEL_FF_FULL', 24 * 3600);   // full f
 if (!defined('BMFUEL_FF_OVERLAP')) define('BMFUEL_FF_OVERLAP', 3600);  // price-change look-back beyond the last fetch
 if (!defined('BMFUEL_FF_GAP_US')) define('BMFUEL_FF_GAP_US', 700000);  // pause between requests: < 100 a minute
 if (!defined('BMFUEL_FF_MAXAGE')) define('BMFUEL_FF_MAXAGE', 45 * 86400); // a price unconfirmed this long is left out
-if (!defined('BMFUEL_FF_PARSE_V')) define('BMFUEL_FF_PARSE_V', 4);      // version of the stored lists (3: whole UK; 4: addresses de-duplicated)
+if (!defined('BMFUEL_FF_PARSE_V')) define('BMFUEL_FF_PARSE_V', 5);      // version of the stored lists (3: whole UK; 4: addresses de-duplicated; 5: Costco, Waitrose, Circle K, Maxol)
 if (!defined('BMFUEL_KEEP_OFFICIAL')) define('BMFUEL_KEEP_OFFICIAL', 12 * 3600);  // official data kept through an outage
 if (!defined('BMFUEL_TOP')) define('BMFUEL_TOP', 200);                  // forecourts in a "cheapest" answer
 
@@ -160,10 +163,14 @@ function bmfuel_brand($raw) {
         '/^esso\b/i' => 'Esso', '/^shell\b/i' => 'Shell', '/^texaco\b/i' => 'Texaco', '/^jet\b/i' => 'Jet', '/^murco\b/i' => 'Murco',
         '/^gulf\b/i' => 'Gulf', '/^valero\b/i' => 'Valero', '/^eg on the move\b/i' => 'EG On The Move', '/^bwoc$/i' => 'BWOC',
         '/^bp\b|\(bp\)$/i' => 'BP', '/^co-?op\b/i' => 'Co-op', '/^moto\b/i' => 'Moto', '/^applegreen\b/i' => 'Applegreen',
+        '/^costco\b/i' => 'Costco', '/^waitrose\b/i' => 'Waitrose', '/^circle ?k\b/i' => 'Circle K', '/^maxol\b/i' => 'Maxol',
     );
     foreach ($known as $re => $name) if (preg_match($re, $b)) return $name;
     return $b;
 }
+
+/* The supermarkets, for "which supermarket has the cheapest fuel" (owner 4 Oct). Costco needs a membership card. */
+function bmfuel_is_super($b) { return in_array($b, array('Asda', 'Tesco', "Sainsbury's", 'Morrisons', 'Costco', 'Waitrose'), true); }
 
 /* An address from its parts: a company line ("Tesco Stores Ltd") is not where the forecourt is, so it is dropped, and a
    bare house number joins the street after it ("771, Castle Lane East" -> "771 Castle Lane East"). */
@@ -524,14 +531,150 @@ function bm_fuel_publish($all, $mode, $sources, $now) {
             'co' => $cs, 'areas' => $as, 'top' => array_slice($top, 0, 10),
         );
     }
+    /* By brand (owner 4 Oct: "which supermarket has the cheapest fuel"): every brand with 10+ forecourts, and every
+       supermarket however few; then the supermarkets taken together against every other forecourt. Per fuel:
+       array(forecourts, median, lowest). */
+    $bp = array(); $bn = array(); $gp = array();
+    foreach ($all as $s) {
+        $b = $s['b']; $bn[$b] = isset($bn[$b]) ? $bn[$b] + 1 : 1;
+        $g = bmfuel_is_super($b) ? 'super' : 'other';
+        foreach ($s['p'] as $f => $p) { $bp[$b][$f][] = $p; $gp[$g][$f][] = $p; }
+    }
+    $brands = array();
+    foreach ($bn as $b => $n) {
+        if ($n < 10 && !bmfuel_is_super($b)) continue;
+        $row = array('n' => $n, 'super' => bmfuel_is_super($b));
+        foreach ($bp[$b] as $f => $v) $row[$f] = array(count($v), bmfuel_median($v), min($v));
+        $brands[$b] = $row;
+    }
+    $stats['brands'] = $brands;
+    foreach ($gp as $g => $fs) foreach ($fs as $f => $v) $stats['groups'][$g][$f] = array(count($v), bmfuel_median($v), min($v));
     bmfuel_json_save('stats.json', $stats);
+    if ($mode === 'official') bmfuel_history_add($all, $stats, $now);
     bmfuel_json_save('meta.json', array('v' => 2, 'mode' => $mode, 'partial' => $mode !== 'official', 'fetched_at' => $now,
                                         'sources' => $sources, 'n' => count($all), 'dropped' => $dropped));
     @unlink(bmfuel_dir() . 'stations.json');                                  // the south-coast-only file of 4 Oct
 }
 
+/* ---------- going up or down: our own daily record + the government's weekly series ---------- */
+
+/* One line a day from every forecourt (owner 4 Oct: "keep a daily price history"): the UK median of each fuel, and
+   unleaded and diesel within BMFUEL_HOME_MI of Bournemouth town centre. Rewritten at every publish, so a day ends
+   holding its last prices. Starts on 4 Oct 2026 - nothing earlier exists, and nothing is back-filled. */
+if (!defined('BMFUEL_HOME_MI')) define('BMFUEL_HOME_MI', 6);
+function bmfuel_uk_day($t) {
+    $d = new DateTime('@' . (int)$t); $d->setTimezone(new DateTimeZone('Europe/London'));
+    return $d->format('Y-m-d');
+}
+function bmfuel_history_add($all, $stats, $now) {
+    $day = array('t' => $now, 'uk' => array(), 'bm' => array());
+    foreach ($stats['fuels'] as $f => $x) $day['uk'][$f] = array($x['uk']['n'], $x['uk']['med']);
+    $loc = array();
+    foreach ($all as $s) {
+        if (abs($s['la'] - 50.7208) > 0.1 || abs($s['lo'] + 1.8794) > 0.15) continue;   // cheap box first
+        if (bmfuel_miles(50.7208, -1.8794, $s['la'], $s['lo']) > BMFUEL_HOME_MI) continue;
+        foreach ($s['p'] as $f => $p) $loc[$f][] = $p;
+    }
+    foreach ($loc as $f => $v) $day['bm'][$f] = array(count($v), bmfuel_median($v));
+    $h = bmfuel_json_load('history.json');
+    if (empty($h['days']) || !is_array($h['days'])) $h = array('v' => 1, 'days' => array());
+    $h['days'][bmfuel_uk_day($now)] = $day;
+    ksort($h['days']);
+    bmfuel_json_save('history.json', $h);
+}
+
+/* The government's weekly UK average pump prices (DESNZ "Weekly road fuel prices", published each Tuesday for the
+   Monday; OGL v3), June 2003 onwards. Found through GOV.UK's content API, which lists the current CSV files (their
+   addresses change every week); a file is only downloaded when its address is new. Checked every BMFUEL_DESNZ_EVERY;
+   anything odd keeps the last good copy. Stored as rows of array('Y-m-d', unleaded, diesel), and the latest week's fuel
+   duty (pence a litre) and VAT (%) as 'tax' => array('Y-m-d', duty unleaded, duty diesel, VAT % unleaded, VAT % diesel). */
+if (!defined('BMFUEL_DESNZ_EVERY')) define('BMFUEL_DESNZ_EVERY', 6 * 3600);
+if (!defined('BMFUEL_DESNZ_API')) define('BMFUEL_DESNZ_API', 'https://www.gov.uk/api/content/government/statistics/weekly-road-fuel-prices');
+function bmfuel_desnz_parse($csv) {
+    $rows = array();
+    $lines = preg_split('/\r\n|\n|\r/', preg_replace('/^\xEF\xBB\xBF/', '', (string)$csv));
+    $head = str_getcsv(array_shift($lines));
+    $iu = $id = $tu = $td = $vu = $vd = null;   // pump prices; duty (p a litre) and VAT (%) for each
+    foreach ($head as $i => $c) {
+        $u = stripos($c, 'ULSP') !== false; $d = stripos($c, 'ULSD') !== false;
+        if (stripos($c, 'pump') !== false) { if ($u && $iu === null) $iu = $i; if ($d && $id === null) $id = $i; }
+        if (stripos($c, 'duty') !== false) { if ($u && $tu === null) $tu = $i; if ($d && $td === null) $td = $i; }
+        if (stripos($c, 'VAT') !== false) { if ($u && $vu === null) $vu = $i; if ($d && $vd === null) $vd = $i; }
+    }
+    if ($iu === null || $id === null) return array();
+    $num = function ($x, $i) { return ($i !== null && isset($x[$i]) && is_numeric(trim($x[$i]))) ? (float)trim($x[$i]) : null; };
+    foreach ($lines as $l) {
+        if (trim($l) === '') continue;
+        $x = str_getcsv($l);
+        if (!isset($x[$iu], $x[$id]) || !preg_match('#^(\d{1,2})/(\d{1,2})/(\d{4})$#', trim($x[0]), $m)) continue;
+        $u = (float)$x[$iu]; $d = (float)$x[$id];
+        if ($u < 40 || $u > 400 || $d < 40 || $d > 400) continue;
+        $rows[] = array(sprintf('%04d-%02d-%02d', $m[3], $m[2], $m[1]), round($u, 2), round($d, 2), $num($x, $tu), $num($x, $td), $num($x, $vu), $num($x, $vd));
+    }
+    return $rows;
+}
+function bmfuel_desnz_refresh($now) {
+    $w = bmfuel_json_load('desnz.json');
+    if (!empty($w['checked']) && $now - (int)$w['checked'] < BMFUEL_DESNZ_EVERY) return array('ok' => true, 'skipped' => 'ttl');
+    $w['checked'] = $now;
+    bmfuel_json_save('desnz.json', $w);                                   // claim the slot first (as beat.json does)
+    list($code, $body) = bmfuel_http(BMFUEL_DESNZ_API, 15);
+    $j = $body ? json_decode($body, true) : null;
+    if (empty($j['details']['attachments'])) { $w['error'] = 'content API ' . $code; bmfuel_json_save('desnz.json', $w); return array('ok' => false, 'error' => $w['error']); }
+    $files = bmfuel_json_load('desnz-files.json');   // url => rows: an unchanged address is never downloaded twice
+    $want = array(); $changed = false;
+    foreach ($j['details']['attachments'] as $a) {
+        $url = isset($a['url']) ? (string)$a['url'] : '';
+        if ((isset($a['content_type']) && stripos($a['content_type'], 'csv') === false) || !preg_match('#^https://assets\.publishing\.service\.gov\.uk/.+\.csv$#i', $url)) continue;
+        $want[$url] = true;
+        if (isset($files[$url])) continue;
+        list($c2, $csv) = bmfuel_http($url, 20);
+        $rows = $csv ? bmfuel_desnz_parse($csv) : array();
+        if (count($rows) < 20) { $w['error'] = 'CSV ' . $c2 . ' unreadable'; bmfuel_json_save('desnz.json', $w); return array('ok' => false, 'error' => $w['error']); }
+        $files[$url] = $rows; $changed = true;
+    }
+    if (!$want) { $w['error'] = 'no CSV listed'; bmfuel_json_save('desnz.json', $w); return array('ok' => false, 'error' => $w['error']); }
+    foreach (array_keys($files) as $u) if (!isset($want[$u])) { unset($files[$u]); $changed = true; }   // last week's file
+    if ($changed || empty($w['rows'])) {
+        $by = array();
+        foreach ($files as $rows) foreach ($rows as $r) $by[$r[0]] = $r;
+        ksort($by);
+        $rows = array_values($by);
+        $last = end($rows);
+        // a series that went backwards or lost most of its history is a bad download, not news
+        if (count($rows) < 500 || (!empty($w['rows']) && $last[0] < $w['rows'][count($w['rows']) - 1][0])) {
+            $w['error'] = 'series looked wrong (' . count($rows) . ' weeks)'; bmfuel_json_save('desnz.json', $w); return array('ok' => false, 'error' => $w['error']);
+        }
+        // the page needs date + the two prices a week; duty and VAT only for the latest week
+        $w['rows'] = array_map(function ($r) { return array($r[0], $r[1], $r[2]); }, $rows);
+        $w['tax'] = (isset($last[3], $last[4], $last[5], $last[6])) ? array($last[0], $last[3], $last[4], $last[5], $last[6]) : null;
+        bmfuel_json_save('desnz-files.json', $files);
+    }
+    $w['published'] = isset($j['public_updated_at']) ? (string)$j['public_updated_at'] : null;
+    $w['page'] = 'https://www.gov.uk/government/statistics/weekly-road-fuel-prices';
+    unset($w['error']);
+    bmfuel_json_save('desnz.json', $w);
+    return array('ok' => true, 'weeks' => count($w['rows']));
+}
+
+/* What the "going up or down" section reads: the weekly series and our daily lines. */
+function bm_fuel_trend() {
+    $w = bmfuel_json_load('desnz.json');
+    $h = bmfuel_json_load('history.json');
+    if (empty($w['rows']) && empty($h['days'])) return array('ok' => false, 'error' => 'no data yet');
+    $days = array();
+    foreach ((isset($h['days']) ? $h['days'] : array()) as $d => $x) {
+        $days[] = array($d, isset($x['uk']['E10']) ? $x['uk']['E10'][1] : null, isset($x['uk']['B7']) ? $x['uk']['B7'][1] : null,
+                        isset($x['bm']['E10']) ? $x['bm']['E10'][1] : null, isset($x['bm']['B7']) ? $x['bm']['B7'][1] : null);
+    }
+    return array('ok' => true, 'weeks' => isset($w['rows']) ? $w['rows'] : array(), 'tax' => isset($w['tax']) ? $w['tax'] : null,
+                 'published' => isset($w['published']) ? $w['published'] : null,
+                 'source' => isset($w['page']) ? $w['page'] : null, 'days' => $days);
+}
+
 function bm_fuel_refresh($force = false) {
     $now = time();
+    try { bmfuel_desnz_refresh($now); } catch (Throwable $e) {}   // its own 6-hour cadence; a few ms when not due
     $beat = bmfuel_json_load('beat.json');
     // A key file saved or replaced since the last run makes this run due at once: uploading the key shows results at
     // the next cron tick, not up to half an hour later.
@@ -647,12 +790,13 @@ function bm_fuel_top($f) {
     return $m + array('f' => $f, 'r' => 'uk', 'stations' => bmfuel_json_load('top-' . $f . '.json'));
 }
 
-/* The UK, the four nations and every postcode area, for every fuel. */
+/* The UK, the four nations and every postcode area, for every fuel; by brand; supermarkets against the rest. */
 function bm_fuel_stats() {
     $m = bm_fuel_meta();
     if (!$m['ok']) return $m;
     $s = bmfuel_json_load('stats.json');
-    return $m + array('fuels' => isset($s['fuels']) ? $s['fuels'] : array());
+    return $m + array('fuels' => isset($s['fuels']) ? $s['fuels'] : array(), 'brands' => isset($s['brands']) ? $s['brands'] : array(),
+                      'groups' => isset($s['groups']) ? $s['groups'] : array());
 }
 
 /* Postcode -> map position through postcodes.io (ONS data, OGL). Full postcode first, then the district ("BH8").

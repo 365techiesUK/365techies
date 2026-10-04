@@ -15463,6 +15463,8 @@ def free_tools_hub():
        ["pcmapp","speccheck","pcbench","gpubench","pcbuild","avtest","healthcheck","faultcheck","repairreplace","w10"]),
       ("Costs &amp; planning", "Clear numbers and honest recommendations.",
        ["costcalc","planfinder","quickquote","downtime","m365picker","servercloud","aicalc","solarcalc","vbuilder"]),
+      ("On the road", "Fuel is costing everyone a fortune &mdash; find the cheapest.",
+       ["fuel"]),
     ]
     sections = ""
     items = []
