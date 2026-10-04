@@ -12,6 +12,10 @@
  * hintLights(S, m) -> {cards, slots}, optional: variant, deals(v), daily(v), autoNext(S, keepDown), slotHtml(key, S),
  * winBonus(S, secs), describe(S), help, valid(s), faceKey(S), noTap(from), bestLabel(v), whyNot(S, from, to|null) and
  * cantPick(S, c) - a plain-words reason when a move is refused or a card won't lift.
+ * Pyramid (4 Oct 2026): pairs: true - a tap picks a card up and a second tap on its partner plays the pair (a King, or
+ * anything E.smartMove takes on its own, goes at once); partnerCards(S, from) -> the cards that would go with it (they
+ * glow when the level allows a Hint), pickSay(S, from) -> what to tell the player. An fx with big: true (a peak or a
+ * row cleared) gets the big burst.
  * Every timed step checks `gen` (bumped by a new game, or Undo while cards are still moving) and stops if it changed. */
 (function () {
   'use strict';
@@ -189,6 +193,7 @@
       if (from.p === 'stock') { act({ t: 'draw' }); return; }
       var cards = D.picked(S, from);
       if (!cards.length) return;
+      if (sel && sel.c !== c && !D.pairs) selOff();
       drag = { from: from, cards: cards, c: c, x0: e.clientX, y0: e.clientY, dx: 0, dy: 0, moved: false, id: e.pointerId, base: cards.map(function (k) { return lastP[k]; }) };
       try { board.setPointerCapture(e.pointerId); } catch (er) {}
     });
@@ -198,6 +203,7 @@
       if (!drag.moved) {
         if (Math.abs(dx) + Math.abs(dy) < 8) return;
         drag.moved = true;
+        selOff();
         drag.cards.forEach(function (k, i) { var el = cardEl[k]; clearTimeout(el._zt); el._zt = 0; el.classList.add('drag'); el.style.zIndex = 3000 + i; });
         drag.pos = drag.base.map(function (b) { return { x: b.x, y: b.y }; });
         showCan(drag);
@@ -259,8 +265,28 @@
     });
     board.addEventListener('pointercancel', function () { if (!drag) return; var d = drag; drag = null; if (d.moved) endDragLook(d); render(); });
     board.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    // Pyramid: the card picked first, waiting for its partner (D.pairs)
+    var sel = null;
+    function selOff() {
+      if (!sel) return;
+      if (cardEl[sel.c]) cardEl[sel.c].classList.remove('sel');
+      (sel.lit || []).forEach(function (c) { if (cardEl[c]) cardEl[c].classList.remove('can'); });
+      sel = null;
+    }
+    function pairTap(d) {
+      if (sel && sel.c === d.c) { selOff(); sfx('place'); return; }   // tapped again: put it down
+      if (sel) { var pm = { t: 'move', from: sel.from, to: d.from }; if (E.legal(S, pm)) { selOff(); act(pm); return; } }
+      var km = E.smartMove(S, d.from);
+      if (km) { selOff(); act(km); return; }
+      selOff();
+      sel = { c: d.c, from: d.from, lit: rules().hint && D.partnerCards ? D.partnerCards(S, d.from) : [] };
+      cardEl[d.c].classList.add('sel'); sfx('lift');
+      sel.lit.forEach(function (c) { if (cardEl[c]) cardEl[c].classList.add('can'); });
+      if (D.pickSay) say(D.pickSay(S, d.from));
+    }
     function tap(d) {
       if (D.noTap && D.noTap(d.from)) return;   // e.g. cards come down from the piles by dragging only
+      if (D.pairs) { pairTap(d); return; }
       var m = E.smartMove(S, d.from);
       if (m) act(m);
       else { nope(cardEl[d.c]); sfx('nope'); say(D.whyNot ? D.whyNot(S, d.from, null) : 'No move for that card yet'); }
@@ -283,6 +309,7 @@
     // ------------------------------------------------------------ making moves
     function act(m) {
       if (busy || !S || S.won || G.over) return;
+      selOff();
       var snap = { s: E.clone(S), ms: G.ms, n: G.log ? G.log.length : 0 };
       var fx = E.apply(S, m);
       if (!fx) { if (fx === null && m.t === 'draw' && D.noDrawSay) say(D.noDrawSay(S)); sfx('nope'); render(); return; }
@@ -308,7 +335,7 @@
     // finished: a bigger burst and a little fanfare
     function celebrate(fx) {
       var cards = fx.popCards || fx.cards, last = cards[cards.length - 1], gained = shownScore == null ? 0 : S.score - shownScore;
-      var whole = (fx.popCards && fx.popCards.length >= 13) || (cards.length === 1 && D.face(last, S).r === 13), my = gen;
+      var whole = typeof fx.big === 'boolean' ? fx.big : ((fx.popCards && fx.popCards.length >= 13) || (cards.length === 1 && D.face(last, S).r === 13)), my = gen;
       setTimeout(function () {
         if (my !== gen || !cardEl[last]) return;
         var r = cardEl[last].getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
@@ -402,6 +429,7 @@
       if (!G.undo.length || !S || S.won || drag) return;   // after a win the scores are written: no taking it back
       if (busy) { gen++; busy = false; }   // cards still moving by themselves: stop them; the step comes back whole
       var u = G.undo.pop();
+      selOff();
       S = u.s; G.undid++; G.keepDown = null;
       if (G.log) G.log.length = Math.min(G.log.length, u.n || 0);
       hideStuck(); unhint(); sfx('place');
@@ -475,6 +503,7 @@
     }
     function newGame(mode, jl) {
       gen++; busy = false;   // stop anything still running from the last game
+      selOff();
       recordLoss();
       var v = V ? SET[V.key] : 0, seed, day = '';
       if (mode === 'again') { seed = S.seed; v = vOf(S); if (G.mode === 'journey') jl = G.jl; mode = G.mode === 'daily' || G.mode === 'sprint' || G.mode === 'clock' || G.mode === 'journey' ? G.mode : 'deal'; day = mode === 'daily' || mode === 'sprint' ? G.day : ''; }

@@ -42,6 +42,8 @@ $HOF_GAMES = array(
     'solitaire' => array('lib' => 'games-sol-lib.php', 'replay' => 'sol_replay', 'daily' => 'sol_daily_seed', 'sprint' => 'sol_sprint_seed', 'count' => 'sol_found_count', 'sprintLv' => 1),
     'freecell'  => array('lib' => 'games-fc-lib.php',  'replay' => 'fc_replay',  'daily' => 'fc_daily_seed',  'sprint' => 'fc_sprint_seed',  'count' => 'fc_found_count',  'sprintLv' => 1),
     'spider'    => array('lib' => 'games-sp-lib.php',  'replay' => 'sp_replay',  'daily' => 'sp_daily_seed',  'sprint' => 'sp_sprint_seed',  'count' => 'sp_found_count',  'sprintLv' => 1),
+    'tripeaks'  => array('lib' => 'games-tp-lib.php',  'replay' => 'tp_replay',  'daily' => 'tp_daily_seed',  'sprint' => 'tp_sprint_seed',  'count' => 'tp_found_count',  'sprintLv' => 1, 'minSecs' => 15, 'perMove' => 0.3),
+    'pyramid'   => array('lib' => 'games-py-lib.php',  'replay' => 'py_replay',  'daily' => 'py_daily_seed',  'sprint' => 'py_sprint_seed',  'count' => 'py_found_count',  'sprintLv' => 1, 'minSecs' => 15, 'perMove' => 0.3),
 );
 // the arcade games: their speeds (the game's own score slots, arcade.js skey) and the most points a second of play can
 // bring, plus a margin - generous, so a great game is never refused; the ticket's clock is what really holds a score down
@@ -162,7 +164,7 @@ function hof_board($all, $board, $lv, $town, $me, $game) {
                 if ($board === 'town' && $pl[$e['p']]['town'] !== $town) continue;
             }
             $r = $board === 'sprint'
-                ? array('p' => $e['p'], 'k1' => -$e['cards'], 'k2' => $e['secs'], 'v' => $e['cards'] . ($e['cards'] === ($game === 'spider' ? 104 : 52) ? ' cards - all of them!' : ' cards'), 'sub' => hof_mmss($e['secs']))
+                ? array('p' => $e['p'], 'k1' => -$e['cards'], 'k2' => $e['secs'], 'v' => $e['cards'] . ($e['cards'] === ($game === 'spider' ? 104 : ($game === 'tripeaks' || $game === 'pyramid' ? 28 : 52)) ? ' cards - all of them!' : ' cards'), 'sub' => hof_mmss($e['secs']))
                 : array('p' => $e['p'], 'k1' => $e['secs'], 'k2' => $e['moves'], 'v' => hof_mmss($e['secs']), 'sub' => $e['moves'] . ' moves' . ($board === 'alltime' ? ' · ' . date('j M Y', strtotime($e['day'] . ' 12:00')) : ''));
             if (!isset($byP[$e['p']]) || $r['k1'] < $byP[$e['p']]['k1'] || ($r['k1'] === $byP[$e['p']]['k1'] && $r['k2'] < $byP[$e['p']]['k2'])) $byP[$e['p']] = $r;   // each player once: their best
         }
@@ -321,7 +323,9 @@ if ($action === 'submit') {
     $secs = isset($in['secs']) ? (int)$in['secs'] : 0; $moves = count($log); $cards = call_user_func($G['count'], $s);
     if ($mode === 'daily') {
         if (!$s['won']) hof_out(array('ok' => false, 'error' => 'not-won'), 400);
-        if ($secs < max(25, (int)ceil($moves * 0.2)) || $secs > 4 * 3600) hof_out(array('ok' => false, 'error' => 'time'), 400);
+        // no quicker than a person could do it: 25 seconds (TriPeaks and Pyramid, short games: 15) or 0.2 s a move (0.3)
+        $floor = max(isset($G['minSecs']) ? $G['minSecs'] : 25, (int)ceil($moves * (isset($G['perMove']) ? $G['perMove'] : 0.2)));
+        if ($secs < $floor || $secs > 4 * 3600) hof_out(array('ok' => false, 'error' => 'time'), 400);
     } else {
         if ($cards < 1 || $secs < 10 || $secs > 185) hof_out(array('ok' => false, 'error' => 'time'), 400);
     }

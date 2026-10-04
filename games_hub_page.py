@@ -2,7 +2,7 @@
 /games/ - the Games page: every free game on one page (4 Oct 2026).
 
 WHY IT EXISTS
-The games (Solitaire, FreeCell, Spider, 365 Invaders, 365 Bat & Ball, 365 Eclipse, and Seafront in the
+The games (Solitaire, FreeCell, Spider, TriPeaks, Pyramid, 365 Invaders, 365 Bat & Ball, 365 Eclipse, and Seafront in the
 Bournemouth section) each had their own address but nothing linked them together, and /games/ itself was a
 403. The owner asked whether the games should live only in 365 PC Manager or on the website as well; the
 advice taken ("yes build the games page") was: the website is where people find them, PC Manager is the
@@ -39,7 +39,7 @@ _SITE = "https://365techies.co.uk"
 
 # what each section of games.json is called on the page, and a line about it
 _CATS = {
-    "Card games": ("Card games", "The classics, with big clear cards. Tap a card and it moves to the best place for it &mdash; or drag it, if you prefer."),
+    "Card games": ("Card games", "The classics, with big clear cards. Tap a card to play it &mdash; or drag it, if you prefer."),
     "Arcade": ("Arcade games", "Our own takes on the arcade games of the 80s and 90s. Each one has a <b>Gentle</b> speed for beginners."),
     "Seafront": ("Made in Bournemouth", "A 3D game on the real Bournemouth seafront. It runs best on a newer computer."),
 }
@@ -196,8 +196,8 @@ info_page(
     slug="games", crumb_name="Free Games",
     eyebrow="// FREE GAMES",
     h1='Free games, <em class="grad grad--cyan">no adverts</em>',
-    lede="Solitaire, FreeCell, Spider and our own arcade games &mdash; made by us in Bournemouth. Play in your web browser on a PC, tablet or phone: nothing to install, nothing to sign up to, and never an advert.",
-    desc="Free Solitaire, FreeCell, Spider and arcade games from 365 Techies in Bournemouth. No adverts, no sign-in, nothing to install - PC, tablet or phone.",
+    lede="Solitaire, FreeCell, Spider, TriPeaks, Pyramid and our own arcade games &mdash; made by us in Bournemouth. Play in your web browser on a PC, tablet or phone: nothing to install, nothing to sign up to, and never an advert.",
+    desc="Free Solitaire, FreeCell, Spider, TriPeaks, Pyramid and arcade games from 365 Techies in Bournemouth. No adverts, no sign-in, nothing to install.",
     title="Free Games - No Adverts, No Sign-In | 365 Techies",
     og_title="Free games, no adverts | 365 Techies",
     chips=["No adverts", "No sign-in", "Nothing to install"],

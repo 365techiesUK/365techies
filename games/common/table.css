@@ -81,6 +81,9 @@ body::before {
 /* while a card is being dragged, every place it may go glows */
 .slot.can { border-color: #8ff0ff; box-shadow: inset 0 0 18px rgba(143, 240, 255, .35), 0 0 16px 3px rgba(143, 240, 255, .55); }
 .card.can .front { box-shadow: 0 0 0 3px #8ff0ff, 0 0 20px 5px rgba(143, 240, 255, .6) !important; }
+/* Pyramid: the card picked up, waiting for its partner - lifted, with a gold edge */
+.card.sel .wig { transform: translateY(-7%) scale(1.05); }
+.card.sel .front { box-shadow: 0 0 0 3px var(--gold), 0 0 22px 6px rgba(255, 210, 87, .65), 0 14px 24px rgba(0, 0, 0, .35) !important; }
 
 .card { position: absolute; left: 0; top: 0; width: var(--cw); height: var(--ch); transition: transform .3s cubic-bezier(.2, .8, .25, 1); will-change: transform; cursor: pointer; }
 .card .wig { position: absolute; inset: 0; transition: transform .15s; }
