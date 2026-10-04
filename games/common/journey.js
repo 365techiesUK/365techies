@@ -7,7 +7,11 @@
  *   Journey.open()                  the map
  *   Journey.level(i)                a level's data;  Journey.goalPill(i, G, S)  the goals as shown while playing
  *   Journey.win(box, i, r)          after a win: stars, saved, the win card's box filled (r = {secs, moves, undid, hinted})
- *   Journey.total()                 {stars, max, next} */
+ *   Journey.total()                 {stars, max, next}
+ * A game can bring its own goals (5 Oct 2026: the games against the computer, where a level is one hand with three
+ * targets): init({ rules: { goals(l) -> [3 texts], got(l, r) -> [3 booleans], better(r, best), bestText(best) } }).
+ * Then the stars come in order (star 2 needs star 1), r is the game's own result, and a hand that misses star 1
+ * gets a "Not this time" card with Try again. Without rules, the patience goals above work as before. */
 (function () {
   'use strict';
   var C = { game: 'solitaire', store: 'sol365', title: 'Solitaire', data: { chapters: [], levels: [] } }, built = false, openEl = null, lastFocus = null, sel = -1;
@@ -23,9 +27,17 @@
   function total() { var p = prog(), s = 0, next = 0; for (var i = 0; i < L().length; i++) { s += p.stars[i] || 0; if (p.stars[i]) next = i + 1; } return { stars: s, max: L().length * 3, next: Math.min(next, L().length - 1) }; }
   function goals(i) {
     var l = L()[i];
+    if (C.rules) return C.rules.goals(l);
     return ['Win it', 'Win in ' + mmss(l.secs) + ' or less', l.moves ? 'Win in ' + l.moves + ' moves or fewer' : l.goal === 'noundo' ? 'Win without using Undo' : 'Win without using Hint'];
   }
+  // which of the three goals a result met
+  function gotOf(i, r) {
+    var l = L()[i];
+    if (C.rules) return C.rules.got(l, r);
+    return [true, r.secs <= l.secs, l.moves ? r.moves <= l.moves : l.goal === 'noundo' ? !r.undid : !r.hinted];
+  }
   function earned(i, r) {
+    if (C.rules) { var g = gotOf(i, r); return !g[0] ? 0 : !g[1] ? 1 : !g[2] ? 2 : 3; }
     var l = L()[i], n = 1;
     if (r.secs <= l.secs) n++;
     if (l.moves ? r.moves <= l.moves : l.goal === 'noundo' ? !r.undid : !r.hinted) n++;
@@ -199,7 +211,7 @@
     var l = L()[i], n = starsOf(i), g = goals(i), c = Math.floor(i / 10);
     var best = prog().best[i];
     $('jyCard').innerHTML = '<h3>Level ' + (i + 1) + ' &middot; ' + esc(C.data.chapters[c]) + '</h3>'
-      + '<p class="sub">' + esc(C.lvName ? C.lvName(l.lv) : '') + (best ? ' &middot; your best: ' + mmss(best.secs) + ', ' + best.moves + ' moves' : '') + '</p>'
+      + '<p class="sub">' + esc(C.lvName ? C.lvName(l.lv) : '') + (best ? ' &middot; your best: ' + esc(C.rules ? C.rules.bestText(best) : mmss(best.secs) + ', ' + best.moves + ' moves') : '') + '</p>'
       + '<ul class="jy-goals">' + g.map(function (t, k) { return '<li class="' + (n > k ? 'got' : '') + '"><i></i>' + esc(t) + '</li>'; }).join('') + '</ul>'
       + '<div class="jy-row"><button class="jy-btn" type="button" data-jyplay="' + i + '">' + (n ? 'Play again' : 'Play level ' + (i + 1)) + '</button><button class="jy-btn ghost" type="button" id="jyCardX">Back to the map</button></div>';
     $('jyCard').hidden = false;
@@ -233,18 +245,31 @@
   }
   function win(box, i, r) {
     build();
-    var p = prog(), n = earned(i, r), had = p.stars[i] || 0, g = goals(i), l = L()[i];
+    var p = prog(), n = earned(i, r), had = p.stars[i] || 0, g = goals(i), ok = gotOf(i, r);
     if (n > had) p.stars[i] = n;
-    var b = p.best[i]; if (!b || r.secs < b.secs || (r.secs === b.secs && r.moves < b.moves)) p.best[i] = { secs: r.secs, moves: r.moves };
+    var b = p.best[i];
+    if (C.rules) { if (n && (!b || C.rules.better(r, b))) p.best[i] = r; }
+    else if (!b || r.secs < b.secs || (r.secs === b.secs && r.moves < b.moves)) p.best[i] = { secs: r.secs, moves: r.moves };
     saveProg(p);
-    var last = i === L().length - 1, chapDone = (i % 10) === 9, okT = r.secs <= l.secs, okM = l.moves ? r.moves <= l.moves : l.goal === 'noundo' ? !r.undid : !r.hinted;
+    var last = i === L().length - 1, chapDone = (i % 10) === 9, stars = n || had;
+    var pills = '<div class="jy-ip">' + [0, 1, 2].map(function (k) { return '<span class="' + (ok[k] ? 'got' : '') + '">&#9733; ' + esc(k || C.rules ? g[k] : 'Won') + '</span>'; }).join('') + '</div>';
     box.hidden = false;
+    if (!n) {   // a game with its own goals: the hand missed star 1
+      box.innerHTML = '<div class="jy-win"><div class="bigst"><i></i><i></i><i></i></div>'
+        + '<p style="font-weight:800;color:#fff;font-size:18px">Not this time</p>' + pills
+        + '<p style="margin-top:8px">' + (had ? 'You already have ' + had + (had === 1 ? ' star' : ' stars') + ' here &mdash; this hand didn&rsquo;t beat it.' : 'Reach the first goal to open level ' + (i + 2) + '. The cards are the same every time &mdash; have another go!') + '</p>'
+        + '<div class="jy-row"><button class="jy-btn" type="button" data-jyplay="' + i + '">Try again</button><button class="jy-btn ghost" type="button" id="jyMapB">The Journey map</button></div></div>';
+      $('jyMapB').onclick = function () { if (C.onLeave) C.onLeave(); open(); };
+      return 0;
+    }
     box.innerHTML = '<div class="jy-win"><div class="bigst">' + [1, 2, 3].map(function (x) { return '<i class="' + (x <= n ? 'on' : '') + '" style="--i:' + (x - 1) + '"></i>'; }).join('') + '</div>'
-      + '<p style="font-weight:800;color:#fff;font-size:18px">Level ' + (i + 1) + (n === 3 ? ' &mdash; all three stars!' : ' complete!') + '</p>'
-      + '<div class="jy-ip"><span class="got">&#9733; Won</span><span class="' + (okT ? 'got' : '') + '">&#9733; ' + esc(g[1]) + '</span><span class="' + (okM ? 'got' : '') + '">&#9733; ' + esc(g[2]) + '</span></div>'
+      + '<p style="font-weight:800;color:#fff;font-size:18px">Level ' + (i + 1) + (n === 3 ? ' &mdash; all three stars!' : ' complete!') + '</p>' + pills
+      + (n < had ? '<p style="margin-top:8px">Your best here is still ' + had + ' stars.</p>' : '')
       + (chapDone && !last ? '<p style="margin-top:8px">Chapter complete &mdash; next stop: <b style="color:#ffd257">' + esc(C.data.chapters[Math.floor(i / 10) + 1]) + '</b></p>' : '')
       + (last ? '<p style="margin-top:8px"><b style="color:#ffd257">You&rsquo;ve finished the Journey!</b></p>' : '')
-      + '<div class="jy-row">' + (last ? '' : '<button class="jy-btn" type="button" data-jyplay="' + (i + 1) + '">Next level &rarr;</button>') + '<button class="jy-btn ghost" type="button" id="jyMapB">The Journey map</button></div></div>';
+      + '<div class="jy-row">' + (last ? '' : '<button class="jy-btn" type="button" data-jyplay="' + (i + 1) + '">Next level &rarr;</button>')
+      + (stars < 3 ? '<button class="jy-btn ghost" type="button" data-jyplay="' + i + '">Play again</button>' : '')
+      + '<button class="jy-btn ghost" type="button" id="jyMapB">The Journey map</button></div></div>';
     $('jyMapB').onclick = function () { if (C.onLeave) C.onLeave(); open(); };
     if (C.onWin) C.onWin(n, n > had);
     return n;

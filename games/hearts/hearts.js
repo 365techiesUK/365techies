@@ -193,8 +193,29 @@
     return { cards: [m.c], say: 'This one looks like a good card to play' };
   }
 
+  // The Journey (5 Oct 2026): a level is ONE HAND on a set deal with three targets, one per star - the levels are in
+  // journey.js (made, and every target proved reachable, by tools/journeys/make-rival-journeys.cjs). r = this hand's result.
+  var JR = {
+    result: function (S) { return { v: S.lastHand ? S.lastHand.add[0] : 26, flag: !!(S.lastHand && S.lastHand.moon === 0) }; },
+    got: function (l, r) { return l.t.map(function (t) { return t === 'moon' ? r.flag : r.v <= t; }); },
+    goals: function (l) { return l.t.map(function (t) { return t === 'moon' ? 'Shoot the moon \u2013 take every point' : t === 0 ? 'Score no points at all' : 'Score ' + t + ' points or fewer'; }); },
+    better: function (r, b) { return (r.flag && !b.flag) || (r.flag === b.flag && r.v < b.v); },
+    bestText: function (b) { return b.flag ? 'you shot the moon' : b.v + (b.v === 1 ? ' point' : ' points'); },
+    sayResult: function (r) { return r.flag ? 'You shot the moon \u2013 everyone else scores 26!' : 'You scored ' + r.v + (r.v === 1 ? ' point' : ' points') + ' this hand.'; },
+    chips: function (S, l) {   // the best star still possible, and your points so far
+      var mine = S.taken[0], t = l.t, aim;
+      if (t[2] === 'moon' && !(S.taken[1] + S.taken[2] + S.taken[3])) aim = '\u2605\u2605\u2605 moon';
+      else if (t[2] !== 'moon' && mine <= t[2]) aim = '\u2605\u2605\u2605 none';
+      else if (mine <= t[1]) aim = '\u2605\u2605 \u2264' + t[1];
+      else if (mine <= t[0]) aim = '\u2605 \u2264' + t[0];
+      else aim = 'missed';
+      return [['Goal', aim], ['Taken', mine]];
+    }
+  };
+
   Rivals365.start({
     id: 'hearts', store: 'he365', title: 'Hearts', cards: 52, E: E,
+    journey: window.HE_JOURNEY || null, jr: JR,   // the Journey: 100 levels, one hand each (5 Oct 2026)
     hof: true, hofWhat: { today: 'Lowest winning score first.', alltime: 'The lowest winning scores ever.', town: 'Lowest winning score first.' },   // the Hall of Fame: Today's match (5 Oct 2026)
     face: function (c) { return { r: E.rank(c), s: E.suit(c) }; },
     levels: {

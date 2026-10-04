@@ -188,8 +188,21 @@
     return { cards: [m.c], say: 'Throw away the ' + cname(m.c) };
   }
 
+  // The Journey (5 Oct 2026): a level is ONE HAND on a set deal with three targets, one per star - the levels are in
+  // journey.js (made, and every target proved reachable, by tools/journeys/make-rival-journeys.cjs). r = this hand's result.
+  var JR = {
+    result: function (S) { var r = S.result; return { v: r && !r.draw ? (r.to === 0 ? r.pts : -r.pts) : 0, flag: !!(r && r.gin && r.to === 0), draw: !!(r && r.draw) }; },
+    got: function (l, r) { return l.t.map(function (t) { return t === 'gin' ? r.flag : r.v >= t; }); },
+    goals: function (l) { return l.t.map(function (t) { return t === 'gin' ? 'Go Gin \u2013 all ten cards in melds' : t === 1 ? 'Win the hand' : 'Win the hand by ' + t + ' points or more'; }); },
+    better: function (r, b) { return (r.flag && !b.flag) || (r.flag === b.flag && r.v > b.v); },
+    bestText: function (b) { return (b.flag ? 'Gin, by ' : 'won by ') + b.v; },
+    sayResult: function (r) { return r.draw ? 'The deck ran down \u2013 a draw, so nobody won the hand.' : r.v > 0 ? (r.flag ? 'Gin! ' : '') + 'You won the hand by ' + r.v + (r.v === 1 ? ' point.' : ' points.') : OPP + ' won the hand by ' + (-r.v) + (r.v === -1 ? ' point.' : ' points.'); },
+    chips: function (S, l) { var t = l.t; return [['\u2605\u2605', 'by ' + t[1]], ['\u2605\u2605\u2605', t[2] === 'gin' ? 'Gin!' : 'by ' + t[2]]]; }
+  };
+
   Rivals365.start({
     id: 'gin', store: 'gr365', title: 'Gin Rummy', cards: 52, E: E,
+    journey: window.GR_JOURNEY || null, jr: JR,   // the Journey: 100 levels, one hand each (5 Oct 2026)
     hof: true, hofWhat: { today: 'Biggest winning margin first (with the match bonuses).', alltime: 'The biggest winning margins ever.', town: 'Biggest winning margin first (with the match bonuses).' },   // the Hall of Fame: Today's match (5 Oct 2026)
     face: function (c) { return { r: E.rank(c), s: E.suit(c) }; },
     levels: {

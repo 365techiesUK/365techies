@@ -34,7 +34,7 @@
     g.inPlay = !!(sv && sv.s && sv.g && sv.g.started && (g.kind === 'card' ? !sv.s.won : sv.s.phase !== 'over'));
     g.inDaily = g.inPlay && sv.g.mode === 'daily' && sv.g.day === T;
     g.stars = 0;
-    var j = g.kind === 'card' && g.store ? get(g.store + ':journey') : null;
+    var j = (g.kind === 'card' || g.kind === 'rival') && g.store ? get(g.store + ':journey') : null;   // (the games against the computer have a Journey too, from 5 Oct)
     if (j && j.stars && typeof j.stars === 'object') for (var n in j.stars) g.stars += +j.stars[n] || 0;
     return g;
   });
@@ -51,7 +51,7 @@
   games.forEach(function (g) {
     var me = g.li.querySelector('.gt-me'), rib = g.li.querySelector('.gt-rib'), t = '', r = null;
     if (g.kind === 'card') t = g.played ? 'Won ' + g.won + ' of ' + g.played + (g.stars ? ' · ★ ' + g.stars : '') : g.stars ? '★ ' + g.stars + ' Journey stars' : '';
-    else if (g.kind === 'rival' && g.played) t = 'Won ' + g.won + ' of ' + g.played + (g.played === 1 ? ' match' : ' matches');
+    else if (g.kind === 'rival') t = g.played ? 'Won ' + g.won + ' of ' + g.played + (g.played === 1 ? ' match' : ' matches') + (g.stars ? ' · ★ ' + g.stars : '') : g.stars ? '★ ' + g.stars + ' Journey stars' : '';
     else if (g.kind === 'arcade' && g.best) t = 'Best ' + g.best.toLocaleString('en-GB');
     if (me) me.textContent = t;
     if (g.inPlay) r = ['Carry on', ''];

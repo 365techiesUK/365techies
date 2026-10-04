@@ -150,8 +150,22 @@
   }
   function hintShow(S, m) { return { cards: [m.c], say: 'This one looks like a good card to play' }; }
 
+  // The Journey (5 Oct 2026): a level is ONE HAND on a set deal with three targets, one per star - the levels are in
+  // journey.js (made, and every target proved reachable, by tools/journeys/make-rival-journeys.cjs). r = this hand's result.
+  function aimUp(v, t) { return v < t[0] ? '\u2605 ' + t[0] : v < t[1] ? '\u2605\u2605 ' + t[1] : v < t[2] ? '\u2605\u2605\u2605 ' + t[2] : '\u2605\u2605\u2605 \u2713'; }
+  var JR = {
+    result: function (S) { return { v: S.lastHand ? S.lastHand.tricks[0] : S.won[0] + S.won[2] }; },
+    got: function (l, r) { return l.t.map(function (t) { return r.v >= t; }); },
+    goals: function (l) { return l.t.map(function (t) { return 'Take ' + t + ' tricks with Jo'; }); },
+    better: function (r, b) { return r.v > b.v; },
+    bestText: function (b) { return b.v + ' tricks'; },
+    sayResult: function (r) { return 'You and Jo took ' + r.v + (r.v === 1 ? ' trick' : ' tricks') + ' this hand.'; },
+    chips: function (S, l) { var v = S.won[0] + S.won[2]; return [['Goal', aimUp(v, l.t)], ['Tricks', v]]; }
+  };
+
   Rivals365.start({
     id: 'whist', store: 'wh365', title: 'Whist', cards: 52, E: E,
+    journey: window.WH_JOURNEY || null, jr: JR,   // the Journey: 100 levels, one hand each (5 Oct 2026)
     hof: true, hofWhat: { today: 'Fewest hands to win the rubber first.', alltime: 'The quickest rubbers ever, in hands.', town: 'Fewest hands to win the rubber first.' },   // the Hall of Fame: Today's match (5 Oct 2026)
     face: function (c) { return { r: E.rank(c), s: E.suit(c) }; },
     levels: {

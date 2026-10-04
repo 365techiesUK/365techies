@@ -213,8 +213,22 @@
     return { cards: [m.c], say: 'This one looks like a good card to play' };
   }
 
+  // The Journey (5 Oct 2026): a level is ONE HAND on a set deal with three targets, one per star - the levels are in
+  // journey.js (made, and every target proved reachable, by tools/journeys/make-rival-journeys.cjs). r = this hand's result.
+  function aimUp(v, t) { return v < t[0] ? '\u2605 ' + t[0] : v < t[1] ? '\u2605\u2605 ' + t[1] : v < t[2] ? '\u2605\u2605\u2605 ' + t[2] : '\u2605\u2605\u2605 \u2713'; }
+  var JR = {
+    result: function (S) { return { v: S.scores[0], o: S.scores[1] }; },
+    got: function (l, r) { return l.t.map(function (t) { return r.v >= t; }); },
+    goals: function (l) { return l.t.map(function (t) { return 'Score ' + t + ' points this deal'; }); },
+    better: function (r, b) { return r.v > b.v; },
+    bestText: function (b) { return b.v + ' points'; },
+    sayResult: function (r) { return 'You scored ' + r.v + (r.v === 1 ? ' point' : ' points') + ' this deal (' + OPP + ' ' + r.o + ').'; },
+    chips: function (S, l) { return [['Goal', aimUp(S.scores[0], l.t)], ['You', S.scores[0]]]; }
+  };
+
   Rivals365.start({
     id: 'cribbage', store: 'cr365', title: 'Cribbage', cards: 52, E: E,
+    journey: window.CR_JOURNEY || null, jr: JR,   // the Journey: 100 levels, one hand each (5 Oct 2026)
     hof: true, hofWhat: { today: 'Biggest winning margin first: 121 against Sam&rsquo;s score.', alltime: 'The biggest winning margins ever.', town: 'Biggest winning margin first: 121 against Sam&rsquo;s score.' },   // the Hall of Fame: Today's match (5 Oct 2026)
     face: function (c) { return { r: E.rank(c), s: E.suit(c) }; },
     levels: {
