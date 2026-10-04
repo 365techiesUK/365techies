@@ -15,10 +15,11 @@ game there, rebuild, and the website and the app both show it. Pictures: games/i
 the game's own screen, made by the scratchpad games-thumbs.cjs of the 4 Oct session); a game without one shows
 its icon instead. ⚠ Never overwrite a picture in place (images are cached for a year): give a new one -v2.
 
-HIDDEN UNTIL THE OWNER SAYS SO
-PUBLIC = False keeps the page noindex (which also keeps it out of sitemap.xml - build_blog skips noindex pages)
-and out of the site's own search. Flip it to True when the owner is happy, and add the page to a menu or the
-footer then (NAV_MENUS in build_pages.py - never menu HTML).
+PUBLIC SINCE 4 OCT 2026 (owner: "make the games page public")
+PUBLIC = False would make the page noindex again (which also keeps it out of sitemap.xml - build_blog skips noindex
+pages) and out of the site's own search and llms.txt. It is linked from the footer's FREE TOOLS column (FOOTER in
+build_pages.py). The game pages themselves stay noindex: like Seafront's play/ page, a game is a screen with no
+words, so this page is the one that should rank.
 
 PC MANAGER LINE
 The Games menu is in PC Manager v32, which is built and signed but not released yet (it goes when the owner
@@ -30,7 +31,7 @@ import os
 import build_pages as bp
 from build_extra import info_page
 
-PUBLIC = False
+PUBLIC = True
 PCM_GAMES_MENU_LIVE = False
 
 _ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -194,7 +195,7 @@ info_page(
     eyebrow="// FREE GAMES",
     h1='Free games, <em class="grad grad--cyan">no adverts</em>',
     lede="Solitaire, FreeCell, Spider and our own arcade games &mdash; made by us in Bournemouth. Play in your web browser on a PC, tablet or phone: nothing to install, nothing to sign up to, and never an advert.",
-    desc="Free Solitaire, FreeCell, Spider and arcade games from 365 Techies in Bournemouth - no adverts, no sign-in, nothing to install. Play in your browser on a PC, tablet or phone.",
+    desc="Free Solitaire, FreeCell, Spider and arcade games from 365 Techies in Bournemouth. No adverts, no sign-in, nothing to install - PC, tablet or phone.",
     title="Free Games - No Adverts, No Sign-In | 365 Techies",
     og_title="Free games, no adverts | 365 Techies",
     chips=["No adverts", "No sign-in", "Nothing to install"],

@@ -16586,7 +16586,7 @@ _PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
           </ul>
 
           <h2>Our free games</h2>
-          <p>Our free games keep your scores and settings in your browser on your own computer &mdash; they are never sent to us. Opening a game is counted like any other page (see the live count above), once a day for each game.</p>
+          <p>Our <a href="/games/">free games</a> keep your scores and settings in your browser on your own computer &mdash; they are never sent to us. Opening a game is counted like any other page (see the live count above), once a day for each game.</p>
           <ul>
             <li>If you send us <strong>feedback or ask for a game</strong>, what you write comes to our team&rsquo;s message channel, and we keep it for up to 12 months to help us improve the games. Your first name, town and email address are all optional.</li>
             <li>We mention your first name and town (for example &ldquo;asked for by Jean in Poole&rdquo;) only if you tick the box that says we may.</li>
