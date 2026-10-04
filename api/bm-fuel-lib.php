@@ -50,7 +50,7 @@ if (!defined('BMFUEL_FF_FULL')) define('BMFUEL_FF_FULL', 24 * 3600);   // full f
 if (!defined('BMFUEL_FF_OVERLAP')) define('BMFUEL_FF_OVERLAP', 3600);  // price-change look-back beyond the last fetch
 if (!defined('BMFUEL_FF_GAP_US')) define('BMFUEL_FF_GAP_US', 700000);  // pause between requests: < 100 a minute
 if (!defined('BMFUEL_FF_MAXAGE')) define('BMFUEL_FF_MAXAGE', 45 * 86400); // a price unconfirmed this long is left out
-if (!defined('BMFUEL_FF_PARSE_V')) define('BMFUEL_FF_PARSE_V', 3);      // version of the stored lists (3: whole UK)
+if (!defined('BMFUEL_FF_PARSE_V')) define('BMFUEL_FF_PARSE_V', 4);      // version of the stored lists (3: whole UK; 4: addresses de-duplicated)
 if (!defined('BMFUEL_KEEP_OFFICIAL')) define('BMFUEL_KEEP_OFFICIAL', 12 * 3600);  // official data kept through an outage
 if (!defined('BMFUEL_TOP')) define('BMFUEL_TOP', 200);                  // forecourts in a "cheapest" answer
 
@@ -167,15 +167,22 @@ function bmfuel_brand($raw) {
 
 /* An address from its parts: a company line ("Tesco Stores Ltd") is not where the forecourt is, so it is dropped, and a
    bare house number joins the street after it ("771, Castle Lane East" -> "771 Castle Lane East"). */
+/* (4 Oct, whole UK) Forecourts also type their town and postcode into the address lines - "Banbridge, BT32 4ET,
+   Banbridge, BT32 4ET" came through - so a postcode segment is dropped (the page adds the postcode once) and a segment
+   already used anywhere is not repeated. */
 function bmfuel_address($parts) {
-    $out = array();
+    $out = array(); $seen = array();
     foreach ($parts as $p) {
         foreach (explode(',', (string)$p) as $seg) {
             $seg = bmfuel_tidy_case($seg);
             if ($seg === '' || preg_match('/\b(ltd|limited|plc)\b/i', $seg)) continue;
+            if (preg_match('/^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$/i', $seg)) continue;
+            $k = strtolower($seg);
+            if (isset($seen[$k])) continue;
             $n = count($out);
             if ($n && preg_match('/^\d+[A-Za-z]?$/', $out[$n - 1])) $out[$n - 1] .= ' ' . $seg;
-            elseif (!$n || strcasecmp($out[$n - 1], $seg) !== 0) $out[] = $seg;
+            else $out[] = $seg;
+            $seen[$k] = true;
         }
     }
     return implode(', ', $out);
@@ -304,6 +311,8 @@ function bmfuel_ff_stations($rows) {
         $rawBrand = !empty($r['brand_name']) ? $r['brand_name'] : (isset($r['trading_name']) ? $r['trading_name'] : '');
         $brand = bmfuel_brand($rawBrand);
         $name = bmfuel_tidy_case(!empty($r['trading_name']) ? $r['trading_name'] : $rawBrand);
+        // A company name in the brand field ("Cscm Holdings Ltd") means nothing to a driver: show the forecourt's own name.
+        if ($name !== '' && preg_match('/\b(ltd|limited|plc|holdings|llp)\b/i', $brand)) $brand = $name;
         $pc = strtoupper(trim(isset($l['postcode']) ? (string)$l['postcode'] : ''));
         $out[(string)$r['node_id']] = array(
             'b' => $brand,

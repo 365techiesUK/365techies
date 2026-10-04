@@ -12,7 +12,7 @@ as they scroll into view, the location button pulses while it searches, and a sk
 A device set to reduce motion gets none of it (CSS below + the script checks the same setting).
 """
 
-JS_V = "3"
+JS_V = "4"
 
 HEAD = '''
   <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
@@ -199,7 +199,9 @@ def faqs(where):
          "keeps no record of it."),
         ("How is the saving worked out?",
          "It is the difference between the cheapest price and the average (median) price in the same area, multiplied by "
-         "55 litres, about a family car&rsquo;s tank. Your own saving depends on your tank and how far you drive to get it."),
+         "55 litres, about a family car&rsquo;s tank. Your own saving depends on your tank and how far you drive to get it. "
+         "When you are looking at the whole UK, that box shows instead the gap between the cheapest and dearest postcode "
+         "areas&rsquo; average prices on the same tank."),
         ("Why might the price at the pump be different?",
          "Forecourts change prices during the day, and a change reaches the data a little after it reaches the pump. The "
          "price on the pump is the one you pay."),

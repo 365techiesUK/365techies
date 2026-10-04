@@ -132,10 +132,23 @@
       chip = '<span class="ff-chip">' + uk.n.toLocaleString('en-GB') + ' forecourts reporting</span>';
     }
     t2.querySelector('.ff-ts').innerHTML = chip;
-    var save = med != null ? Math.max(0, med - best.p) : 0;
-    t3.querySelector('.ff-tl').innerHTML = 'Fill a ' + TANK + '-litre tank at the cheapest';
-    countUp(t3.querySelector('.ff-num b'), save * TANK / 100);
-    t3.querySelector('.ff-ts').innerHTML = 'saved against the average price ' + (st.r === 'uk' ? 'in the UK' : 'near ' + (st.centre === HOME ? esc(HOME.label) : 'you'));
+    if (st.r === 'uk') {
+      // Whole UK: "save against the UK average" would mean driving to Northern Ireland, so instead the gap between the
+      // cheapest and dearest postcode areas - true, and the number people share.
+      var A = st.stats && st.stats.fuels[st.fuel] ? st.stats.fuels[st.fuel].areas : null, lo = null, hi = null;
+      for (var a in (A || {})) { if (!lo || A[a][1] < A[lo][1]) lo = a; if (!hi || A[a][1] > A[hi][1]) hi = a; }
+      if (!lo || !hi) { t3.hidden = true; }
+      else {
+        t3.querySelector('.ff-tl').innerHTML = 'Gap on a ' + TANK + '-litre tank between the cheapest and dearest areas';
+        countUp(t3.querySelector('.ff-num b'), (A[hi][1] - A[lo][1]) * TANK / 100);
+        t3.querySelector('.ff-ts').innerHTML = esc(areaName(lo)) + ' ' + p1(A[lo][1]) + 'p, ' + esc(areaName(hi)) + ' ' + p1(A[hi][1]) + 'p (averages)';
+      }
+    } else {
+      var save = med != null ? Math.max(0, med - best.p) : 0;
+      t3.querySelector('.ff-tl').innerHTML = 'Fill a ' + TANK + '-litre tank at the cheapest';
+      countUp(t3.querySelector('.ff-num b'), save * TANK / 100);
+      t3.querySelector('.ff-ts').innerHTML = 'saved against the average price near ' + (st.centre === HOME ? esc(HOME.label) : 'you');
+    }
     [t1, t2, t3].forEach(replay);
   }
 
