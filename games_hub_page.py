@@ -341,7 +341,7 @@ _ASK = """      <div class="gh-ask" id="ask">
         </div>
       </div>
       <script src="/games/common/social.js?v=4"></script>
-      <script src="/games/common/hub.js?v=1"></script>
+      <script src="/games/common/hub.js?v=2"></script>
       <script>(function(){if(!window.GameSocial){var a=document.getElementById("ask");if(a)a.hidden=true;return;}
         GameSocial.init({id:"games",title:"365 Games"});
         document.getElementById("ghAsk").onclick=function(){GameSocial.openFeedback("request");};
@@ -368,6 +368,8 @@ _FAQS = [
      "Yes. The card games are made for touch: tap a card and it moves to the best place for it. The arcade games show big buttons under the screen on a tablet or phone."),
     ("What are the daily challenges?",
      "Every card game has a new deal each day &mdash; Today&rsquo;s deal, or Today&rsquo;s match in Hearts, Gin Rummy, Cribbage and Whist &mdash; with the same cards for everyone. Win it to tick it off for the day; the Daily challenges tile on this page shows how many you&rsquo;ve done and how many days in a row."),
+    ("What is the Journey?",
+     "Every card game has one: 100 levels in ten chapters, each named after a real Dorset place &mdash; along the coast, round Poole Harbour, through the old market towns. Every level is a set deal with three stars to win, and every star has been checked to be possible. In Hearts, Gin Rummy, Cribbage and Whist a level is a single hand against the computer."),
     ("Are my scores saved?",
      "Your scores and settings are kept in your web browser on that computer. They&rsquo;re only sent to us if you choose to put a score in the Hall of Fame. Like every page on our site, we count visits without cookies &mdash; see our <a href=\"/privacy-policy/\">privacy policy</a>."),
     ("What is the Hall of Fame?",
