@@ -352,3 +352,10 @@ body.nofx .lvls button { animation: none; } body.nofx .lvls button[aria-pressed=
 @keyframes chalIn { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } }
 @keyframes chalPulse { 0%, 100% { transform: translate(-50%, 0) scale(1); } 50% { transform: translate(-50%, 0) scale(1.05); } }
 @media (prefers-reduced-motion: reduce) { .chal, .chal.hurry { animation: none; } }
+/* the Journey (4 Oct 2026): its button in New game, and its goals pill while a level is played */
+.btn.jourbtn { background: linear-gradient(135deg, #1d97e3, #0d5f9a); border-color: #0d5f9a; color: #fff; }
+.btn.jourbtn small { color: rgba(255, 255, 255, .88) !important; }
+.btn.jourbtn:hover { filter: brightness(1.07); }
+.chal.jour { gap: 12px; border-color: rgba(127, 232, 255, .55); box-shadow: 0 8px 24px rgba(0, 0, 0, .35), 0 0 18px rgba(127, 232, 255, .2); }
+.chal.jour .cl { font-size: 14px; }
+@media (max-width: 480px) { .chal.jour { gap: 8px; padding: 7px 12px 7px 10px; font-size: 13px; max-width: calc(100vw - 20px); flex-wrap: wrap; justify-content: center; } .chal.jour .cl { font-size: 12.5px; } }

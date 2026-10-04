@@ -143,6 +143,8 @@
     // 4 Oct 2026 - the Hall of Fame (games/common/hof.js + api/games-hof.php) and its two races: Today's deal, and the
     // 3-minute sprint on one turn-one deal for everyone. ⚠ sprintSeed must match sol_sprint_seed in api/games-sol-lib.php.
     hof: true, sprintLevel: 1,
+    journey: window.SOL_JOURNEY || null,   // journey.js: 100 levels along the Dorset coast (tools/solitaire/make-journey.cjs)
+    journeyLevelName: function (lv) { return lv === 3 ? 'Normal · turn three cards' : 'Easy · turn one card'; },
     sprintSeed: function (n) { var l = DEALS && DEALS.d1; return l && l.length ? l[((n * 104729 + 17) % l.length + l.length) % l.length] : 700000 + ((n % 90000) + 90000) % 90000; },
     foundCount: function (S) { return S.found[0].length + S.found[1].length + S.found[2].length + S.found[3].length; },
     winnableSmall: 'On Easy and Normal, every deal has been played through to a win first. Hard and Expert can be any deal.',

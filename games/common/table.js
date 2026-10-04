@@ -164,6 +164,7 @@
       $('chipTime').style.display = SET.timer ? '' : 'none';
       var R = rules();
       $('bUndo').disabled = !G.undo.length || !R.undo; $('bHint').disabled = !R.hint;
+      if (G.mode === 'journey') chal();
       $('bUndo').title = R.undo ? 'Undo (U or Ctrl+Z)' : 'No Undo at this level'; $('bHint').title = R.hint ? 'Show me a move (H)' : 'No hints at this level';
       $('stUndo').hidden = !R.undo;
     }
@@ -413,6 +414,7 @@
       unhint();
       var m = E.hint(S);
       if (!m) { showStuck(); return; }
+      G.hinted = (G.hinted || 0) + 1;
       var lit = D.hintLights(S, m);
       (lit.cards || []).forEach(function (c) { if (cardEl[c]) cardEl[c].classList.add('hint'); });
       (lit.slots || []).forEach(function (k) { if (slotEl[k]) slotEl[k].classList.add('hint'); });
@@ -425,6 +427,11 @@
     function foundCount() { return D.foundCount ? D.foundCount(S) : 0; }
     function chal() {
       var el = $('chal'); if (!el) return;
+      if (G && G.mode === 'journey' && window.Journey && !S.won && Journey.level(G.jl)) {
+        el.hidden = false; el.className = 'chal jour';
+        el.innerHTML = Journey.goalPill(G.jl, Math.round(G.ms / 1000), S.moves, G.undid, G.hinted);
+        return;
+      }
       if (!G || !G.limit || S.won) { el.hidden = true; return; }
       var left = Math.max(0, G.limit - G.ms), sp = G.mode === 'sprint';
       el.hidden = false;
@@ -464,17 +471,19 @@
       ST.played++; ST.streak = 0; G.counted = true;
       save('stats', ST);
     }
-    function newGame(mode) {
+    function newGame(mode, jl) {
       gen++; busy = false;   // stop anything still running from the last game
       recordLoss();
       var v = V ? SET[V.key] : 0, seed, day = '';
-      if (mode === 'again') { seed = S.seed; v = vOf(S); mode = G.mode === 'daily' || G.mode === 'sprint' || G.mode === 'clock' ? G.mode : 'deal'; day = mode === 'daily' || mode === 'sprint' ? G.day : ''; }
+      if (mode === 'again') { seed = S.seed; v = vOf(S); if (G.mode === 'journey') jl = G.jl; mode = G.mode === 'daily' || G.mode === 'sprint' || G.mode === 'clock' || G.mode === 'journey' ? G.mode : 'deal'; day = mode === 'daily' || mode === 'sprint' ? G.day : ''; }
+      else if (mode === 'journey' && window.Journey && Journey.level(jl)) { var jlv = Journey.level(jl); seed = jlv.seed; v = jlv.lv; }
       else if (mode === 'sprint') { day = today(); seed = D.sprintSeed ? D.sprintSeed(dayNumber(new Date())) : pickSeed(v); v = D.sprintLevel || v; }   // the same deal for everyone today
       else if (mode === 'shared') { seed = shared.seed; v = shared.v; mode = 'deal'; }
       else if (mode === 'daily') { day = today(); seed = dailySeed(v); }
       else seed = pickSeed(v);
       S = E.deal(seed, v);
       G = newG(mode, day);
+      if (mode === 'journey') G.jl = jl;
       ST.recent.push(seed); if (ST.recent.length > 60) ST.recent.shift();
       save('stats', ST);
       closeSheets(); hideStuck(); unhint(); chal();
@@ -544,6 +553,8 @@
       var hb = $('wHof'); hb.hidden = true; hb.innerHTML = '';
       if (window.HallOfFame && D.hof && G.mode === 'daily') HallOfFame.daily(hb, { day: G.day, lv: vOf(S), secs: rec.secs, log: G.log });
       else if (window.HallOfFame && D.hof && G.mode === 'sprint' && !G.timeUp) HallOfFame.sprint(hb, { day: G.day, secs: rec.secs, log: G.log, cards: foundCount() });
+      var jb = $('wJour'); jb.hidden = true; jb.innerHTML = '';
+      if (window.Journey && D.journey && G.mode === 'journey') Journey.win(jb, G.jl, { secs: rec.secs, moves: S.moves, undid: G.undid, hinted: G.hinted || 0 });
     }
     // the classic finish: the cards leap off the piles and bounce away, leaving trails
     var imgCache = {};
@@ -712,6 +723,7 @@
       $('nDealS').textContent = SET.winnable && D.deals ? 'A fresh shuffle you can win' : 'A fresh shuffle';
       $('nDailyS').textContent = (dd && dd.won ? 'Done today ✔ — play it again if you like' : 'The same deal for everyone today') + (D.hof ? ' · race the Hall of Fame' : '');
       $('nAgainS').textContent = 'Deal #' + S.seed + ', from the beginning';
+      if (window.Journey && D.journey && $('nJourS')) { var jt = Journey.total(); $('nJourS').textContent = Journey.count() + ' levels along the Dorset coast \u00b7 \u2605 ' + jt.stars + ' of ' + jt.max; }
       syncControls();
       openD('dNew');
     }
@@ -774,6 +786,13 @@
       $('sHof').onclick = function () { hofOpen(); };
       $('spHofB').onclick = function () { hofOpen({ board: 'sprint' }); };
       $('spNew').onclick = openNew;
+      if (D.journey && window.Journey) {
+        Journey.init({ game: D.id, store: D.store, title: D.title, data: D.journey,
+          lvName: function (lv) { return D.journeyLevelName ? D.journeyLevelName(lv) : ''; },
+          onPlay: function (i) { closeSheets(); newGame('journey', i); },
+          onWin: function (n) { if (n === 3 && SET.fx && !reduce) { var r = document.querySelector('#wJour .bigst'); if (r) { var b = r.getBoundingClientRect(); setTimeout(function () { Spark.burst(b.left + b.width / 2, b.top + b.height / 2, 80, ['#ffe08a', '#ffffff', '#ffb347'], 6, 90); }, 1100); } } } });
+        $('nJourney').onclick = function () { closeSheets(); Journey.open(); };
+      }
       if (window.HallOfFame) HallOfFame.init({ game: D.id, title: D.title, levels: V ? V.options.map(function (o) { return [o[0], V.newLabel ? V.newLabel(o[0]) : o[1]]; }) : [[0, '']],
         level: function () { return V ? SET[V.key] : 0; }, sfx: function (k, n) { sfx(k, n); },
         burst: function (x, y, place) { if (SET.fx && !reduce) { Spark.burst(x, y, place === 1 ? 90 : 50, ['#ffe08a', '#ffffff', '#ffb347', '#8ff0ff'], 6, 90); Spark.ring(x, y, 120, '#ffe08a', 40); } },
@@ -803,7 +822,7 @@
     document.addEventListener('fullscreenchange', function () { $('bFullL').textContent = document.fullscreenElement ? 'Leave full screen' : 'Full screen'; });
     document.addEventListener('keydown', function (e) {
       gestured = true;
-      if (e.defaultPrevented || (window.GameSocial && GameSocial.isOpen()) || (window.HallOfFame && HallOfFame.isOpen())) return;   // typing feedback / initials, or a key a sheet used
+      if (e.defaultPrevented || (window.GameSocial && GameSocial.isOpen()) || (window.HallOfFame && HallOfFame.isOpen()) || (window.Journey && Journey.isOpen())) return;   // typing feedback / initials, or a key a sheet used
       if (e.key === 'Escape') { if (openSheet) closeSheets(); return; }
       if (openSheet || e.altKey) return;
       var k = (e.key || '').toLowerCase();
@@ -824,14 +843,15 @@
       sayT = setTimeout(function () { el.classList.remove('on'); }, Math.min(7000, 1800 + t.length * 55));   // time to read it
     }
     function persist() {
-      save('game', { s: S, g: { undo: G.undo.slice(-60), ms: G.ms, mode: G.mode, day: G.day, started: G.started, counted: G.counted, undid: G.undid, log: G.log || [], timeUp: G.timeUp, over: G.over } });
+      save('game', { s: S, g: { undo: G.undo.slice(-60), ms: G.ms, mode: G.mode, day: G.day, started: G.started, counted: G.counted, undid: G.undid, log: G.log || [], timeUp: G.timeUp, over: G.over, jl: G.jl, hinted: G.hinted || 0 } });
     }
     var lastTick = Date.now();
     setInterval(function () {
       var now = Date.now(), d = Math.min(2000, now - lastTick); lastTick = now;
-      if (!G || !G.started || S.won || G.over || document.hidden || openSheet || (window.GameSocial && GameSocial.isOpen()) || (window.HallOfFame && HallOfFame.isOpen())) return;
+      if (!G || !G.started || S.won || G.over || document.hidden || openSheet || (window.GameSocial && GameSocial.isOpen()) || (window.HallOfFame && HallOfFame.isOpen()) || (window.Journey && Journey.isOpen())) return;
       G.ms += d;
       if (G.limit) { chal(); if (G.ms >= G.limit && !G.timeUp) timeUp(); }
+      else if (G.mode === 'journey') chal();
       $('vTime').textContent = clock(G.ms);
     }, 1000);
     document.addEventListener('visibilitychange', function () { if (document.hidden && S) persist(); });
@@ -853,6 +873,7 @@
       S = saved.s; G = newG(saved.g.mode, saved.g.day);
       G.undo = Array.isArray(saved.g.undo) ? saved.g.undo : []; G.ms = +saved.g.ms || 0; G.started = !!saved.g.started; G.counted = !!saved.g.counted; G.undid = +saved.g.undid || 0;
       G.log = Array.isArray(saved.g.log) ? saved.g.log : []; G.timeUp = !!saved.g.timeUp; G.over = !!saved.g.over;
+      G.jl = typeof saved.g.jl === 'number' ? saved.g.jl : undefined; G.hinted = +saved.g.hinted || 0;
       faces(); layout(); render(true);
       if (G.started && E.stuck(S)) showStuck();
     } else {
@@ -889,12 +910,12 @@
           + '<div class="choice"><button class="btn go" type="button" id="nDeal">New deal<small id="nDealS">A fresh shuffle</small></button>'
           + '<button class="btn" type="button" id="nDaily">Today&rsquo;s deal<small id="nDailyS">The same deal for everyone today</small></button>'
           + '<button class="btn" type="button" id="nAgain">Play this deal again<small id="nAgainS">Start the same cards from the beginning</small></button></div>'
-          + (D.hof ? '<p class="chalh">Challenges</p><div class="choice chals"><button class="btn" type="button" id="nClock">&#9201; Beat the clock<small>Win a fresh deal in 5 minutes, at your level</small></button>'
+          + (D.hof ? '<p class="chalh">Challenges</p><div class="choice chals">' + (D.journey ? '<button class="btn jourbtn" type="button" id="nJourney">&#129517; The Journey<small id="nJourS">100 levels along the Dorset coast</small></button>' : '') + '<button class="btn" type="button" id="nClock">&#9201; Beat the clock<small>Win a fresh deal in 5 minutes, at your level</small></button>'
             + '<button class="btn" type="button" id="nSprint">&#9889; 3-minute sprint<small>As many cards up as you can &middot; the same deal for everyone today</small></button>'
             + '<button class="btn hofbtn" type="button" id="nHof">&#127942; Hall of Fame<small>Who&rsquo;s fastest today &mdash; in Dorset and beyond</small></button></div>' : '')
           + '<div class="row"><button class="btn wide" type="button" data-close>Keep playing</button></div>')
         + sheet('dWin', 'You won!', '<p class="soft" id="dWinSub"></p><div class="tiles"><div class="tile"><b id="wTime">0:00</b><span>Time</span></div><div class="tile"><b id="wMoves">0</b><span>Moves</span></div><div class="tile"><b id="wScore">0</b><span>Score</span></div></div>'
-          + '<ul class="badges" id="wBadges"></ul><div id="wHof" hidden></div><div class="row"><button class="btn go wide" type="button" id="wAgain">Play again</button><button class="btn wide" type="button" id="wShare">Challenge a friend</button><button class="btn wide" type="button" id="wDaily">Today&rsquo;s deal</button><button class="btn wide" type="button" id="wStats">My scores</button></div>')
+          + '<ul class="badges" id="wBadges"></ul><div id="wJour" hidden></div><div id="wHof" hidden></div><div class="row"><button class="btn go wide" type="button" id="wAgain">Play again</button><button class="btn wide" type="button" id="wShare">Challenge a friend</button><button class="btn wide" type="button" id="wDaily">Today&rsquo;s deal</button><button class="btn wide" type="button" id="wStats">My scores</button></div>')
         + sheet('dSprint', 'Time\u2019s up!', '<p class="soft" id="spSub"></p><div class="tiles"><div class="tile"><b id="spCards">0</b><span>Cards up</span></div></div><div id="spHof"></div>'
           + '<div class="row"><button class="btn go wide" type="button" id="spNew">New game</button><button class="btn wide" type="button" id="spHofB">Hall of Fame</button></div>')
         + sheet('dStats', 'My scores', (D.hof ? '<button class="btn hofbtn wide" type="button" id="sHof" style="width:100%;margin:2px 0 12px">&#127942; The Hall of Fame<small>Today&rsquo;s fastest, this week&rsquo;s best, all time</small></button>' : '') + '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere.</p><div class="tiles" id="sTiles"></div><h3 style="margin:16px 0 0;font-size:18px">Today&rsquo;s deal this week</h3><div class="week" id="sWeek"></div><div class="tiles" id="sBest"></div>'
