@@ -29,10 +29,16 @@
  *   - No station is ever given a price it did not report; a fuel a station did not list is simply absent.
  *
  * WIRING: tm-cron.php calls bm_fuel_refresh() (rate-limited inside by BMFUEL_TTL; never echoes or exits);
- * bm-fuel.php serves the stored file. The store folder has its own deny-all .htaccess and .gitignore.
+ * bm-fuel.php answers the pages. The store folder has its own deny-all .htaccess and .gitignore.
  *
- * AREA: the south-coast box the self-hosted street map covers (lon -2.98..-0.90, lat 50.45..51.15):
- * Weymouth and Dorchester to Chichester, up to Salisbury, and the Isle of Wight.
+ * WHOLE UK (owner, 4 Oct 2026: "the 365 techies one ... for the whole of the UK"; the Bournemouth page keeps its own
+ * focus with distances up to 100 miles and a Whole UK option). Every UK forecourt is kept; the pages never download
+ * all ~8,300. bm_fuel_publish() writes, each run:
+ *   cells/c_<lat>_<lon>.json  the forecourts in each 1-degree square (a "near me" answer reads only the squares it needs)
+ *   top-<fuel>.json           the 200 cheapest in the UK for that fuel
+ *   stats.json                per fuel: UK, the four nations and every postcode area (count, median, lowest) + top 10
+ *   meta.json                 mode, when fetched, the source list
+ * A visitor's position reaches the server rounded to 0.1 degree (about 10 km); the page works out exact distances.
  */
 
 if (!defined('BMFUEL_TTL'))    define('BMFUEL_TTL', 30 * 60);       // refresh cadence
@@ -44,9 +50,11 @@ if (!defined('BMFUEL_FF_FULL')) define('BMFUEL_FF_FULL', 24 * 3600);   // full f
 if (!defined('BMFUEL_FF_OVERLAP')) define('BMFUEL_FF_OVERLAP', 3600);  // price-change look-back beyond the last fetch
 if (!defined('BMFUEL_FF_GAP_US')) define('BMFUEL_FF_GAP_US', 700000);  // pause between requests: < 100 a minute
 if (!defined('BMFUEL_FF_MAXAGE')) define('BMFUEL_FF_MAXAGE', 45 * 86400); // a price unconfirmed this long is left out
-if (!defined('BMFUEL_FF_PARSE_V')) define('BMFUEL_FF_PARSE_V', 2);      // version of the stored forecourt list's tidying
+if (!defined('BMFUEL_FF_PARSE_V')) define('BMFUEL_FF_PARSE_V', 3);      // version of the stored lists (3: whole UK)
+if (!defined('BMFUEL_KEEP_OFFICIAL')) define('BMFUEL_KEEP_OFFICIAL', 12 * 3600);  // official data kept through an outage
+if (!defined('BMFUEL_TOP')) define('BMFUEL_TOP', 200);                  // forecourts in a "cheapest" answer
 
-function bmfuel_area() { return array(-2.98, 50.45, -0.90, 51.15); }   // W, S, E, N
+function bmfuel_area() { return array(-8.7, 49.8, 2.0, 61.0); }   // W, S, E, N: the UK, Northern Ireland and Shetland included
 
 function bmfuel_dir() { return defined('BMFUEL_DIR') ? BMFUEL_DIR : __DIR__ . '/bm-fuel-store/'; }   // BMFUEL_DIR: tests only
 
@@ -86,7 +94,7 @@ function bmfuel_http($url, $timeout = 15, $headers = array(), $post = null) {
             CURLOPT_MAXREDIRS => 3,
             CURLOPT_ENCODING => '',
             CURLOPT_HTTPHEADER => array_merge(array('Accept: application/json'), $headers),
-            CURLOPT_USERAGENT => '365techies-bournemouth365/1.0 (+https://365techies.co.uk/bournemouth/fuel-prices/)',
+            CURLOPT_USERAGENT => '365techies-fuel-prices/1.0 (+https://365techies.co.uk/fuel-prices/)',
         );
         if ($post !== null) { $opt[CURLOPT_POST] = true; $opt[CURLOPT_POSTFIELDS] = $post; }
         @curl_setopt_array($ch, $opt);
@@ -201,13 +209,16 @@ function bmfuel_src_retailer($id, $label, $url, $now) {
             if (isset($s['prices'][$k])) { $v = bmfuel_price($s['prices'][$k]); if ($v !== null) $p[$k] = $v; }
         }
         if (!$p) continue;
+        $pc = strtoupper(trim(isset($s['postcode']) ? (string)$s['postcode'] : ''));
         $out[] = array(
             'id' => $id . ':' . (isset($s['site_id']) ? preg_replace('/[^A-Za-z0-9_-]/', '', (string)$s['site_id']) : count($out)),
-            'b'  => bmfuel_tidy_case(isset($s['brand']) ? $s['brand'] : $label),
-            'a'  => bmfuel_tidy_case(isset($s['address']) ? $s['address'] : ''),
-            'pc' => strtoupper(trim(isset($s['postcode']) ? (string)$s['postcode'] : '')),
+            'b'  => bmfuel_brand(isset($s['brand']) ? $s['brand'] : $label),
+            'n'  => '',
+            'a'  => bmfuel_address(array(isset($s['address']) ? $s['address'] : '')),
+            'pc' => $pc,
             'la' => round($la, 6), 'lo' => round($lo, 6),
             'p'  => $p,
+            'co' => bmfuel_country('', $pc),
             's'  => $id,
             't'  => $upd,
         );
@@ -246,8 +257,10 @@ function bmfuel_ff_rows($j) {
     return null;
 }
 
-/* Every batch of one endpoint, one request at a time. Returns array(rows, error). */
-function bmfuel_ff_all($path, $query, &$token, $key, $now) {
+/* Every batch of one endpoint, one request at a time. Returns array(rows, error). With $each, each batch is handed to
+   it as it arrives and not kept: the whole UK's raw forecourt records (opening hours, amenities...) held at once could
+   meet shared hosting's memory limit, while one 500-row batch at a time cannot. Then returns array(array(), error). */
+function bmfuel_ff_all($path, $query, &$token, $key, $now, $each = null) {
     $rows = array();
     for ($n = 1; $n <= 40; $n++) {                       // 40 x 500 = 20,000 forecourts: far beyond the UK's ~8,300
         if ($n > 1) usleep(BMFUEL_FF_GAP_US);
@@ -262,8 +275,10 @@ function bmfuel_ff_all($path, $query, &$token, $key, $now) {
         if ($code === 404 && $n > 1) break;              // past the last batch, if the API says so with a 404
         $page = $body ? bmfuel_ff_rows(json_decode($body, true)) : null;
         if ($page === null) return array(null, $path . ' batch ' . $n . ' failed' . ($code ? ' (' . $code . ')' : ''));
-        foreach ($page as $r) $rows[] = $r;
-        if (count($page) < 500) break;                   // a short batch is the last one
+        $short = count($page) < 500;
+        if ($each) $each($page); else foreach ($page as $r) $rows[] = $r;
+        unset($page, $body);
+        if ($short) break;                               // a short batch is the last one
     }
     return array($rows, null);
 }
@@ -289,12 +304,14 @@ function bmfuel_ff_stations($rows) {
         $rawBrand = !empty($r['brand_name']) ? $r['brand_name'] : (isset($r['trading_name']) ? $r['trading_name'] : '');
         $brand = bmfuel_brand($rawBrand);
         $name = bmfuel_tidy_case(!empty($r['trading_name']) ? $r['trading_name'] : $rawBrand);
+        $pc = strtoupper(trim(isset($l['postcode']) ? (string)$l['postcode'] : ''));
         $out[(string)$r['node_id']] = array(
             'b' => $brand,
             'n' => (strcasecmp($name, $brand) === 0) ? '' : $name,
             'a' => bmfuel_address($addr),
-            'pc' => strtoupper(trim(isset($l['postcode']) ? (string)$l['postcode'] : '')),
+            'pc' => $pc,
             'la' => round($la, 6), 'lo' => round($lo, 6),
+            'co' => bmfuel_country(isset($l['country']) ? $l['country'] : '', $pc),
         );
     }
     return $out;
@@ -330,26 +347,28 @@ function bmfuel_src_official($now) {
     // BMFUEL_FF_PARSE_V: bump when bmfuel_ff_stations() changes how it tidies names/addresses, so the stored list is
     // rebuilt at the next run instead of waiting up to a day.
     if (empty($st['nodes']) || !isset($st['v']) || (int)$st['v'] !== BMFUEL_FF_PARSE_V || $now - (int)$st['t'] > BMFUEL_FF_FULL) {
-        list($rows, $err) = bmfuel_ff_all('pfs', '', $token, $key, $now);
+        $fresh = array();
+        list($rows, $err) = bmfuel_ff_all('pfs', '', $token, $key, $now, function ($page) use (&$fresh) { $fresh += bmfuel_ff_stations($page); });
         if ($rows === null && empty($st['nodes'])) return array('ok' => false, 'error' => $err, 'stations' => array());
-        if ($rows !== null) { $st = array('v' => BMFUEL_FF_PARSE_V, 't' => $now, 'nodes' => bmfuel_ff_stations($rows)); bmfuel_json_save('ff-stations.json', $st); }
+        if ($rows !== null) { $st = array('v' => BMFUEL_FF_PARSE_V, 't' => $now, 'nodes' => $fresh); bmfuel_json_save('ff-stations.json', $st); }
+        unset($fresh);
         usleep(BMFUEL_FF_GAP_US);
     }
     $nodes = $st['nodes'];
 
     $pr = bmfuel_json_load('ff-prices.json');
     $prices = isset($pr['p']) && is_array($pr['p']) ? $pr['p'] : array();
-    if (!$prices || $now - (int)(isset($pr['full']) ? $pr['full'] : 0) > BMFUEL_FF_FULL) {
+    if (!$prices || !isset($pr['v']) || (int)$pr['v'] !== BMFUEL_FF_PARSE_V || $now - (int)(isset($pr['full']) ? $pr['full'] : 0) > BMFUEL_FF_FULL) {
         $prices = array();
-        list($rows, $err) = bmfuel_ff_all('pfs/fuel-prices', '', $token, $key, $now);
+        list($rows, $err) = bmfuel_ff_all('pfs/fuel-prices', '', $token, $key, $now,
+                                          function ($page) use (&$prices, $nodes) { bmfuel_ff_merge_prices($prices, $page, $nodes); });
         if ($rows === null) return array('ok' => false, 'error' => $err, 'stations' => array());
-        bmfuel_ff_merge_prices($prices, $rows, $nodes);
-        $pr = array('full' => $now, 'last' => $now, 'p' => $prices);
+        $pr = array('v' => BMFUEL_FF_PARSE_V, 'full' => $now, 'last' => $now, 'p' => $prices);
     } else {
         $since = gmdate('Y-m-d H:i:s', (int)$pr['last'] - BMFUEL_FF_OVERLAP);
-        list($rows, $err) = bmfuel_ff_all('pfs/fuel-prices', '&effective-start-timestamp=' . rawurlencode($since), $token, $key, $now);
+        list($rows, $err) = bmfuel_ff_all('pfs/fuel-prices', '&effective-start-timestamp=' . rawurlencode($since), $token, $key, $now,
+                                          function ($page) use (&$prices, $nodes) { bmfuel_ff_merge_prices($prices, $page, $nodes); });
         if ($rows === null) return array('ok' => false, 'error' => $err, 'stations' => array());
-        bmfuel_ff_merge_prices($prices, $rows, $nodes);
         $pr['last'] = $now; $pr['p'] = $prices;
     }
     bmfuel_json_save('ff-prices.json', $pr);
@@ -366,9 +385,9 @@ function bmfuel_src_official($now) {
         }
         if (!$p) continue;
         $out[] = array('id' => 'ff:' . substr($id, 0, 16), 'b' => $s['b'], 'n' => $s['n'], 'a' => $s['a'], 'pc' => $s['pc'],
-                       'la' => $s['la'], 'lo' => $s['lo'], 'p' => $p, 'pt' => $pt, 's' => 'official', 't' => $t);
+                       'la' => $s['la'], 'lo' => $s['lo'], 'p' => $p, 'pt' => $pt, 'co' => isset($s['co']) ? $s['co'] : 'E', 't' => $t);
     }
-    return array('ok' => (bool)$out, 'error' => $out ? null : 'no priced forecourts in the area', 'updated' => $now,
+    return array('ok' => (bool)$out, 'error' => $out ? null : 'no priced forecourts', 'updated' => $now,
                  'stations' => $out, 'n' => count($out), 'total' => count($nodes));
 }
 
@@ -381,18 +400,125 @@ function bmfuel_miles($la1, $lo1, $la2, $lo2) {
 }
 
 /* The same forecourt can sit in two retailer feeds (an MFG site branded Esso, say). Within 80 m and same brand = one
-   station; the copy from the more recently updated feed wins. */
+   station; the copy from the more recently updated feed wins. Bucketed (~0.5 km squares and their neighbours), so the
+   whole UK's few thousand preview stations are not compared each with each. */
 function bmfuel_dedupe($all) {
     usort($all, function ($x, $y) { return (int)$y['t'] - (int)$x['t']; });
-    $kept = array();
+    $kept = array(); $grid = array();
     foreach ($all as $s) {
+        $gy = (int)floor($s['la'] * 200); $gx = (int)floor($s['lo'] * 130);
         $dup = false;
-        foreach ($kept as $k) {
-            if (strcasecmp($k['b'], $s['b']) === 0 && bmfuel_miles($k['la'], $k['lo'], $s['la'], $s['lo']) < 0.05) { $dup = true; break; }
+        for ($dy = -1; $dy <= 1 && !$dup; $dy++) for ($dx = -1; $dx <= 1 && !$dup; $dx++) {
+            $k = ($gy + $dy) . ':' . ($gx + $dx);
+            if (empty($grid[$k])) continue;
+            foreach ($grid[$k] as $i) {
+                $o = $kept[$i];
+                if (strcasecmp($o['b'], $s['b']) === 0 && bmfuel_miles($o['la'], $o['lo'], $s['la'], $s['lo']) < 0.05) { $dup = true; break; }
+            }
         }
-        if (!$dup) $kept[] = $s;
+        if ($dup) continue;
+        $grid[$gy . ':' . $gx][] = count($kept);
+        $kept[] = $s;
     }
     return $kept;
+}
+
+/* E, S, W or N(orthern Ireland): the forecourt's own country field first, else its postcode area. */
+function bmfuel_country($field, $pc) {
+    $f = strtolower((string)$field);
+    if (strpos($f, 'scot') !== false) return 'S';
+    if (strpos($f, 'wales') !== false || strpos($f, 'cymru') !== false) return 'W';
+    if (strpos($f, 'northern') !== false) return 'N';
+    if (strpos($f, 'england') !== false) return 'E';
+    $a = bmfuel_pc_area($pc);
+    if ($a === 'BT') return 'N';
+    if (in_array($a, array('AB', 'DD', 'DG', 'EH', 'FK', 'G', 'HS', 'IV', 'KA', 'KW', 'KY', 'ML', 'PA', 'PH', 'TD', 'ZE'), true)) return 'S';
+    if (in_array($a, array('CF', 'LD', 'LL', 'NP', 'SA'), true)) return 'W';
+    return 'E';
+}
+
+/* "BH23 2BJ" -> "BH", "M1 1AA" -> "M" */
+function bmfuel_pc_area($pc) {
+    return preg_match('/^([A-Z]{1,2})\d/', strtoupper(trim((string)$pc)), $m) ? $m[1] : '';
+}
+
+function bmfuel_median($v) {
+    $n = count($v);
+    if (!$n) return null;
+    sort($v);
+    return round($n % 2 ? $v[($n - 1) / 2] : ($v[$n / 2 - 1] + $v[$n / 2]) / 2, 1);
+}
+
+/* ---------- publish: what the pages read ---------- */
+
+function bmfuel_cell($la, $lo) { return 'c_' . (int)floor($la) . '_' . (int)floor($lo); }
+
+/* A price far from the rest of the country is a typing mistake or a long-dead price, not a bargain: on 4 Oct the preview
+   feeds listed BP forecourts at 131.9p unleaded against a UK median of 174.9p, and one would have topped "cheapest in the
+   UK". More than 15% under or 30% over the UK median for that fuel is left out (the station keeps its other fuels). */
+if (!defined('BMFUEL_LOW')) define('BMFUEL_LOW', 0.85);
+if (!defined('BMFUEL_HIGH')) define('BMFUEL_HIGH', 1.30);
+function bmfuel_sane($all, &$dropped) {
+    $med = array();
+    foreach (array('E10', 'E5', 'B7', 'SDV') as $f) {
+        $v = array(); foreach ($all as $s) if (isset($s['p'][$f])) $v[] = $s['p'][$f];
+        $med[$f] = bmfuel_median($v);
+    }
+    $out = array(); $dropped = 0;
+    foreach ($all as $s) {
+        foreach ($s['p'] as $f => $p) {
+            if (!empty($med[$f]) && ($p < $med[$f] * BMFUEL_LOW || $p > $med[$f] * BMFUEL_HIGH)) {
+                unset($s['p'][$f]); if (isset($s['pt'][$f])) unset($s['pt'][$f]); $dropped++;
+            }
+        }
+        if ($s['p']) $out[] = $s;
+    }
+    return $out;
+}
+
+function bm_fuel_publish($all, $mode, $sources, $now) {
+    $all = bmfuel_sane($all, $dropped);
+    $dir = bmfuel_dir() . 'cells/';
+    if (!is_dir($dir)) @mkdir($dir, 0755, true);
+    $cells = array();
+    foreach ($all as $s) $cells[bmfuel_cell($s['la'], $s['lo'])][] = $s;
+    foreach ($cells as $c => $list) bmfuel_json_save('cells/' . $c . '.json', $list);
+    foreach ((array)glob($dir . 'c_*.json') as $f) {                         // a square with no forecourts any more
+        if (!isset($cells[basename($f, '.json')])) @unlink($f);
+    }
+    $stats = array('fetched_at' => $now, 'fuels' => array());
+    foreach (array('E10', 'E5', 'B7', 'SDV') as $f) {
+        $have = array(); $uk = array(); $co = array(); $ar = array();
+        foreach ($all as $s) {
+            if (!isset($s['p'][$f])) continue;
+            $p = $s['p'][$f];
+            $have[] = $s; $uk[] = $p;
+            $co[isset($s['co']) ? $s['co'] : 'E'][] = $p;
+            $a = bmfuel_pc_area($s['pc']);
+            if ($a !== '') $ar[$a][] = $p;
+        }
+        if (!$uk) continue;
+        usort($have, function ($x, $y) use ($f) {
+            if ($x['p'][$f] != $y['p'][$f]) return $x['p'][$f] < $y['p'][$f] ? -1 : 1;
+            $tx = isset($x['pt'][$f]) ? (int)$x['pt'][$f] : 0; $ty = isset($y['pt'][$f]) ? (int)$y['pt'][$f] : 0;
+            return $ty - $tx;                                                   // same price: the most recently confirmed first
+        });
+        $top = array_slice($have, 0, BMFUEL_TOP);
+        bmfuel_json_save('top-' . $f . '.json', $top);
+        $cs = array();
+        foreach ($co as $k => $v) $cs[$k] = array('n' => count($v), 'med' => bmfuel_median($v), 'min' => min($v));
+        $as = array();
+        foreach ($ar as $k => $v) if (count($v) >= 3) $as[$k] = array(count($v), bmfuel_median($v), min($v));
+        $stats['fuels'][$f] = array(
+            'uk' => array('n' => count($uk), 'med' => bmfuel_median($uk), 'min' => min($uk), 'max' => max($uk),
+                          'avg' => round(array_sum($uk) / count($uk), 1)),
+            'co' => $cs, 'areas' => $as, 'top' => array_slice($top, 0, 10),
+        );
+    }
+    bmfuel_json_save('stats.json', $stats);
+    bmfuel_json_save('meta.json', array('v' => 2, 'mode' => $mode, 'partial' => $mode !== 'official', 'fetched_at' => $now,
+                                        'sources' => $sources, 'n' => count($all), 'dropped' => $dropped));
+    @unlink(bmfuel_dir() . 'stations.json');                                  // the south-coast-only file of 4 Oct
 }
 
 function bm_fuel_refresh($force = false) {
@@ -402,7 +528,8 @@ function bm_fuel_refresh($force = false) {
     // the next cron tick, not up to half an hour later.
     $kf = bmfuel_dir() . 'fuelfinder-key.php';
     $keyNew = file_exists($kf) && !empty($beat['t']) && @filemtime($kf) > (int)$beat['t'];
-    if (!$force && !$keyNew && !empty($beat['t']) && $now - (int)$beat['t'] < BMFUEL_TTL) return array('ok' => true, 'skipped' => 'ttl');
+    $noMeta = !file_exists(bmfuel_dir() . 'meta.json');                // first run of a new store layout: do it now
+    if (!$force && !$keyNew && !$noMeta && !empty($beat['t']) && $now - (int)$beat['t'] < BMFUEL_TTL) return array('ok' => true, 'skipped' => 'ttl');
     if (!is_dir(bmfuel_dir())) @mkdir(bmfuel_dir(), 0755, true);
     $lk = @fopen(bmfuel_dir() . 'refresh.lock', 'c');
     if (!$lk || !@flock($lk, LOCK_EX | LOCK_NB)) return array('ok' => true, 'skipped' => 'locked');
@@ -413,8 +540,17 @@ function bm_fuel_refresh($force = false) {
         $sources[] = array('id' => 'official', 'label' => 'Fuel Finder (official)', 'ok' => $off['ok'], 'n' => count($off['stations']),
                            'total' => isset($off['total']) ? $off['total'] : 0,
                            'updated' => isset($off['updated']) ? $off['updated'] : null, 'error' => isset($off['error']) ? $off['error'] : null);
+        $meta = bmfuel_json_load('meta.json');
         if ($off['ok'] && $off['stations']) {
             $mode = 'official'; $all = $off['stations'];
+        } elseif (bmfuel_official_key() && !empty($meta['mode']) && $meta['mode'] === 'official'
+                  && $now - (int)$meta['fetched_at'] < BMFUEL_KEEP_OFFICIAL) {
+            // The official feed had a bad moment: keep showing its last good prices (the page says how old they are)
+            // rather than dropping to the partial retailer feeds and losing the supermarkets.
+            $meta['sources'][0]['error'] = $off['error'];
+            $meta['last_error'] = $off['error'] . ' at ' . date('H:i', $now);
+            bmfuel_json_save('meta.json', $meta);
+            return array('ok' => false, 'kept' => 'last official data', 'error' => $off['error']);
         } else {
             $mode = 'preview';
             /* SiteGround bills connected seconds (siteground-cpu memory): a feed that refused, timed out or froze is
@@ -437,27 +573,77 @@ function bm_fuel_refresh($force = false) {
             bmfuel_json_save('fails.json', $fails);
             $all = bmfuel_dedupe($all);
         }
-        if (!$all) {   // keep the last good file rather than replacing it with nothing
-            $old = bmfuel_json_load('stations.json');
-            if ($old) { $old['last_error'] = 'no source answered at ' . date('H:i', $now); bmfuel_json_save('stations.json', $old); }
+        if (!$all) {   // keep the last good files rather than replacing them with nothing
+            if ($meta) { $meta['last_error'] = 'no source answered at ' . date('H:i', $now); bmfuel_json_save('meta.json', $meta); }
             return array('ok' => false, 'error' => 'no stations', 'sources' => $sources);
         }
-        bmfuel_json_save('stations.json', array(
-            'v' => 1, 'mode' => $mode, 'partial' => $mode !== 'official', 'fetched_at' => $now,
-            'area' => bmfuel_area(), 'sources' => $sources, 'stations' => array_values($all),
-        ));
+        bm_fuel_publish(array_values($all), $mode, $sources, $now);
         return array('ok' => true, 'mode' => $mode, 'stations' => count($all));
     } finally {
         @flock($lk, LOCK_UN); @fclose($lk);
     }
 }
 
-function bm_fuel_public() {
-    $c = bmfuel_json_load('stations.json');
-    if (!$c) return array('ok' => false, 'error' => 'no data yet');
-    $c['ok'] = true;
-    $c['stale'] = (time() - (int)$c['fetched_at']) > BMFUEL_STALE;
-    return $c;
+/* ---------- what the pages ask ---------- */
+
+/* When the prices were fetched and where from; every answer carries it. */
+function bm_fuel_meta() {
+    $m = bmfuel_json_load('meta.json');
+    if (!$m) return array('ok' => false, 'error' => 'no data yet');
+    return array('ok' => true, 'mode' => $m['mode'], 'partial' => !empty($m['partial']), 'fetched_at' => (int)$m['fetched_at'],
+                 'stale' => (time() - (int)$m['fetched_at']) > BMFUEL_STALE, 'sources' => $m['sources'], 'n' => isset($m['n']) ? $m['n'] : 0);
+}
+
+function bmfuel_fuel($f) { return in_array($f, array('E10', 'E5', 'B7', 'SDV'), true) ? $f : 'E10'; }
+
+/* The cheapest forecourts within $r miles of a point. The point is rounded to 0.1 degree HERE as well as in the page
+   (about 10 km), and the search reaches BMFUEL_SLACK miles further so the page can trim to the exact distance from
+   the visitor's real position. Also: how many, the median and the lowest within $r - "around you". */
+if (!defined('BMFUEL_SLACK')) define('BMFUEL_SLACK', 5);
+function bm_fuel_near($la, $lo, $r, $f) {
+    $m = bm_fuel_meta();
+    if (!$m['ok']) return $m;
+    $f = bmfuel_fuel($f);
+    $la = round((float)$la, 1); $lo = round((float)$lo, 1);
+    $r = max(1, min(100, (int)$r));
+    list($W, $S, $E, $N) = bmfuel_area();
+    if ($lo < $W - 1 || $lo > $E + 1 || $la < $S - 1 || $la > $N + 1) return array('ok' => false, 'error' => 'outside the UK');
+    $R = $r + BMFUEL_SLACK;
+    $dLa = $R / 69; $dLo = $R / (69 * max(0.2, cos(deg2rad($la))));
+    $cand = array(); $inR = array();
+    for ($cy = (int)floor($la - $dLa); $cy <= (int)floor($la + $dLa); $cy++) {
+        for ($cx = (int)floor($lo - $dLo); $cx <= (int)floor($lo + $dLo); $cx++) {
+            foreach (bmfuel_json_load('cells/c_' . $cy . '_' . $cx . '.json') as $s) {
+                if (!isset($s['p'][$f])) continue;
+                $d = bmfuel_miles($la, $lo, $s['la'], $s['lo']);
+                if ($d > $R) continue;
+                $cand[] = array($s['p'][$f], $d, $s);
+                if ($d <= $r) $inR[] = $s['p'][$f];
+            }
+        }
+    }
+    usort($cand, function ($x, $y) { return $x[0] == $y[0] ? ($x[1] < $y[1] ? -1 : 1) : ($x[0] < $y[0] ? -1 : 1); });
+    $list = array();
+    foreach (array_slice($cand, 0, BMFUEL_TOP) as $c) $list[] = $c[2];
+    return $m + array('f' => $f, 'r' => $r, 'la' => $la, 'lo' => $lo, 'cut' => count($cand) > BMFUEL_TOP,
+                      'around' => array('n' => count($inR), 'med' => bmfuel_median($inR), 'min' => $inR ? min($inR) : null),
+                      'stations' => $list);
+}
+
+/* The cheapest in the whole UK for one fuel (written by bm_fuel_publish). */
+function bm_fuel_top($f) {
+    $m = bm_fuel_meta();
+    if (!$m['ok']) return $m;
+    $f = bmfuel_fuel($f);
+    return $m + array('f' => $f, 'r' => 'uk', 'stations' => bmfuel_json_load('top-' . $f . '.json'));
+}
+
+/* The UK, the four nations and every postcode area, for every fuel. */
+function bm_fuel_stats() {
+    $m = bm_fuel_meta();
+    if (!$m['ok']) return $m;
+    $s = bmfuel_json_load('stats.json');
+    return $m + array('fuels' => isset($s['fuels']) ? $s['fuels'] : array());
 }
 
 /* Postcode -> map position through postcodes.io (ONS data, OGL). Full postcode first, then the district ("BH8").
