@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=8';
+import * as MD from './models3d.js?v=9';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -154,7 +154,7 @@ const GRADE = {
     'uniform sampler2D tDiffuse; uniform float sat; uniform float con; uniform float vig; uniform float blur; uniform vec3 tint; uniform float flash; uniform float vib; uniform float curve; uniform vec3 lift; varying vec2 vUv;',
     'void main(){',
     '  vec3 c = texture2D(tDiffuse, vUv).rgb;',
-    '  if (blur > 0.002) { vec2 dd = (vUv - vec2(0.5, 0.48)) * blur * 0.009; vec3 s = c; for (int i = 1; i < 8; i++) s += texture2D(tDiffuse, vUv - dd * float(i)).rgb; c = s / 8.0; }',
+    '  if (blur > 0.002) { vec2 dd = (vUv - vec2(0.5, 0.52)) * blur * 0.009 * smoothstep(0.07, 0.22, length((vUv - vec2(0.5, 0.33)) * vec2(1.5, 1.0))); vec3 s = c; for (int i = 1; i < 8; i++) s += texture2D(tDiffuse, vUv - dd * float(i)).rgb; c = s / 8.0; }',
     '  float l = dot(c, vec3(0.299, 0.587, 0.114)); c = mix(vec3(l), c, sat);',
     '  float sp = max(c.r, max(c.g, c.b)) - min(c.r, min(c.g, c.b)); l = dot(c, vec3(0.299, 0.587, 0.114)); c = mix(vec3(l), c, 1.0 + vib * (1.0 - clamp(sp * 2.0, 0.0, 1.0)) * clamp((max(c.g, c.b) - c.r) * 6.0, 0.0, 1.0) * smoothstep(0.08, 0.3, l));',   // vibrance: the duller colours (haze-washed greens and blues) lifted most
     '  c = (c - 0.5) * con + 0.5; c *= tint;',
@@ -202,7 +202,8 @@ export function createWorld() {
   const tailGlow = [-1, 1].map(() => { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameGlow(), color: '#ff2030', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, opacity: 0 })); s.scale.setScalar(0.75); return s; });
   const tailWash = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 3.2), new THREE.MeshBasicMaterial({ map: radial(64, [[0, 'rgba(255,40,40,0.55)'], [0.5, 'rgba(255,30,30,0.18)'], [1, 'rgba(255,20,20,0)']]), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0 }));
   tailWash.rotation.x = -Math.PI / 2;
-  const nitroLight = new THREE.PointLight('#ff8a30', 0, 7, 1.6);   // the jets light up the road behind
+  const nitroLight = new THREE.PointLight('#ff8a30', 0, 4.2, 2);
+  const cabinLight = new THREE.PointLight('#ffd8a8', 0, 2.6, 2);   // a dash light on the two of you after dark   // the jets light up the road behind
   const carGlow = new THREE.PointLight('#ffe2c0', 0, 10, 1.6); scene.add(carGlow);   // at night: the street lights' glow on the car (always there, so no shader rebuilds)   // at the front bumper, lighting the road ahead (never the car)
 
   // ---------------------------------------------------------------- the sky (and the same sky, with the land below, as everything's surroundings)
@@ -262,7 +263,7 @@ export function createWorld() {
   MAT.wave.onBeforeCompile = (sh) => { sh.uniforms.uT = WAVE_T; sh.vertexShader = 'uniform float uT;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\ntransformed.y += sin(uT * 9.0 + position.x * 1.7 + position.z * 1.3) * 0.16;'); };
   MAT.wave.customProgramCacheKey = () => 'wave';
   const CAR = {
-    paint: new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.36, metalness: 0.3, clearcoat: 1, clearcoatRoughness: 0.12, envMapIntensity: 1.2 }),
+    paint: new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.36, metalness: 0.3, clearcoat: 1, clearcoatRoughness: 0.07, envMapIntensity: 1.25 }),
     plate: new THREE.MeshStandardMaterial({ map: plateTexture(), roughness: 0.4, metalness: 0.1 }),
     chrome: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.18, metalness: 1, envMapIntensity: 1.0 }),
     glass: new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.1, metalness: 0, clearcoat: 0.6, clearcoatRoughness: 0.12, envMapIntensity: 1.3 }),
@@ -918,7 +919,7 @@ export function createWorld() {
     const gr = GRADE_U; gr.sat.value = to(gr.sat.value, look.grade[0] * (lit(look) ? 1 : 1.07)); gr.con.value = to(gr.con.value, look.grade[1] + (lit(look) ? 0 : 0.05)); blend(gr.tint.value, look.grade[2]); gr.vib.value = to(gr.vib.value, lit(look) ? 0.1 : 0.22); { const lf = look.lift || [0, 0, 0]; gr.lift.value.set(to(gr.lift.value.x, lf[0]), to(gr.lift.value.y, lf[1]), to(gr.lift.value.z, lf[2])); } gr.curve.value = to(gr.curve.value, lit(look) ? 0.08 : 0.18);
     stars.visible = !!look.night; moon.visible = !!look.night;
     MAT.eyes.color.setScalar(look.night ? 2.6 : look.dusk ? 1.6 : R.tunK > 0.5 ? 1.2 : 0.5).multiply(EYEC);
-    headlight.intensity = lit(look) ? 220 : 0; carGlow.intensity = look.night ? 9 : look.dusk ? 4 : 0; { const tg = look.night ? 1 : look.dusk ? 0.6 : 0; tailGlow.forEach((s) => { s.material.opacity = tg; }); tailWash.material.opacity = tg * 0.9; } fill.intensity = look.night ? 42 : look.dusk ? 22 : look.rays ? 12 : 0;   // (high above: close over their heads it blew them out into a glare)
+    headlight.intensity = lit(look) ? 220 : 0; carGlow.intensity = look.night ? 9 : look.dusk ? 4 : 0; cabinLight.intensity = look.night ? 2.4 : look.dusk ? 1.2 : 0; { const tg = look.night ? 1 : look.dusk ? 0.6 : 0; tailGlow.forEach((s) => { s.material.opacity = tg; }); tailWash.material.opacity = tg * 0.9; } fill.intensity = look.night ? 42 : look.dusk ? 22 : look.rays ? 12 : 0;   // (high above: close over their heads it blew them out into a glare)
     bloom.threshold = lit(look) ? 2.2 : 1.9; bloom.strength = (lit(look) ? 0.24 : 0.26) * (look.bloomK || 1);   // only the sun's disc and the lamps glow
     renderer.toneMappingExposure = to(renderer.toneMappingExposure, look.exp || 1);
     roadMat.roughness = to(roadMat.roughness, look.night ? 0.42 : look.rays ? 0.7 : look.glow >= 1.4 ? 0.55 : 0.6);   // wetter-looking at night, a sheen under a low sun
@@ -967,6 +968,7 @@ export function createWorld() {
       scarf = []; let parent = new THREE.Group(); parent.position.set(spec.scarfAt[0], spec.scarfAt[1], spec.scarfAt[2]); parent.scale.setScalar(0.74); neck.add(parent);
       spec.part.scarf.forEach((geo, i) => { const g = new THREE.Group(); g.position.set(0, 0, i ? 0.125 : 0.06); parent.add(g); addParts(g, geo, {}); scarf.push(g); parent = g; });
     }
+    if (spec.lean) root.rotation.x = spec.lean;   // leaning back in her seat
     root.userData.home = { p: root.position.clone(), r: root.rotation.clone(), s: root.scale.clone() };
     return { root: root, neck: neck, arms: arms, hair: hair, scarf: scarf };
   }
@@ -989,6 +991,7 @@ export function createWorld() {
     tailGlow.forEach((s, q) => { s.position.set((q ? 1 : -1) * 0.6, 0.63, m.len + 0.08); player.add(s); });
     tailWash.position.set(0, 0.03, m.len + 1.4); player.add(tailWash);
     nitroLight.position.set(0, 0.5, m.len + 1.2); player.add(nitroLight);
+    cabinLight.position.set(0, 1.25, -0.25); player.add(cabinLight);
     playerCarId = id;
   }
 
@@ -1012,7 +1015,7 @@ export function createWorld() {
     for (let i = 0; i < n * 0.3; i++) sparks.emit(x, y + 0.6, z, fx * 6 + (Math.random() - 0.5) * 10, 3 + Math.random() * 7, fz * 6 + (Math.random() - 0.5) * 10, 0.12, 0.05, cols[i % 2], 1, 0.5 + Math.random() * 0.5, 14);   // glints of glass
     const nShard = Math.min(18, Math.round(n / 4));
     for (let i = 0; i < nShard; i++) {
-      const kind = i % 6, sz = kind < 3 ? [0.3 + Math.random() * 0.4, 0.07, 0.22 + Math.random() * 0.3] : kind < 5 ? [0.4, 0.09, 0.12] : [0.16, 0.02, 0.16], fv = v * (0.4 + Math.random() * 0.35) + 5;
+      const kind = i % 6, sz = kind < 3 ? [0.16 + Math.random() * 0.2, 0.09, 0.12 + Math.random() * 0.14] : kind < 5 ? [0.26, 0.12, 0.12] : [0.14, 0.05, 0.14], fv = v * (0.4 + Math.random() * 0.35) + 5;
       shard(x, y + 0.6, z, fx * fv + (Math.random() - 0.5) * 11, 3 + Math.random() * 8, fz * fv + (Math.random() - 0.5) * 11, sz, kind < 3 ? '#c8101c' : kind < 5 ? '#1a1a1a' : '#cfe6f4', y + 0.02);
     }
     const dust = R.W && R.W.off ? '#a49a7c' : '#c4bcb0';
@@ -1035,7 +1038,7 @@ export function createWorld() {
       if (o.y < o.floor) { o.y = o.floor; o.vy = Math.abs(o.vy) * 0.3; o.vx *= 0.55; o.vz *= 0.55; o.wx *= 0.4; o.wy *= 0.4; o.wz *= 0.4; if (Math.abs(o.vy) < 0.6) { o.vy = 0; o.rx = Math.round(o.rx / Math.PI) * Math.PI; o.rz = Math.round(o.rz / Math.PI) * Math.PI; } }
       const k = Math.min(1, (o.max - o.life) / 0.5);   // they shrink away at the end
       SHE.set(o.rx, o.ry, o.rz); SHQ.setFromEuler(SHE); SHS.set(o.sz[0] * k, o.sz[1] * k, o.sz[2] * k); SHP.set(o.x, o.y, o.z);
-      SHM.compose(SHP, SHQ, SHS); shards.setMatrixAt(n, SHM); shards.setColorAt(n, SHC.set(o.col)); n++;
+      if (SHP.distanceTo(camera.position) < 2.4) SHS.setScalar(0); SHM.compose(SHP, SHQ, SHS); shards.setMatrixAt(n, SHM); shards.setColorAt(n, SHC.set(o.col)); n++;
     }
     shards.count = n; shards.instanceMatrix.needsUpdate = true; if (shards.instanceColor) shards.instanceColor.needsUpdate = true;
   }
@@ -1068,7 +1071,7 @@ export function createWorld() {
       const out = 2 + Math.random() * 2.5;
       R.flying.push({ obj: obj, kind: kind, side: Math.random() < 0.5 ? -1 : 1, v: new THREE.Vector3(fx * v0 * 0.5 + rx * side * out, up, fz * v0 * 0.5 + rz * side * out), w: new THREE.Vector3((Math.random() - 0.5) * spin, (Math.random() - 0.5) * spin, (Math.random() - 0.5) * spin), rest: false });
     };
-    if (R.couple) { toss(R.couple.drv.root, 1, 8 + Math.random() * 2, 11, 'person'); toss(R.couple.her.root, -1, 9 + Math.random() * 2, 12, 'person'); }
+    if (R.couple) { R.couple.drv.root.userData.arms = R.couple.drv.arms; R.couple.her.root.userData.arms = R.couple.her.arms; toss(R.couple.drv.root, 1, 8 + Math.random() * 2, 11, 'person'); toss(R.couple.her.root, -1, 9 + Math.random() * 2, 12, 'person'); }
     const lw = wheels[2 + (Math.random() < 0.5 ? 0 : 1)]; toss(lw, 0, 6.5, 0, 'wheel'); if (lw.parent === scene) lw.rotation.z += 0.38;   // tilted as it goes, its alloy face showing
   }
   const WQ = new THREE.Quaternion(), WV = new THREE.Vector3();
@@ -1077,7 +1080,9 @@ export function createWorld() {
       const o = f.obj, ahead = (o.position.x - cx) * fx + (o.position.z - cz) * fz, floor = E.heightAt(W, W.s + ahead) + (roadY - E.heightAt(W, W.s)) + (f.kind === 'wheel' ? 0.34 : 0.14);
       if (!f.rest) {
         f.v.y -= TG * dt; o.position.addScaledVector(f.v, dt);
+        if (f.kind === 'person' && o.userData.arms) o.userData.arms.forEach((A, i) => { A.sh.rotation.x = Math.sin(W.t * 0.3 + i * 2.1) * 1.4; A.sh.rotation.z = (i ? -1 : 1) * (1 + Math.cos(W.t * 0.23 + i) * 0.7); A.el.rotation.x = 0.4 + Math.sin(W.t * 0.4 + i) * 0.4; });
         if (f.kind === 'person') { o.rotation.x += f.w.x * dt; o.rotation.y += f.w.y * dt; o.rotation.z += f.w.z * dt; } else o.rotation.x -= 20 * dt;
+        if (f.kind === 'wheel') o.visible = !nearCam(o);
         if (o.position.y < floor) {
           o.position.y = floor; f.v.y = Math.abs(f.v.y) * 0.32; f.v.x *= 0.62; f.v.z *= 0.62; f.w.multiplyScalar(0.45);
           for (let i = 0; i < 8; i++) smoke.emit(o.position.x, floor, o.position.z, (Math.random() - 0.5) * 3, 0.8, (Math.random() - 0.5) * 3, 0.5, 1.4, '#c8c0b4', 0.5, 1);
@@ -1100,6 +1105,8 @@ export function createWorld() {
       }
     }
   }
+  function nearCam(o) { o.getWorldPosition(SCV2); return SCV2.distanceTo(camera.position) < 2.4; }
+  const SCV2 = new THREE.Vector3();
   function restore() {   // everyone and everything back where it belongs in the car
     for (const f of R.flying) { const o = f.obj, h = o.userData.home; player.add(o); o.position.copy(h.p); o.rotation.copy(h.r); o.scale.copy(h.s); }
     R.flying.length = 0;
@@ -1108,25 +1115,26 @@ export function createWorld() {
   // ---------------------------------------------------------------- the two of you, moving: his hands on the wheel, her arms and head by her mood, her hair in the wind
   const SCV = new THREE.Vector3();
   const POSES = {   // [left shoulder forward, left out, left elbow, right forward, right out, right elbow, head turn, head nod, left turn, right turn]
-    idle: [0.14, 0.22, 0.9, 0.14, -0.22, 0.9, 0, 0, 0.35, -0.35],
+    idle: [0.12, -0.95, 1.15, 0.14, -0.22, 0.9, 0, 0, 0.2, -0.35],
     ask: [0.55, 0.12, 1.05, 1.15, -0.25, 0.75, -0.55, -0.05, 0, -0.4],
-    cheer: [0.3, -2.75, 0.35, 0.3, 2.75, 0.35, 0, -0.25, 0, 0],
+    cheer: [0.3, -2.6, 0.7, 0.3, 2.6, 0.7, 0, -0.25, 0, 0],
     wave: [0.55, 0.12, 1.05, 0.2, 2.5, 0.6, -0.3, -0.1, 0, 0],
     scared: [1.5, 0.25, 2.3, 1.5, -0.25, 2.3, 0, 0.3, 0, 0],
     sad: [0.45, 0.05, 1.2, 0.45, -0.05, 1.2, 0, 0.35, 0, 0]
   };
   function animateCouple(W, dt, t) {
     const C = R.couple; if (!C) return;
+    if (R.flying.length) { if (C.scarf) C.scarf.visible = false; return; }   // thrown clear: their limbs are the crash's to move
     const k = Math.min(1, dt * 9), cur = C.cur, her = W.her || { k: 'idle', side: 0, t: 0 };
     let tgt = (POSES[her.k] || POSES.idle).slice();
-    if (her.k === 'point') { const d = her.side || 1; tgt = d < 0 ? [1.45, 0, 0.05, 0.55, -0.12, 1.05, 0.55, -0.1, 0.75, 0] : [0.55, 0.12, 1.05, 1.45, 0, 0.05, -0.55, -0.1, 0, -0.75]; }
+    if (her.k === 'point') { const d = her.side || 1; tgt = d < 0 ? [1.4, 0, 0.3, 0.14, -0.22, 0.9, 0.55, -0.1, 0.75, 0] : [0.14, 0.22, 0.9, 1.4, 0, 0.3, -0.55, -0.1, 0, -0.75]; }
     if (her.k === 'cheer' || her.k === 'wave') { const w = Math.sin(t / 90) * 0.3; tgt[4] += her.k === 'wave' ? w * 1.4 : w; if (her.k === 'cheer') tgt[1] -= w; }
     if (her.k === 'idle') { tgt[6] = Math.sin(t / 2300) * 0.45 + (W.drift ? -W.drift * 0.4 : 0); tgt[7] = Math.sin(t / 1700) * 0.06; }
     if (her.k === 'ask') tgt[7] += Math.sin(t / 120) * 0.08;
     for (let i = 0; i < 10; i++) cur[i] = cur[i] == null ? tgt[i] : cur[i] + (tgt[i] - cur[i]) * k;
     const H = C.her; H.arms[0].sh.rotation.x = cur[0]; H.arms[0].sh.rotation.z = cur[1]; H.arms[0].el.rotation.x = cur[2];
     H.arms[1].sh.rotation.x = cur[3]; H.arms[1].sh.rotation.z = cur[4]; H.arms[1].el.rotation.x = cur[5];
-    H.neck.rotation.y = cur[6]; H.neck.rotation.x = cur[7]; H.neck.rotation.z = -0.14; H.arms[0].sh.rotation.y = cur[8]; H.arms[1].sh.rotation.y = cur[9];
+    H.neck.rotation.y = cur[6]; H.neck.rotation.x = cur[7]; H.neck.rotation.z = 0.05; H.arms[0].sh.rotation.y = cur[8]; H.arms[1].sh.rotation.y = cur[9];
     // her hair: hanging down when you're still, streaming out behind at speed, fluttering
     const sp = Math.min(1, W.v / 40);
     { const C = R.couple, sc = C.scarf; sc.visible = !R.flying.length;
@@ -1150,7 +1158,7 @@ export function createWorld() {
     C.wheel.rotation.z = -st * 1.5;
     D.arms[0].sh.rotation.x = 0.7 - st * 0.2; D.arms[0].sh.rotation.z = 0.12; D.arms[0].sh.rotation.y = 0; D.arms[0].el.rotation.x = 0.55;
     D.arms[1].sh.rotation.x = gl ? 0.2 : 0.7 + st * 0.2; D.arms[1].sh.rotation.z = gl ? 2.7 + Math.sin(t / 100) * 0.2 : -0.12; D.arms[1].sh.rotation.y = 0; D.arms[1].el.rotation.x = gl ? 0.4 : 0.55;
-    D.neck.rotation.y = -st * 0.22 + (her.k === 'ask' ? 0.3 : 0); D.neck.rotation.x = 0;
+    D.neck.rotation.y = -st * 0.22 + (her.k === 'ask' ? 0.3 : 0); D.neck.rotation.x = 0.09;
     // both lean a little into the bends
     if (!R.flying.length) D.root.rotation.z = H.root.rotation.z = -st * Math.min(1, W.v / 50) * 0.22;
   }

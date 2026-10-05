@@ -610,6 +610,7 @@ function spider() {
   }
   for (const sd of [-1, 1]) { const hw = at(0)[1];
     k.box(0.05, 0.11, 1.75, sd * (hw - 0.01), 0.3, 0, '#151517', 0, 0, 0, 'trim').box(0.02, 0.018, 1.7, sd * (hw + 0.015), 0.4, 0, '#d6d9dc', 0, 0, 0, 'chrome'); }   // the sills
+  for (const sd of [-1, 1]) k.box(0.012, 0.016, 1.7, sd * (at(0)[1] + 0.001), 0.68, 0.05, '#e2e5e8', 0, 0, 0, 'chrome');   // a chrome strip along the waist
   // red brake calipers (they stay put while the wheels turn)
   const wx = w / 2 - 0.08;
   for (const z of wz) for (const sd of [-1, 1]) k.box(0.05, 0.13, 0.17, sd * (wx - 0.15), 0.43, z - 0.1, '#d01818', 0, 0, 0, 'lit');
@@ -635,7 +636,7 @@ export function people() {
   const P = (fn) => { const k = new Kit(); fn(k); return k.build(); };
   const cap = (r, l) => new THREE.CapsuleGeometry(r, l, 4, 10);
   const one = (o) => ({
-    torso: P((k) => { k.put(cap(o.chest, 0.3), o.top, 0, 0.3, 0, 0, 0, 0, o.wide, 1, 0.72, 'lit'); for (const sd of [-1, 1]) k.ball(o.arm * 1.35, sd * o.chest * o.wide * 0.98, 0.55, 0, o.sleeve, 1, 0.9, 1, 'lit', 10); if (o.collar) for (const sd of [-1, 1]) k.box(0.09, 0.03, 0.07, sd * 0.05, 0.62, -0.06, '#e4e4de', 0, 0, sd * 0.5, 'lit'); k.cyl(0.05, 0.055, 0.14, 8, 0, 0.6, 0, o.skin); if (o.strap) { k.box(0.04, 0.2, 0.04, -0.1, 0.48, -0.1, o.skin); k.box(0.04, 0.2, 0.04, 0.1, 0.48, -0.1, o.skin); } }),
+    torso: P((k) => { k.put(cap(o.chest, 0.3), o.top, 0, 0.3, 0, 0, 0, 0, o.wide, 1, 0.72, 'lit'); for (const sd of [-1, 1]) k.ball(o.arm * 1.1, sd * o.chest * o.wide * 0.9, 0.53, 0, o.sleeve, 1, 0.85, 1, 'lit', 10); if (o.collar) for (const sd of [-1, 1]) k.box(0.09, 0.03, 0.07, sd * 0.05, 0.62, -0.06, '#e4e4de', 0, 0, sd * 0.5, 'lit'); k.cyl(0.05, 0.055, 0.14, 8, 0, 0.6, 0, o.skin); if (o.strap) { k.box(0.04, 0.2, 0.04, -0.1, 0.48, -0.1, o.skin); k.box(0.04, 0.2, 0.04, 0.1, 0.48, -0.1, o.skin); } }),
     head: P((k) => {
       k.ball(0.122, 0, 0.13, 0, o.skin, 1, 1.15, 1.06, 'lit', 16);
       k.ball(0.021, 0, 0.112, -0.122, o.skin, 0.9, 0.95, 0.75, 'lit', 8);   // the nose   // the nose
@@ -665,7 +666,7 @@ export function people() {
       k.put(new THREE.TorusGeometry(0.03, 0.006, 5, 12, Math.PI), o.shades ? '#8a4a3a' : '#c8304a', 0, 0.083, -0.114, 0, 0, Math.PI, 1, 0.8, 0.45, 'lit');   // a smile
     }),
     upper: P((k) => k.put(cap(o.arm, 0.2), o.sleeve, 0, -0.14, 0)),
-    fore: P((k) => { k.put(cap(o.arm * 0.9, 0.17), o.skin, 0, -0.12, 0); k.box(0.07, 0.085, 0.055, 0, -0.32, 0, o.skin, 0, 0, 0, 'lit').ball(0.022, 0.036, -0.255, -0.018, o.skin, 1, 1.3, 1, 'lit', 8); }),   // a mitten hand and thumb
+    fore: P((k) => { k.ball(o.arm * 1.25, 0, 0, 0, o.long ? o.skin : o.sleeve, 1, 1, 1, 'lit', 8); k.put(new THREE.CylinderGeometry(o.arm * 0.95, o.arm * 0.72, 0.22, 10), o.skin, 0, -0.12, 0, 0, 0, 0, 1, 1, 1, 'lit'); k.box(0.07, 0.085, 0.055, 0, -0.32, 0, o.skin, 0, 0, 0, 'lit').ball(0.022, 0.036, -0.255, -0.018, o.skin, 1, 1.3, 1, 'lit', 8); }),   // a mitten hand and thumb
     hair: o.long ? [0, 1, 2].map((i) => P((k) => {
       const w = 0.11 - i * 0.016, c = ['#f0cd78', '#ecc66e', '#e6be66', '#deb45e', '#d6a852'][i];
       k.ball(0.07, 0, 0, 0.07, c, w / 0.14, w / 0.15, 1.5, 'lit', 14);   // one smooth length of tail, overlapping the next
@@ -677,7 +678,7 @@ export function people() {
   const sw = P((k) => { k.put(new THREE.TorusGeometry(0.175, 0.022, 8, 24), '#151515', 0, 0, 0, 0, 0, 0, 1, 1, 1, 'trim'); k.box(0.3, 0.03, 0.02, 0, 0, 0, '#202020', 0, 0, 0, 'trim').cyl(0.045, 0.045, 0.03, 12, 0, 0, 0, '#2a2a2e', Math.PI / 2, 0, 'trim'); });
   return {
     driver: { part: driver, seat: [0.4, 0.72, 0.42], neck: 0.68, shoulder: [0.205, 0.56, 0], elbow: 0.27, scale: 1.2 },
-    girl: { part: girl, seat: [-0.4, 0.71, 0.5], neck: 0.66, shoulder: [0.18, 0.54, 0], elbow: 0.26, hairAt: [-0.085, 0.19, 0.09], scarfAt: [-0.085, -0.03, 0.04], scale: 1.18 },
+    girl: { part: girl, seat: [-0.4, 0.68, 0.6], lean: 0.2, neck: 0.66, shoulder: [0.18, 0.54, 0], elbow: 0.26, hairAt: [-0.085, 0.19, 0.09], scarfAt: [-0.085, -0.03, 0.04], scale: 1.18 },
     wheel: { geo: sw, at: [0.4, 0.98, -0.08], tilt: 0.45 }
   };
 }
