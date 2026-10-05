@@ -877,7 +877,7 @@ export function createWorld() {
     for (let c = need0; c <= need1; c++) {
       const ch = R.chunks.get(c), want = Math.min((c + 1) * CH, E.lastIndex(W));
       if (ch && ch.userData.i1 >= want && !ch.userData.dirty) continue;
-      if (made >= (R.built ? 2 : 99)) break;
+      if (made >= (R.built ? 2 : 4)) break;
       if (ch) { dropChunk(ch); R.chunks.delete(c); }
       const g = buildChunk(W, c); if (g) { scene.add(g); R.chunks.set(c, g); }
       made++;
@@ -951,7 +951,7 @@ export function createWorld() {
   function addParts(group, geo, mats) { for (const k in geo) if (geo[k] && (mats[k] || CAR[k])) { const mesh = new THREE.Mesh(geo[k], mats[k] || CAR[k]); mesh.castShadow = k !== 'glow'; group.add(mesh); } }
   function personOf(spec) {   // a body with a neck, two shoulders and two elbows that bend, and (hers) a streaming tail of hair
     const root = new THREE.Group(); root.position.set(spec.seat[0], spec.seat[1], spec.seat[2]); root.scale.setScalar(spec.scale || 1); addParts(root, spec.part.torso, {});
-    const neck = new THREE.Group(); neck.position.set(0, spec.neck, 0); neck.scale.setScalar(1.52); root.add(neck); addParts(neck, spec.part.head, {});
+    const neck = new THREE.Group(); neck.position.set(0, spec.neck, 0); neck.scale.setScalar(1.32); root.add(neck); addParts(neck, spec.part.head, {});
     const arms = [-1, 1].map((sd) => {
       const sh = new THREE.Group(); sh.position.set(sd * spec.shoulder[0], spec.shoulder[1], spec.shoulder[2]); root.add(sh); addParts(sh, spec.part.upper, {});
       const el = new THREE.Group(); el.position.set(0, -spec.elbow, 0); sh.add(el); addParts(el, spec.part.fore, {});
@@ -1160,6 +1160,7 @@ export function createWorld() {
   function render(W, t, mode) {
     const dt = R.lastT ? Math.min(0.1, (t - R.lastT) / 1000) : 1 / 60; R.lastT = t;
     if (R.W !== W) reset(W);
+    if (!R.warm && (R.frames = (R.frames || 0) + 1) > 3) warmUp();   // once the title is up and running
     poses(W, E.segIndex(W.s + E.VIEW + 240));
     updateChunks(W);
     // which place we're in: the light, the sky and the far hills follow it
@@ -1197,7 +1198,7 @@ export function createWorld() {
     const sh = player.userData.shadow; sh.position.y = 0.05 - (W.h - E.heightAt(W, W.s)) - lift; sh.material.opacity = Math.max(0.15, 1 - (W.h - E.heightAt(W, W.s) + lift) * 0.2);
     // ---- the camera: behind and above, swinging round late, wider as you go faster
     R.crashK += ((cr && cr.hard ? 1 : 0) - R.crashK) * Math.min(1, dt * 2.5);
-    const spd = W.v / E.VMAX, camDist = 3.25 + spd * 0.3 + R.crashK * 5.2, camH = 1.42 + spd * 0.1 + R.crashK * 2.4;
+    const spd = W.v / E.VMAX, camDist = 4.4 + spd * 0.5 + R.crashK * 3.8, camH = 2.15 + spd * 0.2 + R.crashK * 1.7;   // high enough to see the road ahead over the two of you
     const yawTarget = travel * 0.55 + heading * 0.45;
     if (!R.camInit) { R.camYaw = yawTarget; }
     let dy = yawTarget - R.camYaw; while (dy > Math.PI) dy -= 2 * Math.PI; while (dy < -Math.PI) dy += 2 * Math.PI;
@@ -1212,13 +1213,13 @@ export function createWorld() {
     R.camPos.y = V3.y;
     camera.position.copy(R.camPos);
     if (W.shake > 0 && R.shakeOn !== false) camera.position.add(V4.set((Math.random() - 0.5) * W.shake * 0.02, (Math.random() - 0.5) * W.shake * 0.02, 0));
-    V4.set(cx + fx * 7 * (1 - R.crashK * 0.85), R.camY + 1.05 + (cy - R.camY) * 0.35 + lift * 0.7 * R.crashK, cz + fz * 7 * (1 - R.crashK * 0.85));
+    V4.set(cx + fx * 12 * (1 - R.crashK * 0.9), R.camY + 1.55 + (cy - R.camY) * 0.35 + lift * 0.7 * R.crashK, cz + fz * 7 * (1 - R.crashK * 0.85));
     if (R.camShake > 0) { camera.position.add(V3.set((Math.random() - 0.5) * R.camShake, (Math.random() - 0.5) * R.camShake, (Math.random() - 0.5) * R.camShake)); R.camShake = Math.max(0, R.camShake - dt * 1.4); }
     camera.lookAt(V4);
     fill.position.copy(camera.position).add(V3.set(0, 0.6, 0)); fill.target.position.set(cx, cy + 1.62, cz);
     camera.rotation.z += POS.bank * 0.35 - W.steer * spd * 0.02;
     if (R.debugCam) { camera.position.set(cx + R.debugCam[0], cy + R.debugCam[1], cz + R.debugCam[2]); camera.lookAt(cx + R.debugCam[3], cy + (R.debugCam[5] || 0), cz + R.debugCam[4]); }
-    camera.fov += ((49 + spd * 4 + (W.boosting ? 8 : 0)) - camera.fov) * Math.min(1, dt * 3); camera.updateProjectionMatrix();
+    camera.fov += ((53 + spd * 6 + (W.boosting ? 8 : 0)) - camera.fov) * Math.min(1, dt * 3); camera.updateProjectionMatrix();
     // the sky things go round with the camera
     sky.position.copy(camera.position); stars.position.copy(camera.position);
     turnRing(W, dt); ringFar.position.set(camera.position.x, camera.position.y - (ringFar.userData.hz || 0) - 30, camera.position.z);
@@ -1390,6 +1391,22 @@ export function createWorld() {
     R.low = low; renderer.shadowMap.enabled = !low; sun.castShadow = !low; R.view = low ? 650 : E.VIEW; renderer.shadowMap.needsUpdate = true;
     skyMat.defines.OCT = low ? 3 : 5; skyMat.needsUpdate = true;
     for (const [, ch] of R.chunks) ch.userData.dirty = true;   // rebuilt with less far scenery
+  }
+  function warmUp() {
+    if (R.warm) return; R.warm = true;
+    const g = new THREE.Group(), box = new THREE.BoxGeometry(0.01, 0.01, 0.01), mats = [...Object.values(MAT), ...Object.values(CAR), roadMat, rumbleMat, slowMat, poolMat, groundMat, seaMat];
+    for (const m of mats) if (m && m.isMaterial) g.add(new THREE.Mesh(box, m));
+    g.position.set(0, -500, 0); scene.add(g);
+    const hidden = [bubble, glint, ...flames, ...tailGlow, tailWash].filter(Boolean), was = hidden.map((o) => o.visible);
+    hidden.forEach((o) => { o.visible = true; });
+    const done = () => { scene.remove(g); hidden.forEach((o, i) => { o.visible = was[i]; }); };
+    try {   // for the picture as drawn through the glow and grade (into a render target: linear colour) and straight to the screen (a slow PC)
+      const prev = renderer.getRenderTarget(); renderer.setRenderTarget(composer.readBuffer); renderer.compile(scene, camera); renderer.setRenderTarget(prev);
+      if (renderer.compileAsync) renderer.compileAsync(scene, camera).then(done, done); else { renderer.compile(scene, camera); done(); }
+    } catch (e) { done(); }
+    for (let tt = 0; tt < MD.TRAFFIC_ORDER.length; tt++) for (let cc = 0; cc < 6; cc++) MD.trafficModel(tt, cc);   // every car, van and bus built now, not as it first appears
+    for (const m of mats) if (m && m.map) { try { renderer.initTexture(m.map); } catch (e) {} }
+    for (const t of [flameMat.map, flameCore.map, rays.material.map, glint.material.map]) if (t) { try { renderer.initTexture(t); } catch (e) {} }
   }
   return { render: render, setSize: setSize, quality: quality, reset: () => { R.W = null; }, setShake: (on) => { R.shakeOn = on; }, renderer: renderer, scene: scene, camera: camera, debugCam: (v) => { R.debugCam = v; } };
 }

@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=11';
+import { createWorld } from './world3d.js?v=12';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 const GW = 384, GH = 224;
@@ -371,23 +371,79 @@ function sound(name, S, e) {
   }
 }
 let AU = null;
-function makeAudio(a, bus) {
+// the engine: a high-revving flat-plane V8 - exhaust pulses at the firing rate (four a revolution) with a rich, rasping
+// harmonic stack, a growl an octave down, pulsed exhaust noise, soft clipping and the pipes' resonances; the throttle opens
+// it up, lifting off it goes flat and pops. Built so the same graph can be rendered offline (engineSample, for a listen).
+function engineGraph(a, bus) {
   const o = {};
-  o.g = a.createGain(); o.g.gain.value = 0; o.f = a.createBiquadFilter(); o.f.type = 'lowpass'; o.f.Q.value = 3; o.f.frequency.value = 600;
-  o.f.connect(o.g); o.g.connect(bus);
-  o.o1 = a.createOscillator(); o.o1.type = 'sawtooth'; o.o2 = a.createOscillator(); o.o2.type = 'square'; o.o3 = a.createOscillator(); o.o3.type = 'triangle';
-  const m1 = a.createGain(), m2 = a.createGain(), m3 = a.createGain(); m1.gain.value = 0.5; m2.gain.value = 0.32; m3.gain.value = 0.4;
-  o.o4 = a.createOscillator(); o.o4.type = 'sawtooth'; const m4 = a.createGain(); m4.gain.value = 0.38; o.o4.connect(m4);
-  o.ws = a.createWaveShaper(); const curve = new Float32Array(1024); for (let i = 0; i < 1024; i++) { const x = i / 511.5 - 1; curve[i] = Math.tanh(x * 2.2) / Math.tanh(2.2); } o.ws.curve = curve; o.ws.oversample = '2x';
-  o.o1.connect(m1); o.o2.connect(m2); o.o3.connect(m3); m1.connect(o.ws); m2.connect(o.ws); m3.connect(o.ws); m4.connect(o.ws); o.ws.connect(o.f); o.o4.start();
-  o.o1.start(); o.o2.start(); o.o3.start();
+  const harm = 28, re = new Float32Array(harm + 1), im = new Float32Array(harm + 1);
+  for (let n = 1; n <= harm; n++) im[n] = (n % 2 ? 1 : 0.62) / Math.pow(n, 0.78) * (n === 3 || n === 5 ? 1.25 : 1);   // a buzzing pulse: odd harmonics a touch louder (the rasp)
+  const wave = a.createPeriodicWave(re, im, { disableNormalization: false });
+  o.main = a.createOscillator(); o.main.setPeriodicWave(wave);
+  o.sub = a.createOscillator(); o.sub.type = 'sawtooth';          // an octave down: the growl
+  o.whine = a.createOscillator(); o.whine.type = 'sine';          // two octaves up: the cams and the intake howl
+  const gMain = a.createGain(), gSub = a.createGain(), gWhine = a.createGain(); gMain.gain.value = 0.5; gSub.gain.value = 0.2; o.gWhine = gWhine; gWhine.gain.value = 0.05;
+  o.main.connect(gMain); o.sub.connect(gSub); o.whine.connect(gWhine);
+  // exhaust noise, pulsed at the firing rate
+  const len = Math.floor(a.sampleRate * 2), nb = a.createBuffer(1, len, a.sampleRate), nd = nb.getChannelData(0);
+  for (let i = 0; i < len; i++) nd[i] = Math.random() * 2 - 1;
+  o.noise = a.createBufferSource(); o.noise.buffer = nb; o.noise.loop = true;
+  const nf = a.createBiquadFilter(); nf.type = 'bandpass'; nf.frequency.value = 1400; nf.Q.value = 0.7; o.nf = nf;
+  o.gNoise = a.createGain(); o.gNoise.gain.value = 0.04;
+  o.am = a.createOscillator(); o.am.type = 'sine'; o.gAm = a.createGain(); o.gAm.gain.value = 0.05; o.am.connect(o.gAm); o.gAm.connect(o.gNoise.gain);
+  o.noise.connect(nf); nf.connect(o.gNoise);
+  // all of it through a drive, a soft clip, the pipes' resonances and a throttle-opened low-pass
+  o.drive = a.createGain(); o.drive.gain.value = 1.4;
+  gMain.connect(o.drive); gSub.connect(o.drive); gWhine.connect(o.drive); o.gNoise.connect(o.drive);
+  const ws = a.createWaveShaper(), cv = new Float32Array(2048); for (let i = 0; i < 2048; i++) { const x = i / 1023.5 - 1; cv[i] = Math.tanh(x * 2.6) / Math.tanh(2.6); } ws.curve = cv; ws.oversample = '4x';
+  const pipe = a.createBiquadFilter(); pipe.type = 'peaking'; pipe.frequency.value = 190; pipe.Q.value = 1.1; pipe.gain.value = 7;
+  o.howl = a.createBiquadFilter(); o.howl.type = 'peaking'; o.howl.frequency.value = 1300; o.howl.Q.value = 1.6; o.howl.gain.value = 3;
+  o.lp = a.createBiquadFilter(); o.lp.type = 'lowpass'; o.lp.frequency.value = 1200; o.lp.Q.value = 0.9;
+  const hp = a.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 45;
+  o.g = a.createGain(); o.g.gain.value = 0;
+  o.drive.connect(ws); ws.connect(pipe); pipe.connect(o.howl); o.howl.connect(o.lp); o.lp.connect(hp); hp.connect(o.g); o.g.connect(bus);
+  [o.main, o.sub, o.whine, o.noise, o.am].forEach((n) => n.start());
+  return o;
+}
+// rpm 0..1 (idle to the limiter), throttle 0..1, nitro 0..1, at time t
+function engineSet(o, t, rpm, thr, nitro, crash) {
+  const RPM = 1100 + rpm * 7900, F = RPM / 60 * 4, T = 0.022;   // flat-plane V8: four firings a revolution
+  o.main.frequency.setTargetAtTime(F, t, T); o.sub.frequency.setTargetAtTime(F / 2, t, T); o.whine.frequency.setTargetAtTime(F * 4.01, t, T); o.am.frequency.setTargetAtTime(F, t, T);
+  o.nf.frequency.setTargetAtTime(900 + rpm * 2600, t, 0.05);
+  o.gNoise.gain.setTargetAtTime(0.02 + thr * 0.04 + nitro * 0.03, t, 0.05); o.gAm.gain.setTargetAtTime(0.03 + thr * 0.05, t, 0.05);
+  o.gWhine.gain.setTargetAtTime(0.03 + rpm * rpm * 0.08 + nitro * 0.06, t, 0.05);
+  o.drive.gain.setTargetAtTime(0.9 + thr * 1.1 + rpm * 0.6 + nitro * 0.5, t, 0.04);
+  o.lp.frequency.setTargetAtTime(500 + thr * (900 + rpm * 4200) + nitro * 1500, t, 0.04);
+  o.howl.frequency.setTargetAtTime(900 + rpm * 1400, t, 0.05); o.howl.gain.setTargetAtTime(2 + rpm * 5 + nitro * 3, t, 0.05);
+  o.g.gain.setTargetAtTime(crash ? 0.012 : (0.06 + rpm * 0.05) * (0.55 + thr * 0.45), t, 0.04);
+}
+function makeAudio(a, bus) {
+  const o = engineGraph(a, bus);
   const len = Math.floor(a.sampleRate * 2), buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
   for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
-  const loop = (type, freq, q) => { const s = a.createBufferSource(), f = a.createBiquadFilter(), gn = a.createGain(); s.buffer = buf; s.loop = true; f.type = type; f.frequency.value = freq; f.Q.value = q; gn.gain.value = 0; s.connect(f); f.connect(gn); gn.connect(bus); s.start(0, Math.random()); return { f: f, g: gn }; };
+  const loop = (type, freq, q) => { const s = a.createBufferSource(), f = a.createBiquadFilter(), gn = a.createGain(); s.buffer = buf; s.loop = true; f.type = type; f.frequency.value = freq; f.Q.value = q; gn.gain.value = 0; s.connect(f); f.connect(gn); gn.connect(bus); s.start(); return { f: f, g: gn }; };
   o.wind = loop('bandpass', 900, 0.6); o.skid = loop('bandpass', 2400, 7); o.rumble = loop('lowpass', 160, 1);
   return o;
 }
-const GEARS = [0, 0.19, 0.37, 0.56, 0.76, 0.98, 1.4];
+// a sports-car run through the gears, rendered offline: for checking the sound (window.CRengineSample(seconds) -> a WAV blob)
+window.CRengineSample = function (sec) {
+  const SR = 44100, a = new OfflineAudioContext(1, Math.floor(SR * sec), SR), bus = a.createGain(); bus.gain.value = 2.2; bus.connect(a.destination);
+  const o = engineGraph(a, bus); let gear = 1, rpm = 0.08;
+  for (let t = 0; t < sec; t += 1 / 60) {
+    let thr = 1, shift = false;
+    if (t < 1.2) { rpm = 0.08 + (t > 0.5 && t < 0.9 ? 0.5 * Math.sin((t - 0.5) / 0.4 * Math.PI) : 0); thr = t > 0.5 && t < 0.9 ? 1 : 0.2; }   // idle, a blip
+    else if (gear <= 5 && rpm < 0.97) rpm += (0.42 / gear) / 60;
+    else if (gear < 5) { gear++; rpm = 0.58; shift = true; }
+    else { thr = 0.15; rpm = Math.max(0.3, rpm - 0.25 / 60); }   // lifting off
+    engineSet(o, t, rpm, shift ? 0.1 : thr, 0, false);
+  }
+  return a.startRendering().then((b) => { const d = b.getChannelData(0), n = d.length, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+    const w = (p, s2) => { for (let i = 0; i < s2.length; i++) v.setUint8(p + i, s2.charCodeAt(i)); };
+    w(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); w(8, 'WAVEfmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, SR, true); v.setUint32(28, SR * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, 'data'); v.setUint32(40, n * 2, true);
+    for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, Math.max(-1, Math.min(1, d[i])) * 32767, true);
+    return Array.from(new Uint8Array(buf)); });
+};
+const GEARS = [0, 0.17, 0.33, 0.5, 0.68, 0.86, 1.05, 1.5];
 // the music: a track for each place (made with ACE-Step, tools/coastrun/gen_music.py), fading from one to the next at the
 // checkpoints, a jingle at the goal and a sting when time runs out. Files in music/; loaded as they're needed.
 const LOOPS = { title: 1, bournemouth: 1, sandbanks: 1, christchurch: 1, purbeck: 1, swanage: 1, forest: 1, jurassic: 1, weymouth: 1, harbour: 1, lymington: 1, lyme: 1, portland: 1, goldencap: 1, hengistbury: 1, needles: 1 };
@@ -443,20 +499,20 @@ function frameAudio(W, S, mode, SET) {
   if (!a) return;
   if (!AU) { if (!playing) return; AU = makeAudio(a, S.bus() || a.destination); }
   const now = a.currentTime, T = 0.06;
-  if (!playing) { AU.g.gain.setTargetAtTime(0, now, 0.05); AU.wind.g.gain.setTargetAtTime(0, now, 0.05); AU.skid.g.gain.setTargetAtTime(0, now, 0.05); AU.rumble.g.gain.setTargetAtTime(0, now, 0.05); return; }
-  const pct = W.v / E.VMAX; let gi = 0; while (gi < 5 && pct > GEARS[gi + 1]) gi++;
-  let rpm = W.count > 0 ? 0.18 + (W.rev || 0) * 0.75 : Math.min(1.1, 0.28 + 0.72 * (pct - GEARS[gi]) / (GEARS[gi + 1] - GEARS[gi]));
+  if (!playing) { AU.g.gain.setTargetAtTime(0, now, 0.05); AU.gNoise.gain.setTargetAtTime(0, now, 0.05); AU.wind.g.gain.setTargetAtTime(0, now, 0.05); AU.skid.g.gain.setTargetAtTime(0, now, 0.05); AU.rumble.g.gain.setTargetAtTime(0, now, 0.05); return; }
+  const pct = W.v / E.VMAX; let gi = 0; while (gi < 6 && pct > GEARS[gi + 1]) gi++;
+  let rpm = W.count > 0 ? 0.06 + (W.rev || 0) * 0.85 : Math.min(1.02, 0.5 + 0.5 * (pct - GEARS[gi]) / (GEARS[gi + 1] - GEARS[gi]));
+  if (W.count <= 0 && gi === 0) rpm = Math.max(0.12, Math.min(1, 0.12 + pct / GEARS[1] * 0.85));
   if (W.timeUp) rpm *= 0.6;
-  if (W.air) rpm = Math.min(1.15, rpm + 0.15);
-  const f = 46 + rpm * 112 + gi * 6 + (W.boosting ? 18 : 0);
-  AU.o1.frequency.setTargetAtTime(f, now, 0.025); AU.o2.frequency.setTargetAtTime(f * 0.501, now, 0.025); AU.o3.frequency.setTargetAtTime(f * 2.003, now, 0.025); AU.o4.frequency.setTargetAtTime(f * 1.0065, now, 0.025);
-  // a gear change: a quick crackle from the pipes; lifting off at speed (a brake, a drift) pops and bangs
-  if (AU.gi != null && gi > AU.gi && !W.crash) { S.noise(0.05, 0.05, 1600, { type: 'bandpass', q: 1.5 }); S.noise(0.04, 0.04, 2400, { type: 'bandpass', q: 2, when: 0.07 }); }
+  if (W.air) rpm = Math.min(1.05, rpm + 0.12);   // the wheels off the ground: it flares
+  const lift = (R.braking || W.drift) && pct > 0.4 && !W.crash;
+  const shifting = AU.shiftT && now < AU.shiftT;   // a moment off the throttle as the gear goes in
+  const thr = W.crash || W.timeUp ? 0.2 : shifting ? 0.05 : lift ? 0.25 : 1;
+  engineSet(AU, now, rpm, thr, W.boosting ? 1 : 0, !!W.crash);
+  // a gear change: the revs drop with a crisp cut and a crackle from the pipes; lifting off at speed pops and bangs
+  if (AU.gi != null && gi > AU.gi && !W.crash && W.count <= 0) { AU.shiftT = now + 0.09; S.noise(0.05, 0.06, 1500, { type: 'bandpass', q: 1.5, when: 0.04 }); S.noise(0.04, 0.045, 2600, { type: 'bandpass', q: 2, when: 0.1 }); }
   AU.gi = gi;
-  const lift = (R.braking || W.drift) && pct > 0.5 && !W.crash;
-  if (lift && Math.random() < 0.09) S.noise(0.035 + Math.random() * 0.04, 0.035 + Math.random() * 0.03, 900 + Math.random() * 1400, { type: 'bandpass', q: 1.2, pan: (Math.random() - 0.5) * 0.4 });
-  AU.f.frequency.setTargetAtTime(380 + rpm * 1500 + (W.boosting ? 900 : 0) + (R.braking ? -200 : 0), now, T);
-  AU.g.gain.setTargetAtTime(W.crash ? 0.015 : 0.05 + rpm * 0.045, now, T);
+  if (lift && Math.random() < 0.11) S.noise(0.035 + Math.random() * 0.04, 0.04 + Math.random() * 0.035, 800 + Math.random() * 1500, { type: 'bandpass', q: 1.2, pan: (Math.random() - 0.5) * 0.4 });
   AU.wind.f.frequency.setTargetAtTime(600 + pct * 1800, now, T);
   AU.wind.g.gain.setTargetAtTime(Math.min(0.09, pct * pct * 0.055 + (W.boosting ? 0.03 : 0)), now, T);
   AU.skid.g.gain.setTargetAtTime(W.drift && !W.air ? 0.05 : 0, now, 0.03);
