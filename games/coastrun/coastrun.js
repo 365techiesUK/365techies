@@ -253,8 +253,8 @@ function routeMap(g, W, x0, y0, t) {   // the pyramid of places: the way you've 
 }
 function speedo(g, W, t) {   // the speed in big slanted digits, a rev bar that climbs and drops with each gear, the gear, the nitro beneath
   const xr = GW - 10, yb = GH - 9, pct = W.v / E.VMAX;
-  let gi = 0; while (gi < 7 && pct > RG[gi + 1]) gi++;
-  const rpm = W.count > 0 ? 6200 + (W.rev || 0) * 11500 : gearRpm(pct, gi), rf = Math.max(0, Math.min(1, (rpm - 4000) / 14200));
+  let gi = 0; while (gi < 6 && pct > RG[gi + 1]) gi++;
+  const rpm = W.count > 0 ? 1000 + (W.rev || 0) * 5600 : gearRpm(pct, gi), rf = Math.max(0, Math.min(1, (rpm - REV0) / (REDLINE - REV0)));
   const n = 16, sw = 3.2, gap = 1.1, x0 = xr - n * (sw + gap) + gap, y0 = yb - 27, lit = Math.round(rf * n);
   for (let i = 0; i < n; i++) {   // the rev bar: slanted segments, rising, white then amber then red
     const x = x0 + i * (sw + gap), hh = 3.5 + 4 * i / (n - 1);
@@ -440,42 +440,55 @@ function engineSet(o, t, rpm, thr, nitro, crash) {
   o.howl.frequency.setTargetAtTime(900 + rpm * 1400, t, 0.05); o.howl.gain.setTargetAtTime(2 + rpm * 5 + nitro * 3, t, 0.05);
   o.g.gain.setTargetAtTime(crash ? 0.012 : (0.06 + rpm * 0.05) * (0.55 + thr * 0.45), t, 0.04);
 }
-// the race engine is made sample by sample in engine-worklet.js (a ten-cylinder screamer); where a browser can't run that,
-// the oscillator engine above stands in
-const WORKLET = 'engine-worklet.js?v=3';
-let WL = null, WLok = false, WLdone = false;
-function loadWorklet(a) { if (WL || !a) return; WL = a.audioWorklet ? a.audioWorklet.addModule(WORKLET).then(() => { WLok = true; WLdone = true; }, () => { WLdone = true; }) : Promise.resolve().then(() => { WLdone = true; }); }
-function raceEngine(a, bus) {   // the worklet, then a touch of body and air round it
-  const node = new AudioWorkletNode(a, 'race-engine', { numberOfInputs: 0, numberOfOutputs: 1, outputChannelCount: [1] });
-  const body = a.createBiquadFilter(); body.type = 'peaking'; body.frequency.value = 260; body.Q.value = 0.9; body.gain.value = 3;
-  const top = a.createBiquadFilter(); top.type = 'lowpass'; top.frequency.value = 7000; top.Q.value = 0.5;
+// the engine: a real V12 sports car's own firings (engine-v12.wav: cut from "Supercar rev" by richwise on freesound.org,
+// CC0), replayed at the revs you're doing by engine-worklet.js; where a browser can't run that, the oscillator engine above
+const WORKLET = 'engine-worklet.js?v=4', GRAINS = 'engine-v12';
+let WL = null, WLok = false, WLdone = false, GR = null;
+function grainsFor(a) {   // the recording and its index, at this context's sample rate
+  return Promise.all([fetch(GRAINS + '.json?v=1').then((r) => r.json()), fetch(GRAINS + '.wav?v=1').then((r) => r.arrayBuffer()).then((b) => a.decodeAudioData(b))]).then(([I, buf]) => {
+    const k = buf.sampleRate / I.sr, sc = (q) => [Math.round(q[0] * k), Math.max(8, Math.round(q[1] * k))];
+    return { data: buf.getChannelData(0), sets: I.sets.map((s) => ({ f0: s.f0, rms: s.rms, grains: s.grains.map(sc) })), pops: I.pops.map(sc) };
+  });
+}
+function loadWorklet(a) {
+  if (WL || !a) return;
+  const mod = a.audioWorklet ? a.audioWorklet.addModule(WORKLET) : Promise.reject(new Error('no worklets'));
+  WL = Promise.all([mod, grainsFor(a)]).then(([, g]) => { GR = g; WLok = true; WLdone = true; }, () => { WLdone = true; });
+}
+function raceEngine(a, bus, gr) {   // the worklet fed the firings, a little weight low down, the very top rolled off
+  const node = new AudioWorkletNode(a, 'grain-engine', { numberOfInputs: 0, numberOfOutputs: 1, outputChannelCount: [1] });
+  node.port.postMessage({ data: gr.data, sets: gr.sets, pops: gr.pops });
+  const body = a.createBiquadFilter(); body.type = 'lowshelf'; body.frequency.value = 160; body.gain.value = 2.5;
+  const top = a.createBiquadFilter(); top.type = 'lowpass'; top.frequency.value = 9000; top.Q.value = 0.5;
   node.connect(body); body.connect(top); top.connect(bus);
   const P = (n) => node.parameters.get(n);
   return { node: node, rpm: P('rpm'), throttle: P('throttle'), gain: P('gain'), nitro: P('nitro') };
 }
 function makeAudio(a, bus) {
   let o;
-  if (WLok) { o = raceEngine(a, bus); o.race = true; } else o = engineGraph(a, bus);
+  if (WLok && GR) { o = raceEngine(a, bus, GR); o.race = true; } else o = engineGraph(a, bus);
   const len = Math.floor(a.sampleRate * 2), buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
   for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
   const loop = (type, freq, q) => { const s = a.createBufferSource(), f = a.createBiquadFilter(), gn = a.createGain(); s.buffer = buf; s.loop = true; f.type = type; f.frequency.value = freq; f.Q.value = q; gn.gain.value = 0; s.connect(f); f.connect(gn); gn.connect(bus); s.start(); return { f: f, g: gn }; };
   o.wind = loop('bandpass', 900, 0.6); o.skid = loop('bandpass', 2400, 7); o.rumble = loop('lowpass', 160, 1);
   return o;
 }
-// rpm in real revs a minute, throttle 0-1: an F1-style screamer, quiet enough to sit under the music and her voice
+// rpm in real revs a minute (a V12 road engine: ~1,000 idling, 7,600 at the limiter), throttle 0-1; quiet enough to sit
+// under the music and her voice, a little louder as the revs rise
 function raceSet(o, t, rpm, thr, nitro, crash) {
   o.rpm.setTargetAtTime(rpm, t, 0.012); o.throttle.setTargetAtTime(thr, t, 0.015); o.nitro.setTargetAtTime(nitro, t, 0.05);
-  o.gain.setTargetAtTime(crash ? 0.02 : 0.145 + Math.min(1, (rpm - 6000) / 12000) * 0.085, t, 0.06);
+  o.gain.setTargetAtTime(crash ? 0.03 : ENG_GAIN * (0.7 + Math.min(1, Math.max(0, (rpm - 1000) / 6500)) * 0.45), t, 0.06);
 }
+const ENG_GAIN = 0.42;
 // a racing car's run through the gears, rendered offline with the same engine: window.CRengineSample(seconds) -> WAV bytes
 window.CRengineSample = function (sec) {
   const SR = 44100, a = new OfflineAudioContext(1, Math.floor(SR * sec), SR), bus = a.createGain(); bus.gain.value = 2.6; bus.connect(a.destination);
-  return a.audioWorklet.addModule(WORKLET).then(() => {
-    const o = raceEngine(a, bus); let gear = 0, sp = 0;
+  return Promise.all([a.audioWorklet.addModule(WORKLET), grainsFor(a)]).then(([, gr]) => {
+    const o = raceEngine(a, bus, gr); let gear = 0, sp = 0;
     for (let t = 0; t < sec; t += 1 / 60) {
       let rpm, thr = 1;
-      if (t < 1.6) { rpm = 6200 + (t > 0.4 && t < 0.75 ? 9000 * Math.sin((t - 0.4) / 0.35 * Math.PI) : 0) + (t > 0.95 && t < 1.25 ? 7000 * Math.sin((t - 0.95) / 0.3 * Math.PI) : 0); thr = (t > 0.4 && t < 0.75) || (t > 0.95 && t < 1.25) ? 1 : 0.15; }   // revving on the line
-      else if (t < sec - 1.6) { sp = Math.min(1.05, sp + (0.36 - sp * 0.28) / 60); while (gear < 7 && sp > RG[gear + 1]) gear++; rpm = gearRpm(sp, gear); const sh = o.lastGear !== undefined && gear > o.lastGear; if (sh) o.cut = t + 0.05; o.lastGear = gear; if (o.cut && t < o.cut) thr = 0.05; }
+      if (t < 1.6) { rpm = 1050 + (t > 0.4 && t < 0.75 ? 4800 * Math.sin((t - 0.4) / 0.35 * Math.PI) : 0) + (t > 0.95 && t < 1.25 ? 3800 * Math.sin((t - 0.95) / 0.3 * Math.PI) : 0); thr = (t > 0.4 && t < 0.75) || (t > 0.95 && t < 1.25) ? 1 : 0.12; }   // revving on the line
+      else if (t < sec - 1.6) { sp = Math.min(1.05, sp + (0.36 - sp * 0.28) / 60); while (gear < 6 && sp > RG[gear + 1]) gear++; rpm = gearRpm(sp, gear); const sh = o.lastGear !== undefined && gear > o.lastGear; if (sh) o.cut = t + 0.06; o.lastGear = gear; if (o.cut && t < o.cut) thr = 0.05; }
       else { sp = Math.max(0.3, sp - 0.4 / 60); while (gear > 0 && sp < RG[gear]) gear--; rpm = gearRpm(sp, gear); thr = 0.1; }   // braking, changing down
       raceSet(o, t, rpm, thr, 0, false);
     }
@@ -486,11 +499,12 @@ window.CRengineSample = function (sec) {
     for (let i = 0; i < n; i++) v.setInt16(44 + i * 2, Math.max(-1, Math.min(1, d[i])) * 32767, true);
     return Array.from(new Uint8Array(buf)); });
 };
-// seven close racing gears: first from the line, then each change drops the revs by about a sixth (17,800 -> ~14,800)
-const RG = [0, 0.3, 0.37, 0.45, 0.55, 0.67, 0.81, 0.99, 1.6];
+// the road car's gearbox: six gears, then an overdrive only the nitro reaches; first from the line with the clutch slipping,
+// then each change drops the revs by about a third (7,300 -> ~4,900); 7,600 is the limiter
+const RG = [0, 0.17, 0.32, 0.48, 0.65, 0.82, 1.02, 1.6], REV0 = 900, REDLINE = 7600;
 function gearRpm(pct, g) {
-  if (g === 0) return 6500 + 11300 * Math.min(1, pct / RG[1]);
-  return Math.min(18200, 17800 * pct / RG[g + 1]);
+  if (g === 0) return 2400 + 4600 * Math.min(1, pct / RG[1]);
+  return Math.min(REDLINE, 7300 * pct / RG[g + 1]);
 }
 const GEARS = [0, 0.17, 0.33, 0.5, 0.68, 0.86, 1.05, 1.5];
 // the music: a track for each place (made with ACE-Step, tools/coastrun/gen_music.py), fading from one to the next at the
@@ -559,11 +573,11 @@ function frameAudio(W, S, mode, SET) {
   const lift = (R.braking || W.drift) && pct > 0.4 && !W.crash;
   const shifting = AU.shiftT && now < AU.shiftT;   // a moment off the throttle as the gear goes in
   const thr = W.crash || W.timeUp ? 0.2 : shifting ? 0.05 : lift ? 0.25 : 1;
-  if (AU.race) {   // the racing gearbox: seven close gears, revs in real numbers
-    let rg = 0; while (rg < 7 && pct > RG[rg + 1]) rg++;
-    let r2 = W.count > 0 ? 6200 + (W.rev || 0) * 11500 : gearRpm(pct, rg);
-    if (W.timeUp) r2 = Math.max(5500, r2 * 0.6);
-    if (W.air) r2 = Math.min(18600, r2 + 1500);
+  if (AU.race) {   // the road gearbox, revs in real numbers
+    let rg = 0; while (rg < 6 && pct > RG[rg + 1]) rg++;
+    let r2 = W.count > 0 ? 1000 + (W.rev || 0) * 5600 : gearRpm(pct, rg);
+    if (W.timeUp) r2 = Math.max(1000, r2 * 0.6);
+    if (W.air) r2 = Math.min(REDLINE + 200, r2 + 600);
     const down = AU.rg != null && rg < AU.rg && !W.crash; if (down) AU.blipT = now + 0.11;   // changing down: a blip of throttle
     const up = AU.rg != null && rg > AU.rg && !W.crash && W.count <= 0; if (up) AU.cutT = now + 0.045;   // changing up: the briefest cut
     AU.rg = rg;
@@ -620,6 +634,7 @@ A.start({
     '<b>Bonuses</b> on the road: a red <b>magnet</b> pulls in coins from every lane; a gold <b>star</b> puts a shield round the car &mdash; smash through traffic and signs without crashing; a purple <b>gem</b> doubles every point you score; a green <b>clock</b> adds five seconds. The ones you have on show under the score, running down.',
     '<b>Jumps:</b> go over a crest fast and the car flies &mdash; points for every bit of air. <b>Coins</b> lie on the road in lines; get every coin in a line for a bonus.',
     '<b>Bumps:</b> running into the back of a car slows you right down; hitting a lamp post, palm tree or sign at speed spins you off (on Gentle you just bounce off). Bushes and beach umbrellas only slow you a little.',
-    '<b>Start:</b> hold nitro as the lights turn green for a flying start. <b>Gentle</b> gives a little more time, less traffic and help round the bends, and only big crashes stop you. <b>P</b> pauses; the game also pauses itself if you click away.'
+    '<b>Start:</b> hold nitro as the lights turn green for a flying start. <b>Gentle</b> gives a little more time, less traffic and help round the bends, and only big crashes stop you. <b>P</b> pauses; the game also pauses itself if you click away.',
+    '<b>The engine</b> you hear is a real V12 sports car&rsquo;s, made from &ldquo;Supercar rev&rdquo; by richwise on freesound.org (public domain, CC0).'
   ]
 });
