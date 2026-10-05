@@ -356,6 +356,11 @@
   }
   function flightTime(an) { try { var tm = an.effect.getTiming(); return (tm.delay || 0) + tm.duration; } catch (e) { return 320; } }
   var MOTION_CSS = ''
+    // the game's name is the page's heading (games audit, 5 Oct 2026); on a phone the bar shows only the 365 badge, so
+    // the name stays there for screen readers instead of display:none; the keys line goes on touch-only devices
+    + 'h1.brand{margin:0}'
+    + '@media (max-width:860px){.brand span{display:block!important;position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}'
+    + '@media (hover:none) and (pointer:coarse){.keys365{display:none}}'
     + '.card .wig{perspective:calc(var(--cw) * 5)}'   // a true 3D turn when a card flips
     + '.front,.back{transition:box-shadow .22s ease}'
     + '.card.flight{transition:none!important;pointer-events:none}'   // a card in the air never catches a click meant for what is under it
@@ -1200,7 +1205,9 @@
     function openD(id) {
       closeSheets();
       var d = $(id); d.hidden = false; openSheet = d; lastFocus = document.activeElement;
-      var f = d.querySelector('.btn.go') || d.querySelector('button'); if (f) f.focus();
+      // focus the main button without scrolling to it: on a phone a long sheet (How to play) would open at the bottom
+      var f = d.querySelector('.btn.go') || d.querySelector('button'); if (f) f.focus({ preventScroll: true });
+      var sh = d.querySelector('.sheet'); if (sh) sh.scrollTop = 0;
     }
     function closeSheets() {
       if (!openSheet) return;
@@ -1415,7 +1422,7 @@
         return '<button type="button" data-var="' + o[0] + '" style="--i:' + i + '"><span class="lvtop"><b>' + esc(V.newLabel ? V.newLabel(o[0]) : o[1]) + '</b><span class="lvst" aria-hidden="true">' + stars + '</span></span><small>' + esc(V.info(o[0])) + '</small></button>';
       }).join('') : '';
       var tb = function (id, icon, label, title, cls) { return '<button class="tb' + (cls ? ' ' + cls : '') + '" id="' + id + '" type="button" title="' + esc(title) + '">' + ICON[icon] + '<span class="lbl"' + (id === 'bFull' ? ' id="bFullL"' : '') + '>' + esc(label) + '</span></button>'; };
-      var html = '<div id="app"><header class="bar"><div class="brand"><b>365</b><span>' + esc(D.title) + '</span></div>'
+      var html = '<div id="app"><header class="bar"><h1 class="brand"><b>365</b> <span>' + esc(D.title) + '</span></h1>'
         + '<div class="info" aria-live="off"><div class="chip" id="chipTime"><small>Time</small><span id="vTime">0:00</span></div><div class="chip"><small>Moves</small><span id="vMoves">0</span></div><div class="chip"><small>Score</small><span id="vScore">0</span></div></div>'
         + '<nav class="tools" aria-label="Game">' + tb('bNew', 'new', 'New game', 'New game (N)', 'main') + tb('bGames', 'games', 'Games', 'Switch to another of our games', 'tb3') + tb('bUndo', 'undo', 'Undo', 'Undo (U or Ctrl+Z)') + tb('bHint', 'hint', 'Hint', 'Show me a move (H)')
         + tb('bStats', 'stats', 'My scores', 'My scores', 'tb3') + tb('bSet', 'set', 'Settings', 'Settings', 'tb3') + tb('bHelp', 'help', 'How to play', 'How to play')
@@ -1450,7 +1457,7 @@
           + '<p class="foot">' + esc(D.title) + ' is made by <a href="https://365techies.co.uk/" target="_blank" rel="noopener">365 Techies</a> in Bournemouth. No adverts, no sign-in, nothing to install. Computer playing up? Ring us on <b>01202 775566</b>.</p>'
           + '<div class="row"><button class="btn go wide" type="button" data-close>Done</button></div>')
         + sheet('dHelp', 'How to play', '<ol class="how">' + (D.help || []).map(function (h) { return '<li>' + h + '</li>'; }).join('') + '</ol>'
-          + '<p class="soft">Keys, if you like them: N new game, U undo, H hint' + (D.hasStock ? ', space turns the deck' : '') + ', F full screen.</p><div class="row"><button class="btn go wide" type="button" data-close>Let&rsquo;s play</button></div>')
+          + '<p class="soft keys365">Keys, if you like them: N new game, U undo, H hint' + (D.hasStock ? ', space turns the deck' : '') + ', F full screen.</p><div class="row"><button class="btn go wide" type="button" data-close>Let&rsquo;s play</button></div>')
         + sheet('dReset', 'Clear my scores?', '<p>Your games won, streaks and best times for ' + esc(D.title) + ' on this computer go back to nothing. This can&rsquo;t be undone.</p><div class="row"><button class="btn wide" type="button" data-close>Keep them</button><button class="btn go wide" type="button" id="rYes" style="background:#a3242f;border-color:#a3242f">Clear them</button></div>');
       var holder = document.createElement('div'); holder.innerHTML = html;
       var frag = document.createDocumentFragment();

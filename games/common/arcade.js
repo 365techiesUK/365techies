@@ -452,7 +452,9 @@
       if (mode === 'play') pause();
       closeSheets();
       var d = $(id); d.hidden = false; openSheet = d; lastFocus = document.activeElement;
-      var f = d.querySelector('.btn.go') || d.querySelector('button'); if (f) f.focus();
+      // focus the main button without scrolling to it: on a phone a long sheet (How to play) would open at the bottom
+      var f = d.querySelector('.btn.go') || d.querySelector('button'); if (f) f.focus({ preventScroll: true });
+      var sh = d.querySelector('.sheet'); if (sh) sh.scrollTop = 0;
     }
     function closeSheets() { if (!openSheet) return; openSheet.hidden = true; openSheet = null; if (lastFocus && lastFocus.focus && document.body.contains(lastFocus)) { try { lastFocus.focus(); } catch (e) {} } }
     document.addEventListener('click', function (e) {

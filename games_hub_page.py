@@ -384,7 +384,7 @@ info_page(
     slug="games", crumb_name="Free Games",
     eyebrow="// FREE GAMES",
     h1='Free games, <em class="grad grad--cyan">no adverts</em>',
-    lede="Solitaire, FreeCell, Spider, Hearts, Cribbage, Gin Rummy, Whist and our own arcade games &mdash; made by us in Bournemouth. Play in your web browser on a PC, tablet or phone: nothing to install, nothing to sign up to, and never an advert.",
+    lede="Solitaire, Hearts, Cribbage, Whist and five more card games, plus our own arcade games &mdash; made by us in Bournemouth, for your PC, tablet or phone.",
     desc="Free Solitaire, FreeCell, Spider, Hearts, Cribbage, Gin Rummy and arcade games from 365 Techies in Bournemouth. No adverts, no sign-in, nothing to install.",
     title="Free Games - No Adverts, No Sign-In | 365 Techies",
     og_title="Free games, no adverts | 365 Techies",
