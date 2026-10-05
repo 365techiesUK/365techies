@@ -160,8 +160,8 @@ test('traffic: running into the back of a car slows you right down; passing clos
 
 test('coins, a whole line of them, and nitro', () => {
   const W = E.newWorld(2, {}, 13); go(W); W.cars = [];
-  const i = findSeg(W, 50, (g) => (g.coins || []).some((c) => !c.nitro && c.of === 8));
-  const first = E.segAt(W, i).coins.find((c) => !c.nitro), line = first.line;
+  const i = findSeg(W, 50, (g) => (g.coins || []).some((c) => !c.nitro && !c.pw && c.of === 8));
+  const first = E.segAt(W, i).coins.find((c) => !c.nitro && !c.pw), line = first.line;
   const s0 = W.score; W.s = (i - 1) * E.SEG; W.x = first.x; W.v = 30; W.boost = 0;
   drive(W, 150, (w) => { w.x = first.x; w.v = 30; w.psi = w.phi = 0; return {}; });
   assert.equal(W.lineGot[line], first.of, 'every coin in the line'); assert.ok(W.score - s0 >= 2500 + 100 * first.of);
@@ -249,4 +249,48 @@ test('requests come along by themselves while you drive', () => {
   const W = E.newWorld(2, {}, 19); let asked = 0;
   for (let i = 0; i < 60 * 60 && !W.over; i++) { E.step(W, E.autopilot(W)); if (W.events.some((e) => e.sfx === 'ask')) asked++; quiet(W); W.time = Math.max(W.time, 30); }
   assert.ok(asked >= 3, 'asked ' + asked + ' times in a minute'); assert.ok(W.hearts > 0, 'and some were done: ' + W.hearts);
+});
+
+test('the bonuses: all five turn up on the road', () => {
+  const seen = {};
+  const W = E.newWorld(2, {}, 1); for (let id = 1; id < 6; id++) E.buildStage(W, id);   // the first few places, end to end
+  for (let i = W.base; i <= E.lastIndex(W); i++) for (const c of E.segAt(W, i).coins || []) { if (c.pw) seen[c.pw] = 1; if (c.nitro) seen.nitro = 1; }
+  for (const k of ['nitro', 'magnet', 'shield', 'double', 'time']) assert.ok(seen[k], k + ' appears');
+});
+
+function bonusAt(W, k) {   // put a bonus of kind k right in front of the car on a clear road
+  clear(W); const i = E.segIndex(W.s) + 2, c = { x: 0, pw: k, got: 0 }; E.segAt(W, i).coins = [c]; W.x = 0; return c;
+}
+test('extra time: five more seconds on the clock', () => {
+  const W = E.newWorld(2, {}, 1); go(W); W.s = 60 * E.SEG; W.v = 20;
+  const c = bonusAt(W, 'time'), t0 = W.time; drive(W, 30, { up: true });
+  assert.ok(c.got); assert.ok(W.time > t0 + 4, 'about five seconds more (less the half second driven)');
+});
+test('the magnet pulls in coins from the other lanes', () => {
+  const W = E.newWorld(2, {}, 1); go(W); W.s = 60 * E.SEG; W.v = 25;
+  bonusAt(W, 'magnet'); drive(W, 30, { up: true }); assert.ok(W.pw.magnet > 0, 'magnet on');
+  const i = E.segIndex(W.s) + 4, far = { x: 4.6, got: 0, line: 99, of: 1 }; E.segAt(W, i).coins = [far]; W.x = -4.6;
+  drive(W, 30, (w) => { w.x = -4.6; return { up: true }; }); assert.ok(far.got, 'a coin two lanes away is caught');
+  const W2 = E.newWorld(2, {}, 1); go(W2); W2.s = 60 * E.SEG; W2.v = 25; clear(W2);
+  const j = E.segIndex(W2.s) + 4, far2 = { x: 4.6, got: 0, line: 99, of: 1 }; E.segAt(W2, j).coins = [far2];
+  drive(W2, 30, (w) => { w.x = -4.6; return { up: true }; }); assert.ok(!far2.got, 'without the magnet it is missed');
+});
+test('the shield: hit the traffic and it goes flying, no crash', () => {
+  const W = E.newWorld(2, {}, 1); go(W); W.s = 60 * E.SEG; W.v = 60;
+  bonusAt(W, 'shield'); drive(W, 30, { up: true }); assert.ok(W.pw.shield > 0); W.v = 60;
+  W.cars = [{ id: 999, s: W.s + 12, x: W.x, tx: W.x, v: 20, v0: 20, t: 0, b: 0, col: 0, lc: 60, hitT: -999, passed: false, ds: 12, spin: 0 }];
+  const s0 = W.score; drive(W, 40, { up: true });
+  assert.equal(W.crash, null, 'no crash'); assert.ok(W.v > 40, 'still going'); assert.ok(W.score - s0 >= 1000, 'a smash scores');
+});
+test('double points doubles what you score while it lasts', () => {
+  const A = E.newWorld(2, {}, 1), B = E.newWorld(2, {}, 1); go(A); go(B);
+  for (const W of [A, B]) { W.s = 60 * E.SEG; W.v = E.VMAX; clear(W); }
+  B.pw.double = 600; const a0 = A.score, b0 = B.score;
+  drive(A, 120, { up: true }); drive(B, 120, { up: true });
+  assert.ok(B.score - b0 > (A.score - a0) * 1.8, 'about twice the points');
+});
+test('nitro takes you well past full speed', () => {
+  const W = E.newWorld(2, {}, 1); go(W); W.s = 60 * E.SEG; W.v = E.VMAX; W.boost = 1; clear(W);
+  drive(W, 150, (w) => { w.x = 0; return { up: true, fire: true }; });
+  assert.ok(W.v > E.VMAX * 1.3, 'over 30% past full speed: ' + Math.round(W.v / E.VMAX * 100) + '%');
 });

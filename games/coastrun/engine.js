@@ -422,7 +422,8 @@
     if (S.key === 'hengistbury') { mark('headland', 0.7, function (h) { return Math.max(h, 18) + 70; }); }
     if (S.key === 'needles') { mark('needles', 0.8, function (h) { return Math.max(h, 18) + 90; }); }
   }
-  function pickups(W, from, to, r) {   // lines of coins, and the odd nitro bottle
+  var PW = { magnet: 480, shield: 480, double: 600 };   // how long each bonus lasts (steps; 60 a second)
+  function pickups(W, from, to, r) {   // lines of coins, and between them the bonuses: nitro bottles, a magnet, a shield, double points, extra time
     var i = from + 15 + ((r() * 20) | 0), id = 0;
     while (i < to) {
       var lane = LANES[(r() * 3) | 0], kind = r(), n = kind < 0.6 ? 8 : 12;
@@ -433,7 +434,8 @@
         (s.coins || (s.coins = [])).push({ x: x, line: id, of: n, got: 0 });
       }
       i += n * 2 + 30 + ((r() * 45) | 0);
-      if (r() < 0.3) { var sn = segAt(W, i); if (sn && !sn.fk) (sn.coins || (sn.coins = [])).push({ x: LANES[(r() * 3) | 0], nitro: true, got: 0 }); i += 15; }
+      var roll = r(), pw = roll < 0.22 ? 'nitro' : roll < 0.29 ? 'magnet' : roll < 0.35 ? 'shield' : roll < 0.41 ? 'double' : roll < 0.46 ? 'time' : null;
+      if (pw) { var sn = segAt(W, i), px = LANES[(r() * 3) | 0]; if (sn && !sn.fk) (sn.coins || (sn.coins = [])).push(pw === 'nitro' ? { x: px, nitro: true, got: 0 } : { x: px, pw: pw, got: 0 }); i += 15; }
     }
   }
 
@@ -446,7 +448,7 @@
       seed: seed == null ? (Math.random() * 4294967296) >>> 0 : seed >>> 0,
       segs: [], base: 0, fork: null, goalAt: -1, stretch: [], pendingSide: 0,
       s: 0, x: 0, v: 0, psi: 0, phi: 0, steer: 0, yawRate: 0, h: 0, vh: 0, air: false, airT: 0, land: 0,
-      boost: 0.4, boosting: false, wasBoost: false, drift: 0, driftT: 0, driftPts: 0, brakeT: 0, brakeHeld: false,
+      boost: 0.4, boosting: false, wasBoost: false, pw: { magnet: 0, shield: 0, double: 0 }, drift: 0, driftT: 0, driftPts: 0, brakeT: 0, brakeHeld: false,
       time: 0, timeUp: false, overT: 0, count: 200, t: 0, score: 0, sAcc: 0,
       stageNo: 1, round: 1, stage: 0, route: [0], cars: [], carN: 1, crash: null,
       combo: 0, comboT: 0, coinRun: 0, coinLast: -99, lineGot: {}, slip: 0, slipOn: false, scrapeT: 0, off: false,
@@ -556,6 +558,16 @@
     mood(W, 'scared'); voice(W, hard ? 'crash' : 'bump', hard);
     knock(W);
   }
+  function bonus(W, c) {   // a bonus picked up
+    var k = c.pw, dx = c.x - W.x;
+    if (k === 'time') { if (!W.timeUp) W.time += 5; pop(W, 'EXTRA TIME', '+5 SECONDS', dx, 'time'); }
+    else { W.pw[k] = PW[k]; pop(W, k === 'magnet' ? 'COIN MAGNET' : k === 'shield' ? 'SHIELD' : 'DOUBLE POINTS', k === 'double' ? '10 SECONDS' : '8 SECONDS', dx, k); }
+    W.score += 500; W.events.push({ sfx: 'power', k: k, x: dx }); fx(W, { k: 'power', x: c.x, pw: k }); mood(W, 'cheer');
+  }
+  function smash(W, why) {   // shielded: whatever you hit goes flying, and you keep going
+    W.v *= 0.94; W.shake = Math.max(W.shake, 9); W.score += 1000;
+    W.events.push({ sfx: 'smash', x: 0 }); fx(W, { k: 'smash', x: W.x }); pop(W, 'SMASH!', '+1,000', 0, 'shield');
+  }
   function knock(W) { if (W.req && W.req.k === 'clean') endReq(W, false); }   // any knock spoils a "careful" request
   function endDrift(W) {
     if (W.driftT > 0.5) {
@@ -569,7 +581,7 @@
     var g = segAt(W, i), F = W.fork, j;
     if (F && i === F.split && !F.s) {   // the split: whichever side the car is on is the road it takes
       var sx = W.x >= 0 ? 1 : -1, nextId = F.next[sx < 0 ? 0 : 1];
-      if (Math.abs(W.x) < CAR_W + 0.8) crash(W, hardHit(W, W.v - 3), 'sign');
+      if (Math.abs(W.x) < CAR_W + 0.8) { if (W.pw.shield > 0) smash(W, 'sign'); else crash(W, hardHit(W, W.v - 3), 'sign'); }
       F.s = sx; W.x -= sx * OFF0; if (W.crash) W.crash.tx = 0;
       W.pendingSide = sx; buildStage(W, nextId); W.route.push(nextId);
       W.events.push({ sfx: 'fork' }); W.events.push({ say: 'You chose ' + STAGES[nextId].name.toLowerCase() });
@@ -589,9 +601,10 @@
     if (g.gate) gate(W, g.gate);
     if (g.coins && !W.crash) for (j = 0; j < g.coins.length; j++) {
       var c = g.coins[j];
-      if (!c.got && Math.abs(W.x - c.x) < 1.7 && W.h - heightAt(W, W.s) < 2.6) {
-        c.got = W.t;
-        if (c.nitro) { W.boost = Math.min(1, W.boost + 0.45); W.events.push({ sfx: 'nitro', x: c.x - W.x }); pop(W, 'NITRO', '+45% BOOST', c.x - W.x, 'nitro'); fx(W, { k: 'nitro', x: c.x }); W.score += 500; }
+      if (!c.got && Math.abs(W.x - c.x) < (W.pw.magnet > 0 && !c.nitro && !c.pw ? 9.5 : 1.7) && W.h - heightAt(W, W.s) < 2.6) {
+        c.got = W.t; c.gx = W.x;
+        if (c.pw) bonus(W, c);
+        else if (c.nitro) { W.boost = Math.min(1, W.boost + 0.45); W.events.push({ sfx: 'nitro', x: c.x - W.x }); pop(W, 'NITRO', '+45% BOOST', c.x - W.x, 'nitro'); fx(W, { k: 'nitro', x: c.x }); W.score += 500; }
         else {
           W.coinRun = W.t - W.coinLast < 40 ? W.coinRun + 1 : 1; W.coinLast = W.t; W.coinsN++;
           W.score += 100 * Math.min(W.coinRun, 10); W.boost = Math.min(1, W.boost + 0.012);
@@ -608,6 +621,7 @@
       if (p.b && !(W.fork && W.fork.s === p.b)) continue;
       if (Math.abs(W.x - p.x) < CAR_W + p.h) {
         if (p.soft) { p.done = W.t; W.v *= 0.84; W.events.push({ sfx: 'bush', x: p.x - W.x }); fx(W, { k: 'leaves', x: p.x, t2: p.t }); W.shake = Math.max(W.shake, 5); knock(W); }
+        else if (W.pw.shield > 0) { p.done = W.t; smash(W, p.t); }
         else crash(W, hardHit(W, W.v), p.t);
         break;
       }
@@ -664,7 +678,7 @@
     var i = segIndex(W.s), ahead = Math.round(W.v * REQ[k].dur * 0.8 / SEG) + 20, j, n = 0, c;
     if (k === 'drift') { for (j = i + 10; j < i + ahead; j++) if (Math.abs(segAt(W, j).k) >= 1 / 160 && Math.abs(segAt(W, j + 8).k) >= 1 / 160) return true; return false; }
     if (k === 'air') { for (j = i + 15; j < i + ahead; j++) if (segAt(W, j).crest) return true; return false; }
-    if (k === 'coins') { for (j = i + 10; j < i + ahead; j++) { c = segAt(W, j).coins; if (c) for (var q = 0; q < c.length; q++) if (!c[q].got && !c[q].nitro) n++; } return n >= REQ.coins.goal[W.D.req] + 3; }
+    if (k === 'coins') { for (j = i + 10; j < i + ahead; j++) { c = segAt(W, j).coins; if (c) for (var q = 0; q < c.length; q++) if (!c[q].got && !c[q].nitro && !c[q].pw) n++; } return n >= REQ.coins.goal[W.D.req] + 3; }
     if (k === 'near' || k === 'pass' || k === 'slip') { for (j = 0; j < W.cars.length; j++) { c = W.cars[j]; if (sameRoad(W, c) && c.s > W.s + 20 && c.s < W.s + 600) n++; } return n >= (k === 'slip' ? 1 : k === 'near' ? 3 : 4); }
     return true;
   }
@@ -726,6 +740,8 @@
       moveTraffic(W);
       return;
     }
+    var score0 = W.score;
+    for (var pk in W.pw) if (W.pw[pk] > 0 && --W.pw[pk] === 0) W.events.push({ sfx: 'powerEnd', k: pk });
     if (!W.timeUp) {
       var before = Math.ceil(W.time);
       W.time -= DT;
@@ -753,8 +769,8 @@
     W.wasBoost = W.boosting;
 
     // ---- speed
-    var hz = top * (W.boosting ? 1.22 : 1) * (W.slipOn ? 1.04 : 1);
-    var v = W.v, accel = 16 * C.acc * Math.max(0, 1 - Math.pow(v / hz, 1.6)) + (W.boosting ? 9 : 0);
+    var hz = top * (W.boosting ? 1.4 : 1) * (W.slipOn ? 1.04 : 1);
+    var v = W.v, accel = 16 * C.acc * Math.max(0, 1 - Math.pow(v / hz, 1.6)) + (W.boosting ? 15 : 0);
     if (out) v *= W.crash.hard ? (W.crash.t < W.crash.dur * 0.6 ? 0.986 : 0.9) : 0.9;
     else if (W.drift) v -= (2.5 + (brake ? 2 : 0)) * DT;
     else if (brake) v -= 26 * DT;
@@ -833,7 +849,8 @@
       var V = VEH[car.t], dz = car.s - W.s, dxx = Math.abs(car.x - W.x), hitW = V.w + CAR_W - 0.1, hitL = V.l + CAR_L;
       if (!out && !W.air && Math.abs(dz) < hitL && dxx < hitW && W.t - car.hitT > 30) {
         car.hitT = W.t;
-        if (W.v >= car.v) {
+        if (W.pw.shield > 0) { smash(W, 'car'); car.spin = 60; car.x += (car.x >= W.x ? 1 : -1) * 2.5; car.v *= 0.6; }
+        else if (W.v >= car.v) {
           var hard = dxx < hitW * 0.7 && (D.crash ? W.v - car.v > 30 : W.v - car.v > 44);
           if (hard) { crash(W, true, 'car'); W.s = Math.min(W.s, car.s - hitL - 0.5); car.spin = 60; }
           else {
@@ -881,6 +898,7 @@
 
     if (W.timeUp && W.v < 1.5) { if (++W.overT > 70) W.over = true; }
     if (W.t % 60 === 0) { var drop = i1 - 80 - W.base; if (drop > 300) { W.segs.splice(0, drop); W.base += drop; } }
+    if (W.pw.double > 0 && W.score > score0) W.score += W.score - score0;
   }
 
   // ---------------------------------------------------------------- a driver for the title screen and the tests
@@ -927,7 +945,7 @@
 
   return {
     SEG: SEG, HALF: HALF, RUMBLE: RUMBLE, VMAX: VMAX, VIEW: VIEW, CAR_W: CAR_W, CAR_L: CAR_L, LANES: LANES, FA: FA, FB: FB, OFF0: OFF0, OFF_END: OFF_END, OFF2: OFF2,
-    LEVELS: LEVELS, TUN_W: TUN_W, BRG_W: BRG_W,
+    LEVELS: LEVELS, TUN_W: TUN_W, BRG_W: BRG_W, PW: PW,
     STAGES: STAGES, VEH: VEH, CARS: CARS, DIFF: DIFF, REQ: REQ,
     newWorld: newWorld, step: step, hud: hud, mph: mph, autopilot: autopilot, peek: peek, topSpeed: topSpeed, buildStage: buildStage,
     segAt: segAt, segIndex: segIndex, lastIndex: lastIndex, heightAt: heightAt, forkOff: forkOff, edges: edges, roadHalf: roadHalf, bendHere: bendHere, rnd: rnd

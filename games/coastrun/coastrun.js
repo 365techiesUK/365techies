@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=9';
+import { createWorld } from './world3d.js?v=10';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 const GW = 384, GH = 224;
@@ -106,6 +106,7 @@ function hud(g, W, t, mode) {
     g.fillStyle = S.next ? '#ffffff' : '#4ade80'; g.beginPath(); g.arc(bx + bw, by + 2, 2.6, 0, Math.PI * 2); g.fill();
   }
   routeMap(g, W, 8, GH - 46, t);
+  powers(g, W, t);
   speedo(g, W, t);
   if (W.drift) hudText(g, 'DRIFT', GW / 2, GH - 12, 9, '#ffb347', 'center');
   if (W.count > 0 || (R.goT >= 0 && W.t - R.goT < 50)) lights(g, W);
@@ -121,11 +122,25 @@ function hud(g, W, t, mode) {
     if (her) heart(g, her < 0 ? GW / 2 - 144 : GW / 2 + 144, 61, 4 + Math.sin(t / 120) * 0.6, '#ff4d7a');
   }
   if (mode === 'play' && W.stageNo === 1 && W.count <= 0 && W.t - R.goT < 480 && R.goT >= 0 && !document.body.classList.contains('touchy')) {
-    hudText(g, '◀ ▶ steer   ·   SPACE boost   ·   tap ▼ while turning to drift', GW / 2, GH - 30, 7.5, '#ffffff', 'center');
+    hudText(g, '◀ ▶ steer   ·   SPACE nitro   ·   tap ▼ while turning to drift', GW / 2, GH - 30, 7.5, '#ffffff', 'center');
   }
   banner(g, W, t);
   if (!W.crash) pops(g, W);   // (no score popping up over a crash)
   results(g, W, t);
+}
+function powers(g, W, t) {   // the bonuses you have on, under the score: an icon each, the time left running round it
+  if (!W.pw) return;
+  const on = ['magnet', 'shield', 'double'].filter((k) => W.pw[k] > 0); let x = GW - 14;
+  for (const k of on) {
+    const left = W.pw[k] / E.PW[k], y = 66, flash = W.pw[k] < 120 && (t / 120 | 0) % 2, col = { magnet: '#ff5a5a', shield: '#ffd23f', double: '#c77dff' }[k];
+    g.fillStyle = 'rgba(0,8,24,0.55)'; g.beginPath(); g.arc(x, y, 8.5, 0, Math.PI * 2); g.fill();
+    g.strokeStyle = flash ? '#ffffff' : col; g.lineWidth = 1.8; g.beginPath(); g.arc(x, y, 8.5, -Math.PI / 2, -Math.PI / 2 + left * Math.PI * 2); g.stroke();
+    g.fillStyle = col; g.strokeStyle = col; g.lineWidth = 2.2;
+    if (k === 'magnet') { g.beginPath(); g.moveTo(x - 3.4, y - 2.6); g.lineTo(x - 3.4, y); g.arc(x, y, 3.4, Math.PI, 0, true); g.lineTo(x + 3.4, y - 2.6); g.stroke(); g.fillStyle = '#e8eef2'; g.fillRect(x - 4.5, y - 4.6, 2.2, 2.2); g.fillRect(x + 2.3, y - 4.6, 2.2, 2.2); }   // a horseshoe magnet, its silver ends up
+    else if (k === 'shield') { g.beginPath(); for (let q = 0; q < 10; q++) { const a = q / 10 * Math.PI * 2 - Math.PI / 2, rr = q % 2 ? 2.2 : 5; g.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } g.fill(); }
+    else hudText(g, 'x2', x, y + 3, 7.5, col, 'center', false);
+    x -= 21;
+  }
 }
 function heart(g, x, y, r, col) {   // a little heart, centred on x, y
   g.fillStyle = col; g.beginPath(); g.moveTo(x, y + r * 0.9);
@@ -185,11 +200,11 @@ function routeMap(g, W, x0, y0, t) {   // the pyramid of places: the way you've 
   });
 }
 function speedo(g, W, t) {   // a sweep of the speed round an arc, the number in the middle, the boost below
-  const cx = GW - 40, cy = GH - 20, r = 26, f = Math.min(1.25, W.v / E.VMAX), a0 = Math.PI * 0.8, a1 = Math.PI * 2.2;
+  const cx = GW - 40, cy = GH - 20, r = 26, f = Math.min(1.45, W.v / E.VMAX), a0 = Math.PI * 0.8, a1 = Math.PI * 2.2;
   g.lineCap = 'round';
   g.strokeStyle = 'rgba(0,0,0,0.45)'; g.lineWidth = 5; g.beginPath(); g.arc(cx, cy, r, a0, a1); g.stroke();
   const sg = g.createLinearGradient(cx - r, 0, cx + r, 0); sg.addColorStop(0, '#3fd0ff'); sg.addColorStop(0.7, '#ffd400'); sg.addColorStop(1, '#ff4d4d');
-  g.strokeStyle = W.boosting ? '#7fe8ff' : sg; g.lineWidth = 3.4; g.beginPath(); g.arc(cx, cy, r, a0, a0 + (a1 - a0) * Math.min(1, f / 1.2)); g.stroke();
+  g.strokeStyle = W.boosting ? '#7fe8ff' : sg; g.lineWidth = 3.4; g.beginPath(); g.arc(cx, cy, r, a0, a0 + (a1 - a0) * Math.min(1, f / 1.4)); g.stroke();
   g.lineCap = 'butt';
   hudText(g, String(E.mph(W)), cx + 2, cy + 3, 15, W.boosting ? '#7fd8ff' : '#ffffff', 'center');
   hudText(g, 'MPH', cx, cy + 12, 6, '#bfe6ff', 'center');
@@ -197,7 +212,7 @@ function speedo(g, W, t) {   // a sweep of the speed round an arc, the number in
   g.fillStyle = 'rgba(0,0,0,0.5)'; roundRect(g, bx2 - 1, by2 - 1, bw2 + 2, 5, 2.5); g.fill();
   const bg2 = g.createLinearGradient(bx2, 0, bx2 + bw2, 0); bg2.addColorStop(0, '#2f7cf6'); bg2.addColorStop(1, '#7fe8ff');
   g.fillStyle = bg2; roundRect(g, bx2, by2, Math.max(1, bw2 * W.boost), 3, 1.5); g.fill();
-  hudText(g, 'BOOST', bx2 - 4, by2 + 4, 6, W.boosting ? '#ffffff' : W.boost > 0.25 && ((t / 400 | 0) % 2) ? '#7fe8ff' : '#9fb3c8', 'right');
+  hudText(g, 'NITRO', bx2 - 4, by2 + 4, 6, W.boosting ? '#ffffff' : W.boost > 0.25 && ((t / 400 | 0) % 2) ? '#7fe8ff' : '#9fb3c8', 'right');
 }
 function results(g, W, t) {   // at the goal: each stretch's time and hearts, the bonuses and the rank
   const Rz = W.result; if (!Rz) return;
@@ -248,7 +263,7 @@ function banner(g, W, t) {
   if (b.sub) hudText(g, b.sub, 0, 16, 10, cols[1], 'center');
   g.restore();
 }
-const POP_COL = { near: '#7fe8ff', drift: '#ffb347', gold: '#ffd400', nitro: '#7fb8ff', slip: '#c9b8ff', heart: '#ff8fb3' };
+const POP_COL = { near: '#7fe8ff', drift: '#ffb347', gold: '#ffd400', nitro: '#7fb8ff', slip: '#c9b8ff', heart: '#ff8fb3', time: '#5dff9a', magnet: '#ff7b7b', shield: '#ffd23f', double: '#d39bff' };
 function pops(g, W) {
   for (let i = 0; i < W.pops.length; i++) {
     const p = W.pops[i], age = W.t - p.t; if (age > 70 || age < 0) continue;
@@ -297,6 +312,9 @@ function sound(name, S, e) {
     case 'near': S.noise(0.42, 0.16, 500, { type: 'bandpass', q: 1.4, to: 3200, pan: p }); S.tone(880 * Math.pow(1.122, Math.min(n, 9) - 1), 0.14, 0.04, { type: 'triangle', when: 0.05, verb: 0.3 }); break;
     case 'coin': { const f0 = 1318 * Math.pow(1.0595, Math.min(n, 12) - 1); S.tone(f0, 0.07, 0.04, { type: 'square', pan: p }); S.tone(f0 * 1.5, 0.16, 0.035, { type: 'square', when: 0.05, pan: p, verb: 0.2 }); break; }
     case 'line': [1047, 1319, 1568, 2093].forEach((f, k) => S.tone(f, 0.12, 0.04, { type: 'square', when: k * 0.06, verb: 0.35 })); break;
+    case 'power': [660, 880, 1175, 1568].forEach((f, k) => S.tone(f * ({ magnet: 1, shield: 1.12, double: 1.26, time: 0.9 }[e && e.k] || 1), 0.14, 0.05, { type: 'triangle', when: k * 0.05, verb: 0.45 })); S.noise(0.3, 0.06, 2000, { type: 'bandpass', q: 2, to: 8000 }); break;
+    case 'powerEnd': [880, 660, 440].forEach((f, k) => S.tone(f, 0.1, 0.035, { type: 'triangle', when: k * 0.07 })); break;
+    case 'smash': S.noise(0.5, 0.3, 2200, { verb: 0.4 }); S.tone(70, 0.4, 0.2, { type: 'sine', to: 30 }); [1319, 1760].forEach((f, k) => S.tone(f, 0.18, 0.04, { type: 'square', when: 0.06 + k * 0.06, verb: 0.4 })); break;
     case 'nitro': S.tone(300, 0.4, 0.06, { type: 'sawtooth', to: 1400, verb: 0.3 }); S.noise(0.4, 0.08, 600, { type: 'bandpass', q: 2, to: 5000 }); break;
     case 'boost': S.noise(0.8, 0.14, 300, { type: 'bandpass', q: 1.2, to: 3000, verb: 0.3 }); S.tone(160, 0.6, 0.06, { type: 'sawtooth', to: 320 }); break;
     case 'check': [523, 659, 784, 1047, 784, 1047, 1319].forEach((f, k) => S.tone(f, 0.14, 0.055, { type: 'square', when: k * 0.08, verb: 0.4 })); break;
@@ -416,7 +434,7 @@ document.addEventListener('keydown', (e) => { const k = (e.key || '').toLowerCas
 document.addEventListener('pointerdown', (e) => { const b = e.target && e.target.closest && e.target.closest('[data-pad="down"]'); if (b && window.ARCADE365 && window.ARCADE365.mode === 'play') window.ARCADE365.input.brakeTap = true; }, true);
 A.start({
   id: 'coastrun', store: 'coast365', title: '365 Coast Run', width: GW, height: GH, waveWord: 'stage', alt: true,
-  pad: [{ act: 'left', label: '◀' }, { act: 'right', label: '▶' }, { act: 'down', label: 'Brake', cls: 'alt' }, { act: 'fire', label: 'Boost', cls: 'fire' }],
+  pad: [{ act: 'left', label: '◀' }, { act: 'right', label: '▶' }, { act: 'down', label: 'Brake', cls: 'alt' }, { act: 'fire', label: 'Nitro', cls: 'fire' }],
   speeds: { options: [[1, 'Gentle'], [2, 'Classic'], [3, 'Fast']], def: 1 },
   settings: [
     { key: 'car', type: 'seg', label: 'Car', small: 'The Roadster is the all-rounder; the GT is the fastest but slides more; the Hot hatch is quick off the mark and grips best. Changes from your next game.', options: [['roadster', 'Roadster'], ['gt', 'GT'], ['hatch', 'Hot hatch']], def: 'roadster' },
@@ -441,11 +459,12 @@ A.start({
     '<b>Your passenger</b> asks for things as you go: a drift, a near miss, overtaking, coins, a jump, a slipstream, keeping clean or going flat out. Do it before her timer runs out for up to three <b>hearts</b>. Coming up to a fork she says which way she would like to go &mdash; take her road for two more. Hearts are worth points now and again at the goal, and they count towards your rank.',
     '<b>Steer</b> with the <b>&larr; &rarr;</b> arrow keys (or A and D). The car accelerates by itself; press <b>&darr;</b> (or S) to brake. In Settings you can choose to hold <b>&uarr;</b> to go instead.',
     '<b>Bends</b> pull the car outwards &mdash; steer into them, and ease off (brake) for the sharp ones the black and white arrows warn you about. On <b>Gentle</b> the car helps you round.',
-    '<b>Drifting:</b> while turning at speed, <b>tap &darr;</b> &mdash; the back of the car slides out and you go round the bend sideways, scoring points and filling your boost. Keep steering to hold the slide; straighten up to stop.',
+    '<b>Drifting:</b> while turning at speed, <b>tap &darr;</b> &mdash; the back of the car slides out and you go round the bend sideways, scoring points and filling your nitro. Keep steering to hold the slide; straighten up to stop.',
     '<b>Forks:</b> at the end of each stretch the road splits &mdash; keep to the <b>left</b> (west) or <b>right</b> (east) half to choose where you go next. The map in the bottom corner shows your way through the fifteen places. Don&rsquo;t hit the sign in the middle!',
-    '<b>Boost:</b> hold <b>Space</b> (or Shift, B or X, or the mouse button) for a burst of speed while the blue bar lasts. Fill it with <b>near misses</b> (passing cars closely), <b>slipstreams</b>, drifting, coins and the blue <b>N</b> nitro bottles.',
+    '<b>Nitro:</b> hold <b>Space</b> (or Shift, B or X, or the mouse button, or the <b>Nitro</b> button) and flames shoot from the pipes &mdash; well past full speed while the blue bar lasts. Fill it with <b>near misses</b> (passing cars closely), <b>slipstreams</b>, drifting, coins and the blue <b>nitro bottles</b>.',
+    '<b>Bonuses</b> on the road: a red <b>magnet</b> pulls in coins from every lane; a gold <b>star</b> puts a shield round the car &mdash; smash through traffic and signs without crashing; a purple <b>gem</b> doubles every point you score; a green <b>clock</b> adds five seconds. The ones you have on show under the score, running down.',
     '<b>Jumps:</b> go over a crest fast and the car flies &mdash; points for every bit of air. <b>Coins</b> lie on the road in lines; get every coin in a line for a bonus.',
     '<b>Bumps:</b> running into the back of a car slows you right down; hitting a lamp post, palm tree or sign at speed spins you off (on Gentle you just bounce off). Bushes and beach umbrellas only slow you a little.',
-    '<b>Start:</b> hold boost as the lights turn green for a flying start. <b>Gentle</b> gives more time, less traffic and help round the bends. <b>P</b> pauses; the game also pauses itself if you click away.'
+    '<b>Start:</b> hold nitro as the lights turn green for a flying start. <b>Gentle</b> gives more time, less traffic and help round the bends. <b>P</b> pauses; the game also pauses itself if you click away.'
   ]
 });

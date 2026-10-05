@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=6';
+import * as MD from './models3d.js?v=7';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -198,6 +198,7 @@ export function createWorld() {
   glint.rotation.order = 'YXZ'; glint.renderOrder = 2; glint.visible = false; scene.add(glint);   // the moon's path across the water
   const rays = new THREE.Sprite(new THREE.SpriteMaterial({ map: raysTexture(), color: '#ffd8a0', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, opacity: 0 }));
   rays.renderOrder = -6; rays.scale.setScalar(820); scene.add(rays);   // shafts of light fanning from a low sun (behind the hills, in front of the sky)
+  const fill = new THREE.SpotLight('#fff0dc', 0, 9, 0.17, 0.5, 1.6); scene.add(fill); scene.add(fill.target);   // from just behind the camera onto the car
   const carGlow = new THREE.PointLight('#ffe2c0', 0, 10, 1.6); scene.add(carGlow);   // at night: the street lights' glow on the car (always there, so no shader rebuilds)   // at the front bumper, lighting the road ahead (never the car)
 
   // ---------------------------------------------------------------- the sky (and the same sky, with the land below, as everything's surroundings)
@@ -257,10 +258,11 @@ export function createWorld() {
   MAT.wave.onBeforeCompile = (sh) => { sh.uniforms.uT = WAVE_T; sh.vertexShader = 'uniform float uT;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\ntransformed.y += sin(uT * 9.0 + position.x * 1.7 + position.z * 1.3) * 0.16;'); };
   MAT.wave.customProgramCacheKey = () => 'wave';
   const CAR = {
-    paint: new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.27, metalness: 0.12, clearcoat: 1, clearcoatRoughness: 0.018, envMapIntensity: 1.4, sheen: 0.25, sheenColor: new THREE.Color('#ff6a5a') }),
+    paint: new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.36, metalness: 0.3, clearcoat: 1, clearcoatRoughness: 0.12, envMapIntensity: 1.2 }),
+    plate: new THREE.MeshStandardMaterial({ map: plateTexture(), roughness: 0.4, metalness: 0.1 }),
     chrome: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.18, metalness: 1, envMapIntensity: 1.0 }),
     glass: new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.1, metalness: 0, clearcoat: 0.6, clearcoatRoughness: 0.12, envMapIntensity: 1.3 }),
-    tyre: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92, metalness: 0, envMapIntensity: 0.4 }),
+    tyre: new THREE.MeshStandardMaterial({ vertexColors: true, color: new THREE.Color(1.5, 1.5, 1.5), roughness: 0.82, metalness: 0, envMapIntensity: 0.5 }),
     trim: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.55, metalness: 0.15 }),
     skin: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.6, metalness: 0 }),
     alloy: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.2, metalness: 0.85, envMapIntensity: 1.6, emissive: '#1a1b1e' }),
@@ -268,6 +270,8 @@ export function createWorld() {
     screen: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.04, metalness: 0, transparent: true, opacity: 0.28, envMapIntensity: 1.4, depthWrite: false }),
     lit: MAT.lit, glow: MAT.glow
   };
+  CAR.paint.onBeforeCompile = (sh) => { sh.fragmentShader = sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\ngl_FragColor.b = mix(gl_FragColor.b, min(gl_FragColor.b, gl_FragColor.g + 0.05), 0.75);'); };   // a red that stays red: blue light on it reads grey, not magenta
+  CAR.paint.customProgramCacheKey = () => 'paint';
   const groundMat = new THREE.MeshStandardMaterial({ vertexColors: true, map: groundDetail(), roughness: 0.95, metalness: 0 });
   const FU = { uF0: { value: new THREE.Color('#79bb50') }, uF1: { value: new THREE.Color('#5f9e3c') }, uF2: { value: new THREE.Color('#9ccc5a') }, uF3: { value: new THREE.Color('#e2cf58') }, uF4: { value: new THREE.Color('#b49a62') }, uFK: { value: 0.5 }, uFlow: { value: 0 }, uDry: { value: 0.5 }, uDap: { value: 0 } };
   groundMat.onBeforeCompile = (sh) => {   // far from the road the land is a patchwork of fields with dark hedge lines between them
@@ -343,8 +347,51 @@ export function createWorld() {
   const coins = new THREE.InstancedMesh(coinGeo, new THREE.MeshStandardMaterial({ color: '#ffcf3a', emissive: '#7a5000', emissiveIntensity: 0.6, metalness: 0.85, roughness: 0.2, envMapIntensity: 1.4 }), 400); coins.count = 0; coins.frustumCulled = false; scene.add(coins);   // (their bounds change every frame)
   const OWN_ENV = [CAR.paint, CAR.chrome, CAR.glass, CAR.tyre, CAR.alloy, CAR.screen, roadMat, seaMat, coins.material];   // how strongly each reflects the sky is its own
   OWN_ENV.forEach((m) => { m.userData.envBase = m.envMapIntensity; });
-  const nitroGeo = new THREE.CylinderGeometry(0.35, 0.35, 1.3, 14);
-  const nitros = new THREE.InstancedMesh(nitroGeo, new THREE.MeshStandardMaterial({ color: '#2f7cf6', emissive: '#0b2a8a', metalness: 0.6, roughness: 0.2 }), 40); nitros.count = 0; nitros.frustumCulled = false; scene.add(nitros);
+  const pwMat = new THREE.MeshStandardMaterial({ vertexColors: true, metalness: 0.45, roughness: 0.22, emissive: '#ffffff', emissiveIntensity: 0.32 });
+  pwMat.onBeforeCompile = (sh) => { sh.fragmentShader = sh.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance *= vColor.rgb;'); };   // each part glows in its own colour
+  pwMat.customProgramCacheKey = () => 'pw';
+  const pwGeo = (f) => { const k = new MD.Kit(); f(k); const m = k.build(); return m.lit; };
+  const PWGEO = {
+    nitro: pwGeo((k) => {   // a nitrous bottle: blue, a white label with a red stripe, a chrome neck and valve
+      k.cyl(0.27, 0.27, 0.86, 18, 0, -0.5, 0, '#1f6ff0', 0, 0, 'lit').ball(0.27, 0, 0.36, 0, '#1f6ff0', 1, 0.6, 1, 'lit', 14);
+      k.cyl(0.275, 0.275, 0.26, 18, 0, -0.22, 0, '#f4f6f8', 0, 0, 'lit').cyl(0.278, 0.278, 0.06, 18, 0, -0.12, 0, '#e8263f', 0, 0, 'lit');
+      k.cyl(0.08, 0.1, 0.16, 10, 0, 0.48, 0, '#d8dde2', 0, 0, 'lit').box(0.22, 0.07, 0.07, 0, 0.62, 0, '#d8dde2', 0, 0, 0, 'lit');
+    }),
+    magnet: pwGeo((k) => {   // a horseshoe magnet: red, with silver ends
+      k.put(new THREE.TorusGeometry(0.36, 0.12, 10, 22, Math.PI), '#e02a2a', 0, 0.05, 0, 0, 0, 0, 1, 1, 1, 'lit');
+      for (const sd of [-1, 1]) k.cyl(0.12, 0.12, 0.34, 12, sd * 0.36, -0.4, 0, '#e8eef2', 0, 0, 'lit');
+    }),
+    shield: pwGeo((k) => {   // a gold star
+      const sh = new THREE.Shape(); for (let q = 0; q < 10; q++) { const a = q / 10 * Math.PI * 2 + Math.PI / 2, rr = q % 2 ? 0.24 : 0.58; if (q) sh.lineTo(Math.cos(a) * rr, Math.sin(a) * rr); else sh.moveTo(Math.cos(a) * rr, Math.sin(a) * rr); }
+      const g = new THREE.ExtrudeGeometry(sh, { depth: 0.14, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.04, bevelSegments: 2 }); g.translate(0, 0, -0.07);
+      k.put(g, '#ffcc22', 0, 0, 0, 0, 0, 0, 1, 1, 1, 'lit');
+    }),
+    double: pwGeo((k) => {   // a purple gem
+      k.put(new THREE.OctahedronGeometry(0.5, 0), '#b04df0', 0, 0, 0, 0, 0, 0, 0.85, 1.15, 0.85, 'lit');
+      k.put(new THREE.OctahedronGeometry(0.3, 0), '#e2b4ff', 0, 0, 0, 0, Math.PI / 4, 0, 0.9, 1.25, 0.9, 'lit');
+    }),
+    time: pwGeo((k) => {   // a clock: green rim, white face, two hands
+      k.put(new THREE.CylinderGeometry(0.5, 0.5, 0.16, 24), '#22c06a', 0, 0, 0, Math.PI / 2, 0, 0, 1, 1, 1, 'lit');
+      for (const sd of [-1, 1]) k.put(new THREE.CylinderGeometry(0.4, 0.4, 0.02, 24), '#ffffff', 0, 0, sd * 0.08, Math.PI / 2, 0, 0, 1, 1, 1, 'lit');
+      for (const sd of [-1, 1]) { k.box(0.05, 0.28, 0.02, 0, 0, sd * 0.095, '#1a1a1a', 0, 0, 0, 'lit'); k.box(0.2, 0.05, 0.02, 0.1, 0, sd * 0.095, '#1a1a1a', 0, 0, 0, 'lit'); }
+    })
+  };
+  const PWMESH = {};
+  for (const kk in PWGEO) { const im = new THREE.InstancedMesh(PWGEO[kk], pwMat, 40); im.count = 0; im.frustumCulled = false; im.castShadow = true; scene.add(im); PWMESH[kk] = im; }
+  const nitros = PWMESH.nitro;
+  // ---- the shield: a shimmering bubble round the car while it lasts
+  const bubble = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 18), new THREE.ShaderMaterial({ uniforms: { t: { value: 0 }, a: { value: 0 } }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
+    vertexShader: 'varying vec3 vN; varying vec3 vV; varying vec3 vP; void main(){ vec4 mv = modelViewMatrix * vec4(position, 1.0); vN = normalize(normalMatrix * normal); vV = normalize(-mv.xyz); vP = position; gl_Position = projectionMatrix * mv; }',
+    fragmentShader: 'uniform float t; uniform float a; varying vec3 vN; varying vec3 vV; varying vec3 vP; void main(){ float f = pow(1.0 - abs(dot(vN, vV)), 3.0); float hex = 0.6 + 0.4 * sin(vP.x * 9.0 + t * 3.0) * sin(vP.y * 9.0 - t * 2.0) * sin(vP.z * 9.0); float band = 1.0 - smoothstep(0.02, 0.06, abs(vP.y)); vec3 col = mix(vec3(0.6, 0.9, 1.0), vec3(1.0, 0.97, 0.85), 0.5 + 0.5 * sin(t * 2.0 + vP.y * 3.0)); gl_FragColor = vec4((col * (f * 0.9 + 0.035) * hex + vec3(1.0, 0.78, 0.25) * band * 0.5) * a, 1.0); }' }));
+  bubble.scale.set(1.45, 1.05, 2.75); bubble.visible = false; bubble.renderOrder = 4; scene.add(bubble);
+  // ---- the nitro: flames out of the pipes
+  const flameMat = new THREE.MeshBasicMaterial({ map: flameTexture(), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false });
+  const flameCore = new THREE.MeshBasicMaterial({ map: flameMat.map, color: '#cfe6ff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false });
+  const flames = [-1, 1].map(() => { const g = new THREE.Group();
+    const outer = new THREE.Mesh(new THREE.ConeGeometry(0.15, 1.5, 14, 1, true), flameMat); outer.rotation.x = Math.PI / 2; outer.position.z = 0.75; g.add(outer);   // the jet: wide at the pipe, streaming back
+    const core = new THREE.Mesh(new THREE.ConeGeometry(0.075, 0.7, 10, 1, true), flameCore); core.rotation.x = Math.PI / 2; core.position.z = 0.35; g.add(core);
+    const glowT = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameGlow(), color: '#ffb060', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); glowT.scale.setScalar(0.7); g.add(glowT);   // a glow at the pipe
+    g.visible = false; return g; });
   const smoke = particles(700, false), sparks = particles(500, true);
   scene.add(smoke.points); scene.add(sparks.points);
   const skid = skidMarks(); scene.add(skid.mesh);
@@ -867,7 +914,7 @@ export function createWorld() {
     const gr = GRADE_U; gr.sat.value = to(gr.sat.value, look.grade[0] * (lit(look) ? 1 : 1.07)); gr.con.value = to(gr.con.value, look.grade[1] + (lit(look) ? 0 : 0.05)); blend(gr.tint.value, look.grade[2]); gr.vib.value = to(gr.vib.value, lit(look) ? 0.1 : 0.22); { const lf = look.lift || [0, 0, 0]; gr.lift.value.set(to(gr.lift.value.x, lf[0]), to(gr.lift.value.y, lf[1]), to(gr.lift.value.z, lf[2])); } gr.curve.value = to(gr.curve.value, lit(look) ? 0.08 : 0.18);
     stars.visible = !!look.night; moon.visible = !!look.night;
     MAT.eyes.color.setScalar(look.night ? 2.6 : look.dusk ? 1.6 : R.tunK > 0.5 ? 1.2 : 0.5).multiply(EYEC);
-    headlight.intensity = lit(look) ? 220 : 0; carGlow.intensity = look.night ? 6 : look.dusk ? 3 : 0;   // (high above: close over their heads it blew them out into a glare)
+    headlight.intensity = lit(look) ? 220 : 0; carGlow.intensity = look.night ? 6 : look.dusk ? 3 : 0; fill.intensity = look.night ? 26 : look.dusk ? 16 : look.rays ? 10 : 0;   // (high above: close over their heads it blew them out into a glare)
     bloom.threshold = lit(look) ? 2.2 : 1.9; bloom.strength = (lit(look) ? 0.24 : 0.26) * (look.bloomK || 1);   // only the sun's disc and the lamps glow
     renderer.toneMappingExposure = to(renderer.toneMappingExposure, look.exp || 1);
     roadMat.roughness = to(roadMat.roughness, look.night ? 0.42 : look.rays ? 0.7 : look.glow >= 1.4 ? 0.55 : 0.6);   // wetter-looking at night, a sheen under a low sun
@@ -900,7 +947,7 @@ export function createWorld() {
   function addParts(group, geo, mats) { for (const k in geo) if (geo[k] && (mats[k] || CAR[k])) { const mesh = new THREE.Mesh(geo[k], mats[k] || CAR[k]); mesh.castShadow = k !== 'glow'; group.add(mesh); } }
   function personOf(spec) {   // a body with a neck, two shoulders and two elbows that bend, and (hers) a streaming tail of hair
     const root = new THREE.Group(); root.position.set(spec.seat[0], spec.seat[1], spec.seat[2]); root.scale.setScalar(spec.scale || 1); addParts(root, spec.part.torso, {});
-    const neck = new THREE.Group(); neck.position.set(0, spec.neck, 0); neck.scale.setScalar(1.15); root.add(neck); addParts(neck, spec.part.head, {});
+    const neck = new THREE.Group(); neck.position.set(0, spec.neck, 0); neck.scale.setScalar(1.28); root.add(neck); addParts(neck, spec.part.head, {});
     const arms = [-1, 1].map((sd) => {
       const sh = new THREE.Group(); sh.position.set(sd * spec.shoulder[0], spec.shoulder[1], spec.shoulder[2]); root.add(sh); addParts(sh, spec.part.upper, {});
       const el = new THREE.Group(); el.position.set(0, -spec.elbow, 0); sh.add(el); addParts(el, spec.part.fore, {});
@@ -931,6 +978,7 @@ export function createWorld() {
       sw.position.set(COUPLE.wheel.at[0], COUPLE.wheel.at[1], COUPLE.wheel.at[2]); sw.rotation.x = COUPLE.wheel.tilt; const inner = new THREE.Group(); sw.add(inner); addParts(inner, COUPLE.wheel.geo, {}); player.add(sw);
       R.couple = { drv: drv, her: her, wheel: inner, cur: {} };
     }
+    flames.forEach((f, q) => { f.position.set((q ? 1 : -1) * 0.42, 0.36, m.len + 0.06); player.add(f); });
     playerCarId = id;
   }
 
@@ -1049,7 +1097,7 @@ export function createWorld() {
 
   // ---------------------------------------------------------------- the two of you, moving: his hands on the wheel, her arms and head by her mood, her hair in the wind
   const POSES = {   // [left shoulder forward, left out, left elbow, right forward, right out, right elbow, head turn, head nod, left turn, right turn]
-    idle: [0.55, 0.12, 1.05, 0.55, -0.12, 1.05, 0, 0, 0, 0],
+    idle: [0.32, 0.16, 0.95, 0.32, -0.16, 0.95, 0, 0, 0, 0],
     ask: [0.55, 0.12, 1.05, 1.15, -0.25, 0.75, -0.55, -0.05, 0, -0.4],
     cheer: [0.3, -2.75, 0.35, 0.3, 2.75, 0.35, 0, -0.25, 0, 0],
     wave: [0.55, 0.12, 1.05, 0.2, 2.5, 0.6, -0.3, -0.1, 0, 0],
@@ -1070,16 +1118,16 @@ export function createWorld() {
     H.neck.rotation.y = cur[6]; H.neck.rotation.x = cur[7]; H.arms[0].sh.rotation.y = cur[8]; H.arms[1].sh.rotation.y = cur[9];
     // her hair: hanging down when you're still, streaming out behind at speed, fluttering
     const sp = Math.min(1, W.v / 40);
-    if (H.scarf) H.scarf.forEach((g, i) => { g.rotation.x = (i ? 0.08 : 1.3 - sp * 1.15) + Math.sin(t / 45 + i * 1.6) * 0.22 * sp; g.rotation.y = (i ? -0.08 : -0.55) + Math.sin(t / 70 + i * 1.3) * 0.3 * sp; g.rotation.z = Math.sin(t / 55 + i) * 0.4 * sp; });
-    if (H.hair) H.hair.forEach((g, i) => { g.rotation.x = (i ? 0.06 + (1 - sp) * 0.14 : 1.25 - sp * 0.95) + Math.sin(t / 65 + i * 1.2) * 0.13 * sp; g.rotation.y = Math.sin(t / 100 + i * 0.9) * 0.12 * sp; });
+    if (H.scarf) H.scarf.forEach((g, i) => { g.rotation.x = (i ? 0.04 : 1.35 - sp * 1.15) + Math.sin(t / 45 + i * 1.6) * 0.2 * sp; g.rotation.y = (i ? 0 : -0.08) + Math.sin(t / 70 + i * 1.3) * 0.28 * sp; g.rotation.z = Math.sin(t / 55 + i) * 0.4 * sp; });
+    if (H.hair) H.hair.forEach((g, i) => { g.rotation.x = (i ? 0.13 + (1 - sp) * 0.14 : 1.3 - sp * 0.62) + Math.sin(t / 65 + i * 1.2) * 0.13 * sp; g.rotation.y = Math.sin(t / 100 + i * 0.9) * 0.12 * sp; });
     // him: both hands on the wheel, turning it; a fist in the air at the goal
     const D = C.drv, st = W.steer, gl = her.k === 'wave' || (her.k === 'cheer' && W.banner && W.banner.kind === 'goal');
     C.wheel.rotation.z = -st * 1.5;
-    D.arms[0].sh.rotation.x = 1.12 - st * 0.22; D.arms[0].sh.rotation.z = 0.32; D.arms[0].el.rotation.x = 0.5;
-    D.arms[1].sh.rotation.x = gl ? 0.2 : 1.12 + st * 0.22; D.arms[1].sh.rotation.z = gl ? 2.7 + Math.sin(t / 100) * 0.2 : -0.32; D.arms[1].el.rotation.x = gl ? 0.4 : 0.5;
+    D.arms[0].sh.rotation.x = 1.12 - st * 0.22; D.arms[0].sh.rotation.z = 0.1; D.arms[0].el.rotation.x = 0.5;
+    D.arms[1].sh.rotation.x = gl ? 0.2 : 1.12 + st * 0.22; D.arms[1].sh.rotation.z = gl ? 2.7 + Math.sin(t / 100) * 0.2 : -0.1; D.arms[1].el.rotation.x = gl ? 0.4 : 0.5;
     D.neck.rotation.y = -st * 0.22 + (her.k === 'ask' ? 0.3 : 0); D.neck.rotation.x = 0;
     // both lean a little into the bends
-    if (!R.flying.length) D.root.rotation.z = H.root.rotation.z = -st * W.v / 70 * 0.08;
+    if (!R.flying.length) D.root.rotation.z = H.root.rotation.z = -st * Math.min(1, W.v / 50) * 0.22;
   }
 
   // ---------------------------------------------------------------- one picture
@@ -1124,7 +1172,7 @@ export function createWorld() {
     const sh = player.userData.shadow; sh.position.y = 0.05 - (W.h - E.heightAt(W, W.s)) - lift; sh.material.opacity = Math.max(0.15, 1 - (W.h - E.heightAt(W, W.s) + lift) * 0.2);
     // ---- the camera: behind and above, swinging round late, wider as you go faster
     R.crashK += ((cr && cr.hard ? 1 : 0) - R.crashK) * Math.min(1, dt * 2.5);
-    const spd = W.v / E.VMAX, camDist = 5.4 + spd * 1.3 + R.crashK * 3.2, camH = 1.95 + spd * 0.35 + R.crashK * 1.8;
+    const spd = W.v / E.VMAX, camDist = 3.45 + spd * 0.8 + R.crashK * 4.9, camH = 1.55 + spd * 0.22 + R.crashK * 2.3;
     const yawTarget = travel * 0.55 + heading * 0.45;
     if (!R.camInit) { R.camYaw = yawTarget; }
     let dy = yawTarget - R.camYaw; while (dy > Math.PI) dy -= 2 * Math.PI; while (dy < -Math.PI) dy += 2 * Math.PI;
@@ -1142,9 +1190,10 @@ export function createWorld() {
     V4.set(cx + fx * 7 * (1 - R.crashK * 0.85), R.camY + 1.05 + (cy - R.camY) * 0.35 + lift * 0.7 * R.crashK, cz + fz * 7 * (1 - R.crashK * 0.85));
     if (R.camShake > 0) { camera.position.add(V3.set((Math.random() - 0.5) * R.camShake, (Math.random() - 0.5) * R.camShake, (Math.random() - 0.5) * R.camShake)); R.camShake = Math.max(0, R.camShake - dt * 1.4); }
     camera.lookAt(V4);
+    fill.position.copy(camera.position).add(V3.set(0, 0.6, 0)); fill.target.position.set(cx, cy + 1.62, cz);
     camera.rotation.z += POS.bank * 0.35 - W.steer * spd * 0.02;
-    if (R.debugCam) { camera.position.set(cx + R.debugCam[0], cy + R.debugCam[1], cz + R.debugCam[2]); camera.lookAt(cx + R.debugCam[3], cy, cz + R.debugCam[4]); }
-    camera.fov += ((56 + spd * 10 + (W.boosting ? 7 : 0)) - camera.fov) * Math.min(1, dt * 3); camera.updateProjectionMatrix();
+    if (R.debugCam) { camera.position.set(cx + R.debugCam[0], cy + R.debugCam[1], cz + R.debugCam[2]); camera.lookAt(cx + R.debugCam[3], cy + (R.debugCam[5] || 0), cz + R.debugCam[4]); }
+    camera.fov += ((53 + spd * 9 + (W.boosting ? 7 : 0)) - camera.fov) * Math.min(1, dt * 3); camera.updateProjectionMatrix();
     // the sky things go round with the camera
     sky.position.copy(camera.position); stars.position.copy(camera.position);
     turnRing(W, dt); ringFar.position.set(camera.position.x, camera.position.y - (ringFar.userData.hz || 0) - 30, camera.position.z);
@@ -1180,19 +1229,26 @@ export function createWorld() {
     for (const [id, m] of traffic) if (!seen.has(id)) { scene.remove(m); traffic.delete(id); }
 
     // ---- coins and nitro bottles near the car spin; a caught one flies up and vanishes
-    let nc = 0, nn = 0; const i0 = E.segIndex(W.s) - 2, i1 = E.segIndex(W.s + 420);
+    let nc = 0, nn = 0; const PN = { magnet: 0, shield: 0, double: 0, time: 0 }, i0 = E.segIndex(W.s) - 2, i1 = E.segIndex(W.s + 420);
     for (let i = Math.max(W.base, i0); i <= Math.min(i1, E.lastIndex(W)); i++) {
       const g = E.segAt(W, i); if (!g.coins || i * SEG < W.s - 3) continue;   // the ones behind you are gone
       for (const cn of g.coins) {
         let up = 1.1, scl = 1;
-        if (cn.got) { const gt = W.t - cn.got; if (gt > 12) continue; up += gt * 0.06; scl = 1 - gt / 13; }   // a caught one pops up a little and shrinks away (growing, it filled the camera)
-        place(W, i * SEG, cn.x, 0, POS);
-        TMP.position.set(POS.x, POS.y + up + Math.sin(t / 300 + i) * 0.12, POS.z); TMP.rotation.set(0, t / 260 + i * 0.4, 0); TMP.scale.setScalar(scl); TMP.updateMatrix();
+        if (cn.got) { const gt = W.t - cn.got; if (gt > 6) continue; up += 1.2 + gt * 0.35; scl = 1 - gt / 7; }   // a caught one pops up a little and shrinks away (growing, it filled the camera)
+        const pulled = cn.got && cn.gx != null && Math.abs(cn.x - cn.gx) > 2.2 ? Math.min(1, (W.t - cn.got) / 9) : 0;   // the magnet caught it: it flies across to you
+        place(W, i * SEG, cn.x + (W.x - cn.x) * pulled, 0, POS);
+        const big = cn.pw || cn.nitro ? 1.5 : 1;
+        TMP.position.set(POS.x, POS.y + up + (big > 1 ? 0.25 : 0) + Math.sin(t / 300 + i) * 0.12, POS.z); TMP.rotation.set(0, t / 260 + i * 0.4, 0); TMP.scale.setScalar(scl * big); TMP.updateMatrix();
         if (cn.nitro) { if (nn < 40) nitros.setMatrixAt(nn++, TMP.matrix); }
+        else if (cn.pw) { if (PN[cn.pw] < 40) PWMESH[cn.pw].setMatrixAt(PN[cn.pw]++, TMP.matrix); }
         else if (nc < 400) coins.setMatrixAt(nc++, TMP.matrix);
       }
     }
     coins.count = nc; nitros.count = nn; coins.instanceMatrix.needsUpdate = true; nitros.instanceMatrix.needsUpdate = true;
+    for (const kk in PN) { PWMESH[kk].count = PN[kk]; PWMESH[kk].instanceMatrix.needsUpdate = true; }
+    // the shield's bubble and the nitro's flames
+    { const sl = W.pw ? W.pw.shield : 0; bubble.visible = sl > 0 && !W.crash; if (bubble.visible) { bubble.position.copy(player.position); bubble.position.y += 0.75; bubble.quaternion.copy(player.quaternion); bubble.material.uniforms.t.value = t / 1000; bubble.material.uniforms.a.value = sl < 120 ? (Math.floor(t / 110) % 2 ? 0.25 : 1) : 1; } }
+    flames.forEach((f, q) => { f.visible = !!W.boosting; if (f.visible) { const fl = 0.85 + Math.random() * 0.3; f.scale.set(0.9 + Math.random() * 0.2, 0.9 + Math.random() * 0.2, fl * (0.6 + R.boostK * 0.5)); } });
 
     // ---- knocked-over things fly off; glows at night
     let ng = 0;
@@ -1209,7 +1265,7 @@ export function createWorld() {
     // ---- draw: straight to the screen on a slow PC, otherwise through the glow, the grade and the blur
     R.boostK += ((W.boosting ? 1 : 0) - R.boostK) * Math.min(1, dt * 4); R.flash = Math.max(0, R.flash - dt * 2.2);
     if (R.low) renderer.render(scene, camera);
-    else { GRADE_U.blur.value = R.boostK * 0.7 + Math.max(0, W.v / E.VMAX - 0.88) * 1.1; GRADE_U.flash.value = R.flash * 0.5; composer.render(dt); }
+    else { GRADE_U.blur.value = R.boostK * 0.3 + Math.max(0, W.v / E.VMAX - 0.88) * 1.1; GRADE_U.flash.value = R.flash * 0.5; composer.render(dt); }
     return renderer.domElement;
   }
   // the sun's glare: a chain of soft rings from the sun through the middle of the picture, hidden when a hill is in the way
@@ -1264,7 +1320,7 @@ export function createWorld() {
     const rear = (side) => [cx - fx * len * 0.62 + rx * side * 0.8, cy + 0.3, cz - fz * len * 0.62 + rz * side * 0.8];
     if (W.drift && !W.air) for (const sd of [-1, 1]) { const p = rear(sd); smoke.emit(p[0], p[1], p[2], (Math.random() - 0.5) * 2, 1 + Math.random(), (Math.random() - 0.5) * 2, 1.2, 2.2, '#f2f2f2', 0.34, 1.5); }
     if (W.off && W.v > 8) { const p = rear(Math.random() < 0.5 ? -1 : 1), pal = PAL[E.segAt(W, E.segIndex(W.s)).st]; smoke.emit(p[0], p[1], p[2], -fx * W.v * 0.1, 1.5, -fz * W.v * 0.1, 1.2, 2.2, '#a89e88', 0.3, 1.3); }
-    if (W.boosting) for (const sd of [-0.42, 0.42]) for (let q = 0; q < 2; q++) { const p = rear(sd); sparks.emit(p[0] - fx * 0.95, p[1] + 0.06, p[2] - fz * 0.95, -fx * (3 + Math.random() * 3) + (Math.random() - 0.5) * 0.5, 0.15, -fz * (3 + Math.random() * 3) + (Math.random() - 0.5) * 0.5, 0.34, 0.06, q ? '#8fd0ff' : (Math.random() < 0.5 ? '#ff9a3c' : '#4a9cff'), 1, 0.14); }
+    if (false) for (const sd of [-0.42, 0.42]) for (let q = 0; q < 1; q++) { const p = rear(sd); sparks.emit(p[0] - fx * 0.95, p[1] + 0.06, p[2] - fz * 0.95, -fx * (3 + Math.random() * 3) + (Math.random() - 0.5) * 0.5, 0.15, -fz * (3 + Math.random() * 3) + (Math.random() - 0.5) * 0.5, 0.34, 0.06, q ? '#8fd0ff' : (Math.random() < 0.5 ? '#ff9a3c' : '#4a9cff'), 1, 0.14); }
     if (W.drift && !R.wasDrift) for (const sd of [-0.9, 0.9]) for (let q = 0; q < 6; q++) { const p = rear(sd); smoke.emit(p[0], p[1], p[2], (Math.random() - 0.5) * 3, 1 + Math.random(), (Math.random() - 0.5) * 3, 0.9, 2.4, '#f4f4f4', 0.45, 1.3); }
     R.wasDrift = !!W.drift;
     // skid marks while drifting
@@ -1276,6 +1332,8 @@ export function createWorld() {
       const x = POS.x, y = W.h + 0.8, z = POS.z;
       switch (f.k) {
         case 'coin': for (let i = 0; i < 10; i++) sparks.emit(x, y + 0.6, z, (Math.random() - 0.5) * 6, Math.random() * 5, (Math.random() - 0.5) * 6, 0.25, 0.5, '#ffe066', 1, 0.6); break;
+        case 'power': { const col = { magnet: '#ff5a5a', shield: '#ffd23f', double: '#c77dff', time: '#5dff9a' }[f.pw] || '#ffffff'; for (let i = 0; i < 26; i++) sparks.emit(x, y + 0.8, z, (Math.random() - 0.5) * 9, Math.random() * 7, (Math.random() - 0.5) * 9, 0.34, 0.6, col, 1, 0.8); R.flash = Math.max(R.flash, 0.2); break; }
+        case 'smash': for (let i = 0; i < 30; i++) sparks.emit(x, y + 0.6, z, (Math.random() - 0.5) * 14, Math.random() * 8, (Math.random() - 0.5) * 14, 0.3, 0.6, i % 2 ? '#ffd23f' : '#ffffff', 1, 0.7, 9); R.camShake = Math.max(R.camShake || 0, 0.35); break;
         case 'nitro': for (let i = 0; i < 18; i++) sparks.emit(x, y + 0.6, z, (Math.random() - 0.5) * 8, Math.random() * 6, (Math.random() - 0.5) * 8, 0.3, 0.6, '#5aa9ff', 1, 0.7); R.flash = Math.max(R.flash, 0.25); break;
         case 'leaves': for (let i = 0; i < 26; i++) smoke.emit(x, y, z, (Math.random() - 0.5) * 8, 2 + Math.random() * 6, (Math.random() - 0.5) * 8, 0.25, 1.2, ['#3c8a3a', '#64b852', '#c8641e', '#ffd31a', '#e63946'][i % 5], 1, 0.3, 9); break;
         case 'bump': for (let i = 0; i < 14; i++) sparks.emit(x, y, z, (Math.random() - 0.5) * 8, Math.random() * 4, (Math.random() - 0.5) * 8, 0.18, 0.4, '#ffd27a', 1, 0.5, 9); break;
@@ -1346,6 +1404,20 @@ function raysTexture() {   // soft shafts radiating from the middle, fading out
     x.fillStyle = g; x.beginPath(); x.moveTo(0, 0); x.lineTo(Math.cos(a - w) * L, Math.sin(a - w) * L); x.lineTo(Math.cos(a + w) * L, Math.sin(a + w) * L); x.closePath(); x.fill();
   }
   const gl = x.createRadialGradient(0, 0, 0, 0, 0, S * 0.22); gl.addColorStop(0, 'rgba(255,255,255,0.35)'); gl.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = gl; x.fillRect(-S / 2, -S / 2, S, S);
+  return tex(c, false);
+}
+function plateTexture() {   // a yellow rear plate: 365 CR
+  const c = canvas(256, 56), x = c.getContext('2d');
+  x.fillStyle = '#f7d417'; x.fillRect(0, 0, 256, 56); x.strokeStyle = '#1a1a1a'; x.lineWidth = 3; x.strokeRect(3, 3, 250, 50);
+  x.fillStyle = '#111111'; x.font = '900 40px Arial, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('365 CR', 128, 30);
+  const t = tex(c, false); return t;
+}
+let FGLOW = null;
+function flameGlow() { if (FGLOW) return FGLOW; const c = canvas(64, 64), x = c.getContext('2d'), g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.3, 'rgba(255,200,120,0.6)'); g.addColorStop(1, 'rgba(255,120,40,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); return (FGLOW = tex(c, false)); }
+function flameTexture() {   // a flame along its length: white-blue at the pipe, orange, then gone
+  const W = 64, H = 256, c = canvas(W, H), x = c.getContext('2d');
+  const g = x.createLinearGradient(0, H, 0, 0); g.addColorStop(0, 'rgba(210,235,255,1)'); g.addColorStop(0.18, 'rgba(90,170,255,0.95)'); g.addColorStop(0.45, 'rgba(255,170,60,0.75)'); g.addColorStop(1, 'rgba(255,90,20,0)');
+  x.fillStyle = g; x.beginPath(); x.moveTo(W / 2, 0); x.quadraticCurveTo(W * 0.95, H * 0.55, W * 0.62, H); x.lineTo(W * 0.38, H); x.quadraticCurveTo(W * 0.05, H * 0.55, W / 2, 0); x.fill();
   return tex(c, false);
 }
 function slowTexture() {   // SLOW, as painted on the road: tall letters (they're read from a low angle, far off)
