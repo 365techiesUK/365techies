@@ -370,6 +370,8 @@ _FAQS = [
      "Every card game has a new deal each day &mdash; Today&rsquo;s deal, or Today&rsquo;s match in Hearts, Gin Rummy, Cribbage and Whist &mdash; with the same cards for everyone. Win it to tick it off for the day; the Daily challenges tile on this page shows how many you&rsquo;ve done and how many days in a row."),
     ("What is the Journey?",
      "Every card game has one: 100 levels in ten chapters, each named after a real Dorset place &mdash; along the coast, round Poole Harbour, through the old market towns. Every level is a set deal with three stars to win, and every star has been checked to be possible. In Hearts, Gin Rummy, Cribbage and Whist a level is a single hand against the computer."),
+    ("Can I change how the cards look?",
+     "Yes. In any card game, open Settings and choose <b>Table and card backs</b>: twelve tables and twelve card backs, from green baize to beach huts and Old Harry Rocks. A few specials are won with Journey stars. Your choice is used in all our card games."),
     ("Are my scores saved?",
      "Your scores and settings are kept in your web browser on that computer. They&rsquo;re only sent to us if you choose to put a score in the Hall of Fame. Like every page on our site, we count visits without cookies &mdash; see our <a href=\"/privacy-policy/\">privacy policy</a>."),
     ("What is the Hall of Fame?",
