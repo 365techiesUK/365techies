@@ -455,7 +455,7 @@
       seed: seed == null ? (Math.random() * 4294967296) >>> 0 : seed >>> 0,
       segs: [], base: 0, fork: null, goalAt: -1, stretch: [], pendingSide: 0,
       s: 0, x: 0, v: 0, psi: 0, phi: 0, steer: 0, yawRate: 0, h: 0, vh: 0, air: false, airT: 0, land: 0,
-      boost: 0.4, boosting: false, wasBoost: false, pw: { magnet: 0, shield: 0, double: 0 }, drift: 0, driftT: 0, driftPts: 0, brakeT: 0, brakeHeld: false,
+      boost: 0, bottles: BOTTLES0, nitroT: 0, autoDrift: set.drift !== 'manual', steerHold: 0, field: [], pos: FIELD_N + 1, posT: -999, boosting: false, wasBoost: false, pw: { magnet: 0, shield: 0, double: 0 }, drift: 0, driftT: 0, driftPts: 0, brakeT: 0, brakeHeld: false,
       time: 0, timeUp: false, overT: 0, count: 200, t: 0, score: 0, sAcc: 0,
       stageNo: 1, round: 1, stage: 0, route: [0], cars: [], carN: 1, crash: null,
       combo: 0, comboT: 0, coinRun: 0, coinLast: -99, lineGot: {}, slip: 0, slipOn: false, scrapeT: 0, off: false,
@@ -468,7 +468,8 @@
     buildStage(W, 0); nextFork(W, 0);
     W.time = W.D.time * STAGES[0].t;
     W.s = 3 * SEG; W.h = heightAt(W, W.s);
-    for (var z = W.s + 70; z < W.s + VIEW; z += W.D.gap * (0.6 + W.rng() * 0.8)) spawnCar(W, z);
+    for (var z = W.s + 320; z < W.s + VIEW; z += W.D.gap * (0.6 + W.rng() * 0.8)) spawnCar(W, z);   // (the road ahead of the grid clear)
+    makeField(W);
     return W;
   }
   function bannerOf(W, txt, sub, kind) { W.banner = { txt: txt, sub: sub || '', kind: kind || '', t: W.t }; }
@@ -496,7 +497,62 @@
   // ---------------------------------------------------------------- rivals: sports cars as quick as you, to keep up with and get past
   // One at a time. It turns up a way ahead already at speed; if you drop well back it eases off so you can always catch it; right
   // behind you after you've passed, it fights for its place back; stay clear of it and it's beaten (points), and another comes later.
+  // THE FIELD (owner, 6 Oct: "cars that race you... start on a race line and all race off"): seven racers start on the grid with
+  // you and race the whole run, through whichever fork you take. Near you each is a car on the road; out of sight it's carried
+  // along at its own pace. They pace themselves off how far ahead or behind you they are, so there's always someone to catch.
+  var FIELD_N = 7, BOTTLES0 = 10, BOTTLE_MAX = 20, NITRO_T = 150, SKILL = [1.04, 1.02, 1.0, 0.99, 0.97, 0.95, 0.93];
+  var POS_BONUS = [0, 100000, 60000, 40000, 25000, 15000, 8000, 4000, 0];
+  function makeField(W) {
+    W.field = [];
+    for (var k = 0; k < FIELD_N; k++) W.field.push({ id: k, p: W.s + 70 - k * 8.5, x: k % 2 ? 4.6 : -4.6, v: 0, skill: SKILL[k], t: k % 2 ? 9 : 8, col: (k >> 1) % 4, car: null });   // the grid: two columns, the fastest at the front; you at the back in the middle
+    W.pos = FIELD_N + 1;
+  }
+  function racerPace(W, r) {
+    var base = VMAX * W.D.rv * r.skill * (1 + 0.03 * Math.min(4, W.round - 1)), gap = r.p - W.s;
+    if (gap > 0) return base * (1 - Math.min(0.16, gap / 2600));   // ahead: easing off the further ahead
+    if (gap > -60 && r.car && !W.crash) return Math.min(VMAX * 1.03, Math.max(base * 0.97, W.v * 0.995));   // just behind you: hanging on, back past only if you slow
+    return base * (1 + Math.min(0.22, -gap / 1400));   // behind: pushing to catch up
+  }
+  function fieldStep(W) {
+    var F = W.fork, i, ahead = 0, lastSeg = lastIndex(W) - 40;
+    for (i = 0; i < W.field.length; i++) {
+      var r = W.field[i], c = r.car;
+      if (c && W.cars.indexOf(c) < 0) c = r.car = null;   // (dropped from the road: carried on out of sight)
+      if (c) { r.p = c.s; r.v = c.v; r.x = c.x; c.v0 = racerPace(W, r); if (Math.abs(c.s - W.s) > 340) { W.cars.splice(W.cars.indexOf(c), 1); r.car = null; } }
+      else {
+        r.v += (racerPace(W, r) - r.v) * 0.02; r.p = Math.min(r.p + r.v * DT, lastSeg * SEG);
+        if (Math.abs(r.p - W.s) < 280 && !W.timeUp) {   // near you: on the road
+          var si = segIndex(r.p), g = segAt(W, si); if (!g || si > lastSeg || g.gate) continue;
+          var b = 0; if (g.fk && g.fk.b) { if (!F || !F.s) continue; b = F.s; }
+          var L = null, lanes = W.rng() < 0.5 ? [4.6, 0, -4.6] : [-4.6, 0, 4.6];
+          for (var q = 0; q < 3 && L === null; q++) { var ok = !(Math.abs(r.p - W.s) < 30 && Math.abs(W.x - lanes[q]) < 3.2);
+            for (var j = 0; j < W.cars.length && ok; j++) { var o = W.cars[j]; if (o.b === b && Math.abs(o.s - r.p) < 30 && Math.abs(o.x - lanes[q]) < 3) ok = false; }
+            if (ok) L = lanes[q]; }
+          if (L === null) continue;
+          r.car = { id: W.carN++, s: r.p, x: L, tx: L, v: r.v, v0: racerPace(W, r), t: r.t, b: b, col: r.col, lc: 30, hitT: -999, passed: r.p < W.s, paid: true, ds: r.p - W.s, spin: 0, rival: true, racer: r.id };
+          W.cars.push(r.car);
+        }
+      }
+    }
+    for (i = 0; i < W.field.length; i++) if (W.field[i].p > W.s) ahead++;
+    var pos = ahead + 1;
+    if (pos !== W.pos && W.count <= 0) {
+      if (pos < W.pos) {
+        var best = pos < (W.bestPos || 99); if (best && !W.crash) { W.score += 2000 * ((W.bestPos || W.pos) - pos); W.events.push({ sfx: 'overtake', x: 0 }); W.bestPos = pos; }
+        if (best || W.t - W.posT > 90) { pop(W, pos === 1 ? 'INTO THE LEAD!' : 'UP TO P' + pos, best ? '+' + (2000 * 1).toLocaleString('en-GB') : '', 0, 'gold'); W.posT = W.t; }
+        if (pos === 1 && best) { mood(W, 'cheer'); voice(W, 'great'); }
+      } else if (W.t - W.posT > 120) { pop(W, 'DOWN TO P' + pos, '', 0, 'nitro'); W.posT = W.t; }
+      W.pos = pos;
+    }
+  }
+  function launchField(W) { for (var i = 0; i < W.field.length; i++) { var r = W.field[i]; r.v = 0; if (r.car) r.car.v0 = racerPace(W, r) * (0.92 + i * 0.012); } }
+  function rebunch(W) {   // a new round: the field round you again, some ahead, some behind
+    var off = [150, 95, 45, -35, -80, -130, 200];
+    for (var i = 0; i < W.field.length; i++) { var r = W.field[i]; if (r.car && W.cars.indexOf(r.car) >= 0) W.cars.splice(W.cars.indexOf(r.car), 1); r.car = null; r.p = W.s + off[i]; r.v = W.v; }
+  }
   function rivalOf(W) { for (var i = 0; i < W.cars.length; i++) if (W.cars[i].rival) return W.cars[i]; return null; }
+  function nextAhead(W) { var best = null; for (var i = 0; i < W.field.length; i++) { var d = W.field[i].p - W.s; if (d > 0 && (best === null || d < best)) best = d; } return best; }   // metres to the racer just ahead
+  function nextBehind(W) { var best = null; for (var i = 0; i < W.field.length; i++) { var d = W.s - W.field[i].p; if (d > 0 && (best === null || d < best)) best = d; } return best; }
   function rivals(W) {
     var r = rivalOf(W), i;
     if (!r) {
@@ -552,8 +608,8 @@
         }
         if (Math.abs(ahead.x - c.x) < 3 && !c.rival) c.v = Math.min(c.v, ahead.v);
         else if (c.rival && Math.abs(ahead.x - c.x) < 3 && dmin < 34) c.v = dmin < 9 ? Math.min(c.v, ahead.v) : Math.max(Math.min(c.v, ahead.v + (dmin - 9) * 0.6), c.v - 11 * DT);   // a rival boxed in brakes hard but not all at once (no brake-checking you)
-        else if (c.rival) c.v += (c.v0 - c.v) * 0.02;
-      } else c.v += (c.v0 - c.v) * (c.rival ? 0.02 : 0.01);
+        else if (c.rival) c.v += Math.min((c.v0 - c.v) * 0.02, 12 * DT);
+      } else c.v += c.rival ? Math.min((c.v0 - c.v) * 0.02, 12 * DT) : (c.v0 - c.v) * 0.01;
       if (sameRoad(W, c)) { var dz = c.s - W.s; if (dz < 0 && dz > -(c.rival ? 12 : 30) && Math.abs(c.x - W.x) < 3) c.v = Math.min(c.v, W.v * 0.95); }
       var g = segAt(W, segIndex(c.s));
       if (g.fk && g.fk.a && Math.abs(c.tx) < 3) c.tx = (c.id % 2 ? 1 : -1) * 6.5;   // in the widening road the middle lane picks a side
@@ -656,10 +712,10 @@
       if (!c.got && Math.abs(W.x - c.x) < (W.pw.magnet > 0 && !c.nitro && !c.pw ? 9.5 : 1.7) && W.h - heightAt(W, W.s) < 2.6) {
         c.got = W.t; c.gx = W.x;
         if (c.pw) bonus(W, c);
-        else if (c.nitro) { W.boost = Math.min(1, W.boost + 0.45); W.events.push({ sfx: 'nitro', x: c.x - W.x }); pop(W, 'NITRO', '+45% BOOST', c.x - W.x, 'nitro'); fx(W, { k: 'nitro', x: c.x }); W.score += 500; }
+        else if (c.nitro) { W.bottles = Math.min(BOTTLE_MAX, W.bottles + 2); W.events.push({ sfx: 'nitro', x: c.x - W.x }); pop(W, 'NITRO', '+2 BOTTLES', c.x - W.x, 'nitro'); fx(W, { k: 'nitro', x: c.x }); W.score += 500; }
         else {
           W.coinRun = W.t - W.coinLast < 40 ? W.coinRun + 1 : 1; W.coinLast = W.t; W.coinsN++;
-          W.score += 100 * Math.min(W.coinRun, 10); W.boost = Math.min(1, W.boost + 0.012);
+          W.score += 100 * Math.min(W.coinRun, 10); W.boost = Math.min(1, W.boost + 0.1);   // (ten coins: a bottle)
           W.events.push({ sfx: 'coin', n: W.coinRun, x: c.x - W.x }); fx(W, { k: 'coin', x: c.x });
           W.lineGot[c.line] = (W.lineGot[c.line] || 0) + 1;
           if (W.req && W.req.k === 'coins') W.req.have++;
@@ -696,7 +752,7 @@
       if (g.kind === 'check') endLeg(W);
       W.stageNo++; W.stage = g.st; W.reqNext = Math.max(W.reqNext, W.t + 60 * 5);
       if (g.kind === 'round') {
-        W.route = [0]; W.legs = []; W.legT0 = W.t; W.legHearts = 0; W.runHearts = 0; W.runAsked = 0; W.result = null;
+        W.route = [0]; W.legs = []; W.legT0 = W.t; W.legHearts = 0; W.runHearts = 0; W.runAsked = 0; W.result = null; rebunch(W); W.bestPos = 99;
         bannerOf(W, 'ROUND ' + W.round, 'Bournemouth again - busier and quicker', 'stage'); W.events.push({ say: 'Round ' + W.round });
       } else {
         W.time += add; bannerOf(W, 'CHECKPOINT', 'EXTENDED TIME +' + add + ' SEC', 'check'); W.events.push({ sfx: 'check' }); W.events.push({ say: 'Checkpoint: ' + add + ' more seconds' });
@@ -707,10 +763,11 @@
       var bonus = Math.ceil(W.time) * 1000 * Math.min(W.round, 3), love = W.runHearts * 5000;
       var asked = Math.max(1, W.runAsked * 3), pct = W.runHearts / asked, mark = pct * 70 + Math.min(30, W.time);
       var rank = mark >= 88 ? 'S' : mark >= 72 ? 'A' : mark >= 55 ? 'B' : mark >= 38 ? 'C' : 'D';
-      W.result = { t: W.t, route: W.route.slice(), legs: W.legs.slice(), hearts: W.runHearts, of: asked, timeBonus: bonus, love: love, rank: rank, round: W.round, goal: STAGES[g.st].name };
-      W.score += bonus + love; W.round++;
+      var placeB = POS_BONUS[W.pos] || 0;
+      W.result = { t: W.t, route: W.route.slice(), legs: W.legs.slice(), hearts: W.runHearts, of: asked, timeBonus: bonus, love: love, rank: rank, round: W.round, goal: STAGES[g.st].name, pos: W.pos, of2: FIELD_N + 1, posBonus: placeB };
+      W.score += bonus + love + placeB; W.round++;
       W.time = W.D.time * STAGES[0].t * Math.max(0.8, Math.pow(0.95, W.round - 1)) + 4;
-      bannerOf(W, 'GOAL!', 'TIME BONUS +' + bonus.toLocaleString('en-GB'), 'goal');
+      bannerOf(W, W.pos === 1 ? 'YOU WIN!' : 'GOAL!', 'FINISHED P' + W.pos + ' OF ' + (FIELD_N + 1) + '  -  TIME BONUS +' + bonus.toLocaleString('en-GB'), 'goal');
       W.events.push({ sfx: 'goal' }); W.events.push({ say: 'Goal! Time bonus ' + bonus + ', love bonus ' + love + ', rank ' + rank });
       fx(W, { k: 'fireworks', x: 0 }); fx(W, { k: 'confetti', x: 0 });
       mood(W, 'wave'); voice(W, 'goal', true);
@@ -784,11 +841,13 @@
       W.count--;
       if (W.count === 180 || W.count === 120 || W.count === 60) W.events.push({ sfx: 'count' });
       if (W.count === 0) {
-        W.events.push({ sfx: 'go' }); bannerOf(W, 'GO!', '', 'go'); mood(W, 'cheer'); voice(W, 'go', true); W.legT0 = W.t;
-        if (inp.fire || inp.alt) { W.v = top * 0.32; W.boost = Math.min(1, W.boost + 0.25); W.score += 5000; pop(W, 'FLYING START', '+5,000', 0, 'gold'); W.events.push({ sfx: 'perfect' }); }
+        W.events.push({ sfx: 'go' }); bannerOf(W, 'GO!', 'RACE THEM TO THE COAST', 'go'); mood(W, 'cheer'); voice(W, 'go', true); W.legT0 = W.t; launchField(W);
+        if (inp.fire || inp.alt) { W.v = top * 0.32; W.bottles = Math.min(BOTTLE_MAX, W.bottles + 1); W.score += 5000; pop(W, 'FLYING START', '+5,000 +1 NITRO', 0, 'gold'); W.events.push({ sfx: 'perfect' }); }
       }
       W.rev = (inp.fire || inp.alt || inp.up) ? Math.min(1, (W.rev || 0) + 0.05) : Math.max(0, (W.rev || 0) - 0.03);
       W.h = heightAt(W, W.s);
+      if (W.t === 2) fieldStep(W);   // (the grid on the road)
+      for (var fi = 0; fi < W.field.length; fi++) if (W.field[fi].car) { W.field[fi].car.v = 0; W.field[fi].car.v0 = 0; }
       moveTraffic(W);
       return;
     }
@@ -817,13 +876,16 @@
     if (inp.brakeTap) inp.brakeTap = false;
     if (brake && !W.drift) W.brakeT += DT; else W.brakeT = 0;
     // a drift: brake (a tap is enough) while turning at speed; it lasts while you hold the turn or the car is still sliding
-    if (!W.drift && !out && !W.air && target !== 0 && W.v > top * 0.42 && (pressed || (brake && W.brakeT < 0.3))) {
+    W.steerHold = target !== 0 && target === W.steerDir ? W.steerHold + 1 : 0; W.steerDir = target;
+    var autoGo = W.autoDrift && W.steerHold >= 12 && W.v > top * 0.55 && target * bendHere(W, g) >= 1 / 170;
+    if (!W.drift && !out && !W.air && target !== 0 && W.v > top * 0.42 && (pressed || (brake && W.brakeT < 0.3) || autoGo)) {
       W.drift = target; W.driftT = 0; W.driftPts = 0; W.events.push({ sfx: 'skid' });
       W.psi += target * 0.18;   // the back steps out
     }
     if (W.drift && (W.v < top * 0.3 || out || target !== W.drift)) endDrift(W);   // let go (or turn the other way) to straighten up
-    W.boosting = wantBoost && W.boost > 0.005;
-    if (W.boosting) { W.boost = Math.max(0, W.boost - 0.3 * DT); if (!W.wasBoost) W.events.push({ sfx: 'boost' }); }
+    if (W.nitroT > 0) W.nitroT--;
+    if (wantBoost && W.nitroT <= 0 && W.bottles > 0) { W.bottles--; W.nitroT = NITRO_T; W.events.push({ sfx: 'boost' }); }
+    W.boosting = !W.timeUp && !out && W.nitroT > 0;
     W.wasBoost = W.boosting;
 
     // ---- speed
@@ -898,7 +960,7 @@
     }
 
     // ---- the traffic: bumps, near misses, overtakes and slipstreams
-    moveTraffic(W); rivals(W);
+    moveTraffic(W); fieldStep(W);
     out = !!W.crash;
     var slipping = false;
     for (var q = 0; q < W.cars.length; q++) {
@@ -922,7 +984,7 @@
         dz = car.s - W.s;
       }
       if (car.rival && !out) {   // past the rival (a few metres clear, so side by side doesn't flicker), and back
-        if (car.passed && dz > 4) { car.passed = false; if (W.t - (car.popT || -999) > 100) { pop(W, 'RIVAL BACK IN FRONT', '', 0, 'nitro'); car.popT = W.t; } }
+        if (car.passed && dz > 4) { car.passed = false; if (!car.racer && W.t - (car.popT || -999) > 100) { pop(W, 'RIVAL BACK IN FRONT', '', 0, 'nitro'); car.popT = W.t; } }
         else if (!car.passed && dz < -4) {
           car.passed = true; W.passN++; if (W.req && W.req.k === 'pass') W.req.have++;
           if (!car.paid) { car.paid = true; W.score += 3000; pop(W, 'OVERTAKE!', '+3,000', car.x - W.x, 'gold'); W.events.push({ sfx: 'overtake', x: car.x - W.x }); mood(W, 'cheer'); car.popT = W.t; }
@@ -958,6 +1020,8 @@
       if (W.t % 3 === 0) fx(W, { k: 'smoke', x: W.x, d: W.drift });
     }
     if (W.off && W.v > 10 && W.t % 4 === 0) fx(W, { k: 'dust', x: W.x });
+    if (W.boost >= 1 && W.bottles < BOTTLE_MAX) { W.boost -= 1; W.bottles++; pop(W, '+1 NITRO', 'A BOTTLE FILLED', 0, 'nitro'); W.events.push({ sfx: 'nitro', x: 0 }); }   // the meter full: another bottle
+    else if (W.bottles >= BOTTLE_MAX) W.boost = Math.min(W.boost, 0.99);
     if (!W.timeUp && !out) { var p2 = W.v / VMAX; W.sAcc += p2 * p2 * 32 * (W.boosting ? 1.5 : 1); var whole = Math.floor(W.sAcc); W.score += whole; W.sAcc -= whole; }
     requests(W);
     if (W.her.k !== 'idle' && W.her.k !== 'point' && W.t - W.her.t > (W.her.k === 'ask' ? 70 : W.her.k === 'wave' ? 240 : 110)) mood(W, 'idle');
@@ -1000,7 +1064,7 @@
     var maxK = 0; for (j = 2; j < 30; j++) maxK = Math.max(maxK, Math.abs(segAt(W, i + j).k));
     var tooFast = pushOut(W, maxK, W.v) > W.v * Math.sin(lim) * 0.85;
     if (tooFast && W.v > 24) { if (W.auto) inp.down = true; else inp.up = false; }
-    inp.fire = W.boost > 0.3 && maxK < 1 / 260 && W.v > top * 0.6 && !(W.botBrake > 0);
+    inp.fire = W.bottles > 0 && W.nitroT <= 0 && maxK < 1 / 260 && W.v > top * 0.6 && !(W.botBrake > 0);
     if (W.botBrake > 0) { W.botBrake--; inp.down = true; inp.up = false; }
     if (inp.down && !W.drift) { inp.left = false; inp.right = false; }   // the driver brakes in a straight line, so it never drifts by accident
     return inp;
@@ -1010,7 +1074,7 @@
   function mph(W) { return Math.round(W.v * 2.237); }
 
   return {
-    SEG: SEG, HALF: HALF, RUMBLE: RUMBLE, VERGE: VERGE, VMAX: VMAX, VIEW: VIEW, CAR_W: CAR_W, CAR_L: CAR_L, LANES: LANES, FA: FA, FB: FB, OFF0: OFF0, OFF_END: OFF_END, OFF2: OFF2,
+    nextAhead: nextAhead, nextBehind: nextBehind, SEG: SEG, HALF: HALF, RUMBLE: RUMBLE, VERGE: VERGE, FIELD_N: FIELD_N, BOTTLE_MAX: BOTTLE_MAX, NITRO_T: NITRO_T, VMAX: VMAX, VIEW: VIEW, CAR_W: CAR_W, CAR_L: CAR_L, LANES: LANES, FA: FA, FB: FB, OFF0: OFF0, OFF_END: OFF_END, OFF2: OFF2,
     LEVELS: LEVELS, TUN_W: TUN_W, BRG_W: BRG_W, PW: PW,
     STAGES: STAGES, VEH: VEH, CARS: CARS, DIFF: DIFF, REQ: REQ, rivalOf: rivalOf,
     newWorld: newWorld, step: step, hud: hud, mph: mph, autopilot: autopilot, peek: peek, topSpeed: topSpeed, buildStage: buildStage,

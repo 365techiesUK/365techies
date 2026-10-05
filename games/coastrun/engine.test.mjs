@@ -11,7 +11,7 @@ const quiet = (W) => { W.events.length = 0; W.fx.length = 0; };
 function drive(W, n, input) { for (let i = 0; i < n && !W.over; i++) { E.step(W, typeof input === 'function' ? input(W, i) : input || {}); quiet(W); } }
 function go(W) { while (W.count > 0) { E.step(W, {}); quiet(W); } }
 function findSeg(W, from, ok) { let i = from; while (i < E.lastIndex(W) && !ok(E.segAt(W, i), i)) i++; return ok(E.segAt(W, i), i) ? i : -1; }
-function clear(W) { W.cars = []; for (let i = W.base; i <= E.lastIndex(W); i++) { const g = E.segAt(W, i); g.spr = null; g.coins = null; } }
+function clear(W) { W.cars = []; W.field = []; for (let i = W.base; i <= E.lastIndex(W); i++) { const g = E.segAt(W, i); g.spr = null; g.coins = null; } }
 
 test('a new game: Bournemouth first, the clock by speed, a car and an accelerator', () => {
   const g = E.newWorld(1, { car: 'hatch' }, 1), c = E.newWorld(2, { car: 'nope', pedal: 'hold' }, 1);
@@ -168,7 +168,7 @@ test('coins, a whole line of them, and nitro', () => {
   const j = findSeg(W, E.segIndex(W.s), (g) => (g.coins || []).some((c) => c.nitro));
   const nit = E.segAt(W, j).coins.find((c) => c.nitro);
   W.s = (j - 1) * E.SEG + 2; W.x = nit.x; W.boost = 0; W.v = 30; drive(W, 10, (w) => { w.x = nit.x; return {}; });
-  assert.ok(nit.got); assert.ok(W.boost >= 0.45);
+  assert.ok(nit.got); assert.ok(W.bottles >= 12, 'two bottles of nitro');
 });
 
 test('walls and the sea wall keep the car on the land; the clock running out ends the game', () => {

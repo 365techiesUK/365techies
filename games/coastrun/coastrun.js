@@ -156,20 +156,23 @@ function hud(g, W, t, mode) {
   }
   if (mode === 'play' && W.stageNo === 1 && W.count <= 0 && W.t - R.goT < 300 && R.goT >= 0 && !document.body.classList.contains('touchy')) {
     g.globalAlpha = Math.min(1, (300 - (W.t - R.goT)) / 40);
-    hudText(g, '◀ ▶  STEER     SPACE  NITRO     TAP ▼ IN A BEND  DRIFT     R  RADIO', GW / 2, GH - 22, 6, '#ffffff', 'center');
+    hudText(g, W.autoDrift ? '◀ ▶  STEER - HARD INTO A BEND TO DRIFT     SPACE  NITRO     R  RADIO' : '◀ ▶  STEER     SPACE  NITRO     TAP ▼ IN A BEND  DRIFT     R  RADIO', GW / 2, GH - 22, 6, '#ffffff', 'center');
     g.globalAlpha = 1;
   }
   banner(g, W, t);
   if (!W.crash) pops(g, W);   // (no score popping up over a crash)
   results(g, W, t);
 }
-function rivalTag(g, W, t, mode) {   // RIVAL with an arrow and the gap in metres, while one's about
-  const r = E.rivalOf && E.rivalOf(W); if (!r || mode === 'title' || W.crash || (W.fork && !W.fork.s && E.segIndex(W.s) > W.fork.a - 70)) return;
-  const gap = Math.round(r.s - W.s), y = W.req || W.reqSide || (W.reqDone && W.t - W.reqDone.t < 110) ? 54 : 32, close = Math.abs(gap) < 40;
-  g.fillStyle = 'rgba(6,10,18,0.5)'; g.fillRect(GW / 2 - 34, y - 7.5, 68, 10);
-  g.fillStyle = '#ffc23a'; g.fillRect(GW / 2 - 34, y - 7.5, 1.4, 10);
-  hudText(g, 'RIVAL', GW / 2 - 29, y, 5.6, '#ffc23a', 'left', false);
-  hudText(g, (gap >= 0 ? '▲ ' : '▼ ') + Math.abs(gap) + ' m', GW / 2 + 30, y, 6.5, close && (t / 160 | 0) % 2 ? '#ffc23a' : '#ffffff', 'right', false);
+function rivalTag(g, W, t, mode) {   // your place in the race, big, and the gap to the car ahead (or behind, when you're leading)
+  if (!W.field || !W.field.length || mode === 'title') return;
+  const n = E.FIELD_N + 1, p = Math.min(n, W.pos || n), ah = E.nextAhead(W), bh = E.nextBehind(W);
+  const x = 14, y = 72, lead = p === 1;
+  g.fillStyle = 'rgba(6,10,18,0.55)'; g.fillRect(x - 4, y - 13, 66, 22); g.fillStyle = lead ? '#ffd23f' : '#ffc23a'; g.fillRect(x - 4, y - 13, 1.4, 22);
+  hudText(g, 'POS', x, y - 5, 5, '#c9d6e6', 'left', false);
+  hudText(g, String(p), x + 13, y + 6, 15, lead ? '#ffd23f' : '#ffffff', 'left');
+  hudText(g, '/' + n, x + 13 + (p > 9 ? 17 : 9.5), y + 6, 7, '#c9d6e6', 'left', false);
+  const gap = lead ? (bh == null ? null : -Math.round(bh)) : ah == null ? null : Math.round(ah);
+  if (gap !== null && W.count <= 0) hudText(g, lead ? 'LEADING' : '▲ ' + gap + ' m', x + 58, y - 5, 5.2, lead ? '#ffd23f' : Math.abs(gap) < 40 && (t / 160 | 0) % 2 ? '#ffc23a' : '#ffffff', 'right', false);
 }
 function powers(g, W, t) {   // the bonuses you have on, under the score: an icon each, the time left running round it
   if (!W.pw) return;
@@ -271,15 +274,22 @@ function speedo(g, W, t) {   // the speed in big slanted digits, a rev bar that 
   hudText(g, 'GEAR', x0 - 5, y0 - 9.5, 4.6, '#c9d6e6', 'right', false);
   hudText(g, String(E.mph(W)), xr - 17, yb - 4, 21, W.boosting ? '#8fe3ff' : '#ffffff', 'right');
   hudText(g, 'MPH', xr, yb - 4, 6, '#c9d6e6', 'right');
-  const bw2 = n * (sw + gap) - gap, by2 = yb - 0.5;
-  g.fillStyle = 'rgba(255,255,255,0.14)'; g.fillRect(x0, by2, bw2, 2);
-  g.fillStyle = W.boosting ? '#d8f6ff' : '#4fc3ff'; g.fillRect(x0, by2, bw2 * W.boost, 2);
-  hudText(g, 'NITRO', x0 - 5, by2 + 2.4, 5.2, W.boosting ? '#ffffff' : W.boost > 0.25 && ((t / 400 | 0) % 2) ? '#8fe3ff' : '#9fb3c8', 'right');
+  const nb = W.bottles || 0, show = Math.min(10, nb), bw3 = 4.6, bgp = 1.2, by2 = yb - 1.5, bx = x0 - 16 - 10 * (bw3 + bgp);   // (left of the speedo: on top of the number it hid it)
+  for (let i = 0; i < 10; i++) {   // the bottles: full ones blue, the one in use draining white
+    const xx = bx + i * (bw3 + bgp), on = i < show, live = W.boosting && i === show;
+    g.fillStyle = on ? '#4fc3ff' : 'rgba(255,255,255,0.12)'; g.fillRect(xx, by2 - 7, bw3, 7); g.fillRect(xx + 1.3, by2 - 9, bw3 - 2.6, 2);
+    if (on) { g.fillStyle = 'rgba(255,255,255,0.55)'; g.fillRect(xx + 0.8, by2 - 6, 1, 5); }
+    if (live) { const k = Math.max(0, (W.nitroT || 0) / (E.NITRO_T || 150)); g.fillStyle = '#e8fbff'; g.fillRect(xx, by2 - 7 * k, bw3, 7 * k); }
+  }
+  if (nb > 10) hudText(g, '+' + (nb - 10), bx + 10 * (bw3 + bgp) + 1, by2 - 9, 5.5, '#8fe3ff', 'left');
+  g.fillStyle = 'rgba(255,255,255,0.14)'; g.fillRect(bx, by2 + 1.4, 10 * (bw3 + bgp) - bgp, 1.2);   // the next bottle, filling
+  g.fillStyle = '#8fe3ff'; g.fillRect(bx, by2 + 1.4, (10 * (bw3 + bgp) - bgp) * Math.min(1, W.boost || 0), 1.2);
+  hudText(g, 'NITRO', bx, by2 - 11, 5.2, W.boosting ? '#ffffff' : nb > 0 && ((t / 400 | 0) % 2) ? '#8fe3ff' : '#9fb3c8', 'left');
 }
 function results(g, W, t) {   // at the goal: each stretch's time and hearts, the bonuses and the rank
   const Rz = W.result; if (!Rz) return;
   const age = W.t - Rz.t; if (age < 40 || age > 600) return;
-  const a = Math.min(1, (age - 40) / 20, (600 - age) / 25), x = GW / 2 - 110, y = 46, w = 220, h = 30 + Rz.legs.length * 11 + 30;
+  const a = Math.min(1, (age - 40) / 20, (600 - age) / 25), x = GW / 2 - 110, y = 46, w = 220, h = 30 + Rz.legs.length * 11 + 41;
   g.save(); g.globalAlpha = a;
   g.fillStyle = 'rgba(6,10,18,0.8)'; g.fillRect(x, y, w, h);
   g.fillStyle = '#ffc23a'; g.fillRect(x + 10, y, w - 20, 1);
@@ -294,6 +304,7 @@ function results(g, W, t) {   // at the goal: each stretch's time and hearts, th
   if (age > 60 + Rz.legs.length * 12) {
     hudText(g, 'TIME BONUS  ' + Rz.timeBonus.toLocaleString('en-GB'), x + 12, yb, 7, '#ffe9a8', 'left', false);
     hudText(g, 'LOVE BONUS  ' + Rz.love.toLocaleString('en-GB') + '  (' + Rz.hearts + ' ♥)', x + 12, yb + 11, 7, '#ffd1df', 'left', false);
+    if (Rz.pos) hudText(g, 'FINISHED P' + Rz.pos + ' OF ' + Rz.of2 + (Rz.posBonus ? '  +' + Rz.posBonus.toLocaleString('en-GB') : ''), x + 12, yb + 22, 7, Rz.pos === 1 ? '#ffd23f' : '#ffffff', 'left', false);
   }
   if (age > 90 + Rz.legs.length * 12) { const s = 1 + Math.max(0, 1 - (age - 90 - Rz.legs.length * 12) / 12) * 0.8; g.save(); g.translate(x + w - 26, yb + 6); g.scale(s, s); hudText(g, Rz.rank, 0, 8, 26, Rz.rank === 'S' ? '#ff4dd2' : Rz.rank === 'A' ? '#ffd400' : '#ffffff', 'center'); g.restore(); hudText(g, 'RANK', x + w - 26, yb - 12, 6, '#bfe6ff', 'center', false); }
   g.restore();
@@ -682,10 +693,11 @@ A.start({
     { key: 'radio', type: 'seg', label: 'Radio', small: 'Coast FM plays a tune for each place; or pick one station to play all the way. On the start line press ◀ ▶ to tune the car radio, or R at any time.', options: RADIO.map((r) => [r[0], r[1]]), def: 'place' },
     { key: 'voice', type: 'switch', label: 'Her voice', small: 'Your passenger says what she would like you to do, and how you did.', def: true },
     { key: 'shake', type: 'switch', label: 'Screen shake', small: 'The picture shakes when you bump or crash.', def: !reducedMotion },
+    { key: 'drift', type: 'seg', label: 'Drifting', small: 'Automatic: steer hard into a sharp bend at speed and the car drifts by itself. Manual: tap the brake as you turn into the bend.', options: [['auto', 'Automatic'], ['manual', 'Manual']], def: 'auto' },
     { key: 'cam', type: 'seg', label: 'Camera', small: 'Close: low behind the car, like the arcade. High: further back and up, to see more of the road ahead.', options: [['near', 'Close'], ['far', 'High']], def: 'near' }
   ],
   picker: { key: 'car', label: 'Choose your car', options: [['roadster', 'Roadster', 'Red · all-rounder'], ['gt', 'GT', 'Silver · fastest'], ['hatch', 'Hot hatch', 'Yellow · grippy']] },
-  newWorld: (speed, set) => { set = set || {}; R.shakeOn = set.shake !== false; return E.newWorld(speed, { car: set.car, pedal: touchy() ? 'auto' : set.pedal }); },
+  newWorld: (speed, set) => { set = set || {}; R.shakeOn = set.shake !== false; return E.newWorld(speed, { car: set.car, pedal: touchy() ? 'auto' : set.pedal, drift: set.drift }); },
   statKey: (W) => 'v' + W.diff,
   hires: () => true,
   step: E.step, hud: E.hud, draw: draw, sound: sound, frameAudio: frameAudio,
