@@ -252,6 +252,7 @@
     else if (!b || r.secs < b.secs || (r.secs === b.secs && r.moves < b.moves)) p.best[i] = { secs: r.secs, moves: r.moves };
     saveProg(p);
     var last = i === L().length - 1, chapDone = (i % 10) === 9, stars = n || had;
+    var unl = n && window.Looks && Looks.newlyUnlocked ? Looks.newlyUnlocked() : [];   // a special table or card back won with these stars
     var pills = '<div class="jy-ip">' + [0, 1, 2].map(function (k) { return '<span class="' + (ok[k] ? 'got' : '') + '">&#9733; ' + esc(k || C.rules ? g[k] : 'Won') + '</span>'; }).join('') + '</div>';
     box.hidden = false;
     if (!n) {   // a game with its own goals: the hand missed star 1
@@ -265,6 +266,7 @@
     box.innerHTML = '<div class="jy-win"><div class="bigst">' + [1, 2, 3].map(function (x) { return '<i class="' + (x <= n ? 'on' : '') + '" style="--i:' + (x - 1) + '"></i>'; }).join('') + '</div>'
       + '<p style="font-weight:800;color:#fff;font-size:18px">Level ' + (i + 1) + (n === 3 ? ' &mdash; all three stars!' : ' complete!') + '</p>' + pills
       + (n < had ? '<p style="margin-top:8px">Your best here is still ' + had + ' stars.</p>' : '')
+      + (unl.length ? '<p style="margin-top:8px">&#127881; Unlocked: <b style="color:#ffd257">' + esc(unl.join(', ')) + '</b> &mdash; choose it in Settings</p>' : '')
       + (chapDone && !last ? '<p style="margin-top:8px">Chapter complete &mdash; next stop: <b style="color:#ffd257">' + esc(C.data.chapters[Math.floor(i / 10) + 1]) + '</b></p>' : '')
       + (last ? '<p style="margin-top:8px"><b style="color:#ffd257">You&rsquo;ve finished the Journey!</b></p>' : '')
       + '<div class="jy-row">' + (last ? '' : '<button class="jy-btn" type="button" data-jyplay="' + (i + 1) + '">Next level &rarr;</button>')

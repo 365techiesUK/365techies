@@ -77,6 +77,13 @@
     if (V) SET[V.key] = V.def;
     (function () { var s = load('settings', null); if (s && typeof s === 'object') for (var k in SET) if (k in s) SET[k] = s[k]; })();
     if (V && !V.options.some(function (o) { return o[0] === SET[V.key]; })) SET[V.key] = V.def;
+    // tables and card backs (5 Oct 2026): one choice for every card game (looks.js keeps it as cards365:look)
+    if (window.Looks) {
+      var lk = Looks.shared();
+      if (lk) { if (Looks.known('felt', lk.felt)) SET.felt = lk.felt; if (Looks.known('back', lk.back)) SET.back = lk.back; }
+      if (!Looks.known('felt', SET.felt)) SET.felt = 'green';
+      if (!Looks.known('back', SET.back)) SET.back = 'navy';
+    }
     function blankStats() { return { v: 1, played: 0, won: 0, streak: 0, bestStreak: 0, best: {}, daily: {}, recent: [] }; }
     var ST = blankStats();
     (function () { var s = load('stats', null); if (s && s.v === 1) for (var k in ST) if (k in s) ST[k] = s[k]; if (!ST.best || typeof ST.best !== 'object') ST.best = {}; })();
@@ -791,6 +798,7 @@
       Array.prototype.forEach.call(document.querySelectorAll('[data-felt]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-felt') === SET.felt)); });
       Array.prototype.forEach.call(document.querySelectorAll('[data-back]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-back') === SET.back)); });
       document.body.className = 'felt-' + SET.felt + ' back-' + SET.back + (SET.fx ? '' : ' nofx');
+      var pv = $('sLookPv'); if (pv) { pv.className = 'lkpv lk-f-' + SET.felt; pv.firstChild.className = 'lk-b-' + SET.back; }
     }
     document.addEventListener('click', function (e) {
       var b = e.target.closest ? e.target.closest('[data-var],[data-set],[data-felt],[data-back]') : null; if (!b) return;
@@ -798,10 +806,15 @@
       else if (b.hasAttribute('data-set')) { var k = b.getAttribute('data-set'); SET[k] = !SET[k]; if (k === 'timer') bar(); }
       else if (b.hasAttribute('data-back')) SET.back = b.getAttribute('data-back');
       else SET.felt = b.getAttribute('data-felt');
+      if ((b.hasAttribute('data-felt') || b.hasAttribute('data-back')) && window.Looks) Looks.remember(SET.felt, SET.back);
       save('settings', SET); syncControls();
     });
 
     // ------------------------------------------------------------ buttons and keys
+    if (window.Looks) $('sLooks').onclick = function () {
+      closeSheets();
+      Looks.open({ felt: SET.felt, back: SET.back, pick: function (kind, id) { if (kind === 'felt') SET.felt = id; else SET.back = id; save('settings', SET); syncControls(); } });
+    };
     $('bNew').onclick = openNew;
     $('bUndo').onclick = undo;
     $('bHint').onclick = hint;
@@ -858,7 +871,7 @@
     document.addEventListener('fullscreenchange', function () { $('bFullL').textContent = document.fullscreenElement ? 'Leave full screen' : 'Full screen'; });
     document.addEventListener('keydown', function (e) {
       gestured = true;
-      if (e.defaultPrevented || (window.GameSocial && GameSocial.isOpen()) || (window.HallOfFame && HallOfFame.isOpen()) || (window.Journey && Journey.isOpen())) return;   // typing feedback / initials, or a key a sheet used
+      if (e.defaultPrevented || (window.GameSocial && GameSocial.isOpen()) || (window.HallOfFame && HallOfFame.isOpen()) || (window.Journey && Journey.isOpen()) || (window.Looks && Looks.isOpen())) return;   // typing feedback / initials, or a key a sheet used
       if (e.key === 'Escape') { if (openSheet) closeSheets(); return; }
       if (openSheet || e.altKey) return;
       var k = (e.key || '').toLowerCase();
@@ -884,7 +897,7 @@
     var lastTick = Date.now();
     setInterval(function () {
       var now = Date.now(), d = Math.min(2000, now - lastTick); lastTick = now;
-      if (!G || !G.started || S.won || G.over || document.hidden || openSheet || (window.GameSocial && GameSocial.isOpen()) || (window.HallOfFame && HallOfFame.isOpen()) || (window.Journey && Journey.isOpen())) return;
+      if (!G || !G.started || S.won || G.over || document.hidden || openSheet || (window.GameSocial && GameSocial.isOpen()) || (window.HallOfFame && HallOfFame.isOpen()) || (window.Journey && Journey.isOpen()) || (window.Looks && Looks.isOpen())) return;
       G.ms += d;
       if (G.limit) { chal(); if (G.ms >= G.limit && !G.timeUp) timeUp(); }
       else if (G.mode === 'journey') chal();
@@ -969,9 +982,10 @@
           + (D.autoNext ? sw('auto', 'Move cards up to the piles for me', 'When it&rsquo;s plainly safe to.') : '')
           + sw('sound', 'Sounds', 'Soft card sounds and chimes.') + sw('timer', 'Show the clock', 'It still keeps your best time.')
           + sw('fx', 'Extra effects', 'Sparkles, cards that lift as they move, fireworks when you win. Switch off on a slower computer.')
-          + '<div class="set"><div><label>Table</label></div><div class="felts" role="group" aria-label="Table"><button type="button" data-felt="green" style="background:#1f7a45" aria-label="Green baize"></button><button type="button" data-felt="blue" style="background:#1f5f9c" aria-label="Blue"></button><button type="button" data-felt="red" style="background:#8e2537" aria-label="Red"></button><button type="button" data-felt="slate" style="background:#45526a" aria-label="Grey"></button>'
+          + (window.Looks ? '<div class="set"><div><label>Table and card backs</label><small>Twelve of each &ndash; the specials are won with Journey stars.</small></div><button class="btn lkbtn" type="button" id="sLooks"><span class="lkpv" id="sLookPv"><i></i></span>Choose</button></div>' : ''
+            + '<div class="set"><div><label>Table</label></div><div class="felts" role="group" aria-label="Table"><button type="button" data-felt="green" style="background:#1f7a45" aria-label="Green baize"></button><button type="button" data-felt="blue" style="background:#1f5f9c" aria-label="Blue"></button><button type="button" data-felt="red" style="background:#8e2537" aria-label="Red"></button><button type="button" data-felt="slate" style="background:#45526a" aria-label="Grey"></button>'
           + '<button type="button" data-felt="oak" style="background:repeating-linear-gradient(91deg,#6b4220 0 3px,#7a4c26 3px 6px)" aria-label="Oak table"></button><button type="button" data-felt="night" style="background:radial-gradient(#2a3670,#060918)" aria-label="Night"></button></div></div>'
-          + '<div class="set"><div><label>Card backs</label></div><div class="backs" role="group" aria-label="Card backs"><button type="button" data-back="navy" style="background:linear-gradient(155deg,#17447a,#0a2245)" aria-label="365 navy"></button><button type="button" data-back="royal" style="background:linear-gradient(155deg,#8e1d2c,#4a0712)" aria-label="Royal red"></button><button type="button" data-back="sea" style="background:linear-gradient(180deg,#ff9a6a,#ffcf8a 30%,#2aa3c4 52%,#0b5e86)" aria-label="Seaside"></button></div></div>'
+          + '<div class="set"><div><label>Card backs</label></div><div class="backs" role="group" aria-label="Card backs"><button type="button" data-back="navy" style="background:linear-gradient(155deg,#17447a,#0a2245)" aria-label="365 navy"></button><button type="button" data-back="royal" style="background:linear-gradient(155deg,#8e1d2c,#4a0712)" aria-label="Royal red"></button><button type="button" data-back="sea" style="background:linear-gradient(180deg,#ff9a6a,#ffcf8a 30%,#2aa3c4 52%,#0b5e86)" aria-label="Seaside"></button></div></div>')
           + '<p class="foot">' + esc(D.title) + ' is made by <a href="https://365techies.co.uk/" target="_blank" rel="noopener">365 Techies</a> in Bournemouth. No adverts, no sign-in, nothing to install. Computer playing up? Ring us on <b>01202 775566</b>.</p>'
           + '<div class="row"><button class="btn go wide" type="button" data-close>Done</button></div>')
         + sheet('dHelp', 'How to play', '<ol class="how">' + (D.help || []).map(function (h) { return '<li>' + h + '</li>'; }).join('') + '</ol>'
