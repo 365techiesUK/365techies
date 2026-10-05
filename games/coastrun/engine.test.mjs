@@ -16,7 +16,7 @@ function clear(W) { W.cars = []; for (let i = W.base; i <= E.lastIndex(W); i++) 
 test('a new game: Bournemouth first, the clock by speed, a car and an accelerator', () => {
   const g = E.newWorld(1, { car: 'hatch' }, 1), c = E.newWorld(2, { car: 'nope', pedal: 'hold' }, 1);
   assert.equal(g.stage, 0); assert.equal(E.STAGES[0].name, 'BOURNEMOUTH');
-  assert.equal(Math.round(g.time), Math.round(E.STAGES[0].t * 1.3), 'Gentle gives more time'); assert.equal(Math.round(c.time), E.STAGES[0].t);
+  assert.equal(Math.round(g.time), Math.round(E.STAGES[0].t * 1.06), 'Gentle gives a little more time'); assert.equal(Math.round(c.time), E.STAGES[0].t);
   assert.equal(g.car, 'hatch'); assert.equal(c.car, 'roadster', 'an unknown car falls back to the Roadster');
   assert.equal(g.auto, true); assert.equal(c.auto, false);
   assert.ok(g.fork && g.fork.next.join() === '1,2', 'the first fork leads to the Purbeck Hills or the New Forest');

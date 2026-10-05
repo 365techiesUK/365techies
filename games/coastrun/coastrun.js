@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=10';
+import { createWorld } from './world3d.js?v=11';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 const GW = 384, GH = 224;
@@ -13,7 +13,11 @@ let world = null, worldTried = false;
 window.COAST3D = { get world() { return world; } };   // for the tests (read-only look at the 3D world)
 function getWorld() { if (!worldTried) { worldTried = true; try { world = createWorld(); } catch (e) { world = null; if (window.console) console.warn('365 Coast Run: 3D failed', e); } } return world; }
 
-const R = { lastT: 0, demoAcc: 0, W: null, goT: -1, shownScore: 0, lastV: 0, braking: false, boostK: 0, slow: 0, scale: 1, shakeOn: true };
+const BEST_KEY = 'coast365.best';
+let BEST = {}; try { BEST = JSON.parse(localStorage.getItem(BEST_KEY) || '{}') || {}; } catch (e) { BEST = {}; }
+function bestOf(W, st) { const d = BEST['d' + W.diff]; return d && d[st] ? d[st] : 0; }
+function saveBest(W, st, sec) { const k = 'd' + W.diff; (BEST[k] || (BEST[k] = {}))[st] = sec; try { localStorage.setItem(BEST_KEY, JSON.stringify(BEST)); } catch (e) {} }
+const R = { lastT: 0, legN: 0, split: null, demoAcc: 0, W: null, goT: -1, shownScore: 0, lastV: 0, braking: false, boostK: 0, slow: 0, scale: 1, shakeOn: true };
 let K = 3;
 function roundRect(g, x, y, w, h, r) { g.beginPath(); if (g.roundRect) g.roundRect(x, y, w, h, r); else g.rect(x, y, w, h); }
 const GLOW = {};
@@ -89,6 +93,7 @@ function hud(g, W, t, mode) {
   hudText(g, 'TIME', 10, 13, 7.5, '#ffe9a8');
   hudText(g, String(tm), 9, 38, 26, flash ? '#ff4d4d' : low ? '#ff9a3c' : '#ffd400');
   if (W.count <= 0 && mode !== 'title') hudText(g, 'STAGE ' + clock(Math.max(0, (W.t - W.legT0) / 60)), 10, 49, 6.5, '#ffffff');
+  if (mode !== 'title') clockExtras(g, W, t, pi);
   // the score, your hearts, which stretch of five
   R.shownScore += (W.score - R.shownScore) * 0.2; if (Math.abs(W.score - R.shownScore) < 1) R.shownScore = W.score;
   hudText(g, 'SCORE', GW - 10, 13, 7.5, '#d4efff', 'right');
@@ -140,6 +145,37 @@ function powers(g, W, t) {   // the bonuses you have on, under the score: an ico
     else if (k === 'shield') { g.beginPath(); for (let q = 0; q < 10; q++) { const a = q / 10 * Math.PI * 2 - Math.PI / 2, rr = q % 2 ? 2.2 : 5; g.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } g.fill(); }
     else hudText(g, 'x2', x, y + 3, 7.5, col, 'center', false);
     x -= 21;
+  }
+}
+function clockExtras(g, W, t, pi) {   // the race against the clock: your best for this stage, a warning when you're behind, the last seconds big
+  if (W.legs.length < R.legN) R.legN = 0;   // a new round
+  if (W.legs.length > R.legN) {   // a checkpoint (or the goal): this stage's time against your best
+    const L = W.legs[W.legs.length - 1], prev = bestOf(W, L.st), rec = !prev || L.t < prev;
+    if (rec && !W.demo) saveBest(W, L.st, L.t);
+    R.split = { t: L.t, prev: prev, rec: rec, at: W.t }; R.legN = W.legs.length;
+  }
+  const st = stretchOf(W, pi);
+  if (st && W.count <= 0) {
+    const b = bestOf(W, st.id); if (b) hudText(g, 'BEST ' + clock(b), 10, 58, 6.2, '#ffd98a');
+    const el = (W.t - W.legT0) / 60, done = (pi - st.from) * 4, left = (st.to - pi) * 4, pace = el > 5 ? done / el : 0;
+    if (!W.timeUp && pace > 0 && left / Math.max(12, pace) > W.time + 1 && (t / 200 | 0) % 3) hudText(g, 'HURRY!', 10, b ? 69 : 60, 10, '#ff4d4d');
+  }
+  if (!W.timeUp && W.count <= 0 && W.time > 0 && W.time <= 5) {   // the last five seconds, big in the middle
+    const n = Math.ceil(W.time), f = W.time - Math.floor(W.time), s = 1 + (f > 0.75 ? (f - 0.75) * 1.6 : 0);
+    g.save(); g.translate(GW / 2, GH * 0.3); g.scale(s, s); g.globalAlpha = 0.35 + 0.65 * Math.min(1, f * 2.2);
+    hudText(g, String(n), 0, 14, 40, n <= 2 ? '#ff4d4d' : '#ffd400', 'center'); g.restore(); g.globalAlpha = 1;
+  }
+  const S = R.split;
+  if (S && W.t - S.at < 240 && W.t >= S.at) {   // under the checkpoint banner: STAGE TIME, against your best
+    const a = Math.min(1, (240 - (W.t - S.at)) / 30), y = 86;
+    g.globalAlpha = a;
+    g.fillStyle = 'rgba(0,8,24,0.55)'; roundRect(g, GW / 2 - 70, y - 9, 140, S.prev ? 27 : 19, 8); g.fill();
+    hudText(g, 'STAGE TIME ' + clock(S.t), GW / 2, y + 3, 8.5, '#ffffff', 'center');
+    if (S.prev) {
+      const d = S.t - S.prev, txt = (d < 0 ? '-' : '+') + Math.abs(d).toFixed(2) + 's';
+      hudText(g, S.rec ? 'NEW RECORD!  ' + txt : 'BEST ' + clock(S.prev) + '   ' + txt, GW / 2, y + 14, 7.5, S.rec ? ((t / 180 | 0) % 2 ? '#ffd400' : '#fff3a0') : '#ff8a8a', 'center');
+    }
+    g.globalAlpha = 1;
   }
 }
 function heart(g, x, y, r, col) {   // a little heart, centred on x, y
@@ -456,6 +492,7 @@ A.start({
   touchText: '<b>&#9664; &#9654;</b> steer &middot; <b>Boost</b> &middot; <b>Brake</b> (tap it while turning to drift) &mdash; the car goes by itself',
   help: [
     '<b>The aim:</b> drive as far as you can before the clock runs out. Each stretch of road ends at a <b>checkpoint</b> that adds time. Five stretches make a run: reach one of the five <b>goals</b> for a time bonus, a love bonus and a rank, then go round again &mdash; busier and quicker.',
+    '<b>Beat the clock:</b> the clock never stops &mdash; if it reaches zero it&rsquo;s game over and you start again from Bournemouth. Every stage keeps your <b>best time</b> on this device: it shows under the stage clock, and at each checkpoint you see how you did against it &mdash; beat it for a <b>NEW RECORD</b>. <b>HURRY!</b> flashes when you&rsquo;re not on pace to make the next checkpoint.',
     '<b>Your passenger</b> asks for things as you go: a drift, a near miss, overtaking, coins, a jump, a slipstream, keeping clean or going flat out. Do it before her timer runs out for up to three <b>hearts</b>. Coming up to a fork she says which way she would like to go &mdash; take her road for two more. Hearts are worth points now and again at the goal, and they count towards your rank.',
     '<b>Steer</b> with the <b>&larr; &rarr;</b> arrow keys (or A and D). The car accelerates by itself; press <b>&darr;</b> (or S) to brake. In Settings you can choose to hold <b>&uarr;</b> to go instead.',
     '<b>Bends</b> pull the car outwards &mdash; steer into them, and ease off (brake) for the sharp ones the black and white arrows warn you about. On <b>Gentle</b> the car helps you round.',
@@ -465,6 +502,6 @@ A.start({
     '<b>Bonuses</b> on the road: a red <b>magnet</b> pulls in coins from every lane; a gold <b>star</b> puts a shield round the car &mdash; smash through traffic and signs without crashing; a purple <b>gem</b> doubles every point you score; a green <b>clock</b> adds five seconds. The ones you have on show under the score, running down.',
     '<b>Jumps:</b> go over a crest fast and the car flies &mdash; points for every bit of air. <b>Coins</b> lie on the road in lines; get every coin in a line for a bonus.',
     '<b>Bumps:</b> running into the back of a car slows you right down; hitting a lamp post, palm tree or sign at speed spins you off (on Gentle you just bounce off). Bushes and beach umbrellas only slow you a little.',
-    '<b>Start:</b> hold nitro as the lights turn green for a flying start. <b>Gentle</b> gives more time, less traffic and help round the bends. <b>P</b> pauses; the game also pauses itself if you click away.'
+    '<b>Start:</b> hold nitro as the lights turn green for a flying start. <b>Gentle</b> gives a little more time, less traffic and help round the bends, and only big crashes stop you. <b>P</b> pauses; the game also pauses itself if you click away.'
   ]
 });
