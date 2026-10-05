@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=6';
+import { createWorld } from './world3d.js?v=7';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 const GW = 384, GH = 224;
@@ -84,17 +84,17 @@ function stretchOf(W, i) { for (let j = W.stretch.length - 1; j >= 0; j--) if (i
 const clock = (sec) => { const m = Math.floor(sec / 60), s = sec - m * 60; return m + "'" + (s < 10 ? '0' : '') + s.toFixed(2).replace('.', '"'); };
 function hud(g, W, t, mode) {
   const pi = E.segIndex(W.s), tm = Math.ceil(W.time), low = !W.timeUp && W.time <= 10 && W.count <= 0, flash = low && (t / 250 | 0) % 2;
-  for (const [x, y] of [[30, 26], [GW - 34, 30]]) { const gr = g.createRadialGradient(x, y, 0, x, y, 52); gr.addColorStop(0, 'rgba(0,8,24,0.34)'); gr.addColorStop(1, 'rgba(0,8,24,0)'); g.fillStyle = gr; g.fillRect(x - 60, y - 60, 120, 120); }   // a soft shade behind the corner numbers, so they read on a bright sky
+  for (const [x, y] of [[30, 26], [GW - 34, 30]]) { const gr = g.createRadialGradient(x, y, 0, x, y, 52); gr.addColorStop(0, 'rgba(0,8,24,0.5)'); gr.addColorStop(0.6, 'rgba(0,8,24,0.22)'); gr.addColorStop(1, 'rgba(0,8,24,0)'); g.fillStyle = gr; g.fillRect(x - 60, y - 60, 120, 120); }   // a soft shade behind the corner numbers, so they read on a bright sky
   // the clock, and this stretch's own time
   hudText(g, 'TIME', 10, 13, 7.5, '#ffe9a8');
   hudText(g, String(tm), 9, 38, 26, flash ? '#ff4d4d' : low ? '#ff9a3c' : '#ffd400');
   if (W.count <= 0 && mode !== 'title') hudText(g, 'STAGE ' + clock(Math.max(0, (W.t - W.legT0) / 60)), 10, 49, 6.5, '#ffffff');
   // the score, your hearts, which stretch of five
   R.shownScore += (W.score - R.shownScore) * 0.2; if (Math.abs(W.score - R.shownScore) < 1) R.shownScore = W.score;
-  hudText(g, 'SCORE', GW - 10, 13, 7.5, '#bfe6ff', 'right');
+  hudText(g, 'SCORE', GW - 10, 13, 7.5, '#d4efff', 'right');
   hudText(g, Math.round(R.shownScore).toLocaleString('en-GB'), GW - 10, 29, 14, '#ffffff', 'right');
   const S0 = E.STAGES[W.stage] || E.STAGES[0];
-  hudText(g, 'STAGE ' + S0.level + '/' + E.LEVELS + (W.round > 1 ? '  ·  ROUND ' + W.round : ''), GW - 10, 40, 7, '#bfe6ff', 'right');
+  hudText(g, 'STAGE ' + S0.level + '/' + E.LEVELS + (W.round > 1 ? '  ·  ROUND ' + W.round : ''), GW - 10, 40, 7, '#d4efff', 'right');
   if (mode !== 'title') { heart(g, GW - 44, 47, 4.2, '#ff4d7a'); hudText(g, String(W.runHearts || 0), GW - 37, 50.5, 8, '#ffd1df', 'left'); }
   // where you are: the place, and how far along it
   const st = stretchOf(W, pi), S = E.STAGES[(st && st.id) || 0];
@@ -124,7 +124,7 @@ function hud(g, W, t, mode) {
     hudText(g, '◀ ▶ steer   ·   SPACE boost   ·   tap ▼ while turning to drift', GW / 2, GH - 30, 7.5, '#ffffff', 'center');
   }
   banner(g, W, t);
-  pops(g, W);
+  if (!W.crash) pops(g, W);   // (no score popping up over a crash)
   results(g, W, t);
 }
 function heart(g, x, y, r, col) {   // a little heart, centred on x, y
@@ -149,10 +149,10 @@ function face(g, x, y, r, mood, t) {   // your passenger, in a little round fram
 function request(g, W, t) {   // what she's asking for: her face, the words, how much is done and how long is left; then how you did
   const Q = W.req, done = W.reqDone && W.t - W.reqDone.t < 110 ? W.reqDone : null, side = W.reqSide;
   if (!Q && !done && !side) return;
-  const x = GW / 2 - 92, y = 26, w = 184, h = 22;
-  g.fillStyle = 'rgba(40,6,24,0.72)'; roundRect(g, x, y, w, h, 11); g.fill();
-  g.strokeStyle = 'rgba(255,120,170,0.8)'; g.lineWidth = 0.8; roundRect(g, x, y, w, h, 11); g.stroke();
-  face(g, x + 11, y + 11, 9, done && done.n < 2 ? 'sad' : 'happy', t);
+  const x = GW / 2 - 88, y = 25, w = 176, h = 20;
+  g.fillStyle = 'rgba(40,6,24,0.62)'; roundRect(g, x, y, w, h, 10); g.fill();
+  g.strokeStyle = 'rgba(255,120,170,0.8)'; g.lineWidth = 0.8; roundRect(g, x, y, w, h, 10); g.stroke();
+  face(g, x + 10, y + 10, 8.4, done && done.n < 2 ? 'sad' : 'happy', t);
   if (done && !Q) {
     hudText(g, done.word, x + 26, y + 15, 9, done.n >= 2 ? '#ffd1df' : '#ffffff', 'left', false);
     for (let i = 0; i < 3; i++) heart(g, x + w - 38 + i * 12, y + 11, 4.2, i < done.n ? '#ff4d7a' : 'rgba(255,255,255,0.25)');

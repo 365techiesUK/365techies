@@ -289,7 +289,7 @@ const MODELS = {
   chev(k) { k.cyl(0.06, 0.06, 1.3, 5, 0, 0, 0, '#9aa0a6'); k.box(1.1, 0.9, 0.06, 0, 1.2, 0, '#111111'); },
   warn(k) { k.cyl(0.08, 0.08, 1.7, 5, -1.4, 0, 0, '#9aa0a6').cyl(0.08, 0.08, 1.7, 5, 1.4, 0, 0, '#9aa0a6'); k.box(3.6, 1.5, 0.08, 0, 1.6, 0, '#111111'); },
   gpost(k) { k.box(0.18, 1.1, 0.18, 0, 0, 0, '#f4f4f4').box(0.2, 0.18, 0.2, 0, 0.75, 0, '#d32f2f'); },
-  wall(k) { k.box(0.6, 1.1, 4.2, 0, 0, 0, '#9d978a').box(0.7, 0.18, 4.2, 0, 1.05, 0, '#7d786d'); },
+  wall(k) { k.box(0.6, 1.1, 4.5, 0, 0, 0, '#c9c1ae', 0, 0, 0, 'stone').box(0.72, 0.18, 4.5, 0, 1.05, 0, '#a59c88', 0, 0, 0, 'stone'); },
   fence(k) { k.box(0.14, 1.2, 0.14, 0, 0, 0, '#8a6a48').box(0.08, 0.1, 4.2, 0, 0.55, 0, '#8a6a48').box(0.08, 0.1, 4.2, 0, 1.05, 0, '#8a6a48'); },
   rail(k) { k.box(0.1, 1, 0.1, 0, 0, 0, '#2f7f86').box(0.07, 0.08, 4.2, 0, 0.55, 0, '#2f7f86').box(0.09, 0.09, 4.2, 0, 0.98, 0, '#2f7f86'); },
   quay(k) { k.box(0.8, 0.7, 4.2, 0, 0, 0, '#55585f'); },
@@ -401,11 +401,37 @@ const CARCOL = ['#d62828', '#1d4ed8', '#f4f4f4', '#2b2d42', '#f2c14e', '#2a9d8f'
 function wheelsOn(k, xs, zs, r, w) { for (const x of xs) for (const z of zs) { k.axle(r, w, 14, x, r, z, '#151515'); k.axle(r * 0.58, w + 0.02, 10, x, r, z, '#b8bec4', 'shiny'); } }
 function lights(k, w, y, z, h, col) { k.box(0.42, h || 0.16, 0.06, -w / 2 + 0.3, y, z, col || '#ff2a2a', 0, 0, 0, 'glow').box(0.42, h || 0.16, 0.06, w / 2 - 0.3, y, z, col || '#ff2a2a', 0, 0, 0, 'glow'); }
 const GLASS = '#1c2632';
+function tail(k, w, y, z, h) {   // a lamp cluster each side: a dark surround, the red lamp, an amber indicator at the outer edge
+  h = h || 0.18;
+  for (const sd of [-1, 1]) {
+    const x = sd * (w / 2 - 0.3);
+    k.box(0.5, h + 0.08, 0.05, x, y - 0.04, z - 0.01, '#1a0c0c', 0, 0, 0, 'shiny');
+    k.box(0.34, h, 0.06, x - sd * 0.04, y, z, '#ff2a2a', 0, 0, 0, 'glow');
+    k.box(0.1, h * 0.7, 0.06, x + sd * 0.18, y + h * 0.15, z, '#ffb24a', 0, 0, 0, 'lit');
+  }
+}
+function rearEnd(k, w, z, by, py) {   // the bumper and the plate
+  k.box(w + 0.06, 0.22, 0.16, 0, by, z - 0.03, '#1e1f22', 0, 0, 0, 'shiny');
+  k.box(0.52, 0.12, 0.03, 0, py, z + 0.02, '#f2d24a'); k.box(0.48, 0.03, 0.035, 0, py + 0.045, z + 0.025, '#2a2a2a');
+}
+function slopeGlass(k, w, zA, yA, zB, yB) {   // a rear window lying along the slope from (zA, yA) at the back to (zB, yB) at the front
+  const dz = zB - zA, dy = yB - yA, L = Math.hypot(dz, dy), a = Math.atan2(dy, -dz);
+  k.put(new THREE.BoxGeometry(w, 0.03, L * 0.86), GLASS, 0, (yA + yB) / 2 + 0.11 * Math.cos(a), (zA + zB) / 2 + 0.11 * Math.sin(a), a, 0, 0, 1, 1, 1, 'shiny');   // (out past the body's bevel)
+}
 const TRAFFIC = {
-  hatch(k, col) { k.side([-1.9, 0.3, 1.9, 0.3, 1.95, 0.85, 1.5, 1.05, 1.1, 1.45, -0.6, 1.55, -1.4, 1.05, -1.9, 0.95], 1.7, 0, 0, 0, col, 'shiny', 0.06); k.side([-0.55, 1.07, 1.05, 1.07, 1.3, 1.42, -0.5, 1.5], 1.52, 0, 0.02, 0, GLASS, 'shiny'); wheelsOn(k, [-0.78, 0.78], [-1.25, 1.25], 0.32, 0.22); lights(k, 1.7, 0.75, 1.96); },
-  saloon(k, col) { k.side([-2.2, 0.3, 2.2, 0.3, 2.25, 0.85, 1.6, 0.95, 1.1, 1.4, -0.7, 1.42, -1.4, 0.95, -2.2, 0.85], 1.8, 0, 0, 0, col, 'shiny', 0.06); k.side([-0.65, 0.97, 1.05, 0.97, 1.2, 1.36, -0.6, 1.38], 1.62, 0, 0.02, 0, GLASS, 'shiny'); wheelsOn(k, [-0.82, 0.82], [-1.45, 1.45], 0.33, 0.22); lights(k, 1.8, 0.72, 2.26); },
-  sports(k, col) { k.side([-2.1, 0.25, 2.1, 0.25, 2.15, 0.75, 0.9, 0.95, 0.3, 1.2, -0.6, 1.2, -1.2, 0.85, -2.1, 0.6], 1.85, 0, 0, 0, col, 'shiny', 0.07); k.side([-0.55, 0.88, 0.35, 0.95, 0.25, 1.15, -0.5, 1.15], 1.62, 0, 0.02, 0, GLASS, 'shiny'); k.box(1.7, 0.06, 0.4, 0, 1.0, 1.9, '#1a1a1a'); wheelsOn(k, [-0.84, 0.84], [-1.35, 1.35], 0.33, 0.25); lights(k, 1.85, 0.6, 2.16); },
-  van(k, col) { k.side([-2.5, 0.35, 2.5, 0.35, 2.5, 2.3, -1.2, 2.3, -1.9, 1.3, -2.5, 1.1], 1.95, 0, 0, 0, col, 'shiny', 0.07); k.side([-1.85, 1.35, -1.2, 1.35, -1.2, 2.05, -1.6, 2.05], 1.82, 0, 0.02, 0, GLASS, 'shiny'); wheelsOn(k, [-0.88, 0.88], [-1.6, 1.6], 0.36, 0.24); lights(k, 1.95, 1.2, 2.51, 0.4); },
+  hatch(k, col) { k.side([-1.9, 0.3, 1.9, 0.3, 1.95, 0.85, 1.5, 1.05, 1.1, 1.45, -0.6, 1.55, -1.4, 1.05, -1.9, 0.95], 1.7, 0, 0, 0, col, 'shiny', 0.1); k.side([-0.55, 1.07, 1.05, 1.07, 1.3, 1.42, -0.5, 1.5], 1.52, 0, 0.02, 0, GLASS, 'shiny'); wheelsOn(k, [-0.78, 0.78], [-1.25, 1.25], 0.32, 0.22);
+    slopeGlass(k, 1.36, 1.42, 1.08, 0.62, 1.52); tail(k, 1.7, 0.78, 2.02); rearEnd(k, 1.7, 2.02, 0.3, 0.55); },
+  saloon(k, col) { k.side([-2.2, 0.3, 2.2, 0.3, 2.25, 0.85, 1.6, 0.95, 1.1, 1.4, -0.7, 1.42, -1.4, 0.95, -2.2, 0.85], 1.8, 0, 0, 0, col, 'shiny', 0.1); k.side([-0.65, 0.97, 1.05, 0.97, 1.2, 1.36, -0.6, 1.38], 1.62, 0, 0.02, 0, GLASS, 'shiny'); wheelsOn(k, [-0.82, 0.82], [-1.45, 1.45], 0.33, 0.22);
+    slopeGlass(k, 1.44, 1.42, 0.98, 0.72, 1.4); tail(k, 1.8, 0.7, 2.32); rearEnd(k, 1.8, 2.32, 0.3, 0.5); },
+  sports(k, col) { k.side([-2.1, 0.25, 2.1, 0.25, 2.15, 0.75, 0.9, 0.95, 0.3, 1.2, -0.6, 1.2, -1.2, 0.85, -2.1, 0.6], 1.85, 0, 0, 0, col, 'shiny', 0.1); k.side([-0.55, 0.88, 0.35, 0.95, 0.25, 1.15, -0.5, 1.15], 1.62, 0, 0.02, 0, GLASS, 'shiny'); k.box(1.7, 0.06, 0.4, 0, 1.0, 1.9, '#1a1a1a'); wheelsOn(k, [-0.84, 0.84], [-1.35, 1.35], 0.33, 0.25);
+    slopeGlass(k, 1.3, 1.22, 0.86, 0.62, 1.16); tail(k, 1.85, 0.56, 2.22, 0.14); rearEnd(k, 1.85, 2.22, 0.25, 0.4); },
+  van(k, col) { k.side([-2.5, 0.35, 2.5, 0.35, 2.5, 2.3, -1.2, 2.3, -1.9, 1.3, -2.5, 1.1], 1.95, 0, 0, 0, col, 'shiny', 0.12); k.side([-1.85, 1.35, -1.2, 1.35, -1.2, 2.05, -1.6, 2.05], 1.82, 0, 0.02, 0, GLASS, 'shiny'); wheelsOn(k, [-0.88, 0.88], [-1.6, 1.6], 0.36, 0.24);
+    const stripe = col === '#f4f4f4' ? '#1d4ed8' : '#f4f4f4';
+    k.side([-2.56, 1.02, 2.56, 1.02, 2.56, 1.24, -2.56, 1.24], 1.99, 0, 0, 0, stripe, 'shiny');   // a stripe along the side and round the back
+    k.box(1.99, 0.22, 0.03, 0, 1.02, 2.62, stripe, 0, 0, 0, 'shiny');
+    k.box(0.03, 1.7, 0.04, 0, 0.5, 2.63, '#2a2a2a');   // the split back doors
+    for (const sd of [-1, 1]) k.box(0.62, 0.4, 0.04, sd * 0.42, 1.6, 2.63, GLASS, 0, 0, 0, 'shiny');   // their windows
+    tail(k, 1.95, 0.6, 2.64, 0.36); rearEnd(k, 1.95, 2.64, 0.32, 0.62); },
   bus(k, col) {   // an open-top seaside bus
     const b = col === '#d62828' ? '#d62828' : '#f2c14e';
     k.side([-5.4, 0.4, 5.4, 0.4, 5.4, 3.4, -5.4, 3.4], 2.4, 0, 0, 0, b, 'shiny', 0.06); k.box(2.42, 0.25, 10.8, 0, 1.9, 0, '#ffffff');
@@ -418,7 +444,8 @@ const TRAFFIC = {
     k.side([-2.7, 0.35, 2.7, 0.35, 2.7, 2.5, -1.4, 2.5, -2.2, 1.4, -2.7, 1.2], 2, 0, 0, 0, '#f4f1ea', 'shiny', 0.07);
     k.side([-2.7, 0.35, 2.7, 0.35, 2.7, 1.25, -2.7, 1.25], 2.04, 0, 0, 0, col, 'shiny');
     k.side([-2.15, 1.45, -1.45, 1.45, -1.45, 2.25, -1.8, 2.25], 1.87, 0, 0.02, 0, GLASS, 'shiny');
-    k.box(1.6, 0.25, 3.4, 0, 2.5, 0.6, '#e8e2d4'); wheelsOn(k, [-0.9, 0.9], [-1.7, 1.7], 0.36, 0.24); lights(k, 2, 0.9, 2.71, 0.3);
+    k.box(1.6, 0.25, 3.4, 0, 2.5, 0.6, '#e8e2d4'); wheelsOn(k, [-0.9, 0.9], [-1.7, 1.7], 0.36, 0.24);
+    k.box(1.2, 0.6, 0.04, 0, 1.55, 2.78, GLASS, 0, 0, 0, 'shiny'); tail(k, 2, 0.85, 2.79, 0.3); rearEnd(k, 2, 2.79, 0.32, 0.6);
   },
   tractor(k, col) {
     const g = col === '#2a9d8f' ? '#2e8b3a' : '#c62828';
@@ -586,14 +613,15 @@ export function people() {
       const w = 0.22 - i * 0.03;
       k.put(new THREE.CapsuleGeometry(0.03, 0.1, 3, 8), o.hair, 0, 0, 0.065, Math.PI / 2, 0, 0, w * 0.5 / 0.06, 1, 0.8 - i * 0.08, 'lit');
       for (const sd of [-1, 1]) k.put(new THREE.CapsuleGeometry(0.026, 0.09, 3, 8), i % 2 ? '#e2b860' : '#f6d888', sd * w * 0.36, -0.008, 0.06 + sd * 0.004, Math.PI / 2, 0, sd * 0.12, w * 0.3 / 0.052, 1, 0.75 - i * 0.07, 'lit');
-    })) : null
+    })) : null,
+    scarf: o.long ? [0, 1, 2, 3].map((i) => P((k) => { k.box(0.012, 0.085 - i * 0.01, 0.13, 0, -0.03, 0.0, i % 2 ? '#e8789c' : '#f49ab6', 0, 0, 0, 'lit'); })) : null
   });
   const driver = one({ chest: 0.165, wide: 1.25, top: '#f2f2ee', sleeve: '#f2f2ee', skin: '#e2ae86', hair: '#2a1c12', arm: 0.052, shades: true });
   const girl = one({ chest: 0.14, wide: 1.15, top: '#e8263f', sleeve: '#e8b48c', skin: '#efbf98', hair: '#f0cd78', arm: 0.044, long: true, strap: true });
   const sw = P((k) => { k.put(new THREE.TorusGeometry(0.175, 0.022, 8, 24), '#151515', 0, 0, 0, 0, 0, 0, 1, 1, 1, 'trim'); k.box(0.3, 0.03, 0.02, 0, 0, 0, '#202020', 0, 0, 0, 'trim').cyl(0.045, 0.045, 0.03, 12, 0, 0, 0, '#d10f1d', Math.PI / 2, 0, 'paint'); });
   return {
     driver: { part: driver, seat: [0.4, 0.66, 0.42], neck: 0.68, shoulder: [0.205, 0.56, 0], elbow: 0.27, scale: 1.14 },
-    girl: { part: girl, seat: [-0.4, 0.66, 0.44], neck: 0.66, shoulder: [0.18, 0.54, 0], elbow: 0.26, hairAt: [0, 0.2, 0.09], scale: 1.12 },
+    girl: { part: girl, seat: [-0.4, 0.66, 0.44], neck: 0.66, shoulder: [0.18, 0.54, 0], elbow: 0.26, hairAt: [0, 0.2, 0.09], scarfAt: [-0.085, -0.03, 0.04], scale: 1.12 },
     wheel: { geo: sw, at: [0.4, 0.98, -0.08], tilt: 0.45 }
   };
 }
