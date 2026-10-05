@@ -538,7 +538,7 @@ function spider() {
   const st = sections(keys, wz), at = (z) => { let b = st[0]; for (const s of st) if (Math.abs(s[0] - z) < Math.abs(b[0] - z)) b = s; return b; };
   k.loft(st, col, 'paint', { up: 3.8, dn: 6 });
   { const list = k.parts.paint, g = list[list.length - 1], P3 = g.attributes.position, C3 = g.attributes.color;   // two-tone shading: deeper red low down and along the sills, a touch brighter on the shoulders
-    for (let i = 0; i < P3.count; i++) { const y = P3.getY(i), f = y < 0.5 ? 0.45 + 0.55 * Math.min(1, Math.max(0, (y - 0.3) / 0.2)) : y > 0.78 ? 1.06 : 1; C3.setXYZ(i, C3.getX(i) * f, C3.getY(i) * f, C3.getZ(i) * f); } }
+    for (let i = 0; i < P3.count; i++) { const y = P3.getY(i), f = y > 0.8 ? 1.15 : y > 0.62 ? 1 + (y - 0.62) / 0.18 * 0.15 : y > 0.45 ? 0.74 + 0.26 * (y - 0.45) / 0.17 : 0.42 + 0.32 * Math.min(1, Math.max(0, (y - 0.3) / 0.15)); C3.setXYZ(i, C3.getX(i) * f, C3.getY(i) * f, C3.getZ(i) * f); } }
   // the cabin: a black tub, tan seats with headrests, the dash and its glowing dials, a raked windscreen in a black frame
   k.box(1.5, 0.05, 1.3, 0, 0.79, 0.28, '#111111', 0, 0, 0, 'trim');
   for (const x of [-0.4, 0.4]) {
@@ -546,13 +546,13 @@ function spider() {
     k.put(new THREE.CapsuleGeometry(0.2, 0.12, 4, 12), '#a8652f', x, 0.95, 0.74, 0.22, 0, 0, 1.15, 1, 0.36, 'lit');   // the backrest
     k.box(0.07, 0.3, 0.02, x, 0.8, 0.665, '#8a5226', 0, 0.22, 0, 'lit');   // its stitched centre panel
     k.ball(0.11, x, 1.02, 0.8, '#94582a', 0.9, 0.55, 0.4, 'lit', 12);   // a slim headrest
-    for (const b of [-1, 1]) { k.put(new THREE.CapsuleGeometry(0.055, 0.1, 4, 8), '#94582a', x + b * 0.22, 0.88, 0.71, 0.22, 0, 0, 1, 1, 0.9, 'lit'); k.put(new THREE.CapsuleGeometry(0.05, 0.36, 4, 8), '#94582a', x + b * 0.22, 0.84, 0.42, Math.PI / 2, 0, 0, 1, 1, 0.8, 'lit'); }   // soft bolsters
+    for (const b of [-1, 1]) { k.put(new THREE.CapsuleGeometry(0.05, 0.36, 4, 8), '#94582a', x + b * 0.22, 0.84, 0.42, Math.PI / 2, 0, 0, 1, 1, 0.8, 'lit'); }   // soft bolsters
     k.loft([[0.86, 0.1, 0.78, 0.84], [1.0, 0.15, 0.78, 0.99], [1.35, 0.14, 0.78, 0.95], [1.85, 0.06, 0.8, 0.89]], col, 'paint', { up: 2.4, dn: 3, belly: 0.3, n: 16, x: x });   // the humps behind the seats
   }
   k.box(1.62, 0.15, 0.32, 0, 0.8, -0.5, '#191919', 0, 0, 0, 'trim');
   for (const x of [0.28, 0.52]) { k.cyl(0.055, 0.055, 0.02, 14, x, 0.92, -0.335, '#3a404a', Math.PI / 2, 0, 'glow'); k.put(new THREE.TorusGeometry(0.052, 0.006, 4, 18), '#f2efe6', x, 0.92, -0.349, 0, 0, 0, 1, 1, 1, 'chrome'); k.box(0.006, 0.04, 0.004, x + 0.01, 0.9, -0.35, '#ff6a3d', 0, 0, -0.6, 'glow'); }
-  k.box(1.52, 0.44, 0.02, 0, 0.82, -0.6, '#b8d0e0', 0, 0.78, 0, 'screen');
-  k.box(1.56, 0.028, 0.035, 0, 1.17, -0.44, '#121212', 0, 0.78, 0, 'trim').box(0.025, 0.44, 0.035, -0.77, 0.82, -0.6, '#121212', 0, 0.78, 0, 'trim').box(0.025, 0.44, 0.035, 0.77, 0.82, -0.6, '#121212', 0, 0.78, 0, 'trim');
+  k.box(1.52, 0.44, 0.02, 0, 0.82, -0.6, '#d8e6ef', 0, 0.78, 0, 'screen');
+  k.box(1.56, 0.022, 0.03, 0, 1.17, -0.44, '#d8dadc', 0, 0.78, 0, 'chrome').box(0.016, 0.44, 0.03, -0.77, 0.82, -0.6, '#121212', 0, 0.78, 0, 'trim').box(0.016, 0.44, 0.03, 0.77, 0.82, -0.6, '#121212', 0, 0.78, 0, 'trim');
   k.box(0.18, 0.05, 0.035, 0, 1.12, -0.46, '#121212', 0, 0.78, 0, 'trim');   // the mirror
   // louvres over the engine, scoops ahead of the rear wheels, the mirrors on stalks
   const topAt = (z) => { let i = 0; while (i < st.length - 2 && st[i + 1][0] < z) i++; const a = st[i], b = st[i + 1], f = Math.max(0, Math.min(1, (z - a[0]) / (b[0] - a[0]))); return a[3] + (b[3] - a[3]) * f; };
@@ -610,7 +610,24 @@ function spider() {
   }
   for (const sd of [-1, 1]) { const hw = at(0)[1];
     k.box(0.05, 0.11, 1.75, sd * (hw - 0.01), 0.3, 0, '#151517', 0, 0, 0, 'trim').box(0.02, 0.018, 1.7, sd * (hw + 0.015), 0.4, 0, '#d6d9dc', 0, 0, 0, 'chrome'); }   // the sills
-  for (const sd of [-1, 1]) k.box(0.012, 0.016, 1.7, sd * (at(0)[1] + 0.001), 0.68, 0.05, '#e2e5e8', 0, 0, 0, 'chrome');   // a chrome strip along the waist
+  {   // a chrome strip along the waist, headlamp to tail, on the body's surface (broken by the wheel arches)
+    const kat = (z) => { let i = 0; while (i < keys.length - 2 && keys[i + 1][0] < z) i++; const a = keys[i], b = keys[i + 1], f = Math.max(0, Math.min(1, (z - a[0]) / (b[0] - a[0]))); return a.map((v, j) => v + (b[j] - v) * f); };
+    const sat = (z) => { let i = 0; while (i < st.length - 2 && st[i + 1][0] < z) i++; const a = st[i], b = st[i + 1], f = Math.max(0, Math.min(1, (z - a[0]) / (b[0] - a[0]))); return a.map((v, j) => v + (b[j] - v) * f); };
+    const line = (z) => {   // the strip's height (a smooth line, no arches in it) and the body's half-width there
+      const K = kat(z), ymK = K[2] + (K[3] - K[2]) * 0.45, y = ymK + (K[3] - ymK) * 0.45, S = sat(z), ym = S[2] + (S[3] - S[2]) * 0.45;
+      if (y < S[2] + 0.04) return null;
+      const x = y >= ym ? S[1] * Math.pow(1 - Math.pow((y - ym) / (S[3] - ym), 3.8), 1 / 3.8) : S[1] * Math.pow(1 - Math.pow((ym - y) / (ym - S[2]), 6), 1 / 6);
+      return [x + 0.004, y];
+    };
+    for (const sd of [-1, 1]) for (const [lo, hi, inA, inB, hex] of [[0, 0.015, 0.001, 0.005, '#f4f6f8'], [-0.015, 0, 0, 0.001, '#4c5158']]) {   // the bright top edge, the dark lower half
+      const pos = [], n = 110, z0 = -2.05, z1 = 2.2; let gap = false;
+      for (let q = 0; q < n; q++) { const za = z0 + (z1 - z0) * q / n, zb = z0 + (z1 - z0) * (q + 1) / n, A = line(za), B = line(zb); if (!A || !B) { gap = true; continue; } if (!gap) continue;
+        const v = [[sd * (A[0] - inA), A[1] + lo, za], [sd * (A[0] - inB), A[1] + hi, za], [sd * (B[0] - inB), B[1] + hi, zb], [sd * (B[0] - inA), B[1] + lo, zb]];
+        const t = sd > 0 ? [0, 1, 2, 0, 2, 3] : [0, 2, 1, 0, 3, 2]; for (const i of t) pos.push(...v[i]); }
+      const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.computeVertexNormals();
+      k.put(g, hex, 0, 0, 0, 0, 0, 0, 1, 1, 1, 'chrome');
+    }
+  }
   // red brake calipers (they stay put while the wheels turn)
   const wx = w / 2 - 0.08;
   for (const z of wz) for (const sd of [-1, 1]) k.box(0.05, 0.13, 0.17, sd * (wx - 0.15), 0.43, z - 0.1, '#d01818', 0, 0, 0, 'lit');
@@ -636,7 +653,7 @@ export function people() {
   const P = (fn) => { const k = new Kit(); fn(k); return k.build(); };
   const cap = (r, l) => new THREE.CapsuleGeometry(r, l, 4, 10);
   const one = (o) => ({
-    torso: P((k) => { k.put(cap(o.chest, 0.3), o.top, 0, 0.3, 0, 0, 0, 0, o.wide, 1, 0.72, 'lit'); for (const sd of [-1, 1]) k.ball(o.arm * 1.1, sd * o.chest * o.wide * 0.9, 0.53, 0, o.sleeve, 1, 0.85, 1, 'lit', 10); if (o.collar) for (const sd of [-1, 1]) k.box(0.09, 0.03, 0.07, sd * 0.05, 0.62, -0.06, '#e4e4de', 0, 0, sd * 0.5, 'lit'); k.cyl(0.05, 0.055, 0.14, 8, 0, 0.6, 0, o.skin); if (o.strap) { k.box(0.04, 0.2, 0.04, -0.1, 0.48, -0.1, o.skin); k.box(0.04, 0.2, 0.04, 0.1, 0.48, -0.1, o.skin); } }),
+    torso: P((k) => { k.put(cap(o.chest, 0.3), o.top, 0, 0.3, 0, 0, 0, 0, o.wide, 1, 0.72, 'lit'); if (!o.short) for (const sd of [-1, 1]) k.ball(o.arm * 1.1, sd * o.chest * o.wide * 0.9, 0.53, 0, o.sleeve, 1, 0.85, 1, 'lit', 10); else k.ball(0.17, 0, 0.525, 0, o.sleeve, 1.42, 0.4, 0.74, 'lit', 16); if (o.collar) for (const sd of [-1, 1]) k.box(0.09, 0.03, 0.07, sd * 0.05, 0.62, -0.06, '#e4e4de', 0, 0, sd * 0.5, 'lit'); k.cyl(0.05, 0.055, 0.14, 8, 0, 0.6, 0, o.skin); if (o.strap) { k.box(0.04, 0.2, 0.04, -0.1, 0.48, -0.1, o.skin); k.box(0.04, 0.2, 0.04, 0.1, 0.48, -0.1, o.skin); } }),
     head: P((k) => {
       k.ball(0.122, 0, 0.13, 0, o.skin, 1, 1.15, 1.06, 'lit', 16);
       k.ball(0.021, 0, 0.112, -0.122, o.skin, 0.9, 0.95, 0.75, 'lit', 8);   // the nose   // the nose
@@ -665,20 +682,27 @@ export function people() {
       }
       k.put(new THREE.TorusGeometry(0.03, 0.006, 5, 12, Math.PI), o.shades ? '#8a4a3a' : '#c8304a', 0, 0.083, -0.114, 0, 0, Math.PI, 1, 0.8, 0.45, 'lit');   // a smile
     }),
-    upper: P((k) => k.put(cap(o.arm, 0.2), o.sleeve, 0, -0.14, 0)),
-    fore: P((k) => { k.ball(o.arm * 1.25, 0, 0, 0, o.long ? o.skin : o.sleeve, 1, 1, 1, 'lit', 8); k.put(new THREE.CylinderGeometry(o.arm * 0.95, o.arm * 0.72, 0.22, 10), o.skin, 0, -0.12, 0, 0, 0, 0, 1, 1, 1, 'lit'); k.box(0.07, 0.085, 0.055, 0, -0.32, 0, o.skin, 0, 0, 0, 'lit').ball(0.022, 0.036, -0.255, -0.018, o.skin, 1, 1.3, 1, 'lit', 8); }),   // a mitten hand and thumb
+    upper: P((k) => {
+      k.put(cap(o.arm, 0.2), o.short ? o.skin : o.sleeve, 0, -0.14, 0);
+      if (o.short) {   // a short shirt sleeve
+        k.ball(o.arm * 1.25, 0, -0.05, 0, o.sleeve, 1, 0.8, 1, 'lit', 12);
+        k.put(new THREE.CylinderGeometry(o.arm * 1.25, o.arm * 1.34, 0.12, 12, 1, true), o.sleeve, 0, -0.075, 0, 0, 0, 0, 1, 1, 1, 'lit');
+        k.put(new THREE.TorusGeometry(o.arm * 1.34, 0.007, 4, 14), '#d2d2cc', 0, -0.135, 0, Math.PI / 2, 0, 0, 1, 1, 1, 'lit');
+      }
+    }),
+    fore: P((k) => { k.ball(o.arm * 1.25, 0, 0, 0, o.long || o.short ? o.skin : o.sleeve, 1, 1, 1, 'lit', 8); k.put(new THREE.CylinderGeometry(o.arm * 0.95, o.arm * 0.72, 0.22, 10), o.skin, 0, -0.12, 0, 0, 0, 0, 1, 1, 1, 'lit'); k.ball(0.04, 0, -0.315, 0, o.skin, 0.9, 1.15, 0.68, 'lit', 10).ball(0.034, 0, -0.355, -0.012, o.skin, 0.95, 0.8, 0.75, 'lit', 8).ball(0.02, 0.034, -0.27, -0.016, o.skin, 1, 1.3, 1, 'lit', 8); }),   // a mitten hand, fingers curled a little, and a thumb
     hair: o.long ? [0, 1, 2].map((i) => P((k) => {
       const w = 0.11 - i * 0.016, c = ['#f0cd78', '#ecc66e', '#e6be66', '#deb45e', '#d6a852'][i];
       k.ball(0.07, 0, 0, 0.07, c, w / 0.14, w / 0.15, 1.5, 'lit', 14);   // one smooth length of tail, overlapping the next
     })) : null,
     scarf: null
   });
-  const driver = one({ collar: true, chest: 0.165, wide: 1.25, top: '#f2f2ee', sleeve: '#f2f2ee', skin: '#e2ae86', hair: '#2a1c12', arm: 0.052, shades: true });
+  const driver = one({ collar: true, short: true, chest: 0.165, wide: 1.25, top: '#f2f2ee', sleeve: '#f2f2ee', skin: '#e2ae86', hair: '#2a1c12', arm: 0.052, shades: true });
   const girl = one({ chest: 0.14, wide: 1.15, top: '#1fb5c4', sleeve: '#e8b48c', skin: '#efbf98', hair: '#f0cd78', arm: 0.044, long: true, strap: true });
   const sw = P((k) => { k.put(new THREE.TorusGeometry(0.175, 0.022, 8, 24), '#151515', 0, 0, 0, 0, 0, 0, 1, 1, 1, 'trim'); k.box(0.3, 0.03, 0.02, 0, 0, 0, '#202020', 0, 0, 0, 'trim').cyl(0.045, 0.045, 0.03, 12, 0, 0, 0, '#2a2a2e', Math.PI / 2, 0, 'trim'); });
   return {
     driver: { part: driver, seat: [0.4, 0.72, 0.42], neck: 0.68, shoulder: [0.205, 0.56, 0], elbow: 0.27, scale: 1.2 },
-    girl: { part: girl, seat: [-0.4, 0.68, 0.6], lean: 0.2, neck: 0.66, shoulder: [0.18, 0.54, 0], elbow: 0.26, hairAt: [-0.085, 0.19, 0.09], scarfAt: [-0.085, -0.03, 0.04], scale: 1.18 },
+    girl: { part: girl, seat: [-0.4, 0.645, 0.6], lean: 0.29, neck: 0.66, shoulder: [0.18, 0.54, 0], elbow: 0.26, hairAt: [-0.085, 0.19, 0.09], scarfAt: [-0.085, -0.03, 0.04], scale: 1.18 },
     wheel: { geo: sw, at: [0.4, 0.98, -0.08], tilt: 0.45 }
   };
 }
