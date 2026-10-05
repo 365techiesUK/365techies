@@ -90,10 +90,19 @@ function speedLines(g, t, k) {   // streaks rushing past the sides and bottom of
 }
 
 // ---------------------------------------------------------------- the dashboard
+const HFONT = '"Clash Display", ' + ART.FONT;
+if (document.fonts && document.fonts.load) document.fonts.load('600 20px "Clash Display"').catch(() => {});
 function hudText(g, s, x, y, size, col, align, stroke) {
-  g.font = '800 ' + size + 'px ' + ART.FONT; g.textAlign = align || 'left'; g.textBaseline = 'alphabetic';
-  if (stroke !== false) { g.lineJoin = 'round'; g.lineWidth = Math.max(1, size * 0.16); g.strokeStyle = 'rgba(0,0,0,0.75)'; g.strokeText(s, x, y); }
-  g.fillStyle = col; g.fillText(s, x, y);
+  g.save(); g.translate(x, y); g.transform(1, 0, -0.16, 1, 0, 0);   // a forward slant
+  g.font = '600 ' + (size * 1.04).toFixed(2) + 'px ' + HFONT; g.textAlign = align || 'left'; g.textBaseline = 'alphabetic';
+  if ('letterSpacing' in g) g.letterSpacing = (size < 9 ? size * 0.1 : size * 0.02).toFixed(2) + 'px';
+  if (stroke !== false) {
+    g.shadowColor = 'rgba(0,0,0,0.6)'; g.shadowBlur = size * 0.45 * K; g.shadowOffsetY = size * 0.05 * K;
+    g.lineJoin = 'round'; g.lineWidth = Math.max(0.5, size * 0.07); g.strokeStyle = 'rgba(0,0,0,0.5)'; g.strokeText(s, 0, 0);
+    g.shadowColor = 'transparent';
+  }
+  g.fillStyle = col; g.fillText(s, 0, 0);
+  g.restore();
 }
 function stretchOf(W, i) { for (let j = W.stretch.length - 1; j >= 0; j--) if (i >= W.stretch[j].from && i < W.stretch[j].to) return W.stretch[j]; return null; }
 const clock = (sec) => { const m = Math.floor(sec / 60), s = sec - m * 60; return m + "'" + (s < 10 ? '0' : '') + s.toFixed(2).replace('.', '"'); };
@@ -101,25 +110,25 @@ function hud(g, W, t, mode) {
   const pi = E.segIndex(W.s), tm = Math.ceil(W.time), low = !W.timeUp && W.time <= 10 && W.count <= 0, flash = low && (t / 250 | 0) % 2;
   for (const [x, y] of [[30, 26], [GW - 34, 30]]) { const gr = g.createRadialGradient(x, y, 0, x, y, 52); gr.addColorStop(0, 'rgba(0,8,24,0.5)'); gr.addColorStop(0.6, 'rgba(0,8,24,0.22)'); gr.addColorStop(1, 'rgba(0,8,24,0)'); g.fillStyle = gr; g.fillRect(x - 60, y - 60, 120, 120); }   // a soft shade behind the corner numbers, so they read on a bright sky
   // the clock, and this stretch's own time
-  hudText(g, 'TIME', 10, 13, 7.5, '#ffe9a8');
-  hudText(g, String(tm), 9, 38, 26, flash ? '#ff4d4d' : low ? '#ff9a3c' : '#ffd400');
-  if (W.count <= 0 && mode !== 'title') hudText(g, 'STAGE ' + clock(Math.max(0, (W.t - W.legT0) / 60)), 10, 49, 6.5, '#ffffff');
+  hudText(g, 'TIME', 10, 13, 6.5, '#d8cdb0');
+  hudText(g, String(tm), 9, 38, 26, flash ? '#ff4d4d' : low ? '#ff9a3c' : '#ffc23a');
+  if (W.count <= 0 && mode !== 'title') hudText(g, 'STAGE ' + clock(Math.max(0, (W.t - W.legT0) / 60)), 10, 49, 6.2, '#e8eef5');
   if (mode !== 'title') clockExtras(g, W, t, pi);
   // the score, your hearts, which stretch of five
   R.shownScore += (W.score - R.shownScore) * 0.2; if (Math.abs(W.score - R.shownScore) < 1) R.shownScore = W.score;
-  hudText(g, 'SCORE', GW - 10, 13, 7.5, '#d4efff', 'right');
+  hudText(g, 'SCORE', GW - 10, 13, 6.5, '#c9d6e6', 'right');
   hudText(g, Math.round(R.shownScore).toLocaleString('en-GB'), GW - 10, 29, 14, '#ffffff', 'right');
   const S0 = E.STAGES[W.stage] || E.STAGES[0];
-  hudText(g, 'STAGE ' + S0.level + '/' + E.LEVELS + (W.round > 1 ? '  ·  ROUND ' + W.round : ''), GW - 10, 40, 7, '#d4efff', 'right');
-  if (mode !== 'title') { heart(g, GW - 44, 47, 4.2, '#ff4d7a'); hudText(g, String(W.runHearts || 0), GW - 37, 50.5, 8, '#ffd1df', 'left'); }
+  hudText(g, 'STAGE ' + S0.level + '/' + E.LEVELS + (W.round > 1 ? '  ·  ROUND ' + W.round : ''), GW - 10, 40, 6.2, '#c9d6e6', 'right');
+  if (mode !== 'title') { heart(g, GW - 30, 47.5, 3, '#ff7a9a'); hudText(g, String(W.runHearts || 0), GW - 10, 50.5, 7, '#ffd1df', 'right'); }
   // where you are: the place, and how far along it
   const st = stretchOf(W, pi), S = E.STAGES[(st && st.id) || 0];
-  hudText(g, S.name, GW / 2, 13, 8.5, '#ffffff', 'center');
+  hudText(g, S.name.toUpperCase(), GW / 2, 13, 7.5, '#ffffff', 'center');
   if (st) {
     const p = Math.max(0, Math.min(1, (pi - st.from) / (st.to - st.from))), bw = 96, bx = GW / 2 - bw / 2, by = 18;
-    g.fillStyle = 'rgba(0,0,0,0.45)'; roundRect(g, bx - 1, by - 1, bw + 2, 6, 3); g.fill(); g.strokeStyle = 'rgba(255,255,255,0.35)'; g.lineWidth = 0.6; roundRect(g, bx - 1, by - 1, bw + 2, 6, 3); g.stroke();
-    g.fillStyle = '#ffd400'; roundRect(g, bx, by, Math.max(2, bw * p), 4, 2); g.fill();
-    g.fillStyle = S.next ? '#ffffff' : '#4ade80'; g.beginPath(); g.arc(bx + bw, by + 2, 2.6, 0, Math.PI * 2); g.fill();
+    g.fillStyle = 'rgba(255,255,255,0.18)'; g.fillRect(bx, by + 1, bw, 1.4);   // how far along this stretch: a fine line
+    g.fillStyle = '#ffc23a'; g.fillRect(bx, by + 0.6, Math.max(1, bw * p), 2.2);
+    g.fillStyle = S.next ? '#ffffff' : '#4ade80'; g.fillRect(bx + bw - 1, by - 1, 2, 5.2);
   }
   routeMap(g, W, 8, GH - 46, t);
   powers(g, W, t);
@@ -131,14 +140,16 @@ function hud(g, W, t, mode) {
   const F = W.fork;
   if (F && !F.s && pi > F.a - 70 && pi < F.split && mode !== 'title') {
     const L = E.STAGES[F.next[0]].name, Rn = E.STAGES[F.next[1]].name, side = W.x < -1 ? -1 : W.x > 1 ? 1 : 0, her = W.reqSide ? W.reqSide.side : 0;
-    roundRect(g, GW / 2 - 150, 52, 300, 18, 9); g.fillStyle = 'rgba(0,40,20,0.72)'; g.fill();
-    hudText(g, '◀ ' + L, GW / 2 - 8, 65, 9, side < 0 ? '#ffd400' : '#ffffff', 'right', false);
-    hudText(g, Rn + ' ▶', GW / 2 + 8, 65, 9, side > 0 ? '#ffd400' : '#ffffff', 'left', false);
+    g.fillStyle = 'rgba(6,10,18,0.6)'; g.fillRect(GW / 2 - 150, 52, 300, 18); g.fillStyle = '#ffc23a'; g.fillRect(GW / 2 - 150, 52, 300, 0.8);
+    hudText(g, '◀ ' + L.toUpperCase(), GW / 2 - 8, 64.5, 8, side < 0 ? '#ffc23a' : '#ffffff', 'right', false);
+    hudText(g, Rn.toUpperCase() + ' ▶', GW / 2 + 8, 64.5, 8, side > 0 ? '#ffc23a' : '#ffffff', 'left', false);
     g.fillStyle = 'rgba(255,255,255,0.4)'; g.fillRect(GW / 2 - 0.5, 55, 1, 12);
     if (her) heart(g, her < 0 ? GW / 2 - 144 : GW / 2 + 144, 61, 4 + Math.sin(t / 120) * 0.6, '#ff4d7a');
   }
-  if (mode === 'play' && W.stageNo === 1 && W.count <= 0 && W.t - R.goT < 480 && R.goT >= 0 && !document.body.classList.contains('touchy')) {
-    hudText(g, '◀ ▶ steer   ·   SPACE nitro   ·   tap ▼ while turning to drift', GW / 2, GH - 30, 7.5, '#ffffff', 'center');
+  if (mode === 'play' && W.stageNo === 1 && W.count <= 0 && W.t - R.goT < 300 && R.goT >= 0 && !document.body.classList.contains('touchy')) {
+    g.globalAlpha = Math.min(1, (300 - (W.t - R.goT)) / 40);
+    hudText(g, '◀ ▶  STEER     SPACE  NITRO     TAP ▼ IN A BEND  DRIFT', GW / 2, GH - 30, 6, '#ffffff', 'center');
+    g.globalAlpha = 1;
   }
   banner(g, W, t);
   if (!W.crash) pops(g, W);   // (no score popping up over a crash)
@@ -194,42 +205,27 @@ function heart(g, x, y, r, col) {   // a little heart, centred on x, y
   g.bezierCurveTo(x - r * 1.6, y - r * 0.2, x - r * 0.9, y - r * 1.5, x, y - r * 0.55);
   g.bezierCurveTo(x + r * 0.9, y - r * 1.5, x + r * 1.6, y - r * 0.2, x, y + r * 0.9); g.fill();
 }
-function face(g, x, y, r, mood, t) {   // your passenger, in a little round frame: fair hair, a turquoise top, a smile (or not)
-  g.save(); g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fillStyle = '#ffe6ef'; g.fill(); g.clip();
-  g.fillStyle = '#1fb5c4'; g.beginPath(); g.ellipse(x, y + r * 1.05, r * 0.8, r * 0.5, 0, 0, Math.PI * 2); g.fill();
-  g.fillStyle = '#f0cd78'; g.beginPath(); g.ellipse(x, y - r * 0.05, r * 0.62, r * 0.78, 0, 0, Math.PI * 2); g.fill();
-  g.fillStyle = '#f3c6a0'; g.beginPath(); g.ellipse(x, y + r * 0.08, r * 0.42, r * 0.5, 0, 0, Math.PI * 2); g.fill();
-  g.fillStyle = '#f0cd78'; g.beginPath(); g.ellipse(x, y - r * 0.36, r * 0.5, r * 0.24, 0, 0, Math.PI * 2); g.fill();
-  const blink = (t / 140 | 0) % 25 === 0;
-  g.fillStyle = '#2a1c12'; if (blink) { g.fillRect(x - r * 0.22, y + r * 0.02, r * 0.14, r * 0.04); g.fillRect(x + r * 0.08, y + r * 0.02, r * 0.14, r * 0.04); }
-  else { g.beginPath(); g.arc(x - r * 0.15, y + r * 0.04, r * 0.06, 0, Math.PI * 2); g.arc(x + r * 0.15, y + r * 0.04, r * 0.06, 0, Math.PI * 2); g.fill(); }
-  g.strokeStyle = '#c0304a'; g.lineWidth = r * 0.07; g.beginPath();
-  if (mood === 'sad') g.arc(x, y + r * 0.38, r * 0.14, Math.PI * 1.15, Math.PI * 1.85); else g.arc(x, y + r * 0.18, r * 0.16, Math.PI * 0.15, Math.PI * 0.85);
-  g.stroke(); g.restore();
-  g.strokeStyle = '#ffffff'; g.lineWidth = 1.2; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.stroke();
-}
 function request(g, W, t) {   // what she's asking for: her face, the words, how much is done and how long is left; then how you did
   const Q = W.req, done = W.reqDone && W.t - W.reqDone.t < 110 ? W.reqDone : null, side = W.reqSide;
   if (!Q && !done && !side) return;
-  const x = GW / 2 - 88, y = 25, w = 176, h = 20;
-  g.fillStyle = 'rgba(40,6,24,0.62)'; roundRect(g, x, y, w, h, 10); g.fill();
-  g.strokeStyle = 'rgba(255,120,170,0.8)'; g.lineWidth = 0.8; roundRect(g, x, y, w, h, 10); g.stroke();
-  face(g, x + 10, y + 10, 8.4, done && done.n < 2 ? 'sad' : 'happy', t);
+  const w = 196, x = GW / 2 - w / 2, y = 26, h = 18;
+  g.fillStyle = 'rgba(6,10,18,0.58)'; g.fillRect(x, y, w, h);
+  g.fillStyle = '#ff7a9a'; g.fillRect(x, y, 1.6, h);   // her colour, down one edge
+  heart(g, x + 9, y + 9.5, 3, done && done.n < 2 ? 'rgba(255,255,255,0.4)' : '#ff7a9a');
   if (done && !Q) {
-    hudText(g, done.word, x + 26, y + 15, 9, done.n >= 2 ? '#ffd1df' : '#ffffff', 'left', false);
-    for (let i = 0; i < 3; i++) heart(g, x + w - 38 + i * 12, y + 11, 4.2, i < done.n ? '#ff4d7a' : 'rgba(255,255,255,0.25)');
+    hudText(g, done.word, x + 17, y + 12.5, 8, done.n >= 2 ? '#ffd1df' : '#ffffff', 'left', false);
+    for (let i = 0; i < 3; i++) heart(g, x + w - 30 + i * 9, y + 9.5, 3, i < done.n ? '#ff7a9a' : 'rgba(255,255,255,0.22)');
     return;
   }
   if (Q) {
-    hudText(g, Q.txt, x + 26, y + 10, 7.2, '#ffffff', 'left', false);
-    const p = Math.min(1, Q.k === 'clean' ? Q.have : Q.have / Q.goal), left = Math.max(0, 1 - (W.t - Q.t0) / Q.dur), bx = x + 26, bw = w - 60;
-    g.fillStyle = 'rgba(255,255,255,0.18)'; roundRect(g, bx, y + 14, bw, 4, 2); g.fill();
-    g.fillStyle = '#ff6f9c'; roundRect(g, bx, y + 14, Math.max(2, bw * p), 4, 2); g.fill();
-    if (Q.goal > 1 && !Q.secs) hudText(g, Math.floor(Q.have) + '/' + Q.goal, x + w - 30, y + 18, 6.5, '#ffd1df', 'left', false);
-    g.strokeStyle = left < 0.25 && (t / 200 | 0) % 2 ? '#ff4d4d' : '#ffd1df'; g.lineWidth = 1.6;
-    g.beginPath(); g.arc(x + w - 11, y + 11, 6, -Math.PI / 2, -Math.PI / 2 + left * Math.PI * 2); g.stroke();
+    hudText(g, Q.txt, x + 17, y + 10, 7, '#ffffff', 'left', false);
+    const p = Math.min(1, Q.k === 'clean' ? Q.have : Q.have / Q.goal), left = Math.max(0, 1 - (W.t - Q.t0) / Q.dur), bx = x + 17, bw = w - 52;
+    g.fillStyle = 'rgba(255,255,255,0.16)'; g.fillRect(bx, y + 13, bw, 1.6);
+    g.fillStyle = '#ff7a9a'; g.fillRect(bx, y + 12.6, Math.max(1, bw * p), 2.4);
+    if (Q.goal > 1 && !Q.secs) hudText(g, Math.floor(Q.have) + '/' + Q.goal, x + w - 8, y + 11.5, 7, '#ffd1df', 'right', false);
+    g.fillStyle = left < 0.25 && (t / 200 | 0) % 2 ? '#ff4d4d' : 'rgba(255,209,223,0.7)'; g.fillRect(x, y + h - 1, w * left, 1);   // her patience, running out along the bottom
   } else if (side) {
-    hudText(g, (side.side < 0 ? '◀ Go left! ' : 'Go right! ▶ ') + side.name, x + 26, y + 15, 8, '#ffffff', 'left', false);
+    hudText(g, (side.side < 0 ? '◀ Go left! ' : 'Go right! ▶ ') + side.name, x + 17, y + 12.5, 7.5, '#ffffff', 'left', false);
   }
 }
 function routeMap(g, W, x0, y0, t) {   // the pyramid of places: the way you've come in yellow, the place you're in flashing
@@ -246,29 +242,33 @@ function routeMap(g, W, x0, y0, t) {   // the pyramid of places: the way you've 
     g.beginPath(); g.arc(p[0], p[1], cur ? 2.6 : 1.8, 0, Math.PI * 2); g.fill();
   });
 }
-function speedo(g, W, t) {   // a sweep of the speed round an arc, the number in the middle, the boost below
-  const cx = GW - 40, cy = GH - 20, r = 26, f = Math.min(1.45, W.v / E.VMAX), a0 = Math.PI * 0.8, a1 = Math.PI * 2.2;
-  g.lineCap = 'round';
-  g.strokeStyle = 'rgba(0,0,0,0.45)'; g.lineWidth = 5; g.beginPath(); g.arc(cx, cy, r, a0, a1); g.stroke();
-  const sg = g.createLinearGradient(cx - r, 0, cx + r, 0); sg.addColorStop(0, '#3fd0ff'); sg.addColorStop(0.7, '#ffd400'); sg.addColorStop(1, '#ff4d4d');
-  g.strokeStyle = W.boosting ? '#7fe8ff' : sg; g.lineWidth = 3.4; g.beginPath(); g.arc(cx, cy, r, a0, a0 + (a1 - a0) * Math.min(1, f / 1.4)); g.stroke();
-  g.lineCap = 'butt';
-  hudText(g, String(E.mph(W)), cx + 2, cy + 3, 15, W.boosting ? '#7fd8ff' : '#ffffff', 'center');
-  hudText(g, 'MPH', cx, cy + 12, 6, '#bfe6ff', 'center');
-  const bw2 = 52, bx2 = cx - bw2 / 2, by2 = GH - 6;
-  g.fillStyle = 'rgba(0,0,0,0.5)'; roundRect(g, bx2 - 1, by2 - 1, bw2 + 2, 5, 2.5); g.fill();
-  const bg2 = g.createLinearGradient(bx2, 0, bx2 + bw2, 0); bg2.addColorStop(0, '#2f7cf6'); bg2.addColorStop(1, '#7fe8ff');
-  g.fillStyle = bg2; roundRect(g, bx2, by2, Math.max(1, bw2 * W.boost), 3, 1.5); g.fill();
-  hudText(g, 'NITRO', bx2 - 4, by2 + 4, 6, W.boosting ? '#ffffff' : W.boost > 0.25 && ((t / 400 | 0) % 2) ? '#7fe8ff' : '#9fb3c8', 'right');
+function speedo(g, W, t) {   // the speed in big slanted digits, a rev bar that climbs and drops with each gear, the gear, the nitro beneath
+  const xr = GW - 10, yb = GH - 9, pct = W.v / E.VMAX;
+  let gi = 0; while (gi < 7 && pct > RG[gi + 1]) gi++;
+  const rpm = W.count > 0 ? 6200 + (W.rev || 0) * 11500 : gearRpm(pct, gi), rf = Math.max(0, Math.min(1, (rpm - 4000) / 14200));
+  const n = 16, sw = 3.2, gap = 1.1, x0 = xr - n * (sw + gap) + gap, y0 = yb - 27, lit = Math.round(rf * n);
+  for (let i = 0; i < n; i++) {   // the rev bar: slanted segments, rising, white then amber then red
+    const x = x0 + i * (sw + gap), hh = 3.5 + 4 * i / (n - 1);
+    g.fillStyle = i < lit ? (i >= n - 3 ? '#ff3b3b' : i >= n - 7 ? '#ffc23a' : '#eef4fa') : 'rgba(255,255,255,0.13)';
+    g.beginPath(); g.moveTo(x + 1.3, y0 - hh); g.lineTo(x + sw + 1.3, y0 - hh); g.lineTo(x + sw, y0); g.lineTo(x, y0); g.fill();
+  }
+  hudText(g, W.count > 0 ? 'N' : String(gi + 1), x0 - 5, y0, 9, '#ffc23a', 'right');
+  hudText(g, 'GEAR', x0 - 5, y0 - 9.5, 4.6, '#c9d6e6', 'right', false);
+  hudText(g, String(E.mph(W)), xr - 17, yb - 4, 21, W.boosting ? '#8fe3ff' : '#ffffff', 'right');
+  hudText(g, 'MPH', xr, yb - 4, 6, '#c9d6e6', 'right');
+  const bw2 = n * (sw + gap) - gap, by2 = yb - 0.5;
+  g.fillStyle = 'rgba(255,255,255,0.14)'; g.fillRect(x0, by2, bw2, 2);
+  g.fillStyle = W.boosting ? '#d8f6ff' : '#4fc3ff'; g.fillRect(x0, by2, bw2 * W.boost, 2);
+  hudText(g, 'NITRO', x0 - 5, by2 + 2.4, 5.2, W.boosting ? '#ffffff' : W.boost > 0.25 && ((t / 400 | 0) % 2) ? '#8fe3ff' : '#9fb3c8', 'right');
 }
 function results(g, W, t) {   // at the goal: each stretch's time and hearts, the bonuses and the rank
   const Rz = W.result; if (!Rz) return;
   const age = W.t - Rz.t; if (age < 40 || age > 600) return;
   const a = Math.min(1, (age - 40) / 20, (600 - age) / 25), x = GW / 2 - 110, y = 46, w = 220, h = 30 + Rz.legs.length * 11 + 30;
   g.save(); g.globalAlpha = a;
-  g.fillStyle = 'rgba(6,16,40,0.82)'; roundRect(g, x, y, w, h, 10); g.fill();
-  g.strokeStyle = 'rgba(255,212,0,0.8)'; g.lineWidth = 1; roundRect(g, x, y, w, h, 10); g.stroke();
-  hudText(g, 'GOAL  ·  ' + Rz.goal, x + w / 2, y + 14, 9, '#ffd400', 'center', false);
+  g.fillStyle = 'rgba(6,10,18,0.8)'; g.fillRect(x, y, w, h);
+  g.fillStyle = '#ffc23a'; g.fillRect(x + 10, y, w - 20, 1);
+  hudText(g, 'GOAL  ·  ' + Rz.goal.toUpperCase(), x + w / 2, y + 14, 8.5, '#ffc23a', 'center', false);
   Rz.legs.forEach((L, i) => {
     const yy = y + 28 + i * 11, show = age > 60 + i * 12; if (!show) return;
     hudText(g, (i + 1) + '  ' + E.STAGES[L.st].name, x + 12, yy, 7, '#ffffff', 'left', false);
@@ -300,8 +300,8 @@ function banner(g, W, t) {
     const inK = Math.min(1, age / 14), outK = Math.min(1, (dur - age) / 18), S = E.STAGES.find((q) => q.name === b.txt);
     g.save(); g.globalAlpha = outK;
     const bw = 230 * inK; g.fillStyle = 'rgba(6,16,40,0.7)'; g.fillRect(GW / 2 - bw / 2, 70, bw, 30);
-    g.fillStyle = '#ffd400'; g.fillRect(GW / 2 - bw / 2, 70, bw, 1.6); g.fillRect(GW / 2 - bw / 2, 98.4, bw, 1.6);
-    if (inK > 0.6) { hudText(g, S ? 'STAGE ' + S.level + (S.next ? '' : '  ·  THE LAST STRETCH') : '', GW / 2, 79, 6.5, '#bfe6ff', 'center', false); hudText(g, b.txt, GW / 2, 95, 15, '#ffffff', 'center'); }
+    g.fillStyle = '#ffc23a'; g.fillRect(GW / 2 - bw / 2, 70, bw, 1); g.fillRect(GW / 2 - bw / 2, 99, bw, 1);
+    if (inK > 0.6) { hudText(g, S ? 'STAGE ' + S.level + (S.next ? '' : '  ·  THE LAST STRETCH') : '', GW / 2, 79, 6, '#c9d6e6', 'center', false); hudText(g, b.txt.toUpperCase(), GW / 2, 95, 14, '#ffffff', 'center'); }
     g.restore(); return;
   }
   const cols = BANNER_COL[b.kind] || BANNER_COL.stage, inK = Math.min(1, age / 10), outK = Math.min(1, (dur - age) / 16), s = 0.7 + 0.3 * inK + (b.kind === 'goal' ? Math.sin(age / 6) * 0.03 : 0);
