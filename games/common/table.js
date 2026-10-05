@@ -641,7 +641,13 @@
       gestured = true;
       touchy = e.pointerType === 'touch'; idle();
       if (busy || (e.button && e.button > 0) || openSheet) return;
-      var hit = e.target.closest ? e.target.closest('.card, .slot') : null; if (!hit) return;
+      var hit = e.target.closest ? e.target.closest('.card, .slot') : null;
+      if (!hit) {   // the deck's place, tapped while its cards are still flying back (they let taps through): still the deck
+        var sl = D.hasStock && (L.slots || []).filter(function (q) { return q.key === 'stock'; })[0], br = board.getBoundingClientRect();
+        var bx = e.clientX - br.left + board.scrollLeft, by = e.clientY - br.top + board.scrollTop;
+        if (sl && bx >= sl.x && bx <= sl.x + L.cw && by >= sl.y && by <= sl.y + L.ch) { e.preventDefault(); unhint(); act({ t: 'draw' }); }
+        return;
+      }
       var hm = hintM;
       unhint();
       if (hm && hm.m.t === 'move' && (hit.classList.contains('slot') ? hm.slots.indexOf(hit.getAttribute('data-slot')) >= 0 : hm.cards.indexOf(+hit.getAttribute('data-c')) >= 0) && E.legal(S, hm.m)) {
@@ -808,9 +814,11 @@
       if (D.pickSay) say(D.pickSay(S, d.from));
     }
     function tap(d) {
+      // the card the Hint is showing, tapped: the hinted move - even one a tap wouldn't normally make (a card back down
+      // from a pile, which otherwise needs a drag)
+      if (!D.pairs && d.hm && d.hm.m.t === 'move' && JSON.stringify(d.hm.m.from) === JSON.stringify(d.from) && E.legal(S, d.hm.m)) { act(d.hm.m); return; }
       if (D.noTap && D.noTap(d.from)) return;   // e.g. cards come down from the piles by dragging only
       if (D.pairs) { pairTap(d); return; }
-      if (d.hm && d.hm.m.t === 'move' && JSON.stringify(d.hm.m.from) === JSON.stringify(d.from) && E.legal(S, d.hm.m)) { act(d.hm.m); return; }
       var m = E.smartMove(S, d.from);
       if (m) act(m);
       else { nope(cardEl[d.c]); sfx('nope'); say(D.whyNot ? D.whyNot(S, d.from, null) : 'No move for that card yet'); }
@@ -990,7 +998,7 @@
       (lit.cards || []).forEach(function (c) { if (cardEl[c]) cardEl[c].classList.add('hint', src.length && src.indexOf(c) < 0 ? 'hdest' : 'hsrc'); });
       (lit.slots || []).forEach(function (k) { if (slotEl[k]) slotEl[k].classList.add('hint', 'hdest'); });
       hintM = { m: m, cards: (lit.cards || []).slice(), slots: (lit.slots || []).slice() };
-      if (lit.say) say(lit.say);
+      if (lit.say) say(lit.say); else $('toast').classList.remove('on');   // (no stale message under a hint that has none)
       if (m._note) say(m._note);   // (the plan says no win is left from here)
       if (m.t === 'move' && arcsOn()) ghost(m);
       hintT = setTimeout(unhint, 2800);

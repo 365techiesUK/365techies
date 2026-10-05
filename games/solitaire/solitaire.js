@@ -74,6 +74,7 @@
   function hintLights(S, m) {
     if (m.t === 'draw') return S.stock.length ? { cards: [S.stock[S.stock.length - 1]], say: 'Turn over a card from the deck' } : { slots: ['stock'], say: 'Turn the deck over' };
     var out = { cards: picked(S, m.from).slice(), slots: [] };
+    if (m.from.p === 'f') { var dc = S.tab[m.to.i], top = dc.length ? dc[dc.length - 1].c : -1; out.say = 'Bring the ' + WORD[E.rank(out.cards[0])] + ' of ' + E.SUIT_NAME[E.suit(out.cards[0])] + ' back down from its pile' + (top >= 0 ? ' onto the ' + WORD[E.rank(top)] + ' of ' + E.SUIT_NAME[E.suit(top)] : '') + ' – it makes room for the cards waiting'; }
     if (m.to.p === 'f') { var fp = S.found[m.to.i]; if (fp.length) out.cards.push(fp[fp.length - 1]); else out.slots.push('f' + m.to.i); }
     else { var col = S.tab[m.to.i]; if (col.length) out.cards.push(col[col.length - 1].c); else out.slots.push('t' + m.to.i); }
     return out;
