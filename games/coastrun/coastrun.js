@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=7';
+import { createWorld } from './world3d.js?v=8';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 const GW = 384, GH = 224;
@@ -132,9 +132,9 @@ function heart(g, x, y, r, col) {   // a little heart, centred on x, y
   g.bezierCurveTo(x - r * 1.6, y - r * 0.2, x - r * 0.9, y - r * 1.5, x, y - r * 0.55);
   g.bezierCurveTo(x + r * 0.9, y - r * 1.5, x + r * 1.6, y - r * 0.2, x, y + r * 0.9); g.fill();
 }
-function face(g, x, y, r, mood, t) {   // your passenger, in a little round frame: fair hair, a red top, a smile (or not)
+function face(g, x, y, r, mood, t) {   // your passenger, in a little round frame: fair hair, a turquoise top, a smile (or not)
   g.save(); g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fillStyle = '#ffe6ef'; g.fill(); g.clip();
-  g.fillStyle = '#e8263f'; g.beginPath(); g.ellipse(x, y + r * 1.05, r * 0.8, r * 0.5, 0, 0, Math.PI * 2); g.fill();
+  g.fillStyle = '#1fb5c4'; g.beginPath(); g.ellipse(x, y + r * 1.05, r * 0.8, r * 0.5, 0, 0, Math.PI * 2); g.fill();
   g.fillStyle = '#f0cd78'; g.beginPath(); g.ellipse(x, y - r * 0.05, r * 0.62, r * 0.78, 0, 0, Math.PI * 2); g.fill();
   g.fillStyle = '#f3c6a0'; g.beginPath(); g.ellipse(x, y + r * 0.08, r * 0.42, r * 0.5, 0, 0, Math.PI * 2); g.fill();
   g.fillStyle = '#f0cd78'; g.beginPath(); g.ellipse(x, y - r * 0.36, r * 0.5, r * 0.24, 0, 0, Math.PI * 2); g.fill();

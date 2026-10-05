@@ -152,6 +152,9 @@ const MODELS = {
     k.box(2.6, 0.25, 3, 0, 0, 0, '#b99a6a').box(2.3, 2.3, 2.6, 0, 0.25, 0, col);
     k.prism(2.8, 1.1, 2.9, 0, 2.55, 0, trim);
     k.box(1, 1.8, 0.06, 0, 0.3, 1.31, shade(col, -0.2)).box(0.06, 1.8, 0.07, 0, 0.3, 1.32, trim);
+    for (let q = -4; q <= 4; q++) { if (Math.abs(q) > 1) k.box(0.035, 2.25, 0.02, q * 0.26, 0.27, 1.31, shade(col, -0.14)); for (const sd of [-1, 1]) k.box(0.02, 2.25, 0.035, sd * 1.16, 0.27, q * 0.29, shade(col, -0.14)); }   // the planks
+    k.box(2.34, 0.1, 2.64, 0, 2.1, 0, trim);   // a trim band under the roof
+    for (const sd of [-1, 1]) k.box(0.03, 0.5, 0.6, sd * 1.16, 1.3, -0.5, '#2a3a48').box(0.04, 0.6, 0.06, sd * 1.165, 1.25, -0.5, trim);   // a little window each side
   },
   brolly(k, v) {
     const cols = [['#e63946', '#ffffff'], ['#1d7fd6', '#ffffff'], ['#f4a261', '#2a9d8f'], ['#ffd23f', '#ee4266']][v % 4];
@@ -223,9 +226,17 @@ const MODELS = {
   castle(k) {   // Corfe: the ruined keep on its steep hill, curtain walls and broken towers
     k.blob(70, 0, -10, 0, '#5f9a45', 1.15, 0.95, 1.05, 141).blob(40, 30, 10, -20, '#6aa44c', 1, 0.6, 1, 143);
     const st = '#c2bba8', dk = '#a39b88', H = 55, X = 1.8;
-    k.box(16 * X, 34 * X, 16 * X, 0, H, 0, st).box(6 * X, 10 * X, 16 * X, 5 * X, H + 34 * X, 0, dk).box(5 * X, 5 * X, 16 * X, -5.5 * X, H + 34 * X, 0, dk);   // the keep, split by the gap
-    for (let i = -6; i <= 6; i += 3) k.box(1.6 * X, 1.8 * X, 1.6 * X, i * X, H + 34 * X, 8 * X, dk).box(1.6 * X, 1.8 * X, 1.6 * X, i * X, H + 34 * X, -8 * X, dk);
-    for (let f = 0; f < 3; f++) k.box(1.2 * X, 2.4 * X, 0.3, (-3 + f * 3) * X, H + (12 + f * 7) * X, 8 * X + 0.05, '#3a3834');
+    k.box(16 * X, 22 * X, 16 * X, 0, H, 0, st, 0, 0, 0, 'stone');   // the keep's lower storey
+    k.box(16 * X, 13 * X, 2.2 * X, 0, H + 22 * X, 6.9 * X, st, 0, 0, 0, 'stone');                                         // the walls left standing round its hollow top
+    k.box(2.2 * X, 17 * X, 11 * X, 6.9 * X, H + 22 * X, 1.5 * X, st, 0, 0, 0, 'stone');
+    k.box(2.2 * X, 9 * X, 8 * X, -6.9 * X, H + 22 * X, 3 * X, dk, 0, 0, 0, 'stone');
+    k.box(6 * X, 6 * X, 2.2 * X, -4.6 * X, H + 22 * X, -6.9 * X, dk, 0, 0, 0, 'stone');
+    for (const [x, z, h] of [[-6, 6.9, 3], [-2, 6.9, 5], [3, 6.9, 2], [6.9, 5, 4], [6.9, -2, 2.5], [-6.9, 5.5, 2]]) k.box(2.4 * X, h * X, 2.4 * X, x * X, H + (z === 6.9 ? 35 : x === 6.9 ? 39 : 31) * X, z * X, dk, 0, 0, 0, 'stone');   // ragged broken tops
+    k.box(6 * X, 14 * X, 4.5 * X, 10 * X, H - 2, -9 * X, dk, 0.3, 0, 0.42, 'stone');                                       // a great slumped piece, fallen and leaning
+    for (let f = 0; f < 4; f++) k.box(0.9 * X, 2.6 * X, 0.3, (-4.5 + f * 3) * X, H + (8 + (f % 2) * 9) * X, 8 * X + 0.05, '#2e2c28');   // window slits
+    for (let f = 0; f < 3; f++) k.box(0.3, 2.6 * X, 0.9 * X, 8 * X + 0.05, H + (10 + f * 6) * X, (-4 + f * 4) * X, '#2e2c28');
+    for (const [x, z, h] of [[-3.5, 6.9, 1.6], [0.5, 6.9, 2.6], [4.5, 6.9, 1.2], [6.9, 2.5, 2.2], [6.9, -3.5, 1.4]]) k.box(1.4 * X, h * X, 1.4 * X, x * X, H + (z === 6.9 ? 35 : 39) * X + (z === 6.9 ? 3 : 4) * X, z * X, st, 0, 0, 0, 'stone');   // zig-zag broken tops
+    for (let q = 0; q < 4; q++) k.box(9 * X, (7 - q) * X, 3 * X, (-12 - q * 8) * X, H - 10 - q * 9, (18 + q * 3) * X, q % 2 ? dk : st, 0.25, 0, 0, 'stone').box(9 * X, (6 - q) * X, 3 * X, (14 + q * 8) * X, H - 10 - q * 9, (-18 - q * 3) * X, q % 2 ? st : dk, -0.25, 0, 0, 'stone');   // curtain walls stepping down the hill
     k.box(36 * X, 9 * X, 3.5 * X, -24 * X, H - 4, 14 * X, st).box(5 * X, 15 * X, 5 * X, -42 * X, H - 6, 14 * X, dk).box(30 * X, 7 * X, 3.5 * X, 22 * X, H - 4, -14 * X, st).box(5 * X, 12 * X, 5 * X, 37 * X, H - 6, -14 * X, dk).box(4 * X, 18 * X, 4 * X, 20 * X, H - 4, 16 * X, dk);
   },
   heather(k, v) {
@@ -529,8 +540,8 @@ function spider() {
   // the cabin: a black tub, tan seats with headrests, the dash and its glowing dials, a raked windscreen in a black frame
   k.box(1.5, 0.05, 1.3, 0, 0.79, 0.28, '#111111', 0, 0, 0, 'trim');
   for (const x of [-0.4, 0.4]) {
-    k.box(0.5, 0.12, 0.52, x, 0.78, 0.4, '#b8743e', 0, 0, 0, 'lit').box(0.48, 0.3, 0.12, x, 0.82, 0.72, '#a8652f', 0, 0.22, 0, 'lit');
-    k.ball(0.13, x, 1.1, 0.79, '#a8652f', 1, 0.62, 0.45, 'lit', 10);   // a rounded headrest
+    k.box(0.5, 0.12, 0.52, x, 0.78, 0.4, '#b8743e', 0, 0, 0, 'lit').box(0.48, 0.24, 0.12, x, 0.82, 0.72, '#a8652f', 0, 0.22, 0, 'lit');
+    k.ball(0.13, x, 1.03, 0.79, '#a8652f', 1, 0.62, 0.45, 'lit', 10);   // a rounded headrest
     for (const b of [-1, 1]) { k.box(0.1, 0.22, 0.17, x + b * 0.21, 0.84, 0.7, '#94582a', 0, 0.22, 0, 'lit'); k.box(0.09, 0.13, 0.48, x + b * 0.22, 0.82, 0.4, '#94582a', 0, 0, 0, 'lit'); }   // the bolsters (below the backrest's top edge)
     k.loft([[0.86, 0.1, 0.78, 0.84], [1.0, 0.15, 0.78, 0.99], [1.35, 0.14, 0.78, 0.95], [1.85, 0.06, 0.8, 0.89]], col, 'paint', { up: 2.4, dn: 3, belly: 0.3, n: 16, x: x });   // the humps behind the seats
   }
@@ -577,7 +588,7 @@ function spider() {
 }
 function bigWheel() {   // a low tyre, a five-spoke star rim and the brake disc behind it
   const wk = new Kit();
-  wk.axle(0.34, 0.27, 24, 0, 0, 0, '#111111', 'tyre').axle(0.262, 0.275, 22, 0, 0, 0, '#191919', 'tyre');
+  wk.axle(0.34, 0.27, 24, 0, 0, 0, '#1c1c1e', 'tyre').axle(0.262, 0.275, 22, 0, 0, 0, '#232325', 'tyre');
   wk.axle(0.235, 0.05, 20, -0.05, 0, 0, '#3a3d40', 'trim');   // the disc
   wk.put(new THREE.TorusGeometry(0.245, 0.018, 6, 28), '#d4d8dc', 0.145, 0, 0, 0, Math.PI / 2, 0, 1, 1, 1, 'alloy');   // the rim's lip
   for (let i = 0; i < 10; i++) { const a = i * Math.PI * 2 / 10; wk.put(new THREE.BoxGeometry(0.04, 0.24, 0.045), i % 2 ? '#b8bec4' : '#dfe3e6', 0.15, Math.cos(a) * 0.115, Math.sin(a) * 0.115, a, 0, 0, 1, 1, 1, 'alloy'); }
@@ -589,7 +600,7 @@ function bigWheel() {   // a low tyre, a five-spoke star rim and the brake disc 
 
 // ---------------------------------------------------------------- the two of you, in parts that move (world3d.js puts them together and poses them)
 // Each part is built round its own pivot. The driver (on the right: a British car) wears sunglasses and a white shirt;
-// his girlfriend has a red top and long fair hair that streams out behind her in the wind.
+// his girlfriend has a turquoise top and long fair hair that streams out behind her in the wind.
 export function people() {
   const P = (fn) => { const k = new Kit(); fn(k); return k.build(); };
   const cap = (r, l) => new THREE.CapsuleGeometry(r, l, 4, 10);
@@ -614,14 +625,14 @@ export function people() {
       k.put(new THREE.CapsuleGeometry(0.03, 0.1, 3, 8), o.hair, 0, 0, 0.065, Math.PI / 2, 0, 0, w * 0.5 / 0.06, 1, 0.8 - i * 0.08, 'lit');
       for (const sd of [-1, 1]) k.put(new THREE.CapsuleGeometry(0.026, 0.09, 3, 8), i % 2 ? '#e2b860' : '#f6d888', sd * w * 0.36, -0.008, 0.06 + sd * 0.004, Math.PI / 2, 0, sd * 0.12, w * 0.3 / 0.052, 1, 0.75 - i * 0.07, 'lit');
     })) : null,
-    scarf: o.long ? [0, 1, 2, 3].map((i) => P((k) => { k.box(0.012, 0.085 - i * 0.01, 0.13, 0, -0.03, 0.0, i % 2 ? '#e8789c' : '#f49ab6', 0, 0, 0, 'lit'); })) : null
+    scarf: o.long ? [0, 1, 2, 3, 4, 5].map((i) => P((k) => { k.box(0.012, 0.085 - i * 0.007, 0.13, 0, -0.03, 0.0, i % 2 ? '#e8789c' : '#f49ab6', 0, 0, 0, 'lit'); })) : null
   });
   const driver = one({ chest: 0.165, wide: 1.25, top: '#f2f2ee', sleeve: '#f2f2ee', skin: '#e2ae86', hair: '#2a1c12', arm: 0.052, shades: true });
-  const girl = one({ chest: 0.14, wide: 1.15, top: '#e8263f', sleeve: '#e8b48c', skin: '#efbf98', hair: '#f0cd78', arm: 0.044, long: true, strap: true });
+  const girl = one({ chest: 0.14, wide: 1.15, top: '#1fb5c4', sleeve: '#e8b48c', skin: '#efbf98', hair: '#f0cd78', arm: 0.044, long: true, strap: true });
   const sw = P((k) => { k.put(new THREE.TorusGeometry(0.175, 0.022, 8, 24), '#151515', 0, 0, 0, 0, 0, 0, 1, 1, 1, 'trim'); k.box(0.3, 0.03, 0.02, 0, 0, 0, '#202020', 0, 0, 0, 'trim').cyl(0.045, 0.045, 0.03, 12, 0, 0, 0, '#d10f1d', Math.PI / 2, 0, 'paint'); });
   return {
-    driver: { part: driver, seat: [0.4, 0.66, 0.42], neck: 0.68, shoulder: [0.205, 0.56, 0], elbow: 0.27, scale: 1.14 },
-    girl: { part: girl, seat: [-0.4, 0.66, 0.44], neck: 0.66, shoulder: [0.18, 0.54, 0], elbow: 0.26, hairAt: [0, 0.2, 0.09], scarfAt: [-0.085, -0.03, 0.04], scale: 1.12 },
+    driver: { part: driver, seat: [0.4, 0.72, 0.42], neck: 0.68, shoulder: [0.205, 0.56, 0], elbow: 0.27, scale: 1.2 },
+    girl: { part: girl, seat: [-0.4, 0.72, 0.44], neck: 0.66, shoulder: [0.18, 0.54, 0], elbow: 0.26, hairAt: [0, 0.2, 0.09], scarfAt: [-0.085, -0.03, 0.04], scale: 1.18 },
     wheel: { geo: sw, at: [0.4, 0.98, -0.08], tilt: 0.45 }
   };
 }

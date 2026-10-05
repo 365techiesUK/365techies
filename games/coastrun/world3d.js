@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=5';
+import * as MD from './models3d.js?v=6';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -40,19 +40,19 @@ const LOOK = {
   bournemouth: { sun: [0.6, 0.85], sunCol: '#fff1dc', sunI: 2.6, hemi: ['#d8eeff', '#8aa070', 0.55], fog: [180, 1400], cliff: '#d9a066', beach: '#ecd7a1', beachY: 1.2, cliffK: 0.75, hills: 14, rise: 70, edge: 'rail', sea: '#1d8cc4', seaOp: 0.82,
     cover: 0.36, cloud: ['#ffffff', '#aebfd6'], grade: [1.14, 1.05, '#fff8ef'], env: 1.0, glow: 1,
     dress: [['palm', 3, 0.32, 15, 40], ['bush', 2, 0.25, 12, 30], ['tuft', 6, 2.08, 8.8, 28], ['hotel', 4, 0.035, 70, 130]] },
-  purbeck: { sun: [0.3, 0.7], sunCol: '#fff3e2', sunI: 2.6, hemi: ['#dcecff', '#7a9a60', 0.55], fog: [260, 1700], fogCol: '#c4daea', hills: 40, rise: 120, wall: true,
+  purbeck: { hedge: 16, sun: [0.3, 0.7], sunCol: '#fff3e2', sunI: 2.6, hemi: ['#dcecff', '#7a9a60', 0.55], fog: [260, 1700], fogCol: '#c4daea', hills: 40, rise: 120, wall: true,
     cover: 0.44, cloud: ['#ffffff', '#a6b6cc'], grade: [1.18, 1.07, '#fffaf2'], env: 1.0, glow: 1,
     dress: [['oak', 1, 0.28, 18, 95], ['beech', 1, 0.14, 18, 95], ['sheep', 2, 0.22, 14, 60], ['hay', 1, 0.08, 14, 60], ['bush', 2, 0.2, 12, 40], ['tuft', 6, 2.08, 8.8, 28]] },
   forest: { sun: [-0.4, 0.5], sunCol: '#ffe0aa', sunI: 2.5, hemi: ['#f8ecd0', '#8a7a50', 0.55], fog: [120, 1000], hills: 14, rise: 80, trees: true,
     cover: 0.3, cloud: ['#fff4e2', '#bcae9e'], grade: [1.2, 1.06, '#fff2e0'], env: 0.95, glow: 1,
     dress: [['pine', 1, 0.55, 12, 80], ['beech', 2, 0.4, 12, 80], ['birch', 2, 0.25, 12, 60], ['oak', 3, 0.2, 14, 80], ['logs', 1, 0.03, 12, 20], ['tuft', 6, 1.56, 8.8, 24]] },
-  jurassic: { roadK: '#f0e6e2', lift: [0.07, 0.04, 0.03], sun: [-0.62, 0.2], sunCol: '#ffcc98', sunI: 2.2, hemi: ['#c8b8e4', '#9a8068', 1.35], exp: 1.16, fog: [280, 1750], fogCol: '#e4ae8e', cliff: '#efe9dc', beach: '#e8dfc8', beachY: 0.5, cliffK: 0.3, hills: 22, rise: 90, edge: 'fence', sea: '#3a5290', seaOp: 0.9,
-    cover: 0.42, cloud: ['#ffd8b0', '#8a6a86'], grade: [1.1, 1.08, '#fff8f0'], env: 0.95, glow: 1.5,
+  jurassic: { roadK: '#ece2d6', lift: [0.02, 0.016, 0.02], rays: 1, sun: [-0.62, 0.2], sunCol: '#ffcc98', sunI: 2.2, hemi: ['#d8c4dc', '#b09a60', 1.4], exp: 1.2, fog: [280, 1750], fogCol: '#e4ae8e', cliff: '#efe9dc', beach: '#e8dfc8', beachY: 0.5, cliffK: 0.3, hills: 22, rise: 90, edge: 'fence', sea: '#3a5290', seaOp: 0.9,
+    cover: 0.42, cloud: ['#ffd8b0', '#8a6a86'], grade: [1.18, 1.16, '#fff8f0'], env: 0.62, glow: 1.5,
     dress: [['gorse', 1, 0.28, 12, 60], ['heather', 2, 0.35, 12, 60], ['rock', 3, 0.08, 15, 60], ['tuft', 6, 1.82, 8.8, 28]] },
   harbour: { sun: [0.5, 0.6], sunCol: '#a8b0d0', sunI: 0.8, hemi: ['#7a80a0', '#3a3a40', 1.6], fog: [80, 750], cliff: '#55585f', beach: '#3a3d44', beachY: -1, cliffK: 0.12, hills: 6, rise: 50, edge: 'quay', sea: '#0b1d3a', seaOp: 0.94, night: true,
     cover: 0.2, cloud: ['#4a5478', '#161b2e'], grade: [1.12, 1.08, '#eaf0ff'], env: 0.55, glow: 0.3,
     dress: [['building', 4, 0.12, 40, 110]] },
-  needles: { roadK: '#ccd6ea', sun: [0.58, 0.2], sunCol: '#ffc6ac', sunI: 2.5, hemi: ['#ffd8d0', '#7a8a70', 0.55], fog: [140, 1250], cliff: '#f3eee4', beach: '#e8e2d6', beachY: 0.4, cliffK: 0.3, hills: 20, rise: 90, edge: 'fence', sea: '#5f88b8', seaOp: 0.84,
+  needles: { hedge: 16, roadK: '#ccd6ea', sun: [0.58, 0.2], sunCol: '#ffc6ac', sunI: 2.5, hemi: ['#ffd8d0', '#7a8a70', 0.55], fog: [140, 1250], cliff: '#f3eee4', beach: '#e8e2d6', beachY: 0.4, cliffK: 0.3, hills: 20, rise: 90, edge: 'fence', sea: '#5f88b8', seaOp: 0.84,
     cover: 0.36, cloud: ['#ffe0d6', '#9c86a6'], grade: [1.12, 1.05, '#fff4f2'], env: 1.0, glow: 1.4,
     dress: [['heather', 2, 0.35, 12, 60], ['gorse', 1, 0.22, 12, 60], ['pony', 3, 0.04, 15, 60], ['tuft', 6, 1.82, 8.8, 28]] }
 };
@@ -60,26 +60,26 @@ Object.assign(LOOK, {
   sandbanks: { sun: [0.5, 0.8], sunCol: '#fff3de', sunI: 2.6, hemi: ['#d8eeff', '#9ab080', 0.55], fog: [200, 1450], cliff: '#e2c08a', beach: '#f0dfb0', beachY: 0.9, cliffK: 0.6, hills: 8, rise: 40, edge: 'rail', sea: '#18a0c6', seaOp: 0.78,
     cover: 0.28, cloud: ['#ffffff', '#b0c4dc'], grade: [1.15, 1.05, '#fff9f0'], env: 1.0, glow: 1,
     dress: [['palm', 3, 0.3, 14, 40], ['villa', 4, 0.05, 40, 90], ['tuft', 6, 1.82, 8.8, 26], ['bush', 2, 0.2, 12, 30]] },
-  christchurch: { sun: [0.4, 0.85], sunCol: '#fff3e2', sunI: 2.6, hemi: ['#dcecff', '#8aa070', 0.55], fog: [190, 1400], cliff: '#c9b088', beach: '#dcc79a', beachY: 0.6, cliffK: 0.4, hills: 8, rise: 40, edge: 'fence', sea: '#3a8fb8', seaOp: 0.8,
+  christchurch: { hedge: 15, sun: [0.4, 0.85], sunCol: '#fff3e2', sunI: 2.6, hemi: ['#dcecff', '#8aa070', 0.55], fog: [190, 1400], cliff: '#c9b088', beach: '#dcc79a', beachY: 0.6, cliffK: 0.4, hills: 8, rise: 40, edge: 'fence', sea: '#3a8fb8', seaOp: 0.8,
     cover: 0.4, cloud: ['#ffffff', '#a8b8cc'], grade: [1.12, 1.05, '#fffaf2'], env: 1.0, glow: 1,
     dress: [['oak', 1, 0.15, 18, 80], ['tuft', 6, 2.34, 8.8, 30], ['bush', 2, 0.25, 12, 40], ['cottage', 2, 0.03, 30, 80]] },
-  swanage: { sun: [0.3, 0.75], sunCol: '#fff3e2', sunI: 2.6, hemi: ['#dcecff', '#7a9a60', 0.55], fog: [190, 1400], cliff: '#f2efe6', beach: '#f6f3ea', beachY: 0.5, cliffK: 0.3, hills: 26, rise: 100, edge: 'fence', sea: '#1f8ec2', seaOp: 0.8,
+  swanage: { hedge: 15, sun: [0.3, 0.75], sunCol: '#fff3e2', sunI: 2.6, hemi: ['#dcecff', '#7a9a60', 0.55], fog: [190, 1400], cliff: '#f2efe6', beach: '#f6f3ea', beachY: 0.5, cliffK: 0.3, hills: 26, rise: 100, edge: 'fence', sea: '#1f8ec2', seaOp: 0.8,
     cover: 0.38, cloud: ['#ffffff', '#a6b6cc'], grade: [1.12, 1.05, '#fffaf2'], env: 1.0, glow: 1,
     dress: [['gorse', 1, 0.25, 12, 60], ['sheep', 2, 0.15, 14, 60], ['tuft', 6, 1.95, 8.8, 28], ['oak', 1, 0.1, 20, 90], ['balloon', 4, 0.004, 150, 420]] },
   weymouth: { sun: [-0.5, 0.45], sunCol: '#ffe2b0', sunI: 2.6, hemi: ['#c8d4f0', '#8a9070', 0.65], fog: [260, 1650], fogCol: '#eedcc0', cliff: '#d8b080', beach: '#f2d9a0', beachY: 1.0, cliffK: 0.6, hills: 10, rise: 50, edge: 'rail', sea: '#2f86b8', seaOp: 0.8,
     cover: 0.3, cloud: ['#fff2dc', '#c0a898'], grade: [1.14, 1.05, '#fff4e6'], env: 1.0, glow: 1.2,
     dress: [['tuft', 6, 1.3, 8.8, 24], ['palm', 3, 0.05, 14, 30], ['balloon', 4, 0.003, 150, 420]] },
-  lymington: { roadK: '#d4dcec', sun: [0.6, 0.3], sunCol: '#ffd2a0', sunI: 2.5, hemi: ['#b8c0e8', '#7a8068', 0.7], fog: [240, 1600], fogCol: '#e2cdb8', cliff: '#b89a78', beach: '#d6c193', beachY: 0.4, cliffK: 0.3, hills: 8, rise: 40, edge: 'quay', sea: '#4a7aa6', seaOp: 0.82,
+  lymington: { hedge: 14, roadK: '#d4dcec', sun: [0.6, 0.3], sunCol: '#ffd2a0', sunI: 2.5, hemi: ['#b8c0e8', '#7a8068', 0.7], fog: [240, 1600], fogCol: '#e2cdb8', cliff: '#b89a78', beach: '#d6c193', beachY: 0.4, cliffK: 0.3, hills: 8, rise: 40, edge: 'quay', sea: '#4a7aa6', seaOp: 0.82,
     cover: 0.32, cloud: ['#ffe8cc', '#a890a0'], grade: [1.13, 1.05, '#fff0e2'], env: 0.95, glow: 1.3,
     dress: [['oak', 1, 0.2, 16, 80], ['cottage', 2, 0.03, 25, 80], ['tuft', 6, 1.69, 8.8, 26], ['bush', 2, 0.2, 12, 40]] },
-  lyme: { roadK: '#e8e2e4', lift: [0.05, 0.03, 0.03], sun: [-0.58, 0.14], sunCol: '#ffb090', sunI: 2.3, hemi: ['#c4b8d8', '#6a7088', 0.95], exp: 1.08, fog: [250, 1650], fogCol: '#d8a8a8', cliff: '#5f6670', beach: '#a59a8c', beachY: 0.5, cliffK: 0.3, hills: 18, rise: 80, edge: 'fence', sea: '#4c5a92', seaOp: 0.86,
+  lyme: { roadK: '#e8e2e4', lift: [0.03, 0.025, 0.05], rays: 1, sun: [-0.58, 0.14], sunCol: '#ffb090', sunI: 2.3, hemi: ['#c4b8d8', '#6a7088', 0.95], exp: 1.08, fog: [250, 1650], fogCol: '#d8a8a8', cliff: '#5f6670', beach: '#a59a8c', beachY: 0.5, cliffK: 0.3, hills: 18, rise: 80, edge: 'fence', sea: '#4c5a92', seaOp: 0.86,
     cover: 0.38, cloud: ['#ffc8c0', '#7a5a86'], grade: [1.12, 1.06, '#fff0f0'], env: 0.95, glow: 1.6,
     dress: [['terrace', 6, 0.06, 30, 70], ['oak', 1, 0.12, 18, 80], ['tuft', 6, 1.56, 8.8, 26]] },
   portland: { sun: [0.3, 0.06], sunCol: '#ffb890', sunI: 1.4, hemi: ['#9aa0d8', '#4a4a60', 1.1], fog: [140, 1100], fogCol: '#9c86a6', cliff: '#b8b0a0', beach: '#c9c2b0', beachY: 0.4, cliffK: 0.3, hills: 14, rise: 60, edge: 'fence', wall: true, sea: '#2c3e70', seaOp: 0.9,
     cover: 0.3, cloud: ['#e8b0b8', '#4a4a78'], grade: [1.1, 1.07, '#f0f0ff'], env: 0.75, glow: 1.2, dusk: true,
     dress: [['rock', 3, 0.08, 14, 60], ['tuft', 6, 1.04, 8.8, 24], ['cottage', 2, 0.02, 25, 70]] },
-  goldencap: { roadK: '#f0e8e4', lift: [0.05, 0.03, 0.02], sun: [-0.62, 0.22], sunCol: '#ffc888', sunI: 2.4, hemi: ['#ccbce4', '#9a8068', 1.2], bloomK: 0.7, exp: 1.06, fog: [260, 1700], fogCol: '#dcbcae', cliff: '#d8a040', beach: '#e8c070', beachY: 0.5, cliffK: 0.3, hills: 26, rise: 100, edge: 'fence', sea: '#3f6496', seaOp: 0.85,
-    cover: 0.36, cloud: ['#ffd8a8', '#8a6880'], grade: [1.15, 1.06, '#fff2e2'], env: 0.95, glow: 1.5,
+  goldencap: { hedge: 17, roadK: '#ece4da', lift: [0.018, 0.014, 0.018], rays: 1, sun: [-0.62, 0.22], sunCol: '#ffc888', sunI: 2.4, hemi: ['#d8c6dc', '#b09a60', 1.3], bloomK: 0.7, exp: 1.14, fog: [260, 1700], fogCol: '#dcbcae', cliff: '#d8a040', beach: '#e8c070', beachY: 0.5, cliffK: 0.3, hills: 26, rise: 100, edge: 'fence', sea: '#3f6496', seaOp: 0.85,
+    cover: 0.36, cloud: ['#ffd8a8', '#8a6880'], grade: [1.2, 1.14, '#fff2e2'], env: 0.66, glow: 1.5,
     dress: [['gorse', 1, 0.25, 12, 60], ['sheep', 2, 0.15, 14, 60], ['tuft', 6, 1.82, 8.8, 28], ['oak', 1, 0.08, 20, 90]] },
   hengistbury: { sun: [0.5, 0.5], sunCol: '#b0b0d8', sunI: 0.8, hemi: ['#8080a8', '#3a3842', 1.5], fog: [90, 850], cliff: '#8a6a4a', beach: '#7a6a5a', beachY: 0.5, cliffK: 0.2, hills: 8, rise: 40, edge: 'fence', sea: '#16244a', seaOp: 0.93, night: true,
     cover: 0.22, cloud: ['#5a5488', '#1c1a34'], grade: [1.12, 1.08, '#eceaff'], env: 0.55, glow: 0.4,
@@ -196,7 +196,9 @@ export function createWorld() {
   const headlight = new THREE.SpotLight('#fff1d0', 0, 120, 0.42, 0.65, 1.0); scene.add(headlight); scene.add(headlight.target);
   const glint = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: glintTexture(), color: '#dfe6ff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }));
   glint.rotation.order = 'YXZ'; glint.renderOrder = 2; glint.visible = false; scene.add(glint);   // the moon's path across the water
-  const carGlow = new THREE.PointLight('#ffe2c0', 0, 11, 1.4); scene.add(carGlow);   // at night: the street lights' glow on the car (always there, so no shader rebuilds)   // at the front bumper, lighting the road ahead (never the car)
+  const rays = new THREE.Sprite(new THREE.SpriteMaterial({ map: raysTexture(), color: '#ffd8a0', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, opacity: 0 }));
+  rays.renderOrder = -6; rays.scale.setScalar(820); scene.add(rays);   // shafts of light fanning from a low sun (behind the hills, in front of the sky)
+  const carGlow = new THREE.PointLight('#ffe2c0', 0, 6.5, 1.6); scene.add(carGlow);   // at night: the street lights' glow on the car (always there, so no shader rebuilds)   // at the front bumper, lighting the road ahead (never the car)
 
   // ---------------------------------------------------------------- the sky (and the same sky, with the land below, as everything's surroundings)
   const SU = { top: { value: new THREE.Color() }, mid: { value: new THREE.Color() }, hor: { value: new THREE.Color() }, gnd: { value: new THREE.Color('#5a7040') },
@@ -233,6 +235,12 @@ export function createWorld() {
   const KIT = (f) => { const k = new MD.Kit(); f(k); return k.build(); }, TW = E.TUN_W;
   const DECK = KIT((k) => k.box(2 * E.BRG_W + 0.9, 1.1, SEG + 0.06, 0, -1.2, 0, '#9a968c'));
   const TROOF = KIT((k) => { k.box(2 * TW + 2.4, 1.4, SEG + 0.7, 0, 5.7, 0, '#4f4a43', 0, 0, 0, 'troof'); k.box(2 * TW + 0.4, 0.35, 0.5, 0, 5.36, 0, '#3e3a34', 0, 0, 0, 'troof'); });
+  const HEDGE = [0, 1, 2].map((v) => KIT((k) => {   // a length of hawthorn hedge: a dark body, lighter lumpy top
+    const r = E.rnd(91 + v), cols = ['#3c6e2c', '#467a30', '#365f28'];
+    k.box(1.1, 1.25, SEG + 0.5, 0, 0, 0, cols[v], 0, 0, 0, 'lit');
+    for (let q = 0; q < 4; q++) k.ball(0.7 + r() * 0.25, (r() - 0.5) * 0.3, 1.15 + r() * 0.2, -1.6 + q * 1.05 + (r() - 0.5) * 0.4, ['#4e8a36', '#5a9640', '#447c30'][(q + v) % 3], 1, 0.62, 1.3, 'lit', 8);
+    if (v === 1) k.ball(0.5, 0.2, 1.5, 0.4, '#e8e2d0', 1, 0.5, 1, 'lit', 6);   // may blossom
+  }));
   const EYE = KIT((k) => k.box(0.1, 0.03, 0.07, 0, 0, 0, '#ffffff', 0, 0, 0, 'eyes'));
   const shade = (hex, f) => '#' + new THREE.Color(hex).multiplyScalar(f).getHexString();
   const TWALLS = [1.05, 0.74, 0.52, 0.74].map((f) => KIT((k) => { for (const sd of [-1, 1]) {
@@ -602,6 +610,12 @@ export function createWorld() {
       const walls = [];
       if (g.wl) walls.push([-10.5, look.wall ? 'wall' : 'fence']);
       if (g.wr) walls.push([10.5, look.wall ? 'wall' : 'fence']);
+      if (look.hedge && !g.tun && !g.brg && !g.fk && !g.gate && !R.low) for (const d of [-1, 1]) {
+        if (g.sea === d || (d < 0 ? g.wl : g.wr) || hash2(i, d * 7 + 3) < 0.12) continue;
+        let kk = 0; for (let j = -4; j <= 4; j++) kk += E.segAt(W, i + j).k; kk /= 9;
+        const lat = look.hedge + hash2(Math.floor(i / 9), d) * 4; if (Math.abs(kk) > 1e-4 && d === (kk > 0 ? 1 : -1) && lat > 0.5 / Math.abs(kk)) continue;
+        place(W, i * SEG + SEG / 2, d * lat, 0, P); addAll(HEDGE[i % 3], P.x, groundAt(W, g, P, d * lat) - 0.15, P.z, -P.th);
+      }
       if (g.sea && g.sh - 1.5 < 26 && look.edge && !g.brg && !g.tun) walls.push([g.sea * (g.sh - 1.2), look.edge === 'rail' ? 'rail' : look.edge === 'quay' ? 'quay' : 'fence']);
       if (g.brg) walls.push([-E.BRG_W, 'rail'], [E.BRG_W, 'rail']);
       for (const wl of walls) { place(W, i * SEG + SEG / 2, wl[0], 0, P); addAll(MD.model(wl[1], 0), P.x, P.y, P.z, -P.th); }
@@ -828,7 +842,7 @@ export function createWorld() {
     const blend = (c, hex) => { TMPC.set(hex); c.lerp(TMPC, k); };
     const to = (v, x) => v + (x - v) * k;
     blend(SU.top.value, sk[0][1]); blend(SU.mid.value, sk[Math.min(2, sk.length - 2)][1]); blend(SU.hor.value, look.fogCol || sk[sk.length - 1][1]);
-    TMPC.set(pal.grass[0]).lerp(ROADGREY, 0.9); SU.gnd.value.lerp(TMPC, k);   // what shiny things see below them: mostly road
+    TMPC.set(pal.grass[0]).lerp(ROADGREY, 0.9).multiplyScalar(0.55); SU.gnd.value.lerp(TMPC, k);   // what shiny things see below them: mostly road
     blend(SU.cLit.value, look.cloud[0]); blend(SU.cDark.value, look.cloud[1]); blend(SU.sunCol.value, look.sunCol);
     { const F = FIELDS[pal.key] || FIELDS.bournemouth; ['uF0', 'uF1', 'uF2', 'uF3', 'uF4'].forEach((u, i) => blend(FU[u].value, F.cols[i])); FU.uFK.value = to(FU.uFK.value, F.k); FU.uFlow.value = to(FU.uFlow.value, look.night ? 0 : (FLOWERS[pal.key] || 0)); FU.uDap.value = RU.uDap.value = to(FU.uDap.value, look.trees ? 1 : 0); FU.uDry.value = to(FU.uDry.value, look.dusk ? 0.3 : (DRY[pal.key] == null ? 0.6 : DRY[pal.key])); }
     SU.cover.value = to(SU.cover.value, look.cover); SU.sunGlow.value = to(SU.sunGlow.value, look.glow); SU.discI.value = to(SU.discI.value, look.night ? 0 : 14);
@@ -844,7 +858,8 @@ export function createWorld() {
     for (const m of OWN_ENV) m.envMapIntensity = m.userData.envBase * scene.environmentIntensity * (m === roadMat ? 1 - 0.9 * dark : 1);   // no sky to see reflected in a tunnel's road
     { const hz = Math.hypot(look.sun[0], 0.7); let az = Math.atan2(look.sun[0], 0.7);
       const wrap = (a) => Math.atan2(Math.sin(a), Math.cos(a)), hd = R.heading || 0;
-      if (look.sun[1] < 0.45 && !look.night) { const cur = R.sunAz == null ? az : R.sunAz, d = wrap(az - hd); if (Math.abs(d) < 0.8) az = hd + (wrap(cur - hd) < 0 ? -0.8 : 0.8); }
+      if (look.rays) { const cur = R.sunAz == null ? az : R.sunAz; az = hd + (wrap(cur - hd) < 0 ? -0.62 : 0.62); }
+      else if (look.sun[1] < 0.45 && !look.night) { const cur = R.sunAz == null ? az : R.sunAz, d = wrap(az - hd); if (Math.abs(d) < 0.8) az = hd + (wrap(cur - hd) < 0 ? -0.8 : 0.8); }
       R.sunAz = R.sunAz == null || k >= 1 ? az : R.sunAz + wrap(az - R.sunAz) * Math.min(1, k * 0.4);
       SUNV.set(Math.sin(R.sunAz) * hz, look.sun[1], -Math.cos(R.sunAz) * hz).normalize(); SU.sunDir.value.lerp(SUNV, k).normalize(); }
     blend(roadMat.color, look.roadK || '#ffffff');   // where the sky is orange the asphalt gets a cool counter-tint, so it stays charcoal
@@ -855,7 +870,7 @@ export function createWorld() {
     headlight.intensity = lit(look) ? 220 : 0; carGlow.intensity = look.night ? 9 : look.dusk ? 4 : 0;
     bloom.threshold = lit(look) ? 2.2 : 1.9; bloom.strength = (lit(look) ? 0.24 : 0.26) * (look.bloomK || 1);   // only the sun's disc and the lamps glow
     renderer.toneMappingExposure = to(renderer.toneMappingExposure, look.exp || 1);
-    roadMat.roughness = to(roadMat.roughness, look.night ? 0.42 : look.glow >= 1.4 ? 0.46 : 0.6);   // wetter-looking at night, a sheen under a low sun
+    roadMat.roughness = to(roadMat.roughness, look.night ? 0.42 : look.rays ? 0.7 : look.glow >= 1.4 ? 0.55 : 0.6);   // wetter-looking at night, a sheen under a low sun
     R.gulls = !!(look.sea && !lit(look));
   }
   const GRADE_U = grade.uniforms;
@@ -885,7 +900,7 @@ export function createWorld() {
   function addParts(group, geo, mats) { for (const k in geo) if (geo[k] && (mats[k] || CAR[k])) { const mesh = new THREE.Mesh(geo[k], mats[k] || CAR[k]); mesh.castShadow = k !== 'glow'; group.add(mesh); } }
   function personOf(spec) {   // a body with a neck, two shoulders and two elbows that bend, and (hers) a streaming tail of hair
     const root = new THREE.Group(); root.position.set(spec.seat[0], spec.seat[1], spec.seat[2]); root.scale.setScalar(spec.scale || 1); addParts(root, spec.part.torso, {});
-    const neck = new THREE.Group(); neck.position.set(0, spec.neck, 0); root.add(neck); addParts(neck, spec.part.head, {});
+    const neck = new THREE.Group(); neck.position.set(0, spec.neck, 0); neck.scale.setScalar(1.15); root.add(neck); addParts(neck, spec.part.head, {});
     const arms = [-1, 1].map((sd) => {
       const sh = new THREE.Group(); sh.position.set(sd * spec.shoulder[0], spec.shoulder[1], spec.shoulder[2]); root.add(sh); addParts(sh, spec.part.upper, {});
       const el = new THREE.Group(); el.position.set(0, -spec.elbow, 0); sh.add(el); addParts(el, spec.part.fore, {});
@@ -939,10 +954,11 @@ export function createWorld() {
     for (let i = 0; i < n * 0.3; i++) sparks.emit(x, y + 0.6, z, fx * 6 + (Math.random() - 0.5) * 10, 3 + Math.random() * 7, fz * 6 + (Math.random() - 0.5) * 10, 0.12, 0.05, cols[i % 2], 1, 0.5 + Math.random() * 0.5, 14);   // glints of glass
     const nShard = Math.min(18, Math.round(n / 4));
     for (let i = 0; i < nShard; i++) {
-      const kind = i % 6, sz = kind < 3 ? [0.3 + Math.random() * 0.4, 0.035, 0.22 + Math.random() * 0.3] : kind < 5 ? [0.4, 0.06, 0.1] : [0.16, 0.015, 0.16], fv = v * (0.4 + Math.random() * 0.35) + 5;
+      const kind = i % 6, sz = kind < 3 ? [0.3 + Math.random() * 0.4, 0.07, 0.22 + Math.random() * 0.3] : kind < 5 ? [0.4, 0.09, 0.12] : [0.16, 0.02, 0.16], fv = v * (0.4 + Math.random() * 0.35) + 5;
       shard(x, y + 0.6, z, fx * fv + (Math.random() - 0.5) * 11, 3 + Math.random() * 8, fz * fv + (Math.random() - 0.5) * 11, sz, kind < 3 ? '#c8101c' : kind < 5 ? '#1a1a1a' : '#cfe6f4', y + 0.02);
     }
     const dust = R.W && R.W.off ? '#a49a7c' : '#c4bcb0';
+    for (let i = 0; i < 12; i++) { const a = Math.random() * Math.PI * 2; smoke.emit(x, y + 0.3, z, Math.cos(a) * 9, 0.4 + Math.random(), Math.sin(a) * 9, 2.2, 7.5, dust, 0.36, 2.8); }   // a ring of dust rolling out low
     for (let i = 0; i < 22; i++) smoke.emit(x + (Math.random() - 0.5) * 3, y + 0.4, z + (Math.random() - 0.5) * 2, (Math.random() - 0.5) * 7 + fx * 3, 0.6 + Math.random() * 2, (Math.random() - 0.5) * 7 + fz * 3, 1.4, 4.6, dust, 0.4, 1.8);
   }
   const SH_N = 48, shards = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ roughness: 0.35, metalness: 0.15 }), SH_N), SHL = [], SHM = new THREE.Matrix4(), SHQ = new THREE.Quaternion(), SHE = new THREE.Euler(), SHS = new THREE.Vector3(), SHP = new THREE.Vector3(), SHC = new THREE.Color();
@@ -995,7 +1011,7 @@ export function createWorld() {
       R.flying.push({ obj: obj, kind: kind, side: Math.random() < 0.5 ? -1 : 1, v: new THREE.Vector3(fx * v0 * 0.5 + rx * side * out, up, fz * v0 * 0.5 + rz * side * out), w: new THREE.Vector3((Math.random() - 0.5) * spin, (Math.random() - 0.5) * spin, (Math.random() - 0.5) * spin), rest: false });
     };
     if (R.couple) { toss(R.couple.drv.root, 1, 8 + Math.random() * 2, 11, 'person'); toss(R.couple.her.root, -1, 9 + Math.random() * 2, 12, 'person'); }
-    toss(wheels[2 + (Math.random() < 0.5 ? 0 : 1)], 0, 6.5, 0, 'wheel');
+    const lw = wheels[2 + (Math.random() < 0.5 ? 0 : 1)]; toss(lw, 0, 6.5, 0, 'wheel'); if (lw.parent === scene) lw.rotation.z += 0.38;   // tilted as it goes, its alloy face showing
   }
   const WQ = new THREE.Quaternion(), WV = new THREE.Vector3();
   function flyBits(W, dt, cx, cz, fx, fz, roadY) {   // the two of you and the wheel: thrown, bouncing, then sprawled on the road (or rolling away)
@@ -1137,11 +1153,13 @@ export function createWorld() {
     foamTex.offset.x = Math.sin(t / 1300) * 0.12; foamTex.offset.y = t / 14000; foamMat.opacity = 0.75 + Math.sin(t / 1300 + 1.2) * 0.15;
     const sd = SU.sunDir.value;
     moon.position.copy(camera.position).addScaledVector(sd, 2000);
+    { const LK = LOOK[R.lookKey] || {}, want = LK.rays && sd.y < 0.4 ? 0.8 * (1 - R.tunK) : 0; rays.material.opacity += (want - rays.material.opacity) * Math.min(1, dt * 2);
+      rays.visible = rays.material.opacity > 0.01; if (rays.visible) { rays.position.copy(camera.position).addScaledVector(sd, 1900); rays.material.rotation = Math.sin(t / 9000) * 0.06; rays.material.color.copy(sun.color); } }
     { const LK = LOOK[R.lookKey] || {}, hh = Math.hypot(sd.x, sd.z) || 1, dx = sd.x / hh, dz = sd.z / hh;
       glint.visible = !!(LK.sea && (LK.night || (LK.glow >= 1.4 && !lit(LK)))); glint.material.color.set(LK.night ? '#dfe6ff' : '#ffb070'); glint.material.opacity = LK.night ? 1 : 0.85;
       if (glint.visible) { glint.scale.set(70, 1500, 1); glint.position.set(cx + dx * 830, 0.12, cz + dz * 830); glint.rotation.set(-Math.PI / 2, Math.atan2(-dx, -dz), 0); } }
     sun.position.set(cx + sd.x * 180, cy + sd.y * 180, cz + sd.z * 180); sun.target.position.set(cx, cy, cz);
-    { const hx = Math.sin(heading), hz = -Math.cos(heading); headlight.position.set(cx + hx * 2.6, cy + 0.75, cz + hz * 2.6); carGlow.position.set(cx - hx * 2.4, cy + 3.4, cz - hz * 2.4); headlight.target.position.set(cx + hx * 34, cy, cz + hz * 34); }
+    { const hx = Math.sin(heading), hz = -Math.cos(heading); headlight.position.set(cx + hx * 2.6, cy + 0.75, cz + hz * 2.6); carGlow.position.set(cx, cy + 2.6, cz); headlight.target.position.set(cx + hx * 34, cy, cz + hz * 34); }
 
     // ---- traffic
     const seen = new Set();
@@ -1195,7 +1213,7 @@ export function createWorld() {
     return renderer.domElement;
   }
   // the sun's glare: a chain of soft rings from the sun through the middle of the picture, hidden when a hill is in the way
-  const FLARE = [[0, 3.2, '#fff4d8', 0.55], [0.35, 0.5, '#ffd27a', 0.22], [0.6, 0.9, '#9fd0ff', 0.12], [1.05, 0.35, '#ffb0e0', 0.2], [1.4, 1.4, '#a0ffd0', 0.08], [1.75, 0.6, '#ffe0a0', 0.15]];
+  const FLARE = [[0, 3.2, '#fff4d8', 0.55], [0.35, 0.5, '#ffd27a', 0.22], [0.6, 0.9, '#ffc890', 0.1], [1.05, 0.35, '#ffb0a0', 0.16], [1.4, 1.4, '#ffd8a8', 0.06], [1.75, 0.6, '#ffe0a0', 0.15]];
   const flares = FLARE.map((f) => { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: radial(64, [[0, 'rgba(255,255,255,1)'], [0.35, 'rgba(255,255,255,0.45)'], [0.75, 'rgba(255,255,255,0.12)'], [1, 'rgba(255,255,255,0)']]), color: f[2], blending: THREE.AdditiveBlending, depthTest: false, depthWrite: false, transparent: true, fog: false })); sp.renderOrder = 20; sp.visible = false; scene.add(sp); return sp; });
   const RAY = new THREE.Raycaster(), SV = new THREE.Vector3(), SW = new THREE.Vector3();
   function flare(W) {
@@ -1317,6 +1335,17 @@ function glintTexture() {   // broken flecks of moonlight: thick and bright towa
     const y = Math.pow(r(), 1.7) * H, f = y / H, spread = 5 + f * 22, g = (r() + r() + r() - 1.5) * spread;
     x.globalAlpha = (0.2 + r() * 0.5) * (1 - f * 0.8); x.fillStyle = '#ffffff'; x.fillRect(W / 2 + g - 1, y, 1.5 + r() * (4 + f * 6), 1 + f * 1.5);
   }
+  return tex(c, false);
+}
+function raysTexture() {   // soft shafts radiating from the middle, fading out
+  const S = 512, c = canvas(S, S), x = c.getContext('2d'), r = E.rnd(73);
+  x.translate(S / 2, S / 2); x.globalCompositeOperation = 'lighter';
+  for (let i = 0; i < 12; i++) {
+    const a = (i + r() * 0.7) / 12 * Math.PI * 2, w = 0.035 + r() * 0.05, L = S * (0.3 + r() * 0.2), g = x.createLinearGradient(0, 0, Math.cos(a) * L, Math.sin(a) * L);
+    g.addColorStop(0, 'rgba(255,255,255,' + (0.42 + r() * 0.25) + ')'); g.addColorStop(0.5, 'rgba(255,255,255,' + (0.14 + r() * 0.08) + ')'); g.addColorStop(1, 'rgba(255,255,255,0)');
+    x.fillStyle = g; x.beginPath(); x.moveTo(0, 0); x.lineTo(Math.cos(a - w) * L, Math.sin(a - w) * L); x.lineTo(Math.cos(a + w) * L, Math.sin(a + w) * L); x.closePath(); x.fill();
+  }
+  const gl = x.createRadialGradient(0, 0, 0, 0, 0, S * 0.22); gl.addColorStop(0, 'rgba(255,255,255,0.35)'); gl.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = gl; x.fillRect(-S / 2, -S / 2, S, S);
   return tex(c, false);
 }
 function slowTexture() {   // SLOW, as painted on the road: tall letters (they're read from a low angle, far off)

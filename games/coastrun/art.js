@@ -28,9 +28,9 @@
       sea: null, foam: null, road: ['#77756f', '#72706a'], rumble: ['#f4f4f4', '#cf2f2b'], lane: '#f2f2f2', wall: ['#a39d90', '#958f82'], tint: null },
     { key: 'forest', sky: [[0, '#5d93d1'], [0.55, '#b4c9d9'], [1, '#f4e3bf']], fog: '#ecdcb6', grass: ['#7aa040', '#70963a'], verge: ['#9a7a3c', '#917238'], beach: null,
       sea: null, foam: null, road: ['#625f59', '#5d5a54'], rumble: ['#f2f2f2', '#2f7d43'], lane: '#efefe6', tint: ['#ffb24a', 0.08] },
-    { key: 'jurassic', sky: [[0, '#1f2466'], [0.35, '#6a4a92'], [0.7, '#ff8f4a'], [1, '#ffd27e']], fog: '#f4ad6c', grass: ['#6f8c3a', '#668235'], verge: ['#6a8a38', '#617f33'], beach: ['#f3ead6', '#e9dfc9'],
+    { key: 'jurassic', sky: [[0, '#1f2466'], [0.35, '#6a4a92'], [0.7, '#ff8f4a'], [1, '#ffd27e']], fog: '#f4ad6c', grass: ['#86a23e', '#7c9838'], verge: ['#6a8a38', '#617f33'], beach: ['#f3ead6', '#e9dfc9'],
       sea: ['#4a5f90', '#455987'], foam: '#ffe2bf', road: ['#6d5e5c', '#685957'], rumble: ['#fff3e6', '#d0362f'], lane: '#fff1df', edge: 'fence', tint: ['#ff7a2e', 0.2] },
-    { key: 'harbour', sky: [[0, '#03071a'], [0.6, '#101a44'], [1, '#2f3570']], fog: '#1c2448', grass: ['#1d2a26', '#1a2622'], verge: ['#373b45', '#33373f'], beach: ['#2d3038', '#2a2d34'],
+    { key: 'harbour', sky: [[0, '#03071a'], [0.6, '#101a44'], [1, '#2f3570']], fog: '#1c2448', grass: ['#26343c', '#233138'], verge: ['#373b45', '#33373f'], beach: ['#2d3038', '#2a2d34'],
       sea: ['#0d2140', '#0b1d39'], foam: '#6b7fae', road: ['#2b2d34', '#282a30'], rumble: ['#cfcfcf', '#a8262a'], lane: '#e6dfa8', edge: 'quay', night: true, tint: ['#1a2a6a', 0.45] },
     { key: 'needles', sky: [[0, '#6878b8'], [0.5, '#c9a8c8'], [0.82, '#f6c3bd'], [1, '#ffe6c9']], fog: '#f1d2cc', grass: ['#80a65b', '#78a053'], verge: ['#7aa257', '#729b50'], beach: ['#f4efe4', '#ebe5d8'],
       sea: ['#6f90b8', '#6a8ab1'], foam: '#fff6ee', road: ['#78757b', '#737176'], rumble: ['#fafafa', '#3b6fd6'], lane: '#fbfbfb', edge: 'fence', tint: ['#ff9ab0', 0.12] },
@@ -48,7 +48,7 @@
       sea: ['#4c5a92', '#465488'], foam: '#ffe0e6', road: ['#6a5e66', '#655962'], rumble: ['#fff0f0', '#c0304a'], lane: '#fff0ea', edge: 'fence', tint: ['#ff6a8a', 0.18] },
     { key: 'portland', sky: [[0, '#141c4a'], [0.4, '#3b4a8a'], [0.75, '#a07aa8'], [1, '#f2b48a']], fog: '#9c86a6', grass: ['#5a7a46', '#53723f'], verge: ['#8a8676', '#827e6e'], beach: ['#c9c2b0', '#bfb8a6'],
       sea: ['#2c3e70', '#283866'], foam: '#d8d8f0', road: ['#55545c', '#504f57'], rumble: ['#f0f0f0', '#c62828'], lane: '#ece8d8', edge: 'fence', wall: ['#8a8676', '#827e6e'], tint: ['#4a5aa8', 0.25] },
-    { key: 'goldencap', sky: [[0, '#25397e'], [0.45, '#7a6aa8'], [0.75, '#ffa868'], [1, '#ffd890']], fog: '#f2c08c', grass: ['#7a9a46', '#71903f'], verge: ['#7a9a46', '#71903f'], beach: ['#e8c070', '#deb664'],
+    { key: 'goldencap', sky: [[0, '#25397e'], [0.45, '#7a6aa8'], [0.75, '#ffa868'], [1, '#ffd890']], fog: '#f2c08c', grass: ['#8eaa48', '#84a040'], verge: ['#7a9a46', '#71903f'], beach: ['#e8c070', '#deb664'],
       sea: ['#3f6496', '#3a5c8c'], foam: '#fff0d8', road: ['#6e625c', '#695d57'], rumble: ['#fff4e2', '#d8902a'], lane: '#fff2dc', edge: 'fence', tint: ['#ff9a40', 0.16] },
     { key: 'hengistbury', sky: [[0, '#060c2c'], [0.5, '#1c2a6a'], [0.82, '#5a4a8a'], [1, '#d07a6a']], fog: '#4a3f6a', grass: ['#2e3e30', '#2a382b'], verge: ['#4a4636', '#443f31'], beach: ['#7a6a5a', '#726252'],
       sea: ['#16244a', '#132042'], foam: '#a8b0e0', road: ['#35343c', '#313038'], rumble: ['#d8d8d8', '#2f6fd6'], lane: '#e8e2b8', edge: 'fence', night: true, tint: ['#2a2a7a', 0.35] }
@@ -117,32 +117,39 @@
     if (glint) { var r = rnd(5); for (var i = 0; i < 160; i++) { var y = top + 1 + Math.pow(r(), 1.5) * (BG_H - top - 1); rr(c, r() * BG_W, y, 1 + r() * 4, 0.5, 0.2, glint); } }
   }
   function clipPoly(c, pts) { c.beginPath(); c.moveTo(pts[0], pts[1]); for (var i = 2; i < pts.length; i += 2) c.lineTo(pts[i], pts[i + 1]); c.closePath(); c.clip(); }
-  function durdleDoor(c, x0) {   // a limestone headland running out into the sea, the great arch at its seaward end
-    c.save(); c.translate(x0, HZ); c.scale(0.72, 2.2); c.translate(-x0, -HZ);   // (the ring squashes the panorama's height: painted tall, it reads true)
-    var hd = [x0, HZ, x0 + 10, HZ - 12, x0 + 38, HZ - 27, x0 + 58, HZ - 30, x0 + 74, HZ - 22, x0 + 84, HZ - 7, x0 + 88, HZ];
-    P(c, hd, '#d8b096');
-    P(c, [x0 + 58, HZ - 30, x0 + 74, HZ - 22, x0 + 84, HZ - 7, x0 + 88, HZ, x0 + 66, HZ, x0 + 62, HZ - 20], '#a8806e');   // the shaded seaward face
-    P(c, [x0 + 10, HZ - 12, x0 + 38, HZ - 27, x0 + 58, HZ - 30, x0 + 46, HZ - 25, x0 + 16, HZ - 10], '#6e7e46');           // the grass on its back
-    c.save(); c.beginPath(); c.rect(x0, 0, 100, HZ - 0.4); c.clip(); c.globalCompositeOperation = 'destination-out';
-    c.beginPath(); c.ellipse(x0 + 68, HZ, 8, 15, 0, 0, Math.PI * 2); c.fill(); c.restore();                                 // the arch, the sky showing through
-    c.save(); c.beginPath(); c.ellipse(x0 + 68, HZ, 8, 15, 0, 0, Math.PI * 2); c.clip();
-    c.fillStyle = '#4a6a9a'; c.fillRect(x0 + 58, HZ - 2.2, 22, 2.4); c.fillStyle = 'rgba(255,240,225,0.85)'; c.fillRect(x0 + 58, HZ - 0.9, 22, 0.6);   // the sea and its foam through the arch
+  function durdleDoor(c, x0) {   // a long limestone ridge sloping down to the sea, a rounded hump over the arch at its seaward end, a sheer drop to the water
+    c.save(); c.translate(x0, HZ); c.scale(1.05, 2.3); c.translate(-x0, -HZ);   // (the ring squashes the panorama's height: painted tall, it reads true)
+    var hd = [x0 - 20, HZ, x0 - 4, HZ - 6, x0 + 14, HZ - 11, x0 + 32, HZ - 16, x0 + 46, HZ - 22, x0 + 56, HZ - 27, x0 + 64, HZ - 29.5, x0 + 72, HZ - 28, x0 + 79, HZ - 23, x0 + 83, HZ - 15, x0 + 85, HZ - 6, x0 + 87, HZ];
+    P(c, hd, '#e2d2bc');
+    c.save(); clipPoly(c, hd);
+    for (var b = 0; b < 9; b++) { c.strokeStyle = b % 2 ? 'rgba(150,130,120,0.35)' : 'rgba(255,245,230,0.3)'; c.lineWidth = 0.7; c.beginPath(); c.moveTo(x0 - 20, HZ - 3 - b * 3.1); c.quadraticCurveTo(x0 + 40, HZ - 1 - b * 3.1 - 5, x0 + 90, HZ - 6 - b * 3.1); c.stroke(); }   // the tilted beds of the rock
+    P(c, [x0 + 70, HZ - 28, x0 + 79, HZ - 23, x0 + 83, HZ - 15, x0 + 85, HZ - 6, x0 + 87, HZ, x0 + 74, HZ, x0 + 76, HZ - 14], 'rgba(120,100,150,0.4)');   // the seaward face in lavender shade
+    c.fillStyle = 'rgba(90,80,70,0.45)'; c.fillRect(x0 - 20, HZ - 2.2, 110, 2.2);   // the wet, darker foot
     c.restore();
-    c.save(); c.beginPath(); c.ellipse(x0 + 68, HZ, 9.5, 16.5, 0, Math.PI, Math.PI * 2); c.ellipse(x0 + 68, HZ, 8, 15, 0, Math.PI * 2, Math.PI, true); c.fillStyle = 'rgba(70,40,50,0.55)'; c.fill(); c.restore();   // its dark underside
-    P(c, [x0 + 74, HZ - 22, x0 + 84, HZ - 7, x0 + 88, HZ, x0 + 77, HZ, x0 + 76, HZ - 12], 'rgba(120,96,150,0.45)');   // the lavender shadow on the far face
-    P(c, [x0 + 10, HZ - 12, x0 + 38, HZ - 27, x0 + 44, HZ - 22, x0 + 20, HZ - 7], 'rgba(255,214,170,0.35)');            // the sun on the near slope
-    rr(c, x0 + 92, HZ - 5, 4, 5, 1, '#c09a84');                                                                          // a stack offshore
+    P(c, [x0 - 4, HZ - 6.5, x0 + 14, HZ - 11.5, x0 + 32, HZ - 16.5, x0 + 46, HZ - 22.5, x0 + 56, HZ - 27.5, x0 + 64, HZ - 30, x0 + 70, HZ - 29.2, x0 + 62, HZ - 27.2, x0 + 50, HZ - 23.5, x0 + 34, HZ - 17.5, x0 + 14, HZ - 12.5, x0 - 2, HZ - 7.5], '#6e8a40');   // the grass cap along its back
+    var ax = x0 + 72, aw = 6, ah = 15;   // the arch: off-centre, taller than wide, its seaward side steeper
+    c.save(); c.beginPath(); c.rect(x0 - 30, 0, 140, HZ - 0.3); c.clip(); c.globalCompositeOperation = 'destination-out';
+    c.beginPath(); c.moveTo(ax - aw, HZ); c.quadraticCurveTo(ax - aw - 1, HZ - ah * 0.9, ax - 1, HZ - ah); c.quadraticCurveTo(ax + aw + 0.5, HZ - ah * 0.85, ax + aw - 1, HZ); c.closePath(); c.fill(); c.restore();
+    c.save(); c.beginPath(); c.moveTo(ax - aw, HZ); c.quadraticCurveTo(ax - aw - 1, HZ - ah * 0.9, ax - 1, HZ - ah); c.quadraticCurveTo(ax + aw + 0.5, HZ - ah * 0.85, ax + aw - 1, HZ); c.closePath(); c.clip();
+    c.fillStyle = '#5a7aa8'; c.fillRect(ax - 10, HZ - 2.4, 20, 2.6); c.fillStyle = 'rgba(255,240,225,0.9)'; c.fillRect(ax - 10, HZ - 1.1, 20, 0.7);   // the sea and its foam through the arch
+    c.restore();
+    c.strokeStyle = 'rgba(80,60,70,0.5)'; c.lineWidth = 1.2; c.beginPath(); c.moveTo(ax - aw + 0.3, HZ); c.quadraticCurveTo(ax - aw - 0.7, HZ - ah * 0.9, ax - 1, HZ - ah - 0.3); c.quadraticCurveTo(ax + aw + 0.8, HZ - ah * 0.85, ax + aw - 0.7, HZ); c.stroke();   // its shadowed underside
+    rr(c, x0 + 94, HZ - 6, 3.5, 6, 1, '#cbb8a4'); rr(c, x0 + 100, HZ - 3, 2.5, 3, 1, '#c0ac98');   // stacks offshore
     c.restore();
   }
-  function goldenCap(c, x0) {   // the highest cliff on the coast: golden sandstone in bands, a dark cap of heath
-    c.save(); c.translate(x0, HZ); c.scale(0.62, 1.9); c.translate(-x0, -HZ);
-    var cl = [x0, HZ, x0 + 18, HZ - 30, x0 + 42, HZ - 40, x0 + 80, HZ - 39, x0 + 106, HZ - 26, x0 + 126, HZ];
-    P(c, cl, '#e4a64c');
+  function goldenCap(c, x0) {   // the highest cliff on the coast: grey-blue clay most of the way up, a band of golden sandstone near the top, a cap of dark heath
+    c.save(); c.translate(x0, HZ); c.scale(0.95, 2.3); c.translate(-x0, -HZ);
+    var cl = [x0, HZ, x0 + 5, HZ - 9, x0 + 9, HZ - 22, x0 + 15, HZ - 33, x0 + 25, HZ - 40, x0 + 40, HZ - 42.5, x0 + 55, HZ - 41, x0 + 67, HZ - 36, x0 + 80, HZ - 31, x0 + 92, HZ - 23, x0 + 104, HZ - 18, x0 + 116, HZ - 9, x0 + 126, HZ];
+    P(c, cl, '#8a8590');
     c.save(); clipPoly(c, cl);
-    var by = HZ - 3; for (var b = 0; b < 7; b++) { var bh = [1.6, 3.2, 1.2, 2.6, 1.8, 3.4, 1.4][b]; c.fillStyle = b % 2 ? 'rgba(150,86,36,0.32)' : 'rgba(255,224,160,0.24)'; c.fillRect(x0, by - bh, 130, bh); by -= bh + [2.4, 3.6, 2.0, 4.2, 2.8, 3.0, 2.2][b]; }
-    for (var gx = 0; gx < 6; gx++) { var gx0 = x0 + 22 + gx * 15 + (gx % 2) * 4; P(c, [gx0, HZ, gx0 + 2.2, HZ - 22 - (gx % 3) * 5, gx0 + 3.4, HZ], 'rgba(110,60,40,0.3)'); }   // gullies down the face
-    P(c, [x0 + 80, HZ - 39, x0 + 106, HZ - 26, x0 + 126, HZ, x0 + 96, HZ], 'rgba(110,80,140,0.32)');   // the far side in shadow
-    P(c, [x0 + 24, HZ - 33, x0 + 42, HZ - 40, x0 + 80, HZ - 39, x0 + 100, HZ - 29, x0 + 74, HZ - 32, x0 + 44, HZ - 33], '#4a5a2c');
+    c.fillStyle = 'rgba(70,72,90,0.28)'; for (var q = 0; q < 5; q++) { c.beginPath(); c.moveTo(x0, HZ - 4 - q * 5); for (var xx = 0; xx <= 130; xx += 10) c.lineTo(x0 + xx, HZ - 4 - q * 5 + Math.sin(xx * 0.11 + q) * 1.2); c.lineTo(x0 + 130, HZ - 2.6 - q * 5); c.lineTo(x0, HZ - 2.6 - q * 5); c.fill(); }   // wavy beds in the clay
+    c.fillStyle = '#e8aa48'; c.beginPath(); c.moveTo(x0, HZ - 31); for (var xx = 0; xx <= 130; xx += 8) c.lineTo(x0 + xx, HZ - 31 - Math.sin(xx * 0.07) * 1.5); for (var xx = 130; xx >= 0; xx -= 8) c.lineTo(x0 + xx, HZ - 37.5 - Math.sin(xx * 0.07) * 1.5); c.fill();   // the golden sandstone band
+    c.fillStyle = 'rgba(255,214,140,0.5)'; c.fillRect(x0, HZ - 36, 130, 1.4);
+    for (var gx = 0; gx < 7; gx++) { var gx0 = x0 + 14 + gx * 14 + (gx % 2) * 4; P(c, [gx0, HZ, gx0 + 1.6, HZ - 18 - (gx % 3) * 6, gx0 + 3.6, HZ], 'rgba(60,58,72,0.35)'); P(c, [gx0 + 1.6, HZ - 18 - (gx % 3) * 6, gx0 + 2.2, HZ - 31, gx0 + 3, HZ - 18 - (gx % 3) * 6], 'rgba(190,130,60,0.5)'); }   // gullies, sand washed down them
+    P(c, [x0 + 64, HZ - 37, x0 + 80, HZ - 31, x0 + 92, HZ - 23, x0 + 104, HZ - 18, x0 + 116, HZ - 9, x0 + 126, HZ, x0 + 96, HZ, x0 + 86, HZ - 10, x0 + 76, HZ - 20, x0 + 68, HZ - 28], '#6e7c3a');   // the long green slope inland
+    for (var lx = 0; lx < 5; lx++) rr(c, x0 + 6 + lx * 9, HZ - 3.5 - (lx % 2), 6 + (lx % 3) * 2, 3.5, 1.2, '#7a7684');   // landslip lumps at its foot
+    P(c, [x0 + 80, HZ - 31, x0 + 126, HZ, x0 + 96, HZ], 'rgba(110,80,140,0.3)');   // the far side in shadow
+    P(c, [x0 + 17, HZ - 34.5, x0 + 25, HZ - 40, x0 + 40, HZ - 42.5, x0 + 55, HZ - 41, x0 + 67, HZ - 36, x0 + 54, HZ - 38.5, x0 + 40, HZ - 39.5, x0 + 26, HZ - 38], '#3e4e26');   // the dark heath on its summit
     c.restore(); c.restore();
   }
   function oldHarry(c, x0) {   // the chalk stacks off the end of the downs
@@ -151,7 +158,7 @@
     rr(c, x0 + 5, HZ - 18, 3, 18, 1, 'rgba(160,150,140,0.35)');
     c.restore();
   }
-  var MARK = { purbeck: 520, jurassic: 448, goldencap: 530, swanage: 290, needles: 540, christchurch: 613, weymouth: 575, sandbanks: 848, lymington: 640, lyme: 700 };   // where each place's landmark is in its panorama
+  var MARK = { purbeck: 520, jurassic: 455, goldencap: 530, swanage: 290, needles: 540, christchurch: 613, weymouth: 575, sandbanks: 848, lymington: 640, lyme: 700 };   // where each place's landmark is in its panorama
   var BG = {
     bournemouth: function (far, near) {
       var r = rnd(101);
