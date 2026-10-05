@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=14';
+import * as MD from './models3d.js?v=15';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -371,7 +371,7 @@ export function createWorld() {
   const traffic = new Map();
   const blobGeo = new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), blobMat = new THREE.MeshBasicMaterial({ map: radial(64, [[0, 'rgba(0,0,0,0.55)'], [0.6, 'rgba(0,0,0,0.3)'], [1, 'rgba(0,0,0,0)']]), transparent: true, depthWrite: false });
   const coinGeo = new THREE.LatheGeometry([[0, 0.045], [0.4, 0.045], [0.46, 0.085], [0.58, 0.085], [0.63, 0.03], [0.63, -0.03], [0.58, -0.085], [0.46, -0.085], [0.4, -0.045], [0, -0.045]].map((q) => new THREE.Vector2(q[0], q[1])), 28); coinGeo.rotateX(Math.PI / 2);
-  coinGeo.scale(0.75, 0.75, 0.75);   // (smaller than they were: less like a toy)
+  coinGeo.scale(0.6, 0.6, 0.6);   // (smaller than they were: less like a toy)
   const coins = new THREE.InstancedMesh(coinGeo, new THREE.MeshStandardMaterial({ color: '#ffcf3a', emissive: '#7a5000', emissiveIntensity: 0.3, metalness: 0.85, roughness: 0.2, envMapIntensity: 1.4 }), 400); coins.count = 0; coins.frustumCulled = false; scene.add(coins);   // (their bounds change every frame)
   const OWN_ENV = [CAR.paint, CAR.chrome, CAR.glass, CAR.tyre, CAR.alloy, CAR.screen, roadMat, seaMat, coins.material];   // how strongly each reflects the sky is its own
   OWN_ENV.forEach((m) => { m.userData.envBase = m.envMapIntensity; });
@@ -976,7 +976,7 @@ export function createWorld() {
   function addParts(group, geo, mats) { for (const k in geo) if (geo[k] && (mats[k] || CAR[k])) { const mesh = new THREE.Mesh(geo[k], mats[k] || CAR[k]); mesh.castShadow = k !== 'glow'; group.add(mesh); } }
   function personOf(spec) {   // a body with a neck, two shoulders and two elbows that bend, and (hers) a streaming tail of hair
     const root = new THREE.Group(); root.position.set(spec.seat[0], spec.seat[1], spec.seat[2]); root.scale.setScalar(spec.scale || 1); addParts(root, spec.part.torso, PM);
-    const neck = new THREE.Group(); neck.position.set(0, spec.neck, 0); neck.scale.setScalar(1.08); root.add(neck); addParts(neck, spec.part.head, PM);
+    const neck = new THREE.Group(); neck.position.set(0, spec.neck, 0); neck.scale.setScalar(0.95); root.add(neck); addParts(neck, spec.part.head, PM);
     const arms = [-1, 1].map((sd) => {
       const sh = new THREE.Group(); sh.position.set(sd * spec.shoulder[0], spec.shoulder[1], spec.shoulder[2]); root.add(sh); addParts(sh, spec.part.upper, PM);
       const el = new THREE.Group(); el.position.set(0, -spec.elbow, 0); sh.add(el); addParts(el, spec.part.fore, PM);
@@ -985,12 +985,12 @@ export function createWorld() {
     const locks = spec.part.locks ? spec.part.locks.map((L) => { const g = new THREE.Group(); g.position.set(L.at[0], L.at[1], L.at[2]); g.scale.setScalar(L.s); neck.add(g); addParts(g, L.geo, PM); return g; }) : null;
     let hair = null;
     if (spec.part.hair) {
-      hair = []; let parent = new THREE.Group(); parent.position.set(spec.hairAt[0], spec.hairAt[1], spec.hairAt[2]); parent.scale.setScalar(0.905); neck.add(parent);
+      hair = []; let parent = new THREE.Group(); parent.position.set(spec.hairAt[0], spec.hairAt[1], spec.hairAt[2]); parent.scale.setScalar(1.028); neck.add(parent);
       spec.part.hair.forEach((geo, i) => { const g = new THREE.Group(); if (i) g.position.set(0, 0, 0.115); parent.add(g); addParts(g, geo, PM); hair.push(g); parent = g; });
     }
     let scarf = null;
     if (spec.part.scarf) {   // her scarf: tied at the neck, its end trailing back
-      scarf = []; let parent = new THREE.Group(); parent.position.set(spec.scarfAt[0], spec.scarfAt[1], spec.scarfAt[2]); parent.scale.setScalar(0.905); neck.add(parent);
+      scarf = []; let parent = new THREE.Group(); parent.position.set(spec.scarfAt[0], spec.scarfAt[1], spec.scarfAt[2]); parent.scale.setScalar(1.028); neck.add(parent);
       spec.part.scarf.forEach((geo, i) => { const g = new THREE.Group(); g.position.set(0, 0, i ? 0.125 : 0.06); parent.add(g); addParts(g, geo, {}); scarf.push(g); parent = g; });
     }
     if (spec.lean) root.rotation.x = spec.lean;   // leaning back in her seat

@@ -35,27 +35,31 @@ export class Kit {
   roll(r, len, n, x, y, z, col, key) { return this.put(new THREE.CylinderGeometry(r, r, len, n), col, x, y, z, Math.PI / 2, 0, 0, 1, 1, 1, key); }   // lying along (Z), centred
   cone(r, h, n, x, y, z, col, key) { return this.put(new THREE.ConeGeometry(r, h, n), col, x, y + h / 2, z, 0, 0, 0, 1, 1, 1, key); }
   ball(r, x, y, z, col, sx, sy, sz, key, detail) { return this.put(new THREE.SphereGeometry(r, detail || 10, Math.max(4, (detail || 10) >> 1)), col, x, y, z, 0, 0, 0, sx, sy, sz, key); }
-  blob(r, x, y, z, col, sx, sy, sz, seed) {   // a lumpy ball (rocks, mounds); a big one (a hill) is smooth, gently rolling, grass on
-    // its gentle slopes and chalky stone where it's steep (a small one stays a faceted rock)
-    if (r < 20) {
+  blob(r, x, y, z, col, sx, sy, sz, seed, opt) {   // a lumpy ball (rocks, mounds); a big one (a hill) - or any with opt.smooth - is
+    // smooth and gently rolling, col on its gentle slopes and stone (opt.rock) where it's steep, opt.wet: dark at the waterline
+    opt = opt || {};
+    if (r < 20 && !opt.smooth) {
       const g = new THREE.IcosahedronGeometry(r, 1), p = g.attributes.position, rr = rnd(seed || 7), seen = new Map();
       for (let i = 0; i < p.count; i++) { const key = p.getX(i).toFixed(3) + p.getY(i).toFixed(3) + p.getZ(i).toFixed(3); let k = seen.get(key); if (k == null) { k = 0.86 + rr() * 0.28; seen.set(key, k); } p.setXYZ(i, p.getX(i) * k, p.getY(i) * k, p.getZ(i) * k); }
       g.computeVertexNormals();
       return this.put(g, col, x, y, z, 0, 0, 0, sx || 1, sy || 1, sz || 1);
     }
-    const g = new THREE.IcosahedronGeometry(r, 6), p = g.attributes.position, rr = rnd(seed || 7), ph = [rr() * 6, rr() * 6, rr() * 6, rr() * 6], v = new THREE.Vector3();
+    sx = sx || 1; sy = sy || 1; sz = sz || 1;
+    const g = new THREE.IcosahedronGeometry(r, r >= 50 ? 7 : r >= 20 ? 6 : 3), p = g.attributes.position, rr = rnd(seed || 7), ph = [rr() * 6, rr() * 6, rr() * 6, rr() * 6], v = new THREE.Vector3();
     const lump = (d) => 1 + 0.07 * Math.sin(d.x * 2.6 + ph[0]) * Math.sin(d.z * 2.2 + ph[1]) + 0.05 * Math.sin(d.y * 3.4 + d.x * 1.7 + ph[2]) + 0.025 * Math.sin(d.z * 6.1 + d.x * 5.3 + ph[3]);
     const nrm = new Float32Array(p.count * 3);
     for (let i = 0; i < p.count; i++) { v.fromBufferAttribute(p, i).normalize(); const k = lump(v); nrm[i * 3] = v.x; nrm[i * 3 + 1] = v.y; nrm[i * 3 + 2] = v.z; p.setXYZ(i, v.x * r * k, v.y * r * k, v.z * r * k); }
     g.setAttribute('normal', new THREE.BufferAttribute(nrm, 3));   // smooth: each point's own direction from the middle
-    g.computeVertexNormals(); const N = g.attributes.normal;   // (then the true slope, for the colouring)
-    const flat = new Float32Array(N.array); g.setAttribute('normal', new THREE.BufferAttribute(nrm, 3));
-    this.put(g, col, x, y, z, 0, 0, 0, sx || 1, sy || 1, sz || 1);
-    const list = this.parts.lit, G = list[list.length - 1], C3 = G.attributes.color, base = new THREE.Color(col), rock = new THREE.Color('#bdb6a3'), c = new THREE.Color();
+    this.put(g, col, x, y, z, 0, 0, 0, sx, sy, sz);
+    // the colour, from the smooth slope and the place on the hill (never per triangle: that showed every facet)
+    const list = this.parts.lit, G = list[list.length - 1], C3 = G.attributes.color, base = new THREE.Color(col), rock = new THREE.Color(opt.rock || '#bdb6a3'), wet = new THREE.Color('#6f685a'), c = new THREE.Color();
     for (let i = 0; i < C3.count; i++) {
-      const up = flat[i * 3 + 1] * (sy || 1) / Math.hypot(flat[i * 3] * (sx || 1), flat[i * 3 + 1] * (sy || 1), flat[i * 3 + 2] * (sz || 1)), steep = 1 - Math.min(1, Math.max(0, (up - 0.55) / 0.22));
-      const nz = 0.88 + 0.2 * (0.5 + 0.5 * Math.sin(i * 12.9898) * Math.sin(i * 0.731));
-      c.copy(base).lerp(rock, steep * 0.85).multiplyScalar(nz); C3.setXYZ(i, c.r, c.g, c.b);
+      const nx = nrm[i * 3] / sx, ny = nrm[i * 3 + 1] / sy, nzz = nrm[i * 3 + 2] / sz, up = ny / Math.hypot(nx, ny, nzz), steep = 1 - Math.min(1, Math.max(0, (up - 0.55) / 0.22));
+      const px = p.getX(i) * sx, py = p.getY(i) * sy + y, pz = p.getZ(i) * sz;
+      const nz = 0.9 + 0.1 * Math.sin(px * 0.11 + pz * 0.07) * Math.sin(py * 0.13 + 1.7) + 0.06 * Math.sin(px * 0.37 + py * 0.29 + pz * 0.31);
+      c.copy(base).lerp(rock, steep * 0.85).multiplyScalar(nz);
+      if (opt.wet && py < 2.5) c.lerp(wet, Math.min(1, (2.5 - py) / 2) * 0.7);
+      C3.setXYZ(i, c.r, c.g, c.b);
     }
     return this;
   }
@@ -300,27 +304,12 @@ const MODELS = {
     k.cyl(2.2, 2.25, 2.6, 14, 0, 8, 0, '#c62828').cyl(1.95, 2, 2.6, 14, 0, 14, 0, '#c62828');
     k.cyl(2.4, 2.4, 0.4, 14, 0, 20, 0, '#222').cyl(1.3, 1.3, 2.2, 10, 0, 20.4, 0, '#fff4b3', 0, 0, 'glow').cone(1.6, 1.6, 10, 0, 22.6, 0, '#c62828');
   },
-  arch(k) {   // Durdle Door: a natural limestone arch - a ridge sloping down into the sea with a great ragged opening near its
-    // seaward end; pale weathered rock in steeply tilted strata, turf on the landward top, dark where the sea wets its foot
-    const sh = new THREE.Shape();
-    sh.moveTo(-52, -4); sh.lineTo(-50, 30); sh.quadraticCurveTo(-40, 42, -22, 40); sh.quadraticCurveTo(0, 37, 18, 30); sh.quadraticCurveTo(34, 22, 40, 10); sh.lineTo(46, -4);
-    sh.lineTo(24, -4); sh.lineTo(22, 4); sh.quadraticCurveTo(20, 20, 8, 23); sh.quadraticCurveTo(-4, 24, -8, 14); sh.lineTo(-10, -4); sh.lineTo(-52, -4);   // the opening, ragged and leaning
-    const g = new THREE.ExtrudeGeometry(sh, { depth: 16, steps: 6, bevelEnabled: true, bevelThickness: 3, bevelSize: 2.5, bevelSegments: 3, curveSegments: 18 }); g.translate(0, 0, -8);
-    const p = g.attributes.position, v = new THREE.Vector3();
-    for (let i = 0; i < p.count; i++) {   // weathered: every face pushed in and out a little (the same push for the same point, so no cracks)
-      v.fromBufferAttribute(p, i); const n = Math.sin(v.x * 0.31 + v.z * 0.7) * Math.sin(v.y * 0.43 + 1.3) * 1.6 + Math.sin(v.x * 0.9 + v.y * 0.7 + v.z) * 0.6;
-      p.setXYZ(i, v.x + n * 0.4, v.y + (v.y > 2 ? n * 0.5 : 0), v.z + n);
-    }
-    g.computeVertexNormals();
-    const N = g.attributes.normal, cl = new Float32Array(p.count * 3), lime = new THREE.Color('#d9d0b9'), dark = new THREE.Color('#ab9f88'), wet = new THREE.Color('#7a7262'), turf = new THREE.Color('#6e9446'), c = new THREE.Color();
-    for (let i = 0; i < p.count; i++) {
-      const x = p.getX(i), y = p.getY(i), ny = N.getY(i);
-      c.copy(Math.sin((x * 0.55 + y) * 0.5) > 0.5 ? dark : lime).multiplyScalar(0.9 + 0.12 * Math.sin(x * 1.7 + y * 2.3));   // the strata, tilted steeply
-      if (y < 2.5) c.lerp(wet, 0.6);
-      if (ny > 0.62 && y > 18 && x < 24) c.copy(turf).multiplyScalar(0.9 + 0.15 * Math.sin(x * 0.8 + p.getZ(i)));
-      cl[i * 3] = c.r; cl[i * 3 + 1] = c.g; cl[i * 3 + 2] = c.b;
-    }
-    k.put(g, '#ffffff', 0, 0, 0); const last = k.parts.lit[k.parts.lit.length - 1]; last.setAttribute('color', new THREE.BufferAttribute(cl, 3));
+  arch(k) {   // Durdle Door: a natural limestone arch - the long headland sloping up from the sea, then weathered boulders round a
+    // rounded, ragged opening; pale limestone where it's steep, turf where it's level, dark at its wet foot, foam round it
+    const rock = '#d8cfb7', turf = '#6e9446';
+    k.blob(30, -50, 3, 0, turf, 1.75, 0.9, 0.55, 301, { rock: rock, wet: true });
+    [[-25, 6, 15], [-23, 18, 13], [-15, 27, 12.5], [-3, 30, 12], [9, 27, 11.5], [18, 18, 11], [21, 7, 12]].forEach(([ax, ay, ar], i) =>
+      k.blob(ar, ax, ay, (i % 2 ? 1.6 : -1.6), turf, 1.15, 1.0, 0.72, 311 + i, { rock: rock, wet: true, smooth: true }));
     for (const [fx, fz, fr] of [[-30, 10, 9], [30, 9, 7], [2, -11, 10], [40, -7, 6], [-44, -9, 7]]) k.ball(fr, fx, -0.2, fz, '#e9efee', 1.6, 0.04, 1, 'lit', 10);   // foam where the sea meets it
   },
   building(k, v) {
@@ -643,7 +632,7 @@ function spider() {
     k.box(0.07, 0.3, 0.02, x, 0.8, 0.665, '#8a5226', 0, 0.22, 0, 'lit');   // its stitched centre panel
     k.ball(0.11, x, 1.02, 0.8, '#94582a', 0.9, 0.55, 0.4, 'lit', 12);   // a slim headrest
     for (const b of [-1, 1]) { k.put(new THREE.CapsuleGeometry(0.05, 0.36, 4, 8), '#94582a', x + b * 0.22, 0.84, 0.42, Math.PI / 2, 0, 0, 1, 1, 0.8, 'lit'); }   // soft bolsters
-    k.loft([[0.86, 0.1, 0.78, 0.84], [1.0, 0.15, 0.78, 0.99], [1.35, 0.14, 0.78, 0.95], [1.85, 0.06, 0.8, 0.89]], col, 'paint', { up: 2.4, dn: 3, belly: 0.3, n: 16, x: x });   // the humps behind the seats
+    k.loft([[0.86, 0.12, 0.78, 0.83], [1.0, 0.19, 0.78, 0.92], [1.35, 0.19, 0.78, 0.9], [1.85, 0.08, 0.8, 0.86]], col, 'paint', { up: 2.4, dn: 3, belly: 0.3, n: 16, x: x });   // the humps behind the seats
   }
   k.box(1.56, 0.07, 0.28, 0, 0.76, -0.5, '#26221f', 0, 0, 0, 'trim');
   k.put(new THREE.CapsuleGeometry(0.14, 1.28, 4, 16), '#6e4426', 0, 0.83, -0.5, 0, 0, Math.PI / 2, 0.3, 1, 1, 'lit');   // the tan roll along its top

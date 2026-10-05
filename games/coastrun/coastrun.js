@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=18';
+import { createWorld } from './world3d.js?v=19';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
@@ -299,7 +299,7 @@ function results(g, W, t) {   // at the goal: each stretch's time and hearts, th
   g.restore();
 }
 function lights(g, W) {
-  const x = GW / 2 - 27, y = 27, lit = W.count > 180 ? 0 : W.count > 120 ? 1 : W.count > 60 ? 2 : W.count > 0 ? 3 : 4;
+  const x = GW / 2 - 27, y = 42, lit = W.count > 180 ? 0 : W.count > 120 ? 1 : W.count > 60 ? 2 : W.count > 0 ? 3 : 4;
   g.fillStyle = 'rgba(8,12,20,0.88)'; roundRect(g, x, y, 54, 14, 4); g.fill();
   for (let i = 0; i < 3; i++) {
     const on = lit === 4 ? '#3bff6a' : i < lit ? '#ff2b2b' : '#3a1414', cx = x + 11 + i * 16, cy = y + 7;

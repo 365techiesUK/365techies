@@ -117,24 +117,32 @@
     if (glint) { var r = rnd(5); for (var i = 0; i < 160; i++) { var y = top + 1 + Math.pow(r(), 1.5) * (BG_H - top - 1); rr(c, r() * BG_W, y, 1 + r() * 4, 0.5, 0.2, glint); } }
   }
   function clipPoly(c, pts) { c.beginPath(); c.moveTo(pts[0], pts[1]); for (var i = 2; i < pts.length; i += 2) c.lineTo(pts[i], pts[i + 1]); c.closePath(); c.clip(); }
-  function durdleDoor(c, x0) {   // a long limestone ridge sloping down to the sea, a rounded hump over the arch at its seaward end, a sheer drop to the water
+  function durdleDoor(c, x0) {   // a long limestone ridge sloping down to the sea, turf along its landward top, steeply tilted strata,
+    // weathered, a rounded arch near its seaward end, dark at its wet foot (painted as a smooth cream wedge with a pointed door it
+    // read as a hangar)
     c.save(); c.translate(x0, HZ); c.scale(1.05, 2.3); c.translate(-x0, -HZ);   // (the ring squashes the panorama's height: painted tall, it reads true)
-    var hd = [x0 - 20, HZ, x0 - 4, HZ - 6, x0 + 14, HZ - 11, x0 + 32, HZ - 16, x0 + 46, HZ - 22, x0 + 56, HZ - 27, x0 + 64, HZ - 29.5, x0 + 72, HZ - 28, x0 + 79, HZ - 23, x0 + 83, HZ - 15, x0 + 85, HZ - 6, x0 + 87, HZ];
-    P(c, hd, '#e2d2bc');
+    var hd = [x0 - 20, HZ, x0 - 4, HZ - 6.5, x0 + 6, HZ - 9.2, x0 + 14, HZ - 11.5, x0 + 24, HZ - 13.8, x0 + 32, HZ - 16.5, x0 + 40, HZ - 19.4, x0 + 46, HZ - 22.5, x0 + 52, HZ - 25.2,
+      x0 + 56, HZ - 27.5, x0 + 61, HZ - 29.2, x0 + 64, HZ - 30, x0 + 68, HZ - 29.5, x0 + 72, HZ - 28.2, x0 + 76, HZ - 26.4, x0 + 79, HZ - 23.2, x0 + 81.5, HZ - 19, x0 + 83, HZ - 15, x0 + 84.6, HZ - 9, x0 + 85.6, HZ - 4, x0 + 87, HZ];
+    var gr = c.createLinearGradient(x0 + 20, HZ - 30, x0 + 50, HZ); gr.addColorStop(0, '#e3d6bd'); gr.addColorStop(0.55, '#cdbfa5'); gr.addColorStop(1, '#a3978a');
+    P(c, hd, gr);
     c.save(); clipPoly(c, hd);
-    for (var b = 0; b < 9; b++) { c.strokeStyle = b % 2 ? 'rgba(150,130,120,0.35)' : 'rgba(255,245,230,0.3)'; c.lineWidth = 0.7; c.beginPath(); c.moveTo(x0 - 20, HZ - 3 - b * 3.1); c.quadraticCurveTo(x0 + 40, HZ - 1 - b * 3.1 - 5, x0 + 90, HZ - 6 - b * 3.1); c.stroke(); }   // the tilted beds of the rock
-    P(c, [x0 + 70, HZ - 28, x0 + 79, HZ - 23, x0 + 83, HZ - 15, x0 + 85, HZ - 6, x0 + 87, HZ, x0 + 74, HZ, x0 + 76, HZ - 14], 'rgba(120,100,150,0.4)');   // the seaward face in lavender shade
-    c.fillStyle = 'rgba(90,80,70,0.45)'; c.fillRect(x0 - 20, HZ - 2.2, 110, 2.2);   // the wet, darker foot
+    for (var b = -8; b < 30; b++) {   // the strata, tilted steeply
+      var sx = x0 - 20 + b * 3.6; c.strokeStyle = b % 3 ? 'rgba(110,96,84,0.2)' : 'rgba(255,248,236,0.25)'; c.lineWidth = b % 3 ? 0.5 : 0.8;
+      c.beginPath(); c.moveTo(sx, HZ + 2); c.lineTo(sx + 11, HZ - 34); c.stroke();
+    }
+    for (var w2 = 0; w2 < 16; w2++) { var wx = x0 - 10 + ((w2 * 37) % 92), wy = HZ - 3 - ((w2 * 23) % 22); c.fillStyle = 'rgba(80,70,62,0.13)'; c.beginPath(); c.ellipse(wx, wy, 2.6 + (w2 % 3), 1.2, 0.3, 0, Math.PI * 2); c.fill(); }   // weathered patches
+    P(c, [x0 + 70, HZ - 28, x0 + 79, HZ - 23, x0 + 83, HZ - 15, x0 + 85, HZ - 6, x0 + 87, HZ, x0 + 74, HZ, x0 + 76, HZ - 14], 'rgba(84,80,104,0.3)');   // the seaward face in shade
+    var fg = c.createLinearGradient(0, HZ - 4, 0, HZ); fg.addColorStop(0, 'rgba(70,62,55,0)'); fg.addColorStop(1, 'rgba(62,56,50,0.7)'); c.fillStyle = fg; c.fillRect(x0 - 20, HZ - 4, 110, 4);   // the wet, darker foot
     c.restore();
-    P(c, [x0 - 4, HZ - 6.5, x0 + 14, HZ - 11.5, x0 + 32, HZ - 16.5, x0 + 46, HZ - 22.5, x0 + 56, HZ - 27.5, x0 + 64, HZ - 30, x0 + 70, HZ - 29.2, x0 + 62, HZ - 27.2, x0 + 50, HZ - 23.5, x0 + 34, HZ - 17.5, x0 + 14, HZ - 12.5, x0 - 2, HZ - 7.5], '#6e8a40');   // the grass cap along its back
-    var ax = x0 + 72, aw = 6, ah = 15;   // the arch: off-centre, taller than wide, its seaward side steeper
-    c.save(); c.beginPath(); c.rect(x0 - 30, 0, 140, HZ - 0.3); c.clip(); c.globalCompositeOperation = 'destination-out';
-    c.beginPath(); c.moveTo(ax - aw, HZ); c.quadraticCurveTo(ax - aw - 1, HZ - ah * 0.9, ax - 1, HZ - ah); c.quadraticCurveTo(ax + aw + 0.5, HZ - ah * 0.85, ax + aw - 1, HZ); c.closePath(); c.fill(); c.restore();
-    c.save(); c.beginPath(); c.moveTo(ax - aw, HZ); c.quadraticCurveTo(ax - aw - 1, HZ - ah * 0.9, ax - 1, HZ - ah); c.quadraticCurveTo(ax + aw + 0.5, HZ - ah * 0.85, ax + aw - 1, HZ); c.closePath(); c.clip();
-    c.fillStyle = '#5a7aa8'; c.fillRect(ax - 10, HZ - 2.4, 20, 2.6); c.fillStyle = 'rgba(255,240,225,0.9)'; c.fillRect(ax - 10, HZ - 1.1, 20, 0.7);   // the sea and its foam through the arch
+    P(c, [x0 - 4, HZ - 6.5, x0 + 14, HZ - 11.5, x0 + 32, HZ - 16.5, x0 + 46, HZ - 22.5, x0 + 56, HZ - 27.5, x0 + 61, HZ - 29.2, x0 + 58, HZ - 27.6, x0 + 48, HZ - 23.6, x0 + 34, HZ - 17.8, x0 + 16, HZ - 12.9, x0 - 2, HZ - 8], '#6c8c44');   // turf along the top
+    var ax = x0 + 72, aw = 6, ah = 15;   // the arch: off-centre, its top rounded and a little ragged
+    var arch = function () { c.beginPath(); c.moveTo(ax - aw, HZ); c.lineTo(ax - aw - 0.4, HZ - ah * 0.5); c.ellipse(ax - 0.3, HZ - ah * 0.5, aw * 0.97, ah * 0.5, 0, Math.PI, Math.PI * 2); c.lineTo(ax + aw - 0.8, HZ); c.closePath(); };
+    c.save(); c.beginPath(); c.rect(x0 - 30, 0, 140, HZ - 0.3); c.clip(); c.globalCompositeOperation = 'destination-out'; arch(); c.fill(); c.restore();
+    c.save(); arch(); c.clip();
+    c.fillStyle = '#4f6f9a'; c.fillRect(ax - 10, HZ - 2.6, 20, 2.8); c.fillStyle = 'rgba(255,244,230,0.85)'; c.fillRect(ax - 10, HZ - 1.1, 20, 0.6);   // the sea and its foam through the arch
     c.restore();
-    c.strokeStyle = 'rgba(80,60,70,0.5)'; c.lineWidth = 1.2; c.beginPath(); c.moveTo(ax - aw + 0.3, HZ); c.quadraticCurveTo(ax - aw - 0.7, HZ - ah * 0.9, ax - 1, HZ - ah - 0.3); c.quadraticCurveTo(ax + aw + 0.8, HZ - ah * 0.85, ax + aw - 0.7, HZ); c.stroke();   // its shadowed underside
-    rr(c, x0 + 94, HZ - 6, 3.5, 6, 1, '#cbb8a4'); rr(c, x0 + 100, HZ - 3, 2.5, 3, 1, '#c0ac98');   // stacks offshore
+    c.strokeStyle = 'rgba(70,60,58,0.45)'; c.lineWidth = 1; arch(); c.stroke();
+    rr(c, x0 + 94, HZ - 6, 3.5, 6, 1, '#c6b6a2'); rr(c, x0 + 100, HZ - 3, 2.5, 3, 1, '#b9a994');   // stacks offshore
     c.restore();
   }
   function goldenCap(c, x0) {   // the highest cliff on the coast: grey-blue clay most of the way up, a band of golden sandstone near the top, a cap of dark heath
@@ -145,7 +153,7 @@
     c.fillStyle = 'rgba(70,72,90,0.28)'; for (var q = 0; q < 5; q++) { c.beginPath(); c.moveTo(x0, HZ - 4 - q * 5); for (var xx = 0; xx <= 130; xx += 10) c.lineTo(x0 + xx, HZ - 4 - q * 5 + Math.sin(xx * 0.11 + q) * 1.2); c.lineTo(x0 + 130, HZ - 2.6 - q * 5); c.lineTo(x0, HZ - 2.6 - q * 5); c.fill(); }   // wavy beds in the clay
     c.fillStyle = '#e8aa48'; c.beginPath(); c.moveTo(x0, HZ - 31); for (var xx = 0; xx <= 130; xx += 8) c.lineTo(x0 + xx, HZ - 31 - Math.sin(xx * 0.07) * 1.5); for (var xx = 130; xx >= 0; xx -= 8) c.lineTo(x0 + xx, HZ - 37.5 - Math.sin(xx * 0.07) * 1.5); c.fill();   // the golden sandstone band
     c.fillStyle = 'rgba(255,214,140,0.5)'; c.fillRect(x0, HZ - 36, 130, 1.4);
-    for (var gx = 0; gx < 7; gx++) { var gx0 = x0 + 14 + gx * 14 + (gx % 2) * 4; P(c, [gx0, HZ, gx0 + 1.6, HZ - 18 - (gx % 3) * 6, gx0 + 3.6, HZ], 'rgba(60,58,72,0.35)'); P(c, [gx0 + 1.6, HZ - 18 - (gx % 3) * 6, gx0 + 2.2, HZ - 31, gx0 + 3, HZ - 18 - (gx % 3) * 6], 'rgba(190,130,60,0.5)'); }   // gullies, sand washed down them
+    for (var gx = 0; gx < 4; gx++) { var gx0 = x0 + 20 + gx * 26 + (gx % 2) * 6; P(c, [gx0, HZ, gx0 + 1.6, HZ - 14 - (gx % 3) * 5, gx0 + 3.6, HZ], 'rgba(60,58,72,0.16)'); P(c, [gx0 + 1.6, HZ - 18 - (gx % 3) * 6, gx0 + 2.2, HZ - 31, gx0 + 3, HZ - 18 - (gx % 3) * 6], 'rgba(190,130,60,0.16)'); }   // gullies, sand washed down them
     P(c, [x0 + 64, HZ - 37, x0 + 80, HZ - 31, x0 + 92, HZ - 23, x0 + 104, HZ - 18, x0 + 116, HZ - 9, x0 + 126, HZ, x0 + 96, HZ, x0 + 86, HZ - 10, x0 + 76, HZ - 20, x0 + 68, HZ - 28], '#6e7c3a');   // the long green slope inland
     for (var lx = 0; lx < 5; lx++) rr(c, x0 + 6 + lx * 9, HZ - 3.5 - (lx % 2), 6 + (lx % 3) * 2, 3.5, 1.2, '#7a7684');   // landslip lumps at its foot
     P(c, [x0 + 80, HZ - 31, x0 + 126, HZ, x0 + 96, HZ], 'rgba(110,80,140,0.3)');   // the far side in shadow
