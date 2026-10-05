@@ -124,6 +124,184 @@
     return ARTIMG[k];
   }
 
+
+  // ---------------------------------------------------------------- a card as a picture (for the canvas finishes),
+  // shared by both card engines: the same paper, border, corners and centre as the real cards
+  var PAINTED = {};
+  function paintCard(r, s, w, h) {
+    var key = r + '_' + s + '_' + w + '_' + h; if (PAINTED[key]) return PAINTED[key];
+    var dpr = Math.min(2, window.devicePixelRatio || 1), cv = document.createElement('canvas'), keep = true;
+    cv.width = Math.ceil(w * dpr); cv.height = Math.ceil(h * dpr);
+    var x = cv.getContext('2d'); x.scale(dpr, dpr);
+    var rad = w * 0.08, su = SUIT_CH[s] + TXT, red = s === 1 || s === 2, ink = red ? '#c6152f' : '#17191f';
+    function rr(ix, iy, iw, ih, ra) { x.beginPath(); x.moveTo(ix + ra, iy); x.arcTo(ix + iw, iy, ix + iw, iy + ih, ra); x.arcTo(ix + iw, iy + ih, ix, iy + ih, ra); x.arcTo(ix, iy + ih, ix, iy, ra); x.arcTo(ix, iy, ix + iw, iy, ra); x.closePath(); }
+    var pg = x.createRadialGradient(w * 0.3, h * 0.12, 0, w * 0.3, h * 0.12, h);
+    pg.addColorStop(0, '#ffffff'); pg.addColorStop(0.45, '#fffdf8'); pg.addColorStop(1, '#f1ebdc');
+    rr(0.5, 0.5, w - 1, h - 1, rad); x.fillStyle = pg; x.fill(); x.strokeStyle = '#bdb7a6'; x.lineWidth = 1; x.stroke();
+    rr(w * 0.035, w * 0.035, w - w * 0.07, h - w * 0.07, rad * 0.7); x.strokeStyle = 'rgba(0,0,0,0.08)'; x.stroke();
+    x.fillStyle = ink; x.textBaseline = 'top'; x.textAlign = 'left';
+    x.font = '700 ' + Math.round(w * 0.32) + 'px Archivo, Arial, sans-serif'; x.fillText(RANK_CH[r], w * 0.05, h * 0.03);
+    x.textAlign = 'right'; x.font = Math.round(w * 0.29) + 'px "Segoe UI Symbol", Arial, sans-serif'; x.fillText(su, w * 0.95, h * 0.03);
+    x.save(); x.translate(w * 0.9, h * 0.95); x.rotate(Math.PI); x.textAlign = 'center'; x.textBaseline = 'top';
+    x.font = '700 ' + Math.round(w * 0.14) + 'px Archivo, Arial, sans-serif'; x.fillText(RANK_CH[r], 0, 0);
+    x.font = Math.round(w * 0.13) + 'px "Segoe UI Symbol", Arial, sans-serif'; x.fillText(su, 0, w * 0.15); x.restore();
+    x.textAlign = 'center'; x.textBaseline = 'middle';
+    if (r > 10) {   // the picture in its gold frame (the letter until the picture has loaded - and then not kept)
+      var fx0 = w * 0.12, fy0 = h * 0.31, fw = w * 0.76, fh = h * 0.62, im = artImg(r, s);
+      x.save(); rr(fx0, fy0, fw, fh, w * 0.05); x.clip();
+      if (im.complete && im.naturalWidth) { var sc = Math.max(fw / 52, fh / 64); x.drawImage(im, fx0 + (fw - 52 * sc) / 2, fy0, 52 * sc, 64 * sc); }
+      else { keep = false; x.fillStyle = '#fbf3dc'; x.fillRect(fx0, fy0, fw, fh); x.fillStyle = ink; x.font = '700 ' + Math.round(w * 0.4) + 'px Georgia, serif'; x.fillText(RANK_CH[r], w / 2, h * 0.58); }
+      x.restore();
+      rr(fx0, fy0, fw, fh, w * 0.05); x.lineWidth = w * 0.022; x.strokeStyle = '#c9a227'; x.stroke();
+    } else { x.fillStyle = ink; x.font = Math.round(w * 0.56) + 'px "Segoe UI Symbol", Arial, sans-serif'; x.fillText(su, w / 2, h * 0.64); }
+    if (keep) PAINTED[key] = cv;
+    return cv;
+  }
+
+  // ---------------------------------------------------------------- the win celebrations (5 Oct 2026; owner: "do the
+  // win celebrations ... make it the ultimate"). Five finishes on a canvas over the table; Settings > Win celebration
+  // picks one, or "Surprise me" (a different one each time). A tap or a key ends it early.
+  //   bounce   - the classic: the cards leap off the piles and bounce away, leaving trails
+  //   fountain - they shoot up from the piles in a fountain, spinning, and fall away
+  //   whirl    - they spiral out round the middle of the table like a galaxy
+  //   rain     - they fly off the top, then flutter down like leaves
+  //   rockets  - each card launches like a rocket and bursts into sparks in its suit's colours
+  var FINALES = ['bounce', 'fountain', 'whirl', 'rain', 'rockets'];
+  var FINALE_NAMES = [['mix', 'Surprise me'], ['bounce', 'Bouncing cards'], ['fountain', 'Card fountain'], ['whirl', 'Card whirl'], ['rain', 'Card rain'], ['rockets', 'Firework cards']];
+  function pickFinale(want) {
+    if (FINALES.indexOf(want) >= 0) return want;
+    var last = ''; try { last = localStorage.getItem('cards365:lastwin') || ''; } catch (e) {}
+    var opts = FINALES.filter(function (k) { return k !== last; }), k = opts[Math.floor(Math.random() * opts.length)];
+    try { localStorage.setItem('cards365:lastwin', k); } catch (e) {}
+    return k;
+  }
+  // o: { cards: [{r, s, x, y}] (where each card starts, page px), cw, ch, cv / tip (the canvas and its "tap" line - made
+  // here if not given), hide(i) (a card leaves the table), show() (the end: put the table back), burst(x, y, cols, big),
+  // trail(x, y, cols), sfx(name), done() }
+  function finale(kind, o) {
+    var W = window.innerWidth, H = window.innerHeight, dpr = Math.min(2, window.devicePixelRatio || 1), k = o.cw / 90, cw = o.cw, ch = o.ch;
+    var made = !o.cv, cv = o.cv || document.createElement('canvas'), tip = o.tip || document.createElement('div');
+    if (made) {
+      cv.style.cssText = 'position:fixed;inset:0;z-index:4500;cursor:pointer'; document.body.appendChild(cv);
+      tip.style.cssText = 'position:fixed;left:50%;bottom:22px;z-index:4600;transform:translateX(-50%);padding:8px 16px;border-radius:999px;background:rgba(0,0,0,.55);color:#fff;font:700 15px Archivo,"Segoe UI",sans-serif;pointer-events:none';
+      tip.textContent = 'Tap to carry on'; document.body.appendChild(tip);
+    }
+    tip.hidden = true;
+    cv.hidden = false; cv.classList.add('on'); cv.style.opacity = '1'; cv.style.transition = '';
+    cv.width = Math.ceil(W * dpr); cv.height = Math.ceil(H * dpr); cv.style.width = W + 'px'; cv.style.height = H + 'px';
+    var ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+    var q = o.cards.map(function (c, i) { return { i: i, r: c.r, s: c.s, x: c.x, y: c.y }; }), live = [], ended = false, last = -1e9, fr = 0;
+    var many = q.length > 60, every = { bounce: many ? 115 : 230, fountain: many ? 34 : 62, whirl: many ? 16 : 28, rain: many ? 14 : 26, rockets: many ? 150 : 240 }[kind] || 200;
+    var CX = W / 2, CY = H * 0.46, RED = ['#ff5a6e', '#ffd257', '#ffffff', '#ff9ad0'], BLK = ['#8ff0ff', '#ffffff', '#b9a6ff', '#9dff9a'];
+    setTimeout(function () { if (!ended) tip.hidden = false; }, 1200);
+    function spawn(n, now) {
+      if (o.hide) o.hide(n.i);
+      var p = { n: n, x: n.x, y: n.y, born: now, ph: Math.random() * 6.283, img: paintCard(n.r, n.s, cw, ch) };
+      if (kind === 'bounce') { p.vx = (Math.random() < 0.5 ? -1 : 1) * (2.5 + Math.random() * 5) * k; p.vy = -(1 + Math.random() * 7) * k; }
+      else if (kind === 'fountain') { p.vx = (Math.random() - 0.5) * 7 * k; p.vy = -(9 + Math.random() * 6) * k; p.spin = (Math.random() - 0.5) * 0.24; p.rot = 0; }
+      else if (kind === 'whirl') { p.sx = n.x; p.sy = n.y; p.th = Math.atan2(n.y + ch / 2 - CY, n.x + cw / 2 - CX); p.r0 = Math.min(W, H) * 0.06 + Math.random() * 24; }
+      else if (kind === 'rain') { p.vy = -(13 + Math.random() * 5) * k; p.vx = (Math.random() - 0.5) * 3 * k; p.up = true; }
+      else { p.vx = (Math.random() - 0.5) * 3.2 * k; p.vy = -(10.5 + Math.random() * 4) * k; }
+      live.push(p);
+    }
+    function draw(p, rot, sx) {
+      ctx.save(); ctx.translate(p.x + cw / 2, p.y + ch / 2);
+      if (rot) ctx.rotate(rot);
+      if (sx != null) ctx.scale(Math.max(0.06, Math.abs(sx)), 1);
+      ctx.drawImage(p.img, -cw / 2, -ch / 2, cw, ch); ctx.restore();
+    }
+    function frame(now) {
+      if (ended) return;
+      fr++;
+      if (q.length && now - last > every) { last = now; spawn(q.shift(), now); if (kind === 'rockets' && q.length) spawn(q.shift(), now); }
+      if (kind !== 'bounce') {   // the classic leaves trails for ever; the others fade theirs
+        ctx.globalCompositeOperation = 'destination-out'; ctx.fillStyle = 'rgba(0,0,0,' + (kind === 'rain' ? 0.55 : kind === 'whirl' ? 0.22 : 0.35) + ')'; ctx.fillRect(0, 0, W, H);
+        ctx.globalCompositeOperation = 'source-over';
+      }
+      live = live.filter(function (p) {
+        var a = now - p.born;
+        if (kind === 'bounce') {
+          p.vy += 0.42 * k; p.x += p.vx; p.y += p.vy;
+          if (p.y + ch > H) { p.y = H - ch; p.vy = -p.vy * 0.8; }
+          ctx.drawImage(p.img, p.x, p.y, cw, ch);
+          return p.x > -cw - 4 && p.x < W + 4;
+        }
+        if (kind === 'fountain') {
+          p.vy += 0.33 * k; p.x += p.vx; p.y += p.vy; p.rot += p.spin;
+          draw(p, p.rot, Math.cos(p.ph + a * 0.006));
+          return p.y < H + ch && p.x > -cw * 2 && p.x < W + cw;
+        }
+        if (kind === 'whirl') {
+          var th = p.th + a * 0.0024, rr = p.r0 + a * 0.15 * Math.max(0.7, k), e = Math.min(1, a / 700), ee = 1 - Math.pow(1 - e, 3);
+          var tx = CX + Math.cos(th) * rr - cw / 2, ty = CY + Math.sin(th) * rr * 0.82 - ch / 2;
+          p.x = p.sx + (tx - p.sx) * ee; p.y = p.sy + (ty - p.sy) * ee;
+          draw(p, (th + Math.PI / 2) * ee);
+          return rr < Math.max(W, H) * 0.9;
+        }
+        if (kind === 'rain') {
+          if (p.up) {
+            p.y += p.vy; p.x += p.vx; draw(p, p.vx * 0.05);
+            if (p.y < -ch * 1.3) { p.up = false; p.base = Math.random() * (W - cw); p.y = -ch - Math.random() * H * 0.7; p.vy = (1.6 + Math.random() * 1.8) * Math.max(0.8, k); }
+            return true;
+          }
+          var t = now * 0.001;
+          p.y += p.vy; p.x = p.base + Math.sin(t * 1.7 + p.ph) * 34 * Math.max(0.8, k);
+          draw(p, Math.sin(t * 1.3 + p.ph) * 0.5, Math.cos(t * 2.2 + p.ph));
+          return p.y < H + 10;
+        }
+        // rockets: up, a glowing trail, and at the top a burst in the suit's colours
+        p.vy += 0.3 * k; p.x += p.vx; p.y += p.vy;
+        var cols = p.n.s === 1 || p.n.s === 2 ? RED : BLK;
+        if (o.trail && fr % 2 === 0) o.trail(p.x + cw / 2, p.y + ch, cols);
+        if (p.vy > -0.7 * k) { if (o.burst) o.burst(p.x + cw / 2, p.y + ch / 2, cols, true); if (o.sfx && fr % 2 === 0) o.sfx('firework'); return false; }
+        draw(p, p.vx * 0.04);
+        return true;
+      });
+      if (!q.length && !live.length) { end(); return; }
+      requestAnimationFrame(frame);
+    }
+    function end() {
+      if (ended) return; ended = true;
+      cv.classList.remove('on'); tip.hidden = true;
+      cv.style.transition = 'opacity .45s'; cv.style.opacity = '0';
+      document.removeEventListener('keydown', end);
+      setTimeout(function () {
+        cv.hidden = true; ctx.clearRect(0, 0, W, H);
+        if (made) { cv.remove(); tip.remove(); }
+        if (o.show) o.show();
+        if (o.done) o.done();
+      }, 460);
+    }
+    cv.onclick = end;
+    document.addEventListener('keydown', end);
+    setTimeout(end, 30000);
+    requestAnimationFrame(frame);
+    return end;
+  }
+  // a whole pack spread in the middle of the screen, for a finish with no table under it (a match won, "Watch")
+  function packAtCentre(cw, ch) {
+    var out = [], W = window.innerWidth, H = window.innerHeight;
+    for (var i = 0; i < 52; i++) { var a = i / 52 * Math.PI * 2; out.push({ r: (i % 13) + 1, s: Math.floor(i / 13), x: W / 2 - cw / 2 + Math.cos(a) * cw * 0.9, y: H * 0.46 - ch / 2 + Math.sin(a) * ch * 0.5 }); }
+    for (var j = out.length - 1; j > 0; j--) { var r = Math.floor(Math.random() * (j + 1)), t = out[j]; out[j] = out[r]; out[r] = t; }
+    return out;
+  }
+  // numbers that count up on a win card (the last one bumps)
+  function countUp(el, to, done) {
+    if (!el) return;
+    var reduceM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches, txt = String(to), m = /\d[\d,]*/.exec(txt);
+    if (!m || reduceM) { el.textContent = txt; return; }
+    var n = +m[0].replace(/,/g, ''), pre = txt.slice(0, m.index), post = txt.slice(m.index + m[0].length), t0 = 0, dur = Math.min(1200, 500 + n * 2);
+    if (n < 2) { el.textContent = txt; return; }
+    function f(now) {
+      if (!t0) t0 = now;
+      var e = Math.min(1, (now - t0) / dur), v = Math.round(n * (1 - Math.pow(1 - e, 3)));
+      el.textContent = pre + (m[0].indexOf(',') >= 0 ? v.toLocaleString('en-GB') : v) + post;
+      if (e < 1) requestAnimationFrame(f); else { el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); if (done) done(); }
+    }
+    el.textContent = pre + '0' + post;
+    requestAnimationFrame(f);
+  }
+
   // one card's face and back, as classes and inner markup (shared with games/common/rivals.js, 5 Oct 2026)
   function cardMarkup(r, s) {
     var su = SUIT_CH[s] + TXT, red = s === 1 || s === 2, mid;
@@ -210,6 +388,28 @@
     + '@keyframes cardNudge{0%,100%{transform:none}50%{transform:translateY(-5%) rotate(-1.5deg)}}'
     + '@media (prefers-reduced-motion:reduce){.card.land .wig,.card.turn .wig,.card.nudge .wig{animation:none}}'
     + 'body.nofx .card.hov .wig,body.nofx .card.press .wig{transform:none}'
+    // a big moment stamped on the table (rivals.js stamp(): a Gin, the Queen of spades, a moon shot...)
+    + '.st365{position:fixed;z-index:4400;transform:translate(-50%,-50%) rotate(-4deg);display:flex;flex-direction:column;align-items:center;pointer-events:none;text-align:center;animation:stIn .55s cubic-bezier(.2,1.4,.4,1) both}'
+    + '.st365 b{position:relative;font:600 clamp(40px,9vw,96px)/1.05 "Clash Display",Archivo,sans-serif;white-space:nowrap;padding:0 .1em;background:linear-gradient(180deg,#fff6d6,#ffd257 50%,#d89a1e);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 0 rgba(60,35,0,.55)) drop-shadow(0 0 20px rgba(255,210,87,.6))}'
+    + '.st365 small{margin-top:8px;padding:6px 16px;border-radius:999px;background:rgba(5,12,28,.78);color:#fff;font:700 clamp(14px,2.2vw,19px)/1.2 Archivo,"Segoe UI",sans-serif;white-space:nowrap}'
+    + '.st365.dark b{background:linear-gradient(180deg,#f1eeff,#a9b2d6 50%,#525d84);filter:drop-shadow(0 3px 0 rgba(0,0,0,.6)) drop-shadow(0 0 16px rgba(20,25,60,.7))}'
+    + '.st365.red b{background:linear-gradient(180deg,#ffe3e3,#ff6b7a 50%,#b3202f);filter:drop-shadow(0 3px 0 rgba(70,0,10,.55)) drop-shadow(0 0 16px rgba(255,90,110,.55))}'
+    + '.st365.blue b{background:linear-gradient(180deg,#eaf7ff,#7fd3ff 50%,#1d6fb3);filter:drop-shadow(0 3px 0 rgba(0,30,60,.55)) drop-shadow(0 0 16px rgba(127,211,255,.6))}'
+    + '.st365.small b{font-size:clamp(28px,5.6vw,58px)}'
+    + '.st365.moon::before{content:"";position:absolute;left:50%;top:50%;width:min(56vw,380px);aspect-ratio:1;border-radius:50%;z-index:-1;'
+    + 'background:radial-gradient(circle at 40% 38%,#fffbe8,#ffeeb4 42%,#e9c86c 68%,rgba(233,200,108,0) 71%),radial-gradient(circle at 62% 64%,rgba(180,150,80,.25) 0 7%,transparent 8%),radial-gradient(circle at 34% 60%,rgba(180,150,80,.2) 0 5%,transparent 6%);'
+    + 'box-shadow:0 0 90px 34px rgba(255,236,170,.4);animation:moonRise 1.5s ease-out both}'
+    + '.st365.out{animation:stOut .5s ease-in forwards}'
+    + '@keyframes stIn{0%{opacity:0;transform:translate(-50%,-50%) scale(2.5) rotate(-12deg)}60%{opacity:1;transform:translate(-50%,-50%) scale(.92) rotate(-3deg)}100%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(-4deg)}}'
+    + '@keyframes stOut{to{opacity:0;transform:translate(-50%,-64%) scale(1.06) rotate(-4deg)}}'
+    + '@keyframes moonRise{from{opacity:0;transform:translate(-50%,-10%)}to{opacity:1;transform:translate(-50%,-58%)}}'
+    + '#board.shake{animation:boardShake .45s}'
+    + '@keyframes boardShake{20%{transform:translate(-7px,3px)}40%{transform:translate(6px,-4px)}60%{transform:translate(-4px,2px)}80%{transform:translate(3px,-1px)}}'
+    + '.wincel{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}'
+    + '.wincel select{min-height:46px;padding:0 10px;border-radius:12px;border:2px solid var(--sheet-line);background:#fff;color:var(--sheet-ink);font:700 15px Archivo,"Segoe UI",sans-serif;cursor:pointer}'
+    + '.wincel select:focus-visible{outline:3px solid #22a3ee;outline-offset:2px}'
+    + '.tile b.bump,.tiles b.bump{animation:bump .45s ease-out}'
+    + '@media (prefers-reduced-motion:reduce){.st365,.st365.out,.st365.moon::before,#board.shake{animation:none}}'
     // the picture cards: the figure fills a slightly larger gold frame (the corner index keeps its place)
     + '.court.art{left:12%;right:12%;top:31%;bottom:7%;display:block;overflow:hidden;background:#fbf3dc}'
     + '.court.art svg{position:absolute;inset:0;width:100%;height:100%;fill:none;stroke:none;filter:none}';
@@ -226,7 +426,7 @@
     // ------------------------------------------------------------ what this browser remembers (per game)
     function load(k, d) { try { var v = localStorage.getItem(D.store + ':' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
     function save(k, v) { try { localStorage.setItem(D.store + ':' + k, JSON.stringify(v)); } catch (e) {} }
-    var SET = { winnable: true, auto: true, sound: true, timer: true, felt: 'green', back: 'navy', fx: true, seenHelp: false };
+    var SET = { winnable: true, auto: true, sound: true, timer: true, felt: 'green', back: 'navy', fx: true, seenHelp: false, win: 'mix' };
     if (V) SET[V.key] = V.def;
     (function () { var s = load('settings', null); if (s && typeof s === 'object') for (var k in SET) if (k in s) SET[k] = s[k]; })();
     if (V && !V.options.some(function (o) { return o[0] === SET[V.key]; })) SET[V.key] = V.def;
@@ -602,8 +802,22 @@
           f.style.left = cx + 'px'; f.style.top = (r.top - 8) + 'px';
           document.body.appendChild(f); setTimeout(function () { f.remove(); }, 1200);
         }
-        if (whole) { sfx('suit'); if (SET.fx && !reduce) pop(last); }
+        if (whole) { sfx('suit'); if (SET.fx && !reduce) pop(last); bigMoment(fx, D.face(last, S).s); }
       }, 260);
+    }
+    // a big moment stamped on the table (5 Oct 2026): a suit completed, a Spider run, a TriPeaks peak, a Pyramid row
+    var SUITW = ['Spades', 'Hearts', 'Diamonds', 'Clubs'], stampEl = null;
+    function bigMoment(fx, suit) {
+      if (!SET.fx || reduce) return;
+      var txt = D.id === 'tripeaks' ? (/All three/.test(fx.say || '') ? 'All three peaks!' : 'Peak cleared!') : D.id === 'pyramid' ? 'Row cleared!' : D.id === 'spider' ? 'Run complete!' : SUITW[suit] + ' complete!';
+      if (stampEl) stampEl.remove();
+      var el = stampEl = document.createElement('div'), r = board.getBoundingClientRect();
+      el.className = 'st365 small ' + (suit === 1 || suit === 2 ? 'red' : 'gold');
+      el.innerHTML = '<b>' + esc(txt) + '</b>';
+      el.style.left = (r.left + r.width / 2) + 'px'; el.style.top = (r.top + r.height * 0.45) + 'px';
+      document.body.appendChild(el);
+      setTimeout(function () { el.classList.add('out'); }, 1000);
+      setTimeout(function () { el.remove(); if (stampEl === el) stampEl = null; }, 1520);
     }
 
     // ------------------------------------------------------------ sparkles: a light layer over the table, running only while there are any
@@ -879,6 +1093,7 @@
       $('wBadges').innerHTML = rec.badges.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('');
       $('wDaily').hidden = !!(ST.daily[today()] && ST.daily[today()].won);
       chal(); openD('dWin');
+      Table365.countUp($('wScore'), S.score); Table365.countUp($('wMoves'), S.moves);   // the numbers count up
       var hb = $('wHof'); hb.hidden = true; hb.innerHTML = '';
       if (window.HallOfFame && D.hof && G.mode === 'daily') HallOfFame.daily(hb, { day: G.day, lv: vOf(S), secs: rec.secs, log: G.log });
       else if (window.HallOfFame && D.hof && G.mode === 'sprint' && !G.timeUp) HallOfFame.sprint(hb, { day: G.day, secs: rec.secs, log: G.log, cards: foundCount() });
@@ -887,34 +1102,7 @@
     }
     // the classic finish: the cards leap off the piles and bounce away, leaving trails
     var imgCache = {};
-    function cardImg(c) {   // the card as a picture for the bouncing finish: the same paper, border, corners and centre
-      var key = c + ':' + L.cw + ':' + faceKey; if (imgCache[key]) return imgCache[key];
-      var f = D.face(c, S), dpr = Math.min(2, window.devicePixelRatio || 1), w = L.cw, h = L.ch, cv = document.createElement('canvas');
-      cv.width = Math.ceil(w * dpr); cv.height = Math.ceil(h * dpr);
-      var x = cv.getContext('2d'); x.scale(dpr, dpr);
-      var r = w * 0.08, su = SUIT_CH[f.s] + TXT, red = f.s === 1 || f.s === 2, ink = red ? '#c6152f' : '#17191f';
-      function rr(ix, iy, iw, ih, rad) { x.beginPath(); x.moveTo(ix + rad, iy); x.arcTo(ix + iw, iy, ix + iw, iy + ih, rad); x.arcTo(ix + iw, iy + ih, ix, iy + ih, rad); x.arcTo(ix, iy + ih, ix, iy, rad); x.arcTo(ix, iy, ix + iw, iy, rad); x.closePath(); }
-      var pg = x.createRadialGradient(w * 0.3, h * 0.12, 0, w * 0.3, h * 0.12, h);
-      pg.addColorStop(0, '#ffffff'); pg.addColorStop(0.45, '#fffdf8'); pg.addColorStop(1, '#f1ebdc');
-      rr(0.5, 0.5, w - 1, h - 1, r); x.fillStyle = pg; x.fill(); x.strokeStyle = '#bdb7a6'; x.lineWidth = 1; x.stroke();
-      rr(w * 0.035, w * 0.035, w - w * 0.07, h - w * 0.07, r * 0.7); x.strokeStyle = 'rgba(0,0,0,0.08)'; x.stroke();
-      x.fillStyle = ink; x.textBaseline = 'top'; x.textAlign = 'left';
-      x.font = '700 ' + Math.round(w * 0.32) + 'px Archivo, Arial, sans-serif'; x.fillText(RANK_CH[f.r], w * 0.05, h * 0.03);
-      x.textAlign = 'right'; x.font = Math.round(w * 0.29) + 'px "Segoe UI Symbol", Arial, sans-serif'; x.fillText(su, w * 0.95, h * 0.03);
-      x.save(); x.translate(w * 0.9, h * 0.95); x.rotate(Math.PI); x.textAlign = 'center'; x.textBaseline = 'top';
-      x.font = '700 ' + Math.round(w * 0.14) + 'px Archivo, Arial, sans-serif'; x.fillText(RANK_CH[f.r], 0, 0);
-      x.font = Math.round(w * 0.13) + 'px "Segoe UI Symbol", Arial, sans-serif'; x.fillText(su, 0, w * 0.15); x.restore();
-      x.textAlign = 'center'; x.textBaseline = 'middle';
-      if (f.r > 10) {   // the picture in its gold frame (the letter, if the picture hasn't loaded yet)
-        var fx0 = w * 0.12, fy0 = h * 0.31, fw = w * 0.76, fh = h * 0.62, im = artImg(f.r, f.s);
-        x.save(); rr(fx0, fy0, fw, fh, w * 0.05); x.clip();
-        if (im.complete && im.naturalWidth) { var sc = Math.max(fw / 52, fh / 64); x.drawImage(im, fx0 + (fw - 52 * sc) / 2, fy0, 52 * sc, 64 * sc); }
-        else { x.fillStyle = '#fbf3dc'; x.fillRect(fx0, fy0, fw, fh); x.fillStyle = ink; x.font = '700 ' + Math.round(w * 0.4) + 'px Georgia, serif'; x.fillText(RANK_CH[f.r], w / 2, h * 0.58); }
-        x.restore();
-        rr(fx0, fy0, fw, fh, w * 0.05); x.lineWidth = w * 0.022; x.strokeStyle = '#c9a227'; x.stroke();
-      } else { x.fillStyle = ink; x.font = Math.round(w * 0.56) + 'px "Segoe UI Symbol", Arial, sans-serif'; x.fillText(su, w / 2, h * 0.64); }
-      return (imgCache[key] = cv);
-    }
+    function cardImg(c) { var f = D.face(c, S); return paintCard(f.r, f.s, L.cw, L.ch); }   // the card as a picture (for the finishes)
     // fireworks over the bouncing cards
     var fwT = 0;
     function fireworks(on) {
@@ -933,44 +1121,21 @@
       };
       shoot(); fwT = setInterval(shoot, 650);
     }
-    function cascade(done) {
+    function cascade(done) {   // the win celebration: the one chosen in Settings (or a surprise)
       fireworks(true);
       var finishCascade = done; done = function () { fireworks(false); finishCascade(); };
       if (reduce) { done(); return; }
-      var cv = $('fx'), tip = $('fxhint'), dpr = Math.min(2, window.devicePixelRatio || 1), W = window.innerWidth, H = window.innerHeight;
-      cv.hidden = false; cv.classList.add('on'); cv.style.opacity = '1'; cv.style.transition = '';
-      cv.width = Math.ceil(W * dpr); cv.height = Math.ceil(H * dpr); cv.style.width = W + 'px'; cv.style.height = H + 'px';
-      var ctx = cv.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      var br = board.getBoundingClientRect(), k = L.cw / 90, q = D.cascade(S, L).slice(), live = [], ended = false, last = 0;
-      var every = q.length > 60 ? 115 : 230;   // Spider's 104 cards leave twice as fast
-      setTimeout(function () { if (!ended) tip.hidden = false; }, 1200);
-      function frame(now) {
-        if (ended) return;
-        if (q.length && now - last > every) {
-          last = now; var n = q.shift();
-          if (cardEl[n.c]) cardEl[n.c].style.visibility = 'hidden';
-          live.push({ c: n.c, x: br.left + n.x, y: br.top + n.y, vx: (Math.random() < 0.5 ? -1 : 1) * (2.5 + Math.random() * 5) * k, vy: -(1 + Math.random() * 7) * k });
-        }
-        live.forEach(function (p) {
-          p.vy += 0.42 * k; p.x += p.vx; p.y += p.vy;
-          if (p.y + L.ch > H) { p.y = H - L.ch; p.vy = -p.vy * 0.8; }
-          ctx.drawImage(cardImg(p.c), p.x, p.y, L.cw, L.ch);
-        });
-        live = live.filter(function (p) { return p.x > -L.cw - 4 && p.x < W + 4; });
-        if (!q.length && !live.length) { end(); return; }
-        requestAnimationFrame(frame);
-      }
-      function end() {
-        if (ended) return; ended = true;
-        cv.classList.remove('on'); tip.hidden = true;
-        cv.style.transition = 'opacity .45s'; cv.style.opacity = '0';
-        setTimeout(function () { cv.hidden = true; ctx.clearRect(0, 0, W, H); for (var i = 0; i < D.cards; i++) cardEl[i].style.visibility = ''; done(); }, 460);
-        document.removeEventListener('keydown', end);
-      }
-      cv.onclick = end;
-      document.addEventListener('keydown', end);
-      setTimeout(end, 30000);
-      requestAnimationFrame(frame);
+      var br = board.getBoundingClientRect(), list = D.cascade(S, L).map(function (n) { var f = D.face(n.c, S); return { c: n.c, r: f.r, s: f.s, x: br.left + n.x, y: br.top + n.y }; });
+      runFinale(Table365.pickFinale(SET.win), list, done, true);
+    }
+    // the finish itself; table = the cards leave the table (a win), not a pack in the middle (Settings > Watch)
+    function runFinale(kind, list, done, table) {
+      return Table365.finale(kind, { cards: list, cw: L.cw, ch: L.ch, cv: $('fx'), tip: $('fxhint'),
+        hide: table ? function (i) { var el = cardEl[list[i].c]; if (el) el.style.visibility = 'hidden'; } : null,
+        show: table ? function () { for (var i = 0; i < D.cards; i++) cardEl[i].style.visibility = ''; } : null,
+        burst: function (x, y, cols, big) { if (!SET.fx) return; Spark.burst(x, y, big ? 64 : 14, cols, big ? 5.4 : 2, big ? 80 : 30, { grav: 0.05, size: 6 }); if (big) Spark.ring(x, y, 70, cols[0], 26); },
+        trail: function (x, y, cols) { if (SET.fx) Spark.burst(x, y, 2, cols, 0.9, 22, { grav: 0.02, size: 4 }); },
+        sfx: sfx, done: done });
     }
 
     // ------------------------------------------------------------ sound: soft, made on the spot, nothing downloaded
@@ -1085,6 +1250,7 @@
       Array.prototype.forEach.call(document.querySelectorAll('[data-felt]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-felt') === SET.felt)); });
       Array.prototype.forEach.call(document.querySelectorAll('[data-back]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-back') === SET.back)); });
       document.body.className = 'felt-' + SET.felt + ' back-' + SET.back + (SET.fx ? '' : ' nofx');
+      if ($('sWin')) $('sWin').value = SET.win;
       var pv = $('sLookPv'); if (pv) { pv.className = 'lkpv lk-f-' + SET.felt; pv.firstChild.className = 'lk-b-' + SET.back; }
     }
     document.addEventListener('click', function (e) {
@@ -1098,6 +1264,13 @@
     });
 
     // ------------------------------------------------------------ buttons and keys
+    // Settings > Win celebration: the choice, and Watch - a whole pack does it in the middle of the screen
+    $('sWin').addEventListener('change', function () { SET.win = $('sWin').value; save('settings', SET); });
+    $('sWinTry').onclick = function () {
+      closeSheets();
+      var sp = $('spark'); sp.style.zIndex = '4550';
+      runFinale(Table365.pickFinale(SET.win), Table365.packAtCentre(L.cw, L.ch), function () { sp.style.zIndex = ''; }, false);
+    };
     if (window.Looks) $('sLooks').onclick = function () {
       closeSheets();
       Looks.open({ felt: SET.felt, back: SET.back, pick: function (kind, id) { if (kind === 'felt') SET.felt = id; else SET.back = id; save('settings', SET); syncControls(); } });
@@ -1269,6 +1442,7 @@
           + (D.autoNext ? sw('auto', 'Move cards up to the piles for me', 'When it&rsquo;s plainly safe to.') : '')
           + sw('sound', 'Sounds', 'Soft card sounds and chimes.') + sw('timer', 'Show the clock', 'It still keeps your best time.')
           + sw('fx', 'Extra effects', 'Sparkles, cards that lift as they move, fireworks when you win. Switch off on a slower computer.')
+           + '<div class="set"><div><label for="sWin">Win celebration</label><small>Surprise me picks a different one each time.</small></div><div class="wincel"><select id="sWin">' + Table365.FINALE_NAMES.map(function (o) { return '<option value="' + o[0] + '">' + o[1] + '</option>'; }).join('') + '</select><button class="btn" type="button" id="sWinTry">Watch</button></div></div>'
           + (window.Looks ? '<div class="set"><div><label>Table and card backs</label><small>Twelve of each &ndash; the specials are won with Journey stars.</small></div><button class="btn lkbtn" type="button" id="sLooks"><span class="lkpv" id="sLookPv"><i></i></span>Choose</button></div>' : ''
             + '<div class="set"><div><label>Table</label></div><div class="felts" role="group" aria-label="Table"><button type="button" data-felt="green" style="background:#1f7a45" aria-label="Green baize"></button><button type="button" data-felt="blue" style="background:#1f5f9c" aria-label="Blue"></button><button type="button" data-felt="red" style="background:#8e2537" aria-label="Red"></button><button type="button" data-felt="slate" style="background:#45526a" aria-label="Grey"></button>'
           + '<button type="button" data-felt="oak" style="background:repeating-linear-gradient(91deg,#6b4220 0 3px,#7a4c26 3px 6px)" aria-label="Oak table"></button><button type="button" data-felt="night" style="background:radial-gradient(#2a3670,#060918)" aria-label="Night"></button></div></div>'
@@ -1287,5 +1461,6 @@
     function sw(key, label, small) { return '<div class="set"><div><label id="l_' + key + '">' + label + '</label><small>' + small + '</small></div><button class="sw" type="button" role="switch" aria-labelledby="l_' + key + '" data-set="' + key + '"></button></div>'; }
   }
 
-  window.Table365 = { start: start, RECYCLE: RECYCLE, ICON: ICON, cardMarkup: cardMarkup, esc: esc, SUIT_CH: SUIT_CH, RANK_CH: RANK_CH, TXT: TXT, fly: fly, flightTime: flightTime, canFly: CAN_FLY };
+  window.Table365 = { start: start, RECYCLE: RECYCLE, ICON: ICON, cardMarkup: cardMarkup, esc: esc, SUIT_CH: SUIT_CH, RANK_CH: RANK_CH, TXT: TXT, fly: fly, flightTime: flightTime, canFly: CAN_FLY,
+    finale: finale, pickFinale: pickFinale, FINALE_NAMES: FINALE_NAMES, packAtCentre: packAtCentre, paintCard: paintCard, countUp: countUp };
 })();

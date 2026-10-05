@@ -144,22 +144,25 @@
   }
   function wait(S, m) { return m.t === 'collect' ? 1150 : S.trick.length === 0 ? 620 : 700; }
   var SUITW = ['spades', 'hearts', 'diamonds', 'clubs'];
+  // the Queen of spades landing on someone: bad news for whoever takes her (5 Oct 2026)
+  function queenStamp(K, w) { if (K.stamp) K.stamp('Queen of spades!', { tone: w === 0 ? 'dark' : 'gold', big: w === 0, sub: w === 0 ? 'You take 13 points' : NAMES[w] + ' takes 13 points' }); }
   function fx(f, K, S) {
     if (f.t === 'pass') { K.sfx('slide'); setTimeout(function () { K.sfx('place'); }, 260); K.say(NAMES[f.from] + ' passed you three cards (they glow). The 2 of clubs starts.'); return; }
     if (f.t === 'play') {
       K.sfx('place');
       if (f.queen) { K.sfx('thud'); K.say((f.p ? NAMES[f.p] : 'You') + ' played the Queen of spades!'); }
-      else if (f.broke) { K.sfx('chime', 1); K.say('Hearts are broken – they can be led now'); }
+      else if (f.broke) { K.sfx('chime', 1); K.say('Hearts are broken – they can be led now'); if (K.stamp) K.stamp('Hearts broken', { tone: 'red', small: true }); }
       return;
     }
     if (f.t === 'collect') {
       K.sfx('gather');
       if (f.handOver) {
-        if (f.moon === 0) { K.sfx('fanfare'); K.say('You shot the moon! Everyone else gets 26.'); S.won[0].slice(-1).forEach(function (c) { K.burst(c, true); }); }
-        else if (f.moon > 0) { K.sfx('thud'); K.say(NAMES[f.moon] + ' shot the moon – 26 points each to everyone else'); }
-        else K.sfx('chime', 2);
+        if (f.moon === 0) { K.sfx('fanfare'); K.say('You shot the moon! Everyone else gets 26.'); S.won[0].slice(-1).forEach(function (c) { K.burst(c, true); }); if (K.stamp) K.stamp('You shot the moon!', { tone: 'gold', big: true, moon: true, sub: 'Everyone else gets 26' }); }
+        else if (f.moon > 0) { K.sfx('thud'); K.say(NAMES[f.moon] + ' shot the moon – 26 points each to everyone else'); if (K.stamp) K.stamp(NAMES[f.moon] + ' shot the moon', { tone: 'dark', moon: true, sub: '26 points to everyone else' }); }
+        else { K.sfx('chime', 2); if (f.queen) queenStamp(K, f.w); }
         return;
       }
+      if (f.queen) queenStamp(K, f.w);
       if (f.w === 0 && f.pts) { K.say('You took ' + f.pts + (f.pts === 1 ? ' point' : ' points') + (f.queen ? ' – including the Queen!' : '')); if (f.queen) K.sfx('thud'); }
       else if (f.w === 0) K.sfx('chime', 0);
       else if (f.queen) K.say(NAMES[f.w] + ' took the Queen of spades – 13 points!');

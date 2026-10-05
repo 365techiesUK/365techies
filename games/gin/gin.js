@@ -160,6 +160,12 @@
       // (the panel in the middle says what happened)
       if (f.gin) { K.sfx(f.p === 0 ? 'fanfare' : 'thud'); if (f.p === 0) S.hands[0].slice(0, 3).forEach(function (c) { K.burst(c, true); }); }
       else if (f.undercut) K.sfx(f.to === 0 ? 'fanfare' : 'thud');
+      if (K.stamp) {   // the moment, stamped on the table (5 Oct 2026)
+        var sc = (f.to === 0 ? 'You score ' : OPP + ' scores ') + f.pts;
+        if (f.gin) K.stamp(f.p === 0 ? 'GIN!' : OPP + ' goes Gin', { tone: f.p === 0 ? 'gold' : 'dark', big: f.p === 0, sub: sc });
+        else if (f.undercut) K.stamp('Undercut!', { tone: f.to === 0 ? 'gold' : 'dark', big: f.to === 0, sub: sc });
+        else K.stamp(f.p === 0 ? 'You knock' : OPP + ' knocks', { tone: 'blue', small: true, sub: sc });
+      }
       K.sfx('chime', f.to === 0 ? 3 : 0);
     }
   }

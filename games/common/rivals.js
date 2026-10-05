@@ -33,7 +33,7 @@
     // ------------------------------------------------------------ what this browser remembers (per game)
     function load(k, d) { try { var v = localStorage.getItem(D.store + ':' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
     function save(k, v) { try { localStorage.setItem(D.store + ':' + k, JSON.stringify(v)); } catch (e) {} }
-    var SET = { lv: LVS.def, speed: 2, sound: true, fx: true, felt: 'green', back: 'navy', seenHelp: false };
+    var SET = { lv: LVS.def, speed: 2, sound: true, fx: true, felt: 'green', back: 'navy', seenHelp: false, win: 'mix' };
     (function () { var s = load('settings', null); if (s && typeof s === 'object') for (var k in SET) if (k in s) SET[k] = s[k]; })();
     if (!LVS.options.some(function (o) { return o[0] === SET.lv; })) SET.lv = LVS.def;
     // tables and card backs (5 Oct 2026): one choice for every card game (looks.js keeps it as cards365:look)
@@ -204,7 +204,7 @@
       }, reduce ? 300 : Math.round(D.wait(S, m) * SPEED[SET.speed]));   // (never quicker than the Hall of Fame allows: 0.2 s a move)
     }
     function effects(fx) {
-      var K = { sfx: sfx, say: say, burst: burstAt, cardEl: cardEl };
+      var K = { sfx: sfx, say: say, burst: burstAt, cardEl: cardEl, stamp: stamp };
       D.fx(fx, K, S);
     }
     // sparkles where a card is (a moon shot, a gin, the Queen)
@@ -311,8 +311,12 @@
       save('stats', ST); persist();
       setTimeout(function () {
         if (my !== gen) return;
+        if (r.won && SET.fx && !reduce) { sfx('win'); fireworks(true); celebrate(T.pickFinale(SET.win), function () { if (my !== gen) return; fireworks(false); showOver(); }); return; }
         if (r.won) { sfx('win'); fireworks(true); setTimeout(function () { if (my === gen) fireworks(false); }, 4200); }
         else sfx('lose');
+        showOver();
+      }, r.won ? 900 : 700);
+      function showOver() {
         $('dOverH').textContent = r.title;
         $('oSub').textContent = r.sub + (G.mode === 'daily' ? ' · today’s match' : '');
         $('oTiles').innerHTML = (r.tiles || []).map(function (t) { return '<div class="tile"><b>' + esc(t[0]) + '</b><span>' + esc(t[1]) + '</span></div>'; }).join('');
@@ -320,9 +324,38 @@
         $('oDaily').hidden = !!(ST.daily[today()]);
         $('oJour').hidden = true; $('oRow').hidden = false; $('oRow').style.display = '';
         openD('dOver');
+        Array.prototype.forEach.call($('oTiles').querySelectorAll('.tile b'), function (b) { T.countUp(b, b.textContent); });   // the numbers count up
         var hb = $('oHof'); hb.hidden = true; hb.innerHTML = '';
         if (window.HallOfFame && D.hof && G.mode === 'daily' && r.won && G.lg) HallOfFame.daily(hb, { day: G.day, lv: S.lv, secs: Math.max(1, Math.round(G.ms / 1000)), log: G.log });
-      }, r.won ? 900 : 700);
+      }
+    }
+    // the win celebration (table.js finale): a whole pack bursts from the middle of the table
+    function celebrate(kind, done) {
+      var sp = $('spark'); sp.style.zIndex = '4550';
+      return T.finale(kind, { cards: T.packAtCentre(L.cw, L.ch), cw: L.cw, ch: L.ch,
+        burst: function (x, y, cols, big) { if (!SET.fx) return; Spark.burst(x, y, big ? 64 : 14, cols, big ? 5.4 : 2, big ? 80 : 30, { grav: 0.05, size: 6 }); if (big) Spark.ring(x, y, 70, cols[0], 26); },
+        trail: function (x, y, cols) { if (SET.fx) Spark.burst(x, y, 2, cols, 0.9, 22, { grav: 0.02, size: 4 }); },
+        sfx: sfx, done: function () { sp.style.zIndex = ''; if (done) done(); } });
+    }
+    // a big moment stamped on the table - a Gin, the Queen of spades, a moon shot, a perfect hand (the games call K.stamp)
+    // o: { tone: 'gold' | 'dark' | 'red' | 'blue', sub: a smaller line, small: a lesser moment, big: sparks and a shake, moon }
+    var stampEl = null;
+    function stamp(text, o) {
+      o = o || {};
+      if (stampEl) stampEl.remove();
+      var el = stampEl = document.createElement('div'), r = board.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height * 0.42;
+      el.className = 'st365 ' + (o.tone || 'gold') + (o.small ? ' small' : '') + (o.moon ? ' moon' : '');
+      el.innerHTML = '<b>' + esc(text) + '</b>' + (o.sub ? '<small>' + esc(o.sub) + '</small>' : '');
+      el.style.left = cx + 'px'; el.style.top = cy + 'px';
+      document.body.appendChild(el);
+      if (SET.fx && !reduce && !o.small) {
+        var cols = o.tone === 'dark' ? ['#c9d2ff', '#ffffff', '#8a96c9'] : o.tone === 'red' ? ['#ff6b7a', '#ffd257', '#ffffff'] : o.tone === 'blue' ? ['#8ff0ff', '#ffffff', '#5cc2ff'] : ['#ffe08a', '#ffffff', '#ffb347', '#ff8ad8'];
+        Spark.burst(cx, cy, o.big ? 90 : 40, cols, o.big ? 6.2 : 3.8, o.big ? 90 : 60, { grav: 0.05, size: 6 }); Spark.ring(cx, cy, o.big ? 200 : 130, cols[0], 34);
+      }
+      if (o.big && SET.fx && !reduce) { board.classList.remove('shake'); void board.offsetWidth; board.classList.add('shake'); setTimeout(function () { board.classList.remove('shake'); }, 500); }
+      var stay = o.small ? 1100 : 1700;
+      setTimeout(function () { el.classList.add('out'); }, stay);
+      setTimeout(function () { el.remove(); if (stampEl === el) stampEl = null; }, stay + 520);
     }
 
     // ------------------------------------------------------------ the end of a Journey level (one hand)
@@ -509,6 +542,7 @@
       Array.prototype.forEach.call(document.querySelectorAll('[data-felt]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-felt') === SET.felt)); });
       Array.prototype.forEach.call(document.querySelectorAll('[data-back]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-back') === SET.back)); });
       document.body.className = 'felt-' + SET.felt + ' back-' + SET.back + (SET.fx ? '' : ' nofx') + ' rivals';
+      if ($('sWin')) $('sWin').value = SET.win;
       var pv = $('sLookPv'); if (pv) { pv.className = 'lkpv lk-f-' + SET.felt; pv.firstChild.className = 'lk-b-' + SET.back; }
     }
     document.addEventListener('click', function (e) {
@@ -523,6 +557,9 @@
     });
 
     // ------------------------------------------------------------ buttons and keys
+    // Settings > Win celebration: the choice, and Watch - a whole pack does it in the middle of the table
+    $('sWin').addEventListener('change', function () { SET.win = $('sWin').value; save('settings', SET); });
+    $('sWinTry').onclick = function () { closeSheets(); celebrate(T.pickFinale(SET.win)); };
     if (window.Looks) $('sLooks').onclick = function () {
       closeSheets();
       Looks.open({ felt: SET.felt, back: SET.back, pick: function (kind, id) { if (kind === 'felt') SET.felt = id; else SET.back = id; save('settings', SET); syncControls(); } });
@@ -653,6 +690,7 @@
           + '<div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>')
         + sheet('dSet', 'Settings', '<div class="set"><div><label>How fast the others play</label><small>Slow gives you time to watch every card.</small></div><div class="seg" role="group" aria-label="How fast the others play"><button type="button" data-speed="1">Slow</button><button type="button" data-speed="2">Normal</button><button type="button" data-speed="3">Quick</button></div></div>'
           + sw('sound', 'Sounds', 'Soft card sounds and chimes.') + sw('fx', 'Extra effects', 'Sparkles and fireworks when you win. Switch off on a slower computer.')
+          + '<div class="set"><div><label for="sWin">Win celebration</label><small>Surprise me picks a different one each time.</small></div><div class="wincel"><select id="sWin">' + T.FINALE_NAMES.map(function (o) { return '<option value="' + o[0] + '">' + o[1] + '</option>'; }).join('') + '</select><button class="btn" type="button" id="sWinTry">Watch</button></div></div>'
           + (window.Looks ? '<div class="set"><div><label>Table and card backs</label><small>Twelve of each &ndash; the specials are won with Journey stars.</small></div><button class="btn lkbtn" type="button" id="sLooks"><span class="lkpv" id="sLookPv"><i></i></span>Choose</button></div>' : ''
             + '<div class="set"><div><label>Table</label></div><div class="felts" role="group" aria-label="Table"><button type="button" data-felt="green" style="background:#1f7a45" aria-label="Green baize"></button><button type="button" data-felt="blue" style="background:#1f5f9c" aria-label="Blue"></button><button type="button" data-felt="red" style="background:#8e2537" aria-label="Red"></button><button type="button" data-felt="slate" style="background:#45526a" aria-label="Grey"></button>'
           + '<button type="button" data-felt="oak" style="background:repeating-linear-gradient(91deg,#6b4220 0 3px,#7a4c26 3px 6px)" aria-label="Oak table"></button><button type="button" data-felt="night" style="background:radial-gradient(#2a3670,#060918)" aria-label="Night"></button></div></div>'

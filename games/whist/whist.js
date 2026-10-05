@@ -116,13 +116,15 @@
   function wait(S, m) { return m.t === 'collect' ? 1150 : S.trick.length === 0 ? 620 : 700; }
   var RW = ['', 'Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King'];
   function fx(f, K, S) {
-    if (f.t === 'play') { K.sfx('place'); if (f.trumped) { K.sfx('thud'); K.say(nameOf(f.p) + (f.p === 0 ? ' trump it' : ' trumps it') + (E.team(f.p) === 0 && f.p !== 0 ? ' – your partner' : '')); } return; }
+    if (f.t === 'play') { K.sfx('place'); if (f.trumped) { K.sfx('thud'); K.say(nameOf(f.p) + (f.p === 0 ? ' trump it' : ' trumps it') + (E.team(f.p) === 0 && f.p !== 0 ? ' – your partner' : '')); if (K.stamp && E.team(f.p) === 0) K.stamp('Trumped!', { tone: 'blue', small: true, sub: f.p === 0 ? 'You trump it' : 'Jo trumps it' }); } return; }
     if (f.t === 'collect') {
       K.sfx('gather');
       if (f.handOver) {
         if (f.over) return;
-        if (f.gameWon === 0) { K.sfx('fanfare'); K.say('You and Jo win the game!'); }
-        else if (f.gameWon === 1) { K.sfx('thud'); K.say('Sam and Alex win the game'); }
+        var slam = S.lastHand && S.lastHand.tricks[0] === 13;   // every trick: a grand slam (5 Oct 2026)
+        if (slam && K.stamp) K.stamp('Grand slam!', { tone: 'gold', big: true, sub: 'All thirteen tricks' });
+        if (f.gameWon === 0) { K.sfx('fanfare'); K.say('You and Jo win the game!'); if (K.stamp && !slam) K.stamp('Game!', { tone: 'gold', big: true, sub: 'You and Jo win the game' }); }
+        else if (f.gameWon === 1) { K.sfx('thud'); K.say('Sam and Alex win the game'); if (K.stamp) K.stamp('Game to Sam and Alex', { tone: 'dark', small: true }); }
         else K.sfx('chime', f.side === 0 ? 2 : 0);
         return;
       }

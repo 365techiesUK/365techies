@@ -176,11 +176,16 @@
     }).join(' and ');
   }
   function fx(f, K, S) {
-    if (f.t === 'discard') { K.sfx('slide'); setTimeout(function () { K.sfx('flip'); }, 300); if (f.heels) { K.sfx('chime', 2); K.say('The starter is a Jack – his heels: 2 for ' + who(S.dealer)); } return; }
+    if (f.t === 'discard') { K.sfx('slide'); setTimeout(function () { K.sfx('flip'); }, 300); if (f.heels) { K.sfx('chime', 2); K.say('The starter is a Jack – his heels: 2 for ' + who(S.dealer)); if (K.stamp) K.stamp('His heels!', { tone: 'gold', small: true, sub: '2 for ' + who(S.dealer) }); } return; }
     if (f.t === 'play') {
       K.sfx('place');
       var w = pegWords(f.parts);
-      if (f.pts) { K.sfx('chime', Math.min(3, Math.floor(f.pts / 2))); K.say((f.p === 0 ? 'You: ' : OPP + ': ') + w.charAt(0).toUpperCase() + w.slice(1) + (f.last ? ', and 1 for the last card' : '')); if (f.pts >= 6) K.burst(f.c, true); }
+      if (f.pts) { K.sfx('chime', Math.min(3, Math.floor(f.pts / 2))); K.say((f.p === 0 ? 'You: ' : OPP + ': ') + w.charAt(0).toUpperCase() + w.slice(1) + (f.last ? ', and 1 for the last card' : '')); if (f.pts >= 6) K.burst(f.c, true);
+        if (K.stamp) {   // the pegging's big moments, stamped (5 Oct 2026)
+          var kind = f.parts.map(function (x) { return x.k === 'four' ? 'Double pair royal!' : x.k === 'three' ? 'Pair royal!' : x.k === 'run' && x.n >= 5 ? 'A run of ' + x.n + '!' : x.k === '31' ? 'Thirty-one!' : ''; }).filter(Boolean)[0];
+          if (kind) K.stamp(kind, { tone: f.p === 0 ? 'gold' : 'blue', small: kind === 'Thirty-one!', big: f.p === 0 && f.pts >= 12, sub: (f.p === 0 ? 'You peg ' : OPP + ' pegs ') + f.pts });
+        }
+      }
       else if (f.last) K.say((f.p === 0 ? 'You get' : OPP + ' gets') + ' 1 for the last card');
       return;
     }
@@ -189,7 +194,15 @@
       else K.say(f.p === 0 ? 'You can’t play without going past 31 – “Go”' : OPP + ' says “Go”');
       return;
     }
-    if (f.t === 'count') { K.sfx(f.total ? 'chime' : 'place', Math.min(3, Math.floor(f.total / 4))); if (f.total >= 12) K.sfx('fanfare'); }
+    if (f.t === 'count') {
+      K.sfx(f.total ? 'chime' : 'place', Math.min(3, Math.floor(f.total / 4))); if (f.total >= 12) K.sfx('fanfare');
+      if (K.stamp) {   // a big hand stamped on the table; a hand of nothing is "nineteen" (the old joke - you can't score 19)
+        var whose = (f.who === 0 ? 'Your ' : OPP + '\u2019s ') + (f.crib ? 'crib' : 'hand');
+        if (f.total === 29) K.stamp('A perfect 29!', { tone: 'gold', big: true, sub: whose });
+        else if (f.total >= 12) K.stamp(f.total + ' points!', { tone: f.who === 0 ? 'gold' : 'blue', big: f.who === 0 && f.total >= 16, small: f.total < 16, sub: whose });
+        else if (f.total === 0 && f.who === 0 && !f.crib) K.stamp('Nineteen!', { tone: 'dark', small: true, sub: 'A hand worth nothing' });
+      }
+    }
   }
   function result(S) {
     var won = S.winner === 0, lose = S.scores[1 - S.winner], badges = [];
