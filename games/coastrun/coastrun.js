@@ -7,7 +7,12 @@
 import { createWorld } from './world3d.js?v=15';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
-const GW = 384, GH = 224;
+let GW = 384; const GH = 224;
+function wideGW() {   // the game's width in its own units for the space on the page (the height stays 224): never narrower than 384
+  const st = document.getElementById('stage'), pad = document.getElementById('pad'); if (!st) return GW;
+  const bw = st.clientWidth - 16, bh = st.clientHeight - 16 - (pad && pad.offsetParent ? pad.offsetHeight + 10 : 0);
+  return bw > 50 && bh > 50 ? Math.round(Math.max(384, Math.min(GH * 2.2, GH * bw / bh))) : GW;
+}
 const reducedMotion = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
 let world = null, worldTried = false;
 window.COAST3D = { get world() { return world; } };   // for the tests (read-only look at the 3D world)
@@ -17,7 +22,8 @@ const BEST_KEY = 'coast365.best';
 let BEST = {}; try { BEST = JSON.parse(localStorage.getItem(BEST_KEY) || '{}') || {}; } catch (e) { BEST = {}; }
 function bestOf(W, st) { const d = BEST['d' + W.diff]; return d && d[st] ? d[st] : 0; }
 function saveBest(W, st, sec) { const k = 'd' + W.diff; (BEST[k] || (BEST[k] = {}))[st] = sec; try { localStorage.setItem(BEST_KEY, JSON.stringify(BEST)); } catch (e) {} }
-const R = { lastT: 0, legN: 0, split: null, demoAcc: 0, W: null, goT: -1, shownScore: 0, lastV: 0, braking: false, boostK: 0, slow: 0, scale: 1, shakeOn: true };
+const R = { lastT: 0, legN: 0, split: null, demoAcc: 0, W: null, goT: -1, shownScore: 0, lastV: 0, braking: false, boostK: 0, scale: 1, ft: 16.7, took: 4, adj: 0, lowN: 0, plain: false, shakeOn: true };
+window.CRgfx = () => ({ GW: GW, scale: R.scale, plain: R.plain, ft: +R.ft.toFixed(1) });   // for checking: the picture's width, resolution step and frame time
 let K = 3;
 function roundRect(g, x, y, w, h, r) { g.beginPath(); if (g.roundRect) g.roundRect(x, y, w, h, r); else g.rect(x, y, w, h); }
 const GLOW = {};
@@ -52,15 +58,20 @@ function draw(g, W, t, mode, info) {
     return;
   }
   const t0 = performance.now();
-  const cap = Math.sqrt(1.8e6 / (info.dw * info.dh)), k = Math.min(1, cap) * R.scale;
+  const cap = Math.sqrt(4.2e6 / (info.dw * info.dh)), k = Math.min(1, cap) * R.scale;
   wd.setSize(Math.max(64, Math.round(info.dw * k)), Math.max(64, Math.round(info.dh * k)));
   wd.setShake(R.shakeOn);
   const cv = wd.render(W, t, mode);
   g.imageSmoothingEnabled = true; g.drawImage(cv, 0, 0, info.dw, info.dh);
-  // a slow PC: a smaller picture, no shadows, a shorter view
+  // a slow PC: the picture a step smaller (and back up when there's room); the plainer look only as a last resort
   const took = performance.now() - t0;
-  R.slow = R.slow * 0.96 + (took > 18 ? 1 : 0) * 0.04;
-  if (R.slow > 0.6 && R.scale === 1 && t > 4000) { R.scale = 0.75; wd.quality(true); }
+  R.ft = R.ft * 0.92 + Math.max(frameDt * 1000, took) * 0.08; R.took = R.took * 0.92 + took * 0.08;
+  if (t > 3000 && t - R.adj > 700) {
+    if (R.ft > 20.5 && R.scale > 0.6) { R.scale = Math.max(0.6, +(R.scale - 0.08).toFixed(2)); R.adj = t; }
+    else if (R.ft < 18 && R.took < 8 && R.scale < 1) { R.scale = Math.min(1, +(R.scale + 0.04).toFixed(2)); R.adj = t; }
+    else if (R.ft > 24 && R.scale <= 0.6 && !R.plain) { if (++R.lowN > 5) { R.plain = true; wd.quality(true); } R.adj = t; }
+    else if (R.ft <= 24) R.lowN = 0;
+  }
   g.setTransform(K, 0, 0, K, 0, 0);
   { const fast = Math.max(R.boostK, Math.max(0, W.v / E.VMAX - 0.8) * 2.2); if (fast > 0.05 && !W.crash) speedLines(g, t, Math.min(1, fast)); }
   hud(g, W, t, mode);
@@ -157,7 +168,7 @@ function clockExtras(g, W, t, pi) {   // the race against the clock: your best f
   const st = stretchOf(W, pi);
   if (st && W.count <= 0) {
     const b = bestOf(W, st.id); if (b) hudText(g, 'BEST ' + clock(b), 10, 58, 6.2, '#ffd98a');
-    const el = (W.t - W.legT0) / 60, done = (pi - st.from) * 4, left = (st.to - pi) * 4, pace = el > 5 ? done / el : 0;
+    const el = (W.t - W.legT0) / 60, done = (pi - st.from) * 4, left = (st.to - pi) * 4, pace = el > 12 ? done / el : 0;   // (judged after 12 s: off the line the average pace is slow)
     if (!W.timeUp && pace > 0 && left / Math.max(12, pace) > W.time + 1 && (t / 200 | 0) % 3) hudText(g, 'HURRY!', 10, b ? 69 : 60, 10, '#ff4d4d');
   }
   if (!W.timeUp && W.count <= 0 && W.time > 0 && W.time <= 5) {   // the last five seconds, big in the middle
@@ -563,7 +574,7 @@ const touchy = () => document.body.classList.contains('touchy');
 document.addEventListener('keydown', (e) => { const k = (e.key || '').toLowerCase(); if ((k === 'arrowdown' || k === 's') && !e.repeat && window.ARCADE365 && window.ARCADE365.mode === 'play') window.ARCADE365.input.brakeTap = true; });
 document.addEventListener('pointerdown', (e) => { const b = e.target && e.target.closest && e.target.closest('[data-pad="down"]'); if (b && window.ARCADE365 && window.ARCADE365.mode === 'play') window.ARCADE365.input.brakeTap = true; }, true);
 A.start({
-  id: 'coastrun', store: 'coast365', title: '365 Coast Run', width: GW, height: GH, waveWord: 'stage', alt: true,
+  id: 'coastrun', store: 'coast365', title: '365 Coast Run', get width() { return (GW = wideGW()); }, height: GH, waveWord: 'stage', alt: true,
   pad: [{ act: 'left', label: '◀' }, { act: 'right', label: '▶' }, { act: 'down', label: 'Brake', cls: 'alt' }, { act: 'fire', label: 'Nitro', cls: 'fire' }],
   speeds: { options: [[1, 'Gentle'], [2, 'Classic'], [3, 'Fast']], def: 1 },
   settings: [
