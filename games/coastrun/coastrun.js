@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=22';
+import { createWorld } from './world3d.js?v=23';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
@@ -395,6 +395,7 @@ function sound(name, S, e) {
     case 'driftend': S.tone(988, 0.1, 0.04, { type: 'square', verb: 0.3 }); S.tone(1319, 0.16, 0.04, { type: 'square', when: 0.07, verb: 0.3 }); break;
     case 'slip': S.noise(0.5, 0.06, 900, { type: 'bandpass', q: 2, to: 2400 }); break;
     case 'bush': S.noise(0.28, 0.12, 2200, { type: 'bandpass', q: 0.8, to: 600, pan: p }); break;
+    case 'horn': [0, 0.55].forEach((w) => { S.tone(98, 0.45, 0.07, { type: 'sawtooth', when: w, verb: 0.6 }); S.tone(123, 0.45, 0.05, { type: 'sawtooth', when: w, verb: 0.6 }); }); break;   // the ferry's horn
     case 'land': S.tone(90, 0.2, 0.08 + 0.04 * n, { type: 'sine', to: 40 }); S.noise(0.18, 0.06 + 0.04 * n, 900, { to: 200 }); break;
     case 'extra': [523, 659, 784, 1047].forEach((f, k) => S.tone(f, 0.1, 0.05, { type: 'square', when: k * 0.08, verb: 0.3 })); break;
   }

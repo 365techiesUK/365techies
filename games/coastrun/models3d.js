@@ -340,6 +340,74 @@ const MODELS = {
   rail(k) { k.box(0.1, 1, 0.1, 0, 0, 0, '#2f7f86').box(0.07, 0.08, 4.2, 0, 0.55, 0, '#2f7f86').box(0.09, 0.09, 4.2, 0, 0.98, 0, '#2f7f86'); },
   quay(k) { k.box(0.8, 0.7, 4.2, 0, 0, 0, '#55585f'); },
   marker(k) { k.box(0.14, 1.05, 0.14, 0, 0, 0, '#f4f4f0').box(0.15, 0.22, 0.15, 0, 0.72, 0, '#151515').box(0.06, 0.1, 0.02, 0, 0.78, -0.08, '#ff2a2a', 0, 0, 0, 'glow'); },
+  vpost(k) {   // the road's edge on the downs and the heath: wooden posts, three strands of wire
+    k.box(0.12, 1.05, 0.12, 0, 0, -1.05, '#7a6448').box(0.12, 1.05, 0.12, 0, 0, 1.05, '#6f5a40');
+    for (const y of [0.38, 0.66, 0.94]) k.box(0.022, 0.022, 4.3, 0, y, 0, '#9a9da2', 0, 0, 0, 'shiny');
+  },
+  prom(k, v) {   // the town's edge: a low cream wall with a coping, flowers along the top of every other length
+    k.box(0.5, 0.62, 4.25, 0, 0, 0, '#e8dfcc', 0, 0, 0, 'stone').box(0.66, 0.1, 4.25, 0, 0.62, 0, '#d2c7b0', 0, 0, 0, 'stone');
+    if (v % 2 === 0) { const r = rnd(41 + v); k.box(0.46, 0.22, 3.9, 0, 0.72, 0, '#5a4a36');
+      for (let i = 0; i < 14; i++) k.ball(0.11 + r() * 0.05, (r() - 0.5) * 0.3, 0.98 + r() * 0.1, -1.85 + i * 0.28, i % 3 ? ['#e63946', '#ffd23f', '#ff7eb6', '#ffffff', '#ff9a3c'][(i + v) % 5] : '#4f8a3a', 1, 0.8, 1, 'lit', 5); }
+  },
+  flowerbed(k, v) {   // a raised bed of bright flowers on the front
+    const r = rnd(61 + v), cols = [['#e63946', '#ffd23f', '#ffffff'], ['#ff7eb6', '#9b5de5', '#ffffff'], ['#ff9a3c', '#ffd23f', '#e63946']][v % 3];
+    k.box(3.2, 0.4, 1.4, 0, 0, 0, '#d9cfb8', 0, 0, 0, 'stone').box(3.0, 0.12, 1.2, 0, 0.36, 0, '#4a3a2a');
+    for (let i = 0; i < 22; i++) { const x = (r() - 0.5) * 2.8, z = (r() - 0.5) * 1.0; k.ball(0.16, x, 0.55 + r() * 0.15, z, i % 4 ? cols[i % 3] : '#4f8a3a', 1, 0.75, 1, 'lit', 5); }
+  },
+  tpole(k) {   // a telegraph pole along a country road
+    k.cyl(0.12, 0.16, 8.4, 6, 0, 0, 0, '#5d4a36').box(1.5, 0.12, 0.12, 0, 7.6, 0, '#5d4a36');
+    for (const x of [-0.6, 0, 0.6]) k.cyl(0.05, 0.05, 0.16, 5, x, 7.72, 0, '#e8e8e2');
+  },
+  windsurf(k, v) {   // a windsurfer out on the water: a white board, a bright sail leaning into the wind
+    const sail = [['#ff3b30', '#ffd60a'], ['#0a84ff', '#ffffff'], ['#34c759', '#ffd60a'], ['#ff2d92', '#5ac8fa']][v % 4];
+    k.box(0.6, 0.14, 2.7, 0, 0, 0, '#f4f6f8', 0, 0, 0, 'shiny');
+    k.side([0.2, 0.3, 0.1, 4.6, -1.9, 0.5], 0.04, 0, 0.1, 0, sail[0], 'lit');
+    k.side([0.1, 2.6, 0.1, 4.6, -0.9, 1.6], 0.05, 0.01, 0.1, 0, sail[1], 'lit');
+    k.box(0.05, 4.6, 0.05, 0, 0.12, 0.15, '#d8dade');
+    person(k, -0.3, 0.12, -0.3, rnd(7 + v), false);
+  },
+  bunting(k, v) {   // a string of bright pennants across the road between two white poles, sagging in the middle
+    const W = 14.6, cols = [['#e63946', '#ffffff', '#1d4ed8'], ['#ffd23f', '#e63946', '#2a9d8f', '#ffffff'], ['#ff7eb6', '#ffd23f', '#3ec1ff', '#7cff8a']][v % 3];
+    for (const sd of [-1, 1]) k.cyl(0.09, 0.12, 7.2, 6, sd * W, 0, 0, '#f2f2ee');
+    const N = 30;
+    for (let i = 0; i < N; i++) { const u = (i + 0.5) / N * 2 - 1, y = 6.9 - 1.6 * (1 - u * u), x = u * W;
+      k.put(new THREE.ConeGeometry(0.34, 0.66, 3), cols[i % cols.length], x, y - 0.36, 0, Math.PI, 0, 0, 1, 1, 0.12, 'lit'); }   // a pennant, facing along the road
+    for (let i = 0; i < N; i++) { const u0 = i / N * 2 - 1, u1 = (i + 1) / N * 2 - 1, y0 = 6.9 - 1.6 * (1 - u0 * u0), y1 = 6.9 - 1.6 * (1 - u1 * u1); k.box(Math.hypot(W * (u1 - u0), y1 - y0), 0.025, 0.025, (u0 + u1) / 2 * W, (y0 + y1) / 2, 0, '#2a2a2a', 0, 0, Math.atan2(y1 - y0, W * (u1 - u0))); }
+  },
+  chainferry(k) {   // a chain ferry across a harbour mouth: a flat open car deck, a raised ramp at each end, a cabin each side with
+    // the wheelhouse up on one, the chains running out fore and aft into the water (our own colours)
+    k.side([-15, -1.2, 15, -1.2, 15.5, 1.2, -15.5, 1.2], 15, 0, 0, 0, '#2d5f6e', 'lit', 0.15);
+    k.box(15.2, 0.12, 30.6, 0, 1.2, 0, '#e9ecee').box(9.6, 0.06, 30, 0, 1.32, 0, '#4a4f55');   // the deck, the road across it
+    for (const z of [-1, 1]) k.box(10, 0.3, 4.5, 0, 1.3, z * 17.3, '#3a3f45', 0, z * 0.32, 0).box(10.4, 0.5, 0.3, 0, 2.6, z * 19.1, '#d9a400', 0, z * 0.32, 0);   // the ramps
+    for (const sd of [-1, 1]) {
+      k.box(2.2, 2.6, 24, sd * 6.5, 1.3, 0, '#f2f4f5').box(2.3, 0.3, 24.2, sd * 6.5, 3.9, 0, '#2d5f6e');
+      for (let i = 0; i < 7; i++) k.box(0.06, 0.9, 1.6, sd * 7.62, 2.6, -9.6 + i * 3.2, '#2a3a48', 0, 0, 0, 'shiny');
+    }
+    k.box(2.6, 2.4, 6, 6.5, 4.2, 0, '#f2f4f5').box(2.7, 1.0, 6.1, 6.5, 5.4, 0, '#2a3a48', 0, 0, 0, 'shiny').box(2.9, 0.25, 6.3, 6.5, 6.6, 0, '#2d5f6e');   // the wheelhouse
+    for (const x of [-3.5, 3.5]) for (const z of [-1, 1]) k.box(0.18, 0.18, 30, x, -0.9, z * 31, '#2a2a2a', 0, z * -0.07, 0);   // the chains, down into the water
+  },
+  carferry(k) {   // a car ferry across the Solent: a long white hull with a navy band, an open car deck at the back, the bridge and
+    // passenger decks forward, a funnel (our own colours)
+    k.side([-30, -2.5, 28, -2.5, 33, 2.5, -32, 2.5], 16, 0, 0, 0, '#1f3a5f', 'lit', 0.2);
+    k.side([-31.6, 2.5, 32.6, 2.5, 33.4, 3.3, -32.2, 3.3], 16.2, 0, 0, 0, '#f4f6f8', 'lit', 0.1);
+    k.box(15.6, 0.12, 36, 0, 3.3, 12, '#4a4f55').box(0.15, 0.12, 30, 0, 3.43, 12, '#e8e2c8');   // the open car deck at the back, its lane line
+    for (const sd of [-1, 1]) k.box(0.3, 1.4, 36, sd * 7.85, 3.3, 12, '#f4f6f8').box(0.32, 0.12, 36, sd * 7.85, 4.7, 12, '#1f3a5f');   // its sides
+    k.box(15, 4.2, 22, 0, 3.3, -17, '#f4f6f8').box(13, 3.4, 16, 0, 7.5, -19, '#f4f6f8').box(10, 2.4, 7, 0, 10.9, -22, '#f4f6f8');   // the decks forward
+    for (const y of [4.6, 8.4]) for (const sd of [-1, 1]) for (let i = 0; i < 8; i++) k.box(0.08, 1.1, 1.8, sd * (y < 6 ? 7.52 : 6.52), y, -26 + i * 2.6, '#2a3a48', 0, 0, 0, 'shiny');
+    k.box(10.2, 1.0, 0.1, 0, 11.6, -25.55, '#22313f', 0, 0, 0, 'shiny');   // the bridge windows
+    k.cyl(1.6, 1.9, 5, 12, 0, 13.3, -16, '#1f3a5f').cyl(1.65, 1.65, 0.9, 12, 0, 17.4, -16, '#f2c230');   // the funnel
+    k.box(16, 0.2, 0.2, 0, 4.7, 30, '#1f3a5f').cyl(0.08, 0.08, 7, 5, 0, 13.3, -24, '#d8dade');
+  },
+  wight(k) {   // the Isle of Wight's west end from the sea: white chalk cliffs under green downs
+    const n0 = k.parts.lit ? k.parts.lit.length : 0;
+    k.blob(60, 0, -18, 0, '#f3eee4', 4.2, 0.9, 1.4, 141).blob(55, -60, -16, 30, '#efe9de', 3.2, 0.75, 1.2, 143);
+    for (let q = n0; q < k.parts.lit.length; q++) { const g = k.parts.lit[q], p = g.attributes.position, c = g.attributes.color;
+      for (let i = 0; i < p.count; i++) { const y = p.getY(i), f = 0.86 + 0.14 * Math.sin(y * 0.7 + p.getX(i) * 0.05); c.setXYZ(i, c.getX(i) * f, c.getY(i) * f, c.getZ(i) * f); } }
+    k.blob(58, 0, 14, 0, '#7a9a55', 4.25, 0.32, 1.42, 145).blob(52, -60, 10, 30, '#86a45c', 3.25, 0.3, 1.22, 147);
+  },
+  studland(k) {   // the Studland shore from the ferry: a long sandy beach, dunes and heath behind, the chalk headland beyond
+    k.blob(70, 0, -64, 0, '#ecd9a8', 4.5, 1, 1.2, 151).blob(60, 0, -44, -30, '#8a7a50', 4.2, 0.85, 1.0, 153).blob(50, 160, -36, -40, '#f1ece0', 1.6, 0.9, 1.0, 155).blob(50, 160, -22, -40, '#6f9a45', 1.62, 0.32, 1.02, 157);
+  },
   armco(k) { k.box(0.14, 0.75, 0.14, 0, 0, 0, '#9aa0a6').box(0.06, 0.32, 4.2, -0.05, 0.42, 0, '#e8ecef', 0, 0, 0, 'shiny'); },
   tuft(k, v) {   // grass and flowers by the road
     const col = ['#7cbf52', '#8ccf5a', '#6aaa48', '#a8c850', '#94c25a', '#78b04c'][v % 6];

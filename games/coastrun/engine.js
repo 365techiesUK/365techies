@@ -31,7 +31,7 @@
   var FA = 30, FB = 110, OFF0 = HALF, OFF_END = 130;   // a fork: FA segments widening, then FB of two roads parting
   var OFF2 = 2 * (OFF_END - OFF0) / Math.pow(FB * SEG, 2);   // how sharply each road of a split bends away (1/metres)
   var LEVELS = 5;                       // stretches in a run (the last one ends in a goal)
-  var TUN_W = HALF + RUMBLE + 0.6, BRG_W = HALF + 1.25;   // a tunnel's walls, a bridge's railings (metres from the middle)
+  var TUN_W = HALF + RUMBLE + 0.6, BRG_W = HALF + 1.25, VERGE = 14.2;   // (VERGE: the boundary along the land side of the road)   // a tunnel's walls, a bridge's railings (metres from the middle)
 
   function rnd(seed) {   // mulberry32: the same numbers every time for the same seed
     var a = seed >>> 0;
@@ -118,10 +118,12 @@
     var W = B.W, i = W.base + W.segs.length, s = { i: i, k: k, y1: 0, y2: 0, bank: 0, st: B.S.id, sea: 0, sh: 0, wl: 0, wr: 0, spr: null, coins: null, gate: null, fk: null };
     if (B.S.sea) {   // the shore wanders between right beside the road and well away from it
       if (B.k > B.S.len - 120) B.shT = 120;
-      else if (B.k >= B.nextSh) { B.shT = [16, 19, 24, 32, 48, 80][(B.rng() * 6) | 0]; B.nextSh = B.k + 90 + ((B.rng() * 120) | 0); }
+      else if (B.k >= B.nextSh) { B.shT = [14, 16, 17, 19, 22, 28, 44, 70][(B.rng() * 8) | 0]; B.nextSh = B.k + 90 + ((B.rng() * 120) | 0); }
       B.sh += clamp(B.shT - B.sh, -0.35, 0.35);
       s.sea = B.S.sea; s.sh = B.sh;
     }
+    if (B.cutN > 0) { B.cutN--; s.cut = B.cutSide; s.cutH = B.cutH * Math.min(1, Math.min(B.cutN, B.cutLen - B.cutN) / 14); }
+    else if (B.S.hilly >= 0.7 && B.k > 60 && B.k < B.S.len - 80 && B.rng() < 0.012) { B.cutLen = B.cutN = 50 + ((B.rng() * 70) | 0); B.cutSide = B.S.sea ? -B.S.sea : (B.rng() < 0.5 ? -1 : 2); B.cutH = 8 + B.rng() * 8; }
     if (B.wallL > 0) { s.wl = 10.5; B.wallL--; }
     if (B.wallR > 0) { s.wr = 10.5; B.wallR--; }
     if (extra) for (var key in extra) s[key] = extra[key];
@@ -202,13 +204,16 @@
   function land(s, x) { return !s.gate && !s.tun && !s.brg && (!s.sea || (x < 0 ? -1 : 1) !== s.sea || Math.abs(x) < s.sh - 2.5); }
   function water(s, x) { return (s.brg && Math.abs(x) > 14) || (s.sea && (x < 0 ? -1 : 1) === s.sea && Math.abs(x) > s.sh + 6); }
 
+  var FERRY = { 'sandbanks>swanage': { k: 'chain', dur: 270, title: 'ALL ABOARD!', sub: 'The chain ferry across to Studland', land: 'STUDLAND', landSub: 'On to Old Harry Rocks' },
+    'lymington>needles': { k: 'car', dur: 390, title: 'ALL ABOARD!', sub: 'The car ferry to the Isle of Wight', land: 'ISLE OF WIGHT', landSub: 'Off the ferry at Yarmouth' } };
   function buildStage(W, id) {
-    var S = STAGES[id], B = { W: W, S: S, rng: rnd(S.seed), k: 0, sh: S.sea ? 30 : 0, shT: 26, nextSh: 60, bends: [], wallL: 0, wallR: 0 };
+    var S = STAGES[id], prev = W.route && W.route.length && W.stretch.length ? STAGES[W.route[W.route.length - 1]].key : null, B = { W: W, S: S, rng: rnd(S.seed), k: 0, sh: S.sea ? 30 : 0, shT: 26, nextSh: 60, bends: [], wallL: 0, wallR: 0 };
     var s0 = W.base + W.segs.length, i, first = !W.stretch.length, rec = { id: id, from: s0, to: 0, fork: null, side: W.pendingSide || 0 };
     W.pendingSide = 0;
     for (i = 0; i < 40; i++) add(B, 0);   // the opening straight with its gate
     var gk = first ? 'start' : id === 0 ? 'round' : 'check';
     segAt(W, s0 + 8).gate = { kind: gk, st: id };
+    if (prev && FERRY[prev + '>' + S.key]) segAt(W, s0).ferry = FERRY[prev + '>' + S.key];   // across the water: the ferry first
     put(W, s0 + 8, 'gate', 0, 0, { v: gk === 'start' ? 0 : gk === 'round' ? 1 : 2 });
     if (gk === 'start') segAt(W, s0 + 5).line = true;
     while (B.k < S.len) {
@@ -571,9 +576,9 @@
   // ---------------------------------------------------------------- the player
   function roadHalf(g) { return g.fk && g.fk.a ? (g.fk.w1 + g.fk.w2) / 2 : HALF; }
   function edges(W, g) {   // how far the car can go each way: fields, walls, the sea wall, tunnel walls, railings and the barrier in a split
-    var lo = -26, hi = 26, F = W.fork;
-    if (g.fk && g.fk.a) { var w = roadHalf(g); lo = -(w + 18); hi = w + 18; }
-    if (g.fk && g.fk.b && F && F.s) { if (F.s > 0) lo = -(9.2 - CAR_W); else hi = 9.2 - CAR_W; }
+    var F = W.fork, open = g.gate, lo = open || g.sea < 0 ? -26 : -(VERGE - CAR_W), hi = open || g.sea > 0 ? 26 : VERGE - CAR_W;
+    if (g.fk && g.fk.a) { var w = roadHalf(g) + VERGE - HALF - CAR_W; lo = g.sea < 0 ? -26 - w : -w; hi = g.sea > 0 ? 26 + w : w; }
+    if (g.fk && g.fk.b && F && F.s) { if (F.s > 0) { lo = -(9.2 - CAR_W); if (g.sea <= 0) hi = VERGE - CAR_W; } else { hi = 9.2 - CAR_W; if (g.sea >= 0) lo = -(VERGE - CAR_W); } }
     if (g.sea && g.sh - 1.5 < 26) { if (g.sea < 0) lo = Math.max(lo, -(g.sh - 1.5)); else hi = Math.min(hi, g.sh - 1.5); }
     if (g.wl) lo = Math.max(lo, -(g.wl - CAR_W));
     if (g.wr) hi = Math.min(hi, g.wr - CAR_W);
@@ -638,6 +643,12 @@
       W.cars = W.cars.filter(function (c) { return !c.b || c.b === F.s; });
       W.cars.forEach(function (c) { c.b = 0; });
       F = null; nextFork(W, i);
+    }
+    if (g.ferry && !W.crash && !W.ferry) {
+      var fy = g.ferry; W.ferry = { k: fy.k, t: 0, dur: fy.dur, info: fy, th: 0 };
+      W.s = i * SEG + 0.5; W.x = 0; W.v = 0; W.psi = W.phi = 0; W.steer = 0; endDrift(W);
+      W.cars = W.cars.filter(function (c) { return c.s < W.s - 40 || c.s > W.s + 260; });   // the ramp clear
+      bannerOf(W, fy.title, fy.sub, 'stage'); W.events.push({ sfx: 'horn' }); mood(W, 'wave'); voice(W, 'wow', true);
     }
     if (g.gate) gate(W, g.gate);
     if (g.coins && !W.crash) for (j = 0; j < g.coins.length; j++) {
@@ -779,6 +790,12 @@
       W.rev = (inp.fire || inp.alt || inp.up) ? Math.min(1, (W.rev || 0) + 0.05) : Math.max(0, (W.rev || 0) - 0.03);
       W.h = heightAt(W, W.s);
       moveTraffic(W);
+      return;
+    }
+    if (W.ferry) {
+      var Fy = W.ferry; Fy.t++; W.v = 0; W.steer *= 0.8; W.h = heightAt(W, W.s); W.legT0++;
+      if (Fy.t === Fy.dur - 50) W.events.push({ sfx: 'horn' });
+      if (Fy.t >= Fy.dur) { W.ferry = null; W.v = 15; bannerOf(W, Fy.info.land, Fy.info.landSub, 'stage'); mood(W, 'cheer'); W.reqNext = Math.max(W.reqNext, W.t + 60 * 3); }
       return;
     }
     var score0 = W.score;
@@ -993,7 +1010,7 @@
   function mph(W) { return Math.round(W.v * 2.237); }
 
   return {
-    SEG: SEG, HALF: HALF, RUMBLE: RUMBLE, VMAX: VMAX, VIEW: VIEW, CAR_W: CAR_W, CAR_L: CAR_L, LANES: LANES, FA: FA, FB: FB, OFF0: OFF0, OFF_END: OFF_END, OFF2: OFF2,
+    SEG: SEG, HALF: HALF, RUMBLE: RUMBLE, VERGE: VERGE, VMAX: VMAX, VIEW: VIEW, CAR_W: CAR_W, CAR_L: CAR_L, LANES: LANES, FA: FA, FB: FB, OFF0: OFF0, OFF_END: OFF_END, OFF2: OFF2,
     LEVELS: LEVELS, TUN_W: TUN_W, BRG_W: BRG_W, PW: PW,
     STAGES: STAGES, VEH: VEH, CARS: CARS, DIFF: DIFF, REQ: REQ, rivalOf: rivalOf,
     newWorld: newWorld, step: step, hud: hud, mph: mph, autopilot: autopilot, peek: peek, topSpeed: topSpeed, buildStage: buildStage,
