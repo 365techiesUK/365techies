@@ -120,6 +120,7 @@
     var here = exact(s);
     if (plan) { var at = plan.at.indexOf(here); if (at >= 0 && at < plan.moves.length) return plan.moves[at]; }
     var r = solveFrom(s, 25000, 450);
+    if (r.gaveUp) r = solveFrom(s, 150000, 1600);   // a hard spot: one longer look before falling back (rare - about 1 deal in 50)
     if (r.won && r.moves.length) {
       var t = E.clone(s), at2 = [exact(t)];
       for (var i = 0; i < r.moves.length - 1; i++) { E.apply(t, r.moves[i]); at2.push(exact(t)); }
