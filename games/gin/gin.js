@@ -91,7 +91,7 @@
       { key: 'p0', x: L.gap, y: L.handY - (L.tall ? 38 : 44), html: '<span class="av">Y</span><span>You &middot; ' + S.scores[0] + (S.scores[0] === 1 ? ' point' : ' points') + '<small>Deadwood <b class="pts">' + you + '</b></small></span>', cls: 'you' + mini + (playing && S.turn === 0 ? ' turn' : '') },
       { key: 'p1', x: L.cx, y: Math.round(L.gap + L.ch * L.osc + 4), center: true, html: '<span class="av">S</span><span>' + OPP + ' &middot; ' + S.scores[1] + (S.scores[1] === 1 ? ' point' : ' points') + '<small>' + (shown ? 'Deadwood <b class="pts">' + (S.result.knocker === 1 ? S.result.kDead : S.result.dDead) + '</b>' : S.hands[1].length + ' cards') + '</small></span>', cls: mini + (playing && S.turn === 1 ? ' turn' : '') },
       { key: 'dk', x: L.stockX + L.cw / 2, y: L.rowY + L.ch + 4, center: true, html: 'Deck &middot; ' + S.stock.length, cls: 'tag' + mini },
-      { key: 'pl', x: L.pileX + L.cw / 2, y: L.rowY + L.ch + 4, center: true, html: 'Discard pile', cls: 'tag' + mini }
+      { key: 'pl', x: L.pileX + L.cw / 2, y: L.rowY + L.ch + 4, center: true, html: L.tall ? 'Discards' : 'Discard pile', cls: 'tag' + mini }   // (shorter on a phone: the two labels ran together)
     ];
     return playing ? out : out.slice(0, 2);
   }
@@ -136,6 +136,8 @@
     }
     if (!inHand) return inStock || onPile ? { say: 'You’ve taken a card – now throw one of yours away' } : null;
     if (S.took && S.took.from === 'pile' && c === S.took.c) return { say: 'You can’t throw back the card you just took from the pile' };
+    // the card the Hint said to knock with: a tap knocks (it used to just throw the card away - critic 4)
+    if (U.knockHint === c && E.knockable(S, 0).some(function (o) { return o.c === c; })) { U.knockHint = null; U.knock = false; return { m: { t: 'knock', c: c } }; }
     if (U.knock) {
       var ok = E.knockable(S, 0).filter(function (o) { return o.c === c; })[0];
       if (!ok) return { say: 'Knocking with that card leaves more than 10 deadwood – tap a glowing one' };
@@ -192,8 +194,9 @@
   // 5 Oct 2026; critic: 10 of 27 hinted discards were picked straight up by Sam)
   function risky(S, c) { return (S.picked[1] || []).some(function (p) { return E.rank(p) === E.rank(c) || (E.suit(p) === E.suit(c) && Math.abs(E.rank(p) - E.rank(c)) <= 2); }); }
   function fits(h, c) { return h.some(function (x) { return x !== c && (E.rank(x) === E.rank(c) || (E.suit(x) === E.suit(c) && Math.abs(E.rank(x) - E.rank(c)) <= 2)); }); }
-  function hintShow(S, m) {
+  function hintShow(S, m, U) {
     var h = S.hands[0];
+    if (U) U.knockHint = m.t === 'knock' ? m.c : null;   // a tap on that card now knocks with it (critic 4)
     if (m.t === 'discard') {
       var c = m.c, opts = E.discards(S, 0).filter(function (o) { return E.canThrow(S, 0, o.c); }), mine = opts.filter(function (o) { return o.c === c; })[0];
       if (mine && risky(S, c)) {
@@ -205,7 +208,7 @@
     if (m.t === 'draw' && m.from === 'pile') { var pc = S.pile[S.pile.length - 1]; return { cards: [pc], say: 'Take the ' + cname(pc) + ' from the pile – it ' + (fits(h, pc) ? 'goes with cards in your hand' : 'lowers your deadwood') }; }
     if (m.t === 'draw') { var tp = S.pile[S.pile.length - 1]; return { cards: [S.stock[S.stock.length - 1]], say: 'Take the top card of the deck' + (tp != null ? ' – the ' + cname(tp) + ' on the pile doesn’t help you' : '') }; }
     if (m.t === 'draw') return m.from === 'pile' ? { cards: [S.pile[S.pile.length - 1]], say: 'Take the ' + cname(S.pile[S.pile.length - 1]) + ' from the pile' } : { cards: [S.stock[S.stock.length - 1]], say: 'Take a card from the deck' };
-    if (m.t === 'knock') return { cards: [m.c], say: 'Knock now, throwing away the ' + cname(m.c) + ' – your deadwood is low enough to win the hand' };
+    if (m.t === 'knock') return { cards: [m.c], say: 'Knock now: tap the ' + cname(m.c) + ' to knock with it – your deadwood is low enough to win the hand' };
     return { cards: [m.c], say: 'Throw away the ' + cname(m.c) };
   }
 
@@ -232,7 +235,7 @@
       hint: function (lv) { return lv <= 3; }
     },
     layout: layout, positions: positions, plates: plates, panel: panel, tap: tap, press: press, wait: wait, fx: fx,
-    commits: function (S) { return S.phase === 'discard'; },   // a tap throws the card away (rivals.js lifts it first on a phone)
+    commits: function (S) { return S.phase === 'discard'; }, liftWord: 'throw it away',   // a tap throws the card away (rivals.js lifts it first on a phone)
     panelAt: function (S, L) { return S.result && (S.phase === 'handEnd' || S.phase === 'over') ? L.panelEnd : L.panel; },
     over: function (S) { return S.phase === 'over'; }, result: result, chips: chips, dealOrder: dealOrder, hintShow: hintShow,
     newHand: function (S, U) { U.knock = false; },

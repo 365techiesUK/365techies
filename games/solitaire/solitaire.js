@@ -170,7 +170,7 @@
       '<b>Tap the deck</b> at the top left to turn over new cards. When it&rsquo;s empty, tap it to start again.',
       '<b>Pick how hard</b> under <b>New game</b>: <b>Easy</b> turns one card at a time; <b>Normal</b> turns three; <b>Hard</b> lets you go through the deck only three times, with no Hint; <b>Expert</b> only once, with no Undo or Hint. Harder levels score more.',
       '<b>Only a King</b> can go in an empty column.',
-      'Stuck? Press <b>Hint</b> and the next move lights up. <b>Undo</b> takes back as many moves as you like (on Easy and Normal).'
+      'Stuck? Press <b>Hint</b> (on Easy and Normal) and the next move lights up. <b>Undo</b> takes back as many moves as you like, on every level but Expert.'
     ]
   });
 })();

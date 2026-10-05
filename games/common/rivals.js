@@ -171,7 +171,7 @@
       if (!narrow) { unlift(); return false; }
       unlift(); lifted = c; el.classList.add('lift'); sfx('lift');
       var f = D.face(c), tips = +(load('lifttips', 0) || 0);   // the tip only the first three times (critic 3: up to 13 a hand)
-      if (tips < 3) { say('Tap the ' + T.cardName(f.r, f.s) + ' again to play it', 'tip'); save('lifttips', tips + 1); }
+      if (tips < 3) { say('Tap the ' + T.cardName(f.r, f.s) + ' again to ' + (D.liftWord || 'play it'), 'tip'); save('lifttips', tips + 1); }
       liftT = setTimeout(unlift, 6000);
       return true;
     }
@@ -578,7 +578,7 @@
     });
     function openNew() {
       var inPlay = G && G.started && !D.over(S), dd = ST.daily[today()];
-      $('dNewNote').textContent = jLevel() && !G.jRes ? 'Leave this Journey level? You can play it again from the map.' : inPlay && !jLevel() ? 'The match you’re playing will count as not won.' : 'Choose how good the other players are, then deal.';
+      $('dNewNote').textContent = jLevel() && !G.jRes ? 'Leave this Journey level? You can play it again from the map.' : inPlay && !jLevel() ? 'The match you’re playing will count as not won.' : 'Choose a level, then deal.';
       $('nDailyS').textContent = (dd ? 'Done today ✔ — play it again if you like' : 'The same cards for everyone today') + (D.hof ? ' · race the Hall of Fame' : '');
       $('nAgainS').textContent = 'Match #' + S.seed + ', from the first hand';
       syncControls(); openD('dNew');
@@ -587,7 +587,7 @@
     function openStats() {
       var rate = ST.played ? Math.round(100 * ST.won / ST.played) + '%' : '–', days = 0, k;
       for (k in ST.daily) if (ST.daily[k]) days++;
-      $('sTiles').innerHTML = tile(ST.won, 'Matches won') + tile(rate, 'Win rate') + tile(ST.played, 'Matches played') + tile(ST.streak, 'Winning run') + tile(ST.bestStreak, 'Longest run') + tile(days, 'Today’s matches played');
+      $('sTiles').innerHTML = tile(ST.won, 'Matches won') + tile(rate, 'Win rate') + tile(ST.played, 'Matches played') + tile(ST.streak, 'Winning streak') + tile(ST.bestStreak, 'Longest streak') + tile(days, 'Today’s matches played');
       var out = '';
       LVS.options.forEach(function (o, n) {
         var b = ST.best['v' + o[0]];
@@ -771,7 +771,7 @@
         + tb('bShare', 'share', 'Share', 'Share this game with a friend', 'tb2 tbx') + tb('bFeed', 'feedback', 'Feedback', 'Tell us what you think, or ask for a new game', 'tb2 tbx') + tb('bFull', 'full', 'Full screen', 'Full screen (F)', 'tb2 tbx') + tb('bMore', 'more', 'More', 'More: my scores, settings, share, feedback', 'tbmore') + '</nav></header>'
         + '<main id="board" aria-label="The card table"><div id="rvPanel" hidden></div></main></div>'
         + '<div id="toast" role="status" aria-live="polite"></div><canvas id="spark" aria-hidden="true"></canvas><div id="winBig" hidden aria-hidden="true"></div>'
-        + sheet('dNew', 'New game', '<p class="soft" id="dNewNote"></p><div class="lvls" role="group" aria-label="How good the other players are">' + lvls + '</div>'
+        + sheet('dNew', 'New game', '<p class="soft" id="dNewNote"></p><div class="lvls" role="group" aria-label="Level">' + lvls + '</div>'
           + '<div class="choice"><button class="btn go" type="button" id="nDeal">New match<small>Fresh cards</small></button>'
           + '<button class="btn" type="button" id="nDaily">Today&rsquo;s match<small id="nDailyS">The same cards for everyone today</small></button>'
           + '<button class="btn" type="button" id="nAgain">Play this match again<small id="nAgainS"></small></button></div>'
@@ -786,7 +786,7 @@
         + sheet('dSet', 'Settings', '<div class="set"><div><label>How fast the others play</label><small>Slow gives you time to watch every card.</small></div><div class="seg" role="group" aria-label="How fast the others play"><button type="button" data-speed="1">Slow</button><button type="button" data-speed="2">Normal</button><button type="button" data-speed="3">Quick</button></div></div>'
           + sw('sound', 'Sounds', 'Soft card sounds and chimes.') + sw('fx', 'Extra effects', 'Sparkles and fireworks when you win. Switch off on a slower computer.')
           + '<div class="set"><div><label for="sWin">Win celebration</label><small>Surprise me picks a different one each time.</small></div><div class="wincel"><select id="sWin">' + T.FINALE_NAMES.map(function (o) { return '<option value="' + o[0] + '">' + o[1] + '</option>'; }).join('') + '</select><button class="btn" type="button" id="sWinTry">Watch</button></div></div>'
-          + (window.Looks ? '<div class="set"><div><label>Table and card backs</label><small>Twelve of each &ndash; the specials are won with Journey stars.</small></div><button class="btn lkbtn" type="button" id="sLooks"><span class="lkpv" id="sLookPv"><i></i></span>Choose</button></div>' : ''
+          + (window.Looks ? '<div class="set"><div><label>Tables and card backs</label><small>Twelve of each &ndash; the specials are won with Journey stars.</small></div><button class="btn lkbtn" type="button" id="sLooks"><span class="lkpv" id="sLookPv"><i></i></span>Choose</button></div>' : ''
             + '<div class="set"><div><label>Table</label></div><div class="felts" role="group" aria-label="Table"><button type="button" data-felt="green" style="background:#1f7a45" aria-label="Green baize"></button><button type="button" data-felt="blue" style="background:#1f5f9c" aria-label="Blue"></button><button type="button" data-felt="red" style="background:#8e2537" aria-label="Red"></button><button type="button" data-felt="slate" style="background:#45526a" aria-label="Grey"></button>'
           + '<button type="button" data-felt="oak" style="background:repeating-linear-gradient(91deg,#6b4220 0 3px,#7a4c26 3px 6px)" aria-label="Oak table"></button><button type="button" data-felt="night" style="background:radial-gradient(#2a3670,#060918)" aria-label="Night"></button></div></div>'
           + '<div class="set"><div><label>Card backs</label></div><div class="backs" role="group" aria-label="Card backs"><button type="button" data-back="navy" style="background:linear-gradient(155deg,#17447a,#0a2245)" aria-label="365 navy"></button><button type="button" data-back="royal" style="background:linear-gradient(155deg,#8e1d2c,#4a0712)" aria-label="Royal red"></button><button type="button" data-back="sea" style="background:linear-gradient(180deg,#ff9a6a,#ffcf8a 30%,#2aa3c4 52%,#0b5e86)" aria-label="Seaside"></button></div></div>')

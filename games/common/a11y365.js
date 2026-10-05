@@ -50,14 +50,16 @@
 
   // the Settings row: Text size (four steps), High contrast, Less movement (the last needs a reload to take full hold -
   // the cards' movement is decided when the game starts - so the switch says so)
-  function mount(into) {
+  function mount(into, opt) {
+    opt = opt || {};
     if (!into || into.querySelector('.a11y365')) return;
     var box = document.createElement('div'); box.className = 'a11y365';
     box.innerHTML = '<div class="a11y-row"><b>Text size</b><div class="a11y-seg" role="group" aria-label="Text size">'
       + ['A', 'A+', 'A++', 'A+++'].map(function (l, i) { return '<button type="button" data-a11y-text="' + i + '" aria-label="' + ['Normal', 'Large', 'Larger', 'Largest'][i] + ' text">' + l + '</button>'; }).join('') + '</div></div>'
       + '<div class="a11y-row"><b>High contrast</b><button type="button" class="a11y-tog" role="switch" data-a11y="contrast">Off</button></div>'
-      + '<div class="a11y-row"><span><b>Less movement</b><br><small>Cards jump instead of flying</small></span><button type="button" class="a11y-tog" role="switch" data-a11y="reduce">Off</button></div>';
-    var close = into.querySelector('.row:last-child'); into.insertBefore(box, close && close.parentNode === into ? close : null);
+      + '<div class="a11y-row"><span><b>Less movement</b><br><small>' + (opt.reduceText || 'Cards jump instead of flying') + '</small></span><button type="button" class="a11y-tog" role="switch" data-a11y="reduce">Off</button></div>';
+    var foot = into.querySelector('.foot'), close = into.querySelector('.row:last-child');   // (before the made-by line - critic 4)
+    into.insertBefore(box, foot && foot.parentNode === into ? foot : close && close.parentNode === into ? close : null);
     function show() {
       var s = get();
       [].forEach.call(box.querySelectorAll('[data-a11y-text]'), function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-a11y-text') === (+s.text || 0))); });

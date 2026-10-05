@@ -360,7 +360,7 @@
     // the game's name is the page's heading (games audit, 5 Oct 2026); on a phone the bar shows only the 365 badge, so
     // the name stays there for screen readers instead of display:none; the keys line goes on touch-only devices
     + 'h1.brand{margin:0}'
-    + '.card.kbd,.slot.kbd{outline:3px solid #ffd54a;outline-offset:3px;border-radius:9px}#board:focus-visible{outline:2px dashed rgba(255,213,74,.5);outline-offset:-6px}'
+    + '.card.kbd,.slot.kbd{outline:3px solid #ffd54a;outline-offset:3px;border-radius:9px}#board:focus,#board:focus-visible{outline:none}.kbd-nav #board:focus-visible{outline:2px dashed rgba(255,213,74,.5);outline-offset:-6px}'
     // a hand fanned out shows only each card's left edge, so the games against the computer put the suit under the
     // rank as well, like a real card's corner (games audit, 5 Oct 2026; critic: Q of spades and Q of clubs looked the same)
     + '.su2{display:none;position:absolute;z-index:2;left:6%;top:calc(2.5% + var(--cw) * .33);font:calc(var(--cw) * .18) / 1 "Segoe UI Symbol","Apple Symbols",Archivo,sans-serif;text-shadow:0 1px 0 #fff,0 0 3px #fff,0 0 2px #fff}.rv365 .su2{display:block}.rv365 .pips{left:25%;right:25%;top:36%}'
@@ -374,6 +374,9 @@
     + '#board.tiny .pips{display:none}#board.tiny .su2{display:block!important;left:50%;top:58%;transform:translate(-50%,-50%);font-size:calc(var(--cw) * .62);text-shadow:none}'
     + '#board.tiny .r1 .su2,#board.tiny .r11 .su2,#board.tiny .r12 .su2,#board.tiny .r13 .su2{display:none!important}'
     + '@media (max-height:520px){.bar{padding-top:4px!important;padding-bottom:4px!important;gap:4px 10px}.tb,.tb.tb2,.tb.tb3{min-height:40px!important}.brand b{width:30px;height:30px}}'   // (a short screen: a slimmer bar leaves the cards more room)
+    + '[hidden]{display:none!important}'   // (a .btn display rule beat hidden: 'Today’s deal' stayed on the win sheet - critic 4)
+    + '#toast{width:max-content}'   // (centred at 50%, it shrank to half the screen: phone messages ran to 5 lines)
+    + '@media (max-width:340px){.rv365 .rv-plate:not(.you) small{display:none}}'   // (320 px: the side seats' lines overlapped)
     + '.sr365{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}'
     // the bar (games audit, 5 Oct 2026; critic: on a phone nine bare icons meant nothing to a first-timer): the game's
     // name shows and opens the Games list; on a phone the main buttons carry a word and the rest live under More
@@ -1341,7 +1344,7 @@
       var dash = function (v, f) { return v == null ? '–' : (f ? f(v) : v); }, sec = function (s) { return clock(s * 1000); }, out = '';
       var opts = V ? V.options : [[0, '']];
       opts.forEach(function (o, n) {
-        var b = ST.best[vKey(o[0])] || {}, lab = V ? ', ' + (V.bestLabel ? V.bestLabel(o[0]) : o[1].toLowerCase()) : '';
+        var b = ST.best[vKey(o[0])] || {}, lab = V ? ', ' + (V.bestLabel ? V.bestLabel(o[0]) : o[1]) : '';
         if (n > 0 && b.time == null) return;   // the other options only once they have a win
         out += tile(dash(b.time, sec), 'Fastest win' + lab) + tile(dash(b.moves), 'Fewest moves' + lab) + tile(dash(b.score), 'Best score' + lab);
       });
@@ -1553,7 +1556,7 @@
           + '<ul class="badges" id="wBadges"></ul><div id="wJour" hidden></div><div id="wHof" hidden></div><div class="row"><button class="btn go wide" type="button" id="wAgain">Play again</button><button class="btn wide" type="button" id="wShare">Challenge a friend</button><button class="btn wide" type="button" id="wDaily">Today&rsquo;s deal</button><button class="btn wide" type="button" id="wStats">My scores</button></div>')
         + sheet('dSprint', 'Time\u2019s up!', '<p class="soft" id="spSub"></p><div class="tiles"><div class="tile"><b id="spCards">0</b><span>Cards up</span></div></div><div id="spHof"></div>'
           + '<div class="row"><button class="btn go wide" type="button" id="spNew">New game</button><button class="btn wide" type="button" id="spHofB">Hall of Fame</button></div>')
-        + sheet('dStats', 'My scores', (D.hof ? '<button class="btn hofbtn wide" type="button" id="sHof" style="width:100%;margin:2px 0 12px">&#127942; The Hall of Fame<small>Today&rsquo;s fastest, this week&rsquo;s best, all time</small></button>' : '') + '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere.</p><div class="tiles" id="sTiles"></div><h3 style="margin:16px 0 0;font-size:18px">Today&rsquo;s deal this week</h3><div class="week" id="sWeek"></div><div class="tiles" id="sBest"></div>'
+        + sheet('dStats', 'My scores', (D.hof ? '<button class="btn hofbtn wide" type="button" id="sHof" style="width:100%;margin:2px 0 12px">&#127942; The Hall of Fame<small>Today&rsquo;s fastest, this week&rsquo;s best, all time</small></button>' : '') + '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere unless you join the Hall of Fame.</p><div class="tiles" id="sTiles"></div><h3 style="margin:16px 0 0;font-size:18px">Today&rsquo;s deal this week</h3><div class="week" id="sWeek"></div><div class="tiles" id="sBest"></div>'
           + '<div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>')
         + sheet('dSet', 'Settings', (V ? '<div class="set"><div><label>' + esc(V.label) + '</label><small>' + esc(V.small || 'Changes from your next game.') + '</small></div><div class="seg" role="group" aria-label="' + esc(V.label) + '">' + v + '</div></div>' : '')
           + (D.deals ? sw('winnable', 'Deals you can always win', D.winnableSmall || 'Every deal has been played through to a win.') : '')
@@ -1561,7 +1564,7 @@
           + sw('sound', 'Sounds', 'Soft card sounds and chimes.') + sw('timer', 'Show the clock', 'It still keeps your best time.')
           + sw('fx', 'Extra effects', 'Sparkles, cards that lift as they move, fireworks when you win. Switch off on a slower computer.')
            + '<div class="set"><div><label for="sWin">Win celebration</label><small>Surprise me picks a different one each time.</small></div><div class="wincel"><select id="sWin">' + Table365.FINALE_NAMES.map(function (o) { return '<option value="' + o[0] + '">' + o[1] + '</option>'; }).join('') + '</select><button class="btn" type="button" id="sWinTry">Watch</button></div></div>'
-          + (window.Looks ? '<div class="set"><div><label>Table and card backs</label><small>Twelve of each &ndash; the specials are won with Journey stars.</small></div><button class="btn lkbtn" type="button" id="sLooks"><span class="lkpv" id="sLookPv"><i></i></span>Choose</button></div>' : ''
+          + (window.Looks ? '<div class="set"><div><label>Tables and card backs</label><small>Twelve of each &ndash; the specials are won with Journey stars.</small></div><button class="btn lkbtn" type="button" id="sLooks"><span class="lkpv" id="sLookPv"><i></i></span>Choose</button></div>' : ''
             + '<div class="set"><div><label>Table</label></div><div class="felts" role="group" aria-label="Table"><button type="button" data-felt="green" style="background:#1f7a45" aria-label="Green baize"></button><button type="button" data-felt="blue" style="background:#1f5f9c" aria-label="Blue"></button><button type="button" data-felt="red" style="background:#8e2537" aria-label="Red"></button><button type="button" data-felt="slate" style="background:#45526a" aria-label="Grey"></button>'
           + '<button type="button" data-felt="oak" style="background:repeating-linear-gradient(91deg,#6b4220 0 3px,#7a4c26 3px 6px)" aria-label="Oak table"></button><button type="button" data-felt="night" style="background:radial-gradient(#2a3670,#060918)" aria-label="Night"></button></div></div>'
           + '<div class="set"><div><label>Card backs</label></div><div class="backs" role="group" aria-label="Card backs"><button type="button" data-back="navy" style="background:linear-gradient(155deg,#17447a,#0a2245)" aria-label="365 navy"></button><button type="button" data-back="royal" style="background:linear-gradient(155deg,#8e1d2c,#4a0712)" aria-label="Royal red"></button><button type="button" data-back="sea" style="background:linear-gradient(180deg,#ff9a6a,#ffcf8a 30%,#2aa3c4 52%,#0b5e86)" aria-label="Seaside"></button></div></div>')
@@ -1584,6 +1587,10 @@
   // now, and Enter plays the ringed card exactly as a tap would. A screen reader hears each card's name (the cards
   // themselves stay hidden from it - they're pictures). o.list() -> [{c, el, x, y, name}], o.play(item), o.busy().
   var RANKW = ['', 'Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King'], SUITN = ['spades', 'hearts', 'diamonds', 'clubs'];
+  // keyboard or pointer: the table's focus marks only for someone using the keyboard (critic 4: the first How to play,
+  // closed with a tap, left a dashed frame round the whole table)
+  document.addEventListener('keydown', function (e) { if (/^(Tab|Arrow|Enter|Escape)/.test(e.key)) document.documentElement.classList.add('kbd-nav'); }, true);
+  document.addEventListener('pointerdown', function () { document.documentElement.classList.remove('kbd-nav'); }, true);
   function cardName(r, s) { return RANKW[r] + ' of ' + SUITN[s]; }
   function kbd(board, o) {
     var live = document.createElement('div'); live.className = 'sr365'; live.setAttribute('aria-live', 'polite'); document.body.appendChild(live);
@@ -1607,7 +1614,7 @@
       return list;
     }
     function after(fn, n) { n = n || 0; if (o.busy() && n < 40) setTimeout(function () { after(fn, n + 1); }, 100); else fn(); }
-    board.addEventListener('focus', function () { if (board.matches && !board.matches(':focus-visible')) return; on = true; refresh(true); });
+    board.addEventListener('focus', function () { if (!document.documentElement.classList.contains('kbd-nav')) return; on = true; refresh(true); });
     board.addEventListener('blur', function () { on = false; ring(cur); });
     board.addEventListener('pointerdown', function () { on = false; ring(cur); });   // a mouse or a finger: no ring
     board.addEventListener('keydown', function (e) {

@@ -22,7 +22,7 @@
   function layout(W, H) {
     var gap = Math.max(5, Math.min(14, Math.round(W * 0.009)));
     var byW = (W - gap * 11) / 10, byH = (H - gap * 3) / 4.6 / 1.4;
-    var cw = Math.max(28, Math.floor(Math.min(byW, byH, 150))), ch = Math.round(cw * 1.4);
+    var cw = Math.max(Math.min(28, Math.floor(byW)), Math.floor(Math.min(byW, byH, 150))), ch = Math.round(cw * 1.4);   // (never wider than the screen)
     var L = { cw: cw, ch: ch, gap: gap, W: W, H: H, left: Math.round((W - (10 * cw + 9 * gap)) / 2), top: gap, tabY: gap + ch + Math.round(gap * 1.8) };
     L.slots = [{ key: 'stock', x: colX(L, 0), y: L.top, cls: 'stock', text: '' }];
     for (var d = 0; d < 8; d++) L.slots.push({ key: 'd' + d, x: colX(L, 2 + d), y: L.top, cls: 'done', text: 'K–A' });

@@ -284,7 +284,7 @@
       '<b>Points:</b> 10, 20 or 30 for an invader (the higher up, the more) and 50 to 300 for the red mystery ship across the top. An extra life at 1,500 points.',
       '<b>Capsules</b> sometimes fall when an invader is hit. Catch one with your ship: <b>R</b> rapid fire (two quicker shots), <b>S</b> spread shot (three at once), <b>+</b> a shield bubble that takes one hit.',
       '<b>Combos:</b> hit six in a row without missing for double points, then triple and four times. A miss starts it again.',
-      '<b>The Mothership</b> arrives every fifth wave. Keep hitting it &mdash; watch its bar at the top. A wave cleared without losing a ship is worth 500 more, and there is an extra life every 5,000 points.',
+      '<b>The Mothership</b> arrives every fifth wave. Keep hitting it &mdash; watch its bar at the top. A wave cleared without losing a ship is worth 500 more, and after the first extra life there is another every 5,000 points.',
       '<b>Settings:</b> <b>Speed</b> &mdash; Gentle is slower with five lives, Classic is the old arcade pace, Fast is for experts. <b>Game</b> &mdash; Enhanced, or Retro for the plain game without the extras.',
       '<b>P</b> pauses. The game also pauses itself if you click away to another window.'
     ]

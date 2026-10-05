@@ -354,6 +354,7 @@
         + '@media (max-width:520px){.legend{grid-template-columns:auto auto;column-gap:18px}.ovbox p{margin:5px 0}.ovbox .trow #tPlay{flex:1 1 58%}.ovbox .trow #tHof{flex:0 1 auto;font-size:14px;padding:0 9px}}'
         + '@media (max-height:520px){.bar{padding-top:4px!important;padding-bottom:4px!important;gap:4px 10px}.tb,.tb.tb2,.tb.tb3{min-height:40px!important}.brand b{width:30px;height:30px}}'
         + '@media (max-height:520px){.legend{display:none}.ovbox h1{font-size:24px;margin-bottom:4px}.ovbox .btn.big{min-height:50px}}'   // (a short screen: Play in view without scrolling the box)
+        + '[hidden]{display:none!important}'   // (the step-up button stayed after moving up - critic 4)
         + '@media (prefers-reduced-motion:reduce){.arc-ban,.arc-ban b,.arc-ban.out,.ovbox .arc-new,.ovbox .tile b.bump{animation:none}}';
       document.head.appendChild(st);
     })();
@@ -534,13 +535,23 @@
       $('sWhich').textContent = D.styleName ? ' Best scores shown for the ' + D.styleName(SET) + ' game (change it in Settings).' : '';
       openD('dStats');
     }
-    $('bNew').onclick = function () { begin(); };
+    // New game while a game is going asks first (critic 4: one press threw away a score of 2,500 without a word)
+    var againWas = '';
+    $('bNew').onclick = function () {
+      var sc = W && !W.over && (mode === 'play' || mode === 'paused') ? D.hud(W).score : 0;
+      if (!sc) { begin(); return; }
+      againWas = mode; if (mode === 'play') pause();
+      $('agScore').textContent = sc.toLocaleString('en-GB'); openD('dAgain');
+    };
+    $('agYes').onclick = function () { againWas = ''; closeSheets(); begin(); };
+    $('agNo').onclick = function () { closeSheets(); if (againWas === 'play') resume(); againWas = ''; };
+
     $('bPause').onclick = togglePause;
     $('bStats').onclick = openStats;
     $('bSet').onclick = function () { sync(); openD('dSet'); };
     $('bHelp').onclick = function () { openD('dHelp'); };
     // the site's Text size / High contrast / Reduce motion, in Settings too (a11y365.js; games audit, 5 Oct 2026)
-    if (window.A11y365) { A11y365.mount($('dSet').querySelector('.sheet')); A11y365.onReduce = function (on) { calm = on || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); }; }
+    if (window.A11y365) { A11y365.mount($('dSet').querySelector('.sheet'), { reduceText: 'Fewer sparks and screen effects' }); A11y365.onReduce = function (on) { calm = on || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); }; }
     // More (phones): the bar's tucked-away buttons, as big buttons with words (games audit, 5 Oct 2026)
     $('bMore').onclick = function () {
       $('moreL').innerHTML = ['bStats', 'bSet', 'bShare', 'bFeed', 'bFull'].filter(function (id) { return $(id) && !$(id).hidden && !$(id).getClientRects().length; }).map(function (id) {
@@ -631,7 +642,7 @@
         + '</div><div class="pad" id="pad">' + (D.pad ? D.pad.map(function (b) { return '<button type="button" data-pad="' + b.act + '" class="' + (b.cls || '') + '">' + esc(b.label) + '</button>'; }).join('')
           : '<button type="button" data-pad="left" aria-label="Move left">&#9664;</button><button type="button" data-pad="fire" class="fire">Fire</button><button type="button" data-pad="right" aria-label="Move right">&#9654;</button>') + '</div>'
         + '</main></div><div id="toast" role="status" aria-live="polite"></div>'
-        + sheet('dStats', 'My scores', '<p class="soft">Kept on this computer only. The Hall of Fame shows only the scores you choose to put in it.<span id="sWhich"></span></p><div class="tiles" id="sTiles"></div><div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn wide hofb" type="button" id="sHof">&#127942; Hall of Fame</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>')
+        + sheet('dStats', 'My scores', '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere unless you join the Hall of Fame.<span id="sWhich"></span></p><div class="tiles" id="sTiles"></div><div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn wide hofb" type="button" id="sHof">&#127942; Hall of Fame</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>')
         + sheet('dSet', 'Settings', '<div class="set"><div><label>Speed</label><small>Gentle is slower, with more lives. Changes from your next game.</small></div><div class="seg" role="group" aria-label="Speed">' + speeds + '</div></div>'
           + segRows
           + '<div class="set"><div><label id="l_sound">Sounds</label><small>Arcade sound effects, made in the game.</small></div><button class="sw" type="button" role="switch" aria-labelledby="l_sound" data-set="sound"></button></div>'
@@ -639,7 +650,8 @@
           + '<p class="foot">' + esc(D.title) + ' is made by <a href="https://365techies.co.uk/" target="_blank" rel="noopener">365 Techies</a> in Bournemouth. No adverts, no sign-in, nothing to install. Computer playing up? Ring us on <b>01202 775566</b>.</p>'
           + '<div class="row"><button class="btn go wide" type="button" data-close>Done</button></div>')
         + sheet('dMore', 'More', '<div class="morel" id="moreL"></div>')
-        + sheet('dHelp', 'How to play', '<ol class="how">' + (D.help || []).map(function (h) { return '<li>' + h + '</li>'; }).join('') + '</ol><div class="row"><button class="btn go wide" type="button" data-close>Got it</button></div>')
+        + sheet('dAgain', 'Start again?', '<p>Your score of <b id="agScore"></b> in this game won&rsquo;t count.</p><div class="row"><button class="btn wide" type="button" id="agNo">Keep playing</button><button class="btn go wide" type="button" id="agYes">Start again</button></div>')
+        + sheet('dHelp', 'How to play', '<ol class="how">' + (D.help || []).map(function (h) { return '<li>' + h + '</li>'; }).join('') + '</ol><div class="row"><button class="btn go wide" type="button" data-close>Let&rsquo;s play</button></div>')
         + sheet('dReset', 'Clear my scores?', '<p>Your scores for ' + esc(D.title) + ' on this computer go back to nothing. This can&rsquo;t be undone.</p><div class="row"><button class="btn wide" type="button" data-close>Keep them</button><button class="btn go wide danger" type="button" id="rYes">Clear them</button></div>');
       var holder = document.createElement('div'); holder.innerHTML = html;
       var frag = document.createDocumentFragment(); while (holder.firstChild) frag.appendChild(holder.firstChild);

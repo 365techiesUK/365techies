@@ -147,7 +147,7 @@
       '<b>Pick how hard</b> under <b>New game</b>: <b>Easy</b> has Hint; <b>Normal</b> has none; <b>Hard</b> gives you only three free cells and <b>Expert</b> two, with no Undo. Harder levels score more.',
       '<b>Any card</b> can go in an empty column. Several cards in order move together when there is room to do it.',
       '<b>Tap a card</b> and it goes to the best place for it &mdash; a free cell if nothing else fits. Dragging works too.',
-      'Stuck? Press <b>Hint</b>. <b>Undo</b> takes back as many moves as you like.'
+      'Stuck? Press <b>Hint</b> (on Easy). <b>Undo</b> takes back as many moves as you like, on every level but Expert.'
     ]
   });
 })();

@@ -386,11 +386,11 @@ _FAQS = [
     ("What are the daily challenges?",
      "Every card game has a new deal each day &mdash; Today&rsquo;s deal, or Today&rsquo;s match in Hearts, Gin Rummy, Cribbage and Whist &mdash; with the same cards for everyone. Win it to tick it off for the day; the Daily challenges tile on this page shows how many you&rsquo;ve done and how many days in a row."),
     ("What is the Journey?",
-     "Every card game has one: 100 levels in ten chapters, each named after a real Dorset place &mdash; along the coast, round Poole Harbour, through the old market towns. Every level is a set deal with three stars to win, and every star has been checked to be possible. In Hearts, Gin Rummy, Cribbage and Whist a level is a single hand against the computer."),
+     "Every card game has one: 100 levels in ten chapters, each named after a real place in Dorset or the New Forest &mdash; along the coast, round Poole Harbour, through the old market towns and the Forest. Every level is a set deal with three stars to win, and every star has been checked to be possible. In Hearts, Gin Rummy, Cribbage and Whist a level is a single hand against the computer."),
     ("Can I change how the cards look?",
      "Yes. In any card game, open Settings and choose <b>Table and card backs</b>: twelve tables and twelve card backs, from green baize to beach huts and Old Harry Rocks. A few specials are won with Journey stars. Your choice is used in all our card games."),
     ("Are my scores saved?",
-     "Your scores and settings are kept in your web browser on that computer. They&rsquo;re only sent to us if you choose to put a score in the Hall of Fame. Like every page on our site, we count visits without cookies &mdash; see our <a href=\"/privacy-policy/\">privacy policy</a>."),
+     "Your scores and settings are kept in your web browser on that computer. They&rsquo;re only sent to us if you choose to put a score in the Hall of Fame. We count visits without cookies; the cookie banner lets you choose whether our live chat and Google Analytics may use cookies &mdash; see our <a href=\"/privacy-policy/\">privacy policy</a>."),
     ("What is the Hall of Fame?",
      "Our card and arcade games each have one. Win Today&rsquo;s deal in a card game, or finish a game in the arcade, and you can put your initials and town in it to see where you rank in Dorset and beyond. Only your initials and town are ever shown &mdash; never your name &mdash; and you can take them off at any time. 365 customers signed in on that computer get a 365 member badge."),
     ("The arcade games are too fast for me &mdash; can I slow them down?",
@@ -402,7 +402,7 @@ info_page(
     eyebrow="// FREE GAMES",
     h1='Free games, <em class="grad grad--cyan">no adverts</em>',
     lede="Solitaire, Hearts, Cribbage, Whist and five more card games, plus our own arcade games &mdash; made by us in Bournemouth, for your PC, tablet or phone.",
-    desc="Free Solitaire, FreeCell, Spider, Hearts, Cribbage, Gin Rummy and arcade games from 365 Techies in Bournemouth. No adverts, no sign-in, nothing to install.",
+    desc="Free Solitaire, FreeCell, Spider, TriPeaks, Pyramid, Hearts, Gin Rummy, Cribbage, Whist and arcade games from 365 Techies, Bournemouth. No adverts, no sign-in.",
     title="Free Games - No Adverts, No Sign-In | 365 Techies",
     og_title="Free games, no adverts | 365 Techies",
     chips=["No adverts", "No sign-in", "Nothing to install"],
@@ -418,4 +418,4 @@ _page = next(p for p in bp.PAGES if p.get("slug") == "games")
 # while hidden, the page stays out of the site's own search as well (build_blog skips pages marked nosearch)
 _page["nosearch"] = not PUBLIC
 # what WhatsApp / Facebook show when the page is shared: the six games on one picture (made 4 Oct, scratchpad make_share_cards.py)
-_page["og_image"] = "/games/img/games-share-v1.jpg"
+_page["og_image"] = "/games/img/games-share-v2.jpg"   # v2 (5 Oct): names Hearts, Cribbage, Whist + 5 more; v1 named only three games
