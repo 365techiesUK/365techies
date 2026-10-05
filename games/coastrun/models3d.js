@@ -8,7 +8,7 @@ import * as THREE from 'three';
 
 const C = new THREE.Color(), M = new THREE.Matrix4(), Q = new THREE.Quaternion(), E3 = new THREE.Euler(), V = new THREE.Vector3(), S3 = new THREE.Vector3();
 function rnd(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
-const UV_KEYS = { leaf: 1, frond: 1, grass: 1 };
+const UV_KEYS = { leaf: 1, frond: 1, grass: 1, stone: 1 };
 
 // ---------------------------------------------------------------- a kit: add shapes, get one geometry per material
 export class Kit {
@@ -23,6 +23,7 @@ export class Kit {
     for (let i = 0; i < n; i++) { cols[i * 3] = C.r; cols[i * 3 + 1] = C.g; cols[i * 3 + 2] = C.b; }
     g.setAttribute('color', new THREE.BufferAttribute(cols, 3));
     if (!g.attributes.normal) g.computeVertexNormals();
+    if (key !== 'glow' && key !== 'alloy' && key !== 'chrome' && UV_KEYS[key] == null) { const nr = g.attributes.normal; for (let i = 0; i < n; i++) { const f = 0.6 + 0.4 * (nr.getY(i) * 0.5 + 0.5); cols[i * 3] *= f; cols[i * 3 + 1] *= f; cols[i * 3 + 2] *= f; } }
     for (const k of Object.keys(g.attributes)) if (k !== 'position' && k !== 'color' && k !== 'normal' && !(k === 'uv' && UV_KEYS[key])) g.deleteAttribute(k);
     (this.parts[key] || (this.parts[key] = [])).push(g);
     geo.dispose();
@@ -219,11 +220,13 @@ const MODELS = {
     k.clump(1, -4.4, 1, 3.8, '#3f8a3a', 3).clump(0.9, 4.2, 1, 3.8, '#4f9a42', 5);
   },
   finger(k) { k.cyl(0.08, 0.1, 3, 6, 0, 0, 0, '#f4f4f4'); k.box(1.6, 0.35, 0.08, 0.7, 2.5, 0, '#f4f4f4', 0.2).box(1.6, 0.35, 0.08, -0.7, 2, 0, '#f4f4f4', -0.4); },
-  castle(k) {
-    k.cone(60, 40, 12, 0, -2, 0, '#5f9a45');
-    const st = '#9e9a8e', dk = '#7f7b70';
-    k.box(9, 26, 9, 0, 34, 0, st).box(3, 6, 9, 3, 60, 0, dk).box(3, 3, 9, -3, 60, 0, dk);
-    k.box(24, 8, 3, -14, 34, 8, st).box(3, 12, 3, -26, 34, 8, dk).box(18, 6, 3, 12, 34, -8, st).box(3, 9, 3, 21, 34, -8, dk);
+  castle(k) {   // Corfe: the ruined keep on its steep hill, curtain walls and broken towers
+    k.blob(70, 0, -10, 0, '#5f9a45', 1.15, 0.95, 1.05, 141).blob(40, 30, 10, -20, '#6aa44c', 1, 0.6, 1, 143);
+    const st = '#c2bba8', dk = '#a39b88', H = 55, X = 1.8;
+    k.box(16 * X, 34 * X, 16 * X, 0, H, 0, st).box(6 * X, 10 * X, 16 * X, 5 * X, H + 34 * X, 0, dk).box(5 * X, 5 * X, 16 * X, -5.5 * X, H + 34 * X, 0, dk);   // the keep, split by the gap
+    for (let i = -6; i <= 6; i += 3) k.box(1.6 * X, 1.8 * X, 1.6 * X, i * X, H + 34 * X, 8 * X, dk).box(1.6 * X, 1.8 * X, 1.6 * X, i * X, H + 34 * X, -8 * X, dk);
+    for (let f = 0; f < 3; f++) k.box(1.2 * X, 2.4 * X, 0.3, (-3 + f * 3) * X, H + (12 + f * 7) * X, 8 * X + 0.05, '#3a3834');
+    k.box(36 * X, 9 * X, 3.5 * X, -24 * X, H - 4, 14 * X, st).box(5 * X, 15 * X, 5 * X, -42 * X, H - 6, 14 * X, dk).box(30 * X, 7 * X, 3.5 * X, 22 * X, H - 4, -14 * X, st).box(5 * X, 12 * X, 5 * X, 37 * X, H - 6, -14 * X, dk).box(4 * X, 18 * X, 4 * X, 20 * X, H - 4, 16 * X, dk);
   },
   heather(k, v) {
     const c = v ? ['#8a5a9a', '#a46ab8', '#c08cd4'] : ['#b0762a', '#cc8f3a', '#8a5f2a'];
@@ -253,10 +256,14 @@ const MODELS = {
     k.cyl(2.2, 2.25, 2.6, 14, 0, 8, 0, '#c62828').cyl(1.95, 2, 2.6, 14, 0, 14, 0, '#c62828');
     k.cyl(2.4, 2.4, 0.4, 14, 0, 20, 0, '#222').cyl(1.3, 1.3, 2.2, 10, 0, 20.4, 0, '#fff4b3', 0, 0, 'glow').cone(1.6, 1.6, 10, 0, 22.6, 0, '#c62828');
   },
-  arch(k) {
-    const col = '#c9a77a', dk = '#a3835c';
-    k.blob(16, -22, 6, 0, dk, 1, 1.6, 1.3, 101).blob(14, 22, 5, 0, col, 1, 1.5, 1.2, 103);
-    k.box(46, 12, 16, 0, 26, 0, col).blob(10, 0, 37, 0, '#6f9a45', 2.4, 0.4, 0.9, 105);
+  arch(k) {   // Durdle Door: a great limestone arch standing in the sea
+    const sh = new THREE.Shape(); sh.moveTo(-46, -4); sh.lineTo(-40, 22); sh.quadraticCurveTo(-26, 40, 0, 38); sh.quadraticCurveTo(26, 36, 36, 18); sh.lineTo(44, -4);
+    sh.lineTo(16, -4); sh.lineTo(16, 6); sh.absarc(0, 6, 16, 0, Math.PI, false); sh.lineTo(-16, -4); sh.lineTo(-46, -4);
+    const g = new THREE.ExtrudeGeometry(sh, { depth: 22, bevelEnabled: true, bevelThickness: 3, bevelSize: 3, bevelSegments: 2, curveSegments: 14 }); g.translate(0, 0, -11); g.computeVertexNormals();
+    const p = g.attributes.position, cl = new Float32Array(p.count * 3), a = new THREE.Color('#d8c09a'), b = new THREE.Color('#b89a72'), c2 = new THREE.Color('#e8dcc0');
+    for (let i = 0; i < p.count; i++) { const y = p.getY(i), band = Math.sin(y * 0.9 + p.getX(i) * 0.05) > 0.3 ? b : y > 30 ? c2 : a; cl[i * 3] = band.r; cl[i * 3 + 1] = band.g; cl[i * 3 + 2] = band.b; }
+    k.put(g, '#ffffff', 0, 0, 0); const last = k.parts.lit[k.parts.lit.length - 1]; last.setAttribute('color', new THREE.BufferAttribute(cl, 3));
+    k.blob(14, -6, 38, 0, '#6f9a45', 2.6, 0.32, 1.2, 105);
     k.cyl(30, 30, 0.3, 16, 0, -0.1, 0, '#ffffff');
   },
   building(k, v) {
@@ -286,9 +293,10 @@ const MODELS = {
   fence(k) { k.box(0.14, 1.2, 0.14, 0, 0, 0, '#8a6a48').box(0.08, 0.1, 4.2, 0, 0.55, 0, '#8a6a48').box(0.08, 0.1, 4.2, 0, 1.05, 0, '#8a6a48'); },
   rail(k) { k.box(0.1, 1, 0.1, 0, 0, 0, '#2f7f86').box(0.07, 0.08, 4.2, 0, 0.55, 0, '#2f7f86').box(0.09, 0.09, 4.2, 0, 0.98, 0, '#2f7f86'); },
   quay(k) { k.box(0.8, 0.7, 4.2, 0, 0, 0, '#55585f'); },
+  marker(k) { k.box(0.14, 1.05, 0.14, 0, 0, 0, '#f4f4f0').box(0.15, 0.22, 0.15, 0, 0.72, 0, '#151515').box(0.06, 0.1, 0.02, 0, 0.78, -0.08, '#ff2a2a', 0, 0, 0, 'glow'); },
   armco(k) { k.box(0.14, 0.75, 0.14, 0, 0, 0, '#9aa0a6').box(0.06, 0.32, 4.2, -0.05, 0.42, 0, '#e8ecef', 0, 0, 0, 'shiny'); },
   tuft(k, v) {   // grass and flowers by the road
-    const col = ['#7cbf52', '#8ccf5a', '#6aaa48', '#f4e04a', '#ffffff', '#ff8ab8'][v % 6];
+    const col = ['#7cbf52', '#8ccf5a', '#6aaa48', '#a8c850', '#94c25a', '#78b04c'][v % 6];
     k.card(1.1, 0.9, 0, 0.42, 0, col, 0, 0, 'grass', 'up').card(1.1, 0.9, 0, 0.42, 0, col, Math.PI / 2, 0, 'grass', 'up');
   },
   crowd(k, v) {   // a row of people cheering behind a barrier (on their +Z side, towards the road), at the start, the checkpoints and the goal
@@ -334,8 +342,11 @@ const MODELS = {
     k.box(6, 1.2, 9, 64, 3, 23, '#bdb5a0', -1.3);
     const r = rnd(77); for (let i = 0; i < 5; i++) k.side([-2.5, 0.3, 2.8, 0.3, 3.2, 1.2, -2.6, 1.2], 1.6, 12 + i * 8, -0.3, 22 + r() * 6, ['#ffffff', '#1d4ed8', '#d32f2f'][i % 3], 'shiny', 0.05);
   },
-  goldcap(k) {   // Golden Cap: the highest cliff on the south coast, a flat green top over a glowing gold face
+  goldcap(k) {   // Golden Cap: the highest cliff on the south coast, a flat green top over a glowing gold face, grey-blue clay below
+    const n0 = k.parts.lit ? k.parts.lit.length : 0;
     k.blob(42, 0, -6, 0, '#d39a34', 1.6, 1.15, 1.25, 121).blob(30, 30, -8, 20, '#c9902e', 1.5, 0.9, 1.2, 125);
+    const grey = new THREE.Color('#6f7a86'), gold = new THREE.Color('#e0a63c'), ochre = new THREE.Color('#c88a30');
+    for (let q = n0; q < k.parts.lit.length; q++) { const g = k.parts.lit[q], p = g.attributes.position, c = g.attributes.color; for (let i = 0; i < p.count; i++) { const y = p.getY(i), col = y < 4 ? grey : (Math.floor(y / 6) % 2 ? gold : ochre); c.setXYZ(i, col.r, col.g, col.b); } }
     k.blob(38, 0, 22, 0, '#6f9a45', 1.65, 0.3, 1.3, 123);
   },
   headland(k) {   // Hengistbury Head: a low heath-topped headland with sandy, ironstone-brown cliffs
@@ -353,7 +364,7 @@ const MODELS = {
     sh.moveTo(-48, 0); sh.lineTo(-48, 17); sh.lineTo(48, 17); sh.lineTo(48, 0);
     arch(44, 32, 3); arch(28, 16, 3); arch(11, -11, 3.5); arch(-16, -28, 3); arch(-32, -44, 3); sh.lineTo(-48, 0);
     const g = new THREE.ExtrudeGeometry(sh, { depth: 5.5, bevelEnabled: false, curveSegments: 10 }); g.translate(0, 0, -2.75); g.computeVertexNormals();
-    k.put(g, '#a39a86', 0, 0, 0);
+    k.put(g, '#c8bfaa', 0, 0, 0, 0, 0, 0, 1, 1, 1, 'stone');
     k.box(96, 1.1, 6.4, 0, 17, 0, '#8f8774').box(96, 0.9, 0.3, 0, 18.1, 3.05, '#8f8774').box(96, 0.9, 0.3, 0, 18.1, -3.05, '#8f8774');
     // a little steam train on top: the engine (boiler, cab, chimney) and two green carriages
     k.box(12, 0.9, 2.4, -30, 18.1, 0, '#1c1c1c').axle(1.15, 8.5, 14, -31.5, 20.15, 0, '#1f2a22', 'shiny').box(3.4, 3, 2.7, -25.6, 19, 0, '#1f2a22', 0, 0, 0, 'shiny');
@@ -491,8 +502,9 @@ function spider() {
   // the cabin: a black tub, tan seats with headrests, the dash and its glowing dials, a raked windscreen in a black frame
   k.box(1.5, 0.05, 1.3, 0, 0.79, 0.28, '#111111', 0, 0, 0, 'trim');
   for (const x of [-0.4, 0.4]) {
-    k.box(0.5, 0.12, 0.52, x, 0.78, 0.4, '#b8743e', 0, 0, 0, 'lit').box(0.5, 0.4, 0.12, x, 0.82, 0.72, '#a8652f', 0, 0.22, 0, 'lit');
-    k.box(0.26, 0.16, 0.12, x, 1.17, 0.8, '#a8652f', 0, 0.22, 0, 'lit');
+    k.box(0.5, 0.12, 0.52, x, 0.78, 0.4, '#b8743e', 0, 0, 0, 'lit').box(0.48, 0.3, 0.12, x, 0.82, 0.72, '#a8652f', 0, 0.22, 0, 'lit');
+    k.ball(0.13, x, 1.1, 0.79, '#a8652f', 1, 0.62, 0.45, 'lit', 10);   // a rounded headrest
+    for (const b of [-1, 1]) { k.box(0.1, 0.22, 0.17, x + b * 0.21, 0.84, 0.7, '#94582a', 0, 0.22, 0, 'lit'); k.box(0.09, 0.13, 0.48, x + b * 0.22, 0.82, 0.4, '#94582a', 0, 0, 0, 'lit'); }   // the bolsters (below the backrest's top edge)
     k.loft([[0.86, 0.1, 0.78, 0.84], [1.0, 0.15, 0.78, 0.99], [1.35, 0.14, 0.78, 0.95], [1.85, 0.06, 0.8, 0.89]], col, 'paint', { up: 2.4, dn: 3, belly: 0.3, n: 16, x: x });   // the humps behind the seats
   }
   k.box(1.62, 0.15, 0.32, 0, 0.8, -0.5, '#191919', 0, 0, 0, 'trim');
@@ -517,11 +529,20 @@ function spider() {
   k.box(1.1, 0.12, 0.1, 0, 0.35, -len + 0.04, '#0d0d0d', 0, 0, 0, 'trim').box(1.55, 0.03, 0.24, 0, 0.29, -2.18, '#0d0d0d', 0, 0, 0, 'trim');
   // the tail: a black panel with the light bar across it, the diffuser, four pipes and the plate
   k.box(1.72, 0.26, 0.06, 0, 0.47, len + 0.005, '#0d0d0d', 0, 0, 0, 'trim');
-  k.box(1.64, 0.055, 0.05, 0, 0.7, len + 0.01, '#ff1a2a', 0, 0, 0, 'glow');
-  for (const sd of [-1, 1]) k.box(0.3, 0.09, 0.05, sd * 0.68, 0.61, len + 0.01, '#ff2a2a', 0, 0, 0, 'glow');
+  k.box(1.64, 0.05, 0.05, 0, 0.72, len + 0.01, '#ff0a18', 0, 0, 0, 'brake');
+  for (const sd of [-1, 1]) { k.box(0.42, 0.13, 0.05, sd * 0.6, 0.6, len + 0.012, '#ff0a18', 0, 0, 0, 'brake'); k.box(0.14, 0.13, 0.05, sd * 0.86, 0.6, len + 0.008, '#ffb070', 0, 0, 0, 'glow'); k.box(0.06, 0.13, 0.055, sd * 0.36, 0.6, len + 0.012, '#b9bcc0', 0, 0, 0, 'chrome'); }
+  k.box(1.5, 0.025, 0.04, 0, 0.785, len - 0.005, '#d6d9dc', 0, 0, 0, 'chrome');
+  k.box(1.7, 0.035, 0.22, 0, at(len - 0.15)[3] - 0.01, len - 0.12, col, 0, -0.12, 0, 'paint');   // a lip spoiler
   k.box(1.3, 0.1, 0.3, 0, 0.29, len - 0.1, '#0d0d0d', 0, 0, 0, 'trim');
   for (const x of [-0.5, -0.34, 0.34, 0.5]) k.roll(0.045, 0.22, 12, x, 0.36, len + 0.03, '#d6d9dc', 'chrome');
   k.box(0.52, 0.11, 0.02, 0, 0.49, len + 0.04, '#f7d417', 0, 0, 0, 'lit');
+  for (const sd of [-1, 1]) { k.box(0.012, 0.36, 0.012, sd * (at(-0.5)[1] - 0.004), 0.43, -0.5, '#4a0006', 0, 0, 0, 'trim'); k.box(0.012, 0.3, 0.012, sd * (at(0.45)[1] - 0.004), 0.45, 0.45, '#4a0006', 0, 0, 0, 'trim'); k.box(0.01, 0.012, 0.95, sd * (at(0)[1] - 0.003), 0.62, -0.03, '#4a0006', 0, 0, 0, 'trim'); }   // the doors' shut lines
+  // the wheel arches: a dark well inside, a flared lip round the outside
+  for (const z of wz) for (const sd of [-1, 1]) {
+    const hw = at(z)[1];
+    k.put(new THREE.CylinderGeometry(0.44, 0.44, 0.34, 18, 1, true, -Math.PI / 2, Math.PI), '#0b0b0b', sd * (hw - 0.2), 0.34, z, 0, 0, Math.PI / 2, 1, 1, 1, 'trim');
+    k.put(new THREE.TorusGeometry(0.455, 0.035, 6, 20, Math.PI), col, sd * (hw - 0.012), 0.34, z, 0, sd * Math.PI / 2, 0, 1, 1, 1, 'paint');
+  }
   // red brake calipers (they stay put while the wheels turn)
   const wx = w / 2 - 0.08;
   for (const z of wz) for (const sd of [-1, 1]) k.box(0.05, 0.13, 0.17, sd * (wx - 0.15), 0.43, z - 0.1, '#d01818', 0, 0, 0, 'lit');
@@ -531,9 +552,11 @@ function bigWheel() {   // a low tyre, a five-spoke star rim and the brake disc 
   const wk = new Kit();
   wk.axle(0.34, 0.27, 24, 0, 0, 0, '#111111', 'tyre').axle(0.262, 0.275, 22, 0, 0, 0, '#191919', 'tyre');
   wk.axle(0.235, 0.05, 20, -0.05, 0, 0, '#3a3d40', 'trim');   // the disc
-  wk.axle(0.255, 0.04, 22, 0.115, 0, 0, '#d4d8dc', 'alloy');   // the rim's lip
-  for (let i = 0; i < 5; i++) { const a = i * Math.PI * 2 / 5; wk.put(new THREE.BoxGeometry(0.05, 0.25, 0.075), '#d4d8dc', 0.12, Math.cos(a) * 0.12, Math.sin(a) * 0.12, a, 0, 0, 1, 1, 1, 'alloy'); }
-  wk.axle(0.06, 0.06, 10, 0.135, 0, 0, '#2a2d31', 'trim');
+  wk.put(new THREE.TorusGeometry(0.245, 0.018, 6, 28), '#d4d8dc', 0.145, 0, 0, 0, Math.PI / 2, 0, 1, 1, 1, 'alloy');   // the rim's lip
+  for (let i = 0; i < 10; i++) { const a = i * Math.PI * 2 / 10; wk.put(new THREE.BoxGeometry(0.04, 0.24, 0.045), i % 2 ? '#b8bec4' : '#dfe3e6', 0.15, Math.cos(a) * 0.115, Math.sin(a) * 0.115, a, 0, 0, 1, 1, 1, 'alloy'); }
+  wk.axle(0.24, 0.02, 24, 0.137, 0, 0, '#26282b', 'trim');   // the dark face behind the spokes
+  wk.put(new THREE.TorusGeometry(0.3, 0.01, 4, 30), '#3c3c3e', 0.137, 0, 0, 0, Math.PI / 2, 0, 1, 1, 1, 'tyre');   // a ring of lettering on the sidewall
+  wk.axle(0.06, 0.06, 10, 0.155, 0, 0, '#2a2d31', 'trim');
   return wk.build();
 }
 
@@ -551,11 +574,19 @@ export function people() {
       k.ball(0.132, 0, 0.18, 0.025, o.hair, 1.04, o.long ? 0.95 : 0.82, 1.08, 'lit', 16);
       if (o.long) { k.ball(0.11, -0.08, 0.06, 0.04, o.hair, 0.55, 1.2, 0.9, 'lit', 10); k.ball(0.11, 0.08, 0.06, 0.04, o.hair, 0.55, 1.2, 0.9, 'lit', 10); }
       if (o.shades) k.box(0.25, 0.05, 0.03, 0, 0.145, -0.122, '#0a0a0a', 0, 0, 0, 'glass');
-      else { k.box(0.22, 0.04, 0.03, 0, 0.26, -0.07, '#0a0a0a', 0, -0.5, 0, 'glass'); }   // her sunglasses pushed up into her hair
+      else {
+        k.box(0.22, 0.04, 0.03, 0, 0.26, -0.07, '#0a0a0a', 0, -0.5, 0, 'glass');   // her sunglasses pushed up into her hair
+        for (const ex of [-0.045, 0.045]) { k.ball(0.016, ex, 0.15, -0.118, '#2a1c12', 1, 1.2, 0.6, 'lit', 6); k.box(0.04, 0.008, 0.01, ex, 0.18, -0.118, '#a87a40', 0, 0, ex > 0 ? -0.15 : 0.15); }
+      }
+      k.box(o.shades ? 0.05 : 0.055, 0.012, 0.012, 0, 0.075, -0.124, o.shades ? '#8a4a3a' : '#c0304a');   // the mouth
     }),
     upper: P((k) => k.put(cap(o.arm, 0.2), o.sleeve, 0, -0.14, 0)),
     fore: P((k) => { k.put(cap(o.arm * 0.9, 0.17), o.skin, 0, -0.12, 0); k.ball(0.048, 0, -0.26, 0, o.skin, 1, 1, 1, 'lit', 8); }),
-    hair: o.long ? [0, 1, 2, 3].map((i) => P((k) => k.put(new THREE.BoxGeometry(0.25 - i * 0.04, 0.035, 0.17), o.hair, 0, 0, 0.075, 0, 0, 0, 1, 1, 1, 'lit'))) : null
+    hair: o.long ? [0, 1, 2, 3, 4].map((i) => P((k) => {
+      const w = 0.22 - i * 0.03;
+      k.put(new THREE.CapsuleGeometry(0.03, 0.1, 3, 8), o.hair, 0, 0, 0.065, Math.PI / 2, 0, 0, w * 0.5 / 0.06, 1, 0.8 - i * 0.08, 'lit');
+      for (const sd of [-1, 1]) k.put(new THREE.CapsuleGeometry(0.026, 0.09, 3, 8), i % 2 ? '#e2b860' : '#f6d888', sd * w * 0.36, -0.008, 0.06 + sd * 0.004, Math.PI / 2, 0, sd * 0.12, w * 0.3 / 0.052, 1, 0.75 - i * 0.07, 'lit');
+    })) : null
   });
   const driver = one({ chest: 0.165, wide: 1.25, top: '#f2f2ee', sleeve: '#f2f2ee', skin: '#e2ae86', hair: '#2a1c12', arm: 0.052, shades: true });
   const girl = one({ chest: 0.14, wide: 1.15, top: '#e8263f', sleeve: '#e8b48c', skin: '#efbf98', hair: '#f0cd78', arm: 0.044, long: true, strap: true });

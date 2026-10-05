@@ -28,7 +28,7 @@
       sea: null, foam: null, road: ['#77756f', '#72706a'], rumble: ['#f4f4f4', '#cf2f2b'], lane: '#f2f2f2', wall: ['#a39d90', '#958f82'], tint: null },
     { key: 'forest', sky: [[0, '#5d93d1'], [0.55, '#b4c9d9'], [1, '#f4e3bf']], fog: '#ecdcb6', grass: ['#8e9c3e', '#849238'], verge: ['#9a7a3c', '#917238'], beach: null,
       sea: null, foam: null, road: ['#625f59', '#5d5a54'], rumble: ['#f2f2f2', '#2f7d43'], lane: '#efefe6', tint: ['#ffb24a', 0.08] },
-    { key: 'jurassic', sky: [[0, '#2c2f6e'], [0.35, '#8a4f8a'], [0.7, '#ff8f4a'], [1, '#ffd27e']], fog: '#f4ad6c', grass: ['#6f8c3a', '#668235'], verge: ['#6a8a38', '#617f33'], beach: ['#f3ead6', '#e9dfc9'],
+    { key: 'jurassic', sky: [[0, '#1f2466'], [0.35, '#6a4a92'], [0.7, '#ff8f4a'], [1, '#ffd27e']], fog: '#f4ad6c', grass: ['#6f8c3a', '#668235'], verge: ['#6a8a38', '#617f33'], beach: ['#f3ead6', '#e9dfc9'],
       sea: ['#4a5f90', '#455987'], foam: '#ffe2bf', road: ['#6d5e5c', '#685957'], rumble: ['#fff3e6', '#d0362f'], lane: '#fff1df', edge: 'fence', tint: ['#ff7a2e', 0.2] },
     { key: 'harbour', sky: [[0, '#03071a'], [0.6, '#101a44'], [1, '#2f3570']], fog: '#1c2448', grass: ['#1d2a26', '#1a2622'], verge: ['#373b45', '#33373f'], beach: ['#2d3038', '#2a2d34'],
       sea: ['#0d2140', '#0b1d39'], foam: '#6b7fae', road: ['#2b2d34', '#282a30'], rumble: ['#cfcfcf', '#a8262a'], lane: '#e6dfa8', edge: 'quay', night: true, tint: ['#1a2a6a', 0.45] },
@@ -48,7 +48,7 @@
       sea: ['#4c5a92', '#465488'], foam: '#ffe0e6', road: ['#6a5e66', '#655962'], rumble: ['#fff0f0', '#c0304a'], lane: '#fff0ea', edge: 'fence', tint: ['#ff6a8a', 0.18] },
     { key: 'portland', sky: [[0, '#141c4a'], [0.4, '#3b4a8a'], [0.75, '#a07aa8'], [1, '#f2b48a']], fog: '#9c86a6', grass: ['#5a7a46', '#53723f'], verge: ['#8a8676', '#827e6e'], beach: ['#c9c2b0', '#bfb8a6'],
       sea: ['#2c3e70', '#283866'], foam: '#d8d8f0', road: ['#55545c', '#504f57'], rumble: ['#f0f0f0', '#c62828'], lane: '#ece8d8', edge: 'fence', wall: ['#8a8676', '#827e6e'], tint: ['#4a5aa8', 0.25] },
-    { key: 'goldencap', sky: [[0, '#3a4f9a'], [0.45, '#c48aa0'], [0.75, '#ffb070'], [1, '#ffd890']], fog: '#f2c08c', grass: ['#7a9a46', '#71903f'], verge: ['#7a9a46', '#71903f'], beach: ['#e8c070', '#deb664'],
+    { key: 'goldencap', sky: [[0, '#25397e'], [0.45, '#7a6aa8'], [0.75, '#ffa868'], [1, '#ffd890']], fog: '#f2c08c', grass: ['#7a9a46', '#71903f'], verge: ['#7a9a46', '#71903f'], beach: ['#e8c070', '#deb664'],
       sea: ['#3f6496', '#3a5c8c'], foam: '#fff0d8', road: ['#6e625c', '#695d57'], rumble: ['#fff4e2', '#d8902a'], lane: '#fff2dc', edge: 'fence', tint: ['#ff9a40', 0.16] },
     { key: 'hengistbury', sky: [[0, '#060c2c'], [0.5, '#1c2a6a'], [0.82, '#5a4a8a'], [1, '#d07a6a']], fog: '#4a3f6a', grass: ['#2e3e30', '#2a382b'], verge: ['#4a4636', '#443f31'], beach: ['#7a6a5a', '#726252'],
       sea: ['#16244a', '#132042'], foam: '#a8b0e0', road: ['#35343c', '#313038'], rumble: ['#d8d8d8', '#2f6fd6'], lane: '#e8e2b8', edge: 'fence', night: true, tint: ['#2a2a7a', 0.35] }

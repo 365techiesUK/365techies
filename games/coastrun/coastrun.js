@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=5';
+import { createWorld } from './world3d.js?v=6';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 const GW = 384, GH = 224;
@@ -58,15 +58,18 @@ function draw(g, W, t, mode, info) {
   R.slow = R.slow * 0.96 + (took > 18 ? 1 : 0) * 0.04;
   if (R.slow > 0.6 && R.scale === 1 && t > 4000) { R.scale = 0.75; wd.quality(true); }
   g.setTransform(K, 0, 0, K, 0, 0);
-  if (R.boostK > 0.05) speedLines(g, t, R.boostK);
+  { const fast = Math.max(R.boostK, Math.max(0, W.v / E.VMAX - 0.8) * 2.2); if (fast > 0.05 && !W.crash) speedLines(g, t, Math.min(1, fast)); }
   hud(g, W, t, mode);
 }
-function speedLines(g, t, k) {
-  g.save(); g.globalAlpha = 0.3 * k; g.strokeStyle = '#ffffff'; g.lineWidth = 0.7;
-  const r = (t / 16) | 0, cy = GH * 0.45;
-  for (let i = 0; i < 26; i++) {
-    const a = ((i * 137.5 + r * 23) % 360) * Math.PI / 180, r0 = 80 + ((i * 53 + r * 17) % 60), r1 = r0 + 30 + ((i * 29) % 40);
-    g.beginPath(); g.moveTo(GW / 2 + Math.cos(a) * r0 * 1.6, cy + Math.sin(a) * r0); g.lineTo(GW / 2 + Math.cos(a) * r1 * 1.6, cy + Math.sin(a) * r1); g.stroke();
+function speedLines(g, t, k) {   // streaks rushing past the sides and bottom of the picture (not the sky ahead, not the dashboard)
+  g.save(); g.strokeStyle = '#ffffff'; g.lineWidth = 0.6;
+  const r = (t / 16) | 0, cy = GH * 0.48;
+  for (let i = 0; i < 22; i++) {
+    let a = ((i * 137.5 + r * 23) % 360) * Math.PI / 180;
+    if (Math.sin(a) < -0.25) a = Math.PI - a;   // never upwards into the sky
+    const r0 = 118 + ((i * 53 + r * 17) % 50), r1 = r0 + 18 + ((i * 29) % 26);
+    g.globalAlpha = 0.22 * k * (0.5 + ((i * 7) % 5) / 10);
+    g.beginPath(); g.moveTo(GW / 2 + Math.cos(a) * r0 * 1.5, cy + Math.sin(a) * r0 * 0.9); g.lineTo(GW / 2 + Math.cos(a) * r1 * 1.5, cy + Math.sin(a) * r1 * 0.9); g.stroke();
   }
   g.restore();
 }
@@ -81,6 +84,7 @@ function stretchOf(W, i) { for (let j = W.stretch.length - 1; j >= 0; j--) if (i
 const clock = (sec) => { const m = Math.floor(sec / 60), s = sec - m * 60; return m + "'" + (s < 10 ? '0' : '') + s.toFixed(2).replace('.', '"'); };
 function hud(g, W, t, mode) {
   const pi = E.segIndex(W.s), tm = Math.ceil(W.time), low = !W.timeUp && W.time <= 10 && W.count <= 0, flash = low && (t / 250 | 0) % 2;
+  for (const [x, y] of [[30, 26], [GW - 34, 30]]) { const gr = g.createRadialGradient(x, y, 0, x, y, 52); gr.addColorStop(0, 'rgba(0,8,24,0.34)'); gr.addColorStop(1, 'rgba(0,8,24,0)'); g.fillStyle = gr; g.fillRect(x - 60, y - 60, 120, 120); }   // a soft shade behind the corner numbers, so they read on a bright sky
   // the clock, and this stretch's own time
   hudText(g, 'TIME', 10, 13, 7.5, '#ffe9a8');
   hudText(g, String(tm), 9, 38, 26, flash ? '#ff4d4d' : low ? '#ff9a3c' : '#ffd400');
@@ -97,7 +101,7 @@ function hud(g, W, t, mode) {
   hudText(g, S.name, GW / 2, 13, 8.5, '#ffffff', 'center');
   if (st) {
     const p = Math.max(0, Math.min(1, (pi - st.from) / (st.to - st.from))), bw = 96, bx = GW / 2 - bw / 2, by = 18;
-    g.fillStyle = 'rgba(0,0,0,0.45)'; roundRect(g, bx - 1, by - 1, bw + 2, 6, 3); g.fill();
+    g.fillStyle = 'rgba(0,0,0,0.45)'; roundRect(g, bx - 1, by - 1, bw + 2, 6, 3); g.fill(); g.strokeStyle = 'rgba(255,255,255,0.35)'; g.lineWidth = 0.6; roundRect(g, bx - 1, by - 1, bw + 2, 6, 3); g.stroke();
     g.fillStyle = '#ffd400'; roundRect(g, bx, by, Math.max(2, bw * p), 4, 2); g.fill();
     g.fillStyle = S.next ? '#ffffff' : '#4ade80'; g.beginPath(); g.arc(bx + bw, by + 2, 2.6, 0, Math.PI * 2); g.fill();
   }
@@ -169,6 +173,7 @@ function request(g, W, t) {   // what she's asking for: her face, the words, how
 function routeMap(g, W, x0, y0, t) {   // the pyramid of places: the way you've come in yellow, the place you're in flashing
   const dx = 13, dy = 8.5, route = W.route || [0], here = route[route.length - 1];
   const at = (id) => { const S = E.STAGES[id]; return [x0 + 4 + (S.level - 1) * dx, y0 + 20 + (S.pos - (S.level - 1) / 2) * dy]; };
+  g.fillStyle = 'rgba(0,10,30,0.38)'; roundRect(g, x0 - 3, y0 - 0.5, 4 * dx + 14, 41, 6); g.fill();   // a dark plate, so the map reads on grass and sand
   g.lineWidth = 1; g.strokeStyle = 'rgba(255,255,255,0.28)';
   E.STAGES.forEach((S) => { if (S.next) S.next.forEach((n) => { const a = at(S.id), b = at(n); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); }); });
   g.strokeStyle = '#ffd400'; g.lineWidth = 1.6;

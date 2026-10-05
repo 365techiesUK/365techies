@@ -802,13 +802,15 @@
 
     // ---- up and down: over a sharp crest the road falls away faster than the car can follow, and it flies
     var roadY = heightAt(W, W.s), roadVY = W.v * Math.cos(W.phi) * gradeAt(W, W.s);
+    var under = segIndex(W.s), roofed = segAt(W, under).tun || segAt(W, under + 6).tun;   // never take off under (or just before) a tunnel's roof
     if (!W.air) {
       var need = (roadVY - W.vh) / DT;
-      if (need < -GRAV && W.v > 20 && !W.crash) { W.air = true; W.airT = 0; W.vh = Math.min(W.vh, 7); W.h += W.vh * DT; }
+      if (need < -GRAV && W.v > 20 && !W.crash && !roofed) { W.air = true; W.airT = 0; W.vh = Math.min(W.vh, 7); W.h += W.vh * DT; }
       else { W.h = roadY; W.vh = roadVY; }
     }
     if (W.air) {
       W.vh -= GRAV * 1.5 * DT; W.h += W.vh * DT; W.airT += DT;   // a little heavier in the air: a short, punchy jump
+      if (roofed && W.h > roadY + 2.2) { W.h = roadY + 2.2; W.vh = Math.min(W.vh, 0); }   // and if you fly into one, the roof keeps you down
       if (W.h <= roadY) {
         var hit = W.vh - roadVY; W.h = roadY; W.vh = roadVY; W.air = false; W.land = W.t;
         if (W.airT > 0.35) {
