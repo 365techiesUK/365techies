@@ -50,11 +50,85 @@
     full: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>'
   };
   function esc(s) { return String(s).replace(/[&<>"]/g, function (m) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]; }); }
+
+  // ---------------------------------------------------------------- the picture cards (5 Oct 2026; owner: "yes do the
+  // richer picture cards next"). Our own court figures, drawn here so they are sharp at any size: each a half-length
+  // figure in its suit's colours (hearts crimson, diamonds royal blue, spades navy, clubs forest green) with its suit
+  // on a cream panel down the robe. The King: beard, jewelled crown, ermine collar, sceptre. The Queen: long hair,
+  // tiara, necklace, a rose. The Jack: feathered cap, a staff with a pennant. Every one of the twelve has its own hair.
+  // The corner index stays big, so the cards still read at a glance in a column.
+  var GOLD = '#d9a520', GOLD_D = '#9c7210', SKIN = '#f2cfae', LINE = '#3a2a1a';
+  var ROBE = ['#2b3a6b', '#b3202f', '#2a5aa8', '#2e6b3a'], ROBE_D = ['#1b264a', '#7e1420', '#1c3f7a', '#1d4a26'];
+  var JEWEL = ['#2f8fcf', '#2f6fbf', '#d13b3b', '#d13b3b'], INK = ['#17191f', '#c6152f', '#c6152f', '#17191f'];
+  var HAIR = { 13: ['#4a4a4a', '#e9e4da', '#7a4a24', '#a85a2a'], 12: ['#2b2118', '#d9a441', '#8a3b1e', '#5a3a22'], 11: ['#3a2a1c', '#c88a3a', '#2b2118', '#b5652e'] };
+  var SUIT_PATH = [
+    'M5 0C7 3 10 4 10 6.5A2.3 2.3 0 0 1 6 7.6L6.8 10H3.2L4 7.6A2.3 2.3 0 0 1 0 6.5C0 4 3 3 5 0Z',
+    'M5 9.6C2 7.4 0 5.4 0 3.2A2.6 2.6 0 0 1 5 2.2A2.6 2.6 0 0 1 10 3.2C10 5.4 8 7.4 5 9.6Z',
+    'M5 0L9 5L5 10L1 5Z',
+    'M5 .4A2.3 2.3 0 1 1 5 5A2.3 2.3 0 1 1 5 .4ZM2.6 3.6A2.3 2.3 0 1 1 2.6 8.2A2.3 2.3 0 1 1 2.6 3.6ZM7.4 3.6A2.3 2.3 0 1 1 7.4 8.2A2.3 2.3 0 1 1 7.4 3.6ZM4.3 6.2H5.7L6.6 10H3.4Z'];
+  function courtArt(r, s, ns) {
+    var robe = ROBE[s], robeD = ROBE_D[s], hair = HAIR[r][s], jw = JEWEL[s], o = ' stroke="' + LINE + '" stroke-width=".6"';
+    var g = '<rect width="64" height="72" fill="#fbf3dc"/><circle cx="32" cy="27" r="22" fill="' + GOLD + '" opacity=".14"/>'
+      + rep(6, function (i) { return '<path d="M' + (i * 12 - 4) + ' 0 L' + (i * 12 + 8) + ' 72" stroke="' + robe + '" stroke-width=".5" opacity=".12"/>'; });
+    // the item held at the side, behind the figure's hand
+    if (r === 13) g += '<path d="M12 72 L19.4 34" stroke="' + GOLD_D + '" stroke-width="2.8" stroke-linecap="round"/><path d="M12 72 L19.4 34" stroke="' + GOLD + '" stroke-width="1.8" stroke-linecap="round"/>'
+      + '<circle cx="19.8" cy="31.6" r="2.7" fill="' + GOLD + '"' + o + '/><path d="M19.8 26.6V29M18.6 27.6H21" stroke="' + GOLD_D + '" stroke-width=".9"/>';
+    else if (r === 12) g += '<path d="M13 72 C14 60 16 50 18.4 40" stroke="#3f7a3a" stroke-width="1.5" fill="none"/><path d="M15.4 55 C11 53 10 50 10.5 48 C13.5 49 15 51.5 15.4 55Z" fill="#4f8f45"/>'
+      + '<circle cx="18.6" cy="37.4" r="3.6" fill="#d63a4a"' + o + '/><path d="M16.8 37.2 Q18.6 35 20.4 37.4 Q18.6 39.6 17.4 37.8" stroke="#8e1d2c" stroke-width=".7" fill="none"/>';
+    else g += '<path d="M13 72 L17.2 29" stroke="#6b4423" stroke-width="2" stroke-linecap="round"/><path d="M17.3 29.4 L29 32.6 L17.8 36.6Z" fill="' + robe + '"' + o + '/>'
+      + '<path transform="translate(19.6 31.2) scale(.42)" d="' + SUIT_PATH[s] + '" fill="#fbf3dc"/>';
+    // the robe, its cream panel with the suit, and the collar
+    g += '<path d="M5 72 C7 53 17 43 32 43 C47 43 57 53 59 72Z" fill="' + robe + '"' + o + '/>'
+      + '<path d="M9 72 C11 58 17 50 24 46 L23 72Z M55 72 C53 58 47 50 40 46 L41 72Z" fill="' + robeD + '" opacity=".55"/>'
+      + '<path d="M26.5 45 L37.5 45 L40 72 L24 72Z" fill="#f5ead0" stroke="' + GOLD + '" stroke-width="1"/>'
+      + '<path transform="translate(27.4 49.6) scale(.92)" d="' + SUIT_PATH[s] + '" fill="' + INK[s] + '"/>'
+      + rep(3, function (i) { return '<circle cx="' + (29 + i * 3) + '" cy="61.4" r=".8" fill="' + GOLD + '"/>'; })
+      + '<rect x="29" y="36" width="6" height="8" fill="' + SKIN + '"/>';
+    if (r === 13) g += '<path d="M13 52 C17 45 24 42.5 32 42.5 C40 42.5 47 45 51 52 C45 48.5 39 47 32 47 C25 47 19 48.5 13 52Z" fill="#fbfaf4"' + o + '/>'
+      + [[19, 48.6], [25, 46.4], [32, 46], [39, 46.4], [45, 48.6]].map(function (p) { return '<path d="M' + p[0] + ' ' + p[1] + 'l.7 1.8 -.7 -.5 -.7 .5z" fill="#1a1a1a"/>'; }).join('');
+    else if (r === 12) g += '<path d="M20 47 C24 44 28 43.2 32 43.2 C36 43.2 40 44 44 47" stroke="' + GOLD + '" stroke-width="2" fill="none"/>';
+    else g += '<path d="M22 46.5 C25 44 28.5 43.3 32 43.3 C35.5 43.3 39 44 42 46.5" stroke="' + GOLD + '" stroke-width="1.6" fill="none"/>';
+    // the hand on the item
+    g += '<circle cx="' + (r === 12 ? 15.6 : 15.2) + '" cy="' + (r === 12 ? 56 : 52) + '" r="2.5" fill="' + SKIN + '"' + o + '/>';
+    // the Queen's long hair falls behind the face
+    if (r === 12) g += '<path d="M22.5 28 C22 17 26.5 14.5 32 14.5 C37.5 14.5 42 17 41.5 28 C41.5 35 43 39 44.5 43 L37 41.5 C39 36 39.6 31 39.4 27 C38 21.5 26 21.5 24.6 27 C24.4 31 25 36 27 41.5 L19.5 43 C21 39 22.5 35 22.5 28Z" fill="' + hair + '"' + o + '/>';
+    // the face
+    g += '<ellipse cx="32" cy="27.5" rx="8.4" ry="9.4" fill="' + SKIN + '"' + o + '/>'
+      + '<circle cx="28.8" cy="26.8" r=".95" fill="#2b2b2b"/><circle cx="35.2" cy="26.8" r=".95" fill="#2b2b2b"/>'
+      + '<path d="M27.3 24.6 Q28.8 23.8 30.2 24.5M33.8 24.5 Q35.2 23.8 36.7 24.6" stroke="' + (r === 13 && s === 1 ? '#9a9488' : hair) + '" stroke-width=".8" fill="none"/>'
+      + '<path d="M32 27.6 L31.1 30.4 L32.7 30.5" stroke="#c99a78" stroke-width=".7" fill="none"/>'
+      + '<circle cx="27.4" cy="30.4" r="1.6" fill="#e9827a" opacity=".35"/><circle cx="36.6" cy="30.4" r="1.6" fill="#e9827a" opacity=".35"/>'
+      + '<path d="M30 32.6 Q32 34 34 32.6" stroke="' + (r === 12 ? '#c0392b' : '#9a3b3b') + '" stroke-width="' + (r === 12 ? 1.1 : .8) + '" fill="none"/>';
+    if (r === 13) g += '<path d="M23.6 28.5 C23.8 37 28 41.5 32 41.5 C36 41.5 40.2 37 40.4 28.5 C38.4 32.6 35.6 34 32 34 C28.4 34 25.6 32.6 23.6 28.5Z" fill="' + hair + '"' + o + '/>'
+      + '<path d="M27.8 31.7 Q32 29.8 36.2 31.7 Q32 33.1 27.8 31.7Z" fill="' + hair + '"/>'
+      + '<path d="M23.5 27.5 C23.3 19 27 15.6 32 15.6 C37 15.6 40.7 19 40.5 27.5 L39 24 C37 20.6 27 20.6 25 24Z" fill="' + hair + '"' + o + '/>'
+      + '<rect x="23" y="13.4" width="18" height="4.4" rx=".8" fill="' + GOLD + '"' + o + '/><path d="M23 13.6 L24.5 5.6 L28 10.6 L32 3.6 L36 10.6 L39.5 5.6 L41 13.6Z" fill="' + GOLD + '"' + o + '/>'
+      + '<circle cx="24.5" cy="5.4" r="1.1" fill="' + GOLD + '"/><circle cx="32" cy="3.4" r="1.2" fill="' + GOLD + '"/><circle cx="39.5" cy="5.4" r="1.1" fill="' + GOLD + '"/>'
+      + '<circle cx="32" cy="15.6" r="1.4" fill="' + jw + '"/><circle cx="26.6" cy="15.6" r=".9" fill="#fff"/><circle cx="37.4" cy="15.6" r=".9" fill="#fff"/>';
+    else if (r === 12) g += '<path d="M24.2 25 C25 18.6 28 17 32 17 C36 17 39 18.6 39.8 25 C37.5 21.5 35 20.6 32 20.6 C29 20.6 26.5 21.5 24.2 25Z" fill="' + hair + '"/>'
+      + '<path d="M24.6 17.2 L26.2 10.8 L29.2 14.2 L32 8.6 L34.8 14.2 L37.8 10.8 L39.4 17.2Z" fill="' + GOLD + '"' + o + '/><circle cx="32" cy="13.8" r="1.3" fill="' + jw + '"/>'
+      + '<circle cx="26.2" cy="10.4" r=".9" fill="#fff"/><circle cx="32" cy="8.2" r=".9" fill="#fff"/><circle cx="37.8" cy="10.4" r=".9" fill="#fff"/>'
+      + '<path d="M27.4 41.6 Q32 45.4 36.6 41.6" stroke="' + GOLD + '" stroke-width="1.1" fill="none"/><circle cx="32" cy="44.6" r="1.3" fill="' + jw + '" stroke="' + GOLD + '" stroke-width=".5"/>';
+    else g += '<path d="M23.6 26.4 C23.6 18.8 27.6 16.2 32 16.2 C36.4 16.2 40.4 18.8 40.4 26.4 C39.4 23.2 36.8 21.8 32 21.8 C27.2 21.8 24.6 23.2 23.6 26.4Z" fill="' + hair + '"' + o + '/>'
+      + '<path d="M38.4 13.6 C44 8.4 50 6 57 4 C52 9.4 46 12.6 40.4 14.6Z" fill="#fbfaf4"' + o + '/><path d="M40 14.2 C46 10 51 7.4 56 4.6" stroke="#b9b2a2" stroke-width=".5" fill="none"/>'
+      + '<path d="M21.4 19.4 C21.8 13 27 10.4 33 10.4 C40 10.4 44.2 13.6 43.6 17.2 C40 18.8 30 19.8 21.4 19.4Z" fill="' + robe + '"' + o + '/>'
+      + '<path d="M21.9 18.9 Q32 20.6 43.2 17.2" stroke="' + GOLD + '" stroke-width="1.4" fill="none"/><circle cx="38.6" cy="17.8" r="1.1" fill="' + jw + '"/>';
+    return '<svg' + (ns ? ' xmlns="http://www.w3.org/2000/svg" width="52" height="64"' : '') + ' viewBox="6 0 52 64" preserveAspectRatio="xMidYMin slice" aria-hidden="true">' + g + '</svg>';
+  }
+  function rep(n, f) { var o = ''; for (var i = 0; i < n; i++) o += f(i); return o; }
+  // the same picture for the bouncing-cards finish (drawn on a canvas): loaded once, as an image
+  var ARTIMG = {};
+  function artImg(r, s) {
+    var k = r + '_' + s;
+    if (!ARTIMG[k]) { var im = new Image(); im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(courtArt(r, s, true)); ARTIMG[k] = im; }
+    return ARTIMG[k];
+  }
+
   // one card's face and back, as classes and inner markup (shared with games/common/rivals.js, 5 Oct 2026)
   function cardMarkup(r, s) {
     var su = SUIT_CH[s] + TXT, red = s === 1 || s === 2, mid;
     if (r === 1) mid = '<div class="ace">' + su + (s === 0 ? '<i>365</i>' : '') + '</div>';
-    else if (r > 10) mid = '<div class="court">' + COURT[r] + '<b>' + RANK_CH[r] + '</b><em>' + su + '</em></div>';
+    else if (r > 10) mid = '<div class="court art">' + courtArt(r, s) + '</div>';
     else mid = '<div class="pips">' + PIPS[r].map(function (p) {
       return '<span class="pip' + (p[1] > 50 ? ' dn' : '') + '" style="left:' + p[0] + '%;top:' + p[1] + '%">' + su + '</span>';
     }).join('') + '</div>';
@@ -135,7 +209,10 @@
     + '.card.nudge .front{box-shadow:0 0 0 2px rgba(255,210,87,.8),0 0 18px 4px rgba(255,210,87,.45)}'
     + '@keyframes cardNudge{0%,100%{transform:none}50%{transform:translateY(-5%) rotate(-1.5deg)}}'
     + '@media (prefers-reduced-motion:reduce){.card.land .wig,.card.turn .wig,.card.nudge .wig{animation:none}}'
-    + 'body.nofx .card.hov .wig,body.nofx .card.press .wig{transform:none}';
+    + 'body.nofx .card.hov .wig,body.nofx .card.press .wig{transform:none}'
+    // the picture cards: the figure fills a slightly larger gold frame (the corner index keeps its place)
+    + '.court.art{left:12%;right:12%;top:31%;bottom:7%;display:block;overflow:hidden;background:#fbf3dc}'
+    + '.court.art svg{position:absolute;inset:0;width:100%;height:100%;fill:none;stroke:none;filter:none}';
   (function () { var st = document.createElement('style'); st.textContent = MOTION_CSS; (document.head || document.documentElement).appendChild(st); })();
 
   function start(D) {
@@ -192,6 +269,7 @@
       var k = D.faceKey ? D.faceKey(S) : 'x';
       if (k === faceKey && cardEl.length) return;
       faceKey = k; imgCache = {};
+      for (var pr = 11; pr <= 13; pr++) for (var ps = 0; ps < 4; ps++) artImg(pr, ps);   // the pictures, ready for the bouncing finish
       for (var c = 0; c < D.cards; c++) { var el = makeCard(c); if (!el.parentNode) board.appendChild(el); cardEl[c] = el; }
     }
 
@@ -827,12 +905,13 @@
       x.font = '700 ' + Math.round(w * 0.14) + 'px Archivo, Arial, sans-serif'; x.fillText(RANK_CH[f.r], 0, 0);
       x.font = Math.round(w * 0.13) + 'px "Segoe UI Symbol", Arial, sans-serif'; x.fillText(su, 0, w * 0.15); x.restore();
       x.textAlign = 'center'; x.textBaseline = 'middle';
-      if (f.r > 10) {   // a gold frame with the letter
-        var fx0 = w * 0.13, fy0 = h * 0.31, fw = w * 0.74, fh = h * 0.58;
-        x.fillStyle = red ? 'rgba(198,21,47,0.08)' : 'rgba(23,25,31,0.07)'; rr(fx0, fy0, fw, fh, w * 0.05); x.fill();
-        x.lineWidth = w * 0.022; x.strokeStyle = '#c9a227'; x.stroke();
-        x.fillStyle = ink; x.font = '700 ' + Math.round(w * 0.4) + 'px Georgia, serif'; x.fillText(RANK_CH[f.r], w / 2, h * 0.56);
-        x.font = Math.round(w * 0.17) + 'px "Segoe UI Symbol", Arial, sans-serif'; x.fillText(su, w / 2, h * 0.78);
+      if (f.r > 10) {   // the picture in its gold frame (the letter, if the picture hasn't loaded yet)
+        var fx0 = w * 0.12, fy0 = h * 0.31, fw = w * 0.76, fh = h * 0.62, im = artImg(f.r, f.s);
+        x.save(); rr(fx0, fy0, fw, fh, w * 0.05); x.clip();
+        if (im.complete && im.naturalWidth) { var sc = Math.max(fw / 52, fh / 64); x.drawImage(im, fx0 + (fw - 52 * sc) / 2, fy0, 52 * sc, 64 * sc); }
+        else { x.fillStyle = '#fbf3dc'; x.fillRect(fx0, fy0, fw, fh); x.fillStyle = ink; x.font = '700 ' + Math.round(w * 0.4) + 'px Georgia, serif'; x.fillText(RANK_CH[f.r], w / 2, h * 0.58); }
+        x.restore();
+        rr(fx0, fy0, fw, fh, w * 0.05); x.lineWidth = w * 0.022; x.strokeStyle = '#c9a227'; x.stroke();
       } else { x.fillStyle = ink; x.font = Math.round(w * 0.56) + 'px "Segoe UI Symbol", Arial, sans-serif'; x.fillText(su, w / 2, h * 0.64); }
       return (imgCache[key] = cv);
     }
