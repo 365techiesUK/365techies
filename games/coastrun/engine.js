@@ -78,7 +78,9 @@
     { id: 'camper', w: 1.05, l: 2.8, v: [0.33, 0.45] },
     { id: 'tractor', w: 1.2, l: 2.2, v: [0.17, 0.23] },
     { id: 'lorry', w: 1.25, l: 6, v: [0.33, 0.43] },
-    { id: 'sports', w: 0.95, l: 2.2, v: [0.52, 0.64] }
+    { id: 'sports', w: 0.95, l: 2.2, v: [0.52, 0.64] },
+    { id: 'wedge', w: 1.0, l: 2.25, v: [1, 1], rival: true },   // the rivals (see rivals()): their pace is set there
+    { id: 'lemans', w: 0.95, l: 2.1, v: [1, 1], rival: true }
   ];
   // the player's car: top speed, acceleration, grip, and how quickly it turns
   var CARS = {
@@ -89,9 +91,9 @@
   // the speeds: more time, fewer and slower cars, bends that push less (assist), bounces instead of crashes at Gentle;
   // psiTop = how far from the road's direction the car turns at full speed (radians); req = which of a request's goals
   var DIFF = {
-    1: { time: 1.06, gap: 170, tv: 0.9, assist: 0.55, psiTop: 0.24, crash: false, off: 0.55, req: 0 },
-    2: { time: 1, gap: 115, tv: 1, assist: 0.2, psiTop: 0.21, crash: true, off: 0.45, req: 1 },
-    3: { time: 0.9, gap: 85, tv: 1.08, assist: 0.05, psiTop: 0.2, crash: true, off: 0.4, req: 2 }
+    1: { time: 1.06, gap: 170, tv: 0.9, assist: 0.55, psiTop: 0.24, crash: false, off: 0.55, req: 0, rv: 0.88 },
+    2: { time: 1, gap: 115, tv: 1, assist: 0.2, psiTop: 0.21, crash: true, off: 0.45, req: 1, rv: 0.94 },
+    3: { time: 0.9, gap: 85, tv: 1.08, assist: 0.05, psiTop: 0.2, crash: true, off: 0.4, req: 2, rv: 0.99 }
   };
   // what your passenger asks for: goal by speed (Gentle, Classic, Fast), seconds to do it in
   var REQ = {
@@ -455,7 +457,7 @@
       shake: 0, events: [], fx: [], fxN: 0, pops: [], banner: null, over: false, demo: false, nearN: 0, coinsN: 0, airBest: 0,
       // your passenger's requests, her hearts, how she's feeling (world3d.js animates her), the stretches of this run
       req: null, reqNext: 60 * 7, reqLast: '', reqSide: null, reqDone: null, hearts: 0, runHearts: 0, runAsked: 0, legHearts: 0,
-      her: { k: 'idle', side: 0, t: 0 }, voiceT: -999, legs: [], legT0: 0, result: null, passN: 0
+      her: { k: 'idle', side: 0, t: 0 }, voiceT: -999, legs: [], legT0: 0, result: null, passN: 0, rivalT: 60 * 14, rivalN: 0, rivalBeat: 0
     };
     W.rng = rnd(W.seed);
     buildStage(W, 0); nextFork(W, 0);
@@ -485,6 +487,41 @@
     W.cars.push({ id: W.carN++, s: z, x: x, tx: x, v: v, v0: v, t: t, b: b, col: (W.rng() * 8) | 0, lc: 60, hitT: -999, passed: false, ds: z - W.s, spin: 0 });
   }
   function sameRoad(W, c) { return !(W.fork && W.fork.s && c.b && c.b !== W.fork.s); }
+
+  // ---------------------------------------------------------------- rivals: sports cars as quick as you, to keep up with and get past
+  // One at a time. It turns up a way ahead already at speed; if you drop well back it eases off so you can always catch it; right
+  // behind you after you've passed, it fights for its place back; stay clear of it and it's beaten (points), and another comes later.
+  function rivalOf(W) { for (var i = 0; i < W.cars.length; i++) if (W.cars[i].rival) return W.cars[i]; return null; }
+  function rivals(W) {
+    var r = rivalOf(W), i;
+    if (!r) {
+      if (W.rivalLive) { W.rivalLive = false; W.rivalT = W.t + 60 * 15; }   // it got away (or went down the other road)
+      if (W.count > 0 || W.crash || W.timeUp || W.t < W.rivalT || (W.fork && !W.fork.s && segIndex(W.s) > W.fork.a - 160)) return;   // (not just before a fork)
+      var z = W.s + 250 + W.rng() * 90, si = segIndex(z); if (si > lastIndex(W) - 40) return;
+      var g = segAt(W, si); if (g.gate || g.fk) return;
+      var L = LANES[(W.rng() * 3) | 0];
+      for (i = 0; i < W.cars.length; i++) { var o = W.cars[i]; if (Math.abs(o.s - z) < 50 && Math.abs(o.x - L) < 3) return; }
+      var v = VMAX * W.D.rv * 0.9;
+      W.cars.push({ id: W.carN++, s: z, x: L, tx: L, v: v, v0: v, t: W.rivalN % 2 ? 9 : 8, b: 0, col: (W.rng() * 4) | 0, lc: 30, hitT: -999, passed: false, ds: z - W.s, spin: 0, rival: true, behind: 0, paid: false });
+      W.rivalN++; W.rivalLive = true;
+      W.events.push({ sfx: 'rival' }); pop(W, 'RIVAL AHEAD', 'CATCH IT', 0, 'gold');
+      return;
+    }
+    if (r.spin > 0) return;
+    var gap = r.s - W.s, base = VMAX * W.D.rv;
+    // ahead of you it paces off your own speed, a touch slower the further back you are (it doesn't slow for the bends; you do),
+    // so driving well always reels it in; just past you, it fights back
+    var mine = Math.max(base * 0.55, W.v);
+    r.v0 = gap > 0 ? Math.min(base, mine * (gap > 300 ? 0.8 : gap > 170 ? 0.88 : gap > 60 ? 0.96 : 0.99)) : gap > -60 ? Math.min(VMAX * 1.04, Math.max(base, W.v * 1.03)) : base * 0.92;
+    r.behind = gap < -45 ? r.behind + 1 : 0;
+    if (r.behind > 60 * 3 || gap < -105) {   // beaten: it drops away behind you
+      W.cars.splice(W.cars.indexOf(r), 1); W.rivalLive = false; W.rivalT = W.t + 60 * 25; W.rivalBeat++;
+      if (!W.crash && !W.timeUp) {
+        W.score += 10000; pop(W, 'RIVAL BEATEN', '+10,000', 0, 'gold'); W.events.push({ sfx: 'beat' });
+        mood(W, 'cheer'); voice(W, 'close');
+      }
+    }
+  }
   function laneFree(W, c, L) {
     if (sameRoad(W, c) && Math.abs(W.s - c.s) < 60 && Math.abs(W.x - L) < 3.2) return false;   // never pull out in front of the player
     for (var q = 0; q < W.cars.length; q++) { var o = W.cars[q]; if (o !== c && o.b === c.b && Math.abs(o.s - c.s) < 45 && Math.abs(o.x - L) < 3) return false; }
@@ -498,21 +535,25 @@
       var ahead = null, dmin = 1e9;
       for (j = 0; j < cars.length; j++) {
         o = cars[j]; if (o === c || o.b !== c.b) continue;
-        var d = o.s - c.s; if (d > 0 && d < 45 && d < dmin && Math.abs(o.x - c.x) < 3) { dmin = d; ahead = o; }
+        var d = o.s - c.s; if (d > 0 && d < (c.rival ? 80 : 45) && d < dmin && Math.abs(o.x - c.x) < 3) { dmin = d; ahead = o; }
       }
+      if (c.rival && sameRoad(W, c) && W.s > c.s && W.s - c.s < 40 && Math.abs(W.x - c.x) < 3 && W.s - c.s < dmin) { dmin = W.s - c.s; ahead = { s: W.s, x: W.x, v: W.v }; }   // you, just ahead of it
       c.lc--;
       if (ahead) {
         if (c.lc <= 0) {
           var tries = [c.tx - 4.6, c.tx + 4.6].filter(function (L) { return L > -5 && L < 5; });
-          for (j = 0; j < tries.length; j++) if (laneFree(W, c, tries[j])) { c.tx = tries[j]; c.lc = 150; break; }
+          if (c.rival && W.rng() < 0.5) tries.reverse();
+          for (j = 0; j < tries.length; j++) if (laneFree(W, c, tries[j])) { c.tx = tries[j]; c.lc = c.rival ? 40 : 150; break; }
         }
-        if (Math.abs(ahead.x - c.x) < 3) c.v = Math.min(c.v, ahead.v);
-      } else c.v += (c.v0 - c.v) * 0.01;
-      if (sameRoad(W, c)) { var dz = c.s - W.s; if (dz < 0 && dz > -30 && Math.abs(c.x - W.x) < 3) c.v = Math.min(c.v, W.v * 0.95); }
+        if (Math.abs(ahead.x - c.x) < 3 && !c.rival) c.v = Math.min(c.v, ahead.v);
+        else if (c.rival && Math.abs(ahead.x - c.x) < 3 && dmin < 34) c.v = dmin < 9 ? Math.min(c.v, ahead.v) : Math.max(Math.min(c.v, ahead.v + (dmin - 9) * 0.6), c.v - 11 * DT);   // a rival boxed in brakes hard but not all at once (no brake-checking you)
+        else if (c.rival) c.v += (c.v0 - c.v) * 0.02;
+      } else c.v += (c.v0 - c.v) * (c.rival ? 0.02 : 0.01);
+      if (sameRoad(W, c)) { var dz = c.s - W.s; if (dz < 0 && dz > -(c.rival ? 12 : 30) && Math.abs(c.x - W.x) < 3) c.v = Math.min(c.v, W.v * 0.95); }
       var g = segAt(W, segIndex(c.s));
       if (g.fk && g.fk.a && Math.abs(c.tx) < 3) c.tx = (c.id % 2 ? 1 : -1) * 6.5;   // in the widening road the middle lane picks a side
       else if (c.lc < -400 && W.rng() < 0.004) { var nl = LANES[(W.rng() * 3) | 0]; if (laneFree(W, c, nl)) { c.tx = nl; c.lc = 120; } }
-      c.x += clamp(c.tx - c.x, -2.6 * DT, 2.6 * DT);
+      c.x += clamp(c.tx - c.x, -(c.rival ? 4.2 : 2.6) * DT, (c.rival ? 4.2 : 2.6) * DT);
       var z0 = c.s; c.s += c.v * DT;
       if (F && c.b === 0 && segIndex(c.s) >= F.split && segIndex(z0) < F.split) {   // this car reaches the split: it takes the road on its side
         c.b = c.x >= 0 ? 1 : -1; c.x -= c.b * OFF0; c.tx = clamp(Math.round(c.x / 4.6) * 4.6, -4.6, 4.6);
@@ -840,7 +881,7 @@
     }
 
     // ---- the traffic: bumps, near misses, overtakes and slipstreams
-    moveTraffic(W);
+    moveTraffic(W); rivals(W);
     out = !!W.crash;
     var slipping = false;
     for (var q = 0; q < W.cars.length; q++) {
@@ -863,7 +904,15 @@
         } else { W.x += (W.x >= car.x ? 1 : -1) * 0.8; W.events.push({ sfx: 'bump', x: car.x - W.x }); knock(W); }
         dz = car.s - W.s;
       }
-      if (!car.passed && car.ds >= 0 && dz < 0) {
+      if (car.rival && !out) {   // past the rival (a few metres clear, so side by side doesn't flicker), and back
+        if (car.passed && dz > 4) { car.passed = false; if (W.t - (car.popT || -999) > 100) { pop(W, 'RIVAL BACK IN FRONT', '', 0, 'nitro'); car.popT = W.t; } }
+        else if (!car.passed && dz < -4) {
+          car.passed = true; W.passN++; if (W.req && W.req.k === 'pass') W.req.have++;
+          if (!car.paid) { car.paid = true; W.score += 3000; pop(W, 'OVERTAKE!', '+3,000', car.x - W.x, 'gold'); W.events.push({ sfx: 'overtake', x: car.x - W.x }); mood(W, 'cheer'); car.popT = W.t; }
+          else if (W.t - (car.popT || -999) > 100) { pop(W, 'OVERTAKE!', '', car.x - W.x, 'gold'); car.popT = W.t; }
+        }
+      }
+      if (!car.rival && !car.passed && car.ds >= 0 && dz < 0) {
         car.passed = true;
         if (!out) { W.passN++; if (W.req && W.req.k === 'pass') W.req.have++; }
         if (dxx < hitW + 2.2 && W.t - car.hitT > 60 && W.v > top * 0.55 && !out) {
@@ -946,7 +995,7 @@
   return {
     SEG: SEG, HALF: HALF, RUMBLE: RUMBLE, VMAX: VMAX, VIEW: VIEW, CAR_W: CAR_W, CAR_L: CAR_L, LANES: LANES, FA: FA, FB: FB, OFF0: OFF0, OFF_END: OFF_END, OFF2: OFF2,
     LEVELS: LEVELS, TUN_W: TUN_W, BRG_W: BRG_W, PW: PW,
-    STAGES: STAGES, VEH: VEH, CARS: CARS, DIFF: DIFF, REQ: REQ,
+    STAGES: STAGES, VEH: VEH, CARS: CARS, DIFF: DIFF, REQ: REQ, rivalOf: rivalOf,
     newWorld: newWorld, step: step, hud: hud, mph: mph, autopilot: autopilot, peek: peek, topSpeed: topSpeed, buildStage: buildStage,
     segAt: segAt, segIndex: segIndex, lastIndex: lastIndex, heightAt: heightAt, forkOff: forkOff, edges: edges, roadHalf: roadHalf, bendHere: bendHere, rnd: rnd
   };

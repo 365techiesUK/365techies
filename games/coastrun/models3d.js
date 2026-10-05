@@ -465,13 +465,47 @@ const TRAFFIC = {
     for (const x of [-1, 1]) { k.axle(0.85, 0.5, 16, x * 0.95, 0.85, 1.1, '#1a1a1a'); k.axle(0.5, 0.4, 12, x * 0.8, 0.5, -1.4, '#1a1a1a'); }
     k.box(0.2, 0.2, 0.06, -0.6, 1.2, 1.45, '#ff8c00', 0, 0, 0, 'glow').box(0.2, 0.2, 0.06, 0.6, 1.2, 1.45, '#ff8c00', 0, 0, 0, 'glow');
   },
+  wedge(k, col) {   // a rival: a low, wide 1980s wedge supercar of our own - knife-edge nose, dark glass canopy pushed forward,
+    // a flat engine deck with slats, intakes in its flanks, a wing on stalks, one bar of light across its tail
+    k.side([-2.25, 0.27, 2.2, 0.27, 2.34, 0.46, 2.24, 0.6, 0.95, 0.86, -0.85, 0.94, -2.22, 0.98, -2.3, 0.72, -2.26, 0.42], 2.0, 0, 0, 0, col, 'shiny', 0.07);
+    k.side([0.98, 0.84, 0.3, 1.1, -0.62, 1.12, -1.2, 0.94], 1.46, 0, 0.02, 0, GLASS, 'shiny');   // the canopy
+    k.side([0.3, 1.1, -0.62, 1.12, -0.62, 1.14, 0.28, 1.125], 1.36, 0, 0.004, 0, col, 'shiny');   // its roof panel
+    for (let i = 0; i < 6; i++) k.box(1.24, 0.025, 0.07, 0, 0.965 + i * 0.005, 0.95 + i * 0.19, '#121212');   // slats over the engine
+    for (const sd of [-1, 1]) {
+      k.box(0.05, 0.24, 0.72, sd * 1.0, 0.5, 0.55, '#121212', sd * -0.08, 0, 0);   // an intake down each flank
+      k.box(0.06, 0.18, 0.1, sd * 0.72, 0.98, 1.98, '#151515');   // the wing's stalks
+      k.box(0.36, 0.035, 0.03, sd * 0.62, 0.47, -2.3, '#f6f2e2', 0, 0, 0, 'glow');   // slim lamps low in the nose
+    }
+    k.box(1.94, 0.045, 0.36, 0, 1.15, 2.0, col, 0, 0, 0, 'shiny').box(1.94, 0.02, 0.06, 0, 1.13, 2.17, '#151515');   // the wing
+    k.box(1.98, 0.36, 0.05, 0, 0.5, 2.27, '#121212', 0, 0, 0, 'shiny');   // a black tail panel
+    k.box(1.7, 0.07, 0.06, 0, 0.74, 2.29, '#ff2a2a', 0, 0, 0, 'glow');   // one bar of light right across
+    wheelsOn(k, [-0.86, 0.86], [-1.42, 1.38], 0.35, 0.3); rearEnd(k, 1.98, 2.28, 0.3, 0.6);
+  },
+  lemans(k, col) {   // a rival: a low 1960s endurance racer of our own - long curving nose, bulging wheel arches over fat tyres, a
+    // bubble of a cabin, a long tail cut off square; twin stripes nose to tail and a white roundel on each door
+    const stripe = col === '#f4f4f4' ? '#1d4ed8' : col === '#f2c14e' ? '#1a1a1a' : '#f4f4f4';
+    const top = [2.14, 0.46, 2.02, 0.6, 1.45, 0.7, 0.72, 0.73, 0.36, 0.98, -0.42, 1.0, -0.9, 0.86, -1.6, 0.8, -2.1, 0.74];
+    k.side([-2.1, 0.25, 2.06, 0.25].concat(top, [-2.12, 0.4]), 1.86, 0, 0, 0, col, 'shiny', 0.12);
+    k.side([0.72, 0.75, 0.37, 0.96, -0.4, 0.98, -0.86, 0.86], 1.3, 0, 0.02, 0, GLASS, 'shiny');   // the cabin's glass
+    for (const z of [-1.35, 1.32]) for (const sd of [-1, 1]) k.ball(0.38, sd * 0.74, 0.56, z, col, 0.55, 0.5, 1.35, 'shiny', 14);   // the arches, bulging over the wheels
+    const band = []; for (let i = 0; i < top.length; i += 2) band.push(top[i], top[i + 1] + 0.012);
+    for (let i = top.length - 2; i >= 0; i -= 2) band.push(top[i], top[i + 1] - 0.012);
+    for (const sx of [-0.15, 0.15]) k.side(band, 0.16, sx, 0.1, 0, stripe, 'shiny');   // (up by the body's rounded edge)   // the stripes, following the body from nose to tail
+    for (const sd of [-1, 1]) {
+      k.put(new THREE.CylinderGeometry(0.21, 0.21, 0.01, 18), '#f4f4f4', sd * 0.935, 0.52, 0.05, 0, 0, Math.PI / 2, 1, 1, 1, 'shiny');   // a roundel on the door
+      k.put(new THREE.CylinderGeometry(0.12, 0.12, 0.012, 14), '#1a1a1a', sd * 0.938, 0.52, 0.05, 0, 0, Math.PI / 2, 1, 1, 1, 'shiny');
+      k.ball(0.1, sd * 0.6, 0.55, -1.95, '#f6f2e2', 1, 0.8, 0.5, 'glow', 10);   // covered round lamps in the nose
+    }
+    k.box(1.76, 0.12, 0.05, 0, 0.6, 2.13, '#121212').box(1.4, 0.06, 0.06, 0, 0.62, 2.15, '#ff2a2a', 0, 0, 0, 'glow');
+    wheelsOn(k, [-0.82, 0.82], [-1.35, 1.32], 0.34, 0.3); rearEnd(k, 1.84, 2.14, 0.3, 0.42);
+  },
   lorry(k, col) {
     k.side([-6, 0.6, 3.6, 0.6, 3.6, 3.9, -6, 3.9], 2.5, 0, 0, 0, col, 'shiny', 0.05); k.side([3.8, 0.5, 6.1, 0.5, 6.1, 2.6, 5.4, 3.3, 3.8, 3.3], 2.4, 0, 0, 0, '#3a3a3a', 'shiny', 0.05);
     k.box(2.52, 0.3, 9.6, 0, 0.5, -1.2, '#3a3a3a'); wheelsOn(k, [-1.05, 1.05], [-4.6, -3.4, 4.8], 0.5, 0.35); lights(k, 2.5, 0.9, 6.12, 0.3);
   }
 };
-export const TRAFFIC_ORDER = ['hatch', 'saloon', 'van', 'bus', 'camper', 'tractor', 'lorry', 'sports'];
-const TCOL = { hatch: [0, 1, 2, 4, 5, 6], saloon: [0, 1, 2, 3, 6, 7], van: [2, 2, 2, 6, 1], bus: [0, 4], camper: [5, 4, 1, 7], tractor: [5, 0], lorry: [2, 1, 3], sports: [0, 4, 7, 1] };
+export const TRAFFIC_ORDER = ['hatch', 'saloon', 'van', 'bus', 'camper', 'tractor', 'lorry', 'sports', 'wedge', 'lemans'];
+const TCOL = { hatch: [0, 1, 2, 4, 5, 6], saloon: [0, 1, 2, 3, 6, 7], van: [2, 2, 2, 6, 1], bus: [0, 4], camper: [5, 4, 1, 7], tractor: [5, 0], lorry: [2, 1, 3], sports: [0, 4, 7, 1], wedge: [4, 7, 2, 3], lemans: [1, 2, 5, 4] };
 export function trafficModel(t, colIdx) {
   const id = TRAFFIC_ORDER[t], cols = TCOL[id], col = CARCOL[cols[colIdx % cols.length]], key = 'veh|' + id + '|' + col;
   let m = cache.get(key); if (m) return m;
@@ -670,7 +704,7 @@ export function people() {
   const P = (fn) => { const k = new Kit(); fn(k); return k.build(); };
   const cap = (r, l) => new THREE.CapsuleGeometry(r, l, 4, 10);
   const one = (o) => ({
-    torso: P((k) => { k.put(cap(o.chest, 0.3), o.top, 0, 0.3, 0, 0, 0, 0, o.wide, 1, 0.72, 'lit'); if (!o.short) for (const sd of [-1, 1]) k.ball(o.arm * 1.1, sd * o.chest * o.wide * 0.9, 0.53, 0, o.sleeve, 1, 0.85, 1, 'lit', 10); else { k.put(new THREE.CapsuleGeometry(0.055, 0.3, 4, 12), o.sleeve, 0, 0.51, 0.005, 0, 0, Math.PI / 2, 0.8, 1, 1.25, 'lit'); k.put(new THREE.TorusGeometry(0.06, 0.013, 4, 16, Math.PI), '#e4e4de', 0, 0.6, 0, Math.PI / 2, 0, 0, 1, 1, 0.5, 'lit'); } if (o.collar) for (const sd of [-1, 1]) k.box(0.08, 0.012, 0.06, sd * 0.045, 0.585, -0.05, '#e4e4de', -0.6, 0, sd * 0.45, 'lit'); k.cyl(0.05, 0.055, 0.14, 8, 0, 0.6, 0, o.skin); if (o.strap) { k.ball(0.13, 0, 0.545, -0.005, o.skin, 1.22, 0.42, 0.74, 'lit', 16); for (const sd of [-1, 1]) k.put(new THREE.TorusGeometry(0.09, 0.009, 4, 12, Math.PI), o.top, sd * 0.075, 0.51, 0, 0, Math.PI / 2, 0, 1, 1, 1, 'lit'); } }),
+    torso: P((k) => { k.put(cap(o.chest, 0.3), o.top, 0, 0.3, 0, 0, 0, 0, o.wide, 1, 0.72, 'lit'); if (!o.short) for (const sd of [-1, 1]) k.ball(o.arm * 1.1, sd * o.chest * o.wide * 0.9, 0.53, 0, o.sleeve, 1, 0.85, 1, 'lit', 10); else { k.put(new THREE.CapsuleGeometry(0.055, 0.3, 4, 12), o.sleeve, 0, 0.51, 0.005, 0, 0, Math.PI / 2, 0.8, 1, 1.25, 'lit'); k.put(new THREE.TorusGeometry(0.06, 0.013, 4, 16, Math.PI), '#e4e4de', 0, 0.6, 0, Math.PI / 2, 0, 0, 1, 1, 0.5, 'lit'); } if (o.collar) for (const sd of [-1, 1]) k.box(0.08, 0.012, 0.06, sd * 0.045, 0.585, -0.05, '#e4e4de', 0, -0.6, sd * 0.45, 'lit'); k.cyl(0.05, 0.055, 0.14, 8, 0, 0.6, 0, o.skin); if (o.strap) { k.ball(0.13, 0, 0.545, -0.005, o.skin, 1.22, 0.42, 0.74, 'lit', 16); for (const sd of [-1, 1]) k.put(new THREE.TorusGeometry(0.09, 0.009, 4, 12, Math.PI), o.top, sd * 0.075, 0.51, 0, 0, Math.PI / 2, 0, 1, 1, 1, 'lit'); } }),
     head: P((k) => {
       k.ball(0.122, 0, 0.13, 0, o.skin, 1, 1.15, 1.06, 'lit', 16);
       k.ball(0.021, 0, 0.112, -0.122, o.skin, 0.9, 0.95, 0.75, 'lit', 8);   // the nose   // the nose

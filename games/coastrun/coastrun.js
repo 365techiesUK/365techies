@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=15';
+import { createWorld } from './world3d.js?v=16';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
@@ -130,6 +130,7 @@ function hud(g, W, t, mode) {
     g.fillStyle = '#ffc23a'; g.fillRect(bx, by + 0.6, Math.max(1, bw * p), 2.2);
     g.fillStyle = S.next ? '#ffffff' : '#4ade80'; g.fillRect(bx + bw - 1, by - 1, 2, 5.2);
   }
+  rivalTag(g, W, t, mode);
   routeMap(g, W, 8, GH - 46, t);
   powers(g, W, t);
   speedo(g, W, t);
@@ -154,6 +155,14 @@ function hud(g, W, t, mode) {
   banner(g, W, t);
   if (!W.crash) pops(g, W);   // (no score popping up over a crash)
   results(g, W, t);
+}
+function rivalTag(g, W, t, mode) {   // RIVAL with an arrow and the gap in metres, while one's about
+  const r = E.rivalOf && E.rivalOf(W); if (!r || mode === 'title' || W.crash || (W.fork && !W.fork.s && E.segIndex(W.s) > W.fork.a - 70)) return;
+  const gap = Math.round(r.s - W.s), y = W.req || W.reqSide || (W.reqDone && W.t - W.reqDone.t < 110) ? 54 : 32, close = Math.abs(gap) < 40;
+  g.fillStyle = 'rgba(6,10,18,0.5)'; g.fillRect(GW / 2 - 34, y - 7.5, 68, 10);
+  g.fillStyle = '#ffc23a'; g.fillRect(GW / 2 - 34, y - 7.5, 1.4, 10);
+  hudText(g, 'RIVAL', GW / 2 - 29, y, 5.6, '#ffc23a', 'left', false);
+  hudText(g, (gap >= 0 ? '▲ ' : '▼ ') + Math.abs(gap) + ' m', GW / 2 + 30, y, 6.5, close && (t / 160 | 0) % 2 ? '#ffc23a' : '#ffffff', 'right', false);
 }
 function powers(g, W, t) {   // the bonuses you have on, under the score: an icon each, the time left running round it
   if (!W.pw) return;
@@ -362,6 +371,9 @@ function sound(name, S, e) {
     case 'power': [660, 880, 1175, 1568].forEach((f, k) => S.tone(f * ({ magnet: 1, shield: 1.12, double: 1.26, time: 0.9 }[e && e.k] || 1), 0.14, 0.05, { type: 'triangle', when: k * 0.05, verb: 0.45 })); S.noise(0.3, 0.06, 2000, { type: 'bandpass', q: 2, to: 8000 }); break;
     case 'powerEnd': [880, 660, 440].forEach((f, k) => S.tone(f, 0.1, 0.035, { type: 'triangle', when: k * 0.07 })); break;
     case 'smash': S.noise(0.5, 0.3, 2200, { verb: 0.4 }); S.tone(70, 0.4, 0.2, { type: 'sine', to: 30 }); [1319, 1760].forEach((f, k) => S.tone(f, 0.18, 0.04, { type: 'square', when: 0.06 + k * 0.06, verb: 0.4 })); break;
+    case 'rival': [0, 0.16].forEach((w) => { S.tone(392, 0.11, 0.05, { type: 'square', when: w, verb: 0.5 }); S.tone(494, 0.11, 0.04, { type: 'square', when: w, verb: 0.5 }); }); break;
+    case 'overtake': S.noise(0.5, 0.16, 400, { type: 'bandpass', q: 1.2, to: 2600, pan: p }); [784, 1047].forEach((f, k) => S.tone(f, 0.13, 0.05, { type: 'triangle', when: 0.06 + k * 0.07, verb: 0.35 })); break;
+    case 'beat': [523, 659, 784, 1047, 1319].forEach((f, k) => S.tone(f, 0.16, 0.05, { type: 'square', when: k * 0.07, verb: 0.45 })); break;
     case 'nitro': S.tone(300, 0.4, 0.06, { type: 'sawtooth', to: 1400, verb: 0.3 }); S.noise(0.4, 0.08, 600, { type: 'bandpass', q: 2, to: 5000 }); break;
     case 'boost': S.noise(0.8, 0.14, 300, { type: 'bandpass', q: 1.2, to: 3000, verb: 0.3 }); S.tone(160, 0.6, 0.06, { type: 'sawtooth', to: 320 }); break;
     case 'check': [523, 659, 784, 1047, 784, 1047, 1319].forEach((f, k) => S.tone(f, 0.14, 0.055, { type: 'square', when: k * 0.08, verb: 0.4 })); break;
@@ -603,6 +615,7 @@ A.start({
     '<b>Bends</b> pull the car outwards &mdash; steer into them, and ease off (brake) for the sharp ones the black and white arrows warn you about. On <b>Gentle</b> the car helps you round.',
     '<b>Drifting:</b> while turning at speed, <b>tap &darr;</b> &mdash; the back of the car slides out and you go round the bend sideways, scoring points and filling your nitro. Keep steering to hold the slide; straighten up to stop.',
     '<b>Forks:</b> at the end of each stretch the road splits &mdash; keep to the <b>left</b> (west) or <b>right</b> (east) half to choose where you go next. The map in the bottom corner shows your way through the fifteen places. Don&rsquo;t hit the sign in the middle!',
+    '<b>Rivals:</b> now and then a sports car as quick as you turns up ahead (RIVAL and the gap show at the top). Keep up with it and get past for <b>+3,000</b>, then stay ahead until it drops away for <b>+10,000</b>. Slipstream it and use your nitro: it fights back.',
     '<b>Nitro:</b> hold <b>Space</b> (or Shift, B or X, or the mouse button, or the <b>Nitro</b> button) and flames shoot from the pipes &mdash; well past full speed while the blue bar lasts. Fill it with <b>near misses</b> (passing cars closely), <b>slipstreams</b>, drifting, coins and the blue <b>nitro bottles</b>.',
     '<b>Bonuses</b> on the road: a red <b>magnet</b> pulls in coins from every lane; a gold <b>star</b> puts a shield round the car &mdash; smash through traffic and signs without crashing; a purple <b>gem</b> doubles every point you score; a green <b>clock</b> adds five seconds. The ones you have on show under the score, running down.',
     '<b>Jumps:</b> go over a crest fast and the car flies &mdash; points for every bit of air. <b>Coins</b> lie on the road in lines; get every coin in a line for a bonus.',
