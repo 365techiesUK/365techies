@@ -103,7 +103,7 @@
   function plates(S, L) {
     var mini = L.tall ? ' mini' : '', out = [];
     var crib = S.dealer === 0 ? 'Your crib' : OPP + '’s crib', dealtag = function (p) { return S.dealer === p ? ' &middot; deals' : ''; };
-    out.push({ key: 'p1', x: L.cx, y: Math.round(L.gap + L.ch * L.osc + 4), center: true, html: '<span class="av">S</span><span>' + OPP + dealtag(1) + '<small>' + (S.phase === 'peg' ? S.inHand[1].length + ' cards left' : 'Score ' + S.scores[1]) + '</small></span>', cls: mini + (S.phase === 'peg' && S.turn === 1 ? ' turn' : '') });
+    out.push({ key: 'p1', x: L.cx, y: Math.round(L.gap + L.ch * L.osc + 4), center: true, html: '<span class="av">S</span><span>' + OPP + dealtag(1) + '<small>' + (S.phase === 'peg' ? S.inHand[1].length + (S.inHand[1].length === 1 ? ' card left' : ' cards left') : 'Score ' + S.scores[1]) + '</small></span>', cls: mini + (S.phase === 'peg' && S.turn === 1 ? ' turn' : '') });
     out.push({ key: 'p0', x: L.gap, y: L.handY - (L.tall ? 38 : 44), html: '<span class="av">Y</span><span>You' + dealtag(0) + '<small>Score <b class="pts">' + S.scores[0] + '</b></small></span>', cls: 'you' + mini + (S.phase === 'peg' && S.turn === 0 ? ' turn' : '') });
     out.push({ key: 'bd', x: L.cx, y: L.boardY, center: true, html: board(S, L), cls: 'board' });
     var showing = S.phase === 'show' || S.phase === 'handEnd' || (S.phase === 'over' && S.counts.length);   // the cards move about in the show
@@ -250,6 +250,7 @@
       hint: function (lv) { return lv <= 3; }
     },
     layout: layout, positions: positions, plates: plates, panel: panel, tap: tap, press: press, wait: wait, fx: fx,
+    commits: function (S) { return S.phase === 'peg'; },   // a tap plays the card for good (rivals.js lifts it first on a phone)
     over: function (S) { return S.phase === 'over'; }, result: result, chips: chips, dealOrder: dealOrder, hintShow: hintShow,
     newHand: function (S, U) { U.crib = []; },
     bestTiles: [{ k: 'hand', label: 'Best hand' }],

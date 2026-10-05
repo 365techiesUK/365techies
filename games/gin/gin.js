@@ -217,6 +217,7 @@
       hint: function (lv) { return lv <= 3; }
     },
     layout: layout, positions: positions, plates: plates, panel: panel, tap: tap, press: press, wait: wait, fx: fx,
+    commits: function (S) { return S.phase === 'discard'; },   // a tap throws the card away (rivals.js lifts it first on a phone)
     panelAt: function (S, L) { return S.result && (S.phase === 'handEnd' || S.phase === 'over') ? L.panelEnd : L.panel; },
     over: function (S) { return S.phase === 'over'; }, result: result, chips: chips, dealOrder: dealOrder, hintShow: hintShow,
     newHand: function (S, U) { U.knock = false; },

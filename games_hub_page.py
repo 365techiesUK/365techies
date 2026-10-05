@@ -166,10 +166,18 @@ def _cards():
             n += 1
             items.append(_tile(g, n))
         cls = "gh-grid--cards" if c == "Card games" else "gh-grid--one" if len(mine) == 1 else "gh-grid--wide"
-        out.append('      <div class="gh-cat"><h2>%s</h2>%s</div>\n      <ul class="gh-grid %s" role="list">\n        %s\n      </ul>'
-                   % (name, ('<p>%s</p>' % line) if line else "", cls, "\n        ".join(items)))
+        out.append('      <div class="gh-cat" id="gh-%s"><h2>%s</h2>%s</div>\n      <ul class="gh-grid %s" role="list">\n        %s\n      </ul>'
+                   % (re.sub(r'[^a-z]+', '-', name.lower()).strip('-'), name, ('<p>%s</p>' % line) if line else "", cls, "\n        ".join(items)))
     return "\n".join(out)
 
+
+# big Play buttons first (games audit, 5 Oct 2026; critic: on a phone the first screen had nothing to tap to start a
+# game). hub.js turns the first into "Carry on" when a game is under way in this browser.
+_QUICK = """      <div class="gh-quick" id="ghQuick">
+        <a class="gh-qb gh-qb--go" id="ghQ1" href="/games/solitaire/"><span aria-hidden="true">&#9654;</span> Solitaire</a>
+        <a class="gh-qb gh-qb--go" href="/games/hearts/"><span aria-hidden="true">&#9654;</span> Hearts</a>
+        <a class="gh-qb" href="#gh-card-games">All the games <span aria-hidden="true">&darr;</span></a>
+      </div>"""
 
 # the "you" card: filled in by hub.js from this browser's own saves; a first-time visitor sees the welcome
 _ME = """      <div class="gh-me" id="ghMe">
@@ -186,6 +194,14 @@ _CSS = """      <style>
         .gh-cat{display:flex;flex-wrap:wrap;align-items:baseline;gap:.2rem 1rem;margin:2.4rem 0 1rem}
         .gh-cat h2{font-family:var(--font-display);font-weight:600;font-size:clamp(1.45rem,2.6vw,1.9rem);margin:0}
         .gh-cat p{margin:0;color:var(--muted);font-size:.98rem;line-height:1.5;max-width:44rem}
+        /* the Play buttons */
+        .gh-quick{display:flex;flex-wrap:wrap;gap:.6rem;margin:0 0 1rem}
+        .gh-qb{flex:0 1 auto;display:inline-flex;align-items:center;justify-content:center;gap:.45rem;min-height:50px;padding:.55rem 1.3rem;border-radius:14px;
+          background:rgba(255,255,255,.07);border:1px solid rgba(108,196,245,.4);color:var(--ink);font:600 1.08rem/1.1 var(--font-display);text-decoration:none}
+        .gh-qb:hover{background:rgba(255,255,255,.13)}
+        .gh-qb--go{background:linear-gradient(135deg,#2aa8f2,#1859b8);border-color:transparent;color:#fff;box-shadow:0 6px 18px rgba(24,89,184,.35)}
+        .gh-qb--go:hover{background:linear-gradient(135deg,#3db4f5,#1d66c9)}
+        @media (max-width:560px){.gh-quick{gap:.45rem}.gh-qb{flex:1 1 0;padding:.5rem .4rem;font-size:1rem;min-width:0;white-space:nowrap}}
         /* the "you" card */
         .gh-me{display:flex;flex-wrap:wrap;align-items:center;gap:.9rem 1.2rem;padding:1rem 1.2rem;border-radius:var(--r-lg);
           background:linear-gradient(120deg,rgba(29,151,227,.18),rgba(12,20,44,.75) 60%);border:1px solid rgba(108,196,245,.28)}
@@ -341,7 +357,7 @@ _ASK = """      <div class="gh-ask" id="ask">
         </div>
       </div>
       <script src="/games/common/social.js?v=4"></script>
-      <script src="/games/common/hub.js?v=2"></script>
+      <script src="/games/common/hub.js?v=3"></script>
       <script>(function(){if(!window.GameSocial){var a=document.getElementById("ask");if(a)a.hidden=true;return;}
         GameSocial.init({id:"games",title:"365 Games"});
         document.getElementById("ghAsk").onclick=function(){GameSocial.openFeedback("request");};
@@ -351,7 +367,7 @@ _ASK = """      <div class="gh-ask" id="ask">
 
 def _pre():
     words, link = _pcm_line()
-    return ('    <section class="section gh" aria-label="The games">\n' + _CSS + '\n      <div class="wrap">\n' + _ME + '\n' + _cards() + '\n' + _ASK
+    return ('    <section class="section gh" aria-label="The games">\n' + _CSS + '\n      <div class="wrap">\n' + _QUICK + '\n' + _ME + '\n' + _cards() + '\n' + _ASK
             + '\n      <div class="gh-pcm"><p>%s</p><a href="/free-pc-health-check/">%s</a></div>\n      </div>\n    </section>' % (words, link))
 
 

@@ -85,7 +85,7 @@
   function plate(p, S, L) {
     var hand = S.taken[p], tot = S.scores[p];
     var txt = p === 0 ? 'You' : NAMES[p];
-    return '<span class="av">' + txt.charAt(0) + '</span><span>' + txt + '<small><b class="pts">' + hand + '</b> this hand &middot; ' + tot + '</small></span>';
+    return '<span class="av">' + txt.charAt(0) + '</span><span>' + txt + '<small>This hand <b class="pts">' + hand + '</b> &middot; Total ' + tot + '</small></span>';
   }
   function plates(S, L) {
     var turn = S.phase === 'play' && S.trick.length < 4 ? S.turn : -1, mini = L.tall ? ' mini' : '', out = [];
@@ -227,6 +227,7 @@
       hint: function (lv) { return lv <= 3; }
     },
     layout: layout, positions: positions, plates: plates, panel: panel, tap: tap, press: press, wait: wait, fx: fx,
+    commits: function (S) { return S.phase === 'play'; },   // a tap plays the card for good (rivals.js lifts it first on a phone)
     panelAt: function (S, L) {
       if (!L.tall || (S.phase !== 'handEnd' && S.phase !== 'over')) return L.panel;
       return { x: L.panel.x, y: Math.round(plateYs(L, S).north + 40 + L.ch * 0.5 + 10), w: L.panel.w };

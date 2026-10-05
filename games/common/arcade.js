@@ -14,6 +14,7 @@
   'use strict';
   function esc(s) { return String(s).replace(/[&<>"]/g, function (m) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]; }); }
   var ICON = {
+    more: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/></svg>',
     play: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"/></svg>',
     pause: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4.5" width="4" height="15" rx="1"/><rect x="14" y="4.5" width="4" height="15" rx="1"/></svg>',
     stats: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>',
@@ -227,7 +228,7 @@
       closeSheets(); mode = 'play'; last = 0; setPauseBtn(); showOverlay('');
       try { cv.focus({ preventScroll: true }); } catch (e) {}
     }
-    function setPauseBtn() { var p = mode === 'paused'; $('bPause').innerHTML = (p ? ICON.play : ICON.pause) + '<span class="lbl">' + (p ? 'Carry on' : 'Pause') + '</span>'; }
+    function setPauseBtn() { var p = mode === 'paused'; $('bPause').innerHTML = (p ? ICON.play : ICON.pause) + '<span class="lbl">' + (p ? 'Carry on' : 'Pause') + '</span><span class="sl" aria-hidden="true">' + (p ? 'Play' : 'Pause') + '</span>'; }
     function gameOver() {
       mode = 'over';
       var h = D.hud(W), key = skey(W), b = ST.best[key] || (ST.best[key] = {}), badges = [], d = today();
@@ -330,6 +331,22 @@
         + '@keyframes arcGlow{from{filter:hue-rotate(0deg)}to{filter:hue-rotate(70deg)}}'
         + '@keyframes arcPulse{from{transform:scale(1)}to{transform:scale(1.07)}}'
         + '@keyframes arcBump{40%{transform:scale(1.25)}100%{transform:none}}'
+        + '.brandb{display:flex;align-items:center;gap:9px;padding:0 4px 0 0;border:0;background:none;color:inherit;font:inherit;letter-spacing:inherit;cursor:pointer;border-radius:10px}'
+        + '.brandb .caret{font-style:normal;font-size:12px;opacity:.75}'
+        + '.tb .sl{display:none}.tb.tbmore{display:none}'
+        + '.sheet{position:relative}.sheet>h2{padding-right:48px}'
+        + '.x365{position:absolute;top:12px;right:12px;width:44px;height:44px;border:0;border-radius:50%;background:rgba(127,127,127,.16);color:inherit;font:400 28px/1 Archivo,sans-serif;cursor:pointer;display:grid;place-items:center}'
+        + '.x365:hover{background:rgba(127,127,127,.3)}'
+        + '.morel{display:grid;gap:8px;margin:4px 0 14px}.morei{display:flex!important;align-items:center;gap:12px;justify-content:flex-start!important;text-align:left}.morei svg{width:24px;height:24px;flex:none}'
+        + '@media (max-width:860px){.brand span{display:inline!important;font-size:18px}}'
+        + '@media (max-width:480px){.bar{gap:6px 10px}.brand span{font-size:17px}'
+        + '.tools{display:grid!important;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px!important;width:100%;margin-left:0!important}'
+        + '.tb,.tb.tb2,.tb.tb3{flex-direction:column;justify-content:center;gap:3px;min-height:52px;padding:5px 2px 4px!important}'
+        + '.tb .sl{display:block;font:700 12px/1 Archivo,sans-serif;white-space:nowrap}.tb svg{width:21px;height:21px}.tb.tbx{display:none}.tb.tbmore{display:inline-flex}}'
+        // the title box (games audit, 5 Oct 2026; critic: Hall of Fame was the biggest button and on a phone the touch
+        // instructions fell below the box): Play the bigger of the two, side by side; the points list in two columns on a phone
+        + '.ovbox .trow{flex-wrap:nowrap}.ovbox .trow #tPlay{flex:3 1 0;padding:0 12px}.ovbox .trow #tHof{flex:2 1 0;padding:0 10px;font-size:16px;white-space:nowrap}'
+        + '@media (max-width:520px){.legend{grid-template-columns:auto auto;column-gap:18px}.ovbox p{margin:5px 0}.ovbox .trow #tPlay{flex:1 1 58%}.ovbox .trow #tHof{flex:0 1 auto;font-size:14px;padding:0 9px}}'
         + '@media (prefers-reduced-motion:reduce){.arc-ban,.arc-ban b,.arc-ban.out,.ovbox .arc-new,.ovbox .tile b.bump{animation:none}}';
       document.head.appendChild(st);
     })();
@@ -448,6 +465,17 @@
 
     // ------------------------------------------------------------ sheets
     var openSheet = null, lastFocus = null;
+    // Tab stays inside whichever dialog is open on top - ours, the Hall of Fame, the Journey, Looks, Share
+    // (games audit, 5 Oct 2026); the last visible aria-modal in the page is the one on top
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Tab') return;
+      var dl = [].filter.call(document.querySelectorAll('[aria-modal="true"]'), function (x) { return x.getClientRects().length > 0; }).pop();
+      if (!dl) return;
+      var f = [].filter.call(dl.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'), function (x) { return !x.disabled && x.getClientRects().length > 0; });
+      if (!f.length) return;
+      var i = f.indexOf(document.activeElement);
+      if (e.shiftKey ? i <= 0 : (i < 0 || i === f.length - 1)) { e.preventDefault(); f[e.shiftKey ? f.length - 1 : 0].focus(); }
+    }, true);
     function openD(id) {
       if (mode === 'play') pause();
       closeSheets();
@@ -491,6 +519,15 @@
     $('bStats').onclick = openStats;
     $('bSet').onclick = function () { sync(); openD('dSet'); };
     $('bHelp').onclick = function () { openD('dHelp'); };
+    // More (phones): the bar's tucked-away buttons, as big buttons with words (games audit, 5 Oct 2026)
+    $('bMore').onclick = function () {
+      $('moreL').innerHTML = ['bStats', 'bSet', 'bShare', 'bFeed', 'bFull'].filter(function (id) { return $(id) && !$(id).hidden; }).map(function (id) {
+        var b = $(id); return '<button class="btn wide morei" type="button" data-for="' + id + '">' + b.querySelector('svg').outerHTML + '<span>' + esc(b.querySelector('.lbl').textContent) + '</span></button>';
+      }).join('');
+      openD('dMore');
+    };
+    $('moreL').onclick = function (e) { var b = e.target.closest && e.target.closest('[data-for]'); if (!b) return; closeSheets(); var t = $(b.getAttribute('data-for')); setTimeout(function () { t.click(); }, 0); };
+    $('bBrand').onclick = function () { $('bGames').click(); };
     $('oPlay').onclick = begin; $('tPlay').onclick = begin; $('pGo').onclick = resume;
     $('oStats').onclick = openStats;
     // the Hall of Fame: one player across all our games; the boards are this game's speeds
@@ -541,7 +578,8 @@
     window.ARCADE365 = { get world() { return W; }, get mode() { return mode; }, begin: begin, input: input, pause: pause, resume: resume };
 
     function buildUI() {
-      var tb = function (id, icon, label, title, cls) { return '<button class="tb' + (cls ? ' ' + cls : '') + '" id="' + id + '" type="button" title="' + esc(title) + '">' + ICON[icon] + '<span class="lbl"' + (id === 'bFull' ? ' id="bFullL"' : '') + '>' + esc(label) + '</span></button>'; };
+      var tb = function (id, icon, label, title, cls) { return '<button class="tb' + (cls ? ' ' + cls : '') + '" id="' + id + '" type="button" title="' + esc(title) + '">' + ICON[icon] + '<span class="lbl"' + (id === 'bFull' ? ' id="bFullL"' : '') + '>' + esc(label) + '</span>'
+        + ({ bNew: 'New', bGames: 'Games', bUndo: 'Undo', bHint: 'Hint', bHelp: 'Help', bPause: 'Pause', bMore: 'More' }[id] ? '<span class="sl" aria-hidden="true">' + { bNew: 'New', bGames: 'Games', bUndo: 'Undo', bHint: 'Hint', bHelp: 'Help', bPause: 'Pause', bMore: 'More' }[id] + '</span>' : '') + '</button>'; };
       var speeds = D.speeds.options.map(function (o) { return '<button type="button" data-speed="' + o[0] + '">' + esc(o[1]) + '</button>'; }).join('');
       var row = function (o) {   // one of the game's own settings
         if (o.type === 'seg') return '<div class="set"><div><label>' + esc(o.label) + '</label><small>' + esc(o.small || '') + '</small></div><div class="seg" role="group" aria-label="' + esc(o.label) + '">'
@@ -551,12 +589,12 @@
       var segRows = (D.settings || []).filter(function (o) { return o.type === 'seg'; }).map(row).join('');
       var swRows = (D.settings || []).filter(function (o) { return o.type !== 'seg'; }).map(row).join('');
       var legend = (D.legend || []).map(function (l, i) { return '<li><span class="lg" data-lg="' + i + '"></span>' + esc(l.text) + '</li>'; }).join('');
-      var html = '<div id="app" class="arcade"><header class="bar"><div class="brand"><b>365</b><span>' + esc(D.title.replace(/^365 /, '')) + '</span></div>'
+      var html = '<div id="app" class="arcade"><header class="bar"><div class="brand"><button class="brandb" type="button" id="bBrand" title="All our games"><b>365</b> <span>' + esc(D.title.replace(/^365 /, '')) + '</span><i class="caret" aria-hidden="true">&#9662;</i></button></div>'
         + '<div class="info"><div class="chip"><small>Score</small><span id="vScore">0</span></div><div class="chip"><small>Best</small><span id="vBest">0</span></div>'
         + '<div class="chip"><small>Lives</small><span id="vLives">0</span></div><div class="chip"><small>' + WORDC + '</small><span id="vWave">1</span></div></div>'
-        + '<nav class="tools" aria-label="Game">' + tb('bNew', 'new', 'New game', 'New game (N)', 'main') + tb('bGames', 'games', 'Games', 'Switch to another of our games', 'tb3') + tb('bPause', 'pause', 'Pause', 'Pause (P)') + tb('bStats', 'stats', 'My scores', 'My scores', 'tb3')
-        + tb('bSet', 'set', 'Settings', 'Settings', 'tb3') + tb('bHelp', 'help', 'How to play', 'How to play')
-        + tb('bShare', 'share', 'Share', 'Share this game with a friend', 'tb2') + tb('bFeed', 'feedback', 'Feedback', 'Tell us what you think, or ask for a new game', 'tb2') + tb('bFull', 'full', 'Full screen', 'Full screen (F)', 'tb2') + '</nav></header>'
+        + '<nav class="tools" aria-label="Game">' + tb('bNew', 'new', 'New game', 'New game (N)', 'main') + tb('bGames', 'games', 'Games', 'Switch to another of our games', 'tb3') + tb('bPause', 'pause', 'Pause', 'Pause (P)') + tb('bStats', 'stats', 'My scores', 'My scores', 'tb3 tbx')
+        + tb('bSet', 'set', 'Settings', 'Settings', 'tb3 tbx') + tb('bHelp', 'help', 'How to play', 'How to play')
+        + tb('bShare', 'share', 'Share', 'Share this game with a friend', 'tb2 tbx') + tb('bFeed', 'feedback', 'Feedback', 'Tell us what you think, or ask for a new game', 'tb2 tbx') + tb('bFull', 'full', 'Full screen', 'Full screen (F)', 'tb2 tbx') + tb('bMore', 'more', 'More', 'More: my scores, settings, share, feedback', 'tbmore') + '</nav></header>'
         + '<main id="stage"><div id="screenwrap"><canvas id="screen" tabindex="-1" aria-label="' + esc(D.title) + ' game screen"></canvas>'
         + '<div class="ov" id="ov_title"><div class="ovbox"><h1>' + esc(D.title) + '</h1>' + (legend ? '<ul class="legend">' + legend + '</ul>' : '')
         + '<p>' + (D.titleText || '') + '</p>'
@@ -578,6 +616,7 @@
           + swRows
           + '<p class="foot">' + esc(D.title) + ' is made by <a href="https://365techies.co.uk/" target="_blank" rel="noopener">365 Techies</a> in Bournemouth. No adverts, no sign-in, nothing to install. Computer playing up? Ring us on <b>01202 775566</b>.</p>'
           + '<div class="row"><button class="btn go wide" type="button" data-close>Done</button></div>')
+        + sheet('dMore', 'More', '<div class="morel" id="moreL"></div>')
         + sheet('dHelp', 'How to play', '<ol class="how">' + (D.help || []).map(function (h) { return '<li>' + h + '</li>'; }).join('') + '</ol><div class="row"><button class="btn go wide" type="button" data-close>Got it</button></div>')
         + sheet('dReset', 'Clear my scores?', '<p>Your scores for ' + esc(D.title) + ' on this computer go back to nothing. This can&rsquo;t be undone.</p><div class="row"><button class="btn wide" type="button" data-close>Keep them</button><button class="btn go wide danger" type="button" id="rYes">Clear them</button></div>');
       var holder = document.createElement('div'); holder.innerHTML = html;
@@ -588,7 +627,7 @@
         c.style.width = (l.rows[0].length * 3) + 'px'; c.style.height = (l.rows.length * 3) + 'px'; el.appendChild(c);
       });
     }
-    function sheet(id, title, body) { return '<div class="scrim" id="' + id + '" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="' + id + 'H"><h2 id="' + id + 'H">' + esc(title) + '</h2>' + body + '</div></div>'; }
+    function sheet(id, title, body) { return '<div class="scrim" id="' + id + '" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="' + id + 'H"><h2 id="' + id + 'H">' + esc(title) + '</h2><button class="x365" type="button" data-close aria-label="Close">&times;</button>' + body + '</div></div>'; }
   }
 
   window.Arcade365 = { start: start, sprite: sprite };

@@ -82,6 +82,7 @@
     + '.gs-cal strong{padding:4px 0 6px;font:600 40px/1 "Clash Display",Archivo,"Segoe UI",sans-serif}'
     + '.gs-cal small{color:#fff;font:700 12.5px/1.25 Archivo,"Segoe UI",sans-serif;text-align:center;text-shadow:0 1px 2px rgba(0,0,0,.45)}'
     + '.gs-more{display:inline-block;margin-top:14px;color:#146c3a;font-weight:700}'
+    + '.gs-x{position:sticky;top:0;float:right;z-index:2;width:44px;height:44px;margin:-10px -10px 0 10px;border:0;border-radius:50%;background:rgba(21,33,26,.08);color:#15211a;font:400 28px/1 Archivo,sans-serif;cursor:pointer;display:grid;place-items:center}.gs-x:hover{background:rgba(21,33,26,.16)}'
     + '@keyframes gsIn{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}'
     + '@media (prefers-reduced-motion:reduce){.gs-game{animation:none;transition:none}.gs-game:hover,.gs-game:hover img{transform:none}.gs-art::after{display:none}}'
     + '@media (max-width:700px){.gs-games,.gs-games.gs-tallg{grid-template-columns:repeat(2,minmax(0,1fr))}}'
@@ -102,7 +103,7 @@
       + '<p class="gs-soft" style="margin:6px 0 0">What they&rsquo;ll get:</p><p class="gs-msg" id="gsMsg"></p>'
       + '<div class="gs-row"><button class="gs-btn" type="button" data-gs-close>Close</button></div></div></div>'
       + '<div class="gs-scrim" id="gsGames" hidden><div class="gs-sheet gs-wide" role="dialog" aria-modal="true" aria-labelledby="gsGamesH">'
-      + '<h2 id="gsGamesH">Our games</h2><p class="gs-soft">All free, with no adverts. Tap one to play.</p><div id="gsGamesList"></div>'
+      + '<h2 id="gsGamesH">Our games</h2><p class="gs-soft">All free, with no adverts. Tap one to play, or <a href="/games/" style="color:#146c3a;font-weight:700">see them all on the Games page</a>.</p><div id="gsGamesList"></div>'
       + '<a class="gs-more" href="/games/">See them all on the Games page &rarr;</a>'
       + '<div class="gs-row"><button class="gs-btn" type="button" data-gs-close>Close</button></div></div></div>'
       + '<div class="gs-scrim" id="gsAny" hidden><div class="gs-sheet" role="dialog" aria-modal="true" aria-labelledby="gsAnyH"><h2 id="gsAnyH"></h2><div id="gsAnyB"></div>'
@@ -127,6 +128,8 @@
       + '<div id="gsThanks" hidden><h2>Thank you!</h2><p id="gsThanksP">We read every message. The ideas people ask for most are the ones we build next.</p>'
       + '<div class="gs-row"><button class="gs-btn gs-go" type="button" data-gs-close>Back to the game</button></div></div>'
       + '</div></div>';
+    // a close cross at the top of every sheet - a first-timer won't know to tap outside it (games audit, 5 Oct 2026)
+    h = h.replace(/(<div class="gs-sheet[^"]*" role="dialog"[^>]*>)/g, '$1<button class="gs-x" type="button" data-gs-close aria-label="Close">&times;</button>');
     var box = document.createElement('div'); box.innerHTML = h;
     while (box.firstChild) document.body.appendChild(box.firstChild);
 

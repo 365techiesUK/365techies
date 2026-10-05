@@ -176,6 +176,7 @@
       hint: function (lv) { return lv <= 3; }
     },
     layout: layout, positions: positions, plates: plates, panel: panel, tap: tap, press: press, wait: wait, fx: fx,
+    commits: function (S) { return S.phase === 'play'; },   // a tap plays the card for good (rivals.js lifts it first on a phone)
     over: function (S) { return S.phase === 'over'; }, result: result, chips: chips, dealOrder: dealOrder, hintShow: hintShow,
     bestTiles: [{ k: 'hands', label: 'Quickest rubber (hands)' }],
     help: [

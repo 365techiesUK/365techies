@@ -236,6 +236,7 @@
     else if (input.right && !input.left) dx = sp.ship;
     P.x = Math.max(LEFT, Math.min(RIGHT - 13, P.x + dx));
     P.vx = dx;
+    if (dx && target == null) W.touched = true;   // (keys or the touch buttons; a ship drifting to a resting mouse is not the player moving)
     if (W.power && --W.power.t <= 0) { W.power = null; W.events.push('powerdown'); fx(W, { k: 'powerdown' }); }
     moveCaps(W);
 
@@ -424,6 +425,9 @@
 
   // ---------------------------------------------------------------- bombs
   function dropBombs(W) {
+    // Gentle, first wave: no bombs until the player has moved or fired (or 10 seconds have gone) - a beginner lost a life
+    // in 3-5 seconds while still finding the controls (games audit, 5 Oct 2026)
+    if (W.wave === 1 && W.sp.name === 'Gentle' && !W.touched && !W.shotsFired && W.frame < 600) return;
     if (--W.bombT > 0 || W.bombs.length >= W.sp.bombs) return;
     var reload = W.sp.reload * Math.max(0.6, 1 - (W.wave - 1) * 0.06);
     W.bombT = Math.round(reload * (0.6 + W.rng() * 0.8));

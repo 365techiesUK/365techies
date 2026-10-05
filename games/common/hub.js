@@ -93,6 +93,9 @@
     } else {
       $('ghHi').textContent = hello + ' – pick a game and play';
     }
+    // a game under way in this browser: the first Play button carries on with it (games audit, 5 Oct 2026)
+    var going = games.filter(function (g) { return g.inPlay && g.href; })[0];
+    if (going && $('ghQ1')) { $('ghQ1').href = going.href; $('ghQ1').innerHTML = '<span aria-hidden="true">&#9654;</span> Carry on: ' + esc(going.title); }
     if (games.some(function (g) { return g.hof; }) && window.GameSocial && GameSocial.sheet) { $('ghHof').hidden = false; $('ghHof').addEventListener('click', openHof); }
   }
 

@@ -53,6 +53,7 @@
     // ------------------------------------------------------------ the page
     buildUI();
     var board = $('board'), panelEl = $('rvPanel'), cardEl = [], plateEl = {};
+    document.documentElement.classList.add('rv365');   // (table.js shows each card's suit under its rank in the hand)
     for (var c0 = 0; c0 < D.cards; c0++) {
       var f0 = D.face(c0), k0 = T.cardMarkup(f0.r, f0.s), el0 = document.createElement('div');
       el0._base = 'card ' + k0.cls; el0.className = el0._base + ' down'; el0.setAttribute('data-c', c0); el0.setAttribute('aria-hidden', 'true'); el0.innerHTML = k0.html;
@@ -113,7 +114,7 @@
       var ph = D.panel(S, U) || '';
       panelEl.hidden = !ph;
       if (ph) {
-        if (panelEl._h !== ph) { panelEl.innerHTML = ph; panelEl._h = ph; }
+        if (panelEl._h !== ph) { panelEl.innerHTML = ph; panelEl._h = ph; if (Date.now() - sayAt > 700) { $('toast').classList.remove('on'); } }   // a stale message goes with the old panel
         var pa = D.panelAt ? D.panelAt(S, L) : L.panel;   // a game may move the panel (Gin: over the deck once a hand is shown)
         panelEl.style.left = Math.round(pa.x) + 'px'; panelEl.style.top = Math.round(pa.y) + 'px'; panelEl.style.width = Math.round(pa.w) + 'px';
         if (jLevel()) { var nb = panelEl.querySelector('[data-act="next"]'); if (nb && nb.getAttribute('data-j') !== '1') { nb.setAttribute('data-j', '1'); nb.textContent = 'See your stars \u2605'; } }
@@ -149,8 +150,26 @@
       e.preventDefault();
       unhint(); unhov();
       if (SET.fx && !reduce && !hit.classList.contains('down')) { hit.classList.add('press'); setTimeout(function () { hit.classList.remove('press'); }, 160); }
-      handle(D.tap(S, +hit.getAttribute('data-c'), U), hit);
+      var tc = +hit.getAttribute('data-c');
+      if (e.pointerType === 'touch' && liftFirst(tc, hit)) return;
+      unlift();
+      handle(D.tap(S, tc, U), hit);
     });
+    // a phone: a hand card showing only a thin edge is lifted by the first tap and played by the second, where a tap
+    // plays it for good (games audit, 5 Oct 2026; critic: one unsteady tap played the card next to it, with no Undo)
+    var lifted = null, liftT = 0;
+    function unlift() { clearTimeout(liftT); if (lifted != null && cardEl[lifted]) cardEl[lifted].classList.remove('lift'); lifted = null; }
+    function liftFirst(c, el) {
+      if (!D.commits || !D.commits(S) || !el.classList.contains('ok') || busy) { unlift(); return false; }
+      if (lifted === c) return false;   // the second tap: play it
+      var p = lastP[c], narrow = false; if (!p) return false;
+      for (var k in lastP) { var q = lastP[k]; if (+k !== c && q && Math.abs(q.y - p.y) < 3 && q.x > p.x && q.x - p.x < 46 && (q.z || 0) > (p.z || 0)) { narrow = true; break; } }
+      if (!narrow) { unlift(); return false; }
+      unlift(); lifted = c; el.classList.add('lift'); sfx('lift');
+      var f = D.face(c); say('Tap the ' + T.cardName(f.r, f.s) + ' again to play it');
+      liftT = setTimeout(unlift, 6000);
+      return true;
+    }
     var hovEl = null;
     function unhov() { if (hovEl) hovEl.classList.remove('hov'); hovEl = null; }
     board.addEventListener('pointerover', function (e) {
@@ -164,6 +183,20 @@
     });
     board.addEventListener('pointerleave', unhov);
     board.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    // the keyboard: the cards the game marks as ready to use (.ok), each played as a tap (games audit, 5 Oct 2026)
+    if (T.kbd) T.kbd(board, {
+      busy: function () { return busy || !!openSheet || !S; },
+      list: function () {
+        var out = [];
+        for (var c = 0; c < D.cards; c++) {
+          var el = cardEl[c], p = lastP[c]; if (!el || !p || !(el.classList.contains('ok') || el.classList.contains('take')) || el.classList.contains('flight')) continue;   // (Gin's deck is .take)
+          var f = D.face(c), nm = el.classList.contains('down') ? 'The deck: take the top card' : T.cardName(f.r, f.s) + (el.classList.contains('take') ? ', on the pile: take it' : '') + (el.classList.contains('sel') ? ', chosen' : '');
+          out.push({ c: c, el: el, x: p.x, y: p.y, name: nm });
+        }
+        return out;
+      },
+      play: function (it) { unhint(); unhov(); handle(D.tap(S, it.c, U), it.el); }
+    });
     panelEl.addEventListener('click', function (e) {
       var b = e.target.closest ? e.target.closest('[data-act]') : null; if (!b || b.disabled) return;
       unhint();
@@ -344,6 +377,8 @@
       o = o || {};
       if (stampEl) stampEl.remove();
       var el = stampEl = document.createElement('div'), r = board.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height * 0.42;
+      var pr = !panelEl.hidden && panelEl.getBoundingClientRect();   // above the panel, never over its words (games audit, 5 Oct 2026)
+      if (pr && pr.height && cy > pr.top - 56) cy = Math.max(r.top + 56, pr.top - 56);
       el.className = 'st365 ' + (o.tone || 'gold') + (o.small ? ' small' : '') + (o.moon ? ' moon' : '');
       el.innerHTML = '<b>' + esc(text) + '</b>' + (o.sub ? '<small>' + esc(o.sub) + '</small>' : '');
       el.style.left = cx + 'px'; el.style.top = cy + 'px';
@@ -499,6 +534,17 @@
 
     // ------------------------------------------------------------ pop-up sheets
     var openSheet = null, lastFocus = null;
+    // Tab stays inside whichever dialog is open on top - ours, the Hall of Fame, the Journey, Looks, Share
+    // (games audit, 5 Oct 2026); the last visible aria-modal in the page is the one on top
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Tab') return;
+      var dl = [].filter.call(document.querySelectorAll('[aria-modal="true"]'), function (x) { return x.getClientRects().length > 0; }).pop();
+      if (!dl) return;
+      var f = [].filter.call(dl.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'), function (x) { return !x.disabled && x.getClientRects().length > 0; });
+      if (!f.length) return;
+      var i = f.indexOf(document.activeElement);
+      if (e.shiftKey ? i <= 0 : (i < 0 || i === f.length - 1)) { e.preventDefault(); f[e.shiftKey ? f.length - 1 : 0].focus(); }
+    }, true);
     function openD(id) {
       closeSheets();
       var d = $(id); d.hidden = false; openSheet = d; lastFocus = document.activeElement;
@@ -571,6 +617,15 @@
     $('bStats').onclick = openStats;
     $('bSet').onclick = function () { syncControls(); openD('dSet'); };
     $('bHelp').onclick = function () { openD('dHelp'); };
+    // More (phones): the bar's tucked-away buttons, as big buttons with words (games audit, 5 Oct 2026)
+    $('bMore').onclick = function () {
+      $('moreL').innerHTML = ['bStats', 'bSet', 'bShare', 'bFeed', 'bFull'].filter(function (id) { return $(id) && !$(id).hidden; }).map(function (id) {
+        var b = $(id); return '<button class="btn wide morei" type="button" data-for="' + id + '">' + b.querySelector('svg').outerHTML + '<span>' + esc(b.querySelector('.lbl').textContent) + '</span></button>';
+      }).join('');
+      openD('dMore');
+    };
+    $('moreL').onclick = function (e) { var b = e.target.closest && e.target.closest('[data-for]'); if (!b) return; closeSheets(); var t = $(b.getAttribute('data-for')); setTimeout(function () { t.click(); }, 0); };
+    $('bBrand').onclick = function () { $('bGames').click(); };
     $('nDeal').onclick = function () { newGame('match'); };
     $('nDaily').onclick = function () { newGame('daily'); };
     $('nAgain').onclick = function () { newGame('again'); };
@@ -620,9 +675,12 @@
 
     // ------------------------------------------------------------ little messages, the clock, saving
     var sayT = 0;
+    var sayAt = 0;
     function say(t) {
       var el = $('toast'); if (!t) return;
-      el.textContent = t; el.classList.add('on'); clearTimeout(sayT);
+      el.textContent = t; el.classList.add('on'); clearTimeout(sayT); sayAt = Date.now();
+      // never over the panel (its buttons and the count): just above it instead (games audit, 5 Oct 2026)
+      var pr = !panelEl.hidden && panelEl.getBoundingClientRect(); el.style.bottom = pr && pr.height && pr.top < innerHeight - 177 ? Math.round(innerHeight - pr.top + 10) + 'px' : '';
       sayT = setTimeout(function () { el.classList.remove('on'); }, Math.min(7000, 1800 + t.length * 55));
     }
     function persist() { if (S) save('game', { s: S, g: G, u: U }); }
@@ -665,17 +723,18 @@
 
     // ------------------------------------------------------------ the page's bar, table and sheets
     function buildUI() {
-      var tb = function (id, icon, label, title, cls) { return '<button class="tb' + (cls ? ' ' + cls : '') + '" id="' + id + '" type="button" title="' + esc(title) + '">' + ICON[icon] + '<span class="lbl"' + (id === 'bFull' ? ' id="bFullL"' : '') + '>' + esc(label) + '</span></button>'; };
+      var tb = function (id, icon, label, title, cls) { return '<button class="tb' + (cls ? ' ' + cls : '') + '" id="' + id + '" type="button" title="' + esc(title) + '">' + ICON[icon] + '<span class="lbl"' + (id === 'bFull' ? ' id="bFullL"' : '') + '>' + esc(label) + '</span>'
+        + ({ bNew: 'New', bGames: 'Games', bUndo: 'Undo', bHint: 'Hint', bHelp: 'Help', bPause: 'Pause', bMore: 'More' }[id] ? '<span class="sl" aria-hidden="true">' + { bNew: 'New', bGames: 'Games', bUndo: 'Undo', bHint: 'Hint', bHelp: 'Help', bPause: 'Pause', bMore: 'More' }[id] + '</span>' : '') + '</button>'; };
       var lvls = LVS.options.map(function (o, i) {
         var stars = ''; for (var k = 1; k <= LVS.options.length; k++) stars += '<i class="' + (k <= i + 1 ? 'on' : '') + '"></i>';
         return '<button type="button" data-lv="' + o[0] + '" style="--i:' + i + '"><span class="lvtop"><b>' + esc(o[1]) + '</b><span class="lvst" aria-hidden="true">' + stars + '</span></span><small>' + esc(LVS.info(o[0])) + '</small></button>';
       }).join('');
       var chip = function (i) { return '<div class="chip" id="rvChip' + i + '"><small></small><span></span></div>'; };
-      var html = '<div id="app"><header class="bar"><h1 class="brand"><b>365</b> <span>' + esc(D.title) + '</span></h1>'
+      var html = '<div id="app"><header class="bar"><h1 class="brand"><button class="brandb" type="button" id="bBrand" title="All our games"><b>365</b> <span>' + esc(D.title) + '</span><i class="caret" aria-hidden="true">&#9662;</i></button></h1>'
         + '<div class="info" aria-live="off">' + chip(0) + chip(1) + chip(2) + '</div>'
         + '<nav class="tools" aria-label="Game">' + tb('bNew', 'new', 'New game', 'New game (N)', 'main') + tb('bGames', 'games', 'Games', 'Switch to another of our games', 'tb3') + tb('bHint', 'hint', 'Hint', 'Show me a good move (H)')
-        + tb('bStats', 'stats', 'My scores', 'My scores', 'tb3') + tb('bSet', 'set', 'Settings', 'Settings', 'tb3') + tb('bHelp', 'help', 'How to play', 'How to play')
-        + tb('bShare', 'share', 'Share', 'Share this game with a friend', 'tb2') + tb('bFeed', 'feedback', 'Feedback', 'Tell us what you think, or ask for a new game', 'tb2') + tb('bFull', 'full', 'Full screen', 'Full screen (F)', 'tb2') + '</nav></header>'
+        + tb('bStats', 'stats', 'My scores', 'My scores', 'tb3 tbx') + tb('bSet', 'set', 'Settings', 'Settings', 'tb3 tbx') + tb('bHelp', 'help', 'How to play', 'How to play')
+        + tb('bShare', 'share', 'Share', 'Share this game with a friend', 'tb2 tbx') + tb('bFeed', 'feedback', 'Feedback', 'Tell us what you think, or ask for a new game', 'tb2 tbx') + tb('bFull', 'full', 'Full screen', 'Full screen (F)', 'tb2 tbx') + tb('bMore', 'more', 'More', 'More: my scores, settings, share, feedback', 'tbmore') + '</nav></header>'
         + '<main id="board" aria-label="The card table"><div id="rvPanel" hidden></div></main></div>'
         + '<div id="toast" role="status" aria-live="polite"></div><canvas id="spark" aria-hidden="true"></canvas><div id="winBig" hidden aria-hidden="true"></div>'
         + sheet('dNew', 'New game', '<p class="soft" id="dNewNote"></p><div class="lvls" role="group" aria-label="How good the other players are">' + lvls + '</div>'
@@ -699,15 +758,16 @@
           + '<div class="set"><div><label>Card backs</label></div><div class="backs" role="group" aria-label="Card backs"><button type="button" data-back="navy" style="background:linear-gradient(155deg,#17447a,#0a2245)" aria-label="365 navy"></button><button type="button" data-back="royal" style="background:linear-gradient(155deg,#8e1d2c,#4a0712)" aria-label="Royal red"></button><button type="button" data-back="sea" style="background:linear-gradient(180deg,#ff9a6a,#ffcf8a 30%,#2aa3c4 52%,#0b5e86)" aria-label="Seaside"></button></div></div>')
           + '<p class="foot">' + esc(D.title) + ' is made by <a href="https://365techies.co.uk/" target="_blank" rel="noopener">365 Techies</a> in Bournemouth. No adverts, no sign-in, nothing to install. Computer playing up? Ring us on <b>01202 775566</b>.</p>'
           + '<div class="row"><button class="btn go wide" type="button" data-close>Done</button></div>')
+        + sheet('dMore', 'More', '<div class="morel" id="moreL"></div>')
         + sheet('dHelp', 'How to play', '<ol class="how">' + (D.help || []).map(function (h) { return '<li>' + h + '</li>'; }).join('') + '</ol>'
-          + '<p class="soft keys365">Keys, if you like them: N new game, H hint, F full screen.</p><div class="row"><button class="btn go wide" type="button" data-close>Let&rsquo;s play</button></div>')
+          + '<p class="soft keys365">Keys, if you like them: arrow keys choose a card and Enter plays it; Tab reaches the buttons; N new game, H hint, F full screen.</p><div class="row"><button class="btn go wide" type="button" data-close>Let&rsquo;s play</button></div>')
         + sheet('dReset', 'Clear my scores?', '<p>Your matches won, winning runs and best scores for ' + esc(D.title) + ' on this computer go back to nothing. This can&rsquo;t be undone.</p><div class="row"><button class="btn wide" type="button" data-close>Keep them</button><button class="btn go wide" type="button" id="rYes" style="background:#a3242f;border-color:#a3242f">Clear them</button></div>');
       var holder = document.createElement('div'); holder.innerHTML = html;
       var frag = document.createDocumentFragment();
       while (holder.firstChild) frag.appendChild(holder.firstChild);
       document.body.insertBefore(frag, document.body.firstChild);
     }
-    function sheet(id, title, body) { return '<div class="scrim" id="' + id + '" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="' + id + 'H"><h2 id="' + id + 'H">' + esc(title) + '</h2>' + body + '</div></div>'; }
+    function sheet(id, title, body) { return '<div class="scrim" id="' + id + '" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="' + id + 'H"><h2 id="' + id + 'H">' + esc(title) + '</h2><button class="x365" type="button" data-close aria-label="Close">&times;</button>' + body + '</div></div>'; }
     function sw(key, label, small) { return '<div class="set"><div><label id="l_' + key + '">' + label + '</label><small>' + small + '</small></div><button class="sw" type="button" role="switch" aria-labelledby="l_' + key + '" data-set="' + key + '"></button></div>'; }
   }
 

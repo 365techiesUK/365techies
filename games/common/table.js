@@ -38,6 +38,7 @@
   };
   var RECYCLE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 15.4-6.4L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.4 6.4L3 16"/><path d="M3 21v-5h5"/></svg>';
   var ICON = {
+    more: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/></svg>',
     'new': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="11" height="15" rx="2"/><path d="M9 21h9a2 2 0 0 0 2-2V8"/><path d="M9.5 8v5M7 10.5h5"/></svg>',
     undo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>',
     hint: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></svg>',
@@ -311,7 +312,7 @@
       return '<span class="pip' + (p[1] > 50 ? ' dn' : '') + '" style="left:' + p[0] + '%;top:' + p[1] + '%">' + su + '</span>';
     }).join('') + '</div>';
     return { cls: (red ? 'red' : 'blk') + ' r' + r, html: '<div class="wig"><div class="flip"><div class="face front"><span class="idx' + (r === 10 ? ' ten' : '') + '">' + RANK_CH[r]
-      + '</span><span class="sui">' + su + '</span>' + mid + '<span class="cor"><i>' + su + '</i></span></div><div class="face back"></div></div></div>' };
+      + '</span><span class="sui">' + su + '</span><span class="su2">' + su + '</span>' + mid + '<span class="cor"><i>' + su + '</i></span></div><div class="face back"></div></div></div>' };
   }
 
   // ---------------------------------------------------------------- motion (5 Oct 2026; owner: "go to town ... the best
@@ -359,7 +360,28 @@
     // the game's name is the page's heading (games audit, 5 Oct 2026); on a phone the bar shows only the 365 badge, so
     // the name stays there for screen readers instead of display:none; the keys line goes on touch-only devices
     + 'h1.brand{margin:0}'
-    + '@media (max-width:860px){.brand span{display:block!important;position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}'
+    + '.card.kbd,.slot.kbd{outline:3px solid #ffd54a;outline-offset:3px;border-radius:9px}#board:focus-visible{outline:2px dashed rgba(255,213,74,.5);outline-offset:-6px}'
+    // a hand fanned out shows only each card's left edge, so the games against the computer put the suit under the
+    // rank as well, like a real card's corner (games audit, 5 Oct 2026; critic: Q of spades and Q of clubs looked the same)
+    + '.su2{display:none;position:absolute;z-index:2;left:6%;top:calc(2.5% + var(--cw) * .33);font:calc(var(--cw) * .18) / 1 "Segoe UI Symbol","Apple Symbols",Archivo,sans-serif;text-shadow:0 1px 0 #fff,0 0 3px #fff,0 0 2px #fff}.rv365 .su2{display:block}.rv365 .pips{left:25%;right:25%;top:36%}'
+    + '.rv365 .card.lift{z-index:2900!important}.rv365 .card.lift .wig{transform:translateY(calc(var(--ch) * -.2))!important}.rv365 .card.lift .front{box-shadow:0 0 0 3px #ffd54a,0 12px 22px rgba(0,0,0,.4)}'
+    + '.card.hint.hdest .front,.slot.hint.hdest{box-shadow:0 0 0 3px rgba(255,213,74,.5),0 0 14px 3px rgba(255,210,87,.35)!important;outline:3px dashed #ffd54a;outline-offset:3px}'
+    + '.rv365 .rv-plate small{font-size:13.5px}@media (max-width:700px){.rv365 .rv-plate small{font-size:12.5px}}'   // (the seat labels a touch bigger, games audit 5 Oct)
+    + '.sr365{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}'
+    // the bar (games audit, 5 Oct 2026; critic: on a phone nine bare icons meant nothing to a first-timer): the game's
+    // name shows and opens the Games list; on a phone the main buttons carry a word and the rest live under More
+    + '.brandb{display:flex;align-items:center;gap:9px;padding:0 4px 0 0;border:0;background:none;color:inherit;font:inherit;letter-spacing:inherit;cursor:pointer;border-radius:10px}'
+    + '.brandb .caret{font-style:normal;font-size:12px;opacity:.75}'
+    + '.tb .sl{display:none}.tb.tbmore{display:none}'
+    + '.sheet{position:relative}.sheet>h2{padding-right:48px}'
+    + '.x365{position:absolute;top:12px;right:12px;width:44px;height:44px;border:0;border-radius:50%;background:rgba(127,127,127,.16);color:inherit;font:400 28px/1 Archivo,sans-serif;cursor:pointer;display:grid;place-items:center}'
+    + '.x365:hover{background:rgba(127,127,127,.3)}'
+    + '.morel{display:grid;gap:8px;margin:4px 0 14px}.morei{display:flex!important;align-items:center;gap:12px;justify-content:flex-start!important;text-align:left}.morei svg{width:24px;height:24px;flex:none}'
+    + '@media (max-width:860px){.brand span{display:inline!important;font-size:18px}}'
+    + '@media (max-width:480px){.bar{gap:6px 10px}.brand span{font-size:17px}'
+    + '.tools{display:grid!important;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px!important;width:100%;margin-left:0!important}'
+    + '.tb,.tb.tb2,.tb.tb3{flex-direction:column;justify-content:center;gap:3px;min-height:52px;padding:5px 2px 4px!important}'
+    + '.tb .sl{display:block;font:700 12px/1 Archivo,sans-serif;white-space:nowrap}.tb svg{width:21px;height:21px}.tb.tbx{display:none}.tb.tbmore{display:inline-flex}}'
     + '@media (hover:none) and (pointer:coarse){.keys365{display:none}}'
     + '.card .wig{perspective:calc(var(--cw) * 5)}'   // a true 3D turn when a card flips
     + '.front,.back{transition:box-shadow .22s ease}'
@@ -604,7 +626,12 @@
       touchy = e.pointerType === 'touch'; idle();
       if (busy || (e.button && e.button > 0) || openSheet) return;
       var hit = e.target.closest ? e.target.closest('.card, .slot') : null; if (!hit) return;
+      var hm = hintM;
       unhint();
+      if (hm && hm.m.t === 'move' && (hit.classList.contains('slot') ? hm.slots.indexOf(hit.getAttribute('data-slot')) >= 0 : hm.cards.indexOf(+hit.getAttribute('data-c')) >= 0) && E.legal(S, hm.m)) {
+        var hc = hit.classList.contains('card') ? +hit.getAttribute('data-c') : -1, hf = hc >= 0 ? D.where(S, hc) : null;
+        if (!(hf && JSON.stringify(hf) === JSON.stringify(hm.m.from))) { e.preventDefault(); act(hm.m); return; }   // the glowing destination: make the hinted move
+      }
       if (hit.classList.contains('slot')) { if (hit.getAttribute('data-slot') === 'stock') { e.preventDefault(); act({ t: 'draw' }); } return; }
       var c = +hit.getAttribute('data-c'), from = D.where(S, c);
       if (!from) { var why = D.cantPick ? D.cantPick(S, c) : ''; if (why) { nope(hit); say(why); } return; }   // say why it won't lift
@@ -613,7 +640,7 @@
       var cards = D.picked(S, from);
       if (!cards.length) return;
       if (sel && sel.c !== c && !D.pairs) selOff();
-      drag = { from: from, cards: cards, c: c, x0: e.clientX, y0: e.clientY, dx: 0, dy: 0, moved: false, id: e.pointerId, base: cards.map(function (k) { return lastP[k]; }) };
+      drag = { hm: hm, from: from, cards: cards, c: c, x0: e.clientX, y0: e.clientY, dx: 0, dy: 0, moved: false, id: e.pointerId, base: cards.map(function (k) { return lastP[k]; }) };
       unhov();
       if (SET.fx && !reduce) cards.forEach(function (k) { cardEl[k].classList.add('press'); });
       try { board.setPointerCapture(e.pointerId); } catch (er) {}
@@ -723,6 +750,28 @@
     });
     board.addEventListener('pointercancel', function () { if (!drag) return; var d = drag; drag = null; unpress(d); if (d.moved) endDragLook(d); render(); });
     board.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    // the keyboard: the cards that can be lifted now (and the deck), each played as a tap (games audit, 5 Oct 2026)
+    kbd(board, {
+      busy: function () { return busy || !!drag || !!openSheet || !S; },
+      list: function () {
+        var out = [], stockDone = false;
+        for (var c = 0; c < D.cards; c++) {
+          var el = cardEl[c], p = lastP[c]; if (!el || !p || el.style.display === 'none' || el.classList.contains('flight')) continue;
+          var from = D.where(S, c); if (!from) continue;
+          if (from.p === 'stock') { if (!stockDone) { stockDone = true; out.push({ c: 'stock', el: el, x: p.x, y: p.y, name: 'The deck: turn over cards' }); } continue; }
+          if (el.classList.contains('down') || !(D.picked(S, from) || []).length) continue;
+          var f = D.face(c, S); out.push({ c: c, el: el, x: p.x, y: p.y, name: cardName(f.r, f.s) });
+        }
+        if (D.hasStock && !stockDone && slotEl.stock && slotEl.stock.style.display !== 'none') (L.slots || []).forEach(function (s) { if (s.key === 'stock') out.push({ c: 'stock', el: slotEl.stock, x: s.x, y: s.y, name: 'The deck: start it again' }); });
+        return out;
+      },
+      play: function (it) {
+        unhint();
+        if (it.c === 'stock') { act({ t: 'draw' }); return; }
+        var from = D.where(S, it.c); if (!from) return;
+        tap({ from: from, cards: D.picked(S, from), c: it.c });
+      }
+    });
     // Pyramid: the card picked first, waiting for its partner (D.pairs)
     var sel = null;
     function selOff() {
@@ -745,6 +794,7 @@
     function tap(d) {
       if (D.noTap && D.noTap(d.from)) return;   // e.g. cards come down from the piles by dragging only
       if (D.pairs) { pairTap(d); return; }
+      if (d.hm && d.hm.m.t === 'move' && JSON.stringify(d.hm.m.from) === JSON.stringify(d.from) && E.legal(S, d.hm.m)) { act(d.hm.m); return; }
       var m = E.smartMove(S, d.from);
       if (m) act(m);
       else { nope(cardEl[d.c]); sfx('nope'); say(D.whyNot ? D.whyNot(S, d.from, null) : 'No move for that card yet'); }
@@ -918,9 +968,11 @@
       var m = E.hint(S);
       if (!m) { showStuck(); return; }
       G.hinted = (G.hinted || 0) + 1;
-      var lit = D.hintLights(S, m);
-      (lit.cards || []).forEach(function (c) { if (cardEl[c]) cardEl[c].classList.add('hint'); });
-      (lit.slots || []).forEach(function (k) { if (slotEl[k]) slotEl[k].classList.add('hint'); });
+      var lit = D.hintLights(S, m), src = m.from ? (D.picked(S, m.from) || []) : [];
+      // the card(s) to move glow; where they'd go glows softer (games audit, 5 Oct 2026); a tap on either makes the move
+      (lit.cards || []).forEach(function (c) { if (cardEl[c]) cardEl[c].classList.add('hint', src.length && src.indexOf(c) < 0 ? 'hdest' : 'hsrc'); });
+      (lit.slots || []).forEach(function (k) { if (slotEl[k]) slotEl[k].classList.add('hint', 'hdest'); });
+      hintM = { m: m, cards: (lit.cards || []).slice(), slots: (lit.slots || []).slice() };
       if (lit.say) say(lit.say);
       if (m.t === 'move' && arcsOn()) ghost(m);
       hintT = setTimeout(unhint, 2800);
@@ -947,7 +999,8 @@
         }, rep * 950);
       });
     }
-    function unhint() { clearTimeout(hintT); Array.prototype.forEach.call(board.querySelectorAll('.hint'), function (e) { e.classList.remove('hint'); }); }
+    var hintM = null;   // the move the Hint is showing, while it shows
+    function unhint() { clearTimeout(hintT); hintM = null; Array.prototype.forEach.call(board.querySelectorAll('.hint'), function (e) { e.classList.remove('hint', 'hdest', 'hsrc'); }); }
     function showStuck() { $('stuck').hidden = false; }
     // ------------------------------------------------------------ the challenges (4 Oct 2026): Beat the clock, the 3-minute sprint
     function foundCount() { return D.foundCount ? D.foundCount(S) : 0; }
@@ -1202,6 +1255,17 @@
 
     // ------------------------------------------------------------ pop-up sheets
     var openSheet = null, lastFocus = null;
+    // Tab stays inside whichever dialog is open on top - ours, the Hall of Fame, the Journey, Looks, Share
+    // (games audit, 5 Oct 2026); the last visible aria-modal in the page is the one on top
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Tab') return;
+      var dl = [].filter.call(document.querySelectorAll('[aria-modal="true"]'), function (x) { return x.getClientRects().length > 0; }).pop();
+      if (!dl) return;
+      var f = [].filter.call(dl.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'), function (x) { return !x.disabled && x.getClientRects().length > 0; });
+      if (!f.length) return;
+      var i = f.indexOf(document.activeElement);
+      if (e.shiftKey ? i <= 0 : (i < 0 || i === f.length - 1)) { e.preventDefault(); f[e.shiftKey ? f.length - 1 : 0].focus(); }
+    }, true);
     function openD(id) {
       closeSheets();
       var d = $(id); d.hidden = false; openSheet = d; lastFocus = document.activeElement;
@@ -1288,6 +1352,15 @@
     $('bStats').onclick = openStats;
     $('bSet').onclick = function () { syncControls(); openD('dSet'); };
     $('bHelp').onclick = function () { openD('dHelp'); };
+    // More (phones): the bar's tucked-away buttons, as big buttons with words (games audit, 5 Oct 2026)
+    $('bMore').onclick = function () {
+      $('moreL').innerHTML = ['bStats', 'bSet', 'bShare', 'bFeed', 'bFull'].filter(function (id) { return $(id) && !$(id).hidden; }).map(function (id) {
+        var b = $(id); return '<button class="btn wide morei" type="button" data-for="' + id + '">' + b.querySelector('svg').outerHTML + '<span>' + esc(b.querySelector('.lbl').textContent) + '</span></button>';
+      }).join('');
+      openD('dMore');
+    };
+    $('moreL').onclick = function (e) { var b = e.target.closest && e.target.closest('[data-for]'); if (!b) return; closeSheets(); var t = $(b.getAttribute('data-for')); setTimeout(function () { t.click(); }, 0); };
+    $('bBrand').onclick = function () { $('bGames').click(); };
     $('nDeal').onclick = function () { newGame('deal'); };
     $('nDaily').onclick = function () { newGame('daily'); };
     $('nAgain').onclick = function () { newGame('again'); };
@@ -1421,15 +1494,17 @@
         for (var k = 1; k <= V.options.length; k++) stars += '<i class="' + (k <= st ? 'on' : '') + '"></i>';
         return '<button type="button" data-var="' + o[0] + '" style="--i:' + i + '"><span class="lvtop"><b>' + esc(V.newLabel ? V.newLabel(o[0]) : o[1]) + '</b><span class="lvst" aria-hidden="true">' + stars + '</span></span><small>' + esc(V.info(o[0])) + '</small></button>';
       }).join('') : '';
-      var tb = function (id, icon, label, title, cls) { return '<button class="tb' + (cls ? ' ' + cls : '') + '" id="' + id + '" type="button" title="' + esc(title) + '">' + ICON[icon] + '<span class="lbl"' + (id === 'bFull' ? ' id="bFullL"' : '') + '>' + esc(label) + '</span></button>'; };
-      var html = '<div id="app"><header class="bar"><h1 class="brand"><b>365</b> <span>' + esc(D.title) + '</span></h1>'
+      var tb = function (id, icon, label, title, cls) { return '<button class="tb' + (cls ? ' ' + cls : '') + '" id="' + id + '" type="button" title="' + esc(title) + '">' + ICON[icon] + '<span class="lbl"' + (id === 'bFull' ? ' id="bFullL"' : '') + '>' + esc(label) + '</span>'
+        + ({ bNew: 'New', bGames: 'Games', bUndo: 'Undo', bHint: 'Hint', bHelp: 'Help', bPause: 'Pause', bMore: 'More' }[id] ? '<span class="sl" aria-hidden="true">' + { bNew: 'New', bGames: 'Games', bUndo: 'Undo', bHint: 'Hint', bHelp: 'Help', bPause: 'Pause', bMore: 'More' }[id] + '</span>' : '') + '</button>'; };
+      var html = '<div id="app"><header class="bar"><h1 class="brand"><button class="brandb" type="button" id="bBrand" title="All our games"><b>365</b> <span>' + esc(D.title) + '</span><i class="caret" aria-hidden="true">&#9662;</i></button></h1>'
         + '<div class="info" aria-live="off"><div class="chip" id="chipTime"><small>Time</small><span id="vTime">0:00</span></div><div class="chip"><small>Moves</small><span id="vMoves">0</span></div><div class="chip"><small>Score</small><span id="vScore">0</span></div></div>'
         + '<nav class="tools" aria-label="Game">' + tb('bNew', 'new', 'New game', 'New game (N)', 'main') + tb('bGames', 'games', 'Games', 'Switch to another of our games', 'tb3') + tb('bUndo', 'undo', 'Undo', 'Undo (U or Ctrl+Z)') + tb('bHint', 'hint', 'Hint', 'Show me a move (H)')
-        + tb('bStats', 'stats', 'My scores', 'My scores', 'tb3') + tb('bSet', 'set', 'Settings', 'Settings', 'tb3') + tb('bHelp', 'help', 'How to play', 'How to play')
-        + tb('bShare', 'share', 'Share', 'Share this game with a friend', 'tb2') + tb('bFeed', 'feedback', 'Feedback', 'Tell us what you think, or ask for a new game', 'tb2') + tb('bFull', 'full', 'Full screen', 'Full screen (F)', 'tb2') + '</nav></header>'
+        + tb('bStats', 'stats', 'My scores', 'My scores', 'tb3 tbx') + tb('bSet', 'set', 'Settings', 'Settings', 'tb3 tbx') + tb('bHelp', 'help', 'How to play', 'How to play')
+        + tb('bShare', 'share', 'Share', 'Share this game with a friend', 'tb2 tbx') + tb('bFeed', 'feedback', 'Feedback', 'Tell us what you think, or ask for a new game', 'tb2 tbx') + tb('bFull', 'full', 'Full screen', 'Full screen (F)', 'tb2 tbx') + tb('bMore', 'more', 'More', 'More: my scores, settings, share, feedback', 'tbmore') + '</nav></header>'
         + '<main id="board" aria-label="The card table"></main></div>'
         + '<div id="stuck" hidden role="status"><span>' + esc(D.stuckText || 'No more moves found.') + '</span><button class="btn" type="button" id="stUndo">Undo</button><button class="btn go" type="button" id="stNew">New game</button></div>'
         + '<div id="chal" class="chal" hidden role="timer" aria-live="off"></div><div id="toast" role="status" aria-live="polite"></div><canvas id="spark" aria-hidden="true"></canvas><canvas id="fx" hidden></canvas><div id="winBig" hidden aria-hidden="true"></div><div id="fxhint" hidden>Tap anywhere to carry on</div>'
+        + sheet('dMore', 'More', '<div class="morel" id="moreL"></div>')
         + sheet('dNew', 'New game', '<p class="soft" id="dNewNote"></p>' + (V ? (V.info ? '<div class="lvls" role="group" aria-label="' + esc(V.label) + '">' + vNew + '</div>' : '<div class="seg" role="group" aria-label="' + esc(V.label) + '">' + vNew + '</div>') : '')
           + '<div class="choice"><button class="btn go" type="button" id="nDeal">New deal<small id="nDealS">A fresh shuffle</small></button>'
           + '<button class="btn" type="button" id="nDaily">Today&rsquo;s deal<small id="nDailyS">The same deal for everyone today</small></button>'
@@ -1457,17 +1532,68 @@
           + '<p class="foot">' + esc(D.title) + ' is made by <a href="https://365techies.co.uk/" target="_blank" rel="noopener">365 Techies</a> in Bournemouth. No adverts, no sign-in, nothing to install. Computer playing up? Ring us on <b>01202 775566</b>.</p>'
           + '<div class="row"><button class="btn go wide" type="button" data-close>Done</button></div>')
         + sheet('dHelp', 'How to play', '<ol class="how">' + (D.help || []).map(function (h) { return '<li>' + h + '</li>'; }).join('') + '</ol>'
-          + '<p class="soft keys365">Keys, if you like them: N new game, U undo, H hint' + (D.hasStock ? ', space turns the deck' : '') + ', F full screen.</p><div class="row"><button class="btn go wide" type="button" data-close>Let&rsquo;s play</button></div>')
+          + '<p class="soft keys365">Keys, if you like them: arrow keys choose a card and Enter plays it; N new game, U undo, H hint' + (D.hasStock ? ', space turns the deck' : '') + ', F full screen.</p><div class="row"><button class="btn go wide" type="button" data-close>Let&rsquo;s play</button></div>')
         + sheet('dReset', 'Clear my scores?', '<p>Your games won, streaks and best times for ' + esc(D.title) + ' on this computer go back to nothing. This can&rsquo;t be undone.</p><div class="row"><button class="btn wide" type="button" data-close>Keep them</button><button class="btn go wide" type="button" id="rYes" style="background:#a3242f;border-color:#a3242f">Clear them</button></div>');
       var holder = document.createElement('div'); holder.innerHTML = html;
       var frag = document.createDocumentFragment();
       while (holder.firstChild) frag.appendChild(holder.firstChild);
       document.body.insertBefore(frag, document.body.firstChild);   // the page first, in order; the scripts stay after it
     }
-    function sheet(id, title, body) { return '<div class="scrim" id="' + id + '" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="' + id + 'H"><h2 id="' + id + 'H">' + esc(title) + '</h2>' + body + '</div></div>'; }
+    function sheet(id, title, body) { return '<div class="scrim" id="' + id + '" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="' + id + 'H"><h2 id="' + id + 'H">' + esc(title) + '</h2><button class="x365" type="button" data-close aria-label="Close">&times;</button>' + body + '</div></div>'; }
     function sw(key, label, small) { return '<div class="set"><div><label id="l_' + key + '">' + label + '</label><small>' + small + '</small></div><button class="sw" type="button" role="switch" aria-labelledby="l_' + key + '" data-set="' + key + '"></button></div>'; }
   }
 
-  window.Table365 = { start: start, RECYCLE: RECYCLE, ICON: ICON, cardMarkup: cardMarkup, esc: esc, SUIT_CH: SUIT_CH, RANK_CH: RANK_CH, TXT: TXT, fly: fly, flightTime: flightTime, canFly: CAN_FLY,
+  // ------------------------------------------------------------ playing from the keyboard (games audit, 5 Oct 2026)
+  // The table takes focus with Tab; the arrow keys move a ring to the nearest card that way among the ones you can use
+  // now, and Enter plays the ringed card exactly as a tap would. A screen reader hears each card's name (the cards
+  // themselves stay hidden from it - they're pictures). o.list() -> [{c, el, x, y, name}], o.play(item), o.busy().
+  var RANKW = ['', 'Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King'], SUITN = ['spades', 'hearts', 'diamonds', 'clubs'];
+  function cardName(r, s) { return RANKW[r] + ' of ' + SUITN[s]; }
+  function kbd(board, o) {
+    var live = document.createElement('div'); live.className = 'sr365'; live.setAttribute('aria-live', 'polite'); document.body.appendChild(live);
+    board.tabIndex = 0; board.setAttribute('role', 'application');
+    board.setAttribute('aria-label', 'The cards. Arrow keys choose a card, Enter plays it.');
+    var cur = null, on = false, ringEl = null, tellT = 0;
+    function ring(it) {
+      if (ringEl) ringEl.classList.remove('kbd');
+      ringEl = null; cur = it || null;
+      if (cur && on) { ringEl = cur.el; ringEl.classList.add('kbd'); }
+    }
+    function tell(t) { clearTimeout(tellT); live.textContent = ''; tellT = setTimeout(function () { live.textContent = t; }, 40); }
+    function refresh(announce) {
+      var list = o.list();
+      if (!list.length) { ring(null); return list; }
+      var keep = cur && list.filter(function (it) { return it.c === cur.c; })[0];
+      if (!keep && cur) { var nd = 1e9; list.forEach(function (it) { var d = Math.abs(it.x - cur.x) + Math.abs(it.y - cur.y); if (d < nd) { nd = d; keep = it; } }); }
+      var was = cur && cur.c;
+      ring(keep || list[0]);
+      if (announce || (cur && cur.c !== was)) tell(cur.name);
+      return list;
+    }
+    function after(fn, n) { n = n || 0; if (o.busy() && n < 40) setTimeout(function () { after(fn, n + 1); }, 100); else fn(); }
+    board.addEventListener('focus', function () { if (board.matches && !board.matches(':focus-visible')) return; on = true; refresh(true); });
+    board.addEventListener('blur', function () { on = false; ring(cur); });
+    board.addEventListener('pointerdown', function () { on = false; ring(cur); });   // a mouse or a finger: no ring
+    board.addEventListener('keydown', function (e) {
+      if (e.target !== board || e.altKey || e.ctrlKey || e.metaKey) return;
+      var dir = { ArrowRight: [1, 0], ArrowLeft: [-1, 0], ArrowDown: [0, 1], ArrowUp: [0, -1] }[e.key];
+      if (!dir && e.key !== 'Enter') return;
+      e.preventDefault(); on = true;
+      if (o.busy()) return;
+      var list = refresh(false);
+      if (!list.length) { tell('No cards to play just now'); return; }
+      if (e.key === 'Enter') { o.play(cur); after(function () { if (!refresh(false).length) setTimeout(function () { refresh(false); }, 500); }); return; }
+      var best = null, bs = 1e9;   // the nearest card that way, keeping to the same row or column where it can
+      list.forEach(function (it) {
+        if (it.c === cur.c) return;
+        var ax = it.x - cur.x, ay = it.y - cur.y, along = dir[0] ? ax * dir[0] : ay * dir[1], across = dir[0] ? Math.abs(ay) : Math.abs(ax);
+        if (along <= 2) return;
+        var sc = along + across * 2.5; if (sc < bs) { bs = sc; best = it; }
+      });
+      if (best) { ring(best); tell(best.name); } else tell(cur.name);
+    });
+    return { refresh: refresh };
+  }
+  window.Table365 = { kbd: kbd, cardName: cardName, start: start, RECYCLE: RECYCLE, ICON: ICON, cardMarkup: cardMarkup, esc: esc, SUIT_CH: SUIT_CH, RANK_CH: RANK_CH, TXT: TXT, fly: fly, flightTime: flightTime, canFly: CAN_FLY,
     finale: finale, pickFinale: pickFinale, FINALE_NAMES: FINALE_NAMES, packAtCentre: packAtCentre, paintCard: paintCard, countUp: countUp };
 })();
