@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=10';
+import * as MD from './models3d.js?v=11';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -203,7 +203,7 @@ export function createWorld() {
   const tailWash = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 3.2), new THREE.MeshBasicMaterial({ map: radial(64, [[0, 'rgba(255,40,40,0.55)'], [0.5, 'rgba(255,30,30,0.18)'], [1, 'rgba(255,20,20,0)']]), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0 }));
   tailWash.rotation.x = -Math.PI / 2;
   const nitroLight = new THREE.PointLight('#ff8a30', 0, 4.2, 2);
-  const cabinLight = new THREE.PointLight('#ffd8a8', 0, 1.6, 2);   // a dash light on the two of you after dark   // the jets light up the road behind
+  const cabinLight = new THREE.PointLight('#ffd8a8', 0, 1.5, 2);   // a dash light on the two of you after dark   // the jets light up the road behind
   const carGlow = new THREE.PointLight('#ffe2c0', 0, 10, 1.6); scene.add(carGlow);   // at night: the street lights' glow on the car (always there, so no shader rebuilds)   // at the front bumper, lighting the road ahead (never the car)
 
   // ---------------------------------------------------------------- the sky (and the same sky, with the land below, as everything's surroundings)
@@ -280,6 +280,7 @@ export function createWorld() {
   PLIT.customProgramCacheKey = () => 'plit';
   const PM = { lit: PLIT };
   const STARMAT = new THREE.SpriteMaterial({ map: starTex(), transparent: true, depthWrite: false });
+  const STUB = new THREE.CylinderGeometry(0.13, 0.13, 0.12, 14);
   CAR.paint.onBeforeCompile = (sh) => { sh.fragmentShader = sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\ngl_FragColor.b = mix(gl_FragColor.b, min(gl_FragColor.b, gl_FragColor.g + 0.05), 0.75);'); };   // a red that stays red: blue light on it reads grey, not magenta
   CAR.paint.customProgramCacheKey = () => 'paint';
   const groundMat = new THREE.MeshStandardMaterial({ vertexColors: true, map: groundDetail(), roughness: 0.95, metalness: 0 });
@@ -392,7 +393,7 @@ export function createWorld() {
   // ---- the shield: a shimmering bubble round the car while it lasts
   const bubble = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 18), new THREE.ShaderMaterial({ uniforms: { t: { value: 0 }, a: { value: 0 } }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
     vertexShader: 'varying vec3 vN; varying vec3 vV; varying vec3 vP; void main(){ vec4 mv = modelViewMatrix * vec4(position, 1.0); vN = normalize(normalMatrix * normal); vV = normalize(-mv.xyz); vP = position; gl_Position = projectionMatrix * mv; }',
-    fragmentShader: 'uniform float t; uniform float a; varying vec3 vN; varying vec3 vV; varying vec3 vP; void main(){ float f = pow(1.0 - abs(dot(vN, vV)), 3.0); float hex = 0.6 + 0.4 * sin(vP.x * 9.0 + t * 3.0) * sin(vP.y * 9.0 - t * 2.0) * sin(vP.z * 9.0); float band = 1.0 - smoothstep(0.02, 0.06, abs(vP.y)); vec3 col = mix(vec3(0.6, 0.9, 1.0), vec3(1.0, 0.97, 0.85), 0.5 + 0.5 * sin(t * 2.0 + vP.y * 3.0)); gl_FragColor = vec4((col * (f * 0.48 + 0.035) * smoothstep(-0.75, -0.2, vP.y) * hex + vec3(1.0, 0.78, 0.25) * band * 0.0) * a, 1.0); }' }));
+    fragmentShader: 'uniform float t; uniform float a; varying vec3 vN; varying vec3 vV; varying vec3 vP; void main(){ float f = pow(clamp(1.0 - abs(dot(normalize(vN), normalize(vV))), 0.0, 1.0), 3.4); float hex = 0.6 + 0.4 * sin(vP.x * 9.0 + t * 3.0) * sin(vP.y * 9.0 - t * 2.0) * sin(vP.z * 9.0); float band = 1.0 - smoothstep(0.02, 0.06, abs(vP.y)); vec3 col = mix(vec3(0.2, 0.78, 1.0), vec3(0.55, 0.92, 1.0), 0.5 + 0.5 * sin(t * 2.0 + vP.y * 3.0)); gl_FragColor = vec4((col * (f * 0.62 + 0.006) * smoothstep(-0.75, -0.2, vP.y) * hex + vec3(1.0, 0.78, 0.25) * band * 0.0) * a, 1.0); }' }));
   bubble.scale.set(1.45, 1.05, 2.75); bubble.visible = false; bubble.renderOrder = 4; scene.add(bubble);
   // ---- the nitro: flames out of the pipes
   const flameMat = new THREE.MeshBasicMaterial({ map: flameTexture(), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false });
@@ -924,7 +925,7 @@ export function createWorld() {
     const gr = GRADE_U; gr.sat.value = to(gr.sat.value, look.grade[0] * (lit(look) ? 1 : 1.07)); gr.con.value = to(gr.con.value, look.grade[1] + (lit(look) ? 0 : 0.05)); blend(gr.tint.value, look.grade[2]); gr.vib.value = to(gr.vib.value, lit(look) ? 0.1 : 0.22); { const lf = look.lift || [0, 0, 0]; gr.lift.value.set(to(gr.lift.value.x, lf[0]), to(gr.lift.value.y, lf[1]), to(gr.lift.value.z, lf[2])); } gr.curve.value = to(gr.curve.value, lit(look) ? 0.08 : 0.18);
     stars.visible = !!look.night; moon.visible = !!look.night;
     MAT.eyes.color.setScalar(look.night ? 2.6 : look.dusk ? 1.6 : R.tunK > 0.5 ? 1.2 : 0.5).multiply(EYEC);
-    headlight.intensity = lit(look) ? 220 : 0; carGlow.intensity = look.night ? 9 : look.dusk ? 4 : 0; cabinLight.intensity = look.night ? 1.5 : look.dusk ? 0.75 : 0; RIM.value.set('#ffd9b0').multiplyScalar(look.night ? 0.6 : look.dusk ? 0.5 : 0.46); { const tg = look.night ? 1 : look.dusk ? 0.6 : 0; tailGlow.forEach((s) => { s.material.opacity = tg; }); tailWash.material.opacity = tg * 0.9; } fill.intensity = look.night ? 42 : look.dusk ? 22 : look.rays ? 12 : 0;   // (high above: close over their heads it blew them out into a glare)
+    headlight.intensity = lit(look) ? 220 : 0; carGlow.intensity = look.night ? 9 : look.dusk ? 4 : 0; cabinLight.intensity = look.night ? 1.2 : look.dusk ? 0.6 : 0; RIM.value.set('#ffd9b0').multiplyScalar(look.night ? 0.6 : look.dusk ? 0.5 : 0.46); { const tg = look.night ? 1 : look.dusk ? 0.6 : 0; tailGlow.forEach((s) => { s.material.opacity = tg; }); tailWash.material.opacity = tg * 0.9; } fill.intensity = look.night ? 42 : look.dusk ? 22 : look.rays ? 12 : 0;   // (high above: close over their heads it blew them out into a glare)
     bloom.threshold = lit(look) ? 2.2 : 1.9; bloom.strength = (lit(look) ? 0.24 : 0.26) * (look.bloomK || 1);   // only the sun's disc and the lamps glow
     renderer.toneMappingExposure = to(renderer.toneMappingExposure, look.exp || 1);
     roadMat.roughness = to(roadMat.roughness, look.night ? 0.42 : look.rays ? 0.7 : look.glow >= 1.4 ? 0.55 : 0.6);   // wetter-looking at night, a sheen under a low sun
@@ -963,6 +964,7 @@ export function createWorld() {
       const el = new THREE.Group(); el.position.set(0, -spec.elbow, 0); sh.add(el); addParts(el, spec.part.fore, PM);
       sh.rotation.order = 'YXZ'; return { sh: sh, el: el };   // out to the side, then forward, then turned
     });
+    const locks = spec.part.locks ? spec.part.locks.map((L) => { const g = new THREE.Group(); g.position.set(L.at[0], L.at[1], L.at[2]); g.scale.setScalar(L.s); neck.add(g); addParts(g, L.geo, PM); return g; }) : null;
     let hair = null;
     if (spec.part.hair) {
       hair = []; let parent = new THREE.Group(); parent.position.set(spec.hairAt[0], spec.hairAt[1], spec.hairAt[2]); parent.scale.setScalar(0.74); neck.add(parent);
@@ -976,13 +978,14 @@ export function createWorld() {
     if (spec.lean) root.rotation.x = spec.lean;   // leaning back in her seat
     root.userData.home = { p: root.position.clone(), r: root.rotation.clone(), s: root.scale.clone() };
     const halo = new THREE.Group(); halo.position.set(0, 0.37, 0); halo.visible = false; neck.add(halo); root.userData.halo = halo;   // the stars you see after a crash
-    for (let i = 0; i < 5; i++) { const s = new THREE.Sprite(STARMAT); const a = i / 5 * Math.PI * 2; s.position.set(Math.cos(a) * 0.3, Math.sin(a * 2) * 0.04, Math.sin(a) * 0.3); s.scale.setScalar(0.22); halo.add(s); }
-    return { root: root, neck: neck, arms: arms, hair: hair, scarf: scarf };
+    for (let i = 0; i < 5; i++) { const s = new THREE.Sprite(STARMAT); const a = i / 5 * Math.PI * 2; s.position.set(Math.cos(a) * 0.34, Math.sin(a * 2) * 0.04, Math.sin(a) * 0.34); s.scale.setScalar(0.32); halo.add(s); }
+    return { root: root, neck: neck, arms: arms, hair: hair, scarf: scarf, locks: locks };
   }
   function makePlayer(id) {
     restore(); player.clear(); const m = MD.playerCar(id); carInfo = m; R.couple = null;
     for (const k in m.body) if (m.body[k] && CAR[k]) { const mesh = new THREE.Mesh(m.body[k], CAR[k]); mesh.castShadow = k !== 'glow'; player.add(mesh); }
     wheels = m.wheels.map((p) => { const w = new THREE.Group(); for (const k in m.wheel) if (m.wheel[k] && CAR[k]) { const mesh = new THREE.Mesh(m.wheel[k], CAR[k]); mesh.castShadow = true; w.add(mesh); } w.position.set(p[0], p[1], p[2]); w.scale.x = p[0] < 0 ? -1 : 1; w.userData.home = { p: w.position.clone(), r: new THREE.Euler(), s: w.scale.clone() }; player.add(w); return w; });   // (mirrored on the left, so the spokes face out)
+    R.hubs = m.wheels.map((p) => { const s = new THREE.Mesh(STUB, CAR.trim); s.position.set(p[0], p[1], p[2]); s.rotation.z = Math.PI / 2; s.visible = false; player.add(s); return s; });   // a hub, seen when a wheel's gone
     const shadow = new THREE.Mesh(new THREE.PlaneGeometry(m.width + 0.7, m.len * 2 + 0.7), new THREE.MeshBasicMaterial({ map: radial(64, [[0, 'rgba(0,0,0,0.6)'], [0.7, 'rgba(0,0,0,0.32)'], [1, 'rgba(0,0,0,0)']]), transparent: true, depthWrite: false }));
     shadow.rotation.x = -Math.PI / 2; shadow.position.y = 0.04; player.add(shadow); player.userData.shadow = shadow;
     if (m.open) {   // the roadster: the two of you, and the steering wheel
@@ -998,7 +1001,7 @@ export function createWorld() {
     tailGlow.forEach((s, q) => { s.position.set((q ? 1 : -1) * 0.6, 0.63, m.len + 0.08); player.add(s); });
     tailWash.position.set(0, 0.03, m.len + 1.4); player.add(tailWash);
     nitroLight.position.set(0, 0.5, m.len + 1.2); player.add(nitroLight);
-    cabinLight.position.set(0, 1.85, -0.35); player.add(cabinLight);
+    cabinLight.position.set(0, 1.2, -0.45); player.add(cabinLight);
     playerCarId = id;
   }
 
@@ -1023,11 +1026,11 @@ export function createWorld() {
     const nShard = Math.min(18, Math.round(n / 4));
     for (let i = 0; i < nShard; i++) {
       const kind = i % 6, sz = kind < 3 ? [0.14 + Math.random() * 0.14, 0.08, 0.1 + Math.random() * 0.1] : kind < 5 ? [0.22, 0.1, 0.1] : [0.12, 0.05, 0.12], fv = v * (0.4 + Math.random() * 0.35) + 5;
-      shard(x, y + 0.6, z, fx * fv + (Math.random() - 0.5) * 11, 2.5 + Math.random() * 4.5, fz * fv + (Math.random() - 0.5) * 11, sz, kind < 3 ? '#c8101c' : kind < 5 ? '#1a1a1a' : '#cfe6f4', y + 0.02);
+      shard(x, y + 0.6, z, fx * fv + (Math.random() - 0.5) * 11, 2.5 + Math.random() * 4.5, fz * fv + (Math.random() - 0.5) * 11, sz, kind < 3 ? '#c8101c' : kind < 5 ? '#4a4c50' : '#cfe6f4', y + 0.02);
     }
     const dust = R.W && R.W.off ? '#a49a7c' : '#c4bcb0';
     for (let i = 0; i < 12; i++) { const a = Math.random() * Math.PI * 2; smoke.emit(x, y + 0.3, z, Math.cos(a) * 9, 0.4 + Math.random(), Math.sin(a) * 9, 2.2, 7.5, dust, 0.36, 2.8); }   // a ring of dust rolling out low
-    for (let i = 0; i < 22; i++) smoke.emit(x + (Math.random() - 0.5) * 3, y + 0.4, z + (Math.random() - 0.5) * 2, (Math.random() - 0.5) * 7 + fx * 3, 0.6 + Math.random() * 2, (Math.random() - 0.5) * 7 + fz * 3, 1.4, 4.6, dust, 0.4, 1.8);
+    for (let i = 0; i < 22; i++) smoke.emit(x + (Math.random() - 0.5) * 3, y + 0.4, z + (Math.random() - 0.5) * 2, (Math.random() - 0.5) * 7 + fx * 3, 0.6 + Math.random() * 2, (Math.random() - 0.5) * 7 + fz * 3, 1.4, 4.6, dust, 0.28, 1.8);
   }
   const SH_N = 48, shards = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ roughness: 0.35, metalness: 0.15 }), SH_N), SHL = [], SHM = new THREE.Matrix4(), SHQ = new THREE.Quaternion(), SHE = new THREE.Euler(), SHS = new THREE.Vector3(), SHP = new THREE.Vector3(), SHC = new THREE.Color();
   shards.frustumCulled = false; shards.castShadow = true; shards.count = 0; scene.add(shards);
@@ -1066,7 +1069,7 @@ export function createWorld() {
         for (let i = 0; i < 26; i++) smoke.emit(cx + (Math.random() - 0.5) * 3, cy + 0.3, cz + (Math.random() - 0.5) * 3, (Math.random() - 0.5) * 5, 1 + Math.random() * 2, (Math.random() - 0.5) * 5, 1.2, 3.2, '#c8c0b4', 0.55, 1.6);
         for (let i = 0; i < 30; i++) sparks.emit(cx, cy + 0.2, cz, (Math.random() - 0.5) * 12 + fx * 8, Math.random() * 4, (Math.random() - 0.5) * 12 + fz * 8, 0.22, 0.08, '#ffd27a', 1, 0.5, 9);
       }
-      if (T.air && Math.random() < 0.7) smoke.emit(cx, cy + T.lift + 0.6, cz, (Math.random() - 0.5), 1, (Math.random() - 0.5), 0.8, 2.6, '#b4a894', 0.3, 1.4);
+      if (T.air && Math.random() < 0.7) smoke.emit(cx, cy + T.lift + 0.6, cz, (Math.random() - 0.5), 1, (Math.random() - 0.5), 0.8, 2.6, '#b4a894', 0.18, 1.4);
     }
     flyBits(W, dt, cx, cz, fx, fz, roadY);
     if (!cr && R.crashObj) { R.crashObj = null; restore(); R.flash = Math.max(R.flash, 0.9); }   // back on the road: a white flash, the two of you in your seats again
@@ -1081,8 +1084,8 @@ export function createWorld() {
       const w = kind === 'person' ? new THREE.Vector3((Math.random() < 0.5 ? -1 : 1) * spin * (0.7 + Math.random() * 0.3), 0, (Math.random() - 0.5) * spin * 0.7) : new THREE.Vector3((Math.random() - 0.5) * spin, (Math.random() - 0.5) * spin, (Math.random() - 0.5) * spin);
       R.flying.push({ obj: obj, kind: kind, side: Math.random() < 0.5 ? -1 : 1, v: new THREE.Vector3(fx * v0 * fwd + rx * side * out, up, fz * v0 * fwd + rz * side * out), w: w, rest: false });
     };
-    if (R.couple) { R.couple.drv.root.userData.arms = R.couple.drv.arms; R.couple.her.root.userData.arms = R.couple.her.arms; toss(R.couple.drv.root, 1, 8 + Math.random() * 2, 7, 'person'); toss(R.couple.her.root, -1, 9 + Math.random() * 2, 7.5, 'person'); }
-    const lw = wheels[2 + (Math.random() < 0.5 ? 0 : 1)]; R.lostSide = lw === wheels[2] ? 1 : -1; toss(lw, 0, 6.5, 0, 'wheel'); if (lw.parent === scene) lw.rotation.z += 0.38;   // tilted as it goes, its alloy face showing
+    if (R.couple) { R.couple.drv.root.userData.arms = R.couple.drv.arms; R.couple.her.root.userData.arms = R.couple.her.arms; R.couple.her.root.userData.locks = R.couple.her.locks; toss(R.couple.drv.root, 1, 8 + Math.random() * 2, 7, 'person'); toss(R.couple.her.root, -1, 9 + Math.random() * 2, 7.5, 'person'); }
+    const lw = wheels[2 + (Math.random() < 0.5 ? 0 : 1)]; R.lostSide = lw === wheels[2] ? 1 : -1; if (R.hubs) R.hubs[wheels.indexOf(lw)].visible = true; toss(lw, 0, 6.5, 0, 'wheel'); if (lw.parent === scene) lw.rotation.z += 0.38;   // tilted as it goes, its alloy face showing
   }
   const WQ = new THREE.Quaternion(), WV = new THREE.Vector3();
   function flyBits(W, dt, cx, cz, fx, fz, roadY) {   // the two of you and the wheel: thrown, bouncing, then sprawled on the road (or rolling away)
@@ -1094,6 +1097,7 @@ export function createWorld() {
           f.v.x += (R.cvx + fx * u.lead - fz * u.out - f.v.x) * q; f.v.z += (R.cvz + fz * u.lead + fx * u.out - f.v.z) * q;
         }
         f.v.y -= TG * dt; o.position.addScaledVector(f.v, dt);
+        if (f.kind === 'person' && o.userData.locks) o.userData.locks.forEach((g, i) => { g.rotation.x = -1 + Math.sin(W.t * 0.3 + i) * 0.25; });
         if (f.kind === 'person' && o.userData.arms) o.userData.arms.forEach((A, i) => { A.sh.rotation.y = 0; A.sh.rotation.x = Math.sin(W.t * 0.12 + i * 2.1) * 0.35; A.sh.rotation.z = (i ? 1 : -1) * (1.4 + Math.sin(W.t * 0.15 + i) * 0.3); A.el.rotation.x = 0.12 + Math.sin(W.t * 0.2 + i) * 0.1; });
         if (f.kind === 'person') { o.rotation.x += f.w.x * dt; o.rotation.y += f.w.y * dt; o.rotation.z += f.w.z * dt; } else o.rotation.x -= 20 * dt;
         o.visible = !nearCam(o);
@@ -1111,7 +1115,7 @@ export function createWorld() {
           o.rotation.x += (tx - o.rotation.x) * Math.min(1, dt * (up ? 4 : 7)); o.rotation.z += (0 - o.rotation.z) * Math.min(1, dt * 7);
           if (up) { o.position.y = floor - 0.12 * Math.min(1, (f.restT - 0.35) * 3);   // sitting up: arms down, hands in the lap
             const q = Math.min(1, dt * 4); if (o.userData.arms) o.userData.arms.forEach((A, i) => { A.sh.rotation.z += ((i ? 1 : -1) * 0.4 - A.sh.rotation.z) * q; A.sh.rotation.x += (0.55 - A.sh.rotation.x) * q; A.el.rotation.x += (0.95 - A.el.rotation.x) * q; }); }
-          const h = o.userData.halo; if (h) { h.visible = f.restT > 0.6 && o.visible; h.rotation.y += dt * 5; o.rotation.y += Math.sin(f.restT * 7) * 0.4 * dt; }   // dazed: a wobble, stars round the head
+          const h = o.userData.halo; if (h) { h.visible = f.restT > 0.6 && o.visible; h.rotation.y += dt * 5; STARMAT.rotation += dt * 4; o.rotation.y += Math.sin(f.restT * 7) * 0.4 * dt; }   // dazed: a wobble, stars round the head
         }
         else {
           const sp = Math.hypot(f.v.x, f.v.z);
@@ -1131,7 +1135,7 @@ export function createWorld() {
   const SCV2 = new THREE.Vector3(), SCV3 = new THREE.Vector3(), UPV = new THREE.Vector3(0, 1, 0);
   function restore() {   // everyone and everything back where it belongs in the car
     for (const f of R.flying) { const o = f.obj, h = o.userData.home; player.add(o); o.position.copy(h.p); o.rotation.copy(h.r); o.scale.copy(h.s); o.visible = true; if (o.userData.halo) o.userData.halo.visible = false; }
-    R.pcx = R.cvx = null;
+    R.pcx = R.cvx = null; if (R.hubs) R.hubs.forEach((s) => { s.visible = false; });
     R.flying.length = 0;
   }
 
@@ -1166,15 +1170,16 @@ export function createWorld() {
         for (let tl = 0; tl < 2; tl++) {
           let x = A.x + tl * 0.03, y = A.y - tl * 0.015, z = A.z + 0.02;
           for (let i = 0; i < C.NS; i++) {
-            const f = i / (C.NS - 1), seg = 0.05, dz = 0.25 + sp * 0.75, dy = -0.95 + sp * 0.85, n = Math.hypot(dz, dy);
+            const f = i / (C.NS - 1), seg = 0.058, dz = 0.25 + sp * 0.75, dy = -0.95 + sp * 0.85, n = Math.hypot(dz, dy);
             if (i) { const ph = t / 70 - i * 0.9 + tl * 1.7, amp = f * sp; x += Math.sin(ph) * 0.03 * amp - 0.006 - 0.006 * (1 - sp); y += dy / n * seg + Math.cos(ph * 1.3) * 0.022 * amp; z += dz / n * seg; if (y < A.y - 0.28) y = A.y - 0.28; }
-            const w = 0.034 * (1 - f * 0.65), o = (tl * C.NS + i) * 2;
-            P.setXYZ(o, x, y + w, z); P.setXYZ(o + 1, x, y - w, z);
+            const w = 0.038 * (1 - f * 0.6), o = (tl * C.NS + i) * 2, tw = Math.sin(t / 60 - i * 0.8 + tl * 1.3) * 1.1 * f * sp, wx = Math.sin(tw) * w, wy = Math.cos(tw) * w;
+            P.setXYZ(o, x + wx, y + wy, z); P.setXYZ(o + 1, x - wx, y - wy, z);
           }
         }
         P.needsUpdate = true; sc.geometry.computeVertexNormals(); sc.geometry.computeBoundingSphere();
       } }
     if (H.scarf) H.scarf.forEach((g, i) => { g.rotation.x = (i ? 0.04 : 1.35 - sp * 1.15) + Math.sin(t / 45 + i * 1.6) * 0.32 * sp; g.rotation.y = (i ? 0 : -0.08) + Math.sin(t / 70 + i * 1.3) * 0.42 * sp; g.rotation.z = Math.sin(t / 55 + i) * 0.4 * sp; });
+    if (H.locks) H.locks.forEach((g, i) => { g.rotation.x = -sp * ((i > 4 ? 0.9 : 0.55) + 0.12 * Math.sin(t / (70 + i * 11) + i * 1.9)) - 0.04; g.rotation.z = Math.sin(t / (90 + i * 13) + i) * 0.08 * sp; });
     if (H.hair) H.hair.forEach((g, i) => { g.rotation.x = (i ? 0.13 + (1 - sp) * 0.14 : 1.3 - sp * 0.62) + Math.sin(t / 65 + i * 1.2) * 0.13 * sp; g.rotation.y = (i ? 0 : 0.14) + Math.sin(t / 100 + i * 0.9) * 0.12 * sp; });
     // him: both hands on the wheel, turning it; a fist in the air at the goal
     const D = C.drv, st = W.steer, gl = her.k === 'wave' || (her.k === 'cheer' && W.banner && W.banner.kind === 'goal');
@@ -1217,7 +1222,7 @@ export function createWorld() {
       const p = cr.t / cr.dur;
       if (cr.hard) { T = tumble(cr); lift = T.lift; pitch += T.pitch; roll += T.roll; yaw += T.yaw;
         R.slump += ((T.hop >= 3 ? 1 : 0) - R.slump) * Math.min(1, dt * 5);   // settled: down on the corner that lost its wheel
-        roll += (R.lostSide || 1) * 0.085 * R.slump; pitch += 0.045 * R.slump; lift -= 0.04 * R.slump; }
+        roll += (R.lostSide || 1) * 0.06 * R.slump; pitch += 0.03 * R.slump; }
       else yaw += cr.spin * Math.sin(p * Math.PI) * 1.4;
     }
     if (!cr || !cr.hard) R.slump = 0;

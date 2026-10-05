@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=14';
+import { createWorld } from './world3d.js?v=15';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 const GW = 384, GH = 224;
@@ -303,7 +303,7 @@ const POP_COL = { near: '#7fe8ff', drift: '#ffb347', gold: '#ffd400', nitro: '#7
 function pops(g, W) {
   for (let i = 0; i < W.pops.length; i++) {
     const p = W.pops[i], age = W.t - p.t; if (age > 70 || age < 0) continue;
-    const a = Math.min(1, (70 - age) / 18), y = 140 - age * 0.5, x = GW / 2 + Math.max(-1, Math.min(1, p.x / 5)) * 70;
+    const a = Math.min(1, (70 - age) / 18), y = 94 - age * 0.32, x = GW / 2 + Math.max(-1, Math.min(1, p.x / 5)) * 70;
     g.globalAlpha = a;
     hudText(g, p.txt, x, y, 10, POP_COL[p.kind] || '#ffffff', 'center');
     if (p.sub) hudText(g, p.sub, x, y + 10, 8, '#ffffff', 'center');
