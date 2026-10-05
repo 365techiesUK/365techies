@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=12';
+import * as MD from './models3d.js?v=13';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -148,10 +148,10 @@ const SKY_FS = [
 
 // ---------------------------------------------------------------- the last step: saturation, contrast, the place's tint, a vignette, a speed blur, a flash
 const GRADE = {
-  uniforms: { tDiffuse: { value: null }, sat: { value: 1.12 }, con: { value: 1.05 }, vig: { value: 0.32 }, blur: { value: 0 }, tint: { value: new THREE.Color(1, 1, 1) }, flash: { value: 0 }, vib: { value: 0.2 }, curve: { value: 0.15 }, lift: { value: new THREE.Vector3() } },
+  uniforms: { tDiffuse: { value: null }, sat: { value: 1.12 }, con: { value: 1.05 }, vig: { value: 0.32 }, blur: { value: 0 }, tint: { value: new THREE.Color(1, 1, 1) }, flash: { value: 0 }, vib: { value: 0.2 }, curve: { value: 0.15 }, lift: { value: new THREE.Vector3() }, gpull: { value: 0.22 }, tone: { value: 1 }, grain: { value: 0.022 }, time: { value: 0 } },
   vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
   fragmentShader: [
-    'uniform sampler2D tDiffuse; uniform float sat; uniform float con; uniform float vig; uniform float blur; uniform vec3 tint; uniform float flash; uniform float vib; uniform float curve; uniform vec3 lift; varying vec2 vUv;',
+    'uniform sampler2D tDiffuse; uniform float sat; uniform float con; uniform float vig; uniform float blur; uniform vec3 tint; uniform float flash; uniform float vib; uniform float curve; uniform vec3 lift; uniform float gpull; uniform float tone; uniform float grain; uniform float time; varying vec2 vUv;',
     'void main(){',
     '  vec3 c = texture2D(tDiffuse, vUv).rgb;',
     '  if (blur > 0.002) { vec2 dd = (vUv - vec2(0.5, 0.52)) * blur * 0.009 * smoothstep(0.07, 0.22, length((vUv - vec2(0.5, 0.33)) * vec2(1.5, 1.0))); vec3 s = c; for (int i = 1; i < 8; i++) s += texture2D(tDiffuse, vUv - dd * float(i)).rgb; c = s / 8.0; }',
@@ -160,7 +160,10 @@ const GRADE = {
     '  c = (c - 0.5) * con + 0.5; c *= tint;',
     '  c = clamp(c, 0.0, 1.0); c = mix(c, c * c * (3.0 - 2.0 * c), curve);',
     '  c += lift * (1.0 - c);',   // a warm lift in the shadows (the sunset places)   // a gentle S-curve: richer shadows, cleaner highlights
+    '  float L2 = dot(c, vec3(0.299, 0.587, 0.114)), gr = clamp((c.g - max(c.r, c.b)) * 5.0, 0.0, 1.0); c = mix(c, vec3(L2), gr * gpull);',   // the toy-bright greens calmer
+    '  c += tone * ((1.0 - L2) * (1.0 - L2) * vec3(-0.012, 0.006, 0.022) + L2 * L2 * vec3(0.026, 0.01, -0.014));',   // cool shadows, warm highlights
     '  vec2 q = vUv - 0.5; c *= 1.0 - vig * dot(q, q) * 1.9;',
+    '  c += grain * (fract(sin(dot(gl_FragCoord.xy + time * 61.0, vec2(12.9898, 78.233))) * 43758.5453) - 0.5);',   // a fine film grain
     '  c = mix(c, vec3(1.0), flash);',
     '  gl_FragColor = vec4(clamp(c, 0.0, 1.0), 1.0);',
     '}'
@@ -295,6 +298,11 @@ export function createWorld() {
       'float fn(vec2 p){ vec2 i = floor(p), f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f); return mix(mix(fh(i), fh(i + vec2(1.0, 0.0)), u.x), mix(fh(i + vec2(0.0, 1.0)), fh(i + vec2(1.0, 1.0)), u.x), u.y); }'].join('\n'))
       .replace('#include <color_fragment>', [
       '#include <color_fragment>',
+      '{ vec2 pv = vWP.xz; float gn = step(diffuseColor.r * 1.06, diffuseColor.g);',   // all the land: brightness in patches; grass a little varied in hue
+      '  diffuseColor.rgb *= 0.9 + 0.12 * fn(pv / 3.1) + 0.07 * fn(pv / 0.9) - 0.06 * smoothstep(0.55, 0.85, fn(pv / 14.0));',
+      '  diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(1.08, 1.02, 0.78), gn * smoothstep(0.55, 0.9, fn(pv / 17.0 + 3.1)) * 0.45);',
+      '  vec3 fN = normalize(cross(dFdx(vWP), dFdy(vWP))); float steep = 1.0 - smoothstep(0.6, 0.82, abs(fN.y));',   // steep: chalk and stone, in bands
+      '  if (steep > 0.01) { vec3 rk = mix(vec3(0.66, 0.63, 0.57), vec3(0.8, 0.78, 0.71), fn(pv / 1.6 + vWP.y * 0.4)) * (0.9 + 0.1 * sin(vWP.y * 2.7)); diffuseColor.rgb = mix(diffuseColor.rgb, rk, steep * 0.8); } }',
       'if (vField > 0.005) {',
       '  vec2 pm = vWP.xz; vec3 gc = diffuseColor.rgb;',
       '  gc *= 0.86 + 0.16 * fn(pm / 2.6) + 0.1 * fn(pm / 0.8) - 0.08 * smoothstep(0.55, 0.8, fn(pm / 11.0));',
@@ -355,7 +363,8 @@ export function createWorld() {
   const traffic = new Map();
   const blobGeo = new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), blobMat = new THREE.MeshBasicMaterial({ map: radial(64, [[0, 'rgba(0,0,0,0.55)'], [0.6, 'rgba(0,0,0,0.3)'], [1, 'rgba(0,0,0,0)']]), transparent: true, depthWrite: false });
   const coinGeo = new THREE.LatheGeometry([[0, 0.045], [0.4, 0.045], [0.46, 0.085], [0.58, 0.085], [0.63, 0.03], [0.63, -0.03], [0.58, -0.085], [0.46, -0.085], [0.4, -0.045], [0, -0.045]].map((q) => new THREE.Vector2(q[0], q[1])), 28); coinGeo.rotateX(Math.PI / 2);
-  const coins = new THREE.InstancedMesh(coinGeo, new THREE.MeshStandardMaterial({ color: '#ffcf3a', emissive: '#7a5000', emissiveIntensity: 0.6, metalness: 0.85, roughness: 0.2, envMapIntensity: 1.4 }), 400); coins.count = 0; coins.frustumCulled = false; scene.add(coins);   // (their bounds change every frame)
+  coinGeo.scale(0.75, 0.75, 0.75);   // (smaller than they were: less like a toy)
+  const coins = new THREE.InstancedMesh(coinGeo, new THREE.MeshStandardMaterial({ color: '#ffcf3a', emissive: '#7a5000', emissiveIntensity: 0.3, metalness: 0.85, roughness: 0.2, envMapIntensity: 1.4 }), 400); coins.count = 0; coins.frustumCulled = false; scene.add(coins);   // (their bounds change every frame)
   const OWN_ENV = [CAR.paint, CAR.chrome, CAR.glass, CAR.tyre, CAR.alloy, CAR.screen, roadMat, seaMat, coins.material];   // how strongly each reflects the sky is its own
   OWN_ENV.forEach((m) => { m.userData.envBase = m.envMapIntensity; });
   const pwMat = new THREE.MeshStandardMaterial({ vertexColors: true, metalness: 0.45, roughness: 0.22, emissive: '#ffffff', emissiveIntensity: 0.32 });
@@ -905,7 +914,7 @@ export function createWorld() {
     { const F = FIELDS[pal.key] || FIELDS.bournemouth; ['uF0', 'uF1', 'uF2', 'uF3', 'uF4'].forEach((u, i) => blend(FU[u].value, F.cols[i])); FU.uFK.value = to(FU.uFK.value, F.k); FU.uFlow.value = to(FU.uFlow.value, look.night ? 0 : (FLOWERS[pal.key] || 0)); FU.uDap.value = RU.uDap.value = to(FU.uDap.value, look.trees ? 1 : 0); FU.uDry.value = to(FU.uDry.value, look.dusk ? 0.3 : (DRY[pal.key] == null ? 0.6 : DRY[pal.key])); }
     SU.cover.value = to(SU.cover.value, look.cover); SU.sunGlow.value = to(SU.sunGlow.value, look.glow); SU.discI.value = to(SU.discI.value, look.night ? 0 : 14);
     blend(fog.color, look.fogCol || sk[sk.length - 1][1]);   // the haze is the sky's own colour at the horizon, never a grey
-    const fogN = lit(look) ? 1 : 2, fogF = lit(look) ? 1 : 1.35;   // daytime: the haze starts twice as far out, so the middle distance keeps its colour
+    const fogN = lit(look) ? 1 : 1.5, fogF = lit(look) ? 1 : 1.2;   // daytime: the haze starts twice as far out, so the middle distance keeps its colour
     fog.near += (look.fog[0] * fogN - fog.near) * k; fog.far += (look.fog[1] * fogF * (R.low ? 0.8 : 1) - fog.far) * k;
     blend(HEMIC, look.hemi[0]); blend(hemi.groundColor, look.hemi[1]); R.hemiI = to(R.hemiI, look.hemi[2] * (lit(look) ? 1 : 0.8));
     blend(sun.color, look.sunCol); R.sunI = to(R.sunI, look.sunI * (lit(look) ? 1 : 1.12));
@@ -958,7 +967,7 @@ export function createWorld() {
   function addParts(group, geo, mats) { for (const k in geo) if (geo[k] && (mats[k] || CAR[k])) { const mesh = new THREE.Mesh(geo[k], mats[k] || CAR[k]); mesh.castShadow = k !== 'glow'; group.add(mesh); } }
   function personOf(spec) {   // a body with a neck, two shoulders and two elbows that bend, and (hers) a streaming tail of hair
     const root = new THREE.Group(); root.position.set(spec.seat[0], spec.seat[1], spec.seat[2]); root.scale.setScalar(spec.scale || 1); addParts(root, spec.part.torso, PM);
-    const neck = new THREE.Group(); neck.position.set(0, spec.neck, 0); neck.scale.setScalar(1.32); root.add(neck); addParts(neck, spec.part.head, PM);
+    const neck = new THREE.Group(); neck.position.set(0, spec.neck, 0); neck.scale.setScalar(1.08); root.add(neck); addParts(neck, spec.part.head, PM);
     const arms = [-1, 1].map((sd) => {
       const sh = new THREE.Group(); sh.position.set(sd * spec.shoulder[0], spec.shoulder[1], spec.shoulder[2]); root.add(sh); addParts(sh, spec.part.upper, PM);
       const el = new THREE.Group(); el.position.set(0, -spec.elbow, 0); sh.add(el); addParts(el, spec.part.fore, PM);
@@ -967,12 +976,12 @@ export function createWorld() {
     const locks = spec.part.locks ? spec.part.locks.map((L) => { const g = new THREE.Group(); g.position.set(L.at[0], L.at[1], L.at[2]); g.scale.setScalar(L.s); neck.add(g); addParts(g, L.geo, PM); return g; }) : null;
     let hair = null;
     if (spec.part.hair) {
-      hair = []; let parent = new THREE.Group(); parent.position.set(spec.hairAt[0], spec.hairAt[1], spec.hairAt[2]); parent.scale.setScalar(0.74); neck.add(parent);
+      hair = []; let parent = new THREE.Group(); parent.position.set(spec.hairAt[0], spec.hairAt[1], spec.hairAt[2]); parent.scale.setScalar(0.905); neck.add(parent);
       spec.part.hair.forEach((geo, i) => { const g = new THREE.Group(); if (i) g.position.set(0, 0, 0.115); parent.add(g); addParts(g, geo, PM); hair.push(g); parent = g; });
     }
     let scarf = null;
     if (spec.part.scarf) {   // her scarf: tied at the neck, its end trailing back
-      scarf = []; let parent = new THREE.Group(); parent.position.set(spec.scarfAt[0], spec.scarfAt[1], spec.scarfAt[2]); parent.scale.setScalar(0.74); neck.add(parent);
+      scarf = []; let parent = new THREE.Group(); parent.position.set(spec.scarfAt[0], spec.scarfAt[1], spec.scarfAt[2]); parent.scale.setScalar(0.905); neck.add(parent);
       spec.part.scarf.forEach((geo, i) => { const g = new THREE.Group(); g.position.set(0, 0, i ? 0.125 : 0.06); parent.add(g); addParts(g, geo, {}); scarf.push(g); parent = g; });
     }
     if (spec.lean) root.rotation.x = spec.lean;   // leaning back in her seat
@@ -1332,7 +1341,7 @@ export function createWorld() {
     // ---- draw: straight to the screen on a slow PC, otherwise through the glow, the grade and the blur
     R.boostK += ((W.boosting ? 1 : 0) - R.boostK) * Math.min(1, dt * 4); R.flash = Math.max(0, R.flash - dt * 2.2);
     if (R.low) renderer.render(scene, camera);
-    else { GRADE_U.blur.value = R.boostK * 0.3 + Math.max(0, W.v / E.VMAX - 0.88) * 1.1; GRADE_U.flash.value = R.flash * 0.5; composer.render(dt); }
+    else { GRADE_U.time.value = (t % 10000) / 1000; GRADE_U.blur.value = R.boostK * 0.3 + Math.max(0, W.v / E.VMAX - 0.88) * 1.1; GRADE_U.flash.value = R.flash * 0.5; composer.render(dt); }
     return renderer.domElement;
   }
   // the sun's glare: a chain of soft rings from the sun through the middle of the picture, hidden when a hill is in the way
@@ -1439,7 +1448,7 @@ export function createWorld() {
     g.position.set(0, -500, 0); scene.add(g);
     const hidden = [bubble, glint, ...flames, ...tailGlow, tailWash].filter(Boolean), was = hidden.map((o) => o.visible);
     hidden.forEach((o) => { o.visible = true; });
-    const done = () => { scene.remove(g); hidden.forEach((o, i) => { o.visible = was[i]; }); };
+    const done = () => { scene.remove(g); hidden.forEach((o, i) => { o.visible = was[i]; }); R.warmed = true; };   // (the frame-rate watcher waits for this)
     try {   // for the picture as drawn through the glow and grade (into a render target: linear colour) and straight to the screen (a slow PC)
       const prev = renderer.getRenderTarget(); renderer.setRenderTarget(composer.readBuffer); renderer.compile(scene, camera); renderer.setRenderTarget(prev);
       if (renderer.compileAsync) renderer.compileAsync(scene, camera).then(done, done); else { renderer.compile(scene, camera); done(); }
@@ -1448,7 +1457,7 @@ export function createWorld() {
     for (const m of mats) if (m && m.map) { try { renderer.initTexture(m.map); } catch (e) {} }
     for (const t of [flameMat.map, flameCore.map, rays.material.map, glint.material.map]) if (t) { try { renderer.initTexture(t); } catch (e) {} }
   }
-  return { render: render, setSize: setSize, quality: quality, reset: () => { R.W = null; }, setShake: (on) => { R.shakeOn = on; }, renderer: renderer, scene: scene, camera: camera, debugCam: (v) => { R.debugCam = v; } };
+  return { render: render, setSize: setSize, quality: quality, reset: () => { R.W = null; }, setShake: (on) => { R.shakeOn = on; }, renderer: renderer, scene: scene, camera: camera, debugCam: (v) => { R.debugCam = v; }, warmed: () => !!R.warmed };
 }
 
 // ---------------------------------------------------------------- textures made on the spot

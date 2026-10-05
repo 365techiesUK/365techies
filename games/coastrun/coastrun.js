@@ -4,12 +4,16 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=16';
+import { createWorld } from './world3d.js?v=17';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
+let GWkey = '', GWt = -1e9;
 function wideGW() {   // the game's width in its own units for the space on the page (the height stays 224): never narrower than 384
+  const key = innerWidth + 'x' + innerHeight + (document.fullscreenElement ? 'f' : '') + document.body.className, now = performance.now();
+  if (key === GWkey && now - GWt < 250) return GW;   // (the layout read at most four times a second, and at once when the window changes)
   const st = document.getElementById('stage'), pad = document.getElementById('pad'); if (!st) return GW;
+  GWkey = key; GWt = now;
   const bw = st.clientWidth - 16, bh = st.clientHeight - 16 - (pad && pad.offsetParent ? pad.offsetHeight + 10 : 0);
   return bw > 50 && bh > 50 ? Math.round(Math.max(384, Math.min(GH * 2.2, GH * bw / bh))) : GW;
 }
@@ -22,7 +26,8 @@ const BEST_KEY = 'coast365.best';
 let BEST = {}; try { BEST = JSON.parse(localStorage.getItem(BEST_KEY) || '{}') || {}; } catch (e) { BEST = {}; }
 function bestOf(W, st) { const d = BEST['d' + W.diff]; return d && d[st] ? d[st] : 0; }
 function saveBest(W, st, sec) { const k = 'd' + W.diff; (BEST[k] || (BEST[k] = {}))[st] = sec; try { localStorage.setItem(BEST_KEY, JSON.stringify(BEST)); } catch (e) {} }
-const R = { lastT: 0, legN: 0, split: null, demoAcc: 0, W: null, goT: -1, shownScore: 0, lastV: 0, braking: false, boostK: 0, scale: 1, ft: 16.7, took: 4, adj: 0, lowN: 0, plain: false, shakeOn: true };
+const R = { lastT: 0, legN: 0, split: null, demoAcc: 0, W: null, goT: -1, shownScore: 0, lastV: 0, braking: false, boostK: 0, scale: 1, ft: 16.7, took: 4, adj: 0, lowN: 0, plain: false, warmAt: 0, shakeOn: true };
+const FIXEDRES = /[?&]fixedres/.test(location.search);   // (for the test pictures: never step the resolution down)
 window.CRgfx = () => ({ GW: GW, scale: R.scale, plain: R.plain, ft: +R.ft.toFixed(1) });   // for checking: the picture's width, resolution step and frame time
 let K = 3;
 function roundRect(g, x, y, w, h, r) { g.beginPath(); if (g.roundRect) g.roundRect(x, y, w, h, r); else g.rect(x, y, w, h); }
@@ -66,11 +71,12 @@ function draw(g, W, t, mode, info) {
   // a slow PC: the picture a step smaller (and back up when there's room); the plainer look only as a last resort
   const took = performance.now() - t0;
   R.ft = R.ft * 0.92 + Math.max(frameDt * 1000, took) * 0.08; R.took = R.took * 0.92 + took * 0.08;
-  if (t > 3000 && t - R.adj > 700) {
+  if (!R.warmAt && wd.warmed && wd.warmed()) R.warmAt = t;
+  if (R.warmAt && t - R.warmAt > 5000 && t - R.adj > 700 && !FIXEDRES) {
     if (R.ft > 20.5 && R.scale > 0.6) { R.scale = Math.max(0.6, +(R.scale - 0.08).toFixed(2)); R.adj = t; }
     else if (R.ft < 18 && R.took < 8 && R.scale < 1) { R.scale = Math.min(1, +(R.scale + 0.04).toFixed(2)); R.adj = t; }
-    else if (R.ft > 24 && R.scale <= 0.6 && !R.plain) { if (++R.lowN > 5) { R.plain = true; wd.quality(true); } R.adj = t; }
-    else if (R.ft <= 24) R.lowN = 0;
+    else if (R.ft > 26 && R.scale <= 0.6 && !R.plain) { if (++R.lowN > 12) { R.plain = true; wd.quality(true); } R.adj = t; }
+    else if (R.ft <= 26) R.lowN = 0;
   }
   g.setTransform(K, 0, 0, K, 0, 0);
   { const fast = Math.max(R.boostK, Math.max(0, W.v / E.VMAX - 0.8) * 2.2); if (fast > 0.05 && !W.crash) speedLines(g, t, Math.min(1, fast)); }
@@ -96,10 +102,10 @@ function hudText(g, s, x, y, size, col, align, stroke) {
   g.save(); g.translate(x, y); g.transform(1, 0, -0.16, 1, 0, 0);   // a forward slant
   g.font = '600 ' + (size * 1.04).toFixed(2) + 'px ' + HFONT; g.textAlign = align || 'left'; g.textBaseline = 'alphabetic';
   if ('letterSpacing' in g) g.letterSpacing = (size < 9 ? size * 0.1 : size * 0.02).toFixed(2) + 'px';
-  if (stroke !== false) {
-    g.shadowColor = 'rgba(0,0,0,0.6)'; g.shadowBlur = size * 0.45 * K; g.shadowOffsetY = size * 0.05 * K;
+  if (stroke !== false) {   // a soft drop shadow, done cheaply: the words in translucent dark a touch lower, then a fine dark edge
+    // (a blurred canvas shadow on every word cost a slow PC half its frame rate)
+    g.fillStyle = 'rgba(0,0,0,0.38)'; g.fillText(s, size * 0.03, size * 0.07);
     g.lineJoin = 'round'; g.lineWidth = Math.max(0.5, size * 0.07); g.strokeStyle = 'rgba(0,0,0,0.5)'; g.strokeText(s, 0, 0);
-    g.shadowColor = 'transparent';
   }
   g.fillStyle = col; g.fillText(s, 0, 0);
   g.restore();
@@ -138,6 +144,7 @@ function hud(g, W, t, mode) {
   if (W.count > 0 || (R.goT >= 0 && W.t - R.goT < 50)) lights(g, W);
   if (W.count <= 0 && R.goT < 0) R.goT = W.t;
   if (mode !== 'title') request(g, W, t);
+  radioPanel(g, W, t, mode);
   const F = W.fork;
   if (F && !F.s && pi > F.a - 70 && pi < F.split && mode !== 'title') {
     const L = E.STAGES[F.next[0]].name, Rn = E.STAGES[F.next[1]].name, side = W.x < -1 ? -1 : W.x > 1 ? 1 : 0, her = W.reqSide ? W.reqSide.side : 0;
@@ -198,13 +205,13 @@ function clockExtras(g, W, t, pi) {   // the race against the clock: your best f
   }
   const S = R.split;
   if (S && W.t - S.at < 240 && W.t >= S.at) {   // under the checkpoint banner: STAGE TIME, against your best
-    const a = Math.min(1, (240 - (W.t - S.at)) / 30), y = 86;
+    const a = Math.min(1, (240 - (W.t - S.at)) / 30), y = 84;
     g.globalAlpha = a;
-    g.fillStyle = 'rgba(0,8,24,0.55)'; roundRect(g, GW / 2 - 70, y - 9, 140, S.prev ? 27 : 19, 8); g.fill();
-    hudText(g, 'STAGE TIME ' + clock(S.t), GW / 2, y + 3, 8.5, '#ffffff', 'center');
+    hudText(g, 'STAGE TIME', 10, y, 5.2, '#c9d6e6');
+    hudText(g, clock(S.t), 10, y + 11, 9, '#ffffff');
     if (S.prev) {
       const d = S.t - S.prev, txt = (d < 0 ? '-' : '+') + Math.abs(d).toFixed(2) + 's';
-      hudText(g, S.rec ? 'NEW RECORD!  ' + txt : 'BEST ' + clock(S.prev) + '   ' + txt, GW / 2, y + 14, 7.5, S.rec ? ((t / 180 | 0) % 2 ? '#ffd400' : '#fff3a0') : '#ff8a8a', 'center');
+      hudText(g, S.rec ? 'NEW RECORD  ' + txt : 'BEST ' + clock(S.prev) + '  ' + txt, 10, y + 20, 5.8, S.rec ? ((t / 180 | 0) % 2 ? '#ffc23a' : '#fff3a0') : '#ff8a8a');
     }
     g.globalAlpha = 1;
   }
@@ -220,21 +227,20 @@ function request(g, W, t) {   // what she's asking for: her face, the words, how
   const w = 196, x = GW / 2 - w / 2, y = 26, h = 18;
   g.fillStyle = 'rgba(6,10,18,0.58)'; g.fillRect(x, y, w, h);
   g.fillStyle = '#ff7a9a'; g.fillRect(x, y, 1.6, h);   // her colour, down one edge
-  heart(g, x + 9, y + 9.5, 3, done && done.n < 2 ? 'rgba(255,255,255,0.4)' : '#ff7a9a');
   if (done && !Q) {
-    hudText(g, done.word, x + 17, y + 12.5, 8, done.n >= 2 ? '#ffd1df' : '#ffffff', 'left', false);
+    hudText(g, done.word.toUpperCase(), x + 9, y + 12, 6.8, done.n >= 2 ? '#ffd1df' : '#ffffff', 'left', false);
     for (let i = 0; i < 3; i++) heart(g, x + w - 30 + i * 9, y + 9.5, 3, i < done.n ? '#ff7a9a' : 'rgba(255,255,255,0.22)');
     return;
   }
   if (Q) {
-    hudText(g, Q.txt, x + 17, y + 10, 7, '#ffffff', 'left', false);
-    const p = Math.min(1, Q.k === 'clean' ? Q.have : Q.have / Q.goal), left = Math.max(0, 1 - (W.t - Q.t0) / Q.dur), bx = x + 17, bw = w - 52;
+    hudText(g, Q.txt.toUpperCase(), x + 9, y + 9.5, 5.6, '#ffffff', 'left', false);
+    const p = Math.min(1, Q.k === 'clean' ? Q.have : Q.have / Q.goal), left = Math.max(0, 1 - (W.t - Q.t0) / Q.dur), bx = x + 9, bw = w - 44;
     g.fillStyle = 'rgba(255,255,255,0.16)'; g.fillRect(bx, y + 13, bw, 1.6);
     g.fillStyle = '#ff7a9a'; g.fillRect(bx, y + 12.6, Math.max(1, bw * p), 2.4);
     if (Q.goal > 1 && !Q.secs) hudText(g, Math.floor(Q.have) + '/' + Q.goal, x + w - 8, y + 11.5, 7, '#ffd1df', 'right', false);
     g.fillStyle = left < 0.25 && (t / 200 | 0) % 2 ? '#ff4d4d' : 'rgba(255,209,223,0.7)'; g.fillRect(x, y + h - 1, w * left, 1);   // her patience, running out along the bottom
   } else if (side) {
-    hudText(g, (side.side < 0 ? '◀ Go left! ' : 'Go right! ▶ ') + side.name, x + 17, y + 12.5, 7.5, '#ffffff', 'left', false);
+    hudText(g, ((side.side < 0 ? '◀ GO LEFT  ' : 'GO RIGHT ▶  ') + side.name).toUpperCase(), x + 9, y + 12, 6.2, '#ffffff', 'left', false);
   }
 }
 function routeMap(g, W, x0, y0, t) {   // the pyramid of places: the way you've come in yellow, the place you're in flashing
@@ -509,7 +515,7 @@ function gearRpm(pct, g) {
 const GEARS = [0, 0.17, 0.33, 0.5, 0.68, 0.86, 1.05, 1.5];
 // the music: a track for each place (made with ACE-Step, tools/coastrun/gen_music.py), fading from one to the next at the
 // checkpoints, a jingle at the goal and a sting when time runs out. Files in music/; loaded as they're needed.
-const LOOPS = { title: 1, bournemouth: 1, sandbanks: 1, christchurch: 1, purbeck: 1, swanage: 1, forest: 1, jurassic: 1, weymouth: 1, harbour: 1, lymington: 1, lyme: 1, portland: 1, goldencap: 1, hengistbury: 1, needles: 1 };
+const LOOPS = { radio_harbour: 1, radio_golden: 1, radio_coastroad: 1, title: 1, bournemouth: 1, sandbanks: 1, christchurch: 1, purbeck: 1, swanage: 1, forest: 1, jurassic: 1, weymouth: 1, harbour: 1, lymington: 1, lyme: 1, portland: 1, goldencap: 1, hengistbury: 1, needles: 1 };
 const MBUF = {}, MLOAD = {}, MUS = { cur: null, gain: null, sting: null, stingEnd: 0, on: false };
 function loadMusic(a, name) {
   if (!name || MBUF[name] || MLOAD[name]) return; MLOAD[name] = true;
@@ -523,7 +529,38 @@ function voice(a, name, fadeIn) {
 }
 function hush(a, v, d) { try { v.g.gain.cancelScheduledValues(a.currentTime); v.g.gain.setValueAtTime(Math.max(0.0001, v.g.gain.value), a.currentTime); v.g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + d); v.src.stop(a.currentTime + d + 0.05); } catch (e) {} }
 function placeTrack(W) { const g = W && E.segAt(W, E.segIndex(W.s)); return g ? ART.PAL[g.st].key : 'bournemouth'; }
+// the car radio: the stations, in the order the dial goes round (the first plays a tune for each place)
+const RADIO_NEW = false;   // the three new stations, on once their tracks (the owner's picks) are in music/
+const RADIO = [['place', 'Coast FM']].concat(RADIO_NEW ? [['radio_harbour', 'Harbour Lights'], ['radio_golden', 'Golden Hour'], ['radio_coastroad', 'Coast Road']] : [],
+  [['title', 'Sunny Shore'], ['bournemouth', 'Beach Groove'], ['purbeck', 'Hill Rock'], ['jurassic', 'Sunset Cruise'], ['harbour', 'Night Drive']]);
+const RAD = { set: null, shownT: -1e9, l: false, r: false };
+function tune(step) {   // the next station along (saved with the other settings)
+  const SET = RAD.set; if (!SET) return;
+  const i = Math.max(0, RADIO.findIndex((r) => r[0] === (SET.radio || 'place')));
+  SET.radio = RADIO[(i + step + RADIO.length) % RADIO.length][0]; RAD.shownT = performance.now();
+  try { localStorage.setItem('coast365:settings', JSON.stringify(SET)); } catch (e) {}
+}
+document.addEventListener('keydown', (e) => {
+  if ((e.key || '').toLowerCase() !== 'r' || e.ctrlKey || e.metaKey || e.altKey || /INPUT|TEXTAREA|SELECT/.test((e.target && e.target.tagName) || '')) return;
+  const A2 = window.ARCADE365; if (A2 && A2.mode === 'play') { tune(e.shiftKey ? -1 : 1); e.preventDefault(); }
+});
+function radioPanel(g, W, t, mode) {   // on the start line (◀ ▶ tune it) and for a moment after you change station
+  const count = W.count > 0 && mode === 'play', shown = performance.now() - RAD.shownT < 2600;
+  if (!RAD.set || RAD.set.music === false || RAD.set.sound === false || (!count && !shown)) return;
+  const A2 = window.ARCADE365, inp = A2 && A2.input;
+  if (count && inp) { if (inp.left && !RAD.l) tune(-1); if (inp.right && !RAD.r) tune(1); RAD.l = !!inp.left; RAD.r = !!inp.right; }
+  const i = Math.max(0, RADIO.findIndex((r) => r[0] === (RAD.set.radio || 'place'))), w = 150, x = GW / 2 - w / 2, y = GH - 58, h = 24;
+  g.fillStyle = 'rgba(6,10,18,0.66)'; g.fillRect(x, y, w, h); g.fillStyle = '#ffc23a'; g.fillRect(x, y, w, 0.8);
+  hudText(g, 'RADIO', x + 6, y + 8.5, 5, '#c9d6e6', 'left', false);
+  hudText(g, RADIO[i][1].toUpperCase(), GW / 2, y + 12, 8, '#ffffff', 'center', false);
+  const dx = x + 14, dw = w - 28, dy = y + 18.5;   // the dial: a scale with a needle at this station
+  g.fillStyle = 'rgba(255,255,255,0.25)'; g.fillRect(dx, dy, dw, 0.7);
+  for (let k = 0; k < RADIO.length; k++) g.fillRect(dx + dw * k / (RADIO.length - 1) - 0.3, dy - 1.6, 0.6, 1.6);
+  g.fillStyle = '#ff4d4d'; g.fillRect(dx + dw * i / (RADIO.length - 1) - 0.6, dy - 4, 1.2, 5.5);
+  hudText(g, count ? '◀  ▶' : 'R', x + w - 6, y + 8.5, 5, '#ffc23a', 'right', false);
+}
 function music(W, S, mode, SET) {
+  RAD.set = SET;
   MUS.on = SET.music !== false && SET.sound;
   const a = SET.sound ? S.ctx() : S.existing();
   if (!a) return;
@@ -607,7 +644,7 @@ A.start({
     { key: 'car', type: 'seg', label: 'Car', small: 'The Roadster is the all-rounder; the GT is the fastest but slides more; the Hot hatch is quick off the mark and grips best. Changes from your next game.', options: [['roadster', 'Roadster'], ['gt', 'GT'], ['hatch', 'Hot hatch']], def: 'roadster' },
     { key: 'pedal', type: 'seg', label: 'Accelerator', small: 'Automatic: the car goes by itself and you just steer (Brake slows you down). Hold: hold the up arrow to go. Tablets always use Automatic.', options: [['auto', 'Automatic'], ['hold', 'Hold ▲ to go']], def: 'auto' },
     { key: 'music', type: 'switch', label: 'Music', small: 'A driving tune for each place along the coast - beachy by the sea, rocking through the hills, smooth at sunset.', def: true },
-    { key: 'radio', type: 'seg', label: 'Radio', small: 'Each place has its own tune, or pick one favourite to play all the way.', options: [['place', 'Each place'], ['title', 'Sunny Shore'], ['bournemouth', 'Beach Groove'], ['purbeck', 'Hill Rock'], ['jurassic', 'Sunset Cruise'], ['harbour', 'Night Drive']], def: 'place' },
+    { key: 'radio', type: 'seg', label: 'Radio', small: 'Coast FM plays a tune for each place; or pick one station to play all the way. On the start line press ◀ ▶ to tune the car radio, or R at any time.', options: RADIO.map((r) => [r[0], r[1]]), def: 'place' },
     { key: 'voice', type: 'switch', label: 'Her voice', small: 'Your passenger says what she would like you to do, and how you did.', def: true },
     { key: 'shake', type: 'switch', label: 'Screen shake', small: 'The picture shakes when you bump or crash.', def: !reducedMotion }
   ],

@@ -11,6 +11,20 @@ API = "http://127.0.0.1:8188"
 OUT = r"D:\claude\reels\coastrun-music"
 
 BRIEFS = {
+    # the car radio (owner, 5 Oct: "a bit childish compared with" the old arcade racers; pick a station before the start): three
+    # grown-up 1980s fusion stations - cool and sophisticated, not bouncy - our own briefs, nothing named or imitated
+    "radio_harbour": dict(bpm=126, key="A minor", dur=96, tags=(
+        "Sophisticated 1980s Latin jazz-fusion instrumental for a coastal drive at sunset. Bright FM-synth brass stabs, a "
+        "melodic steel pan lead answering a smooth synth lead, busy congas and timbales, a slap bass groove, crisp live drums "
+        "with tight hi-hats, warm electric piano comping. Confident, cool and catchy, a little nostalgic. Instrumental, loopable.")),
+    "radio_golden": dict(bpm=104, key="D major", dur=96, tags=(
+        "Smooth 1980s Japanese city-pop fusion instrumental, a relaxed cruise along the sea in the golden hour. Lush electric "
+        "piano chords, a singing saxophone-like synth lead, fretless-style bass, soft gated drums, shimmering chorus guitar, "
+        "airy pads. Mellow, elegant and grown-up, warm and wistful. Instrumental, loopable.")),
+    "radio_coastroad": dict(bpm=148, key="E minor", dur=96, tags=(
+        "Fast driving 1980s fusion rock instrumental for a high-speed race along cliff roads. Punchy synth brass riffs, an "
+        "expressive overdriven lead guitar trading lines with a bright synth lead, a fast funk bass, powerful drums with big "
+        "toms, rhythm guitar chops. Exciting, polished and adult, full of momentum. Instrumental, loopable.")),
     "title": dict(bpm=112, key="F major", dur=60, tags=(
         "Bright feel-good summer driving theme for a seaside road trip. Funky clean electric guitar chords, a slap bass groove, "
         "warm electric piano, shimmering synth brass hits and a catchy soaring saxophone-like synth lead melody over crisp "

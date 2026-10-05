@@ -35,11 +35,29 @@ export class Kit {
   roll(r, len, n, x, y, z, col, key) { return this.put(new THREE.CylinderGeometry(r, r, len, n), col, x, y, z, Math.PI / 2, 0, 0, 1, 1, 1, key); }   // lying along (Z), centred
   cone(r, h, n, x, y, z, col, key) { return this.put(new THREE.ConeGeometry(r, h, n), col, x, y + h / 2, z, 0, 0, 0, 1, 1, 1, key); }
   ball(r, x, y, z, col, sx, sy, sz, key, detail) { return this.put(new THREE.SphereGeometry(r, detail || 10, Math.max(4, (detail || 10) >> 1)), col, x, y, z, 0, 0, 0, sx, sy, sz, key); }
-  blob(r, x, y, z, col, sx, sy, sz, seed) {   // a lumpy ball (rocks, mounds)
-    const g = new THREE.IcosahedronGeometry(r, 1), p = g.attributes.position, rr = rnd(seed || 7), seen = new Map();
-    for (let i = 0; i < p.count; i++) { const key = p.getX(i).toFixed(3) + p.getY(i).toFixed(3) + p.getZ(i).toFixed(3); let k = seen.get(key); if (k == null) { k = 0.86 + rr() * 0.28; seen.set(key, k); } p.setXYZ(i, p.getX(i) * k, p.getY(i) * k, p.getZ(i) * k); }
-    g.computeVertexNormals();
-    return this.put(g, col, x, y, z, 0, 0, 0, sx || 1, sy || 1, sz || 1);
+  blob(r, x, y, z, col, sx, sy, sz, seed) {   // a lumpy ball (rocks, mounds); a big one (a hill) is smooth, gently rolling, grass on
+    // its gentle slopes and chalky stone where it's steep (a small one stays a faceted rock)
+    if (r < 20) {
+      const g = new THREE.IcosahedronGeometry(r, 1), p = g.attributes.position, rr = rnd(seed || 7), seen = new Map();
+      for (let i = 0; i < p.count; i++) { const key = p.getX(i).toFixed(3) + p.getY(i).toFixed(3) + p.getZ(i).toFixed(3); let k = seen.get(key); if (k == null) { k = 0.86 + rr() * 0.28; seen.set(key, k); } p.setXYZ(i, p.getX(i) * k, p.getY(i) * k, p.getZ(i) * k); }
+      g.computeVertexNormals();
+      return this.put(g, col, x, y, z, 0, 0, 0, sx || 1, sy || 1, sz || 1);
+    }
+    const g = new THREE.IcosahedronGeometry(r, 6), p = g.attributes.position, rr = rnd(seed || 7), ph = [rr() * 6, rr() * 6, rr() * 6, rr() * 6], v = new THREE.Vector3();
+    const lump = (d) => 1 + 0.07 * Math.sin(d.x * 2.6 + ph[0]) * Math.sin(d.z * 2.2 + ph[1]) + 0.05 * Math.sin(d.y * 3.4 + d.x * 1.7 + ph[2]) + 0.025 * Math.sin(d.z * 6.1 + d.x * 5.3 + ph[3]);
+    const nrm = new Float32Array(p.count * 3);
+    for (let i = 0; i < p.count; i++) { v.fromBufferAttribute(p, i).normalize(); const k = lump(v); nrm[i * 3] = v.x; nrm[i * 3 + 1] = v.y; nrm[i * 3 + 2] = v.z; p.setXYZ(i, v.x * r * k, v.y * r * k, v.z * r * k); }
+    g.setAttribute('normal', new THREE.BufferAttribute(nrm, 3));   // smooth: each point's own direction from the middle
+    g.computeVertexNormals(); const N = g.attributes.normal;   // (then the true slope, for the colouring)
+    const flat = new Float32Array(N.array); g.setAttribute('normal', new THREE.BufferAttribute(nrm, 3));
+    this.put(g, col, x, y, z, 0, 0, 0, sx || 1, sy || 1, sz || 1);
+    const list = this.parts.lit, G = list[list.length - 1], C3 = G.attributes.color, base = new THREE.Color(col), rock = new THREE.Color('#bdb6a3'), c = new THREE.Color();
+    for (let i = 0; i < C3.count; i++) {
+      const up = flat[i * 3 + 1] * (sy || 1) / Math.hypot(flat[i * 3] * (sx || 1), flat[i * 3 + 1] * (sy || 1), flat[i * 3 + 2] * (sz || 1)), steep = 1 - Math.min(1, Math.max(0, (up - 0.55) / 0.22));
+      const nz = 0.88 + 0.2 * (0.5 + 0.5 * Math.sin(i * 12.9898) * Math.sin(i * 0.731));
+      c.copy(base).lerp(rock, steep * 0.85).multiplyScalar(nz); C3.setXYZ(i, c.r, c.g, c.b);
+    }
+    return this;
   }
   prism(w, h, d, x, y, z, col, ry) {   // a pitched roof, ridge along Z
     const g = new THREE.BufferGeometry(), v = [-0.5, 0, -0.5, 0.5, 0, -0.5, 0, 1, -0.5, -0.5, 0, 0.5, 0.5, 0, 0.5, 0, 1, 0.5];
@@ -126,6 +144,7 @@ export function paintGrass() {   // a tuft of grass blades (and the odd flower, 
 // ---------------------------------------------------------------- colours
 const GRN = ['#4f8f3a', '#5fa344', '#74b852'], AUT = [['#d0702a', '#e8923a', '#f4b844'], ['#c0502e', '#da6a34', '#ee9a44'], ['#b8901e', '#dcb434', '#f4d460']];
 const HUT = ['#3fa7d6', '#f2c14e', '#e4572e', '#76b041', '#f4f1ea', '#d7263d'];
+const CROWD = ['#2b3a55', '#e9e2d0', '#9a8f6a', '#b9b2a4', '#4f6b5a', '#7a3b3b', '#f4f2ec', '#3d4a5c', '#c8b48a'];   // navy, cream, khaki, stone, sage, burgundy, white, slate, sand
 const SHIRTS = ['#e63946', '#f1faee', '#1d7fd6', '#ffd23f', '#2a9d8f', '#f4a261', '#9b5de5', '#ff7eb6', '#111111'];
 const SKIN = ['#f1c27d', '#e0ac69', '#c68642', '#8d5524', '#ffdbac'];
 
@@ -133,7 +152,13 @@ const SKIN = ['#f1c27d', '#e0ac69', '#c68642', '#8d5524', '#ffdbac'];
 const MODELS = {
   palm(k, v) {
     const lean = [0.7, -0.8, 0.3][v % 3], tall = 8.5 + (v % 3) * 0.9;
-    for (let i = 0; i < 9; i++) { const p = i / 9, x = lean * p * p * 2.4; k.cyl(0.2 - p * 0.07, 0.25 - p * 0.07, tall / 9 + 0.05, 7, x, i * tall / 9, 0, i % 2 ? '#8a6a45' : '#a07c54'); }
+    { const pts = []; for (let i = 0; i <= 6; i++) { const p = i / 6; pts.push(new THREE.Vector3(lean * p * p * 2.4, p * (tall + 0.1), 0)); }
+      const curve = new THREE.CatmullRomCurve3(pts), T = 22, RS = 10, g = new THREE.TubeGeometry(curve, T, 0.25, RS, false), P = g.attributes.position, c = new THREE.Vector3(), w = new THREE.Vector3();
+      for (let j = 0; j <= T; j++) { curve.getPointAt(j / T, c); const f = 1 - 0.34 * (j / T); for (let q = 0; q <= RS; q++) { const i = j * (RS + 1) + q; w.fromBufferAttribute(P, i).sub(c).multiplyScalar(f).add(c); P.setXYZ(i, w.x, w.y, w.z); } }
+      g.computeVertexNormals(); k.put(g, '#9a7a52', 0, 0, 0, 0, 0, 0, 1, 1, 1, 'lit');
+      const list = k.parts.lit, G = list[list.length - 1], Q = G.attributes.position, C3 = G.attributes.color;
+      for (let i = 0; i < Q.count; i++) { const f = 0.78 + 0.22 * Math.pow(Math.abs(Math.sin(Q.getY(i) * Math.PI * 2.6)), 0.5); C3.setXYZ(i, C3.getX(i) * f, C3.getY(i) * f, C3.getZ(i) * f); }   // the rings
+      k.cyl(0.25, 0.4, 0.45, 10, 0, 0, 0, '#7a5c3c'); }
     const tx = lean * 2.4, ty = tall + 0.1, q = rnd(31 + v);
     for (let j = 0; j < 11; j++) {
       const a = j / 11 * Math.PI * 2 + q() * 0.3, up = 0.28 - (j % 3) * 0.18, len = 3.4 + q() * 1.2;
@@ -169,9 +194,17 @@ const MODELS = {
   },
   hotel(k, v) {
     const wall = ['#f2ead8', '#e9e2d6', '#f6efe0', '#dfe6ea'][v % 4], roof = ['#9a5b45', '#5a6670', '#8a4f3c', '#4f5d6a'][v % 4], fl = 5 + (v % 3);
-    k.box(22, fl * 3.2, 14, 0, 0, 0, wall).prism(15, 4, 23, 0, fl * 3.2, 0, roof, Math.PI / 2);
-    for (let f = 0; f < fl; f++) for (let w = 0; w < 7; w++) { k.box(1.6, 1.8, 0.2, -9 + w * 3, 1 + f * 3.2, 7.05, '#7fb4d1', 0, 0, 0, 'shiny'); if (f) k.box(2.2, 0.12, 0.7, -9 + w * 3, 0.9 + f * 3.2, 7.3, '#ffffff'); }
-    k.box(6, 3, 0.4, 0, 0, 7.1, ['#1d4e89', '#7a1f2b', '#1f6f50', '#333'][v % 4]);
+    const H = fl * 3.2, glass = ['#3d5a70', '#47627a', '#3a5566', '#4a6478'][v % 4], trim = '#f7f6f2', awn = ['#1d4e89', '#9b3a2c', '#1f6f50', '#2b2d42'][v % 4];
+    k.box(22, H, 14, 0, 0, 0, wall).prism(15, 4, 23, 0, H, 0, roof, Math.PI / 2);
+    k.box(22.7, 0.55, 14.7, 0, H - 0.2, 0, trim).box(22.3, 3.0, 14.3, 0, 0, 0, shade(wall, -0.07));   // the cornice; the ground floor a shade deeper
+    for (let w = 0; w < 8; w++) k.box(0.55, H - 3.4, 0.3, -10.5 + w * 3, 3.0, 7.1, shade(wall, 0.05));   // pilasters between the bays
+    for (let f = 1; f < fl; f++) for (let w = 0; w < 7; w++) {
+      const x = -9 + w * 3, y = 1 + f * 3.2;
+      k.box(1.95, 2.15, 0.12, x, y - 0.17, 7.05, trim).box(1.6, 1.8, 0.2, x, y, 7.07, glass, 0, 0, 0, 'shiny');   // the frame, the glass
+      k.box(2.5, 0.14, 0.85, x, y - 0.3, 7.45, trim).box(2.5, 0.06, 0.06, x, y + 0.6, 7.86, '#d6dde2', 0, 0, 0, 'shiny');   // the balcony, its rail
+    }
+    for (let w = 0; w < 7; w++) { const x = -9 + w * 3; k.box(2.5, 2.3, 0.14, x, 0.15, 7.08, glass, 0, 0, 0, 'shiny').box(2.9, 0.08, 1.5, x, 2.55, 7.7, awn, 0, -0.32, 0); }   // the shopfronts and their awnings
+    for (const sd of [-1, 1]) for (let f = 1; f < fl; f++) for (let w = 0; w < 4; w++) k.box(0.12, 2.15, 1.95, sd * 11.03, 0.83 + f * 3.2, -4.5 + w * 3, trim).box(0.2, 1.8, 1.6, sd * 11.06, 1 + f * 3.2, -4.5 + w * 3, glass, 0, 0, 0, 'shiny');   // the side windows
   },
   yacht(k, v) {
     const night = v >= 3, hull = night ? '#26324a' : ['#ffffff', '#1d3557', '#f1faee'][v % 3];
@@ -312,9 +345,9 @@ const MODELS = {
   },
   crowd(k, v) {   // a row of people cheering behind a barrier (on their +Z side, towards the road), at the start, the checkpoints and the goal
     const r = rnd(200 + v);
-    for (let i = 0; i < 12; i++) person(k, -6.6 + i * 1.2 + (r() - 0.5) * 0.3, 0, (r() - 0.5) * 0.6, r, r() < 0.7);
-    k.box(15, 0.9, 0.12, 0, 0, 0.7, '#ffffff', 0, 0, 0, 'shiny');
-    for (let i = 0; i < 8; i++) k.box(1.8, 0.3, 0.13, -6.3 + i * 1.8, 0.45, 0.7, i % 2 ? '#d32f2f' : '#1d4ed8');
+    for (let i = 0; i < 9; i++) person(k, -6.4 + i * 1.6 + (r() - 0.5) * 0.7, 0, (r() - 0.5) * 0.9, r, r() < 0.8);
+    k.box(15, 0.9, 0.12, 0, 0, 0.7, '#e8e4da', 0, 0, 0, 'shiny');
+    for (let i = 0; i < 8; i++) k.box(1.8, 0.3, 0.13, -6.3 + i * 1.8, 0.45, 0.7, i % 2 ? '#1f2f4a' : '#e8e4da');
   },
   flags(k, v) {   // flag poles in a row
     for (let i = 0; i < 4; i++) { const x = -4.5 + i * 3; k.cyl(0.05, 0.06, 6, 6, x, 0, 0, '#d8dde2'); k.box(1.6, 1, 0.04, x + 0.82, 4.8, 0, ['#d32f2f', '#ffd23f', '#1d7fd6', '#2a9d8f', '#ffffff'][(i + v) % 5], 0, 0, 0.08); }
@@ -390,12 +423,19 @@ const MODELS = {
     for (const [x, z] of [[-0.8, -0.8], [0.8, -0.8], [-0.8, 0.8], [0.8, 0.8]]) k.cyl(0.03, 0.03, 2.4, 3, x, 3.4, z, '#5a4a30');
   },
 };
-function person(k, x, y, z, r, cheer) {   // one of the crowd: legs, a shirt, a head, arms (raised arms wave: the 'wave' material moves them)
-  const sh = SHIRTS[(r() * SHIRTS.length) | 0], sk = SKIN[(r() * SKIN.length) | 0], h = 0.9 + r() * 0.25, up = cheer && r() < 0.75;
-  k.box(0.3, h, 0.25, x, y, z, ['#2d3a55', '#3a3a3a', '#5a4632', '#1d4e89'][(r() * 4) | 0]).box(0.46, 0.62, 0.3, x, y + h, z, sh).ball(0.15, x, y + h + 0.82, z, sk, 1, 1.1, 1, 'lit', 8);
-  if (r() < 0.4) k.ball(0.16, x, y + h + 0.9, z + 0.02, ['#2a1c12', '#c89a4a', '#6b3a1e', '#111111'][(r() * 4) | 0], 1.05, 0.7, 1.05, 'lit', 8);
-  if (up) k.box(0.1, 0.55, 0.1, x - 0.3, y + h + 0.6, z, sk, 0, 0, 0.35, 'wave').box(0.1, 0.55, 0.1, x + 0.3, y + h + 0.6, z, sk, 0, 0, -0.35, 'wave');
-  else k.box(0.1, 0.55, 0.1, x - 0.28, y + h + 0.08, z, sh).box(0.1, 0.55, 0.1, x + 0.28, y + h + 0.08, z, sh);
+const capG = (r, l) => new THREE.CapsuleGeometry(r, l, 3, 8);
+function person(k, x, y, z, r, cheer) {   // one of the crowd, in grown-up proportions: two legs, a body narrowing to the waist, a neck,
+  // an oval head (hair on most), rounded arms - raised ones wave (the 'wave' material moves them)
+  const sh = CROWD[(r() * CROWD.length) | 0], sk = SKIN[(r() * SKIN.length) | 0], h = 0.82 + r() * 0.24, pose = r(), up = cheer && pose < 0.3, one = cheer && !up && pose < 0.55;
+  const legs = ['#2d3a55', '#3a3a3a', '#5a4632', '#1d4e89', '#d8d2c4'][(r() * 5) | 0], hair = ['#2a1c12', '#c89a4a', '#6b3a1e', '#111111', '#8a8a86'][(r() * 5) | 0];
+  for (const sd of [-1, 1]) k.put(capG(0.075, h - 0.15), legs, x + sd * 0.1, y + h / 2, z);
+  k.put(capG(0.16, 0.3), sh, x, y + h + 0.3, z, 0, 0, 0, 1.3, 1, 0.72);
+  k.cyl(0.05, 0.055, 0.12, 6, x, y + h + 0.6, z, sk).ball(0.11, x, y + h + 0.83, z, sk, 1, 1.18, 1.05, 'lit', 10);
+  if (r() < 0.85) k.ball(0.118, x, y + h + 0.88, z + 0.02, hair, 1.04, 0.82, 1.08, 'lit', 10);
+  for (const sd of [-1, 1]) {
+    if (up || (one && sd > 0)) k.put(capG(0.05, 0.48), sk, x + sd * 0.3, y + h + 0.95, z, 0, 0, sd * -0.35, 1, 1, 1, 'wave');
+    else k.put(capG(0.05, 0.46), sh, x + sd * 0.27, y + h + 0.28, z, 0, 0, sd * 0.08);
+  }
 }
 export function shade(hex, f) { C.set(hex); const k = f < 0 ? 1 + f : 1; const add = f > 0 ? f : 0; return '#' + new THREE.Color(C.r * k + add * (1 - C.r), C.g * k + add * (1 - C.g), C.b * k + add * (1 - C.b)).getHexString(); }
 const cache = new Map();
@@ -727,18 +767,14 @@ export function people() {
         k.box(0.03, 0.014, 0.02, 0, 0.152, -0.122, '#1a1a1a').box(0.2, 0.012, 0.012, 0, 0.165, -0.11, '#1a1a1a'); for (const sd of [-1, 1]) k.box(0.008, 0.01, 0.12, sd * 0.121, 0.16, -0.05, '#1a1a1a');
         k.box(0.05, 0.01, 0.012, -0.045, 0.19, -0.115, '#2a1c12', 0, 0, 0.12).box(0.05, 0.01, 0.012, 0.045, 0.19, -0.115, '#2a1c12', 0, 0, -0.12);   // brows
       } else {
-        for (const sd of [-1, 1]) k.ball(0.032, sd * 0.045, 0.262, -0.078, '#6a3a26', 1.25, 0.6, 0.4, 'glass', 10);   // her sunglasses pushed up into her hair
-        k.box(0.17, 0.007, 0.007, 0, 0.276, -0.084, '#d8b464', 0, 0, 0, 'chrome');   // their fine gold frame
-        for (const ex of [-0.046, 0.046]) {
-          k.ball(0.024, ex, 0.15, -0.108, '#fbfbf8', 1.1, 0.9, 0.55, 'lit', 10);   // the white of the eye
-          k.ball(0.005, ex + 0.005, 0.155, -0.127, '#ffffff', 1, 1, 0.5, 'lit', 6);
-          k.ball(0.014, ex, 0.149, -0.12, '#3a6fb0', 1, 1.1, 0.5, 'lit', 8).ball(0.007, ex, 0.149, -0.126, '#101010', 1, 1, 0.5, 'lit', 6);   // blue iris, pupil
-          k.box(0.05, 0.009, 0.01, ex, 0.168, -0.122, '#2a1c12', 0, 0, ex > 0 ? -0.2 : 0.2);   // lashes
+        for (const ex of [-0.047, 0.047]) {   // her sunglasses, on: tinted lenses, a little cat-eye, in a fine gold frame
+          k.ball(0.038, ex, 0.15, -0.112, '#4a2a1a', 1.25, 0.82, 0.45, 'glass', 10);
           k.box(0.045, 0.008, 0.01, ex, 0.19, -0.118, '#a87a40', 0, 0, ex > 0 ? -0.12 : 0.12);   // brows
-          k.ball(0.026, ex * 1.5, 0.1, -0.1, '#f2949a', 1, 0.6, 0.4, 'lit', 8);   // blush
         }
+        k.box(0.2, 0.008, 0.01, 0, 0.17, -0.118, '#d8b464', 0, 0, 0, 'chrome').box(0.025, 0.012, 0.014, 0, 0.152, -0.124, '#d8b464', 0, 0, 0, 'chrome');
+        for (const sd of [-1, 1]) k.box(0.007, 0.008, 0.11, sd * 0.118, 0.163, -0.06, '#d8b464', 0, 0, 0, 'chrome');
       }
-      k.put(new THREE.TorusGeometry(0.03, 0.006, 5, 12, Math.PI), o.shades ? '#8a4a3a' : '#c8304a', 0, 0.083, -0.114, 0, 0, Math.PI, 1, 0.8, 0.45, 'lit');   // a smile
+      k.put(new THREE.TorusGeometry(0.024, 0.0055, 5, 12, Math.PI), o.shades ? '#86503e' : '#b4505c', 0, 0.086, -0.115, 0, 0, Math.PI, 1, 0.5, 0.45, 'lit');   // a quiet smile
     }),
     upper: P((k) => {
       k.put(cap(o.arm, 0.2), o.short ? o.skin : o.sleeve, 0, -0.14, 0);
