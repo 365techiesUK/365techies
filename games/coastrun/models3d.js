@@ -573,19 +573,21 @@ function sections(keys, wheelZ) {   // cross-sections along the body: [z, halfWi
   const at = (z) => { let i = 0; while (i < keys.length - 2 && keys[i + 1][0] < z) i++; const a = keys[i], b = keys[i + 1], f = Math.max(0, Math.min(1, (z - a[0]) / (b[0] - a[0]))); return [a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f, a[3] + (b[3] - a[3]) * f]; };
   const z0 = keys[0][0], z1 = keys[keys.length - 1][0], zs = [];
   for (let i = 0; i <= 26; i++) zs.push(z0 + (z1 - z0) * (0.5 - 0.5 * Math.cos(i / 26 * Math.PI)));   // closer together at the nose and tail
-  for (const wz of wheelZ) for (const o of [-0.5, -0.44, -0.36, -0.24, -0.1, 0.1, 0.24, 0.36, 0.44, 0.5]) zs.push(wz + o);
+  for (const wz of wheelZ) for (const o of [-0.46, -0.4, -0.385, -0.36, -0.32, -0.26, -0.18, -0.09, 0, 0.09, 0.18, 0.26, 0.32, 0.36, 0.385, 0.4, 0.46]) zs.push(wz + o);
+  for (const kk of keys) zs.push(kk[0]);
   zs.sort((a, b) => a - b);
   const out = [];
   for (const z of zs) {
-    if (z < z0 || z > z1 || (out.length && z - out[out.length - 1][0] < 0.025)) continue;
-    const s = at(z); let arch = 0;
-    for (const wz of wheelZ) { const d = (z - wz) / 0.47; if (Math.abs(d) < 1) arch = Math.max(arch, 0.43 * Math.sqrt(1 - d * d)); }
-    out.push([z, s[0], Math.max(s[1], 0.3 + arch), s[2]]);
+    if (z < z0 || z > z1 || (out.length && z - out[out.length - 1][0] < 0.012)) continue;
+    const s = at(z); let bot = 0.3;
+    for (const wz of wheelZ) { const d = (z - wz) / 0.39; if (Math.abs(d) < 1) bot = Math.max(bot, 0.34 + 0.39 * Math.sqrt(1 - d * d)); }   // round the tyre, a hand's width clear
+    out.push([z, s[0], Math.max(s[1], bot), s[2], Math.max(s[1], 0.3)]);   // (and the bottom without the arch)
   }
   return out;
 }
 Kit.prototype.loft = function (st, col, key, opt) {   // a smooth closed body through cross-sections [z, halfWidth, bottom, top]
   opt = opt || {}; const N = opt.n || 28, up = opt.up || 3, dn = opt.dn || 6, belly = opt.belly == null ? 0.45 : opt.belly;
+  if (opt.crease != null) return this.creased(st, col, key, opt);
   const pos = [], idx = [];
   for (const [z, hw, y0, yt] of st) {
     const ym = y0 + (yt - y0) * belly;
@@ -600,6 +602,29 @@ Kit.prototype.loft = function (st, col, key, opt) {   // a smooth closed body th
   for (let j = 0; j < N; j++) { idx.push(f0, (j + 1) % N, j); idx.push(f0 + 1, L * N + j, L * N + (j + 1) % N); }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals();
   return this.put(g, col, opt.x || 0, opt.y || 0, opt.z || 0, 0, 0, 0, 1, 1, 1, key || 'paint');
+};
+Kit.prototype.creased = function (st, col, key, opt) {   // the same body in two halves that meet at a crisp shoulder line, the flank below
+  // it upright, the body above it leaning in (opt.crease: how far, per metre of height); each half has its own normals, so the line stays sharp
+  const N = opt.n || 28, H = N >> 1, R = H + 1, up = opt.up || 3, dn = opt.dn || 6, belly = opt.belly == null ? 0.45 : opt.belly, tkf = typeof opt.crease === 'function' ? opt.crease : () => opt.crease;   // (a number, or a function of z)
+  const mid = (s) => { const b0 = s[4] == null ? s[2] : s[4]; return Math.min(s[3] - 0.004, Math.max(s[2] + 0.004, b0 + (s[3] - b0) * belly)); };
+  for (const half of [0, 1]) {
+    const pos = [], idx = [];
+    for (const s of st) {
+      const [z, hw, y0, yt] = s, ym = mid(s), tk = tkf(z);
+      for (let j = 0; j <= H; j++) {
+        const a = (half + j / H) * Math.PI, c = Math.cos(a), sn = Math.abs(Math.sin(a));
+        if (!half) { const e = 2 / up, y = ym + (yt - ym) * Math.pow(sn, e); pos.push(Math.sign(c) * Math.pow(Math.abs(c), e) * Math.max(0, hw - tk * (y - ym)), y, z); }
+        else { const e = 2 / dn; pos.push(Math.sign(c) * Math.pow(Math.abs(c), e) * hw, ym - (ym - y0) * Math.pow(sn, e), z); }
+      }
+    }
+    for (let i = 0; i < st.length - 1; i++) for (let j = 0; j < H; j++) { const a = i * R + j, b = a + 1, c = a + R, d = c + 1; idx.push(a, b, c, b, d, c); }
+    const L = st.length - 1, f0 = pos.length / 3;
+    pos.push(0, mid(st[0]), st[0][0] - 0.015, 0, mid(st[L]), st[L][0] + 0.015);
+    for (let j = 0; j < H; j++) { idx.push(f0, j + 1, j); idx.push(f0 + 1, L * R + j, L * R + j + 1); }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals();
+    this.put(g, col, opt.x || 0, opt.y || 0, opt.z || 0, 0, 0, 0, 1, 1, 1, key || 'paint');
+  }
+  return this;
 };
 const CARDEF = {
   roadster: { col: '#d2101e', len: 2.28, w: 1.92, wz: [-1.38, 1.38],
@@ -618,135 +643,117 @@ const CARDEF = {
 // the seats, a light bar across the tail and four pipes)
 function spider() {
   const k = new Kit(), col = '#d10f1d', len = 2.3, w = 1.98, wz = [-1.42, 1.42];
-  const keys = [[-2.3, 0.56, 0.38, 0.5], [-2.18, 0.82, 0.3, 0.58], [-1.92, 0.93, 0.28, 0.65], [-1.45, 0.97, 0.28, 0.71], [-0.95, 0.97, 0.28, 0.76], [-0.52, 0.96, 0.28, 0.81],
-    [0.1, 0.94, 0.28, 0.79], [0.65, 0.97, 0.28, 0.83], [1.2, 1.0, 0.28, 0.88], [1.72, 1.0, 0.29, 0.9], [2.1, 0.96, 0.31, 0.89], [2.3, 0.86, 0.36, 0.84]];
+  const keys = [[-2.32, 0.6, 0.36, 0.44], [-2.18, 0.82, 0.3, 0.53], [-1.92, 0.93, 0.28, 0.645], [-1.42, 1.0, 0.28, 0.76], [-0.95, 0.97, 0.28, 0.79], [-0.52, 0.94, 0.28, 0.81],
+    [-0.42, 0.93, 0.28, 0.8], [-0.33, 0.92, 0.28, 0.47], [0.9, 0.93, 0.28, 0.47], [0.99, 0.95, 0.28, 0.85], [1.2, 1.08, 0.28, 0.85], [1.45, 1.13, 0.28, 0.858], [1.72, 1.11, 0.29, 0.865], [2.1, 1.04, 0.3, 0.875], [2.2, 1.0, 0.31, 0.89], [2.27, 0.95, 0.36, 0.92], [2.31, 0.87, 0.42, 0.915]];
   const st = sections(keys, wz), at = (z) => { let b = st[0]; for (const s of st) if (Math.abs(s[0] - z) < Math.abs(b[0] - z)) b = s; return b; };
-  k.loft(st, col, 'paint', { up: 3.8, dn: 6 });
-  { const list = k.parts.paint, g = list[list.length - 1], P3 = g.attributes.position, C3 = g.attributes.color;   // two-tone shading: deeper red low down and along the sills, a touch brighter on the shoulders
-    for (let i = 0; i < P3.count; i++) { const y = P3.getY(i), f = y > 0.8 ? 1.15 : y > 0.62 ? 1 + (y - 0.62) / 0.18 * 0.15 : y > 0.45 ? 0.74 + 0.26 * (y - 0.45) / 0.17 : 0.42 + 0.32 * Math.min(1, Math.max(0, (y - 0.3) / 0.15)); C3.setXYZ(i, C3.getX(i) * f, C3.getY(i) * f, C3.getZ(i) * f); } }
-  // the cabin: a black tub, tan seats with headrests, the dash and its glowing dials, a raked windscreen in a black frame
-  k.box(1.5, 0.05, 1.3, 0, 0.79, 0.28, '#111111', 0, 0, 0, 'trim');
+  const tone = (n) => { const list = k.parts.paint; for (let q = list.length - (n || 1); q < list.length; q++) { const g = list[q], P3 = g.attributes.position, C3 = g.attributes.color;   // two-tone shading: deeper red low down and along the sills, a touch brighter on the shoulders
+    for (let i = 0; i < P3.count; i++) { const y = P3.getY(i), f = y > 0.8 ? 1.15 : y > 0.62 ? 1 + (y - 0.62) / 0.18 * 0.15 : y > 0.45 ? 0.74 + 0.26 * (y - 0.45) / 0.17 : 0.62 + 0.12 * Math.min(1, Math.max(0, (y - 0.3) / 0.15)); C3.setXYZ(i, C3.getX(i) * f, C3.getY(i) * f, C3.getZ(i) * f); } } };
+  k.loft(st, col, 'paint', { up: 3.6, dn: 6, belly: 0.5, crease: (z) => z < 0.95 ? 0.32 : z < 1.25 ? 0.32 + (z - 0.95) / 0.3 * 0.43 : z < 2.2 ? 0.75 : 0.75 - (z - 2.2) / 0.11 * 0.15 }); tone(2);   // a crisp shoulder line along the flanks: upright below it, leaning in above (more over the rear wheels: hips)
+  // the cabin: a black tub, low black leather seats, the dash and its glowing dials, a raked curved windscreen in a slim black frame
+  k.box(1.74, 0.03, 1.34, 0, 0.465, 0.29, '#121212', 0, 0, 0, 'trim');   // the floor, down in the well
+  k.box(0.22, 0.2, 1.1, 0, 0.47, 0.25, '#1c1c1e', 0, 0, 0, 'trim');   // the transmission tunnel between the seats
+  k.box(1.7, 0.34, 0.04, 0, 0.465, -0.33, '#141414', 0, 0, 0, 'trim');   // the footwell's front wall, under the dash
+  for (const sd of [-1, 1]) {   // the doors, standing up either side of the well, flush with the body, their tops rising towards the back
+    k.side([0.43, 0.3, 0.43, 0.76, 0.39, 0.79, -0.93, 0.83, -0.99, 0.8, -0.99, 0.3], 0.07, sd * 0.885, 0, 0, col, 'paint', 0.025); tone();
+    k.box(0.02, 0.28, 1.3, sd * 0.84, 0.5, 0.28, '#1e1c1d', 0, 0, 0, 'lit');   // the door card, black leather
+    k.box(0.04, 0.025, 0.9, sd * 0.825, 0.66, 0.36, '#3a3436', 0, 0, 0, 'lit');   // its armrest
+  }
   for (const x of [-0.4, 0.4]) {
-    k.ball(0.26, x, 0.84, 0.42, '#b8743e', 0.95, 0.28, 1.0, 'lit', 14);   // the cushion
-    k.put(new THREE.CapsuleGeometry(0.2, 0.12, 4, 12), '#a8652f', x, 0.95, 0.74, 0.22, 0, 0, 1.15, 1, 0.36, 'lit');   // the backrest
-    k.box(0.07, 0.3, 0.02, x, 0.8, 0.665, '#8a5226', 0, 0.22, 0, 'lit');   // its stitched centre panel
-    k.ball(0.11, x, 1.02, 0.8, '#94582a', 0.9, 0.55, 0.4, 'lit', 12);   // a slim headrest
-    for (const b of [-1, 1]) { k.put(new THREE.CapsuleGeometry(0.05, 0.36, 4, 8), '#94582a', x + b * 0.22, 0.84, 0.42, Math.PI / 2, 0, 0, 1, 1, 0.8, 'lit'); }   // soft bolsters
-    k.loft([[0.86, 0.12, 0.78, 0.83], [1.0, 0.19, 0.78, 0.92], [1.35, 0.19, 0.78, 0.9], [1.85, 0.08, 0.8, 0.86]], col, 'paint', { up: 2.4, dn: 3, belly: 0.3, n: 16, x: x });   // the humps behind the seats
+    k.ball(0.26, x, 0.5, 0.44, '#232022', 0.95, 0.3, 1.0, 'lit', 14);   // the cushion, low
+    k.put(new THREE.CapsuleGeometry(0.17, 0.26, 4, 12), '#1e1c1d', x, 0.7, 0.75, 0.26, 0, 0, 1.15, 1, 0.36, 'lit');   // the backrest, shoulder high
+    k.box(0.07, 0.32, 0.02, x, 0.5, 0.69, '#3a3436', 0, 0.26, 0, 'lit');   // its stitched centre panel
+    for (const b of [-1, 1]) { k.put(new THREE.CapsuleGeometry(0.05, 0.36, 4, 8), '#2b2729', x + b * 0.21, 0.52, 0.44, Math.PI / 2, 0, 0, 1, 1, 0.8, 'lit'); k.put(new THREE.CapsuleGeometry(0.05, 0.24, 4, 8), '#2b2729', x + b * 0.19, 0.7, 0.73, 0.26, 0, 0, 1, 1, 0.9, 'lit'); }   // bolsters, seat and back
+    k.loft([[0.9, 0.13, 0.8, 0.9], [1.05, 0.14, 0.8, 0.92], [1.6, 0.12, 0.8, 0.905], [2.2, 0.1, 0.8, 0.895]], col, 'paint', { up: 6, dn: 3, belly: 0.3, n: 20, x: x, crease: 0.6 });   // long low fairings behind the seats, running back into the ducktail
+    k.ball(0.1, x, 0.9, 0.9, '#1e1c1d', 1.2, 0.45, 0.6, 'lit', 12);   // a leather pad on the front of each
   }
   k.box(1.56, 0.07, 0.28, 0, 0.76, -0.5, '#26221f', 0, 0, 0, 'trim');
-  k.put(new THREE.CapsuleGeometry(0.14, 1.28, 4, 16), '#6e4426', 0, 0.83, -0.5, 0, 0, Math.PI / 2, 0.3, 1, 1, 'lit');   // the tan roll along its top
+  k.put(new THREE.CapsuleGeometry(0.14, 1.28, 4, 16), '#2a2628', 0, 0.83, -0.5, 0, 0, Math.PI / 2, 0.3, 1, 1, 'lit');   // the leather roll along its top
   k.ball(0.17, 0.4, 0.905, -0.43, '#1a1a1c', 1.3, 0.34, 0.55, 'trim', 14);   // the hood over the dials
   for (const x of [0.29, 0.51]) { k.cyl(0.05, 0.05, 0.02, 14, x, 0.87, -0.31, '#e4eaf0', Math.PI / 2, 0, 'lit'); k.put(new THREE.TorusGeometry(0.048, 0.006, 4, 18), '#f2efe6', x, 0.87, -0.322, 0, 0, 0, 1, 1, 1, 'chrome'); k.box(0.006, 0.036, 0.004, x + 0.01, 0.852, -0.324, '#ff6a3d', 0, 0, -0.6, 'glow'); }
-  k.box(1.52, 0.44, 0.02, 0, 0.82, -0.6, '#d8e6ef', 0, 0.78, 0, 'screen');
-  k.box(1.56, 0.022, 0.03, 0, 1.17, -0.44, '#d8dadc', 0, 0.78, 0, 'chrome').box(0.016, 0.44, 0.03, -0.77, 0.82, -0.6, '#121212', 0, 0.78, 0, 'trim').box(0.016, 0.44, 0.03, 0.77, 0.82, -0.6, '#121212', 0, 0.78, 0, 'trim');
-  k.box(0.18, 0.05, 0.035, 0, 1.12, -0.46, '#121212', 0, 0.78, 0, 'trim');   // the mirror
-  // louvres over the engine, scoops ahead of the rear wheels, the mirrors on stalks
-  const topAt = (z) => { let i = 0; while (i < st.length - 2 && st[i + 1][0] < z) i++; const a = st[i], b = st[i + 1], f = Math.max(0, Math.min(1, (z - a[0]) / (b[0] - a[0]))); return a[3] + (b[3] - a[3]) * f; };
-  const ribbon = (x0, x1, z0, z1, lift, hex) => {   // a strip lying on the body from z0 to z1, between x0 and x1
-    const pos = [], n = Math.ceil((z1 - z0) / 0.04);
-    for (let q = 0; q < n; q++) { const za = z0 + (z1 - z0) * q / n, zb = z0 + (z1 - z0) * (q + 1) / n, ya = topAt(za) + lift, yb = topAt(zb) + lift;
-      pos.push(x0, ya, za, x0, yb, zb, x1, yb, zb, x0, ya, za, x1, yb, zb, x1, ya, za); }
-    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.computeVertexNormals();
-    k.put(g, hex, 0, 0, 0, 0, 0, 0, 1, 1, 1, 'paint');
-  };
-  for (const sx of [-0.13, 0.13]) for (const [z0, z1] of [[-2.14, -0.64], [0.98, 2.22]]) {   // twin white stripes, nose to tail round the cabin, each with a fine dark edge
-    ribbon(sx - 0.05, sx + 0.05, z0, z1, 0.004, '#5e0910');
-    ribbon(sx - 0.042, sx + 0.042, z0, z1, 0.007, '#f4f2ec');
+  {
+    const NC = 8, bot = [], top = [], H = 0.36, A = 1.0;
+    for (let i = 0; i <= NC; i++) { const u = i / NC * 2 - 1, sw = 0.1 * u * u; bot.push([u * 0.78, 0.8, -0.72 + sw]); top.push([u * 0.65, 0.8 + H * Math.cos(A), -0.72 + H * Math.sin(A) + sw]); }
+    const pos = [], idx = []; for (let i = 0; i <= NC; i++) pos.push(...bot[i], ...top[i]);
+    for (let i = 0; i < NC; i++) idx.push(i * 2, i * 2 + 2, i * 2 + 3, i * 2, i * 2 + 3, i * 2 + 1);
+    for (const flip of [false, true]) {   // both faces, each smooth
+      const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+      g.setIndex(flip ? idx.map((v, j) => idx[j - j % 3 + (2 - j % 3)]) : idx); g.computeVertexNormals(); k.put(g, '#d8e6ef', 0, 0, 0, 0, 0, 0, 1, 1, 1, 'screen');
+    }
+    const rail = (pts, r) => k.put(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map((p) => new THREE.Vector3(p[0], p[1], p[2]))), pts.length * 3, r, 5, false), '#121212', 0, 0, 0, 0, 0, 0, 1, 1, 1, 'trim');
+    rail(top, 0.011); rail([bot[0], top[0]], 0.013); rail([bot[NC], top[NC]], 0.013);
+    k.box(0.15, 0.04, 0.025, 0, top[NC >> 1][1] - 0.055, top[NC >> 1][2] + 0.012, '#121212', 0, A, 0, 'trim');   // the mirror
   }
-  for (let i = 0; i < 9; i++) { const z = 1.15 + i * 0.11; k.box(0.09 - i * 0.004, 0.04, 0.13, 0, at(z)[3] - 0.012, z, col, 0, 0.05, 0, 'paint'); }   // the centre spine
+  // the engine vent between the fairings, scoops ahead of the rear wheels, slim black mirrors
+  k.box(0.5, 0.008, 0.64, 0, at(1.55)[3] - 0.004, 1.55, '#2a0408', 0, 0, 0, 'trim');   // a dark recess
+  for (let i = 0; i < 7; i++) { const z = 1.27 + i * 0.093; k.box(0.46, 0.014, 0.04, 0, at(z)[3] - 0.002, z, '#121214', 0, -0.35, 0, 'trim'); }   // its louvres
   for (const sd of [-1, 1]) {
     const hw = at(0.72)[1];
     k.put(new THREE.CapsuleGeometry(0.075, 0.42, 6, 12), '#141414', sd * (hw - 0.02), 0.58, 0.74, Math.PI / 2, 0, 0, 0.45, 1, 1, 'trim');   // a rounded intake
     k.put(new THREE.CapsuleGeometry(0.085, 0.44, 6, 12), col, sd * (hw - 0.008), 0.61, 0.72, Math.PI / 2, 0, 0, 0.3, 1, 0.55, 'paint');   // its lip
     k.box(0.05, 0.05, 0.8, sd * (hw - 0.005), 0.71, 0.7, col, 0, 0, 0, 'paint');
-    const dw = at(-0.5)[1];
-    k.box(0.05, 0.16, 0.08, sd * (dw + 0.02), 0.8, -0.52, col, 0, 0, sd * -0.5, 'paint');   // the arm, rising out from the door top
-    k.ball(0.075, sd * (dw + 0.11), 0.95, -0.52, col, 1.15, 0.72, 0.85, 'paint', 12).ball(0.06, sd * (dw + 0.11), 0.95, -0.47, '#2a3440', 1.1, 0.68, 0.3, 'glass', 10);
+    k.box(0.025, 0.06, 0.05, sd * 0.925, 0.77, -0.4, '#141416', 0, 0, sd * -0.6, 'trim');   // a short black arm off the front of the door
+    k.ball(0.06, sd * 0.99, 0.85, -0.41, '#141416', 1.4, 0.6, 1.6, 'trim', 14).ball(0.05, sd * 0.99, 0.85, -0.32, '#2a3440', 1.4, 0.55, 0.25, 'glass', 10);   // a flat black teardrop pod, the glass on its back
   }
   // the nose: flush glass over the lamps, a dark mouth and a splitter
   const nz = -1.98, ny = at(nz)[3];
   for (const sd of [-1, 1]) {
-    k.box(0.36, 0.04, 0.24, sd * 0.58, ny - 0.07, nz, '#fffbe8', 0, 0.26, 0, 'glow');
-    k.box(0.4, 0.015, 0.03, sd * 0.58, ny - 0.04, nz - 0.17, '#e8f4ff', 0, 0.26, 0, 'glow');   // a running-light strip along its front edge
-    k.put(new THREE.CylinderGeometry(0.06, 0.06, 0.03, 16), '#fff6d8', sd * 0.62, 0.42, -len + 0.02, Math.PI / 2, 0, 0, 1, 1, 1, 'glow');   // fog lamps in the bumper
-    k.put(new THREE.TorusGeometry(0.065, 0.01, 6, 18), '#d6d9dc', sd * 0.62, 0.42, -len + 0.005, 0, 0, 0, 1, 1, 1, 'chrome');
+    k.box(0.36, 0.024, 0.2, sd * 0.58, ny - 0.04, nz, '#1a1e24', 0, -0.4, 0, 'glass');   // a dark lamp housing, flush in the wedge
+    k.box(0.3, 0.012, 0.05, sd * 0.58, ny - 0.02, nz - 0.05, '#fffbe8', 0, -0.4, 0, 'glow');   // a slim lamp in it
+    k.box(0.34, 0.015, 0.03, sd * 0.52, ny - 0.09, nz - 0.17, '#e8f4ff', 0, -0.4, 0, 'glow');   // a running-light strip along its front edge
   }
-  k.put(new THREE.CylinderGeometry(0.06, 0.06, 0.02, 18), '#f2c230', 0, at(-2.15)[3] - 0.01, -2.17, 0.5, 0, 0, 1, 1, 1, 'chrome');   // the badge
-  k.box(1.1, 0.12, 0.1, 0, 0.35, -len + 0.04, '#0d0d0d', 0, 0, 0, 'trim').box(1.55, 0.03, 0.24, 0, 0.29, -2.18, '#0d0d0d', 0, 0, 0, 'trim');
-  // the tail: a black panel with the light bar across it, the diffuser, four pipes and the plate
-  k.box(1.72, 0.26, 0.06, 0, 0.47, len + 0.005, '#0d0d0d', 0, 0, 0, 'trim');
-  k.box(1.64, 0.05, 0.05, 0, 0.72, len + 0.01, '#ff0a18', 0, 0, 0, 'brake');
-  for (const sd of [-1, 1]) {
-    k.put(new THREE.CapsuleGeometry(0.075, 0.34, 6, 16), '#d6d9dc', sd * 0.6, 0.63, len + 0.005, 0, 0, Math.PI / 2, 1.12, 1.04, 0.35, 'chrome');   // the chrome surround
-    k.put(new THREE.CapsuleGeometry(0.065, 0.32, 6, 16), '#ff0a18', sd * 0.6, 0.63, len + 0.02, 0, 0, Math.PI / 2, 1, 1, 0.4, 'brake');
-    k.box(0.12, 0.012, 0.02, sd * 0.6, 0.628, len + 0.045, '#7a0008', 0, 0, 0, 'trim');   // a dark line through it
+  k.box(0.8, 0.09, 0.1, 0, 0.33, -len + 0.03, '#0d0d0d', 0, 0, 0, 'trim').box(1.05, 0.03, 0.16, 0, 0.29, -2.2, '#0d0d0d', 0, 0, 0, 'trim');
+  // the tail: a narrow black band carrying slim lamps that wrap round the corners, joined by a fine light line; a finned
+  // diffuser, two pipes and the plate
+  for (const sd of [-1, 1]) {   // a lamp each side: a bold bar in a black housing, kinked up at its outer end
+    k.box(0.44, 0.1, 0.045, sd * 0.47, 0.64, len + 0.006, '#0b0b0c', 0, 0, 0, 'trim').box(0.4, 0.078, 0.05, sd * 0.47, 0.651, len + 0.012, '#ff0a18', 0, 0, 0, 'brake');
+    k.box(0.17, 0.1, 0.045, sd * 0.71, 0.67, len + 0.006, '#0b0b0c', 0, 0, sd * 0.45, 'trim').box(0.15, 0.078, 0.05, sd * 0.71, 0.681, len + 0.012, '#ff0a18', 0, 0, sd * 0.45, 'brake');
   }
-  for (const sd of [-1, 1]) k.box(0.1, 0.05, 0.05, sd * 0.9, 0.48, len - 0.02, '#ffb070', 0, 0, 0, 'glow');   // the indicators
-  k.box(1.5, 0.025, 0.04, 0, 0.785, len - 0.005, '#d6d9dc', 0, 0, 0, 'chrome');
-  k.box(1.7, 0.035, 0.22, 0, at(len - 0.15)[3] - 0.01, len - 0.12, col, 0, -0.12, 0, 'paint');   // a lip spoiler
-  k.box(1.3, 0.1, 0.3, 0, 0.29, len - 0.1, '#0d0d0d', 0, 0, 0, 'trim');
-  for (const x of [-0.5, -0.34, 0.34, 0.5]) k.roll(0.045, 0.22, 12, x, 0.36, len + 0.03, '#d6d9dc', 'chrome');
-  k.box(0.52, 0.11, 0.02, 0, 0.42, len + 0.04, '#ffffff', 0, 0, 0, 'plate');
-  for (const sd of [-1, 1]) { k.box(0.012, 0.36, 0.012, sd * (at(-0.5)[1] - 0.004), 0.43, -0.5, '#4a0006', 0, 0, 0, 'trim'); k.box(0.012, 0.3, 0.012, sd * (at(0.45)[1] - 0.004), 0.45, 0.45, '#4a0006', 0, 0, 0, 'trim'); k.box(0.01, 0.012, 0.95, sd * (at(0)[1] - 0.003), 0.62, -0.03, '#4a0006', 0, 0, 0, 'trim'); }   // the doors' shut lines
+  k.box(1.2, 0.02, 0.13, 0, 0.895, len + 0.03, col, 0, -0.21, 0, 'paint');   // the ducktail's crisp lip (as wide as the rounded tail is, up there)
+  k.box(1.3, 0.025, 0.04, 0, 0.865, len + 0.012, '#0b0b0c', 0, 0, 0, 'trim');   // and the shadow line under it
+  k.box(1.0, 0.1, 0.3, 0, 0.29, len - 0.1, '#3c4046', 0, 0, 0, 'trim');   // the diffuser, and its fins
+  for (let i = 0; i < 5; i++) k.box(0.02, 0.09, 0.24, -0.2 + i * 0.1, 0.295, len - 0.02, '#5a5e64', 0, 0, 0, 'trim');
+  for (const x of [-0.4, 0.4]) { k.roll(0.085, 0.12, 18, x, 0.36, len, '#c9cdd2', 'lit'); k.roll(0.058, 0.02, 14, x, 0.36, len + 0.055, '#0e0e10', 'trim'); }   // two big bright pipes, dark inside
+  k.box(0.44, 0.093, 0.02, 0, 0.645, len + 0.03, '#ffffff', 0, 0, 0, 'plate');   // the plate, on the red between the lamps
   // the wheel arches: a dark well inside, a flared lip round the outside
   for (const z of wz) for (const sd of [-1, 1]) {
     const hw = at(z)[1];
-    k.put(new THREE.CylinderGeometry(0.44, 0.44, 0.34, 18, 1, true, -Math.PI / 2, Math.PI), '#0b0b0b', sd * (hw - 0.2), 0.34, z, 0, 0, Math.PI / 2, 1, 1, 1, 'trim');
-    k.put(new THREE.TorusGeometry(0.455, 0.035, 6, 20, Math.PI), col, sd * (hw - 0.012), 0.34, z, 0, sd * Math.PI / 2, 0, 1, 1, 1, 'paint');
+    k.put(new THREE.CylinderGeometry(0.385, 0.385, 0.34, 20, 1, true, -Math.PI / 2, Math.PI), '#0b0b0b', sd * (hw - 0.2), 0.34, z, 0, 0, Math.PI / 2, 1, 1, 1, 'trim');
+    k.put(new THREE.TorusGeometry(0.395, 0.018, 6, 24, Math.PI), col, sd * (hw - 0.01), 0.34, z, 0, sd * Math.PI / 2, 0, 1, 1, 1, 'paint');
   }
   for (const sd of [-1, 1]) { const hw = at(0)[1];
-    k.box(0.05, 0.11, 1.75, sd * (hw - 0.01), 0.3, 0, '#151517', 0, 0, 0, 'trim').box(0.02, 0.018, 1.7, sd * (hw + 0.015), 0.4, 0, '#d6d9dc', 0, 0, 0, 'chrome'); }   // the sills
-  {   // a chrome strip along the waist, headlamp to tail, on the body's surface (broken by the wheel arches)
-    const kat = (z) => { let i = 0; while (i < keys.length - 2 && keys[i + 1][0] < z) i++; const a = keys[i], b = keys[i + 1], f = Math.max(0, Math.min(1, (z - a[0]) / (b[0] - a[0]))); return a.map((v, j) => v + (b[j] - v) * f); };
-    const sat = (z) => { let i = 0; while (i < st.length - 2 && st[i + 1][0] < z) i++; const a = st[i], b = st[i + 1], f = Math.max(0, Math.min(1, (z - a[0]) / (b[0] - a[0]))); return a.map((v, j) => v + (b[j] - v) * f); };
-    const line = (z) => {   // the strip's height (a smooth line, no arches in it) and the body's half-width there
-      const K = kat(z), ymK = K[2] + (K[3] - K[2]) * 0.45, y = ymK + (K[3] - ymK) * 0.45, S = sat(z), ym = S[2] + (S[3] - S[2]) * 0.45;
-      if (y < S[2] + 0.04) return null;
-      const x = y >= ym ? S[1] * Math.pow(1 - Math.pow((y - ym) / (S[3] - ym), 3.8), 1 / 3.8) : S[1] * Math.pow(1 - Math.pow((ym - y) / (ym - S[2]), 6), 1 / 6);
-      return [x + 0.004, y];
-    };
-    for (const sd of [-1, 1]) for (const [lo, hi, inA, inB, hex] of [[0, 0.015, 0.001, 0.005, '#f4f6f8'], [-0.015, 0, 0, 0.001, '#4c5158']]) {   // the bright top edge, the dark lower half
-      const pos = [], n = 110, z0 = -2.05, z1 = 2.2; let gap = false;
-      for (let q = 0; q < n; q++) { const za = z0 + (z1 - z0) * q / n, zb = z0 + (z1 - z0) * (q + 1) / n, A = line(za), B = line(zb); if (!A || !B) { gap = true; continue; } if (!gap) continue;
-        const v = [[sd * (A[0] - inA), A[1] + lo, za], [sd * (A[0] - inB), A[1] + hi, za], [sd * (B[0] - inB), B[1] + hi, zb], [sd * (B[0] - inA), B[1] + lo, zb]];
-        const t = sd > 0 ? [0, 1, 2, 0, 2, 3] : [0, 2, 1, 0, 3, 2]; for (const i of t) pos.push(...v[i]); }
-      const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.computeVertexNormals();
-      k.put(g, hex, 0, 0, 0, 0, 0, 0, 1, 1, 1, 'chrome');
-    }
-  }
+    k.box(0.05, 0.11, 1.9, sd * (hw - 0.01), 0.3, 0, '#151517', 0, 0, 0, 'trim'); }   // the sills
   // the underside (you see it when she rolls): a dark floor pan between the axles, the axles, a diff, a fuel tank, twin exhausts
   k.box(1.5, 0.02, 2.1, 0, 0.255, 0, '#3a3d42', 0, 0, 0, 'trim').box(0.34, 0.03, 2.1, 0, 0.228, 0, '#1e2022', 0, 0, 0, 'trim');
   for (const z of wz) k.put(new THREE.CylinderGeometry(0.032, 0.032, 1.62, 8), '#3a3c40', 0, 0.34, z, 0, 0, Math.PI / 2, 1, 1, 1, 'trim');
   k.box(0.26, 0.17, 0.24, 0, 0.25, wz[1], '#2c2e31', 0, 0, 0, 'trim').box(0.7, 0.08, 0.45, 0, 0.175, 0.55, '#6c7076', 0, 0, 0, 'trim');
   for (const sd of [-1, 1]) k.put(new THREE.CylinderGeometry(0.036, 0.036, 2.0, 8), '#8e9196', sd * 0.42, 0.225, 1.2, Math.PI / 2, 0, 0, 1, 1, 1, 'chrome');
   // red brake calipers (they stay put while the wheels turn)
-  const wx = w / 2 - 0.08;
-  for (const z of wz) for (const sd of [-1, 1]) k.box(0.05, 0.13, 0.17, sd * (wx - 0.15), 0.43, z - 0.1, '#d01818', 0, 0, 0, 'lit');
-  return { k: k, len: len, w: w, wz: wz, wx: wx };
+  const wx = w / 2 - 0.08, wxr = wx + 0.06;   // (the rear pair further out, under the hips)
+  for (const z of wz) for (const sd of [-1, 1]) k.box(0.05, 0.13, 0.17, sd * ((z > 0 ? wxr : wx) - 0.15), 0.43, z - 0.1, '#d01818', 0, 0, 0, 'lit');
+  return { k: k, len: len, w: w, wz: wz, wx: wx, wxr: wxr };
 }
 function bigWheel() {   // a low tyre, a five-spoke star rim and the brake disc behind it
   const wk = new Kit();
-  wk.axle(0.34, 0.27, 24, 0, 0, 0, '#1c1c1e', 'tyre').axle(0.262, 0.275, 22, 0, 0, 0, '#232325', 'tyre');
-  wk.axle(0.235, 0.05, 20, -0.05, 0, 0, '#3a3d40', 'trim');   // the disc
-  wk.put(new THREE.TorusGeometry(0.245, 0.018, 6, 28), '#d4d8dc', 0.145, 0, 0, 0, Math.PI / 2, 0, 1, 1, 1, 'alloy');   // the rim's lip
-  for (let i = 0; i < 10; i++) { const a = i * Math.PI * 2 / 10; wk.put(new THREE.BoxGeometry(0.04, 0.24, 0.045), i % 2 ? '#b8bec4' : '#dfe3e6', 0.15, Math.cos(a) * 0.115, Math.sin(a) * 0.115, a, 0, 0, 1, 1, 1, 'alloy'); }
-  wk.axle(0.24, 0.02, 24, 0.137, 0, 0, '#26282b', 'trim');   // the dark face behind the spokes
-  wk.put(new THREE.TorusGeometry(0.296, 0.026, 6, 32), '#55565a', 0.13, 0, 0, 0, Math.PI / 2, 0, 1, 1, 0.4, 'tyre');   // the sidewall band
-  wk.put(new THREE.TorusGeometry(0.296, 0.008, 4, 32), '#8a8b90', 0.138, 0, 0, 0, Math.PI / 2, 0, 1, 1, 1, 'tyre');   // a ring of lettering
+  wk.axle(0.34, 0.27, 24, 0, 0, 0, '#1c1c1e', 'tyre').axle(0.285, 0.275, 22, 0, 0, 0, '#232325', 'tyre');
+  wk.axle(0.25, 0.05, 20, -0.05, 0, 0, '#3a3d40', 'trim');   // the disc
+  wk.put(new THREE.TorusGeometry(0.27, 0.026, 6, 32), '#e6e9ec', 0.145, 0, 0, 0, Math.PI / 2, 0, 1, 1, 1, 'alloy');   // the rim's lip, bright
+  for (let i = 0; i < 10; i++) { const a = Math.floor(i / 2) * Math.PI * 2 / 5 + (i % 2 ? 0.1 : -0.1); wk.put(new THREE.BoxGeometry(0.04, 0.26, 0.055), '#a4aab2', 0.15, Math.cos(a) * 0.135, Math.sin(a) * 0.135, a, 0, 0, 1, 1, 1, 'alloy'); }   // five twin spokes, silver
+  wk.axle(0.265, 0.02, 24, 0.137, 0, 0, '#26282b', 'trim');   // the dark face behind the spokes
+  wk.put(new THREE.TorusGeometry(0.312, 0.02, 6, 32), '#55565a', 0.13, 0, 0, 0, Math.PI / 2, 0, 1, 1, 0.4, 'tyre');   // the sidewall band
+  wk.put(new THREE.TorusGeometry(0.312, 0.007, 4, 32), '#8a8b90', 0.138, 0, 0, 0, Math.PI / 2, 0, 1, 1, 1, 'tyre');   // a ring of lettering
   wk.axle(0.06, 0.06, 10, 0.155, 0, 0, '#2a2d31', 'trim');
-  wk.axle(0.235, 0.012, 22, -0.141, 0, 0, '#8c9095', 'alloy').axle(0.07, 0.03, 12, -0.155, 0, 0, '#c4c8cc', 'alloy');   // the back of the wheel
-  wk.put(new THREE.TorusGeometry(0.296, 0.026, 6, 32), '#55565a', -0.13, 0, 0, 0, Math.PI / 2, 0, 1, 1, 0.4, 'tyre');
+  wk.axle(0.26, 0.012, 22, -0.141, 0, 0, '#8c9095', 'alloy').axle(0.07, 0.03, 12, -0.155, 0, 0, '#c4c8cc', 'alloy');   // the back of the wheel
+  wk.put(new THREE.TorusGeometry(0.312, 0.02, 6, 32), '#55565a', -0.13, 0, 0, 0, Math.PI / 2, 0, 1, 1, 0.4, 'tyre');
   return wk.build();
 }
 
 // ---------------------------------------------------------------- the two of you, in parts that move (world3d.js puts them together and poses them)
 // Each part is built round its own pivot. The driver (on the right: a British car) wears sunglasses and a white shirt;
 // his girlfriend has a turquoise top and long fair hair that streams out behind her in the wind.
-function hairLock(k, pts, r, hex, oy) {   // a lock of hair: a tube along a curve, tapering to its tip, lighter at the root
+function hairLock(k, pts, r, hex, oy, fl, tp) {   // a lock of hair: a tube along a curve, tapering to its tip (tp: how far), lighter at the root (fl: flattened [x, z, y])
   const curve = new THREE.CatmullRomCurve3(pts.map((p) => new THREE.Vector3(p[0], p[1], p[2]))), T = 12, RS = 7;
   const g = new THREE.TubeGeometry(curve, T, r, RS, false), P = g.attributes.position, c = new THREE.Vector3(), v = new THREE.Vector3();
-  for (let j = 0; j <= T; j++) { curve.getPointAt(j / T, c); const f = 1 - 0.88 * (j / T) ** 1.35; for (let q = 0; q <= RS; q++) { const i = j * (RS + 1) + q; v.fromBufferAttribute(P, i).sub(c).multiplyScalar(f).add(c); P.setXYZ(i, v.x, v.y, v.z); } }
+  for (let j = 0; j <= T; j++) { curve.getPointAt(j / T, c); const f = 1 - (tp == null ? 0.88 : tp) * (j / T) ** 1.35; for (let q = 0; q <= RS; q++) { const i = j * (RS + 1) + q; v.fromBufferAttribute(P, i).sub(c).multiplyScalar(f); if (fl) { v.x *= fl[0]; v.z *= fl[1]; if (fl[2]) v.y *= fl[2]; } v.add(c); P.setXYZ(i, v.x, v.y, v.z); } }
   g.computeVertexNormals(); k.put(g, hex, 0, 0, 0, 0, 0, 0, 1, 1, 1, 'lit');
   const list = k.parts.lit, G = list[list.length - 1], Q = G.attributes.position, C3 = G.attributes.color;   // a touch lighter at the crown, deeper towards the tips
   for (let i = 0; i < Q.count; i++) { const y = Q.getY(i) + (oy || 0), f = y > 0.17 ? 1.06 : y < -0.04 ? 0.88 : 0.88 + 0.18 * (y + 0.04) / 0.21; C3.setXYZ(i, Math.min(1, C3.getX(i) * f), Math.min(1, C3.getY(i) * f), Math.min(1, C3.getZ(i) * f)); }
@@ -755,14 +762,20 @@ export function people() {
   const P = (fn) => { const k = new Kit(); fn(k); return k.build(); };
   const cap = (r, l) => new THREE.CapsuleGeometry(r, l, 4, 10);
   const one = (o) => ({
-    torso: P((k) => { if (o.short) k.put(new THREE.LatheGeometry([[0.12, 0.02], [0.145, 0.14], [0.152, 0.3], [0.172, 0.42], [0.182, 0.49], [0.165, 0.545], [0.12, 0.585], [0.07, 0.615], [0.052, 0.64]].map((q) => new THREE.Vector2(q[0], q[1])), 22), o.top, 0, 0, 0, 0, 0, 0, 1.36, 1, 0.8, 'lit'); else k.put(cap(o.chest, 0.3), o.top, 0, 0.3, 0, 0, 0, 0, o.wide, 1, 0.72, 'lit'); if (!o.short) for (const sd of [-1, 1]) k.ball(o.arm * 1.1, sd * o.chest * o.wide * 0.9, 0.53, 0, o.sleeve, 1, 0.85, 1, 'lit', 10); else { k.put(new THREE.TorusGeometry(0.06, 0.013, 4, 16, Math.PI), '#e4e4de', 0, 0.6, 0, Math.PI / 2, 0, 0, 1, 1, 0.5, 'lit'); } if (o.collar) for (const sd of [-1, 1]) k.box(0.08, 0.012, 0.06, sd * 0.045, 0.585, -0.05, '#e4e4de', 0, -0.6, sd * 0.45, 'lit'); k.cyl(0.05, 0.055, 0.14, 8, 0, 0.6, 0, o.skin); if (o.strap) { k.ball(0.13, 0, 0.545, -0.005, o.skin, 1.22, 0.42, 0.74, 'lit', 16); for (const sd of [-1, 1]) k.put(new THREE.TorusGeometry(0.09, 0.009, 4, 12, Math.PI), o.top, sd * 0.075, 0.51, 0, 0, Math.PI / 2, 0, 1, 1, 1, 'lit'); } }),
+    torso: P((k) => { if (o.short) k.put(new THREE.LatheGeometry([[0.12, 0.02], [0.135, 0.14], [0.142, 0.3], [0.168, 0.42], [0.182, 0.49], [0.178, 0.54], [0.105, 0.6], [0.07, 0.615], [0.052, 0.64]].map((q) => new THREE.Vector2(q[0], q[1])), 22), o.top, 0, 0, 0, 0, 0, 0, 1.45, 1, 0.7, 'lit'); else { k.put(new THREE.LatheGeometry([[0.13, 0.02], [0.136, 0.12], [0.116, 0.25], [0.12, 0.33], [0.142, 0.41], [0.15, 0.47], [0.148, 0.485], [0.146, 0.5], [0.138, 0.525], [0.105, 0.565], [0.065, 0.6], [0.046, 0.64]].map((q) => new THREE.Vector2(q[0], q[1])), 22), o.top, 0, 0, 0, 0, 0, 0, 1.2, 1, 0.78, 'lit');
+      const G = k.parts.lit[k.parts.lit.length - 1], Q = G.attributes.position, N = G.attributes.normal, C3 = G.attributes.color, sk = new THREE.Color(o.skin);
+      for (let i = 0; i < Q.count; i++) if (Q.getY(i) > 0.49) { const f = 0.6 + 0.4 * (N.getY(i) * 0.5 + 0.5); C3.setXYZ(i, sk.r * f, sk.g * f, sk.b * f); } }   // bare shoulders above her top
+    if (!o.short) for (const sd of [-1, 1]) k.ball(o.arm * 1.1, sd * 0.16, 0.52, 0, o.sleeve, 1, 0.85, 1, 'lit', 10); else { k.put(new THREE.TorusGeometry(0.06, 0.013, 4, 16, Math.PI), '#e4e4de', 0, 0.6, 0, Math.PI / 2, 0, 0, 1, 1, 0.5, 'lit'); } if (o.collar) for (const sd of [-1, 1]) k.box(0.08, 0.012, 0.06, sd * 0.045, 0.585, -0.05, '#e4e4de', 0, -0.6, sd * 0.45, 'lit'); k.cyl(0.05, 0.055, 0.14, 8, 0, 0.6, 0, o.skin); if (o.strap) { for (const sd of [-1, 1]) k.put(new THREE.TorusGeometry(0.09, 0.009, 4, 12, Math.PI), o.top, sd * 0.075, 0.51, 0, 0, Math.PI / 2, 0, 1, 1, 1, 'lit'); } }),
     head: P((k) => {
       k.ball(0.122, 0, 0.13, 0, o.skin, 1, 1.15, 1.06, 'lit', 16);
       k.ball(0.021, 0, 0.112, -0.122, o.skin, 0.9, 0.95, 0.75, 'lit', 8);   // the nose   // the nose
+      const h0 = k.parts.lit.length;
       k.ball(0.132, 0, 0.18, 0.025, o.hair, 1.04, o.long ? 0.95 : 0.82, 1.08, 'lit', 16);
-      if (!o.long) { k.ball(0.125, 0, 0.13, 0.035, o.hair, 1.02, 0.85, 1.0, 'lit', 16); k.ball(0.06, 0, 0.255, -0.08, o.hair, 1.4, 0.55, 1, 'lit', 10);   // the back of his head, and a quiff
-        const zh = (x, y) => Math.max(0.025 + 0.143 * Math.sqrt(Math.max(0, 1 - (x / 0.137) ** 2 - ((y - 0.18) / 0.108) ** 2)), 0.035 + 0.125 * Math.sqrt(Math.max(0, 1 - (x / 0.1275) ** 2 - ((y - 0.13) / 0.106) ** 2))) + 0.004;
-        for (const [x, c] of [[-0.09, '#33231a'], [-0.045, '#22170f'], [0, '#3a281c'], [0.045, '#22170f'], [0.09, '#33231a']]) hairLock(k, [[x * 0.7, 0.28, 0], [x, 0.235, zh(x, 0.235)], [x * 1.02, 0.15, zh(x * 1.02, 0.15)], [x * 0.92, 0.07, zh(x * 0.92, 0.07) - 0.012]], 0.03, c);
+      if (!o.long) { k.put(new THREE.SphereGeometry(0.125, 16, 8), o.hair, 0, 0.135, 0.035, 0.3, 0, 0, 0.96, 0.85, 1.0, 'lit').ball(0.11, 0, 0.12, 0.05, o.hair, 0.95, 0.6, 0.9, 'lit', 14);   // the back of his head, tipped, tapering into the nape
+        k.ball(0.07, 0.025, 0.245, -0.02, o.hair, 1.4, 0.45, 1.7, 'lit', 14);   // swept back from a side parting
+        for (const [x, c] of [[-0.05, '#2e1f14'], [0, '#24180f'], [0.05, '#33231a']]) hairLock(k, [[x, 0.272, -0.07], [x * 1.1, 0.298, 0], [x * 1.15, 0.292, 0.08], [x * 1.1, 0.256, 0.14]], 0.03, c, 0, [2.0, 1, 0.4], 0.7);   // layered over the crown
+        for (let q = h0; q < k.parts.lit.length; q++) { const G = k.parts.lit[q], Q = G.attributes.position, C3 = G.attributes.color;   // the sun on top, darker underneath
+          for (let i = 0; i < Q.count; i++) { const f = 0.74 + 0.5 * Math.min(1, Math.max(0, (Q.getY(i) - 0.05) / 0.24)); C3.setXYZ(i, C3.getX(i) * f, C3.getY(i) * f, C3.getZ(i) * f); } }
       }
       if (o.long) {
         k.ball(0.115, 0, 0.09, 0.07, '#cfa452', 0.86, 1.15, 0.55, 'lit', 14).ball(0.1, 0, -0.05, 0.075, '#c09648', 0.95, 1.05, 0.5, 'lit', 12);   // the under-layer, in shadow
@@ -770,7 +783,7 @@ export function people() {
           const pts = []; for (let s = 0; s <= 4; s++) { const a = -0.35 + s * 0.45; pts.push([xo * (1 - s * 0.05), 0.18 + 0.129 * Math.cos(a), 0.025 + 0.148 * Math.sin(a)]); }
           hairLock(k, pts, 0.0055, '#f6dc94');
         }
-        k.ball(0.09, -0.03, 0.235, -0.08, '#f6d888', 1.15, 0.45, 0.8, 'lit', 12).ball(0.07, 0.05, 0.225, -0.09, '#e8c070', 1.1, 0.45, 0.7, 'lit', 10);   // a side-swept fringe
+        k.ball(0.09, -0.03, 0.235, -0.08, '#ecc87e', 1.15, 0.45, 0.8, 'lit', 12).ball(0.07, 0.05, 0.225, -0.09, '#dcb46a', 1.1, 0.45, 0.7, 'lit', 10);   // a side-swept fringe
       }
       for (const sd of [-1, 1]) k.ball(0.028, sd * 0.123, 0.13, 0.005, o.skin, 0.5, 1, 0.8, 'lit', 8);   // ears
       if (o.shades) {   // his wraparound sunglasses: dark lenses, a thin frame round to the ears
@@ -795,33 +808,32 @@ export function people() {
         k.put(new THREE.TorusGeometry(o.arm * 1.34, 0.007, 4, 14), '#d2d2cc', 0, -0.135, 0, Math.PI / 2, 0, 0, 1, 1, 1, 'lit');
       }
     }),
-    fore: P((k) => { k.ball(o.arm * 1.25, 0, 0, 0, o.long || o.short ? o.skin : o.sleeve, 1, 1, 1, 'lit', 8); k.put(new THREE.CylinderGeometry(o.arm * 0.95, o.arm * 0.72, 0.22, 10), o.skin, 0, -0.12, 0, 0, 0, 0, 1, 1, 1, 'lit'); k.ball(0.04, 0, -0.315, 0, o.skin, 0.9, 1.15, 0.68, 'lit', 10).ball(0.034, 0, -0.355, -0.012, o.skin, 0.95, 0.8, 0.75, 'lit', 8).ball(0.02, 0.034, -0.27, -0.016, o.skin, 1, 1.3, 1, 'lit', 8); }),   // a mitten hand, fingers curled a little, and a thumb
+    fore: P((k) => { k.ball(o.arm * 1.0, 0, 0, 0, o.long || o.short ? o.skin : o.sleeve, 1, 1, 1, 'lit', 8); k.put(new THREE.CylinderGeometry(o.arm * 0.9, o.arm * 0.62, 0.22, 10), o.skin, 0, -0.12, 0, 0, 0, 0, 1, 1, 1, 'lit'); k.ball(0.042, 0, -0.32, 0, o.skin, 0.95, 1.3, 0.42, 'lit', 10).ball(0.032, 0, -0.372, -0.006, o.skin, 0.9, 0.95, 0.4, 'lit', 8).ball(0.018, 0.036, -0.29, -0.01, o.skin, 0.9, 1.5, 0.8, 'lit', 8); }),   // an open hand, flat, and a thumb
     locks: o.long ? (() => {   // her locks of hair, each built round its root so it can swing back in the wind
       const zb = (x, y) => 0.025 + 0.15 * Math.sqrt(Math.max(0, 1 - (x / 0.145) ** 2 - ((y - 0.18) / 0.135) ** 2)) + 0.012;   // just outside the back of her head
-      const L = [[-0.11, 0.012], [-0.083, -0.006], [-0.055, 0.008], [-0.028, -0.01], [0, 0.01], [0.028, -0.008], [0.055, 0.01], [0.083, -0.006], [0.11, 0.008]].map(([x, j]) => [[x * 0.8, 0.27, 0.06], [x * 1.15, 0.2, zb(x * 1.15, 0.2)], [x * 1.3 + j, 0.05, zb(x * 1.15, 0.2) - 0.012], [x * 1.42 + j * 2, -0.12, zb(x * 1.15, 0.2) - 0.035], 0.033]);
-      for (const sd of [-1, 1]) L.push([[sd * 0.09, 0.26, 0.0], [sd * 0.146, 0.17, 0.02], [sd * 0.152, 0.04, 0.035], [sd * 0.14, -0.1, 0.055], 0.03]);
-      return L.map((q, i) => { const p0 = q[0]; return { at: p0, s: [1, 0.88, 1.1, 0.94, 1.06, 0.9, 1.04, 0.92, 1.08, 1, 0.95][i], geo: P((k) => hairLock(k, q.slice(0, 4).map((p) => [p[0] - p0[0], p[1] - p0[1], p[2] - p0[2]]), q[4] * [1, 0.86, 1.14, 0.92, 1.08, 0.9, 1.1, 0.95, 1, 1, 1][i], ['#f2d07c', '#cfa654', '#f8dc90', '#dcb460', '#ecc66e'][i % 5], p0[1])) }; });
+      const lock = (x, j, dz, r, fl, tp) => [[x * 0.8, 0.27, 0.06 - dz], [x * 1.15, 0.2, zb(x * 1.15, 0.2) - dz], [x * 1.25 + j, 0.04, zb(x * 1.15, 0.2) - 0.006 - dz], [x * 1.3 + j * 2, -0.29, zb(x * 1.15, 0.2) - dz], r, fl, tp];
+      const L = [lock(0, 0, 0.012, 0.034, [2.7, 0.4], 0.55)].concat([[-0.1, 0.01], [-0.05, -0.008], [0, 0.01], [0.05, -0.01], [0.1, 0.008]].map(([x, j]) => lock(x, j, 0, 0.034, [1.7, 0.45], 0.75)));
+      for (const sd of [-1, 1]) L.push([[sd * 0.08, 0.26, 0.0], [sd * 0.128, 0.17, 0.02], [sd * 0.126, 0.04, 0.035], [sd * 0.115, -0.16, 0.06], 0.03, [0.6, 1.6], 0.75]);
+      const S = [1, 1, 0.95, 1.04, 0.95, 1, 0.96, 0.96], CL = ['#a5874e', '#e2ba6e', '#d4ac62', '#dcb468', '#cfa85e', '#e0b86c', '#d4ac62', '#d4ac62'];
+      return L.map((q, i) => { const p0 = q[0]; return { at: p0, s: S[i], geo: P((k) => hairLock(k, q.slice(0, 4).map((p) => [p[0] - p0[0], p[1] - p0[1], p[2] - p0[2]]), q[4] * [1, 1, 0.95, 1.05, 0.95, 1, 1, 1][i], CL[i], p0[1], q[5], q[6])) }; });
     })() : null,
-    hair: o.long ? [0, 1, 2].map((i) => P((k) => {
-      const w = 0.11 - i * 0.016, c = ['#f0cd78', '#ecc66e', '#e6be66', '#deb45e', '#d6a852'][i];
-      k.ball(0.07, 0, 0, 0.07, c, w / 0.14, w / 0.15, 1.5, 'lit', 14);   // one smooth length of tail, overlapping the next
-    })) : null,
+    hair: null,
     scarf: null
   });
   const driver = one({ collar: true, short: true, chest: 0.165, wide: 1.25, top: '#f2f2ee', sleeve: '#f2f2ee', skin: '#e2ae86', hair: '#2a1c12', arm: 0.052, shades: true });
-  const girl = one({ chest: 0.14, wide: 1.15, top: '#1fb5c4', sleeve: '#e8b48c', skin: '#efbf98', hair: '#f0cd78', arm: 0.044, long: true, strap: true });
+  const girl = one({ chest: 0.14, wide: 1.15, top: '#1fb5c4', sleeve: '#e8b48c', skin: '#efbf98', hair: '#f0cd78', arm: 0.043, long: true, strap: true });
   const sw = P((k) => { k.put(new THREE.TorusGeometry(0.175, 0.022, 8, 24), '#151515', 0, 0, 0, 0, 0, 0, 1, 1, 1, 'trim'); k.box(0.3, 0.03, 0.02, 0, 0, 0, '#202020', 0, 0, 0, 'trim').cyl(0.045, 0.045, 0.03, 12, 0, 0, 0, '#2a2a2e', Math.PI / 2, 0, 'trim'); });
   return {
-    driver: { part: driver, seat: [0.4, 0.72, 0.42], neck: 0.68, shoulder: [0.205, 0.56, 0], elbow: 0.27, scale: 1.2 },
-    girl: { part: girl, seat: [-0.4, 0.645, 0.6], lean: 0.29, neck: 0.66, shoulder: [0.18, 0.54, 0], elbow: 0.26, hairAt: [-0.085, 0.19, 0.09], scarfAt: [-0.085, -0.03, 0.04], scale: 1.18 },
-    wheel: { geo: sw, at: [0.4, 0.98, -0.08], tilt: 0.45 }
+    driver: { part: driver, seat: [0.4, 0.53, 0.47], neck: 0.685, shoulder: [0.205, 0.56, 0], elbow: 0.27, scale: 0.98 },
+    girl: { part: girl, seat: [-0.4, 0.51, 0.6], lean: 0.22, neck: 0.68, shoulder: [0.17, 0.53, 0], elbow: 0.26, hairAt: [-0.085, 0.19, 0.09], scarfAt: [-0.085, -0.03, 0.04], scale: 0.96 },
+    wheel: { geo: sw, at: [0.4, 0.85, -0.13], tilt: 0.55 }
   };
 }
 
 export function playerCar(id) {
   if (!CARDEF[id] || id === 'roadster') {   // the red roadster: its own body, wheels and cabin (the two of you come from people())
     const S = spider();
-    return { body: S.k.build(), wheel: bigWheel(), wheels: [[-S.wx, 0.34, S.wz[0]], [S.wx, 0.34, S.wz[0]], [-S.wx, 0.34, S.wz[1]], [S.wx, 0.34, S.wz[1]]], len: S.len, width: S.w, open: true };
+    return { body: S.k.build(), wheel: bigWheel(), wheels: [[-S.wx, 0.34, S.wz[0]], [S.wx, 0.34, S.wz[0]], [-S.wxr, 0.34, S.wz[1]], [S.wxr, 0.34, S.wz[1]]], len: S.len, width: S.w, open: true };
   }
   const D = CARDEF[id], k = new Kit(), len = D.len, w = D.w, skin = ['#e0b088', '#c98d5a'];
   const st = sections(D.keys, D.wz);
