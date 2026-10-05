@@ -951,7 +951,7 @@
       }
       if (E.finishable && E.finishable(S)) { busy = true; say('Finishing it off for you…'); finSteps = 0; var mg = gen; setTimeout(function () { finish(mg); }, reduce ? 0 : 420); return; }
       persist();
-      if (G.started && E.stuck(S)) showStuck();
+      if (G.started && stuckNow()) showStuck();
     }
     var finSteps = 0;
     function finish(my) {
@@ -1020,6 +1020,9 @@
     }
     var hintM = null;   // the move the Hint is showing, while it shows
     function unhint() { clearTimeout(hintT); hintM = null; Array.prototype.forEach.call(board.querySelectorAll('.hint'), function (e) { e.classList.remove('hint', 'hdest', 'hsrc'); }); }
+    // stuck only when the game's planning Hint agrees there is no move left (Solitaire: the old quick check said 'No more
+    // moves found' on deals the planning Hint could still win - games audit, 5 Oct 2026)
+    function stuckNow() { if (!E.stuck(S)) return false; return D.hintMove ? !D.hintMove(S, null) : true; }
     function showStuck() { $('stuck').hidden = false; $('toast').classList.remove('on'); }   // (the old hint's message sat on the bar's buttons - critic 3)
     // ------------------------------------------------------------ the challenges (4 Oct 2026): Beat the clock, the 3-minute sprint
     function foundCount() { return D.foundCount ? D.foundCount(S) : 0; }
@@ -1495,7 +1498,7 @@
       G.log = Array.isArray(saved.g.log) ? saved.g.log : []; G.timeUp = !!saved.g.timeUp; G.over = !!saved.g.over;
       G.jl = typeof saved.g.jl === 'number' ? saved.g.jl : undefined; G.hinted = +saved.g.hinted || 0;
       faces(); layout(); render(true);
-      if (G.started && E.stuck(S)) showStuck();
+      if (G.started && stuckNow()) showStuck();
     } else {
       S = E.deal(1, V ? SET[V.key] : 0); G = newG('deal', '');   // a placeholder for the first layout; replaced straight away
       faces(); layout();
