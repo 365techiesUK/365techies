@@ -755,7 +755,7 @@ export function people() {
   const P = (fn) => { const k = new Kit(); fn(k); return k.build(); };
   const cap = (r, l) => new THREE.CapsuleGeometry(r, l, 4, 10);
   const one = (o) => ({
-    torso: P((k) => { k.put(cap(o.chest, 0.3), o.top, 0, 0.3, 0, 0, 0, 0, o.wide, 1, 0.72, 'lit'); if (!o.short) for (const sd of [-1, 1]) k.ball(o.arm * 1.1, sd * o.chest * o.wide * 0.9, 0.53, 0, o.sleeve, 1, 0.85, 1, 'lit', 10); else { k.put(new THREE.CapsuleGeometry(0.055, 0.3, 4, 12), o.sleeve, 0, 0.51, 0.005, 0, 0, Math.PI / 2, 0.8, 1, 1.25, 'lit'); k.put(new THREE.TorusGeometry(0.06, 0.013, 4, 16, Math.PI), '#e4e4de', 0, 0.6, 0, Math.PI / 2, 0, 0, 1, 1, 0.5, 'lit'); } if (o.collar) for (const sd of [-1, 1]) k.box(0.08, 0.012, 0.06, sd * 0.045, 0.585, -0.05, '#e4e4de', 0, -0.6, sd * 0.45, 'lit'); k.cyl(0.05, 0.055, 0.14, 8, 0, 0.6, 0, o.skin); if (o.strap) { k.ball(0.13, 0, 0.545, -0.005, o.skin, 1.22, 0.42, 0.74, 'lit', 16); for (const sd of [-1, 1]) k.put(new THREE.TorusGeometry(0.09, 0.009, 4, 12, Math.PI), o.top, sd * 0.075, 0.51, 0, 0, Math.PI / 2, 0, 1, 1, 1, 'lit'); } }),
+    torso: P((k) => { if (o.short) k.put(new THREE.LatheGeometry([[0.12, 0.02], [0.145, 0.14], [0.152, 0.3], [0.172, 0.42], [0.182, 0.49], [0.165, 0.545], [0.12, 0.585], [0.07, 0.615], [0.052, 0.64]].map((q) => new THREE.Vector2(q[0], q[1])), 22), o.top, 0, 0, 0, 0, 0, 0, 1.36, 1, 0.8, 'lit'); else k.put(cap(o.chest, 0.3), o.top, 0, 0.3, 0, 0, 0, 0, o.wide, 1, 0.72, 'lit'); if (!o.short) for (const sd of [-1, 1]) k.ball(o.arm * 1.1, sd * o.chest * o.wide * 0.9, 0.53, 0, o.sleeve, 1, 0.85, 1, 'lit', 10); else { k.put(new THREE.TorusGeometry(0.06, 0.013, 4, 16, Math.PI), '#e4e4de', 0, 0.6, 0, Math.PI / 2, 0, 0, 1, 1, 0.5, 'lit'); } if (o.collar) for (const sd of [-1, 1]) k.box(0.08, 0.012, 0.06, sd * 0.045, 0.585, -0.05, '#e4e4de', 0, -0.6, sd * 0.45, 'lit'); k.cyl(0.05, 0.055, 0.14, 8, 0, 0.6, 0, o.skin); if (o.strap) { k.ball(0.13, 0, 0.545, -0.005, o.skin, 1.22, 0.42, 0.74, 'lit', 16); for (const sd of [-1, 1]) k.put(new THREE.TorusGeometry(0.09, 0.009, 4, 12, Math.PI), o.top, sd * 0.075, 0.51, 0, 0, Math.PI / 2, 0, 1, 1, 1, 'lit'); } }),
     head: P((k) => {
       k.ball(0.122, 0, 0.13, 0, o.skin, 1, 1.15, 1.06, 'lit', 16);
       k.ball(0.021, 0, 0.112, -0.122, o.skin, 0.9, 0.95, 0.75, 'lit', 8);   // the nose   // the nose
@@ -791,16 +791,16 @@ export function people() {
       k.put(cap(o.arm, 0.2), o.short ? o.skin : o.sleeve, 0, -0.14, 0);
       if (o.short) {   // a short shirt sleeve
         k.put(new THREE.CylinderGeometry(o.arm * 1.18, o.arm * 1.34, 0.14, 12), o.sleeve, 0, -0.055, 0, 0, 0, 0, 1, 1, 1, 'lit');
-        k.ball(o.arm * 1.18, 0, 0.015, 0, o.sleeve, 1, 0.55, 1, 'lit', 12);   // its top rounded off, flush with the tube
+        // (no cap: the sleeve starts inside the torso)   // its top rounded off, flush with the tube
         k.put(new THREE.TorusGeometry(o.arm * 1.34, 0.007, 4, 14), '#d2d2cc', 0, -0.135, 0, Math.PI / 2, 0, 0, 1, 1, 1, 'lit');
       }
     }),
     fore: P((k) => { k.ball(o.arm * 1.25, 0, 0, 0, o.long || o.short ? o.skin : o.sleeve, 1, 1, 1, 'lit', 8); k.put(new THREE.CylinderGeometry(o.arm * 0.95, o.arm * 0.72, 0.22, 10), o.skin, 0, -0.12, 0, 0, 0, 0, 1, 1, 1, 'lit'); k.ball(0.04, 0, -0.315, 0, o.skin, 0.9, 1.15, 0.68, 'lit', 10).ball(0.034, 0, -0.355, -0.012, o.skin, 0.95, 0.8, 0.75, 'lit', 8).ball(0.02, 0.034, -0.27, -0.016, o.skin, 1, 1.3, 1, 'lit', 8); }),   // a mitten hand, fingers curled a little, and a thumb
     locks: o.long ? (() => {   // her locks of hair, each built round its root so it can swing back in the wind
       const zb = (x, y) => 0.025 + 0.15 * Math.sqrt(Math.max(0, 1 - (x / 0.145) ** 2 - ((y - 0.18) / 0.135) ** 2)) + 0.012;   // just outside the back of her head
-      const L = [[-0.1, 0.012], [-0.05, -0.008], [0, 0.01], [0.05, -0.01], [0.1, 0.008]].map(([x, j]) => [[x * 0.8, 0.27, 0.06], [x * 1.15, 0.2, zb(x * 1.15, 0.2)], [x * 1.3 + j, 0.05, zb(x * 1.15, 0.2) - 0.012], [x * 1.42 + j * 2, -0.12, zb(x * 1.15, 0.2) - 0.035], 0.042]);
+      const L = [[-0.11, 0.012], [-0.083, -0.006], [-0.055, 0.008], [-0.028, -0.01], [0, 0.01], [0.028, -0.008], [0.055, 0.01], [0.083, -0.006], [0.11, 0.008]].map(([x, j]) => [[x * 0.8, 0.27, 0.06], [x * 1.15, 0.2, zb(x * 1.15, 0.2)], [x * 1.3 + j, 0.05, zb(x * 1.15, 0.2) - 0.012], [x * 1.42 + j * 2, -0.12, zb(x * 1.15, 0.2) - 0.035], 0.033]);
       for (const sd of [-1, 1]) L.push([[sd * 0.09, 0.26, 0.0], [sd * 0.146, 0.17, 0.02], [sd * 0.152, 0.04, 0.035], [sd * 0.14, -0.1, 0.055], 0.03]);
-      return L.map((q, i) => { const p0 = q[0]; return { at: p0, s: [1, 0.86, 1.12, 0.94, 1.08, 0.9, 1.04][i], geo: P((k) => hairLock(k, q.slice(0, 4).map((p) => [p[0] - p0[0], p[1] - p0[1], p[2] - p0[2]]), q[4] * [1, 0.84, 1.16, 0.9, 1.1, 1, 1][i], ['#f0cd78', '#e8c26c', '#f4d488', '#e4bc64'][i % 4], p0[1])) }; });
+      return L.map((q, i) => { const p0 = q[0]; return { at: p0, s: [1, 0.88, 1.1, 0.94, 1.06, 0.9, 1.04, 0.92, 1.08, 1, 0.95][i], geo: P((k) => hairLock(k, q.slice(0, 4).map((p) => [p[0] - p0[0], p[1] - p0[1], p[2] - p0[2]]), q[4] * [1, 0.86, 1.14, 0.92, 1.08, 0.9, 1.1, 0.95, 1, 1, 1][i], ['#f2d07c', '#cfa654', '#f8dc90', '#dcb460', '#ecc66e'][i % 5], p0[1])) }; });
     })() : null,
     hair: o.long ? [0, 1, 2].map((i) => P((k) => {
       const w = 0.11 - i * 0.016, c = ['#f0cd78', '#ecc66e', '#e6be66', '#deb45e', '#d6a852'][i];

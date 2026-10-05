@@ -40,7 +40,7 @@
       sea: ['#3a8fb8', '#3584ab'], foam: '#eef9ff', road: ['#6f7177', '#6a6c72'], rumble: ['#f4f4f4', '#2f8a4a'], lane: '#f4f4f4', edge: 'fence', tint: null },
     { key: 'swanage', sky: [[0, '#2c76d2'], [0.55, '#77b9ee'], [1, '#dff0f8']], fog: '#d6eaf4', grass: ['#7fbf55', '#76b44d'], verge: ['#7fbf55', '#76b44d'], beach: ['#f6f3ea', '#ede9de'],
       sea: ['#2390c4', '#1f85b6'], foam: '#ffffff', road: ['#76767a', '#717175'], rumble: ['#f6f6f6', '#1d4ed8'], lane: '#f6f6f6', edge: 'fence', tint: null },
-    { key: 'weymouth', sky: [[0, '#3f7cc8'], [0.55, '#9cc6e4'], [0.85, '#f2e2c0'], [1, '#ffe9bf']], fog: '#f0e2c4', grass: ['#86b850', '#7cad49'], verge: ['#f0dcab', '#e8d29c'], beach: ['#f2d9a0', '#e9cf92'],
+    { key: 'weymouth', sky: [[0, '#3f7cc8'], [0.55, '#9cc6e4'], [0.85, '#dfe8ec'], [1, '#eef0ea']], fog: '#e4e9ea', grass: ['#86b850', '#7cad49'], verge: ['#f0dcab', '#e8d29c'], beach: ['#f2d9a0', '#e9cf92'],
       sea: ['#2f86b8', '#2a7bab'], foam: '#fff8e8', road: ['#77736d', '#726e68'], rumble: ['#f6f2e8', '#d23a2f'], lane: '#f6f2e8', edge: 'railing', tint: ['#ffc070', 0.1] },
     { key: 'lymington', sky: [[0, '#4a76b8'], [0.5, '#c2a6c0'], [0.8, '#f6c894'], [1, '#ffe0a8']], fog: '#f2d6b0', grass: ['#7aa64c', '#719c45'], verge: ['#8aae58', '#80a450'], beach: ['#d6c193', '#cdb788'],
       sea: ['#4a7aa6', '#44709a'], foam: '#ffeedd', road: ['#716a68', '#6c6563'], rumble: ['#f6f0e6', '#1f4e8a'], lane: '#f6f0e6', edge: 'quay', tint: ['#ffa860', 0.15] },
@@ -126,13 +126,13 @@
     var gr = c.createLinearGradient(x0 + 20, HZ - 30, x0 + 50, HZ); gr.addColorStop(0, '#e3d6bd'); gr.addColorStop(0.55, '#cdbfa5'); gr.addColorStop(1, '#a3978a');
     P(c, hd, gr);
     c.save(); clipPoly(c, hd);
-    for (var b = -8; b < 30; b++) {   // the strata, tilted steeply
-      var sx = x0 - 20 + b * 3.6; c.strokeStyle = b % 3 ? 'rgba(110,96,84,0.2)' : 'rgba(255,248,236,0.25)'; c.lineWidth = b % 3 ? 0.5 : 0.8;
-      c.beginPath(); c.moveTo(sx, HZ + 2); c.lineTo(sx + 11, HZ - 34); c.stroke();
-    }
+    var SB = [[4, 1.6, 0.22], [17, 2.6, 0.16], [27, 1.1, 0.26], [44, 2.2, 0.18], [58, 1.4, 0.24]];   // a few strata, steeply tilted, uneven in width and spacing (evenly spaced ribs read as corrugated iron)
+    for (var b = 0; b < SB.length; b++) { var sx = x0 - 12 + SB[b][0], sw = SB[b][1]; c.fillStyle = b % 2 ? 'rgba(255,246,232,' + SB[b][2] + ')' : 'rgba(96,84,74,' + SB[b][2] + ')';
+      c.beginPath(); c.moveTo(sx, HZ + 2); c.lineTo(sx + 10.5, HZ - 34); c.lineTo(sx + 10.5 + sw * 0.7, HZ - 34); c.quadraticCurveTo(sx + sw + 5, HZ - 16, sx + sw * 1.3, HZ + 2); c.closePath(); c.fill(); }
     for (var w2 = 0; w2 < 16; w2++) { var wx = x0 - 10 + ((w2 * 37) % 92), wy = HZ - 3 - ((w2 * 23) % 22); c.fillStyle = 'rgba(80,70,62,0.13)'; c.beginPath(); c.ellipse(wx, wy, 2.6 + (w2 % 3), 1.2, 0.3, 0, Math.PI * 2); c.fill(); }   // weathered patches
     P(c, [x0 + 70, HZ - 28, x0 + 79, HZ - 23, x0 + 83, HZ - 15, x0 + 85, HZ - 6, x0 + 87, HZ, x0 + 74, HZ, x0 + 76, HZ - 14], 'rgba(84,80,104,0.3)');   // the seaward face in shade
     var fg = c.createLinearGradient(0, HZ - 4, 0, HZ); fg.addColorStop(0, 'rgba(70,62,55,0)'); fg.addColorStop(1, 'rgba(62,56,50,0.7)'); c.fillStyle = fg; c.fillRect(x0 - 20, HZ - 4, 110, 4);   // the wet, darker foot
+    c.fillStyle = 'rgba(214,204,186,0.55)'; for (var sh2 = 0; sh2 < 9; sh2++) c.fillRect(x0 - 16 + sh2 * 11 + (sh2 % 3) * 2, HZ - 0.9, 5 + (sh2 % 2) * 3, 0.9);   // shingle along the foot
     c.restore();
     P(c, [x0 - 4, HZ - 6.5, x0 + 14, HZ - 11.5, x0 + 32, HZ - 16.5, x0 + 46, HZ - 22.5, x0 + 56, HZ - 27.5, x0 + 61, HZ - 29.2, x0 + 58, HZ - 27.6, x0 + 48, HZ - 23.6, x0 + 34, HZ - 17.8, x0 + 16, HZ - 12.9, x0 - 2, HZ - 8], '#6c8c44');   // turf along the top
     var ax = x0 + 72, aw = 6, ah = 15;   // the arch: off-centre, its top rounded and a little ragged

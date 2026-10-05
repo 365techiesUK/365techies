@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=15';
+import * as MD from './models3d.js?v=16';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -66,7 +66,7 @@ Object.assign(LOOK, {
   swanage: { hedge: 15, sun: [0.3, 0.75], sunCol: '#fff3e2', sunI: 2.6, hemi: ['#dcecff', '#7a9a60', 0.55], fog: [190, 1400], cliff: '#f2efe6', beach: '#f6f3ea', beachY: 0.5, cliffK: 0.3, hills: 26, rise: 100, edge: 'fence', sea: '#1f8ec2', seaOp: 0.8,
     cover: 0.38, cloud: ['#ffffff', '#a6b6cc'], grade: [1.12, 1.05, '#fffaf2'], env: 1.0, glow: 1,
     dress: [['gorse', 1, 0.25, 12, 60], ['sheep', 2, 0.15, 14, 60], ['tuft', 6, 1.95, 8.8, 28], ['oak', 1, 0.1, 20, 90], ['balloon', 4, 0.004, 150, 420]] },
-  weymouth: { sun: [-0.5, 0.45], sunCol: '#ffe2b0', sunI: 2.6, hemi: ['#c8d4f0', '#8a9070', 0.65], fog: [260, 1650], fogCol: '#eedcc0', cliff: '#d8b080', beach: '#f2d9a0', beachY: 1.0, cliffK: 0.6, hills: 10, rise: 50, edge: 'rail', sea: '#2f86b8', seaOp: 0.8,
+  weymouth: { sun: [-0.5, 0.45], sunCol: '#ffe2b0', sunI: 2.6, hemi: ['#c8d4f0', '#8a9070', 0.65], fog: [340, 2100], fogCol: '#e2e7e6', cliff: '#d8b080', beach: '#f2d9a0', beachY: 1.0, cliffK: 0.6, hills: 10, rise: 50, edge: 'rail', sea: '#2f86b8', seaOp: 0.8,
     cover: 0.3, cloud: ['#fff2dc', '#c0a898'], grade: [1.14, 1.05, '#fff4e6'], env: 1.0, glow: 1.2,
     dress: [['tuft', 6, 1.3, 8.8, 24], ['palm', 3, 0.05, 14, 30], ['balloon', 4, 0.003, 150, 420]] },
   lymington: { hedge: 14, roadK: '#d4dcec', sun: [0.6, 0.3], sunCol: '#ffd2a0', sunI: 2.5, hemi: ['#b8c0e8', '#7a8068', 0.7], fog: [240, 1600], fogCol: '#e2cdb8', cliff: '#b89a78', beach: '#d6c193', beachY: 0.4, cliffK: 0.3, hills: 8, rise: 40, edge: 'quay', sea: '#4a7aa6', seaOp: 0.82,
@@ -310,7 +310,7 @@ export function createWorld() {
       '  diffuseColor.rgb *= 0.9 + 0.12 * fn(pv / 3.1) + 0.07 * fn(pv / 0.9) - 0.06 * smoothstep(0.55, 0.85, fn(pv / 14.0));',
       '  diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(1.08, 1.02, 0.78), gn * smoothstep(0.55, 0.9, fn(pv / 17.0 + 3.1)) * 0.45);',
       '  vec3 fN = normalize(cross(dFdx(vWP), dFdy(vWP))); float steep = 1.0 - smoothstep(0.6, 0.82, abs(fN.y));',   // steep: chalk and stone, in bands
-      '  if (steep > 0.01) { vec3 rk = mix(vec3(0.66, 0.63, 0.57), vec3(0.8, 0.78, 0.71), fn(vec2((vWP.x + vWP.z) / 9.0, vWP.y * 0.9))) * (0.88 + 0.12 * sin(vWP.y * 2.7 + fn(pv / 6.0) * 2.0)); diffuseColor.rgb = mix(diffuseColor.rgb, rk, steep * 0.8); } }',
+      '  if (steep > 0.01) { vec3 rk = mix(vec3(0.66, 0.63, 0.57), vec3(0.8, 0.78, 0.71), fn(vec2((vWP.x + vWP.z) / 9.0, vWP.y * 0.9))) * (0.88 + 0.12 * sin(vWP.y * 2.7 + fn(pv / 6.0) * 2.0)); rk *= 0.82 + 0.3 * fn(vec2((vWP.x + vWP.z) / 2.2, vWP.y * 2.4)); rk *= 1.0 - 0.28 * smoothstep(0.72, 0.9, fn(vec2((vWP.x - vWP.z) / 1.3, vWP.y * 0.7))); diffuseColor.rgb = mix(diffuseColor.rgb, rk, steep * 0.8); } }',
       'if (vField > 0.005) {',
       '  vec2 pm = vWP.xz; vec3 gc = diffuseColor.rgb;',
       '  gc *= 0.86 + 0.16 * fn(pm / 2.6) + 0.1 * fn(pm / 0.8) - 0.08 * smoothstep(0.55, 0.8, fn(pm / 11.0));',
@@ -371,14 +371,14 @@ export function createWorld() {
   const traffic = new Map();
   const blobGeo = new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), blobMat = new THREE.MeshBasicMaterial({ map: radial(64, [[0, 'rgba(0,0,0,0.55)'], [0.6, 'rgba(0,0,0,0.3)'], [1, 'rgba(0,0,0,0)']]), transparent: true, depthWrite: false });
   const coinGeo = new THREE.LatheGeometry([[0, 0.045], [0.4, 0.045], [0.46, 0.085], [0.58, 0.085], [0.63, 0.03], [0.63, -0.03], [0.58, -0.085], [0.46, -0.085], [0.4, -0.045], [0, -0.045]].map((q) => new THREE.Vector2(q[0], q[1])), 28); coinGeo.rotateX(Math.PI / 2);
-  coinGeo.scale(0.6, 0.6, 0.6);   // (smaller than they were: less like a toy)
+  coinGeo.scale(0.46, 0.32, 0.46);   // (smaller than they were: less like a toy)
   const coins = new THREE.InstancedMesh(coinGeo, new THREE.MeshStandardMaterial({ color: '#ffcf3a', emissive: '#7a5000', emissiveIntensity: 0.3, metalness: 0.85, roughness: 0.2, envMapIntensity: 1.4 }), 400); coins.count = 0; coins.frustumCulled = false; scene.add(coins);   // (their bounds change every frame)
   const OWN_ENV = [CAR.paint, CAR.chrome, CAR.glass, CAR.tyre, CAR.alloy, CAR.screen, roadMat, seaMat, coins.material];   // how strongly each reflects the sky is its own
   OWN_ENV.forEach((m) => { m.userData.envBase = m.envMapIntensity; });
   const pwMat = new THREE.MeshStandardMaterial({ vertexColors: true, metalness: 0.45, roughness: 0.22, emissive: '#ffffff', emissiveIntensity: 0.32 });
   pwMat.onBeforeCompile = (sh) => { sh.fragmentShader = sh.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance *= vColor.rgb;'); };   // each part glows in its own colour
   pwMat.customProgramCacheKey = () => 'pw';
-  const pwGeo = (f) => { const k = new MD.Kit(); f(k); const m = k.build(); return m.lit; };
+  const pwGeo = (f) => { const k = new MD.Kit(); f(k); const m = k.build(); m.lit.scale(0.8, 0.8, 0.8); return m.lit; };   // (a fifth smaller than they were)
   const PWGEO = {
     nitro: pwGeo((k) => {   // a nitrous bottle: blue, a white label with a red stripe, a chrome neck and valve
       k.cyl(0.27, 0.27, 0.86, 18, 0, -0.5, 0, '#1f6ff0', 0, 0, 'lit').ball(0.27, 0, 0.36, 0, '#1f6ff0', 1, 0.6, 1, 'lit', 14);
@@ -386,7 +386,7 @@ export function createWorld() {
       k.cyl(0.08, 0.1, 0.16, 10, 0, 0.48, 0, '#d8dde2', 0, 0, 'lit').box(0.22, 0.07, 0.07, 0, 0.62, 0, '#d8dde2', 0, 0, 0, 'lit');
     }),
     magnet: pwGeo((k) => {   // a horseshoe magnet: red, with silver ends
-      k.put(new THREE.TorusGeometry(0.36, 0.12, 10, 22, Math.PI), '#e02a2a', 0, 0.05, 0, 0, 0, 0, 1, 1, 1, 'lit');
+      k.put(new THREE.TorusGeometry(0.36, 0.12, 10, 22, Math.PI), '#9e2a2b', 0, 0.05, 0, 0, 0, 0, 1, 1, 1, 'lit');
       for (const sd of [-1, 1]) k.cyl(0.12, 0.12, 0.34, 12, sd * 0.36, -0.4, 0, '#e8eef2', 0, 0, 'lit');
     }),
     shield: pwGeo((k) => {   // a gold star
@@ -395,11 +395,11 @@ export function createWorld() {
       k.put(g, '#ffcc22', 0, 0, 0, 0, 0, 0, 1, 1, 1, 'lit');
     }),
     double: pwGeo((k) => {   // a purple gem
-      k.put(new THREE.OctahedronGeometry(0.5, 0), '#b04df0', 0, 0, 0, 0, 0, 0, 0.85, 1.15, 0.85, 'lit');
-      k.put(new THREE.OctahedronGeometry(0.3, 0), '#e2b4ff', 0, 0, 0, 0, Math.PI / 4, 0, 0.9, 1.25, 0.9, 'lit');
+      k.put(new THREE.OctahedronGeometry(0.5, 0), '#c9a961', 0, 0, 0, 0, 0, 0, 0.85, 1.15, 0.85, 'lit');
+      k.put(new THREE.OctahedronGeometry(0.3, 0), '#f2e3b3', 0, 0, 0, 0, Math.PI / 4, 0, 0.9, 1.25, 0.9, 'lit');
     }),
     time: pwGeo((k) => {   // a clock: green rim, white face, two hands
-      k.put(new THREE.CylinderGeometry(0.5, 0.5, 0.16, 24), '#22c06a', 0, 0, 0, Math.PI / 2, 0, 0, 1, 1, 1, 'lit');
+      k.put(new THREE.CylinderGeometry(0.5, 0.5, 0.16, 24), '#2b3038', 0, 0, 0, Math.PI / 2, 0, 0, 1, 1, 1, 'lit');
       for (const sd of [-1, 1]) k.put(new THREE.CylinderGeometry(0.4, 0.4, 0.02, 24), '#ffffff', 0, 0, sd * 0.08, Math.PI / 2, 0, 0, 1, 1, 1, 'lit');
       for (const sd of [-1, 1]) { k.box(0.05, 0.28, 0.02, 0, 0, sd * 0.095, '#1a1a1a', 0, 0, 0, 'lit'); k.box(0.2, 0.05, 0.02, 0.1, 0, sd * 0.095, '#1a1a1a', 0, 0, 0, 'lit'); }
     })
@@ -1043,14 +1043,14 @@ export function createWorld() {
     for (let i = 0; i < n * 0.3; i++) sparks.emit(x, y + 0.6, z, fx * 6 + (Math.random() - 0.5) * 10, 3 + Math.random() * 7, fz * 6 + (Math.random() - 0.5) * 10, 0.12, 0.05, cols[i % 2], 1, 0.5 + Math.random() * 0.5, 14);   // glints of glass
     const nShard = Math.min(18, Math.round(n / 4));
     for (let i = 0; i < nShard; i++) {
-      const kind = i % 6, sz = kind < 3 ? [0.14 + Math.random() * 0.14, 0.08, 0.1 + Math.random() * 0.1] : kind < 5 ? [0.22, 0.1, 0.1] : [0.12, 0.05, 0.12], fv = v * (0.4 + Math.random() * 0.35) + 5;
-      shard(x, y + 0.6, z, fx * fv + (Math.random() - 0.5) * 11, 2.5 + Math.random() * 4.5, fz * fv + (Math.random() - 0.5) * 11, sz, kind < 3 ? '#c8101c' : kind < 5 ? '#4a4c50' : '#cfe6f4', y + 0.02);
+      const kind = i % 6, sz = kind < 3 ? [0.16 + Math.random() * 0.16, 0.05, 0.1 + Math.random() * 0.12] : kind < 5 ? [0.24, 0.05, 0.08] : [0.12, 0.03, 0.12], fv = v * (0.4 + Math.random() * 0.35) + 5;
+      shard(x, y + 0.6, z, fx * fv + (Math.random() - 0.5) * 11, 2.5 + Math.random() * 4.5, fz * fv + (Math.random() - 0.5) * 11, sz, kind < 3 ? '#a3111b' : kind < 5 ? '#26282c' : '#cfe6f4', y + 0.02);
     }
     const dust = R.W && R.W.off ? '#a49a7c' : '#c4bcb0';
     for (let i = 0; i < 12; i++) { const a = Math.random() * Math.PI * 2; smoke.emit(x, y + 0.3, z, Math.cos(a) * 9, 0.4 + Math.random(), Math.sin(a) * 9, 2.2, 7.5, dust, 0.36, 2.8); }   // a ring of dust rolling out low
     for (let i = 0; i < 22; i++) smoke.emit(x + (Math.random() - 0.5) * 3, y + 0.4, z + (Math.random() - 0.5) * 2, (Math.random() - 0.5) * 7 + fx * 3, 0.6 + Math.random() * 2, (Math.random() - 0.5) * 7 + fz * 3, 1.4, 4.6, dust, 0.28, 1.8);
   }
-  const SH_N = 48, shards = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ roughness: 0.35, metalness: 0.15 }), SH_N), SHL = [], SHM = new THREE.Matrix4(), SHQ = new THREE.Quaternion(), SHE = new THREE.Euler(), SHS = new THREE.Vector3(), SHP = new THREE.Vector3(), SHC = new THREE.Color();
+  const SH_N = 48, shards = new THREE.InstancedMesh(new THREE.OctahedronGeometry(0.72, 0), new THREE.MeshStandardMaterial({ roughness: 0.35, metalness: 0.15 }), SH_N), SHL = [], SHM = new THREE.Matrix4(), SHQ = new THREE.Quaternion(), SHE = new THREE.Euler(), SHS = new THREE.Vector3(), SHP = new THREE.Vector3(), SHC = new THREE.Color();
   shards.frustumCulled = false; shards.castShadow = true; shards.count = 0; scene.add(shards);
   for (let i = 0; i < SH_N; i++) { shards.setColorAt(i, SHC.set('#ffffff')); SHL.push({ life: 0, max: 0 }); }
   let shNext = 0;
@@ -1197,7 +1197,7 @@ export function createWorld() {
         P.needsUpdate = true; sc.geometry.computeVertexNormals(); sc.geometry.computeBoundingSphere();
       } }
     if (H.scarf) H.scarf.forEach((g, i) => { g.rotation.x = (i ? 0.04 : 1.35 - sp * 1.15) + Math.sin(t / 45 + i * 1.6) * 0.32 * sp; g.rotation.y = (i ? 0 : -0.08) + Math.sin(t / 70 + i * 1.3) * 0.42 * sp; g.rotation.z = Math.sin(t / 55 + i) * 0.4 * sp; });
-    if (H.locks) H.locks.forEach((g, i) => { g.rotation.x = -sp * ((i > 4 ? 0.9 : 0.55) + 0.12 * Math.sin(t / (70 + i * 11) + i * 1.9)) - 0.04; g.rotation.z = Math.sin(t / (90 + i * 13) + i) * 0.08 * sp; });
+    if (H.locks) H.locks.forEach((g, i) => { g.rotation.x = -sp * ((i >= H.locks.length - 2 ? 0.9 : 0.55) + 0.12 * Math.sin(t / (70 + i * 11) + i * 1.9)) - 0.04; g.rotation.z = Math.sin(t / (90 + i * 13) + i) * 0.08 * sp; });
     if (H.hair) H.hair.forEach((g, i) => { g.rotation.x = (i ? 0.13 + (1 - sp) * 0.14 : 1.3 - sp * 0.62) + Math.sin(t / 65 + i * 1.2) * 0.13 * sp; g.rotation.y = (i ? 0 : 0.14) + Math.sin(t / 100 + i * 0.9) * 0.12 * sp; });
     // him: both hands on the wheel, turning it; a fist in the air at the goal
     const D = C.drv, st = W.steer, gl = her.k === 'wave' || (her.k === 'cheer' && W.banner && W.banner.kind === 'goal');

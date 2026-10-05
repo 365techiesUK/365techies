@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=19';
+import { createWorld } from './world3d.js?v=20';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
@@ -156,7 +156,7 @@ function hud(g, W, t, mode) {
   }
   if (mode === 'play' && W.stageNo === 1 && W.count <= 0 && W.t - R.goT < 300 && R.goT >= 0 && !document.body.classList.contains('touchy')) {
     g.globalAlpha = Math.min(1, (300 - (W.t - R.goT)) / 40);
-    hudText(g, '◀ ▶  STEER     SPACE  NITRO     TAP ▼ IN A BEND  DRIFT', GW / 2, GH - 30, 6, '#ffffff', 'center');
+    hudText(g, '◀ ▶  STEER     SPACE  NITRO     TAP ▼ IN A BEND  DRIFT     R  RADIO', GW / 2, GH - 22, 6, '#ffffff', 'center');
     g.globalAlpha = 1;
   }
   banner(g, W, t);
@@ -485,7 +485,7 @@ function raceSet(o, t, rpm, thr, nitro, crash) {
   o.rpm.setTargetAtTime(rpm, t, 0.012); o.throttle.setTargetAtTime(thr, t, 0.015); o.nitro.setTargetAtTime(nitro, t, 0.05);
   o.gain.setTargetAtTime(crash ? 0.03 : ENG_GAIN * (0.7 + Math.min(1, Math.max(0, (rpm - 1000) / 6500)) * 0.45), t, 0.06);
 }
-const ENG_GAIN = 0.42;
+const ENG_GAIN = 0.62;
 // a racing car's run through the gears, rendered offline with the same engine: window.CRengineSample(seconds) -> WAV bytes
 window.CRengineSample = function (sec) {
   const SR = 44100, a = new OfflineAudioContext(1, Math.floor(SR * sec), SR), bus = a.createGain(); bus.gain.value = 2.6; bus.connect(a.destination);
@@ -535,9 +535,11 @@ const RADIO = [['place', 'Coast FM']].concat(RADIO_NEW ? [['radio_harbour', 'Har
   [['title', 'Sunny Shore'], ['bournemouth', 'Beach Groove'], ['purbeck', 'Hill Rock'], ['jurassic', 'Sunset Cruise'], ['harbour', 'Night Drive']]);
 const RAD = { set: null, shownT: -1e9, l: false, r: false };
 function tune(step) {   // the next station along (saved with the other settings)
-  const SET = RAD.set; if (!SET) return;
+  const SET = RAD.set; if (!SET || SET.sound === false) return;
   const i = Math.max(0, RADIO.findIndex((r) => r[0] === (SET.radio || 'place')));
-  SET.radio = RADIO[(i + step + RADIO.length) % RADIO.length][0]; RAD.shownT = performance.now();
+  if (SET.music === false) SET.music = true;   // switched off in Settings: tuning in turns it back on
+  else SET.radio = RADIO[(i + step + RADIO.length) % RADIO.length][0];
+  RAD.shownT = performance.now();
   try { localStorage.setItem('coast365:settings', JSON.stringify(SET)); } catch (e) {}
 }
 document.addEventListener('keydown', (e) => {
@@ -545,19 +547,19 @@ document.addEventListener('keydown', (e) => {
   const A2 = window.ARCADE365; if (A2 && A2.mode === 'play') { tune(e.shiftKey ? -1 : 1); e.preventDefault(); }
 });
 function radioPanel(g, W, t, mode) {   // on the start line (◀ ▶ tune it) and for a moment after you change station
-  const count = W.count > 0 && mode === 'play', shown = performance.now() - RAD.shownT < 2600;
-  if (!RAD.set || RAD.set.music === false || RAD.set.sound === false || (!count && !shown)) return;
-  const A2 = window.ARCADE365, inp = A2 && A2.input;
+  const count = W.count > 0 && mode === 'play', after = mode === 'play' && W.count <= 0 && R.goT >= 0 && W.t - R.goT < 180, shown = performance.now() - RAD.shownT < 2600;
+  if (!RAD.set || RAD.set.sound === false || (!count && !after && !shown)) return;
+  const A2 = window.ARCADE365, inp = A2 && A2.input, off = RAD.set.music === false;
   if (count && inp) { if (inp.left && !RAD.l) tune(-1); if (inp.right && !RAD.r) tune(1); RAD.l = !!inp.left; RAD.r = !!inp.right; }
-  const i = Math.max(0, RADIO.findIndex((r) => r[0] === (RAD.set.radio || 'place'))), w = 150, x = GW / 2 - w / 2, y = GH - 58, h = 24;
-  g.fillStyle = 'rgba(6,10,18,0.66)'; g.fillRect(x, y, w, h); g.fillStyle = '#ffc23a'; g.fillRect(x, y, w, 0.8);
-  hudText(g, 'RADIO', x + 6, y + 8.5, 5, '#c9d6e6', 'left', false);
-  hudText(g, RADIO[i][1].toUpperCase(), GW / 2, y + 12, 8, '#ffffff', 'center', false);
-  const dx = x + 14, dw = w - 28, dy = y + 18.5;   // the dial: a scale with a needle at this station
+  const i = Math.max(0, RADIO.findIndex((r) => r[0] === (RAD.set.radio || 'place'))), w = 184, x = GW / 2 - w / 2, y = GH - 66, h = 32;
+  g.fillStyle = 'rgba(6,10,18,0.72)'; g.fillRect(x, y, w, h); g.fillStyle = '#ffc23a'; g.fillRect(x, y, w, 0.9);
+  hudText(g, count ? 'PICK A STATION' : 'RADIO', x + 7, y + 8.5, 5.2, '#c9d6e6', 'left', false);
+  hudText(g, count ? '◀  ▶ TO TUNE' : 'R TO TUNE', x + w - 7, y + 8.5, 5.2, '#ffc23a', 'right', false);
+  hudText(g, off ? 'OFF - TUNE IN TO TURN IT ON' : RADIO[i][1].toUpperCase(), GW / 2, y + 19, off ? 6.5 : 10, off ? '#ff9a8a' : '#ffffff', 'center', false);
+  const dx = x + 16, dw = w - 32, dy = y + 26.5;   // the dial: a scale with a needle at this station
   g.fillStyle = 'rgba(255,255,255,0.25)'; g.fillRect(dx, dy, dw, 0.7);
   for (let k = 0; k < RADIO.length; k++) g.fillRect(dx + dw * k / (RADIO.length - 1) - 0.3, dy - 1.6, 0.6, 1.6);
   g.fillStyle = '#ff4d4d'; g.fillRect(dx + dw * i / (RADIO.length - 1) - 0.6, dy - 4, 1.2, 5.5);
-  hudText(g, count ? '◀  ▶' : 'R', x + w - 6, y + 8.5, 5, '#ffc23a', 'right', false);
 }
 function music(W, S, mode, SET) {
   RAD.set = SET;
@@ -573,7 +575,7 @@ function music(W, S, mode, SET) {
     if (mode === 'paused' && MUS.cur) want = MUS.cur.name;
   }
   vOn = SET.voice !== false;
-  MUS.gain.gain.setTargetAtTime(want ? (mode === 'paused' ? 0.12 : MUS.duck > now ? 0.26 : 0.42) : 0.0001, now, MUS.duck > now ? 0.08 : 0.35);
+  MUS.gain.gain.setTargetAtTime(want ? (mode === 'paused' ? 0.12 : MUS.duck > now ? 0.22 : mode === 'play' ? 0.32 : 0.42) : 0.0001, now, MUS.duck > now ? 0.08 : 0.35);
   if (want) loadMusic(a, want);
   if (MUS.on && W && !demo && W.fork && W.fork.next) W.fork.next.forEach((st) => loadMusic(a, ART.PAL[st] && ART.PAL[st].key));   // the next places, ready for the checkpoint
   if (MUS.on) { loadMusic(a, 'goal'); loadMusic(a, 'timeup'); }
