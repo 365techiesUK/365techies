@@ -193,7 +193,7 @@
         }
         ev.length = 0;
       }
-      hud();
+      hud(); checkBest();
       if (W.over) gameOver();
     }
     var lastHud = '';
@@ -209,6 +209,7 @@
       closeSheets();
       played = 0; runP = window.HallOfFame && D.hof !== false ? HallOfFame.run() : null;
       W = D.newWorld(SET.speed, SET);
+      bestAtStart = (ST.best[skey(W)] || {}).score || 0; bestShown = false; Cel.stop();   // NEW BEST! watches this
       mode = 'play'; acc = 0; last = 0; input.fire = false;
       showOverlay('');
       $('bPause').disabled = false; setPauseBtn();
@@ -230,6 +231,7 @@
     function gameOver() {
       mode = 'over';
       var h = D.hud(W), key = skey(W), b = ST.best[key] || (ST.best[key] = {}), badges = [], d = today();
+      var prevBest = b.score || 0;   // (for the celebration: is this a new high score?)
       ST.played++; ST.waves += Math.max(0, h.wave - 1);
       if (ST.played === 1) badges.push('Your first game!');
       if (b.score == null || h.score > b.score) { if (b.score != null && h.score > 0) badges.push('Your best score yet!'); b.score = h.score; }
@@ -242,6 +244,7 @@
       $('oWhy').textContent = D.overText ? D.overText(W) : 'Game over';
       $('oBadges').innerHTML = badges.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('');
       showOverlay('over'); lastHud = ''; hud();
+      celebrateOver(h, prevBest);
       if (runP && h.score > 0) HallOfFame.score($('oHof'), { lv: key, score: h.score, wave: h.wave, secs: Math.round(played / 60), run: runP });
       else $('oHof').hidden = true;
       setTimeout(function () { if (mode === 'over') try { $('oPlay').focus({ preventScroll: true }); } catch (e) {} }, 600);
@@ -303,6 +306,146 @@
     };
     function sfx(name, e) { if (!SET.sound) return; if (name === 'pause') { KIT.tone(440, 0.08, 0.04, { type: 'triangle' }); return; } D.sound(name, KIT, e); }
 
+    // ------------------------------------------------------------ celebrations (5 Oct 2026; owner: "yes do the arcade
+    // celebrations next"). The games show their own banners while you play; the cabinet adds what they don't: NEW BEST!
+    // the moment you pass your best score, a game-over card whose numbers count up, NEW HIGH SCORE! with pixel fireworks
+    // and a fanfare when you beat it, and sparks for a place in the Hall of Fame. Square "pixel" sparks in neon colours on
+    // a layer of their own; none of it with reduced motion.
+    var calm = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+    var NEON = ['#ff3df2', '#3dfcff', '#ffe23d', '#7dff5a', '#ff8a3d', '#ffffff'];
+    (function () {
+      var st = document.createElement('style');
+      st.textContent = ''
+        + '.arc-ban{position:fixed;z-index:4350;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;pointer-events:none;text-align:center;animation:arcIn .45s cubic-bezier(.2,1.5,.4,1) both}'
+        + '.arc-ban b{font:600 clamp(30px,6vw,66px)/1 "Clash Display",Archivo,sans-serif;letter-spacing:.04em;color:#fff;white-space:nowrap;text-shadow:0 0 6px #fff,0 0 14px #ff3df2,0 0 28px #ff3df2,0 0 48px #3dfcff;animation:arcGlow .6s ease-in-out infinite alternate}'
+        + '.arc-ban small{margin-top:7px;padding:4px 12px;border-radius:999px;background:rgba(0,0,0,.65);color:#3dfcff;font:700 13px/1.2 Archivo,sans-serif;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap}'
+        + '.arc-ban.out{animation:arcOut .45s ease-in forwards}'
+        + '.ovbox .arc-new{margin:-2px 0 10px;font:600 clamp(22px,4.4vw,34px)/1 "Clash Display",Archivo,sans-serif;letter-spacing:.05em;color:#fff;text-shadow:0 0 6px #fff,0 0 16px #ffe23d,0 0 32px #ff8a3d;animation:arcPulse .9s ease-in-out infinite alternate}'
+        + '.ovbox .arc-new[hidden]{display:none}'
+        + '.ovbox.newbest{box-shadow:0 0 0 3px #ffe23d,0 0 44px rgba(255,226,61,.45)}'
+        + '.ovbox.newbest #oBest{color:#ffe23d;text-shadow:0 0 12px rgba(255,226,61,.85)}'
+        + '.ovbox .tile b.bump{animation:arcBump .45s ease-out}'
+        + '@keyframes arcIn{0%{opacity:0;transform:translate(-50%,-50%) scale(2.2)}60%{opacity:1;transform:translate(-50%,-50%) scale(.94)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}'
+        + '@keyframes arcOut{to{opacity:0;transform:translate(-50%,-75%) scale(1.05)}}'
+        + '@keyframes arcGlow{from{filter:hue-rotate(0deg)}to{filter:hue-rotate(70deg)}}'
+        + '@keyframes arcPulse{from{transform:scale(1)}to{transform:scale(1.07)}}'
+        + '@keyframes arcBump{40%{transform:scale(1.25)}100%{transform:none}}'
+        + '@media (prefers-reduced-motion:reduce){.arc-ban,.arc-ban b,.arc-ban.out,.ovbox .arc-new,.ovbox .tile b.bump{animation:none}}';
+      document.head.appendChild(st);
+    })();
+    var Cel = (function () {
+      var c = null, x = null, P = [], R = [], run = 0, dpr = 1, fw = 0;
+      function ensure() {
+        if (!c) { c = document.createElement('canvas'); c.setAttribute('aria-hidden', 'true'); c.style.cssText = 'position:fixed;left:0;top:0;width:100%;height:100%;z-index:4300;pointer-events:none'; document.body.appendChild(c); x = c.getContext('2d'); }
+        var w = window.innerWidth, h = window.innerHeight, want = Math.min(2, window.devicePixelRatio || 1);
+        if (c.width !== Math.ceil(w * want) || c.height !== Math.ceil(h * want)) { dpr = want; c.width = Math.ceil(w * dpr); c.height = Math.ceil(h * dpr); }
+      }
+      function burst(px, py, n, cols, spd, life, o) {
+        if (calm) return; ensure(); o = o || {};
+        for (var i = 0; i < n && P.length < 1600; i++) {
+          var a = Math.random() * 6.283, v = spd * (0.3 + Math.random() * 0.9);
+          P.push({ x: px, y: py, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: life * (0.6 + Math.random() * 0.6), max: life, col: cols[i % cols.length], s: (o.size || 4) * (0.6 + Math.random() * 0.9), g: o.grav == null ? 0.07 : o.grav });
+        }
+        go();
+      }
+      function ring(px, py, r1, col, life) { if (calm) return; ensure(); R.push({ x: px, y: py, r1: r1, col: col, life: life, max: life }); go(); }
+      function go() { if (!run) run = requestAnimationFrame(frame); }
+      function frame() {
+        run = 0;
+        x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, c.width, c.height); x.globalCompositeOperation = 'lighter';
+        for (var i = P.length - 1; i >= 0; i--) {   // square pixels, like the games themselves
+          var p = P[i]; p.vx *= 0.985; p.vy = p.vy * 0.985 + p.g; p.x += p.vx; p.y += p.vy;
+          if (--p.life <= 0) { P.splice(i, 1); continue; }
+          x.globalAlpha = Math.min(1, p.life / p.max * 1.6); x.fillStyle = p.col;
+          x.fillRect(Math.round(p.x - p.s / 2), Math.round(p.y - p.s / 2), Math.ceil(p.s), Math.ceil(p.s));
+        }
+        for (i = R.length - 1; i >= 0; i--) {
+          var r = R[i], k = 1 - r.life / r.max;
+          if (--r.life <= 0) { R.splice(i, 1); continue; }
+          x.globalAlpha = (1 - k) * 0.9; x.strokeStyle = r.col; x.lineWidth = 3; x.setLineDash([6, 5]);
+          x.beginPath(); x.arc(r.x, r.y, r.r1 * (1 - Math.pow(1 - k, 3)), 0, 6.283); x.stroke(); x.setLineDash([]);
+        }
+        x.globalAlpha = 1; x.globalCompositeOperation = 'source-over';
+        if (P.length || R.length || fw) run = requestAnimationFrame(frame);
+      }
+      function fireworks(ms) {
+        if (calm) return;
+        clearInterval(fw);
+        var end = Date.now() + ms;
+        function shoot() {
+          if (Date.now() > end) { clearInterval(fw); fw = 0; return; }
+          var bx = window.innerWidth * (0.15 + Math.random() * 0.7), by = window.innerHeight * (0.1 + Math.random() * 0.35);
+          var cols = [NEON[Math.floor(Math.random() * 5)], '#ffffff', NEON[Math.floor(Math.random() * 5)]];
+          burst(bx, by, 70, cols, 4.6, 70, { grav: 0.05, size: 4 }); ring(bx, by, 70, cols[0], 26); pop();
+        }
+        shoot(); fw = setInterval(shoot, 420);
+      }
+      function stop() { clearInterval(fw); fw = 0; }
+      return { burst: burst, ring: ring, fireworks: fireworks, stop: stop };
+    })();
+    function pop() { if (!SET.sound) return; KIT.noise(0.4, 0.14, 2600, { type: 'bandpass', q: 0.8, to: 260, verb: 0.3 }); KIT.tone(70, 0.3, 0.05, { type: 'sine' }); }
+    function fanfare() {
+      if (!SET.sound) return;
+      [523, 659, 784, 1047, 1319, 1568].forEach(function (f, i) { KIT.tone(f, 0.16, 0.05, { type: 'square', when: i * 0.08, verb: 0.3 }); });
+      [1047, 1319, 1568].forEach(function (f) { KIT.tone(f, 0.75, 0.035, { type: 'triangle', when: 0.52, verb: 0.5 }); });
+    }
+    function bestChime() { if (!SET.sound) return; KIT.tone(988, 0.1, 0.05, { type: 'square' }); KIT.tone(1319, 0.24, 0.05, { type: 'square', when: 0.09, verb: 0.3 }); }
+    // a neon banner over the game (it carries on underneath); returns the game screen's box
+    function banner(text, sub, ms) {
+      var r = cv.getBoundingClientRect(), el = document.createElement('div');
+      el.className = 'arc-ban';
+      el.innerHTML = '<b>' + esc(text) + '</b>' + (sub ? '<small>' + esc(sub) + '</small>' : '');
+      el.style.left = (r.left + r.width / 2) + 'px'; el.style.top = (r.top + r.height * 0.22) + 'px';
+      document.body.appendChild(el);
+      setTimeout(function () { el.classList.add('out'); }, ms || 1800);
+      setTimeout(function () { el.remove(); }, (ms || 1800) + 500);
+      return r;
+    }
+    // NEW BEST! the moment the score passes the best at this speed (once a game; not on the very first game)
+    var bestAtStart = 0, bestShown = false;
+    function checkBest() {
+      if (bestShown || !bestAtStart || mode !== 'play') return;
+      var sc = D.hud(W).score;
+      if (sc > bestAtStart) {
+        bestShown = true;
+        var r = banner('NEW BEST!', 'past your best of ' + bestAtStart.toLocaleString('en-GB'));
+        Cel.burst(r.left + r.width / 2, r.top + r.height * 0.22, 70, NEON, 4.2, 60, { size: 4 }); bestChime();
+      }
+    }
+    // the game-over card: the numbers count up (with arcade ticks), and a new high score gets the works
+    function countUp(el, to, tick) {
+      var n = +to;
+      if (calm || !(n >= 2)) { el.textContent = to; return; }
+      to = n;
+      var t0 = 0, dur = Math.min(1500, 500 + to * 0.05), lastStep = -1;
+      function f(now) {
+        if (!t0) t0 = now;
+        var e = Math.min(1, (now - t0) / dur), v = Math.round(to * (1 - Math.pow(1 - e, 3))), stepN = Math.floor(e * 14);
+        el.textContent = v;
+        if (tick && SET.sound && stepN !== lastStep) { lastStep = stepN; KIT.tone(700 + 900 * e, 0.03, 0.02, { type: 'square' }); }
+        if (e < 1) requestAnimationFrame(f); else { el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
+      }
+      el.textContent = '0'; requestAnimationFrame(f);
+    }
+    function celebrateOver(h, prevBest) {
+      var box = $('ov_over').querySelector('.ovbox'), nb = $('oNew');
+      if (!nb) { nb = document.createElement('p'); nb.id = 'oNew'; nb.className = 'arc-new'; box.insertBefore(nb, box.querySelector('.tiles')); }
+      var isBest = h.score > 0 && prevBest > 0 && h.score > prevBest, first = !prevBest && h.score > 0;
+      nb.hidden = !isBest; nb.textContent = isBest ? 'NEW HIGH SCORE!' : '';
+      box.classList.toggle('newbest', isBest);
+      if (isBest) [].slice.call($('oBadges').children).forEach(function (li) { if (/best score yet/.test(li.textContent)) li.remove(); });   // the big line says it
+      countUp($('oScore'), h.score, true); countUp($('oWave'), h.wave, false);
+      if (isBest) setTimeout(function () {
+        if (mode !== 'over') return;
+        fanfare(); Cel.fireworks(4200);
+        var r = nb.getBoundingClientRect(); Cel.burst(r.left + r.width / 2, r.top + r.height / 2, 100, NEON, 5.6, 80, { size: 5 }); Cel.ring(r.left + r.width / 2, r.top + r.height / 2, 160, '#ffe23d', 36);
+      }, 800);
+      else if (first) setTimeout(function () {
+        if (mode !== 'over') return;
+        var r2 = $('oScore').getBoundingClientRect(); Cel.burst(r2.left + r2.width / 2, r2.top + r2.height / 2, 50, NEON, 4, 60, { size: 4 }); bestChime();
+      }, 900);
+    }
+
     // ------------------------------------------------------------ sheets
     var openSheet = null, lastFocus = null;
     function openD(id) {
@@ -352,6 +495,7 @@
     if (window.HallOfFame && D.hof !== false) {
       HallOfFame.init({ game: D.id, title: D.title, kind: 'arcade', levels: D.hofLevels || D.speeds.options.map(function (o) { return ['v' + o[0], o[1]]; }),
         level: function () { return skeyFor(SET.speed); }, sfx: function () { sfx('extra'); },
+        burst: function (bx, by, place) { Cel.burst(bx, by, place === 1 ? 110 : 60, NEON, place === 1 ? 6 : 4, 80, { size: 5 }); Cel.ring(bx, by, 130, '#ffe23d', 36); if (place === 1) { fanfare(); Cel.fireworks(2600); } },
         onOpen: function () { if (mode === 'play') pause(); }, onPlay: function () { begin(); } });
       $('tHof').onclick = $('sHof').onclick = function () { closeSheets(); HallOfFame.open({ lv: skeyFor(SET.speed) }); };
       // the title screen: today's top score at the player's speed - something to aim at
