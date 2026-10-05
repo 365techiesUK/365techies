@@ -198,7 +198,7 @@ export function createWorld() {
   glint.rotation.order = 'YXZ'; glint.renderOrder = 2; glint.visible = false; scene.add(glint);   // the moon's path across the water
   const rays = new THREE.Sprite(new THREE.SpriteMaterial({ map: raysTexture(), color: '#ffd8a0', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, opacity: 0 }));
   rays.renderOrder = -6; rays.scale.setScalar(820); scene.add(rays);   // shafts of light fanning from a low sun (behind the hills, in front of the sky)
-  const carGlow = new THREE.PointLight('#ffe2c0', 0, 6.5, 1.6); scene.add(carGlow);   // at night: the street lights' glow on the car (always there, so no shader rebuilds)   // at the front bumper, lighting the road ahead (never the car)
+  const carGlow = new THREE.PointLight('#ffe2c0', 0, 10, 1.6); scene.add(carGlow);   // at night: the street lights' glow on the car (always there, so no shader rebuilds)   // at the front bumper, lighting the road ahead (never the car)
 
   // ---------------------------------------------------------------- the sky (and the same sky, with the land below, as everything's surroundings)
   const SU = { top: { value: new THREE.Color() }, mid: { value: new THREE.Color() }, hor: { value: new THREE.Color() }, gnd: { value: new THREE.Color('#5a7040') },
@@ -635,7 +635,7 @@ export function createWorld() {
         }
       }
       if (!g.fk && !g.tun && !g.brg && i + 14 <= E.lastIndex(W) && bendStarts(W, i + 14)) {   // SLOW in the two outer lanes, 56 m before a sharp bend
-        for (const lat of [-HALF * 2 / 3, HALF * 2 / 3]) { place(W, i * SEG + SEG / 2, lat, 0, P); slows.push([P.x, P.y + 0.035, P.z, 1.35, P.th, 2.9]); }
+        for (const lat of [-HALF * 2 / 3, HALF * 2 / 3]) { place(W, i * SEG + SEG / 2, lat, 0, P); slows.push([P.x, P.y + 0.035, P.z, 1.35, P.th, 2.3]); }
       }
       if (g.spr) for (const it of g.spr) {
         if (it.done) continue;
@@ -867,7 +867,7 @@ export function createWorld() {
     const gr = GRADE_U; gr.sat.value = to(gr.sat.value, look.grade[0] * (lit(look) ? 1 : 1.07)); gr.con.value = to(gr.con.value, look.grade[1] + (lit(look) ? 0 : 0.05)); blend(gr.tint.value, look.grade[2]); gr.vib.value = to(gr.vib.value, lit(look) ? 0.1 : 0.22); { const lf = look.lift || [0, 0, 0]; gr.lift.value.set(to(gr.lift.value.x, lf[0]), to(gr.lift.value.y, lf[1]), to(gr.lift.value.z, lf[2])); } gr.curve.value = to(gr.curve.value, lit(look) ? 0.08 : 0.18);
     stars.visible = !!look.night; moon.visible = !!look.night;
     MAT.eyes.color.setScalar(look.night ? 2.6 : look.dusk ? 1.6 : R.tunK > 0.5 ? 1.2 : 0.5).multiply(EYEC);
-    headlight.intensity = lit(look) ? 220 : 0; carGlow.intensity = look.night ? 9 : look.dusk ? 4 : 0;
+    headlight.intensity = lit(look) ? 220 : 0; carGlow.intensity = look.night ? 6 : look.dusk ? 3 : 0;   // (high above: close over their heads it blew them out into a glare)
     bloom.threshold = lit(look) ? 2.2 : 1.9; bloom.strength = (lit(look) ? 0.24 : 0.26) * (look.bloomK || 1);   // only the sun's disc and the lamps glow
     renderer.toneMappingExposure = to(renderer.toneMappingExposure, look.exp || 1);
     roadMat.roughness = to(roadMat.roughness, look.night ? 0.42 : look.rays ? 0.7 : look.glow >= 1.4 ? 0.55 : 0.6);   // wetter-looking at night, a sheen under a low sun
@@ -1159,7 +1159,7 @@ export function createWorld() {
       glint.visible = !!(LK.sea && (LK.night || (LK.glow >= 1.4 && !lit(LK)))); glint.material.color.set(LK.night ? '#dfe6ff' : '#ffb070'); glint.material.opacity = LK.night ? 1 : 0.85;
       if (glint.visible) { glint.scale.set(70, 1500, 1); glint.position.set(cx + dx * 830, 0.12, cz + dz * 830); glint.rotation.set(-Math.PI / 2, Math.atan2(-dx, -dz), 0); } }
     sun.position.set(cx + sd.x * 180, cy + sd.y * 180, cz + sd.z * 180); sun.target.position.set(cx, cy, cz);
-    { const hx = Math.sin(heading), hz = -Math.cos(heading); headlight.position.set(cx + hx * 2.6, cy + 0.75, cz + hz * 2.6); carGlow.position.set(cx, cy + 2.6, cz); headlight.target.position.set(cx + hx * 34, cy, cz + hz * 34); }
+    { const hx = Math.sin(heading), hz = -Math.cos(heading); headlight.position.set(cx + hx * 2.6, cy + 0.75, cz + hz * 2.6); carGlow.position.set(cx, cy + 5.5, cz); headlight.target.position.set(cx + hx * 34, cy, cz + hz * 34); }
 
     // ---- traffic
     const seen = new Set();
@@ -1351,7 +1351,7 @@ function raysTexture() {   // soft shafts radiating from the middle, fading out
 function slowTexture() {   // SLOW, as painted on the road: tall letters (they're read from a low angle, far off)
   const W = 256, H = 512, c = canvas(W, H), x = c.getContext('2d');
   x.fillStyle = 'rgba(246,246,240,0.92)'; x.font = '900 150px Arial, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle';
-  x.save(); x.translate(W / 2, H / 2); x.scale(0.62, 3.1); x.fillText('SLOW', 0, 2); x.restore();
+  x.save(); x.translate(W / 2, H / 2); x.scale(0.62, 2.4); x.fillText('SLOW', 0, 2); x.restore();
   x.globalCompositeOperation = 'destination-out'; const r = E.rnd(61);
   for (let i = 0; i < 900; i++) { x.globalAlpha = 0.15 + r() * 0.4; x.fillRect(r() * W, r() * H, 1 + r() * 3, 1 + r() * 2); }   // worn paint
   x.globalAlpha = 1; x.globalCompositeOperation = 'source-over';
