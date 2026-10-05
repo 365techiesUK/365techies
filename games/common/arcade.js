@@ -312,7 +312,7 @@
     // the moment you pass your best score, a game-over card whose numbers count up, NEW HIGH SCORE! with pixel fireworks
     // and a fanfare when you beat it, and sparks for a place in the Hall of Fame. Square "pixel" sparks in neon colours on
     // a layer of their own; none of it with reduced motion.
-    var calm = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+    var calm = window.A11y365 ? A11y365.reduce() : !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);   // (the site's own Reduce motion too - a11y365.js)
     var NEON = ['#ff3df2', '#3dfcff', '#ffe23d', '#7dff5a', '#ff8a3d', '#ffffff'];
     (function () {
       var st = document.createElement('style');
@@ -334,6 +334,11 @@
         + '.brandb{display:flex;align-items:center;gap:9px;padding:0 4px 0 0;border:0;background:none;color:inherit;font:inherit;letter-spacing:inherit;cursor:pointer;border-radius:10px}'
         + '.brandb .caret{font-style:normal;font-size:12px;opacity:.75}'
         + '.tb .sl{display:none}.tb.tbmore{display:none}'
+        // every width gets words (games audit pass 3; critic 2: an iPad or a zoomed browser got nine bare icons): the less-used
+        // buttons go under More as room runs out - Share, Feedback, Full screen first, then My scores and Settings
+        + '@media (max-width:1400px){.tb.tb2.tbx{display:none}.tb.tbmore{display:inline-flex}}'
+        + '@media (max-width:1100px){.tb.tb3.tbx{display:none}.tb.tb3 .lbl{display:inline!important}.tb.tb3,.tb.tbmore{padding:0 14px}}'
+        + '@media (max-width:860px){.tb.tb3 .lbl,.tb .lbl{display:none!important}.tb .sl{display:inline;font:700 15px/1 Archivo,sans-serif}.tb,.tb.tb2,.tb.tb3{padding:0 12px!important}}'
         + '.sheet{position:relative}.sheet>h2{padding-right:48px}'
         + '.x365{position:absolute;top:12px;right:12px;width:44px;height:44px;border:0;border-radius:50%;background:rgba(127,127,127,.16);color:inherit;font:400 28px/1 Archivo,sans-serif;cursor:pointer;display:grid;place-items:center}'
         + '.x365:hover{background:rgba(127,127,127,.3)}'
@@ -347,6 +352,8 @@
         // instructions fell below the box): Play the bigger of the two, side by side; the points list in two columns on a phone
         + '.ovbox .trow{flex-wrap:nowrap}.ovbox .trow #tPlay{flex:3 1 0;padding:0 12px}.ovbox .trow #tHof{flex:2 1 0;padding:0 10px;font-size:16px;white-space:nowrap}'
         + '@media (max-width:520px){.legend{grid-template-columns:auto auto;column-gap:18px}.ovbox p{margin:5px 0}.ovbox .trow #tPlay{flex:1 1 58%}.ovbox .trow #tHof{flex:0 1 auto;font-size:14px;padding:0 9px}}'
+        + '@media (max-height:520px){.bar{padding-top:4px!important;padding-bottom:4px!important;gap:4px 10px}.tb,.tb.tb2,.tb.tb3{min-height:40px!important}.brand b{width:30px;height:30px}}'
+        + '@media (max-height:520px){.legend{display:none}.ovbox h1{font-size:24px;margin-bottom:4px}.ovbox .btn.big{min-height:50px}}'   // (a short screen: Play in view without scrolling the box)
         + '@media (prefers-reduced-motion:reduce){.arc-ban,.arc-ban b,.arc-ban.out,.ovbox .arc-new,.ovbox .tile b.bump{animation:none}}';
       document.head.appendChild(st);
     })();
@@ -519,9 +526,11 @@
     $('bStats').onclick = openStats;
     $('bSet').onclick = function () { sync(); openD('dSet'); };
     $('bHelp').onclick = function () { openD('dHelp'); };
+    // the site's Text size / High contrast / Reduce motion, in Settings too (a11y365.js; games audit, 5 Oct 2026)
+    if (window.A11y365) { A11y365.mount($('dSet').querySelector('.sheet')); A11y365.onReduce = function (on) { calm = on || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); }; }
     // More (phones): the bar's tucked-away buttons, as big buttons with words (games audit, 5 Oct 2026)
     $('bMore').onclick = function () {
-      $('moreL').innerHTML = ['bStats', 'bSet', 'bShare', 'bFeed', 'bFull'].filter(function (id) { return $(id) && !$(id).hidden; }).map(function (id) {
+      $('moreL').innerHTML = ['bStats', 'bSet', 'bShare', 'bFeed', 'bFull'].filter(function (id) { return $(id) && !$(id).hidden && !$(id).getClientRects().length; }).map(function (id) {
         var b = $(id); return '<button class="btn wide morei" type="button" data-for="' + id + '">' + b.querySelector('svg').outerHTML + '<span>' + esc(b.querySelector('.lbl').textContent) + '</span></button>';
       }).join('');
       openD('dMore');

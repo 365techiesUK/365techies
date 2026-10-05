@@ -176,7 +176,7 @@ def _cards():
 _QUICK = """      <div class="gh-quick" id="ghQuick">
         <a class="gh-qb gh-qb--go" id="ghQ1" href="/games/solitaire/"><span aria-hidden="true">&#9654;</span> Solitaire</a>
         <a class="gh-qb gh-qb--go" href="/games/hearts/"><span aria-hidden="true">&#9654;</span> Hearts</a>
-        <a class="gh-qb" href="#gh-card-games">All the games <span aria-hidden="true">&darr;</span></a>
+        <a class="gh-qb" href="#gh-card-games">All games <span aria-hidden="true">&darr;</span></a>
       </div>"""
 
 # the "you" card: filled in by hub.js from this browser's own saves; a first-time visitor sees the welcome
@@ -201,7 +201,8 @@ _CSS = """      <style>
         .gh-qb:hover{background:rgba(255,255,255,.13)}
         .gh-qb--go{background:linear-gradient(135deg,#2aa8f2,#1859b8);border-color:transparent;color:#fff;box-shadow:0 6px 18px rgba(24,89,184,.35)}
         .gh-qb--go:hover{background:linear-gradient(135deg,#3db4f5,#1d66c9)}
-        @media (max-width:560px){.gh-quick{gap:.45rem}.gh-qb{flex:1 1 0;padding:.5rem .4rem;font-size:1rem;min-width:0;white-space:nowrap}}
+        /* (a phone: room on the right for the floating Text size button, which sat on the third button - critic 2) */
+        @media (max-width:560px){.gh-quick{gap:.4rem;padding-right:56px}.gh-qb{flex:1 1 0;padding:.5rem .3rem;font-size:.95rem;min-width:0;white-space:nowrap}}
         /* the "you" card */
         .gh-me{display:flex;flex-wrap:wrap;align-items:center;gap:.9rem 1.2rem;padding:1rem 1.2rem;border-radius:var(--r-lg);
           background:linear-gradient(120deg,rgba(29,151,227,.18),rgba(12,20,44,.75) 60%);border:1px solid rgba(108,196,245,.28)}

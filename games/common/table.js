@@ -289,7 +289,7 @@
   // numbers that count up on a win card (the last one bumps)
   function countUp(el, to, done) {
     if (!el) return;
-    var reduceM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches, txt = String(to), m = /\d[\d,]*/.exec(txt);
+    var reduceM = (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) || !!(window.A11y365 && A11y365.reduce()), txt = String(to), m = /\d[\d,]*/.exec(txt);
     if (!m || reduceM) { el.textContent = txt; return; }
     var n = +m[0].replace(/,/g, ''), pre = txt.slice(0, m.index), post = txt.slice(m.index + m[0].length), t0 = 0, dur = Math.min(1200, 500 + n * 2);
     if (n < 2) { el.textContent = txt; return; }
@@ -366,13 +366,25 @@
     + '.su2{display:none;position:absolute;z-index:2;left:6%;top:calc(2.5% + var(--cw) * .33);font:calc(var(--cw) * .18) / 1 "Segoe UI Symbol","Apple Symbols",Archivo,sans-serif;text-shadow:0 1px 0 #fff,0 0 3px #fff,0 0 2px #fff}.rv365 .su2{display:block}.rv365 .pips{left:25%;right:25%;top:36%}'
     + '.rv365 .card.lift{z-index:2900!important}.rv365 .card.lift .wig{transform:translateY(calc(var(--ch) * -.2))!important}.rv365 .card.lift .front{box-shadow:0 0 0 3px #ffd54a,0 12px 22px rgba(0,0,0,.4)}'
     + '.card.hint.hdest .front,.slot.hint.hdest{box-shadow:0 0 0 3px rgba(255,213,74,.5),0 0 14px 3px rgba(255,210,87,.35)!important;outline:3px dashed #ffd54a;outline-offset:3px}'
-    + '.rv365 .rv-plate small{font-size:13.5px}@media (max-width:700px){.rv365 .rv-plate small{font-size:12.5px}}'   // (the seat labels a touch bigger, games audit 5 Oct)
+    + '.rv365 .rv-plate small{font-size:14px}@media (max-width:700px){.rv365 .rv-plate small{font-size:13px}}'   // (the seat labels a touch bigger, games audit 5 Oct)
+    + '.skip365{position:fixed;left:10px;top:-80px;z-index:5000;padding:12px 18px;border-radius:12px;background:#ffd54a;color:#2a2000;font:700 17px/1 Archivo,sans-serif;text-decoration:none}.skip365:focus{top:10px}'
+    // narrow cards: only the corner is read in a column, so it gets the room - rank 42% of the card, a big suit in the
+    // middle in place of the pips (critic 2: Spider's ranks were 10.6 px on a phone)
+    + '#board.tiny .idx{font-size:calc(var(--cw) * .42);letter-spacing:-.06em}#board.tiny .idx.ten{font-size:calc(var(--cw) * .36)}#board.tiny .sui{font-size:calc(var(--cw) * .34)}'
+    + '#board.tiny .pips{display:none}#board.tiny .su2{display:block!important;left:50%;top:58%;transform:translate(-50%,-50%);font-size:calc(var(--cw) * .62);text-shadow:none}'
+    + '#board.tiny .r1 .su2,#board.tiny .r11 .su2,#board.tiny .r12 .su2,#board.tiny .r13 .su2{display:none!important}'
+    + '@media (max-height:520px){.bar{padding-top:4px!important;padding-bottom:4px!important;gap:4px 10px}.tb,.tb.tb2,.tb.tb3{min-height:40px!important}.brand b{width:30px;height:30px}}'   // (a short screen: a slimmer bar leaves the cards more room)
     + '.sr365{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}'
     // the bar (games audit, 5 Oct 2026; critic: on a phone nine bare icons meant nothing to a first-timer): the game's
     // name shows and opens the Games list; on a phone the main buttons carry a word and the rest live under More
     + '.brandb{display:flex;align-items:center;gap:9px;padding:0 4px 0 0;border:0;background:none;color:inherit;font:inherit;letter-spacing:inherit;cursor:pointer;border-radius:10px}'
     + '.brandb .caret{font-style:normal;font-size:12px;opacity:.75}'
     + '.tb .sl{display:none}.tb.tbmore{display:none}'
+    // every width gets words (games audit pass 3; critic 2: an iPad or a zoomed browser got nine bare icons): the less-used
+    // buttons go under More as room runs out - Share, Feedback, Full screen first, then My scores and Settings
+    + '@media (max-width:1400px){.tb.tb2.tbx{display:none}.tb.tbmore{display:inline-flex}}'
+    + '@media (max-width:1100px){.tb.tb3.tbx{display:none}.tb.tb3 .lbl{display:inline!important}.tb.tb3,.tb.tbmore{padding:0 14px}}'
+    + '@media (max-width:860px){.tb.tb3 .lbl,.tb .lbl{display:none!important}.tb .sl{display:inline;font:700 15px/1 Archivo,sans-serif}.tb,.tb.tb2,.tb.tb3{padding:0 12px!important}}'
     + '.sheet{position:relative}.sheet>h2{padding-right:48px}'
     + '.x365{position:absolute;top:12px;right:12px;width:44px;height:44px;border:0;border-radius:50%;background:rgba(127,127,127,.16);color:inherit;font:400 28px/1 Archivo,sans-serif;cursor:pointer;display:grid;place-items:center}'
     + '.x365:hover{background:rgba(127,127,127,.3)}'
@@ -445,7 +457,7 @@
   function start(D) {
     var E = D.E;
     var $ = function (id) { return document.getElementById(id); };
-    var reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+    var reduce = window.A11y365 ? A11y365.reduce() : !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);   // (the site's own Reduce motion too - a11y365.js)
     var V = D.variant || null;   // e.g. Solitaire's one or three cards, Spider's suits
     // what the sprint counts, in this game's words (Spider counts cards in suit order, not cards up to the piles)
     var SPW = D.sprintWords || { pill: 'cards up', sub: 'up to the piles', line: 'As many cards up as you can', board: 'the most cards up to the piles in three minutes' };
@@ -505,6 +517,7 @@
     function layout() {
       L = D.layout(board.clientWidth, board.clientHeight, S);
       document.documentElement.style.setProperty('--cw', L.cw + 'px');
+      board.classList.toggle('tiny', L.cw < 52);   // narrow cards (Spider on a phone): a bigger corner, one big suit (games audit, 5 Oct 2026)
       document.documentElement.style.setProperty('--ch', L.ch + 'px');
       var seen = {};
       (L.slots || []).forEach(function (s) {
@@ -1276,7 +1289,8 @@
     function closeSheets() {
       if (!openSheet) return;
       openSheet.hidden = true; openSheet = null;
-      if (lastFocus && lastFocus.focus && document.body.contains(lastFocus)) { try { lastFocus.focus(); } catch (e) {} }
+      if (lastFocus && lastFocus.focus && lastFocus !== document.body && document.body.contains(lastFocus)) { try { lastFocus.focus(); } catch (e) {} }
+      else { try { board.focus({ preventScroll: true }); } catch (e) {} }   // (a sheet that opened by itself: back to the cards)
     }
     document.addEventListener('click', function (e) {
       var t = e.target;
@@ -1352,9 +1366,12 @@
     $('bStats').onclick = openStats;
     $('bSet').onclick = function () { syncControls(); openD('dSet'); };
     $('bHelp').onclick = function () { openD('dHelp'); };
+    // the site's Text size / High contrast / Reduce motion, in Settings too (a11y365.js; games audit, 5 Oct 2026)
+    if (window.A11y365) { A11y365.mount($('dSet').querySelector('.sheet')); A11y365.onReduce = function (on) { reduce = on || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); }; }
+    $('skip365').onclick = function (e) { e.preventDefault(); board.focus(); };   // the first Tab stop (games audit, 5 Oct 2026)
     // More (phones): the bar's tucked-away buttons, as big buttons with words (games audit, 5 Oct 2026)
     $('bMore').onclick = function () {
-      $('moreL').innerHTML = ['bStats', 'bSet', 'bShare', 'bFeed', 'bFull'].filter(function (id) { return $(id) && !$(id).hidden; }).map(function (id) {
+      $('moreL').innerHTML = ['bStats', 'bSet', 'bShare', 'bFeed', 'bFull'].filter(function (id) { return $(id) && !$(id).hidden && !$(id).getClientRects().length; }).map(function (id) {
         var b = $(id); return '<button class="btn wide morei" type="button" data-for="' + id + '">' + b.querySelector('svg').outerHTML + '<span>' + esc(b.querySelector('.lbl').textContent) + '</span></button>';
       }).join('');
       openD('dMore');
@@ -1496,7 +1513,7 @@
       }).join('') : '';
       var tb = function (id, icon, label, title, cls) { return '<button class="tb' + (cls ? ' ' + cls : '') + '" id="' + id + '" type="button" title="' + esc(title) + '">' + ICON[icon] + '<span class="lbl"' + (id === 'bFull' ? ' id="bFullL"' : '') + '>' + esc(label) + '</span>'
         + ({ bNew: 'New', bGames: 'Games', bUndo: 'Undo', bHint: 'Hint', bHelp: 'Help', bPause: 'Pause', bMore: 'More' }[id] ? '<span class="sl" aria-hidden="true">' + { bNew: 'New', bGames: 'Games', bUndo: 'Undo', bHint: 'Hint', bHelp: 'Help', bPause: 'Pause', bMore: 'More' }[id] + '</span>' : '') + '</button>'; };
-      var html = '<div id="app"><header class="bar"><h1 class="brand"><button class="brandb" type="button" id="bBrand" title="All our games"><b>365</b> <span>' + esc(D.title) + '</span><i class="caret" aria-hidden="true">&#9662;</i></button></h1>'
+      var html = '<a class="skip365" href="#board" id="skip365">Skip to the cards</a><div id="app"><header class="bar"><h1 class="brand"><button class="brandb" type="button" id="bBrand" title="All our games"><b>365</b> <span>' + esc(D.title) + '</span><i class="caret" aria-hidden="true">&#9662;</i></button></h1>'
         + '<div class="info" aria-live="off"><div class="chip" id="chipTime"><small>Time</small><span id="vTime">0:00</span></div><div class="chip"><small>Moves</small><span id="vMoves">0</span></div><div class="chip"><small>Score</small><span id="vScore">0</span></div></div>'
         + '<nav class="tools" aria-label="Game">' + tb('bNew', 'new', 'New game', 'New game (N)', 'main') + tb('bGames', 'games', 'Games', 'Switch to another of our games', 'tb3') + tb('bUndo', 'undo', 'Undo', 'Undo (U or Ctrl+Z)') + tb('bHint', 'hint', 'Hint', 'Show me a move (H)')
         + tb('bStats', 'stats', 'My scores', 'My scores', 'tb3 tbx') + tb('bSet', 'set', 'Settings', 'Settings', 'tb3 tbx') + tb('bHelp', 'help', 'How to play', 'How to play')
@@ -1582,13 +1599,13 @@
       if (o.busy()) return;
       var list = refresh(false);
       if (!list.length) { tell('No cards to play just now'); return; }
-      if (e.key === 'Enter') { o.play(cur); after(function () { if (!refresh(false).length) setTimeout(function () { refresh(false); }, 500); }); return; }
+      if (e.key === 'Enter') { o.play(cur); after(function () { if (!refresh(true).length) setTimeout(function () { refresh(true); }, 500); }); return; }   // (says the card again: 'chosen')
       var best = null, bs = 1e9;   // the nearest card that way, keeping to the same row or column where it can
       list.forEach(function (it) {
         if (it.c === cur.c) return;
         var ax = it.x - cur.x, ay = it.y - cur.y, along = dir[0] ? ax * dir[0] : ay * dir[1], across = dir[0] ? Math.abs(ay) : Math.abs(ax);
         if (along <= 2) return;
-        var sc = along + across * 2.5; if (sc < bs) { bs = sc; best = it; }
+        var sc = along + across * (dir[1] ? 6 : 2.5); if (sc < bs) { bs = sc; best = it; }   // (up and down keep to the column where they can)
       });
       if (best) { ring(best); tell(best.name); } else tell(cur.name);
     });

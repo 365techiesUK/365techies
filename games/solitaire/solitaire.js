@@ -99,6 +99,10 @@
       return 'A ' + colour(c) + ' ' + WORD[r] + ' goes on a ' + (E.red(c) ? 'black' : 'red') + ' ' + WORD[r + 1];
     }
     if (r === 13 && !empty) return king;   // a tap with nowhere to go
+    // only send them to the deck when the deck really is the move (games audit, 5 Oct 2026; critic: it said 'try the deck'
+    // with three moves on the table)
+    var m = E.hint && E.hint(S);
+    if (m && m.t !== 'draw') return 'That card can’t move yet – but another one can';
     return 'No move for that card yet - try turning over a card from the deck';
   }
   function cantPick(S, c) {

@@ -27,7 +27,7 @@
 
   function start(D) {
     var E = D.E, $ = function (id) { return document.getElementById(id); };
-    var reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+    var reduce = window.A11y365 ? A11y365.reduce() : !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);   // (the site's own Reduce motion too - a11y365.js)
     var LVS = D.levels;
 
     // ------------------------------------------------------------ what this browser remembers (per game)
@@ -111,12 +111,16 @@
         e.style.display = ''; seen[q.key] = 1;
       });
       for (var k in plateEl) if (!seen[k]) plateEl[k].style.display = 'none';
+      if (S.phase !== sayPh) { if (sayPh != null && Date.now() - sayAt > 700) sayClear(); sayPh = S.phase; }   // a new stage: last stage's messages go
       var ph = D.panel(S, U) || '';
       panelEl.hidden = !ph;
       if (ph) {
-        if (panelEl._h !== ph) { panelEl.innerHTML = ph; panelEl._h = ph; if (Date.now() - sayAt > 700) { $('toast').classList.remove('on'); } }   // a stale message goes with the old panel
+        if (panelEl._h !== ph) { panelEl.innerHTML = ph; panelEl._h = ph; }
         var pa = D.panelAt ? D.panelAt(S, L) : L.panel;   // a game may move the panel (Gin: over the deck once a hand is shown)
         panelEl.style.left = Math.round(pa.x) + 'px'; panelEl.style.top = Math.round(pa.y) + 'px'; panelEl.style.width = Math.round(pa.w) + 'px';
+        // never over your own hand (a short screen - a phone on its side, a browser zoomed to 200%): slide up above it
+        // (games audit, 5 Oct 2026; critic: at 200% the crib panel hid half of the cards you were choosing from)
+        if (L.handY != null) { var pH = panelEl.offsetHeight; if (Math.round(pa.y) + pH > L.handY - 6) panelEl.style.top = Math.max(4, Math.round(L.handY - 6 - pH)) + 'px'; }
         if (jLevel()) { var nb = panelEl.querySelector('[data-act="next"]'); if (nb && nb.getAttribute('data-j') !== '1') { nb.setAttribute('data-j', '1'); nb.textContent = 'See your stars \u2605'; } }
       }
       if (instant) { void board.offsetWidth; board.classList.remove('instant'); }
@@ -201,9 +205,12 @@
       var b = e.target.closest ? e.target.closest('[data-act]') : null; if (!b || b.disabled) return;
       unhint();
       handle(D.press(S, b.getAttribute('data-act'), U), b);
+      // the button usually goes with its stage: keep a keyboard player's place on the cards (games audit, 5 Oct 2026)
+      [0, 400, 1000, 2000, 3500].forEach(function (t) { setTimeout(function () { var a = document.activeElement; if (!openSheet && (!a || a === document.body || !document.body.contains(a))) { try { board.focus({ preventScroll: true }); } catch (er) {} } }, t); });   // (the button goes once the cards have moved)
     });
     function handle(r, el) {
       if (!r) return;
+      if (sayHint && (r.m || r.ui)) sayClear();   // the player acted: the Hint's message has done its job
       if (r.say) { if (el && el.classList.contains('card')) nope(el); sfx('nope'); say(r.say); }
       if (r.ui) { sfx(r.sfx || 'lift'); render(); persist(); }
       if (r.m) { if (busy) { say('One moment – the others are still playing'); return; } act(r.m, true); }
@@ -261,7 +268,7 @@
       var m = E.hint(S); if (!m) { say('Nothing to do just now – wait for your turn'); return; }
       var lit = D.hintShow(S, m, U) || {};
       (lit.cards || []).forEach(function (c) { if (cardEl[c]) { cardEl[c]._hint = true; cardEl[c].classList.add('hint'); } });
-      if (lit.say) say(lit.say);
+      if (lit.say) say(lit.say, true);
       hintT = setTimeout(unhint, 3200);
     }
     function unhint() { clearTimeout(hintT); cardEl.forEach(function (el) { if (el._hint) { el._hint = false; el.classList.remove('hint'); } }); }
@@ -383,6 +390,9 @@
       el.innerHTML = '<b>' + esc(text) + '</b>' + (o.sub ? '<small>' + esc(o.sub) + '</small>' : '');
       el.style.left = cx + 'px'; el.style.top = cy + 'px';
       document.body.appendChild(el);
+      // the panel often appears just after the stamp (the end of a hand): check again once it's drawn (critic 2: Gin's
+      // 'Sam scores 5' sat on the result panel)
+      requestAnimationFrame(function () { var p2 = !panelEl.hidden && panelEl.getBoundingClientRect(), er = el.getBoundingClientRect(); if (p2 && p2.height && er.bottom > p2.top - 6 && er.top < p2.bottom) el.style.top = Math.max(r.top + er.height / 2 + 6, p2.top - er.height / 2 - 12) + 'px'; });
       if (SET.fx && !reduce && !o.small) {
         var cols = o.tone === 'dark' ? ['#c9d2ff', '#ffffff', '#8a96c9'] : o.tone === 'red' ? ['#ff6b7a', '#ffd257', '#ffffff'] : o.tone === 'blue' ? ['#8ff0ff', '#ffffff', '#5cc2ff'] : ['#ffe08a', '#ffffff', '#ffb347', '#ff8ad8'];
         Spark.burst(cx, cy, o.big ? 90 : 40, cols, o.big ? 6.2 : 3.8, o.big ? 90 : 60, { grav: 0.05, size: 6 }); Spark.ring(cx, cy, o.big ? 200 : 130, cols[0], 34);
@@ -555,7 +565,8 @@
     function closeSheets() {
       if (!openSheet) return;
       openSheet.hidden = true; openSheet = null;
-      if (lastFocus && lastFocus.focus && document.body.contains(lastFocus)) { try { lastFocus.focus(); } catch (e) {} }
+      if (lastFocus && lastFocus.focus && lastFocus !== document.body && document.body.contains(lastFocus)) { try { lastFocus.focus(); } catch (e) {} }
+      else { try { board.focus({ preventScroll: true }); } catch (e) {} }   // (a sheet that opened by itself: back to the cards)
     }
     document.addEventListener('click', function (e) {
       var t = e.target;
@@ -617,9 +628,12 @@
     $('bStats').onclick = openStats;
     $('bSet').onclick = function () { syncControls(); openD('dSet'); };
     $('bHelp').onclick = function () { openD('dHelp'); };
+    // the site's Text size / High contrast / Reduce motion, in Settings too (a11y365.js; games audit, 5 Oct 2026)
+    if (window.A11y365) { A11y365.mount($('dSet').querySelector('.sheet')); A11y365.onReduce = function (on) { reduce = on || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); }; }
+    $('skip365').onclick = function (e) { e.preventDefault(); board.focus(); };   // the first Tab stop (games audit, 5 Oct 2026)
     // More (phones): the bar's tucked-away buttons, as big buttons with words (games audit, 5 Oct 2026)
     $('bMore').onclick = function () {
-      $('moreL').innerHTML = ['bStats', 'bSet', 'bShare', 'bFeed', 'bFull'].filter(function (id) { return $(id) && !$(id).hidden; }).map(function (id) {
+      $('moreL').innerHTML = ['bStats', 'bSet', 'bShare', 'bFeed', 'bFull'].filter(function (id) { return $(id) && !$(id).hidden && !$(id).getClientRects().length; }).map(function (id) {
         var b = $(id); return '<button class="btn wide morei" type="button" data-for="' + id + '">' + b.querySelector('svg').outerHTML + '<span>' + esc(b.querySelector('.lbl').textContent) + '</span></button>';
       }).join('');
       openD('dMore');
@@ -675,13 +689,26 @@
 
     // ------------------------------------------------------------ little messages, the clock, saving
     var sayT = 0;
-    var sayAt = 0;
-    function say(t) {
-      var el = $('toast'); if (!t) return;
-      el.textContent = t; el.classList.add('on'); clearTimeout(sayT); sayAt = Date.now();
-      // never over the panel (its buttons and the count): just above it instead (games audit, 5 Oct 2026)
+    // messages (games audit, 5 Oct 2026; critic: scoring messages were gone in 1.2 s even on Slow): each stays at least
+    // 1.7 s and about a quarter of a second a word (half as long again on Slow); a new one waits for that minimum
+    // instead of wiping the last; a Hint's message goes as soon as the player acts
+    var sayAt = 0, sayQ = [], sayOn = false, sayHint = false, sayPh = null;
+    function spdF() { return SET.speed === 1 ? 1.5 : SET.speed === 3 ? 0.8 : 1; }
+    function sayShow(t) {
+      var el = $('toast');
+      el.textContent = t; el.classList.add('on'); sayAt = Date.now(); sayOn = true;
+      // never over the panel (its buttons and the count): just above it instead
       var pr = !panelEl.hidden && panelEl.getBoundingClientRect(); el.style.bottom = pr && pr.height && pr.top < innerHeight - 177 ? Math.round(innerHeight - pr.top + 10) + 'px' : '';
-      sayT = setTimeout(function () { el.classList.remove('on'); }, Math.min(7000, 1800 + t.length * 55));
+      clearTimeout(sayT); sayT = setTimeout(sayNext, Math.min(9000, 1700 + t.split(/\s+/).length * 260) * spdF());
+    }
+    function sayNext() { if (sayQ.length) sayShow(sayQ.shift()); else sayClear(); }
+    function sayClear() { clearTimeout(sayT); sayQ = []; sayOn = false; sayHint = false; $('toast').classList.remove('on'); }
+    function say(t, isHint) {
+      if (!t) return;
+      if (!sayOn || sayHint) { sayQ = []; sayHint = !!isHint; sayShow(t); return; }
+      if (sayQ[sayQ.length - 1] === t || (!sayQ.length && $('toast').textContent === t)) return;
+      sayQ.push(t); if (sayQ.length > 2) sayQ.shift();
+      clearTimeout(sayT); sayT = setTimeout(sayNext, Math.max(0, 1700 * spdF() - (Date.now() - sayAt)));
     }
     function persist() { if (S) save('game', { s: S, g: G, u: U }); }
     var lastTick = Date.now();
@@ -730,7 +757,7 @@
         return '<button type="button" data-lv="' + o[0] + '" style="--i:' + i + '"><span class="lvtop"><b>' + esc(o[1]) + '</b><span class="lvst" aria-hidden="true">' + stars + '</span></span><small>' + esc(LVS.info(o[0])) + '</small></button>';
       }).join('');
       var chip = function (i) { return '<div class="chip" id="rvChip' + i + '"><small></small><span></span></div>'; };
-      var html = '<div id="app"><header class="bar"><h1 class="brand"><button class="brandb" type="button" id="bBrand" title="All our games"><b>365</b> <span>' + esc(D.title) + '</span><i class="caret" aria-hidden="true">&#9662;</i></button></h1>'
+      var html = '<a class="skip365" href="#board" id="skip365">Skip to the cards</a><div id="app"><header class="bar"><h1 class="brand"><button class="brandb" type="button" id="bBrand" title="All our games"><b>365</b> <span>' + esc(D.title) + '</span><i class="caret" aria-hidden="true">&#9662;</i></button></h1>'
         + '<div class="info" aria-live="off">' + chip(0) + chip(1) + chip(2) + '</div>'
         + '<nav class="tools" aria-label="Game">' + tb('bNew', 'new', 'New game', 'New game (N)', 'main') + tb('bGames', 'games', 'Games', 'Switch to another of our games', 'tb3') + tb('bHint', 'hint', 'Hint', 'Show me a good move (H)')
         + tb('bStats', 'stats', 'My scores', 'My scores', 'tb3 tbx') + tb('bSet', 'set', 'Settings', 'Settings', 'tb3 tbx') + tb('bHelp', 'help', 'How to play', 'How to play')

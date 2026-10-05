@@ -190,7 +190,7 @@
       return;
     }
     if (f.t === 'go') {
-      if (f.reset) { K.sfx('gather'); if (f.pts) K.say((f.p === 0 ? 'You can’t go' : OPP + ' says “Go”') + ' – 1 to ' + who(f.to) + ' for the go. The count starts again.'); }
+      if (f.reset) { K.sfx('gather'); if (f.pts) K.say('Neither of you can play without going past 31 – ' + (f.to === 0 ? 'you get' : OPP + ' gets') + ' 1 for the last card. The count starts again at 0.'); }   // (plainer, games audit 5 Oct 2026: 'You can’t go – 1 to you' read as a contradiction)
       else K.say(f.p === 0 ? 'You can’t play without going past 31 – “Go”' : OPP + ' says “Go”');
       return;
     }
@@ -246,7 +246,7 @@
     face: function (c) { return { r: E.rank(c), s: E.suit(c) }; },
     levels: {
       options: [[1, 'Easy'], [3, 'Normal'], [5, 'Hard'], [7, 'Expert']], def: 3,
-      info: function (lv) { return { 1: 'A relaxed player who misses things · Hint on', 3: 'A steady, sensible player · Hint on', 5: 'Weighs every starter, plays safely · no Hint', 7: 'And thinks about your reply to every card · no Hint' }[lv]; },
+      info: function (lv) { return { 1: 'A relaxed player who misses things · Hint on', 3: 'A steady, sensible player · Hint on', 5: 'Thinks through every card that could turn up, plays safely · no Hint', 7: 'And thinks about your reply to every card · no Hint' }[lv]; },
       hint: function (lv) { return lv <= 3; }
     },
     layout: layout, positions: positions, plates: plates, panel: panel, tap: tap, press: press, wait: wait, fx: fx,
