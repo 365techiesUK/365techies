@@ -300,15 +300,28 @@ const MODELS = {
     k.cyl(2.2, 2.25, 2.6, 14, 0, 8, 0, '#c62828').cyl(1.95, 2, 2.6, 14, 0, 14, 0, '#c62828');
     k.cyl(2.4, 2.4, 0.4, 14, 0, 20, 0, '#222').cyl(1.3, 1.3, 2.2, 10, 0, 20.4, 0, '#fff4b3', 0, 0, 'glow').cone(1.6, 1.6, 10, 0, 22.6, 0, '#c62828');
   },
-  arch(k) {   // Durdle Door: a great limestone arch standing in the sea
-    const sh = new THREE.Shape(); sh.moveTo(-46, -4); sh.lineTo(-40, 22); sh.quadraticCurveTo(-26, 40, 0, 38); sh.quadraticCurveTo(26, 36, 36, 18); sh.lineTo(44, -4);
-    sh.lineTo(16, -4); sh.lineTo(16, 6); sh.absarc(0, 6, 16, 0, Math.PI, false); sh.lineTo(-16, -4); sh.lineTo(-46, -4);
-    const g = new THREE.ExtrudeGeometry(sh, { depth: 22, bevelEnabled: true, bevelThickness: 3, bevelSize: 3, bevelSegments: 2, curveSegments: 14 }); g.translate(0, 0, -11); g.computeVertexNormals();
-    const p = g.attributes.position, cl = new Float32Array(p.count * 3), a = new THREE.Color('#d8c09a'), b = new THREE.Color('#b89a72'), c2 = new THREE.Color('#e8dcc0');
-    for (let i = 0; i < p.count; i++) { const y = p.getY(i), band = Math.sin(y * 0.9 + p.getX(i) * 0.05) > 0.3 ? b : y > 30 ? c2 : a; cl[i * 3] = band.r; cl[i * 3 + 1] = band.g; cl[i * 3 + 2] = band.b; }
+  arch(k) {   // Durdle Door: a natural limestone arch - a ridge sloping down into the sea with a great ragged opening near its
+    // seaward end; pale weathered rock in steeply tilted strata, turf on the landward top, dark where the sea wets its foot
+    const sh = new THREE.Shape();
+    sh.moveTo(-52, -4); sh.lineTo(-50, 30); sh.quadraticCurveTo(-40, 42, -22, 40); sh.quadraticCurveTo(0, 37, 18, 30); sh.quadraticCurveTo(34, 22, 40, 10); sh.lineTo(46, -4);
+    sh.lineTo(24, -4); sh.lineTo(22, 4); sh.quadraticCurveTo(20, 20, 8, 23); sh.quadraticCurveTo(-4, 24, -8, 14); sh.lineTo(-10, -4); sh.lineTo(-52, -4);   // the opening, ragged and leaning
+    const g = new THREE.ExtrudeGeometry(sh, { depth: 16, steps: 6, bevelEnabled: true, bevelThickness: 3, bevelSize: 2.5, bevelSegments: 3, curveSegments: 18 }); g.translate(0, 0, -8);
+    const p = g.attributes.position, v = new THREE.Vector3();
+    for (let i = 0; i < p.count; i++) {   // weathered: every face pushed in and out a little (the same push for the same point, so no cracks)
+      v.fromBufferAttribute(p, i); const n = Math.sin(v.x * 0.31 + v.z * 0.7) * Math.sin(v.y * 0.43 + 1.3) * 1.6 + Math.sin(v.x * 0.9 + v.y * 0.7 + v.z) * 0.6;
+      p.setXYZ(i, v.x + n * 0.4, v.y + (v.y > 2 ? n * 0.5 : 0), v.z + n);
+    }
+    g.computeVertexNormals();
+    const N = g.attributes.normal, cl = new Float32Array(p.count * 3), lime = new THREE.Color('#d9d0b9'), dark = new THREE.Color('#ab9f88'), wet = new THREE.Color('#7a7262'), turf = new THREE.Color('#6e9446'), c = new THREE.Color();
+    for (let i = 0; i < p.count; i++) {
+      const x = p.getX(i), y = p.getY(i), ny = N.getY(i);
+      c.copy(Math.sin((x * 0.55 + y) * 0.5) > 0.5 ? dark : lime).multiplyScalar(0.9 + 0.12 * Math.sin(x * 1.7 + y * 2.3));   // the strata, tilted steeply
+      if (y < 2.5) c.lerp(wet, 0.6);
+      if (ny > 0.62 && y > 18 && x < 24) c.copy(turf).multiplyScalar(0.9 + 0.15 * Math.sin(x * 0.8 + p.getZ(i)));
+      cl[i * 3] = c.r; cl[i * 3 + 1] = c.g; cl[i * 3 + 2] = c.b;
+    }
     k.put(g, '#ffffff', 0, 0, 0); const last = k.parts.lit[k.parts.lit.length - 1]; last.setAttribute('color', new THREE.BufferAttribute(cl, 3));
-    k.blob(14, -6, 38, 0, '#6f9a45', 2.6, 0.32, 1.2, 105);
-    k.cyl(30, 30, 0.3, 16, 0, -0.1, 0, '#ffffff');
+    for (const [fx, fz, fr] of [[-30, 10, 9], [30, 9, 7], [2, -11, 10], [40, -7, 6], [-44, -9, 7]]) k.ball(fr, fx, -0.2, fz, '#e9efee', 1.6, 0.04, 1, 'lit', 10);   // foam where the sea meets it
   },
   building(k, v) {
     const h = [24, 34, 16, 28][v % 4], r = rnd(91 + v);
@@ -389,8 +402,17 @@ const MODELS = {
   goldcap(k) {   // Golden Cap: the highest cliff on the south coast, a flat green top over a glowing gold face, grey-blue clay below
     const n0 = k.parts.lit ? k.parts.lit.length : 0;
     k.blob(42, 0, -6, 0, '#d39a34', 1.6, 1.15, 1.25, 121).blob(30, 30, -8, 20, '#c9902e', 1.5, 0.9, 1.2, 125);
-    const grey = new THREE.Color('#6f7a86'), gold = new THREE.Color('#e0a63c'), ochre = new THREE.Color('#c88a30');
-    for (let q = n0; q < k.parts.lit.length; q++) { const g = k.parts.lit[q], p = g.attributes.position, c = g.attributes.color; for (let i = 0; i < p.count; i++) { const y = p.getY(i), col = y < 4 ? grey : (Math.floor(y / 6) % 2 ? gold : ochre); c.setXYZ(i, col.r, col.g, col.b); } }
+    const clay = new THREE.Color('#5f6a76'), clay2 = new THREE.Color('#7a838c'), gold = new THREE.Color('#d9a043'), ochre = new THREE.Color('#c4852c'), cc = new THREE.Color(), gg = new THREE.Color();
+    for (let q = n0; q < k.parts.lit.length; q++) {
+      const g = k.parts.lit[q], p = g.attributes.position, c = g.attributes.color; let lo = 1e9, hi = -1e9;
+      for (let i = 0; i < p.count; i++) { lo = Math.min(lo, p.getY(i)); hi = Math.max(hi, p.getY(i)); }
+      for (let i = 0; i < p.count; i++) {
+        const x = p.getX(i), y = p.getY(i), z = p.getZ(i), gt = Math.min(1, Math.max(0, (y - 0.55 * hi) / (0.2 * hi))), sgt = gt * gt * (3 - 2 * gt);
+        cc.copy(clay).lerp(clay2, 0.5 + 0.5 * Math.sin(y * 0.9 + x * 0.07));
+        gg.copy(gold).lerp(ochre, 0.5 + 0.5 * Math.sin(y * 0.6 + z * 0.05)); cc.lerp(gg, sgt).multiplyScalar(0.9 + 0.1 * Math.sin(x * 0.5 + y * 1.3 + z * 0.4));
+        c.setXYZ(i, cc.r, cc.g, cc.b);
+      }
+    }
     k.blob(38, 0, 22, 0, '#6f9a45', 1.65, 0.3, 1.3, 123);
   },
   headland(k) {   // Hengistbury Head: a low heath-topped headland with sandy, ironstone-brown cliffs

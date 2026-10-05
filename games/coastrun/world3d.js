@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=13';
+import * as MD from './models3d.js?v=14';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -261,7 +261,15 @@ export function createWorld() {
   } }));
   const TRIB = KIT((k) => { for (const sd of [-1, 1]) k.box(0.42, 5.7, 0.5, sd * 7.92, 0, 0, '#6a645a', 0, 0, 0, 'twall'); k.box(2 * TW + 0.4, 0.5, 0.5, 0, 5.2, 0, '#6a645a', 0, 0, 0, 'twall'); });   // a rib: the walls' pillars and a beam across
   const TLAMP = KIT((k) => { for (const x of [-4.4, 4.4]) { k.box(0.56, 0.14, 3.4, x, 5.56, 0, '#2a2a2a', 0, 0, 0, 'troof'); k.box(0.4, 0.05, 3.1, x, 5.52, 0, '#ffd690', 0, 0, 0, 'glow'); } });
-  const PORTAL = KIT((k) => { k.box(2 * TW + 12, 6.5, 1.6, 0, 5.7, 0, '#7a7468'); for (let i = 0; i < 9; i++) k.box(1.9, 0.5, 1.7, -TW + 1 + i * 1.9, 5.7, 0, i % 2 ? '#1c1c1c' : '#f2c230'); });
+  const PORTAL = KIT((k) => { k.box(2 * TW + 22, 8.6, 1.6, 0, 5.7, 0, '#8f8879', 0, 0, 0, 'stone'); k.box(2 * TW + 1, 0.7, 1.75, 0, 5.7, 0, '#6d675b', 0, 0, 0, 'stone'); });   // the stone headwall, a darker lintel over the mouth
+  const TCOVER = KIT((k) => {   // the hill the tunnel runs through: a grassy ridge over the roof, hollow where the road goes
+    const sh = new THREE.Shape(); sh.moveTo(-48, -1.2); sh.quadraticCurveTo(-32, 2, -22, 7.5); sh.quadraticCurveTo(-12, 13.8, 0, 14.4); sh.quadraticCurveTo(12, 13.8, 22, 7.5); sh.quadraticCurveTo(32, 2, 48, -1.2);
+    sh.lineTo(8.45, -1.2); sh.lineTo(8.45, 7.15); sh.lineTo(-8.45, 7.15); sh.lineTo(-8.45, -1.2); sh.lineTo(-48, -1.2);
+    const g = new THREE.ExtrudeGeometry(sh, { depth: SEG + 0.8, bevelEnabled: false, curveSegments: 8 }); g.translate(0, 0, -(SEG + 0.8) / 2); g.computeVertexNormals();
+    k.put(g, '#6a9442', 0, 0, 0, 0, 0, 0, 1, 1, 1, 'lit');
+    const list = k.parts.lit, G = list[list.length - 1], P2 = G.attributes.position, C3 = G.attributes.color;
+    for (let i = 0; i < P2.count; i++) { const y = P2.getY(i), x = P2.getX(i), f = 0.88 + 0.16 * Math.sin(x * 0.37 + y * 0.6); C3.setXYZ(i, C3.getX(i) * f, C3.getY(i) * f * (y < 1 ? 0.92 : 1), C3.getZ(i) * f); }
+  });
   const WAVE_T = { value: 0 };   // the crowd's raised arms bob up and down, each at its own beat (by where it is)
   MAT.wave.onBeforeCompile = (sh) => { sh.uniforms.uT = WAVE_T; sh.vertexShader = 'uniform float uT;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\ntransformed.y += sin(uT * 9.0 + position.x * 1.7 + position.z * 1.3) * 0.16;'); };
   MAT.wave.customProgramCacheKey = () => 'wave';
@@ -302,7 +310,7 @@ export function createWorld() {
       '  diffuseColor.rgb *= 0.9 + 0.12 * fn(pv / 3.1) + 0.07 * fn(pv / 0.9) - 0.06 * smoothstep(0.55, 0.85, fn(pv / 14.0));',
       '  diffuseColor.rgb = mix(diffuseColor.rgb, diffuseColor.rgb * vec3(1.08, 1.02, 0.78), gn * smoothstep(0.55, 0.9, fn(pv / 17.0 + 3.1)) * 0.45);',
       '  vec3 fN = normalize(cross(dFdx(vWP), dFdy(vWP))); float steep = 1.0 - smoothstep(0.6, 0.82, abs(fN.y));',   // steep: chalk and stone, in bands
-      '  if (steep > 0.01) { vec3 rk = mix(vec3(0.66, 0.63, 0.57), vec3(0.8, 0.78, 0.71), fn(pv / 1.6 + vWP.y * 0.4)) * (0.9 + 0.1 * sin(vWP.y * 2.7)); diffuseColor.rgb = mix(diffuseColor.rgb, rk, steep * 0.8); } }',
+      '  if (steep > 0.01) { vec3 rk = mix(vec3(0.66, 0.63, 0.57), vec3(0.8, 0.78, 0.71), fn(vec2((vWP.x + vWP.z) / 9.0, vWP.y * 0.9))) * (0.88 + 0.12 * sin(vWP.y * 2.7 + fn(pv / 6.0) * 2.0)); diffuseColor.rgb = mix(diffuseColor.rgb, rk, steep * 0.8); } }',
       'if (vField > 0.005) {',
       '  vec2 pm = vWP.xz; vec3 gc = diffuseColor.rgb;',
       '  gc *= 0.86 + 0.16 * fn(pm / 2.6) + 0.1 * fn(pm / 0.8) - 0.08 * smoothstep(0.55, 0.8, fn(pm / 11.0));',
@@ -692,7 +700,7 @@ export function createWorld() {
           addAll(DECK, P.x, P.y, P.z, -P.th);
           if (i % 7 === 0) { const k = new MD.Kit(), hh = P.y + 7; for (const x of [-4.2, 4.2]) k.box(1.6, hh, 2.4, x, -hh - 0.2, 0, '#8e8a80'); const m = k.build(); addModel(m.lit, 'lit', P.x, P.y, P.z, -P.th, 1, true); }
         } else {
-          addAll(TROOF, P.x, P.y, P.z, -P.th); addAll(TWALLS[i % 4], P.x, P.y, P.z, -P.th);
+          addAll(TROOF, P.x, P.y, P.z, -P.th); addAll(TWALLS[i % 4], P.x, P.y, P.z, -P.th); addAll(TCOVER, P.x, P.y, P.z, -P.th);
           if (i % 4 === 0) addAll(TLAMP, P.x, P.y, P.z, -P.th);
           if (i % 3 === 1) addAll(TRIB, P.x, P.y, P.z, -P.th);
           if (i % 4 === 0) for (const d of [-1, 1]) pools.push([P.x + Math.cos(P.th) * d * 4.4, P.y + 0.06, P.z + Math.sin(P.th) * d * 4.4, 2.0, P.th, 2.6]);
@@ -713,6 +721,7 @@ export function createWorld() {
         if (it.t === 'lamp') ry = fr + Math.PI;   // the arm reaches over the road
         if (/^(gate|gantry|nose|chev|warn|gpost|footbridge|viaduct|banner)$/.test(it.t)) ry = -P.th;
         if (it.t === 'priory' || it.t === 'cobb' || it.t === 'goldcap' || it.t === 'headland') ry = fr;
+        if (it.t === 'arch') ry = -P.th + (it.x < 0 ? Math.PI : 0);   // Durdle Door side-on from the road, its high end towards the shore
         if (it.t === 'board') ry = -P.th + d * 0.5;
         if (it.t === 'pier' || it.t === 'ferry') ry = fr + Math.PI / 2;
         let y = P.y;
@@ -801,8 +810,8 @@ export function createWorld() {
     switch (it.t) {
       case 'gate': {
         const w = HALF + 2.5;
-        box(1.2, 8, 1.2, -w, 0, 0, '#e5e7eb'); box(1.2, 8, 1.2, w, 0, 0, '#e5e7eb'); box(w * 2 + 1.6, 2.4, 0.8, 0, 8, 0, '#111827');
-        plane(w * 2 + 1.2, 2.1, 'gate|' + it.v, 0, 9.2, 0.42); plane(w * 2 + 1.2, 2.1, 'gate|' + it.v, 0, 9.2, -0.42, true);
+        box(0.7, 8.4, 0.7, -w, 0, 0, '#d9dde3'); box(0.7, 8.4, 0.7, w, 0, 0, '#d9dde3'); box(w * 2 + 1.2, 1.7, 0.5, 0, 8.4, 0, '#1c2533');
+        plane(w * 2 + 0.8, 1.45, 'gate|' + it.v, 0, 9.25, 0.27); plane(w * 2 + 0.8, 1.45, 'gate|' + it.v, 0, 9.25, -0.27, true);
         // people cheering behind the barriers either side, and flags
         poses(W, Math.min(E.lastIndex(W), i + 8));
         for (const d of [-1, 1]) {
@@ -1408,7 +1417,7 @@ export function createWorld() {
       const x = POS.x, y = W.h + 0.8, z = POS.z;
       switch (f.k) {
         case 'coin': for (let i = 0; i < 10; i++) sparks.emit(x, y + 0.6, z, (Math.random() - 0.5) * 6, Math.random() * 5, (Math.random() - 0.5) * 6, 0.25, 0.5, '#ffe066', 1, 0.6); break;
-        case 'power': { const col = { magnet: '#ff5a5a', shield: '#ffd23f', double: '#c77dff', time: '#5dff9a' }[f.pw] || '#ffffff'; for (let i = 0; i < 26; i++) sparks.emit(x, y + 0.8, z, (Math.random() - 0.5) * 9, Math.random() * 7, (Math.random() - 0.5) * 9, 0.34, 0.6, col, 1, 0.8); R.flash = Math.max(R.flash, 0.2); break; }
+        case 'power': { const col = { magnet: '#ff5a5a', shield: '#ffd23f', double: '#f2e3b3', time: '#5dff9a' }[f.pw] || '#ffffff'; for (let i = 0; i < 26; i++) sparks.emit(x, y + 0.8, z, (Math.random() - 0.5) * 9, Math.random() * 7, (Math.random() - 0.5) * 9, 0.34, 0.6, col, 1, 0.8); R.flash = Math.max(R.flash, 0.2); break; }
         case 'smash': for (let i = 0; i < 30; i++) sparks.emit(x, y + 0.6, z, (Math.random() - 0.5) * 14, Math.random() * 8, (Math.random() - 0.5) * 14, 0.3, 0.6, i % 2 ? '#ffd23f' : '#ffffff', 1, 0.7, 9); R.camShake = Math.max(R.camShake || 0, 0.35); break;
         case 'nitro': for (let i = 0; i < 18; i++) sparks.emit(x, y + 0.6, z, (Math.random() - 0.5) * 8, Math.random() * 6, (Math.random() - 0.5) * 8, 0.3, 0.6, '#5aa9ff', 1, 0.7); R.flash = Math.max(R.flash, 0.25); break;
         case 'leaves': for (let i = 0; i < 26; i++) smoke.emit(x, y, z, (Math.random() - 0.5) * 8, 2 + Math.random() * 6, (Math.random() - 0.5) * 8, 0.25, 1.2, ['#3c8a3a', '#64b852', '#c8641e', '#ffd31a', '#e63946'][i % 5], 1, 0.3, 9); break;
@@ -1573,10 +1582,11 @@ function paintSign(key) {   // the faces of the signs: gates, direction boards, 
   const parts = key.split('|'), kind = parts[0];
   const T = (x, s, cx, cy, size, fill, weight) => { x.font = (weight || 800) + ' ' + size + 'px ' + ART.FONT; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillStyle = fill; let w = x.measureText(s).width, max = x.canvas.width * 0.9; if (w > max) { x.font = (weight || 800) + ' ' + (size * max / w) + 'px ' + ART.FONT; } x.fillText(s, cx, cy); };
   if (kind === 'gate') {
-    const c = canvas(1024, 128), x = c.getContext('2d'), k = [['START', '#d32f2f'], ['ROUND', '#1d4ed8'], ['CHECKPOINT', '#f59e0b'], ['GOAL', '#16a34a']][+parts[1] % 4];
+    const c = canvas(1024, 128), x = c.getContext('2d'), k = [['START', '#16233b'], ['ROUND', '#1d3557'], ['CHECKPOINT', '#6b4212'], ['GOAL', '#14532d']][+parts[1] % 4];
     x.fillStyle = k[1]; x.fillRect(0, 0, 1024, 128);
-    for (let i = 0; i < 32; i++) { x.fillStyle = i % 2 ? '#111' : '#fff'; x.fillRect(i * 32, 0, 32, 14); x.fillStyle = i % 2 ? '#fff' : '#111'; x.fillRect(i * 32, 114, 32, 14); }
-    T(x, k[0], 512, 66, 80, '#ffffff'); return c;
+    x.fillStyle = '#e8dcc0'; x.fillRect(0, 10, 1024, 3); x.fillRect(0, 115, 1024, 3);   // fine cream rules
+    for (const ex of [24, 1024 - 120]) for (let i = 0; i < 6; i++) for (let j = 0; j < 4; j++) { x.fillStyle = (i + j) % 2 ? '#e8dcc0' : '#0d1422'; x.fillRect(ex + i * 16, 32 + j * 16, 16, 16); }   // a small chequer at each end
+    x.save(); if ('letterSpacing' in x) x.letterSpacing = '14px'; T(x, k[0], 512, 66, 60, '#f2ead8', 700); x.restore(); return c;
   }
   if (kind === 'fsign') {
     const c = canvas(512, 224), x = c.getContext('2d'), d = +parts[1], name = parts.slice(2).join('|');

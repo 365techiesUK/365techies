@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=17';
+import { createWorld } from './world3d.js?v=18';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
@@ -175,7 +175,7 @@ function powers(g, W, t) {   // the bonuses you have on, under the score: an ico
   if (!W.pw) return;
   const on = ['magnet', 'shield', 'double'].filter((k) => W.pw[k] > 0); let x = GW - 14;
   for (const k of on) {
-    const left = W.pw[k] / E.PW[k], y = 66, flash = W.pw[k] < 120 && (t / 120 | 0) % 2, col = { magnet: '#ff5a5a', shield: '#ffd23f', double: '#c77dff' }[k];
+    const left = W.pw[k] / E.PW[k], y = 66, flash = W.pw[k] < 120 && (t / 120 | 0) % 2, col = { magnet: '#ff5a5a', shield: '#ffd23f', double: '#f2e3b3' }[k];
     g.fillStyle = 'rgba(0,8,24,0.55)'; g.beginPath(); g.arc(x, y, 8.5, 0, Math.PI * 2); g.fill();
     g.strokeStyle = flash ? '#ffffff' : col; g.lineWidth = 1.8; g.beginPath(); g.arc(x, y, 8.5, -Math.PI / 2, -Math.PI / 2 + left * Math.PI * 2); g.stroke();
     g.fillStyle = col; g.strokeStyle = col; g.lineWidth = 2.2;
@@ -299,12 +299,12 @@ function results(g, W, t) {   // at the goal: each stretch's time and hearts, th
   g.restore();
 }
 function lights(g, W) {
-  const x = GW / 2 - 36, y = 26, lit = W.count > 180 ? 0 : W.count > 120 ? 1 : W.count > 60 ? 2 : W.count > 0 ? 3 : 4;
-  g.fillStyle = '#111'; roundRect(g, x, y, 72, 22, 6); g.fill(); g.fillStyle = '#333'; roundRect(g, x + 2, y + 2, 68, 18, 5); g.fill();
+  const x = GW / 2 - 27, y = 27, lit = W.count > 180 ? 0 : W.count > 120 ? 1 : W.count > 60 ? 2 : W.count > 0 ? 3 : 4;
+  g.fillStyle = 'rgba(8,12,20,0.88)'; roundRect(g, x, y, 54, 14, 4); g.fill();
   for (let i = 0; i < 3; i++) {
-    const on = lit === 4 ? '#3bff6a' : i < lit ? '#ff2b2b' : '#3a1414', cx = x + 14 + i * 22, cy = y + 11;
-    g.fillStyle = on; g.beginPath(); g.arc(cx, cy, 7, 0, Math.PI * 2); g.fill();
-    if (lit === 4 || i < lit) { g.globalCompositeOperation = 'lighter'; g.drawImage(glowDot(lit === 4 ? '#3bff6a' : '#ff2b2b'), cx - 16, cy - 16, 32, 32); g.globalCompositeOperation = 'source-over'; }
+    const on = lit === 4 ? '#3bff6a' : i < lit ? '#ff2b2b' : '#3a1414', cx = x + 11 + i * 16, cy = y + 7;
+    g.fillStyle = on; g.beginPath(); g.arc(cx, cy, 4.4, 0, Math.PI * 2); g.fill();
+    if (lit === 4 || i < lit) { g.globalCompositeOperation = 'lighter'; g.drawImage(glowDot(lit === 4 ? '#3bff6a' : '#ff2b2b'), cx - 10, cy - 10, 20, 20); g.globalCompositeOperation = 'source-over'; }
   }
 }
 const BANNER_COL = { check: ['#ffd400', '#ffffff'], stage: ['#ffffff', '#bfe6ff'], goal: ['#4ade80', '#ffd400'], red: ['#ff4d4d', '#ffffff'], go: ['#3bff6a', '#ffffff'], gold: ['#ffd400', '#ffffff'] };
@@ -325,7 +325,7 @@ function banner(g, W, t) {
   if (b.sub) hudText(g, b.sub, 0, 16, 10, cols[1], 'center');
   g.restore();
 }
-const POP_COL = { near: '#7fe8ff', drift: '#ffb347', gold: '#ffd400', nitro: '#7fb8ff', slip: '#c9b8ff', heart: '#ff8fb3', time: '#5dff9a', magnet: '#ff7b7b', shield: '#ffd23f', double: '#d39bff' };
+const POP_COL = { near: '#7fe8ff', drift: '#ffb347', gold: '#ffd400', nitro: '#7fb8ff', slip: '#c9b8ff', heart: '#ff8fb3', time: '#5dff9a', magnet: '#ff7b7b', shield: '#ffd23f', double: '#f2e3b3' };
 function pops(g, W) {
   for (let i = 0; i < W.pops.length; i++) {
     const p = W.pops[i], age = W.t - p.t; if (age > 70 || age < 0) continue;
@@ -530,7 +530,7 @@ function voice(a, name, fadeIn) {
 function hush(a, v, d) { try { v.g.gain.cancelScheduledValues(a.currentTime); v.g.gain.setValueAtTime(Math.max(0.0001, v.g.gain.value), a.currentTime); v.g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + d); v.src.stop(a.currentTime + d + 0.05); } catch (e) {} }
 function placeTrack(W) { const g = W && E.segAt(W, E.segIndex(W.s)); return g ? ART.PAL[g.st].key : 'bournemouth'; }
 // the car radio: the stations, in the order the dial goes round (the first plays a tune for each place)
-const RADIO_NEW = false;   // the three new stations, on once their tracks (the owner's picks) are in music/
+const RADIO_NEW = true;    // the three new stations, on once their tracks (the owner's picks) are in music/
 const RADIO = [['place', 'Coast FM']].concat(RADIO_NEW ? [['radio_harbour', 'Harbour Lights'], ['radio_golden', 'Golden Hour'], ['radio_coastroad', 'Coast Road']] : [],
   [['title', 'Sunny Shore'], ['bournemouth', 'Beach Groove'], ['purbeck', 'Hill Rock'], ['jurassic', 'Sunset Cruise'], ['harbour', 'Night Drive']]);
 const RAD = { set: null, shownT: -1e9, l: false, r: false };
