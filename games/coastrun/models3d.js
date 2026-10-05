@@ -293,18 +293,88 @@ const MODELS = {
   },
   crowd(k, v) {   // a row of people cheering behind a barrier (on their +Z side, towards the road), at the start, the checkpoints and the goal
     const r = rnd(200 + v);
-    for (let i = 0; i < 12; i++) {
-      const x = -6.6 + i * 1.2 + (r() - 0.5) * 0.3, z = (r() - 0.5) * 0.6, sh = SHIRTS[(r() * SHIRTS.length) | 0], sk = SKIN[(r() * SKIN.length) | 0], h = 0.9 + r() * 0.25;
-      k.box(0.3, h, 0.25, x, 0, z, '#2d3a55').box(0.46, 0.62, 0.3, x, h, z, sh).ball(0.15, x, h + 0.82, z, sk, 1, 1.1, 1, 'lit', 8);
-      const up = r() < 0.5; k.box(0.1, 0.55, 0.1, x - 0.28, h + (up ? 0.6 : 0.1), z, up ? sk : sh, 0, 0, up ? 0.3 : 0).box(0.1, 0.55, 0.1, x + 0.28, h + (up ? 0.6 : 0.1), z, up ? sk : sh, 0, 0, up ? -0.3 : 0);
-    }
+    for (let i = 0; i < 12; i++) person(k, -6.6 + i * 1.2 + (r() - 0.5) * 0.3, 0, (r() - 0.5) * 0.6, r, r() < 0.7);
     k.box(15, 0.9, 0.12, 0, 0, 0.7, '#ffffff', 0, 0, 0, 'shiny');
     for (let i = 0; i < 8; i++) k.box(1.8, 0.3, 0.13, -6.3 + i * 1.8, 0.45, 0.7, i % 2 ? '#d32f2f' : '#1d4ed8');
   },
   flags(k, v) {   // flag poles in a row
     for (let i = 0; i < 4; i++) { const x = -4.5 + i * 3; k.cyl(0.05, 0.06, 6, 6, x, 0, 0, '#d8dde2'); k.box(1.6, 1, 0.04, x + 0.82, 4.8, 0, ['#d32f2f', '#ffd23f', '#1d7fd6', '#2a9d8f', '#ffffff'][(i + v) % 5], 0, 0, 0.08); }
-  }
+  },
+  villa(k, v) {   // Sandbanks: a smart white house of stacked boxes, glass walls to the sea, a pool
+    const w = ['#f6f6f2', '#eef0f0', '#f4efe6', '#e8eef2'][v % 4], gl = '#3d6f8c';
+    k.box(15, 4, 10, 0, 0, 0, w).box(10, 3.6, 8, v % 2 ? 2 : -2, 4, -0.6, w);
+    k.box(14, 2.8, 0.15, 0, 0.6, 5.06, gl, 0, 0, 0, 'shiny').box(9, 2.6, 0.15, v % 2 ? 2 : -2, 4.5, 3.46, gl, 0, 0, 0, 'shiny');
+    k.box(15.6, 0.28, 10.6, 0, 4, 0, '#d9d9d4').box(10.6, 0.28, 8.6, v % 2 ? 2 : -2, 7.6, -0.6, '#d9d9d4');
+    k.box(15, 0.9, 0.06, 0, 4.28, 5.25, '#bcd7e6', 0, 0, 0, 'shiny');   // the glass balcony rail
+    k.box(7, 0.06, 3.2, -3, 0, 7.2, '#29b4dc', 0, 0, 0, 'shiny').box(7.6, 0.2, 3.8, -3, -0.05, 7.2, '#e7e2d6');   // the pool
+  },
+  terrace(k, v) {   // Weymouth and Lyme: a tall painted house in a row along the front
+    const c = ['#f3d9a4', '#e9b4b0', '#bfe0e8', '#f4f1ea', '#c9e3b8', '#f0c987'][v % 6], h = 12 + (v % 3);
+    k.box(11.9, h, 9, 0, 0, 0, c);
+    k.prism(9.6, 3, 12, 0, h, 0, ['#5a5f66', '#6b4a3a', '#4f5862'][v % 3], Math.PI / 2);
+    k.box(1.4, 2.4, 1.4, 4.2, h + 1.2, 0, '#8a7a6a');
+    for (let f = 0; f < 3; f++) for (let w = 0; w < 3; w++) k.box(1.5, 2, 0.12, -3.6 + w * 3.6, 2.2 + f * 3.4, 4.52, '#34505f', 0, 0, 0, 'shiny');
+    k.box(11.9, 0.3, 0.6, 0, 3.9, 4.65, '#ffffff').box(11.9, 0.35, 0.3, 0, h - 0.4, 4.6, '#ffffff');
+    k.box(1.3, 2.5, 0.1, 0, 0, 4.53, ['#1d3557', '#7a1f2b', '#1f6f50'][v % 3]);
+  },
+  clock(k) {   // Weymouth's Victorian clock tower on the front: painted iron, four faces, a pointed red roof
+    k.box(2.8, 1, 2.8, 0, 0, 0, '#c8b89a').box(2.0, 8, 2.0, 0, 1, 0, '#2f6fb0');
+    k.box(2.4, 2.4, 2.4, 0, 9, 0, '#f2e6c8');
+    for (const [x, z, a, b] of [[0, 1.22, Math.PI / 2, 0], [0, -1.22, Math.PI / 2, 0], [1.22, 0, 0, Math.PI / 2], [-1.22, 0, 0, Math.PI / 2]]) { k.cyl(0.85, 0.85, 0.06, 18, x, 10.17, z, '#ffffff', a, b); k.cyl(0.08, 0.08, 0.08, 6, x * 1.03, 10.17, z * 1.03, '#111111', a, b); }
+    k.cone(1.8, 3.2, 4, 0, 11.4, 0, '#c8382e'); k.cyl(0.07, 0.07, 1.2, 6, 0, 14.5, 0, '#d4af37');
+  },
+  priory(k) {   // Christchurch Priory, inland: the long church and its tall square tower with battlements
+    const st = '#b9ad94', dk = '#9d927b';
+    k.box(11, 36, 11, 0, 0, 0, st).box(44, 15, 15, -28, 0, 0, st).prism(15, 8, 44, -28, 15, 0, '#6e6a62', Math.PI / 2);
+    for (let i = -5; i <= 5; i += 2) { k.box(1.4, 1.6, 1.4, i, 36, 5.2, dk).box(1.4, 1.6, 1.4, i, 36, -5.2, dk).box(1.4, 1.6, 1.4, 5.2, 36, i, dk).box(1.4, 1.6, 1.4, -5.2, 36, i, dk); }
+    for (let i = 0; i < 6; i++) k.box(2, 6, 0.3, -46 + i * 7, 4, 7.6, '#3d4b55', 0, 0, 0, 'shiny');
+  },
+  cobb(k) {   // the Cobb at Lyme Regis: a long curving stone harbour wall, boats tucked inside it
+    for (let i = 0; i < 16; i++) { const a = -0.2 + i * 0.1, R = 70, x = Math.sin(a) * R, z = R - Math.cos(a) * R; k.box(7.6, 4.5, 8, x, -1.5, z, i % 2 ? '#a8a08c' : '#9e9682', -a); }
+    k.box(6, 1.2, 9, 64, 3, 23, '#bdb5a0', -1.3);
+    const r = rnd(77); for (let i = 0; i < 5; i++) k.side([-2.5, 0.3, 2.8, 0.3, 3.2, 1.2, -2.6, 1.2], 1.6, 12 + i * 8, -0.3, 22 + r() * 6, ['#ffffff', '#1d4ed8', '#d32f2f'][i % 3], 'shiny', 0.05);
+  },
+  goldcap(k) {   // Golden Cap: the highest cliff on the south coast, a flat green top over a glowing gold face
+    k.blob(42, 0, -6, 0, '#d39a34', 1.6, 1.15, 1.25, 121).blob(30, 30, -8, 20, '#c9902e', 1.5, 0.9, 1.2, 125);
+    k.blob(38, 0, 22, 0, '#6f9a45', 1.65, 0.3, 1.3, 123);
+  },
+  headland(k) {   // Hengistbury Head: a low heath-topped headland with sandy, ironstone-brown cliffs
+    k.blob(32, 0, -5, 0, '#b07a4a', 2.2, 0.85, 1.4, 131).blob(30, 0, 9, 0, '#7a8a50', 2.25, 0.28, 1.45, 133);
+  },
+  footbridge(k, v) {   // a white footbridge right over the road, people on it waving
+    const col = '#eef2f4';
+    for (const x of [-11.6, 11.6]) for (const z of [-1, 1]) k.box(0.55, 6.2, 0.55, x, 0, z, col);
+    k.box(25, 0.4, 2.8, 0, 6, 0, col, 0, 0, 0, 'shiny');
+    for (const z of [-1.35, 1.35]) { k.box(25, 0.14, 0.14, 0, 7.5, z, col); for (let i = -12; i <= 12; i += 1.5) k.box(0.1, 1.6, 0.1, i, 6.3, z, col, 0, 0, (i * 2) % 2 ? 0.55 : -0.55); }
+    const r = rnd(300 + v); for (let i = 0; i < 7; i++) person(k, -9 + i * 3 + r() * 1.2, 6.4, (r() - 0.5) * 1.2, r, true);
+  },
+  viaduct(k) {   // a stone railway viaduct striding over the road: a big arch for the road, smaller ones either side
+    const sh = new THREE.Shape(), arch = (x1, x0, h) => { sh.lineTo(x1, 0); sh.lineTo(x1, h); sh.absarc((x0 + x1) / 2, h, (x1 - x0) / 2, 0, Math.PI, false); sh.lineTo(x0, 0); };
+    sh.moveTo(-48, 0); sh.lineTo(-48, 17); sh.lineTo(48, 17); sh.lineTo(48, 0);
+    arch(44, 32, 3); arch(28, 16, 3); arch(11, -11, 3.5); arch(-16, -28, 3); arch(-32, -44, 3); sh.lineTo(-48, 0);
+    const g = new THREE.ExtrudeGeometry(sh, { depth: 5.5, bevelEnabled: false, curveSegments: 10 }); g.translate(0, 0, -2.75); g.computeVertexNormals();
+    k.put(g, '#a39a86', 0, 0, 0);
+    k.box(96, 1.1, 6.4, 0, 17, 0, '#8f8774').box(96, 0.9, 0.3, 0, 18.1, 3.05, '#8f8774').box(96, 0.9, 0.3, 0, 18.1, -3.05, '#8f8774');
+    // a little steam train on top: the engine (boiler, cab, chimney) and two green carriages
+    k.box(12, 0.9, 2.4, -30, 18.1, 0, '#1c1c1c').axle(1.15, 8.5, 14, -31.5, 20.15, 0, '#1f2a22', 'shiny').box(3.4, 3, 2.7, -25.6, 19, 0, '#1f2a22', 0, 0, 0, 'shiny');
+    k.cyl(0.38, 0.45, 1.5, 8, -35, 21, 0, '#151515');
+    for (let i = 0; i < 2; i++) k.box(12.5, 3, 2.7, -16.5 + i * 13.4, 18.4, 0, '#3f5f3a', 0, 0, 0, 'shiny').box(12.6, 0.3, 2.8, -16.5 + i * 13.4, 21.4, 0, '#d9d4c4');
+  },
+  balloon(k, v) {   // a hot-air balloon, far off over the land
+    const c = [['#e63946', '#ffd23f'], ['#1d7fd6', '#ffffff'], ['#2a9d8f', '#f4a261'], ['#9b5de5', '#ffd23f']][v % 4];
+    for (let i = 0; i < 10; i++) k.put(new THREE.SphereGeometry(8, 3, 14, i * Math.PI / 5, Math.PI / 5), c[i % 2], 0, 16, 0, 0, 0, 0, 1, 1.22, 1);
+    k.put(new THREE.CylinderGeometry(3.6, 1.4, 4.5, 16, 1, true), c[0], 0, 6.3, 0);
+    k.box(1.7, 1.3, 1.7, 0, 2.2, 0, '#8a6a40');
+    for (const [x, z] of [[-0.8, -0.8], [0.8, -0.8], [-0.8, 0.8], [0.8, 0.8]]) k.cyl(0.03, 0.03, 2.4, 3, x, 3.4, z, '#5a4a30');
+  },
 };
+function person(k, x, y, z, r, cheer) {   // one of the crowd: legs, a shirt, a head, arms (raised arms wave: the 'wave' material moves them)
+  const sh = SHIRTS[(r() * SHIRTS.length) | 0], sk = SKIN[(r() * SKIN.length) | 0], h = 0.9 + r() * 0.25, up = cheer && r() < 0.75;
+  k.box(0.3, h, 0.25, x, y, z, ['#2d3a55', '#3a3a3a', '#5a4632', '#1d4e89'][(r() * 4) | 0]).box(0.46, 0.62, 0.3, x, y + h, z, sh).ball(0.15, x, y + h + 0.82, z, sk, 1, 1.1, 1, 'lit', 8);
+  if (r() < 0.4) k.ball(0.16, x, y + h + 0.9, z + 0.02, ['#2a1c12', '#c89a4a', '#6b3a1e', '#111111'][(r() * 4) | 0], 1.05, 0.7, 1.05, 'lit', 8);
+  if (up) k.box(0.1, 0.55, 0.1, x - 0.3, y + h + 0.6, z, sk, 0, 0, 0.35, 'wave').box(0.1, 0.55, 0.1, x + 0.3, y + h + 0.6, z, sk, 0, 0, -0.35, 'wave');
+  else k.box(0.1, 0.55, 0.1, x - 0.28, y + h + 0.08, z, sh).box(0.1, 0.55, 0.1, x + 0.28, y + h + 0.08, z, sh);
+}
 export function shade(hex, f) { C.set(hex); const k = f < 0 ? 1 + f : 1; const add = f > 0 ? f : 0; return '#' + new THREE.Color(C.r * k + add * (1 - C.r), C.g * k + add * (1 - C.g), C.b * k + add * (1 - C.b)).getHexString(); }
 const cache = new Map();
 export function model(t, v) {   // {key: geometry} for a roadside thing, built once
@@ -395,7 +465,7 @@ Kit.prototype.loft = function (st, col, key, opt) {   // a smooth closed body th
   pos.push(0, (st[0][2] + st[0][3]) / 2, st[0][0] - 0.015, 0, (st[L][2] + st[L][3]) / 2, st[L][0] + 0.015);
   for (let j = 0; j < N; j++) { idx.push(f0, (j + 1) % N, j); idx.push(f0 + 1, L * N + j, L * N + (j + 1) % N); }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals();
-  return this.put(g, col, 0, 0, 0, 0, 0, 0, 1, 1, 1, key || 'paint');
+  return this.put(g, col, opt.x || 0, opt.y || 0, opt.z || 0, 0, 0, 0, 1, 1, 1, key || 'paint');
 };
 const CARDEF = {
   roadster: { col: '#d2101e', len: 2.28, w: 1.92, wz: [-1.38, 1.38],
@@ -409,8 +479,100 @@ const CARDEF = {
     cabin: [[-0.95, 0.8, 0.84, 0.93], [-0.55, 0.79, 0.88, 1.3], [0.3, 0.77, 0.92, 1.48], [1.3, 0.76, 0.94, 1.5], [1.8, 0.74, 0.95, 1.46], [1.97, 0.72, 0.95, 1.32]], cabinUp: 4.5,
     roof: [[-0.28, 0.6, 1.4, 1.5], [0.2, 0.64, 1.44, 1.535], [1.4, 0.64, 1.44, 1.545], [1.84, 0.6, 1.4, 1.5]] }
 };
+// ---------------------------------------------------------------- your red roadster: long, low and open, a tan cabin, a turning steering wheel
+// (our own design: a wedge nose with flush lamps, scoops ahead of the rear wheels, louvres over the engine, humps behind
+// the seats, a light bar across the tail and four pipes)
+function spider() {
+  const k = new Kit(), col = '#d10f1d', len = 2.3, w = 1.98, wz = [-1.42, 1.42];
+  const keys = [[-2.3, 0.56, 0.38, 0.5], [-2.18, 0.82, 0.3, 0.58], [-1.92, 0.93, 0.28, 0.65], [-1.45, 0.97, 0.28, 0.71], [-0.95, 0.97, 0.28, 0.76], [-0.52, 0.96, 0.28, 0.81],
+    [0.1, 0.94, 0.28, 0.79], [0.65, 0.97, 0.28, 0.83], [1.2, 1.0, 0.28, 0.88], [1.72, 1.0, 0.29, 0.9], [2.1, 0.96, 0.31, 0.89], [2.3, 0.86, 0.36, 0.84]];
+  const st = sections(keys, wz), at = (z) => { let b = st[0]; for (const s of st) if (Math.abs(s[0] - z) < Math.abs(b[0] - z)) b = s; return b; };
+  k.loft(st, col, 'paint', { up: 3.8, dn: 6 });
+  // the cabin: a black tub, tan seats with headrests, the dash and its glowing dials, a raked windscreen in a black frame
+  k.box(1.5, 0.05, 1.3, 0, 0.79, 0.28, '#111111', 0, 0, 0, 'trim');
+  for (const x of [-0.4, 0.4]) {
+    k.box(0.5, 0.12, 0.52, x, 0.78, 0.4, '#b8743e', 0, 0, 0, 'lit').box(0.5, 0.4, 0.12, x, 0.82, 0.72, '#a8652f', 0, 0.22, 0, 'lit');
+    k.box(0.26, 0.16, 0.12, x, 1.17, 0.8, '#a8652f', 0, 0.22, 0, 'lit');
+    k.loft([[0.86, 0.1, 0.78, 0.84], [1.0, 0.15, 0.78, 0.99], [1.35, 0.14, 0.78, 0.95], [1.85, 0.06, 0.8, 0.89]], col, 'paint', { up: 2.4, dn: 3, belly: 0.3, n: 16, x: x });   // the humps behind the seats
+  }
+  k.box(1.62, 0.15, 0.32, 0, 0.8, -0.5, '#191919', 0, 0, 0, 'trim');
+  for (const x of [0.28, 0.52]) k.cyl(0.055, 0.055, 0.02, 14, x, 0.92, -0.335, '#ffb347', Math.PI / 2, 0, 'glow');
+  k.box(1.52, 0.44, 0.03, 0, 0.82, -0.6, '#b8d0e0', 0, 0.55, 0, 'screen');
+  k.box(1.6, 0.045, 0.05, 0, 1.2, -0.42, '#121212', 0, 0.55, 0, 'trim').box(0.04, 0.44, 0.05, -0.78, 0.82, -0.6, '#121212', 0, 0.55, 0, 'trim').box(0.04, 0.44, 0.05, 0.78, 0.82, -0.6, '#121212', 0, 0.55, 0, 'trim');
+  k.box(0.2, 0.06, 0.04, 0, 1.16, -0.45, '#121212', 0, 0.55, 0, 'trim');   // the mirror
+  // louvres over the engine, scoops ahead of the rear wheels, the mirrors on stalks
+  for (let i = 0; i < 6; i++) { const z = 1.32 + i * 0.1; k.box(1.0, 0.025, 0.06, 0, at(z)[3] - 0.004, z, '#141414', 0, 0.3, 0, 'trim'); }
+  for (const sd of [-1, 1]) {
+    const hw = at(0.72)[1];
+    k.box(0.06, 0.15, 0.62, sd * (hw - 0.025), 0.5, 0.74, '#141414', 0, 0, 0, 'trim');
+    k.box(0.05, 0.05, 0.8, sd * (hw - 0.005), 0.71, 0.7, col, 0, 0, 0, 'paint');
+    k.box(0.12, 0.03, 0.03, sd * 1.0, 0.92, -0.55, '#121212', 0, 0, 0, 'trim').box(0.17, 0.1, 0.12, sd * 1.08, 0.92, -0.55, col, 0, 0, 0, 'paint');
+  }
+  // the nose: flush glass over the lamps, a dark mouth and a splitter
+  const nz = -1.98, ny = at(nz)[3];
+  for (const sd of [-1, 1]) {
+    k.box(0.46, 0.05, 0.36, sd * 0.58, ny - 0.035, nz, '#cfe0ec', 0, 0.26, 0, 'glass');
+    k.box(0.36, 0.04, 0.24, sd * 0.58, ny - 0.07, nz, '#fffbe8', 0, 0.26, 0, 'glow');
+  }
+  k.box(1.1, 0.12, 0.1, 0, 0.35, -len + 0.04, '#0d0d0d', 0, 0, 0, 'trim').box(1.55, 0.03, 0.24, 0, 0.29, -2.18, '#0d0d0d', 0, 0, 0, 'trim');
+  // the tail: a black panel with the light bar across it, the diffuser, four pipes and the plate
+  k.box(1.72, 0.26, 0.06, 0, 0.47, len + 0.005, '#0d0d0d', 0, 0, 0, 'trim');
+  k.box(1.64, 0.055, 0.05, 0, 0.7, len + 0.01, '#ff1a2a', 0, 0, 0, 'glow');
+  for (const sd of [-1, 1]) k.box(0.3, 0.09, 0.05, sd * 0.68, 0.61, len + 0.01, '#ff2a2a', 0, 0, 0, 'glow');
+  k.box(1.3, 0.1, 0.3, 0, 0.29, len - 0.1, '#0d0d0d', 0, 0, 0, 'trim');
+  for (const x of [-0.5, -0.34, 0.34, 0.5]) k.roll(0.045, 0.22, 12, x, 0.36, len + 0.03, '#d6d9dc', 'chrome');
+  k.box(0.52, 0.11, 0.02, 0, 0.49, len + 0.04, '#f7d417', 0, 0, 0, 'lit');
+  // red brake calipers (they stay put while the wheels turn)
+  const wx = w / 2 - 0.08;
+  for (const z of wz) for (const sd of [-1, 1]) k.box(0.05, 0.13, 0.17, sd * (wx - 0.15), 0.43, z - 0.1, '#d01818', 0, 0, 0, 'lit');
+  return { k: k, len: len, w: w, wz: wz, wx: wx };
+}
+function bigWheel() {   // a low tyre, a five-spoke star rim and the brake disc behind it
+  const wk = new Kit();
+  wk.axle(0.34, 0.27, 24, 0, 0, 0, '#111111', 'tyre').axle(0.262, 0.275, 22, 0, 0, 0, '#191919', 'tyre');
+  wk.axle(0.235, 0.05, 20, -0.05, 0, 0, '#3a3d40', 'trim');   // the disc
+  wk.axle(0.255, 0.04, 22, 0.115, 0, 0, '#d4d8dc', 'alloy');   // the rim's lip
+  for (let i = 0; i < 5; i++) { const a = i * Math.PI * 2 / 5; wk.put(new THREE.BoxGeometry(0.05, 0.25, 0.075), '#d4d8dc', 0.12, Math.cos(a) * 0.12, Math.sin(a) * 0.12, a, 0, 0, 1, 1, 1, 'alloy'); }
+  wk.axle(0.06, 0.06, 10, 0.135, 0, 0, '#2a2d31', 'trim');
+  return wk.build();
+}
+
+// ---------------------------------------------------------------- the two of you, in parts that move (world3d.js puts them together and poses them)
+// Each part is built round its own pivot. The driver (on the right: a British car) wears sunglasses and a white shirt;
+// his girlfriend has a red top and long fair hair that streams out behind her in the wind.
+export function people() {
+  const P = (fn) => { const k = new Kit(); fn(k); return k.build(); };
+  const cap = (r, l) => new THREE.CapsuleGeometry(r, l, 4, 10);
+  const one = (o) => ({
+    torso: P((k) => { k.put(cap(o.chest, 0.3), o.top, 0, 0.3, 0, 0, 0, 0, o.wide, 1, 0.72, 'lit'); k.cyl(0.05, 0.055, 0.14, 8, 0, 0.6, 0, o.skin); if (o.strap) { k.box(0.04, 0.2, 0.04, -0.1, 0.48, -0.1, o.skin); k.box(0.04, 0.2, 0.04, 0.1, 0.48, -0.1, o.skin); } }),
+    head: P((k) => {
+      k.ball(0.122, 0, 0.13, 0, o.skin, 1, 1.15, 1.06, 'lit', 16);
+      k.put(new THREE.ConeGeometry(0.025, 0.06, 6), o.skin, 0, 0.11, -0.13, -Math.PI / 2, 0, 0);   // the nose
+      k.ball(0.132, 0, 0.18, 0.025, o.hair, 1.04, o.long ? 0.95 : 0.82, 1.08, 'lit', 16);
+      if (o.long) { k.ball(0.11, -0.08, 0.06, 0.04, o.hair, 0.55, 1.2, 0.9, 'lit', 10); k.ball(0.11, 0.08, 0.06, 0.04, o.hair, 0.55, 1.2, 0.9, 'lit', 10); }
+      if (o.shades) k.box(0.25, 0.05, 0.03, 0, 0.145, -0.122, '#0a0a0a', 0, 0, 0, 'glass');
+      else { k.box(0.22, 0.04, 0.03, 0, 0.26, -0.07, '#0a0a0a', 0, -0.5, 0, 'glass'); }   // her sunglasses pushed up into her hair
+    }),
+    upper: P((k) => k.put(cap(o.arm, 0.2), o.sleeve, 0, -0.14, 0)),
+    fore: P((k) => { k.put(cap(o.arm * 0.9, 0.17), o.skin, 0, -0.12, 0); k.ball(0.048, 0, -0.26, 0, o.skin, 1, 1, 1, 'lit', 8); }),
+    hair: o.long ? [0, 1, 2, 3].map((i) => P((k) => k.put(new THREE.BoxGeometry(0.25 - i * 0.04, 0.035, 0.17), o.hair, 0, 0, 0.075, 0, 0, 0, 1, 1, 1, 'lit'))) : null
+  });
+  const driver = one({ chest: 0.165, wide: 1.25, top: '#f2f2ee', sleeve: '#f2f2ee', skin: '#e2ae86', hair: '#2a1c12', arm: 0.052, shades: true });
+  const girl = one({ chest: 0.14, wide: 1.15, top: '#e8263f', sleeve: '#e8b48c', skin: '#efbf98', hair: '#f0cd78', arm: 0.044, long: true, strap: true });
+  const sw = P((k) => { k.put(new THREE.TorusGeometry(0.175, 0.022, 8, 24), '#151515', 0, 0, 0, 0, 0, 0, 1, 1, 1, 'trim'); k.box(0.3, 0.03, 0.02, 0, 0, 0, '#202020', 0, 0, 0, 'trim').cyl(0.045, 0.045, 0.03, 12, 0, 0, 0, '#d10f1d', Math.PI / 2, 0, 'paint'); });
+  return {
+    driver: { part: driver, seat: [0.4, 0.66, 0.42], neck: 0.68, shoulder: [0.205, 0.56, 0], elbow: 0.27, scale: 1.14 },
+    girl: { part: girl, seat: [-0.4, 0.66, 0.44], neck: 0.66, shoulder: [0.18, 0.54, 0], elbow: 0.26, hairAt: [0, 0.2, 0.09], scale: 1.12 },
+    wheel: { geo: sw, at: [0.4, 0.98, -0.08], tilt: 0.45 }
+  };
+}
+
 export function playerCar(id) {
-  const D = CARDEF[id] || CARDEF.roadster, k = new Kit(), len = D.len, w = D.w, skin = ['#e0b088', '#c98d5a'];
+  if (!CARDEF[id] || id === 'roadster') {   // the red roadster: its own body, wheels and cabin (the two of you come from people())
+    const S = spider();
+    return { body: S.k.build(), wheel: bigWheel(), wheels: [[-S.wx, 0.34, S.wz[0]], [S.wx, 0.34, S.wz[0]], [-S.wx, 0.34, S.wz[1]], [S.wx, 0.34, S.wz[1]]], len: S.len, width: S.w, open: true };
+  }
+  const D = CARDEF[id], k = new Kit(), len = D.len, w = D.w, skin = ['#e0b088', '#c98d5a'];
   const st = sections(D.keys, D.wz);
   k.loft(st, D.col, 'paint', { up: 3.2, dn: 6 });
   const near = (z) => { let best = st[0]; for (const s of st) if (Math.abs(s[0] - z) < Math.abs(best[0] - z)) best = s; return best; };

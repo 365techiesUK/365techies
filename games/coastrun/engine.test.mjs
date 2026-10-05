@@ -109,16 +109,17 @@ test('hitting the sign in the middle of a fork crashes (Classic) and still picks
   assert.ok(crashed); assert.equal(W.route.length, 2);
 });
 
-test('the goal: a time bonus, round 2 and the road goes on to Bournemouth again', () => {
+test('the goal: a time bonus, a love bonus, a rank, round 2 and the road goes on to Bournemouth again', () => {
   const W = E.newWorld(2, {}, 8); go(W);
-  for (let k = 0; k < 2; k++) {
+  for (let k = 0; k < 4; k++) {
     W.s = (W.fork.split - 2) * E.SEG; W.x = -6; W.v = 40; W.cars = []; drive(W, 30, {});
     W.s = (W.fork.end - 1) * E.SEG; W.x = 0; drive(W, 30, {});
   }
-  assert.equal(W.route.length, 3); assert.ok(!E.STAGES[W.route[2]].next, 'the third place ends in a goal');
-  W.s = (W.goalAt - 3) * E.SEG; W.time = 12.2; W.cars = [];
+  assert.equal(W.route.length, 5); assert.ok(!E.STAGES[W.route[4]].next, 'the fifth place ends in a goal');
+  W.s = (W.goalAt - 3) * E.SEG; W.time = 12.2; W.cars = []; W.runHearts = 4; W.runAsked = 3;
   const s0 = W.score; let goal = false; for (let i = 0; i < 40; i++) { E.step(W, {}); if (W.events.some((e) => e.sfx === 'goal')) goal = true; quiet(W); }
-  assert.ok(goal); assert.equal(W.round, 2); assert.ok(W.score - s0 >= 12000); assert.ok(W.time > 50, 'the clock starts again');
+  assert.ok(goal); assert.equal(W.round, 2); assert.ok(W.score - s0 >= 12000 + 20000, 'time bonus and 5,000 a heart'); assert.ok(W.time > 50, 'the clock starts again');
+  assert.ok(W.result && 'SABCD'.includes(W.result.rank), 'a rank: ' + (W.result && W.result.rank)); assert.equal(W.result.love, 20000); assert.equal(W.result.route.length, 5);
   drive(W, 120, {});
   assert.equal(W.stage, 0); assert.deepEqual(W.route, [0], 'round 2 starts at Bournemouth');
 });
@@ -186,13 +187,63 @@ test('at a split the other road\'s traffic goes its own way', () => {
   assert.equal(W.fork && W.fork.s, 0); assert.ok(W.cars.every((c) => c.b === 0 || (W.fork && E.segIndex(c.s) >= W.fork.split)));
 });
 
-test('the driver gets round three stretches at Gentle and Classic, and the score stays within the Hall of Fame limit', () => {
+test('the driver gets round five stretches at Gentle and Classic, and the score stays within the Hall of Fame limit', () => {
   for (const sp of [1, 2]) for (const seed of [1, 2]) {
     const W = E.newWorld(sp, {}, seed); let goal = false;
-    for (let i = 0; i < 60 * 60 * 6 && !W.over && !goal; i++) { E.step(W, E.autopilot(W)); if (W.events.some((e) => e.sfx === 'goal')) goal = true; quiet(W); if (sp === 2) W.time = Math.max(W.time, 5); }
-    assert.ok(goal, 'speed ' + sp + ' seed ' + seed + ' reached the goal'); assert.equal(W.round, 2); assert.ok(W.t > 60 * 120, 'it took a few minutes of driving');
+    for (let i = 0; i < 60 * 60 * 10 && !W.over && !goal; i++) { E.step(W, E.autopilot(W)); if (W.events.some((e) => e.sfx === 'goal')) goal = true; quiet(W); if (sp === 2) W.time = Math.max(W.time, 5); }
+    assert.ok(goal, 'speed ' + sp + ' seed ' + seed + ' reached the goal'); assert.equal(W.round, 2); assert.ok(W.t > 60 * 200, 'it took a few minutes of driving');
+    assert.ok(W.result.legs.length >= 4, 'a time for each stretch'); assert.ok(W.runAsked >= 5 || W.result.of >= 15, 'she asked for things along the way: ' + W.runAsked);
     assert.ok(W.score <= 8000 * W.t / 60 + 500000, 'score ' + W.score + ' in ' + Math.round(W.t / 60) + ' s');
   }
   const F = E.newWorld(3, {}, 1); drive(F, 60 * 40, E.autopilot);
   assert.ok(F.score > 0, 'Fast runs');
+});
+
+test('fifteen places in a pyramid: each leads to the two below it, and the fifth level ends in goals', () => {
+  assert.equal(E.STAGES.length, 15);
+  for (const S of E.STAGES) {
+    if (S.level < 5) { const a = E.STAGES[S.next[0]], b = E.STAGES[S.next[1]]; assert.equal(a.level, S.level + 1); assert.equal(b.pos, a.pos + 1); assert.equal(a.pos, S.pos); }
+    else assert.equal(S.next, null);
+  }
+  assert.equal(E.STAGES.filter((S) => !S.next).length, 5, 'five goals');
+  assert.equal(new Set(E.STAGES.map((S) => S.key)).size, 15, 'every place its own');
+});
+
+test('tunnels and bridges: the road keeps level through them, and their walls and railings keep the car in', () => {
+  for (const [key, flag, wall] of [['purbeck', 'tun', E.TUN_W], ['christchurch', 'brg', E.BRG_W]]) {
+    const W = E.newWorld(2, {}, 16); go(W); W.cars = [];
+    const from = E.lastIndex(W) + 1; E.buildStage(W, E.STAGES.find((S) => S.key === key).id);
+    const i = findSeg(W, from, (g, j) => g[flag] && E.segAt(W, j + 12)[flag]);
+    assert.ok(i > 0, key + ' has one');
+    if (flag === 'brg') assert.ok(E.segAt(W, i).y1 >= 8.9, 'the bridge is well above the water');
+    assert.ok(!(E.segAt(W, i).spr || []).some((p) => p.h > 0), 'nothing to hit inside');
+    W.fork = null; W.s = i * E.SEG; W.v = 40; W.x = 0;
+    drive(W, 40, (w) => { w.v = 40; return { left: true }; });
+    assert.ok(W.x >= -(wall - E.CAR_W) - 0.01, key + ': held in by the ' + (flag === 'tun' ? 'wall' : 'railing') + ' at ' + W.x.toFixed(2));
+  }
+});
+
+test('her requests: do what she asks in time for hearts; a knock spoils "careful"; she picks a road at the fork', () => {
+  const W = E.newWorld(2, {}, 17); go(W); clear(W);
+  W.s = 100 * E.SEG; W.x = 0; W.v = 60; W.reqNext = 1e9;
+  W.req = { k: 'pass', txt: '', t0: W.t, dur: 900, goal: 2, have: 0 };
+  for (const z of [40, 80]) W.cars.push({ id: z, s: W.s + z, x: 4.6, tx: 4.6, v: 20, v0: 20, t: 0, b: 0, col: 0, lc: 9999, hitT: -999, passed: false, ds: z, spin: 0 });
+  const h0 = W.hearts; drive(W, 200, (w) => { w.x = 0; w.v = 60; return {}; });
+  assert.equal(W.req, null, 'done'); assert.equal(W.hearts - h0, 3, 'three hearts for doing it quickly');
+  W.req = { k: 'clean', txt: '', t0: W.t, dur: 720, goal: 1, have: 0 };
+  W.cars.push({ id: 99, s: W.s + 6, x: 0, tx: 0, v: 10, v0: 10, t: 0, b: 0, col: 0, lc: 9999, hitT: -999, passed: false, ds: 6, spin: 0 });
+  const h1 = W.hearts; drive(W, 40, (w) => { w.x = 0; return {}; });
+  assert.equal(W.req, null, 'over'); assert.equal(W.hearts, h1, 'no hearts after a bump'); assert.ok(W.her.k === 'scared' || W.her.k === 'sad');
+  const F = E.newWorld(2, {}, 18); go(F); F.cars = [];
+  F.s = (F.fork.a - 60) * E.SEG; F.v = 40; drive(F, 30, (w) => { w.v = 40; return {}; });
+  assert.ok(F.reqSide, 'she says which way'); assert.equal(F.her.k, 'point');
+  const want = F.reqSide.side, h2 = F.hearts;
+  F.s = (F.fork.split - 3) * E.SEG; F.x = want * 6; drive(F, 20, {});
+  assert.equal(F.hearts - h2, 2, 'two hearts for taking her road'); assert.equal(F.reqSide, null);
+});
+
+test('requests come along by themselves while you drive', () => {
+  const W = E.newWorld(2, {}, 19); let asked = 0;
+  for (let i = 0; i < 60 * 60 && !W.over; i++) { E.step(W, E.autopilot(W)); if (W.events.some((e) => e.sfx === 'ask')) asked++; quiet(W); W.time = Math.max(W.time, 30); }
+  assert.ok(asked >= 3, 'asked ' + asked + ' times in a minute'); assert.ok(W.hearts > 0, 'and some were done: ' + W.hearts);
 });

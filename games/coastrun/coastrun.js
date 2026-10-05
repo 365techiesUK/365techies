@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=3';
+import { createWorld } from './world3d.js?v=4';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 const GW = 384, GH = 224;
@@ -78,15 +78,21 @@ function hudText(g, s, x, y, size, col, align, stroke) {
   g.fillStyle = col; g.fillText(s, x, y);
 }
 function stretchOf(W, i) { for (let j = W.stretch.length - 1; j >= 0; j--) if (i >= W.stretch[j].from && i < W.stretch[j].to) return W.stretch[j]; return null; }
-const STAGE_POS = { 0: [0, 0], 1: [1, 0], 2: [1, 1], 3: [2, 0], 4: [2, 1], 5: [2, 2] };
+const clock = (sec) => { const m = Math.floor(sec / 60), s = sec - m * 60; return m + "'" + (s < 10 ? '0' : '') + s.toFixed(2).replace('.', '"'); };
 function hud(g, W, t, mode) {
   const pi = E.segIndex(W.s), tm = Math.ceil(W.time), low = !W.timeUp && W.time <= 10 && W.count <= 0, flash = low && (t / 250 | 0) % 2;
+  // the clock, and this stretch's own time
   hudText(g, 'TIME', 10, 13, 7.5, '#ffe9a8');
   hudText(g, String(tm), 9, 38, 26, flash ? '#ff4d4d' : low ? '#ff9a3c' : '#ffd400');
+  if (W.count <= 0 && mode !== 'title') hudText(g, 'STAGE ' + clock(Math.max(0, (W.t - W.legT0) / 60)), 10, 49, 6.5, '#ffffff');
+  // the score, your hearts, which stretch of five
   R.shownScore += (W.score - R.shownScore) * 0.2; if (Math.abs(W.score - R.shownScore) < 1) R.shownScore = W.score;
   hudText(g, 'SCORE', GW - 10, 13, 7.5, '#bfe6ff', 'right');
   hudText(g, Math.round(R.shownScore).toLocaleString('en-GB'), GW - 10, 29, 14, '#ffffff', 'right');
-  hudText(g, 'STAGE ' + W.stageNo + (W.round > 1 ? '  ·  ROUND ' + W.round : ''), GW - 10, 40, 7, '#bfe6ff', 'right');
+  const S0 = E.STAGES[W.stage] || E.STAGES[0];
+  hudText(g, 'STAGE ' + S0.level + '/' + E.LEVELS + (W.round > 1 ? '  ·  ROUND ' + W.round : ''), GW - 10, 40, 7, '#bfe6ff', 'right');
+  if (mode !== 'title') { heart(g, GW - 44, 47, 4.2, '#ff4d7a'); hudText(g, String(W.runHearts || 0), GW - 37, 50.5, 8, '#ffd1df', 'left'); }
+  // where you are: the place, and how far along it
   const st = stretchOf(W, pi), S = E.STAGES[(st && st.id) || 0];
   hudText(g, S.name, GW / 2, 13, 8.5, '#ffffff', 'center');
   if (st) {
@@ -95,43 +101,120 @@ function hud(g, W, t, mode) {
     g.fillStyle = '#ffd400'; roundRect(g, bx, by, Math.max(2, bw * p), 4, 2); g.fill();
     g.fillStyle = S.next ? '#ffffff' : '#4ade80'; g.beginPath(); g.arc(bx + bw, by + 2, 2.6, 0, Math.PI * 2); g.fill();
   }
-  routeMap(g, W, 10, GH - 34, t);
-  hudText(g, String(E.mph(W)), GW - 34, GH - 15, 22, W.boosting ? '#7fd8ff' : '#ffffff', 'right');
-  hudText(g, 'MPH', GW - 10, GH - 15, 7.5, '#bfe6ff', 'right');
-  const bw2 = 64, bx2 = GW - 10 - bw2, by2 = GH - 10;
-  g.fillStyle = 'rgba(0,0,0,0.5)'; roundRect(g, bx2 - 1, by2 - 1, bw2 + 2, 6, 3); g.fill();
-  const bg2 = g.createLinearGradient(bx2, 0, bx2 + bw2, 0); bg2.addColorStop(0, '#2f7cf6'); bg2.addColorStop(1, '#7fe8ff');
-  g.fillStyle = bg2; roundRect(g, bx2, by2, Math.max(1, bw2 * W.boost), 4, 2); g.fill();
-  hudText(g, 'BOOST', bx2 - 4, by2 + 5, 6.5, W.boosting ? '#ffffff' : W.boost > 0.25 && ((t / 400 | 0) % 2) ? '#7fe8ff' : '#9fb3c8', 'right');
+  routeMap(g, W, 8, GH - 46, t);
+  speedo(g, W, t);
   if (W.drift) hudText(g, 'DRIFT', GW / 2, GH - 12, 9, '#ffb347', 'center');
   if (W.count > 0 || (R.goT >= 0 && W.t - R.goT < 50)) lights(g, W);
   if (W.count <= 0 && R.goT < 0) R.goT = W.t;
+  if (mode !== 'title') request(g, W, t);
   const F = W.fork;
   if (F && !F.s && pi > F.a - 70 && pi < F.split && mode !== 'title') {
-    const L = E.STAGES[F.next[0]].name, Rn = E.STAGES[F.next[1]].name, side = W.x < -1 ? -1 : W.x > 1 ? 1 : 0;
-    roundRect(g, GW / 2 - 140, 52, 280, 18, 9); g.fillStyle = 'rgba(0,40,20,0.72)'; g.fill();
+    const L = E.STAGES[F.next[0]].name, Rn = E.STAGES[F.next[1]].name, side = W.x < -1 ? -1 : W.x > 1 ? 1 : 0, her = W.reqSide ? W.reqSide.side : 0;
+    roundRect(g, GW / 2 - 150, 52, 300, 18, 9); g.fillStyle = 'rgba(0,40,20,0.72)'; g.fill();
     hudText(g, '◀ ' + L, GW / 2 - 8, 65, 9, side < 0 ? '#ffd400' : '#ffffff', 'right', false);
     hudText(g, Rn + ' ▶', GW / 2 + 8, 65, 9, side > 0 ? '#ffd400' : '#ffffff', 'left', false);
     g.fillStyle = 'rgba(255,255,255,0.4)'; g.fillRect(GW / 2 - 0.5, 55, 1, 12);
+    if (her) heart(g, her < 0 ? GW / 2 - 144 : GW / 2 + 144, 61, 4 + Math.sin(t / 120) * 0.6, '#ff4d7a');
   }
   if (mode === 'play' && W.stageNo === 1 && W.count <= 0 && W.t - R.goT < 480 && R.goT >= 0 && !document.body.classList.contains('touchy')) {
     hudText(g, '◀ ▶ steer   ·   SPACE boost   ·   tap ▼ while turning to drift', GW / 2, GH - 30, 7.5, '#ffffff', 'center');
   }
-  banner(g, W);
+  banner(g, W, t);
   pops(g, W);
+  results(g, W, t);
 }
-function routeMap(g, W, x0, y0, t) {
-  const dx = 14, dy = 10, route = W.route || [0], here = route[route.length - 1];
-  const at = (id) => { const p = STAGE_POS[id]; return [x0 + 4 + p[0] * dx, y0 + 4 + (p[1] - p[0] / 2) * dy + dy]; };
-  g.lineWidth = 1.2; g.strokeStyle = 'rgba(255,255,255,0.3)';
-  [[0, 1], [0, 2], [1, 3], [1, 4], [2, 4], [2, 5]].forEach((e) => { const a = at(e[0]), b = at(e[1]); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); });
+function heart(g, x, y, r, col) {   // a little heart, centred on x, y
+  g.fillStyle = col; g.beginPath(); g.moveTo(x, y + r * 0.9);
+  g.bezierCurveTo(x - r * 1.6, y - r * 0.2, x - r * 0.9, y - r * 1.5, x, y - r * 0.55);
+  g.bezierCurveTo(x + r * 0.9, y - r * 1.5, x + r * 1.6, y - r * 0.2, x, y + r * 0.9); g.fill();
+}
+function face(g, x, y, r, mood, t) {   // your passenger, in a little round frame: fair hair, a red top, a smile (or not)
+  g.save(); g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fillStyle = '#ffe6ef'; g.fill(); g.clip();
+  g.fillStyle = '#e8263f'; g.beginPath(); g.ellipse(x, y + r * 1.05, r * 0.8, r * 0.5, 0, 0, Math.PI * 2); g.fill();
+  g.fillStyle = '#f0cd78'; g.beginPath(); g.ellipse(x, y - r * 0.05, r * 0.62, r * 0.78, 0, 0, Math.PI * 2); g.fill();
+  g.fillStyle = '#f3c6a0'; g.beginPath(); g.ellipse(x, y + r * 0.08, r * 0.42, r * 0.5, 0, 0, Math.PI * 2); g.fill();
+  g.fillStyle = '#f0cd78'; g.beginPath(); g.ellipse(x, y - r * 0.36, r * 0.5, r * 0.24, 0, 0, Math.PI * 2); g.fill();
+  const blink = (t / 140 | 0) % 25 === 0;
+  g.fillStyle = '#2a1c12'; if (blink) { g.fillRect(x - r * 0.22, y + r * 0.02, r * 0.14, r * 0.04); g.fillRect(x + r * 0.08, y + r * 0.02, r * 0.14, r * 0.04); }
+  else { g.beginPath(); g.arc(x - r * 0.15, y + r * 0.04, r * 0.06, 0, Math.PI * 2); g.arc(x + r * 0.15, y + r * 0.04, r * 0.06, 0, Math.PI * 2); g.fill(); }
+  g.strokeStyle = '#c0304a'; g.lineWidth = r * 0.07; g.beginPath();
+  if (mood === 'sad') g.arc(x, y + r * 0.38, r * 0.14, Math.PI * 1.15, Math.PI * 1.85); else g.arc(x, y + r * 0.18, r * 0.16, Math.PI * 0.15, Math.PI * 0.85);
+  g.stroke(); g.restore();
+  g.strokeStyle = '#ffffff'; g.lineWidth = 1.2; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.stroke();
+}
+function request(g, W, t) {   // what she's asking for: her face, the words, how much is done and how long is left; then how you did
+  const Q = W.req, done = W.reqDone && W.t - W.reqDone.t < 110 ? W.reqDone : null, side = W.reqSide;
+  if (!Q && !done && !side) return;
+  const x = GW / 2 - 92, y = 26, w = 184, h = 22;
+  g.fillStyle = 'rgba(40,6,24,0.72)'; roundRect(g, x, y, w, h, 11); g.fill();
+  g.strokeStyle = 'rgba(255,120,170,0.8)'; g.lineWidth = 0.8; roundRect(g, x, y, w, h, 11); g.stroke();
+  face(g, x + 11, y + 11, 9, done && done.n < 2 ? 'sad' : 'happy', t);
+  if (done && !Q) {
+    hudText(g, done.word, x + 26, y + 15, 9, done.n >= 2 ? '#ffd1df' : '#ffffff', 'left', false);
+    for (let i = 0; i < 3; i++) heart(g, x + w - 38 + i * 12, y + 11, 4.2, i < done.n ? '#ff4d7a' : 'rgba(255,255,255,0.25)');
+    return;
+  }
+  if (Q) {
+    hudText(g, Q.txt, x + 26, y + 10, 7.2, '#ffffff', 'left', false);
+    const p = Math.min(1, Q.k === 'clean' ? Q.have : Q.have / Q.goal), left = Math.max(0, 1 - (W.t - Q.t0) / Q.dur), bx = x + 26, bw = w - 60;
+    g.fillStyle = 'rgba(255,255,255,0.18)'; roundRect(g, bx, y + 14, bw, 4, 2); g.fill();
+    g.fillStyle = '#ff6f9c'; roundRect(g, bx, y + 14, Math.max(2, bw * p), 4, 2); g.fill();
+    if (Q.goal > 1 && !Q.secs) hudText(g, Math.floor(Q.have) + '/' + Q.goal, x + w - 30, y + 18, 6.5, '#ffd1df', 'left', false);
+    g.strokeStyle = left < 0.25 && (t / 200 | 0) % 2 ? '#ff4d4d' : '#ffd1df'; g.lineWidth = 1.6;
+    g.beginPath(); g.arc(x + w - 11, y + 11, 6, -Math.PI / 2, -Math.PI / 2 + left * Math.PI * 2); g.stroke();
+  } else if (side) {
+    hudText(g, (side.side < 0 ? '◀ Go left! ' : 'Go right! ▶ ') + side.name, x + 26, y + 15, 8, '#ffffff', 'left', false);
+  }
+}
+function routeMap(g, W, x0, y0, t) {   // the pyramid of places: the way you've come in yellow, the place you're in flashing
+  const dx = 13, dy = 8.5, route = W.route || [0], here = route[route.length - 1];
+  const at = (id) => { const S = E.STAGES[id]; return [x0 + 4 + (S.level - 1) * dx, y0 + 20 + (S.pos - (S.level - 1) / 2) * dy]; };
+  g.lineWidth = 1; g.strokeStyle = 'rgba(255,255,255,0.28)';
+  E.STAGES.forEach((S) => { if (S.next) S.next.forEach((n) => { const a = at(S.id), b = at(n); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); }); });
   g.strokeStyle = '#ffd400'; g.lineWidth = 1.6;
   for (let i = 1; i < route.length; i++) { const a = at(route[i - 1]), b = at(route[i]); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); }
-  for (let id = 0; id < 6; id++) {
-    const p = at(id), on = route.indexOf(id) >= 0, cur = id === here;
-    g.fillStyle = cur ? ((t / 300 | 0) % 2 ? '#ffffff' : '#ffd400') : on ? '#ffd400' : 'rgba(255,255,255,0.45)';
-    g.beginPath(); g.arc(p[0], p[1], cur ? 2.8 : 2.1, 0, Math.PI * 2); g.fill();
+  E.STAGES.forEach((S) => {
+    const p = at(S.id), on = route.indexOf(S.id) >= 0, cur = S.id === here;
+    g.fillStyle = cur ? ((t / 300 | 0) % 2 ? '#ffffff' : '#ffd400') : on ? '#ffd400' : S.next ? 'rgba(255,255,255,0.45)' : 'rgba(120,255,160,0.6)';
+    g.beginPath(); g.arc(p[0], p[1], cur ? 2.6 : 1.8, 0, Math.PI * 2); g.fill();
+  });
+}
+function speedo(g, W, t) {   // a sweep of the speed round an arc, the number in the middle, the boost below
+  const cx = GW - 40, cy = GH - 20, r = 26, f = Math.min(1.25, W.v / E.VMAX), a0 = Math.PI * 0.8, a1 = Math.PI * 2.2;
+  g.lineCap = 'round';
+  g.strokeStyle = 'rgba(0,0,0,0.45)'; g.lineWidth = 5; g.beginPath(); g.arc(cx, cy, r, a0, a1); g.stroke();
+  const sg = g.createLinearGradient(cx - r, 0, cx + r, 0); sg.addColorStop(0, '#3fd0ff'); sg.addColorStop(0.7, '#ffd400'); sg.addColorStop(1, '#ff4d4d');
+  g.strokeStyle = W.boosting ? '#7fe8ff' : sg; g.lineWidth = 3.4; g.beginPath(); g.arc(cx, cy, r, a0, a0 + (a1 - a0) * Math.min(1, f / 1.2)); g.stroke();
+  g.lineCap = 'butt';
+  hudText(g, String(E.mph(W)), cx + 2, cy + 3, 15, W.boosting ? '#7fd8ff' : '#ffffff', 'center');
+  hudText(g, 'MPH', cx, cy + 12, 6, '#bfe6ff', 'center');
+  const bw2 = 52, bx2 = cx - bw2 / 2, by2 = GH - 6;
+  g.fillStyle = 'rgba(0,0,0,0.5)'; roundRect(g, bx2 - 1, by2 - 1, bw2 + 2, 5, 2.5); g.fill();
+  const bg2 = g.createLinearGradient(bx2, 0, bx2 + bw2, 0); bg2.addColorStop(0, '#2f7cf6'); bg2.addColorStop(1, '#7fe8ff');
+  g.fillStyle = bg2; roundRect(g, bx2, by2, Math.max(1, bw2 * W.boost), 3, 1.5); g.fill();
+  hudText(g, 'BOOST', bx2 - 4, by2 + 4, 6, W.boosting ? '#ffffff' : W.boost > 0.25 && ((t / 400 | 0) % 2) ? '#7fe8ff' : '#9fb3c8', 'right');
+}
+function results(g, W, t) {   // at the goal: each stretch's time and hearts, the bonuses and the rank
+  const Rz = W.result; if (!Rz) return;
+  const age = W.t - Rz.t; if (age < 40 || age > 600) return;
+  const a = Math.min(1, (age - 40) / 20, (600 - age) / 25), x = GW / 2 - 110, y = 46, w = 220, h = 30 + Rz.legs.length * 11 + 30;
+  g.save(); g.globalAlpha = a;
+  g.fillStyle = 'rgba(6,16,40,0.82)'; roundRect(g, x, y, w, h, 10); g.fill();
+  g.strokeStyle = 'rgba(255,212,0,0.8)'; g.lineWidth = 1; roundRect(g, x, y, w, h, 10); g.stroke();
+  hudText(g, 'GOAL  ·  ' + Rz.goal, x + w / 2, y + 14, 9, '#ffd400', 'center', false);
+  Rz.legs.forEach((L, i) => {
+    const yy = y + 28 + i * 11, show = age > 60 + i * 12; if (!show) return;
+    hudText(g, (i + 1) + '  ' + E.STAGES[L.st].name, x + 12, yy, 7, '#ffffff', 'left', false);
+    hudText(g, clock(L.t), x + w - 56, yy, 7, '#bfe6ff', 'right', false);
+    for (let k = 0; k < Math.min(6, L.hearts); k++) heart(g, x + w - 48 + k * 7, yy - 2.5, 2.6, '#ff4d7a');
+  });
+  const yb = y + 28 + Rz.legs.length * 11 + 4;
+  if (age > 60 + Rz.legs.length * 12) {
+    hudText(g, 'TIME BONUS  ' + Rz.timeBonus.toLocaleString('en-GB'), x + 12, yb, 7, '#ffe9a8', 'left', false);
+    hudText(g, 'LOVE BONUS  ' + Rz.love.toLocaleString('en-GB') + '  (' + Rz.hearts + ' ♥)', x + 12, yb + 11, 7, '#ffd1df', 'left', false);
   }
+  if (age > 90 + Rz.legs.length * 12) { const s = 1 + Math.max(0, 1 - (age - 90 - Rz.legs.length * 12) / 12) * 0.8; g.save(); g.translate(x + w - 26, yb + 6); g.scale(s, s); hudText(g, Rz.rank, 0, 8, 26, Rz.rank === 'S' ? '#ff4dd2' : Rz.rank === 'A' ? '#ffd400' : '#ffffff', 'center'); g.restore(); hudText(g, 'RANK', x + w - 26, yb - 12, 6, '#bfe6ff', 'center', false); }
+  g.restore();
 }
 function lights(g, W) {
   const x = GW / 2 - 36, y = 26, lit = W.count > 180 ? 0 : W.count > 120 ? 1 : W.count > 60 ? 2 : W.count > 0 ? 3 : 4;
@@ -143,16 +226,24 @@ function lights(g, W) {
   }
 }
 const BANNER_COL = { check: ['#ffd400', '#ffffff'], stage: ['#ffffff', '#bfe6ff'], goal: ['#4ade80', '#ffd400'], red: ['#ff4d4d', '#ffffff'], go: ['#3bff6a', '#ffffff'], gold: ['#ffd400', '#ffffff'] };
-function banner(g, W) {
+function banner(g, W, t) {
   const b = W.banner; if (!b) return;
-  const age = W.t - b.t, dur = b.kind === 'go' ? 50 : b.kind === 'red' ? 400 : 160; if (age > dur || age < 0) return;
+  const age = W.t - b.t, dur = b.kind === 'go' ? 50 : b.kind === 'red' ? 400 : b.kind === 'stage' ? 200 : 160; if (age > dur || age < 0) return;
+  if (b.kind === 'stage') {   // a new place: a sweeping card with its name
+    const inK = Math.min(1, age / 14), outK = Math.min(1, (dur - age) / 18), S = E.STAGES.find((q) => q.name === b.txt);
+    g.save(); g.globalAlpha = outK;
+    const bw = 230 * inK; g.fillStyle = 'rgba(6,16,40,0.7)'; g.fillRect(GW / 2 - bw / 2, 70, bw, 30);
+    g.fillStyle = '#ffd400'; g.fillRect(GW / 2 - bw / 2, 70, bw, 1.6); g.fillRect(GW / 2 - bw / 2, 98.4, bw, 1.6);
+    if (inK > 0.6) { hudText(g, S ? 'STAGE ' + S.level + (S.next ? '' : '  ·  THE LAST STRETCH') : '', GW / 2, 79, 6.5, '#bfe6ff', 'center', false); hudText(g, b.txt, GW / 2, 95, 15, '#ffffff', 'center'); }
+    g.restore(); return;
+  }
   const cols = BANNER_COL[b.kind] || BANNER_COL.stage, inK = Math.min(1, age / 10), outK = Math.min(1, (dur - age) / 16), s = 0.7 + 0.3 * inK + (b.kind === 'goal' ? Math.sin(age / 6) * 0.03 : 0);
   g.save(); g.globalAlpha = outK; g.translate(GW / 2, 86); g.scale(s, s);
   hudText(g, b.txt, 0, 0, b.kind === 'go' ? 34 : 24, cols[0], 'center');
   if (b.sub) hudText(g, b.sub, 0, 16, 10, cols[1], 'center');
   g.restore();
 }
-const POP_COL = { near: '#7fe8ff', drift: '#ffb347', gold: '#ffd400', nitro: '#7fb8ff', slip: '#c9b8ff' };
+const POP_COL = { near: '#7fe8ff', drift: '#ffb347', gold: '#ffd400', nitro: '#7fb8ff', slip: '#c9b8ff', heart: '#ff8fb3' };
 function pops(g, W) {
   for (let i = 0; i < W.pops.length; i++) {
     const p = W.pops[i], age = W.t - p.t; if (age > 70 || age < 0) continue;
@@ -166,9 +257,29 @@ function pops(g, W) {
 
 // ---------------------------------------------------------------- sounds: one-off effects, and the engine, wind and tyres that follow the car
 function pan(e) { return e && e.x != null ? Math.max(-0.8, Math.min(0.8, e.x * 0.12)) : 0; }
+// ---- your passenger's voice: one of each line's takes, a touch louder than the music, which dips while she speaks
+const VOICE = { go: 2, drift: 2, near: 2, pass: 2, coins: 2, clean: 2, speed: 2, air: 2, slip: 2, left: 2, right: 2, great: 3, good: 2, fail: 2, yay: 2, aww: 2, crash: 2, bump: 2, close: 2, wow: 2, wheee: 2, check: 2, goal: 2, hurry: 1, timeup: 1 };
+const VBUF = {}; let vLoaded = false, vOn = true;
+function loadVoices(a) {
+  if (vLoaded) return; vLoaded = true;
+  for (const id in VOICE) for (let n = 0; n < VOICE[id]; n++) fetch('voice/' + id + '-' + n + '.mp3').then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(r.status))).then((b) => a.decodeAudioData(b)).then((buf) => { (VBUF[id] || (VBUF[id] = []))[n] = buf; }).catch(() => {});
+}
+function say(id, S) {
+  const a = S.ctx(); if (!a || !vOn) return;
+  loadVoices(a);
+  const list = (VBUF[id] || []).filter(Boolean); if (!list.length) return;
+  const b = list[(Math.random() * list.length) | 0];
+  try {
+    const src = a.createBufferSource(), g = a.createGain(); src.buffer = b; g.gain.value = 1.05; src.connect(g); g.connect(S.bus() || a.destination); src.start();
+    if (MUS.gain) MUS.duck = a.currentTime + b.duration + 0.2;
+  } catch (er) {}
+}
 function sound(name, S, e) {
   const p = pan(e), n = (e && e.n) || 1;
+  if (name.charCodeAt(0) === 118 && name[1] === ':') { say(name.slice(2), S); return; }   // 'v:...' - something she says
   switch (name) {
+    case 'ask': S.tone(1318, 0.14, 0.035, { type: 'sine', verb: 0.3 }); S.tone(1760, 0.22, 0.03, { type: 'sine', when: 0.09, verb: 0.3 }); break;
+    case 'heart': for (let i = 0; i < n; i++) { S.tone(1568 * Math.pow(1.122, i), 0.14, 0.04, { type: 'triangle', when: i * 0.09, verb: 0.4 }); S.tone(3136 * Math.pow(1.122, i), 0.1, 0.015, { type: 'sine', when: i * 0.09 + 0.02, verb: 0.4 }); } break;
     case 'count': S.tone(523, 0.32, 0.09, { type: 'square', verb: 0.25 }); break;
     case 'go': S.tone(1046, 0.7, 0.1, { type: 'square', verb: 0.4 }); S.tone(1568, 0.6, 0.04, { type: 'triangle', verb: 0.4 }); break;
     case 'perfect': [784, 988, 1175, 1568].forEach((f, k) => S.tone(f, 0.16, 0.05, { type: 'square', when: k * 0.05, verb: 0.4 })); break;
@@ -207,7 +318,9 @@ function makeAudio(a, bus) {
   o.f.connect(o.g); o.g.connect(bus);
   o.o1 = a.createOscillator(); o.o1.type = 'sawtooth'; o.o2 = a.createOscillator(); o.o2.type = 'square'; o.o3 = a.createOscillator(); o.o3.type = 'triangle';
   const m1 = a.createGain(), m2 = a.createGain(), m3 = a.createGain(); m1.gain.value = 0.5; m2.gain.value = 0.32; m3.gain.value = 0.4;
-  o.o1.connect(m1); o.o2.connect(m2); o.o3.connect(m3); m1.connect(o.f); m2.connect(o.f); m3.connect(o.f);
+  o.o4 = a.createOscillator(); o.o4.type = 'sawtooth'; const m4 = a.createGain(); m4.gain.value = 0.38; o.o4.connect(m4);
+  o.ws = a.createWaveShaper(); const curve = new Float32Array(1024); for (let i = 0; i < 1024; i++) { const x = i / 511.5 - 1; curve[i] = Math.tanh(x * 2.2) / Math.tanh(2.2); } o.ws.curve = curve; o.ws.oversample = '2x';
+  o.o1.connect(m1); o.o2.connect(m2); o.o3.connect(m3); m1.connect(o.ws); m2.connect(o.ws); m3.connect(o.ws); m4.connect(o.ws); o.ws.connect(o.f); o.o4.start();
   o.o1.start(); o.o2.start(); o.o3.start();
   const len = Math.floor(a.sampleRate * 2), buf = a.createBuffer(1, len, a.sampleRate), d = buf.getChannelData(0);
   for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
@@ -218,7 +331,7 @@ function makeAudio(a, bus) {
 const GEARS = [0, 0.19, 0.37, 0.56, 0.76, 0.98, 1.4];
 // the music: a track for each place (made with ACE-Step, tools/coastrun/gen_music.py), fading from one to the next at the
 // checkpoints, a jingle at the goal and a sting when time runs out. Files in music/; loaded as they're needed.
-const LOOPS = { title: 1, bournemouth: 1, purbeck: 1, forest: 1, jurassic: 1, harbour: 1, needles: 1 };
+const LOOPS = { title: 1, bournemouth: 1, sandbanks: 1, christchurch: 1, purbeck: 1, swanage: 1, forest: 1, jurassic: 1, weymouth: 1, harbour: 1, lymington: 1, lyme: 1, portland: 1, goldencap: 1, hengistbury: 1, needles: 1 };
 const MBUF = {}, MLOAD = {}, MUS = { cur: null, gain: null, sting: null, stingEnd: 0, on: false };
 function loadMusic(a, name) {
   if (!name || MBUF[name] || MLOAD[name]) return; MLOAD[name] = true;
@@ -241,13 +354,15 @@ function music(W, S, mode, SET) {
   let want = null;
   if (MUS.on) {
     if (MUS.sting && now < MUS.stingEnd) want = MUS.sting;
-    else { MUS.sting = null; want = mode === 'title' || mode === 'over' || demo ? 'title' : placeTrack(W); }
+    else { MUS.sting = null; want = mode === 'title' || mode === 'over' || demo ? 'title' : SET.radio && SET.radio !== 'place' ? SET.radio : placeTrack(W); }
     if (mode === 'paused' && MUS.cur) want = MUS.cur.name;
   }
-  MUS.gain.gain.setTargetAtTime(want ? (mode === 'paused' ? 0.12 : 0.42) : 0.0001, now, 0.35);
+  vOn = SET.voice !== false;
+  MUS.gain.gain.setTargetAtTime(want ? (mode === 'paused' ? 0.12 : MUS.duck > now ? 0.26 : 0.42) : 0.0001, now, MUS.duck > now ? 0.08 : 0.35);
   if (want) loadMusic(a, want);
   if (MUS.on && W && !demo && W.fork && W.fork.next) W.fork.next.forEach((st) => loadMusic(a, ART.PAL[st] && ART.PAL[st].key));   // the next places, ready for the checkpoint
   if (MUS.on) { loadMusic(a, 'goal'); loadMusic(a, 'timeup'); }
+  if (SET.sound && SET.voice !== false) loadVoices(a);
   if (want !== (MUS.cur ? MUS.cur.name : null) && (!want || MBUF[want])) {
     const sting = want && !LOOPS[want];
     if (MUS.cur) hush(a, MUS.cur, sting ? 0.4 : 2.2);
@@ -275,7 +390,12 @@ function frameAudio(W, S, mode, SET) {
   if (W.timeUp) rpm *= 0.6;
   if (W.air) rpm = Math.min(1.15, rpm + 0.15);
   const f = 46 + rpm * 112 + gi * 6 + (W.boosting ? 18 : 0);
-  AU.o1.frequency.setTargetAtTime(f, now, 0.025); AU.o2.frequency.setTargetAtTime(f * 0.501, now, 0.025); AU.o3.frequency.setTargetAtTime(f * 2.003, now, 0.025);
+  AU.o1.frequency.setTargetAtTime(f, now, 0.025); AU.o2.frequency.setTargetAtTime(f * 0.501, now, 0.025); AU.o3.frequency.setTargetAtTime(f * 2.003, now, 0.025); AU.o4.frequency.setTargetAtTime(f * 1.0065, now, 0.025);
+  // a gear change: a quick crackle from the pipes; lifting off at speed (a brake, a drift) pops and bangs
+  if (AU.gi != null && gi > AU.gi && !W.crash) { S.noise(0.05, 0.05, 1600, { type: 'bandpass', q: 1.5 }); S.noise(0.04, 0.04, 2400, { type: 'bandpass', q: 2, when: 0.07 }); }
+  AU.gi = gi;
+  const lift = (R.braking || W.drift) && pct > 0.5 && !W.crash;
+  if (lift && Math.random() < 0.09) S.noise(0.035 + Math.random() * 0.04, 0.035 + Math.random() * 0.03, 900 + Math.random() * 1400, { type: 'bandpass', q: 1.2, pan: (Math.random() - 0.5) * 0.4 });
   AU.f.frequency.setTargetAtTime(380 + rpm * 1500 + (W.boosting ? 900 : 0) + (R.braking ? -200 : 0), now, T);
   AU.g.gain.setTargetAtTime(W.crash ? 0.015 : 0.05 + rpm * 0.045, now, T);
   AU.wind.f.frequency.setTargetAtTime(600 + pct * 1800, now, T);
@@ -297,6 +417,8 @@ A.start({
     { key: 'car', type: 'seg', label: 'Car', small: 'The Roadster is the all-rounder; the GT is the fastest but slides more; the Hot hatch is quick off the mark and grips best. Changes from your next game.', options: [['roadster', 'Roadster'], ['gt', 'GT'], ['hatch', 'Hot hatch']], def: 'roadster' },
     { key: 'pedal', type: 'seg', label: 'Accelerator', small: 'Automatic: the car goes by itself and you just steer (Brake slows you down). Hold: hold the up arrow to go. Tablets always use Automatic.', options: [['auto', 'Automatic'], ['hold', 'Hold ▲ to go']], def: 'auto' },
     { key: 'music', type: 'switch', label: 'Music', small: 'A driving tune for each place along the coast - beachy by the sea, rocking through the hills, smooth at sunset.', def: true },
+    { key: 'radio', type: 'seg', label: 'Radio', small: 'Each place has its own tune, or pick one favourite to play all the way.', options: [['place', 'Each place'], ['title', 'Sunny Shore'], ['bournemouth', 'Beach Groove'], ['purbeck', 'Hill Rock'], ['jurassic', 'Sunset Cruise'], ['harbour', 'Night Drive']], def: 'place' },
+    { key: 'voice', type: 'switch', label: 'Her voice', small: 'Your passenger says what she would like you to do, and how you did.', def: true },
     { key: 'shake', type: 'switch', label: 'Screen shake', small: 'The picture shakes when you bump or crash.', def: !reducedMotion }
   ],
   picker: { key: 'car', label: 'Choose your car', options: [['roadster', 'Roadster', 'Red · all-rounder'], ['gt', 'GT', 'Silver · fastest'], ['hatch', 'Hot hatch', 'Yellow · grippy']] },
@@ -306,15 +428,16 @@ A.start({
   step: E.step, hud: E.hud, draw: draw, sound: sound, frameAudio: frameAudio,
   quietSay: () => true,
   overText: (W) => 'Time up – stage ' + W.stageNo + (W.round > 1 ? ', round ' + W.round : ''),
-  titleText: 'Race along the coast before the clock runs out. Each <b>checkpoint</b> gives you more time, and at every <b>fork</b> you choose your road &mdash; the Purbeck Hills or the New Forest, then the Jurassic Coast, Poole Harbour by night or the Needles.',
+  titleText: 'Race along the Dorset coast with your girlfriend beside you, before the clock runs out. Five stretches make a run: at every <b>fork</b> you choose your road through fifteen places, to one of five goals &mdash; and she asks for things on the way. Do them for <b>hearts</b>.',
   keysText: '<b>&larr; &rarr;</b> steer &middot; <b>Space</b> boost &middot; <b>&darr;</b> brake &mdash; tap it while turning to <b>drift</b> &middot; <b>P</b> pause',
   touchText: '<b>&#9664; &#9654;</b> steer &middot; <b>Boost</b> &middot; <b>Brake</b> (tap it while turning to drift) &mdash; the car goes by itself',
   help: [
-    '<b>The aim:</b> drive as far as you can before the clock runs out. Each stretch of road ends at a <b>checkpoint</b> that adds time. Reach the <b>goal</b> after three stretches for a time bonus, then go round again &mdash; busier and quicker.',
+    '<b>The aim:</b> drive as far as you can before the clock runs out. Each stretch of road ends at a <b>checkpoint</b> that adds time. Five stretches make a run: reach one of the five <b>goals</b> for a time bonus, a love bonus and a rank, then go round again &mdash; busier and quicker.',
+    '<b>Your passenger</b> asks for things as you go: a drift, a near miss, overtaking, coins, a jump, a slipstream, keeping clean or going flat out. Do it before her timer runs out for up to three <b>hearts</b>. Coming up to a fork she says which way she would like to go &mdash; take her road for two more. Hearts are worth points now and again at the goal, and they count towards your rank.',
     '<b>Steer</b> with the <b>&larr; &rarr;</b> arrow keys (or A and D). The car accelerates by itself; press <b>&darr;</b> (or S) to brake. In Settings you can choose to hold <b>&uarr;</b> to go instead.',
     '<b>Bends</b> pull the car outwards &mdash; steer into them, and ease off (brake) for the sharp ones the black and white arrows warn you about. On <b>Gentle</b> the car helps you round.',
     '<b>Drifting:</b> while turning at speed, <b>tap &darr;</b> &mdash; the back of the car slides out and you go round the bend sideways, scoring points and filling your boost. Keep steering to hold the slide; straighten up to stop.',
-    '<b>Forks:</b> at the end of each stretch the road splits &mdash; keep to the <b>left</b> or <b>right</b> half to choose where you go next. The map in the bottom corner shows your way. Don&rsquo;t hit the sign in the middle!',
+    '<b>Forks:</b> at the end of each stretch the road splits &mdash; keep to the <b>left</b> (west) or <b>right</b> (east) half to choose where you go next. The map in the bottom corner shows your way through the fifteen places. Don&rsquo;t hit the sign in the middle!',
     '<b>Boost:</b> hold <b>Space</b> (or Shift, B or X, or the mouse button) for a burst of speed while the blue bar lasts. Fill it with <b>near misses</b> (passing cars closely), <b>slipstreams</b>, drifting, coins and the blue <b>N</b> nitro bottles.',
     '<b>Jumps:</b> go over a crest fast and the car flies &mdash; points for every bit of air. <b>Coins</b> lie on the road in lines; get every coin in a line for a bonus.',
     '<b>Bumps:</b> running into the back of a car slows you right down; hitting a lamp post, palm tree or sign at speed spins you off (on Gentle you just bounce off). Bushes and beach umbrellas only slow you a little.',

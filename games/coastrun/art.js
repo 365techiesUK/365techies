@@ -33,8 +33,28 @@
     { key: 'harbour', sky: [[0, '#03071a'], [0.6, '#101a44'], [1, '#2f3570']], fog: '#1c2448', grass: ['#1d2a26', '#1a2622'], verge: ['#373b45', '#33373f'], beach: ['#2d3038', '#2a2d34'],
       sea: ['#0d2140', '#0b1d39'], foam: '#6b7fae', road: ['#2b2d34', '#282a30'], rumble: ['#cfcfcf', '#a8262a'], lane: '#e6dfa8', edge: 'quay', night: true, tint: ['#1a2a6a', 0.45] },
     { key: 'needles', sky: [[0, '#6878b8'], [0.5, '#c9a8c8'], [0.82, '#f6c3bd'], [1, '#ffe6c9']], fog: '#f1d2cc', grass: ['#80a65b', '#78a053'], verge: ['#7aa257', '#729b50'], beach: ['#f4efe4', '#ebe5d8'],
-      sea: ['#6f90b8', '#6a8ab1'], foam: '#fff6ee', road: ['#78757b', '#737176'], rumble: ['#fafafa', '#3b6fd6'], lane: '#fbfbfb', edge: 'fence', tint: ['#ff9ab0', 0.12] }
+      sea: ['#6f90b8', '#6a8ab1'], foam: '#fff6ee', road: ['#78757b', '#737176'], rumble: ['#fafafa', '#3b6fd6'], lane: '#fbfbfb', edge: 'fence', tint: ['#ff9ab0', 0.12] },
+    { key: 'sandbanks', sky: [[0, '#1f6fd0'], [0.55, '#63b3f0'], [1, '#d6effa']], fog: '#d2ecf8', grass: ['#7cc257', '#72b84e'], verge: ['#efdcab', '#e8d39e'], beach: ['#f0dfb0', '#e9d6a2'],
+      sea: ['#1fa3c9', '#1b95ba'], foam: '#f4fdff', road: ['#73777e', '#6e7279'], rumble: ['#2a7fd6', '#f6f6f6'], lane: '#f6f6f6', edge: 'railing', tint: null },
+    { key: 'christchurch', sky: [[0, '#3a80d6'], [0.6, '#86c0ee'], [1, '#e2f1f8']], fog: '#d8ebf3', grass: ['#78b94f', '#6fae48'], verge: ['#82b85a', '#78ad52'], beach: ['#dcc79a', '#d4be8f'],
+      sea: ['#3a8fb8', '#3584ab'], foam: '#eef9ff', road: ['#6f7177', '#6a6c72'], rumble: ['#f4f4f4', '#2f8a4a'], lane: '#f4f4f4', edge: 'fence', tint: null },
+    { key: 'swanage', sky: [[0, '#2c76d2'], [0.55, '#77b9ee'], [1, '#dff0f8']], fog: '#d6eaf4', grass: ['#7fbf55', '#76b44d'], verge: ['#7fbf55', '#76b44d'], beach: ['#f6f3ea', '#ede9de'],
+      sea: ['#2390c4', '#1f85b6'], foam: '#ffffff', road: ['#76767a', '#717175'], rumble: ['#f6f6f6', '#1d4ed8'], lane: '#f6f6f6', edge: 'fence', tint: null },
+    { key: 'weymouth', sky: [[0, '#3f7cc8'], [0.55, '#9cc6e4'], [0.85, '#f2e2c0'], [1, '#ffe9bf']], fog: '#f0e2c4', grass: ['#86b850', '#7cad49'], verge: ['#f0dcab', '#e8d29c'], beach: ['#f2d9a0', '#e9cf92'],
+      sea: ['#2f86b8', '#2a7bab'], foam: '#fff8e8', road: ['#77736d', '#726e68'], rumble: ['#f6f2e8', '#d23a2f'], lane: '#f6f2e8', edge: 'railing', tint: ['#ffc070', 0.1] },
+    { key: 'lymington', sky: [[0, '#4a76b8'], [0.5, '#c2a6c0'], [0.8, '#f6c894'], [1, '#ffe0a8']], fog: '#f2d6b0', grass: ['#7aa64c', '#719c45'], verge: ['#8aae58', '#80a450'], beach: ['#d6c193', '#cdb788'],
+      sea: ['#4a7aa6', '#44709a'], foam: '#ffeedd', road: ['#716a68', '#6c6563'], rumble: ['#f6f0e6', '#1f4e8a'], lane: '#f6f0e6', edge: 'quay', tint: ['#ffa860', 0.15] },
+    { key: 'lyme', sky: [[0, '#2a2f78'], [0.35, '#7a4f9a'], [0.65, '#f0809a'], [1, '#ffc79a']], fog: '#efa8a0', grass: ['#6a8c40', '#62823a'], verge: ['#6e8a42', '#66823c'], beach: ['#a59a8c', '#9b9082'],
+      sea: ['#4c5a92', '#465488'], foam: '#ffe0e6', road: ['#6a5e66', '#655962'], rumble: ['#fff0f0', '#c0304a'], lane: '#fff0ea', edge: 'fence', tint: ['#ff6a8a', 0.18] },
+    { key: 'portland', sky: [[0, '#141c4a'], [0.4, '#3b4a8a'], [0.75, '#a07aa8'], [1, '#f2b48a']], fog: '#9c86a6', grass: ['#5a7a46', '#53723f'], verge: ['#8a8676', '#827e6e'], beach: ['#c9c2b0', '#bfb8a6'],
+      sea: ['#2c3e70', '#283866'], foam: '#d8d8f0', road: ['#55545c', '#504f57'], rumble: ['#f0f0f0', '#c62828'], lane: '#ece8d8', edge: 'fence', wall: ['#8a8676', '#827e6e'], tint: ['#4a5aa8', 0.25] },
+    { key: 'goldencap', sky: [[0, '#3a4f9a'], [0.45, '#c48aa0'], [0.75, '#ffb070'], [1, '#ffd890']], fog: '#f2c08c', grass: ['#7a9a46', '#71903f'], verge: ['#7a9a46', '#71903f'], beach: ['#e8c070', '#deb664'],
+      sea: ['#3f6496', '#3a5c8c'], foam: '#fff0d8', road: ['#6e625c', '#695d57'], rumble: ['#fff4e2', '#d8902a'], lane: '#fff2dc', edge: 'fence', tint: ['#ff9a40', 0.16] },
+    { key: 'hengistbury', sky: [[0, '#060c2c'], [0.5, '#1c2a6a'], [0.82, '#5a4a8a'], [1, '#d07a6a']], fog: '#4a3f6a', grass: ['#2e3e30', '#2a382b'], verge: ['#4a4636', '#443f31'], beach: ['#7a6a5a', '#726252'],
+      sea: ['#16244a', '#132042'], foam: '#a8b0e0', road: ['#35343c', '#313038'], rumble: ['#d8d8d8', '#2f6fd6'], lane: '#e8e2b8', edge: 'fence', night: true, tint: ['#2a2a7a', 0.35] }
   ];
+  // in the engine's order of the places (CREngine.STAGES: the pyramid), so PAL[stage id] is that place's colours
+  PAL = (function (byKey) { var m = {}; byKey.forEach(function (p) { m[p.key] = p; }); return window.CREngine.STAGES.map(function (S) { return m[S.key]; }); })(PAL);
 
   // ---------------------------------------------------------------- the castle on the Purbeck skyline (painted into its panorama)
   var SPR = {
@@ -158,6 +178,62 @@
       P(far, [500, HZ, 540, HZ - 16, 700, HZ - 22, 820, HZ - 18, 900, HZ], '#d9c9d2'); P(far, [500, HZ, 540, HZ - 16, 560, HZ - 15, 548, HZ], '#f6efe8');
       seaBand(far, HZ, ['#9fb3d0', '#7b97bd'], 'rgba(255,240,230,0.7)');
       hills(near, r, HZ + 10, 16, 3, '#6f9a52', 0.7);
+    },
+    sandbanks: function (far) {   // across the harbour mouth: the Purbeck hills and the chalk stacks
+      var r = rnd(707);
+      hills(far, r, HZ, 16, 3, '#8fb39a', 0.6);
+      P(far, [820, HZ, 830, HZ - 9, 846, HZ - 12, 860, HZ], '#f2efe6'); P(far, [866, HZ, 870, HZ - 8, 876, HZ], '#f2efe6');
+      seaBand(far, HZ, ['#3fb4d8', '#24a0c8'], 'rgba(255,255,255,0.8)');
+    },
+    christchurch: function (far) {   // the harbour: low green hills, the headland, the priory tower
+      var r = rnd(808);
+      hills(far, r, HZ, 8, 3, '#9db896', 0.5);
+      P(far, [180, HZ, 200, HZ - 10, 300, HZ - 12, 330, HZ], '#a7a07a');
+      rr(far, 610, HZ - 24, 6, 24, 0.5, '#a89f8a'); P(far, [570, HZ, 570, HZ - 10, 612, HZ - 10, 612, HZ], '#b0a690');
+      seaBand(far, HZ, ['#5aa2c8', '#3f90b8'], 'rgba(255,255,255,0.6)');
+    },
+    swanage: function (far) {   // chalk cliffs and green downs above a bright bay
+      var r = rnd(909);
+      hills(far, r, HZ, 20, 3, '#86b07a', 0.7);
+      P(far, [100, HZ, 110, HZ - 18, 260, HZ - 22, 280, HZ], '#f4f1e8'); P(far, [700, HZ, 712, HZ - 14, 860, HZ - 18, 880, HZ], '#f4f1e8');
+      seaBand(far, HZ, ['#3aa0d0', '#2390c4'], 'rgba(255,255,255,0.8)');
+    },
+    weymouth: function (far) {   // the bay, and Portland's long flat-topped island across it
+      var r = rnd(1010);
+      hills(far, r, HZ, 10, 3, '#a8b88e', 0.5);
+      P(far, [420, HZ, 440, HZ - 13, 700, HZ - 15, 730, HZ], '#9aa08a');
+      seaBand(far, HZ, ['#4e9ac4', '#2f86b8'], 'rgba(255,240,210,0.8)');
+    },
+    lymington: function (far) {   // across the Solent: the Isle of Wight's hills in the golden light
+      var r = rnd(1111);
+      P(far, [0, HZ, 0, HZ - 10, 200, HZ - 16, 420, HZ - 12, 640, HZ - 18, 900, HZ - 10, 1152, HZ - 12, 1152, HZ], '#8f9c8a');
+      hills(far, r, HZ, 6, 3, '#a6ad8a', 0.5);
+      seaBand(far, HZ, ['#7a96b4', '#4a7aa6'], 'rgba(255,220,170,0.8)');
+    },
+    lyme: function (far) {   // the cliffs along the bay, dark below and gold above, in the sunset
+      var r = rnd(1212);
+      hills(far, r, HZ, 14, 3, '#7a6a8a', 0.6);
+      P(far, [600, HZ, 620, HZ - 20, 700, HZ - 26, 760, HZ - 20, 790, HZ], '#c8884a'); P(far, [600, HZ, 790, HZ, 770, HZ - 6, 620, HZ - 8], '#6a5a6a');
+      seaBand(far, HZ, ['#8a6a9a', '#4c5a92'], 'rgba(255,200,190,0.7)');
+    },
+    portland: function (far) {   // open sea all round, the long shingle bank and the mainland far off
+      var r = rnd(1313);
+      hills(far, r, HZ, 6, 3, '#5a5a7a', 0.4);
+      P(far, [200, HZ, 230, HZ - 2, 600, HZ - 3, 640, HZ], '#9a8f80');
+      seaBand(far, HZ, ['#4a4a80', '#2c3e70'], 'rgba(240,200,190,0.5)');
+    },
+    goldencap: function (far) {   // the coast going west, cliff after golden cliff
+      var r = rnd(1414);
+      hills(far, r, HZ, 16, 3, '#8a9a5a', 0.6);
+      for (var i = 0; i < 4; i++) P(far, [80 + i * 270, HZ, 100 + i * 270, HZ - 16 - i * 2, 180 + i * 270, HZ - 18 - i * 2, 200 + i * 270, HZ], ['#d8a048', '#c8903e', '#e0aa52', '#cc9442'][i]);
+      seaBand(far, HZ, ['#6a7aa6', '#3f6496'], 'rgba(255,220,160,0.8)');
+    },
+    hengistbury: function (far) {   // twilight over the bay: the town's lights along the shore, the Needles far off
+      var r = rnd(1515);
+      hills(far, r, HZ, 6, 3, '#1c2238', 0.4);
+      P(far, [900, HZ, 905, HZ - 6, 912, HZ], '#b0aac8'); P(far, [916, HZ, 920, HZ - 5, 925, HZ], '#b0aac8');
+      for (var x = 0; x < BG_W; x += 2 + r() * 5) rr(far, x, HZ - 2 - r() * 3, 1, 1, 0.2, r() < 0.8 ? '#ffd27a' : '#cfe8ff');
+      seaBand(far, HZ, ['#1c2a5a', '#16244a'], 'rgba(255,210,140,0.5)');
     }
   };
   function SPR_BG(c, t, x, y, w) { var S = SPR[t], m = sprite(t, 0, false, null)[0], h = w * S.h / S.w; c.drawImage(m, x - w / 2, y - h, w, h); }
@@ -168,7 +244,7 @@
     SKY3D = !!sky3d;
     var out = {}, mk = function () { var c = canvas(BG_W * res, BG_H * res), x = c.getContext('2d'); x.scale(res, res); return [c, x]; };
     var f = mk(), n = mk();
-    BG[key](f[1], n[1]);
+    (BG[key] || BG.bournemouth)(f[1], n[1]);
     out.far = f[0]; out.near = n[0];
     var keys = Object.keys(bgCache); if (keys.length > 4) delete bgCache[keys[0]];
     return (bgCache[k] = out);

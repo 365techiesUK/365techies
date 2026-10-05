@@ -38,6 +38,34 @@ BRIEFS = {
     "needles": dict(bpm=104, key="G major", dur=64, tags=(
         "Dreamy dawn chillwave for a sunrise coastal drive. Airy shimmering pads, soft plucked synth arpeggios, a gentle "
         "melodic lead, warm sub bass and a relaxed steady beat. Pink sky, calm sea, peaceful and hopeful. Instrumental, loopable.")),
+    "sandbanks": dict(bpm=120, key="D major", dur=64, tags=(
+        "Bright breezy beach-pop driving tune. Sunny acoustic and clean electric guitars, a bouncy bass, steel drums and marimba, "
+        "handclaps and a catchy whistle-like synth lead. Golden sand, blue sea, summer holiday sunshine, upbeat and smiling. "
+        "Instrumental, steady groove, loopable.")),
+    "christchurch": dict(bpm=116, key="G major", dur=64, tags=(
+        "Feel-good funky harbour cruise. Wah-wah rhythm guitar, slap bass, bright horn section stabs, warm electric piano and tight "
+        "disco-funk drums. Sunny, cheerful and bouncy. Instrumental, loopable.")),
+    "swanage": dict(bpm=128, key="A major", dur=64, tags=(
+        "Uplifting coastal rock-pop for driving above white chalk cliffs. Chiming electric guitars, a driving bass, big drums, bright "
+        "synth pads and a soaring melodic guitar lead. Blue sky and sea, exciting and free. Instrumental, loopable.")),
+    "weymouth": dict(bpm=108, key="F major", dur=64, tags=(
+        "Laid-back seaside summer groove. Jazzy electric piano, nylon string guitar, soft brass, a warm walking bass and swinging "
+        "drums. Sailing boats on a golden afternoon, relaxed but moving. Instrumental, loopable.")),
+    "lymington": dict(bpm=104, key="Eb major", dur=64, tags=(
+        "Smooth sophisticated yacht pop. Glossy electric piano chords, fretless bass, a silky saxophone lead, lush strings and crisp "
+        "drums. A marina of white yachts at golden hour. Instrumental, loopable.")),
+    "lyme": dict(bpm=112, key="Bb major", dur=64, tags=(
+        "Romantic sunset cruise. Warm synth strings, a singing electric guitar melody, gentle funk bass, shimmering pads and steady "
+        "drums. A golden evening by the sea, emotional and soaring. Instrumental, loopable.")),
+    "portland": dict(bpm=136, key="E minor", dur=64, tags=(
+        "Dramatic heroic rock fusion for the final stretch. Powerful drums, a gritty bass, a soaring lead guitar and stabbing synth "
+        "brass. A lighthouse on rugged cliffs at dusk, thrilling and determined. Instrumental, loopable.")),
+    "goldencap": dict(bpm=124, key="C major", dur=64, tags=(
+        "Euphoric evening synth-funk. Sparkling arpeggiated synths, a punchy bass, bright brass, glowing pads and driving drums. "
+        "Cliffs glowing gold in the low evening sun, joyful. Instrumental, loopable.")),
+    "hengistbury": dict(bpm=100, key="A minor", dur=64, tags=(
+        "Cool twilight chillwave funk. Warm analogue synths, mellow guitar licks, a deep groove bass and soft drums. The first stars "
+        "over the beach and the sea at dusk, dreamy and smooth. Instrumental, loopable.")),
     "goal": dict(bpm=124, key="E major", dur=16, tags=(
         "Short triumphant celebration jingle for finishing a road race. Bright brass fanfare, funky guitar and drum fill, "
         "a big happy final chord with cymbal crash. Instrumental.")),
