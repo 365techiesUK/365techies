@@ -85,6 +85,26 @@ BRIEFS = {
         "a big happy final chord with cymbal crash. Instrumental.")),
     "timeup": dict(bpm=96, key="E minor", dur=10, tags=(
         "Short game over sting, descending synth brass and a slowing drum fill, ending softly. Instrumental.")),
+    # the arcade set (owner, 5 Oct: the sound "very similar and better" than the last of the old arcade road racers): measured,
+    # their music runs in sunny major keys at about 126-157 bpm, ours mostly 100-130 and half in minor keys - so faster, brighter,
+    # major, live-sounding jazz-fusion. Our own briefs: nothing named or imitated.
+    "arcade_sun": dict(bpm=148, key="D major", dur=96, tags=(
+        "Fast sunny jazz-fusion instrumental for a coastal road race in bright sunshine. A tight live band: crisp drums with busy "
+        "hi-hats and snappy fills, a popping slap bass groove, a punchy brass section with bright stabs, sparkling electric piano "
+        "chords, a singing overdriven lead guitar trading melodies with a bright analogue synth lead, timbales and conga accents. "
+        "Uplifting, confident and catchy, top down by the sea. Instrumental, loopable.")),
+    "arcade_breeze": dict(bpm=136, key="G major", dur=96, tags=(
+        "Breezy upbeat Latin jazz-fusion instrumental for cruising a seafront road on a summer afternoon. Bright steel drums and "
+        "marimba answering a smooth synth lead, a warm slap bass, crisp live drums with a samba feel, bright brass hits, chiming "
+        "clean guitar and electric piano. Carefree, sunny and melodic. Instrumental, loopable.")),
+    "arcade_coast": dict(bpm=156, key="A major", dur=96, tags=(
+        "High-speed fusion rock instrumental for racing along cliff-top roads. Driving live drums, a fast fingered bass, bright "
+        "synth brass riffs, a soaring expressive lead guitar with a bright synth lead in harmony, rhythm guitar chops and "
+        "Hammond organ swells. Thrilling, polished and joyful, full of momentum. Instrumental, loopable.")),
+    "arcade_sunset": dict(bpm=128, key="F major", dur=96, tags=(
+        "Warm golden-hour jazz-funk instrumental for the last stretch of a coast road at sunset. A grooving slap bass, tight "
+        "drums, lush electric piano, a singing saxophone-like synth lead, shimmering chorus guitar and glowing brass swells. "
+        "Glamorous, nostalgic and uplifting. Instrumental, loopable.")),
 }
 LYRICS = "[Intro]\n[Instrumental]\n\n[Verse]\n[Instrumental]\n\n[Chorus]\n[Instrumental]\n\n[Outro]\n[Instrumental]"
 LOOP_LYRICS = "[Verse]\n[Instrumental]\n\n[Chorus]\n[Instrumental]\n\n[Verse]\n[Instrumental]\n\n[Chorus]\n[Instrumental]"

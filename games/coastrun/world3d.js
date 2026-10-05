@@ -154,7 +154,7 @@ const GRADE = {
     'uniform sampler2D tDiffuse; uniform float sat; uniform float con; uniform float vig; uniform float blur; uniform vec3 tint; uniform float flash; uniform float vib; uniform float curve; uniform vec3 lift; uniform float gpull; uniform float tone; uniform float grain; uniform float time; varying vec2 vUv;',
     'void main(){',
     '  vec3 c = texture2D(tDiffuse, vUv).rgb;',
-    '  if (blur > 0.002) { vec2 dd = (vUv - vec2(0.5, 0.52)) * blur * 0.009 * smoothstep(0.07, 0.22, length((vUv - vec2(0.5, 0.33)) * vec2(1.5, 1.0))); vec3 s = c; for (int i = 1; i < 8; i++) s += texture2D(tDiffuse, vUv - dd * float(i)).rgb; c = s / 8.0; }',
+    '  if (blur > 0.002) { vec2 dd = (vUv - vec2(0.5, 0.52)) * blur * 0.009 * smoothstep(0.12, 0.32, length((vUv - vec2(0.5, 0.25)) * vec2(1.3, 1.0))) * smoothstep(0.24, 0.44, length((vUv - vec2(0.5, 0.45)) * vec2(1.0, 1.4))) * (1.0 - smoothstep(0.52, 0.66, vUv.y)); vec3 s = c; for (int i = 1; i < 8; i++) s += texture2D(tDiffuse, vUv - dd * float(i)).rgb; c = s / 8.0; }',
     '  float l = dot(c, vec3(0.299, 0.587, 0.114)); c = mix(vec3(l), c, sat);',
     '  float sp = max(c.r, max(c.g, c.b)) - min(c.r, min(c.g, c.b)); l = dot(c, vec3(0.299, 0.587, 0.114)); c = mix(vec3(l), c, 1.0 + vib * (1.0 - clamp(sp * 2.0, 0.0, 1.0)) * clamp((max(c.g, c.b) - c.r) * 6.0, 0.0, 1.0) * smoothstep(0.08, 0.3, l));',   // vibrance: the duller colours (haze-washed greens and blues) lifted most
     '  c = (c - 0.5) * con + 0.5; c *= tint;',
@@ -416,18 +416,18 @@ export function createWorld() {
   const flameMat = new THREE.MeshBasicMaterial({ map: flameTexture(), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false });
   const flameCore = new THREE.MeshBasicMaterial({ map: flameMat.map, color: '#cfe6ff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false });
   const flames = [-1, 1].map(() => { const g = new THREE.Group();
-    const outer = new THREE.Mesh(new THREE.ConeGeometry(0.18, 1.6, 14, 1, true), flameMat); outer.rotation.x = Math.PI / 2; outer.position.z = 0.8; g.add(outer);   // the jet: from the pipe, streaming back
-    const core = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.9, 10, 1, true), flameCore); core.rotation.x = Math.PI / 2; core.position.z = 0.45; g.add(core);
-    const glowT = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameGlow(), color: '#ffb060', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); glowT.scale.setScalar(0.45); g.add(glowT);   // a glow at the pipe
-    g.userData.dia = [0.18, 0.4, 0.62].map((z) => { const d = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameGlow(), color: '#ffffff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); d.position.z = z; d.scale.setScalar(0.17); g.add(d); return d; });   // shock diamonds in the core
+    const outer = new THREE.Mesh(new THREE.ConeGeometry(0.18, 2.4, 14, 1, true), flameMat); outer.rotation.x = Math.PI / 2; outer.position.z = 1.2; g.add(outer);   // the jet: from the pipe, streaming back
+    const core = new THREE.Mesh(new THREE.ConeGeometry(0.09, 1.35, 10, 1, true), flameCore); core.rotation.x = Math.PI / 2; core.position.z = 0.675; g.add(core);
+    const glowT = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameGlow(), color: '#ffb060', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); glowT.scale.setScalar(0.65); g.add(glowT);   // a glow at the pipe
+    g.userData.dia = [0.26, 0.6, 0.94].map((z) => { const d = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameGlow(), color: '#ffffff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); d.position.z = z; d.scale.setScalar(0.17); g.add(d); return d; });   // shock diamonds in the core
     g.visible = false; return g; });
-  const smoke = particles(700, false), sparks = particles(500, true);
-  scene.add(smoke.points); scene.add(sparks.points);
+  const smoke = particles(700, false), sparks = particles(500, true, { near: [0.8, 2.0] }), tyre = particles(1100, false, { near: [0.5, 1.4], lift: 0.12, flat: true }), SMK = { quick: true, drag: 0.985 }, SPK = { drag: 0.99 };   // (tyre: smoke and dust low along the road, right by the car)
+  scene.add(smoke.points); scene.add(sparks.points); scene.add(tyre.points);
   const skid = skidMarks(); scene.add(skid.mesh);
   const glows = glowPoints(1200); scene.add(glows.points);
 
   // ---------------------------------------------------------------- state
-  const R = { brakeK: 0, lastV: 0, slump: 0, flying: [], crashObj: null, hop: 0, crashK: 0, camShake: 0, hemiI: 0.6, sunI: 2.6, envI: 1, tunK: 0, flareK: 0, flareN: 0, lastBanner: null, pose: {}, W: null, poseHi: -1, chunks: new Map(), stubs: [], look: null, lookKey: '', fade: 1, camPos: new THREE.Vector3(), camLook: new THREE.Vector3(), camYaw: 0, camInit: false,
+  const R = { brakeK: 0, lastV: 0, slump: 0, flying: [], crashObj: null, hop: 0, crashK: 0, camShake: 0, hemiI: 0.6, sunI: 2.6, envI: 1, tunK: 0, flareK: 0, flareN: 0, lastBanner: null, pose: {}, W: null, poseHi: -1, chunks: new Map(), stubs: [], look: null, lookKey: '', fade: 1, camPos: new THREE.Vector3(), camOff: new THREE.Vector3(), camLook: new THREE.Vector3(), camYaw: 0, camInit: false,
     fxN: 0, low: false, view: E.VIEW, w: 0, h: 0, lastT: 0, wheelSpin: 0, prevSkid: null, demoAcc: 0, built: 0, envT: -1e9, envRT: null, envDone: false, flash: 0, boostK: 0 };
 
   // ---------------------------------------------------------------- where each segment is in the world
@@ -614,7 +614,7 @@ export function createWorld() {
     gg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); gg.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
     gg.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); gg.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); gg.setAttribute('aField', new THREE.Float32BufferAttribute(fld, 1)); gg.computeBoundingSphere();
     const ground = new THREE.Mesh(gg, groundMat); ground.receiveShadow = true;
-    const group = new THREE.Group(); group.add(ground);
+    const group = new THREE.Group(); group.add(ground); group.userData.ground = ground;
     surf(rows, off, i1 - i0, group);
     // ---- the road (one, or two in a split) and its rumble strips
     for (const b of [0, -1, 1]) roadStrip(W, i0, i1, b, group);
@@ -793,6 +793,12 @@ export function createWorld() {
         }
       });
     }
+  }
+  const GRAY = new THREE.Raycaster(), GO = new THREE.Vector3(), GD = new THREE.Vector3(0, -1, 0), GL = [];
+  function landY(W, x, y, z) {   // the drawn land's height under a point (null if none): a ray down through the chunks round here
+    const c = Math.floor(E.segIndex(W.s) / CH); GL.length = 0;
+    for (let k = c - 1; k <= c + 1; k++) { const ch = R.chunks.get(k); if (ch && ch.userData.ground) GL.push(ch.userData.ground); }
+    GO.set(x, y + 40, z); GRAY.set(GO, GD); GRAY.far = 90; const h = GRAY.intersectObjects(GL, false); return h.length ? h[0].point.y : null;
   }
   function groundAt(W, g, P, lat) {   // the land's height beside the road (the same sums as the chunk's ground)
     const S = E.STAGES[g.st], look = LOOK[S.key], d = lat < 0 ? -1 : 1, a = Math.abs(lat), span = HALF + RUM;
@@ -1232,11 +1238,19 @@ export function createWorld() {
     if (playerCarId !== W.car) makePlayer(W.car);
     const F = W.fork, b = F && F.s && E.segIndex(W.s) >= F.split ? F.s : 0;
     place(W, W.s, W.x, b, POS);
-    const cx = POS.x, cz = POS.z, roadTh = POS.th, cy = W.h + (POS.y - E.heightAt(W, W.s));
+    const cx = POS.x, cz = POS.z, roadTh = POS.th;
+    let cy = W.h + (POS.y - E.heightAt(W, W.s));
+    { let up = 0, gp = 0, gr = 0; if (Math.abs(W.x) > HALF + RUM && !W.air) { const ly = landY(W, POS.x, cy, POS.z); if (ly != null) { up = Math.max(-0.5, Math.min(8, ly - cy));   // off the road: on the land,
+        const hd = R.visHead || roadTh, fx0 = Math.sin(hd), fz0 = -Math.cos(hd), lf = landY(W, POS.x + fx0 * 1.4, cy, POS.z + fz0 * 1.4), lr = landY(W, POS.x - fz0 * 0.9, cy, POS.z + fx0 * 0.9);   // tilted to its slope
+        if (lf != null) gp = Math.max(-0.35, Math.min(0.35, Math.atan((lf - ly) / 1.4))); if (lr != null) gr = Math.max(-0.35, Math.min(0.35, Math.atan((lr - ly) / 0.9))); } }
+      const kg = Math.min(1, dt * 10); R.gLift = (R.gLift || 0) + (up - (R.gLift || 0)) * kg; R.gP = (R.gP || 0) + (gp - (R.gP || 0)) * kg; R.gR = (R.gR || 0) + (gr - (R.gR || 0)) * kg; cy += R.gLift; }
     const heading = roadTh + W.psi, travel = roadTh + W.phi; R.heading = heading;
     player.position.set(cx, cy, cz);
     const cr = W.crash;
-    let yaw = -heading, roll = POS.bank * 0.8 + W.steer * W.v / 70 * 0.05, pitch = Math.atan(gradeAt(W)) * 0.9 + (W.air ? clamp(W.vh * 0.012, -0.25, 0.2) : 0), lift = 0;
+    R.psiK = (R.psiK || 1) + ((W.drift && !cr ? 1.75 : 1) - (R.psiK || 1)) * Math.min(1, dt * 4); R.visHead = roadTh + Math.sign(W.psi) * Math.min(Math.abs(W.psi) * R.psiK, Math.max(Math.abs(W.psi), 0.7));   // (never past about 40 degrees)
+    let yaw = -R.visHead, roll = POS.bank * 0.8 + W.steer * W.v / 70 * 0.05, pitch = Math.atan(gradeAt(W)) * 0.9 + (W.air ? clamp(W.vh * 0.012, -0.25, 0.2) : 0), lift = 0;
+    R.bodyR = (R.bodyR || 0) + ((W.drift && !cr ? W.steer * 0.08 : 0) - (R.bodyR || 0)) * Math.min(1, dt * 5); R.bodyP = (R.bodyP || 0) + ((W.boosting ? 0.04 : 0) - R.brakeK * 0.025 - (R.bodyP || 0)) * Math.min(1, dt * 5);
+    roll += R.bodyR + (R.gR || 0); pitch += R.bodyP + (R.gP || 0);
     let T = null;
     if (cr) {
       const p = cr.t / cr.dur;
@@ -1247,7 +1261,7 @@ export function createWorld() {
     }
     if (!cr || !cr.hard) R.slump = 0;
     crashScene(W, cr, T, dt, cx, cy, cz, heading, POS.y);
-    player.position.y += lift;
+    player.position.y += lift; R.land = Math.max(0, (R.land || 0) - dt * 5); player.position.y -= R.land * 0.06;
     player.rotation.set(0, 0, 0); player.rotation.order = 'YXZ'; player.rotation.y = yaw; player.rotation.x = pitch; player.rotation.z = roll;
     R.wheelSpin += W.v * dt / 0.34;
     R.brakeK += (((W.v < R.lastV - 0.05 && !W.crash) || W.drift ? 1 : 0) - R.brakeK) * Math.min(1, dt * 12); R.lastV = W.v;
@@ -1257,28 +1271,36 @@ export function createWorld() {
     const sh = player.userData.shadow; sh.position.y = 0.05 - (W.h - E.heightAt(W, W.s)) - lift; sh.material.opacity = Math.max(0.15, 1 - (W.h - E.heightAt(W, W.s) + lift) * 0.2);
     // ---- the camera: behind and above, swinging round late, wider as you go faster
     R.crashK += ((cr && cr.hard ? 1 : 0) - R.crashK) * Math.min(1, dt * 2.5);
-    const spd = W.v / E.VMAX, camDist = 4.4 + spd * 0.5 + R.crashK * 3.8, camH = 2.15 + spd * 0.2 + R.crashK * 1.7;   // high enough to see the road ahead over the two of you
+    const near = R.camNear !== false, spd = W.v / E.VMAX, sk = Math.min(0.5, Math.max(0, spd - 0.6)), zk = near ? Math.pow(Math.tan(25 * Math.PI / 180) / Math.tan((camera.fov - (R.nk || 0) * 7) * Math.PI / 360), 0.7) : 1, camDist = (near ? (7.15 - (R.driftK || 0) * 0.45) * zk : 4.4 + spd * 0.5) + R.crashK * 3.8, camH = (near ? 1.9 * zk : 2.15 + spd * 0.2) + R.crashK * 1.7;   // (the whole rig scales round the car: same size, same place)   // Close: low behind the car; High: up enough to see the road over the two of you
     const yawTarget = travel * 0.55 + heading * 0.45;
     if (!R.camInit) { R.camYaw = yawTarget; }
     let dy = yawTarget - R.camYaw; while (dy > Math.PI) dy -= 2 * Math.PI; while (dy < -Math.PI) dy += 2 * Math.PI;
-    R.camYaw += dy * Math.min(1, dt * (cr ? 1.5 : 5.5));
+    R.camYaw += dy * Math.min(1, dt * (cr ? 1.5 : near ? 3.8 : 5.5));
+    R.driftK = (R.driftK || 0) + ((W.drift && !cr ? 1 : 0) - (R.driftK || 0)) * Math.min(1, dt * 2.5);
     const fx = Math.sin(R.camYaw), fz = -Math.cos(R.camYaw);
     // the camera rides on the road, not on the car: over a crest the car is seen to leave the ground
     const groundY = Math.max(E.heightAt(W, W.s), E.heightAt(W, W.s - camDist)) + (cy - W.h);
     R.camY = R.camInit ? R.camY + (groundY - R.camY) * Math.min(1, dt * 6) : groundY;
     V3.set(cx - fx * camDist, R.camY + camH, cz - fz * camDist);
-    if (!R.camInit) { R.camPos.copy(V3); R.camInit = true; }
-    R.camPos.lerp(V3, Math.min(1, dt * (cr ? (cr.hard ? 7 : 2) : 12)));   // a big crash: stay with the car as it tumbles away
-    R.camPos.y = V3.y;
+    if (!R.camInit) { R.camPos.copy(V3); R.camOff.set(V3.x - cx, 0, V3.z - cz); R.camInit = true; }
+    if (near && !cr) { const kk = Math.min(1, dt * 12); R.camOff.x += (V3.x - cx - R.camOff.x) * kk; R.camOff.z += (V3.z - cz - R.camOff.z) * kk; R.camPos.set(cx + R.camOff.x, V3.y, cz + R.camOff.z); }
+    else { R.camPos.lerp(V3, Math.min(1, dt * (cr ? (cr.hard ? 7 : 2) : 12))); R.camOff.set(R.camPos.x - cx, 0, R.camPos.z - cz); }   // a big crash: stay with the car as it tumbles away
+    R.camPos.y = V3.y - (R.land || 0) * 0.18;
+    { let ly = landY(W, R.camPos.x, R.camPos.y, R.camPos.z);   // never in the land: in towards the car, then up for what's left
+      for (let q = 0; q < 3 && ly != null && R.camPos.y < ly + 1.1; q++) { R.camPos.x = cx + (R.camPos.x - cx) * 0.8; R.camPos.z = cz + (R.camPos.z - cz) * 0.8; ly = landY(W, R.camPos.x, R.camPos.y, R.camPos.z); }
+      if (ly != null && R.camPos.y < ly + 1.1) R.camPos.y = ly + 1.1; }
     camera.position.copy(R.camPos);
     if (W.shake > 0 && R.shakeOn !== false) camera.position.add(V4.set((Math.random() - 0.5) * W.shake * 0.02, (Math.random() - 0.5) * W.shake * 0.02, 0));
-    V4.set(cx + fx * 12 * (1 - R.crashK * 0.9), R.camY + 1.55 + (cy - R.camY) * 0.35 + lift * 0.7 * R.crashK, cz + fz * 7 * (1 - R.crashK * 0.85));
+    if (near) { const io = (R.driftK || 0) * (W.steer || 0) * 2.2 * zk, la = 12 * zk; V4.set(cx + fx * la * (1 - R.crashK * 0.9) - fz * io, R.camY + 1.0 * zk + (cy - R.camY) * 0.35 + lift * 0.7 * R.crashK, cz + fz * la * (1 - R.crashK * 0.9) + fx * io); }
+    else V4.set(cx + fx * 12 * (1 - R.crashK * 0.9), R.camY + 1.55 + (cy - R.camY) * 0.35 + lift * 0.7 * R.crashK, cz + fz * 7 * (1 - R.crashK * 0.85));
     if (R.camShake > 0) { camera.position.add(V3.set((Math.random() - 0.5) * R.camShake, (Math.random() - 0.5) * R.camShake, (Math.random() - 0.5) * R.camShake)); R.camShake = Math.max(0, R.camShake - dt * 1.4); }
     camera.lookAt(V4);
     fill.position.copy(camera.position).add(V3.set(0, 0.6, 0)); fill.target.position.set(cx, cy + 1.62, cz);
-    camera.rotation.z += POS.bank * 0.35 - W.steer * spd * 0.02;
+    camera.rotation.z += POS.bank * 0.35 - W.steer * spd * (near ? 0.05 : 0.02);
+    const kerb = !W.air && Math.abs(W.x) > HALF - 0.6 && Math.abs(W.x) < HALF + RUM + 0.4 && spd > 0.2;
+    if (R.shakeOn !== false && !cr && (spd > 0.65 || kerb)) { const a = Math.max(0, spd - 0.65) * 0.008 + R.boostK * 0.003 + (kerb ? 0.004 : 0); camera.rotation.x += (Math.random() - 0.5) * a; camera.rotation.y += (Math.random() - 0.5) * a; }   // a tremor at speed
     if (R.debugCam) { camera.position.set(cx + R.debugCam[0], cy + R.debugCam[1], cz + R.debugCam[2]); camera.lookAt(cx + R.debugCam[3], cy + (R.debugCam[5] || 0), cz + R.debugCam[4]); }
-    camera.fov += ((53 + spd * 6 + (W.boosting ? 8 : 0)) - camera.fov) * Math.min(1, dt * 3); camera.updateProjectionMatrix();
+    camera.fov += ((near ? 50 + sk * 20 + Math.max(0, spd - 0.88) * 40 + (W.boosting ? 6 : 0) : 53 + spd * 6 + (W.boosting ? 8 : 0)) + (R.nk || 0) * 7 - camera.fov) * Math.min(1, dt * ((R.nk || 0) > 0.5 ? 12 : 3)); camera.updateProjectionMatrix();
     // the sky things go round with the camera
     sky.position.copy(camera.position); stars.position.copy(camera.position);
     turnRing(W, dt); ringFar.position.set(camera.position.x, camera.position.y - (ringFar.userData.hz || 0) - 30, camera.position.z);
@@ -1334,8 +1356,9 @@ export function createWorld() {
     for (const kk in PN) { PWMESH[kk].count = PN[kk]; PWMESH[kk].instanceMatrix.needsUpdate = true; }
     // the shield's bubble and the nitro's flames
     { const sl = W.pw ? W.pw.shield : 0; bubble.visible = sl > 0 && !W.crash; if (bubble.visible) { bubble.position.copy(player.position); bubble.quaternion.copy(player.quaternion); bubble.material.uniforms.t.value = t / 1000; bubble.material.uniforms.a.value = sl < 120 ? (Math.floor(t / 110) % 2 ? 0.25 : 1) : 1; } }
-    nitroLight.intensity = W.boosting ? 6 + Math.random() * 3 : 0;
-    flames.forEach((f, q) => { f.visible = !!W.boosting; if (f.visible) { const fl = 0.85 + Math.random() * 0.3; f.scale.set(0.9 + Math.random() * 0.2, 0.9 + Math.random() * 0.2, fl * (0.6 + R.boostK * 0.5)); f.userData.dia.forEach((d) => { d.material.opacity = 0.5 + Math.random() * 0.5; }); } });
+    nitroLight.intensity = W.boosting ? 1.8 + Math.random() : 0;
+    if (W.boosting && !R.wasBoost) R.nk = 1; R.wasBoost = !!W.boosting; R.nk = Math.max(0, (R.nk || 0) - dt / 0.3);   // the moment it fires
+    flames.forEach((f, q) => { f.visible = !!W.boosting; if (f.visible) { const fl = 0.75 + Math.random() * 0.5; const kk = 1 + (R.nk || 0) * 0.7; f.scale.set((0.9 + Math.random() * 0.2) * kk, (0.9 + Math.random() * 0.2) * kk, fl * (0.6 + R.boostK * 0.5) * kk); f.userData.dia.forEach((d) => { d.material.opacity = 0.5 + Math.random() * 0.5; }); } });
 
     // ---- knocked-over things fly off; glows at night
     let ng = 0;
@@ -1344,15 +1367,15 @@ export function createWorld() {
       const Lp = ch.userData.lamps; if (Lp) for (let q = 0; q < Lp.length; q += 3) { if (ng >= 1200) break; glows.set(ng++, Lp[q], Lp[q + 1], Lp[q + 2], '#ffd98a', 1.5); }
     }
     glows.draw(ng);
-    effects(W, t, dt, cx, cy, cz, heading, travel);
+    effects(W, t, dt, cx, cy, cz, R.visHead, travel);
     flare(W); gulls(W, t, cx, cy, cz, fx, fz);
     if (W.banner && W.banner !== R.lastBanner) { R.lastBanner = W.banner; if (W.banner.kind === 'check' || W.banner.kind === 'goal' || W.banner.kind === 'go') confetti(cx, cy, cz, fx, fz, W.banner.kind === 'goal' ? 360 : 200); }
-    { const LK = LOOK[R.lookKey] || {}; smoke.amb((1 - 0.62 * R.tunK) * (LK.night ? 0.42 : LK.dusk ? 0.72 : 1)); }   // smoke takes the light it's in
-    smoke.update(dt); sparks.update(dt); updateShards(dt);
+    { const LK = LOOK[R.lookKey] || {}, am = (1 - 0.62 * R.tunK) * (LK.night ? 0.42 : LK.dusk ? 0.72 : 1); smoke.amb(am); tyre.amb(am); }   // smoke takes the light it's in
+    smoke.update(dt); sparks.update(dt); tyre.update(dt); updateShards(dt);
     // ---- draw: straight to the screen on a slow PC, otherwise through the glow, the grade and the blur
     R.boostK += ((W.boosting ? 1 : 0) - R.boostK) * Math.min(1, dt * 4); R.flash = Math.max(0, R.flash - dt * 2.2);
     if (R.low) renderer.render(scene, camera);
-    else { GRADE_U.time.value = (t % 10000) / 1000; GRADE_U.blur.value = R.boostK * 0.3 + Math.max(0, W.v / E.VMAX - 0.88) * 1.1; GRADE_U.flash.value = R.flash * 0.5; composer.render(dt); }
+    else { GRADE_U.time.value = (t % 10000) / 1000; GRADE_U.blur.value = R.boostK * 0.3 + Math.min(1, Math.max(0, (W.v / E.VMAX - 0.7) / 0.3)) * 0.3 + Math.max(0, W.v / E.VMAX - 0.88) * 1.2; GRADE_U.flash.value = R.flash * 0.5; composer.render(dt); }
     return renderer.domElement;
   }
   // the sun's glare: a chain of soft rings from the sun through the middle of the picture, hidden when a hill is in the way
@@ -1405,10 +1428,13 @@ export function createWorld() {
   function effects(W, t, dt, cx, cy, cz, heading, travel) {
     const fx = Math.sin(heading), fz = -Math.cos(heading), rx = Math.cos(heading), rz = Math.sin(heading), len = carInfo ? carInfo.len : 2;
     const rear = (side) => [cx - fx * len * 0.62 + rx * side * 0.8, cy + 0.3, cz - fz * len * 0.62 + rz * side * 0.8];
-    if (W.drift && !W.air) for (const sd of [-1, 1]) { const p = rear(sd); smoke.emit(p[0], p[1], p[2], (Math.random() - 0.5) * 2, 1 + Math.random(), (Math.random() - 0.5) * 2, 1.2, 2.2, '#f2f2f2', 0.34, 1.5); }
-    if (W.off && W.v > 8) { const p = rear(Math.random() < 0.5 ? -1 : 1), pal = PAL[E.segAt(W, E.segIndex(W.s)).st]; smoke.emit(p[0], p[1], p[2], -fx * W.v * 0.1, 1.5, -fz * W.v * 0.1, 1.2, 2.2, '#a89e88', 0.3, 1.3); }
+    const tfx = Math.sin(travel), tfz = -Math.cos(travel);   // the way the car is really going
+    if (W.drift && !W.air) for (const sd of [-1, 1]) for (let q = 0; q < 3; q++) { const p = rear(sd), out = sd * (0.5 + Math.random() * 1.3);
+      tyre.emit(p[0] + rx * sd * 0.3 + (Math.random() - 0.5) * 0.3, p[1] - 0.1, p[2] + rz * sd * 0.3 + (Math.random() - 0.5) * 0.3, tfx * W.v * 0.6 + rx * out * 2.0, 0.6 + Math.random() * 0.5, tfz * W.v * 0.6 + rz * out * 2.0, 0.8, 4.6, '#d6dde6', 0.45, 1.5, 0, SMK); }
+    if (W.off && W.v > 8 && !W.air) for (const sd of [-1, 1]) { const p = rear(sd);
+      tyre.emit(p[0], p[1] - 0.08, p[2], tfx * W.v * 0.35 + rx * sd * 1.5, 0.4 + Math.random() * 0.8, tfz * W.v * 0.35 + rz * sd * 1.5, 0.4, 2.6, '#b3a385', 0.45, 1.1, 0, SMK); }
     if (false) for (const sd of [-0.42, 0.42]) for (let q = 0; q < 1; q++) { const p = rear(sd); sparks.emit(p[0] - fx * 0.95, p[1] + 0.06, p[2] - fz * 0.95, -fx * (3 + Math.random() * 3) + (Math.random() - 0.5) * 0.5, 0.15, -fz * (3 + Math.random() * 3) + (Math.random() - 0.5) * 0.5, 0.34, 0.06, q ? '#8fd0ff' : (Math.random() < 0.5 ? '#ff9a3c' : '#4a9cff'), 1, 0.14); }
-    if (W.drift && !R.wasDrift) for (const sd of [-0.9, 0.9]) for (let q = 0; q < 6; q++) { const p = rear(sd); smoke.emit(p[0], p[1], p[2], (Math.random() - 0.5) * 3, 1 + Math.random(), (Math.random() - 0.5) * 3, 0.9, 2.4, '#f4f4f4', 0.45, 1.3); }
+    if (W.drift && !R.wasDrift) for (const sd of [-0.9, 0.9]) for (let q = 0; q < 8; q++) { const p = rear(sd); tyre.emit(p[0], p[1] - 0.08, p[2], tfx * W.v * 0.45 + (Math.random() - 0.5) * 2, 0.2 + Math.random() * 0.4, tfz * W.v * 0.45 + (Math.random() - 0.5) * 2, 0.4, 2.2, '#d6dde6', 0.45, 1.0, 0, SMK); }   // a burst as the tyres let go
     R.wasDrift = !!W.drift;
     // skid marks while drifting
     if (W.drift && !W.air) { const a = rear(-1), b = rear(1); skid.add(a, b, R.prevSkid); R.prevSkid = [a, b]; } else R.prevSkid = null;
@@ -1424,13 +1450,19 @@ export function createWorld() {
         case 'nitro': for (let i = 0; i < 18; i++) sparks.emit(x, y + 0.6, z, (Math.random() - 0.5) * 8, Math.random() * 6, (Math.random() - 0.5) * 8, 0.3, 0.6, '#5aa9ff', 1, 0.7); R.flash = Math.max(R.flash, 0.25); break;
         case 'leaves': for (let i = 0; i < 26; i++) smoke.emit(x, y, z, (Math.random() - 0.5) * 8, 2 + Math.random() * 6, (Math.random() - 0.5) * 8, 0.25, 1.2, ['#3c8a3a', '#64b852', '#c8641e', '#ffd31a', '#e63946'][i % 5], 1, 0.3, 9); break;
         case 'bump': for (let i = 0; i < 14; i++) sparks.emit(x, y, z, (Math.random() - 0.5) * 8, Math.random() * 4, (Math.random() - 0.5) * 8, 0.18, 0.4, '#ffd27a', 1, 0.5, 9); break;
-        case 'sparks': for (let i = 0; i < 8; i++) sparks.emit(x, y - 0.4, z, (Math.random() - 0.5) * 3 - Math.sin(heading) * 6, Math.random() * 3, (Math.random() - 0.5) * 3 + Math.cos(heading) * 6, 0.16, 0.35, '#ffd27a', 1, 0.4, 9); break;
+        case 'sparks': for (let i = 0; i < 48; i++) sparks.emit(x, y - 0.4, z, (Math.random() - 0.5) * 4 + tfx * W.v * (0.55 + Math.random() * 0.3), 1 + Math.random() * 4, (Math.random() - 0.5) * 4 + tfz * W.v * (0.55 + Math.random() * 0.3), 0.2, 0.08, i % 3 ? '#ffb347' : '#fff6dc', 1, 0.3 + Math.random() * 0.25, 9, SPK);
+          sparks.emit(x, y - 0.3, z, tfx * W.v * 0.85, 0, tfz * W.v * 0.85, 0.8, 0.25, '#fff0d0', 0.6, 0.1, 0, SPK); break;
         case 'crash':
           for (let i = 0; i < 30; i++) sparks.emit(x, y, z, (Math.random() - 0.5) * 12, Math.random() * 8, (Math.random() - 0.5) * 12, 0.3, 0.8, ['#ffb347', '#ff6a3d', '#ffe08a'][i % 3], 1, 0.7, 9);
           for (let i = 0; i < 24; i++) smoke.emit(x, y, z, (Math.random() - 0.5) * 4, 1 + Math.random() * 3, (Math.random() - 0.5) * 4, 1.5, 3, '#777777', 0.6, 1.8);
           R.flash = Math.max(R.flash, 0.5);
           break;
-        case 'land': for (let i = 0; i < 14; i++) smoke.emit(x + (Math.random() - 0.5) * 2, W.h + 0.2, z + (Math.random() - 0.5) * 2, (Math.random() - 0.5) * 6, 1, (Math.random() - 0.5) * 6, 1.2, 1.2, '#d8d0c0', 0.5, 1.4); break;
+        case 'land': R.land = 1;
+          for (let i = 0; i < 14; i++) tyre.emit(x + (Math.random() - 0.5) * 2, W.h + 0.15, z + (Math.random() - 0.5) * 2, tfx * W.v * 0.4 + (Math.random() - 0.5) * 5, 0.5, tfz * W.v * 0.4 + (Math.random() - 0.5) * 5, 0.6, 2.6, '#d8d0c0', 0.45, 1.0, 0, SMK);
+          { const bx = cx - Math.sin(R.visHead || 0) * 1.9, bz = cz + Math.cos(R.visHead || 0) * 1.9;   // under the tail
+            if (W.off) { for (let i = 0; i < 16; i++) tyre.emit(bx + (Math.random() - 0.5) * 1.6, cy + 0.2, bz + (Math.random() - 0.5) * 1.2, tfx * W.v * 0.5 + (Math.random() - 0.5) * 4, 0.6 + Math.random() * 1.6, tfz * W.v * 0.5 + (Math.random() - 0.5) * 4, 0.5, 2.6, '#9a8a62', 0.55, 1.1, 2, SMK); break; }
+            for (let i = 0; i < 36; i++) sparks.emit(bx + (Math.random() - 0.5) * 1.4, cy + 0.12, bz + (Math.random() - 0.5) * 0.6, tfx * W.v * (0.5 + Math.random() * 0.3) + (Math.random() - 0.5) * 4, 0.8 + Math.random() * 3, tfz * W.v * (0.5 + Math.random() * 0.3) + (Math.random() - 0.5) * 4, 0.2, 0.08, i % 3 ? '#ffb347' : '#fff6dc', 1, 0.3 + Math.random() * 0.2, 9, SPK);
+            sparks.emit(bx, cy + 0.2, bz, tfx * W.v * 0.85, 0, tfz * W.v * 0.85, 0.7, 0.25, '#fff0d0', 0.6, 0.1, 0, SPK); } break;
         case 'confetti': confetti(cx, cy, cz, Math.sin(heading), -Math.cos(heading), 300); break;
         case 'fireworks': for (let b2 = 0; b2 < 6; b2++) { const ox = x + Math.sin(heading) * 60 + (Math.random() - 0.5) * 60, oz = z - Math.cos(heading) * 60 + (Math.random() - 0.5) * 60, oy = W.h + 30 + Math.random() * 20, cc = ['#ff5a5f', '#ffd23f', '#5aa9ff', '#7cff8a'][b2 % 4]; for (let i = 0; i < 50; i++) { const a = Math.random() * 6.28, e = Math.random() * 3.14 - 1.57, sp = 10 + Math.random() * 6; sparks.emit(ox, oy, oz, Math.cos(a) * Math.cos(e) * sp, Math.sin(e) * sp, Math.sin(a) * Math.cos(e) * sp, 0.7, 1.6, cc, 1, 1.2, 3); } } break;
       }
@@ -1443,7 +1475,7 @@ export function createWorld() {
     for (const [, ch] of R.chunks) dropChunk(ch); R.chunks.clear();
     R.stubs.forEach((m) => { scene.remove(m); m.geometry.dispose(); }); R.stubs = [];
     for (const [, m] of traffic) scene.remove(m); traffic.clear();
-    smoke.clear(); sparks.clear(); skid.clear();
+    smoke.clear(); sparks.clear(); tyre.clear(); skid.clear();
     if (W.segs.length && W.segs[0].i === 0) { W.segs[0].px = 0; W.segs[0].pz = 0; W.segs[0].th = 0; }
   }
   function setSize(w, h) { if (w === R.w && h === R.h) return; R.w = w; R.h = h; renderer.setSize(w, h, false); composer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); }
@@ -1468,7 +1500,7 @@ export function createWorld() {
     for (const m of mats) if (m && m.map) { try { renderer.initTexture(m.map); } catch (e) {} }
     for (const t of [flameMat.map, flameCore.map, rays.material.map, glint.material.map]) if (t) { try { renderer.initTexture(t); } catch (e) {} }
   }
-  return { render: render, setSize: setSize, quality: quality, reset: () => { R.W = null; }, setShake: (on) => { R.shakeOn = on; }, renderer: renderer, scene: scene, camera: camera, debugCam: (v) => { R.debugCam = v; }, warmed: () => !!R.warmed };
+  return { render: render, setSize: setSize, quality: quality, reset: () => { R.W = null; }, setShake: (on) => { R.shakeOn = on; }, setCam: (n) => { R.camNear = n; }, renderer: renderer, scene: scene, camera: camera, debugCam: (v) => { R.debugCam = v; }, warmed: () => !!R.warmed };
 }
 
 // ---------------------------------------------------------------- textures made on the spot
@@ -1484,7 +1516,7 @@ function roadTexture() {   // asphalt with the lane lines: across = the road's w
   for (const u of [1 / 6, 1 / 2, 5 / 6]) { const g = x.createLinearGradient(S * (u - 0.07), 0, S * (u + 0.07), 0); g.addColorStop(0, 'rgba(30,30,34,0)'); g.addColorStop(0.5, 'rgba(30,30,34,0.28)'); g.addColorStop(1, 'rgba(30,30,34,0)'); x.fillStyle = g; x.fillRect(S * (u - 0.07), 0, S * 0.14, S); }   // the oily strip down each lane
   for (const u of [0.09, 0.25, 0.41, 0.59, 0.75, 0.91]) { x.fillStyle = 'rgba(30,32,36,0.2)'; x.fillRect(S * u - 14, 0, 28, S); }   // the tyres' darker tracks
   x.fillStyle = '#f6f6f2';
-  for (const u of [1 / 3, 2 / 3]) x.fillRect(S * u - 10, 0, 20, S * 0.42);   // lane dashes
+  for (const u of [1 / 3, 2 / 3]) { x.fillRect(S * u - 10, 0, 20, S * 0.21); x.fillRect(S * u - 10, S * 0.5, 20, S * 0.21); }   // lane dashes
   x.fillRect(16, 0, 18, S); x.fillRect(S - 34, 0, 18, S);   // edge lines
   x.globalAlpha = 0.25; x.fillStyle = '#6c7076'; for (let i = 0; i < 2000; i++) x.fillRect(r() * S, r() * S, 2, 2);   // worn paint
   x.globalAlpha = 1;
@@ -1525,8 +1557,11 @@ function starTex() {   // a cartoon star, yellow with a white edge
 function flameGlow() { if (FGLOW) return FGLOW; const c = canvas(64, 64), x = c.getContext('2d'), g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.3, 'rgba(255,200,120,0.6)'); g.addColorStop(1, 'rgba(255,120,40,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); return (FGLOW = tex(c, false)); }
 function flameTexture() {   // a flame along its length: white-blue at the pipe, orange, then gone
   const W = 64, H = 256, c = canvas(W, H), x = c.getContext('2d');
-  const g = x.createLinearGradient(0, H, 0, 0); g.addColorStop(0, 'rgba(210,235,255,1)'); g.addColorStop(0.18, 'rgba(90,170,255,0.95)'); g.addColorStop(0.45, 'rgba(255,170,60,0.75)'); g.addColorStop(1, 'rgba(255,90,20,0)');
-  x.fillStyle = g; x.beginPath(); x.moveTo(W / 2, 0); x.quadraticCurveTo(W * 0.95, H * 0.55, W * 0.62, H); x.lineTo(W * 0.38, H); x.quadraticCurveTo(W * 0.05, H * 0.55, W / 2, 0); x.fill();
+  const g = x.createLinearGradient(0, H, 0, 0); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.12, 'rgba(200,228,255,1)'); g.addColorStop(0.3, 'rgba(80,150,255,0.9)'); g.addColorStop(0.55, 'rgba(255,160,60,0.7)'); g.addColorStop(1, 'rgba(255,80,20,0)');
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  x.globalCompositeOperation = 'destination-out'; const r = E.rnd(17);
+  for (let i = 0; i < 22; i++) { const sx = r() * W, len = H * (0.25 + r() * 0.6); x.fillStyle = 'rgba(0,0,0,' + (0.25 + r() * 0.45) + ')'; x.fillRect(sx, 0, 1.5 + r() * 4, len); }   // licks: gaps running back from the tip
+  x.globalCompositeOperation = 'source-over';
   return tex(c, false);
 }
 function slowTexture() {   // SLOW, as painted on the road: tall letters (they're read from a low angle, far off)
@@ -1646,37 +1681,37 @@ function makeStars() {
 }
 const BLOB_FS = 'varying vec3 vC; varying float vA; void main(){ vec2 d = gl_PointCoord - 0.5; float r = dot(d,d) * 4.0; if (r > 1.0) discard; gl_FragColor = vec4(vC, vA * (1.0 - r) * (1.0 - r));\n#include <tonemapping_fragment>\n#include <colorspace_fragment>\n}';
 const PUFF_FS = 'uniform sampler2D puff; uniform float amb; varying vec3 vC; varying float vA; void main(){ vec4 t = texture2D(puff, gl_PointCoord); if (t.a < 0.02) discard; gl_FragColor = vec4(vC * amb * (0.72 + 0.4 * t.r), vA * t.a);\n#include <tonemapping_fragment>\n#include <colorspace_fragment>\n}';
-let PUFF = null;
-function puffTex() {   // a soft, lumpy puff of smoke (and a few hard-edged bits for confetti and debris don't use it)
-  if (PUFF) return PUFF;
-  const S = 128, c = canvas(S, S), x = c.getContext('2d'), img = x.createImageData(S, S), r = E.rnd(41), blobs = [];
-  for (let i = 0; i < 7; i++) blobs.push([S / 2 + (r() - 0.5) * S * 0.24, S / 2 + (r() - 0.5) * S * 0.24, S * (0.14 + r() * 0.1)]);
+let PUFF = null, PUFF2 = null;
+function puffTex(flat) {   // a soft, lumpy puff of smoke (and a few hard-edged bits for confetti and debris don't use it); flat: low and wide, for smoke along the road
+  if (flat ? PUFF2 : PUFF) return flat ? PUFF2 : PUFF;
+  const S = 128, c = canvas(S, S), x = c.getContext('2d'), img = x.createImageData(S, S), r = E.rnd(flat ? 43 : 41), blobs = [], fy = flat ? 0.45 : 1;
+  for (let i = 0; i < 7; i++) blobs.push([S / 2 + (r() - 0.5) * S * (flat ? 0.42 : 0.24), S / 2 + (r() - 0.5) * S * 0.24 * fy, S * (0.14 + r() * 0.1)]);
   for (let j = 0; j < S; j++) for (let i = 0; i < S; i++) {
-    let a = 0; for (const b of blobs) { const dd = Math.hypot(i - b[0], j - b[1]) / b[2]; a += Math.max(0, 1 - dd * dd) * 0.55; }
-    const rr = Math.hypot(i - S / 2, j - S / 2) / (S / 2), fall = Math.max(0, 1 - rr * rr), k = (j * S + i) * 4, v = Math.min(1, a) * fall * fall;
+    let a = 0; for (const b of blobs) { const dd = Math.hypot(i - b[0], (j - b[1]) / fy) / b[2]; a += Math.max(0, 1 - dd * dd) * 0.55; }
+    const rr = Math.hypot(i - S / 2, (j - S / 2) / fy) / (S / 2), fall = Math.max(0, 1 - rr * rr), k = (j * S + i) * 4, v = Math.min(1, a) * fall * fall;
     img.data[k] = img.data[k + 1] = img.data[k + 2] = 190 + 65 * Math.min(1, a); img.data[k + 3] = v * 235;
   }
-  x.putImageData(img, 0, 0); PUFF = new THREE.CanvasTexture(c); return PUFF;
+  x.putImageData(img, 0, 0); const T = new THREE.CanvasTexture(c); if (flat) PUFF2 = T; else PUFF = T; return T;
 }
 const BLOB_VS = 'attribute float size; attribute float alpha; varying vec3 vC; varying float vA; uniform float scale; uniform vec4 fade; uniform float lift; void main(){ vC = color; vec4 mv = modelViewMatrix * vec4(position + vec3(0.0, size * lift, 0.0), 1.0); float d = -mv.z; vA = alpha * smoothstep(fade.x, fade.y, d) * (1.0 - smoothstep(fade.z, fade.w, d)); gl_PointSize = min(size * scale / d, 260.0); gl_Position = projectionMatrix * mv; }';
-function particles(n, add) {   // a pool of soft round blobs: smoke and dust (normal), sparks and flames (added light)
+function particles(n, add, o) {   // a pool of soft round blobs: smoke and dust (normal), sparks and flames (added light); o: { near: [from, to] m - closer to the camera a puff fades, lift: how far it sits up by its size, flat: low wide puffs }
   const pos = new Float32Array(n * 3), col = new Float32Array(n * 3), size = new Float32Array(n), alpha = new Float32Array(n), P = [];
   for (let i = 0; i < n; i++) P.push({ life: 0, max: 0 });
   const g = new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3)); g.setAttribute('size', new THREE.BufferAttribute(size, 1)); g.setAttribute('alpha', new THREE.BufferAttribute(alpha, 1));
-  const mat = new THREE.ShaderMaterial({ uniforms: { scale: { value: 600 }, puff: { value: add ? null : puffTex() }, amb: { value: 1 }, lift: { value: add ? 0 : 0.3 }, fade: { value: new THREE.Vector4(3, 10, 1e5, 1e6) } }, transparent: true, depthWrite: false, blending: add ? THREE.AdditiveBlending : THREE.NormalBlending, vertexShader: BLOB_VS, fragmentShader: add ? BLOB_FS : PUFF_FS, vertexColors: true });
+  const mat = new THREE.ShaderMaterial({ uniforms: { scale: { value: 600 }, puff: { value: add ? null : puffTex(o && o.flat) }, amb: { value: 1 }, lift: { value: add ? 0 : o && o.lift != null ? o.lift : 0.3 }, fade: { value: new THREE.Vector4(o && o.near ? o.near[0] : 3, o && o.near ? o.near[1] : 10, 1e5, 1e6) } }, transparent: true, depthWrite: false, blending: add ? THREE.AdditiveBlending : THREE.NormalBlending, vertexShader: BLOB_VS, fragmentShader: add ? BLOB_FS : PUFF_FS, vertexColors: true });
   const points = new THREE.Points(g, mat); points.frustumCulled = false; points.renderOrder = 3;
   let next = 0;
   const C2 = new THREE.Color();
   return {
     points: points,
-    emit(x, y, z, vx, vy, vz, s0, s1, hex, a0, life, grav) { const i = next; next = (next + 1) % n; const p = P[i]; p.x = x; p.y = y; p.z = z; p.vx = vx; p.vy = vy; p.vz = vz; p.s0 = s0; p.s1 = s1; p.a0 = !add && s1 > 1 ? Math.min(a0, 0.4) : a0; p.soft = !add && s1 > 1; p.life = 0; p.max = life; p.g = grav || 0; C2.set(hex); if (add) C2.multiplyScalar(2.2); col[i * 3] = C2.r; col[i * 3 + 1] = C2.g; col[i * 3 + 2] = C2.b; },
+    emit(x, y, z, vx, vy, vz, s0, s1, hex, a0, life, grav, o) { const i = next; next = (next + 1) % n; const p = P[i]; p.x = x; p.y = y; p.z = z; p.vx = vx; p.vy = vy; p.vz = vz; p.s0 = s0; p.s1 = s1; p.quick = !!(o && o.quick); p.drag = (o && o.drag) || 0.98; p.a0 = !add && s1 > 1 ? Math.min(a0, p.quick ? 0.75 : 0.4) : a0; p.soft = !add && s1 > 1; p.life = 0; p.max = life; p.g = grav || 0; C2.set(hex); if (add) C2.multiplyScalar(2.2); col[i * 3] = C2.r; col[i * 3 + 1] = C2.g; col[i * 3 + 2] = C2.b; },
     update(dt) {
       for (let i = 0; i < n; i++) {
         const p = P[i];
         if (p.life >= p.max) { alpha[i] = 0; size[i] = 0; continue; }
-        p.life += dt; const k = p.life / p.max; p.vy -= p.g * dt; p.vx *= 0.98; p.vz *= 0.98; p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt;
-        pos[i * 3] = p.x; pos[i * 3 + 1] = p.y; pos[i * 3 + 2] = p.z; size[i] = p.s0 + (p.s1 - p.s0) * (p.soft ? Math.sqrt(k) : k); alpha[i] = p.a0 * (1 - k) * (p.soft ? Math.min(1, k * 6) : 1);
+        p.life += dt; const k = p.life / p.max, dg = Math.pow(p.drag, dt * 60); p.vy -= p.g * dt; p.vx *= dg; p.vz *= dg; p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt;
+        pos[i * 3] = p.x; pos[i * 3 + 1] = p.y; pos[i * 3 + 2] = p.z; size[i] = p.s0 + (p.s1 - p.s0) * (p.soft ? Math.sqrt(k) : k); alpha[i] = p.a0 * (1 - k) * (p.soft ? Math.min(1, k * (p.quick ? 40 : 6)) : 1);
       }
       g.attributes.position.needsUpdate = true; g.attributes.size.needsUpdate = true; g.attributes.alpha.needsUpdate = true; g.attributes.color.needsUpdate = true;
     },
@@ -1695,11 +1730,11 @@ function glowPoints(n) {   // halos round the lamps at night
     draw(count) { g.setDrawRange(0, count); points.visible = count > 0; for (const k of ['position', 'color', 'size', 'alpha']) g.attributes[k].needsUpdate = true; } };
 }
 function skidMarks() {   // dark stripes left on the road by a drift
-  const N = 600, pos = new Float32Array(N * 18);
+  const N = 1400, pos = new Float32Array(N * 18);
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  const mesh = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: '#111111', transparent: true, opacity: 0.45, depthWrite: false, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 }));
+  const mesh = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: '#060606', transparent: true, opacity: 0.78, depthWrite: false, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 }));
   mesh.frustumCulled = false; let k = 0;
   const strip = (a, b, w) => { const dx = b[0] - a[0], dz = b[2] - a[2], L = Math.hypot(dx, dz) || 1, nx = -dz / L * w, nz = dx / L * w, o = (k % N) * 18; const y0 = a[1] - 0.26, y1 = b[1] - 0.26;
     pos.set([a[0] - nx, y0, a[2] - nz, b[0] - nx, y1, b[2] - nz, b[0] + nx, y1, b[2] + nz, a[0] - nx, y0, a[2] - nz, b[0] + nx, y1, b[2] + nz, a[0] + nx, y0, a[2] + nz], o); k++; };
-  return { mesh: mesh, add(a, b, prev) { if (!prev || Math.hypot(a[0] - prev[0][0], a[2] - prev[0][2]) > 6) return; strip(prev[0], a, 0.14); strip(prev[1], b, 0.14); g.attributes.position.needsUpdate = true; }, clear() { pos.fill(0); g.attributes.position.needsUpdate = true; } };
+  return { mesh: mesh, add(a, b, prev) { if (!prev || Math.hypot(a[0] - prev[0][0], a[2] - prev[0][2]) > 6) return; strip(prev[0], a, 0.22); strip(prev[1], b, 0.22); g.attributes.position.needsUpdate = true; }, clear() { pos.fill(0); g.attributes.position.needsUpdate = true; } };
 }

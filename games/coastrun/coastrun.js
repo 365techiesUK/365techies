@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=21';
+import { createWorld } from './world3d.js?v=22';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
@@ -65,7 +65,7 @@ function draw(g, W, t, mode, info) {
   const t0 = performance.now();
   const cap = Math.sqrt(4.2e6 / (info.dw * info.dh)), k = Math.min(1, cap) * R.scale;
   wd.setSize(Math.max(64, Math.round(info.dw * k)), Math.max(64, Math.round(info.dh * k)));
-  wd.setShake(R.shakeOn);
+  wd.setShake(R.shakeOn); wd.setCam(!(RAD.set && RAD.set.cam === 'far'));
   const cv = wd.render(W, t, mode);
   g.imageSmoothingEnabled = true; g.drawImage(cv, 0, 0, info.dw, info.dh);
   // a slow PC: the picture a step smaller (and back up when there's room); the plainer look only as a last resort
@@ -461,12 +461,18 @@ function loadWorklet(a) {
   const mod = a.audioWorklet ? a.audioWorklet.addModule(WORKLET) : Promise.reject(new Error('no worklets'));
   WL = Promise.all([mod, grainsFor(a)]).then(([, g]) => { GR = g; WLok = true; WLdone = true; }, () => { WLdone = true; });
 }
-function raceEngine(a, bus, gr) {   // the worklet fed the firings, a little weight low down, the very top rolled off
+let RASP = null;
+function raceEngine(a, bus, gr) {   // the worklet fed the firings, a little weight low down, the very top rolled off; some bite on top, a little width
   const node = new AudioWorkletNode(a, 'grain-engine', { numberOfInputs: 0, numberOfOutputs: 1, outputChannelCount: [1] });
   node.port.postMessage({ data: gr.data, sets: gr.sets, pops: gr.pops });
   const body = a.createBiquadFilter(); body.type = 'lowshelf'; body.frequency.value = 160; body.gain.value = 2.5;
   const top = a.createBiquadFilter(); top.type = 'lowpass'; top.frequency.value = 9000; top.Q.value = 0.5;
   node.connect(body); body.connect(top); top.connect(bus);
+  const hp = a.createBiquadFilter(), pre = a.createGain(), lp = a.createBiquadFilter(), rg = a.createGain();   // the rasp: the mids driven hard into a curve, the harmonics that makes mixed in under it
+  hp.type = 'highpass'; hp.frequency.value = 650; hp.Q.value = 0.6; pre.gain.value = 7; lp.type = 'lowpass'; lp.frequency.value = 5200; rg.gain.value = 0.085;
+  const ws = a.createWaveShaper(); ws.curve = RASP || (RASP = (() => { const n = 2048, c = new Float32Array(n); for (let i = 0; i < n; i++) c[i] = Math.tanh((i / (n - 1) * 2 - 1) * 3.2); return c; })());
+  top.connect(hp); hp.connect(pre); pre.connect(ws); ws.connect(lp); lp.connect(rg); rg.connect(bus);
+  if (a.createStereoPanner) for (const [ms, pn] of [[0.007, -0.9], [0.011, 0.9]]) { const d = a.createDelay(0.05), g = a.createGain(), p = a.createStereoPanner(); d.delayTime.value = ms; g.gain.value = 0.26; p.pan.value = pn; top.connect(d); d.connect(g); g.connect(p); p.connect(bus); }   // width: the sound back off the barriers
   const P = (n) => node.parameters.get(n);
   return { node: node, rpm: P('rpm'), throttle: P('throttle'), gain: P('gain'), nitro: P('nitro') };
 }
@@ -477,7 +483,23 @@ function makeAudio(a, bus) {
   for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
   const loop = (type, freq, q) => { const s = a.createBufferSource(), f = a.createBiquadFilter(), gn = a.createGain(); s.buffer = buf; s.loop = true; f.type = type; f.frequency.value = freq; f.Q.value = q; gn.gain.value = 0; s.connect(f); f.connect(gn); gn.connect(bus); s.start(); return { f: f, g: gn }; };
   o.wind = loop('bandpass', 900, 0.6); o.skid = loop('bandpass', 2400, 7); o.rumble = loop('lowpass', 160, 1);
+  o.sq = squeal(a, bus); o.passT = 0; o.passD = new Map();
   return o;
+}
+function squeal(a, bus) {   // the tyres: a pitched squeal that wobbles (vibrato ~6 a second) and trembles, through a band of the upper mids
+  const g = a.createGain(); g.gain.value = 0;
+  const bp = a.createBiquadFilter(), lp = a.createBiquadFilter(); bp.type = 'highpass'; bp.frequency.value = 300; lp.type = 'lowpass'; lp.frequency.value = 3600;
+  const amp = a.createGain(); amp.gain.value = 0.75;
+  const lfo = a.createOscillator(), lfoG = a.createGain(), lfo2 = a.createOscillator(), lfoG2 = a.createGain(); lfo.frequency.value = 6.3; lfoG.gain.value = 15; lfo.connect(lfoG); lfo2.frequency.value = 3.7; lfoG2.gain.value = 9; lfo2.connect(lfoG2);   // two wobbles, so it's not a clean vibrato
+  const trem = a.createOscillator(), tremG = a.createGain(); trem.frequency.value = 9.1; tremG.gain.value = 0.25; trem.connect(tremG); tremG.connect(amp.gain);
+  const oscs = [[1, 'sawtooth', 0.55], [2.01, 'triangle', 0.6], [2.98, 'triangle', 0.4], [4.03, 'sine', 0.25], [5.02, 'sine', 0.15]].map(([h, type, lv]) => {
+    const os = a.createOscillator(), og = a.createGain(), dg = a.createGain(); os.type = type; os.frequency.value = 450 * h; og.gain.value = lv; dg.gain.value = h;
+    lfoG.connect(dg); lfoG2.connect(dg); dg.connect(os.frequency); os.connect(og); og.connect(bp); os.start(); return { os: os, h: h };
+  });
+  const pn = a.createStereoPanner ? a.createStereoPanner() : null;
+  bp.connect(lp); lp.connect(amp); amp.connect(g); if (pn) { g.connect(pn); pn.connect(bus); } else g.connect(bus);
+  lfo.start(); lfo2.start(); trem.start();
+  return { g: g, pn: pn, oscs: oscs };
 }
 // rpm in real revs a minute (a V12 road engine: ~1,000 idling, 7,600 at the limiter), throttle 0-1; quiet enough to sit
 // under the music and her voice, a little louder as the revs rise
@@ -603,7 +625,7 @@ function frameAudio(W, S, mode, SET) {
   if (!a) return;
   if (!AU) { if (!playing) return; loadWorklet(a); if (!WLdone) return; AU = makeAudio(a, S.bus() || a.destination); }   // (a moment while the engine loads)
   const now = a.currentTime, T = 0.06;
-  if (!playing) { if (AU.race) AU.gain.setTargetAtTime(0, now, 0.05); else { AU.g.gain.setTargetAtTime(0, now, 0.05); AU.gNoise.gain.setTargetAtTime(0, now, 0.05); } AU.wind.g.gain.setTargetAtTime(0, now, 0.05); AU.skid.g.gain.setTargetAtTime(0, now, 0.05); AU.rumble.g.gain.setTargetAtTime(0, now, 0.05); return; }
+  if (!playing) { if (AU.race) AU.gain.setTargetAtTime(0, now, 0.05); else { AU.g.gain.setTargetAtTime(0, now, 0.05); AU.gNoise.gain.setTargetAtTime(0, now, 0.05); } AU.wind.g.gain.setTargetAtTime(0, now, 0.05); AU.skid.g.gain.setTargetAtTime(0, now, 0.05); AU.rumble.g.gain.setTargetAtTime(0, now, 0.05); AU.sq.g.gain.setTargetAtTime(0, now, 0.05); return; }
   const pct = W.v / E.VMAX; let gi = 0; while (gi < 6 && pct > GEARS[gi + 1]) gi++;
   let rpm = W.count > 0 ? 0.06 + (W.rev || 0) * 0.85 : Math.min(1.02, 0.5 + 0.5 * (pct - GEARS[gi]) / (GEARS[gi + 1] - GEARS[gi]));
   if (W.count <= 0 && gi === 0) rpm = Math.max(0.12, Math.min(1, 0.12 + pct / GEARS[1] * 0.85));
@@ -629,7 +651,17 @@ function frameAudio(W, S, mode, SET) {
   if (!AU.race && lift && Math.random() < 0.11) S.noise(0.035 + Math.random() * 0.04, 0.04 + Math.random() * 0.035, 800 + Math.random() * 1500, { type: 'bandpass', q: 1.2, pan: (Math.random() - 0.5) * 0.4 });
   AU.wind.f.frequency.setTargetAtTime(600 + pct * 1800, now, T);
   AU.wind.g.gain.setTargetAtTime(Math.min(0.09, pct * pct * 0.055 + (W.boosting ? 0.03 : 0)), now, T);
-  AU.skid.g.gain.setTargetAtTime(W.drift && !W.air ? 0.05 : 0, now, 0.03);
+  AU.skid.g.gain.setTargetAtTime(W.drift && !W.air ? 0.028 : 0, now, 0.03);   // (a little grit under the squeal)
+  { const slip = W.air || W.crash ? 0 : W.drift ? 1 : pct > 0.3 ? Math.max(0, Math.min(1, (Math.abs(W.slide || 0) - 0.12) / 0.2)) * 0.55 : 0, f0 = (420 + slip * 80 + pct * 60) * (1 + (Math.random() - 0.5) * 0.03);
+    AU.sq.oscs.forEach((o) => o.os.frequency.setTargetAtTime(f0 * o.h, now, 0.08));
+    AU.sq.g.gain.setTargetAtTime(slip * 0.11, now, slip > 0 ? 0.03 : 0.08);
+    if (AU.sq.pn) AU.sq.pn.pan.setTargetAtTime(Math.max(-0.5, Math.min(0.5, -(W.steer || 0) * 0.35)), now, 0.1); }
+  if (W.count <= 0 && !W.crash) for (const c of W.cars) {   // a car going past: a swoosh falling in pitch (Doppler), on the side it passes
+    const d = c.s - W.s, was = AU.passD.get(c.id); AU.passD.set(c.id, d);
+    if (was > 0 && d <= 0 && Math.abs(c.x - W.x) < 9 && now > AU.passT) { AU.passT = now + 0.12; const pp = Math.max(-0.85, Math.min(0.85, (c.x - W.x) * 0.22)), k = Math.min(1, pct * 1.2);
+      S.noise(0.42, 0.05 + 0.05 * k, 2400, { type: 'bandpass', q: 1.1, to: 450, pan: pp }); S.tone(175, 0.42, 0.035 + 0.03 * k, { type: 'sawtooth', to: 112, pan: pp }); }
+  }
+  if (AU.passD.size > 80) AU.passD.clear();
   AU.rumble.g.gain.setTargetAtTime(W.off && pct > 0.08 ? 0.12 * Math.min(1, pct * 2) : 0, now, 0.04);
 }
 
@@ -648,7 +680,8 @@ A.start({
     { key: 'music', type: 'switch', label: 'Music', small: 'A driving tune for each place along the coast - beachy by the sea, rocking through the hills, smooth at sunset.', def: true },
     { key: 'radio', type: 'seg', label: 'Radio', small: 'Coast FM plays a tune for each place; or pick one station to play all the way. On the start line press ◀ ▶ to tune the car radio, or R at any time.', options: RADIO.map((r) => [r[0], r[1]]), def: 'place' },
     { key: 'voice', type: 'switch', label: 'Her voice', small: 'Your passenger says what she would like you to do, and how you did.', def: true },
-    { key: 'shake', type: 'switch', label: 'Screen shake', small: 'The picture shakes when you bump or crash.', def: !reducedMotion }
+    { key: 'shake', type: 'switch', label: 'Screen shake', small: 'The picture shakes when you bump or crash.', def: !reducedMotion },
+    { key: 'cam', type: 'seg', label: 'Camera', small: 'Close: low behind the car, like the arcade. High: further back and up, to see more of the road ahead.', options: [['near', 'Close'], ['far', 'High']], def: 'near' }
   ],
   picker: { key: 'car', label: 'Choose your car', options: [['roadster', 'Roadster', 'Red · all-rounder'], ['gt', 'GT', 'Silver · fastest'], ['hatch', 'Hot hatch', 'Yellow · grippy']] },
   newWorld: (speed, set) => { set = set || {}; R.shakeOn = set.shake !== false; return E.newWorld(speed, { car: set.car, pedal: touchy() ? 'auto' : set.pedal }); },
