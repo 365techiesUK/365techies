@@ -418,4 +418,4 @@ _page = next(p for p in bp.PAGES if p.get("slug") == "games")
 # while hidden, the page stays out of the site's own search as well (build_blog skips pages marked nosearch)
 _page["nosearch"] = not PUBLIC
 # what WhatsApp / Facebook show when the page is shared: the six games on one picture (made 4 Oct, scratchpad make_share_cards.py)
-_page["og_image"] = "/games/img/games-share-v2.jpg"   # v2 (5 Oct): names Hearts, Cribbage, Whist + 5 more; v1 named only three games
+_page["og_image"] = "/games/img/games-share-v3.jpg"   # v3 (5 Oct): names Hearts, Cribbage, Whist + 5 more AND shows a Hearts table (v1 named only three games; v2 named them but showed none)

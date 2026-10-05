@@ -90,8 +90,8 @@
     var out = [
       { key: 'p0', x: L.gap, y: L.handY - (L.tall ? 38 : 44), html: '<span class="av">Y</span><span>You &middot; ' + S.scores[0] + (S.scores[0] === 1 ? ' point' : ' points') + '<small>Deadwood <b class="pts">' + you + '</b></small></span>', cls: 'you' + mini + (playing && S.turn === 0 ? ' turn' : '') },
       { key: 'p1', x: L.cx, y: Math.round(L.gap + L.ch * L.osc + 4), center: true, html: '<span class="av">S</span><span>' + OPP + ' &middot; ' + S.scores[1] + (S.scores[1] === 1 ? ' point' : ' points') + '<small>' + (shown ? 'Deadwood <b class="pts">' + (S.result.knocker === 1 ? S.result.kDead : S.result.dDead) + '</b>' : S.hands[1].length + ' cards') + '</small></span>', cls: mini + (playing && S.turn === 1 ? ' turn' : '') },
-      { key: 'dk', x: L.stockX + L.cw / 2, y: L.rowY + L.ch + 4, center: true, html: 'Deck &middot; ' + S.stock.length, cls: 'tag' + mini },
-      { key: 'pl', x: L.pileX + L.cw / 2, y: L.rowY + L.ch + 4, center: true, html: L.tall ? 'Discards' : 'Discard pile', cls: 'tag' + mini }   // (shorter on a phone: the two labels ran together)
+      { key: 'dk', x: L.stockX + L.cw / 2, y: L.rowY + L.ch + 4, center: true, html: (L.pileX - L.stockX < 70 ? '' + S.stock.length : L.pileX - L.stockX < 110 ? S.stock.length + ' left' : 'Deck &middot; ' + S.stock.length), cls: 'tag' + mini + ' tagl' },   // (shorter where the piles sit close: the labels ran together - critic 5)
+      { key: 'pl', x: L.pileX + L.cw / 2, y: L.rowY + L.ch + 4, center: true, html: L.pileX - L.stockX < 70 ? 'Pile' : L.cw < 90 ? 'Discards' : 'Discard pile', cls: 'tag' + mini + ' tagr' }   // (shorter on a phone: the two labels ran together)
     ];
     return playing ? out : out.slice(0, 2);
   }

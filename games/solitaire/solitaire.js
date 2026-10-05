@@ -144,7 +144,7 @@
     variant: { key: 'draw', stateKey: 'lv', label: 'Difficulty', small: 'Changes from your next game.', options: [[1, 'Easy'], [3, 'Normal'], [5, 'Hard'], [7, 'Expert']], def: 1,
                newLabel: function (v) { return LV[v] ? LV[v].name : 'Easy'; }, info: function (v) { return LV[v] ? LV[v].line : ''; },
                stars: function (v) { return LV[v] ? LV[v].stars : 1; },
-               statKey: function (v) { return LV[v] ? LV[v].stat : 'd1'; }, bestLabel: function (v) { return LV[v] ? LV[v].name.toLowerCase() : 'easy'; } },
+               statKey: function (v) { return LV[v] ? LV[v].stat : 'd1'; }, bestLabel: function (v) { return LV[v] ? LV[v].name : 'easy'; } },
     deals: DEALS ? function (v) { return v === 1 ? DEALS.d1 : v === 3 ? DEALS.d3 : null; } : null,   // Hard and Expert: any deal at all
     // 4 Oct 2026 - the Hall of Fame (games/common/hof.js + api/games-hof.php) and its two races: Today's deal, and the
     // 3-minute sprint on one turn-one deal for everyone. ⚠ sprintSeed must match sol_sprint_seed in api/games-sol-lib.php.

@@ -353,6 +353,7 @@
         + '.ovbox .trow{flex-wrap:nowrap}.ovbox .trow #tPlay{flex:3 1 0;padding:0 12px}.ovbox .trow #tHof{flex:2 1 0;padding:0 10px;font-size:16px;white-space:nowrap}'
         + '@media (max-width:520px){.legend{grid-template-columns:auto auto;column-gap:18px}.ovbox p{margin:5px 0}.ovbox .trow #tPlay{flex:1 1 58%}.ovbox .trow #tHof{flex:0 1 auto;font-size:14px;padding:0 9px}}'
         + '@media (max-height:520px){.bar{padding-top:4px!important;padding-bottom:4px!important;gap:4px 10px}.tb,.tb.tb2,.tb.tb3{min-height:40px!important}.brand b{width:30px;height:30px}}'
+        + '@media (max-width:520px){#ov_title .soft:last-child{display:none}}'   // (the speed line: Settings shows it)
         + '@media (max-height:520px){.legend{display:none}.ovbox h1{font-size:24px;margin-bottom:4px}.ovbox .btn.big{min-height:50px}}'   // (a short screen: Play in view without scrolling the box)
         + '[hidden]{display:none!important}'   // (the step-up button stayed after moving up - critic 4)
         + '@media (prefers-reduced-motion:reduce){.arc-ban,.arc-ban b,.arc-ban.out,.ovbox .arc-new,.ovbox .tile b.bump{animation:none}}';
@@ -505,7 +506,7 @@
       var f = d.querySelector('.btn.go') || d.querySelector('button'); if (f) f.focus({ preventScroll: true });
       var sh = d.querySelector('.sheet'); if (sh) sh.scrollTop = 0;
     }
-    function closeSheets() { if (!openSheet) return; openSheet.hidden = true; openSheet = null; if (lastFocus && lastFocus.focus && document.body.contains(lastFocus)) { try { lastFocus.focus(); } catch (e) {} } }
+    function closeSheets() { if (!openSheet) return; var was = openSheet.id; openSheet.hidden = true; openSheet = null; if (was === 'dAgain' && againWas === 'play') { againWas = ''; setTimeout(resume, 0); } if (lastFocus && lastFocus.focus && document.body.contains(lastFocus)) { try { lastFocus.focus(); } catch (e) {} } }
     document.addEventListener('click', function (e) {
       var t = e.target;
       if (t.closest && t.closest('[data-close]')) { closeSheets(); return; }
@@ -544,7 +545,7 @@
       $('agScore').textContent = sc.toLocaleString('en-GB'); openD('dAgain');
     };
     $('agYes').onclick = function () { againWas = ''; closeSheets(); begin(); };
-    $('agNo').onclick = function () { closeSheets(); if (againWas === 'play') resume(); againWas = ''; };
+    $('agNo').onclick = function () { closeSheets(); };   // (closing it any way keeps playing - closeSheets)
 
     $('bPause').onclick = togglePause;
     $('bStats').onclick = openStats;

@@ -61,6 +61,7 @@
     }
     var L = { cw: 80, ch: 112 };
     function layout() {
+      LW = board.clientWidth; LH = board.clientHeight;   // (the size this layout was made for)
       L = D.layout(board.clientWidth, board.clientHeight, S);
       document.documentElement.style.setProperty('--cw', L.cw + 'px');
       document.documentElement.style.setProperty('--ch', L.ch + 'px');
@@ -134,6 +135,8 @@
       clearTimeout(el._tt); el._tt = setTimeout(function () { el.classList.remove('turn'); }, 480);
       clearTimeout(el._st); el._st = setTimeout(function () { el.classList.add('shine'); el._st = setTimeout(function () { el.classList.remove('shine'); }, 800); }, 220);
     }
+    // a level's three stars in words (critic 5: after the first message the bar showed only 'by 30' and '\u2605\u2605\u2605 none')
+    function goalsLine(jl, ji) { var g = D.jr.goals(jl); return 'Level ' + (ji + 1) + ' \u2013 \u2605 ' + g[0] + ' \u00b7 \u2605\u2605 ' + g[1] + ' \u00b7 \u2605\u2605\u2605 ' + g[2]; }
     function jLevel() { return G && G.mode === 'journey' && D.jr && window.Journey ? Journey.level(G.jl) : null; }
     function bar() {
       var jl = jLevel(), ch = jl ? [['Level', G.jl + 1]].concat(D.jr.chips(S, jl)) : D.chips(S);
@@ -155,13 +158,14 @@
       unhint(); unhov();
       if (SET.fx && !reduce && !hit.classList.contains('down')) { hit.classList.add('press'); setTimeout(function () { hit.classList.remove('press'); }, 160); }
       var tc = +hit.getAttribute('data-c');
+      if (Date.now() - playedAt < 350) return;   // the second click of a double-click: no 'Wait for your turn' (critic 5)
       if (e.pointerType === 'touch' && liftFirst(tc, hit)) return;
       unlift();
       handle(D.tap(S, tc, U), hit);
     });
     // a phone: a hand card showing only a thin edge is lifted by the first tap and played by the second, where a tap
     // plays it for good (games audit, 5 Oct 2026; critic: one unsteady tap played the card next to it, with no Undo)
-    var lifted = null, liftT = 0;
+    var lifted = null, liftT = 0, playedAt = 0;
     function unlift() { clearTimeout(liftT); if (lifted != null && cardEl[lifted]) cardEl[lifted].classList.remove('lift'); lifted = null; }
     function liftFirst(c, el) {
       if (!D.commits || !D.commits(S) || !el.classList.contains('ok') || busy) { unlift(); return false; }
@@ -189,7 +193,7 @@
     board.addEventListener('pointerleave', unhov);
     board.addEventListener('contextmenu', function (e) { e.preventDefault(); });
     // the keyboard: the cards the game marks as ready to use (.ok), each played as a tap (games audit, 5 Oct 2026)
-    if (T.kbd) T.kbd(board, {
+    var kbdApi = T.kbd ? T.kbd(board, {
       busy: function () { return busy || !!openSheet || !S; },
       list: function () {
         var out = [];
@@ -201,7 +205,9 @@
         return out;
       },
       play: function (it) { unhint(); unhov(); handle(D.tap(S, it.c, U), it.el); }
-    });
+    }) : null;
+    // a redraw sets each card's classes afresh (and wiped the keyboard ring): put the ring back after every redraw
+    var render0 = render; render = function (x) { render0(x); if (kbdApi && document.activeElement === board) kbdApi.refresh(false); };
     panelEl.addEventListener('click', function (e) {
       var b = e.target.closest ? e.target.closest('[data-act]') : null; if (!b || b.disabled) return;
       unhint();
@@ -214,7 +220,7 @@
       if (sayHint && (r.m || r.ui)) sayNext();   // the player acted: the Hint's (or tip's) message has done its job
       if (r.say) { if (el && el.classList.contains('card')) nope(el); sfx('nope'); say(r.say); }
       if (r.ui) { sfx(r.sfx || 'lift'); render(); persist(); }
-      if (r.m) { if (busy) { say('One moment – the others are still playing'); return; } act(r.m, true); }
+      if (r.m) { if (busy) { say('One moment – the others are still playing'); return; } playedAt = Date.now(); act(r.m, true); }
       if (r.newGame) openNew();
     }
     function nope(el) { el.classList.remove('nope'); void el.offsetWidth; el.classList.add('nope'); setTimeout(function () { el.classList.remove('nope'); }, 360); }
@@ -298,7 +304,7 @@
       sfx('shuffle');
       dealOut();
       effects({ t: 'deal' });   // a game may say something about the first deal (Whist: what trumps are)
-      if (jl) { var my = gen; setTimeout(function () { if (my === gen) say('Level ' + (ji + 1) + ' \u2013 ' + D.jr.goals(jl)[0] + ' for a star'); }, reduce ? 0 : 1700); }
+      if (jl) { var my = gen; setTimeout(function () { if (my === gen) say(goalsLine(jl, ji)); }, reduce ? 0 : 1700); }
       persist();
     }
     function dealOut() {   // every card starts on the deck, then they fly out one by one
@@ -702,7 +708,11 @@
       el.textContent = t; el.classList.add('on'); sayAt = Date.now(); sayOn = true;
       // never over the panel (its buttons and the count): just above it instead; on a phone, at the top of the table,
       // over the other players' cards rather than the piles, the trick or your hand (critic 3)
-      if (innerWidth < 600) { el.style.top = Math.round(board.getBoundingClientRect().top + 8) + 'px'; el.style.bottom = 'auto'; }
+      if (innerWidth < 600) {   // below the top seat's plate and any marker up there (Whist's Trumps - critic 5)
+        var br = board.getBoundingClientRect(), top = br.top + 8;
+        [].forEach.call(board.querySelectorAll('.rv-plate'), function (pl) { var q = pl.getBoundingClientRect(); if (q.height && q.top < br.top + br.height * 0.3) top = Math.max(top, q.bottom + 6); });
+        el.style.top = Math.round(top) + 'px'; el.style.bottom = 'auto';
+      }
       else { el.style.top = ''; var pr = !panelEl.hidden && panelEl.getBoundingClientRect(); el.style.bottom = pr && pr.height && pr.top < innerHeight - 177 ? Math.round(innerHeight - pr.top + 10) + 'px' : ''; }
       clearTimeout(sayT); sayT = setTimeout(sayNext, Math.min(9000, 1700 + t.split(/\s+/).length * 260) * spdF());
     }
@@ -713,7 +723,7 @@
     function say(t, kind) {
       if (!t) return;
       if (kind === 'tip') { if (sayOn && !sayHint) sayQ.unshift($('toast').textContent); sayHint = true; sayShow(t); return; }
-      if (!sayOn || sayHint) { sayHint = kind === 'hint'; sayShow(t); return; }   // nothing showing, or only a hint/tip: show it now
+      if (!sayOn || sayHint || kind === 'hint') { sayHint = kind === 'hint'; sayShow(t); if (sayHint) { clearTimeout(sayT); sayT = setTimeout(sayNext, 3500); } return; }   // nothing showing, only a hint/tip, or a Hint press: show it now (a Hint for 3.5 s)
       if (sayQ[sayQ.length - 1] === t || (!sayQ.length && $('toast').textContent === t)) return;
       sayQ.push(t); if (sayQ.length > 4) sayQ.shift();
     }
@@ -724,6 +734,13 @@
     window.addEventListener('pagehide', persist);
     var rz = 0;
     window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { layout(); render(true); }, 120); });
+    // the bar can wrap to a second row after the table was laid out (the game's name, the chips filling in): lay the
+    // table out again whenever its own size changes (critic 5: Hearts opened with a quarter of the hand off the screen)
+    // a phone held sideways: one tip a visit (critic 5: the cards got very small)
+    function sideTip() { try { if (sessionStorage.getItem('tip365side')) return; if (window.matchMedia && matchMedia('(orientation: landscape) and (max-height: 450px) and (pointer: coarse)').matches) { say('Tip: turn your phone upright for bigger cards'); sessionStorage.setItem('tip365side', '1'); } } catch (e) {} }
+    setTimeout(sideTip, 2600); window.addEventListener('orientationchange', function () { setTimeout(sideTip, 700); });
+    var LW, LH;   // (declared here, set by layout() - no initial value, or it would wipe the first layout's)
+    if (window.ResizeObserver) new ResizeObserver(function () { if (Math.abs(board.clientWidth - LW) < 2 && Math.abs(board.clientHeight - LH) < 2) return; clearTimeout(rz); rz = setTimeout(function () { layout(); render(true); }, 60); }).observe(board);
 
     // ------------------------------------------------------------ start
     syncControls();
@@ -746,6 +763,7 @@
       if (G.mode === 'journey') { G.jl = saved.g.jl; G.jRes = saved.g.jRes || null; if (!jLevel()) G.mode = 'match'; }
       U = saved.u && typeof saved.u === 'object' ? saved.u : {};
       layout(); render(true); go();
+      if (jLevel()) setTimeout(function () { say(goalsLine(jLevel(), G.jl)); }, 1200);   // (a reload: the goals again)
     } else if (shared) { S = E.newMatch(shared.seed, shared.v); G = newG(); layout(); newGame('shared'); say('Match #' + shared.seed + ' – the same cards your friend played. Good luck!'); }
     else { S = E.newMatch(1, SET.lv); G = newG(); layout(); newGame('match'); }
     if (!shared && ask.daily && !(G.mode === 'daily' && G.day === today())) newGame('daily');   // today's match already under way: carry on with it

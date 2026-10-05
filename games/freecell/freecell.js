@@ -120,7 +120,7 @@
     variant: { key: 'lv', stateKey: 'lv', label: 'Difficulty', small: 'Changes from your next game.', options: [[1, 'Easy'], [3, 'Normal'], [5, 'Hard'], [7, 'Expert']], def: 1,
                newLabel: function (v) { return LV[v] ? LV[v].name : 'Easy'; }, info: function (v) { return LV[v] ? LV[v].line : ''; },
                stars: function (v) { return LV[v] ? LV[v].stars : 1; },
-               statKey: function (v) { return LV[v] ? LV[v].stat : 'all'; }, bestLabel: function (v) { return LV[v] ? LV[v].name.toLowerCase() : 'easy'; } },
+               statKey: function (v) { return LV[v] ? LV[v].stat : 'all'; }, bestLabel: function (v) { return LV[v] ? LV[v].name : 'easy'; } },
     deals: function (v) { return v === 5 && FD.c3.length ? FD.c3 : v === 7 && FD.c2.length ? FD.c2 : WIN; },
     rules: function (S) { var v = lvOf(S); return { undo: v !== 7, hint: v === 1 }; },
     winBonus: function (S, secs) { return Math.round((100 + Math.max(0, 1200 - secs) / 2) * ({ 1: 1, 3: 1.25, 5: 1.6, 7: 2 }[lvOf(S)] || 1)); },

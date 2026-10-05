@@ -94,7 +94,7 @@
     variant: { key: 'lv', stateKey: 'lv', label: 'Difficulty', small: 'Changes from your next game.', options: [[1, 'Easy'], [3, 'Normal'], [5, 'Hard'], [7, 'Expert']], def: 1,
                newLabel: function (v) { return LV[v] ? LV[v].name : 'Easy'; }, info: function (v) { return LV[v] ? LV[v].line : ''; },
                stars: function (v) { return LV[v] ? LV[v].stars : 1; },
-               statKey: function (v) { return LV[v] ? LV[v].stat : 'e'; }, bestLabel: function (v) { return LV[v] ? LV[v].name.toLowerCase() : 'easy'; } },
+               statKey: function (v) { return LV[v] ? LV[v].stat : 'e'; }, bestLabel: function (v) { return LV[v] ? LV[v].name : 'easy'; } },
     deals: list,
     rules: function (S) { var v = lvOf(S); return { undo: v !== 7, hint: v <= 3 }; },
     winBonus: function (S, secs) { return Math.round(((S.stock.length + S.waste.length) * 10 + Math.max(0, 900 - secs) / 2) * ({ 1: 1, 3: 1.25, 5: 1.6, 7: 2 }[lvOf(S)] || 1)); },

@@ -105,7 +105,7 @@
     variant: { key: 'suits', stateKey: 'lv', label: 'Difficulty', small: 'Changes from your next game.', options: [[1, 'Easy'], [3, 'Normal'], [5, 'Hard'], [7, 'Expert']], def: 1,
                newLabel: function (v) { return LV[v] ? LV[v].name : 'Easy'; }, info: function (v) { return LV[v] ? LV[v].line : ''; },
                stars: function (v) { return LV[v] ? LV[v].stars : 1; },
-               statKey: function (v) { return LV[v] ? LV[v].stat : 's1'; }, bestLabel: function (v) { return LV[v] ? LV[v].name.toLowerCase() : 'easy'; } },
+               statKey: function (v) { return LV[v] ? LV[v].stat : 's1'; }, bestLabel: function (v) { return LV[v] ? LV[v].name : 'easy'; } },
     deals: function (v) { var l = v === 1 ? SD.s1 : v === 3 ? SD.s2 : SD.s4; return l && l.length ? l : null; },
     rules: function (S) { var v = lvOf(S); return { undo: v !== 7, hint: v <= 3 }; },
     dealOrder: function (S) { var o = [], r, c; for (r = 0; r < 6; r++) for (c = 0; c < 10; c++) if (r < S.tab[c].length) o.push(S.tab[c][r].c); return o; },

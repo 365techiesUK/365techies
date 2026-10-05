@@ -376,7 +376,8 @@
     + '@media (max-height:520px){.bar{padding-top:4px!important;padding-bottom:4px!important;gap:4px 10px}.tb,.tb.tb2,.tb.tb3{min-height:40px!important}.brand b{width:30px;height:30px}}'   // (a short screen: a slimmer bar leaves the cards more room)
     + '[hidden]{display:none!important}'   // (a .btn display rule beat hidden: 'Today’s deal' stayed on the win sheet - critic 4)
     + '#toast{width:max-content}'   // (centred at 50%, it shrank to half the screen: phone messages ran to 5 lines)
-    + '@media (max-width:340px){.rv365 .rv-plate:not(.you) small{display:none}}'   // (320 px: the side seats' lines overlapped)
+    + '@media (max-width:340px){.rv365 .rv-plate:not(.you) small,.rv365 .rv-plate.mate small{display:none}.rv365 .rv-plate{font-size:11.5px}}'
+    + '@media (max-width:600px){.rv365 .rv-plate.tag{padding-left:6px;padding-right:6px}.rv365 .rv-plate.tagl{margin-left:-4px}.rv365 .rv-plate.tagr{margin-left:4px}}'   // (Gin's two pile labels ran together - critic 5)   // (320 px: the side seats' lines overlapped)
     + '.sr365{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}'
     // the bar (games audit, 5 Oct 2026; critic: on a phone nine bare icons meant nothing to a first-timer): the game's
     // name shows and opens the Games list; on a phone the main buttons carry a word and the rest live under More
@@ -521,6 +522,7 @@
     // ------------------------------------------------------------ where everything sits
     var L = { cw: 90, ch: 126, slots: [] };
     function layout() {
+      LW = board.clientWidth; LH = board.clientHeight;   // (the size this layout was made for)
       L = D.layout(board.clientWidth, board.clientHeight, S);
       document.documentElement.style.setProperty('--cw', L.cw + 'px');
       board.classList.toggle('tiny', L.cw < 52); board.classList.add('g-' + D.id);   // narrow cards (Spider on a phone): a bigger corner, one big suit (games audit, 5 Oct 2026)
@@ -1486,6 +1488,13 @@
     window.addEventListener('pagehide', function () { if (S) persist(); });
     var rz = 0;
     window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { layout(); render(true); }, 120); });
+    // the bar can wrap to a second row after the table was laid out (the game's name, the chips filling in): lay the
+    // table out again whenever its own size changes (critic 5: Hearts opened with a quarter of the hand off the screen)
+    // a phone held sideways: one tip a visit (critic 5: the cards got very small)
+    function sideTip() { try { if (sessionStorage.getItem('tip365side')) return; if (window.matchMedia && matchMedia('(orientation: landscape) and (max-height: 450px) and (pointer: coarse)').matches) { say('Tip: turn your phone upright for bigger cards'); sessionStorage.setItem('tip365side', '1'); } } catch (e) {} }
+    setTimeout(sideTip, 2600); window.addEventListener('orientationchange', function () { setTimeout(sideTip, 700); });
+    var LW, LH;   // (declared here, set by layout() - no initial value, or it would wipe the first layout's)
+    if (window.ResizeObserver) new ResizeObserver(function () { if (Math.abs(board.clientWidth - LW) < 2 && Math.abs(board.clientHeight - LH) < 2) return; clearTimeout(rz); rz = setTimeout(function () { layout(); render(true); }, 60); }).observe(board);
 
     // ------------------------------------------------------------ start
     syncControls();

@@ -80,7 +80,7 @@
     var southY = L.handY - (L.tall ? 38 : 44), Y = plateYs(L);
     out.push({ key: 'p0', x: L.gap, y: southY, html: plate(0, S), cls: 'you' + mini + (turn === 0 ? ' turn' : '') });
     out.push({ key: 'p1', x: L.gap, y: Y.side, html: plate(1, S), cls: mini + (turn === 1 ? ' turn' : '') });
-    out.push({ key: 'p2', x: L.cx, y: Y.north, center: true, html: plate(2, S), cls: 'you' + mini + (turn === 2 ? ' turn' : '') });
+    out.push({ key: 'p2', x: L.cx, y: Y.north, center: true, html: plate(2, S), cls: 'you mate' + mini + (turn === 2 ? ' turn' : '') });
     out.push({ key: 'p3', x: L.W - L.gap, y: Y.side, right: true, html: plate(3, S), cls: mini + (turn === 3 ? ' turn' : '') });
     var red = S.trump === 1 || S.trump === 2;
     out.push({ key: 'tr', x: L.gap, y: L.gap, html: 'Trumps <b style="color:' + (red ? '#ff6a7a' : '#fff') + ';font-size:1.25em">' + SUITCH[S.trump] + '</b> ' + E.SUIT_NAME[S.trump], cls: 'tag' + mini });
