@@ -221,9 +221,16 @@
   }
   function chips(S) { return [['You', S.scores[0]], [OPP, S.scores[1]], ['Deal', S.hand + 1]]; }
   function dealOrder(S) { var o = []; for (var i = 0; i < 6; i++) { o.push(S.hands[1 - S.dealer][i]); o.push(S.hands[S.dealer][i]); } return o; }
+  var HW = ['', 'Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King'], HS = ['spades', 'hearts', 'diamonds', 'clubs'];
+  function hname(c) { return HW[(c % 13) + 1] + ' of ' + HS[(c / 13) | 0]; }   // (for the Hint's reasons)
+  // the Hint says why (games audit, 5 Oct 2026)
   function hintShow(S, m) {
-    if (m.t === 'discard') return { cards: m.cards, say: 'These two would be good ones for the crib' };
-    return { cards: [m.c], say: 'This one looks like a good card to play' };
+    if (m.t === 'discard') return { cards: m.cards, say: S.dealer === 0 ? 'Put these two in your crib – they keep the best four for your hand, and the crib is yours too' : 'Give these two to ' + OPP + '’s crib – they keep your best four and give the crib the least' };
+    var c = m.c, n = S.count + E.val(c), pts = E.pegPoints(S.seq.concat([c]), n).reduce(function (a, x) { return a + x.pts; }, 0), say;
+    if (pts) say = 'Play the ' + hname(c) + ' – it scores ' + pts + (pts === 1 ? ' point' : ' points') + (n === 15 ? ' for fifteen' : n === 31 ? ' for 31' : '');
+    else if (n === 5 || n === 21) say = 'Play the ' + hname(c) + ' – the safest card you have just now';
+    else say = 'Play the ' + hname(c) + ' – it keeps the count at ' + n + ', hard for ' + OPP + ' to score from';
+    return { cards: [c], say: say };
   }
 
   // The Journey (5 Oct 2026): a level is ONE HAND on a set deal with three targets, one per star - the levels are in

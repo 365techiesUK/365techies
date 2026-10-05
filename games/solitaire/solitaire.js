@@ -139,6 +139,7 @@
     face: function (c) { return { r: E.rank(c), s: E.suit(c) }; },
     E: E, layout: layout, positions: positions, where: where, picked: picked, targets: targets, autoNext: autoNext, hintLights: hintLights, valid: valid,
     whyNot: whyNot, cantPick: cantPick,
+    hintMove: function (S, greedy) { return window.SolSolver ? SolSolver.hint(S, greedy) : greedy; },   // the Hint plans a winning line (solver.js, games audit 5 Oct 2026)
     variant: { key: 'draw', stateKey: 'lv', label: 'Difficulty', small: 'Changes from your next game.', options: [[1, 'Easy'], [3, 'Normal'], [5, 'Hard'], [7, 'Expert']], def: 1,
                newLabel: function (v) { return LV[v] ? LV[v].name : 'Easy'; }, info: function (v) { return LV[v] ? LV[v].line : ''; },
                stars: function (v) { return LV[v] ? LV[v].stars : 1; },

@@ -3,7 +3,7 @@
  * draws, over the 3D picture, everything that must always be crisp and on top: enemy bullets, your shots, the items and
  * medals, the panel, and the labels and banners (../common/arcade-fx.js). Sounds are made on the spot; the music is an
  * optional techno track (Settings > Music, off unless switched on). A PC that can't do WebGL gets a plain flat picture. */
-import { createWorld } from './world3d.js?v=1';
+import { createWorld } from './world3d.js?v=2';
 
 const E = window.EclEngine, A = window.Arcade365, F = window.Arcade365FX.create();
 const GW = E.WIDTH, GH = E.HEIGHT;

@@ -170,7 +170,8 @@
       for (var k in lastP) { var q = lastP[k]; if (+k !== c && q && Math.abs(q.y - p.y) < 3 && q.x > p.x && q.x - p.x < 46 && (q.z || 0) > (p.z || 0)) { narrow = true; break; } }
       if (!narrow) { unlift(); return false; }
       unlift(); lifted = c; el.classList.add('lift'); sfx('lift');
-      var f = D.face(c); say('Tap the ' + T.cardName(f.r, f.s) + ' again to play it');
+      var f = D.face(c), tips = +(load('lifttips', 0) || 0);   // the tip only the first three times (critic 3: up to 13 a hand)
+      if (tips < 3) { say('Tap the ' + T.cardName(f.r, f.s) + ' again to play it', 'tip'); save('lifttips', tips + 1); }
       liftT = setTimeout(unlift, 6000);
       return true;
     }
@@ -210,7 +211,7 @@
     });
     function handle(r, el) {
       if (!r) return;
-      if (sayHint && (r.m || r.ui)) sayClear();   // the player acted: the Hint's message has done its job
+      if (sayHint && (r.m || r.ui)) sayNext();   // the player acted: the Hint's (or tip's) message has done its job
       if (r.say) { if (el && el.classList.contains('card')) nope(el); sfx('nope'); say(r.say); }
       if (r.ui) { sfx(r.sfx || 'lift'); render(); persist(); }
       if (r.m) { if (busy) { say('One moment – the others are still playing'); return; } act(r.m, true); }
@@ -268,7 +269,7 @@
       var m = E.hint(S); if (!m) { say('Nothing to do just now – wait for your turn'); return; }
       var lit = D.hintShow(S, m, U) || {};
       (lit.cards || []).forEach(function (c) { if (cardEl[c]) { cardEl[c]._hint = true; cardEl[c].classList.add('hint'); } });
-      if (lit.say) say(lit.say, true);
+      if (lit.say) say(lit.say, 'hint');
       hintT = setTimeout(unhint, 3200);
     }
     function unhint() { clearTimeout(hintT); cardEl.forEach(function (el) { if (el._hint) { el._hint = false; el.classList.remove('hint'); } }); }
@@ -375,7 +376,7 @@
       return T.finale(kind, { cards: T.packAtCentre(L.cw, L.ch), cw: L.cw, ch: L.ch,
         burst: function (x, y, cols, big) { if (!SET.fx) return; Spark.burst(x, y, big ? 64 : 14, cols, big ? 5.4 : 2, big ? 80 : 30, { grav: 0.05, size: 6 }); if (big) Spark.ring(x, y, 70, cols[0], 26); },
         trail: function (x, y, cols) { if (SET.fx) Spark.burst(x, y, 2, cols, 0.9, 22, { grav: 0.02, size: 4 }); },
-        sfx: sfx, done: function () { sp.style.zIndex = ''; if (done) done(); } });
+        sfx: sfx, max: 9000, done: function () { sp.style.zIndex = ''; if (done) done(); } });   // (fades out by 9 s - games audit)
     }
     // a big moment stamped on the table - a Gin, the Queen of spades, a moon shot, a perfect hand (the games call K.stamp)
     // o: { tone: 'gold' | 'dark' | 'red' | 'blue', sub: a smaller line, small: a lesser moment, big: sparks and a shake, moon }
@@ -493,11 +494,13 @@
           var C = window.AudioContext || window.webkitAudioContext; if (!C) return null; AC = new C();
           var comp = AC.createDynamicsCompressor(); comp.threshold.value = -16; comp.ratio.value = 3.5; comp.attack.value = 0.005; comp.release.value = 0.2;
           OUT = AC.createGain(); OUT.gain.value = 0.95; OUT.connect(comp); comp.connect(AC.destination);
-          try {
+          // the room echo is built a moment later, not on the first tap (critic 3: a 130-170 ms stall on a phone's first
+          // card - 65 ms of it making this echo); the first sounds just play dry
+          setTimeout(function () { try {
             var cv = AC.createConvolver(), len = Math.floor(AC.sampleRate * 1.3), ir = AC.createBuffer(2, len, AC.sampleRate);
             for (var ch = 0; ch < 2; ch++) { var dd = ir.getChannelData(ch); for (var j = 0; j < len; j++) dd[j] = (Math.random() * 2 - 1) * Math.pow(1 - j / len, 2.8); }
-            cv.buffer = ir; ROOM = AC.createGain(); ROOM.gain.value = 0.28; ROOM.connect(cv); cv.connect(OUT);
-          } catch (er) { ROOM = null; }
+            cv.buffer = ir; var rm = AC.createGain(); rm.gain.value = 0.28; rm.connect(cv); cv.connect(OUT); ROOM = rm;
+          } catch (er) { ROOM = null; } }, 600);
         }
         if (AC.state === 'suspended') AC.resume();
       } catch (e) { return null; }
@@ -697,18 +700,22 @@
     function sayShow(t) {
       var el = $('toast');
       el.textContent = t; el.classList.add('on'); sayAt = Date.now(); sayOn = true;
-      // never over the panel (its buttons and the count): just above it instead
-      var pr = !panelEl.hidden && panelEl.getBoundingClientRect(); el.style.bottom = pr && pr.height && pr.top < innerHeight - 177 ? Math.round(innerHeight - pr.top + 10) + 'px' : '';
+      // never over the panel (its buttons and the count): just above it instead; on a phone, at the top of the table,
+      // over the other players' cards rather than the piles, the trick or your hand (critic 3)
+      if (innerWidth < 600) { el.style.top = Math.round(board.getBoundingClientRect().top + 8) + 'px'; el.style.bottom = 'auto'; }
+      else { el.style.top = ''; var pr = !panelEl.hidden && panelEl.getBoundingClientRect(); el.style.bottom = pr && pr.height && pr.top < innerHeight - 177 ? Math.round(innerHeight - pr.top + 10) + 'px' : ''; }
       clearTimeout(sayT); sayT = setTimeout(sayNext, Math.min(9000, 1700 + t.split(/\s+/).length * 260) * spdF());
     }
     function sayNext() { if (sayQ.length) sayShow(sayQ.shift()); else sayClear(); }
     function sayClear() { clearTimeout(sayT); sayQ = []; sayOn = false; sayHint = false; $('toast').classList.remove('on'); }
-    function say(t, isHint) {
+    // kind: 'hint' (gives way to anything, goes when the player acts) or 'tip' (shows at once, the message it covers
+    // comes back after it); a plain message waits its turn and is read in full (critic 3: queued ones were cut short)
+    function say(t, kind) {
       if (!t) return;
-      if (!sayOn || sayHint) { sayQ = []; sayHint = !!isHint; sayShow(t); return; }
+      if (kind === 'tip') { if (sayOn && !sayHint) sayQ.unshift($('toast').textContent); sayHint = true; sayShow(t); return; }
+      if (!sayOn || sayHint) { sayHint = kind === 'hint'; sayShow(t); return; }   // nothing showing, or only a hint/tip: show it now
       if (sayQ[sayQ.length - 1] === t || (!sayQ.length && $('toast').textContent === t)) return;
-      sayQ.push(t); if (sayQ.length > 2) sayQ.shift();
-      clearTimeout(sayT); sayT = setTimeout(sayNext, Math.max(0, 1700 * spdF() - (Date.now() - sayAt)));
+      sayQ.push(t); if (sayQ.length > 4) sayQ.shift();
     }
     function persist() { if (S) save('game', { s: S, g: G, u: U }); }
     var lastTick = Date.now();

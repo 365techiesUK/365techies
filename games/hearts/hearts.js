@@ -191,9 +191,20 @@
     for (var i = 0; i < 13; i++) for (var p = 1; p <= 4; p++) { var h = S.hands[p % 4]; if (h[i] != null) o.push(h[i]); }
     return o;
   }
+  var HW = ['', 'Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King'], HS = ['spades', 'hearts', 'diamonds', 'clubs'];
+  function hname(c) { return HW[(c % 13) + 1] + ' of ' + HS[(c / 13) | 0]; }   // (for the Hint's reasons)
+  // the Hint says why (games audit, 5 Oct 2026; critic: 'This one looks like a good card to play', forty times)
   function hintShow(S, m, U) {
-    if (m.t === 'pass') return { cards: m.cards, say: 'These three would be good ones to pass' };
-    return { cards: [m.c], say: 'This one looks like a good card to play' };
+    if (m.t === 'pass') return { cards: m.cards, say: 'Pass these three – ' + (m.cards.indexOf(E.QS) >= 0 ? 'the Queen of spades is 13 points to whoever takes her' : 'high cards win the tricks you don’t want') };
+    var c = m.c, t = S.trick, say;
+    if (!t.length) say = E.suit(c) === E.HE ? 'Lead a low heart – someone else should take the trick' : E.hi(c) <= 7 ? 'Lead the ' + hname(c) + ' – a low card, so someone else should win the trick' : 'Lead the ' + hname(c) + ' – the safest suit for you to lead now';
+    else {
+      var led = E.suit(t[0].c), top = t.filter(function (x) { return E.suit(x.c) === led; }).reduce(function (a, x) { return E.hi(x.c) > E.hi(a.c) ? x : a; }, t[0]);
+      var pts = t.some(function (x) { return E.suit(x.c) === E.HE || x.c === E.QS; });
+      if (E.suit(c) === led) say = E.hi(c) < E.hi(top.c) ? 'Play under the ' + hname(top.c) + ' – you won’t take the trick' : t.length === 3 && !pts ? 'You’re last and there are no points in this trick – take it with a high card' : 'You have to follow suit – this is the least risky card';
+      else say = c === E.QS ? 'You can’t follow suit – the perfect moment to get rid of the Queen of spades' : E.suit(c) === E.HE ? 'You can’t follow suit – give someone else a heart' : 'You can’t follow suit – throw away a high card while it’s safe';
+    }
+    return { cards: [c], say: say };
   }
 
   // The Journey (5 Oct 2026): a level is ONE HAND on a set deal with three targets, one per star - the levels are in

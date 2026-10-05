@@ -188,9 +188,24 @@
     for (var i = 0; i < 10; i++) { o.push(S.hands[1 - S.dealer][i]); o.push(S.hands[S.dealer][i]); }
     return o.filter(function (c) { return c != null; }).concat(S.pile);
   }
+  // the Hint says why, and never throws Sam a card he is collecting when a near-as-good one is safe (games audit,
+  // 5 Oct 2026; critic: 10 of 27 hinted discards were picked straight up by Sam)
+  function risky(S, c) { return (S.picked[1] || []).some(function (p) { return E.rank(p) === E.rank(c) || (E.suit(p) === E.suit(c) && Math.abs(E.rank(p) - E.rank(c)) <= 2); }); }
+  function fits(h, c) { return h.some(function (x) { return x !== c && (E.rank(x) === E.rank(c) || (E.suit(x) === E.suit(c) && Math.abs(E.rank(x) - E.rank(c)) <= 2)); }); }
   function hintShow(S, m) {
+    var h = S.hands[0];
+    if (m.t === 'discard') {
+      var c = m.c, opts = E.discards(S, 0).filter(function (o) { return E.canThrow(S, 0, o.c); }), mine = opts.filter(function (o) { return o.c === c; })[0];
+      if (mine && risky(S, c)) {
+        var safe = opts.filter(function (o) { return !risky(S, o.c) && o.dead <= mine.dead + 3; }).sort(function (a, b) { return a.dead - b.dead || E.val(b.c) - E.val(a.c); })[0];
+        if (safe) return { cards: [safe.c], say: 'Throw away the ' + cname(safe.c) + ' – ' + OPP + ' has been picking up cards like the ' + cname(c) + ', so hold on to that one for now' };
+      }
+      return { cards: [c], say: 'Throw away the ' + cname(c) + ' – ' + (fits(h, c) ? 'the card your hand needs least' : E.val(c) >= 8 ? 'a high card that fits no set or run, so it would cost you points' : 'it fits no set or run') };
+    }
+    if (m.t === 'draw' && m.from === 'pile') { var pc = S.pile[S.pile.length - 1]; return { cards: [pc], say: 'Take the ' + cname(pc) + ' from the pile – it ' + (fits(h, pc) ? 'goes with cards in your hand' : 'lowers your deadwood') }; }
+    if (m.t === 'draw') { var tp = S.pile[S.pile.length - 1]; return { cards: [S.stock[S.stock.length - 1]], say: 'Take the top card of the deck' + (tp != null ? ' – the ' + cname(tp) + ' on the pile doesn’t help you' : '') }; }
     if (m.t === 'draw') return m.from === 'pile' ? { cards: [S.pile[S.pile.length - 1]], say: 'Take the ' + cname(S.pile[S.pile.length - 1]) + ' from the pile' } : { cards: [S.stock[S.stock.length - 1]], say: 'Take a card from the deck' };
-    if (m.t === 'knock') return { cards: [m.c], say: 'Knock now, throwing away the ' + cname(m.c) };
+    if (m.t === 'knock') return { cards: [m.c], say: 'Knock now, throwing away the ' + cname(m.c) + ' – your deadwood is low enough to win the hand' };
     return { cards: [m.c], say: 'Throw away the ' + cname(m.c) };
   }
 

@@ -443,10 +443,21 @@ export function createWorld() {
     while (wings.length > p.wing.length) ents.remove(wings.pop());
     wings.forEach((w, i) => { w.visible = !p.dead; place(w, p.wing[i].x, p.wing[i].y, MD.HEIGHT.wing); w.rotation.z = player.userData.bank * 0.8; });
   }
+  // the stage's two big models (its mid-boss and boss) are built in spare moments as the stage starts, not the instant
+  // they appear (games audit, 5 Oct 2026; critic 3: a 110-190 ms stall on a phone at 'Watch out - a big one!' and the bosses)
+  const bossCache = {}; let warmFor = '';
+  function warm(W) {
+    const S = W.stage; if (!S || warmFor === S.id + W.loop) return; warmFor = S.id + W.loop;
+    [S.mid, S.boss].forEach((k, i) => {
+      if (!k || bossCache[k]) return;
+      const go = () => { if (!bossCache[k]) { try { bossCache[k] = MD.boss(k); } catch (e) {} } };
+      if (window.requestIdleCallback) requestIdleCallback(go, { timeout: 4000 + i * 3000 }); else setTimeout(go, 1500 + i * 1500);
+    });
+  }
   function syncBoss(W, t) {
     const B = W.boss;
     if (!B) { if (bossObj) { ents.remove(bossObj); bossObj = null; bossKind = ''; } return; }
-    if (bossKind !== B.kind) { if (bossObj) ents.remove(bossObj); bossObj = MD.boss(B.kind); toAir(bossObj, !B.ground); ents.add(bossObj); bossKind = B.kind; bossObj.traverse((c) => { if (c.isMesh) c.userData.mat = c.material; }); }
+    if (bossKind !== B.kind) { if (bossObj) ents.remove(bossObj); bossObj = bossCache[B.kind] || MD.boss(B.kind); delete bossCache[B.kind]; toAir(bossObj, !B.ground); ents.add(bossObj); bossKind = B.kind; bossObj.traverse((c) => { if (c.isMesh) c.userData.mat = c.material; }); }
     const h = B.sea ? -3 + (B.kind === 'kraken' ? Math.min(0, -14 + (190 - B.enter) * 0.09) : 0) : B.ground ? 0 : MD.HEIGHT.boss;
     const shake = B.dead ? (Math.random() - 0.5) * 3 : 0;
     place(bossObj, B.x + shake, B.y + shake, h);
@@ -520,7 +531,7 @@ export function createWorld() {
     if (starPts) starPts.position.x = Math.sin(t / 20000) * 6;
     const steps = demo ? 1 : Math.max(0, Math.min(6, W.frame - lastFrame)); lastFrame = W.frame;
     if (!demo) {
-      syncEnemies(W); syncPlayer(W, t); syncBoss(W, t);
+      syncEnemies(W); syncPlayer(W, t); warm(W); syncBoss(W, t);
       for (let i = 0; i < steps; i++) stepFx(dist);
       // engine flames flicker
       if (player) player.traverse((c) => { if (c.isMesh && c.material === MD.materials().glow) c.scale.z = 0.85 + Math.random() * 0.3; });

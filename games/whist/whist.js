@@ -150,7 +150,22 @@
     for (var i = 0; i < 13; i++) for (var k = 1; k <= 4; k++) { var h = S.hands[(S.dealer + k) % 4]; if (h[i] != null) o.push(h[i]); }
     return o;
   }
-  function hintShow(S, m) { return { cards: [m.c], say: 'This one looks like a good card to play' }; }
+  var HW = ['', 'Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King'], HS = ['spades', 'hearts', 'diamonds', 'clubs'];
+  function hname(c) { return HW[(c % 13) + 1] + ' of ' + HS[(c / 13) | 0]; }   // (for the Hint's reasons)
+  // the Hint says why (games audit, 5 Oct 2026)
+  function hintShow(S, m) {
+    var c = m.c, t = S.trick, say, tr = S.trump;
+    if (!t.length) say = E.suit(c) === tr ? 'Lead a trump – it draws out the others’ trumps' : E.hi(c) === 14 ? 'Lead your Ace – it should win the trick' : 'Lead the ' + hname(c) + ' – a safe card to start the trick with';
+    else {
+      var led = E.suit(t[0].c), wc = E.winnerOf(t, tr), mate = !!wc && wc.p === 2;   // (winnerOf gives the winning {p, c})
+      var beats = wc && ((E.suit(c) === E.suit(wc.c) && E.hi(c) > E.hi(wc.c)) || (E.suit(c) === tr && E.suit(wc.c) !== tr));
+      if (mate && !beats) say = 'Jo is winning this trick – play low and save your good cards';
+      else if (E.suit(c) !== led && E.suit(c) === tr) say = 'You can’t follow suit – trump it and win the trick';
+      else if (E.suit(c) !== led) say = 'You can’t follow suit or win it – throw away your lowest card';
+      else say = beats ? 'The ' + hname(c) + ' wins the trick so far' : 'You can’t win this trick – play your lowest';
+    }
+    return { cards: [c], say: say };
+  }
 
   // The Journey (5 Oct 2026): a level is ONE HAND on a set deal with three targets, one per star - the levels are in
   // journey.js (made, and every target proved reachable, by tools/journeys/make-rival-journeys.cjs). r = this hand's result.

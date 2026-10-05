@@ -275,7 +275,7 @@
     }
     cv.onclick = end;
     document.addEventListener('keydown', end);
-    setTimeout(end, 30000);
+    setTimeout(end, o.max || 30000);   // a real win fades out by o.max (9 s: critic 3 - 13 to 17 s was a long wait for the score)
     requestAnimationFrame(frame);
     return end;
   }
@@ -399,6 +399,9 @@
     + '.front,.back{transition:box-shadow .22s ease}'
     + '.card.flight{transition:none!important;pointer-events:none}'   // a card in the air never catches a click meant for what is under it
     + '.card.flight .front,.card.flight .back{box-shadow:0 0 0 1px var(--card-edge) inset,0 18px 30px rgba(0,0,0,.4),0 6px 10px rgba(0,0,0,.22)}'
+    // Spider flies whole runs over a table of 104 cards: a lighter shadow there and on narrow cards keeps a phone at
+    // full speed (critic 3: 32-52 fps on a mid-range phone, the time going on painting big blurred shadows)
+    + '#board.g-spider .card.flight .front,#board.g-spider .card.flight .back,#board.tiny .card.flight .front,#board.tiny .card.flight .back{box-shadow:0 0 0 1px var(--card-edge) inset,0 5px 9px rgba(0,0,0,.38)}'
     + '.card.land .wig{animation:cardLand .28s ease-out}'
     + '@keyframes cardLand{0%{transform:scale(1.035)}55%{transform:scale(.985)}100%{transform:none}}'
     + '.card.turn .wig{animation:cardTurn .46s cubic-bezier(.3,.7,.3,1)}'
@@ -517,7 +520,7 @@
     function layout() {
       L = D.layout(board.clientWidth, board.clientHeight, S);
       document.documentElement.style.setProperty('--cw', L.cw + 'px');
-      board.classList.toggle('tiny', L.cw < 52);   // narrow cards (Spider on a phone): a bigger corner, one big suit (games audit, 5 Oct 2026)
+      board.classList.toggle('tiny', L.cw < 52); board.classList.add('g-' + D.id);   // narrow cards (Spider on a phone): a bigger corner, one big suit (games audit, 5 Oct 2026)
       document.documentElement.style.setProperty('--ch', L.ch + 'px');
       var seen = {};
       (L.slots || []).forEach(function (s) {
@@ -979,6 +982,7 @@
       if (busy || !S || S.won) return;
       unhint();
       var m = E.hint(S);
+      if (D.hintMove) m = D.hintMove(S, m);   // a game may plan ahead (Solitaire: a line that wins - solver.js)
       if (!m) { showStuck(); return; }
       G.hinted = (G.hinted || 0) + 1;
       var lit = D.hintLights(S, m), src = m.from ? (D.picked(S, m.from) || []) : [];
@@ -987,6 +991,7 @@
       (lit.slots || []).forEach(function (k) { if (slotEl[k]) slotEl[k].classList.add('hint', 'hdest'); });
       hintM = { m: m, cards: (lit.cards || []).slice(), slots: (lit.slots || []).slice() };
       if (lit.say) say(lit.say);
+      if (m._note) say(m._note);   // (the plan says no win is left from here)
       if (m.t === 'move' && arcsOn()) ghost(m);
       hintT = setTimeout(unhint, 2800);
     }
@@ -998,7 +1003,8 @@
       var b0 = lastP[cards[0]], my = gen;
       [0, 1].forEach(function (rep) {
         setTimeout(function () {
-          if (my !== gen) return;
+          // (the second showing only while that hint still stands - critic 3: after the move was made it flew a ghost off the table)
+          if (my !== gen || (rep && (!hintM || hintM.m !== m))) return;
           cards.forEach(function (k, i) {
             var src = lastP[k]; if (!src || !cardEl[k]) return;
             var g = cardEl[k].cloneNode(true), dst = { x: tg.x + (src.x - b0.x), y: tg.y + (src.y - b0.y) };
@@ -1014,7 +1020,7 @@
     }
     var hintM = null;   // the move the Hint is showing, while it shows
     function unhint() { clearTimeout(hintT); hintM = null; Array.prototype.forEach.call(board.querySelectorAll('.hint'), function (e) { e.classList.remove('hint', 'hdest', 'hsrc'); }); }
-    function showStuck() { $('stuck').hidden = false; }
+    function showStuck() { $('stuck').hidden = false; $('toast').classList.remove('on'); }   // (the old hint's message sat on the bar's buttons - critic 3)
     // ------------------------------------------------------------ the challenges (4 Oct 2026): Beat the clock, the 3-minute sprint
     function foundCount() { return D.foundCount ? D.foundCount(S) : 0; }
     function chal() {
@@ -1206,7 +1212,7 @@
         show: table ? function () { for (var i = 0; i < D.cards; i++) cardEl[i].style.visibility = ''; } : null,
         burst: function (x, y, cols, big) { if (!SET.fx) return; Spark.burst(x, y, big ? 64 : 14, cols, big ? 5.4 : 2, big ? 80 : 30, { grav: 0.05, size: 6 }); if (big) Spark.ring(x, y, 70, cols[0], 26); },
         trail: function (x, y, cols) { if (SET.fx) Spark.burst(x, y, 2, cols, 0.9, 22, { grav: 0.02, size: 4 }); },
-        sfx: sfx, done: done });
+        sfx: sfx, done: done, max: table ? 9000 : 0 });
     }
 
     // ------------------------------------------------------------ sound: soft, made on the spot, nothing downloaded
@@ -1219,11 +1225,13 @@
           // one gentle limiter for everything, and a soft room echo for the chimes
           var comp = AC.createDynamicsCompressor(); comp.threshold.value = -16; comp.ratio.value = 3.5; comp.attack.value = 0.005; comp.release.value = 0.2;
           OUT = AC.createGain(); OUT.gain.value = 0.95; OUT.connect(comp); comp.connect(AC.destination);
-          try {
+          // the room echo is built a moment later, not on the first tap (critic 3: a 130-170 ms stall on a phone's first
+          // card - 65 ms of it making this echo); the first sounds just play dry
+          setTimeout(function () { try {
             var cv = AC.createConvolver(), len = Math.floor(AC.sampleRate * 1.3), ir = AC.createBuffer(2, len, AC.sampleRate);
             for (var ch = 0; ch < 2; ch++) { var dd = ir.getChannelData(ch); for (var j = 0; j < len; j++) dd[j] = (Math.random() * 2 - 1) * Math.pow(1 - j / len, 2.8); }
-            cv.buffer = ir; ROOM = AC.createGain(); ROOM.gain.value = 0.28; ROOM.connect(cv); cv.connect(OUT);
-          } catch (er) { ROOM = null; }
+            cv.buffer = ir; var rm = AC.createGain(); rm.gain.value = 0.28; rm.connect(cv); cv.connect(OUT); ROOM = rm;
+          } catch (er) { ROOM = null; } }, 600);
         }
         if (AC.state === 'suspended') AC.resume();
       } catch (e) { return null; }

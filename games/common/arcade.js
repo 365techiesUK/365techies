@@ -451,7 +451,20 @@
       }
       el.textContent = '0'; requestAnimationFrame(f);
     }
+    // a player who has reached wave/level 3 on the gentlest speed is offered the next one up (games audit, 5 Oct 2026;
+    // critic 3: Gentle never threatened a confident player, and nothing invited them to step up)
+    function stepUp(h) {
+      var opts = (D.speeds && D.speeds.options) || [], b = $('oStep');
+      var show = opts.length > 1 && SET.speed === opts[0][0] && h.wave >= 3;
+      if (!b && show) {
+        b = document.createElement('button'); b.id = 'oStep'; b.type = 'button'; b.className = 'btn wide';
+        b.onclick = function () { SET.speed = opts[1][0]; save('settings', SET); begin(); };
+        var pl = $('oPlay'); pl.parentNode.insertBefore(b, pl.nextSibling);
+      }
+      if (b) { b.hidden = !show; if (show) b.innerHTML = ICON.play + ' Ready for ' + esc(opts[1][1]) + ' speed?'; }
+    }
     function celebrateOver(h, prevBest) {
+      stepUp(h);
       var box = $('ov_over').querySelector('.ovbox'), nb = $('oNew');
       if (!nb) { nb = document.createElement('p'); nb.id = 'oNew'; nb.className = 'arc-new'; box.insertBefore(nb, box.querySelector('.tiles')); }
       var isBest = h.score > 0 && prevBest > 0 && h.score > prevBest, first = !prevBest && h.score > 0;
