@@ -135,7 +135,7 @@ function pcm_news_out($db, $tier) {
 // gfhaolhbpbjdfjgacpehimkjjnhcipjd, submitted 2 Oct 2026): an unapproved item's page is a dead end. When it is live, set
 // it to 'https://chromewebstore.google.com/detail/gfhaolhbpbjdfjgacpehimkjjnhcipjd' and push. The app only takes a
 // https://chromewebstore.google.com/detail/ link; an empty value takes the button away again.
-const PCM_MM_ADDON_URL = '';
+const PCM_MM_ADDON_URL = 'https://chromewebstore.google.com/detail/gfhaolhbpbjdfjgacpehimkjjnhcipjd';   // approved and live 5 Oct 2026 (owner: switch it on)
 function pcm_mm_addon_out() { return PCM_MM_ADDON_URL !== '' ? array('mm_addon' => PCM_MM_ADDON_URL) : array(); }
 
 require_once __DIR__ . '/pcm-programs-lib.php';   // programs check: the list + the matching (top-level scope on purpose)

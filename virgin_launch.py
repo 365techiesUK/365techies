@@ -35,7 +35,7 @@ GMAIL_PAGE = "/move-virgin-media-email-to-gmail/"
 # that. Once approved, set it to "https://chromewebstore.google.com/detail/gfhaolhbpbjdfjgacpehimkjjnhcipjd" and rebuild
 # (the same day: api/pcm.php PCM_MM_ADDON_URL, which switches on the app's own "Add to Chrome" button). It then shows in
 # the free card on every Virgin page and as its own section on the tool page.
-EMAIL_MOVER_ADDON_URL = ""
+EMAIL_MOVER_ADDON_URL = "https://chromewebstore.google.com/detail/gfhaolhbpbjdfjgacpehimkjjnhcipjd"   # approved and published (Unlisted) 5 Oct 2026; owner: "switch both on now"
 
 # the owner's GBP 60 move: what they get (the same promises the pages made before the free app, plus the PC service)
 VM_US_TICKS = ("Every message and folder into Gmail, with the original dates",
