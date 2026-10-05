@@ -65,22 +65,38 @@
       document.documentElement.style.setProperty('--ch', L.ch + 'px');
     }
     var lastP = {};
+    function endT(p) { return 'translate3d(' + Math.round(p.x) + 'px,' + Math.round(p.y) + 'px,0)' + (p.rot ? ' rotate(' + p.rot + 'deg)' : '') + (p.sc && p.sc !== 1 ? ' scale(' + p.sc + ')' : ''); }
+    function arcsOn() { return SET.fx && !reduce && T.canFly; }
     function render(instant) {
       if (!S) return;
-      var P = D.positions(S, L, U);
+      var P = D.positions(S, L, U), arcs = !instant && arcsOn(), my = gen, n = 0;
       if (instant) board.classList.add('instant');
       for (var c = 0; c < D.cards; c++) {
         var p = P[c], el = cardEl[c], old = lastP[c];
         if (!p) { el.style.display = 'none'; continue; }
         el.style.display = '';
-        el.style.transform = 'translate3d(' + Math.round(p.x) + 'px,' + Math.round(p.y) + 'px,0)' + (p.rot ? ' rotate(' + p.rot + 'deg)' : '') + (p.sc && p.sc !== 1 ? ' scale(' + p.sc + ')' : '');
         var cls = el._base + (p.up ? '' : ' down') + (p.cls ? ' ' + p.cls : '') + (el._hint ? ' hint' : '');
+        var dist = old ? Math.abs(old.x - p.x) + Math.abs(old.y - p.y) : 0, turning = !instant && old && !old.up && p.up;
+        // a card going somewhere (into the trick, to the winner of a trick, passed across) flies in an arc and turns over
+        // in the air; little shuffles along a hand just slide
+        if (arcs && old && dist > L.cw * 0.9) {
+          el.className = turning ? cls + ' down' : cls;   // (fly() adds .flight) - a card turning over stays face down until mid-air
+          el.style.zIndex = 900 + p.z;
+          var an = T.fly(el, { x: old.x, y: old.y, r: old.rot || 0, s: old.sc || 1 }, { x: p.x, y: p.y, r: p.rot || 0, s: p.sc || 1 }, { end: endT(p), delay: Math.min(240, n++ * 45), lift: Math.min(56, 10 + dist * 0.12) });
+          var t = T.flightTime(an);
+          (function (el, cls, z, turning) {
+            setTimeout(function () { if (my !== gen) return; el.style.zIndex = z; }, t + 30);
+            if (turning) setTimeout(function () { if (my !== gen) return; el.className = cls + (el.classList.contains('flight') ? ' flight' : ''); turnOn(el); }, t * 0.42);
+          })(el, cls, p.z, turning);
+          continue;
+        }
+        el.style.transform = endT(p);
         if (el.className !== cls) {
-          if (!instant && old && !old.up && p.up && SET.fx && !reduce) { el.className = cls + ' shine'; clearTimeout(el._st); el._st = setTimeout(function (e) { return function () { e.classList.remove('shine'); }; }(el), 900); }
+          if (turning && SET.fx && !reduce) { el.className = cls; turnOn(el); }
           else el.className = cls;
         }
         el.style.zIndex = p.z;
-        if (!instant && old && (Math.abs(old.x - p.x) > 2 || Math.abs(old.y - p.y) > 2) && SET.fx && !reduce) flyOn(el);
+        if (!instant && old && (Math.abs(old.x - p.x) > 2 || Math.abs(old.y - p.y) > 2) && SET.fx && !reduce && !arcs) flyOn(el);
       }
       lastP = P;
       // the name plates round the table, and the panel in the middle
@@ -106,6 +122,13 @@
       bar();
     }
     function flyOn(el) { el.classList.remove('fly'); void el.offsetWidth; el.classList.add('fly'); clearTimeout(el._ft); el._ft = setTimeout(function () { el.classList.remove('fly'); }, 420); }
+    // a card turned over rises off the table as it turns, then catches the light
+    function turnOn(el) {
+      if (!SET.fx || reduce) return;
+      el.classList.remove('turn'); void el.offsetWidth; el.classList.add('turn');
+      clearTimeout(el._tt); el._tt = setTimeout(function () { el.classList.remove('turn'); }, 480);
+      clearTimeout(el._st); el._st = setTimeout(function () { el.classList.add('shine'); el._st = setTimeout(function () { el.classList.remove('shine'); }, 800); }, 220);
+    }
     function jLevel() { return G && G.mode === 'journey' && D.jr && window.Journey ? Journey.level(G.jl) : null; }
     function bar() {
       var jl = jLevel(), ch = jl ? [['Level', G.jl + 1]].concat(D.jr.chips(S, jl)) : D.chips(S);
@@ -124,9 +147,22 @@
       if ((e.button && e.button > 0) || openSheet || !S) return;
       var hit = e.target.closest ? e.target.closest('.card') : null; if (!hit) return;
       e.preventDefault();
-      unhint();
+      unhint(); unhov();
+      if (SET.fx && !reduce && !hit.classList.contains('down')) { hit.classList.add('press'); setTimeout(function () { hit.classList.remove('press'); }, 160); }
       handle(D.tap(S, +hit.getAttribute('data-c'), U), hit);
     });
+    var hovEl = null;
+    function unhov() { if (hovEl) hovEl.classList.remove('hov'); hovEl = null; }
+    board.addEventListener('pointerover', function (e) {
+      if (e.pointerType !== 'mouse' || !S || busy || !SET.fx || reduce) return;
+      var h = e.target.closest ? e.target.closest('.card') : null;
+      if (h === hovEl) return;
+      unhov();
+      // only a card you could play now (the games mark those .ok)
+      if (!h || !h.classList.contains('ok') || h.classList.contains('flight')) return;
+      h.classList.add('hov'); hovEl = h;
+    });
+    board.addEventListener('pointerleave', unhov);
     board.addEventListener('contextmenu', function (e) { e.preventDefault(); });
     panelEl.addEventListener('click', function (e) {
       var b = e.target.closest ? e.target.closest('[data-act]') : null; if (!b || b.disabled) return;
@@ -233,17 +269,22 @@
       panelEl.hidden = true;
       if (reduce) { render(true); go(); return; }
       busy = true;
-      var order = D.dealOrder(S), step = Math.max(14, Math.min(40, 1300 / order.length));
+      var order = D.dealOrder(S), step = Math.max(14, Math.min(40, 1300 / order.length)), arcs = arcsOn();
       order.forEach(function (c, k) {
         setTimeout(function () {
           if (my !== gen) return;
           var p = P[c], el = cardEl[c];
           el.style.zIndex = 600 + k;
-          el.style.transform = 'translate3d(' + Math.round(p.x) + 'px,' + Math.round(p.y) + 'px,0)' + (p.rot ? ' rotate(' + p.rot + 'deg)' : '') + (p.sc && p.sc !== 1 ? ' scale(' + p.sc + ')' : '');
           if (k % 2 === 0) sfx('deal');
+          if (arcs) {
+            var an = T.fly(el, { x: deck.x, y: deck.y }, { x: p.x, y: p.y, r: p.rot || 0, s: p.sc || 1 }, { end: endT(p), dur: 300 + Math.min(180, (Math.abs(p.x - deck.x) + Math.abs(p.y - deck.y)) * 0.12), lift: 22, tilt: (p.x > deck.x ? 1 : -1) * 7, land: false });
+            if (p.up) setTimeout(function () { if (my !== gen) return; el.classList.remove('down'); turnOn(el); }, T.flightTime(an) * 0.5);
+            return;
+          }
+          el.style.transform = endT(p);
         }, 80 + k * step);
       });
-      setTimeout(function () { if (my !== gen) return; busy = false; render(); go(); }, 80 + order.length * step + 450);
+      setTimeout(function () { if (my !== gen) return; busy = false; render(); go(); }, 80 + order.length * step + 560);
     }
 
     // ------------------------------------------------------------ the end of a match

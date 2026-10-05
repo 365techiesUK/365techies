@@ -62,6 +62,82 @@
       + '</span><span class="sui">' + su + '</span>' + mid + '<span class="cor"><i>' + su + '</i></span></div><div class="face back"></div></div></div>' };
   }
 
+  // ---------------------------------------------------------------- motion (5 Oct 2026; owner: "go to town ... the best
+  // ever card animations ... really fun to use and really intuitive"). A card that changes place FLIES: an arc up and
+  // over, tilting the way it travels and growing a little as it rises, then settling as it lands. Stacks leave one card
+  // after another; a card that turns over turns in the air. Web Animations (CSS transitions are off while it flies).
+  // Shared with rivals.js (Table365.fly). Callers skip it with Extra effects off or reduced motion.
+  var CAN_FLY = typeof Element !== 'undefined' && !!Element.prototype.animate;
+  function easeInOut(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+  function easeBack(t) { var c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); }   // a spring: past the mark, and back
+  var EASE = { inOut: easeInOut, out: easeOut, back: easeBack };
+  // el: the card; a, b: {x, y, r (deg), s (scale)} from and to, in board pixels; o: { end: the card's final transform
+  // (set on the element - what it shows once landed), delay, dur, lift (px the arc rises), tilt (deg at the top),
+  // grow (extra scale at the top), ease ('inOut' | 'out' | 'back'), land (false: no settle), done() }
+  function fly(el, a, b, o) {
+    o = o || {};
+    el.classList.add('flight');
+    el.style.transform = o.end;
+    if (!CAN_FLY) { el.classList.remove('flight'); return null; }
+    var dx = b.x - a.x, dy = b.y - a.y, dist = Math.sqrt(dx * dx + dy * dy);
+    var dur = o.dur || Math.round(Math.max(250, Math.min(560, 210 + dist * 0.42)));
+    var lift = o.lift != null ? o.lift : Math.min(72, 6 + dist * 0.2), tilt = o.tilt != null ? o.tilt : Math.max(-10, Math.min(10, dx / 28));
+    var grow = o.grow != null ? o.grow : 0.07, ease = EASE[o.ease || 'inOut'], ar = a.r || 0, br = b.r || 0, as = a.s || 1, bs = b.s || 1;
+    var cx = a.x + dx / 2, cy = a.y + dy / 2 - lift, frames = [], N = 14;
+    for (var i = 0; i <= N; i++) {
+      var t = i / N, e = ease(t), u = 1 - e, up = Math.sin(Math.PI * Math.max(0, Math.min(1, e)));
+      var x = u * u * a.x + 2 * u * e * cx + e * e * b.x, y = u * u * a.y + 2 * u * e * cy + e * e * b.y;
+      frames.push({ offset: t, transform: 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) rotate(' + (ar + (br - ar) * e + tilt * up).toFixed(2) + 'deg) scale(' + ((as + (bs - as) * e) * (1 + grow * up)).toFixed(4) + ')' });
+    }
+    if (el._fl) { try { el._fl.cancel(); } catch (er) {} }
+    var an = el.animate(frames, { duration: dur, delay: o.delay || 0, easing: 'linear', fill: 'backwards' });
+    el._fl = an;
+    an.onfinish = function () {
+      if (el._fl !== an) return;
+      el._fl = null; el.classList.remove('flight');
+      if (o.land !== false) { el.classList.remove('land'); void el.offsetWidth; el.classList.add('land'); clearTimeout(el._lt); el._lt = setTimeout(function () { el.classList.remove('land'); }, 300); }
+      if (o.done) o.done();
+    };
+    an.oncancel = function () { if (el._fl === an) { el._fl = null; el.classList.remove('flight'); } };
+    return an;
+  }
+  function flightTime(an) { try { var tm = an.effect.getTiming(); return (tm.delay || 0) + tm.duration; } catch (e) { return 320; } }
+  var MOTION_CSS = ''
+    + '.card .wig{perspective:calc(var(--cw) * 5)}'   // a true 3D turn when a card flips
+    + '.front,.back{transition:box-shadow .22s ease}'
+    + '.card.flight{transition:none!important;pointer-events:none}'   // a card in the air never catches a click meant for what is under it
+    + '.card.flight .front,.card.flight .back{box-shadow:0 0 0 1px var(--card-edge) inset,0 18px 30px rgba(0,0,0,.4),0 6px 10px rgba(0,0,0,.22)}'
+    + '.card.land .wig{animation:cardLand .28s ease-out}'
+    + '@keyframes cardLand{0%{transform:scale(1.035)}55%{transform:scale(.985)}100%{transform:none}}'
+    + '.card.turn .wig{animation:cardTurn .46s cubic-bezier(.3,.7,.3,1)}'
+    + '@keyframes cardTurn{0%{transform:none}45%{transform:translateY(-6%) scale(1.08)}100%{transform:none}}'
+    // touched: it lifts at once; under the mouse, a card you can move rises a little
+    + '.card.press .wig{transform:translateY(-3%) scale(1.035);transition:transform .1s}'
+    + '.card.press .front{box-shadow:0 0 0 1px var(--card-edge) inset,0 12px 22px rgba(0,0,0,.34)}'
+    + '.card.hov .wig{transform:translateY(-2.5%);transition:transform .14s}'
+    + '.card.hov .front{box-shadow:0 0 0 1px var(--card-edge) inset,0 7px 16px rgba(0,0,0,.3)}'
+    + '.card.hov{cursor:grab}'
+    // while dragging: the place it will land if let go now glows brighter than the rest
+    + '.card.can.hot .front{box-shadow:0 0 0 3px #fff,0 0 0 6px #8ff0ff,0 0 30px 10px rgba(143,240,255,.8)!important}'
+    + '.slot.can.hot{border-color:#fff;box-shadow:inset 0 0 24px rgba(143,240,255,.55),0 0 0 3px #8ff0ff,0 0 30px 9px rgba(143,240,255,.75)}'
+    // the Hint's ghost: a see-through card showing the move
+    + '.card.ghost{pointer-events:none;transition:none!important;filter:drop-shadow(0 0 10px rgba(255,210,87,.95))}'
+    + '.card.ghost .front{box-shadow:0 0 0 3px rgba(255,210,87,.95),0 0 26px 8px rgba(255,210,87,.55)!important}'
+    // a pile of cards exactly on top of each other (the deck, a foundation): one shadow, and an edge showing its thickness
+    + '.card.under .front,.card.under .back{box-shadow:none}'
+    + '.card.thick1::before,.card.thick2::before,.card.thick3::before{content:"";position:absolute;inset:0;border-radius:calc(var(--cw) * .08);background:#ebe5d4;z-index:-1;pointer-events:none}'
+    + '.card.thick1::before{transform:translate(1px,1.5px);box-shadow:0 3px 8px rgba(0,0,0,.22)}'
+    + '.card.thick2::before{transform:translate(1.5px,2.5px);box-shadow:.5px 1px 0 #d6cfbc,1px 2px 0 #c8c0ab,0 4px 10px rgba(0,0,0,.26)}'
+    + '.card.thick3::before{transform:translate(2px,3.5px);box-shadow:.7px 1.2px 0 #d6cfbc,1.4px 2.4px 0 #c8c0ab,2px 3.6px 0 #b9b19b,0 5px 12px rgba(0,0,0,.3)}'
+    // the beginner's nudge: a card that could move bobs gently after a long pause (the easiest level only)
+    + '.card.nudge .wig{animation:cardNudge 1.1s ease-in-out 2}'
+    + '.card.nudge .front{box-shadow:0 0 0 2px rgba(255,210,87,.8),0 0 18px 4px rgba(255,210,87,.45)}'
+    + '@keyframes cardNudge{0%,100%{transform:none}50%{transform:translateY(-5%) rotate(-1.5deg)}}'
+    + '@media (prefers-reduced-motion:reduce){.card.land .wig,.card.turn .wig,.card.nudge .wig{animation:none}}'
+    + 'body.nofx .card.hov .wig,body.nofx .card.press .wig{transform:none}';
+  (function () { var st = document.createElement('style'); st.textContent = MOTION_CSS; (document.head || document.documentElement).appendChild(st); })();
+
   function start(D) {
     var E = D.E;
     var $ = function (id) { return document.getElementById(id); };
@@ -139,24 +215,64 @@
       imgCache = {};
     }
     var lastP = {};
+    var flyFrom = null;   // where cards really are when let go (a drop, or a slide back): they fly from there, not from their pile
+    function arcsOn() { return SET.fx && !reduce && Table365.canFly; }
+    // cards lying exactly on top of each other: only the top one casts a shadow, with an edge as thick as the pile
+    function stacks(P) {
+      var at = {}, c, k;
+      for (c = 0; c < D.cards; c++) { var p = P[c]; if (!p) continue; k = Math.round(p.x) + '|' + Math.round(p.y); (at[k] = at[k] || []).push(c); }
+      for (k in at) {
+        var l = at[k], n = l.length;
+        if (n > 1) l.sort(function (a, b) { return P[a].z - P[b].z; });
+        l.forEach(function (cc, i) {
+          var el = cardEl[cc], top = i === n - 1, lv = top && n > 1 ? (n > 15 ? 3 : n > 5 ? 2 : 1) : 0;
+          el.classList.toggle('under', !top);
+          el.classList.toggle('thick1', lv === 1); el.classList.toggle('thick2', lv === 2); el.classList.toggle('thick3', lv === 3);
+        });
+      }
+    }
     function render(instant) {
-      var P = D.positions(S, L);
+      var P = D.positions(S, L), arcs = !instant && arcsOn(), groups = {}, gk = [];
       if (instant) board.classList.add('instant');
       for (var c = 0; c < D.cards; c++) {
-        var p = P[c], el = cardEl[c], old = lastP[c];
+        var p = P[c], el = cardEl[c], old = lastP[c], from = flyFrom && flyFrom[c];
         if (!p) { el.style.display = 'none'; continue; }
         el.style.display = '';
-        if (!el.classList.contains('drag')) el.style.transform = 'translate3d(' + p.x + 'px,' + p.y + 'px,0)';
-        el.classList.toggle('down', !p.up);
         el._z = p.z;
+        var turning = !instant && old && !old.up && p.up, endT = 'translate3d(' + p.x + 'px,' + p.y + 'px,0)';
+        if (arcs && !el.classList.contains('drag') && (from || (old && old.pile !== p.pile))) {   // it flies: gathered by journey
+          var key = from ? 'drop' : String(old.pile);
+          if (!groups[key]) { groups[key] = []; gk.push(key); }
+          groups[key].push({ el: el, a: from || old, b: p, end: endT, turning: turning, drop: !!from });
+          if (!turning) el.classList.toggle('down', !p.up);
+          continue;
+        }
+        if (!el.classList.contains('drag')) el.style.transform = endT;
+        el.classList.toggle('down', !p.up);
         if (!instant && old && old.pile !== p.pile) {   // flying to another pile: on top of everything until it lands
           el.style.zIndex = 2000 + p.z; clearTimeout(el._zt);
           el._zt = setTimeout((function (e) { return function () { e.style.zIndex = e._z; e._zt = 0; }; })(el), 320);
           flyOn(el);
         } else if (!el._zt) el.style.zIndex = p.z;
-        if (!instant && old && !old.up && p.up) shineOn(el);   // turned face up: it catches the light
+        if (turning) turnOn(el);   // turned face up where it lies: it rises as it turns and catches the light
       }
+      // the flights: each group (cards leaving one pile for another together) goes one card after another, in arcs; a
+      // card turning over turns in the air; a card let go near its place just settles in (a spring if it goes back)
+      var my = gen;
+      gk.forEach(function (key) {
+        var g = groups[key].sort(function (u, v) { return Math.round(u.b.x) - Math.round(v.b.x) || u.b.z - v.b.z; }), gap = Math.min(34, 420 / g.length);
+        g.forEach(function (f, i) {
+          var el = f.el, delay = Math.round(i * gap);
+          clearTimeout(el._zt); el.style.zIndex = 2000 + f.b.z;
+          var an = Table365.fly(el, f.a, f.b, { end: f.end, delay: delay, ease: f.drop && flyFrom.back ? 'back' : 'inOut', lift: f.drop ? Math.min(26, 4 + Math.abs(f.b.x - f.a.x) * 0.08) : null, tilt: f.drop ? 0 : null });
+          var t = Table365.flightTime(an);
+          el._zt = setTimeout(function () { el.style.zIndex = el._z; el._zt = 0; }, t + 30);
+          if (f.turning) setTimeout(function () { if (my === gen && lastP[+el.getAttribute('data-c')] && lastP[+el.getAttribute('data-c')].up) { el.classList.remove('down'); turnOn(el); } }, delay + (t - delay) * 0.4);
+        });
+      });
+      flyFrom = null;
       lastP = P;
+      stacks(P);
       if (D.slotHtml) for (var k in slotEl) { var h = D.slotHtml(k, S); if (h != null) { slotEl[k].setAttribute('data-html', '1'); if (slotEl[k]._h !== h) { slotEl[k].innerHTML = h; slotEl[k]._h = h; } } }
       if (instant) { void board.offsetWidth; board.classList.remove('instant'); }
       bar();
@@ -171,6 +287,13 @@
       if (!SET.fx || reduce) return;
       clearTimeout(el._st); el.classList.remove('shine');
       el._st = setTimeout(function () { el.classList.add('shine'); el._st = setTimeout(function () { el.classList.remove('shine'); }, 800); }, 240);
+    }
+    // a card turning over rises off the table as it turns, then catches the light
+    function turnOn(el) {
+      if (!SET.fx || reduce) return;
+      el.classList.remove('turn'); void el.offsetWidth; el.classList.add('turn');
+      clearTimeout(el._tt); el._tt = setTimeout(function () { el.classList.remove('turn'); }, 480);
+      shineOn(el);
     }
     var shownScore = null;
     function bar() {
@@ -195,6 +318,7 @@
     var drag = null, gestured = false;
     board.addEventListener('pointerdown', function (e) {
       gestured = true;
+      touchy = e.pointerType === 'touch'; idle();
       if (busy || (e.button && e.button > 0) || openSheet) return;
       var hit = e.target.closest ? e.target.closest('.card, .slot') : null; if (!hit) return;
       unhint();
@@ -207,21 +331,53 @@
       if (!cards.length) return;
       if (sel && sel.c !== c && !D.pairs) selOff();
       drag = { from: from, cards: cards, c: c, x0: e.clientX, y0: e.clientY, dx: 0, dy: 0, moved: false, id: e.pointerId, base: cards.map(function (k) { return lastP[k]; }) };
+      unhov();
+      if (SET.fx && !reduce) cards.forEach(function (k) { cardEl[k].classList.add('press'); });
       try { board.setPointerCapture(e.pointerId); } catch (er) {}
     });
+    function unpress(d) { if (d) d.cards.forEach(function (k) { cardEl[k].classList.remove('press'); }); }
+    // a phone: a tiny buzz as a move lands (a firmer one for a card going up to the piles) - Extra effects only
+    var touchy = false;
+    function buzz(ms) { if (touchy && SET.fx && !reduce && navigator.vibrate) try { navigator.vibrate(ms); } catch (e) {} }
+    // the beginner's nudge: on the easiest level of an ordinary game, after a long pause a card that could move bobs once
+    var idleT = 0;
+    function idle() { clearTimeout(idleT); idleT = setTimeout(nudge, 25000); }
+    function nudge() {
+      if (!S || S.won || G.over || busy || drag || openSheet || reduce || !SET.fx || G.mode !== 'deal' || !rules().hint) return;
+      if (V && vOf(S) !== V.options[0][0]) return;
+      var m = E.hint(S); if (!m) return;
+      var lit = D.hintLights(S, m) || {}, cs = (lit.cards || []).slice(0, 1);
+      cs.forEach(function (c) { if (cardEl[c]) cardEl[c].classList.add('nudge'); });
+      setTimeout(function () { cs.forEach(function (c) { if (cardEl[c]) cardEl[c].classList.remove('nudge'); }); }, 2400);
+    }
+    var hovCards = [];
+    function unhov() { hovCards.forEach(function (k) { if (cardEl[k]) cardEl[k].classList.remove('hov'); }); hovCards = []; }
+    board.addEventListener('pointerover', function (e) {
+      if (e.pointerType !== 'mouse' || drag || busy || !S || S.won || !SET.fx || reduce) return;
+      var h = e.target.closest ? e.target.closest('.card') : null, c = h ? +h.getAttribute('data-c') : -1;
+      if (hovCards.length && hovCards[0] === c) return;
+      unhov();
+      if (!h || h.classList.contains('down') || h.classList.contains('flight')) return;
+      var from = D.where(S, c); if (!from || from.p === 'stock') return;
+      hovCards = D.picked(S, from) || [];
+      if (hovCards[0] !== c) hovCards = [c].concat(hovCards.filter(function (k) { return k !== c; }));
+      hovCards.forEach(function (k) { cardEl[k].classList.add('hov'); });
+    });
+    board.addEventListener('pointerleave', unhov);
     board.addEventListener('pointermove', function (e) {
       if (!drag || e.pointerId !== drag.id) return;
       var dx = e.clientX - drag.x0, dy = e.clientY - drag.y0;
       if (!drag.moved) {
         if (Math.abs(dx) + Math.abs(dy) < 8) return;
         drag.moved = true;
-        selOff();
+        selOff(); unpress(drag);
         drag.cards.forEach(function (k, i) { var el = cardEl[k]; clearTimeout(el._zt); el._zt = 0; el.classList.add('drag'); el.style.zIndex = 3000 + i; });
         drag.pos = drag.base.map(function (b) { return { x: b.x, y: b.y }; });
         showCan(drag);
         sfx('lift');
       }
       drag.dx = dx; drag.dy = dy;
+      hotOn(drag);
       if (SET.fx && !reduce) { if (!dragRAF) dragRAF = requestAnimationFrame(dragLoop); }   // the stack trails and tilts (dragLoop)
       else drag.cards.forEach(function (k, i) { var b = drag.base[i]; cardEl[k].style.transform = 'translate3d(' + (b.x + dx) + 'px,' + (b.y + dy) + 'px,0)'; });
     });
@@ -259,23 +415,30 @@
           if (q && d.cards.indexOf(c) < 0 && Math.abs(q.x - t.x) < 0.5 && Math.abs(q.y - t.y) < 0.5 && q.z > bz && cardEl[c].style.display !== 'none') { best = cardEl[c]; bz = q.z; }
         }
         if (!best) (L.slots || []).forEach(function (s) { if (!best && Math.abs(s.x - t.x) < 0.5 && Math.abs(s.y - t.y) < 0.5) best = slotEl[s.key]; });
-        if (best) { best.classList.add('can'); canEls.push(best); }
+        if (best) { best.classList.add('can'); best._to = JSON.stringify(t.to); canEls.push(best); }
       });
     }
-    function hideCan() { canEls.forEach(function (el) { el.classList.remove('can'); }); canEls = []; }
+    function hideCan() { canEls.forEach(function (el) { el.classList.remove('can', 'hot'); }); canEls = []; }
+    function hotOn(d) {
+      if (!canEls.length) return;
+      var t = dropTarget(d), k = t.m ? JSON.stringify(t.m.to) : '';
+      canEls.forEach(function (el) { el.classList.toggle('hot', el._to === k); });
+    }
     board.addEventListener('pointerup', function (e) {
       if (!drag || e.pointerId !== drag.id) return;
       var d = drag; drag = null;
+      unpress(d);
       if (!d.moved) { tap(d); return; }
       var drop = dropTarget(d);
+      if (arcsOn()) { flyFrom = {}; d.cards.forEach(function (k, i) { flyFrom[k] = d.pos ? { x: d.pos[i].x, y: d.pos[i].y } : { x: d.base[i].x + d.dx, y: d.base[i].y + d.dy }; }); flyFrom.back = !drop.m; }
       endDragLook(d);
       if (drop.m) act(drop.m);
-      else {   // it slides back - and the player is told why, in plain words (owner, 3 Oct 2026: Kings "just come back")
+      else {   // it springs back - and the player is told why, in plain words (owner, 3 Oct 2026: Kings "just come back")
         render(); sfx('nope');
         say(D.whyNot ? D.whyNot(S, d.from, drop.near) : 'That card can’t go there');
       }
     });
-    board.addEventListener('pointercancel', function () { if (!drag) return; var d = drag; drag = null; if (d.moved) endDragLook(d); render(); });
+    board.addEventListener('pointercancel', function () { if (!drag) return; var d = drag; drag = null; unpress(d); if (d.moved) endDragLook(d); render(); });
     board.addEventListener('contextmenu', function (e) { e.preventDefault(); });
     // Pyramid: the card picked first, waiting for its partner (D.pairs)
     var sel = null;
@@ -320,14 +483,15 @@
 
     // ------------------------------------------------------------ making moves
     function act(m) {
-      if (busy || !S || S.won || G.over) return;
-      selOff();
+      if (busy || !S || S.won || G.over) { flyFrom = null; return; }
+      selOff(); unhov();
       var snap = { s: E.clone(S), ms: G.ms, n: G.log ? G.log.length : 0 };
       var fx = E.apply(S, m);
       if (!fx) { if (fx === null && m.t === 'draw' && D.noDrawSay) say(D.noDrawSay(S)); sfx('nope'); render(); return; }
       G.undo.push(snap); if (G.undo.length > 400) G.undo.shift();
       logMove(m);
-      G.started = true;
+      G.started = true; idle();
+      if (m.t === 'move') buzz(fx.toFound ? 14 : 8);
       G.keepDown = m.t === 'move' && m.from && m.from.p === 'f' ? fx.cards[0] : null;   // taken down on purpose: not straight back up
       hideStuck(); unhint();
       effects(fx);
@@ -339,7 +503,7 @@
       if (fx.t === 'draw') { foundRun = 0; sfx(fx.recycled ? 'shuffle' : (fx.dealt ? 'deal' : 'flip'));
         if (fx.recycled && typeof fx.left === 'number') say(fx.left ? 'Turned over – one more time through the deck after this' : 'Last time through the deck!'); }
       else if (fx.toFound) { foundRun++; sfx('found', foundRun); (fx.popCards || fx.cards).forEach(pop); celebrate(fx); }
-      else { foundRun = 0; sfx('slide'); setTimeout(function () { sfx('place'); }, 230); }
+      else { foundRun = 0; sfx('slide'); setTimeout(function () { sfx('place'); }, arcsOn() ? 330 : 230); }   // (as a flying card lands)
       if (fx.flipped && fx.flipped.length) setTimeout(function () { sfx('flip'); }, 140);
       if (fx.say) say(fx.say);
     }
@@ -461,7 +625,30 @@
       (lit.cards || []).forEach(function (c) { if (cardEl[c]) cardEl[c].classList.add('hint'); });
       (lit.slots || []).forEach(function (k) { if (slotEl[k]) slotEl[k].classList.add('hint'); });
       if (lit.say) say(lit.say);
+      if (m.t === 'move' && arcsOn()) ghost(m);
       hintT = setTimeout(unhint, 2800);
+    }
+    // the Hint shows the move: see-through copies of the cards fly from where they are to where they'd go, twice
+    function ghost(m) {
+      var to = JSON.stringify(m.to), tg = (D.targets(S, m.from, L, lastP) || []).filter(function (t) { return JSON.stringify(t.to) === to; })[0];
+      var cards = D.picked(S, m.from) || [];
+      if (!tg || !cards.length || !lastP[cards[0]]) return;
+      var b0 = lastP[cards[0]], my = gen;
+      [0, 1].forEach(function (rep) {
+        setTimeout(function () {
+          if (my !== gen) return;
+          cards.forEach(function (k, i) {
+            var src = lastP[k]; if (!src || !cardEl[k]) return;
+            var g = cardEl[k].cloneNode(true), dst = { x: tg.x + (src.x - b0.x), y: tg.y + (src.y - b0.y) };
+            g.className = cardEl[k].className.replace(/\b(hint|hov|press|sel|can|hot|land|turn|fly|pop|shine|nope|flight)\b/g, '') + ' ghost';
+            g.removeAttribute('data-c'); g.style.zIndex = 5000 + i; g.style.opacity = '0';
+            board.appendChild(g);
+            Table365.fly(g, src, dst, { end: 'translate3d(' + dst.x + 'px,' + dst.y + 'px,0)', delay: i * 30, dur: 640, land: false });
+            g.animate([{ opacity: 0 }, { opacity: 0.85, offset: 0.12 }, { opacity: 0.85, offset: 0.78 }, { opacity: 0 }], { duration: 760, delay: i * 30, fill: 'both' });
+            setTimeout(function () { g.remove(); }, 860 + i * 30);
+          });
+        }, rep * 950);
+      });
     }
     function unhint() { clearTimeout(hintT); Array.prototype.forEach.call(board.querySelectorAll('.hint'), function (e) { e.classList.remove('hint'); }); }
     function showStuck() { $('stuck').hidden = false; }
@@ -546,18 +733,39 @@
       lastP = {};
       if (reduce) { render(true); return; }
       busy = true; bar();
-      var my = gen, order = D.dealOrder(S), step = order.length > 60 ? 26 : 44;
+      var my = gen, order = D.dealOrder(S), arcs = arcsOn(), step = arcs ? Math.max(16, Math.min(34, 1400 / order.length)) : (order.length > 60 ? 26 : 44);   // the whole deal about 1.4 s
+      var wait = arcs ? riffle(deck, my) : 0;   // a quick riffle shuffle first
       order.forEach(function (c, k) {
         setTimeout(function () {
           if (my !== gen) return;
-          var p = P[c], el = cardEl[c];
-          el.style.zIndex = 600 + k; el.style.transform = 'translate3d(' + p.x + 'px,' + p.y + 'px,0)';
-          flyOn(el);
+          var p = P[c], el = cardEl[c], endT = 'translate3d(' + p.x + 'px,' + p.y + 'px,0)';
+          el.style.zIndex = 600 + k;
           if (k % 2 === 0) sfx('deal');
+          if (arcs) {   // dealt in an arc, a little spin, turning face up in the air
+            var an = Table365.fly(el, deck, p, { end: endT, dur: 330 + Math.min(160, Math.abs(p.x - deck.x) * 0.12), lift: 26, tilt: (p.x > deck.x ? 1 : -1) * 6 });
+            if (p.up) setTimeout(function () { if (my === gen) { el.classList.remove('down'); turnOn(el); } }, Table365.flightTime(an) * 0.45);
+            return;
+          }
+          el.style.transform = endT;
+          flyOn(el);
           if (p.up) setTimeout(function () { if (my === gen) { el.classList.remove('down'); shineOn(el); } }, 200);
-        }, 80 + k * step);
+        }, wait + 80 + k * step);
       });
-      setTimeout(function () { if (my !== gen) return; busy = false; render(); }, 80 + order.length * step + 420);
+      setTimeout(function () { if (my !== gen) return; busy = false; render(); idle(); }, wait + 80 + order.length * step + 520);
+    }
+    // the riffle: the top of the deck splits into two halves that lean apart, then the cards fall back together one by
+    // one from alternate sides - like shuffling a real pack. Returns how long it takes (ms).
+    function riffle(deck, my) {
+      var top = [], c;
+      for (c = D.cards - 1; c >= 0 && top.length < 18; c--) if (cardEl[c].style.display !== 'none') top.push(cardEl[c]);
+      var T = function (x, y, r) { return 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) rotate(' + r + 'deg)'; }, base = T(deck.x, deck.y, 0);
+      top.forEach(function (el, j) {
+        var side = j % 2 ? 1 : -1, dx = side * L.cw * 0.6, rise = -4 - (j >> 1) * 0.7, back = 0.58 + j * 0.02;
+        el.animate([{ transform: base }, { transform: T(deck.x + dx, deck.y + rise, side * 9), offset: 0.3 }, { transform: T(deck.x + dx * 0.9, deck.y + rise, side * 7), offset: back - 0.06 },
+          { transform: T(deck.x, deck.y - 2, 0), offset: back }, { transform: base }], { duration: 660, easing: 'ease-in-out' });
+      });
+      setTimeout(function () { if (my === gen) sfx('shuffle'); }, 280);
+      return 680;
     }
 
     // ------------------------------------------------------------ winning
@@ -1000,5 +1208,5 @@
     function sw(key, label, small) { return '<div class="set"><div><label id="l_' + key + '">' + label + '</label><small>' + small + '</small></div><button class="sw" type="button" role="switch" aria-labelledby="l_' + key + '" data-set="' + key + '"></button></div>'; }
   }
 
-  window.Table365 = { start: start, RECYCLE: RECYCLE, ICON: ICON, cardMarkup: cardMarkup, esc: esc, SUIT_CH: SUIT_CH, RANK_CH: RANK_CH, TXT: TXT };
+  window.Table365 = { start: start, RECYCLE: RECYCLE, ICON: ICON, cardMarkup: cardMarkup, esc: esc, SUIT_CH: SUIT_CH, RANK_CH: RANK_CH, TXT: TXT, fly: fly, flightTime: flightTime, canFly: CAN_FLY };
 })();
