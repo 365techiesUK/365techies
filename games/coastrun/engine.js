@@ -543,10 +543,12 @@
     if (g.fk && g.fk.b && F && F.s) k += F.s * OFF2;
     return k;
   }
+  // a big crash: on Classic and Fast anything solid at speed; on Gentle only flat out (slower knocks just bounce you off)
+  function hardHit(W, speed) { return W.D.crash ? speed > 22 : speed > 46; }
   function crash(W, hard, why) {
     if (W.crash) return;
     var tx = clamp(Math.round(W.x / 4.6) * 4.6, -4.6, 4.6);
-    W.crash = { t: 0, dur: hard ? 115 : 42, hard: hard, x0: W.x, tx: tx, spin: W.x < 0 ? 1 : -1, why: why || '' };
+    W.crash = { t: 0, dur: hard ? 185 : 42, hard: hard, x0: W.x, tx: tx, spin: W.x < 0 ? 1 : -1, why: why || '', v0: W.v };
     W.combo = 0; W.comboT = 0; W.drift = 0; W.boosting = false; W.shake = hard ? 26 : 12;
     W.events.push({ sfx: hard ? 'crash' : 'bump', x: 0 });
     fx(W, { k: hard ? 'crash' : 'bump', x: W.x });
@@ -567,7 +569,7 @@
     var g = segAt(W, i), F = W.fork, j;
     if (F && i === F.split && !F.s) {   // the split: whichever side the car is on is the road it takes
       var sx = W.x >= 0 ? 1 : -1, nextId = F.next[sx < 0 ? 0 : 1];
-      if (Math.abs(W.x) < CAR_W + 0.8) crash(W, W.D.crash && W.v > 25, 'sign');
+      if (Math.abs(W.x) < CAR_W + 0.8) crash(W, hardHit(W, W.v - 3), 'sign');
       F.s = sx; W.x -= sx * OFF0; if (W.crash) W.crash.tx = 0;
       W.pendingSide = sx; buildStage(W, nextId); W.route.push(nextId);
       W.events.push({ sfx: 'fork' }); W.events.push({ say: 'You chose ' + STAGES[nextId].name.toLowerCase() });
@@ -606,7 +608,7 @@
       if (p.b && !(W.fork && W.fork.s === p.b)) continue;
       if (Math.abs(W.x - p.x) < CAR_W + p.h) {
         if (p.soft) { p.done = W.t; W.v *= 0.84; W.events.push({ sfx: 'bush', x: p.x - W.x }); fx(W, { k: 'leaves', x: p.x, t2: p.t }); W.shake = Math.max(W.shake, 5); knock(W); }
-        else crash(W, W.D.crash && W.v > 22, p.t);
+        else crash(W, hardHit(W, W.v), p.t);
         break;
       }
     }
@@ -753,7 +755,7 @@
     // ---- speed
     var hz = top * (W.boosting ? 1.22 : 1) * (W.slipOn ? 1.04 : 1);
     var v = W.v, accel = 16 * C.acc * Math.max(0, 1 - Math.pow(v / hz, 1.6)) + (W.boosting ? 9 : 0);
-    if (out) v *= W.crash.hard ? 0.95 : 0.9;
+    if (out) v *= W.crash.hard ? (W.crash.t < W.crash.dur * 0.6 ? 0.986 : 0.9) : 0.9;
     else if (W.drift) v -= (2.5 + (brake ? 2 : 0)) * DT;
     else if (brake) v -= 26 * DT;
     else if (gas || W.boosting) v += accel * DT;
@@ -781,7 +783,7 @@
       W.phi += (W.psi - W.phi) * Math.min(1, grip * DT);
     }
     W.yawRate = (want - W.psi) * 7;
-    if (out) { var cr = W.crash; cr.t++; if (cr.t > cr.dur * 0.55) { W.x += (cr.tx - W.x) * 0.1; W.psi *= 0.85; W.phi *= 0.85; } if (cr.t >= cr.dur) { W.crash = null; W.v = 0; W.x = cr.tx; W.psi = W.phi = 0; W.steer = 0; } }
+    if (out) { var cr = W.crash; cr.t++; if (cr.t > cr.dur * (cr.hard ? 0.88 : 0.55)) { W.x += (cr.tx - W.x) * 0.1; W.psi *= 0.85; W.phi *= 0.85; } if (cr.t >= cr.dur) { W.crash = null; W.v = 0; W.x = cr.tx; W.psi = W.phi = 0; W.steer = 0; } }
 
     // ---- along and across; a bend pushes the car outwards
     W.s += v * Math.cos(W.phi) * DT;
@@ -830,7 +832,7 @@
       if (!out && !W.air && Math.abs(dz) < hitL && dxx < hitW && W.t - car.hitT > 30) {
         car.hitT = W.t;
         if (W.v >= car.v) {
-          var hard = D.crash && W.v - car.v > 30 && dxx < hitW * 0.7;
+          var hard = dxx < hitW * 0.7 && (D.crash ? W.v - car.v > 30 : W.v - car.v > 44);
           if (hard) { crash(W, true, 'car'); W.s = Math.min(W.s, car.s - hitL - 0.5); car.spin = 60; }
           else {
             W.v = car.v * (W.diff === 1 ? 0.85 : 0.72); W.s = Math.min(W.s, car.s - hitL - 0.3);

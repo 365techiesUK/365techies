@@ -124,15 +124,18 @@ test('the goal: a time bonus, a love bonus, a rank, round 2 and the road goes on
   assert.equal(W.stage, 0); assert.deepEqual(W.route, [0], 'round 2 starts at Bournemouth');
 });
 
-test('crashes: a lamp post at speed spins you off on Classic; on Gentle it is a bounce; bushes only slow you', () => {
-  for (const sp of [2, 1]) {
+test('crashes: a lamp post at speed is a big crash on Classic; on Gentle a bounce, unless flat out; bushes only slow you', () => {
+  for (const [sp, v, big] of [[2, 50, true], [1, 40, false], [1, 62, true]]) {
     const W = E.newWorld(sp, {}, 9); go(W); W.cars = [];
     const i = findSeg(W, 50, (g) => (g.spr || []).some((p) => p.t === 'lamp' && p.x > 0));
     const lamp = E.segAt(W, i).spr.find((p) => p.t === 'lamp' && p.x > 0);
-    W.s = (i - 1) * E.SEG + 1; W.x = lamp.x - 0.3; W.v = 50;
-    drive(W, 4, (w) => { w.x = lamp.x - 0.3; return {}; });
-    assert.ok(W.crash, 'crashed'); assert.equal(W.crash.hard, sp === 2);
-    drive(W, 130, {}); assert.equal(W.crash, null, 'back on the road'); assert.ok(Math.abs(W.x) <= 4.7);
+    W.s = (i - 1) * E.SEG + 1; W.x = lamp.x - 0.3; W.v = v;
+    drive(W, 6, (w) => { w.x = lamp.x - 0.3; return {}; });
+    assert.ok(W.crash, 'crashed'); assert.equal(W.crash.hard, big, 'speed ' + sp + ' at ' + v);
+    const s0 = W.s; drive(W, 60, {});
+    if (big) assert.ok(W.s - s0 > 25, 'a big crash tumbles on down the road: ' + (W.s - s0).toFixed(0) + ' m');
+    let n = 0; while (W.crash && n++ < 400) { E.step(W, {}); quiet(W); }
+    assert.equal(W.crash, null, 'back on the road'); assert.ok(Math.abs(W.x) <= 4.7); if (big) assert.ok(W.v < 1, 'from a standstill');
   }
   const W = E.newWorld(2, {}, 10); go(W); W.cars = [];
   const i = findSeg(W, 50, (g) => (g.spr || []).some((p) => p.soft && !p.b));
