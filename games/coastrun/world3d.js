@@ -734,7 +734,7 @@ export function createWorld() {
       const g = E.segAt(W, i); if (!g.coins) continue;
       for (const cn of g.coins) {
         let up = 1.1, scl = 1;
-        if (cn.got) { const gt = W.t - cn.got; if (gt > 16) continue; up += gt * 0.25; scl = 1 + gt * 0.05; }
+        if (cn.got) { const gt = W.t - cn.got; if (gt > 12) continue; up += gt * 0.06; scl = 1 - gt / 13; }   // a caught one pops up a little and shrinks away (growing, it filled the camera)
         place(W, i * SEG, cn.x, 0, POS);
         TMP.position.set(POS.x, POS.y + up + Math.sin(t / 300 + i) * 0.12, POS.z); TMP.rotation.set(0, t / 260 + i * 0.4, 0); TMP.scale.setScalar(scl); TMP.updateMatrix();
         if (cn.nitro) { if (nn < 40) nitros.setMatrixAt(nn++, TMP.matrix); }
