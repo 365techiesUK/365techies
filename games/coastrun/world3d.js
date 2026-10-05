@@ -1,14 +1,24 @@
-/* 365 Coast Run - the 3D world (5 Oct 2026). three.js draws the road, the land and sea, the sky, the roadside, the
- * traffic and your car; coastrun.js draws the dashboard over the top. The rules (engine.js) hold the road as a line of
- * segments, each with a bend and a height; here each segment is given its place in the world (poses()), and the road,
- * verges, cliffs, beach and hills are built in chunks of CH segments as the car comes to them. Everything is our own:
- * shapes from models3d.js, textures painted on the spot.
+/* 365 Coast Run - the 3D world (5 Oct 2026; the "premium" look the same day). three.js draws the road, the land and sea,
+ * the sky, the roadside, the traffic and your car; coastrun.js draws the dashboard over the top. The rules (engine.js) hold
+ * the road as a line of segments, each with a bend and a height; here each segment is given its place in the world
+ * (poses()), and the road, verges, cliffs, beach and hills are built in chunks of CH segments as the car comes to them.
+ * Everything is our own: shapes from models3d.js, textures painted on the spot, the sky and clouds worked out in a shader.
+ *
+ * The look: physically lit materials with the sky as their surroundings (so the paintwork, the glass and the sea reflect
+ * it), a sky with a glowing sun and drifting clouds, a sea you can see the sandy shallows through, surf on the beaches,
+ * then a soft glow on the bright things (bloom), a colour grade for each place and a speed blur on the boost. A slow PC
+ * (quality(true)) skips the glow, the grade and the shadows.
  *
  * World axes: y up; a road heading th runs along (sin th, 0, -cos th) and its right is (cos th, 0, sin th), so a bend
  * to the right (k > 0) turns th up. At a fork the two roads are the main line moved out sideways by forkOff on each
  * side; the next stretch starts at the end of the road taken. */
-import * as THREE from '../common/vendor/three-r185/three.module.min.js';
-import * as MD from './models3d.js?v=1';
+import * as THREE from 'three';
+import { EffectComposer } from '../common/vendor/three-r185/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
+import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
+import * as MD from './models3d.js?v=2';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -23,71 +33,168 @@ const COL = new THREE.Color();
 function lin(hex, out, off) { COL.set(hex); out[off] = COL.r; out[off + 1] = COL.g; out[off + 2] = COL.b; }
 
 // ---------------------------------------------------------------- what each place looks like beyond the road
+// sun [across, up], hemi [sky, ground, strength], fog [near, far], cover = how much cloud, cloud [lit, shade],
+// grade [saturation, contrast, tint], env = how strongly the sky lights things, dress = extra scenery far from the road
+// [model, variants, how many per segment and side, nearest, furthest]
 const LOOK = {
-  bournemouth: { sun: [0.6, 0.85], sunCol: '#fff4e0', sunI: 2.3, hemi: ['#d8eeff', '#8aa070', 1.7], fog: [160, 1300], cliff: '#d9a066', beach: '#ecd7a1', beachY: 1.2, cliffK: 0.75, hills: 14, rise: 70, edge: 'rail', sea: '#2b90cc' },
-  purbeck: { sun: [0.3, 0.7], sunCol: '#fff4e0', sunI: 2.3, hemi: ['#dcecff', '#7a9a60', 1.6], fog: [150, 1250], hills: 40, rise: 120, wall: true },
-  forest: { sun: [-0.4, 0.5], sunCol: '#ffe2b0', sunI: 2.2, hemi: ['#f8ecd0', '#8a7a50', 1.6], fog: [110, 950], hills: 14, rise: 80, trees: true },
-  jurassic: { sun: [-0.15, 0.22], sunCol: '#ffb070', sunI: 2.6, hemi: ['#ffc896', '#8a6a58', 1.7], fog: [140, 1250], cliff: '#efe9dc', beach: '#e8dfc8', beachY: 0.5, cliffK: 0.3, hills: 22, rise: 90, edge: 'fence', sea: '#4a5f90' },
-  harbour: { sun: [0.5, 0.6], sunCol: '#8d9cd8', sunI: 0.9, hemi: ['#6a7ab8', '#3a3e58', 2.2], fog: [70, 700], cliff: '#55585f', beach: '#3a3d44', beachY: -1, cliffK: 0.12, hills: 6, rise: 50, edge: 'quay', sea: '#0d2140', night: true },
-  needles: { sun: [0.25, 0.2], sunCol: '#ffc8b0', sunI: 2.2, hemi: ['#ffd8d0', '#7a8a70', 1.6], fog: [120, 1150], cliff: '#f3eee4', beach: '#e8e2d6', beachY: 0.4, cliffK: 0.3, hills: 20, rise: 90, edge: 'fence', sea: '#6f90b8' }
+  bournemouth: { sun: [0.6, 0.85], sunCol: '#fff1dc', sunI: 2.6, hemi: ['#d8eeff', '#8aa070', 0.55], fog: [180, 1400], cliff: '#d9a066', beach: '#ecd7a1', beachY: 1.2, cliffK: 0.75, hills: 14, rise: 70, edge: 'rail', sea: '#1d8cc4', seaOp: 0.82,
+    cover: 0.36, cloud: ['#ffffff', '#aebfd6'], grade: [1.14, 1.05, '#fff8ef'], env: 1.0, glow: 1,
+    dress: [['palm', 3, 0.32, 15, 40], ['bush', 2, 0.25, 12, 30], ['tuft', 6, 1.6, 9, 28], ['hotel', 4, 0.035, 70, 130]] },
+  purbeck: { sun: [0.3, 0.7], sunCol: '#fff3e2', sunI: 2.6, hemi: ['#dcecff', '#7a9a60', 0.55], fog: [170, 1350], hills: 40, rise: 120, wall: true,
+    cover: 0.44, cloud: ['#ffffff', '#a6b6cc'], grade: [1.12, 1.05, '#fffaf2'], env: 1.0, glow: 1,
+    dress: [['oak', 1, 0.28, 18, 95], ['beech', 1, 0.14, 18, 95], ['sheep', 2, 0.22, 14, 60], ['hay', 1, 0.08, 14, 60], ['bush', 2, 0.2, 12, 40], ['tuft', 6, 1.6, 9, 28]] },
+  forest: { sun: [-0.4, 0.5], sunCol: '#ffe0aa', sunI: 2.5, hemi: ['#f8ecd0', '#8a7a50', 0.55], fog: [120, 1000], hills: 14, rise: 80, trees: true,
+    cover: 0.3, cloud: ['#fff4e2', '#bcae9e'], grade: [1.14, 1.06, '#fff1de'], env: 0.95, glow: 1,
+    dress: [['pine', 1, 0.55, 12, 80], ['beech', 2, 0.4, 12, 80], ['birch', 2, 0.25, 12, 60], ['oak', 3, 0.2, 14, 80], ['logs', 1, 0.03, 12, 20], ['tuft', 6, 1.2, 9, 24]] },
+  jurassic: { sun: [-0.15, 0.2], sunCol: '#ffc28a', sunI: 2.3, hemi: ['#ffd8b8', '#7a7058', 0.65], fog: [190, 1400], fogCol: '#e9b48e', cliff: '#efe9dc', beach: '#e8dfc8', beachY: 0.5, cliffK: 0.3, hills: 22, rise: 90, edge: 'fence', sea: '#41608f', seaOp: 0.86,
+    cover: 0.42, cloud: ['#ffd8b0', '#8a6a86'], grade: [1.12, 1.06, '#fff6ee'], env: 0.95, glow: 1.5,
+    dress: [['gorse', 1, 0.28, 12, 60], ['heather', 2, 0.35, 12, 60], ['rock', 3, 0.08, 15, 60], ['tuft', 6, 1.4, 9, 28]] },
+  harbour: { sun: [0.5, 0.6], sunCol: '#8d9cd8', sunI: 0.9, hemi: ['#6a7ab8', '#3a3e58', 1.6], fog: [80, 750], cliff: '#55585f', beach: '#3a3d44', beachY: -1, cliffK: 0.12, hills: 6, rise: 50, edge: 'quay', sea: '#0b1d3a', seaOp: 0.94, night: true,
+    cover: 0.2, cloud: ['#4a5478', '#161b2e'], grade: [1.12, 1.08, '#eaf0ff'], env: 0.55, glow: 0.3,
+    dress: [['building', 4, 0.12, 40, 110]] },
+  needles: { sun: [0.25, 0.2], sunCol: '#ffc6ac', sunI: 2.5, hemi: ['#ffd8d0', '#7a8a70', 0.55], fog: [140, 1250], cliff: '#f3eee4', beach: '#e8e2d6', beachY: 0.4, cliffK: 0.3, hills: 20, rise: 90, edge: 'fence', sea: '#5f88b8', seaOp: 0.84,
+    cover: 0.36, cloud: ['#ffe0d6', '#9c86a6'], grade: [1.12, 1.05, '#fff4f2'], env: 1.0, glow: 1.4,
+    dress: [['heather', 2, 0.35, 12, 60], ['gorse', 1, 0.22, 12, 60], ['pony', 3, 0.04, 15, 60], ['tuft', 6, 1.4, 9, 28]] }
 };
 const SIGNS = { gate: 1, gantry: 1, nose: 1, board: 1, chev: 1, warn: 1 };
+
+// ---------------------------------------------------------------- the sky: the colours, the sun and its glow, the clouds
+const SKY_VS = 'varying vec3 vp; void main(){ vp = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }';
+const SKY_FS = [
+  'uniform vec3 top; uniform vec3 mid; uniform vec3 hor; uniform vec3 gnd; uniform vec3 sunCol; uniform vec3 cLit; uniform vec3 cDark; uniform vec3 sunDir;',
+  'uniform float midAt; uniform float cover; uniform float time; uniform float sunSize; uniform float sunGlow; uniform float discI;',
+  'varying vec3 vp;',
+  'float h21(vec2 p){ vec3 q = fract(vec3(p.xyx) * 0.1031); q += dot(q, q.yzx + 33.33); return fract((q.x + q.y) * q.z); }',
+  'float vn(vec2 p){ vec2 i = floor(p), f = fract(p); vec2 u = f * f * (3.0 - 2.0 * f); return mix(mix(h21(i), h21(i + vec2(1.0, 0.0)), u.x), mix(h21(i + vec2(0.0, 1.0)), h21(i + vec2(1.0, 1.0)), u.x), u.y); }',
+  'float fbm(vec2 p){ float s = 0.0, a = 0.5; for (int i = 0; i < OCT; i++) { s += a * vn(p); p = p * 2.03 + vec2(3.1, 1.7); a *= 0.5; } return s; }',
+  'void main(){',
+  '  vec3 d = normalize(vp); float h = d.y;',
+  '  vec3 c = mix(hor, mid, smoothstep(0.0, midAt, h)); c = mix(c, top, smoothstep(midAt, 1.0, h));',
+  '  float cs = dot(d, sunDir), sd = max(cs, 0.0), ang = acos(clamp(cs, -1.0, 1.0));',
+  '  c += sunCol * (pow(sd, 10.0) * 0.12 + pow(sd, 90.0) * 0.5) * sunGlow;',
+  '  c += sunCol * discI * (1.0 - smoothstep(sunSize * 0.8, sunSize, ang));',
+  '#ifdef CLOUDS',
+  '  if (h > 0.0 && cover > 0.0) {',
+  '    vec2 uv = d.xz / (h + 0.2) * 0.6 + vec2(time * 0.004, time * 0.0013);',
+  '    float big = vn(uv * 0.42 + 5.3), n = fbm(uv) * 0.75 + big * 0.45 - 0.1;',   // big heaps of cloud with billowing edges
+  '    float m = smoothstep(1.0 - cover, 1.0 - cover + 0.12, n);',
+  '    float n2 = fbm(uv + normalize(sunDir.xz + 1e-4) * 0.06) * 0.75 + vn((uv + normalize(sunDir.xz + 1e-4) * 0.06) * 0.42 + 5.3) * 0.45 - 0.1;',
+  '    float lit = clamp(0.85 - (n2 - n) * 6.0, 0.0, 1.0) * mix(1.0, 0.72, smoothstep(1.0 - cover + 0.1, 1.0 - cover + 0.5, n));',
+  '    vec3 cc = mix(cDark, cLit * 1.25, lit) + sunCol * pow(sd, 6.0) * 0.22 * (1.0 - m * 0.5);',
+  '    c = mix(c, cc, m * smoothstep(0.0, 0.16, h) * 0.96);',
+  '  }',
+  '#endif',
+  '#ifdef ENV',
+  '  if (h < 0.0) c = mix(hor, gnd, smoothstep(0.0, 0.2, -h));',
+  '#else',
+  '  if (h < 0.0) c = hor;',
+  '#endif',
+  '  gl_FragColor = vec4(c, 1.0);',
+  '  #include <tonemapping_fragment>',
+  '  #include <colorspace_fragment>',
+  '}'
+].join('\n');
+
+// ---------------------------------------------------------------- the last step: saturation, contrast, the place's tint, a vignette, a speed blur, a flash
+const GRADE = {
+  uniforms: { tDiffuse: { value: null }, sat: { value: 1.12 }, con: { value: 1.05 }, vig: { value: 0.32 }, blur: { value: 0 }, tint: { value: new THREE.Color(1, 1, 1) }, flash: { value: 0 } },
+  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+  fragmentShader: [
+    'uniform sampler2D tDiffuse; uniform float sat; uniform float con; uniform float vig; uniform float blur; uniform vec3 tint; uniform float flash; varying vec2 vUv;',
+    'void main(){',
+    '  vec3 c = texture2D(tDiffuse, vUv).rgb;',
+    '  if (blur > 0.002) { vec2 dd = (vUv - vec2(0.5, 0.48)) * blur * 0.009; vec3 s = c; for (int i = 1; i < 8; i++) s += texture2D(tDiffuse, vUv - dd * float(i)).rgb; c = s / 8.0; }',
+    '  float l = dot(c, vec3(0.299, 0.587, 0.114)); c = mix(vec3(l), c, sat);',
+    '  c = (c - 0.5) * con + 0.5; c *= tint;',
+    '  vec2 q = vUv - 0.5; c *= 1.0 - vig * dot(q, q) * 1.9;',
+    '  c = mix(c, vec3(1.0), flash);',
+    '  gl_FragColor = vec4(clamp(c, 0.0, 1.0), 1.0);',
+    '}'
+  ].join('\n')
+};
 
 export function createWorld() {
   let renderer;
   try { renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' }); } catch (e) { return null; }
   if (!renderer.getContext()) return null;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+  renderer.toneMapping = THREE.NeutralToneMapping; renderer.toneMappingExposure = 1.0;   // keeps the colours true (the filmic curve greyed them)
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.setPixelRatio(1);
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(62, 16 / 9, 0.4, 3000);
   const fog = new THREE.Fog('#cfe7f6', 150, 1300); scene.fog = fog;
 
+  // ---------------------------------------------------------------- the glow, the grade and the blur (not on a slow PC)
+  const rt = new THREE.WebGLRenderTarget(64, 64, { type: THREE.HalfFloatType, samples: 4 });
+  const composer = new EffectComposer(renderer, rt); composer.setPixelRatio(1);
+  composer.addPass(new RenderPass(scene, camera));
+  const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.3, 0.6, 1.6); composer.addPass(bloom);
+  composer.addPass(new OutputPass());
+  const grade = new ShaderPass(GRADE); composer.addPass(grade);
+
   // ---------------------------------------------------------------- light
-  const hemi = new THREE.HemisphereLight('#bfe3ff', '#6a8a50', 1.1); scene.add(hemi);
+  const hemi = new THREE.HemisphereLight('#bfe3ff', '#6a8a50', 0.6); scene.add(hemi);
   const sun = new THREE.DirectionalLight('#fff4e0', 2.6); sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048); const sc = sun.shadow.camera; sc.left = -70; sc.right = 70; sc.top = 70; sc.bottom = -70; sc.near = 10; sc.far = 400;
-  sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.6;
+  sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.5; sun.shadow.radius = 2;
   scene.add(sun); scene.add(sun.target);
   const headlight = new THREE.SpotLight('#fff1d0', 0, 140, 0.55, 0.5, 1.2); scene.add(headlight); scene.add(headlight.target);
 
-  // ---------------------------------------------------------------- materials
-  const litMat = new THREE.MeshLambertMaterial({ vertexColors: true, flatShading: true });
-  const glowMat = new THREE.MeshBasicMaterial({ vertexColors: true, toneMapped: false });
-  const groundMat = new THREE.MeshLambertMaterial({ vertexColors: true, flatShading: true });
-  const roadTex = roadTexture(), roadMat = new THREE.MeshLambertMaterial({ map: roadTex, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
-  const rumbleMat = new THREE.MeshLambertMaterial({ vertexColors: true, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 });
-  const signMats = new Map();
-  function signMat(key) { let m = signMats.get(key); if (!m) { m = new THREE.MeshLambertMaterial({ map: tex(paintSign(key)), side: THREE.DoubleSide }); signMats.set(key, m); } return m; }
-
-  // ---------------------------------------------------------------- sky, sun, sea, the hills far away
-  const skyMat = new THREE.ShaderMaterial({
-    uniforms: { top: { value: new THREE.Color() }, mid: { value: new THREE.Color() }, hor: { value: new THREE.Color() }, midAt: { value: 0.4 } },
-    vertexShader: 'varying vec3 vp; void main(){ vp = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
-    fragmentShader: 'uniform vec3 top; uniform vec3 mid; uniform vec3 hor; uniform float midAt; varying vec3 vp; void main(){ float h = clamp(vp.y, 0.0, 1.0); vec3 c = h < midAt * 0.25 ? mix(hor, mid, h / (midAt * 0.25)) : mix(mid, top, clamp((h - midAt * 0.25) / (1.0 - midAt * 0.25), 0.0, 1.0)); if (vp.y < 0.0) c = hor; gl_FragColor = vec4(c, 1.0); }',
-    side: THREE.BackSide, depthWrite: false, fog: false
-  });
-  const sky = new THREE.Mesh(new THREE.SphereGeometry(2600, 24, 12), skyMat); sky.renderOrder = -10; scene.add(sky);
-  const sunDisc = new THREE.Sprite(new THREE.SpriteMaterial({ map: radial(128, [[0, 'rgba(255,255,240,1)'], [0.16, 'rgba(255,240,200,0.95)'], [0.3, 'rgba(255,200,120,0.35)'], [1, 'rgba(255,180,100,0)']]), fog: false, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
-  sunDisc.scale.set(520, 520, 1); sunDisc.renderOrder = -8; scene.add(sunDisc);
+  // ---------------------------------------------------------------- the sky (and the same sky, with the land below, as everything's surroundings)
+  const SU = { top: { value: new THREE.Color() }, mid: { value: new THREE.Color() }, hor: { value: new THREE.Color() }, gnd: { value: new THREE.Color('#5a7040') },
+    sunCol: { value: new THREE.Color('#fff4e0') }, cLit: { value: new THREE.Color('#ffffff') }, cDark: { value: new THREE.Color('#aab8cc') }, sunDir: { value: new THREE.Vector3(0.3, 0.6, -0.7).normalize() },
+    midAt: { value: 0.32 }, cover: { value: 0.35 }, time: { value: 0 }, sunSize: { value: 0.036 }, sunGlow: { value: 1 }, discI: { value: 14 } };
+  const skyMat = new THREE.ShaderMaterial({ uniforms: SU, vertexShader: SKY_VS, fragmentShader: SKY_FS, defines: { CLOUDS: '', OCT: 5 }, side: THREE.BackSide, depthWrite: false, fog: false });
+  const sky = new THREE.Mesh(new THREE.SphereGeometry(2600, 32, 16), skyMat); sky.renderOrder = -10; sky.frustumCulled = false; scene.add(sky);
+  const envScene = new THREE.Scene();
+  envScene.add(new THREE.Mesh(new THREE.SphereGeometry(50, 32, 16), new THREE.ShaderMaterial({ uniforms: SU, vertexShader: SKY_VS, fragmentShader: SKY_FS, defines: { CLOUDS: '', OCT: 3, ENV: '' }, side: THREE.BackSide, depthWrite: false, fog: false })));
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const moon = new THREE.Sprite(new THREE.SpriteMaterial({ map: radial(128, [[0, 'rgba(255,255,250,1)'], [0.16, 'rgba(235,240,255,0.95)'], [0.3, 'rgba(180,200,255,0.3)'], [1, 'rgba(160,180,255,0)']]), fog: false, depthWrite: false, blending: THREE.AdditiveBlending }));
+  moon.scale.set(170, 170, 1); moon.renderOrder = -8; moon.visible = false; scene.add(moon);
   const stars = makeStars(); stars.visible = false; scene.add(stars);
-  const ringFar = new THREE.Mesh(new THREE.CylinderGeometry(2300, 2300, 1, 48, 1, true), new THREE.MeshBasicMaterial({ transparent: true, side: THREE.BackSide, fog: false, depthWrite: false }));
-  ringFar.renderOrder = -7; scene.add(ringFar);
+  const ringFar = new THREE.Mesh(new THREE.CylinderGeometry(2300, 2300, 1, 64, 1, true), new THREE.MeshBasicMaterial({ transparent: true, side: THREE.BackSide, fog: false, depthWrite: false }));
+  ringFar.renderOrder = -7; ringFar.frustumCulled = false; scene.add(ringFar);
+
+  // ---------------------------------------------------------------- materials
+  const leafy = (map) => { const m = new THREE.MeshStandardMaterial({ vertexColors: true, map: map, alphaTest: 0.42, side: THREE.DoubleSide, roughness: 0.88 });
+    m.onBeforeCompile = (sh) => { sh.fragmentShader = sh.fragmentShader.replace('#include <normal_fragment_begin>', THREE.ShaderChunk.normal_fragment_begin.replace('normal *= faceDirection;', '')); };   // the leaves keep their rounded normals on both faces
+    m.customProgramCacheKey = () => 'leafy'; return m; };
+  const MAT = {
+    lit: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82, metalness: 0 }),
+    shiny: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.26, metalness: 0.2 }),
+    glow: new THREE.MeshBasicMaterial({ vertexColors: true, color: new THREE.Color(2.4, 2.4, 2.4) }),
+    leaf: leafy(tex(MD.paintLeaves())), frond: leafy(tex(MD.paintFrond())), grass: leafy(tex(MD.paintGrass()))
+  };
+  const CAR = {
+    paint: new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.4, metalness: 0.05, clearcoat: 0.55, clearcoatRoughness: 0.08, envMapIntensity: 0.7 }),
+    chrome: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.18, metalness: 1, envMapIntensity: 1.0 }),
+    glass: new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.1, metalness: 0, clearcoat: 0.6, clearcoatRoughness: 0.12, envMapIntensity: 1.3 }),
+    tyre: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.92, metalness: 0, envMapIntensity: 0.4 }),
+    trim: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.55, metalness: 0.15 }),
+    lit: MAT.lit, glow: MAT.glow
+  };
+  const groundMat = new THREE.MeshStandardMaterial({ vertexColors: true, map: groundDetail(), roughness: 0.95, metalness: 0 });
+  const roadTex = roadTexture(), roadMat = new THREE.MeshStandardMaterial({ map: roadTex, roughness: 0.72, metalness: 0, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+  const rumbleMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.6, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 });
+  const foamTex = foamTexture(), foamMat = new THREE.MeshBasicMaterial({ map: foamTex, transparent: true, depthWrite: false, opacity: 0.9, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 });
+  const signMats = new Map();
+  function signMat(key) { let m = signMats.get(key); if (!m) { m = new THREE.MeshStandardMaterial({ map: tex(paintSign(key)), side: THREE.DoubleSide, roughness: 0.6 }); signMats.set(key, m); } return m; }
+
+  // ---------------------------------------------------------------- the sea: glossy, see-through near the shore, rippling
   const seaNorm = waveNormals();
-  const seaMat = new THREE.MeshPhongMaterial({ color: '#2b90cc', specular: '#ffffff', shininess: 90, normalMap: seaNorm, normalScale: new THREE.Vector2(0.6, 0.6) });
-  const sea = new THREE.Mesh(new THREE.PlaneGeometry(6000, 6000), seaMat); sea.rotation.x = -Math.PI / 2; sea.receiveShadow = true; scene.add(sea);
-  seaNorm.repeat.set(220, 220);
+  const seaMat = new THREE.MeshStandardMaterial({ color: '#1d8cc4', roughness: 0.07, metalness: 0, normalMap: seaNorm, normalScale: new THREE.Vector2(0.2, 0.2), transparent: true, opacity: 0.82, envMapIntensity: 1.1 });
+  const sea = new THREE.Mesh(new THREE.PlaneGeometry(6000, 6000), seaMat); sea.rotation.x = -Math.PI / 2; sea.receiveShadow = true; sea.renderOrder = 1; scene.add(sea);
+  seaNorm.repeat.set(110, 110);
 
   // ---------------------------------------------------------------- your car, the traffic, coins, smoke and sparks
   const player = new THREE.Group(); scene.add(player);
   let playerCarId = null, wheels = [], carInfo = null;
   const traffic = new Map();
-  const coinGeo = new THREE.CylinderGeometry(0.6, 0.6, 0.14, 16); coinGeo.rotateX(Math.PI / 2);
-  const coins = new THREE.InstancedMesh(coinGeo, new THREE.MeshLambertMaterial({ color: '#ffcf33', emissive: '#7a5200' }), 400); coins.count = 0; coins.frustumCulled = false; scene.add(coins);   // (their bounds change every frame)
-  const nitroGeo = new THREE.CylinderGeometry(0.35, 0.35, 1.3, 10);
-  const nitros = new THREE.InstancedMesh(nitroGeo, new THREE.MeshLambertMaterial({ color: '#2f7cf6', emissive: '#0b2a6a' }), 40); nitros.count = 0; nitros.frustumCulled = false; scene.add(nitros);
+  const coinGeo = new THREE.CylinderGeometry(0.6, 0.6, 0.14, 20); coinGeo.rotateX(Math.PI / 2);
+  const coins = new THREE.InstancedMesh(coinGeo, new THREE.MeshStandardMaterial({ color: '#ffc22e', emissive: '#6a4200', metalness: 1, roughness: 0.22 }), 400); coins.count = 0; coins.frustumCulled = false; scene.add(coins);   // (their bounds change every frame)
+  const nitroGeo = new THREE.CylinderGeometry(0.35, 0.35, 1.3, 14);
+  const nitros = new THREE.InstancedMesh(nitroGeo, new THREE.MeshStandardMaterial({ color: '#2f7cf6', emissive: '#0b2a8a', metalness: 0.6, roughness: 0.2 }), 40); nitros.count = 0; nitros.frustumCulled = false; scene.add(nitros);
   const smoke = particles(700, false), sparks = particles(500, true);
   scene.add(smoke.points); scene.add(sparks.points);
   const skid = skidMarks(); scene.add(skid.mesh);
@@ -95,7 +202,7 @@ export function createWorld() {
 
   // ---------------------------------------------------------------- state
   const R = { W: null, poseHi: -1, chunks: new Map(), stubs: [], look: null, lookKey: '', fade: 1, camPos: new THREE.Vector3(), camLook: new THREE.Vector3(), camYaw: 0, camInit: false,
-    fxN: 0, low: false, view: E.VIEW, w: 0, h: 0, lastT: 0, wheelSpin: 0, prevSkid: null, demoAcc: 0, built: 0 };
+    fxN: 0, low: false, view: E.VIEW, w: 0, h: 0, lastT: 0, wheelSpin: 0, prevSkid: null, demoAcc: 0, built: 0, envT: -1e9, envRT: null, envDone: false, flash: 0, boostK: 0 };
 
   // ---------------------------------------------------------------- where each segment is in the world
   function poses(W, upto) {
@@ -130,10 +237,11 @@ export function createWorld() {
     return out;
   }
   function place(W, s, lat, b, out) { at(W, s, b, out); out.x += Math.cos(out.th) * lat; out.z += Math.sin(out.th) * lat; out.y += lat * Math.sin(out.bank) * (Math.abs(lat) < HALF + RUM ? 1 : 0); return out; }
+  const faceRoad = (d, th) => Math.atan2(-d * Math.cos(th), -d * Math.sin(th));   // turns a model's front (+Z) towards the road from side d
 
   // ---------------------------------------------------------------- the land in a chunk: rows across the road, columns out to the hills
   const LAND_COLS = [0.6, 3, 7, 13, 22, 35, 55, 85, 130, 200, 300, 450, 650];
-  function sideCols(g, d, span) {   // [lateral distance from the middle, kind] for one side of a row
+  function sideCols(g, d, span) {   // [lateral distance from the middle, kind] for one side of a row (always 13 of them)
     const out = [];
     if (g.sea === d && g.sh) {
       const shore = Math.max(g.sh, span + 4);
@@ -143,86 +251,149 @@ export function createWorld() {
     } else for (const c of LAND_COLS) out.push([span + c, 'land']);
     return out;
   }
+  // the far land's height depends only on where it is (plus the road's height smoothed over a long way), so the land
+  // laid out from two bits of road that overlap (the far side of a tight bend) agrees, instead of one poking through the other
+  const FBC = new Map();
+  function farBase(W, i) {
+    let f = FBC.get(i); if (f) return f;
+    const lo = Math.max(W.base, i - 60), hi = Math.min(E.lastIndex(W), i + 60);
+    let sy = 0, sh = 0, sr = 0, n = 0;
+    for (let j = lo; j <= hi; j += 4) { const g = E.segAt(W, j), L = LOOK[E.STAGES[g.st].key]; sy += (g.y1 + g.y2) / 2; sh += L.hills; sr += L.rise; n++; }
+    f = { B: sy / n, hills: sh / n, rise: sr / n };
+    if (FBC.size > 6000) FBC.clear(); FBC.set(i, f); return f;
+  }
   function heightOf(W, look, S, g, kind, lat, roadY, wx, wz, dist) {
     if (kind === 'verge') return roadY - 0.15 + (dist > 4 ? (fbm(wx / 40, wz / 40) - 0.5) * 1.6 * smooth(4, 20, dist) : 0);
     if (kind === 'top') return roadY - 0.2 + (fbm(wx / 40, wz / 40) - 0.5) * 1.2;
     if (kind === 'foot') return look.beachY;
     if (kind === 'water') return -0.6;
     if (kind === 'bed') return -6 - dist * 0.01;
-    // the land: from the road's own height out to hills that rise towards the far edge
-    // hills relative to the road's own height (so the land never walls the road in), rising towards the far edge
-    const hill = roadY + (fbm(wx / 300 + 40, wz / 300 + 17) - 0.42) * 2 * look.hills + Math.pow(dist / 650, 2) * look.rise;
-    return roadY + (hill - roadY) * smooth(5, 110, dist) - (dist < 2 ? 0.25 : 0);
+    // the land: flat by the road, easing out to hills and higher ground that belong to the place, not to this bit of road
+    const fb = farBase(W, g.i), far = fb.B + (fbm(wx / 300 + 40, wz / 300 + 17) - 0.4) * 2 * fb.hills + (vnoise(wx / 1100 + 3.7, wz / 1100 + 8.1) - 0.15) * fb.rise;
+    return roadY + (far - roadY) * smooth(6, 160, dist) - (dist < 2 ? 0.25 : 0);
   }
-  function colourOf(look, pal, kind, stripe, n) {
-    if (kind === 'cliff') return look.cliff || '#8a7a6a';
-    if (kind === 'beach') return look.beach || pal.verge[0];
-    if (kind === 'bed') return look.night ? '#0b1a30' : '#2a5a70';
-    if (kind === 'verge') return pal.verge[stripe] || pal.grass[stripe];
-    const g = pal.grass[n > 0.55 ? 0 : 1];
-    return n > 0.8 ? ART.shade(g, 0.06) : n < 0.2 ? ART.shade(g, -0.07) : g;
+  // the colours of the land, worked out at each corner from where it is (so neighbouring patches match and blend)
+  const CC = new Map(), C1 = new THREE.Color(), C2 = new THREE.Color();
+  function cols(st) {
+    let c = CC.get(st); if (c) return c;
+    const pal = PAL[st], look = LOOK[pal.key], L = (h) => new THREE.Color(h);
+    const beach = L(look.beach || pal.verge[0]);
+    c = { g0: L(pal.grass[0]), g1: L(pal.grass[1]), dry: L(look.night ? pal.grass[0] : ART.shade(pal.grass[0], 0.12)).lerp(L('#c8b070'), look.night ? 0 : 0.35), beach: beach, wet: beach.clone().multiplyScalar(0.62),
+      cliff: L(look.cliff || '#8a7a6a'), shallow: beach.clone().multiplyScalar(0.8), deep: L(look.night ? '#06101e' : '#1c4a62') };
+    CC.set(st, c); return c;
   }
+  function colourAt(kind, st, x, y, z, out) {
+    const c = cols(st);
+    if (kind === 'land') {
+      out.copy(c.g0).lerp(c.g1, smooth(0.3, 0.7, fbm(x / 45, z / 45)));
+      out.lerp(c.dry, smooth(0.62, 0.8, vnoise(x / 70 + 9, z / 70 + 3)) * 0.7);
+      out.multiplyScalar(0.88 + vnoise(x / 8, z / 8) * 0.22);
+    } else if (kind === 'beach') out.copy(c.wet).lerp(c.beach, smooth(-0.2, 0.7, y)).multiplyScalar(0.95 + vnoise(x / 6, z / 6) * 0.1);
+    else if (kind === 'cliff') out.copy(c.cliff).multiplyScalar(0.8 + vnoise(x / 9 + y / 2.5, z / 9) * 0.3);
+    else out.copy(c.shallow).lerp(c.deep, smooth(-1, -6, y));
+    return out;
+  }
+  const QK = { land: 'land', verge: 'land', top: 'land', foot: 'cliff', water: 'beach', bed: 'bed' };
+  function rowAt(W, i) {   // the cross-section of the land at segment i, from far left to far right
+    const g = E.segAt(W, i), S = E.STAGES[g.st], look = LOOK[S.key], P = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null };
+    at(W, i * SEG, 0, P);
+    const fa = g.fk && g.fk.a, fb = g.fk && g.fk.b, flat = fa || fb ? 0 : 1;
+    const span = fb ? g.fk.o1 + HALF + RUM + 1 : (fa ? g.fk.w1 : HALF) + RUM;
+    // a bend: don't reach further in than the bend's own radius on the inside (the land would fold over itself)
+    let kk = 0; for (let j = -8; j <= 8; j++) kk += E.segAt(W, i + j).k; kk /= 17;
+    const inner = Math.abs(kk) > 1e-4 ? 0.85 / Math.abs(kk) : 1e9, innerSide = kk > 0 ? 1 : -1;
+    const side = {};
+    for (const d of [-1, 1]) {
+      const cs = sideCols(g, d, span), list = [];
+      let prevH = P.y;
+      for (let j = 0; j < cs.length; j++) {
+        let lat = cs[j][0]; const kind = cs[j][1];
+        if (d === innerSide) lat = Math.min(lat, Math.max(span + 0.6, inner));
+        const wx = P.x + Math.cos(P.th) * d * lat, wz = P.z + Math.sin(P.th) * d * lat;
+        let h = heightOf(W, look, S, g, kind, lat, P.y + d * Math.min(lat, span) * Math.sin(P.bank) * flat, wx, wz, lat - span);
+        if (kind === 'land' && j === 0) h = Math.min(h, prevH + 0.4);
+        list.push([wx, h, wz, kind]); prevH = h;
+      }
+      side[d] = list;
+    }
+    const pts = [], kinds = [];
+    for (let j = side[-1].length - 1; j >= 0; j--) { pts.push(side[-1][j]); kinds.push(QK[side[-1][j][3]]); }   // the gap inside each point on the left takes that point's kind
+    pts.push([P.x - Math.cos(P.th) * span, P.y - span * Math.sin(P.bank) * flat, P.z - Math.sin(P.th) * span, 'verge']); kinds.push('land');
+    pts.push([P.x + Math.cos(P.th) * span, P.y + span * Math.sin(P.bank) * flat, P.z + Math.sin(P.th) * span, 'verge']);
+    for (const q of side[1]) { kinds.push(QK[q[3]]); pts.push(q); }   // ... and on the right the point outside it
+    return { pts: pts, kinds: kinds, g: g, st: g.st, look: look, sea: g.sea, P: { x: P.x, y: P.y, z: P.z, th: P.th } };
+  }
+  const NA = new THREE.Vector3(), NB = new THREE.Vector3(), NN = new THREE.Vector3();
   function buildChunk(W, c) {
     const i0 = c * CH, last = E.lastIndex(W), i1 = Math.min((c + 1) * CH, last);
     if (i1 <= i0) return null;
-    poses(W, i1);
-    const rows = [], P = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null };
-    for (let i = i0; i <= i1; i++) {
-      const g = E.segAt(W, i), S = E.STAGES[g.st], look = LOOK[S.key], pal = PAL[g.st];
-      at(W, i * SEG, 0, P);
-      const fa = g.fk && g.fk.a, fb = g.fk && g.fk.b;
-      const span = fb ? g.fk.o1 + HALF + RUM + 1 : (fa ? g.fk.w1 : HALF) + RUM;
-      // a bend: don't reach further in than the bend's own radius on the inside (the land would fold over itself)
-      let kk = 0; for (let j = -8; j <= 8; j++) kk += E.segAt(W, i + j).k; kk /= 17;
-      const inner = Math.abs(kk) > 1e-4 ? 0.85 / Math.abs(kk) : 1e9, innerSide = kk > 0 ? 1 : -1;
-      const row = { pts: [], kinds: [], g: g, stripe: Math.floor(i / 2) % 2 };
-      for (const d of [-1, 1]) {
-        const cols = sideCols(g, d, span), list = [];
-        let prevH = P.y;
-        for (let j = 0; j < cols.length; j++) {
-          let lat = cols[j][0]; const kind = cols[j][1];
-          if (d === innerSide) lat = Math.min(lat, Math.max(span + 0.6, inner));
-          const wx = P.x + Math.cos(P.th) * d * lat, wz = P.z + Math.sin(P.th) * d * lat;
-          let h = heightOf(W, look, S, g, kind, lat, P.y + d * Math.min(lat, span) * Math.sin(P.bank) * (fa || fb ? 0 : 1), wx, wz, lat - span);
-          if (kind === 'land' && j === 0) h = Math.min(h, prevH + 0.4);
-          list.push([wx, h, wz, kind]); prevH = h;
+    poses(W, Math.min(last, i1 + 1));
+    const r0 = Math.max(W.base, i0 - 1), r1 = Math.min(last, i1 + 1), rows = [];
+    for (let i = r0; i <= r1; i++) rows.push(rowAt(W, i));
+    const off = i0 - r0, n = rows[0].pts.length;
+    // smooth normals at each corner, from its neighbours along the road and across it
+    const nrm = rows.map((row, r) => row.pts.map((p, k) => {
+      const A = rows[Math.min(rows.length - 1, r + 1)].pts[k], B = rows[Math.max(0, r - 1)].pts[k], Lp = row.pts[Math.min(n - 1, k + 1)], Rp = row.pts[Math.max(0, k - 1)];
+      NA.set(Lp[0] - Rp[0], Lp[1] - Rp[1], Lp[2] - Rp[2]); NB.set(A[0] - B[0], A[1] - B[1], A[2] - B[2]); NN.crossVectors(NA, NB);
+      const L = NN.length(); if (L < 1e-6 || NN.y / L < 0.05) return [0, 1, 0];
+      return [NN.x / L, NN.y / L, NN.z / L];
+    }));
+    // ---- the ground: two triangles per patch, wound to face up
+    const pos = [], nor = [], col = [], uv = [];
+    const corner = (p, nv, kind, st) => {
+      pos.push(p[0], p[1], p[2]); nor.push(nv[0], nv[1], nv[2]);
+      colourAt(kind, st, p[0], p[1], p[2], C1); col.push(C1.r, C1.g, C1.b);
+      if (kind === 'cliff') uv.push((p[0] + p[2]) / 5, p[1] / 3); else uv.push(p[0] / 4.5, p[2] / 4.5);
+    };
+    const FN = [0, 1, 0];
+    for (let r = off; r < off + (i1 - i0); r++) {
+      const A = rows[r], B = rows[r + 1];
+      for (let k = 0; k < n - 1; k++) {
+        const kind = A.kinds[k], st = A.st;
+        const nl = A.pts[k], nr = A.pts[k + 1], fl = B.pts[k], fr = B.pts[k + 1];
+        let n1 = nrm[r][k], n2 = nrm[r][k + 1], n3 = nrm[r + 1][k], n4 = nrm[r + 1][k + 1];
+        if (kind === 'cliff') {   // cliffs keep a hard edge
+          NA.set(nr[0] - nl[0], nr[1] - nl[1], nr[2] - nl[2]); NB.set(fl[0] - nl[0], fl[1] - nl[1], fl[2] - nl[2]); NN.crossVectors(NA, NB).normalize();
+          if (NN.y < 0) NN.negate(); FN[0] = NN.x; FN[1] = NN.y; FN[2] = NN.z; n1 = n2 = n3 = n4 = FN.slice();
         }
-        row[d] = list;
-      }
-      // the flat band under the road (and between the roads of a split)
-      row.cl = [P.x - Math.cos(P.th) * span, P.y + -span * Math.sin(P.bank) * (fa || fb ? 0 : 1), P.z - Math.sin(P.th) * span];
-      row.cr = [P.x + Math.cos(P.th) * span, P.y + span * Math.sin(P.bank) * (fa || fb ? 0 : 1), P.z + Math.sin(P.th) * span];
-      row.look = look; row.pal = pal;
-      rows.push(row);
-    }
-    // ---- the ground: triangles between each row and the next
-    const pos = [], col = [];
-    const tri = (a, b, cc, hex) => { pos.push(a[0], a[1], a[2], b[0], b[1], b[2], cc[0], cc[1], cc[2]); const o = col.length; col.length += 9; lin(hex, col, o); col[o + 3] = col[o]; col[o + 4] = col[o + 1]; col[o + 5] = col[o + 2]; col[o + 6] = col[o]; col[o + 7] = col[o + 1]; col[o + 8] = col[o + 2]; };
-    const quad = (nl, nr, fr, fl, hex, hex2) => { tri(nl, nr, fl, hex); tri(nr, fr, fl, hex2 || hex); };   // wound to face up
-    for (let r = 0; r < rows.length - 1; r++) {
-      const A = rows[r], B = rows[r + 1], pal = A.pal, look = A.look;
-      quad(A.cl, A.cr, B.cr, B.cl, pal.verge[A.stripe] || pal.grass[0]);
-      for (const d of [-1, 1]) {
-        const a = A[d], b = B[d];
-        let pa = d < 0 ? A.cl : A.cr, pb = d < 0 ? B.cl : B.cr;
-        for (let j = 0; j < a.length; j++) {
-          const qa = a[j], qb = b[j], kind = qa[3];
-          let k2 = kind === 'land' || kind === 'verge' || kind === 'top' ? (j === 0 ? 'verge' : kind === 'land' ? 'land' : 'verge') : kind === 'foot' ? 'cliff' : kind === 'water' ? 'beach' : 'bed';
-          const n = hash2(Math.round(qa[0] / 7), Math.round(qa[2] / 7)), hex = colourOf(look, pal, k2, A.stripe, n), hex2 = colourOf(look, pal, k2, A.stripe, hash2(Math.round(qa[0] / 7) + 1, Math.round(qa[2] / 7)));
-          if (d < 0) quad(qa, pa, pb, qb, hex, hex2); else quad(pa, qa, qb, pb, hex, hex2);
-          pa = qa; pb = qb;
-        }
+        corner(nl, n1, kind, st); corner(nr, n2, kind, st); corner(fl, n3, kind, st);
+        corner(nr, n2, kind, st); corner(fr, n4, kind, st); corner(fl, n3, kind, st);
       }
     }
-    const gg = new THREE.BufferGeometry(); gg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); gg.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); gg.computeVertexNormals();
+    const gg = new THREE.BufferGeometry();
+    gg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); gg.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+    gg.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); gg.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); gg.computeBoundingSphere();
     const ground = new THREE.Mesh(gg, groundMat); ground.receiveShadow = true;
     const group = new THREE.Group(); group.add(ground);
+    surf(rows, off, i1 - i0, group);
     // ---- the road (one, or two in a split) and its rumble strips
     for (const b of [0, -1, 1]) roadStrip(W, i0, i1, b, group);
     // ---- roadside things
     scenery(W, i0, i1, group);
-    group.userData = { i0: i0, i1: i1 };
+    group.userData = Object.assign(group.userData || {}, { i0: i0, i1: i1 });
     return group;
+  }
+  function surf(rows, off, count, group) {   // white water where a beach meets the sea
+    const pos = [], uv = [];
+    for (const d of [-1, 1]) {
+      const fi = d < 0 ? rows[0].pts.length / 2 - 1 - 4 : rows[0].pts.length / 2 + 4;   // the cliff foot (the water is the next point out)
+      const wi = fi + d;
+      const edge = (row) => {
+        if (row.sea !== d || !(row.look.beachY > 0.05)) return null;
+        const F = row.pts[fi], Wt = row.pts[wi]; if (!F || !Wt || F[3] !== 'foot') return null;
+        const f = F[1] / (F[1] - Wt[1]), a = clamp(f - 0.13, 0, 1), b = clamp(f + 0.1, 0, 1);
+        return [[F[0] + (Wt[0] - F[0]) * a, 0.05, F[2] + (Wt[2] - F[2]) * a], [F[0] + (Wt[0] - F[0]) * b, 0.05, F[2] + (Wt[2] - F[2]) * b]];
+      };
+      for (let r = off; r < off + count; r++) {
+        const e1 = edge(rows[r]), e2 = edge(rows[r + 1]); if (!e1 || !e2) continue;
+        const v0 = r * 0.37, v1 = (r + 1) * 0.37;
+        const [p, q] = d > 0 ? [e1, e2] : [[e1[1], e1[0]], [e2[1], e2[0]]], u0 = d > 0 ? 0 : 1, u1 = 1 - u0;
+        pos.push(...p[0], ...p[1], ...q[0], ...p[1], ...q[1], ...q[0]); uv.push(u0, v0, u1, v0, u0, v1, u1, v0, u1, v1, u0, v1);
+      }
+    }
+    if (!pos.length) return;
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.computeVertexNormals();
+    const m = new THREE.Mesh(g, foamMat); m.renderOrder = 2; group.add(m);
   }
   function roadStrip(W, i0, i1, b, group) {
     const pos = [], uv = [], rpos = [], rcol = [], P = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null }, Q = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null };
@@ -237,6 +408,7 @@ export function createWorld() {
       const rc = (Math.floor(i / 2) % 2) ? PAL[g.st].rumble[0] : PAL[g.st].rumble[1];
       for (const d of [-1, 1]) {
         const c1 = e(P, d * w1), c2 = e(P, d * (w1 + RUM)), c3 = e(Q, d * (w2 + RUM)), c4 = e(Q, d * w2);
+        c2[1] += 0.04; c3[1] += 0.04;   // a kerb, a touch proud of the road
         if (d < 0) rpos.push(...c2, ...c1, ...c3, ...c1, ...c4, ...c3); else rpos.push(...c1, ...c2, ...c4, ...c2, ...c3, ...c4);
         for (let q = 0; q < 6; q++) { const o = rcol.length; rcol.length += 3; lin(rc, rcol, o); }
       }
@@ -247,12 +419,13 @@ export function createWorld() {
     if (pos.length) { const g1 = new THREE.BufferGeometry(); g1.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g1.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g1.computeVertexNormals(); const m = new THREE.Mesh(g1, roadMat); m.receiveShadow = true; group.add(m); }
     if (rpos.length) { const g2 = new THREE.BufferGeometry(); g2.setAttribute('position', new THREE.Float32BufferAttribute(rpos, 3)); g2.setAttribute('color', new THREE.Float32BufferAttribute(rcol, 3)); g2.computeVertexNormals(); const m2 = new THREE.Mesh(g2, rumbleMat); m2.receiveShadow = true; group.add(m2); }
   }
-  // ---- everything that stands by the road in a chunk, merged into a few meshes (one for the lit, one for the glowing,
-  //      one per sign picture); things you can knock over keep their own little mesh so they can fly off
+  // ---- everything that stands by the road in a chunk, merged into one mesh per material (and one per sign picture);
+  //      things you can knock over keep their own little group so they can fly off
   const TMP = new THREE.Object3D();
   function scenery(W, i0, i1, group) {
-    const lit = [], glow = [], signs = new Map(), lamps = [], P = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null };
-    const addModel = (geo, list, x, y, z, ry, s) => { TMP.position.set(x, y, z); TMP.rotation.set(0, ry, 0); TMP.scale.setScalar(s || 1); TMP.updateMatrix(); list.push([geo, TMP.matrix.clone()]); };
+    const L = {}, signs = new Map(), lamps = [], P = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null };
+    const addModel = (geo, key, x, y, z, ry, s, temp) => { if (!geo) return; TMP.position.set(x, y, z); TMP.rotation.set(0, ry, 0); TMP.scale.setScalar(s || 1); TMP.updateMatrix(); (L[key] || (L[key] = [])).push([geo, TMP.matrix.clone(), temp]); };
+    const addAll = (m, x, y, z, ry, s) => { for (const k in m) if (m[k] && MAT[k]) addModel(m[k], k, x, y, z, ry, s); };
     for (let i = i0; i < i1; i++) {
       const g = E.segAt(W, i), S = E.STAGES[g.st], look = LOOK[S.key];
       // walls, fences and the sea wall: pieces end to end
@@ -260,56 +433,94 @@ export function createWorld() {
       if (g.wl) walls.push([-10.5, look.wall ? 'wall' : 'fence']);
       if (g.wr) walls.push([10.5, look.wall ? 'wall' : 'fence']);
       if (g.sea && g.sh - 1.5 < 26 && look.edge) walls.push([g.sea * (g.sh - 1.2), look.edge === 'rail' ? 'rail' : look.edge === 'quay' ? 'quay' : 'fence']);
-      for (const wl of walls) { place(W, i * SEG + SEG / 2, wl[0], 0, P); const m = MD.model(wl[1], 0); addModel(m.lit, lit, P.x, P.y, P.z, -P.th); }
-      if (!g.spr) continue;
-      for (const it of g.spr) {
+      for (const wl of walls) { place(W, i * SEG + SEG / 2, wl[0], 0, P); addAll(MD.model(wl[1], 0), P.x, P.y, P.z, -P.th); }
+      if (g.spr) for (const it of g.spr) {
         if (it.done) continue;
         place(W, i * SEG, it.x, it.b, P);
-        const d = it.x < 0 ? -1 : 1, faceRoad = Math.atan2(-d * Math.cos(P.th), -d * Math.sin(P.th));
+        const d = it.x < 0 ? -1 : 1, fr = faceRoad(d, P.th);
         let ry = hash2(i, Math.round(it.x * 10)) * Math.PI * 2;
-        if (/^(hut|cottage|hotel|building|board|finger|forestsign|lamp)$/.test(it.t)) ry = faceRoad;
-        if (it.t === 'lamp') ry = faceRoad + Math.PI;   // the arm reaches over the road
+        if (/^(hut|cottage|hotel|building|board|finger|forestsign|lamp)$/.test(it.t)) ry = fr;
+        if (it.t === 'lamp') ry = fr + Math.PI;   // the arm reaches over the road
         if (/^(gate|gantry|nose|chev|warn|gpost)$/.test(it.t)) ry = -P.th;
         if (it.t === 'board') ry = -P.th + d * 0.5;
-        if (it.t === 'pier' || it.t === 'ferry') ry = faceRoad + Math.PI / 2;
+        if (it.t === 'pier' || it.t === 'ferry') ry = fr + Math.PI / 2;
         let y = P.y;
-        if (/^(yacht|buoy|stack|arch|needles|ferry|pier)$/.test(it.t)) y = it.t === 'pier' ? 0 : 0;
+        if (/^(yacht|buoy|stack|arch|needles|ferry|pier)$/.test(it.t)) y = 0;
         else if (it.t === 'lighthouse') y = P.y - 6;
         else if (Math.abs(it.x) > HALF + 2) y = groundAt(W, g, P, it.x);
-        if (SIGNS[it.t]) { signParts(it, P, y, ry, lit, signs, addModel); if (it.t === 'gate' || it.t === 'gantry') continue; }
+        if (SIGNS[it.t]) { signParts(W, i, g, it, P, y, ry, signs, addModel, addAll); if (it.t === 'gate' || it.t === 'gantry') continue; }
         const m = MD.model(it.t, it.v); if (!m) continue;
-        if (it.soft) { const mesh = new THREE.Mesh(m.lit, litMat); mesh.position.set(P.x, y, P.z); mesh.rotation.y = ry; mesh.castShadow = true; mesh.userData.it = it; group.add(mesh); continue; }
-        addModel(m.lit, lit, P.x, y, P.z, ry);
-        if (m.glow) addModel(m.glow, glow, P.x, y, P.z, ry);
+        if (it.soft) {
+          const grp = new THREE.Group();
+          for (const k in m) if (m[k] && MAT[k]) { const mesh = new THREE.Mesh(m[k], MAT[k]); mesh.castShadow = k !== 'glow'; mesh.userData.keep = true; grp.add(mesh); }
+          grp.position.set(P.x, y, P.z); grp.rotation.y = ry; grp.userData.it = it; group.add(grp); continue;
+        }
+        addAll(m, P.x, y, P.z, ry);
         if (look.night && it.t === 'lamp') { TMP.position.set(0, 5.95, -1.5); TMP.rotation.set(0, ry, 0); TMP.position.applyEuler(TMP.rotation); lamps.push(P.x + TMP.position.x, y + TMP.position.y, P.z + TMP.position.z); }
         if (look.night && (it.t === 'yacht' || it.t === 'buoy')) lamps.push(P.x, y + (it.t === 'yacht' ? 12.3 : 2.3), P.z);
       }
+      dress(W, i, g, look, P, addAll);
     }
-    if (lit.length) { const mesh = new THREE.Mesh(mergeT(lit), litMat); mesh.castShadow = true; mesh.receiveShadow = true; group.add(mesh); }
-    if (glow.length) group.add(new THREE.Mesh(mergeT(glow), glowMat));
-    for (const [key, list] of signs) group.add(new THREE.Mesh(mergeT(list, true), signMat(key)));
+    for (const k in L) {
+      const mesh = new THREE.Mesh(mergeT(L[k]), MAT[k]);
+      mesh.castShadow = k !== 'glow' && k !== 'grass'; mesh.receiveShadow = k !== 'glow';
+      group.add(mesh);
+    }
+    for (const [key, list] of signs) { const m = new THREE.Mesh(mergeT(list), signMat(key)); m.castShadow = true; group.add(m); }
     if (lamps.length) group.userData.lamps = lamps;
+  }
+  // more of the place, further from the road than anything you can hit: trees, palms, sheep, grass (the same every time)
+  const DP = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null };
+  function dress(W, i, g, look, P, addAll) {
+    if (!look.dress || g.fk || R.low && i % 2) return;
+    let kk = 0; for (let j = -6; j <= 6; j++) kk += E.segAt(W, i + j).k; kk /= 13;
+    const inner = Math.abs(kk) > 1e-4 ? 0.55 / Math.abs(kk) : 1e9, innerSide = kk > 0 ? 1 : -1;
+    for (const d of [-1, 1]) {
+      if (g.sea === d) continue;
+      look.dress.forEach((t, ti) => {
+        const h0 = hash2(i * 7 + ti, d * 31 + 5), cnt = Math.floor(t[2]) + (h0 < t[2] % 1 ? 1 : 0);
+        for (let q = 0; q < cnt; q++) {
+          const h1 = hash2(i * 13 + q, ti * 17 + d), h2 = hash2(i * 3 + q * 11, ti * 5 - d), h3 = hash2(i + q * 29, ti * 37 + d * 3);
+          const lat = t[3] + h1 * (t[4] - t[3]); if (d === innerSide && lat > inner) continue;
+          place(W, i * SEG + h2 * SEG, d * lat, 0, DP);
+          const y = groundAt(W, g, DP, d * lat) - (t[0] === 'tuft' ? 0.05 : 0.25);
+          const ry = /^(hotel|building)$/.test(t[0]) ? faceRoad(d, DP.th) : h3 * Math.PI * 2;
+          addAll(MD.model(t[0], Math.floor(h3 * 997) % t[1]), DP.x, y, DP.z, ry, t[0] === 'tuft' || /^(hotel|building)$/.test(t[0]) ? 1 : 0.8 + h2 * 0.45);
+        }
+      });
+    }
   }
   function groundAt(W, g, P, lat) {   // the land's height beside the road (the same sums as the chunk's ground)
     const S = E.STAGES[g.st], look = LOOK[S.key], d = lat < 0 ? -1 : 1, a = Math.abs(lat), span = HALF + RUM;
-    const wx = P.x, wz = P.z;
     if (g.sea === d && g.sh) { if (a > g.sh + 4) return look.beachY; return P.y - 0.15; }
-    return heightOf(W, look, S, g, 'land', a, P.y, wx, wz, a - span);
+    return heightOf(W, look, S, g, 'land', a, P.y, P.x, P.z, a - span);
   }
-  function signParts(it, P, y, ry, lit, signs, addModel) {
+  const P2 = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null };
+  function signParts(W, i, g, it, P, y, ry, signs, addModel, addAll) {
     const plane = (w, h, key, ox, oy, oz, flip) => {
-      const g = new THREE.PlaneGeometry(w, h); if (flip) { const uv = g.attributes.uv; for (let q = 0; q < uv.count; q++) uv.setX(q, 1 - uv.getX(q)); }
-      TMP.position.set(ox, oy, oz); TMP.rotation.set(0, 0, 0); TMP.updateMatrix(); g.applyMatrix4(TMP.matrix);
-      TMP.position.set(P.x, y, P.z); TMP.rotation.set(0, ry, 0); TMP.scale.setScalar(1); TMP.updateMatrix();
-      (signs.get(key) || signs.set(key, []).get(key)).push([g, TMP.matrix.clone(), true]);
+      const pg = new THREE.PlaneGeometry(w, h); if (flip) { const u = pg.attributes.uv; for (let q = 0; q < u.count; q++) u.setX(q, 1 - u.getX(q)); }
+      TMP.position.set(ox, oy, oz); TMP.rotation.set(0, 0, 0); TMP.scale.setScalar(1); TMP.updateMatrix(); pg.applyMatrix4(TMP.matrix);
+      TMP.position.set(P.x, y, P.z); TMP.rotation.set(0, ry, 0); TMP.updateMatrix();
+      (signs.get(key) || signs.set(key, []).get(key)).push([pg, TMP.matrix.clone(), true]);
     };
-    const box = (w, h, d, ox, oy, oz, col) => { const k = new MD.Kit(); k.box(w, h, d, ox, oy, oz, col); addModel(k.build().lit, lit, P.x, y, P.z, ry); };
+    const box = (w, h, d, ox, oy, oz, col, key) => { const k = new MD.Kit(); k.box(w, h, d, ox, oy, oz, col, 0, 0, 0, key || 'shiny'); const m = k.build(); for (const kk in m) if (m[kk]) addModel(m[kk], kk, P.x, y, P.z, ry, 1, true); };
     switch (it.t) {
       case 'gate': {
-        const kinds = ['START', 'ROUND', 'CHECKPOINT', 'GOAL'], w = HALF + 2.5;
+        const w = HALF + 2.5;
         box(1.2, 8, 1.2, -w, 0, 0, '#e5e7eb'); box(1.2, 8, 1.2, w, 0, 0, '#e5e7eb'); box(w * 2 + 1.6, 2.4, 0.8, 0, 8, 0, '#111827');
         plane(w * 2 + 1.2, 2.1, 'gate|' + it.v, 0, 9.2, 0.42); plane(w * 2 + 1.2, 2.1, 'gate|' + it.v, 0, 9.2, -0.42, true);
-        void kinds; break;
+        // people cheering behind the barriers either side, and flags
+        poses(W, Math.min(E.lastIndex(W), i + 8));
+        for (const d of [-1, 1]) {
+          if (g.sea === d && g.sh < 20) continue;
+          for (const [o, t, lat] of [[-7, 'crowd', 12.6], [9, 'crowd', 12.6], [-22, 'flags', 11.8], [24, 'flags', 11.8]]) {
+            const s = i * SEG + o, si = E.segIndex(s); if (si < W.base || si > E.lastIndex(W) - 1) continue;
+            const gg = E.segAt(W, si); if (gg.fk) continue;
+            place(W, s, d * lat, 0, P2);
+            addAll(MD.model(t, (i + o + d * 3) & 7), P2.x, groundAt(W, gg, P2, d * lat), P2.z, faceRoad(d, P2.th));
+          }
+        }
+        break;
       }
       case 'gantry': {
         const w = HALF + 2.5, names = (it.txt || '|').split('|');
@@ -323,20 +534,29 @@ export function createWorld() {
       case 'warn': plane(3.6, 1.5, 'warn', 0, 2.35, 0.05, it.v < 0); break;
     }
   }
-  function mergeT(list, uvs) {   // geometries placed by matrices, joined into one
-    let n = 0; for (const [g] of list) n += (g.index ? g.index.count : g.attributes.position.count);
-    const pos = new Float32Array(n * 3), col = uvs ? null : new Float32Array(n * 3), uv = uvs ? new Float32Array(n * 2) : null; let o = 0;
-    const v = new THREE.Vector3();
-    for (const [g0, m] of list) {
-      const g = g0.index ? g0.toNonIndexed() : g0, p = g.attributes.position, c = g.attributes.color, u = g.attributes.uv;
-      for (let i = 0; i < p.count; i++) { v.fromBufferAttribute(p, i).applyMatrix4(m); pos[(o + i) * 3] = v.x; pos[(o + i) * 3 + 1] = v.y; pos[(o + i) * 3 + 2] = v.z; if (col) { col[(o + i) * 3] = c.getX(i); col[(o + i) * 3 + 1] = c.getY(i); col[(o + i) * 3 + 2] = c.getZ(i); } if (uv) { uv[(o + i) * 2] = u.getX(i); uv[(o + i) * 2 + 1] = u.getY(i); } }
-      o += p.count; if (g !== g0) g.dispose();
+  const NM = new THREE.Matrix3(), VV = new THREE.Vector3();
+  function mergeT(list) {   // [geometry, matrix, temporary?] joined into one geometry: positions and normals moved, colours and uvs kept when all have them
+    let n = 0; for (const [g] of list) n += g.index ? g.index.count : g.attributes.position.count;
+    const hasC = list.every((e) => e[0].attributes.color), hasU = list.every((e) => e[0].attributes.uv);
+    const pos = new Float32Array(n * 3), nor = new Float32Array(n * 3), col = hasC ? new Float32Array(n * 3) : null, uv = hasU ? new Float32Array(n * 2) : null; let o = 0;
+    for (const [g0, m, temp] of list) {
+      const g = g0.index ? g0.toNonIndexed() : g0, p = g.attributes.position, nn = g.attributes.normal, c = g.attributes.color, u = g.attributes.uv;
+      NM.getNormalMatrix(m);
+      for (let i = 0; i < p.count; i++) {
+        const k = (o + i) * 3;
+        VV.fromBufferAttribute(p, i).applyMatrix4(m); pos[k] = VV.x; pos[k + 1] = VV.y; pos[k + 2] = VV.z;
+        VV.fromBufferAttribute(nn, i).applyMatrix3(NM).normalize(); nor[k] = VV.x; nor[k + 1] = VV.y; nor[k + 2] = VV.z;
+        if (col) { col[k] = c.getX(i); col[k + 1] = c.getY(i); col[k + 2] = c.getZ(i); }
+        if (uv) { uv[(o + i) * 2] = u.getX(i); uv[(o + i) * 2 + 1] = u.getY(i); }
+      }
+      o += p.count; if (g !== g0) g.dispose(); if (temp) g0.dispose();
     }
-    const out = new THREE.BufferGeometry(); out.setAttribute('position', new THREE.BufferAttribute(pos, 3)); if (col) out.setAttribute('color', new THREE.BufferAttribute(col, 3)); if (uv) out.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
-    out.computeVertexNormals(); out.computeBoundingSphere();
+    const out = new THREE.BufferGeometry(); out.setAttribute('position', new THREE.BufferAttribute(pos, 3)); out.setAttribute('normal', new THREE.BufferAttribute(nor, 3));
+    if (col) out.setAttribute('color', new THREE.BufferAttribute(col, 3)); if (uv) out.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+    out.computeBoundingSphere();
     return out;
   }
-  function dropChunk(ch) { scene.remove(ch); ch.traverse((o) => { if (o.geometry && !o.userData.it) o.geometry.dispose(); }); }
+  function dropChunk(ch) { scene.remove(ch); ch.traverse((o) => { if (o.geometry && !o.userData.keep) o.geometry.dispose(); }); }
 
   // ---------------------------------------------------------------- the road the other way at a fork, going off into the haze
   function stubs(W) {
@@ -355,10 +575,10 @@ export function createWorld() {
       const pushQ = (nl, fl, fr, nr, hex) => { pos.push(...nl, ...nr, ...fl, ...nr, ...fr, ...fl); for (let q = 0; q < 6; q++) { const o = col.length; col.length += 3; lin(hex, col, o); } };
       for (let i = 0; i < segs.length; i++) {
         const k = segs[i].k, mid = th + k * SEG / 2, nx = x + Math.sin(mid) * SEG, nz = z - Math.cos(mid) * SEG, nth = th + k * SEG;
-        const L = (px, pz, t, lat, yy) => [px + Math.cos(t) * lat, yy, pz + Math.sin(t) * lat];
-        pushQ(L(x, z, th, -HALF, y), L(nx, nz, nth, -HALF, y), L(nx, nz, nth, HALF, y), L(x, z, th, HALF, y), i % 4 < 2 ? pal.road[0] : pal.road[1]);
-        pushQ(L(x, z, th, -40, y - 0.1), L(nx, nz, nth, -40, y - 0.1), L(nx, nz, nth, -HALF, y - 0.05), L(x, z, th, -HALF, y - 0.05), pal.grass[i % 2]);
-        pushQ(L(x, z, th, HALF, y - 0.05), L(nx, nz, nth, HALF, y - 0.05), L(nx, nz, nth, 40, y - 0.1), L(x, z, th, 40, y - 0.1), pal.grass[(i + 1) % 2]);
+        const Lq = (px, pz, t, lat, yy) => [px + Math.cos(t) * lat, yy, pz + Math.sin(t) * lat];
+        pushQ(Lq(x, z, th, -HALF, y), Lq(nx, nz, nth, -HALF, y), Lq(nx, nz, nth, HALF, y), Lq(x, z, th, HALF, y), i % 4 < 2 ? pal.road[0] : pal.road[1]);
+        pushQ(Lq(x, z, th, -40, y - 0.1), Lq(nx, nz, nth, -40, y - 0.1), Lq(nx, nz, nth, -HALF, y - 0.05), Lq(x, z, th, -HALF, y - 0.05), pal.grass[i % 2]);
+        pushQ(Lq(x, z, th, HALF, y - 0.05), Lq(nx, nz, nth, HALF, y - 0.05), Lq(nx, nz, nth, 40, y - 0.1), Lq(x, z, th, 40, y - 0.1), pal.grass[(i + 1) % 2]);
         x = nx; z = nz; th = nth;
       }
       const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); g.computeVertexNormals();
@@ -383,27 +603,34 @@ export function createWorld() {
   }
 
   // ---------------------------------------------------------------- the place's light, sky and haze (fading from one place to the next)
-  const TMPC = new THREE.Color(), TMPC2 = new THREE.Color();
+  const TMPC = new THREE.Color(), SUNV = new THREE.Vector3(), ROADGREY = new THREE.Color('#6c7076');
   function setLook(st, k) {
     const pal = PAL[st], look = LOOK[pal.key], sk = pal.sky;
     const blend = (c, hex) => { TMPC.set(hex); c.lerp(TMPC, k); };
-    blend(skyMat.uniforms.top.value, sk[0][1]); blend(skyMat.uniforms.mid.value, sk[Math.min(2, sk.length - 2)][1]); blend(skyMat.uniforms.hor.value, sk[sk.length - 1][1]);
-    blend(fog.color, pal.fog);
+    const to = (v, x) => v + (x - v) * k;
+    blend(SU.top.value, sk[0][1]); blend(SU.mid.value, sk[Math.min(2, sk.length - 2)][1]); blend(SU.hor.value, look.fogCol || sk[sk.length - 1][1]);
+    TMPC.set(pal.grass[0]).lerp(ROADGREY, 0.65); SU.gnd.value.lerp(TMPC, k);   // what shiny things see below them: mostly road blend(SU.cLit.value, look.cloud[0]); blend(SU.cDark.value, look.cloud[1]); blend(SU.sunCol.value, look.sunCol);
+    SU.cover.value = to(SU.cover.value, look.cover); SU.sunGlow.value = to(SU.sunGlow.value, look.glow); SU.discI.value = to(SU.discI.value, look.night ? 0 : 14);
+    blend(fog.color, look.fogCol || pal.fog);
     fog.near += (look.fog[0] - fog.near) * k; fog.far += (look.fog[1] * (R.low ? 0.8 : 1) - fog.far) * k;
-    blend(hemi.color, look.hemi[0]); blend(hemi.groundColor, look.hemi[1]); hemi.intensity += (look.hemi[2] - hemi.intensity) * k;
-    blend(sun.color, look.sunCol); sun.intensity += (look.sunI - sun.intensity) * k;
-    R.sunDir = R.sunDir || new THREE.Vector3(0.3, 0.8, 0.3);
-    TMPC2.setRGB(0, 0, 0);
-    const dir = new THREE.Vector3(look.sun[0], look.sun[1], -0.7).normalize(); R.sunDir.lerp(dir, k).normalize();
-    blend(seaMat.color, look.sea || '#2b90cc');
-    stars.visible = !!look.night;
+    blend(hemi.color, look.hemi[0]); blend(hemi.groundColor, look.hemi[1]); hemi.intensity = to(hemi.intensity, look.hemi[2]);
+    blend(sun.color, look.sunCol); sun.intensity = to(sun.intensity, look.sunI);
+    scene.environmentIntensity = to(scene.environmentIntensity, look.env);
+    SUNV.set(look.sun[0], look.sun[1], -0.7).normalize(); SU.sunDir.value.lerp(SUNV, k).normalize();
+    blend(seaMat.color, look.sea || '#1d8cc4'); seaMat.opacity = to(seaMat.opacity, look.seaOp || 0.85);
+    const gr = GRADE_U; gr.sat.value = to(gr.sat.value, look.grade[0]); gr.con.value = to(gr.con.value, look.grade[1]); blend(gr.tint.value, look.grade[2]);
+    stars.visible = !!look.night; moon.visible = !!look.night;
     headlight.intensity = look.night ? 2600 : 0;
-    sunDisc.material.color.set(look.night ? '#c8d4ff' : '#ffffff'); sunDisc.scale.setScalar(look.night ? 160 : 520);
+  }
+  const GRADE_U = grade.uniforms;
+  function updateEnv(t) {   // the sky as everything's surroundings: worked out again as one place fades into the next
+    const rtE = pmrem.fromScene(envScene, 0, 0.1, 200);
+    if (R.envRT) R.envRT.dispose(); R.envRT = rtE; scene.environment = rtE.texture; R.envT = t;
   }
   function setBackdrop(key) {
-    const res = 2, B = ART.bg(key, res), t = new THREE.CanvasTexture(B.far); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = THREE.RepeatWrapping;
+    const res = 2, B = ART.bg(key, res, true), tx = new THREE.CanvasTexture(B.far); tx.colorSpace = THREE.SRGBColorSpace; tx.wrapS = THREE.RepeatWrapping; tx.anisotropy = 8;
     if (ringFar.material.map) ringFar.material.map.dispose();
-    ringFar.material.map = t; ringFar.material.needsUpdate = true;
+    ringFar.material.map = tx; ringFar.material.needsUpdate = true;
     const H = 2 * Math.PI * 2300 / ART.BG_W * ART.BG_H * 0.55;   // the panorama wrapped once round, squashed so its hills sit low
     ringFar.scale.set(1, H, 1); ringFar.userData.hz = ((ART.BG_H - ART.HZ) / ART.BG_H - 0.5) * H;   // the horizon's height within the ring
   }
@@ -411,10 +638,9 @@ export function createWorld() {
   // ---------------------------------------------------------------- the player's car
   function makePlayer(id) {
     player.clear(); const m = MD.playerCar(id); carInfo = m;
-    const body = new THREE.Mesh(m.body.lit, litMat); body.castShadow = true; player.add(body);
-    if (m.body.glow) { const gl = new THREE.Mesh(m.body.glow, glowMat); player.add(gl); }
-    wheels = m.wheels.map((p) => { const w = new THREE.Mesh(m.wheel, litMat); w.position.set(p[0], p[1], p[2]); w.castShadow = true; player.add(w); return w; });
-    const shadow = new THREE.Mesh(new THREE.PlaneGeometry(m.width + 0.6, m.len * 2 + 0.6), new THREE.MeshBasicMaterial({ map: radial(64, [[0, 'rgba(0,0,0,0.55)'], [0.7, 'rgba(0,0,0,0.3)'], [1, 'rgba(0,0,0,0)']]), transparent: true, depthWrite: false }));
+    for (const k in m.body) if (m.body[k] && CAR[k]) { const mesh = new THREE.Mesh(m.body[k], CAR[k]); mesh.castShadow = k !== 'glow'; player.add(mesh); }
+    wheels = m.wheels.map((p) => { const w = new THREE.Group(); for (const k in m.wheel) if (m.wheel[k] && CAR[k]) { const mesh = new THREE.Mesh(m.wheel[k], CAR[k]); mesh.castShadow = true; w.add(mesh); } w.position.set(p[0], p[1], p[2]); player.add(w); return w; });
+    const shadow = new THREE.Mesh(new THREE.PlaneGeometry(m.width + 0.7, m.len * 2 + 0.7), new THREE.MeshBasicMaterial({ map: radial(64, [[0, 'rgba(0,0,0,0.6)'], [0.7, 'rgba(0,0,0,0.32)'], [1, 'rgba(0,0,0,0)']]), transparent: true, depthWrite: false }));
     shadow.rotation.x = -Math.PI / 2; shadow.position.y = 0.04; player.add(shadow); player.userData.shadow = shadow;
     playerCarId = id;
   }
@@ -428,9 +654,11 @@ export function createWorld() {
     updateChunks(W);
     // which place we're in: the light, the sky and the far hills follow it
     const here = E.segAt(W, E.segIndex(W.s)).st, key = PAL[here].key;
-    if (key !== R.lookKey) { R.lookKey = key; R.fade = R.look === null ? 1 : 0; R.look = here; setBackdrop(key); }
+    if (key !== R.lookKey) { R.lookKey = key; R.fade = R.look === null ? 1 : 0; R.look = here; setBackdrop(key); R.envDone = false; }
     R.fade = Math.min(1, R.fade + dt / 2.5);
-    setLook(here, R.fade >= 1 ? 1 : Math.min(1, dt * 1.2));
+    setLook(here, R.fade >= 1 && !R.envDone ? 1 : Math.min(1, dt * 1.2));
+    if (!R.envDone && (R.fade >= 1 || t - R.envT > 350)) { updateEnv(t); if (R.fade >= 1) R.envDone = true; }
+    SU.time.value = t / 1000;
 
     // ---- the car
     if (playerCarId !== W.car) makePlayer(W.car);
@@ -459,14 +687,13 @@ export function createWorld() {
     R.camYaw += dy * Math.min(1, dt * (cr ? 1.5 : 5.5));
     const fx = Math.sin(R.camYaw), fz = -Math.cos(R.camYaw);
     // the camera rides on the road, not on the car: over a crest the car is seen to leave the ground
-    const roadHere = POS.y - (W.h - E.heightAt(W, W.s)) * 0, groundY = Math.max(E.heightAt(W, W.s), E.heightAt(W, W.s - camDist)) + (cy - W.h);
+    const groundY = Math.max(E.heightAt(W, W.s), E.heightAt(W, W.s - camDist)) + (cy - W.h);
     R.camY = R.camInit ? R.camY + (groundY - R.camY) * Math.min(1, dt * 6) : groundY;
     V3.set(cx - fx * camDist, R.camY + camH, cz - fz * camDist);
     if (!R.camInit) { R.camPos.copy(V3); R.camInit = true; }
     R.camPos.lerp(V3, Math.min(1, dt * (cr ? 2 : 12)));
     R.camPos.y = V3.y;
     camera.position.copy(R.camPos);
-    void roadHere;
     if (W.shake > 0 && R.shakeOn !== false) camera.position.add(V4.set((Math.random() - 0.5) * W.shake * 0.02, (Math.random() - 0.5) * W.shake * 0.02, 0));
     V4.set(cx + fx * 7, R.camY + 1.05 + (cy - R.camY) * 0.35, cz + fz * 7);
     camera.lookAt(V4);
@@ -477,9 +704,10 @@ export function createWorld() {
     sky.position.copy(camera.position); stars.position.copy(camera.position);
     ringFar.position.set(camera.position.x, camera.position.y - (ringFar.userData.hz || 0) - 30, camera.position.z);
     sea.position.set(Math.round(camera.position.x / 100) * 100, 0, Math.round(camera.position.z / 100) * 100);
-    seaNorm.offset.x = (t / 1000) * 0.02; seaNorm.offset.y = (t / 1000) * 0.012;
-    const sd = R.sunDir || V4.set(0.3, 0.8, -0.5);
-    sunDisc.position.copy(camera.position).addScaledVector(sd, 2000);
+    seaNorm.offset.x = (t / 1000) * 0.012; seaNorm.offset.y = (t / 1000) * 0.008;
+    foamTex.offset.x = Math.sin(t / 1300) * 0.12; foamTex.offset.y = t / 14000; foamMat.opacity = 0.75 + Math.sin(t / 1300 + 1.2) * 0.15;
+    const sd = SU.sunDir.value;
+    moon.position.copy(camera.position).addScaledVector(sd, 2000);
     sun.position.set(cx + sd.x * 180, cy + sd.y * 180, cz + sd.z * 180); sun.target.position.set(cx, cy, cz);
     headlight.position.set(cx - fx * 0.5, cy + 1.1, cz - fz * 0.5); headlight.target.position.set(cx + fx * 30, cy, cz + fz * 30);
 
@@ -489,8 +717,7 @@ export function createWorld() {
       let m = traffic.get(c.id);
       if (!m) {
         const mm = MD.trafficModel(c.t, c.col); m = new THREE.Group();
-        const body = new THREE.Mesh(mm.lit, litMat); body.castShadow = true; m.add(body);
-        if (mm.glow) m.add(new THREE.Mesh(mm.glow, glowMat));
+        for (const k in mm) if (mm[k] && MAT[k]) { const mesh = new THREE.Mesh(mm[k], MAT[k]); mesh.castShadow = k !== 'glow'; m.add(mesh); }
         scene.add(m); traffic.set(c.id, m);
       }
       seen.add(c.id);
@@ -506,10 +733,10 @@ export function createWorld() {
     for (let i = Math.max(W.base, i0); i <= Math.min(i1, E.lastIndex(W)); i++) {
       const g = E.segAt(W, i); if (!g.coins) continue;
       for (const cn of g.coins) {
-        let up = 1.1, sc = 1;
-        if (cn.got) { const gt = W.t - cn.got; if (gt > 16) continue; up += gt * 0.25; sc = 1 + gt * 0.05; }
+        let up = 1.1, scl = 1;
+        if (cn.got) { const gt = W.t - cn.got; if (gt > 16) continue; up += gt * 0.25; scl = 1 + gt * 0.05; }
         place(W, i * SEG, cn.x, 0, POS);
-        TMP.position.set(POS.x, POS.y + up + Math.sin(t / 300 + i) * 0.12, POS.z); TMP.rotation.set(0, t / 260 + i * 0.4, 0); TMP.scale.setScalar(sc); TMP.updateMatrix();
+        TMP.position.set(POS.x, POS.y + up + Math.sin(t / 300 + i) * 0.12, POS.z); TMP.rotation.set(0, t / 260 + i * 0.4, 0); TMP.scale.setScalar(scl); TMP.updateMatrix();
         if (cn.nitro) { if (nn < 40) nitros.setMatrixAt(nn++, TMP.matrix); }
         else if (nc < 400) coins.setMatrixAt(nc++, TMP.matrix);
       }
@@ -520,12 +747,15 @@ export function createWorld() {
     let ng = 0;
     for (const [, ch] of R.chunks) {
       ch.children.forEach((o) => { const it = o.userData.it; if (it && it.done) { const age = W.t - it.done; if (age > 50) o.visible = false; else { o.position.y += 0.25 - age * 0.012; o.rotation.x += 0.15; o.rotation.z += 0.1; } } });
-      const L = ch.userData.lamps; if (L) for (let q = 0; q < L.length; q += 3) { if (ng >= 1200) break; glows.set(ng++, L[q], L[q + 1], L[q + 2], '#ffd98a', 14); }
+      const Lp = ch.userData.lamps; if (Lp) for (let q = 0; q < Lp.length; q += 3) { if (ng >= 1200) break; glows.set(ng++, Lp[q], Lp[q + 1], Lp[q + 2], '#ffd98a', 4.5); }
     }
     glows.draw(ng);
     effects(W, t, dt, cx, cy, cz, heading, travel);
     smoke.update(dt); sparks.update(dt);
-    renderer.render(scene, camera);
+    // ---- draw: straight to the screen on a slow PC, otherwise through the glow, the grade and the blur
+    R.boostK += ((W.boosting ? 1 : 0) - R.boostK) * Math.min(1, dt * 4); R.flash = Math.max(0, R.flash - dt * 2.2);
+    if (R.low) renderer.render(scene, camera);
+    else { GRADE_U.blur.value = R.boostK; GRADE_U.flash.value = R.flash * 0.5; composer.render(dt); }
     return renderer.domElement;
   }
   function gradeAt(W) { const a = E.heightAt(W, W.s + 2), b2 = E.heightAt(W, W.s - 2); return (a - b2) / 4; }
@@ -534,9 +764,9 @@ export function createWorld() {
   function effects(W, t, dt, cx, cy, cz, heading, travel) {
     const fx = Math.sin(heading), fz = -Math.cos(heading), rx = Math.cos(heading), rz = Math.sin(heading), len = carInfo ? carInfo.len : 2;
     const rear = (side) => [cx - fx * len * 0.62 + rx * side * 0.8, cy + 0.3, cz - fz * len * 0.62 + rz * side * 0.8];
-    if (W.drift && !W.air) for (const sd of [-1, 1]) { const p = rear(sd); smoke.emit(p[0], p[1], p[2], (Math.random() - 0.5) * 2, 1 + Math.random(), (Math.random() - 0.5) * 2, 1.6, 2.4, '#eeeeee', 0.55, 1.6); }
+    if (W.drift && !W.air) for (const sd of [-1, 1]) { const p = rear(sd); smoke.emit(p[0], p[1], p[2], (Math.random() - 0.5) * 2, 1 + Math.random(), (Math.random() - 0.5) * 2, 1.2, 2.2, '#f2f2f2', 0.34, 1.5); }
     if (W.off && W.v > 8) { const p = rear(Math.random() < 0.5 ? -1 : 1), pal = PAL[E.segAt(W, E.segIndex(W.s)).st]; smoke.emit(p[0], p[1], p[2], -fx * W.v * 0.1, 1.5, -fz * W.v * 0.1, 1.2, 1.3, pal.verge[0] || pal.grass[0], 0.5, 1.3); }
-    if (W.boosting) for (const sd of [-0.45, 0.45]) { const p = rear(sd); sparks.emit(p[0] - fx * 0.9, p[1] - 0.08, p[2] - fz * 0.9, -fx * 2 + (Math.random() - 0.5) * 0.6, 0.2, -fz * 2 + (Math.random() - 0.5) * 0.6, 0.22, 0.08, Math.random() < 0.5 ? '#ff9a3c' : '#5ab0ff', 1, 0.16); }
+    if (W.boosting) for (const sd of [-0.4, 0.4]) { const p = rear(sd); sparks.emit(p[0] - fx * 0.9, p[1] - 0.06, p[2] - fz * 0.9, -fx * 2 + (Math.random() - 0.5) * 0.6, 0.2, -fz * 2 + (Math.random() - 0.5) * 0.6, 0.26, 0.08, Math.random() < 0.5 ? '#ff9a3c' : '#5ab0ff', 1, 0.16); }
     // skid marks while drifting
     if (W.drift && !W.air) { const a = rear(-1), b = rear(1); skid.add(a, b, R.prevSkid); R.prevSkid = [a, b]; } else R.prevSkid = null;
     // what the rules say happened
@@ -546,13 +776,14 @@ export function createWorld() {
       const x = POS.x, y = W.h + 0.8, z = POS.z;
       switch (f.k) {
         case 'coin': for (let i = 0; i < 10; i++) sparks.emit(x, y + 0.6, z, (Math.random() - 0.5) * 6, Math.random() * 5, (Math.random() - 0.5) * 6, 0.25, 0.5, '#ffe066', 1, 0.6); break;
-        case 'nitro': for (let i = 0; i < 18; i++) sparks.emit(x, y + 0.6, z, (Math.random() - 0.5) * 8, Math.random() * 6, (Math.random() - 0.5) * 8, 0.3, 0.6, '#5aa9ff', 1, 0.7); break;
+        case 'nitro': for (let i = 0; i < 18; i++) sparks.emit(x, y + 0.6, z, (Math.random() - 0.5) * 8, Math.random() * 6, (Math.random() - 0.5) * 8, 0.3, 0.6, '#5aa9ff', 1, 0.7); R.flash = Math.max(R.flash, 0.25); break;
         case 'leaves': for (let i = 0; i < 26; i++) smoke.emit(x, y, z, (Math.random() - 0.5) * 8, 2 + Math.random() * 6, (Math.random() - 0.5) * 8, 0.25, 1.2, ['#3c8a3a', '#64b852', '#c8641e', '#ffd31a', '#e63946'][i % 5], 1, 0.3, 9); break;
         case 'bump': for (let i = 0; i < 14; i++) sparks.emit(x, y, z, (Math.random() - 0.5) * 8, Math.random() * 4, (Math.random() - 0.5) * 8, 0.18, 0.4, '#ffd27a', 1, 0.5, 9); break;
         case 'sparks': for (let i = 0; i < 8; i++) sparks.emit(x, y - 0.4, z, (Math.random() - 0.5) * 3 - Math.sin(heading) * 6, Math.random() * 3, (Math.random() - 0.5) * 3 + Math.cos(heading) * 6, 0.16, 0.35, '#ffd27a', 1, 0.4, 9); break;
         case 'crash':
           for (let i = 0; i < 30; i++) sparks.emit(x, y, z, (Math.random() - 0.5) * 12, Math.random() * 8, (Math.random() - 0.5) * 12, 0.3, 0.8, ['#ffb347', '#ff6a3d', '#ffe08a'][i % 3], 1, 0.7, 9);
           for (let i = 0; i < 24; i++) smoke.emit(x, y, z, (Math.random() - 0.5) * 4, 1 + Math.random() * 3, (Math.random() - 0.5) * 4, 1.5, 3, '#777777', 0.6, 1.8);
+          R.flash = Math.max(R.flash, 0.5);
           break;
         case 'land': for (let i = 0; i < 14; i++) smoke.emit(x + (Math.random() - 0.5) * 2, W.h + 0.2, z + (Math.random() - 0.5) * 2, (Math.random() - 0.5) * 6, 1, (Math.random() - 0.5) * 6, 1.2, 1.2, '#d8d0c0', 0.5, 1.4); break;
         case 'fireworks': for (let b2 = 0; b2 < 6; b2++) { const ox = x + Math.sin(heading) * 60 + (Math.random() - 0.5) * 60, oz = z - Math.cos(heading) * 60 + (Math.random() - 0.5) * 60, oy = W.h + 30 + Math.random() * 20, cc = ['#ff5a5f', '#ffd23f', '#5aa9ff', '#7cff8a'][b2 % 4]; for (let i = 0; i < 50; i++) { const a = Math.random() * 6.28, e = Math.random() * 3.14 - 1.57, sp = 10 + Math.random() * 6; sparks.emit(ox, oy, oz, Math.cos(a) * Math.cos(e) * sp, Math.sin(e) * sp, Math.sin(a) * Math.cos(e) * sp, 0.7, 1.6, cc, 1, 1.2, 3); } } break;
@@ -561,41 +792,68 @@ export function createWorld() {
   }
 
   function reset(W) {
-    R.W = W; R.poseHi = -1; R.camInit = false; R.fxN = W.fxN || 0; R.lookKey = ''; R.look = null; R.built = 0; R.stubKey = null; R.prevSkid = null;
+    R.W = W; R.poseHi = -1; R.camInit = false; FBC.clear(); R.fxN = W.fxN || 0; R.lookKey = ''; R.look = null; R.built = 0; R.stubKey = null; R.prevSkid = null; R.envDone = false; R.flash = 0;
     for (const [, ch] of R.chunks) dropChunk(ch); R.chunks.clear();
     R.stubs.forEach((m) => { scene.remove(m); m.geometry.dispose(); }); R.stubs = [];
     for (const [, m] of traffic) scene.remove(m); traffic.clear();
     smoke.clear(); sparks.clear(); skid.clear();
     if (W.segs.length && W.segs[0].i === 0) { W.segs[0].px = 0; W.segs[0].pz = 0; W.segs[0].th = 0; }
   }
-  function setSize(w, h) { if (w === R.w && h === R.h) return; R.w = w; R.h = h; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
-  function quality(low) { R.low = low; renderer.shadowMap.enabled = !low; sun.castShadow = !low; R.view = low ? 650 : E.VIEW; renderer.shadowMap.needsUpdate = true; }
-  return { render: render, setSize: setSize, quality: quality, reset: () => { R.W = null; }, setShake: (on) => { R.shakeOn = on; }, renderer: renderer, debugCam: (v) => { R.debugCam = v; } };
+  function setSize(w, h) { if (w === R.w && h === R.h) return; R.w = w; R.h = h; renderer.setSize(w, h, false); composer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+  function quality(low) {
+    R.low = low; renderer.shadowMap.enabled = !low; sun.castShadow = !low; R.view = low ? 650 : E.VIEW; renderer.shadowMap.needsUpdate = true;
+    skyMat.defines.OCT = low ? 3 : 5; skyMat.needsUpdate = true;
+    for (const [, ch] of R.chunks) ch.userData.dirty = true;   // rebuilt with less far scenery
+  }
+  return { render: render, setSize: setSize, quality: quality, reset: () => { R.W = null; }, setShake: (on) => { R.shakeOn = on; }, renderer: renderer, scene: scene, camera: camera, debugCam: (v) => { R.debugCam = v; } };
 }
 
 // ---------------------------------------------------------------- textures made on the spot
 function radial(size, stops) { const c = canvas(size, size), x = c.getContext('2d'), g = x.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2); stops.forEach((s) => g.addColorStop(s[0], s[1])); x.fillStyle = g; x.fillRect(0, 0, size, size); return tex(c); }
 function roadTexture() {   // asphalt with the lane lines: across = the road's width, along = 9 metres
-  const c = canvas(256, 256), x = c.getContext('2d'), r = E.rnd(5);
-  x.fillStyle = '#6a6e74'; x.fillRect(0, 0, 256, 256);
-  for (let i = 0; i < 2600; i++) { x.globalAlpha = 0.08 + r() * 0.12; x.fillStyle = r() < 0.5 ? '#585c62' : '#7c8086'; x.fillRect(r() * 256, r() * 256, 1 + r() * 2, 1 + r() * 2); }
-  x.globalAlpha = 1; x.fillStyle = 'rgba(40,42,46,0.25)'; x.fillRect(256 * 0.2, 0, 256 * 0.1, 256); x.fillRect(256 * 0.7, 0, 256 * 0.1, 256);   // the wheel tracks
-  x.fillStyle = '#f4f4f4';
-  for (const u of [1 / 3, 2 / 3]) x.fillRect(256 * u - 3, 0, 6, 256 * 0.42);   // lane dashes
-  x.fillRect(4, 0, 5, 256); x.fillRect(247, 0, 5, 256);   // edge lines
+  const S = 512, c = canvas(S, S), x = c.getContext('2d'), r = E.rnd(5);
+  x.fillStyle = '#74787e'; x.fillRect(0, 0, S, S);
+  for (let i = 0; i < 16000; i++) { x.globalAlpha = 0.07 + r() * 0.13; x.fillStyle = r() < 0.5 ? '#5c6066' : '#8a8e94'; x.fillRect(r() * S, r() * S, 1 + r() * 2, 1 + r() * 2); }
+  for (let i = 0; i < 40; i++) { x.globalAlpha = 0.05; x.fillStyle = '#3a3c40'; x.beginPath(); x.ellipse(r() * S, r() * S, 10 + r() * 40, 6 + r() * 20, r() * 3, 0, 6.28); x.fill(); }   // patches and stains
+  x.globalAlpha = 1; x.fillStyle = 'rgba(40,42,46,0.22)'; x.fillRect(S * 0.19, 0, S * 0.11, S); x.fillRect(S * 0.7, 0, S * 0.11, S);   // the wheel tracks
+  x.fillStyle = '#f6f6f2';
+  for (const u of [1 / 3, 2 / 3]) x.fillRect(S * u - 5, 0, 10, S * 0.42);   // lane dashes
+  x.fillRect(8, 0, 9, S); x.fillRect(S - 17, 0, 9, S);   // edge lines
   return tex(c, true);
 }
+function groundDetail() {   // a pale grain laid over the land's colours (grass blades, sand grains), the same everywhere
+  const S = 256, c = canvas(S, S), x = c.getContext('2d'), r = E.rnd(17);
+  x.fillStyle = '#f2f2f2'; x.fillRect(0, 0, S, S);
+  for (let i = 0; i < 2600; i++) {
+    const l = 175 + r() * 80, px = r() * S, py = r() * S, h = 3 + r() * 6, lean = (r() - 0.5) * 3;
+    x.strokeStyle = 'rgba(' + (l | 0) + ',' + (l | 0) + ',' + (l | 0) + ',0.5)'; x.lineWidth = 1 + r();
+    x.beginPath(); x.moveTo(px, py); x.lineTo(px + lean, py - h); x.stroke();
+    for (const o of [-S, S]) { if (px + o >= -10 && px + o <= S + 10) { x.beginPath(); x.moveTo(px + o, py); x.lineTo(px + o + lean, py - h); x.stroke(); } }
+  }
+  return tex(c, true);
+}
+function foamTexture() {   // white water: strongest at the water's edge (the middle, across), broken up along the shore
+  const W = 64, H = 256, c = canvas(W, H), x = c.getContext('2d'), img = x.createImageData(W, H), r = E.rnd(23), bumps = [];
+  for (let i = 0; i < 18; i++) bumps.push([r() * H, 6 + r() * 20, r()]);
+  for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) {
+    const u = i / (W - 1); let n = 0; for (const b of bumps) { let dv = Math.abs(j - b[0]); dv = Math.min(dv, H - dv); n += Math.exp(-dv * dv / (b[1] * b[1])) * b[2]; }
+    const band = Math.exp(-Math.pow((u - 0.55) / 0.18, 2)), lace = 0.5 + 0.5 * Math.sin(j * 0.31 + Math.sin(i * 0.4) * 2), a = clamp(band * (0.55 + n * 0.5) * (0.75 + lace * 0.25) + Math.exp(-Math.pow((u - 0.3) / 0.08, 2)) * 0.35 * lace, 0, 1);
+    const k = (j * W + i) * 4; img.data[k] = 255; img.data[k + 1] = 255; img.data[k + 2] = 255; img.data[k + 3] = a * 255;
+  }
+  x.putImageData(img, 0, 0);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = THREE.ClampToEdgeWrapping; t.wrapT = THREE.RepeatWrapping; return t;
+}
 function waveNormals() {
-  const size = 128, c = canvas(size, size), x = c.getContext('2d'), img = x.createImageData(size, size), r = E.rnd(11), W = [];
-  for (let i = 0; i < 12; i++) W.push({ fx: Math.round(1 + r() * 6) * (r() < 0.5 ? -1 : 1), fy: Math.round(1 + r() * 7), a: 0.6 / (1 + i * 0.35), p: r() * 6.28 });
+  const size = 256, c = canvas(size, size), x = c.getContext('2d'), img = x.createImageData(size, size), r = E.rnd(11), W = [];
+  for (let i = 0; i < 18; i++) W.push({ fx: Math.round(1 + r() * 9) * (r() < 0.5 ? -1 : 1), fy: Math.round(1 + r() * 10), a: 0.6 / (1 + i * 0.3), p: r() * 6.28 });
   const H = (u, v) => { let s = 0; for (const w of W) s += Math.sin((w.fx * u + w.fy * v) * Math.PI * 2 + w.p) * w.a; return s; };
   const e = 1 / size;
   for (let j = 0; j < size; j++) for (let i = 0; i < size; i++) {
-    const u = i / size, v = j / size, dx = (H(u + e, v) - H(u - e, v)) * 3, dy = (H(u, v + e) - H(u, v - e)) * 3, n = Math.hypot(dx, dy, 1), k = (j * size + i) * 4;
+    const u = i / size, v = j / size, dx = (H(u + e, v) - H(u - e, v)) * 2.4, dy = (H(u, v + e) - H(u, v - e)) * 2.4, n = Math.hypot(dx, dy, 1), k = (j * size + i) * 4;
     img.data[k] = (-dx / n * 0.5 + 0.5) * 255; img.data[k + 1] = (-dy / n * 0.5 + 0.5) * 255; img.data[k + 2] = (1 / n * 0.5 + 0.5) * 255; img.data[k + 3] = 255;
   }
   x.putImageData(img, 0, 0);
-  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; return t;
+  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = 8; return t;
 }
 function paintSign(key) {   // the faces of the signs: gates, direction boards, the split, the 365 boards, chevrons
   const parts = key.split('|'), kind = parts[0];
@@ -650,26 +908,23 @@ function makeStars() {
   const n = 900, pos = new Float32Array(n * 3), r = E.rnd(21);
   for (let i = 0; i < n; i++) { const a = r() * 6.28, e = 0.05 + Math.pow(r(), 0.7) * 1.4; pos[i * 3] = Math.cos(a) * Math.cos(e) * 2400; pos[i * 3 + 1] = Math.sin(e) * 2400; pos[i * 3 + 2] = Math.sin(a) * Math.cos(e) * 2400; }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  const p = new THREE.Points(g, new THREE.PointsMaterial({ color: '#ffffff', size: 2.2, sizeAttenuation: false, fog: false, depthWrite: false })); p.renderOrder = -9;
+  const p = new THREE.Points(g, new THREE.PointsMaterial({ color: '#ffffff', size: 2.2, sizeAttenuation: false, fog: false, depthWrite: false })); p.renderOrder = -9; p.frustumCulled = false;
   return p;
 }
+const BLOB_FS = 'varying vec3 vC; varying float vA; void main(){ vec2 d = gl_PointCoord - 0.5; float r = dot(d,d) * 4.0; if (r > 1.0) discard; gl_FragColor = vec4(vC, vA * (1.0 - r) * (1.0 - r));\n#include <tonemapping_fragment>\n#include <colorspace_fragment>\n}';
+const BLOB_VS = 'attribute float size; attribute float alpha; varying vec3 vC; varying float vA; uniform float scale; void main(){ vC = color; vA = alpha; vec4 mv = modelViewMatrix * vec4(position,1.0); gl_PointSize = min(size * scale / -mv.z, 260.0); gl_Position = projectionMatrix * mv; }';
 function particles(n, add) {   // a pool of soft round blobs: smoke and dust (normal), sparks and flames (added light)
   const pos = new Float32Array(n * 3), col = new Float32Array(n * 3), size = new Float32Array(n), alpha = new Float32Array(n), P = [];
   for (let i = 0; i < n; i++) P.push({ life: 0, max: 0 });
   const g = new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3)); g.setAttribute('size', new THREE.BufferAttribute(size, 1)); g.setAttribute('alpha', new THREE.BufferAttribute(alpha, 1));
-  const mat = new THREE.ShaderMaterial({
-    uniforms: { scale: { value: 600 } }, transparent: true, depthWrite: false, blending: add ? THREE.AdditiveBlending : THREE.NormalBlending,
-    vertexShader: 'attribute float size; attribute float alpha; varying vec3 vC; varying float vA; uniform float scale; void main(){ vC = color; vA = alpha; vec4 mv = modelViewMatrix * vec4(position,1.0); gl_PointSize = size * scale / -mv.z; gl_Position = projectionMatrix * mv; }',
-    fragmentShader: 'varying vec3 vC; varying float vA; void main(){ vec2 d = gl_PointCoord - 0.5; float r = dot(d,d) * 4.0; if (r > 1.0) discard; gl_FragColor = vec4(vC, vA * (1.0 - r) * (1.0 - r)); }',
-    vertexColors: true
-  });
-  const points = new THREE.Points(g, mat); points.frustumCulled = false;
+  const mat = new THREE.ShaderMaterial({ uniforms: { scale: { value: 600 } }, transparent: true, depthWrite: false, blending: add ? THREE.AdditiveBlending : THREE.NormalBlending, vertexShader: BLOB_VS, fragmentShader: BLOB_FS, vertexColors: true });
+  const points = new THREE.Points(g, mat); points.frustumCulled = false; points.renderOrder = 3;
   let next = 0;
   const C2 = new THREE.Color();
   return {
     points: points,
-    emit(x, y, z, vx, vy, vz, s0, s1, hex, a0, life, grav) { const i = next; next = (next + 1) % n; const p = P[i]; p.x = x; p.y = y; p.z = z; p.vx = vx; p.vy = vy; p.vz = vz; p.s0 = s0; p.s1 = s1; p.a0 = a0; p.life = 0; p.max = life; p.g = grav || 0; C2.set(hex); col[i * 3] = C2.r; col[i * 3 + 1] = C2.g; col[i * 3 + 2] = C2.b; },
+    emit(x, y, z, vx, vy, vz, s0, s1, hex, a0, life, grav) { const i = next; next = (next + 1) % n; const p = P[i]; p.x = x; p.y = y; p.z = z; p.vx = vx; p.vy = vy; p.vz = vz; p.s0 = s0; p.s1 = s1; p.a0 = a0; p.life = 0; p.max = life; p.g = grav || 0; C2.set(hex); if (add) C2.multiplyScalar(2.2); col[i * 3] = C2.r; col[i * 3 + 1] = C2.g; col[i * 3 + 2] = C2.b; },
     update(dt) {
       for (let i = 0; i < n; i++) {
         const p = P[i];
@@ -686,12 +941,8 @@ function glowPoints(n) {   // halos round the lamps at night
   const pos = new Float32Array(n * 3), col = new Float32Array(n * 3), size = new Float32Array(n), alpha = new Float32Array(n);
   const g = new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3)); g.setAttribute('size', new THREE.BufferAttribute(size, 1)); g.setAttribute('alpha', new THREE.BufferAttribute(alpha, 1));
-  const mat = new THREE.ShaderMaterial({
-    uniforms: { scale: { value: 600 } }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, vertexColors: true,
-    vertexShader: 'attribute float size; attribute float alpha; varying vec3 vC; varying float vA; uniform float scale; void main(){ vC = color; vA = alpha; vec4 mv = modelViewMatrix * vec4(position,1.0); gl_PointSize = size * scale / -mv.z; gl_Position = projectionMatrix * mv; }',
-    fragmentShader: 'varying vec3 vC; varying float vA; void main(){ vec2 d = gl_PointCoord - 0.5; float r = dot(d,d) * 4.0; if (r > 1.0) discard; gl_FragColor = vec4(vC, vA * (1.0 - r) * (1.0 - r)); }'
-  });
-  const points = new THREE.Points(g, mat); points.frustumCulled = false;
+  const mat = new THREE.ShaderMaterial({ uniforms: { scale: { value: 600 } }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, vertexColors: true, vertexShader: BLOB_VS, fragmentShader: BLOB_FS });
+  const points = new THREE.Points(g, mat); points.frustumCulled = false; points.renderOrder = 3;
   const C2 = new THREE.Color();
   return { points: points, set(i, x, y, z, hex, s) { pos[i * 3] = x; pos[i * 3 + 1] = y; pos[i * 3 + 2] = z; C2.set(hex); col[i * 3] = C2.r; col[i * 3 + 1] = C2.g; col[i * 3 + 2] = C2.b; size[i] = s; alpha[i] = 0.55; },
     draw(count) { g.setDrawRange(0, count); points.visible = count > 0; for (const k of ['position', 'color', 'size', 'alpha']) g.attributes[k].needsUpdate = true; } };
@@ -703,5 +954,5 @@ function skidMarks() {   // dark stripes left on the road by a drift
   mesh.frustumCulled = false; let k = 0;
   const strip = (a, b, w) => { const dx = b[0] - a[0], dz = b[2] - a[2], L = Math.hypot(dx, dz) || 1, nx = -dz / L * w, nz = dx / L * w, o = (k % N) * 18; const y0 = a[1] - 0.26, y1 = b[1] - 0.26;
     pos.set([a[0] - nx, y0, a[2] - nz, b[0] - nx, y1, b[2] - nz, b[0] + nx, y1, b[2] + nz, a[0] - nx, y0, a[2] - nz, b[0] + nx, y1, b[2] + nz, a[0] + nx, y0, a[2] + nz], o); k++; };
-  return { mesh: mesh, add(a, b, prev) { if (!prev) return; strip(prev[0], a, 0.14); strip(prev[1], b, 0.14); g.attributes.position.needsUpdate = true; }, clear() { pos.fill(0); g.attributes.position.needsUpdate = true; } };
+  return { mesh: mesh, add(a, b, prev) { if (!prev || Math.hypot(a[0] - prev[0][0], a[2] - prev[0][2]) > 6) return; strip(prev[0], a, 0.14); strip(prev[1], b, 0.14); g.attributes.position.needsUpdate = true; }, clear() { pos.fill(0); g.attributes.position.needsUpdate = true; } };
 }

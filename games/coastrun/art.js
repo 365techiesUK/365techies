@@ -99,7 +99,7 @@
   var BG = {
     bournemouth: function (far, near) {
       var r = rnd(101);
-      for (var i = 0; i < 9; i++) cloud(far, r() * BG_W, 20 + r() * 40, 40 + r() * 60, '#ffffff', 'rgba(140,170,200,0.35)');
+      for (var i = 0; i < 9; i++) { var c0 = [r() * BG_W, 20 + r() * 40, 40 + r() * 60]; if (!SKY3D) cloud(far, c0[0], c0[1], c0[2], '#ffffff', 'rgba(140,170,200,0.35)'); }
       hills(far, r, HZ, 10, 3, '#9fb7a6', 0.5);
       far.fillStyle = '#a7c3b4'; far.fillRect(0, HZ - 3, BG_W, 3);
       P(far, [80, HZ, 120, HZ - 14, 190, HZ - 18, 240, HZ - 6, 250, HZ], '#b6cbb9'); P(far, [240, HZ - 6, 250, HZ, 244, HZ, 238, HZ - 5], '#f2efe6');
@@ -115,7 +115,7 @@
     },
     purbeck: function (far, near) {
       var r = rnd(202);
-      for (var i = 0; i < 8; i++) cloud(far, r() * BG_W, 18 + r() * 34, 50 + r() * 60, '#ffffff', 'rgba(150,170,200,0.3)');
+      for (var i = 0; i < 8; i++) { var c0 = [r() * BG_W, 18 + r() * 34, 50 + r() * 60]; if (!SKY3D) cloud(far, c0[0], c0[1], c0[2], '#ffffff', 'rgba(150,170,200,0.3)'); }
       hills(far, r, HZ, 26, 3, '#9cbf9a', 0.8);
       SPR_BG(far, 'castle', 520, HZ - 18, 120);
       hills(near, r, HZ + 6, 22, 4, '#6faa4f', 1);
@@ -123,15 +123,15 @@
     },
     forest: function (far, near) {
       var r = rnd(303);
-      for (var i = 0; i < 6; i++) cloud(far, r() * BG_W, 26 + r() * 30, 60 + r() * 50, '#fff8ea', 'rgba(200,170,130,0.3)');
+      for (var i = 0; i < 6; i++) { var c0 = [r() * BG_W, 26 + r() * 30, 60 + r() * 50]; if (!SKY3D) cloud(far, c0[0], c0[1], c0[2], '#fff8ea', 'rgba(200,170,130,0.3)'); }
       hills(far, r, HZ, 12, 3, '#8fa6b8', 0.6);
       treeline(near, r, HZ + 8, 30, ['#6b4a1e', '#a0561e', '#c47a26', '#7a6a22', '#3a4a22', '#b8902a'], 12);
     },
     jurassic: function (far, near) {
       var r = rnd(404), sx = 610, sy = HZ - 12;
-      far.fillStyle = rg(far, sx, sy, 4, 160, [[0, 'rgba(255,240,180,0.95)'], [0.15, 'rgba(255,190,90,0.5)'], [1, 'rgba(255,140,60,0)']]); far.fillRect(0, 0, BG_W, BG_H);
-      circ(far, sx, sy, 22, '#fff1c2'); circ(far, sx, sy, 19, '#ffe08a');
-      for (var i = 0; i < 12; i++) { (function (y, x0, w, hh0) { wrap(x0, w, function (x) { ell(far, x, y, w, hh0, 'rgba(255,170,120,0.55)'); ell(far, x, y + 2, w * 0.9, 1.6, 'rgba(120,60,90,0.35)'); }); })(14 + r() * 60, r() * BG_W, 60 + r() * 140, 2.5 + r() * 2); }
+      if (!SKY3D) { far.fillStyle = rg(far, sx, sy, 4, 160, [[0, 'rgba(255,240,180,0.95)'], [0.15, 'rgba(255,190,90,0.5)'], [1, 'rgba(255,140,60,0)']]); far.fillRect(0, 0, BG_W, BG_H);
+      circ(far, sx, sy, 22, '#fff1c2'); circ(far, sx, sy, 19, '#ffe08a'); }
+      for (var i = 0; i < 12; i++) { (function (y, x0, w, hh0) { if (!SKY3D) wrap(x0, w, function (x) { ell(far, x, y, w, hh0, 'rgba(255,170,120,0.55)'); ell(far, x, y + 2, w * 0.9, 1.6, 'rgba(120,60,90,0.35)'); }); })(14 + r() * 60, r() * BG_W, 60 + r() * 140, 2.5 + r() * 2); }
       P(far, [700, HZ, 760, HZ - 18, 860, HZ - 24, 960, HZ - 10, 1000, HZ], '#7a4a6a'); P(far, [100, HZ, 140, HZ - 10, 260, HZ - 14, 320, HZ], '#8a5a72');
       seaBand(far, HZ, ['#6a5a8a', '#3f4f80'], null);
       var gr = rg(far, sx, HZ + 4, 2, 120, [[0, 'rgba(255,220,140,0.9)'], [1, 'rgba(255,160,80,0)']]); far.fillStyle = gr;
@@ -140,10 +140,10 @@
     },
     harbour: function (far, near) {
       var r = rnd(505);
-      for (var i = 0; i < 220; i++) circ(far, r() * BG_W, Math.pow(r(), 1.6) * (HZ - 20), r() < 0.1 ? 0.9 : 0.5, 'rgba(255,255,255,' + (0.4 + r() * 0.6) + ')');
-      circ(far, 860, 30, 10, '#f4f1e0'); circ(far, 856, 28, 10, 'rgba(16,26,68,0.0)');
+      for (var i = 0; i < 220; i++) { var s0 = [r() * BG_W, Math.pow(r(), 1.6) * (HZ - 20), r() < 0.1 ? 0.9 : 0.5, 0.4 + r() * 0.6]; if (!SKY3D) circ(far, s0[0], s0[1], s0[2], 'rgba(255,255,255,' + s0[3] + ')'); }
+      if (!SKY3D) { circ(far, 860, 30, 10, '#f4f1e0'); circ(far, 856, 28, 10, 'rgba(16,26,68,0.0)');
       far.fillStyle = rg(far, 860, 30, 8, 60, [[0, 'rgba(240,240,220,0.35)'], [1, 'rgba(240,240,220,0)']]); far.fillRect(780, 0, 160, 100);
-      far.fillStyle = rg(far, 400, HZ, 10, 300, [[0, 'rgba(255,170,90,0.35)'], [1, 'rgba(255,170,90,0)']]); far.fillRect(0, 0, BG_W, BG_H);
+      far.fillStyle = rg(far, 400, HZ, 10, 300, [[0, 'rgba(255,170,90,0.35)'], [1, 'rgba(255,170,90,0)']]); far.fillRect(0, 0, BG_W, BG_H); }
       for (var x = 0; x < BG_W - 20; x += 8 + r() * 14) {
         var h = 8 + Math.pow(r(), 2) * 40, w = 8 + r() * 16; rr(far, x, HZ - h, w, h, 0.5, '#0b1020');
         for (var wy = HZ - h + 3; wy < HZ - 2; wy += 4) for (var wx = x + 2; wx < x + w - 2; wx += 3) if (r() < 0.35) rr(far, wx, wy, 1.2, 1.4, 0.2, r() < 0.8 ? '#ffd27a' : '#cfe8ff');
@@ -153,8 +153,8 @@
     },
     needles: function (far, near) {
       var r = rnd(606);
-      for (var i = 0; i < 14; i++) { (function (y, x0, w, hh0) { wrap(x0, w, function (x) { ell(far, x, y, w, hh0, 'rgba(255,230,235,0.45)'); }); })(14 + r() * 50, r() * BG_W, 80 + r() * 160, 3 + r() * 3); }
-      far.fillStyle = rg(far, 300, HZ, 4, 200, [[0, 'rgba(255,230,190,0.8)'], [1, 'rgba(255,200,180,0)']]); far.fillRect(0, 0, BG_W, BG_H);
+      for (var i = 0; i < 14; i++) { (function (y, x0, w, hh0) { if (!SKY3D) wrap(x0, w, function (x) { ell(far, x, y, w, hh0, 'rgba(255,230,235,0.45)'); }); })(14 + r() * 50, r() * BG_W, 80 + r() * 160, 3 + r() * 3); }
+      if (!SKY3D) { far.fillStyle = rg(far, 300, HZ, 4, 200, [[0, 'rgba(255,230,190,0.8)'], [1, 'rgba(255,200,180,0)']]); far.fillRect(0, 0, BG_W, BG_H); }
       P(far, [500, HZ, 540, HZ - 16, 700, HZ - 22, 820, HZ - 18, 900, HZ], '#d9c9d2'); P(far, [500, HZ, 540, HZ - 16, 560, HZ - 15, 548, HZ], '#f6efe8');
       seaBand(far, HZ, ['#9fb3d0', '#7b97bd'], 'rgba(255,240,230,0.7)');
       hills(near, r, HZ + 10, 16, 3, '#6f9a52', 0.7);
@@ -162,8 +162,10 @@
   };
   function SPR_BG(c, t, x, y, w) { var S = SPR[t], m = sprite(t, 0, false, null)[0], h = w * S.h / S.w; c.drawImage(m, x - w / 2, y - h, w, h); }
   var bgCache = {};
-  function bg(key, res) {   // {far, near} canvases for a place, painted at res pixels per game unit
-    var k = key + '|' + res; if (bgCache[k]) return bgCache[k];
+  var SKY3D = false;   // the 3D game draws its own sky (clouds, sun, moon, stars): the panorama is then just the land and sea
+  function bg(key, res, sky3d) {   // {far, near} canvases for a place, painted at res pixels per game unit
+    var k = key + '|' + res + '|' + !!sky3d; if (bgCache[k]) return bgCache[k];
+    SKY3D = !!sky3d;
     var out = {}, mk = function () { var c = canvas(BG_W * res, BG_H * res), x = c.getContext('2d'); x.scale(res, res); return [c, x]; };
     var f = mk(), n = mk();
     BG[key](f[1], n[1]);

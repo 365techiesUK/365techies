@@ -2,9 +2,9 @@
  * (window.CREngine); the 3D picture is world3d.js (three.js); this file puts the arcade cabinet together
  * (../common/arcade.js), draws the dashboard over the 3D picture (time, score, where you are, speed, boost, the lights,
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
- * car. The music is an optional driving tune (Settings > Music, off unless switched on). A browser without 3D graphics
+ * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=1';
+import { createWorld } from './world3d.js?v=2';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 const GW = 384, GH = 224;
@@ -185,11 +185,12 @@ function sound(name, S, e) {
     case 'boost': S.noise(0.8, 0.14, 300, { type: 'bandpass', q: 1.2, to: 3000, verb: 0.3 }); S.tone(160, 0.6, 0.06, { type: 'sawtooth', to: 320 }); break;
     case 'check': [523, 659, 784, 1047, 784, 1047, 1319].forEach((f, k) => S.tone(f, 0.14, 0.055, { type: 'square', when: k * 0.08, verb: 0.4 })); break;
     case 'goal':
+      if (sting('goal')) break;
       [523, 659, 784, 1047, 1319, 1568].forEach((f, k) => S.tone(f, 0.2, 0.06, { type: 'square', when: k * 0.09, verb: 0.45 }));
       [1047, 1319, 1568, 2093].forEach((f) => S.tone(f, 1.1, 0.03, { type: 'triangle', when: 0.6, verb: 0.5 }));
       break;
     case 'tick': S.tone(n <= 5 ? 1320 : 990, 0.07, 0.06, { type: 'square' }); break;
-    case 'timeup': [523, 440, 349, 262].forEach((f, k) => S.tone(f, 0.3, 0.07, { type: 'triangle', when: k * 0.24, verb: 0.4 })); break;
+    case 'timeup': if (sting('timeup')) break; [523, 440, 349, 262].forEach((f, k) => S.tone(f, 0.3, 0.07, { type: 'triangle', when: k * 0.24, verb: 0.4 })); break;
     case 'fork': S.tone(784, 0.14, 0.05, { type: 'triangle', verb: 0.3 }); S.tone(1175, 0.2, 0.05, { type: 'triangle', when: 0.1, verb: 0.3 }); break;
     case 'skid': S.noise(0.35, 0.07, 2600, { type: 'bandpass', q: 9, to: 2200 }); break;
     case 'driftend': S.tone(988, 0.1, 0.04, { type: 'square', verb: 0.3 }); S.tone(1319, 0.16, 0.04, { type: 'square', when: 0.07, verb: 0.3 }); break;
@@ -215,16 +216,60 @@ function makeAudio(a, bus) {
   return o;
 }
 const GEARS = [0, 0.19, 0.37, 0.56, 0.76, 0.98, 1.4];
-const BPM = 128, ST16 = 60 / BPM / 4;
-let nextT = 0, stepN = 0;
-const SONG = [[[110, 220], [659, 880, 988, 1319]], [[87.3, 174.6], [659, 880, 1047, 1319]], [[98, 196], [587, 784, 988, 1175]], [[82.4, 164.8], [494, 659, 831, 988]]];
+// the music: a track for each place (made with ACE-Step, tools/coastrun/gen_music.py), fading from one to the next at the
+// checkpoints, a jingle at the goal and a sting when time runs out. Files in music/; loaded as they're needed.
+const LOOPS = { title: 1, bournemouth: 1, purbeck: 1, forest: 1, jurassic: 1, harbour: 1, needles: 1 };
+const MBUF = {}, MLOAD = {}, MUS = { cur: null, gain: null, sting: null, stingEnd: 0, on: false };
+function loadMusic(a, name) {
+  if (!name || MBUF[name] || MLOAD[name]) return; MLOAD[name] = true;
+  fetch('music/' + name + '.mp3').then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(r.status))).then((b) => a.decodeAudioData(b)).then((buf) => { MBUF[name] = buf; }).catch(() => { MLOAD[name] = false; });
+}
+function voice(a, name, fadeIn) {
+  const src = a.createBufferSource(), g = a.createGain(), b = MBUF[name];
+  src.buffer = b; g.gain.setValueAtTime(0.0001, a.currentTime); g.gain.exponentialRampToValueAtTime(1, a.currentTime + fadeIn);
+  src.connect(g); g.connect(MUS.gain); src.start();
+  return { name: name, src: src, g: g, t0: a.currentTime, dur: b.duration };
+}
+function hush(a, v, d) { try { v.g.gain.cancelScheduledValues(a.currentTime); v.g.gain.setValueAtTime(Math.max(0.0001, v.g.gain.value), a.currentTime); v.g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + d); v.src.stop(a.currentTime + d + 0.05); } catch (e) {} }
+function placeTrack(W) { const g = W && E.segAt(W, E.segIndex(W.s)); return g ? ART.PAL[g.st].key : 'bournemouth'; }
+function music(W, S, mode, SET) {
+  MUS.on = SET.music !== false && SET.sound;
+  const a = SET.sound ? S.ctx() : S.existing();
+  if (!a) return;
+  if (!MUS.gain) { MUS.gain = a.createGain(); MUS.gain.gain.value = 0.0001; MUS.gain.connect(S.bus() || a.destination); }
+  const now = a.currentTime, demo = !W || W.demo;
+  let want = null;
+  if (MUS.on) {
+    if (MUS.sting && now < MUS.stingEnd) want = MUS.sting;
+    else { MUS.sting = null; want = mode === 'title' || mode === 'over' || demo ? 'title' : placeTrack(W); }
+    if (mode === 'paused' && MUS.cur) want = MUS.cur.name;
+  }
+  MUS.gain.gain.setTargetAtTime(want ? (mode === 'paused' ? 0.12 : 0.42) : 0.0001, now, 0.35);
+  if (want) loadMusic(a, want);
+  if (MUS.on && W && !demo && W.fork && W.fork.next) W.fork.next.forEach((st) => loadMusic(a, ART.PAL[st] && ART.PAL[st].key));   // the next places, ready for the checkpoint
+  if (MUS.on) { loadMusic(a, 'goal'); loadMusic(a, 'timeup'); }
+  if (want !== (MUS.cur ? MUS.cur.name : null) && (!want || MBUF[want])) {
+    const sting = want && !LOOPS[want];
+    if (MUS.cur) hush(a, MUS.cur, sting ? 0.4 : 2.2);
+    MUS.cur = want ? voice(a, want, sting ? 0.05 : 1.8) : null;
+  }
+  if (MUS.cur && LOOPS[MUS.cur.name] && now > MUS.cur.t0 + MUS.cur.dur - 2.6) {   // round again: the next copy fades in as this one ends
+    const old = MUS.cur; MUS.cur = voice(a, old.name, 2.4); hush(a, old, 2.4);
+  }
+}
+function sting(name) {   // the goal jingle / the time-up sting, in place of the little tune made on the spot (true when it will play)
+  if (!MUS.on || !MBUF[name] || !MUS.gain) return false;
+  MUS.sting = name; MUS.stingEnd = MUS.gain.context.currentTime + MBUF[name].duration - 0.3;
+  return true;
+}
 function frameAudio(W, S, mode, SET) {
+  music(W, S, mode, SET);
   const playing = !!(W && !W.demo && mode === 'play' && SET.sound);
   const a = playing ? S.ctx() : S.existing();
   if (!a) return;
   if (!AU) { if (!playing) return; AU = makeAudio(a, S.bus() || a.destination); }
   const now = a.currentTime, T = 0.06;
-  if (!playing) { AU.g.gain.setTargetAtTime(0, now, 0.05); AU.wind.g.gain.setTargetAtTime(0, now, 0.05); AU.skid.g.gain.setTargetAtTime(0, now, 0.05); AU.rumble.g.gain.setTargetAtTime(0, now, 0.05); nextT = 0; return; }
+  if (!playing) { AU.g.gain.setTargetAtTime(0, now, 0.05); AU.wind.g.gain.setTargetAtTime(0, now, 0.05); AU.skid.g.gain.setTargetAtTime(0, now, 0.05); AU.rumble.g.gain.setTargetAtTime(0, now, 0.05); return; }
   const pct = W.v / E.VMAX; let gi = 0; while (gi < 5 && pct > GEARS[gi + 1]) gi++;
   let rpm = W.count > 0 ? 0.18 + (W.rev || 0) * 0.75 : Math.min(1.1, 0.28 + 0.72 * (pct - GEARS[gi]) / (GEARS[gi + 1] - GEARS[gi]));
   if (W.timeUp) rpm *= 0.6;
@@ -237,17 +282,6 @@ function frameAudio(W, S, mode, SET) {
   AU.wind.g.gain.setTargetAtTime(Math.min(0.09, pct * pct * 0.055 + (W.boosting ? 0.03 : 0)), now, T);
   AU.skid.g.gain.setTargetAtTime(W.drift && !W.air ? 0.05 : 0, now, 0.03);
   AU.rumble.g.gain.setTargetAtTime(W.off && pct > 0.08 ? 0.12 * Math.min(1, pct * 2) : 0, now, 0.04);
-  if (!SET.music) { nextT = 0; return; }
-  if (!nextT || nextT < now) { nextT = now + 0.06; stepN = 0; }
-  while (nextT < now + 0.22) {   // a sunny driving tune: bass on the eighths, an arpeggio, a beat
-    const bar = Math.floor(stepN / 16) % 4, s = stepN % 16, ch = SONG[bar], when = nextT - now;
-    if (s % 2 === 0) S.tone(ch[0][(s / 2) % 2], ST16 * 1.6, 0.045, { type: 'sawtooth', when: when, attack: 0.004 });
-    S.tone(ch[1][s % 4] * (s >= 8 ? 1 : 0.5), ST16 * 0.9, 0.012, { type: 'square', when: when, verb: 0.3 });
-    if (s % 4 === 0) S.tone(140, 0.12, 0.11, { type: 'sine', to: 45, when: when });
-    if (s === 4 || s === 12) S.noise(0.12, 0.05, 2400, { type: 'bandpass', q: 1.1, when: when });
-    if (s % 2 === 1) S.noise(0.03, 0.012, 9000, { type: 'highpass', to: 7000, when: when });
-    nextT += ST16; stepN++;
-  }
 }
 
 // ---------------------------------------------------------------- the cabinet
@@ -262,7 +296,7 @@ A.start({
   settings: [
     { key: 'car', type: 'seg', label: 'Car', small: 'The Roadster is the all-rounder; the GT is the fastest but slides more; the Hot hatch is quick off the mark and grips best. Changes from your next game.', options: [['roadster', 'Roadster'], ['gt', 'GT'], ['hatch', 'Hot hatch']], def: 'roadster' },
     { key: 'pedal', type: 'seg', label: 'Accelerator', small: 'Automatic: the car goes by itself and you just steer (Brake slows you down). Hold: hold the up arrow to go. Tablets always use Automatic.', options: [['auto', 'Automatic'], ['hold', 'Hold ▲ to go']], def: 'auto' },
-    { key: 'music', type: 'switch', label: 'Music', small: 'A sunny driving tune while you play.', def: false },
+    { key: 'music', type: 'switch', label: 'Music', small: 'A driving tune for each place along the coast - beachy by the sea, rocking through the hills, smooth at sunset.', def: true },
     { key: 'shake', type: 'switch', label: 'Screen shake', small: 'The picture shakes when you bump or crash.', def: !reducedMotion }
   ],
   picker: { key: 'car', label: 'Choose your car', options: [['roadster', 'Roadster', 'Red · all-rounder'], ['gt', 'GT', 'Silver · fastest'], ['hatch', 'Hot hatch', 'Yellow · grippy']] },
