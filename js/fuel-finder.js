@@ -702,7 +702,11 @@
       if (INAPP) return '<b>You&rsquo;re in Facebook&rsquo;s built-in browser</b>, which can&rsquo;t add pages to your home screen. Tap <b>&#8943;</b> at the top right, choose <b>' + (IOS ? 'Open in Safari' : 'Open in browser') + '</b>, then tap <b>Add to home screen</b> again from there.';
       if (IOS && IOS_OTHER) return 'Tap the <b>Share</b> button ' + SH + ' by the address bar, then <b>Add to Home Screen</b>.';
       if (IOS) return '1. Tap the <b>Share</b> button ' + SH + ' in Safari&rsquo;s toolbar.<br>2. Scroll down and tap <b>Add to Home Screen</b> ' + PL + '.<br>3. Tap <b>Add</b>. The ' + APP + ' icon opens straight to this page.';
-      if (SAMSUNG) return 'Tap the <b>menu</b> (&#9776;, bottom right), then <b>Add page to</b> &rarr; <b>Home screen</b>.';
+      // (6 Oct 2026) Samsung Internet's own app packages trip Google Play Protect's "built for an older version of Android"
+      // block - this page in Chrome instead (an Android intent; the same page again if Chrome isn't installed)
+      if (SAMSUNG) return 'Samsung&rsquo;s own browser can&rsquo;t add it as an app at the moment &mdash; Google Play Protect wrongly blocks the app it makes (a known Samsung fault, not a risk to you). '
+        + '<a href="intent://' + location.host + location.pathname + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent('https://' + location.host + location.pathname) + ';end"><b>Open this page in Chrome</b></a> and add it from there.'
+        + '<br><br><small>No Chrome? A simple shortcut works too: tap the <b>menu</b> (&#9776;, bottom right), then <b>Add page to</b> &rarr; <b>Home screen</b>.</small>';
       if (ANDROID) return 'Tap the <b>&#8942;</b> menu at the top right and choose <b>Add to home screen</b> (or <b>Install app</b>).';
       return 'Press <b>' + (/Mac/.test(navigator.platform) ? '&#8984;' : 'Ctrl') + ' + D</b> to bookmark this page, or use your browser&rsquo;s menu to <b>install</b> it as an app.';
     }

@@ -1543,10 +1543,10 @@
     var IOS = /iPad|iPhone|iPod/.test(UA) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1), INAPP = /FBAN|FBAV|FB_IAB|FBIOS|Instagram|Messenger/i.test(UA);
     var APPMODE = !!(window.matchMedia && (matchMedia('(display-mode: fullscreen)').matches || matchMedia('(display-mode: standalone)').matches)) || navigator.standalone === true;
     if (APPMODE) document.body.classList.add('app365');
-    function appHave() { try { return localStorage.getItem('cards365:app:' + D.id) === '1'; } catch (e) { return false; } }
+    function appHave() { try { return localStorage.getItem('games365:app') === '1'; } catch (e) { return false; } }
     function appSnoozed() { try { return Date.now() - (+localStorage.getItem('cards365:appno') || 0) < 14 * 864e5; } catch (e) { return false; } }
     function appOK() { return APPABLE && !APPMODE && !appHave() && !!(window.matchMedia && matchMedia('(pointer: coarse)').matches); }
-    function appDone() { try { localStorage.setItem('cards365:app:' + D.id, '1'); } catch (e) {} $('bApp').hidden = true; $('wApp').hidden = true; }
+    function appDone() { try { localStorage.setItem('games365:app', '1'); } catch (e) {} $('bApp').hidden = true; $('wApp').hidden = true; }
     var SHARE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="Share"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
     function appSteps() {
       if (INAPP) return 'You&rsquo;re in Facebook&rsquo;s built-in browser, which can&rsquo;t do this. Tap <b>&#8943;</b> at the top right, choose <b>' + (IOS ? 'Open in Safari' : 'Open in browser') + '</b>, then come back here.';
@@ -1558,7 +1558,7 @@
     }
     function addApp() {
       if (deferredApp) { var dp = deferredApp; deferredApp = null; try { dp.prompt(); dp.userChoice.then(function (r) { if (r && r.outcome === 'accepted') appDone(); }); } catch (e) {} return; }
-      $('appWhy').textContent = D.title + ' on your home screen: one tap opens it full screen, with no address bar - like an app.';
+      $('appWhy').textContent = '365 Games on your home screen: one tap opens your last game full screen, with no address bar - like an app. All our games are in it.';
       $('appHow').innerHTML = appSteps(); $('appChrome').hidden = !SAMSUNG; openD('dApp');
     }
     // this page in Chrome (an Android intent; if Chrome isn't installed, the same page again in this browser)
