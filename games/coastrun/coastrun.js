@@ -64,6 +64,7 @@ function smoothUndo(W) { for (const k of SMK) W[k] = SM.cur[k]; for (const c of 
 // ---------------------------------------------------------------- the picture
 function draw(g, W, t, mode, info) {
   K = info.scale;
+  touchFrame(mode);
   const frameDt = R.lastT ? Math.min(0.1, (t - R.lastT) / 1000) : 1 / 60; R.lastT = t;
   if (R.W !== W) { R.W = W; R.goT = -1; R.shownScore = W.score; R.lastV = W.v; }
   // the title screen drives itself along the coast
@@ -178,6 +179,11 @@ function hud(g, W, t, mode) {
     hudText(g, Rn.toUpperCase() + ' ▶', GW / 2 + 8, 64.5, 8, side > 0 ? '#ffc23a' : '#ffffff', 'left', false);
     g.fillStyle = 'rgba(255,255,255,0.4)'; g.fillRect(GW / 2 - 0.5, 55, 1, 12);
     if (her) heart(g, her < 0 ? GW / 2 - 144 : GW / 2 + 144, 61, 4 + Math.sin(t / 120) * 0.6, '#ff4d7a');
+  }
+  if (mode === 'play' && W.stageNo === 1 && W.count <= 0 && W.t - R.goT < 300 && R.goT >= 0 && document.body.classList.contains('touchy')) {   // the same for thumbs
+    g.globalAlpha = Math.min(1, (300 - (W.t - R.goT)) / 40);
+    hudText(g, TOUCH.layout === 'buttons' ? 'STEER ◀ ▶  LEFT THUMB     BRAKE  NITRO  RIGHT THUMB' : 'TOUCH LEFT ◀     ▶ TOUCH RIGHT     BOTH AT ONCE: NITRO', GW / 2 - 40, GH - 22, 5.5, '#ffffff', 'center');
+    g.globalAlpha = 1;
   }
   if (mode === 'play' && W.stageNo === 1 && W.count <= 0 && W.t - R.goT < 300 && R.goT >= 0 && !document.body.classList.contains('touchy')) {
     g.globalAlpha = Math.min(1, (300 - (W.t - R.goT)) / 40);
@@ -393,6 +399,7 @@ function say(id, S) {
   } catch (er) {}
 }
 function sound(name, S, e) {
+  if (BUZZ[name] && navigator.vibrate && R.shakeOn && document.body.classList.contains('cr-race')) { try { navigator.vibrate(BUZZ[name]); } catch (e2) {} }
   const p = pan(e), n = (e && e.n) || 1;
   if (name.charCodeAt(0) === 118 && name[1] === ':') { say(name.slice(2), S); return; }   // 'v:...' - something she says
   switch (name) {
@@ -606,6 +613,96 @@ document.addEventListener('keydown', (e) => {
   if ((e.key || '').toLowerCase() !== 'r' || e.ctrlKey || e.metaKey || e.altKey || /INPUT|TEXTAREA|SELECT/.test((e.target && e.target.tagName) || '')) return;
   const A2 = window.ARCADE365; if (A2 && A2.mode === 'play') { tune(e.shiftKey ? -1 : 1); e.preventDefault(); }
 });
+// ---------------------------------------------------------------- phones and tablets (owner, 6 Oct: on an iPad the buttons were "very difficult to
+// get your fingers on"; sideways on a phone the picture was a quarter of the screen, between the bar and a row of buttons). While you race the
+// bar and that row go, the picture fills the screen (full screen and sideways where the device allows it: Android, iPad), and the controls sit
+// under your thumbs at the two sides. Sides (the default): touch anywhere on the left half to steer left, the right half to steer right, both at
+// once for nitro; Brake on the left edge and Nitro on the right. Buttons: ◀ ▶ under the left thumb, Brake and Nitro under the right.
+const TOUCH = { el: null, on: false, ptr: new Map(), both: 0, layout: '', hintT: 0 };
+const isTouchy = () => document.body.classList.contains('touchy');
+const IPHONE = /iPhone|iPod/.test(navigator.userAgent), STANDALONE = navigator.standalone === true || !!(window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+const canFull = () => { const d = document.documentElement; return !!((d.requestFullscreen || d.webkitRequestFullscreen) && (document.fullscreenEnabled || document.webkitFullscreenEnabled)); };
+const inFull = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
+function goFull() {   // full screen, then turned sideways (Android only lets a page lock the way round once it's full screen)
+  if (inFull() || !canFull()) return;
+  const d = document.documentElement, side = () => { try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(() => {}); } catch (e) {} };
+  try { const pr = d.requestFullscreen ? d.requestFullscreen({ navigationUI: 'hide' }) : d.webkitRequestFullscreen(); if (pr && pr.then) pr.then(side).catch(() => {}); else side(); } catch (e) {}
+}
+function leaveFull() { try { if (document.exitFullscreen) document.exitFullscreen(); else if (document.webkitExitFullscreen) document.webkitExitFullscreen(); } catch (e) {} }
+function touchBuild() {
+  const css = document.createElement('style');
+  css.textContent = 'body.touchy #pad{display:none!important}'   // (our own controls instead of the cabinet's row)
+    + 'body.cr-race header.bar{display:none!important}body.cr-race #stage{padding:0}'
+    + '#crTouch{--b:clamp(64px,19vmin,104px);--el:max(12px,env(safe-area-inset-left));--er:max(12px,env(safe-area-inset-right));--lift:26%;position:fixed;inset:0;z-index:4;display:none;pointer-events:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}'
+    + 'body.cr-race #crTouch{display:block}'
+    + '#crTouch .z{position:absolute;top:0;bottom:0;width:50%;pointer-events:auto;touch-action:none}#crTouch .zl{left:0}#crTouch .zr{right:0}'
+    + '#crTouch .tb{position:absolute;bottom:var(--lift);width:var(--b);height:var(--b);padding:0;border-radius:50%;border:2px solid rgba(255,255,255,.42);background:rgba(8,16,34,.3);color:#fff;'
+    + 'font:800 calc(var(--b)*.19)/1 Archivo,system-ui,sans-serif;letter-spacing:.05em;pointer-events:auto;touch-action:none;-webkit-tap-highlight-color:transparent;box-shadow:0 2px 10px rgba(0,0,0,.25)}'
+    + '#crTouch .tb.on{transform:scale(.94);filter:brightness(1.5)}'
+    + '#crTouch .brake{left:var(--el);border-color:rgba(255,196,96,.8);background:rgba(255,160,40,.24)}#crTouch .nitro{right:var(--er);border-color:rgba(255,120,120,.85);background:rgba(255,56,56,.3)}'
+    + '#crTouch .tl{left:var(--el);font-size:calc(var(--b)*.36)}#crTouch .tr{left:calc(var(--el) + var(--b) + 12px);font-size:calc(var(--b)*.36)}'
+    + '#crTouch.lay-buttons .brake{left:auto;right:calc(var(--er) + var(--b) + 12px)}#crTouch.lay-sides .tl,#crTouch.lay-sides .tr,#crTouch.lay-buttons .z,#crTouch.lay-buttons .hint{display:none}'
+    + '#crTouch .hint{position:absolute;bottom:calc(var(--lift) + var(--b) + 14px);font:800 calc(var(--b)*.42)/1 Archivo,system-ui,sans-serif;color:#fff;opacity:.5;transition:opacity 1.2s;text-shadow:0 2px 8px rgba(0,0,0,.5)}'
+    + '#crTouch .hl{left:calc(var(--el) + var(--b)*.3)}#crTouch .hr{right:calc(var(--er) + var(--b)*.3)}#crTouch.quiet .hint{opacity:.14}'
+    + '#crTouch .tp{position:absolute;top:max(6px,env(safe-area-inset-top));left:27%;width:40px;height:40px;padding:0;border-radius:12px;border:1px solid rgba(255,255,255,.3);background:rgba(6,10,18,.45);color:#fff;font:700 15px/1 system-ui,sans-serif;pointer-events:auto;touch-action:manipulation}'
+    + '#crTouch .full{left:calc(27% + 48px)}#crTouch .turn{position:absolute;left:50%;top:22%;transform:translateX(-50%);padding:10px 16px;border-radius:12px;background:rgba(6,10,18,.72);color:#fff;font:700 15px/1.3 Archivo,system-ui,sans-serif;text-align:center;opacity:0;transition:opacity .6s;pointer-events:none}'
+    + '#crTouch.upright .turn{opacity:1}.cr-tip{margin:6px 0 0;font-size:14px;opacity:.85}';
+  document.head.appendChild(css);
+  const el = document.createElement('div'); el.id = 'crTouch'; el.setAttribute('aria-hidden', 'true');
+  el.innerHTML = '<div class="z zl"></div><div class="z zr"></div><span class="hint hl">&#9664;</span><span class="hint hr">&#9654;</span>'
+    + '<button type="button" class="tb tl" data-a="left">&#9664;</button><button type="button" class="tb tr" data-a="right">&#9654;</button>'
+    + '<button type="button" class="tb brake" data-a="down">BRAKE</button><button type="button" class="tb nitro" data-a="fire">NITRO</button>'
+    + '<button type="button" class="tp pause" data-a="pause">&#10074;&#10074;</button><button type="button" class="tp full" data-a="full">&#x26F6;</button>'
+    + '<div class="turn">Turn your phone sideways<br>for a bigger picture</div>';
+  document.body.appendChild(el); TOUCH.el = el;
+  const zoneSide = (x) => (x < innerWidth / 2 ? 'left' : 'right');
+  el.addEventListener('pointerdown', (e) => {
+    const t = e.target, a = t.getAttribute && t.getAttribute('data-a'); e.preventDefault();
+    if (a === 'pause') { if (window.ARCADE365) window.ARCADE365.pause(); return; }
+    if (a === 'full') { if (inFull()) leaveFull(); else goFull(); return; }
+    const act = a || (t.classList && t.classList.contains('z') ? zoneSide(e.clientX) : null); if (!act) return;
+    try { t.setPointerCapture(e.pointerId); } catch (e2) {}
+    TOUCH.ptr.set(e.pointerId, { act: act, el: t, zone: !a }); if (a) t.classList.add('on');
+    if (act === 'down' && window.ARCADE365) window.ARCADE365.input.brakeTap = true;   // (a tap too quick to last a step still counts: a drift)
+    touchApply();
+  });
+  el.addEventListener('pointermove', (e) => { const q = TOUCH.ptr.get(e.pointerId); if (q && q.zone) { const s2 = zoneSide(e.clientX); if (s2 !== q.act) { q.act = s2; touchApply(); } } });   // (slide your thumb across the middle to turn the other way)
+  const up = (e) => { const q = TOUCH.ptr.get(e.pointerId); if (!q) return; TOUCH.ptr.delete(e.pointerId); if (q.el && !q.zone) q.el.classList.remove('on'); touchApply(); };
+  el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up); el.addEventListener('lostpointercapture', up);
+  el.addEventListener('contextmenu', (e) => e.preventDefault());
+  if (!canFull()) el.querySelector('.full').hidden = true;
+}
+function touchApply() {   // what the fingers on the screen are asking for (only ever written while the touch controls are in use)
+  const inp = window.ARCADE365 && window.ARCADE365.input; if (!inp) return;
+  let L = false, Rt = false, brake = false, nitro = false;
+  for (const q of TOUCH.ptr.values()) { if (q.act === 'left') L = true; else if (q.act === 'right') Rt = true; else if (q.act === 'down') brake = true; else if (q.act === 'fire') nitro = true; }
+  const both = L && Rt && TOUCH.layout === 'sides';
+  if (both && !TOUCH.both) TOUCH.both = performance.now(); else if (!both) TOUCH.both = 0;
+  inp.left = L && !both; inp.right = Rt && !both; inp.down = brake; inp.fire = nitro || (both && performance.now() - TOUCH.both > 120);   // (both thumbs: straight on, and nitro once they've stayed down a moment)
+}
+function touchClear() { for (const q of TOUCH.ptr.values()) if (q.el && !q.zone) q.el.classList.remove('on'); TOUCH.ptr.clear(); TOUCH.both = 0; const inp = window.ARCADE365 && window.ARCADE365.input; if (inp) { inp.left = inp.right = inp.down = inp.fire = false; } }
+function touchFrame(mode) {   // each picture: the race layout on or off, which controls, the hints
+  const want = mode === 'play' && isTouchy();
+  if (want && !TOUCH.el) touchBuild();
+  if (want !== TOUCH.on) { TOUCH.on = want; document.body.classList.toggle('cr-race', want); if (want) TOUCH.hintT = performance.now(); else touchClear(); }
+  if (!want) return;
+  const lay = (RAD.set && RAD.set.touch) === 'buttons' ? 'buttons' : 'sides';
+  if (lay !== TOUCH.layout) { TOUCH.layout = lay; touchClear(); }
+  const cls = 'lay-' + lay + (performance.now() - TOUCH.hintT > 5000 ? ' quiet' : '') + (innerHeight > innerWidth * 1.1 && innerWidth < 700 ? ' upright' : '');
+  if (TOUCH.el.className !== cls) TOUCH.el.className = cls;
+  if (TOUCH.both && performance.now() - TOUCH.both > 120 && window.ARCADE365 && !window.ARCADE365.input.fire) window.ARCADE365.input.fire = true;
+}
+document.addEventListener('click', (e) => {   // Play on a phone or a tablet: full screen and sideways (Settings can switch it off)
+  if (!isTouchy() || (RAD.set && RAD.set.touchfull === false)) return;
+  const b = e.target && e.target.closest && e.target.closest('#tPlay, #oPlay, #pGo'); if (b) goFull();
+}, true);
+(function iphoneTip() {   // an iPhone can't put a web page full screen: added to the Home Screen it opens without Safari's bars
+  if (!IPHONE || STANDALONE) return;
+  const add = () => { const box = document.querySelector('#ov_title .ovbox'); if (!box) return setTimeout(add, 300); if (box.querySelector('.cr-tip')) return;
+    const p = document.createElement('p'); p.className = 'soft cr-tip'; p.innerHTML = 'For the whole screen on an iPhone: tap <b>Share</b> then <b>Add to Home Screen</b>, and play from there.'; box.appendChild(p); };
+  add();
+})();
+const BUZZ = { boost: 18, crash: [45, 30, 70], smash: 30, bump: 22, scrape: 8, grid: [8, 22, 8, 22, 8], land: 14 };   // a buzz you can feel on a phone (Android: iPhones have none for web pages)
 const CAMS = [['near', 'Close'], ['driver', 'Driver'], ['far', 'High']];
 document.addEventListener('keydown', (e) => {   // C: the next camera (saved with the other settings)
   if ((e.key || '').toLowerCase() !== 'c' || e.repeat || e.ctrlKey || e.metaKey || e.altKey || /INPUT|TEXTAREA|SELECT/.test((e.target && e.target.tagName) || '')) return;
@@ -729,6 +826,8 @@ A.start({
     { key: 'voice', type: 'switch', label: 'Her voice', small: 'Your passenger says what she would like you to do, and how you did.', def: true },
     { key: 'shake', type: 'switch', label: 'Screen shake', small: 'The picture shakes when you bump or crash.', def: !reducedMotion },
     { key: 'drift', type: 'seg', label: 'Drifting', small: 'Automatic: steer hard into a sharp bend at speed and the car drifts by itself. Manual: tap the brake as you turn into the bend.', options: [['auto', 'Automatic'], ['manual', 'Manual']], def: 'auto' },
+    { key: 'touch', type: 'seg', label: 'Touch steering', small: 'Phones and tablets. Sides: touch anywhere on the left of the screen to steer left, the right to steer right, both at once for nitro. Buttons: ◀ ▶ under your left thumb, Brake and Nitro under your right.', options: [['sides', 'Sides'], ['buttons', 'Buttons']], def: 'sides' },
+    { key: 'touchfull', type: 'switch', label: 'Full screen when you race', small: 'Phones and tablets: Play takes the game full screen and sideways. An iPhone can\'t do that for a web page: add the game to your Home Screen instead.', def: true },
     { key: 'cam', type: 'seg', label: 'Camera', small: 'Close: low behind the car, like the arcade. Driver: from your seat, over the bonnet. High: further back and up, to see more of the road ahead. Press C while driving to change it.', options: [['near', 'Close'], ['driver', 'Driver'], ['far', 'High']], def: 'near' }
   ],
   picker: { key: 'car', label: 'Choose your car', options: [['roadster', 'Roadster', 'Red · all-rounder'], ['gt', 'GT', 'Silver · fastest'], ['hatch', 'Hot hatch', 'Yellow · grippy']] },
@@ -740,7 +839,7 @@ A.start({
   overText: (W) => 'Time up – stage ' + W.stageNo + (W.round > 1 ? ', round ' + W.round : ''),
   titleText: 'Race along the Dorset coast with your girlfriend beside you, before the clock runs out. Five stretches make a run: at every <b>fork</b> you choose your road through fifteen places, to one of five goals &mdash; and she asks for things on the way. Do them for <b>hearts</b>.',
   keysText: '<b>&larr; &rarr;</b> steer &middot; <b>Space</b> boost &middot; <b>&darr;</b> brake &mdash; tap it while turning to <b>drift</b> &middot; <b>C</b> camera &middot; <b>P</b> pause',
-  touchText: '<b>&#9664; &#9654;</b> steer &middot; <b>Boost</b> &middot; <b>Brake</b> (tap it while turning to drift) &mdash; the car goes by itself',
+  touchText: 'Touch the <b>left</b> or <b>right</b> of the screen to steer, <b>both at once</b> for nitro; <b>Brake</b> and <b>Nitro</b> at the sides too &mdash; the car goes by itself. Settings &gt; Touch steering for buttons instead.',
   help: [
     '<b>The aim:</b> drive as far as you can before the clock runs out. Each stretch of road ends at a <b>checkpoint</b> that adds time. Five stretches make a run: reach one of the five <b>goals</b> for a time bonus, a love bonus and a rank, then go round again &mdash; busier and quicker.',
     '<b>Beat the clock:</b> the clock never stops &mdash; if it reaches zero it&rsquo;s game over and you start again from Bournemouth. Every stage keeps your <b>best time</b> on this device: it shows under the stage clock, and at each checkpoint you see how you did against it &mdash; beat it for a <b>NEW RECORD</b>. <b>HURRY!</b> flashes when you&rsquo;re not on pace to make the next checkpoint.',
