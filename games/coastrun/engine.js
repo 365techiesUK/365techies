@@ -80,7 +80,9 @@
     { id: 'lorry', w: 1.25, l: 6, v: [0.33, 0.43] },
     { id: 'sports', w: 0.95, l: 2.2, v: [0.52, 0.64] },
     { id: 'wedge', w: 1.0, l: 2.25, v: [1, 1], rival: true },   // the rivals (see rivals()): their pace is set there
-    { id: 'lemans', w: 0.95, l: 2.1, v: [1, 1], rival: true }
+    { id: 'lemans', w: 0.95, l: 2.1, v: [1, 1], rival: true },
+    { id: 'coupe9', w: 0.95, l: 2.1, v: [1, 1], rival: true }, { id: 'gtbrit', w: 0.96, l: 2.2, v: [1, 1], rival: true }, { id: 'raging', w: 1.0, l: 2.2, v: [1, 1], rival: true },
+    { id: 'trident', w: 0.95, l: 2.25, v: [1, 1], rival: true }, { id: 'barchetta', w: 0.97, l: 2.3, v: [1, 1], rival: true }
   ];
   // the player's car: top speed, acceleration, grip, and how quickly it turns
   var CARS = {
@@ -468,7 +470,7 @@
     buildStage(W, 0); nextFork(W, 0);
     W.time = W.D.time * STAGES[0].t;
     W.s = 3 * SEG; W.h = heightAt(W, W.s);
-    for (var z = W.s + 320; z < W.s + VIEW; z += W.D.gap * (0.6 + W.rng() * 0.8)) spawnCar(W, z);   // (the road ahead of the grid clear)
+    for (var z = W.s + 320; z < W.s + VIEW; z += W.D.gap * (0.85 + W.rng() * 1.1)) spawnCar(W, z);   // (the road ahead of the grid clear)
     makeField(W);
     return W;
   }
@@ -501,10 +503,12 @@
   // you and race the whole run, through whichever fork you take. Near you each is a car on the road; out of sight it's carried
   // along at its own pace. They pace themselves off how far ahead or behind you they are, so there's always someone to catch.
   var FIELD_N = 7, BOTTLES0 = 10, BOTTLE_MAX = 20, NITRO_T = 150, SKILL = [1.04, 1.02, 1.0, 0.99, 0.97, 0.95, 0.93];
+  var CSCHEME = [[0, 0, 0, 0, 1, 0, 0], [1, 1, 1, 0, 0, 1, 0], [0, 0, 0, 1, 1, 0, 1], [1, 0, 1, 2, 0, 1, 3], [3, 2, 0, 0, 1, 0, 0]];   // per racer (wedge, lemans, raging, coupe9, barchetta, gtbrit, trident): which of its colours (never more than two red, or two silver/white, on one grid)
   var POS_BONUS = [0, 100000, 60000, 40000, 25000, 15000, 8000, 4000, 0];
   function makeField(W) {
     W.field = [];
-    for (var k = 0; k < FIELD_N; k++) W.field.push({ id: k, p: W.s + 70 - k * 8.5, x: k % 2 ? 4.6 : -4.6, v: 0, skill: SKILL[k], t: k % 2 ? 9 : 8, col: (k >> 1) % 4, car: null });   // the grid: two columns, the fastest at the front; you at the back in the middle
+    var RT = [8, 9, 12, 10, 14, 11, 13];   // the fastest first: the wedge, the endurance racer, the sharp Italian, the turbo coupe, the open V12, the GT, the grand tourer
+    for (var k = 0; k < FIELD_N; k++) W.field.push({ id: k, p: W.s + 70 - k * 8.5, x: k % 2 ? 4.6 : -4.6, v: 0, skill: SKILL[k], t: RT[k], col: CSCHEME[W.seed % CSCHEME.length][k], car: null });   // (a set colour scheme for the field: a mix, never more than two red cars)   // the grid: two columns, the fastest at the front; you at the back in the middle
     W.pos = FIELD_N + 1;
   }
   function racerPace(W, r) {
@@ -524,9 +528,9 @@
         if (Math.abs(r.p - W.s) < 280 && !W.timeUp) {   // near you: on the road
           var si = segIndex(r.p), g = segAt(W, si); if (!g || si > lastSeg || g.gate) continue;
           var b = 0; if (g.fk && g.fk.b) { if (!F || !F.s) continue; b = F.s; }
-          var L = null, lanes = W.rng() < 0.5 ? [4.6, 0, -4.6] : [-4.6, 0, 4.6];
-          for (var q = 0; q < 3 && L === null; q++) { var ok = !(Math.abs(r.p - W.s) < 30 && Math.abs(W.x - lanes[q]) < 3.2);
-            for (var j = 0; j < W.cars.length && ok; j++) { var o = W.cars[j]; if (o.b === b && Math.abs(o.s - r.p) < 30 && Math.abs(o.x - lanes[q]) < 3) ok = false; }
+          var L = null, lanes = W.count > 0 ? [r.x] : W.rng() < 0.5 ? [4.6, 0, -4.6] : [-4.6, 0, 4.6];
+          for (var q = 0; q < lanes.length && L === null; q++) { var ok = W.count > 0 || !(Math.abs(r.p - W.s) < 30 && Math.abs(W.x - lanes[q]) < 3.2);   // (the grid: its places are set)
+            for (var j = 0; j < W.cars.length && ok && W.count <= 0; j++) { var o = W.cars[j]; if (o.b === b && Math.abs(o.s - r.p) < 30 && Math.abs(o.x - lanes[q]) < 3) ok = false; }
             if (ok) L = lanes[q]; }
           if (L === null) continue;
           r.car = { id: W.carN++, s: r.p, x: L, tx: L, v: r.v, v0: racerPace(W, r), t: r.t, b: b, col: r.col, lc: 30, hitT: -999, passed: r.p < W.s, paid: true, ds: r.p - W.s, spin: 0, rival: true, racer: r.id };
@@ -624,7 +628,7 @@
       c = cars[i];
       if (c.s < W.s - 120 || c.s > W.s + VIEW + 120 || segIndex(c.s) > lastIndex(W) - 2 || (F && F.s && c.b && c.b !== F.s && segIndex(c.s) >= F.end - 2) || (!F && c.b)) cars.splice(i, 1);
     }
-    var want = Math.round(VIEW / (W.D.gap * Math.pow(0.92, Math.min(4, W.round - 1)))), n = 0;
+    var want = Math.round(VIEW / (W.D.gap * Math.pow(0.92, Math.min(4, W.round - 1))) * (W.field.length ? 0.72 : 1)), n = 0;   // (the racers fill the road too: less traffic)
     for (i = 0; i < cars.length; i++) if (cars[i].s > W.s) n++;
     if (n < want && W.t % 10 === 0) spawnCar(W, W.s + VIEW * (0.8 + W.rng() * 0.18));
   }
@@ -971,10 +975,10 @@
         car.hitT = W.t;
         if (W.pw.shield > 0) { smash(W, 'car'); car.spin = 60; car.x += (car.x >= W.x ? 1 : -1) * 2.5; car.v *= 0.6; }
         else if (W.v >= car.v) {
-          var hard = dxx < hitW * 0.7 && (D.crash ? W.v - car.v > 30 : W.v - car.v > 44);
+          var hard = !car.racer && dxx < hitW * 0.7 && (D.crash ? W.v - car.v > 30 : W.v - car.v > 44);   // (a racer: always a bump and a shove, never a wreck)
           if (hard) { crash(W, true, 'car'); W.s = Math.min(W.s, car.s - hitL - 0.5); car.spin = 60; }
           else {
-            W.v = car.v * (W.diff === 1 ? 0.85 : 0.72); W.s = Math.min(W.s, car.s - hitL - 0.3);
+            W.v = car.v * (car.racer != null ? 0.92 : W.diff === 1 ? 0.85 : 0.72); W.s = Math.min(W.s, car.s - hitL - 0.3); if (car.racer != null) { car.tx = car.x + (car.x >= W.x ? 3 : -3); car.lc = 60; }
             W.x += (W.x >= car.x ? 1 : -1) * 0.6; car.x += (car.x > W.x ? 1 : -1) * 0.3;
             W.shake = Math.max(W.shake, 10); W.combo = 0; W.comboT = 0; if (W.drift) endDrift(W);
             W.events.push({ sfx: 'bump', x: car.x - W.x }); fx(W, { k: 'bump', x: (car.x + W.x) / 2 });
@@ -1045,7 +1049,7 @@
           c = W.cars[j]; if (!sameRoad(W, c)) continue;
           var dz = c.s - W.s, closing = Math.max(0, W.v - c.v);
           if (k !== cur && dz > -10 && dz < 12 + closing * 0.6 && c.x > lo && c.x < hi) free = -1;
-          else if (dz > -6 && dz < free && Math.abs(c.x - L) < 2.8) { free = dz; cl = closing; }
+          else if (dz > (k === cur ? 0.5 : -6) && dz < free && Math.abs(c.x - L) < 2.8) { free = dz; cl = closing; }   // (in its own lane, only what's ahead: a racer sitting behind it once held it stopped)
         }
         var sc = free + (k === cur ? 25 : 0);
         if (sc > best) { best = sc; target = L; room = free; close = cl; pickK = k; }

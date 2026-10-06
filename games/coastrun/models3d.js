@@ -23,7 +23,7 @@ export class Kit {
     for (let i = 0; i < n; i++) { cols[i * 3] = C.r; cols[i * 3 + 1] = C.g; cols[i * 3 + 2] = C.b; }
     g.setAttribute('color', new THREE.BufferAttribute(cols, 3));
     if (!g.attributes.normal) g.computeVertexNormals();
-    if (key !== 'glow' && key !== 'alloy' && key !== 'chrome' && UV_KEYS[key] == null) { const nr = g.attributes.normal; for (let i = 0; i < n; i++) { const f = 0.6 + 0.4 * (nr.getY(i) * 0.5 + 0.5); cols[i * 3] *= f; cols[i * 3 + 1] *= f; cols[i * 3 + 2] *= f; } }
+    if (key !== 'glow' && key !== 'alloy' && key !== 'chrome' && key !== 'rlamp' && UV_KEYS[key] == null) { const nr = g.attributes.normal; for (let i = 0; i < n; i++) { const f = 0.6 + 0.4 * (nr.getY(i) * 0.5 + 0.5); cols[i * 3] *= f; cols[i * 3 + 1] *= f; cols[i * 3 + 2] *= f; } }
     for (const k of Object.keys(g.attributes)) if (k !== 'position' && k !== 'color' && k !== 'normal' && !(k === 'uv' && UV_KEYS[key])) g.deleteAttribute(k);
     (this.parts[key] || (this.parts[key] = [])).push(g);
     geo.dispose();
@@ -623,10 +623,257 @@ const TRAFFIC = {
     k.box(2.52, 0.3, 9.6, 0, 0.5, -1.2, '#3a3a3a'); wheelsOn(k, [-1.05, 1.05], [-4.6, -3.4, 4.8], 0.5, 0.35); lights(k, 2.5, 0.9, 6.12, 0.3);
   }
 };
-export const TRAFFIC_ORDER = ['hatch', 'saloon', 'van', 'bus', 'camper', 'tractor', 'lorry', 'sports', 'wedge', 'lemans'];
-const TCOL = { hatch: [0, 1, 2, 4, 5, 6], saloon: [0, 1, 2, 3, 6, 7], van: [2, 2, 2, 6, 1], bus: [0, 4], camper: [5, 4, 1, 7], tractor: [5, 0], lorry: [2, 1, 3], sports: [0, 4, 7, 1], wedge: [4, 7, 2, 3], lemans: [1, 2, 5, 4] };
+
+// ---------------------------------------------------------------- the racers (owner, 6 Oct): a pack of supercars of our own, each a cousin of a
+// famous shape - its proportions, stance and colours - never a copy: no badges, names, grilles or lamp signatures of any real make.
+// Keys: rpaint (clearcoat body), rglass, shiny (chrome, alloy), lit (black, tyres), rlamp (lamps).
+const RIMS = { five: [5, false, 0.085], twin: [5, true, 0.042], star: [5, false, 0.045], ten: [10, false, 0.034], seven: [7, false, 0.05] };
+function rwheel(k, x, z, r, w, rim, style) {   // a low tyre on the ground, a big rim on its outer face (r: the tyre's radius)
+  const sd = Math.sign(x) || 1, ox = x + sd * (w / 2 - 0.005), rr = r * 0.74, S = RIMS[style] || RIMS.five;
+  k.axle(r, w, 16, x, r, z, '#131313', 'lit');
+  k.axle(rr, 0.02, 14, ox, r, z, '#1c1e21', 'lit');   // the barrel, dark behind the spokes
+  k.put(new THREE.TorusGeometry(rr, 0.02, 4, 18), rim, ox + sd * 0.006, r, z, 0, Math.PI / 2, 0, 1, 1, 1, 'shiny');   // the lip
+  for (let i = 0; i < S[0]; i++) for (const off of S[1] ? [-0.12, 0.12] : [0]) { const a = i * Math.PI * 2 / S[0] + off;
+    k.put(new THREE.BoxGeometry(0.03, rr * 0.92, S[2]), rim, ox + sd * 0.01, r + Math.cos(a) * rr * 0.46, z + Math.sin(a) * rr * 0.46, a, 0, 0, 1, 1, 1, 'shiny'); }
+  k.axle(0.07, 0.03, 10, ox + sd * 0.014, r, z, rim, 'shiny').axle(0.035, 0.035, 8, ox + sd * 0.018, r, z, '#1c1e21', 'lit');
+}
+function lerpAt(list, z, j) { let i = 0; while (i < list.length - 2 && list[i + 1][0] < z) i++; const a = list[i], b = list[i + 1], f = Math.max(0, Math.min(1, (z - a[0]) / (b[0] - a[0]))); return a[j] + (b[j] - a[j]) * f; }
+function racerBody(k, col, o) {   // a lofted body (paint, shaded deeper low down), a glass cabin and a painted roof; o.w: [[z, r, tyre width]...] the wheels
+  const wz = o.w.map((q) => q[0]), st = sections(o.keys, wz, o.w.map((q) => [q[1], q[1] + 0.05])), n0 = (k.parts.rpaint || []).length;
+  k.loft(st, col, 'rpaint', { up: o.up || 3.4, dn: 6, belly: o.belly || 0.6, crease: o.crease == null ? 0.12 : o.crease, n: 22 });   // (always creased: a sharp shoulder line catching the light)
+  if (o.cabin) k.loft(o.cabin, '#1a2430', 'rglass', { up: o.cabinUp || 3, dn: 8, belly: 0.3, n: 18 });
+  if (o.roof) k.loft(o.roof, col, 'rroof', { up: o.roofUp || 3, dn: o.roofDn || 3, belly: o.roofBelly || 0.4, n: 18 });   // (a satin coat: a flat roof under the sun flared white)
+  const list = k.parts.rpaint;
+  for (let q = n0; q < list.length; q++) { const P3 = list[q].attributes.position, C3 = list[q].attributes.color;
+    for (let i = 0; i < P3.count; i++) { const y = P3.getY(i), f = y > 0.74 ? 1.08 : y > 0.5 ? 0.88 + (y - 0.5) / 0.24 * 0.2 : 0.66 + 0.22 * Math.max(0, (y - 0.24) / 0.26); C3.setXYZ(i, C3.getX(i) * f, C3.getY(i) * f, C3.getZ(i) * f); } }
+  const B = { st: st, topAt: (z) => lerpAt(st, z, 3), hwAt: (z) => lerpAt(st, z, 1), roofAt: (z) => o.roof ? lerpAt(o.roof, z, 3) : 0 };
+  for (const [z, r, w] of o.w) for (const sd of [-1, 1]) {   // the wheel arches: a dark liner, a fine lip; the wheel set flush under it
+    const hw = B.hwAt(z), R = r + 0.05;
+    k.put(new THREE.CylinderGeometry(R, R, 0.36, 18, 1, true, -Math.PI / 2, Math.PI), '#0b0b0c', sd * (hw - 0.2), r, z, 0, 0, Math.PI / 2, 1, 1, 1, 'lit');
+    k.put(new THREE.TorusGeometry(R + 0.008, 0.016, 5, 22, Math.PI), col, sd * (hw - 0.012), r, z, 0, sd * Math.PI / 2, 0, 1, 1, 1, 'rpaint');
+    rwheel(k, sd * (hw - w / 2 - 0.02), z, r, w, o.rim || '#cdd1d5', o.style);
+  }
+  if (o.mirror) { const [mz, my] = o.mirror; for (const sd of [-1, 1]) { const hw = B.hwAt(mz) - 0.06;   // door mirrors on short arms
+    k.box(0.12, 0.02, 0.03, sd * (hw + 0.05), my - 0.03, mz, '#151517', 0, 0, sd * 0.3, 'lit');
+    k.ball(0.055, sd * (hw + 0.13), my, mz, col, 1.3, 0.75, 1.5, 'rpaint', 12).ball(0.045, sd * (hw + 0.13), my, mz + 0.06, '#1a2430', 1.2, 0.65, 0.3, 'rglass', 8); } }
+  if (o.doors) for (const z of o.doors) for (const sd of [-1, 1]) {   // the doors' shut lines
+    const t = B.topAt(z), hw = B.hwAt(z); k.box(0.006, Math.max(0.1, t - 0.4), 0.012, sd * (hw + 0.002), 0.34, z, '#1a1a1c', 0, 0, 0, 'lit'); }
+  return B;
+}
+function ribbon(k, yAt, x0, x1, z0, z1, lift, hex) {   // a strip lying on the body from z0 to z1 (stripes)
+  const pos = [], n = Math.ceil((z1 - z0) / 0.05);
+  for (let q = 0; q < n; q++) { const za = z0 + (z1 - z0) * q / n, zb = z0 + (z1 - z0) * (q + 1) / n, ya = yAt(za) + lift, yb = yAt(zb) + lift; pos.push(x0, ya, za, x0, yb, zb, x1, yb, zb, x0, ya, za, x1, yb, zb, x1, ya, za); }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.computeVertexNormals();
+  k.put(g, hex, 0, 0, 0, 0, 0, 0, 1, 1, 1, 'rpaint');
+}
+function plate(k, pts, x, w, col, key) { k.side(pts.flatMap((p, i) => i % 2 ? [p] : [-p]), w, x, 0, 0, col, key || 'rpaint', 0.012); }   // a panel drawn side-on, pts as [z, y, z, y...]
+function lamp(k, x, y, z, sx, sy, col, house) {   // a lamp: a crisp lens in a dark housing
+  if (house !== false) k.ball(0.1, x, y, z - 0.012, '#120c0c', sx * 1.18, sy * 1.35, 0.3, 'lit', 12);
+  k.ball(0.1, x, y, z, col, sx, sy, 0.3, 'rlamp', 12);
+}
+const RED = '#ff2a2a', LAMP = '#f6f2e2', BLK = '#121214';
+function cover(k, x, y, z, sx, sy, sz, ry) {   // a lamp under a clear cover, lying in the bodywork
+  k.put(new THREE.SphereGeometry(0.1, 12, 8), '#8ea2b4', x, y, z, 0, ry || 0, 0, sx, sy, sz, 'rglass');
+  k.put(new THREE.SphereGeometry(0.08, 10, 6), LAMP, x, y + 0.01, z - Math.cos(ry || 0) * sz * 0.03, 0, ry || 0, 0, sx * 0.85, sy * 0.85, sz * 0.8, 'rlamp');
+}
+function cabW(cab, z, y, up) {   // how wide a glass cabin is at height y (its sections lofted with belly 0.3)
+  const hw = lerpAt(cab, z, 1), cb = lerpAt(cab, z, 2), t = lerpAt(cab, z, 3), ym = cb + (t - cb) * 0.3;
+  if (y <= ym) return hw; const s = Math.pow(Math.min(1, (y - ym) / (t - ym)), up / 2); return Math.pow(Math.sqrt(1 - s * s), 2 / up) * hw;
+}
+function capOver(cab, list, up) {   // a painted roof hugging a glass cabin: [[z, bottom]...]; a low bottom takes the paint down the side, so
+  // where the bottom falls is the back edge of the side window
+  return list.map(([z, b0]) => { const b = Math.max(b0, lerpAt(cab, z, 2)); return [z, cabW(cab, z, b, up) + 0.02, b, lerpAt(cab, z, 3) + 0.02]; });
+}
+function glassOn(k, sec, z0, z1, f, up, belly) {   // a window lying on a painted loft's top, from z0 to z1, f of its width
+  const pos = [], n = Math.max(2, Math.ceil((z1 - z0) / 0.05)), m = 6;
+  const P = (z, u) => { const hw = lerpAt(sec, z, 1), b = lerpAt(sec, z, 2), t = lerpAt(sec, z, 3), ym = b + (t - b) * belly, x = u * f * hw, c = Math.pow(Math.abs(x) / hw, up / 2);
+    return [x, ym + (t - ym) * Math.pow(Math.sqrt(Math.max(0, 1 - c * c)), 2 / up) + 0.006, z]; };
+  for (let q = 0; q < n; q++) for (let j = 0; j < m; j++) { const za = z0 + (z1 - z0) * q / n, zb = z0 + (z1 - z0) * (q + 1) / n, ua = -1 + 2 * j / m, ub = -1 + 2 * (j + 1) / m;
+    pos.push(...P(za, ua), ...P(zb, ua), ...P(zb, ub), ...P(za, ua), ...P(zb, ub), ...P(za, ub)); }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.computeVertexNormals();
+  k.put(g, '#1a2430', 0, 0, 0, 0, 0, 0, 1, 1, 1, 'rglass');
+}
+function trimLine(k, pts, col, s) {   // a thin bright line through [[x, y, z]...]
+  for (let i = 0; i < pts.length - 1; i++) { const [a, b] = [pts[i], pts[i + 1]], dx = b[0] - a[0], dy = b[1] - a[1], dz = b[2] - a[2], L = Math.hypot(dx, dy, dz);
+    k.put(new THREE.BoxGeometry(s || 0.014, s || 0.014, L + 0.01), col || '#e4e7ea', (a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2, -Math.asin(dy / L), Math.atan2(dx, dz), 0, 1, 1, 1, 'shiny'); }
+}
+function windowTrim(k, B, cab, cap, z0, z1, up) {   // a bright surround on the side glass: along the waist, and under the roof's edge
+  const zs = []; for (let z = z0; z < z1; z += 0.12) zs.push(z); zs.push(z1);
+  for (const sd of [-1, 1]) {
+    trimLine(k, zs.map((z) => { const y = B.topAt(z) + 0.006; return [sd * (cabW(cab, z, y, up) + 0.006), y, z]; }));
+    trimLine(k, [cap[0][0]].concat(zs.filter((z) => z > cap[0][0])).map((z) => { const y = lerpAt(cap, z, 2) - 0.008; return [sd * (cabW(cab, z, y, up) + 0.006), y, z]; }));
+  }
+}
+function vent(k, pts, x, sd, col) {   // a recessed vent seen side-on: a black frame, a lighter mesh inside, a body-colour lip over it
+  plate(k, pts, x + sd * 0.006, 0.02, BLK, 'lit');
+  const c = [0, 0]; for (let i = 0; i < pts.length; i += 2) { c[0] += pts[i] / (pts.length / 2); c[1] += pts[i + 1] / (pts.length / 2); }
+  plate(k, pts.map((v, i) => c[i % 2] + (v - c[i % 2]) * 0.8), x + sd * 0.014, 0.02, '#34373c', 'lit');
+}
+Object.assign(TRAFFIC, {
+  wedge(k, col) {   // cousin of the late-80s twin-turbo wedge: short and squat, a knife nose, a deck climbing to the tail, slats over the
+    // engine, a low full-width wing carried on short endplates that continue the rear wings
+    const B = racerBody(k, col, { w: [[-1.22, 0.33, 0.27], [1.24, 0.36, 0.33]], up: 4.6, crease: 0.3, style: 'five', mirror: [-0.5, 0.86], doors: [-0.62, 0.5],
+      keys: [[-1.88, 0.86, 0.3, 0.36], [-1.8, 0.94, 0.27, 0.42], [-1.62, 0.97, 0.24, 0.54], [-1.22, 0.99, 0.23, 0.76], [-0.85, 0.97, 0.23, 0.76], [-0.35, 0.95, 0.23, 0.76], [0.25, 0.98, 0.24, 0.81], [0.8, 1.03, 0.25, 0.87], [1.24, 1.06, 0.25, 0.9], [1.65, 1.04, 0.27, 0.94], [1.95, 0.99, 0.32, 0.96], [2.06, 0.92, 0.42, 0.95]],
+      cabin: [[-0.72, 0.7, 0.67, 0.73], [-0.45, 0.69, 0.69, 0.98], [0.05, 0.65, 0.72, 1.07], [0.48, 0.61, 0.76, 1.05], [0.8, 0.54, 0.8, 0.96], [0.98, 0.46, 0.84, 0.9]], cabinUp: 4,
+      roof: [[-0.18, 0.5, 0.99, 1.05], [0.2, 0.54, 1.01, 1.08], [0.52, 0.48, 0.99, 1.05]] });
+    for (let i = 0; i < 7; i++) { const z = 1.05 + i * 0.1; k.box(1.06, 0.02, 0.045, 0, B.topAt(z) - 0.008, z, BLK, 0, 0, 0, 'lit'); }   // slats over the engine
+    const wt = B.topAt(1.95) + 0.2;
+    for (const sd of [-1, 1]) {
+      plate(k, [1.62, B.topAt(1.62) - 0.02, 2.06, B.topAt(2.06) - 0.02, 2.06, wt, 1.8, wt - 0.02], sd * 0.93, 0.07, col);   // short endplates, continuing the rear wings
+      vent(k, [-0.45, 0.55, -0.05, 0.55, -0.05, 0.7, -0.3, 0.7], sd * B.hwAt(-0.25), sd, col);   // a duct in each door
+      vent(k, [0.52, 0.32, 1.0, 0.32, 1.0, 0.64, 0.62, 0.6], sd * B.hwAt(0.78), sd, col);   // an intake ahead of the rear wheel
+      k.box(0.36, 0.016, 0.045, sd * 0.58, B.topAt(-1.74) - 0.01, -1.74, LAMP, 0, -0.59, 0, 'rlamp');   // a slit of a lamp in the nose
+      lamp(k, sd * 0.6, 0.7, 2.075, 2.1, 0.55, RED);   // a long lamp each side
+      k.roll(0.055, 0.14, 12, sd * 0.4, 0.36, 2.04, '#cfd3d7', 'shiny');
+    }
+    k.box(1.88, 0.045, 0.34, 0, wt, 1.9, col, 0, -0.06, 0, 'rpaint').box(1.86, 0.035, 0.03, 0, wt + 0.03, 2.06, BLK, 0, 0, 0, 'lit');   // the wing, low, and its lip
+    k.box(1.76, 0.3, 0.05, 0, 0.38, 2.07, '#202226', 0, 0, 0, 'lit');   // a dark mesh tail
+    k.box(1.74, 0.025, 0.2, 0, 0.27, -1.84, BLK, 0, 0, 0, 'lit');   // the splitter under the knife nose
+  },
+  lemans(k, col) {   // cousin of the 60s endurance winner and its revival: very low, long curving nose, lamps under clear covers in the wing
+    // tops, a deep scoop behind the door under a swelling haunch, a bubble cabin, a tail cut off square, twin stripes nose to tail
+    const stripe = col === '#f4f4f4' ? '#1d4ed8' : '#f4f4f4';
+    const B = racerBody(k, col, { w: [[-1.38, 0.33, 0.27], [1.36, 0.36, 0.33]], up: 3.2, crease: 0.14, style: 'twin', mirror: [-0.62, 0.84], doors: [-0.7, 0.3],
+      keys: [[-2.15, 0.5, 0.32, 0.44], [-2.02, 0.8, 0.25, 0.58], [-1.75, 0.93, 0.24, 0.69], [-1.38, 0.99, 0.24, 0.76], [-0.95, 0.95, 0.24, 0.74], [-0.5, 0.93, 0.24, 0.74], [0.3, 0.97, 0.24, 0.8], [0.9, 1.05, 0.25, 0.87], [1.36, 1.07, 0.25, 0.9], [1.85, 1.04, 0.28, 0.91], [2.12, 1.0, 0.3, 0.91], [2.18, 0.98, 0.3, 0.9]],
+      cabin: [[-0.74, 0.76, 0.68, 0.72], [-0.47, 0.75, 0.7, 0.98], [0.0, 0.71, 0.72, 1.1], [0.43, 0.67, 0.75, 1.1], [0.83, 0.58, 0.8, 0.98], [1.12, 0.48, 0.84, 0.88]],
+      roof: [[-0.3, 0.55, 1.01, 1.07], [0.08, 0.6, 1.05, 1.12], [0.43, 0.57, 1.05, 1.12], [0.76, 0.48, 1.0, 1.06]] });
+    for (const sx of [-0.13, 0.13]) {   // twin stripes over the nose, the roof and the tail
+      ribbon(k, B.topAt, sx - 0.085, sx + 0.085, -2.08, -0.72, 0.008, stripe);
+      ribbon(k, B.roofAt, sx - 0.085, sx + 0.085, -0.26, 0.72, 0.008, stripe);
+      ribbon(k, B.topAt, sx - 0.085, sx + 0.085, 1.14, 2.16, 0.008, stripe);
+    }
+    for (const sd of [-1, 1]) {
+      const ly = B.topAt(-1.84), ry = sd * 0.28;   // lamps sunk in the wing tops: a dark pocket, swept back, two bright projector dots in it
+      k.put(new THREE.SphereGeometry(0.1, 12, 8), '#0c0e12', sd * 0.6, ly - 0.045, -1.84, -0.39, ry, 0, 2.3, 0.4, 3.0, 'lit');
+      for (const dz of [-0.1, 0.08]) k.ball(0.034, sd * 0.6 + dz * Math.sin(ry), ly - 0.01 + dz * 0.38, -1.84 + dz * Math.cos(ry), LAMP, 1, 0.8, 1, 'rlamp', 10);
+      vent(k, [0.35, 0.36, 0.98, 0.36, 0.98, 0.66, 0.5, 0.6], sd * B.hwAt(0.65), sd, col);   // a deep scoop behind the door
+      plate(k, [0.32, 0.6, 1.0, 0.66, 1.05, 0.72, 0.4, 0.66], sd * (B.hwAt(0.65) + 0.024), 0.04, col);   // the haunch swelling over it
+      lamp(k, sd * 0.6, 0.68, 2.19, 1.7, 0.8, RED);   // a wide oval lamp each side
+    }
+    k.box(1.8, 0.34, 0.05, 0, 0.36, 2.185, '#202226', 0, 0, 0, 'lit');   // the tail, cut off square, dark
+    for (const x of [-0.12, 0.12]) k.roll(0.065, 0.14, 12, x, 0.44, 2.19, '#d6d9dc', 'shiny');   // twin pipes in the middle
+    k.box(0.9, 0.12, 0.06, 0, 0.3, -2.13, BLK, 0, 0, 0, 'lit');
+  },
+  coupe9(k, col) {   // cousin of the rear-engined German turbo coupe: a short low bonnet between proud front wings with upright oval lamps,
+    // a tall glasshouse with an upright screen, the roof peaking over the driver and falling in one curve to the tail, broad flared
+    // rear hips, a body-colour spoiler with a rubber edge, lamps joined by a dark band across the tail
+    const cab = [[-0.6, 0.72, 0.69, 0.73], [-0.4, 0.71, 0.71, 1.06], [-0.05, 0.69, 0.74, 1.2], [0.4, 0.66, 0.77, 1.18], [0.85, 0.59, 0.8, 1.06], [1.2, 0.52, 0.81, 0.95], [1.52, 0.44, 0.81, 0.86]];
+    const roof = capOver(cab, [[-0.24, 1.1], [0.1, 1.13], [0.5, 1.09], [0.68, 1.06], [0.82, 0.99], [0.92, 0.9], [0.98, 0.8], [1.53, 0.8]], 3);   // the roof falling in one curve to the lid, the side glass a D
+    const B = racerBody(k, col, { w: [[-1.18, 0.31, 0.24], [1.02, 0.36, 0.36]], up: 3.0, crease: 0.1, style: 'five', mirror: [-0.5, 0.82], doors: [-0.58, 0.45],
+      keys: [[-1.92, 0.55, 0.3, 0.44], [-1.78, 0.78, 0.25, 0.53], [-1.5, 0.84, 0.23, 0.63], [-1.18, 0.86, 0.23, 0.69], [-0.85, 0.84, 0.23, 0.66], [-0.55, 0.84, 0.23, 0.68], [0.0, 0.89, 0.24, 0.75], [0.55, 1.02, 0.25, 0.82], [1.02, 1.15, 0.25, 0.85], [1.45, 1.1, 0.27, 0.84], [1.8, 0.98, 0.31, 0.8], [2.0, 0.86, 0.38, 0.74]],
+      cabin: cab, roof: roof, roofBelly: 0.2, roofDn: 8 });
+    glassOn(k, roof, 0.98, 1.44, 0.62, 3, 0.2);   // the rear window, on the fastback
+    for (const sd of [-1, 1]) {
+      k.loft([[-1.88, 0.12, 0.45, 0.58], [-1.72, 0.2, 0.45, 0.76], [-1.2, 0.21, 0.45, 0.79], [-0.7, 0.19, 0.45, 0.74], [-0.45, 0.08, 0.45, 0.69]], col, 'rpaint', { up: 2.4, dn: 4, belly: 0.4, n: 14, x: sd * 0.62 });   // the front wings, proud
+      k.put(new THREE.CylinderGeometry(0.1, 0.1, 0.04, 18), LAMP, sd * 0.62, 0.66, -1.84, Math.PI / 2, 0, 0, 1, 1.25, 1, 'rlamp');   // an upright oval lamp on the front of each
+      k.put(new THREE.TorusGeometry(0.105, 0.014, 4, 18), '#d6d9dc', sd * 0.62, 0.66, -1.83, 0, 0, 0, 1, 1.25, 1, 'shiny');
+      k.box(0.34, 0.1, 0.05, sd * 0.6, 0.6, 2.01, RED, 0, 0, 0, 'rlamp');   // a lamp each side ...
+      k.roll(0.05, 0.12, 10, sd * 0.36, 0.38, 1.98, '#cfd3d7', 'shiny');
+    }
+    k.box(0.86, 0.06, 0.04, 0, 0.62, 2.012, '#5a0d10', 0, 0, 0, 'lit');   // ... joined by a dark red band
+    const sy = B.topAt(1.75);
+    k.box(1.3, 0.1, 0.42, 0, sy + 0.02, 1.74, col, 0, -0.04, 0, 'rpaint');   // the spoiler: a raised tray in body colour ...
+    for (const sd of [-1, 1]) k.box(0.05, 0.05, 0.42, sd * 0.63, sy + 0.12, 1.74, col, 0, -0.04, 0, 'rpaint');   // ... its raised sides ...
+    k.box(1.34, 0.05, 0.05, 0, sy + 0.11, 1.96, BLK, 0, 0, 0, 'lit');   // ... and its black rubber edge
+    k.box(1.55, 0.1, 0.04, 0, 0.5, 2.0, BLK, 0, 0, 0, 'lit');
+    k.box(1.2, 0.1, 0.06, 0, 0.3, -1.88, BLK, 0, 0, 0, 'lit');
+  },
+  gtbrit(k, col) {   // cousin of the British V8 grand tourer: a long bonnet, the cabin set well back behind the front axle, fat hips swelling past
+    // the cabin, a fastback to a short upturned ducktail, swept-back teardrop lamps
+    const cab = [[-0.2, 0.72, 0.76, 0.8], [0.05, 0.71, 0.78, 1.03], [0.45, 0.68, 0.8, 1.13], [0.9, 0.63, 0.82, 1.11], [1.3, 0.56, 0.85, 1.0], [1.62, 0.47, 0.88, 0.93]];
+    const roof = capOver(cab, [[0.2, 1.06], [0.65, 1.08], [0.95, 1.04], [1.15, 0.99], [1.3, 0.94], [1.42, 0.9], [1.5, 0.85], [1.63, 0.85]], 3);   // a fastback, the side glass tapering to a point
+    const B = racerBody(k, col, { w: [[-1.3, 0.33, 0.26], [1.26, 0.35, 0.3]], up: 3.2, crease: 0.25, style: 'ten', mirror: [-0.1, 0.86], doors: [-0.2, 0.85],
+      keys: [[-1.98, 0.6, 0.32, 0.52], [-1.84, 0.84, 0.26, 0.62], [-1.58, 0.92, 0.25, 0.7], [-1.3, 0.94, 0.25, 0.75], [-0.75, 0.91, 0.25, 0.77], [-0.2, 0.89, 0.25, 0.79], [0.45, 0.93, 0.25, 0.82], [0.9, 1.03, 0.26, 0.86], [1.26, 1.08, 0.26, 0.88], [1.65, 1.03, 0.28, 0.9], [1.9, 0.92, 0.32, 0.92], [2.0, 0.84, 0.4, 0.92]],
+      cabin: cab, roof: roof, roofBelly: 0.2, roofDn: 8 });
+    glassOn(k, roof, 1.0, 1.58, 0.6, 3, 0.2);   // the rear window
+    windowTrim(k, B, cab, roof, 0.02, 1.46, 3);   // a thin bright surround
+    k.ball(0.3, 0, 0.42, -1.965, BLK, 1.9, 0.38, 0.25, 'lit', 16).ball(0.3, 0, 0.42, -1.975, '#34373c', 1.7, 0.3, 0.2, 'lit', 16);   // a wide low mouth: dark round its edge, a lighter mesh inside ...
+    k.put(new THREE.TorusGeometry(0.3, 0.011, 4, 26), '#b9bec4', 0, 0.42, -1.985, 0, 0, 0, 1.9, 0.38, 1, 'shiny');   // ... behind a thin satin lip
+    for (const sd of [-1, 1]) {
+      cover(k, sd * 0.6, 0.63, -1.76, 1.0, 0.5, 2.2, sd * 0.35);   // swept-back teardrop lamps
+      k.box(0.02, 0.04, 0.3, sd * (B.hwAt(-0.85) + 0.004), 0.55, -0.85, '#d6d9dc', 0, 0, 0, 'shiny');   // a strake behind the front wheel
+      k.box(0.5, 0.05, 0.05, sd * 0.52, 0.8, 1.99, RED, 0, 0, 0, 'rlamp').box(0.18, 0.05, 0.05, sd * 0.79, 0.8, 1.92, RED, sd * 0.5, 0, 0, 'rlamp');   // a slim lamp each side, round the corner
+      k.roll(0.055, 0.12, 10, sd * 0.45, 0.4, 1.97, '#cfd3d7', 'shiny');
+    }
+    k.box(1.28, 0.03, 0.14, 0, B.topAt(1.95) - 0.005, 1.97, col, 0, -0.38, 0, 'rpaint');   // the ducktail, kicked up
+    k.box(1.2, 0.12, 0.1, 0, 0.3, 1.94, BLK, 0, 0, 0, 'lit');
+  },
+  raging(k, col) {   // cousin of the sharp Italian V10: short, all edges, one arc from nose to tail, the windscreen pushed forward over the
+    // front wheels, slashes of lamps up the wings, a big recessed trapezoid mouth across the nose, big black intakes
+    const B = racerBody(k, col, { w: [[-1.2, 0.33, 0.27], [1.22, 0.35, 0.32]], up: 6, crease: 0.55, style: 'star', rim: '#7a7f86', mirror: [-0.8, 0.86], doors: [-0.85, 0.55],
+      keys: [[-1.83, 0.66, 0.28, 0.42], [-1.7, 0.92, 0.23, 0.55], [-1.45, 0.99, 0.23, 0.68], [-1.2, 1.0, 0.23, 0.76], [-0.9, 0.98, 0.23, 0.79], [-0.3, 0.97, 0.23, 0.8], [0.4, 0.99, 0.24, 0.82], [0.85, 1.02, 0.25, 0.84], [1.22, 1.04, 0.25, 0.85], [1.55, 1.02, 0.27, 0.82], [1.8, 0.98, 0.31, 0.77], [1.9, 0.94, 0.38, 0.73]],
+      cabin: [[-0.98, 0.76, 0.74, 0.79], [-0.7, 0.74, 0.76, 0.98], [-0.2, 0.7, 0.78, 1.08], [0.35, 0.66, 0.8, 1.07], [0.8, 0.6, 0.82, 0.98], [1.1, 0.52, 0.84, 0.9]], cabinUp: 6,
+      roof: [[-0.45, 0.53, 1.0, 1.06], [0.0, 0.56, 1.02, 1.09], [0.45, 0.52, 1.0, 1.06]], roofUp: 6 });
+    const trap = (w0, w1, h) => { const t = new THREE.Shape(); t.moveTo(-w0, 0); t.lineTo(w0, 0); t.lineTo(w1, h); t.lineTo(-w1, h); t.closePath(); return new THREE.ShapeGeometry(t); };
+    k.put(trap(0.78, 0.6, 0.2), BLK, 0, 0.25, -1.836, 0, Math.PI, 0, 1, 1, 1, 'lit').put(trap(0.7, 0.54, 0.15), '#34373c', 0, 0.275, -1.842, 0, Math.PI, 0, 1, 1, 1, 'lit');   // the mouth, its mesh inside
+    for (const sd of [-1, 1]) {
+      k.box(0.44, 0.03, 0.1, sd * 0.6, B.topAt(-1.58) - 0.03, -1.58, LAMP, sd * 0.3, -0.25, sd * -0.3, 'rlamp');   // a slash of a lamp up each wing
+      vent(k, [0.45, 0.32, 0.98, 0.32, 0.98, 0.66, 0.6, 0.62], sd * B.hwAt(0.75), sd, col);   // a big intake ahead of the rear wheel
+      plate(k, [0.42, 0.62, 1.0, 0.66, 1.0, 0.7, 0.5, 0.67], sd * (B.hwAt(0.75) + 0.024), 0.04, col);
+      k.box(0.46, 0.03, 0.05, sd * 0.56, 0.665, 1.905, RED, 0, 0, 0, 'rlamp').box(0.4, 0.03, 0.05, sd * 0.58, 0.6, 1.905, RED, 0, 0, 0, 'rlamp');   // two thin lamp bars each side, where the roof's arc runs out
+    }
+    for (const [wz, r] of [[-1.2, 0.33], [1.22, 0.35]]) for (const sd of [-1, 1]) {   // the arches' lips, flat-topped and angular
+      const hx = sd * (B.hwAt(wz) + 0.006), R = r + 0.06;
+      k.box(0.03, 0.035, 0.44, hx, r + R * 0.93, wz, col, 0, 0, 0, 'rpaint');
+      for (const e of [-1, 1]) k.box(0.03, 0.035, 0.34, hx, r + R * 0.58, wz + e * 0.34, col, 0, e * 1.0, 0, 'rpaint');
+    }
+    k.box(0.9, 0.02, 0.5, 0, B.topAt(1.42) - 0.006, 1.42, '#1a2430', 0, 0.12, 0, 'rglass');   // a glass engine cover, slatted
+    for (let i = 0; i < 5; i++) k.box(0.92, 0.014, 0.03, 0, B.topAt(1.22 + i * 0.1) + 0.012, 1.22 + i * 0.1, BLK, 0, 0, 0, 'lit');
+    k.box(1.7, 0.22, 0.05, 0, 0.36, 1.905, '#202226', 0, 0, 0, 'lit');   // a dark mesh tail
+    for (const x of [-0.12, 0.12]) k.roll(0.06, 0.12, 10, x, 0.4, 1.9, '#cfd3d7', 'shiny');
+  },
+  trident(k, col) {   // cousin of the curvy Italian grand tourer: front-engined, a three-box shape - a flat roof, upright side glass in a bright
+    // frame, a kinked rear pillar, a short separate boot - a wide low mouth with one blade, swept twin-lens lamp pods, oval lamps
+    const cab = [[-0.45, 0.74, 0.8, 0.84], [-0.2, 0.73, 0.82, 1.06], [0.2, 0.71, 0.84, 1.2], [0.6, 0.68, 0.86, 1.17], [1.0, 0.62, 0.88, 1.07], [1.3, 0.55, 0.9, 0.98], [1.45, 0.51, 0.9, 0.955]];   // (narrowing to the back)
+    const roof = capOver(cab, [[-0.1, 1.07], [0.2, 1.13], [0.55, 1.11], [0.76, 1.08], [0.84, 1.0], [0.88, 0.93], [0.9, 0.86], [1.46, 0.86]], 4);   // the roof peaking over the driver, falling to the pillar
+    const B = racerBody(k, col, { w: [[-1.36, 0.33, 0.26], [1.32, 0.35, 0.29]], up: 2.8, crease: 0.14, style: 'seven', mirror: [-0.36, 0.92], doors: [-0.45, 0.95],
+      keys: [[-2.08, 0.6, 0.35, 0.56], [-1.95, 0.84, 0.29, 0.66], [-1.7, 0.92, 0.27, 0.74], [-1.36, 0.94, 0.27, 0.79], [-0.8, 0.92, 0.27, 0.8], [-0.1, 0.9, 0.27, 0.82], [0.6, 0.92, 0.27, 0.86], [1.05, 0.95, 0.28, 0.9], [1.32, 0.97, 0.28, 0.93], [1.65, 0.95, 0.3, 0.95], [1.92, 0.9, 0.35, 0.95], [2.0, 0.82, 0.42, 0.93]],
+      cabin: cab, cabinUp: 4, roof: roof, roofUp: 4, roofBelly: 0.2, roofDn: 8 });
+    glassOn(k, roof, 0.92, 1.42, 0.62, 4, 0.2);   // the rear window, raked down to a short flat boot
+    windowTrim(k, B, cab, roof, -0.3, 0.88, 4);   // upright side glass in a bright frame
+    k.ball(0.3, 0, 0.42, -2.035, BLK, 1.85, 0.42, 0.25, 'lit', 16).ball(0.3, 0, 0.42, -2.045, '#34373c', 1.68, 0.34, 0.2, 'lit', 16);   // a wide low mouth, a mesh inside ...
+    k.put(new THREE.TorusGeometry(0.3, 0.011, 4, 26), '#b9bec4', 0, 0.42, -2.055, 0, 0, 0, 1.85, 0.42, 1, 'shiny');   // ... a satin lip round it
+    for (const sd of [-1, 1]) {
+      cover(k, sd * 0.6, 0.67, -1.84, 2.3, 0.42, 1.5, sd * 0.45);   // a wide swept lamp
+      plate(k, [0.66, 0.865, 0.89, 0.865, 0.89, 0.975], sd * 0.655, 0.03, col);   // the pillar's foot, kinked forward
+      lamp(k, sd * 0.6, 0.74, 2.022, 1.5, 0.85, RED); k.ball(0.06, sd * 0.38, 0.74, 2.032, '#ffb24a', 1.3, 0.85, 0.3, 'rlamp', 8);   // oval lamps, an amber one inside
+      k.roll(0.05, 0.12, 10, sd * 0.4, 0.44, 1.99, '#cfd3d7', 'shiny');
+    }
+    k.box(1.4, 0.14, 0.1, 0, 0.38, 1.97, BLK, 0, 0, 0, 'lit');
+  },
+  barchetta(k, col) {   // cousin of the open V12 two-seater: a very long bonnet with a scoop between raised wing crowns carrying almond lamps
+    // under clear covers, the beltline running unbroken through the doors and kicking up over the rear wheels, a cockpit cut down to
+    // the seats, hoops behind the heads, a low raked screen
+    const B = racerBody(k, col, { w: [[-1.42, 0.33, 0.26], [1.36, 0.35, 0.3]], up: 3.2, crease: 0.14, style: 'five', mirror: [-0.45, 0.92], doors: [-0.42, 0.8],
+      keys: [[-2.12, 0.62, 0.33, 0.54], [-1.98, 0.86, 0.27, 0.64], [-1.72, 0.93, 0.25, 0.72], [-1.42, 0.96, 0.25, 0.77], [-0.75, 0.94, 0.25, 0.8], [-0.42, 0.93, 0.25, 0.83], [-0.36, 0.92, 0.25, 0.62], [0.8, 0.93, 0.25, 0.62], [0.86, 0.95, 0.25, 0.86], [1.36, 1.0, 0.26, 0.92], [1.85, 0.96, 0.28, 0.9], [2.15, 0.87, 0.33, 0.87], [2.22, 0.8, 0.4, 0.85]] });
+    for (const sd of [-1, 1]) {
+      k.loft([[-0.46, 0.04, 0.3, 0.82], [-0.38, 0.075, 0.3, 0.85], [0.3, 0.08, 0.3, 0.87], [0.82, 0.075, 0.3, 0.88], [0.9, 0.04, 0.3, 0.88]], col, 'rpaint', { up: 2.4, dn: 6, belly: 0.6, n: 14, x: sd * 0.86 });   // the doors, rounded, up to the beltline
+      k.loft([[-2.02, 0.1, 0.55, 0.62], [-1.85, 0.2, 0.55, 0.81], [-1.4, 0.22, 0.55, 0.86], [-0.9, 0.19, 0.55, 0.84], [-0.55, 0.08, 0.55, 0.81]], col, 'rpaint', { up: 2.4, dn: 4, belly: 0.4, n: 14, x: sd * 0.6 });   // the wing crowns
+      cover(k, sd * 0.6, 0.72, -1.88, 1.6, 0.45, 2.0, sd * 0.2);   // almond lamps under clear covers
+    }
+    k.box(1.6, 0.03, 1.2, 0, 0.46, 0.25, BLK, 0, 0, 0, 'lit');   // the cockpit floor
+    for (const x of [-0.38, 0.38]) {
+      k.ball(0.24, x, 0.52, 0.4, '#1e1c1d', 0.95, 0.3, 1.0, 'lit', 12).put(new THREE.CapsuleGeometry(0.17, 0.2, 4, 10), '#1e1c1d', x, 0.66, 0.66, 0.26, 0, 0, 1.1, 0.75, 0.36, 'lit');   // the seats, low behind the beltline
+      k.loft([[0.64, 0.11, 0.84, 0.93], [0.72, 0.15, 0.82, 1.06], [0.95, 0.165, 0.8, 1.07], [1.45, 0.13, 0.8, 0.97], [2.0, 0.05, 0.8, 0.88]], col, 'rpaint', { up: 3, dn: 3, belly: 0.3, n: 14, x: x });   // a headrest hump behind each head, flowing into the deck
+      k.put(new THREE.CapsuleGeometry(0.15, 0.26, 4, 10), x > 0 ? '#e8e4da' : '#2a3a5a', x, 0.8, 0.5, 0.15, 0, 0, 1.25, 1, 0.8, 'lit');   // the two aboard
+      k.ball(0.11, x, 1.14, 0.48, '#e2ae86', 1, 1.1, 1.05, 'lit', 12).ball(0.118, x, 1.19, 0.51, x > 0 ? '#2a1c12' : '#c89a4a', 1.04, 0.82, 1.08, 'lit', 12);
+    }
+    k.box(1.42, 0.26, 0.02, 0, 0.8, -0.5, '#3c5568', 0, 0.95, 0, 'rglass').box(1.46, 0.022, 0.03, 0, 1.03, -0.37, '#e4e7ea', 0, 0.95, 0, 'shiny');   // a low raked tinted screen, its bright frame
+    for (const sd of [-1, 1]) k.box(0.022, 0.27, 0.03, sd * 0.72, 0.8, -0.5, '#e4e7ea', 0, 0.95, 0, 'shiny');
+    k.box(0.4, 0.07, 0.6, 0, B.topAt(-1.2) - 0.01, -1.2, BLK, 0, 0, 0, 'lit');   // the bonnet scoop
+    k.box(0.8, 0.12, 0.06, 0, 0.32, -2.09, BLK, 0, 0, 0, 'lit');
+    for (const sd of [-1, 1]) {
+      k.box(0.17, 0.11, 0.05, sd * 0.5, 0.7, 2.24, RED, 0, 0, 0, 'rlamp').box(0.17, 0.11, 0.05, sd * 0.72, 0.7, 2.215, RED, 0, 0, 0, 'rlamp');   // two square lamps each side
+      for (const dx of [0, 0.13]) k.roll(0.045, 0.12, 10, sd * (0.4 + dx), 0.4, 2.22, '#cfd3d7', 'shiny');
+    }
+  }
+});
+export const TRAFFIC_ORDER = ['hatch', 'saloon', 'van', 'bus', 'camper', 'tractor', 'lorry', 'sports', 'wedge', 'lemans', 'coupe9', 'gtbrit', 'raging', 'trident', 'barchetta'];
+const TCOL = { hatch: [0, 1, 2, 4, 5, 6], saloon: [0, 1, 2, 3, 6, 7], van: [2, 2, 2, 6, 1], bus: [0, 4], camper: [5, 4, 1, 7], tractor: [5, 0], lorry: [2, 1, 3], sports: [0, 4, 7, 1],
+  wedge: ['#d10f1d', '#f2c230', '#e8eaec', '#e2531c'], lemans: ['#2e64d8', '#d62a1c', '#f4f4f4', '#e2531c'], coupe9: ['#c0c4c8', '#c81e1e', '#f2f2ee', '#2f6b48'], gtbrit: ['#2f6b48', '#c0c4c8', '#8a8f96', '#c9a227'],
+  raging: ['#9fd000', '#ef7d00', '#f2c230', '#f4f4f2'], trident: ['#2b4fa0', '#e8e4da', '#c0c4c8', '#5a6b78'], barchetta: ['#c81e1e', '#e8c02a', '#c0c4c8', '#2e64d8'] };   // (the racers: their own colours)
 export function trafficModel(t, colIdx) {
-  const id = TRAFFIC_ORDER[t], cols = TCOL[id], col = CARCOL[cols[colIdx % cols.length]], key = 'veh|' + id + '|' + col;
+  const id = TRAFFIC_ORDER[t], cols = TCOL[id], c0 = cols[colIdx % cols.length], col = typeof c0 === 'string' ? c0 : CARCOL[c0], key = 'veh|' + id + '|' + col;
   let m = cache.get(key); if (m) return m;
   const k = new Kit(); TRAFFIC[id](k, col);
   m = k.build(); cache.set(key, m);
@@ -637,19 +884,19 @@ export function trafficModel(t, colIdx) {
 // The body is drawn through cross-sections from the nose (-Z) to the tail (+Z): at each, a half-width, a bottom and a top,
 // and a rounded-box shape between them; the bottom rises over the wheels into arches. keys: paint, trim (black),
 // chrome, glass, tyre, lit (people, seats), glow (lights); the four wheels are apart (they turn and steer).
-function sections(keys, wheelZ) {   // cross-sections along the body: [z, halfWidth, bottom, top]
+function sections(keys, wheelZ, arch) {   // cross-sections along the body: [z, halfWidth, bottom, top]; arch: [[centre height, radius] per wheel] (default: the roadster's)
   const at = (z) => { let i = 0; while (i < keys.length - 2 && keys[i + 1][0] < z) i++; const a = keys[i], b = keys[i + 1], f = Math.max(0, Math.min(1, (z - a[0]) / (b[0] - a[0]))); return [a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f, a[3] + (b[3] - a[3]) * f]; };
   const z0 = keys[0][0], z1 = keys[keys.length - 1][0], zs = [];
-  for (let i = 0; i <= 26; i++) zs.push(z0 + (z1 - z0) * (0.5 - 0.5 * Math.cos(i / 26 * Math.PI)));   // closer together at the nose and tail
-  for (const wz of wheelZ) for (const o of [-0.46, -0.4, -0.385, -0.36, -0.32, -0.26, -0.18, -0.09, 0, 0.09, 0.18, 0.26, 0.32, 0.36, 0.385, 0.4, 0.46]) zs.push(wz + o);
+  for (let i = 0, nn = arch ? 18 : 26; i <= nn; i++) zs.push(z0 + (z1 - z0) * (0.5 - 0.5 * Math.cos(i / nn * Math.PI)));   // closer together at the nose and tail
+  for (const wz of wheelZ) for (const o of arch ? [-0.42, -0.38, -0.32, -0.22, -0.1, 0, 0.1, 0.22, 0.32, 0.38, 0.42] : [-0.46, -0.4, -0.385, -0.36, -0.32, -0.26, -0.18, -0.09, 0, 0.09, 0.18, 0.26, 0.32, 0.36, 0.385, 0.4, 0.46]) zs.push(wz + o);
   for (const kk of keys) zs.push(kk[0]);
   zs.sort((a, b) => a - b);
   const out = [];
   for (const z of zs) {
     if (z < z0 || z > z1 || (out.length && z - out[out.length - 1][0] < 0.012)) continue;
-    const s = at(z); let bot = 0.3;
-    for (const wz of wheelZ) { const d = (z - wz) / 0.39; if (Math.abs(d) < 1) bot = Math.max(bot, 0.34 + 0.39 * Math.sqrt(1 - d * d)); }   // round the tyre, a hand's width clear
-    out.push([z, s[0], Math.max(s[1], bot), s[2], Math.max(s[1], 0.3)]);   // (and the bottom without the arch)
+    const s = at(z); let bot = arch ? 0 : 0.3;   // (the racers ride lower)
+    wheelZ.forEach((wz, wi) => { const A = arch ? arch[wi] : [0.34, 0.39], d = (z - wz) / A[1]; if (Math.abs(d) < 1) bot = Math.max(bot, A[0] + A[1] * Math.sqrt(1 - d * d)); });   // round the tyre, a hand's width clear
+    out.push([z, s[0], Math.max(s[1], bot), arch ? Math.max(s[2], Math.max(s[1], bot) + 0.05) : s[2], Math.max(s[1], 0.3)]);   // (and the bottom without the arch)
   }
   return out;
 }
