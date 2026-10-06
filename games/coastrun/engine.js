@@ -73,29 +73,41 @@
     { key: 'hurn', name: 'HURN AIRPORT', seed: 7823, t: 68, len: 710, curvy: 0.6, hilly: 0.2, sea: 0, band: [8, 20], bands: [[0, [6, 12]], [0.3, [10, 16]], [0.72, [5, 12]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Holdenhurst, Hurn, Bournemouth Airport)
     { key: 'wimborne', name: 'WIMBORNE MINSTER', seed: 7927, t: 70, len: 730, curvy: 0.6, hilly: 0.3, sea: 0, band: [10, 25], bands: [[0, [10, 22]], [0.32, [6, 12]], [0.66, [6, 12]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Canford Magna, the Minster)
     { key: 'ferndown', name: 'FERNDOWN', seed: 8029, t: 70, len: 730, curvy: 0.6, hilly: 0.3, sea: 0, band: [20, 40], bands: [[0, [14, 26]], [0.3, [24, 34]], [0.64, [26, 42]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Ringwood Road north, West Parley)
+    // the west coast run (owner, 6 Oct: "split the coast run and do Wareham and Wool"); Kimmeridge to join Swanage and Durdle Door by real roads
+    { key: 'wareham', name: 'WAREHAM', seed: 8233, t: 68, len: 720, curvy: 0.55, hilly: 0.25, sea: 0, band: [8, 22], bands: [[0, [14, 26]], [0.3, [6, 12]], [0.62, [3, 7]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Sandford's heath, the town inside its Saxon walls, the quay and the causeway over the Frome)
+    { key: 'wool', name: 'WOOL', seed: 8337, t: 68, len: 720, curvy: 0.6, hilly: 0.3, sea: 0, band: [8, 30], bands: [[0, [22, 40]], [0.32, [18, 30]], [0.64, [4, 10]]], mix: [5, 3, 2, 1, 3, 1, 1, 2], feat: {} },   // (the heath past the tank crossings, Bovington and the Tank Museum, over Wool Bridge into the village)
+    { key: 'kimmeridge', name: 'KIMMERIDGE', seed: 8441, t: 70, len: 730, curvy: 0.75, hilly: 0.7, sea: -1, band: [8, 90], bands: [[0, [60, 95]], [0.36, [24, 40]], [0.66, [10, 18]]], shoreZ: [[0, [110, 120, 130, 115, 125, 110, 130, 120]], [0.36, [70, 75, 80, 72, 78, 70, 80, 75]], [0.66, [26, 28, 30, 32, 28, 26, 30, 28]]], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: {} },   // (along the Purbeck ridge, the village, down to the bay)
     { key: 'highcliffe', name: 'HIGHCLIFFE', seed: 8131, t: 70, len: 730, curvy: 0.6, hilly: 0.3, sea: 0, band: [20, 35], bands: [[0, [6, 14]], [0.33, [14, 24]], [0.66, [24, 34]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (the castle, the clifftop)
   ];
-  // the runs (owner, 6 Oct): round 1 the town, from Bournemouth out through its suburbs, every fork a real road (games/coastrun
-  // route map, 6 Oct 2026); reach a goal and round 2 goes out to the coast; its goals bring you back into town. Within a run:
-  // level L (1..5) has L places; from place j of a level, left goes to j and right to j + 1 of the next.
+  // the runs (owner, 6 Oct): round 1 the town, from Bournemouth out through its suburbs, every fork a real road (games/coastrun route
+  // map, 6 Oct 2026). Reach a goal and round 2 goes on along the real roads from it: west along the coast from Poole Quay or Wimborne
+  // (Wareham, then Corfe or Wool ...), east from Ferndown, Highcliffe or Hengistbury (Lymington, then the Forest or the island); the
+  // coast's goals bring you back into town. Within a run of n levels: level L (1..n) has L places; from place j of a level, left goes to
+  // j and right to j + 1 of the next. (The owner split the old coast run, 6 Oct: Christchurch to Old Harry was no real road.)
   var RUNS = [
-    ['bournemouth', 'winton', 'charminster', 'kinson', 'muscliff', 'littledown', 'towerpark', 'bearcross', 'hurn', 'christchurch', 'harbour', 'wimborne', 'ferndown', 'highcliffe', 'hengistbury'],
-    ['bournemouth', 'sandbanks', 'christchurch', 'purbeck', 'swanage', 'forest', 'jurassic', 'weymouth', 'harbour', 'lymington', 'lyme', 'portland', 'goldencap', 'hengistbury', 'needles']
+    { key: 'town', levels: 5, banner: 'Back into town', places: ['bournemouth', 'winton', 'charminster', 'kinson', 'muscliff', 'littledown', 'towerpark', 'bearcross', 'hurn', 'christchurch', 'harbour', 'wimborne', 'ferndown', 'highcliffe', 'hengistbury'], names: { harbour: 'POOLE QUAY' } },
+    // Wareham > Wool (A352) | Corfe (A351); Wool > Weymouth (A353) | Durdle Door (B3071); Corfe > Durdle Door (the range road to East Lulworth) |
+    // Swanage; Weymouth > Portland | Lyme Regis (the coast road, past Golden Cap); Durdle Door > Lyme Regis (the A35, past Golden Cap) | Kimmeridge
+    // (the range road back east by Tyneham); Swanage > Kimmeridge (by Kingston and Steeple) | Sandbanks (Studland and the chain ferry)
+    { key: 'west', levels: 4, banner: 'West along the coast', places: ['wareham', 'wool', 'purbeck', 'weymouth', 'jurassic', 'swanage', 'portland', 'lyme', 'kimmeridge', 'sandbanks'], names: {} },
+    // Lymington > the New Forest (the A337 north by Brockenhurst) | the Needles (the car ferry to Yarmouth)
+    { key: 'east', levels: 2, banner: 'East to the Forest and the island', places: ['lymington', 'forest', 'needles'], names: {} }
   ];
-  var RUN_NAME = [{ harbour: 'POOLE QUAY' }, {}];   // (a place called something else in one run)
-  var RUN_N = 15, STAGES = [];
+  var GOAL_RUN = { harbour: 1, wimborne: 1, ferndown: 2, highcliffe: 2, hengistbury: 2 };   // the town's goals: which run they lead on to
+  var STAGES = [], RUN_START = [];
   (function () {
     var byKey = {}; PLACES.forEach(function (p) { byKey[p.key] = p; });
     RUNS.forEach(function (run, r) {
-      var id = r * RUN_N, j0 = 0;
-      for (var L = 1; L <= LEVELS; L++) for (var j = 0; j < L; j++, id++, j0++) {
-        var P = byKey[run[j0]], S = {}; for (var k in P) S[k] = P[k];
-        if (RUN_NAME[r][S.key]) S.name = RUN_NAME[r][S.key];
-        S.id = id; S.run = r; S.level = L; S.pos = j; S.next = L < LEVELS ? [id + L, id + L + 1] : null;
+      var id = STAGES.length, j0 = 0; RUN_START[r] = id;
+      for (var L = 1; L <= run.levels; L++) for (var j = 0; j < L; j++, id++, j0++) {
+        var P = byKey[run.places[j0]], S = {}; for (var k in P) S[k] = P[k];
+        if (run.names[S.key]) S.name = run.names[S.key];
+        S.id = id; S.run = r; S.level = L; S.pos = j; S.next = L < run.levels ? [id + L, id + L + 1] : null;
         STAGES.push(S);
       }
     });
   })();
+  function nextRun(S) { return S.run ? 0 : GOAL_RUN[S.key] || 1; }   // after a goal
   // the traffic: w = half its width, l = half its length (metres), v = its speed (share of full speed)
   var VEH = [
     { id: 'hatch', w: 0.9, l: 2.0, v: [0.4, 0.56] },
@@ -248,13 +260,14 @@
   function water(s, x) { return (s.brg && Math.abs(x) > 14) || (s.sea && (x < 0 ? -1 : 1) === s.sea && Math.abs(x) > s.sh + 6); }
 
   var FERRY = { 'sandbanks>swanage': { k: 'chain', dur: 270, title: 'ALL ABOARD!', sub: 'The chain ferry across to Studland', land: 'STUDLAND', landSub: 'On to Old Harry Rocks' },
+    'swanage>sandbanks': { k: 'chain', dur: 270, title: 'ALL ABOARD!', sub: 'The chain ferry back across to Sandbanks', land: 'SANDBANKS', landSub: 'Along the spit to the goal' },
     'lymington>needles': { k: 'car', dur: 390, title: 'ALL ABOARD!', sub: 'The car ferry to the Isle of Wight', land: 'ISLE OF WIGHT', landSub: 'Off the ferry at Yarmouth' } };
   function buildStage(W, id) {
     var S = STAGES[id], prev = W.route && W.route.length && W.stretch.length ? STAGES[W.route[W.route.length - 1]].key : null, B = { W: W, S: S, rng: rnd(S.seed), k: 0, sh: S.sea ? 30 : 0, shT: 26, nextSh: 60, bends: [], wallL: 0, wallR: 0 };
     var s0 = W.base + W.segs.length, i, first = !W.stretch.length, rec = { id: id, from: s0, to: 0, fork: null, side: W.pendingSide || 0 };
     W.pendingSide = 0;
     for (i = 0; i < 40; i++) add(B, 0);   // the opening straight with its gate
-    var gk = first ? 'start' : id % RUN_N === 0 ? 'round' : 'check';
+    var gk = first ? 'start' : id === RUN_START[STAGES[id].run] ? 'round' : 'check';
     segAt(W, s0 + 8).gate = { kind: gk, st: id };
     if (prev && FERRY[prev + '>' + S.key]) segAt(W, s0).ferry = FERRY[prev + '>' + S.key];   // across the water: the ferry first
     put(W, s0 + 8, 'gate', 0, 0, { v: gk === 'start' ? 0 : gk === 'round' ? 1 : 2 });
@@ -303,7 +316,7 @@
     pickups(W, s0 + 50, s0 + S.len - 40, rnd(S.seed * 13 + 5));
     rec.to = end; W.stretch.push(rec);
     if (W.stretch.length > 12) W.stretch.shift();
-    if (!S.next) buildStage(W, S.run ? 0 : RUN_N);   // after the goal the road goes on: round 2 out to the coast, then back into town
+    if (!S.next) buildStage(W, RUN_START[nextRun(S)]);   // after the goal the road goes on: out west or east along the coast, then back into town
   }
   // the first n segments of a stretch's bends, without building it: the road the other way at a fork, drawn going off
   // into the distance (world3d.js); heights level
@@ -327,6 +340,7 @@
       return putAt(W2, j, t, xx, h, o);
     }
     var STREET = {   // (fraction ends, then: side = a side street every so many segments; car, tree, bin = how often)
+      wareham: [[0.3, {}], [0.8, { car: 0.24, bin: 0.05, side: 50 }], [1.01, {}]], wool: [[0.64, {}], [1.01, { car: 0.14, tree: 0.06, side: 70, poles: 1 }]],
       winton: [[0.25, { car: 0.16, tree: 0.16, side: 70 }], [0.66, { car: 0.3, bin: 0.05, side: 56 }], [1.01, { car: 0.22, tree: 0.12, side: 60, poles: 1, wheelie: 0.25 }]],   // (the owner's videos: cars all along the kerbs)
       charminster: [[0.3, { car: 0.22, tree: 0.1, side: 60 }], [0.7, { car: 0.32, bin: 0.05, side: 52 }], [1.01, { car: 0.18, tree: 0.14, side: 66, poles: -1, wheelie: 0.2 }]],
       kinson: [[0.3, { car: 0.18, tree: 0.12, side: 62, poles: 1, wheelie: 0.25 }], [0.66, { car: 0.26, bin: 0.05, side: 50 }], [1.01, { tree: 0.05, side: 90 }]],
@@ -451,6 +465,15 @@
           // a bus stop every so often, either side (the houses, shops and pavements: world3d.js)
           lamps(8, 0, false); street();
           if (k % 44 === 22) put(W, i, 'busstop', ((k / 44) | 0) % 2 ? 15.0 : -15.0, 0, { v: S.key === 'winton' ? 1 : 0 });
+          break;
+        }
+        case 'wareham': case 'wool': case 'kimmeridge': {   // Wareham (Sandford's heath, the town in its walls, the quay and the causeway); Wool (the heath and the tank
+          // crossings, Bovington, the village); Kimmeridge (the Purbeck ridge, the village, the bay) - their houses: world3d.js; landmarks: below
+          var fw = k / Math.max(1, to - from), lit2 = (S.key === 'wareham' && fw >= 0.3 && fw < 0.8) || (S.key === 'wool' && fw >= 0.64);
+          if (lit2) { lamps(8, 0, false); street(); }
+          if (S.key === 'wool' && fw < 0.64 && k % 3 === 0) put(W, i, 'railline', -28, 0);   // the railway alongside, Waterloo to Weymouth
+          if (S.key === 'wool' && fw < 0.32 && k % 90 === 45) put(W, i, 'tanksign', (((k / 90) | 0) % 2 ? 1 : -1) * 11.4, 0.3);   // tanks crossing
+          if (S.key === 'wareham' && fw >= 0.8 && k % 2 === 0) for (var sd2 of [-1, 1]) put(W, i, 'riverseg', sd2 * (28 + Math.sin(k / 19) * 3), 0, { v: (k / 2) % 9 });   // the Frome's water meadows either side of the causeway
           break;
         }
         case 'kinson': case 'muscliff': case 'littledown': {   // Kinson (Redhill, the village, the common); Muscliff and down to Throop Mill on the Stour;
@@ -595,6 +618,27 @@
       var wb = straightest(0.3, 0.4, 40, 10); if (wb >= 0) putAt(W, wb, 'cornerbank', -21, 0, {});
       mark('brickchurch', 0.45, function () { return 23; }); mark('moderne', 0.55, function () { return -23; }); mark('policestn', 0.68, function () { return 23; });
       [[0.38, 0.47], [0.56, 0.64]].forEach(function (w) { var zj = straightest(w[0], w[1], 8, 8); if (zj >= 0) { putAt(W, zj, 'zebra', 0, 0, {}); segAt(W, zj).zebra = true; } });   // (on the straight: a banked bend buried half the stripes)
+    }
+    function wetBank(c) {   // an old bridge's river either side: flat meadows, nothing parked or planted on the water (world3d.js: no hedge, houses or boundary)
+      for (var q2 = c - 24; q2 <= c + 24; q2++) { var d2 = Math.abs(q2 - c); segAt(W, q2).flat = d2 <= 6 ? 1 : 1 - (d2 - 6) / 18; }   // (the land eases down to the meadows over 70 m: higher, it hid the river)
+      for (var q = c - 4; q <= c + 4; q++) { var gq = segAt(W, q); gq.wet = 1; if (gq.spr) gq.spr = gq.spr.filter(function (it) { return !/^(parkedcar|streettree|bin|junction|postbox|wheeliebins|tpolewire|tpole|tanksign|railline)$/.test(it.t); }); }
+    }
+    if (S.key === 'wareham') {   // the Saxon walls where the road comes into the town (North Street: the south side is open to the river); the town hall at the crossroads; the quay - the Quay Inn and
+      // the Granary - and St Mary's tower beside the river
+      mark('rampart', 0.31, function () { return -17; }); mark('rampart', 0.31, function () { return 17; });
+      var wh = straightest(0.44, 0.56, 30, 10); if (wh >= 0) putAt(W, wh, 'warehamhall', 22, 0, {});
+      var wz2 = straightest(0.56, 0.64, 8, 8); if (wz2 >= 0) { putAt(W, wz2, 'zebra', 0, 0, {}); segAt(W, wz2).zebra = true; }
+      var wq = straightest(0.66, 0.76, 50, 10); if (wq >= 0) { putAt(W, wq, 'quayinn', -22, 0, {}); putAt(W, wq + 8, 'granary', -22, 0, {}); putAt(W, wq - 12, 'warehamchurch', 30, 0, {}); }
+      var wb4 = straightest(0.77, 0.81, 12, 12); if (wb4 >= 0) { putAt(W, wb4, 'woolbridge', 0, 0, { v: 1 }); wetBank(wb4); }   // South Bridge over the Frome at the foot of the town, boats moored along the quay
+    }
+    if (S.key === 'wool') {   // the Tank Museum at Bovington; over Wool Bridge by the manor; the level crossing at the station; a train on the line
+      var tm2 = straightest(0.36, 0.52, 50, 10); if (tm2 >= 0) putAt(W, tm2, 'tankmuseum', 40, 0, {});   // (its tank 18 m from the road: further out, it was off the side of the picture)
+      var wb3 = straightest(0.64, 0.72, 20, 10); if (wb3 >= 0) { putAt(W, wb3, 'woolbridge', 0, 0, {}); putAt(W, wb3 + 8, 'woolmanor', -24, 0, {}); wetBank(wb3); }
+      var lc = straightest(0.76, 0.84, 8, 8); if (lc >= 0) putAt(W, lc, 'levelcross', 0, 0, {});   // (well before the fork: its gantry hid it)
+      mark('train', 0.18, function () { return -28; }, 0);
+    }
+    if (S.key === 'kimmeridge') {   // the bay: the shale ledges, the nodding donkey on the cliff, Clavell Tower on Hen Cliff
+      var kb = straightest(0.76, 0.9, 50, 10); if (kb >= 0) { var shk = segAt(W, kb).sh; putAt(W, kb, 'clavell', -(Math.max(shk, 18) - 8), 0, {}); putAt(W, kb + 22, 'nodding', 16, 0, {}); putAt(W, kb - 10, 'ledges', -(Math.max(shk, 18) + 18), 0, { v: 0 }); putAt(W, kb + 10, 'ledges', -(Math.max(shk, 18) + 24), 0, { v: 1 }); }
     }
     if (S.key === 'wimborne') {   // over the Stour at Canford; the Minster's two towers over the town; a zebra in the square
       var wb2 = straightest(0.24, 0.3, 20, 10); if (wb2 >= 0) putAt(W, wb2, 'hurnbridge', 0, 0, {});
@@ -872,6 +916,7 @@
     if (g.wr) hi = Math.min(hi, g.wr - CAR_W);
     if (g.tun) { lo = Math.max(lo, -(TUN_W - CAR_W)); hi = Math.min(hi, TUN_W - CAR_W); }
     if (g.brg) { lo = Math.max(lo, -(BRG_W - CAR_W)); hi = Math.min(hi, BRG_W - CAR_W); }
+    if (g.wet) { lo = Math.max(lo, -(8.2 - CAR_W)); hi = Math.min(hi, 8.2 - CAR_W); }   // (an old stone bridge over a river: its parapets)
     return [lo, hi];
   }
   function bendHere(W, g) {   // the bend under the car: the road's own, plus a split road's turn away from the middle
@@ -986,7 +1031,7 @@
       W.stageNo++; W.stage = g.st; W.reqNext = Math.max(W.reqNext, W.t + 60 * 5);
       if (g.kind === 'round') {
         W.route = [g.st]; W.legs = []; W.legT0 = W.t; W.legHearts = 0; W.runHearts = 0; W.runAsked = 0; W.result = null; rebunch(W); W.bestPos = 99;
-        bannerOf(W, 'ROUND ' + W.round, (g.st ? 'Out to the coast' : 'Back into town') + ' - busier and quicker', 'stage'); W.events.push({ say: 'Round ' + W.round });
+        bannerOf(W, 'ROUND ' + W.round, RUNS[STAGES[g.st].run].banner + ' - busier and quicker', 'stage'); W.events.push({ say: 'Round ' + W.round });
       } else {
         W.time += add; bannerOf(W, 'CHECKPOINT', 'EXTENDED TIME +' + add + ' SEC', 'check'); W.events.push({ sfx: 'check' }); W.events.push({ say: 'Checkpoint: ' + add + ' more seconds' });
         mood(W, 'cheer'); voice(W, 'check', true);
@@ -1318,7 +1363,7 @@
 
   return {
     nextAhead: nextAhead, nextBehind: nextBehind, SEG: SEG, HALF: HALF, RUMBLE: RUMBLE, VERGE: VERGE, FIELD_N: FIELD_N, BOTTLE_MAX: BOTTLE_MAX, NITRO_T: NITRO_T, VMAX: VMAX, VIEW: VIEW, CAR_W: CAR_W, CAR_L: CAR_L, LANES: LANES, FA: FA, FB: FB, OFF0: OFF0, OFF_END: OFF_END, OFF2: OFF2,
-    LEVELS: LEVELS, RUN_N: RUN_N, RUNS: RUNS, PLACES: PLACES, TUN_W: TUN_W, BRG_W: BRG_W, PW: PW,
+    LEVELS: LEVELS, RUN_START: RUN_START, RUNS: RUNS, PLACES: PLACES, nextRun: nextRun, TUN_W: TUN_W, BRG_W: BRG_W, PW: PW,
     STAGES: STAGES, VEH: VEH, CARS: CARS, DIFF: DIFF, REQ: REQ, rivalOf: rivalOf,
     newWorld: newWorld, step: step, hud: hud, mph: mph, autopilot: autopilot, peek: peek, topSpeed: topSpeed, buildStage: buildStage,
     segAt: segAt, segIndex: segIndex, lastIndex: lastIndex, heightAt: heightAt, forkOff: forkOff, edges: edges, roadHalf: roadHalf, bendHere: bendHere, rnd: rnd

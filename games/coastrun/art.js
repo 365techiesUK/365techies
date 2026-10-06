@@ -77,6 +77,10 @@
       sea: null, foam: null, road: ['#6c6e74', '#67696f'], rumble: ['#b8b4aa', '#aaa69c'], lane: '#f4f4f4', tint: null },
   ];
   // in the engine's order of the places (CREngine.STAGES: the pyramid), so PAL[stage id] is that place's colours
+  (function () {   // the west coast run's new places (6 Oct 2026): Wareham and Wool inland like Christchurch's fields, Kimmeridge by the sea like Swanage
+    var by = {}; PAL.forEach(function (p) { by[p.key] = p; });
+    PAL.push(Object.assign({}, by.christchurch, { key: 'wareham', sea: null, foam: null, beach: null, rumble: ['#b8b4aa', '#aaa69c'] }), Object.assign({}, by.christchurch, { key: 'wool', sea: null, foam: null, beach: null, rumble: ['#f4f4f4', '#2f8a4a'] }), Object.assign({}, by.swanage, { key: 'kimmeridge', rumble: ['#b8b4aa', '#aaa69c'] }));
+  })();
   PAL = (function (byKey) { var m = {}; byKey.forEach(function (p) { m[p.key] = p; }); return window.CREngine.STAGES.map(function (S) { return m[S.key]; }); })(PAL);
 
   // ---------------------------------------------------------------- the castle on the Purbeck skyline (painted into its panorama)
@@ -215,6 +219,20 @@
       SPR_BG(far, 'castle', 520, HZ - 18, 120);
       hills(near, r, HZ + 6, 22, 4, '#6faa4f', 1);
       hills(near, r, HZ + 14, 12, 3, '#5f9c45', 1.5);
+    },
+    purbeckhills: function (far, near) {   // Wareham and Wool: the long green ridge of the Purbeck Hills to the south over the heath and the trees (no castle:
+      // from here it's out of sight, and no sea)
+      var r = rnd(212);
+      for (var i = 0; i < 8; i++) { var c0 = [r() * BG_W, 18 + r() * 34, 50 + r() * 60]; if (!SKY3D) cloud(far, c0[0], c0[1], c0[2], '#ffffff', 'rgba(150,170,200,0.3)'); }
+      hills(far, r, HZ, 22, 2, '#9cbf9a', 0.5);
+      treeline(near, r, HZ + 6, 12, ['#3e6a34', '#4e7a3a', '#5a6a3a', '#6a7a42'], 22);
+    },
+    kimmeridge: function (far, near) {   // Kimmeridge: the open sea beyond the dark shale cliffs, the Purbeck downs inland
+      var r = rnd(313);
+      for (var i = 0; i < 6; i++) { var c0 = [r() * BG_W, 20 + r() * 34, 50 + r() * 60]; if (!SKY3D) cloud(far, c0[0], c0[1], c0[2], '#ffffff', 'rgba(150,170,200,0.3)'); }
+      hills(far, r, HZ, 18, 2, '#8eb07e', 0.6);
+      seaBandPart(far, 300, 900);
+      P(far, [300, HZ, 320, HZ - 7, 420, HZ - 9, 470, HZ - 6, 500, HZ], '#5a5a50');   // the dark cliffs along the bay
     },
     clifftown: function (far, near) {   // Highcliffe: the town's rooftops and pines one way; the other way, across Christchurch Bay, the Isle of
       // Wight's long low downs ending in the white cliffs and the Needles
@@ -356,7 +374,8 @@
       seaBand(far, HZ, ['#1c2a5a', '#16244a'], 'rgba(255,210,140,0.5)');
     }
   };
-  ['winton', 'charminster', 'kinson', 'muscliff', 'littledown', 'towerpark', 'bearcross', 'hurn', 'wimborne', 'ferndown', 'highcliffe'].forEach(function (k) { if (!BG[k]) BG[k] = k === 'hurn' ? BG.airfield : k === 'highcliffe' ? BG.clifftown : BG.town; });   // (Hurn: the airfield's own)   // (the local run: the town's rooftops, trees and pines behind)
+  ['winton', 'charminster', 'kinson', 'muscliff', 'littledown', 'towerpark', 'bearcross', 'hurn', 'wimborne', 'ferndown', 'highcliffe'].forEach(function (k) { if (!BG[k]) BG[k] = k === 'hurn' ? BG.airfield : k === 'highcliffe' ? BG.clifftown : BG.town; });
+  BG.wareham = BG.purbeckhills; BG.wool = BG.purbeckhills;   // (Wareham and Wool: the Purbeck hills to the south; Kimmeridge: its own, the sea and the cliffs)   // (Hurn: the airfield's own)   // (the local run: the town's rooftops, trees and pines behind)
   function SPR_BG(c, t, x, y, w) { var S = SPR[t], m = sprite(t, 0, false, null)[0], h = w * S.h / S.w; c.drawImage(m, x - w / 2, y - h, w, h); }
   var bgCache = {};
   var SKY3D = false;   // the 3D game draws its own sky (clouds, sun, moon, stars): the panorama is then just the land and sea

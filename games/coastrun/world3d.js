@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=39';
+import * as MD from './models3d.js?v=40';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -115,7 +115,7 @@ const BIG = { lighthouse: 1.15, hurstcastle: 1.6, obelisk: 1.35, castle: 1.5, ar
 const SIGNS = { gate: 1, gantry: 1, nose: 1, board: 1, chev: 1, warn: 1, banner: 1 };
 const lit = (look) => !!(look.night || look.dusk);   // lamps and headlights on
 // OutRun's way (owner, 5 Oct): the land side of the road ends at a boundary, and the place is packed in right behind it
-const VERGE_K = { 'wimborne:canford': 'hedge', 'wimborne:town': 'none', 'wimborne:square': 'none', 'ferndown:centre': 'none', 'ferndown:common': 'vpost', 'highcliffe:village': 'none', 'highcliffe:castle': 'vpost', 'bearcross:roundabout': 'none', 'bearcross:magna': 'hedge', 'hurn:holdenhurst': 'hedge', 'hurn:airport': 'vpost', 'hurn:village': 'vpost', 'towerpark:leisure': 'vpost', 'towerpark:mannings': 'vpost', 'kinson:village': 'none', 'muscliff:castlelane': 'hedge', 'muscliff:throop': 'vpost', 'littledown:castlepoint': 'none', 'littledown:park': 'hedge', 'winton:banks': 'none', 'charminster:road': 'none', winton: 'wall', charminster: 'wall', kinson: 'wall', muscliff: 'wall', littledown: 'wall', towerpark: 'wall', bearcross: 'wall', hurn: 'wall', wimborne: 'wall', ferndown: 'wall', highcliffe: 'wall', 'jurassic:castle': 'wall', 'jurassic:ranges': 'vpost', 'jurassic:cove': 'wall', 'lymington:town': 'prom', 'lymington:marina': 'hedge', 'lymington:marsh': 'hedge', 'forest:heath': 'vpost', 'forest:village': 'hedge', 'forest:woods': 'vpost', 'purbeck:village': 'wall', 'purbeck:heath': 'vpost', 'needles:yarmouth': 'wall', 'needles:downs': 'hedge', 'swanage:town': 'prom', bournemouth: 'prom', sandbanks: 'prom', weymouth: 'prom', christchurch: 'hedge', lymington: 'hedge', goldencap: 'hedge', purbeck: 'wall', lyme: 'wall', portland: 'wall', forest: 'fence', swanage: 'vpost', jurassic: 'vpost', needles: 'vpost', hengistbury: 'vpost', harbour: 'bollard' };
+const VERGE_K = { 'wareham:heath': 'vpost', 'wareham:town': 'none', 'wareham:quay': 'none', 'wareham:causeway': 'vpost', 'wool:heath': 'vpost', 'wool:bovington': 'vpost', 'wool:village': 'hedge', 'kimmeridge:ridge': 'wall', 'kimmeridge:village': 'wall', 'kimmeridge:bay': 'vpost', 'wimborne:canford': 'hedge', 'wimborne:town': 'none', 'wimborne:square': 'none', 'ferndown:centre': 'none', 'ferndown:common': 'vpost', 'highcliffe:village': 'none', 'highcliffe:castle': 'vpost', 'bearcross:roundabout': 'none', 'bearcross:magna': 'hedge', 'hurn:holdenhurst': 'hedge', 'hurn:airport': 'vpost', 'hurn:village': 'vpost', 'towerpark:leisure': 'vpost', 'towerpark:mannings': 'vpost', 'kinson:village': 'none', 'muscliff:castlelane': 'hedge', 'muscliff:throop': 'vpost', 'littledown:castlepoint': 'none', 'littledown:park': 'hedge', 'winton:banks': 'none', 'charminster:road': 'none', winton: 'wall', charminster: 'wall', kinson: 'wall', muscliff: 'wall', littledown: 'wall', towerpark: 'wall', bearcross: 'wall', hurn: 'wall', wimborne: 'wall', ferndown: 'wall', highcliffe: 'wall', 'jurassic:castle': 'wall', 'jurassic:ranges': 'vpost', 'jurassic:cove': 'wall', 'lymington:town': 'prom', 'lymington:marina': 'hedge', 'lymington:marsh': 'hedge', 'forest:heath': 'vpost', 'forest:village': 'hedge', 'forest:woods': 'vpost', 'purbeck:village': 'wall', 'purbeck:heath': 'vpost', 'needles:yarmouth': 'wall', 'needles:downs': 'hedge', 'swanage:town': 'prom', bournemouth: 'prom', sandbanks: 'prom', weymouth: 'prom', christchurch: 'hedge', lymington: 'hedge', goldencap: 'hedge', purbeck: 'wall', lyme: 'wall', portland: 'wall', forest: 'fence', swanage: 'vpost', jurassic: 'vpost', needles: 'vpost', hengistbury: 'vpost', harbour: 'bollard' };
 const ROWS = {   // set out at a steady spacing behind the boundary: [model, variants, every so many segments, how far out, sideways jitter]
   // the local run, plain for now: red-brick houses and shops both sides (Lyndhurst's will do until each place has its own)
   winton: [['brickhouse', 5, 3, 19.6, 0.5], ['tpole', 1, 12, 15.6, 0]],
@@ -126,7 +126,7 @@ const ROWS = {   // set out at a steady spacing behind the boundary: [model, var
   towerpark: [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]], 'towerpark:mannings': [], 'towerpark:leisure': [],
   bearcross: [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]], 'bearcross:roundabout': [['parade', 8, 3, 20.4, 0.1]], 'bearcross:bearwood': [['estatehouse', 4, 4, 22, 1], ['gardenwall', 4, 2, 17.8, 0]], 'bearcross:magna': [],
   hurn: [], 'hurn:holdenhurst': [],
-  wimborne: [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]], 'wimborne:canford': [], 'wimborne:town': [['lymhouse', 8, 3, 19.6, 0.3]], 'wimborne:square': [['parade', 8, 3, 20.4, 0.1]],
+  wimborne: [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]], 'wareham:heath': [], 'wareham:town': [['lymhouse', 8, 3, 19.6, 0.3]], 'wareham:quay': [], 'wareham:causeway': [], 'wool:heath': [], 'wool:bovington': [], 'wool:village': [['lulcottage', 5, 4, 21, 1], ['gardenwall', 4, 2, 17.8, 0]], 'kimmeridge:ridge': [], 'kimmeridge:village': [['purbeckcottage', 6, 4, 19.5, 0.6]], 'kimmeridge:bay': [], 'wimborne:canford': [], 'wimborne:town': [['lymhouse', 8, 3, 19.6, 0.3]], 'wimborne:square': [['parade', 8, 3, 20.4, 0.1]],
   ferndown: [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]], 'ferndown:centre': [['precinct', 3, 5, 22, 0.2]], 'ferndown:common': [],
   highcliffe: [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]], 'highcliffe:village': [['flatparade', 4, 4, 21, 0.2]], 'highcliffe:castle': [],
   bournemouth: [['hutrow', 6, 4, 16.0, 0], ['hotel', 8, 7, 47, 4]], sandbanks: [['villa', 8, 6, 25, 2], ['palm', 3, 4, 16.6, 2]],
@@ -138,8 +138,11 @@ const ROCKC = { hengistbury: '#c07a44', bournemouth: '#c9a66a', purbeck: '#e8e4d
 const BUNT = { 'forest:village': 1, 'purbeck:village': 1, 'swanage:town': 1, 'needles:yarmouth': 1, bournemouth: 1, weymouth: 1, lyme: 1, christchurch: 1, 'lymington:town': 1, sandbanks: 1 };   // flags strung over the road in the towns
 LOOK.charminster = Object.assign({}, LOOK.harbour, { heroLand: false, edge: null, fireworks: false, paved: 0, hills: 10, rise: 50, yellow: true, pave: 15.4, fog: [120, 900], glow: 0.5,   // (Charminster Road at night, as the owner filmed it: the restaurants lit along it)
   dress: [['oak', 1, 0.1, 30, 80], ['pine', 1, 0.1, 30, 90]] });
-const NOYELLOW = { 'wimborne:canford': 1, 'ferndown:common': 1, 'highcliffe:castle': 1, 'muscliff:throop': 1, 'hurn:holdenhurst': 1, 'hurn:airport': 1, 'hurn:village': 1, 'bearcross:magna': 1 };   // (country lanes: no double yellow lines)
-const PAVE = { 'wimborne:canford': 0.1, 'wimborne:town': 20, 'wimborne:square': 20.4, 'ferndown:centre': 21, 'ferndown:common': 0.1, 'highcliffe:village': 21, 'highcliffe:castle': 0.1, 'bearcross:roundabout': 20.4, 'hurn:holdenhurst': 0.1, 'hurn:airport': 0.1, 'hurn:village': 0.1, 'bearcross:magna': 0.1, 'winton:banks': 20.4, 'charminster:road': 20.4, 'kinson:village': 21, 'muscliff:throop': 0.1 };   // (Throop's lane: none)   // (where the shops come to the pavement: paved up to their fronts)
+const NOYELLOW = { 'wareham:heath': 1, 'wareham:causeway': 1, 'wool:heath': 1, 'wool:bovington': 1, 'wimborne:canford': 1, 'ferndown:common': 1, 'highcliffe:castle': 1, 'muscliff:throop': 1, 'hurn:holdenhurst': 1, 'hurn:airport': 1, 'hurn:village': 1, 'bearcross:magna': 1 };   // (country lanes: no double yellow lines)
+const PAVE = { 'wareham:heath': 0.1, 'wareham:town': 20, 'wareham:quay': 21, 'wareham:causeway': 0.1, 'wool:heath': 0.1, 'wool:bovington': 0.1, 'wool:village': 18, 'wimborne:canford': 0.1, 'wimborne:town': 20, 'wimborne:square': 20.4, 'ferndown:centre': 21, 'ferndown:common': 0.1, 'highcliffe:village': 21, 'highcliffe:castle': 0.1, 'bearcross:roundabout': 20.4, 'hurn:holdenhurst': 0.1, 'hurn:airport': 0.1, 'hurn:village': 0.1, 'bearcross:magna': 0.1, 'winton:banks': 20.4, 'charminster:road': 20.4, 'kinson:village': 21, 'muscliff:throop': 0.1 };   // (Throop's lane: none)   // (where the shops come to the pavement: paved up to their fronts)
+LOOK.wareham = Object.assign({}, LOOK.christchurch, { heroLand: false, edge: null, hills: 30, rise: 90, yellow: true, pave: 15.4 });   // (Wareham and Wool: Christchurch's bright day inland; the Purbeck hills behind)
+LOOK.wool = Object.assign({}, LOOK.christchurch, { heroLand: false, edge: null, hills: 30, rise: 90, yellow: true, pave: 15.4 });
+LOOK.kimmeridge = Object.assign({}, LOOK.swanage, { cliff: '#6e6a60', beach: '#837d70', dress: [['gorse', 1, 0.25, 12, 60], ['sheep', 2, 0.15, 14, 60], ['tuft', 6, 1.6, 8.8, 26]] });   // (Kimmeridge: Swanage's light and sea)
 const MORE = {   // closer, thicker dressing behind the boundary (as look.dress: [model, variants, a segment, from, to])
   winton: [['strollers', 8, 0.1, 15.4, 17], ['flowerbed', 3, 0.12, 15.6, 18]],
   charminster: [['strollers', 8, 0.1, 15.4, 17], ['flowerbed', 3, 0.12, 15.6, 18]],
@@ -180,8 +183,14 @@ const MARSHY = { 'lymington:marsh': 1 };   // the sea side of the road saltmarsh
 const FISH = { harbour: 1, 'lymington:town': 1 };   // fishing boats moored along the quay wall
 const GROYNE = { 'swanage:town': 'groyne', 'swanage:studland': 'groyne', bournemouth: 'groyne', sandbanks: 'rockgroyne', hengistbury: 'longgroyne' };   // (Bournemouth's are timber, Sandbanks' granite boulders)
 const HARB = { sandbanks: [['mooring', 6, 0.16, 14, 210], ['motorboat', 4, 0.025, 30, 180], ['jetty', 3, 0.045, -3, -3]] };   // out in the harbour (lateral from its edge; a jetty from the bank)   // lamps along the water's edge (at night the quay side was a black void)
-const ZONES = { wimborne: [[0.32, 'canford'], [0.66, 'town'], [1.01, 'square']], ferndown: [[0.3, 'parley'], [0.64, 'centre'], [1.01, 'common']], highcliffe: [[0.33, 'somerford'], [0.66, 'village'], [1.01, 'castle']], towerpark: [[0.3, 'ringwood'], [0.62, 'mannings'], [1.01, 'leisure']], bearcross: [[0.3, 'roundabout'], [0.66, 'bearwood'], [1.01, 'magna']], hurn: [[0.3, 'holdenhurst'], [0.72, 'airport'], [1.01, 'village']], kinson: [[0.3, 'redhill'], [0.66, 'village'], [1.01, 'common']], muscliff: [[0.32, 'castlelane'], [0.62, 'estate'], [1.01, 'throop']], littledown: [[0.33, 'castlepoint'], [0.66, 'hospital'], [1.01, 'park']], winton: [[0.25, 'deanpark'], [0.66, 'banks'], [1.01, 'moordown']], charminster: [[0.3, 'springbourne'], [0.7, 'road'], [1.01, 'queenspark']], jurassic: [[0.18, 'castle'], [0.36, 'ranges'], [0.64, 'cove'], [1.01, 'door']], lymington: [[0.3, 'town'], [0.64, 'marina'], [1.01, 'marsh']], forest: [[0.3, 'heath'], [0.64, 'village'], [1.01, 'woods']], swanage: [[0.27, 'studland'], [0.7, 'downs'], [1.01, 'town']], needles: [[0.24, 'yarmouth'], [0.68, 'downs'], [1.01, 'alumbay']], purbeck: [[0.3, 'heath'], [0.62, 'village'], [1.01, 'hills']] };   // (Purbeck: the heath, Corfe village under its castle, over the hills)   // (the Isle of Wight: off the ferry at Yarmouth, across West Wight, Alum Bay and the Needles)   // a stage in parts (where each ends, as a share of the stage): off the ferry through Studland, over the downs past Old Harry, down into Swanage
+const ZONES = { wareham: [[0.3, 'heath'], [0.66, 'town'], [0.8, 'quay'], [1.01, 'causeway']], wool: [[0.32, 'heath'], [0.64, 'bovington'], [1.01, 'village']], kimmeridge: [[0.36, 'ridge'], [0.66, 'village'], [1.01, 'bay']], wimborne: [[0.32, 'canford'], [0.66, 'town'], [1.01, 'square']], ferndown: [[0.3, 'parley'], [0.64, 'centre'], [1.01, 'common']], highcliffe: [[0.33, 'somerford'], [0.66, 'village'], [1.01, 'castle']], towerpark: [[0.3, 'ringwood'], [0.62, 'mannings'], [1.01, 'leisure']], bearcross: [[0.3, 'roundabout'], [0.66, 'bearwood'], [1.01, 'magna']], hurn: [[0.3, 'holdenhurst'], [0.72, 'airport'], [1.01, 'village']], kinson: [[0.3, 'redhill'], [0.66, 'village'], [1.01, 'common']], muscliff: [[0.32, 'castlelane'], [0.62, 'estate'], [1.01, 'throop']], littledown: [[0.33, 'castlepoint'], [0.66, 'hospital'], [1.01, 'park']], winton: [[0.25, 'deanpark'], [0.66, 'banks'], [1.01, 'moordown']], charminster: [[0.3, 'springbourne'], [0.7, 'road'], [1.01, 'queenspark']], jurassic: [[0.18, 'castle'], [0.36, 'ranges'], [0.64, 'cove'], [1.01, 'door']], lymington: [[0.3, 'town'], [0.64, 'marina'], [1.01, 'marsh']], forest: [[0.3, 'heath'], [0.64, 'village'], [1.01, 'woods']], swanage: [[0.27, 'studland'], [0.7, 'downs'], [1.01, 'town']], needles: [[0.24, 'yarmouth'], [0.68, 'downs'], [1.01, 'alumbay']], purbeck: [[0.3, 'heath'], [0.62, 'village'], [1.01, 'hills']] };   // (Purbeck: the heath, Corfe village under its castle, over the hills)   // (the Isle of Wight: off the ferry at Yarmouth, across West Wight, Alum Bay and the Needles)   // a stage in parts (where each ends, as a share of the stage): off the ferry through Studland, over the downs past Old Harry, down into Swanage
 const DRESSZ = {   // the dressing for a part of a stage (in place of the place's own)
+  'wareham:heath': [['heather', 2, 0.4, 15.6, 60], ['gorse', 1, 0.3, 15.6, 60], ['pine', 1, 0.3, 18, 80], ['birch', 1, 0.08, 18, 50]],   // (Wareham: Sandford's heath, the town, the quay, the water meadows; Wool: the heath, Bovington, the village; Kimmeridge: the ridge, the village, the bay)
+  'wareham:town': [['strollers', 8, 0.2, 15.4, 17.5]], 'wareham:quay': [['strollers', 8, 0.24, 15.4, 18]], 'wareham:causeway': [['reeds', 4, 0.45, 16, 40], ['tuft', 6, 1.0, 8.8, 18]],
+  'wool:heath': [['heather', 2, 0.4, 15.6, 60], ['gorse', 1, 0.3, 15.6, 60], ['pine', 1, 0.3, 18, 80], ['birch', 1, 0.1, 18, 50]], 'wool:bovington': [['pine', 1, 0.25, 30, 80], ['birch', 1, 0.08, 24, 60], ['estatehouse', 4, 0.03, 70, 90]],
+  'wool:village': [['oak', 1, 0.12, 24, 70], ['tuft', 6, 1.0, 8.8, 18], ['strollers', 8, 0.05, 15.4, 17]],
+  'kimmeridge:ridge': [['sheep', 2, 0.3, 17, 60], ['gorse', 1, 0.2, 15.6, 50], ['drywall', 3, 0.06, 17, 40], ['tuft', 6, 1.6, 8.8, 26]], 'kimmeridge:village': [['oak', 1, 0.12, 24, 60], ['strollers', 8, 0.05, 15.4, 17], ['tuft', 6, 1.0, 8.8, 18]],
+  'kimmeridge:bay': [['gorse', 1, 0.25, 15.6, 50], ['heather', 2, 0.2, 15.6, 50], ['strollers', 8, 0.04, 15.4, 19], ['carpark', 4, 0.02, 16.5, 22]],
   'wimborne:canford': [['oak', 1, 0.2, 18, 70], ['sheep', 2, 0.12, 18, 60], ['hay', 1, 0.03, 20, 40], ['thatch', 3, 0.04, 21, 24], ['tuft', 6, 1.4, 8.8, 20]],   // (Wimborne: Canford's fields and the Stour, the town, the square; Ferndown: West Parley, the centre, the common's heath and golf; Highcliffe: Somerford, the village, the clifftop)
   'wimborne:town': [['strollers', 8, 0.1, 15.4, 17], ['oak', 1, 0.05, 30, 60]], 'wimborne:square': [['strollers', 8, 0.22, 15.4, 17.5]],
   'ferndown:parley': [['oak', 1, 0.06, 30, 70], ['pine', 1, 0.06, 30, 80]], 'ferndown:centre': [['strollers', 8, 0.18, 15.4, 17.5], ['carpark', 4, 0.04, 24, 30]],
@@ -641,6 +650,7 @@ export function createWorld() {
     if (FBC.size > 6000) FBC.clear(); FBC.set(i, f); return f;
   }
   function heightOf(W, look, S, g, kind, lat, roadY, wx, wz, dist, side) {
+    if (g.flat && (kind === 'verge' || kind === 'top')) { const y0 = kind === 'verge' ? roadY - 0.15 + (dist > 4 ? (fbm(wx / 40, wz / 40) - 0.5) * 1.6 * smooth(4, 20, dist) : 0) : roadY - 0.2 + (fbm(wx / 40, wz / 40) - 0.5) * 1.2; return y0 + (roadY - 0.15 - y0) * g.flat; }   // a river's flat meadows round its bridge (the bumps hid the water)
     if ((kind === 'verge' || kind === 'top') && g.sea === side && dist > 2 && zt(MARSHY, W, g)) return roadY - 0.35 + (fbm(wx / 30, wz / 30) - 0.5) * 0.16 * smooth(2, 8, dist);   // saltmarsh: dead flat, a touch below the road (bumps hid the pans and reeds)
     if (kind === 'verge') return roadY - 0.15 + (dist > 4 ? (fbm(wx / 40, wz / 40) - 0.5) * 1.6 * smooth(4, 20, dist) : 0);
     if (kind === 'top') return roadY - 0.2 + (fbm(wx / 40, wz / 40) - 0.5) * 1.2;
@@ -665,6 +675,7 @@ export function createWorld() {
       const c = look.bluff, t = Math.min(1, (lat - c.toe) / (c.top - c.toe)), ramp = Math.min(rin, rout) / 30;
       if (ramp > 0) y = Math.max(y, roadY - 0.25 + c.h * ramp * (0.95 + 0.1 * fbm(wx / 90, wz / 90)) * t * t * (3 - 2 * t));
     }
+    if (g.flat) y += (roadY - 0.15 - y) * g.flat * (1 - smooth(60, 140, dist));
     return y;
   }
   // the colours of the land, worked out at each corner from where it is (so neighbouring patches match and blend)
@@ -877,7 +888,7 @@ export function createWorld() {
       const walls = [];
       if (g.wl) walls.push([-10.5, look.wall ? 'wall' : 'fence']);
       if (g.wr) walls.push([10.5, look.wall ? 'wall' : 'fence']);
-      if (look.hedge && !g.tun && !g.brg && !g.fk && !g.gate && !R.low) for (const d of [-1, 1]) {
+      if (look.hedge && !g.tun && !g.brg && !g.fk && !g.gate && !g.wet && !R.low) for (const d of [-1, 1]) {
         if (g.sea === d || (d < 0 ? g.wl : g.wr) || hash2(i, d * 7 + 3) < 0.12) continue;
         let kk = 0; for (let j = -4; j <= 4; j++) kk += E.segAt(W, i + j).k; kk /= 9;
         const lat = look.hedge + hash2(Math.floor(i / 9), d) * 4; if (Math.abs(kk) > 1e-4 && d === (kk > 0 ? 1 : -1) && lat > 0.5 / Math.abs(kk)) continue;
@@ -887,7 +898,7 @@ export function createWorld() {
       if (g.brg) walls.push([-E.BRG_W, 'rail'], [E.BRG_W, 'rail']);
       for (const wl of walls) { place(W, i * SEG + SEG / 2, wl[0], 0, P); addAll(MD.model(wl[1], 0), P.x, P.y, P.z, -P.th); }
       const fo = forkOut(g);
-      if (!g.tun && !g.brg && !g.gate) for (const d of [-1, 1]) {   // the boundary along the land side (the engine stops you at it)
+      if (!g.tun && !g.brg && !g.gate && !g.wet) for (const d of [-1, 1]) {   // the boundary along the land side (the engine stops you at it)
         if ((d < 0 ? g.wl : g.wr) || g.sea === d) continue;
         if (LOOK[S.key].bluff) continue;   // (the beach huts stand along it)
         const vk = zt(VERGE_K, W, g) || 'vpost', lat = d * (E.VERGE + 0.3 + fo); if (vk === 'none' || sideStreet(W, i, d, 2)) continue; place(W, i * SEG + SEG / 2, lat, 0, P);
@@ -895,7 +906,7 @@ export function createWorld() {
         if (vk === 'hedge') addAll(HEDGE[i % 3], P.x, vy - 0.1, P.z, -P.th); else addAll(MD.model(vk, i % 2), P.x, vy, P.z, -P.th);
       }
       if (zt(BUNT, W, g) && i % 26 === 13 && !g.tun && !g.brg && !g.fk && !g.gate && !g.over) { place(W, i * SEG + SEG / 2, 0, 0, P); addAll(MD.model('bunting', i % 3), P.x, P.y, P.z, -P.th); }
-      const rows = !R.low && !g.tun && !g.brg && !g.gate && zt(ROWS, W, g);
+      const rows = !R.low && !g.tun && !g.brg && !g.gate && !g.wet && zt(ROWS, W, g);
       if (rows) for (const [t, nv, every, lat0, jit] of rows) {
         if (i % every) continue;
         let kk = 0; for (let j = -6; j <= 6; j++) kk += E.segAt(W, i + j).k; kk /= 13;
@@ -905,7 +916,7 @@ export function createWorld() {
           if (g.sea === d || (d === innerSide && lat > inner)) continue;
           place(W, i * SEG + SEG / 2, d * lat, 0, P);
           if (t === 'brickhouse' || t === 'lymhouse') { let busy = false; for (let q = i - 16; q <= i + 40; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && sq.spr.some((it) => (it.t === 'lyndchurch' || it.t === 'stthomas' || it.t === 'minster') && Math.sign(it.x) === d)) busy = true; } if (busy) continue; }   // (Lyndhurst's churchyard: the church seen from the road)
-          if (/^(parade|nightparade|semis|vicvilla|flatparade|estatehouse|brickhouse|gardenwall|lymhouse|precinct)$/.test(t)) { let busy = false; for (let q = i - 5; q <= i + 6; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && (sq.spr.some((it) => /^(cornerbank|brickchurch|moderne|policestn|richmondpub|kinsonchurch|bearpub|minster)$/.test(it.t) && Math.sign(it.x) === d) || sq.spr.some((it) => it.t === 'junction' && Math.sign(it.x) === d && Math.abs(q - i) <= 3))) busy = true; } if (busy) continue; }   // (a gap in the row where a landmark stands, and for a side street)
+          if (/^(parade|nightparade|semis|vicvilla|flatparade|estatehouse|brickhouse|gardenwall|lymhouse|precinct)$/.test(t)) { let busy = false; for (let q = i - 5; q <= i + 6; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && (sq.spr.some((it) => /^(cornerbank|brickchurch|moderne|policestn|richmondpub|kinsonchurch|bearpub|minster|warehamhall|quayinn|granary|woolmanor|levelcross)$/.test(it.t) && Math.sign(it.x) === d) || sq.spr.some((it) => it.t === 'junction' && Math.sign(it.x) === d && Math.abs(q - i) <= 3))) busy = true; } if (busy) continue; }   // (a gap in the row where a landmark stands, and for a side street)
           if (t === 'hutrow' || t === 'quayfront') { let busy = false; for (let q = i - 4; q <= i + 6; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && sq.spr.some((it) => it.t === 'clifflift' || it.t === 'zigzag' || it.t === 'customhouse')) busy = true; } if (busy) continue; }
           const ry = /^(hotel|building|villa|terrace|cottage|quayfront|thatch|purbeckcottage|brickhouse|lymhouse|lulcottage|caravan|parade|nightparade|vicvilla|semis|flatparade|estatehouse|precinct)$/.test(t) ? faceRoad(d, P.th) : t === 'gardenwall' ? -P.th + (d < 0 ? Math.PI : 0) : t === 'tpole' ? -P.th : t === 'hutrow' ? -P.th + (d < 0 ? Math.PI : 0) : hash2(i, d) * Math.PI * 2;
           addAll(MD.model(t, Math.floor(hash2(i * 3, d + 5) * 997) % nv), P.x, groundAt(W, g, P, d * lat) - (t === 'tpole' ? 0.3 : 0.25), P.z, ry, 1);
@@ -934,9 +945,9 @@ export function createWorld() {
         place(W, i * SEG, it.x, it.b, P);
         const d = it.x < 0 ? -1 : 1, fr = faceRoad(d, P.th);
         let ry = hash2(i, Math.round(it.x * 10)) * Math.PI * 2;
-        if (/^(hut|cottage|hotel|building|board|finger|forestsign|lamp|villa|terrace|clock|haven|customhouse|placemill|castlekeep|visitorcentre|tollbooth|clocktower|thatch|tennyson|alumcliffs|landmarkpark|stonepub|lyndchurch|stthomas|lulcastle|cornerbank|brickchurch|moderne|policestn|richmondpub|busstop|kinsonchurch|commcentre|throopmill|castlepoint|rbhospital|leisurecentre|glassoffice|postbox|wheeliebins|towerpark|bearpub|rbtsign|terminal|hangar|minster|highcastle)$/.test(it.t)) ry = fr;
+        if (/^(hut|cottage|hotel|building|board|finger|forestsign|lamp|villa|terrace|clock|haven|customhouse|placemill|castlekeep|visitorcentre|tollbooth|clocktower|thatch|tennyson|alumcliffs|landmarkpark|stonepub|lyndchurch|stthomas|lulcastle|cornerbank|brickchurch|moderne|policestn|richmondpub|busstop|kinsonchurch|commcentre|throopmill|castlepoint|rbhospital|leisurecentre|glassoffice|postbox|wheeliebins|towerpark|bearpub|rbtsign|terminal|hangar|minster|highcastle|quayinn|granary|warehamchurch|warehamhall|woolmanor|tankmuseum|tanksign)$/.test(it.t)) ry = fr;
         if (it.t === 'lamp') ry = fr + Math.PI;   // the arm reaches over the road
-        if (/^(gate|gantry|nose|chev|warn|gpost|footbridge|viaduct|banner|rockarch|treearch|pierarch|liftbridge|chairlift|craneway|ferryqueue|landtrain|corfestation|cattlegrid|zebra|riverseg|tpolewire|keepleft|airfence|hurnbridge)$/.test(it.t)) ry = -P.th;
+        if (/^(gate|gantry|nose|chev|warn|gpost|footbridge|viaduct|banner|rockarch|treearch|pierarch|liftbridge|chairlift|craneway|ferryqueue|landtrain|corfestation|cattlegrid|zebra|riverseg|tpolewire|keepleft|airfence|hurnbridge|rampart|woolbridge|levelcross|railline|train)$/.test(it.t)) ry = -P.th;
         if (it.t === 'parkedcar') ry = -P.th + (hash2(i, 77) < 0.5 ? Math.PI : 0);   // (parked either way round, along the kerb)
         if (it.t === 'priory' || it.t === 'cobb' || it.t === 'goldcap' || it.t === 'headland') ry = fr;
         if (it.t === 'arch') ry = -P.th + (it.x < 0 ? Math.PI : 0);   // Durdle Door side-on from the road, its high end towards the shore
@@ -946,7 +957,7 @@ export function createWorld() {
         if (/^(pier|ferry|clifflift|zigzag|rowboats|dykes|littlesea|needles|yarmouthcastle|oldbattery|seabaths|hurstcastle|obelisk|lulcove|junction|approachlights)$/.test(it.t)) ry = fr + Math.PI / 2 - (it.t === 'pier' ? 0.72 * -d : 0);   // (a pier angled ahead, on either side)   // (+X away from the road; the piers angled 20 degrees ahead - square to the shore they lay off to the side, out of the chase camera's view)
         let y = P.y;
         if (it.t === 'pier' || it.t === 'seabaths') y = P.y - 0.15;   // (its deck level with the promenade)
-        else if (/^(yacht|buoy|stack|arch|needles|ferry|cobb|goldcap|headland|rowboats|swans|yarmouthcastle|alumcliffs|hurstcastle|obelisk|lulcove)$/.test(it.t)) y = 0;
+        else if (/^(yacht|buoy|stack|arch|needles|ferry|cobb|goldcap|headland|rowboats|swans|yarmouthcastle|alumcliffs|hurstcastle|obelisk|lulcove|ledges)$/.test(it.t)) y = 0;
         else if (/^(footbridge|viaduct|rockarch|treearch|pierarch|liftbridge|chairlift|craneway)$/.test(it.t)) y = P.y - (it.t === 'rockarch' ? 1.5 : 0.3);
         else if (Math.abs(it.x) > HALF + 2) y = groundAt(W, g, P, it.x);
         if (SIGNS[it.t]) { signParts(W, i, g, it, P, y, ry, signs, addModel, addAll); if (it.t === 'gate' || it.t === 'gantry' || it.t === 'banner') continue; }
@@ -997,7 +1008,7 @@ export function createWorld() {
   const DP = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null };
   function sideStreet(W, i, d, n) { for (let q = i - n; q <= i + n; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && sq.spr.some((it) => it.t === 'junction' && Math.sign(it.x) === d)) return true; } return false; }
   function dress(W, i, g, look, P, addAll) {
-    if (!look.dress || g.tun || g.brg || R.low && i % 2) return;
+    if (!look.dress || g.tun || g.brg || g.wet || R.low && i % 2) return;
     const fo = forkOut(g);
     let kk = 0; for (let j = -6; j <= 6; j++) kk += E.segAt(W, i + j).k; kk /= 13;
     const inner = Math.abs(kk) > 1e-4 ? 0.55 / Math.abs(kk) : 1e9, innerSide = kk > 0 ? 1 : -1;

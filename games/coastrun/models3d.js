@@ -1747,6 +1747,142 @@ const MODELS = {
     k.box(36, 7, 12, 0, 0, 0, B, 0, 0, 0, 'stone').box(36.4, 0.4, 12.4, 0, 7, 0, '#d8d4cc').box(36.4, 1.0, 1.4, 0, 3.2, 6.7, '#e8e4dc');
     for (let i = 0; i < 6; i++) { const x = -15 + i * 6; k.box(5.4, 0.7, 0.2, x, 3.3, 7.42, FAS[(i + v) % 6]).box(5, 2.6, 0.12, x, 0.3, 6.04, '#5a7890', 0, 0, 0, 'shiny'); k.box(5, 1.4, 0.12, x, 4.6, 6.04, '#5a7890', 0, 0, 0, 'shiny'); }
   },
+  quayinn(k) {   // the Quay Inn on Wareham's quay (its face +Z): whitewashed walls, a grey slate roof, sash windows, its painted sign on a post
+    // (a ship, no lettering), benches and baskets out on the quay
+    const W = '#f4f2ec', S = '#4c5058';
+    k.box(16, 6.4, 9, 0, 0, 0, W).prism(9.6, 3.6, 16.4, 0, 6.4, 0, S, Math.PI / 2).box(1.1, 2.6, 1.2, 6.5, 8.6, -1, '#9a5a40');
+    for (const x of [-6, -2, 2, 6]) for (const y of [1.2, 4.0]) k.box(1.3, 1.6, 0.12, x, y, 4.52, '#f4f4f0').box(1.0, 1.3, 0.14, x, y + 0.15, 4.53, '#5a7890', 0, 0, 0, 'shiny');
+    k.box(1.2, 2.3, 0.14, 0, 0, 4.54, '#2f5a3a');
+    k.cyl(0.08, 0.08, 3.4, 5, -9, 0, 6, '#2a2a2a').box(0.1, 1.4, 1.0, -9, 2.4, 6, '#1d3557').box(0.12, 0.5, 0.6, -9.02, 2.5, 6, '#f4f4f0');
+    for (const x of [-4, 4]) k.box(2.4, 0.45, 0.6, x, 0.45, 7, '#6a4e34').box(2.4, 0.08, 1.6, x, 0.85, 7, '#8a6a48');
+    for (const x of [-6, -2, 2, 6]) k.ball(0.4, x, 3.4, 4.9, ['#e63946', '#ff7eb6', '#ffd23f', '#9b5de5'][Math.abs(x) % 4], 1, 0.8, 1, 'lit', 6);
+  },
+  granary(k) {   // the Granary on Wareham's quay (its face +Z): a tall old brick store of three floors and a loft, small windows, loading doors
+    // one above another under a hoist beam, a steep tiled roof
+    const B = '#9a4a34', T = '#7a4a3a';
+    k.box(14, 10, 10, 0, 0, 0, B, 0, 0, 0, 'stone').prism(10.6, 5, 14.4, 0, 10, 0, T, Math.PI / 2);
+    for (const y of [0.4, 3.6, 6.8]) k.box(2.2, 2.6, 0.14, 0, y, 5.04, '#5a3a2a');   // the loading doors
+    k.box(0.4, 0.4, 2.4, 0, 9.8, 5.8, '#4a3a2a');   // the hoist beam
+    for (const x of [-4.6, 4.6]) for (const y of [1.2, 4.4, 7.6]) k.box(1.2, 1.2, 0.14, x, y, 5.04, '#5a7890', 0, 0, 0, 'shiny');
+  },
+  warehamchurch(k) {   // Lady St Mary, Wareham, by the river (its side +Z): a square west tower of grey Purbeck stone with battlements and corner
+    // pinnacles, the long nave and chancel under a lead-grey roof, churchyard trees
+    const S = '#a8a294', D = '#8e887a';
+    k.box(7, 22, 7, 16, 0, 0, S, 0, 0, 0, 'stone'); for (const y of [8, 15]) k.box(7.3, 0.4, 7.3, 16, y, 0, D, 0, 0, 0, 'stone');
+    for (let i = 0; i < 5; i++) for (const z of [3.2, -3.2]) k.box(0.9, 1.0, 0.7, 13.3 + i * 1.35, 22, z, S, 0, 0, 0, 'stone');
+    for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) k.cone(0.5, 2.4, 5, 16 + x * 3.2, 22, z * 3.2, D);
+    k.box(1.4, 3, 0.14, 16, 16, 3.55, '#2a2a2a').box(1.6, 3.6, 0.14, 16, 0, 3.55, '#4a3020');
+    k.box(30, 9, 11, -4, 0, 0, S, 0, 0, 0, 'stone').prism(12, 4.5, 30.4, -4, 9, 0, '#8a9098', Math.PI / 2);
+    for (let i = 0; i < 6; i++) k.box(1.6, 4, 0.14, -16 + i * 4.8, 2.6, 5.54, '#2b3540', 0, 0, 0, 'shiny');
+    for (const [x, z] of [[-20, 9], [8, 10]]) k.cyl(0.4, 0.55, 4, 6, x, 0, z, '#4a3a2a').clump(3.6, x, 6.4, z, '#3e6a32', 7300 + x);
+  },
+  warehamhall(k) {   // Wareham's town hall at the crossroads (its face +Z): Victorian red brick dressed in Purbeck stone, two storeys, round-headed
+    // windows, and on its corner a stone clock turret with a little leaded cupola
+    const B = '#a4462f', S = '#d8ccb0';
+    k.box(16, 8, 10, 0, 0, 0, B, 0, 0, 0, 'stone').prism(10.6, 3, 16.4, 0, 8, 0, '#4c5058', Math.PI / 2);
+    for (const y of [0, 4]) k.box(16.2, 0.4, 10.2, 0, y + (y ? 0 : 0.0), 0, S, 0, 0, 0, 'stone');
+    for (const x of [-5, -1, 3]) for (const y of [1.2, 4.8]) { k.box(1.6, 2.4, 0.14, x, y, 5.04, S, 0, 0, 0, 'stone').box(1.2, 2.0, 0.16, x, y + 0.2, 5.05, '#5a7890', 0, 0, 0, 'shiny'); }
+    k.box(3.6, 14, 3.6, 7, 0, 3, S, 0, 0, 0, 'stone').cyl(1.0, 1.0, 0.12, 14, 7, 11, 4.82, '#f4f2ea', Math.PI / 2).box(0.06, 0.6, 0.05, 7, 11.1, 4.9, '#1a1a1a');
+    k.cyl(1.6, 1.8, 1.6, 8, 7, 14, 3, '#5a6a6a').cone(1.6, 2.4, 8, 7, 15.6, 3, '#5a6a6a').cyl(0.04, 0.04, 1.2, 4, 7, 18, 3, '#c9a24a');
+  },
+  rampart(k) {   // a length of Wareham's Saxon walls: a high grassy earth bank (the road along Z), a path along its top, trees on it here and there
+    k.blob(10, 0, -3.6, 0, '#5e8a3c', 0.9, 0.9, 2.2, 7400, { smooth: true });
+    k.box(1.2, 0.08, 34, 0, 5.3, 0, '#b8a888');
+    k.cyl(0.3, 0.45, 3, 6, 1, 4.6, 8, '#4a3a2a').clump(3, 1, 9, 8, '#4e7a3a', 7401);
+  },
+  woolbridge(k, v) {   // the old Wool Bridge over the Frome (the road along Z): low stone parapets each side with cutwaters below, the river under it
+    // and its reeds (v 1: Wareham's South Bridge, boats moored along the quay side)
+    for (const sd of [-1, 1]) { k.box(0.7, 1.1, 30, sd * 8.6, 0, 0, '#a89c84', 0, 0, 0, 'stone').box(0.8, 0.15, 30.2, sd * 8.6, 1.1, 0, '#c0b498', 0, 0, 0, 'stone');
+      for (let i = 0; i < 5; i++) k.prism(1.6, 2.6, 1.6, sd * 9.6, -2.6, -12 + i * 6, '#9a8e76', 0); }
+    for (const sd of [-1, 1]) {   // the river either side (proud of the meadow's bumps: under the bridge, the ground hid it), its banks and reeds
+      k.box(36, 0.3, 25, sd * 28, -0.1, 0, '#5a7a44').box(36, 0.22, 22, sd * 28, 0.12, 0, '#3a6a78', 0, 0, 0, 'shiny');
+      for (let i = 0; i < 7; i++) for (const z of [-11.2, 11.2]) k.card(1.8, 1.4, sd * (13 + i * 4.6), 0.1, z, ['#a8a060', '#7a9a4a'][(i + (z > 0 ? 1 : 0)) % 2], i, 0, 'grass', 'up');
+    }
+    if (v) for (let i = 0; i < 6; i++) {   // the boats along the quay (the north bank)
+      const x = (i < 3 ? -1 : 1) * (15 + (i % 3) * 6), col = ['#2a6ab0', '#e8e4da', '#c62828', '#2f6a3a', '#e8e4da', '#e8b030'][i];
+      k.side([-1.9, 0, 1.7, 0, 2.3, 0.7, -2.0, 0.7], 1.5, x, 0.2, -8.4, col, 'shiny', 0.06).box(1.2, 0.1, 0.24, x, 0.55, -8.4, '#8a6a48');
+    }
+  },
+  woolmanor(k) {   // Woolbridge Manor by the bridge (its face +Z): a 17th-century house of mellow red-brown brick, three storeys under steep tiled
+    // gables, stone mullioned windows, tall brick chimney stacks
+    const B = '#9a5a40', S = '#d8ccb0', T = '#6a4a3a';
+    k.box(18, 9.6, 9, 0, 0, 0, B, 0, 0, 0, 'stone').prism(9.6, 5, 18.4, 0, 9.6, 0, T, Math.PI / 2);
+    for (const x of [-5, 0, 5]) k.prism(0.8, 4, 6, x, 9.6, 4.4, B, 0).prism(0.7, 4.1, 6.4, x, 9.5, 4.7, T, 0);   // the front gables
+    for (const x of [-5, 0, 5]) for (const y of [1.2, 4.4, 7.4]) { k.box(2.6, 1.6, 0.14, x, y, 4.54, S, 0, 0, 0, 'stone').box(2.2, 1.3, 0.16, x, y + 0.15, 4.55, '#5a7890', 0, 0, 0, 'shiny').box(0.12, 1.3, 0.18, x, y + 0.15, 4.57, S, 0, 0, 0, 'stone'); }
+    for (const x of [-8.4, 8.4]) k.box(1.4, 6, 1.6, x, 9.6, -1, B, 0, 0, 0, 'stone').box(0.5, 0.8, 0.5, x - 0.3, 15.6, -1, '#7a3a2a').box(0.5, 0.8, 0.5, x + 0.3, 15.6, -1, '#7a3a2a');
+    k.box(1.4, 2.6, 0.14, 0, 0, 4.56, '#4a3020');
+  },
+  levelcross(k) {   // Wool's level crossing (the road along Z, the railway across it along X): the rails set in the road, the white barriers raised
+    // either side with their red bands, the twin red lights and the warning signs; the station's platform and footbridge beside
+    for (const z of [-0.75, 0.75]) k.box(30, 0.06, 0.12, 0, 0, z, '#c8ccd0', 0, 0, 0, 'shiny');
+    for (const z of [-2.4, 2.4]) k.box(30, 0.06, 0.12, 0, 0, z, '#c8ccd0', 0, 0, 0, 'shiny');
+    for (let i = 0; i < 10; i++) k.box(0.3, 0.05, 6.4, -13.5 + i * 3, -0.02, 0, '#5a4a3a');
+    for (const sd of [-1, 1]) {
+      const x = sd * 9, z = sd * 5;
+      k.box(0.6, 1.0, 0.6, x, 0, z, '#f4f4f0').box(0.2, 0.2, 0.2, x, 1.0, z, '#2a2a2a');
+      k.box(0.18, 7, 0.18, x, 1.0, z, '#f4f4f0', 0, 0, sd * 0.05);   // the barrier, raised
+      for (let b = 0; b < 3; b++) k.box(0.2, 0.7, 0.2, x, 2.0 + b * 1.8, z, '#d02828');
+      k.cyl(0.08, 0.08, 3, 5, x + sd * 1.2, 0, z, '#2a2a2a').box(1.2, 0.5, 0.2, x + sd * 1.2, 2.8, z, '#1a1a1a'); for (const o of [-0.35, 0.35]) k.ball(0.18, x + sd * 1.2 + o, 2.8, z + sd * 0.12, '#ff2a2a', 1, 1, 0.5, 'glow', 8);
+    }
+    k.box(40, 1.0, 4, 0, -0.1, -9, '#c8c4bc').box(40, 0.2, 0.4, 0, 0.9, -7.2, '#f2d020');   // the platform
+    k.box(2, 0.6, 10, 22, 5, -5, '#3a5a8a').box(1.4, 5.6, 1.4, 22, 0, -9, '#3a5a8a').box(1.4, 5.6, 1.4, 22, 0, 0, '#3a5a8a');   // the footbridge
+  },
+  railline(k) {   // the railway beside the road (along Z): two rails on sleepers on a bed of ballast, a fence along it, a telegraph-style cable post
+    k.box(4.4, 0.4, 12, 0, 0, 0, '#8a8478');
+    for (let i = 0; i < 12; i++) k.box(3, 0.12, 0.3, 0, 0.4, -5.5 + i, '#5a4a3a');
+    for (const x of [-0.75, 0.75]) k.box(0.1, 0.14, 12, x, 0.52, 0, '#b8bcc0', 0, 0, 0, 'shiny');
+    k.box(0.06, 1.2, 12, -3.4, 0, 0, '#7a6a52');
+  },
+  train(k, v) {   // a passenger train on the line (along Z): four coaches in a plain livery (no operator's colours), windows, a cab at each end
+    const C = ['#2a5aa8', '#3a7a5a', '#6a6a72'][v % 3];
+    for (let i = 0; i < 4; i++) { const z = -30 + i * 20.5; k.box(2.8, 3.4, 20, 0, 0.9, z, '#e8eaee', 0, 0, 0, 'shiny').box(2.82, 0.8, 20.02, 0, 1.0, z, C).box(2.84, 1.0, 18, 0, 2.4, z, '#2a3440', 0, 0, 0, 'shiny'); }
+    k.box(2.82, 3.4, 1.2, 0, 0.9, -40.6, '#f2d020').box(2.82, 3.4, 1.2, 0, 0.9, 40.6, '#f2d020');
+  },
+  tankmuseum(k) {   // the Tank Museum at Bovington (its face +Z): its long modern halls in grey cladding with a glazed entrance, flags, and out in
+    // front by the road on its plinth a First World War tank - the rhomboid hull with its tracks running right round it - and a modern one
+    const G = '#9aa2aa', OL = '#6a6a4a';
+    k.box(60, 12, 30, 0, 0, -16, G).box(60.4, 1.4, 30.4, 0, 10.6, -16, '#6a7480').box(20, 9, 1, -12, 0, -0.5, '#5a7890', 0, 0, 0, 'shiny');
+    for (const x of [12, 16, 20]) k.cyl(0.07, 0.07, 9, 5, x, 0, 4, '#d8dce0').box(0.05, 1.2, 1.8, x, 7.4, 4.9, ['#c8302a', '#2a5aa8', '#2f8a4a'][x % 3]);
+    k.box(13, 1.2, 7, 6, 0, 22, '#b8b4aa');   // the plinth
+    const rh = new THREE.Shape(); rh.moveTo(-4.6, 0); rh.lineTo(-2.6, 2.8); rh.lineTo(2.6, 2.8); rh.lineTo(4.8, 0.4); rh.lineTo(3.6, -0.4); rh.lineTo(-3.6, -0.4); rh.lineTo(-4.6, 0);
+    const g = new THREE.ExtrudeGeometry(rh, { depth: 4.2, bevelEnabled: false }); g.translate(0, 0, -2.1);
+    k.put(g, OL, 6, 1.8, 22, 0, 0, 0, 1.3, 1.3, 1.1, 'lit');   // the rhomboid hull, side-on to the road (its outline is the one everyone knows)
+    for (const sd of [-1, 1]) k.box(2.8, 1.6, 0.9, 6, 2.7, 22 + sd * 2.75, '#5a5a3e').put(new THREE.CylinderGeometry(0.13, 0.13, 1.5, 5), '#3a3a2a', 6.7, 3.4, 22 + sd * 3.9, Math.PI / 2, 0, 0);   // the sponsons, their guns
+    k.box(1.5, 1.0, 1.7, 5.5, 5.4, 22, '#5a5a3e');   // the cab on top
+    // a modern tank by the entrance on the grass: a low hull on its tracks, the turret, the long gun pointing out over the road
+    const M = '#5e6648', M2 = '#4a5238';
+    k.box(7.4, 1.3, 3.6, -16, 0.5, 14, M).box(7.8, 1.0, 0.8, -16, 0, 14 - 1.6, M2).box(7.8, 1.0, 0.8, -16, 0, 14 + 1.6, M2);
+    k.box(3.6, 1.0, 2.8, -16.4, 1.8, 14, M).put(new THREE.CylinderGeometry(0.13, 0.16, 5.6, 6), M2, -16.4, 2.3, 18.2, Math.PI / 2, 0, 0);
+    k.box(10, 0.5, 6, -16, 0, 14, '#b8b4aa');   // its hardstanding
+  },
+  tanksign(k) {   // the red triangle sign round Bovington: tanks crossing (a tank's silhouette, no words)
+    k.cyl(0.07, 0.07, 2.5, 6, 0, 0, 0, '#9aa0a6');
+    k.put(new THREE.CylinderGeometry(0.85, 0.85, 0.06, 3), '#d32f2f', 0, 3.0, 0.06, Math.PI / 2, 0, 0).put(new THREE.CylinderGeometry(0.65, 0.65, 0.07, 3), '#ffffff', 0, 2.96, 0.1, Math.PI / 2, 0, 0);
+    k.box(0.7, 0.22, 0.06, 0, 2.82, 0.14, '#111111').box(0.36, 0.14, 0.06, 0, 2.98, 0.14, '#111111').box(0.36, 0.04, 0.06, 0.26, 3.0, 0.14, '#111111');
+  },
+  clavell(k) {   // Clavell Tower on Hen Cliff above Kimmeridge Bay: a round folly of honey-coloured stone, four floors, a Tuscan colonnade round
+    // its ground floor, brick-framed windows, a stone parapet on top
+    const S = '#d8c090', D = '#c0a676', B = '#9a5a40';
+    k.cyl(3.2, 3.4, 11, 18, 0, 0, 0, S, 0, 0, 'stone').cyl(3.5, 3.5, 0.6, 18, 0, 11, 0, D, 0, 0, 'stone').cyl(3.3, 3.3, 1.0, 18, 0, 11.6, 0, S, 0, 0, 'stone');
+    k.cyl(4.6, 4.6, 0.4, 20, 0, 0, 0, D, 0, 0, 'stone').cyl(4.6, 4.6, 0.5, 20, 0, 3.4, 0, D, 0, 0, 'stone');
+    for (let i = 0; i < 12; i++) { const a = i / 12 * 6.283; k.cyl(0.25, 0.28, 3.0, 8, Math.sin(a) * 4.3, 0.4, Math.cos(a) * 4.3, '#e8d8b0', 0, 0, 'stone'); }   // the colonnade
+    for (const y of [4.6, 7.6]) for (let i = 0; i < 4; i++) { const a = i / 4 * 6.283 + 0.4; k.box(1.0, 1.6, 0.2, Math.sin(a) * 3.3, y, Math.cos(a) * 3.3, B, a).box(0.7, 1.3, 0.22, Math.sin(a) * 3.32, y + 0.15, Math.cos(a) * 3.32, '#2a3440', a, 0, 0, 'shiny'); }
+    k.blob(14, 0, -3, 0, '#7a9a4a', 1.2, 0.25, 1.2, 7500, { smooth: true });   // the cliff top's turf round it
+  },
+  nodding(k) {   // the oil well's beam pump on the cliff at Kimmeridge (the "nodding donkey"): its A-frame, the walking beam with the horse's head
+    // at one end and the crank and counterweights at the other, painted, inside a low fence on a concrete pad
+    const C = '#3a6a4a', Y = '#d8a020';
+    k.box(8, 0.3, 4, 0, 0, 0, '#a8a49c');
+    for (const sd of [-1, 1]) k.box(0.3, 4.2, 0.3, 0, 0.3, sd * 1, C, 0, sd * 0.2, 0);
+    k.box(7.4, 0.5, 0.5, 0, 4.6, 0, C, 0, 0, 0.12);   // the walking beam
+    k.box(0.8, 1.8, 0.6, 3.7, 3.6, 0, C, 0, 0, 0.12).cyl(0.06, 0.06, 3.6, 4, 3.9, 0.3, 0, '#2a2a2a');   // the horse's head, its rod
+    k.box(1.4, 1.4, 1.2, -3.0, 1.0, 0, Y).box(0.4, 2.6, 0.4, -3.0, 1.6, 0, C);   // the crank and counterweights
+    for (const [x, z] of [[-4, -2], [4, -2], [-4, 2], [4, 2]]) k.box(0.08, 1.1, 0.08, x, 0.3, z, '#7a8088'); k.box(8, 0.06, 0.06, 0, 1.3, 2, '#7a8088').box(8, 0.06, 0.06, 0, 1.3, -2, '#7a8088');
+  },
+  ledges(k, v) {   // the flat shale ledges of Kimmeridge Bay at low water: long dark grey slabs in stripes out into the sea, pools between
+    const r = rnd(7600 + v);
+    for (let i = 0; i < 7; i++) k.blob(6 + r() * 4, (r() - 0.5) * 16, -0.55, -24 + i * 8, ['#4a4a46', '#5a5a54', '#3e3e3a'][i % 3], 2.6, 0.08, 0.5, 7610 + v * 9 + i, { smooth: true });
+  },
   balloon(k, v) {   // a hot-air balloon, far off over the land
     const c = [['#e63946', '#ffd23f'], ['#1d7fd6', '#ffffff'], ['#2a9d8f', '#f4a261'], ['#9b5de5', '#ffd23f']][v % 4];
     for (let i = 0; i < 10; i++) k.put(new THREE.SphereGeometry(8, 3, 14, i * Math.PI / 5, Math.PI / 5), c[i % 2], 0, 16, 0, 0, 0, 0, 1, 1.22, 1);

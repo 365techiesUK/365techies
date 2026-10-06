@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=46';
+import { createWorld } from './world3d.js?v=47';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
@@ -157,7 +157,7 @@ function hud(g, W, t, mode) {
   hudText(g, 'SCORE', GW - 10, 13, 6.5, '#c9d6e6', 'right');
   hudText(g, Math.round(R.shownScore).toLocaleString('en-GB'), GW - 10, 29, 14, '#ffffff', 'right');
   const S0 = E.STAGES[W.stage] || E.STAGES[0];
-  hudText(g, 'STAGE ' + S0.level + '/' + E.LEVELS + (W.round > 1 ? '  ·  ROUND ' + W.round : ''), GW - 10, 40, 6.2, '#c9d6e6', 'right');
+  hudText(g, 'STAGE ' + S0.level + '/' + E.RUNS[S0.run].levels + (W.round > 1 ? '  ·  ROUND ' + W.round : ''), GW - 10, 40, 6.2, '#c9d6e6', 'right');
   if (mode !== 'title') { heart(g, GW - 30, 47.5, 3, '#ff7a9a'); hudText(g, String(W.runHearts || 0), GW - 10, 50.5, 7, '#ffd1df', 'right'); }
   // where you are: the place, and how far along it
   const st = stretchOf(W, pi), S = E.STAGES[(st && st.id) || 0];
@@ -602,7 +602,7 @@ function voice(a, name, fadeIn) {
   return { name: name, src: src, g: g, t0: a.currentTime, dur: b.duration };
 }
 function hush(a, v, d) { try { v.g.gain.cancelScheduledValues(a.currentTime); v.g.gain.setValueAtTime(Math.max(0.0001, v.g.gain.value), a.currentTime); v.g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + d); v.src.stop(a.currentTime + d + 0.05); } catch (e) {} }
-const TRACK_AS = { winton: 'christchurch', charminster: 'bournemouth', kinson: 'forest', muscliff: 'christchurch', littledown: 'lymington', towerpark: 'weymouth', bearcross: 'forest', hurn: 'hengistbury', wimborne: 'purbeck', ferndown: 'forest', highcliffe: 'hengistbury' };   // (the local run's places: another place's track until they have their own)
+const TRACK_AS = { wareham: 'purbeck', wool: 'forest', kimmeridge: 'swanage', winton: 'christchurch', charminster: 'bournemouth', kinson: 'forest', muscliff: 'christchurch', littledown: 'lymington', towerpark: 'weymouth', bearcross: 'forest', hurn: 'hengistbury', wimborne: 'purbeck', ferndown: 'forest', highcliffe: 'hengistbury' };   // (the local run's places: another place's track until they have their own)
 const trackOf = (key) => TRACK_AS[key] || key;
 function placeTrack(W) { const g = W && E.segAt(W, E.segIndex(W.s)); return g ? trackOf(ART.PAL[g.st].key) : 'bournemouth'; }
 // the car radio: the stations, in the order the dial goes round (the first plays a tune for each place)
