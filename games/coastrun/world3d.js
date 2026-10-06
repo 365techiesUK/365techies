@@ -230,7 +230,7 @@ function stageFrac(W, g) { for (const s of W.stretch) if (s.id === g.st && g.i >
 const zt = (T, W, g) => { const z = zoneKey(W, g); return z in T ? T[z] : T[E.STAGES[g.st].key]; };   // a table's entry for the part of the stage, else the place's
 const BG_IMG = { bournemouth: 4, sandbanks: 4, christchurch: 4, purbeck: 4, swanage: 4, forest: 4, jurassic: 4, weymouth: 4, harbour: 4, lymington: 4, lyme: 4, portland: 4, goldencap: 4, needles: 4 };   // the places with a painted panorama (games/coastrun/bg/<place>.webp), and its version
 const HERO = { bournemouth: 62, sandbanks: 46, christchurch: 44, purbeck: 56, swanage: 44, forest: 30, jurassic: 34, weymouth: 38, harbour: 38, lymington: 46, lyme: 46, portland: 40, goldencap: 50, hengistbury: 40, needles: 52 };   // each place's landmark painted large (tools/coastrun/gen_hero.py): how wide it stands, in degrees
-const HERO_V = 8, HERO_D = 2150, MARK_OFF = 0.17;   // (the landmark sits just off the road ahead, to the sea side: further out, the beach huts and the prom hid it)
+const HERO_V = 9, HERO_D = 2150, MARK_OFF = 0.17;   // (the landmark sits just off the road ahead, to the sea side: further out, the beach huts and the prom hid it)
 const BGL = new THREE.TextureLoader();
 
 // ---------------------------------------------------------------- the sky: the colours, the sun and its glow, the clouds
