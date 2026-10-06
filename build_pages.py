@@ -41,6 +41,22 @@ BENCHV = _jsv("pcbench.js")
 # Per-page attributes on <main>: data-cv marks the scene-heavy pages that get content-visibility on phones
 # (the static home page carries it by hand). Volatile in the content hash, see _VOLATILE.
 MAIN_ATTRS = {"dell-hardware": " data-cv"}
+DOCK_HTML = """  <nav class="mobile-cta-bar" aria-label="Quick contact">
+    <a href="tel:+441202775566"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>Call</a>
+    <a href="/book-service/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book</a>
+    <a href="sms:+447520615332"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5z"/></svg>Text</a>
+  </nav>
+"""
+# 6 Oct 2026 (owner): the free tools people come to USE carry no Call / Book / Text bar along the bottom of a phone -
+# "they're trying to play the game, not give us a call ... it's just going to kill it". The page gets body.no-dock
+# (styles.css drops the bar's bottom padding and lowers the Text size button); the footer still has the number.
+NO_DOCK = {"fuel-prices", "bournemouth/fuel-prices", "mobile-signal-check", "games"}
+# ...and where the page shows no phone number of its own (the footer's is folded away on a phone), one quiet line at
+# the end of the page - not fixed, so it never covers the tool (owner: "a reference for IT support ... with our
+# telephone number"). The UK fuel page and Mobile signal check end with their own "call 01202 775566" band and the Games
+# list shows the number twice, so only the Bournemouth fuel page needs it.
+HELP_LINE = {"bournemouth/fuel-prices"}
+HELP_LINE_HTML = '    <p class="tool-help">Computer, phone or Wi-Fi trouble? 365 Techies can help: call <a href="tel:+441202775566">01202 775566</a>.</p>\n'
 # Per-page CSS placed at the end of <head> (after the site stylesheet, so equal-specificity rules win, and parsed before
 # anything paints). Set by a page module, e.g. the Bournemouth weather page's phone app view.
 HEAD_EXTRA = {}
@@ -188,7 +204,7 @@ except Exception:
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://365techies.co.uk"
-CSSV = "119"   # bumped 2026-10-03: links inside FAQ answers styled like prose links (they were invisible). Earlier: v118 2026-10-02 (2nd): the accessibility button moves into the strip left of the open phone menu, off its arrows. Earlier: v117 2026-10-02: the menus reorganised (nav check) - Services, Free Tools and Get Help open as three-column panels (.dropdown--mega). Earlier: v116 2026-09-26: the shared first-screen CSS moved into styles.css (was inlined in 520 pages) + compact phone tiles (site audit items 2 + 4). Earlier: v115 2026-09-25: phone footer folds into accordions + badge grid (it was 8,316 px at 390 wide). Earlier: v114 2026-09-14 (2nd): accessibility audit (tooltip box, breadcrumb contrast, focus ring, reveal on focus, clip). Earlier: v113 2026-09-14: performance audit (scenes paused off screen, content-visibility on phones, self-hosted body fonts, compositor glows). Earlier: v112 2026-09-13 (9th): inline form messages + jargon-term hint (UX audit item 6). Earlier: v111 2026-09-13 (8th): the phone cookie banner as one strip (UX audit item 4). Earlier: v110 2026-09-13 (7th): 12px floor for readable phone text (UX audit item 3). Earlier: v109 2026-09-13 (6th): tap-target padding on breadcrumb/towns/byline links (UX audit item 2); also retires v108, whose URL was requested before the file landed. Earlier: v108 2026-09-13 (5th): phone heroes under one screen (UX audit item 1). Earlier: v107 2026-09-13 (4th): the hero byline (.page-hero__byline). Earlier: v106 2026-09-13 (3rd): metric-matched local fallback fonts (size-adjust/ascent/descent overrides) so the web-font swap moves nothing; the lab home CLS of 0.169 was entirely the swap (SEO audit item 6). Earlier: v105 2026-09-13 (2nd): the phone cookie banner pins under the header, not over the hero Call button. Earlier: v104 2026-09-13: the Text size pill is an icon at bottom-right on phones (nav audit: it covered the hero Call button). Earlier: v103 2026-09-07: scam alert in the strip + homepage band, strip re-timed to 85s. Earlier: v102 2026-09-05 (3rd): mobile-menu contact links lifted to a 44px tap target. Earlier the same day: v101 = the >=1960 header expand moved to 2040 so "Contact" is never clipped. Earlier the same day: v100 = the A+ text steps hand the nav to the hamburger instead of clipping it (nav audit). Earlier: v99 2026-09-02: hero console card no longer tilted. Earlier: v98   # bumped 2026-09-02 again: v97 was poisoned in the SiteGround proxy by a pre-completion page load (old CSS cached under the new URL for browsers; curl variants showed MISS). NEVER load a page carrying a new ?v= until the deploy run is completed+success. v97 = 2026-09-02 (live-map launcher + overlay).   # bumped 2026-09-02 (Bournemouth365 live-map launcher + overlay). Earlier: v96 2026-08-27 (skip-link could not be outgrown by the a11y ladder). Earlier: v95 2026-08-19 (proof bar replaces the duplicate reviews teaser). Earlier: v94 2026-08-17 (status strip rebuild). Earlier the same day: v88 was poisoned in the SiteGround proxy by a pre-deploy probe (see deploy-hash-sync-blindspot); NEVER request a new ?v= URL before the deploy that ships it is confirmed complete
+CSSV = "120"   # bumped 2026-10-06: phones with big text (Chrome turns the text size into page zoom: 180-330 px wide) - the menu button stays on screen, slimmer header/Call bar, cookie note stacks, headings wrap. Earlier: v119 2026-10-03: links inside FAQ answers styled like prose links (they were invisible). Earlier: v118 2026-10-02 (2nd): the accessibility button moves into the strip left of the open phone menu, off its arrows. Earlier: v117 2026-10-02: the menus reorganised (nav check) - Services, Free Tools and Get Help open as three-column panels (.dropdown--mega). Earlier: v116 2026-09-26: the shared first-screen CSS moved into styles.css (was inlined in 520 pages) + compact phone tiles (site audit items 2 + 4). Earlier: v115 2026-09-25: phone footer folds into accordions + badge grid (it was 8,316 px at 390 wide). Earlier: v114 2026-09-14 (2nd): accessibility audit (tooltip box, breadcrumb contrast, focus ring, reveal on focus, clip). Earlier: v113 2026-09-14: performance audit (scenes paused off screen, content-visibility on phones, self-hosted body fonts, compositor glows). Earlier: v112 2026-09-13 (9th): inline form messages + jargon-term hint (UX audit item 6). Earlier: v111 2026-09-13 (8th): the phone cookie banner as one strip (UX audit item 4). Earlier: v110 2026-09-13 (7th): 12px floor for readable phone text (UX audit item 3). Earlier: v109 2026-09-13 (6th): tap-target padding on breadcrumb/towns/byline links (UX audit item 2); also retires v108, whose URL was requested before the file landed. Earlier: v108 2026-09-13 (5th): phone heroes under one screen (UX audit item 1). Earlier: v107 2026-09-13 (4th): the hero byline (.page-hero__byline). Earlier: v106 2026-09-13 (3rd): metric-matched local fallback fonts (size-adjust/ascent/descent overrides) so the web-font swap moves nothing; the lab home CLS of 0.169 was entirely the swap (SEO audit item 6). Earlier: v105 2026-09-13 (2nd): the phone cookie banner pins under the header, not over the hero Call button. Earlier: v104 2026-09-13: the Text size pill is an icon at bottom-right on phones (nav audit: it covered the hero Call button). Earlier: v103 2026-09-07: scam alert in the strip + homepage band, strip re-timed to 85s. Earlier: v102 2026-09-05 (3rd): mobile-menu contact links lifted to a 44px tap target. Earlier the same day: v101 = the >=1960 header expand moved to 2040 so "Contact" is never clipped. Earlier the same day: v100 = the A+ text steps hand the nav to the hamburger instead of clipping it (nav audit). Earlier: v99 2026-09-02: hero console card no longer tilted. Earlier: v98   # bumped 2026-09-02 again: v97 was poisoned in the SiteGround proxy by a pre-completion page load (old CSS cached under the new URL for browsers; curl variants showed MISS). NEVER load a page carrying a new ?v= until the deploy run is completed+success. v97 = 2026-09-02 (live-map launcher + overlay).   # bumped 2026-09-02 (Bournemouth365 live-map launcher + overlay). Earlier: v96 2026-08-27 (skip-link could not be outgrown by the a11y ladder). Earlier: v95 2026-08-19 (proof bar replaces the duplicate reviews teaser). Earlier: v94 2026-08-17 (status strip rebuild). Earlier the same day: v88 was poisoned in the SiteGround proxy by a pre-deploy probe (see deploy-hash-sync-blindspot); NEVER request a new ?v= URL before the deploy that ships it is confirmed complete
 HERITAGE_DIMS = {'heritage-01.jpg': (1400, 787), 'heritage-02.jpg': (787, 1400), 'heritage-03.jpg': (1400, 787), 'heritage-04.jpg': (1400, 787), 'heritage-05.jpg': (787, 1400), 'heritage-07.jpg': (1400, 787), 'heritage-kinson.jpg': (1200, 710), 'heritage-moordown.jpg': (1400, 788), 'heritage-stock.jpg': (1400, 788), 'heritage-storefront.jpg': (1024, 683)}
 try:
     from hero_scenes import SCENES as HERO_SCENES
@@ -1056,6 +1072,9 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None, robot
     og_title = og_title.replace('"', "&quot;")
     meta_desc = _meta_desc(desc)
     main_attrs = MAIN_ATTRS.get(slug, "")
+    dock_html = "" if slug in NO_DOCK else DOCK_HTML
+    help_line = HELP_LINE_HTML if slug in HELP_LINE else ""
+    body_attrs = ' class="no-dock"' if slug in NO_DOCK else ""
     head_extra = HEAD_EXTRA.get(slug, "")
     manifest_href = MANIFEST_FOR.get(slug, "/site.webmanifest?v=2")
     touch_icon = TOUCH_ICON_FOR.get(slug, "/apple-touch-icon.png")
@@ -1209,7 +1228,7 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None, robot
     }})();
   </script>{head_extra}
 </head>
-<body id="top">
+<body id="top"{body_attrs}>
   <a class="skip-link" href="#main">Skip to content</a>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>Cookies run our live chat and site stats. <a href="/cookie-policy/">Cookie policy</a>.</p>
@@ -1223,14 +1242,9 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None, robot
 {HEADER}
   <main id="main"{main_attrs}>
 {content}
-  </main>
+{help_line}  </main>
 {FOOTER}
-  <nav class="mobile-cta-bar" aria-label="Quick contact">
-    <a href="tel:+441202775566"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>Call</a>
-    <a href="/book-service/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book</a>
-    <a href="sms:+447520615332"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5z"/></svg>Text</a>
-  </nav>
-  <div class="a11y" id="a11y">
+{dock_html}  <div class="a11y" id="a11y">
     <button type="button" class="a11y__toggle" id="a11y-toggle" aria-expanded="false" aria-controls="a11y-panel" aria-label="Text size and accessibility options" title="Text size and accessibility options">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="3.6" r="1.6"/><path d="M3.5 8h17M12 8v6m0 0-3.2 6.4M12 14l3.2 6.4"/></svg><span class="a11y__togglelabel">Text size</span>
     </button>

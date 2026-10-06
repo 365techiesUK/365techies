@@ -5467,12 +5467,14 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
           .sck__panel{position:relative;background:linear-gradient(165deg,rgba(22,38,74,.94),rgba(10,15,30,.96));border:1px solid rgba(108,196,245,.26);
             border-radius:24px;padding:1rem;box-shadow:0 30px 70px -40px rgba(29,151,227,.65),inset 0 1px 0 rgba(255,255,255,.05)}
           .sck__panel[data-verdict="good"]{border-color:rgba(0,206,27,.45)}.sck__panel[data-verdict="ok"]{border-color:rgba(224,179,65,.45)}.sck__panel[data-verdict="slow"]{border-color:rgba(224,86,63,.45)}
-          .sck__seg{display:grid;grid-template-columns:1fr 1fr;gap:.35rem;padding:.3rem;border-radius:17px;background:rgba(6,12,24,.62);border:1px solid rgba(125,170,220,.16);margin:0 0 .75rem}
+          .sck__seg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.35rem;padding:.3rem;border-radius:17px;background:rgba(6,12,24,.62);border:1px solid rgba(125,170,220,.16);margin:0 0 .75rem}
           .sck__place{display:flex;align-items:center;justify-content:center;gap:.55rem;padding:.65rem .5rem;min-height:58px;border:0;border-radius:13px;background:transparent;
             color:#cfe0f5;font-weight:800;font-size:1.06rem;line-height:1.1;cursor:pointer;text-align:left;transition:background .2s,color .2s,box-shadow .2s}
           .sck__place svg{width:24px;height:24px;flex:none;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;opacity:.9}
           .sck__place small{display:block;font-weight:500;font-size:.72rem;color:var(--muted,#9fb5d3);margin-top:.18rem;transition:color .2s}
           .sck__place:hover{background:rgba(29,151,227,.1)}
+          /* a phone with big text (6 Oct 2026: Chrome turns the text size into page zoom, 180-330 px wide): the two halves shrink */
+          @media (max-width:330px){.sck__place{min-width:0;gap:.35rem;padding:.55rem .3rem;overflow-wrap:anywhere}.sck__place svg{width:20px;height:20px}}
           .sck__place[aria-pressed="true"]{background:linear-gradient(135deg,var(--cyan,#1d97e3),var(--green,#00ce1b));color:#061019;box-shadow:0 10px 26px -12px rgba(29,151,227,.85)}
           .sck__place[data-place="in"][aria-pressed="true"]{background:linear-gradient(135deg,#2f5f9e,var(--cyan,#1d97e3));color:#fff}
           .sck__place[aria-pressed="true"] small{color:inherit;opacity:.78}

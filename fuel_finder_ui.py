@@ -79,7 +79,7 @@ HEAD = '''
   <style>
     .ff,.ff-sheet{--ff-deep:#0a1420;--ff-water:#10202f;--ff-line:#1d3346;--ff-foam:#e8f1f2;--ff-mute:#8ea3b5;--ff-surf:#4fd8c4;--ff-dusk:#ffb066;--ff-ink:#04121a}
     .ff-sec .wrap{max-width:1120px}
-    .ff-controls{display:grid;gap:.75rem;margin:0 0 1rem}
+    .ff-controls{display:grid;grid-template-columns:minmax(0,1fr);gap:.75rem;margin:0 0 1rem}
     .ff-fuels{display:flex;flex-wrap:wrap;gap:.5rem}
     .ff-fuels button{min-height:46px;padding:.55rem 1.05rem;border-radius:999px;border:1px solid var(--ff-line);background:var(--ff-water);color:var(--ff-foam);font:inherit;font-size:.98rem;cursor:pointer;transition:background .25s,border-color .25s,color .25s,transform .15s}
     .ff-fuels button:active{transform:scale(.96)}
@@ -97,7 +97,7 @@ HEAD = '''
     .ff-status b{color:var(--ff-foam)}
     .ff-banner{border:1px solid var(--ff-dusk);background:rgba(255,176,102,.08);border-radius:12px;padding:.75rem 1rem;margin:0 0 1rem;font-size:.92rem;line-height:1.5}
     .ff-banner b{color:var(--ff-dusk)}
-    .ff-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.65rem;margin:0 0 1.1rem}
+    .ff-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(170px,100%),1fr));gap:.65rem;margin:0 0 1.1rem}
     .ff-tile{position:relative;overflow:hidden;background:var(--ff-water);border:1px solid var(--ff-line);border-radius:16px;padding:.85rem 1rem}
     .ff-tile::before{content:"";position:absolute;inset:0 auto auto 0;width:100%;height:3px;background:linear-gradient(90deg,var(--ff-surf),transparent 70%)}
     .ff-tile.ff-t3::before{background:linear-gradient(90deg,var(--ff-dusk),transparent 70%)}
@@ -126,7 +126,7 @@ HEAD = '''
     .ff-today h2{margin-top:0}
     .ff-today h3{font-size:1.05rem;margin:1.4rem 0 .6rem}
     .ff-today p{max-width:72ch}
-    .ff-twocol{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+    .ff-twocol{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:1rem}
     .ff-stamp{font-family:var(--mono,ui-monospace,monospace);font-size:.8rem;color:var(--ff-mute)}
     .ff-answer{font-size:1.06rem;line-height:1.65}
     .ff-weeks small.up{color:var(--ff-dusk)}
@@ -189,7 +189,7 @@ HEAD = '''
     .ff-note{color:var(--ff-mute);font-size:.86rem;line-height:1.55;margin:1rem 0 0}
     .ff-note a{color:var(--ff-surf)}
     .ff-myarea{background:var(--ff-water);border:1px solid var(--ff-surf);border-radius:14px;padding:.75rem 1rem;margin:0 0 1rem;color:var(--ff-foam)}
-    .ff-uk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.9rem}
+    .ff-uk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:.9rem}
     .ff-card{background:var(--ff-water);border:1px solid var(--ff-line);border-radius:16px;padding:1rem 1.1rem}
     .ff-card h3{margin:0 0 .7rem;font-size:1.02rem;color:var(--ff-foam)}
     .ff-wide{grid-column:1 / -1}
@@ -206,17 +206,21 @@ HEAD = '''
     .ff-bv small{display:block;font-weight:400;font-size:.74rem;color:var(--ff-mute)}
     .ff-areas li{display:flex;justify-content:space-between;gap:.6rem;padding:.4rem 0;border-bottom:1px solid var(--ff-line);font-size:.93rem;color:var(--ff-foam)}
     .ff-areas li:last-child{border-bottom:0}
-    .ff-top{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+    .ff-top{grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr))}
     .ff-top li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:.15rem .7rem;align-items:center;padding:.6rem .75rem;border:1px solid var(--ff-line);border-radius:12px;cursor:pointer;transition:border-color .2s}
     .ff-top li:hover,.ff-top li:focus-visible{border-color:var(--ff-surf);outline:none}
     .ff-top .ff-price{font-size:1.1rem}
     .leaflet-popup-content{font:14px/1.45 system-ui,sans-serif}
     @media (max-width:430px){
-      .ff-fuels{display:grid;grid-template-columns:1fr 1fr}
+      .ff-fuels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+      .ff-fuels button{padding:.5rem .55rem;overflow-wrap:anywhere}
       .ff-gps{width:100%;justify-content:center}
       .ff-where select{width:100%}
       .ff-bar{grid-template-columns:6.2rem minmax(0,1fr) auto}
     }
+    /* a phone with big text (6 Oct 2026, owner on a Galaxy S22: Chrome turns the text size into page zoom, 180-260 px wide): the name over its bar */
+    @media (max-width:260px){.ff-bar{grid-template-columns:minmax(0,1fr) auto;gap:.25rem .5rem}.ff-bl{grid-column:1 / -1}
+      .ff-item{grid-template-columns:auto minmax(0,1fr)}.ff-price,.ff-addr,.ff-meta,.ff-dir{grid-column:2;text-align:left}}   /* each forecourt: its price under its name */
     .ff-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin:0 0 1rem}
     .ff-pill{display:inline-flex;align-items:center;gap:.45rem;min-height:44px;padding:0 1.05rem;border-radius:999px;border:1px solid rgba(79,216,196,.5);background:rgba(79,216,196,.08);color:var(--ff-foam);font:inherit;font-size:.92rem;font-weight:600;cursor:pointer;transition:background .2s,transform .15s}
     .ff-pill:hover{background:rgba(79,216,196,.16)}
@@ -229,6 +233,8 @@ HEAD = '''
     /* the script moves both panels to <body> (the site's <main> is z-index 2, which kept them UNDER the phone's
        Call/Book/Text bar); on a phone they sit just above that bar, which is 4.6rem tall (styles.css). Seen 4 Oct. */
     @media (max-width:767px){.ff-sheet{bottom:calc(4.6rem + 10px + env(safe-area-inset-bottom));max-height:calc(100vh - 4.6rem - 24px);overflow-y:auto}}
+    /* 6 Oct 2026: the fuel pages no longer carry that bar (build_pages.NO_DOCK, body.no-dock) - the panels sit at the bottom */
+    @media (max-width:767px){body.no-dock .ff-sheet{bottom:calc(10px + env(safe-area-inset-bottom));max-height:calc(100vh - 24px)}}
     @media (max-width:1024px) and (max-height:500px) and (orientation:landscape){.ff-sheet{bottom:calc(10px + env(safe-area-inset-bottom))}}
     .ff-sheet[hidden],.ff-actions[hidden],[data-ffa2hs][hidden]{display:none!important}
     .ff-sheet-ic{width:52px;height:52px;border-radius:13px;background:url(/images/fuel-icon-192-v1.png) center/cover;box-shadow:0 4px 14px rgba(0,0,0,.4)}

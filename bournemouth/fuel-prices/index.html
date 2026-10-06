@@ -74,7 +74,7 @@
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.min.css?v=119" />
+  <link rel="stylesheet" href="/css/styles.min.css?v=120" />
   <style>/* Emergency styles. Applied ONLY when the stylesheet above did not arrive,
     or arrived truncated - see the SENTINEL rule at the foot of styles.css. Keeps a
     failed page readable instead of raw giant-serif HTML. */
@@ -112,7 +112,7 @@
       try { sessionStorage.setItem('tt_css_sos', String(n + 1)); } catch (e) {}
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = '/css/styles.min.css?v=119&sos=' + Date.now();
+      l.href = '/css/styles.min.css?v=120&sos=' + Date.now();
       l.onload = function () {
         if ((getComputedStyle(R).getPropertyValue('--css-ok') || '').trim() === '1') {
           R.className = R.className.replace(/\s*css-sos/, '');
@@ -307,7 +307,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-10-04",
+      "dateModified": "2026-10-06",
       "publisher": {
         "@id": "https://365techies.co.uk/bournemouth/#organization"
       }
@@ -490,7 +490,7 @@
   <style>
     .ff,.ff-sheet{--ff-deep:#0a1420;--ff-water:#10202f;--ff-line:#1d3346;--ff-foam:#e8f1f2;--ff-mute:#8ea3b5;--ff-surf:#4fd8c4;--ff-dusk:#ffb066;--ff-ink:#04121a}
     .ff-sec .wrap{max-width:1120px}
-    .ff-controls{display:grid;gap:.75rem;margin:0 0 1rem}
+    .ff-controls{display:grid;grid-template-columns:minmax(0,1fr);gap:.75rem;margin:0 0 1rem}
     .ff-fuels{display:flex;flex-wrap:wrap;gap:.5rem}
     .ff-fuels button{min-height:46px;padding:.55rem 1.05rem;border-radius:999px;border:1px solid var(--ff-line);background:var(--ff-water);color:var(--ff-foam);font:inherit;font-size:.98rem;cursor:pointer;transition:background .25s,border-color .25s,color .25s,transform .15s}
     .ff-fuels button:active{transform:scale(.96)}
@@ -508,7 +508,7 @@
     .ff-status b{color:var(--ff-foam)}
     .ff-banner{border:1px solid var(--ff-dusk);background:rgba(255,176,102,.08);border-radius:12px;padding:.75rem 1rem;margin:0 0 1rem;font-size:.92rem;line-height:1.5}
     .ff-banner b{color:var(--ff-dusk)}
-    .ff-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.65rem;margin:0 0 1.1rem}
+    .ff-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(170px,100%),1fr));gap:.65rem;margin:0 0 1.1rem}
     .ff-tile{position:relative;overflow:hidden;background:var(--ff-water);border:1px solid var(--ff-line);border-radius:16px;padding:.85rem 1rem}
     .ff-tile::before{content:"";position:absolute;inset:0 auto auto 0;width:100%;height:3px;background:linear-gradient(90deg,var(--ff-surf),transparent 70%)}
     .ff-tile.ff-t3::before{background:linear-gradient(90deg,var(--ff-dusk),transparent 70%)}
@@ -537,7 +537,7 @@
     .ff-today h2{margin-top:0}
     .ff-today h3{font-size:1.05rem;margin:1.4rem 0 .6rem}
     .ff-today p{max-width:72ch}
-    .ff-twocol{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+    .ff-twocol{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:1rem}
     .ff-stamp{font-family:var(--mono,ui-monospace,monospace);font-size:.8rem;color:var(--ff-mute)}
     .ff-answer{font-size:1.06rem;line-height:1.65}
     .ff-weeks small.up{color:var(--ff-dusk)}
@@ -600,7 +600,7 @@
     .ff-note{color:var(--ff-mute);font-size:.86rem;line-height:1.55;margin:1rem 0 0}
     .ff-note a{color:var(--ff-surf)}
     .ff-myarea{background:var(--ff-water);border:1px solid var(--ff-surf);border-radius:14px;padding:.75rem 1rem;margin:0 0 1rem;color:var(--ff-foam)}
-    .ff-uk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.9rem}
+    .ff-uk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:.9rem}
     .ff-card{background:var(--ff-water);border:1px solid var(--ff-line);border-radius:16px;padding:1rem 1.1rem}
     .ff-card h3{margin:0 0 .7rem;font-size:1.02rem;color:var(--ff-foam)}
     .ff-wide{grid-column:1 / -1}
@@ -617,17 +617,21 @@
     .ff-bv small{display:block;font-weight:400;font-size:.74rem;color:var(--ff-mute)}
     .ff-areas li{display:flex;justify-content:space-between;gap:.6rem;padding:.4rem 0;border-bottom:1px solid var(--ff-line);font-size:.93rem;color:var(--ff-foam)}
     .ff-areas li:last-child{border-bottom:0}
-    .ff-top{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+    .ff-top{grid-template-columns:repeat(auto-fit,minmax(min(250px,100%),1fr))}
     .ff-top li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:.15rem .7rem;align-items:center;padding:.6rem .75rem;border:1px solid var(--ff-line);border-radius:12px;cursor:pointer;transition:border-color .2s}
     .ff-top li:hover,.ff-top li:focus-visible{border-color:var(--ff-surf);outline:none}
     .ff-top .ff-price{font-size:1.1rem}
     .leaflet-popup-content{font:14px/1.45 system-ui,sans-serif}
     @media (max-width:430px){
-      .ff-fuels{display:grid;grid-template-columns:1fr 1fr}
+      .ff-fuels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+      .ff-fuels button{padding:.5rem .55rem;overflow-wrap:anywhere}
       .ff-gps{width:100%;justify-content:center}
       .ff-where select{width:100%}
       .ff-bar{grid-template-columns:6.2rem minmax(0,1fr) auto}
     }
+    /* a phone with big text (6 Oct 2026, owner on a Galaxy S22: Chrome turns the text size into page zoom, 180-260 px wide): the name over its bar */
+    @media (max-width:260px){.ff-bar{grid-template-columns:minmax(0,1fr) auto;gap:.25rem .5rem}.ff-bl{grid-column:1 / -1}
+      .ff-item{grid-template-columns:auto minmax(0,1fr)}.ff-price,.ff-addr,.ff-meta,.ff-dir{grid-column:2;text-align:left}}   /* each forecourt: its price under its name */
     .ff-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin:0 0 1rem}
     .ff-pill{display:inline-flex;align-items:center;gap:.45rem;min-height:44px;padding:0 1.05rem;border-radius:999px;border:1px solid rgba(79,216,196,.5);background:rgba(79,216,196,.08);color:var(--ff-foam);font:inherit;font-size:.92rem;font-weight:600;cursor:pointer;transition:background .2s,transform .15s}
     .ff-pill:hover{background:rgba(79,216,196,.16)}
@@ -640,6 +644,8 @@
     /* the script moves both panels to <body> (the site's <main> is z-index 2, which kept them UNDER the phone's
        Call/Book/Text bar); on a phone they sit just above that bar, which is 4.6rem tall (styles.css). Seen 4 Oct. */
     @media (max-width:767px){.ff-sheet{bottom:calc(4.6rem + 10px + env(safe-area-inset-bottom));max-height:calc(100vh - 4.6rem - 24px);overflow-y:auto}}
+    /* 6 Oct 2026: the fuel pages no longer carry that bar (build_pages.NO_DOCK, body.no-dock) - the panels sit at the bottom */
+    @media (max-width:767px){body.no-dock .ff-sheet{bottom:calc(10px + env(safe-area-inset-bottom));max-height:calc(100vh - 24px)}}
     @media (max-width:1024px) and (max-height:500px) and (orientation:landscape){.ff-sheet{bottom:calc(10px + env(safe-area-inset-bottom))}}
     .ff-sheet[hidden],.ff-actions[hidden],[data-ffa2hs][hidden]{display:none!important}
     .ff-sheet-ic{width:52px;height:52px;border-radius:13px;background:url(/images/fuel-icon-192-v1.png) center/cover;box-shadow:0 4px 14px rgba(0,0,0,.4)}
@@ -678,7 +684,7 @@
   <meta name="apple-mobile-web-app-title" content="B365 Fuel" />
   <meta name="theme-color" content="#0a1420" />
 </head>
-<body id="top">
+<body id="top" class="no-dock">
   <a class="skip-link" href="#main">Skip to content</a>
   <div class="cookie-banner" id="cookie-banner" role="dialog" aria-label="Cookie consent" aria-live="polite" hidden>
     <p>Cookies run our live chat and site stats. <a href="/cookie-policy/">Cookie policy</a>.</p>
@@ -1133,7 +1139,7 @@
           <a href="/bournemouth/" class="button secondary button--lg">More from Bournemouth365</a>
         </div>
         <ul class="page-hero__chips mono"><li>&#9679; Every UK forecourt</li><li>&#9679; Live pump prices</li><li>&#9679; No adverts</li></ul>
-        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 4 October 2026</p>
+        <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed 6 October 2026</p>
       </div>
     </section>
     <section class="section ff-sec" id="finder" aria-label="Find the cheapest fuel">
@@ -1338,6 +1344,7 @@
         </div>
       </div>
     </section>
+    <p class="tool-help">Computer, phone or Wi-Fi trouble? 365 Techies can help: call <a href="tel:+441202775566">01202 775566</a>.</p>
   </main>
   <footer class="site-footer">
     <div class="footer-areas">
@@ -1613,11 +1620,6 @@
     </script>
   </footer>
 
-  <nav class="mobile-cta-bar" aria-label="Quick contact">
-    <a href="tel:+441202775566"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.4 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>Call</a>
-    <a href="/book-service/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3v3M17 3v3M4 8h16M5 6h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg>Book</a>
-    <a href="sms:+447520615332"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1 1 21 11.5z"/></svg>Text</a>
-  </nav>
   <div class="a11y" id="a11y">
     <button type="button" class="a11y__toggle" id="a11y-toggle" aria-expanded="false" aria-controls="a11y-panel" aria-label="Text size and accessibility options" title="Text size and accessibility options">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="3.6" r="1.6"/><path d="M3.5 8h17M12 8v6m0 0-3.2 6.4M12 14l3.2 6.4"/></svg><span class="a11y__togglelabel">Text size</span>

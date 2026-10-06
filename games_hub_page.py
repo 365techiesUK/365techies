@@ -203,6 +203,9 @@ _CSS = """      <style>
         .gh-qb--go:hover{background:linear-gradient(135deg,#3db4f5,#1d66c9)}
         /* (a phone: room on the right for the floating Text size button, which sat on the third button - critic 2) */
         @media (max-width:560px){.gh-quick{gap:.4rem;padding-right:56px}.gh-qb{flex:1 1 0;padding:.5rem .3rem;font-size:.95rem;min-width:0;white-space:nowrap}}
+        /* a phone with big text (6 Oct 2026, owner's Galaxy S22: Chrome turns the text size into page zoom, so this page can be
+           180-250 px wide): the quick buttons one per row, one game per row, the PC Manager link wraps */
+        @media (max-width:250px){.gh-qb{flex:1 1 100%;white-space:normal}.gh-grid{grid-template-columns:minmax(0,1fr)}.gh-pcm a{white-space:normal}}
         /* the "you" card */
         .gh-me{display:flex;flex-wrap:wrap;align-items:center;gap:.9rem 1.2rem;padding:1rem 1.2rem;border-radius:var(--r-lg);
           background:linear-gradient(120deg,rgba(29,151,227,.18),rgba(12,20,44,.75) 60%);border:1px solid rgba(108,196,245,.28)}
