@@ -71,9 +71,9 @@
     { key: 'towerpark', name: 'TOWER PARK', seed: 7617, t: 68, len: 710, curvy: 0.55, hilly: 0.3, sea: 0, band: [20, 40], bands: [[0, [24, 36]], [0.3, [26, 34]], [0.62, [26, 32]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Ringwood Road, Mannings Heath, the leisure park)
     { key: 'bearcross', name: 'BEAR CROSS', seed: 7719, t: 68, len: 710, curvy: 0.55, hilly: 0.3, sea: 0, band: [25, 45], bands: [[0, [30, 36]], [0.3, [28, 42]], [0.66, [14, 34]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (the roundabout, Bearwood, Magna Road)
     { key: 'hurn', name: 'HURN AIRPORT', seed: 7823, t: 68, len: 710, curvy: 0.6, hilly: 0.2, sea: 0, band: [8, 20], bands: [[0, [6, 12]], [0.3, [10, 16]], [0.72, [5, 12]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Holdenhurst, Hurn, Bournemouth Airport)
-    { key: 'wimborne', name: 'WIMBORNE MINSTER', seed: 7927, t: 70, len: 730, curvy: 0.6, hilly: 0.3, sea: 0, band: [10, 25], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Canford Magna, the Minster)
-    { key: 'ferndown', name: 'FERNDOWN', seed: 8029, t: 70, len: 730, curvy: 0.6, hilly: 0.3, sea: 0, band: [20, 40], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Ringwood Road north, West Parley)
-    { key: 'highcliffe', name: 'HIGHCLIFFE', seed: 8131, t: 70, len: 730, curvy: 0.6, hilly: 0.3, sea: 0, band: [20, 35], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (the castle, the clifftop)
+    { key: 'wimborne', name: 'WIMBORNE MINSTER', seed: 7927, t: 70, len: 730, curvy: 0.6, hilly: 0.3, sea: 0, band: [10, 25], bands: [[0, [10, 22]], [0.32, [6, 12]], [0.66, [6, 12]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Canford Magna, the Minster)
+    { key: 'ferndown', name: 'FERNDOWN', seed: 8029, t: 70, len: 730, curvy: 0.6, hilly: 0.3, sea: 0, band: [20, 40], bands: [[0, [14, 26]], [0.3, [24, 34]], [0.64, [26, 42]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Ringwood Road north, West Parley)
+    { key: 'highcliffe', name: 'HIGHCLIFFE', seed: 8131, t: 70, len: 730, curvy: 0.6, hilly: 0.3, sea: 0, band: [20, 35], bands: [[0, [6, 14]], [0.33, [14, 24]], [0.66, [24, 34]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (the castle, the clifftop)
   ];
   // the runs (owner, 6 Oct): round 1 the town, from Bournemouth out through its suburbs, every fork a real road (games/coastrun
   // route map, 6 Oct 2026); reach a goal and round 2 goes out to the coast; its goals bring you back into town. Within a run:
@@ -334,7 +334,9 @@
       towerpark: [[0.3, { car: 0.18, tree: 0.1, side: 56, poles: 1, wheelie: 0.2 }], [0.62, { side: 70 }], [1.01, { side: 120 }]],
       bearcross: [[0.3, { car: 0.2, bin: 0.05, side: 50 }], [0.66, { car: 0.12, tree: 0.12, side: 58, poles: -1, wheelie: 0.25 }], [1.01, { poles: 1 }]],
       hurn: [[0.3, { tree: 0.06, poles: -1 }], [0.72, {}], [1.01, { tree: 0.05, poles: 1 }]],
-      wimborne: [[1.01, { car: 0.16, tree: 0.12, side: 62, poles: 1, wheelie: 0.2 }]], ferndown: [[1.01, { car: 0.14, tree: 0.14, side: 60, poles: -1, wheelie: 0.2 }]], highcliffe: [[1.01, { car: 0.14, tree: 0.14, side: 64, poles: 1, wheelie: 0.2 }]],
+      wimborne: [[0.32, { poles: 1 }], [0.66, { car: 0.22, tree: 0.08, side: 54 }], [1.01, { car: 0.26, bin: 0.05, side: 50 }]],
+      ferndown: [[0.3, { car: 0.16, tree: 0.12, side: 60, poles: -1, wheelie: 0.25 }], [0.64, { car: 0.24, bin: 0.05, side: 50 }], [1.01, { poles: 1 }]],
+      highcliffe: [[0.33, { car: 0.16, tree: 0.12, side: 58, poles: 1, wheelie: 0.25 }], [0.66, { car: 0.24, bin: 0.05, side: 52 }], [1.01, { tree: 0.06 }]],
       littledown: [[0.33, { side: 80 }], [0.66, { tree: 0.12, side: 96 }], [1.01, { tree: 0.06, side: 100 }]]
     };
     function street() {   // the town: side streets going off (a traffic light on some), cars parked at the kerb between the lamps, street trees, bins
@@ -460,7 +462,7 @@
           break;
         }
         case 'towerpark': case 'bearcross': case 'hurn': case 'wimborne': case 'ferndown': case 'highcliffe':
-          var ft = k / Math.max(1, to - from), quiet = (S.key === 'hurn' && (ft < 0.3 || ft >= 0.72)) || (S.key === 'bearcross' && ft >= 0.66);   // (Holdenhurst, Hurn and Magna Road: country lanes, no street lamps)
+          var ft = k / Math.max(1, to - from), quiet = (S.key === 'hurn' && (ft < 0.3 || ft >= 0.72)) || (S.key === 'bearcross' && ft >= 0.66) || (S.key === 'wimborne' && ft < 0.32) || (S.key === 'ferndown' && ft >= 0.64) || (S.key === 'highcliffe' && ft >= 0.66);   // (Holdenhurst, Hurn and Magna Road: country lanes, no street lamps)
           if (!quiet) lamps(8, 0, false); street();   // (their houses, units and gardens: world3d.js)
           if (S.key === 'hurn' && ft >= 0.3 && ft < 0.72) {   // the airport: its perimeter fence, the airfield behind it - airliners parked nose-in along the
             // fence (as they line up at Hurn, waiting for the hangars), light aircraft on the grass, the hangars
@@ -593,6 +595,18 @@
       var wb = straightest(0.3, 0.4, 40, 10); if (wb >= 0) putAt(W, wb, 'cornerbank', -21, 0, {});
       mark('brickchurch', 0.45, function () { return 23; }); mark('moderne', 0.55, function () { return -23; }); mark('policestn', 0.68, function () { return 23; });
       [[0.38, 0.47], [0.56, 0.64]].forEach(function (w) { var zj = straightest(w[0], w[1], 8, 8); if (zj >= 0) { putAt(W, zj, 'zebra', 0, 0, {}); segAt(W, zj).zebra = true; } });   // (on the straight: a banked bend buried half the stripes)
+    }
+    if (S.key === 'wimborne') {   // over the Stour at Canford; the Minster's two towers over the town; a zebra in the square
+      var wb2 = straightest(0.24, 0.3, 20, 10); if (wb2 >= 0) putAt(W, wb2, 'hurnbridge', 0, 0, {});
+      var wm = straightest(0.5, 0.64, 60, 10); if (wm >= 0) putAt(W, wm, 'minster', -36, 0, {});
+      var wz = straightest(0.72, 0.8, 8, 8); if (wz >= 0) { putAt(W, wz, 'zebra', 0, 0, {}); segAt(W, wz).zebra = true; }
+    }
+    if (S.key === 'ferndown') {   // the Tricketts Cross roundabout's signs; the golf course among the pines on the common
+      var fr = straightest(0.3, 0.38, 30, 10); if (fr >= 0) { putAt(W, fr - 30, 'rbtsign', 11.6, 0, {}); putAt(W, fr - 30, 'rbtsign', -11.6, 0, {}); }
+      for (var gq = 0; gq < 5; gq++) mark('golfgreen', 0.7 + gq * 0.05, function () { return (gq % 2 ? -1 : 1) * (30 + (gq * 13) % 20); }, gq);
+    }
+    if (S.key === 'highcliffe') {   // Highcliffe Castle on its clifftop, across its gardens
+      var hc = straightest(0.74, 0.86, 60, 10); if (hc >= 0) putAt(W, hc, 'highcastle', -44, 0, {});
     }
     if (S.key === 'towerpark') {   // the Mannings Heath water tower over the industrial estate; Tower Park across its car park
       var wt = straightest(0.4, 0.55, 50, 10); if (wt >= 0) putAt(W, wt, 'watertower', -34, 0, {});

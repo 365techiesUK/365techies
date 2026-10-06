@@ -135,6 +135,7 @@
     for (var x0 = 0; x0 < BG_W; x0 += gap * (0.6 + r() * 0.8)) { (function (x0, hh, col) { wrap(x0, gap, function (x) { ell(c, x, y - hh * 0.5, gap * 0.9, hh * 0.6, col); }); })(x0, h * (0.6 + r() * 0.6), cols[(r() * cols.length) | 0]); }
     c.fillStyle = cols[0]; c.fillRect(0, y - 2, BG_W, BG_H - y + 2);
   }
+  function seaBandPart(c, xa, xb) { c.fillStyle = lg(c, 0, HZ, 0, BG_H, [[0, '#7aa0c0'], [1, '#4a7aa0']]); c.fillRect(xa, HZ - 0.5, xb - xa, BG_H - HZ + 0.5); }   // the sea along part of the horizon
   function seaBand(c, top, cols, glint) {
     c.fillStyle = lg(c, 0, top, 0, BG_H, [[0, cols[0]], [1, cols[1]]]); c.fillRect(0, top, BG_W, BG_H - top);
     if (glint) { var r = rnd(5); for (var i = 0; i < 160; i++) { var y = top + 1 + Math.pow(r(), 1.5) * (BG_H - top - 1); rr(c, r() * BG_W, y, 1 + r() * 4, 0.5, 0.2, glint); } }
@@ -214,6 +215,15 @@
       SPR_BG(far, 'castle', 520, HZ - 18, 120);
       hills(near, r, HZ + 6, 22, 4, '#6faa4f', 1);
       hills(near, r, HZ + 14, 12, 3, '#5f9c45', 1.5);
+    },
+    clifftown: function (far, near) {   // Highcliffe: the town's rooftops and pines one way; the other way, across Christchurch Bay, the Isle of
+      // Wight's long low downs ending in the white cliffs and the Needles
+      BG.town(far, near);
+      var x0 = 160, x1 = 640;
+      seaBandPart(far, x0 - 40, x1 + 80);
+      P(far, [x0, HZ, x0 + 40, HZ - 9, x0 + 140, HZ - 13, x0 + 260, HZ - 11, x0 + 380, HZ - 15, x0 + 440, HZ - 12, x1, HZ - 7, x1 + 10, HZ], '#9ab0a0');   // the island's downs
+      P(far, [x1 - 30, HZ - 9, x1, HZ - 7, x1 + 10, HZ, x1 - 30, HZ], '#eef0ee');   // its white cliff end
+      for (var n = 0; n < 3; n++) P(far, [x1 + 16 + n * 9, HZ, x1 + 19 + n * 9, HZ - 5 + n, x1 + 22 + n * 9, HZ], '#f2f4f2');   // the Needles
     },
     airfield: function (far, near) {   // Hurn: the flat airfield - a low treeline far off, the long grey hangars with airliners' tail fins over
       // them, the control tower, no houses
@@ -346,7 +356,7 @@
       seaBand(far, HZ, ['#1c2a5a', '#16244a'], 'rgba(255,210,140,0.5)');
     }
   };
-  ['winton', 'charminster', 'kinson', 'muscliff', 'littledown', 'towerpark', 'bearcross', 'hurn', 'wimborne', 'ferndown', 'highcliffe'].forEach(function (k) { if (!BG[k]) BG[k] = k === 'hurn' ? BG.airfield : BG.town; });   // (Hurn: the airfield's own)   // (the local run: the town's rooftops, trees and pines behind)
+  ['winton', 'charminster', 'kinson', 'muscliff', 'littledown', 'towerpark', 'bearcross', 'hurn', 'wimborne', 'ferndown', 'highcliffe'].forEach(function (k) { if (!BG[k]) BG[k] = k === 'hurn' ? BG.airfield : k === 'highcliffe' ? BG.clifftown : BG.town; });   // (Hurn: the airfield's own)   // (the local run: the town's rooftops, trees and pines behind)
   function SPR_BG(c, t, x, y, w) { var S = SPR[t], m = sprite(t, 0, false, null)[0], h = w * S.h / S.w; c.drawImage(m, x - w / 2, y - h, w, h); }
   var bgCache = {};
   var SKY3D = false;   // the 3D game draws its own sky (clouds, sun, moon, stars): the panorama is then just the land and sea

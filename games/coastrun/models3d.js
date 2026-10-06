@@ -1707,6 +1707,46 @@ const MODELS = {
     k.put(new THREE.CylinderGeometry(2.0, 2.0, 12, 14), '#f4f6f8', L / 4, 3.6, -2, Math.PI / 2, 0, 0, 1, 1, 1, 'shiny').ball(2.0, L / 4, 3.6, 4, '#f4f6f8', 1, 1, 1.6, 'shiny', 12).box(0.12, 1.6, 4, L / 4, 4.0, 4.6, '#2a3440');   // an airliner's nose out of it
     k.box(0.5, 9, 5, L / 4, 9, -26, ['#1d7a8a', '#c8302a', '#2a5aa8'][v % 3]);   // its tail fin, inside, over the roofline of the doors
   },
+  minster(k) {   // Wimborne Minster (its side to the road, +Z): the long church of mottled stone - grey-brown and rust-red heathstone in a
+    // chequer - under grey slate roofs, its two towers each crowned with pinnacles at the corners: the Norman central tower with its rows of
+    // arches, and the taller west tower; the churchyard's yews and the green before it
+    const A = '#8a7058', B = '#a0523a', C = '#9c8a74', SL = '#5a5e66', r = rnd(7100);
+    k.box(46, 11, 12, 0, 0, 0, A, 0, 0, 0, 'stone').prism(13, 6, 46.4, 0, 11, 0, SL, Math.PI / 2);   // the nave and chancel
+    for (let i = 0; i < 40; i++) k.box(2.2, 1.1, 0.1, -21 + (i % 10) * 4.6 + (Math.floor(i / 10) % 2) * 2.3, 1.2 + Math.floor(i / 10) * 2.4, 6.03, [B, C][i % 2], 0, 0, 0, 'stone');   // the chequer of red and grey stone
+    for (let i = 0; i < 7; i++) { const x = -18 + i * 6; k.box(1.4, 4.4, 0.12, x, 4.6, 6.06, '#2b3540', 0, 0, 0, 'shiny'); k.prism(1.4, 1.0, 0.14, x, 9.0, 6.06, C, 0); }   // the lancets
+    const tower = (x, w, h, arches) => {
+      k.box(w, h, w, x, 0, 0, A, 0, 0, 0, 'stone'); for (const y of [h * 0.4, h * 0.7]) k.box(w + 0.3, 0.5, w + 0.3, x, y, 0, C, 0, 0, 0, 'stone');
+      if (arches) for (let i = 0; i < 4; i++) k.box(0.9, 2.6, 0.14, x - w / 2 + 1.2 + i * (w - 2.4) / 3, h * 0.48, w / 2 + 0.04, '#2a2a2a');   // its rows of arches
+      for (let i = 0; i < 2; i++) k.box(1.2, 3.2, 0.14, x - w / 4 + i * w / 2, h * 0.76, w / 2 + 0.04, '#2a2a2a');   // the belfry's openings
+      for (let i = 0; i < 6; i++) k.box(0.9, 1.0, 0.9, x - w / 2 + 0.45 + i * (w - 0.9) / 5, h, w / 2 - 0.45, A, 0, 0, 0, 'stone');   // battlements
+      for (const [sx, sz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) k.box(1.1, 3.2, 1.1, x + sx * (w / 2 - 0.55), h, sz * (w / 2 - 0.55), A, 0, 0, 0, 'stone').cone(0.75, 2.6, 6, x + sx * (w / 2 - 0.55), h + 3.2, sz * (w / 2 - 0.55), C);   // the corner pinnacles
+    };
+    tower(0, 9, 26, true); tower(-27, 8, 30, false);   // the central tower, the west tower
+    for (const [x, z, sc] of [[14, 12, 1.2], [-14, 13, 1], [26, 9, 1.1]]) k.cyl(0.35, 0.5, 3.4, 6, x, 0, z, '#4a3a2a').clump(3.2 * sc, x, 5 + 2 * sc, z, '#203c26', 7110 + x).clump(2.4 * sc, x, 7.6 + 2 * sc, z, '#284a2e', 7120 + x);   // yews
+    for (let i = 0; i < 12; i++) k.box(0.7, 0.9 + r() * 0.4, 0.16, -20 + r() * 40, 0, 9 + r() * 6, '#9a9a94');
+  },
+  highcastle(k) {   // Highcliffe Castle on its clifftop (its face +Z): a Gothic house of pale cream stone - long, battlemented, bristling with
+    // pinnacles, tall traceried windows, an octagonal tower, a great oriel window; the parterre of clipped box hedges in front
+    const S = '#e2d6b8', D = '#c8b896', G = '#3a5a7a';
+    k.box(52, 12, 16, 0, 0, 0, S, 0, 0, 0, 'stone');
+    for (let i = 0; i < 18; i++) k.box(1.2, 1.2, 0.8, -25 + i * 2.95, 12, 7.6, S, 0, 0, 0, 'stone');   // battlements
+    for (let i = 0; i < 9; i++) { const x = -24 + i * 6; k.box(0.8, 4.2, 0.8, x, 12, 7.6, D, 0, 0, 0, 'stone').cone(0.55, 2.4, 6, x, 16.2, 7.6, D); }   // the pinnacles
+    for (const y of [1.6, 6.8]) for (let i = 0; i < 8; i++) { const x = -21 + i * 6; k.box(2.0, 3.6, 0.14, x, y, 8.04, D, 0, 0, 0, 'stone').box(1.6, 3.2, 0.16, x, y + 0.2, 8.05, G, 0, 0, 0, 'shiny').box(0.12, 3.2, 0.18, x, y + 0.2, 8.07, D); }   // the traceried windows
+    k.cyl(5, 5, 18, 8, 22, 0, 2, S, 0, 0, 'stone'); for (let i = 0; i < 8; i++) { const a = i / 8 * 6.283; k.box(1.0, 1.4, 0.8, 22 + Math.sin(a) * 4.8, 18, 2 + Math.cos(a) * 4.8, S, a, 0, 0, 'stone'); }   // the octagonal tower
+    k.box(8, 10, 3, -6, 1, 9.4, S, 0, 0, 0, 'stone').box(6.8, 8.4, 0.16, -6, 1.8, 10.92, G, 0, 0, 0, 'shiny'); for (let i = 0; i < 4; i++) k.box(0.14, 8.4, 0.2, -8.6 + i * 1.75, 1.8, 10.96, D);   // the great oriel
+    k.box(4, 7, 4, -26, 12, -2, S, 0, 0, 0, 'stone').cone(2.4, 4, 4, -26, 19, -2, D);   // a corner turret
+    for (let i = 0; i < 4; i++) for (let j = 0; j < 2; j++) k.box(9, 0.7, 6, -18 + i * 12, 0, 16 + j * 9, '#2e5a2e').box(7, 0.2, 4, -18 + i * 12, 0.05, 16 + j * 9, '#c8b090');   // the parterre: box hedges round gravel beds
+  },
+  golfgreen(k, v) {   // a hole on the golf course among the pines (Ferndown): the smooth green with its flag, a sand bunker beside it
+    k.blob(9, 0, -1.6, 0, '#4ea83a', 1.4, 0.18, 1.0, 7200 + v, { smooth: true }).blob(4, 7, -0.95, 4, '#e8d8a8', 1.3, 0.25, 0.9, 7210 + v, { smooth: true });
+    k.cyl(0.04, 0.04, 2.4, 4, -2, 0, 1, '#f4f4f4').box(0.04, 0.5, 0.8, -2, 1.9, 1.4, v % 2 ? '#e8302a' : '#f2d020');
+  },
+  precinct(k, v) {   // Ferndown's town centre (its face +Z): a 1960s-70s precinct of two-storey shops in brown brick, flat roofed, a deep fascia band
+    // over the shopfronts (no lettering), the first floor's long windows
+    const B = ['#8a5a3c', '#9a6a4a', '#7a5a44'][v % 3], FAS = ['#2f6a4a', '#1d3557', '#7a1f2b', '#c9a227', '#3a5a7a', '#2a2a2a'];
+    k.box(36, 7, 12, 0, 0, 0, B, 0, 0, 0, 'stone').box(36.4, 0.4, 12.4, 0, 7, 0, '#d8d4cc').box(36.4, 1.0, 1.4, 0, 3.2, 6.7, '#e8e4dc');
+    for (let i = 0; i < 6; i++) { const x = -15 + i * 6; k.box(5.4, 0.7, 0.2, x, 3.3, 7.42, FAS[(i + v) % 6]).box(5, 2.6, 0.12, x, 0.3, 6.04, '#5a7890', 0, 0, 0, 'shiny'); k.box(5, 1.4, 0.12, x, 4.6, 6.04, '#5a7890', 0, 0, 0, 'shiny'); }
+  },
   balloon(k, v) {   // a hot-air balloon, far off over the land
     const c = [['#e63946', '#ffd23f'], ['#1d7fd6', '#ffffff'], ['#2a9d8f', '#f4a261'], ['#9b5de5', '#ffd23f']][v % 4];
     for (let i = 0; i < 10; i++) k.put(new THREE.SphereGeometry(8, 3, 14, i * Math.PI / 5, Math.PI / 5), c[i % 2], 0, 16, 0, 0, 0, 0, 1, 1.22, 1);
