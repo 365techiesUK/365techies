@@ -2505,6 +2505,74 @@ if ($action === 'custsave') {
     out(array('ok' => true, 'changed' => $res['changed'], 'person' => $g3 !== null ? cb_card($rows3, $g3) : null));
 }
 
+/* "Log a job we've done" (owner, 6 Oct 2026: a quick remote 365 Quick Fix for a customer who is in the customer book but
+   not SimplyBook - "a little description of what I've done ... on the booking"). One press:
+   1. the job card - the New customer card with "Work carried out" - to #sos-jobs-in-out and the job list, so it is
+      invoiceable and on their customer card (nj_create);
+   2. if asked: SimplyBook today, the next free slot for that service, under their client (made if they have none),
+      marked Completed there and here, with the note on the diary row. No free slot left today = the job alone, and
+      the answer says why. Their PC Manager record is linked to the client, so their own portal lists it too. */
+if ($action === 'custlogjob') {
+    need_staff();
+    require_once __DIR__ . '/pcm-custbook-lib.php';
+    require_once __DIR__ . '/pcm-newjob-lib.php';
+    $ref = cb_ref_in(); if ($ref === '') fail('bad_request');
+    $what = trim(str_replace(array("\r\n", "\r"), "\n", preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]+/', ' ', (string)(isset($in['what']) ? $in['what'] : ''))));
+    if ($what === '') out(array('ok' => false, 'error' => 'check', 'errors' => array('what' => 'Say what you did - a line or two.')));
+    $what = function_exists('mb_substr') ? mb_substr($what, 0, 1500) : substr($what, 0, 1500);
+    $eventId = (int)(isset($in['eventId']) ? $in['eventId'] : 0);
+    $svcName = '';
+    if ($eventId > 0) { foreach (sb_services() as $sv) if ((int)$sv['id'] === $eventId) $svcName = (string)$sv['name']; if ($svcName === '') fail('bad_service'); }
+    $jobtype = (string)(isset($in['jobtype']) ? $in['jobtype'] : 'Remote');
+    $rows = cb_with_sb(cb_local_rows(), $ref);
+    $g = cb_cluster_for($rows, $ref);
+    if ($g === null) fail('unknown_customer');
+    $p = cb_person($rows, $g); $f = $p['fields'];
+    $who = staff_who(); $first = ucfirst((string)strtok($who !== '' ? $who : 'staff', '@.'));
+    $name = $f['name'] !== '' ? $f['name'] : $f['company'];
+    $nj = nj_create(array('name' => $name, 'company' => $f['company'], 'address' => $f['address'], 'postcode' => $f['postcode'],
+        'phone' => $f['phone'], 'mobile' => $f['mobile'], 'email' => $f['email'], 'website' => $f['website'], 'jobtype' => $jobtype,
+        'issue' => $svcName !== '' ? $svcName : 'Quick job', 'work' => $what, 'assigned' => $first, 'priority' => '',
+        'price' => (string)(isset($in['price']) ? $in['price'] : '')), $first, 'a job logged as done');
+    if (empty($nj['ok'])) out(array('ok' => false, 'error' => 'check', 'errors' => isset($nj['errors']) ? $nj['errors'] : array(), 'why' => isset($nj['error']) ? $nj['error'] : ''));
+    $bk = array('ok' => false, 'why' => 'not_asked');
+    if (!empty($in['book'])) {
+        if (!$HAS_ADMIN) $bk['why'] = 'not_configured';
+        elseif ($eventId <= 0) $bk['why'] = 'no_service';
+        else {
+            list($slot, $why) = staff_today_slot($eventId);
+            if ($slot === '') $bk['why'] = $why;
+            else {
+                $ce = $f['email'];
+                $cp = substr(preg_replace('/[^0-9+]/', '', $f['mobile'] !== '' ? $f['mobile'] : $f['phone']), 0, 20);
+                $res = staff_book_core($eventId, date('Y-m-d'), $slot, (int)$p['sb'], substr($name, 0, 60), $cp, $ce);
+                if (empty($res['ok'])) { $bk['why'] = $res['error']; if (!empty($res['sberr'])) $bk['sberr'] = $res['sberr']; }
+                else {
+                    $bid = (int)$res['id']; $sbOk = false;
+                    $sid = sb_status_id('completed');
+                    if ($sid > 0 && $bid > 0) { $r2 = sb_adm('setStatus', array($bid, $sid)); $sbOk = !sb_net($r2) && !empty($r2['result']); }
+                    if ($bid > 0) {
+                        list($lk, $db) = db_open();
+                        if (!isset($db['bkmeta'])) $db['bkmeta'] = array();
+                        $db['bkmeta'][(string)$bid] = array('st' => 'completed', 'ts' => time(), 'sb' => $sbOk ? 1 : 0, 'src' => 'portal',
+                            'note' => function_exists('mb_substr') ? mb_substr($what, 0, 300) : substr($what, 0, 300), 'by' => $who);
+                        // their PC Manager record with this email, not yet linked: link it to the client (their portal lists the booking)
+                        $toLink = array();
+                        if ($ce !== '') foreach ((isset($db['customers']) ? $db['customers'] : array()) as $k3 => $c3)
+                            if (is_array($c3) && empty($c3['merged_into']) && empty($c3['sb_client_id']) && strtolower(trim((string)(isset($c3['email']) ? $c3['email'] : ''))) === $ce) $toLink[] = $k3;
+                        db_save($db); db_close($lk);
+                        foreach ($toLink as $k3) link_cid_from_email($k3, $ce, true);
+                    }
+                    $bk = array('ok' => true, 'id' => $bid, 'when' => date('D j M g:ia', (int)$res['ts']), 'completed_in_sb' => $sbOk);
+                    pcm_slack_say(':white_check_mark: *Done job logged* - ' . bk_clean($name) . ($f['company'] !== '' && $f['company'] !== $name ? ' (' . bk_clean($f['company']) . ')' : '')
+                        . ' - ' . bk_clean($svcName) . ', booked in SimplyBook ' . $bk['when'] . ' and marked completed' . bk_by());
+                }
+            }
+        }
+    }
+    out(array('ok' => true, 'job' => array('id' => $nj['id'], 'slack' => !empty($nj['slack'])), 'booking' => $bk));
+}
+
 // staff: quick client search for the book-a-new-job flow (existing customers by name/phone)
 if ($action === 'staffclients') {
     if (!$HAS_ADMIN) fail('not_configured');
@@ -2522,6 +2590,56 @@ if ($action === 'staffclients') {
         if (count($list) >= 8) break;
     }
     out(array('ok' => true, 'clients' => $list));
+}
+
+/* The booking itself, shared by staffbook and custlogjob (6 Oct 2026): an existing SimplyBook client, or a new one made
+   silently (addClient dedupes), then the ADMIN book method on a unit that is free at that time. Returns ok, id (the
+   booking), cid (the client) - or ok false with error (+ sberr, SimplyBook's own complaint). */
+function staff_book_core($eventId, $date, $time, $cid, $cn, $cp, $ce) {
+    if ($cid <= 0) {
+        $cdArr = array('name' => $cn);
+        if ($ce !== '') $cdArr['email'] = $ce;
+        if ($cp !== '') $cdArr['phone'] = $cp;
+        $cfF2 = null;
+        $ac = sb_add_client_smart($cdArr, $cfF2);
+        if (sb_net($ac) || empty($ac['result'])) return array('ok' => false, 'error' => 'sb_unavailable');
+        $cid = (int)$ac['result'];
+    }
+    if ($cid <= 0) return array('ok' => false, 'error' => 'booking_failed');
+    $au = sb_pub('getAvailableUnits', array($eventId, $date . ' ' . $time, 1));
+    if (sb_net($au)) return array('ok' => false, 'error' => 'sb_unavailable');
+    $unitIds = isset($au['result']) && is_array($au['result']) ? array_values($au['result']) : array();
+    if (!count($unitIds)) return array('ok' => false, 'error' => 'slot_taken');
+    $startTs = strtotime($date . ' ' . $time);
+    $endTs = $startTs + sb_mins_for($eventId) * 60;
+    $r = sb_adm('book', array($eventId, (int)$unitIds[0], $cid, $date, $time,
+        date('Y-m-d', $endTs), date('H:i:s', $endTs), 0, array(), 1));
+    if (sb_net($r)) return array('ok' => false, 'error' => 'sb_unavailable');
+    $b = isset($r['result']) && is_array($r['result']) ? $r['result'] : null;
+    if (!$b) {
+        // surface SimplyBook's actual complaint so failures are diagnosable, not mute
+        $msg = isset($r['error']['message']) ? substr(preg_replace('/[^\x20-\x7E]/', '', (string)$r['error']['message']), 0, 140) : '';
+        return array('ok' => false, 'error' => 'booking_failed', 'sberr' => $msg);
+    }
+    $bid = 0;
+    if (isset($b['bookings'][0]['id'])) $bid = (int)$b['bookings'][0]['id'];
+    elseif (isset($b['id'])) $bid = (int)$b['id'];
+    return array('ok' => true, 'id' => $bid, 'cid' => $cid, 'ts' => $startTs);
+}
+/* Today's next free start time for a service (HH:MM:SS), or '' and why. */
+function staff_today_slot($eventId) {
+    $units = sb_units_for($eventId);
+    if (!count($units)) return array('', 'sb_unavailable');
+    $today = date('Y-m-d');
+    $r = sb_pub('getStartTimeMatrix', array($today, $today, $eventId, $units, 1));
+    if (sb_net($r)) return array('', 'sb_unavailable');
+    $times = isset($r['result'][$today]) && is_array($r['result'][$today]) ? $r['result'][$today] : array();
+    $now = date('H:i:s');
+    foreach ($times as $t) {
+        $t = (string)$t; if (strlen($t) === 5) $t .= ':00';
+        if (preg_match('/^\d\d:\d\d:\d\d$/', $t) && $t >= $now) return array($t, '');
+    }
+    return array('', 'no_slot_today');
 }
 
 // staff: book a new job on a customer's behalf (the phone-call flow). Uses the ADMIN
@@ -2543,33 +2661,12 @@ if ($action === 'staffbook') {
     $ce = strtolower(trim(substr((string)(isset($in['email']) ? $in['email'] : ''), 0, 120)));
     if ($cid <= 0 && $cn === '') fail('no_name');
     if ($ce !== '' && !filter_var($ce, FILTER_VALIDATE_EMAIL)) fail('bad_email');
-    if ($cid <= 0) {
-        $cdArr = array('name' => $cn);
-        if ($ce !== '') $cdArr['email'] = $ce;
-        if ($cp !== '') $cdArr['phone'] = $cp;
-        $ac = sb_add_client_smart($cdArr, $cfF2);
-        if (sb_net($ac) || empty($ac['result'])) fail('sb_unavailable');
-        $cid = (int)$ac['result'];
+    $res = staff_book_core($eventId, $date, $time, $cid, $cn, $cp, $ce);
+    if (empty($res['ok'])) {
+        if ($res['error'] === 'booking_failed' && isset($res['sberr'])) out(array('ok' => false, 'error' => 'booking_failed', 'sberr' => $res['sberr']));
+        fail($res['error']);
     }
-    if ($cid <= 0) fail('booking_failed');
-    $au = sb_pub('getAvailableUnits', array($eventId, $date . ' ' . $time, 1));
-    if (sb_net($au)) fail('sb_unavailable');
-    $unitIds = isset($au['result']) && is_array($au['result']) ? array_values($au['result']) : array();
-    if (!count($unitIds)) fail('slot_taken');
-    $startTs = strtotime($date . ' ' . $time);
-    $endTs = $startTs + sb_mins_for($eventId) * 60;
-    $r = sb_adm('book', array($eventId, (int)$unitIds[0], $cid, $date, $time,
-        date('Y-m-d', $endTs), date('H:i:s', $endTs), 0, array(), 1));
-    if (sb_net($r)) fail('sb_unavailable');
-    $b = isset($r['result']) && is_array($r['result']) ? $r['result'] : null;
-    if (!$b) {
-        // surface SimplyBook's actual complaint so failures are diagnosable, not mute
-        $msg = isset($r['error']['message']) ? substr(preg_replace('/[^\x20-\x7E]/', '', (string)$r['error']['message']), 0, 140) : '';
-        out(array('ok' => false, 'error' => 'booking_failed', 'sberr' => $msg));
-    }
-    $bid = 0;
-    if (isset($b['bookings'][0]['id'])) $bid = (int)$b['bookings'][0]['id'];
-    elseif (isset($b['id'])) $bid = (int)$b['id'];
+    $bid = (int)$res['id']; $cid = (int)$res['cid'];
     $ts = strtotime($date . ' ' . $time);
     pcm_slack_say(':calendar: *New booking* - ' . ($cn !== '' ? bk_clean($cn) : ('client #' . $cid)) . (isset($in['what']) && $in['what'] !== '' ? ' - ' . bk_clean($in['what']) : '') . ' on ' . ($ts ? date('D j M g:ia', $ts) : ($date . ' ' . $time)) . bk_by());
     out(array('ok' => true, 'id' => $bid, 'when' => $ts ? date('D j M Y g:ia', $ts) : ($date . ' ' . $time)));
@@ -2664,6 +2761,7 @@ if ($action === 'agenda') {
                         'cid' => $cid,
                         'st' => $st,
                         'conf' => $st === 'confirmed',
+                        'note' => (string)(is_array($bmr) && isset($bmr['note']) ? $bmr['note'] : ''),   // 6 Oct 2026: what we did (Log a job we've done)
                         'what' => (string)(isset($b['event_name']) ? $b['event_name'] : (isset($b['event']) ? $b['event'] : 'Service')),
                         'eventId' => (int)(isset($b['event_id']) ? $b['event_id'] : (isset($b['eventId']) ? $b['eventId'] : (isset($b['service_id']) ? $b['service_id'] : 0))));
         if (count($list) >= 120) break;

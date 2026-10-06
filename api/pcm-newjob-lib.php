@@ -50,6 +50,9 @@ function nj_card_text($v) {
         $lines[] = '*' . $f[1] . '*';
         $lines[] = nj_clean(isset($v[$f[0]]) ? $v[$f[0]] : '');
     }
+    // a done job: the Workflow Builder's own "Work carried out" label, which the reader already takes as the
+    // invoice line and as "done" (sj_parse)
+    if (isset($v['work']) && $v['work'] !== '') { $lines[] = '*Work carried out*'; $lines[] = nj_clean($v['work']); }
     return implode("\n", $lines);
 }
 
@@ -70,6 +73,10 @@ function nj_read($raw) {
     $pick = function ($val, $opts) { foreach ($opts as $o) if (strcasecmp(trim($val), $o) === 0) return $o; return ''; };
     $v['jobtype'] = $pick($v['jobtype'], nj_job_types());
     $v['priority'] = $pick($v['priority'], nj_priorities());
+    /* 6 Oct 2026: a job that is already done (the customer card's "Log a job we've done") carries what was done.
+       Only then - the Slack form has no such box, and the cards stay byte-identical without it. */
+    $w = trim(str_replace(array("\r\n", "\r"), "\n", (string)(isset($raw['work']) && is_scalar($raw['work']) ? $raw['work'] : '')));
+    if ($w !== '') $v['work'] = function_exists('mb_substr') ? mb_substr($w, 0, 1500) : substr($w, 0, 1500);
     return $v;
 }
 

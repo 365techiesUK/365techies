@@ -765,9 +765,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 06 Oct 2026 &middot; b00c943a0e</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 06 Oct 2026 &middot; 6431b6a48e</p><script>
 (function () {
-  var P365BUILD = 'b00c943a0e';
+  var P365BUILD = '6431b6a48e';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -7529,6 +7529,7 @@
         : '<span class="quiet">no number on file - check SimplyBook</span>')
       + (b.email ? ' <a href="mailto:' + esc(b.email) + '" class="tphone">\u2709\ufe0f ' + esc(b.email) + '</a>' : '')
       + (b.cid ? ' <button class="sm ghost cib" data-cid="' + esc(b.cid) + '" data-p="' + prefix + i + '">\ud83d\udccd Details</button>' : '')
+      + (b.note ? '<div class="quiet" style="margin-top:.25rem;font-size:.88rem;white-space:pre-line">\ud83d\udcdd ' + esc(b.note) + '</div>' : '')   // what we did (Log a job we've done)
       /* No inline "Done" button. It was shown on every row that was not already
          completed - including jobs not yet started - so it sat one stray tap away
          from marking a job finished before anyone had been out to it, and that
@@ -7754,7 +7755,7 @@
   }
 
   // ---------- book a new job: who -> what -> when, live against SimplyBook ----------
-  var NB = null, SVC = null;
+  var NB = null, SVC = null, NBSEQ = 0;
   function toggleWiz() {
     var w = document.getElementById('nbwiz'); if (!w) return;
     if (w.style.display !== 'none') { w.style.display = 'none'; return; }
@@ -7775,17 +7776,37 @@
       var val = q.value.trim();
       if (val.length < 2) { document.getElementById('nbres').style.display = 'none'; return; }
       t2 = setTimeout(function () {
-        post(BK, { action: 'staffclients', stoken: S.stoken, machine: mid(), q: val }).then(function (d) {
+        /* 6 Oct 2026 (owner: Jake was in Find a customer but not here): SimplyBook's clients AND everyone in the
+           customer book - job cards, PC Manager. Someone with no SimplyBook client gets one when the booking is made
+           (staffbook, cid 0 + their details). */
+        var mine = ++NBSEQ;
+        Promise.all([
+          post(BK, { action: 'staffclients', stoken: S.stoken, machine: mid(), q: val }).catch(function () { return null; }),
+          post(BK, { action: 'custfind', stoken: S.stoken, machine: mid(), q: val }).catch(function () { return null; })
+        ]).then(function (both) {
+          if (mine !== NBSEQ) return;   // a newer search is on its way
           var res = document.getElementById('nbres'); if (!res) return;
-          if (!d || !d.ok || !d.clients.length) { res.style.display = 'none'; return; }
+          var d = both[0], cf = both[1], seen = {};
+          var clients = (d && d.ok && d.clients) || [], people = (cf && cf.ok && cf.people) || [];
           res.innerHTML = '';
-          d.clients.forEach(function (c) {
+          clients.forEach(function (c) {
+            seen[c.id] = true;
             var b2 = document.createElement('button');
             b2.innerHTML = '<strong>' + esc(c.name) + '</strong>' + (c.phone ? ' · ' + esc(c.phone) : '') + (c.email ? ' <span class="quiet">' + esc(c.email) + '</span>' : '');
             b2.onclick = function () { NB.cid = c.id; NB.cname = c.name; NB.cphone = c.phone; NB.cemail = c.email; wizWhat(); };
             res.appendChild(b2);
           });
-          res.style.display = 'block';
+          people.forEach(function (pp) {
+            if (pp.sb && seen[pp.sb]) return;   // already listed as their SimplyBook client
+            var f = pp.fields, nm = f.name || f.company, ph = f.mobile || f.phone;
+            var b2 = document.createElement('button');
+            b2.innerHTML = '<strong>' + esc(nm) + '</strong>' + (f.company && f.name ? ' <span class="quiet">' + esc(f.company) + '</span>' : '') + (ph ? ' · ' + esc(ph) : '')
+              + (f.email ? ' <span class="quiet">' + esc(f.email) + '</span>' : '')
+              + (pp.sb ? '' : ' <span class="quiet">· from our records — their booking account is made when you book</span>');
+            b2.onclick = function () { NB.cid = pp.sb || 0; NB.cname = nm; NB.cphone = ph || ''; NB.cemail = f.email || ''; wizWhat(); };
+            res.appendChild(b2);
+          });
+          res.style.display = res.children.length ? 'block' : 'none';
         });
       }, 280);
     });
@@ -8398,7 +8419,8 @@
       + (last ? '<p class="quiet" style="font-size:.85rem">Last edited by ' + esc(String(last.by || '').split('@')[0]) + ', ' + esc(cbkWhen(last.at)) + ' (' + esc((last.fields || []).join(', ')) + ')</p>' : '')
       + '<div class="nc-act" style="margin-top:.6rem"><button type="button" id="cuedit">\u270f\ufe0f Edit details</button>'
       + '<button type="button" class="ghost" id="cujob">\u2795 New job for them</button>'
-      + '<button type="button" class="ghost" id="cubook">\ud83d\udcc5 Book a visit</button></div>'
+      + '<button type="button" class="ghost" id="cubook">\ud83d\udcc5 Book a visit</button>'
+      + '<button type="button" class="ghost" id="culog">\u2705 Log a job we\u2019ve done</button></div>'
       + (p.sb || f.email ? '<div class="pcmwrap" data-cid="' + esc(String(p.sb || '')) + '" data-em="' + esc(f.email || '') + '" style="margin-top:.8rem"></div>' : '')
       // someone who has booked: the diary's own contact card, with its quote / invoice, invite, job-done and pay-link buttons
       + (p.sb ? '<div style="margin-top:.7rem"><button type="button" class="sm ghost cib" data-cid="' + esc(String(p.sb)) + '" data-p="cbk">\ud83e\uddfe Invoice, invite, pay link\u2026</button>'
@@ -8416,6 +8438,7 @@
                email: f.email, website: f.website, assigned: cmMe(), known: cbkWho(p) });
     };
     document.getElementById('cubook').onclick = function () { cbkBook(p); };
+    document.getElementById('culog').onclick = function () { cbkLog(p); };
     bindPcmLic(box);
     bindContactCards(box);
   }
@@ -8452,6 +8475,63 @@
       }).catch(function () { b.disabled = false; b.textContent = 'Save details'; er.textContent = 'No answer from the server \u2014 nothing was saved.'; });
     };
     var fn = document.getElementById('cu_name'); if (fn) fn.focus();
+  }
+  /* "Log a job we've done" (owner, 6 Oct 2026: a quick remote 365 Quick Fix for Jake, with what was done): the job card
+     with "Work carried out" (Slack + the job list + Invoices + this card), and - ticked by default - SimplyBook today,
+     the next free slot for that service, marked Completed with the note (custlogjob). */
+  function cbkLog(p) {
+    var box = document.getElementById('custview'); if (!p || !box) return;
+    function form(list) {
+      var pick = 0; list.forEach(function (sv) { if (!pick && /quick/i.test(sv.name)) pick = sv.id; });
+      if (!pick && list.length) pick = list[0].id;
+      box.innerHTML = '<div class="cu-view"><h3 style="margin:0">Log a job we\u2019ve done \u2014 ' + esc(cbkWho(p)) + '</h3>'
+        + '<p class="quiet" style="margin:.3rem 0 0">Posts the job card (with what you did) to #sos-jobs-in-out and the job list, ready to invoice.</p>'
+        + '<div class="nc-grid">'
+        + '<div class="nc-f"><label for="lj_svc">Service</label><select id="lj_svc">' + (list.length ? list.map(function (sv) { return '<option value="' + esc(String(sv.id)) + '"' + (sv.id === pick ? ' selected' : '') + '>' + esc(sv.name) + '</option>'; }).join('') : '<option value="0">(SimplyBook didn\u2019t list its services)</option>') + '</select></div>'
+        + '<div class="nc-f"><label for="lj_type">Job type</label><select id="lj_type"><option>Remote</option><option>On-site</option><option>Hardware</option></select></div>'
+        + '<div class="nc-f nc-f--wide"><label for="lj_what">What we did</label><textarea id="lj_what" maxlength="1500" placeholder="Removed the pop-up adware\nReset the browser\nChecked the backup"></textarea><span class="nc-err" id="lj_what_e"></span></div>'
+        + '<div class="nc-f"><label for="lj_price">Price \u00a3 (optional)</label><input id="lj_price" inputmode="decimal" placeholder="35" autocomplete="off" /><span class="nc-err" id="lj_price_e"></span></div>'
+        + '<div class="nc-f" style="display:flex;align-items:flex-end"><label style="display:flex;gap:.5rem;align-items:flex-start;margin:0 0 .4rem;color:var(--pwhite)"><input type="checkbox" id="lj_book" checked style="width:auto;margin-top:.2rem" /> <span>Also book it in SimplyBook today (the next free slot), marked Completed</span></label></div>'
+        + '</div><div class="err" id="lj_err" aria-live="polite"></div>'
+        + '<div class="nc-act"><button type="button" id="lj_go">\u2705 Log it</button><button type="button" class="ghost" id="lj_cancel">Cancel</button></div></div>';
+      document.getElementById('lj_cancel').onclick = function () { cbkShow(p); };
+      document.getElementById('lj_what').focus();
+      document.getElementById('lj_go').onclick = function () {
+        var b = this, er = document.getElementById('lj_err'), wE = document.getElementById('lj_what_e'), pE = document.getElementById('lj_price_e');
+        er.textContent = ''; wE.textContent = ''; pE.textContent = '';
+        var what = document.getElementById('lj_what').value.trim();
+        if (!what) { wE.textContent = 'Say what you did \u2014 a line or two.'; document.getElementById('lj_what').focus(); return; }
+        var sel = document.getElementById('lj_svc'), svcName = sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].text : '';
+        b.disabled = true; b.textContent = 'Logging\u2026';
+        post(BK, { action: 'custlogjob', stoken: S.stoken, machine: mid(), ref: p.ref, eventId: parseInt(sel.value, 10) || 0,
+                   jobtype: document.getElementById('lj_type').value, what: what, price: document.getElementById('lj_price').value.trim(),
+                   book: document.getElementById('lj_book').checked ? 1 : 0 }).then(function (r) {
+          if (!r || !r.ok) {
+            b.disabled = false; b.textContent = '\u2705 Log it';
+            var errs = (r && r.errors) || {};
+            if (errs.what) wE.textContent = errs.what;
+            if (errs.price) pE.textContent = errs.price;
+            er.textContent = errs.what || errs.price ? '' : (r && r.error === 'not_staff' ? 'Your staff session has expired \u2014 sign out and in again.'
+              : (r && r.error === 'unknown_customer' ? 'Couldn\u2019t find this customer any more \u2014 search again.' : 'Not logged \u2014 ' + ((r && (r.why || r.error)) || 'try again') + '.'));
+            return;
+          }
+          var bk = r.booking || {}, msg = '\u2714 Logged: ' + svcName + (r.job && r.job.slack ? ' \u2014 the card is in #sos-jobs-in-out' : '') + ' and it\u2019s in the job list.';
+          if (bk.ok) msg += ' Booked in SimplyBook ' + bk.when + (bk.completed_in_sb ? ' and marked Completed.' : ', marked Completed here (SimplyBook didn\u2019t take the status).');
+          else if (bk.why && bk.why !== 'not_asked') msg += ' Not booked in SimplyBook: ' + ({ no_slot_today: 'no free slot left today for that service', slot_taken: 'the slot went just as it was booked',
+              sb_unavailable: 'SimplyBook didn\u2019t answer', no_service: 'no service picked', not_configured: 'SimplyBook isn\u2019t connected',
+              booking_failed: 'SimplyBook refused' + (bk.sberr ? ' (' + bk.sberr + ')' : '') }[bk.why] || bk.why) + '.';
+          if (bk.ok) { AG60 = null; if (typeof loadDiary === 'function') loadDiary(); }
+          cbkOpen(p.ref, msg);
+          if (CBK.q) cbkFind(CBK.q);   // the search list's job count too
+        }).catch(function () { b.disabled = false; b.textContent = '\u2705 Log it'; er.textContent = 'No answer from the server \u2014 check #sos-jobs-in-out before trying again, in case it went through.'; });
+      };
+    }
+    if (SVC) { form(SVC); return; }
+    box.innerHTML = '<div class="cu-view"><p class="quiet">Loading services\u2026</p></div>';
+    post(BK, { action: 'services', stoken: S.stoken, machine: mid() }).then(function (d) {
+      if (d && d.ok && d.services) SVC = d.services;
+      form(SVC || []);
+    }).catch(function () { form([]); });
   }
   function cbkBook(p) {   // the diary's Book a new job, for this customer (their SimplyBook client when we know it)
     var w = document.getElementById('nbwiz'); if (!w) return;
