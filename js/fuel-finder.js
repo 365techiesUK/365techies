@@ -22,6 +22,7 @@
   var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   var d = root.dataset;
+  root.classList.add('ff-js');
   var HOME = d.homeLat ? { la: +d.homeLat, lo: +d.homeLon, label: d.homeLabel } : null;
   var st = {
     fuel: 'E10',
@@ -75,7 +76,62 @@
     if (st.r === 'uk') return 'in the UK';
     return 'within ' + st.r + ' mile' + (st.r === 1 ? '' : 's') + ' of ' + esc(st.centre.label);
   }
-  function dirUrl(s) { return 'https://www.google.com/maps/dir/?api=1&destination=' + s.la + ',' + s.lo; }
+  /* Directions in the app the person drives with (owner, 6 Oct 2026: "automatically detect if it's going to be Google Maps
+     or Apple Maps or whatever other people use ... in a car ... Android Auto ... or the Apple one"). A web page can't see
+     which apps a phone has, so: an Android phone gets a geo: link, which its own default maps app opens (Google Maps,
+     Waze... whatever it is set to, or Android asks); an iPhone opens Apple Maps with driving directions; a computer opens
+     Google Maps. "Change" picks Google Maps, Apple Maps or Waze, remembered on the device. A route started on a phone
+     that is connected to Android Auto or CarPlay shows on the car's screen by itself - there is no way for a web page to
+     send one there directly. Facebook's in-app browser may refuse geo: links, so there it is Google Maps' web link. */
+  var NAV = { phone: 'your phone\u2019s maps app', apple: 'Apple Maps', google: 'Google Maps', waze: 'Waze' };
+  function navPref() {
+    var v = lsGet('ff-nav');
+    if (NAV[v] && (v !== 'phone' || (ANDROID && !INAPP))) return v;
+    return IOS ? 'apple' : (ANDROID && !INAPP ? 'phone' : 'google');
+  }
+  function navUrl(s, app) {
+    var ll = s.la + ',' + s.lo;
+    if (app === 'apple') return 'https://maps.apple.com/?daddr=' + ll + '&dirflg=d';
+    if (app === 'waze') return 'https://waze.com/ul?ll=' + ll + '&navigate=yes';
+    if (app === 'phone') return 'geo:' + ll + '?q=' + ll + '(' + encodeURIComponent(s.b + (s.n ? ', ' + s.n : '')) + ')';
+    return 'https://www.google.com/maps/dir/?api=1&destination=' + ll + '&travelmode=driving' + (IOS || ANDROID ? '&dir_action=navigate' : '');
+  }
+  function dirUrl(s) { return navUrl(s, navPref()); }
+  // a web link opens in a new tab (or the app); geo: is handed straight to the phone
+  function dirAttr(s) { var u = dirUrl(s); return 'href="' + esc(u) + '"' + (/^https/.test(u) ? ' target="_blank" rel="noopener"' : '') + ' data-nav'; }
+  function cap(t) { return t.charAt(0).toUpperCase() + t.slice(1); }
+  /* 6 Oct 2026 phone revamp: each forecourt wears a badge in its brand's colours with its initial (never a logo); any
+     other brand gets one of four quiet colours, always the same one for the same name. */
+  var BRAND = { asda: ['#5f9e1e', '#fff'], tesco: ['#00539f', '#fff'], sainsburys: ['#f06c00', '#fff'], morrisons: ['#00563f', '#ffd800'],
+    costco: ['#e31837', '#fff'], waitrose: ['#5c8d2c', '#fff'], bp: ['#007f00', '#ffe600'], shell: ['#ffd500', '#dd1d21'],
+    esso: ['#e2231a', '#fff'], texaco: ['#e30613', '#fff'], jet: ['#ffcc00', '#111'], murco: ['#d4001a', '#fff'], gulf: ['#f58220', '#14294a'],
+    applegreen: ['#00a650', '#fff'], valero: ['#004a8f', '#ffc72c'], maxol: ['#e2001a', '#fff'], harvest: ['#2d6a2e', '#fff'], certas: ['#003a70', '#fff'] };
+  var QUIET = [['#1f4f6e', '#e8f1f2'], ['#2c4a63', '#e8f1f2'], ['#3a3f6b', '#e8f1f2'], ['#24584f', '#e8f1f2']];
+  function badge(b) {
+    var k = String(b || '').toLowerCase().replace(/[^a-z0-9 ]/g, '').trim(), c = BRAND[k] || BRAND[k.split(' ')[0]];
+    if (!c) { var h = 0; for (var i = 0; i < k.length; i++) h = (h * 31 + k.charCodeAt(i)) | 0; c = QUIET[Math.abs(h) % 4]; }
+    return { c: c, ini: (String(b || '?').replace(/[^A-Za-z0-9]/g, '') || '?').charAt(0).toUpperCase() };
+  }
+  // "Spur End Service Station, 771 Castle Lane East, Bournemouth" with the station's own name left out
+  function shortAddr(s) {
+    var n = String(s.n || '').toLowerCase();
+    return String(s.a || '').split(', ').filter(function (x) { return x && x.toLowerCase() !== n; }).slice(0, 2).join(', ');
+  }
+  var SVG = function (p) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>'; };
+  var DIR = SVG('<path d="M3 11 21 3l-8 18-2-8-8-2z"/>'), PIN = SVG('<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>');
+  var CAR = '<path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/>';
+  var VICON = {
+    moto: '<circle cx="5" cy="16.5" r="3.2"/><circle cx="19" cy="16.5" r="3.2"/><path d="M5 16.5 9 10h5.5l3.2 3.6"/><path d="M9 10 7.5 7.5H5"/><path d="m14.5 10 1.6-3H19"/><path d="M11 13.5h4"/>',
+    small: '<g transform="translate(2.4 2.6) scale(.8)">' + CAR + '</g>',
+    family: CAR,
+    suv: '<path d="M19 17h2a1 1 0 0 0 1-1v-3.5c0-.8-.5-1.5-1.3-1.8L17 9.5l-2.5-2.9A2 2 0 0 0 13 6H5a2 2 0 0 0-1.8 1.1L2.2 9.4A2 2 0 0 0 2 10.3V16a1 1 0 0 0 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/><path d="M9 6v4"/>',
+    van: '<path d="M10 17h4"/><path d="M5 17H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h12l5.6 5.6c.3.3.4.6.4 1V16a1 1 0 0 1-1 1h-1"/><path d="M15 5v5.5h6"/><circle cx="7.5" cy="17" r="2.2"/><circle cx="16.5" cy="17" r="2.2"/>',
+    motorhome: '<path d="M10 17h4"/><path d="M5 17H3a1 1 0 0 1-1-1V5a2 2 0 0 1 2-2h11v5h2.2c.3 0 .6.1.8.4l3.2 4.2c.1.2.2.4.2.6V16a1 1 0 0 1-1 1h-1"/><path d="M15 8v4.5h6.5"/><path d="M5.5 7h5v3h-5z"/><circle cx="7.5" cy="17" r="2.2"/><circle cx="16.5" cy="17" r="2.2"/>',
+    lorry: '<path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/>',
+    hgv: '<path d="M1.5 16V5.5h12V16"/><path d="M13.5 9H18l3.5 4v3h-1"/><path d="M6.5 16H11"/><circle cx="4.2" cy="17" r="1.9"/><circle cx="8.6" cy="17" r="1.9"/><circle cx="18" cy="17" r="1.9"/>',
+    own: '<path d="M3 22h12"/><path d="M4 9h10"/><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 4 0V9.83a2 2 0 0 0-.59-1.42L18 5"/>'
+  };
+  var VSHORT = { moto: 'Motorbike', small: 'Small car', family: 'Family car', suv: 'SUV / estate', van: 'Van', motorhome: 'Motorhome', lorry: '7.5t lorry', hgv: 'HGV' };
 
   /* ---- data ---- */
   /* Every request gives up after 20 s: a reply that never comes (a deploy mid-upload, a dropped phone signal) must end
@@ -119,24 +175,25 @@
     var L = st.list, fl = FUEL[st.fuel].toLowerCase(), uk = st.stats && st.stats.fuels[st.fuel] ? st.stats.fuels[st.fuel].uk : null;
     var t1 = $('ff-t1'), t2 = $('ff-t2'), t3 = $('ff-t3');
     if (!L.length) { t1.hidden = t2.hidden = t3.hidden = true; return; }
-    t1.hidden = t2.hidden = t3.hidden = false;
+    t1.hidden = t2.hidden = t3.hidden = false; if ($('ff-tskel')) $('ff-tskel').hidden = true;
     var best = L[0];
-    t1.querySelector('.ff-tl').innerHTML = 'Cheapest ' + fl + ' ' + scope();
+    t1.querySelector('.ff-tl').innerHTML = 'Cheapest ' + fl + '<small>' + cap(scope()) + '</small>';
     countUp(t1.querySelector('.ff-num b'), best.p);
-    t1.querySelector('.ff-ts').innerHTML = esc(best.s.b) + ', ' + esc(best.s.a) + (best.d != null ? ' &middot; ' + best.d.toFixed(1) + ' miles' : '');
+    t1.querySelector('.ff-ts').innerHTML = '<b>' + esc(best.s.b) + '</b> &middot; ' + esc(shortAddr(best.s)) + (best.d != null ? ' &middot; ' + best.d.toFixed(1) + ' mi' : '');
+    navLinks(best.s);
     var med = st.r === 'uk' ? (uk ? uk.med : null) : (st.cut && st.around ? st.around.med : median(L.map(function (x) { return x.p; })));
-    t2.querySelector('.ff-tl').innerHTML = st.r === 'uk' ? 'UK average ' + fl : 'Average ' + fl + ' ' + scope();
+    t2.querySelector('.ff-tl').innerHTML = st.r === 'uk' ? 'UK average ' + fl : 'Average ' + fl + ' nearby';
     if (med != null) countUp(t2.querySelector('.ff-num b'), med);
     var chip = '';
     if (st.r !== 'uk' && uk && med != null) {
       var dlt = med - uk.med, cls = dlt <= -0.05 ? 'ff-good' : (dlt >= 0.05 ? 'ff-bad' : '');
       chip = '<span class="ff-chip ' + cls + '">' + (Math.abs(dlt) < 0.05 ? 'the same as' : p1(Math.abs(dlt)) + 'p ' + (dlt < 0 ? 'below' : 'above')) + ' the UK average</span>';
-    } else if (uk) {
-      chip = '<span class="ff-chip">' + uk.n.toLocaleString('en-GB') + ' forecourts reporting</span>';
     }
-    t2.querySelector('.ff-ts').innerHTML = chip;
+    var n = st.r === 'uk' ? (uk ? uk.n : 0) : (st.cut && st.around ? st.around.n : L.length);
+    t2.querySelector('.ff-ts').innerHTML = chip + (n ? (chip ? ' ' : '') + '<span class="ff-chip">' + n.toLocaleString('en-GB') + ' forecourt' + (n === 1 ? '' : 's') + '</span>' : '');
     fillTile(best, med);
     [t1, t2, t3].forEach(replay);
+    markVeh(false);
   }
 
   /* The fill-up box: what a full tank costs for the vehicle picked, and what that saves. Whole UK: "save against the UK
@@ -171,21 +228,35 @@
   }
 
   /* The vehicle menu in the fill-up box: every vehicle, plus "your own tank size" with a litres box. Remembered. */
+  var markVeh = function () {};
   function vehicleMenu() {
     var sel = $('ff-vehicle'), own = $('ff-own'), wrap = $('ff-own-wrap'); if (!sel) return;
     sel.innerHTML = VEH.map(function (v) { return '<option value="' + v.k + '">' + esc(v.name) + ' (about ' + v.l + ' litres)</option>'; }).join('') +
       '<option value="own">Your own tank size&hellip;</option>';
     sel.value = st.tank; own.value = st.own; wrap.hidden = st.tank !== 'own';
+    var chips = $('ff-vchips');
+    if (chips) chips.innerHTML = VEH.concat([{ k: 'own', name: 'Your tank', l: null }]).map(function (v) {
+      return '<button type="button" class="ff-vchip" data-k="' + v.k + '" aria-pressed="' + (st.tank === v.k) + '">' + SVG(VICON[v.k] || VICON.own) +
+        '<span>' + esc(VSHORT[v.k] || v.name) + '</span></button>';
+    }).join('');
+    var mark = function (smooth) {
+      if (!chips) return; var on = null;
+      [].forEach.call(chips.querySelectorAll('.ff-vchip'), function (b) { var y = b.getAttribute('data-k') === st.tank; b.setAttribute('aria-pressed', y ? 'true' : 'false'); if (y) on = b; });
+      if (on && chips.scrollWidth > chips.clientWidth) { var x = on.offsetLeft - (chips.clientWidth - on.offsetWidth) / 2; try { chips.scrollTo({ left: x, behavior: smooth && !still ? 'smooth' : 'auto' }); } catch (er) { chips.scrollLeft = x; } }
+    };
     var redraw = function () {
       if (st.list.length) { fillTile(st.list[0], st.r === 'uk' ? null : currentMedian()); renderList(); }
       fillTable();
     };
-    sel.addEventListener('change', function () {
-      st.tank = sel.value; wrap.hidden = st.tank !== 'own';
+    var pick = function () {
+      st.tank = sel.value; wrap.hidden = st.tank !== 'own'; mark(true);
       try { localStorage.setItem('ff-tank', st.tank); } catch (er) {}
       if (st.tank === 'own') try { own.focus(); } catch (er) {}
-      redraw();
-    });
+      redraw(); replay($('ff-t3'));
+    };
+    sel.addEventListener('change', pick);
+    if (chips) chips.addEventListener('click', function (e) { var b = e.target.closest('.ff-vchip'); if (!b) return; sel.value = b.getAttribute('data-k'); pick(); });
+    markVeh = mark;
     own.addEventListener('input', function () {
       var v = Math.round(+own.value); if (!(v >= 5 && v <= 1500)) return;
       st.own = v; try { localStorage.setItem('ff-own', String(v)); } catch (er) {}
@@ -227,14 +298,33 @@
 
   /* ---- the list ---- */
   function row(x, i) {
-    var s = x.s, t = s.pt && s.pt[st.fuel] ? ' &middot; price from ' + hm(s.pt[st.fuel]) : '';
-    return '<li class="ff-item' + (i === 0 ? ' best' : '') + '" tabindex="0" data-i="' + i + '" style="animation-delay:' + Math.min(i, 14) * 35 + 'ms">' +
-      '<span class="ff-rank">' + (i + 1) + '</span><span class="ff-name">' + esc(s.b) + (s.n ? '<small>' + esc(s.n) + '</small>' : '') + '</span>' +
-      '<span class="ff-price">' + p1(x.p) + 'p' + (fits(tank(), st.fuel) ? '<small>' + pounds(x.p, tank().l) + ' a tank</small>' : '') + '</span>' +
-      '<span class="ff-addr">' + esc(s.a) + (s.pc ? ', ' + esc(s.pc) : '') + t + '</span>' +
-      '<span class="ff-meta">' + (x.d != null ? x.d.toFixed(1) + ' mi' : '') + '</span>' +
-      '<span class="ff-dir"><a href="' + dirUrl(s) + '" target="_blank" rel="noopener">Directions</a></span></li>';
+    var s = x.s, T = tank(), g = badge(s.b), dif = st.list.length ? x.p - st.list[0].p : 0;
+    var bill = fits(T, st.fuel) ? pounds(x.p, T.l) : '', more = i > 0 && dif >= 0.05 ? '<em>+' + p1(dif) + 'p</em>' + (bill ? ' &middot; ' + bill : '') : bill;
+    return '<li class="ff-item' + (i === 0 ? ' best' : '') + '" tabindex="0" aria-expanded="false" data-i="' + i + '" style="animation-delay:' + Math.min(i, 14) * 35 + 'ms">' +
+      '<span class="ff-logo" style="--c:' + g.c[0] + ';--t:' + g.c[1] + '" aria-hidden="true"><i>' + (i + 1) + '</i>' + esc(g.ini) + '</span>' +
+      '<span class="ff-name">' + esc(s.b) + (i === 0 ? '<span class="ff-tagbest">Cheapest</span>' : '') +
+      '<small>' + (x.d != null ? '<b>' + x.d.toFixed(1) + ' mi</b> &middot; ' : '') + esc(shortAddr(s)) + '</small></span>' +
+      '<span class="ff-price">' + p1(x.p) + 'p' + (more ? '<small>' + more + '</small>' : '') + '</span>' +
+      '<div class="ff-x"><div></div></div></li>';
   }
+  function detail(x, i) {
+    var s = x.s, fu = '';
+    ['E10', 'B7', 'E5', 'SDV'].forEach(function (f) {
+      if (s.p[f] != null) fu += '<li' + (f === st.fuel ? ' class="on"' : '') + '>' + FUEL[f] + '<b>' + p1(s.p[f]) + 'p</b>' + (s.pt && s.pt[f] ? 'set ' + hm(s.pt[f]) : '') + '</li>';
+    });
+    return '<div class="ff-xin"><p class="ff-xa">' + (s.n ? esc(s.n) + '<br>' : '') + esc(s.a) + (s.pc ? ', ' + esc(s.pc) : '') + '</p>' +
+      '<ul class="ff-fu">' + fu + '</ul>' +
+      '<div class="ff-acts"><a class="ff-btn" ' + dirAttr(s) + '>' + DIR + 'Directions</a>' +
+      '<button type="button" class="ff-btn ff-btn--ghost" data-map="' + i + '">' + PIN + 'On the map</button></div></div>';
+  }
+  function toggleRow(li) {
+    var open = li.classList.contains('open'), i = +li.getAttribute('data-i');
+    [].forEach.call($('ff-list').querySelectorAll('.ff-item.open'), function (o) { if (o !== li) { o.classList.remove('open'); o.setAttribute('aria-expanded', 'false'); } });
+    if (!open) { var box = li.querySelector('.ff-x > div'); if (box && !box.innerHTML) box.innerHTML = detail(st.list[i], i); }
+    li.classList.toggle('open', !open); li.setAttribute('aria-expanded', open ? 'false' : 'true');
+    if (!open && wide()) focus(i, null, true);            // the map is beside the list: fly it there too
+  }
+  function wide() { return window.innerWidth >= 700; }
   function listHtml() {
     var L = st.list;
     if (!L.length) return '<li class="ff-empty">No forecourts ' + scope() + ' have a ' + FUEL[st.fuel].toLowerCase() + ' price today. Try a bigger distance.</li>';
@@ -244,12 +334,12 @@
   }
   function renderList() { $('ff-list').innerHTML = listHtml(); }
   function skeleton() {
-    var h = ''; for (var i = 0; i < 5; i++) h += '<li class="ff-skel"><i></i><i></i></li>';
+    var h = ''; for (var i = 0; i < 5; i++) h += '<li class="ff-skel"><i></i><i></i><i></i></li>';
     $('ff-list').innerHTML = h;
   }
 
   /* ---- the map (our own tiles; Leaflet loads after the page) ---- */
-  var map = null, layer = null, me = null, temp = null, markers = [];
+  var map = null, layer = null, me = null, temp = null, markers = [], lastFit = null;
   function ensureMap() {
     if (map) return true;
     if (typeof L === 'undefined' || typeof protomapsL === 'undefined') return false;
@@ -267,7 +357,7 @@
     ['E10', 'E5', 'B7', 'SDV'].forEach(function (f) { if (s.p[f] != null) rows += '<br>' + FUEL[f] + ': <b>' + p1(s.p[f]) + 'p</b>' + (s.pt && s.pt[f] ? ' <small>from ' + hm(s.pt[f]) + '</small>' : ''); });
     var T = tank(), fill = s.p[st.fuel] != null && fits(T, st.fuel) ? '<br>Fill ' + T.say + ' (' + T.l + ' L) with ' + FUEL[st.fuel].toLowerCase() + ': <b>' + pounds(s.p[st.fuel], T.l) + '</b>' : '';
     return '<b>' + esc(s.b) + '</b>' + (s.n ? '<br>' + esc(s.n) : '') + '<br>' + esc(s.a) + (s.pc ? ', ' + esc(s.pc) : '') + rows + fill +
-      '<br><a href="' + dirUrl(s) + '" target="_blank" rel="noopener">Directions</a>';
+      '<br><a ' + dirAttr(s) + '>Directions</a>';
   }
   function pop(s) { return function () { return popup(s); }; }   // built when opened: always the current vehicle and fuel
   function pin(x, i) {
@@ -296,15 +386,22 @@
     if (st.centre && st.centre !== HOME && st.centre.la != null) {
       me = L.marker([st.centre.la, st.centre.lo], { icon: L.divIcon({ className: '', html: '<div class="ff-me"></div>', iconSize: [16, 16], iconAnchor: [8, 8] }), interactive: false }).addTo(map);
     }
+    var box = null;
     if (st.r !== 'uk' && st.centre) {
       var dLa = st.r / 69, dLo = st.r / (69 * Math.cos(st.centre.la * Math.PI / 180));
-      map.fitBounds([[st.centre.la - dLa, st.centre.lo - dLo], [st.centre.la + dLa, st.centre.lo + dLo]], { animate: !still });
+      box = [[st.centre.la - dLa, st.centre.lo - dLo], [st.centre.la + dLa, st.centre.lo + dLo]];
     } else if (L2.length) {
-      map.fitBounds(L.latLngBounds(L2.map(function (x) { return [x.s.la, x.s.lo]; })).pad(0.08), { animate: !still });
+      box = L.latLngBounds(L2.map(function (x) { return [x.s.la, x.s.lo]; })).pad(0.08);
     }
+    lastFit = box ? function () { map.fitBounds(box, { animate: false }); } : null;
+    if (box && $('ff-map').offsetWidth) map.fitBounds(box, { animate: !still });
   }
-  function focus(i, s) {
+  function focus(i, s, quiet) {
     if (!ensureMap()) return;
+    if (!wide() && $('ff-grid').getAttribute('data-view') !== 'map') {
+      setView('map');
+      var head = root.querySelector('.ff-listhead'); if (head) head.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'start' });
+    }
     var m = i != null ? markers[i] : null;
     if (!m && s) { if (temp) map.removeLayer(temp); temp = L.marker([s.la, s.lo]).bindPopup(pop(s)).addTo(map); m = temp; }
     if (!m) return;
@@ -313,7 +410,7 @@
     var done = false, go = function () { if (done) return; done = true; m.openPopup(); };
     if (still) { map.setView(m.getLatLng(), Math.max(map.getZoom(), 13)); go(); }
     else { map.once('moveend', go); map.flyTo(m.getLatLng(), Math.max(map.getZoom(), 13), { duration: .8 }); setTimeout(go, 1500); }
-    if (window.innerWidth <= 860) $('ff-map').scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'center' });
+    if (!quiet && wide() && $('ff-map').getBoundingClientRect().top > window.innerHeight) $('ff-map').scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'center' });
   }
 
   /* ---- the UK picture: nations, areas, top ten ---- */
@@ -407,10 +504,10 @@
       L2.sort(function (a, b) { return a.p - b.p || (a.d || 0) - (b.d || 0); });
       st.list = L2; st.cut = !!j.cut; st.around = j.around || null;
       var n = L2.length;
-      status(st.r === 'uk'
-        ? 'The cheapest ' + FUEL[f].toLowerCase() + ' in the whole UK' + (c ? ', with distances from ' + esc(c.label) : '') + '.'
-        : 'Cheapest ' + FUEL[f].toLowerCase() + ' ' + scope() + (c && c.acc ? ' (accurate to about ' + c.acc + ' m)' : '') + ': ' +
-          (st.cut && st.around ? 'about ' + st.around.n.toLocaleString('en-GB') + ' forecourts, cheapest first.' : n + ' forecourt' + (n === 1 ? '' : 's') + '.'));
+      status('Live prices' + (j.fetched_at ? ', updated ' + hm(j.fetched_at) : '') +
+        (st.r === 'uk' ? (c ? ' &middot; distances from ' + esc(c.label) : ' &middot; every UK forecourt') : (c && c.acc ? ' &middot; your location to about ' + c.acc + ' m' : '')));
+      var nn = st.cut && st.around ? st.around.n : n;
+      $('ff-lh').innerHTML = st.r === 'uk' ? 'Cheapest in the <b>UK</b>' : '<b>' + nn.toLocaleString('en-GB') + '</b> forecourt' + (nn === 1 ? '' : 's') + '<span class="ff-lh2"> &middot; cheapest first</span>';
       renderList(); tiles(); drawMap(); renderUk();
       $('ff-actions').hidden = !st.list.length;
       fillTable();
@@ -418,12 +515,25 @@
   }
 
   /* ---- controls ---- */
-  function pressFuel() { [].forEach.call(root.querySelectorAll('.ff-fuels button'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-f') === st.fuel ? 'true' : 'false'); }); }
+  var fuelRow = root.querySelector('.ff-fuels'), pill = root.querySelector('.ff-seg');
+  function slide(anim) {
+    var b = fuelRow && fuelRow.querySelector('button[aria-pressed="true"]'); if (!b || !pill) return;
+    pill.classList.toggle('still', !anim || still);
+    pill.style.width = b.offsetWidth + 'px'; pill.style.transform = 'translateX(' + b.offsetLeft + 'px)';
+    if (fuelRow.scrollWidth > fuelRow.clientWidth + 2) { var x = b.offsetLeft - (fuelRow.clientWidth - b.offsetWidth) / 2; try { fuelRow.scrollTo({ left: x, behavior: anim && !still ? 'smooth' : 'auto' }); } catch (e) { fuelRow.scrollLeft = x; } }
+    setTimeout(edge, anim && !still ? 450 : 0);
+  }
+  function edge() { if (fuelRow) fuelRow.classList.toggle('more', fuelRow.scrollLeft + fuelRow.clientWidth < fuelRow.scrollWidth - 4); }
+  if (fuelRow) fuelRow.addEventListener('scroll', edge);
+  function pressFuel(anim) { [].forEach.call(root.querySelectorAll('.ff-fuels button'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-f') === st.fuel ? 'true' : 'false'); }); slide(anim); }
+  window.addEventListener('resize', function () { slide(false); edge(); });
+  window.addEventListener('load', function () { slide(false); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { slide(false); });
   [].forEach.call(root.querySelectorAll('.ff-fuels button'), function (b) {
-    b.addEventListener('click', function () { st.fuel = b.getAttribute('data-f'); try { localStorage.setItem('ff-fuel', st.fuel); } catch (e) {} pressFuel(); update(); });
+    b.addEventListener('click', function () { st.fuel = b.getAttribute('data-f'); try { localStorage.setItem('ff-fuel', st.fuel); } catch (e) {} pressFuel(true); update(); });
   });
   var sel = $('ff-rad');
-  sel.innerHTML = RADII.map(function (r) { return '<option value="' + r + '">within ' + r + ' mile' + (r === 1 ? '' : 's') + '</option>'; }).join('') + '<option value="uk">the whole UK</option>';
+  sel.innerHTML = RADII.map(function (r) { return '<option value="' + r + '">' + r + ' mile' + (r === 1 ? '' : 's') + '</option>'; }).join('') + '<option value="uk">Whole UK</option>';
   sel.value = String(st.r);
   sel.addEventListener('change', function () {
     if (sel.value !== 'uk' && !st.centre) { sel.value = 'uk'; status('Tap <b>Use my location</b> or type a postcode first, then choose a distance.'); return; }
@@ -462,9 +572,23 @@
   $('ff-list').addEventListener('click', function (e) {
     if (e.target.id === 'ff-more') { st.shown += 15; renderList(); return; }
     if (e.target.closest('a')) return;
-    var li = e.target.closest('.ff-item'); if (li) focus(+li.getAttribute('data-i'));
+    var mb = e.target.closest('[data-map]'); if (mb) { focus(+mb.getAttribute('data-map')); return; }
+    var li = e.target.closest('.ff-item'); if (li) toggleRow(li);
   });
-  $('ff-list').addEventListener('keydown', function (e) { if (e.key !== 'Enter' && e.key !== ' ') return; var li = e.target.closest('.ff-item'); if (li) { e.preventDefault(); focus(+li.getAttribute('data-i')); } });
+  $('ff-list').addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    if (e.target.closest('a,button')) return;
+    var li = e.target.closest('.ff-item'); if (li) { e.preventDefault(); toggleRow(li); }
+  });
+  /* the List / Map switch (phones; a wide screen shows both) */
+  function setView(v) {
+    var g = $('ff-grid'); if (!g) return;
+    g.setAttribute('data-view', v);
+    [].forEach.call($('ff-view').querySelectorAll('button'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-v') === v ? 'true' : 'false'); });
+    if (v === 'map') { if (ensureMap()) { map.invalidateSize(); if (lastFit) lastFit(); } else setTimeout(function () { if (g.getAttribute('data-view') === 'map') setView('map'); }, 250); }
+  }
+  $('ff-view').addEventListener('click', function (e) { var b = e.target.closest('button[data-v]'); if (b) setView(b.getAttribute('data-v')); });
+  $('ff-t1-map').addEventListener('click', function () { if (st.list.length) focus(0); });
   var top10 = $('ff-top10');
   if (top10) {
     var pick = function (e) { var li = e.target.closest('li[data-t]'); if (!li || !st.stats) return; var s = st.stats.fuels[st.fuel].top[+li.getAttribute('data-t')]; if (s) focus(null, s); };
@@ -613,6 +737,7 @@
       if (e.key !== 'Escape') return;
       if (!sheet.hidden) closeSheet(sheet);
       if (!$('ff-share').hidden) closeSheet($('ff-share'));
+      if (!$('ff-navsheet').hidden) closeSheet($('ff-navsheet'));
     });
     /* The offer, phones only, once per visit, after the page has been useful: 6 s after a postcode or location search, or
        45 s on the page (10 s into a return visit). "Not now" keeps it away for 30 days. */
@@ -630,6 +755,43 @@
     if (PHONE) setTimeout(invite, visits >= 2 ? 10000 : 45000);
     return { searched: function () { if (PHONE) setTimeout(invite, 6000); } };
   })();
+
+  /* ---- directions: the price display's link, and "Change" ---- */
+  function navLinks(s) {
+    var a = $('ff-t1-dir'), u = dirUrl(s);
+    a.href = u;
+    if (/^https/.test(u)) { a.target = '_blank'; a.rel = 'noopener'; } else a.removeAttribute('target');
+    a.setAttribute('data-nav', '');
+    [].forEach.call(root.querySelectorAll('.ff-navname'), function (b) { b.textContent = NAV[navPref()]; });
+  }
+  var NICON = {
+    phone: '<i style="background:#7fd8a8;color:#08131e">' + SVG('<rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/>') + '</i>',
+    apple: '<i style="background:#1c8ef9;color:#fff">' + SVG('<path d="M3 11 21 3l-8 18-2-8-8-2z"/>') + '</i>',
+    google: '<i style="background:#34a853;color:#fff">' + SVG('<path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>') + '</i>',
+    waze: '<i style="background:#33ccff;color:#08131e">' + SVG('<circle cx="12" cy="11" r="8"/><circle cx="9.5" cy="10" r=".8" fill="currentColor"/><circle cx="14.5" cy="10" r=".8" fill="currentColor"/><path d="M9.5 13.5c1.3 1 3.7 1 5 0"/>') + '</i>'
+  };
+  function navSheet() {
+    var opts = (ANDROID && !INAPP ? ['phone'] : []).concat(IOS ? ['apple', 'google', 'waze'] : ['google', 'waze', 'apple']), now = navPref();
+    $('ff-nav-grid').innerHTML = opts.map(function (k) {
+      return '<button type="button" data-app="' + k + '" aria-pressed="' + (k === now) + '">' + NICON[k] + (k === 'phone' ? 'Phone&rsquo;s own' : NAV[k]) + '</button>';
+    }).join('');
+    openSheet($('ff-navsheet'));
+    var b = $('ff-nav-grid').querySelector('[aria-pressed="true"]') || $('ff-nav-grid').querySelector('button'); if (b) try { b.focus({ preventScroll: true }); } catch (e) {}
+  }
+  $('ff-nav-grid').addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-app]'); if (!b) return;
+    lsPut('ff-nav', b.getAttribute('data-app')); track('fuel_nav_app', { app: b.getAttribute('data-app') });
+    if (st.list.length) navLinks(st.list[0].s);
+    [].forEach.call($('ff-list').querySelectorAll('.ff-x > div'), function (x) { x.innerHTML = ''; });   // opened rows rebuild with the new app
+    [].forEach.call($('ff-list').querySelectorAll('.ff-item.open'), function (li) { var i = +li.getAttribute('data-i'); li.querySelector('.ff-x > div').innerHTML = detail(st.list[i], i); });
+    closeSheet($('ff-navsheet'));
+  });
+  $('ff-nav-x').addEventListener('click', function () { closeSheet($('ff-navsheet')); });
+  root.addEventListener('click', function (e) {
+    var t = e.target && e.target.closest ? e.target : null; if (!t) return;
+    if (t.closest('[data-navchg]')) { e.preventDefault(); navSheet(); return; }
+    if (t.closest('a[data-nav]')) track('fuel_directions', { app: navPref() });
+  });
 
   function loadStats() {
     get('?stats=1').then(function (j) { if (j && j.ok) { st.stats = j; if (st.list.length) tiles(); renderUk(); fillTable(); } }, function () {});
@@ -774,7 +936,7 @@
     } else { seen = true; load(); }
   })();
 
-  pressFuel();
+  pressFuel(false);
   vehicleMenu();
   loadStats();
   update();

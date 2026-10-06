@@ -12,7 +12,7 @@ as they scroll into view, the location button pulses while it searches, and a sk
 A device set to reduce motion gets none of it (CSS below + the script checks the same setting).
 """
 
-JS_V = "12"
+JS_V = "13"
 
 import html as _html
 import json as _json
@@ -71,48 +71,125 @@ def app_head(short_name):
 _SHARE_SVG = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" '
               'stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/>'
               '<path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>')
+_LOC_SVG = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" '
+            'aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/>'
+            '<path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>')
+_DIR_SVG = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" '
+            'stroke-linejoin="round" aria-hidden="true"><path d="M3 11 21 3l-8 18-2-8-8-2z"/></svg>')
+_PIN_SVG = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" '
+            'stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/>'
+            '<circle cx="12" cy="9.5" r="2.5"/></svg>')
+_LIST_SVG = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" '
+             'aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1" fill="currentColor"/>'
+             '<circle cx="3.5" cy="12" r="1" fill="currentColor"/><circle cx="3.5" cy="18" r="1" fill="currentColor"/></svg>')
+_MAP_SVG = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" '
+            'stroke-linejoin="round" aria-hidden="true"><path d="m9 4-6 2.5v13L9 17l6 3 6-2.5v-13L15 7z"/><path d="M9 4v13M15 7v13"/></svg>')
 _ADD_SVG = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" '
             'aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 8v8M8 12h8"/></svg>')
 
 HEAD = '''
   <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
   <style>
-    .ff,.ff-sheet{--ff-deep:#0a1420;--ff-water:#10202f;--ff-line:#1d3346;--ff-foam:#e8f1f2;--ff-mute:#8ea3b5;--ff-surf:#4fd8c4;--ff-dusk:#ffb066;--ff-ink:#04121a}
+    .ff,.ff-sheet{--ff-deep:#0a1420;--ff-water:#10202f;--ff-raise:#16293b;--ff-line:#1d3346;--ff-foam:#e8f1f2;--ff-mute:#8ea3b5;--ff-surf:#4fd8c4;--ff-glow:#7ff0de;--ff-dusk:#ffb066;--ff-ink:#04121a;--ff-r:18px;--ff-ease:cubic-bezier(.2,.8,.2,1)}
     .ff-sec .wrap{max-width:1120px}
-    .ff-controls{display:grid;grid-template-columns:minmax(0,1fr);gap:.75rem;margin:0 0 1rem}
-    .ff-fuels{display:flex;flex-wrap:wrap;gap:.5rem}
-    .ff-fuels button{min-height:46px;padding:.55rem 1.05rem;border-radius:999px;border:1px solid var(--ff-line);background:var(--ff-water);color:var(--ff-foam);font:inherit;font-size:.98rem;cursor:pointer;transition:background .25s,border-color .25s,color .25s,transform .15s}
-    .ff-fuels button:active{transform:scale(.96)}
-    .ff-fuels button[aria-pressed="true"]{background:var(--ff-surf);border-color:var(--ff-surf);color:var(--ff-ink);font-weight:700;box-shadow:0 6px 18px -8px rgba(79,216,196,.7)}
-    .ff-where{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
-    .ff-where button,.ff-where input,.ff-where select{min-height:46px;border-radius:12px;border:1px solid var(--ff-line);background:var(--ff-water);color:var(--ff-foam);font:inherit;font-size:1rem;padding:.5rem .85rem}
-    .ff-where button{cursor:pointer}
-    .ff-gps{background:var(--ff-surf)!important;border-color:var(--ff-surf)!important;color:var(--ff-ink)!important;font-weight:700;display:inline-flex;align-items:center;gap:.45rem}
-    .ff-gps::before{content:"";width:12px;height:12px;border-radius:50%;background:var(--ff-ink);box-shadow:0 0 0 3px rgba(4,18,26,.25)}
+    #finder{scroll-margin-top:5rem}
+    /* 6 Oct 2026 phone revamp (owner: "it doesn't look very good ... animate it ... really super easy to use on the mobile
+       phone in portrait"): the answer first. One fuel switch, one search bar, then a forecourt price display with the
+       cheapest near you, the average and the tank bill, then slim rows; a List / Map switch on phones. */
+    .ff-controls{display:grid;grid-template-columns:minmax(0,1fr);gap:.55rem;margin:0 0 .85rem}
+    /* the fuel switch: a pill that slides to the fuel picked; swipes sideways when the screen is narrow */
+    .ff-fuels{position:relative;display:flex;gap:.2rem;padding:.25rem;border-radius:999px;background:var(--ff-water);border:1px solid var(--ff-line);overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    .ff-fuels::-webkit-scrollbar{display:none}
+    .ff-fuels.more{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 2.2rem),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 2.2rem),transparent)}
+    .ff-fuels button{position:relative;z-index:1;flex:1 0 auto;min-height:42px;padding:.4rem .95rem;border:0;border-radius:999px;background:transparent;color:var(--ff-mute);font:600 .95rem/1.1 var(--font-body,inherit);white-space:nowrap;cursor:pointer;transition:color .3s,transform .15s}
+    .ff-fuels button:hover{color:var(--ff-foam)}
+    .ff-fuels button:active{transform:scale(.95)}
+    .ff-fuels button[aria-pressed="true"]{color:var(--ff-ink)}
+    .ff-fuels button:focus-visible{outline:2px solid var(--ff-surf);outline-offset:1px}
+    .ff-seg{position:absolute;z-index:0;top:.25rem;bottom:.25rem;left:0;width:0;border-radius:999px;background:linear-gradient(135deg,#9af5e8,var(--ff-surf));box-shadow:0 6px 18px -6px rgba(79,216,196,.75);transition:transform .38s var(--ff-ease),width .38s var(--ff-ease);pointer-events:none}
+    .ff-seg.still{transition:none}
+    .ff-short{display:none}
+    @media (max-width:480px){.ff-fuels button{padding:.4rem .7rem}.ff-fuels .ff-long{display:none}.ff-fuels .ff-short{display:inline}}
+    .ff:not(.ff-js) .ff-fuels button[aria-pressed="true"]{background:var(--ff-surf)}
+    /* one search bar: near me, a postcode, how far */
+    .ff-where{display:flex;flex-wrap:wrap;align-items:stretch;gap:.35rem;padding:.3rem;border-radius:16px;background:var(--ff-water);border:1px solid var(--ff-line);transition:border-color .2s,box-shadow .2s}
+    .ff-where:focus-within{border-color:rgba(79,216,196,.7);box-shadow:0 0 0 3px rgba(79,216,196,.15)}
+    .ff-gps{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;min-height:44px;padding:0 .95rem;border:0;border-radius:12px;background:linear-gradient(135deg,#9af5e8,var(--ff-surf));color:var(--ff-ink);font:700 .95rem var(--font-body,inherit);cursor:pointer;transition:transform .15s,box-shadow .2s}
+    .ff-gps:active{transform:scale(.96)}
+    .ff-gps svg{width:18px;height:18px;flex:0 0 auto}
     .ff-gps.busy{animation:ffPulse 1s ease-out infinite}
-    .ff-where form{display:flex;gap:.4rem;flex:1 1 15rem;min-width:0}
-    .ff-where input{flex:1 1 auto;min-width:0;text-transform:uppercase}
-    .ff-where input::placeholder{text-transform:none;color:var(--ff-mute)}
-    .ff-status{color:var(--ff-mute);font-size:.96rem;margin:.15rem 0 0;min-height:1.4em}
+    .ff-gps.busy svg{animation:ffSpin 1.1s linear infinite}
+    .ff-where form{display:flex;flex:1 1 11rem;min-width:0;gap:.3rem}
+    .ff-where input{flex:1 1 auto;min-width:0;min-height:44px;border:0;border-radius:12px;background:transparent;color:var(--ff-foam);font:600 1rem var(--font-body,inherit);padding:0 .55rem;text-transform:uppercase;outline:none}
+    .ff-where input::placeholder{text-transform:none;color:var(--ff-mute);font-weight:400}
+    .ff-where form button{flex:0 0 auto;min-height:44px;min-width:48px;padding:0 .75rem;border:0;border-radius:12px;background:var(--ff-raise);color:var(--ff-foam);font:700 .95rem var(--font-body,inherit);cursor:pointer;transition:background .2s,transform .15s}
+    .ff-where form button:hover{background:#1f3a52}
+    .ff-where form button:active{transform:scale(.95)}
+    .ff-where select{flex:0 0 auto;min-height:44px;max-width:100%;border:1px solid var(--ff-line);border-radius:12px;background:var(--ff-raise);color:var(--ff-foam);font:600 .92rem var(--font-body,inherit);padding:0 .45rem;cursor:pointer}
+    .ff-where select option{background:#0e1d2c}
+    .ff-status{display:flex;align-items:baseline;gap:.5rem;color:var(--ff-mute);font-size:.88rem;line-height:1.45;margin:.05rem 0 0;min-height:1.3em}
+    .ff-status::before{content:"";flex:0 0 8px;height:8px;border-radius:50%;background:var(--ff-surf);transform:translateY(-1px);animation:ffLive 2.2s ease-out infinite}
     .ff-status b{color:var(--ff-foam)}
     .ff-banner{border:1px solid var(--ff-dusk);background:rgba(255,176,102,.08);border-radius:12px;padding:.75rem 1rem;margin:0 0 1rem;font-size:.92rem;line-height:1.5}
     .ff-banner b{color:var(--ff-dusk)}
-    .ff-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(170px,100%),1fr));gap:.65rem;margin:0 0 1.1rem}
-    .ff-tile{position:relative;overflow:hidden;background:var(--ff-water);border:1px solid var(--ff-line);border-radius:16px;padding:.85rem 1rem}
-    .ff-tile::before{content:"";position:absolute;inset:0 auto auto 0;width:100%;height:3px;background:linear-gradient(90deg,var(--ff-surf),transparent 70%)}
-    .ff-tile.ff-t3::before{background:linear-gradient(90deg,var(--ff-dusk),transparent 70%)}
-    .ff-tl{margin:0;color:var(--ff-mute);font-size:.86rem;line-height:1.35}
-    .ff-num{margin:.2rem 0;font-size:clamp(1.9rem,6.5vw,2.7rem);font-weight:800;line-height:1.05;color:var(--ff-foam);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+    /* the three answers: the price display (cheapest), the average, the tank */
+    .ff-tiles{display:grid;grid-template-columns:minmax(0,1fr);gap:.6rem;margin:0 0 .9rem}
+    .ff-tile{position:relative;overflow:hidden;background:var(--ff-water);border:1px solid var(--ff-line);border-radius:var(--ff-r);padding:.85rem 1rem}
+    .ff-tl{margin:0;color:var(--ff-mute);font-size:.84rem;line-height:1.35}
+    .ff-num{margin:.15rem 0;font-size:clamp(1.8rem,8vw,2.4rem);font-weight:800;line-height:1.05;color:var(--ff-foam);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
     .ff-num small{font-size:.45em;font-weight:600;color:var(--ff-mute);margin-left:.1em}
-    .ff-ts{margin:0;color:var(--ff-mute);font-size:.84rem;line-height:1.4}
+    .ff-ts{margin:0;color:var(--ff-mute);font-size:.86rem;line-height:1.45}
     .ff-ts b{color:var(--ff-foam)}
+    .ff-t1{padding:1rem 1.05rem 1.05rem;border-color:rgba(79,216,196,.5);background:radial-gradient(130% 120% at 100% 0%,rgba(79,216,196,.18),transparent 55%),linear-gradient(180deg,#13293d,#0a1724);box-shadow:0 22px 44px -28px rgba(79,216,196,.75)}
+    .ff-t1::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:16px 16px;-webkit-mask-image:linear-gradient(160deg,#000 10%,transparent 70%);mask-image:linear-gradient(160deg,#000 10%,transparent 70%)}
+    .ff-t1 .ff-tl{position:relative;font-family:var(--font-mono,ui-monospace,monospace);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ff-surf)}
+    .ff-t1 .ff-tl small{display:block;margin-top:.15rem;letter-spacing:.04em;text-transform:none;font-size:.78rem;color:var(--ff-mute);font-family:var(--font-body,inherit)}
+    .ff-led{position:relative;display:inline-flex;align-items:baseline;margin:.5rem 0 .55rem;padding:.15rem .75rem .25rem;border-radius:14px;background:#03070d;border:1px solid #1a2b3d;box-shadow:inset 0 0 26px rgba(0,0,0,.9),0 0 0 1px rgba(79,216,196,.08)}
+    .ff-led b{font-family:var(--font-mono,ui-monospace,monospace);font-weight:500;font-size:clamp(2.7rem,15vw,3.9rem);line-height:1.08;letter-spacing:.02em;color:var(--ff-glow);text-shadow:0 0 14px rgba(79,216,196,.7),0 0 38px rgba(79,216,196,.32);font-variant-numeric:tabular-nums}
+    .ff-led small{font-family:var(--font-mono,ui-monospace,monospace);font-size:1.25rem;color:var(--ff-glow);opacity:.8;margin-left:.15rem}
+    .ff-t1 .ff-ts{position:relative;font-size:.95rem;color:#c7d6e2}
+    .ff-t1 .ff-ts b{font-size:1.05rem}
+    .ff-acts{position:relative;display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.8rem}
+    .ff-btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;min-height:44px;padding:0 1.05rem;border-radius:999px;border:0;background:linear-gradient(135deg,#9af5e8,var(--ff-surf));color:var(--ff-ink)!important;font:700 .92rem var(--font-body,inherit);text-decoration:none!important;cursor:pointer;transition:transform .15s,box-shadow .2s}
+    .ff-btn:hover{box-shadow:0 8px 22px -10px rgba(79,216,196,.9)}
+    .ff-btn:active{transform:scale(.96)}
+    .ff-btn svg{width:17px;height:17px}
+    .ff-navchg{position:relative;display:block;margin:.6rem 0 0;padding:.3rem 0;border:0;background:none;color:var(--ff-mute);font:500 .84rem var(--font-body,inherit);text-align:left;cursor:pointer}
+    .ff-navchg b{color:#c7d6e2;font-weight:600}
+    .ff-navchg u{color:var(--ff-surf);text-underline-offset:2px}
+    .ff-navchg:focus-visible{outline:2px solid var(--ff-surf);outline-offset:2px;border-radius:6px}
+    .ff-nav-grid button[aria-pressed="true"]{border-color:var(--ff-surf);background:rgba(79,216,196,.12)}
+    .ff-btn--ghost{background:rgba(79,216,196,.07);border:1px solid rgba(79,216,196,.45);color:var(--ff-foam)!important}
+    .ff-btn--ghost:hover{background:rgba(79,216,196,.15);box-shadow:none}
+    .ff-btn:focus-visible{outline:2px solid var(--ff-surf);outline-offset:2px}
+    .ff-t2 .ff-num b,.ff-t3 .ff-num b{font-family:var(--font-display,inherit);font-weight:600;letter-spacing:-.01em}
+    .ff-t2{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.1rem .8rem}
+    .ff-t2 .ff-tl,.ff-t2 .ff-ts{grid-column:1 / -1}
+    .ff-t2 .ff-num{font-size:clamp(1.7rem,7vw,2.1rem)}
+    .ff-t3{border-color:rgba(255,176,102,.38);background:radial-gradient(120% 130% at 100% 0%,rgba(255,176,102,.13),transparent 55%),var(--ff-water)}
+    .ff-t3 .ff-num{color:var(--ff-dusk)}
+    .ff-t3 .ff-num .ff-cur{font-size:.7em;margin-right:.05em}
     .ff-t3.nofit .ff-cur{display:none}
-    .ff-veh{display:flex;flex-wrap:wrap;gap:.45rem;align-items:center;margin:.65rem 0 0}
-    .ff-veh select{flex:1 1 12rem;min-height:44px;border-radius:12px;border:1px solid var(--ff-dusk);background:rgba(255,176,102,.08);color:var(--ff-foam);font:inherit;font-size:.95rem;padding:.45rem .7rem}
-    .ff-veh select option{background:#0e1d2c;color:var(--ff-foam)}
+    /* vehicles: a row of chips (the menu stays underneath for anything that drives it, e.g. the reel camera) */
+    .ff-veh{display:flex;flex-wrap:wrap;gap:.45rem;align-items:center;margin:.7rem 0 0}
+    .ff-veh select{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+    .ff-vchips{display:flex;gap:.35rem;width:calc(100% + 2rem);margin:0 -1rem;padding:.15rem 1rem .25rem;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 .9rem,#000 calc(100% - 1.6rem),transparent);mask-image:linear-gradient(90deg,transparent 0,#000 .9rem,#000 calc(100% - 1.6rem),transparent)}
+    .ff-vchips::-webkit-scrollbar{display:none}
+    .ff-vchip{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.22rem;min-width:4.6rem;min-height:60px;padding:.4rem .5rem;border-radius:14px;border:1px solid var(--ff-line);background:rgba(255,255,255,.02);color:var(--ff-mute);font:600 .74rem/1.15 var(--font-body,inherit);text-align:center;cursor:pointer;transition:border-color .25s,background .25s,color .25s,transform .15s}
+    .ff-vchip svg{width:28px;height:28px;transition:transform .35s var(--ff-ease)}
+    .ff-vchip:active{transform:scale(.95)}
+    .ff-vchip[aria-pressed="true"]{border-color:var(--ff-dusk);background:rgba(255,176,102,.14);color:var(--ff-foam)}
+    .ff-vchip[aria-pressed="true"] svg{color:var(--ff-dusk);transform:translateY(-1px) scale(1.08)}
+    .ff-vchip:focus-visible{outline:2px solid var(--ff-dusk);outline-offset:1px}
     .ff-own{display:inline-flex;align-items:center;gap:.4rem;color:var(--ff-mute);font-size:.9rem}
     .ff-own[hidden]{display:none}
-    .ff-own input{width:6.5rem;min-height:44px;border-radius:12px;border:1px solid var(--ff-line);background:var(--ff-water);color:var(--ff-foam);font:inherit;font-size:1rem;padding:.4rem .6rem}
+    .ff-own input{width:6.5rem;min-height:44px;border-radius:12px;border:1px solid var(--ff-line);background:var(--ff-raise);color:var(--ff-foam);font:inherit;font-size:1rem;padding:.4rem .6rem}
+    .ff-tskel{display:grid;gap:.55rem}
+    .ff-tskel i{display:block;height:14px;border-radius:7px;background:linear-gradient(90deg,var(--ff-water) 0%,#1a3048 50%,var(--ff-water) 100%);background-size:200% 100%;animation:ffShim 1.2s linear infinite}
+    .ff-tskel i:nth-child(1){width:45%}.ff-tskel i:nth-child(2){height:56px;width:62%;border-radius:12px}.ff-tskel i:nth-child(3){width:80%}
+    .ff-tskel[hidden]{display:none}
+    @media (min-width:700px){.ff-tiles{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}.ff-t1{grid-row:span 2}}
+    @media (min-width:1040px){.ff-tiles{grid-template-columns:minmax(0,1.15fr) minmax(0,.8fr) minmax(0,1.15fr)}.ff-t1{grid-row:auto}}
     .ff-tablewrap{overflow-x:auto;border:1px solid var(--ff-line);border-radius:16px;background:var(--ff-water)}
     .ff-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:.95rem}
     .ff-table th,.ff-table td{padding:.6rem .8rem;border-bottom:1px solid var(--ff-line);text-align:left;vertical-align:top}
@@ -154,35 +231,69 @@ HEAD = '''
     .ff-tip b{font-variant-numeric:tabular-nums}
     .ff-legend{display:flex;flex-wrap:wrap;gap:.4rem 1.1rem;margin:.6rem 0 0;color:var(--ff-mute);font-size:.86rem}
     .ff-legend i{display:inline-block;width:16px;height:3px;margin-right:.4rem;border-radius:2px;vertical-align:middle}
-    @media (max-width:600px){.ff-t3{grid-column:1 / -1}}
-    .ff-chip{display:inline-block;padding:.15rem .55rem;border-radius:999px;border:1px solid var(--ff-line);font-size:.8rem;color:var(--ff-foam)}
+    .ff-chip{display:inline-block;padding:.15rem .55rem;border-radius:1em;border:1px solid var(--ff-line);font-size:.8rem;color:var(--ff-foam)}
     .ff-chip.ff-good{border-color:var(--ff-surf);color:var(--ff-surf)}
     .ff-chip.ff-bad{border-color:var(--ff-dusk);color:var(--ff-dusk)}
     .ff-pop{animation:ffPop .5s cubic-bezier(.2,.7,.2,1) both}
+    /* the list and the map: side by side on a wide screen, a List / Map switch on a phone */
+    .ff-listhead{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin:0 0 .55rem;min-height:40px;scroll-margin-top:calc(var(--header-h,76px) + var(--ticker-h,30px) + .5rem)}
+    .ff-lh{margin:0;font-family:var(--font-mono,ui-monospace,monospace);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ff-mute)}
+    .ff-lh b{color:var(--ff-foam);font-weight:500}
+    .ff-view{position:relative;display:inline-flex;flex:0 0 auto;padding:.2rem;border-radius:999px;background:var(--ff-water);border:1px solid var(--ff-line)}
+    .ff-view button{position:relative;z-index:1;display:inline-flex;align-items:center;gap:.35rem;min-height:38px;padding:0 .85rem;border:0;border-radius:999px;background:transparent;color:var(--ff-mute);font:700 .86rem var(--font-body,inherit);cursor:pointer;transition:color .25s}
+    .ff-view button svg{width:16px;height:16px}
+    .ff-view button[aria-pressed="true"]{color:var(--ff-foam);background:var(--ff-raise);box-shadow:0 4px 12px -6px rgba(0,0,0,.6)}
+    .ff-view button:focus-visible{outline:2px solid var(--ff-surf);outline-offset:1px}
     .ff-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:1rem;align-items:start}
-    @media (max-width:860px){.ff-grid{grid-template-columns:minmax(0,1fr)}}
-    .ff-list,.ff-top,.ff-areas{list-style:none;margin:0;padding:0;display:grid;gap:.5rem}
-    .ff-item{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:.15rem .8rem;align-items:center;padding:.7rem .85rem;border:1px solid var(--ff-line);border-radius:14px;background:var(--ff-water);cursor:pointer;animation:ffIn .45s cubic-bezier(.2,.7,.2,1) both;transition:border-color .2s,transform .2s}
-    .ff-item:hover,.ff-item:focus-visible{border-color:var(--ff-surf);outline:none;transform:translateY(-1px)}
-    .ff-item.best{border-color:var(--ff-surf);box-shadow:inset 3px 0 0 var(--ff-surf),0 10px 28px -18px rgba(79,216,196,.8)}
-    .ff-rank{font-family:var(--mono,ui-monospace,monospace);color:var(--ff-mute);font-size:.8rem;width:1.6rem;text-align:center}
-    .ff-name{font-weight:700;color:var(--ff-foam);overflow-wrap:anywhere}
-    .ff-name small{display:block;font-weight:400;color:var(--ff-mute);font-size:.82rem}
-    .ff-addr{color:var(--ff-mute);font-size:.86rem;grid-column:2;overflow-wrap:anywhere}
-    .ff-price{font-size:1.35rem;font-weight:800;color:var(--ff-foam);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
-    .ff-item.best .ff-price{color:var(--ff-surf)}
-    .ff-price small{display:block;font-size:.72rem;font-weight:500;color:var(--ff-mute);letter-spacing:0}
-    .ff-meta{grid-column:3;text-align:right;color:var(--ff-mute);font-size:.82rem;white-space:nowrap}
-    .ff-dir{grid-column:2 / 4;font-size:.9rem}
-    .ff-dir a{color:var(--ff-surf);display:inline-block;padding:.2rem 0}
-    .ff-more button{width:100%;min-height:46px;border-radius:12px;border:1px dashed var(--ff-line);background:transparent;color:var(--ff-foam);font:inherit;cursor:pointer}
+    @media (min-width:700px){.ff-view{display:none}}
+    @media (max-width:699px){
+      .ff-grid{grid-template-columns:minmax(0,1fr)}
+      .ff-grid[data-view="list"] .ff-mapwrap{display:none}
+      .ff-grid[data-view="map"] #ff-list{display:none}
+      .ff-grid[data-view="map"] .ff-mapwrap{animation:ffIn .35s var(--ff-ease) both}
+    }
+    .ff-list,.ff-top,.ff-areas{list-style:none;margin:0;padding:0;display:grid;gap:.45rem}
+    /* one forecourt: brand badge (its rank on the corner), name and street, price and the tank; tap to open */
+    .ff-item{position:relative;display:grid;grid-template-columns:2.7rem minmax(0,1fr) auto;gap:.1rem .75rem;align-items:center;padding:.65rem .8rem;border:1px solid var(--ff-line);border-radius:16px;background:var(--ff-water);cursor:pointer;animation:ffIn .45s var(--ff-ease) both;transition:border-color .2s,background .2s,transform .15s}
+    .ff-item:hover{border-color:rgba(79,216,196,.55)}
+    .ff-item:active{transform:scale(.99)}
+    .ff-item:focus-visible{outline:2px solid var(--ff-surf);outline-offset:2px}
+    .ff-item.open{border-color:rgba(79,216,196,.6);background:#122638}
+    .ff-item.best{border-color:var(--ff-surf);background:linear-gradient(90deg,rgba(79,216,196,.12),var(--ff-water) 55%);box-shadow:0 12px 30px -22px rgba(79,216,196,.9)}
+    .ff-logo{position:relative;display:grid;place-items:center;width:2.7rem;height:2.7rem;border-radius:13px;background:var(--c,#25405a);color:var(--t,#fff);font:700 1.05rem/1 var(--font-display,inherit);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+    .ff-logo i{position:absolute;top:-7px;left:-7px;min-width:1.3rem;height:1.3rem;padding:0 .25rem;border-radius:999px;background:var(--ff-deep);border:1px solid var(--ff-line);color:var(--ff-mute);font:500 .68rem/1.2rem var(--font-mono,ui-monospace,monospace);font-style:normal;text-align:center}
+    .ff-item.best .ff-logo i{background:var(--ff-surf);border-color:var(--ff-surf);color:var(--ff-ink)}
+    .ff-name{min-width:0;font-weight:700;color:var(--ff-foam);line-height:1.25}
+    .ff-name small{display:block;margin-top:.12rem;font-weight:400;color:var(--ff-mute);font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ff-name small b{color:#c7d6e2;font-weight:600}
+    @media (max-width:430px){.ff-lh2{display:none}}
+    .ff-price{font-size:1.32rem;font-weight:800;color:var(--ff-foam);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;line-height:1.1}
+    .ff-item.best .ff-price{color:var(--ff-glow);text-shadow:0 0 14px rgba(79,216,196,.35)}
+    .ff-price small{display:block;margin-top:.15rem;font-size:.72rem;font-weight:600;color:var(--ff-mute);letter-spacing:0;text-shadow:none}
+    .ff-price small em{font-style:normal;color:var(--ff-dusk)}
+    .ff-tagbest{display:inline-block;margin-left:.35rem;padding:.08rem .45rem;border-radius:999px;background:var(--ff-surf);color:var(--ff-ink);font:700 .62rem/1.4 var(--font-mono,ui-monospace,monospace);letter-spacing:.08em;text-transform:uppercase;vertical-align:.12em}
+    /* opened: the full address, every fuel it sells, directions */
+    .ff-x{grid-column:1 / -1;display:grid;grid-template-rows:0fr;transition:grid-template-rows .32s var(--ff-ease)}
+    .ff-item.open .ff-x{grid-template-rows:1fr}
+    .ff-x > div{overflow:hidden;min-height:0}
+    .ff-xin{padding-top:.65rem;margin-top:.55rem;border-top:1px solid var(--ff-line)}
+    .ff-xa{margin:0;color:#c7d6e2;font-size:.88rem;line-height:1.5}
+    .ff-fu{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(6.5rem,100%),1fr));gap:.35rem;margin:.55rem 0 0;padding:0;list-style:none}
+    .ff-fu li{padding:.4rem .55rem;border-radius:10px;background:rgba(255,255,255,.035);border:1px solid var(--ff-line);font-size:.78rem;color:var(--ff-mute);line-height:1.3}
+    .ff-fu li b{display:block;font-size:1rem;color:var(--ff-foam);font-variant-numeric:tabular-nums}
+    .ff-fu li.on{border-color:rgba(79,216,196,.55)}
+    .ff-fu li.on b{color:var(--ff-glow)}
+    .ff-x .ff-acts{margin-top:.6rem}
+    .ff-more button{width:100%;min-height:48px;border-radius:14px;border:1px dashed var(--ff-line);background:transparent;color:var(--ff-foam);font:600 .95rem var(--font-body,inherit);cursor:pointer;transition:border-color .2s,background .2s}
+    .ff-more button:hover{border-color:var(--ff-surf);background:rgba(79,216,196,.06)}
     .ff-empty{color:var(--ff-mute);padding:1rem;border:1px dashed var(--ff-line);border-radius:14px}
-    .ff-skel{display:grid;gap:.45rem;padding:.9rem;border:1px solid var(--ff-line);border-radius:14px;background:var(--ff-water)}
+    .ff-skel{display:grid;grid-template-columns:2.7rem minmax(0,1fr) 3.5rem;gap:.75rem;align-items:center;padding:.75rem .8rem;border:1px solid var(--ff-line);border-radius:16px;background:var(--ff-water)}
     .ff-skel i{display:block;height:13px;border-radius:6px;background:linear-gradient(90deg,var(--ff-water) 0%,#1a3048 50%,var(--ff-water) 100%);background-size:200% 100%;animation:ffShim 1.2s linear infinite}
-    .ff-skel i+i{width:60%}
-    .ff-mapwrap{position:sticky;top:5rem}
-    #ff-map{height:min(70vh,580px);border-radius:16px;border:1px solid var(--ff-line);background:var(--ff-deep)}
-    @media (max-width:860px){.ff-mapwrap{position:static}#ff-map{height:55vh}}
+    .ff-skel i:first-child{height:2.7rem;border-radius:13px}
+    .ff-skel i:last-child{height:22px}
+    .ff-mapwrap{position:sticky;top:calc(var(--header-h,76px) + var(--ticker-h,30px) + .75rem)}
+    #ff-map{height:min(70vh,580px);border-radius:var(--ff-r);border:1px solid var(--ff-line);background:var(--ff-deep)}
+    @media (max-width:699px){.ff-mapwrap{position:static}#ff-map{height:min(64vh,560px)}}
     .ff-pin span{display:inline-block;transform:translate(-50%,-100%);background:var(--ff-water);color:var(--ff-foam);border:1px solid var(--ff-line);border-radius:8px;padding:2px 6px;font:700 12px/1.3 system-ui,sans-serif;white-space:nowrap;box-shadow:0 3px 8px rgba(0,0,0,.45);animation:ffDrop .55s cubic-bezier(.3,1.3,.5,1) both}
     .ff-pin.best span{background:var(--ff-surf);color:var(--ff-ink);border-color:var(--ff-surf)}
     .ff-me{width:16px;height:16px;border-radius:50%;background:#4ea1ff;border:3px solid #fff;box-shadow:0 0 0 2px rgba(78,161,255,.5);animation:ffPulseBlue 1.6s ease-out infinite}
@@ -211,16 +322,43 @@ HEAD = '''
     .ff-top li:hover,.ff-top li:focus-visible{border-color:var(--ff-surf);outline:none}
     .ff-top .ff-price{font-size:1.1rem}
     .leaflet-popup-content{font:14px/1.45 system-ui,sans-serif}
-    @media (max-width:430px){
-      .ff-fuels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
-      .ff-fuels button{padding:.5rem .55rem;overflow-wrap:anywhere}
-      .ff-gps{width:100%;justify-content:center}
-      .ff-where select{width:100%}
+    @media (max-width:560px){
+      .ff-where .ff-gps{flex:1 1 auto}
+      .ff-where select{flex:0 1 auto}
+      .ff-where form{order:3;flex:1 1 100%}
       .ff-bar{grid-template-columns:6.2rem minmax(0,1fr) auto}
     }
-    /* a phone with big text (6 Oct 2026, owner on a Galaxy S22: Chrome turns the text size into page zoom, 180-260 px wide): the name over its bar */
-    @media (max-width:260px){.ff-bar{grid-template-columns:minmax(0,1fr) auto;gap:.25rem .5rem}.ff-bl{grid-column:1 / -1}
-      .ff-item{grid-template-columns:auto minmax(0,1fr)}.ff-price,.ff-addr,.ff-meta,.ff-dir{grid-column:2;text-align:left}}   /* each forecourt: its price under its name */
+    /* a tool used standing at a car: on a phone the heading stays short so the switch and the answer are on screen */
+    @media (max-width:767px){
+      .page-hero h1,.taskhead h1{font-size:clamp(1.45rem,7vw,1.95rem);line-height:1.1;margin-bottom:.35rem}
+      .page-hero .eyebrow,.taskhead .eyebrow{margin-bottom:.3rem}
+      #finder{padding-top:.6rem}
+      .page-hero{padding-top:calc(var(--header-h,76px) + var(--ticker-h,30px) + .9rem)}
+      .taskhead__lede,.taskhead .page-hero__byline{display:none}
+    }
+    /* a phone with big text (6 Oct 2026, owner on a Galaxy S22: Chrome turns the text size into page zoom, 180-300 px
+       wide): each control on its own row, each forecourt's price under its name */
+    @media (max-width:300px){
+      .ff-fuels button{padding:.4rem .7rem;font-size:.9rem}
+      .ff-where .ff-gps,.ff-where select{flex:1 1 100%}
+      .ff-item{grid-template-columns:2.3rem minmax(0,1fr);gap:.15rem .6rem;padding:.6rem .65rem}
+      .ff-logo{width:2.3rem;height:2.3rem;border-radius:11px;font-size:.95rem}
+      .ff-price{grid-column:2;text-align:left}
+      .ff-acts .ff-btn{flex:1 1 100%}
+      .ff-vchip{min-width:4.1rem}
+      .ff-t2{grid-template-columns:minmax(0,1fr)}
+      .ff-listhead{flex-wrap:wrap}
+    }
+    @media (max-width:260px){.ff-bar{grid-template-columns:minmax(0,1fr) auto;gap:.25rem .5rem}.ff-bl{grid-column:1 / -1}}
+    /* a phone on its side: a shorter heading, the list and the map side by side (the grid above), a taller map */
+    @media (max-height:500px) and (orientation:landscape){
+      .page-hero .lede,.page-hero__chips,.page-hero__cta,.page-hero__byline,.taskhead__lede{display:none}
+      .page-hero{padding-top:calc(var(--header-h,76px) + var(--ticker-h,30px) + .6rem);padding-bottom:0}
+      .page-hero h1,.taskhead h1{font-size:1.5rem;margin-bottom:.3rem}
+      #finder{padding-top:.6rem}
+      .ff-led b{font-size:2.7rem}
+      #ff-map{height:calc(100vh - var(--header-h,76px) - var(--ticker-h,30px) - 1.6rem)}
+    }
     .ff-actions{display:flex;flex-wrap:wrap;gap:.5rem;margin:0 0 1rem}
     .ff-pill{display:inline-flex;align-items:center;gap:.45rem;min-height:44px;padding:0 1.05rem;border-radius:999px;border:1px solid rgba(79,216,196,.5);background:rgba(79,216,196,.08);color:var(--ff-foam);font:inherit;font-size:.92rem;font-weight:600;cursor:pointer;transition:background .2s,transform .15s}
     .ff-pill:hover{background:rgba(79,216,196,.16)}
@@ -261,7 +399,9 @@ HEAD = '''
     @keyframes ffShim{from{background-position:200% 0}to{background-position:-200% 0}}
     @keyframes ffPulse{0%{box-shadow:0 0 0 0 rgba(79,216,196,.65)}100%{box-shadow:0 0 0 16px rgba(79,216,196,0)}}
     @keyframes ffPulseBlue{0%{box-shadow:0 0 0 0 rgba(78,161,255,.55)}100%{box-shadow:0 0 0 14px rgba(78,161,255,0)}}
-    @media (prefers-reduced-motion:reduce){.ff *,.ff *::before{animation:none!important;transition:none!important}}
+    @keyframes ffSpin{to{transform:rotate(360deg)}}
+    @keyframes ffLive{0%{box-shadow:0 0 0 0 rgba(79,216,196,.6)}70%,100%{box-shadow:0 0 0 7px rgba(79,216,196,0)}}
+    @media (prefers-reduced-motion:reduce){.ff *,.ff *::before,.ff *::after{animation:none!important;transition:none!important}}
   </style>'''
 
 
@@ -277,16 +417,17 @@ def tool(mode, radius, home=None):
         <div id="ff" class="ff" data-mode="{mode}" data-radius="{radius}"{home_attrs} data-vehicles="{_attr_json(VEHICLES)}" data-areas="{_attr_json(AREAS)}">
           <div class="ff-controls">
             <div class="ff-fuels" role="group" aria-label="Fuel">
+              <span class="ff-seg" aria-hidden="true"></span>
               <button type="button" data-f="E10" aria-pressed="true">Unleaded</button>
               <button type="button" data-f="B7" aria-pressed="false">Diesel</button>
-              <button type="button" data-f="E5" aria-pressed="false">Super unleaded</button>
-              <button type="button" data-f="SDV" aria-pressed="false">Premium diesel</button>
+              <button type="button" data-f="E5" aria-pressed="false" aria-label="Super unleaded"><span class="ff-long">Super unleaded</span><span class="ff-short">Super</span></button>
+              <button type="button" data-f="SDV" aria-pressed="false" aria-label="Premium diesel"><span class="ff-long">Premium diesel</span><span class="ff-short">Premium</span></button>
             </div>
             <div class="ff-where">
-              <button type="button" class="ff-gps" id="ff-gps">Use my location</button>
+              <button type="button" class="ff-gps" id="ff-gps">{_LOC_SVG}<span>Use my location</span></button>
               <form id="ff-pcform" autocomplete="on">
                 <label for="ff-pc" class="sr-only">Postcode</label>
-                <input id="ff-pc" name="postcode" inputmode="text" autocomplete="postal-code" placeholder="or postcode, e.g. BH8 8DQ" maxlength="9" />
+                <input id="ff-pc" name="postcode" inputmode="text" autocomplete="postal-code" placeholder="Postcode, e.g. BH8 8DQ" maxlength="9" />
                 <button type="submit">Go</button>
               </form>
               <label for="ff-rad" class="sr-only">How far</label>
@@ -296,16 +437,21 @@ def tool(mode, radius, home=None):
           </div>
           <div id="ff-banner" class="ff-banner" hidden></div>
           <div class="ff-tiles" aria-live="polite">
-            {tile(1, "ff-t1", "", 1)}
+            <div class="ff-tile ff-tskel" id="ff-tskel" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div class="ff-tile ff-t1" id="ff-t1" hidden><p class="ff-tl"></p><p class="ff-num ff-led"><b data-dp="1">&nbsp;</b><small>p</small></p><p class="ff-ts"></p>
+              <div class="ff-acts"><a class="ff-btn" id="ff-t1-dir" href="#finder" target="_blank" rel="noopener">{_DIR_SVG}Directions</a><button type="button" class="ff-btn ff-btn--ghost" id="ff-t1-map">{_PIN_SVG}On the map</button></div>
+              <button type="button" class="ff-navchg" id="ff-navchg" data-navchg>Directions open in <b class="ff-navname">your maps app</b> &middot; <u>Change</u></button></div>
             {tile(2, "ff-t2", "", 1)}
-            {tile(3, "ff-t3", "&pound;", 2, '<div class="ff-veh"><label for="ff-vehicle" class="sr-only">Your vehicle</label><select id="ff-vehicle"></select>'
+            {tile(3, "ff-t3", "&pound;", 2, '<div class="ff-veh"><label for="ff-vehicle" class="sr-only">Your vehicle</label><select id="ff-vehicle" tabindex="-1" aria-hidden="true"></select><div class="ff-vchips" id="ff-vchips" role="group" aria-label="Your vehicle"></div>'
                   '<span class="ff-own" id="ff-own-wrap" hidden><label for="ff-own">Litres</label><input id="ff-own" type="number" inputmode="numeric" min="5" max="1500" step="1" value="60" /></span></div>')}
           </div>
           <div class="ff-actions" id="ff-actions" hidden>
             <button type="button" class="ff-pill" data-ffshare>{_SHARE_SVG}Share</button>
             <button type="button" class="ff-pill ff-pill--add" data-ffa2hs>{_ADD_SVG}<span class="ff-a2hs-label">Add to home screen</span></button>
           </div>
-          <div class="ff-grid">
+          <div class="ff-listhead"><p class="ff-lh" id="ff-lh">Cheapest first</p>
+            <div class="ff-view" id="ff-view" role="group" aria-label="Show as"><button type="button" data-v="list" aria-pressed="true">{_LIST_SVG}List</button><button type="button" data-v="map" aria-pressed="false">{_MAP_SVG}Map</button></div></div>
+          <div class="ff-grid" id="ff-grid" data-view="list">
             <ol id="ff-list" class="ff-list" aria-label="Cheapest first"></ol>
             <div class="ff-mapwrap"><div id="ff-map" role="region" aria-label="Map of the forecourts"></div></div>
           </div>
@@ -320,6 +466,14 @@ def tool(mode, radius, home=None):
               <div class="ff-sheet-btns"><button type="button" class="ff-sheet-add" id="ff-a2hs-add">Add to home screen</button><button type="button" class="ff-sheet-no" id="ff-a2hs-no">Not now</button></div>
             </div>
             <button type="button" class="ff-sheet-x" id="ff-a2hs-x" aria-label="Close">&times;</button>
+          </div>
+          <div class="ff-sheet ff-sheet--share" id="ff-navsheet" role="dialog" aria-labelledby="ff-nav-h" hidden>
+            <div class="ff-sheet-body">
+              <p class="ff-sheet-h" id="ff-nav-h">Get directions in&hellip;</p>
+              <p class="ff-sheet-sub">Pick the app you drive with &mdash; we&rsquo;ll remember it. With your phone connected to Android Auto or Apple CarPlay, the route shows on your car&rsquo;s screen.</p>
+              <div class="ff-share-grid ff-nav-grid" id="ff-nav-grid"></div>
+            </div>
+            <button type="button" class="ff-sheet-x" id="ff-nav-x" aria-label="Close">&times;</button>
           </div>
           <div class="ff-sheet ff-sheet--share" id="ff-share" role="dialog" aria-labelledby="ff-share-h" hidden>
             <div class="ff-sheet-body">
