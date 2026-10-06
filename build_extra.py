@@ -23350,22 +23350,49 @@ FIX_FLOW_OVERRIDES[PLUSNET_MOVE_V2] = {'stuck_tail': FIX_FLOW_OVERRIDES[VIRGIN_M
                                        'areas': FIX_FLOW_OVERRIDES[VIRGIN_MOVE_V2]['areas']}
 
 
+from hub_ui import EMAIL_MOVE_TICKS, EMAIL_MOVE_SMALL
+
+
 def plusnet_move_v2(d, crumbs):
-    hero_html = _email_hero(d, crumbs,
-        'Plusnet is closing its email service and moving mailboxes to a company called Greenby. You can keep your address with Greenby &mdash; free for two years if you still have Plusnet broadband, then paid &mdash; or move to free Gmail once. We can do the whole move for you for <strong>&pound;60 per address</strong>.',
-        ("Do it myself", "#fixflow"), [
-        ("hp-c-care", "mail", "Move it for me", "Every message and folder into Gmail, done remotely", "&pound;60 PER ADDRESS", "#move-for-me"),
-        ("hp-c-fix", "book", "Do it myself", "The free step-by-step guide on this page", "FREE", "#fixflow"),
-        ("hp-c-biz", "clock", "Keep my Plusnet address", "Greenby: free for 2 years with Plusnet broadband", "THEN PAID", "#s1"),
-        ("hp-c-buy", "alert", "Already left Plusnet?", "Greenby keeps it 30 days, then &pound;15 a year", "ACT SOONER", "#s1"),
-    ])
-    offer_html = email_move_box("Rather we just did it?", "We move your Plusnet email to Gmail for you", [
-        '<p class="vm-alt__h">Or keep it with Greenby</p>',
-        '<p>Unless you opt out, your mailbox moves to Greenby with the same address and settings. If you still have Plusnet broadband it is free for two years; if you have left Plusnet it stays live for 30 days after the move, then costs &pound;15 a year.</p>',
-        '<p class="vm-alt__h">Don&rsquo;t cancel your broadband first</p>',
-        '<p>Cancelling Plusnet broadband before your mailbox has moved closes the email with it. Move it, or copy it into Gmail, first.</p>',
-        '<p><a class="dh-link" href="#s1">What&rsquo;s happening, in full &#8594;</a></p>'])
-    return hero_html, offer_html
+    # 6 Oct 2026 (owner: "do the same on the Plusnet page", after the two Virgin pages): task-first like them. A short
+    # opener, then the GBP 60 card with only "For Windows PCs only." between the price and Text / Call, so the Text button
+    # is on the first phone screen (simulated on the live layout: 74 px above the sticky bar at 375 x 812, 9 px at
+    # 360 x 800; the old page had no Text button near the top - the box started 1,240 px down). Every link of the old
+    # first screen and box survives: the call and text in the card, #fixflow and #s1 under the cards, /reviews/ and
+    # /meet-the-team/ in the header, #move-for-me stays the card's id. Deliberately NOT copied from the Virgin card: the
+    # full PC service (the owner's 28 Sep offer is Virgin only - ask before extending it) and the ring-me-back form.
+    # Every sentence below was already on this page.
+    head = bp.task_head(crumbs, d['h1'],
+        'Plusnet email is moving to Greenby: free for two years if you still have Plusnet broadband, then paid. '
+        'Or move it to Gmail once and keep it free.', trust=_VL.TASK_TRUST)
+    ticks = "\n".join("            <li>" + t + "</li>" for t in EMAIL_MOVE_TICKS)
+    cards = f'''    <section class="dh vmc" id="choose" aria-label="Two ways to deal with your Plusnet email">
+    <div class="vmc__in">
+      <div class="vmc__grid">
+        <div class="vmc__card vmc__card--lead hp-c-care" id="move-for-me">
+          <p class="vmc__tag"><span class="hp-ico hp-ico--sm">{_dh_ico("phone")}</span>DONE FOR YOU &middot; AGREED BEFORE WE START</p>
+          <h2 class="vmc__h">Let us do it: <b>&pound;60</b> per email address</h2>
+          <p class="vmc__d"><b>For Windows PCs only.</b></p>
+          <p class="vmc__cta"><a class="button primary button--lg" href="sms:+447520615332">Text 07520 615332</a><a class="button secondary button--lg" href="tel:+441202775566">Call 01202 775566</a></p>
+          <p class="vmc__d vmc__d--after">We move your Plusnet email to Gmail for you, remotely.</p>
+          <ul class="vmc__list">
+{ticks}
+          </ul>
+          <p class="vmc__small">{EMAIL_MOVE_SMALL}</p>
+        </div>
+        <div class="vmc__card hp-c-biz" id="keep-greenby">
+          <p class="vmc__tag"><span class="hp-ico hp-ico--sm">{_dh_ico("clock")}</span>KEEP YOUR PLUSNET ADDRESS &middot; THEN PAID</p>
+          <h2 class="vmc__h">Or keep it with Greenby</h2>
+          <p class="vmc__d" style="margin-bottom:.75rem">Unless you opt out, your mailbox moves to Greenby with the same address and settings. If you still have Plusnet broadband it is free for two years; if you have left Plusnet it stays live for 30 days after the move, then costs &pound;15 a year.</p>
+          <p class="vmc__d"><b>Don&rsquo;t cancel your broadband first.</b> Cancelling Plusnet broadband before your mailbox has moved closes the email with it. Move it, or copy it into Gmail, first.</p>
+          <p class="vmc__more"><a class="dh-link" href="#s1">What&rsquo;s happening, in full &#8594;</a></p>
+        </div>
+      </div>
+    <p class="vmc__also">Rather do it yourself? <a href="#fixflow">Move it to Gmail step by step, free</a> &middot; <a href="#s1">already left Plusnet?</a></p>
+    </div>
+    <style>{" ".join(l.strip() for l in _VL._VMC_CSS.strip().splitlines())}</style>
+    </section>'''
+    return head + "\n" + cards, ""
 
 
 # BT (26 Sep 2026): a fix page, not a closing provider, so the same first screen without the move box.
