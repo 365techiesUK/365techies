@@ -23353,6 +23353,33 @@ FIX_FLOW_OVERRIDES[PLUSNET_MOVE_V2] = {'stuck_tail': FIX_FLOW_OVERRIDES[VIRGIN_M
 from hub_ui import EMAIL_MOVE_TICKS, EMAIL_MOVE_SMALL
 
 
+def _paid_first_pair(aria, h2, after, ticks, small, other_card, also_html="", card_id="move-for-me"):
+    """6 Oct 2026: the two-card first screen the Virgin pages use (virgin_launch.virgin_choices paid_first), for email
+    pages without the free app: the paid card first (id move-for-me) with only "For Windows PCs only." between its
+    price and Text / Call, so the Text button clears the sticky bar on a phone; other_card beside it."""
+    lis = "\n".join("            <li>" + t + "</li>" for t in ticks)
+    also = ('\n    <p class="vmc__also">' + also_html + '</p>') if also_html else ""
+    return f'''    <section class="dh vmc" id="choose" aria-label="{aria}">
+    <div class="vmc__in">
+      <div class="vmc__grid">
+        <div class="vmc__card vmc__card--lead hp-c-care" id="{card_id}">
+          <p class="vmc__tag"><span class="hp-ico hp-ico--sm">{_dh_ico("phone")}</span>DONE FOR YOU &middot; AGREED BEFORE WE START</p>
+          <h2 class="vmc__h">{h2}</h2>
+          <p class="vmc__d"><b>For Windows PCs only.</b></p>
+          <p class="vmc__cta"><a class="button primary button--lg" href="sms:+447520615332">Text 07520 615332</a><a class="button secondary button--lg" href="tel:+441202775566">Call 01202 775566</a></p>
+          <p class="vmc__d vmc__d--after">{after}</p>
+          <ul class="vmc__list">
+{lis}
+          </ul>
+          <p class="vmc__small">{small}</p>
+        </div>
+{other_card}
+      </div>{also}
+    </div>
+    <style>{" ".join(l.strip() for l in _VL._VMC_CSS.strip().splitlines())}</style>
+    </section>'''
+
+
 def plusnet_move_v2(d, crumbs):
     # 6 Oct 2026 (owner: "do the same on the Plusnet page", after the two Virgin pages): task-first like them. A short
     # opener, then the GBP 60 card with only "For Windows PCs only." between the price and Text / Call, so the Text button
@@ -23365,34 +23392,18 @@ def plusnet_move_v2(d, crumbs):
     head = bp.task_head(crumbs, d['h1'],
         'Plusnet email is moving to Greenby: free for two years if you still have Plusnet broadband, then paid. '
         'Or move it to Gmail once and keep it free.', trust=_VL.TASK_TRUST)
-    ticks = "\n".join("            <li>" + t + "</li>" for t in EMAIL_MOVE_TICKS)
-    cards = f'''    <section class="dh vmc" id="choose" aria-label="Two ways to deal with your Plusnet email">
-    <div class="vmc__in">
-      <div class="vmc__grid">
-        <div class="vmc__card vmc__card--lead hp-c-care" id="move-for-me">
-          <p class="vmc__tag"><span class="hp-ico hp-ico--sm">{_dh_ico("phone")}</span>DONE FOR YOU &middot; AGREED BEFORE WE START</p>
-          <h2 class="vmc__h">Let us do it: <b>&pound;60</b> per email address</h2>
-          <p class="vmc__d"><b>For Windows PCs only.</b></p>
-          <p class="vmc__cta"><a class="button primary button--lg" href="sms:+447520615332">Text 07520 615332</a><a class="button secondary button--lg" href="tel:+441202775566">Call 01202 775566</a></p>
-          <p class="vmc__d vmc__d--after">We move your Plusnet email to Gmail for you, remotely.</p>
-          <ul class="vmc__list">
-{ticks}
-          </ul>
-          <p class="vmc__small">{EMAIL_MOVE_SMALL}</p>
-        </div>
-        <div class="vmc__card hp-c-biz" id="keep-greenby">
+    greenby = f'''        <div class="vmc__card hp-c-biz" id="keep-greenby">
           <p class="vmc__tag"><span class="hp-ico hp-ico--sm">{_dh_ico("clock")}</span>KEEP YOUR PLUSNET ADDRESS &middot; THEN PAID</p>
           <h2 class="vmc__h">Or keep it with Greenby</h2>
           <p class="vmc__d" style="margin-bottom:.75rem">Unless you opt out, your mailbox moves to Greenby with the same address and settings. If you still have Plusnet broadband it is free for two years; if you have left Plusnet it stays live for 30 days after the move, then costs &pound;15 a year.</p>
           <p class="vmc__d"><b>Don&rsquo;t cancel your broadband first.</b> Cancelling Plusnet broadband before your mailbox has moved closes the email with it. Move it, or copy it into Gmail, first.</p>
           <p class="vmc__more"><a class="dh-link" href="#s1">What&rsquo;s happening, in full &#8594;</a></p>
-        </div>
-      </div>
-    <p class="vmc__also">Rather do it yourself? <a href="#fixflow">Move it to Gmail step by step, free</a> &middot; <a href="#s1">already left Plusnet?</a></p>
-    </div>
-    <style>{" ".join(l.strip() for l in _VL._VMC_CSS.strip().splitlines())}</style>
-    </section>'''
-    return head + "\n" + cards, ""
+        </div>'''
+    return head + "\n" + _paid_first_pair(
+        "Two ways to deal with your Plusnet email", "Let us do it: <b>&pound;60</b> per email address",
+        "We move your Plusnet email to Gmail for you, remotely.", EMAIL_MOVE_TICKS, EMAIL_MOVE_SMALL, greenby,
+        'Rather do it yourself? <a href="#fixflow">Move it to Gmail step by step, free</a> &middot; '
+        '<a href="#s1">already left Plusnet?</a>'), ""
 
 
 # BT (26 Sep 2026): a fix page, not a closing provider, so the same first screen without the move box.
@@ -23400,15 +23411,29 @@ BT_OUTLOOK_V2 = 'btinternet-email-wont-add-to-new-outlook'
 
 
 def bt_outlook_v2(d, crumbs):
-    hero_html = _email_hero(d, crumbs,
-        'The new Outlook often refuses a btinternet.com address: the password rejected on a loop, or &lsquo;something went wrong&rsquo;. The fix is nearly always to add it by hand with BT&rsquo;s own settings and your normal BT email password &mdash; BT has no app passwords. Left BT broadband? Check your mailbox type first.',
-        ("Fix it with me", "#fixflow"), [
-        ("hp-c-fix", "book", "Fix it with me", "BT&rsquo;s own settings, one step at a time", "FREE", "#fixflow"),
-        ("hp-c-care", "wrench", "Fix it for me", "We connect and add it while you watch", "FROM &pound;20, AGREED FIRST", "#fix-help"),
-        ("hp-c-biz", "alert", "Left BT broadband?", "BT Basic email only works in a browser", "CHECK THIS FIRST", "#s4"),
-        ("hp-c-buy", "monitor", "Try classic Outlook", "It often adds BT email first time", "ONE TOGGLE", "#s5"),
-    ])
-    return hero_html, ""
+    # 6 Oct 2026 (owner: "do the same on the BT email page", after the Virgin and Plusnet pages): task-first, the same
+    # two cards. BT has no GBP 60 move (no owner price), so the paid card is this page's own "Fix it for me, from GBP 20,
+    # agreed first" (the published remote-fix price; checking is free, the fix is not). The page had no Text button at
+    # all; simulated on the live layout, Text now clears the sticky bar by 35 px at 375 x 812 and 7 px at 360 x 800.
+    # The opener keeps the answer; the symptom words it dropped ("something went wrong", "rejected") are in the body.
+    # Old first-screen links kept: call and text in the card, #fixflow, #s4 and #s5 in the free card, /reviews/,
+    # /meet-the-team/ and /outlook-problems/ in the header; #fix-help (the closing panel) is still on the page.
+    head = bp.task_head(crumbs, d['h1'],
+        'Add it by hand with BT&rsquo;s own settings and your normal BT email password &mdash; BT has no app passwords.',
+        trust=_VL.TASK_TRUST)
+    diy = f'''        <div class="vmc__card hp-c-fix" id="fix-it-yourself">
+          <p class="vmc__tag"><span class="hp-ico hp-ico--sm">{_dh_ico("book")}</span>FREE &middot; STEP BY STEP</p>
+          <h2 class="vmc__h">Or fix it yourself, free</h2>
+          <p class="vmc__d">BT&rsquo;s own settings, one step at a time.</p>
+          <p class="vmc__cta"><a class="button secondary button--lg" href="#fixflow">Fix it with me</a></p>
+          <p class="vmc__note" style="margin-bottom:.6rem"><b>Left BT broadband?</b> BT Basic email only works in a browser, so <a href="#s4">check your mailbox type first</a>.</p>
+          <p class="vmc__note"><b>Try classic Outlook.</b> It often adds BT email first time: <a href="#s5">one toggle</a>.</p>
+        </div>'''
+    return head + "\n" + _paid_first_pair(
+        "Two ways to get your BT email into the new Outlook", "Let us fix it: from <b>&pound;20</b>, agreed first",
+        "We connect and add it while you watch.",
+        ("Checking the problem is free", "We phone first, and you watch every step", "Usually same-day remote help"),
+        "Agreed before we start &middot; no fix, no fee &middot; Mon&ndash;Fri 9&ndash;5", diy, card_id="fix-for-me"), ""
 
 
 EMAIL_MOVE_V2 = {VIRGIN_MOVE_V2: virgin_move_v2, JUNARA_SLUG: junara_v2, PLUSNET_MOVE_V2: plusnet_move_v2,
