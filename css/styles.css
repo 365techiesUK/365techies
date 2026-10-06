@@ -3001,6 +3001,68 @@ html { overflow-x: clip; }
 @media (prefers-reduced-motion:reduce){.dh .hp-intent,.dh-btn,.dh-machines a{transition:none}}
 /* HUB-CSS END */
 
+/* ===== Phones with big text (6 Oct 2026) =====
+   Owner on a Galaxy S22 with large text: "everything seems really big ... you can't basically use it". Chrome on Android
+   turns the phone's text size into PAGE ZOOM, so a 360 px phone at 150% lays every page out 240 px wide (206 at 175%,
+   180 at 200%). Measured on the fuel pages at 240: the menu button sat off the right edge (no way into the menu), the
+   heading "Bournemouth" ran off the side, the cookie note was a one-word-a-line column, and the fixed header + Call bar
+   took 30% of the screen. Below 330 px only - a normal phone (360-430) and every desktop is exactly as before. */
+@media (max-width: 330px) {
+  :root { --header-h: 58px; --pad-x: 0.8rem; }
+  .header-bar { padding: 0 0.55rem; gap: 0.4rem; }
+  .logo { gap: 0.3rem; min-width: 0; flex: 0 1 auto; overflow: hidden; }
+  .logo__mark { width: 24px; height: 24px; }
+  .logo__text { font-size: clamp(0.78rem, 5.6vw, 1.1rem); white-space: nowrap; }
+  .header-actions, html[class*="a11y-text-"] .header-actions { gap: 0.3rem; }
+  .nav-search { width: 40px; height: 40px; padding: 0; justify-content: center; }
+  .mobile-menu-button { width: 42px; height: 42px; }
+  /* the cookie note: the sentence on one line-run, the two buttons side by side under it */
+  .cookie-banner { flex-wrap: wrap; padding: 0.55rem 0.7rem 0.6rem; gap: 0.45rem; }   /* (the phone strip above is nowrap) */
+  .cookie-banner p { flex: 1 1 100%; font-size: 0.82rem; }
+  .cookie-banner__actions { width: 100%; flex: 1 1 100%; gap: 0.4rem; }
+  .cookie-banner__actions .button { flex: 1 1 0; min-width: 0; padding: 0.45rem 0.3rem; }
+  /* the Call / Book / Text bar: icon beside the word, one slim row */
+  .mobile-cta-bar a { flex-direction: row; gap: 0.3rem; min-height: 44px; padding: 0.3rem 0.15rem; font-size: 0.78rem; letter-spacing: 0; }
+  .mobile-cta-bar svg { width: 17px; height: 17px; flex: none; }
+  body { padding-bottom: calc(2.9rem + env(safe-area-inset-bottom)); }
+  .a11y { right: 6px; bottom: calc(3.2rem + env(safe-area-inset-bottom)); }
+  .a11y__toggle { min-height: 40px; padding: 0 0.5rem; }
+  .a11y__toggle svg { width: 20px; height: 20px; }
+  /* headings shrink with the screen; a word longer than the line wraps instead of running off the side */
+  .page-hero h1 { font-size: clamp(1.25rem, 10.5vw, 2.4rem); }
+  .hero__title { font-size: clamp(1.3rem, 10.5vw, 2.3rem); }
+  h1, h2, h3 { overflow-wrap: break-word; }
+  /* any grid or flex item in the page may shrink to the screen: by default an item is never narrower than its longest
+     word or button, which made one-column grids 226-244 px wide on a 206 px screen (homepage, service pages, Contact,
+     Pricing). Low specificity on purpose - anything that sets its own min-width keeps it. "html body" below outranks the
+     pages' own inline phone rules (the homepage's .hp-hero__grid{grid-template-columns:1fr} came after this sheet). */
+  main *, main { min-width: 0; }
+  main svg, main button { min-width: auto; }   /* icons keep their size; a button is never narrower than its word (the fuel finder Go button broke into G / o) */
+  main { overflow-wrap: break-word; }
+  html body .hp-hero__grid { grid-template-columns: minmax(0, 1fr); }
+  html body main .button, html body .reviews__badge { white-space: normal; max-width: 100%; }
+  /* the three grids with a fixed minimum column (Dell directory 280, heritage 170, towns 190 px; the footer has its own phone layout) */
+  html body .dell-dir, html body .heritage-grid, html body .areas-grid { grid-template-columns: minmax(0, 1fr); }
+  /* spaced-out one-line labels ("200+ COMPUTERS UNDER OUR CARE", the reviews badge) may wrap */
+  html body .trust-line span, html body main .mono { white-space: normal; }
+}
+@media (max-width: 260px) {
+  html body .hero-buttons, html body .hp-intents__grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 230px) {
+  .logo__mark { display: none; }
+}
+/* The free tools people come to use - fuel prices, mobile signal check, the games list (owner, 6 Oct 2026: "they're trying
+   to play the game, not give us a call"): build_pages.NO_DOCK leaves the Call / Book / Text bar out and marks the body,
+   so its bottom padding goes and the Text size button sits at the real bottom. */
+@media (max-width: 767px) {
+  body.no-dock { padding-bottom: env(safe-area-inset-bottom); }
+  body.no-dock .a11y { bottom: calc(14px + env(safe-area-inset-bottom)); }
+}
+/* ...and the one quiet line at the end of those pages, where the page shows no number of its own (build_pages.HELP_LINE) */
+.tool-help { max-width: 1180px; margin: 0 auto; padding: 1.6rem var(--pad-x) 2.2rem; text-align: center; color: var(--muted); font-size: 0.98rem; line-height: 1.5; }
+.tool-help a { color: var(--cyan); font-weight: 600; white-space: nowrap; }
+
 /* ============================================================
    SENTINEL — must stay the LAST rule in this file.
    The head's guard reads --css-ok; if it is absent the browser

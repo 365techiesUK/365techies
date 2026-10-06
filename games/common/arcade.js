@@ -348,6 +348,13 @@
         + '.tools{display:grid!important;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px!important;width:100%;margin-left:0!important}'
         + '.tb,.tb.tb2,.tb.tb3{flex-direction:column;justify-content:center;gap:3px;min-height:52px;padding:5px 2px 4px!important}'
         + '.tb .sl{display:block;font:700 12px/1 Archivo,sans-serif;white-space:nowrap}.tb svg{width:21px;height:21px}.tb.tbx{display:none}.tb.tbmore{display:inline-flex}}'
+        // a phone with big text (6 Oct 2026, owner's Galaxy S22): Chrome turns the text size into page zoom, so this bar can
+        // be 180-300 px wide - the buttons share the row whatever its width, slimmer chips; under 250 px Games goes (the
+        // game's name at the top opens the same list). 360 px phones and up are as before.
+        + '@media (max-width:330px){.bar{padding-left:8px;padding-right:8px;gap:5px 8px}.tools{grid-auto-columns:minmax(0,1fr)!important;gap:3px!important}'
+        + '.tb,.tb.tb2,.tb.tb3{min-width:0;min-height:48px;padding:4px 1px 3px!important}.tb .sl{font-size:11px;max-width:100%;overflow:hidden}.tb svg{width:20px;height:20px}'
+        + '.info{min-width:0;flex:1 1 100%}.chip{flex:1 1 0;min-width:0!important;padding:2px 4px}.chip small{font-size:10px;letter-spacing:0}.chip span{font-size:15px}.brand span{font-size:16px}}'
+        + '@media (max-width:250px){.tb#bGames{display:none}}'
         // the title box (games audit, 5 Oct 2026; critic: Hall of Fame was the biggest button and on a phone the touch
         // instructions fell below the box): Play the bigger of the two, side by side; the points list in two columns on a phone
         + '.ovbox .trow{flex-wrap:nowrap}.ovbox .trow #tPlay{flex:3 1 0;padding:0 12px}.ovbox .trow #tHof{flex:2 1 0;padding:0 10px;font-size:16px;white-space:nowrap}'

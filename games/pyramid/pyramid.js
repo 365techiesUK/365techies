@@ -12,7 +12,7 @@
   function layout(W, H) {
     var tall = H > W * 1.25, gap = Math.max(5, Math.min(16, Math.round(W * 0.011))), rs = tall ? 0.56 : 0.5, step = tall ? 0.84 : 1;
     var byW = tall ? (W - gap * 2) / (1 + 6 * step) : (W - gap * 8) / 7, byH = (H - gap * 3) / (1 + 6 * rs) / 1.4;
-    var cw = Math.max(30, Math.floor(Math.min(byW, byH, 160))), ch = Math.round(cw * 1.4), unit = tall ? Math.round(cw * step) : cw + gap;
+    var cw = Math.max(Math.min(30, Math.floor(byW)), Math.floor(Math.min(byW, byH, 160))), ch = Math.round(cw * 1.4), unit = tall ? Math.round(cw * step) : cw + gap;
     var need = ch * (1 + 6 * rs) + gap * 2;
     var L = { cw: cw, ch: ch, gap: gap, W: W, H: H, rs: rs, unit: unit, left: Math.round((W - (cw + 6 * unit)) / 2), top: gap + Math.round(Math.max(0, H - need - gap) * (tall ? 0.4 : 0.3)) };
     L.slots = [{ key: 'stock', x: colX(L, 0), y: L.top, cls: 'stock', text: '' }, { key: 'w', x: colX(L, 1), y: L.top, cls: 'tab', text: '' },

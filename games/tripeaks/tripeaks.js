@@ -20,7 +20,7 @@
   function layout(W, H) {
     var tall = H > W * 1.25, gap = Math.max(4, Math.min(14, Math.round(W * 0.009))), rs = tall ? 0.6 : 0.5, step = tall ? 0.8 : 1;
     var byW = tall ? (W - gap * 2) / (1 + 9 * step) : (W - gap * 11) / 10, byH = (H - gap * 4) / (2 + 3 * rs) / 1.4;
-    var cw = Math.max(26, Math.floor(Math.min(byW, byH, 150))), ch = Math.round(cw * 1.4), unit = tall ? Math.round(cw * step) : cw + gap;
+    var cw = Math.max(Math.min(26, Math.floor(byW)), Math.floor(Math.min(byW, byH, 150))), ch = Math.round(cw * 1.4), unit = tall ? Math.round(cw * step) : cw + gap;
     var need = ch * (2 + 3 * rs) + gap * 3;
     var L = { cw: cw, ch: ch, gap: gap, W: W, H: H, rs: rs, unit: unit, left: Math.round((W - (cw + 9 * unit)) / 2), top: gap + Math.round(Math.max(0, H - need - gap) * (tall ? 0.45 : 0.3)) };
     L.baseY = L.top + Math.round(ch * (1 + 3 * rs)) + gap * 2;

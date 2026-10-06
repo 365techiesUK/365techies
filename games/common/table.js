@@ -403,6 +403,13 @@
     + '.tools{display:grid!important;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px!important;width:100%;margin-left:0!important}'
     + '.tb,.tb.tb2,.tb.tb3{flex-direction:column;justify-content:center;gap:3px;min-height:52px;padding:5px 2px 4px!important}'
     + '.tb .sl{display:block;font:700 12px/1 Archivo,sans-serif;white-space:nowrap}.tb svg{width:21px;height:21px}.tb.tbx{display:none}.tb.tbmore{display:inline-flex}}'
+    // a phone with big text (6 Oct 2026, owner's Galaxy S22): Chrome turns the text size into page zoom, so this bar can be
+    // 180-300 px wide - the buttons share the row whatever its width, slimmer chips; under 250 px the Games button goes
+    // (the game's name at the top opens the same list). 360 px phones and up are as before.
+    + '@media (max-width:330px){.bar{padding-left:8px;padding-right:8px;gap:5px 8px}.tools{grid-auto-columns:minmax(0,1fr)!important;gap:3px!important}'
+    + '.tb,.tb.tb2,.tb.tb3{min-width:0;min-height:48px;padding:4px 1px 3px!important}.tb .sl{font-size:11px;max-width:100%;overflow:hidden}.tb svg{width:20px;height:20px}'
+    + '.info{min-width:0;flex:1 1 100%}.chip{flex:1 1 0;min-width:0!important;padding:2px 4px}.chip small{font-size:10px;letter-spacing:0}.chip span{font-size:15px}.brand span{font-size:16px}}'
+    + '@media (max-width:250px){.tb#bGames{display:none}}'
     + '@media (hover:none) and (pointer:coarse){.keys365{display:none}}'
     + '.card .wig{perspective:calc(var(--cw) * 5)}'   // a true 3D turn when a card flips
     + '.front,.back{transition:box-shadow .22s ease}'
@@ -535,7 +542,7 @@
       L = D.layout(board.clientWidth, board.clientHeight, S);
       document.documentElement.style.setProperty('--cw', L.cw + 'px');
       // narrow cards: a bigger corner, one big suit (games audit, 5 Oct 2026 - Spider on a phone). 6 Oct 2026 (Petra: "not
-      // clear enough" on her phone): every phone-sized card, up to 64 px - rows of tiny pips were the hard part to read
+      // clear enough" on a phone): every phone-sized card, up to 64 px - rows of tiny pips were the hard part to read
       board.classList.toggle('tiny', L.cw < 64); board.classList.add('g-' + D.id);
       document.documentElement.style.setProperty('--ch', L.ch + 'px');
       var seen = {};

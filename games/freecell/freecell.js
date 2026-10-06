@@ -22,7 +22,7 @@
     var phone = W < 600 && H > W * 1.3, asp = phone ? 1.5 : 1.4;
     var gap = phone ? 4 : Math.max(6, Math.min(16, Math.round(W * 0.011)));
     var byW = (W - gap * 9) / 8, byH = (H - gap * 3) / 4.5 / asp;
-    var cw = Math.max(30, Math.floor(Math.min(byW, byH, 160))), ch = Math.round(cw * asp);
+    var cw = Math.max(Math.min(30, Math.floor(byW)), Math.floor(Math.min(byW, byH, 160))), ch = Math.round(cw * asp);   // (never wider than the screen: a phone with big text is zoomed - 6 Oct 2026)
     var L = { cw: cw, ch: ch, gap: gap, W: W, H: H, phone: phone, left: Math.round((W - (8 * cw + 7 * gap)) / 2), top: gap, tabY: gap + ch + Math.round(gap * 1.6) };
     L.slots = [];
     for (var c = 0; c < 4; c++) L.slots.push({ key: 'c' + c, x: colX(L, c), y: L.top, cls: 'cell', text: '' });
