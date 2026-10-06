@@ -1,11 +1,11 @@
 {
-  "ver": 30,
-  "version": "1.0.30",
-  "url": "https://365techies.co.uk/downloads/pcm/pcm-v30.exe",
-  "sha256": "4e86c7993a84866ae1c71ae893bf19f712841a4fbb175f2597fdc6ae91621281",
-  "notes": "New, and free for everyone: Virgin Media, Blueyonder, ntlworld or virgin.net email? Tools > Virgin email checks your mailbox, helps you move it into Gmail yourself - it carries on by itself each day - and lists the companies that use your address so you can change it. Stuck? We'll do it for you for £60. Also new: your full 365 service runs inside the app, This PC shows what's inside your computer and whether it's ready for Windows 11, What we've done lists every job we run on your PC, and Let 365 in opens a secure connection for your techie in one click. The app also keeps itself up to date more reliably. Signed by 365 Techies Ltd.",
+  "ver": 35,
+  "version": "1.0.35",
+  "url": "https://365techies.co.uk/downloads/pcm/pcm-v35.exe",
+  "sha256": "52db069dba417e1e09a5f03cfa6d33fef804fcd806a026eca18b6f1a99528acf",
+  "notes": "New in version 35: Tools has a new look - grouped, with a search box, a status on every check and a Check everything button that runs them all at once. New checks: Gaming check (is your PC set up for games - your graphics card's temperature and speed, power settings, and Watch while I play), Network check (your Wi-Fi signal and speed, and whether your connection lags when it's busy) and Devices on your network (the printers, cameras, storage boxes and shared folders on your home network, and which ones are open to everyone). A Text size button makes everything bigger, and the app is sharper on high-resolution screens. Also new since version 30: Eco, Everyday and Full speed on the Home screen with a live Power now reading, a history of how much power your PC used each hour and day, Sound check, What keeps going wrong (programs that keep crashing, and blue screens), Screen check, Browser safety, Safety settings, Camera and microphone, Test my backup, your Microsoft Office licence, hardware faults and how long your Windows gets updates, Scam check spots the fake \"I'm not a robot\" trick, and a Games menu - Solitaire, FreeCell, Spider, TriPeaks, Pyramid, Hearts, Gin Rummy, Cribbage and Whist with big, clear cards, our own arcade games and the Seafront game - no adverts, no sign-in. Signed by 365 Techies Ltd.",
   "installer": {
-    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v30.exe",
-    "sha256": "e1e113f42c2579185fbec05272fbd2ca89fc2ade967b3ea3000c8b590b8d60e5"
+    "url": "https://365techies.co.uk/downloads/pcm/365-pc-manager-setup-v35.exe",
+    "sha256": "32754e66432355b7bc3e2cddb35968e96ff421652e540d27e12e403cf63658cb"
   }
 }

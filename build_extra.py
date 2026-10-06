@@ -480,9 +480,10 @@ if not PCM_DOWNLOAD_URL or not _os_pcm.path.exists(_pcm_exe):
 PCM_FILESIZE = "%.1fMB" % (_os_pcm.path.getsize(_pcm_exe) / 1048576.0)
 PCM_LIVE = bp.PCM_LIVE and bool(PCM_DOWNLOAD_URL)   # the switch lives in build_pages.PCM_LIVE (one truth for cards + page); the URL must also be set. Everything "coming soon"/waitlist on this page keys off this.
 # 29 Sep 2026 (launch branch virgin-launch): the free Virgin email tools ship in 365 PC Manager v30. Every Virgin page's
-# download button (virgin_launch.py) uses THIS one link, so launch day changes it here and nowhere else. It does not
-# follow version.json on purpose: the installer version.json names today does not have the Virgin tools.
-PCM_SETUP_V30 = "/downloads/pcm/365-pc-manager-setup-v30.exe"
+# download button (virgin_launch.py) uses THIS one link. It was pinned to setup-v30 while version.json still named an
+# installer without the Virgin tools; since the v35 release (6 Oct 2026) the manifest's installer has them, so the
+# Virgin pages follow version.json like the app page (the name is kept for virgin_launch.py).
+PCM_SETUP_V30 = "/downloads/pcm/" + PCM_DOWNLOAD_URL.rsplit("/", 1)[-1]
 if not _os_pcm.path.exists(_os_pcm.path.join(_pcm_dir, PCM_SETUP_V30.rsplit("/", 1)[-1])):
     print("  NOTE: %s is not in downloads/pcm/ yet: the Virgin pages' download button 404s until it is." % PCM_SETUP_V30)
 
