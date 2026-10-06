@@ -183,7 +183,8 @@ const MODELS = {
     k.box(1, 1.8, 0.06, 0, 0.3, 1.31, shade(col, -0.2)).box(0.06, 1.8, 0.07, 0, 0.3, 1.32, trim);
     for (let q = -4; q <= 4; q++) { if (Math.abs(q) > 1) k.box(0.035, 2.25, 0.02, q * 0.26, 0.27, 1.31, shade(col, -0.14)); for (const sd of [-1, 1]) k.box(0.02, 2.25, 0.035, sd * 1.16, 0.27, q * 0.29, shade(col, -0.14)); }   // the planks
     k.box(2.34, 0.1, 2.64, 0, 2.1, 0, trim);   // a trim band under the roof
-    for (const sd of [-1, 1]) k.box(0.03, 0.5, 0.6, sd * 1.16, 1.3, -0.5, '#2a3a48').box(0.04, 0.6, 0.06, sd * 1.165, 1.25, -0.5, trim);   // a little window each side
+    for (const sd of [-1, 1]) k.box(0.03, 0.5, 0.6, sd * 1.16, 1.3, -0.5, v >= 6 ? '#ff9a2e' : '#2a3a48', 0, 0, 0, v >= 6 ? 'glow' : 'lit').box(0.04, 0.6, 0.06, sd * 1.165, 1.25, -0.5, trim);   // a little window each side (lit, at night)
+    if (v >= 6) k.box(0.9, 1.5, 0.05, 0, 0.35, 1.34, '#ff8a1e', 0, 0, 0, 'glow').box(0.2, 0.2, 0.2, 0, 2.15, 1.4, '#ffd27a', 0, 0, 0, 'glow').box(2.2, 0.02, 1.6, 0, 0.27, 2.2, '#7a4a1a', 0, 0, 0, 'glow');   // the door open on a warm room, a lamp over it, its light on the boards   // the door open, a lamp over it
   },
   brolly(k, v) {
     const cols = [['#e63946', '#ffffff'], ['#1d7fd6', '#ffffff'], ['#f4a261', '#2a9d8f'], ['#ffd23f', '#ee4266']][v % 4];
@@ -197,7 +198,8 @@ const MODELS = {
     if (!v) { const r = rnd(9); for (let i = 0; i < 10; i++) k.ball(0.09, (r() - 0.5) * 2, 1 + r() * 0.6, (r() - 0.5) * 1.6, ['#ff5fa2', '#ffd23f', '#ffffff', '#ff7b39'][i % 4], 1, 1, 1, 'lit', 5); }
   },
   hotel(k, v) {
-    const wall = ['#f2ead8', '#e9e2d6', '#f6efe0', '#dfe6ea'][v % 4], roof = ['#9a5b45', '#5a6670', '#8a4f3c', '#4f5d6a'][v % 4], fl = 5 + (v % 3);
+    if (v >= 4) return apartments(k, v);
+    const wall = ['#f2ead8', '#e9e2d6', '#f6efe0', '#dfe6ea'][v % 4], roof = ['#9a5b45', '#5a6670', '#8a4f3c', '#4f5d6a'][v % 4], fl = [5, 7, 6, 4][v % 4];
     const H = fl * 3.2, glass = ['#3d5a70', '#47627a', '#3a5566', '#4a6478'][v % 4], trim = '#f7f6f2', awn = ['#1d4e89', '#9b3a2c', '#1f6f50', '#2b2d42'][v % 4];
     k.box(22, H, 14, 0, 0, 0, wall).prism(15, 4, 23, 0, H, 0, roof, Math.PI / 2);
     k.box(22.7, 0.55, 14.7, 0, H - 0.2, 0, trim).box(22.3, 3.0, 14.3, 0, 0, 0, shade(wall, -0.07));   // the cornice; the ground floor a shade deeper
@@ -436,12 +438,20 @@ const MODELS = {
     for (let i = 0; i < 4; i++) { const x = -4.5 + i * 3; k.cyl(0.05, 0.06, 6, 6, x, 0, 0, '#d8dde2'); k.box(1.6, 1, 0.04, x + 0.82, 4.8, 0, ['#d32f2f', '#ffd23f', '#1d7fd6', '#2a9d8f', '#ffffff'][(i + v) % 5], 0, 0, 0.08); }
   },
   villa(k, v) {   // Sandbanks: a smart white house of stacked boxes, glass walls to the sea, a pool
-    const w = ['#f6f6f2', '#eef0f0', '#f4efe6', '#e8eef2'][v % 4], gl = '#3d6f8c';
+    const w = ['#f8f8f4', '#f2efe8', '#f6f2ea', '#eef0ee'][v % 4], gl = '#25323e';
     k.box(15, 4, 10, 0, 0, 0, w).box(10, 3.6, 8, v % 2 ? 2 : -2, 4, -0.6, w);
     k.box(14, 2.8, 0.15, 0, 0.6, 5.06, gl, 0, 0, 0, 'shiny').box(9, 2.6, 0.15, v % 2 ? 2 : -2, 4.5, 3.46, gl, 0, 0, 0, 'shiny');
     k.box(15.6, 0.28, 10.6, 0, 4, 0, '#d9d9d4').box(10.6, 0.28, 8.6, v % 2 ? 2 : -2, 7.6, -0.6, '#d9d9d4');
     k.box(15, 0.9, 0.06, 0, 4.28, 5.25, '#bcd7e6', 0, 0, 0, 'shiny');   // the glass balcony rail
-    k.box(7, 0.06, 3.2, -3, 0, 7.2, '#29b4dc', 0, 0, 0, 'shiny').box(7.6, 0.2, 3.8, -3, -0.05, 7.2, '#e7e2d6');   // the pool
+    k.box(7, 0.06, 3.2, -3, 0, 7.2, '#29b4dc', 0, 0, 0, 'shiny').box(7.6, 0.2, 3.8, -3, -0.05, 7.2, '#e7e2d6');
+    const ux = v % 2 ? 2 : -2;
+    for (const sd of [-1, 1]) { k.box(0.12, 2.2, 7, sd * 7.52, 0.9, 0, gl, 0, 0, 0, 'shiny').box(0.12, 2.0, 5, ux + sd * 5.02, 4.7, -0.6, gl, 0, 0, 0, 'shiny'); }   // windows round the sides
+    for (let i = 0; i < 12; i++) k.box(0.12, 2.8, 0.06, ux - 4.4 + i * 0.8, 4.4, 3.62, ['#c9a46a', '#8a8f96', '#d8d2c4', '#5a5f66'][v % 4]);   // a louvred sunshade over the upper glass
+    k.box(10.2, 0.9, 0.06, ux, 7.9, 3.45, '#bcd7e6', 0, 0, 0, 'shiny').cyl(0.05, 0.05, 2.2, 5, ux + 3, 7.9, 1, '#e8e4da');   // the roof terrace: its glass rail, a parasol
+    k.cone(1.6, 0.5, 8, ux + 3, 9.9, 1, ['#ffffff', '#1d3557', '#e9c46a', '#2a9d8f'][v % 4]);
+    k.box(17, 1.3, 0.4, 0, 0, 9.6, w).box(2.6, 1.4, 0.1, 5.5, 0, 9.75, '#5a5f66');   // the front wall, the gate
+    k.cyl(0.18, 0.28, 5.5, 6, 6.2, 0, 7.8, '#8a6a48');
+    for (let i = 0; i < 7; i++) { const a = i / 7 * Math.PI * 2; k.box(0.5, 0.06, 2.6, 6.2 + Math.cos(a) * 1.2, 5.4, 7.8 + Math.sin(a) * 1.2, '#3f8a3a', -a + Math.PI / 2, 0.45, 0); }   // a palm in the garden   // the pool
   },
   terrace(k, v) {   // Weymouth and Lyme: a tall painted house in a row along the front (its face +Z) - framed sash windows with sills, a bay
     // or an iron balcony on the first floor, a shopfront and awning on some, a cornice, the chimney stack and its pots
@@ -491,7 +501,7 @@ const MODELS = {
     const R = 80, n = 40, r = rnd(77);
     for (let i = 0; i < n; i++) {
       const a = -0.15 + i * 0.04, x = Math.sin(a) * R, z = R - Math.cos(a) * R, c = i % 3 ? '#a8a08c' : '#9e9682';
-      k.box(3.7, 6, 9, x, -3, z, c, -a).box(3.7, 1.5, 2, x + 3.6 * Math.sin(a), 3, z - 3.6 * Math.cos(a), shade(c, -0.08), -a);   // the arm, its parapet
+      k.box(3.7, 8, 10, x, -3, z, c, -a).box(3.7, 2.2, 2.2, x + 4 * Math.sin(a), 5, z - 4 * Math.cos(a), shade(c, -0.08), -a).box(3.7, 1.2, 3, x - 4.6 * Math.sin(a), 3.2, z + 4.6 * Math.cos(a), shade(c, 0.06), -a);   // the arm, its parapet, the step down inside
     }
     const ae = -0.15 + n * 0.04, hx = Math.sin(ae) * R, hz = R - Math.cos(ae) * R;
     k.cyl(6, 7, 7.5, 16, hx, -3, hz, '#a49c88').cyl(6.2, 6.2, 0.4, 16, hx, 4.5, hz, '#8e8774');   // the round head
@@ -541,10 +551,11 @@ const MODELS = {
     const sh = new THREE.Shape(), q = rnd(410 + v), j = (a) => a + (q() - 0.5) * 2;
     sh.moveTo(-28, 0); [[-27, 8], [-24, 15], [-18, 20.5], [-9, 23.5], [0, 24], [9, 23], [18, 20], [24, 14], [27.5, 7]].forEach(([x, y]) => sh.lineTo(j(x), j(y))); sh.lineTo(28, 0);
     sh.lineTo(14.8, 0); sh.lineTo(14.8, 3.5); sh.absarc(0, 3.5, 14.8, 0, Math.PI, false); sh.lineTo(-14.8, 0); sh.lineTo(-28, 0);   // (the opening clear of the boundary, 14.2 out)
-    const g = new THREE.ExtrudeGeometry(sh, { depth: 8, bevelEnabled: true, bevelThickness: 1.6, bevelSize: 1.4, bevelSegments: 2, curveSegments: 14 }); g.translate(0, 0, -4); g.computeVertexNormals();
+    const g = new THREE.ExtrudeGeometry(sh, { depth: 15, bevelEnabled: true, bevelThickness: 2.2, bevelSize: 1.4, bevelSegments: 2, curveSegments: 14 }); g.translate(0, 0, -7.5); g.computeVertexNormals();   // (deep: from the side a thin one read as a ring)
     k.put(g, '#d2c7ab', 0, 0, 0, 0, 0, 0, 1, 1, 1, 'lit');   // (plain weathered rock: the masonry texture made it a bridge)
-    for (const sd of [-1, 1]) for (let i = 0; i < 3; i++) k.blob(3.6 + q() * 2.2, sd * (21 + q() * 3), 2 + i * 4.5, (q() - 0.5) * 7, '#cfc4a8', 1, 1.2, 1, 430 + v * 9 + i + (sd > 0 ? 5 : 0));   // lumps on the legs
-    k.blob(9, 0, 22.9, 0, '#6f9a45', 1.9, 0.26, 0.72, 440 + v);   // grass on top (hugging the rock: wider and thinner, from below it read as a green line in the sky)
+    for (const sd of [-1, 1]) for (let i = 0; i < 4; i++) k.blob(3.8 + q() * 2.4, sd * (21 + q() * 3), 2 + i * 4.2, (q() - 0.5) * 13, '#cfc4a8', 1, 1.2, 1, 430 + v * 9 + i + (sd > 0 ? 5 : 0));   // lumps on the legs
+    for (let i = 0; i < 4; i++) k.blob(4 + q() * 2, (q() - 0.5) * 30, 20 + q() * 3, (q() - 0.5) * 12, '#d6ccb2', 1.3, 0.7, 1, 450 + v * 9 + i);   // and over the top
+    k.blob(9, 0, 22.6, 0, '#6f9a45', 1.8, 0.32, 1.0, 440 + v);   // grass on top (hugging the rock: wider and thinner, from below it read as a green line in the sky)
   },
   treearch(k, v) {   // old trees either side of the lane, their crowns meeting over the road: a green tunnel 60 m long to drive through.
     // The crowns are solid lumpy balls of leaves (leaf cards, seen from right underneath, showed as flat planks across the sky)
@@ -587,8 +598,8 @@ const MODELS = {
   marina(k, v) {   // a pontoon along the shore with yachts moored either side: a forest of masts (v 3+: at night, lit)
     const night = v >= 3, r = rnd(800 + v), wood = night ? '#4a4038' : '#9a8266';
     k.box(2, 0.3, 44, 0, 0.1, 0, wood);
-    for (let z = -20; z <= 20; z += 5) { for (const sd of [-1, 1]) k.box(4.6, 0.25, 0.7, sd * 3.3, 0.1, z, wood); for (const sd of [-1, 1]) k.cyl(0.16, 0.16, 2.2, 5, sd * 1.05, -1.4, z, '#3a3028'); }   // the fingers, the piles
-    for (let z = -17.5; z <= 17.5; z += 5) for (const sd of [-1, 1]) if (r() < 0.85) moored(k, sd * 1.2, z, sd * (8 + r() * 3), r, night);
+    for (let z = -20; z <= 20; z += 5) { k.box(4.6, 0.25, 0.7, 3.3, 0.1, z, wood); for (const sd of [-1, 1]) k.cyl(0.16, 0.16, 2.2, 5, sd * 1.05, -1.4, z, '#3a3028'); }   // the fingers, the piles
+    for (let z = -17.5; z <= 17.5; z += 5) for (const off of [0, 2.5]) if (r() < 0.85) moored(k, 1.2, z + off, 8 + r() * 3, r, night);   // (all out on the seaward side, +X)
     if (night) for (let z = -20; z <= 20; z += 10) k.box(0.2, 0.2, 0.2, 0, 1.2, z, '#ffe2a0', 0, 0, 0, 'glow').cyl(0.06, 0.06, 1, 4, 0, 0.3, z, '#2a2e36');
   },
   quaylight(k) { k.cyl(0.12, 0.16, 1.0, 6, 0, 0, 0, '#2a2e36').box(0.24, 0.24, 0.24, 0, 1.0, 0, '#ffe2a0', 0, 0, 0, 'glow'); },   // a lamp on the quay's edge
@@ -643,6 +654,45 @@ const MODELS = {
     }
     k.box(27, 0.8, 4, 0, 13.2, 0, '#d8dce0').box(27, 0.3, 4.1, 0, 13.0, 0, '#3ec1ff', 0, 0, 0, 'glow');   // the gantry over the road, lit underneath
   },
+  carpark(k, v) {   // a clifftop car park: gravel, a row of parked cars, a pay machine, people heading off for a walk
+    const r = rnd(1000 + v * 3), cols = ['#d62828', '#1d4ed8', '#f4f4f4', '#2b2d42', '#f2c14e', '#2a9d8f', '#8d99ae', '#e76f51'];
+    k.box(20, 0.08, 9, 0, -0.02, 0, '#bdb4a2');
+    for (let i = 0; i < 6; i++) { if (r() < 0.2) continue; const x = -8 + i * 3.2, c = cols[(r() * 8) | 0];
+      k.box(1.8, 0.75, 4.1, x, 0.32, 0, c, 0, 0, 0, 'shiny').box(1.6, 0.6, 2.1, x, 1.07, 0.2, shade(c, -0.1)).box(1.62, 0.45, 1.9, x, 1.12, 0.2, '#2a3a48', 0, 0, 0, 'shiny');
+      for (const [wx, wz] of [[-0.85, -1.3], [0.85, -1.3], [-0.85, 1.3], [0.85, 1.3]]) k.axle(0.33, 0.24, 10, x + wx, 0.33, wz, '#151515');
+      if (r() < 0.4) k.box(1.4, 0.4, 0.9, x, 1.67, 0.2, ['#c62828', '#e8e4da', '#3a3a3a'][(r() * 3) | 0]); }   // a roof box or bikes
+    k.box(0.5, 1.5, 0.4, 9.5, 0, 3.5, '#2a5a8a').box(0.4, 0.3, 0.06, 9.5, 1.1, 3.72, '#c8d8e8', 0, 0, 0, 'shiny');
+    for (let i = 0; i < 2 + (v % 2); i++) person(k, 7.5 + i * 0.8, 0, 5 + r(), r, false);
+  },
+  picnic(k, v) {   // a picnic table on the grass, a family sat round it
+    const r = rnd(1040 + v);
+    k.box(1.8, 0.08, 0.8, 0, 0.72, 0, '#9a7a52');
+    for (const sd of [-1, 1]) { k.box(1.8, 0.06, 0.3, 0, 0.42, sd * 0.68, '#8a6a48'); k.box(0.08, 0.72, 1.7, sd * 0.75, 0, 0, '#7a5c3c', 0, sd * 0.35, 0); }
+    for (let i = 0; i < 2 + (v % 2); i++) { const z = i % 2 ? 0.75 : -0.75; sitter(k, -0.5 + (i >> 1), 0.12, z, r); }
+    k.box(0.4, 0.3, 0.3, 0.3, 0.8, 0, '#d8c8a8');   // a hamper
+    if (v % 2) for (let i = 0; i < 1; i++) person(k, 2.0, 0, 0.8, r, true);
+  },
+  chairlift(k, v) {   // a clifftop chairlift crossing over the road: two lattice towers, the cables, open chairs with people riding
+    const r = rnd(1100 + v), steel = '#5a6470';
+    for (const sd of [-1, 1]) { const x = sd * 15.8;
+      for (const [dx, dz] of [[-0.7, -0.7], [0.7, -0.7], [-0.7, 0.7], [0.7, 0.7]]) k.box(0.18, 12, 0.18, x + dx * 0.6, 0, dz * 0.6, steel, 0, dx * 0.05, -dz * 0.05);
+      for (let y = 2; y < 12; y += 2.5) k.box(1.0, 0.1, 0.1, x, y, -0.45, steel).box(1.0, 0.1, 0.1, x, y, 0.45, steel);
+      k.box(1.2, 0.5, 4.6, x, 12, 0, '#c8462a'); }
+    for (const z of [-2, 2]) k.box(31.6, 0.06, 0.06, 0, 11.4 - (z > 0 ? 0.6 : 0), z, '#2a2a2a');
+    for (let i = 0; i < 6; i++) { const z = i % 2 ? 2 : -2, x = -12 + i * 4.8 + (r() - 0.5), y = 10.6 - (z > 0 ? 0.6 : 0);
+      k.box(0.05, 1.6, 0.05, x, y - 1.6, z, '#2a2a2a').box(1.3, 0.12, 0.6, x, y - 2.3, z, ['#2a9d8f', '#e9c46a', '#e76f51'][i % 3]).box(1.3, 0.6, 0.08, x, y - 2.3, z - 0.3, ['#2a9d8f', '#e9c46a', '#e76f51'][i % 3]);
+      if (r() < 0.75) { person(k, x - 0.25, y - 3.15, z, r, r() < 0.5); if (r() < 0.5) person(k, x + 0.3, y - 3.15, z, r, false); } }
+  },
+  craneway(k, v) {   // a quarry's travelling crane spanning the road: two braced legs, a girder across, the crab and hook, a block of stone hanging
+    const y0 = '#d9a400', rust = '#8a5a3a';
+    for (const sd of [-1, 1]) { const x = sd * 15.6;
+      k.box(0.6, 11, 0.6, x, 0, -2, y0).box(0.6, 11, 0.6, x, 0, 2, y0).box(0.3, 0.3, 4, x, 5.5, 0, y0).box(0.3, 4.6, 0.3, x, 3.2, 0, y0, 0, 0.8, 0);
+      k.box(1.4, 0.8, 5, x, 0, 0, '#3a3a3a'); }
+    k.box(33, 1.2, 1.2, 0, 11, -1.4, y0).box(33, 1.2, 1.2, 0, 11, 1.4, y0);
+    for (let x = -15; x <= 15; x += 2.5) k.box(0.15, 1.2, 2.6, x, 11, 0, y0, 0, 0.6, 0);
+    k.box(3, 1.6, 3.6, 4, 12.2, 0, rust).box(1.6, 1.2, 1.4, 4, 13.8, 0, '#2a3a48', 0, 0, 0, 'shiny');   // the crab, its cab
+    k.box(0.05, 3.2, 0.05, 4, 8, 0, '#2a2a2a').box(2.6, 1.4, 1.6, 4, 6.6, 0, '#e8e2d2', 0, 0.2, 0, 'stone');   // a block of Portland stone on the hook
+  },
   balloon(k, v) {   // a hot-air balloon, far off over the land
     const c = [['#e63946', '#ffd23f'], ['#1d7fd6', '#ffffff'], ['#2a9d8f', '#f4a261'], ['#9b5de5', '#ffd23f']][v % 4];
     for (let i = 0; i < 10; i++) k.put(new THREE.SphereGeometry(8, 3, 14, i * Math.PI / 5, Math.PI / 5), c[i % 2], 0, 16, 0, 0, 0, 0, 1, 1.22, 1);
@@ -651,7 +701,20 @@ const MODELS = {
     for (const [x, z] of [[-0.8, -0.8], [0.8, -0.8], [-0.8, 0.8], [0.8, 0.8]]) k.cyl(0.03, 0.03, 2.4, 3, x, 3.4, z, '#5a4a30');
   },
 };
-const capG = (r, l) => new THREE.CapsuleGeometry(r, l, 2, 7);   // (people and ponies come in crowds now: kept light)
+const capG = (r, l) => new THREE.CapsuleGeometry(r, l, 2, 7);
+function apartments(k, v) {   // a modern seafront block (its face +Z): white bands of balconies with glass fronts, a set-back top floor, coloured panels
+  const fl = 6 + (v % 3) * 2, H = fl * 3.0, gl = '#4a6a80', acc = ['#2a9d8f', '#e9c46a', '#e76f51', '#457b9d'][v % 4], wall = ['#f4f4f0', '#f2e2c0', '#e9b8a0', '#e8e4dc'][v % 4];
+  k.box(20, H, 13, 0, 0, 0, wall).box(16, 3, 10, 0, H, -1, wall).box(16.6, 0.3, 10.6, 0, H + 3, -1, '#d8d8d2');   // the block, the set-back penthouse
+  k.box(15.4, 2.4, 0.12, 0, H + 0.3, 4.05, gl, 0, 0, 0, 'shiny');
+  for (let f = 0; f < fl; f++) {
+    const y = f * 3.0;
+    k.box(20.6, 0.28, 2.0, 0, y + 0.02, 7.4, '#fbfbf8');   // the balcony slab
+    if (f) k.box(20.4, 0.95, 0.06, 0, y + 0.3, 8.35, '#bcd7e6', 0, 0, 0, 'shiny');   // its glass front
+    k.box(19.6, 2.3, 0.12, 0, y + 0.35, 6.55, f ? gl : '#3a4a58', 0, 0, 0, 'shiny');   // the glass wall behind
+    for (const x of [-6.5, 0, 6.5]) k.box(0.3, 3.0, 2.0, x, y, 7.4, f % 2 ? acc : wall);   // dividers, every other floor coloured
+  }
+  for (const sd of [-1, 1]) for (let f = 1; f < fl; f++) k.box(0.12, 1.6, 7, sd * 10.05, f * 3.0 + 0.7, -1, gl, 0, 0, 0, 'shiny');   // side windows in a band
+}   // (people and ponies come in crowds now: kept light)
 function ponyAt(k, x, z, col, s, graze) {   // a stocky forest pony, head to -Z: a round barrel of a body, slim legs, a dark mane and tail
   const dk = shade(col, -0.35);
   for (const [lx, lz] of [[-0.2, -0.55], [0.2, -0.55], [-0.2, 0.55], [0.2, 0.55]]) k.put(capG(0.06 * s, 0.72 * s), col, x + lx * s, 0.4 * s, z + lz * s).box(0.13 * s, 0.1 * s, 0.14 * s, x + lx * s, 0, z + lz * s, '#2a2420');

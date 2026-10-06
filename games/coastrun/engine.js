@@ -172,9 +172,9 @@
   }
   // tunnels, bridges and the things that span the road, somewhere in the middle of the stretch (never on a crest, a
   // gate or a fork). A bridge lifts the road to at least 9 m over the water, easing up to it and down again.
-  var OVERS = { bournemouth: ['pierarch', 'footbridge', 'banner'], sandbanks: ['banner', 'footbridge'], christchurch: ['treearch', 'footbridge'], purbeck: ['treearch', 'viaduct'], swanage: ['rockarch', 'treearch'],
+  var OVERS = { bournemouth: ['pierarch', 'footbridge', 'banner'], sandbanks: ['banner', 'footbridge'], christchurch: ['treearch', 'footbridge'], purbeck: ['treearch', 'viaduct'], swanage: ['footbridge', 'treearch'],
     forest: ['treearch', 'footbridge', 'treearch'], jurassic: ['rockarch', 'footbridge'], weymouth: ['banner', 'footbridge'], harbour: ['liftbridge', 'footbridge', 'banner'], lymington: ['treearch', 'banner'], lyme: ['banner', 'footbridge'],
-    portland: ['rockarch', 'footbridge'], goldencap: ['treearch', 'rockarch'], hengistbury: ['footbridge', 'treearch'], needles: ['rockarch', 'footbridge'] };   // what spans the road in each place
+    portland: ['craneway', 'footbridge'], goldencap: ['treearch', 'footbridge'], hengistbury: ['footbridge', 'treearch'], needles: ['chairlift', 'footbridge'] };   // what spans the road in each place (the natural arch only at Durdle Door, the one place that has one)
   function features(W, S, lo, hi, r) {
     var F = S.feat || {}, used = [], i, tries;
     function free(a, b) { if (a < lo || b > hi) return false; for (var u = 0; u < used.length; u++) if (a < used[u][1] + 50 && b > used[u][0] - 50) return false; for (var q = a; q < b; q++) if (segAt(W, q).crest) return false; return true; }
@@ -404,8 +404,8 @@
           onWater('yacht', 30, 140, 0.012, (r() * 3) | 0);
           break;
         case 'hengistbury':   // Hengistbury Head at twilight: the long row of beach huts on the spit, heath and the harbour
-          lamps(12, 1, true);
-          if (sh > 22 && k % 3 === 0 && land(s, 12.5)) put(W, i, 'hut', 12.5, 1.3, { v: (k / 3) % 6 });
+          lamps(7, 1, true);
+          if (sh > 18 && k % 3 === 0 && land(s, 12.5)) put(W, i, 'hut', 12.5, 1.3, { v: 6 + (k / 3) % 6 });   // (lit up: at night the head was a dark blank)
           if (r() < 0.05) put(W, i, ['gorse', 'heather'][(r() * 2) | 0], -(11.5 + r() * 20), 0.8, { soft: true, v: 1 });
           if (r() < 0.02) put(W, i, 'pine', -(14 + r() * 30), 0.7, { v: 0 });
           onWater('yacht', 20, 120, 0.03, 3 + ((r() * 3) | 0));

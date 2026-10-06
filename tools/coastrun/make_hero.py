@@ -14,6 +14,7 @@ def main():
     place, src, foot = sys.argv[1], sys.argv[2], float(sys.argv[3])
     x0, x1 = (float(sys.argv[4]), float(sys.argv[5])) if len(sys.argv) > 5 else (0.0, 1.0)
     sea, desat = len(sys.argv) > 6 and sys.argv[6] == '1', float(sys.argv[7]) if len(sys.argv) > 7 else 0.0
+    sfade, ffade = (float(sys.argv[8]), float(sys.argv[9])) if len(sys.argv) > 9 else (0.1, 0.16)   # how far in the sides and the foot fade out
     a = np.asarray(Image.open(src).convert('RGB')).astype(np.float32); h, w, _ = a.shape
     alpha, land = key_sky(a)
     if sea:
@@ -27,9 +28,10 @@ def main():
     c0, c1, yb = int(x0 * w), int(x1 * w), int(foot * h)
     top = max(0, int(land[c0:c1].min()) - 6)
     rgba = np.dstack([a, alpha * 255])[top:yb, c0:c1].copy(); hh, ww = rgba.shape[:2]
-    fy = np.clip((hh - np.arange(hh)) / (hh * 0.16), 0, 1) ** 1.5   # the foot fades out into the haze
-    fx = np.clip(np.minimum(np.arange(ww), ww - 1 - np.arange(ww)) / (ww * 0.1), 0, 1)   # and so do the two sides
-    rgba[..., 3] *= fy[:, None] * fx[None, :]
+    fy = np.clip((hh - np.arange(hh)) / (hh * ffade), 0, 1) ** 1.5   # the foot fades out into the haze
+    fx = np.clip(np.minimum(np.arange(ww), ww - 1 - np.arange(ww)) / (ww * sfade), 0, 1)   # and so do the two sides
+    low = np.clip((np.arange(hh) - hh * 0.55) / (hh * 0.45), 0, 1)[:, None]   # (low down, where a painted sea shows, the sides fade in further: no square corners)
+    rgba[..., 3] *= fy[:, None] * (fx[None, :] ** (1 + 2 * low))
     im = Image.fromarray(np.clip(rgba, 0, 255).astype(np.uint8), 'RGBA')
     if im.width > 1024: im = im.resize((1024, round(im.height * 1024 / im.width)), Image.LANCZOS)
     dst = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'games', 'coastrun', 'bg', 'hero-' + place + '.webp')
