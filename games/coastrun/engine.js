@@ -65,9 +65,9 @@
     // plain town streets for now, each built properly a level at a time (Winton and Charminster first)
     { key: 'winton', name: 'WINTON', seed: 7101, t: 66, len: 700, curvy: 0.5, hilly: 0.25, sea: 0, band: [30, 46], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (up Wimborne Road: Dean Park, Winton Banks, Moordown)
     { key: 'charminster', name: 'CHARMINSTER', seed: 7203, t: 66, len: 700, curvy: 0.5, hilly: 0.25, sea: 0, band: [28, 44], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Springbourne, Charminster Road, Queens Park)
-    { key: 'kinson', name: 'KINSON', seed: 7307, t: 66, len: 700, curvy: 0.55, hilly: 0.3, sea: 0, band: [20, 40], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Redhill, the village green, St Andrew's)
-    { key: 'muscliff', name: 'MUSCLIFF & THROOP', seed: 7411, t: 68, len: 710, curvy: 0.6, hilly: 0.3, sea: 0, band: [8, 30], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Castle Lane West, Throop Mill, the Stour)
-    { key: 'littledown', name: 'LITTLEDOWN', seed: 7513, t: 66, len: 700, curvy: 0.5, hilly: 0.25, sea: 0, band: [15, 35], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Castlepoint, the hospital, Littledown Centre)
+    { key: 'kinson', name: 'KINSON', seed: 7307, t: 66, len: 700, curvy: 0.55, hilly: 0.3, sea: 0, band: [20, 40], bands: [[0, [28, 40]], [0.3, [22, 32]], [0.66, [18, 34]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Redhill, the village green, St Andrew's)
+    { key: 'muscliff', name: 'MUSCLIFF & THROOP', seed: 7411, t: 68, len: 710, curvy: 0.6, hilly: 0.3, sea: 0, band: [8, 30], bands: [[0, [18, 30]], [0.32, [12, 24]], [0.62, [3, 8]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Castle Lane West, Throop Mill, the Stour)
+    { key: 'littledown', name: 'LITTLEDOWN', seed: 7513, t: 66, len: 700, curvy: 0.5, hilly: 0.25, sea: 0, band: [15, 35], bands: [[0, [20, 30]], [0.33, [15, 28]], [0.66, [12, 24]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Castlepoint, the hospital, Littledown Centre)
     { key: 'towerpark', name: 'TOWER PARK', seed: 7617, t: 68, len: 710, curvy: 0.55, hilly: 0.3, sea: 0, band: [20, 40], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Ringwood Road, Mannings Heath, the leisure park)
     { key: 'bearcross', name: 'BEAR CROSS', seed: 7719, t: 68, len: 710, curvy: 0.55, hilly: 0.3, sea: 0, band: [25, 45], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (the roundabout, Bearwood, Magna Road)
     { key: 'hurn', name: 'HURN AIRPORT', seed: 7823, t: 68, len: 710, curvy: 0.6, hilly: 0.2, sea: 0, band: [8, 20], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Holdenhurst, Hurn, Bournemouth Airport)
@@ -326,6 +326,21 @@
       if (wide) { if (/^(lamp|hut|brolly|board|finger|forestsign|warn|chev|villa|terrace|clock)$/.test(t)) return null; xx += (xx < 0 ? -1 : 1) * wide; }
       return putAt(W2, j, t, xx, h, o);
     }
+    var STREET = {   // (fraction ends, then: side = a side street every so many segments; car, tree, bin = how often)
+      winton: [[0.25, { car: 0.16, tree: 0.16, side: 70 }], [0.66, { car: 0.3, bin: 0.05, side: 56 }], [1.01, { car: 0.22, tree: 0.12, side: 60 }]],   // (the owner's videos: cars all along the kerbs)
+      charminster: [[0.3, { car: 0.22, tree: 0.1, side: 60 }], [0.7, { car: 0.32, bin: 0.05, side: 52 }], [1.01, { car: 0.18, tree: 0.14, side: 66 }]],
+      kinson: [[0.3, { car: 0.18, tree: 0.12, side: 62 }], [0.66, { car: 0.26, bin: 0.05, side: 50 }], [1.01, { tree: 0.05, side: 90 }]],
+      muscliff: [[0.32, { car: 0.06, tree: 0.18, side: 72 }], [0.62, { car: 0.2, tree: 0.1, side: 46 }], [1.01, {}]],
+      littledown: [[0.33, { side: 80 }], [0.66, { tree: 0.12, side: 96 }], [1.01, { tree: 0.06, side: 100 }]]
+    };
+    function street() {   // the town: side streets going off (a traffic light on some), cars parked at the kerb between the lamps, street trees, bins
+      var Z = STREET[S.key]; if (!Z) return; var f = k / Math.max(1, to - from), o = null; for (var q = 0; q < Z.length; q++) if (f < Z[q][0]) { o = Z[q][1]; break; } if (!o) return;
+      if (o.side && k % o.side === (o.side >> 1)) { put(W, i, 'junction', (((k / o.side) | 0) % 2 ? 1 : -1) * (HALF + RUMBLE), 0, { v: (k / o.side) | 0 }); return; }
+      var m = k % 8, nearSide = o.side && Math.abs(k % o.side - (o.side >> 1)) <= 4;
+      if (o.car && !nearSide && m >= 2 && m <= 6 && r() < o.car) put(W, i, 'parkedcar', (r() < 0.5 ? -1 : 1) * 9.4, 1.0, { v: (r() * 8) | 0 });
+      if (o.tree && !nearSide && m === 4 && r() < o.tree * 4) put(W, i, 'streettree', (r() < 0.5 ? -1 : 1) * 13.5, 0.4, { v: (r() * 4) | 0 });
+      if (o.bin && !nearSide && r() < o.bin) put(W, i, 'bin', (r() < 0.5 ? -1 : 1) * 13.9, 0.3);
+    }
     function lamps(every, v, onSea) { if (k % every === 0) { if (land(s, -9.8) || (onSea && s.brg)) put(W, i, 'lamp', -9.8, 0.25, { v: v }); if (land(s, 9.8) || (onSea && s.brg)) put(W, i, 'lamp', 9.8, 0.25, { v: v }); } }
     function onWater(t, d0, d1, p, v) { if (r() < p) { x = sea * (sh + d0 + r() * d1); if (water(s, x)) put(W, i, t, x, 0, { v: v }); } }
     function onLand(t, d0, d1, p, h, o) { if (r() < p) { x = landSide * (d0 + r() * d1); if (land(s, x)) put(W, i, t, x, h, o); } }
@@ -425,11 +440,19 @@
           break;
         case 'winton': case 'charminster': {   // Wimborne Road through Winton (by day); Charminster Road (at night, as the owner filmed it): street lamps,
           // a bus stop every so often, either side (the houses, shops and pavements: world3d.js)
-          lamps(8, 0, false);
+          lamps(8, 0, false); street();
           if (k % 44 === 22) put(W, i, 'busstop', ((k / 44) | 0) % 2 ? 15.0 : -15.0, 0, { v: S.key === 'winton' ? 1 : 0 });
           break;
         }
-        case 'kinson': case 'muscliff': case 'littledown': case 'towerpark': case 'bearcross': case 'hurn': case 'wimborne': case 'ferndown': case 'highcliffe':
+        case 'kinson': case 'muscliff': case 'littledown': {   // Kinson (Redhill, the village, the common); Muscliff and down to Throop Mill on the Stour;
+          // Castle Lane East past Castlepoint and the hospital to Littledown (their houses and parks: world3d.js; their landmarks: below)
+          var fk = k / Math.max(1, to - from), rural = S.key === 'muscliff' && fk >= 0.62;
+          if (!rural) { lamps(8, 0, false); street(); if (k % 46 === 23 && !(S.key === 'littledown' && fk < 0.33)) put(W, i, 'busstop', ((k / 46) | 0) % 2 ? 15.0 : -15.0, 0, { v: 1 }); }
+          else if (k % 2 === 0) put(W, i, 'riverseg', 25 + Math.sin(k / 23) * 4, 0, { v: (k / 2) % 9 });   // the Stour beside the lane, meandering
+          if (S.key === 'littledown' && fk < 0.33 && k % 6 === 3) for (var yl of [24, 46]) put(W, i, 'ylamp', (k % 12 === 3 ? 1 : -1) * yl, 0.3);   // Castlepoint's car parks
+          break;
+        }
+        case 'towerpark': case 'bearcross': case 'hurn': case 'wimborne': case 'ferndown': case 'highcliffe':
           lamps(8, 0, false);   // the local run, plain for now: street lamps both sides (its houses and gardens: world3d.js)
           break;
         case 'lymington': {   // in three parts (world3d.js ZONES): the Georgian town on its quay, the river's marinas and the island ferry, then
@@ -554,6 +577,20 @@
       var wb = straightest(0.3, 0.4, 40, 10); if (wb >= 0) putAt(W, wb, 'cornerbank', -21, 0, {});
       mark('brickchurch', 0.45, function () { return 23; }); mark('moderne', 0.55, function () { return -23; }); mark('policestn', 0.68, function () { return 23; });
       [[0.38, 0.47], [0.56, 0.64]].forEach(function (w) { var zj = straightest(w[0], w[1], 8, 8); if (zj >= 0) { putAt(W, zj, 'zebra', 0, 0, {}); segAt(W, zj).zebra = true; } });   // (on the straight: a banked bend buried half the stripes)
+    }
+    if (S.key === 'kinson') {   // St Andrew's in its churchyard by the village; the community centre at Pelhams Park; a zebra in the village
+      var kc = straightest(0.4, 0.56, 40, 10); if (kc >= 0) putAt(W, kc, 'kinsonchurch', -25, 0, {});
+      mark('commcentre', 0.8, function () { return 27; });
+      var kz = straightest(0.34, 0.4, 8, 8); if (kz >= 0) { putAt(W, kz, 'zebra', 0, 0, {}); segAt(W, kz).zebra = true; }
+    }
+    if (S.key === 'muscliff') {   // Throop Mill on the Stour, at the end of the lane
+      var tm = straightest(0.68, 0.78, 40, 10); if (tm >= 0) putAt(W, tm, 'throopmill', 27, 0, {});   // (well before the fork: at the end its gantry hid it)
+    }
+    if (S.key === 'littledown') {   // Castlepoint across its car park; the Royal Bournemouth Hospital's blue roofs (the Accident Centre first);
+      // the Littledown Centre, the park's lake, the bank's glass offices among the pines
+      var cp = straightest(0.08, 0.2, 50, 10); if (cp >= 0) putAt(W, cp, 'castlepoint', 78, 0, {});
+      [[0.38, 0], [0.46, 1], [0.54, 2], [0.6, 4]].forEach(function (h) { mark('rbhospital', h[0], function () { return 36; }, h[1]); });
+      mark('leisurecentre', 0.72, function () { return 32; }); mark('lakegeese', 0.8, function () { return -42; }); mark('glassoffice', 0.88, function () { return 40; }, 0); mark('glassoffice', 0.93, function () { return -44; }, 1);
     }
     if (S.key === 'charminster') {   // The Richmond on the corner; zebra crossings along the restaurants
       var rp = straightest(0.44, 0.56, 40, 10); if (rp >= 0) putAt(W, rp, 'richmondpub', 21.5, 0, {});

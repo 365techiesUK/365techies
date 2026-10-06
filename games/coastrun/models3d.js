@@ -1454,6 +1454,132 @@ const MODELS = {
       k.ball(0.3, x, 2.95, -1.6, '#ffae1a', 1, 1, 1, 'glow', 10);
     }
   },
+  kinsonchurch(k) {   // St Andrew's, Kinson (its face +Z): the old smugglers' church - a squat square tower of rust-brown heathstone with
+    // battlements and a clock face (no numbers), the nave and porch of the same stone under red tiles, gravestones in the grass
+    const H = '#8a5634', H2 = '#7a4a2c', T = '#9a4a34', r = rnd(6300);
+    k.box(6.6, 15, 6.6, 9, 0, 0, H, 0, 0, 0, 'stone');
+    for (let i = 0; i < 5; i++) for (const [x, z] of [[9 - 2.7 + i * 1.35, 3.1], [9 - 2.7 + i * 1.35, -3.1], [9 - 3.1, -2.7 + i * 1.35], [9 + 3.1, -2.7 + i * 1.35]]) k.box(0.8, 1.0, 0.8, x, 15, z, H2, 0, 0, 0, 'stone');   // the battlements
+    for (const y of [5, 10]) k.box(6.9, 0.3, 6.9, 9, y, 0, H2, 0, 0, 0, 'stone');
+    k.cyl(0.9, 0.9, 0.12, 14, 9, 11.2, 3.33, '#f2efe6', Math.PI / 2).box(0.06, 0.6, 0.05, 9, 11.4, 3.42, '#1a1a1a').box(0.45, 0.06, 0.05, 9.2, 11.75, 3.42, '#1a1a1a');   // the clock
+    k.box(1.0, 2.4, 0.14, 9, 7.2, 3.32, '#2a2a2a', 0, 0, 0, 'shiny').box(1.4, 2.4, 0.14, 9, 0, 3.34, '#4a3020');   // a window, the west door
+    k.box(16, 6.4, 8.4, -2.5, 0, 0, H, 0, 0, 0, 'stone').prism(9.2, 4.4, 16.4, -2.5, 6.4, 0, T, Math.PI / 2);   // the nave, red tiles
+    for (const x of [-7.5, -3, 1.5]) k.box(1.0, 2.6, 0.14, x, 2.2, 4.22, '#2b3540', 0, 0, 0, 'shiny');
+    k.box(3.2, 3.2, 3, -2.5, 0, 5.4, H2, 0, 0, 0, 'stone').prism(3.6, 1.8, 3.4, -2.5, 3.2, 5.4, T, 0);   // the porch
+    for (let i = 0; i < 18; i++) { const x = -14 + r() * 28, z = 8 + r() * 9; k.box(0.7, 0.7 + r() * 0.5, 0.15, x, 0, z, ['#9a9a94', '#8a8680', '#a8a49c'][i % 3], (r() - 0.5) * 0.2); }
+    k.box(34, 1.0, 0.5, 0, 0, 18, '#7a5a3c', 0, 0, 0, 'stone');   // the churchyard wall
+    for (const [x, z] of [[-16, 2], [17, 8]]) k.cyl(0.35, 0.5, 4, 6, x, 0, z, '#4a3a2a').clump(3.4, x, 6.4, z, '#203c26', 6310 + x).clump(2.6, x + 0.8, 9, z, '#284a2e', 6320 + x);   // yews
+  },
+  flatparade(k, v) {   // a 1960s shopping parade (Kinson; its face +Z): two floors of flats over the shops, a flat roof, long windows and
+    // balconies, buff or brown brick, the shops' fascias (no lettering) under a deep concrete canopy
+    const B = ['#b8946a', '#8a5a3c', '#c8b090', '#9a6a4a'][v % 4], r = rnd(6400 + v), W = 16, FAS = ['#2f6a4a', '#1d3557', '#7a1f2b', '#c9a227', '#3a5a7a', '#c62828'];
+    k.box(W, 9.6, 10, 0, 0, 0, B, 0, 0, 0, 'stone').box(W + 0.4, 0.5, 10.4, 0, 9.6, 0, '#d8d4cc');
+    k.box(W + 0.6, 0.45, 2.4, 0, 3.6, 5.6, '#d8d4cc');   // the canopy over the pavement
+    for (let i = 0; i < 3; i++) { const x = -W / 3 + i * W / 3; k.box(W / 3 - 0.6, 0.6, 0.2, x, 3.0, 5.06, FAS[(v + i) % 6]).box(W / 3 - 1.4, 2.4, 0.12, x - 0.3, 0.4, 5.04, '#2a3440', 0, 0, 0, 'shiny'); }
+    for (const y of [4.6, 7.2]) { k.box(W - 1, 1.5, 0.12, 0, y, 5.04, '#2a3440', 0, 0, 0, 'shiny'); for (let i = 0; i < 4; i++) k.box(0.15, 1.6, 0.16, -W / 2 + 0.5 + i * (W - 1) / 3, y, 5.06, '#f4f4f0'); }   // the flats' long windows
+    if (v % 2) for (const x of [-4, 4]) k.box(3.4, 0.15, 1.2, x, 6.6, 5.6, '#d8d4cc').box(3.4, 0.9, 0.08, x, 6.75, 6.2, '#5a6068');   // balconies
+  },
+  commcentre(k) {   // Kinson's community centre at Pelhams Park (its face +Z): a long low white building, a dark blue band along its front
+    // (its name left off), a glazed entrance, the park's lawn and trees about it
+    k.box(26, 5, 12, 0, 0, 0, '#f2f2ee').box(26.4, 0.4, 12.4, 0, 5, 0, '#c8ccd0').box(16, 1.2, 0.14, -2, 3.6, 6.06, '#1d3a8a');
+    for (let i = 0; i < 7; i++) k.box(1.6, 1.8, 0.12, -11 + i * 3.4, 1.2, 6.05, '#2a3440', 0, 0, 0, 'shiny');
+    k.box(4, 3, 2, 8, 0, 7, '#e8e8e2').box(3.4, 2.4, 0.12, 8, 0.1, 8.02, '#2a3440', 0, 0, 0, 'shiny');
+    k.blob(22, 0, -2.4, 14, '#5e9a3e', 1.4, 0.12, 0.8, 6501, { smooth: true });
+  },
+  throopmill(k) {   // Throop Mill on the Stour (its face +Z, to the lane; the river behind it, along X): a tall red-brick flour mill, three
+    // storeys and an attic, slate roof, the white boarded hoist gable jutting from the top, a white painted band (its name left off),
+    // white doors; the millpond and weir below, a willow
+    const B = '#a4462f', R = '#4c5058', W = '#f2efe6';
+    k.box(18, 11, 11, 0, 0, 0, B, 0, 0, 0, 'stone').prism(12, 4.6, 18.4, 0, 11, 0, R, Math.PI / 2);
+    k.box(3, 3, 2, -3, 11.4, 5.4, W).prism(3.4, 1.6, 2.4, -3, 14.4, 5.4, R, 0);   // the lucam, the hoist gable
+    k.box(12, 1.2, 0.14, 3, 7.6, 5.56, W);   // the painted band (left blank)
+    for (const y of [1.6, 4.8, 8.4]) for (const x of [-6.5, -2, 5, 7.5]) k.box(1.2, 1.6, 0.14, x, y, 5.56, '#2a3440', 0, 0, 0, 'shiny');
+    k.box(2.2, 3.2, 0.16, 1.6, 0, 5.58, W).box(2.0, 2.6, 0.16, -3, 3.6, 5.58, W);   // the doors
+    k.box(30, 0.3, 14, 0, -1.2, -13, '#4a7a8a', 0, 0, 0, 'shiny').box(0.8, 1.0, 14, -6, -1.2, -13, '#8a8478', 0, 0, 0, 'stone');   // the millpond, the weir
+    k.cyl(0.5, 0.7, 4, 6, 12, 0, -6, '#5a4632'); for (let i = 0; i < 6; i++) k.clump(2.6, 12 + Math.cos(i) * 2, 5 + (i % 3) * 1.2, -6 + Math.sin(i) * 2, ['#7a9a4a', '#8aa856'][i % 2], 6600 + i);   // a willow
+  },
+  riverseg(k, v) {   // a stretch of the River Stour beside the lane (along Z): dark slow water between grassy banks, reeds along the edges,
+    // a willow or an alder now and then
+    const r = rnd(6700 + v);
+    k.box(15.6, 0.3, 10.4, 0, -0.1, 0, '#5a7a44').box(14, 0.2, 9.4, 0, 0.12, 0, '#3a6a78', 0, 0, 0, 'shiny');   // its grassy banks, the water (proud of the meadow's bumps: lower, the ground hid it)
+    for (let i = 0; i < 5; i++) k.card(1.6, 1.3, (r() < 0.5 ? -6.6 : 6.6) + (r() - 0.5), 0.1, (r() - 0.5) * 8, ['#a8a060', '#7a9a4a'][i % 2], r() * 3, 0, 'grass', 'up');
+    if (v % 3 === 0) { const x = (r() < 0.5 ? -1 : 1) * 8.5; k.cyl(0.35, 0.5, 3.4, 6, x, -0.2, 0, '#5a4632'); for (let i = 0; i < 4; i++) k.clump(2.2, x + (r() - 0.5) * 2, 4 + i * 0.8, (r() - 0.5) * 2, ['#6a8a42', '#7a9a4a'][i % 2], 6710 + v * 5 + i); }
+  },
+  estatehouse(k, v) {   // 1970s-80s estate houses (Muscliff, Littledown; their face +Z): a short terrace or a pair in brown or red brick, dark
+    // concrete-tiled roofs, white windows, a garage or a car, little open-plan front lawns
+    const B = ['#8a5a3c', '#9a4a34', '#a8784e', '#7a4a32'][v % 4], T = ['#4a4440', '#5a4a44', '#3e3a38'][v % 3], n = 2 + (v % 2), r = rnd(6800 + v);
+    for (let i = 0; i < n; i++) {
+      const x = (i - (n - 1) / 2) * 6.4;
+      k.box(6.2, 5.6, 8, x, 0, 0, B, 0, 0, 0, 'stone');
+      k.box(2.2, 1.2, 0.12, x - 1.3, 1.0, 4.03, '#f4f4f0').box(2.0, 1.0, 0.13, x - 1.3, 1.1, 4.04, '#2a3440', 0, 0, 0, 'shiny');
+      k.box(2.6, 1.2, 0.12, x, 3.4, 4.03, '#f4f4f0').box(2.4, 1.0, 0.13, x, 3.5, 4.04, '#2a3440', 0, 0, 0, 'shiny');
+      k.box(1.0, 2.1, 0.12, x + 1.8, 0, 4.03, ['#f4f4f0', '#2f5a3a', '#7a1f2b', '#1d3557'][(v + i) % 4]);
+    }
+    k.prism(9, 3.2, n * 6.4 + 0.4, 0, 5.6, 0, T, Math.PI / 2);
+    k.blob(10, 0, -1.0, 7.6, '#6aa848', n * 0.34, 0.1, 0.32, 6810 + v, { smooth: true });   // the lawns
+    if (r() < 0.6) { const c = ['#c62828', '#e8e8e8', '#1d3557', '#2a2a2a', '#7a8a9a'][v % 5], x = (n - 1) / 2 * 6.4; k.box(1.8, 0.8, 4.2, x, 0.3, 8.4, c, 0, 0, 0, 'shiny').box(1.6, 0.6, 2.2, x, 1.1, 8.2, '#2a3440', 0, 0, 0, 'shiny'); }
+  },
+  castlepoint(k) {   // Castlepoint shopping centre (its face +Z, to the road across its car park): a long low run of big stores in white and
+    // grey cladding under one sweeping white canopy on slender posts, glass fronts, the anchor store's tall white gable (no lettering)
+    const W = '#eef0f2', G = '#c4c8cc';
+    k.box(140, 9, 30, 0, 0, 0, G).box(140.4, 0.6, 30.4, 0, 9, 0, W);
+    for (let i = 0; i < 10; i++) k.box(12, 6, 0.14, -63 + i * 14, 0.3, 15.04, '#2a3440', 0, 0, 0, 'shiny').box(12.4, 1.4, 0.2, -63 + i * 14, 6.8, 15.1, ['#1d3557', '#2f6a4a', '#c62828', '#3a5a7a', '#5a2a6a'][i % 5]);
+    const cv = new THREE.CylinderGeometry(9, 9, 142, 18, 1, true, Math.PI * 0.12, Math.PI * 0.42); k.put(cv, W, 0, 7, 22, 0, 0, Math.PI / 2, 1, 0.5, 1, 'lit');   // the sweeping canopy
+    for (let i = 0; i < 12; i++) k.cyl(0.18, 0.18, 8, 6, -66 + i * 12, 0, 24.5, W);
+    k.box(26, 14, 2, 52, 0, 15.5, W).prism(2.4, 3, 26.4, 52, 14, 15.5, W, Math.PI / 2);   // the anchor store's gable
+  },
+  ylamp(k) {   // a tall car-park lamp post with two curved arms (Castlepoint)
+    k.cyl(0.14, 0.2, 10, 6, 0, 0, 0, '#d8dce0');
+    for (const sd of [-1, 1]) k.box(3.2, 0.14, 0.14, sd * 1.5, 10.2, 0, '#d8dce0', 0, 0, sd * 0.35).box(0.9, 0.18, 0.5, sd * 3, 10.6, 0, '#f4f4f0', 0, 0, 0, 'glow');
+  },
+  rbhospital(k, v) {   // a wing of the Royal Bournemouth Hospital (its face +Z): long, two or three storeys, white with bands of windows, a
+    // bright blue metal roof (its sign), blue gables; v 0: the Accident Centre entrance with its red canopy
+    const n = 2 + (v % 2), L = 38 + (v % 3) * 6, B = '#f2f2ee', BL = '#2a7ad8';
+    k.box(L, n * 3.6, 16, 0, 0, 0, B);
+    for (let f = 0; f < n; f++) { k.box(L - 2, 1.4, 0.12, 0, 1.0 + f * 3.6, 8.04, '#2a3440', 0, 0, 0, 'shiny'); k.box(L - 2, 0.25, 0.14, 0, 2.6 + f * 3.6, 8.06, '#b8443a'); }   // the window bands, a red line under each
+    k.prism(17, 3.6, L + 0.6, 0, n * 3.6, 0, BL, Math.PI / 2);   // the blue roof
+    for (const x of [-L / 3, L / 3]) k.prism(0.8, 3.6, 7, x, n * 3.6, 8.2, BL, 0).box(6, 1.6, 1.2, x, n * 3.6 - 1.6, 8.2, B);   // blue gables
+    if (v % 3 === 0) { k.box(14, 0.5, 6, 0, 3.2, 11, '#c62828').box(12, 3.0, 0.14, 0, 0, 8.06, '#2a3440', 0, 0, 0, 'shiny'); for (const x of [-6.5, 6.5]) k.cyl(0.15, 0.15, 3.2, 6, x, 0, 13.6, '#d8dce0'); }   // the Accident Centre
+  },
+  leisurecentre(k) {   // the Littledown Centre (its face +Z): a big sports hall in buff brick with a curved metal roof and a band of blue
+    // cladding, a glazed entrance block, flags out front
+    const Bk = '#c8a878';
+    k.box(44, 10, 30, 0, 0, -4, Bk, 0, 0, 0, 'stone').box(44.4, 2, 30.4, 0, 8, -4, '#3a6ab8');
+    k.put(new THREE.CylinderGeometry(22, 22, 30.4, 16, 1, false, -Math.PI / 2 * 0.55, Math.PI * 0.55), '#b8c0c8', 0, 4.2, -4, Math.PI / 2, 0, 0, 1, 0.45, 1);
+    k.box(18, 6, 6, -8, 0, 13, '#e8ecee').box(16, 4.6, 0.14, -8, 0.4, 16.02, '#2a3440', 0, 0, 0, 'shiny');
+    for (const x of [6, 9, 12]) k.cyl(0.07, 0.07, 9, 5, x, 0, 18, '#d8dce0').box(0.05, 1.2, 1.8, x, 7.4, 18.9, ['#2a7ad8', '#2f8a4a', '#c62828'][(x / 3) % 3]);
+  },
+  glassoffice(k, v) {   // an office block of the big bank's campus at Littledown (its face +Z): four storeys of blue glass curtain wall between
+    // white bands, a flat roof, among pines
+    const L = 34 + (v % 2) * 10;
+    k.box(L, 15, 18, 0, 0, 0, '#3a6a9a', 0, 0, 0, 'shiny');
+    for (let f = 0; f <= 4; f++) k.box(L + 0.3, 0.45, 18.3, 0, f * 3.6, 0, '#eef0f2');
+    for (let i = 0; i <= L / 4; i++) k.box(0.12, 15, 18.2, -L / 2 + i * 4, 0, 0, '#9ab0c4');
+  },
+  lakegeese(k, v) {   // the lake in Littledown park: still water, reeds round it, a few geese and ducks on it
+    const r = rnd(6900 + v);
+    k.blob(16, 0, -2.6, 0, '#4a7a8a', 1.6, 0.17, 1.0, 6901 + v, { smooth: true });
+    for (let i = 0; i < 10; i++) { const a = r() * 6.28; k.card(1.5, 1.2, Math.cos(a) * 24, 0.5, Math.sin(a) * 15, ['#a8a060', '#7a9a4a'][i % 2], r() * 3, 0, 'grass', 'up'); }
+    for (let i = 0; i < 6; i++) { const x = (r() - 0.5) * 30, z = (r() - 0.5) * 16; k.ball(0.35, x, 0.25, z, i % 2 ? '#6a5a4a' : '#d8d4c8', 1, 0.7, 1.5, 'lit', 6).ball(0.12, x, 0.62, z - 0.4, '#1a1a1a', 1, 1, 1, 'lit', 5); }
+  },
+  parkedcar(k, v) {   // a car parked at the kerb (along Z): any colour, plain - no make
+    const c = ['#c62828', '#e8e8e8', '#1d3557', '#2a2a2a', '#7a8a9a', '#3a6a3a', '#c9a227', '#5a6a8a'][v % 8];
+    k.box(1.8, 0.75, 4.3, 0, 0.3, 0, c, 0, 0, 0, 'shiny').box(1.62, 0.62, 2.3, 0, 1.05, 0.1, '#2a3440', 0, 0, 0, 'shiny').box(1.64, 0.12, 2.2, 0, 1.62, 0.1, c, 0, 0, 0, 'shiny');
+    for (const [x, z] of [[-0.82, -1.4], [0.82, -1.4], [-0.82, 1.4], [0.82, 1.4]]) k.axle(0.32, 0.24, 10, x, 0.32, z, '#1a1a1a');
+  },
+  junction(k, v) {   // a side street going off (its mouth on the main road at z 0, running away along +X): tarmac, kerbs, give-way lines
+    // across its mouth, its name plate (blank) on two posts, a traffic light on the corner on some
+    k.box(40, 0.06, 7, 20, -0.02, 0, '#5c6066').box(40, 0.16, 0.4, 20, 0, -3.7, '#b8b4aa').box(40, 0.16, 0.4, 20, 0, 3.7, '#b8b4aa');
+    for (let i = 0; i < 7; i++) k.box(0.15, 0.03, 0.6, 1.2, 0.05, -2.7 + i * 0.85, '#f4f4f2');   // give way
+    k.box(0.15, 0.03, 6.4, 0.6, 0.05, 0, '#f4f4f2');
+    k.box(0.08, 1.0, 0.08, 2.2, 0, -4.4, '#2a2a2a').box(0.08, 1.0, 0.08, 2.2, 0, -5.6, '#2a2a2a').box(0.06, 0.4, 1.4, 2.2, 0.9, -5.0, '#f4f4f2');   // the name plate (blank)
+    if (v % 2 === 0) { k.cyl(0.08, 0.08, 3.2, 6, 0.4, 0, -4.2, '#2a2a2a').box(0.36, 1.0, 0.3, 0.4, 3.2, -4.2, '#1a1a1a'); for (const [y, c] of [[3.95, '#ff3030'], [3.65, '#ffb020'], [3.35, '#30e060']]) k.ball(0.1, 0.25, y, -4.2, c, 1, 1, 0.5, y > 3.9 ? 'glow' : 'lit', 6); }
+  },
+  streettree(k, v) {   // a street tree in the pavement (a lime or a plane): a slim trunk in a grille, a rounded crown
+    const r = rnd(7000 + v);
+    k.box(1.2, 0.05, 1.2, 0, 0, 0, '#3a3a3a').cyl(0.16, 0.22, 3.6, 6, 0, 0, 0, '#6a5a44');
+    for (let i = 0; i < 5; i++) k.clump(1.5 + r() * 0.5, (r() - 0.5) * 1.6, 4.4 + r() * 1.6, (r() - 0.5) * 1.6, ['#4e8a3a', '#5a9a42', '#6aa848'][i % 3], 7010 + v * 7 + i);
+  },
+  bin(k) { k.cyl(0.32, 0.28, 0.95, 8, 0, 0, 0, '#2a2e36').cyl(0.35, 0.35, 0.08, 8, 0, 0.95, 0, '#c9a227'); },   // a litter bin
   balloon(k, v) {   // a hot-air balloon, far off over the land
     const c = [['#e63946', '#ffd23f'], ['#1d7fd6', '#ffffff'], ['#2a9d8f', '#f4a261'], ['#9b5de5', '#ffd23f']][v % 4];
     for (let i = 0; i < 10; i++) k.put(new THREE.SphereGeometry(8, 3, 14, i * Math.PI / 5, Math.PI / 5), c[i % 2], 0, 16, 0, 0, 0, 0, 1, 1.22, 1);
