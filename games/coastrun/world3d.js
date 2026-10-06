@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=47';
+import * as MD from './models3d.js?v=48';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -1527,6 +1527,7 @@ export function createWorld() {
     if (her.k === 'clap') { const c = Math.sin(t / 65); tgt[1] += c * 0.3; tgt[4] -= c * 0.3; }
     if (her.k === 'hair') tgt[2] += Math.sin(t / 260) * 0.12;
     if (her.k === 'hold') tgt[7] -= Math.min(0.15, W.v / 600);
+    if (W.count > 75 && her.k === 'idle' && !R.camDrv) { tgt = [0.2, -2.5 - Math.sin(t / 90) * 0.42, 0.6, 0.55, -0.12, 1.05, 0.05, -0.08, 0, 0]; }   // the lights: she waves at you (the camera's in front), the outside hand
     const speaking = W.voiceT != null && W.t - W.voiceT < 80;   // (a pass on the two of you, owner 6 Oct: while she talks she turns to him, nods along, her hand going)
     if (speaking && (her.k === 'idle' || her.k === 'look' || her.k === 'hair')) { tgt[6] = -0.32; tgt[7] = -0.04 + Math.sin(t / 110) * 0.05; tgt[3] = 0.55; tgt[5] = 1.2 + Math.sin(t / 170) * 0.25; }
     for (let i = 0; i < 10; i++) cur[i] = cur[i] == null ? tgt[i] : cur[i] + (tgt[i] - cur[i]) * k;
@@ -1565,7 +1566,7 @@ export function createWorld() {
 
   // ---------------------------------------------------------------- one picture
   const FLY = new THREE.Group(), PF = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null };   // (the plane over Hurn)
-  const POS = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null }, POSD = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null }, V3 = new THREE.Vector3(), V4 = new THREE.Vector3();
+  const POS = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null }, POSD = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null }, V3 = new THREE.Vector3(), V4 = new THREE.Vector3(), V5 = new THREE.Vector3(), V6 = new THREE.Vector3();
   const DRV_EYE = [COUPLE.driver.seat[0], COUPLE.driver.seat[1] + COUPLE.driver.neck * (COUPLE.driver.scale || 1) + 0.2, COUPLE.driver.seat[2] - 0.1];   // the driver's eyes, in the car's own space
   function render(W, t, mode) {
     const dt = R.lastT ? Math.min(0.1, (t - R.lastT) / 1000) : 1 / 60; R.lastT = t;
@@ -1656,6 +1657,14 @@ export function createWorld() {
     camera.rotation.z += POS.bank * 0.35 - W.steer * spd * (near ? 0.05 : 0.02);
     const kerb = !W.air && Math.abs(W.x) > HALF - 0.6 && Math.abs(W.x) < HALF + RUM + 0.4 && spd > 0.2;
     if (R.shakeOn !== false && !cr && (spd > 0.65 || kerb)) { const a = Math.max(0, spd - 0.65) * 0.004 + R.boostK * 0.0012 + (kerb ? 0.003 : 0), ts = t / 1000; camera.rotation.x += (Math.sin(ts * 37) * 0.6 + Math.sin(ts * 61 + 1.3) * 0.4) * a * 0.5; camera.rotation.y += (Math.sin(ts * 43 + 2.1) * 0.6 + Math.sin(ts * 71) * 0.4) * a * 0.5; }   // a tremor at speed (a smooth shiver: a fresh random jolt every picture read as judder)
+    if (W.count > 0 && !R.debugCam && !W.ferry && !cr && !R.camDrv) {   // the lights (owner, 7 Oct: "more passes on the people and their faces" - so you SEE them): the camera starts in front of
+      // the two of you, close on their faces, eases round past her side and settles behind the car for GO
+      const p = 1 - W.count / 200, ss = (a, b, x) => { const u = Math.min(1, Math.max(0, (x - a) / (b - a))); return u * u * (3 - 2 * u); };
+      const a = ss(0.4, 0.9, p), e = ss(0.8, 1, p), ph = a * Math.PI, d = 2.75 - 0.25 * Math.min(1, p / 0.4) + 3.0 * a;
+      player.updateMatrixWorld(); V5.set(-Math.sin(ph) * d * 0.9 - 0.12 * (1 - a), 1.5 + 0.8 * a, -Math.cos(ph) * d); player.localToWorld(V5);
+      V6.set(-0.02, 1.06 + 0.34 * a, 0.5); player.localToWorld(V6); V6.lerp(V4, e);   // (from a little above, aimed at their chests: their faces between the lights and the radio panel)
+      camera.position.lerpVectors(V5, camera.position, e); camera.up.set(0, 1, 0); camera.lookAt(V6);
+    }
     if (W.ferry) {   // aboard: the camera swings slowly round from behind to the side, the far shore coming up ahead
       const S = FERRY_SCENE[W.ferry.k], p = Math.min(1, W.ferry.t / W.ferry.dur), a = roadTh + S.cam[2] + (S.cam[3] - S.cam[2]) * (p * p * (3 - 2 * p)), dd = S.cam[0] * (1 - p * 0.15);
       camera.position.set(cx + Math.sin(a) * dd, cy + S.cam[1] * (1 + p * 0.3), cz - Math.cos(a) * dd); camera.up.set(0, 1, 0); camera.lookAt(cx + Math.sin(roadTh) * 5, cy + 1.4, cz - Math.cos(roadTh) * 5);
