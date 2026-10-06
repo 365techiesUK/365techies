@@ -60,7 +60,7 @@
     { key: 'portland', name: 'PORTLAND BILL', seed: 6203, t: 72, len: 750, curvy: 0.8, hilly: 0.7, sea: -1, band: [18, 60], mix: [5, 3, 2, 0, 3, 1, 1, 1], feat: { tunnel: 2 } },
     { key: 'goldencap', name: 'GOLDEN CAP', seed: 6307, t: 72, len: 760, curvy: 0.8, hilly: 0.9, sea: -1, band: [30, 90], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { tunnel: 1 } },
     { key: 'hengistbury', name: 'HENGISTBURY HEAD', seed: 6409, t: 72, len: 740, curvy: 0.65, hilly: 0.4, sea: 1, band: [4, 22], shores: [30, 34, 38, 42, 46, 36, 40, 32], mix: [5, 4, 1, 1, 3, 0, 0, 3], feat: { bridge: 1 } },
-    { key: 'needles', name: 'THE NEEDLES', seed: 6607, t: 72, len: 760, curvy: 0.75, hilly: 0.8, sea: 1, band: [22, 70], mix: [5, 3, 1, 1, 3, 0, 0, 2], feat: { tunnel: 1 } }
+    { key: 'needles', name: 'THE NEEDLES', seed: 6607, t: 72, len: 760, curvy: 0.75, hilly: 0.8, sea: 1, band: [22, 70], bands: [[0, [3, 9]], [0.24, [14, 36]], [0.68, [22, 44]], [0.86, [32, 54]]], shores: [22, 26, 30, 34, 28, 24, 32, 26], mix: [5, 3, 1, 1, 3, 0, 0, 2] }   // (bands: Yarmouth at the water, over West Wight, up to the Needles; no tunnel)
   ];
   (function () {   // the pyramid: level L (1..5) has L places; from place j of a level, left goes to j and right to j + 1 of the next
     var id = 0;
@@ -407,14 +407,18 @@
           if (r() < 0.02) put(W, i, 'pine', -(14 + r() * 30), 0.7, { v: 0 });
           onWater('yacht', 20, 120, 0.03, 3 + ((r() * 3) | 0));
           break;
-        case 'needles':   // the Needles at dawn: downs and gorse, chalk stacks, boats, and the lighthouse at the end of the rocks
-          if (r() < 0.05) put(W, i, 'gorse', -(11.5 + r() * 20), 0.8, { soft: true });
-          if (r() < 0.025) { x = 11.5 + r() * Math.max(2, sh - 14); if (land(s, x)) put(W, i, 'gorse', x, 0.8, { soft: true }); }
-          if (r() < 0.012) { x = (r() < 0.5 ? -1 : 1) * (12 + r() * 12); if (land(s, x)) put(W, i, 'rock', x, 1.1, { v: (r() * 3) | 0 }); }
-          if (r() < 0.035) put(W, i, 'sheep', -(18 + r() * 45), 0, { v: (r() * 2) | 0 });
-          onWater('stack', 25, 120, 0.012, (r() * 3) | 0);
+        case 'needles': {   // the Isle of Wight at dawn in three parts (world3d.js ZONES): Yarmouth off the ferry, across West Wight, Alum Bay and the Needles
+          var fn = k / Math.max(1, to - from);
+          if (fn < 0.24) lamps(9, 0, true);
+          else if (fn < 0.68) { if (r() < 0.035) put(W, i, 'sheep', -(18 + r() * 45), 0, { v: (r() * 2) | 0 }); }
+          else {
+            if (r() < 0.05) put(W, i, 'gorse', -(11.5 + r() * 20), 0.8, { soft: true });
+            if (r() < 0.025) { x = 11.5 + r() * Math.max(2, sh - 14); if (land(s, x)) put(W, i, 'gorse', x, 0.8, { soft: true }); }
+            if (r() < 0.012) { x = (r() < 0.5 ? -1 : 1) * (12 + r() * 12); if (land(s, x)) put(W, i, 'rock', x, 1.1, { v: (r() * 3) | 0 }); }
+          }
           onWater('yacht', 20, 100, 0.01, (r() * 3) | 0);
           break;
+        }
       }
     }
     // the landmarks, each on clear ground (never in a tunnel, on a bridge, at a gate or a fork) near its place in the stretch
@@ -461,7 +465,19 @@
       mark('headland', 0.7, function (h) { return Math.max(h, 18) + 70; });
       mark('visitorcentre', 0.2, function () { return -26; }); mark('landtrain', 0.215, function () { return -16.4; }); mark('dykes', 0.34, function () { return -15.5; });
     }
-    if (S.key === 'needles') { mark('needles', 0.8, function (h) { return Math.max(h, 18) + 90; }); }
+    if (S.key === 'needles') {   // Yarmouth's castle by the slipway and its long pier; the Tennyson Monument up on the down; Alum Bay's coloured cliffs,
+      // the visitor park, the Old Battery on the clifftop and the Needles off the end
+      mark('yarmouthcastle', 0.05, function (h) { return h + 4; }); mark('pier', 0.13, function () { return 14.9; }, 3);
+      mark('tennyson', 0.5, function () { return -64; });
+      mark('alumcliffs', 0.74, function (h) { return h + 100; }); mark('landmarkpark', 0.78, function () { return -26; });
+      mark('oldbattery', 0.9, function (h) { return Math.max(17, h - 12); });
+      var nj = -1, nb = 1e9;   // the Needles off the straightest stretch near the end (from a bend, a big offset put a blade on the grass by the road)
+      for (var q3 = from + Math.round((to - from) * 0.78); q3 < from + Math.round((to - from) * 0.92); q3++) {
+        var b3 = 0; for (var u3 = q3 - 50; u3 < q3 + 30; u3++) b3 += Math.abs(segAt(W, u3).k);
+        var g3 = segAt(W, q3); if (b3 < nb && !g3.tun && !g3.brg && !g3.gate && !g3.fk) { nb = b3; nj = q3; }
+      }
+      if (nj >= 0) putAt(W, nj, 'needles', Math.max(segAt(W, nj).sh, 18) + 4, 0, {});   // (the model's line starts 4 m past the shore and runs out to sea)
+    }
   }
   var PW = { magnet: 480, shield: 480, double: 600 };   // how long each bonus lasts (steps; 60 a second)
   function pickups(W, from, to, r) {   // lines of coins, and between them the bonuses: nitro bottles, a magnet, a shield, double points, extra time

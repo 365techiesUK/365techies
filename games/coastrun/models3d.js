@@ -248,7 +248,7 @@ const MODELS = {
     // dense dark cross-braced piles, white railings; at Bournemouth a long white head building with a copper-green barrel roof and a
     // fly tower, a low white rotunda, the lattice zip-wire tower at the square end and its wires down to the beach; at the root the
     // white pier-entrance building with green roofs and cupolas, the observation wheel beside it
-    return v === 2 ? swanagePier(k) : v ? boscombePier(k) : bournemouthPier(k);
+    return v === 3 ? yarmouthPier(k) : v === 2 ? swanagePier(k) : v ? boscombePier(k) : bournemouthPier(k);
   },
   oak(k, v) {
     const c = v ? AUT[(v - 1) % 3] : GRN, q = rnd(11 + v * 7);
@@ -346,12 +346,78 @@ const MODELS = {
     k.box(16, 6, 10, 0, 3, 0, '#f4f6f8').box(10, 3, 8, 0, 9, 0, '#f4f6f8').cyl(1, 1, 4, 8, 0, 12, 0, '#2b4a7a');
     for (let i = 0; i < 6; i++) k.box(1.6, 1, 0.2, -6 + i * 2.4, 6, 5.05, '#ffd98a', 0, 0, 0, 'glow');
   },
-  needles(k) {
-    const col = '#f3eee4';
-    k.cyl(6, 9, 26, 8, -40, -4, 0, col).cyl(5, 8, 22, 8, -16, -4, 6, col).cyl(5, 7, 18, 8, 6, -4, 2, col);
-    k.blob(8, 26, -1, 0, '#6b6056', 1.2, 0.6, 1, 111);
-    k.cyl(1.3, 1.8, 12, 10, 26, 2, 0, '#f6f3ee').cyl(1.75, 1.8, 2, 10, 26, 7, 0, '#c62828').cyl(1, 1, 1.6, 10, 26, 14, 0, '#fff4b3', 0, 0, 'glow').cone(1.2, 1.2, 10, 26, 15.6, 0, '#c62828');
-    k.cyl(40, 40, 0.3, 14, -10, -0.1, 0, '#ffffff');
+  needles(k) {   // the Needles: three low jagged blades of chalk in a line out to sea (+X), the lighthouse at the foot of the last - a white
+    // tower with a red band, its lantern and the helipad on top - about as tall as the rocks (from the owner's photo of them at night)
+    const W = '#f3eee4', W2 = '#e2dccd';
+    const blade = (x0, len, h, th, ry) => {
+      const sh = new THREE.Shape(); sh.moveTo(0, -2); sh.lineTo(len * 0.15, h * 0.7); sh.lineTo(len * 0.32, h * 0.86); sh.lineTo(len * 0.46, h); sh.lineTo(len * 0.62, h * 0.82); sh.lineTo(len * 0.8, h * 0.6); sh.lineTo(len, -2); sh.lineTo(0, -2);
+      const g = new THREE.ExtrudeGeometry(sh, { depth: th, bevelEnabled: true, bevelThickness: th * 0.25, bevelSize: 0.8, bevelSegments: 2 }); g.translate(0, 0, -th / 2);
+      k.put(g, W, x0, 0, 0, 0, ry || 0, 0, 1, 1, 1, 'stone');
+      k.blob(len * 0.22, x0 + len * 0.5, -1, 0, W2, 1.3, 0.25, 0.7, 120 + Math.round(x0));   // its foot in the surf
+    };
+    const O = 60;   // (the whole line starts this far out from where it's placed: from 56 m back, its first blade stood on the grass by the road)
+    blade(O - 56, 26, 26, 7, 0.08); blade(O - 24, 20, 21, 6, -0.06); blade(O + 2, 15, 16, 5, 0.1);
+    const LX = O + 26;
+    k.blob(7, LX, -1, 0, '#8a8478', 1.2, 0.45, 1, 111);   // the rock it stands on
+    k.cyl(2.6, 3.1, 16, 16, LX, 1, 0, '#f6f3ee').cyl(2.62, 2.62, 3.2, 16, LX, 8.5, 0, '#c62828');   // the tower, its red band
+    k.cyl(1.7, 1.9, 2.2, 12, LX, 17, 0, '#2a2a2a').cyl(1.5, 1.5, 1.6, 12, LX, 17.3, 0, '#ff4a3a', 0, 0, 'glow');   // the lantern, lit red
+    k.cyl(3.6, 3.6, 0.4, 16, LX, 19.4, 0, '#e8e4da').cyl(3.65, 3.65, 0.05, 16, LX, 19.82, 0, '#3a8a4a');   // the helipad
+    k.cyl(46, 46, 0.3, 18, O - 16, -0.1, 0, '#ffffff');   // the surf round them
+  },
+  yarmouthcastle(k) {   // Yarmouth Castle by the ferry slipway: a squat Tudor artillery fort of grey stone, low thick walls, an arrowhead bastion
+    // on the land side, a gun platform with cannons looking over the water (+X: the water), a flag
+    const S = '#a8a294', S2 = '#968f80';
+    k.box(30, 8, 26, 0, -0.5, 0, S, 0, 0, 0, 'stone').box(30.6, 1, 26.6, 0, 7.5, 0, S2, 0, 0, 0, 'stone');
+    k.put(new THREE.CylinderGeometry(15, 15, 8, 4), S, -16, 3.5, 0, 0, Math.PI / 4, 0, 1, 1, 0.75, 'stone');   // the arrowhead bastion
+    for (let i = 0; i < 7; i++) k.box(2.2, 1.4, 1.4, -12 + i * 4, 7.5, 13.0, S2, 0, 0, 0, 'stone').box(2.2, 1.4, 1.4, -12 + i * 4, 7.5, -13.0, S2, 0, 0, 0, 'stone');   // battlements
+    for (let i = 0; i < 4; i++) k.roll(0.35, 3, 8, 12 + (i % 2) * 2, 9.2, -9 + i * 6, '#1c1c1c').box(1.2, 0.6, 1.6, 11, 8.5, -9 + i * 6, '#5a4632');   // the cannons
+    k.box(6, 4, 6, -6, 7.5, 6, '#e8e4dc').prism(6.6, 2.2, 6.6, -6, 11.5, 6, '#4a4a4e');   // a little white house inside the walls
+    k.cyl(0.08, 0.1, 8, 6, 2, 8.5, -4, '#e8ecea').box(2.4, 1.4, 0.05, 3.25, 15, -4, '#c62828');
+  },
+  thatch(k, v) {   // a thatched cottage (Freshwater): white walls, a deep rounded thatch roof down over little windows, a brick chimney
+    const W = ['#f6f2e8', '#efe6d0', '#f4ecdc'][v % 3], T = ['#b89a5a', '#a88a4a', '#c4a868'][v % 3];
+    k.box(10, 3.4, 6, 0, 0, 0, W);
+    k.put(new THREE.CylinderGeometry(4.4, 4.4, 11, 14, 1, false, -Math.PI / 2, Math.PI), T, 0, 3.2, 0, 0, 0, Math.PI / 2, 1, 0.9, 1);   // the thatch, rounded
+    k.box(11, 0.4, 7.2, 0, 3.0, 0, shade(T, -0.15));
+    for (const x of [-3, 3]) k.box(1.2, 1.0, 0.1, x, 1.2, 3.02, '#2a3440', 0, 0, 0, 'shiny').box(1.0, 0.8, 0.12, x, 5.2, 3.6, '#2a3440', 0, 0, 0, 'shiny');   // windows, the eyebrow ones in the thatch
+    k.box(1.0, 2.0, 0.12, 0, 0, 3.03, ['#2f5a3a', '#1d3557', '#7a1f2b'][v % 3]).box(1.4, 3.4, 1.2, 4.2, 5.4, -1, '#9a5040');
+    k.box(10.6, 0.8, 0.4, 0, 0, 5.5, '#4f8a3a');   // a hedge at the front
+    for (let i = 0; i < 6; i++) k.ball(0.25, -4 + i * 1.6, 0.9, 5.6, ['#e63946', '#ff7eb6', '#ffd23f'][i % 3], 1, 1, 1, 'lit', 6);
+  },
+  tennyson(k) {   // the Tennyson Monument on the top of the down: a tall Celtic cross of pale granite on a stepped base
+    const G = '#c9c3b6';
+    k.box(5, 1, 5, 0, 0, 0, G, 0, 0, 0, 'stone').box(3.6, 1, 3.6, 0, 1, 0, G, 0, 0, 0, 'stone').box(1.6, 9, 1.0, 0, 2, 0, G, 0, 0, 0, 'stone');
+    k.box(5, 1.2, 1.0, 0, 8.2, 0, G, 0, 0, 0, 'stone').put(new THREE.TorusGeometry(1.5, 0.3, 6, 18), G, 0, 8.8, 0, 0, 0, 0, 1, 1, 1, 'stone');
+  },
+  alumcliffs(k) {   // Alum Bay's cliffs of coloured sands: a tall curved face striped top to bottom in reds, ochres, yellows, white and grey-purple,
+    // a green top, a shingle beach at its foot (its face +Z, towards the road across the bay)
+    const C = ['#c0563a', '#e0b060', '#f2e6c8', '#a86a8a', '#e8a048', '#d8d0c0', '#9a4a3a', '#f0d080', '#8a8a9a', '#c87850', '#efe4cc', '#b05a6a'];
+    for (let i = 0; i < 30; i++) {   // the face in steep sloping strips, each its own sand, overlapping (upright and apart they read as slabs)
+      const a = -0.75 + i * 0.05, x = Math.sin(a) * 100, z = -Math.cos(a) * 100 + 100, h = 50 + Math.sin(i * 1.7) * 7 + Math.sin(i * 0.43) * 5;
+      k.box(6.6, h, 12, x, -2, z - 6, C[i % C.length], -a, -0.32, 0, 'lit');
+      k.blob(5.5, x - Math.sin(a) * 6, h - 5, z - 12, '#6f9a45', 1.3, 0.45, 1.6, 3400 + i);   // the turf along the top, rounded
+      if (i % 2 === 0) k.box(3.2, h * 0.55, 0.4, x + Math.cos(a) * 1.2, h * 0.1, z + 0.6 - h * 0.08, C[(i + 5) % C.length], -a, -0.32, 0.05);   // a streak of another sand down the face
+    }
+    for (let i = 0; i < 12; i++) k.blob(4 + (i % 3), -55 + i * 10, -0.5, 6 + (i % 2) * 3, C[(i * 5) % C.length], 1.6, 0.5, 1, 3460 + i);   // slumped sand at the foot
+    k.box(150, 0.6, 14, 0, -0.3, 12, '#9a958a');   // the shingle
+  },
+  landmarkpark(k) {   // the Needles visitor park on the clifftop: low buildings with glass fronts under a long canopy, people, the jars of
+    // coloured sand in a lit window, flags
+    const r = rnd(3300);
+    k.box(30, 4.6, 12, 0, 0, 0, '#f2f0ea').box(31, 0.4, 13, 0, 4.6, 0, '#2f4a6a').box(28, 3.4, 0.12, 0, 0.5, 6.05, '#3a5566', 0, 0, 0, 'shiny');
+    k.box(30, 0.2, 4, 0, 3.6, 8, '#e8e4dc'); for (let x = -14; x <= 14; x += 4) k.cyl(0.1, 0.1, 3.6, 6, x, 0, 9.8, '#9aa0a6');
+    for (let i = 0; i < 10; i++) k.box(0.4, 0.9, 0.3, -6 + i * 1.2, 1.2, 6.2, ['#c0563a', '#e0b060', '#a86a8a', '#f2e6c8', '#e8a048'][i % 5]);   // the sand jars in the window
+    for (let i = 0; i < 4; i++) k.cyl(0.06, 0.06, 7, 5, -15 + i * 10, 0, 13, '#e8ecea').box(1.6, 1.0, 0.05, -14.2 + i * 10, 6, 13, ['#d62828', '#1d7fd6', '#ffd23f', '#2a9d8f'][i]);
+    for (let i = 0; i < 5; i++) person(k, -13 + r() * 26, 0, 10 + r() * 4, r, r() < 0.3);
+  },
+  oldbattery(k) {   // the Old Battery on the cliff over the Needles: low Victorian fort walls round a parade, two big guns on their mounts, the
+    // little white coastguard lookout with its windows all round, a flagpole (+X towards the sea)
+    const S = '#b8b0a0';
+    k.box(34, 2.2, 1.6, 0, 0, -12, S, 0, 0, 0, 'stone').box(34, 2.2, 1.6, 0, 0, 12, S, 0, 0, 0, 'stone').box(1.6, 2.2, 25, -17, 0, 0, S, 0, 0, 0, 'stone').box(1.6, 2.6, 25, 17, 0, 0, S, 0, 0, 0, 'stone');
+    k.box(32, 0.1, 22, 0, 0.02, 0, '#7a8a5a');
+    for (const z of [-5, 5]) k.cyl(2.2, 2.2, 0.8, 12, 12, 0, z, '#5a5a5a').roll(0.5, 7, 10, 12, 1.6, z, '#1c1c1c').box(6, 0.4, 0.4, 14.5, 1.6, z, '#1c1c1c', 0, 0, 0.12);
+    k.box(5, 3.4, 4, -8, 0, 0, '#f6f6f2').box(5.2, 1.4, 4.2, -8, 3.4, 0, '#3a5566', 0, 0, 0, 'shiny').box(5.6, 0.3, 4.6, -8, 4.8, 0, '#2a2a2a');   // the lookout
+    k.cyl(0.08, 0.1, 9, 6, 0, 0, -8, '#e8ecea').box(2.4, 1.4, 0.05, 1.25, 7.4, -8, '#1d4e89');
   },
   chev(k) { k.cyl(0.06, 0.06, 1.3, 5, 0, 0, 0, '#9aa0a6'); k.box(1.1, 0.9, 0.06, 0, 1.2, 0, '#111111'); },
   warn(k) { k.cyl(0.08, 0.08, 1.7, 5, -1.4, 0, 0, '#9aa0a6').cyl(0.08, 0.08, 1.7, 5, 1.4, 0, 0, '#9aa0a6'); k.box(3.6, 1.5, 0.08, 0, 1.6, 0, '#111111'); },
@@ -1128,20 +1194,22 @@ function boscombePier(k) {   // Boscombe: a bare modern pier - a long concrete n
   for (const z of [-12.9, 12.9]) { k.box(36, 0.07, 0.07, 9 + 208, 1.05, z, RAIL, 0, 0, 0, 'shiny'); for (let x = 9 + 190; x < 9 + 226; x += 2.4) k.box(0.07, 1.1, 0.07, x, 0, z, RAIL); }
   for (let i = 0; i < 4; i++) k.box(2.4, 0.5, 0.6, 9 + 196 + i * 7, 0, -9, '#9a7a52');
 }
-function swanagePier(k) {   // Swanage Pier (Victorian): a timber deck raised on timber piles out into the bay, lamp posts both sides, a little
-  // white entrance building at the root, and beside it the stumps of the older pier (the deck stands 1.4 m above the promenade: level with
-  // it, it sank into the sand and barely showed from the road)
-  const T = '#8a7258', P = '#4a3c30', D = 1.4;
-  k.box(8, 3.4, 10, 4, -0.5, 0, '#f4f2ec').prism(10.6, 2.2, 8.6, 4, 2.9, 0, '#5a6a72').box(0.12, 1.8, 3.2, -0.06, 0.4, 0, '#2a3a48', 0, 0, 0, 'shiny');
-  k.box(10, D, 6, 10, 0, 0, T, 0, 0, Math.atan2(D, 10));   // a ramp up to the deck
-  k.box(190, 0.45, 7, 8 + 95 + 6, D - 0.45, 0, T).box(190, 0.6, 7.2, 8 + 95 + 6, D - 1.05, 0, '#3a2e24');   // the deck, a dark fascia under it
-  for (let x = 16; x < 204; x += 4.5) { for (const z of [-3.2, 3.2]) k.cyl(0.22, 0.25, 12 + D, 6, x, -12.2, z, P); beam(k, [x, D - 1.2, -3.2], [x, -6.5, 3.2], 0.14, P); }
-  for (const z of [-3.45, 3.45]) { k.box(190, 0.08, 0.08, 109, D + 1.05, z, '#e8e4da'); for (let x = 15; x < 204; x += 2.5) k.box(0.08, 1.1, 0.08, x, D, z, '#e8e4da'); }
-  for (let x = 24; x < 204; x += 20) for (const z of [-3.3, 3.3]) k.cyl(0.07, 0.09, 4.4, 6, x, D, z, '#1d3557').box(0.34, 0.42, 0.34, x, D + 4.4, z, '#fff3c0', 0, 0, 0, 'glow');
-  k.box(16, 0.45, 12, 202, D - 0.45, 0, T).box(16.2, 0.6, 12.2, 202, D - 1.05, 0, '#3a2e24');   // the head, a little wider
-  for (let x = 10; x < 120; x += 6) k.cyl(0.25, 0.3, 4 + ((x * 7) % 3), 5, x, -3, -18, '#3a3028');   // the old pier's stumps beside it
-  const r = rnd(3200); for (let i = 0; i < 16; i++) person(k, 20 + r() * 180, D, (r() - 0.5) * 5, r, r() < 0.2);   // people strolling out along it
+function woodPier(k, o) {   // a Victorian wooden pier: a timber deck raised on timber piles out into the water (+X), lamp posts both sides, a little
+  // entrance building at the root (o: len, w, entrance and roof colours, stumps of an older pier beside it) - Swanage's, Yarmouth's
+  // (the deck stands 1.4 m above the promenade: level with it, it sank into the sand and barely showed from the road)
+  const T = '#8a7258', P = '#4a3c30', D = 1.4, L = o.len, hw = o.w / 2;
+  k.box(8, 3.4, 10, 4, -0.5, 0, o.ent).prism(10.6, 2.2, 8.6, 4, 2.9, 0, o.roof).box(0.12, 1.8, 3.2, -0.06, 0.4, 0, '#2a3a48', 0, 0, 0, 'shiny');
+  k.box(10, D, o.w - 1, 10, 0, 0, T, 0, 0, Math.atan2(D, 10));   // a ramp up to the deck
+  k.box(L, 0.45, o.w, 14 + L / 2, D - 0.45, 0, T).box(L, 0.6, o.w + 0.2, 14 + L / 2, D - 1.05, 0, '#3a2e24');   // the deck, a dark fascia under it
+  for (let x = 16; x < 14 + L; x += 4.5) { for (const z of [-hw + 0.3, hw - 0.3]) k.cyl(0.22, 0.25, 12 + D, 6, x, -12.2, z, P); beam(k, [x, D - 1.2, -hw + 0.3], [x, -6.5, hw - 0.3], 0.14, P); }
+  for (const z of [-hw + 0.05, hw - 0.05]) { k.box(L, 0.08, 0.08, 14 + L / 2, D + 1.05, z, '#e8e4da'); for (let x = 15; x < 14 + L; x += 2.5) k.box(0.08, 1.1, 0.08, x, D, z, '#e8e4da'); }
+  for (let x = 24; x < 14 + L; x += 20) for (const z of [-hw + 0.2, hw - 0.2]) k.cyl(0.07, 0.09, 4.4, 6, x, D, z, o.lamp).box(0.34, 0.42, 0.34, x, D + 4.4, z, '#fff3c0', 0, 0, 0, 'glow');
+  k.box(16, 0.45, o.w + 5, 14 + L, D - 0.45, 0, T).box(16.2, 0.6, o.w + 5.2, 14 + L, D - 1.05, 0, '#3a2e24');   // the head, a little wider
+  if (o.stumps) for (let x = 10; x < 120; x += 6) k.cyl(0.25, 0.3, 4 + ((x * 7) % 3), 5, x, -3, -18, '#3a3028');   // the old pier's stumps beside it
+  const r = rnd(3200 + L); for (let i = 0; i < 16; i++) person(k, 20 + r() * L, D, (r() - 0.5) * (o.w - 2), r, r() < 0.2);   // people strolling out along it
 }
+const swanagePier = (k) => woodPier(k, { len: 190, w: 7, ent: '#f4f2ec', roof: '#5a6a72', lamp: '#1d3557', stumps: true });
+const yarmouthPier = (k) => woodPier(k, { len: 220, w: 5, ent: '#dfe6ea', roof: '#2f4a6a', lamp: '#2a2a2a', stumps: false });   // (Yarmouth's: long and plain, a weatherboarded entrance)
 function hutAt(k, z, col, trim, num) {   // one beach hut facing -X, as the owner's photos show them: weatherboarded, pastel, a white gable, a dark roof
   const w = 2.0, d = 2.4, h = 2.15, dk = shade(col, -0.12);
   k.box(d, 0.25, w + 0.1, 0, 0, z, '#7a6a52').box(d, h, w, 0, 0.25, z, col);

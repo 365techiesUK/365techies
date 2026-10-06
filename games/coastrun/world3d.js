@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=28';
+import * as MD from './models3d.js?v=29';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -112,15 +112,15 @@ const BIG = { castle: 1.5, arch: 1.4, goldcap: 1.3, headland: 1.3, priory: 1.35,
 const SIGNS = { gate: 1, gantry: 1, nose: 1, board: 1, chev: 1, warn: 1, banner: 1 };
 const lit = (look) => !!(look.night || look.dusk);   // lamps and headlights on
 // OutRun's way (owner, 5 Oct): the land side of the road ends at a boundary, and the place is packed in right behind it
-const VERGE_K = { 'swanage:town': 'prom', bournemouth: 'prom', sandbanks: 'prom', weymouth: 'prom', christchurch: 'hedge', lymington: 'hedge', goldencap: 'hedge', purbeck: 'wall', lyme: 'wall', portland: 'wall', forest: 'fence', swanage: 'vpost', jurassic: 'vpost', needles: 'vpost', hengistbury: 'vpost', harbour: 'bollard' };
+const VERGE_K = { 'needles:yarmouth': 'wall', 'needles:downs': 'hedge', 'swanage:town': 'prom', bournemouth: 'prom', sandbanks: 'prom', weymouth: 'prom', christchurch: 'hedge', lymington: 'hedge', goldencap: 'hedge', purbeck: 'wall', lyme: 'wall', portland: 'wall', forest: 'fence', swanage: 'vpost', jurassic: 'vpost', needles: 'vpost', hengistbury: 'vpost', harbour: 'bollard' };
 const ROWS = {   // set out at a steady spacing behind the boundary: [model, variants, every so many segments, how far out, sideways jitter]
   bournemouth: [['hutrow', 6, 4, 16.0, 0], ['hotel', 8, 7, 47, 4]], sandbanks: [['villa', 8, 6, 25, 2], ['palm', 3, 4, 16.6, 2]],
   weymouth: [['terrace', 6, 3, 21, 0]], lyme: [['terrace', 6, 4, 22, 0]], harbour: [['quayfront', 8, 5, 27, 0]],
   christchurch: [['cottage', 2, 10, 24, 4], ['terrace', 6, 8, 38, 3]], lymington: [['cottage', 2, 9, 24, 5], ['tpole', 1, 12, 15.6, 0]],
-  purbeck: [['tpole', 1, 12, 15.6, 0]], hengistbury: [['lamp', 2, 6, 15.4, 0]], swanage: [['tpole', 1, 12, 15.6, 0]], 'swanage:town': [['terrace', 6, 3, 22, 0]], goldencap: [['tpole', 1, 12, 15.6, 0]], needles: [['tpole', 1, 14, 15.6, 0]]
+  purbeck: [['tpole', 1, 12, 15.6, 0]], hengistbury: [['lamp', 2, 6, 15.4, 0]], swanage: [['tpole', 1, 12, 15.6, 0]], 'swanage:town': [['terrace', 6, 3, 22, 0]], 'needles:yarmouth': [['terrace', 6, 4, 23, 1]], 'needles:downs': [['thatch', 3, 11, 24, 6], ['tpole', 1, 14, 15.6, 0]], 'needles:alumbay': [], goldencap: [['tpole', 1, 12, 15.6, 0]], needles: [['tpole', 1, 14, 15.6, 0]]
 };
 const ROCKC = { hengistbury: '#c07a44', bournemouth: '#c9a66a', purbeck: '#e8e4d8', swanage: '#eeebe2', needles: '#efece4', jurassic: '#d8cfba', portland: '#c9c2b2', goldencap: '#d8a85e', lyme: '#7f8790', forest: '#a89070', christchurch: '#b9a98a', lymington: '#b9a98a', hengistbury: '#a87850' };   // the rock in the cuttings and cliffs
-const BUNT = { 'swanage:town': 1, bournemouth: 1, weymouth: 1, lyme: 1, christchurch: 1, lymington: 1, sandbanks: 1 };   // flags strung over the road in the towns
+const BUNT = { 'swanage:town': 1, 'needles:yarmouth': 1, bournemouth: 1, weymouth: 1, lyme: 1, christchurch: 1, lymington: 1, sandbanks: 1 };   // flags strung over the road in the towns
 const MORE = {   // closer, thicker dressing behind the boundary (as look.dress: [model, variants, a segment, from, to])
   bournemouth: [['bush', 2, 0.9, 19.2, 37], ['gorse', 1, 0.45, 19.2, 37], ['heather', 2, 0.3, 20, 36], ['pine', 1, 0.55, 38, 80], ['oak', 1, 0.12, 42, 75]], sandbanks: [['palm', 3, 0.22, 17, 28], ['bush', 2, 0.25, 15.6, 22], ['strollers', 8, 0.1, 15.4, 19]],   // (bournemouth: the cliff face - scrub, gorse, sandy patches; pines along the top)
   christchurch: [['oak', 1, 0.2, 17, 40], ['bush', 2, 0.25, 15.6, 22]], purbeck: [['oak', 1, 0.2, 17, 45], ['sheep', 2, 0.3, 17, 50]],
@@ -134,7 +134,7 @@ const MORE = {   // closer, thicker dressing behind the boundary (as look.dress:
 };
 for (const k in MORE) if (LOOK[k]) LOOK[k].dress = (LOOK[k].dress || []).concat(MORE[k]);   // (a part of a stage's ('swanage:town') goes to DRESSZ, below)
 const SEA_MORE = { bournemouth: [['windsurf', 4, 0.07, 30, 220], ['motorboat', 4, 0.04, 40, 200]], sandbanks: [['windsurf', 4, 0.09, 25, 220], ['motorboat', 4, 0.05, 30, 200], ['marina', 3, 0.02, 7, 12]],
-  weymouth: [['windsurf', 4, 0.06, 30, 220], ['motorboat', 4, 0.04, 40, 200]], swanage: [['windsurf', 4, 0.03, 40, 220]], 'swanage:town': [['windsurf', 4, 0.05, 30, 200], ['motorboat', 4, 0.05, 30, 180], ['mooring', 6, 0.05, 40, 200]], 'swanage:studland': [['windsurf', 4, 0.06, 30, 220], ['motorboat', 4, 0.05, 30, 200], ['mooring', 6, 0.03, 40, 200]], christchurch: [['marsh', 4, 0.05, 20, 140], ['swans', 2, 0.035, 3, 14], ['marina', 3, 0.04, 9, 15], ['mooring', 6, 0.06, 30, 160]],
+  weymouth: [['windsurf', 4, 0.06, 30, 220], ['motorboat', 4, 0.04, 40, 200]], swanage: [['windsurf', 4, 0.03, 40, 220]], 'swanage:town': [['windsurf', 4, 0.05, 30, 200], ['motorboat', 4, 0.05, 30, 180], ['mooring', 6, 0.05, 40, 200]], 'swanage:studland': [['windsurf', 4, 0.06, 30, 220], ['motorboat', 4, 0.05, 30, 200], ['mooring', 6, 0.03, 40, 200]], 'needles:yarmouth': [['marina', 3, 0.08, 6, 12], ['mooring', 6, 0.12, 30, 220], ['motorboat', 4, 0.04, 30, 180]], 'needles:downs': [['mooring', 6, 0.03, 40, 220], ['motorboat', 4, 0.03, 40, 220]], 'needles:alumbay': [['motorboat', 4, 0.04, 40, 220]], christchurch: [['marsh', 4, 0.05, 20, 140], ['swans', 2, 0.035, 3, 14], ['marina', 3, 0.04, 9, 15], ['mooring', 6, 0.06, 30, 160]],
   lymington: [['marina', 3, 0.16, 3, 7], ['motorboat', 4, 0.03, 30, 140]], lyme: [['motorboat', 4, 0.03, 30, 160], ['marina', 3, 0.025, 7, 12]], harbour: [['marina', 6, 0.06, 22, 30], ['portcrane', 3, 0.045, 200, 250]] };   // out on the water
 const BEACH = {   // the beach between the road and the water: [model, variants, a segment, from, to (less than 0: that far short of the water)]
   bournemouth: [['strollers', 8, 0.22, 11.8, 19], ['deckchairs', 4, 0.26, 15.5, -3.5], ['lifeguard', 1, 0.012, 20, -6]], sandbanks: [['marram', 6, 0.42, 11.8, 21], ['strollers', 8, 0.16, 11.8, 19], ['deckchairs', 4, 0.22, 15, -3.5]],
@@ -146,10 +146,13 @@ const QUAY = { harbour: 1 };
 const FISH = { harbour: 1 };   // fishing boats moored along the quay wall
 const GROYNE = { 'swanage:town': 'groyne', 'swanage:studland': 'groyne', bournemouth: 'groyne', sandbanks: 'rockgroyne', hengistbury: 'longgroyne' };   // (Bournemouth's are timber, Sandbanks' granite boulders)
 const HARB = { sandbanks: [['mooring', 6, 0.16, 14, 210], ['motorboat', 4, 0.025, 30, 180], ['jetty', 3, 0.045, -3, -3]] };   // out in the harbour (lateral from its edge; a jetty from the bank)   // lamps along the water's edge (at night the quay side was a black void)
-const ZONES = { swanage: [[0.27, 'studland'], [0.7, 'downs'], [1.01, 'town']] };   // a stage in parts (where each ends, as a share of the stage): off the ferry through Studland, over the downs past Old Harry, down into Swanage
+const ZONES = { swanage: [[0.27, 'studland'], [0.7, 'downs'], [1.01, 'town']], needles: [[0.24, 'yarmouth'], [0.68, 'downs'], [1.01, 'alumbay']] };   // (the Isle of Wight: off the ferry at Yarmouth, across West Wight, Alum Bay and the Needles)   // a stage in parts (where each ends, as a share of the stage): off the ferry through Studland, over the downs past Old Harry, down into Swanage
 const DRESSZ = {   // the dressing for a part of a stage (in place of the place's own)
   'swanage:studland': [['heather', 2, 0.45, 12, 50], ['gorse', 1, 0.35, 12, 50], ['pine', 1, 0.18, 16, 70], ['birch', 1, 0.06, 15, 40], ['tuft', 6, 1.4, 8.8, 26], ['carpark', 4, 0.03, 16.5, 22]],
-  'swanage:town': [['flowerbed', 3, 0.3, 15.6, 18], ['strollers', 8, 0.18, 15.4, 18.5], ['palm', 3, 0.08, 16, 20]]
+  'swanage:town': [['flowerbed', 3, 0.3, 15.6, 18], ['strollers', 8, 0.18, 15.4, 18.5], ['palm', 3, 0.08, 16, 20]],
+  'needles:yarmouth': [['strollers', 8, 0.16, 15.4, 18.5], ['oak', 1, 0.1, 30, 70], ['tuft', 6, 1.0, 8.8, 20]],
+  'needles:downs': [['oak', 1, 0.2, 17, 60], ['sheep', 2, 0.3, 17, 60], ['bush', 2, 0.2, 15.6, 30], ['tuft', 6, 1.6, 8.8, 26], ['drywall', 3, 0.05, 17, 40]],
+  'needles:alumbay': [['heather', 2, 0.4, 15.6, 40], ['gorse', 1, 0.35, 15.6, 40], ['tuft', 6, 1.6, 8.8, 26], ['strollers', 8, 0.04, 15.4, 19], ['carpark', 4, 0.012, 16.5, 22]]   // (lighter: Alum Bay ran 18-19 ms on a slow PC)
 };
 for (const k in MORE) if (!LOOK[k] && DRESSZ[k]) DRESSZ[k] = DRESSZ[k].concat(MORE[k]);
 function zoneKey(W, g) {   // the place's key, or its part's ('swanage:town') where the stage comes in parts
@@ -806,7 +809,7 @@ export function createWorld() {
           if (g.sea === d || (d === innerSide && lat > inner)) continue;
           place(W, i * SEG + SEG / 2, d * lat, 0, P);
           if (t === 'hutrow' || t === 'quayfront') { let busy = false; for (let q = i - 4; q <= i + 6; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && sq.spr.some((it) => it.t === 'clifflift' || it.t === 'zigzag' || it.t === 'customhouse')) busy = true; } if (busy) continue; }
-          const ry = /^(hotel|building|villa|terrace|cottage|quayfront)$/.test(t) ? faceRoad(d, P.th) : t === 'tpole' ? -P.th : t === 'hutrow' ? -P.th + (d < 0 ? Math.PI : 0) : hash2(i, d) * Math.PI * 2;
+          const ry = /^(hotel|building|villa|terrace|cottage|quayfront|thatch)$/.test(t) ? faceRoad(d, P.th) : t === 'tpole' ? -P.th : t === 'hutrow' ? -P.th + (d < 0 ? Math.PI : 0) : hash2(i, d) * Math.PI * 2;
           addAll(MD.model(t, Math.floor(hash2(i * 3, d + 5) * 997) % nv), P.x, groundAt(W, g, P, d * lat) - (t === 'tpole' ? 0.3 : 0.25), P.z, ry, 1);
         }
       }
@@ -833,16 +836,16 @@ export function createWorld() {
         place(W, i * SEG, it.x, it.b, P);
         const d = it.x < 0 ? -1 : 1, fr = faceRoad(d, P.th);
         let ry = hash2(i, Math.round(it.x * 10)) * Math.PI * 2;
-        if (/^(hut|cottage|hotel|building|board|finger|forestsign|lamp|villa|terrace|clock|haven|customhouse|placemill|castlekeep|visitorcentre|tollbooth|clocktower)$/.test(it.t)) ry = fr;
+        if (/^(hut|cottage|hotel|building|board|finger|forestsign|lamp|villa|terrace|clock|haven|customhouse|placemill|castlekeep|visitorcentre|tollbooth|clocktower|thatch|tennyson|alumcliffs|landmarkpark)$/.test(it.t)) ry = fr;
         if (it.t === 'lamp') ry = fr + Math.PI;   // the arm reaches over the road
         if (/^(gate|gantry|nose|chev|warn|gpost|footbridge|viaduct|banner|rockarch|treearch|pierarch|liftbridge|chairlift|craneway|ferryqueue|landtrain)$/.test(it.t)) ry = -P.th;
         if (it.t === 'priory' || it.t === 'cobb' || it.t === 'goldcap' || it.t === 'headland') ry = fr;
         if (it.t === 'arch') ry = -P.th + (it.x < 0 ? Math.PI : 0);   // Durdle Door side-on from the road, its high end towards the shore
         if (it.t === 'board') ry = -P.th + d * 0.5;
-        if (/^(pier|ferry|clifflift|zigzag|rowboats|dykes|littlesea)$/.test(it.t)) ry = fr + Math.PI / 2 - (it.t === 'pier' ? 0.72 : 0);   // (+X away from the road; the piers angled 20 degrees ahead - square to the shore they lay off to the side, out of the chase camera's view)
+        if (/^(pier|ferry|clifflift|zigzag|rowboats|dykes|littlesea|needles|yarmouthcastle|oldbattery)$/.test(it.t)) ry = fr + Math.PI / 2 - (it.t === 'pier' ? 0.72 * -d : 0);   // (a pier angled ahead, on either side)   // (+X away from the road; the piers angled 20 degrees ahead - square to the shore they lay off to the side, out of the chase camera's view)
         let y = P.y;
         if (it.t === 'pier') y = P.y - 0.15;   // (its deck level with the promenade)
-        else if (/^(yacht|buoy|stack|arch|needles|ferry|cobb|goldcap|headland|rowboats|swans)$/.test(it.t)) y = 0;
+        else if (/^(yacht|buoy|stack|arch|needles|ferry|cobb|goldcap|headland|rowboats|swans|yarmouthcastle|alumcliffs)$/.test(it.t)) y = 0;
         else if (/^(footbridge|viaduct|rockarch|treearch|pierarch|liftbridge|chairlift|craneway)$/.test(it.t)) y = P.y - (it.t === 'rockarch' ? 1.5 : 0.3);
         else if (it.t === 'lighthouse') y = P.y - 6;
         else if (Math.abs(it.x) > HALF + 2) y = groundAt(W, g, P, it.x);
@@ -1187,7 +1190,7 @@ export function createWorld() {
   }
   const FERRYG = new THREE.Group(); FERRYG.visible = false; scene.add(FERRYG); let ferryKind = '';
   const FERRY_SCENE = {   // [model, x, z (along the way: + ahead of the start), turn, scale] ; deck: the car's height and place on board
-    car: { boat: 'carferry', deck: [3.4, 10], speed: 95, cam: [16, 6.5, -2.95, -2.1], parts: [['wight', 0, 1150, 0.3, 3.2], ['needles', -150, 830, 1.2, 3.4], ['yacht', 60, -140, 0.4, 1], ['yacht', -80, -220, 1.1, 1], ['yacht', 40, -320, 2, 1], ['buoy', 22, 160, 0, 1.4], ['buoy', -24, 330, 0, 1.4]] },
+    car: { boat: 'carferry', deck: [3.4, 10], speed: 95, cam: [16, 6.5, -2.95, -2.1], parts: [['wight', 0, 1150, 0.3, 3.2], ['yarmouthcastle', 70, 1010, 3.14, 1.6], ['mooring', 120, 960, 0.4, 1, 1], ['mooring', 150, 990, 1.4, 1, 3], ['mooring', 30, 940, 2.2, 1, 5], ['needles', -150, 830, 1.2, 3.4], ['yacht', 60, -140, 0.4, 1], ['yacht', -80, -220, 1.1, 1], ['yacht', 40, -320, 2, 1], ['buoy', 22, 160, 0, 1.4], ['buoy', -24, 330, 0, 1.4]] },
     chain: { boat: 'chainferry', deck: [1.3, 6], speed: 52, cam: [27, 13, -0.45, -2.5], aboard: [[-3.8, -16, 0], [-3.8, -8, 1], [-3.8, 0, 7], [-3.8, 8, 2], [-3.8, 16, 4], [3.8, -18, 1], [3.8, -10, 0], [3.8, -2, 2], [3.8, 6, 7], [0, -4, 1], [0, 16, 0], [3.8, 20, 1]],   // (cam: from ahead, looking back at Sandbanks, round to behind as Studland comes up)
       parts: [['studland', 0, 400, 0, 1], ['stack', -300, 700, 0, 1.6], ['stack', -268, 740, 0, 1.2], ['stack', -330, 760, 0, 0.9], ['brownsea', 560, 140, 0.5, 1], ['slipland', 0, -58, 0, 1], ['ferryqueue', 2, -98, 0, 1, 1], ['haven', 66, -112, 3.14, 1], ['villa', -64, -122, 3.14, 1, 5], ['villa', -104, -138, 3.14, 1, 4], ['villa', -146, -128, 3.14, 1, 7], ['mooring', 90, 30, 0.5, 1, 1], ['mooring', 130, -20, 2, 1, 3], ['mooring', 190, 70, 1.1, 1, 5], ['mooring', 240, 10, 2.6, 1, 0], ['motorboat', -80, 150, 0.4, 1, 2], ['buoy', 18, 80, 0, 1.4], ['buoy', -24, 230, 0, 1.4]] }
   };
