@@ -89,7 +89,7 @@
     input.alt = false; input.altTap = false; input.mouseY = null; input.touch = false; input.tx = null; input.ty = null;
     document.addEventListener('keydown', function (e) {
       gestured = true;
-      if (e.defaultPrevented || (window.GameSocial && GameSocial.isOpen()) || (window.HallOfFame && HallOfFame.isOpen())) return;   // typing feedback or initials, or a key a sheet used
+      if (e.defaultPrevented || (window.GameSocial && GameSocial.isOpen()) || (window.HallOfFame && HallOfFame.isOpen()) || (window.Looks && Looks.isOpen()) || (window.Keep && Keep.isOpen())) return;   // typing feedback or initials, or a key a sheet used
       if (e.key === 'Escape' && openSheet) { closeSheets(); return; }
       if (openSheet || e.altKey || e.ctrlKey || e.metaKey) return;
       var k = (e.key || '').toLowerCase();
@@ -250,6 +250,7 @@
           SET.speed === fastest && h.wave >= 3 && 'arc-fast', all && 'arc-all'].filter(Boolean), D.id);
       }
       $('oTro').innerHTML = won365.length ? Looks.wonHtml(won365) : ''; $('oTro').hidden = !won365.length;
+      if (window.Keep) Keep.sync();   // Keep my scores (keep.js): the saved copy follows every game
       setPauseBtn(); $('bPause').disabled = true;
       $('oScore').textContent = h.score; $('oWave').textContent = h.wave; $('oBest').textContent = b.score;
       $('oWhy').textContent = D.overText ? D.overText(W) : 'Game over';
@@ -544,6 +545,7 @@
     }
     function tile(v, label) { return '<div class="tile"><b>' + esc(v) + '</b><span>' + esc(label) + '</span></div>'; }
     function openStats() {
+      if (window.Keep) Keep.refresh();
       if ($('sTroS') && window.Looks && Looks.trophyCount) { var tc = Looks.trophyCount(); $('sTroS').textContent = tc.n + ' of ' + tc.of + ' won'; }
       var out = '', d = today();
       D.speeds.options.forEach(function (o) {
@@ -584,6 +586,10 @@
     function openTrophies() { if (!window.Looks || !Looks.openTrophies) return; closeSheets(); Looks.openTrophies({}); }
     if ($('bTro')) { $('bTro').hidden = !(window.Looks && Looks.openTrophies); $('bTro').onclick = openTrophies; }
     if ($('sTro')) $('sTro').onclick = openTrophies;
+    // Keep my scores - My code and the 365 account - shared by every game (keep.js, 6 Oct 2026); a game running when
+    // the sheet opens by itself (a player signed in to the 365 portal, asked which scores to keep) is paused first
+    if ($('sCode')) $('sCode').onclick = function () { if (window.Keep) Keep.open(); };
+    if (window.Keep) Keep.beforeOpen = function () { if (mode === 'play') pause(); };
     $('oPlay').onclick = begin; $('tPlay').onclick = begin; $('pGo').onclick = resume;
     $('oStats').onclick = openStats;
     // the Hall of Fame: one player across all our games; the boards are this game's speeds
@@ -665,7 +671,7 @@
         + '</div><div class="pad" id="pad">' + (D.pad ? D.pad.map(function (b) { return '<button type="button" data-pad="' + b.act + '" class="' + (b.cls || '') + '">' + esc(b.label) + '</button>'; }).join('')
           : '<button type="button" data-pad="left" aria-label="Move left">&#9664;</button><button type="button" data-pad="fire" class="fire">Fire</button><button type="button" data-pad="right" aria-label="Move right">&#9654;</button>') + '</div>'
         + '</main></div><div id="toast" role="status" aria-live="polite"></div>'
-        + sheet('dStats', 'My scores', (window.Looks && Looks.openTrophies ? '<button class="btn wide" type="button" id="sTro" style="width:100%;margin:2px 0 10px;display:flex;align-items:center;justify-content:center;gap:8px">' + ICON.trophy.replace('<svg ', '<svg style="width:22px;height:22px;color:#d9a520" ') + ' Trophies<small id="sTroS" style="margin-left:6px;opacity:.75"></small></button>' : '') + '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere unless you join the Hall of Fame.<span id="sWhich"></span></p><div class="tiles" id="sTiles"></div><div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn wide hofb" type="button" id="sHof">&#127942; Hall of Fame</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>')
+        + sheet('dStats', 'My scores', (window.Looks && Looks.openTrophies ? '<button class="btn wide" type="button" id="sTro" style="width:100%;margin:2px 0 10px;display:flex;align-items:center;justify-content:center;gap:8px">' + ICON.trophy.replace('<svg ', '<svg style="width:22px;height:22px;color:#d9a520" ') + ' Trophies<small id="sTroS" style="margin-left:6px;opacity:.75"></small></button>' : '') + (window.Keep ? '<button class="btn wide" type="button" id="sCode" style="width:100%;margin:0 0 10px;display:flex;align-items:center;justify-content:center;gap:8px">&#128273; Keep my scores<small id="sCodeS" style="margin-left:6px;opacity:.75"></small></button>' : '') + '<p class="soft">' + (window.Keep ? 'Kept on this phone or computer &mdash; nothing is sent anywhere unless you use Keep my scores or join the Hall of Fame.' : 'Kept on this computer only &mdash; nothing is sent anywhere unless you join the Hall of Fame.') + '<span id="sWhich"></span></p><div class="tiles" id="sTiles"></div><div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn wide hofb" type="button" id="sHof">&#127942; Hall of Fame</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>')
         + sheet('dSet', 'Settings', '<div class="set"><div><label>Speed</label><small>Gentle is slower, with more lives. Changes from your next game.</small></div><div class="seg" role="group" aria-label="Speed">' + speeds + '</div></div>'
           + segRows
           + '<div class="set"><div><label id="l_sound">Sounds</label><small>Arcade sound effects, made in the game.</small></div><button class="sw" type="button" role="switch" aria-labelledby="l_sound" data-set="sound"></button></div>'

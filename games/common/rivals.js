@@ -363,6 +363,7 @@
           Looks.dayRun(ST.daily) >= 7 && 'week', S.lv === lvTop && 'hardest', ST.won >= 50 && 'fifty'].filter(Boolean), D.id);
       }
       save('stats', ST); persist();
+      if (window.Keep) Keep.sync();   // Keep my scores (keep.js): the saved copy follows every match
       setTimeout(function () {
         if (my !== gen) return;
         if (r.won && SET.fx && !reduce) { sfx('win'); fireworks(true); celebrate(T.pickFinale(SET.win), function () { if (my !== gen) return; fireworks(false); showOver(); }); return; }
@@ -599,6 +600,7 @@
     }
     function tile(v, label) { return '<div class="tile"><b>' + esc(v) + '</b><span>' + esc(label) + '</span></div>'; }
     function openStats() {
+      if (window.Keep) Keep.refresh();
       if ($('sTroS') && window.Looks && Looks.trophyCount) { var tc = Looks.trophyCount(); $('sTroS').textContent = tc.n + ' of ' + tc.of + ' won'; }
       var rate = ST.played ? Math.round(100 * ST.won / ST.played) + '%' : '–', days = 0, k;
       for (k in ST.daily) if (ST.daily[k]) days++;
@@ -662,6 +664,8 @@
     function openTrophies() { if (!window.Looks || !Looks.openTrophies) return; closeSheets(); Looks.openTrophies({ looks: function () { if ($('sLooks')) $('sLooks').click(); } }); }
     if ($('bTro')) { $('bTro').hidden = !(window.Looks && Looks.openTrophies); $('bTro').onclick = openTrophies; }
     if ($('sTro')) $('sTro').onclick = openTrophies;
+    // Keep my scores - My code and the 365 account - shared by every game (keep.js, 6 Oct 2026)
+    if ($('sCode')) $('sCode').onclick = function () { if (window.Keep) Keep.open(); };
     $('nDeal').onclick = function () { newGame('match'); };
     $('nDaily').onclick = function () { newGame('daily'); };
     $('nAgain').onclick = function () { newGame('again'); };
@@ -702,7 +706,7 @@
     document.addEventListener('fullscreenchange', function () { $('bFullL').textContent = document.fullscreenElement ? 'Leave full screen' : 'Full screen'; });
     document.addEventListener('keydown', function (e) {
       gestured = true;
-      if (e.defaultPrevented || (window.GameSocial && GameSocial.isOpen()) || (window.HallOfFame && HallOfFame.isOpen()) || (window.Journey && Journey.isOpen()) || (window.Looks && Looks.isOpen())) return;   // typing feedback or initials
+      if (e.defaultPrevented || (window.GameSocial && GameSocial.isOpen()) || (window.HallOfFame && HallOfFame.isOpen()) || (window.Journey && Journey.isOpen()) || (window.Looks && Looks.isOpen()) || (window.Keep && Keep.isOpen())) return;   // typing feedback or initials
       if (e.key === 'Escape') { if (openSheet) closeSheets(); return; }
       if (openSheet || e.altKey || e.ctrlKey || e.metaKey) return;
       var k = (e.key || '').toLowerCase();
@@ -742,7 +746,7 @@
     }
     function persist() { if (S) save('game', { s: S, g: G, u: U }); }
     var lastTick = Date.now();
-    setInterval(function () { var now = Date.now(), d = Math.min(2000, now - lastTick); lastTick = now; if (G && G.started && S && !D.over(S) && !document.hidden && !openSheet && !(window.HallOfFame && HallOfFame.isOpen())) G.ms += d; }, 1000);
+    setInterval(function () { var now = Date.now(), d = Math.min(2000, now - lastTick); lastTick = now; if (G && G.started && S && !D.over(S) && !document.hidden && !openSheet && !(window.HallOfFame && HallOfFame.isOpen()) && !(window.Keep && Keep.isOpen())) G.ms += d; }, 1000);
     document.addEventListener('visibilitychange', function () { if (document.hidden) persist(); });
     window.addEventListener('pagehide', persist);
     var rz = 0;
@@ -812,7 +816,7 @@
           + '<div class="row"><button class="btn wide" type="button" data-close>Keep playing</button></div>')
         + sheet('dOver', 'You won!', '<p class="soft" id="oSub"></p><div class="tiles" id="oTiles"></div><ul class="badges" id="oBadges"></ul><div class="lk-won" id="oTro" hidden></div><div id="oHof" hidden></div><div id="oJour" hidden></div>'
           + '<div class="row" id="oRow"><button class="btn go wide" type="button" id="oAgain">New match</button><button class="btn wide" type="button" id="oShare">Challenge a friend</button><button class="btn wide" type="button" id="oDaily">Today&rsquo;s match</button><button class="btn wide" type="button" id="oStats">My scores</button></div>')
-        + sheet('dStats', 'My scores', (window.Looks && Looks.openTrophies ? '<button class="btn wide trob" type="button" id="sTro">' + ICON.trophy + ' Trophies<small id="sTroS"></small></button>' : '') + (D.hof ? '<button class="btn hofbtn wide" type="button" id="sHof" style="width:100%;margin:2px 0 12px">&#127942; The Hall of Fame<small>Today&rsquo;s match: the best wins, this week, all time</small></button>' : '') + '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere unless you join the Hall of Fame.</p><div class="tiles" id="sTiles"></div><div class="tiles" id="sBest"></div>'
+        + sheet('dStats', 'My scores', (window.Looks && Looks.openTrophies ? '<button class="btn wide trob" type="button" id="sTro">' + ICON.trophy + ' Trophies<small id="sTroS"></small></button>' : '') + (window.Keep ? '<button class="btn wide trob" type="button" id="sCode">&#128273; Keep my scores<small id="sCodeS"></small></button>' : '') + (D.hof ? '<button class="btn hofbtn wide" type="button" id="sHof" style="width:100%;margin:2px 0 12px">&#127942; The Hall of Fame<small>Today&rsquo;s match: the best wins, this week, all time</small></button>' : '') + '<p class="soft">' + (window.Keep ? 'Kept on this phone or computer &mdash; nothing is sent anywhere unless you use Keep my scores or join the Hall of Fame.' : 'Kept on this computer only &mdash; nothing is sent anywhere unless you join the Hall of Fame.') + '</p><div class="tiles" id="sTiles"></div><div class="tiles" id="sBest"></div>'
           + '<div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>')
         + sheet('dSet', 'Settings', '<div class="set"><div><label>How fast the others play</label><small>Slow gives you time to watch every card.</small></div><div class="seg" role="group" aria-label="How fast the others play"><button type="button" data-speed="1">Slow</button><button type="button" data-speed="2">Normal</button><button type="button" data-speed="3">Quick</button></div></div>'
           + sw('sound', 'Sounds', 'Soft card sounds and chimes.') + sw('fx', 'Extra effects', 'Sparkles and fireworks when you win. Switch off on a slower computer.')
