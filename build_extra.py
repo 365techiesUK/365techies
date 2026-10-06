@@ -30327,8 +30327,17 @@ def write_portal_page():
        they differ - the portal one is the one they typed most recently. */
     if (c.mobile && c.mobile !== c.phone) rows.push('\\ud83d\\udcf1 <a href="tel:' + esc(c.mobile.replace(/\\s/g, '')) + '">' + esc(c.mobile) + '</a> <span class="quiet">(mobile, portal)</span>');
     if (c.tel && c.tel !== c.phone) rows.push('\\u260e\\ufe0f <a href="tel:' + esc(c.tel.replace(/\\s/g, '')) + '">' + esc(c.tel) + '</a> <span class="quiet">(landline, portal)</span>');
+    /* 6 Oct 2026 (owner): "put the company and our numbers on the diary booking card too" - the numbers in OUR records
+       (the customer book, the job cards) that SimplyBook and their portal don't hold, from the same person Find a
+       customer shows (clientinfo 'ours'; already-shown numbers are left out by the server) */
+    var ob = c.ours || {};
+    (ob.nums || []).forEach(function (n) {
+      rows.push((n.kind === 'mobile' ? '\\ud83d\\udcf1' : '\\u260e\\ufe0f') + ' <a href="tel:' + esc(String(n.show).replace(/\\s/g, '')) + '">' + esc(n.show) + '</a>'
+        + ' <span class="quiet">(' + esc(n.kind) + (CBK_FROM[n.from] ? ', ' + CBK_FROM[n.from] : '') + ')</span>');
+    });
     var addr = [c.address1, c.address2, c.city, c.zip].filter(function (x) { return x && ('' + x).trim(); });
     var out = '';
+    if (ob.company) out += '<div>\\ud83c\\udfe2 <strong>' + esc(ob.company) + '</strong>' + (CBK_FROM[ob.company_from] ? ' <span class="quiet">(' + CBK_FROM[ob.company_from] + ')</span>' : '') + '</div>';
     if (rows.length) out += '<div>' + rows.join(' &middot; ') + '</div>';
     if (addr.length) {
       var a = addr.map(function (x) { return esc(x); }).join(', ');
@@ -30350,6 +30359,8 @@ def write_portal_page():
     if (c.id || c.email) {
       out += '<div class="pcmwrap" data-cid="' + esc('' + (c.id || '')) + '" data-em="' + esc(c.email || '') + '" style="margin-top:.45rem"></div>';
     }
+    // their card in Find a customer (Customers tab) - where the company and numbers are edited
+    if (ob.ref) out += '<div style="margin-top:.4rem"><button class="sm ghost cbkopen" data-ref="' + esc(ob.ref) + '" style="margin:0;padding:.3rem .65rem;font-size:.82rem">\\ud83d\\udc64 Their customer card (edit details)</button></div>';
     /* Matched on email, because that is what QuickBooks is searched by. No email,
        no button - guessing by name would merge two Smiths into one ledger. */
     if (c.email) {
@@ -30415,6 +30426,12 @@ def write_portal_page():
   /* The 365 PC Manager line on a contact card: which plan their app is on, and the one tap that
      changes it - stafftier, the same call as the licence table's button. Free -> Pro needs no
      confirm (it only unlocks the full service); Pro -> Free asks first, like the table does. */
+  /* "Their customer card": the same person in Find a customer, on the Customers tab */
+  function bindCbkOpen(panel) {
+    Array.prototype.forEach.call(panel.querySelectorAll('.cbkopen'), function (b) {
+      b.onclick = function () { if (NXL.show) NXL.show('customers'); cbkOpen(b.getAttribute('data-ref')); };
+    });
+  }
   function bindPcmLic(panel) {
     var w = panel.querySelector('.pcmwrap'); if (!w) return;
     var lbl = '\\ud83d\\udcbb <b>365 PC Manager:</b> ';
@@ -31176,7 +31193,7 @@ def write_portal_page():
           .then(function (r) {
             if (!r || !r.ok || !r.client) { panel.innerHTML = '<span class="quiet">Couldn\\u2019t load contact details.</span>'; return; }
             panel.innerHTML = clientCard(r.client); panel.setAttribute('data-loaded', '1');
-            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel); bindJobDone(panel); bindPaylink(panel); bindAppPass(panel); bindPcmLic(panel);
+            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel); bindJobDone(panel); bindPaylink(panel); bindAppPass(panel); bindPcmLic(panel); bindCbkOpen(panel);
           })
           .catch(function () { panel.innerHTML = '<span class="quiet">Couldn\\u2019t reach the server.</span>'; });
       };
@@ -31338,7 +31355,7 @@ def write_portal_page():
           .then(function (r) {
             if (!r || !r.ok || !r.client) { panel.innerHTML = '<span class="quiet">Couldn\\u2019t load contact details.</span>'; return; }
             panel.innerHTML = clientCard(r.client); panel.setAttribute('data-loaded', '1');
-            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel); bindJobDone(panel); bindPaylink(panel); bindAppPass(panel); bindPcmLic(panel);
+            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel); bindJobDone(panel); bindPaylink(panel); bindAppPass(panel); bindPcmLic(panel); bindCbkOpen(panel);
           })
           .catch(function () { panel.innerHTML = '<span class="quiet">Couldn\\u2019t reach the server.</span>'; });
       };

@@ -2709,7 +2709,30 @@ if ($action === 'clientinfo') {
        first - that is the one a text reaches). Both portal numbers are also sent
        on their own so the card can show them beside SimplyBook's. */
     $oursPhone = $ours['mobile'] !== '' ? $ours['mobile'] : $ours['tel'];
+    /* 6 Oct 2026 (owner): "put the company and our numbers on the diary booking card too". The same person as Find a
+       customer builds them (the customer book over the job cards and PC Manager, joined to this SimplyBook client):
+       their company, and any number we hold that this card does not already show - with where it came from. Read
+       only; nothing goes into SimplyBook. Best effort: the card is complete without it. */
+    $book = array('ref' => '', 'company' => '', 'company_from' => '', 'nums' => array());
+    require_once __DIR__ . '/pcm-custbook-lib.php';
+    $cliRow = $c; $cliRow['id'] = $cid;
+    $rowsB = array_merge(cb_local_rows(), cb_rows_from_sb(array($cliRow)));
+    $gB = cb_cluster_for($rowsB, 's:' . $cid);
+    if ($gB !== null) {
+        $pB = cb_person($rowsB, $gB);
+        $book['ref'] = $pB['ref'];
+        $book['company'] = $pB['fields']['company']; $book['company_from'] = $pB['from']['company'];
+        $shown = array();
+        foreach (array($g('phone') !== '' ? $g('phone') : $oursPhone, $ours['mobile'], $ours['tel']) as $sx) { $k = cb_phone_key($sx); if ($k !== '') $shown[$k] = true; }
+        foreach (array('mobile' => 'mobile', 'phone' => 'landline') as $f => $kind) {
+            $k = cb_phone_key($pB['fields'][$f]);
+            if ($k === '' || isset($shown[$k])) continue;
+            $shown[$k] = true;
+            $book['nums'][] = array('kind' => $kind, 'show' => $pB['fields'][$f], 'from' => $pB['from'][$f]);
+        }
+    }
     out(array('ok' => true, 'client' => array(
+        'ours' => $book,   // the customer book's company + numbers not shown above (6 Oct 2026)
         'id' => (int)$cid,   // the SimplyBook client: the diary's reset-password action needs it
         'name' => $g('name'), 'email' => $g('email'),
         'phone' => ($g('phone') !== '' ? $g('phone') : $oursPhone),
