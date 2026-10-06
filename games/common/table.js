@@ -321,7 +321,7 @@
   // after another; a card that turns over turns in the air. Web Animations (CSS transitions are off while it flies).
   // Shared with rivals.js (Table365.fly). Callers skip it with Extra effects off or reduced motion.
   var CAN_FLY = typeof Element !== 'undefined' && !!Element.prototype.animate;
-  // 6 Oct 2026 (Petra, on her phone: "Response needs to be quicker. Bit slow for me"): every card journey and the waits
+  // 6 Oct 2026 (Petra, playing on a phone: "Response needs to be quicker. Bit slow for me"): every card journey and the waits
   // around it scale by PACE - Settings > Card speed: Quick (0.5, the default) or Relaxed (1, the pace until then).
   // A table sets it in start(); the hand games (rivals.js) never do, so theirs stays as it was.
   var PACE = 1;
