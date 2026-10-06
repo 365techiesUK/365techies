@@ -151,12 +151,26 @@ function pcm_slack_say($text) {
     return ($r === 'ok');
 }
 // Booking-event Slack helpers: the signed-in staffer's label, a safe name cleaner, and a "who - what" label.
-function staff_who() { global $STAFF_REC; $r = (isset($STAFF_REC) && is_array($STAFF_REC)) ? $STAFF_REC : array();
-    return (string)(isset($r['email']) ? $r['email'] : (isset($r['name']) ? $r['name'] : '')); }
+// A staff session keeps the sign-in email as 'login' (stafflogin); older readers looked only for 'email'/'name',
+// so every "(by ...)" said "the team" (found 6 Oct 2026, Jake's logged job "by Staff").
+function staff_who_of($r) {
+    $r = is_array($r) ? $r : array();
+    foreach (array('login', 'email', 'name') as $k) if (isset($r[$k]) && trim((string)$r[$k]) !== '') return trim((string)$r[$k]);
+    return '';
+}
+function staff_who() { global $STAFF_REC; return staff_who_of(isset($STAFF_REC) ? $STAFF_REC : array()); }
+// steve@365techies.co.uk -> Steve; info@ (David's account) -> David - the same rule as comms_staff_name()
+function staff_first_of($raw) {
+    $l = strtolower((string)strstr(trim((string)$raw) . '@', '@', true));
+    if ($l === '') return '';
+    if ($l === 'info') return 'David';
+    return ucfirst((string)preg_replace('/[^a-z].*$/', '', $l));
+}
+function staff_first() { return staff_first_of(staff_who()); }
 function bk_clean($s) { return trim(substr(preg_replace('/[\x00-\x1F\x7F]+/', ' ', (string)$s), 0, 80)); }
 function bk_lbl($bid) { global $in; $who = bk_clean(isset($in['who']) ? $in['who'] : (isset($in['name']) ? $in['name'] : ''));
     $what = bk_clean(isset($in['what']) ? $in['what'] : ''); return ($who !== '' ? $who : ('Booking #' . (int)$bid)) . ($what !== '' ? ' - ' . $what : ''); }
-function bk_by() { $w = staff_who(); return ' _(by ' . ($w !== '' ? $w : 'the team') . ')_'; }
+function bk_by() { $w = staff_first(); return ' _(by ' . ($w !== '' ? $w : 'the team') . ')_'; }
 
 function cache_load($f){ $c = file_exists($f) ? json_decode((string)@file_get_contents($f), true) : null; return is_array($c) ? $c : array(); }
 function cache_save($f, $c){ $tmp = $f . '.' . getmypid() . '.tmp'; if (@file_put_contents($tmp, json_encode($c), LOCK_EX) !== false) @rename($tmp, $f); }
@@ -2288,8 +2302,8 @@ if ($action === 'staffapppass') {
     // prove it before the staffer types it: the same call the app makes
     $chk = sb_pub('getClientInfoByLoginPassword', array($cemail, $pw));
     $verified = (!sb_net($chk) && isset($chk['result']['id']) && (int)$chk['result']['id'] === $cid);
-    $who = staff_who();
-    if ($who === '') $who = (string)(isset($STAFF_REC['login']) ? $STAFF_REC['login'] : 'staff');
+    $who = staff_first();
+    if ($who === '') $who = 'staff';
     pcm_slack_say(':key: *' . bk_clean($who) . '* reset the app sign-in password for *' . ($cname !== '' ? $cname : $cemail)
         . '* at the visit (shown once in the staff portal, not emailed).');
     out(array('ok' => true, 'cid' => $cid, 'email' => $cemail, 'name' => $cname, 'password' => $pw, 'verified' => $verified));
@@ -2488,7 +2502,7 @@ if ($action === 'custsave') {
     if ($errs) out(array('ok' => false, 'error' => 'check', 'errors' => $errs));
     $rows = cb_with_sb(cb_local_rows(), $ref);   // read outside the book's lock: SimplyBook is a network call
     if (cb_cluster_for($rows, $ref) === null) fail('unknown_customer');
-    $who = staff_who(); if ($who === '') $who = 'staff';
+    $who = staff_first(); if ($who === '') $who = 'staff';
     $res = cb_book_locked(function ($book) use ($rows, $ref, $v, $who) {
         // the book as it is NOW (another save may have landed): its rows replace the ones read before the lock
         $rows2 = array_merge(array_values(array_filter($rows, function ($r) { return $r['src'] !== 'book'; })), cb_rows_from_book($book));
@@ -2547,7 +2561,7 @@ if ($action === 'custlogjob') {
             'phone' => cb_str(isset($pi['phone']) ? $pi['phone'] : '', 30), 'mobile' => '', 'email' => cb_email(isset($pi['email']) ? $pi['email'] : ''));
         $sbId = (int)(isset($pi['cid']) ? $pi['cid'] : 0);
     }
-    $who = staff_who(); $first = ucfirst((string)strtok($who !== '' ? $who : 'staff', '@.'));
+    $first = staff_first(); if ($first === '') $first = 'Staff'; $who = $first;
     $name = $f['name'] !== '' ? $f['name'] : $f['company'];
     $note = function_exists('mb_substr') ? mb_substr($what, 0, 300) : substr($what, 0, 300);
     $nj = nj_create(array('name' => $name, 'company' => $f['company'], 'address' => $f['address'], 'postcode' => $f['postcode'],
@@ -2992,7 +3006,7 @@ if ($action === 'staffstatus') {
     if ($want === 'none') $db['bkmeta'][(string)$bid] = array('st' => '', 'cleared' => 1, 'ts' => time(), 'sb' => $sb ? 1 : 0, 'src' => 'portal');
     else $db['bkmeta'][(string)$bid] = array('st' => $want, 'ts' => time(), 'sb' => $sb ? 1 : 0, 'src' => 'portal');
     $sr = isset($db['staff'][$stok]) ? $db['staff'][$stok] : array();
-    $staffWho = (string)(isset($sr['email']) ? $sr['email'] : (isset($sr['name']) ? $sr['name'] : ''));
+    $staffWho = staff_first_of(staff_who_of($sr));
     db_save($db); db_close($lk);
     // Real-time Slack so the team sees every confirm/complete the instant it happens (best-effort).
     $cl = function ($s) { return trim(substr(preg_replace('/[\x00-\x1F\x7F]+/', ' ', (string)$s), 0, 80)); };
