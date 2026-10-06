@@ -548,8 +548,43 @@ const MODELS = {
     }
     k.blob(38, 0, 22, 0, '#6f9a45', 1.65, 0.3, 1.3, 123);
   },
-  headland(k) {   // Hengistbury Head: a low heath-topped headland with sandy, ironstone-brown cliffs
-    k.blob(32, 0, -5, 0, '#b07a4a', 2.2, 0.85, 1.4, 131).blob(30, 0, 9, 0, '#7a8a50', 2.25, 0.28, 1.45, 133);
+  headland(k) {   // Hengistbury Head: a low flat heath-topped headland, its end a cliff of layered orange sand and ironstone
+    k.blob(34, 0, -4, 0, '#c07a44', 2.4, 0.8, 1.4, 131, { rock: '#c8743a' });
+    for (let i = 0; i < 4; i++) k.blob(33.6 - i * 0.2, 0, -6 + i * 3.2, 0, ['#b8683a', '#d08a4a', '#a85a32', '#c88048'][i], 2.42, 0.06, 1.42, 135 + i);   // the strata
+    k.blob(32, 0, 10.5, 0, '#5a5a3a', 2.36, 0.26, 1.42, 133).blob(20, -20, 16, 10, '#6a5a3e', 1.8, 0.28, 1.3, 134);   // the heath on top
+    for (let i = 0; i < 8; i++) k.cone(3, 7, 7, -50 + i * 12, 15 + (i % 3), -20 + (i % 4) * 9, '#2e4a2a');   // a few pines
+  },
+  longgroyne(k, v) {   // the Long Groyne off Hengistbury Head: big pale rock blocks out into the surf, a red beacon post at its end (+X out)
+    const r = rnd(2600 + v);
+    for (let x = 0; x < 40; x += 2.0) for (let j = 0; j < 3; j++) k.blob(1.3 + r() * 0.7, x + (r() - 0.5), -0.5 + j * 0.45 - x * 0.025, (r() - 0.5) * 3, ['#c9c0a8', '#b8ae96', '#d8d0bc'][(r() * 3) | 0], 1.25, 0.8, 1, 2610 + v * 70 + Math.round(x * 3) + j);
+    k.cyl(0.18, 0.2, 5.5, 8, 40, 0, 0, '#1a1a1a').box(0.3, 2.2, 0.3, 40, 2.4, 0, '#d62828').box(1.6, 0.25, 0.3, 40, 5.4, 0, '#d62828');   // the beacon: a post, a red trapezoid top
+    beam(k, [39.3, 5.5, 0], [39.7, 7.0, 0], 0.22, '#d62828'); beam(k, [40.7, 5.5, 0], [40.3, 7.0, 0], 0.22, '#d62828'); k.box(1.0, 0.22, 0.3, 40, 6.9, 0, '#d62828');
+  },
+  visitorcentre(k, v) {   // the visitor centre and its cafe at the Head: a low timber building with a green turf roof, a glazed end, tables out
+    const r = rnd(2700);
+    k.box(22, 4, 10, 0, 0, 0, '#8a6a48').box(22.6, 0.6, 10.6, 0, 4, 0, '#5a7a3a');
+    for (let i = 0; i < 11; i++) k.box(0.12, 4, 0.1, -10.5 + i * 2.1, 0, 5.05, '#6a4e34');
+    k.box(7, 3, 0.12, 7, 0.5, 5.06, '#3a5566', 0, 0, 0, 'shiny');
+    for (let i = 0; i < 4; i++) { const x = -8 + i * 4; k.cyl(0.5, 0.5, 0.06, 8, x, 0.75, 8.5, '#6a4e34').cyl(0.05, 0.05, 2.3, 4, x, 0, 8.5, '#9a9a9a').cone(1.4, 0.45, 8, x, 2.2, 8.5, ['#2f6a3a', '#e8e4da'][i % 2]); }
+    for (let i = 0; i < 5; i++) person(k, -9 + i * 4 + r(), 0, 10.5 + r(), r, false);
+  },
+  landtrain(k, v) {   // the little land train that takes people out to the sandbank: a green engine and three open carriages under
+    // striped canopies, people aboard (along +Z)
+    k.box(2, 1.4, 3.2, 0, 0.4, -6, '#2f6a3a', 0, 0, 0, 'shiny').box(1.9, 1.0, 1.6, 0, 1.8, -5.4, '#2f6a3a').box(1.8, 0.7, 0.1, 0, 2.0, -6.22, '#2a3a48', 0, 0, 0, 'shiny');
+    k.cyl(0.18, 0.18, 1.2, 8, 0.5, 1.8, -7.1, '#c9a227');
+    for (const [z, x] of [[-6.9, -0.9], [-6.9, 0.9], [-5.1, -0.9], [-5.1, 0.9]]) k.axle(0.35, 0.25, 10, x, 0.35, z, '#151515');
+    for (let c = 0; c < 3; c++) {
+      const z = -2 + c * 4.2, r = rnd(2800 + c);
+      k.box(1.9, 0.5, 3.6, 0, 0.5, z, '#e8e4da').box(2.0, 0.08, 3.8, 0, 2.6, z, c % 2 ? '#d62828' : '#ffffff');
+      for (const [x, zz] of [[-0.9, -1.7], [0.9, -1.7], [-0.9, 1.7], [0.9, 1.7]]) k.cyl(0.04, 0.04, 1.6, 4, x, 1.0, z + zz, '#9a9a9a');
+      for (const x of [-0.85, 0.85]) k.axle(0.3, 0.2, 8, x, 0.3, z - 1.2, '#151515').axle(0.3, 0.2, 8, x, 0.3, z + 1.2, '#151515');
+      for (let i = 0; i < 3; i++) person(k, (i - 1) * 0.55, 0.7, z + (r() - 0.5) * 2, r, r() < 0.3);
+    }
+  },
+  dykes(k, v) {   // the Iron Age Double Dykes: two long grassy banks with a ditch between, running back from the road (+X), a stile and a sign
+    for (const z of [-3.5, 3.5]) k.blob(16, 30, -12.5, z, '#7a8a48', 2.4, 0.95, 0.2, 2900 + (z > 0 ? 1 : 0), { smooth: true });
+    for (let i = 0; i < 12; i++) k.cone(0.7, 0.9, 6, 8 + i * 4, 2.6 + (i % 2) * 0.3, (i % 2 ? 3.5 : -3.5), '#5a6a38');
+    k.cyl(0.08, 0.08, 1.4, 5, 2, 0, 6, '#6a4e34').box(0.08, 0.5, 0.9, 2, 1.1, 6, '#6a4e34');
   },
   footbridge(k, v) {   // a white footbridge right over the road, people on it waving
     const col = '#eef2f4';

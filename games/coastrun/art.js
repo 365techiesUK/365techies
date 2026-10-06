@@ -50,8 +50,8 @@
       sea: ['#2c3e70', '#283866'], foam: '#d8d8f0', road: ['#55545c', '#504f57'], rumble: ['#f0f0f0', '#c62828'], lane: '#ece8d8', edge: 'fence', wall: ['#8a8676', '#827e6e'], tint: ['#4a5aa8', 0.25] },
     { key: 'goldencap', sky: [[0, '#25397e'], [0.45, '#7a6aa8'], [0.75, '#ffa868'], [1, '#ffd890']], fog: '#f2c08c', grass: ['#8eaa48', '#84a040'], verge: ['#7a9a46', '#71903f'], beach: ['#e8c070', '#deb664'],
       sea: ['#3f6496', '#3a5c8c'], foam: '#fff0d8', road: ['#6e625c', '#695d57'], rumble: ['#fff4e2', '#d8902a'], lane: '#fff2dc', edge: 'fence', tint: ['#ff9a40', 0.16] },
-    { key: 'hengistbury', sky: [[0, '#060c2c'], [0.5, '#1c2a6a'], [0.82, '#5a4a8a'], [1, '#d07a6a']], fog: '#4a3f6a', grass: ['#2e3e30', '#2a382b'], verge: ['#4a4636', '#443f31'], beach: ['#7a6a5a', '#726252'],
-      sea: ['#16244a', '#132042'], foam: '#a8b0e0', road: ['#35343c', '#313038'], rumble: ['#d8d8d8', '#2f6fd6'], lane: '#e8e2b8', edge: 'fence', night: true, tint: ['#2a2a7a', 0.35] }
+    { key: 'hengistbury', sky: [[0, '#1e2a6a'], [0.4, '#6a4a9a'], [0.7, '#ff8a5a'], [1, '#ffcf8a']], fog: '#f0a880', grass: ['#6a6a40', '#62623a'], verge: ['#8a8a5a', '#80804f'], beach: ['#c8b490', '#bea886'],
+      sea: ['#3c5a8a', '#365482'], foam: '#ffe6d0', road: ['#6a5e5a', '#655955'], rumble: ['#fff0e2', '#d86a3a'], lane: '#fff0dc', edge: 'fence', tint: ['#ff7a40', 0.08] },   // (sunset, as in the owner's photos)
   ];
   // in the engine's order of the places (CREngine.STAGES: the pyramid), so PAL[stage id] is that place's colours
   PAL = (function (byKey) { var m = {}; byKey.forEach(function (p) { m[p.key] = p; }); return window.CREngine.STAGES.map(function (S) { return m[S.key]; }); })(PAL);

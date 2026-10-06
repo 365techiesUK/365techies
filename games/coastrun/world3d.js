@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=26';
+import * as MD from './models3d.js?v=27';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -84,8 +84,8 @@ Object.assign(LOOK, {
   goldencap: { hedge: 17, roadK: '#ece4da', lift: [0.018, 0.014, 0.018], rays: 1, sun: [-0.62, 0.22], sunCol: '#ffc888', sunI: 2.4, hemi: ['#d8c6dc', '#b09a60', 1.3], bloomK: 0.7, exp: 1.14, fog: [260, 1700], fogCol: '#dcbcae', cliff: '#d8a040', beach: '#e8c070', beachY: 0.5, cliffK: 0.3, hills: 26, rise: 100, edge: 'fence', sea: '#3f6496', seaOp: 0.85,
     cover: 0.36, cloud: ['#ffd8a8', '#8a6880'], grade: [1.2, 1.14, '#fff2e2'], env: 0.66, glow: 1.5,
     dress: [['gorse', 1, 0.25, 12, 60], ['sheep', 2, 0.15, 14, 60], ['tuft', 6, 1.82, 8.8, 28], ['oak', 1, 0.08, 20, 90]] },
-  hengistbury: { sun: [0.5, 0.5], sunCol: '#b0b0d8', sunI: 0.8, hemi: ['#8080a8', '#3a3842', 1.5], fog: [90, 850], cliff: '#8a6a4a', beach: '#7a6a5a', beachY: 0.5, cliffK: 0.2, hills: 8, rise: 40, edge: 'fence', sea: '#16244a', seaOp: 0.93, night: true,
-    cover: 0.22, cloud: ['#5a5488', '#1c1a34'], grade: [1.12, 1.08, '#eceaff'], env: 0.55, glow: 0.4,
+  hengistbury: { lift: [0.018, 0.01, 0.014], rays: 1, sun: [-0.66, 0.14], sunCol: '#ffbc80', sunI: 2.4, hemi: ['#c8c4dc', '#6a7050', 1.05], exp: 1.02, fog: [320, 2100], fogCol: '#d8a8a0', cliff: '#b8703a', beach: '#c8b490', beachY: 0.5, cliffK: 0.3, hills: 10, rise: 50, edge: 'fence', sea: '#3c5a8a', seaOp: 0.86,
+    cover: 0.34, cloud: ['#ffc8a0', '#6a5080'], grade: [1.12, 1.06, '#fff6f0'], env: 0.9, glow: 1.5, dusk: true,   // (sunset, as in the owner's photos: it was a near-black night)
     dress: [['heather', 2, 0.3, 12, 50], ['gorse', 1, 0.2, 12, 50], ['pine', 1, 0.05, 20, 70]] }
 });
 const FIELDS = {
@@ -102,7 +102,7 @@ const FIELDS = {
   lyme: { cols: ['#6a8c40', '#5e8038', '#7e9c48', '#a89a50', '#74944a'], k: 0.6 },
   portland: { cols: ['#5a7a46', '#6a7a50', '#7a7a60', '#4e6a40', '#8a8a70'], k: 0.5 },
   goldencap: { cols: ['#90a644', '#7e963c', '#a8b450', '#d8b456', '#98a848'], k: 0.75 },
-  hengistbury: { cols: ['#2e3e30', '#2a382b', '#34443a', '#2e3e30', '#2a382b'], k: 0.15 },
+  hengistbury: { cols: ['#6a6a40', '#5a6238', '#7a6e48', '#86704a', '#62683c'], k: 0.2 },   // (heath: heather and dry grass)
   needles: { cols: ['#80a65b', '#729a50', '#94b468', '#bcb474', '#86a85a'], k: 0.55 }
 };
 const FLOWERS = { purbeck: 1, christchurch: 0.9, swanage: 0.8, lymington: 0.8, goldencap: 0.8, needles: 0.7, jurassic: 0.5, lyme: 0.6, weymouth: 0.5, bournemouth: 0.35, sandbanks: 0.3, forest: 0.25, portland: 0.2 };   // wild flowers in the grass close by
@@ -119,7 +119,7 @@ const ROWS = {   // set out at a steady spacing behind the boundary: [model, var
   christchurch: [['cottage', 2, 10, 24, 4], ['terrace', 6, 8, 38, 3]], lymington: [['cottage', 2, 9, 24, 5], ['tpole', 1, 12, 15.6, 0]],
   purbeck: [['tpole', 1, 12, 15.6, 0]], hengistbury: [['lamp', 2, 6, 15.4, 0]], swanage: [['tpole', 1, 12, 15.6, 0]], goldencap: [['tpole', 1, 12, 15.6, 0]], needles: [['tpole', 1, 14, 15.6, 0]]
 };
-const ROCKC = { bournemouth: '#c9a66a', purbeck: '#e8e4d8', swanage: '#eeebe2', needles: '#efece4', jurassic: '#d8cfba', portland: '#c9c2b2', goldencap: '#d8a85e', lyme: '#7f8790', forest: '#a89070', christchurch: '#b9a98a', lymington: '#b9a98a', hengistbury: '#a87850' };   // the rock in the cuttings and cliffs
+const ROCKC = { hengistbury: '#c07a44', bournemouth: '#c9a66a', purbeck: '#e8e4d8', swanage: '#eeebe2', needles: '#efece4', jurassic: '#d8cfba', portland: '#c9c2b2', goldencap: '#d8a85e', lyme: '#7f8790', forest: '#a89070', christchurch: '#b9a98a', lymington: '#b9a98a', hengistbury: '#a87850' };   // the rock in the cuttings and cliffs
 const BUNT = { bournemouth: 1, weymouth: 1, lyme: 1, christchurch: 1, lymington: 1, sandbanks: 1 };   // flags strung over the road in the towns
 const MORE = {   // closer, thicker dressing behind the boundary (as look.dress: [model, variants, a segment, from, to])
   bournemouth: [['bush', 2, 0.9, 19.2, 37], ['gorse', 1, 0.45, 19.2, 37], ['heather', 2, 0.3, 20, 36], ['pine', 1, 0.55, 38, 80], ['oak', 1, 0.12, 42, 75]], sandbanks: [['palm', 3, 0.22, 17, 28], ['bush', 2, 0.25, 15.6, 22], ['strollers', 8, 0.1, 15.4, 19]],   // (bournemouth: the cliff face - scrub, gorse, sandy patches; pines along the top)
@@ -137,15 +137,15 @@ const SEA_MORE = { bournemouth: [['windsurf', 4, 0.07, 30, 220], ['motorboat', 4
   lymington: [['marina', 3, 0.16, 3, 7], ['motorboat', 4, 0.03, 30, 140]], lyme: [['motorboat', 4, 0.03, 30, 160], ['marina', 3, 0.025, 7, 12]], harbour: [['marina', 6, 0.06, 22, 30], ['portcrane', 3, 0.045, 200, 250]] };   // out on the water
 const BEACH = {   // the beach between the road and the water: [model, variants, a segment, from, to (less than 0: that far short of the water)]
   bournemouth: [['strollers', 8, 0.22, 11.8, 19], ['deckchairs', 4, 0.26, 15.5, -3.5], ['lifeguard', 1, 0.012, 20, -6]], sandbanks: [['marram', 6, 0.42, 11.8, 21], ['strollers', 8, 0.16, 11.8, 19], ['deckchairs', 4, 0.22, 15, -3.5]],
-  weymouth: [['strollers', 8, 0.22, 11.8, 19], ['deckchairs', 4, 0.26, 15.5, -3.5]], harbour: [['strollers', 8, 0.18, 9.6, -2.6], ['tripkiosk', 2, 0.035, 10.6, 11.2], ['canopy', 2, 0.012, 11.2, 11.6]], christchurch: [['reeds', 4, 0.34, 12, -0.5], ['strollers', 8, 0.05, 10, 16]], hengistbury: [['strollers', 8, 0.08, 11.8, 19]]
+  weymouth: [['strollers', 8, 0.22, 11.8, 19], ['deckchairs', 4, 0.26, 15.5, -3.5]], harbour: [['strollers', 8, 0.18, 9.6, -2.6], ['tripkiosk', 2, 0.035, 10.6, 11.2], ['canopy', 2, 0.012, 11.2, 11.6]], christchurch: [['reeds', 4, 0.34, 12, -0.5], ['strollers', 8, 0.05, 10, 16]], hengistbury: [['marram', 6, 0.36, 11.8, 21], ['strollers', 8, 0.08, 11.8, 19]]
 };
 const QUAY = { harbour: 1 };
 const FISH = { harbour: 1 };   // fishing boats moored along the quay wall
-const GROYNE = { bournemouth: 'groyne', sandbanks: 'rockgroyne' };   // (Bournemouth's are timber, Sandbanks' granite boulders)
+const GROYNE = { bournemouth: 'groyne', sandbanks: 'rockgroyne', hengistbury: 'longgroyne' };   // (Bournemouth's are timber, Sandbanks' granite boulders)
 const HARB = { sandbanks: [['mooring', 6, 0.16, 14, 210], ['motorboat', 4, 0.025, 30, 180], ['jetty', 3, 0.045, -3, -3]] };   // out in the harbour (lateral from its edge; a jetty from the bank)   // lamps along the water's edge (at night the quay side was a black void)
 const BG_IMG = { bournemouth: 4, sandbanks: 4, christchurch: 4, purbeck: 4, swanage: 4, forest: 4, jurassic: 4, weymouth: 4, harbour: 4, lymington: 4, lyme: 4, portland: 4, goldencap: 4, needles: 4 };   // the places with a painted panorama (games/coastrun/bg/<place>.webp), and its version
-const HERO = { bournemouth: 62, sandbanks: 46, christchurch: 44, purbeck: 56, swanage: 17, forest: 30, jurassic: 34, weymouth: 38, harbour: 38, lymington: 46, lyme: 46, portland: 40, goldencap: 50, hengistbury: 44, needles: 52 };   // each place's landmark painted large (tools/coastrun/gen_hero.py): how wide it stands, in degrees
-const HERO_V = 5, HERO_D = 2150, MARK_OFF = 0.17;   // (the landmark sits just off the road ahead, to the sea side: further out, the beach huts and the prom hid it)
+const HERO = { bournemouth: 62, sandbanks: 46, christchurch: 44, purbeck: 56, swanage: 17, forest: 30, jurassic: 34, weymouth: 38, harbour: 38, lymington: 46, lyme: 46, portland: 40, goldencap: 50, hengistbury: 40, needles: 52 };   // each place's landmark painted large (tools/coastrun/gen_hero.py): how wide it stands, in degrees
+const HERO_V = 6, HERO_D = 2150, MARK_OFF = 0.17;   // (the landmark sits just off the road ahead, to the sea side: further out, the beach huts and the prom hid it)
 const BGL = new THREE.TextureLoader();
 
 // ---------------------------------------------------------------- the sky: the colours, the sun and its glow, the clouds
@@ -815,13 +815,13 @@ export function createWorld() {
         place(W, i * SEG, it.x, it.b, P);
         const d = it.x < 0 ? -1 : 1, fr = faceRoad(d, P.th);
         let ry = hash2(i, Math.round(it.x * 10)) * Math.PI * 2;
-        if (/^(hut|cottage|hotel|building|board|finger|forestsign|lamp|villa|terrace|clock|haven|customhouse|placemill|castlekeep)$/.test(it.t)) ry = fr;
+        if (/^(hut|cottage|hotel|building|board|finger|forestsign|lamp|villa|terrace|clock|haven|customhouse|placemill|castlekeep|visitorcentre)$/.test(it.t)) ry = fr;
         if (it.t === 'lamp') ry = fr + Math.PI;   // the arm reaches over the road
-        if (/^(gate|gantry|nose|chev|warn|gpost|footbridge|viaduct|banner|rockarch|treearch|pierarch|liftbridge|chairlift|craneway|ferryqueue)$/.test(it.t)) ry = -P.th;
+        if (/^(gate|gantry|nose|chev|warn|gpost|footbridge|viaduct|banner|rockarch|treearch|pierarch|liftbridge|chairlift|craneway|ferryqueue|landtrain)$/.test(it.t)) ry = -P.th;
         if (it.t === 'priory' || it.t === 'cobb' || it.t === 'goldcap' || it.t === 'headland') ry = fr;
         if (it.t === 'arch') ry = -P.th + (it.x < 0 ? Math.PI : 0);   // Durdle Door side-on from the road, its high end towards the shore
         if (it.t === 'board') ry = -P.th + d * 0.5;
-        if (/^(pier|ferry|clifflift|zigzag|rowboats)$/.test(it.t)) ry = fr + Math.PI / 2 - (it.t === 'pier' ? 0.72 : 0);   // (+X away from the road; the piers angled 20 degrees ahead - square to the shore they lay off to the side, out of the chase camera's view)
+        if (/^(pier|ferry|clifflift|zigzag|rowboats|dykes)$/.test(it.t)) ry = fr + Math.PI / 2 - (it.t === 'pier' ? 0.72 : 0);   // (+X away from the road; the piers angled 20 degrees ahead - square to the shore they lay off to the side, out of the chase camera's view)
         let y = P.y;
         if (it.t === 'pier') y = P.y - 0.15;   // (its deck level with the promenade)
         else if (/^(yacht|buoy|stack|arch|needles|ferry|cobb|goldcap|headland|rowboats|swans)$/.test(it.t)) y = 0;

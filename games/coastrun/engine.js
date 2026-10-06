@@ -59,7 +59,7 @@
     { key: 'lyme', name: 'LYME REGIS', seed: 6101, t: 72, len: 750, curvy: 0.75, hilly: 0.8, sea: -1, band: [10, 50], mix: [5, 3, 1, 1, 3, 0, 0, 2], feat: { tunnel: 1 } },
     { key: 'portland', name: 'PORTLAND BILL', seed: 6203, t: 72, len: 750, curvy: 0.8, hilly: 0.7, sea: -1, band: [18, 60], mix: [5, 3, 2, 0, 3, 1, 1, 1], feat: { tunnel: 2 } },
     { key: 'goldencap', name: 'GOLDEN CAP', seed: 6307, t: 72, len: 760, curvy: 0.8, hilly: 0.9, sea: -1, band: [30, 90], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { tunnel: 1 } },
-    { key: 'hengistbury', name: 'HENGISTBURY HEAD', seed: 6409, t: 72, len: 740, curvy: 0.65, hilly: 0.4, sea: 1, band: [4, 22], mix: [5, 4, 1, 1, 3, 0, 0, 3], feat: { bridge: 1 } },
+    { key: 'hengistbury', name: 'HENGISTBURY HEAD', seed: 6409, t: 72, len: 740, curvy: 0.65, hilly: 0.4, sea: 1, band: [4, 22], shores: [30, 34, 38, 42, 46, 36, 40, 32], mix: [5, 4, 1, 1, 3, 0, 0, 3], feat: { bridge: 1 } },
     { key: 'needles', name: 'THE NEEDLES', seed: 6607, t: 72, len: 760, curvy: 0.75, hilly: 0.8, sea: 1, band: [22, 70], mix: [5, 3, 1, 1, 3, 0, 0, 2], feat: { tunnel: 1 } }
   ];
   (function () {   // the pyramid: level L (1..5) has L places; from place j of a level, left goes to j and right to j + 1 of the next
@@ -395,7 +395,7 @@
           if (r() < 0.008) put(W, i, 'cottage', 20 + r() * 20, 4, { v: 1 });
           onWater('yacht', 30, 140, 0.012, (r() * 3) | 0);
           break;
-        case 'hengistbury':   // Hengistbury Head at twilight: the long row of beach huts on the spit, heath and the harbour
+        case 'hengistbury':   // Hengistbury Head at sunset: the beach huts on the sandbank, heath and gorse, the Long Groyne (world3d.js), the Head at the end
           lamps(7, 1, true);
           if (sh > 18 && k % 3 === 0 && land(s, 12.5)) put(W, i, 'hut', 12.5, 1.3, { v: 6 + (k / 3) % 6 });   // (lit up: at night the head was a dark blank)
           if (r() < 0.05) put(W, i, ['gorse', 'heather'][(r() * 2) | 0], -(11.5 + r() * 20), 0.8, { soft: true, v: 1 });
@@ -446,7 +446,10 @@
     if (S.key === 'lymington') { mark('ferry', 0.5, function (h) { return Math.max(h, 16) + 60; }); }
     if (S.key === 'lyme') { mark('cobb', 0.32, function (h) { return -(Math.max(h, 18) + 34); }); }   // (earlier and nearer: the critic never saw it)
     if (S.key === 'portland') { mark('lighthouse', 0.84, function (h) { return -(Math.max(h, 18) - 5); }, 1); }
-    if (S.key === 'hengistbury') { mark('headland', 0.7, function (h) { return Math.max(h, 18) + 70; }); }
+    if (S.key === 'hengistbury') {   // the Head itself; the visitor centre and its cafe, the land train at its stop, the Double Dykes
+      mark('headland', 0.7, function (h) { return Math.max(h, 18) + 70; });
+      mark('visitorcentre', 0.2, function () { return -26; }); mark('landtrain', 0.215, function () { return -16.4; }); mark('dykes', 0.34, function () { return -15.5; });
+    }
     if (S.key === 'needles') { mark('needles', 0.8, function (h) { return Math.max(h, 18) + 90; }); }
   }
   var PW = { magnet: 480, shield: 480, double: 600 };   // how long each bonus lasts (steps; 60 a second)
