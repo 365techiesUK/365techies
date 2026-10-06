@@ -38,6 +38,8 @@
   };
   var RECYCLE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 15.4-6.4L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.4 6.4L3 16"/><path d="M3 21v-5h5"/></svg>';
   var ICON = {
+    app: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 8.5v6M9 11.5h6"/><path d="M10.5 18.5h3"/></svg>',
+    flame: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.7 2c.5 2.7-.5 4.5-2 6.2-1.6 1.8-3.6 3.6-3.6 6.7 0 3.6 2.6 6.6 5.8 6.6s5.8-2.8 5.8-6.3c0-2.8-1.4-4.5-2.5-5.9-.2 1.4-.8 2.4-1.9 3 .4-4-.6-7.5-1.6-10.3zM12.3 21c-1.6 0-2.8-1.4-2.8-3.1 0-1.8 1.4-2.8 2.3-4.1.4 1 1.1 1.6 1.9 1.9.1-.5.1-1 0-1.5 1 .9 1.6 2 1.6 3.4 0 1.9-1.3 3.4-3 3.4z"/></svg>',
     more: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/></svg>',
     'new': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="11" height="15" rx="2"/><path d="M9 21h9a2 2 0 0 0 2-2V8"/><path d="M9.5 8v5M7 10.5h5"/></svg>',
     undo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>',
@@ -411,7 +413,7 @@
     + '.info{min-width:0;flex:1 1 100%}.chip{flex:1 1 0;min-width:0!important;padding:2px 4px}.chip small{font-size:10px;letter-spacing:0}.chip span{font-size:15px}.brand span{font-size:16px}}'
     + '@media (max-width:250px){.tb#bGames{display:none}}'
     // a phone that can go full screen (Android): Full screen takes Help's place on the bar; Help is under More (6 Oct 2026)
-    + '@media (max-width:480px){body.fs365 .tools .tb#bHelp{display:none}body.fs365 .tools .tb#bFull:not([hidden]){display:inline-flex}}'
+    + '@media (max-width:480px){body.fs365:not(.app365) .tools .tb#bHelp{display:none}body.fs365:not(.app365) .tools .tb#bFull:not([hidden]){display:inline-flex}}'
     // the folded bar (6 Oct 2026, owner: "once you start the game could that menu hide"): one slim row - the scores, Undo,
     // Hint, Full screen and Menu; the game's name stays for screen readers; sideways there is room for it and New
     + 'body.fold365 .bar{flex-wrap:nowrap;align-items:center;gap:6px 6px;padding:max(4px,env(safe-area-inset-top,0px)) 8px 4px}'
@@ -419,7 +421,7 @@
     + 'body.fold365 .chip small{font-size:10px;letter-spacing:.02em}body.fold365 .chip span{font-size:15px}'
     + 'body.fold365 .tools{display:flex!important;flex:0 0 auto;width:auto!important;gap:4px!important;margin-left:0!important}'
     + 'body.fold365 .tools .tb{display:none!important}'
-    + 'body.fold365 .tools .tb#bUndo:not([hidden]),body.fold365 .tools .tb#bHint:not([hidden]),body.fold365 .tools .tb#bMore:not([hidden]),body.fs365.fold365 .tools .tb#bFull:not([hidden])'
+    + 'body.fold365 .tools .tb#bUndo:not([hidden]),body.fold365 .tools .tb#bHint:not([hidden]),body.fold365 .tools .tb#bMore:not([hidden]),body.fs365.fold365:not(.app365) .tools .tb#bFull:not([hidden])'
     + '{display:inline-flex!important;flex-direction:column;justify-content:center;gap:2px;width:46px;min-width:0;min-height:44px;padding:3px 0 2px!important}'
     + 'body.fold365 .tb .sl{display:block!important;font:700 10.5px/1 Archivo,sans-serif;white-space:nowrap}body.fold365 .tb svg{width:20px;height:20px}body.fold365 .tb .lbl{display:none!important}'
     + '@media (max-width:600px){body.fold365 .brand{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}'
@@ -428,6 +430,23 @@
     + '@media (max-width:330px){body.fold365 .bar{flex-wrap:wrap}body.fold365 .info{flex:1 1 100%}body.fold365 .chip{max-width:none}body.fold365 .tools{margin-left:auto!important}}'
     // a strong phone (8+ cores, 6 Oct 2026): the full flying-card shadow even on narrow cards (Spider keeps the light one)
     + 'body.rich365 #board.tiny:not(.g-spider) .card.flight .front,body.rich365 #board.tiny:not(.g-spider) .card.flight .back{box-shadow:0 0 0 1px var(--card-edge) inset,0 18px 30px rgba(0,0,0,.4),0 6px 10px rgba(0,0,0,.22)}'
+    // the daily streak chip (6 Oct 2026): orange flame = today's deal won; glowing = today's still to play; grey = none yet
+    + '.chip.chipst{border:0;color:inherit;font:inherit;cursor:pointer;min-width:52px}.chipst span{display:inline-flex;align-items:center;gap:3px}'
+    + '.chipst svg{width:16px;height:16px;color:#ff9a3c;flex:none}.chipst.cold svg{color:rgba(255,255,255,.4)}.chipst:hover{background:rgba(0,0,0,.28)}'
+    // (a ring that fades in and out six times, then rests - opacity and transform only, so an idle table costs no battery)
+    + '.chipst{position:relative}.chipst.due::after{content:"";position:absolute;inset:-2px;border-radius:11px;box-shadow:0 0 0 3px rgba(255,154,60,.6);opacity:0;pointer-events:none}'
+    + '@media (prefers-reduced-motion:no-preference){.chipst.due::after{animation:due365 2.2s ease-in-out 6}.chipst.due svg{animation:flick365 1.1s ease-in-out 12 alternate}}'
+    + '@keyframes due365{50%{opacity:1}}@keyframes flick365{from{transform:scale(1)}to{transform:scale(1.14) translateY(-1px)}}'
+    + 'body.fold365 .chip.chipst{flex:0 0 auto;min-width:40px!important;max-width:none}body.fold365 .chipst small{display:none}body.fold365 .chip.chipst{justify-content:center}body.fold365 .chipst span{font-size:15px}'
+    + '@media (max-width:379px){body.fold365 .info .chip:nth-child(2){display:none}}'   // a narrow phone, folded: Moves gives way to the flame
+    + '.stk{text-align:center}.stkbig{display:inline-flex;align-items:center;gap:6px;font:800 54px/1 "Clash Display",Archivo,sans-serif;color:var(--sheet-ink)}.stkbig svg{width:56px;height:56px;color:#ff8a1f}'
+    + '.stksub{margin:4px 0 6px;font-weight:700;color:var(--sheet-ink)}#kNote{margin:10px 0 4px}'
+    // never on the bar - Add to home screen lives in Menu; launched from the home screen: no Full screen, Help back
+    + '.tb.tbapp{display:none!important}body.app365 .tools .tb#bFull{display:none!important}'
+    + '.wapp{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:center;margin:12px 0 4px;padding:12px 14px;border-radius:14px;background:#eef6ef;color:var(--sheet-ink);text-align:left}'
+    + '.wapp svg{width:30px;height:30px;color:var(--primary);grid-row:span 2}.wapp p{margin:0;font-size:15px;line-height:1.35}.wapp .btn{justify-self:start}'
+    + '.wapp .linkb{grid-column:2;justify-self:start;border:0;background:none;color:var(--sheet-soft);font:600 14px Archivo,sans-serif;text-decoration:underline;cursor:pointer;padding:4px 0}'
+    + '.apphow{font-size:17px;line-height:1.6}.apphow svg{width:20px;height:20px;vertical-align:-4px}'
     + '@media (hover:none) and (pointer:coarse){.keys365{display:none}}'
     + '.card .wig{perspective:calc(var(--cw) * 5)}'   // a true 3D turn when a card flips
     + '.front,.back{transition:box-shadow .22s ease}'
@@ -518,7 +537,9 @@
     function pc(ms) { return Math.round(ms * PACE); }
     setPace();
     try { if ((navigator.hardwareConcurrency || 0) >= 8 && (!navigator.deviceMemory || navigator.deviceMemory >= 6)) document.body.classList.add('rich365'); } catch (e) {}
-    function blankStats() { return { v: 1, played: 0, won: 0, streak: 0, bestStreak: 0, best: {}, daily: {}, recent: [] }; }
+    // (only these keys survive a reload: dayBest = the longest daily streak, clocks = clocks beaten - that one was
+    // being dropped on every load until 6 Oct 2026)
+    function blankStats() { return { v: 1, played: 0, won: 0, streak: 0, bestStreak: 0, best: {}, daily: {}, recent: [], dayBest: 0, clocks: 0 }; }
     var ST = blankStats();
     (function () { var s = load('stats', null); if (s && s.v === 1) for (var k in ST) if (k in s) ST[k] = s[k]; if (!ST.best || typeof ST.best !== 'object') ST.best = {}; })();
     function vKey(v) { return V ? (V.statKey ? V.statKey(v) : 'v' + v) : 'all'; }
@@ -666,6 +687,7 @@
       shownScore = S.score;
       $('vTime').textContent = clock(G.ms);
       $('chipTime').style.display = SET.timer ? '' : 'none';
+      streakChip();
       var R = rules();
       $('bUndo').disabled = !G.undo.length || !R.undo; $('bHint').disabled = !R.hint;
       if (G.mode === 'journey') chal();
@@ -1230,7 +1252,11 @@
       if (b.score == null || S.score > b.score) { if (b.score != null) badges.push('Your best score yet!'); b.score = S.score; }
       if (!G.undid) badges.push('Won without using Undo');
       if (G.mode === 'clock' && !G.timeUp) { ST.clocks = (ST.clocks || 0) + 1; badges.push('Beat the clock with ' + clock(G.limit - G.ms) + ' to spare!'); }
-      if (G.mode === 'daily' && G.day) { ST.daily[G.day] = { won: 1, t: secs, m: S.moves, d: vOf(S) }; badges.push('Today’s deal: done!'); }
+      if (G.mode === 'daily' && G.day) {
+        ST.daily[G.day] = { won: 1, t: secs, m: S.moves, d: vOf(S) }; badges.push('Today’s deal: done!');
+        var dn = dayStreak(); if (dn > (ST.dayBest || 0)) ST.dayBest = dn;   // the daily streak (6 Oct 2026)
+        badges.push(dn >= 2 ? 'Daily streak: ' + dn + ' days in a row!' : 'Your daily streak has started – come back tomorrow for day 2');
+      }
       save('stats', ST);
       return { secs: secs, badges: badges };
     }
@@ -1239,6 +1265,7 @@
       $('wTime').textContent = clock(rec.secs * 1000); $('wMoves').textContent = S.moves; $('wScore').textContent = S.score;
       $('wBadges').innerHTML = rec.badges.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('');
       $('wDaily').hidden = !!(ST.daily[today()] && ST.daily[today()].won);
+      $('wApp').hidden = !(appOK() && !appSnoozed());
       chal(); openD('dWin');
       Table365.countUp($('wScore'), S.score); Table365.countUp($('wMoves'), S.moves);   // the numbers count up
       var hb = $('wHof'); hb.hidden = true; hb.innerHTML = '';
@@ -1414,7 +1441,7 @@
       Array.prototype.forEach.call(document.querySelectorAll('[data-felt]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-felt') === SET.felt)); });
       Array.prototype.forEach.call(document.querySelectorAll('[data-back]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-back') === SET.back)); });
       // (keeps the phone marks: fs365 = can go full screen, rich365 = a strong phone, fold365 = the bar folded - 6 Oct 2026)
-      document.body.className = 'felt-' + SET.felt + ' back-' + SET.back + (SET.fx ? '' : ' nofx') + ['fs365', 'rich365', 'fold365'].filter(function (k) { return document.body.classList.contains(k); }).map(function (k) { return ' ' + k; }).join('');
+      document.body.className = 'felt-' + SET.felt + ' back-' + SET.back + (SET.fx ? '' : ' nofx') + ['fs365', 'rich365', 'fold365', 'app365'].filter(function (k) { return document.body.classList.contains(k); }).map(function (k) { return ' ' + k; }).join('');
       if ($('sWin')) $('sWin').value = SET.win;
       var pv = $('sLookPv'); if (pv) { pv.className = 'lkpv lk-f-' + SET.felt; pv.firstChild.className = 'lk-b-' + SET.back; }
     }
@@ -1452,7 +1479,7 @@
     $('skip365').onclick = function (e) { e.preventDefault(); board.focus(); };   // the first Tab stop (games audit, 5 Oct 2026)
     // More (phones): the bar's tucked-away buttons, as big buttons with words (games audit, 5 Oct 2026)
     $('bMore').onclick = function () {
-      $('moreL').innerHTML = ['bNew', 'bGames', 'bHint', 'bHelp', 'bStats', 'bSet', 'bShare', 'bFeed', 'bFull'].filter(function (id) { return $(id) && !$(id).hidden && !$(id).getClientRects().length; }).map(function (id) {
+      $('moreL').innerHTML = ['bNew', 'bGames', 'bApp', 'bHint', 'bHelp', 'bStats', 'bSet', 'bShare', 'bFeed', 'bFull'].filter(function (id) { return $(id) && !$(id).hidden && !$(id).getClientRects().length; }).map(function (id) {
         var b = $(id); return '<button class="btn wide morei' + (id === 'bNew' ? ' go' : '') + '" type="button" data-for="' + id + '">' + b.querySelector('svg').outerHTML + '<span>' + esc(b.querySelector('.lbl').textContent) + '</span></button>';
       }).join('');
       var mh = $('dMore').querySelector('h2'); if (mh) mh.textContent = document.body.classList.contains('fold365') ? 'Menu' : 'More';   // (the folded bar calls it Menu)
@@ -1466,6 +1493,76 @@
     $('wAgain').onclick = function () { newGame('deal'); };
     $('wDaily').onclick = function () { newGame('daily'); };
     $('wStats').onclick = openStats;
+
+    // ---- the daily streak (owner, 6 Oct 2026): days in a row today's deal was won, counted back from today - or from
+    // yesterday while today's is still to play, so the streak lives until midnight
+    function dayStreak() {
+      var d = new Date(), n = 0, i, x;
+      if (!(ST.daily[today(d)] && ST.daily[today(d)].won)) d = new Date(d.getFullYear(), d.getMonth(), d.getDate() - 1);
+      for (i = 0; i < 1000; i++) { x = new Date(d.getFullYear(), d.getMonth(), d.getDate() - i); if (ST.daily[today(x)] && ST.daily[today(x)].won) n++; else break; }
+      return n;
+    }
+    function doneToday() { var t = ST.daily[today()]; return !!(t && t.won); }
+    function streakChip() {
+      var c = $('chipStreak'); if (!c) return;
+      var n = dayStreak(), done = doneToday();
+      $('vStreak').textContent = n;
+      c.classList.toggle('cold', !n && !done); c.classList.toggle('due', !!n && !done);
+      c.title = done ? 'Daily streak: ' + n + (n === 1 ? ' day' : ' days') + ' - today’s deal is done' : n ? 'Daily streak: ' + n + (n === 1 ? ' day' : ' days') + ' - play today’s deal to keep it going' : 'Daily streak: win today’s deal to start one';
+    }
+    function openStreak() {
+      var n = dayStreak(), done = doneToday(), best = Math.max(ST.dayBest || 0, n), wk = '', d = new Date(), names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      $('kN').textContent = n;
+      $('kSub').textContent = (n === 1 ? '1 day in a row' : n + ' days in a row') + (best > n ? ' · your best: ' + best : n ? ' · your best yet!' : '');
+      for (var i = 6; i >= 0; i--) {
+        var x = new Date(d.getFullYear(), d.getMonth(), d.getDate() - i), key = today(x), won = ST.daily[key] && ST.daily[key].won;
+        wk += '<div class="' + (won ? 'won' : '') + (i === 0 ? ' today' : '') + '"><b>' + (won ? '✔' : '•') + '</b>' + names[x.getDay()] + ' ' + x.getDate() + '</div>';
+      }
+      $('kWeek').innerHTML = wk;
+      var inPlay = G.started && !S.won && G.mode !== 'daily';
+      $('kNote').textContent = done ? 'Today’s deal is done ✔ Come back tomorrow to make it ' + (n + 1) + '.'
+        : (n ? 'Win today’s deal to make it ' + (n + 1) + '.' : 'Win today’s deal to start your streak.') + ' The same deal for everyone today.' + (inPlay ? ' (The game you’re playing will count as not won.)' : '');
+      $('kPlay').hidden = done;
+      $('kPlay').textContent = G.mode === 'daily' && G.day === today() && G.started && !S.won ? 'Carry on with today’s deal' : 'Play today’s deal';
+      openD('dStreak');
+    }
+    $('chipStreak').onclick = openStreak;
+    $('kPlay').onclick = function () { if (G.mode === 'daily' && G.day === today() && G.started && !S.won) { closeSheets(); return; } newGame('daily'); };
+    // a gentle word once a day while a streak is waiting on today's deal
+    setTimeout(function () {
+      try { var n = dayStreak(); if (!n || doneToday() || localStorage.getItem('cards365:stk') === today()) return; localStorage.setItem('cards365:stk', today());
+        say('Your ' + n + '-day streak: win today’s deal to keep it going (tap the flame)'); } catch (e) {}
+    }, 3200);
+
+    // ---- play it like an app (owner, 6 Oct 2026: "do the install like an app"): the game's own manifest opens it full
+    // screen from the home screen. Android: Chrome's own install prompt; otherwise the steps for this browser.
+    var MAN = document.querySelector('link[rel="manifest"]'), deferredApp = null, UA = navigator.userAgent || '';
+    var IOS = /iPad|iPhone|iPod/.test(UA) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1), INAPP = /FBAN|FBAV|FB_IAB|FBIOS|Instagram|Messenger/i.test(UA);
+    var APPMODE = !!(window.matchMedia && (matchMedia('(display-mode: fullscreen)').matches || matchMedia('(display-mode: standalone)').matches)) || navigator.standalone === true;
+    if (APPMODE) document.body.classList.add('app365');
+    function appHave() { try { return localStorage.getItem('cards365:app:' + D.id) === '1'; } catch (e) { return false; } }
+    function appSnoozed() { try { return Date.now() - (+localStorage.getItem('cards365:appno') || 0) < 14 * 864e5; } catch (e) { return false; } }
+    function appOK() { return !!MAN && !APPMODE && !appHave() && !!(window.matchMedia && matchMedia('(pointer: coarse)').matches); }
+    function appDone() { try { localStorage.setItem('cards365:app:' + D.id, '1'); } catch (e) {} $('bApp').hidden = true; $('wApp').hidden = true; }
+    var SHARE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="Share"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
+    function appSteps() {
+      if (INAPP) return 'You&rsquo;re in Facebook&rsquo;s built-in browser, which can&rsquo;t do this. Tap <b>&#8943;</b> at the top right, choose <b>' + (IOS ? 'Open in Safari' : 'Open in browser') + '</b>, then come back here.';
+      if (IOS) return '1. Tap the <b>Share</b> button ' + SHARE + '.<br>2. Scroll down and tap <b>Add to Home Screen</b>.<br>3. Tap <b>Add</b>.';
+      if (/SamsungBrowser/i.test(UA)) return 'Tap the <b>menu</b> (&#9776;, bottom right), then <b>Add page to</b> &rarr; <b>Home screen</b>.';
+      if (/Android/i.test(UA)) return 'Tap <b>&#8942;</b> at the top right of Chrome, then <b>Add to home screen</b> (or <b>Install app</b>) and <b>Install</b>.';
+      return 'Use your browser&rsquo;s menu to <b>install</b> this page as an app.';
+    }
+    function addApp() {
+      if (deferredApp) { var dp = deferredApp; deferredApp = null; try { dp.prompt(); dp.userChoice.then(function (r) { if (r && r.outcome === 'accepted') appDone(); }); } catch (e) {} return; }
+      $('appWhy').textContent = D.title + ' on your home screen: one tap opens it full screen, with no address bar - like an app.';
+      $('appHow').innerHTML = appSteps(); openD('dApp');
+    }
+    $('bApp').hidden = !appOK();
+    $('bApp').onclick = addApp;
+    $('wAppAdd').onclick = function () { closeSheets(); addApp(); };
+    $('wAppNo').onclick = function () { try { localStorage.setItem('cards365:appno', String(Date.now())); } catch (e) {} $('wApp').hidden = true; };
+    window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferredApp = e; });
+    window.addEventListener('appinstalled', appDone);
     if (D.hof) {
       $('nClock').onclick = function () { newGame('clock'); };
       $('nSprint').onclick = function () { newGame('sprint'); };
@@ -1603,10 +1700,11 @@
       var tb = function (id, icon, label, title, cls) { return '<button class="tb' + (cls ? ' ' + cls : '') + '" id="' + id + '" type="button" title="' + esc(title) + '">' + ICON[icon] + '<span class="lbl"' + (id === 'bFull' ? ' id="bFullL"' : '') + '>' + esc(label) + '</span>'
         + ({ bNew: 'New', bGames: 'Games', bUndo: 'Undo', bHint: 'Hint', bHelp: 'Help', bPause: 'Pause', bMore: 'More', bFull: 'Full' }[id] ? '<span class="sl" aria-hidden="true">' + { bNew: 'New', bGames: 'Games', bUndo: 'Undo', bHint: 'Hint', bHelp: 'Help', bPause: 'Pause', bMore: 'More', bFull: 'Full' }[id] + '</span>' : '') + '</button>'; };
       var html = '<a class="skip365" href="#board" id="skip365">Skip to the cards</a><div id="app"><header class="bar"><h1 class="brand"><button class="brandb" type="button" id="bBrand" title="All our games"><b>365</b> <span>' + esc(D.title) + '</span><i class="caret" aria-hidden="true">&#9662;</i></button></h1>'
-        + '<div class="info" aria-live="off"><div class="chip" id="chipTime"><small>Time</small><span id="vTime">0:00</span></div><div class="chip"><small>Moves</small><span id="vMoves">0</span></div><div class="chip"><small>Score</small><span id="vScore">0</span></div></div>'
+        + '<div class="info" aria-live="off"><div class="chip" id="chipTime"><small>Time</small><span id="vTime">0:00</span></div><div class="chip"><small>Moves</small><span id="vMoves">0</span></div><div class="chip"><small>Score</small><span id="vScore">0</span></div>'
+        + '<button class="chip chipst cold" id="chipStreak" type="button" title="Daily streak: days in a row you won today&rsquo;s deal"><small>Streak</small><span>' + ICON.flame + '<b id="vStreak">0</b></span></button></div>'
         + '<nav class="tools" aria-label="Game">' + tb('bNew', 'new', 'New game', 'New game (N)', 'main') + tb('bGames', 'games', 'Games', 'Switch to another of our games', 'tb3') + tb('bUndo', 'undo', 'Undo', 'Undo (U or Ctrl+Z)') + tb('bHint', 'hint', 'Hint', 'Show me a move (H)')
         + tb('bStats', 'stats', 'My scores', 'My scores', 'tb3 tbx') + tb('bSet', 'set', 'Settings', 'Settings', 'tb3 tbx') + tb('bHelp', 'help', 'How to play', 'How to play')
-        + tb('bShare', 'share', 'Share', 'Share this game with a friend', 'tb2 tbx') + tb('bFeed', 'feedback', 'Feedback', 'Tell us what you think, or ask for a new game', 'tb2 tbx') + tb('bFull', 'full', 'Full screen', 'Full screen (F)', 'tb2 tbx') + tb('bMore', 'more', 'More', 'More: my scores, settings, share, feedback', 'tbmore') + '</nav></header>'
+        + tb('bShare', 'share', 'Share', 'Share this game with a friend', 'tb2 tbx') + tb('bFeed', 'feedback', 'Feedback', 'Tell us what you think, or ask for a new game', 'tb2 tbx') + tb('bFull', 'full', 'Full screen', 'Full screen (F)', 'tb2 tbx') + tb('bApp', 'app', 'Add to home screen', 'Play it like an app: full screen, one tap from your home screen', 'tbx tbapp') + tb('bMore', 'more', 'More', 'More: my scores, settings, share, feedback', 'tbmore') + '</nav></header>'
         + '<main id="board" aria-label="The card table"></main></div>'
         + '<div id="stuck" hidden role="status"><span>' + esc(D.stuckText || 'No more moves found.') + '</span><button class="btn" type="button" id="stUndo">Undo</button><button class="btn go" type="button" id="stNew">New game</button></div>'
         + '<div id="chal" class="chal" hidden role="timer" aria-live="off"></div><div id="toast" role="status" aria-live="polite"></div><canvas id="spark" aria-hidden="true"></canvas><canvas id="fx" hidden></canvas><div id="winBig" hidden aria-hidden="true"></div><div id="fxhint" hidden>Tap anywhere to carry on</div>'
@@ -1620,7 +1718,12 @@
             + '<button class="btn hofbtn" type="button" id="nHof">&#127942; Hall of Fame<small>Who&rsquo;s fastest today &mdash; in Dorset and beyond</small></button></div>' : '')
           + '<div class="row"><button class="btn wide" type="button" data-close>Keep playing</button></div>')
         + sheet('dWin', 'You won!', '<p class="soft" id="dWinSub"></p><div class="tiles"><div class="tile"><b id="wTime">0:00</b><span>Time</span></div><div class="tile"><b id="wMoves">0</b><span>Moves</span></div><div class="tile"><b id="wScore">0</b><span>Score</span></div></div>'
-          + '<ul class="badges" id="wBadges"></ul><div id="wJour" hidden></div><div id="wHof" hidden></div><div class="row"><button class="btn go wide" type="button" id="wAgain">Play again</button><button class="btn wide" type="button" id="wShare">Challenge a friend</button><button class="btn wide" type="button" id="wDaily">Today&rsquo;s deal</button><button class="btn wide" type="button" id="wStats">My scores</button></div>')
+          + '<ul class="badges" id="wBadges"></ul><div id="wJour" hidden></div><div id="wHof" hidden></div>'
+          + '<div class="wapp" id="wApp" hidden>' + ICON.app + '<p><b>Play it like an app</b> &mdash; full screen, one tap from your home screen.</p><button class="btn go" type="button" id="wAppAdd">Add to home screen</button><button class="linkb" type="button" id="wAppNo">Not now</button></div>'
+          + '<div class="row"><button class="btn go wide" type="button" id="wAgain">Play again</button><button class="btn wide" type="button" id="wShare">Challenge a friend</button><button class="btn wide" type="button" id="wDaily">Today&rsquo;s deal</button><button class="btn wide" type="button" id="wStats">My scores</button></div>')
+        + sheet('dStreak', 'Daily streak', '<div class="stk"><div class="stkbig">' + ICON.flame + '<b id="kN">0</b></div><p class="stksub" id="kSub"></p><div class="week" id="kWeek"></div><p class="soft" id="kNote"></p>'
+          + '<div class="row"><button class="btn go wide" type="button" id="kPlay">Play today&rsquo;s deal</button></div></div>')
+        + sheet('dApp', 'Play it like an app', '<p class="soft" id="appWhy"></p><p class="apphow" id="appHow"></p><div class="row"><button class="btn wide" type="button" data-close>OK</button></div>')
         + sheet('dSprint', 'Time\u2019s up!', '<p class="soft" id="spSub"></p><div class="tiles"><div class="tile"><b id="spCards">0</b><span>Cards up</span></div></div><div id="spHof"></div>'
           + '<div class="row"><button class="btn go wide" type="button" id="spNew">New game</button><button class="btn wide" type="button" id="spHofB">Hall of Fame</button></div>')
         + sheet('dStats', 'My scores', (D.hof ? '<button class="btn hofbtn wide" type="button" id="sHof" style="width:100%;margin:2px 0 12px">&#127942; The Hall of Fame<small>Today&rsquo;s fastest, this week&rsquo;s best, all time</small></button>' : '') + '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere unless you join the Hall of Fame.</p><div class="tiles" id="sTiles"></div><h3 style="margin:16px 0 0;font-size:18px">Today&rsquo;s deal this week</h3><div class="week" id="sWeek"></div><div class="tiles" id="sBest"></div>'
