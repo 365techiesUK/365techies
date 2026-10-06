@@ -198,8 +198,8 @@
  },
  "bournemouth/sea-today": {
   "first": "2026-08-02",
-  "h": "723813cdcd34c4db",
-  "last": "2026-10-04"
+  "h": "9811befedddfa66e",
+  "last": "2026-10-06"
  },
  "bournemouth/sunrise-sunset": {
   "first": "2026-08-03",
@@ -373,8 +373,8 @@
  },
  "cctv-smart-home": {
   "first": "2026-07-28",
-  "h": "ba62c4dbce0d7b73",
-  "last": "2026-10-03"
+  "h": "7f2a4940d7ad843e",
+  "last": "2026-10-06"
  },
  "cerbo-gx-gps": {
   "first": "2026-07-28",
@@ -423,8 +423,8 @@
  },
  "cloud-migration": {
   "first": "2026-07-28",
-  "h": "ce7de30ce4dbd388",
-  "last": "2026-10-03"
+  "h": "e1c5328374603413",
+  "last": "2026-10-06"
  },
  "cloud-vs-on-premise": {
   "first": "2026-07-28",
@@ -473,58 +473,58 @@
  },
  "computer-repair-beaminster": {
   "first": "2026-07-28",
-  "h": "e56c356564743882",
-  "last": "2026-10-03"
+  "h": "7ba75061370e3b42",
+  "last": "2026-10-06"
  },
  "computer-repair-blandford-forum": {
   "first": "2026-07-28",
-  "h": "eaef354e3754a839",
-  "last": "2026-10-03"
+  "h": "d5a28683ff81f0c2",
+  "last": "2026-10-06"
  },
  "computer-repair-boscombe": {
   "first": "2026-07-28",
-  "h": "0683d9f73ba31409",
-  "last": "2026-10-03"
+  "h": "00c75a2fb3cefaf9",
+  "last": "2026-10-06"
  },
  "computer-repair-bournemouth": {
   "first": "2026-07-28",
-  "h": "c6ede7771091c3ca",
-  "last": "2026-10-03"
+  "h": "5d8cb2fb94eb2c28",
+  "last": "2026-10-06"
  },
  "computer-repair-bridport": {
   "first": "2026-07-28",
-  "h": "1ad811b8f03be932",
-  "last": "2026-10-03"
+  "h": "549fe809514b3d5e",
+  "last": "2026-10-06"
  },
  "computer-repair-canford-heath": {
   "first": "2026-07-28",
-  "h": "01668ea0f7ddf265",
-  "last": "2026-10-03"
+  "h": "7fc1f8330b84fc03",
+  "last": "2026-10-06"
  },
  "computer-repair-christchurch": {
   "first": "2026-07-28",
-  "h": "89054eef59769c3c",
-  "last": "2026-10-03"
+  "h": "67313d3b807f3e6f",
+  "last": "2026-10-06"
  },
  "computer-repair-corfe-mullen": {
   "first": "2026-07-28",
-  "h": "999caa48ef90ce89",
-  "last": "2026-10-03"
+  "h": "a43393f5f57ae747",
+  "last": "2026-10-06"
  },
  "computer-repair-dorchester": {
   "first": "2026-07-28",
-  "h": "137cddc8cc9e304a",
-  "last": "2026-10-03"
+  "h": "4ab846ddf8b2d995",
+  "last": "2026-10-06"
  },
  "computer-repair-ferndown": {
   "first": "2026-07-28",
-  "h": "4452b46ae983ceb7",
-  "last": "2026-10-03"
+  "h": "3a6a99c9ea398ab8",
+  "last": "2026-10-06"
  },
  "computer-repair-gillingham": {
   "first": "2026-07-28",
-  "h": "280f29e22a49acf2",
-  "last": "2026-10-03"
+  "h": "055b5a660cc4269b",
+  "last": "2026-10-06"
  },
  "computer-repair-kinson": {
   "first": "2026-07-28",
@@ -533,68 +533,68 @@
  },
  "computer-repair-lyme-regis": {
   "first": "2026-07-28",
-  "h": "f91376e2f0f432f6",
-  "last": "2026-10-03"
+  "h": "9af1a6a215a7aacc",
+  "last": "2026-10-06"
  },
  "computer-repair-poole": {
   "first": "2026-07-28",
-  "h": "a701e033ce4eedb2",
-  "last": "2026-10-03"
+  "h": "956d92cc7413d41f",
+  "last": "2026-10-06"
  },
  "computer-repair-portland": {
   "first": "2026-07-28",
-  "h": "6ba92284080cfe14",
-  "last": "2026-10-03"
+  "h": "0a2545f72edf09f3",
+  "last": "2026-10-06"
  },
  "computer-repair-shaftesbury": {
   "first": "2026-07-28",
-  "h": "da4839c7d45ec6d6",
-  "last": "2026-10-03"
+  "h": "1556eaa5713b9248",
+  "last": "2026-10-06"
  },
  "computer-repair-sherborne": {
   "first": "2026-07-28",
-  "h": "55f51d43a636cb37",
-  "last": "2026-10-03"
+  "h": "8361f914c965b56f",
+  "last": "2026-10-06"
  },
  "computer-repair-st-ives": {
   "first": "2026-07-28",
-  "h": "ceee2074797020b1",
-  "last": "2026-10-03"
+  "h": "12252be07e219c62",
+  "last": "2026-10-06"
  },
  "computer-repair-sturminster-newton": {
   "first": "2026-07-28",
-  "h": "7c5dde95b6793198",
-  "last": "2026-10-03"
+  "h": "663877fe15962aa5",
+  "last": "2026-10-06"
  },
  "computer-repair-swanage": {
   "first": "2026-07-28",
-  "h": "e4e07b0775b6a5eb",
-  "last": "2026-10-03"
+  "h": "c242dc5f3e9a8535",
+  "last": "2026-10-06"
  },
  "computer-repair-upton": {
   "first": "2026-07-28",
-  "h": "0e5172e7ff5335b0",
-  "last": "2026-10-03"
+  "h": "f2aa3fd2024f5d03",
+  "last": "2026-10-06"
  },
  "computer-repair-verwood": {
   "first": "2026-07-28",
-  "h": "7c84d3babb097af3",
-  "last": "2026-10-03"
+  "h": "d6002f148a86cd49",
+  "last": "2026-10-06"
  },
  "computer-repair-wareham": {
   "first": "2026-07-28",
-  "h": "c56e30881f052e0b",
-  "last": "2026-10-03"
+  "h": "e0d0c42dc875cd27",
+  "last": "2026-10-06"
  },
  "computer-repair-west-moors": {
   "first": "2026-07-28",
-  "h": "08cb6f058e9e2638",
-  "last": "2026-10-03"
+  "h": "44565a63d641b40c",
+  "last": "2026-10-06"
  },
  "computer-repair-west-parley": {
   "first": "2026-07-28",
-  "h": "999edea30b735e72",
-  "last": "2026-10-03"
+  "h": "6f3c233fa851e6b3",
+  "last": "2026-10-06"
  },
  "computer-repair-westbourne": {
   "first": "2026-07-28",
@@ -603,23 +603,23 @@
  },
  "computer-repair-weymouth": {
   "first": "2026-07-28",
-  "h": "a37fddc1a1385633",
-  "last": "2026-10-03"
+  "h": "6f89c4fbff5a0060",
+  "last": "2026-10-06"
  },
  "computer-repair-wimborne": {
   "first": "2026-07-28",
-  "h": "9a04bf5023b00568",
-  "last": "2026-10-03"
+  "h": "fec80ee8ee35ba0f",
+  "last": "2026-10-06"
  },
  "computer-repair-wool": {
   "first": "2026-07-28",
-  "h": "ac8a410e4e8c04a0",
-  "last": "2026-10-03"
+  "h": "0070b3bfa92fc14b",
+  "last": "2026-10-06"
  },
  "computer-repair-wyke-regis": {
   "first": "2026-07-28",
-  "h": "9f5355da7d4dc03f",
-  "last": "2026-10-03"
+  "h": "68146087425bdb26",
+  "last": "2026-10-06"
  },
  "computer-repairs": {
   "first": "2026-07-28",
@@ -683,8 +683,8 @@
  },
  "custom-pc-builds": {
   "first": "2026-07-28",
-  "h": "821b456999b8fb1a",
-  "last": "2026-10-03"
+  "h": "cb065432d2d5c4bc",
+  "last": "2026-10-06"
  },
  "custom-vrm-dashboards": {
   "first": "2026-07-28",
@@ -703,8 +703,8 @@
  },
  "cyber-essentials": {
   "first": "2026-07-28",
-  "h": "e308605f5cd248fa",
-  "last": "2026-10-03"
+  "h": "7432e6d6a1e50c3d",
+  "last": "2026-10-06"
  },
  "cyber-threats": {
   "first": "2026-07-28",
@@ -1038,8 +1038,8 @@
  },
  "email-support": {
   "first": "2026-07-28",
-  "h": "8dcc3ac0b5531ebe",
-  "last": "2026-10-02"
+  "h": "a39815655e8c0bc8",
+  "last": "2026-10-06"
  },
  "emails-on-computer-but-not-phone": {
   "first": "2026-07-28",
@@ -1093,8 +1093,8 @@
  },
  "family-it-support": {
   "first": "2026-07-28",
-  "h": "b743f398cb39e09e",
-  "last": "2026-10-02"
+  "h": "8a5dd490e5d88b6a",
+  "last": "2026-10-06"
  },
  "faqs": {
   "first": "2026-07-28",
@@ -1143,7 +1143,7 @@
  },
  "free-pc-health-check": {
   "first": "2026-07-28",
-  "h": "d3363660ed7f653b",
+  "h": "d7f9c6a069ef3f05",
   "last": "2026-10-06"
  },
  "free-tools": {
@@ -1193,8 +1193,8 @@
  },
  "google-workspace-support": {
   "first": "2026-07-28",
-  "h": "0fd7cec559db3a74",
-  "last": "2026-10-03"
+  "h": "b75e67d2a96875a1",
+  "last": "2026-10-06"
  },
  "graphics-card-benchmark": {
   "first": "2026-07-28",
@@ -1587,28 +1587,28 @@
  },
  "it-support-blandford-forum": {
   "first": "2026-07-28",
-  "h": "b5d3e0a18bf9f97a",
-  "last": "2026-10-03"
+  "h": "53f9102adab4c071",
+  "last": "2026-10-06"
  },
  "it-support-bournemouth": {
   "first": "2026-07-28",
-  "h": "9e8b253c1b2df90d",
-  "last": "2026-10-03"
+  "h": "d31fea16eb4d1c9e",
+  "last": "2026-10-06"
  },
  "it-support-bridport": {
   "first": "2026-07-28",
-  "h": "e84807e5d59307ea",
-  "last": "2026-10-03"
+  "h": "b49da6a593e76518",
+  "last": "2026-10-06"
  },
  "it-support-broadstone": {
   "first": "2026-07-28",
-  "h": "b5f9c903a46a80fb",
-  "last": "2026-10-03"
+  "h": "c42bd09b3e097a9a",
+  "last": "2026-10-06"
  },
  "it-support-brockenhurst": {
   "first": "2026-07-28",
-  "h": "b7a75c2066d640c4",
-  "last": "2026-10-03"
+  "h": "41febc22d1e0f9e2",
+  "last": "2026-10-06"
  },
  "it-support-by-industry": {
   "first": "2026-07-28",
@@ -1617,13 +1617,13 @@
  },
  "it-support-christchurch": {
   "first": "2026-07-28",
-  "h": "8be6e4f0996a3557",
-  "last": "2026-10-03"
+  "h": "cdf6a0c37b4460c7",
+  "last": "2026-10-06"
  },
  "it-support-corfe-mullen": {
   "first": "2026-07-28",
-  "h": "0e23ea3254b04e9a",
-  "last": "2026-10-03"
+  "h": "80a34e872c9db071",
+  "last": "2026-10-06"
  },
  "it-support-cost-guide": {
   "first": "2026-07-28",
@@ -1632,18 +1632,18 @@
  },
  "it-support-dorchester": {
   "first": "2026-07-28",
-  "h": "ef5641dff56ce619",
-  "last": "2026-10-03"
+  "h": "c4e8b5fb42429455",
+  "last": "2026-10-06"
  },
  "it-support-dorset": {
   "first": "2026-07-28",
-  "h": "8f44fd7dce07bf81",
+  "h": "b741bc9aa98a230f",
   "last": "2026-10-06"
  },
  "it-support-ferndown": {
   "first": "2026-07-28",
-  "h": "2823054edd4d7d74",
-  "last": "2026-10-03"
+  "h": "0e4291445f9ea723",
+  "last": "2026-10-06"
  },
  "it-support-for-accountants-dorset": {
   "first": "2026-07-28",
@@ -1652,13 +1652,13 @@
  },
  "it-support-for-architects": {
   "first": "2026-07-28",
-  "h": "686540c5e6b62fa6",
-  "last": "2026-10-02"
+  "h": "e6232c96774f25f5",
+  "last": "2026-10-06"
  },
  "it-support-for-care-homes": {
   "first": "2026-07-28",
-  "h": "dbe2c45493d163d5",
-  "last": "2026-10-03"
+  "h": "4dece446f207f246",
+  "last": "2026-10-06"
  },
  "it-support-for-charities-dorset": {
   "first": "2026-07-28",
@@ -1667,8 +1667,8 @@
  },
  "it-support-for-churches-faith": {
   "first": "2026-07-28",
-  "h": "6c43adce9b39d3e0",
-  "last": "2026-10-03"
+  "h": "13bcb5c998451889",
+  "last": "2026-10-06"
  },
  "it-support-for-construction": {
   "first": "2026-07-28",
@@ -1677,68 +1677,68 @@
  },
  "it-support-for-creative-agencies": {
   "first": "2026-07-28",
-  "h": "2beb4ec2cbc8034e",
-  "last": "2026-10-02"
+  "h": "58a1ef00cd01cc38",
+  "last": "2026-10-06"
  },
  "it-support-for-dental-medical": {
   "first": "2026-07-28",
-  "h": "10de65c41e57e539",
-  "last": "2026-10-03"
+  "h": "9fbcb471c1754e3b",
+  "last": "2026-10-06"
  },
  "it-support-for-digital-nomads": {
   "first": "2026-07-28",
-  "h": "1a3f77094d605014",
-  "last": "2026-10-02"
+  "h": "9847384ecbabc8c0",
+  "last": "2026-10-06"
  },
  "it-support-for-disabled-people": {
   "first": "2026-07-28",
-  "h": "e7eb25daea7ee046",
-  "last": "2026-10-02"
+  "h": "e2bcc068bc508311",
+  "last": "2026-10-06"
  },
  "it-support-for-ecommerce": {
   "first": "2026-07-28",
-  "h": "34571ab9c9231ee0",
-  "last": "2026-10-03"
+  "h": "46904f1fcd51fcc5",
+  "last": "2026-10-06"
  },
  "it-support-for-education": {
   "first": "2026-07-28",
-  "h": "818523c5eeb11137",
-  "last": "2026-10-03"
+  "h": "52c8af5f52e108a8",
+  "last": "2026-10-06"
  },
  "it-support-for-estate-agents": {
   "first": "2026-07-28",
-  "h": "929576ff6874e251",
-  "last": "2026-10-03"
+  "h": "cc0403b20914e5b6",
+  "last": "2026-10-06"
  },
  "it-support-for-financial-advisers": {
   "first": "2026-07-28",
-  "h": "499a495309fa9426",
-  "last": "2026-10-03"
+  "h": "9c19662afd713bd8",
+  "last": "2026-10-06"
  },
  "it-support-for-garages-automotive": {
   "first": "2026-07-28",
-  "h": "59bafebe7b4dfecb",
-  "last": "2026-10-03"
+  "h": "b5deb1f86e35dc1c",
+  "last": "2026-10-06"
  },
  "it-support-for-gyms-fitness": {
   "first": "2026-07-28",
-  "h": "584c681d23a27eb0",
-  "last": "2026-10-03"
+  "h": "8da088d7e1ed8963",
+  "last": "2026-10-06"
  },
  "it-support-for-home-workers": {
   "first": "2026-07-28",
-  "h": "60553b62f26576b0",
-  "last": "2026-10-02"
+  "h": "e68bd8ee826623c7",
+  "last": "2026-10-06"
  },
  "it-support-for-hotels-holiday-lets": {
   "first": "2026-07-28",
-  "h": "a9fd88f2bafb42c7",
-  "last": "2026-10-03"
+  "h": "6e36629f448dc4ff",
+  "last": "2026-10-06"
  },
  "it-support-for-manufacturing": {
   "first": "2026-07-28",
-  "h": "0a7c54c9ccb9caeb",
-  "last": "2026-10-03"
+  "h": "ddddf37705c1b259",
+  "last": "2026-10-06"
  },
  "it-support-for-nurseries-dorset": {
   "first": "2026-07-28",
@@ -1747,143 +1747,143 @@
  },
  "it-support-for-opticians": {
   "first": "2026-07-28",
-  "h": "e43771fbf893bc77",
-  "last": "2026-10-02"
+  "h": "053c00f18e510261",
+  "last": "2026-10-06"
  },
  "it-support-for-property-management": {
   "first": "2026-07-28",
-  "h": "d13a8f0890395c41",
-  "last": "2026-10-03"
+  "h": "4862ad3484c82806",
+  "last": "2026-10-06"
  },
  "it-support-for-recruitment-agencies": {
   "first": "2026-07-28",
-  "h": "184530d35aa0dba8",
-  "last": "2026-10-03"
+  "h": "71abb86b363be1c1",
+  "last": "2026-10-06"
  },
  "it-support-for-retail-hospitality": {
   "first": "2026-07-28",
-  "h": "7e1423df06855743",
-  "last": "2026-10-03"
+  "h": "0722b776b0aaa4f2",
+  "last": "2026-10-06"
  },
  "it-support-for-retired-users": {
   "first": "2026-07-28",
-  "h": "94927138c303cd1f",
-  "last": "2026-10-02"
+  "h": "8e808ff410634d2f",
+  "last": "2026-10-06"
  },
  "it-support-for-salons-beauty": {
   "first": "2026-07-28",
-  "h": "5d57d57195f57a42",
-  "last": "2026-10-03"
+  "h": "c14277d0c5fcad91",
+  "last": "2026-10-06"
  },
  "it-support-for-sole-traders": {
   "first": "2026-07-28",
-  "h": "d67cb506b4be08f5",
-  "last": "2026-10-02"
+  "h": "355f5256e887661a",
+  "last": "2026-10-06"
  },
  "it-support-for-solicitors": {
   "first": "2026-07-28",
-  "h": "3d93ab84221bdd88",
-  "last": "2026-10-03"
+  "h": "792d15eb54be298e",
+  "last": "2026-10-06"
  },
  "it-support-for-tradespeople": {
   "first": "2026-07-28",
-  "h": "03373a23e6f3f44b",
-  "last": "2026-10-03"
+  "h": "32e8db5348cd238e",
+  "last": "2026-10-06"
  },
  "it-support-for-vets": {
   "first": "2026-07-28",
-  "h": "7235b532e64fad03",
-  "last": "2026-10-03"
+  "h": "2fd4c240af3585be",
+  "last": "2026-10-06"
  },
  "it-support-fordingbridge": {
   "first": "2026-07-28",
-  "h": "a67ddc69d90850f3",
-  "last": "2026-10-03"
+  "h": "ddebd6acaf7a5a75",
+  "last": "2026-10-06"
  },
  "it-support-gillingham": {
   "first": "2026-07-28",
-  "h": "c87f9c74ea2aab75",
-  "last": "2026-10-03"
+  "h": "8e2dc4b421484e55",
+  "last": "2026-10-06"
  },
  "it-support-highcliffe": {
   "first": "2026-07-28",
-  "h": "2545f30beb32b437",
-  "last": "2026-10-03"
+  "h": "28b154c6ca1863a5",
+  "last": "2026-10-06"
  },
  "it-support-hythe": {
   "first": "2026-07-28",
-  "h": "651397cddf79e5c1",
-  "last": "2026-10-03"
+  "h": "f4c09b0453b22038",
+  "last": "2026-10-06"
  },
  "it-support-lyme-regis": {
   "first": "2026-07-28",
-  "h": "7fd168e51fef7f02",
-  "last": "2026-10-03"
+  "h": "e43529dc126544b3",
+  "last": "2026-10-06"
  },
  "it-support-lymington": {
   "first": "2026-07-28",
-  "h": "d7cffd7aa73b76ac",
-  "last": "2026-10-03"
+  "h": "e6cff2a0115754bb",
+  "last": "2026-10-06"
  },
  "it-support-lyndhurst": {
   "first": "2026-07-28",
-  "h": "5e9798a06d819c72",
-  "last": "2026-10-03"
+  "h": "4d766d01aa995043",
+  "last": "2026-10-06"
  },
  "it-support-new-forest": {
   "first": "2026-07-28",
-  "h": "82ce5d483f4b8960",
-  "last": "2026-10-03"
+  "h": "1cab67d2b05c7363",
+  "last": "2026-10-06"
  },
  "it-support-new-milton": {
   "first": "2026-07-28",
-  "h": "49c3442bf4974654",
-  "last": "2026-10-03"
+  "h": "3d9645242f86833c",
+  "last": "2026-10-06"
  },
  "it-support-poole": {
   "first": "2026-07-28",
-  "h": "93a35fef54a7c2b5",
-  "last": "2026-10-03"
+  "h": "d97d6b2fd5943465",
+  "last": "2026-10-06"
  },
  "it-support-portland": {
   "first": "2026-07-28",
-  "h": "a8bcee8199172f87",
-  "last": "2026-10-03"
+  "h": "c112ab89804115fb",
+  "last": "2026-10-06"
  },
  "it-support-ringwood": {
   "first": "2026-07-28",
-  "h": "4236493d76e25640",
-  "last": "2026-10-03"
+  "h": "54f38041449f41e7",
+  "last": "2026-10-06"
  },
  "it-support-shaftesbury": {
   "first": "2026-07-28",
-  "h": "1d36890ee26ec2f0",
-  "last": "2026-10-03"
+  "h": "bc132a3353b653ea",
+  "last": "2026-10-06"
  },
  "it-support-sherborne": {
   "first": "2026-07-28",
-  "h": "8c4ca69dfe272e24",
-  "last": "2026-10-03"
+  "h": "41a1ad59d31addc1",
+  "last": "2026-10-06"
  },
  "it-support-southampton": {
   "first": "2026-07-28",
-  "h": "993a555e150709e1",
-  "last": "2026-10-03"
+  "h": "ece39bb2dbd2d9cd",
+  "last": "2026-10-06"
  },
  "it-support-sturminster-newton": {
   "first": "2026-07-28",
-  "h": "3d4ce8464a07892f",
-  "last": "2026-10-03"
+  "h": "d6c0c7f89aa8d55b",
+  "last": "2026-10-06"
  },
  "it-support-swanage": {
   "first": "2026-07-28",
-  "h": "bd6ba6d20a4abae8",
-  "last": "2026-10-03"
+  "h": "b5e926b50f78fc38",
+  "last": "2026-10-06"
  },
  "it-support-totton": {
   "first": "2026-07-28",
-  "h": "742fb83e0273d208",
-  "last": "2026-10-03"
+  "h": "b314bcf2d17f24f5",
+  "last": "2026-10-06"
  },
  "it-support-uk-europe": {
   "first": "2026-07-28",
@@ -1892,33 +1892,33 @@
  },
  "it-support-upton": {
   "first": "2026-07-28",
-  "h": "0614e6a278b2784f",
-  "last": "2026-10-03"
+  "h": "f7c849c39ebed56a",
+  "last": "2026-10-06"
  },
  "it-support-verwood": {
   "first": "2026-07-28",
-  "h": "f89cbb2b98bfea4b",
-  "last": "2026-10-03"
+  "h": "4a322bb5aef192e4",
+  "last": "2026-10-06"
  },
  "it-support-wareham": {
   "first": "2026-07-28",
-  "h": "ca093990a453f50d",
-  "last": "2026-10-03"
+  "h": "1958e5f8198320fa",
+  "last": "2026-10-06"
  },
  "it-support-west-moors": {
   "first": "2026-07-28",
-  "h": "201757ab2078b0af",
-  "last": "2026-10-03"
+  "h": "a202c74fa6190209",
+  "last": "2026-10-06"
  },
  "it-support-weymouth": {
   "first": "2026-07-28",
-  "h": "98aa034d8514d3c9",
-  "last": "2026-10-03"
+  "h": "3df13d932c031453",
+  "last": "2026-10-06"
  },
  "it-support-wimborne": {
   "first": "2026-07-28",
-  "h": "74c87b5877b460f2",
-  "last": "2026-10-03"
+  "h": "d58d85b3cb4ad5ec",
+  "last": "2026-10-06"
  },
  "ive-been-scammed-what-to-do": {
   "first": "2026-07-28",
@@ -2087,8 +2087,8 @@
  },
  "microsoft-office-unlicensed-product-error": {
   "first": "2026-07-28",
-  "h": "b3bc918cf45e4947",
-  "last": "2026-10-03"
+  "h": "05fdfbda439037a4",
+  "last": "2026-10-06"
  },
  "microsoft-word-wont-open": {
   "first": "2026-07-28",
@@ -2107,8 +2107,8 @@
  },
  "mobile-tablet-support": {
   "first": "2026-07-28",
-  "h": "7896c720583e5cef",
-  "last": "2026-10-03"
+  "h": "3afaeb0adabdce02",
+  "last": "2026-10-06"
  },
  "monthly-it-support": {
   "first": "2026-07-28",
@@ -2127,7 +2127,7 @@
  },
  "move-virgin-media-email-to-gmail": {
   "first": "2026-07-28",
-  "h": "69aef86f6f38b6bc",
+  "h": "9e768714e2bcfa9c",
   "last": "2026-10-06"
  },
  "nas-drive-not-showing-after-windows-11-update": {
@@ -2137,8 +2137,8 @@
  },
  "new-computer-setup": {
   "first": "2026-07-28",
-  "h": "968e6ba6107871fe",
-  "last": "2026-10-02"
+  "h": "8b0c9cd8e9a69e15",
+  "last": "2026-10-06"
  },
  "new-employee-laptop-setup": {
   "first": "2026-08-01",
@@ -2627,8 +2627,8 @@
  },
  "pc-benchmark": {
   "first": "2026-07-28",
-  "h": "56a5af09298efccf",
-  "last": "2026-09-28"
+  "h": "05f1153b49f22d25",
+  "last": "2026-10-06"
  },
  "phishing": {
   "first": "2026-07-28",
@@ -2667,8 +2667,8 @@
  },
  "preventative-maintenance": {
   "first": "2026-07-28",
-  "h": "7e70b4fe576cbccf",
-  "last": "2026-10-03"
+  "h": "d24e8a5ea2cf6e3c",
+  "last": "2026-10-06"
  },
  "pricing": {
   "first": "2026-07-28",
@@ -2682,7 +2682,7 @@
  },
  "printer-disappeared-after-windows-update": {
   "first": "2026-07-28",
-  "h": "1807f68787c06c33",
+  "h": "3eb079980a6f7767",
   "last": "2026-10-06"
  },
  "printer-prints-but-wont-scan-after-new-router": {
@@ -2702,8 +2702,8 @@
  },
  "printer-support": {
   "first": "2026-07-28",
-  "h": "76271b96843ff853",
-  "last": "2026-10-02"
+  "h": "aa5c60818c87fdbd",
+  "last": "2026-10-06"
  },
  "printer-wont-connect-after-changing-broadband": {
   "first": "2026-07-28",
@@ -2722,7 +2722,7 @@
  },
  "printer-wont-connect-to-ee-smart-hub": {
   "first": "2026-07-28",
-  "h": "239eaad147bfbcaa",
+  "h": "eda0cabee2503654",
   "last": "2026-10-06"
  },
  "printer-wont-connect-to-mesh-wifi": {
@@ -2962,8 +2962,8 @@
  },
  "server-network-support": {
   "first": "2026-07-28",
-  "h": "d9cdc9fc3b193cf1",
-  "last": "2026-10-03"
+  "h": "7f84ed3f3b808100",
+  "last": "2026-10-06"
  },
  "server-or-cloud-picker": {
   "first": "2026-07-28",
@@ -3002,7 +3002,7 @@
  },
  "shared-folders-not-working-after-windows-11-24h2-update": {
   "first": "2026-07-28",
-  "h": "2a9f3c011ab88001",
+  "h": "40af538659bd9550",
   "last": "2026-10-06"
  },
  "sharepoint-not-syncing-file-explorer": {
@@ -3062,8 +3062,8 @@
  },
  "small-business-it-support": {
   "first": "2026-07-28",
-  "h": "778952cbd7833f07",
-  "last": "2026-10-03"
+  "h": "3235c758769743dd",
+  "last": "2026-10-06"
  },
  "smart-tv-streaming-setup-help": {
   "first": "2026-07-28",
@@ -3262,12 +3262,12 @@
  },
  "virgin-email-mover": {
   "first": "2026-09-29",
-  "h": "9f57bf9b5c03e13a",
+  "h": "780d7bae79fcb22c",
   "last": "2026-10-06"
  },
  "virgin-media-email-moving-to-junara": {
   "first": "2026-09-26",
-  "h": "283f7d645b5d2262",
+  "h": "bc10c38d6bcb2593",
   "last": "2026-10-06"
  },
  "virgin-media-email-wont-add-to-new-outlook": {
@@ -3287,8 +3287,8 @@
  },
  "voip-business-phones": {
   "first": "2026-07-28",
-  "h": "34fc839caebdf62e",
-  "last": "2026-10-03"
+  "h": "e4d3a6cdaf1011dd",
+  "last": "2026-10-06"
  },
  "web-care": {
   "first": "2026-07-28",
@@ -3467,13 +3467,13 @@
  },
  "wifi-signal-test": {
   "first": "2026-07-28",
-  "h": "e2a78fca15af8767",
-  "last": "2026-09-28"
+  "h": "ae02cb7ccba57c38",
+  "last": "2026-10-06"
  },
  "wifi-support": {
   "first": "2026-07-28",
-  "h": "4d2d1e8adff6e336",
-  "last": "2026-10-03"
+  "h": "e980ec29c15337e5",
+  "last": "2026-10-06"
  },
  "wifi-troubleshooting": {
   "first": "2026-07-28",
@@ -3537,8 +3537,8 @@
  },
  "windows-11-support": {
   "first": "2026-07-28",
-  "h": "5f8740ab313709d4",
-  "last": "2026-10-02"
+  "h": "9d62c2dcfe58ea4a",
+  "last": "2026-10-06"
  },
  "windows-11-upgrade-service": {
   "first": "2026-07-28",

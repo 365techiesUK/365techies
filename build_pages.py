@@ -3326,7 +3326,7 @@ PCM_BAND = '''    <section class="section section--alt" aria-label="365 PC Manag
           </div>
         </div>
         <div data-reveal>
-          <img src="/images/pcm-laptop-health-v28.webp" alt="365 PC Manager on a laptop: the health score and what to do next" width="1040" height="810" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:14px;margin-bottom:1rem">
+          <img src="/images/pcm-laptop-health-v35.webp" alt="365 PC Manager on a laptop: the health score and what to do next" width="1040" height="810" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:14px;margin-bottom:1rem">
         <ul class="checklist" data-stagger>
           <li>Free forever, no sign-up, uninstall any time</li>
           <li>Every program kept up to date, not just Windows</li>
@@ -3633,7 +3633,7 @@ def keep_band(cfg):
     if cfg.get("app", True):
         app = f'''
           <div class="kb-card kb-app" data-reveal>
-            <a class="kb-shot" href="/free-pc-health-check/" aria-label="See 365 PC Manager, the free app"><img src="/images/pcm-laptop-health-v28.webp" width="2080" height="1620" alt="365 PC Manager Home - the health score, what to do next and the PC at a glance" loading="lazy" decoding="async"></a>
+            <a class="kb-shot" href="/free-pc-health-check/" aria-label="See 365 PC Manager, the free app"><img src="/images/pcm-laptop-health-v35.webp" width="2080" height="1620" alt="365 PC Manager Home - the health score, what to do next and the PC at a glance" loading="lazy" decoding="async"></a>
             <p class="kb-tag">FREE APP &middot; WINDOWS &middot; REAL SCREENSHOT</p>
             <h3>{cfg.get("app_h3", "See how this PC is really doing")}</h3>
             <ul class="kb-list">{li(cfg.get("app_list", KEEP_BAND_APP))}</ul>

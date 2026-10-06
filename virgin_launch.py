@@ -100,9 +100,9 @@ _VMC_JS = """    <script>
     </script>"""
 
 
-# Screens from 365 PC Manager v30 (29 Sep 2026): real renders of the app's own Virgin page with its made-up sample mailbox
+# Screens from 365 PC Manager v35 (6 Oct 2026; v30's set on 29 Sep): real renders of the app's own Virgin page with its made-up sample mailbox
 # (yourname@virginmedia.com - never a customer's), in the laptop frame. Each has a 1200-wide and a 2080-wide file.
-# Made by scratchpad pcm/frame_v30_virgin.py; the share card by pcm/og_virgin_v30.py.
+# Made by frame_v35.py (session 81aaf1c9 scratchpad; v30's by pcm/frame_v30_virgin.py); the share card by pcm/og_virgin_v30.py.
 VIRGIN_SHOTS = {
     "check": ("Check my Virgin email", "How many emails, how big, and how many days the move will take. It only reads.",
               "365 PC Manager&rsquo;s Virgin email check: 37,150 emails, 2.6 GB, about 6 days to move into Gmail (a sample mailbox)"),
@@ -118,8 +118,8 @@ VIRGIN_OG = "/images/pcm-virgin-og-v30.jpg"
 
 def virgin_shot(key, sizes):
     t, x, alt = VIRGIN_SHOTS[key]
-    return (f'<img src="/images/pcm-virgin-{key}-v30-1200.webp" srcset="/images/pcm-virgin-{key}-v30-1200.webp 1200w, '
-            f'/images/pcm-virgin-{key}-v30.webp 2080w" sizes="{sizes}" width="1200" height="935" alt="{alt}" loading="lazy" decoding="async">')
+    return (f'<img src="/images/pcm-virgin-{key}-v35-1200.webp" srcset="/images/pcm-virgin-{key}-v35-1200.webp 1200w, '
+            f'/images/pcm-virgin-{key}-v35.webp 2080w" sizes="{sizes}" width="1200" height="935" alt="{alt}" loading="lazy" decoding="async">')
 
 
 def _vmc_stuck():
