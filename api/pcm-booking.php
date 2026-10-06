@@ -1202,7 +1202,14 @@ if ($action === 'join') {
     // ⚠️ bk_phone, NEVER $mobile: that variable is an SMS destination governed by
     // the takeover rules above, and this one is only ever read by a human.
     // Staff sign-ins are not prospects, so they are not parked.
-    if (!in_array($email, $allowSt, true)) {
+    // 6 Oct 2026: ONLY a join from the booking page is parked - it always sends bk_name and bk_phone (both required
+    // there). The portal's own sign-in uses this same join with neither, and every customer signing in to their
+    // portal was being reported 25 min later as "Booking started but never finished ... (no phone given)": all ten
+    // such posts 21 Sep-3 Oct were sign-ins (no name, no phone, no slot), several from customers the team had just
+    // set up at a visit. They drowned the lead reminders and made a working booking page look broken.
+    $fromBooking = (isset($in['bk_name']) && trim((string)$in['bk_name']) !== '')
+                || (isset($in['bk_phone']) && trim((string)$in['bk_phone']) !== '');
+    if ($fromBooking && !in_array($email, $allowSt, true)) {
         bkpend_add($email,
                    isset($in['bk_name']) ? $in['bk_name'] : '',
                    isset($in['bk_phone']) ? $in['bk_phone'] : '',

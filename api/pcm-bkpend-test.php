@@ -105,6 +105,10 @@ $src = file_get_contents(__DIR__ . '/pcm-booking.php');
 ok(strpos($src, "bkpend_add(\$email,") !== false, "join parks details under bkpend_add");
 ok(!preg_match('/bkpend_add\([^)]*\$mobile/', $src),
    "the SMS-destination \$mobile is never what gets parked");
+// 6 Oct 2026: a portal sign-in (join with no bk_* fields) is not an abandoned booking
+ok((bool)preg_match('/if \(\$fromBooking && !in_array\(\$email, \$allowSt, true\)\) \{\s*bkpend_add\(/', $src),
+   "only a join from the booking page (bk_name or bk_phone sent) is parked");
+ok((bool)preg_match("/\\\$fromBooking = \(isset\(\\\$in\['bk_name'\]\)/", $src), "fromBooking keys on the booking page's own fields");
 $js = file_get_contents(__DIR__ . '/../booking_app.py');
 ok(strpos($js, "bk_phone: S.phone") !== false, "client sends the phone as bk_phone");
 ok(!preg_match("/action: 'join'[^}]*mobile:/", $js), "client never sends it as `mobile`");

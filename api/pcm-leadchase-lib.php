@@ -76,6 +76,10 @@ function lc_lead($m) {
     $all = lc_all_text($m);
     if (stripos($all, '[INTERNAL TEST]') !== false) return null;
     if (stripos($text, 'Service report not in the portal') !== false) return null;
+    // 6 Oct 2026: Service Pass posts each 6-weekly report through the same "New website enquiry" relay (email
+    // service-report@, "via ServicePass"). Every report on a Latitude or OptiPlex was listed as an unanswered
+    // "Dell quote", the rest as "Website enquiry" - noise that buried the real Dell quotes in the reminders.
+    if (stripos($all, 'service-report@365techies.co.uk') !== false || preg_match('/via ServicePass|6-weekly service report/i', $all)) return null;
     $plain = trim(preg_replace('/^(:[a-z0-9_+\-]+:|[^\x00-\x7F]+)\s*/u', '', $text));   // drop a leading emoji
     $plain = str_replace(array('*', '_'), '', $plain);
     if (!$isBot && !preg_match('/^Voicemail from /', $plain)) return null;   // a person's own file is never a lead

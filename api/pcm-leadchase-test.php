@@ -30,6 +30,11 @@ check(lc_lead(bot($wed, 'New website enquiry')) && lc_lead(bot($wed, 'New websit
 $l = lc_lead(bot($wed, ":bell: New website enquiry\n*Name:*\nPeter Example\n*Email:*\n<mailto:p@example.com|p@example.com>"));
 check($l && $l['who'] === 'Peter Example', 'the name from the Name field when the summary line has none', json_encode($l));
 check(lc_lead(bot($wed, 'Service report not in the portal - Dell Latitude 5420')) === null, 'a service report is not a lead');
+// 6 Oct 2026: the 6-weekly Service Pass report arrives as a "New website enquiry" - never a lead, never a Dell quote
+check(lc_lead(bot($wed, ":bell: New website enquiry\n*Name:*\nJane Example Dell 3510\n*Email:*\n<mailto:service-report@365techies.co.uk|service-report@365techies.co.uk>\n*Needs help with:*\n6-weekly service report\n*Message:*\n&gt;PC: Dell Inc. Latitude 3510\nvia ServicePass \u{00b7} 12:00, Thu 17 Sep")) === null, 'a Service Pass report on a Latitude is not a Dell quote');
+check(lc_lead(bot($wed, ":bell: New website enquiry\n*Name:*\n365 Workstation\n*Needs help with:*\n6-weekly service report\n*Message:*\n&gt;PC: ASUS")) === null, 'a Service Pass report without the email line is not a lead either');
+$l = lc_lead(bot($wed, ":bell: New website enquiry\n*Name:*\nJohn Example\n*Needs help with:*\nDell availability &amp; quote\n*Message:*\n&gt;machine: Latitude 5430\nvia https://365techies.co.uk/dell-hardware/?model=latitude-5430#pick"));
+check($l && $l['label'] === 'Dell quote', 'a real Dell picker quote is still a Dell quote', json_encode($l));
 check(lc_lead(bot($wed, 'New website enquiry from Test', array('blocks' => array(array('type' => 'section', 'text' => array('type' => 'mrkdwn', 'text' => '[INTERNAL TEST] hello')))))) === null, 'an internal test is not a lead');
 $l = lc_lead(bot($wed, "Website enquiry (no-JS fallback)\nName: Carl Example\nPhone: 07700 900123\nPage: /contact/"));
 check($l && $l['who'] === 'Carl Example', 'the no-script form relay', json_encode($l));
