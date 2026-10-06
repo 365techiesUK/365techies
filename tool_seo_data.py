@@ -166,13 +166,13 @@ TOOL_SEO = {'ai-roi-calculator': {'answer': 'This free ROI calculator estimates 
                                          ['Confirm the exact figure',
                                           'Every plan is cancel-anytime and includes a full computer service every six weeks; tap through to view plans or talk to us and we&rsquo;ll confirm your exact price before anything starts.']]},
                      'webapp': True},
- 'coverage-checker': {'answer': '365 Techies provides on-site IT support across Dorset and the New Forest — including Bournemouth, Poole and Christchurch (BH), Dorchester, Weymouth and west Dorset (DT), Southampton and the New Forest (SO) '
+ 'coverage-checker': {'answer': '365 Techies provides on-site IT support across Dorset and the New Forest — including Bournemouth, Christchurch and Poole (BH), Dorchester, Weymouth and west Dorset (DT), Southampton and the New Forest (SO) '
                                 'and Salisbury/Fordingbridge (SP) — plus fast remote IT support everywhere else in the UK and Europe; enter your postcode on this page to check instantly.',
                       'faqs': [['Do you offer on-site IT support in the New Forest?',
-                                'Yes — Southampton and the New Forest (SO postcodes) are within our on-site area, alongside Bournemouth, Poole and Christchurch (BH), west Dorset (DT) and Salisbury and Fordingbridge (SP). Enter your '
+                                'Yes — Southampton and the New Forest (SO postcodes) are within our on-site area, alongside Bournemouth, Christchurch and Poole (BH), west Dorset (DT) and Salisbury and Fordingbridge (SP). Enter your '
                                 "postcode in the checker on this page and it confirms on-site coverage instantly, or we support you remotely if you're just outside."],
                                ['Which postcodes get on-site IT support from 365 Techies?',
-                                'On-site visits cover the BH (Bournemouth, Poole, Christchurch), DT (Dorchester, Weymouth, west Dorset), SO (Southampton and the New Forest), SP (Salisbury and Fordingbridge) and BA (north Somerset edge) '
+                                'On-site visits cover the BH (Bournemouth, Christchurch, Poole), DT (Dorchester, Weymouth, west Dorset), SO (Southampton and the New Forest), SP (Salisbury and Fordingbridge) and BA (north Somerset edge) '
                                 'postcode areas. Everywhere else in the UK and Europe is covered by our remote IT support and fully managed monthly plans.'],
                                ["How does the coverage checker decide if I'm covered on-site?",
                                 "It reads the first letters of your postcode (the postcode area) and checks them against our on-site list — BH, DT, SO, SP and BA return a 'yes, we cover you' result with a link to your local support page, "
@@ -183,7 +183,7 @@ TOOL_SEO = {'ai-roi-calculator': {'answer': 'This free ROI calculator estimates 
                                           ['See your on-site result', "If you're in a covered area it confirms on-site plus remote support and links to your local support page."],
                                           ['Or get remote support', 'Outside the on-site area, you still get fast, secure remote IT support and fully managed plans right across the UK and Europe.'],
                                           ['Book a visit or start remotely', "Book an on-site visit if you're covered, or start remote support and speak to the same friendly local team."]]},
-                      'keyfacts': '<ul><li><strong>BH</strong> — Bournemouth, Poole &amp; Christchurch: on-site + remote</li><li><strong>DT</strong> — Dorchester, Weymouth &amp; west Dorset: on-site + remote</li><li><strong>SO</strong> — '
+                      'keyfacts': '<ul><li><strong>BH</strong> — Bournemouth, Christchurch &amp; Poole: on-site + remote</li><li><strong>DT</strong> — Dorchester, Weymouth &amp; west Dorset: on-site + remote</li><li><strong>SO</strong> — '
                                   'Southampton &amp; the New Forest: on-site + remote</li><li><strong>SP</strong> — Salisbury &amp; Fordingbridge: on-site + remote</li><li><strong>BA</strong> — north Somerset / Bath edge: on-site + '
                                   'remote</li><li><strong>Everywhere else in the UK &amp; Europe</strong> — fast, secure remote IT support &amp; managed plans</li></ul>',
                       'webapp': True},

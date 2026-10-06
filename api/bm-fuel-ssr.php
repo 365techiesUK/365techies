@@ -10,7 +10,7 @@
  *
  * Fills, in the built index.html:
  *   <!--ssr:today-->   UK page: the four fuels, the four nations, the cheapest and dearest areas.
- *                      Bournemouth page: the cheapest in Bournemouth, Poole and Christchurch, against the UK.
+ *                      Bournemouth page: the cheapest in Bournemouth, Christchurch and Poole, against the UK.
  *   <!--ssr:fill-->    the "what it costs to fill up" rows (+ the line above the table), at the UK or local average
  *   <!--ssr:brands-->  which supermarket has the cheapest fuel: UK league / within 10 miles of Bournemouth (the section is
  *                      built hidden and shown only when filled)
@@ -127,7 +127,7 @@ function bmfssr_uk($stats, $meta, $areas) {
     $h .= '<tr><td colspan="3" class="ff-na">&hellip;</td></tr>';
     foreach (array_reverse(array_slice($keys, -5)) as $k) $h .= $row($k);
     $h .= '</tbody></table></div><p class="ff-note">Postcode areas with at least three forecourts reporting.</p></div></div>';
-    $h .= '<p>Looking for Dorset? See <a href="/bournemouth/fuel-prices/">fuel prices in Bournemouth, Poole and Christchurch</a>.</p>';
+    $h .= '<p>Looking for Dorset? See <a href="/bournemouth/fuel-prices/">fuel prices in Bournemouth, Christchurch and Poole</a>.</p>';
     $desc = 'UK fuel prices today: unleaded averages ' . bmfssr_p($e['uk']['med']) . ' and diesel ' . bmfssr_p($b['uk']['med']) . ' a litre across '
           . number_format($e['uk']['n']) . ' forecourts. Find the cheapest near you, and what a tank costs for a car, van or HGV.';
     return array($h, $desc, $e['uk']['med'], $b['uk']['med'], 'across the UK');
@@ -142,13 +142,13 @@ function bmfssr_b365($stats, $meta) {
     $medE = bmfssr_med_of($bmE); $medB = bmfssr_med_of($bmB);
     $ukE = $F['E10']['uk']['med']; $ukB = $F['B7']['uk']['med'];
     $vs = function ($a, $u) { $d = round($a - $u, 1); return abs($d) < 0.05 ? 'the same as the UK average' : number_format(abs($d), 1) . 'p ' . ($d < 0 ? 'below' : 'above') . ' the UK average of ' . bmfssr_p($u); };
-    $h = '<h2 id="ff-today-h">Fuel prices in Bournemouth, Poole and Christchurch today</h2>'
+    $h = '<h2 id="ff-today-h">Fuel prices in Bournemouth, Christchurch and Poole today</h2>'
        . '<p class="ff-stamp">Updated ' . bmfssr_esc($when) . ' &middot; the government&rsquo;s Fuel Finder data</p>'
        . '<p>At ' . date('H:i', $meta['fetched_at']) . ' today the cheapest unleaded within six miles of Bournemouth town centre was <b>' . bmfssr_p($bmE[0][0]) . '</b> at '
        . bmfssr_station($bmE[0][2]) . ' (' . ltrim(bmfssr_set($bmE[0][2], 'E10'), ', ') . '), and the cheapest diesel <b>' . bmfssr_p($bmB[0][0]) . '</b> at '
        . bmfssr_station($bmB[0][2]) . ' (' . ltrim(bmfssr_set($bmB[0][2], 'B7'), ', ') . '). '
        . 'Across ' . count($bmE) . ' forecourts the average unleaded was ' . bmfssr_p($medE) . ', ' . $vs($medE, $ukE) . '; diesel averaged ' . bmfssr_p($medB) . ', ' . $vs($medB, $ukB) . '.</p>';
-    $h .= '<div class="ff-tablewrap"><table class="ff-table"><caption class="sr-only">The cheapest fuel in Bournemouth, Poole and Christchurch today</caption>'
+    $h .= '<div class="ff-tablewrap"><table class="ff-table"><caption class="sr-only">The cheapest fuel in Bournemouth, Christchurch and Poole today</caption>'
         . '<thead><tr><th scope="col">Within 3 miles of</th><th scope="col">Cheapest unleaded</th><th scope="col">Cheapest diesel</th></tr></thead><tbody>';
     foreach ($towns as $t) {
         $e = bmfssr_local($t[1], $t[2], 3, 'E10'); $b = bmfssr_local($t[1], $t[2], 3, 'B7');
@@ -158,7 +158,7 @@ function bmfssr_b365($stats, $meta) {
     $h .= '</tbody></table></div>'
         . '<p>Prices for the rest of the country, the four nations and the cheapest areas are on our <a href="/fuel-prices/">UK fuel prices</a> page.</p>';
     $desc = 'Cheapest fuel in Bournemouth today: unleaded ' . bmfssr_p($bmE[0][0]) . ' at ' . $bmE[0][2]['b'] . ', diesel ' . bmfssr_p($bmB[0][0]) . ' at '
-          . $bmB[0][2]['b'] . '. Live prices for Bournemouth, Poole and Christchurch, and what a tank costs.';
+          . $bmB[0][2]['b'] . '. Live prices for Bournemouth, Christchurch and Poole, and what a tank costs.';
     return array($h, $desc, $medE, $medB, 'within six miles of Bournemouth town centre');
 }
 

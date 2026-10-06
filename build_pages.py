@@ -709,8 +709,8 @@ FOOTER = '''  <footer class="site-footer">
       <nav class="footer-areas__links" aria-label="Areas we cover">
         <a href="/it-support-dorset/">IT support near you &mdash; all Dorset</a>
         <a href="/it-support-bournemouth/">Bournemouth</a>
-        <a href="/it-support-poole/">Poole</a>
         <a href="/it-support-christchurch/">Christchurch</a>
+        <a href="/it-support-poole/">Poole</a>
         <a href="/it-support-ferndown/">Ferndown</a>
         <a href="/it-support-wimborne/">Wimborne</a>
         <a href="/it-support-broadstone/">Broadstone</a>
@@ -3454,7 +3454,7 @@ FIX_FLOW_SCRIPT = r"""      <script>
 # positions 2-13 for "it support <town>" with no clicks and almost no internal links, and
 # the flow pages are where the traffic is. Rendered in the DOM, not in the hidden ending,
 # so the links count. Phone flows opt out with cfg['areas'] = False (no on-site promise).
-FIX_FLOW_AREAS = ('Rather have it done for you? Remote help from &pound;20, or in person across <a href="/it-support-bournemouth/">Bournemouth</a>, <a href="/it-support-poole/">Poole</a>, <a href="/it-support-christchurch/">Christchurch</a>, <a href="/it-support-ringwood/">Ringwood</a> and the <a href="/it-support-new-forest/">New Forest</a>, with no call-out fee.')
+FIX_FLOW_AREAS = ('Rather have it done for you? Remote help from &pound;20, or in person across <a href="/it-support-bournemouth/">Bournemouth</a>, <a href="/it-support-christchurch/">Christchurch</a>, <a href="/it-support-poole/">Poole</a>, <a href="/it-support-ringwood/">Ringwood</a> and the <a href="/it-support-new-forest/">New Forest</a>, with no call-out fee.')
 
 def _fix_flow_section(cfg):
     """One guided flow section. cfg: eyebrow, h2, lede, rev_suffix, os (bool), count, steps_html (the <li>s),
@@ -6078,7 +6078,7 @@ add(
      ("How much does a remote fix cost?", "Remote fix jobs are priced on difficulty and the time they take, <strong>starting from &pound;20</strong>. A senior techie connects first to confirm what&rsquo;s needed and agrees the price with you before any chargeable work. Every pay-as-you-go job also includes <strong>30 days&rsquo; follow-up remote support</strong> and a <strong>health check at 30 days</strong>. As an example, a full Windows clean install with all your data backed up and restored (about 4 hours) is <strong>&pound;149</strong>. On a <a href=\"/monthly-it-support/\">monthly plan</a> your computer is kept maintained and running, with priority support included and any fault work <strong>discounted</strong> &mdash; our customer loyalty promise. On a business plan, remote fixes are included."),
      ("Will you connect to my computer without warning?", "No &mdash; we always phone you first to say we&rsquo;re ready and to check you&rsquo;re ready before we connect. We never connect out of the blue, and a session can only start when you open our support tool and read us its code."),
      ("Should I let someone remote into my computer?", "Only when you trust them and <em>you</em> started it. A genuine session (like ours over Splashtop SOS) only begins when you click a link you asked for, and we always phone first to check you&rsquo;re ready. If someone rings out of the blue claiming to be Microsoft, BT or your bank and asks for remote access, hang up &mdash; that&rsquo;s a scam. See our <a href=\"/spot-the-scam/\">Spot the Scam</a> guide."),
-     ("What if it can&rsquo;t be fixed remotely?", "Some jobs need hands-on work &mdash; a failing drive, a cracked screen or a machine that won&rsquo;t power on. If so, we&rsquo;ll either <a href=\"/book-a-collection/\">collect your computer or laptop</a> or come to you on-site, and <strong>either way you&rsquo;re quoted for the work before we start</strong>. For an on-site call-out we arrange the day and time with you first and phone ahead with an ETA &mdash; we never just turn up. We cover Bournemouth, Poole, Christchurch and across Dorset."),
+     ("What if it can&rsquo;t be fixed remotely?", "Some jobs need hands-on work &mdash; a failing drive, a cracked screen or a machine that won&rsquo;t power on. If so, we&rsquo;ll either <a href=\"/book-a-collection/\">collect your computer or laptop</a> or come to you on-site, and <strong>either way you&rsquo;re quoted for the work before we start</strong>. For an on-site call-out we arrange the day and time with you first and phone ahead with an ETA &mdash; we never just turn up. We cover Bournemouth, Christchurch, Poole and across Dorset."),
    ]),
    promise_strip(items=[PROMISE_CALL, PROMISE_PEOPLE, PROMISE_ETA]),
    # 28 Sep 2026 (site-wide check, item 6): the "Your PC, from anywhere" band (Splashtop Business for plan customers,
@@ -6220,7 +6220,7 @@ add(
         <div class="section-head">
           <p class="eyebrow eyebrow--center mono" data-reveal>/06 &mdash; LOCAL MICROSOFT 365 HELP</p>
           <h2 class="section-title section-title--center" data-title>Microsoft 365 &amp; Office 365 support across Dorset<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Need someone local to install, set up or fix Microsoft 365? We provide Microsoft 365 and Office 365 support, installation and migration for homes and businesses across <a href="/it-support-bournemouth/">Bournemouth</a>, <a href="/it-support-poole/">Poole</a>, <a href="/it-support-christchurch/">Christchurch</a>, <a href="/it-support-dorchester/">Dorchester</a>, <a href="/it-support-weymouth/">Weymouth</a>, <a href="/it-support-ferndown/">Ferndown</a>, <a href="/it-support-gillingham/">Gillingham</a> and the rest of <a href="/it-support-dorset/">Dorset</a>. That is remotely anywhere, and on-site when you need a hands-on Office 365 installer.</p>
+          <p class="lede lede--center" data-reveal>Need someone local to install, set up or fix Microsoft 365? We provide Microsoft 365 and Office 365 support, installation and migration for homes and businesses across <a href="/it-support-bournemouth/">Bournemouth</a>, <a href="/it-support-christchurch/">Christchurch</a>, <a href="/it-support-poole/">Poole</a>, <a href="/it-support-dorchester/">Dorchester</a>, <a href="/it-support-weymouth/">Weymouth</a>, <a href="/it-support-ferndown/">Ferndown</a>, <a href="/it-support-gillingham/">Gillingham</a> and the rest of <a href="/it-support-dorset/">Dorset</a>. That is remotely anywhere, and on-site when you need a hands-on Office 365 installer.</p>
         </div>
       </div>
     </section>''',
@@ -6354,14 +6354,14 @@ add(
           <h2 class="section-title section-title--center" data-title>Cyber security help in Bournemouth, Poole and across Dorset<span class="title-underline title-underline--center"></span></h2>
         </div>
         <ul class="security-grid" data-stagger>
-{grid_cards([("A small local team","We&rsquo;re a family-run firm based in Bournemouth, looking after businesses in Poole, Christchurch, Wimborne, Ferndown and across Dorset since 1995. You speak to the people who do the work."),
+{grid_cards([("A small local team","We&rsquo;re a family-run firm based in Bournemouth, looking after businesses in Christchurch, Poole, Wimborne, Ferndown and across Dorset since 1995. You speak to the people who do the work."),
              ("Help the same day","Most security work is done remotely and usually the same day: locking down a hacked email account, cleaning a computer, switching on multi-factor sign-in. On a <a href=\"/business-it-support-plans/\">business plan</a>, remote fixes are included."),
              ("On-site when it&rsquo;s needed","Routers, Wi-Fi and new computers sometimes need a visit. We come to you anywhere in Dorset, with the work quoted before we start."),
              ("Prices you can see","Business antivirus, email filtering, staff training and password managers are priced <a href=\"#software\">on this page</a>, per person a month. We&rsquo;re not VAT registered, so there&rsquo;s nothing to add."),
              ("Cyber Essentials","Need it for a contract or your insurer? We get your computers and accounts ready and help you through the <a href=\"/cyber-essentials/\">Cyber Essentials</a> application."),
              ("Been hacked?","Call 01202 775566 now. See <a href=\"/business-hacked-emergency-help/\">emergency help for a hacked business</a> for what to do in the first hour.")])}
         </ul>
-        <p style="text-align:center;margin-top:1.6rem" data-reveal>IT support near you: <a href="/it-support-bournemouth/">Bournemouth</a> &middot; <a href="/it-support-poole/">Poole</a> &middot; <a href="/it-support-christchurch/">Christchurch</a> &middot; <a href="/it-support-wimborne/">Wimborne</a> &middot; <a href="/it-support-dorset/">all of Dorset</a></p>
+        <p style="text-align:center;margin-top:1.6rem" data-reveal>IT support near you: <a href="/it-support-bournemouth/">Bournemouth</a> &middot; <a href="/it-support-christchurch/">Christchurch</a> &middot; <a href="/it-support-poole/">Poole</a> &middot; <a href="/it-support-wimborne/">Wimborne</a> &middot; <a href="/it-support-dorset/">all of Dorset</a></p>
       </div>
     </section>''',
    net_map_section("// ALWAYS WATCHING", "Your whole network, watched over",
@@ -6382,8 +6382,8 @@ add(
 # (Town, slug, nearby areas, matching IT-support town page)
 REPAIR_TOWNS = [
   ("Bournemouth", "computer-repair-bournemouth", "Boscombe, Winton, Charminster, Southbourne and across the BH postcodes", "it-support-bournemouth"),
-  ("Poole", "computer-repair-poole", "Parkstone, Canford Heath, Broadstone and across Poole", "it-support-poole"),
   ("Christchurch", "computer-repair-christchurch", "Highcliffe, Mudeford, Burton and the surrounding area", "it-support-christchurch"),
+  ("Poole", "computer-repair-poole", "Parkstone, Canford Heath, Broadstone and across Poole", "it-support-poole"),
   ("Blandford Forum", "computer-repair-blandford-forum", "Blandford St Mary, Pimperne, Bryanston, Charlton Marshall and the surrounding villages", "it-support-blandford-forum"),
   ("Weymouth", "computer-repair-weymouth", "Wyke Regis, Chickerell, Preston, Littlemoor and the surrounding area", "it-support-weymouth"),
   ("Gillingham", "computer-repair-gillingham", "Bourton, Milton on Stour, Wyke and the surrounding villages", "it-support-gillingham"),
@@ -6620,7 +6620,7 @@ add(
 )
 
 # ============================================================ AREAS COVERED
-DORSET_AREAS = ["Bournemouth","Poole","Christchurch","Ferndown","Wimborne","Verwood","West Moors","Corfe Mullen","Broadstone","Upton","Wareham","Swanage","Dorchester","Weymouth","Portland","Blandford Forum","Shaftesbury","Sherborne","Gillingham","Sturminster Newton","Bridport","Lyme Regis","Beaminster","Wool","Lytchett Matravers","Colehill","West Parley","Ringwood","Highcliffe"]
+DORSET_AREAS = ["Bournemouth","Christchurch","Poole","Ferndown","Wimborne","Verwood","West Moors","Corfe Mullen","Broadstone","Upton","Wareham","Swanage","Dorchester","Weymouth","Portland","Blandford Forum","Shaftesbury","Sherborne","Gillingham","Sturminster Newton","Bridport","Lyme Regis","Beaminster","Wool","Lytchett Matravers","Colehill","West Parley","Ringwood","Highcliffe"]
 LOCAL_SLUGS = {"Bournemouth", "Poole", "Christchurch", "Wimborne", "Ferndown", "Ringwood", "Verwood", "Broadstone", "Wareham",
                "Weymouth", "Dorchester", "Swanage", "Blandford Forum", "Shaftesbury", "Gillingham", "Sherborne",
                "Bridport", "Lyme Regis", "Corfe Mullen", "West Moors", "Sturminster Newton", "Portland", "Upton", "Highcliffe"}
@@ -6637,7 +6637,7 @@ def area_links():
 add(
  slug="areas-covered",
  title="Areas Covered | IT Support Across Bournemouth, Poole & Dorset",
- desc="365 Techies provides remote and on-site IT support across Bournemouth, Poole, Christchurch, Wimborne, Ferndown and the rest of Dorset — for homes, sole traders and small businesses.",
+ desc="365 Techies provides remote and on-site IT support across Bournemouth, Christchurch, Poole, Wimborne, Ferndown and the rest of Dorset — for homes, sole traders and small businesses.",
  og_title="Areas Covered | IT Support Across Dorset",
  schema=lambda s: graph([
    crumb(s, "Areas Covered"), webpage(s, "Areas Covered", "IT support across Bournemouth, Poole and Dorset."),

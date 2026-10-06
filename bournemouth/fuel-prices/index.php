@@ -1,6 +1,6 @@
 <?php
 /**
- * /bournemouth/fuel-prices/ with today's Bournemouth, Poole and Christchurch fuel prices already in the HTML (4 Oct 2026) - see api/bm-fuel-ssr.php for why.
+ * /bournemouth/fuel-prices/ with today's Bournemouth, Christchurch and Poole fuel prices already in the HTML (4 Oct 2026) - see api/bm-fuel-ssr.php for why.
  *
  * The built page is still index.html: build_pages.py writes it, and the site search, sitemap and build guards read it.
  * This file serves that page with its <!--ssr:--> markers filled from the fuel store, and serves the file untouched if

@@ -5,14 +5,14 @@ SERVICE_PAGES = [
   "crumbName": "Data Recovery",
   "eyebrow": "// DATA RECOVERY",
   "h1": "Data recovery in <em class=\"grad grad--cyan\">Bournemouth &amp; Poole</em>",
-  "lede": "Lost your photos, documents or business files? Whether a hard drive has failed, a file was deleted by mistake, or a drive has suddenly become unreadable, we'll calmly assess what's recoverable and get back what we can. Honest, plain-English help for Windows and Android from a local team in Bournemouth &mdash; covering Poole, Christchurch and the rest of Dorset.",
+  "lede": "Lost your photos, documents or business files? Whether a hard drive has failed, a file was deleted by mistake, or a drive has suddenly become unreadable, we'll calmly assess what's recoverable and get back what we can. Honest, plain-English help for Windows and Android from a local team in Bournemouth &mdash; covering Christchurch, Poole and the rest of Dorset.",
   "metaDesc": "Data recovery in Bournemouth &amp; Poole. Failed drives, deleted files, corrupted or unreadable disks, dead laptops &amp; memory cards &mdash; Windows &amp; Android. Honest assessment first.",
   "chips": [
    "Failed &amp; clicking drives",
    "Deleted &amp; lost files",
    "Corrupted or RAW drives"
   ],
-  "intro": "<p>Losing your data is one of the most stressful things that can happen with a computer &mdash; a lifetime of family photos, your accounts, your coursework or a customer database, all seemingly gone in a moment. Take a breath. In many cases the data is still there and can be recovered, but the most important thing is to <strong>stop using the device straight away</strong> so nothing gets overwritten.</p><p>Data recovery is the job of getting back files you can no longer reach &mdash; whether the drive has physically failed, become corrupted or unreadable, or the files were deleted, formatted or lost past the point the Recycle Bin can help. It's different from setting up <a href=\"/backup-support/\">backups</a> (which prevents the problem) or planning whole-business <a href=\"/disaster-recovery/\">disaster recovery</a> (which gets a whole organisation running again). This page is about the here-and-now: <em>I've lost something important and I need it back.</em> We'll tell you honestly what's likely recoverable, what it involves, and when a specialist clean-room lab is the right next step &mdash; before you spend a penny on the recovery itself.</p><h3>Two checks we make before anyone touches your drive</h3><p><strong>1. Did it click, grind or get dropped?</strong> If so, it stays switched off. A drive with a physical fault only has so many spin-ups left, and every one spent &ldquo;just checking&rdquo; can turn a recoverable drive into a lost one. We send those to a specialist clean-room lab unpowered.</p><p><strong>2. Is it encrypted?</strong> Many Windows 11 laptops encrypt their drive automatically (BitLocker or device encryption), and some external drives encrypt inside the case. Without the recovery key nobody can read the data &mdash; not us, not a lab &mdash; and an encrypted drive can look exactly like a blank or corrupted one. So we check first, and help you find the key, which is often saved in your Microsoft account.</p><h3>Local to Bournemouth and Poole</h3><p>We&rsquo;re a family-run team based in Bournemouth. We can <a href=\"/book-a-collection/\">collect your computer or drive</a> from home or work anywhere in Bournemouth, Poole, Christchurch and across Dorset. Simple jobs on a computer that still works &mdash; files deleted by mistake, say &mdash; can often be done remotely: remote jobs start from &pound;20 and are agreed before we start. Bigger recoveries are quoted per job, and we&rsquo;re not VAT registered, so there&rsquo;s nothing to add.</p>",
+  "intro": "<p>Losing your data is one of the most stressful things that can happen with a computer &mdash; a lifetime of family photos, your accounts, your coursework or a customer database, all seemingly gone in a moment. Take a breath. In many cases the data is still there and can be recovered, but the most important thing is to <strong>stop using the device straight away</strong> so nothing gets overwritten.</p><p>Data recovery is the job of getting back files you can no longer reach &mdash; whether the drive has physically failed, become corrupted or unreadable, or the files were deleted, formatted or lost past the point the Recycle Bin can help. It's different from setting up <a href=\"/backup-support/\">backups</a> (which prevents the problem) or planning whole-business <a href=\"/disaster-recovery/\">disaster recovery</a> (which gets a whole organisation running again). This page is about the here-and-now: <em>I've lost something important and I need it back.</em> We'll tell you honestly what's likely recoverable, what it involves, and when a specialist clean-room lab is the right next step &mdash; before you spend a penny on the recovery itself.</p><h3>Two checks we make before anyone touches your drive</h3><p><strong>1. Did it click, grind or get dropped?</strong> If so, it stays switched off. A drive with a physical fault only has so many spin-ups left, and every one spent &ldquo;just checking&rdquo; can turn a recoverable drive into a lost one. We send those to a specialist clean-room lab unpowered.</p><p><strong>2. Is it encrypted?</strong> Many Windows 11 laptops encrypt their drive automatically (BitLocker or device encryption), and some external drives encrypt inside the case. Without the recovery key nobody can read the data &mdash; not us, not a lab &mdash; and an encrypted drive can look exactly like a blank or corrupted one. So we check first, and help you find the key, which is often saved in your Microsoft account.</p><h3>Local to Bournemouth and Poole</h3><p>We&rsquo;re a family-run team based in Bournemouth. We can <a href=\"/book-a-collection/\">collect your computer or drive</a> from home or work anywhere in Bournemouth, Christchurch, Poole and across Dorset. Simple jobs on a computer that still works &mdash; files deleted by mistake, say &mdash; can often be done remotely: remote jobs start from &pound;20 and are agreed before we start. Bigger recoveries are quoted per job, and we&rsquo;re not VAT registered, so there&rsquo;s nothing to add.</p>",
   "features": [
    {
     "icon": "server",
@@ -86,7 +86,7 @@ SERVICE_PAGES = [
    },
    {
     "q": "Do you do data recovery in Bournemouth and Poole?",
-    "a": "Yes. We&rsquo;re based in Bournemouth and help homes and businesses across Bournemouth, Poole, Christchurch and Dorset. We can collect the computer or drive, or help remotely when the computer still works. If the drive is clicking or has been dropped, keep it switched off and call 01202 775566 first."
+    "a": "Yes. We&rsquo;re based in Bournemouth and help homes and businesses across Bournemouth, Christchurch, Poole and Dorset. We can collect the computer or drive, or help remotely when the computer still works. If the drive is clicking or has been dropped, keep it switched off and call 01202 775566 first."
    },
    {
     "q": "Do you do clean-room recovery yourselves?",
@@ -103,7 +103,7 @@ SERVICE_PAGES = [
    "computer-repairs"
   ],
   "ctaHead": "Lost something important? Let's see what we can get back.",
-  "ctaSub": "Power the device off and call us on 01202 775566, or book online. We'll give you honest first-aid advice the same day and a clear quote before any recovery work &mdash; across Bournemouth, Poole, Christchurch and Dorset.",
+  "ctaSub": "Power the device off and call us on 01202 775566, or book online. We'll give you honest first-aid advice the same day and a clear quote before any recovery work &mdash; across Bournemouth, Christchurch, Poole and Dorset.",
   "_slug": "data-recovery"
  },
  {
@@ -111,7 +111,7 @@ SERVICE_PAGES = [
   "crumbName": "Virus &amp; Malware Removal",
   "eyebrow": "// VIRUS &amp; MALWARE REMOVAL",
   "h1": "Virus &amp; malware <em class=\"grad grad--cyan\">removal</em></h1>, done properly",
-  "lede": "Pop-ups you can't close, a sluggish machine, scary \"your computer is infected\" warnings, or a browser that's been hijacked? We find what's really there, clean it out for good, and check nothing's been left behind &mdash; remotely or at your home in Bournemouth, Poole, Christchurch and across Dorset. Windows and Android only. Rated 4.9 on Google.",
+  "lede": "Pop-ups you can't close, a sluggish machine, scary \"your computer is infected\" warnings, or a browser that's been hijacked? We find what's really there, clean it out for good, and check nothing's been left behind &mdash; remotely or at your home in Bournemouth, Christchurch, Poole and across Dorset. Windows and Android only. Rated 4.9 on Google.",
   # GSC 28 Jul 2026: position 7.5 for "virus removal", zero clicks. Old desc listed the service;
   # this one opens with the symptoms someone actually types, so they recognise their own problem.
   # With no seoTitle the default produced 61 chars ("...&amp; Dorset | 365 Techies"), which Google
@@ -123,7 +123,7 @@ SERVICE_PAGES = [
    " Remote or on-site",
    " Windows &amp; Android"
   ],
-  "intro": "<p>A virus or piece of malware rarely announces itself politely. It shows up as a computer that's suddenly crawling, a wall of pop-ups, a homepage you didn't choose, files behaving oddly, or a heart-stopping \"Microsoft has detected a virus &mdash; call this number\" message. Some of it is genuinely harmful; a lot of it is a <strong>scam designed to frighten you into calling a fake support line or paying for software you don't need</strong>. Knowing the difference is half the job.</p><p>This is our dedicated clean-up service for a device that's <em>already</em> infected or behaving strangely. We diagnose what's actually wrong, remove every trace we find, undo the damage where we can, and make sure it doesn't simply come straight back. If you'd rather stop infections before they start, our <a href=\"/cybersecurity-support/\">cybersecurity</a> and <a href=\"/malwarebytes-premium/\">Malwarebytes Premium</a> pages cover prevention &mdash; but if something's wrong <em>right now</em>, you're in the right place.</p><p>Worried about a fake &ldquo;your computer is infected&rdquo; pop-up in particular? We have a plain-English guide to <a href=\"/scam-pop-up-help-poole/\">scam pop-up help in Poole</a>, and local <a href=\"/virus-removal-christchurch/\">virus removal in Christchurch</a> too.</p>",
+  "intro": "<p>A virus or piece of malware rarely announces itself politely. It shows up as a computer that's suddenly crawling, a wall of pop-ups, a homepage you didn't choose, files behaving oddly, or a heart-stopping \"Microsoft has detected a virus &mdash; call this number\" message. Some of it is genuinely harmful; a lot of it is a <strong>scam designed to frighten you into calling a fake support line or paying for software you don't need</strong>. Knowing the difference is half the job.</p><p>This is our dedicated clean-up service for a device that's <em>already</em> infected or behaving strangely. We diagnose what's actually wrong, remove every trace we find, undo the damage where we can, and make sure it doesn't simply come straight back. If you'd rather stop infections before they start, our <a href=\"/cybersecurity-support/\">cybersecurity</a> and <a href=\"/malwarebytes-premium/\">Malwarebytes Premium</a> pages cover prevention &mdash; but if something's wrong <em>right now</em>, you're in the right place.</p><p>Worried about a fake &ldquo;your computer is infected&rdquo; pop-up in particular? We have a plain-English guide to <a href=\"/virus-removal-christchurch/\">virus removal in Christchurch</a>, and local <a href=\"/scam-pop-up-help-poole/\">scam pop-up help in Poole</a> too.</p>",
   "features": [
    {
     "icon": "bug",
@@ -214,8 +214,8 @@ SERVICE_PAGES = [
   "crumbName": "Wi-Fi Installation",
   "eyebrow": "// WI-FI INSTALLATION",
   "h1": "Professional <em class=\"grad grad--cyan\">Wi-Fi installation</em> in Dorset",
-  "lede": "A proper, planned Wi-Fi installation for your home or business &mdash; we survey your building, place and mount the right access points, run the cabling, configure everything securely and hand it over working in every room. Bournemouth, Poole, Christchurch and across Dorset. Rated 4.9 on Google.",
-  "metaDesc": "Professional Wi-Fi installation in Bournemouth, Poole, Christchurch &amp; Dorset. Site survey, access point mounting, cabling, secure setup &amp; handover. Family firm since 1995.",
+  "lede": "A proper, planned Wi-Fi installation for your home or business &mdash; we survey your building, place and mount the right access points, run the cabling, configure everything securely and hand it over working in every room. Bournemouth, Christchurch, Poole and across Dorset. Rated 4.9 on Google.",
+  "metaDesc": "Professional Wi-Fi installation in Bournemouth, Christchurch, Poole &amp; Dorset. Site survey, access point mounting, cabling, secure setup &amp; handover. Family firm since 1995.",
   "chips": [
    "On-site survey first",
    "Mounted &amp; cabled neatly",
@@ -295,7 +295,7 @@ SERVICE_PAGES = [
    },
    {
     "q": "Do you install Wi-Fi for businesses as well as homes?",
-    "a": "Yes. We install reliable networks for small businesses, offices, holiday lets, shops and home workers across Bournemouth, Poole, Christchurch and Dorset &mdash; with secure staff Wi-Fi, separate guest access and wired connections where needed. Ask us about a <a href=\"/business-it-support-plans/\">business support plan</a> to keep it looked after afterwards."
+    "a": "Yes. We install reliable networks for small businesses, offices, holiday lets, shops and home workers across Bournemouth, Christchurch, Poole and Dorset &mdash; with secure staff Wi-Fi, separate guest access and wired connections where needed. Ask us about a <a href=\"/business-it-support-plans/\">business support plan</a> to keep it looked after afterwards."
    }
   ],
   "relatedSlugs": [
@@ -509,8 +509,8 @@ SERVICE_PAGES = [
   "seoTitle": "Laptop Repair Bournemouth &amp; Poole | No Fix, No Fee",
   "eyebrow": "// LAPTOP REPAIR",
   "h1": "Laptop <em class=\"grad grad--cyan\">repair</em> in Bournemouth, Poole &amp; Dorset",
-  "lede": "Cracked screen, swollen battery, dead charging port, or a laptop that just won't turn on? We diagnose the real fault, quote clearly before any chargeable work, and fix Windows laptops properly &mdash; with free local collection across Bournemouth, Poole, Christchurch and Dorset. Rated 4.9 on Google, family-run since 1995.",
-  "metaDesc": "Laptop repair in Bournemouth, Poole, Christchurch &amp; Dorset. Screens, batteries, charging ports, keyboards, overheating &amp; no-power faults fixed. No-fix-no-fee, 12-month warranty.",
+  "lede": "Cracked screen, swollen battery, dead charging port, or a laptop that just won't turn on? We diagnose the real fault, quote clearly before any chargeable work, and fix Windows laptops properly &mdash; with free local collection across Bournemouth, Christchurch, Poole and Dorset. Rated 4.9 on Google, family-run since 1995.",
+  "metaDesc": "Laptop repair in Bournemouth, Christchurch, Poole &amp; Dorset. Screens, batteries, charging ports, keyboards, overheating &amp; no-power faults fixed. No-fix-no-fee, 12-month warranty.",
   "chips": [
    "No-fix-no-fee",
    "12-month warranty",
@@ -607,7 +607,7 @@ SERVICE_PAGES = [
    "backup-support"
   ],
   "ctaHead": "Get your laptop fixed properly",
-  "ctaSub": "Tell us what's wrong and we'll get you booked in &mdash; free local collection across Bournemouth, Poole, Christchurch and Dorset, no-fix-no-fee, with a clear quote before any work.",
+  "ctaSub": "Tell us what's wrong and we'll get you booked in &mdash; free local collection across Bournemouth, Christchurch, Poole and Dorset, no-fix-no-fee, with a clear quote before any work.",
   "_slug": "laptop-repair"
  },
  {
@@ -616,7 +616,7 @@ SERVICE_PAGES = [
   "eyebrow": "Ransomware Recovery",
   "h1": "Ransomware Recovery in <em class=\"grad grad--cyan\">Bournemouth, Poole &amp; Dorset</em>",
   "lede": "Hit by ransomware? Don't pay, don't panic &mdash; and don't switch the machine off in a hurry. We're a local, family-run IT firm that's been getting Dorset homes and small businesses back on their feet since 1995. Call us and we'll start the recovery the same working day.",
-  "metaDesc": "Ransomware recovery for homes &amp; small businesses in Bournemouth, Poole, Christchurch &amp; Dorset. Don't pay the ransom &mdash; we contain, restore from backups &amp; rebuild. Call 01202 775566.",
+  "metaDesc": "Ransomware recovery for homes &amp; small businesses in Bournemouth, Christchurch, Poole &amp; Dorset. Don't pay the ransom &mdash; we contain, restore from backups &amp; rebuild. Call 01202 775566.",
   "chips": [
    "Same working-day response",
    "Restore, don't pay",
@@ -627,7 +627,7 @@ SERVICE_PAGES = [
    {
     "icon": "bolt",
     "title": "Same working-day response",
-    "body": "Call us and we start straight away &mdash; by remote first if the machine is safe to connect to, on-site across Bournemouth, Poole, Christchurch and Dorset if not. The faster we contain it, the more we save."
+    "body": "Call us and we start straight away &mdash; by remote first if the machine is safe to connect to, on-site across Bournemouth, Christchurch, Poole and Dorset if not. The faster we contain it, the more we save."
    },
    {
     "icon": "lock",
@@ -705,7 +705,7 @@ SERVICE_PAGES = [
    "backup-support"
   ],
   "ctaHead": "Hit by ransomware? Let's get you back.",
-  "ctaSub": "Don't pay, don't panic &mdash; call 365 Techies on 01202 775566 and we'll start your recovery the same working day. Friendly, local and honest, serving Bournemouth, Poole, Christchurch and the whole of Dorset.",
+  "ctaSub": "Don't pay, don't panic &mdash; call 365 Techies on 01202 775566 and we'll start your recovery the same working day. Friendly, local and honest, serving Bournemouth, Christchurch, Poole and the whole of Dorset.",
   "_slug": "ransomware-recovery"
  },
  {
@@ -713,7 +713,7 @@ SERVICE_PAGES = [
   "crumbName": "Broadband Setup &amp; Help",
   "eyebrow": "// BROADBAND SETUP &amp; HELP",
   "h1": "Broadband setup &amp; <em class=\"grad grad--cyan\">help</em>",
-  "lede": "No internet, a new line to set up, or a switch you'd rather not face alone? We get your broadband connected, talk to your provider for you, and fix the dropouts &mdash; for homes and small businesses across Bournemouth, Poole, Christchurch and Dorset. Rated 4.9 on Google.",
+  "lede": "No internet, a new line to set up, or a switch you'd rather not face alone? We get your broadband connected, talk to your provider for you, and fix the dropouts &mdash; for homes and small businesses across Bournemouth, Christchurch, Poole and Dorset. Rated 4.9 on Google.",
   "metaDesc": "Broadband setup &amp; help in Bournemouth, Poole &amp; Dorset. New line setup, switching providers, FTTP upgrades, no-internet fixes &amp; dealing with your ISP &mdash; Windows &amp; Android.",
   "chips": [
    " New line setup",
@@ -909,8 +909,8 @@ SERVICE_PAGES = [
   "crumbName": "Data Migration",
   "eyebrow": "Data Migration Services",
   "h1": "Data <em class=\"grad grad--cyan\">migration</em> done safely",
-  "lede": "Moving data to a new computer, off a failing drive, or between storage and Microsoft 365? We transfer your files, photos, email and settings safely and in full &mdash; nothing lost, nothing left behind. Bournemouth, Poole, Christchurch and across Dorset. Rated 4.9 on Google.",
-  "metaDesc": "Safe data migration in Bournemouth, Poole, Christchurch &amp; Dorset. We move files, photos, email &amp; settings to a new PC or off a failing drive &mdash; verified, nothing lost. Windows &amp; Android.",
+  "lede": "Moving data to a new computer, off a failing drive, or between storage and Microsoft 365? We transfer your files, photos, email and settings safely and in full &mdash; nothing lost, nothing left behind. Bournemouth, Christchurch, Poole and across Dorset. Rated 4.9 on Google.",
+  "metaDesc": "Safe data migration in Bournemouth, Christchurch, Poole &amp; Dorset. We move files, photos, email &amp; settings to a new PC or off a failing drive &mdash; verified, nothing lost. Windows &amp; Android.",
   "chips": [
    "Files, photos &amp; email moved in full",
    "Verified &mdash; nothing left behind",
@@ -999,7 +999,7 @@ SERVICE_PAGES = [
    "microsoft-365-support"
   ],
   "ctaHead": "Got data to move? Let's move it safely.",
-  "ctaSub": "Whether it's a new laptop, a dying drive or a mailbox move, we'll get everything across in full and check it together. Call 01202 775566 or book a service &mdash; friendly, local help across Bournemouth, Poole, Christchurch and Dorset.",
+  "ctaSub": "Whether it's a new laptop, a dying drive or a mailbox move, we'll get everything across in full and check it together. Call 01202 775566 or book a service &mdash; friendly, local help across Bournemouth, Christchurch, Poole and Dorset.",
   "_slug": "data-migration"
  },
  {
@@ -1014,7 +1014,7 @@ SERVICE_PAGES = [
    "12-month warranty",
    "Free local collection"
   ],
-  "intro": "<p>A broken laptop screen is a very fixable fault. Whether the glass is cracked after a drop, the picture has gone black but you can still hear Windows starting, or the display is flickering, dim or full of coloured lines, the screen itself can almost always be replaced without scrapping the whole laptop. Your files, your apps and your settings stay exactly where they are. If the screen <a href='/laptop-screen-flickers-then-goes-black/'>flickers and then goes black</a>, that pattern has its own likely causes &mdash; worth reading before you assume the worst.</p><p>This page is all about laptop displays specifically. We diagnose the real fault first &mdash; because a dark screen isn't always a broken panel &mdash; then quote clearly before we order any parts. We work on <strong>Windows laptops</strong> (we don't repair Apple MacBooks), and we cover Bournemouth, Poole, Christchurch and the wider Dorset and New Forest area with free local collection and return.</p>",
+  "intro": "<p>A broken laptop screen is a very fixable fault. Whether the glass is cracked after a drop, the picture has gone black but you can still hear Windows starting, or the display is flickering, dim or full of coloured lines, the screen itself can almost always be replaced without scrapping the whole laptop. Your files, your apps and your settings stay exactly where they are. If the screen <a href='/laptop-screen-flickers-then-goes-black/'>flickers and then goes black</a>, that pattern has its own likely causes &mdash; worth reading before you assume the worst.</p><p>This page is all about laptop displays specifically. We diagnose the real fault first &mdash; because a dark screen isn't always a broken panel &mdash; then quote clearly before we order any parts. We work on <strong>Windows laptops</strong> (we don't repair Apple MacBooks), and we cover Bournemouth, Christchurch, Poole and the wider Dorset and New Forest area with free local collection and return.</p>",
   "features": [
    {
     "icon": "monitor",
@@ -1204,13 +1204,13 @@ SERVICE_PAGES = [
   "eyebrow": "Home Network Setup",
   "h1": "Home Network Setup, <em class=\"grad grad--cyan\">done properly</em>",
   "lede": "We plan and build your whole home network from the broadband socket out &mdash; router, wired connections, wireless layout and every device connected, named and secured. One tidy, reliable network you never have to think about again.",
-  "metaDesc": "Home network setup in Bournemouth, Poole, Christchurch &amp; Dorset. We configure your router, connect every device and secure the lot &mdash; on-site or remote. Windows &amp; Android.",
+  "metaDesc": "Home network setup in Bournemouth, Christchurch, Poole &amp; Dorset. We configure your router, connect every device and secure the lot &mdash; on-site or remote. Windows &amp; Android.",
   "chips": [
    "Router &amp; broadband configured",
    "Every device connected",
    "Secured from day one"
   ],
-  "intro": "<p>A home network is everything in your house that talks to the internet and to each other &mdash; your broadband router, your computers, printer, phones and tablets, smart TVs, streaming sticks and any smart-home gadgets. When it's set up properly, it just works: every room has signal, every device is connected, files and printers are shared where you want them, and the whole thing is locked down against outsiders. When it isn't, you get a tangle of half-connected kit, a printer nobody can find, a password taped to the router and a nagging worry about who else can get in.</p><p>365 Techies has been setting up home networks across Bournemouth, Poole, Christchurch and the wider Dorset and New Forest area since 1995. We come to you (or work remotely where we can), do the whole job end to end, and leave you with a written note of how it all fits together. No jargon, no half-finished setup &mdash; a network that's solid from the first day. If your Wi-Fi already exists but has dead spots or runs slowly, that's a slightly different job &mdash; see our <a href=\"/wifi-support/\">Wi-Fi support</a> page.</p>",
+  "intro": "<p>A home network is everything in your house that talks to the internet and to each other &mdash; your broadband router, your computers, printer, phones and tablets, smart TVs, streaming sticks and any smart-home gadgets. When it's set up properly, it just works: every room has signal, every device is connected, files and printers are shared where you want them, and the whole thing is locked down against outsiders. When it isn't, you get a tangle of half-connected kit, a printer nobody can find, a password taped to the router and a nagging worry about who else can get in.</p><p>365 Techies has been setting up home networks across Bournemouth, Christchurch, Poole and the wider Dorset and New Forest area since 1995. We come to you (or work remotely where we can), do the whole job end to end, and leave you with a written note of how it all fits together. No jargon, no half-finished setup &mdash; a network that's solid from the first day. If your Wi-Fi already exists but has dead spots or runs slowly, that's a slightly different job &mdash; see our <a href=\"/wifi-support/\">Wi-Fi support</a> page.</p>",
   "features": [
    {
     "icon": "wifi",
@@ -1272,7 +1272,7 @@ SERVICE_PAGES = [
    },
    {
     "q": "Do you come to my house or do it remotely?",
-    "a": "Both, depending on the job. A brand-new network &mdash; new router, wired runs, devices to physically connect &mdash; is usually best done on-site, and we cover Bournemouth, Poole, Christchurch and the wider Dorset and New Forest area. Smaller changes and follow-up tweaks we can often handle remotely. We'll tell you honestly which makes sense for you."
+    "a": "Both, depending on the job. A brand-new network &mdash; new router, wired runs, devices to physically connect &mdash; is usually best done on-site, and we cover Bournemouth, Christchurch, Poole and the wider Dorset and New Forest area. Smaller changes and follow-up tweaks we can often handle remotely. We'll tell you honestly which makes sense for you."
    },
    {
     "q": "I've just moved house or changed broadband &mdash; can you set it all up?",
@@ -1399,8 +1399,8 @@ SERVICE_PAGES = [
   "crumbName": "Windows Reinstall &amp; Refresh",
   "eyebrow": "Windows Reinstall &amp; Refresh",
   "h1": "Windows Reinstall &amp; <em class=\"grad grad--cyan\">Refresh</em>",
-  "lede": "If your PC has slowed to a crawl, fills the screen with pop-ups, or just feels tired and cluttered, a clean Windows reinstall wipes the slate and rebuilds it properly &mdash; with your photos, documents and email safely carried across. A careful, fully managed rebuild for homes and small businesses across Bournemouth, Poole, Christchurch and Dorset.",
-  "metaDesc": "Clean Windows reinstall &amp; refresh in Bournemouth, Poole, Christchurch &amp; Dorset. We back up your files, wipe and rebuild Windows, reinstall apps and hand it back fast.",
+  "lede": "If your PC has slowed to a crawl, fills the screen with pop-ups, or just feels tired and cluttered, a clean Windows reinstall wipes the slate and rebuilds it properly &mdash; with your photos, documents and email safely carried across. A careful, fully managed rebuild for homes and small businesses across Bournemouth, Christchurch, Poole and Dorset.",
+  "metaDesc": "Clean Windows reinstall &amp; refresh in Bournemouth, Christchurch, Poole &amp; Dorset. We back up your files, wipe and rebuild Windows, reinstall apps and hand it back fast.",
   "chips": [
    "Files backed up first",
    "Apps &amp; email put back",
@@ -1436,7 +1436,7 @@ SERVICE_PAGES = [
    {
     "icon": "home",
     "title": "Remote or on-site, your choice",
-    "body": "Many refreshes are done remotely via Splashtop, or we collect and return locally across Bournemouth, Poole, Christchurch and Dorset. We talk you through it and keep you posted at every step."
+    "body": "Many refreshes are done remotely via Splashtop, or we collect and return locally across Bournemouth, Christchurch, Poole and Dorset. We talk you through it and keep you posted at every step."
    }
   ],
   "howItWorks": [
@@ -1472,7 +1472,7 @@ SERVICE_PAGES = [
    },
    {
     "q": "How long does a Windows reinstall take and will I be without my PC?",
-    "a": "Most refreshes are done within a day or two once we have the machine, depending on how much data needs backing up and restoring. Many jobs can be handled remotely via Splashtop with no need to drop anything off, and across Bournemouth, Poole, Christchurch and Dorset we can collect and return locally. We'll give you a realistic timescale before we start."
+    "a": "Most refreshes are done within a day or two once we have the machine, depending on how much data needs backing up and restoring. Many jobs can be handled remotely via Splashtop with no need to drop anything off, and across Bournemouth, Christchurch, Poole and Dorset we can collect and return locally. We'll give you a realistic timescale before we start."
    },
    {
     "q": "Should I reinstall Windows or just buy a new computer?",
@@ -1489,7 +1489,7 @@ SERVICE_PAGES = [
    "backup-support"
   ],
   "ctaHead": "Give your tired PC a fresh start",
-  "ctaSub": "Slow, cluttered or full of pop-ups? We'll back up your files, reinstall Windows cleanly and hand it back feeling like new. Friendly local help across Bournemouth, Poole, Christchurch and Dorset &mdash; talk to a real person and book your refresh today.",
+  "ctaSub": "Slow, cluttered or full of pop-ups? We'll back up your files, reinstall Windows cleanly and hand it back feeling like new. Friendly local help across Bournemouth, Christchurch, Poole and Dorset &mdash; talk to a real person and book your refresh today.",
   "_slug": "windows-reinstall"
  },
  {

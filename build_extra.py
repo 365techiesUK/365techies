@@ -6610,7 +6610,7 @@ COVERAGE_WIDGET = '''    <section class="section section--alt" aria-label="Cover
       <script>
       (function () {
         var f = document.getElementById('cov'); if (!f) return;
-        var ON = {BH:'Bournemouth, Poole &amp; Christchurch', DT:'Dorchester, Weymouth &amp; west Dorset', SO:'Southampton &amp; the New Forest', SP:'Salisbury &amp; Fordingbridge', BA:'the Bath, Frome &amp; Yeovil area'};
+        var ON = {BH:'Bournemouth, Christchurch &amp; Poole', DT:'Dorchester, Weymouth &amp; west Dorset', SO:'Southampton &amp; the New Forest', SP:'Salisbury &amp; Fordingbridge', BA:'the Bath, Frome &amp; Yeovil area'};
         var AREA = {BH:'/it-support-bournemouth/', DT:'/it-support-dorchester/', SO:'/it-support-southampton/', SP:'/it-support-fordingbridge/'};
         function check(){
           var m=(document.getElementById('cov-in').value||'').toUpperCase().match(/[A-Z]{1,2}/);
@@ -6630,7 +6630,7 @@ def coverage_checker():
     slug = "coverage-checker"
     desc = "Do we cover your area? Enter your postcode and instantly see whether 365 Techies offers on-site IT support near you across Dorset, the New Forest and Hampshire — plus full remote support everywhere else in the UK & Europe."
     faqs = [
-      ("Which areas do you cover on-site?", "We cover Bournemouth, Poole, Christchurch and across Dorset, the New Forest and parts of Hampshire on-site. See our <a href=\"/areas-covered/\">areas covered</a> page for the full list."),
+      ("Which areas do you cover on-site?", "We cover Bournemouth, Christchurch, Poole and across Dorset, the New Forest and parts of Hampshire on-site. See our <a href=\"/areas-covered/\">areas covered</a> page for the full list."),
       ("What if I&rsquo;m outside your area?", "No problem &mdash; we provide fast, secure <a href=\"/remote-it-support/\">remote IT support</a> and fully managed monthly plans <a href=\"/it-support-uk-europe/\">across the UK and Europe</a>."),
       ("Is remote support as good as on-site?", "For most issues, yes &mdash; many problems are fixed remotely, often in minutes. We arrange on-site visits when hands-on help is genuinely needed."),
     ]
@@ -10325,7 +10325,7 @@ def dell_it_support_hub():
       f'<span class="hp-intent__d">{d}</span><span class="hp-intent__p">{p}</span></a>'
       for c, i, t, d, p, href in tiles)
     faqs = [
-      ("Do you offer Dell support across Bournemouth, Poole and Dorset?", "Yes &mdash; we&rsquo;re a family-run, independent Dell specialist based in Kinson, Bournemouth (BH10&nbsp;7LH), and we&rsquo;ve supplied and supported Dell systems for homes and businesses across Bournemouth, Poole, Christchurch and the wider Dorset area since 1995. Remote support and refurbished sales reach customers UK-wide."),
+      ("Do you offer Dell support across Bournemouth, Poole and Dorset?", "Yes &mdash; we&rsquo;re a family-run, independent Dell specialist based in Kinson, Bournemouth (BH10&nbsp;7LH), and we&rsquo;ve supplied and supported Dell systems for homes and businesses across Bournemouth, Christchurch, Poole and the wider Dorset area since 1995. Remote support and refurbished sales reach customers UK-wide."),
       ("Are you a Dell reseller or a Dell authorised repair centre?", "Both parts have an honest answer. We <strong>are</strong> a genuine <strong>Dell reseller &mdash; and have been since 2001</strong> &mdash; so we can supply brand-new Dell hardware as well as our tested refurbished range. For <strong>repairs and support</strong>, though, we&rsquo;re deliberately independent: not a Dell Authorised Service Provider and not Dell ProSupport. That independence lets us give honest advice and fair prices, and fix machines Dell would rather you replaced."),
       ("Can you fix my Dell remotely?", "Often, yes. Software, Windows, email, driver, setup and slowdown problems can usually be sorted the same day over a secure remote session you watch on screen &mdash; we always phone first. Physical faults (a screen, battery or port) need hands-on repair, with free local collection. See <a href=\"/dell-remote-support/\">Dell remote support</a>."),
       ("Do you support Dell for businesses as well as homes?", "Both. We look after home users&rsquo; Dell laptops and desktops, and we support small-business Dell fleets &mdash; Latitude, OptiPlex and Precision &mdash; with proactive maintenance, remote and on-site help. See <a href=\"/dell-business-support-dorset/\">Dell business support</a>. Home support is &pound;18.25/month per computer; business from &pound;24.38."),
@@ -10448,10 +10448,10 @@ def refurbished_local():
     slug = "refurbished-laptops-dorset"
     desc = "Refurbished Dell Latitude laptops & OptiPlex PCs in Bournemouth, Poole & across Dorset — tested, fitted with a new Samsung Pro SSD, set up, supported and guaranteed by a local family firm since 1995."
     faqs = [
-      ("Where can I buy a refurbished laptop near me in Dorset?", "365 Techies supplies refurbished Dell business laptops and PCs right across Bournemouth, Poole, Christchurch and the wider Dorset area &mdash; set up and supported locally. Tell us what you need and we&rsquo;ll match you one."),
+      ("Where can I buy a refurbished laptop near me in Dorset?", "365 Techies supplies refurbished Dell business laptops and PCs right across Bournemouth, Christchurch, Poole and the wider Dorset area &mdash; set up and supported locally. Tell us what you need and we&rsquo;ll match you one."),
       ("Do you deliver, or do I collect?", "We come to you: we bring the machine to your home or business to see first, anywhere we cover, and set it up there &mdash; or deliver it. If it&rsquo;s easier, we can meet at the Kinson Community Centre by appointment. Much of the setup we can even do remotely once you&rsquo;re up and running."),
       ("Are they new or refurbished?", "Professionally refurbished, tested ex-business Dell &mdash; each with a brand-new Samsung Pro SSD, graded A, B or C, and backed by any remaining Dell warranty where applicable plus our own 5-year guarantee on a 365 support plan. See our <a href=\"/dell-hardware/\">refurbished Dell page</a> for the full detail."),
-      ("Which areas do you cover?", "Bournemouth, Poole, Christchurch, Ferndown, Wimborne, Wareham, Dorchester, Weymouth and across Dorset &mdash; remotely and on-site."),
+      ("Which areas do you cover?", "Bournemouth, Christchurch, Poole, Ferndown, Wimborne, Wareham, Dorchester, Weymouth and across Dorset &mdash; remotely and on-site."),
     ]
     # ---- v2 (26 Sep 2026): the hub layout - what they're after with prices beside the H1, proof, popular
     # machines with guide prices beside the real photo, the page's own two sections, buyers' reviews, FAQ.
@@ -10585,7 +10585,7 @@ def refurbished_local():
           <p class="lede lede--center" data-reveal>We supply, set up and support refurbished Dell laptops and PCs right across the area &mdash; we bring it to you to see first, or deliver and set it up for you.</p>
         </div>
         <ul class="security-grid" data-stagger>
-{grid_cards([("Bournemouth &amp; Poole","Refurbished Dell laptops and PCs supplied and set up across Bournemouth, Poole and Christchurch."),("Across Dorset","Ferndown, Wimborne, Wareham, Dorchester, Weymouth and the surrounding towns and villages."),("Set up &amp; supported","We configure everything and can support it remotely, wherever you are in Dorset."),("Trade in your old one","We&rsquo;ll move your data across, then securely wipe and recycle your old machine &mdash; see <a href=\"/secure-it-disposal/\">secure IT disposal</a>.")])}
+{grid_cards([("Bournemouth &amp; Poole","Refurbished Dell laptops and PCs supplied and set up across Bournemouth, Christchurch and Poole."),("Across Dorset","Ferndown, Wimborne, Wareham, Dorchester, Weymouth and the surrounding towns and villages."),("Set up &amp; supported","We configure everything and can support it remotely, wherever you are in Dorset."),("Trade in your old one","We&rsquo;ll move your data across, then securely wipe and recycle your old machine &mdash; see <a href=\"/secure-it-disposal/\">secure IT disposal</a>.")])}
         </ul>
         <p style="text-align:center;margin-top:1.8rem" data-reveal><a class="button secondary" href="/dell-hardware/">See all the detail on our refurbished Dell page &#8594;</a></p>
       </div>
@@ -14464,9 +14464,9 @@ SPECCHECK_SIGNAL_BAND = """    <section class="section section--alt" aria-label=
       @media(max-width:560px){#signal-test .sg__cta .button{width:100%}#signal-test .sg__stats b{font-size:1.4rem}}
       </style>
         <div class="section-head">
-          <p class="eyebrow eyebrow--center mono" data-reveal>// HELP MAP THE MOBILE SIGNAL &middot; BOURNEMOUTH, POOLE, CHRISTCHURCH &amp; BEYOND</p>
+          <p class="eyebrow eyebrow--center mono" data-reveal>// HELP MAP THE MOBILE SIGNAL &middot; BOURNEMOUTH, CHRISTCHURCH, POOLE &amp; BEYOND</p>
           <h2 class="section-title section-title--center" data-title>Where does a phone actually work? Help everyone find out<span class="title-underline title-underline--center"></span></h2>
-          <p class="lede lede--center" data-reveal>Knowing where a call will connect matters &mdash; for someone working from the back bedroom, for a relative living alone, for the day the broadband goes down. Our signal map is built from ten-second tests on ordinary phones, one square at a time. It started in Bournemouth, Poole and Christchurch, and a reading from anywhere in the UK now counts. Your reading joins a square on the map &mdash; never a pin on you.</p>
+          <p class="lede lede--center" data-reveal>Knowing where a call will connect matters &mdash; for someone working from the back bedroom, for a relative living alone, for the day the broadband goes down. Our signal map is built from ten-second tests on ordinary phones, one square at a time. It started in Bournemouth, Christchurch and Poole, and a reading from anywhere in the UK now counts. Your reading joins a square on the map &mdash; never a pin on you.</p>
         </div>
         <div class="sg__stats" id="sg-stats" data-reveal hidden>
           <div><b id="sg-n">&ndash;</b><span>readings from people&rsquo;s phones</span></div>
@@ -16312,7 +16312,7 @@ GAP_SERVICES = [
   "slug": "business-it-consultancy", "crumb": "IT Consultancy",
   "eyebrow": "// IT CONSULTANCY &middot; BOURNEMOUTH, POOLE &amp; DORSET",
   "h1": 'IT consultancy for <em class="grad grad--cyan">Dorset</em> businesses',
-  "lede": "Plain-English IT advice and a clear technology plan for your business &mdash; like having your own IT director, without the salary. We&rsquo;re based in Bournemouth and help small businesses in Poole, Christchurch and across Dorset choose the right systems, budget sensibly and stop firefighting.",
+  "lede": "Plain-English IT advice and a clear technology plan for your business &mdash; like having your own IT director, without the salary. We&rsquo;re based in Bournemouth and help small businesses in Christchurch, Poole and across Dorset choose the right systems, budget sensibly and stop firefighting.",
   "chips": ["Plain-English advice", "Your virtual IT manager", "No jargon, no pressure"],
   "cta1": ("Book a Free IT Review", "/contact/"), "cta2": ("Business IT Support", "/business-it-support-subscriptions/"),
   "why_eyebrow": "WHY IT MATTERS", "why_title": "Technology that fits your business",
@@ -16331,7 +16331,7 @@ GAP_SERVICES = [
     ("Do I have to be a support customer?", "No &mdash; we offer standalone IT consultancy and reviews. Many businesses start with a review, then move onto a support plan."),
     ("Is the advice independent?", "Yes &mdash; we recommend what&rsquo;s right for you, in plain English, with no pressure. We&rsquo;ll happily tell you when you don&rsquo;t need to spend."),
     ("How much does it cost?", "An initial IT review is free and no-obligation. Ongoing consultancy is quoted clearly up front to suit how much help you want."),
-    ("Do you offer IT consultancy across Dorset?", "Yes. We&rsquo;re a family-run team based in Bournemouth, working with small businesses in Poole, Christchurch, Wimborne, Ferndown, Dorchester and across Dorset &mdash; in person at your office or remotely, whichever suits.")],
+    ("Do you offer IT consultancy across Dorset?", "Yes. We&rsquo;re a family-run team based in Bournemouth, working with small businesses in Christchurch, Poole, Wimborne, Ferndown, Dorchester and across Dorset &mdash; in person at your office or remotely, whichever suits.")],
   "cta_title": "Let&rsquo;s make sense of your IT", "cta_text": "Book a free, no-obligation IT review and we&rsquo;ll give you a clear, plain-English plan &mdash; no jargon, no pressure.",
   "svc_name": "Business IT Consultancy", "svc_desc": "IT strategy, planning and virtual IT manager services for small businesses across Dorset — independent, plain-English advice.", "svc_type": "IT consultancy",
   "title": "IT Consultancy Dorset | Virtual IT Manager for Small Firms",
@@ -16360,7 +16360,7 @@ GAP_SERVICES = [
     ("Can you move our IT out of hours or at a weekend?", "Yes &mdash; we often move IT in the evening or at a weekend so your team walks into a working office with no lost working time."),
     ("Will we lose internet or phones during the move?", "We plan connectivity and phones ahead so there&rsquo;s no gap &mdash; numbers and broadband are ready at the new office before you arrive."),
     ("Can you move our server, or should we go cloud?", "Either &mdash; we&rsquo;ll move your server safely, or use the move as the moment to migrate to the cloud. We&rsquo;ll advise what&rsquo;s best."),
-    ("Do you cover our area?", "Yes &mdash; office moves and IT relocation across Bournemouth, Poole, Christchurch and the whole of Dorset.")],
+    ("Do you cover our area?", "Yes &mdash; office moves and IT relocation across Bournemouth, Christchurch, Poole and the whole of Dorset.")],
   "cta_title": "Moving office? Let&rsquo;s plan the IT", "cta_text": "Tell us about your move and we&rsquo;ll handle the whole IT side &mdash; so your team is up and running on day one.",
   "svc_name": "Office Moves & IT Relocation", "svc_desc": "End-to-end IT relocation for office moves across Dorset — servers, network, computers, phones and broadband, planned and reconnected with minimal downtime.", "svc_type": "IT relocation",
   "title": "Office Moves & IT Relocation Dorset | Minimal Downtime | 365 Techies",
@@ -17411,7 +17411,7 @@ info_page(
           <h2>No-fix-no-fee &amp; warranty</h2>
           <p><strong>If we can&rsquo;t fix it, you don&rsquo;t pay for the diagnosis</strong> &mdash; and every repair is backed by a <strong>12-month warranty</strong>. We&rsquo;ll always quote clearly before doing any chargeable work.</p>
           <h2>Where we cover</h2>
-          <p>We collect across Bournemouth, Poole, Christchurch and the wider Dorset area. Not sure if we reach you? Just ask on the form or call <a href="tel:+441202775566">01202 775566</a>.</p>""",
+          <p>We collect across Bournemouth, Christchurch, Poole and the wider Dorset area. Not sure if we reach you? Just ask on the form or call <a href="tel:+441202775566">01202 775566</a>.</p>""",
   cta_args=("Prefer a remote fix first?", "Many problems are sorted remotely in minutes &mdash; no collection needed.",
             ("Start Remote Support", "/remote-support/"), ("Call 01202 775566", "tel:+441202775566")),
 )
@@ -18036,7 +18036,7 @@ info_page(
           <h2>What we can fix remotely</h2>
           <p>Most things! Slow computers, email problems, software setup, updates, printer and Wi-Fi issues, security checks and much more &mdash; all without us leaving the office or you leaving home.</p>
           <h2>And if it can&rsquo;t be done remotely?</h2>
-          <p>Some jobs need hands-on work &mdash; a failing hard drive, a cracked screen, or a machine that won&rsquo;t power on. If so, we&rsquo;ll either <a href="/book-a-collection/">collect your computer or laptop</a> or come to you on&#8209;site &mdash; and <strong>either way you get a clear quote for the work before anything starts</strong>. For a visit, we agree the day and time with you first and phone ahead with an ETA; we never just turn up. We cover Bournemouth, Poole, Christchurch and across Dorset for collections and on&#8209;site visits.</p>
+          <p>Some jobs need hands-on work &mdash; a failing hard drive, a cracked screen, or a machine that won&rsquo;t power on. If so, we&rsquo;ll either <a href="/book-a-collection/">collect your computer or laptop</a> or come to you on&#8209;site &mdash; and <strong>either way you get a clear quote for the work before anything starts</strong>. For a visit, we agree the day and time with you first and phone ahead with an ETA; we never just turn up. We cover Bournemouth, Christchurch, Poole and across Dorset for collections and on&#8209;site visits.</p>
           <h2>Which devices?</h2>
           <p>Remote support works on <strong>Windows computers and laptops and Android devices</strong>. Please note we can&rsquo;t remotely connect to Apple Macs, iPhones or iPads. For on-site help across Dorset, just <a href="/contact/">get in touch</a>.</p>
           <p>Want to reach your <strong>own</strong> computer from anywhere &mdash; your work PC from home, say &mdash; rather than get support? That&rsquo;s <a href="/remote-access/">remote access</a>, and we set that up too.</p>
@@ -18053,7 +18053,7 @@ info_page(
     ("Do I get any follow-up after a one-off remote fix?", "Yes &mdash; every pay-as-you-go remote job includes <strong>30 days of follow-up remote support</strong> to help sort any further issues on the same problem, plus a <strong>free system health check at 30 days</strong> to make sure everything&rsquo;s still running well."),
     ("When can I book remote servicing on a plan?", "Remote servicing for support customers runs <strong>Mondays, Tuesdays and Thursdays, 10am&ndash;1pm</strong>. Business customers can also book <strong>evening slots, 5pm&ndash;7pm</strong> &mdash; we recommend after-hours servicing so there&rsquo;s no disruption during the working day. You can view or change your appointment any time."),
     ("Is everything free once I&rsquo;m on a plan?", "Your plan keeps your computer maintained and running smoothly &mdash; a full health check and service are <strong>included</strong>, plus a full service every 6 weeks, priority support and fully-managed servicing. It&rsquo;s about keeping a working machine hassle-free, a bit like servicing a car. And if a genuine fault ever does crop up, any work you need is <strong>discounted</strong> because you&rsquo;re on support &mdash; that&rsquo;s our customer loyalty promise. On a <a href=\"/business-it-support-plans/\">business plan</a>, remote fixes are <strong>included</strong>; on-site visits, parts and new set-ups are quoted first, with the same discount."),
-    ("What if it can&rsquo;t be fixed remotely?", "Some jobs need hands-on work. If so, we&rsquo;ll either <a href=\"/book-a-collection/\">collect your computer or laptop</a> or come to you on-site &mdash; and <strong>either way you&rsquo;re quoted for the work before we start</strong>. For an on-site call-out we arrange the day and time with you first and phone ahead with an ETA; we never just turn up. Collections and visits cover Bournemouth, Poole, Christchurch and across Dorset."),
+    ("What if it can&rsquo;t be fixed remotely?", "Some jobs need hands-on work. If so, we&rsquo;ll either <a href=\"/book-a-collection/\">collect your computer or laptop</a> or come to you on-site &mdash; and <strong>either way you&rsquo;re quoted for the work before we start</strong>. For an on-site call-out we arrange the day and time with you first and phone ahead with an ETA; we never just turn up. Collections and visits cover Bournemouth, Christchurch, Poole and across Dorset."),
   ],
   cta_args=("Prefer to book ahead?", "Not an emergency? Book a convenient time and we&rsquo;ll call you.",
             ("Book a Service", "/book-service/"), ("Call 01202 775566", "tel:+441202775566")),
@@ -19254,7 +19254,7 @@ info_page(
     ("Should I buy refurbished?","A good refurbished machine from a reputable seller can be excellent value &mdash; just check it has an SSD, enough memory and can run Windows 11. We actually supply <a href=\"/dell-hardware/\">refurbished, business-grade Dell laptops &amp; PCs</a> &mdash; tested, set up and backed by our own warranty &mdash; so we&rsquo;re happy to advise or match you one."),
     ("How do I recycle my old laptop?","Back up and wipe it first, then recycle it responsibly &mdash; see our guide to <a href=\"/how-to-wipe-and-recycle-old-computer/\">wiping and recycling an old computer</a>."),
     ("What is the best laptop for a home-office setup, and are refurbished ones any good?","For a home office running email, the web, video calls and office software, you do not need the latest or most expensive machine &mdash; aim for an SSD, plenty of memory and a screen size that suits your desk. A professionally refurbished, business-grade Dell Latitude or OptiPlex is often the sweet spot here: built for reliable all-day office use, fitted with a brand-new Samsung Pro SSD, and typically around 30&ndash;50% less than an equivalent new machine. See our guide on whether <a href=\"/are-refurbished-laptops-any-good/\">refurbished laptops are any good</a>."),
-    ("Where can I buy a good refurbished laptop near me?","If you are in Bournemouth, Poole, Christchurch or anywhere across Dorset, we supply professionally refurbished, tested ex-business Dell laptops and desktops from &pound;545 &mdash; each with a brand-new Samsung Pro SSD, a clean licensed copy of Windows, and any remaining Dell warranty where applicable and our own 5-year guarantee on a 365 support plan. See <a href=\"/refurbished-laptops-dorset/\">refurbished laptops in Dorset</a>, or call 01202 775566."),
+    ("Where can I buy a good refurbished laptop near me?","If you are in Bournemouth, Christchurch, Poole or anywhere across Dorset, we supply professionally refurbished, tested ex-business Dell laptops and desktops from &pound;545 &mdash; each with a brand-new Samsung Pro SSD, a clean licensed copy of Windows, and any remaining Dell warranty where applicable and our own 5-year guarantee on a 365 support plan. See <a href=\"/refurbished-laptops-dorset/\">refurbished laptops in Dorset</a>, or call 01202 775566."),
   ],
   cta_args=("Want a hand choosing?","Tell us how you&rsquo;ll use it and your budget, and we&rsquo;ll recommend the right computer &mdash; honestly, with no upselling &mdash; and set it all up for you.",
             ("New Computer Setup","/new-computer-setup/"), ("Talk to a Techie","/contact/")),

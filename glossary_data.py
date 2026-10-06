@@ -325,7 +325,7 @@ GLOSSARY_PAGES = [
     "label": "Operating system"
    }
   ],
-  "how365Helps": "<p>If you'd rather not fiddle with security settings yourself, we're happy to check your firewall and overall protection are set up sensibly &mdash; for homes and small businesses across Bournemouth, Poole, Christchurch and Dorset.</p>",
+  "how365Helps": "<p>If you'd rather not fiddle with security settings yourself, we're happy to check your firewall and overall protection are set up sensibly &mdash; for homes and small businesses across Bournemouth, Christchurch, Poole and Dorset.</p>",
   "faqQ": "Is the Windows firewall good enough, or do I need to buy one?",
   "faqA": "<p>For most home users and small businesses, the firewall built into Windows &mdash; combined with the one in your internet router &mdash; is genuinely enough, as long as it's left switched on. You don't need to buy a separate firewall product. What matters more is keeping Windows up to date, running reputable antivirus, and being careful about which apps you allow through. If you'd like a second pair of eyes to confirm everything's set up properly, we can take a look.</p>",
   "_slug": "firewall"
@@ -415,7 +415,7 @@ GLOSSARY_PAGES = [
     "label": "Megabytes &amp; gigabytes"
    }
   ],
-  "how365Helps": "<p>If your internet feels slow and you're not sure whether it's the connection, the router or the computer, we're happy to take a look and tell you honestly what's going on &mdash; for homes and small businesses across Bournemouth, Poole, Christchurch and Dorset.</p>",
+  "how365Helps": "<p>If your internet feels slow and you're not sure whether it's the connection, the router or the computer, we're happy to take a look and tell you honestly what's going on &mdash; for homes and small businesses across Bournemouth, Christchurch, Poole and Dorset.</p>",
   "faqQ": "Is more bandwidth the same as faster Wi-Fi?",
   "faqA": "<p>Not quite. Bandwidth is how much your broadband line can carry, while Wi-Fi is how that connection reaches your devices through the air. You can pay for plenty of bandwidth but still get poor speeds in a back bedroom because the Wi-Fi signal is weak there. Moving closer to the router, or plugging in with an Ethernet cable, often helps more than buying a bigger package.</p>",
   "_slug": "bandwidth"

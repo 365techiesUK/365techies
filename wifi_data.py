@@ -329,7 +329,7 @@ WIFI_PAGES = [
  'secondaryCta': ['Test your WiFi first', '/wifi-signal-test/'],
  'ctaHead': 'Not sure which of these your house actually needs?',
  'ctaSub': 'Tell us the property, the broadband package and where it goes wrong, and we&rsquo;ll tell you straight &mdash; including when the answer is &ldquo;don&rsquo;t buy '
-           'anything, move your router&rdquo;. Homes and businesses across Bournemouth, Poole, Christchurch and Dorset.',
+           'anything, move your router&rdquo;. Homes and businesses across Bournemouth, Christchurch, Poole and Dorset.',
  'serviceName': 'Mesh WiFi advice, supply and installation',
  'schemaKind': 'service',
  'sections': [
@@ -483,7 +483,7 @@ WIFI_PAGES = [
            '<p>For a Victorian terrace or a stone cottage we would stop thinking about mesh altogether and think about <strong>one access point per floor, wired</strong>. '
            'It costs less than a flagship mesh, it works, and it keeps working.</p>'
            '<p>For a garden office we would put in <strong>external-grade Cat6 in ducting</strong> and be done with it for the next twenty years.</p>'
-           '<p>If you want us to look at yours, we cover Bournemouth, Poole, Christchurch and the wider Dorset area, and we&rsquo;ll tell you if the answer is '
+           '<p>If you want us to look at yours, we cover Bournemouth, Christchurch, Poole and the wider Dorset area, and we&rsquo;ll tell you if the answer is '
            '&ldquo;you don&rsquo;t need us&rdquo;. See also our <a href="/mesh-wifi-setup-guide/">step-by-step setup guide</a>, our '
            '<a href="/wifi-troubleshooting/">fault-finding guide</a>, and <a href="/business-wifi-installation/">business WiFi</a> if this is for an office.</p>'},
 
@@ -804,7 +804,7 @@ WIFI_PAGES = [
  'secondaryCta': ['Measure your signal free', '/wifi-signal-test/'],
  'ctaHead': 'Tried all this and it&rsquo;s still wrong?',
  'ctaSub': 'That is genuinely what we are for. We diagnose properly rather than guessing, and we will tell you when the problem is your line, your device or your '
-           'walls rather than selling you a box. No-fix-no-fee, across Bournemouth, Poole, Christchurch and Dorset.',
+           'walls rather than selling you a box. No-fix-no-fee, across Bournemouth, Christchurch, Poole and Dorset.',
  'serviceName': 'WiFi fault diagnosis and repair',
  'schemaKind': 'service',
  'sections': [
@@ -959,7 +959,7 @@ WIFI_PAGES = [
  'primaryCta': ['Book a site survey', '/contact/'],
  'secondaryCta': ['Call 01202 775566', 'tel:+441202775566'],
  'ctaHead': 'Want a straight quote for your premises?',
- 'ctaSub': 'We survey first (priced before we come), design against measured coverage rather than a coverage map, and show you the cabling cost separately so you can see where the money goes. Offices, shops, cafes, holiday lets, care homes and practices across Bournemouth, Poole, Christchurch and Dorset.',
+ 'ctaSub': 'We survey first (priced before we come), design against measured coverage rather than a coverage map, and show you the cabling cost separately so you can see where the money goes. Offices, shops, cafes, holiday lets, care homes and practices across Bournemouth, Christchurch, Poole and Dorset.',
  'serviceName': 'Business WiFi survey, installation and support',
  'schemaKind': 'service',
  'sections': [
@@ -1082,7 +1082,7 @@ WIFI_PAGES = [
         'Wireless mesh is a legitimate compromise for outbuildings, listed walls and temporary sites. If cable can be run and a supplier still proposes wireless '
         'mesh, they are saving themselves labour rather than saving you money.'},
   {'q': 'Do you install business WiFi in Bournemouth and Poole?',
-   'a': 'Yes. We are a family-run IT firm based in Bournemouth, trading since 1995, and we cover Poole, Christchurch and the wider Dorset area &mdash; offices, '
+   'a': 'Yes. We are a family-run IT firm based in Bournemouth, trading since 1995, and we cover Christchurch, Poole and the wider Dorset area &mdash; offices, '
         'shops, cafes, holiday lets, care homes and practices. We survey before quoting, show the cabling cost separately, and hand over full documentation and '
         'credentials at the end.'},
  ],
@@ -1110,7 +1110,7 @@ WIFI_PAGES = [
  'secondaryCta': ['Measure your signal free', '/wifi-signal-test/'],
  'ctaHead': 'Old house, thick walls, or a garden office that never works?',
  'ctaSub': 'These are the jobs we enjoy most, and they are almost never solved by buying a bigger box. We survey, measure and tell you honestly what will and '
-           'won&rsquo;t work &mdash; across Bournemouth, Poole, Christchurch and rural Dorset.',
+           'won&rsquo;t work &mdash; across Bournemouth, Christchurch, Poole and rural Dorset.',
  'serviceName': 'WiFi survey and design for difficult buildings',
  'schemaKind': 'service',
  'sections': [

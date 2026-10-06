@@ -160,7 +160,7 @@ EMERGENCY_PAGES = [
 
   {'eyebrow': '/08 &mdash; WHERE WE GO',
    'h2': 'Where we can get to',
-   'html': '<p>We are based in Bournemouth and the van covers <strong>Poole, Christchurch, Wimborne, Wareham, Ferndown, Ringwood, the Purbecks and the wider Dorset '
+   'html': '<p>We are based in Bournemouth and the van covers <strong>Christchurch, Poole, Wimborne, Wareham, Ferndown, Ringwood, the Purbecks and the wider Dorset '
            'area</strong>, with the New Forest and south-east Hampshire within reach.</p>'
            '<p><strong>An honest limit: we have one van.</strong> If it is committed to a booked event, we cannot be in two places at once, and we will tell you that '
            'when you call rather than leave you waiting. That is also the single best argument for <a href="/business-continuity-internet/">agreeing a plan in '
@@ -221,7 +221,7 @@ EMERGENCY_PAGES = [
  'secondaryCta': ['Is it down for everyone?', '/is-it-down/'],
  'ctaHead': 'Stuck, or been told it will be days?',
  'ctaSub': 'Call us. We will tell you on the phone whether we can help today, whether a failover router is the better answer, or whether the honest advice is to '
-           'wait it out. Bournemouth, Poole, Christchurch and Dorset.',
+           'wait it out. Bournemouth, Christchurch, Poole and Dorset.',
  'serviceName': 'Emergency broadband fault support',
  'schemaKind': 'service',
  'sections': [

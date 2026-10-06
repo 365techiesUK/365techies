@@ -644,7 +644,7 @@ SNIPPETS = {
         "desc": "Setup, migration and support for Google Workspace. Gmail, Drive, Docs and Meet set up properly, secured and working smoothly for your home or business.",
     },
     "home-network-setup": {
-        "desc": "Home network setup in Bournemouth, Poole, Christchurch and Dorset. We configure your router, connect every device and secure the lot, on site or remotely.",
+        "desc": "Home network setup in Bournemouth, Christchurch, Poole and Dorset. We configure your router, connect every device and secure the lot, on site or remotely.",
     },
     "independent-it-support": {
         "desc": "An honest comparison of local independent IT support against big-box repair desks and DIY remote tools: who actually helps you, speed, and repair honesty.",
@@ -871,7 +871,7 @@ SNIPPETS = {
     },
     "areas-covered": {
         "title": "Areas Covered: IT Support Across Bournemouth &amp; Dorset",
-        "desc": "Remote and on-site IT support across Bournemouth, Poole, Christchurch, Wimborne, Ferndown and the rest of Dorset, for homes and businesses alike.",
+        "desc": "Remote and on-site IT support across Bournemouth, Christchurch, Poole, Wimborne, Ferndown and the rest of Dorset, for homes and businesses alike.",
     },
 
     # ================================================================

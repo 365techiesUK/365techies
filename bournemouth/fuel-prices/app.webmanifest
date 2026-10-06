@@ -1,7 +1,7 @@
 {
   "name": "Bournemouth365 Fuel Prices",
   "short_name": "B365 Fuel",
-  "description": "The cheapest petrol and diesel near Bournemouth, Poole and Christchurch, and anywhere in the UK. Live pump prices, free, no adverts.",
+  "description": "The cheapest petrol and diesel near Bournemouth, Christchurch and Poole, and anywhere in the UK. Live pump prices, free, no adverts.",
   "lang": "en-GB",
   "start_url": "/bournemouth/fuel-prices/?src=a2hs",
   "scope": "/bournemouth/fuel-prices/",

@@ -23,8 +23,8 @@ import fuel_finder_ui as _ui
 _SLUG = "bournemouth/fuel-prices"
 PUBLIC = True
 
-_TITLE = "Petrol & Diesel Prices Bournemouth, Poole & Christchurch Today"
-_DESC = ("Fuel prices in Bournemouth, Poole and Christchurch today: the cheapest petrol and diesel near you from every "
+_TITLE = "Petrol & Diesel Prices Bournemouth, Christchurch & Poole Today"
+_DESC = ("Fuel prices in Bournemouth, Christchurch and Poole today: the cheapest petrol and diesel near you from every "
          "forecourt, the average against the UK, and what a tank costs for a car, van or lorry. Free, no adverts.")
 
 # A tool, used standing at a car: on a phone the hero keeps only its headline so the fuel buttons and "Use my location"
@@ -38,7 +38,7 @@ _PHONE = '''
     }
   </style>'''
 
-_FAQS = _ui.faqs("around Bournemouth, Poole and Christchurch, anywhere else by postcode or location,")
+_FAQS = _ui.faqs("around Bournemouth, Christchurch and Poole, anywhere else by postcode or location,")
 
 
 def _content(b365_band):
@@ -46,13 +46,13 @@ def _content(b365_band):
           <h2 id="method">How this works</h2>
           <p>Pick a fuel, then tap <strong>Use my location</strong> or type a postcode, and choose how far you will drive: 2 miles up to 100, or the whole UK. The list shows the cheapest forecourts first, with the nearest first where two prices are the same. Tap one to see it on the map with all its prices, or <strong>Directions</strong> to open your maps app.</p>
           <p>Before you search, the page shows Bournemouth town centre. The three numbers at the top are the cheapest price, the average, and what a full tank costs at the cheapest. Pick your vehicle in that box &mdash; a motorbike, a small or family car, an SUV, a van, a motorhome, a 7.5-tonne lorry or a 44-tonne HGV, or type your own tank size &mdash; and every price shows the bill, with what you save against the average.</p>
-          <p>Further down: the cheapest forecourts in Bournemouth, Poole and Christchurch today, what every kind of vehicle costs to fill up at today&rsquo;s prices here, which supermarket is cheapest within ten miles, whether prices are going up or down (the government&rsquo;s weekly figures back to 2003, and our own day-by-day record for Bournemouth), and the UK picture &mdash; England, Scotland, Wales and Northern Ireland, the cheapest and dearest postcode areas, and the cheapest forecourts in the country. The national figures are on our <a href="/fuel-prices/">UK fuel prices</a> page.</p>
+          <p>Further down: the cheapest forecourts in Bournemouth, Christchurch and Poole today, what every kind of vehicle costs to fill up at today&rsquo;s prices here, which supermarket is cheapest within ten miles, whether prices are going up or down (the government&rsquo;s weekly figures back to 2003, and our own day-by-day record for Bournemouth), and the UK picture &mdash; England, Scotland, Wales and Northern Ireland, the cheapest and dearest postcode areas, and the cheapest forecourts in the country. The national figures are on our <a href="/fuel-prices/">UK fuel prices</a> page.</p>
           <p>Nothing here is guessed. Every price comes from the government&rsquo;s Fuel Finder service and shows when the forecourt set it; a price not confirmed for six weeks is left out.</p>'''
     return "\n".join([
         hero(bc_sub("Bournemouth365", "/bournemouth/", "Fuel Prices"),
              "// BOURNEMOUTH365",
              'Bournemouth fuel prices: the cheapest <em class="grad grad--cyan">near you</em>',
-             "Live petrol and diesel prices around Bournemouth, Poole and Christchurch, and anywhere in the UK, cheapest first, from your postcode or your phone&rsquo;s location. Free, no adverts, nothing to sign up to.",
+             "Live petrol and diesel prices around Bournemouth, Christchurch and Poole, and anywhere in the UK, cheapest first, from your postcode or your phone&rsquo;s location. Free, no adverts, nothing to sign up to.",
              cta1=("Find the cheapest near me", "#finder"),
              cta2=("More from Bournemouth365", "/bournemouth/"),
              chips=["Every UK forecourt", "Live pump prices", "No adverts"]),
@@ -69,7 +69,7 @@ def _schema(s):
         _pl.published(webpage(s, _TITLE, _DESC, about=[_pl.BOURNEMOUTH, _pl.BCP])),
         _pl.ORG,
         _ui.web_app(_bp.SITE + "/" + _SLUG + "/", "B365 Fuel: Bournemouth fuel prices",
-                    "Live pump prices around Bournemouth, Poole and Christchurch and across the UK, cheapest first, with the cost of a full tank for any vehicle.",
+                    "Live pump prices around Bournemouth, Christchurch and Poole and across the UK, cheapest first, with the cost of a full tank for any vehicle.",
                     _pl.ORG_ID),
         faqpage(s, _FAQS),
     ])

@@ -296,7 +296,7 @@ def make_local(i, slug, town, region, lede, intro_para, nearby):
     ]
     if slug == "it-support-dorset":
         faqs = faqs + [
-          ("Do you provide IT support near me?", "If you&rsquo;re in Dorset &mdash; Bournemouth, Poole, Christchurch, Dorchester, Weymouth or the surrounding towns &mdash; then yes, we&rsquo;re your local IT support team. Most issues are fixed remotely in minutes, and we visit on-site across the county when hands-on help is needed. Call 01202&nbsp;775566."),
+          ("Do you provide IT support near me?", "If you&rsquo;re in Dorset &mdash; Bournemouth, Christchurch, Poole, Dorchester, Weymouth or the surrounding towns &mdash; then yes, we&rsquo;re your local IT support team. Most issues are fixed remotely in minutes, and we visit on-site across the county when hands-on help is needed. Call 01202&nbsp;775566."),
           ("Can I find IT support and services near me in Dorset?", "Yes &mdash; wherever you are in Dorset you&rsquo;ll find local IT support and services near you. Homes, sole traders and businesses across the county rely on us as their nearby IT experts for computer support, Microsoft 365, cybersecurity and everyday help. That is remotely in minutes and on-site when needed."),
           ("Do you offer managed IT services and IT solutions in Dorset?", "Yes &mdash; we&rsquo;re a family-run Dorset <a href=\"/managed-it-support/\">managed IT services</a> provider (MSP), delivering proactive IT solutions for businesses across the county: monthly <a href=\"/business-it-support-subscriptions/\">business IT support</a>, Microsoft 365, cybersecurity, backups, servers and networks, all for one predictable monthly cost."),
         ]

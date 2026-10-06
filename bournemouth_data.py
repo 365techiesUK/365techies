@@ -1279,7 +1279,7 @@ _HUB_CARDS = [
     # 4 Oct 2026 (owner: "go public"): the fuel finder. Its picture is a real screenshot of the page (the live-map card's
     # precedent), not a stock forecourt.
     ("/bournemouth/fuel-prices/", "/images/og-fuel-prices-b365-v1.jpg",
-     "Petrol &amp; diesel prices today", "The cheapest fuel in Bournemouth, Poole and Christchurch from every forecourt, which supermarket is cheapest, and what a tank costs for a car, van or lorry &mdash; live from the government&rsquo;s Fuel Finder data.",
+     "Petrol &amp; diesel prices today", "The cheapest fuel in Bournemouth, Christchurch and Poole from every forecourt, which supermarket is cheapest, and what a tank costs for a car, van or lorry &mdash; live from the government&rsquo;s Fuel Finder data.",
      "The fuel prices page: the cheapest unleaded near Bournemouth town centre, the local average, the cost of a family car tank, and forecourt prices on a map of Bournemouth and Poole"),
     ("/bournemouth/sunrise-sunset/", "/bournemouth/media/beach-sunrise.jpg",
      "Sunrise &amp; sunset times, and where to watch", "Today&rsquo;s times computed for the seafront, and every good spot to watch from &mdash; photographed by us, not stock.",

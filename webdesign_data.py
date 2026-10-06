@@ -417,7 +417,7 @@ WEBDESIGN_PAGES = [
    {
     "eyebrow": "Local help",
     "h2": "WordPress help in Bournemouth, Poole &amp; Dorset",
-    "html": "<p>Around here, WordPress help mostly means capable one-person operations &mdash; which is fine until your one person is on holiday, fully booked or has moved on. We are a family-run firm, going since 1995, and you deal with the same faces every time.</p><p>Most WordPress speed work happens over a secure remote session, so it makes no difference whether you are in Boscombe or Bridport &mdash; we work with businesses across Bournemouth, Poole, Christchurch and the rest of Dorset, and further afield. We visit on site when that genuinely helps, and we can meet by appointment at Kinson Community Centre. There is no walk-in shop; we come to the problem rather than the other way round.</p><p>Whether it is a one-off speed sort-out, untangling a plugin conflict, or a straight answer on the fix-or-rebuild question, call <a href=\"tel:+441202775566\">01202 775566</a> (Mon&ndash;Fri, 9&ndash;5) or text <a href=\"sms:+447520615332\">07520 615332</a> and we will call you back. We hold a 4.9 rating on Google, and we would like to keep it &mdash; so if the honest answer is &ldquo;do these three free things and keep your money&rdquo;, that is the answer you will get.</p>"
+    "html": "<p>Around here, WordPress help mostly means capable one-person operations &mdash; which is fine until your one person is on holiday, fully booked or has moved on. We are a family-run firm, going since 1995, and you deal with the same faces every time.</p><p>Most WordPress speed work happens over a secure remote session, so it makes no difference whether you are in Boscombe or Bridport &mdash; we work with businesses across Bournemouth, Christchurch, Poole and the rest of Dorset, and further afield. We visit on site when that genuinely helps, and we can meet by appointment at Kinson Community Centre. There is no walk-in shop; we come to the problem rather than the other way round.</p><p>Whether it is a one-off speed sort-out, untangling a plugin conflict, or a straight answer on the fix-or-rebuild question, call <a href=\"tel:+441202775566\">01202 775566</a> (Mon&ndash;Fri, 9&ndash;5) or text <a href=\"sms:+447520615332\">07520 615332</a> and we will call you back. We hold a 4.9 rating on Google, and we would like to keep it &mdash; so if the honest answer is &ldquo;do these three free things and keep your money&rdquo;, that is the answer you will get.</p>"
    },
    {
     "eyebrow": "Two doors",
@@ -460,7 +460,7 @@ WEBDESIGN_PAGES = [
    },
    {
     "q": "Do you offer WordPress help near Bournemouth and Poole?",
-    "a": "Yes &mdash; we are family-run in Bournemouth, going since 1995, and help businesses across Bournemouth, Poole, Christchurch and wider Dorset. Most speed work is done over a secure remote session; we visit on site when it helps and can meet by appointment at Kinson Community Centre. Call 01202 775566 or text 07520 615332."
+    "a": "Yes &mdash; we are family-run in Bournemouth, going since 1995, and help businesses across Bournemouth, Christchurch, Poole and wider Dorset. Most speed work is done over a secure remote session; we visit on site when it helps and can meet by appointment at Kinson Community Centre. Call 01202 775566 or text 07520 615332."
    },
    {
     "q": "How much does a website rebuild cost?",
@@ -513,7 +513,7 @@ WEBDESIGN_PAGES = [
    "Free website check before any decision"
   ],
   "ctaHead": "Not sure whether you&rsquo;ve outgrown your website builder?",
-  "ctaSub": 'Call 01202 775566 or text 07520 615332, Mon&ndash;Fri 9&ndash;5. Send us your web address and we&rsquo;ll give you a plain-English verdict &mdash; and if that verdict is &ldquo;stay on Wix, it&rsquo;s fine&rdquo;, that&rsquo;s exactly what we&rsquo;ll say. Most of this is a conversation, not a visit: we work remotely across Bournemouth, Poole, Christchurch &amp; Dorset, come to you when it helps (priced before we come), or meet at the Kinson Community Centre by appointment.',
+  "ctaSub": 'Call 01202 775566 or text 07520 615332, Mon&ndash;Fri 9&ndash;5. Send us your web address and we&rsquo;ll give you a plain-English verdict &mdash; and if that verdict is &ldquo;stay on Wix, it&rsquo;s fine&rdquo;, that&rsquo;s exactly what we&rsquo;ll say. Most of this is a conversation, not a visit: we work remotely across Bournemouth, Christchurch, Poole &amp; Dorset, come to you when it helps (priced before we come), or meet at the Kinson Community Centre by appointment.',
   "sections": [
    {
     "eyebrow": "The honest bit first",
@@ -1140,7 +1140,7 @@ WEBDESIGN_PAGES = [
    {
     "eyebrow": "The essentials",
     "h2": "What a builder&rsquo;s website actually needs",
-    "html": "<p>Strip away the agency talk and a trades website needs five things done properly:</p><ul><li><strong>Tap-to-call everywhere.</strong> Most of your visitors are on a phone, often standing next to the problem. Your number should be one thumb-tap away on every single page &mdash; not buried on a contact page.</li><li><strong>A page per service.</strong> A page called &ldquo;roof leak repair&rdquo; will beat a page called &ldquo;general roofing&rdquo; for the person with water coming through the ceiling. One honest page for each thing you genuinely do, in plain words.</li><li><strong>Your own photos.</strong> Your van, your scaffolding, your finished jobs. Homeowners can smell stock photography a mile off, and it quietly tells them you have nothing of your own to show.</li><li><strong>Say where you work.</strong> Name your towns &mdash; Bournemouth, Poole, Christchurch, Wimborne, wherever you actually go. &ldquo;Dorset and surrounding areas&rdquo; helps nobody, including Google.</li><li><strong>Visible trust signals.</strong> Real reviews on the page, your trade-body memberships, how long you&rsquo;ve been going, insurance. People are about to let you into their home &mdash; make it easy to trust you.</li></ul><p>None of this is secret knowledge. It&rsquo;s just rarely all done well on the same site &mdash; which is exactly the gap a good rebuild closes.</p>"
+    "html": "<p>Strip away the agency talk and a trades website needs five things done properly:</p><ul><li><strong>Tap-to-call everywhere.</strong> Most of your visitors are on a phone, often standing next to the problem. Your number should be one thumb-tap away on every single page &mdash; not buried on a contact page.</li><li><strong>A page per service.</strong> A page called &ldquo;roof leak repair&rdquo; will beat a page called &ldquo;general roofing&rdquo; for the person with water coming through the ceiling. One honest page for each thing you genuinely do, in plain words.</li><li><strong>Your own photos.</strong> Your van, your scaffolding, your finished jobs. Homeowners can smell stock photography a mile off, and it quietly tells them you have nothing of your own to show.</li><li><strong>Say where you work.</strong> Name your towns &mdash; Bournemouth, Christchurch, Poole, Wimborne, wherever you actually go. &ldquo;Dorset and surrounding areas&rdquo; helps nobody, including Google.</li><li><strong>Visible trust signals.</strong> Real reviews on the page, your trade-body memberships, how long you&rsquo;ve been going, insurance. People are about to let you into their home &mdash; make it easy to trust you.</li></ul><p>None of this is secret knowledge. It&rsquo;s just rarely all done well on the same site &mdash; which is exactly the gap a good rebuild closes.</p>"
    },
    {
     "eyebrow": "Ten-minute check",
@@ -1198,7 +1198,7 @@ WEBDESIGN_PAGES = [
    },
    {
     "q": "Which areas do you cover?",
-    "a": 'We&rsquo;re based in the Bournemouth area and work with trades across Bournemouth, Poole, Christchurch, Wimborne and the wider Dorset area. Most website work happens remotely, and we visit on-site when it helps, priced before we come &mdash; Mon&ndash;Fri, 9&ndash;5.'
+    "a": 'We&rsquo;re based in the Bournemouth area and work with trades across Bournemouth, Christchurch, Poole, Wimborne and the wider Dorset area. Most website work happens remotely, and we visit on-site when it helps, priced before we come &mdash; Mon&ndash;Fri, 9&ndash;5.'
    },
    {
     "q": "Can you look after our office computers too?",
