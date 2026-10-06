@@ -48,6 +48,21 @@ try {
 } catch (Exception $e) { $mailW = array('error' => 'exception'); }
 $GLOBALS['mailW'] = $mailW;
 
+/* 6 Oct 2026: the automatic "we have your request" replies to Dell quotes and Virgin email-move call-backs
+   (pcm-ack-lib.php; queued by slack-lead.php). Our own queue, nothing to do with SimplyBook, so it sits here beside
+   the welcome, before any early exit. tm-lib.php keeps its config in globals, so it must load at TOP LEVEL - a try {}
+   at file level still is. A fault in here cannot touch the booking sync below. */
+$mailA = array('skip' => 'not_run');
+try {
+    @include_once __DIR__ . '/tm-lib.php';
+    require_once __DIR__ . '/pcm-ack-lib.php';
+    if (function_exists('ack_flush') && function_exists('rv_send_raw')) {
+        $mailA = ack_flush('ack_send_email_rv', function_exists('tm_send') ? 'ack_send_sms_tm' : null,
+                           function_exists('rv_slack') ? 'rv_slack' : null);
+    }
+} catch (Throwable $e) { $mailA = array('error' => 'exception'); }
+$GLOBALS['mailA'] = $mailA;
+
 if (!is_readable($SBF)) jout(array('ok' => false, 'error' => 'no_config', 'welcome' => $mailW));
 require $SBF;
 if (empty($SB_COMPANY) || empty($SB_API_USER) || empty($SB_API_USER_KEY)) jout(array('ok' => false, 'error' => 'no_admin_creds'));

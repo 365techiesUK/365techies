@@ -111,4 +111,14 @@ $res  = curl_exec($ch);
 $code = (int)curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 curl_close($ch);
 
+/* 6 Oct 2026: a Dell quote or a Virgin email-move call-back gets an automatic "we have your request" reply
+   (pcm-ack-lib.php). It is only QUEUED here, and only once Slack has the lead; the 5-minute cron sends it. Wrapped so
+   that nothing in it can cost us the lead or the visitor's "thanks". */
+if (!$isReport && $code >= 200 && $code < 300) {
+    try {
+        require_once __DIR__ . '/pcm-ack-lib.php';
+        ack_queue(ack_kind($topic, $msg, $page), $name, $email, $phone, $msg);
+    } catch (Throwable $e) { }
+}
+
 echo json_encode(['ok' => ($code >= 200 && $code < 300)]);

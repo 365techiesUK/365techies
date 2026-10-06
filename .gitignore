@@ -143,6 +143,9 @@ api/pcm-bkpend.json.*
 api/pcm-bkpend.lock
 api/pcm-bkpend-beat.json
 api/pcm-bkpend-beat.json.tmp
+api/pcm-ack.json
+api/pcm-ack.json.*
+api/pcm-ack.off
 api/bm-sea-cache.json
 api/bm-sea-cache.json.*
 api/bm-sea-beat.json
