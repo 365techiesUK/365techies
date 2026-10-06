@@ -64,13 +64,13 @@
   <meta name="twitter:description" content="Free Solitaire, FreeCell, Spider, TriPeaks, Pyramid, Hearts, Gin Rummy, Cribbage, Whist and arcade games from 365 Techies, Bournemouth. No adverts, no sign-in." />
   <meta name="twitter:image" content="https://365techies.co.uk/games/img/games-share-v3.jpg" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="apple-touch-icon" href="/games/img/app-games-192-v1.png" />
   <!-- ?v= bumps past SiteGround's proxy cache. Learned the hard way 2026-08-01:
        the un-versioned URL was serving a month-old copy (proxy HIT, Last-Modified
        28 June) because no Cache-Control applied to it. The .htaccess rule now makes
        these revalidate, but a URL already stuck in the cache stays stuck until its
        TTL - a new URL is the only immediate escape. BUMP THIS when the manifest changes. -->
-  <link rel="manifest" href="/site.webmanifest?v=2" />
+  <link rel="manifest" href="/site.webmanifest?v=2" /><script>if(!/SamsungBrowser/i.test(navigator.userAgent))document.querySelector('link[rel="manifest"]').href="/games/app.webmanifest";</script>
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
@@ -391,7 +391,7 @@
         });
       });
     })();
-  </script>
+  </script><script>/* the 365 Games app opens back into the last game played */if(/[?&]src=app\b/.test(location.search)){try{var l365=localStorage.getItem("games365:last");if(l365&&/^\/games\/[a-z0-9-]+\/$/.test(l365))location.replace(l365+"?src=app");}catch(e){}}</script>
   <script src="/games/common/pcm-mode.js?v=1"></script>
 </head>
 <body id="top" class="no-dock">

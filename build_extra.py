@@ -6388,7 +6388,7 @@ SIGCHECK_WIDGET = r'''    <section class="section" id="sigcheck" aria-label="Mob
         /* KEEP-THIS-HANDY: offered after the SECOND reading of a visit. The page swaps in
            its own scoped manifest; deliberately NO service worker. */
         (function(){
-          try{var m=document.querySelector('link[rel="manifest"]');if(m)m.href='/mobile-signal-check/app.webmanifest';}catch(e){}
+          try{var m=document.querySelector('link[rel="manifest"]');if(m&&!/SamsungBrowser/i.test(navigator.userAgent))m.href='/mobile-signal-check/app.webmanifest';}catch(e){}/* not Samsung Internet: its own app packages trip Play Protect - 6 Oct 2026 */
           var deferred=null;
           window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;});
           var IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
@@ -32803,7 +32803,8 @@ def write_portal_page():
     if _oldman not in html:
         raise SystemExit("portal: site manifest link not found to swap - did build_pages.py's "
                          "manifest href change? Update the string in write_portal_page.")
-    html = html.replace(_oldman, '<link rel="manifest" href="/portal/app.webmanifest" />', 1)
+    # (6 Oct 2026) not for Samsung Internet, whose own app packages trip Google Play Protect: it keeps the plain site manifest
+    html = html.replace(_oldman, _oldman + '<script>if(!/SamsungBrowser/i.test(navigator.userAgent))document.querySelector(\'link[rel="manifest"]\').href="/portal/app.webmanifest";</script>', 1)
     import os as _os, hashlib as _hl, re as _re, json as _json, datetime as _dt
     d = _os.path.join(bp.BASE, "portal")
     _os.makedirs(d, exist_ok=True)

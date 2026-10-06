@@ -417,6 +417,15 @@ info_page(
               ("Get Help", "/contact/"), ("Call 01202 775566", "tel:+441202775566")),
     robots=None if PUBLIC else "noindex,follow",
 )
+# 6 Oct 2026 (owner): one "365 Games" app (games/app.webmanifest, scope /games/ - switching games stays in the app). It
+# opens here with ?src=app and goes straight on to the last game played (each game page records itself in
+# games365:last); a first-timer, or someone who taps Games, sees this page. Samsung Internet gets no app manifest
+# (build_pages: its own app packages trip Google Play Protect).
+bp.MANIFEST_FOR["games"] = "/games/app.webmanifest"
+bp.TOUCH_ICON_FOR["games"] = "/games/img/app-games-192-v1.png"
+bp.HEAD_EXTRA["games"] = bp.HEAD_EXTRA.get("games", "") + (r'<script>/* the 365 Games app opens back into the last game played */'
+    r'if(/[?&]src=app\b/.test(location.search)){try{var l365=localStorage.getItem("games365:last");'
+    r'if(l365&&/^\/games\/[a-z0-9-]+\/$/.test(l365))location.replace(l365+"?src=app");}catch(e){}}</script>')
 _page = next(p for p in bp.PAGES if p.get("slug") == "games")
 # while hidden, the page stays out of the site's own search as well (build_blog skips pages marked nosearch)
 _page["nosearch"] = not PUBLIC

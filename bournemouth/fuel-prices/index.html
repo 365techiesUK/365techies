@@ -70,7 +70,7 @@
        28 June) because no Cache-Control applied to it. The .htaccess rule now makes
        these revalidate, but a URL already stuck in the cache stays stuck until its
        TTL - a new URL is the only immediate escape. BUMP THIS when the manifest changes. -->
-  <link rel="manifest" href="/bournemouth/fuel-prices/app.webmanifest?v=1" />
+  <link rel="manifest" href="/site.webmanifest?v=2" /><script>if(!/SamsungBrowser/i.test(navigator.userAgent))document.querySelector('link[rel="manifest"]').href="/bournemouth/fuel-prices/app.webmanifest?v=1";</script>
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
@@ -1399,7 +1399,7 @@
     <script src="/vendor/leaflet/leaflet.js" defer></script>
     <script src="/vendor/protomaps/protomaps-leaflet.js" defer></script>
     <script src="/vendor/leaflet/touch-friendly.js?v=20260819c" defer></script>
-    <script src="/js/fuel-finder.js?v=13" defer></script>
+    <script src="/js/fuel-finder.js?v=14" defer></script>
     <section class="section">
       <div class="wrap">
         <div class="prose">

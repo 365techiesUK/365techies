@@ -1077,6 +1077,10 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None, robot
     body_attrs = ' class="no-dock"' if slug in NO_DOCK else ""
     head_extra = HEAD_EXTRA.get(slug, "")
     manifest_href = MANIFEST_FOR.get(slug, "/site.webmanifest?v=2")
+    # an installable (app) manifest reaches every browser but Samsung Internet, whose own app packages trip Google Play
+    # Protect's "built for an older version of Android" block (6 Oct 2026): the plain site manifest, swapped in a line
+    manifest_tag = '<link rel="manifest" href="/site.webmanifest?v=2" />' + ('' if manifest_href == "/site.webmanifest?v=2" else
+        '<script>if(!/SamsungBrowser/i.test(navigator.userAgent))document.querySelector(\'link[rel="manifest"]\').href="' + manifest_href + '";</script>')
     touch_icon = TOUCH_ICON_FOR.get(slug, "/apple-touch-icon.png")
     return f'''<!DOCTYPE html>
 <html lang="en-GB">
@@ -1150,7 +1154,7 @@ def page(slug, title, desc, og_title, schema_json, content, og_image=None, robot
        28 June) because no Cache-Control applied to it. The .htaccess rule now makes
        these revalidate, but a URL already stuck in the cache stays stuck until its
        TTL - a new URL is the only immediate escape. BUMP THIS when the manifest changes. -->
-  <link rel="manifest" href="{manifest_href}" />
+  {manifest_tag}
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   <link rel="preload" href="/fonts/clash-display-600.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high" />
   <link rel="preload" href="/fonts/archivo-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />

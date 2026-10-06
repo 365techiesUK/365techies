@@ -1894,7 +1894,7 @@
         /* KEEP-THIS-HANDY: offered after the SECOND reading of a visit. The page swaps in
            its own scoped manifest; deliberately NO service worker. */
         (function(){
-          try{var m=document.querySelector('link[rel="manifest"]');if(m)m.href='/mobile-signal-check/app.webmanifest';}catch(e){}
+          try{var m=document.querySelector('link[rel="manifest"]');if(m&&!/SamsungBrowser/i.test(navigator.userAgent))m.href='/mobile-signal-check/app.webmanifest';}catch(e){}/* not Samsung Internet: its own app packages trip Play Protect - 6 Oct 2026 */
           var deferred=null;
           window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;});
           var IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
