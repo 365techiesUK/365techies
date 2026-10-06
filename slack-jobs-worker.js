@@ -40,7 +40,7 @@ const CHANNEL = "C0C3VGP1SJC";   // #sos-jobs-in-out - cards always go here, whi
 
 // the card's fields, in the order the Workflow Builder form posted them (the reader knows these labels)
 const FIELDS = [
-  ["name", "Customer name"], ["address", "Address"], ["postcode", "Postcode"], ["phone", "Contact number"],
+  ["name", "Customer name"], ["company", "Company"], ["address", "Address"], ["postcode", "Postcode"], ["phone", "Contact number"],
   ["mobile", "Mobile phone"], ["email", "Email"], ["website", "Website address"], ["jobtype", "Job type"],
   ["issue", "Issue"], ["assigned", "Assigned to"], ["priority", "Priority"], ["price", "Price £."],
 ];
@@ -164,6 +164,7 @@ export function modalView(v, privateMetadata) {
     close: { type: "plain_text", text: "Cancel" },
     blocks: [
       input("name", "Customer name"),
+      input("company", "Company", { optional: true }),   // 6 Oct 2026: businesses as customers
       input("address", "Address", { optional: true }),
       input("postcode", "Postcode", { optional: true }),
       input("phone", "Contact number", { optional: true }),

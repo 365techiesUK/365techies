@@ -13,11 +13,11 @@ function ok($c, $what, $detail = '') { global $fails; echo ($c ? "  PASS  " : " 
 
 echo "A  the card is the Slack form's card, byte for byte\n";
 // the same card pinned in pcm-slackjobs-test.php ($BOTCARD) and slack-jobs-worker.test.mjs (CARD)
-$BOTCARD = ":inbox_tray: *New job in*\n*Customer name*\nDavina Gahan\n*Address*\n8 Copsewood Avenue, Bournemouth\n*Postcode*\nBH8 9NG\n*Contact number*\n01202 123456\n*Mobile phone*\n07584168898\n*Email*\ndavinagahn@hotmail.com\n*Website address*\nwww.davinagahan.co.uk\n*Job type*\nRemote\n*Issue*\nMS 365 Lost password. Waiting for reply from MS to restore the password\n*Assigned to*\nSteve\n*Priority*\nMedium\n*Price £.*\n60";
+$BOTCARD = ":inbox_tray: *New job in*\n*Customer name*\nDavina Gahan\n*Company*\nGahan Design Ltd\n*Address*\n8 Copsewood Avenue, Bournemouth\n*Postcode*\nBH8 9NG\n*Contact number*\n01202 123456\n*Mobile phone*\n07584168898\n*Email*\ndavinagahn@hotmail.com\n*Website address*\nwww.davinagahan.co.uk\n*Job type*\nRemote\n*Issue*\nMS 365 Lost password. Waiting for reply from MS to restore the password\n*Assigned to*\nSteve\n*Priority*\nMedium\n*Price £.*\n60";
 $SJT = (string)file_get_contents(__DIR__ . '/pcm-slackjobs-test.php');
 ok(strpos($SJT, '$BOTCARD = ' . var_export($BOTCARD, true)) !== false || strpos($SJT, '$BOTCARD = "' . str_replace("\n", '\n', $BOTCARD) . '";') !== false,
     'this is the same pinned card as the Slack jobs reader\'s tests');
-$DAV = array('name' => 'Davina Gahan', 'address' => '8 Copsewood Avenue, Bournemouth', 'postcode' => 'BH8 9NG', 'phone' => '01202 123456',
+$DAV = array('name' => 'Davina Gahan', 'company' => 'Gahan Design Ltd', 'address' => '8 Copsewood Avenue, Bournemouth', 'postcode' => 'BH8 9NG', 'phone' => '01202 123456',
     'mobile' => '07584168898', 'email' => 'davinagahn@hotmail.com', 'website' => 'www.davinagahan.co.uk', 'jobtype' => 'Remote',
     'issue' => 'MS 365 Lost password. Waiting for reply from MS to restore the password', 'assigned' => 'Steve', 'priority' => 'Medium', 'price' => '60');
 ok(nj_card_text(nj_read($DAV)) === $BOTCARD, 'the portal writes exactly the card the Slack form writes', json_encode(nj_card_text(nj_read($DAV))));

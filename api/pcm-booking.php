@@ -2400,6 +2400,104 @@ if ($action === 'staffpcmlic') {
         'lic' => array_slice($list, 0, 5)));
 }
 
+// ---------------------------------------------------------------- the customer book (pcm-custbook-lib.php)
+// Owner, 6 Oct 2026: "search for customers there, and bring up their details, and also be able to edit their contact
+// details in the portal ... mobile numbers, telephone numbers, the company details". Search across the job list, the
+// PC Manager records, SimplyBook's clients and the book; open one person; save edits into the book (never into
+// SimplyBook - see the library's header). Staff only, like everything above.
+function cb_local_rows() {
+    list($lkC, $dbC) = db_open(); db_close($lkC);
+    $jd = @json_decode((string)@file_get_contents(__DIR__ . '/pcm-jobs.json'), true);
+    return array_merge(cb_rows_from_jobs(isset($jd['jobs']) && is_array($jd['jobs']) ? $jd['jobs'] : array()),
+                       cb_rows_from_pcm(isset($dbC['customers']) ? $dbC['customers'] : array()),
+                       cb_rows_from_book(cb_book_read()));
+}
+/* The person's SimplyBook client, added to the rows when the ref or the person names one (else looked up by their
+   exact email, unique on SimplyBook's side). Best effort: the card works without it. */
+function cb_with_sb($rows, $ref) {
+    global $HAS_ADMIN;
+    if (!$HAS_ADMIN) return $rows;
+    $cid = (strpos($ref, 's:') === 0) ? (int)substr($ref, 2) : 0;
+    $g = cb_cluster_for($rows, $ref);
+    if ($cid <= 0 && $g !== null) foreach ($g as $i) if (!empty($rows[$i]['sb'])) { $cid = (int)$rows[$i]['sb']; break; }
+    if ($cid > 0) {
+        foreach ($rows as $r) if ($r['src'] === 'sb' && (int)$r['id'] === $cid) return $rows;
+        $cli = sb_client_fetch($cid);
+        if (is_array($cli)) { $cli['id'] = $cid; return array_merge($rows, cb_rows_from_sb(array($cli))); }
+        return $rows;
+    }
+    if ($g === null) return $rows;
+    $email = ''; foreach ($g as $i) if ($rows[$i]['email'] !== '') { $email = $rows[$i]['email']; break; }
+    if ($email === '') return $rows;
+    $r0 = sb_adm('getClientList', array($email, 5));
+    if (sb_net($r0) || !isset($r0['result']) || !is_array($r0['result'])) return $rows;
+    $hits = array(); foreach ($r0['result'] as $c) if (is_array($c) && cb_email(isset($c['email']) ? $c['email'] : '') === $email) $hits[] = $c;
+    return count($hits) === 1 ? array_merge($rows, cb_rows_from_sb($hits)) : $rows;   // two clients with one email: neither
+}
+function cb_ref_in() {
+    global $in;
+    $ref = (string)(isset($in['ref']) ? $in['ref'] : '');
+    return preg_match('/^[bsekpj]:[A-Za-z0-9@._+\-]{1,120}$/', $ref) ? $ref : '';
+}
+function cb_card($rows, $g) {
+    $p = cb_person($rows, $g);
+    $p['joblist'] = cb_jobs_of($rows, $g);
+    $hist = array();
+    foreach ($g as $i) if ($rows[$i]['src'] === 'book') {
+        $b = cb_book_read(); $rec = isset($b['people'][$rows[$i]['id']]) ? $b['people'][$rows[$i]['id']] : array();
+        foreach (array_slice(isset($rec['history']) ? (array)$rec['history'] : array(), -5) as $h) $hist[] = $h;
+    }
+    $p['history'] = $hist;
+    return $p;
+}
+if ($action === 'custfind') {
+    need_staff();
+    require_once __DIR__ . '/pcm-custbook-lib.php';
+    $q = cb_str(isset($in['q']) ? $in['q'] : '', 60);
+    if (strlen($q) < 2) out(array('ok' => true, 'people' => array()));
+    $rows = cb_local_rows();
+    $sbState = 'off';
+    if ($HAS_ADMIN && strlen($q) >= 3) {   // people who only ever booked are on SimplyBook alone
+        $r = sb_adm('getClientList', array($q, 10));
+        if (!sb_net($r) && isset($r['result']) && is_array($r['result'])) { $rows = array_merge($rows, cb_rows_from_sb($r['result'])); $sbState = 'ok'; }
+        else $sbState = 'unavailable';
+    }
+    out(array('ok' => true, 'people' => cb_search($rows, $q, 25), 'sb' => $sbState));
+}
+if ($action === 'custget') {
+    need_staff();
+    require_once __DIR__ . '/pcm-custbook-lib.php';
+    $ref = cb_ref_in(); if ($ref === '') fail('bad_request');
+    $rows = cb_with_sb(cb_local_rows(), $ref);
+    $g = cb_cluster_for($rows, $ref);
+    if ($g === null) fail('unknown_customer');
+    out(array('ok' => true, 'person' => cb_card($rows, $g)));
+}
+if ($action === 'custsave') {
+    need_staff();
+    require_once __DIR__ . '/pcm-custbook-lib.php';
+    $ref = cb_ref_in(); if ($ref === '') fail('bad_request');
+    list($v, $errs) = cb_read(isset($in['v']) ? $in['v'] : array());
+    if ($errs) out(array('ok' => false, 'error' => 'check', 'errors' => $errs));
+    $rows = cb_with_sb(cb_local_rows(), $ref);   // read outside the book's lock: SimplyBook is a network call
+    if (cb_cluster_for($rows, $ref) === null) fail('unknown_customer');
+    $who = staff_who(); if ($who === '') $who = 'staff';
+    $res = cb_book_locked(function ($book) use ($rows, $ref, $v, $who) {
+        // the book as it is NOW (another save may have landed): its rows replace the ones read before the lock
+        $rows2 = array_merge(array_values(array_filter($rows, function ($r) { return $r['src'] !== 'book'; })), cb_rows_from_book($book));
+        $g = cb_cluster_for($rows2, $ref);
+        if ($g === null) return array('ok' => false, 'error' => 'unknown_customer');
+        list($book2, $id, $changed) = cb_save_into($book, $rows2, $g, $v, $who, time());
+        if ($id === '') return array('ok' => true, 'id' => '', 'changed' => array());   // nothing changed: nothing written
+        return array('ok' => true, 'id' => $id, 'changed' => $changed, 'data' => $book2);
+    });
+    if (empty($res['ok'])) fail(isset($res['error']) ? $res['error'] : 'store');
+    $ref2 = $res['id'] !== '' ? 'b:' . $res['id'] : $ref;
+    $rows3 = array_merge(array_values(array_filter($rows, function ($r) { return $r['src'] !== 'book'; })), cb_rows_from_book(cb_book_read()));
+    $g3 = cb_cluster_for($rows3, $ref2);
+    out(array('ok' => true, 'changed' => $res['changed'], 'person' => $g3 !== null ? cb_card($rows3, $g3) : null));
+}
+
 // staff: quick client search for the book-a-new-job flow (existing customers by name/phone)
 if ($action === 'staffclients') {
     if (!$HAS_ADMIN) fail('not_configured');

@@ -18,6 +18,10 @@ api/pcm-jobs.json
 api/pcm-jobs.json.lock
 api/pcm-jobs.json.*.tmp
 api/pcm-jobs.log
+# the customer book (6 Oct 2026): runtime store, server-only
+api/pcm-custbook.json
+api/pcm-custbook.json.lock
+api/pcm-custbook.json.*.tmp
 api/pcm-invite.log
 api/pcm-invite-plans.json
 api/pcm-invite-allow.json

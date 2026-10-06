@@ -28,7 +28,7 @@ require_once __DIR__ . '/pcm-slackjobs-sweep.php';   // sj_jobs_locked(), sj_job
 /* The card's boxes, in the order the Slack form posts them (slack-jobs-worker.js FIELDS - keep the two identical). */
 function nj_fields() {
     return array(
-        array('name', 'Customer name'), array('address', 'Address'), array('postcode', 'Postcode'), array('phone', 'Contact number'),
+        array('name', 'Customer name'), array('company', 'Company'), array('address', 'Address'), array('postcode', 'Postcode'), array('phone', 'Contact number'),
         array('mobile', 'Mobile phone'), array('email', 'Email'), array('website', 'Website address'), array('jobtype', 'Job type'),
         array('issue', 'Issue'), array('assigned', 'Assigned to'), array('priority', 'Priority'), array('price', "Price \xC2\xA3."),
     );

@@ -137,7 +137,7 @@ $REPLIES = array(
 );
 $x = sj_replies_extract($REPLIES, '1789794361.365689');
 ok($x['email'] === 'colin.sutton@example.com' && $x['price'] === 45.0, 'first email and first price from the replies, mailto unwrapped', json_encode($x));
-$NONE = array('price' => 0.0, 'email' => '', 'email_by' => '', 'addr' => '', 'postcode' => '', 'phone' => '', 'mobile' => '', 'website' => '');
+$NONE = array('price' => 0.0, 'email' => '', 'email_by' => '', 'addr' => '', 'postcode' => '', 'phone' => '', 'mobile' => '', 'website' => '', 'company' => '');
 ok(sj_replies_extract(array($REPLIES[0]), '1789794361.365689') === $NONE, 'the parent alone yields nothing (its own £30 is read from the post, not here)');
 ok(sj_replies_extract(array(array('ts' => '2.0', 'text' => 'no details yet')), '1.0') === $NONE, 'a reply with neither gives nothing');
 ok(sj_replies_extract(array(array('ts' => '2.0', 'text' => 'test@gmail.com'), array('ts' => '3.0', 'text' => 'other@x.com')), '1.0')['email'] === 'test@gmail.com', 'a bare address in a reply is enough; the first wins');
@@ -176,7 +176,7 @@ ok($st['email'] === 'typed@portal.example', 'a bare email in the thread never re
 
 echo "-- a card posted by our own bot (slack-jobs-worker.js, 1 Oct 2026): the same layout, read the same way\n";
 // pinned to the byte in slack-jobs-worker.test.mjs (CARD) - if the Worker's layout drifts, one of the two fails
-$BOTCARD = ":inbox_tray: *New job in*\n*Customer name*\nDavina Gahan\n*Address*\n8 Copsewood Avenue, Bournemouth\n*Postcode*\nBH8 9NG\n*Contact number*\n01202 123456\n*Mobile phone*\n07584168898\n*Email*\ndavinagahn@hotmail.com\n*Website address*\nwww.davinagahan.co.uk\n*Job type*\nRemote\n*Issue*\nMS 365 Lost password. Waiting for reply from MS to restore the password\n*Assigned to*\nSteve\n*Priority*\nMedium\n*Price £.*\n60";
+$BOTCARD = ":inbox_tray: *New job in*\n*Customer name*\nDavina Gahan\n*Company*\nGahan Design Ltd\n*Address*\n8 Copsewood Avenue, Bournemouth\n*Postcode*\nBH8 9NG\n*Contact number*\n01202 123456\n*Mobile phone*\n07584168898\n*Email*\ndavinagahn@hotmail.com\n*Website address*\nwww.davinagahan.co.uk\n*Job type*\nRemote\n*Issue*\nMS 365 Lost password. Waiting for reply from MS to restore the password\n*Assigned to*\nSteve\n*Priority*\nMedium\n*Price £.*\n60";
 ok(sj_is_job($BOTCARD) && !sj_is_out($BOTCARD), 'the bot card is a job, not a completion');
 $bc = sj_parse($BOTCARD);
 ok($bc['name'] === 'Davina Gahan' && $bc['addr'] === '8 Copsewood Avenue, Bournemouth BH8 9NG' && $bc['postcode'] === 'BH8 9NG' && $bc['phone'] === '01202123456' && $bc['email'] === 'davinagahn@hotmail.com', 'name, address + postcode, phone, email', json_encode(array($bc['name'], $bc['addr'], $bc['phone'], $bc['email'])));
@@ -184,6 +184,16 @@ ok($bc['mobile'] === '07584168898' && $bc['website'] === 'www.davinagahan.co.uk'
 $bcw = sj_parse(str_replace('www.davinagahan.co.uk', '<https://www.davinagahan.co.uk|www.davinagahan.co.uk>', $BOTCARD));
 ok($bcw['website'] === 'www.davinagahan.co.uk', 'Slack\'s link wrapping on the website comes off', $bcw['website']);
 ok(sj_parse($GORDON)['mobile'] === '' && sj_parse($GORDON)['website'] === '', 'an older post without the boxes: both blank');
+// 6 Oct 2026: Company - the bot card's box, the Workflow Builder's own label, a thread reply, and a re-parse
+ok($bc['company'] === 'Gahan Design Ltd' && sj_job(array('ts' => '1790900000.000300', 'text' => $BOTCARD), 'C0C3VGP1SJC', 1790900100)['company'] === 'Gahan Design Ltd', 'the company box reaches the job', json_encode($bc['company']));
+ok(sj_parse(str_replace('*Company*', '*Company name*', $BOTCARD))['company'] === 'Gahan Design Ltd', 'a form that calls it "Company name" reads the same');
+$noco = sj_parse(str_replace("*Company*\nGahan Design Ltd\n", '', $BOTCARD));
+ok(sj_parse($GORDON)['company'] === '' && sj_parse($DAVINA)['company'] === '' && $noco['company'] === '' && $noco['name'] === 'Davina Gahan' && $noco['addr'] === '8 Copsewood Avenue, Bournemouth BH8 9NG', 'a card without the box: no company, nothing else moves', json_encode($noco));
+$rc = sj_replies_extract(array(array('ts' => '2.0', 'text' => "sorry, company: Acme Builders Ltd")), '1.0');
+ok($rc['company'] === 'Acme Builders Ltd' && $rc['phone'] === '', 'a thread reply "Company: ..." goes to the company box, not the contact number', json_encode($rc));
+$cj = sj_job(array('ts' => '1790900000.000400', 'text' => $BOTCARD, 'reply_count' => 1), 'C0C3VGP1SJC', 1790900100);
+$cj2 = sj_merge(sj_apply_thread($cj, $rc, 1), sj_job(array('ts' => '1790900000.000400', 'text' => $BOTCARD, 'reply_count' => 1), 'C0C3VGP1SJC', 1790900200));
+ok($cj2['company'] === 'Acme Builders Ltd', 'a company corrected in the thread survives a re-parse of the post', json_encode($cj2['company']));
 $rm = sj_replies_extract(array(array('ts' => '2.0', 'text' => "Mobile: 07700 900123\nWebsite: www.shop.example")), '1.0');
 ok($rm['mobile'] === '07700900123' && $rm['website'] === 'www.shop.example' && $rm['phone'] === '', 'thread replies: Mobile: and Website: go to their own boxes, not the contact number', json_encode($rm));
 $bj = sj_job(array('ts' => '1790900000.000200', 'text' => $BOTCARD, 'reply_count' => 1), 'C0C3VGP1SJC', 1790900100);

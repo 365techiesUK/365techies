@@ -34,6 +34,7 @@ if (!file_exists($SECRET)) { http_response_code(503); header('Content-Type: appl
 require $SECRET;   // $PCM_ADMIN_PASS - also the key the play links are signed with
 require __DIR__ . '/comms-lib.php';
 require_once __DIR__ . '/visitors-tally-lib.php';   // vis_staff_ok()
+require_once __DIR__ . '/pcm-custbook-lib.php';     // cb_book_names(): the names staff set in the customer book
 
 /* the recording: a signed, unexpired link only */
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['a'])) {
@@ -223,7 +224,8 @@ list($ok, $snap) = comms_locked(function ($d) { return array('__result' => array
 if (!$ok) ca_out(array('ok' => false, 'error' => 'busy'));
 // 2 Oct 2026: people written up as a job (Slack's New job in, or New customer here) are named by it
 // ... and emails from people we hold are named by our records or the job list (comms_mail_known_map: 'mail:<address>')
-$b = comms_board($snap['items'], comms_names_with_jobs(comms_names_with_jobs($snap['names'], comms_job_names()), comms_mail_known_map()), $PCM_ADMIN_PASS);
+// 6 Oct 2026: then the names staff set in the customer book (pcm-custbook-lib.php) - over the job cards' names
+$b = comms_board($snap['items'], comms_names_with_jobs(comms_names_with_jobs(comms_names_with_jobs($snap['names'], comms_job_names()), comms_mail_known_map()), cb_book_names()), $PCM_ADMIN_PASS);
 // 2 Oct 2026: each mailbox's last look - when, how many came in, how many were left out and why - so the card can say so
 $boxes = array();
 foreach (comms_mail_config() as $bx) {

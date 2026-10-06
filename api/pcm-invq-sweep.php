@@ -472,6 +472,9 @@ function invq_ensure_customer($c, $job, $jobId) {
     if ($m === null) return array('ok' => false, 'error' => 'busy');
     $body = array('DisplayName' => $name, 'PrimaryEmailAddr' => array('Address' => $email));
     if ($phone !== '') $body['PrimaryPhone'] = array('FreeFormNumber' => $phone);
+    // 6 Oct 2026: the business the job is for (the card's Company box) - QuickBooks' own company field, for the invoice
+    $company = invq_str(isset($job['company']) ? $job['company'] : '', 90);
+    if ($company !== '') $body['CompanyName'] = $company;
     /* the address as written up in Slack (22 Sep): the postcode is its own field
        when the post had one; the rest is line 1 */
     $addr = invq_str(isset($job['addr']) ? $job['addr'] : '', 200);

@@ -99,7 +99,8 @@ function sj_block_label($rawLine) {
     static $known = array('customer name', 'address', 'postcode', 'contact number', 'email', 'job type', 'issue',
                           'date received', 'assigned to', 'priority', 'price', 'work carried out', 'time spent',
                           'invoiced', 'follow-up needed', 'follow up needed', 'date closed',
-                          'mobile phone', 'mobile', 'website address', 'website');   // 1 Oct 2026: the two boxes the owner asked for
+                          'mobile phone', 'mobile', 'website address', 'website',    // 1 Oct 2026: the two boxes the owner asked for
+                          'company', 'company name');                                // 6 Oct 2026: businesses as customers
     return in_array($k, $known, true) ? $k : '';
 }
 /* The set of block labels a post carries (empty for the hand-typed layout). */
@@ -211,7 +212,7 @@ function sj_replies_extract($messages, $parentTs) {
        labelled replies instead - "Address: 8 Copsewood Avenue", "Postcode: BH8 9NG", "Contact number: 07..." or
        "Email: x@y.com" - and the LAST labelled one wins (a later reply corrects an earlier). A bare email or £ price
        with no label keeps the old rule: the first wins. A bare line of text is never taken as an address. */
-    $out = array('price' => 0.0, 'email' => '', 'email_by' => '', 'addr' => '', 'postcode' => '', 'phone' => '', 'mobile' => '', 'website' => '');
+    $out = array('price' => 0.0, 'email' => '', 'email_by' => '', 'addr' => '', 'postcode' => '', 'phone' => '', 'mobile' => '', 'website' => '', 'company' => '');
     $labelledEmail = '';
     foreach ((array)$messages as $m) {
         if (!is_array($m) || (string)(isset($m['ts']) ? $m['ts'] : '') === (string)$parentTs) continue;
@@ -224,6 +225,7 @@ function sj_replies_extract($messages, $parentTs) {
         if ($F['phone'] !== '') { $p2 = sj_phone($F['phone']); if ($p2 !== '') $out['phone'] = $p2; }
         if ($F['mobile'] !== '') { $m2 = sj_phone($F['mobile']); if ($m2 !== '') $out['mobile'] = $m2; }
         if ($F['website'] !== '') $out['website'] = sj_clean($F['website'], 120);
+        if ($F['company'] !== '') $out['company'] = sj_clean($F['company'], 90);
         if ($F['email'] !== '') { $e2 = sj_email($F['email']); if ($e2 !== '') $labelledEmail = $e2; }
     }
     if ($labelledEmail !== '') { $out['email'] = $labelledEmail; $out['email_by'] = 'label'; }
@@ -232,11 +234,11 @@ function sj_replies_extract($messages, $parentTs) {
 /* The labelled fields in one typed reply - "Postcode: BH8 9NG", and just as happily "sorry, postcode: BH8 9NG"
    (a few words may come before the label; the value runs to the end of the line). The last of each wins. */
 function sj_reply_fields($text) {
-    $out = array('address' => '', 'postcode' => '', 'phone' => '', 'email' => '', 'mobile' => '', 'website' => '');
+    $out = array('address' => '', 'postcode' => '', 'phone' => '', 'email' => '', 'mobile' => '', 'website' => '', 'company' => '');
     foreach (preg_split('/\r\n|\r|\n/', (string)$text) as $ln) {
         $ln = sj_clean($ln, 400);
         if ($ln === '' || strpos($ln, ':') === false) continue;
-        if (!preg_match('/^(?:[\w,\'.!-]+\s+){0,3}(address|post\s*code|contact number|phone(?: number)?|mobile(?: phone)?|tel|e-?mail|website(?: address)?|web)\s*:\s*(.+)$/i', $ln, $m)) continue;
+        if (!preg_match('/^(?:[\w,\'.!-]+\s+){0,3}(address|post\s*code|contact number|phone(?: number)?|mobile(?: phone)?|tel|e-?mail|website(?: address)?|web|company(?: name)?)\s*:\s*(.+)$/i', $ln, $m)) continue;
         $k = strtolower(preg_replace('/\s+/', '', $m[1])); $v = trim($m[2]);
         if ($v === '') continue;
         if ($k === 'address') $out['address'] = $v;
@@ -244,6 +246,7 @@ function sj_reply_fields($text) {
         elseif ($k === 'email' || $k === 'e-mail') $out['email'] = $v;
         elseif ($k === 'mobile' || $k === 'mobilephone') $out['mobile'] = $v;
         elseif ($k === 'website' || $k === 'websiteaddress' || $k === 'web') $out['website'] = $v;
+        elseif ($k === 'company' || $k === 'companyname') $out['company'] = $v;
         else $out['phone'] = $v;
     }
     return $out;
@@ -255,7 +258,7 @@ function sj_reply_fields($text) {
    undo it, with the reply count it was read at ('thread_seen') so the poller reads the thread again only when
    new replies have appeared. */
 function sj_apply_thread($job, $x, $replyCount) {
-    $x = array_merge(array('price' => 0.0, 'email' => '', 'email_by' => '', 'addr' => '', 'postcode' => '', 'phone' => '', 'mobile' => '', 'website' => ''), (array)$x);
+    $x = array_merge(array('price' => 0.0, 'email' => '', 'email_by' => '', 'addr' => '', 'postcode' => '', 'phone' => '', 'mobile' => '', 'website' => '', 'company' => ''), (array)$x);
     if ((float)$job['amount'] <= 0 && (float)$x['price'] > 0) { $job['amount'] = (float)$x['price']; $job['amount_by'] = 'slack'; }
     if ($x['email'] !== '' && ((string)$job['email'] === '' || $x['email_by'] === 'label')) $job['email'] = $x['email'];
     if ($x['addr'] !== '' || $x['postcode'] !== '') {
@@ -270,7 +273,8 @@ function sj_apply_thread($job, $x, $replyCount) {
     if ($x['phone'] !== '') $job['phone'] = $x['phone'];
     if ($x['mobile'] !== '') $job['mobile'] = $x['mobile'];
     if ($x['website'] !== '') $job['website'] = $x['website'];
-    $job['thread'] = array('addr' => $x['addr'], 'postcode' => $x['postcode'], 'phone' => $x['phone'], 'mobile' => $x['mobile'], 'website' => $x['website'],
+    if ($x['company'] !== '') $job['company'] = $x['company'];
+    $job['thread'] = array('addr' => $x['addr'], 'postcode' => $x['postcode'], 'phone' => $x['phone'], 'mobile' => $x['mobile'], 'website' => $x['website'], 'company' => $x['company'],
                            'email' => ($x['email_by'] === 'label' ? $x['email'] : ''));
     $job['thread_seen'] = (int)$replyCount;
     return $job;
@@ -369,6 +373,8 @@ function sj_parse($text) {
         // 1 Oct 2026: a mobile besides the contact number, and the customer's website (Slack's <url|label> unwrapped by sj_clean)
         'mobile' => sj_phone(sj_get($L, 'mobile phone') !== '' ? sj_get($L, 'mobile phone') : sj_get($L, 'mobile')),
         'website' => sj_clean(sj_get($L, 'website address') !== '' ? sj_get($L, 'website address') : sj_get($L, 'website'), 120),
+        // 6 Oct 2026: the business the job is for, when it is one (the invoice and the customer book use it)
+        'company' => sj_clean(sj_get($L, 'company') !== '' ? sj_get($L, 'company') : sj_get($L, 'company name'), 90),
         'done' => ($work !== '' || $closed !== '' || $time !== ''),
     );
 }
@@ -390,7 +396,7 @@ function sj_job($msg, $channel, $now = null) {
         'slack' => array('channel' => (string)$channel, 'ts' => $ts, 'replies' => (int)(isset($msg['reply_count']) ? $msg['reply_count'] : 0),
                          'seen' => ($now === null ? time() : $now)),
         'name' => $p['name'], 'email' => $p['email'], 'phone' => $p['phone'], 'addr' => $p['addr'], 'postcode' => $p['postcode'],
-        'mobile' => $p['mobile'], 'website' => $p['website'],
+        'mobile' => $p['mobile'], 'website' => $p['website'], 'company' => $p['company'],
         'desc' => $p['desc'], 'note' => $note, 'kind' => $p['kind'],
         'amount' => $p['price'], 'amount_by' => ($p['price'] > 0 ? 'slack' : ''),
         'invoice_no' => '', 'invoice_url' => '', 'invoice_doc' => $p['invoice_doc'], 'invoiced_in_slack' => ($p['invoiced'] === 'yes'),
@@ -403,7 +409,7 @@ function sj_job($msg, $channel, $now = null) {
 function sj_merge($old, $new) {
     if (!is_array($old)) return $new;
     $keep = $old;
-    foreach (array('name', 'email', 'phone', 'addr', 'postcode', 'mobile', 'website', 'note', 'kind', 'status', 'invoice_doc', 'invoiced_in_slack', 'slack', 'ts') as $k) $keep[$k] = isset($new[$k]) ? $new[$k] : '';
+    foreach (array('name', 'email', 'phone', 'addr', 'postcode', 'mobile', 'website', 'company', 'note', 'kind', 'status', 'invoice_doc', 'invoiced_in_slack', 'slack', 'ts') as $k) $keep[$k] = isset($new[$k]) ? $new[$k] : '';
     /* 1 Oct 2026: corrections typed in the thread stand over the parent's original text. A poll that re-read the
        thread brings them in $new; one that did not re-applies what the job already holds. */
     if (isset($new['thread']) && is_array($new['thread'])) { $keep['thread'] = $new['thread']; $keep['thread_seen'] = (int)(isset($new['thread_seen']) ? $new['thread_seen'] : 0); }
@@ -411,6 +417,7 @@ function sj_merge($old, $new) {
         $th = $old['thread'];
         $keep = sj_apply_thread($keep, array('addr' => $th['addr'], 'postcode' => $th['postcode'], 'phone' => $th['phone'],
             'mobile' => (isset($th['mobile']) ? $th['mobile'] : ''), 'website' => (isset($th['website']) ? $th['website'] : ''),
+            'company' => (isset($th['company']) ? $th['company'] : ''),
             'email' => $th['email'], 'email_by' => ($th['email'] !== '' ? 'label' : ''), 'price' => 0.0), (int)(isset($old['thread_seen']) ? $old['thread_seen'] : 0));
     }
     // an email a person typed in the portal outranks whatever the post has (usually nothing)

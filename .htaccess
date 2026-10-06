@@ -283,6 +283,11 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(pcm-newjob-(lib|test)\.php|comms-leads-test\.php)$">
   Require all denied
 </FilesMatch>
+# The customer book (6 Oct 2026): pcm-custbook-lib.php is include-only (pcm-booking.php, comms-api.php); the test is
+# CLI-only; the store pcm-custbook.json is in the pcm-data rule below. Nothing here is a URL.
+<FilesMatch "^pcm-custbook-(lib|test)\.php$">
+  Require all denied
+</FilesMatch>
 # Emails in the inbox (2 Oct 2026): mail-imap.php holds the mailbox passwords (server-only, made by the owner, never in
 # git); the library is include-only and the test CLI-only. Nothing here is a URL.
 <FilesMatch "^(mail-imap\.php(\.example)?|comms-mail-(lib|test)\.php)$">
@@ -459,7 +464,7 @@ ErrorDocument 404 /404.html
 # readable 2026-07-27 - it was never in this list). Any new *-cache/token file the
 # api/ writes MUST be added here; check with a browser fetch, not curl (the bot wall
 # answers 202 to scripted requests and hides a real 200).
-<FilesMatch "^(pcm-data|pcm-report-move|pcm-sb-token|pcm-bkpoll-cache|pcm-fleet-cache|bench-results|bench-stats-cache|bench-throttle|pcm-used|pass-used|pcm-throttle|pcm-joincodes|pcm-waitlist|pcm-waitlist-rate|pcm-fb-rate|pcm-reviewq|pcm-pubrate|pcm-draftfb|pcm-draftfb-rate|pcm-bkpend|pcm-bkpend-beat|bm-sea-cache|bm-sea-beat|pcm-wifi-[a-f0-9]+|pcm-bb-[a-f0-9]+|pcm-msg-[a-f0-9]+|pcm-msg-beat|pcm-engineer-secret|pcm-engineer-runs)\.json(\..*)?$">
+<FilesMatch "^(pcm-data|pcm-custbook|pcm-report-move|pcm-sb-token|pcm-bkpoll-cache|pcm-fleet-cache|bench-results|bench-stats-cache|bench-throttle|pcm-used|pass-used|pcm-throttle|pcm-joincodes|pcm-waitlist|pcm-waitlist-rate|pcm-fb-rate|pcm-reviewq|pcm-pubrate|pcm-draftfb|pcm-draftfb-rate|pcm-bkpend|pcm-bkpend-beat|bm-sea-cache|bm-sea-beat|pcm-wifi-[a-f0-9]+|pcm-bb-[a-f0-9]+|pcm-msg-[a-f0-9]+|pcm-msg-beat|pcm-engineer-secret|pcm-engineer-runs)\.json(\..*)?$">
   Require all denied
 </FilesMatch>
 # Portal messaging: the Slack BOT token (the only bot token in the project), the

@@ -765,9 +765,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 06 Oct 2026 &middot; 6ce8cd3a07</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 06 Oct 2026 &middot; 58525362ec</p><script>
 (function () {
-  var P365BUILD = '6ce8cd3a07';
+  var P365BUILD = '58525362ec';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -1760,6 +1760,25 @@
   #p365app .nc-act button, .p365ov .nc-act button { margin:0; min-height:44px; }
   #p365app .nc-ok, .p365ov .nc-ok { margin:.7rem 0 .4rem; font-size:1.05rem; color:var(--pgood); }
   @media (max-width:640px) { #p365app .nc-grid, .p365ov .nc-grid { grid-template-columns:1fr; } }
+  
+  #p365app .cu-list, .p365ov .cu-list { display:grid; gap:.4rem; margin-top:.6rem; }
+  #p365app button.cu-row, .p365ov button.cu-row { display:block; width:100%; text-align:left; margin:0; padding:.6rem .8rem; border-radius:10px; border:1px solid var(--pline); background:var(--pink); color:var(--pwhite); font-weight:400; }
+  #p365app button.cu-row:hover, .p365ov button.cu-row:hover { filter:none; transform:none; border-color:var(--psoft); }
+  #p365app button.cu-row:focus-visible, .p365ov button.cu-row:focus-visible { outline:2px solid #5cb8f0; outline-offset:2px; }
+  #p365app button.cu-row.on, .p365ov button.cu-row.on { border-color:var(--pcyan); background:rgba(29,151,227,.1); }
+  #p365app .cu-nm, .p365ov .cu-nm { font-weight:700; }
+  #p365app .cu-co, .p365ov .cu-co { color:var(--psoft); }
+  #p365app .cu-sub, .p365ov .cu-sub { display:block; margin-top:.15rem; font-size:.88rem; color:var(--pmut); overflow-wrap:anywhere; }
+  #p365app .cu-tags, .p365ov .cu-tags { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.35rem; }
+  #p365app .cu-tags:empty, .p365ov .cu-tags:empty { display:none; }
+  #p365app .cu-view, .p365ov .cu-view { margin-top:1rem; padding-top:1rem; border-top:1px solid var(--pline); }
+  #p365app .cu-dl, .p365ov .cu-dl { display:grid; grid-template-columns:max-content minmax(0, 1fr); gap:.4rem 1.1rem; margin:.8rem 0 .4rem; }
+  #p365app .cu-dl dt, .p365ov .cu-dl dt { color:var(--pmut); }
+  #p365app .cu-dl dd, .p365ov .cu-dl dd { margin:0; overflow-wrap:anywhere; }
+  #p365app .cu-from, .p365ov .cu-from { margin-left:.45rem; font-size:.78rem; color:var(--pmut); }
+  #p365app .cu-h, .p365ov .cu-h { margin:1rem 0 .2rem; font-size:.95rem; color:var(--pwhite); }
+  #p365app .cu-jobs, .p365ov .cu-jobs { list-style:none; margin:0; padding:0; display:grid; gap:.3rem; font-size:.92rem; }
+  @media (max-width:640px) { #p365app .cu-dl, .p365ov .cu-dl { grid-template-columns:1fr; gap:.1rem; } #p365app .cu-dl dt, .p365ov .cu-dl dt { margin-top:.45rem; } }
   #p365app .cm-ni, .p365ov .cm-ni { margin:0; font-size:.95rem; line-height:1.45; color:var(--pwhite); overflow-wrap:anywhere; }
   #p365app .cm-ni .cm-k, .p365ov .cm-ni .cm-k { display:block; }
   #p365app details.nx-how > summary, .p365ov details.nx-how > summary { cursor:pointer; color:#86b6e8; font-size:.92rem; margin:.1rem 0 .5rem; }
@@ -5850,7 +5869,8 @@
     function cardOf(id) { var n = document.getElementById(id); return n ? (n.classList.contains('card') ? n : n.closest('.card')) : null; }
     var diary = cardOf('dday'), sos = cardOf('sosqcard'), invq = cardOf('invqcard'), worth = cardOf('worthcall'), fleet = cardOf('ffleet'), comms = cardOf('cmbox'),
         act = cardOf('ab'), qbo = cardOf('qbosetup'), invp = cardOf('inviteplans'), geo = cardOf('geocard'), quick = cardOf('pcmadm'), live = cardOf('vislive'), lic = null,
-        inst = cardOf('instbox'), commsV = cardOf('cmvbox');   // 1 Oct 2026: PC Manager installs, under the fleet
+        inst = cardOf('instbox'), commsV = cardOf('cmvbox'),   // 1 Oct 2026: PC Manager installs, under the fleet
+        cust = cardOf('custq');   // 6 Oct 2026: Find a customer, first on the Customers tab
     Array.prototype.forEach.call(root.querySelectorAll('.card > h2'), function (h2) { if (/PC Manager licences/.test(h2.textContent)) lic = h2.parentNode; });
     var TABS = [['today', 'Today'], ['live', 'Live'], ['customers', 'Customers'], ['computers', 'Computers'], ['invoices', 'Invoices'], ['setup', 'Setup']];
     var bar = document.createElement('div'); bar.className = 'nx-sbar';
@@ -5879,7 +5899,7 @@
     if (comms) colB.appendChild(comms);
     if (commsV) colC.appendChild(commsV);
     if (live) panels.today.appendChild(live);
-    [lic, act].forEach(function (c) { if (c) panels.customers.appendChild(c); });
+    [cust, lic, act].forEach(function (c) { if (c) panels.customers.appendChild(c); });
     if (worth) panels.computers.appendChild(worth);
     if (fleet) panels.computers.appendChild(fleet);
     if (inst) panels.computers.appendChild(inst);
@@ -6438,6 +6458,11 @@
         + '<div class="ftabs" id="ftabs"></div><div class="tblwrap" id="ffleet"><p class="quiet">Loading the fleet\u2026</p></div></div>';
       // 1 Oct 2026: every install, linked or not, counted from the app's own hourly check-in (api/pcm-installs.php)
       h += '<div class="card"><h2>\ud83d\udcc8 PC Manager installs</h2><div id="instbox"><p class="quiet">Counting\u2026</p></div></div>';
+      // 6 Oct 2026 (owner): find ANY customer - job cards, PC Manager, SimplyBook, the book - open them, edit them
+      h += '<div class="card" id="custcard"><h2>\ud83d\udd0e Find a customer</h2>'
+        + '<p class="quiet" style="margin:.1rem 0 .6rem">Everyone we\u2019ve written up a job for, everyone with PC Manager and everyone who has booked \u2014 by name, company, phone, email or postcode.</p>'
+        + '<input id="custq" type="search" placeholder="e.g. Jules, First Choice, 07595 691892, BH23" autocomplete="off" aria-label="Find a customer: name, company, phone, email or postcode" />'
+        + '<div id="custres" aria-live="polite"></div><div id="custview"></div></div>';
       h += '<div class="card"><h2>\u26a1 Activate a customer\u2019s PC Manager</h2>'
         + '<label>Customer name</label><input id="an" />'
         + '<label>Email (optional - links their booking login + Direct Debit)</label><input id="ae" type="email" />'
@@ -6492,6 +6517,7 @@
       qboSetup();
       invitePlansSetup();
       geoSetup();
+      cbkSetup();
       loadInvq();
       // every 90 s while the staff area is open and on screen: the pill shows on every tab. The server's shared 90 s
       // cache means at most 960 Cloudflare lists a day however many staff screens are open (free tier: 1,000).
@@ -6803,7 +6829,7 @@
           if (!r || !r.ok) { show('<span class="quiet">' + lbl + 'couldn\u2019t check just now.</span>'); return; }
           if (!r.lic || !r.lic.length) {
             show('<div>' + lbl + '<span class="quiet">not linked yet. On their PC: <b>Link this PC to 365</b> \u2192 sign in with their booking account'
-              + ' (forgotten the password? <b>Reset app sign-in password</b> below), then check again.</span></div>');
+              + ' (forgotten the password? <b>Reset app sign-in password</b>, on their booking\u2019s contact card), then check again.</span></div>');
             return;
           }
           var h = '';
@@ -8188,7 +8214,7 @@
     return p;
   }
   var NC = { pre: null, busy: false, ret: null };
-  var NC_F = [['name', 'Customer name', 'text', 1], ['address', 'Address'], ['postcode', 'Postcode'], ['phone', 'Contact number', 'tel'],
+  var NC_F = [['name', 'Customer name', 'text', 1], ['company', 'Company'], ['address', 'Address'], ['postcode', 'Postcode'], ['phone', 'Contact number', 'tel'],
     ['mobile', 'Mobile phone', 'tel'], ['email', 'Email', 'email'], ['website', 'Website address'], ['jobtype', 'Job type', ['Remote', 'On-site', 'Hardware']],
     ['issue', 'Issue', 'area'], ['assigned', 'Assigned to'], ['priority', 'Priority', ['Low', 'Medium', 'High']], ['price', 'Price \u00a3']];
   function ncKey(e) { if (e.key === 'Escape') ncClose(); }
@@ -8259,6 +8285,156 @@
     document.getElementById('ncok').onclick = ncClose;
     document.getElementById('ncbook').onclick = function () { ncClose(); ncBook(j); };
     document.getElementById('ncbook').focus();
+  }
+  // ---------- 6 Oct 2026: the customer book - find anyone, open their details, edit them (pcm-custbook-lib.php) ----------
+  var CBK = { q: '', t: null, seq: 0, p: null };
+  var CBK_F = [['name', 'Name'], ['company', 'Company'], ['phone', 'Landline', 'tel'], ['mobile', 'Mobile', 'tel'], ['email', 'Email', 'email'],
+    ['address', 'Address'], ['postcode', 'Postcode'], ['website', 'Website'], ['note', 'Note (staff only)', 'area']];
+  var CBK_FROM = { book: 'edited here', pcm: 'from their portal', job: 'from a job card', sb: 'from their booking' };
+  function cbkSetup() {
+    var q = document.getElementById('custq'); if (!q) return;
+    q.addEventListener('input', function () { clearTimeout(CBK.t); var v = q.value.trim(); CBK.t = setTimeout(function () { cbkFind(v); }, 300); });
+    q.addEventListener('keydown', function (e) { if (e.key === 'Enter') { clearTimeout(CBK.t); cbkFind(q.value.trim()); } });
+  }
+  function cbkWho(p) { return p.fields.name || p.fields.company || p.fields.email || 'Customer'; }
+  function cbkTags(p) {
+    var t = [];
+    if (p.jobs) t.push('<span class="pill free">' + p.jobs + (p.jobs === 1 ? ' job' : ' jobs') + '</span>');
+    if (p.booked) t.push('<span class="pill free">Booked</span>');
+    if (p.pcm) t.push('<span class="pill ' + (p.pcm === 'pro' ? 'pro">PC Manager Pro' : 'free">PC Manager Free') + '</span>');
+    if (p.edited) t.push('<span class="pill free">Edited</span>');
+    return t.join(' ');
+  }
+  function cbkFind(v) {
+    var res = document.getElementById('custres'); if (!res) return;
+    CBK.q = v;
+    if (v.length < 2) { res.innerHTML = ''; return; }
+    var my = ++CBK.seq;
+    res.innerHTML = '<p class="quiet" style="margin:.6rem 0 0">Searching\u2026</p>';
+    post(BK, { action: 'custfind', stoken: S.stoken, machine: mid(), q: v }).then(function (r) {
+      if (my !== CBK.seq) return;   // a newer search is already on its way
+      if (!r || !r.ok) { res.innerHTML = '<p class="quiet" style="margin:.6rem 0 0">' + (r && r.error === 'not_staff' ? 'Your staff session has expired \u2014 sign out and in again.' : 'Couldn\u2019t search just now \u2014 try again.') + '</p>'; return; }
+      var ps = r.people || [], sbOff = r.sb === 'unavailable' ? ' SimplyBook didn\u2019t answer, so people who only booked may be missing.' : '';
+      if (!ps.length) {
+        res.innerHTML = '<p class="quiet" style="margin:.6rem 0 0">Nobody matches \u201c' + esc(v) + '\u201d.' + sbOff + ' <button class="sm ghost" id="custnew">\u2795 New customer</button></p>';
+        document.getElementById('custnew').onclick = function () { ncOpen({ assigned: cmMe() }); };
+        return;
+      }
+      res.innerHTML = '<div class="cu-list">' + ps.map(function (p) {
+        var f = p.fields, sub = [f.mobile, f.phone, f.email, f.postcode].filter(function (x) { return x; }).map(esc).join(' \u00b7 ');
+        return '<button type="button" class="cu-row' + (CBK.p && CBK.p.ref === p.ref ? ' on' : '') + '" data-ref="' + esc(p.ref) + '">'
+          + '<span class="cu-nm">' + esc(cbkWho(p)) + '</span>' + (f.company && f.name ? ' <span class="cu-co">' + esc(f.company) + '</span>' : '')
+          + (sub ? '<span class="cu-sub">' + sub + '</span>' : '') + '<span class="cu-tags">' + cbkTags(p) + '</span></button>';
+      }).join('') + '</div>' + (ps.length >= 25 ? '<p class="quiet">The 25 most recent \u2014 add a word to narrow it down.</p>' : '') + (sbOff ? '<p class="quiet">' + sbOff + '</p>' : '');
+      Array.prototype.forEach.call(res.querySelectorAll('.cu-row'), function (b) {
+        b.onclick = function () {
+          Array.prototype.forEach.call(res.querySelectorAll('.cu-row'), function (x) { x.classList.toggle('on', x === b); });
+          cbkOpen(b.getAttribute('data-ref'));
+        };
+      });
+    }).catch(function () { if (my === CBK.seq) res.innerHTML = '<p class="quiet" style="margin:.6rem 0 0">Couldn\u2019t reach the server.</p>'; });
+  }
+  function cbkOpen(ref, note) {
+    var box = document.getElementById('custview'); if (!box) return;
+    box.innerHTML = '<div class="cu-view"><p class="quiet">Opening\u2026</p></div>';
+    post(BK, { action: 'custget', stoken: S.stoken, machine: mid(), ref: ref }).then(function (r) {
+      if (!r || !r.ok || !r.person) { box.innerHTML = '<div class="cu-view"><p class="quiet">Couldn\u2019t open that customer' + (r && r.error === 'unknown_customer' ? ' \u2014 their details may have changed; search again.' : '.') + '</p></div>'; return; }
+      cbkShow(r.person, note);
+      box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }).catch(function () { box.innerHTML = '<div class="cu-view"><p class="quiet">Couldn\u2019t reach the server.</p></div>'; });
+  }
+  function cbkWhen(ts) { try { return new Date(ts * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); } catch (e) { return ''; } }
+  function cbkShow(p, note) {
+    var box = document.getElementById('custview'); if (!box) return;
+    CBK.p = p;
+    var f = p.fields, fr = p.from || {}, dl = '';
+    CBK_F.forEach(function (x) {
+      var k = x[0], v = f[k]; if (!v) return;
+      var shown = esc(v);
+      if (k === 'phone' || k === 'mobile') shown = '<a href="tel:' + esc(v.replace(/\s/g, '')) + '">' + esc(v) + '</a>';
+      else if (k === 'email') shown = '<a href="mailto:' + esc(v) + '">' + esc(v) + '</a>';
+      else if (k === 'website') shown = '<a href="https://' + esc(v) + '" target="_blank" rel="noopener">' + esc(v) + '</a>';
+      else if (k === 'address') shown = esc(v) + ' &middot; <a href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent([v, f.postcode].filter(function (y) { return y; }).join(', ')) + '" target="_blank" rel="noopener">Open in Maps</a>';
+      else if (k === 'note') shown = '<span style="white-space:pre-line">' + esc(v) + '</span>';
+      dl += '<dt>' + x[1] + '</dt><dd>' + shown + (fr[k] && CBK_FROM[fr[k]] ? '<span class="cu-from">' + CBK_FROM[fr[k]] + '</span>' : '') + '</dd>';
+    });
+    var jobs = (p.joblist || []).map(function (j) {
+      return '<li><span class="quiet">' + esc(cbkWhen(j.ts)) + '</span> ' + esc(j.desc || '(no description)')
+        + (j.amount ? ' \u00b7 \u00a3' + esc(String(j.amount)) : '') + (j.invoice ? ' \u00b7 invoice ' + esc(j.invoice) : (j.status === 'done' ? ' \u00b7 done' : ''))
+        + (j.name && j.name !== f.name ? ' <span class="quiet">(' + esc(j.name) + ')</span>' : '') + '</li>';
+    }).join('');
+    var last = (p.history || []).slice(-1)[0];
+    box.innerHTML = '<div class="cu-view">'
+      + (note ? '<p class="nc-ok" style="margin-top:0">' + esc(note) + '</p>' : '')
+      + '<div class="nc-top"><div><h3 style="margin:0">' + esc(cbkWho(p)) + '</h3>' + (f.company && f.name ? '<div class="quiet">' + esc(f.company) + '</div>' : '')
+      + '<div class="cu-tags">' + cbkTags(p) + '</div></div>'
+      + '<button type="button" class="sm ghost" id="cuclose" aria-label="Close this customer">\u2715</button></div>'
+      + (dl ? '<dl class="cu-dl">' + dl + '</dl>' : '<p class="quiet">No contact details yet \u2014 add them with Edit details.</p>')
+      + (p.aka && p.aka.length ? '<p class="quiet" style="font-size:.88rem">Also written up as: ' + p.aka.map(esc).join(', ') + '</p>' : '')
+      + (last ? '<p class="quiet" style="font-size:.85rem">Last edited by ' + esc(String(last.by || '').split('@')[0]) + ', ' + esc(cbkWhen(last.at)) + ' (' + esc((last.fields || []).join(', ')) + ')</p>' : '')
+      + '<div class="nc-act" style="margin-top:.6rem"><button type="button" id="cuedit">\u270f\ufe0f Edit details</button>'
+      + '<button type="button" class="ghost" id="cujob">\u2795 New job for them</button>'
+      + '<button type="button" class="ghost" id="cubook">\ud83d\udcc5 Book a visit</button></div>'
+      + (p.sb || f.email ? '<div class="pcmwrap" data-cid="' + esc(String(p.sb || '')) + '" data-em="' + esc(f.email || '') + '" style="margin-top:.8rem"></div>' : '')
+      // someone who has booked: the diary's own contact card, with its quote / invoice, invite, job-done and pay-link buttons
+      + (p.sb ? '<div style="margin-top:.7rem"><button type="button" class="sm ghost cib" data-cid="' + esc(String(p.sb)) + '" data-p="cbk">\ud83e\uddfe Invoice, invite, pay link\u2026</button>'
+        + '<div class="cipanel" id="cipcbk" style="display:none;margin-top:.5rem"></div></div>' : '')
+      + (jobs ? '<h4 class="cu-h">Jobs</h4><ul class="cu-jobs">' + jobs + '</ul>' : '<p class="quiet" style="margin-top:.8rem">No jobs written up for them yet.</p>')
+      + '</div>';
+    document.getElementById('cuclose').onclick = function () {
+      box.innerHTML = ''; CBK.p = null;
+      Array.prototype.forEach.call(document.querySelectorAll('#custres .cu-row.on'), function (x) { x.classList.remove('on'); });
+      var q = document.getElementById('custq'); if (q) q.focus();
+    };
+    document.getElementById('cuedit').onclick = function () { cbkEdit(); };
+    document.getElementById('cujob').onclick = function () {
+      ncOpen({ name: f.name || f.company, company: f.company, address: f.address, postcode: f.postcode, phone: f.phone, mobile: f.mobile,
+               email: f.email, website: f.website, assigned: cmMe(), known: cbkWho(p) });
+    };
+    document.getElementById('cubook').onclick = function () { cbkBook(p); };
+    bindPcmLic(box);
+    bindContactCards(box);
+  }
+  function cbkEdit() {
+    var p = CBK.p, box = document.getElementById('custview'); if (!p || !box) return;
+    var boxes = CBK_F.map(function (x) {
+      var id = 'cu_' + x[0], v = p.fields[x[0]] || '', t = x[2] || 'text', wide = x[0] === 'address' || t === 'area';
+      var lab = '<label for="' + id + '">' + x[1] + '</label>', err = '<span class="nc-err" id="' + id + '_e"></span>';
+      if (t === 'area') return '<div class="nc-f nc-f--wide">' + lab + '<textarea id="' + id + '" maxlength="600">' + esc(v) + '</textarea>' + err + '</div>';
+      return '<div class="nc-f' + (wide ? ' nc-f--wide' : '') + '">' + lab + '<input id="' + id + '" type="' + t + '" value="' + esc(v) + '" autocomplete="off"'
+        + (x[0] === 'website' ? ' placeholder="www.example.co.uk"' : '') + ' />' + err + '</div>';
+    }).join('');
+    box.innerHTML = '<div class="cu-view"><h3 style="margin:0">Edit ' + esc(cbkWho(p)) + '</h3>'
+      + '<p class="quiet" style="margin:.3rem 0 0">Saved in our customer book and shown everywhere in the portal. Their SimplyBook record and old job cards are left as they were.</p>'
+      + '<div class="nc-grid">' + boxes + '</div><div class="err" id="cuerr" aria-live="polite"></div>'
+      + '<div class="nc-act"><button type="button" id="cusave">Save details</button><button type="button" class="ghost" id="cucancel">Cancel</button></div></div>';
+    document.getElementById('cucancel').onclick = function () { cbkShow(p); };
+    document.getElementById('cusave').onclick = function () {
+      var b = this, v = {}, er = document.getElementById('cuerr');
+      CBK_F.forEach(function (x) { var e2 = document.getElementById('cu_' + x[0]); v[x[0]] = e2 ? e2.value : ''; var s2 = document.getElementById('cu_' + x[0] + '_e'); if (s2) s2.textContent = ''; });
+      er.textContent = ''; b.disabled = true; b.textContent = 'Saving\u2026';
+      post(BK, { action: 'custsave', stoken: S.stoken, machine: mid(), ref: p.ref, v: v }).then(function (r) {
+        if (r && r.ok && r.person) {
+          cbkShow(r.person, r.changed && r.changed.length ? '\u2714 Saved: ' + r.changed.join(', ') + '.' : 'Nothing had changed.');
+          if (CBK.q) cbkFind(CBK.q);
+          return;
+        }
+        b.disabled = false; b.textContent = 'Save details';
+        var errs = (r && r.errors) || {}, first = '';
+        Object.keys(errs).forEach(function (k) { var s3 = document.getElementById('cu_' + k + '_e'); if (s3) { s3.textContent = errs[k]; if (!first) first = k; } });
+        if (first) { var fb = document.getElementById('cu_' + first); if (fb) fb.focus(); }
+        er.textContent = r && r.error === 'not_staff' ? 'Your staff session has expired \u2014 sign out and in again.'
+          : (r && r.error === 'unknown_customer' ? 'Couldn\u2019t find this customer any more \u2014 search again.' : (first ? '' : 'Not saved \u2014 try again.'));
+      }).catch(function () { b.disabled = false; b.textContent = 'Save details'; er.textContent = 'No answer from the server \u2014 nothing was saved.'; });
+    };
+    var fn = document.getElementById('cu_name'); if (fn) fn.focus();
+  }
+  function cbkBook(p) {   // the diary's Book a new job, for this customer (their SimplyBook client when we know it)
+    var w = document.getElementById('nbwiz'); if (!w) return;
+    if (NXL.show) NXL.show('today');
+    NB = { cid: p.sb || 0, cname: cbkWho(p), cphone: p.fields.mobile || p.fields.phone || '', cemail: p.fields.email || '', svc: 0, svcName: '', date: '', time: '' };
+    w.style.display = 'block'; wizWhat();
+    w.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   function ncBook(j) {   // straight into the diary's Book a new job, at "What service?"
     var w = document.getElementById('nbwiz'); if (!w) return;

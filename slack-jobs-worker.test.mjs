@@ -25,10 +25,10 @@ function signed(path, body, { ts = Math.floor(Date.now() / 1000), secret = SECRE
   });
 }
 const payload = (p) => 'payload=' + encodeURIComponent(JSON.stringify(p));
-const V = { name: 'Davina Gahan', address: '8 Copsewood Avenue, Bournemouth', postcode: 'BH8 9NG', phone: '01202 123456', mobile: '07584168898', email: 'davinagahn@hotmail.com', website: 'www.davinagahan.co.uk',
+const V = { name: 'Davina Gahan', company: 'Gahan Design Ltd', address: '8 Copsewood Avenue, Bournemouth', postcode: 'BH8 9NG', phone: '01202 123456', mobile: '07584168898', email: 'davinagahn@hotmail.com', website: 'www.davinagahan.co.uk',
   jobtype: 'Remote', issue: 'MS 365 Lost password. Waiting for reply from MS to restore the password', assigned: 'Steve', priority: 'Medium', price: '60' };
 // the EXACT card the Worker posts for V - pinned here and in api/pcm-slackjobs-test.php, where the server's reader parses it
-const CARD = ':inbox_tray: *New job in*\n*Customer name*\nDavina Gahan\n*Address*\n8 Copsewood Avenue, Bournemouth\n*Postcode*\nBH8 9NG\n*Contact number*\n01202 123456\n*Mobile phone*\n07584168898\n*Email*\ndavinagahn@hotmail.com\n*Website address*\nwww.davinagahan.co.uk\n*Job type*\nRemote\n*Issue*\nMS 365 Lost password. Waiting for reply from MS to restore the password\n*Assigned to*\nSteve\n*Priority*\nMedium\n*Price £.*\n60';
+const CARD = ':inbox_tray: *New job in*\n*Customer name*\nDavina Gahan\n*Company*\nGahan Design Ltd\n*Address*\n8 Copsewood Avenue, Bournemouth\n*Postcode*\nBH8 9NG\n*Contact number*\n01202 123456\n*Mobile phone*\n07584168898\n*Email*\ndavinagahn@hotmail.com\n*Website address*\nwww.davinagahan.co.uk\n*Job type*\nRemote\n*Issue*\nMS 365 Lost password. Waiting for reply from MS to restore the password\n*Assigned to*\nSteve\n*Priority*\nMedium\n*Price £.*\n60';
 function submission(values, privateMetadata = '', user = { id: 'U1', name: 'david' }) {
   const state = {};
   for (const [k, val] of Object.entries(values)) state[k] = { v: (k === 'jobtype' || k === 'priority') ? { type: 'static_select', selected_option: val ? { value: val } : null } : { type: 'plain_text_input', value: val } };
@@ -38,7 +38,7 @@ function submission(values, privateMetadata = '', user = { id: 'U1', name: 'davi
 test('the card: the Workflow Builder layout the reader already knows, empty answers as empty lines', () => {
   assert.equal(cardText(V, null), CARD);
   const t = cardText({ name: 'Joan Baker' }, null);
-  assert.ok(t.includes('*Customer name*\nJoan Baker\n*Address*\n\n*Postcode*\n\n'), t);
+  assert.ok(t.includes('*Customer name*\nJoan Baker\n*Company*\n\n*Address*\n\n*Postcode*\n\n'), t);
   assert.ok(t.includes('*Mobile phone*\n\n*Email*\n\n*Website address*\n\n'), t);
   assert.ok(t.endsWith('*Price £.*\n'), t);
   const e = cardText(V, { by: 'david', when: '1 Oct, 14:20' });
@@ -62,18 +62,19 @@ test('parseCard reads a card back, a mailto-wrapped email, a two-line issue, and
 test('the form: a select keeps its current choice, an input its current text; the title says which it is', () => {
   const m = modalView({}, '');
   assert.equal(m.title.text, 'New job in'); assert.equal(m.submit.text, 'Post'); assert.equal(m.private_metadata, '');
-  assert.equal(m.blocks.length, 12);
+  assert.equal(m.blocks.length, 13);
   assert.equal(m.blocks[0].optional, false);
   assert.equal(m.blocks[1].optional, true);
   const e = modalView(V, JSON.stringify({ channel: 'C1', ts: '1.2' }));
   assert.equal(e.title.text, 'Edit job'); assert.equal(e.submit.text, 'Save');
   assert.equal(e.blocks[0].element.initial_value, 'Davina Gahan');
-  assert.equal(e.blocks[7].element.initial_option.value, 'Remote');
-  assert.equal(e.blocks[10].element.initial_option.value, 'Medium');
-  assert.equal(e.blocks[4].element.initial_value, '07584168898');
-  assert.equal(e.blocks[6].element.initial_value, 'www.davinagahan.co.uk');
-  assert.equal(modalView({ jobtype: 'on-site' }, 'x').blocks[7].element.initial_option.value, 'On-site');
-  assert.equal(modalView({ jobtype: 'Van' }, 'x').blocks[7].element.initial_option, undefined);
+  assert.equal(e.blocks[1].element.initial_value, 'Gahan Design Ltd');   // 6 Oct 2026: Company, after the name
+  assert.equal(e.blocks[8].element.initial_option.value, 'Remote');
+  assert.equal(e.blocks[11].element.initial_option.value, 'Medium');
+  assert.equal(e.blocks[5].element.initial_value, '07584168898');
+  assert.equal(e.blocks[7].element.initial_value, 'www.davinagahan.co.uk');
+  assert.equal(modalView({ jobtype: 'on-site' }, 'x').blocks[8].element.initial_option.value, 'On-site');
+  assert.equal(modalView({ jobtype: 'Van' }, 'x').blocks[8].element.initial_option, undefined);
 });
 
 test('readSubmission + validate: trims, strips a leading £, insists on a name, checks email and price', () => {
@@ -116,7 +117,8 @@ test('Edit: the button opens the form filled from the card; Save rewrites that m
   assert.equal(r.status, 200);
   assert.equal(calls[0].method, 'views.open');
   assert.equal(calls[0].body.view.title.text, 'Edit job');
-  assert.equal(calls[0].body.view.blocks[1].element.initial_value, '8 Copsewood Avenue, Bournemouth');
+  assert.equal(calls[0].body.view.blocks[1].element.initial_value, 'Gahan Design Ltd');   // 6 Oct 2026: Company, after the name
+  assert.equal(calls[0].body.view.blocks[2].element.initial_value, '8 Copsewood Avenue, Bournemouth');
   assert.deepEqual(JSON.parse(calls[0].body.view.private_metadata), { channel: 'C0C3VGP1SJC', ts: '1790900000.000100' });
   calls = [];
   r = await worker.fetch(signed('/slack/interact', payload(submission({ ...V, postcode: 'BH8 9NH' }, JSON.stringify({ channel: 'C0C3VGP1SJC', ts: '1790900000.000100' })))), env);
