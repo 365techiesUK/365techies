@@ -82,8 +82,55 @@
         + rep(5, function (i) { return '<path d="M' + (20 + i * 15) + ' ' + (88 + (i % 2) * 10) + ' l2 5 5 0 -4 3 2 5 -5 -3 -5 3 2 -5 -4 -3 5 0z" fill="#ffd257" opacity=".85"/>'; })) + ' center / cover' },
     { id: 'gold', name: 'Gold leaf', stars: 150, pill: ['#111111', '#d9a520', '#f5d77a'],
       bg: svg('<defs><pattern id="p" width="20" height="14" patternUnits="userSpaceOnUse"><path d="M0 14 A10 10 0 0 1 20 14" fill="none" stroke="#d9a520" stroke-width="1.1"/><path d="M4 14 A6 6 0 0 1 16 14" fill="none" stroke="#b8860b" stroke-width=".9"/><path d="M8 14 A2 2 0 0 1 12 14" fill="none" stroke="#f5d77a" stroke-width=".9"/></pattern></defs>'
-        + '<rect width="100" height="140" fill="#121212"/><rect width="100" height="140" fill="url(#p)"/><rect x="5" y="5" width="90" height="130" fill="none" stroke="#d9a520" stroke-width="1.5"/><rect x="8" y="8" width="84" height="124" fill="none" stroke="#b8860b" stroke-width=".6"/>') + ' center / cover' }
+        + '<rect width="100" height="140" fill="#121212"/><rect width="100" height="140" fill="url(#p)"/><rect x="5" y="5" width="90" height="130" fill="none" stroke="#d9a520" stroke-width="1.5"/><rect x="8" y="8" width="84" height="124" fill="none" stroke="#b8860b" stroke-width=".6"/>') + ' center / cover' },
+    // won with trophies (6 Oct 2026): each one its own trophy
+    { id: 'rosette', name: "Winner's rosette", trophy: 'first', pill: ['#0c2a5a', '#ffd257', '#ffe9a8', '30%'],
+      bg: svg('<rect width="100" height="140" fill="#0f2f63"/>' + rep(12, function (i) { return '<path d="M50 74 L' + (50 + 40 * Math.cos(i * 0.5236)).toFixed(1) + ' ' + (74 + 40 * Math.sin(i * 0.5236)).toFixed(1) + '" stroke="rgba(255,210,87,.14)" stroke-width="5"/>'; })
+        + '<path d="M38 92 L30 128 L40 122 L44 132 L50 98 Z M62 92 L70 128 L60 122 L56 132 L50 98 Z" fill="#c8102e"/>'
+        + rep(16, function (i) { var a = i * 0.3927; return '<ellipse cx="' + (50 + 17 * Math.cos(a)).toFixed(1) + '" cy="' + (74 + 17 * Math.sin(a)).toFixed(1) + '" rx="7" ry="4" transform="rotate(' + (i * 22.5).toFixed(1) + ' ' + (50 + 17 * Math.cos(a)).toFixed(1) + ' ' + (74 + 17 * Math.sin(a)).toFixed(1) + ')" fill="' + (i % 2 ? '#e8394f' : '#c8102e') + '"/>'; })
+        + '<circle cx="50" cy="74" r="13" fill="#ffd257"/><circle cx="50" cy="74" r="10" fill="none" stroke="#b8860b" stroke-width="1.2"/><path d="M50 67 l2.1 4.4 4.8.6-3.5 3.3.9 4.8-4.3-2.3-4.3 2.3.9-4.8-3.5-3.3 4.8-.6z" fill="#b8860b"/>'
+        + '<rect x="4" y="4" width="92" height="132" rx="5" fill="none" stroke="rgba(255,210,87,.6)" stroke-width="1.4"/>') + ' center / cover' },
+    { id: 'sweep', name: 'Clean sweep', trophy: 'noundo', pill: ['#ffffff', '#0e8a7a', '#0e8a7a'],
+      bg: svg('<rect width="100" height="140" fill="#f4fbf9"/>' + rep(8, function (r) { return rep(6, function (c) { var x = c * 18 + (r % 2 ? 9 : 0) - 4, y = r * 18 + 2; return '<path d="M' + x + ' ' + (y + 9) + ' l9 -9 9 9 -9 9z" fill="none" stroke="' + ((r + c) % 3 ? 'rgba(14,138,122,.28)' : 'rgba(14,138,122,.55)') + '" stroke-width="1.3"/>'; }); })
+        + '<path d="M50 50 l3 11 11 3 -11 3 -3 11 -3 -11 -11 -3 11 -3z M74 30 l1.6 5.4 5.4 1.6 -5.4 1.6 -1.6 5.4 -1.6 -5.4 -5.4 -1.6 5.4 -1.6z M28 104 l1.6 5.4 5.4 1.6 -5.4 1.6 -1.6 5.4 -1.6 -5.4 -5.4 -1.6 5.4 -1.6z" fill="#14b39e"/>'
+        + '<rect x="4" y="4" width="92" height="132" rx="5" fill="none" stroke="#0e8a7a" stroke-width="1.4"/>') + ' center / cover' },
+    { id: 'flash', name: 'Lightning', trophy: 'quick', pill: ['#1a0b3d', '#ffd23f', '#ffe680'],
+      bg: svg('<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a1a7a"/><stop offset="1" stop-color="#12062e"/></linearGradient></defs><rect width="100" height="140" fill="url(#g)"/>'
+        + rep(5, function (i) { var x = [14, 70, 38, 82, 22][i], y = [10, 22, 58, 92, 104][i], k = [0.8, 0.6, 1, 0.7, 0.6][i]; return '<path transform="translate(' + x + ' ' + y + ') scale(' + k + ')" d="M10 0 L0 18 L8 18 L3 34 L18 12 L10 12 L15 0 Z" fill="#ffd23f" opacity="' + (i === 2 ? 1 : 0.55) + '"/>'; })
+        + '<rect x="4" y="4" width="92" height="132" rx="5" fill="none" stroke="rgba(255,210,63,.55)" stroke-width="1.4"/>') + ' center / cover' },
+    { id: 'champion', name: "Champion's gold", trophy: 'streak10', pill: ['#0b3d20', '#f5c542', '#ffe9a8', '26%'],
+      bg: svg('<defs><radialGradient id="g" cx=".5" cy=".55" r=".75"><stop offset="0" stop-color="#1f7a45"/><stop offset="1" stop-color="#062915"/></radialGradient></defs><rect width="100" height="140" fill="url(#g)"/>'
+        + rep(9, function (i) { var a = 2.5 + i * 0.2; return '<ellipse cx="' + (50 + 26 * Math.cos(a)).toFixed(1) + '" cy="' + (80 + 30 * Math.sin(a)).toFixed(1) + '" rx="6" ry="2.6" transform="rotate(' + (a * 57.3 + 90).toFixed(0) + ' ' + (50 + 26 * Math.cos(a)).toFixed(1) + ' ' + (80 + 30 * Math.sin(a)).toFixed(1) + ')" fill="#f5c542"/>'
+          + '<ellipse cx="' + (50 - 26 * Math.cos(a)).toFixed(1) + '" cy="' + (80 + 30 * Math.sin(a)).toFixed(1) + '" rx="6" ry="2.6" transform="rotate(' + (-(a * 57.3 + 90)).toFixed(0) + ' ' + (50 - 26 * Math.cos(a)).toFixed(1) + ' ' + (80 + 30 * Math.sin(a)).toFixed(1) + ')" fill="#f5c542"/>'; })
+        + '<path d="M38 70 h24 v6 a12 12 0 0 1 -24 0 z M44 88 h12 v4 h6 v5 h-24 v-5 h6 z" fill="#f5c542"/><path d="M38 72 h-6 a6 6 0 0 0 6 8 M62 72 h6 a6 6 0 0 1 -6 8" fill="none" stroke="#f5c542" stroke-width="2"/>'
+        + '<rect x="4" y="4" width="92" height="132" rx="5" fill="none" stroke="#f5c542" stroke-width="1.6"/><rect x="7" y="7" width="86" height="126" rx="4" fill="none" stroke="rgba(245,197,66,.45)" stroke-width=".8"/>') + ' center / cover' },
   ];
+
+  // ---------------------------------------------------------------- trophies (6 Oct 2026, owner: "yes ... the trophies")
+  // shared by every card game; earned on a win (table.js); four unlock a card back above (trophy: id)
+  var TROPHIES = [
+    { id: 'first', name: 'First win', how: 'Win a game of any of our card games.' },
+    { id: 'noundo', name: 'Clean sweep', how: 'Win a game without using Undo.' },
+    { id: 'quick', name: 'Quick as a flash', how: 'Win a game in under 3 minutes.' },
+    { id: 'streak3', name: 'Hat trick', how: 'Win 3 games in a row.' },
+    { id: 'streak10', name: 'On a roll', how: 'Win 10 games in a row.' },
+    { id: 'week', name: 'Week of deals', how: 'Win Today’s deal 7 days in a row.' },
+    { id: 'hardest', name: 'Tough nut', how: 'Win at a game’s hardest level.' },
+    { id: 'fifty', name: 'Fifty wins', how: 'Win 50 games of one card game.' }
+  ];
+  function earned() { var t = get('cards365:trophies'); return t && typeof t === 'object' ? t : {}; }
+  // award(ids, game) -> the trophies newly won, each with the card back it unlocks (if any)
+  function award(ids, game) {
+    var t = earned(), out = [];
+    (ids || []).forEach(function (id) {
+      var tr = TROPHIES.filter(function (x) { return x.id === id; })[0]; if (!tr || t[id]) return;
+      var d = new Date(); t[id] = { at: d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2), game: game || '' };
+      var back = BACKS.filter(function (b) { return b.trophy === id; })[0];
+      out.push({ id: id, name: tr.name, back: back ? back.name : '' });
+    });
+    if (out.length) put('cards365:trophies', t);
+    return out;
+  }
 
   // ---------------------------------------------------------------- the styles: every table and back, and the gallery
   var css = '';
@@ -143,7 +190,8 @@
   function list(kind) { return kind === 'felt' ? TABLES : BACKS; }
   function find(kind, id) { return list(kind).filter(function (x) { return x.id === id; })[0] || null; }
   function known(kind, id) { return !!find(kind, id); }
-  function open_(x, n) { return !x.stars || n >= x.stars; }
+  function open_(x, n) { return x.trophy ? !!earned()[x.trophy] : !x.stars || n >= x.stars; }
+  function trophyName(id) { var t = TROPHIES.filter(function (x) { return x.id === id; })[0]; return t ? t.name : id; }
   function shared() { var s = get('cards365:look'); return s && typeof s === 'object' ? s : null; }
   function remember(felt, back) { put('cards365:look', { felt: felt, back: back }); }
   function newlyUnlocked() {
@@ -171,6 +219,7 @@
       var b = t.closest ? t.closest('[data-lk]') : null; if (!b) return;
       var kind = b.getAttribute('data-lk'), id = b.getAttribute('data-id'), x = find(kind, id), n = stars();
       if (!x) return;
+      if (!open_(x, n) && x.trophy) { document.getElementById('lkMsg').textContent = 'Win the “' + trophyName(x.trophy) + '” trophy to use ' + x.name + ' – ' + TROPHIES.filter(function (q) { return q.id === x.trophy; })[0].how; return; }
       if (!open_(x, n)) { document.getElementById('lkMsg').textContent = 'Win ' + x.stars + ' Journey stars to use ' + x.name + ' – you have ' + n + '. Every card game’s Journey counts.'; return; }
       if (kind === 'felt') C.felt = id; else C.back = id;
       remember(C.felt, C.back);
@@ -180,10 +229,10 @@
     });
     document.addEventListener('keydown', function (e) { if (!el.hidden && e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); } }, true);
   }
-  function lock(x) { return '<span class="lk-lock">&#128274; &#9733; ' + x.stars + '</span>'; }
+  function lock(x) { return x.trophy ? '<span class="lk-lock">&#128274; &#127942; ' + esc(trophyName(x.trophy)) + '</span>' : '<span class="lk-lock">&#128274; &#9733; ' + x.stars + '</span>'; }
   function draw() {
     var n = stars();
-    document.getElementById('lkStars').innerHTML = '&#9733; ' + n + ' Journey ' + (n === 1 ? 'star' : 'stars') + ' &middot; win stars to unlock the specials';
+    document.getElementById('lkStars').innerHTML = '&#9733; ' + n + ' Journey ' + (n === 1 ? 'star' : 'stars') + ' &middot; win stars and trophies to unlock the specials';
     document.getElementById('lkBacks').innerHTML = BACKS.map(function (b) {
       var ok = open_(b, n);
       return '<button type="button" class="lk-tile' + (ok ? '' : ' lk-locked') + '" data-lk="back" data-id="' + b.id + '" aria-pressed="' + (b.id === C.back) + '"' + (ok ? '' : ' aria-label="' + esc(b.name) + ', locked: ' + b.stars + ' Journey stars"') + '>'
@@ -208,5 +257,5 @@
   }
 
   window.Looks = { tables: TABLES, backs: BACKS, open: open, close: close, isOpen: function () { return !!(el && !el.hidden); },
-    shared: shared, remember: remember, known: known, stars: stars, newlyUnlocked: newlyUnlocked };
+    shared: shared, remember: remember, known: known, stars: stars, newlyUnlocked: newlyUnlocked, trophies: TROPHIES, earned: earned, award: award };
 })();
