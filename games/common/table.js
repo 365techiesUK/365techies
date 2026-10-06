@@ -1537,26 +1537,35 @@
     // ---- play it like an app (owner, 6 Oct 2026: "do the install like an app"): the game's own manifest opens it full
     // screen from the home screen. Android: Chrome's own install prompt; otherwise the steps for this browser.
     var MAN = document.querySelector('link[rel="manifest"]'), deferredApp = null, UA = navigator.userAgent || '';
+    // Samsung Internet gets no manifest (its own app packages trip Play Protect's "built for an older version of Android"
+    // block - Samsung's bug, 6 Oct 2026); the page still counts as installable, through Chrome
+    var SAMSUNG = /SamsungBrowser/i.test(UA), APPABLE = !!MAN || (SAMSUNG && !!document.querySelector('meta[name="mobile-web-app-capable"]'));
     var IOS = /iPad|iPhone|iPod/.test(UA) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1), INAPP = /FBAN|FBAV|FB_IAB|FBIOS|Instagram|Messenger/i.test(UA);
     var APPMODE = !!(window.matchMedia && (matchMedia('(display-mode: fullscreen)').matches || matchMedia('(display-mode: standalone)').matches)) || navigator.standalone === true;
     if (APPMODE) document.body.classList.add('app365');
     function appHave() { try { return localStorage.getItem('cards365:app:' + D.id) === '1'; } catch (e) { return false; } }
     function appSnoozed() { try { return Date.now() - (+localStorage.getItem('cards365:appno') || 0) < 14 * 864e5; } catch (e) { return false; } }
-    function appOK() { return !!MAN && !APPMODE && !appHave() && !!(window.matchMedia && matchMedia('(pointer: coarse)').matches); }
+    function appOK() { return APPABLE && !APPMODE && !appHave() && !!(window.matchMedia && matchMedia('(pointer: coarse)').matches); }
     function appDone() { try { localStorage.setItem('cards365:app:' + D.id, '1'); } catch (e) {} $('bApp').hidden = true; $('wApp').hidden = true; }
     var SHARE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="Share"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
     function appSteps() {
       if (INAPP) return 'You&rsquo;re in Facebook&rsquo;s built-in browser, which can&rsquo;t do this. Tap <b>&#8943;</b> at the top right, choose <b>' + (IOS ? 'Open in Safari' : 'Open in browser') + '</b>, then come back here.';
       if (IOS) return '1. Tap the <b>Share</b> button ' + SHARE + '.<br>2. Scroll down and tap <b>Add to Home Screen</b>.<br>3. Tap <b>Add</b>.';
-      if (/SamsungBrowser/i.test(UA)) return 'Tap the <b>menu</b> (&#9776;, bottom right), then <b>Add page to</b> &rarr; <b>Home screen</b>.';
+      if (SAMSUNG) return 'Samsung&rsquo;s own browser can&rsquo;t add it as an app at the moment &mdash; Google Play Protect wrongly blocks the app it makes (a known Samsung fault, not a risk to you). Tap <b>Open in Chrome</b> below and add it from there: it opens full screen, like an app.'
+        + '<br><br><small>No Chrome? A simple shortcut works too: tap the <b>menu</b> (&#9776;, bottom right), then <b>Add page to</b> &rarr; <b>Home screen</b>.</small>';
       if (/Android/i.test(UA)) return 'Tap <b>&#8942;</b> at the top right of Chrome, then <b>Add to home screen</b> (or <b>Install app</b>) and <b>Install</b>.';
       return 'Use your browser&rsquo;s menu to <b>install</b> this page as an app.';
     }
     function addApp() {
       if (deferredApp) { var dp = deferredApp; deferredApp = null; try { dp.prompt(); dp.userChoice.then(function (r) { if (r && r.outcome === 'accepted') appDone(); }); } catch (e) {} return; }
       $('appWhy').textContent = D.title + ' on your home screen: one tap opens it full screen, with no address bar - like an app.';
-      $('appHow').innerHTML = appSteps(); openD('dApp');
+      $('appHow').innerHTML = appSteps(); $('appChrome').hidden = !SAMSUNG; openD('dApp');
     }
+    // this page in Chrome (an Android intent; if Chrome isn't installed, the same page again in this browser)
+    $('appChrome').onclick = function () {
+      var here = 'https://' + location.host + location.pathname + '?src=samsung';
+      location.href = 'intent://' + location.host + location.pathname + '?src=samsung#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(here) + ';end';
+    };
     $('bApp').hidden = !appOK();
     $('bApp').onclick = addApp;
     $('wAppAdd').onclick = function () { closeSheets(); addApp(); };
@@ -1723,7 +1732,7 @@
           + '<div class="row"><button class="btn go wide" type="button" id="wAgain">Play again</button><button class="btn wide" type="button" id="wShare">Challenge a friend</button><button class="btn wide" type="button" id="wDaily">Today&rsquo;s deal</button><button class="btn wide" type="button" id="wStats">My scores</button></div>')
         + sheet('dStreak', 'Daily streak', '<div class="stk"><div class="stkbig">' + ICON.flame + '<b id="kN">0</b></div><p class="stksub" id="kSub"></p><div class="week" id="kWeek"></div><p class="soft" id="kNote"></p>'
           + '<div class="row"><button class="btn go wide" type="button" id="kPlay">Play today&rsquo;s deal</button></div></div>')
-        + sheet('dApp', 'Play it like an app', '<p class="soft" id="appWhy"></p><p class="apphow" id="appHow"></p><div class="row"><button class="btn wide" type="button" data-close>OK</button></div>')
+        + sheet('dApp', 'Play it like an app', '<p class="soft" id="appWhy"></p><p class="apphow" id="appHow"></p><div class="row"><button class="btn go wide" type="button" id="appChrome" hidden>Open in Chrome</button><button class="btn wide" type="button" data-close>OK</button></div>')
         + sheet('dSprint', 'Time\u2019s up!', '<p class="soft" id="spSub"></p><div class="tiles"><div class="tile"><b id="spCards">0</b><span>Cards up</span></div></div><div id="spHof"></div>'
           + '<div class="row"><button class="btn go wide" type="button" id="spNew">New game</button><button class="btn wide" type="button" id="spHofB">Hall of Fame</button></div>')
         + sheet('dStats', 'My scores', (D.hof ? '<button class="btn hofbtn wide" type="button" id="sHof" style="width:100%;margin:2px 0 12px">&#127942; The Hall of Fame<small>Today&rsquo;s fastest, this week&rsquo;s best, all time</small></button>' : '') + '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere unless you join the Hall of Fame.</p><div class="tiles" id="sTiles"></div><h3 style="margin:16px 0 0;font-size:18px">Today&rsquo;s deal this week</h3><div class="week" id="sWeek"></div><div class="tiles" id="sBest"></div>'
