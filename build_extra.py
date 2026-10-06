@@ -1124,7 +1124,7 @@ def pcm_landing():
                       faqpage(s, _faqs)])
     add(slug=slug, title="Free PC Health Check for Windows | 365 PC Manager",
         desc=desc, og_title="Free PC Health Check - 365 PC Manager | 365 Techies", schema=schema, content=content,
-        og_image=bp.SITE + "/images/pcm-og-v28.jpg")
+        og_image=bp.SITE + "/images/pcm-og-v35.jpg")
 pcm_landing()
 
 # ===================================================== 365 WIFI OPTIMIZER (live signal finder)
