@@ -1258,6 +1258,70 @@ const MODELS = {
     k.cyl(3.0, 3.6, 30, 14, 2, 0, 128, '#f6f4ee').cyl(3.3, 3.3, 0.6, 14, 2, 30, 128, '#2a2a2a').cyl(2.4, 2.4, 3.0, 12, 2, 30.6, 128, '#e8eef0', 0, 0, 'glow').cone(2.8, 2.2, 12, 2, 33.6, 128, '#2a2a2a');   // the lighthouse
     k.box(4, 7, 4, 2, 0, 112, '#b0282a').box(4.6, 0.6, 4.6, 2, 7, 112, '#2a2a2a');   // the low light, red
   },
+  lulcastle(k) {   // Lulworth Castle in its park (its face +Z, to the road): a square hunting lodge of pale stone, three storeys, a big round
+    // tower at each corner, battlements all round, tall mullioned windows; the lawn, a gravel sweep and great cedars about it
+    const S = '#e6dcc4', D = '#2c3238', r = rnd(5500), W = 26, H = 17, TR = 5.4, TH = 21;
+    k.blob(40, 0, -6.6, 0, '#5e8a3c', 1.6, 0.18, 1.3, 5501, { smooth: true });   // the lawn rising to it
+    k.box(W, H, W, 0, 0, 0, S, 0, 0, 0, 'stone');
+    const merl = (x, z, ry) => k.box(1.0, 1.1, 0.7, x, H, z, S, ry, 0, 0, 'stone');
+    for (let i = 0; i < 11; i++) { const u = -W / 2 + 2.6 + i * 2.1; merl(u, W / 2 - 0.3, 0); merl(u, -W / 2 + 0.3, 0); merl(W / 2 - 0.3, u, Math.PI / 2); merl(-W / 2 + 0.3, u, Math.PI / 2); }
+    for (const [sx, sz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+      const x = sx * W / 2, z = sz * W / 2;
+      k.cyl(TR, TR + 0.2, TH, 16, x, 0, z, S, 0, 0, 'stone').cyl(TR + 0.35, TR + 0.35, 0.5, 16, x, TH - 0.5, z, shade(S, -0.06), 0, 0, 'stone');
+      for (let m = 0; m < 10; m++) { const a = m / 10 * 6.283; k.box(1.1, 1.2, 0.8, x + Math.sin(a) * (TR - 0.1), TH, z + Math.cos(a) * (TR - 0.1), S, a, 0, 0, 'stone'); }
+      for (const y of [4, 9.5, 15]) k.box(1.2, 2.4, 0.2, x, y, z + TR + 0.02, D, 0, 0, 0, 'shiny').box(0.2, 2.4, 1.2, x + sx * (TR + 0.02), y, z, D, 0, 0, 0, 'shiny');   // tower windows
+    }
+    for (const y of [3.2, 8.4, 13.4]) for (let i = 0; i < 4; i++) { const x = -7.5 + i * 5; k.box(2.4, 3.0, 0.15, x, y, W / 2 + 0.05, S, 0, 0, 0, 'stone').box(2.0, 2.6, 0.17, x, y + 0.2, W / 2 + 0.06, D, 0, 0, 0, 'shiny').box(0.16, 2.6, 0.2, x, y + 0.2, W / 2 + 0.08, S); }   // the mullioned windows
+    k.box(4, 4.6, 0.3, 0, 0, W / 2 + 0.1, '#4a3a2a').box(5, 0.6, 0.4, 0, 4.6, W / 2 + 0.15, S, 0, 0, 0, 'stone');   // the doorway
+    for (let i = 0; i < 4; i++) k.box(9 - i * 0.6, 0.35, 1.2, 0, i * 0.35, W / 2 + 1 + (3 - i) * 1.0, '#d8ceb4', 0, 0, 0, 'stone');   // the steps
+    k.blob(16, 0, -0.6, W / 2 + 18, '#c9bfa6', 1.6, 0.04, 0.9, 5502, { smooth: true });   // the gravel sweep
+    for (const [x, z, sc] of [[-44, -6, 1.3], [40, 10, 1.15], [-34, 26, 1.0], [46, -22, 1.2]]) {   // cedars: a stout trunk, broad flat layers
+      k.cyl(0.8 * sc, 1.2 * sc, 7 * sc, 7, x, 0, z, '#5a4632');
+      for (let l = 0; l < 4; l++) k.blob(7.5 * sc - l * 1.3 * sc, x + (r() - 0.5) * 2, (5.5 + l * 3) * sc, z + (r() - 0.5) * 2, ['#2c4a32', '#34563a', '#2a4430'][l % 3], 1.5, 0.32, 1.3, 5510 + l + Math.round(x));
+    }
+  },
+  rangeflag(k, v) {   // the army ranges by the road: a tall white pole flying the red flag (firing today), a red-and-white board at its foot (blank)
+    k.cyl(0.08, 0.1, 8.5, 6, 0, 0, 0, '#f2f2ee').box(0.04, 1.5, 2.4, 0, 6.8, 1.25, '#d42a2a', 0, 0.12 * (v % 2 ? 1 : -1), 0);
+    if (v % 3 === 0) k.box(0.1, 1.6, 0.1, -0.9, 0, 0, '#9aa0a6').box(0.1, 1.6, 0.1, 0.9, 0, 0, '#9aa0a6').box(2.3, 1.4, 0.08, 0, 1.5, 0.05, '#c62828').box(1.9, 0.9, 0.1, 0, 1.75, 0.08, '#f4f4f0');
+  },
+  tankhulk(k, v) {   // an old tank left on the ranges as a target: a rusting olive hull on its tracks, the turret turned, churned ground round it
+    const r = rnd(5600 + v), O = ['#5e5a3a', '#6a5a3a', '#57553a'][v % 3], RU = '#8a5a32', ty = (r() - 0.5) * 1.6;
+    k.blob(7, 0, -2.0, 0, '#7a6a4a', 1.4, 0.32, 1.1, 5610 + v, { smooth: true });
+    for (const sd of [-1, 1]) k.box(0.9, 1.1, 7.4, sd * 1.75, 0, 0, '#3a3630').box(0.95, 0.35, 7.6, sd * 1.75, 1.05, 0, '#2e2a26');   // the tracks
+    k.box(3.2, 1.1, 6.6, 0, 0.8, 0, O).box(3.0, 0.5, 2.2, 0, 1.35, 2.6, O, 0, -0.35, 0).box(1.2, 0.6, 1.4, 0.6, 1.6, -1.4, RU);   // the hull, its sloped front, rust
+    k.put(new THREE.CylinderGeometry(1.4, 1.6, 0.9, 10), O, 0, 2.35, -0.4, 0, ty, 0).roll(0.11, 4.2, 6, Math.sin(ty) * 2.4, 2.4, -0.4 + Math.cos(ty) * 2.4, '#4a463a');   // the turret, the gun
+    k.box(1.0, 0.5, 1.0, -0.8 + r(), 2.7, -0.6, RU);
+  },
+  lulcottage(k, v) {   // West Lulworth (its face +Z): cottages of whitewash or grey-cream stone under steep thatch (a slate roof on some),
+    // little windows peeping from the thatch, a stone chimney, a low wall and flowers in front; v 5: the thatched inn, longer, its sign
+    // (blank) and benches out
+    const inn = v % 6 === 5, Wl = ['#f6f2e8', '#d8d0bc', '#f2ede2', '#e4dccb', '#f6f2e8', '#efe8da'][v % 6], slate = v % 6 === 3, T = slate ? '#5a5e66' : ['#c8a868', '#bc9c5c', '#d0b070'][v % 3];
+    const len = inn ? 15 : [9, 10.5, 8.5, 11, 9.5][v % 5], r = rnd(5700 + v), stone = Wl === '#d8d0bc' || Wl === '#e4dccb';
+    k.box(len, 4.0, 6.4, 0, 0, 0, Wl, 0, 0, 0, stone ? 'stone' : 'lit');
+    k.prism(7.6, 3.9, len + 0.9, 0, 3.8, 0, T, Math.PI / 2);   // the roof, steep
+    if (!slate) k.box(len + 0.9, 0.4, 0.7, 0, 7.55, 0, shade(T, -0.2));   // the thatch's ridge
+    const n = Math.max(2, Math.round(len / 3.4));
+    for (let i = 0; i < n; i++) { const x = -len / 2 + len * (i + 0.5) / n;
+      if (i !== (n >> 1)) k.box(1.1, 1.1, 0.1, x, 1.1, 3.22, '#f4f1ea').box(0.9, 0.9, 0.12, x, 1.2, 3.23, '#2a3440', 0, 0, 0, 'shiny');
+      k.box(1.3, 1.0, 1.3, x, 4.3, 3.0, slate ? Wl : T).box(0.9, 0.7, 0.12, x, 4.4, 3.66, '#2a3440', 0, 0, 0, 'shiny'); }   // windows, and the little ones up in the roof
+    k.box(1.0, 2.1, 0.12, -len / 2 + len * ((n >> 1) + 0.5) / n, 0, 3.23, ['#2f5a3a', '#1d3557', '#7a1f2b', '#4a3a2a'][v % 4]);
+    k.box(1.3, 2.6, 1.2, len / 2 - 1.2, 6.3, -0.6, '#b8ae98', 0, 0, 0, 'stone');
+    k.box(len + 1, 0.9, 0.5, 0, 0, 5.4, '#c8beaa', 0, 0, 0, 'stone');   // the front wall
+    for (let i = 0; i < 6; i++) k.ball(0.26, -len / 2 + 0.8 + r() * (len - 1.6), 1.05, 5.4, ['#e63946', '#ff7eb6', '#ffd23f', '#9b5de5'][i % 4], 1, 1, 1, 'lit', 6);
+    if (inn) { k.box(0.1, 0.1, 1.2, len / 2 - 0.4, 3.2, 4.1, '#1a1a1a').box(0.08, 1.2, 0.9, len / 2 - 0.4, 1.9, 4.4, '#5a2a1a'); for (const x of [-4, 3]) k.box(2.4, 0.45, 0.6, x, 0.45, 4.4, '#6a4e34').box(2.4, 0.08, 1.5, x, 0.85, 4.4, '#8a6a48'); }
+  },
+  lulcove(k) {   // Lulworth Cove from its beach (+X out to sea, the beach at the near side, y 0 the sea): the near-round bay in its ring of chalk
+    // and limestone cliffs, turf on top, the narrow mouth to the open sea at the far side; boats on the shingle and at their moorings
+    const r = rnd(5800), cx = 110, R = 92, chalk = '#ece6d6', lime = '#cfc6ae', turf = '#6e9446';
+    for (let i = 0; i < 26; i++) {   // the ring, both sides of the bay round to the mouth (the near side left for the beach, the far side open)
+      const side = i % 2 ? 1 : -1, j = i >> 1, a = side * (0.62 + j * 0.19), x = cx - Math.cos(a) * R, z = Math.sin(a) * R, back = j > 9;
+      const h = back ? 2.0 - (j - 9) * 0.35 : 1.15 + Math.sin(j / 9 * Math.PI) * 0.75;
+      k.blob(15.5 + r() * 3.5, x - Math.cos(a) * 8, -4, z + Math.sin(a) * 8, turf, 1.2, h * 1.15, 1.2, 5810 + i, { rock: back ? lime : chalk, wet: true, smooth: true });
+    }
+    k.blob(26, cx - R - 2, -1.6, 0, '#cbbf9e', 0.9, 0.08, 2.3, 5850, { smooth: true });   // the shingle beach round the near side
+    for (let i = 0; i < 7; i++) { const a = (r() - 0.5) * 1.6; k.ball(1, cx - Math.cos(a) * (R - 6) + 2, 0.7, Math.sin(a) * (R - 6), ['#f4f4f0', '#2a6ad0', '#c0392b', '#f2c94c'][i % 4], 1.2, 0.5, 2.6, 'lit', 8); }   // boats pulled up
+    for (let i = 0; i < 9; i++) { const x = cx - 40 + r() * 80, z = (r() - 0.5) * 100; k.ball(1, x, 0.25, z, ['#f4f4f0', '#1d3557', '#f4f4f0'][i % 3], 1.3, 0.45, 3.2, 'lit', 8); if (i % 3 === 0) k.cyl(0.06, 0.08, 8, 4, x, 0.4, z, '#d8d8d8'); }   // boats at their moorings
+  },
   balloon(k, v) {   // a hot-air balloon, far off over the land
     const c = [['#e63946', '#ffd23f'], ['#1d7fd6', '#ffffff'], ['#2a9d8f', '#f4a261'], ['#9b5de5', '#ffd23f']][v % 4];
     for (let i = 0; i < 10; i++) k.put(new THREE.SphereGeometry(8, 3, 14, i * Math.PI / 5, Math.PI / 5), c[i % 2], 0, 16, 0, 0, 0, 0, 1, 1.22, 1);

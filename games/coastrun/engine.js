@@ -52,7 +52,7 @@
     { key: 'purbeck', name: 'CORFE CASTLE', seed: 2207, t: 70, len: 730, curvy: 0.75, hilly: 1, sea: 0, band: [14, 95], bands: [[0, [10, 26]], [0.3, [22, 34]], [0.62, [30, 90]]], mix: [5, 3, 2, 0, 3, 3, 1, 1], feat: { tunnel: 1, over: ['viaduct'] } },
     { key: 'swanage', name: 'OLD HARRY ROCKS', seed: 2903, t: 70, len: 730, curvy: 0.7, hilly: 0.75, sea: -1, band: [22, 60], bands: [[0, [3, 9]], [0.26, [24, 40]], [0.62, [24, 40]], [0.7, [3, 9]]], shores: [26, 30, 34, 38, 44, 30, 36, 28], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { over: ['viaduct'] } },   // (bands: low through Studland, up over the downs, down into Swanage)
     { key: 'forest', name: 'NEW FOREST', seed: 3301, t: 70, len: 730, curvy: 0.85, hilly: 0.55, sea: 0, band: [10, 50], bands: [[0, [10, 22]], [0.3, [14, 26]], [0.64, [12, 40]]], mix: [5, 3, 2, 0, 3, 2, 1, 1], feat: { over: ['footbridge'] } },
-    { key: 'jurassic', name: 'DURDLE DOOR', seed: 4409, t: 70, len: 740, curvy: 0.8, hilly: 0.85, sea: -1, band: [30, 80], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { tunnel: 1 } },
+    { key: 'jurassic', name: 'DURDLE DOOR', seed: 4409, t: 70, len: 740, curvy: 0.8, hilly: 0.85, sea: -1, band: [30, 80], bands: [[0, [18, 30]], [0.18, [30, 60]], [0.36, [3, 9]], [0.64, [40, 80]]], shoreZ: [[0, [100, 110, 120, 95, 105, 115, 100, 110]], [0.18, [60, 70, 80, 65, 75, 70, 60, 80]], [0.36, [20, 22, 24, 26, 22, 20, 24, 22]], [0.64, [26, 30, 34, 38, 30, 28, 34, 32]]], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { tunnel: 1 } },   // (in four parts: Lulworth Castle's park, the ranges, West Lulworth and the Cove, the downs to the Door)
     { key: 'weymouth', name: 'WEYMOUTH BAY', seed: 4513, t: 68, len: 720, curvy: 0.6, hilly: 0.35, sea: -1, band: [4, 14], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: { bridge: 1, over: ['banner'] } },
     { key: 'harbour', name: 'POOLE HARBOUR', seed: 5503, t: 68, len: 720, curvy: 0.6, hilly: 0.12, sea: 1, band: [3, 8], shores: [16.5, 17, 18, 17.5, 16.5, 19, 18, 17], mix: [5, 4, 3, 2, 1, 0, 2, 2], feat: { bridge: 1 } },
     { key: 'lymington', name: 'LYMINGTON', seed: 5617, t: 68, len: 720, curvy: 0.65, hilly: 0.3, sea: 1, band: [4, 13], bands: [[0, [4, 9]], [0.3, [3, 7]], [0.64, [3, 6]]], shoreZ: [[0, [17, 18, 19, 20, 18, 17.5, 19, 21]], [0.3, [18, 19, 20, 22, 19, 18.5, 21, 20]], [0.64, [44, 50, 56, 62, 48, 54, 66, 52]]], mix: [5, 4, 2, 1, 3, 1, 0, 3], feat: { bridge: 1 } },   // (shoreZ: the shore for each part of the stage)
@@ -367,13 +367,23 @@
           if (k % 230 === 115) put(W, i, 'forestsign', 10.4, 0.3);
           break;
         }
-        case 'jurassic':   // Durdle Door at sunset: downs, gorse and rocks; chalk cliffs, a lighthouse and the stone arch out at sea
+        case 'jurassic': {   // in four parts (world3d.js ZONES): Lulworth Castle in its park, the army ranges, West Lulworth and its cove, then over
+          // the downs to Durdle Door at sunset
+          var fj = k / Math.max(1, to - from);
+          if (fj < 0.18) { if (r() < 0.012) put(W, i, 'sheep', 18 + r() * 40, 0, { v: (r() * 2) | 0 }); break; }   // (the park's trees: world3d.js; the castle: below)
+          if (fj < 0.36) {   // the ranges: the red flags flying along the road, either side, gorse on the verges
+            if (k % 26 === 13) { x = ((k / 26) | 0) % 2 ? 15.6 : -15.6; if (land(s, x)) put(W, i, 'rangeflag', x, 0, { v: (k / 26) | 0 }); }
+            if (r() < 0.05) put(W, i, 'gorse', 11.5 + r() * 2.6, 0.8, { soft: true });
+            break;
+          }
+          if (fj < 0.64) { lamps(10, 0, false); break; }   // West Lulworth (its cottages: world3d.js; the cove: below)
           if (r() < 0.06) put(W, i, 'gorse', 11.5 + r() * 20, 0.8, { soft: true });
           if (r() < 0.035) { x = -(11.5 + r() * Math.max(2, sh - 14)); if (land(s, x)) put(W, i, 'gorse', x, 0.8, { soft: true }); }
           if (r() < 0.012) { x = (r() < 0.5 ? -1 : 1) * (12 + r() * 12); if (land(s, x)) put(W, i, 'rock', x, 1.1, { v: (r() * 3) | 0 }); }
           if (r() < 0.035) put(W, i, 'sheep', 18 + r() * 45, 0, { v: (r() * 2) | 0 });
           onWater('stack', 25, 120, 0.01, (r() * 3) | 0);
           break;
+        }
         case 'weymouth':   // the seafront: a long terrace of painted houses on the right, the beach, the clock tower and sailing boats
           lamps(8, 0, true);
           if (k % 3 === 0 && r() < 0.8) put(W, i, 'terrace', 22 + r() * 3, 0, { v: (k / 3) % 6 });
@@ -458,7 +468,13 @@
       putAt(W, fa - 30, 'haven', 31, 0, {}); putAt(W, fa - 62, 'ferryqueue', 17.4, 0, {});
     }
     if (S.key === 'swanage') { mark('needles', 0.33, function (h) { return -(Math.max(h, 18) + 80); }); mark('needles', 0.66, function (h) { return -(Math.max(h, 18) + 80); }); }
-    if (S.key === 'jurassic') { mark('arch', 0.68, function (h) { return -(Math.max(h, 18) + 70); }); }   // (no lighthouse: there's none at Durdle Door)
+    if (S.key === 'jurassic') {   // Lulworth Castle across its park; old tanks on the ranges, left there as targets; the Cove below West Lulworth;
+      // Durdle Door (no lighthouse: there's none there)
+      var lj = straightest(0.04, 0.14, 60, 10); if (lj >= 0) putAt(W, lj, 'lulcastle', 72, 0, {});
+      for (var tk = 0; tk < 4; tk++) mark('tankhulk', 0.21 + tk * 0.035, function (h) { var x = 22 + (tk * 7) % 12; return tk % 2 && h > x + 8 ? -x : x; }, tk);   // (just past the boundary, where you see them from the road)
+      var cv = straightest(0.46, 0.58, 50, 10); if (cv >= 0) putAt(W, cv, 'lulcove', -(Math.max(segAt(W, cv).sh, 18) - 2), 0, {});
+      mark('arch', 0.68, function (h) { return -(Math.max(h, 18) + 70); });
+    }
     if (S.key === 'weymouth') { mark('clock', 0.4, function (h) { return -(Math.min(h, 22) - 4); }); }
     if (S.key === 'purbeck') {   // in the village: the old stone pub on the square, the steam train standing at the station (the castle itself is the
       // place's landmark painting, high on its hill over the village)
