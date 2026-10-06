@@ -442,6 +442,13 @@
     + '@media (max-width:379px){body.fold365 .info .chip:nth-child(2){display:none}}'   // a narrow phone, folded: Moves gives way to the flame
     + '.stk{text-align:center}.stkbig{display:inline-flex;align-items:center;gap:6px;font:800 54px/1 "Clash Display",Archivo,sans-serif;color:var(--sheet-ink)}.stkbig svg{width:56px;height:56px;color:#ff8a1f}'
     + '.stksub{margin:4px 0 6px;font-weight:700;color:var(--sheet-ink)}#kNote{margin:10px 0 4px}'
+    // My code (6 Oct 2026)
+    + '.mcbox{display:grid;gap:4px;justify-items:center;margin:10px 0;padding:14px;border-radius:14px;background:#eef6ef;text-align:center}.mcbox span{font-size:14px;color:var(--sheet-soft)}'
+    + '.mcbox b{font:800 34px/1.1 "Clash Display",Archivo,sans-serif;letter-spacing:.06em;color:var(--sheet-ink)}.mcbox small{font-size:13px;color:var(--sheet-soft);max-width:30em}'
+    + '.mcbox .linkb,.mcin+.mcmsg .linkb{border:0;background:none;padding:4px 0 0;color:var(--sheet-soft);font:600 14px Archivo,sans-serif;text-decoration:underline;cursor:pointer}'
+    + '.mcin{margin:14px 0 4px}.mcin label{display:block;font-weight:700;margin:0 0 6px;color:var(--sheet-ink)}.mcrow{display:flex;gap:8px;flex-wrap:wrap}'
+    + '.mcrow input{flex:1 1 10em;min-width:0;min-height:46px;padding:0 12px;border:2px solid var(--sheet-line);border-radius:12px;font:700 20px Archivo,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--sheet-ink);background:#fff}'
+    + '.mcmsg{min-height:1.3em;margin:8px 0 0;font-size:15px;color:var(--sheet-ink)}'
     // trophies (6 Oct 2026)
     + '.trol{list-style:none;margin:6px 0 10px;padding:0;display:grid;gap:8px}.tro{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:10px 12px;border-radius:14px;background:#f0ede3;color:var(--sheet-soft)}'
     + '.tro svg{width:30px;height:30px;color:#b9b2a0}.tro b{display:block;color:var(--sheet-ink);font-size:16px}.tro span{display:block;font-size:14px;line-height:1.35}.tro small{display:block;margin-top:3px;font-size:13px;color:#6a4b00}'
@@ -1245,6 +1252,7 @@
       var rec = recordWin(secs);
       persist(); bar();
       sfx('win'); buzz([16, 60, 16, 60, 30, 80, 140]);   // the win: a little drum roll in the hand
+      codeSync();   // My code: the saved copy follows every win
       cascade(function () { showWin(rec); });
     }
     function recordWin(secs) {
@@ -1436,6 +1444,7 @@
     }
     function tile(v, label) { return '<div class="tile"><b>' + esc(v) + '</b><span>' + esc(label) + '</span></div>'; }
     function openStats() {
+      codeDraw();
       if ($('sTroS')) { var tc = troCount(); $('sTroS').textContent = tc.n + ' of ' + tc.of + ' won'; }
       var rate = ST.played ? Math.round(100 * ST.won / ST.played) + '%' : '–', days = 0, k;
       for (k in ST.daily) if (ST.daily[k] && ST.daily[k].won) days++;
@@ -1512,6 +1521,55 @@
     }
     if ($('bTro')) { $('bTro').hidden = !(window.Looks && Looks.trophies); $('bTro').onclick = openTrophies; }
     if ($('sTro')) $('sTro').onclick = openTrophies;
+
+    // ---- My code (owner, 6 Oct 2026): progress to another phone or browser - a code to type in, no sign-in
+    var CODE_API = '/api/games-code.php', CODE_RX = /^(sol365|fc365|sp365|tp365|py365|he365|gr365|cr365|wh365|inv365|bb365|ecl365|coast365|cards365|games365):[a-z0-9:_-]{1,40}$|^hof365:player$/;
+    var CODE_LOCAL = { 'games365:code': 1, 'games365:app': 1 };   // this phone's own: never sent, never replaced
+    function myCode() { try { return localStorage.getItem('games365:code') || ''; } catch (e) { return ''; } }
+    function codeKeys() { var o = []; try { for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); if (k && CODE_RX.test(k) && !/:game$/.test(k) && !CODE_LOCAL[k]) o.push(k); } } catch (e) {} return o; }
+    function codeData() { var o = {}; codeKeys().forEach(function (k) { try { o[k] = localStorage.getItem(k); } catch (e) {} }); return o; }
+    function codeCall(body) { return fetch(CODE_API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), credentials: 'same-origin' }).then(function (r) { return r.json().then(function (j) { j._s = r.status; return j; }); }); }
+    var codeT = 0;
+    function codeSync() { var c = myCode(); if (!c) return; clearTimeout(codeT); codeT = setTimeout(function () { codeCall({ action: 'save', code: c, data: codeData() }).then(function (j) { if (j && j.error === 'no_such_code') { try { localStorage.removeItem('games365:code'); } catch (e) {} } }).catch(function () {}); }, 1200); }
+    function codeMsg(t) { $('mcMsg').textContent = t || ''; }
+    function codeDraw() { var c = myCode(); $('mcHave').hidden = !c; $('mcGetRow').hidden = !!c; $('mcCode').textContent = c; if ($('sCodeS')) $('sCodeS').textContent = c ? c : 'take your scores to another phone'; }
+    var codeAsk = '';
+    function openCode() { codeAsk = ''; codeMsg(''); $('mcIn').value = ''; codeDraw(); openD('dCode'); }
+    $('sCode').onclick = openCode;
+    $('mcGet').onclick = function () {
+      codeMsg('Making your code…'); $('mcGet').disabled = true;
+      codeCall({ action: 'new', data: codeData() }).then(function (j) {
+        $('mcGet').disabled = false;
+        if (!j || !j.code) { codeMsg(j && j.error === 'too_many' ? 'Too many tries just now - have another go in an hour.' : 'Sorry, that didn’t work - check you’re online and try again.'); return; }
+        try { localStorage.setItem('games365:code', j.code); } catch (e) {}
+        codeDraw(); codeMsg('Done - write it down, or take a photo of it.');
+      }).catch(function () { $('mcGet').disabled = false; codeMsg('Sorry, that didn’t work - check you’re online and try again.'); });
+    };
+    $('mcLoad').onclick = function () {
+      var c = ($('mcIn').value || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (c.length !== 8) { codeMsg('A code has 8 letters and numbers, like 7K3P-9QXA.'); return; }
+      var pretty = c.slice(0, 4) + '-' + c.slice(4);
+      if (codeAsk !== c) { codeAsk = c; codeMsg('This replaces the scores on this phone with the ones saved under ' + pretty + '. Tap “Bring my scores here” again to go ahead.'); return; }
+      codeMsg('Fetching your scores…'); $('mcLoad').disabled = true;
+      codeCall({ action: 'load', code: c }).then(function (j) {
+        $('mcLoad').disabled = false;
+        if (!j || !j.data) { codeAsk = ''; codeMsg(j && j.error === 'too_many' ? 'Too many tries just now - have another go in an hour.' : 'No scores are saved under ' + pretty + ' - check the code and try again.'); return; }
+        try {
+          codeKeys().forEach(function (k) { localStorage.removeItem(k); });
+          for (var k in j.data) if (CODE_RX.test(k) && !/:game$/.test(k) && !CODE_LOCAL[k] && typeof j.data[k] === 'string') localStorage.setItem(k, j.data[k]);
+          localStorage.setItem('games365:code', j.code || pretty);
+        } catch (e) { codeMsg('Sorry, this phone wouldn’t store them - is it in private browsing?'); return; }
+        codeMsg('Your scores are here - starting again with them…');
+        setTimeout(function () { location.reload(); }, 900);
+      }).catch(function () { $('mcLoad').disabled = false; codeMsg('Sorry, that didn’t work - check you’re online and try again.'); });
+    };
+    $('mcForget').onclick = function () {
+      var c = myCode(); if (!c) return;
+      if (codeAsk !== 'forget') { codeAsk = 'forget'; codeMsg('Tap “Stop using this code” again: the copy saved under ' + c + ' is deleted; your scores stay on this phone.'); return; }
+      codeCall({ action: 'forget', code: c }).catch(function () {});
+      try { localStorage.removeItem('games365:code'); } catch (e) {}
+      codeAsk = ''; codeDraw(); codeMsg('Done - that code no longer works.');
+    };
     if ($('troLooks')) $('troLooks').onclick = function () { if ($('sLooks')) $('sLooks').click(); };
     $('bSet').onclick = function () { syncControls(); openD('dSet'); };
     $('bHelp').onclick = function () { openD('dHelp'); };
@@ -1593,6 +1651,7 @@
       if (INAPP) return 'You&rsquo;re in Facebook&rsquo;s built-in browser, which can&rsquo;t do this. Tap <b>&#8943;</b> at the top right, choose <b>' + (IOS ? 'Open in Safari' : 'Open in browser') + '</b>, then come back here.';
       if (IOS) return '1. Tap the <b>Share</b> button ' + SHARE + '.<br>2. Scroll down and tap <b>Add to Home Screen</b>.<br>3. Tap <b>Add</b>.';
       if (SAMSUNG) return 'Samsung&rsquo;s own browser can&rsquo;t add it as an app at the moment &mdash; Google Play Protect wrongly blocks the app it makes (a known Samsung fault, not a risk to you). Tap <b>Open in Chrome</b> below and add it from there: it opens full screen, like an app.'
+        + '<br><br><small>Your scores stay in this browser: to take them with you, get your code under <b>My scores &rarr; My code</b> first and type it in Chrome.</small>'
         + '<br><br><small>No Chrome? A simple shortcut works too: tap the <b>menu</b> (&#9776;, bottom right), then <b>Add page to</b> &rarr; <b>Home screen</b>.</small>';
       if (/Android/i.test(UA)) return 'Tap <b>&#8942;</b> at the top right of Chrome, then <b>Add to home screen</b> (or <b>Install app</b>) and <b>Install</b>.';
       return 'Use your browser&rsquo;s menu to <b>install</b> this page as an app.';
@@ -1771,13 +1830,18 @@
           + '<ul class="badges" id="wBadges"></ul><div class="wtro" id="wTro" hidden></div><div id="wJour" hidden></div><div id="wHof" hidden></div>'
           + '<div class="wapp" id="wApp" hidden>' + ICON.app + '<p><b>Play it like an app</b> &mdash; full screen, one tap from your home screen.</p><button class="btn go" type="button" id="wAppAdd">Add to home screen</button><button class="linkb" type="button" id="wAppNo">Not now</button></div>'
           + '<div class="row"><button class="btn go wide" type="button" id="wAgain">Play again</button><button class="btn wide" type="button" id="wShare">Challenge a friend</button><button class="btn wide" type="button" id="wDaily">Today&rsquo;s deal</button><button class="btn wide" type="button" id="wStats">My scores</button></div>')
+        + sheet('dCode', 'My code', '<p class="soft">Take your scores, streaks, trophies, Journey stars and Hall of Fame name to another phone &mdash; or from Samsung&rsquo;s browser into Chrome. No sign-in, nothing about you.</p>'
+          + '<div class="mcbox" id="mcHave" hidden><span>Your code</span><b id="mcCode"></b><small>Keep it to yourself &mdash; anyone with it can see and change your scores. It updates after every win.</small><button class="linkb" type="button" id="mcForget">Stop using this code</button></div>'
+          + '<div class="row" id="mcGetRow"><button class="btn go wide" type="button" id="mcGet">Get my code</button></div>'
+          + '<div class="mcin"><label for="mcIn">Got a code from another phone or browser?</label><div class="mcrow"><input id="mcIn" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="9" placeholder="e.g. 7K3P-9QXA"><button class="btn" type="button" id="mcLoad">Bring my scores here</button></div></div>'
+          + '<p class="mcmsg" id="mcMsg" role="status" aria-live="polite"></p>')
         + sheet('dTro', 'Trophies', '<p class="soft" id="troN"></p><ul class="trol" id="troL"></ul><div class="row"><button class="btn wide" type="button" id="troLooks">Card backs and tables</button><button class="btn go wide" type="button" data-close>OK</button></div>')
         + sheet('dStreak', 'Daily streak', '<div class="stk"><div class="stkbig">' + ICON.flame + '<b id="kN">0</b></div><p class="stksub" id="kSub"></p><div class="week" id="kWeek"></div><p class="soft" id="kNote"></p>'
           + '<div class="row"><button class="btn go wide" type="button" id="kPlay">Play today&rsquo;s deal</button></div></div>')
         + sheet('dApp', 'Play it like an app', '<p class="soft" id="appWhy"></p><p class="apphow" id="appHow"></p><div class="row"><button class="btn go wide" type="button" id="appChrome" hidden>Open in Chrome</button><button class="btn wide" type="button" data-close>OK</button></div>')
         + sheet('dSprint', 'Time\u2019s up!', '<p class="soft" id="spSub"></p><div class="tiles"><div class="tile"><b id="spCards">0</b><span>Cards up</span></div></div><div id="spHof"></div>'
           + '<div class="row"><button class="btn go wide" type="button" id="spNew">New game</button><button class="btn wide" type="button" id="spHofB">Hall of Fame</button></div>')
-        + sheet('dStats', 'My scores', (window.Looks && Looks.trophies ? '<button class="btn wide trob" type="button" id="sTro">' + ICON.trophy + ' Trophies<small id="sTroS"></small></button>' : '') + (D.hof ? '<button class="btn hofbtn wide" type="button" id="sHof" style="width:100%;margin:2px 0 12px">&#127942; The Hall of Fame<small>Today&rsquo;s fastest, this week&rsquo;s best, all time</small></button>' : '') + '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere unless you join the Hall of Fame.</p><div class="tiles" id="sTiles"></div><h3 style="margin:16px 0 0;font-size:18px">Today&rsquo;s deal this week</h3><div class="week" id="sWeek"></div><div class="tiles" id="sBest"></div>'
+        + sheet('dStats', 'My scores', (window.Looks && Looks.trophies ? '<button class="btn wide trob" type="button" id="sTro">' + ICON.trophy + ' Trophies<small id="sTroS"></small></button>' : '') + '<button class="btn wide trob" type="button" id="sCode">&#128273; My code<small id="sCodeS"></small></button>' + (D.hof ? '<button class="btn hofbtn wide" type="button" id="sHof" style="width:100%;margin:2px 0 12px">&#127942; The Hall of Fame<small>Today&rsquo;s fastest, this week&rsquo;s best, all time</small></button>' : '') + '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere unless you join the Hall of Fame.</p><div class="tiles" id="sTiles"></div><h3 style="margin:16px 0 0;font-size:18px">Today&rsquo;s deal this week</h3><div class="week" id="sWeek"></div><div class="tiles" id="sBest"></div>'
           + '<div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>')
         + sheet('dSet', 'Settings', (V ? '<div class="set"><div><label>' + esc(V.label) + '</label><small>' + esc(V.small || 'Changes from your next game.') + '</small></div><div class="seg" role="group" aria-label="' + esc(V.label) + '">' + v + '</div></div>' : '')
           + (D.deals ? sw('winnable', 'Deals you can always win', D.winnableSmall || 'Every deal has been played through to a win.') : '')

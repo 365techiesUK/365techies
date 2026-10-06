@@ -286,3 +286,6 @@ api/games-hof.lock
 api/games-hof-runs.json
 api/games-hof-runrate.json
 api/games-hof-runs.lock
+# 365 Games - My code store (6 Oct 2026): players' saved progress - runtime only, never in git (the .htaccess is)
+api/games-code-store/*.json
+api/games-code-store/*.tmp
