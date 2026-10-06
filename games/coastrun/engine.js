@@ -327,10 +327,12 @@
       return putAt(W2, j, t, xx, h, o);
     }
     var STREET = {   // (fraction ends, then: side = a side street every so many segments; car, tree, bin = how often)
-      winton: [[0.25, { car: 0.16, tree: 0.16, side: 70 }], [0.66, { car: 0.3, bin: 0.05, side: 56 }], [1.01, { car: 0.22, tree: 0.12, side: 60 }]],   // (the owner's videos: cars all along the kerbs)
-      charminster: [[0.3, { car: 0.22, tree: 0.1, side: 60 }], [0.7, { car: 0.32, bin: 0.05, side: 52 }], [1.01, { car: 0.18, tree: 0.14, side: 66 }]],
-      kinson: [[0.3, { car: 0.18, tree: 0.12, side: 62 }], [0.66, { car: 0.26, bin: 0.05, side: 50 }], [1.01, { tree: 0.05, side: 90 }]],
-      muscliff: [[0.32, { car: 0.06, tree: 0.18, side: 72 }], [0.62, { car: 0.2, tree: 0.1, side: 46 }], [1.01, {}]],
+      winton: [[0.25, { car: 0.16, tree: 0.16, side: 70 }], [0.66, { car: 0.3, bin: 0.05, side: 56 }], [1.01, { car: 0.22, tree: 0.12, side: 60, poles: 1, wheelie: 0.25 }]],   // (the owner's videos: cars all along the kerbs)
+      charminster: [[0.3, { car: 0.22, tree: 0.1, side: 60 }], [0.7, { car: 0.32, bin: 0.05, side: 52 }], [1.01, { car: 0.18, tree: 0.14, side: 66, poles: -1, wheelie: 0.2 }]],
+      kinson: [[0.3, { car: 0.18, tree: 0.12, side: 62, poles: 1, wheelie: 0.25 }], [0.66, { car: 0.26, bin: 0.05, side: 50 }], [1.01, { tree: 0.05, side: 90 }]],
+      muscliff: [[0.32, { car: 0.06, tree: 0.18, side: 72, poles: -1 }], [0.62, { car: 0.2, tree: 0.1, side: 46, poles: 1, wheelie: 0.3 }], [1.01, { poles: -1 }]],
+      towerpark: [[1.01, { car: 0.14, tree: 0.12, side: 60, poles: 1, wheelie: 0.2 }]], bearcross: [[1.01, { car: 0.14, tree: 0.12, side: 58, poles: -1, wheelie: 0.2 }]], hurn: [[1.01, { tree: 0.1, side: 90, poles: 1 }]],
+      wimborne: [[1.01, { car: 0.16, tree: 0.12, side: 62, poles: 1, wheelie: 0.2 }]], ferndown: [[1.01, { car: 0.14, tree: 0.14, side: 60, poles: -1, wheelie: 0.2 }]], highcliffe: [[1.01, { car: 0.14, tree: 0.14, side: 64, poles: 1, wheelie: 0.2 }]],
       littledown: [[0.33, { side: 80 }], [0.66, { tree: 0.12, side: 96 }], [1.01, { tree: 0.06, side: 100 }]]
     };
     function street() {   // the town: side streets going off (a traffic light on some), cars parked at the kerb between the lamps, street trees, bins
@@ -340,6 +342,9 @@
       if (o.car && !nearSide && m >= 2 && m <= 6 && r() < o.car) put(W, i, 'parkedcar', (r() < 0.5 ? -1 : 1) * 9.4, 1.0, { v: (r() * 8) | 0 });
       if (o.tree && !nearSide && m === 4 && r() < o.tree * 4) put(W, i, 'streettree', (r() < 0.5 ? -1 : 1) * 13.5, 0.4, { v: (r() * 4) | 0 });
       if (o.bin && !nearSide && r() < o.bin) put(W, i, 'bin', (r() < 0.5 ? -1 : 1) * 13.9, 0.3);
+      if (!nearSide && k % 61 === 30) put(W, i, 'postbox', (((k / 61) | 0) % 2 ? 1 : -1) * 13.6, 0.4);   // a red pillar box now and then
+      if (o.poles && !nearSide && k % 11 === 5) put(W, i, 'tpolewire', o.poles * 13.9, 0.3);   // telegraph poles along the houses' side
+      if (o.wheelie && !nearSide && m === 1 && r() < o.wheelie) put(W, i, 'wheeliebins', (r() < 0.5 ? -1 : 1) * 15.0, 0.4, { v: (r() * 3) | 0 });
     }
     function lamps(every, v, onSea) { if (k % every === 0) { if (land(s, -9.8) || (onSea && s.brg)) put(W, i, 'lamp', -9.8, 0.25, { v: v }); if (land(s, 9.8) || (onSea && s.brg)) put(W, i, 'lamp', 9.8, 0.25, { v: v }); } }
     function onWater(t, d0, d1, p, v) { if (r() < p) { x = sea * (sh + d0 + r() * d1); if (water(s, x)) put(W, i, t, x, 0, { v: v }); } }
@@ -453,7 +458,8 @@
           break;
         }
         case 'towerpark': case 'bearcross': case 'hurn': case 'wimborne': case 'ferndown': case 'highcliffe':
-          lamps(8, 0, false);   // the local run, plain for now: street lamps both sides (its houses and gardens: world3d.js)
+          lamps(8, 0, false); street();   // the local run's places still to build: a Bournemouth suburb for now (its houses and gardens: world3d.js)
+          if (k % 46 === 23) put(W, i, 'busstop', ((k / 46) | 0) % 2 ? 15.0 : -15.0, 0, { v: 1 });
           break;
         case 'lymington': {   // in three parts (world3d.js ZONES): the Georgian town on its quay, the river's marinas and the island ferry, then
           // the saltmarshes along the sea wall towards Keyhaven, with Hurst Castle out on its spit (the houses, boats and marsh: world3d.js)

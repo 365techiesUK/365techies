@@ -1109,10 +1109,10 @@ const MODELS = {
     if (v === 5) { k.box(wide, 3.6, 6.5, 0, 0, 0, '#f2ecdc'); k.put(new THREE.CylinderGeometry(4.6, 4.6, wide + 1, 14, 1, false, -Math.PI / 2, Math.PI), '#b0925a', 0, 3.4, 0, 0, 0, Math.PI / 2, 1, 0.9, 1); k.box(1.2, 3.4, 1.2, wide / 2 - 1.6, 5.6, -1, B); }   // the thatched one
     else { k.box(wide, h, 7, 0, 0, 0, B).prism(7.6, 3.4, wide + 0.4, 0, h, 0, R, Math.PI / 2); for (const sd of [-1, 1]) k.box(1.1, 3.0, 1.4, sd * (wide / 2 - 0.4), h + 1.8, 0, B); }
     const n = Math.round(wide / 3), wy = v === 5 ? [1.2] : h > 7 ? [1.2, 3.9] : [1.2, 3.6], fz = v === 5 ? 3.27 : 3.52;
-    for (let i = 0; i < n; i++) { const x = -wide / 2 + wide * (i + 0.5) / n; for (const y of wy) { if (y < 2 && i === (n >> 1)) continue; k.box(1.3, 1.6, 0.1, x, y, fz, '#f4f1ea').box(1.0, 1.3, 0.12, x, y + 0.15, fz + 0.01, '#2a3440', 0, 0, 0, 'shiny'); } }
+    for (let i = 0; i < n; i++) { const x = -wide / 2 + wide * (i + 0.5) / n; for (const y of wy) { if (y < 2 && i === (n >> 1)) continue; k.box(1.3, 1.6, 0.1, x, y, fz, '#f4f1ea').box(1.0, 1.3, 0.12, x, y + 0.15, fz + 0.01, '#5a7890', 0, 0, 0, 'shiny'); } }
     k.box(1.1, 2.3, 0.12, -wide / 2 + wide * ((n >> 1) + 0.5) / n, 0, fz + 0.02, ['#2f5a3a', '#1d3557', '#7a1f2b', '#2a2a2a'][v % 4]);
-    if (v % 3 === 1) for (const sd of [-1, 1]) k.box(2.6, 2.4, 1.0, sd * wide / 4, 0.4, 3.9, B).box(2.2, 1.6, 0.1, sd * wide / 4, 0.8, 4.42, '#2a3440', 0, 0, 0, 'shiny');   // bay windows
-    if (v === 2 || v === 4) { k.box(wide - 1, 2.6, 0.12, 0, 0.2, 3.56, '#2a3440', 0, 0, 0, 'shiny'); for (let i = 0; i < 6; i++) k.box((wide - 1) / 6, 0.18, 1.6, -(wide - 1) / 2 + (i + 0.5) * (wide - 1) / 6, 2.9, 4.2, i % 2 ? '#f4f1ea' : ['#2f6a4a', '#7a1f2b'][v % 2], 0, -0.35); }   // a shop front, its awning
+    if (v % 3 === 1) for (const sd of [-1, 1]) k.box(2.6, 2.4, 1.0, sd * wide / 4, 0.4, 3.9, B).box(2.2, 1.6, 0.1, sd * wide / 4, 0.8, 4.42, '#5a7890', 0, 0, 0, 'shiny');   // bay windows
+    if (v === 2 || v === 4) { k.box(wide - 1, 2.6, 0.12, 0, 0.2, 3.56, '#5a7890', 0, 0, 0, 'shiny'); for (let i = 0; i < 6; i++) k.box((wide - 1) / 6, 0.18, 1.6, -(wide - 1) / 2 + (i + 0.5) * (wide - 1) / 6, 2.9, 4.2, i % 2 ? '#f4f1ea' : ['#2f6a4a', '#7a1f2b'][v % 2], 0, -0.35); }   // a shop front, its awning
     if (v === 0) k.box(0.1, 0.1, 1.2, wide / 2 - 0.6, 3.4, 4.1, '#1a1a1a').box(0.08, 1.2, 0.9, wide / 2 - 0.6, 2.1, 4.4, '#4a2a1a');   // the inn's sign (blank)
     for (let i = 0; i < 4; i++) k.ball(0.26, (r() - 0.5) * wide * 0.8, 0.35, 3.9, ['#e63946', '#ff7eb6', '#ffd23f', '#9b5de5'][i], 1, 1.1, 0.8, 'lit', 6);
   },
@@ -1333,11 +1333,11 @@ const MODELS = {
     if (flat) k.box(W + 0.2, 1.0, 9.2, 0, H, 0, B).box(W + 0.3, 0.2, 9.3, 0, H + 1.0, 0, S);   // a parapet (the 1930s ones)
     else { k.prism(9.4, 3.6, W + 0.3, 0, H, 0, '#4c5058', Math.PI / 2);
       if (gable) { k.prism(0.6, 3.6, 6, -W / 4, H, 4.3, B, 0).prism(0.7, 3.7, 6.3, -W / 4, H - 0.05, 4.6, '#f4f1ea', 0); k.box(1.4, 1.5, 0.12, -W / 4, H + 0.5, 4.62, '#2a3440', 0, 0, 0, night && r() < 0.6 ? 'glow' : 'shiny'); }   // a front gable, white bargeboards, its window
-      else for (const x of [-W / 4, W / 4]) k.box(1.8, 1.6, 1.6, x, H + 0.5, 3.6, '#4c5058').box(1.2, 1.0, 0.12, x, H + 0.8, 4.42, '#2a3440', 0, 0, 0, 'shiny'); }   // dormers
+      else for (const x of [-W / 4, W / 4]) k.box(1.8, 1.6, 1.6, x, H + 0.5, 3.6, '#4c5058').box(1.2, 1.0, 0.12, x, H + 0.8, 4.42, '#5a7890', 0, 0, 0, 'shiny'); }   // dormers
     for (const sd of [-1, 1]) k.box(1.1, 2.4, 1.6, sd * (W / 2 - 0.5), H + (flat ? 1.2 : 1.8), -1, B, 0, 0, 0, render ? 'lit' : 'stone');   // chimneys
     for (const x of [-W / 4, W / 4]) {   // two-storey bays (or flat windows on the 1930s ones), lit warm at night here and there
       for (const y of [4.6, 7.7]) {
-        const lit = night && r() < 0.55, gl = lit ? '#ffd890' : '#2a3440', key = lit ? 'glow' : 'shiny';
+        const lit = night && r() < 0.55, gl = lit ? '#ffd890' : '#5a7890', key = lit ? 'glow' : 'shiny';
         if (flat) k.box(2.6, 1.8, 0.12, x, y, 4.52, '#f4f1ea').box(2.3, 1.5, 0.14, x, y + 0.15, 4.53, gl, 0, 0, 0, key);
         else k.box(2.8, 2.2, 0.9, x, y - 0.1, 4.8, S).box(2.4, 1.7, 0.12, x, y + 0.15, 5.26, gl, 0, 0, 0, key).box(0.12, 1.7, 0.7, x - 1.25, y + 0.15, 4.9, gl, 0, 0, 0, key).box(0.12, 1.7, 0.7, x + 1.25, y + 0.15, 4.9, gl, 0, 0, 0, key);
       }
@@ -1346,7 +1346,7 @@ const MODELS = {
     for (const sd of [-1, 1]) {   // the two shops: a fascia (lettering left off), the window, the door, a pilaster between
       const x = sd * W / 4, f = FAS[(u * 3 + (sd > 0 ? 1 : 0) + v) % 8];
       k.box(W / 2 - 0.5, 0.75, 0.3, x, 3.15, 4.55, f, 0, 0, 0, night ? 'glow' : 'lit');
-      k.box(W / 2 - 1.6, 2.5, 0.12, x - 0.4, 0.45, 4.52, night ? ['#fff0c8', '#ffe4a0', '#e8f4ff'][(u + (sd > 0 ? 1 : 0)) % 3] : '#2a3440', 0, 0, 0, night ? 'glow' : 'shiny');
+      k.box(W / 2 - 1.6, 2.5, 0.12, x - 0.4, 0.45, 4.52, night ? ['#fff0c8', '#ffe4a0', '#e8f4ff'][(u + (sd > 0 ? 1 : 0)) % 3] : '#5a7890', 0, 0, 0, night ? 'glow' : 'shiny');
       k.box(1.0, 2.8, 0.13, x + W / 4 - 0.9, 0, 4.53, night ? '#ffe8b0' : '#1a1a1a', 0, 0, 0, night ? 'glow' : 'lit');
       if (!night && r() < 0.35) for (let i = 0; i < 5; i++) k.box((W / 2 - 0.6) / 5, 0.15, 1.4, x - (W / 2 - 0.6) / 2 + (i + 0.5) * (W / 2 - 0.6) / 5, 2.75, 5.2, i % 2 ? '#f4f1ea' : f, 0, -0.35);   // an awning
       if (night && r() < 0.4) for (let i = 0; i < 4; i++) k.box(0.6, 0.5, 0.6, x - 1.6 + i * 0.9, 0.2, 5.0, ['#e63946', '#ffd23f', '#7cc576', '#ff9a3c'][i], 0, 0, 0, 'lit');   // fruit out front
@@ -1406,8 +1406,8 @@ const MODELS = {
     k.box(12, 7.4, 10, 0, 0, 0, B, 0, 0, 0, render ? 'lit' : 'stone').prism(10.6, 4.4, 12.4, 0, 7.4, 0, R, Math.PI / 2);
     k.prism(0.8, 4.6, 6.6, -2.6, 7.4, 5.1, B, 0).prism(0.7, 4.8, 7.0, -2.6, 7.3, 5.45, '#f4f1ea', 0);   // the gable, its bargeboards
     k.box(4.2, 6.6, 1.4, -2.6, 0.6, 5.6, B, 0, 0, 0, render ? 'lit' : 'stone');
-    for (const y of [1.4, 4.4]) k.box(3.4, 2.0, 0.12, -2.6, y, 6.32, '#2a3440', 0, 0, 0, 'shiny');
-    for (const y of [1.4, 4.4]) k.box(1.4, 1.9, 0.12, 2.6, y, 5.06, '#2a3440', 0, 0, 0, 'shiny');
+    for (const y of [1.4, 4.4]) k.box(3.4, 2.0, 0.12, -2.6, y, 6.32, '#5a7890', 0, 0, 0, 'shiny');
+    for (const y of [1.4, 4.4]) k.box(1.4, 1.9, 0.12, 2.6, y, 5.06, '#5a7890', 0, 0, 0, 'shiny');
     k.box(1.2, 2.3, 0.12, 4.6, 0, 5.06, ['#2f5a3a', '#7a1f2b', '#1d3557'][v % 3]);
     for (const x of [-5.4, 5.0]) k.box(1.0, 3.2, 1.2, x, 9.8, -1, B);
     k.box(13, 0.9, 0.4, 0, 0, 9.2, '#c8beaa', 0, 0, 0, 'stone').box(13, 1.6, 0.9, 0, 0.9, 8.9, '#3f6a34');   // the wall and hedge
@@ -1420,12 +1420,12 @@ const MODELS = {
     k.put(new THREE.ConeGeometry(11.2, 4.6, 4), T, 0, 8.7, 0, 0, Math.PI / 4, 0, 1, 1, 0.6, 'lit');   // the hipped roof
     for (const sd of [-1, 1]) {
       const x = sd * 4.4;
-      k.box(3.4, 5.6, 1.0, x, 0.4, 4.9, P).box(3.0, 1.6, 0.12, x, 1.2, 5.42, '#2a3440', 0, 0, 0, 'shiny').box(3.0, 1.6, 0.12, x, 4.0, 5.42, '#2a3440', 0, 0, 0, 'shiny');   // the bays
+      k.box(3.4, 5.6, 1.0, x, 0.4, 4.9, P).box(3.0, 1.6, 0.12, x, 1.2, 5.42, '#5a7890', 0, 0, 0, 'shiny').box(3.0, 1.6, 0.12, x, 4.0, 5.42, '#5a7890', 0, 0, 0, 'shiny');   // the bays
       k.box(1.6, 0.3, 1.4, sd * 7.0, 2.6, 5.2, T).box(1.0, 2.2, 0.12, sd * 7.0, 0, 4.56, ['#2f5a3a', '#7a1f2b', '#1d3557', '#f4f4f0'][(v + (sd > 0 ? 1 : 0)) % 4]);   // porch, door
       k.box(8, 0.8, 0.35, x, 0, 9.6, BR, 0, 0, 0, 'stone');
     }
     k.box(1.1, 2.4, 1.1, 0, 7.2, 0, BR, 0, 0, 0, 'stone');
-    if (r() < 0.6) { const c = ['#c62828', '#1d3557', '#e8e8e8', '#2a2a2a', '#3a6a9a'][(v + 2) % 5], x = (r() < 0.5 ? -1 : 1) * 4.4; k.box(1.8, 0.8, 4.2, x, 0.3, 7.6, c, 0, 0, 0, 'shiny').box(1.6, 0.6, 2.2, x, 1.1, 7.4, '#2a3440', 0, 0, 0, 'shiny'); }   // a car on the drive
+    if (r() < 0.6) { const c = ['#c62828', '#1d3557', '#e8e8e8', '#2a2a2a', '#3a6a9a'][(v + 2) % 5], x = (r() < 0.5 ? -1 : 1) * 4.4; k.box(1.8, 0.8, 4.2, x, 0.3, 7.6, c, 0, 0, 0, 'shiny').box(1.6, 0.6, 2.2, x, 1.1, 7.4, '#5a7890', 0, 0, 0, 'shiny'); }   // a car on the drive
   },
   richmondpub(k) {   // The Richmond on Charminster Road at night (its face +Z): Edwardian red brick, a big curved Dutch gable with its name
     // band (left blank), bay windows lit warm, hanging baskets, lamps over the doors
@@ -1474,15 +1474,15 @@ const MODELS = {
     const B = ['#b8946a', '#8a5a3c', '#c8b090', '#9a6a4a'][v % 4], r = rnd(6400 + v), W = 16, FAS = ['#2f6a4a', '#1d3557', '#7a1f2b', '#c9a227', '#3a5a7a', '#c62828'];
     k.box(W, 9.6, 10, 0, 0, 0, B, 0, 0, 0, 'stone').box(W + 0.4, 0.5, 10.4, 0, 9.6, 0, '#d8d4cc');
     k.box(W + 0.6, 0.45, 2.4, 0, 3.6, 5.6, '#d8d4cc');   // the canopy over the pavement
-    for (let i = 0; i < 3; i++) { const x = -W / 3 + i * W / 3; k.box(W / 3 - 0.6, 0.6, 0.2, x, 3.0, 5.06, FAS[(v + i) % 6]).box(W / 3 - 1.4, 2.4, 0.12, x - 0.3, 0.4, 5.04, '#2a3440', 0, 0, 0, 'shiny'); }
-    for (const y of [4.6, 7.2]) { k.box(W - 1, 1.5, 0.12, 0, y, 5.04, '#2a3440', 0, 0, 0, 'shiny'); for (let i = 0; i < 4; i++) k.box(0.15, 1.6, 0.16, -W / 2 + 0.5 + i * (W - 1) / 3, y, 5.06, '#f4f4f0'); }   // the flats' long windows
+    for (let i = 0; i < 3; i++) { const x = -W / 3 + i * W / 3; k.box(W / 3 - 0.6, 0.6, 0.2, x, 3.0, 5.06, FAS[(v + i) % 6]).box(W / 3 - 1.4, 2.4, 0.12, x - 0.3, 0.4, 5.04, '#5a7890', 0, 0, 0, 'shiny'); }
+    for (const y of [4.6, 7.2]) { k.box(W - 1, 1.5, 0.12, 0, y, 5.04, '#5a7890', 0, 0, 0, 'shiny'); for (let i = 0; i < 4; i++) k.box(0.15, 1.6, 0.16, -W / 2 + 0.5 + i * (W - 1) / 3, y, 5.06, '#f4f4f0'); }   // the flats' long windows
     if (v % 2) for (const x of [-4, 4]) k.box(3.4, 0.15, 1.2, x, 6.6, 5.6, '#d8d4cc').box(3.4, 0.9, 0.08, x, 6.75, 6.2, '#5a6068');   // balconies
   },
   commcentre(k) {   // Kinson's community centre at Pelhams Park (its face +Z): a long low white building, a dark blue band along its front
     // (its name left off), a glazed entrance, the park's lawn and trees about it
     k.box(26, 5, 12, 0, 0, 0, '#f2f2ee').box(26.4, 0.4, 12.4, 0, 5, 0, '#c8ccd0').box(16, 1.2, 0.14, -2, 3.6, 6.06, '#1d3a8a');
-    for (let i = 0; i < 7; i++) k.box(1.6, 1.8, 0.12, -11 + i * 3.4, 1.2, 6.05, '#2a3440', 0, 0, 0, 'shiny');
-    k.box(4, 3, 2, 8, 0, 7, '#e8e8e2').box(3.4, 2.4, 0.12, 8, 0.1, 8.02, '#2a3440', 0, 0, 0, 'shiny');
+    for (let i = 0; i < 7; i++) k.box(1.6, 1.8, 0.12, -11 + i * 3.4, 1.2, 6.05, '#5a7890', 0, 0, 0, 'shiny');
+    k.box(4, 3, 2, 8, 0, 7, '#e8e8e2').box(3.4, 2.4, 0.12, 8, 0.1, 8.02, '#5a7890', 0, 0, 0, 'shiny');
     k.blob(22, 0, -2.4, 14, '#5e9a3e', 1.4, 0.12, 0.8, 6501, { smooth: true });
   },
   throopmill(k) {   // Throop Mill on the Stour (its face +Z, to the lane; the river behind it, along X): a tall red-brick flour mill, three
@@ -1510,13 +1510,13 @@ const MODELS = {
     for (let i = 0; i < n; i++) {
       const x = (i - (n - 1) / 2) * 6.4;
       k.box(6.2, 5.6, 8, x, 0, 0, B, 0, 0, 0, 'stone');
-      k.box(2.2, 1.2, 0.12, x - 1.3, 1.0, 4.03, '#f4f4f0').box(2.0, 1.0, 0.13, x - 1.3, 1.1, 4.04, '#2a3440', 0, 0, 0, 'shiny');
-      k.box(2.6, 1.2, 0.12, x, 3.4, 4.03, '#f4f4f0').box(2.4, 1.0, 0.13, x, 3.5, 4.04, '#2a3440', 0, 0, 0, 'shiny');
+      k.box(2.2, 1.2, 0.12, x - 1.3, 1.0, 4.03, '#f4f4f0').box(2.0, 1.0, 0.13, x - 1.3, 1.1, 4.04, '#5a7890', 0, 0, 0, 'shiny');
+      k.box(2.6, 1.2, 0.12, x, 3.4, 4.03, '#f4f4f0').box(2.4, 1.0, 0.13, x, 3.5, 4.04, '#5a7890', 0, 0, 0, 'shiny');
       k.box(1.0, 2.1, 0.12, x + 1.8, 0, 4.03, ['#f4f4f0', '#2f5a3a', '#7a1f2b', '#1d3557'][(v + i) % 4]);
     }
     k.prism(9, 3.2, n * 6.4 + 0.4, 0, 5.6, 0, T, Math.PI / 2);
     k.blob(10, 0, -1.0, 7.6, '#6aa848', n * 0.34, 0.1, 0.32, 6810 + v, { smooth: true });   // the lawns
-    if (r() < 0.6) { const c = ['#c62828', '#e8e8e8', '#1d3557', '#2a2a2a', '#7a8a9a'][v % 5], x = (n - 1) / 2 * 6.4; k.box(1.8, 0.8, 4.2, x, 0.3, 8.4, c, 0, 0, 0, 'shiny').box(1.6, 0.6, 2.2, x, 1.1, 8.2, '#2a3440', 0, 0, 0, 'shiny'); }
+    if (r() < 0.6) { const c = ['#c62828', '#e8e8e8', '#1d3557', '#2a2a2a', '#7a8a9a'][v % 5], x = (n - 1) / 2 * 6.4; k.box(1.8, 0.8, 4.2, x, 0.3, 8.4, c, 0, 0, 0, 'shiny').box(1.6, 0.6, 2.2, x, 1.1, 8.2, '#5a7890', 0, 0, 0, 'shiny'); }
   },
   castlepoint(k) {   // Castlepoint shopping centre (its face +Z, to the road across its car park): a long low run of big stores in white and
     // grey cladding under one sweeping white canopy on slender posts, glass fronts, the anchor store's tall white gable (no lettering)
@@ -1580,6 +1580,26 @@ const MODELS = {
     for (let i = 0; i < 5; i++) k.clump(1.5 + r() * 0.5, (r() - 0.5) * 1.6, 4.4 + r() * 1.6, (r() - 0.5) * 1.6, ['#4e8a3a', '#5a9a42', '#6aa848'][i % 3], 7010 + v * 7 + i);
   },
   bin(k) { k.cyl(0.32, 0.28, 0.95, 8, 0, 0, 0, '#2a2e36').cyl(0.35, 0.35, 0.08, 8, 0, 0.95, 0, '#c9a227'); },   // a litter bin
+  postbox(k) {   // a red pillar box (no lettering): the round red pillar, its black base, the domed cap, the slot
+    k.cyl(0.3, 0.3, 1.3, 14, 0, 0.12, 0, '#c8102e', 0, 0, 'shiny').cyl(0.34, 0.34, 0.14, 14, 0, 0, 0, '#1a1a1a').ball(0.32, 0, 1.42, 0, '#c8102e', 1, 0.45, 1, 'shiny', 12);
+    k.box(0.36, 0.06, 0.06, 0, 1.08, 0.29, '#1a1a1a').box(0.3, 0.2, 0.04, 0, 0.75, 0.3, '#f2c94c');
+  },
+  tpolewire(k) {   // a wooden telegraph pole with its crossbar and insulators, the drop wires fanning to the houses (along Z: the wire to the next)
+    k.cyl(0.1, 0.14, 8, 6, 0, 0, 0, '#6a5440').box(1.4, 0.1, 0.1, 0, 7.4, 0, '#5a4636');
+    for (const x of [-0.55, 0, 0.55]) k.cyl(0.04, 0.04, 0.14, 5, x, 7.5, 0, '#e8e8e2');
+    k.put(new THREE.CylinderGeometry(0.012, 0.012, 32, 3), '#1a1a1a', 0, 7.55, 16, Math.PI / 2 + 0.02, 0, 0);   // the wire on to the next pole
+    for (const sd of [-1, 1]) k.put(new THREE.CylinderGeometry(0.01, 0.01, 9, 3), '#1a1a1a', sd * 4, 6.2, 1, 0, 0, sd * 1.15);   // drops to the houses
+  },
+  wheeliebins(k, v) {   // a household's wheelie bins at the front: BCP's grey-black rubbish, blue recycling and a green garden bin (no lettering)
+    const cols = [['#2a2e32', '#2a5aa8'], ['#2a2e32', '#2a5aa8', '#3a7a3a'], ['#2a5aa8', '#2a2e32']][v % 3];
+    cols.forEach((c, i) => { const x = (i - (cols.length - 1) / 2) * 0.7; k.box(0.58, 0.95, 0.72, x, 0.06, 0, c).box(0.62, 0.08, 0.78, x, 1.01, 0.02, c).axle(0.08, 0.6, 6, x, 0.08, -0.32, '#1a1a1a'); });
+  },
+  gardenwall(k, v) {   // a front garden's low wall and its gate (along Z, the house behind at -X): brick or stone, a hedge or flowers behind, a gate
+    const W = ['#9a4a34', '#c8beaa', '#a85036', '#d8d0bc'][v % 4];
+    k.box(0.3, 0.75, 7, 0, 0, 0, W, 0, 0, 0, 'stone').box(0.36, 0.08, 7.06, 0, 0.75, 0, '#b8b0a0', 0, 0, 0, 'stone');
+    k.box(0.06, 0.9, 1.2, 0, 0, 2.6 + (v % 2) * -5.2, ['#2a2a2a', '#f4f4f0', '#2f5a3a'][v % 3]);   // the gate
+    if (v % 2) k.box(0.7, 1.1, 5.4, -0.6, 0, -0.6, '#3f6a34'); else for (let i = 0; i < 6; i++) k.ball(0.24, -0.4, 0.9, -2.6 + i * 0.9, ['#e63946', '#ffd23f', '#ff7eb6', '#ffffff'][i % 4], 1, 1, 1, 'lit', 6);
+  },
   balloon(k, v) {   // a hot-air balloon, far off over the land
     const c = [['#e63946', '#ffd23f'], ['#1d7fd6', '#ffffff'], ['#2a9d8f', '#f4a261'], ['#9b5de5', '#ffd23f']][v % 4];
     for (let i = 0; i < 10; i++) k.put(new THREE.SphereGeometry(8, 3, 14, i * Math.PI / 5, Math.PI / 5), c[i % 2], 0, 16, 0, 0, 0, 0, 1, 1.22, 1);

@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=35';
+import * as MD from './models3d.js?v=36';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -123,16 +123,16 @@ const ROWS = {   // set out at a steady spacing behind the boundary: [model, var
   kinson: [['brickhouse', 5, 3, 19.6, 0.5], ['tpole', 1, 12, 15.6, 0]],
   muscliff: [['brickhouse', 5, 3, 19.6, 0.5], ['tpole', 1, 12, 15.6, 0]],
   littledown: [['brickhouse', 5, 3, 19.6, 0.5], ['tpole', 1, 12, 15.6, 0]],
-  towerpark: [['brickhouse', 5, 3, 19.6, 0.5], ['tpole', 1, 12, 15.6, 0]],
-  bearcross: [['brickhouse', 5, 3, 19.6, 0.5], ['tpole', 1, 12, 15.6, 0]],
-  hurn: [['brickhouse', 5, 3, 19.6, 0.5], ['tpole', 1, 12, 15.6, 0]],
-  wimborne: [['brickhouse', 5, 3, 19.6, 0.5], ['tpole', 1, 12, 15.6, 0]],
-  ferndown: [['brickhouse', 5, 3, 19.6, 0.5], ['tpole', 1, 12, 15.6, 0]],
-  highcliffe: [['brickhouse', 5, 3, 19.6, 0.5], ['tpole', 1, 12, 15.6, 0]],
+  towerpark: [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]],
+  bearcross: [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]],
+  hurn: [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]],
+  wimborne: [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]],
+  ferndown: [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]],
+  highcliffe: [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]],
   bournemouth: [['hutrow', 6, 4, 16.0, 0], ['hotel', 8, 7, 47, 4]], sandbanks: [['villa', 8, 6, 25, 2], ['palm', 3, 4, 16.6, 2]],
   weymouth: [['terrace', 6, 3, 21, 0]], lyme: [['terrace', 6, 4, 22, 0]], harbour: [['quayfront', 8, 5, 27, 0]],
   christchurch: [['cottage', 2, 10, 24, 4], ['terrace', 6, 8, 38, 3]], lymington: [['cottage', 2, 9, 24, 5], ['tpole', 1, 12, 15.6, 0]],
-  purbeck: [['tpole', 1, 12, 15.6, 0]], hengistbury: [['lamp', 2, 6, 15.4, 0]], swanage: [['tpole', 1, 12, 15.6, 0]], 'swanage:town': [['terrace', 6, 3, 22, 0]], 'needles:yarmouth': [['terrace', 6, 4, 23, 1]], 'needles:downs': [['thatch', 3, 11, 24, 6], ['tpole', 1, 14, 15.6, 0]], 'needles:alumbay': [], 'purbeck:village': [['purbeckcottage', 6, 3, 19.5, 0.5]], 'purbeck:heath': [], 'forest:heath': [], 'forest:village': [['brickhouse', 6, 3, 19.6, 0.4]], 'lymington:town': [['lymhouse', 8, 3, 19.6, 0.3]], 'kinson:redhill': [['semis', 4, 4, 22, 0.8]], 'kinson:village': [['flatparade', 4, 4, 21, 0.2]], 'kinson:common': [], 'muscliff:castlelane': [['semis', 4, 4, 24, 1]], 'muscliff:estate': [['estatehouse', 4, 4, 22, 1]], 'muscliff:throop': [], 'littledown:castlepoint': [], 'littledown:hospital': [], 'littledown:park': [], 'winton:deanpark': [['vicvilla', 4, 4, 21.5, 1.2]], 'winton:banks': [['parade', 8, 3, 20.4, 0.1]], 'winton:moordown': [['semis', 4, 4, 22, 0.8]], 'charminster:springbourne': [['vicvilla', 4, 3, 21.5, 0.8]], 'charminster:road': [['nightparade', 8, 3, 20.4, 0.1]], 'charminster:queenspark': [['semis', 4, 4, 22, 0.8]], 'jurassic:castle': [], 'jurassic:ranges': [], 'jurassic:cove': [['lulcottage', 6, 4, 19.6, 0.6]], 'jurassic:door': [['caravan', 4, 3, 22, 3], ['caravan', 4, 3, 33, 3]], 'lymington:marina': [['tpole', 1, 12, 15.6, 0]], 'lymington:marsh': [['tpole', 1, 14, 15.6, 0]], 'forest:woods': [['redwood', 3, 3, 16.6, 0.7]], goldencap: [['tpole', 1, 12, 15.6, 0]], needles: [['tpole', 1, 14, 15.6, 0]]
+  purbeck: [['tpole', 1, 12, 15.6, 0]], hengistbury: [['lamp', 2, 6, 15.4, 0]], swanage: [['tpole', 1, 12, 15.6, 0]], 'swanage:town': [['terrace', 6, 3, 22, 0]], 'needles:yarmouth': [['terrace', 6, 4, 23, 1]], 'needles:downs': [['thatch', 3, 11, 24, 6], ['tpole', 1, 14, 15.6, 0]], 'needles:alumbay': [], 'purbeck:village': [['purbeckcottage', 6, 3, 19.5, 0.5]], 'purbeck:heath': [], 'forest:heath': [], 'forest:village': [['brickhouse', 6, 3, 19.6, 0.4]], 'lymington:town': [['lymhouse', 8, 3, 19.6, 0.3]], 'kinson:redhill': [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]], 'kinson:village': [['flatparade', 4, 4, 21, 0.2]], 'kinson:common': [], 'muscliff:castlelane': [['semis', 4, 4, 24, 1], ['gardenwall', 4, 2, 17.8, 0]], 'muscliff:estate': [['estatehouse', 4, 4, 22, 1], ['gardenwall', 4, 2, 17.8, 0]], 'muscliff:throop': [], 'littledown:castlepoint': [], 'littledown:hospital': [], 'littledown:park': [], 'winton:deanpark': [['vicvilla', 4, 4, 21.5, 1.2]], 'winton:banks': [['parade', 8, 3, 20.4, 0.1]], 'winton:moordown': [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]], 'charminster:springbourne': [['vicvilla', 4, 3, 21.5, 0.8]], 'charminster:road': [['nightparade', 8, 3, 20.4, 0.1]], 'charminster:queenspark': [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]], 'jurassic:castle': [], 'jurassic:ranges': [], 'jurassic:cove': [['lulcottage', 6, 4, 19.6, 0.6]], 'jurassic:door': [['caravan', 4, 3, 22, 3], ['caravan', 4, 3, 33, 3]], 'lymington:marina': [['tpole', 1, 12, 15.6, 0]], 'lymington:marsh': [['tpole', 1, 14, 15.6, 0]], 'forest:woods': [['redwood', 3, 3, 16.6, 0.7]], goldencap: [['tpole', 1, 12, 15.6, 0]], needles: [['tpole', 1, 14, 15.6, 0]]
 };
 const ROCKC = { hengistbury: '#c07a44', bournemouth: '#c9a66a', purbeck: '#e8e4d8', swanage: '#eeebe2', needles: '#efece4', jurassic: '#d8cfba', portland: '#c9c2b2', goldencap: '#d8a85e', lyme: '#7f8790', forest: '#a89070', christchurch: '#b9a98a', lymington: '#b9a98a', hengistbury: '#a87850' };   // the rock in the cuttings and cliffs
 const BUNT = { 'forest:village': 1, 'purbeck:village': 1, 'swanage:town': 1, 'needles:yarmouth': 1, bournemouth: 1, weymouth: 1, lyme: 1, christchurch: 1, 'lymington:town': 1, sandbanks: 1 };   // flags strung over the road in the towns
@@ -892,9 +892,9 @@ export function createWorld() {
           if (g.sea === d || (d === innerSide && lat > inner)) continue;
           place(W, i * SEG + SEG / 2, d * lat, 0, P);
           if (t === 'brickhouse' || t === 'lymhouse') { let busy = false; for (let q = i - 16; q <= i + 40; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && sq.spr.some((it) => (it.t === 'lyndchurch' || it.t === 'stthomas') && Math.sign(it.x) === d)) busy = true; } if (busy) continue; }   // (Lyndhurst's churchyard: the church seen from the road)
-          if (/^(parade|nightparade|semis|vicvilla|flatparade|estatehouse|brickhouse)$/.test(t)) { let busy = false; for (let q = i - 5; q <= i + 6; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && (sq.spr.some((it) => /^(cornerbank|brickchurch|moderne|policestn|richmondpub|kinsonchurch)$/.test(it.t) && Math.sign(it.x) === d) || sq.spr.some((it) => it.t === 'junction' && Math.sign(it.x) === d && Math.abs(q - i) <= 3))) busy = true; } if (busy) continue; }   // (a gap in the row where a landmark stands, and for a side street)
+          if (/^(parade|nightparade|semis|vicvilla|flatparade|estatehouse|brickhouse|gardenwall)$/.test(t)) { let busy = false; for (let q = i - 5; q <= i + 6; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && (sq.spr.some((it) => /^(cornerbank|brickchurch|moderne|policestn|richmondpub|kinsonchurch)$/.test(it.t) && Math.sign(it.x) === d) || sq.spr.some((it) => it.t === 'junction' && Math.sign(it.x) === d && Math.abs(q - i) <= 3))) busy = true; } if (busy) continue; }   // (a gap in the row where a landmark stands, and for a side street)
           if (t === 'hutrow' || t === 'quayfront') { let busy = false; for (let q = i - 4; q <= i + 6; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && sq.spr.some((it) => it.t === 'clifflift' || it.t === 'zigzag' || it.t === 'customhouse')) busy = true; } if (busy) continue; }
-          const ry = /^(hotel|building|villa|terrace|cottage|quayfront|thatch|purbeckcottage|brickhouse|lymhouse|lulcottage|caravan|parade|nightparade|vicvilla|semis|flatparade|estatehouse)$/.test(t) ? faceRoad(d, P.th) : t === 'tpole' ? -P.th : t === 'hutrow' ? -P.th + (d < 0 ? Math.PI : 0) : hash2(i, d) * Math.PI * 2;
+          const ry = /^(hotel|building|villa|terrace|cottage|quayfront|thatch|purbeckcottage|brickhouse|lymhouse|lulcottage|caravan|parade|nightparade|vicvilla|semis|flatparade|estatehouse)$/.test(t) ? faceRoad(d, P.th) : t === 'gardenwall' ? -P.th + (d < 0 ? Math.PI : 0) : t === 'tpole' ? -P.th : t === 'hutrow' ? -P.th + (d < 0 ? Math.PI : 0) : hash2(i, d) * Math.PI * 2;
           addAll(MD.model(t, Math.floor(hash2(i * 3, d + 5) * 997) % nv), P.x, groundAt(W, g, P, d * lat) - (t === 'tpole' ? 0.3 : 0.25), P.z, ry, 1);
         }
       }
@@ -921,9 +921,9 @@ export function createWorld() {
         place(W, i * SEG, it.x, it.b, P);
         const d = it.x < 0 ? -1 : 1, fr = faceRoad(d, P.th);
         let ry = hash2(i, Math.round(it.x * 10)) * Math.PI * 2;
-        if (/^(hut|cottage|hotel|building|board|finger|forestsign|lamp|villa|terrace|clock|haven|customhouse|placemill|castlekeep|visitorcentre|tollbooth|clocktower|thatch|tennyson|alumcliffs|landmarkpark|stonepub|lyndchurch|stthomas|lulcastle|cornerbank|brickchurch|moderne|policestn|richmondpub|busstop|kinsonchurch|commcentre|throopmill|castlepoint|rbhospital|leisurecentre|glassoffice)$/.test(it.t)) ry = fr;
+        if (/^(hut|cottage|hotel|building|board|finger|forestsign|lamp|villa|terrace|clock|haven|customhouse|placemill|castlekeep|visitorcentre|tollbooth|clocktower|thatch|tennyson|alumcliffs|landmarkpark|stonepub|lyndchurch|stthomas|lulcastle|cornerbank|brickchurch|moderne|policestn|richmondpub|busstop|kinsonchurch|commcentre|throopmill|castlepoint|rbhospital|leisurecentre|glassoffice|postbox|wheeliebins)$/.test(it.t)) ry = fr;
         if (it.t === 'lamp') ry = fr + Math.PI;   // the arm reaches over the road
-        if (/^(gate|gantry|nose|chev|warn|gpost|footbridge|viaduct|banner|rockarch|treearch|pierarch|liftbridge|chairlift|craneway|ferryqueue|landtrain|corfestation|cattlegrid|zebra|riverseg)$/.test(it.t)) ry = -P.th;
+        if (/^(gate|gantry|nose|chev|warn|gpost|footbridge|viaduct|banner|rockarch|treearch|pierarch|liftbridge|chairlift|craneway|ferryqueue|landtrain|corfestation|cattlegrid|zebra|riverseg|tpolewire)$/.test(it.t)) ry = -P.th;
         if (it.t === 'parkedcar') ry = -P.th + (hash2(i, 77) < 0.5 ? Math.PI : 0);   // (parked either way round, along the kerb)
         if (it.t === 'priory' || it.t === 'cobb' || it.t === 'goldcap' || it.t === 'headland') ry = fr;
         if (it.t === 'arch') ry = -P.th + (it.x < 0 ? Math.PI : 0);   // Durdle Door side-on from the road, its high end towards the shore
