@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=38';
+import { createWorld } from './world3d.js?v=39';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
@@ -24,8 +24,14 @@ function getWorld() { if (!worldTried) { worldTried = true; try { world = create
 
 const BEST_KEY = 'coast365.best';
 let BEST = {}; try { BEST = JSON.parse(localStorage.getItem(BEST_KEY) || '{}') || {}; } catch (e) { BEST = {}; }
-function bestOf(W, st) { const d = BEST['d' + W.diff]; return d && d[st] ? d[st] : 0; }
-function saveBest(W, st, sec) { const k = 'd' + W.diff; (BEST[k] || (BEST[k] = {}))[st] = sec; try { localStorage.setItem(BEST_KEY, JSON.stringify(BEST)); } catch (e) {} }
+(function () {   // best times were kept by the stage's number; since the town run came in (6 Oct 2026) by the place's name, so a number never moves to another place
+  const OLD = ['bournemouth', 'sandbanks', 'christchurch', 'purbeck', 'swanage', 'forest', 'jurassic', 'weymouth', 'harbour', 'lymington', 'lyme', 'portland', 'goldencap', 'hengistbury', 'needles'];
+  let moved = false; for (const d in BEST) for (const k in BEST[d]) if (/^\d+$/.test(k)) { const key = OLD[+k]; if (key && !BEST[d][key]) BEST[d][key] = BEST[d][k]; delete BEST[d][k]; moved = true; }
+  if (moved) try { localStorage.setItem(BEST_KEY, JSON.stringify(BEST)); } catch (e) {}
+})();
+const placeKey = (st) => (E.STAGES[st] ? E.STAGES[st].key : String(st));
+function bestOf(W, st) { const d = BEST['d' + W.diff]; return d && d[placeKey(st)] ? d[placeKey(st)] : 0; }
+function saveBest(W, st, sec) { const k = 'd' + W.diff; (BEST[k] || (BEST[k] = {}))[placeKey(st)] = sec; try { localStorage.setItem(BEST_KEY, JSON.stringify(BEST)); } catch (e) {} }
 const R = { lastT: 0, legN: 0, split: null, demoAcc: 0, W: null, goT: -1, shownScore: 0, lastV: 0, braking: false, boostK: 0, scale: 1, ft: 16.7, took: 4, adj: 0, lowN: 0, plain: false, warmAt: 0, shakeOn: true };
 const FIXEDRES = /[?&]fixedres/.test(location.search);   // (for the test pictures: never step the resolution down)
 window.CRgfx = () => ({ GW: GW, scale: R.scale, plain: R.plain, ft: +R.ft.toFixed(1) });   // for checking: the picture's width, resolution step and frame time
@@ -278,14 +284,15 @@ function request(g, W, t) {   // what she's asking for: her face, the words, how
   }
 }
 function routeMap(g, W, x0, y0, t) {   // the pyramid of places: the way you've come in yellow, the place you're in flashing
-  const dx = 13, dy = 8.5, route = W.route || [0], here = route[route.length - 1];
+  const dx = 13, dy = 8.5, route = W.route || [0], here = route[route.length - 1], run = (E.STAGES[route[0]] || E.STAGES[0]).run;   // (the run you're on: the town, or out to the coast)
   const at = (id) => { const S = E.STAGES[id]; return [x0 + 4 + (S.level - 1) * dx, y0 + 20 + (S.pos - (S.level - 1) / 2) * dy]; };
   g.fillStyle = 'rgba(0,10,30,0.38)'; roundRect(g, x0 - 3, y0 - 0.5, 4 * dx + 14, 41, 6); g.fill();   // a dark plate, so the map reads on grass and sand
   g.lineWidth = 1; g.strokeStyle = 'rgba(255,255,255,0.28)';
-  E.STAGES.forEach((S) => { if (S.next) S.next.forEach((n) => { const a = at(S.id), b = at(n); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); }); });
+  E.STAGES.forEach((S) => { if (S.run === run && S.next) S.next.forEach((n) => { const a = at(S.id), b = at(n); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); }); });
   g.strokeStyle = '#ffd400'; g.lineWidth = 1.6;
   for (let i = 1; i < route.length; i++) { const a = at(route[i - 1]), b = at(route[i]); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); }
   E.STAGES.forEach((S) => {
+    if (S.run !== run) return;
     const p = at(S.id), on = route.indexOf(S.id) >= 0, cur = S.id === here;
     g.fillStyle = cur ? ((t / 300 | 0) % 2 ? '#ffffff' : '#ffd400') : on ? '#ffd400' : S.next ? 'rgba(255,255,255,0.45)' : 'rgba(120,255,160,0.6)';
     g.beginPath(); g.arc(p[0], p[1], cur ? 2.6 : 1.8, 0, Math.PI * 2); g.fill();
@@ -595,7 +602,9 @@ function voice(a, name, fadeIn) {
   return { name: name, src: src, g: g, t0: a.currentTime, dur: b.duration };
 }
 function hush(a, v, d) { try { v.g.gain.cancelScheduledValues(a.currentTime); v.g.gain.setValueAtTime(Math.max(0.0001, v.g.gain.value), a.currentTime); v.g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + d); v.src.stop(a.currentTime + d + 0.05); } catch (e) {} }
-function placeTrack(W) { const g = W && E.segAt(W, E.segIndex(W.s)); return g ? ART.PAL[g.st].key : 'bournemouth'; }
+const TRACK_AS = { winton: 'christchurch', charminster: 'bournemouth', kinson: 'forest', muscliff: 'christchurch', littledown: 'lymington', towerpark: 'weymouth', bearcross: 'forest', hurn: 'hengistbury', wimborne: 'purbeck', ferndown: 'forest', highcliffe: 'hengistbury' };   // (the local run's places: another place's track until they have their own)
+const trackOf = (key) => TRACK_AS[key] || key;
+function placeTrack(W) { const g = W && E.segAt(W, E.segIndex(W.s)); return g ? trackOf(ART.PAL[g.st].key) : 'bournemouth'; }
 // the car radio: the stations, in the order the dial goes round (the first plays a tune for each place)
 const RADIO_NEW = true;    // the three new stations, on once their tracks (the owner's picks) are in music/
 const RADIO = [['place', 'Coast FM']].concat(RADIO_NEW ? [['radio_harbour', 'Harbour Lights'], ['radio_golden', 'Golden Hour'], ['radio_coastroad', 'Coast Road']] : [],
@@ -742,7 +751,7 @@ function music(W, S, mode, SET) {
   vOn = SET.voice !== false;
   MUS.gain.gain.setTargetAtTime(want ? (mode === 'paused' ? 0.12 : MUS.duck > now ? 0.22 : mode === 'play' ? 0.32 : 0.42) : 0.0001, now, MUS.duck > now ? 0.08 : 0.35);
   if (want) loadMusic(a, want);
-  if (MUS.on && W && !demo && W.fork && W.fork.next) W.fork.next.forEach((st) => loadMusic(a, ART.PAL[st] && ART.PAL[st].key));   // the next places, ready for the checkpoint
+  if (MUS.on && W && !demo && W.fork && W.fork.next) W.fork.next.forEach((st) => loadMusic(a, ART.PAL[st] && trackOf(ART.PAL[st].key)));   // the next places, ready for the checkpoint
   if (MUS.on) { loadMusic(a, 'goal'); loadMusic(a, 'timeup'); }
   if (SET.sound && SET.voice !== false) loadVoices(a);
   if (want !== (MUS.cur ? MUS.cur.name : null) && (!want || MBUF[want])) {
@@ -837,17 +846,17 @@ A.start({
   step: smoothStep, hud: E.hud, draw: draw, sound: sound, frameAudio: frameAudio,
   quietSay: () => true,
   overText: (W) => 'Time up – stage ' + W.stageNo + (W.round > 1 ? ', round ' + W.round : ''),
-  titleText: 'Race along the Dorset coast with your girlfriend beside you, before the clock runs out. Five stretches make a run: at every <b>fork</b> you choose your road through fifteen places, to one of five goals &mdash; and she asks for things on the way. Do them for <b>hearts</b>.',
+  titleText: 'Race from Bournemouth seafront out through the town with your girlfriend beside you, before the clock runs out. Five stretches make a run: at every <b>fork</b> you choose your road, along the real roads, to one of five goals &mdash; then round 2 goes out to the coast. She asks for things on the way: do them for <b>hearts</b>.',
   keysText: '<b>&larr; &rarr;</b> steer &middot; <b>Space</b> boost &middot; <b>&darr;</b> brake &mdash; tap it while turning to <b>drift</b> &middot; <b>C</b> camera &middot; <b>P</b> pause',
   touchText: 'Touch the <b>left</b> or <b>right</b> of the screen to steer, <b>both at once</b> for nitro; <b>Brake</b> and <b>Nitro</b> at the sides too &mdash; the car goes by itself. Settings &gt; Touch steering for buttons instead.',
   help: [
-    '<b>The aim:</b> drive as far as you can before the clock runs out. Each stretch of road ends at a <b>checkpoint</b> that adds time. Five stretches make a run: reach one of the five <b>goals</b> for a time bonus, a love bonus and a rank, then go round again &mdash; busier and quicker.',
+    '<b>The aim:</b> drive as far as you can before the clock runs out. Each stretch of road ends at a <b>checkpoint</b> that adds time. Five stretches make a run: reach one of the five <b>goals</b> for a time bonus, a love bonus and a rank, then on to round 2, out along the coast &mdash; busier and quicker.',
     '<b>Beat the clock:</b> the clock never stops &mdash; if it reaches zero it&rsquo;s game over and you start again from Bournemouth. Every stage keeps your <b>best time</b> on this device: it shows under the stage clock, and at each checkpoint you see how you did against it &mdash; beat it for a <b>NEW RECORD</b>. <b>HURRY!</b> flashes when you&rsquo;re not on pace to make the next checkpoint.',
     '<b>Your passenger</b> asks for things as you go: a drift, a near miss, overtaking, coins, a jump, a slipstream, keeping clean or going flat out. Do it before her timer runs out for up to three <b>hearts</b>. Coming up to a fork she says which way she would like to go &mdash; take her road for two more. Hearts are worth points now and again at the goal, and they count towards your rank.',
     '<b>Steer</b> with the <b>&larr; &rarr;</b> arrow keys (or A and D). The car accelerates by itself; press <b>&darr;</b> (or S) to brake. In Settings you can choose to hold <b>&uarr;</b> to go instead.',
     '<b>Bends</b> pull the car outwards &mdash; steer into them, and ease off (brake) for the sharp ones the black and white arrows warn you about. On <b>Gentle</b> the car helps you round.',
     '<b>Drifting:</b> while turning at speed, <b>tap &darr;</b> &mdash; the back of the car slides out and you go round the bend sideways, scoring points and filling your nitro. Keep steering to hold the slide; straighten up to stop.',
-    '<b>Forks:</b> at the end of each stretch the road splits &mdash; keep to the <b>left</b> (west) or <b>right</b> (east) half to choose where you go next. The map in the bottom corner shows your way through the fifteen places. Don&rsquo;t hit the sign in the middle!',
+    '<b>Forks:</b> at the end of each stretch the road splits &mdash; keep to the <b>left</b> (west) or <b>right</b> (east) half to choose where you go next. The map in the bottom corner shows your way through the run&rsquo;s fifteen places: round 1 out through the town (Winton or Charminster, Kinson, Muscliff, Littledown and on), round 2 out along the coast. Don&rsquo;t hit the sign in the middle!',
     '<b>Rivals:</b> now and then a sports car as quick as you turns up ahead (RIVAL and the gap show at the top). Keep up with it and get past for <b>+3,000</b>, then stay ahead until it drops away for <b>+10,000</b>. Slipstream it and use your nitro: it fights back.',
     '<b>Nitro:</b> hold <b>Space</b> (or Shift, B or X, or the mouse button, or the <b>Nitro</b> button) and flames shoot from the pipes &mdash; well past full speed while the blue bar lasts. Fill it with <b>near misses</b> (passing cars closely), <b>slipstreams</b>, drifting, coins and the blue <b>nitro bottles</b>.',
     '<b>Bonuses</b> on the road: a red <b>magnet</b> pulls in coins from every lane; a gold <b>star</b> puts a shield round the car &mdash; smash through traffic and signs without crashing; a purple <b>gem</b> doubles every point you score; a green <b>clock</b> adds five seconds. The ones you have on show under the score, running down.',

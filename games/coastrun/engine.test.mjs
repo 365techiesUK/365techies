@@ -136,7 +136,7 @@ test('hitting the sign in the middle of a fork crashes (Classic) and still picks
   assert.ok(crashed); assert.equal(W.route.length, 2);
 });
 
-test('the goal: a time bonus, a love bonus, a rank, round 2 and the road goes on to Bournemouth again', () => {
+test('the goal: a time bonus, a love bonus, a rank, and round 2 goes out to the coast from Bournemouth', () => {
   const W = E.newWorld(2, {}, 8); go(W);
   for (let k = 0; k < 4; k++) {
     W.s = (W.fork.split - 2) * E.SEG; W.x = -6; W.v = 40; W.cars = []; drive(W, 30, {});
@@ -148,7 +148,7 @@ test('the goal: a time bonus, a love bonus, a rank, round 2 and the road goes on
   assert.ok(goal); assert.equal(W.round, 2); assert.ok(W.score - s0 >= 12000 + 20000, 'time bonus and 5,000 a heart'); assert.ok(W.time > 50, 'the clock starts again');
   assert.ok(W.result && 'SABCD'.includes(W.result.rank), 'a rank: ' + (W.result && W.result.rank)); assert.equal(W.result.love, 20000); assert.equal(W.result.route.length, 5);
   drive(W, 120, {});
-  assert.equal(W.stage, 0); assert.deepEqual(W.route, [0], 'round 2 starts at Bournemouth');
+  assert.equal(W.stage, E.RUN_N); assert.deepEqual(W.route, [E.RUN_N], 'round 2: the coast run, from Bournemouth'); assert.equal(E.STAGES[W.stage].key, 'bournemouth'); assert.equal(E.STAGES[W.stage].run, 1);
 });
 
 test('crashes: a lamp post at speed is a big crash on Classic; on Gentle a bounce, unless flat out; bushes only slow you', () => {
@@ -229,14 +229,14 @@ test('the driver gets round five stretches at Gentle and Classic, and the score 
   assert.ok(F.score > 0, 'Fast runs');
 });
 
-test('fifteen places in a pyramid: each leads to the two below it, and the fifth level ends in goals', () => {
-  assert.equal(E.STAGES.length, 15);
+test('two runs of fifteen places, each a pyramid: each place leads to the two below it, and the fifth level ends in goals', () => {
+  assert.equal(E.STAGES.length, 30);
   for (const S of E.STAGES) {
-    if (S.level < 5) { const a = E.STAGES[S.next[0]], b = E.STAGES[S.next[1]]; assert.equal(a.level, S.level + 1); assert.equal(b.pos, a.pos + 1); assert.equal(a.pos, S.pos); }
+    if (S.level < 5) { const a = E.STAGES[S.next[0]], b = E.STAGES[S.next[1]]; assert.equal(a.level, S.level + 1); assert.equal(b.pos, a.pos + 1); assert.equal(a.pos, S.pos); assert.equal(a.run, S.run, 'stays in its run'); }
     else assert.equal(S.next, null);
   }
-  assert.equal(E.STAGES.filter((S) => !S.next).length, 5, 'five goals');
-  assert.equal(new Set(E.STAGES.map((S) => S.key)).size, 15, 'every place its own');
+  for (const r of [0, 1]) { const run = E.STAGES.filter((S) => S.run === r); assert.equal(run.length, 15); assert.equal(run.filter((S) => !S.next).length, 5, 'five goals'); assert.equal(new Set(run.map((S) => S.key)).size, 15, 'every place once in a run'); }
+  assert.equal(E.STAGES[0].key, 'bournemouth', 'the town starts in Bournemouth'); assert.deepEqual(E.STAGES[0].next.map((n) => E.STAGES[n].key), ['winton', 'charminster']);
 });
 
 test('tunnels and bridges: the road keeps level through them, and their walls and railings keep the car in', () => {

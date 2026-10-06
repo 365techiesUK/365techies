@@ -52,6 +52,29 @@
       sea: ['#3f6496', '#3a5c8c'], foam: '#fff0d8', road: ['#6e625c', '#695d57'], rumble: ['#fff4e2', '#d8902a'], lane: '#fff2dc', edge: 'fence', tint: ['#ff9a40', 0.16] },
     { key: 'hengistbury', sky: [[0, '#1e2a6a'], [0.4, '#6a4a9a'], [0.7, '#ff8a5a'], [1, '#ffcf8a']], fog: '#f0a880', grass: ['#6a6a40', '#62623a'], verge: ['#8a8a5a', '#80804f'], beach: ['#c8b490', '#bea886'],
       sea: ['#3c5a8a', '#365482'], foam: '#ffe6d0', road: ['#6a5e5a', '#655955'], rumble: ['#fff0e2', '#d86a3a'], lane: '#fff0dc', edge: 'fence', tint: ['#ff7a40', 0.08] },   // (sunset, as in the owner's photos)
+    // the local run (6 Oct 2026): plain suburban colours for now, each place's own as it's built
+    { key: 'winton', sky: [[0, '#3a80d6'], [0.6, '#86c0ee'], [1, '#e2f1f8']], fog: '#d8ebf3', grass: ['#74b44c', '#6aa944'], verge: ['#7cb456', '#72aa4f'], beach: null,
+      sea: null, foam: null, road: ['#6c6e74', '#67696f'], rumble: ['#f4f4f4', '#c62828'], lane: '#f4f4f4', tint: null },
+    { key: 'charminster', sky: [[0, '#3a80d6'], [0.6, '#86c0ee'], [1, '#e2f1f8']], fog: '#d8ebf3', grass: ['#74b44c', '#6aa944'], verge: ['#7cb456', '#72aa4f'], beach: null,
+      sea: null, foam: null, road: ['#6c6e74', '#67696f'], rumble: ['#f4f4f4', '#2f8a4a'], lane: '#f4f4f4', tint: null },
+    { key: 'kinson', sky: [[0, '#3a80d6'], [0.6, '#86c0ee'], [1, '#e2f1f8']], fog: '#d8ebf3', grass: ['#74b44c', '#6aa944'], verge: ['#7cb456', '#72aa4f'], beach: null,
+      sea: null, foam: null, road: ['#6c6e74', '#67696f'], rumble: ['#f4f4f4', '#1d5fae'], lane: '#f4f4f4', tint: null },
+    { key: 'muscliff', sky: [[0, '#3a80d6'], [0.6, '#86c0ee'], [1, '#e2f1f8']], fog: '#d8ebf3', grass: ['#74b44c', '#6aa944'], verge: ['#7cb456', '#72aa4f'], beach: null,
+      sea: null, foam: null, road: ['#6c6e74', '#67696f'], rumble: ['#f4f4f4', '#c62828'], lane: '#f4f4f4', tint: null },
+    { key: 'littledown', sky: [[0, '#3a80d6'], [0.6, '#86c0ee'], [1, '#e2f1f8']], fog: '#d8ebf3', grass: ['#74b44c', '#6aa944'], verge: ['#7cb456', '#72aa4f'], beach: null,
+      sea: null, foam: null, road: ['#6c6e74', '#67696f'], rumble: ['#f4f4f4', '#2f8a4a'], lane: '#f4f4f4', tint: null },
+    { key: 'towerpark', sky: [[0, '#3a80d6'], [0.6, '#86c0ee'], [1, '#e2f1f8']], fog: '#d8ebf3', grass: ['#74b44c', '#6aa944'], verge: ['#7cb456', '#72aa4f'], beach: null,
+      sea: null, foam: null, road: ['#6c6e74', '#67696f'], rumble: ['#f4f4f4', '#1d5fae'], lane: '#f4f4f4', tint: null },
+    { key: 'bearcross', sky: [[0, '#3a80d6'], [0.6, '#86c0ee'], [1, '#e2f1f8']], fog: '#d8ebf3', grass: ['#74b44c', '#6aa944'], verge: ['#7cb456', '#72aa4f'], beach: null,
+      sea: null, foam: null, road: ['#6c6e74', '#67696f'], rumble: ['#f4f4f4', '#c62828'], lane: '#f4f4f4', tint: null },
+    { key: 'hurn', sky: [[0, '#3a80d6'], [0.6, '#86c0ee'], [1, '#e2f1f8']], fog: '#d8ebf3', grass: ['#74b44c', '#6aa944'], verge: ['#7cb456', '#72aa4f'], beach: null,
+      sea: null, foam: null, road: ['#6c6e74', '#67696f'], rumble: ['#f4f4f4', '#2f8a4a'], lane: '#f4f4f4', tint: null },
+    { key: 'wimborne', sky: [[0, '#3a80d6'], [0.6, '#86c0ee'], [1, '#e2f1f8']], fog: '#d8ebf3', grass: ['#74b44c', '#6aa944'], verge: ['#7cb456', '#72aa4f'], beach: null,
+      sea: null, foam: null, road: ['#6c6e74', '#67696f'], rumble: ['#f4f4f4', '#1d5fae'], lane: '#f4f4f4', tint: null },
+    { key: 'ferndown', sky: [[0, '#3a80d6'], [0.6, '#86c0ee'], [1, '#e2f1f8']], fog: '#d8ebf3', grass: ['#74b44c', '#6aa944'], verge: ['#7cb456', '#72aa4f'], beach: null,
+      sea: null, foam: null, road: ['#6c6e74', '#67696f'], rumble: ['#f4f4f4', '#c62828'], lane: '#f4f4f4', tint: null },
+    { key: 'highcliffe', sky: [[0, '#3a80d6'], [0.6, '#86c0ee'], [1, '#e2f1f8']], fog: '#d8ebf3', grass: ['#74b44c', '#6aa944'], verge: ['#7cb456', '#72aa4f'], beach: null,
+      sea: null, foam: null, road: ['#6c6e74', '#67696f'], rumble: ['#f4f4f4', '#2f8a4a'], lane: '#f4f4f4', tint: null },
   ];
   // in the engine's order of the places (CREngine.STAGES: the pyramid), so PAL[stage id] is that place's colours
   PAL = (function (byKey) { var m = {}; byKey.forEach(function (p) { m[p.key] = p; }); return window.CREngine.STAGES.map(function (S) { return m[S.key]; }); })(PAL);
@@ -291,6 +314,7 @@
       seaBand(far, HZ, ['#1c2a5a', '#16244a'], 'rgba(255,210,140,0.5)');
     }
   };
+  ['winton', 'charminster', 'kinson', 'muscliff', 'littledown', 'towerpark', 'bearcross', 'hurn', 'wimborne', 'ferndown', 'highcliffe'].forEach(function (k) { if (!BG[k]) BG[k] = BG.forest; });   // (the local run: wooded hills behind the town for now)
   function SPR_BG(c, t, x, y, w) { var S = SPR[t], m = sprite(t, 0, false, null)[0], h = w * S.h / S.w; c.drawImage(m, x - w / 2, y - h, w, h); }
   var bgCache = {};
   var SKY3D = false;   // the 3D game draws its own sky (clouds, sun, moon, stars): the panorama is then just the land and sea

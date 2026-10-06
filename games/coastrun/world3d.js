@@ -88,6 +88,9 @@ Object.assign(LOOK, {
     cover: 0.34, cloud: ['#ffc8a0', '#6a5080'], grade: [1.12, 1.06, '#fff6f0'], env: 0.9, glow: 1.5, dusk: true,   // (sunset, as in the owner's photos: it was a near-black night)
     dress: [['heather', 2, 0.3, 12, 50], ['gorse', 1, 0.2, 12, 50], ['pine', 1, 0.05, 20, 70]] }
 });
+['winton', 'charminster', 'kinson', 'muscliff', 'littledown', 'towerpark', 'bearcross', 'hurn', 'wimborne', 'ferndown', 'highcliffe'].forEach((k) => {   // the local run (6 Oct 2026), plain for now: Christchurch's bright day, no sea; each place its own look as it's built
+  if (!LOOK[k]) LOOK[k] = Object.assign({}, LOOK.christchurch, { heroLand: false, edge: null, hills: 10, rise: 50, dress: [['oak', 1, 0.12, 30, 80], ['tuft', 6, 1.2, 8.8, 20], ['bush', 2, 0.25, 12, 40]] });
+});
 const FIELDS = {
   bournemouth: { cols: ['#6fbd4b', '#62b044', '#86c95a', '#7fbf50', '#5aa040'], k: 0.3 },
   sandbanks: { cols: ['#7cc257', '#72b84e', '#8fcc60', '#80c058', '#6aae48'], k: 0.25 },
@@ -112,8 +115,20 @@ const BIG = { hurstcastle: 1.6, obelisk: 1.35, castle: 1.5, arch: 1.4, goldcap: 
 const SIGNS = { gate: 1, gantry: 1, nose: 1, board: 1, chev: 1, warn: 1, banner: 1 };
 const lit = (look) => !!(look.night || look.dusk);   // lamps and headlights on
 // OutRun's way (owner, 5 Oct): the land side of the road ends at a boundary, and the place is packed in right behind it
-const VERGE_K = { 'jurassic:castle': 'wall', 'jurassic:ranges': 'vpost', 'jurassic:cove': 'wall', 'lymington:town': 'prom', 'lymington:marina': 'hedge', 'lymington:marsh': 'hedge', 'forest:heath': 'vpost', 'forest:village': 'hedge', 'forest:woods': 'vpost', 'purbeck:village': 'wall', 'purbeck:heath': 'vpost', 'needles:yarmouth': 'wall', 'needles:downs': 'hedge', 'swanage:town': 'prom', bournemouth: 'prom', sandbanks: 'prom', weymouth: 'prom', christchurch: 'hedge', lymington: 'hedge', goldencap: 'hedge', purbeck: 'wall', lyme: 'wall', portland: 'wall', forest: 'fence', swanage: 'vpost', jurassic: 'vpost', needles: 'vpost', hengistbury: 'vpost', harbour: 'bollard' };
+const VERGE_K = { winton: 'wall', charminster: 'wall', kinson: 'wall', muscliff: 'wall', littledown: 'wall', towerpark: 'wall', bearcross: 'wall', hurn: 'wall', wimborne: 'wall', ferndown: 'wall', highcliffe: 'wall', 'jurassic:castle': 'wall', 'jurassic:ranges': 'vpost', 'jurassic:cove': 'wall', 'lymington:town': 'prom', 'lymington:marina': 'hedge', 'lymington:marsh': 'hedge', 'forest:heath': 'vpost', 'forest:village': 'hedge', 'forest:woods': 'vpost', 'purbeck:village': 'wall', 'purbeck:heath': 'vpost', 'needles:yarmouth': 'wall', 'needles:downs': 'hedge', 'swanage:town': 'prom', bournemouth: 'prom', sandbanks: 'prom', weymouth: 'prom', christchurch: 'hedge', lymington: 'hedge', goldencap: 'hedge', purbeck: 'wall', lyme: 'wall', portland: 'wall', forest: 'fence', swanage: 'vpost', jurassic: 'vpost', needles: 'vpost', hengistbury: 'vpost', harbour: 'bollard' };
 const ROWS = {   // set out at a steady spacing behind the boundary: [model, variants, every so many segments, how far out, sideways jitter]
+  // the local run, plain for now: red-brick houses and shops both sides (Lyndhurst's will do until each place has its own)
+  winton: [['brickhouse', 5, 3, 19.6, 0.5], ['tpole', 1, 12, 15.6, 0]],
+  charminster: [['brickhouse', 5, 3, 19.6, 0.5], ['tpole', 1, 12, 15.6, 0]],
+  kinson: [['brickhouse', 5, 3, 19.6, 0.5], ['tpole', 1, 12, 15.6, 0]],
+  muscliff: [['brickhouse', 5, 3, 19.6, 0.5], ['tpole', 1, 12, 15.6, 0]],
+  littledown: [['brickhouse', 5, 3, 19.6, 0.5], ['tpole', 1, 12, 15.6, 0]],
+  towerpark: [['brickhouse', 5, 3, 19.6, 0.5], ['tpole', 1, 12, 15.6, 0]],
+  bearcross: [['brickhouse', 5, 3, 19.6, 0.5], ['tpole', 1, 12, 15.6, 0]],
+  hurn: [['brickhouse', 5, 3, 19.6, 0.5], ['tpole', 1, 12, 15.6, 0]],
+  wimborne: [['brickhouse', 5, 3, 19.6, 0.5], ['tpole', 1, 12, 15.6, 0]],
+  ferndown: [['brickhouse', 5, 3, 19.6, 0.5], ['tpole', 1, 12, 15.6, 0]],
+  highcliffe: [['brickhouse', 5, 3, 19.6, 0.5], ['tpole', 1, 12, 15.6, 0]],
   bournemouth: [['hutrow', 6, 4, 16.0, 0], ['hotel', 8, 7, 47, 4]], sandbanks: [['villa', 8, 6, 25, 2], ['palm', 3, 4, 16.6, 2]],
   weymouth: [['terrace', 6, 3, 21, 0]], lyme: [['terrace', 6, 4, 22, 0]], harbour: [['quayfront', 8, 5, 27, 0]],
   christchurch: [['cottage', 2, 10, 24, 4], ['terrace', 6, 8, 38, 3]], lymington: [['cottage', 2, 9, 24, 5], ['tpole', 1, 12, 15.6, 0]],
@@ -122,6 +137,17 @@ const ROWS = {   // set out at a steady spacing behind the boundary: [model, var
 const ROCKC = { hengistbury: '#c07a44', bournemouth: '#c9a66a', purbeck: '#e8e4d8', swanage: '#eeebe2', needles: '#efece4', jurassic: '#d8cfba', portland: '#c9c2b2', goldencap: '#d8a85e', lyme: '#7f8790', forest: '#a89070', christchurch: '#b9a98a', lymington: '#b9a98a', hengistbury: '#a87850' };   // the rock in the cuttings and cliffs
 const BUNT = { 'forest:village': 1, 'purbeck:village': 1, 'swanage:town': 1, 'needles:yarmouth': 1, bournemouth: 1, weymouth: 1, lyme: 1, christchurch: 1, 'lymington:town': 1, sandbanks: 1 };   // flags strung over the road in the towns
 const MORE = {   // closer, thicker dressing behind the boundary (as look.dress: [model, variants, a segment, from, to])
+  winton: [['strollers', 8, 0.1, 15.4, 17], ['flowerbed', 3, 0.12, 15.6, 18]],
+  charminster: [['strollers', 8, 0.1, 15.4, 17], ['flowerbed', 3, 0.12, 15.6, 18]],
+  kinson: [['strollers', 8, 0.1, 15.4, 17], ['flowerbed', 3, 0.12, 15.6, 18]],
+  muscliff: [['strollers', 8, 0.1, 15.4, 17], ['flowerbed', 3, 0.12, 15.6, 18]],
+  littledown: [['strollers', 8, 0.1, 15.4, 17], ['flowerbed', 3, 0.12, 15.6, 18]],
+  towerpark: [['strollers', 8, 0.1, 15.4, 17], ['flowerbed', 3, 0.12, 15.6, 18]],
+  bearcross: [['strollers', 8, 0.1, 15.4, 17], ['flowerbed', 3, 0.12, 15.6, 18]],
+  hurn: [['strollers', 8, 0.1, 15.4, 17], ['flowerbed', 3, 0.12, 15.6, 18]],
+  wimborne: [['strollers', 8, 0.1, 15.4, 17], ['flowerbed', 3, 0.12, 15.6, 18]],
+  ferndown: [['strollers', 8, 0.1, 15.4, 17], ['flowerbed', 3, 0.12, 15.6, 18]],
+  highcliffe: [['strollers', 8, 0.1, 15.4, 17], ['flowerbed', 3, 0.12, 15.6, 18]],
   bournemouth: [['bush', 2, 0.9, 19.2, 37], ['gorse', 1, 0.45, 19.2, 37], ['heather', 2, 0.3, 20, 36], ['pine', 1, 0.55, 38, 80], ['oak', 1, 0.12, 42, 75]], sandbanks: [['palm', 3, 0.22, 17, 28], ['bush', 2, 0.25, 15.6, 22], ['strollers', 8, 0.1, 15.4, 19]],   // (bournemouth: the cliff face - scrub, gorse, sandy patches; pines along the top)
   christchurch: [['oak', 1, 0.2, 17, 40], ['bush', 2, 0.25, 15.6, 22]], purbeck: [['oak', 1, 0.2, 17, 45], ['sheep', 2, 0.3, 17, 50]],
   'swanage:studland': [['heather', 2, 0.3, 15.6, 40], ['gorse', 1, 0.3, 15.6, 40], ['pine', 1, 0.1, 18, 50]], 'swanage:town': [['flowerbed', 3, 0.3, 15.6, 18], ['strollers', 8, 0.18, 15.4, 18.5]],
