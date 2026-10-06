@@ -172,8 +172,8 @@
   }
   // tunnels, bridges and the things that span the road, somewhere in the middle of the stretch (never on a crest, a
   // gate or a fork). A bridge lifts the road to at least 9 m over the water, easing up to it and down again.
-  var OVERS = { bournemouth: ['footbridge', 'banner'], sandbanks: ['banner', 'footbridge'], christchurch: ['treearch', 'footbridge'], purbeck: ['treearch', 'viaduct'], swanage: ['rockarch', 'treearch'],
-    forest: ['treearch', 'footbridge', 'treearch'], jurassic: ['rockarch', 'treearch'], weymouth: ['banner', 'footbridge'], harbour: ['footbridge', 'banner'], lymington: ['treearch', 'banner'], lyme: ['banner', 'footbridge'],
+  var OVERS = { bournemouth: ['pierarch', 'footbridge', 'banner'], sandbanks: ['banner', 'footbridge'], christchurch: ['treearch', 'footbridge'], purbeck: ['treearch', 'viaduct'], swanage: ['rockarch', 'treearch'],
+    forest: ['treearch', 'footbridge', 'treearch'], jurassic: ['rockarch', 'footbridge'], weymouth: ['banner', 'footbridge'], harbour: ['liftbridge', 'footbridge', 'banner'], lymington: ['treearch', 'banner'], lyme: ['banner', 'footbridge'],
     portland: ['rockarch', 'footbridge'], goldencap: ['treearch', 'rockarch'], hengistbury: ['footbridge', 'treearch'], needles: ['rockarch', 'footbridge'] };   // what spans the road in each place
   function features(W, S, lo, hi, r) {
     var F = S.feat || {}, used = [], i, tries;
@@ -433,7 +433,7 @@
     if (S.key === 'weymouth') { mark('clock', 0.4, function (h) { return -(Math.min(h, 22) - 4); }); }
     if (S.key === 'harbour') { mark('ferry', 0.55, function (h) { return Math.max(h, 16) + 40; }); }
     if (S.key === 'lymington') { mark('ferry', 0.5, function (h) { return Math.max(h, 16) + 60; }); }
-    if (S.key === 'lyme') { mark('cobb', 0.5, function (h) { return -(Math.max(h, 18) + 40); }); }
+    if (S.key === 'lyme') { mark('cobb', 0.32, function (h) { return -(Math.max(h, 18) + 34); }); }   // (earlier and nearer: the critic never saw it)
     if (S.key === 'portland') { mark('lighthouse', 0.84, function (h) { return -(Math.max(h, 18) - 5); }, 1); }
     if (S.key === 'hengistbury') { mark('headland', 0.7, function (h) { return Math.max(h, 18) + 70; }); }
     if (S.key === 'needles') { mark('needles', 0.8, function (h) { return Math.max(h, 18) + 90; }); }

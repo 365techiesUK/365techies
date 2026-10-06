@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=20';
+import * as MD from './models3d.js?v=21';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -119,20 +119,27 @@ const ROWS = {   // set out at a steady spacing behind the boundary: [model, var
 const ROCKC = { purbeck: '#e8e4d8', swanage: '#eeebe2', needles: '#efece4', jurassic: '#d8cfba', portland: '#c9c2b2', goldencap: '#d8a85e', lyme: '#7f8790', forest: '#a89070', christchurch: '#b9a98a', lymington: '#b9a98a', hengistbury: '#a87850' };   // the rock in the cuttings and cliffs
 const BUNT = { bournemouth: 1, weymouth: 1, lyme: 1, christchurch: 1, lymington: 1, sandbanks: 1 };   // flags strung over the road in the towns
 const MORE = {   // closer, thicker dressing behind the boundary (as look.dress: [model, variants, a segment, from, to])
-  bournemouth: [['palm', 3, 0.22, 17, 28], ['flowerbed', 3, 0.28, 15.6, 18]], sandbanks: [['palm', 3, 0.22, 17, 28], ['bush', 2, 0.25, 15.6, 22]],
+  bournemouth: [['palm', 3, 0.22, 17, 28], ['flowerbed', 3, 0.28, 15.6, 18], ['strollers', 8, 0.16, 15.4, 19.5]], sandbanks: [['palm', 3, 0.22, 17, 28], ['bush', 2, 0.25, 15.6, 22], ['strollers', 8, 0.1, 15.4, 19]],
   christchurch: [['oak', 1, 0.2, 17, 40], ['bush', 2, 0.25, 15.6, 22]], purbeck: [['oak', 1, 0.2, 17, 45], ['sheep', 2, 0.3, 17, 50]],
-  swanage: [['sheep', 2, 0.35, 17, 50], ['gorse', 1, 0.3, 15.6, 30]],
-  forest: [['pine', 1, 0.7, 15.8, 36], ['beech', 2, 0.6, 15.8, 36], ['oak', 3, 0.3, 16.5, 40], ['pony', 3, 0.05, 16, 30]],
-  jurassic: [['gorse', 1, 0.35, 15.6, 35], ['heather', 2, 0.45, 15.6, 35]], weymouth: [['flowerbed', 3, 0.3, 15.6, 18]],
-  lymington: [['oak', 1, 0.2, 17, 40], ['bush', 2, 0.3, 15.6, 25]], lyme: [['oak', 1, 0.15, 17, 40], ['bush', 2, 0.25, 15.6, 22]],
-  portland: [['heather', 2, 0.35, 15.6, 30], ['bush', 2, 0.15, 15.6, 25]], goldencap: [['oak', 1, 0.2, 17, 45], ['sheep', 2, 0.25, 17, 50], ['bush', 2, 0.25, 15.6, 25]],
-  hengistbury: [['heather', 2, 0.5, 15.6, 40], ['gorse', 1, 0.3, 15.6, 40]], needles: [['heather', 2, 0.4, 15.6, 40], ['sheep', 2, 0.2, 17, 50]]
+  swanage: [['sheep', 2, 0.35, 17, 50], ['gorse', 1, 0.3, 15.6, 30], ['drywall', 3, 0.06, 17, 40], ['caravan', 4, 0.04, 22, 48], ['kiosk', 3, 0.012, 16, 20]],
+  forest: [['pine', 1, 0.7, 15.8, 36], ['beech', 2, 0.6, 15.8, 36], ['oak', 3, 0.3, 16.5, 40], ['ponies', 4, 0.09, 15, 27]],
+  jurassic: [['gorse', 1, 0.35, 15.6, 35], ['heather', 2, 0.45, 15.6, 35], ['drywall', 3, 0.06, 17, 40], ['caravan', 4, 0.05, 22, 48], ['kiosk', 3, 0.012, 16, 20], ['sheep', 2, 0.15, 17, 45]], weymouth: [['flowerbed', 3, 0.3, 15.6, 18], ['strollers', 8, 0.16, 15.4, 18.5]],
+  lymington: [['oak', 1, 0.2, 17, 40], ['bush', 2, 0.3, 15.6, 25]], lyme: [['oak', 1, 0.15, 17, 40], ['bush', 2, 0.25, 15.6, 22], ['strollers', 8, 0.1, 15.4, 19]],
+  portland: [['heather', 2, 0.35, 15.6, 30], ['bush', 2, 0.15, 15.6, 25], ['drywall', 3, 0.09, 17, 40], ['rock', 3, 0.1, 16, 40]], goldencap: [['oak', 1, 0.2, 17, 45], ['sheep', 2, 0.25, 17, 50], ['bush', 2, 0.25, 15.6, 25], ['hay', 1, 0.06, 17, 40], ['drywall', 3, 0.05, 17, 40], ['caravan', 4, 0.03, 24, 48]],
+  hengistbury: [['heather', 2, 0.5, 15.6, 40], ['gorse', 1, 0.3, 15.6, 40], ['strollers', 8, 0.05, 15.4, 19], ['kiosk', 3, 0.01, 16, 20]], needles: [['heather', 2, 0.4, 15.6, 40], ['sheep', 2, 0.25, 17, 50], ['drywall', 3, 0.06, 17, 40], ['kiosk', 3, 0.012, 16, 20], ['strollers', 8, 0.04, 15.4, 19]]
 };
 for (const k in MORE) LOOK[k].dress = (LOOK[k].dress || []).concat(MORE[k]);
-const SEA_MORE = { bournemouth: [['windsurf', 4, 0.07, 30, 220]], sandbanks: [['windsurf', 4, 0.09, 25, 220]], weymouth: [['windsurf', 4, 0.06, 30, 220]], swanage: [['windsurf', 4, 0.03, 40, 220]], christchurch: [['windsurf', 4, 0.04, 25, 160]] };   // out on the water
+const SEA_MORE = { bournemouth: [['windsurf', 4, 0.07, 30, 220], ['motorboat', 4, 0.04, 40, 200]], sandbanks: [['windsurf', 4, 0.09, 25, 220], ['motorboat', 4, 0.05, 30, 200], ['marina', 3, 0.02, 7, 12]],
+  weymouth: [['windsurf', 4, 0.06, 30, 220], ['motorboat', 4, 0.04, 40, 200]], swanage: [['windsurf', 4, 0.03, 40, 220]], christchurch: [['windsurf', 4, 0.04, 25, 160], ['marina', 3, 0.04, 7, 12]],
+  lymington: [['marina', 3, 0.16, 3, 7], ['motorboat', 4, 0.03, 30, 140]], lyme: [['motorboat', 4, 0.03, 30, 160], ['marina', 3, 0.025, 7, 12]], harbour: [['marina', 6, 0.08, 6, 12]] };   // out on the water
+const BEACH = {   // the beach between the road and the water: [model, variants, a segment, from, to (less than 0: that far short of the water)]
+  bournemouth: [['strollers', 8, 0.22, 11.8, 19], ['deckchairs', 4, 0.26, 15.5, -3.5]], sandbanks: [['strollers', 8, 0.16, 11.8, 19], ['deckchairs', 4, 0.22, 15, -3.5]],
+  weymouth: [['strollers', 8, 0.22, 11.8, 19], ['deckchairs', 4, 0.26, 15.5, -3.5]], hengistbury: [['strollers', 8, 0.08, 11.8, 19]]
+};
+const QUAY = { harbour: 1 };   // lamps along the water's edge (at night the quay side was a black void)
 const BG_IMG = { bournemouth: 4, sandbanks: 4, christchurch: 4, purbeck: 4, swanage: 4, forest: 4, jurassic: 4, weymouth: 4, harbour: 4, lymington: 4, lyme: 4, portland: 4, goldencap: 4, needles: 4 };   // the places with a painted panorama (games/coastrun/bg/<place>.webp), and its version
-const HERO = { bournemouth: 44, sandbanks: 46, christchurch: 44, purbeck: 40, swanage: 26, forest: 30, jurassic: 30, weymouth: 38, harbour: 38, lymington: 40, lyme: 44, portland: 40, goldencap: 50, hengistbury: 44, needles: 32 };   // each place's landmark painted large (tools/coastrun/gen_hero.py): how wide it stands, in degrees
-const HERO_V = 1, HERO_D = 2150, MARK_OFF = 0.17;   // (the landmark sits just off the road ahead, to the sea side: further out, the beach huts and the prom hid it)
+const HERO = { bournemouth: 44, sandbanks: 46, christchurch: 44, purbeck: 56, swanage: 17, forest: 30, jurassic: 34, weymouth: 38, harbour: 38, lymington: 40, lyme: 44, portland: 40, goldencap: 50, hengistbury: 44, needles: 40 };   // each place's landmark painted large (tools/coastrun/gen_hero.py): how wide it stands, in degrees
+const HERO_V = 2, HERO_D = 2150, MARK_OFF = 0.17;   // (the landmark sits just off the road ahead, to the sea side: further out, the beach huts and the prom hid it)
 const BGL = new THREE.TextureLoader();
 
 // ---------------------------------------------------------------- the sky: the colours, the sun and its glow, the clouds
@@ -786,14 +793,14 @@ export function createWorld() {
         let ry = hash2(i, Math.round(it.x * 10)) * Math.PI * 2;
         if (/^(hut|cottage|hotel|building|board|finger|forestsign|lamp|villa|terrace|clock)$/.test(it.t)) ry = fr;
         if (it.t === 'lamp') ry = fr + Math.PI;   // the arm reaches over the road
-        if (/^(gate|gantry|nose|chev|warn|gpost|footbridge|viaduct|banner|rockarch|treearch)$/.test(it.t)) ry = -P.th;
+        if (/^(gate|gantry|nose|chev|warn|gpost|footbridge|viaduct|banner|rockarch|treearch|pierarch|liftbridge)$/.test(it.t)) ry = -P.th;
         if (it.t === 'priory' || it.t === 'cobb' || it.t === 'goldcap' || it.t === 'headland') ry = fr;
         if (it.t === 'arch') ry = -P.th + (it.x < 0 ? Math.PI : 0);   // Durdle Door side-on from the road, its high end towards the shore
         if (it.t === 'board') ry = -P.th + d * 0.5;
         if (it.t === 'pier' || it.t === 'ferry') ry = fr + Math.PI / 2;
         let y = P.y;
         if (/^(yacht|buoy|stack|arch|needles|ferry|pier|cobb|goldcap|headland)$/.test(it.t)) y = 0;
-        else if (/^(footbridge|viaduct|rockarch|treearch)$/.test(it.t)) y = P.y - (it.t === 'rockarch' ? 1.5 : 0.3);
+        else if (/^(footbridge|viaduct|rockarch|treearch|pierarch|liftbridge)$/.test(it.t)) y = P.y - (it.t === 'rockarch' ? 1.5 : 0.3);
         else if (it.t === 'lighthouse') y = P.y - 6;
         else if (Math.abs(it.x) > HALF + 2) y = groundAt(W, g, P, it.x);
         if (SIGNS[it.t]) { signParts(W, i, g, it, P, y, ry, signs, addModel, addAll); if (it.t === 'gate' || it.t === 'gantry' || it.t === 'banner') continue; }
@@ -848,11 +855,19 @@ export function createWorld() {
     let kk = 0; for (let j = -6; j <= 6; j++) kk += E.segAt(W, i + j).k; kk /= 13;
     const inner = Math.abs(kk) > 1e-4 ? 0.55 / Math.abs(kk) : 1e9, innerSide = kk > 0 ? 1 : -1;
     for (const d of [-1, 1]) {
-      if (g.sea === d) {   // out on the water: windsurfers
-        const sm = SEA_MORE[E.STAGES[g.st].key]; if (!sm || !g.sh) continue;
+      if (g.sea === d) {   // the beach (people, deckchairs), the quay's lamps, and out on the water: windsurfers, boats, marinas
+        const key = E.STAGES[g.st].key, bl = BEACH[key];
+        const hut = (j) => { const q = E.segAt(W, j); return q && q.spr && q.spr.some((it) => (it.t === 'hut' || it.t === 'crowd') && Math.sign(it.x) === d); };   // (never in a beach hut)
+        if (bl && g.sh > 15 && !g.over && !g.nearOver) bl.forEach((t, ti) => { const h0 = hash2(i * 9 + ti, d * 23 + 4); if (h0 > t[2]) return;
+          const h1 = hash2(i * 17 + ti, ti * 7 - d), h2 = hash2(i * 5 + 1, ti * 11 + d), to = t[4] < 0 ? g.sh + t[4] : t[4], lat = t[3] + fo + h1 * Math.max(0, to - t[3]);
+          if (lat > g.sh - 2.5 || (lat < 15 && (hut(i - 1) || hut(i) || hut(i + 1)))) return;
+          place(W, i * SEG + h2 * SEG, d * lat, 0, DP);
+          addAll(MD.model(t[0], Math.floor(hash2(i, ti * 13 + 2) * 997) % t[1]), DP.x, groundAt(W, g, DP, d * lat) - 0.05, DP.z, faceRoad(d, DP.th) + (t[0] === 'deckchairs' ? Math.PI : 0) + (h2 - 0.5) * 0.6, 1); });
+        if (QUAY[key] && g.sh > 4 && i % 3 === 0) { place(W, i * SEG, d * (g.sh - 0.9), 0, DP); addAll(MD.model('quaylight', 0), DP.x, groundAt(W, g, DP, d * (g.sh - 0.9)), DP.z, 0, 1); }
+        const sm = SEA_MORE[key]; if (!sm || !g.sh) continue;
         sm.forEach((t, ti) => { const h0 = hash2(i * 5 + ti, d * 17 + 9); if (h0 > t[2]) return;
-          const h1 = hash2(i * 11, ti * 3 + d), h2 = hash2(i * 7 + 3, ti - d); place(W, i * SEG + h2 * SEG, d * (g.sh + t[3] + h1 * (t[4] - t[3])), 0, DP);
-          addAll(MD.model(t[0], Math.floor(h1 * 991) % t[1]), DP.x, 0, DP.z, -DP.th + (h2 - 0.5) * 1.2, 1); });
+          const h1 = hash2(i * 11, ti * 3 + d), h2 = hash2(i * 7 + 3, ti - d), mar = t[0] === 'marina'; place(W, i * SEG + h2 * SEG, d * (g.sh + t[3] + h1 * (t[4] - t[3])), 0, DP);
+          addAll(MD.model(t[0], key === 'harbour' && mar ? 3 + Math.floor(h1 * 991) % 3 : Math.floor(h1 * 991) % t[1]), DP.x, 0, DP.z, -DP.th + (mar ? 0 : (h2 - 0.5) * 1.2), 1); });   // (a marina lies along the shore)
         continue;
       }
       look.dress.forEach((t, ti) => {
@@ -862,8 +877,8 @@ export function createWorld() {
           const lat = t[3] + fo + h1 * (t[4] - t[3]); if (d === innerSide && lat > inner) continue;
           place(W, i * SEG + h2 * SEG, d * lat, 0, DP);
           const y = groundAt(W, g, DP, d * lat) - (t[0] === 'tuft' ? 0.05 : 0.25) + (t[0] === 'balloon' ? 60 + h1 * 90 : 0);
-          const ry = /^(hotel|building|villa|terrace)$/.test(t[0]) ? faceRoad(d, DP.th) : h3 * Math.PI * 2;
-          addAll(MD.model(t[0], Math.floor(h3 * 997) % t[1]), DP.x, y, DP.z, ry, t[0] === 'tuft' || /^(hotel|building|villa|terrace|balloon)$/.test(t[0]) ? 1 : 0.8 + h2 * 0.45);
+          const ry = /^(hotel|building|villa|terrace|strollers|kiosk)$/.test(t[0]) ? faceRoad(d, DP.th) + (t[0] === 'strollers' ? (h3 - 0.5) * 0.6 : 0) : t[0] === 'drywall' ? -DP.th + (h3 - 0.5) * 0.5 : h3 * Math.PI * 2;
+          addAll(MD.model(t[0], Math.floor(h3 * 997) % t[1]), DP.x, y, DP.z, ry, t[0] === 'tuft' || /^(hotel|building|villa|terrace|balloon|strollers|ponies|caravan|kiosk|drywall)$/.test(t[0]) ? 1 : 0.8 + h2 * 0.45);
         }
       });
     }
@@ -1478,6 +1493,7 @@ export function createWorld() {
       const g = E.segAt(W, i); if (!g.coins || i * SEG < W.s - 3) continue;   // the ones behind you are gone
       for (const cn of g.coins) {
         let up = 1.1, scl = 1;
+        if (!cn.got && i * SEG < W.s - 0.5) continue;   // (a missed one, once you're past it: a bonus beside the car swept past the camera and filled the corner of the screen)
         if (cn.got) { const gt = W.t - cn.got; if (gt > 6) continue; up += 1.2 + gt * 0.35; scl = 1 - gt / 7; }   // a caught one pops up a little and shrinks away (growing, it filled the camera)
         const pulled = cn.got && cn.gx != null && Math.abs(cn.x - cn.gx) > 2.2 ? Math.min(1, (W.t - cn.got) / 9) : 0;   // the magnet caught it: it flies across to you
         place(W, i * SEG, cn.x + (W.x - cn.x) * pulled, 0, POS);

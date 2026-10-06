@@ -209,6 +209,24 @@ const MODELS = {
     }
     for (let w = 0; w < 7; w++) { const x = -9 + w * 3; k.box(2.5, 2.3, 0.14, x, 0.15, 7.08, glass, 0, 0, 0, 'shiny').box(2.9, 0.08, 1.5, x, 2.55, 7.7, awn, 0, -0.32, 0); }   // the shopfronts and their awnings
     for (const sd of [-1, 1]) for (let f = 1; f < fl; f++) for (let w = 0; w < 4; w++) k.box(0.12, 2.15, 1.95, sd * 11.03, 0.83 + f * 3.2, -4.5 + w * 3, trim).box(0.2, 1.8, 1.6, sd * 11.06, 1 + f * 3.2, -4.5 + w * 3, glass, 0, 0, 0, 'shiny');   // the side windows
+    // a pillared porch over the door (the middle bay), then each hotel its own roofline
+    k.box(4.6, 0.4, 2.6, 0, 3.0, 8.3, trim).box(4.9, 0.2, 2.8, 0, 3.4, 8.3, shade(wall, -0.12));
+    for (const x of [-2.0, 2.0]) k.cyl(0.22, 0.26, 3.0, 10, x, 0, 9.3, trim);
+    const st = v % 4;
+    if (st === 0) {   // a pediment over the middle and a flag
+      k.put(new THREE.CylinderGeometry(5.2, 5.2, 0.8, 3), trim, 0, H + 1.1, 7.0, -Math.PI / 2, 0, 0, 1, 1, 0.42);   // (a triangle prism stood up: the pediment)
+      k.cyl(0.07, 0.08, 7, 6, 0, H + 2.2, 4, '#e0e4e8').box(2.2, 1.3, 0.05, 1.15, H + 7.4, 4, ['#d32f2f', '#1d7fd6', '#ffd23f'][(v >> 2) % 3]);
+    } else if (st === 1) {   // a round turret at each front corner, a green copper cap
+      for (const sd of [-1, 1]) { k.cyl(2.3, 2.3, H + 2.4, 14, sd * 10.6, 0, 6.6, wall).cone(2.7, 4.4, 14, sd * 10.6, H + 2.4, 6.6, '#5e8c7a');
+        for (let f = 1; f < fl; f++) k.box(1.3, 1.9, 0.3, sd * 10.6, 1 + f * 3.2, 8.85, glass, 0, 0, 0, 'shiny'); }
+    } else if (st === 2) {   // art deco: a stepped tower over the middle, white bands, a flagpole
+      k.box(7, 4.5, 8, 0, H, 3, wall).box(4.5, 3, 5.5, 0, H + 4.5, 3, wall).box(7.3, 0.4, 8.3, 0, H + 4.3, 3, trim).box(4.8, 0.4, 5.8, 0, H + 7.3, 3, trim);
+      for (let f = 1; f < fl; f++) k.box(22.4, 0.18, 14.4, 0, f * 3.2 - 0.05, 0, trim);
+      k.cyl(0.06, 0.07, 5, 6, 0, H + 7.7, 3, '#e0e4e8');
+    } else {   // dormers along the roof and tall chimneys
+      for (const x of [-7.5, -2.5, 2.5, 7.5]) { k.box(2.2, 2.0, 2.0, x, H + 0.4, 5.2, wall).prism(2.6, 1.1, 2.4, x, H + 2.4, 5.2, roof).box(1.4, 1.3, 0.12, x, H + 0.7, 6.22, glass, 0, 0, 0, 'shiny'); }
+      for (const x of [-9, 9]) k.box(1.6, 5, 1.6, x, H + 1, -2, '#8a5a48');
+    }
   },
   yacht(k, v) {
     const night = v >= 3, hull = night ? '#26324a' : ['#ffffff', '#1d3557', '#f1faee'][v % 3];
@@ -280,12 +298,7 @@ const MODELS = {
     const c = v ? ['#8a5a9a', '#a46ab8', '#c08cd4'] : ['#b0762a', '#cc8f3a', '#8a5f2a'];
     for (let i = 0; i < 4; i++) k.clump(0.55, (i - 1.5) * 0.65, 0.35, (i % 2) * 0.4, c[i % 3], 70 + i);
   },
-  pony(k, v) {
-    const col = ['#6b4423', '#3a2a1e', '#9a8a7a'][v % 3], dk = shade(col, -0.3);
-    for (const [x, z] of [[-0.25, -0.65], [0.25, -0.65], [-0.25, 0.65], [0.25, 0.65]]) k.box(0.16, 0.9, 0.16, x, 0, z, dk);
-    k.box(0.7, 0.7, 1.7, 0, 0.9, 0, col).box(0.35, 0.8, 0.35, 0, 1.2, -0.95, col, 0, 0.8).box(0.32, 0.32, 0.6, 0, 0.95, -1.4, col, 0, 0.7);
-    k.box(0.12, 0.7, 0.12, 0, 0.8, 0.9, dk, 0, -0.4);
-  },
+  pony(k, v) { ponyAt(k, 0, 0, ['#6b4423', '#3a2a1e', '#9a8a7a'][v % 3], 1, v === 1); },
   logs(k) { for (let r = 0; r < 3; r++) for (let i = 0; i < 4 - r; i++) k.roll(0.32, 3.4, 9, -1.05 + i * 0.7 + r * 0.35, 0.32 + r * 0.56, 0, i % 2 ? '#7a5634' : '#8a6440'); },
   forestsign(k) { k.cyl(0.08, 0.08, 2.4, 5, 0, 0, 0, '#9aa0a6'); k.box(1.8, 1.3, 0.08, 0, 2.2, 0, '#d32f2f').box(1.6, 1.1, 0.1, 0, 2.3, 0, '#ffffff'); k.box(0.7, 0.5, 0.12, 0, 2.6, 0, '#4a3020'); },
   gorse(k) {
@@ -430,14 +443,36 @@ const MODELS = {
     k.box(15, 0.9, 0.06, 0, 4.28, 5.25, '#bcd7e6', 0, 0, 0, 'shiny');   // the glass balcony rail
     k.box(7, 0.06, 3.2, -3, 0, 7.2, '#29b4dc', 0, 0, 0, 'shiny').box(7.6, 0.2, 3.8, -3, -0.05, 7.2, '#e7e2d6');   // the pool
   },
-  terrace(k, v) {   // Weymouth and Lyme: a tall painted house in a row along the front
-    const c = ['#f3d9a4', '#e9b4b0', '#bfe0e8', '#f4f1ea', '#c9e3b8', '#f0c987'][v % 6], h = 12 + (v % 3);
+  terrace(k, v) {   // Weymouth and Lyme: a tall painted house in a row along the front (its face +Z) - framed sash windows with sills, a bay
+    // or an iron balcony on the first floor, a shopfront and awning on some, a cornice, the chimney stack and its pots
+    const c = ['#f3d9a4', '#e9b4b0', '#bfe0e8', '#f4f1ea', '#c9e3b8', '#f0c987'][v % 6], fl = 3 + ((v >> 1) % 2), h = 1.4 + fl * 3.4;
+    const trim = '#fbfaf6', gl = '#34505f', shop = v % 3 === 1, bay = v % 3 === 0, rail = v % 2 === 1;
     k.box(11.9, h, 9, 0, 0, 0, c);
     k.prism(9.6, 3, 12, 0, h, 0, ['#5a5f66', '#6b4a3a', '#4f5862'][v % 3], Math.PI / 2);
-    k.box(1.4, 2.4, 1.4, 4.2, h + 1.2, 0, '#8a7a6a');
-    for (let f = 0; f < 3; f++) for (let w = 0; w < 3; w++) k.box(1.5, 2, 0.12, -3.6 + w * 3.6, 2.2 + f * 3.4, 4.52, '#34505f', 0, 0, 0, 'shiny');
-    k.box(11.9, 0.3, 0.6, 0, 3.9, 4.65, '#ffffff').box(11.9, 0.35, 0.3, 0, h - 0.4, 4.6, '#ffffff');
-    k.box(1.3, 2.5, 0.1, 0, 0, 4.53, ['#1d3557', '#7a1f2b', '#1f6f50'][v % 3]);
+    k.box(1.4, 2.4, 1.4, 4.2, h + 1.2, 0, '#8a7a6a'); for (const x of [3.8, 4.2, 4.6]) k.cyl(0.11, 0.12, 0.55, 6, x, h + 3.6, 0, '#b0603a');   // the chimney stack, its pots
+    k.box(12.1, 0.45, 0.55, 0, h - 0.55, 4.55, trim).box(11.9, 0.25, 0.25, 0, 3.6, 4.6, trim);   // the cornice, a string course over the ground floor
+    const win = (x, y, w2) => { k.box(w2 + 0.35, 2.3, 0.1, x, y - 0.15, 4.5, trim).box(w2, 1.95, 0.14, x, y, 4.52, gl, 0, 0, 0, 'shiny').box(w2 + 0.45, 0.14, 0.34, x, y - 0.32, 4.62, trim).box(0.07, 1.95, 0.16, x, y, 4.56, trim).box(w2, 0.07, 0.16, x, y + 0.9, 4.56, trim); };   // frame, glass, sill, glazing bars
+    for (let f = 1; f < fl; f++) for (let w = 0; w < 3; w++) { if (bay && w === 1 && f < 3) continue; win(-3.6 + w * 3.6, 4.3 + (f - 1) * 3.4, 1.45); }
+    if (bay) {   // a bay window over two floors in the middle
+      k.box(4.0, 6.6, 1.3, 0, 3.6, 5.1, c).box(4.3, 0.35, 1.5, 0, 10.2, 5.15, trim);
+      for (let f = 0; f < 2; f++) { const y = 4.6 + f * 3.4; k.box(3.2, 2.1, 0.12, 0, y - 0.1, 5.78, gl, 0, 0, 0, 'shiny').box(3.5, 0.14, 0.3, 0, y - 0.25, 5.86, trim); for (const x of [-0.8, 0.8]) k.box(0.08, 2.1, 0.16, x, y - 0.1, 5.8, trim); }
+    }
+    if (rail) {   // a first-floor balcony with a black iron railing
+      k.box(11.6, 0.16, 1.1, 0, 3.75, 5.0, trim);
+      for (let x = -5.6; x <= 5.6; x += 0.35) k.box(0.04, 0.9, 0.04, x, 3.9, 5.5, '#1e2226');
+      k.box(11.6, 0.06, 0.08, 0, 4.8, 5.5, '#1e2226');
+    }
+    if (shop) {   // a shopfront: big glass, a painted fascia, a striped awning out over the pavement
+      const fc = ['#1d3557', '#7a1f2b', '#1f6f50', '#3a2a50'][v % 4];
+      k.box(9.6, 2.6, 0.14, -0.6, 0.25, 4.5, '#e8d8b8').box(9.4, 2.4, 0.06, -0.6, 0.35, 4.6, '#9ab4c2', 0, 0, 0, 'shiny').box(11.9, 0.7, 0.2, 0, 2.85, 4.58, fc);   // a lit shop behind light glass (dark glass under the awning read as a black void)
+      for (let i = 0; i < 6; i++) k.box(0.9, 0.7, 0.12, -4.6 + i * 1.6, 0.9, 4.56, ['#ff7eb6', '#ffd23f', '#3ec1ff', '#ff9a3c', '#7cff8a', '#ffffff'][(i + v) % 6]);   // things in the window
+      for (let i = 0; i < 8; i++) k.box(1.4, 0.06, 1.7, -4.95 + i * 1.42, 2.75, 5.35, i % 2 ? '#ffffff' : fc, 0, -0.38, 0);
+      k.box(1.2, 2.6, 0.14, 5.1, 0, 4.55, fc);
+    } else {
+      for (const w of [0, 2]) win(-3.6 + w * 3.6, 1.6, 1.45);
+      k.box(1.3, 2.5, 0.1, 0, 0, 4.53, ['#1d3557', '#7a1f2b', '#1f6f50'][v % 3]).box(1.6, 0.5, 0.12, 0, 2.5, 4.53, trim).box(1.0, 0.35, 0.14, 0, 2.55, 4.55, gl, 0, 0, 0, 'shiny');   // the door, its fanlight
+      k.box(1.8, 0.18, 0.7, 0, 0, 4.85, '#cfc8b8');   // the step
+    }
   },
   clock(k) {   // Weymouth's Victorian clock tower on the front: painted iron, four faces, a pointed red roof
     k.box(2.8, 1, 2.8, 0, 0, 0, '#c8b89a').box(2.0, 8, 2.0, 0, 1, 0, '#2f6fb0');
@@ -451,10 +486,17 @@ const MODELS = {
     for (let i = -5; i <= 5; i += 2) { k.box(1.4, 1.6, 1.4, i, 36, 5.2, dk).box(1.4, 1.6, 1.4, i, 36, -5.2, dk).box(1.4, 1.6, 1.4, 5.2, 36, i, dk).box(1.4, 1.6, 1.4, -5.2, 36, i, dk); }
     for (let i = 0; i < 6; i++) k.box(2, 6, 0.3, -46 + i * 7, 4, 7.6, '#3d4b55', 0, 0, 0, 'shiny');
   },
-  cobb(k) {   // the Cobb at Lyme Regis: a long curving stone harbour wall, boats tucked inside it
-    for (let i = 0; i < 16; i++) { const a = -0.2 + i * 0.1, R = 70, x = Math.sin(a) * R, z = R - Math.cos(a) * R; k.box(7.6, 4.5, 8, x, -1.5, z, i % 2 ? '#a8a08c' : '#9e9682', -a); }
-    k.box(6, 1.2, 9, 64, 3, 23, '#bdb5a0', -1.3);
-    const r = rnd(77); for (let i = 0; i < 5; i++) k.side([-2.5, 0.3, 2.8, 0.3, 3.2, 1.2, -2.6, 1.2], 1.6, 12 + i * 8, -0.3, 22 + r() * 6, ['#ffffff', '#1d4ed8', '#d32f2f'][i % 3], 'shiny', 0.05);
+  cobb(k) {   // the Cobb at Lyme Regis: a long curving stone harbour arm out of the sea, a parapet along its seaward side, the round head
+    // at the end, fishing boats tucked in behind it
+    const R = 80, n = 40, r = rnd(77);
+    for (let i = 0; i < n; i++) {
+      const a = -0.15 + i * 0.04, x = Math.sin(a) * R, z = R - Math.cos(a) * R, c = i % 3 ? '#a8a08c' : '#9e9682';
+      k.box(3.7, 6, 9, x, -3, z, c, -a).box(3.7, 1.5, 2, x + 3.6 * Math.sin(a), 3, z - 3.6 * Math.cos(a), shade(c, -0.08), -a);   // the arm, its parapet
+    }
+    const ae = -0.15 + n * 0.04, hx = Math.sin(ae) * R, hz = R - Math.cos(ae) * R;
+    k.cyl(6, 7, 7.5, 16, hx, -3, hz, '#a49c88').cyl(6.2, 6.2, 0.4, 16, hx, 4.5, hz, '#8e8774');   // the round head
+    for (let i = 0; i < 6; i++) { const a = 0.1 + i * 0.2, bx = Math.sin(a) * (R - 14), bz = R - Math.cos(a) * (R - 14);
+      k.side([-2.5, 0.3, 2.8, 0.3, 3.2, 1.2, -2.6, 1.2], 1.6, bx, -0.3, bz, ['#ffffff', '#1d4ed8', '#d32f2f'][i % 3], 'shiny', 0.05); }
   },
   goldcap(k) {   // Golden Cap: the highest cliff on the south coast, a flat green top over a glowing gold face, grey-blue clay below
     const n0 = k.parts.lit ? k.parts.lit.length : 0;
@@ -502,7 +544,7 @@ const MODELS = {
     const g = new THREE.ExtrudeGeometry(sh, { depth: 8, bevelEnabled: true, bevelThickness: 1.6, bevelSize: 1.4, bevelSegments: 2, curveSegments: 14 }); g.translate(0, 0, -4); g.computeVertexNormals();
     k.put(g, '#d2c7ab', 0, 0, 0, 0, 0, 0, 1, 1, 1, 'lit');   // (plain weathered rock: the masonry texture made it a bridge)
     for (const sd of [-1, 1]) for (let i = 0; i < 3; i++) k.blob(3.6 + q() * 2.2, sd * (21 + q() * 3), 2 + i * 4.5, (q() - 0.5) * 7, '#cfc4a8', 1, 1.2, 1, 430 + v * 9 + i + (sd > 0 ? 5 : 0));   // lumps on the legs
-    k.blob(11, 0, 23.6, 0, '#6f9a45', 2.4, 0.2, 0.62, 440 + v);   // grass on top
+    k.blob(9, 0, 22.9, 0, '#6f9a45', 1.9, 0.26, 0.72, 440 + v);   // grass on top (hugging the rock: wider and thinner, from below it read as a green line in the sky)
   },
   treearch(k, v) {   // old trees either side of the lane, their crowns meeting over the road: a green tunnel 60 m long to drive through.
     // The crowns are solid lumpy balls of leaves (leaf cards, seen from right underneath, showed as flat planks across the sky)
@@ -517,6 +559,90 @@ const MODELS = {
       k.blob(2.5 + q() * 1.3, x, y, z + (q() - 0.5) * 2.5, c[(q() * 3) | 0], 1.25, 0.72, 1.15, 600 + v * 97 + Math.round(z * 7 + lx * 3));
     }
   },
+  strollers(k, v) {   // people out along the front: a loose group, some waving at the cars going by, sometimes with a dog
+    const r = rnd(700 + v * 13), n = 4 + (v % 4);
+    for (let i = 0; i < n; i++) person(k, (r() - 0.5) * 5.5, 0, (r() - 0.5) * 2.8, r, r() < 0.3);
+    if (v % 3 === 0) { const dc = ['#3a2a1e', '#d8c8a8', '#111111'][(v >> 2) % 3], dx = 1.6, dz = 1.2;
+      k.box(0.24, 0.26, 0.6, dx, 0.22, dz, dc).box(0.2, 0.2, 0.26, dx, 0.42, dz - 0.36, dc).box(0.05, 0.05, 0.28, dx, 0.42, dz + 0.38, dc, 0, 0.6);
+      for (const [lx, lz] of [[-0.08, -0.22], [0.08, -0.22], [-0.08, 0.22], [0.08, 0.22]]) k.box(0.06, 0.22, 0.06, dx + lx, 0, dz + lz, dc); }
+  },
+  deckchairs(k, v) {   // a patch of beach: a striped windbreak, deckchairs with people in them, someone on a towel, a bucket
+    const r = rnd(740 + v * 7), C = [['#e63946', '#ffffff'], ['#1d7fd6', '#ffffff'], ['#2a9d8f', '#ffd23f'], ['#ff7eb6', '#ffffff']][v % 4];
+    for (let i = 0; i < 6; i++) k.box(0.55, 1.0, 0.03, -1.4 + i * 0.55, 0.05, -1.3, i % 2 ? C[1] : C[0]);   // the windbreak, behind
+    for (let i = 0; i < 6; i++) k.cyl(0.025, 0.025, 1.2, 4, -1.68 + i * 0.67, 0, -1.33, '#c9a46a');
+    const n = 2 + (v % 3);
+    for (let i = 0; i < n; i++) { const x = -1.2 + i * 1.05; deckchair(k, x, 0, C[0], C[1]); if (r() < 0.75) sitter(k, x, 0.05, -0.05, r); }
+    lyer(k, 2.2 + r() * 0.6, 0.6, r);
+    k.cyl(0.12, 0.09, 0.2, 7, -1.9, 0, 0.9, ['#ff3b30', '#ffd60a', '#0a84ff'][v % 3]);   // a bucket
+    if (v % 2) k.ball(0.2, 1.0, 0.2, 1.4, '#ffffff', 1, 1, 1, 'lit', 8).ball(0.205, 1.0, 0.2, 1.4, C[0], 1, 1, 0.35, 'lit', 8);   // a beach ball
+  },
+  motorboat(k, v) {   // a little speedboat out on the bay, bow to -Z, a white wake behind it
+    const hull = ['#f4f6f8', '#1d3557', '#c62828', '#f4f6f8'][v % 4], trim = ['#1d7fd6', '#f4f6f8', '#f4f6f8', '#e63946'][v % 4];
+    k.side([-2.6, 0, 2.4, 0, 3.4, 0.9, -2.7, 0.9], 1.9, 0, -0.2, 0, hull, 'shiny', 0.06);
+    k.box(1.94, 0.14, 5.4, 0, 0.5, 0.1, trim);
+    k.box(1.5, 0.5, 0.06, 0, 0.7, -0.8, '#bcd7e6', 0, 0.5, 0, 'shiny');   // the windscreen
+    person(k, 0.25, 0.2, 0.2, rnd(31 + v), v % 2 === 0);
+    k.box(2.2, 0.03, 10, 0, -0.12, 7.6, '#eef6f8').box(1.0, 0.04, 6, 0, -0.1, 5.4, '#ffffff');   // the wake
+  },
+  marina(k, v) {   // a pontoon along the shore with yachts moored either side: a forest of masts (v 3+: at night, lit)
+    const night = v >= 3, r = rnd(800 + v), wood = night ? '#4a4038' : '#9a8266';
+    k.box(2, 0.3, 44, 0, 0.1, 0, wood);
+    for (let z = -20; z <= 20; z += 5) { for (const sd of [-1, 1]) k.box(4.6, 0.25, 0.7, sd * 3.3, 0.1, z, wood); for (const sd of [-1, 1]) k.cyl(0.16, 0.16, 2.2, 5, sd * 1.05, -1.4, z, '#3a3028'); }   // the fingers, the piles
+    for (let z = -17.5; z <= 17.5; z += 5) for (const sd of [-1, 1]) if (r() < 0.85) moored(k, sd * 1.2, z, sd * (8 + r() * 3), r, night);
+    if (night) for (let z = -20; z <= 20; z += 10) k.box(0.2, 0.2, 0.2, 0, 1.2, z, '#ffe2a0', 0, 0, 0, 'glow').cyl(0.06, 0.06, 1, 4, 0, 0.3, z, '#2a2e36');
+  },
+  quaylight(k) { k.cyl(0.12, 0.16, 1.0, 6, 0, 0, 0, '#2a2e36').box(0.24, 0.24, 0.24, 0, 1.0, 0, '#ffe2a0', 0, 0, 0, 'glow'); },   // a lamp on the quay's edge
+  ponies(k, v) {   // New Forest ponies grazing by the road, a foal with them
+    const r = rnd(900 + v), cols = ['#6b4423', '#3a2a1e', '#9a8a7a', '#c8a070'];
+    const n = 2 + (v % 2);
+    for (let i = 0; i < n; i++) ponyAt(k, (i - (n - 1) / 2) * 2.6 + (r() - 0.5), (r() - 0.5) * 2.5, cols[(v + i) % 4], 1, r() < 0.6);
+    ponyAt(k, 1.4, 1.8, cols[(v + 1) % 4], 0.62, false);
+  },
+  caravan(k, v) {   // a static holiday caravan on the clifftop: cream with a coloured band, windows, a little step
+    const band = ['#2a9d8f', '#1d7fd6', '#c0392b', '#7a8a3a'][v % 4];
+    k.box(3.3, 2.6, 9, 0, 0.45, 0, '#f2eee2').box(3.34, 0.35, 9.04, 0, 1.25, 0, band).box(3.5, 0.2, 9.2, 0, 3.05, 0, '#d8d4c8');
+    for (const z of [-3, -0.5, 2.5]) for (const sd of [-1, 1]) k.box(0.06, 0.9, 1.6, sd * 1.67, 1.75, z, '#3a5566', 0, 0, 0, 'shiny');
+    k.box(0.06, 1.9, 0.8, 1.67, 0.5, 1.1, '#cfc8b8').box(0.7, 0.3, 0.9, 2.05, 0, 1.1, '#9a9488');
+    k.box(3.1, 0.45, 8.6, 0, 0, 0, '#5a5650');
+  },
+  kiosk(k, v) {   // a seaside ice-cream kiosk with a striped awning and a sandwich board, people queueing
+    const c = ['#ff7eb6', '#3ec1ff', '#ffd23f'][v % 3], r = rnd(960 + v);
+    k.box(3.2, 2.5, 2.4, 0, 0, 0, '#f6f2ea').box(3.4, 0.3, 2.6, 0, 2.5, 0, c).box(2.6, 1.0, 0.08, 0, 1.0, 1.21, '#2a3a48', 0, 0, 0, 'shiny');
+    for (let i = 0; i < 7; i++) k.box(0.48, 0.05, 1.0, -1.45 + i * 0.48, 2.3, 1.6, i % 2 ? '#ffffff' : c, 0, -0.35, 0);
+    k.cone(0.45, 1.1, 10, 0, 2.8, 0, '#e8b860').ball(0.42, 0, 4.0, 0, '#ffd8e6', 1, 0.9, 1, 'lit', 10);   // a giant cone on the roof
+    k.box(0.6, 0.9, 0.05, 1.9, 0, 2.2, c, 0, 0.35, 0);
+    for (let i = 0; i < 3; i++) person(k, -1 + i * 0.9, 0, 2.4 + i * 0.5, r, false);
+  },
+  drywall(k, v) {   // a length of dry-stone field wall, a little crooked, a gap with a wooden gate in it
+    const r = rnd(980 + v), c = ['#b8b0a0', '#c9c1ae', '#a89f8c'][v % 3];
+    for (let i = 0; i < 6; i++) { if (i === 3) { for (let b = 0; b < 4; b++) k.box(0.06, 0.06, 3.4, 0, 0.25 + b * 0.25, i * 3.6 - 9, '#8a6a48'); continue; }
+      k.box(0.6, 1.0 + r() * 0.2, 3.7, (r() - 0.5) * 0.3, 0, i * 3.6 - 9, c, (r() - 0.5) * 0.1, 0, 0, 'stone').box(0.7, 0.18, 3.7, 0, 1.05, i * 3.6 - 9, shade(c, -0.15), 0, 0, 0, 'stone'); }
+  },
+  pierarch(k, v) {   // Bournemouth's pier entrance, made a gateway over the road: two cream pavilion towers with green domes, an iron arch between
+    const cream = '#f2ead8', green = '#5e8c7a';
+    for (const sd of [-1, 1]) {
+      const x = sd * 15.6;
+      k.box(4, 9, 4, x, 0, 0, cream).box(4.4, 0.5, 4.4, x, 9, 0, '#e2d8c2').cyl(1.9, 2.1, 1.4, 14, x, 9.5, 0, cream);
+      k.put(new THREE.SphereGeometry(2.1, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2), green, x, 10.9, 0).cyl(0.12, 0.12, 2, 6, x, 13, 0, '#e8e4da');
+      for (const y of [2.5, 6]) k.box(0.1, 2.2, 1.6, x - sd * 2.02, y, 0, '#3a5566', 0, 0, 0, 'shiny');
+    }
+    for (let i = 0; i <= 24; i++) { const u = i / 24 * 2 - 1, a0 = Math.asin(Math.max(-1, Math.min(1, u))); const x = u * 13.6, y = 8.2 + Math.cos(a0) * 3.2;
+      if (i < 24) { const u2 = (i + 1) / 24 * 2 - 1, x2 = u2 * 13.6, y2 = 8.2 + Math.cos(Math.asin(Math.max(-1, Math.min(1, u2)))) * 3.2; k.box(Math.hypot(x2 - x, y2 - y) + 0.05, 0.35, 0.35, (x + x2) / 2, (y + y2) / 2 - 0.17, 0, '#2f5a4f', 0, 0, Math.atan2(y2 - y, x2 - x)); }
+      if (i % 3 === 0) k.box(0.08, y - 7.4, 0.08, x, 7.4, 0, '#2f5a4f'); }
+    k.box(27.4, 0.4, 0.4, 0, 7.2, 0, '#2f5a4f');
+    k.cyl(1.1, 1.1, 0.2, 18, 0, 11.6, 0, '#e2c25a', Math.PI / 2, 0);   // a gilded crest at the top
+    for (let i = 0; i < 14; i++) k.ball(0.18, -12.6 + i * 1.94, 7.0, 0.3, '#fff3c0', 1, 1, 1, 'glow', 6);   // a row of bulbs under the arch
+  },
+  liftbridge(k, v) {   // the harbour's lifting bridge, open: two tall white leaves raised either side of the road like sails, blue light at their feet
+    for (const sd of [-1, 1]) {
+      const x = sd * 15.4;
+      k.box(4, 3, 7, x, 0, 0, '#d8dce0');
+      k.side([-3.2, 0, 3.2, 0, 0.6, 20], 1.2, x + sd * 0.4, 3, 0, '#f4f6f8', 'shiny');   // the raised leaf, a tall white triangle
+      k.box(0.3, 17, 0.3, x - sd * 0.4, 3, 0.4, '#c8ccd2', 0, 0, sd * 0.14);
+      k.box(4.2, 0.4, 7.2, x, 2.8, 0, '#3ec1ff', 0, 0, 0, 'glow');   // light at the foot
+    }
+    k.box(27, 0.8, 4, 0, 13.2, 0, '#d8dce0').box(27, 0.3, 4.1, 0, 13.0, 0, '#3ec1ff', 0, 0, 0, 'glow');   // the gantry over the road, lit underneath
+  },
   balloon(k, v) {   // a hot-air balloon, far off over the land
     const c = [['#e63946', '#ffd23f'], ['#1d7fd6', '#ffffff'], ['#2a9d8f', '#f4a261'], ['#9b5de5', '#ffd23f']][v % 4];
     for (let i = 0; i < 10; i++) k.put(new THREE.SphereGeometry(8, 3, 14, i * Math.PI / 5, Math.PI / 5), c[i % 2], 0, 16, 0, 0, 0, 0, 1, 1.22, 1);
@@ -525,7 +651,16 @@ const MODELS = {
     for (const [x, z] of [[-0.8, -0.8], [0.8, -0.8], [-0.8, 0.8], [0.8, 0.8]]) k.cyl(0.03, 0.03, 2.4, 3, x, 3.4, z, '#5a4a30');
   },
 };
-const capG = (r, l) => new THREE.CapsuleGeometry(r, l, 3, 8);
+const capG = (r, l) => new THREE.CapsuleGeometry(r, l, 2, 7);   // (people and ponies come in crowds now: kept light)
+function ponyAt(k, x, z, col, s, graze) {   // a stocky forest pony, head to -Z: a round barrel of a body, slim legs, a dark mane and tail
+  const dk = shade(col, -0.35);
+  for (const [lx, lz] of [[-0.2, -0.55], [0.2, -0.55], [-0.2, 0.55], [0.2, 0.55]]) k.put(capG(0.06 * s, 0.72 * s), col, x + lx * s, 0.4 * s, z + lz * s).box(0.13 * s, 0.1 * s, 0.14 * s, x + lx * s, 0, z + lz * s, '#2a2420');
+  k.put(capG(0.34 * s, 0.75 * s), col, x, 1.05 * s, z, Math.PI / 2, 0, 0);   // the body
+  const hy = graze ? 0.55 : 1.55, hz = graze ? -1.35 : -1.15;
+  k.put(capG(0.15 * s, 0.5 * s), col, x, (1.2 + hy) / 2 * s, z + (-0.8 + hz) / 2 * s, graze ? -2.2 : -0.7, 0, 0);   // the neck
+  k.put(capG(0.12 * s, 0.32 * s), col, x, hy * s, z + hz * s, graze ? -2.8 : -1.9, 0, 0).box(0.08 * s, 0.3 * s, 0.5 * s, x, (hy - 0.05 + (graze ? 0 : 0.18)) * s, z + (hz + 0.35) * s, dk, 0, graze ? -1.0 : 0.6, 0);   // the head, the mane
+  k.put(capG(0.07 * s, 0.5 * s), dk, x, 0.85 * s, z + 0.78 * s, 0.35, 0, 0);   // the tail
+}
 function person(k, x, y, z, r, cheer) {   // one of the crowd, in grown-up proportions: two legs, a body narrowing to the waist, a neck,
   // an oval head (hair on most), rounded arms - raised ones wave (the 'wave' material moves them)
   const sh = CROWD[(r() * CROWD.length) | 0], sk = SKIN[(r() * SKIN.length) | 0], h = 0.82 + r() * 0.24, pose = r(), up = cheer && pose < 0.3, one = cheer && !up && pose < 0.55;
@@ -538,6 +673,31 @@ function person(k, x, y, z, r, cheer) {   // one of the crowd, in grown-up propo
     if (up || (one && sd > 0)) k.put(capG(0.05, 0.48), sk, x + sd * 0.3, y + h + 0.95, z, 0, 0, sd * -0.35, 1, 1, 1, 'wave');
     else k.put(capG(0.05, 0.46), sh, x + sd * 0.27, y + h + 0.28, z, 0, 0, sd * 0.08);
   }
+}
+function sitter(k, x, y, z, r) {   // someone sat back in a deckchair, facing +Z: legs out in front, leaning back, an arm on the rest
+  const sh = CROWD[(r() * CROWD.length) | 0], sk = SKIN[(r() * SKIN.length) | 0], legs = r() < 0.55 ? sk : ['#2d3a55', '#d8d2c4', '#1d4e89'][(r() * 3) | 0];
+  for (const sd of [-1, 1]) k.put(capG(0.07, 0.48), legs, x + sd * 0.1, y + 0.3, z + 0.36, Math.PI / 2 - 0.3, 0, 0);
+  k.put(capG(0.15, 0.26), sh, x, y + 0.58, z - 0.08, -0.5, 0, 0, 1.3, 1, 0.72);
+  k.ball(0.11, x, y + 0.95, z - 0.27, sk, 1, 1.15, 1.05, 'lit', 10);
+  if (r() < 0.6) k.put(capG(0.05, 0.4), sk, x + 0.28, y + 0.55, z, 0.9, 0, 0);
+}
+function deckchair(k, x, z, c1, c2) {   // a striped deckchair on its wooden frame, facing +Z
+  for (const sd of [-1, 1]) k.box(0.04, 0.04, 1.2, x + sd * 0.3, 0.32, z - 0.05, '#c9a46a', 0, -0.62, 0).box(0.04, 0.04, 0.85, x + sd * 0.3, 0.2, z + 0.25, '#c9a46a', 0, 0.55, 0);
+  for (let i = 0; i < 5; i++) k.box(0.115, 0.02, 1.05, x - 0.23 + i * 0.115, 0.36, z - 0.05, i % 2 ? c2 : c1, 0, -0.62, 0);   // the canvas, slung back
+}
+function lyer(k, x, z, r) {   // someone sunbathing on a towel, along Z
+  const sk = SKIN[(r() * SKIN.length) | 0], sh = CROWD[(r() * CROWD.length) | 0];
+  k.box(0.85, 0.02, 1.9, x, 0, z, ['#e63946', '#ffd23f', '#3ec1ff', '#ff7eb6', '#2a9d8f'][(r() * 5) | 0]);
+  k.put(capG(0.15, 0.55), sh, x, 0.16, z - 0.15, Math.PI / 2, 0, 0, 1.25, 1, 0.75).put(capG(0.07, 0.6), sk, x - 0.09, 0.1, z + 0.55, Math.PI / 2, 0, 0).put(capG(0.07, 0.6), sk, x + 0.09, 0.1, z + 0.55, Math.PI / 2, 0, 0);
+  k.ball(0.11, x, 0.15, z - 0.68, sk, 1, 0.95, 1.1, 'lit', 10);
+}
+function moored(k, x, z, len, r, night) {   // a yacht moored stern-to a pontoon, its bow out along +X or -X (len's sign), mast up, sail furled
+  const hull = night ? '#26324a' : ['#ffffff', '#f4f4f0', '#1d3557', '#e9eef0'][(r() * 4) | 0], L = Math.abs(len), sd = Math.sign(len);
+  k.box(L * 0.78, 0.8, 2.2, x + sd * L * 0.39, 0, z, hull, 0, 0, 0, 'shiny');
+  k.put(new THREE.CylinderGeometry(1.25, 1.25, 0.8, 3), hull, x + sd * L * 0.8, 0.4, z, 0, sd > 0 ? 0 : Math.PI, 0, 0.9, 1, 0.88, 'shiny');   // the bow
+  k.box(L * 0.32, 0.6, 1.5, x + sd * L * 0.36, 0.8, z, night ? '#33415a' : '#e9eef0').box(L * 0.3, 0.2, 1.45, x + sd * L * 0.36, 1.12, z, night ? '#ffd98a' : '#3a5566', 0, 0, 0, night ? 'glow' : 'shiny');
+  const m = 9 + r() * 4; k.cyl(0.05, 0.06, m, 4, x + sd * L * 0.55, 0.8, z, '#d0d0d0').box(L * 0.42, 0.22, 0.22, x + sd * L * 0.34, 2.0, z, night ? '#2a3550' : ['#1d4e89', '#7a1f2b', '#1f6f50', '#2b2d42'][(r() * 4) | 0]);   // the mast, the furled sail on its boom
+  if (night) k.box(0.18, 0.18, 0.18, x + sd * L * 0.55, 0.8 + m, z, '#fff2c0', 0, 0, 0, 'glow');
 }
 export function shade(hex, f) { C.set(hex); const k = f < 0 ? 1 + f : 1; const add = f > 0 ? f : 0; return '#' + new THREE.Color(C.r * k + add * (1 - C.r), C.g * k + add * (1 - C.g), C.b * k + add * (1 - C.b)).getHexString(); }
 const cache = new Map();
