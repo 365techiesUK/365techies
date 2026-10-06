@@ -9,17 +9,19 @@
 
   function colX(L, i) { return L.left + i * (L.cw + L.gap); }
   function layout(W, H) {
-    var gap = Math.max(6, Math.min(18, Math.round(W * 0.012)));
-    var byW = (W - gap * 8) / 7, byH = (H - gap * 3) / 4.25 / 1.4;
-    var cw = Math.max(32, Math.floor(Math.min(byW, byH, 170))), ch = Math.round(cw * 1.4);
-    var L = { cw: cw, ch: ch, gap: gap, W: W, H: H, left: Math.round((W - (7 * cw + 6 * gap)) / 2), top: gap, tabY: gap + ch + Math.round(gap * 1.6) };
+    // a phone held upright (6 Oct 2026, Petra: "a bit small ... not clear enough"): narrow gaps, taller cards
+    var phone = W < 600 && H > W * 1.3, asp = phone ? 1.5 : 1.4;
+    var gap = phone ? 4 : Math.max(6, Math.min(18, Math.round(W * 0.012)));
+    var byW = (W - gap * 8) / 7, byH = (H - gap * 3) / 4.25 / asp;
+    var cw = Math.max(32, Math.floor(Math.min(byW, byH, 170))), ch = Math.round(cw * asp);
+    var L = { cw: cw, ch: ch, gap: gap, W: W, H: H, phone: phone, left: Math.round((W - (7 * cw + 6 * gap)) / 2), top: gap, tabY: gap + ch + Math.round(gap * 1.6) };
     L.slots = [{ key: 'stock', x: colX(L, 0), y: L.top, cls: 'stock', text: '' }];
     for (var f = 0; f < 4; f++) L.slots.push({ key: 'f' + f, x: colX(L, 3 + f), y: L.top, cls: 'found', text: 'A' });
     for (var t = 0; t < 7; t++) L.slots.push({ key: 't' + t, x: colX(L, t), y: L.tabY, cls: 'tab', text: 'K' });
     return L;
   }
   function colGaps(L, col) {   // face-down cards close together, face-up ones far enough apart to read; squeezed if long
-    var tall = L.H > L.W * 1.25, fd = L.ch * (tall ? 0.15 : 0.11), fu = L.ch * (tall ? 0.42 : 0.3), downs = 0, ups = 0, avail = L.H - L.tabY - L.gap;
+    var tall = L.H > L.W * 1.25, fd = L.ch * (L.phone ? 0.18 : tall ? 0.15 : 0.11), fu = L.ch * (L.phone ? 0.48 : tall ? 0.42 : 0.3), downs = 0, ups = 0, avail = L.H - L.tabY - L.gap;
     col.forEach(function (x) { if (x.up) ups++; else downs++; });
     var need = L.ch + downs * fd + Math.max(0, ups - 1) * fu;
     if (need > avail && ups > 1) { fu = Math.max(L.ch * 0.16, (avail - L.ch - downs * fd) / (ups - 1)); need = L.ch + downs * fd + (ups - 1) * fu; }

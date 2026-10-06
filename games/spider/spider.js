@@ -20,17 +20,19 @@
 
   function colX(L, i) { return L.left + i * (L.cw + L.gap); }
   function layout(W, H) {
-    var gap = Math.max(5, Math.min(14, Math.round(W * 0.009)));
-    var byW = (W - gap * 11) / 10, byH = (H - gap * 3) / 4.6 / 1.4;
-    var cw = Math.max(Math.min(28, Math.floor(byW)), Math.floor(Math.min(byW, byH, 150))), ch = Math.round(cw * 1.4);   // (never wider than the screen)
-    var L = { cw: cw, ch: ch, gap: gap, W: W, H: H, left: Math.round((W - (10 * cw + 9 * gap)) / 2), top: gap, tabY: gap + ch + Math.round(gap * 1.8) };
+    // a phone held upright (6 Oct 2026, Petra: "a bit small ... not clear enough"): narrow gaps, taller cards
+    var phone = W < 600 && H > W * 1.3, asp = phone ? 1.5 : 1.4;
+    var gap = phone ? 3 : Math.max(5, Math.min(14, Math.round(W * 0.009)));
+    var byW = (W - gap * 11) / 10, byH = (H - gap * 3) / 4.6 / asp;
+    var cw = Math.max(Math.min(28, Math.floor(byW)), Math.floor(Math.min(byW, byH, 150))), ch = Math.round(cw * asp);   // (never wider than the screen)
+    var L = { cw: cw, ch: ch, gap: gap, W: W, H: H, phone: phone, left: Math.round((W - (10 * cw + 9 * gap)) / 2), top: gap, tabY: gap + ch + Math.round(gap * 1.8) };
     L.slots = [{ key: 'stock', x: colX(L, 0), y: L.top, cls: 'stock', text: '' }];
     for (var d = 0; d < 8; d++) L.slots.push({ key: 'd' + d, x: colX(L, 2 + d), y: L.top, cls: 'done', text: 'K–A' });
     for (var t = 0; t < 10; t++) L.slots.push({ key: 't' + t, x: colX(L, t), y: L.tabY, cls: 'tab', text: '' });
     return L;
   }
   function colGaps(L, col) {   // face-down cards close together, face-up ones far enough apart to read; squeezed if long
-    var tall = L.H > L.W * 1.25, fd = L.ch * (tall ? 0.13 : 0.1), fu = L.ch * (tall ? 0.38 : 0.27), downs = 0, ups = 0, avail = L.H - L.tabY - L.gap;
+    var tall = L.H > L.W * 1.25, fd = L.ch * (L.phone ? 0.16 : tall ? 0.13 : 0.1), fu = L.ch * (L.phone ? 0.44 : tall ? 0.38 : 0.27), downs = 0, ups = 0, avail = L.H - L.tabY - L.gap;
     col.forEach(function (x) { if (x.up) ups++; else downs++; });
     var need = L.ch + downs * fd + Math.max(0, ups - 1) * fu;
     if (need > avail && ups > 1) { fu = Math.max(L.ch * 0.13, (avail - L.ch - downs * fd) / (ups - 1)); need = L.ch + downs * fd + (ups - 1) * fu; }

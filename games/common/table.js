@@ -321,6 +321,10 @@
   // after another; a card that turns over turns in the air. Web Animations (CSS transitions are off while it flies).
   // Shared with rivals.js (Table365.fly). Callers skip it with Extra effects off or reduced motion.
   var CAN_FLY = typeof Element !== 'undefined' && !!Element.prototype.animate;
+  // 6 Oct 2026 (Petra, on her phone: "Response needs to be quicker. Bit slow for me"): every card journey and the waits
+  // around it scale by PACE - Settings > Card speed: Quick (0.5, the default) or Relaxed (1, the pace until then).
+  // A table sets it in start(); the hand games (rivals.js) never do, so theirs stays as it was.
+  var PACE = 1;
   function easeInOut(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
   function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
   function easeBack(t) { var c1 = 1.5, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); }   // a spring: past the mark, and back
@@ -335,6 +339,7 @@
     if (!CAN_FLY) { el.classList.remove('flight'); return null; }
     var dx = b.x - a.x, dy = b.y - a.y, dist = Math.sqrt(dx * dx + dy * dy);
     var dur = o.dur || Math.round(Math.max(250, Math.min(560, 210 + dist * 0.42)));
+    if (!o.noPace) dur = Math.max(90, Math.round(dur * PACE));
     var lift = o.lift != null ? o.lift : Math.min(72, 6 + dist * 0.2), tilt = o.tilt != null ? o.tilt : Math.max(-10, Math.min(10, dx / 28));
     var grow = o.grow != null ? o.grow : 0.07, ease = EASE[o.ease || 'inOut'], ar = a.r || 0, br = b.r || 0, as = a.s || 1, bs = b.s || 1;
     var cx = a.x + dx / 2, cy = a.y + dy / 2 - lift, frames = [], N = 14;
@@ -472,7 +477,7 @@
     // ------------------------------------------------------------ what this browser remembers (per game)
     function load(k, d) { try { var v = localStorage.getItem(D.store + ':' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
     function save(k, v) { try { localStorage.setItem(D.store + ':' + k, JSON.stringify(v)); } catch (e) {} }
-    var SET = { winnable: true, auto: true, sound: true, timer: true, felt: 'green', back: 'navy', fx: true, seenHelp: false, win: 'mix' };
+    var SET = { winnable: true, auto: true, sound: true, timer: true, felt: 'green', back: 'navy', fx: true, seenHelp: false, win: 'mix', pace: 'quick' };
     if (V) SET[V.key] = V.def;
     (function () { var s = load('settings', null); if (s && typeof s === 'object') for (var k in SET) if (k in s) SET[k] = s[k]; })();
     if (V && !V.options.some(function (o) { return o[0] === SET[V.key]; })) SET[V.key] = V.def;
@@ -483,6 +488,10 @@
       if (!Looks.known('felt', SET.felt)) SET.felt = 'green';
       if (!Looks.known('back', SET.back)) SET.back = 'navy';
     }
+    // Card speed: Quick (half the time, the default since 6 Oct 2026) or Relaxed; pc() scales a wait the same way
+    function setPace() { if (SET.pace !== 'relaxed') SET.pace = 'quick'; PACE = SET.pace === 'relaxed' ? 1 : 0.5; }
+    function pc(ms) { return Math.round(ms * PACE); }
+    setPace();
     function blankStats() { return { v: 1, played: 0, won: 0, streak: 0, bestStreak: 0, best: {}, daily: {}, recent: [] }; }
     var ST = blankStats();
     (function () { var s = load('stats', null); if (s && s.v === 1) for (var k in ST) if (k in s) ST[k] = s[k]; if (!ST.best || typeof ST.best !== 'object') ST.best = {}; })();
@@ -525,7 +534,9 @@
       LW = board.clientWidth; LH = board.clientHeight;   // (the size this layout was made for)
       L = D.layout(board.clientWidth, board.clientHeight, S);
       document.documentElement.style.setProperty('--cw', L.cw + 'px');
-      board.classList.toggle('tiny', L.cw < 52); board.classList.add('g-' + D.id);   // narrow cards (Spider on a phone): a bigger corner, one big suit (games audit, 5 Oct 2026)
+      // narrow cards: a bigger corner, one big suit (games audit, 5 Oct 2026 - Spider on a phone). 6 Oct 2026 (Petra: "not
+      // clear enough" on her phone): every phone-sized card, up to 64 px - rows of tiny pips were the hard part to read
+      board.classList.toggle('tiny', L.cw < 64); board.classList.add('g-' + D.id);
       document.documentElement.style.setProperty('--ch', L.ch + 'px');
       var seen = {};
       (L.slots || []).forEach(function (s) {
@@ -577,7 +588,7 @@
         el.classList.toggle('down', !p.up);
         if (!instant && old && old.pile !== p.pile) {   // flying to another pile: on top of everything until it lands
           el.style.zIndex = 2000 + p.z; clearTimeout(el._zt);
-          el._zt = setTimeout((function (e) { return function () { e.style.zIndex = e._z; e._zt = 0; }; })(el), 320);
+          el._zt = setTimeout((function (e) { return function () { e.style.zIndex = e._z; e._zt = 0; }; })(el), pc(320));
           flyOn(el);
         } else if (!el._zt) el.style.zIndex = p.z;
         if (turning) turnOn(el);   // turned face up where it lies: it rises as it turns and catches the light
@@ -586,7 +597,7 @@
       // card turning over turns in the air; a card let go near its place just settles in (a spring if it goes back)
       var my = gen;
       gk.forEach(function (key) {
-        var g = groups[key].sort(function (u, v) { return Math.round(u.b.x) - Math.round(v.b.x) || u.b.z - v.b.z; }), gap = Math.min(34, 420 / g.length);
+        var g = groups[key].sort(function (u, v) { return Math.round(u.b.x) - Math.round(v.b.x) || u.b.z - v.b.z; }), gap = Math.min(34, 420 / g.length) * PACE;
         g.forEach(function (f, i) {
           var el = f.el, delay = Math.round(i * gap);
           clearTimeout(el._zt); el.style.zIndex = 2000 + f.b.z;
@@ -841,7 +852,7 @@
       return { m: best, near: near };
     }
     function nope(el) { if (!el) return; el.classList.remove('nope'); void el.offsetWidth; el.classList.add('nope'); setTimeout(function () { el.classList.remove('nope'); }, 360); }
-    function pop(c) { var el = cardEl[c]; if (!el) return; setTimeout(function () { el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); setTimeout(function () { el.classList.remove('pop'); }, 380); }, 240); }
+    function pop(c) { var el = cardEl[c]; if (!el) return; setTimeout(function () { el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); setTimeout(function () { el.classList.remove('pop'); }, 380); }, pc(240)); }
 
     // ------------------------------------------------------------ making moves
     function act(m) {
@@ -865,8 +876,8 @@
       if (fx.t === 'draw') { foundRun = 0; sfx(fx.recycled ? 'shuffle' : (fx.dealt ? 'deal' : 'flip'));
         if (fx.recycled && typeof fx.left === 'number') say(fx.left ? 'Turned over – one more time through the deck after this' : 'Last time through the deck!'); }
       else if (fx.toFound) { foundRun++; sfx('found', foundRun); (fx.popCards || fx.cards).forEach(pop); celebrate(fx); }
-      else { foundRun = 0; sfx('slide'); setTimeout(function () { sfx('place'); }, arcsOn() ? 330 : 230); }   // (as a flying card lands)
-      if (fx.flipped && fx.flipped.length) setTimeout(function () { sfx('flip'); }, 140);
+      else { foundRun = 0; sfx('slide'); setTimeout(function () { sfx('place'); }, pc(arcsOn() ? 330 : 230)); }   // (as a flying card lands)
+      if (fx.flipped && fx.flipped.length) setTimeout(function () { sfx('flip'); }, pc(140));
       if (fx.say) say(fx.say);
     }
     // a card reaching the piles: gold sparkles where it lands and the points it earned floating up; a whole suit
@@ -887,7 +898,7 @@
           document.body.appendChild(f); setTimeout(function () { f.remove(); }, 1200);
         }
         if (whole) { sfx('suit'); if (SET.fx && !reduce) pop(last); bigMoment(fx, D.face(last, S).s); }
-      }, 260);
+      }, pc(260));
     }
     // a big moment stamped on the table (5 Oct 2026): a suit completed, a Spider run, a TriPeaks peak, a Pyramid row
     var SUITW = ['Spades', 'Hearts', 'Diamonds', 'Clubs'], stampEl = null;
@@ -958,11 +969,11 @@
         if (m) {
           busy = true;
           var my = gen;
-          setTimeout(function () { if (my !== gen) return; busy = false; var fx = E.apply(S, m); if (fx) { logMove(m); effects(fx); render(); } after(); }, reduce ? 0 : 170);
+          setTimeout(function () { if (my !== gen) return; busy = false; var fx = E.apply(S, m); if (fx) { logMove(m); effects(fx); render(); } after(); }, reduce ? 0 : pc(170));
           return;
         }
       }
-      if (E.finishable && E.finishable(S)) { busy = true; say('Finishing it off for you…'); finSteps = 0; var mg = gen; setTimeout(function () { finish(mg); }, reduce ? 0 : 420); return; }
+      if (E.finishable && E.finishable(S)) { busy = true; say('Finishing it off for you…'); finSteps = 0; var mg = gen; setTimeout(function () { finish(mg); }, reduce ? 0 : pc(420)); return; }
       persist();
       if (G.started && stuckNow()) showStuck();
     }
@@ -974,7 +985,7 @@
       var fx = E.apply(S, m);
       if (fx) { logMove(m); effects(fx); render(); }
       if (S.won) { busy = false; return win(); }
-      setTimeout(function () { finish(my); }, reduce ? 0 : (m.t === 'draw' ? 50 : 105));
+      setTimeout(function () { finish(my); }, reduce ? 0 : pc(m.t === 'draw' ? 50 : 105));
     }
     function undo() {
       if (S && !S.won && !rules().undo) { say('No Undo at this level – every move counts!'); return; }
@@ -1024,7 +1035,7 @@
             g.className = cardEl[k].className.replace(/\b(hint|hov|press|sel|can|hot|land|turn|fly|pop|shine|nope|flight)\b/g, '') + ' ghost';
             g.removeAttribute('data-c'); g.style.zIndex = 5000 + i; g.style.opacity = '0';
             board.appendChild(g);
-            Table365.fly(g, src, dst, { end: 'translate3d(' + dst.x + 'px,' + dst.y + 'px,0)', delay: i * 30, dur: 640, land: false });
+            Table365.fly(g, src, dst, { end: 'translate3d(' + dst.x + 'px,' + dst.y + 'px,0)', delay: i * 30, dur: 640, land: false, noPace: true });
             g.animate([{ opacity: 0 }, { opacity: 0.85, offset: 0.12 }, { opacity: 0.85, offset: 0.78 }, { opacity: 0 }], { duration: 760, delay: i * 30, fill: 'both' });
             setTimeout(function () { g.remove(); }, 860 + i * 30);
           });
@@ -1118,7 +1129,7 @@
       lastP = {};
       if (reduce) { render(true); return; }
       busy = true; bar();
-      var my = gen, order = D.dealOrder(S), arcs = arcsOn(), step = arcs ? Math.max(16, Math.min(34, 1400 / order.length)) : (order.length > 60 ? 26 : 44);   // the whole deal about 1.4 s
+      var my = gen, order = D.dealOrder(S), arcs = arcsOn(), step = (arcs ? Math.max(16, Math.min(34, 1400 / order.length)) : (order.length > 60 ? 26 : 44)) * PACE;   // the whole deal about 1.4 s (Relaxed)
       var wait = arcs ? riffle(deck, my) : 0;   // a quick riffle shuffle first
       order.forEach(function (c, k) {
         setTimeout(function () {
@@ -1134,9 +1145,9 @@
           el.style.transform = endT;
           flyOn(el);
           if (p.up) setTimeout(function () { if (my === gen) { el.classList.remove('down'); shineOn(el); } }, 200);
-        }, wait + 80 + k * step);
+        }, wait + pc(80) + k * step);
       });
-      setTimeout(function () { if (my !== gen) return; busy = false; render(); idle(); }, wait + 80 + order.length * step + 520);
+      setTimeout(function () { if (my !== gen) return; busy = false; render(); idle(); }, wait + pc(80) + order.length * step + pc(520));
     }
     // the riffle: the top of the deck splits into two halves that lean apart, then the cards fall back together one by
     // one from alternate sides - like shuffling a real pack. Returns how long it takes (ms).
@@ -1147,10 +1158,10 @@
       top.forEach(function (el, j) {
         var side = j % 2 ? 1 : -1, dx = side * L.cw * 0.6, rise = -4 - (j >> 1) * 0.7, back = 0.58 + j * 0.02;
         el.animate([{ transform: base }, { transform: T(deck.x + dx, deck.y + rise, side * 9), offset: 0.3 }, { transform: T(deck.x + dx * 0.9, deck.y + rise, side * 7), offset: back - 0.06 },
-          { transform: T(deck.x, deck.y - 2, 0), offset: back }, { transform: base }], { duration: 660, easing: 'ease-in-out' });
+          { transform: T(deck.x, deck.y - 2, 0), offset: back }, { transform: base }], { duration: pc(660), easing: 'ease-in-out' });
       });
-      setTimeout(function () { if (my === gen) sfx('shuffle'); }, 280);
-      return 680;
+      setTimeout(function () { if (my === gen) sfx('shuffle'); }, pc(280));
+      return pc(680);
     }
 
     // ------------------------------------------------------------ winning
@@ -1356,6 +1367,7 @@
     function syncControls() {
       if (V) Array.prototype.forEach.call(document.querySelectorAll('[data-var]'), function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-var') === SET[V.key])); });
       Array.prototype.forEach.call(document.querySelectorAll('[data-set]'), function (b) { b.setAttribute('aria-checked', String(!!SET[b.getAttribute('data-set')])); });
+      Array.prototype.forEach.call(document.querySelectorAll('[data-pace]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-pace') === SET.pace)); });
       Array.prototype.forEach.call(document.querySelectorAll('[data-felt]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-felt') === SET.felt)); });
       Array.prototype.forEach.call(document.querySelectorAll('[data-back]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-back') === SET.back)); });
       document.body.className = 'felt-' + SET.felt + ' back-' + SET.back + (SET.fx ? '' : ' nofx');
@@ -1363,8 +1375,9 @@
       var pv = $('sLookPv'); if (pv) { pv.className = 'lkpv lk-f-' + SET.felt; pv.firstChild.className = 'lk-b-' + SET.back; }
     }
     document.addEventListener('click', function (e) {
-      var b = e.target.closest ? e.target.closest('[data-var],[data-set],[data-felt],[data-back]') : null; if (!b) return;
-      if (b.hasAttribute('data-var')) SET[V.key] = +b.getAttribute('data-var');
+      var b = e.target.closest ? e.target.closest('[data-var],[data-set],[data-felt],[data-back],[data-pace]') : null; if (!b) return;
+      if (b.hasAttribute('data-pace')) { SET.pace = b.getAttribute('data-pace'); setPace(); }
+      else if (b.hasAttribute('data-var')) SET[V.key] = +b.getAttribute('data-var');
       else if (b.hasAttribute('data-set')) { var k = b.getAttribute('data-set'); SET[k] = !SET[k]; if (k === 'timer') bar(); }
       else if (b.hasAttribute('data-back')) SET.back = b.getAttribute('data-back');
       else SET.felt = b.getAttribute('data-felt');
@@ -1572,6 +1585,7 @@
           + (D.autoNext ? sw('auto', 'Move cards up to the piles for me', 'When it&rsquo;s plainly safe to.') : '')
           + sw('sound', 'Sounds', 'Soft card sounds and chimes.') + sw('timer', 'Show the clock', 'It still keeps your best time.')
           + sw('fx', 'Extra effects', 'Sparkles, cards that lift as they move, fireworks when you win. Switch off on a slower computer.')
+          + '<div class="set"><div><label>Card speed</label><small>Quick keeps up with a fast player; Relaxed lets you watch every card&rsquo;s journey.</small></div><div class="seg" role="group" aria-label="Card speed"><button type="button" data-pace="quick">Quick</button><button type="button" data-pace="relaxed">Relaxed</button></div></div>'
            + '<div class="set"><div><label for="sWin">Win celebration</label><small>Surprise me picks a different one each time.</small></div><div class="wincel"><select id="sWin">' + Table365.FINALE_NAMES.map(function (o) { return '<option value="' + o[0] + '">' + o[1] + '</option>'; }).join('') + '</select><button class="btn" type="button" id="sWinTry">Watch</button></div></div>'
           + (window.Looks ? '<div class="set"><div><label>Tables and card backs</label><small>Twelve of each &ndash; the specials are won with Journey stars.</small></div><button class="btn lkbtn" type="button" id="sLooks"><span class="lkpv" id="sLookPv"><i></i></span>Choose</button></div>' : ''
             + '<div class="set"><div><label>Table</label></div><div class="felts" role="group" aria-label="Table"><button type="button" data-felt="green" style="background:#1f7a45" aria-label="Green baize"></button><button type="button" data-felt="blue" style="background:#1f5f9c" aria-label="Blue"></button><button type="button" data-felt="red" style="background:#8e2537" aria-label="Red"></button><button type="button" data-felt="slate" style="background:#45526a" aria-label="Grey"></button>'

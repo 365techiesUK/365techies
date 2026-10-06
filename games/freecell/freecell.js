@@ -18,10 +18,12 @@
 
   function colX(L, i) { return L.left + i * (L.cw + L.gap); }
   function layout(W, H) {
-    var gap = Math.max(6, Math.min(16, Math.round(W * 0.011)));
-    var byW = (W - gap * 9) / 8, byH = (H - gap * 3) / 4.5 / 1.4;
-    var cw = Math.max(30, Math.floor(Math.min(byW, byH, 160))), ch = Math.round(cw * 1.4);
-    var L = { cw: cw, ch: ch, gap: gap, W: W, H: H, left: Math.round((W - (8 * cw + 7 * gap)) / 2), top: gap, tabY: gap + ch + Math.round(gap * 1.6) };
+    // a phone held upright (6 Oct 2026, Petra: "a bit small ... not clear enough"): narrow gaps, taller cards
+    var phone = W < 600 && H > W * 1.3, asp = phone ? 1.5 : 1.4;
+    var gap = phone ? 4 : Math.max(6, Math.min(16, Math.round(W * 0.011)));
+    var byW = (W - gap * 9) / 8, byH = (H - gap * 3) / 4.5 / asp;
+    var cw = Math.max(30, Math.floor(Math.min(byW, byH, 160))), ch = Math.round(cw * asp);
+    var L = { cw: cw, ch: ch, gap: gap, W: W, H: H, phone: phone, left: Math.round((W - (8 * cw + 7 * gap)) / 2), top: gap, tabY: gap + ch + Math.round(gap * 1.6) };
     L.slots = [];
     for (var c = 0; c < 4; c++) L.slots.push({ key: 'c' + c, x: colX(L, c), y: L.top, cls: 'cell', text: '' });
     for (var f = 0; f < 4; f++) L.slots.push({ key: 'f' + f, x: colX(L, 4 + f), y: L.top, cls: 'found', text: 'A' });
@@ -29,7 +31,7 @@
     return L;
   }
   function gapFor(L, n) {   // every card face up: far enough apart to read, squeezed if the column gets long
-    var tall = L.H > L.W * 1.25, fu = L.ch * (tall ? 0.42 : 0.28), avail = L.H - L.tabY - L.gap;
+    var tall = L.H > L.W * 1.25, fu = L.ch * (L.phone ? 0.48 : tall ? 0.42 : 0.28), avail = L.H - L.tabY - L.gap;
     if (n > 1 && L.ch + (n - 1) * fu > avail) fu = Math.max(L.ch * 0.14, (avail - L.ch) / (n - 1));
     return fu;
   }
