@@ -31980,7 +31980,9 @@ def write_portal_page():
     post('/api/comms-api.php', { stoken: S.stoken, machine: mid(), do: 'newjob', v: v, from: NC.pre.from || '' })
       .then(function (d) {
         NC.busy = false;
-        if (d && d.ok && d.job && d.job.id) { CM.d = d; renderComms(); ncDone(d.job, d.err || ''); return; }
+        // 6 Oct 2026 (owner): the "<name> is in the job list" line belongs in THIS dialog (ncDone says it), not in the
+        // Voicemails column's status line, where it sat for good beside somebody else's voicemail
+        if (d && d.ok && d.job && d.job.id) { var jerr = d.err || ''; d.note = ''; d.err = ''; CM.d = d; renderComms(); ncDone(d.job, jerr); return; }
         b.disabled = false; b.textContent = 'Save customer';
         var errs = (d && d.job && d.job.errors) || {}, firstBad = '';
         Object.keys(errs).forEach(function (k) { var s3 = document.getElementById('nc_' + k + '_e'); if (s3) { s3.textContent = errs[k]; if (!firstBad) firstBad = k; } });
@@ -32235,7 +32237,12 @@ def write_portal_page():
     var openM = (d.open_texts || 0) + (d.open_webs || 0) + (d.open_mails || 0);
     if (ot) { ot.textContent = openM ? openM + ' to answer' : 'all answered'; ot.className = 'cm-open' + (openM ? '' : ' cm-open--ok'); }
     if (ov) { ov.textContent = d.open_vms ? d.open_vms + ' not done' : 'all done'; ov.className = 'cm-open' + (d.open_vms ? '' : ' cm-open--ok'); }
-    if (note && (d.note || d.err)) { note.className = 'cm-note' + (d.err ? ' cm-note--bad' : ''); note.textContent = d.err || d.note; }
+    if (note && (d.note || d.err)) {
+      note.className = 'cm-note' + (d.err ? ' cm-note--bad' : ''); note.textContent = d.err || d.note;
+      // a result line ("Marked done.", "2 new voicemails") is news for a moment, not a fixture: it goes after 20 s
+      clearTimeout(CM.noteT);
+      CM.noteT = setTimeout(function () { var n2 = document.getElementById('cmnote'); if (n2) { n2.textContent = ''; n2.className = 'cm-note'; } }, 20000);
+    }
     // 3 Oct 2026 (owner, for David): each list is what is STILL TO ANSWER - Done takes an item off and the next one moves
     // up; "Show done" brings the finished ones back (greyed) so nothing is lost
     var tx = d.texts || [], wb = d.webs || [], ml = d.mails || [], vmAll = d.vms || [];
