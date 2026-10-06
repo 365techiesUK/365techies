@@ -80,6 +80,19 @@ $mailOk = @mail('help@365techies.co.uk',
       $body,
       'From: website@365techies.co.uk' . "\r\n" . 'Reply-To: ' . $clean($replyTo));
 
+/* 6 Oct 2026 (owner: "do the same auto reply for website enquiries too"): the same automatic "we have your message"
+   reply as the JS path (pcm-ack-lib.php). Only QUEUED, only once the enquiry reached someone, and wrapped so nothing
+   in it can stop the redirect to the thank-you page. */
+if (($slackCode >= 200 && $slackCode < 300) || $mailOk) {
+  try {
+    require_once __DIR__ . '/pcm-ack-lib.php';
+    $ackTopic = isset($_POST['topic']) ? (string)$_POST['topic'] : '';
+    $ackMsg   = isset($_POST['message']) ? (string)$_POST['message'] : '';
+    ack_queue(ack_kind($ackTopic, $ackMsg, $page), isset($_POST['name']) ? (string)$_POST['name'] : '',
+              isset($_POST['email']) ? (string)$_POST['email'] : '', isset($_POST['phone']) ? (string)$_POST['phone'] : '', $ackMsg);
+  } catch (Throwable $e) { }
+}
+
 /* One line per enquiry, so a lost one leaves a trace. Denied in .htaccess and
    gitignored: it carries the enquirer's email address.
    ⚠️ If a line here reads slack=0 and mail=0, that enquiry reached NOBODY and

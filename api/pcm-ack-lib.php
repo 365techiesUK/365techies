@@ -8,6 +8,9 @@
  * the contact form's "refurbished Dell" topic) and a Virgin email-move ring-me-back get one short reply that
  * says it reached us and when we will be in touch. It is a SERVICE message to someone who has just asked us to
  * contact them (PECR: fine), never marketing: no offer, no link to anything but our phone numbers.
+ * Same day, owner: "do the same auto reply for website enquiries too" - every other website enquiry (contact form,
+ * quick quote, collection request, the no-JS fallback) gets the 'web' reply, unless ack_web_skip() says it looks like
+ * a pitch (a link), an overseas request (foreign number, non-Latin text) or is one of our own addresses.
  *
  * HOW: slack-lead.php (the form relay) only QUEUES, after its Slack post succeeds - a fault here can never stop a
  * lead reaching Slack. pcm-bkpoll.php (the 5-minute cron, the same place the portal welcome is sent) calls
@@ -38,12 +41,29 @@ define('ACK_TRIES', 3);
 function ack_store() { return defined('ACK_STORE') ? ACK_STORE : __DIR__ . '/pcm-ack.json'; }
 function ack_is_off() { return !ACK_LIVE || file_exists(dirname(ack_store()) . '/pcm-ack.off'); }
 
-/* 'dell', 'emailmove' or '' (not one we acknowledge). Service Pass reports and internal tests never are. */
+/* 'dell', 'emailmove', 'web' (any other website enquiry, owner 6 Oct 2026: "do the same auto reply for website
+   enquiries too") or '' (never acknowledged: Service Pass reports and internal tests). */
 function ack_kind($topic, $message, $page = '') {
     $topic = (string)$topic; $message = (string)$message;
     if (preg_match('/ServicePass|6-weekly service report|\[INTERNAL TEST\]/i', $topic . "\n" . $message . "\n" . $page)) return '';
     if (preg_match('/Virgin email move/i', $topic) || preg_match('/^\s*virgin_addresses\s*:/im', $message)) return 'emailmove';
     if (preg_match('/Dell availability|refurbished Dell/i', $topic) || preg_match('/^\s*(machine|looking_for)\s*:/im', $message)) return 'dell';
+    return 'web';
+}
+
+/* Why a general enquiry should NOT get the automatic reply, or ''. The contact form draws pitch spam and overseas
+   requests (6 Oct check: 2 spam + 1 overseas of 4 in 13 days); a "Steve or David will be in touch" to those helps
+   nobody. Almost every pitch carries a link; overseas ones a foreign number or a non-Latin message. Our own
+   addresses never need telling. Only the 'web' kind is filtered - the Dell and email-move forms are structured. */
+function ack_web_skip($message, $phone, $email) {
+    $m = (string)$message;
+    if (preg_match('~https?://|www\.|\b(bit\.ly|cutt\.ly|tinyurl\.com|buymeacoffee\.com)\b~i', $m)) return 'link';
+    $p = preg_replace('/[^0-9+]/', '', (string)$phone);
+    if ($p !== '' && $p[0] === '+' && strpos($p, '+44') !== 0) return 'overseas-number';
+    $letters = preg_match_all('/\p{L}/u', $m);
+    $latin = preg_match_all('/\p{Latin}/u', $m);
+    if ($letters >= 5 && $latin < $letters * 0.7) return 'non-latin';
+    if (preg_match('/@365techies\.co\.uk$/i', trim((string)$email))) return 'own-address';
     return '';
 }
 
@@ -95,6 +115,12 @@ function ack_email($kind, $name, $what = '') {
         $p1 = 'Thanks for asking us to move your Virgin Media email. Your request has reached us, and Steve or David will ring you, '
             . 'usually the same working day (Monday to Friday, 9am to 5pm).';
         $legal = 'You are receiving this because you asked us on 365techies.co.uk to move your email. It is the only email this request sends.';
+    } elseif ($kind === 'web') {
+        $subject = 'We have your message - 365 Techies';
+        $heading = 'Thanks - we have your message';
+        $p1 = 'Thanks for getting in touch. Your message has reached us, and Steve or David will reply personally, '
+            . 'usually the same working day (Monday to Friday, 9am to 5pm).';
+        $legal = 'You are receiving this because you sent us a message on 365techies.co.uk. It is the only email this message sends.';
     } else {
         $what = (string)$what;
         $subject = 'We have your Dell request - 365 Techies';
@@ -114,6 +140,7 @@ function ack_sms($kind, $name) {
     $first = substr(ack_ascii(ack_first($name)), 0, 15);
     $hi = '365 Techies: thanks' . ($first !== '' && $first !== 'there' ? ' ' . $first : '');
     if ($kind === 'emailmove') return $hi . ', we have your request to move your Virgin email. We will ring you, usually the same working day (Mon-Fri 9-5).';
+    if ($kind === 'web') return $hi . ', we have your message. Steve or David will be in touch, usually the same working day (Mon-Fri 9-5).';
     return $hi . ', we have your Dell request. Steve or David will be in touch, usually the same working day (Mon-Fri 9-5).';
 }
 
@@ -155,7 +182,8 @@ function ack_close($lk) { if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); } }
 function ack_queue($kind, $name, $email, $phone, $message = '', $now = null) {
     $now = $now === null ? time() : (int)$now;
     if (ack_is_off()) return 'off';
-    if ($kind !== 'dell' && $kind !== 'emailmove') return 'not-eligible';
+    if ($kind !== 'dell' && $kind !== 'emailmove' && $kind !== 'web') return 'not-eligible';
+    if ($kind === 'web' && ($why = ack_web_skip($message, $phone, $email)) !== '') return 'skip-' . $why;
     $email = strtolower(trim((string)$email));
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $email = '';
     $mobile = ack_mobile($phone);
@@ -216,7 +244,8 @@ function ack_flush($sendEmail, $sendSms = null, $say = null, $now = null, $cap =
         if ($ok) {
             $sent++;
             if ($say) call_user_func($say, ':outbox_tray: Auto-reply sent to ' . ($e['nm'] !== '' ? $e['nm'] : 'the enquirer') . ' by ' . $e['ch']
-                . ' ("we have your ' . ($e['k'] === 'emailmove' ? 'email-move' : 'Dell') . ' request, usually the same working day"). They still need a call.');
+                . ' ("we have your ' . ($e['k'] === 'emailmove' ? 'email-move request' : ($e['k'] === 'web' ? 'message' : 'Dell request'))
+                . ', usually the same working day"). They still need a reply.');
         } else $failed[] = $id;
     }
     if (!$picked) return array('sent' => 0, 'stale' => $stale, 'waiting' => $waiting);

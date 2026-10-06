@@ -15,8 +15,8 @@ check(ack_kind('Dell availability &amp; quote', "machine: Latitude 5430 \u{00b7}
 check(ack_kind('', "looking_for: A refurbished laptop (Dell Latitude)\nbudget: x") === 'dell', 'the refurbished-laptop finder is a Dell request');
 check(ack_kind('Buying a computer (refurbished Dell)', 'hello') === 'dell', 'the contact form refurbished-Dell topic is a Dell request');
 check(ack_kind('Virgin email move (&pound;60 per address)', "virgin_addresses: 1\nbest_time: Morning") === 'emailmove', 'the Virgin ring-me-back is an email move');
-check(ack_kind('Something else', 'XLSX Preserve Guard software offer') === '', 'an ordinary contact message gets no reply');
-check(ack_kind('Computer or laptop repair', 'my laptop', 'https://365techies.co.uk/refurbished-laptops-dorset/') === '', 'a repair question asked on a refurb page is not a Dell request');
+check(ack_kind('Something else', 'My printer has stopped working') === 'web', 'an ordinary contact message gets the general reply');
+check(ack_kind('Computer or laptop repair', 'my laptop', 'https://365techies.co.uk/refurbished-laptops-dorset/') === 'web', 'a repair question asked on a refurb page is a general enquiry, not a Dell request');
 check(ack_kind('6-weekly service report', "PC: Dell Inc. Latitude 3510\nmachine: x", 'ServicePass') === '', 'a Service Pass report never gets a reply');
 check(ack_kind('Dell availability', "[INTERNAL TEST] machine: Latitude 5430") === '', 'an internal test never gets a reply');
 
@@ -43,12 +43,34 @@ check(strpos(ack_sms('emailmove', 'Margaret'), 'We will ring you') !== false, 'e
 $all = ack_email('dell', 'x', '')['text'] . ack_email('emailmove', 'x', '')['text'] . ack_sms('dell', 'x') . ack_sms('emailmove', 'x');
 check(!preg_match('/\x{00a3}|price|offer|discount|http/iu', $all), 'no price, offer or link in any reply (a service message, not marketing)');
 
+// ---- general website enquiries (owner: "do the same auto reply for website enquiries too") ----
+$w = ack_email('web', 'Claire Spiller', '');
+check(strpos($w['text'], 'Hi Claire,') === 0 && strpos($w['text'], 'Your message has reached us') !== false && strpos($w['text'], 'usually the same working day') !== false, 'the general email', $w['text']);
+check($w['subject'] === 'We have your message - 365 Techies', 'the general subject');
+$ws = ack_sms('web', 'Claire');
+check(strlen($ws) <= 160 && strpos($ws, 'we have your message') !== false, 'the general text is one part (' . strlen($ws) . ')', $ws);
+check(!preg_match('/\x{00a3}|price|offer|discount|http/iu', $w['text'] . $ws), 'no price, offer or link in the general reply either');
+check(ack_web_skip('Stop paying for clicks. Start your free trial here: https://cutt.ly/8ykOW8Zu', '679244619', 'x@msn.com') === 'link', 'a pitch with a link is skipped');
+check(ack_web_skip('XLSX Preserve Guard - https://buymeacoffee.com/x', '', 'b@gmail.com') === 'link', 'a pitch with a shop link is skipped');
+check(ack_web_skip("\u{062F}\u{0648}\u{0631}\u{0647} \u{0645}\u{062C}\u{0627}\u{0646}\u{064A}\u{0647}", '', 'a@gmail.com') === 'non-latin', 'an overseas message in another script is skipped');
+check(ack_web_skip('free course please', '+966598963807', 'a@gmail.com') === 'overseas-number', 'a foreign phone number is skipped');
+check(ack_web_skip('test', '', 'david@365techies.co.uk') === 'own-address', 'our own addresses are skipped');
+check(ack_web_skip('Hello, I left a voicemail today. I need help with Microsoft 365 and the authenticator app.', '07779 159584', 'c@startmail.com') === '', 'a real local enquiry is not skipped');
+check(ack_web_skip("Caf\u{00e9} owner here, Wi-Fi keeps dropping", '01202 123456', 'o@example.co.uk') === '', 'accented Latin text and a landline are fine');
+@unlink(ACK_STORE);
+check(ack_queue('web', 'Spammer', 'x@msn.com', '', 'Get leads now https://cutt.ly/abc', at('2026-10-06 10:00')) === 'skip-link', 'ack_queue refuses a pitch');
+check(ack_queue('web', 'Claire', 'c@startmail.com', '07779 159584', 'I need help with Microsoft 365', at('2026-10-06 10:00')) === 'queued', 'ack_queue takes a real enquiry');
+check(ack_queue('dell', 'Dee', 'd@example.com', '', "machine: Latitude 5430\nsee https://365techies.co.uk/dell-hardware/", at('2026-10-06 10:00')) === 'queued', 'the spam filter is for general enquiries only (a Dell request with our own link still queues)');
+$noJs = (string)file_get_contents(__DIR__ . '/form-relay.php');
+check(strpos($noJs, "require_once __DIR__ . '/pcm-ack-lib.php'") !== false && strpos($noJs, 'ack_queue(') !== false && (bool)preg_match('/catch \(Throwable \$\w+\)/', $noJs), 'the no-JS fallback queues replies too, guarded');
+check(strpos($noJs, 'ack_queue(') < strpos($noJs, "header('Location: /contact/#message-sent', true, 303);\nexit;"), 'and before its redirect');
+
 // ---- queue: one per person per day ----
 $t0 = at('2026-10-06 10:00');
 check(ack_queue('dell', 'John', 'J@Example.com', '', "machine: Latitude 5430", $t0) === 'queued', 'a Dell request is queued');
 check(ack_queue('dell', 'John', 'j@example.com', '', '', $t0 + 3600) === 'dup', 'the same person within 24 h is not replied to twice');
 check(ack_queue('dell', 'John', 'j@example.com', '', '', $t0 + 90000) === 'queued', 'after 24 h they can be again');
-check(ack_queue('', 'X', 'x@example.com', '', '', $t0) === 'not-eligible', 'not a kind we reply to');
+check(ack_queue('', 'X', 'x@example.com', '', '', $t0) === 'not-eligible', 'not a kind we reply to (a Service Pass report, an internal test)');
 check(ack_queue('emailmove', 'X', 'not-an-email', '01202 775566', '', $t0) === 'no-contact', 'no email and a landline: nothing to reply to');
 
 // ---- flush: email at once, text only 08:00-20:00, outcomes recorded ----
@@ -65,7 +87,7 @@ ack_queue('emailmove', 'Margaret', '', '07743 252609', "virgin_addresses: 1", $n
 $r = ack_flush($sendE, $sendS, $say, $night + 300);
 check($r['sent'] === 1 && count($mails) === 1 && count($texts) === 0, 'at night the email goes, the text waits', json_encode($r));
 check($mails[0][0] === 'j@example.com' && strpos($mails[0][1]['text'], 'Latitude 5430') !== false, 'email went to the enquirer with the model');
-check(count($said) === 1 && strpos($said[0], 'Auto-reply sent to John Standring by email') !== false && strpos($said[0], 'still need a call') !== false, 'Slack is told, and reminded to ring', isset($said[0]) ? $said[0] : '');
+check(count($said) === 1 && strpos($said[0], 'Auto-reply sent to John Standring by email') !== false && strpos($said[0], 'still need a reply') !== false, 'Slack is told, and reminded they still need a reply', isset($said[0]) ? $said[0] : '');
 $r = ack_flush($sendE, $sendS, $say, at('2026-10-07 08:05'));
 check($r['sent'] === 1 && count($texts) === 1 && $texts[0][0] === '+447743252609', 'the text goes at 08:00 next morning', json_encode($r));
 $r = ack_flush($sendE, $sendS, $say, at('2026-10-07 09:00'));
