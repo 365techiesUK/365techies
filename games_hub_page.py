@@ -39,8 +39,8 @@ build_pages.py). The game pages themselves stay noindex: like Seafront's play/ p
 words, so this page is the one that should rank.
 
 PC MANAGER LINE
-The Games menu is in PC Manager v32, which is built and signed but not released yet (it goes when the owner
-says). Until then the line says it is coming; set PCM_GAMES_MENU_LIVE = True in the release commit.
+The Games menu shipped in PC Manager v35 (released 6 Oct 2026), so the line says it is there; PCM_GAMES_MENU_LIVE
+= False would put back the coming-soon wording.
 """
 import json
 import os
@@ -50,7 +50,7 @@ import build_pages as bp
 from build_extra import info_page
 
 PUBLIC = True
-PCM_GAMES_MENU_LIVE = False
+PCM_GAMES_MENU_LIVE = True
 
 _ROOT = os.path.dirname(os.path.abspath(__file__))
 _SITE = "https://365techies.co.uk"
