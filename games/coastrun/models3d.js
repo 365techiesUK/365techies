@@ -1038,6 +1038,45 @@ const MODELS = {
     k.put(new THREE.ConeGeometry(2.3, 9, 4), '#a89c82', 0, 17.2, 0, 0, Math.PI / 4, 0, 1, 1, 1, 'stone').cyl(0.06, 0.06, 1.5, 4, 0, 21.7, 0, '#3a3a3a');
     for (const [x, z] of [[-1.6, -1.6], [1.6, -1.6], [-1.6, 1.6], [1.6, 1.6]]) k.cone(0.4, 2.2, 6, x, 12.7, z, '#a89c82');   // pinnacles at its corners
   },
+  purbeckcottage(k, v) {   // a cottage of grey Purbeck stone in Corfe (its face +Z): rubble-stone walls, a heavy roof of stone slates, small
+    // white-framed windows, a chimney at each end; some a pair, some with a little porch, flowers by the door
+    const S = ['#b4ad9e', '#a8a191', '#bcb4a4'][v % 3], R = ['#6e685e', '#7a7468', '#666158'][v % 3], wide = v % 2 ? 13 : 8, r = rnd(3500 + v);
+    k.box(wide, 5.2, 6.5, 0, 0, 0, S, 0, 0, 0, 'stone').prism(7.6, 3.4, wide + 0.6, 0, 5.2, 0, R, Math.PI / 2);
+    for (const sd of [-1, 1]) k.box(1.0, 2.6, 1.0, sd * (wide / 2 - 0.3), 7.4, 0, S, 0, 0, 0, 'stone');   // the chimneys
+    const n = v % 2 ? 4 : 2;
+    for (let i = 0; i < n; i++) { const x = -wide / 2 + wide * (i + 0.5) / n; k.box(1.1, 1.0, 0.1, x, 3.3, 3.27, '#f2efe8').box(0.9, 0.8, 0.12, x, 3.4, 3.28, '#2a3440', 0, 0, 0, 'shiny'); if (i !== 1) k.box(1.1, 1.0, 0.1, x, 1.1, 3.27, '#f2efe8').box(0.9, 0.8, 0.12, x, 1.2, 3.28, '#2a3440', 0, 0, 0, 'shiny'); }
+    k.box(1.0, 2.0, 0.12, v % 2 ? 0.8 : 0, 0, 3.28, ['#2f5a3a', '#1d3557', '#7a1f2b', '#4a3a2a'][v % 4]);
+    if (v % 3 === 0) k.box(1.8, 0.25, 1.2, 0, 2.4, 3.9, R).box(0.12, 2.4, 0.12, -0.8, 0, 4.4, S).box(0.12, 2.4, 0.12, 0.8, 0, 4.4, S);   // a porch
+    for (let i = 0; i < 4; i++) k.ball(0.28, (r() - 0.5) * wide * 0.8, 0.4, 3.6, ['#e63946', '#ff7eb6', '#ffd23f', '#9b5de5'][i], 1, 1.1, 0.8, 'lit', 6);
+  },
+  stonepub(k) {   // the old stone pub in the village square: a long grey Purbeck-stone front, a porch on stone pillars out over the pavement, a blank
+    // hanging sign, flower baskets, benches out front
+    const S = '#b0a998', R = '#6e685e', r = rnd(3600);
+    k.box(18, 6, 8, 0, 0, 0, S, 0, 0, 0, 'stone').prism(9, 3.6, 18.6, 0, 6, 0, R, Math.PI / 2);
+    for (let i = 0; i < 5; i++) { const x = -7 + i * 3.5; k.box(1.4, 1.2, 0.1, x, 3.8, 4.02, '#f2efe8').box(1.2, 1.0, 0.12, x, 3.9, 4.03, '#e8b860', 0, 0, 0, 'glow'); if (i !== 2) k.box(1.4, 1.4, 0.1, x, 1.0, 4.02, '#f2efe8').box(1.2, 1.2, 0.12, x, 1.1, 4.03, '#e0a848', 0, 0, 0, 'glow'); }
+    k.box(4, 0.4, 3, 0, 3.4, 5.4, R).box(4.2, 0.3, 3.2, 0, 3.0, 5.4, S, 0, 0, 0, 'stone'); for (const x of [-1.7, 1.7]) k.box(0.5, 3.0, 0.5, x, 0, 6.6, S, 0, 0, 0, 'stone');   // the porch
+    k.box(0.1, 0.1, 1.2, 9.4, 5.0, 4.6, '#1a1a1a').box(0.08, 1.3, 1.0, 9.4, 3.6, 5.0, '#5a1f1a');   // the sign on its bracket (blank)
+    for (const x of [-6, -3, 3, 6]) { k.cyl(0.02, 0.02, 0.5, 4, x, 5.0, 4.4, '#222222'); k.ball(0.45, x, 4.8, 4.4, ['#e63946', '#ff7eb6', '#ffd23f', '#9b5de5'][(r() * 4) | 0], 1, 0.8, 1); }
+    for (const x of [-5.5, 5.5]) k.box(2.6, 0.45, 0.6, x, 0.45, 7.2, '#6a4e34').box(2.6, 0.08, 1.6, x, 0.85, 7.2, '#8a6a48');
+    for (let i = 0; i < 4; i++) person(k, -6 + i * 4 + r(), 0, 8.5 + r(), r, false);
+  },
+  corfestation(k) {   // the heritage railway's station at Corfe, along the road (+Z: along it): a stone station with a canopy over the platform,
+    // and a steam train standing at it - a green engine with its tall chimney steaming, carriages in crimson and cream
+    const S = '#b0a998', G = '#2f5a3a';
+    k.box(7, 1, 70, 0, 0, 0, '#9a958a');   // the platform
+    k.box(5, 4.4, 16, -1, 1, -8, S, 0, 0, 0, 'stone').prism(6.4, 2.6, 16.6, -1, 5.4, -8, '#6e685e', 0);
+    k.box(4, 0.25, 30, 1.5, 4.4, -2, '#e8e4da'); for (let z = -16; z <= 12; z += 4) k.cyl(0.1, 0.12, 3.4, 6, 3.2, 1, z, G);   // the canopy, its columns
+    const tx = 6.8;   // the train on the track beside the platform
+    k.box(2.6, 0.3, 74, tx, 0, -2, '#4a4038');
+    k.box(2.6, 2.4, 9, tx, 1.0, -30, G, 0, 0, 0, 'shiny').axle(1.2, 2.4, 14, tx, 2.4, -32, G, 'shiny').box(2.8, 3.2, 3.2, tx, 1.0, -25.4, G, 0, 0, 0, 'shiny');   // the engine: boiler, cab
+    k.cyl(0.4, 0.45, 1.6, 10, tx, 3.6, -35, '#1a1a1a').box(2.4, 0.1, 9, tx, 3.6, -30, '#c9a227');   // the chimney, a brass line
+    for (let i = 0; i < 5; i++) k.ball(1.2 + i * 0.5, tx + i * 0.3, 6 + i * 1.3, -35 + i * 2.2, '#f4f4f2', 1, 0.8, 1, 'lit', 8);   // steam
+    for (const z of [-33.5, -30, -27]) for (const sd of [-1, 1]) k.axle(0.75, 0.2, 12, tx + sd * 1.25, 0.95, z, '#c62828');   // red wheels
+    for (let c = 0; c < 3; c++) { const z = -16 + c * 15;
+      k.box(2.7, 3.2, 14, tx, 1.0, z, '#7a1f2b', 0, 0, 0, 'shiny').box(2.72, 1.2, 14.02, tx, 2.9, z, '#e8d8b0').put(new THREE.CylinderGeometry(1.6, 1.6, 14, 12, 1, false, -Math.PI / 2, Math.PI), '#4a4a4e', tx, 4.0, z, Math.PI / 2, 0, 0, 0.9, 1, 0.4);
+      for (let w = 0; w < 6; w++) k.box(0.08, 0.8, 1.4, tx - 1.37, 3.1, z - 5.5 + w * 2.2, '#2a3440', 0, 0, 0, 'shiny'); }
+    for (let i = 0; i < 6; i++) person(k, -0.5 + (i % 2), 1, -12 + i * 5, rnd(3700 + i), i % 3 === 0);
+  },
   balloon(k, v) {   // a hot-air balloon, far off over the land
     const c = [['#e63946', '#ffd23f'], ['#1d7fd6', '#ffffff'], ['#2a9d8f', '#f4a261'], ['#9b5de5', '#ffd23f']][v % 4];
     for (let i = 0; i < 10; i++) k.put(new THREE.SphereGeometry(8, 3, 14, i * Math.PI / 5, Math.PI / 5), c[i % 2], 0, 16, 0, 0, 0, 0, 1, 1.22, 1);
