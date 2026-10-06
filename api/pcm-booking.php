@@ -2516,24 +2516,46 @@ if ($action === 'custlogjob') {
     need_staff();
     require_once __DIR__ . '/pcm-custbook-lib.php';
     require_once __DIR__ . '/pcm-newjob-lib.php';
-    $ref = cb_ref_in(); if ($ref === '') fail('bad_request');
     $what = trim(str_replace(array("\r\n", "\r"), "\n", preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]+/', ' ', (string)(isset($in['what']) ? $in['what'] : ''))));
     if ($what === '') out(array('ok' => false, 'error' => 'check', 'errors' => array('what' => 'Say what you did - a line or two.')));
     $what = function_exists('mb_substr') ? mb_substr($what, 0, 1500) : substr($what, 0, 1500);
+    /* 6 Oct 2026 (owner, a job done "an hour and a half ago"): WHEN it was done - today, a time that has passed (or
+       now). SimplyBook will not take a time that has gone (its book method refuses any time not available), so the
+       diary shows the job at this time from OUR record (agenda: 'logged' rows); SimplyBook only gets a copy if it
+       has a free slot today. */
+    $doneTs = time();
+    $at = preg_replace('/[^0-9:]/', '', (string)(isset($in['at']) ? $in['at'] : ''));
+    if ($at !== '') {
+        if (!preg_match('/^(\d{1,2}):(\d{2})$/', $at, $am) || (int)$am[1] > 23 || (int)$am[2] > 59) out(array('ok' => false, 'error' => 'check', 'errors' => array('at' => 'A time like 11:30, please.')));
+        $doneTs = (int)strtotime(date('Y-m-d') . sprintf(' %02d:%02d:00', (int)$am[1], (int)$am[2]));
+        if ($doneTs > time() + 600) out(array('ok' => false, 'error' => 'check', 'errors' => array('at' => 'That is later than now - for a job still to come, use Book a new job.')));
+    }
     $eventId = (int)(isset($in['eventId']) ? $in['eventId'] : 0);
     $svcName = '';
     if ($eventId > 0) { foreach (sb_services() as $sv) if ((int)$sv['id'] === $eventId) $svcName = (string)$sv['name']; if ($svcName === '') fail('bad_service'); }
     $jobtype = (string)(isset($in['jobtype']) ? $in['jobtype'] : 'Remote');
-    $rows = cb_with_sb(cb_local_rows(), $ref);
-    $g = cb_cluster_for($rows, $ref);
-    if ($g === null) fail('unknown_customer');
-    $p = cb_person($rows, $g); $f = $p['fields'];
+    /* Who: a person Find a customer knows (ref), else - from Book a new job, for somebody typed in there - the name,
+       number and email given (with their SimplyBook client id when it was picked from SimplyBook's list). */
+    $ref = cb_ref_in(); $g = null; $rows = array();
+    if ($ref !== '') { $rows = cb_with_sb(cb_local_rows(), $ref); $g = cb_cluster_for($rows, $ref); }
+    if ($g !== null) { $p = cb_person($rows, $g); $f = $p['fields']; $sbId = (int)$p['sb']; }
+    else {
+        $pi = isset($in['person']) && is_array($in['person']) ? $in['person'] : array();
+        $nm = cb_str(isset($pi['name']) ? $pi['name'] : '', 90);
+        if ($nm === '') fail($ref !== '' ? 'unknown_customer' : 'bad_request');
+        $f = array('name' => $nm, 'company' => '', 'address' => '', 'postcode' => '', 'website' => '', 'note' => '',
+            'phone' => cb_str(isset($pi['phone']) ? $pi['phone'] : '', 30), 'mobile' => '', 'email' => cb_email(isset($pi['email']) ? $pi['email'] : ''));
+        $sbId = (int)(isset($pi['cid']) ? $pi['cid'] : 0);
+    }
     $who = staff_who(); $first = ucfirst((string)strtok($who !== '' ? $who : 'staff', '@.'));
     $name = $f['name'] !== '' ? $f['name'] : $f['company'];
+    $note = function_exists('mb_substr') ? mb_substr($what, 0, 300) : substr($what, 0, 300);
     $nj = nj_create(array('name' => $name, 'company' => $f['company'], 'address' => $f['address'], 'postcode' => $f['postcode'],
         'phone' => $f['phone'], 'mobile' => $f['mobile'], 'email' => $f['email'], 'website' => $f['website'], 'jobtype' => $jobtype,
         'issue' => $svcName !== '' ? $svcName : 'Quick job', 'work' => $what, 'assigned' => $first, 'priority' => '',
-        'price' => (string)(isset($in['price']) ? $in['price'] : '')), $first, 'a job logged as done');
+        'price' => (string)(isset($in['price']) ? $in['price'] : '')), $first, 'a job logged as done',
+        // kept on the job: the diary shows it on its day at this time (agenda), with what we did
+        array('done_at' => $doneTs, 'done_svc' => $svcName !== '' ? $svcName : 'Quick job', 'done_note' => $note, 'done_cid' => $sbId, 'done_by' => $who));
     if (empty($nj['ok'])) out(array('ok' => false, 'error' => 'check', 'errors' => isset($nj['errors']) ? $nj['errors'] : array(), 'why' => isset($nj['error']) ? $nj['error'] : ''));
     $bk = array('ok' => false, 'why' => 'not_asked');
     if (!empty($in['book'])) {
@@ -2545,17 +2567,18 @@ if ($action === 'custlogjob') {
             else {
                 $ce = $f['email'];
                 $cp = substr(preg_replace('/[^0-9+]/', '', $f['mobile'] !== '' ? $f['mobile'] : $f['phone']), 0, 20);
-                $res = staff_book_core($eventId, date('Y-m-d'), $slot, (int)$p['sb'], substr($name, 0, 60), $cp, $ce);
+                $res = staff_book_core($eventId, date('Y-m-d'), $slot, $sbId, substr($name, 0, 60), $cp, $ce);
                 if (empty($res['ok'])) { $bk['why'] = $res['error']; if (!empty($res['sberr'])) $bk['sberr'] = $res['sberr']; }
                 else {
-                    $bid = (int)$res['id']; $sbOk = false;
+                    $bid = (int)$res['id']; $sbOk = false; $sbId = (int)$res['cid'];
                     $sid = sb_status_id('completed');
                     if ($sid > 0 && $bid > 0) { $r2 = sb_adm('setStatus', array($bid, $sid)); $sbOk = !sb_net($r2) && !empty($r2['result']); }
                     if ($bid > 0) {
                         list($lk, $db) = db_open();
                         if (!isset($db['bkmeta'])) $db['bkmeta'] = array();
+                        // logged_job: the diary shows this job ONCE, at the time it was done (the logged row), not again at the slot
                         $db['bkmeta'][(string)$bid] = array('st' => 'completed', 'ts' => time(), 'sb' => $sbOk ? 1 : 0, 'src' => 'portal',
-                            'note' => function_exists('mb_substr') ? mb_substr($what, 0, 300) : substr($what, 0, 300), 'by' => $who);
+                            'note' => $note, 'by' => $who, 'logged_job' => (string)$nj['id']);
                         // their PC Manager record with this email, not yet linked: link it to the client (their portal lists the booking)
                         $toLink = array();
                         if ($ce !== '') foreach ((isset($db['customers']) ? $db['customers'] : array()) as $k3 => $c3)
@@ -2565,12 +2588,20 @@ if ($action === 'custlogjob') {
                     }
                     $bk = array('ok' => true, 'id' => $bid, 'when' => date('D j M g:ia', (int)$res['ts']), 'completed_in_sb' => $sbOk);
                     pcm_slack_say(':white_check_mark: *Done job logged* - ' . bk_clean($name) . ($f['company'] !== '' && $f['company'] !== $name ? ' (' . bk_clean($f['company']) . ')' : '')
-                        . ' - ' . bk_clean($svcName) . ', booked in SimplyBook ' . $bk['when'] . ' and marked completed' . bk_by());
+                        . ' - ' . bk_clean($svcName) . ', done ' . date('g:ia', $doneTs) . ' - copied into SimplyBook at ' . $bk['when'] . ' and marked completed' . bk_by());
                 }
             }
         }
     }
-    out(array('ok' => true, 'job' => array('id' => $nj['id'], 'slack' => !empty($nj['slack'])), 'booking' => $bk));
+    // the job remembers its SimplyBook copy (and client): the diary row's Details card, and no double row
+    if ($bk['ok']) {
+        $jid = (string)$nj['id']; $bidS = (int)$bk['id'];
+        sj_jobs_locked(function ($d) use ($jid, $bidS, $sbId) {
+            foreach ($d['jobs'] as $i => $j) if (is_array($j) && (string)(isset($j['id']) ? $j['id'] : '') === $jid) { $d['jobs'][$i]['done_bid'] = $bidS; $d['jobs'][$i]['done_cid'] = $sbId; return array('ok' => true, 'data' => $d); }
+            return array('ok' => false);
+        });
+    }
+    out(array('ok' => true, 'job' => array('id' => $nj['id'], 'slack' => !empty($nj['slack'])), 'booking' => $bk, 'done_at' => date('g:ia', $doneTs)));
 }
 
 // staff: quick client search for the book-a-new-job flow (existing customers by name/phone)
@@ -2733,6 +2764,7 @@ if ($action === 'agenda') {
         // status: our staff marker first; else SimplyBook's own Status-feature id mapped by
         // name; else SB's legacy confirm flag. So the portal shows the truth from either side.
         $bmr = isset($bm[(string)$bid]) ? $bm[(string)$bid] : null;
+        if (is_array($bmr) && !empty($bmr['logged_job'])) continue;   // a done job's SimplyBook copy: the logged row below shows it, at the time it was done
         $st = $bmr ? (string)(isset($bmr['st']) ? $bmr['st'] : (!empty($bmr['confirmed']) ? 'confirmed' : '')) : '';
         if ($st === '' && !(is_array($bmr) && !empty($bmr['cleared'])) && !empty($b['status_id'])) {
             if ($stMap === null) {
@@ -2765,6 +2797,28 @@ if ($action === 'agenda') {
                         'what' => (string)(isset($b['event_name']) ? $b['event_name'] : (isset($b['event']) ? $b['event'] : 'Service')),
                         'eventId' => (int)(isset($b['event_id']) ? $b['event_id'] : (isset($b['eventId']) ? $b['eventId'] : (isset($b['service_id']) ? $b['service_id'] : 0))));
         if (count($list) >= 120) break;
+    }
+    /* 6 Oct 2026 (owner): jobs logged as done in the portal ("Log a job we've done") sit in the diary on their day, at
+       the time they were done, already Completed - SimplyBook could not take a time that had passed. A SimplyBook copy
+       of one (bkmeta logged_job) was skipped above, so each job shows once. Our own rows: no Actions menu. */
+    $jdA = @json_decode((string)@file_get_contents(__DIR__ . '/pcm-jobs.json'), true);
+    $fromTs = strtotime('today'); $toTs = $fromTs + 86400 * $spanDays;
+    foreach ((isset($jdA['jobs']) && is_array($jdA['jobs']) ? $jdA['jobs'] : array()) as $jA) {
+        if (!is_array($jA) || empty($jA['done_at'])) continue;
+        $tA = (int)$jA['done_at'];
+        if ($tA < $fromTs || $tA >= $toTs) continue;
+        $nmA = (string)(isset($jA['name']) ? $jA['name'] : '');
+        $coA = (string)(isset($jA['company']) ? $jA['company'] : '');
+        $list[] = array('id' => 'L' . preg_replace('/[^0-9A-Za-z]/', '', (string)$jA['id']), 'logged' => 1,
+                        'when' => date('D j M g:ia', $tA), 'd' => date('Y-m-d', $tA), 'tm' => date('H:i', $tA),
+                        'who' => $nmA . ($coA !== '' && $coA !== $nmA ? ' (' . $coA . ')' : ''),
+                        'phone' => (string)(!empty($jA['mobile']) ? $jA['mobile'] : (isset($jA['phone']) ? $jA['phone'] : '')), 'psrc' => '',
+                        'email' => (string)(isset($jA['email']) ? $jA['email'] : ''),
+                        'cid' => (int)(isset($jA['done_cid']) ? $jA['done_cid'] : 0),
+                        'st' => 'completed', 'conf' => false,
+                        'what' => (string)(isset($jA['done_svc']) ? $jA['done_svc'] : 'Quick job'),
+                        'note' => (string)(isset($jA['done_note']) ? $jA['done_note'] : ''),
+                        'by' => (string)(isset($jA['done_by']) ? $jA['done_by'] : ''), 'eventId' => 0);
     }
     out(array('ok' => true, 'bookings' => $list));
 }

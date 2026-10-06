@@ -765,9 +765,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 06 Oct 2026 &middot; 87b0444436</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 06 Oct 2026 &middot; 006874ca36</p><script>
 (function () {
-  var P365BUILD = '87b0444436';
+  var P365BUILD = '006874ca36';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -7519,7 +7519,7 @@
   }
   function bookingRow(b, i, prefix) {
     var cls = stCls(b.st);
-    return '<div class="tline' + cls + '" data-bid="' + esc(b.id) + '"><span class="ttime">' + fmtTime(b.tm) + '</span><div class="tblock">'
+    return '<div class="tline' + cls + '"' + (b.logged ? '' : ' data-bid="' + esc(b.id) + '"') + '><span class="ttime">' + fmtTime(b.tm) + '</span><div class="tblock">'
       + '<strong>' + esc(b.who) + '</strong> · ' + esc(b.what) + ' ' + statusChip(b.st)
       + '<br />' + (b.phone ? '<a href="tel:' + esc(b.phone.replace(/\s/g, '')) + '" class="tphone">\ud83d\udcde ' + esc(b.phone) + '</a>'
           /* Say where it came from. b.psrc==="ours" means SimplyBook had no number
@@ -7537,14 +7537,16 @@
          away under Actions -> "Service completed", which is a deliberate choice
          rather than a button sitting under the customer's phone number. */
       + '</div>'
-      + '<div class="amenu"><button class="sm ghost ab2" data-p="' + prefix + i + '">⋯ Actions</button>'
+      // 6 Oct 2026: a job logged as done in the portal - our own row, already finished: no Actions
+      + (b.logged ? '<div class="quiet" style="font-size:.8rem;padding-top:.3rem">\u2714 logged as done' + (b.by ? ' by ' + esc(String(b.by).split('@')[0]) : '') + '</div></div>' : '')
+      + (b.logged ? '' : '<div class="amenu"><button class="sm ghost ab2" data-p="' + prefix + i + '">⋯ Actions</button>'
       + '<div class="adrop" id="ad' + prefix + i + '">'
       + '<button data-act="confirmed" data-id="' + b.id + '">' + (b.st === 'confirmed' ? 'Un-confirm' : '✓ Confirm booking') + '</button>'
       + '<button data-act="inprogress" data-id="' + b.id + '">' + (b.st === 'inprogress' ? 'Not started yet' : '▶ Start job (in progress)') + '</button>'
       + '<button data-act="completed" data-id="' + b.id + '">' + (b.st === 'completed' ? 'Not completed' : '✔ Service completed') + '</button>'
       + '<button data-act="move" data-id="' + b.id + '" data-p="' + prefix + i + '">↔ Move…</button>'
       + '<button data-act="cancel" data-id="' + b.id + '" style="color:var(--pbad)">✕ Cancel…</button>'
-      + '</div></div></div>'
+      + '</div></div></div>')
       + '<div class="cip" id="cip' + prefix + i + '" style="display:none;padding:.5rem .75rem;margin:-.15rem 0 .55rem 3.1rem;font-size:.92rem;border-left:2px solid rgba(125,170,220,.35);line-height:1.7"></div>'
       + '<div class="mvp" id="mvp' + prefix + i + '" style="display:none"></div>';
   }
@@ -7856,10 +7858,13 @@
   function wizWhen() {
     var w = document.getElementById('nbwiz'); if (!w) return;
     w.innerHTML = '<h3>1 · ' + esc(NB.cname) + ' · 2 · ' + esc(NB.svcName) + '</h3>'
-      + '<h3>3 · When?</h3><div id="nbdays"><p class="quiet">Finding free slots…</p></div><div id="nbtimes" style="margin-top:.3rem"></div>'
+      + '<h3>3 · When?</h3>'
+      + '<p style="margin:.1rem 0 .6rem"><button class="sm ghost" id="nbdone">\u2714 Already done it? Put it in today\u2019s diary as done</button></p>'
+      + '<div id="nbdays"><p class="quiet">Finding free slots…</p></div><div id="nbtimes" style="margin-top:.3rem"></div>'
       + '<div id="nbconf"></div>'
       + '<p class="quiet"><a href="#" id="nbb3">← Back</a></p>';
     document.getElementById('nbb3').onclick = function () { wizWhat(); return false; };
+    document.getElementById('nbdone').onclick = function () { wizDone(); };
     var from = new Date(), to = new Date(Date.now() + 20 * 86400000);
     post(BK, { action: 'slots', stoken: S.stoken, machine: mid(), eventId: NB.svc, from: iso(from), to: iso(to) })
       .then(function (sr) {
@@ -7882,6 +7887,51 @@
         var first = daysEl.querySelector('button'); if (first) first.click();
       })
       .catch(function () { var daysEl = document.getElementById('nbdays'); if (daysEl) daysEl.innerHTML = '<p class="quiet">Couldn’t load slots.</p>'; });
+  }
+  /* 6 Oct 2026 (owner: "I did the job an hour and a half ago ... it doesn't have today on the list"): a job already done
+     goes into today's diary at the time it was done, Completed, with what we did - custlogjob, the same as the customer
+     card's "Log a job we've done". SimplyBook cannot take a time that has passed; it gets a copy at today's next free
+     slot when ticked. */
+  function wizDone() {
+    var w = document.getElementById('nbwiz'); if (!w) return;
+    var dn = new Date(), hm = ('0' + dn.getHours()).slice(-2) + ':' + ('0' + dn.getMinutes()).slice(-2);
+    var ta = 'width:100%;box-sizing:border-box;padding:.5rem .6rem;border-radius:9px;border:1px solid var(--pline);background:var(--pink);color:var(--pwhite);font:inherit;resize:vertical';
+    w.innerHTML = '<h3>1 \u00b7 ' + esc(NB.cname) + ' \u00b7 2 \u00b7 ' + esc(NB.svcName) + '</h3><h3>3 \u00b7 Done it already</h3>'
+      + '<label for="nbat">When did you do it? (today)</label><input id="nbat" type="time" value="' + hm + '" /><div class="err" id="nbat_e"></div>'
+      + '<label for="nbwhat">What we did</label><textarea id="nbwhat" rows="3" maxlength="1500" style="' + ta + '" placeholder="Removed the pop-up adware\nReset the browser"></textarea><div class="err" id="nbwhat_e"></div>'
+      + '<label for="nbprice">Price \u00a3 (optional)</label><input id="nbprice" inputmode="decimal" placeholder="35" autocomplete="off" /><div class="err" id="nbprice_e"></div>'
+      + '<label style="display:flex;gap:.5rem;align-items:flex-start;color:var(--pwhite)"><input type="checkbox" id="nbsbc" checked style="width:auto;margin-top:.2rem" /> <span>Also copy it into SimplyBook, marked Completed <span class="quiet">(today\u2019s next free slot)</span></span></label>'
+      + '<button class="sm" id="nbdgo" style="background:var(--pgood);color:#06220b;font-weight:800">\u2714 Put it in the diary</button> <span class="err" id="nbderr" style="display:inline"></span>'
+      + '<p class="quiet"><a href="#" id="nbb4">\u2190 Back</a></p>';
+    document.getElementById('nbb4').onclick = function () { wizWhen(); return false; };
+    document.getElementById('nbwhat').focus();
+    document.getElementById('nbdgo').onclick = function () {
+      var b2 = this, what = document.getElementById('nbwhat').value.trim();
+      ['nbat_e', 'nbwhat_e', 'nbprice_e', 'nbderr'].forEach(function (k) { document.getElementById(k).textContent = ''; });
+      if (!what) { document.getElementById('nbwhat_e').textContent = 'Say what you did \u2014 a line or two.'; document.getElementById('nbwhat').focus(); return; }
+      var sv = NB.svcName || '', jt = /on.?site|visit|call.?out|collect/i.test(sv) ? 'On-site' : (/repair|laptop|hardware|upgrade/i.test(sv) ? 'Hardware' : 'Remote');
+      b2.disabled = true; b2.textContent = 'Saving\u2026';
+      post(BK, { action: 'custlogjob', stoken: S.stoken, machine: mid(), ref: NB.cid ? 's:' + NB.cid : (NB.cemail ? 'e:' + String(NB.cemail).toLowerCase() : ''),
+                 person: { name: NB.cname, phone: NB.cphone || '', email: NB.cemail || '', cid: NB.cid || 0 }, eventId: NB.svc, jobtype: jt, what: what,
+                 price: document.getElementById('nbprice').value.trim(), at: document.getElementById('nbat').value, book: document.getElementById('nbsbc').checked ? 1 : 0 })
+        .then(function (r) {
+          if (!r || !r.ok) {
+            b2.disabled = false; b2.textContent = '\u2714 Put it in the diary';
+            var errs = (r && r.errors) || {};
+            if (errs.at) document.getElementById('nbat_e').textContent = errs.at;
+            if (errs.what) document.getElementById('nbwhat_e').textContent = errs.what;
+            if (errs.price) document.getElementById('nbprice_e').textContent = errs.price;
+            if (!errs.at && !errs.what && !errs.price) document.getElementById('nbderr').textContent = 'Not saved \u2014 ' + ((r && (r.why || r.error)) || 'try again') + '.';
+            return;
+          }
+          var bk = r.booking || {};
+          w.innerHTML = '<div class="nbsum">\u2714 <strong>' + esc(NB.cname) + '</strong> \u2014 ' + esc(NB.svcName) + ', done at ' + esc(r.done_at || '') + ', is in today\u2019s diary as Completed and in the job list.'
+            + (bk.ok ? ' Copied into SimplyBook at ' + esc(bk.when) + '.' : (bk.why && bk.why !== 'not_asked' ? ' Not copied into SimplyBook (' + esc(({ no_slot_today: 'no free slot left today', sb_unavailable: 'SimplyBook didn\u2019t answer', booking_failed: 'SimplyBook refused' })[bk.why] || bk.why) + ').' : '')) + '</div>';
+          AG60 = null; selDay = todayIso(); loadDiary();
+          setTimeout(function () { var w2 = document.getElementById('nbwiz'); if (w2) w2.style.display = 'none'; }, 6000);
+        })
+        .catch(function () { b2.disabled = false; b2.textContent = '\u2714 Put it in the diary'; document.getElementById('nbderr').textContent = 'No answer from the server \u2014 check #sos-jobs-in-out before trying again.'; });
+    };
   }
   function wizConfirm() {
     var cEl = document.getElementById('nbconf'); if (!cEl) return;
@@ -8484,6 +8534,7 @@
   function cbkLog(p) {
     var box = document.getElementById('custview'); if (!p || !box) return;
     function form(list) {
+      var dn = new Date(), nowHM = ('0' + dn.getHours()).slice(-2) + ':' + ('0' + dn.getMinutes()).slice(-2);
       var pick = 0; list.forEach(function (sv) { if (!pick && /quick/i.test(sv.name)) pick = sv.id; });
       if (!pick && list.length) pick = list[0].id;
       box.innerHTML = '<div class="cu-view"><h3 style="margin:0">Log a job we\u2019ve done \u2014 ' + esc(cbkWho(p)) + '</h3>'
@@ -8492,37 +8543,39 @@
         + '<div class="nc-f"><label for="lj_svc">Service</label><select id="lj_svc">' + (list.length ? list.map(function (sv) { return '<option value="' + esc(String(sv.id)) + '"' + (sv.id === pick ? ' selected' : '') + '>' + esc(sv.name) + '</option>'; }).join('') : '<option value="0">(SimplyBook didn\u2019t list its services)</option>') + '</select></div>'
         + '<div class="nc-f"><label for="lj_type">Job type</label><select id="lj_type"><option>Remote</option><option>On-site</option><option>Hardware</option></select></div>'
         + '<div class="nc-f nc-f--wide"><label for="lj_what">What we did</label><textarea id="lj_what" maxlength="1500" placeholder="Removed the pop-up adware\nReset the browser\nChecked the backup"></textarea><span class="nc-err" id="lj_what_e"></span></div>'
+        + '<div class="nc-f"><label for="lj_at">When did you do it? (today)</label><input id="lj_at" type="time" value="' + nowHM + '" /><span class="nc-err" id="lj_at_e"></span></div>'
         + '<div class="nc-f"><label for="lj_price">Price \u00a3 (optional)</label><input id="lj_price" inputmode="decimal" placeholder="35" autocomplete="off" /><span class="nc-err" id="lj_price_e"></span></div>'
-        + '<div class="nc-f" style="display:flex;align-items:flex-end"><label style="display:flex;gap:.5rem;align-items:flex-start;margin:0 0 .4rem;color:var(--pwhite)"><input type="checkbox" id="lj_book" checked style="width:auto;margin-top:.2rem" /> <span>Also book it in SimplyBook today (the next free slot), marked Completed</span></label></div>'
+        + '<div class="nc-f nc-f--wide"><label style="display:flex;gap:.5rem;align-items:flex-start;margin:.2rem 0 0;color:var(--pwhite)"><input type="checkbox" id="lj_book" checked style="width:auto;margin-top:.2rem" /> <span>Also copy it into SimplyBook, marked Completed. <span class="quiet">SimplyBook only takes today\u2019s free slots, so the copy goes in at the next one; the diary shows the time you did it.</span></span></label></div>'
         + '</div><div class="err" id="lj_err" aria-live="polite"></div>'
         + '<div class="nc-act"><button type="button" id="lj_go">\u2705 Log it</button><button type="button" class="ghost" id="lj_cancel">Cancel</button></div></div>';
       document.getElementById('lj_cancel').onclick = function () { cbkShow(p); };
       document.getElementById('lj_what').focus();
       document.getElementById('lj_go').onclick = function () {
-        var b = this, er = document.getElementById('lj_err'), wE = document.getElementById('lj_what_e'), pE = document.getElementById('lj_price_e');
-        er.textContent = ''; wE.textContent = ''; pE.textContent = '';
+        var b = this, er = document.getElementById('lj_err'), wE = document.getElementById('lj_what_e'), pE = document.getElementById('lj_price_e'), aE = document.getElementById('lj_at_e');
+        er.textContent = ''; wE.textContent = ''; pE.textContent = ''; aE.textContent = '';
         var what = document.getElementById('lj_what').value.trim();
         if (!what) { wE.textContent = 'Say what you did \u2014 a line or two.'; document.getElementById('lj_what').focus(); return; }
         var sel = document.getElementById('lj_svc'), svcName = sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].text : '';
         b.disabled = true; b.textContent = 'Logging\u2026';
         post(BK, { action: 'custlogjob', stoken: S.stoken, machine: mid(), ref: p.ref, eventId: parseInt(sel.value, 10) || 0,
-                   jobtype: document.getElementById('lj_type').value, what: what, price: document.getElementById('lj_price').value.trim(),
+                   jobtype: document.getElementById('lj_type').value, what: what, price: document.getElementById('lj_price').value.trim(), at: document.getElementById('lj_at').value,
                    book: document.getElementById('lj_book').checked ? 1 : 0 }).then(function (r) {
           if (!r || !r.ok) {
             b.disabled = false; b.textContent = '\u2705 Log it';
             var errs = (r && r.errors) || {};
             if (errs.what) wE.textContent = errs.what;
             if (errs.price) pE.textContent = errs.price;
-            er.textContent = errs.what || errs.price ? '' : (r && r.error === 'not_staff' ? 'Your staff session has expired \u2014 sign out and in again.'
+            if (errs.at) aE.textContent = errs.at;
+            er.textContent = errs.what || errs.price || errs.at ? '' : (r && r.error === 'not_staff' ? 'Your staff session has expired \u2014 sign out and in again.'
               : (r && r.error === 'unknown_customer' ? 'Couldn\u2019t find this customer any more \u2014 search again.' : 'Not logged \u2014 ' + ((r && (r.why || r.error)) || 'try again') + '.'));
             return;
           }
-          var bk = r.booking || {}, msg = '\u2714 Logged: ' + svcName + (r.job && r.job.slack ? ' \u2014 the card is in #sos-jobs-in-out' : '') + ' and it\u2019s in the job list.';
-          if (bk.ok) msg += ' Booked in SimplyBook ' + bk.when + (bk.completed_in_sb ? ' and marked Completed.' : ', marked Completed here (SimplyBook didn\u2019t take the status).');
-          else if (bk.why && bk.why !== 'not_asked') msg += ' Not booked in SimplyBook: ' + ({ no_slot_today: 'no free slot left today for that service', slot_taken: 'the slot went just as it was booked',
+          var bk = r.booking || {}, msg = '\u2714 Logged: ' + svcName + ', done at ' + (r.done_at || '') + ' \u2014 it\u2019s in today\u2019s diary as Completed and in the job list' + (r.job && r.job.slack ? ', and the card is in #sos-jobs-in-out.' : '.');
+          if (bk.ok) msg += ' Copied into SimplyBook at ' + bk.when + (bk.completed_in_sb ? ', marked Completed.' : ' (SimplyBook didn\u2019t take the Completed status).');
+          else if (bk.why && bk.why !== 'not_asked') msg += ' Not copied into SimplyBook: ' + ({ no_slot_today: 'no free slot left today for that service', slot_taken: 'the slot went just as it was booked',
               sb_unavailable: 'SimplyBook didn\u2019t answer', no_service: 'no service picked', not_configured: 'SimplyBook isn\u2019t connected',
               booking_failed: 'SimplyBook refused' + (bk.sberr ? ' (' + bk.sberr + ')' : '') }[bk.why] || bk.why) + '.';
-          if (bk.ok) { AG60 = null; if (typeof loadDiary === 'function') loadDiary(); }
+          AG60 = null; if (typeof loadDiary === 'function') loadDiary();   // the diary shows it now, either way
           cbkOpen(p.ref, msg);
           if (CBK.q) cbkFind(CBK.q);   // the search list's job count too
         }).catch(function () { b.disabled = false; b.textContent = '\u2705 Log it'; er.textContent = 'No answer from the server \u2014 check #sos-jobs-in-out before trying again, in case it went through.'; });
