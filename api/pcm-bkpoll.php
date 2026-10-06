@@ -88,6 +88,7 @@ $stMap = array();
 foreach ((isset($sr['result']) && is_array($sr['result']) ? $sr['result'] : array()) as $s) {
     $nm = strtolower((string)(isset($s['name']) ? $s['name'] : '')); $id = intval(isset($s['id']) ? $s['id'] : 0);
     if (strpos($nm, 'complet') !== false) $stMap[$id] = 'completed';
+    else if (strpos($nm, 'progress') !== false || strpos($nm, 'started') !== false) $stMap[$id] = 'inprogress';   // 6 Oct 2026, if the owner adds one
     else if (strpos($nm, 'confirm') !== false) $stMap[$id] = 'confirmed';
 }
 if (empty($stMap)) jout(array('ok' => true, 'note' => 'no confirmed/completed statuses configured - nothing to sync'));
@@ -150,6 +151,9 @@ foreach ($rows as $b) {
     // A marker written WITH a confirmed SB write (sb=1) is still allowed to be cleared
     // here, because then a blank really is a change somebody made in SimplyBook.
     if ($m === '' && (string)(isset($bmr['src']) ? $bmr['src'] : '') === 'portal' && empty($bmr['sb'])) continue;
+    // 6 Oct 2026: "In progress" set in the portal. Unless SimplyBook has a status for it (sb=1), SimplyBook still says
+    // Confirmed (or nothing) - that is not news either. It stands until the job is COMPLETED (here or in SimplyBook).
+    if ($prev === 'inprogress' && $m !== 'completed' && (string)(isset($bmr['src']) ? $bmr['src'] : '') === 'portal' && empty($bmr['sb'])) continue;
     $db['bkmeta'][(string)$bid] = array('st' => $m, 'ts' => time(), 'sb' => 1, 'src' => 'simplybook');
     $changed++;
     $who = bp_clean(isset($b['client']) ? $b['client'] : (isset($b['client_name']) ? $b['client_name'] : ('Booking #' . $bid)));
@@ -201,6 +205,7 @@ foreach ($rows as $b) {
     }
     if ($m === 'completed') $toSlack[] = ':ballot_box_with_check: *Service completed* (in SimplyBook) - ' . $lbl;
     elseif ($m === 'confirmed') $toSlack[] = ':white_check_mark: *Booking confirmed* (in SimplyBook) - ' . $lbl;
+    elseif ($m === 'inprogress') $toSlack[] = ':arrow_forward: *Job started - in progress* (in SimplyBook) - ' . $lbl;
     else $toSlack[] = ':arrows_counterclockwise: *Booking status cleared* (in SimplyBook) - ' . $lbl;
 }
 /* SimplyBook's own view of who has a visit and when, for the report tagger: a full service launched

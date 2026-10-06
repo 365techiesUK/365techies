@@ -2637,6 +2637,7 @@ if ($action === 'agenda') {
                     $nm2 = strtolower((string)(isset($sx['name']) ? $sx['name'] : ''));
                     $sid2 = intval(isset($sx['id']) ? $sx['id'] : 0);
                     if (strpos($nm2, 'complet') !== false) $stMap[$sid2] = 'completed';
+                    else if (strpos($nm2, 'progress') !== false || strpos($nm2, 'started') !== false) $stMap[$sid2] = 'inprogress';
                     else if (strpos($nm2, 'confirm') !== false) $stMap[$sid2] = 'confirmed';
                 }
             }
@@ -2796,19 +2797,23 @@ function sb_status_id($kind) {
         $id = intval(isset($st['id']) ? $st['id'] : 0);
         if ($kind === 'confirmed' && strpos($nm, 'confirm') !== false) return $id;
         if ($kind === 'completed' && strpos($nm, 'complet') !== false) return $id;
+        if ($kind === 'inprogress' && (strpos($nm, 'progress') !== false || strpos($nm, 'started') !== false)) return $id;
         if ($kind === 'default' && !empty($st['is_default'])) return $id;
     }
     return 0;
 }
 
-// staff: set a booking's status (confirmed / completed / clear). Writes SimplyBook's own
+// staff: set a booking's status (confirmed / in progress / completed / clear). Writes SimplyBook's own
 // Status feature via setStatus so their admin shows it too, and always keeps our marker
 // so the portal state never depends on which SimplyBook plan features are enabled.
 if ($action === 'staffstatus') {
     $stok = need_staff();
     $bid = (int)(isset($in['id']) ? $in['id'] : 0);
     $want = (string)(isset($in['status']) ? $in['status'] : '');
-    if ($bid <= 0 || !in_array($want, array('confirmed', 'completed', 'none'), true)) fail('bad_request');
+    // 6 Oct 2026: 'inprogress' - "I've started the job", from the portal instead of Slack. SimplyBook has no such
+    // status unless the owner adds one (sb_status_id matches "progress"/"started"); without it the marker is ours
+    // alone (sb=0) and pcm-bkpoll.php leaves it standing until the job is completed.
+    if ($bid <= 0 || !in_array($want, array('confirmed', 'inprogress', 'completed', 'none'), true)) fail('bad_request');
     $sb = false;
     if ($HAS_ADMIN) {
         $sid = $want === 'none' ? sb_status_id('default') : sb_status_id($want);
@@ -2840,6 +2845,7 @@ if ($action === 'staffstatus') {
         // already in this state - stay quiet, but still confirm to the caller
     } elseif ($want === 'completed') pcm_slack_say(':ballot_box_with_check: *Service completed* - ' . $label . $by);
     elseif ($want === 'confirmed') pcm_slack_say(':white_check_mark: *Booking confirmed* - ' . $label . $by);
+    elseif ($want === 'inprogress') pcm_slack_say(':arrow_forward: *Job started - in progress* - ' . $label . $by);
     else pcm_slack_say(':arrows_counterclockwise: *Booking status cleared* - ' . $label . $by);
     out(array('ok' => true, 'sb' => $sb, 'st' => $want === 'none' ? '' : $want, 'unchanged' => $unchanged ? 1 : 0));
 }

@@ -24530,6 +24530,8 @@ def write_portal_page():
   #p365app .bkchip.conf { color:var(--pgood); border-color:rgba(0,206,27,.42); background:rgba(0,206,27,.11); }
   #p365app .bkchip.done { color:var(--pcyan); border-color:rgba(29,151,227,.42); background:rgba(29,151,227,.11); }
   #p365app .bkchip.pend { color:var(--pmut); border-color:var(--pline); background:rgba(125,170,220,.05); }
+  #p365app .bkchip.prog { color:var(--pwarn); border-color:rgba(224,179,65,.5); background:rgba(224,179,65,.12); }
+  #p365app .tline.inprog { background:rgba(224,179,65,.06); border-radius:8px; padding-left:.4rem; padding-right:.4rem; box-shadow:inset 3px 0 0 var(--pwarn); }
   #p365app .tline.bkflash { animation:bkflash 1.5s ease; border-radius:8px; }
   @keyframes bkflash { 0%{ box-shadow:0 0 0 0 rgba(29,151,227,.55); background:rgba(29,151,227,.13); } 45%{ box-shadow:0 0 0 4px rgba(29,151,227,.22); } 100%{ box-shadow:0 0 0 0 rgba(29,151,227,0); background:transparent; } }
   #p365app .dlive { display:inline-flex; align-items:center; gap:.34rem; font-size: 0.78rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--pmut); vertical-align:middle; margin-left:.5rem; }
@@ -29481,8 +29483,9 @@ def write_portal_page():
     var e = document.getElementById('kVis'); if (!e) return;
     var td = todayIso(), today = (AG || []).filter(function (b) { return b.d === td; });
     var done = today.filter(function (b) { return b.st === 'completed'; }).length;
+    var on = today.filter(function (b) { return b.st === 'inprogress'; }).length;
     nxKpi('kVis', today.length);
-    var sp = e.querySelector('span'); if (sp) sp.textContent = 'visits today' + (done ? ' · ' + done + ' done' : '');
+    var sp = e.querySelector('span'); if (sp) sp.textContent = 'visits today' + (on ? ' · ' + on + ' on now' : '') + (done ? ' · ' + done + ' done' : '');
   }
   function nxStaffLayout() {
     var root = el; if (!root) return;
@@ -30281,14 +30284,16 @@ def write_portal_page():
       var chipEl = row.querySelector('.bkchip'); var cur = chipEl ? chipEl.getAttribute('data-st') : null;
       var ns = map[id]; if (cur === ns) return;   // unchanged -> no flash
       if (chipEl) { var t = document.createElement('span'); t.innerHTML = statusChip(ns); var nc = t.firstChild; if (nc) chipEl.parentNode.replaceChild(nc, chipEl); }
-      row.classList.remove('confd', 'done'); if (ns === 'confirmed') row.classList.add('confd'); else if (ns === 'completed') row.classList.add('done');
+      row.classList.remove('confd', 'done', 'inprog'); var rc = stCls(ns).trim(); if (rc) row.classList.add(rc);
       row.classList.remove('bkflash'); void row.offsetWidth; row.classList.add('bkflash');
       // keep the Actions-menu labels honest (they toggle on status) + announce for screen readers
       var cb = row.querySelector('[data-act="confirmed"]'); if (cb) cb.textContent = (ns === 'confirmed' ? 'Un-confirm' : '✓ Confirm booking');
       var pb = row.querySelector('[data-act="completed"]'); if (pb) pb.textContent = (ns === 'completed' ? 'Not completed' : '✔ Service completed');
+      var gb = row.querySelector('[data-act="inprogress"]'); if (gb) gb.textContent = (ns === 'inprogress' ? 'Not started yet' : '▶ Start job (in progress)');
       var ann = document.getElementById('dann'), nm = row.querySelector('.tblock strong');
-      if (ann) ann.textContent = (nm ? nm.textContent : 'A booking') + ' — ' + (ns === 'completed' ? 'Completed' : (ns === 'confirmed' ? 'Confirmed' : 'Awaiting'));
+      if (ann) ann.textContent = (nm ? nm.textContent : 'A booking') + ' — ' + (ns === 'completed' ? 'Completed' : (ns === 'inprogress' ? 'In progress' : (ns === 'confirmed' ? 'Confirmed' : 'Awaiting')));
     });
+    nxKpiVisits();   // the "visits today" tile counts what is on and done
   }
   function pollStatuses() {
     if (document.hidden) return;
@@ -30318,11 +30323,12 @@ def write_portal_page():
     });
   }
   function statusChip(st) {
-    var c = st === 'completed' ? 'done' : (st === 'confirmed' ? 'conf' : 'pend');
-    var t = st === 'completed' ? '✔ Completed' : (st === 'confirmed' ? '✓ Confirmed' : '● Awaiting');
+    // 6 Oct 2026: 'inprogress' - the job has been started (Actions -> Start job)
+    var c = st === 'completed' ? 'done' : (st === 'inprogress' ? 'prog' : (st === 'confirmed' ? 'conf' : 'pend'));
+    var t = st === 'completed' ? '✔ Completed' : (st === 'inprogress' ? '▶ In progress' : (st === 'confirmed' ? '✓ Confirmed' : '● Awaiting'));
     return '<span class="bkchip ' + c + '" data-st="' + st + '">' + t + '</span>';
   }
-  function stCls(st) { return st === 'completed' ? ' done' : (st === 'confirmed' ? ' confd' : ''); }
+  function stCls(st) { return st === 'completed' ? ' done' : (st === 'inprogress' ? ' inprog' : (st === 'confirmed' ? ' confd' : '')); }
   function clientCard(c) {
     var rows = [];
     if (c.email) rows.push('\\u2709\\ufe0f <a href="mailto:' + esc(c.email) + '">' + esc(c.email) + '</a>');
@@ -31154,6 +31160,7 @@ def write_portal_page():
       + '<div class="amenu"><button class="sm ghost ab2" data-p="' + prefix + i + '">\u22ef Actions</button>'
       + '<div class="adrop" id="ad' + prefix + i + '">'
       + '<button data-act="confirmed" data-id="' + b.id + '">' + (b.st === 'confirmed' ? 'Un-confirm' : '\u2713 Confirm booking') + '</button>'
+      + '<button data-act="inprogress" data-id="' + b.id + '">' + (b.st === 'inprogress' ? 'Not started yet' : '\u25b6 Start job (in progress)') + '</button>'
       + '<button data-act="completed" data-id="' + b.id + '">' + (b.st === 'completed' ? 'Not completed' : '\u2714 Service completed') + '</button>'
       + '<button data-act="move" data-id="' + b.id + '" data-p="' + prefix + i + '">\u2194 Move\u2026</button>'
       + '<button data-act="cancel" data-id="' + b.id + '" style="color:var(--pbad)">\u2715 Cancel\u2026</button>'
@@ -31175,7 +31182,7 @@ def write_portal_page():
           dropEl.classList.add('open');
           // last row / bottom of screen: open UPWARD so Cancel is never cut off
           var rb = btn.getBoundingClientRect();
-          dropEl.classList.toggle('up', (window.innerHeight - rb.bottom) < 210);
+          dropEl.classList.toggle('up', (window.innerHeight - rb.bottom) < 260);   // five items since 6 Oct 2026
           // lift this card above its siblings so the menu paints over the next card
           var crd = btn.closest ? btn.closest('.card') : null;
           if (crd) crd.classList.add('zup');
@@ -31264,7 +31271,7 @@ def write_portal_page():
         var b = byId[parseInt(btn.getAttribute('data-id'), 10)]; if (!b) return;
         var act = btn.getAttribute('data-act');
         if (act === 'cancel') doCancel(b, btn);
-        else if (act === 'confirmed' || act === 'completed') doStatus(b, btn, act);
+        else if (act === 'confirmed' || act === 'inprogress' || act === 'completed') doStatus(b, btn, act);
         else if (act === 'move') doMove(b, btn.getAttribute('data-p'));
       };
     });
