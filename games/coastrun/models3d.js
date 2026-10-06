@@ -1322,6 +1322,138 @@ const MODELS = {
     for (let i = 0; i < 7; i++) { const a = (r() - 0.5) * 1.6; k.ball(1, cx - Math.cos(a) * (R - 6) + 2, 0.7, Math.sin(a) * (R - 6), ['#f4f4f0', '#2a6ad0', '#c0392b', '#f2c94c'][i % 4], 1.2, 0.5, 2.6, 'lit', 8); }   // boats pulled up
     for (let i = 0; i < 9; i++) { const x = cx - 40 + r() * 80, z = (r() - 0.5) * 100; k.ball(1, x, 0.25, z, ['#f4f4f0', '#1d3557', '#f4f4f0'][i % 3], 1.3, 0.45, 3.2, 'lit', 8); if (i % 3 === 0) k.cyl(0.06, 0.08, 8, 4, x, 0.4, z, '#d8d8d8'); }   // boats at their moorings
   },
+  parade(k, v) {   // a Bournemouth shopping parade (Winton Banks, Moordown, Charminster Road; its face +Z): Edwardian red brick, three
+    // storeys, a gable or dormers over two-storey bay windows, stone bands, chimneys; two shops below with coloured fascias (no
+    // lettering), big windows, an awning on some. v 0-7 by day; v 8-15 at night: the fascias and windows lit, the upper windows warm
+    const night = v >= 8, u = v % 8, r = rnd(6000 + v);
+    const B = ['#a4462f', '#9a3e2c', '#b0543a', '#efe4c8', '#a85036', '#8e3a28', '#f2ede2', '#9c4430'][u], render = u === 3 || u === 6;
+    const S = '#e8e0cc', W = 11, H = 10.4, gable = u % 3 !== 2, flat = render;
+    k.box(W, H, 9, 0, 0, 0, B, 0, 0, 0, render ? 'lit' : 'stone');
+    for (const y of [4.2, 7.3]) k.box(W + 0.1, 0.3, 9.1, 0, y, 0, S);   // the stone bands
+    if (flat) k.box(W + 0.2, 1.0, 9.2, 0, H, 0, B).box(W + 0.3, 0.2, 9.3, 0, H + 1.0, 0, S);   // a parapet (the 1930s ones)
+    else { k.prism(9.4, 3.6, W + 0.3, 0, H, 0, '#4c5058', Math.PI / 2);
+      if (gable) { k.prism(0.6, 3.6, 6, -W / 4, H, 4.3, B, 0).prism(0.7, 3.7, 6.3, -W / 4, H - 0.05, 4.6, '#f4f1ea', 0); k.box(1.4, 1.5, 0.12, -W / 4, H + 0.5, 4.62, '#2a3440', 0, 0, 0, night && r() < 0.6 ? 'glow' : 'shiny'); }   // a front gable, white bargeboards, its window
+      else for (const x of [-W / 4, W / 4]) k.box(1.8, 1.6, 1.6, x, H + 0.5, 3.6, '#4c5058').box(1.2, 1.0, 0.12, x, H + 0.8, 4.42, '#2a3440', 0, 0, 0, 'shiny'); }   // dormers
+    for (const sd of [-1, 1]) k.box(1.1, 2.4, 1.6, sd * (W / 2 - 0.5), H + (flat ? 1.2 : 1.8), -1, B, 0, 0, 0, render ? 'lit' : 'stone');   // chimneys
+    for (const x of [-W / 4, W / 4]) {   // two-storey bays (or flat windows on the 1930s ones), lit warm at night here and there
+      for (const y of [4.6, 7.7]) {
+        const lit = night && r() < 0.55, gl = lit ? '#ffd890' : '#2a3440', key = lit ? 'glow' : 'shiny';
+        if (flat) k.box(2.6, 1.8, 0.12, x, y, 4.52, '#f4f1ea').box(2.3, 1.5, 0.14, x, y + 0.15, 4.53, gl, 0, 0, 0, key);
+        else k.box(2.8, 2.2, 0.9, x, y - 0.1, 4.8, S).box(2.4, 1.7, 0.12, x, y + 0.15, 5.26, gl, 0, 0, 0, key).box(0.12, 1.7, 0.7, x - 1.25, y + 0.15, 4.9, gl, 0, 0, 0, key).box(0.12, 1.7, 0.7, x + 1.25, y + 0.15, 4.9, gl, 0, 0, 0, key);
+      }
+    }
+    const FAS = night ? ['#28e070', '#3a8cff', '#b04aff', '#ff4060', '#ffd040', '#30e0e0', '#ff8a30', '#f4f4f4'] : ['#2f6a4a', '#1d3557', '#7a1f2b', '#c9a227', '#3a5a7a', '#2a2a2a', '#5a2a6a', '#b0543a'];
+    for (const sd of [-1, 1]) {   // the two shops: a fascia (lettering left off), the window, the door, a pilaster between
+      const x = sd * W / 4, f = FAS[(u * 3 + (sd > 0 ? 1 : 0) + v) % 8];
+      k.box(W / 2 - 0.5, 0.75, 0.3, x, 3.15, 4.55, f, 0, 0, 0, night ? 'glow' : 'lit');
+      k.box(W / 2 - 1.6, 2.5, 0.12, x - 0.4, 0.45, 4.52, night ? ['#fff0c8', '#ffe4a0', '#e8f4ff'][(u + (sd > 0 ? 1 : 0)) % 3] : '#2a3440', 0, 0, 0, night ? 'glow' : 'shiny');
+      k.box(1.0, 2.8, 0.13, x + W / 4 - 0.9, 0, 4.53, night ? '#ffe8b0' : '#1a1a1a', 0, 0, 0, night ? 'glow' : 'lit');
+      if (!night && r() < 0.35) for (let i = 0; i < 5; i++) k.box((W / 2 - 0.6) / 5, 0.15, 1.4, x - (W / 2 - 0.6) / 2 + (i + 0.5) * (W / 2 - 0.6) / 5, 2.75, 5.2, i % 2 ? '#f4f1ea' : f, 0, -0.35);   // an awning
+      if (night && r() < 0.4) for (let i = 0; i < 4; i++) k.box(0.6, 0.5, 0.6, x - 1.6 + i * 0.9, 0.2, 5.0, ['#e63946', '#ffd23f', '#7cc576', '#ff9a3c'][i], 0, 0, 0, 'lit');   // fruit out front
+    }
+    k.box(0.5, 3.6, 0.4, 0, 0, 4.58, S).box(0.5, 3.6, 0.4, -W / 2 + 0.25, 0, 4.58, S).box(0.5, 3.6, 0.4, W / 2 - 0.25, 0, 4.58, S);   // the pilasters
+  },
+  nightparade(k, v) { MODELS.parade(k, 8 + (v % 8)); },   // (Charminster Road at night: the restaurants lit)
+  cornerbank(k) {   // the old bank on the corner at Winton Banks (its face +Z): red brick dressed in pale stone, three storeys, a little
+    // pyramid-roofed turret on the corner, stone bands and window surrounds, a blue door under a stone hood, its name panel left blank
+    const B = '#a4462f', S = '#e2d6bc', D = '#2a3440';
+    k.box(14, 10, 12, 0, 0, 0, B, 0, 0, 0, 'stone').prism(12.6, 3.6, 14.4, 0, 10, 0, '#4c5058', Math.PI / 2);
+    for (const y of [0, 3.8, 7.0]) k.box(14.2, 0.45, 12.2, 0, y + (y ? 0 : 0.0), 0, S, 0, 0, 0, 'stone');
+    k.box(14.2, 1.0, 12.2, 0, 0, 0, S, 0, 0, 0, 'stone');   // the stone plinth
+    k.prism(0.8, 4.2, 5.4, -3.5, 10, 6.1, B, 0).prism(0.9, 4.3, 5.8, -3.5, 9.95, 6.35, S, 0);   // a stone-edged gable over the front
+    k.cyl(2.4, 2.4, 13.2, 8, 7, 0, 6, B, 0, 0, 'stone').cone(2.9, 3.6, 8, 7, 13.2, 6, '#4c5058').cyl(0.08, 0.08, 1.2, 4, 7, 16.8, 6, '#2a2a2a');   // the corner turret
+    for (const y of [1.4, 4.5, 7.6]) for (const x of [-5, -1.8, 2]) k.box(1.9, 2.2, 0.14, x, y, 6.06, S, 0, 0, 0, 'stone').box(1.5, 1.9, 0.16, x, y + 0.15, 6.07, D, 0, 0, 0, 'shiny');
+    for (const y of [4.5, 7.6]) k.box(1.4, 2.0, 0.14, 7 + 1.7, y, 6 + 1.7, D, -0.785, 0, 0, 'shiny');
+    k.box(1.6, 2.9, 0.16, 7, 0, 8.45, '#1d3a8a').box(2.4, 0.5, 0.6, 7, 3.0, 8.5, S, 0, 0, 0, 'stone').box(3, 0.7, 0.16, -2, 3.0, 6.08, S, 0, 0, 0, 'stone');   // the blue door under its hood; the blank name panel
+  },
+  brickchurch(k) {   // St Luke's, Winton (its face +Z): a tall Victorian red-brick church side-on to the road, a great pointed window in
+    // its gable end, buttresses, a steep slate roof, a bellcote; railings and a noticeboard (blank) in front
+    const B = '#9a3e2c', S = '#d8ccb0', R = '#4c5058';
+    k.box(12, 11, 26, 0, 0, -6, B, 0, 0, 0, 'stone').prism(12.6, 8, 26.6, 0, 11, -6, R, 0);   // the nave, its gable end to the road
+    k.prism(0.8, 8.2, 12.6, 0, 11, 7.3, B, Math.PI / 2);
+    k.box(5.4, 8.4, 0.14, 0, 2.6, 7.06, S, 0, 0, 0, 'stone').put(new THREE.CylinderGeometry(2.7, 2.7, 0.14, 12, 1, false, -Math.PI / 2, Math.PI), S, 0, 11.0, 7.06, Math.PI / 2, 0, 0, 1, 1, 1, 'stone');
+    k.box(4.8, 8.2, 0.16, 0, 2.7, 7.08, '#2b3540', 0, 0, 0, 'shiny').put(new THREE.CylinderGeometry(2.4, 2.4, 0.16, 12, 1, false, -Math.PI / 2, Math.PI), '#2b3540', 0, 10.9, 7.08, Math.PI / 2, 0, 0, 1, 1, 1, 'shiny');   // the great window
+    for (const x of [-1.6, 0, 1.6]) k.box(0.12, 9.5, 0.2, x, 2.7, 7.1, S, 0, 0, 0, 'stone');   // its mullions
+    for (const x of [-6.3, 6.3]) k.box(1.0, 9, 1.4, x, 0, 6.5, B, 0, 0, 0, 'stone');   // buttresses
+    for (let i = 0; i < 4; i++) { const z = 2 - i * 6; for (const sd of [-1, 1]) k.box(0.14, 4.4, 1.6, sd * 6.06, 3, z, '#2b3540', 0, 0, 0, 'shiny'); }
+    k.box(1.6, 3.0, 1.2, 0, 19, 7, B, 0, 0, 0, 'stone').prism(1.4, 1.2, 2.0, 0, 22, 7, R, Math.PI / 2);   // the bellcote
+    for (let i = 0; i < 16; i++) k.box(0.05, 1.2, 0.05, -7.5 + i, 0, 9.5, '#1a1a1a'); k.box(15, 0.06, 0.06, 0, 1.15, 9.5, '#1a1a1a');   // the railings
+  },
+  moderne(k) {   // the old Moderne cinema at Winton (art deco, now a church centre; its face +Z): a white stepped front, a tall fin up
+    // the middle, horizontal bands, a long canopy over the doors; the hall behind in brick
+    const W = '#f4f2ec', G = '#2a3440';
+    k.box(22, 9, 26, 0, 0, -10, '#a4462f', 0, 0, 0, 'stone').box(22.4, 0.5, 26.4, 0, 9, -10, '#d8d0c0');
+    k.box(18, 11, 3, 0, 0, 3, W).box(12, 13.5, 2.6, 0, 0, 3.3, W).box(2.4, 17, 2.4, 0, 0, 4.4, W);   // the stepped white front, the fin
+    for (const y of [7.6, 9.2]) k.box(18.2, 0.25, 3.2, 0, y, 3, '#cfd8dc');   // the bands
+    for (let i = 0; i < 5; i++) k.box(0.9, 3.6, 0.12, -9 + 1.4 + i * 1.6 + (i > 1 ? 9.6 : 0), 6.4, 4.56, G, 0, 0, 0, 'shiny');   // tall thin windows either side
+    k.box(16, 0.5, 2.6, 0, 3.6, 5.6, W).box(14, 3.2, 0.14, 0, 0.2, 4.56, G, 0, 0, 0, 'shiny');   // the canopy, the glass doors
+    for (const y of [11, 13]) k.box(2.5, 0.25, 2.5, 0, y, 4.4, '#cfd8dc');
+  },
+  policestn(k) {   // Winton's 1960s police station (its face +Z): two storeys of long windows over a pale blue band of panels, buff brick
+    // ends, a low green copper roof, the blue lamp (glow) by the door
+    const Y = '#c8a870', BL = '#7ea8d8', G = '#2a3440';
+    k.box(30, 7.6, 12, 0, 0, 0, '#e8e8e2').box(30.6, 0.9, 12.6, 0, 7.6, 0, '#5aa898');   // the block, the copper roof's edge
+    k.prism(12.6, 1.4, 30.6, 0, 8.5, 0, '#5aa898', Math.PI / 2);
+    for (const x of [-14.2, 14.2]) k.box(1.8, 7.6, 12.2, x, 0, 0, Y, 0, 0, 0, 'stone');   // the buff brick ends
+    k.box(26.6, 1.6, 0.12, 0, 3.0, 6.06, BL);   // the blue band
+    for (let i = 0; i < 8; i++) k.box(1.0, 0.8, 0.14, -11.6 + i * 3.3, 3.4, 6.08, '#f4f4f4');   // its pale crosses
+    for (const y of [0.8, 4.9]) for (let i = 0; i < 10; i++) k.box(2.2, 1.9, 0.14, -12.2 + i * 2.7, y, 6.07, G, 0, 0, 0, 'shiny');
+    k.box(4, 2.6, 2.4, -2, 0, 7, '#f0f0ea').box(0.4, 0.4, 0.4, -2, 3.4, 8.2, '#3a7aff', 0, 0, 0, 'glow');   // the porch, the blue lamp
+  },
+  vicvilla(k, v) {   // a Victorian villa off Wimborne Road (Dean Park; its face +Z): red brick or cream render, a front gable with white
+    // bargeboards over a two-storey bay, tall chimneys, behind a low wall and a hedge, a Scots pine or two in the garden (Bournemouth's pines)
+    const B = ['#a4462f', '#efe4c8', '#9a3e2c', '#e8dcc0'][v % 4], R = '#4c5058', r = rnd(6100 + v), render = v % 2 === 1;
+    k.box(12, 7.4, 10, 0, 0, 0, B, 0, 0, 0, render ? 'lit' : 'stone').prism(10.6, 4.4, 12.4, 0, 7.4, 0, R, Math.PI / 2);
+    k.prism(0.8, 4.6, 6.6, -2.6, 7.4, 5.1, B, 0).prism(0.7, 4.8, 7.0, -2.6, 7.3, 5.45, '#f4f1ea', 0);   // the gable, its bargeboards
+    k.box(4.2, 6.6, 1.4, -2.6, 0.6, 5.6, B, 0, 0, 0, render ? 'lit' : 'stone');
+    for (const y of [1.4, 4.4]) k.box(3.4, 2.0, 0.12, -2.6, y, 6.32, '#2a3440', 0, 0, 0, 'shiny');
+    for (const y of [1.4, 4.4]) k.box(1.4, 1.9, 0.12, 2.6, y, 5.06, '#2a3440', 0, 0, 0, 'shiny');
+    k.box(1.2, 2.3, 0.12, 4.6, 0, 5.06, ['#2f5a3a', '#7a1f2b', '#1d3557'][v % 3]);
+    for (const x of [-5.4, 5.0]) k.box(1.0, 3.2, 1.2, x, 9.8, -1, B);
+    k.box(13, 0.9, 0.4, 0, 0, 9.2, '#c8beaa', 0, 0, 0, 'stone').box(13, 1.6, 0.9, 0, 0.9, 8.9, '#3f6a34');   // the wall and hedge
+    if (v % 2 === 0) { const x = (r() < 0.5 ? -1 : 1) * 8; k.cyl(0.3, 0.45, 11, 6, x, 0, 6, '#a0603a'); for (let i = 0; i < 5; i++) k.clump(2.2 - i * 0.2, x + (r() - 0.5) * 2, 10 + i * 1.3, 6 + (r() - 0.5) * 2, ['#1f4d2e', '#2a6136'][i % 2], 6110 + v * 7 + i); }
+  },
+  semis(k, v) {   // a pair of 1930s semis (Moordown, Queens Park; their face +Z): pebbledash or brick below, two-storey bays, a hipped
+    // tiled roof, porches, low front walls and a car on the drive
+    const P = ['#e8e2d4', '#d8cdb8', '#f0ece2', '#c8b8a0'][v % 4], BR = '#9a4a34', T = ['#7a4a3a', '#5e5550', '#8a5a44'][v % 3], r = rnd(6200 + v);
+    k.box(16, 6.4, 9, 0, 0, 0, P).box(16.1, 2.6, 9.1, 0, 0, 0, BR, 0, 0, 0, 'stone');
+    k.put(new THREE.ConeGeometry(11.2, 4.6, 4), T, 0, 8.7, 0, 0, Math.PI / 4, 0, 1, 1, 0.6, 'lit');   // the hipped roof
+    for (const sd of [-1, 1]) {
+      const x = sd * 4.4;
+      k.box(3.4, 5.6, 1.0, x, 0.4, 4.9, P).box(3.0, 1.6, 0.12, x, 1.2, 5.42, '#2a3440', 0, 0, 0, 'shiny').box(3.0, 1.6, 0.12, x, 4.0, 5.42, '#2a3440', 0, 0, 0, 'shiny');   // the bays
+      k.box(1.6, 0.3, 1.4, sd * 7.0, 2.6, 5.2, T).box(1.0, 2.2, 0.12, sd * 7.0, 0, 4.56, ['#2f5a3a', '#7a1f2b', '#1d3557', '#f4f4f0'][(v + (sd > 0 ? 1 : 0)) % 4]);   // porch, door
+      k.box(8, 0.8, 0.35, x, 0, 9.6, BR, 0, 0, 0, 'stone');
+    }
+    k.box(1.1, 2.4, 1.1, 0, 7.2, 0, BR, 0, 0, 0, 'stone');
+    if (r() < 0.6) { const c = ['#c62828', '#1d3557', '#e8e8e8', '#2a2a2a', '#3a6a9a'][(v + 2) % 5], x = (r() < 0.5 ? -1 : 1) * 4.4; k.box(1.8, 0.8, 4.2, x, 0.3, 7.6, c, 0, 0, 0, 'shiny').box(1.6, 0.6, 2.2, x, 1.1, 7.4, '#2a3440', 0, 0, 0, 'shiny'); }   // a car on the drive
+  },
+  richmondpub(k) {   // The Richmond on Charminster Road at night (its face +Z): Edwardian red brick, a big curved Dutch gable with its name
+    // band (left blank), bay windows lit warm, hanging baskets, lamps over the doors
+    const B = '#9a3e2c', S = '#e8e0cc';
+    k.box(18, 9.4, 11, 0, 0, 0, B, 0, 0, 0, 'stone').prism(11.6, 3.4, 18.4, 0, 9.4, 0, '#4c5058', Math.PI / 2);
+    k.box(8, 3.6, 0.8, 0, 9.4, 5.2, B, 0, 0, 0, 'stone').put(new THREE.CylinderGeometry(4, 4, 0.8, 16, 1, false, -Math.PI / 2, Math.PI), B, 0, 13.0, 5.2, Math.PI / 2, 0, 0, 1, 0.6, 1, 'stone');   // the curved gable
+    k.box(6.4, 0.7, 0.2, 0, 10.2, 5.65, '#1d3a2a').box(1.6, 1.4, 0.14, 0, 11.4, 5.66, '#ffd890', 0, 0, 0, 'glow');   // the blank name band, the gable window lit
+    for (const y of [3.8, 9.0]) k.box(18.2, 0.35, 11.2, 0, y, 0, S);
+    for (const x of [-5.5, 5.5]) { k.box(4.4, 3.4, 1.4, x, 0.4, 6.0, S).box(3.8, 2.6, 0.14, x, 0.8, 6.72, '#ffd890', 0, 0, 0, 'glow'); k.box(2.4, 2.0, 0.14, x, 5.2, 5.56, '#ffcf80', 0, 0, 0, 'glow'); }   // the bays, lit
+    k.box(1.6, 2.8, 0.14, 0, 0, 5.57, '#ffe0a0', 0, 0, 0, 'glow').ball(0.3, 0, 3.4, 6.0, '#fff2c0', 1, 1, 1, 'glow', 8);
+    for (const x of [-8, -3, 3, 8]) k.ball(0.45, x, 4.3, 6.2, ['#e63946', '#ff7eb6', '#ffd23f', '#9b5de5'][Math.abs(x) % 4], 1, 0.8, 1, 'lit', 6);
+  },
+  busstop(k, v) {   // a bus shelter (its face +Z, to the road): glass sides and back on a dark frame, a bench, the stop's flag on its pole
+    // (blank), a timetable case
+    const F = '#2a2e36', G = '#a8c8d8';
+    k.box(4.2, 0.12, 1.6, 0, 2.5, 0, F).box(4.0, 2.3, 0.06, 0, 0.15, -0.75, G, 0, 0, 0, 'shiny');
+    for (const x of [-2.05, 2.05]) k.box(0.08, 2.5, 1.5, x, 0, 0, G, 0, 0, 0, 'shiny').box(0.1, 2.6, 0.1, x, 0, 0.75, F);
+    k.box(3, 0.1, 0.4, 0, 0.55, -0.45, '#8a8f98');
+    k.cyl(0.05, 0.05, 2.8, 5, 2.9, 0, 0.6, '#c0c4c8').box(0.06, 0.55, 0.55, 2.9, 2.5, 0.6, v % 2 ? '#c62828' : '#1d5fae').box(0.4, 0.6, 0.08, 2.9, 1.4, 0.68, '#f4f4f4');
+  },
+  zebra(k) {   // a zebra crossing's Belisha beacons (the road runs along Z, across is X): an amber globe on a black-and-white pole each side
+    // (its stripes are painted on the road itself: world3d.js, seg.zebra)
+    for (const sd of [-1, 1]) {
+      const x = sd * 8.6;
+      for (let j = 0; j < 6; j++) k.cyl(0.07, 0.07, 0.45, 6, x, j * 0.45, -1.6, j % 2 ? '#f4f4f4' : '#1a1a1a');
+      k.ball(0.3, x, 2.95, -1.6, '#ffae1a', 1, 1, 1, 'glow', 10);
+    }
+  },
   balloon(k, v) {   // a hot-air balloon, far off over the land
     const c = [['#e63946', '#ffd23f'], ['#1d7fd6', '#ffffff'], ['#2a9d8f', '#f4a261'], ['#9b5de5', '#ffd23f']][v % 4];
     for (let i = 0; i < 10; i++) k.put(new THREE.SphereGeometry(8, 3, 14, i * Math.PI / 5, Math.PI / 5), c[i % 2], 0, 16, 0, 0, 0, 0, 1, 1.22, 1);

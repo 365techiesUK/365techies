@@ -423,7 +423,13 @@
           if (r() < 0.05) { x = sh + 40 + r() * 100; if (water(s, x)) put(W, i, 'yacht', x, 0, { v: 3 + ((r() * 3) | 0) }); }   // (the quay's buildings, bollards, kiosks and fishing boats: world3d.js)
           if (r() < 0.02) { x = sh + 36 + r() * 60; if (water(s, x)) put(W, i, 'buoy', x, 0, { v: (r() * 2) | 0 }); }
           break;
-        case 'winton': case 'charminster': case 'kinson': case 'muscliff': case 'littledown': case 'towerpark': case 'bearcross': case 'hurn': case 'wimborne': case 'ferndown': case 'highcliffe':
+        case 'winton': case 'charminster': {   // Wimborne Road through Winton (by day); Charminster Road (at night, as the owner filmed it): street lamps,
+          // a bus stop every so often, either side (the houses, shops and pavements: world3d.js)
+          lamps(8, 0, false);
+          if (k % 44 === 22) put(W, i, 'busstop', ((k / 44) | 0) % 2 ? 15.0 : -15.0, 0, { v: S.key === 'winton' ? 1 : 0 });
+          break;
+        }
+        case 'kinson': case 'muscliff': case 'littledown': case 'towerpark': case 'bearcross': case 'hurn': case 'wimborne': case 'ferndown': case 'highcliffe':
           lamps(8, 0, false);   // the local run, plain for now: street lamps both sides (its houses and gardens: world3d.js)
           break;
         case 'lymington': {   // in three parts (world3d.js ZONES): the Georgian town on its quay, the river's marinas and the island ferry, then
@@ -543,6 +549,15 @@
         var g4 = segAt(W, q4); if (b4 < bb && !g4.tun && !g4.brg && !g4.gate && !g4.fk && !g4.over && !g4.nearOver) { bb = b4; bj = q4; }
       }
       return bj;
+    }
+    if (S.key === 'winton') {   // Winton Banks: the old bank on the corner, St Luke's, the white Moderne; the police station; zebra crossings
+      var wb = straightest(0.3, 0.4, 40, 10); if (wb >= 0) putAt(W, wb, 'cornerbank', -21, 0, {});
+      mark('brickchurch', 0.45, function () { return 23; }); mark('moderne', 0.55, function () { return -23; }); mark('policestn', 0.68, function () { return 23; });
+      [[0.38, 0.47], [0.56, 0.64]].forEach(function (w) { var zj = straightest(w[0], w[1], 8, 8); if (zj >= 0) { putAt(W, zj, 'zebra', 0, 0, {}); segAt(W, zj).zebra = true; } });   // (on the straight: a banked bend buried half the stripes)
+    }
+    if (S.key === 'charminster') {   // The Richmond on the corner; zebra crossings along the restaurants
+      var rp = straightest(0.44, 0.56, 40, 10); if (rp >= 0) putAt(W, rp, 'richmondpub', 21.5, 0, {});
+      [[0.33, 0.42], [0.58, 0.66]].forEach(function (w) { var zj = straightest(w[0], w[1], 8, 8); if (zj >= 0) { putAt(W, zj, 'zebra', 0, 0, {}); segAt(W, zj).zebra = true; } });
     }
     if (S.key === 'forest') {   // the cattle grid where the road comes onto the open Forest; Lyndhurst's church high on its knoll over the village,
       // off the straightest stretch there (from a bend, a big offset swung it round behind the car)
