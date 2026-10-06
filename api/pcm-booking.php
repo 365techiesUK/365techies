@@ -2357,6 +2357,49 @@ if ($action === 'stafftier') {
     out(array('ok' => true, 'tier' => $want));
 }
 
+// staff: the 365 PC Manager licence(s) of ONE SimplyBook client, for the diary's contact card - so
+// switching a customer to Pro at the visit is one tap on their booking, not a hunt through the licence
+// table (owner, 6 Oct 2026: "takes me seconds rather than spending minutes trying to find everything").
+// Matched on the SimplyBook client id first: the app's "Link this PC" sign-in stores the verified id
+// (signin above). Only when no record carries it, on the exact email - never a record linked to a
+// DIFFERENT SimplyBook client. Read-only: the change itself is stafftier, with these same opaque ids.
+if ($action === 'staffpcmlic') {
+    need_staff();
+    $cid = (int)(isset($in['cid']) ? $in['cid'] : 0);
+    $em = strtolower(trim(substr((string)(isset($in['email']) ? $in['email'] : ''), 0, 120)));
+    if ($em !== '' && !filter_var($em, FILTER_VALIDATE_EMAIL)) $em = '';
+    if ($cid <= 0 && $em === '') fail('bad_request');
+    list($lk, $db) = db_open(); db_close($lk);
+    $byId = array(); $byEm = array();
+    foreach ((isset($db['customers']) ? $db['customers'] : array()) as $k => $c) {
+        if (!is_array($c) || !empty($c['merged_into'])) continue;
+        $sid = (int)(isset($c['sb_client_id']) ? $c['sb_client_id'] : 0);
+        if ($cid > 0 && $sid === $cid) { $byId[$k] = $c; continue; }
+        if ($em === '' || ($cid > 0 && $sid > 0)) continue;   // linked to someone else's booking account
+        $ce = strtolower(trim((string)(isset($c['email']) ? $c['email'] : '')));
+        $se = strtolower(trim((string)(isset($c['sb_email']) ? $c['sb_email'] : '')));
+        if ($ce === $em || $se === $em) $byEm[$k] = $c;
+    }
+    $hits = count($byId) ? $byId : $byEm;
+    $list = array();
+    foreach ($hits as $k => $c) {
+        $ms = isset($c['machines']) && is_array($c['machines']) ? $c['machines'] : array();
+        $lastSeen = ''; $maxVer = 0;
+        foreach ($ms as $m) {
+            if (isset($m['seen']) && $m['seen'] > $lastSeen) $lastSeen = $m['seen'];
+            $mv = intval(isset($m['ver']) ? $m['ver'] : 0); if ($mv > $maxVer) $maxVer = $mv;
+        }
+        // same masked key + one-way id as staffcustomers: the bearer key never reaches the browser
+        $list[] = array('id' => substr(sha1('365cid|' . $k), 0, 12), 'keymask' => substr($k, 0, 4) . '····',
+            'name' => (string)(isset($c['name']) ? $c['name'] : ''),
+            'tier' => ((isset($c['tier']) && $c['tier'] === 'pro') ? 'pro' : 'free'),
+            'pcs' => count($ms), 'seen' => $lastSeen, 'ver' => $maxVer);
+    }
+    usort($list, function ($a, $b) { return strcmp($b['seen'], $a['seen']); });   // the PC in use now first
+    out(array('ok' => true, 'match' => (count($byId) ? 'account' : (count($byEm) ? 'email' : '')),
+        'lic' => array_slice($list, 0, 5)));
+}
+
 // staff: quick client search for the book-a-new-job flow (existing customers by name/phone)
 if ($action === 'staffclients') {
     if (!$HAS_ADMIN) fail('not_configured');

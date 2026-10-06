@@ -30319,6 +30319,11 @@ def write_portal_page():
     } else {
       out += '<div class="quiet">No postal address on file \\u2014 they can add it themselves in their portal, or type it into SimplyBook.</div>';
     }
+    /* Their 365 PC Manager licence, looked up the moment the card opens (bindPcmLic), so moving
+       them to Pro at the visit is one tap here instead of a hunt through the licence table. */
+    if (c.id || c.email) {
+      out += '<div class="pcmwrap" data-cid="' + esc('' + (c.id || '')) + '" data-em="' + esc(c.email || '') + '" style="margin-top:.45rem"></div>';
+    }
     /* Matched on email, because that is what QuickBooks is searched by. No email,
        no button - guessing by name would merge two Smiths into one ledger. */
     if (c.email) {
@@ -30380,6 +30385,59 @@ def write_portal_page():
         })
         .catch(function () { b.disabled = false; b.textContent = label; });
     };
+  }
+  /* The 365 PC Manager line on a contact card: which plan their app is on, and the one tap that
+     changes it - stafftier, the same call as the licence table's button. Free -> Pro needs no
+     confirm (it only unlocks the full service); Pro -> Free asks first, like the table does. */
+  function bindPcmLic(panel) {
+    var w = panel.querySelector('.pcmwrap'); if (!w) return;
+    var lbl = '\\ud83d\\udcbb <b>365 PC Manager:</b> ';
+    function show(h, note) {
+      w.innerHTML = h + (note ? '<div style="margin-top:.2rem;color:#7ee0a2;font-size:.85rem">' + esc(note) + '</div>' : '')
+        + '<div style="margin-top:.15rem"><button class="sm ghost pcmre" style="margin:0;padding:.15rem .5rem;font-size:.75rem">Check again</button></div>';
+      w.querySelector('.pcmre').onclick = function () { load(''); };
+      Array.prototype.forEach.call(w.querySelectorAll('.pcmtf'), function (b) {
+        b.onclick = function () {
+          var to = b.getAttribute('data-to'), nm = b.getAttribute('data-nm'), was = b.textContent;
+          if (to === 'free' && !confirm('Move ' + nm + ' to Free? Their app drops to the free features on its next check-in.')) return;
+          b.disabled = true; b.textContent = 'Saving\\u2026';
+          post(BK, { action: 'stafftier', stoken: S.stoken, machine: mid(), cid: b.getAttribute('data-id'), tier: to })
+            .then(function (r) {
+              if (!r || !r.ok) { b.disabled = false; b.textContent = was; alert('Couldn\\u2019t change the plan - it is unchanged. Try again.'); return; }
+              load(to === 'pro'
+                ? '\\u2713 Now on Pro. Their app switches over at its next check-in (within the hour). To see it straight away: right-click the 365 icon by the clock \\u2192 Exit, then open 365 PC Manager again.'
+                : '\\u2713 Moved to Free. Their app drops to the free features at its next check-in.');
+            })
+            .catch(function () { b.disabled = false; b.textContent = was; alert('Couldn\\u2019t reach the server - plan unchanged.'); });
+        };
+      });
+    }
+    function load(note) {
+      w.innerHTML = '<span class="quiet">' + lbl + 'checking\\u2026</span>';
+      post(BK, { action: 'staffpcmlic', stoken: S.stoken, machine: mid(), cid: w.getAttribute('data-cid'), email: w.getAttribute('data-em') })
+        .then(function (r) {
+          if (!r || !r.ok) { show('<span class="quiet">' + lbl + 'couldn\\u2019t check just now.</span>'); return; }
+          if (!r.lic || !r.lic.length) {
+            show('<div>' + lbl + '<span class="quiet">not linked yet. On their PC: <b>Link this PC to 365</b> \\u2192 sign in with their booking account'
+              + ' (forgotten the password? <b>Reset app sign-in password</b> below), then check again.</span></div>');
+            return;
+          }
+          var h = '';
+          r.lic.forEach(function (l) {
+            h += '<div style="margin:.1rem 0">' + lbl + '<span class="pill ' + (l.tier === 'pro' ? 'pro">Pro' : 'free">Free') + '</span> '
+              + '<span class="quiet">' + l.pcs + (l.pcs === 1 ? ' PC' : ' PCs') + (l.ver ? ' \\u00b7 v' + l.ver : '') + (l.seen ? ' \\u00b7 seen ' + seenTxt(l.seen) : '')
+              + (r.lic.length > 1 ? ' \\u00b7 ' + esc(l.name) + ' <span class="mono">' + esc(l.keymask) + '</span>' : '') + '</span>'
+              + (l.tier === 'pro'
+                  ? ' <button class="sm ghost pcmtf" data-id="' + esc(l.id) + '" data-to="free" data-nm="' + esc(l.name) + '" style="margin:0 0 0 .3rem;padding:.15rem .5rem;font-size:.75rem">\\u2192 Free</button>'
+                  : ' <button class="sm pcmtf" data-id="' + esc(l.id) + '" data-to="pro" data-nm="' + esc(l.name) + '" style="margin:0 0 0 .3rem;padding:.3rem .75rem;font-size:.85rem">\\u2b50 Make Pro</button>')
+              + '</div>';
+          });
+          if (r.match === 'email') h += '<div class="quiet" style="font-size:.8rem">Found by their email address \\u2014 their app hasn\\u2019t signed in with the booking account yet.</div>';
+          show(h, note);
+        })
+        .catch(function () { show('<span class="quiet">' + lbl + 'couldn\\u2019t reach the server.</span>'); });
+    }
+    load('');
   }
   /* "Job done - email what we did": the moment a one-off fix, tune-up or repair is finished, the
      customer gets a short email listing the work in the technician's words and the one honest next
@@ -31092,7 +31150,7 @@ def write_portal_page():
           .then(function (r) {
             if (!r || !r.ok || !r.client) { panel.innerHTML = '<span class="quiet">Couldn\\u2019t load contact details.</span>'; return; }
             panel.innerHTML = clientCard(r.client); panel.setAttribute('data-loaded', '1');
-            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel); bindJobDone(panel); bindPaylink(panel); bindAppPass(panel);
+            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel); bindJobDone(panel); bindPaylink(panel); bindAppPass(panel); bindPcmLic(panel);
           })
           .catch(function () { panel.innerHTML = '<span class="quiet">Couldn\\u2019t reach the server.</span>'; });
       };
@@ -31254,7 +31312,7 @@ def write_portal_page():
           .then(function (r) {
             if (!r || !r.ok || !r.client) { panel.innerHTML = '<span class="quiet">Couldn\\u2019t load contact details.</span>'; return; }
             panel.innerHTML = clientCard(r.client); panel.setAttribute('data-loaded', '1');
-            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel); bindJobDone(panel); bindPaylink(panel); bindAppPass(panel);
+            bindQbo(panel); bindAddrCopy(panel); bindInvite(panel); bindJobDone(panel); bindPaylink(panel); bindAppPass(panel); bindPcmLic(panel);
           })
           .catch(function () { panel.innerHTML = '<span class="quiet">Couldn\\u2019t reach the server.</span>'; });
       };
