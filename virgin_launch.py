@@ -90,6 +90,8 @@ _VMC_CSS = """
 @media (max-width:420px){.vmc__fields .vmc__wide{grid-column:1/-1}}
 @media (max-width:600px){.vmc{padding-top:.8rem}.vmc__card{padding:1rem 1rem 1.05rem;border-radius:20px}.vmc__tag{display:none}.vmc__cta{margin:.8rem 0 .5rem}.vmc__cta .button{flex:1 1 100%;text-align:center;justify-content:center}.vmc__dl-l{display:none}.vmc__dl-s{display:inline}}
 @media (max-width:600px){.taskhead__trust span:nth-child(n+3){display:none}.taskhead__lede{margin-bottom:.55rem}}
+.vmc__d--after{margin:0 0 .75rem}
+@media (max-width:600px){.taskhead .taskhead__trust{column-gap:.8rem;letter-spacing:0}}
 """
 
 _VMC_JS = """    <script>
@@ -152,13 +154,17 @@ def virgin_choices(setup_url, also_html="", how_href="/" + VIRGIN_TOOL_SLUG + "/
     dl_btn = "secondary" if paid_first else "primary"
     diy_or = "Or do" if paid_first else "Do"
     if paid_first:
-        paid_d = ("We move every folder into Gmail for you, remotely. <b>For Windows PCs only.</b> No app passwords, no settings, "
-                  "nothing to learn, and the price includes a full service of your PC with a written report.")
+        # 6 Oct 2026 (owner: "trim it so the text button is on the first screen"): only the one condition sits between the
+        # price and the buttons; the description follows them. Six phone lines above the buttons became one.
+        paid_d = "<b>For Windows PCs only.</b>"
+        paid_after = ("\n          <p class=\"vmc__d vmc__d--after\">We move every folder into Gmail for you, remotely. No app "
+                      "passwords, no settings, nothing to learn, and the price includes a full service of your PC with a written report.</p>")
         paid_cta = ('<a class="button primary button--lg" href="sms:+447520615332">Text 07520 615332</a>'
                     '<a class="button secondary button--lg" href="tel:+441202775566">Call 01202 775566</a>')
     else:
         paid_d = ("No app passwords, no settings, nothing to learn. We move every folder into Gmail for you, remotely, and the "
                   "price includes a full service of your PC with a written report.")
+        paid_after = ""
         paid_cta = ('<a class="button secondary button--lg" href="tel:+441202775566">Call 01202 775566</a>'
                     '<a class="dh-link" href="sms:+447520615332">Or text 07520 615332</a>')
     diy = f'''        <div class="vmc__card vmc__card--diy{diy_lead} hp-c-fix" id="do-it-free">
@@ -179,7 +185,7 @@ def virgin_choices(setup_url, also_html="", how_href="/" + VIRGIN_TOOL_SLUG + "/
           <p class="vmc__tag"><span class="hp-ico hp-ico--sm">{_dh_ico("phone")}</span>DONE FOR YOU &middot; AGREED BEFORE WE START</p>
           <{h} class="vmc__h">Let us do it: <b>&pound;60</b> per email address</{h}>
           <p class="vmc__d">{paid_d}</p>
-          <p class="vmc__cta">{paid_cta}</p>
+          <p class="vmc__cta">{paid_cta}</p>{paid_after}
           <form class="contact-form vmc__form" method="post" action="/api/form-relay.php" data-ga-event="virgin_move_request" data-success="{VM_FORM_OK}">
             <p class="vmc__formh">Or leave your number and we&rsquo;ll ring you</p>
             <input type="hidden" name="topic" value="Virgin email move (&pound;60 per address)" />

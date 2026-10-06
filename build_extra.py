@@ -23296,9 +23296,11 @@ def virgin_move_v2(d, crumbs):
     # 29 Sep 2026 (launch branch virgin-launch): task-first. The two choices - do it yourself, free, with 365 PC Manager
     # v30, or let us do it for GBP 60 including a full PC service - sit straight under a short header, so the download is
     # on the first phone screen. Every link the old first screen and offer box carried is in the line under them.
+    # 6 Oct 2026 (owner: "trim it so the text button is on the first screen"): the "we can do it for you, or you can do it
+    # yourself" clause went - the two cards straight under it say exactly that - so the GBP 60 card's Text button clears the
+    # sticky bar on a 360 x 800 phone (measured: 15 px spare; 72 px at 375 x 812).
     head = bp.task_head(crumbs, d['h1'],
-        'Keeping your Virgin address means paying Junara once any free year ends. Or move it to Gmail once and keep it free: '
-        'we can do it for you, or <a href="#do-it-free">you can do it yourself</a>.',
+        'Keeping your Virgin address means paying Junara once any free year ends. Or move it to Gmail once and keep it free.',
         trust=_VL.TASK_TRUST)
     also = ('Or: <a href="#fixflow">move it by hand with Thunderbird</a> (needs a Virgin app password) &middot; '
             '<a href="/' + JUNARA_SLUG + '/#s3">keep your Virgin address with Junara</a> &middot; '
@@ -23329,10 +23331,13 @@ def junara_v2(d, crumbs):
     # 29 Sep 2026 (launch + the coordinator's SEO brief): cost is what people search for, so the answer is the first line;
     # then the two choices (free app / GBP 60), then the facts table with a source on every row. Links kept from the old
     # first screen and box: #move-for-me, #s3, #s4, #s5, #s6 and the Gmail how-to.
+    # 6 Oct 2026 (owner: "trim it so the text button is on the first screen"): cut from seven phone lines to the cost answer
+    # alone (still the first line, per the SEO brief). Which addresses (blueyonder, ntlworld, virgin.net) is the facts table's
+    # second row, and "move it, by us or yourself" is the two cards straight under this. Measured with the card change in
+    # virgin_choices: the Text button clears the sticky bar by 35 px at 375 x 812 and 7 px at 360 x 800.
     head = bp.task_head(crumbs, d['h1'],
-        'Junara is taking over all Virgin Media email, blueyonder and ntlworld addresses too. Keeping your address is free '
-        'for 12 months if you still have Virgin (plus 99p), then paid per mailbox. Or move it to Gmail once and keep it free: '
-        'we can do it for you, or <a href="#do-it-free">you can do it yourself</a>.', trust=_VL.TASK_TRUST)
+        'Keeping your address is free for 12 months if you still have Virgin (plus 99p), then paid per mailbox.',
+        trust=_VL.TASK_TRUST)
     also = ('Rather keep your Virgin address? <a href="#s3">What Junara costs</a> &middot; <a href="#s4">your deadline</a> &middot; '
             '<a href="#s5">keep it or move it?</a> &middot; <a href="#s6">is this Junara email real?</a> &middot; '
             '<a href="/move-virgin-media-email-to-gmail/">move it to Gmail by hand</a>')
