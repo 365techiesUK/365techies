@@ -50,14 +50,14 @@
     { key: 'sandbanks', name: 'SANDBANKS', seed: 1709, t: 64, len: 700, curvy: 0.6, hilly: 0.2, sea: -1, band: [3, 8], shores: [30, 34, 38, 42, 48, 54, 36, 40], mix: [5, 4, 1, 1, 3, 0, 0, 4], feat: { over: ['banner'] } },   // (no bridge: there is none on the spit)
     { key: 'christchurch', name: 'CHRISTCHURCH', seed: 1811, t: 64, len: 700, curvy: 0.65, hilly: 0.3, sea: 1, band: [4, 13], shores: [20, 22, 24, 28, 32, 26, 22, 36], mix: [5, 4, 2, 1, 3, 1, 0, 2], feat: { bridge: 2 } },
     { key: 'purbeck', name: 'CORFE CASTLE', seed: 2207, t: 70, len: 730, curvy: 0.75, hilly: 1, sea: 0, band: [14, 95], bands: [[0, [10, 26]], [0.3, [22, 34]], [0.62, [30, 90]]], noCut: [0.08, 0.7], mix: [5, 3, 2, 0, 3, 3, 1, 1], feat: { tunnel: 1, over: ['viaduct'] } },   // (noCut: no cutting through the heath's railway or the village)
-    { key: 'swanage', name: 'SWANAGE', seed: 2903, t: 70, len: 730, curvy: 0.7, hilly: 0.6, sea: -1, sh0: 150, shV: 0.6, band: [3, 40], bands: [[0, [24, 40]], [0.26, [12, 22]], [0.42, [6, 12]], [0.58, [3, 7]]], shoreZ: [[0, [140, 150, 160, 145, 155, 150, 160, 140]], [0.26, [105, 110, 115, 100, 110, 105, 115, 108]], [0.42, [80, 84, 88, 82, 86, 80, 88, 84]], [0.58, [24, 26, 28, 30, 26, 24, 28, 26]]], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: {} },   // (in from Corfe on the A351: Harman's Cross by the railway, Herston, the town, then the front - the bay to the sea side, Old Harry across it; sh0: the sea starts far off, shV: and comes in quicker)
+    { key: 'swanage', name: 'SWANAGE', seed: 2903, t: 70, len: 730, curvy: 0.7, hilly: 0.6, sea: -1, sh0: 150, shV: 0.6, band: [3, 40], bands: [[0, [24, 40]], [0.22, [12, 22]], [0.36, [6, 12]], [0.48, [3, 7]]], shoreZ: [[0, [140, 150, 160, 145, 155, 150, 160, 140]], [0.27, [105, 110, 115, 100, 110, 105, 115, 108]], [0.44, [80, 84, 88, 82, 86, 80, 88, 84]], [0.55, [24, 26, 28, 30, 26, 24, 28, 26]]], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: {} },   // (in from Corfe on the A351: Harman's Cross by the railway, Herston, the town, then the front - the bay to the sea side, Old Harry across it; sh0: the sea starts far off, shV: and comes in quicker)
     { key: 'forest', name: 'NEW FOREST', seed: 3301, t: 70, len: 730, curvy: 0.85, hilly: 0.55, sea: 0, band: [10, 50], bands: [[0, [10, 22]], [0.3, [14, 26]], [0.64, [12, 40]]], mix: [5, 3, 2, 0, 3, 2, 1, 1], feat: { over: ['footbridge'] } },
     { key: 'jurassic', name: 'DURDLE DOOR', seed: 4409, t: 70, len: 740, curvy: 0.8, hilly: 0.85, sea: -1, band: [30, 80], bands: [[0, [18, 30]], [0.18, [30, 60]], [0.36, [3, 9]], [0.64, [40, 80]]], shoreZ: [[0, [100, 110, 120, 95, 105, 115, 100, 110]], [0.18, [60, 70, 80, 65, 75, 70, 60, 80]], [0.36, [20, 22, 24, 26, 22, 20, 24, 22]], [0.64, [26, 30, 34, 38, 30, 28, 34, 32]]], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { tunnel: 1 } },   // (in four parts: Lulworth Castle's park, the ranges, West Lulworth and the Cove, the downs to the Door)
-    { key: 'weymouth', name: 'WEYMOUTH BAY', seed: 4513, t: 68, len: 720, curvy: 0.6, hilly: 0.35, sea: -1, band: [4, 14], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: { bridge: 1, over: ['banner'] } },
+    { key: 'weymouth', name: 'WEYMOUTH', seed: 4513, t: 68, len: 720, curvy: 0.6, hilly: 0.35, sea: -1, sh0: 120, shV: 0.8, band: [2, 45], bands: [[0, [20, 45]], [0.12, [4, 10]], [0.3, [3, 6]], [0.52, [2, 5]]], shoreZ: [[0, [110, 120, 130, 115, 125, 110, 130, 120]], [0.074, [14, 16, 18, 20, 16, 15, 18, 17]], [0.37, [30, 34, 38, 44, 36, 32, 40, 34]], [0.6, [12, 13, 14, 15, 13, 12, 14, 13]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: { over: ['banner'] } },   // (in from Wool on the A353: over Osmington Hill under the White Horse, down to the sea at Preston, the Esplanade, the harbour)
     { key: 'harbour', name: 'POOLE HARBOUR', seed: 5503, t: 68, len: 720, curvy: 0.6, hilly: 0.12, sea: 1, band: [3, 8], shores: [16.5, 17, 18, 17.5, 16.5, 19, 18, 17], mix: [5, 4, 3, 2, 1, 0, 2, 2], feat: { bridge: 1 } },
     { key: 'lymington', name: 'LYMINGTON', seed: 5617, t: 68, len: 720, curvy: 0.65, hilly: 0.3, sea: 1, band: [4, 13], bands: [[0, [4, 9]], [0.3, [3, 7]], [0.64, [3, 6]]], shoreZ: [[0, [17, 18, 19, 20, 18, 17.5, 19, 21]], [0.3, [18, 19, 20, 22, 19, 18.5, 21, 20]], [0.64, [44, 50, 56, 62, 48, 54, 66, 52]]], mix: [5, 4, 2, 1, 3, 1, 0, 3], feat: { bridge: 1 } },   // (shoreZ: the shore for each part of the stage)
     { key: 'lyme', name: 'LYME REGIS', seed: 6101, t: 72, len: 750, curvy: 0.75, hilly: 0.8, sea: -1, band: [10, 50], mix: [5, 3, 1, 1, 3, 0, 0, 2], feat: { tunnel: 1 } },
-    { key: 'portland', name: 'PORTLAND BILL', seed: 6203, t: 72, len: 750, curvy: 0.8, hilly: 0.7, sea: -1, band: [18, 60], mix: [5, 3, 2, 0, 3, 1, 1, 1], feat: { tunnel: 2 } },
+    { key: 'portland', name: 'PORTLAND', seed: 6203, t: 72, len: 750, curvy: 0.8, hilly: 0.7, sea: -1, sh0: 18, shV: 1.0, band: [2, 80], bands: [[0, [3, 6]], [0.2, [8, 30]], [0.32, [45, 70]], [0.5, [8, 16]]], shoreZ: [[0, [14, 16, 18, 20, 16, 15, 18, 17]], [0.24, [34, 40, 46, 52, 38, 44, 50, 42]], [0.39, [80, 84, 88, 90, 82, 86, 90, 84]], [0.6, [24, 26, 28, 30, 26, 24, 30, 27]]], noCut: [0, 0.75], mix: [5, 3, 2, 0, 3, 1, 1, 1], feat: {} },   // (in from Weymouth on the A354: the causeway between the harbour and Chesil Beach, up through Fortuneswell, over Tophill's quarries, down to the Bill; no tunnels - Portland has none)
     { key: 'goldencap', name: 'GOLDEN CAP', seed: 6307, t: 72, len: 760, curvy: 0.8, hilly: 0.9, sea: -1, band: [30, 90], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { tunnel: 1 } },
     { key: 'hengistbury', name: 'HENGISTBURY HEAD', seed: 6409, t: 72, len: 740, curvy: 0.65, hilly: 0.4, sea: 1, band: [4, 22], shores: [30, 34, 38, 42, 46, 36, 40, 32], mix: [5, 4, 1, 1, 3, 0, 0, 3], feat: { bridge: 1 } },
     { key: 'needles', name: 'THE NEEDLES', seed: 6607, t: 72, len: 760, curvy: 0.75, hilly: 0.8, sea: 1, band: [22, 70], bands: [[0, [3, 9]], [0.24, [14, 36]], [0.68, [22, 44]], [0.86, [32, 54]]], shores: [22, 26, 30, 34, 28, 24, 32, 26], mix: [5, 3, 1, 1, 3, 0, 0, 2] },   // (bands: Yarmouth at the water, over West Wight, up to the Needles; no tunnel)
@@ -217,9 +217,9 @@
   }
   // tunnels, bridges and the things that span the road, somewhere in the middle of the stretch (never on a crest, a
   // gate or a fork). A bridge lifts the road to at least 9 m over the water, easing up to it and down again.
-  var OVERS = { bournemouth: ['pierarch', 'banner'], sandbanks: ['banner', 'footbridge'], christchurch: ['treearch', 'footbridge'], purbeck: ['treearch', 'viaduct'], swanage: ['footbridge', 'treearch'],
+  var OVERS = { bournemouth: ['pierarch', 'banner'], sandbanks: ['banner', 'footbridge'], christchurch: ['treearch', 'footbridge'], purbeck: ['treearch', 'viaduct'], swanage: ['banner'],
     forest: ['treearch', 'footbridge', 'treearch'], jurassic: ['rockarch', 'footbridge'], weymouth: ['banner', 'footbridge'], harbour: ['liftbridge', 'footbridge', 'banner'], lymington: ['treearch', 'banner'], lyme: ['banner', 'footbridge'],
-    portland: ['craneway', 'footbridge'], goldencap: ['treearch', 'footbridge'], hengistbury: ['footbridge', 'treearch'], needles: ['chairlift', 'footbridge'] };   // what spans the road in each place (the natural arch only at Durdle Door, the one place that has one)
+    portland: [], goldencap: ['treearch', 'footbridge'], hengistbury: ['footbridge', 'treearch'], needles: ['chairlift', 'footbridge'] };   // what spans the road in each place (the natural arch only at Durdle Door, the one place that has one)
   function features(W, S, lo, hi, r) {
     var F = S.feat || {}, used = [], i, tries;
     function free(a, b) { if (a < lo || b > hi) return false; for (var u = 0; u < used.length; u++) if (a < used[u][1] + 50 && b > used[u][0] - 50) return false; for (var q = a; q < b; q++) if (segAt(W, q).crest) return false; return true; }
@@ -340,7 +340,7 @@
       return putAt(W2, j, t, xx, h, o);
     }
     var STREET = {   // (fraction ends, then: side = a side street every so many segments; car, tree, bin = how often)
-      wareham: [[0.3, {}], [0.8, { car: 0.24, bin: 0.05, side: 50 }], [1.01, {}]], swanage: [[0.26, {}], [0.58, { car: 0.2, bin: 0.05, side: 60 }], [1.01, {}]], wool: [[0.64, {}], [1.01, { car: 0.14, tree: 0.06, side: 70, poles: 1 }]],
+      wareham: [[0.3, {}], [0.8, { car: 0.24, bin: 0.05, side: 50 }], [1.01, {}]], swanage: [[0.22, {}], [0.48, { car: 0.2, bin: 0.05, side: 60 }], [1.01, {}]], wool: [[0.64, {}], [1.01, { car: 0.14, tree: 0.06, side: 70, poles: 1 }]],
       winton: [[0.25, { car: 0.16, tree: 0.16, side: 70 }], [0.66, { car: 0.3, bin: 0.05, side: 56 }], [1.01, { car: 0.22, tree: 0.12, side: 60, poles: 1, wheelie: 0.25 }]],   // (the owner's videos: cars all along the kerbs)
       charminster: [[0.3, { car: 0.22, tree: 0.1, side: 60 }], [0.7, { car: 0.32, bin: 0.05, side: 52 }], [1.01, { car: 0.18, tree: 0.14, side: 66, poles: -1, wheelie: 0.2 }]],
       kinson: [[0.3, { car: 0.18, tree: 0.12, side: 62, poles: 1, wheelie: 0.25 }], [0.66, { car: 0.26, bin: 0.05, side: 50 }], [1.01, { tree: 0.05, side: 90 }]],
@@ -410,8 +410,8 @@
         case 'swanage': {   // in four parts (world3d.js ZONES), in from Corfe on the A351: Harman's Cross with the steam railway alongside, Herston,
           // the town, then the front along the bay
           var fz = k / Math.max(1, to - from);
-          if (fz < 0.26) { if (k % 3 === 0) put(W, i, 'railline', 28, 0); if (k % 110 === 55) put(W, i, 'finger', 10.2, 0.2); break; }
-          if (fz < 0.58) { lamps(9, 0, false); street(); break; }
+          if (fz < 0.22) { if (k % 3 === 0) put(W, i, 'railline', 28, 0); if (k % 110 === 55) put(W, i, 'finger', 10.2, 0.2); break; }
+          if (fz < 0.48) { lamps(9, 0, false); street(); break; }
           lamps(9, 0, true);
           onWater('yacht', 30, 140, 0.015, (r() * 3) | 0);
           break;
@@ -446,13 +446,18 @@
           onWater('stack', 25, 120, 0.01, (r() * 3) | 0);
           break;
         }
-        case 'weymouth':   // the seafront: a long terrace of painted houses on the right, the beach, the clock tower and sailing boats
-          lamps(8, 0, true);
-          if (k % 3 === 0 && r() < 0.8) put(W, i, 'terrace', 22 + r() * 3, 0, { v: (k / 3) % 6 });
-          if (r() < 0.06 && sh > 20) { x = -(14 + r() * (sh - 16)); if (land(s, x)) put(W, i, 'brolly', x, 0.7, { soft: true, v: (r() * 4) | 0 }); }
-          if (r() < 0.04 && sh > 24 && land(s, -12.5)) put(W, i, 'hut', -12.5, 1.3, { v: (r() * 6) | 0 });
-          onWater('yacht', 20, 120, 0.06, (r() * 3) | 0);
+        case 'weymouth': {   // in four parts (world3d.js ZONES), in from Wool on the A353: over Osmington Hill under the White Horse, down to the sea at
+          // Preston with Lodmoor's reeds inland, the Esplanade's terraces and sands, then the harbour (its houses: world3d.js ROWS)
+          var fy = k / Math.max(1, to - from);
+          if (fy < 0.14) { if (k % 110 === 55) put(W, i, 'finger', 10.2, 0.2); break; }
+          lamps(fy < 0.3 ? 10 : 8, 0, true);
+          if (fy >= 0.3 && fy < 0.52) {
+            if (r() < 0.06 && sh > 20) { x = -(14 + r() * (sh - 16)); if (land(s, x)) put(W, i, 'brolly', x, 0.7, { soft: true, v: (r() * 4) | 0 }); }
+            if (r() < 0.04 && sh > 24 && land(s, -12.5)) put(W, i, 'hut', -12.5, 1.3, { v: (r() * 6) | 0 });
+          }
+          onWater('yacht', 20, 120, fy < 0.3 ? 0.03 : 0.06, (r() * 3) | 0);
           break;
+        }
         case 'harbour':   // Poole Harbour at night: lamps, lit buildings and palms; the quay, boats and buoys on the right
           lamps(7, 1, true);
           if (r() < 0.05) { x = sh + 40 + r() * 100; if (water(s, x)) put(W, i, 'yacht', x, 0, { v: 3 + ((r() * 3) | 0) }); }   // (the quay's buildings, bollards, kiosks and fishing boats: world3d.js)
@@ -507,12 +512,20 @@
           if (r() < 0.02) { x = -(11.5 + r() * Math.max(2, sh - 14)); if (land(s, x)) put(W, i, 'rock', x, 1.1, { v: 0 }); }
           onWater('yacht', 20, 100, 0.03, (r() * 3) | 0);
           break;
-        case 'portland':   // Portland Bill at dusk: stone walls, quarry rocks and huts; the red and white lighthouse at the end
+        case 'portland': {   // in four parts (world3d.js ZONES), in from Weymouth on the A354 at dusk: the causeway - Portland Harbour on one side, the
+          // great pebble bank of Chesil Beach on the other - up through Fortuneswell, over Tophill's quarries and stone walls, then out to the Bill
+          var fq = k / Math.max(1, to - from);
+          if (fq < 0.2) { if (k % 3 === 0) put(W, i, 'chesil', 36, 0); onWater('yacht', 30, 160, 0.03, (r() * 3) | 0); break; }
+          if (fq < 0.32) { lamps(9, 0, true); break; }
+          if (fq < 0.5) {
+            if (k % 70 === 35) { x = (((k / 70) | 0) % 2 ? 1 : -1) * (34 + r() * 12); if (land(s, x) && (x > 0 || sh > 70)) put(W, i, 'quarry', x, 0, { v: (k / 70) | 0 }); }
+            if (r() < 0.02) { x = (r() < 0.5 ? -1 : 1) * (12 + r() * 14); if (land(s, x)) put(W, i, 'rock', x, 1.1, { v: 1 }); }
+            break;
+          }
           if (r() < 0.025) { x = (r() < 0.5 ? -1 : 1) * (12 + r() * 14); if (land(s, x)) put(W, i, 'rock', x, 1.1, { v: 0 }); }
-          if (r() < 0.01) put(W, i, 'cottage', 18 + r() * 20, 4, { v: 0 });
-          if (r() < 0.03) put(W, i, 'gorse', 11.5 + r() * 20, 0.8, { soft: true });
           onWater('stack', 30, 100, 0.006, 1);
           break;
+        }
         case 'goldencap':   // Golden Cap: green downs falling to golden cliffs, gorse, sheep and a few cottages
           if (r() < 0.05) put(W, i, 'gorse', 11.5 + r() * 20, 0.8, { soft: true });
           if (r() < 0.04) put(W, i, 'sheep', 16 + r() * 45, 0, { v: (r() * 2) | 0 });
@@ -571,7 +584,14 @@
       var cv = straightest(0.46, 0.58, 50, 10); if (cv >= 0) putAt(W, cv, 'lulcove', -(Math.max(segAt(W, cv).sh, 18) - 2), 0, {});
       mark('arch', 0.68, function (h) { return -(Math.max(h, 18) + 70); });
     }
-    if (S.key === 'weymouth') { mark('clock', 0.4, function (h) { return -(Math.min(h, 22) - 4); }); }
+    if (S.key === 'weymouth') {   // the White Horse on Osmington Hill; St John's spire at the top of the Esplanade, the Jubilee Clock, the King's Statue at
+      // its south end; the Nothe Fort on its headland across the harbour mouth
+      var wh2 = straightest(0.08, 0.13, 60, 10); if (wh2 >= 0) putAt(W, wh2, 'whitehorse', 150, 0, {});   // (ahead and to the right coming down off the hill; further out it left the picture)
+      mark('stjohnchurch', 0.32, function () { return 26; });
+      mark('clock', 0.4, function (h) { return -(Math.min(h, 22) - 4); });
+      mark('kingstatue', 0.49, function () { return 17; });
+      mark('nothefort', 0.6, function (h) { return -(Math.max(h, 12) + 36); });   // (before ~0.68 of the stretch: after it the shore pulls away)
+    }
     if (S.key === 'purbeck') {   // the steam train on the line from Norden across the heath; in the village the Greyhound on the square, St Edward's
       // church tower across it, the steam train standing at the station (the castle itself is the place's landmark painting, high on its hill)
       mark('steamtrain', 0.15, function () { return 28; });
@@ -581,11 +601,11 @@
     if (S.key === 'swanage') {   // in from Corfe: the steam train by the road at Harman's Cross; Swanage station and the Town Hall (its front the
       // old Mercers' Hall's) in the town; on the front the King Alfred column, the clock tower from London Bridge and the pier (Old Harry itself is
       // the place's landmark painting, across the bay: as a 3D model from the road it read as a grey box)
-      mark('steamtrain', 0.13, function () { return 28; });
-      var sst = straightest(0.44, 0.5, 30, 10); if (sst >= 0) putAt(W, sst, 'corfestation', 26, 0, {});
-      var sth = straightest(0.51, 0.57, 30, 10); if (sth >= 0) putAt(W, sth, 'swanhall', 21, 0, {});
-      mark('alfredcolumn', 0.66, function (h) { return -(Math.min(h, 22) - 5); });
-      mark('clocktower', 0.71, function () { return -12.6; }); mark('pier', 0.74, function () { return -14.9; }, 2);
+      mark('steamtrain', 0.1, function () { return 28; });
+      var sst = straightest(0.37, 0.42, 30, 10); if (sst >= 0) putAt(W, sst, 'corfestation', 26, 0, {});
+      var sth = straightest(0.42, 0.47, 30, 10); if (sth >= 0) putAt(W, sth, 'swanhall', 21, 0, {});
+      mark('alfredcolumn', 0.565, function (h) { return -(Math.min(h, 22) - 5); });
+      mark('clocktower', 0.6, function () { return -12.6; }); mark('pier', 0.63, function () { return -14.9; }, 2);   // (all before ~0.68 of the stretch: after it the shore pulls away)
     }
     if (S.key === 'christchurch') {   // the quay: the bandstand on the bank, rowing boats for hire, the old mill; the castle keep's ruin in the town
       mark('bandstand', 0.42, function (h) { return Math.max(14, h - 5.5); }); mark('rowboats', 0.445, function (h) { return h + 6; });
@@ -601,7 +621,18 @@
       var hj = straightest(0.8, 0.93, 70, 10); if (hj >= 0) putAt(W, hj, 'hurstcastle', segAt(W, hj).sh + 190, 0, {});
     }
     if (S.key === 'lyme') { mark('cobb', 0.32, function (h) { return -(Math.max(h, 18) + 34); }); }   // (earlier and nearer: the critic never saw it)
-    if (S.key === 'portland') { var lh = straightest(0.8, 0.9, 60, 10); if (lh >= 0) putAt(W, lh, 'lighthouse', -(Math.max(segAt(W, lh).sh, 18) - 6), 0, { v: 1 }); }   // (Portland Bill lighthouse at the tip, off the straightest stretch there)
+    if (S.key === 'portland') {   // the breakwaters across Portland Harbour; Portland Castle on the shore at Castletown; St George's on Tophill; at the Bill
+      // the two old lighthouses, Pulpit Rock at the sea's edge and the red and white lighthouse (the Trinity House obelisk beside it)
+      mark('breakwater', 0.1, function (h) { return -(Math.max(h, 14) + 230); });
+      mark('portlandcastle', 0.22, function (h) { return -Math.max(30, Math.min(h - 8, 36)); });
+      var sg = straightest(0.36, 0.47, 40, 10); if (sg >= 0) putAt(W, sg, 'stgeorge', 30, 0, {});
+      mark('oldlight', 0.52, function () { return 30; }, 0); mark('oldlight', 0.545, function () { return 26; }, 1);
+      var lh = straightest(0.6, 0.67, 60, 10); if (lh >= 0) { putAt(W, lh, 'lighthouse', -(Math.max(segAt(W, lh).sh, 18) - 6), 0, { v: 1 }); putAt(W, lh - 20, 'pulpitrock', -(Math.max(segAt(W, lh - 20).sh, 18) - 3), 0, {}); }   // (Pulpit Rock on the ledge at the edge: the Bill is low, a few metres above the sea)
+    }
+    (function () {   // no advert board in front of a landmark (one hid St John's spire at Weymouth)
+      var LM = /^(stjohnchurch|kingstatue|swanhall|corfechurch|stgeorge|oldlight|portlandcastle|alfredcolumn|clocktower|tankmuseum|warehamhall|warehamchurch|quayinn|stonepub|minster|highcastle|lyndchurch|stthomas)$/;
+      for (var q7 = from; q7 <= to; q7++) { var g7 = segAt(W, q7); if (g7 && g7.spr && g7.spr.some(function (it) { return LM.test(it.t); })) for (var q8 = q7 - 14; q8 <= q7 + 4; q8++) { var g8 = segAt(W, q8); if (g8 && g8.spr) g8.spr = g8.spr.filter(function (it) { return it.t !== 'board'; }); } }
+    })();
     if (S.key === 'hengistbury') {   // the Head itself; the visitor centre and its cafe, the land train at its stop, the Double Dykes
       mark('headland', 0.7, function (h) { return Math.max(h, 18) + 70; });
       mark('visitorcentre', 0.2, function () { return -26; }); mark('landtrain', 0.215, function () { return -16.4; }); mark('dykes', 0.34, function () { return -15.5; });

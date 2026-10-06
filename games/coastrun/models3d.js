@@ -1866,6 +1866,118 @@ const MODELS = {
     k.box(40, 1.0, 4, 0, -0.1, -9, '#c8c4bc').box(40, 0.2, 0.4, 0, 0.9, -7.2, '#f2d020');   // the platform
     k.box(2, 0.6, 10, 22, 5, -5, '#3a5a8a').box(1.4, 5.6, 1.4, 22, 0, -9, '#3a5a8a').box(1.4, 5.6, 1.4, 22, 0, 0, '#3a5a8a');   // the footbridge
   },
+  whitehorse(k) {   // the Osmington White Horse (1808): King George III riding his horse, cut into Osmington Hill above the A353 into Weymouth (its face
+    // +Z; the hillside leans back): the white chalk figure on the green slope, seen for miles
+    const tilt = 0.62, ht = 150, lay = (g, fwd) => { g.rotateX(-tilt); g.translate(0, ht / 2 * Math.cos(tilt), -ht / 2 * Math.sin(tilt) + fwd); return g; };
+    k.put(lay(new THREE.PlaneGeometry(200, ht, 4, 4), 0), '#7fae4c');   // the hillside
+    k.blob(70, -120, -40, -40, '#79a848', 1.3, 0.9, 1, 1801, { smooth: true }).blob(70, 120, -40, -40, '#79a848', 1.3, 0.9, 1, 1803, { smooth: true });   // the hill's shoulders either side
+    const SH = (pts) => { const q = new THREE.Shape(); q.moveTo(pts[0], pts[1]); for (let i = 2; i < pts.length; i += 2) q.lineTo(pts[i], pts[i + 1]); return q; };
+    const ell = (cx, cy, rx, ry) => { const q = new THREE.Shape(); q.absellipse(cx, cy, rx, ry, 0, Math.PI * 2, false, 0); return q; };
+    const limb = (x1, y1, x2, y2, w) => { const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy), nx = -dy / L * w / 2, ny = dx / L * w / 2; return SH([x1 + nx, y1 + ny, x2 + nx, y2 + ny, x2 - nx, y2 - ny, x1 - nx, y1 - ny]); };
+    const parts = [ell(0, 34, 26, 11), SH([18, 38, 28, 58, 36, 57, 27, 30]), SH([28, 58, 44, 50, 46, 45, 40, 44, 33, 51]), SH([30, 57, 31.5, 63, 34, 57]),   // body, neck, head, ear
+      limb(19, 27, 20, 2, 4), limb(24, 27, 28, 3, 4), limb(-18, 28, -21, 2, 4.5), limb(-12, 27, -8, 3, 4), SH([-25, 38, -33, 32, -37, 14, -31, 22, -26, 30]),   // legs, tail
+      SH([-4, 42, 6, 42, 5, 61, -3, 61]), ell(1.5, 66, 4, 4.5), SH([-6, 68, 9, 68, 1.5, 74]), limb(1, 43, 5, 28, 4), limb(5, 58, 15, 66, 2.2)];   // the king: body, head, his hat, leg, arm
+    const fig = new THREE.ExtrudeGeometry(parts, { depth: 0.5, bevelEnabled: false }); fig.translate(-4.5, -38, 0); fig.scale(1.15, 1.15, 1); fig.translate(0, 0, 0.3);
+    k.put(lay(fig, 0), '#f4f2ea');
+  },
+  kingstatue(k) {   // the King's Statue at the south end of the Esplanade, Weymouth (1809-10, Grade I): George III in his Garter robes on a massive
+    // Portland-stone pedestal, the Royal Standard and the Union Flag behind him, the crown on its cushion, his shield; painted in bright colours, the
+    // lion and the unicorn gilded on low pedestals either side
+    const P = '#ddd6c4', P2 = '#c8c0ac', G = '#d8a838';
+    k.box(6, 0.8, 6, 0, 0, 0, P2, 0, 0, 0, 'stone').box(4.6, 5.4, 4.6, 0, 0.8, 0, P, 0, 0, 0, 'stone').box(5.2, 0.6, 5.2, 0, 6.2, 0, P2, 0, 0, 0, 'stone');   // the pedestal
+    k.cyl(0.95, 1.3, 3.2, 14, 0, 6.8, 0.2, '#1d2e6e').box(1.1, 1.4, 0.8, 0, 8.6, 0.45, '#b02a2a').box(1.6, 0.38, 1.0, 0, 9.8, 0.3, '#f4f0e6');   // his blue mantle, red coat, ermine collar
+    k.ball(0.45, 0, 10.5, 0.35, '#e8c4a0', 1, 1.1, 1).ball(0.47, 0, 10.75, 0.22, '#ece8dc', 1, 0.8, 1).cyl(0.06, 0.06, 2.4, 6, 1.0, 8.2, 0.7, G);   // his head, white wig, the sceptre
+    k.cyl(0.08, 0.08, 4.6, 6, -1.4, 6.8, -1.3, G).box(1.8, 1.2, 0.12, -0.5, 9.9, -1.35, '#c0242a').box(0.9, 0.6, 0.13, -0.95, 10.2, -1.35, '#e0b030').box(0.9, 0.6, 0.13, -0.05, 9.6, -1.35, '#1d3a8a');   // the Royal Standard
+    k.cyl(0.08, 0.08, 4.2, 6, -1.9, 6.8, -0.8, G).box(1.6, 1.0, 0.12, -1.1, 9.6, -0.85, '#1d3a8a').box(1.6, 0.22, 0.13, -1.1, 9.98, -0.85, '#f4f4f4').box(0.22, 1.0, 0.13, -1.1, 9.6, -0.85, '#f4f4f4').box(1.6, 0.12, 0.14, -1.1, 10.04, -0.85, '#c0242a');   // the Union Flag
+    k.box(0.8, 0.3, 0.8, -1.5, 6.8, 1.2, '#b02a2a').ball(0.32, -1.5, 7.4, 1.2, G, 1, 0.9, 1);   // the crown on its cushion
+    k.ball(0.75, 1.5, 7.8, 0.6, '#1d3a8a', 0.8, 1.1, 0.25).box(0.9, 0.5, 0.6, 1.6, 6.8, 1.1, '#8a5a3a');   // his shield; the books
+    for (const sd of [-1, 1]) {   // the lion (his right) and the unicorn, gilded, on their own low pedestals
+      const x = sd * 4.6; k.box(2.4, 2.0, 3.0, x, 0, 0, P, 0, 0, 0, 'stone');
+      k.ball(0.9, x, 2.9, -0.3, G, 0.9, 0.75, 1.4, 'shiny').box(0.28, 0.9, 0.28, x - 0.4, 2.0, 0.6, G).box(0.28, 0.9, 0.28, x + 0.4, 2.0, 0.6, G).box(0.28, 0.9, 0.28, x - 0.4, 2.0, -1.0, G).box(0.28, 0.9, 0.28, x + 0.4, 2.0, -1.0, G);
+      if (sd < 0) k.ball(0.75, x, 3.8, 0.9, '#c8901f', 1.1, 1.1, 1, 'shiny').ball(0.45, x, 3.7, 1.35, G, 1, 1, 1, 'shiny');   // the lion's mane and face
+      else k.box(0.45, 1.2, 0.5, x, 3.2, 0.9, G, 0, -0.4, 0, 'shiny').ball(0.38, x, 4.4, 1.3, G, 0.9, 0.9, 1.4, 'shiny').put(new THREE.ConeGeometry(0.08, 1.0, 6), '#f4e8b0', x, 5.0, 1.55, 0.9, 0, 0);   // the unicorn's neck, head and horn
+    }
+  },
+  stjohnchurch(k) {   // St John's at the north end of the Esplanade, Weymouth (1850s): Victorian Gothic in pale Portland stone, its tall broach spire a
+    // landmark along the whole bay; the nave behind, tall pointed windows
+    const S = '#d8d1bf', S2 = '#c4bca8', R = '#6a6e74';
+    k.box(6.4, 1.2, 6.4, -8, 0, 1, S2, 0, 0, 0, 'stone').box(5.6, 16, 5.6, -8, 1.2, 1, S, 0, 0, 0, 'stone').box(6.0, 0.5, 6.0, -8, 16.8, 1, S2, 0, 0, 0, 'stone');
+    k.put(new THREE.ConeGeometry(3.9, 26, 8), S, -8, 30.3, 1, 0, Math.PI / 8, 0, 1, 1, 1, 'stone').cyl(0.06, 0.06, 1.6, 4, -8, 43.3, 1, '#3a3a3a');   // the spire
+    for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) k.cone(0.4, 2.2, 4, -8 + x * 2.7, 17.2, 1 + z * 2.7, S2, 'stone');
+    for (const [x, z, a] of [[0, 3.82, 0], [2.82, 1, 1], [-2.82, 1, 1]]) k.box(a ? 0.12 : 1.0, 3.2, a ? 1.0 : 0.12, -8 + x, 11.5, z, '#2a3440', 0, 0, 0, 'shiny');   // the belfry windows
+    k.box(1.6, 3.2, 0.14, -8, 1.2, 3.86, '#3a2a1e');
+    k.box(20, 10, 11, 6, 0, -1, S, 0, 0, 0, 'stone').prism(11.8, 5.6, 20.6, 6, 10, -1, R, Math.PI / 2);   // the nave
+    for (let i = 0; i < 4; i++) { const x = 0 + i * 4.6; k.box(1.3, 4.6, 0.14, x, 3, 4.56, '#2a3440', 0, 0, 0, 'shiny').put(new THREE.ConeGeometry(0.7, 0.9, 4), '#2a3440', x, 8.05, 4.56, 0, Math.PI / 4, 0, 1, 1, 0.12, 'shiny'); }
+  },
+  nothefort(k) {   // the Nothe Fort (1872) on its green headland across the harbour mouth from the quay: a low half-ring of Portland-stone casemates, its gun
+    // ports to the sea, a grassy top; rocks at its foot
+    const S = '#cfc6b0', S2 = '#b8ae96';
+    k.blob(34, 0, -12, -6, '#6f9a4a', 1.6, 0.55, 1.2, 1877, { smooth: true });   // the headland
+    k.put(new THREE.CylinderGeometry(24, 25, 8, 28, 1, true, -Math.PI * 0.5, Math.PI), S, 0, 4.0, -6, 0, 0, 0, 1, 1, 1, 'stone');   // the casemate wall
+    k.put(new THREE.CylinderGeometry(24.2, 24.2, 0.8, 28, 1, false, -Math.PI * 0.5, Math.PI), '#6f9a4a', 0, 8.3, -6);   // the grass on its roof
+    for (let i = 0; i < 9; i++) { const a = -Math.PI * 0.5 + (i + 0.5) / 9 * Math.PI; k.box(1.6, 1.5, 0.3, Math.sin(a) * 25.1, 2.6, -6 + Math.cos(a) * 25.1, '#2a2a2a', a); }   // the gun ports
+    k.cyl(25.6, 25.6, 0.6, 28, 0, 8, -6, S2, 0, 0, 'stone');
+    for (let i = 0; i < 9; i++) k.blob(2 + (i % 3), -24 + i * 6, -0.6, 22 + (i % 2) * 3, ['#a8a290', '#bdb6a3'][i % 2], 1.4, 0.6, 1, 1880 + i);   // the rocks at its foot
+  },
+  chesil(k) {   // Chesil Beach beside the causeway onto Portland (along Z): the long high bank of grey-brown pebbles, its crest well above the road,
+    // the open sea beyond it hidden
+    const sh = new THREE.Shape(); sh.moveTo(-26, -0.5); sh.lineTo(-14, 3); sh.lineTo(-4, 8.5); sh.lineTo(2, 9.6); sh.lineTo(10, 7); sh.lineTo(26, -0.5);
+    const g = new THREE.ExtrudeGeometry(sh, { depth: 13.5, bevelEnabled: false }); g.translate(0, 0, -6.75);
+    k.put(g, '#a89c86', 0, 0, 0, 0, 0, 0, 1, 1, 1, 'stone');
+    k.box(5, 0.12, 13.5, -1.5, 9.1, 0, '#b8ad98', 0, 0, 0.32, 'stone');   // the paler crest
+  },
+  breakwater(k) {   // Portland Harbour's breakwaters far across the water (along Z): a long low wall of stone blocks, the old round fort at its end
+    const S = '#b8b2a2';
+    k.box(5, 2.6, 260, 0, 0, 0, S, 0, 0, 0, 'stone').box(5.6, 0.6, 260, 0, 2.6, 0, '#a49e8e', 0, 0, 0, 'stone');
+    k.cyl(13, 14, 8, 22, 0, 0, 136, S, 0, 0, 'stone').cyl(13.4, 13.4, 1.0, 22, 0, 8, 136, '#7a7468', 0, 0, 'stone');
+    for (let i = 0; i < 10; i++) { const a = i / 10 * Math.PI * 2; k.box(1.2, 1.2, 0.3, Math.sin(a) * 14.05, 3.6, 136 + Math.cos(a) * 14.05, '#2a2a2a', a); }
+    k.cyl(1, 1, 4, 8, 0, 9, 136, '#f4f4f0').cyl(1.2, 1.2, 1.4, 8, 0, 13, 136, '#c8202a');   // a little light on it
+  },
+  portlandcastle(k) {   // Portland Castle at Castletown (1539-41, Henry VIII), on the harbour shore (its face +Z, to the water): low and squat in pale
+    // Portland stone - a curved gun platform round the front with gun ports, the central block behind it with battlements
+    const S = '#d4ccb6', S2 = '#bdb49c';
+    k.put(new THREE.CylinderGeometry(15, 15.5, 5, 24, 1, false, -Math.PI * 0.5, Math.PI), S, 0, 2.5, 0, 0, 0, 0, 1, 1, 1, 'stone');   // the curved gun platform
+    for (let i = 0; i < 7; i++) { const a = -Math.PI * 0.5 + (i + 0.5) / 7 * Math.PI; k.box(1.1, 1.0, 0.3, Math.sin(a) * 15.3, 2.4, Math.cos(a) * 15.3, '#2a2a2a', a); }
+    k.box(18, 9, 9, 0, 0, -4, S, 0, 0, 0, 'stone').box(18.6, 0.6, 9.6, 0, 9, -4, S2, 0, 0, 0, 'stone');   // the central block
+    for (let i = 0; i < 9; i++) k.box(1.0, 0.9, 1.0, -8 + i * 2, 9.6, 0.5, S2, 0, 0, 0, 'stone');   // battlements
+    for (const x of [-5, 0, 5]) k.box(1.0, 1.4, 0.12, x, 6, 0.56, '#2a3440', 0, 0, 0, 'shiny');
+  },
+  quarry(k, v) {   // a Portland stone quarry on Tophill (its face +Z, the road side): the stepped white faces cut down into the rock, blocks stacked
+    // ready, a derrick crane's mast and boom
+    const S = ['#e4e0d4', '#dcd6c6'][v % 2], r = rnd(1900 + v);
+    k.box(40, 4, 6, 0, 0, -18, S, 0, 0, 0, 'stone').box(40, 3, 6, 0, 0, -12, shade(S, -0.05), 0, 0, 0, 'stone').box(40, 1.6, 6, 0, 0, -6, shade(S, -0.08), 0, 0, 0, 'stone');   // the stepped faces
+    for (let i = 0; i < 9; i++) k.box(2.2 + r() * 1.4, 1.4 + r() * 0.6, 1.6 + r(), -16 + i * 4 + r(), 0, 2 + r() * 4, shade(S, (r() - 0.5) * 0.1), r() * 0.4, 0, 0, 'stone');   // blocks
+    for (let i = 0; i < 4; i++) k.box(2.4, 1.4, 1.8, 10 + (i % 2) * 2.5, 1.4 * (i >> 1), 5, S, 0, 0, 0, 'stone');   // stacked
+    k.cyl(0.3, 0.35, 14, 8, -10, 0, -8, '#5a4a3a').put(new THREE.CylinderGeometry(0.2, 0.25, 16, 6), '#5a4a3a', -4.4, 9, -8, 0, 0, -0.95);   // the derrick's mast and boom
+    k.cyl(0.03, 0.03, 9, 4, 1.2, 5.6, -8, '#222222').box(1.4, 0.8, 1.0, 1.2, 4.8, -8, '#e4e0d4', 0, 0, 0, 'stone');   // a block on its chain
+  },
+  stgeorge(k) {   // St George's, Reforne, on Tophill (1754-66): Portland's great Georgian church in its own stone - a west tower with a domed cupola on top,
+    // the body of the church with a shallow dome in the middle, round-headed windows; its churchyard of quarrymen's headstones
+    const S = '#d8d0bc', S2 = '#c0b8a2', L = '#8a9088';
+    k.box(5.6, 15, 5.6, -11, 0, 0, S, 0, 0, 0, 'stone').box(6, 0.5, 6, -11, 15, 0, S2, 0, 0, 0, 'stone');   // the tower
+    for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; k.cyl(0.18, 0.18, 2.6, 6, -11 + Math.cos(a) * 1.8, 15.5, Math.sin(a) * 1.8, S); }
+    k.cyl(2.2, 2.2, 0.4, 12, -11, 18.1, 0, S2, 0, 0, 'stone').ball(2.0, -11, 18.5, 0, L, 1, 0.9, 1, 'shiny', 12).cyl(0.07, 0.07, 1.4, 4, -11, 20.2, 0, '#3a3a3a');   // the cupola
+    k.box(18, 9, 12, 2, 0, -1, S, 0, 0, 0, 'stone').box(18.4, 0.5, 12.4, 2, 9, -1, S2, 0, 0, 0, 'stone');   // the body of the church
+    k.cyl(4.2, 4.6, 2.2, 14, 2, 9.4, -1, S2, 0, 0, 'stone').ball(4.2, 2, 11.5, -1, L, 1, 0.55, 1, 'shiny', 14);   // its central dome
+    for (let i = 0; i < 4; i++) { const x = -4.5 + i * 4.4; k.box(1.4, 3.4, 0.14, x, 3.2, 5.06, '#2a3440', 0, 0, 0, 'shiny').put(new THREE.CylinderGeometry(0.7, 0.7, 0.14, 12, 1, false, -Math.PI / 2, Math.PI), '#2a3440', x, 6.6, 5.06, Math.PI / 2, 0, 0, 1, 1, 1, 'shiny'); }
+    for (let i = 0; i < 9; i++) k.box(0.8, 1.1, 0.18, -12 + i * 3.4, 0, 9 + (i % 3) * 1.3, '#a9a394', 0, 0, 0, 'stone');   // headstones
+  },
+  pulpitrock(k) {   // Pulpit Rock at Portland Bill (left by the quarrymen in the 1870s): a tall squared stack of stone on the ledge at the sea's edge, a
+    // great flat slab leaning up against it like an open bible on a pulpit
+    const S = '#c8c0aa';
+    k.blob(9, 0, -2, 0, '#b0a892', 1.4, 0.35, 1.1, 1871, { smooth: true });   // its ledge
+    k.box(5, 11, 4.4, 0, 0, 0, S, 0.08, 0, 0, 'stone').box(5.4, 0.8, 4.8, 0, 11, 0, shade(S, -0.06), 0.08, 0, 0, 'stone');   // the stack
+    k.box(4.6, 9, 0.9, 0.4, 0, 4.6, shade(S, 0.04), 0, -0.48, 0, 'stone');   // the leaning slab
+  },
+  oldlight(k, v) {   // Portland's old lighthouses inland of the Bill (both white): v 0 the Old Higher Light - a tall round tower, its lantern long gone,
+    // the keepers' cottages beside it; v 1 the Old Lower Light, now the bird observatory - a shorter tower and its low buildings
+    const W = '#f2f0ea', R = '#5a5e66', tall = v ? 12 : 20;
+    k.cyl(2.4, 3.0, tall, 16, 0, 0, 0, W).cyl(2.7, 2.7, 0.6, 16, 0, tall, 0, '#d8d4ca');
+    for (let i = 0; i < 10; i++) { const a = i / 10 * Math.PI * 2; k.box(0.7, 0.8, 0.7, Math.cos(a) * 2.4, tall + 0.6, Math.sin(a) * 2.4, '#d8d4ca', -a); }   // its castellated top
+    for (const y of [3, 8, 13].filter((y) => y < tall - 2)) k.box(0.7, 1.1, 0.12, 0, y, 2.9 - y * 0.03, '#2a3440', 0, 0, 0, 'shiny');
+    k.box(12, 3.6, 6, 8, 0, -1, W).prism(6.6, 1.8, 12.4, 8, 3.6, -1, R, Math.PI / 2);   // the cottages / the observatory
+    for (const x of [4, 8, 12]) k.box(1.0, 1.2, 0.1, x, 1.2, 2.02, '#2a3440', 0, 0, 0, 'shiny');
+  },
   steamtrain(k) {   // the heritage line's steam train on the move (along Z, the engine at -Z): a green tank engine, its tall chimney trailing steam,
     // red wheels, then its carriages in crimson and cream
     const G = '#2f5a3a';
