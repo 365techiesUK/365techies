@@ -55,7 +55,7 @@
     { key: 'jurassic', name: 'DURDLE DOOR', seed: 4409, t: 70, len: 740, curvy: 0.8, hilly: 0.85, sea: -1, band: [30, 80], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { tunnel: 1 } },
     { key: 'weymouth', name: 'WEYMOUTH BAY', seed: 4513, t: 68, len: 720, curvy: 0.6, hilly: 0.35, sea: -1, band: [4, 14], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: { bridge: 1, over: ['banner'] } },
     { key: 'harbour', name: 'POOLE HARBOUR', seed: 5503, t: 68, len: 720, curvy: 0.6, hilly: 0.12, sea: 1, band: [3, 8], shores: [16.5, 17, 18, 17.5, 16.5, 19, 18, 17], mix: [5, 4, 3, 2, 1, 0, 2, 2], feat: { bridge: 1 } },
-    { key: 'lymington', name: 'LYMINGTON', seed: 5617, t: 68, len: 720, curvy: 0.65, hilly: 0.3, sea: 1, band: [4, 13], mix: [5, 4, 2, 1, 3, 1, 0, 3], feat: { bridge: 1 } },
+    { key: 'lymington', name: 'LYMINGTON', seed: 5617, t: 68, len: 720, curvy: 0.65, hilly: 0.3, sea: 1, band: [4, 13], bands: [[0, [4, 9]], [0.3, [3, 7]], [0.64, [3, 6]]], shoreZ: [[0, [17, 18, 19, 20, 18, 17.5, 19, 21]], [0.3, [18, 19, 20, 22, 19, 18.5, 21, 20]], [0.64, [44, 50, 56, 62, 48, 54, 66, 52]]], mix: [5, 4, 2, 1, 3, 1, 0, 3], feat: { bridge: 1 } },   // (shoreZ: the shore for each part of the stage)
     { key: 'lyme', name: 'LYME REGIS', seed: 6101, t: 72, len: 750, curvy: 0.75, hilly: 0.8, sea: -1, band: [10, 50], mix: [5, 3, 1, 1, 3, 0, 0, 2], feat: { tunnel: 1 } },
     { key: 'portland', name: 'PORTLAND BILL', seed: 6203, t: 72, len: 750, curvy: 0.8, hilly: 0.7, sea: -1, band: [18, 60], mix: [5, 3, 2, 0, 3, 1, 1, 1], feat: { tunnel: 2 } },
     { key: 'goldencap', name: 'GOLDEN CAP', seed: 6307, t: 72, len: 760, curvy: 0.8, hilly: 0.9, sea: -1, band: [30, 90], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { tunnel: 1 } },
@@ -120,7 +120,11 @@
     var W = B.W, i = W.base + W.segs.length, s = { i: i, k: k, y1: 0, y2: 0, bank: 0, st: B.S.id, sea: 0, sh: 0, wl: 0, wr: 0, spr: null, coins: null, gate: null, fk: null };
     if (B.S.sea) {   // the shore wanders between right beside the road and well away from it
       if (B.k > B.S.len - 120) B.shT = 120;
-      else if (B.k >= B.nextSh) { B.shT = (B.S.shores || [14, 16, 17, 19, 22, 28, 44, 70])[(B.rng() * 8) | 0]; B.nextSh = B.k + 90 + ((B.rng() * 120) | 0); }
+      else {
+        var SZ = B.S.shoreZ, zi = -1; if (SZ) for (var q = 0; q < SZ.length; q++) if (B.k / B.S.len >= SZ[q][0]) zi = q;
+        if (SZ && zi !== B.shZ) { B.shZ = zi; B.nextSh = B.k; }   // (a new part of the stage: its own shore straight away)
+        if (B.k >= B.nextSh) { B.shT = (SZ ? SZ[zi][1] : B.S.shores || [14, 16, 17, 19, 22, 28, 44, 70])[(B.rng() * 8) | 0]; B.nextSh = B.k + 90 + ((B.rng() * 120) | 0); }
+      }
       B.sh += clamp(B.shT - B.sh, -0.35, 0.35);
       s.sea = B.S.sea; s.sh = B.sh;
     }
@@ -382,13 +386,14 @@
           if (r() < 0.05) { x = sh + 40 + r() * 100; if (water(s, x)) put(W, i, 'yacht', x, 0, { v: 3 + ((r() * 3) | 0) }); }   // (the quay's buildings, bollards, kiosks and fishing boats: world3d.js)
           if (r() < 0.02) { x = sh + 36 + r() * 60; if (water(s, x)) put(W, i, 'buoy', x, 0, { v: (r() * 2) | 0 }); }
           break;
-        case 'lymington':   // the marina on the right: a forest of masts, the island ferry; brick houses and oaks inland
-          lamps(10, 0, true);
-          if (r() < 0.16) { x = sh + 6 + r() * 60; if (water(s, x)) put(W, i, 'yacht', x, 0, { v: (r() * 3) | 0 }); }
-          if (r() < 0.05) plant(['cottage', 'oak', 'oak'], -(15 + r() * 26), 0.8);
-          if (r() < 0.04) put(W, i, 'bush', -(11.5 + r() * 8), 0.9, { soft: true, v: 1 });
-          if (r() < 0.1) shore('tuft', 1, 0, { v: (r() * 3) | 0 });
+        case 'lymington': {   // in three parts (world3d.js ZONES): the Georgian town on its quay, the river's marinas and the island ferry, then
+          // the saltmarshes along the sea wall towards Keyhaven, with Hurst Castle out on its spit (the houses, boats and marsh: world3d.js)
+          var fy = k / Math.max(1, to - from);
+          if (fy < 0.64) { lamps(fy < 0.3 ? 9 : 10, 0, true); if (fy >= 0.3 && r() < 0.03) put(W, i, 'bush', -(11.5 + r() * 2.5), 0.9, { soft: true, v: 1 }); break; }
+          if (r() < 0.05) { x = sh + 10 + r() * 140; if (water(s, x)) put(W, i, 'yacht', x, 0, { v: (r() * 3) | 0 }); }   // yachts out in the Solent
+          if (r() < 0.04) put(W, i, 'bush', -(11.5 + r() * 2.5), 0.9, { soft: true, v: 1 });
           break;
+        }
         case 'lyme':   // Lyme Regis at sunset: grey-blue fossil cliffs, colourful houses climbing the hill, the curving harbour wall
           if (r() < 0.05) put(W, i, 'terrace', 20 + r() * 20, 0, { v: (r() * 6) | 0 });
           if (r() < 0.05) plant(['oak', 'bush'], 13 + r() * 25, 0.8);
@@ -470,21 +475,31 @@
       mark('placemill', 0.5, function (h) { return Math.max(18, h - 6); }); mark('castlekeep', 0.62, function () { return -42; });
     }
     if (S.key === 'harbour') { mark('ferry', 0.55, function (h) { return Math.max(h, 16) + 190; }); mark('customhouse', 0.3, function () { return -27; }); }   // (the ferry at the terminal across the water; the old custom house on the quay)
-    if (S.key === 'lymington') { mark('ferry', 0.5, function (h) { return Math.max(h, 16) + 60; }); }
+    if (S.key === 'lymington') {   // St Thomas's tower and its white cupola at the top of the town; the sea-water baths by the river; the island
+      // ferry at its terminal; the Walhampton monument on the far bank; Hurst Castle and its lighthouse out at the end of the spit
+      var tj = straightest(0.07, 0.2, 60, 10); if (tj >= 0) putAt(W, tj, 'stthomas', -31, 0, {});
+      mark('seabaths', 0.34, function (h) { return h - 1; });
+      mark('ferry', 0.5, function (h) { return Math.max(h, 16) + 60; });
+      var oj = straightest(0.52, 0.62, 60, 10); if (oj >= 0) putAt(W, oj, 'obelisk', segAt(W, oj).sh + 120, 0, {});
+      var hj = straightest(0.8, 0.93, 70, 10); if (hj >= 0) putAt(W, hj, 'hurstcastle', segAt(W, hj).sh + 190, 0, {});
+    }
     if (S.key === 'lyme') { mark('cobb', 0.32, function (h) { return -(Math.max(h, 18) + 34); }); }   // (earlier and nearer: the critic never saw it)
     if (S.key === 'portland') { mark('lighthouse', 0.84, function (h) { return -(Math.max(h, 18) - 5); }, 1); }
     if (S.key === 'hengistbury') {   // the Head itself; the visitor centre and its cafe, the land train at its stop, the Double Dykes
       mark('headland', 0.7, function (h) { return Math.max(h, 18) + 70; });
       mark('visitorcentre', 0.2, function () { return -26; }); mark('landtrain', 0.215, function () { return -16.4; }); mark('dykes', 0.34, function () { return -15.5; });
     }
+    function straightest(f0, f1, back, on) {   // the segment in that part of the stage with the least bend from back segments before it to on after (a
+      // landmark well off the road, put after a bend, swung round behind the car)
+      var bj = -1, bb = 1e9;
+      for (var q4 = from + Math.round((to - from) * f0); q4 < from + Math.round((to - from) * f1); q4++) {
+        var b4 = 0; for (var u4 = q4 - back; u4 < q4 + on; u4++) b4 += Math.abs(segAt(W, u4).k);
+        var g4 = segAt(W, q4); if (b4 < bb && !g4.tun && !g4.brg && !g4.gate && !g4.fk && !g4.over && !g4.nearOver) { bb = b4; bj = q4; }
+      }
+      return bj;
+    }
     if (S.key === 'forest') {   // the cattle grid where the road comes onto the open Forest; Lyndhurst's church high on its knoll over the village,
       // off the straightest stretch there (from a bend, a big offset swung it round behind the car)
-      var straightest = function (f0, f1, back, on) { var bj = -1, bb = 1e9;
-        for (var q4 = from + Math.round((to - from) * f0); q4 < from + Math.round((to - from) * f1); q4++) {
-          var b4 = 0; for (var u4 = q4 - back; u4 < q4 + on; u4++) b4 += Math.abs(segAt(W, u4).k);
-          var g4 = segAt(W, q4); if (b4 < bb && !g4.tun && !g4.brg && !g4.gate && !g4.fk && !g4.over && !g4.nearOver) { bb = b4; bj = q4; }
-        }
-        return bj; };
       var gj = straightest(0.006, 0.07, 6, 6); if (gj >= 0) putAt(W, gj, 'cattlegrid', 0, 0, {});   // (square across a straight bit of road)
       var cj = straightest(0.31, 0.37, 60, 10); if (cj >= 0) putAt(W, cj, 'lyndchurch', -34, 0, {});   // (as you come into the village, the houses beginning past it)
     }

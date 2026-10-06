@@ -1149,6 +1149,115 @@ const MODELS = {
     const c = [['#b0762a', '#c48a3a', '#8a6a2a'], ['#7a8a3a', '#9a8a3a', '#b0762a']][v % 2], q = rnd(4600 + v);
     for (let i = 0; i < 5; i++) k.card(1.6 + q() * 0.6, 1.1, (q() - 0.5) * 2.4, 0.5, (q() - 0.5) * 2.4, c[i % 3], q() * 3.14, 0, 'grass', 'up');
   },
+  lymhouse(k, v) {   // Lymington's High Street (its face +Z): Georgian houses and shops, painted render or red brick - rows of white sash
+    // windows, a cornice and a parapet in front of a slate roof, chimney stacks; a bow-fronted shop window or a door under a fanlight, a hanging
+    // sign (blank), a striped awning on some
+    const C = ['#f6f2e8', '#efe4c8', '#ecc8c0', '#a4462f', '#c8dce6', '#f2e3a8', '#cfdcc0', '#9c4430'][v % 8], brick = v % 8 === 3 || v % 8 === 7;
+    const fl = v % 3 === 2 ? 2 : 3, h = 1.2 + fl * 3.2, wide = [8, 10, 7.5, 11, 9, 8.5, 10, 9.5][v % 8], T = '#fbfaf6', GL = '#2e3e4a', r = rnd(4700 + v);
+    k.box(wide, h, 8, 0, 0, 0, C).box(wide + 0.3, 0.35, 8.3, 0, h - 0.25, 0, T).box(wide, 0.9, 0.3, 0, h + 0.1, 3.85, C);   // the walls, the cornice, the parapet
+    k.prism(7.6, 2.2, wide - 0.3, 0, h, -0.3, '#4c5058', Math.PI / 2);
+    for (const sd of [-1, 1]) { const cx = sd * (wide / 2 - 0.6); k.box(1.1, 2.4, 1.6, cx, h + 0.4, -0.4, brick ? C : '#a4462f'); for (const o of [-0.25, 0.25]) k.cyl(0.11, 0.13, 0.5, 6, cx + o, h + 2.8, -0.4, '#b0603a'); }
+    const n = Math.max(2, Math.round(wide / 2.6));
+    for (let f = 1; f < fl; f++) for (let i = 0; i < n; i++) { const x = -wide / 2 + wide * (i + 0.5) / n, y = 0.6 + f * 3.2, wh = f === fl - 1 ? 1.6 : 1.9;
+      k.box(1.15, wh + 0.2, 0.1, x, y - 0.1, 4.02, T).box(0.9, wh, 0.12, x, y, 4.03, GL, 0, 0, 0, 'shiny').box(0.95, 0.06, 0.14, x, y + wh * 0.5, 4.05, T).box(1.3, 0.12, 0.3, x, y - 0.16, 4.1, T); }   // sashes, their bars and sills
+    const shop = v % 2 === 0, dx = shop ? wide / 2 - 1.3 : 0;
+    if (shop) {   // the bow window, white glazing bars on it, a fascia over it, and the sign on its bracket
+      const bx = -wide * 0.18;
+      k.put(new THREE.CylinderGeometry(2.0, 2.0, 2.3, 12, 1, false, -Math.PI / 2, Math.PI), GL, bx, 1.75, 4.0, 0, 0, 0, 1, 1, 0.5, 'shiny');
+      k.box(4.3, 0.3, 1.2, bx, 0.3, 4.4, T).box(4.4, 0.35, 1.25, bx, 2.9, 4.4, T).box(wide - 0.4, 0.7, 0.16, 0, 3.25, 4.06, ['#1d3557', '#2f5a3a', '#7a1f2b', '#2a2a2a'][(v >> 1) % 4]);
+      for (const a of [-1.1, -0.4, 0.4, 1.1]) k.box(0.07, 2.3, 0.07, bx + Math.sin(a) * 2.0, 0.6, 4.0 + Math.cos(a) * 1.0, T);
+      k.box(0.08, 0.08, 1.3, wide / 2 - 0.4, 4.0, 4.6, '#1a1a1a').box(0.06, 0.9, 0.8, wide / 2 - 0.4, 3.05, 4.95, ['#e8c060', '#2f5a3a', '#7a1f2b', '#1d3557'][v % 4]);
+      if (v % 4 === 2) for (let i = 0; i < 6; i++) k.box((wide - 1) / 6, 0.16, 1.5, -(wide - 1) / 2 + (i + 0.5) * (wide - 1) / 6, 3.6, 4.7, i % 2 ? '#f4f1ea' : '#2f6a4a', 0, -0.35);   // an awning
+    }
+    k.box(1.1, 2.3, 0.12, dx, 0, 4.04, ['#1d3557', '#2f5a3a', '#7a1f2b', '#111111', '#3a5a7a'][v % 5]).box(1.5, 0.5, 0.14, dx, 2.35, 4.04, T).box(1.0, 0.36, 0.15, dx, 2.4, 4.05, GL, 0, 0, 0, 'shiny');   // the door, the fanlight over it
+    if (!shop) for (const x of [-wide / 2 + 1.6, wide / 2 - 1.6]) k.box(1.15, 1.9, 0.1, x === dx ? x + 1 : x, 1.0, 4.02, T).box(0.9, 1.7, 0.12, x === dx ? x + 1 : x, 1.1, 4.03, GL, 0, 0, 0, 'shiny');
+    for (let i = 0; i < 3; i++) k.ball(0.3, (r() - 0.5) * wide * 0.8, 4.4, 4.3, ['#e63946', '#ff7eb6', '#ffd23f', '#9b5de5'][(v + i) % 4], 1, 0.8, 1, 'lit', 6);   // hanging baskets
+  },
+  stthomas(k) {   // St Thomas's at the top of Lymington's High Street (its face +Z): the stone tower with the white cupola on top (put there in
+    // 1670), a balustrade round it, a round clock face (no numbers); the long rendered nave with tall round-headed windows, the churchyard's limes
+    const S = '#d8ccb0', W = '#f6f4ee', R = '#4c5058', r = rnd(4800);
+    const tx = 12, th = 21;
+    k.box(7, th, 7, tx, 0, 0, S, 0, 0, 0, 'stone'); for (const y of [7, 14]) k.box(7.3, 0.4, 7.3, tx, y, 0, shade(S, -0.08), 0, 0, 0, 'stone');
+    k.box(7.6, 0.5, 7.6, tx, th, 0, W); for (let i = 0; i < 9; i++) for (const [ox, oz, rot] of [[0, 3.6, 0], [0, -3.6, 0], [3.6, 0, 1], [-3.6, 0, 1]]) k.box(rot ? 0.14 : 0.18, 0.9, rot ? 0.18 : 0.14, tx + ox + (rot ? 0 : -3.4 + i * 0.85), th + 0.5, oz + (rot ? -3.4 + i * 0.85 : 0), W);   // the balustrade
+    k.box(7.6, 0.25, 7.6, tx, th + 1.4, 0, W);
+    k.cyl(2.3, 2.3, 3.4, 8, tx, th + 1.6, 0, W); for (let i = 0; i < 8; i++) { const a = i / 8 * 6.283 + 0.39; k.box(0.7, 1.9, 0.2, tx + Math.sin(a) * 2.25, th + 2.3, Math.cos(a) * 2.25, '#2a3036', a); }   // the cupola's open arches
+    k.ball(2.45, tx, th + 5.0, 0, W, 1, 0.75, 1, 'lit', 12).cyl(0.5, 0.6, 1.2, 8, tx, th + 6.6, 0, W).cone(0.35, 1.2, 8, tx, th + 7.8, 0, W).cyl(0.06, 0.06, 1.6, 4, tx, th + 9.0, 0, '#c9a24a', 0, 0, 'shiny');   // its dome, lantern, gilded vane
+    k.box(1.5, 0.5, 0.2, tx + 0.6, th + 10.0, 0, '#c9a24a', 0, 0, 0, 'shiny');
+    k.cyl(1.3, 1.3, 0.2, 16, tx, 15.6, 3.6, W, Math.PI / 2).box(0.08, 0.9, 0.06, tx, 16.0, 3.72, '#111111').box(0.6, 0.08, 0.06, tx + 0.25, 16.6, 3.72, '#111111');   // the clock face and its hands
+    k.box(1.6, 3.4, 0.15, tx, 0, 3.55, '#4a2a1a').box(1.8, 0.6, 0.2, tx, 3.4, 3.55, S, 0, 0, 0, 'stone');   // the west door
+    k.box(24, 9, 13, -4, 0, 0, '#ece4d0').prism(13.6, 6, 24.6, -4, 9, 0, R, Math.PI / 2);   // the nave
+    for (let i = 0; i < 5; i++) { const x = -14 + i * 4.6; k.box(1.6, 4.4, 0.12, x, 2.6, 6.53, W).box(1.25, 4.0, 0.14, x, 2.7, 6.54, '#2b3540', 0, 0, 0, 'shiny'); k.cyl(0.62, 0.62, 0.15, 10, x, 6.7, 6.55, '#2b3540', Math.PI / 2); }
+    for (const [x, z, s] of [[-20, 9, 1.3], [-8, 11, 1.1], [24, 8, 1.4], [22, -8, 1.2]]) k.cyl(0.3, 0.45, 4, 6, x, 0, z, '#4a3a2a').clump(3.2 * s, x, 5.5 + 2 * s, z, '#4e7a3a', 4810 + Math.round(x)).clump(2.4 * s, x + 1, 8 + 2 * s, z, '#5a8a40', 4820 + Math.round(z));
+    for (let i = 0; i < 10; i++) k.box(0.7, 0.9 + r() * 0.4, 0.16, -18 + r() * 34, 0, 8 + r() * 6, '#9a9a94');
+    k.box(40, 0.8, 0.5, 0, 0, 13.5, '#a4462f');   // the churchyard wall
+  },
+  seabaths(k) {   // Lymington's open-air sea-water baths by the river (from the bank, +X out over the water; its deck at y 0): a long pool of
+    // bright blue water inside white walls, the pale deck round it, a row of colourful changing huts, inflatables floating, people about
+    const L = 64, Wd = 30, x0 = 2;
+    k.box(L, 3.6, Wd, x0 + L / 2, -4.2, 0, '#9ad8e0');   // the pool's floor
+    for (const sd of [-1, 1]) k.box(L + 6, 4.2, 3, x0 + L / 2, -4.2, sd * (Wd / 2 + 1.5), '#d8d2c4', 0, 0, 0, 'stone').box(3, 4.2, Wd, x0 + L / 2 + sd * (L / 2 + 1.5), -4.2, 0, '#d8d2c4', 0, 0, 0, 'stone');   // the deck round it, its walls down to the river
+    k.box(L, 0.3, Wd, x0 + L / 2, -0.6, 0, '#38c8dc', 0, 0, 0, 'shiny');   // the water
+    for (let i = 0; i < 6; i++) k.box(L - 2, 0.04, 0.12, x0 + L / 2, -0.27, -Wd / 2 + 2.5 + i * (Wd - 5) / 5, '#f4f4f4');   // lane ropes
+    for (const sd of [-1, 1]) k.box(L + 6, 0.9, 0.3, x0 + L / 2, 0, sd * (Wd / 2 + 2.85), '#f4f4f0');
+    k.box(0.3, 0.9, Wd + 6, x0 + L + 2.85, 0, 0, '#f4f4f0');
+    for (let i = 0; i < 10; i++) { const c = ['#e63946', '#ffd23f', '#2a9df4', '#7cc576', '#ff7eb6', '#ff9a3c'][i % 6]; k.box(2.6, 2.8, 2.4, x0 + 6 + i * 5.8, 0, -Wd / 2 - 4.6, c).prism(3.0, 1.0, 2.8, x0 + 6 + i * 5.8, 2.8, -Wd / 2 - 4.6, '#f4f1ea', Math.PI / 2).box(1.1, 2.0, 0.1, x0 + 6 + i * 5.8, 0, -Wd / 2 - 3.38, '#f4f1ea'); }
+    const r = rnd(4900);
+    for (let i = 0; i < 7; i++) k.blob(1.0 + r() * 0.5, x0 + 8 + r() * (L - 16), -0.35, (r() - 0.5) * (Wd - 6), ['#ffd23f', '#ff7eb6', '#ff9a3c', '#7cc576', '#e63946'][i % 5], 1.6, 0.35, 1.0, 4910 + i);   // inflatables
+    for (let i = 0; i < 5; i++) person(k, x0 + 4 + r() * (L - 8), 0, (r() < 0.5 ? -1 : 1) * (Wd / 2 + 1.2), r, false);
+  },
+  boatyard(k, v) {   // a boatyard by the river (its face +Z, to the road): a big clad shed, yachts up on cradles with their masts up, the blue
+    // travel hoist that lifts them out
+    const r = rnd(5000 + v), shed = ['#3a5a7a', '#8a9098', '#2f5a4a'][v % 3];
+    k.box(26, 10, 16, 0, 0, -10, shed).prism(16.6, 3, 26.6, 0, 10, -10, shade(shed, -0.15), Math.PI / 2).box(8, 8, 0.2, -6, 0, -1.9, '#d8dcd8');
+    for (let i = 0; i < 3; i++) {
+      const x = -9 + i * 9, z = 6 + (r() - 0.5) * 2, hc = ['#f4f6f8', '#1d3557', '#f4f6f8', '#7a1f2b'][(v + i) % 4], af = ['#b02a2a', '#1a2a4a', '#2a2a2a'][i % 3];
+      for (const [px, pz] of [[-1, -2], [1, -2], [-1, 2], [1, 2]]) k.box(0.12, 1.6, 0.12, x + px * 1.1, 0, z + pz, '#d8a020');   // the cradle
+      k.ball(1, x, 2.0, z, af, 1.25, 0.75, 4.2, 'lit', 10).ball(1, x, 2.5, z, hc, 1.3, 0.7, 4.4, 'lit', 10).box(0.25, 1.4, 1.8, x, 0.4, z, af);   // the hull, its antifouling, the keel
+      k.box(1.6, 0.8, 2.4, x, 3.0, z - 0.4, '#f4f6f8').cyl(0.08, 0.1, 11 + r() * 3, 5, x, 3.0, z - 1.0, '#d8d8d8');   // the cabin, the mast
+    }
+    for (const sd of [-1, 1]) { k.box(0.5, 8, 0.5, 12 + sd * 3, 0, 1, '#2a6ad0').box(0.5, 8, 0.5, 12 + sd * 3, 0, 9, '#2a6ad0').box(0.5, 0.6, 8.5, 12 + sd * 3, 8, 5, '#2a6ad0'); }   // the travel hoist
+    k.box(6.5, 0.6, 0.6, 12, 8, 1, '#2a6ad0').box(6.5, 0.6, 0.6, 12, 8, 9, '#2a6ad0');
+  },
+  saltpans(k, v) {   // the old salt pans on the marshes towards Keyhaven: shallow square lagoons of still water between grassy banks
+    const r = rnd(5100 + v), n = 2 + (v % 2);
+    for (let i = 0; i < n; i++) for (let j = 0; j < 2; j++) { const x = (i - (n - 1) / 2) * 15, z = (j - 0.5) * 13; k.box(13, 0.08, 11, x, -0.15, z, ['#7a9aaa', '#8aa8b4', '#6a8a9a'][(i + j + v) % 3], 0, 0, 0, 'shiny'); }
+    for (let i = 0; i <= n; i++) k.box(1.6, 0.45, 27, (i - n / 2) * 15, -0.2, 0, '#6e7a44');   // the banks between
+    for (let j = 0; j < 3; j++) k.box(n * 15 + 1.6, 0.45, 1.6, 0, -0.2, (j - 1) * 13, '#6e7a44');
+    for (let i = 0; i < 6; i++) k.card(1.4, 1.0, (r() - 0.5) * n * 15, 0.45, (r() < 0.5 ? -1 : 1) * 13 + (r() - 0.5), ['#a8a060', '#8a9a58'][i % 2], r() * 3, 0, 'grass', 'up');
+  },
+  egrets(k, v) {   // little egrets stalking the shallows of the marsh: white, slim, an S of a neck, black legs
+    const r = rnd(5200 + v), n = 2 + (v % 3);
+    for (let i = 0; i < n; i++) {
+      const x = (r() - 0.5) * 8, z = (r() - 0.5) * 6, a = r() * 6.28, s = 0.9 + r() * 0.2, fx = Math.sin(a), fz = Math.cos(a);
+      for (const o of [-0.06, 0.06]) k.box(0.025, 0.45 * s, 0.025, x + fz * o, 0, z - fx * o, '#1a1a1a');
+      k.ball(0.17 * s, x, 0.55 * s, z, '#fbfbf8', 0.75, 0.8, 1.6, 'lit', 8);
+      k.ball(0.06 * s, x + fx * 0.22 * s, 0.75 * s, z + fz * 0.22 * s, '#fbfbf8', 1, 2.4, 1, 'lit', 6).ball(0.06 * s, x + fx * 0.3 * s, 0.95 * s, z + fz * 0.3 * s, '#fbfbf8', 1, 1, 1.3, 'lit', 6);   // the neck, the head
+      k.box(0.03, 0.03, 0.16 * s, x + fx * 0.4 * s, 0.94 * s, z + fz * 0.4 * s, '#1a1a1a', a);   // the bill
+    }
+  },
+  obelisk(k) {   // the Walhampton monument on the far bank of the river: a tall granite obelisk (1840) above the trees on its low wooded hill
+    const G = '#c4beb2', r = rnd(5300);
+    k.blob(34, 0, -8, 0, '#4f6e3a', 1.5, 0.42, 1.1, 5301, { smooth: true });
+    for (let i = 0; i < 22; i++) { const a = r() * 6.28, d = 8 + r() * 36, x = Math.cos(a) * d * 1.3, z = Math.sin(a) * d * 0.9, y = 6.2 - d * 0.14; k.clump(3 + r() * 2, x, y + 3, z, ['#3e6a32', '#4a7a3a', '#56803e'][i % 3], 5310 + i); }
+    k.box(5, 3, 5, 0, 5.6, 0, G, 0, 0, 0, 'stone').box(4, 1.2, 4, 0, 8.6, 0, G, 0, 0, 0, 'stone');
+    k.put(new THREE.CylinderGeometry(1.0, 1.75, 22, 4), G, 0, 20.8, 0, 0, Math.PI / 4, 0, 1, 1, 1, 'stone');
+    k.put(new THREE.ConeGeometry(1.0, 2.2, 4), G, 0, 32.9, 0, 0, Math.PI / 4, 0, 1, 1, 1, 'stone');
+  },
+  hurstcastle(k) {   // Hurst Castle at the end of its long shingle spit, seen across the water from the Keyhaven marshes (+X out to sea, the
+    // spit along Z): Henry VIII's round keep and bastions, the long granite wings of casemates either side, the tall white lighthouse
+    // beyond the west wing and the little red light in front
+    const G = '#b4aea2', D = '#8e8a80', r = rnd(5400);
+    k.box(46, 1.6, 620, 10, -1.2, 0, '#cbbfa6');   // the spit
+    for (let i = 0; i < 9; i++) k.blob(6 + r() * 4, 10 + (r() - 0.5) * 30, -0.6, -300 + i * 75, '#c4b89e', 1.4, 0.18, 2.4, 5410 + i, { smooth: true });
+    k.cyl(13, 14, 11, 16, 0, 0, 0, G, 0, 0, 'stone').cyl(7, 7.5, 6, 12, 0, 11, 0, D, 0, 0, 'stone');   // the keep
+    for (const a of [0, 2.09, 4.19]) k.cyl(7, 7.4, 7.5, 12, Math.cos(a) * 14, 0, Math.sin(a) * 14, G, 0, 0, 'stone');   // the bastions
+    for (const sd of [-1, 1]) {
+      k.box(16, 12, 92, 4, 0, sd * 64, G, 0, 0, 0, 'stone').box(16.6, 0.8, 92.6, 4, 12, sd * 64, D, 0, 0, 0, 'stone');   // a wing
+      for (let i = 0; i < 12; i++) k.box(0.2, 4.4, 3.2, -4.1, 2.5, sd * (24 + i * 7.2), '#2c2a28');   // its casemate windows (the landward face)
+    }
+    k.cyl(3.0, 3.6, 30, 14, 2, 0, 128, '#f6f4ee').cyl(3.3, 3.3, 0.6, 14, 2, 30, 128, '#2a2a2a').cyl(2.4, 2.4, 3.0, 12, 2, 30.6, 128, '#e8eef0', 0, 0, 'glow').cone(2.8, 2.2, 12, 2, 33.6, 128, '#2a2a2a');   // the lighthouse
+    k.box(4, 7, 4, 2, 0, 112, '#b0282a').box(4.6, 0.6, 4.6, 2, 7, 112, '#2a2a2a');   // the low light, red
+  },
   balloon(k, v) {   // a hot-air balloon, far off over the land
     const c = [['#e63946', '#ffd23f'], ['#1d7fd6', '#ffffff'], ['#2a9d8f', '#f4a261'], ['#9b5de5', '#ffd23f']][v % 4];
     for (let i = 0; i < 10; i++) k.put(new THREE.SphereGeometry(8, 3, 14, i * Math.PI / 5, Math.PI / 5), c[i % 2], 0, 16, 0, 0, 0, 0, 1, 1.22, 1);
