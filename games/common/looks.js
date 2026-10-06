@@ -114,10 +114,25 @@
     { id: 'quick', name: 'Quick as a flash', how: 'Win a game in under 3 minutes.' },
     { id: 'streak3', name: 'Hat trick', how: 'Win 3 games in a row.' },
     { id: 'streak10', name: 'On a roll', how: 'Win 10 games in a row.' },
-    { id: 'week', name: 'Week of deals', how: 'Win Today’s deal 7 days in a row.' },
+    { id: 'week', name: 'Week of deals', how: 'Win Today’s deal (or Today’s match) 7 days in a row.' },
     { id: 'hardest', name: 'Tough nut', how: 'Win at a game’s hardest level.' },
-    { id: 'fifty', name: 'Fifty wins', how: 'Win 50 games of one card game.' }
+    { id: 'fifty', name: 'Fifty wins', how: 'Win 50 games of one card game.' },
+    // the arcade's own (6 Oct 2026): an arcade game is a score and how far you got, not a win
+    { id: 'arc-first', group: 'arcade', name: 'Arcade debut', how: 'Finish a game of any of our arcade games.' },
+    { id: 'arc-best', group: 'arcade', name: 'New high score', how: 'Beat your own best score in an arcade game.' },
+    { id: 'arc-five', group: 'arcade', name: 'Five up', how: 'Reach wave, level or stage 5 in an arcade game.' },
+    { id: 'arc-ten', group: 'arcade', name: 'Double figures', how: 'Reach wave, level or stage 10 in an arcade game.' },
+    { id: 'arc-fast', group: 'arcade', name: 'Full speed', how: 'Reach wave, level or stage 3 on Fast.' },
+    { id: 'arc-all', group: 'arcade', name: 'All-rounder', how: 'Play all three of our arcade games.' }
   ];
+  // days in a row a Today's deal / match was won, counted back from today (or yesterday while today's is still to play)
+  function dayRun(daily) {
+    daily = daily || {}; var key = function (x) { return x.getFullYear() + '-' + ('0' + (x.getMonth() + 1)).slice(-2) + '-' + ('0' + x.getDate()).slice(-2); };
+    var won = function (k) { var v = daily[k]; return !!(v && (v === 1 || v.won)); }, d = new Date(), n = 0;
+    if (!won(key(d))) d = new Date(d.getFullYear(), d.getMonth(), d.getDate() - 1);
+    for (var i = 0; i < 1000; i++) { if (won(key(new Date(d.getFullYear(), d.getMonth(), d.getDate() - i)))) n++; else break; }
+    return n;
+  }
   function earned() { var t = get('cards365:trophies'); return t && typeof t === 'object' ? t : {}; }
   // award(ids, game) -> the trophies newly won, each with the card back it unlocks (if any)
   function award(ids, game) {
@@ -160,6 +175,13 @@
     + '.lk-tile[aria-pressed="true"]::after{content:"\\2713";position:absolute;top:-8px;right:-8px;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#146c3a;color:#fff;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,.3)}'
     + '.lk-tile.lk-locked{background:#f4f2ea;color:#7a8076}.lk-tile.lk-locked .lk-card,.lk-tile.lk-locked .lk-felt{filter:grayscale(.75) brightness(.85)}'
     + '.lk-lock{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:999px;background:#fff6dc;color:#6a4b00;font-size:13px}'
+    // the trophy cabinet and a result card's won-box (6 Oct 2026)
+    + '.lk-trol{list-style:none;margin:6px 0 10px;padding:0;display:grid;gap:8px}.lk-tro{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:10px 12px;border-radius:14px;background:#f0ede3;color:#5b6b60;text-align:left}'
+    + '.lk-tro svg{width:30px;height:30px;color:#b9b2a0}.lk-tro b{display:block;color:#15211a;font-size:16px}.lk-tro span{display:block;font-size:14px;line-height:1.35}.lk-tro small{display:block;margin-top:3px;font-size:13px;color:#6a4b00}'
+    + '.lk-tro.got{background:#fff6dc}.lk-tro.got svg{color:#d9a520}.lk-btn.lk-btn2{background:#fff;color:#15211a;border:2px solid #e2ded2}'
+    + '.lk-won{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:center;margin:10px 0 4px;padding:12px 14px;border-radius:14px;background:#fff6dc;color:#15211a;text-align:left}'
+    + '.lk-won svg{width:34px;height:34px;color:#d9a520}.lk-won .lk-wtt{display:block;font-size:16px}.lk-won span{display:block;font-size:14px;margin-top:2px}'
+    + '.lk-linkb{border:0;background:none;padding:4px 0 0;color:#5b6b60;font:600 14px Archivo,sans-serif;text-decoration:underline;cursor:pointer}'
     + '.lk-card{position:relative;width:62px;height:87px;border-radius:7px;border:3px solid #fbfaf4;box-shadow:0 0 0 1px #cfc9b8,0 2px 6px rgba(0,0,0,.25);overflow:hidden}'
     + '.lk-card::after{content:"365";position:absolute;left:50%;transform:translate(-50%,-50%);padding:2px 6px;border-radius:999px;border:1.5px solid;font:700 11px/1 Archivo,sans-serif}'
     + '.lk-felt{position:relative;width:100%;aspect-ratio:4/3;border-radius:10px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12);overflow:hidden}'
@@ -256,6 +278,59 @@
     if (C && C.onClose) try { C.onClose(); } catch (e) {}
   }
 
+  // ---------------------------------------------------------------- the trophy cabinet (6 Oct 2026): every game's
+  // "Trophies" opens this one sheet - the card games' trophies and the arcade's, what each unlocks
+  var TICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H4.5A1.5 1.5 0 0 0 3 7.5 3.5 3.5 0 0 0 6.5 11H7M17 6h2.5A1.5 1.5 0 0 1 21 7.5 3.5 3.5 0 0 1 17.5 11H17"/></svg>';
+  var GAMEN = { solitaire: 'Solitaire', freecell: 'FreeCell', spider: 'Spider', tripeaks: 'TriPeaks', pyramid: 'Pyramid', hearts: 'Hearts', gin: 'Gin Rummy', cribbage: 'Cribbage', whist: 'Whist',
+    invaders: '365 Invaders', batball: '365 Bat & Ball', eclipse: '365 Eclipse' };
+  var tEl = null, tCfg = null, tLast = null;
+  function niceDay(k) { var m = /^(\d{4})-(\d\d)-(\d\d)$/.exec(k || ''); return m ? +m[3] + ' ' + ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+m[2] - 1] + ' ' + m[1] : ''; }
+  function tRows(group) {
+    var E = earned();
+    return TROPHIES.filter(function (t) { return (t.group || 'cards') === group; }).map(function (t) {
+      var e = E[t.id], back = BACKS.filter(function (b) { return b.trophy === t.id; })[0];
+      return '<li class="lk-tro' + (e ? ' got' : '') + '">' + TICON + '<div><b>' + esc(t.name) + '</b><span>' + (e ? 'Won ' + niceDay(e.at) + (e.game && GAMEN[e.game] ? ' &middot; ' + esc(GAMEN[e.game]) : '') : esc(t.how)) + '</span>'
+        + (back ? '<small>' + (e ? 'Unlocked the ' : 'Unlocks the ') + esc(back.name) + ' card back</small>' : '') + '</div></li>';
+    }).join('');
+  }
+  function tCount() { var E = earned(); return { n: TROPHIES.filter(function (t) { return E[t.id]; }).length, of: TROPHIES.length }; }
+  function openTrophies(cfg) {
+    tCfg = cfg || {}; tLast = document.activeElement;
+    if (!tEl) {
+      tEl = document.createElement('div'); tEl.className = 'lk-scrim lk-trs'; tEl.hidden = true;
+      tEl.innerHTML = '<div class="lk-sheet" role="dialog" aria-modal="true" aria-labelledby="lkTH"><h2 id="lkTH">Trophies</h2><p class="lk-soft" id="lkTN"></p>'
+        + '<p class="lk-h">Card games</p><ul class="lk-trol" id="lkTC"></ul><p class="lk-h">Arcade</p><ul class="lk-trol" id="lkTA"></ul>'
+        + '<div class="lk-row"><button class="lk-btn lk-btn2" type="button" id="lkTLooks">Card backs and tables</button><button class="lk-btn" type="button" data-lk-tclose>Done</button></div></div>';
+      document.body.appendChild(tEl);
+      tEl.addEventListener('click', function (e) {
+        var t = e.target;
+        if (t === tEl || (t.closest && t.closest('[data-lk-tclose]'))) { closeTrophies(); return; }
+        if (t.closest && t.closest('#lkTLooks')) { closeTrophies(); if (tCfg && tCfg.looks) tCfg.looks(); }
+      });
+      document.addEventListener('keydown', function (e) { if (tEl && !tEl.hidden && e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeTrophies(); } }, true);
+    }
+    var c = tCount();
+    document.getElementById('lkTN').textContent = c.n + ' of ' + c.of + ' won · four of them unlock a card back for the card games';
+    document.getElementById('lkTC').innerHTML = tRows('cards'); document.getElementById('lkTA').innerHTML = tRows('arcade');
+    document.getElementById('lkTLooks').hidden = !(tCfg && tCfg.looks);
+    tEl.hidden = false; tEl.firstChild.scrollTop = 0;
+    var f = tEl.querySelector('[data-lk-tclose]'); if (f) try { f.focus({ preventScroll: true }); } catch (e) {}
+  }
+  function closeTrophies() {
+    if (!tEl || tEl.hidden) return; tEl.hidden = true;
+    if (tLast && tLast.focus && document.body.contains(tLast)) try { tLast.focus({ preventScroll: true }); } catch (e) {}
+  }
+  // a result card's box for trophies just won (list from award()); "See all your trophies" opens the cabinet
+  function wonHtml(list) {
+    if (!list || !list.length) return '';
+    var wb = list.filter(function (t) { return t.back; }).map(function (t) { return '<b>' + esc(t.back) + '</b>'; });
+    return TICON + '<div><b class="lk-wtt">' + (list.length === 1 ? 'Trophy won: ' + esc(list[0].name) : list.length + ' trophies won: ' + list.map(function (t) { return esc(t.name); }).join(', ')) + '!</b>'
+      + (wb.length ? '<span>Unlocked: the ' + (wb.length > 1 ? wb.slice(0, -1).join(', ') + ' and ' + wb[wb.length - 1] + ' card backs' : wb[0] + ' card back') + ' &ndash; choose in Settings.</span>' : '')
+      + '<button class="lk-linkb" type="button" data-lk-tro>See all your trophies</button></div>';
+  }
+  document.addEventListener('click', function (e) { var b = e.target && e.target.closest ? e.target.closest('[data-lk-tro]') : null; if (b) openTrophies(tCfg || {}); });
+
   window.Looks = { tables: TABLES, backs: BACKS, open: open, close: close, isOpen: function () { return !!(el && !el.hidden); },
-    shared: shared, remember: remember, known: known, stars: stars, newlyUnlocked: newlyUnlocked, trophies: TROPHIES, earned: earned, award: award };
+    shared: shared, remember: remember, known: known, stars: stars, newlyUnlocked: newlyUnlocked, trophies: TROPHIES, earned: earned, award: award,
+    openTrophies: openTrophies, trophyCount: tCount, wonHtml: wonHtml, dayRun: dayRun };
 })();

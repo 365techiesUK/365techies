@@ -1505,20 +1505,9 @@
     $('bHint').onclick = hint;
     $('bStats').onclick = openStats;
     // ---- the Trophies page (6 Oct 2026)
-    var GAMEN = { solitaire: 'Solitaire', freecell: 'FreeCell', spider: 'Spider', tripeaks: 'TriPeaks', pyramid: 'Pyramid', hearts: 'Hearts', gin: 'Gin Rummy', cribbage: 'Cribbage', whist: 'Whist' };
-    function niceDay(k) { var m = /^(\d{4})-(\d\d)-(\d\d)$/.exec(k || ''); return m ? +m[3] + ' ' + ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+m[2] - 1] + ' ' + m[1] : ''; }
-    function troCount() { var T = window.Looks && Looks.trophies || [], E = window.Looks ? Looks.earned() : {}; return { n: T.filter(function (t) { return E[t.id]; }).length, of: T.length }; }
-    function openTrophies() {
-      if (!window.Looks || !Looks.trophies) return;
-      var E = Looks.earned(), c = troCount();
-      $('troN').textContent = c.n + ' of ' + c.of + ' won · four of them unlock a card back of their own';
-      $('troL').innerHTML = Looks.trophies.map(function (t) {
-        var e = E[t.id], back = (Looks.backs || []).filter(function (b) { return b.trophy === t.id; })[0];
-        return '<li class="tro' + (e ? ' got' : '') + '">' + ICON.trophy + '<div><b>' + esc(t.name) + '</b><span>' + (e ? 'Won ' + niceDay(e.at) + (e.game && GAMEN[e.game] ? ' · ' + GAMEN[e.game] : '') : esc(t.how)) + '</span>'
-          + (back ? '<small>' + (e ? 'Unlocked the ' : 'Unlocks the ') + esc(back.name) + ' card back</small>' : '') + '</div></li>';
-      }).join('');
-      openD('dTro');
-    }
+    function troCount() { return window.Looks && Looks.trophyCount ? Looks.trophyCount() : { n: 0, of: 0 }; }
+    // the trophy cabinet is shared by every game (looks.js, 6 Oct 2026): card and arcade trophies together
+    function openTrophies() { if (!window.Looks || !Looks.openTrophies) return; closeSheets(); Looks.openTrophies({ looks: function () { if ($('sLooks')) $('sLooks').click(); } }); }
     if ($('bTro')) { $('bTro').hidden = !(window.Looks && Looks.trophies); $('bTro').onclick = openTrophies; }
     if ($('sTro')) $('sTro').onclick = openTrophies;
 
@@ -1570,7 +1559,7 @@
       try { localStorage.removeItem('games365:code'); } catch (e) {}
       codeAsk = ''; codeDraw(); codeMsg('Done - that code no longer works.');
     };
-    if ($('troLooks')) $('troLooks').onclick = function () { if ($('sLooks')) $('sLooks').click(); };
+
     $('bSet').onclick = function () { syncControls(); openD('dSet'); };
     $('bHelp').onclick = function () { openD('dHelp'); };
     // the site's Text size / High contrast / Reduce motion, in Settings too (a11y365.js; games audit, 5 Oct 2026)
@@ -1835,7 +1824,6 @@
           + '<div class="row" id="mcGetRow"><button class="btn go wide" type="button" id="mcGet">Get my code</button></div>'
           + '<div class="mcin"><label for="mcIn">Got a code from another phone or browser?</label><div class="mcrow"><input id="mcIn" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="9" placeholder="e.g. 7K3P-9QXA"><button class="btn" type="button" id="mcLoad">Bring my scores here</button></div></div>'
           + '<p class="mcmsg" id="mcMsg" role="status" aria-live="polite"></p>')
-        + sheet('dTro', 'Trophies', '<p class="soft" id="troN"></p><ul class="trol" id="troL"></ul><div class="row"><button class="btn wide" type="button" id="troLooks">Card backs and tables</button><button class="btn go wide" type="button" data-close>OK</button></div>')
         + sheet('dStreak', 'Daily streak', '<div class="stk"><div class="stkbig">' + ICON.flame + '<b id="kN">0</b></div><p class="stksub" id="kSub"></p><div class="week" id="kWeek"></div><p class="soft" id="kNote"></p>'
           + '<div class="row"><button class="btn go wide" type="button" id="kPlay">Play today&rsquo;s deal</button></div></div>')
         + sheet('dApp', 'Play it like an app', '<p class="soft" id="appWhy"></p><p class="apphow" id="appHow"></p><div class="row"><button class="btn go wide" type="button" id="appChrome" hidden>Open in Chrome</button><button class="btn wide" type="button" data-close>OK</button></div>')

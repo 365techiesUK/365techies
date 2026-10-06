@@ -355,6 +355,13 @@
         });
       }
       if (G.mode === 'daily' && G.day) { ST.daily[G.day] = { won: r.won ? 1 : 0, d: S.lv, s: r.score }; badges.push('Today’s match: done!'); }
+      // trophies (6 Oct 2026): the card games' own, shared with the patience games (looks.js); no Undo here, so no Clean sweep
+      var won365 = [];
+      if (r.won && window.Looks && Looks.award) {
+        var lvTop = LVS.options[LVS.options.length - 1][0];
+        won365 = Looks.award(['first', G.ms > 0 && G.ms < 180000 && 'quick', ST.streak >= 3 && 'streak3', ST.streak >= 10 && 'streak10',
+          Looks.dayRun(ST.daily) >= 7 && 'week', S.lv === lvTop && 'hardest', ST.won >= 50 && 'fifty'].filter(Boolean), D.id);
+      }
       save('stats', ST); persist();
       setTimeout(function () {
         if (my !== gen) return;
@@ -368,6 +375,7 @@
         $('oSub').textContent = r.sub + (G.mode === 'daily' ? ' · today’s match' : '');
         $('oTiles').innerHTML = (r.tiles || []).map(function (t) { return '<div class="tile"><b>' + esc(t[0]) + '</b><span>' + esc(t[1]) + '</span></div>'; }).join('');
         $('oBadges').innerHTML = badges.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('');
+        $('oTro').innerHTML = won365.length && window.Looks ? Looks.wonHtml(won365) : ''; $('oTro').hidden = !won365.length;
         $('oDaily').hidden = !!(ST.daily[today()]);
         $('oJour').hidden = true; $('oRow').hidden = false; $('oRow').style.display = '';
         openD('dOver');
@@ -591,6 +599,7 @@
     }
     function tile(v, label) { return '<div class="tile"><b>' + esc(v) + '</b><span>' + esc(label) + '</span></div>'; }
     function openStats() {
+      if ($('sTroS') && window.Looks && Looks.trophyCount) { var tc = Looks.trophyCount(); $('sTroS').textContent = tc.n + ' of ' + tc.of + ' won'; }
       var rate = ST.played ? Math.round(100 * ST.won / ST.played) + '%' : '–', days = 0, k;
       for (k in ST.daily) if (ST.daily[k]) days++;
       $('sTiles').innerHTML = tile(ST.won, 'Matches won') + tile(rate, 'Win rate') + tile(ST.played, 'Matches played') + tile(ST.streak, 'Winning streak') + tile(ST.bestStreak, 'Longest streak') + tile(days, 'Today’s matches played');
@@ -642,13 +651,17 @@
     $('skip365').onclick = function (e) { e.preventDefault(); board.focus(); };   // the first Tab stop (games audit, 5 Oct 2026)
     // More (phones): the bar's tucked-away buttons, as big buttons with words (games audit, 5 Oct 2026)
     $('bMore').onclick = function () {
-      $('moreL').innerHTML = ['bStats', 'bSet', 'bShare', 'bFeed', 'bFull'].filter(function (id) { return $(id) && !$(id).hidden && !$(id).getClientRects().length; }).map(function (id) {
+      $('moreL').innerHTML = ['bStats', 'bTro', 'bSet', 'bShare', 'bFeed', 'bFull'].filter(function (id) { return $(id) && !$(id).hidden && !$(id).getClientRects().length; }).map(function (id) {
         var b = $(id); return '<button class="btn wide morei" type="button" data-for="' + id + '">' + b.querySelector('svg').outerHTML + '<span>' + esc(b.querySelector('.lbl').textContent) + '</span></button>';
       }).join('');
       openD('dMore');
     };
     $('moreL').onclick = function (e) { var b = e.target.closest && e.target.closest('[data-for]'); if (!b) return; closeSheets(); var t = $(b.getAttribute('data-for')); setTimeout(function () { t.click(); }, 0); };
     $('bBrand').onclick = function () { $('bGames').click(); };
+    // the trophy cabinet (looks.js, shared by every game - 6 Oct 2026)
+    function openTrophies() { if (!window.Looks || !Looks.openTrophies) return; closeSheets(); Looks.openTrophies({ looks: function () { if ($('sLooks')) $('sLooks').click(); } }); }
+    if ($('bTro')) { $('bTro').hidden = !(window.Looks && Looks.openTrophies); $('bTro').onclick = openTrophies; }
+    if ($('sTro')) $('sTro').onclick = openTrophies;
     $('nDeal').onclick = function () { newGame('match'); };
     $('nDaily').onclick = function () { newGame('daily'); };
     $('nAgain').onclick = function () { newGame('again'); };
@@ -785,7 +798,7 @@
       var html = '<a class="skip365" href="#board" id="skip365">Skip to the cards</a><div id="app"><header class="bar"><h1 class="brand"><button class="brandb" type="button" id="bBrand" title="All our games"><b>365</b> <span>' + esc(D.title) + '</span><i class="caret" aria-hidden="true">&#9662;</i></button></h1>'
         + '<div class="info" aria-live="off">' + chip(0) + chip(1) + chip(2) + '</div>'
         + '<nav class="tools" aria-label="Game">' + tb('bNew', 'new', 'New game', 'New game (N)', 'main') + tb('bGames', 'games', 'Games', 'Switch to another of our games', 'tb3') + tb('bHint', 'hint', 'Hint', 'Show me a good move (H)')
-        + tb('bStats', 'stats', 'My scores', 'My scores', 'tb3 tbx') + tb('bSet', 'set', 'Settings', 'Settings', 'tb3 tbx') + tb('bHelp', 'help', 'How to play', 'How to play')
+        + tb('bStats', 'stats', 'My scores', 'My scores', 'tb3 tbx') + tb('bTro', 'trophy', 'Trophies', 'Your trophies', 'tb2 tbx') + tb('bSet', 'set', 'Settings', 'Settings', 'tb3 tbx') + tb('bHelp', 'help', 'How to play', 'How to play')
         + tb('bShare', 'share', 'Share', 'Share this game with a friend', 'tb2 tbx') + tb('bFeed', 'feedback', 'Feedback', 'Tell us what you think, or ask for a new game', 'tb2 tbx') + tb('bFull', 'full', 'Full screen', 'Full screen (F)', 'tb2 tbx') + tb('bMore', 'more', 'More', 'More: my scores, settings, share, feedback', 'tbmore') + '</nav></header>'
         + '<main id="board" aria-label="The card table"><div id="rvPanel" hidden></div></main></div>'
         + '<div id="toast" role="status" aria-live="polite"></div><canvas id="spark" aria-hidden="true"></canvas><div id="winBig" hidden aria-hidden="true"></div>'
@@ -797,14 +810,14 @@
             + (D.journey ? '<button class="btn jourbtn" type="button" id="nJourney">&#129517; The Journey<small>100 levels ' + esc(D.journey.where || 'around Dorset') + ' &mdash; one hand at a time</small></button>' : '')
             + (D.hof ? '<button class="btn hofbtn" type="button" id="nHof">&#127942; Hall of Fame<small>Today&rsquo;s match: the best wins in Dorset and beyond</small></button>' : '') + '</div>' : '')
           + '<div class="row"><button class="btn wide" type="button" data-close>Keep playing</button></div>')
-        + sheet('dOver', 'You won!', '<p class="soft" id="oSub"></p><div class="tiles" id="oTiles"></div><ul class="badges" id="oBadges"></ul><div id="oHof" hidden></div><div id="oJour" hidden></div>'
+        + sheet('dOver', 'You won!', '<p class="soft" id="oSub"></p><div class="tiles" id="oTiles"></div><ul class="badges" id="oBadges"></ul><div class="lk-won" id="oTro" hidden></div><div id="oHof" hidden></div><div id="oJour" hidden></div>'
           + '<div class="row" id="oRow"><button class="btn go wide" type="button" id="oAgain">New match</button><button class="btn wide" type="button" id="oShare">Challenge a friend</button><button class="btn wide" type="button" id="oDaily">Today&rsquo;s match</button><button class="btn wide" type="button" id="oStats">My scores</button></div>')
-        + sheet('dStats', 'My scores', (D.hof ? '<button class="btn hofbtn wide" type="button" id="sHof" style="width:100%;margin:2px 0 12px">&#127942; The Hall of Fame<small>Today&rsquo;s match: the best wins, this week, all time</small></button>' : '') + '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere unless you join the Hall of Fame.</p><div class="tiles" id="sTiles"></div><div class="tiles" id="sBest"></div>'
+        + sheet('dStats', 'My scores', (window.Looks && Looks.openTrophies ? '<button class="btn wide trob" type="button" id="sTro">' + ICON.trophy + ' Trophies<small id="sTroS"></small></button>' : '') + (D.hof ? '<button class="btn hofbtn wide" type="button" id="sHof" style="width:100%;margin:2px 0 12px">&#127942; The Hall of Fame<small>Today&rsquo;s match: the best wins, this week, all time</small></button>' : '') + '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere unless you join the Hall of Fame.</p><div class="tiles" id="sTiles"></div><div class="tiles" id="sBest"></div>'
           + '<div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>')
         + sheet('dSet', 'Settings', '<div class="set"><div><label>How fast the others play</label><small>Slow gives you time to watch every card.</small></div><div class="seg" role="group" aria-label="How fast the others play"><button type="button" data-speed="1">Slow</button><button type="button" data-speed="2">Normal</button><button type="button" data-speed="3">Quick</button></div></div>'
           + sw('sound', 'Sounds', 'Soft card sounds and chimes.') + sw('fx', 'Extra effects', 'Sparkles and fireworks when you win. Switch off on a slower computer.')
           + '<div class="set"><div><label for="sWin">Win celebration</label><small>Surprise me picks a different one each time.</small></div><div class="wincel"><select id="sWin">' + T.FINALE_NAMES.map(function (o) { return '<option value="' + o[0] + '">' + o[1] + '</option>'; }).join('') + '</select><button class="btn" type="button" id="sWinTry">Watch</button></div></div>'
-          + (window.Looks ? '<div class="set"><div><label>Tables and card backs</label><small>Twelve of each &ndash; the specials are won with Journey stars.</small></div><button class="btn lkbtn" type="button" id="sLooks"><span class="lkpv" id="sLookPv"><i></i></span>Choose</button></div>' : ''
+          + (window.Looks ? '<div class="set"><div><label>Tables and card backs</label><small>Twelve tables and sixteen card backs &ndash; the specials are won with Journey stars and trophies.</small></div><button class="btn lkbtn" type="button" id="sLooks"><span class="lkpv" id="sLookPv"><i></i></span>Choose</button></div>' : ''
             + '<div class="set"><div><label>Table</label></div><div class="felts" role="group" aria-label="Table"><button type="button" data-felt="green" style="background:#1f7a45" aria-label="Green baize"></button><button type="button" data-felt="blue" style="background:#1f5f9c" aria-label="Blue"></button><button type="button" data-felt="red" style="background:#8e2537" aria-label="Red"></button><button type="button" data-felt="slate" style="background:#45526a" aria-label="Grey"></button>'
           + '<button type="button" data-felt="oak" style="background:repeating-linear-gradient(91deg,#6b4220 0 3px,#7a4c26 3px 6px)" aria-label="Oak table"></button><button type="button" data-felt="night" style="background:radial-gradient(#2a3670,#060918)" aria-label="Night"></button></div></div>'
           + '<div class="set"><div><label>Card backs</label></div><div class="backs" role="group" aria-label="Card backs"><button type="button" data-back="navy" style="background:linear-gradient(155deg,#17447a,#0a2245)" aria-label="365 navy"></button><button type="button" data-back="royal" style="background:linear-gradient(155deg,#8e1d2c,#4a0712)" aria-label="Royal red"></button><button type="button" data-back="sea" style="background:linear-gradient(180deg,#ff9a6a,#ffcf8a 30%,#2aa3c4 52%,#0b5e86)" aria-label="Seaside"></button></div></div>')

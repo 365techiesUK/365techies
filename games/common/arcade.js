@@ -14,6 +14,7 @@
   'use strict';
   function esc(s) { return String(s).replace(/[&<>"]/g, function (m) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]; }); }
   var ICON = {
+    trophy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H4.5A1.5 1.5 0 0 0 3 7.5 3.5 3.5 0 0 0 6.5 11H7M17 6h2.5A1.5 1.5 0 0 1 21 7.5 3.5 3.5 0 0 1 17.5 11H17"/></svg>',
     more: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/></svg>',
     play: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"/></svg>',
     pause: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4.5" width="4" height="15" rx="1"/><rect x="14" y="4.5" width="4" height="15" rx="1"/></svg>',
@@ -240,6 +241,15 @@
       if (ST.daily[d] == null || h.score > ST.daily[d]) ST.daily[d] = h.score;
       var keep = Object.keys(ST.daily).sort().slice(-60), nd = {}; keep.forEach(function (k) { nd[k] = ST.daily[k]; }); ST.daily = nd;
       save('stats', ST);
+      // trophies (6 Oct 2026): the arcade's own (looks.js); none on a page without it (Coast Run)
+      var won365 = [];
+      if (window.Looks && Looks.award) {
+        var fastest = D.speeds.options[D.speeds.options.length - 1][0];
+        var all = ['inv365', 'bb365', 'ecl365'].every(function (k) { try { var x = JSON.parse(localStorage.getItem(k + ':stats') || 'null'); return !!(x && x.played > 0); } catch (e) { return false; } });
+        won365 = Looks.award(['arc-first', prevBest > 0 && h.score > prevBest && 'arc-best', h.wave >= 5 && 'arc-five', h.wave >= 10 && 'arc-ten',
+          SET.speed === fastest && h.wave >= 3 && 'arc-fast', all && 'arc-all'].filter(Boolean), D.id);
+      }
+      $('oTro').innerHTML = won365.length ? Looks.wonHtml(won365) : ''; $('oTro').hidden = !won365.length;
       setPauseBtn(); $('bPause').disabled = true;
       $('oScore').textContent = h.score; $('oWave').textContent = h.wave; $('oBest').textContent = b.score;
       $('oWhy').textContent = D.overText ? D.overText(W) : 'Game over';
@@ -534,6 +544,7 @@
     }
     function tile(v, label) { return '<div class="tile"><b>' + esc(v) + '</b><span>' + esc(label) + '</span></div>'; }
     function openStats() {
+      if ($('sTroS') && window.Looks && Looks.trophyCount) { var tc = Looks.trophyCount(); $('sTroS').textContent = tc.n + ' of ' + tc.of + ' won'; }
       var out = '', d = today();
       D.speeds.options.forEach(function (o) {
         var b = ST.best[skeyFor(o[0])] || {};
@@ -562,13 +573,17 @@
     if (window.A11y365) { A11y365.mount($('dSet').querySelector('.sheet'), { reduceText: 'Fewer sparks and screen effects' }); A11y365.onReduce = function (on) { calm = on || !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); }; }
     // More (phones): the bar's tucked-away buttons, as big buttons with words (games audit, 5 Oct 2026)
     $('bMore').onclick = function () {
-      $('moreL').innerHTML = ['bStats', 'bSet', 'bShare', 'bFeed', 'bFull'].filter(function (id) { return $(id) && !$(id).hidden && !$(id).getClientRects().length; }).map(function (id) {
+      $('moreL').innerHTML = ['bStats', 'bTro', 'bSet', 'bShare', 'bFeed', 'bFull'].filter(function (id) { return $(id) && !$(id).hidden && !$(id).getClientRects().length; }).map(function (id) {
         var b = $(id); return '<button class="btn wide morei" type="button" data-for="' + id + '">' + b.querySelector('svg').outerHTML + '<span>' + esc(b.querySelector('.lbl').textContent) + '</span></button>';
       }).join('');
       openD('dMore');
     };
     $('moreL').onclick = function (e) { var b = e.target.closest && e.target.closest('[data-for]'); if (!b) return; closeSheets(); var t = $(b.getAttribute('data-for')); setTimeout(function () { t.click(); }, 0); };
     $('bBrand').onclick = function () { $('bGames').click(); };
+    // the trophy cabinet (looks.js, shared by every game - 6 Oct 2026)
+    function openTrophies() { if (!window.Looks || !Looks.openTrophies) return; closeSheets(); Looks.openTrophies({}); }
+    if ($('bTro')) { $('bTro').hidden = !(window.Looks && Looks.openTrophies); $('bTro').onclick = openTrophies; }
+    if ($('sTro')) $('sTro').onclick = openTrophies;
     $('oPlay').onclick = begin; $('tPlay').onclick = begin; $('pGo').onclick = resume;
     $('oStats').onclick = openStats;
     // the Hall of Fame: one player across all our games; the boards are this game's speeds
@@ -633,7 +648,7 @@
       var html = '<div id="app" class="arcade"><header class="bar"><div class="brand"><button class="brandb" type="button" id="bBrand" title="All our games"><b>365</b> <span>' + esc(D.title.replace(/^365 /, '')) + '</span><i class="caret" aria-hidden="true">&#9662;</i></button></div>'
         + '<div class="info"><div class="chip"><small>Score</small><span id="vScore">0</span></div><div class="chip"><small>Best</small><span id="vBest">0</span></div>'
         + '<div class="chip"><small>Lives</small><span id="vLives">0</span></div><div class="chip"><small>' + WORDC + '</small><span id="vWave">1</span></div></div>'
-        + '<nav class="tools" aria-label="Game">' + tb('bNew', 'new', 'New game', 'New game (N)', 'main') + tb('bGames', 'games', 'Games', 'Switch to another of our games', 'tb3') + tb('bPause', 'pause', 'Pause', 'Pause (P)') + tb('bStats', 'stats', 'My scores', 'My scores', 'tb3 tbx')
+        + '<nav class="tools" aria-label="Game">' + tb('bNew', 'new', 'New game', 'New game (N)', 'main') + tb('bGames', 'games', 'Games', 'Switch to another of our games', 'tb3') + tb('bPause', 'pause', 'Pause', 'Pause (P)') + tb('bStats', 'stats', 'My scores', 'My scores', 'tb3 tbx') + tb('bTro', 'trophy', 'Trophies', 'Your trophies', 'tb2 tbx')
         + tb('bSet', 'set', 'Settings', 'Settings', 'tb3 tbx') + tb('bHelp', 'help', 'How to play', 'How to play')
         + tb('bShare', 'share', 'Share', 'Share this game with a friend', 'tb2 tbx') + tb('bFeed', 'feedback', 'Feedback', 'Tell us what you think, or ask for a new game', 'tb2 tbx') + tb('bFull', 'full', 'Full screen', 'Full screen (F)', 'tb2 tbx') + tb('bMore', 'more', 'More', 'More: my scores, settings, share, feedback', 'tbmore') + '</nav></header>'
         + '<main id="stage"><div id="screenwrap"><canvas id="screen" tabindex="-1" aria-label="' + esc(D.title) + ' game screen"></canvas>'
@@ -646,11 +661,11 @@
         + '<p class="soft">Speed: <b id="tSpeed"></b> &middot; change it in Settings</p></div></div>'
         + '<div class="ov" id="ov_paused" hidden><div class="ovbox"><h2>Paused</h2><p>Take your time &mdash; the game waits for you.</p><button class="btn go big" id="pGo" type="button">' + ICON.play + ' Carry on</button></div></div>'
         + '<div class="ov" id="ov_over" hidden><div class="ovbox"><h2 id="oWhy">Game over</h2><div class="tiles"><div class="tile"><b id="oScore">0</b><span>Score</span></div><div class="tile"><b id="oWave">1</b><span>' + WORDC + '</span></div><div class="tile"><b id="oBest">0</b><span>Your best</span></div></div>'
-        + '<ul class="badges" id="oBadges"></ul><div id="oHof" hidden></div><div class="row"><button class="btn go wide big" id="oPlay" type="button">' + ICON.play + ' Play again</button><button class="btn wide" id="oShare" type="button">Challenge a friend</button><button class="btn wide" id="oStats" type="button">My scores</button></div></div></div>'
+        + '<ul class="badges" id="oBadges"></ul><div class="lk-won" id="oTro" hidden></div><div id="oHof" hidden></div><div class="row"><button class="btn go wide big" id="oPlay" type="button">' + ICON.play + ' Play again</button><button class="btn wide" id="oShare" type="button">Challenge a friend</button><button class="btn wide" id="oStats" type="button">My scores</button></div></div></div>'
         + '</div><div class="pad" id="pad">' + (D.pad ? D.pad.map(function (b) { return '<button type="button" data-pad="' + b.act + '" class="' + (b.cls || '') + '">' + esc(b.label) + '</button>'; }).join('')
           : '<button type="button" data-pad="left" aria-label="Move left">&#9664;</button><button type="button" data-pad="fire" class="fire">Fire</button><button type="button" data-pad="right" aria-label="Move right">&#9654;</button>') + '</div>'
         + '</main></div><div id="toast" role="status" aria-live="polite"></div>'
-        + sheet('dStats', 'My scores', '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere unless you join the Hall of Fame.<span id="sWhich"></span></p><div class="tiles" id="sTiles"></div><div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn wide hofb" type="button" id="sHof">&#127942; Hall of Fame</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>')
+        + sheet('dStats', 'My scores', (window.Looks && Looks.openTrophies ? '<button class="btn wide" type="button" id="sTro" style="width:100%;margin:2px 0 10px;display:flex;align-items:center;justify-content:center;gap:8px">' + ICON.trophy.replace('<svg ', '<svg style="width:22px;height:22px;color:#d9a520" ') + ' Trophies<small id="sTroS" style="margin-left:6px;opacity:.75"></small></button>' : '') + '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere unless you join the Hall of Fame.<span id="sWhich"></span></p><div class="tiles" id="sTiles"></div><div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn wide hofb" type="button" id="sHof">&#127942; Hall of Fame</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>')
         + sheet('dSet', 'Settings', '<div class="set"><div><label>Speed</label><small>Gentle is slower, with more lives. Changes from your next game.</small></div><div class="seg" role="group" aria-label="Speed">' + speeds + '</div></div>'
           + segRows
           + '<div class="set"><div><label id="l_sound">Sounds</label><small>Arcade sound effects, made in the game.</small></div><button class="sw" type="button" role="switch" aria-labelledby="l_sound" data-set="sound"></button></div>'
