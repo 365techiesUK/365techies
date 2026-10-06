@@ -410,6 +410,24 @@
     + '.tb,.tb.tb2,.tb.tb3{min-width:0;min-height:48px;padding:4px 1px 3px!important}.tb .sl{font-size:11px;max-width:100%;overflow:hidden}.tb svg{width:20px;height:20px}'
     + '.info{min-width:0;flex:1 1 100%}.chip{flex:1 1 0;min-width:0!important;padding:2px 4px}.chip small{font-size:10px;letter-spacing:0}.chip span{font-size:15px}.brand span{font-size:16px}}'
     + '@media (max-width:250px){.tb#bGames{display:none}}'
+    // a phone that can go full screen (Android): Full screen takes Help's place on the bar; Help is under More (6 Oct 2026)
+    + '@media (max-width:480px){body.fs365 .tools .tb#bHelp{display:none}body.fs365 .tools .tb#bFull:not([hidden]){display:inline-flex}}'
+    // the folded bar (6 Oct 2026, owner: "once you start the game could that menu hide"): one slim row - the scores, Undo,
+    // Hint, Full screen and Menu; the game's name stays for screen readers; sideways there is room for it and New
+    + 'body.fold365 .bar{flex-wrap:nowrap;align-items:center;gap:6px 6px;padding:max(4px,env(safe-area-inset-top,0px)) 8px 4px}'
+    + 'body.fold365 .info{flex:1 1 auto;min-width:0;gap:4px}body.fold365 .chip{flex:1 1 0;min-width:0!important;max-width:96px;padding:2px 3px;border-radius:9px}'
+    + 'body.fold365 .chip small{font-size:10px;letter-spacing:.02em}body.fold365 .chip span{font-size:15px}'
+    + 'body.fold365 .tools{display:flex!important;flex:0 0 auto;width:auto!important;gap:4px!important;margin-left:0!important}'
+    + 'body.fold365 .tools .tb{display:none!important}'
+    + 'body.fold365 .tools .tb#bUndo:not([hidden]),body.fold365 .tools .tb#bHint:not([hidden]),body.fold365 .tools .tb#bMore:not([hidden]),body.fs365.fold365 .tools .tb#bFull:not([hidden])'
+    + '{display:inline-flex!important;flex-direction:column;justify-content:center;gap:2px;width:46px;min-width:0;min-height:44px;padding:3px 0 2px!important}'
+    + 'body.fold365 .tb .sl{display:block!important;font:700 10.5px/1 Archivo,sans-serif;white-space:nowrap}body.fold365 .tb svg{width:20px;height:20px}body.fold365 .tb .lbl{display:none!important}'
+    + '@media (max-width:600px){body.fold365 .brand{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}}'
+    + '@media (min-width:601px){body.fold365 .tools .tb#bNew:not([hidden]){display:inline-flex!important;flex-direction:column;justify-content:center;gap:2px;width:46px;min-height:44px;padding:3px 0 2px!important}body.fold365 .brand span{font-size:17px}}'
+    + '@media (prefers-reduced-motion:no-preference){body.fold365 .info,body.fold365 .tools{animation:fold365 .28s cubic-bezier(.2,.8,.25,1)}}@keyframes fold365{from{opacity:.25;transform:translateY(-6px)}to{opacity:1;transform:none}}'
+    + '@media (max-width:330px){body.fold365 .bar{flex-wrap:wrap}body.fold365 .info{flex:1 1 100%}body.fold365 .chip{max-width:none}body.fold365 .tools{margin-left:auto!important}}'
+    // a strong phone (8+ cores, 6 Oct 2026): the full flying-card shadow even on narrow cards (Spider keeps the light one)
+    + 'body.rich365 #board.tiny:not(.g-spider) .card.flight .front,body.rich365 #board.tiny:not(.g-spider) .card.flight .back{box-shadow:0 0 0 1px var(--card-edge) inset,0 18px 30px rgba(0,0,0,.4),0 6px 10px rgba(0,0,0,.22)}'
     + '@media (hover:none) and (pointer:coarse){.keys365{display:none}}'
     + '.card .wig{perspective:calc(var(--cw) * 5)}'   // a true 3D turn when a card flips
     + '.front,.back{transition:box-shadow .22s ease}'
@@ -499,6 +517,7 @@
     function setPace() { if (SET.pace !== 'relaxed') SET.pace = 'quick'; PACE = SET.pace === 'relaxed' ? 1 : 0.5; }
     function pc(ms) { return Math.round(ms * PACE); }
     setPace();
+    try { if ((navigator.hardwareConcurrency || 0) >= 8 && (!navigator.deviceMemory || navigator.deviceMemory >= 6)) document.body.classList.add('rich365'); } catch (e) {}
     function blankStats() { return { v: 1, played: 0, won: 0, streak: 0, bestStreak: 0, best: {}, daily: {}, recent: [] }; }
     var ST = blankStats();
     (function () { var s = load('stats', null); if (s && s.v === 1) for (var k in ST) if (k in s) ST[k] = s[k]; if (!ST.best || typeof ST.best !== 'object') ST.best = {}; })();
@@ -694,6 +713,21 @@
     // a phone: a tiny buzz as a move lands (a firmer one for a card going up to the piles) - Extra effects only
     var touchy = false;
     function buzz(ms) { if (touchy && SET.fx && !reduce && navigator.vibrate) try { navigator.vibrate(ms); } catch (e) {} }
+    // the folding bar (owner, 6 Oct 2026, S22 Ultra: "once you start the game could that menu sort of hide ... and then you
+    // could unhide it"): on a phone, once the first move is made - and always with the phone on its side - the bar folds
+    // to one slim row; Menu holds the rest. A new game opens it out again (not the win: nothing moves under the finale).
+    // The cards glide into the room it gives back. sync = the caller lays the table out itself straight after.
+    var phoneQ = window.matchMedia ? matchMedia('(pointer: coarse) and (max-width: 600px), (pointer: coarse) and (max-height: 500px)') : null;
+    var sideQ = window.matchMedia ? matchMedia('(orientation: landscape) and (max-height: 500px)') : null;
+    var glide = false, foldT = 0;
+    function fold(sync) {
+      var want = !!(phoneQ && phoneQ.matches && S && G && ((sideQ && sideQ.matches) || G.started));
+      if (want === document.body.classList.contains('fold365')) return;
+      if (!sync && (busy || drag)) { clearTimeout(foldT); foldT = setTimeout(fold, 300); return; }   // not under a card in the air
+      document.body.classList.toggle('fold365', want); glide = !sync;
+      var ml = $('bMore') && $('bMore').querySelector('.sl'); if (ml) ml.textContent = want ? 'Menu' : 'More';
+      if ($('bMore')) $('bMore').title = want ? 'Menu: new game, games, how to play, my scores, settings and more' : 'More: my scores, settings, share, feedback';
+    }
     // the beginner's nudge: on the easiest level of an ordinary game, after a long pause a card that could move bobs once
     var idleT = 0;
     function idle() { clearTimeout(idleT); idleT = setTimeout(nudge, 25000); }
@@ -789,7 +823,7 @@
       endDragLook(d);
       if (drop.m) act(drop.m);
       else {   // it springs back - and the player is told why, in plain words (owner, 3 Oct 2026: Kings "just come back")
-        render(); sfx('nope');
+        render(); sfx('nope'); buzz([5, 45, 5]);
         say(D.whyNot ? D.whyNot(S, d.from, drop.near) : 'That card can’t go there');
       }
     });
@@ -844,7 +878,7 @@
       if (D.pairs) { pairTap(d); return; }
       var m = E.smartMove(S, d.from);
       if (m) act(m);
-      else { nope(cardEl[d.c]); sfx('nope'); say(D.whyNot ? D.whyNot(S, d.from, null) : 'No move for that card yet'); }
+      else { nope(cardEl[d.c]); sfx('nope'); buzz([5, 45, 5]); say(D.whyNot ? D.whyNot(S, d.from, null) : 'No move for that card yet'); }
     }
     function dropTarget(d) {   // the legal place the dragged card overlaps most; near = the place it overlaps most at all
       var b = d.base[0], x = b.x + d.dx, y = b.y + d.dy, best = null, bestA = 0, near = null, nearA = 0;
@@ -867,11 +901,12 @@
       selOff(); unhov();
       var snap = { s: E.clone(S), ms: G.ms, n: G.log ? G.log.length : 0 };
       var fx = E.apply(S, m);
-      if (!fx) { if (fx === null && m.t === 'draw' && D.noDrawSay) say(D.noDrawSay(S)); sfx('nope'); render(); return; }
+      if (!fx) { if (fx === null && m.t === 'draw' && D.noDrawSay) say(D.noDrawSay(S)); sfx('nope'); buzz([5, 45, 5]); render(); return; }
       G.undo.push(snap); if (G.undo.length > 400) G.undo.shift();
       logMove(m);
-      G.started = true; idle();
-      if (m.t === 'move') buzz(fx.toFound ? 14 : 8);
+      var first = !G.started; G.started = true; idle();
+      if (first) { clearTimeout(foldT); foldT = setTimeout(fold, 420); }
+      if (m.t === 'move') buzz(fx.toFound ? 14 : 8); else buzz(5);
       G.keepDown = m.t === 'move' && m.from && m.from.p === 'f' ? fx.cards[0] : null;   // taken down on purpose: not straight back up
       hideStuck(); unhint();
       effects(fx);
@@ -911,6 +946,7 @@
     var SUITW = ['Spades', 'Hearts', 'Diamonds', 'Clubs'], stampEl = null;
     function bigMoment(fx, suit) {
       if (!SET.fx || reduce) return;
+      buzz([10, 40, 24]);   // a suit, a peak, a run finished: a double tap you can feel
       var txt = D.id === 'tripeaks' ? (/All three/.test(fx.say || '') ? 'All three peaks!' : 'Peak cleared!') : D.id === 'pyramid' ? 'Row cleared!' : D.id === 'spider' ? 'Run complete!' : SUITW[suit] + ' complete!';
       if (stampEl) stampEl.remove();
       var el = stampEl = document.createElement('div'), r = board.getBoundingClientRect();
@@ -1120,7 +1156,7 @@
       ST.recent.push(seed); if (ST.recent.length > 60) ST.recent.shift();
       save('stats', ST);
       closeSheets(); hideStuck(); unhint(); chal();
-      faces(); layout();
+      fold(true); faces(); layout();
       dealOut();
       persist();
     }
@@ -1178,7 +1214,7 @@
       S.score += D.winBonus ? D.winBonus(S, secs) : 100 + Math.round(Math.max(0, 1200 - secs) / 2);   // more for a quick one
       var rec = recordWin(secs);
       persist(); bar();
-      sfx('win');
+      sfx('win'); buzz([16, 60, 16, 60, 30, 80, 140]);   // the win: a little drum roll in the hand
       cascade(function () { showWin(rec); });
     }
     function recordWin(secs) {
@@ -1377,7 +1413,8 @@
       Array.prototype.forEach.call(document.querySelectorAll('[data-pace]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-pace') === SET.pace)); });
       Array.prototype.forEach.call(document.querySelectorAll('[data-felt]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-felt') === SET.felt)); });
       Array.prototype.forEach.call(document.querySelectorAll('[data-back]'), function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-back') === SET.back)); });
-      document.body.className = 'felt-' + SET.felt + ' back-' + SET.back + (SET.fx ? '' : ' nofx');
+      // (keeps the phone marks: fs365 = can go full screen, rich365 = a strong phone, fold365 = the bar folded - 6 Oct 2026)
+      document.body.className = 'felt-' + SET.felt + ' back-' + SET.back + (SET.fx ? '' : ' nofx') + ['fs365', 'rich365', 'fold365'].filter(function (k) { return document.body.classList.contains(k); }).map(function (k) { return ' ' + k; }).join('');
       if ($('sWin')) $('sWin').value = SET.win;
       var pv = $('sLookPv'); if (pv) { pv.className = 'lkpv lk-f-' + SET.felt; pv.firstChild.className = 'lk-b-' + SET.back; }
     }
@@ -1415,9 +1452,10 @@
     $('skip365').onclick = function (e) { e.preventDefault(); board.focus(); };   // the first Tab stop (games audit, 5 Oct 2026)
     // More (phones): the bar's tucked-away buttons, as big buttons with words (games audit, 5 Oct 2026)
     $('bMore').onclick = function () {
-      $('moreL').innerHTML = ['bStats', 'bSet', 'bShare', 'bFeed', 'bFull'].filter(function (id) { return $(id) && !$(id).hidden && !$(id).getClientRects().length; }).map(function (id) {
-        var b = $(id); return '<button class="btn wide morei" type="button" data-for="' + id + '">' + b.querySelector('svg').outerHTML + '<span>' + esc(b.querySelector('.lbl').textContent) + '</span></button>';
+      $('moreL').innerHTML = ['bNew', 'bGames', 'bHint', 'bHelp', 'bStats', 'bSet', 'bShare', 'bFeed', 'bFull'].filter(function (id) { return $(id) && !$(id).hidden && !$(id).getClientRects().length; }).map(function (id) {
+        var b = $(id); return '<button class="btn wide morei' + (id === 'bNew' ? ' go' : '') + '" type="button" data-for="' + id + '">' + b.querySelector('svg').outerHTML + '<span>' + esc(b.querySelector('.lbl').textContent) + '</span></button>';
       }).join('');
+      var mh = $('dMore').querySelector('h2'); if (mh) mh.textContent = document.body.classList.contains('fold365') ? 'Menu' : 'More';   // (the folded bar calls it Menu)
       openD('dMore');
     };
     $('moreL').onclick = function (e) { var b = e.target.closest && e.target.closest('[data-for]'); if (!b) return; closeSheets(); var t = $(b.getAttribute('data-for')); setTimeout(function () { t.click(); }, 0); };
@@ -1468,8 +1506,8 @@
     $('rYes').onclick = function () { ST = blankStats(); save('stats', ST); G.counted = true; closeSheets(); say('Your scores have been cleared'); };
     function toggleFull() { try { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen(); } catch (e) {} }
     $('bFull').onclick = toggleFull;
-    if (!document.fullscreenEnabled) $('bFull').hidden = true;
-    document.addEventListener('fullscreenchange', function () { $('bFullL').textContent = document.fullscreenElement ? 'Leave full screen' : 'Full screen'; });
+    if (!document.fullscreenEnabled) $('bFull').hidden = true; else document.body.classList.add('fs365');
+    document.addEventListener('fullscreenchange', function () { $('bFullL').textContent = document.fullscreenElement ? 'Leave full screen' : 'Full screen'; var q = $('bFull').querySelector('.sl'); if (q) q.textContent = document.fullscreenElement ? 'Exit' : 'Full'; });
     document.addEventListener('keydown', function (e) {
       gestured = true;
       if (e.defaultPrevented || (window.GameSocial && GameSocial.isOpen()) || (window.HallOfFame && HallOfFame.isOpen()) || (window.Journey && Journey.isOpen()) || (window.Looks && Looks.isOpen())) return;   // typing feedback / initials, or a key a sheet used
@@ -1507,14 +1545,14 @@
     document.addEventListener('visibilitychange', function () { if (document.hidden && S) persist(); });
     window.addEventListener('pagehide', function () { if (S) persist(); });
     var rz = 0;
-    window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { layout(); render(true); }, 120); });
+    window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { fold(true); layout(); render(true); }, 120); });
     // the bar can wrap to a second row after the table was laid out (the game's name, the chips filling in): lay the
     // table out again whenever its own size changes (critic 5: Hearts opened with a quarter of the hand off the screen)
     // a phone held sideways: one tip a visit (critic 5: the cards got very small)
-    function sideTip() { try { if (sessionStorage.getItem('tip365side')) return; if (window.matchMedia && matchMedia('(orientation: landscape) and (max-height: 450px) and (pointer: coarse)').matches) { say('Tip: turn your phone upright for bigger cards'); sessionStorage.setItem('tip365side', '1'); } } catch (e) {} }
+    function sideTip() { try { if (D.sidewaysOK || sessionStorage.getItem('tip365side')) return; if (window.matchMedia && matchMedia('(orientation: landscape) and (max-height: 450px) and (pointer: coarse)').matches) { say('Tip: turn your phone upright for bigger cards'); sessionStorage.setItem('tip365side', '1'); } } catch (e) {} }
     setTimeout(sideTip, 2600); window.addEventListener('orientationchange', function () { setTimeout(sideTip, 700); });
     var LW, LH;   // (declared here, set by layout() - no initial value, or it would wipe the first layout's)
-    if (window.ResizeObserver) new ResizeObserver(function () { if (Math.abs(board.clientWidth - LW) < 2 && Math.abs(board.clientHeight - LH) < 2) return; clearTimeout(rz); rz = setTimeout(function () { layout(); render(true); }, 60); }).observe(board);
+    if (window.ResizeObserver) new ResizeObserver(function () { if (Math.abs(board.clientWidth - LW) < 2 && Math.abs(board.clientHeight - LH) < 2) return; clearTimeout(rz); rz = setTimeout(function () { var g = glide; glide = false; layout(); render(!g); }, 60); }).observe(board);
 
     // ------------------------------------------------------------ start
     syncControls();
@@ -1537,7 +1575,7 @@
       G.undo = Array.isArray(saved.g.undo) ? saved.g.undo : []; G.ms = +saved.g.ms || 0; G.started = !!saved.g.started; G.counted = !!saved.g.counted; G.undid = +saved.g.undid || 0;
       G.log = Array.isArray(saved.g.log) ? saved.g.log : []; G.timeUp = !!saved.g.timeUp; G.over = !!saved.g.over;
       G.jl = typeof saved.g.jl === 'number' ? saved.g.jl : undefined; G.hinted = +saved.g.hinted || 0;
-      faces(); layout(); render(true);
+      fold(true); faces(); layout(); render(true);
       if (G.started && stuckNow()) showStuck();
     } else {
       S = E.deal(1, V ? SET[V.key] : 0); G = newG('deal', '');   // a placeholder for the first layout; replaced straight away
@@ -1563,7 +1601,7 @@
         return '<button type="button" data-var="' + o[0] + '" style="--i:' + i + '"><span class="lvtop"><b>' + esc(V.newLabel ? V.newLabel(o[0]) : o[1]) + '</b><span class="lvst" aria-hidden="true">' + stars + '</span></span><small>' + esc(V.info(o[0])) + '</small></button>';
       }).join('') : '';
       var tb = function (id, icon, label, title, cls) { return '<button class="tb' + (cls ? ' ' + cls : '') + '" id="' + id + '" type="button" title="' + esc(title) + '">' + ICON[icon] + '<span class="lbl"' + (id === 'bFull' ? ' id="bFullL"' : '') + '>' + esc(label) + '</span>'
-        + ({ bNew: 'New', bGames: 'Games', bUndo: 'Undo', bHint: 'Hint', bHelp: 'Help', bPause: 'Pause', bMore: 'More' }[id] ? '<span class="sl" aria-hidden="true">' + { bNew: 'New', bGames: 'Games', bUndo: 'Undo', bHint: 'Hint', bHelp: 'Help', bPause: 'Pause', bMore: 'More' }[id] + '</span>' : '') + '</button>'; };
+        + ({ bNew: 'New', bGames: 'Games', bUndo: 'Undo', bHint: 'Hint', bHelp: 'Help', bPause: 'Pause', bMore: 'More', bFull: 'Full' }[id] ? '<span class="sl" aria-hidden="true">' + { bNew: 'New', bGames: 'Games', bUndo: 'Undo', bHint: 'Hint', bHelp: 'Help', bPause: 'Pause', bMore: 'More', bFull: 'Full' }[id] + '</span>' : '') + '</button>'; };
       var html = '<a class="skip365" href="#board" id="skip365">Skip to the cards</a><div id="app"><header class="bar"><h1 class="brand"><button class="brandb" type="button" id="bBrand" title="All our games"><b>365</b> <span>' + esc(D.title) + '</span><i class="caret" aria-hidden="true">&#9662;</i></button></h1>'
         + '<div class="info" aria-live="off"><div class="chip" id="chipTime"><small>Time</small><span id="vTime">0:00</span></div><div class="chip"><small>Moves</small><span id="vMoves">0</span></div><div class="chip"><small>Score</small><span id="vScore">0</span></div></div>'
         + '<nav class="tools" aria-label="Game">' + tb('bNew', 'new', 'New game', 'New game (N)', 'main') + tb('bGames', 'games', 'Games', 'Switch to another of our games', 'tb3') + tb('bUndo', 'undo', 'Undo', 'Undo (U or Ctrl+Z)') + tb('bHint', 'hint', 'Hint', 'Show me a move (H)')

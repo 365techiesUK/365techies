@@ -7,16 +7,34 @@
   'use strict';
   var E = window.SolEngine, DEALS = window.SOL_DEALS || null;
 
-  function colX(L, i) { return L.left + i * (L.cw + L.gap); }
+  function colX(L, i) { return L.wide ? L.tabL + i * (L.cw + L.gap) : L.left + i * (L.cw + L.gap); }
+  // where the deck, the turned-over cards and the four piles sit (upright: the top row; sideways: the side columns)
+  function stockXY(L) { return { x: L.wide ? L.left : colX(L, 0), y: L.top }; }
+  function wasteXY(L) { return L.wide ? { x: L.left, y: L.top + L.ch + L.gap * 2 } : { x: colX(L, 1), y: L.top }; }
+  function foundXY(L, f) { return L.wide ? { x: L.foundL + (f % 2) * (L.cw + L.gap), y: L.top + (f >> 1) * (L.ch + L.gap) } : { x: colX(L, 3 + f), y: L.top }; }
   function layout(W, H) {
+    // a phone on its side (6 Oct 2026, owner on an S22 Ultra): the height runs out, not the width - deck on the left,
+    // the four piles two-by-two on the right, the columns get the whole height (cards 34 px -> about 58 in Chrome)
+    if (W > H * 1.5 && H < 560) {
+      var g = Math.max(4, Math.min(12, Math.round(H * 0.02))), sep = g * 3;
+      var bw = (W - g * 9 - sep * 2 - g * 2) / 10, bh = (H - g * 2) / 3.3 / 1.4;
+      var w = Math.max(Math.min(26, Math.floor(bw)), Math.floor(Math.min(bw, bh, 150))), h = Math.round(w * 1.4);
+      var full = 10 * w + 7 * g + sep * 2, L0 = Math.round((W - full) / 2);
+      var LW = { wide: true, cw: w, ch: h, gap: g, W: W, H: H, phone: false, left: L0, top: g, tabY: g };
+      LW.tabL = L0 + w + sep; LW.foundL = LW.tabL + 7 * w + 6 * g + sep;
+      LW.slots = [{ key: 'stock', x: stockXY(LW).x, y: stockXY(LW).y, cls: 'stock', text: '' }];
+      for (var fw = 0; fw < 4; fw++) LW.slots.push({ key: 'f' + fw, x: foundXY(LW, fw).x, y: foundXY(LW, fw).y, cls: 'found', text: 'A' });
+      for (var tw = 0; tw < 7; tw++) LW.slots.push({ key: 't' + tw, x: colX(LW, tw), y: LW.tabY, cls: 'tab', text: 'K' });
+      return LW;
+    }
     // a phone held upright (6 Oct 2026, Petra: "a bit small ... not clear enough"): narrow gaps, taller cards
     var phone = W < 600 && H > W * 1.3, asp = phone ? 1.5 : 1.4;
     var gap = phone ? 4 : Math.max(6, Math.min(18, Math.round(W * 0.012)));
     var byW = (W - gap * 8) / 7, byH = (H - gap * 3) / 4.25 / asp;
     var cw = Math.max(Math.min(32, Math.floor(byW)), Math.floor(Math.min(byW, byH, 170))), ch = Math.round(cw * asp);   // (never wider than the screen: a phone with big text is zoomed - 6 Oct 2026)
     var L = { cw: cw, ch: ch, gap: gap, W: W, H: H, phone: phone, left: Math.round((W - (7 * cw + 6 * gap)) / 2), top: gap, tabY: gap + ch + Math.round(gap * 1.6) };
-    L.slots = [{ key: 'stock', x: colX(L, 0), y: L.top, cls: 'stock', text: '' }];
-    for (var f = 0; f < 4; f++) L.slots.push({ key: 'f' + f, x: colX(L, 3 + f), y: L.top, cls: 'found', text: 'A' });
+    L.slots = [{ key: 'stock', x: stockXY(L).x, y: stockXY(L).y, cls: 'stock', text: '' }];
+    for (var f = 0; f < 4; f++) L.slots.push({ key: 'f' + f, x: foundXY(L, f).x, y: foundXY(L, f).y, cls: 'found', text: 'A' });
     for (var t = 0; t < 7; t++) L.slots.push({ key: 't' + t, x: colX(L, t), y: L.tabY, cls: 'tab', text: 'K' });
     return L;
   }
@@ -30,10 +48,11 @@
   }
   function positions(S, L) {
     var P = {};
-    S.stock.forEach(function (c, i) { var k = Math.min(3, Math.floor(i / 8)); P[c] = { x: colX(L, 0) + k, y: L.top - k, z: 10 + i, up: false, pile: 's' }; });
-    var n = S.waste.length, start = Math.max(0, n - (S.draw === 3 ? 3 : 1)), fan = Math.round(L.cw * 0.28);
-    S.waste.forEach(function (c, i) { P[c] = { x: colX(L, 1) + (i >= start ? i - start : 0) * fan, y: L.top, z: 100 + i, up: true, pile: 'w' }; });
-    S.found.forEach(function (f, fi) { f.forEach(function (c, i) { P[c] = { x: colX(L, 3 + fi), y: L.top, z: 300 + fi * 20 + i, up: true, pile: 'f' + fi }; }); });
+    var sp = stockXY(L), wp = wasteXY(L);
+    S.stock.forEach(function (c, i) { var k = Math.min(3, Math.floor(i / 8)); P[c] = { x: sp.x + k, y: sp.y - k, z: 10 + i, up: false, pile: 's' }; });
+    var n = S.waste.length, start = Math.max(0, n - (S.draw === 3 ? 3 : 1)), fan = Math.round(L.wide ? L.ch * 0.22 : L.cw * 0.28);
+    S.waste.forEach(function (c, i) { var o = (i >= start ? i - start : 0) * fan; P[c] = { x: wp.x + (L.wide ? 0 : o), y: wp.y + (L.wide ? o : 0), z: 100 + i, up: true, pile: 'w' }; });
+    S.found.forEach(function (f, fi) { var q = foundXY(L, fi); f.forEach(function (c, i) { P[c] = { x: q.x, y: q.y, z: 300 + fi * 20 + i, up: true, pile: 'f' + fi }; }); });
     S.tab.forEach(function (col, ci) {
       var g = colGaps(L, col), y = L.tabY;
       col.forEach(function (x, i) { P[x.c] = { x: colX(L, ci), y: Math.round(y), z: 500 + i, up: x.up, pile: 't' + ci }; y += x.up ? g.fu : g.fd; });
@@ -58,7 +77,7 @@
   }
   function targets(S, from, L, P) {
     var out = [], j;
-    if (picked(S, from).length === 1) for (var f = 0; f < 4; f++) out.push({ to: { p: 'f', i: f }, x: colX(L, 3 + f), y: L.top });
+    if (picked(S, from).length === 1) for (var f = 0; f < 4; f++) out.push({ to: { p: 'f', i: f }, x: foundXY(L, f).x, y: foundXY(L, f).y });
     for (j = 0; j < 7; j++) { var col = S.tab[j]; out.push({ to: { p: 't', i: j }, x: colX(L, j), y: col.length ? P[col[col.length - 1].c].y : L.tabY }); }
     return out;
   }
@@ -160,13 +179,14 @@
     noDrawSay: function (S) { return !S.stock.length && S.waste.length ? 'That was your last time through the deck at ' + LV[lvOf(S)].name + ' level' : ''; },
     winBonus: function (S, secs) { return Math.round((100 + Math.max(0, 1200 - secs) / 2) * ({ 1: 1, 3: 1.25, 5: 1.6, 7: 2 }[lvOf(S)] || 1)); },
     dealOrder: function (S) { var o = [], row, col; for (row = 0; row < 7; row++) for (col = row; col < 7; col++) o.push(S.tab[col][row].c); return o; },
-    deckPos: function (L) { return { x: colX(L, 0), y: L.top }; },
-    cascade: function (S, L) { var q = [], r, f; for (r = 13; r >= 1; r--) for (f = 0; f < 4; f++) { var c = S.found[f][r - 1]; if (c != null) q.push({ c: c, x: colX(L, 3 + f), y: L.top }); } return q; },
+    deckPos: function (L) { return stockXY(L); },
+    sidewaysOK: true,   // the sideways layout has bigger cards than upright: no "turn your phone upright" tip
+    cascade: function (S, L) { var q = [], r, f; for (r = 13; r >= 1; r--) for (f = 0; f < 4; f++) { var c = S.found[f][r - 1]; if (c != null) q.push({ c: c, x: foundXY(L, f).x, y: foundXY(L, f).y }); } return q; },
     slotHtml: function (key, S) { return key === 'stock' ? (!S.stock.length && S.waste.length ? (E.canRecycle(S) ? Table365.RECYCLE : '<span class="spent" title="No more times through the deck">&#10005;</span>') : '') : null; },
     noTap: function (from) { return from.p === 'f'; },
     describe: function (S) { return LV[lvOf(S)].name + ' level'; },
     help: [
-      '<b>The aim:</b> build the four piles at the top, one for each suit, from Ace up to King.',
+      '<b>The aim:</b> build the four piles at the top right, one for each suit, from Ace up to King.',
       '<b>In the seven columns</b>, put each card on one a step higher of the other colour &mdash; a red 6 on a black 7.',
       '<b>Tap a card</b> and it moves to the best place for it. You can drag cards too, if you prefer.',
       '<b>Tap the deck</b> at the top left to turn over new cards. When it&rsquo;s empty, tap it to start again.',
