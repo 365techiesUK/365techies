@@ -393,7 +393,7 @@ _FAQS = [
     ("Can I change how the cards look?",
      "Yes. In any card game, open Settings and choose <b>Table and card backs</b>: twelve tables and twelve card backs, from green baize to beach huts and Old Harry Rocks. A few specials are won with Journey stars. Your choice is used in all our card games."),
     ("Are my scores saved?",
-     "Your scores and settings are kept in your web browser on that computer. They&rsquo;re only sent to us if you choose to put a score in the Hall of Fame. We count visits without cookies; the cookie banner lets you choose whether our live chat and Google Analytics may use cookies &mdash; see our <a href=\"/privacy-policy/\">privacy policy</a>."),
+     "Your scores and settings are kept in your web browser on that phone or computer. To take them to another phone, or from one browser to another, open <b>My scores</b> in any of our patience games and tap <b>My code</b>: type that code in on the other phone. They&rsquo;re only sent to us if you put a score in the Hall of Fame or ask for a code. We count visits without cookies; the cookie banner lets you choose whether our live chat and Google Analytics may use cookies &mdash; see our <a href=\"/privacy-policy/\">privacy policy</a>."),
     ("What is the Hall of Fame?",
      "Our card and arcade games each have one. Win Today&rsquo;s deal in a card game, or finish a game in the arcade, and you can put your initials and town in it to see where you rank in Dorset and beyond. Only your initials and town are ever shown &mdash; never your name &mdash; and you can take them off at any time. 365 customers signed in on that computer get a 365 member badge."),
     ("The arcade games are too fast for me &mdash; can I slow them down?",
