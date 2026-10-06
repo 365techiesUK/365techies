@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=50';
+import { createWorld } from './world3d.js?v=51';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
@@ -441,7 +441,7 @@ function sound(name, S, e) {
     case 'tick': S.tone(n <= 5 ? 1320 : 990, 0.07, 0.06, { type: 'square' }); break;
     case 'timeup': if (sting('timeup')) break; [523, 440, 349, 262].forEach((f, k) => S.tone(f, 0.3, 0.07, { type: 'triangle', when: k * 0.24, verb: 0.4 })); break;
     case 'fork': S.tone(784, 0.14, 0.05, { type: 'triangle', verb: 0.3 }); S.tone(1175, 0.2, 0.05, { type: 'triangle', when: 0.1, verb: 0.3 }); break;
-    case 'skid': S.noise(0.35, 0.07, 2600, { type: 'bandpass', q: 9, to: 2200 }); break;
+    case 'skid': if (AU && AU.chirp && AU.chirp(0.22)) break; S.noise(0.35, 0.07, 2600, { type: 'bandpass', q: 9, to: 2200 }); break;   // (the recorded squeal as the slide starts)
     case 'grid': for (let q = 0; q < 9; q++) S.noise(0.025, 0.07 - q * 0.004, 700 + (q % 3) * 260, { type: 'bandpass', q: 2.5, when: q * 0.03 }); break;   // a cattle grid: the tyres drumming over its bars
     case 'driftend': S.tone(988, 0.1, 0.04, { type: 'square', verb: 0.3 }); S.tone(1319, 0.16, 0.04, { type: 'square', when: 0.07, verb: 0.3 }); break;
     case 'slip': S.noise(0.5, 0.06, 900, { type: 'bandpass', q: 2, to: 2400 }); break;
@@ -536,7 +536,24 @@ function makeAudio(a, bus) {
   const loop = (type, freq, q) => { const s = a.createBufferSource(), f = a.createBiquadFilter(), gn = a.createGain(); s.buffer = buf; s.loop = true; f.type = type; f.frequency.value = freq; f.Q.value = q; gn.gain.value = 0; s.connect(f); f.connect(gn); gn.connect(bus); s.start(); return { f: f, g: gn }; };
   o.wind = loop('bandpass', 900, 0.6); o.skid = loop('bandpass', 2400, 7); o.rumble = loop('lowpass', 160, 1);
   o.sq = squeal(a, bus); o.passT = 0; o.passD = new Map();
+  tyres(a, bus, o);
   return o;
+}
+// the tyres, recorded: tyres-loop.wav is a seamless loop cut from the sustained four-tyre screech of "Screeching Tires #4" (Dorian Clair,
+// bigsoundbank.com #2371, CC0); tyres-chirp.wav holds three short squeals from "Tire squeal" (Joseph Sardin, #0500, CC0) for the moment a
+// slide starts. Until they load (or if they can't), the made-up squeal above stands in
+const TYRES = 'tyres-loop.wav?v=1', CHIRPS = 'tyres-chirp.wav?v=1', CHIRP_AT = [[0, 0.8], [0.85, 0.8], [1.7, 0.75]];
+function tyres(a, bus, o) {
+  const get = (u) => fetch(u).then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(r.status))).then((b) => a.decodeAudioData(b));
+  get(TYRES).then((buf) => {
+    const src = a.createBufferSource(), g = a.createGain(), pn = a.createStereoPanner ? a.createStereoPanner() : null;
+    src.buffer = buf; src.loop = true; g.gain.value = 0; src.connect(g); if (pn) { g.connect(pn); pn.connect(bus); } else g.connect(bus);
+    src.start(0, Math.random() * buf.duration); o.tyre = { src: src, g: g, pn: pn };
+  }).catch(() => {});
+  get(CHIRPS).then((buf) => {
+    o.chirp = (vol) => { const c = CHIRP_AT[(Math.random() * CHIRP_AT.length) | 0], src = a.createBufferSource(), g = a.createGain();
+      src.buffer = buf; src.playbackRate.value = 0.92 + Math.random() * 0.16; g.gain.value = vol; src.connect(g); g.connect(bus); src.start(a.currentTime, c[0], c[1]); return true; };
+  }).catch(() => {});
 }
 function squeal(a, bus) {   // the tyres: a pitched squeal that wobbles (vibrato ~6 a second) and trembles, through a band of the upper mids
   const g = a.createGain(); g.gain.value = 0;
@@ -777,7 +794,7 @@ function frameAudio(W, S, mode, SET) {
   if (!a) return;
   if (!AU) { if (!playing) return; loadWorklet(a); if (!WLdone) return; AU = makeAudio(a, S.bus() || a.destination); }   // (a moment while the engine loads)
   const now = a.currentTime, T = 0.06;
-  if (!playing) { if (AU.race) AU.gain.setTargetAtTime(0, now, 0.05); else { AU.g.gain.setTargetAtTime(0, now, 0.05); AU.gNoise.gain.setTargetAtTime(0, now, 0.05); } AU.wind.g.gain.setTargetAtTime(0, now, 0.05); AU.skid.g.gain.setTargetAtTime(0, now, 0.05); AU.rumble.g.gain.setTargetAtTime(0, now, 0.05); AU.sq.g.gain.setTargetAtTime(0, now, 0.05); return; }
+  if (!playing) { if (AU.race) AU.gain.setTargetAtTime(0, now, 0.05); else { AU.g.gain.setTargetAtTime(0, now, 0.05); AU.gNoise.gain.setTargetAtTime(0, now, 0.05); } AU.wind.g.gain.setTargetAtTime(0, now, 0.05); AU.skid.g.gain.setTargetAtTime(0, now, 0.05); AU.rumble.g.gain.setTargetAtTime(0, now, 0.05); AU.sq.g.gain.setTargetAtTime(0, now, 0.05); if (AU.tyre) AU.tyre.g.gain.setTargetAtTime(0, now, 0.05); return; }
   const pct = W.v / E.VMAX; let gi = 0; while (gi < 6 && pct > GEARS[gi + 1]) gi++;
   let rpm = W.count > 0 ? 0.06 + (W.rev || 0) * 0.85 : Math.min(1.02, 0.5 + 0.5 * (pct - GEARS[gi]) / (GEARS[gi + 1] - GEARS[gi]));
   if (W.count <= 0 && gi === 0) rpm = Math.max(0.12, Math.min(1, 0.12 + pct / GEARS[1] * 0.85));
@@ -803,12 +820,20 @@ function frameAudio(W, S, mode, SET) {
   if (!AU.race && lift && Math.random() < 0.11) S.noise(0.035 + Math.random() * 0.04, 0.04 + Math.random() * 0.035, 800 + Math.random() * 1500, { type: 'bandpass', q: 1.2, pan: (Math.random() - 0.5) * 0.4 });
   AU.wind.f.frequency.setTargetAtTime(600 + pct * 1800, now, T);
   AU.wind.g.gain.setTargetAtTime(Math.min(0.09, pct * pct * 0.055 + (W.boosting ? 0.03 : 0)), now, T);
-  AU.skid.g.gain.setTargetAtTime(W.air || W.crash ? 0 : W.drift ? 0.028 : (W.slide || 0) * 0.016, now, 0.03);   // (a little grit under the squeal)
+  AU.skid.g.gain.setTargetAtTime(W.air || W.crash ? 0 : (W.drift ? 0.028 : (W.slide || 0) * 0.016) * (AU.tyre ? 0.4 : 1), now, 0.03);   // (a little grit under the squeal)
   { const slip = W.air || W.crash ? 0 : W.drift ? 0.7 + 0.3 * Math.min(1, (W.driftA || 0) / 0.45) : (W.slide || 0) * 0.85,   // a drift: the full squeal, rising with the slide; hard round a bend, braking hard or a quick flick: the tyres working (engine: slide)
     f0 = (420 + slip * 80 + pct * 60) * (1 + (Math.random() - 0.5) * 0.03);
-    AU.sq.oscs.forEach((o) => o.os.frequency.setTargetAtTime(f0 * o.h, now, 0.08));
-    AU.sq.g.gain.setTargetAtTime(slip * 0.14, now, slip > 0 ? 0.03 : 0.08);
-    if (AU.sq.pn) AU.sq.pn.pan.setTargetAtTime(Math.max(-0.5, Math.min(0.5, -(W.steer || 0) * 0.35)), now, 0.1); }
+    const pan = Math.max(-0.5, Math.min(0.5, -(W.steer || 0) * 0.35));
+    if (AU.tyre) {   // the recording: louder and a little higher the harder the slide and the faster you go, wavering as a real screech does
+      AU.tyre.src.playbackRate.setTargetAtTime((0.86 + slip * 0.14 + pct * 0.1) * (1 + (Math.random() - 0.5) * 0.025), now, 0.08);
+      AU.tyre.g.gain.setTargetAtTime(slip * 0.26, now, slip > 0 ? 0.04 : 0.09);
+      if (AU.tyre.pn) AU.tyre.pn.pan.setTargetAtTime(pan, now, 0.1);
+      AU.sq.g.gain.setTargetAtTime(0, now, 0.05);
+    } else {
+      AU.sq.oscs.forEach((o) => o.os.frequency.setTargetAtTime(f0 * o.h, now, 0.08));
+      AU.sq.g.gain.setTargetAtTime(slip * 0.14, now, slip > 0 ? 0.03 : 0.08);
+      if (AU.sq.pn) AU.sq.pn.pan.setTargetAtTime(pan, now, 0.1);
+    } }
   if (W.count <= 0 && !W.crash) for (const c of W.cars) {   // a car going past: a swoosh falling in pitch (Doppler), on the side it passes
     const d = c.s - W.s, was = AU.passD.get(c.id); AU.passD.set(c.id, d);
     if (was > 0 && d <= 0 && Math.abs(c.x - W.x) < 9 && now > AU.passT) { AU.passT = now + 0.12; const pp = Math.max(-0.85, Math.min(0.85, (c.x - W.x) * 0.22)), k = Math.min(1, pct * 1.2);

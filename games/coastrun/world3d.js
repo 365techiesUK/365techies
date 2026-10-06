@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=43';
+import * as MD from './models3d.js?v=44';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -1585,8 +1585,13 @@ export function createWorld() {
     player.position.set(cx, cy, cz);
     const cr = W.crash;
     R.psiK = (R.psiK || 1) + ((W.drift && !cr ? 1.75 : 1) - (R.psiK || 1)) * Math.min(1, dt * 4); R.visHead = roadTh + Math.sign(W.psi) * Math.min(Math.abs(W.psi) * R.psiK, Math.max(Math.abs(W.psi), 0.7));   // (never past about 40 degrees)
-    let yaw = -R.visHead, roll = POS.bank * 0.8 + W.steer * W.v / 70 * 0.05, pitch = Math.atan(gradeAt(W)) * 0.9 + (W.air ? clamp(W.vh * 0.012, -0.25, 0.2) : 0), lift = 0;
-    R.bodyR = (R.bodyR || 0) + ((W.drift && !cr ? W.steer * 0.08 : 0) - (R.bodyR || 0)) * Math.min(1, dt * 5); R.bodyP = (R.bodyP || 0) + ((W.boosting ? 0.04 : 0) - R.brakeK * 0.025 - (R.bodyP || 0)) * Math.min(1, dt * 5);
+    // the body on its springs (owner, 6 Oct: "more realistic"): it dips under braking and squats as it pulls away, by how hard (the real
+    // change of speed, smoothed), and leans out in a bend by how fast you're turning
+    const dvdt = dt > 0 ? (W.v - (R.pv == null ? W.v : R.pv)) / dt : 0; R.pv = W.v;
+    R.lonA = (R.lonA || 0) + (Math.max(-14, Math.min(10, cr ? 0 : dvdt)) - (R.lonA || 0)) * Math.min(1, dt * 4);
+    R.latK = (R.latK || 0) + ((cr ? 0 : W.steer * Math.pow(Math.min(1.2, W.v / E.VMAX), 2)) - (R.latK || 0)) * Math.min(1, dt * 3);
+    let yaw = -R.visHead, roll = POS.bank * 0.8 + R.latK * 0.06, pitch = Math.atan(gradeAt(W)) * 0.9 + (W.air ? clamp(W.vh * 0.012, -0.25, 0.2) : 0), lift = 0;
+    R.bodyR = (R.bodyR || 0) + ((W.drift && !cr ? W.steer * 0.08 : 0) - (R.bodyR || 0)) * Math.min(1, dt * 5); R.bodyP = (R.bodyP || 0) + ((W.boosting ? 0.012 : 0) + R.lonA * 0.0022 - (R.bodyP || 0)) * Math.min(1, dt * 5);
     roll += R.bodyR + (R.gR || 0); pitch += R.bodyP + (R.gP || 0);
     let T = null;
     if (cr) {

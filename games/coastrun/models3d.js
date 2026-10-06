@@ -2358,41 +2358,119 @@ function slopeGlass(k, w, zA, yA, zB, yB) {   // a rear window lying along the s
   k.put(new THREE.BoxGeometry(w, 0.03, L * 0.86), GLASS, 0, (yA + yB) / 2 + 0.11 * Math.cos(a), (zA + zB) / 2 + 0.11 * Math.sin(a), a, 0, 0, 1, 1, 1, 'shiny');   // (out past the body's bevel)
 }
 const TRAFFIC = {
-  hatch(k, col) { k.side([-1.9, 0.3, 1.9, 0.3, 1.95, 0.85, 1.5, 1.05, 1.1, 1.45, -0.6, 1.55, -1.4, 1.05, -1.9, 0.95], 1.7, 0, 0, 0, col, 'shiny', 0.1); k.side([-0.55, 1.07, 1.05, 1.07, 1.3, 1.42, -0.5, 1.5], 1.52, 0, 0.02, 0, GLASS, 'shiny'); wheelsOn(k, [-0.78, 0.78], [-1.25, 1.25], 0.32, 0.22);
-    slopeGlass(k, 1.36, 1.42, 1.08, 0.62, 1.52); tail(k, 1.7, 0.78, 2.02); rearEnd(k, 1.7, 2.02, 0.3, 0.55); },
-  saloon(k, col) { k.side([-2.2, 0.3, 2.2, 0.3, 2.25, 0.85, 1.6, 0.95, 1.1, 1.4, -0.7, 1.42, -1.4, 0.95, -2.2, 0.85], 1.8, 0, 0, 0, col, 'shiny', 0.1); k.side([-0.65, 0.97, 1.05, 0.97, 1.2, 1.36, -0.6, 1.38], 1.62, 0, 0.02, 0, GLASS, 'shiny'); wheelsOn(k, [-0.82, 0.82], [-1.45, 1.45], 0.33, 0.22);
-    slopeGlass(k, 1.44, 1.42, 0.98, 0.72, 1.4); tail(k, 1.8, 0.7, 2.32); rearEnd(k, 1.8, 2.32, 0.3, 0.5); },
-  sports(k, col) { k.side([-2.1, 0.25, 2.1, 0.25, 2.15, 0.75, 0.9, 0.95, 0.3, 1.2, -0.6, 1.2, -1.2, 0.85, -2.1, 0.6], 1.85, 0, 0, 0, col, 'shiny', 0.1); k.side([-0.55, 0.88, 0.35, 0.95, 0.25, 1.15, -0.5, 1.15], 1.62, 0, 0.02, 0, GLASS, 'shiny'); k.box(1.7, 0.06, 0.4, 0, 1.0, 1.9, '#1a1a1a'); wheelsOn(k, [-0.84, 0.84], [-1.35, 1.35], 0.33, 0.25);
-    slopeGlass(k, 1.3, 1.22, 0.86, 0.62, 1.16); tail(k, 1.85, 0.56, 2.22, 0.14); rearEnd(k, 1.85, 2.22, 0.25, 0.4); },
-  van(k, col) {   // (its cab at the front, -Z: it was built the other way round and looked to be reversing)
-    k.side([2.5, 1.1, 1.9, 1.3, 1.2, 2.3, -2.5, 2.3, -2.5, 0.35, 2.5, 0.35], 1.95, 0, 0, 0, col, 'shiny', 0.12); k.side([1.6, 2.05, 1.2, 2.05, 1.2, 1.35, 1.85, 1.35], 1.82, 0, 0.02, 0, GLASS, 'shiny'); wheelsOn(k, [-0.88, 0.88], [-1.6, 1.6], 0.36, 0.24);
-    const stripe = col === '#f4f4f4' ? '#1d4ed8' : '#f4f4f4';
-    k.side([-2.56, 1.02, 2.56, 1.02, 2.56, 1.24, -2.56, 1.24], 1.99, 0, 0, 0, stripe, 'shiny');   // a stripe along the side and round the back
-    k.box(1.99, 0.22, 0.03, 0, 1.02, 2.62, stripe, 0, 0, 0, 'shiny');
-    k.box(0.03, 1.7, 0.04, 0, 0.5, 2.63, '#2a2a2a');   // the split back doors
-    for (const sd of [-1, 1]) k.box(0.62, 0.4, 0.04, sd * 0.42, 1.6, 2.63, GLASS, 0, 0, 0, 'shiny');   // their windows
-    tail(k, 1.95, 0.6, 2.64, 0.36); rearEnd(k, 1.95, 2.64, 0.32, 0.62); },
-  bus(k, col) {   // an open-top seaside bus
-    const b = col === '#d62828' ? '#d62828' : '#f2c14e';
-    k.side([-5.4, 0.4, 5.4, 0.4, 5.4, 3.4, -5.4, 3.4], 2.4, 0, 0, 0, b, 'shiny', 0.06); k.box(2.42, 0.25, 10.8, 0, 1.9, 0, '#ffffff');
-    k.side([-5.2, 2.2, 5.2, 2.2, 5.2, 3.1, -5.2, 3.1], 2.44, 0, 0, 0, GLASS, 'shiny');
-    k.side([-5.4, 3.4, 5.4, 3.4, 5.4, 4.1, -5.4, 4.1], 2.42, 0, 0, 0, b, 'shiny');
-    const r = rnd(7); for (let i = 0; i < 6; i++) { k.ball(0.22, (i % 2 ? 0.6 : -0.6), 4.55, -3.5 + i * 1.4, SKIN[(r() * 5) | 0], 1, 1.1, 1, 'lit', 8); k.box(0.42, 0.4, 0.3, (i % 2 ? 0.6 : -0.6), 4.1, -3.5 + i * 1.4, SHIRTS[(r() * 9) | 0]); }
-    wheelsOn(k, [-1.05, 1.05], [-3.8, 3.6], 0.5, 0.3); lights(k, 2.4, 0.9, 5.42, 0.4);
+  // the traffic (owner, 6 Oct: "the vehicles look really bad ... make them all a lot better, more grown up"): built on the racers' kit -
+  // lofted bodies in clearcoat paint, glass cabins, painted roofs, proper arches, alloy wheels, lamp clusters - in the colours real cars come
+  // in. v (from the colour's index) picks a body for some: the hatch or a small SUV, the saloon or an estate
+  hatch(k, col, v) {
+    if (v % 2) roadCar(k, col, { L: 2.05, hw: 0.92, r: 0.36, wz: [-1.33, 1.33], clear: 0.3, noseY: 0.72, bonnetY: 1.02, beltY: 1.08, tailY: 1.12, ws: [-0.78, -0.14], roofY: 1.66, roofEnd: 1.58, back: 'hatch', tall: true, doors: [-0.66, 0.36, 1.18], rims: 'twin' });
+    else roadCar(k, col, { L: 2.02, hw: 0.88, r: 0.31, wz: [-1.3, 1.3], clear: 0.22, noseY: 0.56, bonnetY: 0.86, beltY: 0.92, tailY: 0.98, ws: [-0.82, -0.12], roofY: 1.44, roofEnd: 1.5, back: 'hatch', doors: [-0.7, 0.35, 1.2], rims: 'five' });
   },
-  camper(k, col) {
-    k.side([2.7, 1.2, 2.2, 1.4, 1.4, 2.5, -2.7, 2.5, -2.7, 0.35, 2.7, 0.35], 2, 0, 0, 0, '#f4f1ea', 'shiny', 0.07);   // (the cab at the front, -Z: it was built the other way round)
-    k.side([-2.7, 0.35, 2.7, 0.35, 2.7, 1.25, -2.7, 1.25], 2.04, 0, 0, 0, col, 'shiny');
-    k.side([1.8, 2.25, 1.45, 2.25, 1.45, 1.45, 2.15, 1.45], 1.87, 0, 0.02, 0, GLASS, 'shiny');
-    k.box(1.7, 0.45, 3.6, 0, 2.5, -0.9, '#e8e2d4');   // the bed over the cab, out over the windscreen wheelsOn(k, [-0.9, 0.9], [-1.7, 1.7], 0.36, 0.24);
-    k.box(1.2, 0.6, 0.04, 0, 1.55, 2.78, GLASS, 0, 0, 0, 'shiny'); tail(k, 2, 0.85, 2.79, 0.3); rearEnd(k, 2, 2.79, 0.32, 0.6);
+  saloon(k, col, v) {
+    if (v % 2) roadCar(k, col, { L: 2.3, hw: 0.92, r: 0.32, wz: [-1.42, 1.42], clear: 0.22, noseY: 0.58, bonnetY: 0.84, beltY: 0.9, tailY: 0.98, ws: [-0.75, -0.06], roofY: 1.46, roofEnd: 2.0, back: 'estate', rails: true, doors: [-0.64, 0.42, 1.3], rims: 'ten' });
+    else roadCar(k, col, { L: 2.3, hw: 0.92, r: 0.32, wz: [-1.42, 1.42], clear: 0.22, noseY: 0.58, bonnetY: 0.84, beltY: 0.9, tailY: 0.97, ws: [-0.75, -0.04], roofY: 1.42, roofEnd: 0.92, deck: 1.58, back: 'saloon', doors: [-0.62, 0.4, 1.25], rims: 'ten' });
   },
-  tractor(k, col) {
-    const g = col === '#2a9d8f' ? '#2e8b3a' : '#c62828';
-    k.box(1.3, 1.1, 2.6, 0, 0.7, -0.6, g, 0, 0, 0, 'shiny'); k.box(1.6, 1.7, 1.4, 0, 1.4, 0.7, '#2a2a2a'); k.box(1.4, 1.4, 1.2, 0, 1.6, 0.7, '#8fb3c9', 0, 0, 0, 'shiny');
-    k.box(1.8, 0.15, 1.6, 0, 3.1, 0.7, g);
-    for (const x of [-1, 1]) { k.axle(0.85, 0.5, 16, x * 0.95, 0.85, 1.1, '#1a1a1a'); k.axle(0.5, 0.4, 12, x * 0.8, 0.5, -1.4, '#1a1a1a'); }
-    k.box(0.2, 0.2, 0.06, -0.6, 1.2, 1.45, '#ff8c00', 0, 0, 0, 'glow').box(0.2, 0.2, 0.06, 0.6, 1.2, 1.45, '#ff8c00', 0, 0, 0, 'glow');
+  sports(k, col) {   // a modern sports coupe of our own: long bonnet, cabin set back, a fastback to a short tail, a lamp bar across it, four pipes
+    roadCar(k, col, { L: 2.2, hw: 0.96, r: 0.33, wz: [-1.36, 1.32], clear: 0.16, noseY: 0.5, bonnetY: 0.76, beltY: 0.84, tailY: 0.9, ws: [-0.45, 0.18], roofY: 1.22, roofEnd: 0.82, deck: 1.82, back: 'saloon', doors: [-0.4, 0.62], rims: 'ten', sporty: true });
+  },
+  van(k, col) {   // a modern panel van (its cab at the front, -Z): a short bonnet, a steep screen, the tall box behind, a sliding door, twin back
+    // doors with small windows, tall lamps up the back corners and a brake light at the top
+    const B = racerBody(k, col, { w: [[-1.72, 0.36, 0.24], [1.62, 0.36, 0.26]], up: 7, crease: 0.04, style: 'steel', cal: '#3a3c40', rim: '#9aa0a6',
+      keys: [[-2.58, 0.84, 0.4, 0.78], [-2.46, 0.97, 0.35, 0.98], [-2.2, 1.0, 0.33, 1.1], [-1.96, 1.0, 0.33, 1.16], [-1.3, 1.0, 0.33, 2.24], [-1.05, 1.0, 0.33, 2.34], [2.42, 1.0, 0.33, 2.38], [2.58, 0.97, 0.36, 2.33]],
+      mirror: [-1.86, 1.42] });
+    glassOn(k, B.st, -1.92, -1.32, 0.86, 7, 0.45);   // the windscreen
+    for (const sd of [-1, 1]) {
+      k.box(0.02, 0.52, 0.62, sd * 1.003, 1.5, -1.5, GLASS, 0, 0, 0, 'rglass');   // the cab's side window
+      k.box(0.012, 1.7, 0.012, sd * 1.004, 0.45, -0.95, '#1a1a1c', 0, 0, 0, 'lit').box(0.012, 1.7, 0.012, sd * 1.004, 0.45, 0.3, '#1a1a1c', 0, 0, 0, 'lit');   // the sliding door's shut lines
+      k.box(0.03, 0.02, 1.25, sd * 1.004, 2.02, -0.32, '#1a1a1c', 0, 0, 0, 'lit');   // its runner
+      k.box(0.12, 0.62, 0.05, sd * 0.88, 0.95, 2.6, '#3a0a0e', 0, 0, 0, 'lit').box(0.1, 0.36, 0.06, sd * 0.88, 1.05, 2.6, RED, 0, 0, 0, 'rlamp').box(0.1, 0.1, 0.06, sd * 0.88, 0.8, 2.6, '#f4f2ea', 0, 0, 0, 'rlamp').box(0.1, 0.08, 0.06, sd * 0.88, 1.27, 2.6, '#ffb24a', 0, 0, 0, 'rlamp');   // tall lamps up the corners
+      k.box(0.55, 0.36, 0.03, sd * 0.42, 1.75, 2.585, GLASS, 0, 0, 0, 'rglass');   // the back doors' windows
+      cover(k, sd * 0.68, 0.98, -2.5, 1.5, 0.7, 0.8, sd * 0.25);   // headlamps
+    }
+    k.box(0.012, 1.85, 0.03, 0, 0.42, 2.59, '#1a1a1c', 0, 0, 0, 'lit');   // the split between the back doors
+    k.box(0.36, 0.04, 0.04, 0, 2.3, 2.58, RED, 0, 0, 0, 'rlamp');   // the high brake light
+    k.box(2.0, 0.2, 0.22, 0, 0.32, 2.56, BLK, 0, 0, 0, 'lit').box(1.2, 0.05, 0.2, 0, 0.5, 2.62, '#2a2b2e', 0, 0, 0, 'lit');   // the step bumper
+    k.box(0.52, 0.11, 0.02, 0, 0.66, 2.585, '#f2d24a', 0, 0, 0, 'lit');   // the plate
+    k.box(1.4, 0.22, 0.05, 0, 0.82, -2.565, BLK, 0, 0, 0, 'lit').box(1.9, 0.22, 0.14, 0, 0.42, -2.52, '#2a2b2e', 0, 0, 0, 'lit');   // the grille, the front bumper
+  },
+  bus(k, col) {   // an open-top seaside double-decker: the lower deck's windows, the open upper deck behind its waist-high sides with its rail and
+    // people aboard, a cream band between; at the back the engine grille, the lamps, the plate
+    const C2 = '#efe6cf';
+    const B = racerBody(k, col, { w: [[-3.7, 0.5, 0.32], [3.3, 0.5, 0.36]], up: 10, crease: 0.02, style: 'steel', cal: '#3a3c40', rim: '#c8ccd0',
+      keys: [[-5.42, 1.18, 0.42, 3.3], [-5.32, 1.25, 0.36, 3.42], [5.32, 1.25, 0.36, 3.42], [5.42, 1.18, 0.42, 3.3]] });
+    for (const sd of [-1, 1]) {
+      k.box(0.02, 0.85, 9.6, sd * 1.255, 1.15, -0.2, GLASS, 0, 0, 0, 'rglass');   // the lower deck's windows
+      for (let i = 0; i < 8; i++) k.box(0.025, 0.86, 0.08, sd * 1.257, 1.15, -4.6 + i * 1.25, col, 0, 0, 0, 'rpaint');   // their pillars
+      k.box(0.02, 0.3, 10.7, sd * 1.256, 2.1, 0, C2, 0, 0, 0, 'rpaint');   // the cream band
+      k.box(0.04, 0.05, 10.6, sd * 1.2, 4.0, 0, '#c8ccd0', 0, 0, 0, 'shiny');   // the upper deck's rail
+      for (let i = 0; i < 9; i++) k.box(0.04, 0.6, 0.04, sd * 1.2, 3.42, -4.8 + i * 1.2, '#c8ccd0', 0, 0, 0, 'shiny');
+      k.box(0.6, 0.18, 0.05, sd * 0.85, 0.75, 5.43, RED, 0, 0, 0, 'rlamp').box(0.2, 0.18, 0.06, sd * 1.05, 1.0, 5.43, '#ffb24a', 0, 0, 0, 'rlamp');
+    }
+    k.box(2.3, 0.85, 0.02, 0, 1.15, 5.425, GLASS, 0, 0, 0, 'rglass').box(2.4, 0.3, 0.02, 0, 2.1, 5.43, C2, 0, 0, 0, 'rpaint');   // the back window, the band round it
+    k.box(1.6, 0.5, 0.03, 0, 0.5, 5.43, '#1a1b1e', 0, 0, 0, 'lit'); for (let i = 0; i < 6; i++) k.box(1.5, 0.03, 0.04, 0, 0.55 + i * 0.07, 5.445, '#3a3c40', 0, 0, 0, 'lit');   // the engine grille
+    k.box(0.52, 0.11, 0.02, 0, 1.0, 5.435, '#f2d24a', 0, 0, 0, 'lit');
+    k.box(2.4, 1.1, 0.02, 0, 1.0, -5.425, GLASS, 0, 0, 0, 'rglass').box(2.3, 0.7, 0.02, 0, 2.55, -5.425, GLASS, 0, 0, 0, 'rglass');   // the screens
+    k.box(2.3, 0.04, 9.8, 0, 3.42, 0, '#6a5a4a', 0, 0, 0, 'lit');   // the upper deck's floor
+    const r = rnd(7); for (let i = 0; i < 12; i++) { const x = (i % 2 ? 0.6 : -0.6), z = -4.2 + (i >> 1) * 1.55; k.box(0.5, 0.45, 0.45, x, 3.46, z, '#7a2a2a', 0, 0, 0, 'lit'); if (r() < 0.75) { k.box(0.42, 0.5, 0.3, x, 3.75, z + 0.05, SHIRTS[(r() * 9) | 0], 0, 0, 0, 'lit'); k.ball(0.17, x, 4.42, z + 0.05, SKIN[(r() * 5) | 0], 1, 1.12, 1, 'lit', 10); } }   // seats, people
+  },
+  camper(k, col) {   // a coachbuilt motorhome: a van's cab at the front, the tall white box of the living space behind, its bed out over the
+    // cab; windows, the door, a ladder up the back to the roof, a bike rack, lamps low on the back corners
+    const W = '#f1efe9';
+    racerBody(k, col, { w: [[-1.85, 0.36, 0.24], [1.45, 0.36, 0.26]], up: 6, crease: 0.04, style: 'steel', cal: '#3a3c40', rim: '#9aa0a6',
+      keys: [[-2.82, 0.84, 0.4, 0.78], [-2.7, 0.97, 0.35, 0.98], [-2.45, 1.0, 0.33, 1.1], [-2.2, 1.0, 0.33, 1.16], [-1.55, 1.0, 0.33, 2.1], [-1.2, 1.0, 0.33, 2.12]], mirror: [-2.1, 1.45] });
+    const box = [[-1.25, 1.1, 0.36, 2.95], [-1.15, 1.13, 0.34, 3.0], [2.7, 1.13, 0.34, 3.0], [2.82, 1.08, 0.38, 2.92]];
+    k.loft(box, W, 'rpaint', { up: 10, dn: 10, belly: 0.5, n: 24 });   // the living space
+    k.loft([[-2.05, 0.5, 2.25, 2.6], [-1.85, 1.0, 2.2, 2.9], [-1.2, 1.1, 2.2, 2.98]], W, 'rpaint', { up: 4, dn: 6, belly: 0.5, n: 20 });   // its bed out over the cab
+    k.box(1.5, 0.3, 0.02, 0, 1.55, -2.07, GLASS, 0, 0.6, 0, 'rglass');   // the windscreen (raked)
+    for (const sd of [-1, 1]) {
+      k.box(0.02, 0.45, 0.55, sd * 1.003, 1.5, -1.6, GLASS, 0, 0, 0, 'rglass');
+      for (const [z, w] of [[-0.4, 0.9], [1.4, 1.2]]) k.box(0.03, 0.5, w, sd * 1.135, 1.75, z, '#22262c', 0, 0, 0, 'rglass');   // its windows
+      k.box(0.025, 0.08, 3.9, sd * 1.136, 1.2, 0.8, '#5a6b78', 0, 0, 0, 'rpaint');   // a grey stripe along it
+      k.box(0.12, 0.45, 0.05, sd * 0.95, 0.85, 2.84, RED, 0, 0, 0, 'rlamp').box(0.12, 0.1, 0.06, sd * 0.95, 1.12, 2.84, '#ffb24a', 0, 0, 0, 'rlamp');
+      cover(k, sd * 0.68, 0.98, -2.74, 1.5, 0.7, 0.8, sd * 0.25);
+      k.box(0.04, 2.3, 0.04, sd * 0.25 + 0.6, 0.7, 2.88, '#b8bcc0', 0, 0, 0, 'shiny');   // the ladder's rails
+    }
+    k.box(0.03, 1.9, 0.75, 1.136, 0.45, 0.2, '#e4e1da', 0, 0, 0, 'rpaint').box(0.03, 0.4, 0.3, 1.14, 1.55, 0.2, '#22262c', 0, 0, 0, 'rglass');   // the door
+    for (let i = 0; i < 7; i++) k.box(0.5, 0.03, 0.03, 0.6, 0.9 + i * 0.3, 2.88, '#b8bcc0', 0, 0, 0, 'shiny');   // its rungs
+    k.box(1.3, 0.55, 0.02, -0.25, 1.9, 2.83, '#22262c', 0, 0, 0, 'rglass');   // the back window
+    k.box(2.2, 0.18, 0.2, 0, 0.42, 2.8, BLK, 0, 0, 0, 'lit').box(0.52, 0.11, 0.02, 0, 0.66, 2.83, '#f2d24a', 0, 0, 0, 'lit');
+    k.box(1.6, 0.05, 0.3, 0, 1.05, 3.02, '#2a2b2e', 0, 0, 0, 'lit'); for (const x of [-0.45, 0.45]) { k.axle(0.33, 0.04, 16, x, 1.45, 3.08, '#1a1a1a', 'lit'); k.box(0.04, 0.5, 0.9, x, 1.25, 3.08, ['#c62828', '#1d6fd6'][x > 0 ? 1 : 0], 0, 0, 0, 'rpaint'); }   // two bikes on the rack
+  },
+  tractor(k, col) {   // a modern farm tractor: big ribbed back wheels under their mudguards, small front ones, the bonnet with its grille, the
+    // glass cab with a beacon on the roof, the exhaust up the front corner, lamps on the back
+    const G = col, T = '#1a1a1a';
+    k.loft([[-2.15, 0.5, 0.75, 1.55], [-2.05, 0.56, 0.7, 1.75], [-0.4, 0.56, 0.7, 1.8], [-0.2, 0.6, 0.7, 1.75]], G, 'rpaint', { up: 5, dn: 5, belly: 0.5, n: 20 });   // the bonnet
+    k.box(0.9, 0.7, 0.05, 0, 0.95, -2.17, '#22252a', 0, 0, 0, 'lit'); for (let i = 0; i < 6; i++) k.box(0.86, 0.03, 0.06, 0, 1.0 + i * 0.1, -2.18, '#4a4e54', 0, 0, 0, 'shiny');   // its grille
+    k.box(1.5, 0.35, 1.9, 0, 0.75, 0.75, '#2a2c30', 0, 0, 0, 'lit');   // the body under the cab
+    k.box(1.5, 1.55, 1.5, 0, 1.8, 0.85, '#2a3a46', 0, 0, 0, 'rglass');   // the cab's glass
+    for (const [x, z] of [[-0.74, 0.1], [0.74, 0.1], [-0.74, 1.6], [0.74, 1.6]]) k.box(0.08, 1.55, 0.08, x, 1.8, z, T, 0, 0, 0, 'lit');   // its pillars
+    k.box(1.62, 0.12, 1.65, 0, 3.35, 0.85, G, 0, 0, 0, 'rpaint').cyl(0.1, 0.12, 0.18, 10, 0.5, 3.47, 0.5, '#ff8c00', 0, 0, 'rlamp');   // the roof, the beacon
+    k.cyl(0.07, 0.08, 1.6, 8, 0.45, 1.75, -0.6, '#3a3a3a');   // the exhaust stack
+    for (const sd of [-1, 1]) {
+      k.axle(0.85, 0.55, 22, sd * 1.05, 0.85, 1.1, T, 'lit').axle(0.5, 0.57, 16, sd * 1.05, 0.85, 1.1, '#c8a020', 'shiny');   // the big back wheels, yellow centres
+      for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2; k.box(0.56, 0.08, 0.16, sd * 1.05, 0.85 + Math.cos(a) * 0.84, 1.1 + Math.sin(a) * 0.84, '#111111', a, 0, 0, 'lit'); }   // their ribs
+      k.put(new THREE.CylinderGeometry(0.95, 0.95, 0.62, 18, 1, true, -Math.PI / 2, Math.PI), G, sd * 1.05, 0.9, 1.1, 0, 0, Math.PI / 2, 1, 1, 1, 'rpaint');   // the mudguard
+      k.axle(0.5, 0.36, 16, sd * 0.8, 0.5, -1.5, T, 'lit').axle(0.28, 0.37, 12, sd * 0.8, 0.5, -1.5, '#c8a020', 'shiny');
+      k.box(0.12, 0.12, 0.05, sd * 0.6, 1.5, 1.98, RED, 0, 0, 0, 'rlamp').box(0.1, 0.1, 0.05, sd * 0.6, 1.66, 1.98, '#ffb24a', 0, 0, 0, 'rlamp');
+    }
+    k.box(1.2, 0.25, 0.3, 0, 0.6, 1.95, '#3a3a3a', 0, 0, 0, 'lit').box(0.4, 0.08, 0.5, 0, 0.55, 2.25, '#5a5a5a', 0, 0, 0, 'shiny');   // the linkage, the hitch
+  },
+  lorry(k, col) {   // a rigid box lorry: the tall flat-fronted cab, the long box body behind it (white, its cab in colour), the doors at the back with
+    // their locking bars, the lamps on the bar under it, mudflaps
+    const W = '#eeeeec';
+    racerBody(k, col, { w: [[-4.7, 0.52, 0.34], [3.4, 0.52, 0.5], [4.6, 0.52, 0.5]], up: 9, crease: 0.03, style: 'steel', cal: '#3a3c40', rim: '#c8ccd0',
+      keys: [[-6.0, 1.15, 0.6, 2.9], [-5.9, 1.24, 0.55, 3.2], [-4.2, 1.24, 0.55, 3.3], [-4.05, 1.2, 0.6, 3.2]], mirror: [-5.6, 2.2] });
+    k.loft([[-4.0, 1.25, 1.15, 3.85], [-3.9, 1.27, 1.12, 3.95], [5.92, 1.27, 1.12, 3.95], [6.02, 1.25, 1.15, 3.88]], W, 'rpaint', { up: 12, dn: 12, belly: 0.5, n: 24 });   // the box
+    k.box(1.6, 0.35, 10, 0, 0.75, 0.9, '#1a1b1d', 0, 0, 0, 'lit');   // the chassis under it
+    k.box(2.3, 1.1, 0.02, 0, 1.95, -6.01, GLASS, 0, 0, 0, 'rglass').box(1.6, 0.5, 0.05, 0, 1.1, -6.02, '#22252a', 0, 0, 0, 'lit');   // the windscreen, the grille
+    for (const sd of [-1, 1]) {
+      k.box(0.02, 0.7, 0.8, sd * 1.243, 2.2, -5.3, GLASS, 0, 0, 0, 'rglass');
+      cover(k, sd * 0.9, 0.85, -5.98, 1.6, 0.7, 0.8, 0);
+      k.box(0.04, 2.7, 0.04, sd * 0.35, 1.2, 6.04, '#b8bcc0', 0, 0, 0, 'shiny').box(0.04, 2.7, 0.04, sd * 0.95, 1.2, 6.04, '#b8bcc0', 0, 0, 0, 'shiny');   // the locking bars
+      k.box(0.32, 0.12, 0.05, sd * 0.85, 0.82, 6.08, RED, 0, 0, 0, 'rlamp').box(0.12, 0.12, 0.05, sd * 1.1, 0.82, 6.08, '#ffb24a', 0, 0, 0, 'rlamp');   // the lamps on the bar
+      k.box(0.5, 0.55, 0.03, sd * 0.85, 0.3, 5.4, '#111111', 0, 0, 0, 'lit');   // a mudflap
+    }
+    k.box(0.012, 2.8, 0.03, 0, 1.12, 6.035, '#2a2a2a', 0, 0, 0, 'lit');   // the doors' split
+    k.box(2.3, 0.14, 0.12, 0, 0.75, 6.04, '#2a2b2e', 0, 0, 0, 'lit').box(0.52, 0.11, 0.02, 0, 0.65, 6.1, '#f2d24a', 0, 0, 0, 'lit');   // the under-run bar, the plate
   },
   wedge(k, col) {   // a rival: a low, wide 1980s wedge supercar of our own - knife-edge nose, dark glass canopy pushed forward,
     // a flat engine deck with slats, intakes in its flanks, a wing on stalks, one bar of light across its tail
@@ -2428,24 +2506,72 @@ const TRAFFIC = {
     k.box(1.76, 0.12, 0.05, 0, 0.6, 2.13, '#121212').box(1.4, 0.06, 0.06, 0, 0.62, 2.15, '#ff2a2a', 0, 0, 0, 'glow');
     wheelsOn(k, [-0.82, 0.82], [-1.35, 1.32], 0.34, 0.3); rearEnd(k, 1.84, 2.14, 0.3, 0.42);
   },
-  lorry(k, col) {
-    k.side([-6, 0.6, 3.6, 0.6, 3.6, 3.9, -6, 3.9], 2.5, 0, 0, 0, col, 'shiny', 0.05); k.side([3.8, 0.5, 6.1, 0.5, 6.1, 2.6, 5.4, 3.3, 3.8, 3.3], 2.4, 0, 0, 0, '#3a3a3a', 'shiny', 0.05);
-    k.box(2.52, 0.3, 9.6, 0, 0.5, -1.2, '#3a3a3a'); wheelsOn(k, [-1.05, 1.05], [-4.6, -3.4, 4.8], 0.5, 0.35); lights(k, 2.5, 0.9, 6.12, 0.3);
-  }
 };
 
 // ---------------------------------------------------------------- the racers (owner, 6 Oct): a pack of supercars of our own, each a cousin of a
 // famous shape - its proportions, stance and colours - never a copy: no badges, names, grilles or lamp signatures of any real make.
 // Keys: rpaint (clearcoat body), rglass, shiny (chrome, alloy), lit (black, tyres), rlamp (lamps).
-const RIMS = { five: [5, false, 0.085], twin: [5, true, 0.042], star: [5, false, 0.045], ten: [10, false, 0.034], seven: [7, false, 0.05] };
-function rwheel(k, x, z, r, w, rim, style) {   // a low tyre on the ground, a big rim on its outer face (r: the tyre's radius)
-  const sd = Math.sign(x) || 1, ox = x + sd * (w / 2 - 0.005), rr = r * 0.74, S = RIMS[style] || RIMS.five;
-  k.axle(r, w, 16, x, r, z, '#131313', 'lit');
-  k.axle(rr, 0.02, 14, ox, r, z, '#1c1e21', 'lit');   // the barrel, dark behind the spokes
-  k.put(new THREE.TorusGeometry(rr, 0.02, 4, 18), rim, ox + sd * 0.006, r, z, 0, Math.PI / 2, 0, 1, 1, 1, 'shiny');   // the lip
-  for (let i = 0; i < S[0]; i++) for (const off of S[1] ? [-0.12, 0.12] : [0]) { const a = i * Math.PI * 2 / S[0] + off;
-    k.put(new THREE.BoxGeometry(0.03, rr * 0.92, S[2]), rim, ox + sd * 0.01, r + Math.cos(a) * rr * 0.46, z + Math.sin(a) * rr * 0.46, a, 0, 0, 1, 1, 1, 'shiny'); }
-  k.axle(0.07, 0.03, 10, ox + sd * 0.014, r, z, rim, 'shiny').axle(0.035, 0.035, 8, ox + sd * 0.018, r, z, '#1c1e21', 'lit');
+const RIMS = { steel: [8, false, 0.05], five: [5, false, 0.085], twin: [5, true, 0.042], star: [5, false, 0.045], ten: [10, false, 0.034], seven: [7, false, 0.05] };
+function roadCar(k, col, p) {   // an everyday car on the racers' kit (the nose at -Z): p.L half its length, hw half its width, r the wheels, wz where,
+  // clear the ground clearance; the heights of the nose, the bonnet at the screen, the waist and the tail; ws the screen's foot and head (z);
+  // roofY, roofEnd; back: 'hatch' | 'estate' (the roof runs to the tail) or 'saloon' (a boot from deck); tall: an SUV (black cladding, rails)
+  const L = p.L, hw = p.hw, hc = hw - 0.11, [s0, s1] = p.ws, wf = p.wz[0], wr = p.wz[1], cl = p.clear, sal = p.back === 'saloon';
+  const end = sal ? p.deck : L - 0.07, endY = sal ? p.beltY + 0.06 : p.tailY + 0.02;
+  const keys = [[-L, hw * 0.74, cl + 0.08, p.noseY], [-L + 0.1, hw * 0.93, cl + 0.03, p.noseY + 0.1], [-L + 0.36, hw * 0.99, cl, p.noseY + 0.2], [wf, hw, cl, p.bonnetY - 0.07], [s0, hw, cl, p.bonnetY],
+    [(s0 + wr) / 2, hw, cl, p.beltY], [wr, hw, cl, p.beltY + 0.03], [L - 0.3, hw * 0.97, cl + 0.02, p.tailY], [L - 0.08, hw * 0.92, cl + 0.05, p.tailY - 0.02], [L, hw * 0.84, cl + 0.09, p.tailY - 0.07]];
+  const cab = [[s0, hc + 0.02, p.bonnetY - 0.03, p.bonnetY + 0.01], [s0 + (s1 - s0) * 0.5, hc, p.beltY - 0.03, p.bonnetY + (p.roofY - p.bonnetY) * 0.62], [s1, hc - 0.02, p.beltY - 0.01, p.roofY - 0.03],
+    [(s1 + p.roofEnd) / 2, hc - 0.03, p.beltY, p.roofY], [p.roofEnd, hc - 0.05, p.beltY + 0.01, p.roofY - 0.04], [end, hc - 0.1, endY - 0.05, endY]];
+  const capL = [[s1 + 0.04, p.roofY - 0.08], [(s1 + p.roofEnd) / 2, p.roofY - 0.07], [p.roofEnd - 0.1, p.roofY - 0.09]].concat(sal ? [[p.roofEnd + 0.04, p.roofY - 0.1]] : [[p.roofEnd + 0.03, p.beltY + 0.04], [end, p.beltY + 0.04]]);
+  const roof = capOver(cab, capL, 3);
+  const B = racerBody(k, col, { w: [[wf, p.r, 0.23], [wr, p.r, 0.24]], up: p.tall ? 4 : 3.2, crease: 0.07, style: p.rims || 'five', rim: '#c4c8cc', cal: p.sporty ? '#b81e26' : '#4a4d52', mirror: [s0 + 0.14, p.beltY + 0.1], doors: p.doors,
+    keys: keys, cabin: cab, roof: roof, roofBelly: 0.2, roofDn: 8 });
+  if (!sal) glassOn(k, roof, p.roofEnd + 0.04, end - 0.03, 0.74, 3, 0.2); else glassOn(k, roof, p.roofEnd + 0.03, end - 0.04, 0.78, 3, 0.2);   // the back window
+  const ty = sal ? p.tailY - 0.08 : p.tailY - 0.1, tz = L - 0.02, thw = B.hwAt(L - 0.06);
+  for (const sd of [-1, 1]) {   // the lamp clusters at the back corners, wrapping round: a dark housing, the red lamp, a white reversing lamp, an amber indicator
+    k.box(0.44, 0.17, 0.08, sd * (thw - 0.26), ty, tz, '#2a0608', 0, sd * 0.12, 0, 'lit');
+    k.box(0.3, 0.1, 0.09, sd * (thw - 0.3), ty + 0.02, tz + 0.006, RED, 0, sd * 0.12, 0, 'rlamp');
+    k.box(0.1, 0.05, 0.09, sd * (thw - 0.12), ty - 0.04, tz + 0.004, '#f4f2ea', 0, sd * 0.12, 0, 'rlamp').box(0.08, 0.05, 0.09, sd * (thw - 0.44), ty - 0.04, tz + 0.006, '#ffb24a', 0, sd * 0.12, 0, 'rlamp');
+    cover(k, sd * (hw - 0.24), p.noseY + 0.06, -L + 0.1, 2.0, 0.55, 0.9, sd * 0.3);   // the headlamps
+    if (p.tall) { k.box(0.05, 0.13, wr - wf - 2 * p.r - 0.1, sd * (hw + 0.01), cl + 0.06, (wf + wr) / 2, BLK, 0, 0, 0, 'lit'); }   // black cladding along the sills
+    if (p.tall || p.rails) k.box(0.04, 0.05, Math.max(0.6, p.roofEnd - s1 - 0.1), sd * (hc - 0.12), p.roofY + 0.02, (s1 + p.roofEnd) / 2, '#26282c', 0, 0, 0, 'shiny');   // roof rails
+    if (p.sporty) k.roll(0.042, 0.1, 10, sd * 0.38, cl + 0.12, L + 0.02, '#b8bcc0', 'shiny').roll(0.042, 0.1, 10, sd * 0.52, cl + 0.12, L + 0.02, '#b8bcc0', 'shiny');   // four pipes
+  }
+  if (p.sporty) k.box(thw * 1.3, 0.025, 0.05, 0, ty + 0.06, tz + 0.03, RED, 0, 0, 0, 'rlamp');   // the lamp bar across the tail
+  else k.roll(0.035, 0.1, 10, hw * 0.55, cl + 0.07, L + 0.01, '#8a8e92', 'shiny');   // a tailpipe
+  if (!sal) { k.box(hc * 1.5, 0.035, 0.2, 0, p.roofY - 0.03, p.roofEnd + 0.08, col, 0, 0, -0.25, 'rpaint'); k.box(0.36, 0.03, 0.03, 0, p.roofY - 0.06, p.roofEnd + 0.16, RED, 0, 0, 0, 'rlamp'); }   // the roof spoiler, the high brake light
+  k.box(hw * 1.86, 0.2, 0.12, 0, cl + 0.1, L - 0.03, BLK, 0, 0, 0, 'lit');   // the bumper's dark lower part
+  k.box(0.52, 0.11, 0.02, 0, sal ? p.tailY - 0.24 : p.tailY - 0.3, L + 0.012, '#f2d24a', 0, 0, 0, 'lit');   // the plate
+  k.box(hw * 0.9, 0.14, 0.05, 0, p.noseY - 0.08, -L + 0.02, '#16181b', 0, 0, 0, 'lit').box(hw * 1.5, 0.12, 0.06, 0, cl + 0.12, -L + 0.06, '#16181b', 0, 0, 0, 'lit');   // the grille, the intake
+  k.box(0.52, 0.11, 0.02, 0, cl + 0.25, -L - 0.005, '#f4f4f2', 0, 0, 0, 'lit');   // the front plate
+}
+function wheelParts(k, x, y, z, r, w, sd, rim, style, caliper, K) {   // at (x, y, z), the axle along X, the face towards sd (+1: +X); K: the material keys
+  // { t: tyre, a: alloy, d: dark } (the world's by default; your car's own for your wheels)
+  const hi = !!K; K = K || { t: 'lit', a: 'shiny', d: 'lit' };   // (hi: your own wheels, seen close; the others' lighter - there are dozens on the road)
+  const S = RIMS[style] || RIMS.five, rr = r * 0.68, fx = x + sd * (w / 2), T = '#151517', N = hi ? 26 : 14;
+  const prof = [[rr - 0.01, -w / 2], [r - 0.07, -w / 2 - 0.012], [r - 0.025, -w / 2 + 0.004], [r, -w / 2 + 0.035], [r, w / 2 - 0.035], [r - 0.025, w / 2 - 0.004], [r - 0.07, w / 2 + 0.012], [rr - 0.01, w / 2]];
+  const tg = new THREE.LatheGeometry((hi ? prof : [prof[0], prof[1], prof[3], prof[4], prof[6], prof[7]]).map((q) => new THREE.Vector2(q[0], q[1])), N); tg.rotateZ(-Math.PI / 2);
+  k.put(tg, T, x, y, z, 0, 0, 0, 1, 1, 1, K.t);   // the tyre: a rounded section (tread, shoulders, a bulging sidewall) turned round the axle
+  if (hi) k.put(new THREE.TorusGeometry(r - 0.06, 0.006, 4, 30), '#3a3b3e', fx + sd * 0.008, y, z, 0, Math.PI / 2, 0, 1, 1, 1, K.t);   // a fine line on the sidewall
+  k.axle(rr - 0.01, 0.012, N, fx - sd * w * 0.7, y, z, '#1c1d20', K.d);   // dark, deep behind the spokes (the barrel's inside)
+  k.put(new THREE.TorusGeometry(rr, 0.018, hi ? 5 : 3, hi ? 28 : 16), rim, fx - sd * 0.012, y, z, 0, Math.PI / 2, 0, 1, 1, 1, K.a);   // the lip
+  if (style === 'steel') {   // a pressed steel wheel: a dished disc, a ring of round holes, the hub
+    k.axle(rr - 0.015, 0.02, 22, fx - sd * 0.05, y, z, rim, K.a);
+    for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; k.axle(0.035, 0.03, 6, fx - sd * 0.045, y + Math.cos(a) * rr * 0.62, z + Math.sin(a) * rr * 0.62, '#202226', K.d); }
+    k.axle(rr * 0.32, 0.05, 14, fx - sd * 0.035, y, z, shade(rim, -0.12), K.a);
+  } else {   // an alloy: the spokes dished in from the lip to a recessed hub
+    const dish = 0.06, n = S[0], twin = S[1], sw = S[2];
+    for (let i = 0; i < n; i++) for (const off of twin ? [-0.11, 0.11] : [0]) {
+      const a = i * Math.PI * 2 / n + off, L = rr - 0.06, mid = 0.06 + L / 2, tilt = Math.atan2(dish, L);
+      const g = new THREE.BoxGeometry(0.03, L, sw); g.rotateZ(sd * tilt);   // (leaning in towards the hub)
+      k.put(g, rim, fx - sd * (0.018 + dish / 2), y + Math.cos(a) * mid, z + Math.sin(a) * mid, a, 0, 0, 1, 1, 1, K.a);
+    }
+    k.axle(0.075, 0.05, 14, fx - sd * (0.018 + dish), y, z, rim, K.a).axle(0.04, 0.02, 10, fx - sd * (0.004 + dish), y, z, '#2a2d31', K.d);   // the hub, its centre cap
+  }
+  k.axle(rr - 0.05, 0.025, N, fx - sd * 0.13, y, z, '#5a5d62', K.d); if (hi) k.axle(rr * 0.42, 0.03, 14, fx - sd * 0.12, y, z, '#3a3c40', K.d);   // the brake disc behind the spokes
+  if (caliper) k.box(0.06, 0.1, 0.16, fx - sd * 0.1, y + rr * 0.42, z + rr * 0.45, typeof caliper === 'string' ? caliper : '#b81e26', -0.8, 0, 0, K.a);   // the caliper, at the back of the disc
+}
+function rwheel(k, x, z, r, w, rim, style, cal) {   // a wheel on the ground in a body (the racers', the traffic's): its face outwards; cal: the caliper's colour
+  wheelParts(k, x, r, z, r, w, Math.sign(x) || 1, rim, style, cal || '#b81e26');
 }
 function lerpAt(list, z, j) { let i = 0; while (i < list.length - 2 && list[i + 1][0] < z) i++; const a = list[i], b = list[i + 1], f = Math.max(0, Math.min(1, (z - a[0]) / (b[0] - a[0]))); return a[j] + (b[j] - a[j]) * f; }
 function racerBody(k, col, o) {   // a lofted body (paint, shaded deeper low down), a glass cabin and a painted roof; o.w: [[z, r, tyre width]...] the wheels
@@ -2461,7 +2587,7 @@ function racerBody(k, col, o) {   // a lofted body (paint, shaded deeper low dow
     const hw = B.hwAt(z), R = r + 0.05;
     k.put(new THREE.CylinderGeometry(R, R, 0.36, 18, 1, true, -Math.PI / 2, Math.PI), '#0b0b0c', sd * (hw - 0.2), r, z, 0, 0, Math.PI / 2, 1, 1, 1, 'lit');
     k.put(new THREE.TorusGeometry(R + 0.008, 0.016, 5, 22, Math.PI), col, sd * (hw - 0.012), r, z, 0, sd * Math.PI / 2, 0, 1, 1, 1, 'rpaint');
-    rwheel(k, sd * (hw - w / 2 - 0.02), z, r, w, o.rim || '#cdd1d5', o.style);
+    rwheel(k, sd * (hw - w / 2 - 0.02), z, r, w, o.rim || '#cdd1d5', o.style, o.cal);
   }
   if (o.mirror) { const [mz, my] = o.mirror; for (const sd of [-1, 1]) { const hw = B.hwAt(mz) - 0.06;   // door mirrors on short arms
     k.box(0.12, 0.02, 0.03, sd * (hw + 0.05), my - 0.03, mz, '#151517', 0, 0, sd * 0.3, 'lit');
@@ -2679,13 +2805,15 @@ Object.assign(TRAFFIC, {
   }
 });
 export const TRAFFIC_ORDER = ['hatch', 'saloon', 'van', 'bus', 'camper', 'tractor', 'lorry', 'sports', 'wedge', 'lemans', 'coupe9', 'gtbrit', 'raging', 'trident', 'barchetta'];
-const TCOL = { hatch: [0, 1, 2, 4, 5, 6], saloon: [0, 1, 2, 3, 6, 7], van: [2, 2, 2, 6, 1], bus: [0, 4], camper: [5, 4, 1, 7], tractor: [5, 0], lorry: [2, 1, 3], sports: [0, 4, 7, 1],
+const TCOL = {   // the colours real cars come in (silver, grey, black, white, a deep blue, a dark red, a dark green) - not toy primaries
+  hatch: ['#b9bdc2', '#2e3238', '#e9eaec', '#1f3a66', '#7d1f24', '#5f6670', '#14161a', '#9a3a2a'], saloon: ['#a9adb3', '#16181b', '#e7e8ea', '#22385e', '#4a4e55', '#25412f', '#6e1c22', '#8a8a86'],
+  van: ['#eeeeec', '#eeeeec', '#b9bdc2', '#1f3a66', '#eeeeec', '#2e3238'], bus: ['#a8232b', '#2c5e3c', '#1f4f8a'], camper: ['#eeeeec', '#c9ccd0'], tractor: ['#2f7a3a', '#b02a25', '#2a5aa0'], lorry: ['#2b5aa8', '#eeeeec', '#a8232b', '#2f6b48'], sports: ['#b9bdc2', '#14161a', '#7a1a22', '#e9eaec', '#22385e'],
   wedge: ['#d10f1d', '#f2c230', '#e8eaec', '#e2531c'], lemans: ['#2e64d8', '#d62a1c', '#f4f4f4', '#e2531c'], coupe9: ['#c0c4c8', '#c81e1e', '#f2f2ee', '#2f6b48'], gtbrit: ['#2f6b48', '#c0c4c8', '#8a8f96', '#c9a227'],
   raging: ['#9fd000', '#ef7d00', '#f2c230', '#f4f4f2'], trident: ['#2b4fa0', '#e8e4da', '#c0c4c8', '#5a6b78'], barchetta: ['#c81e1e', '#e8c02a', '#c0c4c8', '#2e64d8'] };   // (the racers: their own colours)
 export function trafficModel(t, colIdx) {
-  const id = TRAFFIC_ORDER[t], cols = TCOL[id], c0 = cols[colIdx % cols.length], col = typeof c0 === 'string' ? c0 : CARCOL[c0], key = 'veh|' + id + '|' + col;
+  const id = TRAFFIC_ORDER[t], cols = TCOL[id], c0 = cols[colIdx % cols.length], col = typeof c0 === 'string' ? c0 : CARCOL[c0], key = 'veh|' + id + '|' + col + '|' + (colIdx % cols.length);
   let m = cache.get(key); if (m) return m;
-  const k = new Kit(); TRAFFIC[id](k, col);
+  const k = new Kit(); TRAFFIC[id](k, col, colIdx % cols.length);
   m = k.build(); cache.set(key, m);
   return m;
 }
@@ -2767,13 +2895,14 @@ const CARDEF = {
 // (our own design: a wedge nose with flush lamps, scoops ahead of the rear wheels, louvres over the engine, humps behind
 // the seats, a light bar across the tail and four pipes)
 function spider() {
-  const k = new Kit(), col = '#d10f1d', len = 2.3, w = 1.98, wz = [-1.42, 1.42];
+  const k = new Kit(), col = '#c0111c', len = 2.3, w = 1.98, wz = [-1.42, 1.42];   // (a deeper red, 6 Oct: the owner wanted it less toy-like)
   const keys = [[-2.32, 0.6, 0.36, 0.44], [-2.18, 0.82, 0.3, 0.53], [-1.92, 0.93, 0.28, 0.645], [-1.42, 1.0, 0.28, 0.76], [-0.95, 0.97, 0.28, 0.79], [-0.52, 0.94, 0.28, 0.81],
     [-0.42, 0.93, 0.28, 0.8], [-0.33, 0.92, 0.28, 0.47], [0.9, 0.93, 0.28, 0.47], [0.99, 0.95, 0.28, 0.85], [1.2, 1.08, 0.28, 0.85], [1.45, 1.13, 0.28, 0.858], [1.72, 1.11, 0.29, 0.865], [2.1, 1.04, 0.3, 0.875], [2.2, 1.0, 0.31, 0.89], [2.27, 0.95, 0.36, 0.92], [2.31, 0.87, 0.42, 0.915]];
   const st = sections(keys, wz), at = (z) => { let b = st[0]; for (const s of st) if (Math.abs(s[0] - z) < Math.abs(b[0] - z)) b = s; return b; };
   const tone = (n) => { const list = k.parts.paint; for (let q = list.length - (n || 1); q < list.length; q++) { const g = list[q], P3 = g.attributes.position, C3 = g.attributes.color;   // two-tone shading: deeper red low down and along the sills, a touch brighter on the shoulders
     for (let i = 0; i < P3.count; i++) { const y = P3.getY(i), f = y > 0.8 ? 1.15 : y > 0.62 ? 1 + (y - 0.62) / 0.18 * 0.15 : y > 0.45 ? 0.74 + 0.26 * (y - 0.45) / 0.17 : 0.62 + 0.12 * Math.min(1, Math.max(0, (y - 0.3) / 0.15)); C3.setXYZ(i, C3.getX(i) * f, C3.getY(i) * f, C3.getZ(i) * f); } } };
   k.loft(st, col, 'paint', { up: 3.6, dn: 6, belly: 0.5, crease: (z) => z < 0.95 ? 0.32 : z < 1.25 ? 0.32 + (z - 0.95) / 0.3 * 0.43 : z < 2.2 ? 0.75 : 0.75 - (z - 2.2) / 0.11 * 0.15 }); tone(2);   // a crisp shoulder line along the flanks: upright below it, leaning in above (more over the rear wheels: hips)
+  for (const sd of [-1, 1]) for (let z = wz[0] + 0.46; z < wz[1] - 0.46; z += 0.24) k.box(0.05, 0.11, 0.26, sd * (at(z)[1] - 0.012), 0.33, z, '#141416', 0, 0, 0, 'trim');   // a dark sill between the wheels: the side looks lower, less of a slab
   // the cabin: a black tub, low black leather seats, the dash and its glowing dials, a raked curved windscreen in a slim black frame
   k.box(1.74, 0.03, 1.34, 0, 0.465, 0.29, '#121212', 0, 0, 0, 'trim');   // the floor, down in the well
   k.box(0.22, 0.2, 1.1, 0, 0.47, 0.25, '#1c1c1e', 0, 0, 0, 'trim');   // the transmission tunnel between the seats
@@ -2857,19 +2986,8 @@ function spider() {
   for (const z of wz) for (const sd of [-1, 1]) k.box(0.05, 0.13, 0.17, sd * ((z > 0 ? wxr : wx) - 0.15), 0.43, z - 0.1, '#d01818', 0, 0, 0, 'lit');
   return { k: k, len: len, w: w, wz: wz, wx: wx, wxr: wxr };
 }
-function bigWheel() {   // a low tyre, a five-spoke star rim and the brake disc behind it
-  const wk = new Kit();
-  wk.axle(0.34, 0.27, 24, 0, 0, 0, '#1c1c1e', 'tyre').axle(0.285, 0.275, 22, 0, 0, 0, '#232325', 'tyre');
-  wk.axle(0.25, 0.05, 20, -0.05, 0, 0, '#3a3d40', 'trim');   // the disc
-  wk.put(new THREE.TorusGeometry(0.27, 0.026, 6, 32), '#e6e9ec', 0.145, 0, 0, 0, Math.PI / 2, 0, 1, 1, 1, 'alloy');   // the rim's lip, bright
-  for (let i = 0; i < 10; i++) { const a = Math.floor(i / 2) * Math.PI * 2 / 5 + (i % 2 ? 0.1 : -0.1); wk.put(new THREE.BoxGeometry(0.04, 0.26, 0.055), '#a4aab2', 0.15, Math.cos(a) * 0.135, Math.sin(a) * 0.135, a, 0, 0, 1, 1, 1, 'alloy'); }   // five twin spokes, silver
-  wk.axle(0.265, 0.02, 24, 0.137, 0, 0, '#26282b', 'trim');   // the dark face behind the spokes
-  wk.put(new THREE.TorusGeometry(0.312, 0.02, 6, 32), '#55565a', 0.13, 0, 0, 0, Math.PI / 2, 0, 1, 1, 0.4, 'tyre');   // the sidewall band
-  wk.put(new THREE.TorusGeometry(0.312, 0.007, 4, 32), '#8a8b90', 0.138, 0, 0, 0, Math.PI / 2, 0, 1, 1, 1, 'tyre');   // a ring of lettering
-  wk.axle(0.06, 0.06, 10, 0.155, 0, 0, '#2a2d31', 'trim');
-  wk.axle(0.26, 0.012, 22, -0.141, 0, 0, '#8c9095', 'alloy').axle(0.07, 0.03, 12, -0.155, 0, 0, '#c4c8cc', 'alloy');   // the back of the wheel
-  wk.put(new THREE.TorusGeometry(0.312, 0.02, 6, 32), '#55565a', -0.13, 0, 0, 0, Math.PI / 2, 0, 1, 1, 0.4, 'tyre');
-  return wk.build();
+function bigWheel() {   // your wheel: a low rounded tyre, a ten-spoke concave alloy, the disc behind it (the caliper is on the body: the wheel turns)
+  const wk = new Kit(); wheelParts(wk, 0, 0, 0, 0.34, 0.29, 1, '#d4d8dc', 'twin', false, { t: 'tyre', a: 'alloy', d: 'trim' }); return wk.build();
 }
 
 // ---------------------------------------------------------------- the two of you, in parts that move (world3d.js puts them together and poses them)
