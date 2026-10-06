@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=52';
+import { createWorld } from './world3d.js?v=53';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
@@ -389,11 +389,15 @@ function pops(g, W) {
 // ---------------------------------------------------------------- sounds: one-off effects, and the engine, wind and tyres that follow the car
 function pan(e) { return e && e.x != null ? Math.max(-0.8, Math.min(0.8, e.x * 0.12)) : 0; }
 // ---- your passenger's voice: one of each line's takes, a touch louder than the music, which dips while she speaks
-const VOICE = { go: 2, drift: 2, near: 2, pass: 2, coins: 2, clean: 2, speed: 2, air: 2, slip: 2, left: 2, right: 2, great: 3, good: 2, fail: 2, yay: 2, aww: 2, crash: 2, bump: 2, close: 2, wow: 2, wheee: 2, check: 2, goal: 2, hurry: 1, timeup: 1 };
+const VOICE = { go: 2, drift: 2, near: 2, pass: 2, coins: 2, clean: 2, speed: 2, air: 2, slip: 2, left: 2, right: 2, great: 3, good: 2, fail: 2, yay: 2, aww: 2, crash: 2, bump: 2, close: 2, wow: 2, wheee: 2, check: 2, goal: 2, hurry: 1, timeup: 1,
+  nitro: 3, spin: 2, bye: 3, chat: 5, love: 2, sulk: 2 };   // (6 Oct: every take was silent until now - see tools/coastrun/make_voice.py)
+['winton', 'charminster', 'kinson', 'muscliff', 'littledown', 'towerpark', 'bearcross', 'hurn', 'christchurch', 'harbour', 'wimborne', 'ferndown', 'highcliffe', 'hengistbury', 'wareham', 'wool', 'purbeck', 'weymouth', 'jurassic', 'swanage', 'portland', 'lyme', 'kimmeridge', 'sandbanks', 'lymington', 'forest', 'needles'].forEach((k) => { VOICE['at-' + k] = 1; });   // what she says arriving at each place
 const VBUF = {}; let vLoaded = false, vOn = true;
 function loadVoices(a) {
   if (vLoaded) return; vLoaded = true;
-  for (const id in VOICE) for (let n = 0; n < VOICE[id]; n++) fetch('voice/' + id + '-' + n + '.mp3').then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(r.status))).then((b) => a.decodeAudioData(b)).then((buf) => { (VBUF[id] || (VBUF[id] = []))[n] = buf; }).catch(() => {});
+  const q = []; for (const id in VOICE) for (let n = 0; n < VOICE[id]; n++) q.push([id, n]);   // (a few at a time: all 93 at once ran a browser out of network buffers)
+  const next = () => { const it = q.shift(); if (!it) return; const id = it[0], n = it[1]; fetch('voice/' + id + '-' + n + '.mp3?v=2').then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(r.status))).then((b) => a.decodeAudioData(b)).then((buf) => { (VBUF[id] || (VBUF[id] = []))[n] = buf; }).catch(() => {}).then(next); };
+  for (let w = 0; w < 4; w++) next();
 }
 function say(id, S) {
   const a = S.ctx(); if (!a || !vOn) return;

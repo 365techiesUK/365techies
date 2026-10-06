@@ -270,7 +270,7 @@ test('her requests: do what she asks in time for hearts; a knock spoils "careful
   W.req = { k: 'clean', txt: '', t0: W.t, dur: 720, goal: 1, have: 0 };
   W.cars.push({ id: 99, s: W.s + 6, x: 0, tx: 0, v: 10, v0: 10, t: 0, b: 0, col: 0, lc: 9999, hitT: -999, passed: false, ds: 6, spin: 0 });
   const h1 = W.hearts; drive(W, 40, (w) => { w.x = 0; return {}; });
-  assert.equal(W.req, null, 'over'); assert.equal(W.hearts, h1, 'no hearts after a bump'); assert.ok(W.her.k === 'scared' || W.her.k === 'sad');
+  assert.equal(W.req, null, 'over'); assert.equal(W.hearts, h1, 'no hearts after a bump'); assert.ok(W.her.k === 'scared' || W.her.k === 'sad' || W.her.k === 'sulk', 'she minds: ' + W.her.k);
   const F = E.newWorld(2, {}, 18); go(F); F.cars = [];
   F.s = (F.fork.a - 60) * E.SEG; F.v = 40; drive(F, 30, (w) => { w.v = 40; return {}; });
   assert.ok(F.reqSide, 'she says which way'); assert.equal(F.her.k, 'point');

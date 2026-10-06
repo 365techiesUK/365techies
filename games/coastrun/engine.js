@@ -1065,9 +1065,10 @@
       W.stageNo++; W.stage = g.st; W.reqNext = Math.max(W.reqNext, W.t + 60 * 5);
       if (g.kind === 'round') {
         W.route = [g.st]; W.legs = []; W.legT0 = W.t; W.legHearts = 0; W.runHearts = 0; W.runAsked = 0; W.result = null; rebunch(W); W.bestPos = 99;
-        bannerOf(W, 'ROUND ' + W.round, RUNS[STAGES[g.st].run].banner + ' - busier and quicker', 'stage'); W.events.push({ say: 'Round ' + W.round });
+        bannerOf(W, 'ROUND ' + W.round, RUNS[STAGES[g.st].run].banner + ' - busier and quicker', 'stage'); W.events.push({ say: 'Round ' + W.round }); W.sayLater = { id: 'at-' + STAGES[g.st].key, t: W.t + 150 };
       } else {
         W.time += add; bannerOf(W, 'CHECKPOINT', 'EXTENDED TIME +' + add + ' SEC', 'check'); W.events.push({ sfx: 'check' }); W.events.push({ say: 'Checkpoint: ' + add + ' more seconds' });
+        W.sayLater = { id: 'at-' + STAGES[g.st].key, t: W.t + 140 };   // (then she names the place)
         mood(W, 'cheer'); voice(W, 'check', true);
       }
     } else if (g.kind === 'goal') {
@@ -1082,7 +1083,7 @@
       bannerOf(W, W.pos === 1 ? 'YOU WIN!' : 'GOAL!', 'FINISHED P' + W.pos + ' OF ' + (FIELD_N + 1) + '  -  TIME BONUS +' + bonus.toLocaleString('en-GB'), 'goal');
       W.events.push({ sfx: 'goal' }); W.events.push({ say: 'Goal! Time bonus ' + bonus + ', love bonus ' + love + ', rank ' + rank });
       fx(W, { k: 'fireworks', x: 0 }); fx(W, { k: 'confetti', x: 0 });
-      mood(W, 'wave'); voice(W, 'goal', true);
+      mood(W, 'wave'); voice(W, 'goal', true); if (rank === 'S' || rank === 'A') W.sayLater = { id: 'love', t: W.t + 150 };
       if (W.req) { W.req = null; } W.reqSide = null; W.reqNext = W.t + 60 * 12;
     }
   }
@@ -1120,7 +1121,7 @@
     var R = W.req; if (!R) return;
     var quick = W.t - R.t0 < R.dur * 0.6, n = ok ? (R.k === 'clean' || quick ? 3 : 2) : (R.have >= R.goal * 0.5 && R.goal > 1 ? 1 : 0);
     giveHearts(W, n, n === 3 ? 'AMAZING!' : n === 2 ? 'LOVELY!' : n === 1 ? 'NOT BAD' : 'OH WELL...', R.k);
-    mood(W, n >= 2 ? 'cheer' : 'sad'); voice(W, n === 3 ? 'great' : n === 2 ? 'good' : 'fail', true);
+    mood(W, n >= 2 ? (Math.random() < 0.4 ? 'clap' : 'cheer') : n === 0 ? 'sulk' : 'sad'); voice(W, n === 3 ? 'great' : n === 2 ? 'good' : n === 0 && Math.random() < 0.4 ? 'sulk' : 'fail', true);
     W.req = null; W.reqNext = W.t + 60 * (6 + W.rng() * 5);
   }
   function requests(W) {
@@ -1203,7 +1204,14 @@
     }
     W.dk = (W.dk || 0) + ((W.drift ? 1 : 0) - (W.dk || 0)) * Math.min(1, (W.drift ? 6 : 3) * DT);
     if (W.nitroT > 0) W.nitroT--;
-    if (wantBoost && W.nitroT <= 0 && W.bottles > 0) { W.bottles--; W.nitroT = NITRO_T; W.events.push({ sfx: 'boost' }); }
+    if (wantBoost && W.nitroT <= 0 && W.bottles > 0) {
+      W.bottles--; W.nitroT = NITRO_T; W.events.push({ sfx: 'boost' }); mood(W, 'hold'); if (Math.random() < 0.6) voice(W, 'nitro');   // (her words and looks: Math.random - the world's own dice stay the game's)
+      if (W.v < top * 0.6 && !W.air) { W.kickK = (target || (Math.random() < 0.5 ? -1 : 1)) * (0.06 + 0.26 * (1 - W.v / (top * 0.6))); W.kickT = 0; }   // from low speed: the tail kicks out (towards your steering)
+    }
+    if (W.kickK) {   // a fishtail: out, back past straight, settling (the angle: world3d.js turns the car by it; here it slides you sideways a little)
+      W.kickT++; var kt = W.kickT; W.kickA = kt < 66 ? W.kickK * Math.sin(Math.PI * kt / 66) : kt < 114 ? -0.4 * W.kickK * Math.sin(Math.PI * (kt - 66) / 48) : 0;   // out over half a second and back, then a smaller swing the other way
+      if (kt >= 114 || out) { W.kickK = 0; W.kickA = 0; }
+    }
     W.boosting = !W.timeUp && !out && W.nitroT > 0;
     W.wasBoost = W.boosting;
 
@@ -1224,9 +1232,10 @@
     // wheelspin: foot down from a standstill or a crawl, the rear tyres spin up (smoke, black lines, the screech: world3d.js, coastrun.js);
     // it eases as the speed builds and is gone by about 40 mph. Off the line at the green it always spins, a flying start too
     if (W.launchT > 0) W.launchT--;
-    var spinT = out || W.air || W.ferry || !(gas || W.boosting) ? 0 : Math.max(clamp(1.15 - v / 18, 0, 1), (W.launchT || 0) / 100);
+    var spinT = out || W.air || W.ferry || !(gas || W.boosting) ? 0 : Math.max(clamp(1.15 - v / 18, 0, 1), (W.launchT || 0) / 100, W.boosting ? clamp((top * 0.62 - v) / (top * 0.3), 0, 1) : 0);   // (nitro from low speed: they spin too)
     W.wspin = (W.wspin || 0) + (spinT - (W.wspin || 0)) * Math.min(1, (spinT > (W.wspin || 0) ? 8 : 2.5) * DT);
-    if (W.wspin > 0.35 && !W.spinOn) { W.spinOn = true; W.events.push({ sfx: 'skid' }); } else if (W.wspin < 0.1) W.spinOn = false;
+    if (W.wspin > 0.35 && !W.spinOn) { W.spinOn = true; W.events.push({ sfx: 'skid' }); if (Math.random() < 0.45) voice(W, 'spin'); } else if (W.wspin < 0.1) W.spinOn = false;
+    if (W.kickA) W.x += Math.sin(W.kickA) * v * DT * 0.45;   // (the fishtail carries you a little sideways)
 
     // ---- turning: where the car points (psi) and where it goes (phi), both measured from the road
     var k = bendHere(W, g), lim = turnLimit(W, v) * Math.min(1, v / 6), want;
@@ -1315,7 +1324,7 @@
         if (car.passed && dz > 4) { car.passed = false; if (!car.racer && W.t - (car.popT || -999) > 100) { pop(W, 'RIVAL BACK IN FRONT', '', 0, 'nitro'); car.popT = W.t; } }
         else if (!car.passed && dz < -4) {
           car.passed = true; W.passN++; if (W.req && W.req.k === 'pass') W.req.have++;
-          if (!car.paid) { car.paid = true; W.score += 3000; pop(W, 'OVERTAKE!', '+3,000', car.x - W.x, 'gold'); W.events.push({ sfx: 'overtake', x: car.x - W.x }); mood(W, 'cheer'); car.popT = W.t; }
+          if (!car.paid) { car.paid = true; W.score += 3000; pop(W, 'OVERTAKE!', '+3,000', car.x - W.x, 'gold'); W.events.push({ sfx: 'overtake', x: car.x - W.x }); if (Math.random() < 0.45) { mood(W, 'wave'); voice(W, 'bye'); } else mood(W, 'cheer'); car.popT = W.t; }
           else if (W.t - (car.popT || -999) > 100) { pop(W, 'OVERTAKE!', '', car.x - W.x, 'gold'); car.popT = W.t; }
         }
       }
@@ -1352,7 +1361,12 @@
     else if (W.bottles >= BOTTLE_MAX) W.boost = Math.min(W.boost, 0.99);
     if (!W.timeUp && !out) { var p2 = W.v / VMAX; W.sAcc += p2 * p2 * 32 * (W.boosting ? 1.5 : 1); var whole = Math.floor(W.sAcc); W.score += whole; W.sAcc -= whole; }
     requests(W);
-    if (W.her.k !== 'idle' && W.her.k !== 'point' && W.t - W.her.t > (W.her.k === 'ask' ? 70 : W.her.k === 'wave' ? 240 : 110)) mood(W, 'idle');
+    var HOLD = { ask: 70, wave: 240, look: 210, hair: 170, sulk: 260, clap: 120, hold: W.boosting ? 1e9 : 50 };
+    if (W.her.k !== 'idle' && W.her.k !== 'point' && W.t - W.her.t > (HOLD[W.her.k] || 110)) mood(W, 'idle');
+    if (W.sayLater && W.t >= W.sayLater.t) { voice(W, W.sayLater.id, true); if (W.sayLater.id !== 'love') mood(W, 'look', Math.random() < 0.5 ? -1 : 1); W.sayLater = null; }
+    if (!W.timeUp && !out && W.her.k === 'idle' && !W.req && W.t - W.her.t > 60 * 9 && Math.random() < 0.004) {   // a quiet stretch: she looks about, fixes her hair, now and then says something
+      mood(W, Math.random() < 0.5 ? 'look' : 'hair', Math.random() < 0.5 ? -1 : 1); if (W.t - W.voiceT > 60 * 20 && Math.random() < 0.5) voice(W, 'chat');
+    }
 
     if (W.timeUp && W.v < 1.5) { if (++W.overT > 70) W.over = true; }
     if (W.t % 60 === 0) { var drop = i1 - 80 - W.base; if (drop > 300) { W.segs.splice(0, drop); W.base += drop; } }

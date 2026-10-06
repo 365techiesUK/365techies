@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=45';
+import * as MD from './models3d.js?v=46';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -1506,7 +1506,12 @@ export function createWorld() {
     cheer: [0.3, -2.6, 0.7, 0.3, 2.6, 0.7, 0, -0.25, 0, 0],
     wave: [0.55, 0.12, 1.05, 0.2, 2.5, 0.6, -0.3, -0.1, 0, 0],
     scared: [1.5, 0.25, 2.3, 1.5, -0.25, 2.3, 0, 0.3, 0, 0],
-    sad: [0.45, 0.05, 1.2, 0.45, -0.05, 1.2, 0, 0.35, 0, 0]
+    sad: [0.45, 0.05, 1.2, 0.45, -0.05, 1.2, 0, 0.35, 0, 0],
+    // 6 Oct (owner: "maybe she can do more than put her hands up ... look at OutRun"): holding on (nitro), a hand to her hair, clapping, arms folded
+    hold: [0.95, 0.15, 0.35, 0.95, -0.15, 0.35, 0, -0.2, 0, 0],
+    hair: [0.85, -1.5, 2.3, 0.14, -0.22, 0.9, 0.25, -0.05, 0.6, -0.35],
+    clap: [0.95, 0.35, 1.5, 0.95, -0.35, 1.5, 0, -0.1, 0.5, -0.5],
+    sulk: [0.3, 0.3, 1.85, 0.3, -0.3, 1.85, 0.5, 0.28, 1.0, -1.0]
   };
   function animateCouple(W, dt, t) {
     const C = R.couple; if (!C) return;
@@ -1517,6 +1522,10 @@ export function createWorld() {
     if (her.k === 'cheer' || her.k === 'wave') { const w = Math.sin(t / 90) * 0.3; tgt[4] += her.k === 'wave' ? w * 1.4 : w; if (her.k === 'cheer') tgt[1] -= w; }
     if (her.k === 'idle') { tgt[6] = Math.sin(t / 2300) * 0.45 + (W.drift ? -W.drift * 0.4 : 0); tgt[7] = Math.sin(t / 1700) * 0.06; }
     if (her.k === 'ask') tgt[7] += Math.sin(t / 120) * 0.08;
+    if (her.k === 'look') { tgt = POSES.idle.slice(); tgt[6] = (her.side || 1) * 0.85; tgt[7] = -0.06 + Math.sin(t / 900) * 0.04; }   // looking out at the place, the sea, the view
+    if (her.k === 'clap') { const c = Math.sin(t / 65); tgt[1] += c * 0.3; tgt[4] -= c * 0.3; }
+    if (her.k === 'hair') tgt[2] += Math.sin(t / 260) * 0.12;
+    if (her.k === 'hold') tgt[7] -= Math.min(0.15, W.v / 600);
     for (let i = 0; i < 10; i++) cur[i] = cur[i] == null ? tgt[i] : cur[i] + (tgt[i] - cur[i]) * k;
     const H = C.her; H.arms[0].sh.rotation.x = cur[0]; H.arms[0].sh.rotation.z = cur[1]; H.arms[0].el.rotation.x = cur[2];
     H.arms[1].sh.rotation.x = cur[3]; H.arms[1].sh.rotation.z = cur[4]; H.arms[1].el.rotation.x = cur[5];
@@ -1594,6 +1603,7 @@ export function createWorld() {
     R.bodyR = (R.bodyR || 0) + ((W.drift && !cr ? W.steer * 0.08 : 0) - (R.bodyR || 0)) * Math.min(1, dt * 5); R.bodyP = (R.bodyP || 0) + ((W.boosting ? 0.012 : 0) + R.lonA * 0.0022 - (R.bodyP || 0)) * Math.min(1, dt * 5);
     roll += R.bodyR + (R.gR || 0); pitch += R.bodyP + (R.gP || 0);
     if ((W.wspin || 0) > 0.1 && !cr) yaw += Math.sin(t / 85) * 0.025 * W.wspin;   // (the tail twitching as the tyres spin)
+    if (W.kickA && !cr) yaw -= W.kickA;   // (nitro from low speed: the tail kicked out)
     let T = null;
     if (cr) {
       const p = cr.t / cr.dur;

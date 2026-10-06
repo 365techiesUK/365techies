@@ -2389,6 +2389,7 @@ const TRAFFIC = {
     k.box(0.012, 1.85, 0.03, 0, 0.42, 2.59, '#1a1a1c', 0, 0, 0, 'lit');   // the split between the back doors
     k.box(0.36, 0.04, 0.04, 0, 2.3, 2.58, RED, 0, 0, 0, 'rlamp');   // the high brake light
     k.box(2.0, 0.2, 0.22, 0, 0.32, 2.56, BLK, 0, 0, 0, 'lit').box(1.2, 0.05, 0.2, 0, 0.5, 2.62, '#2a2b2e', 0, 0, 0, 'lit');   // the step bumper
+    for (const sd of [-1, 1]) k.box(0.32, 0.3, 0.02, sd * 0.86, 0.12, 1.95, '#121214', 0, 0, 0, 'lit');   // pass 4: mudflaps behind the back wheels
     k.box(0.52, 0.11, 0.02, 0, 0.66, 2.585, '#f2d24a', 0, 0, 0, 'lit');   // the plate
     k.box(1.4, 0.22, 0.05, 0, 0.82, -2.565, BLK, 0, 0, 0, 'lit').box(1.9, 0.22, 0.14, 0, 0.42, -2.52, '#2a2b2e', 0, 0, 0, 'lit');   // the grille, the front bumper
   },
@@ -2553,6 +2554,8 @@ function roadCar(k, col, p) {   // an everyday car on the racers' kit (the nose 
   else k.roll(0.035, 0.1, 10, hw * 0.55, cl + 0.07, L + 0.01, '#8a8e92', 'shiny');   // a tailpipe
   if (!sal) { k.box(hc * 1.55, 0.03, 0.2, 0, p.roofY - 0.035, p.roofEnd + 0.06, col, 0, 0.22, 0, 'rpaint'); k.box(0.36, 0.03, 0.03, 0, p.roofY - 0.06, p.roofEnd + 0.16, RED, 0, 0, 0, 'rlamp'); }   // the roof spoiler, the high brake light
   k.box(hw * 1.86, 0.2, 0.12, 0, cl + 0.1, L - 0.03, BLK, 0, 0, 0, 'lit');   // the bumper's dark lower part
+  k.box(0.09, 0.05, 0.02, -(hw - 0.35), cl + 0.16, L + 0.005, '#a01018', 0, 0, 0, 'rlamp');   // pass 4: the rear fog lamp (one side, as here)
+  if (sal) k.box(0.3, 0.025, 0.04, 0, p.roofY - 0.08, p.roofEnd + 0.12, RED, 0, 0, 0, 'rlamp');   // a saloon's high brake light, top of the rear screen
   k.box(0.52, 0.11, 0.02, 0, sal ? p.tailY - 0.24 : p.tailY - 0.3, L + 0.012, '#f2d24a', 0, 0, 0, 'lit');   // the plate
   k.box(hw * 0.9, 0.14, 0.05, 0, p.noseY - 0.08, -L + 0.02, '#16181b', 0, 0, 0, 'lit').box(hw * 1.5, 0.12, 0.06, 0, cl + 0.12, -L + 0.06, '#16181b', 0, 0, 0, 'lit');   // the grille, the intake
   k.box(0.52, 0.11, 0.02, 0, cl + 0.25, -L - 0.005, '#f4f4f2', 0, 0, 0, 'lit');   // the front plate
@@ -2817,6 +2820,17 @@ Object.assign(TRAFFIC, {
     }
   }
 });
+// pass 3 (owner, 6 Oct: "a couple more passes on the cars"): the racers' tails - what you chase all race: a bright LED line through each lamp,
+// a dark finned diffuser low between the pipes, red reflectors at the bumper's corners. z: the tail's face; ly, lx, lw: the lamps' height, spread,
+// width; py: the pipes' height; dw: the diffuser's width
+const RTAIL = { wedge: { z: 2.075, ly: 0.7, lx: 0.6, lw: 0.4, py: 0.36, dw: 1.3 }, lemans: { z: 2.19, ly: 0.68, lx: 0.6, lw: 0.34, py: 0.44, dw: 1.2 },
+  coupe9: { z: 2.01, ly: 0.6, lx: 0.6, lw: 0.34, py: 0.38, dw: 1.2 }, gtbrit: { z: 1.99, ly: 0.8, lx: 0.52, lw: 0.5, py: 0.4, dw: 1.3 },
+  raging: { z: 1.905, ly: 0.64, lx: 0.57, lw: 0.44, py: 0.4, dw: 1.3 }, trident: { z: 2.022, ly: 0.74, lx: 0.6, lw: 0.3, py: 0.44, dw: 1.2 },
+  barchetta: { z: 2.24, ly: 0.7, lx: 0.61, lw: 0.4, py: 0.4, dw: 1.2 } };
+for (const id in RTAIL) { const f = TRAFFIC[id], T = RTAIL[id]; TRAFFIC[id] = (k, col, v) => { f(k, col, v);
+  for (const sd of [-1, 1]) { k.box(T.lw * 0.85, 0.014, 0.03, sd * T.lx, T.ly + 0.02, T.z + 0.035, '#ffc4cc', 0, 0, 0, 'rlamp'); k.box(0.1, 0.035, 0.02, sd * (T.dw / 2 + 0.1), T.py + 0.1, T.z - 0.03, '#b0121a', 0, 0, 0, 'rlamp'); }
+  k.box(T.dw, 0.08, 0.26, 0, T.py - 0.13, T.z - 0.15, '#141416', 0, 0, 0, 'lit'); for (let i = 0; i < 5; i++) k.box(0.018, 0.075, 0.22, (i - 2) * T.dw / 6, T.py - 0.12, T.z - 0.06, '#34373c', 0, 0, 0, 'lit');
+}; }
 export const TRAFFIC_ORDER = ['hatch', 'saloon', 'van', 'bus', 'camper', 'tractor', 'lorry', 'sports', 'wedge', 'lemans', 'coupe9', 'gtbrit', 'raging', 'trident', 'barchetta'];
 const TCOL = {   // the colours real cars come in (silver, grey, black, white, a deep blue, a dark red, a dark green) - not toy primaries
   hatch: ['#b9bdc2', '#2e3238', '#e9eaec', '#1f3a66', '#7d1f24', '#5f6670', '#14161a', '#9a3a2a'], saloon: ['#a9adb3', '#16181b', '#e7e8ea', '#22385e', '#4a4e55', '#25412f', '#6e1c22', '#8a8a86'],
