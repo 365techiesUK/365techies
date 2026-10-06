@@ -50,7 +50,7 @@
     { key: 'sandbanks', name: 'SANDBANKS', seed: 1709, t: 64, len: 700, curvy: 0.6, hilly: 0.2, sea: -1, band: [3, 8], shores: [30, 34, 38, 42, 48, 54, 36, 40], mix: [5, 4, 1, 1, 3, 0, 0, 4], feat: { over: ['banner'] } },   // (no bridge: there is none on the spit)
     { key: 'christchurch', name: 'CHRISTCHURCH', seed: 1811, t: 64, len: 700, curvy: 0.65, hilly: 0.3, sea: 1, band: [4, 13], shores: [20, 22, 24, 28, 32, 26, 22, 36], mix: [5, 4, 2, 1, 3, 1, 0, 2], feat: { bridge: 2 } },
     { key: 'purbeck', name: 'CORFE CASTLE', seed: 2207, t: 70, len: 730, curvy: 0.75, hilly: 1, sea: 0, band: [14, 95], mix: [5, 3, 2, 0, 3, 3, 1, 1], feat: { tunnel: 1, over: ['viaduct'] } },
-    { key: 'swanage', name: 'OLD HARRY ROCKS', seed: 2903, t: 70, len: 730, curvy: 0.7, hilly: 0.75, sea: -1, band: [22, 60], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { tunnel: 1, over: ['viaduct'] } },
+    { key: 'swanage', name: 'OLD HARRY ROCKS', seed: 2903, t: 70, len: 730, curvy: 0.7, hilly: 0.75, sea: -1, band: [22, 60], bands: [[0, [3, 9]], [0.26, [24, 40]], [0.62, [24, 40]], [0.7, [3, 9]]], shores: [26, 30, 34, 38, 44, 30, 36, 28], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { over: ['viaduct'] } },   // (bands: low through Studland, up over the downs, down into Swanage)
     { key: 'forest', name: 'NEW FOREST', seed: 3301, t: 70, len: 730, curvy: 0.85, hilly: 0.55, sea: 0, band: [10, 50], mix: [5, 3, 2, 0, 3, 2, 1, 1], feat: { over: ['footbridge'] } },
     { key: 'jurassic', name: 'DURDLE DOOR', seed: 4409, t: 70, len: 740, curvy: 0.8, hilly: 0.85, sea: -1, band: [30, 80], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { tunnel: 1 } },
     { key: 'weymouth', name: 'WEYMOUTH BAY', seed: 4513, t: 68, len: 720, curvy: 0.6, hilly: 0.35, sea: -1, band: [4, 14], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: { bridge: 1, over: ['banner'] } },
@@ -152,6 +152,7 @@
   function hills(W, S, from, to, r, y0) {
     var i = from, y = y0, band = S.band;
     while (i < to) {
+      if (S.bands) { var fb = (i - from) / Math.max(1, to - from); for (var bq = 0; bq < S.bands.length; bq++) if (fb >= S.bands[bq][0]) band = S.bands[bq][1]; }   // (a stage whose height changes along it)
       var len = 30 + ((r() * 70) | 0), target;
       var bw = Math.min(12, band[1] - band[0]);   // (a narrow band - Bournemouth's flat promenade - is kept inside it)
       if (y < band[0]) target = band[0] + r() * bw;
@@ -333,14 +334,18 @@
           if (r() < 0.007) { x = (r() < 0.5 ? -1 : 1) * (19 + r() * 10); put(W, i, 'cottage', x, 4, { v: (r() * 2) | 0 }); }
           if (k % 110 === 55) put(W, i, 'finger', (k % 220 ? -1 : 1) * 10.2, 0.2);
           break;
-        case 'swanage':   // chalk downs above the sea: gorse, sheep, the white stacks of Old Harry out in the water
-          if (r() < 0.05) put(W, i, 'gorse', 11.5 + r() * 20, 0.8, { soft: true });
-          if (r() < 0.03) { x = -(11.5 + r() * Math.max(2, sh - 14)); if (land(s, x)) put(W, i, 'gorse', x, 0.8, { soft: true }); }
-          if (r() < 0.04) put(W, i, 'sheep', 16 + r() * 40, 0, { v: (r() * 2) | 0 });
-          if (r() < 0.012) put(W, i, 'cottage', 18 + r() * 14, 4, { v: (r() * 2) | 0 });
-          onWater('stack', 30, 100, 0.012, (r() * 3) | 0);
+        case 'swanage': {   // in three parts (world3d.js ZONES): Studland's heath and beach off the ferry, the chalk downs past Old Harry, Swanage
+          var fz = k / Math.max(1, to - from);
+          if (fz < 0.27) { if (r() < 0.05) put(W, i, ['gorse', 'heather'][(r() * 2) | 0], 11.5 + r() * 20, 0.8, { soft: true, v: 1 }); }
+          else if (fz < 0.7) {
+            if (r() < 0.05) put(W, i, 'gorse', 11.5 + r() * 20, 0.8, { soft: true });
+            if (r() < 0.03) { x = -(11.5 + r() * Math.max(2, sh - 14)); if (land(s, x)) put(W, i, 'gorse', x, 0.8, { soft: true }); }
+            if (r() < 0.04) put(W, i, 'sheep', 16 + r() * 40, 0, { v: (r() * 2) | 0 });
+            onWater('stack', 30, 100, 0.012, (r() * 3) | 0);
+          } else lamps(9, 0, true);
           onWater('yacht', 30, 140, 0.015, (r() * 3) | 0);
           break;
+        }
         case 'forest':   // the New Forest in autumn: oak, beech, pine and birch, ponies, heather and bracken
           both(function (d) {
             if (r() < 0.28) { var tt = ['oak', 'beech', 'pine', 'birch'][(r() * 4) | 0]; x = d * (12 + Math.pow(r(), 0.8) * 45); put(W, i, tt, x, tt === 'birch' ? 0.4 : 0.7, { v: 1 + ((r() * 2) | 0) }); }
@@ -438,6 +443,12 @@
     if (S.key === 'swanage') { mark('needles', 0.33, function (h) { return -(Math.max(h, 18) + 80); }); mark('needles', 0.66, function (h) { return -(Math.max(h, 18) + 80); }); }
     if (S.key === 'jurassic') { mark('arch', 0.68, function (h) { return -(Math.max(h, 18) + 70); }); }   // (no lighthouse: there's none at Durdle Door)
     if (S.key === 'weymouth') { mark('clock', 0.4, function (h) { return -(Math.min(h, 22) - 4); }); }
+    if (S.key === 'swanage') {   // the toll booths just off the ferry, the boardwalk to the lake on the heath, and at Swanage its pier and the clock
+      // tower (Old Harry itself is the place's landmark painting: as a 3D model from the road it read as a grey box)
+      mark('tollbooth', 0.04, function () { return 11.8; }); mark('tollbooth', 0.045, function () { return -11.8; });
+      mark('littlesea', 0.15, function () { return 15.2; });
+      mark('pier', 0.76, function () { return -14.9; }, 2); mark('clocktower', 0.735, function () { return -12.6; });   // (before the fork's banner, which would hide them)
+    }
     if (S.key === 'christchurch') {   // the quay: the bandstand on the bank, rowing boats for hire, the old mill; the castle keep's ruin in the town
       mark('bandstand', 0.42, function (h) { return Math.max(14, h - 5.5); }); mark('rowboats', 0.445, function (h) { return h + 6; });
       mark('placemill', 0.5, function (h) { return Math.max(18, h - 6); }); mark('castlekeep', 0.62, function () { return -42; });

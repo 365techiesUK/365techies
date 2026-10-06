@@ -248,7 +248,7 @@ const MODELS = {
     // dense dark cross-braced piles, white railings; at Bournemouth a long white head building with a copper-green barrel roof and a
     // fly tower, a low white rotunda, the lattice zip-wire tower at the square end and its wires down to the beach; at the root the
     // white pier-entrance building with green roofs and cupolas, the observation wheel beside it
-    return v ? boscombePier(k) : bournemouthPier(k);
+    return v === 2 ? swanagePier(k) : v ? boscombePier(k) : bournemouthPier(k);
   },
   oak(k, v) {
     const c = v ? AUT[(v - 1) % 3] : GRN, q = rnd(11 + v * 7);
@@ -949,6 +949,29 @@ const MODELS = {
     k.side([0, 0, 9, 0, 9, 6, 6, 9.5, 3, 7, 0, 8], 2, -6, 4.6, 0, st, 'stone');
     for (const [x, z] of [[2, -4], [-3, 3], [5, 4]]) k.blob(1.5, x, 4.8, z, '#9a9282', 1.3, 0.6, 1);
   },
+  tollbooth(k, v) {   // the ferry road's toll booth (Studland): a little brick hut with a mossy tiled hipped roof, a window, a barrier arm raised
+    k.box(3.4, 2.6, 3.2, 0, 0, 0, '#9a5040').box(3.6, 0.2, 3.4, 0, 2.6, 0, '#e8e4da');
+    k.put(new THREE.ConeGeometry(3.0, 1.5, 4), '#8a7a52', 0, 3.55, 0, 0, Math.PI / 4, 0, 1, 1, 0.95);
+    k.box(2.2, 1.0, 0.1, 0, 1.2, 1.62, '#2a3a48', 0, 0, 0, 'shiny').box(0.1, 1.0, 1.6, 1.72, 1.2, 0, '#2a3a48', 0, 0, 0, 'shiny');
+    k.cyl(0.14, 0.14, 1.1, 8, 0, 0, 2.6, '#d62828');
+    for (let i = 0; i < 6; i++) k.box(0.12, 0.12, 0.7, 0, 1.1 + i * 0.42, 2.6 + 0.1 + i * 0.24, i % 2 ? '#ffffff' : '#d62828', 0, -1.05, 0);   // the arm, raised
+  },
+  littlesea(k, v) {   // a boardwalk across the heath to the lake (Little Sea, Studland): timber walkway and rails (+X out), reeds, the water
+    const T = '#a89070', r = rnd(3100);
+    k.box(18, 0.2, 1.8, 9, 0.35, 0, T);
+    for (let x = 0.5; x < 18; x += 2) for (const z of [-0.9, 0.9]) k.box(0.1, 1.0, 0.1, x, 0.35, z, T);
+    for (const z of [-0.9, 0.9]) k.box(18, 0.08, 0.08, 9, 1.3, z, T);
+    k.cyl(16, 16, 0.12, 24, 34, 0.05, 2, '#3a6a8a', 0, 0, 'shiny');   // the lake
+    for (let i = 0; i < 18; i++) { const a = r() * Math.PI * 2, d = 15 + r() * 3; k.card(2, 1.6, 34 + Math.cos(a) * d, 0.9, 2 + Math.sin(a) * d, ['#b8a868', '#8a9a58'][i % 2], r() * 3, 0, 'grass', 'up'); }
+    for (let i = 0; i < 3; i++) k.ball(0.35, 30 + i * 3, 0.25, -2 + i * 2, '#2a2a2a', 1.2, 0.6, 0.8);   // ducks
+  },
+  clocktower(k, v) {   // the old stone clock tower by the sea at Swanage: square, Gothic, a clock face on each side, a tall pointed spire
+    const S = '#c9bea4';
+    k.box(3.6, 1.2, 3.6, 0, 0, 0, S, 0, 0, 0, 'stone').box(3, 11, 3, 0, 1.2, 0, S, 0, 0, 0, 'stone').box(3.4, 0.5, 3.4, 0, 12.2, 0, '#b8ad92', 0, 0, 0, 'stone');
+    for (const [x, z, ry] of [[0, 1.52, 0], [1.52, 0, Math.PI / 2], [0, -1.52, 0], [-1.52, 0, Math.PI / 2]]) k.put(new THREE.CylinderGeometry(0.9, 0.9, 0.1, 18), '#f4f0e0', x, 10.2, z, Math.PI / 2, ry, 0);   // the clock faces
+    k.put(new THREE.ConeGeometry(2.3, 9, 4), '#a89c82', 0, 17.2, 0, 0, Math.PI / 4, 0, 1, 1, 1, 'stone').cyl(0.06, 0.06, 1.5, 4, 0, 21.7, 0, '#3a3a3a');
+    for (const [x, z] of [[-1.6, -1.6], [1.6, -1.6], [-1.6, 1.6], [1.6, 1.6]]) k.cone(0.4, 2.2, 6, x, 12.7, z, '#a89c82');   // pinnacles at its corners
+  },
   balloon(k, v) {   // a hot-air balloon, far off over the land
     const c = [['#e63946', '#ffd23f'], ['#1d7fd6', '#ffffff'], ['#2a9d8f', '#f4a261'], ['#9b5de5', '#ffd23f']][v % 4];
     for (let i = 0; i < 10; i++) k.put(new THREE.SphereGeometry(8, 3, 14, i * Math.PI / 5, Math.PI / 5), c[i % 2], 0, 16, 0, 0, 0, 0, 1, 1.22, 1);
@@ -1104,6 +1127,20 @@ function boscombePier(k) {   // Boscombe: a bare modern pier - a long concrete n
   for (let x = 9 + 192; x < 9 + 226; x += 6) for (const z of [-11, -4, 4, 11]) k.cyl(0.34, 0.38, 15, 6, x, -16, z, PILE);
   for (const z of [-12.9, 12.9]) { k.box(36, 0.07, 0.07, 9 + 208, 1.05, z, RAIL, 0, 0, 0, 'shiny'); for (let x = 9 + 190; x < 9 + 226; x += 2.4) k.box(0.07, 1.1, 0.07, x, 0, z, RAIL); }
   for (let i = 0; i < 4; i++) k.box(2.4, 0.5, 0.6, 9 + 196 + i * 7, 0, -9, '#9a7a52');
+}
+function swanagePier(k) {   // Swanage Pier (Victorian): a timber deck raised on timber piles out into the bay, lamp posts both sides, a little
+  // white entrance building at the root, and beside it the stumps of the older pier (the deck stands 1.4 m above the promenade: level with
+  // it, it sank into the sand and barely showed from the road)
+  const T = '#8a7258', P = '#4a3c30', D = 1.4;
+  k.box(8, 3.4, 10, 4, -0.5, 0, '#f4f2ec').prism(10.6, 2.2, 8.6, 4, 2.9, 0, '#5a6a72').box(0.12, 1.8, 3.2, -0.06, 0.4, 0, '#2a3a48', 0, 0, 0, 'shiny');
+  k.box(10, D, 6, 10, 0, 0, T, 0, 0, Math.atan2(D, 10));   // a ramp up to the deck
+  k.box(190, 0.45, 7, 8 + 95 + 6, D - 0.45, 0, T).box(190, 0.6, 7.2, 8 + 95 + 6, D - 1.05, 0, '#3a2e24');   // the deck, a dark fascia under it
+  for (let x = 16; x < 204; x += 4.5) { for (const z of [-3.2, 3.2]) k.cyl(0.22, 0.25, 12 + D, 6, x, -12.2, z, P); beam(k, [x, D - 1.2, -3.2], [x, -6.5, 3.2], 0.14, P); }
+  for (const z of [-3.45, 3.45]) { k.box(190, 0.08, 0.08, 109, D + 1.05, z, '#e8e4da'); for (let x = 15; x < 204; x += 2.5) k.box(0.08, 1.1, 0.08, x, D, z, '#e8e4da'); }
+  for (let x = 24; x < 204; x += 20) for (const z of [-3.3, 3.3]) k.cyl(0.07, 0.09, 4.4, 6, x, D, z, '#1d3557').box(0.34, 0.42, 0.34, x, D + 4.4, z, '#fff3c0', 0, 0, 0, 'glow');
+  k.box(16, 0.45, 12, 202, D - 0.45, 0, T).box(16.2, 0.6, 12.2, 202, D - 1.05, 0, '#3a2e24');   // the head, a little wider
+  for (let x = 10; x < 120; x += 6) k.cyl(0.25, 0.3, 4 + ((x * 7) % 3), 5, x, -3, -18, '#3a3028');   // the old pier's stumps beside it
+  const r = rnd(3200); for (let i = 0; i < 16; i++) person(k, 20 + r() * 180, D, (r() - 0.5) * 5, r, r() < 0.2);   // people strolling out along it
 }
 function hutAt(k, z, col, trim, num) {   // one beach hut facing -X, as the owner's photos show them: weatherboarded, pastel, a white gable, a dark roof
   const w = 2.0, d = 2.4, h = 2.15, dk = shade(col, -0.12);
