@@ -46,7 +46,7 @@
   // 1 right); band = the heights the road keeps to (metres above the sea); mix = traffic weights for VEH;
   // feat = tunnels, bridges and things over the road (over: models spanning it). id, level, pos and next are filled in below.
   var STAGES = [
-    { key: 'bournemouth', name: 'BOURNEMOUTH', seed: 1103, t: 66, len: 700, curvy: 0.55, hilly: 0.45, sea: -1, band: [4, 16], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: { over: ['footbridge', 'banner'] } },
+    { key: 'bournemouth', name: 'BOURNEMOUTH', seed: 1103, t: 66, len: 700, curvy: 0.55, hilly: 0.12, sea: -1, band: [3, 6], shores: [38, 44, 50, 56, 60, 66, 72, 48], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: { over: ['banner'] } },   // (shores: a wide sandy beach)
     { key: 'sandbanks', name: 'SANDBANKS', seed: 1709, t: 64, len: 700, curvy: 0.6, hilly: 0.3, sea: -1, band: [4, 13], mix: [5, 4, 1, 1, 3, 0, 0, 4], feat: { bridge: 1, over: ['banner'] } },
     { key: 'christchurch', name: 'CHRISTCHURCH', seed: 1811, t: 64, len: 700, curvy: 0.65, hilly: 0.3, sea: 1, band: [4, 13], mix: [5, 4, 2, 1, 3, 1, 0, 2], feat: { bridge: 2 } },
     { key: 'purbeck', name: 'CORFE CASTLE', seed: 2207, t: 70, len: 730, curvy: 0.75, hilly: 1, sea: 0, band: [14, 95], mix: [5, 3, 2, 0, 3, 3, 1, 1], feat: { tunnel: 1, over: ['viaduct'] } },
@@ -120,7 +120,7 @@
     var W = B.W, i = W.base + W.segs.length, s = { i: i, k: k, y1: 0, y2: 0, bank: 0, st: B.S.id, sea: 0, sh: 0, wl: 0, wr: 0, spr: null, coins: null, gate: null, fk: null };
     if (B.S.sea) {   // the shore wanders between right beside the road and well away from it
       if (B.k > B.S.len - 120) B.shT = 120;
-      else if (B.k >= B.nextSh) { B.shT = [14, 16, 17, 19, 22, 28, 44, 70][(B.rng() * 8) | 0]; B.nextSh = B.k + 90 + ((B.rng() * 120) | 0); }
+      else if (B.k >= B.nextSh) { B.shT = (B.S.shores || [14, 16, 17, 19, 22, 28, 44, 70])[(B.rng() * 8) | 0]; B.nextSh = B.k + 90 + ((B.rng() * 120) | 0); }
       B.sh += clamp(B.shT - B.sh, -0.35, 0.35);
       s.sea = B.S.sea; s.sh = B.sh;
     }
@@ -153,8 +153,9 @@
     var i = from, y = y0, band = S.band;
     while (i < to) {
       var len = 30 + ((r() * 70) | 0), target;
-      if (y < band[0]) target = band[0] + r() * 12;
-      else if (y > band[1]) target = band[1] - r() * 12;
+      var bw = Math.min(12, band[1] - band[0]);   // (a narrow band - Bournemouth's flat promenade - is kept inside it)
+      if (y < band[0]) target = band[0] + r() * bw;
+      else if (y > band[1]) target = band[1] - r() * bw;
       else target = clamp(y + (r() * 2 - 1) * (8 + 34 * S.hilly), band[0], band[1]);
       var maxDy = len * SEG * 0.15; target = clamp(target, y - maxDy, y + maxDy);
       for (var j = 0; j < len && i < to; j++, i++) { var g = segAt(W, i); g.y1 = ease(y, target, j / len); g.y2 = ease(y, target, (j + 1) / len); }
@@ -172,7 +173,7 @@
   }
   // tunnels, bridges and the things that span the road, somewhere in the middle of the stretch (never on a crest, a
   // gate or a fork). A bridge lifts the road to at least 9 m over the water, easing up to it and down again.
-  var OVERS = { bournemouth: ['pierarch', 'footbridge', 'banner'], sandbanks: ['banner', 'footbridge'], christchurch: ['treearch', 'footbridge'], purbeck: ['treearch', 'viaduct'], swanage: ['footbridge', 'treearch'],
+  var OVERS = { bournemouth: ['pierarch', 'banner'], sandbanks: ['banner', 'footbridge'], christchurch: ['treearch', 'footbridge'], purbeck: ['treearch', 'viaduct'], swanage: ['footbridge', 'treearch'],
     forest: ['treearch', 'footbridge', 'treearch'], jurassic: ['rockarch', 'footbridge'], weymouth: ['banner', 'footbridge'], harbour: ['liftbridge', 'footbridge', 'banner'], lymington: ['treearch', 'banner'], lyme: ['banner', 'footbridge'],
     portland: ['craneway', 'footbridge'], goldencap: ['treearch', 'footbridge'], hengistbury: ['footbridge', 'treearch'], needles: ['chairlift', 'footbridge'] };   // what spans the road in each place (the natural arch only at Durdle Door, the one place that has one)
   function features(W, S, lo, hi, r) {
@@ -255,7 +256,7 @@
       W.goalAt = end - 18;
     }
     // heights: carried on from the road before, kept level through gates and forks
-    var y0 = s0 > W.base ? segAt(W, s0 - 1).y2 : S.band[0] + 6, flatTo = (S.next ? rec.fork.a : end) - 30;
+    var y0 = s0 > W.base ? segAt(W, s0 - 1).y2 : S.band[0] + Math.min(6, (S.band[1] - S.band[0]) / 2), flatTo = (S.next ? rec.fork.a : end) - 30;
     var yEnd = hills(W, S, s0 + 30, flatTo, rnd(S.seed * 3 + 7), y0);
     for (i = s0; i < s0 + 30; i++) { var g = segAt(W, i); g.y1 = g.y2 = y0; g.bank = 0; }
     for (i = flatTo; i < end; i++) { var g2 = segAt(W, i); g2.y1 = g2.y2 = yEnd; g2.bank = 0; g2.crest = false; }
@@ -305,12 +306,8 @@
       if (s.tun) continue;
       switch (S.key) {
         case 'bournemouth':   // the prom, beach huts, umbrellas and the sea on the left; gardens, palms and hotels on the right
-          lamps(9, 0, true);
-          if (sh > 24 && k % 60 < 22 && k % 2 === 0 && land(s, -12.5)) put(W, i, 'hut', -12.5, 1.3, { v: (k / 2) % 6 });
+          lamps(9, 2, true);   // the promenade (owner, 6 Oct): sand and sea on the left, the beach huts and the cliff on the right (world3d.js), blue lamps
           if (r() < 0.07 && sh > 20) { x = -(15 + r() * (sh - 18)); if (land(s, x)) put(W, i, 'brolly', x, 0.7, { soft: true, v: (r() * 4) | 0 }); }
-          if (r() < 0.12) put(W, i, 'palm', 11 + r() * 9, 0.45, { v: (r() * 3) | 0 });
-          if (r() < 0.05) put(W, i, 'bush', 11 + r() * 12, 0.9, { soft: true, v: 0 });
-          if (r() < 0.035) put(W, i, 'hotel', 34 + r() * 30, 0, { v: (r() * 4) | 0 });
           onWater('yacht', 20, 120, 0.03, (r() * 3) | 0);
           break;
         case 'sandbanks':   // the spit: smart white houses and palms on the right, the beach and umbrellas on the left, boats out on the water
@@ -426,7 +423,18 @@
     function mark(t, f, xf, v) {
       for (var j = from + Math.round((to - from) * f), n = 0; n < 80; j++, n++) { var g = segAt(W, j); if (!g.tun && !g.brg && !g.gate && !g.fk && !g.over) { putAt(W, j, t, xf(g.sh), 0, { v: v || 0 }); return; } }
     }
-    if (S.key === 'bournemouth') { mark('pier', 0.3, function (h) { return -(Math.max(h, 20) + 6); }, 0); mark('pier', 0.72, function (h) { return -(Math.max(h, 20) + 6); }, 1); }
+    if (S.key === 'bournemouth') {   // the pier from the promenade's edge out to sea (and Boscombe's further on); the cliff lifts and zig-zag paths up the cliff
+      var pj = -1, best = 0;   // Bournemouth Pier at the end of a bend AWAY from the sea: as the car comes round it, the pier swings across the view ahead
+      for (var q = from + Math.round((to - from) * 0.16); q < from + Math.round((to - from) * 0.5); q++) {
+        var kk = 0; for (var u = q - 70; u < q - 10; u++) kk += segAt(W, u).k * -S.sea;
+        var g0 = segAt(W, q); if (kk > best && !g0.tun && !g0.brg && !g0.gate && !g0.fk && !g0.over) { best = kk; pj = q; }
+      }
+      if (best < 60 / 600) pj = -1;
+      if (pj >= 0) putAt(W, pj, 'pier', -14.9, 0, { v: 0 }); else mark('pier', 0.24, function () { return -14.9; }, 0);
+      mark('pier', 0.74, function () { return -14.9; }, 1);
+      mark('clifflift', 0.14, function () { return 17.4; }, 0); mark('clifflift', 0.52, function () { return 17.4; }, 1);
+      mark('zigzag', 0.36, function () { return 17.4; }, 0); mark('zigzag', 0.64, function () { return 17.4; }, 1); mark('zigzag', 0.88, function () { return 17.4; }, 2);
+    }
     if (S.key === 'sandbanks') { mark('ferry', 0.5, function (h) { return -(Math.max(h, 20) + 70); }); }
     if (S.key === 'swanage') { mark('needles', 0.33, function (h) { return -(Math.max(h, 18) + 80); }); mark('needles', 0.66, function (h) { return -(Math.max(h, 18) + 80); }); }
     if (S.key === 'jurassic') { mark('arch', 0.68, function (h) { return -(Math.max(h, 18) + 70); }); }   // (no lighthouse: there's none at Durdle Door)
@@ -450,7 +458,7 @@
         (s.coins || (s.coins = [])).push({ x: x, line: id, of: n, got: 0 });
       }
       i += n * 2 + 30 + ((r() * 45) | 0);
-      var roll = r(), pw = roll < 0.22 ? 'nitro' : roll < 0.29 ? 'magnet' : roll < 0.35 ? 'shield' : roll < 0.41 ? 'double' : roll < 0.46 ? 'time' : null;
+      var roll = r(), pw = roll < 0.34 ? 'nitro' : roll < 0.4 ? 'magnet' : roll < 0.45 ? 'shield' : roll < 0.5 ? 'double' : roll < 0.55 ? 'time' : null;   // (nitro the commonest bonus by far)
       if (pw) { var sn = segAt(W, i), px = LANES[(r() * 3) | 0]; if (sn && !sn.fk) (sn.coins || (sn.coins = [])).push(pw === 'nitro' ? { x: px, nitro: true, got: 0 } : { x: px, pw: pw, got: 0 }); i += 15; }
     }
   }
@@ -509,7 +517,7 @@
   // THE FIELD (owner, 6 Oct: "cars that race you... start on a race line and all race off"): seven racers start on the grid with
   // you and race the whole run, through whichever fork you take. Near you each is a car on the road; out of sight it's carried
   // along at its own pace. They pace themselves off how far ahead or behind you they are, so there's always someone to catch.
-  var FIELD_N = 7, BOTTLES0 = 10, BOTTLE_MAX = 20, NITRO_T = 150, SKILL = [1.04, 1.02, 1.0, 0.99, 0.97, 0.95, 0.93];
+  var FIELD_N = 7, BOTTLES0 = 10, BOTTLE_MAX = 30, NITRO_T = 150, SKILL = [1.04, 1.02, 1.0, 0.99, 0.97, 0.95, 0.93];
   var CSCHEME = [[0, 0, 0, 0, 1, 0, 0], [1, 1, 1, 0, 0, 1, 0], [0, 0, 0, 1, 1, 0, 1], [1, 0, 1, 2, 0, 1, 3], [3, 2, 0, 0, 1, 0, 0]];   // per racer (wedge, lemans, raging, coupe9, barchetta, gtbrit, trident): which of its colours (never more than two red, or two silver/white, on one grid)
   var POS_BONUS = [0, 100000, 60000, 40000, 25000, 15000, 8000, 4000, 0];
   function makeField(W) {
@@ -723,10 +731,10 @@
       if (!c.got && Math.abs(W.x - c.x) < (W.pw.magnet > 0 && !c.nitro && !c.pw ? 9.5 : 1.7) && W.h - heightAt(W, W.s) < 2.6) {
         c.got = W.t; c.gx = W.x;
         if (c.pw) bonus(W, c);
-        else if (c.nitro) { W.bottles = Math.min(BOTTLE_MAX, W.bottles + 2); W.events.push({ sfx: 'nitro', x: c.x - W.x }); pop(W, 'NITRO', '+2 BOTTLES', c.x - W.x, 'nitro'); fx(W, { k: 'nitro', x: c.x }); W.score += 500; }
+        else if (c.nitro) { W.bottles = Math.min(BOTTLE_MAX, W.bottles + 3); W.events.push({ sfx: 'nitro', x: c.x - W.x }); pop(W, 'NITRO', '+3 BOTTLES', c.x - W.x, 'nitro'); fx(W, { k: 'nitro', x: c.x }); W.score += 500; }   // (owner, 6 Oct: three at a time, always plenty)
         else {
           W.coinRun = W.t - W.coinLast < 40 ? W.coinRun + 1 : 1; W.coinLast = W.t; W.coinsN++;
-          W.score += 100 * Math.min(W.coinRun, 10); W.boost = Math.min(1, W.boost + 0.1);   // (ten coins: a bottle)
+          W.score += 100 * Math.min(W.coinRun, 10); W.boost = Math.min(1, W.boost + 0.125);   // (eight coins: a bottle - one line of coins fills one)
           W.events.push({ sfx: 'coin', n: W.coinRun, x: c.x - W.x }); fx(W, { k: 'coin', x: c.x });
           W.lineGot[c.line] = (W.lineGot[c.line] || 0) + 1;
           if (W.req && W.req.k === 'coins') W.req.have++;

@@ -33,7 +33,7 @@ test('the road is the same every game, joins up, climbs and falls, and has crest
     if (i) assert.ok(Math.abs(a.segs[i].y1 - a.segs[i - 1].y2) < 1e-9, 'no step in the road at ' + i);
     lo = Math.min(lo, a.segs[i].y1); hi = Math.max(hi, a.segs[i].y1); if (a.segs[i].crest) crests++;
   }
-  assert.ok(hi - lo > 8, 'Bournemouth goes up and down: ' + (hi - lo).toFixed(1) + ' m'); assert.ok(crests > 0, 'with crests to jump');
+  assert.ok(hi - lo > 2 && hi - lo < 12, 'Bournemouth runs nearly flat along the promenade (owner, 6 Oct): ' + (hi - lo).toFixed(1) + ' m'); assert.ok(crests > 0, 'with crests to jump');
   assert.equal(E.segAt(a, 8).gate.kind, 'start');
   const f = a.fork; assert.equal(f.split - f.a, E.FA); assert.equal(f.end - f.split, E.FB);
   assert.equal(E.segAt(a, f.split).fk.o1, E.OFF0, 'the two roads start side by side'); assert.ok(E.segAt(a, f.end - 1).fk.o2 > 100, 'and end far apart');
@@ -168,7 +168,7 @@ test('coins, a whole line of them, and nitro', () => {
   const j = findSeg(W, E.segIndex(W.s), (g) => (g.coins || []).some((c) => c.nitro));
   const nit = E.segAt(W, j).coins.find((c) => c.nitro);
   W.s = (j - 1) * E.SEG + 2; W.x = nit.x; W.boost = 0; W.v = 30; drive(W, 10, (w) => { w.x = nit.x; return {}; });
-  assert.ok(nit.got); assert.ok(W.bottles >= 12, 'two bottles of nitro');
+  assert.ok(nit.got); assert.ok(W.bottles >= 13, 'three bottles of nitro');
 });
 
 test('walls and the sea wall keep the car on the land; the clock running out ends the game', () => {

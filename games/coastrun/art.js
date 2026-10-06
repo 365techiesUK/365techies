@@ -23,7 +23,7 @@
   // ---------------------------------------------------------------- the places' colours
   var PAL = [
     { key: 'bournemouth', sky: [[0, '#2a78d4'], [0.55, '#6db6ef'], [1, '#d4ecfa']], fog: '#cfe7f6', grass: ['#6fbd4b', '#66b244'], verge: ['#ecd7a1', '#e5ce95'], beach: ['#d9bf88', '#d2b77f'],
-      sea: ['#2b90cc', '#2786c0'], foam: '#f2fbff', road: ['#6d7178', '#686c73'], rumble: ['#d8262c', '#f6f6f6'], lane: '#f6f6f6', edge: 'railing', tint: null },
+      sea: ['#2b90cc', '#2786c0'], foam: '#f2fbff', road: ['#76605c', '#705a56'], rumble: ['#d8262c', '#f6f6f6'], lane: '#f6f6f6', edge: 'railing', tint: null },   // (the promenade's red paving)
     { key: 'purbeck', sky: [[0, '#3e86d8'], [0.6, '#8cc2ee'], [1, '#e6f2f6']], fog: '#dbeaf0', grass: ['#79bb50', '#6fb049'], verge: ['#79bb50', '#6fb049'], beach: null,
       sea: null, foam: null, road: ['#77756f', '#72706a'], rumble: ['#f4f4f4', '#cf2f2b'], lane: '#f2f2f2', wall: ['#a39d90', '#958f82'], tint: null },
     { key: 'forest', sky: [[0, '#5d93d1'], [0.55, '#b4c9d9'], [1, '#f4e3bf']], fog: '#ecdcb6', grass: ['#7aa040', '#70963a'], verge: ['#9a7a3c', '#917238'], beach: null,

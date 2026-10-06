@@ -18,7 +18,7 @@ SKY = {"day": " Daylight. The sky is a solid flat uniform pure magenta colour, l
        "night": " Night, the landmark lit up. The sky is a solid flat uniform pure magenta colour, like a studio backdrop, with no stars, no moon, no clouds."}
 BIG = " It stands large in the middle of the picture, filling most of its height, and the {base} runs right out to the bottom edge."
 HERO = {   # place: (the landmark, what it stands on, the light) - each place's own light, as the game paints it
-    "bournemouth": ("A long Victorian seaside pier on slender iron legs reaching out into a turquoise bay, a big white domed pavilion at its end, golden sandy cliffs topped with pines behind", "calm sea", "day"),
+    "bournemouth": ("Seen from far across a wide calm blue bay: a long low green ridge of hills running along the far shore and ending at the sea in white chalk cliffs, with two or three white chalk stacks standing in the sea off the point; in front of the hills, at the water's edge, a long low sandy spit with white houses and dark pine trees", "calm blue sea", "day"),
     "sandbanks": ("A small wooded island in a harbour, a little castellated grey stone castle with towers at its water's edge among tall dark pine trees", "calm blue harbour water", "day"),
     "christchurch": ("A great old grey stone priory church, very long, with a tall square tower with battlements at its west end, rising above the trees and red roofs of a little town", "green water meadow", "day"),
     "purbeck": ("A ruined grey stone castle with a tall broken keep and jagged walls on top of a steep conical green hill, standing in a gap between two long green chalk ridges", "green fields", "day"),

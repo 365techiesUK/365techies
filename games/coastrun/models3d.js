@@ -171,6 +171,11 @@ const MODELS = {
     k.ball(0.22, tx - 0.18, ty - 0.2, 0.1, '#6b4a22').ball(0.22, tx + 0.18, ty - 0.22, 0.06, '#7a5628').ball(0.2, tx, ty - 0.3, -0.18, '#5e4019');
   },
   lamp(k, v) {
+    if (v === 2) {   // Bournemouth's promenade lamp: a tall blue column with a lantern on a short arm
+      k.cyl(0.2, 0.26, 0.8, 10, 0, 0, 0, '#1d5fa8').cyl(0.09, 0.12, 5.6, 8, 0, 0.8, 0, '#1d5fa8').box(0.08, 0.08, 1.1, 0, 6.2, -0.5, '#1d5fa8');
+      k.cyl(0.26, 0.16, 0.55, 8, 0, 5.75, -1.0, '#f4f6f0').cone(0.3, 0.3, 8, 0, 6.3, -1.0, '#1d5fa8');
+      return;
+    }
     const pole = v ? '#20262e' : '#1f4a3f';
     k.cyl(0.18, 0.24, 0.6, 10, 0, 0, 0, pole).cyl(0.08, 0.1, 5.8, 8, 0, 0.6, 0, pole);
     k.box(0.09, 0.09, 1.6, 0, 6.2, -0.75, pole);
@@ -238,11 +243,12 @@ const MODELS = {
     if (!night) { k.side([0, 0, 0, 9.5, 3.8, 0], 0.05, 0, 1.6, -0.6, '#fdfdfd'); k.side([0, 0, 0, 8.2, -2.6, 0], 0.05, 0, 1.6, -0.4, '#f2f2f2'); }
     else { k.box(1.6, 0.25, 2.8, 0, 1.4, 0.5, '#ffd98a', 0, 0, 0, 'glow'); k.box(0.25, 0.25, 0.25, 0, 12.2, -0.5, '#fff2c0', 0, 0, 0, 'glow'); }
   },
-  pier(k) {
-    for (let x = -42; x <= 42; x += 6) { k.cyl(0.25, 0.25, 9, 5, x, -3, -1.6, '#5b4636'); k.cyl(0.25, 0.25, 9, 5, x, -3, 1.6, '#5b4636'); }
-    k.box(90, 0.6, 6, 0, 6, 0, '#e8e0cf').box(90, 1, 0.1, 0, 6.6, 2.9, '#2e5d6b').box(90, 1, 0.1, 0, 6.6, -2.9, '#2e5d6b');
-    k.box(22, 6, 12, 36, 6.6, 0, '#f4efe4'); for (let w = 0; w < 6; w++) k.box(2, 2.4, 0.2, 28 + w * 3.2, 8, 6.05, '#7fb4d1', 0, 0, 0, 'shiny');
-    k.box(24, 1, 13, 36, 12.6, 0, '#3f7f8f'); k.ball(5, 36, 13.4, 0, '#3f7f8f', 1, 0.7, 1); k.cyl(0.2, 0.2, 3, 4, 36, 16.5, 0, '#3f7f8f');
+  pier(k, v) {   // Bournemouth Pier (v 0) and Boscombe Pier (v 1), from the promenade (+X runs out to sea, deck top at y 0): the owner's
+    // photos and the seafront game's measured model (365-efoil-game/src/gl/pier.js) - a GREY CONCRETE neck like a long road bridge on
+    // dense dark cross-braced piles, white railings; at Bournemouth a long white head building with a copper-green barrel roof and a
+    // fly tower, a low white rotunda, the lattice zip-wire tower at the square end and its wires down to the beach; at the root the
+    // white pier-entrance building with green roofs and cupolas, the observation wheel beside it
+    return v ? boscombePier(k) : bournemouthPier(k);
   },
   oak(k, v) {
     const c = v ? AUT[(v - 1) % 3] : GRN, q = rnd(11 + v * 7);
@@ -693,6 +699,40 @@ const MODELS = {
     k.box(3, 1.6, 3.6, 4, 12.2, 0, rust).box(1.6, 1.2, 1.4, 4, 13.8, 0, '#2a3a48', 0, 0, 0, 'shiny');   // the crab, its cab
     k.box(0.05, 3.2, 0.05, 4, 8, 0, '#2a2a2a').box(2.6, 1.4, 1.6, 4, 6.6, 0, '#e8e2d2', 0, 0.2, 0, 'stone');   // a block of Portland stone on the hook
   },
+  hutrow(k, v) {   // a terrace of seven beach huts along the promenade at the cliff's foot (faces -X, the road), the stone toe wall behind
+    const r = rnd(1200 + v * 7);
+    for (let i = 0; i < 7; i++) { const z = -6.9 + i * 2.3, white = v % 3 === 2; hutAt(k, z, white ? '#f6f6f2' : BHUT[(r() * BHUT.length) | 0], '#ffffff', true);
+      if (white) k.box(0.06, 1.85, 1.5, -1.24, 0.3, z, ['#2a9d8f', '#1d4ed8', '#2f8a6a'][v % 3]); }
+    k.box(0.8, 1.3, 16.4, 2.2, -0.3, 0, '#b9b1a2', 0, 0, 0, 'stone').box(0.9, 0.15, 16.4, 2.2, 1.0, 0, '#a59c8a', 0, 0, 0, 'stone');
+  },
+  clifflift(k, v) {   // a cliff lift: two little cars on an incline railway up the cliff face, a station at the foot and one at the top (+X up the cliff)
+    const H = 30, X1 = 1.2, X2 = 20.6, ang = Math.atan2(H, X2 - X1), L = Math.hypot(H, X2 - X1);
+    for (const z of [-2.4, 2.4]) {
+      beam(k, [X1, 0.2, z - 0.7], [X2, H + 0.2, z - 0.7], 0.14, '#3a3f45'); beam(k, [X1, 0.2, z + 0.7], [X2, H + 0.2, z + 0.7], 0.14, '#3a3f45');   // the rails
+      beam(k, [X1, -0.3, z], [X2, H - 0.3, z], 1.9, '#9a958a');   // the track bed
+      const f = z < 0 ? 0.22 : 0.7, cx = X1 + (X2 - X1) * f, cy = H * f;   // a car on each track, stepped to stay level
+      k.box(2.6, 2.5, 2.0, cx, cy + 0.3, z, ['#f2ead0', '#d8e8f0'][v % 2]).box(2.7, 0.3, 2.1, cx, cy + 2.8, z, '#2f6a5a').box(0.06, 1.0, 1.6, cx - 1.31, cy + 1.3, z, '#2a3a48', 0, 0, 0, 'shiny');
+    }
+    k.box(4.2, 3.4, 9, -1.2, 0, 0, '#f4f2ec').box(4.6, 0.4, 9.4, -1.2, 3.4, 0, '#2f6a5a').box(0.1, 1.8, 4, -3.32, 0.4, 0, '#2a3a48', 0, 0, 0, 'shiny');   // the station at the foot
+    k.box(5, 3.6, 9, X2 + 2.4, H - 4, 0, '#f4f2ec').box(5.4, 0.4, 9.4, X2 + 2.4, H - 0.4, 0, '#2f6a5a').box(6, 4, 9, X2 + 2.4, H - 8, 0, '#cfc6b0');   // and at the top, on its plinth
+  },
+  zigzag(k, v) {   // a zig-zag path climbing the cliff face, a low timber fence on its outer edge
+    const H = 30, X1 = 1.5, X2 = 20.5, n = 5;
+    for (let i = 0; i < n; i++) {
+      const xa = X1 + (X2 - X1) * i / n, xb = X1 + (X2 - X1) * (i + 1) / n, ya = H * i / n * (i ? 1 : 0.4), yb = H * (i + 1) / n, za = i % 2 ? 9 : -9;
+      beam(k, [xa + 0.6, ya + 0.1, za], [xb + 0.6, yb + 0.1, -za], 1.6, '#d9c9a0');
+      beam(k, [xa - 0.3, ya + 0.7, za], [xb - 0.3, yb + 0.7, -za], 0.08, '#8a6a48');
+    }
+  },
+  groyne(k, v) {   // a timber groyne out through the surf: a line of weathered posts and planking, running seaward (+X)
+    for (let x = 0; x < 42; x += 1.4) k.box(0.3, 4.2 - x * 0.04, 0.3, x, -3, 0, x % 2.8 < 1.4 ? '#4a3c30' : '#5a4a3a');
+    for (const y of [-0.6, 0.1]) k.box(42, 0.35, 0.12, 21, y, 0.2, '#5a4a3a');
+  },
+  lifeguard(k, v) {   // a lifeguard hut on stilts, the red-and-yellow flags either side
+    for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) k.box(0.15, 1.4, 0.15, x, 0, z, '#d8d8d2');
+    k.box(2.6, 2, 2.6, 0, 1.4, 0, '#d62828').box(2.9, 0.25, 2.9, 0, 3.4, 0, '#ffd23f').box(0.06, 0.8, 1.8, -1.31, 2.2, 0, '#2a3a48', 0, 0, 0, 'shiny');
+    for (const z of [-6, 6]) { k.cyl(0.05, 0.05, 4, 5, 0, 0, z, '#e8e4da'); k.box(0.04, 0.5, 1.0, 0, 3.4, z + 0.5, '#d62828').box(0.04, 0.5, 1.0, 0, 2.9, z + 0.5, '#ffd23f'); }
+  },
   balloon(k, v) {   // a hot-air balloon, far off over the land
     const c = [['#e63946', '#ffd23f'], ['#1d7fd6', '#ffffff'], ['#2a9d8f', '#f4a261'], ['#9b5de5', '#ffd23f']][v % 4];
     for (let i = 0; i < 10; i++) k.put(new THREE.SphereGeometry(8, 3, 14, i * Math.PI / 5, Math.PI / 5), c[i % 2], 0, 16, 0, 0, 0, 0, 1, 1.22, 1);
@@ -762,6 +802,103 @@ function moored(k, x, z, len, r, night) {   // a yacht moored stern-to a pontoon
   const m = 9 + r() * 4; k.cyl(0.05, 0.06, m, 4, x + sd * L * 0.55, 0.8, z, '#d0d0d0').box(L * 0.42, 0.22, 0.22, x + sd * L * 0.34, 2.0, z, night ? '#2a3550' : ['#1d4e89', '#7a1f2b', '#1f6f50', '#2b2d42'][(r() * 4) | 0]);   // the mast, the furled sail on its boom
   if (night) k.box(0.18, 0.18, 0.18, x + sd * L * 0.55, 0.8 + m, z, '#fff2c0', 0, 0, 0, 'glow');
 }
+function beam(k, a, b, t, col, key) {   // a square bar from point a to point b
+  const dx = b[0] - a[0], dy = b[1] - a[1], dz = b[2] - a[2], L = Math.hypot(dx, dy, dz);
+  k.put(new THREE.BoxGeometry(t, t, L), col, (a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2, -Math.asin(dy / L), Math.atan2(dx, dz), 0, 1, 1, 1, key || 'lit');
+}
+const PIER_GREY = '#aeaba2', PILE = '#2e302f', RAIL = '#f2f4f2', COPPER = '#6c9f88';
+function pierNeck(k, x0, x1, hw, bent) {   // a concrete deck on bents of dark piles, cross-braced, white railings both sides
+  k.box(x1 - x0, 0.55, hw * 2, (x0 + x1) / 2, -0.55, 0, PIER_GREY).box(x1 - x0, 0.9, 0.35, (x0 + x1) / 2, -1.45, hw - 0.2, '#8f8c84').box(x1 - x0, 0.9, 0.35, (x0 + x1) / 2, -1.45, -hw + 0.2, '#8f8c84');
+  for (let x = x0 + 2; x < x1; x += bent) {
+    for (const z of [-hw + 1.2, hw - 1.2]) k.cyl(0.32, 0.36, 15, 6, x, -16, z, PILE);
+    beam(k, [x, -1.5, -hw + 1.2], [x, -9, hw - 1.2], 0.22, PILE); beam(k, [x, -1.5, hw - 1.2], [x, -9, -hw + 1.2], 0.22, PILE);   // the cross-bracing
+    k.box(0.4, 0.5, hw * 2 - 1.6, x, -2.0, 0, PILE);
+  }
+  for (const z of [-hw + 0.1, hw - 0.1]) { k.box(x1 - x0, 0.07, 0.07, (x0 + x1) / 2, 1.05, z, RAIL, 0, 0, 0, 'shiny').box(x1 - x0, 0.05, 0.05, (x0 + x1) / 2, 0.55, z, RAIL);
+    for (let x = x0 + 1; x < x1; x += 2.4) k.box(0.07, 1.1, 0.07, x, 0, z, RAIL); }
+}
+function bournemouthPier(k) {
+  const X0 = 9;   // the deck starts behind the entrance building; stations below are the measured ones (s 0 = the root)
+  // the entrance: two white wings with green hipped roofs and little cupolas, the deck running out between them
+  for (const sd of [-1, 1]) {
+    const zc = sd * 8.2;
+    k.box(9, 7.2, 10, 4.5, -0.5, zc, '#f4f2ec').box(9.6, 0.45, 10.6, 4.5, 6.7, zc, '#e6e2d8');
+    k.put(new THREE.ConeGeometry(7.6, 3.6, 4), COPPER, 4.5, 8.95, zc, 0, Math.PI / 4, 0, 1, 1, 1.28);   // the hipped roof
+    k.box(0.12, 2.0, 8.4, -0.07, 0.4, zc, '#2a3a48', 0, 0, 0, 'shiny').box(0.6, 0.12, 8.8, -0.35, 2.55, zc, ['#1d4e89', '#7a1f2b'][sd > 0 ? 1 : 0], 0, -0.4, 0);   // shopfronts, an awning
+    for (let w = 0; w < 3; w++) k.box(0.12, 1.4, 1.6, -0.06, 4.1, zc - 3 + w * 3, '#3a5566', 0, 0, 0, 'shiny');
+    const cx = 8.2, cz = sd * 3.8;   // a cupola on the seaward corner by the gate
+    k.cyl(1.4, 1.4, 2.6, 10, cx, 6.7, cz, '#f4f2ec').cone(1.75, 2.4, 10, cx, 9.3, cz, COPPER).cyl(0.05, 0.05, 2.2, 4, cx, 11.7, cz, '#e8e4da');
+  }
+  k.box(1.0, 1.2, 7.4, 0.5, 4.6, 0, '#f4f2ec').box(0.2, 0.9, 6.4, 0.0, 4.75, 0, '#1d4e89');   // the gateway's lintel and its blue band
+  k.cyl(1.6, 1.6, 2.6, 8, 12, 0, -3, '#f4f2ec').cone(2.0, 1.6, 8, 12, 2.6, -3, COPPER);   // the green-roofed octagonal ticket kiosk
+  // the neck, s 0-118: 11 m wide, lamps along it
+  pierNeck(k, X0, X0 + 118, 5.5, 6);
+  for (let x = X0 + 10; x < X0 + 118; x += 22) for (const z of [-5.2, 5.2]) k.cyl(0.07, 0.09, 4.2, 6, x, 0, z, '#e8ecea').box(0.3, 0.4, 0.3, x, 4.2, z, '#fff3c0', 0, 0, 0, 'glow');
+  // the head, s 118-252: 39 m wide (o -14.5..24.5), a denser grid of piles
+  const H0 = X0 + 118, H1 = X0 + 252, zc = 5;
+  k.box(H1 - H0, 0.6, 39, (H0 + H1) / 2, -0.6, zc, PIER_GREY);
+  for (let x = H0 + 2; x < H1; x += 6) for (const z of [-13, -5, 3, 11, 19]) k.cyl(0.36, 0.4, 15, 6, x, -16, z, PILE);
+  for (let x = H0 + 2; x < H1; x += 12) { beam(k, [x, -1.5, -13], [x, -9, 19], 0.24, PILE); beam(k, [x, -1.5, 19], [x, -9, -13], 0.24, PILE); }
+  for (const z of [-14.4, 24.4]) { k.box(H1 - H0, 0.07, 0.07, (H0 + H1) / 2, 1.05, z, RAIL, 0, 0, 0, 'shiny'); for (let x = H0 + 1; x < H1; x += 2.4) k.box(0.07, 1.1, 0.07, x, 0, z, RAIL); }
+  k.box(0.07, 0.07, 39, H1 - 0.1, 1.05, zc, RAIL, 0, 0, 0, 'shiny');
+  // the head building (ex-theatre, built like a liner heading out to sea): white walls with window bands, a copper-green barrel vault ...
+  const B0 = X0 + 118, B1 = X0 + 171.5, wz0 = -9, wz1 = 21, wc = (wz0 + wz1) / 2, ww = wz1 - wz0;
+  k.box(B1 - B0, 6.5, ww, (B0 + B1) / 2, 0, wc, '#f6f5f0');
+  for (const z of [wz0 - 0.06, wz1 + 0.06]) for (const y of [1.0, 3.9]) k.box(B1 - B0 - 3, 1.5, 0.1, (B0 + B1) / 2, y, z, '#33475a', 0, 0, 0, 'shiny');
+  k.box(0.1, 1.5, ww - 4, B0 - 0.06, 1.0, wc, '#33475a', 0, 0, 0, 'shiny');
+  const R = 23.75, half = Math.asin((ww / 2) / R), sag = R - Math.cos(half) * R;
+  k.put(new THREE.CylinderGeometry(R, R, B1 - B0, 28, 1, true, -half, half * 2), COPPER, (B0 + B1) / 2, 6.5 + sag - R, wc, 0, 0, Math.PI / 2);   // the barrel vault
+  k.put(new THREE.CylinderGeometry(R, R, 0.2, 28, 1, false, -half, half * 2), '#e6e4dc', B0 + 0.1, 6.5 + sag - R, wc, 0, 0, Math.PI / 2).put(new THREE.CylinderGeometry(R, R, 0.2, 28, 1, false, -half, half * 2), '#e6e4dc', B1 - 0.1, 6.5 + sag - R, wc, 0, 0, Math.PI / 2);   // its gable ends
+  // ... the fly tower rising over it, a dark screen on its landward face, the glazed lantern on top
+  const T0 = X0 + 171.5, T1 = X0 + 178.8;
+  k.box(T1 - T0, 10.55, 14, (T0 + T1) / 2, 0, 6, '#f6f5f0').box(T1 - T0 - 1.6, 1.2, 9, (T0 + T1) / 2 - 0.2, 10.55, 3.4, '#f0eee6');
+  k.box(0.12, 3.4, 8, T0 - 0.07, 6.6, 6, '#141c28', 0, 0, 0, 'shiny');   // the screen
+  k.box(4.2, 2.3, 3.8, (T0 + T1) / 2, 11.75, 2.1, '#3a5566', 0, 0, 0, 'shiny').box(4.6, 0.4, 4.2, (T0 + T1) / 2, 14.05, 2.1, '#e6e4dc');
+  // the lower range seaward of it: a white block, a raised centre with its own low barrel
+  const G0 = X0 + 180.8, G1 = X0 + 198;
+  k.box(G1 - G0 + 2, 3.3, 26, (G0 + G1) / 2 - 1, 0, 6, '#f6f5f0').box(G1 - G0 + 2, 1.4, 8.6, (G0 + G1) / 2 - 1, 3.3, 6, '#f2f0e8');
+  k.put(new THREE.CylinderGeometry(21, 21, G1 - G0 + 2, 20, 1, true, -0.21, 0.42), COPPER, (G0 + G1) / 2 - 1, 4.8 - 21, 6, 0, 0, Math.PI / 2);
+  for (const z of [-6.9, 18.9]) k.box(G1 - G0, 1.2, 0.1, (G0 + G1) / 2, 1.2, z, '#33475a', 0, 0, 0, 'shiny');
+  // the rotunda: a low white pavilion, colonnade, shallow dome, lantern (s 208, o 5.1; apex 5.2 m over the deck)
+  const RX = X0 + 208, RZ = 5.1;
+  k.cyl(6.4, 6.4, 3.1, 18, RX, 0, RZ, '#f6f5f0').cyl(7.2, 7.2, 0.35, 18, RX, 3.1, RZ, '#ffffff');
+  for (let a = 0; a < 12; a++) { const t = a / 12 * Math.PI * 2; k.cyl(0.18, 0.2, 3.1, 6, RX + Math.cos(t) * 6.9, 0, RZ + Math.sin(t) * 6.9, '#ffffff'); }
+  k.put(new THREE.SphereGeometry(6.6, 18, 6, 0, Math.PI * 2, 0, Math.PI / 2), '#eeece6', RX, 3.45, RZ, 0, 0, 0, 1, 0.26, 1).cyl(0.9, 0.9, 1.1, 10, RX, 5.1, RZ, '#ffffff');
+  // the zip-wire tower at the square end: a tapering lattice, a platform and cabin on top
+  const ZX = X0 + 244, ZZ = 4.6, ZH = 26;
+  for (const [a, b] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) beam(k, [ZX + a * 2.4, 0, ZZ + b * 2.4], [ZX + a * 1.1, ZH, ZZ + b * 1.1], 0.28, '#4a5056');
+  for (let y = 2; y < ZH; y += 3.2) { const w = 2.4 - (y / ZH) * 1.3;
+    for (const [a, b, c, d] of [[-1, -1, 1, -1], [1, -1, 1, 1], [1, 1, -1, 1], [-1, 1, -1, -1]]) { beam(k, [ZX + a * w, y, ZZ + b * w], [ZX + c * w, y, ZZ + d * w], 0.14, '#4a5056'); beam(k, [ZX + a * w, y, ZZ + b * w], [ZX + c * (w - 0.2), y + 3.2, ZZ + d * (w - 0.2)], 0.1, '#4a5056'); } }
+  k.box(4.4, 0.3, 4.4, ZX, ZH, ZZ, '#3a3f45').box(2.6, 2.4, 2.6, ZX, ZH + 0.3, ZZ, '#22262c').box(4.4, 0.06, 0.06, ZX, ZH + 1.3, ZZ + 2.2, RAIL).box(4.4, 0.06, 0.06, ZX, ZH + 1.3, ZZ - 2.2, RAIL);
+  k.box(0.6, 0.6, 0.6, ZX, ZH + 2.7, ZZ, '#ff4a3a', 0, 0, 0, 'glow');
+  for (const dz of [-0.6, 0.6]) beam(k, [ZX - 1, ZH - 0.5, ZZ + dz], [X0 + 30, 0.4, 46 + dz * 3], 0.06, '#1a1a1a');   // the zip wires, down to the beach east of the pier
+  // the observation wheel beside the entrance, west of it
+  const WX = 6, WZ = -34, WR = 15.5, WY = WR + 2.5;   // (beside the promenade, short of the entrance: further out it stood in front of the pier)
+  k.put(new THREE.TorusGeometry(WR, 0.32, 6, 48), '#f4f4f2', WX, WY, WZ, 0, 0, 0, 1, 1, 1, 'shiny').put(new THREE.TorusGeometry(WR - 1.2, 0.18, 6, 48), '#f4f4f2', WX, WY, WZ, 0, 0, 0, 1, 1, 1, 'shiny');   // (its face to the promenade: edge-on it was a pole)
+  for (let a = 0; a < 16; a++) { const t = a / 16 * Math.PI * 2; beam(k, [WX, WY, WZ], [WX + Math.cos(t) * WR, WY + Math.sin(t) * WR, WZ], 0.12, '#e8e8e6');
+    k.box(1.8, 1.6, 1.4, WX + Math.cos(t) * (WR + 0.4), WY + Math.sin(t) * (WR + 0.4) - 1.9, WZ, ['#e63946', '#1d7fd6', '#ffd23f', '#2a9d8f'][a % 4]); }
+  for (const dx of [-6, 6]) for (const dz of [-2.2, 2.2]) beam(k, [WX + dx, -0.5, WZ + dz], [WX, WY, WZ + dz * 0.25], 0.5, '#e8e8e6');
+  k.box(6, 3, 8, WX - 9, -0.5, WZ, '#f4f2ec').box(6.4, 0.3, 8.4, WX - 9, 2.5, WZ, '#1d4e89');   // its booth
+}
+function boscombePier(k) {   // Boscombe: a bare modern pier - a long concrete neck, a plain head with railings and benches, a white entrance pavilion
+  k.box(10, 4.2, 16, 4.5, -0.5, 0, '#f6f6f2').box(10.6, 0.5, 17, 4.5, 3.7, 0, '#d8d8d2').box(0.12, 2.6, 13, -0.06, 0.4, 0, '#2a3a48', 0, 0, 0, 'shiny');
+  k.box(8, 0.4, 3, 9.5, 4.2, 0, '#f6f6f2');
+  pierNeck(k, 9, 9 + 190, 4.5, 6);
+  k.box(36, 0.6, 26, 9 + 208, -0.6, 0, PIER_GREY);
+  for (let x = 9 + 192; x < 9 + 226; x += 6) for (const z of [-11, -4, 4, 11]) k.cyl(0.34, 0.38, 15, 6, x, -16, z, PILE);
+  for (const z of [-12.9, 12.9]) { k.box(36, 0.07, 0.07, 9 + 208, 1.05, z, RAIL, 0, 0, 0, 'shiny'); for (let x = 9 + 190; x < 9 + 226; x += 2.4) k.box(0.07, 1.1, 0.07, x, 0, z, RAIL); }
+  for (let i = 0; i < 4; i++) k.box(2.4, 0.5, 0.6, 9 + 196 + i * 7, 0, -9, '#9a7a52');
+}
+function hutAt(k, z, col, trim, num) {   // one beach hut facing -X, as the owner's photos show them: weatherboarded, pastel, a white gable, a dark roof
+  const w = 2.0, d = 2.4, h = 2.15, dk = shade(col, -0.12);
+  k.box(d, 0.25, w + 0.1, 0, 0, z, '#7a6a52').box(d, h, w, 0, 0.25, z, col);
+  for (let q = 1; q < 7; q++) k.box(0.025, 0.035, w, -d / 2 - 0.01, 0.25 + q * 0.3, z, dk);   // the weatherboards on the front
+  k.box(0.06, 1.85, 1.5, -d / 2 - 0.03, 0.3, z, shade(col, 0.08)).box(0.07, 1.85, 0.05, -d / 2 - 0.05, 0.3, z, dk);   // the double doors
+  k.prism(w + 0.3, 1.0, d + 0.3, 0, 0.25 + h, z, '#4d5156', Math.PI / 2);   // the roof, ridge running back from the front
+  beam(k, [-d / 2 - 0.12, 0.25 + h - 0.04, z - w / 2 - 0.15], [-d / 2 - 0.12, 0.25 + h + 1.0, z], 0.14, trim); beam(k, [-d / 2 - 0.12, 0.25 + h + 1.0, z], [-d / 2 - 0.12, 0.25 + h - 0.04, z + w / 2 + 0.15], 0.14, trim);   // the white bargeboards
+  if (num) k.box(0.03, 0.18, 0.5, -d / 2 - 0.04, h + 0.3, z, '#2a2a2a');
+}
+const BHUT = ['#c4dbe8', '#f2edd2', '#f6f6f2', '#bfe4d2', '#3f7fc0', '#c04aa0', '#e4eef2', '#f4c9bd', '#f6e6a6', '#a9d8d0', '#ffffff', '#9fc4e8'];
 export function shade(hex, f) { C.set(hex); const k = f < 0 ? 1 + f : 1; const add = f > 0 ? f : 0; return '#' + new THREE.Color(C.r * k + add * (1 - C.r), C.g * k + add * (1 - C.g), C.b * k + add * (1 - C.b)).getHexString(); }
 const cache = new Map();
 export function model(t, v) {   // {key: geometry} for a roadside thing, built once
