@@ -215,6 +215,18 @@
       hills(near, r, HZ + 6, 22, 4, '#6faa4f', 1);
       hills(near, r, HZ + 14, 12, 3, '#5f9c45', 1.5);
     },
+    airfield: function (far, near) {   // Hurn: the flat airfield - a low treeline far off, the long grey hangars with airliners' tail fins over
+      // them, the control tower, no houses
+      var r = rnd(808);
+      for (var i = 0; i < 6; i++) { var c0 = [r() * BG_W, 24 + r() * 30, 60 + r() * 60]; if (!SKY3D) cloud(far, c0[0], c0[1], c0[2], '#ffffff', 'rgba(170,190,210,0.35)'); }
+      treeline(far, r, HZ - 1, 9, ['#5a7a5a', '#6a8a64', '#4e6e50'], 20);
+      for (var h = 0; h < 7; h++) { (function (x, w, hh, fin) { wrap(x, w, function (xx) {
+        near.fillStyle = '#b8c0c8'; near.fillRect(xx - w / 2, HZ - hh, w, hh + 3); near.fillStyle = '#9aa2aa'; near.fillRect(xx - w / 2, HZ - hh, w, 1.2);
+        near.fillStyle = fin; P(near, [xx + w * 0.1, HZ - hh, xx + w * 0.1 + 2, HZ - hh - 7, xx + w * 0.1 + 5, HZ - hh - 7, xx + w * 0.1 + 6, HZ - hh], fin);
+      }); })(r() * BG_W, 28 + r() * 30, 7 + r() * 4, ['#1d7a8a', '#c8302a', '#2a5aa8', '#f4f6f8'][(r() * 4) | 0]); }
+      wrap(560, 6, function (xx) { near.fillStyle = '#e8ecee'; near.fillRect(xx - 1.2, HZ - 18, 2.4, 18); near.fillStyle = '#5a7890'; near.fillRect(xx - 2.6, HZ - 21, 5.2, 3); near.fillStyle = '#9aa2aa'; near.fillRect(xx - 2.8, HZ - 21.6, 5.6, 0.8); });   // the control tower
+      near.fillStyle = '#7aa25a'; near.fillRect(0, HZ + 2, BG_W, BG_H - HZ);
+    },
     town: function (far, near) {   // the town's skyline (inland Bournemouth): far off the Purbeck hills and a tower block or two in the haze;
       // closer, rooftops - pitched roofs and chimney stacks - broken by clumps of trees, Bournemouth's tall umbrella pines and a church spire
       var r = rnd(707);
@@ -334,7 +346,7 @@
       seaBand(far, HZ, ['#1c2a5a', '#16244a'], 'rgba(255,210,140,0.5)');
     }
   };
-  ['winton', 'charminster', 'kinson', 'muscliff', 'littledown', 'towerpark', 'bearcross', 'hurn', 'wimborne', 'ferndown', 'highcliffe'].forEach(function (k) { if (!BG[k]) BG[k] = BG.town; });   // (the local run: the town's rooftops, trees and pines behind)
+  ['winton', 'charminster', 'kinson', 'muscliff', 'littledown', 'towerpark', 'bearcross', 'hurn', 'wimborne', 'ferndown', 'highcliffe'].forEach(function (k) { if (!BG[k]) BG[k] = k === 'hurn' ? BG.airfield : BG.town; });   // (Hurn: the airfield's own)   // (the local run: the town's rooftops, trees and pines behind)
   function SPR_BG(c, t, x, y, w) { var S = SPR[t], m = sprite(t, 0, false, null)[0], h = w * S.h / S.w; c.drawImage(m, x - w / 2, y - h, w, h); }
   var bgCache = {};
   var SKY3D = false;   // the 3D game draws its own sky (clouds, sun, moon, stars): the panorama is then just the land and sea

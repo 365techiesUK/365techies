@@ -11,7 +11,7 @@ from PIL import Image
 UNITS_W, UNITS_H, HZ_FROM_TOP = 1152, 132, 106
 PX = 5   # pixels a unit across the finished panorama
 
-def key_sky(a):
+def key_sky(a, spikes=False):   # spikes: keep a tall thin landmark (a lighthouse) standing far above the land round it
     """alpha 0 for the sky: the sky is the smooth region joined to the top edge - grown down from the top until it meets an
     edge (land has texture and outlines; a painted sky has none). Returns (alpha, the row the land starts in each column)"""
     from scipy import ndimage
@@ -22,6 +22,7 @@ def key_sky(a):
     edge = ndimage.binary_dilation(edge, iterations=1)
     R, G, B = a[..., 0], a[..., 1], a[..., 2]
     pink = ((R - G) > 28) & ((B - G) > 10)   # the painted sky's magenta and its pinks (no Dorset land is that colour): always sky-side
+    if spikes: pink &= (B - G) > 0.55 * (R - G)   # (magenta is as blue as it is red; a lighthouse's red band is not)
     free = ~edge | pink
     lab, n = ndimage.label(free)
     top = set(np.unique(lab[0])) - {0}
@@ -29,7 +30,7 @@ def key_sky(a):
     sky |= ndimage.binary_dilation(sky, iterations=2) & edge   # the thin edge line round the sky goes with it (no halo)
     land = np.argmin(sky, axis=0); land[sky.all(axis=0)] = h   # the first row in each column that isn't sky
     pad = np.pad(land, 30, mode='wrap'); med = np.array([np.median(pad[i:i + 61]) for i in range(len(land))])
-    land = np.maximum(land, (med - 40).astype(np.int32))   # no thin spikes far above the land round them
+    if not spikes: land = np.maximum(land, (med - 40).astype(np.int32))   # no thin spikes far above the land round them
     land = np.minimum(land, (med + 60).astype(np.int32))   # nor sky dipping deep into it (a leak down a smooth slope)
     sm = np.convolve(np.pad(land, 3, mode='wrap'), np.ones(7) / 7, mode='valid')
     land = np.minimum(land, (sm + 2).astype(np.int32))

@@ -16,7 +16,10 @@ def main():
     sea, desat = len(sys.argv) > 6 and sys.argv[6] == '1', float(sys.argv[7]) if len(sys.argv) > 7 else 0.0
     sfade, ffade = (float(sys.argv[8]), float(sys.argv[9])) if len(sys.argv) > 9 else (0.1, 0.16)   # how far in the sides and the foot fade out
     a = np.asarray(Image.open(src).convert('RGB')).astype(np.float32); h, w, _ = a.shape
-    alpha, land = key_sky(a)
+    alpha, land = key_sky(a, spikes=os.environ.get('SPIKES') == '1')   # (SPIKES=1: a lighthouse - Portland's was cut off at the land around it)
+    if os.environ.get('SPIKES') == '1':   # a lighthouse: the sky's lilac fringe left down its sides, out
+        R, G, B = a[..., 0], a[..., 1], a[..., 2]
+        alpha = alpha * ~(((R - G) > 8) & ((B - G) >= 0) & ((R + G + B) > 520))   # (the pale pink sky has blue just above green; the tower's white has it below)
     if sea:
         from scipy import ndimage
         R, G, B = a[..., 0], a[..., 1], a[..., 2]

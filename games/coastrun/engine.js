@@ -462,7 +462,13 @@
         case 'towerpark': case 'bearcross': case 'hurn': case 'wimborne': case 'ferndown': case 'highcliffe':
           var ft = k / Math.max(1, to - from), quiet = (S.key === 'hurn' && (ft < 0.3 || ft >= 0.72)) || (S.key === 'bearcross' && ft >= 0.66);   // (Holdenhurst, Hurn and Magna Road: country lanes, no street lamps)
           if (!quiet) lamps(8, 0, false); street();   // (their houses, units and gardens: world3d.js)
-          if (S.key === 'hurn' && ft >= 0.3 && ft < 0.72 && k % 2 === 0) put(W, i, 'airfence', 15.2, 0);   // the airport's perimeter fence, the airfield behind it
+          if (S.key === 'hurn' && ft >= 0.3 && ft < 0.72) {   // the airport: its perimeter fence, the airfield behind it - airliners parked nose-in along the
+            // fence (as they line up at Hurn, waiting for the hangars), light aircraft on the grass, the hangars
+            if (k % 2 === 0) put(W, i, 'airfence', 15.2, 0);
+            if (k % 11 === 0 && (ft < 0.42 || ft > 0.56)) put(W, i, 'jet', 34 + r() * 4, 0, { v: (k / 11) % 3 });
+            if (k % 7 === 3 && ft > 0.56) put(W, i, 'lightplane', -(24 + r() * 14), 0, { v: (r() * 4) | 0 });
+            if (k % 70 === 35) put(W, i, 'hangar', 92, 0, { v: (k / 70) | 0 });
+          }
           if (k % 46 === 23) put(W, i, 'busstop', ((k / 46) | 0) % 2 ? 15.0 : -15.0, 0, { v: 1 });
           break;
         case 'lymington': {   // in three parts (world3d.js ZONES): the Georgian town on its quay, the river's marinas and the island ferry, then
@@ -569,7 +575,7 @@
       var hj = straightest(0.8, 0.93, 70, 10); if (hj >= 0) putAt(W, hj, 'hurstcastle', segAt(W, hj).sh + 190, 0, {});
     }
     if (S.key === 'lyme') { mark('cobb', 0.32, function (h) { return -(Math.max(h, 18) + 34); }); }   // (earlier and nearer: the critic never saw it)
-    if (S.key === 'portland') { mark('lighthouse', 0.84, function (h) { return -(Math.max(h, 18) - 5); }, 1); }
+    if (S.key === 'portland') { var lh = straightest(0.8, 0.9, 60, 10); if (lh >= 0) putAt(W, lh, 'lighthouse', -(Math.max(segAt(W, lh).sh, 18) - 6), 0, { v: 1 }); }   // (Portland Bill lighthouse at the tip, off the straightest stretch there)
     if (S.key === 'hengistbury') {   // the Head itself; the visitor centre and its cafe, the land train at its stop, the Double Dykes
       mark('headland', 0.7, function (h) { return Math.max(h, 18) + 70; });
       mark('visitorcentre', 0.2, function () { return -26; }); mark('landtrain', 0.215, function () { return -16.4; }); mark('dykes', 0.34, function () { return -15.5; });
@@ -599,7 +605,6 @@
     if (S.key === 'hurn') {   // Bournemouth Airport: the terminal and its control tower behind the fence, airliners on the apron, the approach lights
       // crossing the fields either side of the road
       var at = straightest(0.4, 0.55, 50, 10); if (at >= 0) putAt(W, at, 'terminal', 70, 0, {});
-      mark('jet', 0.46, function () { return 52; }, 0); mark('jet', 0.58, function () { return 60; }, 2);
       var al = straightest(0.33, 0.4, 20, 20); if (al >= 0) { putAt(W, al, 'approachlights', 22, 0, {}); putAt(W, al, 'approachlights', -22, 0, {}); putAt(W, al + 15, 'approachlights', 22, 0, {}); putAt(W, al + 15, 'approachlights', -22, 0, {}); }
       var hb = straightest(0.86, 0.95, 20, 10); if (hb >= 0) putAt(W, hb, 'hurnbridge', 0, 0, {});
     }

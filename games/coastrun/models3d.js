@@ -319,11 +319,21 @@ const MODELS = {
     k.cyl(5 * w, 7 * w, 26, 9, 0, -4, 0, '#f1ece0').cyl(4.6 * w, 5 * w, 1.2, 9, 0, 22, 0, '#6f9a45');
     k.cyl(9 * w, 9 * w, 0.3, 14, 0, -0.1, 0, '#ffffff');
   },
-  lighthouse(k) {
-    k.blob(7, 0, -1, 0, '#6b6056', 1.2, 0.7, 1.1, 91);
-    k.cyl(1.7, 2.4, 18, 14, 0, 2, 0, '#f6f3ee');
-    k.cyl(2.2, 2.25, 2.6, 14, 0, 8, 0, '#c62828').cyl(1.95, 2, 2.6, 14, 0, 14, 0, '#c62828');
-    k.cyl(2.4, 2.4, 0.4, 14, 0, 20, 0, '#222').cyl(1.3, 1.3, 2.2, 10, 0, 20.4, 0, '#fff4b3', 0, 0, 'glow').cone(1.6, 1.6, 10, 0, 22.6, 0, '#c62828');
+  lighthouse(k) {   // Portland Bill lighthouse (from photographs: owner, 6 Oct - the old one, stripes on a boulder, read as Big Ben from afar): a tall
+    // white tapering tower with ONE broad red band round its lower middle, a black railed gallery, a white lantern under a white dome; the
+    // low white keepers' buildings in their walled yard at its foot; the white Trinity House obelisk on the ledges; flat pale limestone
+    const W = '#f6f4ee', RED = '#c8202a', L = '#c8c2b2', r = rnd(91);
+    k.blob(30, 0, -3.2, 0, L, 1.6, 0.12, 1.2, 9101, { smooth: true });   // the flat limestone ledges
+    for (let i = 0; i < 10; i++) k.blob(1.2 + r() * 1.6, (r() - 0.5) * 70, -0.3, (r() - 0.5) * 50, ['#bdb6a3', '#a8a290', '#cfc8b6'][i % 3], 1.4, 0.5, 1, 9110 + i);   // loose blocks
+    k.cyl(2.7, 3.6, 34, 20, 0, 0, 0, W).cyl(3.3, 3.48, 7, 20, 0, 9, 0, RED);   // the tower, its one red band
+    k.cyl(3.6, 3.6, 0.5, 20, 0, 34, 0, '#1a1a1a'); for (let i = 0; i < 20; i++) { const a = i / 20 * 6.283; k.box(0.06, 1.1, 0.06, Math.sin(a) * 3.5, 34.5, Math.cos(a) * 3.5, '#1a1a1a'); } k.cyl(3.55, 3.55, 0.08, 20, 0, 35.6, 0, '#1a1a1a');   // the black gallery and its rail
+    k.cyl(2.0, 2.0, 3.4, 12, 0, 34.5, 0, '#e8f0f2', 0, 0, 'glow'); for (let i = 0; i < 8; i++) { const a = i / 8 * 6.283; k.box(0.1, 3.4, 0.1, Math.sin(a) * 2.02, 34.5, Math.cos(a) * 2.02, W); }   // the lantern's glazing
+    k.ball(2.2, 0, 37.9, 0, W, 1, 0.7, 1, 'lit', 14).cyl(0.12, 0.12, 1.4, 6, 0, 39.2, 0, '#1a1a1a').ball(0.25, 0, 40.7, 0, '#1a1a1a', 1, 1, 1, 'lit', 6);   // the dome, its finial
+    for (const y of [4, 18, 25]) k.box(0.8, 1.4, 0.12, 0, y, 3.4 - y * 0.026, '#2a3440', 0, 0, 0, 'shiny');   // a few small windows up it
+    k.box(16, 3.6, 7, 9, 0, 4, W).prism(7.4, 1.8, 16.4, 9, 3.6, 4, '#5a5e66', Math.PI / 2).box(7, 3.6, 6, 15, 0, -2, W).prism(6.4, 1.6, 7.4, 15, 3.6, -2, '#5a5e66', 0);   // the keepers' buildings
+    for (const x of [3, 7, 11, 15]) k.box(1.0, 1.3, 0.1, x, 1.3, 7.52, '#2a3440', 0, 0, 0, 'shiny');
+    k.box(30, 1.4, 0.4, 5, 0, 12, W).box(0.4, 1.4, 22, -10, 0, 1, W).box(0.4, 1.4, 22, 20, 0, 1, W);   // the yard's low white wall
+    k.box(1.6, 1.0, 1.6, -18, 0, 14, '#ece8de').put(new THREE.CylinderGeometry(0.35, 0.75, 6.5, 4), '#f2efe6', -18, 4.25, 14, 0, Math.PI / 4, 0).put(new THREE.ConeGeometry(0.4, 0.8, 4), '#f2efe6', -18, 7.9, 14, 0, Math.PI / 4, 0);   // the obelisk
   },
   arch(k) {   // Durdle Door: a natural limestone arch - the long headland sloping up from the sea, then weathered boulders round a
     // rounded, ragged opening; pale limestone where it's steep, turf where it's level, dark at its wet foot, foam round it
@@ -1681,6 +1691,21 @@ const MODELS = {
     k.box(8, 6, 1, L / 2 - 5, 0, 10.5, '#eef0f2').box(7, 1.6, 0.14, L / 2 - 5, 3.4, 11.06, '#5a7890', 0, 0, 0, 'shiny').box(7, 1.6, 0.14, L / 2 - 5, 0.8, 11.06, '#5a7890', 0, 0, 0, 'shiny');
     k.box(L, 2, 0.06, 0, 0, 18, '#7a8088');   // the yard's fence
     k.box(2, 2.2, 5, -4, 0, 14, '#f4f4f4', 0, 0, 0, 'shiny');   // a van
+  },
+  lightplane(k, v) {   // a little high-wing training plane parked on the grass (nose +Z): white with a coloured stripe, its propeller, tied down
+    const C = ['#c8302a', '#2a5aa8', '#2a8a5a', '#d8a020'][v % 4];
+    k.box(1.1, 1.3, 7, 0, 0.7, 0, '#f4f6f8', 0, 0, 0, 'shiny').box(1.12, 0.2, 7, 0, 1.15, 0, C).box(11, 0.15, 1.6, 0, 2.05, 0.6, '#f4f6f8', 0, 0, 0, 'shiny');
+    k.box(1.0, 0.8, 1.4, 0, 1.4, 1.2, '#5a7890', 0, 0, 0, 'shiny').box(0.12, 1.6, 1.2, 0, 1.3, -3.3, C).box(3.6, 0.1, 1.0, 0, 1.2, -3.2, '#f4f6f8');   // the cabin glass, the fin, the tailplane
+    k.box(0.08, 1.8, 0.12, 0, 0.75, 3.55, '#2a2a2a'); for (const [x, z] of [[-1.1, 0.8], [1.1, 0.8], [0, 3]]) k.cyl(0.25, 0.25, 0.2, 8, x, 0, z, '#1a1a1a', 0, Math.PI / 2);
+  },
+  hangar(k, v) {   // a big aircraft maintenance hangar at Hurn (its face +Z, to the road): pale grey clad walls, a shallow arched roof, the great doors
+    // half open with an airliner's nose and tail fin showing inside
+    const G = ['#c8ccd0', '#b8c0c8', '#d0d4d8'][v % 3], L = 80, H = 24;
+    k.box(L, H, 60, 0, 0, -30, G).put(new THREE.CylinderGeometry(40, 40, L, 20, 1, false, -Math.PI * 0.28, Math.PI * 0.56), '#a8b0b8', 0, H - 32, -30, 0, 0, Math.PI / 2, 1, 0.55, 1);
+    for (let i = 0; i < 4; i++) k.box(L / 8 - 0.4, H - 2, 0.6, -L / 2 + L / 16 + i * L / 8, 0, 0.3, '#9aa2aa');   // the doors, slid aside
+    k.box(L / 2, H - 2, 0.2, L / 4, 0, -0.5, '#2a2e34');   // the dark opening
+    k.put(new THREE.CylinderGeometry(2.0, 2.0, 12, 14), '#f4f6f8', L / 4, 3.6, -2, Math.PI / 2, 0, 0, 1, 1, 1, 'shiny').ball(2.0, L / 4, 3.6, 4, '#f4f6f8', 1, 1, 1.6, 'shiny', 12).box(0.12, 1.6, 4, L / 4, 4.0, 4.6, '#2a3440');   // an airliner's nose out of it
+    k.box(0.5, 9, 5, L / 4, 9, -26, ['#1d7a8a', '#c8302a', '#2a5aa8'][v % 3]);   // its tail fin, inside, over the roofline of the doors
   },
   balloon(k, v) {   // a hot-air balloon, far off over the land
     const c = [['#e63946', '#ffd23f'], ['#1d7fd6', '#ffffff'], ['#2a9d8f', '#f4a261'], ['#9b5de5', '#ffd23f']][v % 4];

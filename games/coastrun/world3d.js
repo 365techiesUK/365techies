@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=37';
+import * as MD from './models3d.js?v=38';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -111,7 +111,7 @@ const FIELDS = {
 const FLOWERS = { purbeck: 1, christchurch: 0.9, swanage: 0.8, lymington: 0.8, goldencap: 0.8, needles: 0.7, jurassic: 0.5, lyme: 0.6, weymouth: 0.5, bournemouth: 0.35, sandbanks: 0.3, forest: 0.25, portland: 0.2 };   // wild flowers in the grass close by
 const DRY = { forest: 0.9, jurassic: 0.8, goldencap: 0.8, weymouth: 0.7, portland: 0.9, purbeck: 0.45, christchurch: 0.4 };   // how much the grass has dried in patches
 const SANDY = { bournemouth: 1, sandbanks: 1, weymouth: 1, hengistbury: 1, 'swanage:studland': 1, 'swanage:town': 1 };   // a promenade, then sand down to the sea (not grass)
-const BIG = { hurstcastle: 1.6, obelisk: 1.35, castle: 1.5, arch: 1.4, goldcap: 1.3, headland: 1.3, priory: 1.35, cobb: 1.2, clock: 1.2, needles: 1.3 };   // the landmarks, grown so they read from far off
+const BIG = { lighthouse: 1.15, hurstcastle: 1.6, obelisk: 1.35, castle: 1.5, arch: 1.4, goldcap: 1.3, headland: 1.3, priory: 1.35, cobb: 1.2, clock: 1.2, needles: 1.3 };   // the landmarks, grown so they read from far off
 const SIGNS = { gate: 1, gantry: 1, nose: 1, board: 1, chev: 1, warn: 1, banner: 1 };
 const lit = (look) => !!(look.night || look.dusk);   // lamps and headlights on
 // OutRun's way (owner, 5 Oct): the land side of the road ends at a boundary, and the place is packed in right behind it
@@ -187,7 +187,7 @@ const DRESSZ = {   // the dressing for a part of a stage (in place of the place'
   'bearcross:roundabout': [['strollers', 8, 0.12, 15.4, 17.5]], 'bearcross:bearwood': [['pine', 1, 0.2, 30, 80], ['heather', 2, 0.15, 28, 60], ['birch', 1, 0.08, 26, 60]],
   'bearcross:magna': [['oak', 1, 0.18, 18, 70], ['sheep', 2, 0.15, 18, 60], ['heather', 2, 0.2, 18, 60], ['gorse', 1, 0.15, 18, 60], ['thatch', 3, 0.02, 21, 24], ['tuft', 6, 1.2, 8.8, 20]],
   'hurn:holdenhurst': [['oak', 1, 0.16, 18, 70], ['thatch', 3, 0.05, 21, 24], ['sheep', 2, 0.1, 18, 60], ['hay', 1, 0.03, 20, 40], ['tuft', 6, 1.4, 8.8, 20]],
-  'hurn:airport': [['tuft', 6, 1.0, 8.8, 14], ['gorse', 1, 0.06, -17, -40]], 'hurn:village': [['pine', 1, 0.35, 18, 80], ['oak', 1, 0.12, 18, 70], ['thatch', 3, 0.03, 21, 24]],
+  'hurn:airport': [['tuft', 6, 1.0, 8.8, 14]], 'hurn:village': [['pine', 1, 0.35, 18, 80], ['oak', 1, 0.12, 18, 70], ['thatch', 3, 0.03, 21, 24]],
   'kinson:redhill': [['pine', 1, 0.2, 26, 80], ['birch', 1, 0.08, 24, 60], ['gorse', 1, 0.1, 24, 60], ['strollers', 8, 0.05, 15.4, 16.5]],   // (Kinson: Redhill's heath behind the semis, the village, the common and Pelhams Park)
   'kinson:village': [['strollers', 8, 0.2, 15.4, 17.5]], 'kinson:common': [['heather', 2, 0.35, 15.6, 60], ['gorse', 1, 0.3, 15.6, 60], ['pine', 1, 0.15, 20, 80], ['birch', 1, 0.08, 18, 50], ['estatehouse', 4, 0.05, 23, 27]],
   'muscliff:castlelane': [['oak', 1, 0.08, 30, 70], ['strollers', 8, 0.04, 15.4, 16.5]], 'muscliff:estate': [['oak', 1, 0.06, 30, 70], ['strollers', 8, 0.05, 15.4, 16.5]],   // (Muscliff: Castle Lane West, the estate, down the lane to Throop)
@@ -230,7 +230,7 @@ function stageFrac(W, g) { for (const s of W.stretch) if (s.id === g.st && g.i >
 const zt = (T, W, g) => { const z = zoneKey(W, g); return z in T ? T[z] : T[E.STAGES[g.st].key]; };   // a table's entry for the part of the stage, else the place's
 const BG_IMG = { bournemouth: 4, sandbanks: 4, christchurch: 4, purbeck: 4, swanage: 4, forest: 4, jurassic: 4, weymouth: 4, harbour: 4, lymington: 4, lyme: 4, portland: 4, goldencap: 4, needles: 4 };   // the places with a painted panorama (games/coastrun/bg/<place>.webp), and its version
 const HERO = { bournemouth: 62, sandbanks: 46, christchurch: 44, purbeck: 56, swanage: 44, forest: 30, jurassic: 34, weymouth: 38, harbour: 38, lymington: 46, lyme: 46, portland: 40, goldencap: 50, hengistbury: 40, needles: 52 };   // each place's landmark painted large (tools/coastrun/gen_hero.py): how wide it stands, in degrees
-const HERO_V = 7, HERO_D = 2150, MARK_OFF = 0.17;   // (the landmark sits just off the road ahead, to the sea side: further out, the beach huts and the prom hid it)
+const HERO_V = 8, HERO_D = 2150, MARK_OFF = 0.17;   // (the landmark sits just off the road ahead, to the sea side: further out, the beach huts and the prom hid it)
 const BGL = new THREE.TextureLoader();
 
 // ---------------------------------------------------------------- the sky: the colours, the sun and its glow, the clouds
@@ -928,20 +928,20 @@ export function createWorld() {
         place(W, i * SEG, it.x, it.b, P);
         const d = it.x < 0 ? -1 : 1, fr = faceRoad(d, P.th);
         let ry = hash2(i, Math.round(it.x * 10)) * Math.PI * 2;
-        if (/^(hut|cottage|hotel|building|board|finger|forestsign|lamp|villa|terrace|clock|haven|customhouse|placemill|castlekeep|visitorcentre|tollbooth|clocktower|thatch|tennyson|alumcliffs|landmarkpark|stonepub|lyndchurch|stthomas|lulcastle|cornerbank|brickchurch|moderne|policestn|richmondpub|busstop|kinsonchurch|commcentre|throopmill|castlepoint|rbhospital|leisurecentre|glassoffice|postbox|wheeliebins|towerpark|bearpub|rbtsign|terminal)$/.test(it.t)) ry = fr;
+        if (/^(hut|cottage|hotel|building|board|finger|forestsign|lamp|villa|terrace|clock|haven|customhouse|placemill|castlekeep|visitorcentre|tollbooth|clocktower|thatch|tennyson|alumcliffs|landmarkpark|stonepub|lyndchurch|stthomas|lulcastle|cornerbank|brickchurch|moderne|policestn|richmondpub|busstop|kinsonchurch|commcentre|throopmill|castlepoint|rbhospital|leisurecentre|glassoffice|postbox|wheeliebins|towerpark|bearpub|rbtsign|terminal|hangar)$/.test(it.t)) ry = fr;
         if (it.t === 'lamp') ry = fr + Math.PI;   // the arm reaches over the road
         if (/^(gate|gantry|nose|chev|warn|gpost|footbridge|viaduct|banner|rockarch|treearch|pierarch|liftbridge|chairlift|craneway|ferryqueue|landtrain|corfestation|cattlegrid|zebra|riverseg|tpolewire|keepleft|airfence|hurnbridge)$/.test(it.t)) ry = -P.th;
         if (it.t === 'parkedcar') ry = -P.th + (hash2(i, 77) < 0.5 ? Math.PI : 0);   // (parked either way round, along the kerb)
         if (it.t === 'priory' || it.t === 'cobb' || it.t === 'goldcap' || it.t === 'headland') ry = fr;
         if (it.t === 'arch') ry = -P.th + (it.x < 0 ? Math.PI : 0);   // Durdle Door side-on from the road, its high end towards the shore
         if (it.t === 'board') ry = -P.th + d * 0.5;
-        if (it.t === 'jet') ry = fr + Math.PI * 0.6;   // (on the apron, side-on to the road)
+        if (it.t === 'jet') ry = fr + Math.PI + 0.35 * (it.v - 1);   // (parked nose-in to the fence, a little askew)
+        if (it.t === 'lightplane') ry = fr + (hash2(i, 41) - 0.5) * 0.8;
         if (/^(pier|ferry|clifflift|zigzag|rowboats|dykes|littlesea|needles|yarmouthcastle|oldbattery|seabaths|hurstcastle|obelisk|lulcove|junction|approachlights)$/.test(it.t)) ry = fr + Math.PI / 2 - (it.t === 'pier' ? 0.72 * -d : 0);   // (a pier angled ahead, on either side)   // (+X away from the road; the piers angled 20 degrees ahead - square to the shore they lay off to the side, out of the chase camera's view)
         let y = P.y;
         if (it.t === 'pier' || it.t === 'seabaths') y = P.y - 0.15;   // (its deck level with the promenade)
         else if (/^(yacht|buoy|stack|arch|needles|ferry|cobb|goldcap|headland|rowboats|swans|yarmouthcastle|alumcliffs|hurstcastle|obelisk|lulcove)$/.test(it.t)) y = 0;
         else if (/^(footbridge|viaduct|rockarch|treearch|pierarch|liftbridge|chairlift|craneway)$/.test(it.t)) y = P.y - (it.t === 'rockarch' ? 1.5 : 0.3);
-        else if (it.t === 'lighthouse') y = P.y - 6;
         else if (Math.abs(it.x) > HALF + 2) y = groundAt(W, g, P, it.x);
         if (SIGNS[it.t]) { signParts(W, i, g, it, P, y, ry, signs, addModel, addAll); if (it.t === 'gate' || it.t === 'gantry' || it.t === 'banner') continue; }
         const m = MD.model(it.t, it.v); if (!m) continue;
@@ -1526,6 +1526,7 @@ export function createWorld() {
   }
 
   // ---------------------------------------------------------------- one picture
+  const FLY = new THREE.Group(), PF = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null };   // (the plane over Hurn)
   const POS = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null }, POSD = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null }, V3 = new THREE.Vector3(), V4 = new THREE.Vector3();
   const DRV_EYE = [COUPLE.driver.seat[0], COUPLE.driver.seat[1] + COUPLE.driver.neck * (COUPLE.driver.scale || 1) + 0.2, COUPLE.driver.seat[2] - 0.1];   // the driver's eyes, in the car's own space
   function render(W, t, mode) {
@@ -1649,6 +1650,18 @@ export function createWorld() {
     sun.position.set(cx + sd.x * 180, cy + sd.y * 180, cz + sd.z * 180); sun.target.position.set(cx, cy, cz);
     { const hx = Math.sin(heading), hz = -Math.cos(heading); headlight.position.set(cx + hx * 2.6, cy + 0.75, cz + hz * 2.6); carGlow.position.set(cx, cy + 5.5, cz); headlight.target.position.set(cx + hx * 34, cy, cz + hz * 34); }
 
+    // ---- at the airport (Hurn), a plane comes in to land: it crosses low over the road ahead, descending, every quarter of a minute
+    { const air = zoneKey(W, E.segAt(W, E.segIndex(W.s))) === 'hurn:airport' && !W.ferry;
+      if (air && !FLY.children.length) { const m = MD.model('jet', 1); for (const k in m) if (m[k] && MAT[k]) FLY.add(new THREE.Mesh(m[k], MAT[k])); scene.add(FLY); }
+      if (air) R.flyT = (R.flyT || 0) + dt;
+      const p = ((R.flyT || 0) % 15) / 15;
+      FLY.visible = air && p < 0.6;
+      if (FLY.visible) {
+        place(W, W.s + 190, 0, 0, PF); const u = p / 0.6 * 2 - 1, lat = u * 320, cs = Math.cos(PF.th), sn = Math.sin(PF.th);
+        FLY.position.set(PF.x + cs * lat, PF.y + 62 - (u + 1) * 20, PF.z + sn * lat);
+        FLY.rotation.order = 'YXZ'; FLY.rotation.set(0.07, Math.atan2(cs, sn), 0);   // (nose a touch down, the gear-down glide)
+      }
+    }
     // ---- traffic
     const seen = new Set();
     for (const c of W.cars) {
