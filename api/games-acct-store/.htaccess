@@ -1,0 +1,2 @@
+# 365 Games - scores kept in players' 365 accounts. Never served directly; api/games-acct.php reads it.
+Require all denied

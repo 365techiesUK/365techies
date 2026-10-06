@@ -442,6 +442,11 @@
     + '@media (max-width:379px){body.fold365 .info .chip:nth-child(2){display:none}}'   // a narrow phone, folded: Moves gives way to the flame
     + '.stk{text-align:center}.stkbig{display:inline-flex;align-items:center;gap:6px;font:800 54px/1 "Clash Display",Archivo,sans-serif;color:var(--sheet-ink)}.stkbig svg{width:56px;height:56px;color:#ff8a1f}'
     + '.stksub{margin:4px 0 6px;font-weight:700;color:var(--sheet-ink)}#kNote{margin:10px 0 4px}'
+    // Keep my scores in my free 365 account (6 Oct 2026)
+    + '.acbox{margin:4px 0 12px;padding:12px 14px;border-radius:14px;background:#f2f6fb}.mch{margin:6px 0 6px;font-weight:800;font-size:16px;color:var(--sheet-ink)}'
+    + '.acbox input[type=email],.acbox input[type=text],.acbox input[type=tel]{display:block;width:100%;min-height:46px;margin:0 0 8px;padding:0 12px;border:2px solid var(--sheet-line);border-radius:12px;font:600 17px Archivo,sans-serif;color:var(--sheet-ink);background:#fff}'
+    + '.actick{display:flex;gap:8px;align-items:flex-start;margin:2px 0 10px;font-size:14px;line-height:1.35;color:var(--sheet-soft)}.actick input{width:20px;height:20px;flex:none;margin-top:1px}'
+    + '.acpcm{font-size:14px;color:var(--sheet-soft)}.acpcm a{color:var(--primary);font-weight:700}.acbox .linkb{border:0;background:none;padding:6px 0 0;color:var(--sheet-soft);font:600 14px Archivo,sans-serif;text-decoration:underline;cursor:pointer}'
     // My code (6 Oct 2026)
     + '.mcbox{display:grid;gap:4px;justify-items:center;margin:10px 0;padding:14px;border-radius:14px;background:#eef6ef;text-align:center}.mcbox span{font-size:14px;color:var(--sheet-soft)}'
     + '.mcbox b{font:800 34px/1.1 "Clash Display",Archivo,sans-serif;letter-spacing:.06em;color:var(--sheet-ink)}.mcbox small{font-size:13px;color:var(--sheet-soft);max-width:30em}'
@@ -1252,7 +1257,7 @@
       var rec = recordWin(secs);
       persist(); bar();
       sfx('win'); buzz([16, 60, 16, 60, 30, 80, 140]);   // the win: a little drum roll in the hand
-      codeSync();   // My code: the saved copy follows every win
+      codeSync(); acctSync();   // My code / the 365 account: the saved copy follows every win
       cascade(function () { showWin(rec); });
     }
     function recordWin(secs) {
@@ -1521,9 +1526,9 @@
     var codeT = 0;
     function codeSync() { var c = myCode(); if (!c) return; clearTimeout(codeT); codeT = setTimeout(function () { codeCall({ action: 'save', code: c, data: codeData() }).then(function (j) { if (j && j.error === 'no_such_code') { try { localStorage.removeItem('games365:code'); } catch (e) {} } }).catch(function () {}); }, 1200); }
     function codeMsg(t) { $('mcMsg').textContent = t || ''; }
-    function codeDraw() { var c = myCode(); $('mcHave').hidden = !c; $('mcGetRow').hidden = !!c; $('mcCode').textContent = c; if ($('sCodeS')) $('sCodeS').textContent = c ? c : 'take your scores to another phone'; }
+    function codeDraw() { var c = myCode(); $('mcHave').hidden = !c; $('mcGetRow').hidden = !!c; $('mcCode').textContent = c; if ($('sCodeS')) $('sCodeS').textContent = acctOn ? 'in your 365 account' : c ? c : 'to another phone'; }
     var codeAsk = '';
-    function openCode() { codeAsk = ''; codeMsg(''); $('mcIn').value = ''; codeDraw(); openD('dCode'); }
+    function openCode() { codeAsk = ''; codeMsg(''); $('mcIn').value = ''; codeDraw(); acctDraw(); openD('dCode'); }
     $('sCode').onclick = openCode;
     $('mcGet').onclick = function () {
       codeMsg('Making your code…'); $('mcGet').disabled = true;
@@ -1559,6 +1564,83 @@
       try { localStorage.removeItem('games365:code'); } catch (e) {}
       codeAsk = ''; codeDraw(); codeMsg('Done - that code no longer works.');
     };
+
+    // ---- Keep my scores in my free 365 account (owner, 6 Oct 2026): the portal's own sign-in - the emailed 6-digit code
+    // (pcm-booking.php join / verifycode) and its session (localStorage p365 + p365mid), so joining here is joining 365
+    var ACCT_API = '/api/games-acct.php', BK_API = '/api/pcm-booking.php', acctOn = false, acctT = 0, acEmail = '';
+    function portalS() { try { var x = JSON.parse(localStorage.getItem('p365') || 'null'); return x && x.wtoken ? x : null; } catch (e) { return null; } }
+    function machineId() {   // the portal's mid(), so a session made here is the portal's own
+      var m = ''; try { m = localStorage.getItem('p365mid') || ''; } catch (e) {}
+      if (!/^[a-f0-9]{32}$/.test(m)) { var a = new Uint8Array(16); (window.crypto || window.msCrypto).getRandomValues(a); m = ''; for (var i = 0; i < 16; i++) m += ('0' + a[i].toString(16)).slice(-2); try { localStorage.setItem('p365mid', m); } catch (e) {} }
+      return m;
+    }
+    function jpost(url, body) { return fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), cache: 'no-store', credentials: 'same-origin' }).then(function (r) { return r.json(); }); }
+    function acctCall(body) { var ps = portalS(); body.auth = { wtoken: ps ? ps.wtoken : '', machine: machineId() }; return jpost(ACCT_API, body); }
+    function acMsg(t) { $('acMsg').textContent = t || ''; }
+    function localPlayed() { var n = 0; codeKeys().forEach(function (k) { if (/:stats$/.test(k)) { try { var x = JSON.parse(localStorage.getItem(k) || '{}'); n += (+x.played || 0); } catch (e) {} } }); return n; }
+    function acctDraw() {
+      var ps = portalS(); $('acIn').hidden = !(ps && acctOn); $('acOut').hidden = !!(ps && acctOn) || !$('acPick').hidden;
+      if (ps && acctOn) $('acName').textContent = ps.name || 'you';
+    }
+    function acctSync() { if (!acctOn || !portalS()) return; clearTimeout(acctT); acctT = setTimeout(function () { acctCall({ action: 'save', data: codeData() }).catch(function () {}); }, 1500); }
+    // a signed-in player meets their account: nothing saved there yet -> keep this phone's; nothing played here -> bring
+    // the account's; both -> they choose. The choice is made once per phone (games365:acctlinked).
+    function acctLink(fromSheet) {
+      return acctCall({ action: 'me' }).then(function (me) {
+        if (!me || !me.ok) { acctOn = false; if (fromSheet) acMsg(me && me.error === 'team_member' ? 'That’s a company account - sign in with your own email to keep game scores.' : ''); acctDraw(); return; }
+        var linked = false; try { linked = localStorage.getItem('games365:acctlinked') === '1'; } catch (e) {}
+        if (linked || !me.at) { acctOn = true; try { localStorage.setItem('games365:acctlinked', '1'); } catch (e) {} if (!me.at) acctSync(); acctDraw(); codeDraw(); return; }
+        if (!localPlayed()) { acctBring(); return; }
+        $('acPickQ').textContent = 'Your 365 account already has scores saved. Which would you like on this phone?';
+        $('acPick').hidden = false; $('acOut').hidden = true; $('acIn').hidden = true;
+        if (!fromSheet) { codeAsk = ''; codeMsg(''); codeDraw(); openD('dCode'); }
+      }).catch(function () {});
+    }
+    function acctBring() {
+      acMsg('Bringing your scores…');
+      acctCall({ action: 'load' }).then(function (j) {
+        if (!j || !j.ok) { acMsg('Sorry, that didn’t work - try again.'); return; }
+        try {
+          if (j.data) { codeKeys().forEach(function (k) { localStorage.removeItem(k); }); for (var k in j.data) if (CODE_RX.test(k) && !/:game$/.test(k) && !CODE_LOCAL[k] && typeof j.data[k] === 'string') localStorage.setItem(k, j.data[k]); }
+          localStorage.setItem('games365:acctlinked', '1');
+        } catch (e) { acMsg('Sorry, this phone wouldn’t store them - is it in private browsing?'); return; }
+        acMsg('Your scores are here - starting again with them…'); setTimeout(function () { location.reload(); }, 900);
+      }).catch(function () { acMsg('Sorry, that didn’t work - check you’re online and try again.'); });
+    }
+    $('acUseAcct').onclick = acctBring;
+    $('acUseHere').onclick = function () { try { localStorage.setItem('games365:acctlinked', '1'); } catch (e) {} $('acPick').hidden = true; acctOn = true; acctSync(); acctDraw(); codeDraw(); acMsg('Done - this phone’s scores are now kept in your account.'); };
+    $('acSend').onclick = function () {
+      var em = ($('acEmail').value || '').trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { acMsg('Please type your email address.'); return; }
+      acEmail = em.toLowerCase(); $('acSend').disabled = true; acMsg('Sending your code…');
+      jpost(BK_API, { action: 'join', email: acEmail, machine: machineId() }).then(function (d) {
+        $('acSend').disabled = false;
+        if (d && (d.ok || d.have_code)) { $('acStep1').hidden = true; $('acStep2').hidden = false; $('acTo').textContent = acEmail; acMsg(d.have_code && !d.ok ? 'Use the code we sent you a moment ago.' : ''); try { $('acCode').focus(); } catch (e) {} return; }
+        acMsg(d && d.error === 'bad_email' ? 'That email address doesn’t look right.' : d && /throttle|too_many|slow/.test(d.error || '') ? 'Too many codes just now - try again in an hour.' : 'Sorry, we couldn’t send a code - try again, or ring 01202 775566.');
+      }).catch(function () { $('acSend').disabled = false; acMsg('Couldn’t reach us - check you’re online and try again.'); });
+    };
+    $('acBack').onclick = function () { $('acStep2').hidden = true; $('acStep1').hidden = false; $('acPhone').hidden = true; acMsg(''); };
+    $('acGo').onclick = function () {
+      var code = ($('acCode').value || '').replace(/[^0-9]/g, '');
+      if (code.length !== 6) { acMsg('Please type all 6 digits of the code.'); return; }
+      $('acGo').disabled = true; acMsg('Checking…');
+      jpost(BK_API, { action: 'verifycode', email: acEmail, code: code, name: ($('acFirst').value || '').trim(), machine: machineId(), shared: 0, marketing: $('acMkt').checked ? 1 : 0, phone: $('acPhone').hidden ? '' : ($('acPhone').value || '').trim() }).then(function (d) {
+        $('acGo').disabled = false;
+        if (d && d.ok && d.staff) { acMsg('That’s a 365 Techies staff address - use a personal email for your games.'); return; }
+        if (d && d.ok && d.team) { acMsg('That’s a company account - sign in with your own email to keep game scores.'); return; }
+        if (d && d.ok && d.wtoken) {
+          try { localStorage.setItem('p365', JSON.stringify({ wtoken: d.wtoken, name: d.customer || ($('acFirst').value || '').trim(), tier: d.tier, pending: !!d.pending })); } catch (e) {}
+          $('acStep2').hidden = true; $('acStep1').hidden = false; acMsg(''); acctLink(true); return;
+        }
+        if (d && d.error === 'needinfo') {
+          if (d.needname) { acMsg('Almost there - please add your first name above, then tap Sign me in again.'); $('acStep2').hidden = true; $('acStep1').hidden = false; $('acSend').hidden = true; $('acStep2').hidden = false; try { $('acFirst').focus(); } catch (e) {} return; }
+          if (d.needphone) { $('acPhone').hidden = false; acMsg('Almost there - we just need a phone number to finish setting up your account.'); try { $('acPhone').focus(); } catch (e) {} return; }
+        }
+        acMsg(d && d.error === 'wrong_code' ? 'That code isn’t right - check and try again.' : d && d.error === 'code_expired' ? 'That code has expired - go back and ask for a fresh one.' : 'Something went wrong - try again, or ring 01202 775566.');
+      }).catch(function () { $('acGo').disabled = false; acMsg('Couldn’t reach us - try again.'); });
+    };
+    // already signed in to the 365 portal on this phone: link up quietly once the table is settled
+    if (portalS()) setTimeout(function () { acctLink(false); }, 2500);
 
     $('bSet').onclick = function () { syncControls(); openD('dSet'); };
     $('bHelp').onclick = function () { openD('dHelp'); };
@@ -1819,7 +1901,17 @@
           + '<ul class="badges" id="wBadges"></ul><div class="wtro" id="wTro" hidden></div><div id="wJour" hidden></div><div id="wHof" hidden></div>'
           + '<div class="wapp" id="wApp" hidden>' + ICON.app + '<p><b>Play it like an app</b> &mdash; full screen, one tap from your home screen.</p><button class="btn go" type="button" id="wAppAdd">Add to home screen</button><button class="linkb" type="button" id="wAppNo">Not now</button></div>'
           + '<div class="row"><button class="btn go wide" type="button" id="wAgain">Play again</button><button class="btn wide" type="button" id="wShare">Challenge a friend</button><button class="btn wide" type="button" id="wDaily">Today&rsquo;s deal</button><button class="btn wide" type="button" id="wStats">My scores</button></div>')
-        + sheet('dCode', 'My code', '<p class="soft">Take your scores, streaks, trophies, Journey stars and Hall of Fame name to another phone &mdash; or from Samsung&rsquo;s browser into Chrome. No sign-in, nothing about you.</p>'
+        + sheet('dCode', 'Keep my scores', '<div class="acbox" id="acBox"><p class="mch">In your free 365 account</p>'
+          + '<div id="acIn" hidden><p>Signed in as <b id="acName"></b>. Your scores, streaks, trophies and stars are kept in your 365 account &mdash; sign in on any phone or computer and they&rsquo;re there. They update after every win.</p>'
+          + '<p class="acpcm">Your 365 account also runs <a href="/free-pc-health-check/">365 PC Manager</a> &mdash; a free health check for your computer.</p></div>'
+          + '<div id="acPick" hidden><p id="acPickQ"></p><div class="row"><button class="btn go wide" type="button" id="acUseAcct">Use my account&rsquo;s scores</button><button class="btn wide" type="button" id="acUseHere">Keep this phone&rsquo;s scores</button></div></div>'
+          + '<div id="acOut"><p class="soft">Never lose them, and carry on from any phone or computer. Free &mdash; we email you a 6-digit code, no password.</p>'
+          + '<div id="acStep1"><input id="acEmail" type="email" autocomplete="email" placeholder="Your email address"><input id="acFirst" type="text" autocomplete="given-name" placeholder="Your first name (if you&rsquo;re new)">'
+          + '<label class="actick"><input type="checkbox" id="acMkt"> Send me tips and offers from 365 Techies &mdash; you can stop them any time</label><button class="btn go wide" type="button" id="acSend">Email me a code</button></div>'
+          + '<div id="acStep2" hidden><p>We&rsquo;ve emailed a 6-digit code to <b id="acTo"></b>.</p><input id="acCode" type="text" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="6-digit code">'
+          + '<input id="acPhone" type="tel" autocomplete="tel" placeholder="A phone number" hidden><button class="btn go wide" type="button" id="acGo">Sign me in</button><button class="linkb" type="button" id="acBack">Use a different email</button></div></div>'
+          + '<p class="mcmsg" id="acMsg" role="status" aria-live="polite"></p></div>'
+          + '<p class="mch">Or a code, with no account</p><p class="soft">Take your scores, streaks, trophies, Journey stars and Hall of Fame name to another phone &mdash; or from Samsung&rsquo;s browser into Chrome. No sign-in, nothing about you.</p>'
           + '<div class="mcbox" id="mcHave" hidden><span>Your code</span><b id="mcCode"></b><small>Keep it to yourself &mdash; anyone with it can see and change your scores. It updates after every win.</small><button class="linkb" type="button" id="mcForget">Stop using this code</button></div>'
           + '<div class="row" id="mcGetRow"><button class="btn go wide" type="button" id="mcGet">Get my code</button></div>'
           + '<div class="mcin"><label for="mcIn">Got a code from another phone or browser?</label><div class="mcrow"><input id="mcIn" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="9" placeholder="e.g. 7K3P-9QXA"><button class="btn" type="button" id="mcLoad">Bring my scores here</button></div></div>'
@@ -1829,7 +1921,7 @@
         + sheet('dApp', 'Play it like an app', '<p class="soft" id="appWhy"></p><p class="apphow" id="appHow"></p><div class="row"><button class="btn go wide" type="button" id="appChrome" hidden>Open in Chrome</button><button class="btn wide" type="button" data-close>OK</button></div>')
         + sheet('dSprint', 'Time\u2019s up!', '<p class="soft" id="spSub"></p><div class="tiles"><div class="tile"><b id="spCards">0</b><span>Cards up</span></div></div><div id="spHof"></div>'
           + '<div class="row"><button class="btn go wide" type="button" id="spNew">New game</button><button class="btn wide" type="button" id="spHofB">Hall of Fame</button></div>')
-        + sheet('dStats', 'My scores', (window.Looks && Looks.trophies ? '<button class="btn wide trob" type="button" id="sTro">' + ICON.trophy + ' Trophies<small id="sTroS"></small></button>' : '') + '<button class="btn wide trob" type="button" id="sCode">&#128273; My code<small id="sCodeS"></small></button>' + (D.hof ? '<button class="btn hofbtn wide" type="button" id="sHof" style="width:100%;margin:2px 0 12px">&#127942; The Hall of Fame<small>Today&rsquo;s fastest, this week&rsquo;s best, all time</small></button>' : '') + '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere unless you join the Hall of Fame.</p><div class="tiles" id="sTiles"></div><h3 style="margin:16px 0 0;font-size:18px">Today&rsquo;s deal this week</h3><div class="week" id="sWeek"></div><div class="tiles" id="sBest"></div>'
+        + sheet('dStats', 'My scores', (window.Looks && Looks.trophies ? '<button class="btn wide trob" type="button" id="sTro">' + ICON.trophy + ' Trophies<small id="sTroS"></small></button>' : '') + '<button class="btn wide trob" type="button" id="sCode">&#128273; Keep my scores<small id="sCodeS"></small></button>' + (D.hof ? '<button class="btn hofbtn wide" type="button" id="sHof" style="width:100%;margin:2px 0 12px">&#127942; The Hall of Fame<small>Today&rsquo;s fastest, this week&rsquo;s best, all time</small></button>' : '') + '<p class="soft">Kept on this computer only &mdash; nothing is sent anywhere unless you join the Hall of Fame.</p><div class="tiles" id="sTiles"></div><h3 style="margin:16px 0 0;font-size:18px">Today&rsquo;s deal this week</h3><div class="week" id="sWeek"></div><div class="tiles" id="sBest"></div>'
           + '<div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>')
         + sheet('dSet', 'Settings', (V ? '<div class="set"><div><label>' + esc(V.label) + '</label><small>' + esc(V.small || 'Changes from your next game.') + '</small></div><div class="seg" role="group" aria-label="' + esc(V.label) + '">' + v + '</div></div>' : '')
           + (D.deals ? sw('winnable', 'Deals you can always win', D.winnableSmall || 'Every deal has been played through to a win.') : '')
