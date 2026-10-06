@@ -811,6 +811,60 @@ const MODELS = {
     for (let i = 0; i < 6; i++) k.box(1.6, 1.4, 1, -132 + i * 4, 9, 67.2, '#c9c0aa', 0, 0, 0, 'stone');
     k.box(30, 1.2, 6, -110, -0.4, 74, '#8a7a62');   // the quay
   },
+  quayfront(k, v) {   // the buildings along Poole Quay (their fronts +Z, to the road), lit at night: a mock-Tudor pub, a brick
+    // warehouse, apartments, Georgian buildings with restaurants (from the owner's quay footage)
+    const r = rnd(1900 + v * 17), t = v % 4;
+    if (t === 0) quayPub(k, r); else if (t === 1) quayWarehouse(k, r); else if (t === 2) quayFlats(k, r, v); else quayTerrace(k, r);
+  },
+  customhouse(k) {   // the old custom house on the quay: Georgian red brick, a double flight of steps up to a doorway under a white
+    // portico, sash windows, a hipped roof with a flagpole
+    const B = '#9a4030', W = '#efeae0', r = rnd(1950);
+    k.box(18, 9.6, 12, 0, 0, 0, B).box(18.4, 0.5, 12.4, 0, 9.6, 0, W);
+    k.put(new THREE.ConeGeometry(13.6, 4.2, 4), '#4a4a50', 0, 12.2, 0, 0, Math.PI / 4, 0, 1, 1, 0.68);
+    for (let f = 0; f < 2; f++) for (const x of [-6.4, -3.6, 3.6, 6.4]) litWin(k, r, x, 1.4 + f * 4.4, 6.02, 1.4, 2.4, 0.7);
+    k.box(3.2, 3.6, 0.6, 0, 4.4, 6.3, W).box(1.6, 2.6, 0.12, 0, 4.6, 6.62, '#e0a848', 0, 0, 0, 'glow');   // the doorway and its portico
+    k.put(new THREE.CylinderGeometry(2.4, 2.4, 0.6, 3), W, 0, 8.4, 6.4, Math.PI / 2, 0, 0, 1, 0.5, 1);
+    for (const sd of [-1, 1]) for (let i = 0; i < 8; i++) k.box(0.5, (8 - i) * 0.55, 1.4, sd * (2.25 + i * 0.5), 0, 7.6, '#c9c1ae', 0, 0, 0, 'stone');   // the double flight of steps, down from the door each way
+    k.box(4, 4.4, 1.4, 0, 0, 7.6, '#c9c1ae', 0, 0, 0, 'stone');
+    k.cyl(0.08, 0.1, 6, 6, 0, 13, 0, '#e8ecea').box(1.8, 1.1, 0.05, 0.95, 18.0, 0, '#1d4e89');
+  },
+  tripkiosk(k, v) {   // a boat-trip ticket kiosk on the quay: red and white, an ornate pyramid roof with a finial, a lit hatch
+    const red = ['#d62828', '#2a6ab0'][v % 2];
+    k.box(2.4, 2.6, 2.4, 0, 0, 0, red).box(2.5, 0.3, 2.5, 0, 2.6, 0, '#ffffff');
+    k.put(new THREE.ConeGeometry(2.0, 1.8, 4), red, 0, 3.8, 0, 0, Math.PI / 4).cyl(0.06, 0.06, 0.8, 4, 0, 4.6, 0, '#ffffff').ball(0.14, 0, 5.4, 0, '#ffd23f');
+    k.box(1.6, 0.9, 0.08, 0, 1.2, 1.22, '#e8b860', 0, 0, 0, 'glow').box(1.9, 0.12, 0.4, 0, 1.15, 1.35, '#ffffff');
+  },
+  quaybollard(k, v) {   // a black iron bollard on the quay's edge, a rope from it down to a boat alongside (+X: the water)
+    k.cyl(0.22, 0.28, 0.7, 10, 0, 0, 0, '#1a1a1c').cyl(0.3, 0.3, 0.12, 10, 0, 0.7, 0, '#1a1a1c');
+    if (v % 2 === 0) beam(k, [0.1, 0.5, 0], [3.4, 0.3, v % 4 ? 3 : -3], 0.05, '#e8e4da');
+  },
+  fishboat(k, v) {   // a small fishing boat moored against the quay (bow -Z): a coloured hull, a wheelhouse lit at night, a mast and
+    // derrick with its riding light, nets and orange floats, tyres hung as fenders
+    const hull = ['#c62828', '#1d4e89', '#2f6a3a', '#f4f4f0', '#e8b030'][v % 5], r = rnd(2000 + v);
+    k.side([-5, -0.6, 4.4, -0.6, 5.6, 1.6, -5.2, 1.4], 3.6, 0, 0, 0, hull, 'shiny', 0.1);
+    k.box(3.62, 0.25, 10.4, 0, 1.2, 0, '#f4f4f0');
+    k.box(2.4, 2.2, 2.6, 0, 1.5, -1.0, '#f4f4f0').box(2.42, 0.6, 2.62, 0, 2.6, -1.0, '#e8b048', 0, 0, 0, 'glow').box(2.6, 0.2, 2.8, 0, 3.7, -1.0, hull);   // the wheelhouse
+    k.cyl(0.08, 0.1, 6, 6, 0, 3.7, -1.0, '#e8e8e4').box(0.2, 0.2, 0.2, 0, 9.8, -1.0, '#fff4c0', 0, 0, 0, 'glow');
+    beam(k, [0, 6.6, -1.0], [0, 2.4, 3.6], 0.1, '#d8d8d4');   // the derrick
+    for (let i = 0; i < 6; i++) k.ball(0.22, (r() - 0.5) * 2.4, 1.5, 2 + r() * 2.4, '#ff7a1a', 1, 1, 1, 'lit', 6);
+    k.box(2.6, 0.5, 2.4, 0, 1.4, 2.8, '#2a4a3a');   // nets
+    for (const z of [-3, 0, 3]) k.put(new THREE.TorusGeometry(0.32, 0.12, 5, 10), '#151515', -1.85, 0.4, z, 0, Math.PI / 2, 0);
+  },
+  portcrane(k, v) {   // a dockside crane across the harbour at the commercial port: a portal on legs, a tower and an angled jib, red lights at the top
+    const Y = ['#e8b030', '#d8d8d4', '#3a6ab0'][v % 3], H = 28 + (v % 2) * 6;
+    for (const [x, z] of [[-4, -4], [4, -4], [-4, 4], [4, 4]]) k.box(0.8, 9, 0.8, x, 0, z, Y);
+    k.box(9.6, 1.2, 9.6, 0, 9, 0, Y).box(3, H - 10, 3, 0, 10.2, 0, Y).box(5, 3.4, 4, 0, H, 0.6, Y).box(4.6, 1.2, 0.1, 0, H + 1.2, 2.62, '#e8b048', 0, 0, 0, 'glow');
+    beam(k, [0, H + 2, 0], [0, H + 22, -30], 1.0, Y); beam(k, [0, H + 3.4, 2], [0, H + 23, -28], 0.25, '#2a2a2a');
+    beam(k, [0, H + 22, -30], [0, 6, -31], 0.08, '#1a1a1a');
+    k.box(0.6, 0.6, 0.6, 0, H + 23, -30, '#ff3a2a', 0, 0, 0, 'glow').box(0.6, 0.6, 0.6, 0, H + 3.6, 0, '#ff3a2a', 0, 0, 0, 'glow');
+    for (let i = 0; i < 4; i++) k.box(2.4, 2.6, 12, 8 + i * 2.6, 0, 6, ['#b83a2a', '#2a5a9a', '#3a7a4a', '#d8a030'][i % 4]);   // a stack of containers
+  },
+  canopy(k, v) {   // the quay's glass-roofed shelter: a ridged glass roof on slim posts, benches under it, lit at night
+    for (const [x, z] of [[-4.5, -2.5], [4.5, -2.5], [-4.5, 2.5], [4.5, 2.5], [0, -2.5], [0, 2.5]]) k.cyl(0.1, 0.12, 3, 6, x, 0, z, '#2a3a48');
+    k.box(10, 0.3, 6, 0, 3, 0, '#2a3a48').prism(6.4, 1.8, 10.4, 0, 3.3, 0, '#9ab4c2', Math.PI / 2);
+    k.box(9, 0.1, 5, 0, 3.0, 0, '#d8b870', 0, 0, 0, 'glow');   // the light under the roof
+    for (const z of [-1.4, 1.4]) k.box(7, 0.45, 0.6, 0, 0, z, '#5a4a3a');
+  },
   balloon(k, v) {   // a hot-air balloon, far off over the land
     const c = [['#e63946', '#ffd23f'], ['#1d7fd6', '#ffffff'], ['#2a9d8f', '#f4a261'], ['#9b5de5', '#ffd23f']][v % 4];
     for (let i = 0; i < 10; i++) k.put(new THREE.SphereGeometry(8, 3, 14, i * Math.PI / 5, Math.PI / 5), c[i % 2], 0, 16, 0, 0, 0, 0, 1, 1.22, 1);
@@ -1011,6 +1065,47 @@ function carShape(k, x, z, col, y) {   // a parked car, simple (seen from across
   y = y || 0;
   k.box(1.8, 0.7, 4.2, x, y + 0.3, z, col, 0, 0, 0, 'shiny').box(1.6, 0.55, 2.2, x, y + 1.0, z + 0.2, shade(col, -0.15)).box(1.62, 0.42, 2.0, x, y + 1.04, z + 0.2, '#2a3a48', 0, 0, 0, 'shiny');
   for (const [wx, wz] of [[-0.85, -1.3], [0.85, -1.3], [-0.85, 1.3], [0.85, 1.3]]) k.axle(0.33, 0.24, 8, x + wx, y + 0.33, z + wz, '#151515');
+}
+const LIT = ['#c89040', '#d8a050', '#b88038', '#e0b060'];   // warm windows at night (the glow material brightens them)
+function litWin(k, r, x, y, z, w, h, p) {   // a window on a +Z face: lit (warm) or dark, with a pale frame
+  k.box(w + 0.2, h + 0.2, 0.08, x, y - 0.1, z, '#d8d2c4');
+  if (r() < (p == null ? 0.6 : p)) k.box(w, h, 0.1, x, y, z + 0.02, LIT[(r() * 4) | 0], 0, 0, 0, 'glow'); else k.box(w, h, 0.1, x, y, z + 0.02, '#1c2430', 0, 0, 0, 'shiny');
+}
+function quayPub(k, r) {   // a mock-Tudor pub on the quay: white render and black beams, red-tiled gables, warm bay windows, flower baskets,
+  // tables out front under festoon lights
+  const W = '#f2eee4', beam = '#2a2622', roof = '#8a3a2a';
+  k.box(18, 8.4, 11, 0, 0, 0, W).prism(12, 4.6, 18.6, 0, 8.4, 0, roof, Math.PI / 2);
+  for (const x of [-5, 4.6]) { k.box(6.4, 3, 1.6, x, 5.6, 5.9, W).prism(7, 3.4, 2.2, x, 8.6, 6.0, roof); for (const dx of [-3, 0, 3]) k.box(0.2, 3, 0.1, x + dx, 5.6, 6.72, beam); k.box(6.4, 0.2, 0.1, x, 7.2, 6.72, beam); }   // jettied gables, their beams
+  for (let x = -8.6; x <= 8.6; x += 1.9) k.box(0.18, 3.2, 0.1, x, 4.0, 5.53, beam);
+  k.box(18, 0.22, 0.1, 0, 4.0, 5.53, beam).box(18, 0.22, 0.1, 0, 7.1, 5.53, beam);
+  for (const x of [-5, 4.6]) for (const dx of [-1.2, 1.2]) litWin(k, r, x + dx, 6.0, 6.75, 1.2, 1.1, 0.8);
+  for (const x of [-6, -2, 4, 7.6]) { k.box(3, 2.2, 1.2, x, 0.6, 6.0, W); k.box(2.6, 1.7, 0.1, x, 0.85, 6.62, '#e8a848', 0, 0, 0, 'glow'); }   // the bay windows, lit
+  k.box(1.6, 2.6, 0.12, 1, 0, 5.56, '#3a1e14');   // the door
+  for (const x of [-8, -3.5, 1.4, 6]) { k.cyl(0.02, 0.02, 0.6, 4, x, 3.4, 6.6, '#222222'); k.ball(0.45, x, 3.2, 6.6, ['#e63946', '#ff7eb6', '#ffd23f', '#9b5de5'][(r() * 4) | 0], 1, 0.8, 1); }   // hanging baskets
+  for (let i = 0; i < 3; i++) { const x = -6 + i * 6; k.cyl(0.4, 0.4, 0.06, 8, x, 0.75, 9.5, '#5a4a3a').cyl(0.05, 0.05, 2.4, 4, x, 0, 9.5, '#9a9a9a').cone(1.5, 0.5, 8, x, 2.2, 9.5, ['#1d4e89', '#2f6a3a', '#7a1f2b'][i]); }
+  for (let i = 0; i < 18; i++) { const u = i / 17, x = -8.5 + u * 17, y = 3.6 - Math.sin(u * Math.PI * 3) * 0.25; k.ball(0.09, x, y, 11.6, '#ffd27a', 1, 1, 1, 'glow', 5); }   // festoon lights
+  k.box(0.1, 1.2, 0.9, 9.4, 4.6, 6.8, '#3a2a1a').box(1.2, 0.08, 0.08, 9.0, 5.8, 6.3, '#1a1a1a');   // the pub sign on its bracket (blank: no name)
+}
+function quayWarehouse(k, r) {   // a tall red-brick warehouse, its gable to the quay, loading doors one above another, a hoist beam at the top
+  const B = '#9a4a34', roof = '#5a4a44';
+  k.box(14, 14, 16, 0, 0, 0, B).prism(14.6, 5, 16.4, 0, 14, 0, roof);   // (the ridge runs back from the quay: the gable faces it)
+  k.prism(14, 5, 0.6, 0, 14, 8.0, B, 0);
+  for (let f = 0; f < 4; f++) for (const x of [-4.6, 4.6]) litWin(k, r, x, 1.6 + f * 3.3, 8.02, 1.4, 1.8, 0.5);
+  for (let f = 0; f < 4; f++) k.box(2.2, 2.6, 0.12, 0, 1 + f * 3.3, 8.05, f ? '#4a3a2a' : '#c88a3a', 0, 0, 0, f ? 'lit' : 'glow');   // the loading doors, the ground one open and lit
+  k.box(0.3, 0.3, 2.2, 0, 15.2, 8.9, '#2a2a2a').box(0.05, 2.4, 0.05, 0, 12.9, 9.9, '#2a2a2a');
+}
+function quayFlats(k, r, v) {   // modern apartments on the quay: brick and white bands, glass balconies, windows lit at random
+  const B = ['#b0603e', '#c47a4a'][v % 2], H = 18;
+  k.box(20, H, 13, 0, 0, 0, B);
+  for (let f = 0; f < 6; f++) { k.box(20.4, 0.4, 13.4, 0, f * 3, 0, '#e8e4dc'); for (let w = 0; w < 6; w++) litWin(k, r, -8.3 + w * 3.3, f * 3 + 0.8, 6.52, 2.2, 1.9, 0.45); if (f) k.box(20, 0.9, 0.06, 0, f * 3 + 0.4, 7.6, '#9ab4c2', 0, 0, 0, 'shiny').box(20, 0.2, 1.1, 0, f * 3, 7.05, '#e8e4dc'); }
+  k.box(20.6, 0.6, 13.6, 0, H, 0, '#d8d2c4');
+}
+function quayTerrace(k, r) {   // Georgian brick buildings with restaurants below: lit glass shopfronts, sash windows over, chimneys
+  const B = ['#8a4030', '#a05a40', '#7a3a2c'][(r() * 3) | 0];
+  k.box(16, 10, 10, 0, 0, 0, B).box(16.4, 0.5, 10.4, 0, 10, 0, '#e8e4dc').prism(9, 2.4, 16.2, 0, 10.5, 0, '#4a4a4e', Math.PI / 2);
+  k.box(15, 3, 0.12, 0, 0.3, 5.05, '#d8a050', 0, 0, 0, 'glow').box(16, 0.7, 0.3, 0, 3.3, 5.1, ['#1d3557', '#2f5a3a', '#5a1f2b'][(r() * 3) | 0]);
+  for (let f = 0; f < 2; f++) for (let w = 0; w < 4; w++) litWin(k, r, -5.4 + w * 3.6, 4.8 + f * 2.8, 5.02, 1.3, 1.9, 0.55);
+  for (const x of [-6, 6]) k.box(1.2, 2.2, 1.2, x, 11.6, 0, B);
 }
 export function shade(hex, f) { C.set(hex); const k = f < 0 ? 1 + f : 1; const add = f > 0 ? f : 0; return '#' + new THREE.Color(C.r * k + add * (1 - C.r), C.g * k + add * (1 - C.g), C.b * k + add * (1 - C.b)).getHexString(); }
 const cache = new Map();

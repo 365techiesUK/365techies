@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=24';
+import * as MD from './models3d.js?v=25';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -51,8 +51,8 @@ const LOOK = {
     cover: 0.42, cloud: ['#ffd8b0', '#8a6a86'], grade: [1.18, 1.16, '#fff8f0'], env: 0.62, glow: 1.5,
     dress: [['gorse', 1, 0.28, 12, 60], ['heather', 2, 0.35, 12, 60], ['rock', 3, 0.08, 15, 60], ['tuft', 6, 1.82, 8.8, 28]] },
   harbour: { sun: [0.5, 0.6], sunCol: '#a8b0d0', sunI: 0.8, hemi: ['#7a80a0', '#3a3a40', 1.6], fog: [80, 750], cliff: '#55585f', beach: '#3a3d44', beachY: -1, cliffK: 0.12, hills: 6, rise: 50, edge: 'quay', sea: '#0b1d3a', seaOp: 0.94, night: true,
-    cover: 0.2, cloud: ['#4a5478', '#161b2e'], grade: [1.12, 1.08, '#eaf0ff'], env: 0.55, glow: 0.3,
-    dress: [['building', 4, 0.12, 40, 110]] },
+    cover: 0.2, cloud: ['#4a5478', '#161b2e'], grade: [1.12, 1.08, '#eaf0ff'], env: 0.55, glow: 0.3, paved: 22, fireworks: true,
+    dress: [['building', 4, 0.12, 44, 110]] },
   needles: { hedge: 16, roadK: '#ccd6ea', sun: [0.58, 0.2], sunCol: '#ffc6ac', sunI: 2.5, hemi: ['#ffd8d0', '#7a8a70', 0.55], fog: [140, 1250], cliff: '#f3eee4', beach: '#e8e2d6', beachY: 0.4, cliffK: 0.3, hills: 20, rise: 90, edge: 'fence', sea: '#5f88b8', seaOp: 0.84,
     cover: 0.36, cloud: ['#ffe0d6', '#9c86a6'], grade: [1.12, 1.05, '#fff4f2'], env: 1.0, glow: 1.4,
     dress: [['heather', 2, 0.35, 12, 60], ['gorse', 1, 0.22, 12, 60], ['pony', 3, 0.04, 15, 60], ['tuft', 6, 1.82, 8.8, 28]] }
@@ -111,10 +111,10 @@ const BIG = { castle: 1.5, arch: 1.4, goldcap: 1.3, headland: 1.3, priory: 1.35,
 const SIGNS = { gate: 1, gantry: 1, nose: 1, board: 1, chev: 1, warn: 1, banner: 1 };
 const lit = (look) => !!(look.night || look.dusk);   // lamps and headlights on
 // OutRun's way (owner, 5 Oct): the land side of the road ends at a boundary, and the place is packed in right behind it
-const VERGE_K = { bournemouth: 'prom', sandbanks: 'prom', weymouth: 'prom', christchurch: 'hedge', lymington: 'hedge', goldencap: 'hedge', purbeck: 'wall', lyme: 'wall', portland: 'wall', forest: 'fence', swanage: 'vpost', jurassic: 'vpost', needles: 'vpost', hengistbury: 'vpost', harbour: 'rail' };
+const VERGE_K = { bournemouth: 'prom', sandbanks: 'prom', weymouth: 'prom', christchurch: 'hedge', lymington: 'hedge', goldencap: 'hedge', purbeck: 'wall', lyme: 'wall', portland: 'wall', forest: 'fence', swanage: 'vpost', jurassic: 'vpost', needles: 'vpost', hengistbury: 'vpost', harbour: 'bollard' };
 const ROWS = {   // set out at a steady spacing behind the boundary: [model, variants, every so many segments, how far out, sideways jitter]
   bournemouth: [['hutrow', 6, 4, 16.0, 0], ['hotel', 8, 7, 47, 4]], sandbanks: [['villa', 8, 6, 25, 2], ['palm', 3, 4, 16.6, 2]],
-  weymouth: [['terrace', 6, 3, 21, 0]], lyme: [['terrace', 6, 4, 22, 0]], harbour: [['building', 4, 6, 27, 2]],
+  weymouth: [['terrace', 6, 3, 21, 0]], lyme: [['terrace', 6, 4, 22, 0]], harbour: [['quayfront', 8, 5, 27, 0]],
   christchurch: [['tpole', 1, 12, 15.6, 0], ['cottage', 2, 14, 26, 6]], lymington: [['cottage', 2, 9, 24, 5], ['tpole', 1, 12, 15.6, 0]],
   purbeck: [['tpole', 1, 12, 15.6, 0]], hengistbury: [['lamp', 2, 6, 15.4, 0]], swanage: [['tpole', 1, 12, 15.6, 0]], goldencap: [['tpole', 1, 12, 15.6, 0]], needles: [['tpole', 1, 14, 15.6, 0]]
 };
@@ -133,12 +133,13 @@ const MORE = {   // closer, thicker dressing behind the boundary (as look.dress:
 for (const k in MORE) LOOK[k].dress = (LOOK[k].dress || []).concat(MORE[k]);
 const SEA_MORE = { bournemouth: [['windsurf', 4, 0.07, 30, 220], ['motorboat', 4, 0.04, 40, 200]], sandbanks: [['windsurf', 4, 0.09, 25, 220], ['motorboat', 4, 0.05, 30, 200], ['marina', 3, 0.02, 7, 12]],
   weymouth: [['windsurf', 4, 0.06, 30, 220], ['motorboat', 4, 0.04, 40, 200]], swanage: [['windsurf', 4, 0.03, 40, 220]], christchurch: [['windsurf', 4, 0.04, 25, 160], ['marina', 3, 0.04, 7, 12]],
-  lymington: [['marina', 3, 0.16, 3, 7], ['motorboat', 4, 0.03, 30, 140]], lyme: [['motorboat', 4, 0.03, 30, 160], ['marina', 3, 0.025, 7, 12]], harbour: [['marina', 6, 0.08, 6, 12]] };   // out on the water
+  lymington: [['marina', 3, 0.16, 3, 7], ['motorboat', 4, 0.03, 30, 140]], lyme: [['motorboat', 4, 0.03, 30, 160], ['marina', 3, 0.025, 7, 12]], harbour: [['marina', 6, 0.06, 22, 30], ['portcrane', 3, 0.045, 200, 250]] };   // out on the water
 const BEACH = {   // the beach between the road and the water: [model, variants, a segment, from, to (less than 0: that far short of the water)]
   bournemouth: [['strollers', 8, 0.22, 11.8, 19], ['deckchairs', 4, 0.26, 15.5, -3.5], ['lifeguard', 1, 0.012, 20, -6]], sandbanks: [['marram', 6, 0.42, 11.8, 21], ['strollers', 8, 0.16, 11.8, 19], ['deckchairs', 4, 0.22, 15, -3.5]],
-  weymouth: [['strollers', 8, 0.22, 11.8, 19], ['deckchairs', 4, 0.26, 15.5, -3.5]], hengistbury: [['strollers', 8, 0.08, 11.8, 19]]
+  weymouth: [['strollers', 8, 0.22, 11.8, 19], ['deckchairs', 4, 0.26, 15.5, -3.5]], harbour: [['strollers', 8, 0.18, 9.6, -2.6], ['tripkiosk', 2, 0.035, 10.6, 11.2], ['canopy', 2, 0.012, 11.2, 11.6]], hengistbury: [['strollers', 8, 0.08, 11.8, 19]]
 };
 const QUAY = { harbour: 1 };
+const FISH = { harbour: 1 };   // fishing boats moored along the quay wall
 const GROYNE = { bournemouth: 'groyne', sandbanks: 'rockgroyne' };   // (Bournemouth's are timber, Sandbanks' granite boulders)
 const HARB = { sandbanks: [['mooring', 6, 0.16, 14, 210], ['motorboat', 4, 0.025, 30, 180], ['jetty', 3, 0.045, -3, -3]] };   // out in the harbour (lateral from its edge; a jetty from the bank)   // lamps along the water's edge (at night the quay side was a black void)
 const BG_IMG = { bournemouth: 4, sandbanks: 4, christchurch: 4, purbeck: 4, swanage: 4, forest: 4, jurassic: 4, weymouth: 4, harbour: 4, lymington: 4, lyme: 4, portland: 4, goldencap: 4, needles: 4 };   // the places with a painted panorama (games/coastrun/bg/<place>.webp), and its version
@@ -474,8 +475,9 @@ export function createWorld() {
     const glowT = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameGlow(), color: '#ffb060', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); glowT.scale.setScalar(0.65); g.add(glowT);   // a glow at the pipe
     g.userData.dia = [0.26, 0.6, 0.94].map((z) => { const d = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameGlow(), color: '#ffffff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); d.position.z = z; d.scale.setScalar(0.17); g.add(d); return d; });   // shock diamonds in the core
     g.visible = false; return g; });
+  const fworks = particles(2200, true, { near: [10, 40] }), FWP = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null };   // fireworks over Poole Harbour (summer nights, as in the owner's footage)
   const smoke = particles(700, false), sparks = particles(500, true, { near: [0.8, 2.0] }), tyre = particles(1100, false, { near: [0.5, 1.4], lift: 0.12, flat: true }), SMK = { quick: true, drag: 0.985 }, SPK = { drag: 0.99 };   // (tyre: smoke and dust low along the road, right by the car)
-  scene.add(smoke.points); scene.add(sparks.points); scene.add(tyre.points);
+  scene.add(smoke.points); scene.add(sparks.points); scene.add(tyre.points); scene.add(fworks.points);
   const skid = skidMarks(); scene.add(skid.mesh);
   const glows = glowPoints(1200); scene.add(glows.points);
 
@@ -622,6 +624,7 @@ export function createWorld() {
         let k2 = g.tun && j === 0 ? 'rock' : kind;
         if (SANDY[S.key] && g.sea === d && !g.tun && !g.brg && (kind === 'verge' || kind === 'top' || kind === 'foot')) k2 = j === 0 ? 'prom' : 'sand';
         if (look.bluff && g.sea === -d && kind === 'land' && lat < look.bluff.toe) k2 = 'prom';
+        if (look.paved && !g.tun && !g.brg && ((g.sea === -d && kind === 'land' && lat < look.paved) || (g.sea === d && (kind === 'verge' || kind === 'top')))) k2 = 'prom';   // (a quay: paving both sides)
         if (look.harbour && g.sea === -d && kind === 'land' && lat > look.harbour.from - 3 && !g.tun) k2 = h < -0.5 ? 'bed' : 'sand';   // (the harbour's sandy edge)   // (the promenade runs on in front of the huts)
         list.push([wx, h, wz, k2, lat - span]); prevH = h;
       }
@@ -783,8 +786,8 @@ export function createWorld() {
           const lat = lat0 + fo + (hash2(i, d * 13 + 7) - 0.5) * 2 * jit;
           if (g.sea === d || (d === innerSide && lat > inner)) continue;
           place(W, i * SEG + SEG / 2, d * lat, 0, P);
-          if (t === 'hutrow') { let busy = false; for (let q = i - 3; q <= i + 6; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && sq.spr.some((it) => it.t === 'clifflift' || it.t === 'zigzag')) busy = true; } if (busy) continue; }
-          const ry = /^(hotel|building|villa|terrace|cottage)$/.test(t) ? faceRoad(d, P.th) : t === 'tpole' ? -P.th : t === 'hutrow' ? -P.th + (d < 0 ? Math.PI : 0) : hash2(i, d) * Math.PI * 2;
+          if (t === 'hutrow' || t === 'quayfront') { let busy = false; for (let q = i - 4; q <= i + 6; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && sq.spr.some((it) => it.t === 'clifflift' || it.t === 'zigzag' || it.t === 'customhouse')) busy = true; } if (busy) continue; }
+          const ry = /^(hotel|building|villa|terrace|cottage|quayfront)$/.test(t) ? faceRoad(d, P.th) : t === 'tpole' ? -P.th : t === 'hutrow' ? -P.th + (d < 0 ? Math.PI : 0) : hash2(i, d) * Math.PI * 2;
           addAll(MD.model(t, Math.floor(hash2(i * 3, d + 5) * 997) % nv), P.x, groundAt(W, g, P, d * lat) - (t === 'tpole' ? 0.3 : 0.25), P.z, ry, 1);
         }
       }
@@ -811,7 +814,7 @@ export function createWorld() {
         place(W, i * SEG, it.x, it.b, P);
         const d = it.x < 0 ? -1 : 1, fr = faceRoad(d, P.th);
         let ry = hash2(i, Math.round(it.x * 10)) * Math.PI * 2;
-        if (/^(hut|cottage|hotel|building|board|finger|forestsign|lamp|villa|terrace|clock|haven)$/.test(it.t)) ry = fr;
+        if (/^(hut|cottage|hotel|building|board|finger|forestsign|lamp|villa|terrace|clock|haven|customhouse)$/.test(it.t)) ry = fr;
         if (it.t === 'lamp') ry = fr + Math.PI;   // the arm reaches over the road
         if (/^(gate|gantry|nose|chev|warn|gpost|footbridge|viaduct|banner|rockarch|treearch|pierarch|liftbridge|chairlift|craneway|ferryqueue)$/.test(it.t)) ry = -P.th;
         if (it.t === 'priory' || it.t === 'cobb' || it.t === 'goldcap' || it.t === 'headland') ry = fr;
@@ -893,7 +896,8 @@ export function createWorld() {
           if (lat > g.sh - 2.5 || (lat < 15 && (hut(i - 1) || hut(i) || hut(i + 1)))) return;
           place(W, i * SEG + h2 * SEG, d * lat, 0, DP);
           addAll(MD.model(t[0], Math.floor(hash2(i, ti * 13 + 2) * 997) % t[1]), DP.x, groundAt(W, g, DP, d * lat) - 0.05, DP.z, faceRoad(d, DP.th) + (t[0] === 'deckchairs' ? Math.PI : t[0] === 'lifeguard' ? Math.PI / 2 : 0) + (h2 - 0.5) * (t[0] === 'lifeguard' ? 0 : 0.6), 1); });
-        if (QUAY[key] && g.sh > 4 && i % 3 === 0) { place(W, i * SEG, d * (g.sh - 0.9), 0, DP); addAll(MD.model('quaylight', 0), DP.x, groundAt(W, g, DP, d * (g.sh - 0.9)), DP.z, 0, 1); }
+        if (QUAY[key] && g.sh > 4 && i % 2 === 0) { const ql = i % 6 === 0, at = g.sh - (ql ? 0.9 : 0.6); place(W, i * SEG, d * at, 0, DP); addAll(MD.model(ql ? 'quaylight' : 'quaybollard', (i / 2) % 4), DP.x, groundAt(W, g, DP, d * at), DP.z, faceRoad(d, DP.th) + Math.PI / 2, 1); }   // bollards along the edge, a lamp every so often
+        if (FISH[key] && g.sh > 4 && i % 4 === 1 && hash2(i, 77) < 0.72 && !g.brg) { place(W, i * SEG + SEG, d * (g.sh + 3.4), 0, DP); addAll(MD.model('fishboat', Math.floor(hash2(i, 31) * 997) % 5), DP.x, 0, DP.z, -DP.th + (hash2(i, 5) < 0.5 ? Math.PI : 0), 1); }   // fishing boats moored alongside
         const sm = SEA_MORE[key]; if (!sm || !g.sh) continue;
         sm.forEach((t, ti) => { const h0 = hash2(i * 5 + ti, d * 17 + 9); if (h0 > t[2]) return;
           const h1 = hash2(i * 11, ti * 3 + d), h2 = hash2(i * 7 + 3, ti - d), mar = t[0] === 'marina'; place(W, i * SEG + h2 * SEG, d * (g.sh + t[3] + h1 * (t[4] - t[3])), 0, DP);
@@ -1560,7 +1564,18 @@ export function createWorld() {
     flare(W); gulls(W, t, cx, cy, cz, fx, fz);
     if (W.banner && W.banner !== R.lastBanner) { R.lastBanner = W.banner; if (W.banner.kind === 'check' || W.banner.kind === 'goal' || W.banner.kind === 'go') confetti(cx, cy, cz, fx, fz, W.banner.kind === 'goal' ? 360 : 200); }
     { const LK = LOOK[R.lookKey] || {}, am = (1 - 0.62 * R.tunK) * (LK.night ? 0.42 : LK.dusk ? 0.72 : 1); smoke.amb(am); tyre.amb(am); }   // smoke takes the light it's in
-    smoke.update(dt); sparks.update(dt); tyre.update(dt); updateShards(dt);
+    smoke.update(dt); sparks.update(dt); tyre.update(dt); updateShards(dt); fworks.update(dt);
+    if (LOOK[R.lookKey] && LOOK[R.lookKey].fireworks && !W.ferry && !W.crash) {   // a burst out over the water ahead every second or so, a rocket's trail under it
+      R.fwT = (R.fwT || 0) - dt;
+      if (R.fwT <= 0) {
+        R.fwT = 0.45 + Math.random() * 1.1;
+        const side = E.segAt(W, E.segIndex(W.s)).sea || 1; place(W, W.s + 130 + Math.random() * 190, side * (60 + Math.random() * 130), 0, FWP);
+        const y = 38 + Math.random() * 34, C = [['#ff4a4a', '#ffd27a'], ['#6ab8ff', '#ffffff'], ['#7cff8a', '#ffd23f'], ['#ff7eda', '#ffffff'], ['#ffb347', '#ff4a4a']][(Math.random() * 5) | 0], n = 90 + ((Math.random() * 40) | 0), sp = 15 + Math.random() * 7;
+        for (let i = 0; i < n; i++) { const u = Math.random() * 2 - 1, a = Math.random() * Math.PI * 2, q = Math.sqrt(1 - u * u), v = sp * (0.85 + Math.random() * 0.15);
+          fworks.emit(FWP.x, y, FWP.z, Math.cos(a) * q * v, u * v, Math.sin(a) * q * v, 6.5, 2.6, C[i % 3 ? 0 : 1], 1, 1.4 + Math.random() * 0.7, 4, { drag: 0.965 }); }
+        for (let k = 1; k < 8; k++) fworks.emit(FWP.x, y - k * 5, FWP.z, 0, 0, 0, 2.4, 0.6, '#ffd8a0', 0.6, 0.25 + k * 0.06, 0);
+      }
+    }
     // ---- draw: straight to the screen on a slow PC, otherwise through the glow, the grade and the blur
     R.boostK += ((W.boosting ? 1 : 0) - R.boostK) * Math.min(1, dt * 4); R.flash = Math.max(0, R.flash - dt * 2.2);
     if (R.low) renderer.render(scene, camera);
