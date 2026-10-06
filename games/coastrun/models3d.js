@@ -395,17 +395,27 @@ const MODELS = {
       k.put(new THREE.ConeGeometry(0.34, 0.66, 3), cols[i % cols.length], x, y - 0.36, 0, Math.PI, 0, 0, 1, 1, 0.12, 'lit'); }   // a pennant, facing along the road
     for (let i = 0; i < N; i++) { const u0 = i / N * 2 - 1, u1 = (i + 1) / N * 2 - 1, y0 = 6.9 - 1.6 * (1 - u0 * u0), y1 = 6.9 - 1.6 * (1 - u1 * u1); k.box(Math.hypot(W * (u1 - u0), y1 - y0), 0.025, 0.025, (u0 + u1) / 2 * W, (y0 + y1) / 2, 0, '#2a2a2a', 0, 0, Math.atan2(y1 - y0, W * (u1 - u0))); }
   },
-  chainferry(k) {   // a chain ferry across a harbour mouth: a flat open car deck, a raised ramp at each end, a cabin each side with
-    // the wheelhouse up on one, the chains running out fore and aft into the water (our own colours)
-    k.side([-15, -1.2, 15, -1.2, 15.5, 1.2, -15.5, 1.2], 15, 0, 0, 0, '#2d5f6e', 'lit', 0.15);
-    k.box(15.2, 0.12, 30.6, 0, 1.2, 0, '#e9ecee').box(9.6, 0.06, 30, 0, 1.32, 0, '#4a4f55');   // the deck, the road across it
-    for (const z of [-1, 1]) k.box(10, 0.3, 4.5, 0, 1.3, z * 17.3, '#3a3f45', 0, z * 0.32, 0).box(10.4, 0.5, 0.3, 0, 2.6, z * 19.1, '#d9a400', 0, z * 0.32, 0);   // the ramps
+  chainferry(k) {   // the chain ferry (bow -Z), from the owner's drone footage: 74 m long and 20 wide, white, the car deck open down the
+    // middle (green, lane lines), a passenger structure along each side, the bridge raised high on one side amidships with its mast,
+    // hinged ramps at both ends, the chains running out ahead and astern (no name, no livery)
+    const W = '#f6f7f6', L = 66, deckY = 1.3;
+    k.box(20, 2.9, L, 0, -1.6, 0, W).box(20.1, 0.5, L + 0.1, 0, -1.6, 0, '#24323e');   // the hull, a dark band at the water
+    k.box(15.2, 0.12, L, 0, deckY - 0.1, 0, '#3f6f52');   // the car deck (a hair above the hull's top: level with it, the two fought)
+    for (const x of [-1.9, 1.9, 5.7, -5.7]) k.box(0.15, 0.02, L - 4, x, deckY + 0.025, 0, '#f2f2ee');   // lanes, between the rows of cars
     for (const sd of [-1, 1]) {
-      k.box(2.2, 2.6, 24, sd * 6.5, 1.3, 0, '#f2f4f5').box(2.3, 0.3, 24.2, sd * 6.5, 3.9, 0, '#2d5f6e');
-      for (let i = 0; i < 7; i++) k.box(0.06, 0.9, 1.6, sd * 7.62, 2.6, -9.6 + i * 3.2, '#2a3a48', 0, 0, 0, 'shiny');
+      const x = sd * 8.8;
+      k.box(2.4, 3.2, L - 10, x, deckY, 0, W).box(2.5, 0.25, L - 10, x, deckY + 3.2, 0, '#e2e4e2');
+      k.box(0.08, 1.1, L - 14, x + sd * 1.22, deckY + 1.5, 0, '#33475a', 0, 0, 0, 'shiny').box(0.08, 1.1, L - 14, x - sd * 1.22, deckY + 1.5, 0, '#33475a', 0, 0, 0, 'shiny');
+      for (let z = -L / 2 + 6; z < L / 2 - 5; z += 2.4) k.box(0.05, 1.0, 0.05, x + sd * 1.15, deckY + 3.45, z, '#ffffff');
+      k.box(0.06, 0.06, L - 10, x + sd * 1.15, deckY + 4.45, 0, '#ffffff').box(0.06, 0.06, L - 10, x - sd * 1.15, deckY + 4.45, 0, '#ffffff');
+      for (const z of [-20, 0, 20]) k.put(new THREE.TorusGeometry(0.35, 0.09, 6, 12), '#e63946', x + sd * 1.27, deckY + 2.2, z, 0, Math.PI / 2, 0);   // lifebuoys
+      for (const e of [-1, 1]) beam(k, [sd * 4.2, -0.4, e * (L / 2 - 2)], [sd * 4.2, -4, e * (L / 2 + 40)], 0.3, '#2a2a2a');   // the chains, out into the water
     }
-    k.box(2.6, 2.4, 6, 6.5, 4.2, 0, '#f2f4f5').box(2.7, 1.0, 6.1, 6.5, 5.4, 0, '#2a3a48', 0, 0, 0, 'shiny').box(2.9, 0.25, 6.3, 6.5, 6.6, 0, '#2d5f6e');   // the wheelhouse
-    for (const x of [-3.5, 3.5]) for (const z of [-1, 1]) k.box(0.18, 0.18, 30, x, -0.9, z * 31, '#2a2a2a', 0, z * -0.07, 0);   // the chains, down into the water
+    for (const e of [-1, 1]) k.box(15, 0.4, 6, 0, deckY - 0.1, e * (L / 2 + 2.6), '#5a5f66', 0, e * 0.12, 0).box(15.4, 0.3, 0.3, 0, deckY + 0.2, e * (L / 2 + 5.6), '#e8c02a');   // the ramps, a little raised
+    // the bridge, raised amidships on the starboard side (+X), its wheelhouse windows, mast and radar
+    k.box(4.6, 5.6, 9, 8.8, deckY + 3.2, 0, W).box(4.8, 1.4, 9.2, 8.8, deckY + 6.6, 0, '#22303c', 0, 0, 0, 'shiny').box(5.2, 0.4, 9.6, 8.8, deckY + 8.8, 0, '#e2e4e2');
+    k.cyl(0.1, 0.12, 5, 6, 8.8, deckY + 9.2, 0, '#ffffff').box(2.6, 0.12, 0.2, 8.8, deckY + 12.6, 0, '#ffffff').box(0.4, 0.4, 0.4, 8.8, deckY + 14.2, 0, '#ffd23f', 0, 0, 0, 'glow');
+    for (let i = 0; i < 6; i++) person(k, 8.8 + (i % 2 ? 0.5 : -0.4), deckY + 3.45, (i < 3 ? -26 : 9) + (i % 3) * 5, rnd(1800 + i), i % 3 === 0);   // passengers along the top, on the bridge's side (the camera swings round the other)
   },
   carferry(k) {   // a car ferry across the Solent: a long white hull with a navy band, an open car deck at the back, the bridge and
     // passenger decks forward, a funnel (our own colours)
@@ -426,8 +436,15 @@ const MODELS = {
       for (let i = 0; i < p.count; i++) { const y = p.getY(i), f = 0.86 + 0.14 * Math.sin(y * 0.7 + p.getX(i) * 0.05); c.setXYZ(i, c.getX(i) * f, c.getY(i) * f, c.getZ(i) * f); } }
     k.blob(58, 0, 14, 0, '#7a9a55', 4.25, 0.32, 1.42, 145).blob(52, -60, 10, 30, '#86a45c', 3.25, 0.3, 1.22, 147);
   },
-  studland(k) {   // the Studland shore from the ferry: a long sandy beach, dunes and heath behind, the chalk headland beyond
-    k.blob(70, 0, -64, 0, '#ecd9a8', 4.5, 1, 1.2, 151).blob(60, 0, -44, -30, '#8a7a50', 4.2, 0.85, 1.0, 153).blob(50, 160, -36, -40, '#f1ece0', 1.6, 0.9, 1.0, 155).blob(50, 160, -22, -40, '#6f9a45', 1.62, 0.32, 1.02, 157);
+  studland(k) {   // Studland from the ferry: Shell Bay's long sandy beach with marram dunes, heath and pines behind, the slipway and
+    // its queue, and the chalk headland of Old Harry far off to the left
+    k.blob(70, 0, -64, 0, '#ecd9a8', 4.5, 1, 1.2, 151, { smooth: true }).blob(60, 0, -46, -40, '#cbbf8a', 4.2, 0.9, 1.0, 153, { smooth: true });
+    k.blob(60, 0, -36, -110, '#6a7a48', 4.6, 0.85, 1.2, 159, { smooth: true }).blob(50, -160, -36, -60, '#f1ece0', 1.6, 0.9, 1.0, 155).blob(50, -160, -22, -60, '#6f9a45', 1.62, 0.32, 1.02, 157);
+    const r = rnd(161); for (let i = 0; i < 26; i++) { const x = (r() - 0.5) * 520, z = -60 - r() * 90; k.cone(4 + r() * 3, 10 + r() * 6, 7, x, 0, z, ['#2e4a2a', '#36522e'][i % 2]); }
+    for (let i = 0; i < 18; i++) { const x = (r() - 0.5) * 480; k.card(3, 2, x, 6.2, -12 - r() * 8, '#b8b878', r() * 3, 0, 'grass', 'up'); }
+    k.box(16, 0.6, 46, 0, 2.4, 6, '#8a8a84', 0, 0.12, 0).box(24, 0.6, 40, 2, 5.6, -36, '#9a958a');   // the slipway up from the water, the lane at its head
+    k.box(3, 2.8, 3.4, 14, 6.2, -26, '#f4f2ec').box(3.4, 0.3, 3.8, 14, 9.0, -26, '#1d4e89');
+    for (let i = 0; i < 6; i++) carShape(k, 4, -24 - i * 5.6, ['#d62828', '#f4f4f4', '#1d4ed8', '#2b2d42', '#e76f51', '#c0c4c8'][i], 6.2);
   },
   armco(k) { k.box(0.14, 0.75, 0.14, 0, 0, 0, '#9aa0a6').box(0.06, 0.32, 4.2, -0.05, 0.42, 0, '#e8ecef', 0, 0, 0, 'shiny'); },
   tuft(k, v) {   // grass and flowers by the road
@@ -444,6 +461,7 @@ const MODELS = {
     for (let i = 0; i < 4; i++) { const x = -4.5 + i * 3; k.cyl(0.05, 0.06, 6, 6, x, 0, 0, '#d8dde2'); k.box(1.6, 1, 0.04, x + 0.82, 4.8, 0, ['#d32f2f', '#ffd23f', '#1d7fd6', '#2a9d8f', '#ffffff'][(i + v) % 5], 0, 0, 0.08); }
   },
   villa(k, v) {   // Sandbanks: a smart white house of stacked boxes, glass walls to the sea, a pool
+    if (v >= 4) return v % 2 ? villaCurve(k, v) : villaGable(k, v);
     const w = ['#f8f8f4', '#f2efe8', '#f6f2ea', '#eef0ee'][v % 4], gl = '#25323e';
     k.box(15, 4, 10, 0, 0, 0, w).box(10, 3.6, 8, v % 2 ? 2 : -2, 4, -0.6, w);
     k.box(14, 2.8, 0.15, 0, 0.6, 5.06, gl, 0, 0, 0, 'shiny').box(9, 2.6, 0.15, v % 2 ? 2 : -2, 4.5, 3.46, gl, 0, 0, 0, 'shiny');
@@ -733,6 +751,66 @@ const MODELS = {
     k.box(2.6, 2, 2.6, 0, 1.4, 0, '#d62828').box(2.9, 0.25, 2.9, 0, 3.4, 0, '#ffd23f').box(0.06, 0.8, 1.8, -1.31, 2.2, 0, '#2a3a48', 0, 0, 0, 'shiny');
     for (const z of [-6, 6]) { k.cyl(0.05, 0.05, 4, 5, 0, 0, z, '#e8e4da'); k.box(0.04, 0.5, 1.0, 0, 3.4, z + 0.5, '#d62828').box(0.04, 0.5, 1.0, 0, 2.9, z + 0.5, '#ffd23f'); }
   },
+  mooring(k, v) {   // a yacht at her mooring in the harbour: hull, cabin, mast, the sail furled on the boom, a buoy at the bow
+    const r = rnd(1300 + v * 11), hull = ['#ffffff', '#f4f4f0', '#1d3557', '#e9eef0', '#7a1f2b', '#ffffff'][v % 6], L = 8 + (v % 3) * 2;
+    k.side([-L / 2, 0, L / 2 - 0.6, 0, L / 2 + 0.6, 1.1, -L / 2 - 0.2, 1.1], 2.6, 0, -0.3, 0, hull, 'shiny', 0.08);
+    k.box(2.0, 0.6, L * 0.35, 0, 0.8, 0.4, '#eef0f0').box(1.9, 0.18, L * 0.33, 0, 1.15, 0.4, '#3a5566', 0, 0, 0, 'shiny');
+    const m = L * 1.35; k.cyl(0.05, 0.07, m, 4, 0, 0.8, -0.6, '#d0d0d0').roll(0.16, L * 0.45, 6, 0, 2.0, 0.6, ['#1d4e89', '#7a1f2b', '#1f6f50', '#e8e4da'][v % 4]);
+    k.cyl(0.35, 0.35, 0.5, 8, 0, -0.2, -L / 2 - 2.5, ['#ff7a1a', '#ffd23f'][v % 2]);
+    if (r() < 0.4) k.side([-1.4, 0, 1.6, 0, 1.8, 0.5, -1.5, 0.5], 1.2, 0.2, -0.2, L / 2 + 1.6, '#3a3a3a', 'shiny', 0.04);   // a tender astern
+  },
+  jetty(k, v) {   // a private timber jetty out from a garden into the harbour (+X out), a ladder at the end, sometimes a RIB tied up
+    const L = 14 + (v % 3) * 5, wood = '#a58a68';
+    k.box(L, 0.25, 2.0, L / 2, 0.9, 0, wood);
+    for (let x = 1; x <= L; x += 2.5) for (const z of [-0.9, 0.9]) k.cyl(0.13, 0.13, 3.4, 5, x, -2.4, z, '#5a4a3a');
+    for (const z of [-0.95, 0.95]) k.box(L, 0.08, 0.08, L / 2, 1.9, z, '#e8e4da');
+    if (v % 2) { k.side([-2.4, 0, 2.6, 0, 3.2, 0.8, -2.5, 0.8], 2.0, L - 2, -0.2, 2.4, '#2a2a2a', 'shiny', 0.1); k.box(1.6, 0.5, 1.8, L - 2.4, 0.5, 2.4, '#d8d8d2'); }
+  },
+  marram(k, v) {   // a sand dune by the road, marram grass in clumps along its top (Sandbanks beach, Shell Bay)
+    const r = rnd(1400 + v * 5);
+    k.blob(4.5, 0, -2.6, 0, '#ead9ae', 2.2, 0.85, 1.3, 1410 + v, { smooth: true });
+    for (let i = 0; i < 14; i++) { const x = (r() - 0.5) * 16, z = (r() - 0.5) * 8, y = Math.max(0, 1.1 - (x * x) / 70 - (z * z) / 30);
+      const c = ['#b8b878', '#a8ad6a', '#c8c48a', '#9aa060'][i % 4];
+      k.card(1.3, 1.1, x, y + 0.45, z, c, r() * 3, 0, 'grass', 'up').card(1.3, 1.1, x, y + 0.45, z, c, r() * 3 + 1.5, 0, 'grass', 'up'); }
+    if (v % 3 === 0) { k.cyl(0.04, 0.04, 1, 4, 3, 0.6, 2.5, '#9a8a6a'); for (let i = 0; i < 5; i++) k.box(0.04, 0.9, 0.04, 3 + i * 1.6, 0.6, 2.5 - i * 0.3, '#9a8a6a'); }   // a rope fence post or two
+  },
+  rockgroyne(k, v) {   // a groyne of big granite boulders running out through the surf (+X out to sea)
+    const r = rnd(1500 + v);
+    for (let x = 0; x < 34; x += 2.2) for (let j = 0; j < 2; j++) k.blob(1.2 + r() * 0.6, x + (r() - 0.5), -0.6 + j * 0.5 - x * 0.03, (r() - 0.5) * 2.4, ['#8f8a84', '#a09a92', '#7d7872'][(r() * 3) | 0], 1.2, 0.8, 1, 1510 + v * 50 + Math.round(x * 3) + j);
+  },
+  haven(k, v) {   // the hotel at the point of Sandbanks by the ferry: long, white, three storeys, steep terracotta roofs and gables, a round
+    // corner with a conical roof, a glazed terrace looking over the harbour mouth (+Z the road, +X towards the ferry)
+    const W = '#f8f6f0', roof = '#b8452e', gl = '#33475a';
+    k.box(46, 10, 14, 0, 0, 0, W).prism(15, 5, 47, 0, 10, 0, roof, Math.PI / 2);
+    for (let f = 0; f < 3; f++) for (let w = 0; w < 11; w++) k.box(2.2, 1.7, 0.12, -20 + w * 4, 1.2 + f * 3.1, 7.05, gl, 0, 0, 0, 'shiny');
+    for (const x of [-14, -2, 10]) { k.box(6, 4, 2, x, 9, 6.6, W).prism(6.6, 3.2, 2.6, x, 13, 6.6, roof); k.box(3, 2, 0.12, x, 10, 7.62, gl, 0, 0, 0, 'shiny'); }   // gables on the roof
+    k.cyl(6, 6, 11, 18, 24, 0, 2, W).cone(6.8, 6, 18, 24, 11, 2, roof);   // the round corner
+    for (let f = 0; f < 3; f++) for (let a = 0; a < 6; a++) { const t = -0.6 + a * 0.45; k.box(0.12, 1.7, 1.8, 24 + Math.sin(t) * 6.02, 1.2 + f * 3.1, 2 + Math.cos(t) * 6.02, gl, t + Math.PI / 2, 0, 0, 'shiny'); }
+    k.box(30, 3.2, 6, -6, 0, 10, '#eceae4').box(29.6, 2.4, 0.12, -6, 0.4, 13.05, '#5a7a8a', 0, 0, 0, 'shiny').box(30.6, 0.3, 6.6, -6, 3.2, 10, '#e2ded4');   // the glazed terrace
+    k.cyl(0.08, 0.1, 9, 6, -22, 10, 3, '#e8ecea').box(2.2, 1.3, 0.05, -20.8, 17.4, 3, '#1d4e89');
+    k.box(52, 1.1, 0.5, 2, 0, 16, W);
+  },
+  ferryqueue(k, v) {   // the slipway down to the chain ferry and the queue for it: a lane of cars, the ticket booth, a blue sign with a ferry on it
+    const r = rnd(1600 + v), cols = ['#d62828', '#1d4ed8', '#f4f4f4', '#2b2d42', '#f2c14e', '#2a9d8f', '#8d99ae', '#e76f51', '#c0c4c8'];
+    for (let i = 0; i < 7; i++) carShape(k, 0, -4 - i * 5.6, cols[(r() * cols.length) | 0], v ? 2.2 : 0);   // (v 1: up on the slipway's apron, in the crossing)
+    k.box(2.4, 2.6, 3, 3.2, 0, 2, '#f4f2ec').box(2.8, 0.3, 3.4, 3.2, 2.6, 2, '#1d4e89').box(0.08, 1, 2, 1.96, 1.2, 2, '#2a3a48', 0, 0, 0, 'shiny');   // the booth
+    k.cyl(0.08, 0.08, 3.6, 6, -2.6, 0, 4, '#9aa0a6').box(0.08, 1.6, 2.6, -2.6, 2.4, 4, '#1d5fa8');
+    k.box(0.1, 0.5, 1.6, -2.66, 2.8, 4, '#ffffff').box(0.1, 0.35, 0.5, -2.66, 3.25, 4, '#ffffff');   // the ferry pictogram
+    k.box(0.12, 0.12, 4, 1.4, 1.0, 6, '#e8c02a', 0, 0, 0.0);   // the barrier
+  },
+  slipland(k) {   // the Sandbanks end, from the ferry: the point of the spit, its sea wall, the slipway down into the water (towards -Z)
+    k.box(340, 2.2, 110, 0, 0, 55, '#d8cfb8').box(60, 0.3, 60, 4, 2.2, 30, '#bfb8a6');   // the land and its apron
+    k.box(16, 0.6, 28, 2, 0.2, -12, '#8a8a84', 0, -0.14, 0);   // the slipway, down to the water
+    k.box(340, 2.6, 1.2, 0, -0.4, 0.4, '#e8e4da');   // the sea wall
+    for (let i = 0; i < 16; i++) k.blob(2 + (i % 3) * 0.6, (i < 8 ? -90 : 30) + (i % 8) * 6, -0.4, -2, '#8f8a84', 1.2, 0.7, 1, 1720 + i);
+  },
+  brownsea(k, v) {   // Brownsea Island across the harbour: low and wooded with pines, a little castle with a tower at the water's edge, a quay
+    k.blob(70, 0, -40, 0, '#3e5a34', 2.6, 0.62, 1.3, 1701, { smooth: true }).blob(40, 60, -18, 30, '#4a6a3c', 1.6, 0.6, 1.0, 1703, { smooth: true });
+    const r = rnd(1705); for (let i = 0; i < 40; i++) { const x = (r() - 0.5) * 300, z = (r() - 0.5) * 140, y = Math.max(0, 6 - (x * x) / 9000 - (z * z) / 3000) * 1.6; k.cone(6 + r() * 4, 14 + r() * 8, 7, x, y, z, ['#2e4a2a', '#36522e', '#2a4426'][i % 3]); }
+    k.box(24, 9, 14, -120, 0, 60, '#cfc6b0', 0, 0, 0, 'stone').box(7, 15, 7, -128, 0, 58, '#c9c0aa', 0, 0, 0, 'stone');   // the castle
+    for (let i = 0; i < 6; i++) k.box(1.6, 1.4, 1, -132 + i * 4, 9, 67.2, '#c9c0aa', 0, 0, 0, 'stone');
+    k.box(30, 1.2, 6, -110, -0.4, 74, '#8a7a62');   // the quay
+  },
   balloon(k, v) {   // a hot-air balloon, far off over the land
     const c = [['#e63946', '#ffd23f'], ['#1d7fd6', '#ffffff'], ['#2a9d8f', '#f4a261'], ['#9b5de5', '#ffd23f']][v % 4];
     for (let i = 0; i < 10; i++) k.put(new THREE.SphereGeometry(8, 3, 14, i * Math.PI / 5, Math.PI / 5), c[i % 2], 0, 16, 0, 0, 0, 0, 1, 1.22, 1);
@@ -899,6 +977,41 @@ function hutAt(k, z, col, trim, num) {   // one beach hut facing -X, as the owne
   if (num) k.box(0.03, 0.18, 0.5, -d / 2 - 0.04, h + 0.3, z, '#2a2a2a');
 }
 const BHUT = ['#c4dbe8', '#f2edd2', '#f6f6f2', '#bfe4d2', '#3f7fc0', '#c04aa0', '#e4eef2', '#f4c9bd', '#f6e6a6', '#a9d8d0', '#ffffff', '#9fc4e8'];
+function villaCurve(k, v) {   // a curved white house of three floors (its face +Z): sweeping balconies, floor-to-ceiling glass, a spiral stair up the side
+  const W = '#fbfbf8', gl = '#3a5566', r = 6.5;
+  for (let f = 0; f < 3; f++) {
+    const y = f * 3.3, w = 15 - f * 1.5;
+    k.box(w, 3.3, 9, -f * 0.6, y, -0.5, W);
+    k.put(new THREE.CylinderGeometry(r - f * 0.6, r - f * 0.6, 3.3, 20, 1, false, 0, Math.PI), W, -f * 0.6 + w / 2 - 0.2, y + 1.65, -0.5, 0, Math.PI / 2, 0, 0.5, 1, 1);   // the rounded end
+    k.box(w - 1, 2.5, 0.12, -f * 0.6, y + 0.4, 4.02, gl, 0, 0, 0, 'shiny');
+    k.box(w + 0.6, 0.25, 2.2, -f * 0.6, y + 3.3, 4.6, W).box(w + 0.6, 0.9, 0.06, -f * 0.6, y + 3.55, 5.7, '#bcd7e6', 0, 0, 0, 'shiny');   // a sweeping balcony, its glass edge
+  }
+  for (let i = 0; i < 14; i++) { const a = i * 0.55; k.box(1.2, 0.08, 0.5, -8.6 + Math.cos(a) * 0.7, i * 0.7, 1 + Math.sin(a) * 0.7, '#e8e8e4', a); }   // the spiral stair
+  k.cyl(0.12, 0.12, 10, 6, -8.6, 0, 1, '#e8e8e4');
+  k.box(17, 1.3, 0.4, 0, 0, 9.2, W).box(2.4, 1.6, 0.1, 5, 0, 9.35, '#3a3a3a');   // the front wall, the gate
+  k.box(15, 0.05, 4, 0, 0, 6.6, '#5aa040');   // a lawn
+  cordyline(k, -6, 7.5, 1); cordyline(k, 6.5, 7.8, 0.85);
+}
+function villaGable(k, v) {   // an older Sandbanks house: brick and white render, steep red-tiled gables, a bay window, tall chimneys
+  const brick = ['#a85a44', '#b06a50'][v % 2], W = '#f6f2ea', roof = ['#b8452e', '#a83e2a'][v % 2], gl = '#2f4556';
+  k.box(14, 6.4, 10, 0, 0, 0, W).box(14.1, 2.6, 10.1, 0, 0, 0, brick);
+  k.prism(10.6, 4.6, 14.8, 0, 6.4, 0, roof, Math.PI / 2);
+  for (const x of [-3.6, 3.6]) { k.box(5.2, 3.4, 2.2, x, 3.6, 5.6, W).prism(5.8, 3.0, 2.6, x, 7.0, 5.6, roof); k.box(3.2, 1.9, 0.12, x, 4.3, 6.72, gl, 0, 0, 0, 'shiny'); }   // two front gables
+  k.box(4.4, 2.6, 1.4, -3.6, 0.3, 5.7, W).box(3.6, 1.8, 0.12, -3.6, 0.6, 6.42, gl, 0, 0, 0, 'shiny');   // a bay window
+  k.box(1.4, 2.4, 0.12, 3.6, 0, 5.06, '#2a3a5a').box(5.2, 0.08, 0.06, 0, 2.6, 5.08, '#e8e4da');
+  for (const x of [-5.6, 5.2]) k.box(1.1, 3.6, 1.1, x, 8.6, -1.5, brick);
+  k.box(17, 1.2, 0.5, 0, 0, 9.2, brick).box(17.2, 0.15, 0.6, 0, 1.2, 9.2, '#e8e4da');
+  cordyline(k, 6.2, 7.6, 1);
+}
+function cordyline(k, x, z, s) {   // a cabbage palm, as on every Sandbanks front garden: a thin grey trunk, a spiky green head
+  k.cyl(0.13 * s, 0.2 * s, 3.4 * s, 6, x, 0, z, '#8a8278');
+  for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; k.box(0.12 * s, 0.05 * s, 1.5 * s, x + Math.cos(a) * 0.5 * s, 3.5 * s, z + Math.sin(a) * 0.5 * s, i % 2 ? '#5f8a3a' : '#7aa048', -a + Math.PI / 2, i % 3 ? -0.5 : 0.4, 0); }
+}
+function carShape(k, x, z, col, y) {   // a parked car, simple (seen from across the water)
+  y = y || 0;
+  k.box(1.8, 0.7, 4.2, x, y + 0.3, z, col, 0, 0, 0, 'shiny').box(1.6, 0.55, 2.2, x, y + 1.0, z + 0.2, shade(col, -0.15)).box(1.62, 0.42, 2.0, x, y + 1.04, z + 0.2, '#2a3a48', 0, 0, 0, 'shiny');
+  for (const [wx, wz] of [[-0.85, -1.3], [0.85, -1.3], [-0.85, 1.3], [0.85, 1.3]]) k.axle(0.33, 0.24, 8, x + wx, y + 0.33, z + wz, '#151515');
+}
 export function shade(hex, f) { C.set(hex); const k = f < 0 ? 1 + f : 1; const add = f > 0 ? f : 0; return '#' + new THREE.Color(C.r * k + add * (1 - C.r), C.g * k + add * (1 - C.g), C.b * k + add * (1 - C.b)).getHexString(); }
 const cache = new Map();
 export function model(t, v) {   // {key: geometry} for a roadside thing, built once

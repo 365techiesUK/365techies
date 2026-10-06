@@ -47,7 +47,7 @@
   // feat = tunnels, bridges and things over the road (over: models spanning it). id, level, pos and next are filled in below.
   var STAGES = [
     { key: 'bournemouth', name: 'BOURNEMOUTH', seed: 1103, t: 66, len: 700, curvy: 0.55, hilly: 0.12, sea: -1, band: [3, 6], shores: [38, 44, 50, 56, 60, 66, 72, 48], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: { over: ['banner'] } },   // (shores: a wide sandy beach)
-    { key: 'sandbanks', name: 'SANDBANKS', seed: 1709, t: 64, len: 700, curvy: 0.6, hilly: 0.3, sea: -1, band: [4, 13], mix: [5, 4, 1, 1, 3, 0, 0, 4], feat: { bridge: 1, over: ['banner'] } },
+    { key: 'sandbanks', name: 'SANDBANKS', seed: 1709, t: 64, len: 700, curvy: 0.6, hilly: 0.2, sea: -1, band: [3, 8], shores: [30, 34, 38, 42, 48, 54, 36, 40], mix: [5, 4, 1, 1, 3, 0, 0, 4], feat: { over: ['banner'] } },   // (no bridge: there is none on the spit)
     { key: 'christchurch', name: 'CHRISTCHURCH', seed: 1811, t: 64, len: 700, curvy: 0.65, hilly: 0.3, sea: 1, band: [4, 13], mix: [5, 4, 2, 1, 3, 1, 0, 2], feat: { bridge: 2 } },
     { key: 'purbeck', name: 'CORFE CASTLE', seed: 2207, t: 70, len: 730, curvy: 0.75, hilly: 1, sea: 0, band: [14, 95], mix: [5, 3, 2, 0, 3, 3, 1, 1], feat: { tunnel: 1, over: ['viaduct'] } },
     { key: 'swanage', name: 'OLD HARRY ROCKS', seed: 2903, t: 70, len: 730, curvy: 0.7, hilly: 0.75, sea: -1, band: [22, 60], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { tunnel: 1, over: ['viaduct'] } },
@@ -311,10 +311,8 @@
           onWater('yacht', 20, 120, 0.03, (r() * 3) | 0);
           break;
         case 'sandbanks':   // the spit: smart white houses and palms on the right, the beach and umbrellas on the left, boats out on the water
-          lamps(11, 0, true);
-          if (r() < 0.05) put(W, i, 'villa', 20 + r() * 26, 0, { v: (r() * 4) | 0 });
-          if (r() < 0.1) put(W, i, 'palm', 11 + r() * 7, 0.45, { v: (r() * 3) | 0 });
-          if (r() < 0.04) put(W, i, 'bush', 11 + r() * 8, 0.9, { soft: true, v: 0 });
+          lamps(11, 0, true);   // the houses of Millionaires Row on the right (world3d.js), the harbour behind them; the beach and dunes on the left
+          if (r() < 0.06) put(W, i, 'palm', 11 + r() * 5, 0.45, { v: (r() * 3) | 0 });
           if (r() < 0.08 && sh > 20) { x = -(14 + r() * (sh - 16)); if (land(s, x)) put(W, i, 'brolly', x, 0.7, { soft: true, v: (r() * 4) | 0 }); }
           onWater('yacht', 25, 140, 0.05, (r() * 3) | 0);
           break;
@@ -435,7 +433,11 @@
       mark('clifflift', 0.14, function () { return 17.4; }, 0); mark('clifflift', 0.52, function () { return 17.4; }, 1);
       mark('zigzag', 0.36, function () { return 17.4; }, 0); mark('zigzag', 0.64, function () { return 17.4; }, 1); mark('zigzag', 0.88, function () { return 17.4; }, 2);
     }
-    if (S.key === 'sandbanks') { mark('ferry', 0.5, function (h) { return -(Math.max(h, 20) + 70); }); }
+    if (S.key === 'sandbanks') {   // a cross-Channel ferry going out through the harbour mouth; at the point, the hotel and the queue for the chain ferry
+      mark('ferry', 0.5, function (h) { return -(Math.max(h, 20) + 70); });
+      var fa = to; while (fa > from && segAt(W, fa).fk) fa--;
+      putAt(W, fa - 30, 'haven', 31, 0, {}); putAt(W, fa - 62, 'ferryqueue', 17.4, 0, {});
+    }
     if (S.key === 'swanage') { mark('needles', 0.33, function (h) { return -(Math.max(h, 18) + 80); }); mark('needles', 0.66, function (h) { return -(Math.max(h, 18) + 80); }); }
     if (S.key === 'jurassic') { mark('arch', 0.68, function (h) { return -(Math.max(h, 18) + 70); }); }   // (no lighthouse: there's none at Durdle Door)
     if (S.key === 'weymouth') { mark('clock', 0.4, function (h) { return -(Math.min(h, 22) - 4); }); }
