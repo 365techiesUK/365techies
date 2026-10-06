@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=24';
+import { createWorld } from './world3d.js?v=25';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
@@ -156,7 +156,7 @@ function hud(g, W, t, mode) {
   }
   if (mode === 'play' && W.stageNo === 1 && W.count <= 0 && W.t - R.goT < 300 && R.goT >= 0 && !document.body.classList.contains('touchy')) {
     g.globalAlpha = Math.min(1, (300 - (W.t - R.goT)) / 40);
-    hudText(g, W.autoDrift ? '◀ ▶  STEER - HARD INTO A BEND TO DRIFT     SPACE  NITRO     R  RADIO' : '◀ ▶  STEER     SPACE  NITRO     TAP ▼ IN A BEND  DRIFT     R  RADIO', GW / 2, GH - 22, 6, '#ffffff', 'center');
+    hudText(g, W.autoDrift ? 'STEER ◀ ▶     NITRO  SPACE     RADIO  R' : 'STEER ◀ ▶   DRIFT  TAP ▼   NITRO  SPACE   RADIO  R', GW / 2 - 40, GH - 22, 5.5, '#ffffff', 'center');   // (between the map and the nitro bottles: across them it covered the NITRO label)
     g.globalAlpha = 1;
   }
   banner(g, W, t);
@@ -166,7 +166,7 @@ function hud(g, W, t, mode) {
 function rivalTag(g, W, t, mode) {   // your place in the race, big, and the gap to the car ahead (or behind, when you're leading)
   if (!W.field || !W.field.length || mode === 'title') return;
   const n = E.FIELD_N + 1, p = Math.min(n, W.pos || n), ah = E.nextAhead(W), bh = E.nextBehind(W);
-  const x = 14, y = 72, lead = p === 1;
+  const x = 14, y = 88, lead = p === 1;   // (below BEST and HURRY!)
   g.fillStyle = 'rgba(6,10,18,0.55)'; g.fillRect(x - 4, y - 13, 66, 22); g.fillStyle = lead ? '#ffd23f' : '#ffc23a'; g.fillRect(x - 4, y - 13, 1.4, 22);
   hudText(g, 'POS', x, y - 5, 5, '#c9d6e6', 'left', false);
   hudText(g, String(p), x + 13, y + 6, 15, lead ? '#ffd23f' : '#ffffff', 'left');
@@ -208,7 +208,7 @@ function clockExtras(g, W, t, pi) {   // the race against the clock: your best f
   }
   const S = R.split;
   if (S && W.t - S.at < 240 && W.t >= S.at) {   // under the checkpoint banner: STAGE TIME, against your best
-    const a = Math.min(1, (240 - (W.t - S.at)) / 30), y = 84;
+    const a = Math.min(1, (240 - (W.t - S.at)) / 30), y = W.field && W.field.length ? 110 : 84;   // (under the POS box)
     g.globalAlpha = a;
     hudText(g, 'STAGE TIME', 10, y, 5.2, '#c9d6e6');
     hudText(g, clock(S.t), 10, y + 11, 9, '#ffffff');
@@ -581,7 +581,7 @@ document.addEventListener('keydown', (e) => {
   const A2 = window.ARCADE365; if (A2 && A2.mode === 'play') { tune(e.shiftKey ? -1 : 1); e.preventDefault(); }
 });
 function radioPanel(g, W, t, mode) {   // on the start line (◀ ▶ tune it) and for a moment after you change station
-  const count = W.count > 0 && mode === 'play', after = mode === 'play' && W.count <= 0 && R.goT >= 0 && W.t - R.goT < 180, shown = performance.now() - RAD.shownT < 2600;
+  const count = W.count > 0 && mode === 'play', after = mode === 'play' && W.count <= 0 && R.goT >= 0 && W.t - R.goT < 60, shown = performance.now() - RAD.shownT < 2600;
   if (!RAD.set || RAD.set.sound === false || (!count && !after && !shown)) return;
   const A2 = window.ARCADE365, inp = A2 && A2.input, off = RAD.set.music === false;
   if (count && inp) { if (inp.left && !RAD.l) tune(-1); if (inp.right && !RAD.r) tune(1); RAD.l = !!inp.left; RAD.r = !!inp.right; }

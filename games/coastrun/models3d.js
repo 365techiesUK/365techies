@@ -494,6 +494,29 @@ const MODELS = {
     k.cyl(0.38, 0.45, 1.5, 8, -35, 21, 0, '#151515');
     for (let i = 0; i < 2; i++) k.box(12.5, 3, 2.7, -16.5 + i * 13.4, 18.4, 0, '#3f5f3a', 0, 0, 0, 'shiny').box(12.6, 0.3, 2.8, -16.5 + i * 13.4, 21.4, 0, '#d9d4c4');
   },
+  rockarch(k, v) {   // a natural arch of pale rock right over the road, as the coast's own arches are over the sea: lumpy legs, a thick
+    // lintel, grass along the top
+    const sh = new THREE.Shape(), q = rnd(410 + v), j = (a) => a + (q() - 0.5) * 2;
+    sh.moveTo(-28, 0); [[-27, 8], [-24, 15], [-18, 20.5], [-9, 23.5], [0, 24], [9, 23], [18, 20], [24, 14], [27.5, 7]].forEach(([x, y]) => sh.lineTo(j(x), j(y))); sh.lineTo(28, 0);
+    sh.lineTo(14.8, 0); sh.lineTo(14.8, 3.5); sh.absarc(0, 3.5, 14.8, 0, Math.PI, false); sh.lineTo(-14.8, 0); sh.lineTo(-28, 0);   // (the opening clear of the boundary, 14.2 out)
+    const g = new THREE.ExtrudeGeometry(sh, { depth: 8, bevelEnabled: true, bevelThickness: 1.6, bevelSize: 1.4, bevelSegments: 2, curveSegments: 14 }); g.translate(0, 0, -4); g.computeVertexNormals();
+    k.put(g, '#d2c7ab', 0, 0, 0, 0, 0, 0, 1, 1, 1, 'lit');   // (plain weathered rock: the masonry texture made it a bridge)
+    for (const sd of [-1, 1]) for (let i = 0; i < 3; i++) k.blob(3.6 + q() * 2.2, sd * (21 + q() * 3), 2 + i * 4.5, (q() - 0.5) * 7, '#cfc4a8', 1, 1.2, 1, 430 + v * 9 + i + (sd > 0 ? 5 : 0));   // lumps on the legs
+    k.blob(11, 0, 23.6, 0, '#6f9a45', 2.4, 0.2, 0.62, 440 + v);   // grass on top
+  },
+  treearch(k, v) {   // old trees either side of the lane, their crowns meeting over the road: a green tunnel 60 m long to drive through.
+    // The crowns are solid lumpy balls of leaves (leaf cards, seen from right underneath, showed as flat planks across the sky)
+    const c = v % 2 ? AUT[(v >> 1) % 3] : GRN, q = rnd(450 + v * 3);
+    for (let z = -28; z <= 28; z += 8) for (const sd of [-1, 1]) {
+      const x = sd * (15.4 + q() * 1.4), zz = z + (q() - 0.5) * 3;
+      k.cyl(0.42, 0.72, 10, 8, x, 0, zz, '#5a4632', 0, sd * 0.2);   // the trunk, leaning in over the road
+      k.cyl(0.18, 0.3, 7, 6, x - sd * 2.8, 7.2, zz, '#5a4632', 0, sd * 0.95);   // a bough reaching across
+    }
+    for (let z = -30; z <= 30; z += 4.5) for (const lx of [-12, -6.5, -1.5, 3.5, 8.5, 13]) {   // the canopy: overlapping lumps, highest over the middle of the road
+      const x = lx + (q() - 0.5) * 2.5, y = 12.2 - Math.abs(x) * 0.16 + q() * 1.6;
+      k.blob(2.5 + q() * 1.3, x, y, z + (q() - 0.5) * 2.5, c[(q() * 3) | 0], 1.25, 0.72, 1.15, 600 + v * 97 + Math.round(z * 7 + lx * 3));
+    }
+  },
   balloon(k, v) {   // a hot-air balloon, far off over the land
     const c = [['#e63946', '#ffd23f'], ['#1d7fd6', '#ffffff'], ['#2a9d8f', '#f4a261'], ['#9b5de5', '#ffd23f']][v % 4];
     for (let i = 0; i < 10; i++) k.put(new THREE.SphereGeometry(8, 3, 14, i * Math.PI / 5, Math.PI / 5), c[i % 2], 0, 16, 0, 0, 0, 0, 1, 1.22, 1);

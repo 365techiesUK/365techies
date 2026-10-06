@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=19';
+import * as MD from './models3d.js?v=20';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -131,6 +131,8 @@ const MORE = {   // closer, thicker dressing behind the boundary (as look.dress:
 for (const k in MORE) LOOK[k].dress = (LOOK[k].dress || []).concat(MORE[k]);
 const SEA_MORE = { bournemouth: [['windsurf', 4, 0.07, 30, 220]], sandbanks: [['windsurf', 4, 0.09, 25, 220]], weymouth: [['windsurf', 4, 0.06, 30, 220]], swanage: [['windsurf', 4, 0.03, 40, 220]], christchurch: [['windsurf', 4, 0.04, 25, 160]] };   // out on the water
 const BG_IMG = { bournemouth: 4, sandbanks: 4, christchurch: 4, purbeck: 4, swanage: 4, forest: 4, jurassic: 4, weymouth: 4, harbour: 4, lymington: 4, lyme: 4, portland: 4, goldencap: 4, needles: 4 };   // the places with a painted panorama (games/coastrun/bg/<place>.webp), and its version
+const HERO = { bournemouth: 44, sandbanks: 46, christchurch: 44, purbeck: 40, swanage: 26, forest: 30, jurassic: 30, weymouth: 38, harbour: 38, lymington: 40, lyme: 44, portland: 40, goldencap: 50, hengistbury: 44, needles: 32 };   // each place's landmark painted large (tools/coastrun/gen_hero.py): how wide it stands, in degrees
+const HERO_V = 1, HERO_D = 2150, MARK_OFF = 0.17;   // (the landmark sits just off the road ahead, to the sea side: further out, the beach huts and the prom hid it)
 const BGL = new THREE.TextureLoader();
 
 // ---------------------------------------------------------------- the sky: the colours, the sun and its glow, the clouds
@@ -257,6 +259,8 @@ export function createWorld() {
     })); }
   const ringFar = new THREE.Mesh(new THREE.CylinderGeometry(2300, 2300, 1, 64, 1, true), new THREE.MeshBasicMaterial({ transparent: true, side: THREE.BackSide, fog: false, depthWrite: false }));
   ringFar.renderOrder = -7; ringFar.frustumCulled = false; scene.add(ringFar);
+  const heroMesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, fog: false, opacity: 0 }));   // the place's landmark, large, in front of the panorama
+  heroMesh.renderOrder = -6; heroMesh.frustumCulled = false; heroMesh.visible = false; scene.add(heroMesh);
 
   // ---------------------------------------------------------------- materials
   const leafy = (map) => { const m = new THREE.MeshStandardMaterial({ vertexColors: true, map: map, alphaTest: 0.42, side: THREE.DoubleSide, roughness: 0.88 });
@@ -542,7 +546,7 @@ export function createWorld() {
     // the land: flat by the road, easing out to hills and higher ground that belong to the place, not to this bit of road
     const fb = farBase(W, g.i), far = fb.B + (fbm(wx / 300 + 40, wz / 300 + 17) - 0.4) * 2 * fb.hills + (vnoise(wx / 1100 + 3.7, wz / 1100 + 8.1) - 0.15) * fb.rise;
     let y = roadY + (far - roadY) * smooth(6, 160, dist) - (dist < 2 ? 0.25 : 0);
-    if (g.cut && (g.cut === 2 || g.cut === side)) { const span = E.VERGE - HALF + 0.6; y = Math.max(y, roadY + g.cutH * smooth(span, span + 5, dist) * (0.85 + 0.3 * fbm(wx / 9, wz / 9))); }   // a cutting: a rock face behind the boundary
+    if (g.cut && (g.cut === 2 || g.cut === side)) { const span = E.VERGE - HALF + 0.6; y = Math.max(y, roadY + g.cutH * smooth(span, span + 5 + g.cutH * 0.3, dist) * (0.88 + 0.24 * fbm(wx / 45, wz / 45))); }   // a cutting: a rock face behind the boundary (its height wanders slowly: a quick wobble along the road read as corrugated iron)
     return y;
   }
   // the colours of the land, worked out at each corner from where it is (so neighbouring patches match and blend)
@@ -773,7 +777,7 @@ export function createWorld() {
         }
       }
       if (!g.fk && !g.tun && !g.brg && i + 14 <= E.lastIndex(W) && bendStarts(W, i + 14)) {   // SLOW in the two outer lanes, 56 m before a sharp bend
-        for (const lat of [-HALF * 2 / 3, HALF * 2 / 3]) { place(W, i * SEG + SEG / 2, lat, 0, P); slows.push([P.x, P.y + 0.035, P.z, 1.35, P.th, 2.3]); }
+        for (const lat of [-HALF * 2 / 3, HALF * 2 / 3]) slows.push([i * SEG + SEG / 2, lat, 1.35, 2.3]);
       }
       if (g.spr) for (const it of g.spr) {
         if (it.done) continue;
@@ -782,14 +786,14 @@ export function createWorld() {
         let ry = hash2(i, Math.round(it.x * 10)) * Math.PI * 2;
         if (/^(hut|cottage|hotel|building|board|finger|forestsign|lamp|villa|terrace|clock)$/.test(it.t)) ry = fr;
         if (it.t === 'lamp') ry = fr + Math.PI;   // the arm reaches over the road
-        if (/^(gate|gantry|nose|chev|warn|gpost|footbridge|viaduct|banner)$/.test(it.t)) ry = -P.th;
+        if (/^(gate|gantry|nose|chev|warn|gpost|footbridge|viaduct|banner|rockarch|treearch)$/.test(it.t)) ry = -P.th;
         if (it.t === 'priory' || it.t === 'cobb' || it.t === 'goldcap' || it.t === 'headland') ry = fr;
         if (it.t === 'arch') ry = -P.th + (it.x < 0 ? Math.PI : 0);   // Durdle Door side-on from the road, its high end towards the shore
         if (it.t === 'board') ry = -P.th + d * 0.5;
         if (it.t === 'pier' || it.t === 'ferry') ry = fr + Math.PI / 2;
         let y = P.y;
         if (/^(yacht|buoy|stack|arch|needles|ferry|pier|cobb|goldcap|headland)$/.test(it.t)) y = 0;
-        else if (/^(footbridge|viaduct)$/.test(it.t)) y = P.y;
+        else if (/^(footbridge|viaduct|rockarch|treearch)$/.test(it.t)) y = P.y - (it.t === 'rockarch' ? 1.5 : 0.3);
         else if (it.t === 'lighthouse') y = P.y - 6;
         else if (Math.abs(it.x) > HALF + 2) y = groundAt(W, g, P, it.x);
         if (SIGNS[it.t]) { signParts(W, i, g, it, P, y, ry, signs, addModel, addAll); if (it.t === 'gate' || it.t === 'gantry' || it.t === 'banner') continue; }
@@ -817,9 +821,10 @@ export function createWorld() {
     if (slows.length) {   // the painted words, laid flat along the road
       const pos = [], uv = [];
       for (const q of slows) {
-        const r = q[3], th = q[4], ra = r * q[5], ax = Math.sin(th) * ra, az = -Math.cos(th) * ra, bx = Math.cos(th) * r, bz = Math.sin(th) * r;
-        const c = (sa, sb) => [q[0] + ax * sa + bx * sb, q[1], q[2] + az * sa + bz * sb];
-        pos.push(...c(-1, -1), ...c(1, 1), ...c(1, -1), ...c(-1, -1), ...c(-1, 1), ...c(1, 1)); uv.push(0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 1);
+        const r = q[2], ra = r * q[3];
+        const c = (sa, sb) => { place(W, q[0] + ra * sa, q[1] + r * sb, 0, P); return [P.x, P.y + 0.035, P.z]; };   // (each corner on the road itself: over a crest, a flat word half sank)
+        for (let n = 0; n < 4; n++) { const s0 = -1 + n / 2, s1 = s0 + 0.5, v0 = (s0 + 1) / 2, v1 = (s1 + 1) / 2;   // (in four strips, bending with the road)
+          pos.push(...c(s0, -1), ...c(s1, 1), ...c(s1, -1), ...c(s0, -1), ...c(s0, 1), ...c(s1, 1)); uv.push(0, v0, 1, v1, 0, v1, 0, v0, 1, v0, 1, v1); }
       }
       const sg = new THREE.BufferGeometry(); sg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); sg.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); sg.computeVertexNormals();
       const sm = new THREE.Mesh(sg, slowMat); sm.renderOrder = 1; sm.receiveShadow = true; group.add(sm);
@@ -1034,6 +1039,7 @@ export function createWorld() {
     for (const m of OWN_ENV) m.envMap = rtE.texture;   // (three ignores a material's own envMapIntensity under scene.environment: these hold the sky themselves so theirs counts)
   }
   function setBackdrop(key, W) {
+    R.heroWant = HERO[key] ? key : null;
     if (BG_IMG[key]) {   // a painted panorama of the place (tools/coastrun/gen_backdrop.py): it takes over from the shapes when it arrives
       BGL.load('bg/' + key + '.webp?v=' + BG_IMG[key], (t) => {
         if (R.lookKey !== key) { t.dispose(); return; }
@@ -1052,9 +1058,34 @@ export function createWorld() {
   }
   function turnRing(W, dt) {   // the far panorama slides round slowly on the bends (like the old arcade backdrops), keeping the place's landmark ahead, off to the sea side
     if (R.markT == null || R.heading == null) return;
-    const side = E.segAt(W, E.segIndex(W.s)).sea || 1, want = Math.PI - (R.heading + side * 0.36) - R.markT;   // a point at angle t round the ring lies at (sin t, cos t); the ring turned by r puts it at t + r
+    const side = E.segAt(W, E.segIndex(W.s)).sea || 1, want = Math.PI - (R.heading + side * MARK_OFF) - R.markT;   // a point at angle t round the ring lies at (sin t, cos t); the ring turned by r puts it at t + r
     const d = Math.atan2(Math.sin(want - ringFar.rotation.y), Math.cos(want - ringFar.rotation.y));
     ringFar.rotation.y += d * (R.ringSnap ? 1 : Math.min(1, dt * 0.6)); R.ringSnap = false;
+  }
+  function heroStep(W, dt) {   // OutRun's way with a landmark: as a stage begins, the place's own swings into view round the bend, large, and
+    // then stays ahead off to the sea side, over the painted panorama's small one
+    if (R.heroWant !== R.heroKey) {   // the last place's slips away first
+      R.heroVis = heroMesh.visible ? Math.max(0, R.heroVis - dt * 2.5) : 0;
+      if (R.heroVis <= 0 && !R.heroLoading) {
+        const key = R.heroKey = R.heroWant; heroMesh.visible = false;
+        if (key) { R.heroLoading = true;
+          BGL.load('bg/hero-' + key + '.webp?v=' + HERO_V, (tx) => {
+            R.heroLoading = false; if (R.heroKey !== key) { tx.dispose(); return; }
+            tx.colorSpace = THREE.SRGBColorSpace; tx.anisotropy = 8; if (heroMesh.material.map) heroMesh.material.map.dispose();
+            heroMesh.material.map = tx; heroMesh.material.needsUpdate = true;
+            const w = 2 * HERO_D * Math.tan(HERO[key] * Math.PI / 360); heroMesh.scale.set(w, w * tx.image.height / tx.image.width, 1);
+            R.heroT = 0; R.heroVis = 1; R.heroA = null; heroMesh.visible = true;
+          }, undefined, () => { R.heroLoading = false; });
+        }
+      }
+    }
+    if (!heroMesh.visible || R.heading == null) return;
+    R.heroT += dt; const side = E.segAt(W, E.segIndex(W.s)).sea || 1, u = Math.min(1, R.heroT / 3.2), e = 1 - Math.pow(1 - u, 3);
+    const want = Math.PI - R.heading - side * (MARK_OFF + 1.3 * (1 - e));   // (slides in from well off to the side, onto the ring's own small one)
+    if (R.heroA == null) R.heroA = want; else R.heroA += Math.atan2(Math.sin(want - R.heroA), Math.cos(want - R.heroA)) * Math.min(1, dt * (u < 1 ? 8 : 0.6));
+    const cp = camera.position, h = heroMesh.scale.y, y = cp.y - 30 - h * 0.06 + h / 2;   // its foot on the horizon (which lies 30 below the eye)
+    heroMesh.position.set(cp.x + Math.sin(R.heroA) * HERO_D, y, cp.z + Math.cos(R.heroA) * HERO_D); heroMesh.lookAt(cp.x, y, cp.z);
+    heroMesh.material.opacity = R.heroVis * Math.min(1, R.heroT / 0.8);
   }
 
   // ---------------------------------------------------------------- the player's car
@@ -1382,7 +1413,7 @@ export function createWorld() {
     // the camera rides on the road, not on the car: over a crest the car is seen to leave the ground
     const groundY = Math.max(E.heightAt(W, W.s), E.heightAt(W, W.s - camDist)) + (cy - W.h) + (near ? Math.max(0, W.h - E.heightAt(W, W.s)) * 0.7 : 0);
     R.camY = R.camInit ? R.camY + (groundY - R.camY) * Math.min(1, dt * 6) : groundY;
-    V3.set(cx - fx * camDist, R.camY + camH, cz - fz * camDist);
+    V3.set(cx - fx * camDist, Math.max(R.camY + camH, cy + lift + 1.05 * zk), cz - fz * camDist);   // (never below the car's own deck: over a big crest at nitro speed it dropped under the car and showed its underside)
     if (!R.camInit) { R.camPos.copy(V3); R.camOff.set(V3.x - cx, 0, V3.z - cz); R.camInit = true; }
     if (near && !cr) { const kk = Math.min(1, dt * 12); R.camOff.x += (V3.x - cx - R.camOff.x) * kk; R.camOff.z += (V3.z - cz - R.camOff.z) * kk; R.camPos.set(cx + R.camOff.x, V3.y, cz + R.camOff.z); }
     else { R.camPos.lerp(V3, Math.min(1, dt * (cr ? (cr.hard ? 7 : 2) : 12))); R.camOff.set(R.camPos.x - cx, 0, R.camPos.z - cz); }   // a big crash: stay with the car as it tumbles away
@@ -1408,7 +1439,7 @@ export function createWorld() {
     camera.fov += ((near ? 50 + sk * 20 + Math.max(0, spd - 0.88) * 40 + (W.boosting ? 6 : 0) : 53 + spd * 6 + (W.boosting ? 8 : 0)) + (R.nk || 0) * 7 - camera.fov) * Math.min(1, dt * ((R.nk || 0) > 0.5 ? 12 : 3)); camera.updateProjectionMatrix();
     // the sky things go round with the camera
     sky.position.copy(camera.position); stars.position.copy(camera.position); CUMU.position.set(camera.position.x, camera.position.y - 30, camera.position.z); CUMU.rotation.y = ringFar.rotation.y;
-    turnRing(W, dt); ringFar.position.set(camera.position.x, camera.position.y - (ringFar.userData.hz || 0) - 30, camera.position.z);
+    turnRing(W, dt); heroStep(W, dt); ringFar.position.set(camera.position.x, camera.position.y - (ringFar.userData.hz || 0) - 30, camera.position.z);
     sea.position.set(Math.round(camera.position.x / 100) * 100, 0, Math.round(camera.position.z / 100) * 100);
     seaNorm.offset.x = (t / 1000) * 0.012; seaNorm.offset.y = (t / 1000) * 0.008;
     foamTex.offset.x = Math.sin(t / 1300) * 0.12; foamTex.offset.y = t / 14000; foamMat.opacity = 0.75 + Math.sin(t / 1300 + 1.2) * 0.15;
@@ -1576,7 +1607,7 @@ export function createWorld() {
 
   function reset(W) {
     restore(); R.crashObj = null; R.crashK = 0;
-    R.W = W; R.poseHi = -1; R.camInit = false; FBC.clear(); R.tunK = 0; R.lastBanner = W.banner; R.fxN = W.fxN || 0; R.lookKey = ''; R.look = null; R.built = 0; R.stubKey = null; R.prevSkid = null; R.envDone = false; R.flash = 0;
+    R.W = W; R.poseHi = -1; R.camInit = false; FBC.clear(); R.tunK = 0; R.lastBanner = W.banner; R.fxN = W.fxN || 0; R.lookKey = ''; R.look = null; R.heroKey = null; R.heroVis = 0; heroMesh.visible = false; R.built = 0; R.stubKey = null; R.prevSkid = null; R.envDone = false; R.flash = 0;
     for (const [, ch] of R.chunks) dropChunk(ch); R.chunks.clear();
     R.stubs.forEach((m) => { scene.remove(m); m.geometry.dispose(); }); R.stubs = [];
     for (const [, m] of traffic) scene.remove(m); traffic.clear();

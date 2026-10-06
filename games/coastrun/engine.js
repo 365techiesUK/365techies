@@ -172,6 +172,9 @@
   }
   // tunnels, bridges and the things that span the road, somewhere in the middle of the stretch (never on a crest, a
   // gate or a fork). A bridge lifts the road to at least 9 m over the water, easing up to it and down again.
+  var OVERS = { bournemouth: ['footbridge', 'banner'], sandbanks: ['banner', 'footbridge'], christchurch: ['treearch', 'footbridge'], purbeck: ['treearch', 'viaduct'], swanage: ['rockarch', 'treearch'],
+    forest: ['treearch', 'footbridge', 'treearch'], jurassic: ['rockarch', 'treearch'], weymouth: ['banner', 'footbridge'], harbour: ['footbridge', 'banner'], lymington: ['treearch', 'banner'], lyme: ['banner', 'footbridge'],
+    portland: ['rockarch', 'footbridge'], goldencap: ['treearch', 'rockarch'], hengistbury: ['footbridge', 'treearch'], needles: ['rockarch', 'footbridge'] };   // what spans the road in each place
   function features(W, S, lo, hi, r) {
     var F = S.feat || {}, used = [], i, tries;
     function free(a, b) { if (a < lo || b > hi) return false; for (var u = 0; u < used.length; u++) if (a < used[u][1] + 50 && b > used[u][0] - 50) return false; for (var q = a; q < b; q++) if (segAt(W, q).crest) return false; return true; }
@@ -191,9 +194,14 @@
     (F.over || []).forEach(function (t2, n) {
       for (tries = 0; tries < 30; tries++) {
         var oi = lo + 30 + ((r() * (hi - lo - 60)) | 0), og = segAt(W, oi);
-        if (!og.tun && !og.brg && !og.crest && Math.abs(og.k) < 1 / 300 && free(oi - 4, oi + 4)) { used.push([oi - 4, oi + 4]); putAt(W, oi, t2, 0, 0, { v: n }); og.over = t2; break; }
+        if (!og.tun && !og.brg && !og.crest && Math.abs(og.k) < 1 / 300 && free(oi - 4, oi + 4)) { used.push([oi - 4, oi + 4]); putAt(W, oi, t2, 0, 0, { v: n }); og.over = t2; for (var nq0 = oi - 9; nq0 <= oi + 9; nq0++) segAt(W, nq0).nearOver = 1; break; }
       }
     });
+    var OV = OVERS[S.key] || [], n2 = 0;   // OutRun's way: something over the road every half a kilometre or so (a critic counted too few), placed in step (no dice)
+    for (var oj = lo + 60; OV.length && oj < hi - 30; oj += 125) for (var d2 = 0; d2 < 30 && oj + d2 < hi; d2++) {
+      var q2 = oj + d2, g2 = segAt(W, q2);
+      if (!g2.tun && !g2.brg && !g2.crest && !g2.gate && !g2.fk && !g2.over && Math.abs(g2.k) < 1 / 250 && free(q2 - 3, q2 + 3)) { used.push([q2 - 3, q2 + 3]); putAt(W, q2, OV[n2 % OV.length], 0, 0, { v: n2 }); g2.over = OV[n2 % OV.length]; n2++; for (var nq = q2 - 9; nq <= q2 + 9; nq++) segAt(W, nq).nearOver = 1; break; }   // (nothing else stands in its legs)
+    }
   }
   function putAt(W, i, t, x, h, o) {   // something at the roadside: t = what (world3d.js models it), x = across, h = how wide to hit (0 = can't)
     var s = W.segs[i - W.base]; if (!s) return null;
@@ -203,7 +211,7 @@
     return it;
   }
   var put = putAt;
-  function land(s, x) { return !s.gate && !s.tun && !s.brg && (!s.sea || (x < 0 ? -1 : 1) !== s.sea || Math.abs(x) < s.sh - 2.5); }
+  function land(s, x) { return !s.gate && !s.tun && !s.brg && !(s.nearOver && Math.abs(x) < 32) && (!s.sea || (x < 0 ? -1 : 1) !== s.sea || Math.abs(x) < s.sh - 2.5); }
   function water(s, x) { return (s.brg && Math.abs(x) > 14) || (s.sea && (x < 0 ? -1 : 1) === s.sea && Math.abs(x) > s.sh + 6); }
 
   var FERRY = { 'sandbanks>swanage': { k: 'chain', dur: 270, title: 'ALL ABOARD!', sub: 'The chain ferry across to Studland', land: 'STUDLAND', landSub: 'On to Old Harry Rocks' },
@@ -413,21 +421,20 @@
       }
     }
     // the landmarks, each on clear ground (never in a tunnel, on a bridge, at a gate or a fork) near its place in the stretch
+    // (Corfe Castle, the Priory and Golden Cap are painted large far off now - world3d.js's hero layer: close up, the models read as floating
+    // blocks, a squat block and a red mesa)
     function mark(t, f, xf, v) {
       for (var j = from + Math.round((to - from) * f), n = 0; n < 80; j++, n++) { var g = segAt(W, j); if (!g.tun && !g.brg && !g.gate && !g.fk && !g.over) { putAt(W, j, t, xf(g.sh), 0, { v: v || 0 }); return; } }
     }
     if (S.key === 'bournemouth') { mark('pier', 0.3, function (h) { return -(Math.max(h, 20) + 6); }, 0); mark('pier', 0.72, function (h) { return -(Math.max(h, 20) + 6); }, 1); }
     if (S.key === 'sandbanks') { mark('ferry', 0.5, function (h) { return -(Math.max(h, 20) + 70); }); }
-    if (S.key === 'christchurch') { mark('priory', 0.45, function () { return -150; }); }
-    if (S.key === 'purbeck') { mark('castle', 0.42, function () { return 140; }); }
     if (S.key === 'swanage') { mark('needles', 0.33, function (h) { return -(Math.max(h, 18) + 80); }); mark('needles', 0.66, function (h) { return -(Math.max(h, 18) + 80); }); }
-    if (S.key === 'jurassic') { mark('lighthouse', 0.38, function (h) { return -(Math.max(h, 18) - 5); }, 0); mark('arch', 0.68, function (h) { return -(Math.max(h, 18) + 70); }); }
+    if (S.key === 'jurassic') { mark('arch', 0.68, function (h) { return -(Math.max(h, 18) + 70); }); }   // (no lighthouse: there's none at Durdle Door)
     if (S.key === 'weymouth') { mark('clock', 0.4, function (h) { return -(Math.min(h, 22) - 4); }); }
     if (S.key === 'harbour') { mark('ferry', 0.55, function (h) { return Math.max(h, 16) + 40; }); }
     if (S.key === 'lymington') { mark('ferry', 0.5, function (h) { return Math.max(h, 16) + 60; }); }
     if (S.key === 'lyme') { mark('cobb', 0.5, function (h) { return -(Math.max(h, 18) + 40); }); }
     if (S.key === 'portland') { mark('lighthouse', 0.84, function (h) { return -(Math.max(h, 18) - 5); }, 1); }
-    if (S.key === 'goldencap') { mark('goldcap', 0.5, function (h) { return -(Math.max(h, 18) + 55); }); }
     if (S.key === 'hengistbury') { mark('headland', 0.7, function (h) { return Math.max(h, 18) + 70; }); }
     if (S.key === 'needles') { mark('needles', 0.8, function (h) { return Math.max(h, 18) + 90; }); }
   }

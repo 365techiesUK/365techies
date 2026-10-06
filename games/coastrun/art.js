@@ -287,7 +287,7 @@
       var r = rnd(1515);
       hills(far, r, HZ, 6, 3, '#1c2238', 0.4);
       P(far, [900, HZ, 905, HZ - 6, 912, HZ], '#b0aac8'); P(far, [916, HZ, 920, HZ - 5, 925, HZ], '#b0aac8');
-      for (var x = 0; x < BG_W; x += 2 + r() * 5) rr(far, x, HZ - 2 - r() * 3, 1, 1, 0.2, r() < 0.8 ? '#ffd27a' : '#cfe8ff');
+      for (var x = 0; x < BG_W; x += 2 + r() * 5) if (Math.sin(x / 90) * 0.7 + Math.sin(x / 31 + 2) * 0.5 > 0.55) rr(far, x, HZ - 2 - r() * 3, 1, 1, 0.2, r() < 0.8 ? '#ffd27a' : '#cfe8ff');   // (in two or three little towns across the water, not one city all the way round)
       seaBand(far, HZ, ['#1c2a5a', '#16244a'], 'rgba(255,210,140,0.5)');
     }
   };
