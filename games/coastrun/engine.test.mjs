@@ -72,9 +72,36 @@ test('drifting: a tap of brake while turning at speed slides the car round the b
   assert.ok(W.psi - W.phi > 0.3, 'the car is sideways: ' + (W.psi - W.phi).toFixed(2));
   assert.ok(Math.abs(W.x) < E.HALF, 'and still on the road round the bend: ' + W.x.toFixed(2));
   assert.ok(W.v > 45, 'keeping most of its speed'); assert.ok(W.boost > 0.2, 'filling the boost');
-  const s0 = W.score; E.step(W, {}); assert.equal(W.drift, 0, 'let go to straighten up'); assert.ok(W.score - s0 >= 300, 'points for the drift');
+  const s0 = W.score; E.step(W, {}); assert.equal(W.drift, 1, 'let go: the slide eases off, not all at once');
+  let n = 1; while (W.drift && n < 60) { E.step(W, {}); n++; } quiet(W);
+  assert.equal(W.drift, 0, 'and straightens up'); assert.ok(n > 12 && n < 45, 'over a moment: ' + n + ' steps'); assert.ok(W.score - s0 >= 300, 'points for the drift');
   W.boost = 1; W.v = E.VMAX; drive(W, 60, (w) => { w.x = 0; return { fire: true }; });
   assert.ok(W.v > E.VMAX * 1.1, 'boost goes past full speed'); assert.ok(W.boost < 0.8);
+});
+
+test('a drift answers the keys: held it swings wide, caught it straightens quickly, and it eases in rather than snapping', () => {
+  const W = E.newWorld(2, {}, 4); go(W); clear(W);
+  const i = findSeg(W, 60, (g, j) => g.k > 1 / 130 && E.segAt(W, j + 30).k > 1 / 130);
+  W.s = i * E.SEG; W.v = 55; W.x = -2; W.boost = 0;
+  const p0 = W.psi; E.step(W, { right: true, brakeTap: true }); quiet(W);
+  assert.ok(W.psi - p0 < 0.12, 'no snap sideways on the first step: ' + (W.psi - p0).toFixed(3));
+  let prev = 0, rises = 0; for (let n = 0; n < 20; n++) { E.step(W, { right: true }); quiet(W); const a = W.psi - W.phi; if (a > prev) rises++; prev = a; }
+  assert.ok(rises >= 15, 'the slide grows step by step: ' + rises);
+  drive(W, 30, { right: true }); const full = W.psi - W.phi;
+  E.step(W, { left: true }); let n = 1; while (W.drift && n < 60) { E.step(W, { left: true }); n++; } quiet(W);
+  assert.ok(full > 0.35, 'held: a full slide ' + full.toFixed(2)); assert.ok(n < 20, 'steering against it catches it quickly: ' + n + ' steps');
+});
+
+test('the tyres squeal near the limit in a bend, not on a gentle one', () => {
+  const W = E.newWorld(2, {}, 4); go(W); clear(W);
+  const i = findSeg(W, 60, (g, j) => g.k > 1 / 130 && E.segAt(W, j + 20).k > 1 / 130);
+  W.s = i * E.SEG; W.v = 62; W.x = 0; W.psi = W.phi = 0;
+  let most = 0; drive(W, 40, (w) => { w.v = 62; most = Math.max(most, w.slide || 0); return { right: true }; });
+  assert.ok(most > 0.5, 'hard round a sharp bend at speed: ' + most.toFixed(2));
+  const j = findSeg(W, 60, (g, q) => Math.abs(g.k) < 1 / 2000 && Math.abs(E.segAt(W, q + 20).k) < 1 / 2000);
+  W.s = j * E.SEG; W.v = 30; W.x = 0; W.psi = W.phi = 0; W.steer = 0; W.slide = 0; W.drift = 0; W.dk = 0;
+  let quietMost = 0; drive(W, 40, (w) => { w.v = 30; quietMost = Math.max(quietMost, w.slide || 0); return {}; });
+  assert.ok(quietMost < 0.05, 'cruising on the straight: ' + quietMost.toFixed(2));
 });
 
 test('a crest taken fast throws the car into the air, and the landing scores', () => {

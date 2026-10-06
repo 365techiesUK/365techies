@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=35';
+import { createWorld } from './world3d.js?v=36';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
@@ -39,6 +39,28 @@ function glowDot(col) {
   return (GLOW[col] = d);
 }
 
+// ---------------------------------------------------------------- smooth motion: the game moves in steps of a sixtieth of a second and the
+// screen draws when it likes (144 times a second, or 60 not quite in time with them), so one picture can land two steps on and the next
+// none at all: a judder you see most at nitro speed and in the bends. So each picture shows the car and the traffic part way between
+// their last two steps, by how far it falls into the next one (the shared loop keeps the same count: SM mirrors it)
+const SM = { W: null, n: 0, acc: 0, last: 0, mode: '', p: {}, cur: {}, on: !/[?&]nolerp/.test(location.search) };
+const SMK = ['s', 'x', 'h', 'psi', 'phi', 'steer', 'v'], STEPMS = 1000 / 60;
+function smoothSnap(W) { SM.W = W; for (const k of SMK) SM.p[k] = W[k]; for (const c of W.cars) { c.ls = c.s; c.lx = c.x; } SM.n++; }   // before a step: where everything was
+function smoothStep(W, inp) { smoothSnap(W); return E.step(W, inp); }
+function smoothAlpha(t, mode) {   // how far this picture falls between the last step and the next
+  const dt = SM.last && SM.mode === 'play' ? Math.min(250, t - SM.last) : 0; SM.last = t;   // (the loop starts its clock afresh on the first frame of a game)
+  if (mode === 'play') { SM.acc += dt - SM.n * STEPMS; if (SM.n >= 8) SM.acc = 0; SM.acc = Math.max(0, Math.min(STEPMS, SM.acc)); } else SM.acc = 0;   // (out of step it puts itself right: a frame with no step, or two, pins it)
+  SM.n = 0; SM.mode = mode;
+  return mode === 'play' ? SM.acc / STEPMS : mode === 'title' ? Math.max(0, Math.min(1, R.demoAcc * 60)) : 1;
+}
+function smoothApply(W, a) {
+  if (!SM.on || SM.W !== W || W.ferry || a >= 0.999 || Math.abs(W.s - SM.p.s) > 40) return false;   // (a jump - a new round, the ferry, a reset - is drawn as it is)
+  for (const k of SMK) { SM.cur[k] = W[k]; W[k] = SM.p[k] + (W[k] - SM.p[k]) * a; }
+  for (const c of W.cars) if (c.ls != null && Math.abs(c.s - c.ls) < 40) { c.cs = c.s; c.cx = c.x; c.s = c.ls + (c.s - c.ls) * a; c.x = c.lx + (c.x - c.lx) * a; } else c.cs = null;
+  return true;
+}
+function smoothUndo(W) { for (const k of SMK) W[k] = SM.cur[k]; for (const c of W.cars) if (c.cs != null) { c.s = c.cs; c.x = c.cx; c.cs = null; } }
+
 // ---------------------------------------------------------------- the picture
 function draw(g, W, t, mode, info) {
   K = info.scale;
@@ -48,9 +70,10 @@ function draw(g, W, t, mode, info) {
   if (mode === 'title' && W.demo) {
     if (W.count > 0) { W.count = 0; W.v = E.topSpeed(W) * 0.6; }   // no lights: the demo drives straight away
     R.demoAcc += frameDt; let n = 0;
-    while (R.demoAcc > 1 / 60 && n < 4) { W.time = 60; E.step(W, E.autopilot(W)); W.events.length = 0; W.pops.length = 0; W.banner = null; R.demoAcc -= 1 / 60; n++; }
+    while (R.demoAcc > 1 / 60 && n < 4) { W.time = 60; smoothStep(W, E.autopilot(W)); W.events.length = 0; W.pops.length = 0; W.banner = null; R.demoAcc -= 1 / 60; n++; }
     if (n === 4) R.demoAcc = 0;
   }
+  const alpha = smoothAlpha(t, mode);
   R.braking = (W.v < R.lastV - 0.2) && !W.timeUp && !W.crash; R.lastV = W.v;
   R.boostK += ((W.boosting ? 1 : 0) - R.boostK) * Math.min(1, frameDt * 4);
   g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
@@ -65,8 +88,9 @@ function draw(g, W, t, mode, info) {
   const t0 = performance.now();
   const cap = Math.sqrt(4.2e6 / (info.dw * info.dh)), k = Math.min(1, cap) * R.scale;
   wd.setSize(Math.max(64, Math.round(info.dw * k)), Math.max(64, Math.round(info.dh * k)));
-  wd.setShake(R.shakeOn); wd.setCam(!(RAD.set && RAD.set.cam === 'far'));
-  const cv = wd.render(W, t, mode);
+  wd.setShake(R.shakeOn); wd.setCam((RAD.set && RAD.set.cam) || 'near');
+  const lerped = smoothApply(W, alpha);
+  let cv; try { cv = wd.render(W, t, mode); } finally { if (lerped) smoothUndo(W); }
   g.imageSmoothingEnabled = true; g.drawImage(cv, 0, 0, info.dw, info.dh);
   // a slow PC: the picture a step smaller (and back up when there's room); the plainer look only as a last resort
   const took = performance.now() - t0;
@@ -81,6 +105,7 @@ function draw(g, W, t, mode, info) {
   g.setTransform(K, 0, 0, K, 0, 0);
   { const fast = Math.max(R.boostK, Math.max(0, W.v / E.VMAX - 0.8) * 2.2); if (fast > 0.05 && !W.crash) speedLines(g, t, Math.min(1, fast)); }
   hud(g, W, t, mode);
+  if (mode === 'play' && performance.now() - (R.camMsgT || -1e9) < 1400) { const c = CAMS.find((q) => q[0] === ((RAD.set && RAD.set.cam) || 'near')); hudText(g, 'Camera: ' + (c ? c[1] : 'Close') + '  (C to change)', GW / 2, GH * 0.3, 9, '#ffffff', 'center'); }
 }
 function speedLines(g, t, k) {   // streaks rushing past the sides and bottom of the picture (not the sky ahead, not the dashboard)
   g.save(); g.strokeStyle = '#ffffff'; g.lineWidth = 0.6;
@@ -89,7 +114,7 @@ function speedLines(g, t, k) {   // streaks rushing past the sides and bottom of
     let a = ((i * 137.5 + r * 23) % 360) * Math.PI / 180;
     if (Math.sin(a) < -0.25) a = Math.PI - a;   // never upwards into the sky
     const r0 = 118 + ((i * 53 + r * 17) % 50), r1 = r0 + 18 + ((i * 29) % 26);
-    g.globalAlpha = 0.22 * k * (0.5 + ((i * 7) % 5) / 10);
+    g.globalAlpha = 0.17 * k * (0.5 + ((i * 7) % 5) / 10);
     g.beginPath(); g.moveTo(GW / 2 + Math.cos(a) * r0 * 1.5, cy + Math.sin(a) * r0 * 0.9); g.lineTo(GW / 2 + Math.cos(a) * r1 * 1.5, cy + Math.sin(a) * r1 * 0.9); g.stroke();
   }
   g.restore();
@@ -403,6 +428,7 @@ function sound(name, S, e) {
     case 'timeup': if (sting('timeup')) break; [523, 440, 349, 262].forEach((f, k) => S.tone(f, 0.3, 0.07, { type: 'triangle', when: k * 0.24, verb: 0.4 })); break;
     case 'fork': S.tone(784, 0.14, 0.05, { type: 'triangle', verb: 0.3 }); S.tone(1175, 0.2, 0.05, { type: 'triangle', when: 0.1, verb: 0.3 }); break;
     case 'skid': S.noise(0.35, 0.07, 2600, { type: 'bandpass', q: 9, to: 2200 }); break;
+    case 'grid': for (let q = 0; q < 9; q++) S.noise(0.025, 0.07 - q * 0.004, 700 + (q % 3) * 260, { type: 'bandpass', q: 2.5, when: q * 0.03 }); break;   // a cattle grid: the tyres drumming over its bars
     case 'driftend': S.tone(988, 0.1, 0.04, { type: 'square', verb: 0.3 }); S.tone(1319, 0.16, 0.04, { type: 'square', when: 0.07, verb: 0.3 }); break;
     case 'slip': S.noise(0.5, 0.06, 900, { type: 'bandpass', q: 2, to: 2400 }); break;
     case 'bush': S.noise(0.28, 0.12, 2200, { type: 'bandpass', q: 0.8, to: 600, pan: p }); break;
@@ -580,6 +606,14 @@ document.addEventListener('keydown', (e) => {
   if ((e.key || '').toLowerCase() !== 'r' || e.ctrlKey || e.metaKey || e.altKey || /INPUT|TEXTAREA|SELECT/.test((e.target && e.target.tagName) || '')) return;
   const A2 = window.ARCADE365; if (A2 && A2.mode === 'play') { tune(e.shiftKey ? -1 : 1); e.preventDefault(); }
 });
+const CAMS = [['near', 'Close'], ['driver', 'Driver'], ['far', 'High']];
+document.addEventListener('keydown', (e) => {   // C: the next camera (saved with the other settings)
+  if ((e.key || '').toLowerCase() !== 'c' || e.repeat || e.ctrlKey || e.metaKey || e.altKey || /INPUT|TEXTAREA|SELECT/.test((e.target && e.target.tagName) || '')) return;
+  const A2 = window.ARCADE365, SET = RAD.set; if (!A2 || A2.mode !== 'play' || !SET) return;
+  const i = Math.max(0, CAMS.findIndex((c) => c[0] === (SET.cam || 'near')));
+  SET.cam = CAMS[(i + 1) % CAMS.length][0]; R.camMsgT = performance.now(); e.preventDefault();
+  try { localStorage.setItem('coast365:settings', JSON.stringify(SET)); } catch (e2) {}
+});
 function radioPanel(g, W, t, mode) {   // on the start line (◀ ▶ tune it) and for a moment after you change station
   const count = W.count > 0 && mode === 'play', after = mode === 'play' && W.count <= 0 && R.goT >= 0 && W.t - R.goT < 60, shown = performance.now() - RAD.shownT < 2600;
   if (!RAD.set || RAD.set.sound === false || (!count && !after && !shown)) return;
@@ -663,10 +697,11 @@ function frameAudio(W, S, mode, SET) {
   if (!AU.race && lift && Math.random() < 0.11) S.noise(0.035 + Math.random() * 0.04, 0.04 + Math.random() * 0.035, 800 + Math.random() * 1500, { type: 'bandpass', q: 1.2, pan: (Math.random() - 0.5) * 0.4 });
   AU.wind.f.frequency.setTargetAtTime(600 + pct * 1800, now, T);
   AU.wind.g.gain.setTargetAtTime(Math.min(0.09, pct * pct * 0.055 + (W.boosting ? 0.03 : 0)), now, T);
-  AU.skid.g.gain.setTargetAtTime(W.drift && !W.air ? 0.028 : 0, now, 0.03);   // (a little grit under the squeal)
-  { const slip = W.air || W.crash ? 0 : W.drift ? 1 : pct > 0.3 ? Math.max(0, Math.min(1, (Math.abs(W.slide || 0) - 0.12) / 0.2)) * 0.55 : 0, f0 = (420 + slip * 80 + pct * 60) * (1 + (Math.random() - 0.5) * 0.03);
+  AU.skid.g.gain.setTargetAtTime(W.air || W.crash ? 0 : W.drift ? 0.028 : (W.slide || 0) * 0.016, now, 0.03);   // (a little grit under the squeal)
+  { const slip = W.air || W.crash ? 0 : W.drift ? 0.7 + 0.3 * Math.min(1, (W.driftA || 0) / 0.45) : (W.slide || 0) * 0.85,   // a drift: the full squeal, rising with the slide; hard round a bend, braking hard or a quick flick: the tyres working (engine: slide)
+    f0 = (420 + slip * 80 + pct * 60) * (1 + (Math.random() - 0.5) * 0.03);
     AU.sq.oscs.forEach((o) => o.os.frequency.setTargetAtTime(f0 * o.h, now, 0.08));
-    AU.sq.g.gain.setTargetAtTime(slip * 0.11, now, slip > 0 ? 0.03 : 0.08);
+    AU.sq.g.gain.setTargetAtTime(slip * 0.14, now, slip > 0 ? 0.03 : 0.08);
     if (AU.sq.pn) AU.sq.pn.pan.setTargetAtTime(Math.max(-0.5, Math.min(0.5, -(W.steer || 0) * 0.35)), now, 0.1); }
   if (W.count <= 0 && !W.crash) for (const c of W.cars) {   // a car going past: a swoosh falling in pitch (Doppler), on the side it passes
     const d = c.s - W.s, was = AU.passD.get(c.id); AU.passD.set(c.id, d);
@@ -694,17 +729,17 @@ A.start({
     { key: 'voice', type: 'switch', label: 'Her voice', small: 'Your passenger says what she would like you to do, and how you did.', def: true },
     { key: 'shake', type: 'switch', label: 'Screen shake', small: 'The picture shakes when you bump or crash.', def: !reducedMotion },
     { key: 'drift', type: 'seg', label: 'Drifting', small: 'Automatic: steer hard into a sharp bend at speed and the car drifts by itself. Manual: tap the brake as you turn into the bend.', options: [['auto', 'Automatic'], ['manual', 'Manual']], def: 'auto' },
-    { key: 'cam', type: 'seg', label: 'Camera', small: 'Close: low behind the car, like the arcade. High: further back and up, to see more of the road ahead.', options: [['near', 'Close'], ['far', 'High']], def: 'near' }
+    { key: 'cam', type: 'seg', label: 'Camera', small: 'Close: low behind the car, like the arcade. Driver: from your seat, over the bonnet. High: further back and up, to see more of the road ahead. Press C while driving to change it.', options: [['near', 'Close'], ['driver', 'Driver'], ['far', 'High']], def: 'near' }
   ],
   picker: { key: 'car', label: 'Choose your car', options: [['roadster', 'Roadster', 'Red · all-rounder'], ['gt', 'GT', 'Silver · fastest'], ['hatch', 'Hot hatch', 'Yellow · grippy']] },
   newWorld: (speed, set) => { set = set || {}; R.shakeOn = set.shake !== false; return E.newWorld(speed, { car: set.car, pedal: touchy() ? 'auto' : set.pedal, drift: set.drift }); },
   statKey: (W) => 'v' + W.diff,
   hires: () => true,
-  step: E.step, hud: E.hud, draw: draw, sound: sound, frameAudio: frameAudio,
+  step: smoothStep, hud: E.hud, draw: draw, sound: sound, frameAudio: frameAudio,
   quietSay: () => true,
   overText: (W) => 'Time up – stage ' + W.stageNo + (W.round > 1 ? ', round ' + W.round : ''),
   titleText: 'Race along the Dorset coast with your girlfriend beside you, before the clock runs out. Five stretches make a run: at every <b>fork</b> you choose your road through fifteen places, to one of five goals &mdash; and she asks for things on the way. Do them for <b>hearts</b>.',
-  keysText: '<b>&larr; &rarr;</b> steer &middot; <b>Space</b> boost &middot; <b>&darr;</b> brake &mdash; tap it while turning to <b>drift</b> &middot; <b>P</b> pause',
+  keysText: '<b>&larr; &rarr;</b> steer &middot; <b>Space</b> boost &middot; <b>&darr;</b> brake &mdash; tap it while turning to <b>drift</b> &middot; <b>C</b> camera &middot; <b>P</b> pause',
   touchText: '<b>&#9664; &#9654;</b> steer &middot; <b>Boost</b> &middot; <b>Brake</b> (tap it while turning to drift) &mdash; the car goes by itself',
   help: [
     '<b>The aim:</b> drive as far as you can before the clock runs out. Each stretch of road ends at a <b>checkpoint</b> that adds time. Five stretches make a run: reach one of the five <b>goals</b> for a time bonus, a love bonus and a rank, then go round again &mdash; busier and quicker.',

@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=30';
+import * as MD from './models3d.js?v=31';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -94,7 +94,7 @@ const FIELDS = {
   christchurch: { cols: ['#7cbf55', '#68a848', '#a9cf6a', '#d2cf80', '#8fbf5c'], k: 0.85 },
   purbeck: { cols: ['#79bb50', '#5f9e3c', '#9ccc5a', '#e2cf58', '#b49a62'], k: 1.0 },
   swanage: { cols: ['#7fbf55', '#6fae48', '#9ccf68', '#cfc272', '#8fb85a'], k: 0.7 },
-  forest: { cols: ['#82a040', '#749238', '#9a9a48', '#668a34', '#a0a450'], k: 0.3 },
+  forest: { cols: ['#82a040', '#749238', '#9a9a48', '#668a34', '#a0a450'], k: 0.3 }, 'forest:heath': { cols: ['#8a8048', '#7a6a42', '#8e6e5e', '#6e7a3a', '#9a8450'], k: 0.45 },
   jurassic: { cols: ['#98aa44', '#82983c', '#b0b850', '#d4b456', '#a0ac48'], k: 0.75 },
   weymouth: { cols: ['#86b850', '#78ac48', '#a6c862', '#e0c870', '#b5a06a'], k: 0.75 },
   harbour: { cols: ['#1d2a26', '#1a2622', '#22302a', '#1d2a26', '#1a2622'], k: 0.0 },
@@ -112,15 +112,15 @@ const BIG = { castle: 1.5, arch: 1.4, goldcap: 1.3, headland: 1.3, priory: 1.35,
 const SIGNS = { gate: 1, gantry: 1, nose: 1, board: 1, chev: 1, warn: 1, banner: 1 };
 const lit = (look) => !!(look.night || look.dusk);   // lamps and headlights on
 // OutRun's way (owner, 5 Oct): the land side of the road ends at a boundary, and the place is packed in right behind it
-const VERGE_K = { 'purbeck:village': 'wall', 'purbeck:heath': 'vpost', 'needles:yarmouth': 'wall', 'needles:downs': 'hedge', 'swanage:town': 'prom', bournemouth: 'prom', sandbanks: 'prom', weymouth: 'prom', christchurch: 'hedge', lymington: 'hedge', goldencap: 'hedge', purbeck: 'wall', lyme: 'wall', portland: 'wall', forest: 'fence', swanage: 'vpost', jurassic: 'vpost', needles: 'vpost', hengistbury: 'vpost', harbour: 'bollard' };
+const VERGE_K = { 'forest:heath': 'vpost', 'forest:village': 'hedge', 'forest:woods': 'vpost', 'purbeck:village': 'wall', 'purbeck:heath': 'vpost', 'needles:yarmouth': 'wall', 'needles:downs': 'hedge', 'swanage:town': 'prom', bournemouth: 'prom', sandbanks: 'prom', weymouth: 'prom', christchurch: 'hedge', lymington: 'hedge', goldencap: 'hedge', purbeck: 'wall', lyme: 'wall', portland: 'wall', forest: 'fence', swanage: 'vpost', jurassic: 'vpost', needles: 'vpost', hengistbury: 'vpost', harbour: 'bollard' };
 const ROWS = {   // set out at a steady spacing behind the boundary: [model, variants, every so many segments, how far out, sideways jitter]
   bournemouth: [['hutrow', 6, 4, 16.0, 0], ['hotel', 8, 7, 47, 4]], sandbanks: [['villa', 8, 6, 25, 2], ['palm', 3, 4, 16.6, 2]],
   weymouth: [['terrace', 6, 3, 21, 0]], lyme: [['terrace', 6, 4, 22, 0]], harbour: [['quayfront', 8, 5, 27, 0]],
   christchurch: [['cottage', 2, 10, 24, 4], ['terrace', 6, 8, 38, 3]], lymington: [['cottage', 2, 9, 24, 5], ['tpole', 1, 12, 15.6, 0]],
-  purbeck: [['tpole', 1, 12, 15.6, 0]], hengistbury: [['lamp', 2, 6, 15.4, 0]], swanage: [['tpole', 1, 12, 15.6, 0]], 'swanage:town': [['terrace', 6, 3, 22, 0]], 'needles:yarmouth': [['terrace', 6, 4, 23, 1]], 'needles:downs': [['thatch', 3, 11, 24, 6], ['tpole', 1, 14, 15.6, 0]], 'needles:alumbay': [], 'purbeck:village': [['purbeckcottage', 6, 3, 19.5, 0.5]], 'purbeck:heath': [], goldencap: [['tpole', 1, 12, 15.6, 0]], needles: [['tpole', 1, 14, 15.6, 0]]
+  purbeck: [['tpole', 1, 12, 15.6, 0]], hengistbury: [['lamp', 2, 6, 15.4, 0]], swanage: [['tpole', 1, 12, 15.6, 0]], 'swanage:town': [['terrace', 6, 3, 22, 0]], 'needles:yarmouth': [['terrace', 6, 4, 23, 1]], 'needles:downs': [['thatch', 3, 11, 24, 6], ['tpole', 1, 14, 15.6, 0]], 'needles:alumbay': [], 'purbeck:village': [['purbeckcottage', 6, 3, 19.5, 0.5]], 'purbeck:heath': [], 'forest:heath': [], 'forest:village': [['brickhouse', 6, 3, 19.6, 0.4]], 'forest:woods': [['redwood', 3, 3, 16.6, 0.7]], goldencap: [['tpole', 1, 12, 15.6, 0]], needles: [['tpole', 1, 14, 15.6, 0]]
 };
 const ROCKC = { hengistbury: '#c07a44', bournemouth: '#c9a66a', purbeck: '#e8e4d8', swanage: '#eeebe2', needles: '#efece4', jurassic: '#d8cfba', portland: '#c9c2b2', goldencap: '#d8a85e', lyme: '#7f8790', forest: '#a89070', christchurch: '#b9a98a', lymington: '#b9a98a', hengistbury: '#a87850' };   // the rock in the cuttings and cliffs
-const BUNT = { 'purbeck:village': 1, 'swanage:town': 1, 'needles:yarmouth': 1, bournemouth: 1, weymouth: 1, lyme: 1, christchurch: 1, lymington: 1, sandbanks: 1 };   // flags strung over the road in the towns
+const BUNT = { 'forest:village': 1, 'purbeck:village': 1, 'swanage:town': 1, 'needles:yarmouth': 1, bournemouth: 1, weymouth: 1, lyme: 1, christchurch: 1, lymington: 1, sandbanks: 1 };   // flags strung over the road in the towns
 const MORE = {   // closer, thicker dressing behind the boundary (as look.dress: [model, variants, a segment, from, to])
   bournemouth: [['bush', 2, 0.9, 19.2, 37], ['gorse', 1, 0.45, 19.2, 37], ['heather', 2, 0.3, 20, 36], ['pine', 1, 0.55, 38, 80], ['oak', 1, 0.12, 42, 75]], sandbanks: [['palm', 3, 0.22, 17, 28], ['bush', 2, 0.25, 15.6, 22], ['strollers', 8, 0.1, 15.4, 19]],   // (bournemouth: the cliff face - scrub, gorse, sandy patches; pines along the top)
   christchurch: [['oak', 1, 0.2, 17, 40], ['bush', 2, 0.25, 15.6, 22]], purbeck: [['oak', 1, 0.2, 17, 45], ['sheep', 2, 0.3, 17, 50]],
@@ -146,8 +146,11 @@ const QUAY = { harbour: 1 };
 const FISH = { harbour: 1 };   // fishing boats moored along the quay wall
 const GROYNE = { 'swanage:town': 'groyne', 'swanage:studland': 'groyne', bournemouth: 'groyne', sandbanks: 'rockgroyne', hengistbury: 'longgroyne' };   // (Bournemouth's are timber, Sandbanks' granite boulders)
 const HARB = { sandbanks: [['mooring', 6, 0.16, 14, 210], ['motorboat', 4, 0.025, 30, 180], ['jetty', 3, 0.045, -3, -3]] };   // out in the harbour (lateral from its edge; a jetty from the bank)   // lamps along the water's edge (at night the quay side was a black void)
-const ZONES = { swanage: [[0.27, 'studland'], [0.7, 'downs'], [1.01, 'town']], needles: [[0.24, 'yarmouth'], [0.68, 'downs'], [1.01, 'alumbay']], purbeck: [[0.3, 'heath'], [0.62, 'village'], [1.01, 'hills']] };   // (Purbeck: the heath, Corfe village under its castle, over the hills)   // (the Isle of Wight: off the ferry at Yarmouth, across West Wight, Alum Bay and the Needles)   // a stage in parts (where each ends, as a share of the stage): off the ferry through Studland, over the downs past Old Harry, down into Swanage
+const ZONES = { forest: [[0.3, 'heath'], [0.64, 'village'], [1.01, 'woods']], swanage: [[0.27, 'studland'], [0.7, 'downs'], [1.01, 'town']], needles: [[0.24, 'yarmouth'], [0.68, 'downs'], [1.01, 'alumbay']], purbeck: [[0.3, 'heath'], [0.62, 'village'], [1.01, 'hills']] };   // (Purbeck: the heath, Corfe village under its castle, over the hills)   // (the Isle of Wight: off the ferry at Yarmouth, across West Wight, Alum Bay and the Needles)   // a stage in parts (where each ends, as a share of the stage): off the ferry through Studland, over the downs past Old Harry, down into Swanage
 const DRESSZ = {   // the dressing for a part of a stage (in place of the place's own)
+  'forest:heath': [['heather', 2, 0.8, 15.4, 60], ['gorse', 1, 0.4, 15.4, 60], ['bracken', 2, 0.4, 15.4, 40], ['pine', 1, 0.1, 22, 80], ['birch', 1, 0.05, 18, 50], ['oak', 1, 0.03, 30, 80], ['ponies', 4, 0.06, 15.6, 30], ['tuft', 6, 0.4, 8.8, 14]],   // (the New Forest: open heath, ponies grazing, a lone oak)
+  'forest:village': [['oak', 1, 0.08, 30, 70], ['strollers', 8, 0.1, 15.4, 16], ['ponies', 4, 0.012, 15.6, 17], ['tuft', 6, 0.8, 8.8, 14]],
+  'forest:woods': [['beech', 2, 0.45, 19, 45], ['oak', 3, 0.25, 21, 50], ['bracken', 2, 0.7, 15.4, 30], ['deer', 4, 0.03, 19, 34], ['tuft', 6, 0.6, 8.8, 14]],
   'swanage:studland': [['heather', 2, 0.45, 12, 50], ['gorse', 1, 0.35, 12, 50], ['pine', 1, 0.18, 16, 70], ['birch', 1, 0.06, 15, 40], ['tuft', 6, 1.4, 8.8, 26], ['carpark', 4, 0.03, 16.5, 22]],
   'swanage:town': [['flowerbed', 3, 0.3, 15.6, 18], ['strollers', 8, 0.18, 15.4, 18.5], ['palm', 3, 0.08, 16, 20]],
   'purbeck:heath': [['heather', 2, 0.32, 12, 50], ['gorse', 1, 0.28, 12, 50], ['pine', 1, 0.14, 16, 70], ['birch', 1, 0.06, 15, 40], ['ponies', 4, 0.025, 15, 26], ['tuft', 6, 0.9, 8.8, 24]],   // (thinned: the heath ran 18-20 ms on a slow PC)
@@ -609,6 +612,17 @@ export function createWorld() {
       cliff: L(look.cliff || '#8a7a6a'), shallow: lit(look) ? beach.clone().multiplyScalar(0.8) : L('#2ec4bc').lerp(beach, 0.25), deep: L(look.night ? '#06101e' : lit(look) ? '#1c4a62' : '#0c5288') };
     CC.set(st, c); return c;
   }
+  const LANDZ = { 'forest:heath': { g0: new THREE.Color('#8a8250'), g1: new THREE.Color('#7a6646'), dry: new THREE.Color('#8e6a62') } }, C3 = new THREE.Color();
+  function landZone(W, g) {   // [the part's land colours, how much] for the land at segment g
+    const zk = zoneKey(W, g), H = LANDZ[zk]; if (!H) return null;
+    const Z = ZONES[E.STAGES[g.st].key]; let rec = null; for (const s of W.stretch) if (s.id === g.st && g.i >= s.from && g.i < (s.to || 1e9)) { rec = s; break; }
+    const f = (g.i - rec.from) / Math.max(1, rec.to - rec.from), zi = Z.findIndex((z) => zk.endsWith(':' + z[1])), a = zi > 0 ? Z[zi - 1][0] : -1, b = Z[zi][0];
+    return [H, smooth(a, a + 0.03, f) * (1 - smooth(b - 0.03, b, f))];
+  }
+  function landTint(H, w, x, z, out) {   // the land's colour blended towards the part's own
+    C3.copy(H.g0).lerp(H.g1, smooth(0.3, 0.7, fbm(x / 30, z / 30))).lerp(H.dry, smooth(0.55, 0.8, vnoise(x / 18 + 4, z / 18 + 7)) * 0.8).multiplyScalar(0.86 + vnoise(x / 6, z / 6) * 0.26);
+    return out.lerp(C3, w);
+  }
   function colourAt(kind, st, x, y, z, out, dist) {
     if (kind === 'under') return out.copy(UNDERC);   // the filler under the road: asphalt-dark, so a hairline seam in the road never shows grass or sea
     const c = cols(st);
@@ -663,7 +677,7 @@ export function createWorld() {
       pts.push([P.x + Math.cos(P.th) * li, P.y + li * Math.sin(P.bank) * flat - 0.3, P.z + Math.sin(P.th) * li, 'verge', 0]); kinds.push('under'); }
     pts.push([P.x + Math.cos(P.th) * span, P.y + span * Math.sin(P.bank) * flat, P.z + Math.sin(P.th) * span, 'verge', 0]);
     for (const q of side[1]) { kinds.push(QK[q[3]]); pts.push(q); }   // ... and on the right the point outside it
-    return { pts: pts, kinds: kinds, g: g, st: g.st, look: look, sea: g.sea, P: { x: P.x, y: P.y, z: P.z, th: P.th } };
+    return { pts: pts, kinds: kinds, g: g, st: g.st, look: look, sea: g.sea, P: { x: P.x, y: P.y, z: P.z, th: P.th }, lz: landZone(W, g) };
   }
   const NA = new THREE.Vector3(), NB = new THREE.Vector3(), NN = new THREE.Vector3();
   function bendStarts(W, j) {   // a sharp bend begins at j (and the 24 segments before it are gentle)
@@ -687,9 +701,9 @@ export function createWorld() {
     }));
     // ---- the ground: two triangles per patch, wound to face up
     const pos = [], nor = [], col = [], uv = [], fld = [];
-    const corner = (p, nv, kind, st) => {
+    const corner = (p, nv, kind, st, row) => {
       pos.push(p[0], p[1], p[2]); nor.push(nv[0], nv[1], nv[2]);
-      colourAt(kind, st, p[0], p[1], p[2], C1, p[4]); col.push(C1.r, C1.g, C1.b); fld.push(kind === 'land' ? 0.02 + 0.98 * smooth(16, 52, p[4] || 0) : 0);   // (any land: mottled; far land: fields)
+      colourAt(kind, st, p[0], p[1], p[2], C1, p[4]); if (kind === 'land' && row.lz && row.lz[1] > 0) landTint(row.lz[0], row.lz[1], p[0], p[2], C1); col.push(C1.r, C1.g, C1.b); fld.push(kind === 'land' ? 0.02 + 0.98 * smooth(16, 52, p[4] || 0) : 0);   // (any land: mottled; far land: fields)
       if (kind === 'cliff' || kind === 'rock') uv.push((p[0] + p[2]) / 5, p[1] / 3); else uv.push(p[0] / 4.5, p[2] / 4.5);
     };
     const FN = [0, 1, 0];
@@ -703,8 +717,8 @@ export function createWorld() {
           NA.set(nr[0] - nl[0], nr[1] - nl[1], nr[2] - nl[2]); NB.set(fl[0] - nl[0], fl[1] - nl[1], fl[2] - nl[2]); NN.crossVectors(NA, NB).normalize();
           if (NN.y < 0) NN.negate(); FN[0] = NN.x; FN[1] = NN.y; FN[2] = NN.z; n1 = n2 = n3 = n4 = FN.slice();
         }
-        corner(nl, n1, kind, st); corner(nr, n2, kind, st); corner(fl, n3, kind, st);
-        corner(nr, n2, kind, st); corner(fr, n4, kind, st); corner(fl, n3, kind, st);
+        corner(nl, n1, kind, st, A); corner(nr, n2, kind, st, A); corner(fl, n3, kind, st, B);
+        corner(nr, n2, kind, st, A); corner(fr, n4, kind, st, B); corner(fl, n3, kind, st, B);
       }
     }
     const gg = new THREE.BufferGeometry();
@@ -811,8 +825,9 @@ export function createWorld() {
           const lat = lat0 + fo + (hash2(i, d * 13 + 7) - 0.5) * 2 * jit;
           if (g.sea === d || (d === innerSide && lat > inner)) continue;
           place(W, i * SEG + SEG / 2, d * lat, 0, P);
+          if (t === 'brickhouse') { let busy = false; for (let q = i - 16; q <= i + 40; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && sq.spr.some((it) => it.t === 'lyndchurch' && Math.sign(it.x) === d)) busy = true; } if (busy) continue; }   // (Lyndhurst's churchyard: the church seen from the road)
           if (t === 'hutrow' || t === 'quayfront') { let busy = false; for (let q = i - 4; q <= i + 6; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && sq.spr.some((it) => it.t === 'clifflift' || it.t === 'zigzag' || it.t === 'customhouse')) busy = true; } if (busy) continue; }
-          const ry = /^(hotel|building|villa|terrace|cottage|quayfront|thatch|purbeckcottage)$/.test(t) ? faceRoad(d, P.th) : t === 'tpole' ? -P.th : t === 'hutrow' ? -P.th + (d < 0 ? Math.PI : 0) : hash2(i, d) * Math.PI * 2;
+          const ry = /^(hotel|building|villa|terrace|cottage|quayfront|thatch|purbeckcottage|brickhouse)$/.test(t) ? faceRoad(d, P.th) : t === 'tpole' ? -P.th : t === 'hutrow' ? -P.th + (d < 0 ? Math.PI : 0) : hash2(i, d) * Math.PI * 2;
           addAll(MD.model(t, Math.floor(hash2(i * 3, d + 5) * 997) % nv), P.x, groundAt(W, g, P, d * lat) - (t === 'tpole' ? 0.3 : 0.25), P.z, ry, 1);
         }
       }
@@ -839,9 +854,9 @@ export function createWorld() {
         place(W, i * SEG, it.x, it.b, P);
         const d = it.x < 0 ? -1 : 1, fr = faceRoad(d, P.th);
         let ry = hash2(i, Math.round(it.x * 10)) * Math.PI * 2;
-        if (/^(hut|cottage|hotel|building|board|finger|forestsign|lamp|villa|terrace|clock|haven|customhouse|placemill|castlekeep|visitorcentre|tollbooth|clocktower|thatch|tennyson|alumcliffs|landmarkpark|stonepub)$/.test(it.t)) ry = fr;
+        if (/^(hut|cottage|hotel|building|board|finger|forestsign|lamp|villa|terrace|clock|haven|customhouse|placemill|castlekeep|visitorcentre|tollbooth|clocktower|thatch|tennyson|alumcliffs|landmarkpark|stonepub|lyndchurch)$/.test(it.t)) ry = fr;
         if (it.t === 'lamp') ry = fr + Math.PI;   // the arm reaches over the road
-        if (/^(gate|gantry|nose|chev|warn|gpost|footbridge|viaduct|banner|rockarch|treearch|pierarch|liftbridge|chairlift|craneway|ferryqueue|landtrain|corfestation)$/.test(it.t)) ry = -P.th;
+        if (/^(gate|gantry|nose|chev|warn|gpost|footbridge|viaduct|banner|rockarch|treearch|pierarch|liftbridge|chairlift|craneway|ferryqueue|landtrain|corfestation|cattlegrid)$/.test(it.t)) ry = -P.th;
         if (it.t === 'priory' || it.t === 'cobb' || it.t === 'goldcap' || it.t === 'headland') ry = fr;
         if (it.t === 'arch') ry = -P.th + (it.x < 0 ? Math.PI : 0);   // Durdle Door side-on from the road, its high end towards the shore
         if (it.t === 'board') ry = -P.th + d * 0.5;
@@ -937,7 +952,7 @@ export function createWorld() {
           place(W, i * SEG + h2 * SEG, d * lat, 0, DP);
           const y = groundAt(W, g, DP, d * lat) - (t[0] === 'tuft' ? 0.05 : 0.25) + (t[0] === 'balloon' ? 60 + h1 * 90 : 0);
           const ry = /^(hotel|building|villa|terrace|strollers|kiosk|carpark)$/.test(t[0]) ? faceRoad(d, DP.th) + (t[0] === 'strollers' ? (h3 - 0.5) * 0.6 : 0) : t[0] === 'drywall' ? -DP.th + (h3 - 0.5) * 0.5 : h3 * Math.PI * 2;
-          addAll(MD.model(t[0], Math.floor(h3 * 997) % t[1]), DP.x, y, DP.z, ry, t[0] === 'tuft' || /^(hotel|building|villa|terrace|balloon|strollers|ponies|caravan|kiosk|drywall|carpark|picnic)$/.test(t[0]) ? 1 : 0.8 + h2 * 0.45);
+          addAll(MD.model(t[0], Math.floor(h3 * 997) % t[1]), DP.x, y, DP.z, ry, t[0] === 'tuft' || /^(hotel|building|villa|terrace|balloon|strollers|ponies|deer|caravan|kiosk|drywall|carpark|picnic)$/.test(t[0]) ? 1 : 0.8 + h2 * 0.45);
         }
       });
     }
@@ -1075,7 +1090,7 @@ export function createWorld() {
     blend(SU.top.value, sk[0][1]); blend(SU.mid.value, sk[Math.min(2, sk.length - 2)][1]); blend(SU.hor.value, look.fogCol || sk[sk.length - 1][1]);
     TMPC.set(pal.grass[0]).lerp(ROADGREY, 0.9).multiplyScalar(0.55); SU.gnd.value.lerp(TMPC, k);   // what shiny things see below them: mostly road
     blend(SU.cLit.value, look.cloud[0]); blend(SU.cDark.value, look.cloud[1]); blend(SU.sunCol.value, look.sunCol);
-    { const F = FIELDS[pal.key] || FIELDS.bournemouth; ['uF0', 'uF1', 'uF2', 'uF3', 'uF4'].forEach((u, i) => blend(FU[u].value, F.cols[i])); FU.uFK.value = to(FU.uFK.value, F.k); blend(FU.uRock.value, ROCKC[pal.key] || '#d8d3c6'); FU.uFlow.value = to(FU.uFlow.value, look.night ? 0 : (FLOWERS[pal.key] || 0)); FU.uDap.value = RU.uDap.value = to(FU.uDap.value, look.trees ? 1 : 0); FU.uDry.value = to(FU.uDry.value, look.dusk ? 0.3 : (DRY[pal.key] == null ? 0.6 : DRY[pal.key])); }
+    { const F = FIELDS[R.fieldKey] || FIELDS[pal.key] || FIELDS.bournemouth; ['uF0', 'uF1', 'uF2', 'uF3', 'uF4'].forEach((u, i) => blend(FU[u].value, F.cols[i])); FU.uFK.value = to(FU.uFK.value, F.k); blend(FU.uRock.value, ROCKC[pal.key] || '#d8d3c6'); FU.uFlow.value = to(FU.uFlow.value, look.night ? 0 : (FLOWERS[pal.key] || 0)); FU.uDap.value = RU.uDap.value = to(FU.uDap.value, look.trees ? 1 : 0); FU.uDry.value = to(FU.uDry.value, look.dusk ? 0.3 : (DRY[pal.key] == null ? 0.6 : DRY[pal.key])); }
     { const want = look.night ? 0 : Math.min(1, look.cover * 2.1), op = look.night ? 0 : 1;   // the heaped clouds: as many as the place's cloud cover, its lit colour
       CUMU.children.forEach((c) => { const on = c.userData.rank < want ? 1 : 0; c.material.opacity = to(c.material.opacity, on * op); c.visible = c.material.opacity > 0.01; TMPC.set(look.cloud[0]); c.material.color.lerp(TMPC, k); }); }
     SU.cover.value = to(SU.cover.value, look.cover * 0.55);   // (the shader's own cloud is now just high wisps) SU.sunGlow.value = to(SU.sunGlow.value, look.glow); SU.discI.value = to(SU.discI.value, look.night ? 0 : 14);
@@ -1430,7 +1445,8 @@ export function createWorld() {
   }
 
   // ---------------------------------------------------------------- one picture
-  const POS = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null }, V3 = new THREE.Vector3(), V4 = new THREE.Vector3();
+  const POS = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null }, POSD = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null }, V3 = new THREE.Vector3(), V4 = new THREE.Vector3();
+  const DRV_EYE = [COUPLE.driver.seat[0], COUPLE.driver.seat[1] + COUPLE.driver.neck * (COUPLE.driver.scale || 1) + 0.2, COUPLE.driver.seat[2] - 0.1];   // the driver's eyes, in the car's own space
   function render(W, t, mode) {
     const dt = R.lastT ? Math.min(0.1, (t - R.lastT) / 1000) : 1 / 60; R.lastT = t;
     if (R.W !== W) reset(W);
@@ -1442,6 +1458,7 @@ export function createWorld() {
     if (key !== R.lookKey) { R.lookKey = key; R.fade = R.look === null ? 1 : 0; R.look = here; setBackdrop(key, W); R.envDone = false; }
     R.fade = Math.min(1, R.fade + dt / 2.5);
     R.tunK += ((E.segAt(W, E.segIndex(W.s)).tun ? 1 : 0) - R.tunK) * Math.min(1, dt * 3.5); WAVE_T.value = t / 1000;
+    R.fieldKey = zoneKey(W, E.segAt(W, E.segIndex(W.s)));   // (a part of a stage with its own ground blends in as you arrive)
     setLook(here, R.fade >= 1 && !R.envDone ? 1 : Math.min(1, dt * 1.2));
     if (!R.envDone && (R.fade >= 1 || t - R.envT > 350)) { updateEnv(t); if (R.fade >= 1) R.envDone = true; }
     SU.time.value = t / 1000;
@@ -1484,7 +1501,7 @@ export function createWorld() {
     const sh = player.userData.shadow; sh.position.y = 0.05 - (W.h - E.heightAt(W, W.s)) - lift; sh.material.opacity = Math.max(0.15, 1 - (W.h - E.heightAt(W, W.s) + lift) * 0.2);
     // ---- the camera: behind and above, swinging round late, wider as you go faster
     R.crashK += ((cr && cr.hard ? 1 : 0) - R.crashK) * Math.min(1, dt * 2.5);
-    const near = R.camNear !== false, spd = W.v / E.VMAX, sk = Math.min(0.5, Math.max(0, spd - 0.6)), zk = near ? Math.pow(Math.tan(25 * Math.PI / 180) / Math.tan((camera.fov - (R.nk || 0) * 7) * Math.PI / 360), 0.7) : 1, camDist = (near ? (7.15 - (R.driftK || 0) * 0.45) * zk : 4.4 + spd * 0.5) + R.crashK * 3.8, camH = (near ? 1.9 * zk : 2.15 + spd * 0.2) + R.crashK * 1.7;   // (the whole rig scales round the car: same size, same place)   // Close: low behind the car; High: up enough to see the road over the two of you
+    const near = R.camNear !== false, spd = W.v / E.VMAX, sk = Math.min(0.5, Math.max(0, spd - 0.6)), zk = near ? Math.pow(Math.tan(25 * Math.PI / 180) / Math.tan(Math.min(80, Math.max(30, camera.fov - (R.nk || 0) * 4)) * Math.PI / 360), 0.7) : 1, camDist = (near ? (7.15 - (R.driftK || 0) * 0.45) * zk : 4.4 + spd * 0.5) + R.crashK * 3.8, camH = (near ? (1.9 + R.boostK * 0.3) * zk : 2.15 + spd * 0.2) + R.crashK * 1.7;   // (the whole rig scales round the car: same size, same place)   // Close: low behind the car; High: up enough to see the road over the two of you
     const yawTarget = travel * 0.55 + heading * 0.45;
     if (!R.camInit) { R.camYaw = yawTarget; }
     let dy = yawTarget - R.camYaw; while (dy > Math.PI) dy -= 2 * Math.PI; while (dy < -Math.PI) dy += 2 * Math.PI;
@@ -1504,20 +1521,37 @@ export function createWorld() {
       if (ly != null && R.camPos.y < ly + 1.1) R.camPos.y = ly + 1.1; }
     camera.position.copy(R.camPos);
     if (W.shake > 0 && R.shakeOn !== false) camera.position.add(V4.set((Math.random() - 0.5) * W.shake * 0.02, (Math.random() - 0.5) * W.shake * 0.02, 0));
-    if (near) { const io = (R.driftK || 0) * (W.steer || 0) * 2.2 * zk, la = 12 * zk; V4.set(cx + fx * la * (1 - R.crashK * 0.9) - fz * io, R.camY + 1.0 * zk + (cy - R.camY) * 0.35 + lift * 0.7 * R.crashK, cz + fz * la * (1 - R.crashK * 0.9) + fx * io); }
+    if (near) { const io = (R.driftK || 0) * (W.steer || 0) * 2.2 * zk, la = (12 + R.boostK * 5) * zk; V4.set(cx + fx * la * (1 - R.crashK * 0.9) - fz * io, R.camY + 1.0 * zk + (cy - R.camY) * 0.35 + lift * 0.7 * R.crashK, cz + fz * la * (1 - R.crashK * 0.9) + fx * io); }
     else V4.set(cx + fx * 12 * (1 - R.crashK * 0.9), R.camY + 1.55 + (cy - R.camY) * 0.35 + lift * 0.7 * R.crashK, cz + fz * 7 * (1 - R.crashK * 0.85));
     if (R.camShake > 0) { camera.position.add(V3.set((Math.random() - 0.5) * R.camShake, (Math.random() - 0.5) * R.camShake, (Math.random() - 0.5) * R.camShake)); R.camShake = Math.max(0, R.camShake - dt * 1.4); }
     camera.lookAt(V4);
     fill.position.copy(camera.position).add(V3.set(0, 0.6, 0)); fill.target.position.set(cx, cy + 1.62, cz);
     camera.rotation.z += POS.bank * 0.35 - W.steer * spd * (near ? 0.05 : 0.02);
     const kerb = !W.air && Math.abs(W.x) > HALF - 0.6 && Math.abs(W.x) < HALF + RUM + 0.4 && spd > 0.2;
-    if (R.shakeOn !== false && !cr && (spd > 0.65 || kerb)) { const a = Math.max(0, spd - 0.65) * 0.008 + R.boostK * 0.003 + (kerb ? 0.004 : 0); camera.rotation.x += (Math.random() - 0.5) * a; camera.rotation.y += (Math.random() - 0.5) * a; }   // a tremor at speed
+    if (R.shakeOn !== false && !cr && (spd > 0.65 || kerb)) { const a = Math.max(0, spd - 0.65) * 0.004 + R.boostK * 0.0012 + (kerb ? 0.003 : 0), ts = t / 1000; camera.rotation.x += (Math.sin(ts * 37) * 0.6 + Math.sin(ts * 61 + 1.3) * 0.4) * a * 0.5; camera.rotation.y += (Math.sin(ts * 43 + 2.1) * 0.6 + Math.sin(ts * 71) * 0.4) * a * 0.5; }   // a tremor at speed (a smooth shiver: a fresh random jolt every picture read as judder)
     if (W.ferry) {   // aboard: the camera swings slowly round from behind to the side, the far shore coming up ahead
       const S = FERRY_SCENE[W.ferry.k], p = Math.min(1, W.ferry.t / W.ferry.dur), a = roadTh + S.cam[2] + (S.cam[3] - S.cam[2]) * (p * p * (3 - 2 * p)), dd = S.cam[0] * (1 - p * 0.15);
       camera.position.set(cx + Math.sin(a) * dd, cy + S.cam[1] * (1 + p * 0.3), cz - Math.cos(a) * dd); camera.up.set(0, 1, 0); camera.lookAt(cx + Math.sin(roadTh) * 5, cy + 1.4, cz - Math.cos(roadTh) * 5);
     }
     if (R.debugCam) { camera.position.set(cx + R.debugCam[0], cy + R.debugCam[1], cz + R.debugCam[2]); camera.lookAt(cx + R.debugCam[3], cy + (R.debugCam[5] || 0), cz + R.debugCam[4]); }
-    camera.fov += ((near ? 50 + sk * 20 + Math.max(0, spd - 0.88) * 40 + (W.boosting ? 6 : 0) : 53 + spd * 6 + (W.boosting ? 8 : 0)) + (R.nk || 0) * 7 - camera.fov) * Math.min(1, dt * ((R.nk || 0) > 0.5 ? 12 : 3)); camera.updateProjectionMatrix();
+    // the driver's seat: your eyes over the bonnet, the wheel and your hands in front of you, her beside you; looking the way the car
+    // goes, turned a little into the bend ahead (not in a crash, nor aboard a ferry: the camera behind takes those)
+    const drv = !!(R.camDrv && !cr && !W.ferry && !R.debugCam && R.couple && !R.flying.length);
+    if (R.couple) R.couple.drv.neck.visible = !drv;
+    if (drv) {
+      player.updateMatrixWorld(true); player.localToWorld(V3.set(DRV_EYE[0], DRV_EYE[1], DRV_EYE[2]));
+      place(W, W.s + 24, W.x * 0.6, b, POSD);
+      const base = travel + (heading - travel) * 0.5; let into = Math.atan2(POSD.x - cx, -(POSD.z - cz)) - base; while (into > Math.PI) into -= 2 * Math.PI; while (into < -Math.PI) into += 2 * Math.PI;
+      const yawT = base + clamp(into, -0.5, 0.5) * 0.4; if (!R.drvOn) R.drvYaw = yawT; R.drvOn = true;
+      let dd = yawT - R.drvYaw; while (dd > Math.PI) dd -= 2 * Math.PI; while (dd < -Math.PI) dd += 2 * Math.PI; R.drvYaw += dd * Math.min(1, dt * 7);
+      camera.position.copy(V3); camera.up.set(0, 1, 0);
+      camera.lookAt(V3.x + Math.sin(R.drvYaw) * 24, V3.y + (POSD.y - POS.y) - 1.3 - lift, V3.z - Math.cos(R.drvYaw) * 24);
+      camera.rotation.z += roll * 0.5;
+      if (R.shakeOn !== false && spd > 0.65) { const a = (spd - 0.65) * 0.003 + R.boostK * 0.001, ts = t / 1000; camera.rotation.x += Math.sin(ts * 41 + 0.7) * a * 0.5; }
+      if (R.camShake > 0) camera.rotation.x += (Math.random() - 0.5) * R.camShake * 0.02;
+    } else R.drvOn = false;
+    camera.near = drv ? 0.12 : 0.4;
+    camera.fov += ((drv ? 60 + spd * 5 + R.boostK * 2 : near ? 50 + sk * 18 + Math.max(0, spd - 0.88) * 18 + R.boostK * 3 : 53 + spd * 6 + R.boostK * 5) + (R.nk || 0) * (drv ? 3 : 4) - camera.fov) * Math.min(1, dt * ((R.nk || 0) > 0.5 ? 10 : 3)); camera.updateProjectionMatrix();   // (wider as you go faster, but not so wide on the nitro that the road ahead shrinks away)
     // the sky things go round with the camera
     sky.position.copy(camera.position); stars.position.copy(camera.position); CUMU.position.set(camera.position.x, camera.position.y - 30, camera.position.z); CUMU.rotation.y = ringFar.rotation.y;
     turnRing(W, dt); heroStep(W, dt); ringFar.position.set(camera.position.x, camera.position.y - (ringFar.userData.hz || 0) - 30, camera.position.z);
@@ -1574,7 +1608,7 @@ export function createWorld() {
     for (const kk in PN) { PWMESH[kk].count = PN[kk]; PWMESH[kk].instanceMatrix.needsUpdate = true; }
     // the shield's bubble and the nitro's flames
     { const sl = W.pw ? W.pw.shield : 0; bubble.visible = sl > 0 && !W.crash; if (bubble.visible) { bubble.position.copy(player.position); bubble.quaternion.copy(player.quaternion); bubble.material.uniforms.t.value = t / 1000; bubble.material.uniforms.a.value = sl < 120 ? (Math.floor(t / 110) % 2 ? 0.25 : 1) : 1; } }
-    nitroLight.intensity = W.boosting ? 1.8 + Math.random() : 0;
+    nitroLight.intensity = W.boosting ? 2.3 + Math.sin(t / 23) * 0.3 + Math.sin(t / 37) * 0.2 : 0;
     if (W.boosting && !R.wasBoost) R.nk = 1; R.wasBoost = !!W.boosting; R.nk = Math.max(0, (R.nk || 0) - dt / 0.3);   // the moment it fires
     flames.forEach((f, q) => { f.visible = !!W.boosting; if (f.visible) { const fl = 0.75 + Math.random() * 0.5; const kk = 1 + (R.nk || 0) * 0.7; f.scale.set((0.9 + Math.random() * 0.2) * kk, (0.9 + Math.random() * 0.2) * kk, fl * (0.6 + R.boostK * 0.5) * kk); f.userData.dia.forEach((d) => { d.material.opacity = 0.5 + Math.random() * 0.5; }); } });
 
@@ -1604,7 +1638,7 @@ export function createWorld() {
     // ---- draw: straight to the screen on a slow PC, otherwise through the glow, the grade and the blur
     R.boostK += ((W.boosting ? 1 : 0) - R.boostK) * Math.min(1, dt * 4); R.flash = Math.max(0, R.flash - dt * 2.2);
     if (R.low) renderer.render(scene, camera);
-    else { GRADE_U.time.value = (t % 10000) / 1000; GRADE_U.blur.value = R.boostK * 0.3 + Math.min(1, Math.max(0, (W.v / E.VMAX - 0.7) / 0.3)) * 0.3 + Math.max(0, W.v / E.VMAX - 0.88) * 1.2; GRADE_U.flash.value = R.flash * 0.5; composer.render(dt); }
+    else { GRADE_U.time.value = (t % 10000) / 1000; GRADE_U.blur.value = R.boostK * 0.12 + Math.min(1, Math.max(0, (W.v / E.VMAX - 0.7) / 0.3)) * 0.22 + Math.max(0, W.v / E.VMAX - 0.88) * 0.45; GRADE_U.flash.value = R.flash * 0.5; composer.render(dt); }
     return renderer.domElement;
   }
   // the sun's glare: a chain of soft rings from the sun through the middle of the picture, hidden when a hill is in the way
@@ -1729,7 +1763,7 @@ export function createWorld() {
     for (const m of mats) if (m && m.map) { try { renderer.initTexture(m.map); } catch (e) {} }
     for (const t of [flameMat.map, flameCore.map, rays.material.map, glint.material.map]) if (t) { try { renderer.initTexture(t); } catch (e) {} }
   }
-  return { render: render, setSize: setSize, quality: quality, reset: () => { R.W = null; }, setShake: (on) => { R.shakeOn = on; }, setCam: (n) => { R.camNear = n; }, renderer: renderer, scene: scene, camera: camera, debugCam: (v) => { R.debugCam = v; }, warmed: () => !!R.warmed };
+  return { render: render, setSize: setSize, quality: quality, reset: () => { R.W = null; }, setShake: (on) => { R.shakeOn = on; }, setCam: (v) => { R.camNear = v !== 'far' && v !== false; R.camDrv = v === 'driver'; }, renderer: renderer, scene: scene, camera: camera, debugCam: (v) => { R.debugCam = v; }, warmed: () => !!R.warmed };
 }
 
 // ---------------------------------------------------------------- textures made on the spot

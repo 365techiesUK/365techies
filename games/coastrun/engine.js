@@ -51,7 +51,7 @@
     { key: 'christchurch', name: 'CHRISTCHURCH', seed: 1811, t: 64, len: 700, curvy: 0.65, hilly: 0.3, sea: 1, band: [4, 13], shores: [20, 22, 24, 28, 32, 26, 22, 36], mix: [5, 4, 2, 1, 3, 1, 0, 2], feat: { bridge: 2 } },
     { key: 'purbeck', name: 'CORFE CASTLE', seed: 2207, t: 70, len: 730, curvy: 0.75, hilly: 1, sea: 0, band: [14, 95], bands: [[0, [10, 26]], [0.3, [22, 34]], [0.62, [30, 90]]], mix: [5, 3, 2, 0, 3, 3, 1, 1], feat: { tunnel: 1, over: ['viaduct'] } },
     { key: 'swanage', name: 'OLD HARRY ROCKS', seed: 2903, t: 70, len: 730, curvy: 0.7, hilly: 0.75, sea: -1, band: [22, 60], bands: [[0, [3, 9]], [0.26, [24, 40]], [0.62, [24, 40]], [0.7, [3, 9]]], shores: [26, 30, 34, 38, 44, 30, 36, 28], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { over: ['viaduct'] } },   // (bands: low through Studland, up over the downs, down into Swanage)
-    { key: 'forest', name: 'NEW FOREST', seed: 3301, t: 70, len: 730, curvy: 0.85, hilly: 0.55, sea: 0, band: [10, 50], mix: [5, 3, 2, 0, 3, 2, 1, 1], feat: { over: ['footbridge'] } },
+    { key: 'forest', name: 'NEW FOREST', seed: 3301, t: 70, len: 730, curvy: 0.85, hilly: 0.55, sea: 0, band: [10, 50], bands: [[0, [10, 22]], [0.3, [14, 26]], [0.64, [12, 40]]], mix: [5, 3, 2, 0, 3, 2, 1, 1], feat: { over: ['footbridge'] } },
     { key: 'jurassic', name: 'DURDLE DOOR', seed: 4409, t: 70, len: 740, curvy: 0.8, hilly: 0.85, sea: -1, band: [30, 80], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { tunnel: 1 } },
     { key: 'weymouth', name: 'WEYMOUTH BAY', seed: 4513, t: 68, len: 720, curvy: 0.6, hilly: 0.35, sea: -1, band: [4, 14], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: { bridge: 1, over: ['banner'] } },
     { key: 'harbour', name: 'POOLE HARBOUR', seed: 5503, t: 68, len: 720, curvy: 0.6, hilly: 0.12, sea: 1, band: [3, 8], shores: [16.5, 17, 18, 17.5, 16.5, 19, 18, 17], mix: [5, 4, 3, 2, 1, 0, 2, 2], feat: { bridge: 1 } },
@@ -350,15 +350,19 @@
           onWater('yacht', 30, 140, 0.015, (r() * 3) | 0);
           break;
         }
-        case 'forest':   // the New Forest in autumn: oak, beech, pine and birch, ponies, heather and bracken
-          both(function (d) {
-            if (r() < 0.28) { var tt = ['oak', 'beech', 'pine', 'birch'][(r() * 4) | 0]; x = d * (12 + Math.pow(r(), 0.8) * 45); put(W, i, tt, x, tt === 'birch' ? 0.4 : 0.7, { v: 1 + ((r() * 2) | 0) }); }
-            if (r() < 0.04) put(W, i, 'heather', d * (11 + r() * 16), 0.8, { soft: true, v: (r() * 2) | 0 });
-            if (r() < 0.018) put(W, i, 'pony', d * (17 + r() * 30), 0, { v: (r() * 3) | 0 });
-          });
-          if (r() < 0.006) put(W, i, 'logs', (r() < 0.5 ? -1 : 1) * (12 + r() * 6), 1.3);
+        case 'forest': {   // in three parts (world3d.js ZONES): the open heath and its ponies, Lyndhurst under its church spire, then the
+          // giant redwoods of Rhinefield Drive and the old beech and oak woods
+          var ff = k / Math.max(1, to - from);
+          if (ff < 0.3) {   // the heath: heather and gorse right up to the road, a pony grazing just past the posts
+            if (r() < 0.04) put(W, i, ['heather', 'gorse'][(r() * 2) | 0], (r() < 0.5 ? -1 : 1) * (11.5 + r() * 2.6), 0.8, { soft: true, v: 1 });
+            if (r() < 0.016) put(W, i, 'pony', (r() < 0.5 ? -1 : 1) * (15.4 + r() * 3), 0, { v: (r() * 3) | 0 });
+            break;
+          }
+          if (ff < 0.64) { lamps(10, 0, false); if (r() < 0.01) put(W, i, 'pony', (r() < 0.5 ? -1 : 1) * (15.2 + r() * 1.2), 0, { v: (r() * 3) | 0 }); break; }   // Lyndhurst: ponies wander the village too
+          if (r() < 0.006) put(W, i, 'logs', (r() < 0.5 ? -1 : 1) * (11.6 + r() * 2), 1.3);
           if (k % 230 === 115) put(W, i, 'forestsign', 10.4, 0.3);
           break;
+        }
         case 'jurassic':   // Durdle Door at sunset: downs, gorse and rocks; chalk cliffs, a lighthouse and the stone arch out at sea
           if (r() < 0.06) put(W, i, 'gorse', 11.5 + r() * 20, 0.8, { soft: true });
           if (r() < 0.035) { x = -(11.5 + r() * Math.max(2, sh - 14)); if (land(s, x)) put(W, i, 'gorse', x, 0.8, { soft: true }); }
@@ -472,6 +476,17 @@
     if (S.key === 'hengistbury') {   // the Head itself; the visitor centre and its cafe, the land train at its stop, the Double Dykes
       mark('headland', 0.7, function (h) { return Math.max(h, 18) + 70; });
       mark('visitorcentre', 0.2, function () { return -26; }); mark('landtrain', 0.215, function () { return -16.4; }); mark('dykes', 0.34, function () { return -15.5; });
+    }
+    if (S.key === 'forest') {   // the cattle grid where the road comes onto the open Forest; Lyndhurst's church high on its knoll over the village,
+      // off the straightest stretch there (from a bend, a big offset swung it round behind the car)
+      var straightest = function (f0, f1, back, on) { var bj = -1, bb = 1e9;
+        for (var q4 = from + Math.round((to - from) * f0); q4 < from + Math.round((to - from) * f1); q4++) {
+          var b4 = 0; for (var u4 = q4 - back; u4 < q4 + on; u4++) b4 += Math.abs(segAt(W, u4).k);
+          var g4 = segAt(W, q4); if (b4 < bb && !g4.tun && !g4.brg && !g4.gate && !g4.fk && !g4.over && !g4.nearOver) { bb = b4; bj = q4; }
+        }
+        return bj; };
+      var gj = straightest(0.006, 0.07, 6, 6); if (gj >= 0) putAt(W, gj, 'cattlegrid', 0, 0, {});   // (square across a straight bit of road)
+      var cj = straightest(0.31, 0.37, 60, 10); if (cj >= 0) putAt(W, cj, 'lyndchurch', -34, 0, {});   // (as you come into the village, the houses beginning past it)
     }
     if (S.key === 'needles') {   // Yarmouth's castle by the slipway and its long pier; the Tennyson Monument up on the down; Alum Bay's coloured cliffs,
       // the visitor park, the Old Battery on the clifftop and the Needles off the end
@@ -737,10 +752,11 @@
       pop(W, 'DRIFT', '+' + p.toLocaleString('en-GB'), W.drift, 'drift'); W.events.push({ sfx: 'driftend' });
       if (W.driftT > 1.2) { mood(W, 'cheer'); if (W.rng() < 0.35) voice(W, 'wow'); }
     }
-    W.drift = 0; W.driftT = 0; W.driftPts = 0;
+    W.drift = 0; W.driftT = 0; W.driftPts = 0; W.driftA = 0;
   }
   function cross(W, i) {   // the car's nose passes into segment i
     var g = segAt(W, i), F = W.fork, j;
+    if (g.spr && !W.air) for (j = 0; j < g.spr.length; j++) if (g.spr[j].t === 'cattlegrid') { W.events.push({ sfx: 'grid' }); W.shake = Math.max(W.shake, 2.5); }   // over a cattle grid: a rattle
     if (F && i === F.split && !F.s) {   // the split: whichever side the car is on is the road it takes
       var sx = W.x >= 0 ? 1 : -1, nextId = F.next[sx < 0 ? 0 : 1];
       if (Math.abs(W.x) < CAR_W + 0.8) { if (W.pw.shield > 0) smash(W, 'sign'); else crash(W, hardHit(W, W.v - 3), 'sign'); }
@@ -837,7 +853,7 @@
   function topSpeed(W) { return VMAX * CARS[W.car].top; }
   var CF = 0.32;   // how hard a bend pushes the car outwards: k * v * v * CF metres a second
   function turnLimit(W, v) { return (0.6 + (W.D.psiTop - 0.6) * Math.pow(Math.min(1, v / VMAX), 0.8)) * CARS[W.car].yaw; }   // the angle a held key turns the car to
-  function pushOut(W, k, v) { return k * v * v * CF * (1 - W.D.assist) * (W.drift ? 0.42 : 1) / CARS[W.car].grip; }
+  function pushOut(W, k, v) { return k * v * v * CF * (1 - W.D.assist) * (1 - 0.58 * (W.dk || 0)) / CARS[W.car].grip; }   // (a drift eases the push, coming and going over a moment: dk)
 
   // ---------------------------------------------------------------- your passenger's requests
   // Every so often she asks for something; do it in time for hearts (3 if quick, 2 if not, 1 for half of it). Coming up to
@@ -939,10 +955,17 @@
     W.steerHold = target !== 0 && target === W.steerDir ? W.steerHold + 1 : 0; W.steerDir = target;
     var autoGo = W.autoDrift && W.steerHold >= 12 && W.v > top * 0.55 && target * bendHere(W, g) >= 1 / 170;
     if (!W.drift && !out && !W.air && target !== 0 && W.v > top * 0.42 && (pressed || (brake && W.brakeT < 0.3) || autoGo)) {
-      W.drift = target; W.driftT = 0; W.driftPts = 0; W.events.push({ sfx: 'skid' });
-      W.psi += target * 0.18;   // the back steps out
+      W.drift = target; W.driftT = 0; W.driftPts = 0; W.driftA = Math.max(0.06, Math.abs(W.psi - W.phi)); W.events.push({ sfx: 'skid' });
+      W.psi += target * 0.06;   // the back starts to step out (the slide then grows: driftA)
     }
-    if (W.drift && (W.v < top * 0.3 || out || target !== W.drift)) endDrift(W);   // let go (or turn the other way) to straighten up
+    // in a drift the keys set the angle: hold the turn and the tail swings out to the full slide; let go and it straightens over half a
+    // second (press again before it does and it swings back out); steer the other way to catch it quickly
+    if (W.drift) {
+      var sIn = target * W.drift, aT = sIn > 0 ? 0.5 : 0;
+      W.driftA += (aT - W.driftA) * Math.min(1, (sIn > 0 ? 4.5 : sIn < 0 ? 7 : 3.2) * DT);
+      if (W.v < top * 0.3 || out || (sIn <= 0 && W.driftA < 0.12)) endDrift(W);
+    }
+    W.dk = (W.dk || 0) + ((W.drift ? 1 : 0) - (W.dk || 0)) * Math.min(1, (W.drift ? 6 : 3) * DT);
     if (W.nitroT > 0) W.nitroT--;
     if (wantBoost && W.nitroT <= 0 && W.bottles > 0) { W.bottles--; W.nitroT = NITRO_T; W.events.push({ sfx: 'boost' }); }
     W.boosting = !W.timeUp && !out && W.nitroT > 0;
@@ -968,10 +991,10 @@
     if (W.drift && !out) {
       // a drift: the car's line holds the bend (just enough to cancel its push, trimmed a little by the keys) while its
       // nose swings in; the slide grows over the first moment
-      var hold = Math.asin(clamp(pushOut(W, k, v) / Math.max(5, v), -0.6, 0.6)) + W.drift * 0.04;
+      var sIn2 = target * W.drift, hold = Math.asin(clamp(pushOut(W, k, v) / Math.max(5, v), -0.6, 0.6)) + W.drift * (sIn2 > 0 ? 0.045 : sIn2 < 0 ? -0.03 : 0);   // (held: a tighter line; caught: a wider one)
       if (!W.air) W.phi += (hold - W.phi) * Math.min(1, 4 * DT);
-      want = W.phi + W.drift * Math.min(0.5, 0.25 + W.driftT * 0.6);
-      if (!W.air) W.psi += (want - W.psi) * Math.min(1, 5 * DT);
+      want = W.phi + W.drift * W.driftA;
+      if (!W.air) W.psi += (want - W.psi) * Math.min(1, 8 * DT);
     } else {
       want = out ? W.psi : W.steer * lim;
       if (!W.air) W.psi += (want - W.psi) * Math.min(1, 7 * DT);   // the car turns to the angle asked for
@@ -979,6 +1002,9 @@
       W.phi += (W.psi - W.phi) * Math.min(1, grip * DT);
     }
     W.yawRate = (want - W.psi) * 7;
+    { var lim2 = Math.max(0.05, turnLimit(W, v)), load = Math.abs(pushOut(W, k, v)) / Math.max(1, v * Math.sin(lim2)) * (target * k > 0 ? 1 : 0.6);   // how hard the tyres are working, for the squeal: near the limit in a bend,
+      var work = out || W.air || W.drift || v < top * 0.35 ? 0 : Math.max(clamp((load - 0.3) / 0.3, 0, 1), clamp((Math.abs(W.psi - W.phi) - 0.03) / 0.06, 0, 1), brake && v > top * 0.5 ? 0.5 : 0);   // a quick flick at speed, a hard stop
+      W.slide = (W.slide || 0) + (work - (W.slide || 0)) * Math.min(1, (work > (W.slide || 0) ? 10 : 5) * DT); }
     if (out) { var cr = W.crash; cr.t++; if (cr.t > cr.dur * (cr.hard ? 0.88 : 0.55)) { W.x += (cr.tx - W.x) * 0.1; W.psi *= 0.85; W.phi *= 0.85; } if (cr.t >= cr.dur) { W.crash = null; W.v = 0; W.x = cr.tx; W.psi = W.phi = 0; W.steer = 0; } }
 
     // ---- along and across; a bend pushes the car outwards

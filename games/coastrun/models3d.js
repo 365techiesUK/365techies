@@ -1077,6 +1077,78 @@ const MODELS = {
       for (let w = 0; w < 6; w++) k.box(0.08, 0.8, 1.4, tx - 1.37, 3.1, z - 5.5 + w * 2.2, '#2a3440', 0, 0, 0, 'shiny'); }
     for (let i = 0; i < 6; i++) person(k, -0.5 + (i % 2), 1, -12 + i * 5, rnd(3700 + i), i % 3 === 0);
   },
+  redwood(k, v) {   // a giant redwood of Rhinefield Drive (planted along it in 1859): a huge red-brown trunk flaring at its foot, bare for
+    // the first dozen metres, then a tall narrow spire of dark blue-green, its branches swept up
+    const H = [40, 46, 52][v % 3], q = rnd(4100 + v), bark = ['#8a4a2e', '#7e4430', '#94523a'][v % 3];
+    k.cyl(1.15, 2.1, 2.6, 10, 0, 0, 0, bark).cyl(0.62, 1.15, H * 0.62, 9, 0, 2.6, 0, bark).cyl(0.12, 0.62, H * 0.38, 7, 0, 2.6 + H * 0.62, 0, shade(bark, -0.1));
+    for (let i = 0; i < 6; i++) { const a = i / 6 * 6.28 + q(); k.box(0.5, 2.2 + q(), 0.5, Math.cos(a) * 1.55, 0, Math.sin(a) * 1.55, shade(bark, -0.12), a); }   // the buttresses
+    const n = 12, y0 = H * 0.27;
+    for (let i = 0; i < n; i++) { const f = i / (n - 1), r = 4.6 * (1 - f) + 0.7, y = y0 + f * (H - y0 - 1.2);
+      k.clump(r, (q() - 0.5) * 0.8, y, (q() - 0.5) * 0.8, ['#23402c', '#2b4c33', '#1c3826'][i % 3], 4200 + v * 20 + i); }
+  },
+  lyndchurch(k) {   // Lyndhurst's church on its knoll over the village (its face +Z, to the road): Victorian red brick banded with pale stone,
+    // a long steep slate roof, tall lancet windows, and at the end its tower with the slender spire you see from all round the Forest
+    const B = '#a4462f', S = '#e2d6bc', R = '#4c5058', r = rnd(4300);
+    k.blob(26, 0, -3.4, 0, '#5f7f3a', 1.35, 0.22, 1, 4301, { smooth: true });   // the knoll
+    k.box(30, 11, 12, -4, 1.4, 0, B).prism(13, 9, 31, -4, 12.4, 0, R, Math.PI / 2);   // the nave
+    for (const y of [4.4, 8.2, 12.2]) k.box(30.2, 0.45, 12.2, -4, y, 0, S);   // the stone bands
+    for (let i = 0; i < 6; i++) { const x = -16.5 + i * 4.6; k.box(1.5, 5.6, 0.12, x, 4.9, 6.06, S).box(1.1, 5.0, 0.14, x, 5.1, 6.07, '#2b3540', 0, 0, 0, 'shiny'); k.prism(1.5, 1.0, 0.16, x, 10.5, 6.07, S, 0); }   // lancets
+    k.box(10, 9, 6, -10, 1.4, 8.6, B).prism(10.4, 5.4, 6.4, -10, 10.4, 8.6, R, 0).box(3.2, 6.4, 0.14, -10, 3.4, 11.66, '#2b3540', 0, 0, 0, 'shiny');   // the transept's gable and its big window
+    const tx = 15.5;   // the tower and the spire
+    k.box(8, 30, 8, tx, 1.4, 0, B); for (const y of [7, 14, 21, 28]) k.box(8.3, 0.6, 8.3, tx, y, 0, S);
+    for (const z of [4.06, -4.06]) k.box(1.6, 4.4, 0.12, tx, 22.4, z, '#20262e');   // the bell openings
+    for (const x of [tx - 4.06, tx + 4.06]) k.box(0.12, 4.4, 1.6, x, 22.4, 0, '#20262e');
+    for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) k.cone(0.7, 3.2, 6, tx + x * 3.7, 31.4, z * 3.7, S);   // the pinnacles at its corners
+    k.cone(4.4, 26, 8, tx, 31.4, 0, R).cone(0.18, 2.2, 5, tx, 57.2, 0, '#c9a24a', 'shiny');   // the spire, a gilded tip
+    for (let i = 0; i < 14; i++) { const x = -24 + r() * 50, z = 9 + r() * 10; k.box(0.7, 0.9 + r() * 0.4, 0.16, x, 1.0 - Math.max(0, (Math.abs(x) - 18) * 0.12), z, '#9a9a94'); }   // the churchyard's stones
+    for (const [x, z, s] of [[-24, 4, 1.4], [26, -6, 1.6], [-20, -10, 1.3], [24, 10, 1.1]]) k.cyl(0.3, 0.5, 3, 6, x, 0, z, '#4a3a2a').clump(2.6 * s, x, 3.2 + 2 * s, z, '#203c26', 4310 + Math.round(x)).clump(2.0 * s, x, 5.8 + 2 * s, z, '#284a2e', 4320 + Math.round(z));   // dark old yews
+  },
+  brickhouse(k, v) {   // Lyndhurst's high street (its face +Z): Victorian red-brick houses and shops, white sash windows, slate roofs and tall
+    // chimneys; some a pair with bay windows, a shop with a striped awning, one an old inn with a hanging sign (blank), one thatched
+    const B = ['#a4462f', '#9a3e2c', '#b0543a', '#8e3a28', '#a85036', '#9c4430'][v % 6], R = '#4c5058', wide = [9, 12, 10, 11, 9, 13][v % 6], h = v % 3 === 1 ? 8 : 6.4, r = rnd(4400 + v);
+    if (v === 5) { k.box(wide, 3.6, 6.5, 0, 0, 0, '#f2ecdc'); k.put(new THREE.CylinderGeometry(4.6, 4.6, wide + 1, 14, 1, false, -Math.PI / 2, Math.PI), '#b0925a', 0, 3.4, 0, 0, 0, Math.PI / 2, 1, 0.9, 1); k.box(1.2, 3.4, 1.2, wide / 2 - 1.6, 5.6, -1, B); }   // the thatched one
+    else { k.box(wide, h, 7, 0, 0, 0, B).prism(7.6, 3.4, wide + 0.4, 0, h, 0, R, Math.PI / 2); for (const sd of [-1, 1]) k.box(1.1, 3.0, 1.4, sd * (wide / 2 - 0.4), h + 1.8, 0, B); }
+    const n = Math.round(wide / 3), wy = v === 5 ? [1.2] : h > 7 ? [1.2, 3.9] : [1.2, 3.6], fz = v === 5 ? 3.27 : 3.52;
+    for (let i = 0; i < n; i++) { const x = -wide / 2 + wide * (i + 0.5) / n; for (const y of wy) { if (y < 2 && i === (n >> 1)) continue; k.box(1.3, 1.6, 0.1, x, y, fz, '#f4f1ea').box(1.0, 1.3, 0.12, x, y + 0.15, fz + 0.01, '#2a3440', 0, 0, 0, 'shiny'); } }
+    k.box(1.1, 2.3, 0.12, -wide / 2 + wide * ((n >> 1) + 0.5) / n, 0, fz + 0.02, ['#2f5a3a', '#1d3557', '#7a1f2b', '#2a2a2a'][v % 4]);
+    if (v % 3 === 1) for (const sd of [-1, 1]) k.box(2.6, 2.4, 1.0, sd * wide / 4, 0.4, 3.9, B).box(2.2, 1.6, 0.1, sd * wide / 4, 0.8, 4.42, '#2a3440', 0, 0, 0, 'shiny');   // bay windows
+    if (v === 2 || v === 4) { k.box(wide - 1, 2.6, 0.12, 0, 0.2, 3.56, '#2a3440', 0, 0, 0, 'shiny'); for (let i = 0; i < 6; i++) k.box((wide - 1) / 6, 0.18, 1.6, -(wide - 1) / 2 + (i + 0.5) * (wide - 1) / 6, 2.9, 4.2, i % 2 ? '#f4f1ea' : ['#2f6a4a', '#7a1f2b'][v % 2], 0, -0.35); }   // a shop front, its awning
+    if (v === 0) k.box(0.1, 0.1, 1.2, wide / 2 - 0.6, 3.4, 4.1, '#1a1a1a').box(0.08, 1.2, 0.9, wide / 2 - 0.6, 2.1, 4.4, '#4a2a1a');   // the inn's sign (blank)
+    for (let i = 0; i < 4; i++) k.ball(0.26, (r() - 0.5) * wide * 0.8, 0.35, 3.9, ['#e63946', '#ff7eb6', '#ffd23f', '#9b5de5'][i], 1, 1.1, 0.8, 'lit', 6);
+  },
+  cattlegrid(k) {   // where the road comes into the open Forest: a grid of steel bars across the road over a pit (the ponies won't cross it),
+    // the white field gates standing open either side, and the warning sign with a pony on it (its road runs along Z, across is X; the
+    // grid runs out over the verges to the boundary, so nothing stands where the car can go)
+    const w = 14.4;
+    k.box(w * 2, 0.04, 3.2, 0, 0.0, 0, '#1a1c1e');
+    for (let i = 0; i < 12; i++) k.box(w * 2, 0.07, 0.11, 0, 0.0, -1.45 + i * 0.264, '#b8bcc0', 0, 0, 0, 'shiny');
+    for (const sd of [-1, 1]) {
+      k.box(0.32, 1.5, 0.32, sd * (w + 0.4), 0, -1.7, '#f2f2ee').box(0.32, 1.5, 0.32, sd * (w + 0.4), 0, 1.7, '#f2f2ee');   // the gate posts
+      for (const y of [0.35, 0.75, 1.15]) k.box(0.1, 0.12, 3.4, sd * (w + 0.4), y, -3.5, '#f2f2ee');   // the gate, swung open along the verge
+      k.box(0.1, 1.3, 0.1, sd * (w + 0.4), 0, -5.1, '#f2f2ee');
+      for (let i = 0; i < 3; i++) k.box(4.2, 0.12, 0.1, sd * (w + 2.5), 0.35 + i * 0.4, 1.7, '#7a6a52');   // a fence going off
+      k.box(0.16, 1.4, 0.16, sd * (w + 4.6), 0, 1.7, '#7a6a52');
+    }
+    k.cyl(0.07, 0.07, 2.5, 6, w + 1.6, 0, -3.2, '#9aa0a6');   // the sign: a red triangle, a pony on it
+    k.put(new THREE.CylinderGeometry(0.78, 0.78, 0.06, 3), '#d32f2f', w + 1.6, 2.9, -3.12, Math.PI / 2, 0, 0).put(new THREE.CylinderGeometry(0.6, 0.6, 0.07, 3), '#ffffff', w + 1.6, 2.86, -3.08, Math.PI / 2, 0, 0);
+    k.box(0.5, 0.22, 0.08, w + 1.6, 2.76, -3.03, '#111111').box(0.06, 0.2, 0.08, w + 1.42, 2.58, -3.03, '#111111').box(0.06, 0.2, 0.08, w + 1.78, 2.58, -3.03, '#111111').box(0.08, 0.22, 0.08, w + 1.86, 2.88, -3.03, '#111111', 0, 0, 0.5);
+  },
+  deer(k, v) {   // fallow deer in the woods: slim fawn bodies, white bellies and rumps, long thin legs; a buck with flat antlers
+    const r = rnd(4500 + v), n = 2 + (v % 3);
+    for (let d = 0; d < n; d++) {
+      const x = (d - (n - 1) / 2) * 2.4 + (r() - 0.5), z = (r() - 0.5) * 3, s = d === 0 && v % 2 ? 1.05 : 0.85 + r() * 0.1, col = ['#a8703c', '#9a6434', '#b47c48'][d % 3], up = r() < 0.6;
+      for (const [lx, lz] of [[-0.14, -0.42], [0.14, -0.42], [-0.14, 0.42], [0.14, 0.42]]) k.put(capG(0.04 * s, 0.85 * s), col, x + lx * s, 0.45 * s, z + lz * s);
+      k.put(capG(0.24 * s, 0.6 * s), col, x, 1.05 * s, z, Math.PI / 2, 0, 0).box(0.3 * s, 0.14 * s, 0.6 * s, x, 0.86 * s, z, '#efe6d6');   // the body, the white belly
+      k.box(0.26 * s, 0.3 * s, 0.1 * s, x, 0.95 * s, z + 0.6 * s, '#f4efe4');   // the rump
+      const hy = up ? 1.75 : 0.6, hz = up ? -0.75 : -1.0;
+      k.put(capG(0.09 * s, 0.45 * s), col, x, (1.15 + hy) / 2 * s, z + (-0.45 + hz) / 2 * s, up ? -0.5 : -2.2, 0, 0).put(capG(0.09 * s, 0.22 * s), col, x, hy * s, z + hz * s, up ? -1.9 : -2.9, 0, 0);
+      if (d === 0 && v % 2) for (const sd of [-1, 1]) k.box(0.05, 0.5, 0.05, x + sd * 0.12, (hy + 0.15) * s, z + hz * s + 0.1, '#d8c8a0', 0, 0, sd * 0.4).box(0.32, 0.22, 0.04, x + sd * 0.3, (hy + 0.6) * s, z + hz * s + 0.12, '#d8c8a0', 0, 0, sd * 0.5);   // the buck's antlers
+    }
+  },
+  bracken(k, v) {   // bracken under the trees, turning gold and russet
+    const c = [['#b0762a', '#c48a3a', '#8a6a2a'], ['#7a8a3a', '#9a8a3a', '#b0762a']][v % 2], q = rnd(4600 + v);
+    for (let i = 0; i < 5; i++) k.card(1.6 + q() * 0.6, 1.1, (q() - 0.5) * 2.4, 0.5, (q() - 0.5) * 2.4, c[i % 3], q() * 3.14, 0, 'grass', 'up');
+  },
   balloon(k, v) {   // a hot-air balloon, far off over the land
     const c = [['#e63946', '#ffd23f'], ['#1d7fd6', '#ffffff'], ['#2a9d8f', '#f4a261'], ['#9b5de5', '#ffd23f']][v % 4];
     for (let i = 0; i < 10; i++) k.put(new THREE.SphereGeometry(8, 3, 14, i * Math.PI / 5, Math.PI / 5), c[i % 2], 0, 16, 0, 0, 0, 0, 1, 1.22, 1);
