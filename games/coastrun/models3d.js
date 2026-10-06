@@ -1600,6 +1600,88 @@ const MODELS = {
     k.box(0.06, 0.9, 1.2, 0, 0, 2.6 + (v % 2) * -5.2, ['#2a2a2a', '#f4f4f0', '#2f5a3a'][v % 3]);   // the gate
     if (v % 2) k.box(0.7, 1.1, 5.4, -0.6, 0, -0.6, '#3f6a34'); else for (let i = 0; i < 6; i++) k.ball(0.24, -0.4, 0.9, -2.6 + i * 0.9, ['#e63946', '#ffd23f', '#ff7eb6', '#ffffff'][i % 4], 1, 1, 1, 'lit', 6);
   },
+  watertower(k) {   // the Mannings Heath water tower by Tower Park: a tall fluted concrete column carrying a great drum of a tank, a rail round
+    // its top, grey and weather-stained
+    const C = '#b8b4aa', D = '#a09c92';
+    k.cyl(3.0, 3.6, 30, 16, 0, 0, 0, C, 0, 0, 'stone');
+    for (let i = 0; i < 8; i++) { const a = i / 8 * 6.283; k.box(0.5, 30, 0.6, Math.sin(a) * 3.2, 0, Math.cos(a) * 3.2, D, a, 0, 0, 'stone'); }   // the flutes
+    k.cyl(4.2, 3.0, 2.4, 16, 0, 30, 0, D, 0, 0, 'stone').cyl(9, 9, 9, 24, 0, 32.4, 0, C, 0, 0, 'stone').cyl(9.3, 9.3, 0.6, 24, 0, 41.4, 0, D, 0, 0, 'stone');
+    for (let i = 0; i < 4; i++) k.cyl(9.05, 9.05, 0.25, 24, 0, 34 + i * 2, 0, i % 2 ? '#c8c4ba' : '#9a968c', 0, 0, 'stone');   // the stains of the years
+    k.cyl(9.4, 9.4, 1.0, 24, 0, 42, 0, '#8a8a86').cone(2, 1.2, 10, 0, 42.2, 0, '#8a8a86');
+  },
+  towerpark(k) {   // the Tower Park leisure park from its car park (its face +Z): long low halls in white and grey with orange and red bands, the
+    // cinema's tall block, the bowl and the bingo, a canopied walk between; at the front the orange tower with a disc on top; the waterpark's
+    // flumes coiling out of its hall in blue, yellow and red tubes. No lettering anywhere
+    const W = '#eef0f2', G = '#c4c8cc', O = '#f08a24', Rd = '#c8302a';
+    k.box(70, 10, 34, -20, 0, -6, W).box(70.4, 1.4, 34.4, -20, 7.6, -6, O).box(70.4, 0.5, 34.4, -20, 9.2, -6, Rd);   // the main hall
+    for (let i = 0; i < 7; i++) k.box(7, 4, 0.14, -50 + i * 10, 0.4, 11.04, '#5a7890', 0, 0, 0, 'shiny');
+    k.box(34, 18, 28, 32, 0, -10, G).box(34.4, 2, 28.4, 32, 15, -10, Rd).box(16, 12, 0.14, 32, 2, 4.04, '#2a3440', 0, 0, 0, 'shiny');   // the cinema
+    k.box(60, 0.4, 6, -20, 4.0, 14, W); for (let i = 0; i < 7; i++) k.cyl(0.18, 0.18, 4, 6, -48 + i * 9.4, 0, 16.6, W);   // the canopied walk
+    k.cyl(2.2, 2.6, 22, 12, 6, 0, 18, O).cyl(2.4, 2.4, 1, 12, 6, 6, 18, W).cyl(2.4, 2.4, 1, 12, 6, 12, 18, W);   // the orange tower
+    k.cyl(6.5, 4.5, 1.6, 20, 6, 22, 18, W).cyl(6.6, 6.6, 0.5, 20, 6, 23.6, 18, O).cone(1.2, 2.2, 10, 6, 24.1, 18, Rd);   // its disc
+    k.box(30, 13, 24, -62, 0, -8, '#d8e4ec').box(30.4, 1.2, 24.4, -62, 11.8, -8, '#2a7ad8');   // the waterpark's hall
+    const flume = (col, r0, h0, turns, x0, z0) => { for (let i = 0; i < turns * 16; i++) { const a = i / 16 * 6.283, y = h0 - i * 0.55; if (y < 1) break; k.put(new THREE.CylinderGeometry(0.75, 0.75, 2.6, 8), col, x0 + Math.cos(a) * r0, y, z0 + Math.sin(a) * r0, Math.PI / 2, -a, 0); } k.cyl(0.25, 0.25, h0, 6, x0, 0, z0, '#d8dce0'); };
+    flume('#2a7ad8', 6, 15, 3, -82, 6); flume('#f2c21a', 4.5, 12, 3, -72, 10); flume('#c8302a', 5, 10, 2, -88, -18);   // the flumes, coiling down
+  },
+  bearpub(k) {   // the Bear Cross pub (1930s, its face +Z): a big brick roadhouse, two storeys, a steep tiled roof with gables, white windows,
+    // its hanging sign with a standing bear on it (no lettering), a car park and benches out front
+    const B = '#9a4a34', T = '#6a4a3a', S = '#e8e0cc';
+    k.box(24, 7.6, 12, 0, 0, 0, B, 0, 0, 0, 'stone').prism(13, 5.2, 24.6, 0, 7.6, 0, T, Math.PI / 2);
+    for (const x of [-7, 7]) k.prism(0.8, 5, 7, x, 7.6, 6.2, B, 0).prism(0.7, 5.2, 7.4, x, 7.5, 6.5, T, 0).box(5.4, 7.6, 1.2, x, 0, 6.4, B, 0, 0, 0, 'stone');   // the front gables
+    for (const x of [-9, -5, 5, 9]) for (const y of [1.2, 4.6]) k.box(1.8, 1.8, 0.12, x, y, 7.06, S).box(1.5, 1.5, 0.14, x, y + 0.15, 7.07, '#ffd890', 0, 0, 0, 'shiny');
+    k.box(3, 3, 0.14, 0, 0, 6.06, '#4a2a1a').box(4, 0.6, 1.4, 0, 3.0, 6.6, T);   // the door, its hood
+    k.cyl(0.12, 0.14, 6, 6, 13, 0, 9, '#2a2a2a').box(0.1, 0.1, 1.6, 13, 5.8, 9.8, '#2a2a2a').box(0.12, 1.8, 1.4, 13, 3.8, 10.4, '#1d3a2a');   // the sign post, its board
+    k.box(0.14, 1.0, 0.5, 13.02, 4.2, 10.4, '#4a2e1c').ball(0.22, 13.02, 4.9, 10.45, '#4a2e1c', 0.5, 1, 1, 'lit', 6).box(0.14, 0.5, 0.12, 13.02, 3.6, 10.25, '#4a2e1c').box(0.14, 0.5, 0.12, 13.02, 3.6, 10.6, '#4a2e1c');   // the bear on it
+    for (const x of [-10, 10]) k.box(2.4, 0.45, 0.6, x, 0.45, 9.6, '#6a4e34').box(2.4, 0.08, 1.6, x, 0.85, 9.6, '#8a6a48');
+  },
+  rbtsign(k) {   // the blue roundabout sign before Bear Cross: a blue disc with three white arrows chasing round, on a grey post
+    k.cyl(0.07, 0.07, 2.4, 6, 0, 0, 0, '#9aa0a6').cyl(0.75, 0.75, 0.08, 20, 0, 2.9, 0.06, '#1d5fae', Math.PI / 2);
+    for (let i = 0; i < 3; i++) { const a = i / 3 * 6.283; k.box(0.5, 0.1, 0.06, Math.cos(a) * 0.38, 2.9 + Math.sin(a) * 0.38, 0.12, '#f4f4f4', 0, 0, a + Math.PI / 2).box(0.16, 0.16, 0.06, Math.cos(a + 0.6) * 0.38, 2.9 + Math.sin(a + 0.6) * 0.38, 0.12, '#f4f4f4', 0, 0, a); }
+  },
+  keepleft(k) {   // a keep-left bollard on an island (the road along Z): a lit white post with the blue keep-left sign, black and white kerbs
+    k.box(1.6, 0.18, 6, 0, 0, 0, '#c8c4bc').box(1.7, 0.2, 0.3, 0, 0, 2.9, '#1a1a1a').box(1.7, 0.2, 0.3, 0, 0, -2.9, '#f4f4f4');
+    k.box(0.5, 1.1, 0.5, 0, 0.18, 2.4, '#f4f4f4', 0, 0, 0, 'glow').cyl(0.3, 0.3, 0.06, 14, 0, 1.6, 2.7, '#1d5fae', Math.PI / 2).box(0.08, 0.32, 0.06, 0.06, 1.6, 2.74, '#f4f4f4', 0, 0, 0.7);
+  },
+  terminal(k) {   // the terminal at Bournemouth Airport, Hurn (its face +Z): long and low, a shallow grey pitched roof over a glazed front, a
+    // canopy over the doors, the drop-off lane; the control tower behind, its glass cab on top
+    const G = '#8a9098', W = '#eef0f2';
+    k.box(70, 7, 24, 0, 0, 0, W).prism(25, 3.4, 70.6, 0, 7, 0, G, Math.PI / 2);
+    k.box(66, 5, 0.14, 0, 0.6, 12.04, '#5a7890', 0, 0, 0, 'shiny'); for (let i = 0; i <= 11; i++) k.box(0.3, 5.6, 0.2, -33 + i * 6, 0, 12.1, '#d8dce0');
+    k.box(30, 0.4, 7, 0, 4.2, 15.4, G); for (const x of [-14, 0, 14]) k.cyl(0.16, 0.16, 4.2, 6, x, 0, 18.6, '#d8dce0');
+    k.cyl(2.4, 3, 24, 10, 30, 0, -24, W).cyl(4.6, 4.2, 4, 10, 30, 24, -24, '#5a7890', 0, 0, 'shiny').cyl(5, 5, 0.6, 10, 30, 28, -24, G).cyl(0.06, 0.06, 4, 4, 30, 28.6, -24, '#2a2a2a');   // the control tower
+  },
+  jet(k, v) {   // an airliner on the apron (its nose to +Z): white, a coloured tail and cheatline (no airline's livery, no lettering), two engines
+    const T = ['#1d7a8a', '#c8302a', '#2a5aa8'][v % 3];
+    k.put(new THREE.CylinderGeometry(2.0, 2.0, 32, 14), '#f4f6f8', 0, 3.6, 0, Math.PI / 2, 0, 0, 1, 1, 1, 'shiny').ball(2.0, 0, 3.6, 16, '#f4f6f8', 1, 1, 1.6, 'shiny', 12).cone(2.0, 6, 12, 0, 3.6, -16, '#f4f6f8', 'shiny');
+    k.box(0.2, 0.6, 30, 1.98, 3.3, 0, T).box(0.2, 0.6, 30, -1.98, 3.3, 0, T);   // the cheatline
+    k.box(34, 0.5, 5, 0, 2.6, -1, '#e4e8ec', 0, 0, 0, 'shiny');   // the wings
+    for (const sd of [-1, 1]) k.put(new THREE.CylinderGeometry(0.9, 0.9, 3.6, 12), '#d8dce0', sd * 6, 1.6, 1, Math.PI / 2, 0, 0, 1, 1, 1, 'shiny');
+    k.box(0.4, 7, 5, 0, 5, -15, T, 0, 0.25, 0).box(12, 0.3, 3.5, 0, 4.4, -16, '#e4e8ec');   // the tail fin, the tailplane
+    for (const z of [12, -2]) k.cyl(0.12, 0.12, 1.6, 6, 0, 0, z, '#2a2a2a');
+  },
+  approachlights(k) {   // the runway's approach lights crossing the fields (along X, square to the road): a row of white lamps on a bar on poles
+    for (let i = 0; i < 5; i++) { const x = -8 + i * 4; k.cyl(0.1, 0.1, 3, 5, x, 0, 0, '#d8dce0'); }
+    k.box(18, 0.25, 0.25, 0, 3, 0, '#d8dce0'); for (let i = 0; i < 9; i++) k.box(0.5, 0.35, 0.35, -8 + i * 2, 3.25, 0, '#fffbe8', 0, 0, 0, 'glow');
+  },
+  airfence(k) {   // the airport's perimeter fence (along Z): tall chain-link on grey posts, three strands of barbed wire on top
+    k.box(0.06, 2.4, 6, 0, 0, 0, '#9aa0a6').box(0.03, 2.3, 6, 0.02, 0.05, 0, '#b8bcc0');
+    for (const z of [-3, 0, 3]) k.box(0.12, 2.9, 0.12, 0, 0, z, '#7a8088');
+    for (const y of [2.6, 2.75, 2.9]) k.box(0.03, 0.03, 6, 0.08, y, 0, '#4a4e54');
+  },
+  hurnbridge(k) {   // the old bridge over the Stour at Hurn (the road along Z): low brick parapets each side, the river under it
+    for (const sd of [-1, 1]) k.box(0.5, 1.0, 26, sd * 8.6, 0, 0, '#9a5a40', 0, 0, 0, 'stone').box(0.6, 0.15, 26.2, sd * 8.6, 1.0, 0, '#b8a888', 0, 0, 0, 'stone');
+    k.box(60, 0.3, 14, 0, -1.6, 0, '#3a6a78', 0, 0, 0, 'shiny');
+  },
+  unitshed(k, v) {   // a unit on the Mannings Heath industrial estate (its face +Z): a big shed clad in grey or blue profiled steel, a shallow
+    // roof, roller doors, a small office front with windows, a fenced yard with a van
+    const C = ['#8a9aa8', '#5a7aa0', '#b8bcc0', '#6a8a7a'][v % 4], L = 30 + (v % 3) * 8;
+    k.box(L, 8, 20, 0, 0, 0, C).prism(20.4, 1.6, L + 0.4, 0, 8, 0, '#9aa0a6', Math.PI / 2);
+    for (let i = 0; i < L / 2; i++) k.box(0.12, 8, 0.1, -L / 2 + 0.5 + i * 2, 0, 10.04, '#7a8a96');   // the cladding's ribs
+    for (let i = 0; i < 2; i++) k.box(4.6, 5, 0.14, -L / 2 + 6 + i * 7, 0, 10.06, '#c8ccd0');   // roller doors
+    k.box(8, 6, 1, L / 2 - 5, 0, 10.5, '#eef0f2').box(7, 1.6, 0.14, L / 2 - 5, 3.4, 11.06, '#5a7890', 0, 0, 0, 'shiny').box(7, 1.6, 0.14, L / 2 - 5, 0.8, 11.06, '#5a7890', 0, 0, 0, 'shiny');
+    k.box(L, 2, 0.06, 0, 0, 18, '#7a8088');   // the yard's fence
+    k.box(2, 2.2, 5, -4, 0, 14, '#f4f4f4', 0, 0, 0, 'shiny');   // a van
+  },
   balloon(k, v) {   // a hot-air balloon, far off over the land
     const c = [['#e63946', '#ffd23f'], ['#1d7fd6', '#ffffff'], ['#2a9d8f', '#f4a261'], ['#9b5de5', '#ffd23f']][v % 4];
     for (let i = 0; i < 10; i++) k.put(new THREE.SphereGeometry(8, 3, 14, i * Math.PI / 5, Math.PI / 5), c[i % 2], 0, 16, 0, 0, 0, 0, 1, 1.22, 1);

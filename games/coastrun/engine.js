@@ -68,9 +68,9 @@
     { key: 'kinson', name: 'KINSON', seed: 7307, t: 66, len: 700, curvy: 0.55, hilly: 0.3, sea: 0, band: [20, 40], bands: [[0, [28, 40]], [0.3, [22, 32]], [0.66, [18, 34]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Redhill, the village green, St Andrew's)
     { key: 'muscliff', name: 'MUSCLIFF & THROOP', seed: 7411, t: 68, len: 710, curvy: 0.6, hilly: 0.3, sea: 0, band: [8, 30], bands: [[0, [18, 30]], [0.32, [12, 24]], [0.62, [3, 8]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Castle Lane West, Throop Mill, the Stour)
     { key: 'littledown', name: 'LITTLEDOWN', seed: 7513, t: 66, len: 700, curvy: 0.5, hilly: 0.25, sea: 0, band: [15, 35], bands: [[0, [20, 30]], [0.33, [15, 28]], [0.66, [12, 24]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Castlepoint, the hospital, Littledown Centre)
-    { key: 'towerpark', name: 'TOWER PARK', seed: 7617, t: 68, len: 710, curvy: 0.55, hilly: 0.3, sea: 0, band: [20, 40], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Ringwood Road, Mannings Heath, the leisure park)
-    { key: 'bearcross', name: 'BEAR CROSS', seed: 7719, t: 68, len: 710, curvy: 0.55, hilly: 0.3, sea: 0, band: [25, 45], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (the roundabout, Bearwood, Magna Road)
-    { key: 'hurn', name: 'HURN AIRPORT', seed: 7823, t: 68, len: 710, curvy: 0.6, hilly: 0.2, sea: 0, band: [8, 20], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Holdenhurst, Hurn, Bournemouth Airport)
+    { key: 'towerpark', name: 'TOWER PARK', seed: 7617, t: 68, len: 710, curvy: 0.55, hilly: 0.3, sea: 0, band: [20, 40], bands: [[0, [24, 36]], [0.3, [26, 34]], [0.62, [26, 32]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Ringwood Road, Mannings Heath, the leisure park)
+    { key: 'bearcross', name: 'BEAR CROSS', seed: 7719, t: 68, len: 710, curvy: 0.55, hilly: 0.3, sea: 0, band: [25, 45], bands: [[0, [30, 36]], [0.3, [28, 42]], [0.66, [14, 34]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (the roundabout, Bearwood, Magna Road)
+    { key: 'hurn', name: 'HURN AIRPORT', seed: 7823, t: 68, len: 710, curvy: 0.6, hilly: 0.2, sea: 0, band: [8, 20], bands: [[0, [6, 12]], [0.3, [10, 16]], [0.72, [5, 12]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Holdenhurst, Hurn, Bournemouth Airport)
     { key: 'wimborne', name: 'WIMBORNE MINSTER', seed: 7927, t: 70, len: 730, curvy: 0.6, hilly: 0.3, sea: 0, band: [10, 25], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Canford Magna, the Minster)
     { key: 'ferndown', name: 'FERNDOWN', seed: 8029, t: 70, len: 730, curvy: 0.6, hilly: 0.3, sea: 0, band: [20, 40], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Ringwood Road north, West Parley)
     { key: 'highcliffe', name: 'HIGHCLIFFE', seed: 8131, t: 70, len: 730, curvy: 0.6, hilly: 0.3, sea: 0, band: [20, 35], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (the castle, the clifftop)
@@ -331,7 +331,9 @@
       charminster: [[0.3, { car: 0.22, tree: 0.1, side: 60 }], [0.7, { car: 0.32, bin: 0.05, side: 52 }], [1.01, { car: 0.18, tree: 0.14, side: 66, poles: -1, wheelie: 0.2 }]],
       kinson: [[0.3, { car: 0.18, tree: 0.12, side: 62, poles: 1, wheelie: 0.25 }], [0.66, { car: 0.26, bin: 0.05, side: 50 }], [1.01, { tree: 0.05, side: 90 }]],
       muscliff: [[0.32, { car: 0.06, tree: 0.18, side: 72, poles: -1 }], [0.62, { car: 0.2, tree: 0.1, side: 46, poles: 1, wheelie: 0.3 }], [1.01, { poles: -1 }]],
-      towerpark: [[1.01, { car: 0.14, tree: 0.12, side: 60, poles: 1, wheelie: 0.2 }]], bearcross: [[1.01, { car: 0.14, tree: 0.12, side: 58, poles: -1, wheelie: 0.2 }]], hurn: [[1.01, { tree: 0.1, side: 90, poles: 1 }]],
+      towerpark: [[0.3, { car: 0.18, tree: 0.1, side: 56, poles: 1, wheelie: 0.2 }], [0.62, { side: 70 }], [1.01, { side: 120 }]],
+      bearcross: [[0.3, { car: 0.2, bin: 0.05, side: 50 }], [0.66, { car: 0.12, tree: 0.12, side: 58, poles: -1, wheelie: 0.25 }], [1.01, { poles: 1 }]],
+      hurn: [[0.3, { tree: 0.06, poles: -1 }], [0.72, {}], [1.01, { tree: 0.05, poles: 1 }]],
       wimborne: [[1.01, { car: 0.16, tree: 0.12, side: 62, poles: 1, wheelie: 0.2 }]], ferndown: [[1.01, { car: 0.14, tree: 0.14, side: 60, poles: -1, wheelie: 0.2 }]], highcliffe: [[1.01, { car: 0.14, tree: 0.14, side: 64, poles: 1, wheelie: 0.2 }]],
       littledown: [[0.33, { side: 80 }], [0.66, { tree: 0.12, side: 96 }], [1.01, { tree: 0.06, side: 100 }]]
     };
@@ -458,7 +460,9 @@
           break;
         }
         case 'towerpark': case 'bearcross': case 'hurn': case 'wimborne': case 'ferndown': case 'highcliffe':
-          lamps(8, 0, false); street();   // the local run's places still to build: a Bournemouth suburb for now (its houses and gardens: world3d.js)
+          var ft = k / Math.max(1, to - from), quiet = (S.key === 'hurn' && (ft < 0.3 || ft >= 0.72)) || (S.key === 'bearcross' && ft >= 0.66);   // (Holdenhurst, Hurn and Magna Road: country lanes, no street lamps)
+          if (!quiet) lamps(8, 0, false); street();   // (their houses, units and gardens: world3d.js)
+          if (S.key === 'hurn' && ft >= 0.3 && ft < 0.72 && k % 2 === 0) put(W, i, 'airfence', 15.2, 0);   // the airport's perimeter fence, the airfield behind it
           if (k % 46 === 23) put(W, i, 'busstop', ((k / 46) | 0) % 2 ? 15.0 : -15.0, 0, { v: 1 });
           break;
         case 'lymington': {   // in three parts (world3d.js ZONES): the Georgian town on its quay, the river's marinas and the island ferry, then
@@ -583,6 +587,21 @@
       var wb = straightest(0.3, 0.4, 40, 10); if (wb >= 0) putAt(W, wb, 'cornerbank', -21, 0, {});
       mark('brickchurch', 0.45, function () { return 23; }); mark('moderne', 0.55, function () { return -23; }); mark('policestn', 0.68, function () { return 23; });
       [[0.38, 0.47], [0.56, 0.64]].forEach(function (w) { var zj = straightest(w[0], w[1], 8, 8); if (zj >= 0) { putAt(W, zj, 'zebra', 0, 0, {}); segAt(W, zj).zebra = true; } });   // (on the straight: a banked bend buried half the stripes)
+    }
+    if (S.key === 'towerpark') {   // the Mannings Heath water tower over the industrial estate; Tower Park across its car park
+      var wt = straightest(0.4, 0.55, 50, 10); if (wt >= 0) putAt(W, wt, 'watertower', -34, 0, {});
+      var tp = straightest(0.72, 0.88, 50, 10); if (tp >= 0) putAt(W, tp, 'towerpark', 64, 0, {});
+    }
+    if (S.key === 'bearcross') {   // the roundabout: its blue signs, the keep-left islands, the Bear Cross pub on the corner
+      var bj = straightest(0.1, 0.22, 30, 10);
+      if (bj >= 0) { putAt(W, bj - 30, 'rbtsign', 11.6, 0, {}); putAt(W, bj - 30, 'rbtsign', -11.6, 0, {}); putAt(W, bj + 6, 'bearpub', 23, 0, {}); putAt(W, bj, 'junction', -(HALF + RUMBLE), 0, { v: 0 }); putAt(W, bj + 10, 'junction', HALF + RUMBLE, 0, { v: 0 }); }
+    }
+    if (S.key === 'hurn') {   // Bournemouth Airport: the terminal and its control tower behind the fence, airliners on the apron, the approach lights
+      // crossing the fields either side of the road
+      var at = straightest(0.4, 0.55, 50, 10); if (at >= 0) putAt(W, at, 'terminal', 70, 0, {});
+      mark('jet', 0.46, function () { return 52; }, 0); mark('jet', 0.58, function () { return 60; }, 2);
+      var al = straightest(0.33, 0.4, 20, 20); if (al >= 0) { putAt(W, al, 'approachlights', 22, 0, {}); putAt(W, al, 'approachlights', -22, 0, {}); putAt(W, al + 15, 'approachlights', 22, 0, {}); putAt(W, al + 15, 'approachlights', -22, 0, {}); }
+      var hb = straightest(0.86, 0.95, 20, 10); if (hb >= 0) putAt(W, hb, 'hurnbridge', 0, 0, {});
     }
     if (S.key === 'kinson') {   // St Andrew's in its churchyard by the village; the community centre at Pelhams Park; a zebra in the village
       var kc = straightest(0.4, 0.56, 40, 10); if (kc >= 0) putAt(W, kc, 'kinsonchurch', -25, 0, {});
