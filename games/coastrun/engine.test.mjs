@@ -16,7 +16,7 @@ function clear(W) { W.cars = []; W.field = []; for (let i = W.base; i <= E.lastI
 test('a new game: Bournemouth first, the clock by speed, a car and an accelerator', () => {
   const g = E.newWorld(1, { car: 'hatch' }, 1), c = E.newWorld(2, { car: 'nope', pedal: 'hold' }, 1);
   assert.equal(g.stage, 0); assert.equal(E.STAGES[0].name, 'BOURNEMOUTH');
-  assert.equal(Math.round(g.time), Math.round(E.STAGES[0].t * 1.06), 'Gentle gives a little more time'); assert.equal(Math.round(c.time), E.STAGES[0].t);
+  assert.equal(Math.round(g.time), Math.round(E.STAGES[0].t * 1.06 + 10), 'Gentle gives a little more time'); assert.equal(Math.round(c.time), E.STAGES[0].t + 10, 'the first stage and ten seconds in hand');
   assert.equal(g.car, 'hatch'); assert.equal(c.car, 'roadster', 'an unknown car falls back to the Roadster');
   assert.equal(g.auto, true); assert.equal(c.auto, false);
   assert.ok(g.fork && g.fork.next.join() === '1,2', 'the first fork leads to the Purbeck Hills or the New Forest');
@@ -44,7 +44,7 @@ test('steering: a held key turns the car to an angle and it moves across; let go
   const i = findSeg(W, 60, (g, j) => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25].every((d) => Math.abs(E.segAt(W, j + d).k) < 1e-6));
   W.s = i * E.SEG; W.v = 50; W.x = -4;
   drive(W, 30, { right: true });
-  assert.ok(W.psi > 0.15, 'pointing right: ' + W.psi.toFixed(2)); assert.ok(W.x > -1.5, 'moved right: ' + W.x.toFixed(2));
+  assert.ok(W.psi > 0.15, 'pointing right: ' + W.psi.toFixed(2)); assert.ok(W.x > -2.2, 'moved right: ' + W.x.toFixed(2));   // (it has weight now: a lane change takes a moment, 6 Oct)
   drive(W, 40, {});
   assert.ok(Math.abs(W.psi) < 0.03, 'straight again'); const x0 = W.x; drive(W, 20, {}); assert.ok(Math.abs(W.x - x0) < 0.3, 'and going straight');
 });
@@ -182,7 +182,7 @@ test('traffic: running into the back of a car slows you right down; passing clos
   const N = E.newWorld(2, {}, 12); go(N); clear(N);
   N.s = 100 * E.SEG; N.x = 2.8; N.v = E.VMAX; N.boost = 0;
   N.cars.push({ id: 1, s: N.s + 60, x: 0, tx: 0, v: 28, v0: 28, t: 0, b: 0, col: 0, lc: 9999, hitT: -999, passed: false, ds: 60, spin: 0 });
-  const s0 = N.score; let near = false; for (let i = 0; i < 90; i++) { E.step(N, (N.x = 2.8, {})); if (N.events.some((e) => e.sfx === 'near')) near = true; quiet(N); }
+  const s0 = N.score; let near = false; for (let i = 0; i < 140; i++) { E.step(N, (N.x = 2.8, {})); if (N.events.some((e) => e.sfx === 'near')) near = true; quiet(N); }
   assert.ok(near); assert.ok(N.score - s0 >= 500); assert.ok(N.boost >= 0.1, 'a near miss fills the boost');
 });
 
@@ -295,10 +295,10 @@ test('the bonuses: all five turn up on the road', () => {
 function bonusAt(W, k) {   // put a bonus of kind k right in front of the car on a clear road
   clear(W); const i = E.segIndex(W.s) + 2, c = { x: 0, pw: k, got: 0 }; E.segAt(W, i).coins = [c]; W.x = 0; return c;
 }
-test('extra time: five more seconds on the clock', () => {
+test('extra time: three more seconds on the clock', () => {
   const W = E.newWorld(2, {}, 1); go(W); W.s = 60 * E.SEG; W.v = 20;
   const c = bonusAt(W, 'time'), t0 = W.time; drive(W, 30, { up: true });
-  assert.ok(c.got); assert.ok(W.time > t0 + 4, 'about five seconds more (less the half second driven)');
+  assert.ok(c.got); assert.ok(W.time > t0 + 2.2, 'about three seconds more (less the half second driven)');
 });
 test('the magnet pulls in coins from the other lanes', () => {
   const W = E.newWorld(2, {}, 1); go(W); W.s = 60 * E.SEG; W.v = 25;
@@ -326,5 +326,5 @@ test('double points doubles what you score while it lasts', () => {
 test('nitro takes you well past full speed', () => {
   const W = E.newWorld(2, {}, 1); go(W); W.s = 60 * E.SEG; W.v = E.VMAX; W.boost = 1; clear(W);
   drive(W, 150, (w) => { w.x = 0; return { up: true, fire: true }; });
-  assert.ok(W.v > E.VMAX * 1.3, 'over 30% past full speed: ' + Math.round(W.v / E.VMAX * 100) + '%');
+  assert.ok(W.v > E.VMAX * 1.15, 'over 15% past full speed: ' + Math.round(W.v / E.VMAX * 100) + '%');
 });
