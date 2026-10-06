@@ -580,7 +580,6 @@ OTHER_HERO_TILES = {
  'join': [
   ('hp-c-fix', 'user', 'What do I get for free?', 'What the free club includes, and what a plan adds', 'FREE FOREVER', '#included'),
   ('hp-c-care', 'star', 'Sent here by a friend?', 'Your first service and health check is on us', 'FIRST SERVICE FREE', '/book-service/'),
-  ('hp-c-biz', 'gauge', 'Build my own dashboard', 'Drag, resize and save the tiles in your portal', 'DASHBOARD STUDIO', '#studio'),
   ('hp-c-buy', 'home', 'I&rsquo;d like a real techie', 'Serviced every 6 weeks, from &pound;18.25 a month', 'HOME PLANS', '/home-it-support-plans/'),
  ],
  'laptop-repair': [

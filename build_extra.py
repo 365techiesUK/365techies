@@ -24255,7 +24255,9 @@ info_page(
   hero_cta2=("See what&rsquo;s included", "#included"),
   # 27 Sep 2026 task-first pass: how to join and what's included straight after the hero; the value tiles, the
   # "is it really free" prose (FAQ 1), the dashboard band and the closing CTA repeated them
-  pre=_join_how + _join_compare + _join_referred,
+  # 6 Oct 2026 (owner: "remove the dashboard tile from the join page"): three choices now, so the last one spans both
+  # columns of the two-column grid instead of leaving a hole beside it (this page only; phones are one column anyway)
+  pre='<style>.hp-intents__grid>.hp-intent:last-child:nth-child(odd){grid-column:1/-1}</style>\n' + _join_how + _join_compare + _join_referred,
   inner="""          <h2>A plain, honest word on what&rsquo;s free</h2>
           <p>The free 365 PC Manager app <strong>watches and reports</strong> on your PC&rsquo;s health &mdash; it doesn&rsquo;t secretly fix things or remove viruses on its own. The actual servicing, tune-ups and unlimited remote help come with a <a href="/monthly-it-support/">support plan</a>. The app is for Windows PCs, and so is our support: we don&rsquo;t support Apple Macs. And the instant browser check-up on your dashboard only reads what a web browser can see &mdash; the app sees the fuller picture.</p>
           <h2>Already a support customer?</h2>
