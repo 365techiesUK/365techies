@@ -48,7 +48,7 @@
   var STAGES = [
     { key: 'bournemouth', name: 'BOURNEMOUTH', seed: 1103, t: 66, len: 700, curvy: 0.55, hilly: 0.12, sea: -1, band: [3, 6], shores: [38, 44, 50, 56, 60, 66, 72, 48], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: { over: ['banner'] } },   // (shores: a wide sandy beach)
     { key: 'sandbanks', name: 'SANDBANKS', seed: 1709, t: 64, len: 700, curvy: 0.6, hilly: 0.2, sea: -1, band: [3, 8], shores: [30, 34, 38, 42, 48, 54, 36, 40], mix: [5, 4, 1, 1, 3, 0, 0, 4], feat: { over: ['banner'] } },   // (no bridge: there is none on the spit)
-    { key: 'christchurch', name: 'CHRISTCHURCH', seed: 1811, t: 64, len: 700, curvy: 0.65, hilly: 0.3, sea: 1, band: [4, 13], mix: [5, 4, 2, 1, 3, 1, 0, 2], feat: { bridge: 2 } },
+    { key: 'christchurch', name: 'CHRISTCHURCH', seed: 1811, t: 64, len: 700, curvy: 0.65, hilly: 0.3, sea: 1, band: [4, 13], shores: [20, 22, 24, 28, 32, 26, 22, 36], mix: [5, 4, 2, 1, 3, 1, 0, 2], feat: { bridge: 2 } },
     { key: 'purbeck', name: 'CORFE CASTLE', seed: 2207, t: 70, len: 730, curvy: 0.75, hilly: 1, sea: 0, band: [14, 95], mix: [5, 3, 2, 0, 3, 3, 1, 1], feat: { tunnel: 1, over: ['viaduct'] } },
     { key: 'swanage', name: 'OLD HARRY ROCKS', seed: 2903, t: 70, len: 730, curvy: 0.7, hilly: 0.75, sea: -1, band: [22, 60], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { tunnel: 1, over: ['viaduct'] } },
     { key: 'forest', name: 'NEW FOREST', seed: 3301, t: 70, len: 730, curvy: 0.85, hilly: 0.55, sea: 0, band: [10, 50], mix: [5, 3, 2, 0, 3, 2, 1, 1], feat: { over: ['footbridge'] } },
@@ -316,10 +316,9 @@
           if (r() < 0.08 && sh > 20) { x = -(14 + r() * (sh - 16)); if (land(s, x)) put(W, i, 'brolly', x, 0.7, { soft: true, v: (r() * 4) | 0 }); }
           onWater('yacht', 25, 140, 0.05, (r() * 3) | 0);
           break;
-        case 'christchurch':   // the harbour on the right: reeds, boats and buoys; beach huts on the spit, the priory tower inland
+        case 'christchurch':   // the harbour on the right: reeds, saltmarsh, swans, boats (world3d.js); the town on the left, the Priory over it
           lamps(10, 0, true);
           if (r() < 0.12) shore('tuft', 1, 0, { v: (r() * 3) | 0 });
-          if (sh > 24 && k % 80 < 24 && k % 2 === 0 && land(s, 12.5)) put(W, i, 'hut', 12.5, 1.3, { v: (k / 2) % 6 });
           if (r() < 0.06) plant(['oak', 'bush', 'cottage'], -(14 + r() * 24), 0.8);
           onWater('yacht', 15, 100, 0.06, (r() * 3) | 0);
           onWater('buoy', 10, 60, 0.02, (r() * 2) | 0);
@@ -439,6 +438,10 @@
     if (S.key === 'swanage') { mark('needles', 0.33, function (h) { return -(Math.max(h, 18) + 80); }); mark('needles', 0.66, function (h) { return -(Math.max(h, 18) + 80); }); }
     if (S.key === 'jurassic') { mark('arch', 0.68, function (h) { return -(Math.max(h, 18) + 70); }); }   // (no lighthouse: there's none at Durdle Door)
     if (S.key === 'weymouth') { mark('clock', 0.4, function (h) { return -(Math.min(h, 22) - 4); }); }
+    if (S.key === 'christchurch') {   // the quay: the bandstand on the bank, rowing boats for hire, the old mill; the castle keep's ruin in the town
+      mark('bandstand', 0.42, function (h) { return Math.max(14, h - 5.5); }); mark('rowboats', 0.445, function (h) { return h + 6; });
+      mark('placemill', 0.5, function (h) { return Math.max(18, h - 6); }); mark('castlekeep', 0.62, function () { return -42; });
+    }
     if (S.key === 'harbour') { mark('ferry', 0.55, function (h) { return Math.max(h, 16) + 190; }); mark('customhouse', 0.3, function () { return -27; }); }   // (the ferry at the terminal across the water; the old custom house on the quay)
     if (S.key === 'lymington') { mark('ferry', 0.5, function (h) { return Math.max(h, 16) + 60; }); }
     if (S.key === 'lyme') { mark('cobb', 0.32, function (h) { return -(Math.max(h, 18) + 34); }); }   // (earlier and nearer: the critic never saw it)

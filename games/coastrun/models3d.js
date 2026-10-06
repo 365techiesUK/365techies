@@ -865,6 +865,55 @@ const MODELS = {
     k.box(9, 0.1, 5, 0, 3.0, 0, '#d8b870', 0, 0, 0, 'glow');   // the light under the roof
     for (const z of [-1.4, 1.4]) k.box(7, 0.45, 0.6, 0, 0, z, '#5a4a3a');
   },
+  reeds(k, v) {   // a bed of reeds at the harbour's edge (the owner's aerials of Christchurch Harbour): tall straw and green stems in clumps
+    const r = rnd(2100 + v * 7);
+    k.blob(3, 0, -2.2, 0, '#5a5a3a', 2.4, 0.8, 1.6, 2110 + v, { smooth: true });
+    for (let i = 0; i < 16; i++) { const x = (r() - 0.5) * 12, z = (r() - 0.5) * 7, c = ['#b8a868', '#a8a060', '#8a9a58', '#c8b878'][i % 4], h = 2 + r() * 0.8;
+      k.card(1.6, h, x, h / 2 + 0.1, z, c, r() * 3, 0, 'grass', 'up').card(1.6, h, x, h / 2 + 0.1, z, c, r() * 3 + 1.6, 0, 'grass', 'up'); }
+    for (let i = 0; i < 6; i++) k.cyl(0.04, 0.04, 0.5, 4, (r() - 0.5) * 10, 2.4 + r() * 0.6, (r() - 0.5) * 6, '#6a4a2a');   // seed heads
+  },
+  marsh(k, v) {   // a patch of saltmarsh out in the harbour, just above the water: green and brown, a few reeds
+    const r = rnd(2200 + v * 5);
+    for (let i = 0; i < 4; i++) { const R = 6 + r() * 5; k.blob(R, (r() - 0.5) * 26, 0.35 - R * 0.1, (r() - 0.5) * 18, ['#6a7a4a', '#7a7a50', '#5a6a42', '#8a8458'][i], 1.6, 0.1, 1.2, 2210 + v * 9 + i, { smooth: true }); }   // (flat: just proud of the water)
+    for (let i = 0; i < 10; i++) k.card(1.4, 1.2, (r() - 0.5) * 24, 0.7, (r() - 0.5) * 16, ['#a8a060', '#8a9a58'][i % 2], r() * 3, 0, 'grass', 'up');
+  },
+  swans(k, v) {   // swans on the water by the quay: a pair, sometimes with grey cygnets behind
+    const r = rnd(2300 + v);
+    const swan = (x, z, s, col, ry) => {
+      k.ball(0.5 * s, x, 0.25 * s, z, col, 1, 0.55, 1.6, 'lit', 10);
+      k.put(capG(0.09 * s, 0.6 * s), col, x + Math.sin(ry) * 0.6 * s, 0.75 * s, z - Math.cos(ry) * 0.6 * s, -0.25, 0, 0);
+      k.ball(0.14 * s, x + Math.sin(ry) * 0.75 * s, 1.15 * s, z - Math.cos(ry) * 0.75 * s, col, 1, 0.9, 1.4, 'lit', 8).box(0.08 * s, 0.07 * s, 0.22 * s, x + Math.sin(ry) * 0.85 * s, 1.1 * s, z - Math.cos(ry) * 0.92 * s, '#ff8a1a');
+    };
+    swan(0, 0, 1, '#fbfbf8', 0); swan(1.8, 1.2, 1, '#f6f6f2', 0.3);
+    if (v % 2) for (let i = 0; i < 3; i++) swan(0.6 + i * 0.8, 3 + r(), 0.5, '#a8a49c', 0.1);
+  },
+  bandstand(k, v) {   // the Victorian bandstand on the quay: eight slender iron posts on a low round base, a railing, a green ogee roof
+    const R = 4.4;
+    k.cyl(R + 0.4, R + 0.6, 0.9, 16, 0, 0, 0, '#d8d2c4', 0, 0, 'stone');
+    for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; k.cyl(0.08, 0.1, 3.2, 6, Math.cos(a) * R, 0.9, Math.sin(a) * R, '#2f5a4a');
+      k.box(0.05, 0.7, R * 0.76, Math.cos(a + Math.PI / 8) * R * 0.92, 0.9, Math.sin(a + Math.PI / 8) * R * 0.92, '#2f5a4a', -(a + Math.PI / 8) + Math.PI / 2); }
+    k.cyl(R + 0.4, R + 0.4, 0.3, 16, 0, 4.1, 0, '#f4f2ea').cone(R + 0.6, 2.2, 16, 0, 4.4, 0, '#3f7a64').cyl(0.4, 0.4, 0.7, 8, 0, 6.5, 0, '#f4f2ea').cone(0.6, 1.2, 8, 0, 7.2, 0, '#3f7a64');
+  },
+  rowboats(k, v) {   // rowing boats and little motor boats for hire, tied along a short pontoon (+X out from the bank)
+    const r = rnd(2400 + v);
+    k.box(10, 0.25, 1.6, 5, 0.2, 0, '#9a8266');
+    for (let i = 0; i < 5; i++) { const x = 1.5 + i * 2, col = ['#2a6ab0', '#e8e4da', '#c62828', '#2f6a3a', '#e8b030'][(i + v) % 5];
+      for (const sd of [-1, 1]) { if (r() < 0.25) continue; k.side([-1.6, 0, 1.4, 0, 1.9, 0.6, -1.7, 0.6], 1.2, x, -0.1, sd * 2.0, col, 'shiny', 0.06); k.box(1.0, 0.08, 0.2, x, 0.4, sd * 2.0, '#8a6a48'); } }
+  },
+  placemill(k, v) {   // the old watermill on the quay: a long low building of stone below and dark weatherboard above, a steep tiled roof, a wheel at the end
+    k.box(24, 4, 9, 0, 0, 0, '#b8ad96', 0, 0, 0, 'stone').box(24, 3, 9, 0, 4, 0, '#4a3a30').prism(10, 4.4, 24.6, 0, 7, 0, '#8a4a34', Math.PI / 2);
+    for (let i = 0; i < 6; i++) k.box(1.2, 1.2, 0.12, -10 + i * 4, 5, 4.56, '#2a3440', 0, 0, 0, 'shiny');
+    k.box(1.6, 2.4, 0.12, 4, 0, 4.56, '#3a2a1e');
+    k.put(new THREE.TorusGeometry(2.6, 0.22, 6, 18), '#3a2e26', 12.4, 2.6, 0, 0, Math.PI / 2, 0);
+    for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI; k.box(0.12, 5.2, 0.6, 12.5, 2.6, 0, '#3a2e26', 0, a, 0); }
+  },
+  castlekeep(k, v) {   // the ruined Norman castle keep on its grassy mound: two tall broken walls of grey rubble stone
+    k.blob(16, 0, -7, 0, '#6f9a45', 1.4, 0.75, 1.4, 2501, { smooth: true });
+    const st = '#a8a090';
+    k.side([0, 0, 12, 0, 12, 8, 9, 11, 6, 9, 3, 12.5, 0, 10], 2, 0, 4.6, -6, st, 'stone');
+    k.side([0, 0, 9, 0, 9, 6, 6, 9.5, 3, 7, 0, 8], 2, -6, 4.6, 0, st, 'stone');
+    for (const [x, z] of [[2, -4], [-3, 3], [5, 4]]) k.blob(1.5, x, 4.8, z, '#9a9282', 1.3, 0.6, 1);
+  },
   balloon(k, v) {   // a hot-air balloon, far off over the land
     const c = [['#e63946', '#ffd23f'], ['#1d7fd6', '#ffffff'], ['#2a9d8f', '#f4a261'], ['#9b5de5', '#ffd23f']][v % 4];
     for (let i = 0; i < 10; i++) k.put(new THREE.SphereGeometry(8, 3, 14, i * Math.PI / 5, Math.PI / 5), c[i % 2], 0, 16, 0, 0, 0, 0, 1, 1.22, 1);
