@@ -2526,10 +2526,23 @@ function roadCar(k, col, p) {   // an everyday car on the racers' kit (the nose 
   const B = racerBody(k, col, { w: [[wf, p.r, 0.23], [wr, p.r, 0.24]], up: p.tall ? 4 : 3.2, crease: 0.07, style: p.rims || 'five', rim: '#c4c8cc', cal: p.sporty ? '#b81e26' : '#4a4d52', mirror: [s0 + 0.14, p.beltY + 0.1], doors: p.doors,
     keys: keys, cabin: cab, roof: roof, roofBelly: 0.2, roofDn: 8 });
   if (!sal) glassOn(k, roof, p.roofEnd + 0.04, end - 0.03, 0.74, 3, 0.2); else glassOn(k, roof, p.roofEnd + 0.03, end - 0.04, 0.78, 3, 0.2);   // the back window
+  // pass 1 (owner, 6 Oct: "a couple of passes on the cars"): the side glass split by a dark B-pillar and edged in bright trim, door handles,
+  // indicator repeaters, LED strips in the lamps, reflectors, running lights under the headlamps, a wiper on a hatch's back window
+  windowTrim(k, B, cab, roof, s1 + 0.05, p.roofEnd - 0.05, 3);
+  const bz = p.doors && p.doors.length > 1 ? p.doors[1] : (s1 + p.roofEnd) / 2;
+  for (const sd of [-1, 1]) {
+    const yb = p.beltY + 0.02, yt = p.roofY - 0.07, xb = cabW(cab, bz, yb, 3), xt = cabW(cab, bz, yt, 3), ang = Math.atan2(xt - xb, yt - yb);
+    k.put(new THREE.BoxGeometry(0.018, (yt - yb) / Math.cos(ang), 0.09), '#121316', sd * ((xb + xt) / 2 + 0.008), (yb + yt) / 2, bz, 0, 0, -sd * ang, 1, 1, 1, 'lit');   // the B-pillar
+    for (const dz of (p.doors || []).slice(0, -1)) { const hz = dz + 0.62; k.box(0.025, 0.035, 0.16, sd * (B.hwAt(hz) + 0.004), p.beltY - 0.1, hz, '#c8ccd0', 0, 0, 0, 'shiny'); }   // door handles
+    k.box(0.02, 0.035, 0.09, sd * (B.hwAt(wf + p.r + 0.2) + 0.003), cl + 0.52, wf + p.r + 0.2, '#ffb24a', 0, 0, 0, 'rlamp');   // the indicator repeater
+    k.box(0.1, 0.035, 0.02, sd * (hw - 0.14), cl + 0.13, L - 0.005, '#c0161e', 0, 0, 0, 'rlamp');   // a reflector in the bumper
+    k.box(0.32, 0.016, 0.02, sd * (hw - 0.25), p.noseY - 0.03, -L + 0.07, '#f4f6ff', 0, sd * 0.3, 0, 'rlamp');   // the running-light strip
+  }
+  if (!sal) k.box(0.4, 0.02, 0.02, 0.1, p.tailY + 0.12, L - 0.07, '#141416', 0, 0, 0.3, 'lit');   // the wiper on the back window
   const ty = sal ? p.tailY - 0.08 : p.tailY - 0.1, tz = L - 0.02, thw = B.hwAt(L - 0.06);
   for (const sd of [-1, 1]) {   // the lamp clusters at the back corners, wrapping round: a dark housing, the red lamp, a white reversing lamp, an amber indicator
     k.box(0.44, 0.17, 0.08, sd * (thw - 0.26), ty, tz, '#2a0608', 0, sd * 0.12, 0, 'lit');
-    k.box(0.3, 0.1, 0.09, sd * (thw - 0.3), ty + 0.02, tz + 0.006, RED, 0, sd * 0.12, 0, 'rlamp');
+    k.box(0.3, 0.1, 0.09, sd * (thw - 0.3), ty + 0.02, tz + 0.006, RED, 0, sd * 0.12, 0, 'rlamp').box(0.26, 0.018, 0.095, sd * (thw - 0.3), ty + 0.05, tz + 0.01, '#ff8a8a', 0, sd * 0.12, 0, 'rlamp');   // (an LED strip across it)
     k.box(0.1, 0.05, 0.09, sd * (thw - 0.12), ty - 0.04, tz + 0.004, '#f4f2ea', 0, sd * 0.12, 0, 'rlamp').box(0.08, 0.05, 0.09, sd * (thw - 0.44), ty - 0.04, tz + 0.006, '#ffb24a', 0, sd * 0.12, 0, 'rlamp');
     cover(k, sd * (hw - 0.24), p.noseY + 0.06, -L + 0.1, 2.0, 0.55, 0.9, sd * 0.3);   // the headlamps
     if (p.tall) { k.box(0.05, 0.13, wr - wf - 2 * p.r - 0.1, sd * (hw + 0.01), cl + 0.06, (wf + wr) / 2, BLK, 0, 0, 0, 'lit'); }   // black cladding along the sills
@@ -2538,7 +2551,7 @@ function roadCar(k, col, p) {   // an everyday car on the racers' kit (the nose 
   }
   if (p.sporty) k.box(thw * 1.3, 0.025, 0.05, 0, ty + 0.06, tz + 0.03, RED, 0, 0, 0, 'rlamp');   // the lamp bar across the tail
   else k.roll(0.035, 0.1, 10, hw * 0.55, cl + 0.07, L + 0.01, '#8a8e92', 'shiny');   // a tailpipe
-  if (!sal) { k.box(hc * 1.5, 0.035, 0.2, 0, p.roofY - 0.03, p.roofEnd + 0.08, col, 0, 0, -0.25, 'rpaint'); k.box(0.36, 0.03, 0.03, 0, p.roofY - 0.06, p.roofEnd + 0.16, RED, 0, 0, 0, 'rlamp'); }   // the roof spoiler, the high brake light
+  if (!sal) { k.box(hc * 1.55, 0.03, 0.2, 0, p.roofY - 0.035, p.roofEnd + 0.06, col, 0, 0.22, 0, 'rpaint'); k.box(0.36, 0.03, 0.03, 0, p.roofY - 0.06, p.roofEnd + 0.16, RED, 0, 0, 0, 'rlamp'); }   // the roof spoiler, the high brake light
   k.box(hw * 1.86, 0.2, 0.12, 0, cl + 0.1, L - 0.03, BLK, 0, 0, 0, 'lit');   // the bumper's dark lower part
   k.box(0.52, 0.11, 0.02, 0, sal ? p.tailY - 0.24 : p.tailY - 0.3, L + 0.012, '#f2d24a', 0, 0, 0, 'lit');   // the plate
   k.box(hw * 0.9, 0.14, 0.05, 0, p.noseY - 0.08, -L + 0.02, '#16181b', 0, 0, 0, 'lit').box(hw * 1.5, 0.12, 0.06, 0, cl + 0.12, -L + 0.06, '#16181b', 0, 0, 0, 'lit');   // the grille, the intake
@@ -2968,6 +2981,16 @@ function spider() {
   for (let i = 0; i < 5; i++) k.box(0.02, 0.09, 0.24, -0.2 + i * 0.1, 0.295, len - 0.02, '#5a5e64', 0, 0, 0, 'trim');
   for (const x of [-0.4, 0.4]) { k.roll(0.085, 0.12, 18, x, 0.36, len, '#c9cdd2', 'lit'); k.roll(0.058, 0.02, 14, x, 0.36, len + 0.055, '#0e0e10', 'trim'); }   // two big bright pipes, dark inside
   k.box(0.44, 0.093, 0.02, 0, 0.645, len + 0.03, '#ffffff', 0, 0, 0, 'plate');   // the plate, on the red between the lamps
+  // pass 2 (owner, 6 Oct: "a couple of passes on the cars"): the lamps' detail - an LED line through each, a white reversing lamp and an amber
+  // indicator at the inner end; a slim third brake light on the lip; a reflector strip across the bumper; the engine lid's shut lines
+  for (const sd of [-1, 1]) {
+    k.box(0.36, 0.012, 0.055, sd * 0.47, 0.672, len + 0.016, '#ffb0b8', 0, 0, 0, 'glow');
+    k.box(0.07, 0.05, 0.055, sd * 0.24, 0.648, len + 0.016, '#f2f2ee', 0, 0, 0, 'glow').box(0.05, 0.05, 0.055, sd * 0.3, 0.648, len + 0.016, '#ff9a2a', 0, 0, 0, 'glow');
+  }
+  k.box(0.5, 0.018, 0.03, 0, 0.9, len + 0.06, '#ff0a18', 0, -0.21, 0, 'brake');   // the third brake light on the lip
+  k.box(1.5, 0.022, 0.02, 0, 0.47, len + 0.012, '#7a0a10', 0, 0, 0, 'trim');   // the reflector strip
+  for (const sd of [-1, 1]) for (let z = 1.22; z < len - 0.12; z += 0.12) k.box(0.008, 0.006, 0.125, sd * 0.56, at(z)[3] + 0.001, z + 0.06, '#1a0a0c', 0, 0, 0, 'trim');   // the lid's shut lines, either side
+  k.box(1.12, 0.006, 0.008, 0, at(1.22)[3] + 0.002, 1.22, '#1a0a0c', 0, 0, 0, 'trim');
   // the wheel arches: a dark well inside, a flared lip round the outside
   for (const z of wz) for (const sd of [-1, 1]) {
     const hw = at(z)[1];

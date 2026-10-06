@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=51';
+import { createWorld } from './world3d.js?v=52';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
@@ -821,7 +821,7 @@ function frameAudio(W, S, mode, SET) {
   AU.wind.f.frequency.setTargetAtTime(600 + pct * 1800, now, T);
   AU.wind.g.gain.setTargetAtTime(Math.min(0.09, pct * pct * 0.055 + (W.boosting ? 0.03 : 0)), now, T);
   AU.skid.g.gain.setTargetAtTime(W.air || W.crash ? 0 : (W.drift ? 0.028 : (W.slide || 0) * 0.016) * (AU.tyre ? 0.4 : 1), now, 0.03);   // (a little grit under the squeal)
-  { const slip = W.air || W.crash ? 0 : W.drift ? 0.7 + 0.3 * Math.min(1, (W.driftA || 0) / 0.45) : (W.slide || 0) * 0.85,   // a drift: the full squeal, rising with the slide; hard round a bend, braking hard or a quick flick: the tyres working (engine: slide)
+  { const slip = W.air || W.crash ? 0 : W.drift ? 0.7 + 0.3 * Math.min(1, (W.driftA || 0) / 0.45) : Math.max((W.slide || 0) * 0.85, (W.wspin || 0) * 0.9),   // (wheelspin pulling away: the screech too)   // a drift: the full squeal, rising with the slide; hard round a bend, braking hard or a quick flick: the tyres working (engine: slide)
     f0 = (420 + slip * 80 + pct * 60) * (1 + (Math.random() - 0.5) * 0.03);
     const pan = Math.max(-0.5, Math.min(0.5, -(W.steer || 0) * 0.35));
     if (AU.tyre) {   // the recording: louder and a little higher the harder the slide and the faster you go, wavering as a real screech does

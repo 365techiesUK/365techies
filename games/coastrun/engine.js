@@ -1153,7 +1153,7 @@
       W.count--;
       if (W.count === 180 || W.count === 120 || W.count === 60) W.events.push({ sfx: 'count' });
       if (W.count === 0) {
-        W.events.push({ sfx: 'go' }); bannerOf(W, 'GO!', 'RACE THEM TO THE COAST', 'go'); mood(W, 'cheer'); voice(W, 'go', true); W.legT0 = W.t; launchField(W);
+        W.events.push({ sfx: 'go' }); bannerOf(W, 'GO!', 'RACE THEM TO THE COAST', 'go'); mood(W, 'cheer'); voice(W, 'go', true); W.legT0 = W.t; launchField(W); W.goT = W.t; W.launchT = 100;
         if (inp.fire || inp.alt) { W.v = top * 0.32; W.bottles = Math.min(BOTTLE_MAX, W.bottles + 1); W.score += 5000; pop(W, 'FLYING START', '+5,000 +1 NITRO', 0, 'gold'); W.events.push({ sfx: 'perfect' }); }
       }
       W.rev = (inp.fire || inp.alt || inp.up) ? Math.min(1, (W.rev || 0) + 0.05) : Math.max(0, (W.rev || 0) - 0.03);
@@ -1221,6 +1221,12 @@
     if (W.off) { var offTop = top * D.off; if (v > offTop) v = Math.max(offTop, v - 22 * DT); if (!wasOff) knock(W); }
     if (v > hz) v = Math.max(hz, v - 12 * DT);
     W.v = v = Math.max(0, v);
+    // wheelspin: foot down from a standstill or a crawl, the rear tyres spin up (smoke, black lines, the screech: world3d.js, coastrun.js);
+    // it eases as the speed builds and is gone by about 40 mph. Off the line at the green it always spins, a flying start too
+    if (W.launchT > 0) W.launchT--;
+    var spinT = out || W.air || W.ferry || !(gas || W.boosting) ? 0 : Math.max(clamp(1.15 - v / 18, 0, 1), (W.launchT || 0) / 100);
+    W.wspin = (W.wspin || 0) + (spinT - (W.wspin || 0)) * Math.min(1, (spinT > (W.wspin || 0) ? 8 : 2.5) * DT);
+    if (W.wspin > 0.35 && !W.spinOn) { W.spinOn = true; W.events.push({ sfx: 'skid' }); } else if (W.wspin < 0.1) W.spinOn = false;
 
     // ---- turning: where the car points (psi) and where it goes (phi), both measured from the road
     var k = bendHere(W, g), lim = turnLimit(W, v) * Math.min(1, v / 6), want;

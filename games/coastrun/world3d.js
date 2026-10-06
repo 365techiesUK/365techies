@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=44';
+import * as MD from './models3d.js?v=45';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -398,7 +398,7 @@ export function createWorld() {
     twall: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82, emissive: '#ffe2bc', emissiveIntensity: 0.38 }),
     stone: new THREE.MeshStandardMaterial({ vertexColors: true, map: stoneTexture(), roughness: 0.92 }),
     rpaint: new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.32, metalness: 0.25, clearcoat: 0.8, clearcoatRoughness: 0.16, envMapIntensity: 1.2 }),   // the racers' paint (the sun's glint kept small: seen from behind, it bloomed)
-    rglass: new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.3, metalness: 0.05, clearcoat: 0.25, clearcoatRoughness: 0.32, envMapIntensity: 0.7 }),   // (strong reflections flared white)   // their glass
+    rglass: new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.16, metalness: 0.05, clearcoat: 0.5, clearcoatRoughness: 0.2, envMapIntensity: 1.0 }),   // (a little more of the sky in it: near-black glass read as a toy's, 6 Oct)   // (strong reflections flared white)   // their glass
     rroof: new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.42, metalness: 0.2, clearcoat: 0.7, clearcoatRoughness: 0.32, envMapIntensity: 0.85 }),   // their roofs (satin: the sun off a flat roof flared white)
     rlamp: new THREE.MeshBasicMaterial({ vertexColors: true, color: new THREE.Color(1.5, 1.5, 1.5) })   // their lamps (crisp, not blooming)
   };
@@ -1593,6 +1593,7 @@ export function createWorld() {
     let yaw = -R.visHead, roll = POS.bank * 0.8 + R.latK * 0.06, pitch = Math.atan(gradeAt(W)) * 0.9 + (W.air ? clamp(W.vh * 0.012, -0.25, 0.2) : 0), lift = 0;
     R.bodyR = (R.bodyR || 0) + ((W.drift && !cr ? W.steer * 0.08 : 0) - (R.bodyR || 0)) * Math.min(1, dt * 5); R.bodyP = (R.bodyP || 0) + ((W.boosting ? 0.012 : 0) + R.lonA * 0.0022 - (R.bodyP || 0)) * Math.min(1, dt * 5);
     roll += R.bodyR + (R.gR || 0); pitch += R.bodyP + (R.gP || 0);
+    if ((W.wspin || 0) > 0.1 && !cr) yaw += Math.sin(t / 85) * 0.025 * W.wspin;   // (the tail twitching as the tyres spin)
     let T = null;
     if (cr) {
       const p = cr.t / cr.dur;
@@ -1605,11 +1606,11 @@ export function createWorld() {
     crashScene(W, cr, T, dt, cx, cy, cz, heading, POS.y);
     player.position.y += lift; R.land = Math.max(0, (R.land || 0) - dt * 5); player.position.y -= R.land * 0.06;
     player.rotation.set(0, 0, 0); player.rotation.order = 'YXZ'; player.rotation.y = yaw; player.rotation.x = pitch; player.rotation.z = roll;
-    R.wheelSpin += W.v * dt / 0.34;
+    R.wheelSpin += W.v * dt / 0.34; R.rearSpin = (R.rearSpin || 0) + (W.wspin || 0) * 38 * dt;   // (the rear wheels turning faster than the car is going: wheelspin)
     R.brakeK += (((W.v < R.lastV - 0.05 && !W.crash) || W.drift ? 1 : 0) - R.brakeK) * Math.min(1, dt * 12); R.lastV = W.v;
     CAR.brake.color.setScalar(1.05 + R.brakeK * 2.6);
     animateCouple(W, dt, t);
-    wheels.forEach((w, i) => { if (w.parent !== player) return; w.rotation.order = 'YXZ'; w.rotation.y = i < 2 ? -W.steer * 0.42 + (W.drift ? W.drift * 0.25 : 0) : 0; w.rotation.x = -R.wheelSpin; });
+    wheels.forEach((w, i) => { if (w.parent !== player) return; w.rotation.order = 'YXZ'; w.rotation.y = i < 2 ? -W.steer * 0.42 + (W.drift ? W.drift * 0.25 : 0) : 0; w.rotation.x = -R.wheelSpin - (i >= 2 ? R.rearSpin || 0 : 0); });
     const sh = player.userData.shadow; sh.position.y = 0.05 - (W.h - E.heightAt(W, W.s)) - lift; sh.material.opacity = Math.max(0.15, 1 - (W.h - E.heightAt(W, W.s) + lift) * 0.2);
     // ---- the camera: behind and above, swinging round late, wider as you go faster
     R.crashK += ((cr && cr.hard ? 1 : 0) - R.crashK) * Math.min(1, dt * 2.5);
@@ -1708,6 +1709,12 @@ export function createWorld() {
       m.position.set(POS.x, POS.y, POS.z);
       m.rotation.order = 'YXZ'; m.rotation.y = -POS.th + (c.tx - c.x) * -0.04 + (c.spin > 0 ? c.spin * 0.15 : 0); m.rotation.z = POS.bank * 0.8;
       m.rotation.x = Math.atan((E.heightAt(W, c.s + 2) - E.heightAt(W, c.s - 2)) / 4);
+      if (c.rival && W.goT != null && W.t - W.goT < 200 && c.v < 22) {   // a racer off the line: its tyres spinning too
+        const V = E.VEH[c.t], k3 = 1 - c.v / 22, pts = [];
+        for (const sd of [-1, 1]) { place(W, c.s - V.l * 0.7, c.x + sd * 0.8, c.b, P2); pts.push([P2.x, P2.y + 0.3, P2.z]);
+          if (Math.random() < 0.8 * k3) tyre.emit(P2.x + (Math.random() - 0.5) * 0.4, P2.y + 0.18, P2.z + (Math.random() - 0.5) * 0.4, (Math.random() - 0.5) * 2, 0.4 + Math.random() * 0.8, (Math.random() - 0.5) * 2, 0.8, 4.2, '#e2e6ea', 0.2 + 0.3 * k3, 1.6, 0, SMK); }
+        const RS = R.rivalSkid || (R.rivalSkid = new Map()), pv = RS.get(c.id); skid.add(pts[0], pts[1], pv, 0.13, 0.4 + 0.5 * k3); RS.set(c.id, pts);
+      } else if (R.rivalSkid && R.rivalSkid.has(c.id)) R.rivalSkid.delete(c.id);
     }
     for (const [id, m] of traffic) if (!seen.has(id)) { scene.remove(m); traffic.delete(id); }
 
@@ -1823,8 +1830,12 @@ export function createWorld() {
     if (false) for (const sd of [-0.42, 0.42]) for (let q = 0; q < 1; q++) { const p = rear(sd); sparks.emit(p[0] - fx * 0.95, p[1] + 0.06, p[2] - fz * 0.95, -fx * (3 + Math.random() * 3) + (Math.random() - 0.5) * 0.5, 0.15, -fz * (3 + Math.random() * 3) + (Math.random() - 0.5) * 0.5, 0.34, 0.06, q ? '#8fd0ff' : (Math.random() < 0.5 ? '#ff9a3c' : '#4a9cff'), 1, 0.14); }
     if (W.drift && !R.wasDrift) for (const sd of [-0.9, 0.9]) for (let q = 0; q < 8; q++) { const p = rear(sd); tyre.emit(p[0], p[1] - 0.08, p[2], tfx * W.v * 0.45 + (Math.random() - 0.5) * 2, 0.2 + Math.random() * 0.4, tfz * W.v * 0.45 + (Math.random() - 0.5) * 2, 0.4, 2.2, '#d6dde6', 0.45, 1.0, 0, SMK); }   // a burst as the tyres let go
     R.wasDrift = !!W.drift;
-    // skid marks while drifting
-    if (W.drift && !W.air) { const a = rear(-1), b = rear(1); skid.add(a, b, R.prevSkid); R.prevSkid = [a, b]; } else R.prevSkid = null;
+    // wheelspin (pulling away): thick smoke boiling off the rear tyres, drifting back and up behind the car
+    const ws = W.wspin || 0;
+    if (ws > 0.08 && !W.air && !W.crash) for (const sd of [-1, 1]) for (let q = 0; q < Math.ceil(3.5 * ws); q++) { const p = rear(sd), back = 1.5 + Math.random() * 3;
+      tyre.emit(p[0] + rx * sd * 0.15 + (Math.random() - 0.5) * 0.35, p[1] - 0.14, p[2] + rz * sd * 0.15 + (Math.random() - 0.5) * 0.35, -tfx * back + rx * sd * Math.random() * 1.6, 0.35 + Math.random() * 0.9, -tfz * back + rz * sd * Math.random() * 1.6, 0.8, 4.4, '#e2e6ea', 0.22 + 0.3 * ws, 1.8, 0, SMK); }
+    // black lines: a drift lays wide ones, wheelspin two narrow dark ones from the rear tyres
+    if ((W.drift || ws > 0.12) && !W.air && !W.crash) { const a = rear(-1.12), b = rear(1.12); skid.add(a, b, R.prevSkid, W.drift ? 0.17 : 0.13, W.drift ? 0.7 : Math.min(0.9, 0.35 + ws * 0.7)); R.prevSkid = [a, b]; } else R.prevSkid = null;
     // what the rules say happened
     for (const f of W.fx) {
       if (f.n <= R.fxN) continue; R.fxN = f.n;
@@ -2131,12 +2142,15 @@ function glowPoints(n) {   // halos round the lamps at night
   return { points: points, set(i, x, y, z, hex, s) { pos[i * 3] = x; pos[i * 3 + 1] = y; pos[i * 3 + 2] = z; C2.set(hex); col[i * 3] = C2.r; col[i * 3 + 1] = C2.g; col[i * 3 + 2] = C2.b; size[i] = s; alpha[i] = 0.55; },
     draw(count) { g.setDrawRange(0, count); points.visible = count > 0; for (const k of ['position', 'color', 'size', 'alpha']) g.attributes[k].needsUpdate = true; } };
 }
-function skidMarks() {   // dark stripes left on the road by a drift
-  const N = 1400, pos = new Float32Array(N * 18);
-  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  const mesh = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: '#060606', transparent: true, opacity: 0.78, depthWrite: false, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 }));
-  mesh.frustumCulled = false; let k = 0;
-  const strip = (a, b, w) => { const dx = b[0] - a[0], dz = b[2] - a[2], L = Math.hypot(dx, dz) || 1, nx = -dz / L * w, nz = dx / L * w, o = (k % N) * 18; const y0 = a[1] - 0.26, y1 = b[1] - 0.26;
-    pos.set([a[0] - nx, y0, a[2] - nz, b[0] - nx, y1, b[2] - nz, b[0] + nx, y1, b[2] + nz, a[0] - nx, y0, a[2] - nz, b[0] + nx, y1, b[2] + nz, a[0] + nx, y0, a[2] + nz], o); k++; };
-  return { mesh: mesh, add(a, b, prev) { if (!prev || Math.hypot(a[0] - prev[0][0], a[2] - prev[0][2]) > 6) return; strip(prev[0], a, 0.22); strip(prev[1], b, 0.22); g.attributes.position.needsUpdate = true; }, clear() { pos.fill(0); g.attributes.position.needsUpdate = true; } };
+function skidMarks() {   // dark stripes left on the road: a drift's, wheelspin's (narrow, darker the harder it spins)
+  const N = 2400, pos = new Float32Array(N * 18), al = new Float32Array(N * 6);
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('alpha', new THREE.BufferAttribute(al, 1));
+  const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4, fog: false,
+    vertexShader: 'attribute float alpha; varying float vA; void main() { vA = alpha; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: 'varying float vA; void main() { gl_FragColor = vec4(0.02, 0.02, 0.022, vA); }' });
+  const mesh = new THREE.Mesh(g, mat); mesh.frustumCulled = false; let k = 0;
+  const strip = (a, b, w, d) => { const dx = b[0] - a[0], dz = b[2] - a[2], L = Math.hypot(dx, dz) || 1, nx = -dz / L * w, nz = dx / L * w, o = (k % N) * 18; const y0 = a[1] - 0.26, y1 = b[1] - 0.26;
+    pos.set([a[0] - nx, y0, a[2] - nz, b[0] - nx, y1, b[2] - nz, b[0] + nx, y1, b[2] + nz, a[0] - nx, y0, a[2] - nz, b[0] + nx, y1, b[2] + nz, a[0] + nx, y0, a[2] + nz], o); al.fill(d, (k % N) * 6, (k % N) * 6 + 6); k++; };
+  return { mesh: mesh, add(a, b, prev, w, d) { if (!prev || Math.hypot(a[0] - prev[0][0], a[2] - prev[0][2]) > 6) return; strip(prev[0], a, w || 0.17, d == null ? 0.7 : d); strip(prev[1], b, w || 0.17, d == null ? 0.7 : d); g.attributes.position.needsUpdate = true; g.attributes.alpha.needsUpdate = true; },
+    clear() { pos.fill(0); al.fill(0); g.attributes.position.needsUpdate = true; g.attributes.alpha.needsUpdate = true; } };
 }
