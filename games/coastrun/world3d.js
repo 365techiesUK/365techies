@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=46';
+import * as MD from './models3d.js?v=47';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -398,7 +398,8 @@ export function createWorld() {
     twall: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82, emissive: '#ffe2bc', emissiveIntensity: 0.38 }),
     stone: new THREE.MeshStandardMaterial({ vertexColors: true, map: stoneTexture(), roughness: 0.92 }),
     rpaint: new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.32, metalness: 0.25, clearcoat: 0.8, clearcoatRoughness: 0.16, envMapIntensity: 1.2 }),   // the racers' paint (the sun's glint kept small: seen from behind, it bloomed)
-    rglass: new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.16, metalness: 0.05, clearcoat: 0.5, clearcoatRoughness: 0.2, envMapIntensity: 1.0 }),   // (a little more of the sky in it: near-black glass read as a toy's, 6 Oct)   // (strong reflections flared white)   // their glass
+    rglass: new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.08, metalness: 0, clearcoat: 0.6, clearcoatRoughness: 0.12, envMapIntensity: 1.0, transparent: true, opacity: 0.74, depthWrite: false }),   // a cabin's glass: tinted, the sky in it, and you see who's inside (owner, 6 Oct: "have the drivers in the other cars")
+    rglassp: new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.16, metalness: 0.05, clearcoat: 0.5, clearcoatRoughness: 0.2, envMapIntensity: 1.0 }),   // glass laid over paint, lamp lenses: solid   // (strong reflections flared white)   // their glass
     rroof: new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.42, metalness: 0.2, clearcoat: 0.7, clearcoatRoughness: 0.32, envMapIntensity: 0.85 }),   // their roofs (satin: the sun off a flat roof flared white)
     rlamp: new THREE.MeshBasicMaterial({ vertexColors: true, color: new THREE.Color(1.5, 1.5, 1.5) })   // their lamps (crisp, not blooming)
   };
@@ -1292,7 +1293,7 @@ export function createWorld() {
     const neck = new THREE.Group(); neck.position.set(0, spec.neck, 0); neck.scale.setScalar(0.76); root.add(neck); addParts(neck, spec.part.head, PM);
     const arms = [-1, 1].map((sd) => {
       const sh = new THREE.Group(); sh.position.set(sd * spec.shoulder[0], spec.shoulder[1], spec.shoulder[2]); root.add(sh); addParts(sh, spec.part.upper, PM);
-      const el = new THREE.Group(); el.position.set(0, -spec.elbow, 0); sh.add(el); addParts(el, spec.part.fore, PM);
+      const el = new THREE.Group(); el.position.set(0, -spec.elbow, 0); sh.add(el); const fa = new THREE.Group(); if (sd < 0) fa.scale.x = -1; el.add(fa); addParts(fa, sd < 0 && spec.part.foreL || spec.part.fore, PM);   // (the left forearm mirrored: thumbs outward)
       sh.rotation.order = 'YXZ'; return { sh: sh, el: el };   // out to the side, then forward, then turned
     });
     const locks = spec.part.locks ? spec.part.locks.map((L) => { const g = new THREE.Group(); g.position.set(L.at[0], L.at[1], L.at[2]); g.scale.setScalar(L.s); neck.add(g); addParts(g, L.geo, PM); return g; }) : null;
@@ -1526,6 +1527,8 @@ export function createWorld() {
     if (her.k === 'clap') { const c = Math.sin(t / 65); tgt[1] += c * 0.3; tgt[4] -= c * 0.3; }
     if (her.k === 'hair') tgt[2] += Math.sin(t / 260) * 0.12;
     if (her.k === 'hold') tgt[7] -= Math.min(0.15, W.v / 600);
+    const speaking = W.voiceT != null && W.t - W.voiceT < 80;   // (a pass on the two of you, owner 6 Oct: while she talks she turns to him, nods along, her hand going)
+    if (speaking && (her.k === 'idle' || her.k === 'look' || her.k === 'hair')) { tgt[6] = -0.32; tgt[7] = -0.04 + Math.sin(t / 110) * 0.05; tgt[3] = 0.55; tgt[5] = 1.2 + Math.sin(t / 170) * 0.25; }
     for (let i = 0; i < 10; i++) cur[i] = cur[i] == null ? tgt[i] : cur[i] + (tgt[i] - cur[i]) * k;
     const H = C.her; H.arms[0].sh.rotation.x = cur[0]; H.arms[0].sh.rotation.z = cur[1]; H.arms[0].el.rotation.x = cur[2];
     H.arms[1].sh.rotation.x = cur[3]; H.arms[1].sh.rotation.z = cur[4]; H.arms[1].el.rotation.x = cur[5];
@@ -1554,9 +1557,10 @@ export function createWorld() {
     C.wheel.rotation.z = -st * 1.5;
     D.arms[0].sh.rotation.x = 1.12 - st * 0.2; D.arms[0].sh.rotation.z = 0.12; D.arms[0].sh.rotation.y = 0; D.arms[0].el.rotation.x = 0.3;
     D.arms[1].sh.rotation.x = gl ? 0.2 : 1.12 + st * 0.2; D.arms[1].sh.rotation.z = gl ? 2.7 + Math.sin(t / 100) * 0.2 : -0.12; D.arms[1].sh.rotation.y = 0; D.arms[1].el.rotation.x = gl ? 0.4 : 0.3;
-    D.neck.rotation.y = -st * 0.22 + (her.k === 'ask' ? 0.3 : 0); D.neck.rotation.x = 0.09;
+    D.neck.rotation.y = -st * 0.22 + (her.k === 'ask' ? 0.3 : 0) + (speaking && Math.abs(st) < 0.3 ? 0.2 : 0); D.neck.rotation.x = 0.09;   // (a glance across at her while she talks)
     // both lean a little into the bends
     if (!R.flying.length) D.root.rotation.z = H.root.rotation.z = -st * Math.min(1, W.v / 50) * 0.22;
+    if (!R.flying.length) for (const [P2, ph] of [[D, 0], [H, 1.7]]) { const r = P2.root; r.position.y = r.userData.home.p.y + Math.sin(t / 58 + ph) * 0.004 * Math.min(1, W.v / 30) + (R.land || 0) * -0.03; }   // (riding the road: a gentle bob, a jolt on landing)
   }
 
   // ---------------------------------------------------------------- one picture
