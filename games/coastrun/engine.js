@@ -49,8 +49,8 @@
     { key: 'bournemouth', name: 'BOURNEMOUTH', seed: 1103, t: 66, len: 700, curvy: 0.55, hilly: 0.12, sea: -1, band: [3, 6], shores: [38, 44, 50, 56, 60, 66, 72, 48], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: { over: ['banner'] } },   // (shores: a wide sandy beach)
     { key: 'sandbanks', name: 'SANDBANKS', seed: 1709, t: 64, len: 700, curvy: 0.6, hilly: 0.2, sea: -1, band: [3, 8], shores: [30, 34, 38, 42, 48, 54, 36, 40], mix: [5, 4, 1, 1, 3, 0, 0, 4], feat: { over: ['banner'] } },   // (no bridge: there is none on the spit)
     { key: 'christchurch', name: 'CHRISTCHURCH', seed: 1811, t: 64, len: 700, curvy: 0.65, hilly: 0.3, sea: 1, band: [4, 13], shores: [20, 22, 24, 28, 32, 26, 22, 36], mix: [5, 4, 2, 1, 3, 1, 0, 2], feat: { bridge: 2 } },
-    { key: 'purbeck', name: 'CORFE CASTLE', seed: 2207, t: 70, len: 730, curvy: 0.75, hilly: 1, sea: 0, band: [14, 95], bands: [[0, [10, 26]], [0.3, [22, 34]], [0.62, [30, 90]]], mix: [5, 3, 2, 0, 3, 3, 1, 1], feat: { tunnel: 1, over: ['viaduct'] } },
-    { key: 'swanage', name: 'OLD HARRY ROCKS', seed: 2903, t: 70, len: 730, curvy: 0.7, hilly: 0.75, sea: -1, band: [22, 60], bands: [[0, [3, 9]], [0.26, [24, 40]], [0.62, [24, 40]], [0.7, [3, 9]]], shores: [26, 30, 34, 38, 44, 30, 36, 28], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { over: ['viaduct'] } },   // (bands: low through Studland, up over the downs, down into Swanage)
+    { key: 'purbeck', name: 'CORFE CASTLE', seed: 2207, t: 70, len: 730, curvy: 0.75, hilly: 1, sea: 0, band: [14, 95], bands: [[0, [10, 26]], [0.3, [22, 34]], [0.62, [30, 90]]], noCut: [0.08, 0.7], mix: [5, 3, 2, 0, 3, 3, 1, 1], feat: { tunnel: 1, over: ['viaduct'] } },   // (noCut: no cutting through the heath's railway or the village)
+    { key: 'swanage', name: 'SWANAGE', seed: 2903, t: 70, len: 730, curvy: 0.7, hilly: 0.6, sea: -1, sh0: 150, shV: 0.6, band: [3, 40], bands: [[0, [24, 40]], [0.26, [12, 22]], [0.42, [6, 12]], [0.58, [3, 7]]], shoreZ: [[0, [140, 150, 160, 145, 155, 150, 160, 140]], [0.26, [105, 110, 115, 100, 110, 105, 115, 108]], [0.42, [80, 84, 88, 82, 86, 80, 88, 84]], [0.58, [24, 26, 28, 30, 26, 24, 28, 26]]], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: {} },   // (in from Corfe on the A351: Harman's Cross by the railway, Herston, the town, then the front - the bay to the sea side, Old Harry across it; sh0: the sea starts far off, shV: and comes in quicker)
     { key: 'forest', name: 'NEW FOREST', seed: 3301, t: 70, len: 730, curvy: 0.85, hilly: 0.55, sea: 0, band: [10, 50], bands: [[0, [10, 22]], [0.3, [14, 26]], [0.64, [12, 40]]], mix: [5, 3, 2, 0, 3, 2, 1, 1], feat: { over: ['footbridge'] } },
     { key: 'jurassic', name: 'DURDLE DOOR', seed: 4409, t: 70, len: 740, curvy: 0.8, hilly: 0.85, sea: -1, band: [30, 80], bands: [[0, [18, 30]], [0.18, [30, 60]], [0.36, [3, 9]], [0.64, [40, 80]]], shoreZ: [[0, [100, 110, 120, 95, 105, 115, 100, 110]], [0.18, [60, 70, 80, 65, 75, 70, 60, 80]], [0.36, [20, 22, 24, 26, 22, 20, 24, 22]], [0.64, [26, 30, 34, 38, 30, 28, 34, 32]]], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { tunnel: 1 } },   // (in four parts: Lulworth Castle's park, the ranges, West Lulworth and the Cove, the downs to the Door)
     { key: 'weymouth', name: 'WEYMOUTH BAY', seed: 4513, t: 68, len: 720, curvy: 0.6, hilly: 0.35, sea: -1, band: [4, 14], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: { bridge: 1, over: ['banner'] } },
@@ -76,7 +76,7 @@
     // the west coast run (owner, 6 Oct: "split the coast run and do Wareham and Wool"); Kimmeridge to join Swanage and Durdle Door by real roads
     { key: 'wareham', name: 'WAREHAM', seed: 8233, t: 68, len: 720, curvy: 0.55, hilly: 0.25, sea: 0, band: [8, 22], bands: [[0, [14, 26]], [0.3, [6, 12]], [0.62, [3, 7]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Sandford's heath, the town inside its Saxon walls, the quay and the causeway over the Frome)
     { key: 'wool', name: 'WOOL', seed: 8337, t: 68, len: 720, curvy: 0.6, hilly: 0.3, sea: 0, band: [8, 30], bands: [[0, [22, 40]], [0.32, [18, 30]], [0.64, [4, 10]]], mix: [5, 3, 2, 1, 3, 1, 1, 2], feat: {} },   // (the heath past the tank crossings, Bovington and the Tank Museum, over Wool Bridge into the village)
-    { key: 'kimmeridge', name: 'KIMMERIDGE', seed: 8441, t: 70, len: 730, curvy: 0.75, hilly: 0.7, sea: -1, band: [8, 90], bands: [[0, [60, 95]], [0.36, [24, 40]], [0.66, [10, 18]]], shoreZ: [[0, [110, 120, 130, 115, 125, 110, 130, 120]], [0.36, [70, 75, 80, 72, 78, 70, 80, 75]], [0.66, [26, 28, 30, 32, 28, 26, 30, 28]]], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: {} },   // (along the Purbeck ridge, the village, down to the bay)
+    { key: 'kimmeridge', name: 'KIMMERIDGE', seed: 8441, t: 70, len: 730, curvy: 0.75, hilly: 0.7, sea: -1, sh0: 110, band: [8, 90], bands: [[0, [60, 95]], [0.36, [24, 40]], [0.66, [10, 18]]], shoreZ: [[0, [110, 120, 130, 115, 125, 110, 130, 120]], [0.36, [70, 75, 80, 72, 78, 70, 80, 75]], [0.66, [26, 28, 30, 32, 28, 26, 30, 28]]], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: {} },   // (along the Purbeck ridge, the village, down to the bay)
     { key: 'highcliffe', name: 'HIGHCLIFFE', seed: 8131, t: 70, len: 730, curvy: 0.6, hilly: 0.3, sea: 0, band: [20, 35], bands: [[0, [6, 14]], [0.33, [14, 24]], [0.66, [24, 34]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (the castle, the clifftop)
   ];
   // the runs (owner, 6 Oct): round 1 the town, from Bournemouth out through its suburbs, every fork a real road (games/coastrun route
@@ -164,11 +164,11 @@
         if (SZ && zi !== B.shZ) { B.shZ = zi; B.nextSh = B.k; }   // (a new part of the stage: its own shore straight away)
         if (B.k >= B.nextSh) { B.shT = (SZ ? SZ[zi][1] : B.S.shores || [14, 16, 17, 19, 22, 28, 44, 70])[(B.rng() * 8) | 0]; B.nextSh = B.k + 90 + ((B.rng() * 120) | 0); }
       }
-      B.sh += clamp(B.shT - B.sh, -0.35, 0.35);
+      B.sh += clamp(B.shT - B.sh, -(B.S.shV || 0.35), B.S.shV || 0.35);
       s.sea = B.S.sea; s.sh = B.sh;
     }
     if (B.cutN > 0) { B.cutN--; s.cut = B.cutSide; s.cutH = B.cutH * Math.min(1, Math.min(B.cutN, B.cutLen - B.cutN) / 14); }
-    else if (B.S.hilly >= 0.7 && B.k > 60 && B.k < B.S.len - 80 && B.rng() < 0.012) { B.cutLen = B.cutN = 50 + ((B.rng() * 70) | 0); B.cutSide = B.S.sea ? -B.S.sea : (B.rng() < 0.5 ? -1 : 2); B.cutH = 8 + B.rng() * 8; }
+    else if (B.S.hilly >= 0.7 && B.k > 60 && B.k < B.S.len - 80 && B.rng() < 0.012 && !(B.S.noCut && B.k / B.S.len > B.S.noCut[0] - 0.17 && B.k / B.S.len < B.S.noCut[1])) { B.cutLen = B.cutN = 50 + ((B.rng() * 70) | 0); B.cutSide = B.S.sea ? -B.S.sea : (B.rng() < 0.5 ? -1 : 2); B.cutH = 8 + B.rng() * 8; }
     if (B.wallL > 0) { s.wl = 10.5; B.wallL--; }
     if (B.wallR > 0) { s.wr = 10.5; B.wallR--; }
     if (extra) for (var key in extra) s[key] = extra[key];
@@ -263,7 +263,7 @@
     'swanage>sandbanks': { k: 'chain', dur: 270, title: 'ALL ABOARD!', sub: 'The chain ferry back across to Sandbanks', land: 'SANDBANKS', landSub: 'Along the spit to the goal' },
     'lymington>needles': { k: 'car', dur: 390, title: 'ALL ABOARD!', sub: 'The car ferry to the Isle of Wight', land: 'ISLE OF WIGHT', landSub: 'Off the ferry at Yarmouth' } };
   function buildStage(W, id) {
-    var S = STAGES[id], prev = W.route && W.route.length && W.stretch.length ? STAGES[W.route[W.route.length - 1]].key : null, B = { W: W, S: S, rng: rnd(S.seed), k: 0, sh: S.sea ? 30 : 0, shT: 26, nextSh: 60, bends: [], wallL: 0, wallR: 0 };
+    var S = STAGES[id], prev = W.route && W.route.length && W.stretch.length ? STAGES[W.route[W.route.length - 1]].key : null, B = { W: W, S: S, rng: rnd(S.seed), k: 0, sh: S.sea ? S.sh0 || 30 : 0, shT: 26, nextSh: 60, bends: [], wallL: 0, wallR: 0 };
     var s0 = W.base + W.segs.length, i, first = !W.stretch.length, rec = { id: id, from: s0, to: 0, fork: null, side: W.pendingSide || 0 };
     W.pendingSide = 0;
     for (i = 0; i < 40; i++) add(B, 0);   // the opening straight with its gate
@@ -321,7 +321,7 @@
   // the first n segments of a stretch's bends, without building it: the road the other way at a fork, drawn going off
   // into the distance (world3d.js); heights level
   function peek(id, n) {
-    var T = { base: 0, segs: [], stretch: [] }, S = STAGES[id], B = { W: T, S: S, rng: rnd(S.seed), k: 0, sh: S.sea ? 30 : 0, shT: 26, nextSh: 60, bends: [], wallL: 0, wallR: 0 };
+    var T = { base: 0, segs: [], stretch: [] }, S = STAGES[id], B = { W: T, S: S, rng: rnd(S.seed), k: 0, sh: S.sea ? S.sh0 || 30 : 0, shT: 26, nextSh: 60, bends: [], wallL: 0, wallR: 0 };
     for (var i = 0; i < 40; i++) add(B, 0);
     while (T.segs.length < n) piece(B);
     T.segs.length = n;
@@ -340,7 +340,7 @@
       return putAt(W2, j, t, xx, h, o);
     }
     var STREET = {   // (fraction ends, then: side = a side street every so many segments; car, tree, bin = how often)
-      wareham: [[0.3, {}], [0.8, { car: 0.24, bin: 0.05, side: 50 }], [1.01, {}]], wool: [[0.64, {}], [1.01, { car: 0.14, tree: 0.06, side: 70, poles: 1 }]],
+      wareham: [[0.3, {}], [0.8, { car: 0.24, bin: 0.05, side: 50 }], [1.01, {}]], swanage: [[0.26, {}], [0.58, { car: 0.2, bin: 0.05, side: 60 }], [1.01, {}]], wool: [[0.64, {}], [1.01, { car: 0.14, tree: 0.06, side: 70, poles: 1 }]],
       winton: [[0.25, { car: 0.16, tree: 0.16, side: 70 }], [0.66, { car: 0.3, bin: 0.05, side: 56 }], [1.01, { car: 0.22, tree: 0.12, side: 60, poles: 1, wheelie: 0.25 }]],   // (the owner's videos: cars all along the kerbs)
       charminster: [[0.3, { car: 0.22, tree: 0.1, side: 60 }], [0.7, { car: 0.32, bin: 0.05, side: 52 }], [1.01, { car: 0.18, tree: 0.14, side: 66, poles: -1, wheelie: 0.2 }]],
       kinson: [[0.3, { car: 0.18, tree: 0.12, side: 62, poles: 1, wheelie: 0.25 }], [0.66, { car: 0.26, bin: 0.05, side: 50 }], [1.01, { tree: 0.05, side: 90 }]],
@@ -395,7 +395,7 @@
           break;
         case 'purbeck': {   // in three parts (world3d.js ZONES): the heath, Corfe village under its castle, over the Purbeck Hills
           var fp = k / Math.max(1, to - from);
-          if (fp < 0.3) { if (k % 110 === 55) put(W, i, 'finger', (k % 220 ? -1 : 1) * 10.2, 0.2); break; }
+          if (fp < 0.3) { if (k % 3 === 0) put(W, i, 'railline', 28, 0); if (k % 110 === 55) put(W, i, 'finger', -10.2, 0.2); break; }   // (the heritage line from Norden alongside)
           if (fp < 0.62) { lamps(10, 0, false); break; }
           both(function (d) {
             if (r() < 0.07) put(W, i, 'oak', d * (13 + r() * 30), 0.8, { v: 0 });
@@ -407,15 +407,12 @@
           if (k % 110 === 55) put(W, i, 'finger', (k % 220 ? -1 : 1) * 10.2, 0.2);
           break;
         }
-        case 'swanage': {   // in three parts (world3d.js ZONES): Studland's heath and beach off the ferry, the chalk downs past Old Harry, Swanage
+        case 'swanage': {   // in four parts (world3d.js ZONES), in from Corfe on the A351: Harman's Cross with the steam railway alongside, Herston,
+          // the town, then the front along the bay
           var fz = k / Math.max(1, to - from);
-          if (fz < 0.27) { if (r() < 0.05) put(W, i, ['gorse', 'heather'][(r() * 2) | 0], 11.5 + r() * 20, 0.8, { soft: true, v: 1 }); }
-          else if (fz < 0.7) {
-            if (r() < 0.05) put(W, i, 'gorse', 11.5 + r() * 20, 0.8, { soft: true });
-            if (r() < 0.03) { x = -(11.5 + r() * Math.max(2, sh - 14)); if (land(s, x)) put(W, i, 'gorse', x, 0.8, { soft: true }); }
-            if (r() < 0.04) put(W, i, 'sheep', 16 + r() * 40, 0, { v: (r() * 2) | 0 });
-            onWater('stack', 30, 100, 0.012, (r() * 3) | 0);
-          } else lamps(9, 0, true);
+          if (fz < 0.26) { if (k % 3 === 0) put(W, i, 'railline', 28, 0); if (k % 110 === 55) put(W, i, 'finger', 10.2, 0.2); break; }
+          if (fz < 0.58) { lamps(9, 0, false); street(); break; }
+          lamps(9, 0, true);
           onWater('yacht', 30, 140, 0.015, (r() * 3) | 0);
           break;
         }
@@ -567,7 +564,6 @@
       var fa = to; while (fa > from && segAt(W, fa).fk) fa--;
       putAt(W, fa - 30, 'haven', 31, 0, {}); putAt(W, fa - 62, 'ferryqueue', 17.4, 0, {});
     }
-    if (S.key === 'swanage') { mark('needles', 0.33, function (h) { return -(Math.max(h, 18) + 80); }); mark('needles', 0.66, function (h) { return -(Math.max(h, 18) + 80); }); }
     if (S.key === 'jurassic') {   // Lulworth Castle across its park; old tanks on the ranges, left there as targets; the Cove below West Lulworth;
       // Durdle Door (no lighthouse: there's none there)
       var lj = straightest(0.04, 0.14, 60, 10); if (lj >= 0) putAt(W, lj, 'lulcastle', 72, 0, {});
@@ -576,15 +572,20 @@
       mark('arch', 0.68, function (h) { return -(Math.max(h, 18) + 70); });
     }
     if (S.key === 'weymouth') { mark('clock', 0.4, function (h) { return -(Math.min(h, 22) - 4); }); }
-    if (S.key === 'purbeck') {   // in the village: the old stone pub on the square, the steam train standing at the station (the castle itself is the
-      // place's landmark painting, high on its hill over the village)
-      mark('stonepub', 0.44, function () { return -21; }); mark('corfestation', 0.665, function () { return 24; });   // (just past the village's last cottages: behind them it was hidden)
+    if (S.key === 'purbeck') {   // the steam train on the line from Norden across the heath; in the village the Greyhound on the square, St Edward's
+      // church tower across it, the steam train standing at the station (the castle itself is the place's landmark painting, high on its hill)
+      mark('steamtrain', 0.15, function () { return 28; });
+      mark('stonepub', 0.44, function () { return -21; }); mark('corfechurch', 0.47, function () { return 30; });
+      mark('corfestation', 0.665, function () { return 24; });   // (just past the village's last cottages: behind them it was hidden)
     }
-    if (S.key === 'swanage') {   // the toll booths just off the ferry, the boardwalk to the lake on the heath, and at Swanage its pier and the clock
-      // tower (Old Harry itself is the place's landmark painting: as a 3D model from the road it read as a grey box)
-      mark('tollbooth', 0.04, function () { return 11.8; }); mark('tollbooth', 0.045, function () { return -11.8; });
-      mark('littlesea', 0.15, function () { return 15.2; });
-      mark('pier', 0.76, function () { return -14.9; }, 2); mark('clocktower', 0.735, function () { return -12.6; });   // (before the fork's banner, which would hide them)
+    if (S.key === 'swanage') {   // in from Corfe: the steam train by the road at Harman's Cross; Swanage station and the Town Hall (its front the
+      // old Mercers' Hall's) in the town; on the front the King Alfred column, the clock tower from London Bridge and the pier (Old Harry itself is
+      // the place's landmark painting, across the bay: as a 3D model from the road it read as a grey box)
+      mark('steamtrain', 0.13, function () { return 28; });
+      var sst = straightest(0.44, 0.5, 30, 10); if (sst >= 0) putAt(W, sst, 'corfestation', 26, 0, {});
+      var sth = straightest(0.51, 0.57, 30, 10); if (sth >= 0) putAt(W, sth, 'swanhall', 21, 0, {});
+      mark('alfredcolumn', 0.66, function (h) { return -(Math.min(h, 22) - 5); });
+      mark('clocktower', 0.71, function () { return -12.6; }); mark('pier', 0.74, function () { return -14.9; }, 2);
     }
     if (S.key === 'christchurch') {   // the quay: the bandstand on the bank, rowing boats for hire, the old mill; the castle keep's ruin in the town
       mark('bandstand', 0.42, function (h) { return Math.max(14, h - 5.5); }); mark('rowboats', 0.445, function (h) { return h + 6; });

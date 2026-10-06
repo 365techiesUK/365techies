@@ -1041,12 +1041,20 @@ const MODELS = {
     for (let i = 0; i < 18; i++) { const a = r() * Math.PI * 2, d = 15 + r() * 3; k.card(2, 1.6, 34 + Math.cos(a) * d, 0.9, 2 + Math.sin(a) * d, ['#b8a868', '#8a9a58'][i % 2], r() * 3, 0, 'grass', 'up'); }
     for (let i = 0; i < 3; i++) k.ball(0.35, 30 + i * 3, 0.25, -2 + i * 2, '#2a2a2a', 1.2, 0.6, 0.8);   // ducks
   },
-  clocktower(k, v) {   // the old stone clock tower by the sea at Swanage: square, Gothic, a clock face on each side, a tall pointed spire
-    const S = '#c9bea4';
-    k.box(3.6, 1.2, 3.6, 0, 0, 0, S, 0, 0, 0, 'stone').box(3, 11, 3, 0, 1.2, 0, S, 0, 0, 0, 'stone').box(3.4, 0.5, 3.4, 0, 12.2, 0, '#b8ad92', 0, 0, 0, 'stone');
-    for (const [x, z, ry] of [[0, 1.52, 0], [1.52, 0, Math.PI / 2], [0, -1.52, 0], [-1.52, 0, Math.PI / 2]]) k.put(new THREE.CylinderGeometry(0.9, 0.9, 0.1, 18), '#f4f0e0', x, 10.2, z, Math.PI / 2, ry, 0);   // the clock faces
-    k.put(new THREE.ConeGeometry(2.3, 9, 4), '#a89c82', 0, 17.2, 0, 0, Math.PI / 4, 0, 1, 1, 1, 'stone').cyl(0.06, 0.06, 1.5, 4, 0, 21.7, 0, '#3a3a3a');
-    for (const [x, z] of [[-1.6, -1.6], [1.6, -1.6], [-1.6, 1.6], [1.6, 1.6]]) k.cone(0.4, 2.2, 6, x, 12.7, z, '#a89c82');   // pinnacles at its corners
+  clocktower(k, v) {   // the Wellington Clock Tower at Peveril Point, Swanage (built at London Bridge in 1854, rebuilt here 1867-68): a square Gothic
+    // stone tower, round windows where its clock faces were (the clock never came with it), and since 1904 a little cupola where its spire was
+    const S = '#cfc5ad', S2 = '#b8ad92';
+    k.box(3.9, 1.2, 3.9, 0, 0, 0, S2, 0, 0, 0, 'stone').box(3, 11.4, 3, 0, 1.2, 0, S, 0, 0, 0, 'stone');
+    for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) k.box(0.55, 12, 0.55, x * 1.48, 0.8, z * 1.48, S2, 0, 0, 0, 'stone');   // the corner shafts
+    k.box(3.6, 0.45, 3.6, 0, 6.6, 0, S2, 0, 0, 0, 'stone').box(3.7, 0.6, 3.7, 0, 12.6, 0, S2, 0, 0, 0, 'stone');   // a string course, the cornice
+    for (const [x, z, ry] of [[0, 1.52, 0], [1.52, 0, Math.PI / 2], [0, -1.52, 0], [-1.52, 0, Math.PI / 2]]) {
+      k.put(new THREE.CylinderGeometry(0.95, 0.95, 0.12, 20), S2, x, 10.1, z, Math.PI / 2, ry, 0, 1, 1, 1, 'stone').put(new THREE.CylinderGeometry(0.72, 0.72, 0.16, 20), '#2a3440', x * 1.01, 10.1, z * 1.01, Math.PI / 2, ry, 0, 1, 1, 1, 'shiny');   // the round windows
+      const fx = Math.abs(x) > 0 ? 0.09 : 1.0, fz = Math.abs(z) > 0 ? 0.09 : 1.0;   // a tall pointed Gothic window below on each face
+      k.box(0.7 * fx + 0.12, 2.6, 0.7 * fz + 0.12, x * 1.01, 3.4, z * 1.01, '#2a3440', 0, 0, 0, 'shiny').put(new THREE.ConeGeometry(0.42, 0.7, 4), '#2a3440', x * 1.01, 6.35, z * 1.01, 0, Math.PI / 4, 0, fx + 0.1, 1, fz + 0.1, 'shiny');
+    }
+    k.box(1.2, 2.2, 0.12, 0, 1.2, 1.56, '#4a3a2a');   // the door
+    for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; k.cyl(0.09, 0.09, 1.7, 5, Math.cos(a) * 0.95, 13.2, Math.sin(a) * 0.95, S); }   // the cupola: a ring of little columns
+    k.cyl(1.25, 1.25, 0.3, 12, 0, 13.2, 0, S2, 0, 0, 'stone').cyl(1.2, 1.2, 0.25, 12, 0, 14.9, 0, S2, 0, 0, 'stone').ball(1.15, 0, 15.15, 0, '#6f8a7c', 1, 0.75, 1, 'shiny', 14).cyl(0.06, 0.08, 1.1, 5, 0, 15.9, 0, '#3a3a3a');   // its dome and finial
   },
   purbeckcottage(k, v) {   // a cottage of grey Purbeck stone in Corfe (its face +Z): rubble-stone walls, a heavy roof of stone slates, small
     // white-framed windows, a chimney at each end; some a pair, some with a little porch, flowers by the door
@@ -1059,16 +1067,47 @@ const MODELS = {
     if (v % 3 === 0) k.box(1.8, 0.25, 1.2, 0, 2.4, 3.9, R).box(0.12, 2.4, 0.12, -0.8, 0, 4.4, S).box(0.12, 2.4, 0.12, 0.8, 0, 4.4, S);   // a porch
     for (let i = 0; i < 4; i++) k.ball(0.28, (r() - 0.5) * wide * 0.8, 0.4, 3.6, ['#e63946', '#ff7eb6', '#ffd23f', '#9b5de5'][i], 1, 1.1, 0.8, 'lit', 6);
   },
-  stonepub(k) {   // the old stone pub in the village square: a long grey Purbeck-stone front, a porch on stone pillars out over the pavement, a blank
-    // hanging sign, flower baskets, benches out front
-    const S = '#b0a998', R = '#6e685e', r = rnd(3600);
-    k.box(18, 6, 8, 0, 0, 0, S, 0, 0, 0, 'stone').prism(9, 3.6, 18.6, 0, 6, 0, R, Math.PI / 2);
-    for (let i = 0; i < 5; i++) { const x = -7 + i * 3.5; k.box(1.4, 1.2, 0.1, x, 3.8, 4.02, '#f2efe8').box(1.2, 1.0, 0.12, x, 3.9, 4.03, '#e8b860', 0, 0, 0, 'glow'); if (i !== 2) k.box(1.4, 1.4, 0.1, x, 1.0, 4.02, '#f2efe8').box(1.2, 1.2, 0.12, x, 1.1, 4.03, '#e0a848', 0, 0, 0, 'glow'); }
-    k.box(4, 0.4, 3, 0, 3.4, 5.4, R).box(4.2, 0.3, 3.2, 0, 3.0, 5.4, S, 0, 0, 0, 'stone'); for (const x of [-1.7, 1.7]) k.box(0.5, 3.0, 0.5, x, 0, 6.6, S, 0, 0, 0, 'stone');   // the porch
-    k.box(0.1, 0.1, 1.2, 9.4, 5.0, 4.6, '#1a1a1a').box(0.08, 1.3, 1.0, 9.4, 3.6, 5.0, '#5a1f1a');   // the sign on its bracket (blank)
-    for (const x of [-6, -3, 3, 6]) { k.cyl(0.02, 0.02, 0.5, 4, x, 5.0, 4.4, '#222222'); k.ball(0.45, x, 4.8, 4.4, ['#e63946', '#ff7eb6', '#ffd23f', '#9b5de5'][(r() * 4) | 0], 1, 0.8, 1); }
-    for (const x of [-5.5, 5.5]) k.box(2.6, 0.45, 0.6, x, 0.45, 7.2, '#6a4e34').box(2.6, 0.08, 1.6, x, 0.85, 7.2, '#8a6a48');
-    for (let i = 0; i < 4; i++) person(k, -6 + i * 4 + r(), 0, 8.5 + r(), r, false);
+  stonepub(k) {   // the Greyhound on the square at Corfe (two old houses made one, its face +Z): colour-washed rubble-stone walls, a stone-slate
+    // roof with dormers, brick chimneys at the ends and in the middle, and out over the pavement its two-storey porch - open below on three round
+    // stone columns, a sash window in each face above; the right-hand house's own projection; a blank hanging sign, flower baskets, benches
+    const W2 = '#ece5d2', R = '#6e685e', B = '#9a5a40', r = rnd(3600);
+    k.box(20, 6, 8, 0, 0, 0, W2, 0, 0, 0, 'stone').prism(9, 3.8, 20.6, 0, 6, 0, R, Math.PI / 2);
+    for (const x of [-9.4, 0.4, 9.4]) k.box(1.2, 3.2, 1.6, x, 7.8, -0.4, B, 0, 0, 0, 'stone');   // the chimneys
+    for (const x of [-1.5, 3, 6.5]) { k.box(1.6, 1.4, 1.6, x, 7, 3.0, W2, 0, 0, 0, 'stone').prism(2.0, 0.9, 2.0, x, 8.4, 3.0, R).box(0.9, 0.8, 0.1, x, 7.3, 3.82, '#2a3440', 0, 0, 0, 'shiny'); }   // dormers
+    for (const x of [0.5, 3.6, 7.6]) for (const y of [1.1, 3.8]) k.box(1.3, 1.5, 0.1, x, y, 4.02, '#f2efe8').box(1.1, 1.3, 0.12, x, y + 0.1, 4.03, '#e8b860', 0, 0, 0, 'glow');   // sash windows, lit
+    // the porch: its upper room on three round columns, a stone-slate gable on top
+    k.box(4.2, 3.0, 3.6, -5.2, 3.0, 5.6, W2, 0, 0, 0, 'stone').prism(4.6, 1.5, 3.8, -5.2, 6.0, 5.7, R);
+    for (const x of [-6.9, -5.2, -3.5]) k.cyl(0.24, 0.26, 3.0, 10, x, 0, 7.1, '#d8d2c0', 0, 0, 'stone');
+    k.box(1.3, 1.5, 0.1, -5.2, 3.8, 7.42, '#f2efe8').box(1.1, 1.3, 0.12, -5.2, 3.9, 7.43, '#e8b860', 0, 0, 0, 'glow');
+    for (const sd of [-1, 1]) k.box(0.1, 1.3, 1.1, -5.2 + sd * 2.12, 3.9, 5.8, '#e8b860', 0, 0, 0, 'glow');
+    k.box(1.1, 2.1, 0.1, -5.2, 0, 4.05, '#3a2a1e');   // the door under it
+    k.box(3.4, 5.4, 2.0, 7.8, 0, 4.9, W2, 0, 0, 0, 'stone').box(1.0, 2.0, 0.1, 7.8, 0, 5.92, '#2f4a3a').box(1.6, 0.12, 0.5, 7.8, 2.2, 6.1, R);   // the right house's projection, its door and hood
+    k.box(0.1, 0.1, 1.3, 9.9, 5.0, 4.6, '#1a1a1a').box(0.08, 1.3, 1.0, 9.9, 3.6, 5.0, '#5a1f1a');   // the sign on its bracket (blank)
+    for (const x of [-2.5, 2, 5.5]) { k.cyl(0.02, 0.02, 0.5, 4, x, 5.0, 4.4, '#222222'); k.ball(0.45, x, 4.8, 4.4, ['#e63946', '#ff7eb6', '#ffd23f', '#9b5de5'][(r() * 4) | 0], 1, 0.8, 1); }
+    for (const x of [-1, 4.5]) k.box(2.6, 0.45, 0.6, x, 0.45, 6.4, '#6a4e34').box(2.6, 0.08, 1.6, x, 0.85, 6.4, '#8a6a48');
+    for (let i = 0; i < 4; i++) person(k, -8 + i * 4.4 + r(), 0, 8.6 + r(), r, false);
+  },
+  corfechurch(k) {   // St Edward, King and Martyr, on the square at Corfe (its face +Z): the old west tower of grey Purbeck stone - battlements, a pinnacle
+    // at each corner, louvred belfry windows - the nave behind it under stone slates, tall pointed windows, the churchyard wall and its headstones
+    const S = '#aaa392', S2 = '#968f7e', R = '#6e685e';
+    k.box(6.8, 1.4, 6.8, -9, 0, 1, S2, 0, 0, 0, 'stone').box(6, 21, 6, -9, 1.4, 1, S, 0, 0, 0, 'stone');
+    for (const y of [8, 15]) k.box(6.3, 0.35, 6.3, -9, y, 1, S2, 0, 0, 0, 'stone');   // the string courses
+    k.box(6.5, 1.2, 6.5, -9, 22.4, 1, S2, 0, 0, 0, 'stone');
+    for (let i = 0; i < 4; i++) for (const [x, z] of [[-9 - 2.6 + i * 1.75, 1 + 3.05], [-9 - 2.6 + i * 1.75, 1 - 3.05], [-9 + 3.05, 1 - 2.6 + i * 1.75], [-9 - 3.05, 1 - 2.6 + i * 1.75]]) k.box(0.7, 0.8, 0.7, x, 23.6, z, S2, 0, 0, 0, 'stone');   // the battlements
+    for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) k.cone(0.45, 3.2, 4, -9 + x * 2.9, 23.6, 1 + z * 2.9, S2, 'stone');   // the pinnacles
+    for (const [x, z, a] of [[0, 4.02, 0], [0, -2.02, 0], [3.02, 1, 1], [-3.02, 1, 1]]) for (const o of [-0.8, 0.8]) {   // the belfry windows, louvred
+      const dx = a ? 0 : o, dz = a ? o : 0; k.box(a ? 0.14 : 0.8, 3, a ? 0.8 : 0.14, -9 + x + dx, 17, z + dz, '#2a2a2a');
+      for (let l = 0; l < 5; l++) k.box(a ? 0.16 : 0.84, 0.1, a ? 0.84 : 0.16, -9 + x + dx, 17.3 + l * 0.55, z + dz, S2);
+    }
+    k.box(1.6, 3.2, 0.14, -9, 1.4, 4.06, '#3a2a1e').put(new THREE.ConeGeometry(0.85, 1.0, 4), '#3a2a1e', -9, 5.1, 4.06, 0, Math.PI / 4, 0, 1, 1, 0.12);   // the west door, pointed
+    k.box(1.0, 3.2, 0.14, -9, 9.5, 4.06, '#2a3440', 0, 0, 0, 'shiny');
+    k.box(22, 9, 10, 6, 0, -1, S, 0, 0, 0, 'stone').prism(10.8, 4.6, 22.6, 6, 9, -1, R, Math.PI / 2);   // the nave
+    k.box(22, 5, 4, 6, 0, 5.6, S, 0, 0, 0, 'stone');   // its aisle
+    for (let i = 0; i < 4; i++) { const x = -1 + i * 5; k.box(1.2, 3.2, 0.14, x, 1.0, 7.66, '#2a3440', 0, 0, 0, 'shiny').put(new THREE.ConeGeometry(0.65, 0.8, 4), '#2a3440', x, 4.6, 7.66, 0, Math.PI / 4, 0, 1, 1, 0.12, 'shiny'); k.box(1.1, 2.6, 0.14, x, 5.6, 4.06, '#2a3440', 0, 0, 0, 'shiny'); }
+    k.box(23, 0.3, 4.6, 6, 5, 5.6, R, 0, 0.18, 0);   // the aisle's lean-to roof
+    k.box(34, 1.1, 0.6, 1, 0, 11.5, S2, 0, 0, 0, 'stone');   // the churchyard wall
+    for (let i = 0; i < 7; i++) k.box(0.9, 1.2, 0.2, -8 + i * 4.2, 0, 9.2 - (i % 2) * 1.4, '#9a9488', 0, 0, 0, 'stone');   // headstones
+    k.cyl(0.4, 0.6, 5, 6, 14, 0, 9.5, '#5a4632').ball(3.2, 14, 7, 9.5, '#2f5a2a', 1, 1.2, 1);   // a yew
   },
   corfestation(k) {   // the heritage railway's station at Corfe, along the road (+Z: along it): a stone station with a canopy over the platform,
     // and a steam train standing at it - a green engine with its tall chimney steaming, carriages in crimson and cream
@@ -1826,6 +1865,39 @@ const MODELS = {
     }
     k.box(40, 1.0, 4, 0, -0.1, -9, '#c8c4bc').box(40, 0.2, 0.4, 0, 0.9, -7.2, '#f2d020');   // the platform
     k.box(2, 0.6, 10, 22, 5, -5, '#3a5a8a').box(1.4, 5.6, 1.4, 22, 0, -9, '#3a5a8a').box(1.4, 5.6, 1.4, 22, 0, 0, '#3a5a8a');   // the footbridge
+  },
+  steamtrain(k) {   // the heritage line's steam train on the move (along Z, the engine at -Z): a green tank engine, its tall chimney trailing steam,
+    // red wheels, then its carriages in crimson and cream
+    const G = '#2f5a3a';
+    k.box(2.6, 2.4, 9, 0, 1.0, -30, G, 0, 0, 0, 'shiny').axle(1.2, 2.4, 14, 0, 2.4, -32, G, 'shiny').box(2.8, 3.2, 3.2, 0, 1.0, -25.4, G, 0, 0, 0, 'shiny');   // the engine: boiler, tanks, cab
+    k.box(2.9, 0.3, 3.6, 0, 4.2, -25.4, '#1a1a1a').cyl(0.4, 0.45, 1.6, 10, 0, 3.6, -35, '#1a1a1a').box(2.4, 0.1, 9, 0, 3.6, -30, '#c9a227');   // the cab roof, the chimney, a brass line
+    for (let i = 0; i < 6; i++) k.ball(1.2 + i * 0.55, 0.2 * i, 5.8 + i * 1.1, -35 + i * 3.4, '#f4f4f2', 1, 0.8, 1, 'lit', 8);   // its steam, streaming back
+    for (const z of [-33.5, -30, -27]) for (const sd of [-1, 1]) k.axle(0.75, 0.2, 12, sd * 1.25, 0.95, z, '#c62828');   // red wheels
+    for (let c = 0; c < 3; c++) { const z = -16 + c * 15;
+      k.box(2.7, 3.2, 14, 0, 1.0, z, '#7a1f2b', 0, 0, 0, 'shiny').box(2.72, 1.2, 14.02, 0, 2.9, z, '#e8d8b0').put(new THREE.CylinderGeometry(1.6, 1.6, 14, 12, 1, false, -Math.PI / 2, Math.PI), '#4a4a4e', 0, 4.0, z, Math.PI / 2, 0, 0, 0.9, 1, 0.4);
+      for (const sd of [-1, 1]) for (let w = 0; w < 6; w++) k.box(0.08, 0.8, 1.4, sd * 1.37, 3.1, z - 5.5 + w * 2.2, '#2a3440', 0, 0, 0, 'shiny'); }
+  },
+  alfredcolumn(k) {   // the King Alfred memorial on the front at Swanage (1862: the sea battle with the Danes in the bay in 877): a plain Tuscan column
+    // of granite on two steps, four cannonballs from the Crimean War on its top; benches round it
+    const G = '#cbbfb8', G2 = '#b4a8a2';
+    k.box(3.4, 0.35, 3.4, 0, 0, 0, G2, 0, 0, 0, 'stone').box(2.6, 0.35, 2.6, 0, 0.35, 0, G2, 0, 0, 0, 'stone').box(1.6, 1.7, 1.6, 0, 0.7, 0, G, 0, 0, 0, 'stone').box(1.85, 0.28, 1.85, 0, 2.4, 0, G2, 0, 0, 0, 'stone');
+    k.cyl(0.62, 0.62, 0.3, 16, 0, 2.68, 0, G2, 0, 0, 'stone').cyl(0.44, 0.52, 5.4, 16, 0, 2.98, 0, G, 0, 0, 'stone').cyl(0.64, 0.46, 0.4, 16, 0, 8.38, 0, G2, 0, 0, 'stone').box(1.4, 0.3, 1.4, 0, 8.78, 0, G2, 0, 0, 0, 'stone');
+    for (const [x, z] of [[-0.3, -0.3], [0.3, -0.3], [-0.3, 0.3], [0.3, 0.3]]) k.ball(0.27, x, 9.35, z, '#2a2a2a', 1, 1, 1, 'shiny', 12);
+    for (const [x, z, ry] of [[0, 3.2, 0], [0, -3.2, 0], [3.2, 0, Math.PI / 2], [-3.2, 0, Math.PI / 2]]) k.box(2.4, 0.45, 0.6, x, 0.45, z, '#6a4e34', ry).box(2.4, 0.08, 0.5, x, 0.9, z, '#8a6a48', ry);
+  },
+  swanhall(k) {   // Swanage's Town Hall on the High Street (its face +Z): its front is the carved stone facade of the old Mercers' Hall, brought from
+    // Cheapside in London - a round-arched doorway between columns, a pediment over the window above, garlands, a balustrade along the top
+    const S = '#e4dece', S2 = '#cfc8b4', D = '#3a3028';
+    k.box(14, 11, 12, 0, 0, -6.4, S2, 0, 0, 0, 'stone');   // the hall behind
+    k.box(12, 10.4, 0.9, 0, 0, 0.45, S, 0, 0, 0, 'stone');
+    k.box(2.6, 3.4, 0.2, 0, 0, 0.98, D).put(new THREE.CylinderGeometry(1.3, 1.3, 0.2, 16, 1, false, -Math.PI / 2, Math.PI), D, 0, 3.4, 0.98, Math.PI / 2, 0, 0);   // the doorway, round-arched
+    for (const x of [-2.3, 2.3]) k.cyl(0.32, 0.34, 4.6, 12, x, 0, 1.3, S, 0, 0, 'stone').box(0.9, 0.35, 0.9, x, 4.6, 1.3, S2, 0, 0, 0, 'stone');   // its columns
+    k.box(6.4, 0.6, 0.7, 0, 4.95, 1.25, S2, 0, 0, 0, 'stone');
+    k.box(2.2, 2.9, 0.2, 0, 5.8, 0.98, '#2a3440', 0, 0, 0, 'shiny').box(2.8, 0.25, 0.4, 0, 5.6, 1.05, S2, 0, 0, 0, 'stone').prism(3.4, 1.1, 0.5, 0, 8.9, 1.1, S2);   // the window, its pediment
+    for (let i = 0; i < 7; i++) { const a = (i / 6 - 0.5) * 2.2; k.ball(0.22, Math.sin(a) * 2.6, 8.6 - Math.cos(a) * 0.9, 1.05, ['#c8bfa6', '#b8b092'][i % 2], 1, 1, 0.6); }   // the carved garland
+    for (const x of [-4.4, 4.4]) for (const y of [1.2, 5.8]) k.box(1.4, 2.4, 0.2, x, y, 0.98, '#2a3440', 0, 0, 0, 'shiny').box(1.7, 0.2, 0.3, x, y + 2.4, 1.02, S2, 0, 0, 0, 'stone');
+    for (const x of [-5.7, 5.7]) k.box(0.5, 10.4, 0.4, x, 0, 1.0, S2, 0, 0, 0, 'stone');   // the pilasters at its ends
+    k.box(12.4, 0.5, 1.1, 0, 10.4, 0.5, S2, 0, 0, 0, 'stone'); for (let i = 0; i < 15; i++) k.cyl(0.12, 0.16, 0.8, 6, -5.6 + i * 0.8, 10.9, 0.5, S); k.box(12.4, 0.25, 0.8, 0, 11.7, 0.5, S2, 0, 0, 0, 'stone');   // the balustrade
   },
   railline(k) {   // the railway beside the road (along Z): two rails on sleepers on a bed of ballast, a fence along it, a telegraph-style cable post
     k.box(4.4, 0.4, 12, 0, 0, 0, '#8a8478');
