@@ -25446,6 +25446,16 @@ def write_portal_page():
   #p365app .cm-head h2 { margin:0; }
   #p365app .cm-head .cm-sentb { margin:0; min-height:40px; padding:.4rem .8rem; font-size:.88rem; }
   #p365app .sn-dlg { max-width:780px; }
+  /* the paid app abroad (8 Oct 2026) */
+  #p365app .plus-new { display:flex; flex-wrap:wrap; align-items:center; gap:.4rem .8rem; margin:.4rem 0 .6rem; padding:.6rem .8rem; border:1px solid var(--pgood); border-radius:10px; }
+  #p365app .plus-key { font-family:var(--font-mono, monospace); font-size:1.15rem; letter-spacing:.06em; color:var(--pwhite); }
+  #p365app .plus-new button { margin:0; }
+  #p365app .plus-form label { margin-top:.2rem; }
+  #p365app .plus-row { display:flex; flex-wrap:wrap; gap:.5rem; }
+  #p365app .plus-row input { flex:1 1 12rem; width:auto; }
+  #p365app .plus-row select { flex:0 0 auto; width:auto; }
+  #p365app .plus-row button { margin:0; min-height:44px; }
+  #p365app .plus-tbl td .sm { margin:.15rem 0; }
   #p365app .sn-search { display:flex; gap:.5rem; margin:.85rem 0 .75rem; }
   #p365app .sn-search input { flex:1 1 auto; min-width:0; }
   #p365app .sn-search button { margin:0; flex:0 0 auto; min-height:44px; }
@@ -29576,6 +29586,7 @@ def write_portal_page():
     function cardOf(id) { var n = document.getElementById(id); return n ? (n.classList.contains('card') ? n : n.closest('.card')) : null; }
     var diary = cardOf('dday'), sos = cardOf('sosqcard'), invq = cardOf('invqcard'), worth = cardOf('worthcall'), fleet = cardOf('ffleet'), comms = cardOf('cmbox'),
         act = cardOf('ab'), qbo = cardOf('qbosetup'), invp = cardOf('inviteplans'), geo = cardOf('geocard'), quick = cardOf('pcmadm'), live = cardOf('vislive'), lic = null,
+        plus = cardOf('pluscard'),   // 8 Oct 2026: the paid app abroad, on Setup
         inst = cardOf('instbox'), commsV = cardOf('cmvbox'),   // 1 Oct 2026: PC Manager installs, under the fleet
         cust = cardOf('custq');   // 6 Oct 2026: Find a customer, first on the Customers tab
     Array.prototype.forEach.call(root.querySelectorAll('.card > h2'), function (h2) { if (/PC Manager licences/.test(h2.textContent)) lic = h2.parentNode; });
@@ -29611,7 +29622,7 @@ def write_portal_page():
     if (fleet) panels.computers.appendChild(fleet);
     if (inst) panels.computers.appendChild(inst);
     if (invq) panels.invoices.appendChild(invq);
-    [qbo, invp, geo].forEach(function (c) { if (c) panels.setup.appendChild(c); });
+    [qbo, invp, geo, plus].forEach(function (c) { if (c) panels.setup.appendChild(c); });
     // the consoles are used every day, so their buttons ride in the tab bar instead of a card at the bottom
     if (quick) {
       var cons = bar.querySelector('.nx-cons');
@@ -30197,6 +30208,8 @@ def write_portal_page():
         + '<div class="quiet">Customers counted by postcode district, from the address on their record. Not search traffic \\u2014 real customers.</div>'
         + '<p style="margin:.5rem 0 0"><button class="sm ghost" id="geogo">Count by postcode</button></p>'
         + '<div id="geobox"></div></div>';
+      // 8 Oct 2026 (owner: "yes do both"): the paid app abroad - its switch (read-only here) and the Unlock keys
+      h += '<div class="card" id="pluscard"><h2>\\ud83d\\udd13 Paid app abroad: \\u201cUnlock everything\\u201d</h2><div id="plusbox"><p class="quiet">Loading\\u2026</p></div></div>';
       h += '<div class="card"><h2>Quick links</h2><div class="row">'
         + '<button class="sm" id="ncopen">\\u2795 New customer</button>'   // 2 Oct 2026: like Slack's "New job in" (ncOpen)
         + '<a class="btn sm ghost" href="https://365techies.secure.simplybook.it/v2/management/" target="_blank" rel="noopener">SimplyBook admin</a>'
@@ -30220,7 +30233,7 @@ def write_portal_page():
       el.innerHTML = h;
       bindOut();
       nxStaffLayout();
-      loadDiary(); loadFleet(); loadInstalls(); cmBind(); loadComms('list');
+      loadDiary(); loadFleet(); loadInstalls(); loadPlus(); cmBind(); loadComms('list');
       loadSosq();
       nxlLoad();
       qboSetup();
@@ -32590,6 +32603,66 @@ def write_portal_page():
     }
     Array.prototype.forEach.call(box.querySelectorAll('[data-iw]'), function (b) { b.onclick = function () { INST.who = b.getAttribute('data-iw'); loadInstalls(); }; });
     Array.prototype.forEach.call(box.querySelectorAll('[data-iours]'), function (b) { b.onclick = function () { b.disabled = true; loadInstalls(b.getAttribute('data-iours')); }; });
+  }
+  /* ---------- 8 Oct 2026: the paid app abroad, "Unlock everything" (api/pcm-plus-admin.php). The switch is NOT here - it
+     goes on in api/pcm-buy-config.php, deployed on the owner's go (api/pcm-buy.off on the server stops it at once).
+     Keys are made here for testing or a sale made by hand; a new key is shown once (only its hash is kept). ---------- */
+  var PLUS = { d: null, key: '', busy: false };
+  function loadPlus(act, extra) {
+    var box = document.getElementById('plusbox'); if (!box) return;
+    if (PLUS.busy) return; PLUS.busy = !!act;
+    var body = { stoken: S.stoken, machine: mid(), do: act || 'list' }; for (var k in (extra || {})) body[k] = extra[k];
+    post('/api/pcm-plus-admin.php', body)
+      .then(function (d) { PLUS.busy = false; PLUS.d = d; PLUS.key = (d && d.key) || ''; renderPlus(); })
+      .catch(function () { PLUS.busy = false; PLUS.d = { ok: false }; renderPlus(); });
+  }
+  function plusDay(t) { return t ? new Date(t * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : ''; }
+  function renderPlus() {
+    var box = document.getElementById('plusbox'); if (!box) return;
+    var d = PLUS.d;
+    if (!d || !d.ok) { box.innerHTML = '<p class="quiet">' + (d && d.error === 'auth' ? 'Your staff session has expired \\u2014 sign out and in again.' : 'Couldn\\u2019t load the keys \\u2014 refresh to retry.') + '</p>'; return; }
+    var h = '<p style="margin:.1rem 0 .5rem">' + (d.on ? '<b style="color:var(--pgood)">\\u25cf On</b> \\u2014 PCs outside the UK that aren\\u2019t linked to us are offered it' + (d.price ? ' at <b>' + esc(d.price) + '</b>' : '') + '.'
+        : '<b>\\u25cb Switched off</b> \\u2014 nobody is offered it (' + esc(d.why_off) + '). It goes on once you\\u2019ve chosen the payment company and the price.') + '</p>'
+      + '<p class="quiet" style="margin:0 0 .6rem">Outside the UK, the app\\u2019s locked \\u201cdo it for me\\u201d buttons offer \\u201cUnlock everything\\u201d instead of our support plans: the full service and the tools, no visits, email support. Their service reports stay on their PC \\u2014 nothing comes to Slack or email; the card counts the runs. Never offered to a PC linked to a customer. A key works on up to ' + (d.max_pcs || 3) + ' PCs, from the PC Manager release that includes it.</p>';
+    if (PLUS.key) h += '<div class="plus-new" role="status"><span class="quiet">New key \\u2014 copy it now, it won\\u2019t be shown again:</span><b class="plus-key" id="plusnewkey">' + esc(PLUS.key) + '</b>'
+      + '<button type="button" class="sm ghost" id="pluscopy">Copy</button></div>';
+    if (d.note) h += '<p class="quiet" role="status" style="margin:.3rem 0">' + esc(d.note) + '</p>';
+    if (d.err) h += '<p class="err" role="alert">' + esc(d.err) + '</p>';
+    h += '<div class="plus-form"><label for="plusemail">Make a key (for testing, or a sale made by hand)</label>'
+      + '<div class="plus-row"><input id="plusemail" type="email" autocomplete="off" placeholder="The buyer\\u2019s email" />'
+      + '<select id="plusyears" aria-label="How long"><option value="1">1 year</option><option value="0">Lifetime</option></select>'
+      + '<input id="plusnote" type="text" maxlength="120" autocomplete="off" placeholder="Note (optional)" />'
+      + '<button type="button" class="sm" id="plusmake">Make a key</button></div></div>';
+    var keys = d.keys || [];
+    h += keys.length ? '<div class="tblwrap"><table class="plus-tbl"><tr><th>Key</th><th>Email</th><th>Made</th><th>Until</th><th>PCs</th><th>Full services</th><th>Status</th><th></th></tr>' + keys.map(function (k) {
+        var exp = k.expires ? plusDay(k.expires) : 'lifetime', gone = k.expires && k.expires * 1000 < Date.now();
+        return '<tr><td class="mono">\\u2026' + esc(k.last4) + '</td><td>' + esc(k.email) + (k.note ? '<br /><span class="quiet">' + esc(k.note) + '</span>' : '') + '</td>'
+          + '<td>' + esc(plusDay(k.created)) + (k.by ? '<br /><span class="quiet">by ' + esc(k.by) + '</span>' : '') + '</td><td>' + esc(exp) + (gone ? ' (expired)' : '') + '</td>'
+          + '<td>' + k.pcs + ' of ' + (d.max_pcs || 3) + '</td><td>' + (k.runs || 0) + (k.last_run ? '<br /><span class="quiet">last ' + esc(plusDay(k.last_run)) + '</span>' : '') + '</td>'
+          + '<td>' + (k.status === 'active' ? 'working' : 'switched off') + '</td>'
+          + '<td><button type="button" class="sm ghost" data-plusact="' + (k.status === 'active' ? 'revoke' : 'restore') + '" data-plusid="' + esc(k.id) + '">' + (k.status === 'active' ? 'Switch off' : 'Switch on') + '</button>'
+          + (k.pcs ? ' <button type="button" class="sm ghost" data-plusact="freepcs" data-plusid="' + esc(k.id) + '">Clear PCs</button>' : '') + '</td></tr>';
+      }).join('') + '</table></div>' : '<p class="quiet">No keys yet.</p>';
+    box.innerHTML = h;
+    var mk = document.getElementById('plusmake');
+    if (mk) mk.onclick = function () {
+      var em = document.getElementById('plusemail').value.trim();
+      if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(em)) { document.getElementById('plusemail').focus(); return; }
+      mk.disabled = true; mk.textContent = 'Making\\u2026';
+      loadPlus('issue', { email: em, years: parseInt(document.getElementById('plusyears').value, 10) || 0, note: document.getElementById('plusnote').value.trim() });
+    };
+    var cp = document.getElementById('pluscopy');
+    if (cp) cp.onclick = function () {
+      var t = PLUS.key;
+      try { navigator.clipboard.writeText(t).then(function () { cp.textContent = 'Copied'; }, function () { cp.textContent = 'Select it and copy'; }); } catch (e) { cp.textContent = 'Select it and copy'; }
+    };
+    Array.prototype.forEach.call(box.querySelectorAll('[data-plusact]'), function (b) {
+      b.onclick = function () {
+        var act = b.getAttribute('data-plusact');
+        if (act === 'revoke' && !window.confirm('Switch this key off? It stops working at its PCs\\u2019 next check-in. You can switch it back on.')) return;
+        b.disabled = true; loadPlus(act, { id: b.getAttribute('data-plusid') });
+      };
+    });
   }
   function loadFleet() {
     post(BK, { action: 'stafffleet', stoken: S.stoken, machine: mid() }).then(function (d) {
