@@ -32557,11 +32557,13 @@ def write_portal_page():
       h += '<div class="stats">'
         + '<div class="stat"><b>' + d.total + '</b><span>installs</span></div>'
         + '<div class="stat g"><b>' + (d.kept || 0) + '</b><span>still using it</span></div>'
+        + '<div class="stat g"><b>' + (d.days3 || 0) + '</b><span>used on 3+ days</span></div>'
         + '<div class="stat"><b>' + (d.once || 0) + '</b><span>ran once only</span></div>'
         + '<div class="stat"><b>' + d.new7 + '</b><span>new this week</span></div>'
         + '<div class="stat"><b>' + dl.d7 + '</b><span>download clicks this week</span></div></div>';
-      h += '<p class="quiet" style="margin:.55rem 0 0">Used this week: <b>' + d.active7 + '</b> \\u00b7 new today: <b>' + d.newToday + '</b> \\u00b7 too soon to tell: <b>' + (d.soon || 0)
-        + '</b> (first seen in the last two days)</p>';
+      // 8 Oct 2026: still using it now also needs a sighting this week; used on 2+ days but not since = stopped
+      h += '<p class="quiet" style="margin:.55rem 0 0">Stopped using it: <b>' + (d.stopped || 0) + '</b> (used on two or more days, not in the last week) \\u00b7 used this week: <b>' + d.active7
+        + '</b> \\u00b7 new today: <b>' + d.newToday + '</b> \\u00b7 too soon to tell: <b>' + (d.soon || 0) + '</b> (first seen in the last two days)</p>';
       var max = 1; (d.daily || []).forEach(function (x) { if (x.n > max) max = x.n; });
       h += '<p class="quiet" style="margin:.7rem 0 .3rem">New installs, last 30 days</p><div class="instbars">'
         + (d.daily || []).map(function (x) { return '<span title="' + esc(x.d) + ': ' + x.n + '" style="height:' + Math.max(2, Math.round(40 * x.n / max)) + 'px"></span>'; }).join('') + '</div>';
@@ -32583,7 +32585,7 @@ def write_portal_page():
         + (oi.here ? 'Count PCs on this connection again' : 'These PCs are ours: leave out PCs on this internet connection') + '</button>'
         + (oi.here ? '' : '<p class="quiet" style="font-size:.88rem;margin:.35rem 0 0">Press it on the internet your own PCs use (at home or the office). A customer\\u2019s PC on your bench counts as ours only while it is here.</p>')
         + '</div>';
-      h += '<p class="quiet" style="font-size:.9rem;margin:.7rem 0 0">Counted from the app\\u2019s own hourly check-in' + (d.since ? ' since ' + esc(d.since) : '') + '. <b>Still using it</b> = seen on two or more different days; <b>ran once</b> = seen on one day only, at least two days ago (mostly antivirus firms\\u2019 test machines and people who tried it once). Counting began on 1 Oct 2026, so copies already in use show up as \\u201cnew\\u201d the first time they start after that. A download click is a click on a download button (the live view, each visitor once a day) - not every click becomes an install. Countries come from the internet connection at check-in; no names or addresses are kept.</p>';
+      h += '<p class="quiet" style="font-size:.9rem;margin:.7rem 0 0">Counted from the app\\u2019s own hourly check-in' + (d.since ? ' since ' + esc(d.since) : '') + '. <b>Still using it</b> = used on two or more different days, and seen in the last week; <b>used on 3+ days</b> = the surest sign of a real person (days are counted from 8 Oct 2026); <b>ran once</b> = seen on one day only, at least two days ago (mostly antivirus firms\\u2019 test machines and people who tried it once). Counting began on 1 Oct 2026, so copies already in use show up as \\u201cnew\\u201d the first time they start after that. A download click is a click on a download button (the live view, each visitor once a day) - not every click becomes an install. Countries come from the internet connection at check-in; no names or addresses are kept.</p>';
       box.innerHTML = h;
     }
     Array.prototype.forEach.call(box.querySelectorAll('[data-iw]'), function (b) { b.onclick = function () { INST.who = b.getAttribute('data-iw'); loadInstalls(); }; });
