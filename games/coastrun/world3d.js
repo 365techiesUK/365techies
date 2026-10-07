@@ -1779,18 +1779,22 @@ export function createWorld() {
     { let up = 0, gp = 0, gr = 0; if (Math.abs(W.x) > HALF + RUM && !W.air) { const ly = landY(W, POS.x, cy, POS.z); if (ly != null) { up = Math.max(-0.5, Math.min(8, ly - cy));   // off the road: on the land,
         const hd = R.visHead || roadTh, fx0 = Math.sin(hd), fz0 = -Math.cos(hd), lf = landY(W, POS.x + fx0 * 1.4, cy, POS.z + fz0 * 1.4), lr = landY(W, POS.x - fz0 * 0.9, cy, POS.z + fx0 * 0.9);   // tilted to its slope
         if (lf != null) gp = Math.max(-0.35, Math.min(0.35, Math.atan((lf - ly) / 1.4))); if (lr != null) gr = Math.max(-0.35, Math.min(0.35, Math.atan((lr - ly) / 0.9))); } }
+      const dk2 = 1 - 0.5 * (R.driftK || 0); up *= dk2; gp *= dk2; gr *= dk2;   // (drifting over the kerb: half the jolt)
       const kg = Math.min(1, dt * 10); R.gLift = (R.gLift || 0) + (up - (R.gLift || 0)) * kg; R.gP = (R.gP || 0) + (gp - (R.gP || 0)) * kg; R.gR = (R.gR || 0) + (gr - (R.gR || 0)) * kg; cy += R.gLift; }
     const heading = roadTh + W.psi, travel = roadTh + W.phi; R.heading = heading;
     player.position.set(cx, cy, cz);
     const cr = W.crash;
-    R.psiK = (R.psiK || 1) + ((W.drift && !cr ? 1.75 : 1) - (R.psiK || 1)) * Math.min(1, dt * 4); R.visHead = roadTh + Math.sign(W.psi) * Math.min(Math.abs(W.psi) * R.psiK, Math.max(Math.abs(W.psi), 0.7));   // (never past about 40 degrees)
+    { const slip = W.psi - W.phi, a = Math.abs(slip), S = Math.min(1, Math.max(0, (a - 0.03) / 0.27)), ex = 1 + 0.35 * S * S * (3 - 2 * S), vs = Math.sign(slip) * 0.66 * Math.tanh(a * ex / 0.66);   // (drift, 7 Oct: one smooth curve - it used to switch)
+      R.vsS = R.vsS == null || cr ? vs : R.vsS + Math.max(-2.1 * dt, Math.min(2.1 * dt, vs - R.vsS)); R.visSlip = cr ? 0 : R.vsS;   // (round 3: at most ~120 degrees a second on screen)
+      R.visHead = roadTh + W.phi + (cr ? slip : R.vsS);
+      if (!cr) { const tv = roadTh + W.phi, A = 0.3; player.position.x += A * (Math.sin(tv) - Math.sin(R.visHead)); player.position.z += A * (Math.cos(R.visHead) - Math.cos(tv)); } }   // (the tail swings out round the front wheels)   // (never past about 40 degrees)
     // the body on its springs (owner, 6 Oct: "more realistic"): it dips under braking and squats as it pulls away, by how hard (the real
     // change of speed, smoothed), and leans out in a bend by how fast you're turning
     const dvdt = dt > 0 ? (W.v - (R.pv == null ? W.v : R.pv)) / dt : 0; R.pv = W.v;
     R.lonA = (R.lonA || 0) + (Math.max(-14, Math.min(10, cr ? 0 : dvdt)) - (R.lonA || 0)) * Math.min(1, dt * 4);
     R.latK = (R.latK || 0) + ((cr ? 0 : W.steer * Math.pow(Math.min(1.2, W.v / E.VMAX), 2)) - (R.latK || 0)) * Math.min(1, dt * 3);
     let yaw = -R.visHead, roll = POS.bank * 0.8 + R.latK * 0.06, pitch = Math.atan(gradeAt(W)) * 0.9 + (W.air ? clamp(W.vh * 0.012, -0.25, 0.2) : 0), lift = 0;
-    R.bodyR = (R.bodyR || 0) + ((W.drift && !cr ? W.steer * 0.08 : 0) - (R.bodyR || 0)) * Math.min(1, dt * 5); R.bodyP = (R.bodyP || 0) + ((W.boosting ? 0.012 : 0) + R.lonA * 0.0022 - (R.bodyP || 0)) * Math.min(1, dt * 5);
+    R.bodyR = (R.bodyR || 0) + ((cr ? 0 : (R.visSlip || 0) * 0.13) - (R.bodyR || 0)) * Math.min(1, dt * 10); R.bodyP = (R.bodyP || 0) + ((W.boosting ? 0.012 : 0) + R.lonA * 0.0022 + (W.drift && !cr ? (W.driftT < 0.18 ? -0.026 : 0.017) : 0) - (R.bodyP || 0)) * Math.min(1, dt * 5);   // (drift, 7 Oct: roll by the slide, a nose dip into it, a squat holding it)
     roll += R.bodyR + (R.gR || 0); pitch += R.bodyP + (R.gP || 0);
     if ((W.wspin || 0) > 0.1 && !cr) yaw += Math.sin(t / 85) * 0.025 * W.wspin;   // (the tail twitching as the tyres spin)
     if (W.kickA && !cr) yaw -= W.kickA;   // (nitro from low speed: the tail kicked out)
@@ -1810,12 +1814,13 @@ export function createWorld() {
     R.brakeK += (((W.v < R.lastV - 0.05 && !W.crash) || W.drift ? 1 : 0) - R.brakeK) * Math.min(1, dt * 12); R.lastV = W.v;
     CAR.brake.color.setScalar(1.05 + R.brakeK * 2.6);
     animateCouple(W, dt, t);
-    wheels.forEach((w, i) => { if (w.parent !== player) return; w.rotation.order = 'YXZ'; w.rotation.y = i < 2 ? -W.steer * 0.42 + (W.drift ? W.drift * 0.25 : 0) : 0; w.rotation.x = -R.wheelSpin - (i >= 2 ? R.rearSpin || 0 : 0); });
+    R.lockK = (R.lockK || 0) + ((Math.abs(R.visSlip || 0) > 0.06 ? 1 : 0) - (R.lockK || 0)) * Math.min(1, dt * 10);   // (opposite lock, eased in and out over ~0.1 s)
+    wheels.forEach((w, i) => { if (w.parent !== player) return; w.rotation.order = 'YXZ'; w.rotation.y = i < 2 ? (1 - R.lockK) * -W.steer * 0.42 + R.lockK * Math.max(-0.52, Math.min(0.52, (R.visSlip || 0) * 0.8)) : 0; w.rotation.x = -R.wheelSpin - (i >= 2 ? R.rearSpin || 0 : 0); });
     const sh = player.userData.shadow; sh.position.y = 0.05 - (W.h - E.heightAt(W, W.s)) - lift; sh.material.opacity = Math.max(0.15, 1 - (W.h - E.heightAt(W, W.s) + lift) * 0.2);
     // ---- the camera: behind and above, swinging round late, wider as you go faster
     R.crashK += ((cr && cr.hard ? 1 : 0) - R.crashK) * Math.min(1, dt * 2.5);
     const near = R.camNear !== false, spd = W.v / E.VMAX, sk = Math.min(0.5, Math.max(0, spd - 0.6)), zk = near ? Math.pow(Math.tan(25 * Math.PI / 180) / Math.tan(Math.min(80, Math.max(30, camera.fov - (R.nk || 0) * 4)) * Math.PI / 360), 0.7) : 1, camDist = (near ? (7.15 - (R.driftK || 0) * 0.45) * zk : 4.4 + spd * 0.5) + R.crashK * 3.8, camH = (near ? (1.9 + R.boostK * 0.3) * zk : 2.15 + spd * 0.2) + R.crashK * 1.7;   // (the whole rig scales round the car: same size, same place)   // Close: low behind the car; High: up enough to see the road over the two of you
-    const yawTarget = travel * 0.55 + heading * 0.45;
+    const hw = 0.45 - 0.25 * Math.min(1, Math.abs(R.visSlip || 0) / 0.3), yawTarget = travel * (1 - hw) + heading * hw;   // (in a drift the camera keeps more to the line the car's taking)
     if (!R.camInit) { R.camYaw = yawTarget; }
     let dy = yawTarget - R.camYaw; while (dy > Math.PI) dy -= 2 * Math.PI; while (dy < -Math.PI) dy += 2 * Math.PI;
     R.camYaw += dy * Math.min(1, dt * (cr ? 1.5 : near ? 3.8 : 5.5));
@@ -1834,7 +1839,7 @@ export function createWorld() {
       if (ly != null && R.camPos.y < ly + 1.1) R.camPos.y = ly + 1.1; }
     camera.position.copy(R.camPos);
     if (W.shake > 0 && R.shakeOn !== false) camera.position.add(V4.set((Math.random() - 0.5) * W.shake * 0.02, (Math.random() - 0.5) * W.shake * 0.02, 0));
-    if (near) { const io = (R.driftK || 0) * (W.steer || 0) * 2.2 * zk, la = (12 + R.boostK * 5) * zk; V4.set(cx + fx * la * (1 - R.crashK * 0.9) - fz * io, R.camY + 1.0 * zk + (cy - R.camY) * 0.35 + lift * 0.7 * R.crashK, cz + fz * la * (1 - R.crashK * 0.9) + fx * io); }
+    if (near) { const io = (R.driftK || 0) * (W.steer || 0) * 0.8 * zk, la = (12 + R.boostK * 5) * zk; V4.set(cx + fx * la * (1 - R.crashK * 0.9) - fz * io, R.camY + 1.0 * zk + (cy - R.camY) * 0.35 + lift * 0.7 * R.crashK, cz + fz * la * (1 - R.crashK * 0.9) + fx * io); }
     else V4.set(cx + fx * 12 * (1 - R.crashK * 0.9), R.camY + 1.55 + (cy - R.camY) * 0.35 + lift * 0.7 * R.crashK, cz + fz * 7 * (1 - R.crashK * 0.85));
     if (R.camShake > 0) { camera.position.add(V3.set((Math.random() - 0.5) * R.camShake, (Math.random() - 0.5) * R.camShake, (Math.random() - 0.5) * R.camShake)); R.camShake = Math.max(0, R.camShake - dt * 1.4); }
     camera.lookAt(V4);
@@ -2045,7 +2050,8 @@ export function createWorld() {
     const fx = Math.sin(heading), fz = -Math.cos(heading), rx = Math.cos(heading), rz = Math.sin(heading), len = carInfo ? carInfo.len : 2;
     const rear = (side) => [cx - fx * len * 0.62 + rx * side * 0.8, cy + 0.3, cz - fz * len * 0.62 + rz * side * 0.8];
     const tfx = Math.sin(travel), tfz = -Math.cos(travel);   // the way the car is really going
-    if (W.drift && !W.air) for (const sd of [-1, 1]) for (let q = 0; q < 3; q++) { const p = rear(sd), out = sd * (0.5 + Math.random() * 1.3);
+    const smk = W.drift && !W.air ? Math.min(1, Math.max(0, (Math.abs(R.visSlip || 0) - 0.12) / 0.25)) * Math.min(1, W.v / 40) : 0;   // (drift smoke by slide x speed: none once it's nearly straight)
+    if (smk > 0.05) for (const sd of [-1, 1]) for (let q = 0; q < Math.round(3 * smk); q++) { const p = rear(sd), out = sd * (0.5 + Math.random() * 1.3);
       tyre.emit(p[0] + rx * sd * 0.3 + (Math.random() - 0.5) * 0.3, p[1] - 0.1, p[2] + rz * sd * 0.3 + (Math.random() - 0.5) * 0.3, tfx * W.v * 0.6 + rx * out * 2.0, 0.6 + Math.random() * 0.5, tfz * W.v * 0.6 + rz * out * 2.0, 0.8, 4.6, '#d6dde6', 0.45, 1.5, 0, SMK); }
     if (W.off && W.v > 8 && !W.air) for (const sd of [-1, 1]) { const p = rear(sd);
       tyre.emit(p[0], p[1] - 0.08, p[2], tfx * W.v * 0.35 + rx * sd * 1.5, 0.4 + Math.random() * 0.8, tfz * W.v * 0.35 + rz * sd * 1.5, 0.4, 2.6, '#b3a385', 0.45, 1.1, 0, SMK); }

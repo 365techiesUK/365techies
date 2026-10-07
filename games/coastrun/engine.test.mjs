@@ -73,8 +73,8 @@ test('drifting: a tap of brake while turning at speed slides the car round the b
   assert.ok(Math.abs(W.x) < E.HALF, 'and still on the road round the bend: ' + W.x.toFixed(2));
   assert.ok(W.v > 45, 'keeping most of its speed'); assert.ok(W.boost > 0.2, 'filling the boost');
   const s0 = W.score; E.step(W, {}); assert.equal(W.drift, 1, 'let go: the slide eases off, not all at once');
-  let n = 1; while (W.drift && n < 60) { E.step(W, {}); n++; } quiet(W);
-  assert.equal(W.drift, 0, 'and straightens up'); assert.ok(n > 12 && n < 45, 'over a moment: ' + n + ' steps'); assert.ok(W.score - s0 >= 300, 'points for the drift');
+  let n = 1; while (W.drift && n < 120) { E.step(W, {}); n++; } quiet(W);
+  assert.equal(W.drift, 0, 'and straightens up'); assert.ok(n > 30 && n < 85, 'unwinding over most of a second, not snapping (7 Oct): ' + n + ' steps'); assert.ok(W.score - s0 >= 300, 'points for the drift');
   W.boost = 1; W.v = E.VMAX; drive(W, 60, (w) => { w.x = 0; return { fire: true }; });
   assert.ok(W.v > E.VMAX * 1.1, 'boost goes past full speed'); assert.ok(W.boost < 0.8);
 });
@@ -89,7 +89,7 @@ test('a drift answers the keys: held it swings wide, caught it straightens quick
   assert.ok(rises >= 15, 'the slide grows step by step: ' + rises);
   drive(W, 30, { right: true }); const full = W.psi - W.phi;
   E.step(W, { left: true }); let n = 1; while (W.drift && n < 60) { E.step(W, { left: true }); n++; } quiet(W);
-  assert.ok(full > 0.35, 'held: a full slide ' + full.toFixed(2)); assert.ok(n < 20, 'steering against it catches it quickly: ' + n + ' steps');
+  assert.ok(full > 0.35, 'held: a full slide ' + full.toFixed(2)); assert.ok(n < 34, 'steering against it catches it quicker than letting go: ' + n + ' steps');
 });
 
 test('the tyres squeal near the limit in a bend, not on a gentle one', () => {
@@ -363,7 +363,7 @@ test('drifting (7 Oct): a drift held into the bend keeps its speed, a good one g
   drive(W, 3, { ...key, down: true }); assert.ok(W.drift, 'a drift started');
   const v0 = W.v; drive(W, 60, (w) => { w.cars = []; return into * w.x < 2.2 ? key : {}; });
   assert.ok(W.drift && v0 - W.v < 2, 'a second held in the drift loses under 2 m/s: lost ' + (v0 - W.v).toFixed(2));
-  const vEnd = W.v; drive(W, 50, (w) => { w.cars = []; return {}; });   // let go: it straightens, and comes out with a shove
+  const vEnd = W.v; drive(W, 90, (w) => { w.cars = []; return {}; });   // let go: it straightens (over most of a second now), and comes out with a shove
   assert.ok(!W.drift, 'the drift ended');
   // a bounce on Gentle: down to about half speed, still moving
   const B = E.newWorld(1, {}, 9); go(B); B.cars = [];

@@ -134,8 +134,8 @@
   // psiTop = how far from the road's direction the car turns at full speed (radians); req = which of a request's goals
   var DIFF = {
     1: { time: 1.06, gap: 170, tv: 0.9, assist: 0.55, psiTop: 0.24, crash: false, off: 0.55, req: 0, rv: 0.88, cf: 1 },
-    2: { time: 1.04, gap: 115, tv: 1, assist: 0.2, psiTop: 0.21, crash: true, off: 0.45, req: 1, rv: 0.94, cf: 1.2 },
-    3: { time: 1.08, gap: 85, tv: 1.08, assist: 0.05, psiTop: 0.2, crash: true, off: 0.4, req: 2, rv: 0.99, cf: 1.25 }
+    2: { time: 1.055, gap: 115, tv: 1, assist: 0.2, psiTop: 0.21, crash: true, off: 0.45, req: 1, rv: 0.94, cf: 1.2 },
+    3: { time: 1.01, gap: 85, tv: 1.08, assist: 0.05, psiTop: 0.2, crash: true, off: 0.4, req: 2, rv: 0.99, cf: 1.25 }
   };
   // what your passenger asks for: goal by speed (Gentle, Classic, Fast), seconds to do it in
   var REQ = {
@@ -997,7 +997,7 @@
       pop(W, ch > 1 ? 'DRIFT x' + ch : clean && W.driftT > 1.2 ? 'CLEAN DRIFT' : 'DRIFT', '+' + p.toLocaleString('en-GB'), W.drift, 'drift'); W.events.push({ sfx: 'driftend' });
       if (W.driftT > 1.2) { mood(W, 'cheer'); if (W.rng() < 0.35) voice(W, 'wow'); }
     }
-    W.drift = 0; W.driftT = 0; W.driftPts = 0; W.driftA = 0;
+    W.lastDrift = W.drift; W.driftEndT = W.t; W.drift = 0; W.driftT = 0; W.driftPts = 0; W.driftA = 0; W.driftV = 0;
   }
   function cross(W, i) {   // the car's nose passes into segment i
     var g = segAt(W, i), F = W.fork, j;
@@ -1225,18 +1225,20 @@
     if (brake && !W.drift) W.brakeT += DT; else W.brakeT = 0;
     // a drift: brake (a tap is enough) while turning at speed; it lasts while you hold the turn or the car is still sliding
     W.steerHold = target !== 0 && target === W.steerDir ? W.steerHold + 1 : 0; W.steerDir = target;
-    var autoGo = W.autoDrift && W.steerHold >= 12 && W.v > top * 0.55 && target * bendHere(W, g) >= 1 / 170;
+    var flick = target !== 0 && target === -(W.lastDrift || 0) && W.t - (W.driftEndT || -1e9) < 50 && target * bendHere(W, g) >= 1 / 340;   // (drift, 7 Oct: S-bends flow one drift into the next)
+    var autoGo = W.autoDrift && ((W.steerHold >= 12 && W.v > top * 0.55 && target * bendHere(W, g) >= 1 / 170) || (flick && W.v > top * 0.5));
     if (!W.drift && !out && !W.air && target !== 0 && W.v > top * 0.42 && (pressed || (brake && W.brakeT < 0.3) || autoGo)) {
-      W.drift = target; W.driftT = 0; W.driftPts = 0; W.driftA = Math.max(0.06, Math.abs(W.psi - W.phi)); W.events.push({ sfx: 'skid' });
+      W.drift = target; W.driftT = 0; W.driftPts = 0; W.driftA = Math.max(0.02, Math.abs(W.psi - W.phi)); W.driftV = 1.5; W.events.push({ sfx: 'skid' });   // (the tail starts swinging out - owner, 7 Oct: "it snaps")
       if (!(W.t < (W.chainUntil || 0))) W.driftChain = 1;   // (a chain broken: too long since the last)
-      W.psi += target * 0.06;   // the back starts to step out (the slide then grows: driftA)
     }
     // in a drift the keys set the angle: hold the turn and the tail swings out to the full slide; let go and it straightens over half a
     // second (press again before it does and it swings back out); steer the other way to catch it quickly
     if (W.drift) {
-      var sIn = target * W.drift, aT = sIn > 0 ? 0.5 : 0;
-      W.driftA += (aT - W.driftA) * Math.min(1, (sIn > 0 ? 4.5 : sIn < 0 ? 7 : 3.2) * DT);
-      if (W.v < top * 0.3 || out || (sIn <= 0 && W.driftA < 0.12)) endDrift(W);
+      var kb = Math.abs(bendHere(W, g)), sIn = target * W.drift, aT = sIn > 0 ? 0.52 + 0.07 * clamp((kb - 1 / 250) / (1 / 120 - 1 / 250), 0, 1) + 0.025 * Math.sin(W.t / 40) : 0, kS = sIn > 0 ? 50 : sIn < 0 ? 62 : 14, cS = 2 * (sIn < 0 ? 0.92 : 0.86) * Math.sqrt(kS);   // (held: swings out over ~0.5 s; let go: unwinds over ~0.8 s; caught against it: ~0.45 s)
+      if (sIn <= 0 && (W.prevSIn || 0) > 0) W.driftV = Math.min(W.driftV || 0, -0.12); W.prevSIn = sIn;   // (round 3: no carry-on after letting go)
+      W.driftV = (W.driftV || 0) + (kS * (aT - W.driftA) - cS * (W.driftV || 0)) * DT; W.driftA = Math.max(0, W.driftA + W.driftV * DT);
+      if (W.driftA <= 0 && W.driftV < 0) W.driftV = 0;
+      if (W.v < top * 0.3 || out || (sIn === 0 && W.driftA < 0.018 && Math.abs(W.driftV) < 0.2) || (sIn < 0 && W.driftA < 0.045)) endDrift(W);
     }
     W.dk = (W.dk || 0) + ((W.drift ? 1 : 0) - (W.dk || 0)) * Math.min(1, (W.drift ? 6 : 3) * DT);
     if (W.nitroT > 0) W.nitroT--;
@@ -1287,11 +1289,11 @@
         hold += W.drift * (0.07 * clamp((oOut - (rh - 3)) / 2, 0, 1) - 0.07 * clamp((oIn - (rh - 2.4)) / 1.5, 0, 1)); }
       if (!W.air) W.phi += (hold - W.phi) * Math.min(1, 4 * DT);
       want = W.phi + W.drift * W.driftA;
-      if (!W.air) W.psi += (want - W.psi) * Math.min(1, 8 * DT);
+      if (!W.air) W.psi += (want - W.psi) * Math.min(1, 9 * DT);
     } else {
       want = out ? W.psi : W.steer * lim;
-      if (!W.air) W.psi += (want - W.psi) * Math.min(1, (7 - 3.2 * Math.min(1, v / VMAX)) * DT);   // the car turns to the angle asked for (more slowly the faster it goes: it has weight)
-      var grip = 9 * C.grip * (W.off ? 0.7 : 1) * (W.air ? 0 : 1);   // (and its line follows a moment behind: was 12)
+      if (!W.air) W.psi += (want - W.psi) * Math.min(1, (7 - 3.2 * Math.min(1, v / VMAX)) * (1 - 0.7 * (W.dk || 0)) * DT);   // the car turns to the angle asked for (more slowly the faster it goes: it has weight)
+      var grip = 9 * C.grip * (W.off ? 0.7 : 1) * (W.air ? 0 : 1) * (1 - 0.75 * (W.dk || 0));   // (just out of a drift the grip comes back over a moment: it blends out, no last snap)   // (and its line follows a moment behind: was 12)
       W.phi += (W.psi - W.phi) * Math.min(1, grip * DT);
     }
     W.yawRate = (want - W.psi) * 7;
