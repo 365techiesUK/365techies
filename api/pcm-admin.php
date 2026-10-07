@@ -791,6 +791,8 @@ tbody tr:hover td{background:rgba(29,151,227,.04)}
         $vchip = $mv>0 ? ' · <span style="opacity:.75;color:'.(($latestVer>0&&$mv<$latestVer)?'#e0b341':'#8fa3bd').'">app v'.$mv.(($latestVer>0&&$mv<$latestVer)?' (v'.$latestVer.' out - updates itself)':'').'</span>' : '';
         $kh = substr(hash('sha256', $key), 0, 12);
         $shotLink = (!empty($m['shot']) && is_readable(__DIR__.'/pcm-sos-'.$kh.'-'.$id.'.jpg')) ? ' · <a href="pcm-admin.php?shot='.h($kh.'-'.$id).'" target=_blank style="color:#1d97e3">📸 their screen ('.h($m['shot']).')</a>' : '';
+        // v36: photos sent from the customer's phone (pcm.php photoup) - newest first, the same authed viewer
+        foreach (array_reverse((array)($m['photos'] ?? array())) as $pp) { $pid = preg_replace('/[^a-f0-9\-]/', '', (string)($pp['f'] ?? '')); if ($pid !== '' && is_readable(__DIR__.'/pcm-sos-'.$pid.'.jpg')) $shotLink .= ' · <a href="pcm-admin.php?shot='.h($pid).'" target=_blank style="color:#1d97e3">📷 phone photo ('.h($pp['t'] ?? '').')</a>'; }
         echo '<div class=mach><span class=dot style="background:'.$col.'"></span><strong style="color:#eef">'.h($m['name']?:$id).'</strong> — '.$sc.'% '.h($m['verdict']??'').' <span style="opacity:.6">· seen '.h($seen).($fresh?' ✓':'').(!empty($m['help'])?' · 🆘 '.h($m['help']):'').'</span>'.$vchip.$shotLink.'</div>';
       } ?>
   </td>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Send 365 Techies a photo</title>
+<!-- 365 PC Manager v36 "Send us a photo" (7 Oct 2026). Opened from the QR code the app shows, or by typing the 6-digit
+     code. Each photo is shrunk to a JPEG on the phone before it is sent (that also drops its location data) and posted
+     to api/pcm.php action "photoup". No analytics, nothing stored on the phone. Plain ES5 for older phones. -->
+<style>
+  :root { --ink:#09112a; --panel:#13204a; --line:#2a3b6e; --cyan:#1d97e3; --soft:#7cc4f2; --text:#eef3fb; --mut:#a9b8d6; --good:#2fd36b; --warn:#ffcf5c; --bad:#ff6b81; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; background:var(--ink); color:var(--text); font:17px/1.45 "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif; }
+  main { max-width:520px; margin:0 auto; padding:20px 16px 40px; }
+  .brand { display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+  .logo { background:var(--cyan); color:#fff; font-weight:700; border-radius:8px; padding:6px 9px; font-size:16px; }
+  .brand b { font-size:17px; }
+  h1 { font-size:26px; line-height:1.2; margin:6px 0 10px; }
+  p { margin:0 0 12px; color:var(--mut); }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px; margin:14px 0; }
+  .btn { display:block; width:100%; text-align:center; border:0; border-radius:12px; padding:17px 14px; font:600 19px/1.2 inherit; cursor:pointer; margin:10px 0; }
+  .btn.main { background:var(--cyan); color:#fff; }
+  .btn.alt { background:transparent; color:var(--text); border:1px solid var(--line); }
+  .btn[disabled] { opacity:.5; }
+  input.code { width:100%; font:700 30px/1.2 inherit; letter-spacing:6px; text-align:center; padding:12px; border-radius:12px; border:1px solid var(--line); background:#0d1838; color:var(--text); }
+  .list { list-style:none; padding:0; margin:8px 0 0; }
+  .list li { display:flex; align-items:center; gap:12px; padding:8px 0; border-top:1px solid var(--line); }
+  .list img { width:56px; height:56px; object-fit:cover; border-radius:8px; background:#0d1838; }
+  .ok { color:var(--good); } .warn { color:var(--warn); } .bad { color:var(--bad); }
+  .small { font-size:14px; color:var(--mut); }
+  .hide { display:none; }
+  a { color:var(--soft); }
+</style>
+</head>
+<body>
+<main>
+  <div class="brand"><span class="logo">365</span><b>365 Techies</b></div>
+  <h1>Send us a photo</h1>
+
+  <div id="checking" class="card"><p>Just a moment&hellip;</p></div>
+
+  <div id="ask" class="card hide">
+    <p>Type the 6-digit code that 365 PC Manager is showing on your computer.</p>
+    <input id="code" class="code" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="000 000" aria-label="6-digit code">
+    <button id="go" class="btn main">Next</button>
+    <p id="askMsg" class="small"></p>
+  </div>
+
+  <div id="pick" class="card hide">
+    <p>Take a photo of what you'd like us to see &ndash; a message on the screen, the printer's display, a label or a cable. Up to 6.</p>
+    <button id="take" class="btn main">&#128247;&nbsp; Take a photo</button>
+    <button id="choose" class="btn alt">Choose from my photos</button>
+    <input id="camIn" type="file" accept="image/*" capture="environment" class="hide">
+    <input id="libIn" type="file" accept="image/*" multiple class="hide">
+    <ul id="list" class="list"></ul>
+    <p id="pickMsg" class="small"></p>
+  </div>
+
+  <div id="done" class="card hide">
+    <p class="ok" style="font-size:19px;font-weight:600">&#10003; Got it &ndash; thank you.</p>
+    <p>We'll take a look and be in touch. You can close this page, or send another.</p>
+    <button id="more" class="btn alt">Send another photo</button>
+  </div>
+
+  <div id="gone" class="card hide">
+    <p class="warn" style="font-weight:600">This link has run out.</p>
+    <p>Codes last 30 minutes. In 365 PC Manager, tap <b>Send us a photo</b> again for a new one &ndash; or text the photo to <a href="sms:+447520615332">07520 615332</a>.</p>
+  </div>
+
+  <p class="small">Only 365 Techies sees your photos, and we delete them after 30 days. The photo's location isn't sent. Stuck? Ring <a href="tel:+441202775566">01202 775566</a>.</p>
+</main>
+<script>
+(function () {
+  var API = '/api/pcm.php', MAXPX = 1600, tok = '', sent = 0, max = 6, busy = false;
+  function $(id) { return document.getElementById(id); }
+  function show(id) { var ids = ['checking', 'ask', 'pick', 'done', 'gone']; for (var i = 0; i < ids.length; i++) $(ids[i]).className = 'card' + (ids[i] === id ? '' : ' hide'); }
+  function post(body, cb) {
+    var x = new XMLHttpRequest();
+    x.open('POST', API, true);
+    x.setRequestHeader('Content-Type', 'application/json');
+    x.timeout = 60000;
+    x.onload = function () { var r = null; try { r = JSON.parse(x.responseText); } catch (e) { } cb(r && typeof r === 'object' ? r : { ok: false, error: x.status === 202 || x.status === 403 ? 'blocked' : 'server' }); };
+    x.onerror = x.ontimeout = function () { cb({ ok: false, error: 'network' }); };
+    x.send(JSON.stringify(body));
+  }
+  function why(e) {
+    if (e === 'rate') return 'Too many tries - please wait a while and try again.';
+    if (e === 'full') return 'That\'s 6 photos - the most for one code. Thank you!';
+    if (e === 'not_a_photo') return 'That didn\'t look like a photo - try taking it again.';
+    if (e === 'blocked') return 'Our website\'s security check got in the way - try again in a minute, or text the photo to 07520 615332.';
+    if (e === 'network') return 'No connection - check your phone\'s signal or Wi-Fi and try again.';
+    return 'Something went wrong - try again, or text the photo to 07520 615332.';
+  }
+  function check(body) {
+    show('checking');
+    post(body, function (r) {
+      if (r.ok) { tok = r.t; sent = r.n || 0; max = r.max || 6; show(sent >= max ? 'done' : 'pick'); return; }
+      if (r.error === 'expired') { if (body.code) { show('ask'); $('askMsg').innerHTML = '<span class="bad">That code didn\'t work - check the 6 numbers, or tap Send us a photo again for a new one.</span>'; } else show('gone'); return; }
+      show('ask'); $('askMsg').innerHTML = '<span class="bad">' + why(r.error) + '</span>';
+    });
+  }
+  // shrink to a JPEG (max 1600 px) - smaller to send, and the photo's location data isn't copied
+  function shrink(file, cb) {
+    var url = (window.URL || window.webkitURL).createObjectURL(file), img = new Image();
+    img.onload = function () {
+      var w = img.naturalWidth, h = img.naturalHeight, s = Math.min(1, MAXPX / Math.max(w, h));
+      var c = document.createElement('canvas'); c.width = Math.round(w * s); c.height = Math.round(h * s);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      (window.URL || window.webkitURL).revokeObjectURL(url);
+      cb(c.toDataURL('image/jpeg', 0.82));
+    };
+    img.onerror = function () { cb(null); };
+    img.src = url;
+  }
+  function addRow(text) {
+    var li = document.createElement('li'), im = document.createElement('img'), sp = document.createElement('span');
+    sp.textContent = text; li.appendChild(im); li.appendChild(sp); $('list').appendChild(li);
+    return { li: li, img: im, txt: sp };
+  }
+  function sendFiles(files) {
+    if (busy || !files || !files.length) return;
+    var queue = []; for (var i = 0; i < files.length && sent + queue.length < max; i++) queue.push(files[i]);
+    if (!queue.length) { show('done'); return; }
+    busy = true; $('take').disabled = $('choose').disabled = true; $('pickMsg').textContent = '';
+    (function next() {
+      if (!queue.length) { busy = false; $('take').disabled = $('choose').disabled = false; if (sent > 0) show('done'); return; }
+      var f = queue.shift(), row = addRow('Getting it ready…');
+      shrink(f, function (data) {
+        if (!data) { row.txt.innerHTML = '<span class="bad">Couldn\'t read that picture</span>'; next(); return; }
+        row.img.src = data; row.txt.textContent = 'Sending…';
+        post({ action: 'photoup', t: tok, img: data.split(',')[1] }, function (r) {
+          if (r.ok) { sent = r.n; row.txt.innerHTML = '<span class="ok">✓ Sent</span>'; }
+          else if (r.error === 'expired') { show('gone'); busy = false; return; }
+          else row.txt.innerHTML = '<span class="bad">' + why(r.error) + '</span>';
+          next();
+        });
+      });
+    })();
+  }
+  $('take').onclick = function () { $('camIn').click(); };
+  $('choose').onclick = function () { $('libIn').click(); };
+  $('camIn').onchange = function () { sendFiles(this.files); this.value = ''; };
+  $('libIn').onchange = function () { sendFiles(this.files); this.value = ''; };
+  $('more').onclick = function () { if (sent >= max) { $('more').textContent = 'That\'s the most for one code'; return; } $('list').innerHTML = ''; show('pick'); };
+  $('go').onclick = function () { var c = $('code').value.replace(/\D/g, ''); if (c.length !== 6) { $('askMsg').textContent = 'The code is 6 numbers.'; return; } check({ action: 'photoup', code: c }); };
+  $('code').onkeydown = function (e) { if ((e.keyCode || e.which) === 13) $('go').onclick(); };
+  var m = /[?&]t=([a-f0-9]{8,32})/.exec(location.search);
+  if (m) check({ action: 'photoup', t: m[1] }); else show('ask');
+})();
+</script>
+</body>
+</html>

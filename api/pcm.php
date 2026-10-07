@@ -6,6 +6,7 @@
  *  action=activate {key, machine, name}   -> validates a licence key, binds the machine, returns tier+customer+next
  *  action=checkin  {key, machine, score}  -> records health; returns current tier (so lapsed support downgrades)
  *  action=help     {key, machine, message}-> relays a panic request to Slack (via slack-lead.php webhook file)
+ *  action=photoask / photostatus {key, machine} and photoup {t|code, img} -> v36 "Send us a photo" from a phone
  *
  * Data file api/pcm-data.json:
  *  { "customers": { "<KEY>": {name, email, tier, next, created, machines:{<id>:{name,score,verdict,seen}} } } }
@@ -972,6 +973,100 @@ if ($action === 'reportget') {
     $f = __DIR__ . '/pcm-rep-' . $kh . '-' . $mid2 . '-' . $rts . '.html';
     if (!is_readable($f)) out(array('ok'=>false,'error'=>'not_found'));
     out(array('ok'=>true, 'html'=>base64_encode((string)file_get_contents($f))));
+}
+
+/* v36 "Send us a photo" (owner, 7 Oct 2026). The app shows a QR code; the customer's phone opens /photo/?t=<token>, or
+   types the 6-digit code at 365techies.co.uk/photo, and sends up to 6 photos - an error on the screen, a printer's
+   display, a label. A token is minted only for a registered key + machine (like help), lasts 30 minutes and is the only
+   permission the phone page has. The page shrinks each photo to a JPEG first, which also drops its location data.
+   Files are pcm-sos-<keyhash>-<machine>-<time>-<n>.jpg, so the .htaccess rule that keeps the SOS screenshots off the
+   web covers them too; staff open them in pcm-admin.php (?shot=). Kept 30 days. Wrong codes: 12 an hour per address. */
+function pcm_photo_prune(&$db) {
+    $t = time();
+    foreach ((array)($db['photo_tokens'] ?? array()) as $tk => $p) if (intval($p['exp'] ?? 0) < $t - 86400) unset($db['photo_tokens'][$tk]);
+    foreach ((array)($db['photo_fail'] ?? array()) as $ik => $f) if (intval($f['h'] ?? 0) < intval($t / 3600) - 1) unset($db['photo_fail'][$ik]);
+    if (intval($db['photo_prune'] ?? 0) < $t - 3600) {   // the files themselves, at most once an hour
+        $db['photo_prune'] = $t;
+        foreach ((array)glob(__DIR__ . '/pcm-sos-*-*-*-*.jpg') as $f)
+            if (preg_match('/^pcm-sos-[a-f0-9]{12}-[a-f0-9]{1,32}-[a-f0-9]{8}-\d\.jpg$/', basename($f)) && @filemtime($f) < $t - 30 * 86400) @unlink($f);
+    }
+}
+function pcm_photo_slack($webhookFile, $text) {
+    $SLACK_WEBHOOK = '';
+    if (file_exists($webhookFile)) { ob_start(); include $webhookFile; ob_end_clean(); }
+    if (empty($SLACK_WEBHOOK) && file_exists($webhookFile)) {
+        $rawWh = (string)@file_get_contents($webhookFile);
+        if (preg_match('#https://hooks\.slack\.com/\S+#', $rawWh, $mWh)) $SLACK_WEBHOOK = trim($mWh[0]);
+    }
+    if (empty($SLACK_WEBHOOK)) return false;
+    $ch = curl_init($SLACK_WEBHOOK);
+    curl_setopt_array($ch, array(CURLOPT_POST=>true, CURLOPT_RETURNTRANSFER=>true, CURLOPT_TIMEOUT=>6,
+        CURLOPT_HTTPHEADER=>array('Content-Type: application/json'), CURLOPT_POSTFIELDS=>json_encode(array('text'=>$text))));
+    $r = curl_exec($ch); curl_close($ch);
+    return $r === 'ok';
+}
+// the app asks for a code to show as a QR code
+if ($action === 'photoask') {
+    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
+    if ($machine === '' || !isset($db['customers'][$key]['machines'][$machine])) out(array('ok'=>false,'error'=>'unknown_machine'));
+    pcm_photo_prune($db);
+    $t = time(); $made = 0;
+    foreach ((array)($db['photo_tokens'] ?? array()) as $p) if (($p['key'] ?? '') === $key && intval($p['made'] ?? 0) > $t - 3600) $made++;
+    if ($made >= 6) out(array('ok'=>false,'error'=>'rate'));
+    $tok = bin2hex(random_bytes(12));
+    do {
+        $code = sprintf('%06d', random_int(0, 999999)); $clash = false;
+        foreach ((array)($db['photo_tokens'] ?? array()) as $p) if (($p['code'] ?? '') === $code && intval($p['exp'] ?? 0) > $t) $clash = true;
+    } while ($clash);
+    $db['photo_tokens'][$tok] = array('key'=>$key, 'machine'=>$machine, 'code'=>$code, 'made'=>$t, 'exp'=>$t + 1800, 'n'=>0,
+        'cust'=>pcm_txt($in['customer'] ?? '', 60), 'pc'=>pcm_txt($in['pc'] ?? '', 60));
+    save($DATA, $db);
+    out(array('ok'=>true, 'url'=>'https://365techies.co.uk/photo/?t=' . $tok, 'token'=>$tok, 'code'=>$code, 'mins'=>30));
+}
+// the app, while its QR code is showing: how many photos have arrived
+if ($action === 'photostatus') {
+    $tok = preg_replace('/[^a-f0-9]/', '', substr((string)($in['token'] ?? ''), 0, 32));
+    $p = ($tok !== '') ? ($db['photo_tokens'][$tok] ?? null) : null;
+    if (!$p || ($p['key'] ?? '') !== $key || ($p['machine'] ?? '') !== $machine) out(array('ok'=>false,'error'=>'unknown_token'));
+    out(array('ok'=>true, 'n'=>intval($p['n'] ?? 0), 'left'=>max(0, intval($p['exp'] ?? 0) - time())));
+}
+// the phone page (no key: the token, or its 6-digit code, is the permission). No img = just check the code.
+if ($action === 'photoup') {
+    $t = time(); $hr = intval($t / 3600);
+    $ipk = substr(hash('sha256', (string)($_SERVER['REMOTE_ADDR'] ?? '') . '|pcm-photo'), 0, 16);
+    $fl = $db['photo_fail'][$ipk] ?? array('h'=>$hr, 'n'=>0);
+    if (intval($fl['h'] ?? 0) !== $hr) $fl = array('h'=>$hr, 'n'=>0);
+    if (intval($fl['n']) >= 12) out(array('ok'=>false,'error'=>'rate'));
+    $tok = preg_replace('/[^a-f0-9]/', '', substr((string)($in['t'] ?? ''), 0, 32));
+    $code = preg_replace('/[^0-9]/', '', substr((string)($in['code'] ?? ''), 0, 12));
+    if ($tok === '' && strlen($code) === 6)
+        foreach ((array)($db['photo_tokens'] ?? array()) as $tk => $p) if (($p['code'] ?? '') === $code && intval($p['exp'] ?? 0) > $t) { $tok = (string)$tk; break; }
+    $p = ($tok !== '') ? ($db['photo_tokens'][$tok] ?? null) : null;
+    if (!$p || intval($p['exp'] ?? 0) < $t || !isset($db['customers'][(string)$p['key']]['machines'][(string)$p['machine']])) {
+        $fl['n'] = intval($fl['n']) + 1; $db['photo_fail'][$ipk] = $fl; save($DATA, $db);
+        out(array('ok'=>false,'error'=>'expired'));
+    }
+    if (empty($in['img'])) out(array('ok'=>true, 't'=>$tok, 'n'=>intval($p['n'] ?? 0), 'max'=>6, 'left'=>intval($p['exp']) - $t));
+    if (intval($p['n'] ?? 0) >= 6) out(array('ok'=>false,'error'=>'full'));
+    $b = base64_decode(substr((string)$in['img'], 0, 6000000), true);
+    if ($b === false || strlen($b) < 2000 || strlen($b) > 4400000 || substr($b, 0, 3) !== "\xFF\xD8\xFF") out(array('ok'=>false,'error'=>'not_a_photo'));
+    if (function_exists('getimagesizefromstring')) { $gi = @getimagesizefromstring($b); if (!$gi || intval($gi[2] ?? 0) !== IMAGETYPE_JPEG) out(array('ok'=>false,'error'=>'not_a_photo')); }
+    $pk = (string)$p['key']; $pm = (string)$p['machine'];
+    $kh = substr(hash('sha256', $pk), 0, 12); $n = intval($p['n'] ?? 0) + 1;
+    $file = 'pcm-sos-' . $kh . '-' . $pm . '-' . sprintf('%08x', $t) . '-' . $n . '.jpg';
+    if (@file_put_contents(__DIR__ . '/' . $file, $b, LOCK_EX) === false) out(array('ok'=>false,'error'=>'save'));
+    $db['photo_tokens'][$tok]['n'] = $n;
+    $ph = (array)($db['customers'][$pk]['machines'][$pm]['photos'] ?? array());
+    $ph[] = array('f'=>substr($file, 8, -4), 't'=>$now);   // the id pcm-admin.php?shot= streams
+    $db['customers'][$pk]['machines'][$pm]['photos'] = array_slice($ph, -12);
+    pcm_photo_prune($db);
+    save($DATA, $db);
+    // Slack: a line per photo (6 at most per code) - the picture itself stays on our server
+    $clean = function($s){ return str_replace(array("\r","\n",'<','>','&'), array(' ',' ','&lt;','&gt;','&amp;'), (string)$s); };
+    $who = $clean($p['cust'] ?? '') !== '' ? $clean($p['cust']) : '(registered)';
+    pcm_photo_slack($WEBHOOK, ":camera_with_flash: *Photo from a customer's phone* - *" . $who . "*" . (($p['pc'] ?? '') !== '' ? ' (' . $clean($p['pc']) . ')' : '')
+        . " - photo " . $n . "\nView it in the PCM admin console\nMachine " . $pm . " · key " . $pk);
+    out(array('ok'=>true, 'n'=>$n, 'max'=>6));
 }
 
 if ($action === 'help') {
