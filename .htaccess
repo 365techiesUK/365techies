@@ -298,6 +298,12 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(comms-sent-(lib|test)\.php|pcm-sentlog-(lib|test)\.php|pcm-sentlog\.json(\..*)?)$">
   Require all denied
 </FilesMatch>
+# The paid app abroad, "Unlock everything" (8 Oct 2026): the library is include-only, the test CLI-only; pcm-plus.json holds
+# the Unlock keys (hashed) and buyers' emails; pcm-buy-config.php (switch, checkout link, price) is read as data, and
+# pcm-buy.off stops it at once. pcm-plus-admin.php stays served (staff session only). Nothing here is a URL.
+<FilesMatch "^(pcm-plus-(lib|test)\.php|pcm-plus\.json(\..*)?|pcm-buy-config\.php|pcm-buy\.off)$">
+  Require all denied
+</FilesMatch>
 # Bournemouth weather record books (22 Sep 2026): the per-date record table is read by
 # bm-wx.php on the server (it is public Met Office data, but 300 KB nobody's browser
 # needs); the library and its test are include/CLI-only.

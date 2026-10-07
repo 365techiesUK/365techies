@@ -141,6 +141,9 @@ function pcm_mm_addon_out() { return PCM_MM_ADDON_URL !== '' ? array('mm_addon' 
 require_once __DIR__ . '/pcm-programs-lib.php';   // programs check: the list + the matching (top-level scope on purpose)
 require_once __DIR__ . '/pcm-gate.php';            // 29 Sep 2026: the minute poll answered by .htaccess while nothing waits
 require_once __DIR__ . '/pcm-installs-lib.php';    // 1 Oct 2026: installs counted from check-ins (top-level scope on purpose)
+// 8 Oct 2026: the paid app abroad, "Unlock everything" - switched off until the owner says go. Guarded, and every call is
+// behind function_exists: a missing file (a deploy may upload it after this one) can never stop a check-in.
+if (is_readable(__DIR__ . '/pcm-plus-lib.php')) require_once __DIR__ . '/pcm-plus-lib.php';
 
 $raw = file_get_contents('php://input');
 $in = pcm_json_body($raw);
@@ -173,6 +176,11 @@ $now = gmdate('Y-m-d H:i');
 pcm_gate_mark_sb($db, $key);   // an SB key's 67-byte "services" post must keep reaching PHP from this address (pcm-gate.php)
 
 if ($action === 'activate') {
+    // 8 Oct 2026: an "Unlock everything" key (pcm-plus-lib.php) binds this PC if the key has room - a customer key always wins
+    if ($key !== '' && !isset($db['customers'][$key]) && function_exists('plus_is_key') && plus_is_key($key)) {
+        $pr = plus_check($key, $machine, true);
+        out($pr['ok'] ? array('ok'=>true,'tier'=>'plus','customer'=>'','next'=>'','expires'=>(int)$pr['expires']) : array('ok'=>false,'error'=>'plus_' . $pr['error']));
+    }
     if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
     $c =& $db['customers'][$key];
     // any valid key binds the machine and registers it for health monitoring; tier decides features
@@ -194,7 +202,16 @@ if ($action === 'checkin') {
         inst_note($machine, (int)($in['ver'] ?? 0), !empty($in['w10']), $instLinked,
             $instLinked && (($db['customers'][$key]['tier'] ?? 'free') === 'pro'), (string)($_SERVER['REMOTE_ADDR'] ?? ''));
     } catch (Throwable $e) { }
-    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>true,'tier'=>'free') + $upd + pcm_news_out($db, 'free') + pcm_prog_ver() + pcm_mm_addon_out()); // key gone => downgrade
+    // 8 Oct 2026: an "Unlock everything" key - good for this PC: 'plus'; expired, refunded or never activated here: 'free'
+    // with the reason, so the app can say so. Offered nothing.
+    if ($key !== '' && !isset($db['customers'][$key]) && function_exists('plus_is_key') && plus_is_key($key)) {
+        $pr = plus_check($key, $machine, false);
+        out(array('ok'=>true,'tier'=>$pr['ok'] ? 'plus' : 'free') + ($pr['ok'] ? array('expires'=>(int)$pr['expires']) : array('plus_error'=>$pr['error']))
+            + $upd + pcm_news_out($db, 'free') + pcm_prog_ver() + pcm_mm_addon_out());
+    }
+    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>true,'tier'=>'free') + $upd + pcm_news_out($db, 'free') + pcm_prog_ver() + pcm_mm_addon_out()
+        // 8 Oct 2026: abroad, with the paid app switched on: "Unlock everything" in place of our UK plans (nothing while off)
+        + (function_exists('plus_offer_out') ? plus_offer_out(geo_cc((string)($_SERVER['REMOTE_ADDR'] ?? '')), plus_mhash($machine)) : array())); // key gone => downgrade
     $c =& $db['customers'][$key];
     $tier = ($c['tier'] ?? 'free');
     if ($machine !== '') {
