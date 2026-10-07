@@ -136,24 +136,24 @@ test('hitting the sign in the middle of a fork crashes (Classic) and still picks
   assert.ok(crashed); assert.equal(W.route.length, 2);
 });
 
-test('the goal: a time bonus, a love bonus, a rank, and round 2 goes on west along the coast from Poole Quay', () => {
+test('the goal: a time bonus, a love bonus, a rank; then the game is complete, or Space carries on into town', () => {
   const W = E.newWorld(2, {}, 8); go(W);
   for (let k = 0; k < 4; k++) {
     W.s = (W.fork.split - 2) * E.SEG; W.x = -6; W.v = 40; W.cars = []; drive(W, 30, {});
-    W.s = (W.fork.end - 1) * E.SEG; W.x = 0; drive(W, 30, {});
+    W.s = (W.fork.end - 1) * E.SEG; W.x = 0; drive(W, 30, {}); while (W.ferry) { E.step(W, {}); quiet(W); }
   }
   assert.equal(W.route.length, 5); assert.ok(!E.STAGES[W.route[4]].next, 'the fifth place ends in a goal');
   W.s = (W.goalAt - 3) * E.SEG; W.time = 12.2; W.cars = []; W.runHearts = 4; W.runAsked = 3;
   const s0 = W.score; let goal = false; for (let i = 0; i < 40; i++) { E.step(W, {}); if (W.events.some((e) => e.sfx === 'goal')) goal = true; quiet(W); }
   assert.ok(goal); assert.equal(W.round, 2); assert.ok(W.score - s0 >= 12000 + 20000, 'time bonus and 5,000 a heart'); assert.ok(W.time > 50, 'the clock starts again');
   assert.ok(W.result && 'SABCD'.includes(W.result.rank), 'a rank: ' + (W.result && W.result.rank)); assert.equal(W.result.love, 20000); assert.equal(W.result.route.length, 5);
-  assert.equal(E.STAGES[W.result.route[4]].key, 'harbour', 'all left: Poole Quay');
+  assert.equal(E.STAGES[W.result.route[4]].key, 'lyme', 'all left: Lyme Regis');
+  const C = JSON.parse(JSON.stringify(W.complete || null));
   // the goal's moment (7 Oct): the clock stops, the car drives itself, the card stays up - then round 2
   const tFrozen = W.time; drive(W, 200, {});
   assert.ok(W.goalSeq, 'the goal sequence is still on after 3 s'); assert.equal(W.time, tFrozen, 'the clock stops for it'); assert.ok(W.result, 'the results card stays up');
   drive(W, 400, {});
-  assert.ok(!W.goalSeq && !W.result, 'over after 8 s, the card gone');
-  assert.equal(W.stage, E.RUN_START[1]); assert.deepEqual(W.route, [E.RUN_START[1]], 'round 2: west along the coast'); assert.equal(E.STAGES[W.stage].key, 'wareham');
+  assert.ok(W.over && W.complete && W.complete.goal === 'LYME REGIS' && 'SABCD'.includes(W.complete.rank), 'no input: the game is complete at the goal');
 });
 
 test('crashes: a lamp post at speed is a big crash on Classic; on Gentle a bounce, unless flat out; bushes only slow you', () => {
@@ -200,7 +200,7 @@ test('coins, a whole line of them, and nitro', () => {
   const j = findSeg(W, E.segIndex(W.s), (g) => (g.coins || []).some((c) => c.nitro));
   const nit = E.segAt(W, j).coins.find((c) => c.nitro);
   W.s = (j - 1) * E.SEG + 2; W.x = nit.x; W.boost = 0; W.v = 30; drive(W, 10, (w) => { w.x = nit.x; return {}; });
-  assert.ok(nit.got); assert.ok(W.bottles >= 13, 'three bottles of nitro');
+  assert.ok(nit.got); assert.ok(W.bottles >= 4, 'a bottle of nitro (earned now, 7 Oct: you start with three)');
 });
 
 test('walls and the sea wall keep the car on the land; the clock running out ends the game', () => {
@@ -234,20 +234,21 @@ test('the driver gets round five stretches at Gentle and Classic, and the score 
   assert.ok(F.score > 0, 'Fast runs');
 });
 
-test('the runs: the town, then west or east along the coast - each a pyramid of real roads, every place once in it, goals at the end', () => {
-  assert.deepEqual(E.RUNS.map((r) => r.levels), [5, 4, 2]);
+test('the runs: the coast first, then the town - each a pyramid, every place once in it, goals at the end', () => {
+  assert.deepEqual(E.RUNS.map((r) => r.levels), [5, 5]);
   for (let r = 0; r < E.RUNS.length; r++) {
     const run = E.STAGES.filter((S) => S.run === r), n = E.RUNS[r].levels;
     assert.equal(run.length, n * (n + 1) / 2); assert.equal(run.filter((S) => !S.next).length, n, 'a goal for each end');
     assert.equal(new Set(run.map((S) => S.key)).size, run.length, 'every place once in a run'); assert.equal(E.STAGES[E.RUN_START[r]].level, 1);
     for (const S of run) if (S.next) { const a = E.STAGES[S.next[0]], b = E.STAGES[S.next[1]]; assert.equal(a.level, S.level + 1); assert.equal(b.pos, a.pos + 1); assert.equal(a.pos, S.pos); assert.equal(a.run, r, 'stays in its run'); }
   }
-  assert.equal(E.STAGES[0].key, 'bournemouth', 'the town starts in Bournemouth'); assert.deepEqual(E.STAGES[0].next.map((n) => E.STAGES[n].key), ['winton', 'charminster']);
-  const W1 = E.STAGES[E.RUN_START[1]], E2 = E.STAGES[E.RUN_START[2]];
-  assert.equal(W1.key, 'wareham'); assert.deepEqual(W1.next.map((n) => E.STAGES[n].key), ['wool', 'purbeck']); assert.equal(E2.key, 'lymington');
-  const goal = (k) => E.STAGES.find((S) => S.run === 0 && S.key === k);
-  assert.equal(E.nextRun(goal('harbour')), 1, 'Poole Quay leads west'); assert.equal(E.nextRun(goal('wimborne')), 1); assert.equal(E.nextRun(goal('highcliffe')), 2, 'Highcliffe leads east'); assert.equal(E.nextRun(goal('ferndown')), 2); assert.equal(E.nextRun(goal('hengistbury')), 2);
-  assert.equal(E.nextRun(E.STAGES.find((S) => S.run === 1 && !S.next)), 0, 'the coast leads back into town');
+  // the coast first (7 Oct), the town as round 2
+  assert.equal(E.RUNS.length, 2); assert.equal(E.RUNS[0].key, 'coast'); assert.equal(E.RUNS[1].key, 'town');
+  assert.equal(E.STAGES[0].key, 'bournemouth', 'the coast starts in Bournemouth'); assert.deepEqual(E.STAGES[0].next.map((n) => E.STAGES[n].key), ['sandbanks', 'christchurch']);
+  const goals = E.STAGES.filter((S) => S.run === 0 && !S.next).map((S) => S.key); assert.deepEqual(goals, ['lyme', 'jurassic', 'portland', 'weymouth', 'needles'], 'five goals along the coast');
+  const T = E.STAGES[E.RUN_START[1]]; assert.equal(T.key, 'bournemouth', 'round 2 back into town from Bournemouth'); assert.deepEqual(T.next.map((n) => E.STAGES[n].key), ['winton', 'charminster']);
+  assert.equal(E.nextRun(E.STAGES.find((S) => S.run === 0 && !S.next)), 1, 'the coast leads into town'); assert.equal(E.nextRun(E.STAGES.find((S) => S.run === 1 && !S.next)), 0, 'the town back to the coast');
+  for (const k of E.PLACES.map((p) => p.key).filter((k) => k !== 'goldencap')) assert.ok(E.STAGES.some((S) => S.key === k), k + ' is on the map');
 });
 
 test('tunnels and bridges: the road keeps level through them, and their walls and railings keep the car in', () => {
@@ -370,4 +371,14 @@ test('drifting (7 Oct): a drift held into the bend keeps its speed, a good one g
   B.s = (li - 1) * E.SEG + 1; B.x = lamp.x - 0.3; B.v = 40; drive(B, 6, (w) => { w.x = lamp.x - 0.3; return {}; });
   assert.ok(B.crash && !B.crash.hard, 'a bounce'); let n = 0; while (B.crash && n++ < 100) { E.step(B, {}); quiet(B); }
   assert.ok(B.v > 12, 'still moving after a bounce: ' + B.v.toFixed(1) + ' m/s');
+});
+
+test('carrying on from a goal (7 Oct): Space in the goal moment, and round 2 goes back into town', () => {
+  const W = E.newWorld(2, {}, 8); go(W);
+  for (let k = 0; k < 4; k++) { W.s = (W.fork.split - 2) * E.SEG; W.x = 6; W.v = 40; W.cars = []; drive(W, 30, {}); W.s = (W.fork.end - 1) * E.SEG; W.x = 0; drive(W, 30, {}); while (W.ferry) { E.step(W, {}); quiet(W); } }
+  W.s = (W.goalAt - 3) * E.SEG; W.time = 12; W.cars = [];
+  let n = 0; while (!W.goalSeq && n++ < 60) { E.step(W, {}); quiet(W); }
+  assert.ok(W.goalSeq, 'the goal'); assert.equal(E.STAGES[W.route[4]].key, 'needles', 'all right: the Needles');
+  drive(W, 90, {}); E.step(W, { fire: true }); quiet(W); assert.ok(!W.goalSeq && !W.over, 'carried on');
+  drive(W, 700, {}); assert.equal(W.stage, E.RUN_START[1]); assert.equal(E.STAGES[W.stage].key, 'bournemouth', 'round 2: into town'); assert.equal(W.round, 2);
 });

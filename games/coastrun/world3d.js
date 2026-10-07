@@ -486,6 +486,7 @@ export function createWorld() {
   const LENS2 = LENSMAT.clone(); LENS2.opacity = 0.58;   // (hers lighter glass than his)
   LENSMAT.opacity = 0.8;
   const PM = { lit: PLIT, skin: SKINMAT, hair: HAIRMAT, satin: SATIN, lens: LENSMAT, lens2: LENS2 };
+  const GHOSTMAT = new THREE.MeshStandardMaterial({ color: '#8fd8ff', emissive: '#1f5f8f', emissiveIntensity: 0.6, roughness: 0.35, metalness: 0.2, transparent: true, opacity: 0.32, depthWrite: false });   // (your ghost)
   const STARMAT = new THREE.SpriteMaterial({ map: starTex(), transparent: true, depthWrite: false });
   const STUB = new THREE.CylinderGeometry(0.13, 0.13, 0.12, 14);
   CAR.paint.onBeforeCompile = (sh) => { sh.fragmentShader = sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\ngl_FragColor.b = mix(gl_FragColor.b, min(gl_FragColor.b, gl_FragColor.g + 0.05), 0.75);'); };   // a red that stays red: blue light on it reads grey, not magenta
@@ -1389,6 +1390,11 @@ export function createWorld() {
     for (const k in m.body) if (m.body[k] && CAR[k]) { const mesh = new THREE.Mesh(m.body[k], CAR[k]); mesh.castShadow = k !== 'glow'; player.add(mesh); }
     wheels = m.wheels.map((p) => { const w = new THREE.Group(); for (const k in m.wheel) if (m.wheel[k] && CAR[k]) { const mesh = new THREE.Mesh(m.wheel[k], CAR[k]); mesh.castShadow = true; w.add(mesh); } w.position.set(p[0], p[1], p[2]); w.scale.x = (p[0] < 0 ? -1 : 1) * (m.open && p[2] > 0 ? 1.2 : 1); w.userData.home = { p: w.position.clone(), r: new THREE.Euler(), s: w.scale.clone() }; player.add(w); return w; });   // (mirrored on the left, so the spokes face out)
     R.hubs = m.wheels.map((p) => { const s = new THREE.Mesh(STUB, CAR.trim); s.position.set(p[0], p[1], p[2]); s.rotation.z = Math.PI / 2; s.visible = false; player.add(s); return s; });   // a hub, seen when a wheel's gone
+    if (R.ghostCar) scene.remove(R.ghostCar);   // your ghost (7 Oct): the same car in see-through blue
+    R.ghostCar = new THREE.Group(); R.ghostCar.visible = false; scene.add(R.ghostCar);
+    for (const k in m.body) if (m.body[k] && k !== 'glow') R.ghostCar.add(new THREE.Mesh(m.body[k], GHOSTMAT));
+    for (const p of m.wheels) for (const k in m.wheel) if (m.wheel[k]) { const w = new THREE.Mesh(m.wheel[k], GHOSTMAT); w.position.set(p[0], p[1], p[2]); w.scale.x = p[0] < 0 ? -1 : 1; R.ghostCar.add(w); }
+    { const gl = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameGlow(), color: '#7fd0ff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, opacity: 0.5 })); gl.scale.set(5.5, 2.6, 1); gl.position.y = 0.9; R.ghostCar.add(gl); R.ghostGlow = gl; }   // (a soft blue glow: you can pick it out far down the road)
     const shadow = new THREE.Mesh(new THREE.PlaneGeometry(m.width + 0.7, m.len * 2 + 0.7), new THREE.MeshBasicMaterial({ map: radial(64, [[0, 'rgba(0,0,0,0.6)'], [0.7, 'rgba(0,0,0,0.32)'], [1, 'rgba(0,0,0,0)']]), transparent: true, depthWrite: false }));
     shadow.rotation.x = -Math.PI / 2; shadow.position.y = 0.04; player.add(shadow); player.userData.shadow = shadow;
     if (m.open) {   // the roadster: the two of you, and the steering wheel
@@ -1816,6 +1822,12 @@ export function createWorld() {
       } else if (R.rivalSkid && R.rivalSkid.has(c.id)) R.rivalSkid.delete(c.id);
     }
     for (const [id, m] of traffic) if (!seen.has(id)) { scene.remove(m); traffic.delete(id); }
+    if (R.ghostCar) {   // your ghost: on the road where your best drive was at this moment (not in a split's other branch, not right on top of you)
+      const G = W.ghost, gi = G ? E.segIndex(G.s) : 0, gs = G ? E.segAt(W, gi) : null;
+      R.ghostCar.visible = !!(G && gs && !(gs.fk && gs.fk.b) && !W.crash && !W.ferry && gi >= W.base && gi <= E.lastIndex(W));
+      if (R.ghostCar.visible) { place(W, G.s, G.x, 0, P2); R.ghostCar.position.set(P2.x, P2.y, P2.z); R.ghostCar.rotation.order = 'YXZ'; R.ghostCar.rotation.y = -P2.th; R.ghostCar.rotation.z = P2.bank * 0.8;
+        const nk = Math.min(1, Math.max(0.25, (G.near - 3) / 10)), fk = Math.min(1, Math.max(0, (G.near - 30) / 150)); GHOSTMAT.opacity = (0.34 + 0.3 * fk) * nk; R.ghostGlow.material.opacity = (0.25 + 0.55 * fk) * nk; R.ghostGlow.scale.set(5.5 + 6 * fk, 2.6 + 2 * fk, 1); }   // (bolder and brighter far off; faint right beside you)
+    }
 
     // ---- coins and nitro bottles near the car spin; a caught one flies up and vanishes
     let nc = 0, nn = 0; const PN = { magnet: 0, shield: 0, double: 0, time: 0 }, i0 = E.segIndex(W.s) - 2, i1 = E.segIndex(W.s + 420);
