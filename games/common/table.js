@@ -1135,7 +1135,7 @@
       el.hidden = false;
       el.className = 'chal' + (left <= 30000 && !G.timeUp ? ' hurry' : '') + (G.timeUp ? ' done' : '');
       el.innerHTML = '<span class="ci" aria-hidden="true">' + (sp ? '&#9889;' : '&#9201;') + '</span><b>' + (G.timeUp ? (sp ? 'Sprint over' : 'Time&rsquo;s up') : clock(left + 999)) + '</b>'
-        + '<span class="cl">' + (sp ? foundCount() + ' ' + SPW.pill : (G.timeUp ? 'keep playing for fun' : 'to beat the clock')) + '</span>';
+        + '<span class="cl">' + (sp ? '<span style="white-space:nowrap">' + foundCount() + ' ' + SPW.pill + '</span>' + (G.beat && !G.timeUp ? ' <span style="white-space:nowrap">&middot; ' + G.beat + ' to beat</span>' : '') : (G.timeUp ? 'keep playing for fun' : 'to beat the clock')) + '</span>';
     }
     function timeUp() {
       G.timeUp = true; chal(); persist();
@@ -1143,6 +1143,10 @@
         G.over = true; busy = false; gen++; hideStuck(); unhint(); sfx('win');
         var cards = foundCount();
         $('spCards').textContent = cards; $('spSub').textContent = 'Today\u2019s 3-minute sprint \u00b7 ' + (cards === 1 ? '1 card' : cards + ' cards') + ' ' + SPW.sub;
+        // 7 Oct 2026: a friend's challenge link carries their score - say how this one compares
+        var sb = $('spBeat'); sb.hidden = !G.beat;
+        if (G.beat) sb.textContent = cards > G.beat ? 'Your friend got ' + G.beat + ' \u2013 you beat them!' : cards === G.beat ? 'Your friend got ' + G.beat + ' too \u2013 a draw!'
+          : 'Your friend got ' + G.beat + ' \u2013 ' + (G.beat - cards) + ' more and you\u2019d have had them.';
         openD('dSprint');
         if (window.HallOfFame && D.hof && cards > 0) HallOfFame.sprint($('spHof'), { day: G.day, secs: Math.round(G.limit / 1000), log: G.log, cards: cards });
         else $('spHof').hidden = true;
@@ -1180,9 +1184,11 @@
       else if (mode === 'shared') { seed = shared.seed; v = shared.v; mode = 'deal'; }
       else if (mode === 'daily') { day = today(); seed = dailySeed(v); }
       else seed = pickSeed(v);
+      var prevBeat = G && G.mode === 'sprint' ? G.beat || 0 : 0, prevDay = G ? G.day : '';
       S = E.deal(seed, v);
       G = newG(mode, day);
       if (mode === 'journey') G.jl = jl;
+      if (mode === 'sprint' && prevBeat && day === prevDay) G.beat = prevBeat;   // another go at today's sprint keeps the friend's score to beat
       ST.recent.push(seed); if (ST.recent.length > 60) ST.recent.shift();
       save('stats', ST);
       closeSheets(); hideStuck(); unhint(); chal();
@@ -1633,9 +1639,19 @@
     $('bShare').onclick = function () { if (window.GameSocial) GameSocial.share(); };
     $('bGames').onclick = function () { if (window.GameSocial && GameSocial.openGames) GameSocial.openGames(); else location.href = '/games/'; };
     $('bFeed').onclick = function () { if (window.GameSocial) GameSocial.openFeedback('feedback'); };
-    if (!window.GameSocial) { $('bShare').hidden = true; $('bFeed').hidden = true; $('wShare').hidden = true; }
+    if (!window.GameSocial) { $('bShare').hidden = true; $('bFeed').hidden = true; $('wShare').hidden = true; $('spShare').hidden = true; }
+    // 7 Oct 2026 (owner: no share at the end of the 3-minute challenge): the sprint's link opens TODAY's sprint - the same
+    // cards for everyone today - with the friend's score to beat (?sprint=<day>&beat=<cards>)
+    function shareSprint() {
+      if (!window.GameSocial || !G) return;
+      var n = foundCount();
+      GameSocial.share({ text: 'I got ' + n + ' ' + (n === 1 ? 'card' : 'cards') + ' ' + SPW.sub + ' in today’s 3-minute ' + D.title + ' sprint – can you beat me? Same cards for everyone today, free with no adverts:',
+        query: '?sprint=' + encodeURIComponent(G.day || today()) + '&beat=' + n });
+    }
+    $('spShare').onclick = shareSprint;
     $('wShare').onclick = function () {
       if (!window.GameSocial || !S) return;
+      if (G.mode === 'sprint') { shareSprint(); return; }   // every card up inside the three minutes
       var secs = Math.max(1, Math.round(G.ms / 1000)), daily = G.mode === 'daily';
       var lvl = V && V.info && V.newLabel ? ' (' + V.newLabel(vOf(S)) + ')' : '';
       var text = 'I won ' + (daily ? 'today’s ' + D.title + lvl + ' deal' : D.title + lvl + ' deal #' + S.seed) + ' in ' + clock(secs * 1000) + (S.moves ? ' with ' + S.moves + ' moves' : '')
@@ -1673,7 +1689,7 @@
       sayT = setTimeout(function () { el.classList.remove('on'); }, Math.min(7000, 1800 + t.length * 55));   // time to read it
     }
     function persist() {
-      save('game', { s: S, g: { undo: G.undo.slice(-60), ms: G.ms, mode: G.mode, day: G.day, started: G.started, counted: G.counted, undid: G.undid, log: G.log || [], timeUp: G.timeUp, over: G.over, jl: G.jl, hinted: G.hinted || 0 } });
+      save('game', { s: S, g: { undo: G.undo.slice(-60), ms: G.ms, mode: G.mode, day: G.day, started: G.started, counted: G.counted, undid: G.undid, log: G.log || [], timeUp: G.timeUp, over: G.over, jl: G.jl, hinted: G.hinted || 0, beat: G.beat || 0 } });
     }
     var lastTick = Date.now();
     setInterval(function () {
@@ -1709,14 +1725,16 @@
     var ask = {};
     try {
       var qa = new URLSearchParams(location.search); ask.daily = qa.get('daily') === '1'; ask.hof = qa.get('hof') === '1';
-      if ((qa.has('daily') || qa.has('hof')) && window.history && history.replaceState) history.replaceState(null, '', location.pathname);
+      // a friend's sprint challenge (7 Oct 2026): ?sprint=2026-10-07&beat=23 - only for a game that has the sprint
+      if (qa.has('sprint') && D.foundCount) { ask.sprint = String(qa.get('sprint')); ask.beat = Math.max(0, Math.min(999, parseInt(qa.get('beat'), 10) || 0)); }
+      if ((qa.has('daily') || qa.has('hof') || qa.has('sprint')) && window.history && history.replaceState) history.replaceState(null, '', location.pathname);
     } catch (e) {}
     var saved = load('game', null);
     if (saved && saved.s && saved.g && !saved.s.won && D.valid(saved.s)) {
       S = saved.s; G = newG(saved.g.mode, saved.g.day);
       G.undo = Array.isArray(saved.g.undo) ? saved.g.undo : []; G.ms = +saved.g.ms || 0; G.started = !!saved.g.started; G.counted = !!saved.g.counted; G.undid = +saved.g.undid || 0;
       G.log = Array.isArray(saved.g.log) ? saved.g.log : []; G.timeUp = !!saved.g.timeUp; G.over = !!saved.g.over;
-      G.jl = typeof saved.g.jl === 'number' ? saved.g.jl : undefined; G.hinted = +saved.g.hinted || 0;
+      G.jl = typeof saved.g.jl === 'number' ? saved.g.jl : undefined; G.hinted = +saved.g.hinted || 0; G.beat = Math.max(0, Math.min(999, +saved.g.beat || 0));
       fold(true); faces(); layout(); render(true);
       if (G.started && stuckNow()) showStuck();
     } else {
@@ -1725,6 +1743,13 @@
       newGame('deal');
     }
     if (shared) { newGame('shared'); say('Deal #' + shared.seed + ' – the same cards your friend played. Good luck!'); }
+    else if (ask.sprint) {
+      // today's sprint already under way here: carry on with it (the friend's score joins it); otherwise start today's
+      if (!(G.mode === 'sprint' && G.day === today() && !G.over && !S.won)) newGame('sprint');
+      G.beat = ask.beat; chal(); persist();
+      say((ask.sprint === today() ? 'Today’s 3-minute sprint – the same cards your friend played.' : 'Your friend’s sprint was on another day, so here’s today’s.')
+        + (ask.beat ? ' They got ' + ask.beat + ' – can you beat that? The clock starts with your first move.' : ' The clock starts with your first move.'));
+    }
     else if (ask.daily && !(G.mode === 'daily' && G.day === today())) newGame('daily');   // today's deal already under way: carry on with it
     if (!SET.seenHelp) { SET.seenHelp = true; save('settings', SET); if (!ask.hof) openD('dHelp'); }
     if (ask.hof && D.hof && window.HallOfFame) { closeSheets(); HallOfFame.open({}); }
@@ -1769,8 +1794,8 @@
         + sheet('dStreak', 'Daily streak', '<div class="stk"><div class="stkbig">' + ICON.flame + '<b id="kN">0</b></div><p class="stksub" id="kSub"></p><div class="week" id="kWeek"></div><p class="soft" id="kNote"></p>'
           + '<div class="row"><button class="btn go wide" type="button" id="kPlay">Play today&rsquo;s deal</button></div></div>')
         + sheet('dApp', 'Play it like an app', '<p class="soft" id="appWhy"></p><p class="apphow" id="appHow"></p><div class="row"><button class="btn go wide" type="button" id="appChrome" hidden>Open in Chrome</button><button class="btn wide" type="button" data-close>OK</button></div>')
-        + sheet('dSprint', 'Time\u2019s up!', '<p class="soft" id="spSub"></p><div class="tiles"><div class="tile"><b id="spCards">0</b><span>Cards up</span></div></div><div id="spHof"></div>'
-          + '<div class="row"><button class="btn go wide" type="button" id="spNew">New game</button><button class="btn wide" type="button" id="spHofB">Hall of Fame</button></div>')
+        + sheet('dSprint', 'Time\u2019s up!', '<p class="soft" id="spSub"></p><div class="tiles"><div class="tile"><b id="spCards">0</b><span>Cards up</span></div></div><p class="soft" id="spBeat" hidden></p><div id="spHof"></div>'
+          + '<div class="row"><button class="btn go wide" type="button" id="spNew">New game</button><button class="btn wide" type="button" id="spShare">Challenge a friend</button><button class="btn wide" type="button" id="spHofB">Hall of Fame</button></div>')
         + sheet('dStats', 'My scores', (window.Looks && Looks.trophies ? '<button class="btn wide trob" type="button" id="sTro">' + ICON.trophy + ' Trophies<small id="sTroS"></small></button>' : '') + '<button class="btn wide trob" type="button" id="sCode">&#128273; Keep my scores<small id="sCodeS"></small></button>' + (D.hof ? '<button class="btn hofbtn wide" type="button" id="sHof" style="width:100%;margin:2px 0 12px">&#127942; The Hall of Fame<small>Today&rsquo;s fastest, this week&rsquo;s best, all time</small></button>' : '') + '<p class="soft">' + (window.Keep ? 'Kept on this phone or computer &mdash; nothing is sent anywhere unless you use Keep my scores or join the Hall of Fame.' : 'Kept on this computer only &mdash; nothing is sent anywhere unless you join the Hall of Fame.') + '</p><div class="tiles" id="sTiles"></div><h3 style="margin:16px 0 0;font-size:18px">Today&rsquo;s deal this week</h3><div class="week" id="sWeek"></div><div class="tiles" id="sBest"></div>'
           + '<div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>')
         + sheet('dSet', 'Settings', (V ? '<div class="set"><div><label>' + esc(V.label) + '</label><small>' + esc(V.small || 'Changes from your next game.') + '</small></div><div class="seg" role="group" aria-label="' + esc(V.label) + '">' + v + '</div></div>' : '')
