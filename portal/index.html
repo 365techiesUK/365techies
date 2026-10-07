@@ -270,7 +270,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-10-06"
+      "dateModified": "2026-10-07"
     }
   ]
 }
@@ -765,9 +765,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 06 Oct 2026 &middot; 2ccca21a5d</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 07 Oct 2026 &middot; 007c6412ca</p><script>
 (function () {
-  var P365BUILD = '2ccca21a5d';
+  var P365BUILD = '007c6412ca';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -1752,6 +1752,20 @@
   #p365app .nc-top, .p365ov .nc-top { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; }
   #p365app .nc-top p, .p365ov .nc-top p { margin:.35rem 0 0; }
   #p365app .nc-top button, .p365ov .nc-top button { flex:0 0 auto; }
+  
+  #p365app .cm-head, .p365ov .cm-head { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:.35rem .6rem; margin:0 0 .6rem; }
+  #p365app .cm-head h2, .p365ov .cm-head h2 { margin:0; }
+  #p365app .cm-head .cm-sentb, .p365ov .cm-head .cm-sentb { margin:0; min-height:40px; padding:.4rem .8rem; font-size:.88rem; }
+  #p365app .sn-dlg, .p365ov .sn-dlg { max-width:780px; }
+  #p365app .sn-search, .p365ov .sn-search { display:flex; gap:.5rem; margin:.85rem 0 .75rem; }
+  #p365app .sn-search input, .p365ov .sn-search input { flex:1 1 auto; min-width:0; }
+  #p365app .sn-search button, .p365ov .sn-search button { margin:0; flex:0 0 auto; min-height:44px; }
+  #p365app .sn-res, .p365ov .sn-res { margin:.15rem 0 .5rem; color:var(--psoft); font-size:.92rem; }
+  #p365app .sn-to, .p365ov .sn-to { font-size:.82rem; color:var(--pmut); }
+  #p365app .sn-dlg .cm-it p.sn-snip, .p365ov .sn-dlg .cm-it p.sn-snip { color:var(--psoft); }
+  #p365app .sn-dlg .cm-it p.sn-text, .p365ov .sn-dlg .cm-it p.sn-text { white-space:pre-line; }
+  #p365app .sn-dlg .cm-it button, .p365ov .sn-dlg .cm-it button { margin:.5rem 0 0; min-height:40px; }
+  #p365app .sn-row--open .cm-it, .p365ov .sn-row--open .cm-it { border-color:rgba(29,151,227,.6); }
   #p365app .nc-grid, .p365ov .nc-grid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:0 1rem; margin-top:.3rem; }
   #p365app .nc-f--wide, .p365ov .nc-f--wide { grid-column:1 / -1; }
   #p365app .nc-grid textarea, .p365ov .nc-grid textarea { width:100%; min-height:6rem; padding:.62rem .7rem; border-radius:9px; border:1px solid var(--pline); background:var(--pink); color:var(--pwhite); font:inherit; font-size:1rem; resize:vertical; box-sizing:border-box; }
@@ -1836,7 +1850,7 @@
   #p365app .nx-lvmap .leaflet-tile-pane, #p365app .nx-lsmap .leaflet-tile-pane, .p365ov .nx-lvmap .leaflet-tile-pane, .p365ov .nx-lsmap .leaflet-tile-pane { filter:url(#nxNavy); }
   #p365app .nx-lsmap .leaflet-control-attribution, .p365ov .nx-lsmap .leaflet-control-attribution { font-size:9px; padding:0 4px; }
   @media (max-width:640px) { .nx-bar__in:has(.nx-live:not([hidden])) .nx-where { display:none; } }
-  #p365app .leaflet-container, .p365ov .leaflet-container { font-family:inherit; background:#0b1430; }
+  #p365app .leaflet-container, .p365ov .leaflet-container { font-family:inherit; background:#0b1430; isolation:isolate; }   
   #p365app .nx-lvviews, .p365ov .nx-lvviews { display:flex; gap:.4rem; flex-wrap:wrap; }
   #p365app button.nx-lvview, .p365ov button.nx-lvview { min-height:44px; margin:0; padding:0 .9rem; border-radius:10px; background:transparent; border:1px solid #2a3a5e; color:#c4d6ee; font-weight:600; font-size:.92rem; }
   #p365app button.nx-lvview[aria-pressed="true"], .p365ov button.nx-lvview[aria-pressed="true"] { background:#16213f; border-color:#1d97e3; color:#fff; }
@@ -6448,7 +6462,9 @@
       // 2 Oct 2026 (owner): "an inbox for everything" - Texts became Messages: the texts, emails from people (the company
       // mailboxes, comms-mail-lib.php) and every website enquiry, Dell quote, AI enquiry, PC Manager call-back request and
       // unfinished booking (from #365-job-tracker), newest first
-      h += '<div class="card cm-card" id="cmcard" style="border-left:4px solid var(--pcyan)"><h2>\ud83d\udcac Messages <span class="cm-open" id="cmopent"></span></h2>'
+      // 7 Oct 2026 (owner, for David): "an icon where we can check the sent emails" - beside the card's title
+      h += '<div class="card cm-card" id="cmcard" style="border-left:4px solid var(--pcyan)"><div class="cm-head"><h2>\ud83d\udcac Messages <span class="cm-open" id="cmopent"></span></h2>'
+        + '<button type="button" class="sm ghost cm-sentb" id="cmsent" title="What went out from info@ and help@, and the website\u2019s automatic emails">\ud83d\udce4 Sent emails</button></div>'
         + '<div id="cmbox"><p class="quiet">Loading texts, emails and enquiries\u2026</p></div></div>';
       h += '<div class="card cm-card" id="cmvcard" style="border-left:4px solid #8a5de3"><h2>\ud83d\udcde Voicemails <span class="cm-open" id="cmopenv"></span></h2>'
         + '<div class="cm-bar"><button class="sm ghost" id="cmcheck">Check for new</button><span class="cm-note" id="cmnote" aria-live="polite"></span></div>'
@@ -8383,6 +8399,126 @@
     document.getElementById('ncbook').onclick = function () { ncClose(); ncBook(j); };
     document.getElementById('ncbook').focus();
   }
+  /* ---------- Sent emails (7 Oct 2026, owner for David: "somewhere we can check on the emails that have been sent from
+     help@ and also info@ ... so we can see what [we] sent people, customers"). Two sources, newest first: each mailbox's
+     Sent folder (what was typed in Outlook, webmail or a phone - read-only, comms-sent-lib.php) and the website's own
+     automatic emails (pcm-sentlog-lib.php, kept 90 days from 7 Oct 2026, links' private parts hidden). comms-api
+     do=sent lists them (q searches who, subject and text); do=sentmsg opens one in full. ---------- */
+  var SN = { d: null, f: 'all', q: '', more: false, open: {}, full: {}, ret: null, seq: 0 };
+  var SN_VIA = { website: 'automatic email', 'sign-in code': 'sign-in code', 'payment link': 'payment link', 'plan invite': 'plan invite', 'job email': 'job email' };
+  function snKey(e) { if (e.key === 'Escape') snClose(); }
+  function snClose() {
+    var x = document.getElementById('snmask'); if (x && x.parentNode) x.parentNode.removeChild(x);
+    document.removeEventListener('keydown', snKey);
+    if (SN.ret && SN.ret.focus && document.body.contains(SN.ret)) { try { SN.ret.focus(); } catch (e) {} }
+  }
+  function snOpen() {
+    snClose(); SN.ret = document.activeElement; SN.open = {}; SN.full = {}; SN.d = null; SN.more = false;
+    var mask = document.createElement('div'); mask.className = 'tmask'; mask.id = 'snmask';
+    mask.innerHTML = '<div class="tmodal sn-dlg" role="dialog" aria-modal="true" aria-labelledby="snh">'
+      + '<div class="nc-top"><div><h3 id="snh">&#128228; Sent emails</h3>'
+      + '<p class="quiet">What went out from info@ and help@, newest first &mdash; what was typed in Outlook, and the website&rsquo;s automatic emails. Just for reading: nothing here changes the mailboxes.</p></div>'
+      + '<button type="button" class="sm ghost" id="snx" aria-label="Close">&#10005;</button></div>'
+      + '<form class="sn-search" id="snform" role="search"><label for="snq" class="sr-only">Search the sent emails</label>'
+      + '<input id="snq" type="search" autocomplete="off" placeholder="Name, email or subject" value="' + esc(SN.q) + '" />'
+      + '<button type="submit" class="sm">Search</button></form>'
+      + '<div id="snbody"><p class="quiet">Opening the Sent folders&hellip;</p></div></div>';
+    el.appendChild(mask);
+    mask.addEventListener('click', snClick);
+    document.getElementById('snform').addEventListener('submit', function (e) { e.preventDefault(); SN.q = document.getElementById('snq').value.trim(); SN.more = false; SN.open = {}; snLoad(); });
+    document.addEventListener('keydown', snKey);
+    // a phone: focus the close button, so the keyboard does not cover the list; a computer: straight into the search
+    var coarse = window.matchMedia && matchMedia('(pointer: coarse)').matches;
+    document.getElementById(coarse ? 'snx' : 'snq').focus();
+    snLoad();
+  }
+  function snLoad() {
+    var seq = ++SN.seq, body = document.getElementById('snbody'); if (!body) return;
+    var mb = document.getElementById('snmore');
+    if (SN.more && mb) { mb.disabled = true; mb.innerHTML = 'Fetching more&hellip;'; }
+    else body.innerHTML = '<p class="quiet">' + (SN.q ? 'Looking through the sent emails for &ldquo;' + esc(SN.q) + '&rdquo;&hellip;' : 'Opening the Sent folders&hellip;') + '</p>';
+    post('/api/comms-api.php', { stoken: S.stoken, machine: mid(), do: 'sent', q: SN.q, more: SN.more ? 1 : 0 })
+      .then(function (d) { if (seq !== SN.seq) return; SN.d = d && d.ok ? d : { ok: false, error: (d && d.error) || 'no answer' }; snRender(); })
+      .catch(function () { if (seq !== SN.seq) return; SN.d = { ok: false, error: 'no answer' }; snRender(); });
+  }
+  function snBox(b) { return esc(String(b || '').split('@')[0]) + '@'; }
+  function snIn(x, k) { return k === 'all' || (k === 'auto' ? x.k === 'auto' : x.k === 'box' && x.box === k); }
+  function snKeyOf(x) { return x.k === 'auto' ? 'a:' + x.id : 'b:' + x.box + '|' + x.folder + '|' + x.uid; }
+  function snWho(list) {
+    if (!list || !list.length) return '<b>(nobody named)</b>';
+    return list.slice(0, 3).map(function (p) {
+      var nm = p.cust || p.name;
+      return '<b>' + esc(nm || p.addr) + '</b>' + (nm && nm !== p.addr ? '<span class="cm-num">' + esc(p.addr) + '</span>' : '')
+        + (p.cust ? '<span class="cm-tag">' + (p.cust_src === 'job' ? 'job record' : 'customer') + '</span>' : '');
+    }).join(' ') + (list.length > 3 ? '<span class="cm-num">+ ' + (list.length - 3) + ' more</span>' : '');
+  }
+  function snRender(focusKey) {
+    var body = document.getElementById('snbody'); if (!body) return;
+    var d = SN.d || {};
+    if (!d.ok) {
+      body.innerHTML = '<p class="err">' + (d.error === 'auth' ? 'Your staff session has expired &mdash; sign out and in again.' : 'The sent emails could not load (' + esc(d.error || 'no answer') + '). Try again in a minute.') + '</p>';
+      return;
+    }
+    var items = d.items || [], boxes = d.boxes || [];
+    var fl = [['all', 'All']].concat(boxes.map(function (b) { return [b.box, snBox(b.box)]; })).concat([['auto', 'Automatic']]);
+    if (fl.map(function (f) { return f[0]; }).indexOf(SN.f) < 0) SN.f = 'all';
+    var chips = '<div class="cm-filter" role="group" aria-label="Show">' + fl.map(function (f) {
+        var n = items.filter(function (x) { return snIn(x, f[0]); }).length;
+        return '<button type="button" class="sm ghost' + (SN.f === f[0] ? ' on' : '') + '" data-snf="' + esc(f[0]) + '" aria-pressed="' + (SN.f === f[0] ? 'true' : 'false') + '">' + f[1]
+          + (n ? '<span class="cm-fn">' + n + '</span>' : '') + '</button>';
+      }).join('') + '</div>';
+    var stat = '<p class="cm-mstat">' + boxes.map(function (b) {
+        if (b.error) return '<span class="cm-mbad">&#9993; ' + snBox(b.box) + ': ' + esc(b.error)
+          + (/no Sent folder/.test(b.error) ? ' &mdash; the email program may be keeping its sent emails on the computer, not on the server.' : '') + '</span>';
+        return '&#9993; ' + snBox(b.box) + ' &middot; ' + esc((b.folders || []).join(' + ')) + ' &middot; ' + Number(b.total || 0).toLocaleString('en-GB') + ' email' + (b.total === 1 ? '' : 's') + ' in Sent';
+      }).concat(['&#9881; The website&rsquo;s automatic emails: ' + (d.auto_since ? 'kept since ' + esc(new Date(d.auto_since * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })) + ', for 90 days'
+        : 'none yet &mdash; each one is kept from now on, for 90 days')]).join('<br />') + '</p>';
+    var list = items.filter(function (x) { return snIn(x, SN.f); });
+    var head = d.q ? '<p class="sn-res">' + list.length + ' found for &ldquo;' + esc(d.q) + '&rdquo; &middot; <a href="#" data-snclr="1">show everything again</a></p>' : '';
+    body.innerHTML = chips + stat + head
+      + (list.length ? list.map(snRow).join('') : '<p class="quiet">' + (d.q ? 'Nothing sent matches that.' : SN.f === 'auto' ? 'No automatic emails kept yet.' : 'Nothing in Sent yet.') + '</p>')
+      + (!d.more && !d.q && items.some(function (x) { return x.k === 'box'; }) ? '<button type="button" class="sm ghost cm-more" id="snmore">Show more (up to 100 from each mailbox)</button>' : '');
+    if (focusKey) [].forEach.call(body.querySelectorAll('[data-sno]'), function (b) { if (b.getAttribute('data-sno') === focusKey) b.focus({ preventScroll: true }); });
+  }
+  function snRow(x) {
+    var key = snKeyOf(x), open = !!SN.open[key], first = (x.to && x.to[0]) || {};
+    var tag = x.k === 'auto' ? '<span class="cm-tag cm-tag--soft">Automatic &middot; ' + esc(SN_VIA[x.via] || x.via || 'website') + '</span>' : '<span class="cm-tag cm-tag--mail">from ' + snBox(x.box) + '</span>';
+    var re = x.k === 'box' && x.subject ? '?subject=' + encodeURIComponent(/^re:/i.test(x.subject) ? x.subject : 'Re: ' + x.subject) : '';
+    return '<div class="cm-th sn-row' + (open ? ' sn-row--open' : '') + '"><div class="cm-hd"><span class="sn-to">To</span> ' + snWho(x.to) + tag + '<span class="cm-t">' + esc(cmWhen(x.at)) + '</span></div>'
+      + '<div class="cm-it cm-it--mail">' + (x.subject ? '<p class="cm-subj">' + esc(x.subject) + '</p>' : '<p class="cm-subj">(no subject)</p>')
+      + (open ? snFull(key) : (x.snip ? '<p class="sn-snip">' + esc(x.snip) + '</p>' : '') + (x.attach && x.attach.length ? '<span class="cm-k">&#128206; ' + esc(x.attach.join(', ')) + '</span>' : ''))
+      + '</div><div class="cm-act"><button type="button" class="sm' + (open ? ' ghost' : '') + '" data-sno="' + esc(key) + '" aria-expanded="' + (open ? 'true' : 'false') + '">' + (open ? 'Close it' : 'Read it') + '</button>'
+      + (first.addr ? '<a class="btn sm ghost" href="mailto:' + esc(first.addr) + re + '" title="A new email to them in your email program">&#9993; Email them</a>' : '') + '</div></div>';
+  }
+  function snFull(key) {
+    var m = SN.full[key];
+    if (!m) return '<p class="quiet">Opening it\u2026</p>';
+    if (m.error) return '<p class="err">' + esc(m.error) + '</p>';
+    var who = function (l) { return (l || []).map(function (p) { var nm = p.cust || p.name; return esc(nm ? nm + ' <' + p.addr + '>' : p.addr); }).join(', '); };
+    return '<span class="cm-k">' + esc(cmWhen(m.at)) + (m.to && m.to.length ? ' &middot; to ' + who(m.to) : '') + (m.cc && m.cc.length ? ' &middot; copied to ' + who(m.cc) : '') + '</span>'
+      + '<p class="sn-text">' + (esc(m.showAll ? m.full : (m.wrote || m.full)) || '<span class="quiet">No text in this email.</span>') + '</p>'
+      + (m.attach && m.attach.length ? '<span class="cm-k">&#128206; ' + esc(m.attach.join(', ')) + '</span>' : '')
+      + (m.more ? '<button type="button" class="sm ghost" data-snw="' + esc(key) + '">' + (m.showAll ? 'Just what was written' : 'Show the whole email (with the earlier messages)') + '</button>' : '');
+  }
+  function snClick(e) {
+    var b = e.target && e.target.closest ? e.target.closest('button, a') : null; if (!b) return;
+    if (b.id === 'snx') { snClose(); return; }
+    if (b.id === 'snmore') { SN.more = true; snLoad(); return; }
+    if (b.hasAttribute('data-snclr')) { e.preventDefault(); SN.q = ''; SN.open = {}; var qi = document.getElementById('snq'); if (qi) qi.value = ''; SN.more = false; snLoad(); return; }
+    if (b.hasAttribute('data-snf')) { SN.f = b.getAttribute('data-snf'); snRender(); return; }
+    if (b.hasAttribute('data-snw')) { var w = SN.full[b.getAttribute('data-snw')]; if (w) { w.showAll = !w.showAll; snRender(b.getAttribute('data-snw')); } return; }
+    if (!b.hasAttribute('data-sno')) return;
+    var key = b.getAttribute('data-sno');
+    if (SN.open[key]) { delete SN.open[key]; snRender(key); return; }
+    SN.open[key] = true;
+    if (SN.full[key] && SN.full[key].error) delete SN.full[key];
+    snRender(key);
+    if (SN.full[key]) return;
+    var x = ((SN.d && SN.d.items) || []).filter(function (i) { return snKeyOf(i) === key; })[0]; if (!x) return;
+    post('/api/comms-api.php', x.k === 'auto' ? { stoken: S.stoken, machine: mid(), do: 'sentmsg', auto: x.id } : { stoken: S.stoken, machine: mid(), do: 'sentmsg', box: x.box, folder: x.folder, uid: x.uid })
+      .then(function (d) { SN.full[key] = d && d.ok ? d.msg : { error: d && d.error === 'auth' ? 'Your staff session has expired - sign out and in again.' : 'It could not be opened (' + ((d && d.error) || 'no answer') + ').' }; if (SN.open[key]) snRender(key); })
+      .catch(function () { SN.full[key] = { error: 'No answer from the server - try again.' }; if (SN.open[key]) snRender(key); });
+  }
   // ---------- 6 Oct 2026: the customer book - find anyone, open their details, edit them (pcm-custbook-lib.php) ----------
   var CBK = { q: '', t: null, seq: 0, p: null };
   var CBK_F = [['name', 'Name'], ['company', 'Company'], ['phone', 'Landline', 'tel'], ['mobile', 'Mobile', 'tel'], ['email', 'Email', 'email'],
@@ -8674,6 +8810,7 @@
     card.addEventListener('click', function (e) {
       var b = e.target && e.target.closest ? e.target.closest('button, a') : null; if (!b || !card.contains(b)) return;
       if (b.id === 'cmcheck') { loadComms('check'); return; }
+      if (b.id === 'cmsent') { snOpen(); return; }
       if (b.id === 'cmmoret') { CM.allT = true; renderComms(); return; }
       if (b.id === 'cmmorev') { CM.allV = true; renderComms(); return; }
       if (b.id === 'cmdonet') { CM.doneT = !CM.doneT; renderComms(); return; }
