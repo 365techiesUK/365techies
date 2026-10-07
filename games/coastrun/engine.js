@@ -134,9 +134,9 @@
   // the speeds: more time, fewer and slower cars, bends that push less (assist), bounces instead of crashes at Gentle;
   // psiTop = how far from the road's direction the car turns at full speed (radians); req = which of a request's goals
   var DIFF = {
-    1: { time: 1.06, gap: 170, tv: 0.9, assist: 0.55, psiTop: 0.24, crash: false, off: 0.55, req: 0, rv: 0.88 },
-    2: { time: 1, gap: 115, tv: 1, assist: 0.2, psiTop: 0.21, crash: true, off: 0.45, req: 1, rv: 0.94 },
-    3: { time: 0.97, gap: 85, tv: 1.08, assist: 0.05, psiTop: 0.2, crash: true, off: 0.4, req: 2, rv: 0.99 }
+    1: { time: 1.06, gap: 170, tv: 0.9, assist: 0.55, psiTop: 0.24, crash: false, off: 0.55, req: 0, rv: 0.88, cf: 1 },
+    2: { time: 1.04, gap: 115, tv: 1, assist: 0.2, psiTop: 0.21, crash: true, off: 0.45, req: 1, rv: 0.94, cf: 1.2 },
+    3: { time: 1.0, gap: 85, tv: 1.08, assist: 0.05, psiTop: 0.2, crash: true, off: 0.4, req: 2, rv: 0.99, cf: 1.25 }
   };
   // what your passenger asks for: goal by speed (Gentle, Classic, Fast), seconds to do it in
   var REQ = {
@@ -964,7 +964,7 @@
     if (W.crash) return;
     var tx = clamp(Math.round(W.x / 4.6) * 4.6, -4.6, 4.6);
     W.crash = { t: 0, dur: hard ? 185 : 42, hard: hard, x0: W.x, tx: tx, spin: W.x < 0 ? 1 : -1, why: why || '', v0: W.v };
-    W.combo = 0; W.comboT = 0; W.drift = 0; W.boosting = false; W.shake = hard ? 26 : 12;
+    W.combo = 0; W.comboT = 0; W.drift = 0; W.driftChain = 1; W.chainUntil = 0; W.boosting = false; W.shake = hard ? 26 : 12;
     W.events.push({ sfx: hard ? 'crash' : 'bump', x: 0 });
     fx(W, { k: hard ? 'crash' : 'bump', x: W.x });
     if (hard) W.events.push({ say: 'Crash!' });
@@ -984,8 +984,10 @@
   function knock(W) { if (W.req && W.req.k === 'clean') endReq(W, false); }   // any knock spoils a "careful" request
   function endDrift(W) {
     if (W.driftT > 0.5) {
-      var p = Math.round(W.driftPts / 10) * 10; W.score += p;
-      pop(W, 'DRIFT', '+' + p.toLocaleString('en-GB'), W.drift, 'drift'); W.events.push({ sfx: 'driftend' });
+      var ch = W.driftChain || 1, clean = !W.crash && W.t - W.scrapeT > 30, p = Math.round(W.driftPts * ch / 10) * 10; W.score += p;
+      if (clean && W.driftT > 0.8 && !W.timeUp) { var top0 = topSpeed(W); W.v = Math.min(Math.max(W.v, top0 * 1.04), W.v + Math.min(4.5, 1.2 + W.driftT * 1.2) * (1 + 0.2 * (ch - 1))); }   // (a good one: a shove out of it)
+      W.chainUntil = W.t + 90; W.driftChain = Math.min(5, ch + 1);   // (the next drift within 1.5 s: a chain)
+      pop(W, ch > 1 ? 'DRIFT x' + ch : clean && W.driftT > 1.2 ? 'CLEAN DRIFT' : 'DRIFT', '+' + p.toLocaleString('en-GB'), W.drift, 'drift'); W.events.push({ sfx: 'driftend' });
       if (W.driftT > 1.2) { mood(W, 'cheer'); if (W.rng() < 0.35) voice(W, 'wow'); }
     }
     W.drift = 0; W.driftT = 0; W.driftPts = 0; W.driftA = 0;
@@ -1062,8 +1064,9 @@
     var saved = W.timeUp && !W.over;   // (out of time, rolled over the line)
     if (saved) { W.timeUp = false; W.overT = 0; W.tuCoast = false; W.score += 10000; mood(W, 'cheer'); }
     if (g.kind === 'check' || g.kind === 'round') {
-      var S = STAGES[g.st], add = Math.round(S.t * W.D.time * Math.max(0.8, Math.pow(0.95, W.round - 1)));
       if (g.kind === 'check') endLeg(W);
+      var S = STAGES[g.st], taper = g.kind === 'check' ? 1 - 0.04 * Math.max(0, W.legs.length - 1) : 1;   // (each checkpoint further into a run gives a little less: the surplus used to snowball - audit, 7 Oct)
+      var add = Math.round(S.t * W.D.time * taper * Math.max(0.8, Math.pow(0.95, W.round - 1)));
       W.stageNo++; W.stage = g.st; W.reqNext = Math.max(W.reqNext, W.t + 60 * 5);
       if (g.kind === 'round') {
         W.route = [g.st]; W.legs = []; W.legT0 = W.t; W.legHearts = 0; W.runHearts = 0; W.runAsked = 0;
@@ -1104,7 +1107,7 @@
   function topSpeed(W) { return VMAX * CARS[W.car].top; }
   var CF = 0.32;   // how hard a bend pushes the car outwards: k * v * v * CF metres a second
   function turnLimit(W, v) { return (0.6 + (W.D.psiTop - 0.6) * Math.pow(Math.min(1, v / VMAX), 0.8)) * CARS[W.car].yaw; }   // the angle a held key turns the car to
-  function pushOut(W, k, v) { return k * v * v * CF * (1 - W.D.assist) * (1 - 0.58 * (W.dk || 0)) / CARS[W.car].grip; }   // (a drift eases the push, coming and going over a moment: dk)
+  function pushOut(W, k, v) { return k * v * v * CF * (W.D.cf || 1) * (1 - W.D.assist) * (1 - 0.58 * (W.dk || 0)) / CARS[W.car].grip; }   // (a drift eases the push, coming and going over a moment: dk)
 
   // ---------------------------------------------------------------- your passenger's requests
   // Every so often she asks for something; do it in time for hearts (3 if quick, 2 if not, 1 for half of it). Coming up to
@@ -1216,6 +1219,7 @@
     var autoGo = W.autoDrift && W.steerHold >= 12 && W.v > top * 0.55 && target * bendHere(W, g) >= 1 / 170;
     if (!W.drift && !out && !W.air && target !== 0 && W.v > top * 0.42 && (pressed || (brake && W.brakeT < 0.3) || autoGo)) {
       W.drift = target; W.driftT = 0; W.driftPts = 0; W.driftA = Math.max(0.06, Math.abs(W.psi - W.phi)); W.events.push({ sfx: 'skid' });
+      if (!(W.t < (W.chainUntil || 0))) W.driftChain = 1;   // (a chain broken: too long since the last)
       W.psi += target * 0.06;   // the back starts to step out (the slide then grows: driftA)
     }
     // in a drift the keys set the angle: hold the turn and the tail swings out to the full slide; let go and it straightens over half a
@@ -1243,10 +1247,10 @@
     // (the roadster 218 mph, the GT 234, the hatch 205; was 1.22, 172 mph) and a hard shove towards it - one bottle from a 141 mph cruise passes 200 -
     // softer from a crawl (the tyres spin); when it runs out the speed bleeds away over a few seconds rather than dropping straight back
     var hzN = top * (W.slipOn ? 1.04 : 1), hz = hzN * (W.boosting ? 1.55 : 1);
-    var v = W.v, accel = 8.8 * C.acc * Math.max(0, 1 - Math.pow(v / hzN, 1.6)) + (W.boosting ? 26 * Math.max(0, 1 - Math.pow(v / hz, 3)) * (0.3 + 0.7 * Math.min(1, v / (top * 0.6))) : 0);   // (about 0.9 g off the line, 0-60 in under four seconds, then it takes its time to the top; was 1.6 g)
-    if (out) v *= W.crash.hard ? (W.crash.t < W.crash.dur * 0.6 ? 0.986 : 0.9) : 0.9;
+    var v = W.v, accel = 8.8 * C.acc * Math.max(0, 1 - Math.pow(v / hzN, 1.6)) + 3 * C.acc * Math.max(0, 1 - v / (hzN * 0.5)) + (W.boosting ? 26 * Math.max(0, 1 - Math.pow(v / hz, 3)) * (0.3 + 0.7 * Math.min(1, v / (top * 0.6))) : 0);   // (about 0.9 g off the line, 0-60 in under four seconds, then it takes its time to the top; was 1.6 g)
+    if (out) v = W.crash.hard ? v * (W.crash.t < W.crash.dur * 0.6 ? 0.986 : 0.9) : Math.max(W.crash.v0 * 0.45, v * 0.95);   // (a bounce: down to about half speed, not a stop)
     else if (W.timeUp && !W.goalSeq) v -= (W.tuCoast ? TU_COAST : W.tuBrake) * DT;   // (time up: rolling for a checkpoint in reach, or braking to a stop)
-    else if (W.drift) v -= (2.5 + (brake ? 2 : 0)) * DT;
+    else if (W.drift) v -= ((target * W.drift > 0 ? 0.5 : 2.2) + (brake ? 2 : 0) + (W.t - W.scrapeT < 10 ? 2 : 0)) * DT;   // (held: it keeps its speed; fought, braked or on the wall: it scrubs)
     else if (brake) v -= 12.5 * DT;   // (a sports car's brakes, about 1.3 g: was 2.6)
     else if (gas || W.boosting) v += accel * DT;
     else v -= (1.6 + 0.00035 * v * v) * DT;   // (off the throttle: the engine and the air slow it, gently)
@@ -1270,6 +1274,8 @@
       // a drift: the car's line holds the bend (just enough to cancel its push, trimmed a little by the keys) while its
       // nose swings in; the slide grows over the first moment
       var sIn2 = target * W.drift, hold = Math.asin(clamp(pushOut(W, k, v) / Math.max(5, v), -0.6, 0.6)) + W.drift * (sIn2 > 0 ? 0.045 : sIn2 < 0 ? -0.03 : 0);   // (held: a tighter line; caught: a wider one)
+      { var rh = roadHalf(g), oOut = -W.drift * W.x, oIn = W.drift * W.x;   // the slide follows the road (as OutRun 2's does): eased back off the outside edge, and off the inside one
+        hold += W.drift * (0.07 * clamp((oOut - (rh - 3)) / 2, 0, 1) - 0.07 * clamp((oIn - (rh - 2.4)) / 1.5, 0, 1)); }
       if (!W.air) W.phi += (hold - W.phi) * Math.min(1, 4 * DT);
       want = W.phi + W.drift * W.driftA;
       if (!W.air) W.psi += (want - W.psi) * Math.min(1, 8 * DT);
@@ -1283,7 +1289,7 @@
     { var lim2 = Math.max(0.05, turnLimit(W, v)), load = Math.abs(pushOut(W, k, v)) / Math.max(1, v * Math.sin(lim2)) * (target * k > 0 ? 1 : 0.6);   // how hard the tyres are working, for the squeal: near the limit in a bend,
       var work = out || W.air || W.drift || v < top * 0.35 ? 0 : Math.max(clamp((load - 0.3) / 0.3, 0, 1), clamp((Math.abs(W.psi - W.phi) - 0.03) / 0.06, 0, 1), brake && v > top * 0.5 ? 0.5 : 0);   // a quick flick at speed, a hard stop
       W.slide = (W.slide || 0) + (work - (W.slide || 0)) * Math.min(1, (work > (W.slide || 0) ? 10 : 5) * DT); }
-    if (out) { var cr = W.crash; cr.t++; if (cr.t > cr.dur * (cr.hard ? 0.88 : 0.55)) { W.x += (cr.tx - W.x) * 0.1; W.psi *= 0.85; W.phi *= 0.85; } if (cr.t >= cr.dur) { W.crash = null; W.v = 0; W.x = cr.tx; W.psi = W.phi = 0; W.steer = 0; } }
+    if (out) { var cr = W.crash; cr.t++; if (cr.t > cr.dur * (cr.hard ? 0.88 : 0.55)) { W.x += (cr.tx - W.x) * 0.1; W.psi *= 0.85; W.phi *= 0.85; } if (cr.t >= cr.dur) { W.crash = null; if (cr.hard) W.v = 0; W.x = cr.tx; W.psi = W.phi = 0; W.steer = 0; } }
 
     // ---- along and across; a bend pushes the car outwards
     W.s += v * Math.cos(W.phi) * DT;
@@ -1380,7 +1386,7 @@
     // ---- drifting fills the boost and scores by speed and angle; points for speed
     if (W.drift) {
       var ang = Math.abs(W.psi - W.phi);
-      W.driftT += DT; W.driftPts += W.v / VMAX * ang * 70; W.boost = Math.min(1, W.boost + ang * 0.75 * DT);
+      W.driftT += DT; W.driftPts += W.v / VMAX * ang * 70; W.boost = Math.min(1, W.boost + ang * 0.75 * (1 + 0.25 * ((W.driftChain || 1) - 1)) * DT);
       if (W.t % 3 === 0) fx(W, { k: 'smoke', x: W.x, d: W.drift });
     }
     if (W.off && W.v > 10 && W.t % 4 === 0) fx(W, { k: 'dust', x: W.x });
@@ -1433,6 +1439,10 @@
     if (u > 0.3) inp.right = true; else if (u < -0.3) inp.left = true;
     var maxK = 0; for (j = 2; j < 30; j++) maxK = Math.max(maxK, Math.abs(segAt(W, i + j).k));
     var tooFast = pushOut(W, maxK, W.v) > W.v * Math.sin(lim) * 0.85;
+    var forkNear = F && !F.s && i > F.a - 120;
+    if (tooFast && W.v > 24 && W.autoDrift && W.v > top * 0.55 && !forkNear && W.v <= top * 1.02) {   // (a bend too quick to hold on grip: drift it, as a player would with auto-drift - hold the turn into it, easing off near the inside)
+      var into = kAhead > 0 ? 1 : -1; if (into * W.x < 2.2) { inp.right = into > 0; inp.left = into < 0; } else { inp.left = false; inp.right = false; } tooFast = false;
+    }
     if (tooFast && W.v > 24) { if (W.auto) inp.down = true; else inp.up = false; }
     // over the car's own top speed (the nitro, 7 Oct: 200 mph and more) a lift isn't enough: look as far ahead as it takes to stop and brake in time for
     // each bend (to a little under the speed it can be taken at, on ~7.5 m/s/s), still steering as it brakes

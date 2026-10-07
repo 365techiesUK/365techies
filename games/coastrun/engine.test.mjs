@@ -16,7 +16,7 @@ function clear(W) { W.cars = []; W.field = []; for (let i = W.base; i <= E.lastI
 test('a new game: Bournemouth first, the clock by speed, a car and an accelerator', () => {
   const g = E.newWorld(1, { car: 'hatch' }, 1), c = E.newWorld(2, { car: 'nope', pedal: 'hold' }, 1);
   assert.equal(g.stage, 0); assert.equal(E.STAGES[0].name, 'BOURNEMOUTH');
-  assert.equal(Math.round(g.time), Math.round(E.STAGES[0].t * 1.06 + 10), 'Gentle gives a little more time'); assert.equal(Math.round(c.time), E.STAGES[0].t + 10, 'the first stage and ten seconds in hand');
+  assert.equal(Math.round(g.time), Math.round(E.STAGES[0].t * 1.06 + 10), 'Gentle gives a little more time'); assert.equal(Math.round(c.time), Math.round(E.STAGES[0].t * 1.04 + 10), 'Classic: the first stage (and a little: 7 Oct, so nitro is margin, not rent) and ten seconds in hand');
   assert.equal(g.car, 'hatch'); assert.equal(c.car, 'roadster', 'an unknown car falls back to the Roadster');
   assert.equal(g.auto, true); assert.equal(c.auto, false);
   assert.ok(g.fork && g.fork.next.join() === '1,2', 'the first fork leads to the Purbeck Hills or the New Forest');
@@ -350,4 +350,24 @@ test('time up (7 Oct): the car stops in a few seconds, Space ends it at once, an
   W.s = (ci - 30) * E.SEG; W.x = 0; W.v = 40; W.time = 0.02;
   let saved = false; for (let i = 0; i < 600 && !W.over; i++) { W.cars = []; W.x = 0; E.step(W, {}); if (W.banner && W.banner.txt === 'JUST MADE IT!') saved = true; quiet(W); }
   assert.ok(saved && !W.timeUp && !W.over && W.time > 20, 'just made it: back in the race with ' + W.time.toFixed(0) + ' s');
+});
+
+test('drifting (7 Oct): a drift held into the bend keeps its speed, a good one gives a shove coming out, and a bounce no longer stops you dead', () => {
+  const W = E.newWorld(2, {}, 3); go(W); W.cars = []; W.field = [];
+  const i = findSeg(W, E.segIndex(W.s) + 40, (g, j) => Math.abs(g.k) > 1 / 180 && Math.abs(E.segAt(W, j + 20).k) > 1 / 180);
+  assert.ok(i > 0, 'a bend');
+  const into = E.segAt(W, i).k > 0 ? 1 : -1, top = E.topSpeed(W);
+  W.s = (i - 2) * E.SEG; W.x = -into * 2; W.v = top * 0.9; W.autoDrift = true;
+  const key = into > 0 ? { right: true } : { left: true };
+  drive(W, 3, { ...key, down: true }); assert.ok(W.drift, 'a drift started');
+  const v0 = W.v; drive(W, 60, (w) => { w.cars = []; return into * w.x < 2.2 ? key : {}; });
+  assert.ok(W.drift && v0 - W.v < 2, 'a second held in the drift loses under 2 m/s: lost ' + (v0 - W.v).toFixed(2));
+  const vEnd = W.v; drive(W, 50, (w) => { w.cars = []; return {}; });   // let go: it straightens, and comes out with a shove
+  assert.ok(!W.drift, 'the drift ended');
+  // a bounce on Gentle: down to about half speed, still moving
+  const B = E.newWorld(1, {}, 9); go(B); B.cars = [];
+  const li = findSeg(B, 50, (g) => (g.spr || []).some((p) => p.t === 'lamp' && p.x > 0)), lamp = E.segAt(B, li).spr.find((p) => p.t === 'lamp' && p.x > 0);
+  B.s = (li - 1) * E.SEG + 1; B.x = lamp.x - 0.3; B.v = 40; drive(B, 6, (w) => { w.x = lamp.x - 0.3; return {}; });
+  assert.ok(B.crash && !B.crash.hard, 'a bounce'); let n = 0; while (B.crash && n++ < 100) { E.step(B, {}); quiet(B); }
+  assert.ok(B.v > 12, 'still moving after a bounce: ' + B.v.toFixed(1) + ' m/s');
 });
