@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=50';
+import * as MD from './models3d.js?v=51';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -471,7 +471,21 @@ export function createWorld() {
   HAIRMAT.customProgramCacheKey = () => 'hair';
   const SATIN = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.36, metalness: 0 });   // (pass 7: her top)
   SATIN.onBeforeCompile = PLIT.onBeforeCompile; SATIN.customProgramCacheKey = () => 'satin';
-  const PM = { lit: PLIT, skin: SKINMAT, hair: HAIRMAT, satin: SATIN };
+  const EYEMAT = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.16, metalness: 0 });   // (their eyes: wet, a glint)
+  const LENSMAT = new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.04, metalness: 0.1, clearcoat: 0.8, clearcoatRoughness: 0.05, envMapIntensity: 1.6, transparent: true, opacity: 0.68, depthWrite: false });   // (their sunglasses: tinted glass you can see their eyes through)
+  // pass 7 (second ten): skin isn't smooth - a fine grain of pores and a softer mottling in its colour and its shine, worked out on the surface
+  // itself (no texture to load)
+  const SKIN_NOISE = 'varying vec3 vSkinP;\nfloat skH(vec3 p) { p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }\n' +
+    'float skN(vec3 x) { vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f); return mix(mix(mix(skH(i), skH(i + vec3(1,0,0)), f.x), mix(skH(i + vec3(0,1,0)), skH(i + vec3(1,1,0)), f.x), f.y), mix(mix(skH(i + vec3(0,0,1)), skH(i + vec3(1,0,1)), f.x), mix(skH(i + vec3(0,1,1)), skH(i + vec3(1,1,1)), f.x), f.y), f.z); }\n';
+  const skinBefore = SKINMAT.onBeforeCompile;
+  SKINMAT.onBeforeCompile = (sh) => { skinBefore(sh);
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vSkinP;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvSkinP = position;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\n' + SKIN_NOISE)
+      .replace('#include <color_fragment>', '#include <color_fragment>\n{ float sn = skN(vSkinP * 260.0) * 0.55 + skN(vSkinP * 70.0) * 0.45; diffuseColor.rgb *= 0.955 + 0.09 * sn; diffuseColor.r += 0.018 * (skN(vSkinP * 28.0) - 0.5); }')
+      .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\nroughnessFactor = clamp(roughnessFactor * (0.9 + 0.2 * skN(vSkinP * 180.0)), 0.3, 1.0);'); };
+  const LENS2 = LENSMAT.clone(); LENS2.opacity = 0.58;   // (hers lighter glass than his)
+  LENSMAT.opacity = 0.8;
+  const PM = { lit: PLIT, skin: SKINMAT, hair: HAIRMAT, satin: SATIN, lens: LENSMAT, lens2: LENS2 };
   const STARMAT = new THREE.SpriteMaterial({ map: starTex(), transparent: true, depthWrite: false });
   const STUB = new THREE.CylinderGeometry(0.13, 0.13, 0.12, 14);
   CAR.paint.onBeforeCompile = (sh) => { sh.fragmentShader = sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\ngl_FragColor.b = mix(gl_FragColor.b, min(gl_FragColor.b, gl_FragColor.g + 0.05), 0.75);'); };   // a red that stays red: blue light on it reads grey, not magenta
@@ -1309,6 +1323,9 @@ export function createWorld() {
   function personOf(spec) {   // a body with a neck, two shoulders and two elbows that bend, and (hers) a streaming tail of hair
     const root = new THREE.Group(); root.position.set(spec.seat[0], spec.seat[1], spec.seat[2]); root.scale.setScalar(spec.scale || 1); const chest = new THREE.Group(); root.add(chest); addParts(chest, spec.part.torso, PM);   // (pass 9: the chest group breathes)
     const neck = new THREE.Group(); neck.position.set(0, spec.neck, 0); neck.scale.setScalar(0.76); root.add(neck); addParts(neck, spec.part.head, PM);
+    let eyes = null; if (spec.part.eye) { const E = spec.part.eye; eyes = E.at.map((p) => { const g = new THREE.Group(); g.position.set(p[0], p[1], p[2]); neck.add(g);   // (their eyes: each turns in its own place, its lids close)
+      const look = new THREE.Group(); g.add(look); look.add(new THREE.Mesh(E.ball, EYEMAT)); const lu = new THREE.Group(); g.add(lu); addParts(lu, E.lidU, PM); const ll = new THREE.Group(); g.add(ll); addParts(ll, E.lidL, PM); return { look: look, lu: lu, ll: ll }; }); }
+    const brows = spec.part.brows ? spec.part.brows.map((B) => { const g = new THREE.Group(); g.position.set(B.at[0], B.at[1], B.at[2]); g.userData.y0 = B.at[1]; g.userData.sd = B.sd; neck.add(g); addParts(g, B.geo, PM); return g; }) : null;   // (their brows, to lift and knit)
     let mouth = null; if (spec.part.mouth) { mouth = new THREE.Mesh(spec.part.mouth, SKINMAT); mouth.castShadow = false; mouth.morphTargetInfluences = [0.3, 0, 0]; neck.add(mouth); }   // (pass 3: lips that smile, laugh, pout)
     const arms = [-1, 1].map((sd) => {
       const sh = new THREE.Group(); sh.position.set(sd * spec.shoulder[0], spec.shoulder[1], spec.shoulder[2]); root.add(sh); addParts(sh, spec.part.upper, PM);
@@ -1338,7 +1355,7 @@ export function createWorld() {
     root.userData.home = { p: root.position.clone(), r: root.rotation.clone(), s: root.scale.clone() };
     const halo = new THREE.Group(); halo.position.set(0, 0.47, 0); halo.scale.setScalar(1.25); halo.visible = false; neck.add(halo); root.userData.halo = halo;   // the stars you see after a crash
     for (let i = 0; i < 5; i++) { const s = new THREE.Sprite(STARMAT); const a = i / 5 * Math.PI * 2; s.position.set(Math.cos(a) * 0.34, Math.sin(a * 2) * 0.04, Math.sin(a) * 0.34); s.scale.setScalar(0.32); halo.add(s); }
-    return { root: root, neck: neck, arms: arms, hair: hair, scarf: scarf, locks: locks, mouth: mouth, chest: chest };
+    return { root: root, neck: neck, arms: arms, hair: hair, scarf: scarf, locks: locks, mouth: mouth, chest: chest, eyes: eyes, brows: brows };
   }
   const FERRYG = new THREE.Group(); FERRYG.visible = false; scene.add(FERRYG); let ferryKind = '';
   const FERRY_SCENE = {   // [model, x, z (along the way: + ahead of the start), turn, scale] ; deck: the car's height and place on board
@@ -1564,6 +1581,21 @@ export function createWorld() {
       const hg = (MO[her.k] || MO.idle).slice(); if (speaking && hg[1] < 0.5) { hg[1] = Math.max(hg[1], 0.15 + 0.35 * Math.abs(Math.sin(t / 95) * Math.sin(t / 61))); hg[0] = Math.max(hg[0], 0.45); }
       if (W.count > 30 && !R.camDrv) { hg[0] = 0.95; hg[1] = Math.max(hg[1], 0.3); }   // (pass 10: on the start line, a big smile for the camera)
       mv(C.her.mouth, hg); mv(C.drv.mouth, W.count > 30 ? [0.85, 0.12, 0] : W.crash ? [0, 0.9, 0] : her.k === 'cheer' || her.k === 'wave' || her.k === 'clap' ? [1, 0.3, 0] : W.boosting ? [0.7, 0.2, 0] : [0.25, 0, 0]);
+    }
+    {   // their eyes (the second ten, pass 2): a blink every few seconds, small glances about; she looks at him while she chats, he at her; at you on the start line
+      const eyeAt = (P2, yaw, pitch, ph) => { if (!P2.eyes) return; const bt = (t + ph) % 4100, bl = bt < 170 ? Math.sin(Math.PI * bt / 170) : 0, sac = Math.floor((t + ph) / 1700), jx = Math.sin(sac * 12.9898) * 0.1, jy = Math.sin(sac * 78.233) * 0.05, q = Math.min(1, dt * 18);
+        for (const e of P2.eyes) { e.look.rotation.y += (yaw + jx - e.look.rotation.y) * q; e.look.rotation.x += (pitch + jy - e.look.rotation.x) * q; e.lu.rotation.x = -bl * 1.12 + e.look.rotation.x * 0.45 + (e.squint || 0) * -0.18; e.ll.rotation.x = bl * 0.22 + (e.squint || 0) * 0.22; } };
+      const start = W.count > 30 && !R.camDrv, stv = W.steer || 0;
+      eyeAt(C.her, start ? 0 : speaking ? -0.42 : her.k === 'look' ? (her.side || 1) * 0.3 : 0, start ? 0.06 : her.k === 'sulk' ? -0.22 : 0, 0);
+      eyeAt(C.drv, start ? 0 : speaking && Math.abs(stv) < 0.3 ? 0.42 : -stv * 0.28, start ? 0.06 : 0, 1300);
+    }
+    {   // their expressions (second ten, pass 9): the brows lift with a smile, a question or a fright and knit in a sulk; a smile narrows the eyes
+      const ex = (P2, up, knit, squint) => { if (P2.brows) for (const g of P2.brows) { const sd = g.userData.sd, q = Math.min(1, dt * 8);
+          g.position.y += (g.userData.y0 + up * 0.0045 - knit * 0.0022 - g.position.y) * q; g.rotation.z += (sd * knit * 0.24 - sd * up * 0.05 - g.rotation.z) * q; }
+        if (P2.eyes) for (const e of P2.eyes) e.squint = (e.squint || 0) + (squint - (e.squint || 0)) * Math.min(1, dt * 8); };
+      const hk = her.k, happy = hk === 'cheer' || hk === 'wave' || hk === 'clap' || W.count > 30;
+      ex(C.her, happy ? 0.45 : hk === 'ask' ? 1 : hk === 'hold' ? 0.85 : hk === 'sulk' ? -0.3 : speaking ? 0.3 * Math.abs(Math.sin(t / 260)) : hk === 'look' ? 0.2 : 0, hk === 'sulk' || hk === 'sad' ? 1 : 0, happy ? 0.65 : 0.1);
+      ex(C.drv, W.crash ? 1.2 : W.boosting ? 0.4 : happy ? 0.2 : 0, 0, happy ? 0.5 : 0);
     }
     const H = C.her; H.arms[0].sh.rotation.x = cur[0]; H.arms[0].sh.rotation.z = cur[1]; H.arms[0].el.rotation.x = cur[2];
     H.arms[1].sh.rotation.x = cur[3]; H.arms[1].sh.rotation.z = cur[4]; H.arms[1].el.rotation.x = cur[5];
