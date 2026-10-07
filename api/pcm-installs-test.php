@@ -66,6 +66,58 @@ inst_note('bbbb0001', 30, false, false, false, '8.8.8.8', $N - 400 * 86400);
 inst_note('bbbb0002', 30, false, false, false, '8.8.8.8', $N);
 check(!isset(json_decode(file_get_contents($F), true)['m'][substr(sha1('365inst|bbbb0001'), 0, 16)]), 'an install not seen for a year is dropped');
 
+echo "E  still using it, ran once, too soon to tell (7 Oct 2026)\n";
+@unlink($F);
+$N = gmmktime(12, 0, 0, 10, 10, 2026);
+inst_note('cccc0001', 35, false, false, false, '86.163.78.248', $N - 5 * 86400);   // first seen 5 days ago...
+inst_note('cccc0001', 35, false, false, false, '86.163.78.248', $N - 1 * 86400);   // ...and again yesterday: still using it
+inst_note('cccc0002', 35, false, false, false, '8.8.8.8', $N - 5 * 86400);         // one day only, 5 days ago: ran once
+inst_note('cccc0003', 30, false, false, false, '8.8.8.8', $N - 2 * 86400);         // one day only, exactly 2 days ago: ran once
+inst_note('cccc0004', 35, false, false, false, '86.163.78.248', $N - 1 * 86400);   // first seen yesterday: too soon
+inst_note('cccc0005', 35, false, false, false, '86.163.78.248', $N);               // first seen today: too soon
+inst_note('cccc0006', 35, false, false, false, '86.163.78.248', $N - 3 * 86400);
+inst_note('cccc0006', 35, false, false, false, '86.163.78.248', $N - 3 * 86400 + 7200);   // twice the SAME day: still one day
+$s = inst_stats(json_decode(file_get_contents($F), true), 'free', $N);
+check($s['kept'] === 1 && $s['once'] === 3 && $s['soon'] === 2 && $s['total'] === 6, 'still using it 1 / ran once 3 / too soon 2 (twice in one day is still one day)', json_encode(array($s['kept'], $s['once'], $s['soon'], $s['total'])));
+$cc = array(); foreach ($s['countries'] as $c) $cc[$c['k']] = $c;
+check($cc['GB']['kept'] === 1 && $cc['US']['kept'] === 0 && $cc['GB']['n'] === 4 && $cc['US']['n'] === 2, 'by country: how many are still using it', json_encode($s['countries']));
+
+echo "F  our own PCs (7 Oct 2026)\n";
+@unlink($F);
+$N = gmmktime(12, 0, 0, 10, 10, 2026);
+check(inst_net('86.163.78.248') === '86.163.78.248' && inst_net('::ffff:86.163.78.248') === '86.163.78.248' && inst_net('2a00:23c5:1234:5678:aaaa::1') === inst_net('2a00:23c5:1234:5678:bbbb::9')
+    && inst_net('2a00:23c5:1234:5678::1') !== inst_net('2a00:23c5:1234:9999::1') && inst_net('nonsense') === '', 'a connection: IPv4 as it is; IPv6 by its /64 (every device in a home shares it)');
+inst_note('dddd0001', 35, false, false, false, '81.2.69.160', $N - 3 * 86400);   // Steve's test PC, at home
+inst_note('dddd0002', 35, false, false, false, '8.8.8.8', $N - 3 * 86400);       // a stranger
+check(inst_mark_ours('81.2.69.160', 'Steve', false, $N) === false, 'unmarking a connection nobody marked: nothing written');
+check(inst_mark_ours('81.2.69.160', 'Steve', true, $N - 2 * 86400) === true, 'Steve marks his home connection as ours');
+$raw = file_get_contents($F); $d = json_decode($raw, true);
+check(strpos($raw, '81.2.69.160') === false && count($d['ours']) === 1 && strlen($d['salt']) === 16 && current($d['ours'])['by'] === 'Steve', 'kept as a salted one-way hash - never the address', $raw);
+check(inst_is_ours($d, '81.2.69.160', $N) && !inst_is_ours($d, '81.2.69.161', $N) && !inst_is_ours($d, '8.8.8.8', $N), 'that connection, and only that one, is ours');
+inst_note('dddd0001', 35, false, false, false, '81.2.69.160', $N - 2 * 86400 + 3600);   // its next check-in
+$d = json_decode(file_get_contents($F), true);
+$s = inst_stats($d, 'free', $N);
+check($s['ours'] === 1 && $s['total'] === 1 && $s['kept'] === 0 && $s['once'] === 1 && $s['countries'][0]['k'] === 'US', 'from its next check-in, Steve\'s PC is left out of every figure and counted on its own', json_encode(array($s['ours'], $s['total'], $s['kept'], $s['once'])));
+check(inst_stats($d, 'all', $N)['ours'] === 1 && inst_stats($d, 'all', $N)['unlinked'] === 1, 'left out of the whole picture too');
+check(inst_note('dddd0001', 35, false, false, false, '81.2.69.160', $N - 2 * 86400 + 7200) === 'same', 'its later check-ins that day: nothing written');
+inst_note('eeee0001', 30, false, true, false, '81.2.69.160', $N - 1 * 86400);     // a customer's PC on Steve's bench
+inst_note('eeee0001', 30, false, true, false, '86.163.78.248', $N);               // ...collected and back home the next day
+$s = inst_stats(json_decode(file_get_contents($F), true), 'free', $N);
+check($s['ours'] === 1 && $s['total'] === 2 && $s['kept'] === 1, 'a customer\'s PC on our bench counts as ours only while it is here', json_encode(array($s['ours'], $s['total'], $s['kept'])));
+$info = inst_ours_info(json_decode(file_get_contents($F), true), '81.2.69.160', $N);
+check($info['nets'] === 1 && $info['here'] === true && $info['hereBy'] === 'Steve' && $info['hereSince'] === '2026-10-08' && inst_ours_info(json_decode(file_get_contents($F), true), '8.8.8.8', $N)['here'] === false, 'the card can say this connection is marked, by whom and since when', json_encode($info));
+check(inst_mark_ours('81.2.69.160', '', true, $N, true) === true && json_decode(file_get_contents($F), true)['ours'][inst_ours_key(json_decode(file_get_contents($F), true), '81.2.69.160')]['at'] === $N
+    && inst_mark_ours('81.2.69.160', '', true, $N + 3600, true) === false && inst_mark_ours('8.8.8.8', '', true, $N, true) === false, 'opening the card from it re-confirms it, at most once a day; never marks a new one');
+$d = json_decode(file_get_contents($F), true);
+check(!inst_is_ours($d, '81.2.69.160', $N + (INST_OURS_DAYS + 1) * 86400), 'a connection nobody re-confirms for ' . INST_OURS_DAYS . ' days stops counting');
+check(inst_mark_ours('81.2.69.160', 'Steve', false, $N) === true && !inst_is_ours(json_decode(file_get_contents($F), true), '81.2.69.160', $N), 'unmarked: it is ours no more');
+inst_note('dddd0001', 35, false, false, false, '81.2.69.160', $N);
+check(inst_stats(json_decode(file_get_contents($F), true), 'free', $N)['ours'] === 0, '...and Steve\'s PC counts again from its next check-in');
+check(inst_mark_ours('nonsense', 'Steve', true, $N) === false, 'no usable address: nothing marked');
+file_put_contents($F, '{broken');
+check(inst_mark_ours('81.2.69.160', 'Steve', true, $N) === false && file_get_contents($F) === '{broken', 'an unreadable store is never overwritten by a mark');
+@unlink($F);
+
 echo "D  the wiring, at source level\n";
 $P = (string)file_get_contents(__DIR__ . '/pcm.php');
 $i1 = strpos($P, "if (\$action === 'checkin') {"); $i2 = strpos($P, 'inst_note($machine', $i1); $i3 = strpos($P, "if (\$key === '' || !isset(\$db['customers'][\$key])) out(", $i1);
@@ -73,6 +125,9 @@ check($i1 !== false && $i2 !== false && $i3 !== false && $i2 < $i3, 'pcm.php not
 check(strpos($P, "require_once __DIR__ . '/pcm-installs-lib.php';") !== false && strpos($P, 'catch (Throwable $e) { }') !== false, 'included at top level; a failure never stops the check-in');
 $H = (string)file_get_contents(__DIR__ . '/../.htaccess');
 check(preg_match('/pcm-installs\\\\\.json/', $H) && preg_match('/geoip/', $H) && preg_match('/pcm-installs-lib/', $H), '.htaccess denies the store, the tables and the library');
+$E = (string)file_get_contents(__DIR__ . '/pcm-installs.php');
+$pA = strpos($E, 'if (!vis_staff_ok($in, __DIR__))'); $pM = strpos($E, "inst_mark_ours(\$ip, \$by !== '' ? \$by : 'Staff', \$do === 'ours')");
+check($pA !== false && $pM !== false && $pA < $pM && strpos($E, "'ours_info'") !== false && strpos($E, '$_SERVER[\'REMOTE_ADDR\']') !== false, 'pcm-installs.php: marking needs a staff session; the card is told about this connection, never its address');
 
 @unlink($F); @unlink($F . '.lock');
 echo "\n" . ($fails ? "pcm-installs-test: $fails FAILED\n" : "pcm-installs-test: all passed\n");
