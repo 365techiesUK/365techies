@@ -765,9 +765,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 07 Oct 2026 &middot; 007c6412ca</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 07 Oct 2026 &middot; 8cf3d02712</p><script>
 (function () {
-  var P365BUILD = '007c6412ca';
+  var P365BUILD = '8cf3d02712';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -8843,9 +8843,9 @@
       }
     });
   }
-  function loadInstalls() {
+  function loadInstalls(act) {   // act: 'ours' | 'notours' (7 Oct 2026: our own PCs on this connection)
     var box = document.getElementById('instbox'); if (!box) return;
-    post('/api/pcm-installs.php', { stoken: S.stoken, machine: mid(), who: INST.who })
+    post('/api/pcm-installs.php', { stoken: S.stoken, machine: mid(), who: INST.who, do: act || '' })
       .then(function (d) { INST.d = d; renderInstalls(); })
       .catch(function () { INST.d = { ok: false }; renderInstalls(); });
   }
@@ -8862,26 +8862,42 @@
       box.innerHTML = h + '<p class="quiet">Couldn\u2019t load the install count - refresh to retry.</p>';
     } else {
       var dl = d.downloads || { d7: 0, d30: 0 };
+      // 7 Oct 2026 (owner: "yes add it"): the first week was inflated by copies that ran once (antivirus firms' test
+      // machines, one-off tries) - so: still using it = seen on two or more different days
       h += '<div class="stats">'
         + '<div class="stat"><b>' + d.total + '</b><span>installs</span></div>'
-        + '<div class="stat g"><b>' + d.active7 + '</b><span>used this week</span></div>'
+        + '<div class="stat g"><b>' + (d.kept || 0) + '</b><span>still using it</span></div>'
+        + '<div class="stat"><b>' + (d.once || 0) + '</b><span>ran once only</span></div>'
         + '<div class="stat"><b>' + d.new7 + '</b><span>new this week</span></div>'
-        + '<div class="stat"><b>' + d.newToday + '</b><span>new today</span></div>'
         + '<div class="stat"><b>' + dl.d7 + '</b><span>download clicks this week</span></div></div>';
+      h += '<p class="quiet" style="margin:.55rem 0 0">Used this week: <b>' + d.active7 + '</b> \u00b7 new today: <b>' + d.newToday + '</b> \u00b7 too soon to tell: <b>' + (d.soon || 0)
+        + '</b> (first seen in the last two days)</p>';
       var max = 1; (d.daily || []).forEach(function (x) { if (x.n > max) max = x.n; });
       h += '<p class="quiet" style="margin:.7rem 0 .3rem">New installs, last 30 days</p><div class="instbars">'
         + (d.daily || []).map(function (x) { return '<span title="' + esc(x.d) + ': ' + x.n + '" style="height:' + Math.max(2, Math.round(40 * x.n / max)) + 'px"></span>'; }).join('') + '</div>';
       h += '<div class="instgrid"><div><h3>Countries</h3>'
-        + ((d.countries || []).length ? '<table>' + d.countries.map(function (c) { return '<tr><td>' + esc(instCountry(c.k)) + '</td><td class="num"><b>' + c.n + '</b></td><td class="num quiet">' + c.a7 + ' this week</td></tr>'; }).join('') + '</table>' : '<p class="quiet">None yet</p>')
+        + ((d.countries || []).length ? '<table>' + d.countries.map(function (c) { return '<tr><td>' + esc(instCountry(c.k)) + '</td><td class="num"><b>' + c.n + '</b></td><td class="num quiet">' + (c.kept || 0) + ' still using it</td></tr>'; }).join('') + '</table>' : '<p class="quiet">None yet</p>')
         + '</div><div><h3>Versions</h3>'
         + ((d.versions || []).length ? '<table>' + d.versions.map(function (v) { return '<tr><td>v' + v.k + '</td><td class="num"><b>' + v.n + '</b></td></tr>'; }).join('') + '</table>' : '<p class="quiet">None yet</p>')
         + '<p class="quiet" style="margin:.6rem 0 0">On Windows 10: <b>' + d.w10 + '</b> of ' + d.total + '</p>'
         + '<p class="quiet" style="margin:.2rem 0 0">Every install: ' + d.unlinked + ' never linked \u00b7 ' + d.linked + ' linked but free \u00b7 ' + d.plan + ' on a plan</p>'
         + '<p class="quiet" style="margin:.2rem 0 0">Download clicks, 30 days: <b>' + dl.d30 + '</b></p></div></div>';
-      h += '<p class="quiet" style="font-size:.9rem;margin:.7rem 0 0">Counted from the app\u2019s own hourly check-in' + (d.since ? ' since ' + esc(d.since) : '') + '. Counting began on 1 Oct 2026, so copies already in use show up as \u201cnew\u201d the first time they start after that. A download click is a click on a download button (the live view, each visitor once a day) - not every click becomes an install. Countries come from the internet connection at check-in; no names or addresses are kept.</p>';
+      // our own PCs (7 Oct 2026): pressed on the connection our PCs use; only a scrambled code of it is kept
+      var oi = d.ours_info || {}, ou = d.ours || 0;
+      h += '<div class="inst-ours"><p class="quiet" style="margin:.8rem 0 .2rem">\ud83c\udfe0 <b>Our own PCs:</b> '
+        + (ou ? ou + ' left out of these figures' : 'none left out yet')
+        + (oi.here ? ' \u00b7 this internet connection is marked as ours' + (oi.hereBy ? ' (by ' + esc(oi.hereBy) + (oi.hereSince ? ', ' + esc(oi.hereSince) : '') + ')' : '') : '')
+        + (oi.nets > (oi.here ? 1 : 0) ? ' \u00b7 ' + (oi.nets - (oi.here ? 1 : 0)) + ' other connection' + (oi.nets - (oi.here ? 1 : 0) === 1 ? '' : 's') + ' marked' : '') + '.</p>'
+        + (d.note ? '<p class="quiet" style="margin:.2rem 0" role="status">' + esc(d.note) + '</p>' : '')
+        + '<button type="button" class="sm ghost" data-iours="' + (oi.here ? 'notours' : 'ours') + '" style="margin-top:.3rem">'
+        + (oi.here ? 'Count PCs on this connection again' : 'These PCs are ours: leave out PCs on this internet connection') + '</button>'
+        + (oi.here ? '' : '<p class="quiet" style="font-size:.88rem;margin:.35rem 0 0">Press it on the internet your own PCs use (at home or the office). A customer\u2019s PC on your bench counts as ours only while it is here.</p>')
+        + '</div>';
+      h += '<p class="quiet" style="font-size:.9rem;margin:.7rem 0 0">Counted from the app\u2019s own hourly check-in' + (d.since ? ' since ' + esc(d.since) : '') + '. <b>Still using it</b> = seen on two or more different days; <b>ran once</b> = seen on one day only, at least two days ago (mostly antivirus firms\u2019 test machines and people who tried it once). Counting began on 1 Oct 2026, so copies already in use show up as \u201cnew\u201d the first time they start after that. A download click is a click on a download button (the live view, each visitor once a day) - not every click becomes an install. Countries come from the internet connection at check-in; no names or addresses are kept.</p>';
       box.innerHTML = h;
     }
     Array.prototype.forEach.call(box.querySelectorAll('[data-iw]'), function (b) { b.onclick = function () { INST.who = b.getAttribute('data-iw'); loadInstalls(); }; });
+    Array.prototype.forEach.call(box.querySelectorAll('[data-iours]'), function (b) { b.onclick = function () { b.disabled = true; loadInstalls(b.getAttribute('data-iours')); }; });
   }
   function loadFleet() {
     post(BK, { action: 'stafffleet', stoken: S.stoken, machine: mid() }).then(function (d) {
