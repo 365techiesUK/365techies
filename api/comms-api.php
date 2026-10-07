@@ -22,6 +22,12 @@
  *   list also carries webs: website enquiries and call-back requests from #365-job-tracker (comms_lead_*, 2 Oct 2026),
  *             and names from the job list (comms_job_names); mails: emails from people in the company mailboxes
  *             (comms-mail-lib.php, 2 Oct 2026) and mailboxes: each one's last look [{box, at, new, left_out, replied, error}].
+ *   do=sent    {q?, more?} -> 7 Oct 2026, "Sent emails" (owner, for David: "see what [we] sent people"): what went out from
+ *              the company mailboxes - each one's Sent folder, read-only (comms-sent-lib.php) - and the website's own
+ *              automatic emails (pcm-sentlog-lib.php), newest first: {items: [{k: box|auto, box, folder, uid, id, via, at,
+ *              to: [{name, addr, cust}], subject, snip}], boxes: [{box, folders, total, shown, error}], auto_since}.
+ *              q searches who it went to, the subject and the text. Answers on its own (no inbox list).
+ *   do=sentmsg {box, folder, uid} | {auto: id} -> one of those in full: {msg: {to, cc, subject, at, wrote, full, attach}}
  * GET ?a=<recording>&e=<expiry>&s=<signature> -> the recording itself (comms_stream_audio), for the card's players.
  *   The link is signed with the server-only admin secret and lasts 3 hours, so an <audio> element needs no cookie.
  *
@@ -54,6 +60,37 @@ if (!is_array($in)) $in = array();
 if (!vis_staff_ok($in, __DIR__)) { http_response_code(403); ca_out(array('ok' => false, 'error' => 'auth')); }
 
 $do = (string)($in['do'] ?? 'list');
+// 7 Oct 2026 (owner, for David): Sent emails - read-only, and answered on its own, before anything below touches the inbox
+if ($do === 'sent' || $do === 'sentmsg') {
+    require_once __DIR__ . '/comms-sent-lib.php';
+    @set_time_limit(60);
+    $known = comms_mail_known_map();
+    $boxCfg = array(); foreach (comms_mail_config() as $bx) if (!isset($boxCfg[$bx['user']])) $boxCfg[$bx['user']] = $bx;   // one look per mailbox
+    if ($do === 'sentmsg') {
+        if (!empty($in['auto'])) { $r = comms_sent_auto_read((string)$in['auto'], $known); ca_out(isset($r['error']) ? array('ok' => false, 'error' => $r['error']) : array('ok' => true, 'msg' => $r)); }
+        $want = strtolower(trim((string)($in['box'] ?? '')));
+        if (!isset($boxCfg[$want])) ca_out(array('ok' => false, 'error' => 'no such mailbox'));
+        $e2 = ''; $io = comms_sent_io($boxCfg[$want], $e2);
+        if (!$io) ca_out(array('ok' => false, 'error' => $e2));
+        $r = comms_sent_read_box($boxCfg[$want], $io, (string)($in['folder'] ?? ''), (int)($in['uid'] ?? 0), $known);
+        call_user_func($io['close']);
+        ca_out(isset($r['error']) ? array('ok' => false, 'error' => $r['error']) : array('ok' => true, 'msg' => $r));
+    }
+    $q = comms_sent_query($in['q'] ?? '');
+    $limit = !empty($in['more']) ? SENT_MORE : SENT_PAGE;
+    $items = array(); $boxes = array();
+    foreach ($boxCfg as $bx) {
+        $e2 = ''; $io = comms_sent_io($bx, $e2);
+        if (!$io) { $boxes[] = array('box' => $bx['user'], 'folders' => array(), 'total' => 0, 'shown' => 0, 'error' => $e2); continue; }
+        $r = comms_sent_box($bx, $io, $q, $limit, $known, microtime(true) + max(2, SENT_SNIP_SECS / max(1, count($boxCfg))));
+        call_user_func($io['close']);
+        $boxes[] = $r['status']; $items = array_merge($items, $r['items']);
+    }
+    $items = array_merge($items, comms_sent_auto($q, $limit, $known));
+    usort($items, function ($a, $b) { return $b['ts'] - $a['ts']; });
+    $log = sentlog_all();
+    ca_out(array('ok' => true, 'items' => $items, 'boxes' => $boxes, 'auto_since' => $log ? (int)$log[0]['at'] : 0, 'q' => $q, 'more' => !empty($in['more'])));
+}
 $note = ''; $err = ''; $jobOut = null; $blockKey = '';
 $num = function ($raw) { $r = (string)$raw; if ($r !== '' && $r[0] === ' ') $r = '+' . ltrim($r); return substr(preg_replace('/[^0-9+]/', '', $r), 0, 20); };
 if ($do === 'check') {

@@ -880,7 +880,10 @@ function send_join_email($to, $code) {
                 }
                 if (!$dead) @fwrite($fp, "QUIT\r\n");   // fire-and-forget - never wait on a dying server
                 fclose($fp);
-                if ($ok) return true;
+                if ($ok) {   // 7 Oct 2026: the portal's Sent emails (pcm-sentlog-lib.php), after the send
+                    try { if (is_readable(__DIR__ . '/pcm-sentlog-lib.php')) { require_once __DIR__ . '/pcm-sentlog-lib.php'; sentlog_add($to, 'Your 365 Techies sign-in code', 'A sign-in code for the 365 portal and 365 PC Manager (the code itself is not kept here).', 'sign-in code'); } } catch (Throwable $e) { }
+                    return true;
+                }
             }
         }
     }
@@ -894,7 +897,9 @@ function send_join_email($to, $code) {
     $hdr = "From: 365 Techies <info@365techies.co.uk>\r\nReply-To: info@365techies.co.uk\r\n"
          . 'Message-ID: <' . bin2hex(random_bytes(8)) . '.' . time() . "@365techies.co.uk>\r\n"
          . "MIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8";
-    return @mail($to, $subject, $body, $hdr, '-finfo@365techies.co.uk');
+    $sent = @mail($to, $subject, $body, $hdr, '-finfo@365techies.co.uk');
+    if ($sent) { try { if (is_readable(__DIR__ . '/pcm-sentlog-lib.php')) { require_once __DIR__ . '/pcm-sentlog-lib.php'; sentlog_add($to, 'Your 365 Techies sign-in code', 'A sign-in code for the 365 portal and 365 PC Manager (the code itself is not kept here).', 'sign-in code'); } } catch (Throwable $e) { } }
+    return $sent;
 }
 
 function send_join_sms($mobile, $code) {

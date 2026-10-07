@@ -984,7 +984,10 @@ function rv_send_raw($to, $subject, $body, $icsName = '', $icsData = '', $html =
                 }
                 if (!$dead) @fwrite($fp, "QUIT\r\n");
                 fclose($fp);
-                if ($ok) return true;
+                if ($ok) {   // 7 Oct 2026: the portal's Sent emails (pcm-sentlog-lib.php), after the send
+                    try { if (is_readable(__DIR__ . '/pcm-sentlog-lib.php')) { require_once __DIR__ . '/pcm-sentlog-lib.php'; sentlog_add($to, $subject, $body, 'website'); } } catch (Throwable $e) { }
+                    return true;
+                }
             }
         }
     }
@@ -992,7 +995,9 @@ function rv_send_raw($to, $subject, $body, $icsName = '', $icsData = '', $html =
     // the hosting account, SPF authenticates the wrong domain, and DMARC alignment
     // then hangs entirely on DKIM.
     $hdr = "From: 365 Techies <info@365techies.co.uk>\r\nReply-To: info@365techies.co.uk\r\nMIME-Version: 1.0\r\n" . $ctype;
-    return @mail($to, $subject, $payload, $hdr, '-finfo@365techies.co.uk');
+    $sent = @mail($to, $subject, $payload, $hdr, '-finfo@365techies.co.uk');
+    if ($sent) { try { if (is_readable(__DIR__ . '/pcm-sentlog-lib.php')) { require_once __DIR__ . '/pcm-sentlog-lib.php'; sentlog_add($to, $subject, $body, 'website'); } } catch (Throwable $e) { } }
+    return $sent;
 }
 
 /* =====================================================================

@@ -293,6 +293,11 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(mail-imap\.php(\.example)?|comms-mail-(lib|test)\.php)$">
   Require all denied
 </FilesMatch>
+# Sent emails (7 Oct 2026): the Sent-folder reader and the website's own sent-email log are include-only, the tests
+# CLI-only, and pcm-sentlog.json (+ .lock, .tmp) holds what the website emailed people. Nothing here is a URL.
+<FilesMatch "^(comms-sent-(lib|test)\.php|pcm-sentlog-(lib|test)\.php|pcm-sentlog\.json(\..*)?)$">
+  Require all denied
+</FilesMatch>
 # Bournemouth weather record books (22 Sep 2026): the per-date record table is read by
 # bm-wx.php on the server (it is public Met Office data, but 300 KB nobody's browser
 # needs); the library and its test are include/CLI-only.
