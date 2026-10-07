@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=55';
+import * as MD from './models3d.js?v=56';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -1162,8 +1162,8 @@ export function createWorld() {
         poses(W, Math.min(E.lastIndex(W), i + 8));
         for (const d of [-1, 1]) {
           if (g.sea === d && g.sh < 20) continue;
-          const START = it.v === 0, CR = START ? [[-14, 'crowd', 12.6], [-14, 'crowdback', 12.6], [1, 'crowd', 12.6], [1, 'crowdback', 12.6], [16, 'crowd', 12.6], [16, 'crowdback', 12.6],
-            [31, 'crowdlite', 12.6], [46, 'crowdlite', 12.6], [61, 'crowdlite', 12.6], [76, 'crowdlite', 12.6], [91, 'crowdlite', 12.6], [110, 'crowd', 12.6], [134, 'crowd', 13.4], [-23, 'flags', 11.8], [24, 'flags', 11.8], [54, 'flags', 11.8], [99, 'flags', 11.8]]   // (owner, 7 Oct: "lots of people at the start, like on OutRun": three deep from beside the car to past the arch)
+          const START = it.v === 0, CR = START ? [[-14, 'crowdlite', 12.6], [1, 'crowdlite', 12.6], [16, 'crowdlite', 12.6],
+            [31, 'crowdlite', 12.6], [46, 'crowdlite', 12.6], [61, 'crowdlite', 12.6], [76, 'crowdlite', 12.6], [91, 'crowdlite', 12.6], [112, 'crowdlite', 12.6], [140, 'crowdlite', 13.4], [-23, 'flags', 11.8], [24, 'flags', 11.8], [54, 'flags', 11.8], [99, 'flags', 11.8]]   // (owner, 7 Oct: "lots of people at the start, like on OutRun": three deep from beside the car to past the arch)
             : [[-7, 'crowd', 12.6], [9, 'crowd', 12.6], [-22, 'flags', 11.8], [24, 'flags', 11.8]];
           if (START && d < 0) { const s = i * SEG - 6, si = E.segIndex(s); if (si >= W.base) { place(W, s, -(HALF - 2.4), 0, P2); const sy = groundAt(W, E.segAt(W, si), P2, -(HALF - 2.4)) + 0.5, sr = faceRoad(-1, P2.th); addAll(MD.model('starter', 0), P2.x, sy, P2.z, sr);
             const st = new THREE.Group(), arm = new THREE.Group(), fm = MD.model('starterflag', 0); st.position.set(P2.x, sy, P2.z); st.rotation.y = sr; arm.position.set(0.2, 1.98, 0); st.add(arm);   /* (st sits 0.5 up: the box) */
@@ -1368,7 +1368,7 @@ export function createWorld() {
   function addParts(group, geo, mats) { for (const k in geo) if (geo[k] && (mats[k] || CAR[k])) { const mesh = new THREE.Mesh(geo[k], mats[k] || CAR[k]); mesh.castShadow = k !== 'glow' && k !== 'hair'; group.add(mesh); } }   // (hair cards would cast solid shadows)
   function personOf(spec) {   // a body with a neck, two shoulders and two elbows that bend, and (hers) a streaming tail of hair
     const root = new THREE.Group(); root.position.set(spec.seat[0], spec.seat[1], spec.seat[2]); root.scale.setScalar(spec.scale || 1); const chest = new THREE.Group(); root.add(chest); addParts(chest, spec.part.torso, PM);   // (pass 9: the chest group breathes)
-    const neck = new THREE.Group(); neck.position.set(0, spec.neck, 0); neck.scale.setScalar(0.83);   /* (heads 1.09x: they read tiny on their bodies - skeptic, round 0) */ root.add(neck); addParts(neck, spec.part.head, PM);
+    const neck = new THREE.Group(); neck.position.set(0, spec.neck, spec.neckZ || 0); neck.scale.setScalar(0.83);   /* (heads 1.09x: they read tiny on their bodies - skeptic, round 0) */ root.add(neck); addParts(neck, spec.part.head, PM);
     let eyes = null; if (spec.part.eye) { const E = spec.part.eye; eyes = E.at.map((p) => { const g = new THREE.Group(); g.position.set(p[0], p[1], p[2]); neck.add(g);   // (their eyes: each turns in its own place, its lids close)
       const look = new THREE.Group(); g.add(look); look.add(new THREE.Mesh(E.ball, EYEMAT)); const lu = new THREE.Group(); g.add(lu); addParts(lu, E.lidU, PM); const ll = new THREE.Group(); g.add(ll); addParts(ll, E.lidL, PM); return { look: look, lu: lu, ll: ll }; }); }
     const brows = spec.part.brows ? spec.part.brows.map((B) => { const g = new THREE.Group(); g.position.set(B.at[0], B.at[1], B.at[2]); g.userData.y0 = B.at[1]; g.userData.sd = B.sd; neck.add(g); addParts(g, B.geo, PM); return g; }) : null;   // (their brows, to lift and knit)
@@ -1445,12 +1445,14 @@ export function createWorld() {
     if (m.open) {   // the roadster: the two of you, and the steering wheel
       const drv = personOf(COUPLE.driver), her = personOf(COUPLE.girl), sw = new THREE.Group();
       player.add(drv.root); player.add(her.root);
+      R.keyL = new THREE.SpotLight('#fff0e0', 0, 7, 0.55, 0.7, 2); R.keyL.position.set(-1.6, 2.3, -2.6); R.keyL.target.position.set(0, 1.05, 0.5); player.add(R.keyL); player.add(R.keyL.target);   // (round 8: a key light and a rim light on the two of you,
+      R.rimL = new THREE.SpotLight('#dfe8ff', 0, 7, 0.6, 0.7, 2); R.rimL.position.set(0.3, 2.1, 2.4); R.rimL.target.position.set(0, 1.15, 0.45); player.add(R.rimL); player.add(R.rimL.target);   // up only while the cameras are close on you: the lights and the goal)
       sw.position.set(COUPLE.wheel.at[0], COUPLE.wheel.at[1], COUPLE.wheel.at[2]); sw.rotation.x = COUPLE.wheel.tilt; const inner = new THREE.Group(); sw.add(inner); addParts(inner, COUPLE.wheel.geo, {}); player.add(sw);
       { const A = COUPLE.wheel.at, dy = -0.45, dz = -0.89, col = new THREE.Mesh(new THREE.CylinderGeometry(0.023, 0.028, 0.27, 12), MAT.trim), shr = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.05, 0.09, 14), MAT.trim);   // the steering column, into the dash (round 2: slim)
         col.position.set(A[0], A[1] + dy * 0.16, A[2] + dz * 0.16); shr.position.set(A[0], A[1] + dy * 0.31, A[2] + dz * 0.31); col.rotation.x = shr.rotation.x = Math.atan2(dz, dy); player.add(col); player.add(shr); }
       const NS = 11, sg = new THREE.BufferGeometry(); sg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(NS * 2 * 3), 3));
       const idx = []; for (let tl = 0; tl < 1; tl++) for (let i = 0; i < NS - 1; i++) { const a = (tl * NS + i) * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); } sg.setIndex(idx);
-      const scarf = new THREE.Mesh(sg, new THREE.MeshStandardMaterial({ color: '#efe8da', roughness: 0.45, side: THREE.DoubleSide })); scarf.frustumCulled = false; player.add(scarf);
+      const scarf = new THREE.Mesh(sg, new THREE.MeshStandardMaterial({ color: '#e0505e', roughness: 0.4, side: THREE.DoubleSide })); scarf.frustumCulled = false; player.add(scarf);
       R.couple = { drv: drv, her: her, wheel: inner, cur: {}, scarf: scarf, NS: NS };
     }
     { const sg = m.body.paint.clone(); sg.translate(0, -0.6, 0); sg.scale(1.06, 1.08, 1.04); sg.translate(0, 0.6, 0); bubble.geometry.dispose(); bubble.geometry = sg; }   // the shield's shell, just outside the paint
@@ -1619,7 +1621,9 @@ export function createWorld() {
     let tgt = (POSES[her.k] || POSES.idle).slice();
     if (her.k === 'point') { const d = her.side || 1; tgt = d < 0 ? [1.4, 0, 0.3, 0.14, -0.22, 0.9, 0.55, -0.1, 0.75, 0] : [0.14, 0.22, 0.9, 1.4, 0, 0.3, -0.55, -0.1, 0, -0.75]; }
     if (her.k === 'cheer' || her.k === 'wave') { const w = Math.sin(t / 90) * 0.3; tgt[4] += her.k === 'wave' ? w * 1.4 : w; if (her.k === 'cheer') tgt[1] -= w; }
-    if (her.k === 'idle') { tgt[6] = Math.sin(t / 2300) * 0.45 + (W.drift ? -W.drift * 0.4 : 0); tgt[7] = Math.sin(t / 1700) * 0.06; }
+    if (her.k === 'idle') {   // (round 7: every few seconds she looks out at the view or across at him, holds it, then looks ahead again)
+      if (!R.hNext || t > R.hNext) { const q = Math.random(); R.hYaw = q < 0.5 ? 0.7 + Math.random() * 0.35 : q < 0.82 ? -0.6 : 0.25; R.hUntil = t + 1200 + Math.random() * 1300; R.hNext = R.hUntil + 2200 + Math.random() * 4500; }
+      tgt[6] = (t < R.hUntil ? R.hYaw : 0) + (W.drift ? -W.drift * 0.4 : 0); tgt[7] = Math.sin(t / 1700) * 0.05 + (t < R.hUntil && R.hYaw < 0 ? -0.03 : 0); }
     if (her.k === 'ask') tgt[7] += Math.sin(t / 120) * 0.08;
     if (her.k === 'look') { tgt = POSES.idle.slice(); tgt[6] = (her.side || 1) * 0.85; tgt[7] = -0.06 + Math.sin(t / 900) * 0.04; }   // looking out at the place, the sea, the view
     if (her.k === 'clap') { const c = Math.sin(t / 65); tgt[1] += c * 0.3; tgt[4] -= c * 0.3; }
@@ -1628,7 +1632,8 @@ export function createWorld() {
     if (W.count > 75 && her.k === 'idle' && !R.camDrv) { tgt = [0.2, -2.5 - Math.sin(t / 90) * 0.42, 0.6, 0.55, -0.12, 1.05, 0.05, -0.08, 0, 0]; }   // the lights: she waves at you (the camera's in front), the outside hand
     const speaking = W.voiceT != null && W.t - W.voiceT < 80;   // (a pass on the two of you, owner 6 Oct: while she talks she turns to him, nods along, her hand going)
     if (speaking && (her.k === 'idle' || her.k === 'look' || her.k === 'hair')) { tgt[6] = -0.32; tgt[7] = -0.04 + Math.sin(t / 110) * 0.05; tgt[3] = 0.55; tgt[5] = 1.2 + Math.sin(t / 170) * 0.25; }
-    for (let i = 0; i < 10; i++) cur[i] = cur[i] == null ? tgt[i] : cur[i] + (tgt[i] - cur[i]) * k;
+    if (her.k === 'idle' && !speaking && W.count <= 0 && W.v > 30 && !W.crash) { const ph = (t / 1000) % 18; if (ph > 11.5 && ph < 17) { const w = Math.sin(t / 230) * 0.13; tgt = POSES.idle.slice(); tgt[0] = 0.28; tgt[1] = -1.3 + w; tgt[2] = 0.32 + w * 0.8; tgt[8] = 0.12; tgt[6] = 0.38; tgt[7] = -0.05; } }   // (round 7: now and then at speed her outside hand out over the door, riding the wind - OutRun 2's girl)
+    for (let i = 0; i < 10; i++) cur[i] = cur[i] == null ? tgt[i] : cur[i] + (tgt[i] - cur[i]) * (i === 6 ? Math.min(1, dt * 4.5) : k);   // (her head turns ease over ~0.4 s)
     {   // their mouths (pass 3): [smile, open, pout] - she laughs when she cheers, pouts in a sulk, and her mouth moves as she chats; he grins when she's happy, gapes at a crash
       const MO = { idle: [0.35, 0, 0], cheer: [1, 0.6, 0], wave: [0.95, 0.4, 0], clap: [1, 0.5, 0], sulk: [0, 0, 1], sad: [0, 0, 0.7], ask: [0.55, 0.25, 0], look: [0.4, 0.05, 0], hair: [0.45, 0, 0], hold: [0.6, 0.65, 0], point: [0.6, 0.3, 0] };
       const q = Math.min(1, dt * 10), mv = (M, g) => { if (!M) return; const mi = M.morphTargetInfluences; for (let j = 0; j < 3; j++) mi[j] += (g[j] - mi[j]) * q; };
@@ -1664,14 +1669,15 @@ export function createWorld() {
           for (let i = 0; i < C.NS; i++) {
             const f = i / (C.NS - 1), seg = 0.075, dz = 0.25 + sp * 0.75, dy = -0.95 + sp * 0.95, n = Math.hypot(dz, dy);
             if (i) { const ph = t / 70 - i * 0.9 + tl * 1.7, amp = f * sp; x += Math.sin(ph) * 0.03 * amp - 0.006 - 0.006 * (1 - sp); y += dy / n * seg + Math.cos(ph * 1.3) * 0.022 * amp; z += dz / n * seg; if (y < A.y - 0.28) y = A.y - 0.28; }
-            const w = 0.104 * (1 - f * 0.5), o = (tl * C.NS + i) * 2, tw = Math.sin(t / 60 - i * 0.8 + tl * 1.3) * 1.1 * f * sp, wx = Math.sin(tw) * w, wy = Math.cos(tw) * w;
+            const w = 0.05 * (1 - f * 0.6), o = (tl * C.NS + i) * 2, tw = Math.sin(t / 60 - i * 0.8 + tl * 1.3) * 1.1 * f * sp, wx = Math.sin(tw) * w, wy = Math.cos(tw) * w;
             P.setXYZ(o, x + wx, y + wy, z); P.setXYZ(o + 1, x - wx, y - wy, z);
           }
         }
         P.needsUpdate = true; sc.geometry.computeVertexNormals(); sc.geometry.computeBoundingSphere();
       } }
     if (H.scarf) H.scarf.forEach((g, i) => { g.rotation.x = (i ? 0.04 : 1.35 - sp * 1.15) + Math.sin(t / 45 + i * 1.6) * 0.32 * sp; g.rotation.y = (i ? 0 : -0.08) + Math.sin(t / 70 + i * 1.3) * 0.42 * sp; g.rotation.z = Math.sin(t / 55 + i) * 0.4 * sp; });
-    if (H.locks) H.locks.forEach((g, i) => { g.rotation.x = -sp * ((i >= H.locks.length - 2 ? 1.2 : 0.95) + 0.07 * Math.sin(t / (75 + i * 3) + i * 0.35)) - 0.04; g.rotation.z = ((i >= 1 && i <= 5 ? (i - 3) * 0.045 : 0) + Math.sin(t / (90 + i * 4) + i * 0.4) * 0.03) * sp; });
+    if (H.locks) H.locks.forEach((g, i) => { const fr = i === H.locks.length - 2, wv = 0.1 * Math.sin(t / (75 + i * 3) + i * 0.35) + 0.05 * Math.sin(t / (41 + i * 2) + i * 1.3);   // (round 7: two waves; her front lock lifts and whips)
+      g.rotation.x = -sp * ((i >= H.locks.length - 2 ? 1.2 : 0.95) + wv + (fr ? 0.3 : 0)) - 0.04; g.rotation.z = ((i >= 1 && i <= 5 ? (i - 3) * 0.045 : 0) + Math.sin(t / (90 + i * 4) + i * 0.4) * 0.06 + (fr ? Math.sin(t / 62) * 0.3 : 0)) * sp + (R.lean || 0) * 1.6; });
     if (H.hair) H.hair.forEach((g, i) => { g.rotation.x = (i ? 0.13 + (1 - sp) * 0.14 : 1.3 - sp * 0.62) + Math.sin(t / 65 + i * 1.2) * 0.13 * sp; g.rotation.y = (i ? 0 : 0.14) + Math.sin(t / 100 + i * 0.9) * 0.12 * sp; });
     // him: both hands on the wheel, turning it; a fist in the air at the goal
     const D = C.drv, st = W.steer, gl = her.k === 'wave' || (her.k === 'cheer' && W.banner && W.banner.kind === 'goal');
@@ -1679,10 +1685,16 @@ export function createWorld() {
     D.arms[0].sh.rotation.x = 0.46 - st * 0.14; D.arms[0].sh.rotation.z = 0.08; D.arms[0].sh.rotation.y = 0; D.arms[0].el.rotation.x = 1.08 + st * 0.1;   // (hands at 9 and 3, elbows bent: solved, scratchpad armik.mjs)
     D.arms[1].sh.rotation.x = gl ? 0.2 : 0.46 + st * 0.14; D.arms[1].sh.rotation.z = gl ? 2.7 + Math.sin(t / 100) * 0.2 : -0.08; D.arms[1].sh.rotation.y = 0; D.arms[1].el.rotation.x = gl ? 0.4 : 1.08 - st * 0.1;
     const mir = (t % 13000) < 750 && Math.abs(st) < 0.2 && !W.crash ? Math.sin(Math.PI * (t % 13000) / 750) : 0;   // (pass 9: now and then a glance up at the mirror)
-    D.neck.rotation.y = -st * 0.22 + (her.k === 'ask' ? 0.3 : 0) + (speaking && Math.abs(st) < 0.3 ? 0.2 : 0) + mir * 0.3 + Math.sin(t / 1900) * 0.025; D.neck.rotation.x = 0.09 - mir * 0.12 + Math.sin(t / 1400 + 1) * 0.015;   // (a glance across at her while she talks)
+    if (!R.gNext || t > R.gNext) { R.gAt = t; R.gNext = t + 6000 + Math.random() * 7000; } const gk = Math.abs(st) < 0.2 && t - R.gAt < 650 ? Math.sin(Math.PI * (t - R.gAt) / 650) : 0;   // (round 7: a quick glance across at her)
+    D.neck.rotation.y = -st * 0.34 - (R.lean || 0) * 0.6 + (her.k === 'ask' ? 0.3 : 0) + (speaking && Math.abs(st) < 0.3 ? 0.2 : 0) + mir * 0.3 + gk * 0.26 + Math.sin(t / 1900) * 0.025; D.neck.rotation.x = 0.09 - mir * 0.12 + Math.sin(t / 1400 + 1) * 0.015;   // (a glance across at her while she talks)
     for (const [P2, ph] of [[D, 0], [C.her, 2.1]]) if (P2.chest) { const b = Math.sin(t / 720 + ph); P2.chest.scale.set(1 + 0.004 * b, 1 + 0.003 * b, 1 + 0.009 * b); }   // (breathing)
     // both lean a little into the bends
-    if (!R.flying.length) D.root.rotation.z = H.root.rotation.z = -st * Math.min(1, W.v / 50) * 0.22;
+    if (!R.flying.length) {   // (round 7: thrown out of the bends - up to ~7 degrees, lagging ~0.25 s - their heads kept nearly level; pressed back as you accelerate, forward braking)
+      const lt = st * Math.min(1, W.v / 40) * 0.12 + (W.drift ? W.drift * 0.04 : 0); R.lean = (R.lean || 0) + (lt - (R.lean || 0)) * Math.min(1, dt / 0.25);
+      const acc = R.pv == null ? 0 : (W.v - R.pv) / Math.max(1e-3, dt); R.pv = W.v; R.pitch = (R.pitch || 0) + (Math.max(-0.05, Math.min(0.05, acc * 0.0025)) - (R.pitch || 0)) * Math.min(1, dt / 0.3);
+      for (const P2 of [D, H]) { P2.root.rotation.z = R.lean * (P2 === D ? 1.3 : 1); P2.root.rotation.x = P2.root.userData.home.r.x + R.pitch; }   // (round 8: him ~9 degrees)
+      D.neck.rotation.z = -0.6 * R.lean * 1.3; H.neck.rotation.z = 0.09 - 0.6 * R.lean;
+    }
     if (!R.flying.length) for (const [P2, ph] of [[D, 0], [H, 1.7]]) { const r = P2.root; r.position.y = r.userData.home.p.y + Math.sin(t / 58 + ph) * 0.004 * Math.min(1, W.v / 30) + (R.land || 0) * -0.03; }   // (riding the road: a gentle bob, a jolt on landing)
   }
 
@@ -1701,6 +1713,7 @@ export function createWorld() {
     if (key !== R.lookKey) { R.lookKey = key; R.fade = R.look === null ? 1 : 0; R.look = here; setBackdrop(key, W); R.envDone = false; }
     R.fade = Math.min(1, R.fade + dt / 2.5);
     R.tunK += ((E.segAt(W, E.segIndex(W.s)).tun ? 1 : 0) - R.tunK) * Math.min(1, dt * 3.5); WAVE_T.value = t / 1000;
+    { const hero = W.count > 0 ? 1 : W.goalSeq ? Math.min(1, W.goalSeq.t / 40) : 0; R.heroL = (R.heroL || 0) + (hero - (R.heroL || 0)) * Math.min(1, dt * 3); if (R.keyL) { R.keyL.intensity = 7 * R.heroL; R.rimL.intensity = 9 * R.heroL; } }
     if (R.starterArm && R.starterArm.parent) {   // the starter's flag: held up and waved while the lights count down, swept down (towards the road) at GO
       const SA = R.starterArm; if (W.count > 0 || W.goT == null) { SA.rotation.x = 0; SA.rotation.z = Math.sin(t / 140) * 0.16; }
       else { const u = Math.min(1, (W.t - W.goT) / 16); SA.rotation.z = 0; SA.rotation.x = 1.95 * u * u * (3 - 2 * u); }
@@ -2005,10 +2018,10 @@ export function createWorld() {
       const F = W.fork, b = F && F.s && E.segIndex(W.s) >= F.split ? F.s : 0; place(W, W.s + 1.5, f.x, b, POS);
       const x = POS.x, y = W.h + 0.8, z = POS.z;
       switch (f.k) {
-        case 'coin': for (let i = 0; i < 10; i++) sparks.emit(x, y + 0.6, z, (Math.random() - 0.5) * 6, Math.random() * 5, (Math.random() - 0.5) * 6, 0.25, 0.5, '#ffe066', 1, 0.6); break;
-        case 'power': { const col = { magnet: '#ff5a5a', shield: '#ffd23f', double: '#f2e3b3', time: '#5dff9a' }[f.pw] || '#ffffff'; for (let i = 0; i < 26; i++) sparks.emit(x, y + 0.8, z, (Math.random() - 0.5) * 9, Math.random() * 7, (Math.random() - 0.5) * 9, 0.34, 0.6, col, 1, 0.8); R.flash = Math.max(R.flash, 0.2); break; }
+        case 'coin': for (let i = 0; i < 10; i++) sparks.emit(x + tfx * 2.4, y - 0.1, z + tfz * 2.4, (Math.random() - 0.5) * 6, Math.random() * 3, (Math.random() - 0.5) * 6, 0.18, 0.34, '#ffe066', 1, 0.5); break;   // (round 8: ahead of the bonnet, low - the flare covered her)
+        case 'power': { const col = { magnet: '#ff5a5a', shield: '#ffd23f', double: '#f2e3b3', time: '#5dff9a' }[f.pw] || '#ffffff'; for (let i = 0; i < 26; i++) sparks.emit(x + tfx * 2.4, y, z + tfz * 2.4, (Math.random() - 0.5) * 9, Math.random() * 5, (Math.random() - 0.5) * 9, 0.24, 0.42, col, 1, 0.7); R.flash = Math.max(R.flash, 0.2); break; }
         case 'smash': for (let i = 0; i < 30; i++) sparks.emit(x, y + 0.6, z, (Math.random() - 0.5) * 14, Math.random() * 8, (Math.random() - 0.5) * 14, 0.3, 0.6, i % 2 ? '#ffd23f' : '#ffffff', 1, 0.7, 9); R.camShake = Math.max(R.camShake || 0, 0.35); break;
-        case 'nitro': for (let i = 0; i < 18; i++) sparks.emit(x, y + 0.6, z, (Math.random() - 0.5) * 8, Math.random() * 6, (Math.random() - 0.5) * 8, 0.3, 0.6, '#5aa9ff', 1, 0.7); R.flash = Math.max(R.flash, 0.25); break;
+        case 'nitro': for (let i = 0; i < 18; i++) sparks.emit(x + tfx * 2.4, y, z + tfz * 2.4, (Math.random() - 0.5) * 8, Math.random() * 4, (Math.random() - 0.5) * 8, 0.22, 0.42, '#5aa9ff', 1, 0.6); R.flash = Math.max(R.flash, 0.25); break;
         case 'leaves': for (let i = 0; i < 26; i++) smoke.emit(x, y, z, (Math.random() - 0.5) * 8, 2 + Math.random() * 6, (Math.random() - 0.5) * 8, 0.25, 1.2, ['#3c8a3a', '#64b852', '#c8641e', '#ffd31a', '#e63946'][i % 5], 1, 0.3, 9); break;
         case 'bump': for (let i = 0; i < 14; i++) sparks.emit(x, y, z, (Math.random() - 0.5) * 8, Math.random() * 4, (Math.random() - 0.5) * 8, 0.18, 0.4, '#ffd27a', 1, 0.5, 9); break;
         case 'sparks': for (let i = 0; i < 30; i++) sparks.emit(x, y - 0.4, z, (Math.random() - 0.5) * 4 + tfx * W.v * (0.55 + Math.random() * 0.3), 1 + Math.random() * 4, (Math.random() - 0.5) * 4 + tfz * W.v * (0.55 + Math.random() * 0.3), 0.09, 0.04, i % 3 ? '#ffb347' : '#fff6dc', 1, 0.3 + Math.random() * 0.25, 9, SPK);
