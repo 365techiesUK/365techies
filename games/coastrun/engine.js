@@ -50,7 +50,7 @@
     { key: 'sandbanks', name: 'SANDBANKS', seed: 1709, t: 64, len: 700, curvy: 0.6, hilly: 0.2, sea: -1, band: [3, 8], shores: [30, 34, 38, 42, 48, 54, 36, 40], mix: [5, 4, 1, 1, 3, 0, 0, 4], feat: { over: ['banner'] } },   // (no bridge: there is none on the spit)
     { key: 'christchurch', name: 'CHRISTCHURCH', seed: 1811, t: 66, len: 700, curvy: 0.65, hilly: 0.3, sea: 1, band: [4, 13], shores: [20, 22, 24, 28, 32, 26, 22, 36], mix: [5, 4, 2, 1, 3, 1, 0, 2], feat: { bridge: 2 } },
     { key: 'purbeck', name: 'CORFE CASTLE', seed: 2207, t: 66, len: 730, curvy: 0.75, hilly: 1, sea: 0, band: [14, 95], bands: [[0, [10, 26]], [0.3, [22, 34]], [0.62, [30, 90]]], noCut: [0.08, 0.7], mix: [5, 3, 2, 0, 3, 3, 1, 1], feat: { tunnel: 1, over: ['viaduct'] } },   // (noCut: no cutting through the heath's railway or the village)
-    { key: 'swanage', name: 'SWANAGE', seed: 2903, t: 72, len: 730, curvy: 0.7, hilly: 0.6, sea: -1, sh0: 150, shV: 0.6, band: [3, 40], bands: [[0, [24, 40]], [0.22, [12, 22]], [0.36, [6, 12]], [0.48, [3, 7]]], shoreZ: [[0, [140, 150, 160, 145, 155, 150, 160, 140]], [0.27, [105, 110, 115, 100, 110, 105, 115, 108]], [0.44, [80, 84, 88, 82, 86, 80, 88, 84]], [0.55, [24, 26, 28, 30, 26, 24, 28, 26]]], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: {} },   // (in from Corfe on the A351: Harman's Cross by the railway, Herston, the town, then the front - the bay to the sea side, Old Harry across it; sh0: the sea starts far off, shV: and comes in quicker)
+    { key: 'swanage', name: 'SWANAGE', seed: 2903, t: 63, len: 730, curvy: 0.7, hilly: 0.6, sea: -1, sh0: 26, shV: 0.6, band: [3, 30], bands: [[0, [3, 6]], [0.31, [5, 12]], [0.39, [16, 30]], [0.53, [6, 12]], [0.59, [3, 7]]], shoreZ: [[0, [26, 30, 28, 32, 27, 31, 29, 26]], [0.31, [60, 70, 80, 66, 74, 62, 78, 70]], [0.39, [150, 160, 170, 155, 165, 150, 168, 158]], [0.53, [72, 80, 86, 76, 82, 74, 84, 78]], [0.59, [24, 26, 28, 30, 26, 24, 28, 26]]], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: {} },   // (in off the chain ferry, 7 Oct - the coast run reaches it only from Sandbanks: Shell Bay's dunes and Studland's long beach close on the sea side, the heath and Little Sea inland, Studland village, over the downs by Ulwell, down into the town and along the front)
     { key: 'forest', name: 'NEW FOREST', seed: 3301, t: 72, len: 730, curvy: 0.85, hilly: 0.55, sea: 0, band: [10, 50], bands: [[0, [10, 22]], [0.3, [14, 26]], [0.64, [12, 40]]], mix: [5, 3, 2, 0, 3, 2, 1, 1], feat: { over: ['footbridge'] } },
     { key: 'jurassic', name: 'DURDLE DOOR', seed: 4409, t: 53, len: 740, curvy: 0.8, hilly: 0.85, sea: -1, band: [30, 80], bands: [[0, [18, 30]], [0.18, [30, 60]], [0.36, [3, 9]], [0.64, [40, 80]]], shoreZ: [[0, [100, 110, 120, 95, 105, 115, 100, 110]], [0.18, [60, 70, 80, 65, 75, 70, 60, 80]], [0.36, [20, 22, 24, 26, 22, 20, 24, 22]], [0.64, [26, 30, 34, 38, 30, 28, 34, 32]]], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { tunnel: 1 } },   // (in four parts: Lulworth Castle's park, the ranges, West Lulworth and the Cove, the downs to the Door)
     { key: 'weymouth', name: 'WEYMOUTH', seed: 4513, t: 58, len: 720, curvy: 0.6, hilly: 0.35, sea: -1, sh0: 120, shV: 0.8, band: [2, 45], bands: [[0, [20, 45]], [0.12, [4, 10]], [0.3, [3, 6]], [0.52, [2, 5]]], shoreZ: [[0, [110, 120, 130, 115, 125, 110, 130, 120]], [0.074, [14, 16, 18, 20, 16, 15, 18, 17]], [0.37, [30, 34, 38, 44, 36, 32, 40, 34]], [0.6, [12, 13, 14, 15, 13, 12, 14, 13]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: { over: ['banner'] } },   // (in from Wool on the A353: over Osmington Hill under the White Horse, down to the sea at Preston, the Esplanade, the harbour)
@@ -409,10 +409,11 @@
           if (k % 110 === 55) put(W, i, 'finger', (k % 220 ? -1 : 1) * 10.2, 0.2);
           break;
         }
-        case 'swanage': {   // in four parts (world3d.js ZONES), in from Corfe on the A351: Harman's Cross with the steam railway alongside, Herston,
-          // the town, then the front along the bay
+        case 'swanage': {   // in six parts (world3d.js ZONES), off the chain ferry (7 Oct): Shell Bay's dunes, Knoll Beach, Studland village, the downs
+          // by Ulwell, the town, then the front along the bay
           var fz = k / Math.max(1, to - from);
-          if (fz < 0.22) { if (k % 3 === 0) put(W, i, 'railline', 28, 0); if (k % 110 === 55) put(W, i, 'finger', 10.2, 0.2); break; }
+          if (fz < 0.25) { if (r() < 0.06) put(W, i, ['heather', 'gorse'][(r() * 2) | 0], 11.6 + r() * 3, 0.8, { soft: true, v: 1 }); if (k % 120 === 50) put(W, i, 'finger', 10.2, 0.2); break; }   // (the heath right up to the road inland)
+          if (fz < 0.43) break;
           if (fz < 0.48) { lamps(9, 0, false); street(); break; }
           lamps(9, 0, true);
           onWater('yacht', 30, 140, 0.015, (r() * 3) | 0);
@@ -600,12 +601,16 @@
       mark('stonepub', 0.44, function () { return -21; }); mark('corfechurch', 0.47, function () { return 30; });
       mark('corfestation', 0.665, function () { return 24; });   // (just past the village's last cottages: behind them it was hidden)
     }
-    if (S.key === 'swanage') {   // in from Corfe: the steam train by the road at Harman's Cross; Swanage station and the Town Hall (its front the
-      // old Mercers' Hall's) in the town; on the front the King Alfred column, the clock tower from London Bridge and the pier (Old Harry itself is
-      // the place's landmark painting, across the bay: as a 3D model from the road it read as a grey box)
-      mark('steamtrain', 0.1, function () { return 28; });
-      var sst = straightest(0.37, 0.42, 30, 10); if (sst >= 0) putAt(W, sst, 'corfestation', 26, 0, {});
-      var sth = straightest(0.42, 0.47, 30, 10); if (sth >= 0) putAt(W, sth, 'swanhall', 21, 0, {});
+    if (S.key === 'swanage') {   // off the chain ferry (owner, 7 Oct: "it doesn't look anything like Studland"): at Knoll Beach the National Trust's cafe
+      // between the road and the sand, the boardwalk out to Little Sea across the heath; in Studland village the old Norman church and the Bankes
+      // Arms above the bay; the obelisk on the down at Ulwell; Swanage station and the Town Hall (its front the old Mercers' Hall's) in the town; on
+      // the front the King Alfred column, the clock tower from London Bridge and the pier (Old Harry itself is the place's landmark painting, ahead
+      // across the bay as you come along Studland's beach: as a 3D model from the road it read as a grey box)
+      mark('visitorcentre', 0.17, function () { return -21; }); mark('littlesea', 0.21, function () { return 17; });
+      mark('kinsonchurch', 0.275, function () { return 25; }, 2); mark('stonepub', 0.3, function () { return -22; });
+      var uo = straightest(0.35, 0.4, 30, 10); if (uo >= 0) putAt(W, uo, 'obelisk', -48, 0, {});
+      var sst = straightest(0.43, 0.455, 30, 10); if (sst >= 0) putAt(W, sst, 'corfestation', 26, 0, {});
+      var sth = straightest(0.455, 0.48, 30, 10); if (sth >= 0) putAt(W, sth, 'swanhall', 21, 0, {});
       mark('alfredcolumn', 0.565, function (h) { return -(Math.min(h, 22) - 5); });
       mark('clocktower', 0.6, function () { return -12.6; }); mark('pier', 0.63, function () { return -14.9; }, 2);   // (all before ~0.68 of the stretch: after it the shore pulls away)
     }

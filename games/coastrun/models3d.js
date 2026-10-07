@@ -1503,19 +1503,23 @@ const MODELS = {
       k.ball(0.3, x, 2.95, -1.6, '#ffae1a', 1, 1, 1, 'glow', 10);
     }
   },
-  kinsonchurch(k) {   // St Andrew's, Kinson (its face +Z): the old smugglers' church - a squat square tower of rust-brown heathstone with
-    // battlements and a clock face (no numbers), the nave and porch of the same stone under red tiles, gravestones in the grass
-    const H = '#8a5634', H2 = '#7a4a2c', T = '#9a4a34', r = rnd(6300);
-    k.box(6.6, 15, 6.6, 9, 0, 0, H, 0, 0, 0, 'stone');
-    for (let i = 0; i < 5; i++) for (const [x, z] of [[9 - 2.7 + i * 1.35, 3.1], [9 - 2.7 + i * 1.35, -3.1], [9 - 3.1, -2.7 + i * 1.35], [9 + 3.1, -2.7 + i * 1.35]]) k.box(0.8, 1.0, 0.8, x, 15, z, H2, 0, 0, 0, 'stone');   // the battlements
-    for (const y of [5, 10]) k.box(6.9, 0.3, 6.9, 9, y, 0, H2, 0, 0, 0, 'stone');
-    k.cyl(0.9, 0.9, 0.12, 14, 9, 11.2, 3.33, '#f2efe6', Math.PI / 2).box(0.06, 0.6, 0.05, 9, 11.4, 3.42, '#1a1a1a').box(0.45, 0.06, 0.05, 9.2, 11.75, 3.42, '#1a1a1a');   // the clock
+  kinsonchurch(k, v) {   // St Andrew's, Kinson (its face +Z): the old smugglers' church - a squat square tower of rust-brown heathstone with
+    // battlements and a clock face (no numbers), the nave and porch of the same stone under red tiles, gravestones in the grass. v 2: St Nicholas,
+    // Studland (7 Oct) - the Norman church of grey Purbeck stone, its tower never finished: low, no battlements, a shallow pyramid cap, stone-slate roofs
+    const SN = v === 2, H = SN ? '#a49c8a' : '#8a5634', H2 = SN ? '#8e8676' : '#7a4a2c', T = SN ? '#77726a' : '#9a4a34', r = rnd(6300);
+    if (SN) {
+      k.box(6.6, 12.5, 6.6, 9, 0, 0, H, 0, 0, 0, 'stone').box(6.9, 0.3, 6.9, 9, 6.5, 0, H2, 0, 0, 0, 'stone').put(new THREE.ConeGeometry(4.9, 1.8, 4), T, 9, 13.4, 0, 0, Math.PI / 4, 0);
+      for (const z of [-3.4, 3.4]) for (const x of [6.2, 11.8]) k.box(0.9, 4.5, 0.9, x, 0, z, H2, 0, 0, 0, 'stone');   // (buttresses)
+    } else k.box(6.6, 15, 6.6, 9, 0, 0, H, 0, 0, 0, 'stone');
+    if (!SN) for (let i = 0; i < 5; i++) for (const [x, z] of [[9 - 2.7 + i * 1.35, 3.1], [9 - 2.7 + i * 1.35, -3.1], [9 - 3.1, -2.7 + i * 1.35], [9 + 3.1, -2.7 + i * 1.35]]) k.box(0.8, 1.0, 0.8, x, 15, z, H2, 0, 0, 0, 'stone');   // the battlements
+    if (!SN) for (const y of [5, 10]) k.box(6.9, 0.3, 6.9, 9, y, 0, H2, 0, 0, 0, 'stone');
+    if (!SN) k.cyl(0.9, 0.9, 0.12, 14, 9, 11.2, 3.33, '#f2efe6', Math.PI / 2).box(0.06, 0.6, 0.05, 9, 11.4, 3.42, '#1a1a1a').box(0.45, 0.06, 0.05, 9.2, 11.75, 3.42, '#1a1a1a');   // the clock
     k.box(1.0, 2.4, 0.14, 9, 7.2, 3.32, '#2a2a2a', 0, 0, 0, 'shiny').box(1.4, 2.4, 0.14, 9, 0, 3.34, '#4a3020');   // a window, the west door
     k.box(16, 6.4, 8.4, -2.5, 0, 0, H, 0, 0, 0, 'stone').prism(9.2, 4.4, 16.4, -2.5, 6.4, 0, T, Math.PI / 2);   // the nave, red tiles
     for (const x of [-7.5, -3, 1.5]) k.box(1.0, 2.6, 0.14, x, 2.2, 4.22, '#2b3540', 0, 0, 0, 'shiny');
     k.box(3.2, 3.2, 3, -2.5, 0, 5.4, H2, 0, 0, 0, 'stone').prism(3.6, 1.8, 3.4, -2.5, 3.2, 5.4, T, 0);   // the porch
     for (let i = 0; i < 18; i++) { const x = -14 + r() * 28, z = 8 + r() * 9; k.box(0.7, 0.7 + r() * 0.5, 0.15, x, 0, z, ['#9a9a94', '#8a8680', '#a8a49c'][i % 3], (r() - 0.5) * 0.2); }
-    k.box(34, 1.0, 0.5, 0, 0, 18, '#7a5a3c', 0, 0, 0, 'stone');   // the churchyard wall
+    k.box(34, 1.0, 0.5, 0, 0, 18, SN ? '#8e8676' : '#7a5a3c', 0, 0, 0, 'stone');   // the churchyard wall
     for (const [x, z] of [[-16, 2], [17, 8]]) k.cyl(0.35, 0.5, 4, 6, x, 0, z, '#4a3a2a').clump(3.4, x, 6.4, z, '#203c26', 6310 + x).clump(2.6, x + 0.8, 9, z, '#284a2e', 6320 + x);   // yews
   },
   flatparade(k, v) {   // a 1960s shopping parade (Kinson; its face +Z): two floors of flats over the shops, a flat roof, long windows and

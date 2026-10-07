@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=62';
+import { createWorld } from './world3d.js?v=63';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
@@ -295,7 +295,7 @@ function clockExtras(g, W, t, pi) {   // the race against the clock: your best f
   }
   const S = R.split;
   if (S && W.t - S.at < 240 && W.t >= S.at) {   // under the checkpoint banner: STAGE TIME, against your best
-    const a = Math.min(1, (240 - (W.t - S.at)) / 30), y = W.field && W.field.length ? 110 : 84;   // (under the POS box)
+    const a = Math.min(1, (240 - (W.t - S.at)) / 30), y = 110;   // (under the POS box, or the ghost's in its place)
     g.globalAlpha = a;
     hudText(g, 'STAGE TIME', 10, y, 5.2, '#c9d6e6');
     hudText(g, clock(S.t), 10, y + 11, 9, '#ffffff');
