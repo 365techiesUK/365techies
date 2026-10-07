@@ -300,8 +300,9 @@ ErrorDocument 404 /404.html
 </FilesMatch>
 # The paid app abroad, "Unlock everything" (8 Oct 2026): the library is include-only, the test CLI-only; pcm-plus.json holds
 # the Unlock keys (hashed) and buyers' emails; pcm-buy-config.php (switch, checkout link, price) is read as data, and
-# pcm-buy.off stops it at once. pcm-plus-admin.php stays served (staff session only). Nothing here is a URL.
-<FilesMatch "^(pcm-plus-(lib|test)\.php|pcm-plus\.json(\..*)?|pcm-buy-config\.php|pcm-buy\.off)$">
+# pcm-buy.off stops it at once; pcm-ls-secret.php is the owner's Lemon Squeezy signing secret and pcm-plus-ls.log the
+# webhook's log. pcm-plus-admin.php (staff session) and pcm-plus-ls.php (Lemon Squeezy's webhook, signed) stay served.
+<FilesMatch "^(pcm-plus-(lib|test)\.php|pcm-plus\.json(\..*)?|pcm-buy-config\.php|pcm-buy\.off|pcm-ls-secret\.php|pcm-plus-ls\.log)$">
   Require all denied
 </FilesMatch>
 # Bournemouth weather record books (22 Sep 2026): the per-date record table is read by

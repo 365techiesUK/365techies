@@ -153,6 +153,8 @@ api/pcm-sentlog.json.*
 api/pcm-plus.json
 api/pcm-plus.json.*
 api/pcm-buy.off
+api/pcm-ls-secret.php
+api/pcm-plus-ls.log
 api/bm-sea-cache.json
 api/bm-sea-cache.json.*
 api/bm-sea-beat.json

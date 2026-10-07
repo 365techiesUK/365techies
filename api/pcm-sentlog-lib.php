@@ -29,6 +29,8 @@ function sentlog_cut($s, $n) { $s = (string)$s; return function_exists('mb_subst
 /* Every link keeps where it goes (the site, the page) and loses what makes it work: a query string or fragment becomes
    "?...", and any path part that looks like a token (16+ letters/digits, or 10+ with a digit) becomes "...". */
 function sentlog_redact($text) {
+    // 8 Oct 2026: an Unlock key emailed to a buyer is kept to its last four characters, like the staff card shows it
+    $text = preg_replace('/\bUNLK(?:-[2-9A-HJKMNP-Z]{4}){2}-([2-9A-HJKMNP-Z]{4})\b/i', "UNLK-\xE2\x80\xA6-$1", (string)$text);
     return preg_replace_callback('~\bhttps?://[^\s<>"\'\]\)]+~i', function ($m) {
         $u = $m[0]; $tail = '';
         if (preg_match('/[.,;:!?]+$/', $u, $t)) { $tail = $t[0]; $u = substr($u, 0, -strlen($tail)); }

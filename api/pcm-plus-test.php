@@ -12,6 +12,7 @@ define('PLUS_FILE', $TMP . '/pcm-plus.json');
 define('PLUS_OFF', $TMP . '/pcm-buy.off');
 define('PLUS_CONFIG', $TMP . '/pcm-buy-config.php');
 require __DIR__ . '/pcm-plus-lib.php';
+function TMP_SECRET_FILE() { return sys_get_temp_dir() . '/pcm-plus-test-secret-' . getmypid() . '.php'; }
 $fails = 0;
 function check($ok, $what, $detail = '') { global $fails; echo ($ok ? "  PASS  " : "  FAIL  ") . $what . ($ok ? '' : "  [" . $detail . "]") . "\n"; if (!$ok) $fails++; }
 
@@ -72,7 +73,94 @@ check(count($L) === 2 && $L[0]['email'] === 'life@example.com' && $L[1]['last4']
 file_put_contents(PLUS_FILE, '{broken');
 check(plus_issue('a@b.co', 1, 'Steve') === null && file_get_contents(PLUS_FILE) === '{broken' && plus_check($k1, 'aaaa1111bbbb2222', false)['error'] === 'busy', 'an unreadable store is never overwritten; keys answer "busy", not "unknown"');
 
-echo "E  the wiring\n";
+echo "E  Lemon Squeezy's webhook (8 Oct 2026)\n";
+@unlink(PLUS_FILE);
+file_put_contents(PLUS_CONFIG, "<?php\n\$BUY_ON = false;\n\$LS_VARIANTS = '777:life, 555:year';\n");
+$SECRET = 'test-signing-secret-1234';
+$mails = array();
+$mailer = function ($to, $key, $exp) use (&$mails) { $mails[] = array($to, $key, $exp); return true; };
+$ev = function ($name, $type, $id, $attrs, $custom = array(), $test = false) {
+    return json_encode(array('meta' => array('event_name' => $name, 'test_mode' => $test, 'custom_data' => (object)$custom), 'data' => array('type' => $type, 'id' => (string)$id, 'attributes' => $attrs)));
+};
+$sign = function ($raw) use ($SECRET) { return hash_hmac('sha256', $raw, $SECRET); };
+$T = gmmktime(12, 0, 0, 10, 8, 2026);
+$order = array('status' => 'paid', 'user_email' => 'Buyer@Example.com', 'order_number' => 1001, 'currency' => 'USD', 'total' => 2900, 'refunded' => false, 'first_order_item' => array('variant_id' => 999, 'product_id' => 1));
+$raw = $ev('order_created', 'orders', 5001, $order, array('install' => 'a1b2c3d4e5f60718'));
+check(plus_ls_handle($raw, $sign($raw), '', $mailer, $T)[0] === 503, 'no signing secret on the server yet: 503 (Lemon Squeezy tries again later)');
+check(plus_ls_handle($raw, 'deadbeef', $SECRET, $mailer, $T)[0] === 401 && plus_ls_handle($raw, '', $SECRET, $mailer, $T)[0] === 401 && plus_ls_handle($raw . ' ', $sign($raw), $SECRET, $mailer, $T)[0] === 401 && !$mails && !file_exists(PLUS_FILE),
+    'a wrong, missing or stale signature: 401, nothing made');
+$r = plus_ls_handle($raw, strtoupper($sign($raw)), $SECRET, $mailer, $T);
+check($r[0] === 200 && preg_match('/^key [a-f0-9]{10} made and emailed$/', $r[1]) && count($mails) === 1 && $mails[0][0] === 'buyer@example.com' && plus_is_key($mails[0][1]) && $mails[0][2] === strtotime('+1 year', $T),
+    'a paid order: a key for a year (variant not listed), emailed to the buyer', json_encode(array($r, $mails)));
+$k = plus_list()[0];
+check($k['provider'] === 'lemonsqueezy' && $k['note'] === 'Lemon Squeezy order #1001 USD 29.00' && $k['by'] === 'checkout' && !$k['test'], 'listed for the staff card: the order number and what was paid', json_encode($k));
+$st = json_decode(file_get_contents(PLUS_FILE), true); $e1 = current($st['keys']);
+check($e1['install'] === 'a1b2c3d4e5f60718' && $e1['order'] === '5001' && strpos(file_get_contents(PLUS_FILE), $mails[0][1]) === false, 'the install it came from and the order kept; the key itself never');
+check(plus_check($mails[0][1], 'aaaa1111bbbb2222', true, $T)['ok'], 'the emailed key activates');
+$r = plus_ls_handle($raw, $sign($raw), $SECRET, $mailer, $T + 60);
+check($r[0] === 200 && $r[1] === 'order already has its key' && count($mails) === 1 && count(plus_list()) === 1, 'the same delivery again (a retry): nothing new, no second email');
+$raw2 = $ev('order_created', 'orders', 5002, array('status' => 'pending') + $order);
+check(plus_ls_handle($raw2, $sign($raw2), $SECRET, $mailer, $T)[1] === 'order not paid (pending)' && count(plus_list()) === 1, 'an order not paid yet: nothing');
+$raw3 = $ev('order_created', 'orders', 5003, array('first_order_item' => array('variant_id' => 777), 'order_number' => 1003) + $order, array(), true);
+$r = plus_ls_handle($raw3, $sign($raw3), $SECRET, $mailer, $T);
+$byId = function ($id) { foreach (plus_list() as $x) if ($x['id'] === $id) return $x; return null; };
+$k3 = $byId(plus_find_order('lemonsqueezy', '5003'));
+check($r[0] === 200 && $mails[1][2] === 0 && $k3['expires'] === 0 && $k3['test'] && strpos($k3['note'], '(TEST)') !== false, 'a variant listed as "life": a lifetime key; a test-mode order is marked TEST', json_encode($k3));
+// subscriptions
+$sub = function ($status, $orderId, $renews, $ends = null) { return array('order_id' => $orderId, 'status' => $status, 'renews_at' => $renews ? gmdate('Y-m-d\TH:i:s.000000\Z', $renews) : null, 'ends_at' => $ends ? gmdate('Y-m-d\TH:i:s.000000\Z', $ends) : null, 'user_email' => 'buyer@example.com'); };
+$raw4 = $ev('subscription_created', 'subscriptions', 9001, $sub('active', 7777, $T + 365 * 86400));
+check(plus_ls_handle($raw4, $sign($raw4), $SECRET, $mailer, $T)[0] === 409, 'a subscription that arrives before its order: 409, so Lemon Squeezy tries again');
+$ren = $T + 365 * 86400;
+$raw5 = $ev('subscription_created', 'subscriptions', 9002, $sub('active', 5001, $ren));
+$r = plus_ls_handle($raw5, $sign($raw5), $SECRET, $mailer, $T);
+$e = $byId(plus_find_order('lemonsqueezy', '5001'));
+check($r[0] === 200 && $e['expires'] === $ren + 7 * 86400, 'the subscription: the key runs to its renewal date + a week\'s grace', json_encode(array($r, $e['expires'])));
+$raw6 = $ev('subscription_updated', 'subscriptions', 9002, $sub('active', 5001, $ren + 365 * 86400));
+plus_ls_handle($raw6, $sign($raw6), $SECRET, $mailer, $T + 360 * 86400);
+$e = $byId(plus_find_order('lemonsqueezy', '5001'));
+check($e['expires'] === $ren + 365 * 86400 + 7 * 86400, 'renewed a year on: another year');
+$endsAt = $ren + 365 * 86400;
+$raw7 = $ev('subscription_cancelled', 'subscriptions', 9002, $sub('cancelled', 5001, null, $endsAt));
+plus_ls_handle($raw7, $sign($raw7), $SECRET, $mailer, $T + 400 * 86400);
+$e = $byId(plus_find_order('lemonsqueezy', '5001'));
+check($e['expires'] === $endsAt, 'cancelled: the key runs to the end of what was paid for');
+$raw8 = $ev('subscription_expired', 'subscriptions', 9002, $sub('expired', 5001, null, $endsAt));
+plus_ls_handle($raw8, $sign($raw8), $SECRET, $mailer, $endsAt + 60);
+check(plus_check($mails[0][1], 'aaaa1111bbbb2222', false, $endsAt + 120)['error'] === 'expired', 'expired: the key stops working');
+// refunds
+$raw9 = $ev('order_refunded', 'orders', 5003, array('status' => 'partial_refund', 'refunded' => false) + $order);
+check(plus_ls_handle($raw9, $sign($raw9), $SECRET, $mailer, $T)[1] === 'partial refund - key kept' && plus_check($mails[1][1], 'aaaa1111bbbb2222', true, $T)['ok'], 'a partial refund: the key keeps working');
+$raw10 = $ev('order_refunded', 'orders', 5003, array('status' => 'refunded', 'refunded' => true) + $order);
+$r = plus_ls_handle($raw10, $sign($raw10), $SECRET, $mailer, $T);
+check($r[0] === 200 && plus_check($mails[1][1], 'aaaa1111bbbb2222', false, $T)['error'] === 'revoked', 'a full refund: the key is switched off', $r[1]);
+$raw11 = $ev('order_refunded', 'orders', 4444, array('refunded' => true) + $order);
+check(plus_ls_handle($raw11, $sign($raw11), $SECRET, $mailer, $T)[1] === 'refund for an order with no key', 'a refund for an order we never keyed: nothing');
+// the email fails
+$failMail = function () { return false; };
+$raw12 = $ev('order_created', 'orders', 5004, $order);
+$r = plus_ls_handle($raw12, $sign($raw12), $SECRET, $failMail, $T);
+check($r[0] === 200 && strpos($r[1], 'EMAIL FAILED') !== false, 'the email did not go: the key is still made (no duplicate on a retry) and the log says to send a new one', $r[1]);
+check(plus_ls_handle($ev('license_key_created', 'license-keys', 1, array()), $sign($ev('license_key_created', 'license-keys', 1, array())), $SECRET, $mailer, $T)[1] === 'event license_key_created - nothing to do', 'other events: nothing');
+check(plus_ls_handle('not json', $sign('not json'), $SECRET, $mailer, $T)[0] === 200, 'a signed delivery we cannot read: answered, nothing done');
+// a new key for a buyer who lost the email
+$id4 = plus_find_order('lemonsqueezy', '5004');
+$nk = plus_reissue($id4, 'Steve', $T + 100);
+check($nk && plus_is_key($nk[0]) && plus_find_order('lemonsqueezy', '5004') === $nk[1] && plus_check($nk[0], 'aaaa1111bbbb2222', true, $T + 200)['ok'], 'a new key: it works, and the order now belongs to it');
+$old = null; foreach (plus_list() as $x) if ($x['id'] === $id4) $old = $x;
+check($old['status'] === 'revoked' && plus_ls_handle($raw12, $sign($raw12), $SECRET, $mailer, $T + 300)[1] === 'order already has its key', 'the old key is switched off; a late retry of the order still makes nothing');
+list($subj, $body) = plus_key_email('UNLK-ABCD-EFGH-JK7M', 0);
+check($subj === 'Your 365 PC Manager key: Unlock everything' && strpos($body, 'UNLK-ABCD-EFGH-JK7M') !== false && strpos($body, 'up to 3 PCs') !== false && strpos($body, 'It never runs out.') !== false
+    && strpos(plus_key_email('UNLK-ABCD-EFGH-JK7M', gmmktime(0, 0, 0, 10, 8, 2027))[1], 'It works until 8 October 2027.') !== false, 'the email: the key, how to use it, 3 PCs, until when');
+check(plus_ls_secret(TMP_SECRET_FILE()) === '', 'no secret file: no secret');
+file_put_contents(TMP_SECRET_FILE(), "<?php\n// the owner's\n\$LS_WEBHOOK_SECRET = 'abc123XYZ';\n");
+check(plus_ls_secret(TMP_SECRET_FILE()) === 'abc123XYZ', 'the secret read from api/pcm-ls-secret.php as data');
+@unlink(TMP_SECRET_FILE());
+$W = (string)file_get_contents(__DIR__ . '/pcm-plus-ls.php');
+$iSig = strpos($W, 'if (plus_ls_signed($raw, $sig, $secret)) {'); $iRev = strpos($W, "require_once __DIR__ . '/pcm-review.php'");
+check($iSig !== false && $iRev !== false && $iSig < $iRev && strpos($W, 'http_response_code($code);') !== false && strpos($W, "\$_SERVER['HTTP_X_SIGNATURE']") !== false,
+    'pcm-plus-ls.php: the mail code is loaded only for a signed delivery; the answer\'s status is the handler\'s');
+
+echo "F  the wiring\n";
 $P = (string)file_get_contents(__DIR__ . '/pcm.php');
 $iA = strpos($P, "if (\$action === 'activate') {"); $iPA = strpos($P, 'plus_check($key, $machine, true)', $iA); $iU = strpos($P, "out(array('ok'=>false,'error'=>'unknown_key'))", $iA);
 check($iA !== false && $iPA !== false && $iU !== false && $iPA < $iU, 'activate: an Unlock key is tried before "unknown key"');
@@ -91,18 +179,18 @@ check($iS !== false && $iN !== false && $iS < $iN && strpos($S, "plus_check(\$ke
     'pcm-service.php: an Unlock key activated on this PC gets the full service - always a self-run, counted, never written to the customer file');
 check(substr_count($S, 'readfile($payload);') === 2 && strpos($S, "deny('update the app first')") !== false, '...signed payload only (an app older than v29 is told to update)');
 $HT = (string)file_get_contents(__DIR__ . '/../.htaccess');
-foreach (array('pcm-plus-lib.php', 'pcm-plus-test.php', 'pcm-plus.json', 'pcm-plus.json.lock', 'pcm-buy-config.php', 'pcm-buy.off') as $f) {
+foreach (array('pcm-plus-lib.php', 'pcm-plus-test.php', 'pcm-plus.json', 'pcm-plus.json.lock', 'pcm-buy-config.php', 'pcm-buy.off', 'pcm-ls-secret.php', 'pcm-plus-ls.log') as $f) {
     $denied = false;
     if (preg_match_all('/<FilesMatch "([^"]+)">\s*Require all denied/', $HT, $fm)) foreach ($fm[1] as $re) if (@preg_match('#' . $re . '#', $f)) $denied = true;
     check($denied, 'denied over HTTP: ' . $f);
 }
-foreach (array('pcm-plus-admin.php', 'pcm.php') as $f) {
+foreach (array('pcm-plus-admin.php', 'pcm.php', 'pcm-plus-ls.php') as $f) {
     $denied = false;
     if (preg_match_all('/<FilesMatch "([^"]+)">\s*Require all denied/', $HT, $fm)) foreach ($fm[1] as $re) if (@preg_match('#' . $re . '#', $f)) $denied = true;
     check(!$denied, 'still served: ' . $f);
 }
 $GI = (string)file_get_contents(__DIR__ . '/../.gitignore');
-foreach (array('api/pcm-plus.json', 'api/pcm-buy.off') as $f) check(preg_match('#^' . preg_quote($f, '#') . '\r?$#m', $GI) === 1, 'never committed: ' . $f);
+foreach (array('api/pcm-plus.json', 'api/pcm-buy.off', 'api/pcm-ls-secret.php', 'api/pcm-plus-ls.log') as $f) check(preg_match('#^' . preg_quote($f, '#') . '\r?$#m', $GI) === 1, 'never committed: ' . $f);
 check(preg_match('#^api/pcm-buy-config\.php\r?$#m', $GI) === 0, 'the config IS in git (nothing secret in it)');
 
 array_map('unlink', glob("$TMP/*")); @rmdir($TMP);

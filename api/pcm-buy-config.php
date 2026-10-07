@@ -12,3 +12,6 @@ $BUY_ON = false;
 $BUY_URL = '';
 $BUY_PRICE = '';
 $BUY_PROVIDER = '';
+// Lemon Squeezy (owner's choice, 8 Oct 2026): which variants are lifetime keys - "12345:life, 67890:year". A variant not
+// listed gets a key for a year (a subscription's key then follows its renewals).
+$LS_VARIANTS = '';
