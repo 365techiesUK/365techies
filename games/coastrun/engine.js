@@ -563,17 +563,19 @@
     function mark(t, f, xf, v) {
       for (var j = from + Math.round((to - from) * f), n = 0; n < 80; j++, n++) { var g = segAt(W, j); if (!g.tun && !g.brg && !g.gate && !g.fk && !g.over) { putAt(W, j, t, xf(g.sh), 0, { v: v || 0 }); return; } }
     }
-    if (S.key === 'bournemouth') {   // the pier from the promenade's edge out to sea (and Boscombe's further on); the cliff lifts and zig-zag paths up the cliff
+    if (S.key === 'bournemouth') {   // west along the beach from Boscombe Pier (owner, 7 Oct: "start ... by Boscombe Pier and then going on to Bournemouth Pier
+      // towards Sandbanks ... so people actually think they're on the beach"): Boscombe Pier behind the start line, the Overstrand just past it, the
+      // East Cliff and its lift, Bournemouth Pier in the gap of Pier Approach, the West Cliff lift, then the chines (world3d.js ZONES opens the cliff)
+      putAt(W, from - 22, 'pier', -14.9, 0, { v: 1 }); putAt(W, from + 20, 'overstrand', 17.4, 0, {});   // (from = 40 segments past the grid. Boscombe Pier ~150 m beyond the START arch: the camera swings round for GO and there it is)
       var pj = -1, best = 0;   // Bournemouth Pier at the end of a bend AWAY from the sea: as the car comes round it, the pier swings across the view ahead
-      for (var q = from + Math.round((to - from) * 0.16); q < from + Math.round((to - from) * 0.5); q++) {
+      for (var q = from + Math.round((to - from) * 0.39); q < from + Math.round((to - from) * 0.45); q++) {
         var kk = 0; for (var u = q - 70; u < q - 10; u++) kk += segAt(W, u).k * -S.sea;
         var g0 = segAt(W, q); if (kk > best && !g0.tun && !g0.brg && !g0.gate && !g0.fk && !g0.over) { best = kk; pj = q; }
       }
-      if (best < 60 / 600) pj = -1;
-      if (pj >= 0) putAt(W, pj, 'pier', -14.9, 0, { v: 0 }); else mark('pier', 0.24, function () { return -14.9; }, 0);
-      mark('pier', 0.74, function () { return -14.9; }, 1);
-      mark('clifflift', 0.14, function () { return 17.4; }, 0); mark('clifflift', 0.52, function () { return 17.4; }, 1);
-      mark('zigzag', 0.36, function () { return 17.4; }, 0); mark('zigzag', 0.64, function () { return 17.4; }, 1); mark('zigzag', 0.88, function () { return 17.4; }, 2);
+      if (best < 20 / 600) pj = -1;
+      if (pj >= 0) putAt(W, pj, 'pier', -14.9, 0, { v: 0 }); else mark('pier', 0.42, function () { return -14.9; }, 0);
+      mark('zigzag', 0.12, function () { return 17.4; }, 0); mark('zigzag', 0.24, function () { return 17.4; }, 1); mark('clifflift', 0.31, function () { return 17.4; }, 0);   // (the East Cliff lift)
+      mark('clifflift', 0.56, function () { return 17.4; }, 1); mark('zigzag', 0.61, function () { return 17.4; }, 2);   // (the West Cliff lift)
     }
     if (S.key === 'sandbanks') {   // a cross-Channel ferry going out through the harbour mouth; at the point, the hotel and the queue for the chain ferry
       mark('ferry', 0.5, function (h) { return -(Math.max(h, 20) + 70); });
@@ -1178,7 +1180,7 @@
       W.count--;
       if (W.count === 180 || W.count === 120 || W.count === 60) W.events.push({ sfx: 'count' });
       if (W.count === 0) {
-        W.events.push({ sfx: 'go' }); bannerOf(W, 'GO!', 'DOWN TO THE COAST', 'go'); mood(W, 'cheer'); voice(W, 'go', true); W.legT0 = W.t; launchField(W); W.goT = W.t; W.launchT = 100;
+        W.events.push({ sfx: 'go' }); bannerOf(W, 'GO!', 'FROM BOSCOMBE PIER', 'go'); mood(W, 'cheer'); voice(W, 'go', true); W.legT0 = W.t; launchField(W); W.goT = W.t; W.launchT = 100;
         if (inp.fire || inp.alt) { W.v = top * 0.32; W.bottles = Math.min(BOTTLE_MAX, W.bottles + 1); W.score += 5000; pop(W, 'FLYING START', '+5,000 +1 NITRO', 0, 'gold'); W.events.push({ sfx: 'perfect' }); }
       }
       W.rev = (inp.fire || inp.alt || inp.up) ? Math.min(1, (W.rev || 0) + 0.05) : Math.max(0, (W.rev || 0) - 0.03);
