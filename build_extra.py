@@ -629,7 +629,7 @@ def pcm_landing():
       <div class="dh-hero__grid">
         <div>
           <nav class="breadcrumb" aria-label="Breadcrumb">{bc("Free PC Health Check")}</nav>
-          <a class="pcm-new" href="#virgin-email"><b>NEW</b><span class="pcm-new__l">Free: check your Virgin Media email and move it to Gmail</span><span class="pcm-new__s">Free: move Virgin email to Gmail</span><i aria-hidden="true">&rarr;</i></a>
+          <a class="pcm-new" href="#whats-new"><b>NEW</b><span class="pcm-new__l">Just updated: new network, screen, sound and safety checks</span><span class="pcm-new__s">New: check everything in one tap</span><i aria-hidden="true">&rarr;</i></a>
           <p class="eyebrow mono">// THE MUST-HAVE WINDOWS APP &middot; FREE &middot; {"SIGNED &amp; LIVE" if PCM_LIVE else "COMING SOON"}</p>
           <h1>Your PC&rsquo;s health, <em class="grad grad--cyan">at a glance</em></h1>
           <p class="lede">365 PC Manager is the free app that shows your computer&rsquo;s health in plain English, from your network safety to programs you&rsquo;re better without &mdash; <strong>no fake errors, no scare tactics, nothing to buy</strong>. On a 365 support plan it keeps your PC up to date and secure, and writes up every service.</p>
@@ -1098,7 +1098,9 @@ def pcm_landing():
         _blocks[_i] = _blocks[_i].replace('<section ', '<section data-hw-fold ', 1)
     _blocks.append(_PCM_WHATSNEW)   # 22: what the app checks (version-free since 2 Oct 2026, so a release never leaves it stale)
     _blocks.append(_PCM_VIRGIN)     # 23: the free Virgin email tools (launch branch virgin-launch, 29 Sep 2026)
-    _order = [17, 23, 22, 4, 1, 2, 10, 3, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21]
+    # 7 Oct 2026 (owner: the Virgin email mover "has its own page ... doesn't need to be right at the top" - this page shows
+    # off the app): the download, then what's inside; the Virgin tools sit after "What it does" (5), whose list names them
+    _order = [17, 22, 4, 1, 2, 10, 3, 5, 23, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 18, 19, 20, 21]
     content = "\n".join([_pcm_hero, _pcm_proof] + [_blocks[i] for i in _order] + [_pcm_fold])
     def schema(s, _desc=desc, _faqs=faqs):
         app = {"@type": "SoftwareApplication", "@id": f"{SITE}/{s}/#app",
