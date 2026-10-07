@@ -765,9 +765,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 07 Oct 2026 &middot; c5e7e3e16f</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 07 Oct 2026 &middot; 640be207ad</p><script>
 (function () {
-  var P365BUILD = 'c5e7e3e16f';
+  var P365BUILD = '640be207ad';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -1767,6 +1767,11 @@
   #p365app .plus-row select, .p365ov .plus-row select { flex:0 0 auto; width:auto; }
   #p365app .plus-row button, .p365ov .plus-row button { margin:0; min-height:44px; }
   #p365app .plus-tbl td .sm, .p365ov .plus-tbl td .sm { margin:.15rem 0; }
+  #p365app .plus-test, .p365ov .plus-test { display:inline-block; font-size:.72rem; font-weight:700; letter-spacing:.06em; padding:0 .35rem; border:1px solid var(--pwarn, #c90); border-radius:4px; color:var(--pwarn, #c90); }
+  #p365app .plus-log, .p365ov .plus-log { margin:.7rem 0 0; }
+  #p365app .plus-log summary, .p365ov .plus-log summary { cursor:pointer; min-height:44px; display:flex; align-items:center; }
+  #p365app .plus-log ul, .p365ov .plus-log ul { margin:.2rem 0 0; padding-left:1.1rem; font-size:.9rem; }
+  #p365app .plus-log li, .p365ov .plus-log li { margin:.15rem 0; overflow-wrap:anywhere; }
   #p365app .sn-search, .p365ov .sn-search { display:flex; gap:.5rem; margin:.85rem 0 .75rem; }
   #p365app .sn-search input, .p365ov .sn-search input { flex:1 1 auto; min-width:0; }
   #p365app .sn-search button, .p365ov .sn-search button { margin:0; flex:0 0 auto; min-height:44px; }
@@ -8934,6 +8939,10 @@
     var h = '<p style="margin:.1rem 0 .5rem">' + (d.on ? '<b style="color:var(--pgood)">\u25cf On</b> \u2014 PCs outside the UK that aren\u2019t linked to us are offered it' + (d.price ? ' at <b>' + esc(d.price) + '</b>' : '') + '.'
         : '<b>\u25cb Switched off</b> \u2014 nobody is offered it (' + esc(d.why_off) + '). It goes on once you\u2019ve chosen the payment company and the price.') + '</p>'
       + '<p class="quiet" style="margin:0 0 .6rem">Outside the UK, the app\u2019s locked \u201cdo it for me\u201d buttons offer \u201cUnlock everything\u201d instead of our support plans: the full service and the tools, no visits, email support. Their service reports stay on their PC \u2014 nothing comes to Slack or email; the card counts the runs. Never offered to a PC linked to a customer. A key works on up to ' + (d.max_pcs || 3) + ' PCs, from the PC Manager release that includes it.</p>';
+    // Lemon Squeezy (8 Oct 2026): sales there make and email the key by themselves once the signing secret is on the server
+    var ls = d.ls || {};
+    h += '<p style="margin:0 0 .6rem">' + (ls.secret_set ? '<b style="color:var(--pgood)">\u25cf Lemon Squeezy connected</b> \u2014 each sale makes its key and emails it to the buyer from info@; a refund switches it off; a yearly subscription\u2019s key follows its renewals.'
+        : '<b>\u25cb Lemon Squeezy not connected yet</b> \u2014 waiting for the webhook\u2019s signing secret in api/pcm-ls-secret.php on the server. Until then Lemon Squeezy\u2019s deliveries are turned away and it tries again later, so no sale is lost.') + '</p>';
     if (PLUS.key) h += '<div class="plus-new" role="status"><span class="quiet">New key \u2014 copy it now, it won\u2019t be shown again:</span><b class="plus-key" id="plusnewkey">' + esc(PLUS.key) + '</b>'
       + '<button type="button" class="sm ghost" id="pluscopy">Copy</button></div>';
     if (d.note) h += '<p class="quiet" role="status" style="margin:.3rem 0">' + esc(d.note) + '</p>';
@@ -8946,13 +8955,18 @@
     var keys = d.keys || [];
     h += keys.length ? '<div class="tblwrap"><table class="plus-tbl"><tr><th>Key</th><th>Email</th><th>Made</th><th>Until</th><th>PCs</th><th>Full services</th><th>Status</th><th></th></tr>' + keys.map(function (k) {
         var exp = k.expires ? plusDay(k.expires) : 'lifetime', gone = k.expires && k.expires * 1000 < Date.now();
-        return '<tr><td class="mono">\u2026' + esc(k.last4) + '</td><td>' + esc(k.email) + (k.note ? '<br /><span class="quiet">' + esc(k.note) + '</span>' : '') + '</td>'
+        return '<tr><td class="mono">\u2026' + esc(k.last4) + (k.test ? ' <span class="plus-test" title="Made by a Lemon Squeezy test-mode order - no money was taken">TEST</span>' : '') + '</td><td>' + esc(k.email) + (k.note ? '<br /><span class="quiet">' + esc(k.note) + '</span>' : '') + '</td>'
           + '<td>' + esc(plusDay(k.created)) + (k.by ? '<br /><span class="quiet">by ' + esc(k.by) + '</span>' : '') + '</td><td>' + esc(exp) + (gone ? ' (expired)' : '') + '</td>'
           + '<td>' + k.pcs + ' of ' + (d.max_pcs || 3) + '</td><td>' + (k.runs || 0) + (k.last_run ? '<br /><span class="quiet">last ' + esc(plusDay(k.last_run)) + '</span>' : '') + '</td>'
           + '<td>' + (k.status === 'active' ? 'working' : 'switched off') + '</td>'
           + '<td><button type="button" class="sm ghost" data-plusact="' + (k.status === 'active' ? 'revoke' : 'restore') + '" data-plusid="' + esc(k.id) + '">' + (k.status === 'active' ? 'Switch off' : 'Switch on') + '</button>'
-          + (k.pcs ? ' <button type="button" class="sm ghost" data-plusact="freepcs" data-plusid="' + esc(k.id) + '">Clear PCs</button>' : '') + '</td></tr>';
+          + (k.pcs ? ' <button type="button" class="sm ghost" data-plusact="freepcs" data-plusid="' + esc(k.id) + '">Clear PCs</button>' : '')
+          + (k.status === 'active' && k.email ? ' <button type="button" class="sm ghost" data-plusact="reissue" data-plusid="' + esc(k.id) + '" data-plusemail="' + esc(k.email) + '">Send a new key</button>' : '') + '</td></tr>';
       }).join('') + '</table></div>' : '<p class="quiet">No keys yet.</p>';
+    var log = ls.log || [];
+    if (log.length) h += '<details class="plus-log"><summary>Lemon Squeezy\u2019s last ' + log.length + ' deliveries</summary><ul>' + log.map(function (l) {
+        return '<li><span class="mono">' + esc(l.at) + ' UTC</span> ' + (l.code === 200 ? '' : '<b class="err">' + esc(String(l.code)) + '</b> ') + esc(l.event.replace(/_/g, ' ')) + ' \u2014 ' + esc(l.note) + '</li>';
+      }).join('') + '</ul><p class="quiet" style="margin:.3rem 0 0">401 = not signed by Lemon Squeezy (ignored). 503 = the signing secret isn\u2019t on the server yet. 409 = a renewal arrived before its order; Lemon Squeezy sends it again.</p></details>';
     box.innerHTML = h;
     var mk = document.getElementById('plusmake');
     if (mk) mk.onclick = function () {
@@ -8970,6 +8984,7 @@
       b.onclick = function () {
         var act = b.getAttribute('data-plusact');
         if (act === 'revoke' && !window.confirm('Switch this key off? It stops working at its PCs\u2019 next check-in. You can switch it back on.')) return;
+        if (act === 'reissue' && !window.confirm('Make a new key and email it to ' + b.getAttribute('data-plusemail') + '? Their old key stops working (for when a buyer lost the email, or their key got out).')) return;
         b.disabled = true; loadPlus(act, { id: b.getAttribute('data-plusid') });
       };
     });
