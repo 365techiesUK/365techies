@@ -93,7 +93,7 @@ $r = plus_ls_handle($raw, strtoupper($sign($raw)), $SECRET, $mailer, $T);
 check($r[0] === 200 && preg_match('/^key [a-f0-9]{10} made and emailed$/', $r[1]) && count($mails) === 1 && $mails[0][0] === 'buyer@example.com' && plus_is_key($mails[0][1]) && $mails[0][2] === strtotime('+1 year', $T),
     'a paid order: a key for a year (variant not listed), emailed to the buyer', json_encode(array($r, $mails)));
 $k = plus_list()[0];
-check($k['provider'] === 'lemonsqueezy' && $k['note'] === 'Lemon Squeezy order #1001 USD 29.00' && $k['by'] === 'checkout' && !$k['test'], 'listed for the staff card: the order number and what was paid', json_encode($k));
+check($k['provider'] === 'lemonsqueezy' && $k['note'] === 'Lemon Squeezy order #1001 USD 29.00, variant 999 (a year)' && $k['by'] === 'checkout' && !$k['test'], 'listed for the staff card: the order number, what was paid, the variant (for LS_VARIANTS)', json_encode($k));
 $st = json_decode(file_get_contents(PLUS_FILE), true); $e1 = current($st['keys']);
 check($e1['install'] === 'a1b2c3d4e5f60718' && $e1['order'] === '5001' && strpos(file_get_contents(PLUS_FILE), $mails[0][1]) === false, 'the install it came from and the order kept; the key itself never');
 check(plus_check($mails[0][1], 'aaaa1111bbbb2222', true, $T)['ok'], 'the emailed key activates');
@@ -105,7 +105,7 @@ $raw3 = $ev('order_created', 'orders', 5003, array('first_order_item' => array('
 $r = plus_ls_handle($raw3, $sign($raw3), $SECRET, $mailer, $T);
 $byId = function ($id) { foreach (plus_list() as $x) if ($x['id'] === $id) return $x; return null; };
 $k3 = $byId(plus_find_order('lemonsqueezy', '5003'));
-check($r[0] === 200 && $mails[1][2] === 0 && $k3['expires'] === 0 && $k3['test'] && strpos($k3['note'], '(TEST)') !== false, 'a variant listed as "life": a lifetime key; a test-mode order is marked TEST', json_encode($k3));
+check($r[0] === 200 && $mails[1][2] === 0 && $k3['expires'] === 0 && $k3['test'] && strpos($k3['note'], '(TEST)') !== false && substr($k3['note'], -24) === ', variant 777 (lifetime)', 'a variant listed as "life": a lifetime key; a test-mode order is marked TEST', json_encode($k3));
 // subscriptions
 $sub = function ($status, $orderId, $renews, $ends = null) { return array('order_id' => $orderId, 'status' => $status, 'renews_at' => $renews ? gmdate('Y-m-d\TH:i:s.000000\Z', $renews) : null, 'ends_at' => $ends ? gmdate('Y-m-d\TH:i:s.000000\Z', $ends) : null, 'user_email' => 'buyer@example.com'); };
 $raw4 = $ev('subscription_created', 'subscriptions', 9001, $sub('active', 7777, $T + 365 * 86400));
@@ -155,6 +155,19 @@ check(plus_ls_secret(TMP_SECRET_FILE()) === '', 'no secret file: no secret');
 file_put_contents(TMP_SECRET_FILE(), "<?php\n// the owner's\n\$LS_WEBHOOK_SECRET = 'abc123XYZ';\n");
 check(plus_ls_secret(TMP_SECRET_FILE()) === 'abc123XYZ', 'the secret read from api/pcm-ls-secret.php as data');
 @unlink(TMP_SECRET_FILE());
+// the checkout link the owner will paste: Lemon Squeezy's own way of carrying the install id into the order (meta.custom_data)
+file_put_contents(PLUS_CONFIG, "<?php
+\$BUY_ON = true;
+\$BUY_URL = 'https://365techies.lemonsqueezy.com/buy/0a1b2c3d-aaaa-bbbb-cccc-0123456789ab?checkout[custom][install]={id}';
+\$BUY_PRICE = '$29 a year';
+");
+@unlink(PLUS_OFF);
+$o = plus_offer_out('US', 'a1b2c3d4e5f60718');
+check(($o['buy_url'] ?? '') === 'https://365techies.lemonsqueezy.com/buy/0a1b2c3d-aaaa-bbbb-cccc-0123456789ab?checkout[custom][install]=a1b2c3d4e5f60718' && $o['buy_price'] === '$29 a year',
+    'a Lemon Squeezy checkout link (square brackets and all) reaches the app with the install id in it', json_encode($o));
+file_put_contents(PLUS_CONFIG, "<?php
+\$BUY_ON = false;
+");
 $W = (string)file_get_contents(__DIR__ . '/pcm-plus-ls.php');
 $iSig = strpos($W, 'if (plus_ls_signed($raw, $sig, $secret)) {'); $iRev = strpos($W, "require_once __DIR__ . '/pcm-review.php'");
 check($iSig !== false && $iRev !== false && $iSig < $iRev && strpos($W, 'http_response_code($code);') !== false && strpos($W, "\$_SERVER['HTTP_X_SIGNATURE']") !== false,

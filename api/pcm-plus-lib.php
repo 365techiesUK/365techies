@@ -251,7 +251,9 @@ function plus_ls_handle($raw, $sig, $secret, $mail, $now = null, $file = null, $
     if ($ev === 'order_created') {
         if (($a['status'] ?? '') !== 'paid') return array(200, 'order not paid (' . ($a['status'] ?? '?') . ')');
         $years = plus_ls_years($a['first_order_item']['variant_id'] ?? '', $config);
-        $note = 'Lemon Squeezy order #' . (int)($a['order_number'] ?? 0) . ($test ? ' (TEST)' : '') . (isset($a['currency'], $a['total']) ? ' ' . preg_replace('/[^A-Z]/', '', (string)$a['currency']) . ' ' . number_format(((int)$a['total']) / 100, 2) : '');
+        $note = 'Lemon Squeezy order #' . (int)($a['order_number'] ?? 0) . ($test ? ' (TEST)' : '') . (isset($a['currency'], $a['total']) ? ' ' . preg_replace('/[^A-Z]/', '', (string)$a['currency']) . ' ' . number_format(((int)$a['total']) / 100, 2) : '')
+            // the variant's number, so the owner can list a lifetime option in $LS_VARIANTS after one test purchase
+            . ((int)($a['first_order_item']['variant_id'] ?? 0) ? ', variant ' . (int)$a['first_order_item']['variant_id'] . ($years === 0 ? ' (lifetime)' : ' (a year)') : '');
         $r = plus_issue_for_order($a['user_email'] ?? '', $years, 'lemonsqueezy', (string)$j['data']['id'], $note, array('install' => $custom['install'] ?? '', 'test' => $test), $now, $file);
         if ($r === null) return array(500, 'could not store the key - try again');
         if (!$r[2]) return array(200, 'order already has its key');
