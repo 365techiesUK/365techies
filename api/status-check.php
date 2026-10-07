@@ -109,6 +109,7 @@ foreach ($hs as $k => $ch) {
 curl_multi_close($mh);
 
 function clean($s, $n = 150) {
+    if (!is_scalar($s)) return ''; // an array/object would cast to the literal "Array"
     $s = str_replace(['<![CDATA[', ']]>'], '', (string)$s);
     $s = trim(preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\s]+/', ' ', strip_tags($s)));
     if (function_exists('mb_convert_encoding')) $s = (string)mb_convert_encoding($s, 'UTF-8', 'UTF-8');
@@ -164,14 +165,63 @@ else {
     put($svc, 'gworkspace', $gw['s'], $gw['d']);
 }
 
-/* PlayStation Network (Europe region): non-empty region status[] = problem */
+/* PlayStation Network (Europe region feed, read for the UK): a region status[] entry = problem.
+   The same statusId is repeated under countries[].status / countries[].services[].status for the
+   countries it hits; an entry attributed only to other countries (e.g. a Store outage in RU/AE/SA,
+   Oct 2026) is not a UK problem. Unattributed entries still count, so region-wide ones show.
+   message = {messageKey, messages: {locale: text}} - pick English, never the array itself. */
+function psn_ids($j) { // [GB statusIds, statusIds attributed to any country]; null = no countries block
+    if (!isset($j['countries']) || !is_array($j['countries'])) return null;
+    $gb = []; $any = [];
+    foreach ($j['countries'] as $c) {
+        if (!is_array($c)) continue;
+        $lists = [isset($c['status']) ? $c['status'] : []];
+        if (isset($c['services']) && is_array($c['services'])) {
+            foreach ($c['services'] as $s) if (is_array($s) && isset($s['status'])) $lists[] = $s['status'];
+        }
+        $isGb = (isset($c['countryCode']) && $c['countryCode'] === 'GB');
+        foreach ($lists as $l) {
+            if (!is_array($l)) continue;
+            foreach ($l as $e) {
+                if (!is_array($e) || !isset($e['statusId']) || !is_string($e['statusId'])) continue;
+                $any[$e['statusId']] = 1;
+                if ($isGb) $gb[$e['statusId']] = 1;
+            }
+        }
+    }
+    return [$gb, $any];
+}
+function psn_text($m) {
+    if (is_string($m)) return clean($m);
+    if (!is_array($m) || !isset($m['messages']) || !is_array($m['messages'])) return '';
+    $by = [];
+    foreach ($m['messages'] as $k => $v) {
+        if (is_array($v) && isset($v['locale'], $v['text'])) { $k = $v['locale']; $v = $v['text']; }
+        if (is_string($v) && trim($v) !== '') $by[(string)$k] = $v;
+    }
+    foreach (['en-GB', 'en-US'] as $l) if (isset($by[$l])) return clean($by[$l]);
+    foreach ($by as $l => $v) if (strncasecmp($l, 'en', 2) === 0) return clean($v);
+    return $by ? clean(reset($by)) : '';
+}
 $j = json_decode($body['psn'], true);
 if (!is_array($j) || !array_key_exists('status', $j)) { put($svc, 'psn', 'unknown', ''); }
-elseif (empty($j['status'])) { put($svc, 'psn', 'ok', ''); }
 else {
-    $e = $j['status'][0];
-    $down = (isset($e['statusType']) && stripos($e['statusType'], 'outage') !== false);
-    put($svc, 'psn', $down ? 'down' : 'warn', clean(isset($e['message']) ? $e['message'] : 'Some services affected'));
+    $ids = psn_ids($j);
+    $hit = [];
+    foreach ((array)$j['status'] as $e) {
+        if (!is_array($e)) continue;
+        $id = (isset($e['statusId']) && is_string($e['statusId'])) ? $e['statusId'] : '';
+        if ($ids !== null && $id !== '' && isset($ids[1][$id]) && !isset($ids[0][$id])) continue; // other countries only
+        $hit[] = $e;
+    }
+    if (!$hit) { put($svc, 'psn', 'ok', ''); }
+    else {
+        $e = $hit[0];
+        foreach ($hit as $h) if (isset($h['statusType']) && is_string($h['statusType']) && stripos($h['statusType'], 'outage') !== false) { $e = $h; break; }
+        $down = (isset($e['statusType']) && is_string($e['statusType']) && stripos($e['statusType'], 'outage') !== false);
+        $d = psn_text(isset($e['message']) ? $e['message'] : null);
+        put($svc, 'psn', $down ? 'down' : 'warn', ($d !== '') ? $d : 'Some services affected');
+    }
 }
 
 /* Xbox Live: XML, Overall State = None | Impacted | Unavailable */
