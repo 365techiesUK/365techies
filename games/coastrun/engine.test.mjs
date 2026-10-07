@@ -92,6 +92,33 @@ test('a drift answers the keys: held it swings wide, caught it straightens quick
   assert.ok(full > 0.35, 'held: a full slide ' + full.toFixed(2)); assert.ok(n < 34, 'steering against it catches it quicker than letting go: ' + n + ' steps');
 });
 
+test('the flick (8 Oct): steering the other way into an S-bend swings the slide straight through to the other side as one drift, scored once', () => {
+  const W = E.newWorld(2, {}, 5); go(W); clear(W);
+  const run = (j, a, b, sg, min) => { for (let d = a; d < b; d++) { const g = E.segAt(W, j + d); if (!g || g.fk || g.k * sg < min) return false; } return true; };
+  let i = -1, sg = 0;
+  for (let j = 60; j < E.lastIndex(W) - 140 && i < 0; j++) for (const s of [1, -1]) if (i < 0 && run(j, 0, 20, s, 1 / 260)) { for (let o = 22; o < 50; o += 2) if (run(j, o, o + 16, -s, 1 / 320)) { i = j; sg = s; break; } }
+  assert.ok(i > 0, 'an S-bend to try');
+  const into = sg > 0 ? { right: true } : { left: true }, back = sg > 0 ? { left: true } : { right: true };
+  W.s = (i - 2) * E.SEG; W.x = -sg * 2; W.v = E.topSpeed(W) * 0.9;
+  let ends = 0, flags = [], slips = [], swT = -1, n = 0;
+  const tick = (inp) => { E.step(W, inp); W.cars = []; for (const e of W.events) if (e.sfx === 'driftend') ends++; quiet(W); flags.push(W.drift); slips.push(W.psi - W.phi); n++; };
+  tick({ ...into, brakeTap: true }); assert.equal(W.drift, sg, 'a drift into the first bend');
+  while (n < 240 && swT < 0) { if (E.segAt(W, E.segIndex(W.s) + 3).k * sg < -1 / 400) swT = n; else tick(into); }
+  assert.ok(swT > 20, 'held into the first bend until the road turns the other way: ' + swT);
+  for (let k = 0; k < 96; k++) tick(back);
+  const flip = flags.slice(swT), slip = slips.slice(swT);
+  assert.ok(flip.every((f) => f !== 0), 'the drift stays on all the way through straight (no CLEAN DRIFT halfway)');
+  assert.equal(flags[flags.length - 1], -sg, 'and now slides the other way'); assert.equal(ends, 0, 'nothing scored yet');
+  const near = slip.filter((a) => Math.abs(a) < 6 / 57.3).length; assert.ok(near <= 9, 'it swings through straight, not stopping there: ' + near + ' steps within 6 degrees');
+  const peak = slips.slice(0, swT).reduce((m, a) => Math.max(m, a * sg), 0), from = slip.findIndex((a) => a * sg < 0.75 * peak), to = slip.findIndex((a) => a * sg < -0.75 * peak);
+  assert.ok(from >= 0 && to > from && to - from < 48, 'side to side in under 0.8 s: ' + (to - from) + ' steps');
+  const rel = slips.length; let air = 0; for (let k = 0; k < 240 && W.drift; k++) { tick({}); if (W.air) air++; }   // (this S runs over a crest: the slide waits in the air, 8 Oct)
+  for (let k = 0; k < 30; k++) tick({});
+  assert.equal(W.drift, 0, 'let go and it straightens'); assert.equal(ends, 1, 'scored once, for the whole S');
+  const jump = slips.slice(rel).reduce((m, a, q, s) => (q ? Math.max(m, Math.abs(a - s[q - 1])) : m), 0);
+  assert.ok(air > 20 && jump < 0.02, 'over the crest it lands still sliding and unwinds, no snap straight: ' + air + ' steps in the air, biggest step ' + (jump * 57.3).toFixed(2) + ' deg');
+});
+
 test('the tyres squeal near the limit in a bend, not on a gentle one', () => {
   const W = E.newWorld(2, {}, 4); go(W); clear(W);
   const i = findSeg(W, 60, (g, j) => g.k > 1 / 130 && E.segAt(W, j + 20).k > 1 / 130);

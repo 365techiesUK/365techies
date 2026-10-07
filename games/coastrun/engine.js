@@ -135,7 +135,7 @@
   var DIFF = {
     1: { time: 1.06, gap: 170, tv: 0.9, assist: 0.55, psiTop: 0.24, crash: false, off: 0.55, req: 0, rv: 0.88, cf: 1 },
     2: { time: 1.055, gap: 115, tv: 1, assist: 0.2, psiTop: 0.21, crash: true, off: 0.45, req: 1, rv: 0.94, cf: 1.2 },
-    3: { time: 1.01, gap: 85, tv: 1.08, assist: 0.05, psiTop: 0.2, crash: true, off: 0.4, req: 2, rv: 0.99, cf: 1.25 }
+    3: { time: 1.0075, gap: 85, tv: 1.08, assist: 0.05, psiTop: 0.2, crash: true, off: 0.4, req: 2, rv: 0.99, cf: 1.25 }
   };
   // what your passenger asks for: goal by speed (Gentle, Classic, Fast), seconds to do it in
   var REQ = {
@@ -989,6 +989,10 @@
     W.events.push({ sfx: 'smash', x: 0 }); fx(W, { k: 'smash', x: W.x }); pop(W, 'SMASH!', '+1,000', 0, 'shield');
   }
   function knock(W) { if (W.req && W.req.k === 'clean') endReq(W, false); }   // any knock spoils a "careful" request
+  function flipBend(W, g, dir) {   // a bend the other way under the car or within ~50 m: the flick swings into it
+    var si = segIndex(W.s); for (var j = 0; j < 13; j++) { var gg = segAt(W, si + j); if (gg && !gg.fk && gg.k * dir >= 1 / 340) return true; }
+    return false;
+  }
   function endDrift(W) {
     if (W.driftT > 0.5) {
       var ch = W.driftChain || 1, clean = !W.crash && W.t - W.scrapeT > 30, p = Math.round(W.driftPts * ch / 10) * 10; W.score += p;
@@ -1234,11 +1238,19 @@
     // in a drift the keys set the angle: hold the turn and the tail swings out to the full slide; let go and it straightens over half a
     // second (press again before it does and it swings back out); steer the other way to catch it quickly
     if (W.drift) {
-      var kb = Math.abs(bendHere(W, g)), sIn = target * W.drift, aT = sIn > 0 ? 0.52 + 0.07 * clamp((kb - 1 / 250) / (1 / 120 - 1 / 250), 0, 1) + 0.025 * Math.sin(W.t / 40) : 0, kS = sIn > 0 ? 50 : sIn < 0 ? 62 : 14, cS = 2 * (sIn < 0 ? 0.92 : 0.86) * Math.sqrt(kS);   // (held: swings out over ~0.5 s; let go: unwinds over ~0.8 s; caught against it: ~0.45 s)
+      // the flick (owner + sceptic, 8 Oct): steer the other way into a bend that turns the other way and the slide swings straight through to
+      // the other side - one drift, the flag kept on through straight, the weight going across fastest as it passes straight, one score at the end
+      if (target * W.drift < 0 && W.v > top * 0.5 && !W.air && !out && flipBend(W, g, -W.drift)) {
+        W.drift = -W.drift; W.driftA = -W.driftA; W.driftV = -(W.driftV || 0); W.flipT = W.t; W.prevSIn = 1; W.events.push({ sfx: 'skid' });
+      }
+      var flipping = W.t - (W.flipT || -1e9) < 54;
+      var kb = Math.abs(bendHere(W, g)), sIn = target * W.drift, aT = sIn > 0 ? 0.52 + 0.07 * clamp((kb - 1 / 250) / (1 / 120 - 1 / 250), 0, 1) + 0.025 * Math.sin(W.t / 40) : 0, kS = flipping && sIn > 0 ? 30 : sIn > 0 ? 50 : sIn < 0 ? 62 : 14, cS = 2 * (flipping && sIn > 0 ? 0.8 : sIn < 0 ? 0.92 : 0.86) * Math.sqrt(kS);   // (held: swings out over ~0.5 s; let go: unwinds over ~0.8 s; caught against it: ~0.45 s)
       if (sIn <= 0 && (W.prevSIn || 0) > 0) W.driftV = Math.min(W.driftV || 0, -0.12); W.prevSIn = sIn;   // (round 3: no carry-on after letting go)
-      W.driftV = (W.driftV || 0) + (kS * (aT - W.driftA) - cS * (W.driftV || 0)) * DT; W.driftA = Math.max(0, W.driftA + W.driftV * DT);
-      if (W.driftA <= 0 && W.driftV < 0) W.driftV = 0;
-      if (W.v < top * 0.3 || out || (sIn === 0 && W.driftA < 0.018 && Math.abs(W.driftV) < 0.2) || (sIn < 0 && W.driftA < 0.045)) endDrift(W);
+      if (!W.air) {   // (in the air the tyres do nothing, so the slide waits and unwinds once it lands: it used to run down mid-air, end, and the landing snapped it straight, 8 Oct)
+        W.driftV = (W.driftV || 0) + (kS * (aT - W.driftA) - cS * (W.driftV || 0)) * DT; W.driftA = W.driftA + W.driftV * DT;   // (negative: still sliding the old way, in a flick)
+        if (!flipping && W.driftA <= 0) { W.driftA = 0; if (W.driftV < 0) W.driftV = 0; }
+      }
+      if (W.v < top * 0.3 || out || (!W.air && ((sIn === 0 && Math.abs(W.driftA) < 0.018 && Math.abs(W.driftV) < 0.2) || (sIn < 0 && Math.abs(W.driftA) < 0.045)))) endDrift(W);
     }
     W.dk = (W.dk || 0) + ((W.drift ? 1 : 0) - (W.dk || 0)) * Math.min(1, (W.drift ? 6 : 3) * DT);
     if (W.nitroT > 0) W.nitroT--;
@@ -1261,7 +1273,7 @@
     var v = W.v, accel = 8.8 * C.acc * Math.max(0, 1 - Math.pow(v / hzN, 1.6)) + 3 * C.acc * Math.max(0, 1 - v / (hzN * 0.5)) + (W.boosting ? 26 * Math.max(0, 1 - Math.pow(v / hz, 3)) * (0.3 + 0.7 * Math.min(1, v / (top * 0.6))) : 0);   // (about 0.9 g off the line, 0-60 in under four seconds, then it takes its time to the top; was 1.6 g)
     if (out) v = W.crash.hard ? v * (W.crash.t < W.crash.dur * 0.6 ? 0.986 : 0.9) : Math.max(W.crash.v0 * 0.45, v * 0.95);   // (a bounce: down to about half speed, not a stop)
     else if (W.timeUp && !W.goalSeq) v -= (W.tuCoast ? TU_COAST : W.tuBrake) * DT;   // (time up: rolling for a checkpoint in reach, or braking to a stop)
-    else if (W.drift) v -= ((target * W.drift > 0 ? 0.5 : 2.2) + (brake ? 2 : 0) + (W.t - W.scrapeT < 10 ? 2 : 0)) * DT;   // (held: it keeps its speed; fought, braked or on the wall: it scrubs)
+    else if (W.drift && !W.air) v -= ((target * W.drift > 0 ? 0.5 : 2.2) + (brake ? 2 : 0) + (W.t - W.scrapeT < 10 ? 2 : 0)) * DT;   // (held: it keeps its speed; fought, braked or on the wall: it scrubs)
     else if (brake) v -= 12.5 * DT;   // (a sports car's brakes, about 1.3 g: was 2.6)
     else if (gas || W.boosting) v += accel * DT;
     else v -= (1.6 + 0.00035 * v * v) * DT;   // (off the throttle: the engine and the air slow it, gently)
@@ -1397,8 +1409,9 @@
     // ---- drifting fills the boost and scores by speed and angle; points for speed
     if (W.drift) {
       var ang = Math.abs(W.psi - W.phi);
-      W.driftT += DT; W.driftPts += W.v / VMAX * ang * 70; W.boost = Math.min(1, W.boost + ang * 0.75 * (1 + 0.25 * ((W.driftChain || 1) - 1)) * DT);
-      if (W.t % 3 === 0) fx(W, { k: 'smoke', x: W.x, d: W.drift });
+      var onRd = W.air ? 0 : 1;   // (a drift carried over a jump: the air scores its own points, the tyres only on the road)
+      W.driftT += DT; W.driftPts += onRd * W.v / VMAX * ang * 70; W.boost = Math.min(1, W.boost + onRd * ang * 0.75 * (1 + 0.25 * ((W.driftChain || 1) - 1)) * DT);
+      if (W.t % 3 === 0 && onRd) fx(W, { k: 'smoke', x: W.x, d: W.drift });
     }
     if (W.off && W.v > 10 && W.t % 4 === 0) fx(W, { k: 'dust', x: W.x });
     if (W.boost >= 1 && W.bottles < BOTTLE_MAX) { W.boost -= 1; W.bottles++; pop(W, '+1 NITRO', 'A BOTTLE FILLED', 0, 'nitro'); W.events.push({ sfx: 'nitro', x: 0 }); }   // the meter full: another bottle

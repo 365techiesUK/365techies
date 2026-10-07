@@ -1785,7 +1785,7 @@ export function createWorld() {
     player.position.set(cx, cy, cz);
     const cr = W.crash;
     { const slip = W.psi - W.phi, a = Math.abs(slip), S = Math.min(1, Math.max(0, (a - 0.03) / 0.27)), ex = 1 + 0.35 * S * S * (3 - 2 * S), vs = Math.sign(slip) * 0.66 * Math.tanh(a * ex / 0.66);   // (drift, 7 Oct: one smooth curve - it used to switch)
-      R.vsS = R.vsS == null || cr ? vs : R.vsS + Math.max(-2.1 * dt, Math.min(2.1 * dt, vs - R.vsS)); R.visSlip = cr ? 0 : R.vsS;   // (round 3: at most ~120 degrees a second on screen)
+      R.vsS = R.vsS == null || cr ? vs : R.vsS + Math.max(-3.5 * dt, Math.min(3.5 * dt, (vs - R.vsS) * Math.min(1, dt * 13))); R.visSlip = cr ? 0 : R.vsS;   // (a short smooth lag - a hard rate cap left a corner at the end of a flick - with a cap for jolts)
       R.visHead = roadTh + W.phi + (cr ? slip : R.vsS);
       if (!cr) { const tv = roadTh + W.phi, A = 0.3; player.position.x += A * (Math.sin(tv) - Math.sin(R.visHead)); player.position.z += A * (Math.cos(R.visHead) - Math.cos(tv)); } }   // (the tail swings out round the front wheels)   // (never past about 40 degrees)
     // the body on its springs (owner, 6 Oct: "more realistic"): it dips under braking and squats as it pulls away, by how hard (the real
