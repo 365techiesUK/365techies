@@ -15,8 +15,10 @@
  *
  * 7 Oct 2026 (owner: "yes add it"), after the first week's figures were inflated by copies that ran once - antivirus
  * firms' test machines, people who tried it and left - and by our own PCs:
- *   STILL USING IT = seen on two or more different days (last day > first day). RAN ONCE = seen on one day only, at least
- *   two days ago. TOO SOON TO TELL = first seen in the last two days and not again yet.
+ *   STILL USING IT = used on two or more different days AND seen in the last week (8 Oct 2026: before that it was only
+ *   "two different days", which kept counting copies that had stopped). STOPPED = used on two or more days, not this
+ *   week. USED ON 3+ DAYS = still using it, on three or more different days ('n', counted from 8 Oct 2026). RAN ONCE =
+ *   seen on one day only, at least two days ago. TOO SOON TO TELL = first seen in the last two days and not again yet.
  *   OUR OWN PCs: staff press "these PCs are ours" in the portal on the internet connection their own PCs use; the
  *   connection is kept only as a salted one-way hash (never the address), and from then on any PC checking in over it is
  *   flagged 'o' and left out of every figure (counted on its own). The flag is re-decided every day, so a customer's PC
@@ -125,10 +127,13 @@ function inst_note($machine, $ver, $w10, $linked, $plan, $ip, $now = null) {
             $e = $d['m'][$id];
             $cc = (string)(isset($e['c']) ? $e['c'] : '');
             if ($cc === '' || (string)$e['l'] !== $day) { $g = geo_cc($ip); if ($g !== '') $cc = $g; }   // a move abroad shows up the next day
-            $d['m'][$id] = array_merge($e, $row, array('l' => $day, 'c' => $cc));
+            // n = how many different days it has been used (8 Oct 2026); copies noted before then start from what first/last say
+            $n = isset($e['n']) ? (int)$e['n'] : ((string)$e['l'] > (string)$e['f'] ? 2 : 1);
+            if ((string)$e['l'] !== $day) $n++;
+            $d['m'][$id] = array_merge($e, $row, array('l' => $day, 'c' => $cc, 'n' => $n));
             $what = 'updated';
         } else {
-            $d['m'][$id] = array_merge($row, array('f' => $day, 'l' => $day, 'c' => geo_cc($ip)));
+            $d['m'][$id] = array_merge($row, array('f' => $day, 'l' => $day, 'c' => geo_cc($ip), 'n' => 1));
             $what = 'new';
         }
         // an install not seen for a year is gone for good
@@ -152,7 +157,7 @@ function inst_stats(array $d, $who, $now = null) {
     $d2 = gmdate('Y-m-d', $now - 2 * 86400);   // a copy seen on one day only, at least two days ago, "ran once"
     $out = array('ok' => true, 'since' => (string)(isset($d['since']) ? $d['since'] : ''), 'who' => $who,
         'total' => 0, 'active7' => 0, 'active30' => 0, 'new7' => 0, 'new30' => 0, 'newToday' => 0,
-        'kept' => 0, 'once' => 0, 'soon' => 0, 'ours' => 0,
+        'kept' => 0, 'once' => 0, 'soon' => 0, 'ours' => 0, 'stopped' => 0, 'days3' => 0,
         'linked' => 0, 'plan' => 0, 'unlinked' => 0, 'w10' => 0,
         'countries' => array(), 'versions' => array(), 'daily' => array());
     $cc = array(); $vv = array(); $daily = array();
@@ -173,8 +178,14 @@ function inst_stats(array $d, $who, $now = null) {
         if ($f >= $d7) $out['new7']++;
         if ($f >= $d30) $out['new30']++;
         if ($f === $today) $out['newToday']++;
-        $kept = $l > $f;   // seen on two or more different days
-        if ($kept) $out['kept']++; elseif ($f <= $d2) $out['once']++; else $out['soon']++;
+        // 8 Oct 2026: STILL USING IT = used on two or more different days AND seen in the last week; used on 2+ days but
+        // not this week = STOPPED. USED ON 3+ DAYS (of those still using it) is the surest sign of a real person.
+        $multi = $l > $f;
+        $kept = $multi && $l >= $d7;
+        $days = isset($e['n']) ? (int)$e['n'] : ($multi ? 2 : 1);
+        if ($kept) { $out['kept']++; if ($days >= 3) $out['days3']++; }
+        elseif ($multi) $out['stopped']++;
+        elseif ($f <= $d2) $out['once']++; else $out['soon']++;
         if (!empty($e['w'])) $out['w10']++;
         if (isset($daily[$f])) $daily[$f]++;
         $c = (string)(isset($e['c']) ? $e['c'] : ''); $c = $c !== '' ? $c : '--';

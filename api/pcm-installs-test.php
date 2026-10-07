@@ -78,9 +78,27 @@ inst_note('cccc0005', 35, false, false, false, '86.163.78.248', $N);            
 inst_note('cccc0006', 35, false, false, false, '86.163.78.248', $N - 3 * 86400);
 inst_note('cccc0006', 35, false, false, false, '86.163.78.248', $N - 3 * 86400 + 7200);   // twice the SAME day: still one day
 $s = inst_stats(json_decode(file_get_contents($F), true), 'free', $N);
-check($s['kept'] === 1 && $s['once'] === 3 && $s['soon'] === 2 && $s['total'] === 6, 'still using it 1 / ran once 3 / too soon 2 (twice in one day is still one day)', json_encode(array($s['kept'], $s['once'], $s['soon'], $s['total'])));
+check($s['kept'] === 1 && $s['once'] === 3 && $s['soon'] === 2 && $s['total'] === 6 && $s['stopped'] === 0, 'still using it 1 / ran once 3 / too soon 2 (twice in one day is still one day)', json_encode(array($s['kept'], $s['once'], $s['soon'], $s['total'])));
 $cc = array(); foreach ($s['countries'] as $c) $cc[$c['k']] = $c;
 check($cc['GB']['kept'] === 1 && $cc['US']['kept'] === 0 && $cc['GB']['n'] === 4 && $cc['US']['n'] === 2, 'by country: how many are still using it', json_encode($s['countries']));
+// 8 Oct 2026: still using it needs to have been seen this week; days used are counted
+inst_note('cccc0007', 30, false, false, false, '86.163.78.248', $N - 12 * 86400);
+inst_note('cccc0007', 30, false, false, false, '86.163.78.248', $N - 10 * 86400);   // two days, then nothing for 10 days: stopped
+foreach (array(6, 4, 2, 0) as $ago) inst_note('cccc0008', 35, false, false, false, '86.163.78.248', $N - $ago * 86400);   // four days this week
+inst_note('cccc0008', 35, false, false, false, '86.163.78.248', $N + 3600);   // twice today: still four days
+$d = json_decode(file_get_contents($F), true);
+$s = inst_stats($d, 'free', $N);
+check($s['stopped'] === 1 && $s['kept'] === 2 && $s['days3'] === 1 && $s['once'] === 3, 'used on two days then not for a week: stopped, not still using it; four days this week: used on 3+ days', json_encode(array($s['stopped'], $s['kept'], $s['days3'], $s['once'])));
+check($d['m'][substr(sha1('365inst|cccc0008'), 0, 16)]['n'] === 4 && $d['m'][substr(sha1('365inst|cccc0001'), 0, 16)]['n'] === 2 && $d['m'][substr(sha1('365inst|cccc0002'), 0, 16)]['n'] === 1, 'days used: counted once a day', json_encode($d['m'][substr(sha1('365inst|cccc0008'), 0, 16)]));
+// a copy noted before 8 Oct (no day count): first/last tell whether it was used on one day or more
+$d['m']['oldoldoldoldold1'] = array('v' => 30, 'w' => 0, 'k' => 0, 'p' => 0, 'f' => gmdate('Y-m-d', $N - 5 * 86400), 'l' => gmdate('Y-m-d', $N - 3 * 86400), 'c' => 'GB');
+file_put_contents($F, json_encode($d));
+$s = inst_stats($d, 'free', $N);
+check($s['kept'] === 3 && $s['days3'] === 1, 'an older entry with no day count counts as two days', json_encode(array($s['kept'], $s['days3'])));
+inst_note('9e9e9e9e9e9e', 30, false, false, false, '86.163.78.248', $N - 3 * 86400);
+$d = json_decode(file_get_contents($F), true); $k9 = substr(sha1('365inst|9e9e9e9e9e9e'), 0, 16); unset($d['m'][$k9]['n']); file_put_contents($F, json_encode($d));
+inst_note('9e9e9e9e9e9e', 30, false, false, false, '86.163.78.248', $N);
+check(json_decode(file_get_contents($F), true)['m'][$k9]['n'] === 2, 'an older entry (one day, no count) used again: two days');
 
 echo "F  our own PCs (7 Oct 2026)\n";
 @unlink($F);
