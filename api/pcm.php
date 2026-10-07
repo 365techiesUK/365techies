@@ -206,7 +206,9 @@ if ($action === 'checkin') {
     // with the reason, so the app can say so. Offered nothing.
     if ($key !== '' && !isset($db['customers'][$key]) && function_exists('plus_is_key') && plus_is_key($key)) {
         $pr = plus_check($key, $machine, false);
-        out(array('ok'=>true,'tier'=>$pr['ok'] ? 'plus' : 'free') + ($pr['ok'] ? array('expires'=>(int)$pr['expires']) : array('plus_error'=>$pr['error']))
+        // (a key that has run out is offered "Unlock everything" again - to renew - where the paid app is offered at all)
+        out(array('ok'=>true,'tier'=>$pr['ok'] ? 'plus' : 'free') + ($pr['ok'] ? array('expires'=>(int)$pr['expires'])
+                : array('plus_error'=>$pr['error']) + plus_offer_out(geo_cc((string)($_SERVER['REMOTE_ADDR'] ?? '')), plus_mhash($machine)))
             + $upd + pcm_news_out($db, 'free') + pcm_prog_ver() + pcm_mm_addon_out());
     }
     if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>true,'tier'=>'free') + $upd + pcm_news_out($db, 'free') + pcm_prog_ver() + pcm_mm_addon_out()
@@ -812,6 +814,8 @@ if ($action === 'asset') {
 }
 
 if ($action === 'reportup') {
+    // 8 Oct 2026, "Unlock everything": an Unlock key's reports stay on the PC (owner's choice) - taken, not kept; no Slack, no email
+    if ($key !== '' && !isset($db['customers'][$key]) && function_exists('plus_is_key') && plus_is_key($key)) out(array('ok'=>true,'kept'=>false));
     if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
     if ($machine === '' || !isset($db['customers'][$key]['machines'][$machine])) out(array('ok'=>false,'error'=>'unknown_machine'));
     $b = base64_decode(substr((string)($in['html'] ?? ''), 0, 600000), true);
@@ -941,6 +945,9 @@ if ($action === 'reportup') {
 // headed "New website enquiry". Text only, built here from short capped fields, and only for a licence we know, so the
 // channel is not open to anyone. An unknown licence is exactly when the tool falls back to that webhook itself.
 if ($action === 'reportnote') {
+    // 8 Oct 2026: the Service Pass's "not in the portal" notice for an Unlock key - noted, never posted (the owner chose that
+    // an Unlock buyer's report stays on their PC). Answering ok also stops its last-resort post to the enquiries channel.
+    if ($key !== '' && !isset($db['customers'][$key]) && function_exists('plus_is_key') && plus_is_key($key)) out(array('ok'=>true,'posted'=>false));
     if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
     $esc = function ($s) { return str_replace(array('&', '<', '>'), array('&amp;', '&lt;', '&gt;'), (string)$s); };
     $cn = pcm_txt(isset($db['customers'][$key]['name']) ? $db['customers'][$key]['name'] : '', 80);

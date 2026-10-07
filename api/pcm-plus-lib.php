@@ -146,6 +146,18 @@ function plus_check($key, $machine, $bind, $now = null, $file = null) {
     if ($r === 'full') return array('ok' => false, 'error' => 'too_many_pcs');
     return $r === true ? array('ok' => true, 'expires' => (int)$e['expires']) : array('ok' => false, 'error' => 'busy');
 }
+// A full service served to this key (pcm-service.php): counted for the staff card. Best effort - never in the service's way.
+function plus_note_run($key, $now = null, $file = null) {
+    $now = $now === null ? time() : (int)$now;
+    if (!plus_is_key($key)) return false;
+    $h = plus_hash($key);
+    return plus_locked(function (&$d) use ($h, $now) {
+        if (!isset($d['keys'][$h])) return false;
+        $d['keys'][$h]['runs'] = (int)($d['keys'][$h]['runs'] ?? 0) + 1;
+        $d['keys'][$h]['last_run'] = $now;
+        return true;
+    }, $file) === true;
+}
 // Staff: switch a key off (refund, abuse) or back on; free a PC slot.
 function plus_set_status($id, $status, $file = null) {
     if (!in_array($status, array('active', 'revoked'), true)) return false;
@@ -164,7 +176,8 @@ function plus_free_pcs($id, $file = null) {
 function plus_list($file = null) {
     $d = plus_load($file); $o = array();
     foreach (($d ? $d['keys'] : array()) as $e) $o[] = array('id' => $e['id'], 'last4' => $e['last4'], 'email' => $e['email'], 'created' => (int)$e['created'],
-        'expires' => (int)$e['expires'], 'status' => $e['status'], 'provider' => $e['provider'], 'note' => $e['note'], 'by' => $e['by'], 'pcs' => count($e['pcs']));
+        'expires' => (int)$e['expires'], 'status' => $e['status'], 'provider' => $e['provider'], 'note' => $e['note'], 'by' => $e['by'], 'pcs' => count($e['pcs']),
+        'runs' => (int)($e['runs'] ?? 0), 'last_run' => (int)($e['last_run'] ?? 0));
     usort($o, function ($a, $b) { return $b['created'] - $a['created']; });
     return $o;
 }

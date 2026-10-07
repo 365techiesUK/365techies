@@ -64,7 +64,10 @@ check(plus_set_status($id1, 'revoked') && plus_check($k1, 'aaaa1111bbbb2222', fa
 check(!plus_set_status($id1, 'revoked') && !plus_set_status('nope', 'revoked') && !plus_set_status($id1, 'nonsense'), 'nothing to change: nothing written');
 check(plus_set_status($id1, 'active') && plus_check($k1, 'aaaa1111bbbb2222', false, $T)['ok'], 'and back on');
 check(plus_free_pcs($id1) && plus_check($k1, '9999000011112222', true, $T)['ok'], 'free its PC slots: a new PC can be activated');
+check(plus_note_run($k1, $T + 100) && plus_note_run($k1, $T + 200) && !plus_note_run('UNLK-2345-6789-ABCD', $T) && !plus_note_run('nonsense', $T), 'full services served are counted on the key (never on an unknown one)');
 $L = plus_list();
+$r1 = null; foreach ($L as $x) if ($x['id'] === $id1) $r1 = $x;
+check($r1['runs'] === 2 && $r1['last_run'] === $T + 200, 'the staff card sees how many and when', json_encode($r1));
 check(count($L) === 2 && $L[0]['email'] === 'life@example.com' && $L[1]['last4'] === substr($k1, -4) && $L[1]['pcs'] === 1 && !isset($L[0]['key']) && strpos(json_encode($L), $k1) === false, 'the list: newest first, last four only, never the key', json_encode($L));
 file_put_contents(PLUS_FILE, '{broken');
 check(plus_issue('a@b.co', 1, 'Steve') === null && file_get_contents(PLUS_FILE) === '{broken' && plus_check($k1, 'aaaa1111bbbb2222', false)['error'] === 'busy', 'an unreadable store is never overwritten; keys answer "busy", not "unknown"');
@@ -75,8 +78,18 @@ $iA = strpos($P, "if (\$action === 'activate') {"); $iPA = strpos($P, 'plus_chec
 check($iA !== false && $iPA !== false && $iU !== false && $iPA < $iU, 'activate: an Unlock key is tried before "unknown key"');
 $iC = strpos($P, "if (\$action === 'checkin') {"); $iPC = strpos($P, 'plus_check($key, $machine, false)', $iC); $iK = strpos($P, "out(array('ok'=>true,'tier'=>'free') + \$upd", $iC);
 check($iC !== false && $iPC !== false && $iK !== false && $iPC < $iK && strpos(substr($P, $iK, 400), 'plus_offer_out(') !== false, 'check-in: an Unlock key is checked; only a KEYLESS answer carries the offer');
-check(substr_count($P, "!isset(\$db['customers'][\$key]) && function_exists('plus_is_key') && plus_is_key(\$key)") === 2, 'a customer key always wins over an Unlock key (activate and check-in)');
+check(substr_count($P, "!isset(\$db['customers'][\$key]) && function_exists('plus_is_key') && plus_is_key(\$key)") === 4, 'a customer key always wins over an Unlock key (activate, check-in, report, report notice)');
 check(strpos($P, "if (is_readable(__DIR__ . '/pcm-plus-lib.php')) require_once __DIR__ . '/pcm-plus-lib.php';") !== false && strpos($P, "function_exists('plus_offer_out') ? plus_offer_out(") !== false, 'guarded: a missing library can never stop a check-in');
+check(strpos($P, "array('plus_error'=>\$pr['error']) + plus_offer_out(") !== false, 'a key that has run out is offered Unlock again (to renew)');
+foreach (array('reportup' => "out(array('ok'=>true,'kept'=>false))", 'reportnote' => "out(array('ok'=>true,'posted'=>false))") as $act => $ans) {
+    $i0 = strpos($P, "if (\$action === '" . $act . "') {"); $iP = strpos($P, $ans, $i0); $iU = strpos($P, "out(array('ok'=>false,'error'=>'unknown_key'))", $i0);
+    check($i0 !== false && $iP !== false && $iU !== false && $iP < $iU, $act . ': an Unlock key\'s report is taken and NOT kept or posted (stays on the PC; stops the Slack fallback)');
+}
+$S = (string)file_get_contents(__DIR__ . '/pcm-service.php');
+$iS = strpos($S, 'if (plus_is_key($key)) {'); $iN = strpos($S, "if (!isset(\$db['customers'][\$key])) deny('not on support');");
+check($iS !== false && $iN !== false && $iS < $iN && strpos($S, "plus_check(\$key, \$machine, false)") !== false && strpos($S, "header('X-365-SelfRun: 1');") !== false && strpos($S, 'plus_note_run($key);') !== false,
+    'pcm-service.php: an Unlock key activated on this PC gets the full service - always a self-run, counted, never written to the customer file');
+check(substr_count($S, 'readfile($payload);') === 2 && strpos($S, "deny('update the app first')") !== false, '...signed payload only (an app older than v29 is told to update)');
 $HT = (string)file_get_contents(__DIR__ . '/../.htaccess');
 foreach (array('pcm-plus-lib.php', 'pcm-plus-test.php', 'pcm-plus.json', 'pcm-plus.json.lock', 'pcm-buy-config.php', 'pcm-buy.off') as $f) {
     $denied = false;

@@ -47,6 +47,24 @@ $rawDb = (string)@file_get_contents($DATA);
 $db = json_decode($rawDb, true);
 if (!is_array($db) || !isset($db['customers'])) { http_response_code(503); deny('temporarily unavailable'); }
 
+// 8 Oct 2026, "Unlock everything" (pcm-plus-lib.php; owner: "Include it, report stays on their PC"): an Unlock key
+// activated on THIS PC runs the full service too - always a self-run, signed payload only (PC Manager v29+), nothing
+// written to the customer file (it isn't a customer); the run is counted on the key for the staff card. Its report stays
+// on the PC: pcm.php reportup / reportnote take it without keeping or posting it.
+if (!isset($db['customers'][$key]) && is_readable(__DIR__ . '/pcm-plus-lib.php')) {
+    require_once __DIR__ . '/pcm-plus-lib.php';
+    if (plus_is_key($key)) {
+        $pr = plus_check($key, $machine, false);
+        if (empty($pr['ok'])) deny($pr['error'] === 'not_this_pc' ? 'activate on this PC first' : 'not on support');
+        if ((isset($in['ver']) ? (int)$in['ver'] : 0) < 29) deny('update the app first');
+        if (strpos((string)file_get_contents($payload), "\n# SIG # Begin signature block") === false) { http_response_code(503); deny('temporarily unavailable'); }
+        plus_note_run($key);
+        header('X-365-SelfRun: 1');
+        header('X-365-Stamp: full service - served ' . gmdate('Y-m-d H:i') . ' UTC - unlock key ...' . substr($key, -4) . ' - machine ' . substr($machine, 0, 8) . ' - self-run');
+        readfile($payload);
+        exit;
+    }
+}
 if (!isset($db['customers'][$key])) deny('not on support');
 $c = $db['customers'][$key];
 $tier = (isset($c['tier']) && $c['tier'] === 'pro') ? 'pro' : 'free';
