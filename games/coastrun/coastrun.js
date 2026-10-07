@@ -388,31 +388,12 @@ function pops(g, W) {
 
 // ---------------------------------------------------------------- sounds: one-off effects, and the engine, wind and tyres that follow the car
 function pan(e) { return e && e.x != null ? Math.max(-0.8, Math.min(0.8, e.x * 0.12)) : 0; }
-// ---- your passenger's voice: one of each line's takes, a touch louder than the music, which dips while she speaks
-const VOICE = { go: 2, drift: 2, near: 2, pass: 2, coins: 2, clean: 2, speed: 2, air: 2, slip: 2, left: 2, right: 2, great: 3, good: 2, fail: 2, yay: 2, aww: 2, crash: 2, bump: 2, close: 2, wow: 2, wheee: 2, check: 2, goal: 2, hurry: 1, timeup: 1,
-  nitro: 3, spin: 2, bye: 3, chat: 5, love: 2, sulk: 2 };   // (6 Oct: every take was silent until now - see tools/coastrun/make_voice.py)
-['winton', 'charminster', 'kinson', 'muscliff', 'littledown', 'towerpark', 'bearcross', 'hurn', 'christchurch', 'harbour', 'wimborne', 'ferndown', 'highcliffe', 'hengistbury', 'wareham', 'wool', 'purbeck', 'weymouth', 'jurassic', 'swanage', 'portland', 'lyme', 'kimmeridge', 'sandbanks', 'lymington', 'forest', 'needles'].forEach((k) => { VOICE['at-' + k] = 1; });   // what she says arriving at each place
-const VBUF = {}; let vLoaded = false, vOn = true;
-function loadVoices(a) {
-  if (vLoaded) return; vLoaded = true;
-  const q = []; for (const id in VOICE) for (let n = 0; n < VOICE[id]; n++) q.push([id, n]);   // (a few at a time: all 93 at once ran a browser out of network buffers)
-  const next = () => { const it = q.shift(); if (!it) return; const id = it[0], n = it[1]; fetch('voice/' + id + '-' + n + '.mp3?v=2').then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(r.status))).then((b) => a.decodeAudioData(b)).then((buf) => { (VBUF[id] || (VBUF[id] = []))[n] = buf; }).catch(() => {}).then(next); };
-  for (let w = 0; w < 4; w++) next();
-}
-function say(id, S) {
-  const a = S.ctx(); if (!a || !vOn) return;
-  loadVoices(a);
-  const list = (VBUF[id] || []).filter(Boolean); if (!list.length) return;
-  const b = list[(Math.random() * list.length) | 0];
-  try {
-    const src = a.createBufferSource(), g = a.createGain(); src.buffer = b; g.gain.value = 1.05; src.connect(g); g.connect(S.bus() || a.destination); src.start();
-    if (MUS.gain) MUS.duck = a.currentTime + b.duration + 0.2;
-  } catch (er) {}
-}
+// ---- your passenger's voice: taken out (owner, 7 Oct: "best to take the voice out of it completely ... she doesn't sound excited at all" - the
+// computer voices couldn't do excitement). Her lines still arrive as 'v:' events, and still turn her to you as if chatting - silently
 function sound(name, S, e) {
   if (BUZZ[name] && navigator.vibrate && R.shakeOn && document.body.classList.contains('cr-race')) { try { navigator.vibrate(BUZZ[name]); } catch (e2) {} }
   const p = pan(e), n = (e && e.n) || 1;
-  if (name.charCodeAt(0) === 118 && name[1] === ':') { say(name.slice(2), S); return; }   // 'v:...' - something she says
+  if (name.charCodeAt(0) === 118 && name[1] === ':') return;   // 'v:...' - something she'd have said (no voice now)
   switch (name) {
     case 'ask': S.tone(1318, 0.14, 0.035, { type: 'sine', verb: 0.3 }); S.tone(1760, 0.22, 0.03, { type: 'sine', when: 0.09, verb: 0.3 }); break;
     case 'heart': for (let i = 0; i < n; i++) { S.tone(1568 * Math.pow(1.122, i), 0.14, 0.04, { type: 'triangle', when: i * 0.09, verb: 0.4 }); S.tone(3136 * Math.pow(1.122, i), 0.1, 0.015, { type: 'sine', when: i * 0.09 + 0.02, verb: 0.4 }); } break;
@@ -575,7 +556,7 @@ function squeal(a, bus) {   // the tyres: a pitched squeal that wobbles (vibrato
   return { g: g, pn: pn, oscs: oscs };
 }
 // rpm in real revs a minute (a V12 road engine: ~1,000 idling, 7,600 at the limiter), throttle 0-1; quiet enough to sit
-// under the music and her voice, a little louder as the revs rise
+// under the music, a little louder as the revs rise
 function raceSet(o, t, rpm, thr, nitro, crash) {
   o.rpm.setTargetAtTime(rpm, t, 0.012); o.throttle.setTargetAtTime(thr, t, 0.015); o.nitro.setTargetAtTime(nitro, t, 0.05);
   o.gain.setTargetAtTime(crash ? 0.03 : ENG_GAIN * (0.7 + Math.min(1, Math.max(0, (rpm - 1000) / 6500)) * 0.45), t, 0.06);
@@ -769,12 +750,10 @@ function music(W, S, mode, SET) {
     else { MUS.sting = null; want = mode === 'title' || mode === 'over' || demo ? 'title' : SET.radio && SET.radio !== 'place' ? SET.radio : placeTrack(W); }
     if (mode === 'paused' && MUS.cur) want = MUS.cur.name;
   }
-  vOn = SET.voice !== false;
   MUS.gain.gain.setTargetAtTime(want ? (mode === 'paused' ? 0.12 : MUS.duck > now ? 0.22 : mode === 'play' ? 0.32 : 0.42) : 0.0001, now, MUS.duck > now ? 0.08 : 0.35);
   if (want) loadMusic(a, want);
   if (MUS.on && W && !demo && W.fork && W.fork.next) W.fork.next.forEach((st) => loadMusic(a, ART.PAL[st] && trackOf(ART.PAL[st].key)));   // the next places, ready for the checkpoint
   if (MUS.on) { loadMusic(a, 'goal'); loadMusic(a, 'timeup'); }
-  if (SET.sound && SET.voice !== false) loadVoices(a);
   if (want !== (MUS.cur ? MUS.cur.name : null) && (!want || MBUF[want])) {
     const sting = want && !LOOPS[want];
     if (MUS.cur) hush(a, MUS.cur, sting ? 0.4 : 2.2);
@@ -861,7 +840,6 @@ A.start({
     { key: 'pedal', type: 'seg', label: 'Accelerator', small: 'Automatic: the car goes by itself and you just steer (Brake slows you down). Hold: hold the up arrow to go. Tablets always use Automatic.', options: [['auto', 'Automatic'], ['hold', 'Hold ▲ to go']], def: 'auto' },
     { key: 'music', type: 'switch', label: 'Music', small: 'A driving tune for each place along the coast - beachy by the sea, rocking through the hills, smooth at sunset.', def: true },
     { key: 'radio', type: 'seg', label: 'Radio', small: 'Coast FM plays a tune for each place; or pick one station to play all the way. On the start line press ◀ ▶ to tune the car radio, or R at any time.', options: RADIO.map((r) => [r[0], r[1]]), def: 'place' },
-    { key: 'voice', type: 'switch', label: 'Her voice', small: 'Your passenger says what she would like you to do, and how you did.', def: true },
     { key: 'shake', type: 'switch', label: 'Screen shake', small: 'The picture shakes when you bump or crash.', def: !reducedMotion },
     { key: 'drift', type: 'seg', label: 'Drifting', small: 'Automatic: steer hard into a sharp bend at speed and the car drifts by itself. Manual: tap the brake as you turn into the bend.', options: [['auto', 'Automatic'], ['manual', 'Manual']], def: 'auto' },
     { key: 'touch', type: 'seg', label: 'Touch steering', small: 'Phones and tablets. Sides: touch anywhere on the left of the screen to steer left, the right to steer right, both at once for nitro. Buttons: ◀ ▶ under your left thumb, Brake and Nitro under your right.', options: [['sides', 'Sides'], ['buttons', 'Buttons']], def: 'sides' },
