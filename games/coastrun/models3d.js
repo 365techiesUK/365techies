@@ -8,7 +8,7 @@ import * as THREE from 'three';
 
 const C = new THREE.Color(), M = new THREE.Matrix4(), Q = new THREE.Quaternion(), E3 = new THREE.Euler(), V = new THREE.Vector3(), S3 = new THREE.Vector3();
 function rnd(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
-const UV_KEYS = { leaf: 1, frond: 1, grass: 1, stone: 1, plate: 1 };
+const UV_KEYS = { leaf: 1, frond: 1, grass: 1, stone: 1, plate: 1, hair: 1 };
 
 // ---------------------------------------------------------------- a kit: add shapes, get one geometry per material
 export class Kit {
@@ -3111,6 +3111,18 @@ function bigWheel() {   // your wheel: a low rounded tyre, a ten-spoke concave a
 // ---------------------------------------------------------------- the two of you, in parts that move (world3d.js puts them together and poses them)
 // Each part is built round its own pivot. The driver (on the right: a British car) wears sunglasses and a white shirt;
 // his girlfriend has a turquoise top and long fair hair that streams out behind her in the wind.
+function hairCard(k, pts, w0, w1, hex, up) {   // a card of hair (passes 4-5 of 10 on the two of you): a flat strip along a curve, facing away from the head's centre
+  // (up), w0 wide at the root and w1 at the tip; textured with fine strands in world3d (key 'hair': cut out where there are no strands, both sides drawn)
+  const curve = new THREE.CatmullRomCurve3(pts.map((p) => new THREE.Vector3(p[0], p[1], p[2]))), n = 10, pos = [], uv = [], idx = [];
+  const T = new THREE.Vector3(), N = new THREE.Vector3(), S = new THREE.Vector3(), Q = new THREE.Vector3();
+  for (let i = 0; i <= n; i++) {
+    const t = i / n; curve.getPointAt(t, Q); curve.getTangentAt(t, T); N.set(Q.x - up[0], Q.y - up[1], Q.z - up[2]).normalize(); S.crossVectors(T, N).normalize();
+    const w = (w0 + (w1 - w0) * t) / 2; pos.push(Q.x - S.x * w, Q.y - S.y * w, Q.z - S.z * w, Q.x + S.x * w, Q.y + S.y * w, Q.z + S.z * w); uv.push(0, 1 - t, 1, 1 - t);
+  }
+  for (let i = 0; i < n; i++) { const a = i * 2; idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3); }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx); g.computeVertexNormals();
+  k.put(g, hex, 0, 0, 0, 0, 0, 0, 1, 1, 1, 'hair');
+}
 function hairLock(k, pts, r, hex, oy, fl, tp) {   // a lock of hair: a tube along a curve, tapering to its tip (tp: how far), lighter at the root (fl: flattened [x, z, y])
   const curve = new THREE.CatmullRomCurve3(pts.map((p) => new THREE.Vector3(p[0], p[1], p[2]))), T = 12, RS = 7;
   const g = new THREE.TubeGeometry(curve, T, r, RS, false), P = g.attributes.position, c = new THREE.Vector3(), v = new THREE.Vector3();
@@ -3125,12 +3137,24 @@ export function people() {
   const PRM = [[0.12, 0.02], [0.135, 0.14], [0.142, 0.3], [0.168, 0.42], [0.182, 0.49], [0.178, 0.54], [0.105, 0.6], [0.07, 0.615], [0.052, 0.64]], PRG = [[0.13, 0.02], [0.136, 0.12], [0.116, 0.25], [0.12, 0.33], [0.142, 0.41], [0.15, 0.47], [0.148, 0.485], [0.146, 0.5], [0.138, 0.525], [0.105, 0.565], [0.065, 0.6], [0.046, 0.64]];   // his torso's profile and hers (lathed, then scaled: his 1.45 x 0.7, hers 1.2 x 0.78)
   const onBody = (o, phi, y, lift) => { const PR = o.short ? PRM : PRG; let r = PR[PR.length - 1][0]; for (let i = 1; i < PR.length; i++) if (y <= PR[i][1]) { const a = PR[i - 1], b = PR[i]; r = a[0] + (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]); break; }
     return [Math.sin(phi) * r * (o.short ? 1.45 : 1.2) + Math.sin(phi) * lift, y, -Math.cos(phi) * r * (o.short ? 0.7 : 0.78) - Math.cos(phi) * lift]; };   // a point just on the body's surface (phi 0: the middle of the front)
+  const rod = (k, a, b, r, col, key) => { const A = new THREE.Vector3(...a), B = new THREE.Vector3(...b), d = B.clone().sub(A), L = d.length(), e = new THREE.Euler().setFromQuaternion(new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize()), 'YXZ');
+    k.put(new THREE.CapsuleGeometry(r, Math.max(0.001, L - 2 * r), 3, 8), col, (a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2, e.x, e.y, e.z, 1, 1, 1, key); };   // a rounded rod from a to b
   const fore = (o, wear) => P((k) => {   // the forearm, tapering to the wrist, and an open hand: palm, four fingers, a thumb (a pass, 6 Oct: they were a mannequin's paddles)
     const a = o.arm, sk = o.skin, fc = (r, l) => new THREE.CapsuleGeometry(r, l, 2, 6);
-    k.ball(a * 0.6, 0, -0.004, a * 0.27, sk, 1, 1, 1, 'lit', 10);   // the point of the elbow (inside the arm when it's straight; it shows as the arm bends - the arm itself is one skin now: part.arm)
-    k.ball(0.034, 0, -0.31, 0, sk, 0.95, 1.15, 0.42, 'lit', 10);   // the palm
-    for (let i = 0; i < 4; i++) { const L = [0.034, 0.041, 0.039, 0.031][i]; k.put(fc(0.0074, L), sk, (i - 1.5) * 0.0128, -0.342 - L / 2, -0.002, 0, 0, (i - 1.5) * -0.05, 1, 1, 0.85, 'lit'); }
-    k.put(fc(0.0088, 0.028), sk, 0.031, -0.302, -0.012, 0, 0, 0.5, 1, 1, 1, 'lit');   // the thumb (outward: the left arm is mirrored)
+    k.ball(a * 0.6, 0, -0.004, a * 0.27, sk, 1, 1, 1, 'skin', 10);   // the point of the elbow (inside the arm when it's straight; it shows as the arm bends - the arm itself is one skin now: part.arm)
+    k.ball(0.034, 0, -0.31, 0, sk, 0.95, 1.15, 0.42, 'skin', 10);   // the palm
+    {   // pass 8 of 10: fingers in two joints, curled as each of them holds their hands (his round the wheel, hers relaxed), knuckles, nails
+      const cu = o.curl || 0.3, nail = o.long ? '#b01e3c' : '#e7c3b2';
+      for (let i = 0; i < 4; i++) {
+        const L = [0.034, 0.041, 0.039, 0.031][i], x = (i - 1.5) * 0.0128, sp = (i - 1.5) * 0.05, c1 = cu * 0.55, c2 = cu * 1.35;
+        const p0 = [x, -0.342, -0.002], d1 = [Math.sin(sp) * Math.cos(c1), -Math.cos(sp) * Math.cos(c1), -Math.sin(c1)], p1 = p0.map((q, j) => q + d1[j] * L * 0.55);
+        const d2 = [Math.sin(sp) * Math.cos(c2), -Math.cos(sp) * Math.cos(c2), -Math.sin(c2)], p2 = p1.map((q, j) => q + d2[j] * L * 0.5);
+        rod(k, p0, p1, 0.0074, sk, 'skin'); rod(k, p1, p2, 0.0066, sk, 'skin');
+        k.ball(0.0062, x, -0.336, 0.0055, shade(sk, -0.04), 1, 0.9, 0.7, 'skin', 6);   // the knuckle
+        k.ball(0.0046, p2[0] - d2[0] * 0.003, p2[1] - d2[1] * 0.003, p2[2] - d2[2] * 0.003 + 0.0042 * Math.cos(c2), nail, 1, 1.25, 0.45, 'lit', 6);   // the nail
+      }
+      rod(k, [0.024, -0.29, -0.008], [0.036 - cu * 0.004, -0.325 - cu * 0.004, -0.02 - cu * 0.012], 0.0086, sk, 'skin');   // the thumb (outward: the left arm is mirrored)
+    }
     if (wear === 'watch') { k.put(new THREE.TorusGeometry(a * 0.56, 0.0068, 4, 14), '#1c1c1e', 0, -0.254, 0, Math.PI / 2, 0, 0, 1, 0.88, 1, 'lit'); k.put(new THREE.CylinderGeometry(0.0125, 0.0125, 0.007, 14), '#d0d0c8', 0, -0.254, a * 0.46 + 0.007, Math.PI / 2, 0, 0, 1, 1, 1, 'chrome').put(new THREE.CylinderGeometry(0.0098, 0.0098, 0.002, 14), '#1a2030', 0, -0.254, a * 0.46 + 0.011, Math.PI / 2, 0, 0, 1, 1, 1, 'lit'); }   // his watch
     if (wear === 'bangle') k.put(new THREE.TorusGeometry(a * 0.64, 0.0042, 4, 16), '#e6c062', 0, -0.262, 0, Math.PI / 2 + 0.25, 0, 0, 1, 0.88, 1, 'chrome');   // her bangle, slipped down to the wrist
   });
@@ -3142,8 +3166,26 @@ export function people() {
     const H = HS(o), W = v >= 0 ? 1 - 0.1 * v * v : 1 - H.J * Math.pow(-v, 1.7), cb = 1 + 0.045 * Math.exp(-(((v + 0.1) / 0.17) ** 2)) * Math.max(0, -w);
     const D = w > 0 ? (v > -0.2 ? 1.08 : Math.max(0.62, 1.08 - 0.6 * (-v - 0.2))) : 0.95 * (v > 0.45 ? 1 - 0.12 * (v - 0.45) : 1);
     const chin = w < 0 && v < -0.3 ? H.ch * Math.min(1, (-v - 0.3) / 0.55) * Math.sqrt(-w) : 0;   // (the chin and jaw forward: a sphere's underside recedes)
+    if (inf < 0.0045) inf += relief(o, u, v, w);   // (the face's own shape - on the skin, not the hair over it)
     out[0] = u * (H.hw * W * cb + inf); out[1] = H.cy + v * (H.hh + inf); out[2] = w * (H.hd * D + inf) + (w > 0 ? 0.006 : -chin); return out;
   };
+  // pass 2 of 10: the face's relief, in metres out from the skull - a brow ridge, the eye sockets the glasses sit in, fuller cheeks, the mouth
+  // standing a little forward, the groove under the nose and under the lower lip, the folds from nose to mouth, temples, his squarer jaw
+  function relief(o, u, v, w) {
+    const her = !!o.long, a = Math.atan2(u, -w), aa = Math.abs(a), G = (d, s) => Math.exp(-((d / s) * (d / s)));
+    let r = (her ? 0.003 : 0.006) * G(v - 0.2, 0.07) * G(aa - 0.33, 0.3)   // the brow ridge
+      - 0.007 * G(v + 0.03, 0.075) * G(aa - 0.38, 0.13)   // the eye sockets
+      + (her ? 0.006 : 0.004) * G(v + 0.34, 0.13) * G(aa - 0.55, 0.2)   // the cheeks
+      + 0.003 * G(v + 0.6, 0.13) * G(a, 0.33)   // the mouth, a little forward
+      - 0.0015 * G(a, 0.035) * G(v + 0.48, 0.05)   // the groove under the nose
+      - 0.003 * G(v + 0.73, 0.035) * G(aa, 0.28)   // and under the lower lip
+      - 0.004 * G(v - 0.28, 0.14) * G(aa - 1.05, 0.2)   // the temples
+      + (her ? 0.002 : 0.007) * G(v + 0.66, 0.1) * G(aa - 1.25, 0.25)   // the angle of the jaw
+      - (her ? 0.001 : 0.003) * G(v + 0.42, 0.08) * G(aa - 0.85, 0.15);   // under the cheekbone
+    { const t = Math.max(0, Math.min(1, ((aa - 0.19) * 0.13 + (v + 0.37) * -0.25) / (0.13 * 0.13 + 0.25 * 0.25))), d = Math.hypot(aa - (0.19 + 0.13 * t), v - (-0.37 - 0.25 * t));
+      r -= (her ? 0.0015 : 0.003) * G(d, 0.025); }   // the folds from the nose to the corners of the mouth
+    return r;
+  }
   const onFace = (o, a, v, inf) => { const c = Math.sqrt(Math.max(0, 1 - v * v)); return skull(o, Math.sin(a) * c, v, -Math.cos(a) * c, inf || 0, [0, 0, 0]); };   // a: round from the middle of the face (+: towards +X)
   const lerpT = (T, x) => { if (x <= T[0][0]) return T[0][1]; for (let i = 1; i < T.length; i++) if (x <= T[i][0]) { const a = T[i - 1], b = T[i]; return a[1] + (b[1] - a[1]) * (x - a[0]) / (b[0] - a[0]); } return T[T.length - 1][1]; };
   const sculpt = (o, ws, hs, inf, edge) => {   // the head (inf 0) or hair over it: inf(u, v, w) how thick; edge(u, v, w) < 0 = past the hairline (under the skin), blended smoothly
@@ -3154,75 +3196,144 @@ export function people() {
     for (const r of [0, hs]) { A.set(0, 0, 0); for (let c = 0; c <= ws; c++) A.add(B.fromBufferAttribute(N, r * (ws + 1) + c)); A.normalize(); for (let c = 0; c <= ws; c++) N.setXYZ(r * (ws + 1) + c, A.x, A.y, A.z); }
     return g;
   };
-  const tint = (k, fn) => { const G = k.parts.lit[k.parts.lit.length - 1], Q = G.attributes.position, C3 = G.attributes.color, c = [0, 0, 0];   // recolour the last part put: fn(x, y, z, rgb)
+  const tint = (k, fn, key) => { const L = k.parts[key || 'lit'], G = L[L.length - 1], Q = G.attributes.position, C3 = G.attributes.color, c = [0, 0, 0];   // recolour the last part put: fn(x, y, z, rgb)
     for (let i = 0; i < Q.count; i++) { c[0] = C3.getX(i); c[1] = C3.getY(i); c[2] = C3.getZ(i); fn(Q.getX(i), Q.getY(i), Q.getZ(i), c); C3.setXYZ(i, Math.min(1, c[0]), Math.min(1, c[1]), Math.min(1, c[2])); } };
   const mixTo = (c, hex, f) => { const t = new THREE.Color(hex); c[0] += (t.r - c[0]) * f; c[1] += (t.g - c[1]) * f; c[2] += (t.b - c[2]) * f; };
   const strand = (k, o, path, inf, r, col, fl, tp) => hairLock(k, path.map(([a, v, di]) => onFace(o, a, v, inf + (di || 0))), r, col, 0, fl, tp);   // a lock lying on the hair: path [[a, v, extra lift]]
+  // pass 3 of 10: the lips - two soft rolls across the mouth, tapering into the corners (a cupid's bow on the top one), lying on the face -
+  // with three shapes to move between (morph targets): a smile (the corners up and back), open (a laugh: the lower lip drops, the teeth show)
+  // and a pout (the lips forward, the corners down). world3d sets how much of each from her mood
+  function mouthOf(o) {
+    const her = !!o.long, m = onFace(o, 0, -0.6), W = her ? 0.022 : 0.024, NC = 26, NR = 12, pos = [], col = [], idx = [], dS = [], dO = [], dP = [];
+    const cU = new THREE.Color(her ? '#c24a60' : '#b47462'), cL = new THREE.Color(her ? '#cf5a6e' : '#bf8070'), cIn = new THREE.Color(her ? '#7a2436' : '#7c4436');
+    const zAt = (x) => onFace(o, Math.asin(Math.max(-1, Math.min(1, x / 0.085))), -0.6)[2];
+    for (const lip of [0, 1]) {   // 0 the top lip, 1 the bottom
+      const base = pos.length / 3;
+      for (let c = 0; c <= NC; c++) {
+        const s = c / NC, x = -W + 2 * W * s, e = Math.abs(s - 0.5) * 2, t = Math.pow(Math.sin(Math.PI * s), 0.55), bow = lip ? 0 : -0.0018 * Math.exp(-(((s - 0.5) / 0.07) ** 2)) + 0.0008 * Math.exp(-(((e - 0.17) / 0.08) ** 2));
+        const cy = m[1] + (lip ? (her ? -0.0058 : -0.0052) : (her ? 0.0046 : 0.0041)) * t + bow, h = (lip ? (her ? 0.0058 : 0.005) : (her ? 0.0046 : 0.0039)) * t + 0.0004, d = (lip ? (her ? 0.0062 : 0.0048) : (her ? 0.0052 : 0.004)) * t + 0.0005, cz = zAt(x) + 0.0008;
+        for (let r = 0; r <= NR; r++) {
+          const th = r / NR * Math.PI * 2, fy = Math.cos(th), fz = Math.sin(th);
+          pos.push(x, cy + fy * h, cz + fz * (fz < 0 ? d : 0.004));   // (front half bulges out by d; the back half sinks into the face)
+          const inner = lip ? Math.max(0, fy) : Math.max(0, -fy), cc = (lip ? cL : cU).clone().lerp(cIn, 0.55 * inner * inner);   // (darker where the lips meet)
+          if (lip && fy < -0.2 && fz < 0) cc.offsetHSL(0, 0, 0.03);   // (light catching the bottom lip)
+          col.push(cc.r, cc.g, cc.b);
+          const k2 = e * e;   // the corners move most
+          dS.push(Math.sign(s - 0.5) * 0.0062 * k2, 0.007 * k2 + 0.0006, 0.0042 * k2);
+          dO.push(0, lip ? -0.0115 * (0.35 + 0.65 * t) : 0.003 * t, lip ? 0.0015 * t : 0);
+          dP.push(-Math.sign(s - 0.5) * 0.004 * e, -0.0028 * k2 + (lip ? 0.0012 : 0), -0.0045 * t);
+        }
+      }
+      for (let c = 0; c < NC; c++) for (let r = 0; r < NR; r++) { const a = base + c * (NR + 1) + r, b = a + NR + 1; idx.push(a, b, a + 1, b, b + 1, a + 1); }
+    }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); g.setIndex(idx);
+    g.computeVertexNormals();
+    g.morphAttributes.position = [new THREE.Float32BufferAttribute(dS, 3), new THREE.Float32BufferAttribute(dO, 3), new THREE.Float32BufferAttribute(dP, 3)]; g.morphTargetsRelative = true;
+    return g;
+  }
   function faceOf(k, o) {
     const H = HS(o), sk = o.skin, her = !!o.long;
-    k.put(sculpt(o, 36, 26, () => 0), sk, 0, 0, 0, 0, 0, 0, 1, 1, 1, 'lit');   // the head
-    tint(k, (x, y, z, c) => { const v = (y - H.cy) / H.hh;
-      if (her) { const b = Math.exp(-(((Math.abs(x) - 0.06) / 0.024) ** 2) - (((v + 0.3) / 0.16) ** 2)) * (z < -0.04 ? 1 : 0); mixTo(c, '#ec9a8e', 0.42 * b); }   // her cheeks
-      else if (z < 0.05 && v < -0.42) { const f = Math.min(1, (-v - 0.42) / 0.25) * (v < -0.97 ? 0.4 : 1); mixTo(c, '#a08474', 0.2 * f); }   // his jaw: a shave's shadow
-      if (z < -0.06 && Math.abs(v + 0.04) < 0.16 && Math.abs(x) < 0.09) { c[0] *= 0.93; c[1] *= 0.91; c[2] *= 0.91; } });   // round the eyes, under the lenses
+    k.put(sculpt(o, 56, 40, () => 0), sk, 0, 0, 0, 0, 0, 0, 1, 1, 1, 'skin');   // the head
+    tint(k, (x, y, z, c) => { const v = (y - H.cy) / H.hh, G2 = (d, s) => Math.exp(-((d / s) ** 2)), fr = z < -0.03 ? 1 : 0;
+      const cheek = G2(Math.abs(x) - 0.058, 0.026) * G2(v + 0.3, 0.17) * fr; mixTo(c, her ? '#ee968a' : '#d88a78', (her ? 0.4 : 0.2) * cheek);   // the colour in the cheeks
+      mixTo(c, '#e08a7c', 0.22 * G2(x, 0.022) * G2(v + 0.3, 0.1) * fr);   // the end of the nose
+      if (!her && z < 0.05 && v < -0.42) { const f = Math.min(1, (-v - 0.42) / 0.25) * (v < -0.97 ? 0.4 : 1); mixTo(c, '#a08474', 0.2 * f); }   // his jaw: a shave's shadow
+      if (z < -0.06 && Math.abs(v + 0.04) < 0.16 && Math.abs(x) < 0.09) { c[0] *= 0.92; c[1] *= 0.9; c[2] *= 0.9; }   // round the eyes, under the lenses
+      if (v > 0.35 && fr) mixTo(c, '#f6dccb', 0.08);   // a lighter forehead
+    }, 'skin');
     // the nose: a bridge and a tip, nostrils either side
     const nb = onFace(o, 0, 0.04), nt = onFace(o, 0, -0.33), nl = Math.hypot(nb[1] - nt[1], nb[2] - nt[2]);
-    k.put(new THREE.ConeGeometry(0.019, nl + 0.012, 4), sk, 0, (nb[1] + nt[1]) / 2, (nb[2] + nt[2]) / 2 - 0.006, 0.42, 0, 0, her ? 0.78 : 0.88, 1, 0.8, 'lit');
-    k.ball(her ? 0.0125 : 0.015, 0, nt[1] - 0.008, nt[2] - 0.016, sk, 1.1, 0.95, 1, 'lit', 8);
-    for (const sd of [-1, 1]) k.ball(her ? 0.009 : 0.0105, sd * (her ? 0.012 : 0.0145), nt[1] - 0.012, nt[2] - 0.006, sk, 1, 0.8, 1, 'lit', 6);
-    // the lips: a quiet smile between them
-    const m = onFace(o, 0, -0.6), mz = m[2] - 0.004, lip = her ? '#c8566a' : shade(sk, -0.16);
-    k.ball(her ? 0.024 : 0.024, 0, m[1] + 0.007, mz + (her ? 0.002 : 0.006), lip, 1.18, her ? 0.3 : 0.17, her ? 0.42 : 0.32, 'lit', 10).ball(her ? 0.022 : 0.022, 0, m[1] - 0.008, mz + (her ? 0.003 : 0.007), her ? '#d26878' : shade(sk, -0.08), 1.08, her ? 0.42 : 0.24, her ? 0.45 : 0.34, 'lit', 10);
-    k.put(new THREE.TorusGeometry(0.07, 0.0026, 4, 12, 0.62), her ? '#6e2433' : '#5a3226', 0, m[1] + 0.07 - 0.001, mz - 0.007, 0, 0, -Math.PI / 2 - 0.31, 1, 1, 1, 'lit');   // (the line between, its corners just up)
-    const cz = onFace(o, 0, -0.84); k.ball(0.026, 0, cz[1] + 0.002, cz[2] + 0.012, sk, 1.25, 0.75, 0.6, 'lit', 10);   // the point of the chin
+    k.put(new THREE.CapsuleGeometry(0.0105, nl * 0.85, 4, 10), sk, 0, (nb[1] + nt[1]) / 2 - 0.002, (nb[2] + nt[2]) / 2 - 0.004, 0.42, 0, 0, her ? 0.78 : 0.9, 1, 1.15, 'skin');   // (the bridge, rounded)
+    k.ball(her ? 0.0125 : 0.015, 0, nt[1] - 0.008, nt[2] - 0.016, sk, 1.1, 0.95, 1, 'skin', 8);
+    for (const sd of [-1, 1]) k.ball(her ? 0.009 : 0.0105, sd * (her ? 0.012 : 0.0145), nt[1] - 0.012, nt[2] - 0.006, sk, 1, 0.8, 1, 'skin', 6);
+    for (const sd of [-1, 1]) k.ball(0.0045, sd * (her ? 0.0075 : 0.009), nt[1] - 0.0175, nt[2] - 0.006, '#5e3026', 1.3, 0.6, 1, 'skin', 6);   // the nostrils
+    // inside the mouth (pass 3: the lips are their own part now - part.mouth - and move: a smile, a laugh, a pout): dark, the top teeth
+    const m = onFace(o, 0, -0.6), mz = m[2];
+    k.ball(0.019, 0, m[1] - 0.002, mz + 0.014, '#3a1418', 1.35, 0.62, 0.55, 'skin', 10).ball(0.0155, 0, m[1] + 0.0012, mz + 0.0098, '#f1ede2', 1.28, 0.34, 0.45, 'lit', 10);   // (behind where the lips meet)
+    const cz = onFace(o, 0, -0.84); k.ball(0.026, 0, cz[1] + 0.002, cz[2] + 0.012, sk, 1.25, 0.75, 0.6, 'skin', 10);   // the point of the chin
     for (const sd of [-1, 1]) {   // the ears
-      const e = onFace(o, sd * Math.PI / 2, -0.12); k.ball(0.031, e[0] + sd * 0.004, e[1], e[2] + 0.006, sk, 0.42, 1, 0.7, 'lit', 10).ball(0.018, e[0] + sd * 0.009, e[1] + 0.002, e[2] + 0.004, shade(sk, -0.14), 0.3, 1, 0.7, 'lit', 8);
+      const e = onFace(o, sd * Math.PI / 2, -0.12), ex = e[0] + sd * 0.006, ez = e[2] + 0.008;   // the ears: a rim (the helix) round a hollow, the lobe below
+      k.put(new THREE.TorusGeometry(0.02, 0.0062, 6, 16), '#dd9a86', ex, e[1] + 0.004, ez, -0.15, Math.PI / 2, 0, 1, 1.45, 1, 'skin');
+      k.ball(0.019, ex - sd * 0.003, e[1] + 0.002, ez, '#c08470', 0.32, 1.3, 0.85, 'skin', 10).ball(0.0105, ex, e[1] - 0.03, ez - 0.002, '#e3a08c', 0.6, 1, 0.9, 'skin', 8);
       if (her) { const l = onFace(o, sd * Math.PI / 2, -0.36); k.put(new THREE.TorusGeometry(0.013, 0.0028, 5, 14), '#e8c060', l[0] + sd * 0.006, l[1] - 0.013, l[2] - 0.002, 0, Math.PI / 2, 0, 1, 1, 1, 'chrome'); }   // her gold hoops
       else { const b = onFace(o, sd * 1.42, 0.08, 0.003); k.box(0.012, 0.042, 0.022, b[0], b[1] - 0.03, b[2], o.hair, 0, 0, 0, 'lit'); }   // his sideburns
       const br = onFace(o, sd * 0.37, her ? 0.3 : 0.29, 0.001), bR = her ? 0.036 : 0.045;   // the brows: fine arches just over the frame (his straighter, heavier)
       k.put(new THREE.TorusGeometry(bR, her ? 0.0032 : 0.0045, 4, 10, her ? 1.05 : 0.85), her ? '#9a6c38' : '#2a1c12', br[0], br[1] - bR + 0.002, br[2] - 0.001, 0, -sd * 0.32, Math.PI / 2 - (her ? 0.525 : 0.425) + sd * 0.06, 1, 1, 0.6, 'lit');
     }
-    // sunglasses on (it's the seaside): his wraparound, dark; hers a little cat-eye, tinted, in a fine gold frame
-    for (const sd of [-1, 1]) { const l = onFace(o, sd * 0.38, -0.04); k.ball(her ? 0.037 : 0.04, l[0], l[1], l[2] - 0.006, her ? '#4a2a1a' : '#0d1218', her ? 1.25 : 1.2, her ? 0.8 : 0.82, 0.45, 'glass', 12); }
-    const fr = onFace(o, 0, 0.1), fc = her ? '#d8b464' : '#1a1a1a', fk = her ? 'chrome' : 'lit', fw = H.hw * 2 + 0.01, ar = onFace(o, Math.PI / 2, 0.115);
-    { const t = onFace(o, 0, 0.115), rz = -t[2] + 0.009, rx = onFace(o, Math.PI / 2, 0.115)[0] + 0.004; k.put(new THREE.TorusGeometry(rz, her ? 0.0045 : 0.007, 5, 28, Math.PI), fc, 0, t[1], 0, -Math.PI / 2, 0, 0, rx / rz, 1, 1, fk); }   // the frame along the lens tops, wrapping round
-    k.box(0.024, 0.01, 0.014, 0, onFace(o, 0, 0.0)[1] - 0.005, onFace(o, 0, 0.0)[2] - 0.009, fc, 0, 0, 0, fk);   // the bridge
-    for (const sd of [-1, 1]) k.box(0.007, 0.008, 0.115, sd * (ar[0] + 0.005), ar[1] - 0.004, -0.055, fc, 0, 0, 0, fk);   // the arms, back to the ears
+    // pass 6 of 10: sunglasses made like sunglasses - two flat tinted lenses turned round the face, each in its own rim, a bridge with nose pads,
+    // hinges, arms back over the ears. His: black acetate, a heavy brow line, near-black lenses. Hers: a fine gold cat-eye, the lenses fading from
+    // dark brown at the top to amber
+    const fc = her ? '#d8b464' : '#151515', fk = her ? 'chrome' : 'lit', lw = her ? 0.04 : 0.045, lh = her ? 0.028 : 0.027, tube = her ? 0.0028 : 0.0048;
+    for (const sd of [-1, 1]) {
+      const l = onFace(o, sd * 0.4, -0.04), ry = -sd * 0.4, rz = her ? sd * 0.16 : sd * 0.04, lz = l[2] - 0.011;
+      const lg = new THREE.CylinderGeometry(1, 1, 0.0035, 30); lg.rotateX(Math.PI / 2); k.put(lg, her ? '#5a3a22' : '#0c1016', l[0], l[1], lz, 0, ry, rz, lw, lh, 1, 'glass');   // the lens
+      if (her) tint(k, (x, y, z, c) => { const f = Math.min(1, Math.max(0, (y - (l[1] - lh)) / (2 * lh))); c[0] = 0.4 - 0.29 * f; c[1] = 0.24 - 0.18 * f; c[2] = 0.12 - 0.09 * f; }, 'glass');   // (dark at the top, amber below)
+      k.put(new THREE.TorusGeometry(1, tube / lw, 6, 36), fc, l[0], l[1], lz + 0.0005, 0, ry, rz, lw, lh, lw, fk);   // the rim
+      if (!her) k.put(new THREE.TorusGeometry(1, 0.0062 / lw, 6, 20, Math.PI), fc, l[0], l[1] + 0.001, lz - 0.0005, 0, ry, rz, lw * 1.04, lh * 1.12, lw, fk);   // his heavy brow line
+      const ox = l[0] + sd * Math.cos(ry) * lw * 0.98, oz = lz + Math.sin(Math.abs(ry)) * lw * 0.98, ear = onFace(o, sd * Math.PI / 2, 0.0, 0.006);
+      k.box(0.008, her ? 0.006 : 0.011, 0.012, ox, l[1] + lh * 0.45 - 0.004, oz + 0.002, fc, 0, 0, 0, fk);   // the hinge
+      beam(k, [ox, l[1] + lh * 0.45, oz + 0.006], [ear[0] + sd * 0.004, ear[1] + 0.012, ear[2] - 0.01], her ? 0.004 : 0.0065, fc, fk);   // the arm, back to the ear...
+      beam(k, [ear[0] + sd * 0.004, ear[1] + 0.012, ear[2] - 0.01], [ear[0] + sd * 0.002, ear[1] - 0.012, ear[2] + 0.022], her ? 0.004 : 0.006, fc, fk);   // ...and down behind it
+      const np = onFace(o, sd * 0.13, -0.1, 0.004); k.ball(0.004, np[0], np[1], np[2], '#e8e4dc', 0.6, 1, 0.5, 'lit', 6);   // a nose pad
+    }
+    const br = onFace(o, 0, 0.02); k.put(new THREE.TorusGeometry(0.008, her ? 0.0022 : 0.0034, 5, 12, Math.PI), fc, 0, br[1] - 0.004, br[2] - 0.012, 0, 0, 0, 1, 0.7, 1, fk);   // the bridge, arched over the nose
     // the hair
     if (!her) {   // his: short at the back and sides, fuller on top, combed back off the forehead in a soft quiff
-      const HL = [[0, 0.52], [0.42, 0.6], [0.7, 0.55], [1.1, 0.34], [1.36, 0.02], [1.5, 0.0], [1.62, 0.18], [2.1, -0.08], [2.6, -0.36], [Math.PI, -0.46]];
+      const HL = [[0, 0.5], [0.22, 0.53], [0.42, 0.62], [0.62, 0.6], [0.85, 0.48], [1.1, 0.34], [1.36, 0.02], [1.5, 0.0], [1.62, 0.18], [2.1, -0.08], [2.6, -0.36], [Math.PI, -0.46]];
       const keep = (u, v, w) => v - lerpT(HL, Math.abs(Math.atan2(u, -w)));
-      k.put(sculpt(o, 44, 32, (u, v, w) => 0.005 + 0.006 * Math.max(0, v + 0.2) / 1.2 + 0.012 * Math.max(0, v - 0.35) / 0.65 * Math.max(0, 0.3 - w) / 1.3, keep), o.hair, 0, 0, 0, 0, 0, 0, 1, 1, 1, 'lit');
+      const hisInf = (u, v, w) => 0.003 + 0.007 * Math.max(0, v + 0.2) / 1.2 + 0.012 * Math.max(0, v - 0.35) / 0.65 * Math.max(0, 0.3 - w) / 1.3;   // (how thick his hair is, where)
+      k.put(sculpt(o, 44, 32, hisInf, keep), o.hair, 0, 0, 0, 0, 0, 0, 1, 1, 1, 'lit');
       tint(k, (x, y, z, c) => { const f = 0.86 + 0.24 * Math.min(1, Math.max(0, (y - H.cy) / 0.14)); c[0] *= f; c[1] *= f; c[2] *= f; });   // the sun on top, darker where it's short
-      const CL = ['#3a2818', '#2e1f14', '#33231a', '#24180f', '#3d2a1b'];
-      for (let i = 0; i < 9; i++) { const a = -0.62 + i * 0.155, lift = 0.022 + 0.008 * Math.cos(a * 2);   // combed strands from the hairline over the top to the crown
-        strand(k, o, [[a, 0.74, 0.004], [a * 0.9, 0.86, 0.006], [a * 0.75, 0.96, 0.004], [Math.PI - a * 0.5, 0.86, 0.0], [Math.PI - a * 0.8, 0.62, -0.003]], lift - 0.016, 0.0085, CL[i % 5], [1.5, 1, 0.5], 0.8); }
+      // pass 4: real hair over the shell - cards of fine strands lying ON it (each just above the shell where it is): combed back from the hairline over
+      // the crown, swept back above the ears, layered down the back under the crown
+      const up = [0, H.cy, 0], CL = ['#3a2818', '#2e1f14', '#45301d', '#33231a', '#3d2a1b', '#2a1a10'];
+      const card = (path, w0, w1, hex) => hairCard(k, path.map(([a, v, f]) => { const c = Math.sqrt(Math.max(0, 1 - v * v)); return onFace(o, a, v, hisInf(Math.sin(a) * c, v, -Math.cos(a) * c) + 0.0025 + (f || 0)); }), w0, w1, hex, up);
+      for (let i = 0; i < 11; i++) { const a = 2.25 + i * 0.18;   // the back first (under the rest): short, from under the crown down to the nape
+        card([[a, 0.8], [a, 0.45], [a, 0.05], [a, -0.28]], 0.042, 0.03, CL[(i + 1) % 6]); }
+      for (const sd of [-1, 1]) for (const [v0, a0] of [[0.52, 0.85], [0.4, 1.05], [0.28, 1.25], [0.14, 1.48], [0.4, 1.6], [0.2, 1.85], [0.05, 2.1]]) {   // the sides, swept back above the ears
+        card([[sd * a0, v0 + 0.03], [sd * (a0 + 0.3), v0 - 0.05], [sd * (a0 + 0.62), v0 - 0.14]], 0.034, 0.024, CL[Math.round(v0 * 10) % 6]); }
+      for (let i = 0; i < 11; i++) { const a = -0.75 + i * 0.15;   // over the crown and down the back, over the short layer
+        card([[a * 0.4, 0.94, 0.001], [0, 1.0, 0.002], [Math.PI - a * 0.6, 0.9, 0.002], [Math.PI - a * 0.75, 0.68, 0.0015], [Math.PI - a * 0.85, 0.42, 0.001]], 0.038, 0.028, CL[(i + 2) % 6]); }
+      for (let i = 0; i < 13; i++) { const a = -0.66 + i * 0.11;   // from just behind the hairline up and back over the top (on top of everything)
+        card([[a, 0.55, 0.0], [a * 0.95, 0.68, 0.003], [a * 0.85, 0.82, 0.004], [a * 0.7, 0.94, 0.004], [a * 0.4, 0.99, 0.003]], 0.034, 0.026, CL[i % 6]); }
     } else {   // hers: parted to one side, a swept fringe across the forehead, over the ears, long down the back (the locks)
       const HL = [[0, 0.44], [0.45, 0.52], [0.95, 0.3], [1.35, -0.1], [1.6, -0.42], [2.2, -0.62], [Math.PI, -0.78]];
       const keep = (u, v, w) => v - lerpT(HL, Math.abs(Math.atan2(u, -w)));
-      k.put(sculpt(o, 44, 32, (u, v, w) => 0.017 + 0.01 * Math.max(0, v), keep), o.hair, 0, 0, 0, 0, 0, 0, 1, 1, 1, 'lit');
+      const herInf = (v) => 0.017 + 0.01 * Math.max(0, v);
+      k.put(sculpt(o, 44, 32, (u, v, w) => herInf(v), keep), o.hair, 0, 0, 0, 0, 0, 0, 1, 1, 1, 'lit');
       tint(k, (x, y, z, c) => { const f = 0.78 + 0.32 * Math.min(1, Math.max(0, (y - 0.02) / 0.22)); c[0] *= f; c[1] *= f; c[2] *= f; });
       k.ball(0.115, 0, 0.09, 0.07, '#cfa452', 0.86, 1.15, 0.55, 'lit', 14).ball(0.1, 0, -0.05, 0.075, '#c09648', 0.95, 1.05, 0.5, 'lit', 12);   // the under-layer, in shadow
-      const pa = -0.28, SC = ['#f6dc94', '#e8c47a', '#f0d48a', '#dcb468'];
-      for (let i = 0; i < 7; i++) { const to = 0.55 + i * 0.32;   // fine bright strands from the parting, over the crown and down the sides and back
-        strand(k, o, [[pa, 0.86], [pa + (to - pa) * 0.25, 0.78], [pa + (to - pa) * 0.6, 0.55], [to, 0.22 - i * 0.04]], 0.024, 0.0065, SC[i % 4], [1.4, 1, 0.7], 0.5); }
-      for (let i = 0; i < 4; i++) strand(k, o, [[pa - 0.05 * i, 0.84], [pa - 0.4 - 0.15 * i, 0.7], [-1.0 - 0.12 * i, 0.4], [-1.45 - 0.08 * i, 0.05 - 0.05 * i]], 0.024, 0.0065, SC[(i + 2) % 4], [1.4, 1, 0.7], 0.5);
-      for (let i = 0; i < 4; i++) strand(k, o, [[pa + 0.04 * i, 0.82 - 0.02 * i, 0.004], [0.15 + 0.08 * i, 0.62 - 0.03 * i, 0.016], [0.6 + 0.07 * i, 0.46 - 0.04 * i, 0.012], [0.98 + 0.06 * i, 0.26 - 0.05 * i, 0.002]], 0.02, 0.018 - 0.002 * i, ['#ecc87e', '#dcb46a', '#e6c276', '#d8ae62'][i], [1.6, 1, 0.5], 0.75);   // the fringe, swept across
+      // pass 5: real hair - cards of fine strands lying on the shell, from her parting over the crown and down the sides and the back, a swept fringe
+      const up = [0, H.cy, 0], card = (path, w0, w1, hex) => hairCard(k, path.map(([a, v, f]) => onFace(o, a, v, herInf(v) + 0.003 + (f || 0))), w0, w1, hex, up);
+      const pa = -0.28, SC = ['#f2d690', '#e9c477', '#f6e0a4', '#dcb468', '#ecca80', '#d6ac5e'];
+      for (let i = 0; i < 11; i++) { const to = 0.35 + i * 0.27;   // from the parting over to the right side and round to the back
+        card([[pa, 0.9], [pa + (to - pa) * 0.3, 0.8, 0.002], [pa + (to - pa) * 0.7, 0.5, 0.003], [to, 0.1, 0.003], [to * 1.02, -0.32, 0.004]], 0.05, 0.034, SC[i % 6]); }
+      for (let i = 0; i < 8; i++) { const to = -0.75 - i * 0.3;   // and over to the left
+        card([[pa, 0.9], [pa + (to - pa) * 0.3, 0.78, 0.002], [pa + (to - pa) * 0.7, 0.45, 0.003], [to, 0.05, 0.003], [to, -0.36, 0.004]], 0.05, 0.034, SC[(i + 3) % 6]); }
+      for (let i = 0; i < 9; i++) { const a = Math.PI + (i - 4) * 0.24; card([[a * 0.5 + 0.15, 0.95], [a, 0.62, 0.002], [a, 0.2, 0.003], [a, -0.3, 0.006], [a * 1.0, -0.85, 0.012]], 0.065, 0.06, SC[(i + 2) % 6]); }   // (down the back, under her locks)
+      for (let i = 0; i < 5; i++) card([[pa + 0.04 * i, 0.85 - 0.02 * i, 0.004], [0.12 + 0.08 * i, 0.64 - 0.03 * i, 0.007], [0.55 + 0.07 * i, 0.47 - 0.04 * i, 0.006], [0.95 + 0.06 * i, 0.25 - 0.05 * i, 0.005]], 0.048, 0.03, SC[(i + 1) % 6]);   // the fringe, swept across, lying on her forehead
     }
   }
   const one = (o) => ({
     torso: P((k) => { const fold = (x, y, z, c) => { if (!o.short && y > 0.49) return; const f = 0.8 + 0.24 * Math.min(1, Math.max(0, (y - 0.02) / 0.46)) - (z > 0.02 ? 0.04 : 0); c[0] *= f; c[1] *= f; c[2] *= f; };   // (shaded: darker towards the seat)
-      if (o.short) { k.put(new THREE.LatheGeometry(PRM.map(v2), 22), o.top, 0, 0, 0, 0, 0, 0, 1.45, 1, 0.7, 'lit'); tint(k, fold); } else { k.put(new THREE.LatheGeometry(PRG.map(v2), 22), o.top, 0, 0, 0, 0, 0, 0, 1.2, 1, 0.78, 'lit');
-      const G = k.parts.lit[k.parts.lit.length - 1], Q = G.attributes.position, N = G.attributes.normal, C3 = G.attributes.color, sk = new THREE.Color(o.skin);
-      for (let i = 0; i < Q.count; i++) if (Q.getY(i) > 0.49) { const f = 0.6 + 0.4 * (N.getY(i) * 0.5 + 0.5); C3.setXYZ(i, sk.r * f, sk.g * f, sk.b * f); } tint(k, fold); }   // bare shoulders above her top
-    if (!o.short) for (const sd of [-1, 1]) k.ball(o.arm * 1.1, sd * 0.16, 0.52, 0, o.sleeve, 1, 0.85, 1, 'lit', 10); else { k.put(new THREE.TorusGeometry(0.06, 0.013, 4, 16, Math.PI), '#e4e4de', 0, 0.6, 0, Math.PI / 2, 0, 0, 1, 1, 0.5, 'lit'); } if (o.collar) for (const sd of [-1, 1]) k.box(0.08, 0.012, 0.06, sd * 0.045, 0.585, -0.05, '#e4e4de', 0, -0.6, sd * 0.45, 'lit'); k.cyl(o.short ? 0.058 : 0.047, o.short ? 0.066 : 0.053, 0.14, 12, 0, 0.6, 0, o.skin);   // (his neck thicker, hers slender) if (o.strap) { for (const sd of [-1, 1]) k.put(new THREE.TorusGeometry(0.09, 0.009, 4, 12, Math.PI), o.top, sd * 0.075, 0.51, 0, 0, Math.PI / 2, 0, 1, 1, 1, 'lit'); }
+      if (o.short) { k.put(new THREE.LatheGeometry(PRM.map(v2), 32), o.top, 0, 0, 0, 0, 0, 0, 1.45, 1, 0.7, 'lit'); tint(k, fold);
+        tint(k, (x, y, z, c) => { const f = 1 - 0.07 * Math.max(0, Math.sin(y * 64 + x * 9)) * (y < 0.26 ? 1 : 0.25) - 0.1 * Math.max(0, Math.abs(x) / 0.25 - 0.75) * (y > 0.3 && y < 0.52 ? 1 : 0); c[0] *= f; c[1] *= f; c[2] *= f; }); /* (creases at the waist, shadow under the arms) */ } else { k.put(new THREE.LatheGeometry(PRG.filter((q) => q[1] <= 0.5).map(v2), 32), o.top, 0, 0, 0, 0, 0, 0, 1.2, 1, 0.78, 'satin'); tint(k, fold, 'satin');
+        k.put(new THREE.TorusGeometry(0.146, 0.0042, 5, 40), shade(o.top, -0.12), 0, 0.497, 0, Math.PI / 2, 0, 0, 1.2, 0.78, 1, 'satin');   // (pass 7: her top in satin, a hem along its edge)
+        for (const sd of [-1, 1]) rod(k, onBody(o, sd * 0.1, 0.585, 0.001), onBody(o, sd * 0.72, 0.555, 0.0005), 0.0055, shade(o.skin, 0.04), 'skin');   // (her collarbones)   // her top...
+        k.put(new THREE.LatheGeometry(PRG.filter((q) => q[1] >= 0.485).map(v2), 22), o.skin, 0, 0, 0, 0, 0, 0, 1.2, 1, 0.78, 'skin'); }   // ...and her bare shoulders above it
+    if (!o.short) for (const sd of [-1, 1]) k.ball(o.arm * 1.1, sd * 0.16, 0.52, 0, o.skin, 1, 0.85, 1, 'skin', 10); else { k.put(new THREE.TorusGeometry(0.06, 0.013, 4, 16, Math.PI), '#e4e4de', 0, 0.6, 0, Math.PI / 2, 0, 0, 1, 1, 0.5, 'lit'); } if (o.collar) {   // pass 7 of 10: an open collar - the V of skin at the neck, the collar's two points lying out over the chest
+        const v0 = onBody(o, 0, 0.6, 0.001), v1 = onBody(o, 0, 0.515, 0.002); k.put(new THREE.ConeGeometry(0.038, 0.095, 3), o.skin, 0, (v0[1] + v1[1]) / 2, (v0[2] + v1[2]) / 2 - 0.004, 0.42, 0, Math.PI, 1, 1, 0.2, 'skin');
+        for (const sd of [-1, 1]) { const a = onBody(o, sd * 0.42, 0.62, 0.006), b = onBody(o, sd * 0.13, 0.53, 0.007); k.put(new THREE.BoxGeometry(0.034, 0.086, 0.007), '#f4f4f0', (a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2, 0.3, sd * -0.35, -sd * 0.42, 1, 1, 1, 'lit'); }
+      } k.cyl(o.short ? 0.058 : 0.047, o.short ? 0.066 : 0.053, 0.14, 12, 0, 0.6, 0, o.skin, 0, 0, 'skin'); if (o.short) for (const sd of [-1, 1]) k.put(new THREE.CapsuleGeometry(0.0085, 0.12, 2, 6), o.skin, sd * 0.03, 0.665, -0.042, 0.45, 0, sd * -0.35, 1, 1, 1, 'skin');   // (the tendons down the neck)
+      if (o.short) k.ball(0.012, 0, 0.665, -0.057, o.skin, 1, 1.6, 0.8, 'skin', 8);   // (his Adam's apple)
+      if (o.strap) { for (const sd of [-1, 1]) k.put(new THREE.TorusGeometry(0.09, 0.006, 4, 16, Math.PI), o.top, sd * 0.078, 0.505, 0, 0, Math.PI / 2, 0, 1, 1, 1, 'satin'); }   // (his neck thicker, hers slender; her straps)
       // a pass on the two of you (owner, 6 Oct): his shirt's breast pocket and buttons; her fine gold necklace
       if (o.short) { const pk = onBody(o, -0.36, 0.43, 0.004), fl = onBody(o, -0.36, 0.47, 0.006); k.box(0.07, 0.075, 0.008, pk[0], 0.395, pk[2], shade(o.top, -0.05), -0.3, 0, 0, 'lit').box(0.074, 0.014, 0.01, fl[0], 0.462, fl[2], shade(o.top, -0.1), -0.3, 0, 0, 'lit');
         for (let i = 0; i < 4; i++) { const b = onBody(o, 0, 0.27 + i * 0.075, 0.002); k.ball(0.0072, b[0], b[1], b[2], '#b8b8b0', 1, 1, 0.5, 'lit', 6); }
         k.box(0.006, 0.36, 0.006, 0.012, 0.2, onBody(o, 0, 0.35, 0.001)[2], shade(o.top, -0.07), 0, -0.1, 0, 'lit'); }   // the placket the buttons sit on
       else { const pts = []; for (let i = 0; i <= 16; i++) { const ph = -1.3 + 2.6 * i / 16; pts.push(new THREE.Vector3(...onBody(o, ph, 0.598 - 0.085 * Math.cos(ph * 1.2) ** 2, 0.003))); }
         k.put(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 24, 0.0035, 4, false), '#e8c060', 0, 0, 0, 0, 0, 0, 1, 1, 1, 'chrome'); const pd = onBody(o, 0, 0.5, 0.008); k.ball(0.009, pd[0], pd[1], pd[2], '#f0d070', 1, 1.25, 0.6, 'chrome', 8); } }),   // her fine gold chain and its little pendant, lying on her skin
-    head: P((k) => faceOf(k, o)),
+    head: P((k) => faceOf(k, o)), mouth: mouthOf(o),
     upper: P((k) => {
       if (o.short) {   // a short shirt sleeve
         k.put(new THREE.CylinderGeometry(o.arm * 1.18, o.arm * 1.34, 0.14, 12), o.sleeve, 0, -0.055, 0, 0, 0, 0, 1, 1, 1, 'lit');
@@ -3234,7 +3345,7 @@ export function people() {
     arm: P((k) => {   // the arm, shoulder to wrist, as ONE skin that bends at the elbow (owner, 7 Oct: "fix her elbows" - it was an upper arm, a ball and a forearm, and the joint showed);
       // world3d skins it to the shoulder and elbow groups. Shoulder, a curve of muscle, the elbow (rings close together, for a smooth bend), the forearm tapering to the wrist
       const a = o.arm, E = o.elbow, pts = [[0, 0.03], [a * 0.75, 0.022], [a * 1.02, 0], [a * 1.1, -0.05], [a * 1.0, -0.14], [a * 0.92, -0.2], [a * 0.88, -E + 0.04], [a * 0.86, -E + 0.02], [a * 0.86, -E], [a * 0.88, -E - 0.02], [a * 0.92, -E - 0.04], [a * 0.88, -E - 0.08], [a * 0.8, -E - 0.14], [a * 0.68, -E - 0.2], [a * 0.58, -E - 0.25], [a * 0.5, -E - 0.274], [a * 0.25, -E - 0.281], [0, -E - 0.284]];
-      k.put(new THREE.LatheGeometry(pts.reverse().map(v2), 14), o.skin, 0, 0, 0, 0, 0, 0, 1, 1, 0.9, 'lit');
+      k.put(new THREE.LatheGeometry(pts.reverse().map(v2), 14), o.skin, 0, 0, 0, 0, 0, 0, 1, 1, 0.9, 'skin');
     }),
     locks: o.long ? (() => {   // her locks of hair, each built round its root so it can swing back in the wind
       const zb = (x, y) => { const H = HS(o), v = Math.max(-1, Math.min(1, (y - H.cy) / (H.hh + 0.02))), c = Math.sqrt(Math.max(0, 1 - v * v)), u = Math.max(-c, Math.min(c, x / (H.hw + 0.02))); return skull(o, u, v, Math.sqrt(Math.max(0, 1 - u * u - v * v)), 0.02, [0, 0, 0])[2] + 0.012; };   // just outside the back of her hair
@@ -3242,13 +3353,16 @@ export function people() {
       const L = [lock(0, 0, 0.012, 0.034, [2.7, 0.4], 0.55)].concat([[-0.1, 0.01], [-0.05, -0.008], [0, 0.01], [0.05, -0.01], [0.1, 0.008]].map(([x, j]) => lock(x, j, 0, 0.034, [1.7, 0.45], 0.75)));
       for (const sd of [-1, 1]) L.push([[sd * 0.08, 0.26, 0.0], [sd * 0.128, 0.17, 0.02], [sd * 0.126, 0.04, 0.035], [sd * 0.115, -0.16, 0.06], 0.03, [0.6, 1.6], 0.75]);
       const S = [1, 1, 0.95, 1.04, 0.95, 1, 0.96, 0.96], CL = ['#a5874e', '#e2ba6e', '#d4ac62', '#dcb468', '#cfa85e', '#e0b86c', '#d4ac62', '#d4ac62'];
-      return L.map((q, i) => { const p0 = q[0]; return { at: p0, s: S[i], geo: P((k) => hairLock(k, q.slice(0, 4).map((p) => [p[0] - p0[0], p[1] - p0[1], p[2] - p0[2]]), q[4] * [1, 1, 0.95, 1.05, 0.95, 1, 1, 1][i], CL[i], p0[1], q[5], q[6])) }; });
+      return L.map((q, i) => { const p0 = q[0], rel = q.slice(0, 4).map((p) => [p[0] - p0[0], p[1] - p0[1], p[2] - p0[2]]), up = [-p0[0], 0.13 - p0[1], -p0[2]];   // (pass 5: each lock a core and two cards of strands)
+        return { at: p0, s: S[i], geo: P((k) => { hairLock(k, rel, q[4] * [1, 1, 0.95, 1.05, 0.95, 1, 1, 1][i] * 0.45, shade(CL[i], -0.14), p0[1], [1.15, 0.85], q[6]);
+          const hang = rel.slice(1), back = [0, hang[0][1] + 0.05, hang[0][2] - 0.45];   // (the cards hang from where the lock leaves her head, facing back)
+          for (let c = 0; c < 3; c++) hairCard(k, hang.map((p, j) => [p[0] + (c - 1) * 0.008 * (1 + j * 0.25), p[1] - c * 0.008 * j / 2, p[2] + (c === 1 ? 0.007 : 0)]), [0.075, 0.068, 0.06][c], [0.066, 0.06, 0.052][c], shade(CL[i], [0, 0.07, -0.05][c]), back); }) }; });
     })() : null,
     hair: null,
     scarf: null
   });
-  const driver = one({ elbow: 0.27, collar: true, short: true, chest: 0.165, wide: 1.25, top: '#f2f2ee', sleeve: '#f2f2ee', skin: '#e2ae86', hair: '#2a1c12', arm: 0.052, shades: true });
-  const girl = one({ elbow: 0.26, chest: 0.14, wide: 1.15, top: '#1fb5c4', sleeve: '#efbf98', skin: '#efbf98', hair: '#f0cd78', arm: 0.043, long: true, strap: true });
+  const driver = one({ curl: 1.15, elbow: 0.27, collar: true, short: true, chest: 0.165, wide: 1.25, top: '#f2f2ee', sleeve: '#f2f2ee', skin: '#cf9576', hair: '#2a1c12', arm: 0.052, shades: true });
+  const girl = one({ curl: 0.3, elbow: 0.26, chest: 0.14, wide: 1.15, top: '#1fb5c4', sleeve: '#e6b293', skin: '#e6b293', hair: '#f0cd78', arm: 0.043, long: true, strap: true });
   const sw = P((k) => { k.put(new THREE.TorusGeometry(0.175, 0.022, 8, 24), '#151515', 0, 0, 0, 0, 0, 0, 1, 1, 1, 'trim'); k.box(0.3, 0.03, 0.02, 0, 0, 0, '#202020', 0, 0, 0, 'trim').cyl(0.045, 0.045, 0.03, 12, 0, 0, 0, '#2a2a2e', Math.PI / 2, 0, 'trim'); });
   return {
     driver: { part: driver, seat: [0.4, 0.53, 0.47], neck: 0.685, shoulder: [0.205, 0.56, 0], elbow: 0.27, scale: 0.98 },

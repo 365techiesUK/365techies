@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=49';
+import * as MD from './models3d.js?v=50';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -453,7 +453,25 @@ export function createWorld() {
   const RIM = { value: new THREE.Color(0, 0, 0) }, PLIT = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82, metalness: 0 });   // the two of you: a warm light round your edges, so you stand out from the road and from each other
   PLIT.onBeforeCompile = (sh) => { sh.uniforms.uRim = RIM; sh.fragmentShader = 'uniform vec3 uRim;\n' + sh.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n{ float rf = 1.0 - clamp(dot(normalize(normal), normalize(vViewPosition)), 0.0, 1.0); totalEmissiveRadiance += uRim * rf * rf; }'); };
   PLIT.customProgramCacheKey = () => 'plit';
-  const PM = { lit: PLIT };
+  // their skin (pass 1 of 10 on the two of you, owner 7 Oct: "as lifelike as you can get them"): light wraps softly round it and a warm red shows where
+  // light turns to shadow (skin scatters light under its surface) - in its diffuse light only: wrapped light in the SPECULAR blew up at grazing
+  // angles into blooming white spots. Matte-ish, a little specular, no clearcoat or sheen (their glints at the edges bloomed too)
+  const SKINMAT = new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.6, metalness: 0, specularIntensity: 0.3 });
+  const WRAP_FROM = 'vec3 irradiance = dotNL * directLight.color;', WRAP_DIFF = 'reflectedLight.directDiffuse += irradiance * BRDF_Lambert( material.diffuseContribution );';
+  const WRAP_TO = 'vec3 irradiance = dotNL * directLight.color; float nlS = dot( geometryNormal, directLight.direction );\n\tvec3 irradianceW = ( vec3( saturate( ( nlS + 0.4 ) / 1.4 ) ) + vec3( 0.13, 0.022, 0.0 ) * smoothstep( -0.4, 0.15, nlS ) * ( 1.0 - smoothstep( 0.15, 0.7, nlS ) ) ) * directLight.color;';
+  SKINMAT.onBeforeCompile = (sh) => { sh.uniforms.uRim = RIM;
+    const ch = THREE.ShaderChunk.lights_physical_pars_fragment, i = ch.indexOf('void RE_Direct_Physical(');   // (only in the direct light from the sun and the fill)
+    const body = i < 0 ? ch : ch.slice(0, i) + ch.slice(i).replace(WRAP_FROM, WRAP_TO).replace(WRAP_DIFF, WRAP_DIFF.replace('irradiance *', 'irradianceW *'));
+    sh.fragmentShader = 'uniform vec3 uRim;\n' + sh.fragmentShader.replace('#include <lights_physical_pars_fragment>', body)
+      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n{ float rf = 1.0 - clamp(dot(normalize(normal), normalize(vViewPosition)), 0.0, 1.0); totalEmissiveRadiance += uRim * rf * rf; }'); };
+  SKINMAT.customProgramCacheKey = () => 'skin';
+  // their hair (passes 4-5): cards of fine strands, cut out where there are none, both sides drawn, the same warm rim of light as the rest of them
+  const HAIRMAT = new THREE.MeshStandardMaterial({ map: hairTex(), vertexColors: true, alphaTest: 0.42, side: THREE.DoubleSide, roughness: 0.48, metalness: 0 });
+  HAIRMAT.onBeforeCompile = (sh) => { sh.uniforms.uRim = RIM; sh.fragmentShader = 'uniform vec3 uRim;\n' + sh.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n{ float rf = 1.0 - clamp(abs(dot(normalize(normal), normalize(vViewPosition))), 0.0, 1.0); totalEmissiveRadiance += uRim * rf * rf * 0.6; }'); };
+  HAIRMAT.customProgramCacheKey = () => 'hair';
+  const SATIN = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.36, metalness: 0 });   // (pass 7: her top)
+  SATIN.onBeforeCompile = PLIT.onBeforeCompile; SATIN.customProgramCacheKey = () => 'satin';
+  const PM = { lit: PLIT, skin: SKINMAT, hair: HAIRMAT, satin: SATIN };
   const STARMAT = new THREE.SpriteMaterial({ map: starTex(), transparent: true, depthWrite: false });
   const STUB = new THREE.CylinderGeometry(0.13, 0.13, 0.12, 14);
   CAR.paint.onBeforeCompile = (sh) => { sh.fragmentShader = sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\ngl_FragColor.b = mix(gl_FragColor.b, min(gl_FragColor.b, gl_FragColor.g + 0.05), 0.75);'); };   // a red that stays red: blue light on it reads grey, not magenta
@@ -1287,10 +1305,11 @@ export function createWorld() {
 
   // ---------------------------------------------------------------- the player's car
   const COUPLE = MD.people();
-  function addParts(group, geo, mats) { for (const k in geo) if (geo[k] && (mats[k] || CAR[k])) { const mesh = new THREE.Mesh(geo[k], mats[k] || CAR[k]); mesh.castShadow = k !== 'glow'; group.add(mesh); } }
+  function addParts(group, geo, mats) { for (const k in geo) if (geo[k] && (mats[k] || CAR[k])) { const mesh = new THREE.Mesh(geo[k], mats[k] || CAR[k]); mesh.castShadow = k !== 'glow' && k !== 'hair'; group.add(mesh); } }   // (hair cards would cast solid shadows)
   function personOf(spec) {   // a body with a neck, two shoulders and two elbows that bend, and (hers) a streaming tail of hair
-    const root = new THREE.Group(); root.position.set(spec.seat[0], spec.seat[1], spec.seat[2]); root.scale.setScalar(spec.scale || 1); addParts(root, spec.part.torso, PM);
+    const root = new THREE.Group(); root.position.set(spec.seat[0], spec.seat[1], spec.seat[2]); root.scale.setScalar(spec.scale || 1); const chest = new THREE.Group(); root.add(chest); addParts(chest, spec.part.torso, PM);   // (pass 9: the chest group breathes)
     const neck = new THREE.Group(); neck.position.set(0, spec.neck, 0); neck.scale.setScalar(0.76); root.add(neck); addParts(neck, spec.part.head, PM);
+    let mouth = null; if (spec.part.mouth) { mouth = new THREE.Mesh(spec.part.mouth, SKINMAT); mouth.castShadow = false; mouth.morphTargetInfluences = [0.3, 0, 0]; neck.add(mouth); }   // (pass 3: lips that smile, laugh, pout)
     const arms = [-1, 1].map((sd) => {
       const sh = new THREE.Group(); sh.position.set(sd * spec.shoulder[0], spec.shoulder[1], spec.shoulder[2]); root.add(sh); addParts(sh, spec.part.upper, PM);
       const el = new THREE.Group(); el.position.set(0, -spec.elbow, 0); sh.add(el); const fa = new THREE.Group(); if (sd < 0) fa.scale.x = -1; el.add(fa); addParts(fa, sd < 0 && spec.part.foreL || spec.part.fore, PM);   // (the left forearm mirrored: thumbs outward)
@@ -1298,11 +1317,11 @@ export function createWorld() {
     });
     if (spec.part.arm) {   // the arms: one skin each, shoulder to wrist, whose two "bones" are the shoulder and elbow groups - the elbow bends smoothly (it showed as a ball joint)
       root.updateMatrixWorld(true);
-      arms.forEach((A, i) => { const sd = i ? 1 : -1, g = spec.part.arm.lit.clone(), P = g.attributes.position, n = P.count, si = new Uint16Array(n * 4), sw = new Float32Array(n * 4);
+      arms.forEach((A, i) => { const sd = i ? 1 : -1, g = spec.part.arm.skin.clone(), P = g.attributes.position, n = P.count, si = new Uint16Array(n * 4), sw = new Float32Array(n * 4);
         g.translate(sd * spec.shoulder[0], spec.shoulder[1], spec.shoulder[2]);
         for (let j = 0; j < n; j++) { const y = P.getY(j) - (spec.shoulder[1] - spec.elbow), t = Math.min(1, Math.max(0, (0.04 - y) / 0.08)), u = t * t * (3 - 2 * t); si[j * 4 + 1] = 1; sw[j * 4] = 1 - u; sw[j * 4 + 1] = u; }
         g.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(si, 4)); g.setAttribute('skinWeight', new THREE.Float32BufferAttribute(sw, 4));
-        const m = new THREE.SkinnedMesh(g, PLIT); m.castShadow = true; m.frustumCulled = false; root.add(m); m.bind(new THREE.Skeleton([A.sh, A.el])); });
+        const m = new THREE.SkinnedMesh(g, SKINMAT); m.castShadow = true; m.frustumCulled = false; root.add(m); m.bind(new THREE.Skeleton([A.sh, A.el])); });
     }
     const locks = spec.part.locks ? spec.part.locks.map((L) => { const g = new THREE.Group(); g.position.set(L.at[0], L.at[1], L.at[2]); g.scale.setScalar(L.s); neck.add(g); addParts(g, L.geo, PM); return g; }) : null;
     let hair = null;
@@ -1319,7 +1338,7 @@ export function createWorld() {
     root.userData.home = { p: root.position.clone(), r: root.rotation.clone(), s: root.scale.clone() };
     const halo = new THREE.Group(); halo.position.set(0, 0.47, 0); halo.scale.setScalar(1.25); halo.visible = false; neck.add(halo); root.userData.halo = halo;   // the stars you see after a crash
     for (let i = 0; i < 5; i++) { const s = new THREE.Sprite(STARMAT); const a = i / 5 * Math.PI * 2; s.position.set(Math.cos(a) * 0.34, Math.sin(a * 2) * 0.04, Math.sin(a) * 0.34); s.scale.setScalar(0.32); halo.add(s); }
-    return { root: root, neck: neck, arms: arms, hair: hair, scarf: scarf, locks: locks };
+    return { root: root, neck: neck, arms: arms, hair: hair, scarf: scarf, locks: locks, mouth: mouth, chest: chest };
   }
   const FERRYG = new THREE.Group(); FERRYG.visible = false; scene.add(FERRYG); let ferryKind = '';
   const FERRY_SCENE = {   // [model, x, z (along the way: + ahead of the start), turn, scale] ; deck: the car's height and place on board
@@ -1539,9 +1558,16 @@ export function createWorld() {
     const speaking = W.voiceT != null && W.t - W.voiceT < 80;   // (a pass on the two of you, owner 6 Oct: while she talks she turns to him, nods along, her hand going)
     if (speaking && (her.k === 'idle' || her.k === 'look' || her.k === 'hair')) { tgt[6] = -0.32; tgt[7] = -0.04 + Math.sin(t / 110) * 0.05; tgt[3] = 0.55; tgt[5] = 1.2 + Math.sin(t / 170) * 0.25; }
     for (let i = 0; i < 10; i++) cur[i] = cur[i] == null ? tgt[i] : cur[i] + (tgt[i] - cur[i]) * k;
+    {   // their mouths (pass 3): [smile, open, pout] - she laughs when she cheers, pouts in a sulk, and her mouth moves as she chats; he grins when she's happy, gapes at a crash
+      const MO = { idle: [0.35, 0, 0], cheer: [1, 0.6, 0], wave: [0.95, 0.4, 0], clap: [1, 0.5, 0], sulk: [0, 0, 1], sad: [0, 0, 0.7], ask: [0.55, 0.25, 0], look: [0.4, 0.05, 0], hair: [0.45, 0, 0], hold: [0.6, 0.65, 0], point: [0.6, 0.3, 0] };
+      const q = Math.min(1, dt * 10), mv = (M, g) => { if (!M) return; const mi = M.morphTargetInfluences; for (let j = 0; j < 3; j++) mi[j] += (g[j] - mi[j]) * q; };
+      const hg = (MO[her.k] || MO.idle).slice(); if (speaking && hg[1] < 0.5) { hg[1] = Math.max(hg[1], 0.15 + 0.35 * Math.abs(Math.sin(t / 95) * Math.sin(t / 61))); hg[0] = Math.max(hg[0], 0.45); }
+      if (W.count > 30 && !R.camDrv) { hg[0] = 0.95; hg[1] = Math.max(hg[1], 0.3); }   // (pass 10: on the start line, a big smile for the camera)
+      mv(C.her.mouth, hg); mv(C.drv.mouth, W.count > 30 ? [0.85, 0.12, 0] : W.crash ? [0, 0.9, 0] : her.k === 'cheer' || her.k === 'wave' || her.k === 'clap' ? [1, 0.3, 0] : W.boosting ? [0.7, 0.2, 0] : [0.25, 0, 0]);
+    }
     const H = C.her; H.arms[0].sh.rotation.x = cur[0]; H.arms[0].sh.rotation.z = cur[1]; H.arms[0].el.rotation.x = cur[2];
     H.arms[1].sh.rotation.x = cur[3]; H.arms[1].sh.rotation.z = cur[4]; H.arms[1].el.rotation.x = cur[5];
-    H.neck.rotation.y = cur[6]; H.neck.rotation.x = cur[7]; H.neck.rotation.z = 0.05; H.arms[0].sh.rotation.y = cur[8]; H.arms[1].sh.rotation.y = cur[9];
+    H.neck.rotation.y = cur[6] + Math.sin(t / 1700 + 2) * 0.03; H.neck.rotation.x = cur[7] + Math.sin(t / 1300) * 0.018; H.neck.rotation.z = 0.05; H.arms[0].sh.rotation.y = cur[8]; H.arms[1].sh.rotation.y = cur[9];
     // her hair: hanging down when you're still, streaming out behind at speed, fluttering
     const sp = Math.min(1, W.v / 40);
     { const C = R.couple, sc = C.scarf; sc.visible = !R.flying.length;
@@ -1566,7 +1592,9 @@ export function createWorld() {
     C.wheel.rotation.z = -st * 1.5;
     D.arms[0].sh.rotation.x = 1.12 - st * 0.2; D.arms[0].sh.rotation.z = 0.12; D.arms[0].sh.rotation.y = 0; D.arms[0].el.rotation.x = 0.3;
     D.arms[1].sh.rotation.x = gl ? 0.2 : 1.12 + st * 0.2; D.arms[1].sh.rotation.z = gl ? 2.7 + Math.sin(t / 100) * 0.2 : -0.12; D.arms[1].sh.rotation.y = 0; D.arms[1].el.rotation.x = gl ? 0.4 : 0.3;
-    D.neck.rotation.y = -st * 0.22 + (her.k === 'ask' ? 0.3 : 0) + (speaking && Math.abs(st) < 0.3 ? 0.2 : 0); D.neck.rotation.x = 0.09;   // (a glance across at her while she talks)
+    const mir = (t % 13000) < 750 && Math.abs(st) < 0.2 && !W.crash ? Math.sin(Math.PI * (t % 13000) / 750) : 0;   // (pass 9: now and then a glance up at the mirror)
+    D.neck.rotation.y = -st * 0.22 + (her.k === 'ask' ? 0.3 : 0) + (speaking && Math.abs(st) < 0.3 ? 0.2 : 0) + mir * 0.3 + Math.sin(t / 1900) * 0.025; D.neck.rotation.x = 0.09 - mir * 0.12 + Math.sin(t / 1400 + 1) * 0.015;   // (a glance across at her while she talks)
+    for (const [P2, ph] of [[D, 0], [C.her, 2.1]]) if (P2.chest) { const b = Math.sin(t / 720 + ph); P2.chest.scale.set(1 + 0.004 * b, 1 + 0.003 * b, 1 + 0.009 * b); }   // (breathing)
     // both lean a little into the bends
     if (!R.flying.length) D.root.rotation.z = H.root.rotation.z = -st * Math.min(1, W.v / 50) * 0.22;
     if (!R.flying.length) for (const [P2, ph] of [[D, 0], [H, 1.7]]) { const r = P2.root; r.position.y = r.userData.home.p.y + Math.sin(t / 58 + ph) * 0.004 * Math.min(1, W.v / 30) + (R.land || 0) * -0.03; }   // (riding the road: a gentle bob, a jolt on landing)
@@ -1977,6 +2005,20 @@ function plateTexture() {   // a yellow rear plate: 365 CR
   const t = tex(c, false); return t;
 }
 let FGLOW = null;
+let HAIRTEX = null;
+function hairTex() {   // a lock of hair for the two of you (passes 4-5): fine strands from the root down, thick at the root, thinning to wispy tips, fewer at the
+  // card's edges so no straight side shows; white-grey, so each card's own colour tints it
+  if (HAIRTEX) return HAIRTEX; const W = 128, H = 256, c = canvas(W, H), x = c.getContext('2d'); let sd = 7;
+  const rr = () => { sd = (sd * 16807) % 2147483647; return sd / 2147483647; };
+  for (let i = 0; i < 300; i++) {
+    const x0 = rr() * W, len = H * (0.5 + rr() * 0.5), l = Math.round(165 + rr() * 90), a = 0.55 + rr() * 0.45, wv = (rr() - 0.5) * 7;
+    const g = x.createLinearGradient(0, 0, 0, len); g.addColorStop(0, 'rgba(' + l + ',' + l + ',' + l + ',' + a + ')'); g.addColorStop(0.7, 'rgba(' + l + ',' + l + ',' + l + ',' + (a * 0.9) + ')'); g.addColorStop(1, 'rgba(' + l + ',' + l + ',' + l + ',0)');
+    x.strokeStyle = g; x.lineWidth = 1 + rr() * 2; x.beginPath(); x.moveTo(x0, 0); x.bezierCurveTo(x0 + wv, len * 0.33, x0 - wv, len * 0.66, x0 + wv * 0.5, len); x.stroke();
+  }
+  x.globalCompositeOperation = 'destination-in'; const e = x.createLinearGradient(0, 0, W, 0);
+  e.addColorStop(0, 'rgba(0,0,0,0)'); e.addColorStop(0.16, 'rgba(0,0,0,1)'); e.addColorStop(0.84, 'rgba(0,0,0,1)'); e.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = e; x.fillRect(0, 0, W, H);
+  return (HAIRTEX = tex(c, false));
+}
 let STARTEX = null;
 function starTex() {   // a cartoon star, yellow with a white edge
   if (STARTEX) return STARTEX; const c = canvas(64, 64), x = c.getContext('2d'); x.beginPath();
