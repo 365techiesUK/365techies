@@ -541,6 +541,28 @@ const MODELS = {
     for (let i = 0; i < 20; i++) personLiteY(k, -7.2 + i * 0.76 + (r() - 0.5) * 0.25, 0, -1.2 + (r() - 0.5) * 0.25, r, r() < 0.75);
     for (let i = 0; i < 20; i++) personLiteY(k, -7.0 + i * 0.74 + (r() - 0.5) * 0.25, 0.35, -2.0 + (r() - 0.5) * 0.25, r, r() < 0.7);
   },
+  herofans(k, v) {   // standout fans at the front by the car (owner, 7 Oct: "make the crowd look more human"): a dad with his little girl on his shoulders,
+    // a fan swinging a big flag, one with a giant foam hand - up on a step so they stand out over the rows (facing +Z, the road)
+    const r = rnd(7100 + v * 31);
+    k.box(3.6, 0.3, 1.2, 0, 0, -0.2, '#9a9a96', 0, 0, 0, 'bob');
+    { const kk = new Kit(); personLite(kk, -1.2, 0.3, 0, r, false); for (const key in kk.parts) (k.parts[key] || (k.parts[key] = [])).push(...kk.parts[key]);   // the dad...
+      const kc = new Kit(); personLite(kc, 0, 0, 0, r, true); for (const key in kc.parts) for (const g of kc.parts[key]) { g.scale(0.58, 0.58, 0.58); g.translate(-1.2, 1.62, -0.06); (k.parts[key] || (k.parts[key] = [])).push(g); }   // ...and her on his shoulders
+      for (const sd of [-1, 1]) k.box(0.08, 0.3, 0.08, -1.2 + sd * 0.22, 1.32, 0.04, '#e0b090', 0, 0, sd * -0.25, 'bob'); }   // (his hands up, holding her legs)
+    { const kk = new Kit(); personLite(kk, 0.1, 0.3, 0.05, r, true); for (const key in kk.parts) (k.parts[key] || (k.parts[key] = [])).push(...kk.parts[key]);   // the flag fan
+      k.cyl(0.02, 0.02, 2.6, 6, 0.42, 1.7, 0.05, '#d8d8d4', 0, -0.2, 'wave');
+      const fc = [['#c8102e', '#f4f4f0'], ['#1d4ed8', '#ffd23f'], ['#2a9d8f', '#f4f4f0']][v % 3];
+      for (let q = 0; q < 4; q++) k.box(1.35, 0.22, 0.02, 1.2, 3.42 + q * 0.22, 0.05, fc[q % 2], 0, 0, -0.08 + q * 0.015, 'wave'); }
+    { const kk = new Kit(); personLite(kk, 1.3, 0.3, -0.05, r, true); for (const key in kk.parts) (k.parts[key] || (k.parts[key] = [])).push(...kk.parts[key]);   // the foam hand
+      k.box(0.24, 0.42, 0.08, 1.62, 1.95, -0.05, '#ffd23f', 0, 0, -0.3, 'wave').box(0.08, 0.26, 0.07, 1.74, 2.36, -0.05, '#ffd23f', 0, 0, -0.3, 'wave'); }
+  },
+  crowdfar(k, v) {   // the start's crowd further along: two rows (the third is lost at that distance - and cost the slow computers)
+    const r = rnd(1600 + v * 19);
+    k.box(15, 0.9, 0.12, 0, 0, 0.7, '#e8e4da', 0, 0, 0, 'shiny');
+    for (let i = 0; i < 8; i++) k.box(1.8, 0.3, 0.13, -6.3 + i * 1.8, 0.45, 0.7, i % 2 ? '#1f2f4a' : '#e8e4da');
+    k.box(15.4, 0.35, 1.3, 0, 0, -1.2, '#9a9a96');
+    for (let i = 0; i < 20; i++) personLiteY(k, -7.2 + i * 0.76 + (r() - 0.5) * 0.25, 0, (r() - 0.5) * 0.2, r, r() < 0.8);
+    for (let i = 0; i < 20; i++) personLiteY(k, -7.0 + i * 0.74 + (r() - 0.5) * 0.25, 0.35, -1.1 + (r() - 0.5) * 0.25, r, r() < 0.72);
+  },
   crowdlite(k, v) {   // further along the start: a barrier and three rows of light-built people, cheering, some with flags
     const r = rnd(1500 + v * 17);
     k.box(15, 0.9, 0.12, 0, 0, 0.7, '#e8e4da', 0, 0, 0, 'shiny');
@@ -2203,24 +2225,24 @@ function personLite(k, x, y, z, r, cheer) {   // a light-built one of the crowd 
   // facing +Z (the road); a body, a head with hair or a cap, arms down or up and waving (the 'wave' material), some with a little flag or scarf
   const sh = CROWD[(r() * CROWD.length) | 0], sk = SKIN[(r() * SKIN.length) | 0], h = 0.82 + r() * 0.24, W = y + h, pose = r(), up = cheer && pose < 0.4, one = cheer && !up && pose < 0.6, clap = cheer && pose >= 0.6 && pose < 0.75, phone = cheer && pose >= 0.75 && pose < 0.9, longS = r() < 0.25;   // (round 8: 40% both arms up, 20% one, 15% clapping, 15% a phone held up, the rest arms down)
   const bright = ['#c8102e', '#1d4ed8', '#ffd23f', '#2a9d8f', '#f4f2ec', '#e76f51', '#7b2cbf', '#ff7aa2', '#2b3a55', '#4f6b5a', '#7a3b3b', '#3d4a5c', '#111827'], top = bright[(r() * bright.length) | 0];   // (round 3: no sand or cream tops - on a figure that size they read as bare skin)
-  k.box(0.3, h, 0.2, x, y, z, ['#2d3a55', '#3a3a3a', '#1d4e89', '#d8d2c4'][(r() * 4) | 0], 0, 0, 0, 'lit');   // (the legs, one block: they're behind the front row)
-  k.put(new THREE.CylinderGeometry(0.215, 0.155, 0.6, 4), top, x, W + 0.3, z, 0, Math.PI / 4, 0, 1.15, 1, 0.6);   // (round 6: a tapered box - shoulders, a waist - not an egg)
-  k.put(new THREE.CylinderGeometry(0.1, 0.16, 0.07, 4), top, x, W + 0.635, z, 0, Math.PI / 4, 0, 1.25, 1, 0.6);   // (the slope of the shoulders up to the neck)
-  k.put(new THREE.CylinderGeometry(0.05, 0.055, 0.1, 4, 1, true), sk, x, W + 0.64, z).put(new THREE.SphereGeometry(0.11, 6, 4), sk, x, W + 0.8, z, 0, 0, 0, 1, 1.15, 1, 'lit');
+  k.box(0.3, h, 0.2, x, y, z, ['#2d3a55', '#3a3a3a', '#1d4e89', '#d8d2c4'][(r() * 4) | 0], 0, 0, 0, 'bob');   // (the legs, one block: they're behind the front row)
+  k.put(new THREE.CylinderGeometry(0.215, 0.155, 0.6, 4), top, x, W + 0.3, z, 0, Math.PI / 4, 0, 1.15, 1, 0.6, 'bob');   // (round 6: a tapered box - shoulders, a waist - not an egg)
+  k.put(new THREE.CylinderGeometry(0.1, 0.16, 0.07, 4), top, x, W + 0.635, z, 0, Math.PI / 4, 0, 1.25, 1, 0.6, 'bob');   // (the slope of the shoulders up to the neck)
+  k.put(new THREE.CylinderGeometry(0.056, 0.064, 0.1, 5, 1, true), sk, x, W + 0.64, z, 0, 0, 0, 1, 1, 1, 'bob').put(new THREE.SphereGeometry(0.11, 7, 5), sk, x, W + 0.8, z, 0, 0, 0, 0.94, 1.17, 1.02, 'bob').box(0.026, 0.04, 0.03, x, W + 0.775, z + 0.108, sk, 0, 0, 0, 'bob');   // (round 9: a rounder head, a nose, a sturdier neck)
   const hr = r();
-  if (hr < 0.16) k.put(new THREE.SphereGeometry(0.122, 6, 2, 0, Math.PI * 2, 0, Math.PI / 2), ['#1d3557', '#c1121f', '#f4f2ec', '#2a2a2a'][(r() * 4) | 0], x, W + 0.85, z, 0, 0, 0, 1, 0.75, 1.05);   // a cap
-  else if (hr < 0.92) { const hc = ['#2a1c12', '#c89a4a', '#6b3a1e', '#111111', '#8a8a86', '#d8b878'][(r() * 6) | 0]; k.put(new THREE.SphereGeometry(0.12, 6, 3, 0, Math.PI * 2, 0, Math.PI * 0.5), hc, x, W + 0.81, z - 0.012, -0.38, 0, 0, 1.03, 1.05, 1.06);   // (round 3: tipped back - down to the forehead in front, lower behind: it read as a dark band across their eyes)
-    if (r() < 0.4) k.box(0.2, 0.26, 0.06, x, W + 0.58, z - 0.1, hc, 0, 0, 0, 'lit'); }   // hair; long hair down the back
-  if (r() < 0.3) k.box(0.16, 0.03, 0.025, x, W + 0.82, z + 0.105, '#111316', 0, 0, 0, 'lit');   // sunglasses
-  else for (const sd of [-1, 1]) k.box(0.022, 0.018, 0.012, x + sd * 0.038, W + 0.82, z + 0.104, '#2a1c16', 0, 0, 0, 'lit');   // or eyes
+  if (hr < 0.16) k.put(new THREE.SphereGeometry(0.122, 6, 2, 0, Math.PI * 2, 0, Math.PI / 2), ['#1d3557', '#c1121f', '#f4f2ec', '#2a2a2a'][(r() * 4) | 0], x, W + 0.85, z, 0, 0, 0, 1, 0.75, 1.05, 'bob');   // a cap
+  else if (hr < 0.92) { const hc = ['#2a1c12', '#c89a4a', '#6b3a1e', '#111111', '#8a8a86', '#d8b878'][(r() * 6) | 0]; k.put(new THREE.SphereGeometry(0.12, 6, 3, 0, Math.PI * 2, 0, Math.PI * 0.5), hc, x, W + 0.81, z - 0.012, -0.38, 0, 0, 1.03, 1.05, 1.06, 'bob');   // (round 3: tipped back - down to the forehead in front, lower behind: it read as a dark band across their eyes)
+    if (r() < 0.4) k.box(0.2, 0.26, 0.06, x, W + 0.58, z - 0.1, hc, 0, 0, 0, 'bob'); }   // hair; long hair down the back
+  if (r() < 0.3) k.box(0.16, 0.03, 0.025, x, W + 0.82, z + 0.105, '#111316', 0, 0, 0, 'bob');   // sunglasses
+  else for (const sd of [-1, 1]) k.box(0.022, 0.018, 0.012, x + sd * 0.038, W + 0.82, z + 0.104, '#2a1c16', 0, 0, 0, 'bob');   // or eyes
   for (const sd of [-1, 1]) {
     if (up || (one && sd > 0)) { const ac = sd > 0 && r() < 0.3 ? top : sk, ea = 0.55 + r() * 0.35, ex = x + sd * (0.19 + 0.28 * Math.sin(ea)), ey = W + 0.53 + 0.28 * Math.cos(ea);
       k.box(0.085, 0.29, 0.085, x + sd * (0.19 + 0.14 * Math.sin(ea)), W + 0.53 + 0.14 * Math.cos(ea) - 0.145, z, ac, 0, 0, -sd * ea, 'wave').cyl(0.037, 0.034, 0.27, 6, ex - sd * 0.03, ey - 0.02, z, sk, 0, sd * 0.22, 'wave').box(0.075, 0.1, 0.045, ex - sd * 0.06, ey + 0.26, z, sk, 0, 0, sd * 0.22, 'wave');   // (upper arm out, forearm up, the mitten of a hand)
       if (sd > 0 && r() < 0.22) k.cyl(0.012, 0.012, 0.55, 4, x + 0.38, W + 1.0, z, '#d8d8d4', 0, 0, 'wave').box(0.36, 0.24, 0.015, x + 0.57, W + 1.38, z, bright[(r() * bright.length) | 0], 0, 0, 0, 'wave'); }   // a little flag
-    else if (clap || (phone && sd > 0)) { k.cyl(0.046, 0.046, 0.27, 6, x + sd * 0.24, W + 0.3, z, top, 0, sd * 0.1, 'lit');   // clapping, or a phone held up
+    else if (clap || (phone && sd > 0)) { k.cyl(0.046, 0.046, 0.27, 6, x + sd * 0.24, W + 0.3, z, top, 0, sd * 0.1, 'bob');   // clapping, or a phone held up
       if (clap) k.cyl(0.04, 0.036, 0.25, 6, x + sd * 0.171, W + 0.244, z + 0.077, sk, 0.84, sd * 0.587, 'wave').box(0.06, 0.09, 0.04, x + sd * 0.1, W + 0.4, z + 0.16, sk, 0, 0, -sd * 0.5, 'wave');   // (round 8: from the elbow in to the hands)
-      else { k.cyl(0.04, 0.036, 0.27, 6, x + 0.204, W + 0.266, z + 0.081, sk, 0.676, 0.273, 'lit').box(0.06, 0.08, 0.045, x + 0.167, W + 0.47, z + 0.162, sk, 0, 0.6, 0, 'lit').box(0.07, 0.12, 0.012, x + 0.167, W + 0.52, z + 0.19, '#16181c', 0, 0.3, 0, 'lit'); } }
-    else { const sl = longS ? top : sk; k.cyl(0.046, 0.046, 0.27, 6, x + sd * 0.24, W + 0.3, z, top, 0, sd * 0.1, 'lit').cyl(0.039, 0.035, 0.25, 6, x + sd * 0.265, W + 0.06, z + 0.01, sl, 0, sd * 0.06, 'lit').box(0.07, 0.1, 0.045, x + sd * 0.272, W - 0.03, z + 0.012, sk, 0, 0, 0, 'lit'); }   // (round 6-8: sleeve, forearm, hand - round arms)
+      else { k.cyl(0.04, 0.036, 0.27, 6, x + 0.204, W + 0.266, z + 0.081, sk, 0.676, 0.273, 'bob').box(0.06, 0.08, 0.045, x + 0.167, W + 0.47, z + 0.162, sk, 0, 0.6, 0, 'bob').box(0.07, 0.12, 0.012, x + 0.167, W + 0.52, z + 0.19, '#16181c', 0, 0.3, 0, 'bob'); } }
+    else { const sl = longS ? top : sk; k.cyl(0.046, 0.046, 0.27, 6, x + sd * 0.24, W + 0.3, z, top, 0, sd * 0.1, 'bob').cyl(0.039, 0.035, 0.25, 6, x + sd * 0.265, W + 0.06, z + 0.01, sl, 0, sd * 0.06, 'bob').box(0.07, 0.1, 0.045, x + sd * 0.272, W - 0.03, z + 0.012, sk, 0, 0, 0, 'bob'); }   // (round 6-8: sleeve, forearm, hand - round arms)
   }
 }
 function personTurned(k, x, y, z, r, cheer) {   // one of the crowd facing +Z - the road's side wherever a model's +Z is turned to the road (owner, 7 Oct: "make the crowd face the race":
@@ -3495,16 +3517,17 @@ export function people() {
     head: P((k) => faceOf(k, o)), mouth: mouthOf(o), eye: eyesOf(o), brows: browsOf(o),
     upper: P((k) => {
       if (o.short) {   // a short shirt sleeve
-        k.put(new THREE.CylinderGeometry(o.arm * 1.14, o.arm * 1.08, 0.2, 24, 1, false), o.sleeve, 0, -0.04, 0, 0, 0, 0, 1, 1, 1, 'lit');   // (round 8: no flare, closed, its top well inside the shirt)   // (round 6: narrower, its top sunk deeper into the shirt)
+        k.put(new THREE.CylinderGeometry(o.arm * 1.14, o.arm * 1.08, 0.165, 24, 1, false), o.sleeve, 0, -0.07, 0, 0, 0, 0, 1, 1, 1, 'lit');   /* (one piece with the arm: its top no higher than his shoulder) */   // (round 8: no flare, closed, its top well inside the shirt)   // (round 6: narrower, its top sunk deeper into the shirt)
         tint(k, (x, y, z, c) => { const f = 1 - 0.12 * Math.max(0, Math.min(1, (z + 0.02) / 0.06)) - 0.05 * Math.max(0, Math.min(1, (-0.12 - y) / 0.08)); c[0] *= f; c[1] *= f * 1.01; c[2] *= f * 1.05; });   // (shade on the sleeve's back and towards its hem: the same sleeve serves both arms)
         // (no cap: the sleeve starts inside the torso)   // its top rounded off, flush with the tube
         k.put(new THREE.TorusGeometry(o.arm * 1.08, 0.003, 4, 24), '#cfccc4', 0, -0.139, 0, Math.PI / 2, 0, 0, 1, 1, 1, 'lit');
       }
     }),
+    get sleeve() { return o.short ? this.upper : null; },   // (his sleeves: world3d skins them with the arm)
     fore: fore(o), foreL: fore(o, o.short ? 'watch' : 'bangle'),   // (the left one wears his watch, her bangle)
     arm: P((k) => {   // the arm, shoulder to wrist, as ONE skin that bends at the elbow (owner, 7 Oct: "fix her elbows" - it was an upper arm, a ball and a forearm, and the joint showed);
       // world3d skins it to the shoulder and elbow groups. Shoulder, a curve of muscle, the elbow (rings close together, for a smooth bend), the forearm tapering to the wrist
-      const a = o.arm, E = o.elbow, pts = [[0, 0.03], [a * 0.75, 0.022], [a * 1.02, 0], [a * 1.1, -0.05], [a * 1.0, -0.14], [a * 0.92, -0.2], [a * 0.88, -E + 0.04], [a * 0.86, -E + 0.02], [a * 0.86, -E], [a * 0.88, -E - 0.02], [a * 0.92, -E - 0.04], [a * 0.88, -E - 0.08], [a * 0.8, -E - 0.14], [a * 0.68, -E - 0.2], [a * 0.58, -E - 0.25], [a * 0.5, -E - 0.274], [a * 0.25, -E - 0.281], [0, -E - 0.284]];
+      const a = o.arm, E = o.elbow, cap = o.short ? 0.4 : 1, pts = [[0, 0.05 * cap], [a * 0.62, 0.046 * cap], [a * 0.98, 0.03 * cap], [a * 1.14, 0.006 * cap], [a * 1.14, -0.02], [a * 1.1, -0.05],   /* (the arms in one piece with the shoulder: a fuller cap, anchored to the body in world3d) */ [a * 1.0, -0.14], [a * 0.92, -0.2], [a * 0.88, -E + 0.04], [a * 0.86, -E + 0.02], [a * 0.86, -E], [a * 0.88, -E - 0.02], [a * 0.92, -E - 0.04], [a * 0.88, -E - 0.08], [a * 0.8, -E - 0.14], [a * 0.68, -E - 0.2], [a * 0.58, -E - 0.25], [a * 0.5, -E - 0.274], [a * 0.25, -E - 0.281], [0, -E - 0.284]];
       k.put(new THREE.LatheGeometry(pts.reverse().map(v2), 14), o.skin, 0, 0, 0, 0, 0, 0, 1, 1, 0.9, 'skin');
     }),
     locks: o.long ? (() => {   // her locks of hair, each built round its root so it can swing back in the wind

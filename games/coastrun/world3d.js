@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=56';
+import * as MD from './models3d.js?v=57';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -408,7 +408,7 @@ export function createWorld() {
     shiny: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.26, metalness: 0.2 }),
     glow: new THREE.MeshBasicMaterial({ vertexColors: true, color: new THREE.Color(2.4, 2.4, 2.4) }),
     leaf: leafy(tex(MD.paintLeaves())), frond: leafy(tex(MD.paintFrond())), grass: leafy(tex(MD.paintGrass())),
-    wave: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82 }),
+    wave: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82 }), bob: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82 }),
     troof: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.9, emissive: '#3a3026' }),
     eyes: new THREE.MeshBasicMaterial({ vertexColors: true, color: new THREE.Color(0.7, 0.7, 0.66) }),
     twall: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82, emissive: '#ffe2bc', emissiveIntensity: 0.38 }),
@@ -451,7 +451,9 @@ export function createWorld() {
     for (let i = 0; i < P2.count; i++) { const y = P2.getY(i), x = P2.getX(i), f = 0.88 + 0.16 * Math.sin(x * 0.37 + y * 0.6); C3.setXYZ(i, C3.getX(i) * f, C3.getY(i) * f * (y < 1 ? 0.92 : 1), C3.getZ(i) * f); }
   });
   const WAVE_T = { value: 0 };   // the crowd's raised arms bob up and down, each at its own beat (by where it is)
-  MAT.wave.onBeforeCompile = (sh) => { sh.uniforms.uT = WAVE_T; sh.vertexShader = 'uniform float uT;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\ntransformed.y += sin(uT * 9.0 + position.x * 1.7 + position.z * 1.3) * 0.16;'); };
+  MAT.wave.onBeforeCompile = (sh) => { sh.uniforms.uT = WAVE_T; sh.vertexShader = 'uniform float uT;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\ntransformed.y += sin(uT * 9.0 + position.x * 1.7 + position.z * 1.3) * 0.16 + max(0.0, sin(uT * 6.3 + position.x * 0.9 + position.z * 1.1)) * 0.07;'); };
+  MAT.bob.onBeforeCompile = (sh) => { sh.uniforms.uT = WAVE_T; sh.vertexShader = 'uniform float uT;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\ntransformed.y += max(0.0, sin(uT * 6.3 + position.x * 0.9 + position.z * 1.1)) * 0.07;'); };   // (the start's crowd bouncing on its toes, each at its own beat)
+  MAT.bob.customProgramCacheKey = () => 'bob';
   MAT.wave.customProgramCacheKey = () => 'wave';
   const CAR = {
     paint: new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.36, metalness: 0.3, clearcoat: 1, clearcoatRoughness: 0.07, envMapIntensity: 1.25 }),
@@ -1162,8 +1164,8 @@ export function createWorld() {
         poses(W, Math.min(E.lastIndex(W), i + 8));
         for (const d of [-1, 1]) {
           if (g.sea === d && g.sh < 20) continue;
-          const START = it.v === 0, CR = START ? [[-14, 'crowdlite', 12.6], [1, 'crowdlite', 12.6], [16, 'crowdlite', 12.6],
-            [31, 'crowdlite', 12.6], [46, 'crowdlite', 12.6], [61, 'crowdlite', 12.6], [76, 'crowdlite', 12.6], [91, 'crowdlite', 12.6], [112, 'crowdlite', 12.6], [140, 'crowdlite', 13.4], [-23, 'flags', 11.8], [24, 'flags', 11.8], [54, 'flags', 11.8], [99, 'flags', 11.8]]   // (owner, 7 Oct: "lots of people at the start, like on OutRun": three deep from beside the car to past the arch)
+          const START = it.v === 0, CR = START ? [[-14, 'crowdlite', 12.6], [1, 'crowdlite', 12.6], [16, 'crowdlite', 12.6], [-9, 'herofans', 12.2], [7, 'herofans', 12.2],
+            [31, 'crowdlite', 12.6], [46, 'crowdfar', 12.6], [61, 'crowdfar', 12.6], [76, 'crowdfar', 12.6], [91, 'crowdfar', 12.6], [112, 'crowdfar', 12.6], [140, 'crowdfar', 13.4], [-23, 'flags', 11.8], [24, 'flags', 11.8], [54, 'flags', 11.8], [99, 'flags', 11.8]]   // (owner, 7 Oct: "lots of people at the start, like on OutRun": three deep from beside the car to past the arch)
             : [[-7, 'crowd', 12.6], [9, 'crowd', 12.6], [-22, 'flags', 11.8], [24, 'flags', 11.8]];
           if (START && d < 0) { const s = i * SEG - 6, si = E.segIndex(s); if (si >= W.base) { place(W, s, -(HALF - 2.4), 0, P2); const sy = groundAt(W, E.segAt(W, si), P2, -(HALF - 2.4)) + 0.5, sr = faceRoad(-1, P2.th); addAll(MD.model('starter', 0), P2.x, sy, P2.z, sr);
             const st = new THREE.Group(), arm = new THREE.Group(), fm = MD.model('starterflag', 0); st.position.set(P2.x, sy, P2.z); st.rotation.y = sr; arm.position.set(0.2, 1.98, 0); st.add(arm);   /* (st sits 0.5 up: the box) */
@@ -1374,17 +1376,23 @@ export function createWorld() {
     const brows = spec.part.brows ? spec.part.brows.map((B) => { const g = new THREE.Group(); g.position.set(B.at[0], B.at[1], B.at[2]); g.userData.y0 = B.at[1]; g.userData.sd = B.sd; neck.add(g); addParts(g, B.geo, PM); return g; }) : null;   // (their brows, to lift and knit)
     let mouth = null; if (spec.part.mouth) { mouth = new THREE.Mesh(spec.part.mouth, SKINMAT); mouth.castShadow = false; mouth.morphTargetInfluences = [0.3, 0, 0]; neck.add(mouth); }   // (pass 3: lips that smile, laugh, pout)
     const arms = [-1, 1].map((sd) => {
-      const sh = new THREE.Group(); sh.position.set(sd * spec.shoulder[0], spec.shoulder[1], spec.shoulder[2]); root.add(sh); addParts(sh, spec.part.upper, PM);
+      const sh = new THREE.Group(); sh.position.set(sd * spec.shoulder[0], spec.shoulder[1], spec.shoulder[2]); root.add(sh); if (!spec.part.sleeve) addParts(sh, spec.part.upper, PM);
       const el = new THREE.Group(); el.position.set(0, -spec.elbow, 0); sh.add(el); const fa = new THREE.Group(); if (sd < 0) fa.scale.x = -1; el.add(fa); addParts(fa, sd < 0 && spec.part.foreL || spec.part.fore, PM);   // (the left forearm mirrored: thumbs outward)
       sh.rotation.order = 'YXZ'; return { sh: sh, el: el };   // out to the side, then forward, then turned
     });
     if (spec.part.arm) {   // the arms: one skin each, shoulder to wrist, whose two "bones" are the shoulder and elbow groups - the elbow bends smoothly (it showed as a ball joint)
       root.updateMatrixWorld(true);
-      arms.forEach((A, i) => { const sd = i ? 1 : -1, g = spec.part.arm.skin.clone(), P = g.attributes.position, n = P.count, si = new Uint16Array(n * 4), sw = new Float32Array(n * 4);
+      const skin3 = (g0, A, sd, mat, anc) => {   // a part skinned to [the body at the shoulder, the shoulder, the elbow]
+        const g = g0.clone(), P = g.attributes.position, n = P.count, si = new Uint16Array(n * 4), sw = new Float32Array(n * 4);
         g.translate(sd * spec.shoulder[0], spec.shoulder[1], spec.shoulder[2]);
-        for (let j = 0; j < n; j++) { const y = P.getY(j) - (spec.shoulder[1] - spec.elbow), t = Math.min(1, Math.max(0, (0.04 - y) / 0.08)), u = t * t * (3 - 2 * t); si[j * 4 + 1] = 1; sw[j * 4] = 1 - u; sw[j * 4 + 1] = u; }
+        for (let j = 0; j < n; j++) { const yv = P.getY(j), y = yv - (spec.shoulder[1] - spec.elbow), t = Math.min(1, Math.max(0, (0.04 - y) / 0.08)), u = t * t * (3 - 2 * t);
+          const ta = Math.min(1, Math.max(0, (yv - spec.shoulder[1] + 0.035) / 0.075)), ua = ta * ta * (3 - 2 * ta) * 0.72;   // (the top of the arm stays with the body)
+          si[j * 4] = 0; si[j * 4 + 1] = 1; si[j * 4 + 2] = 2; sw[j * 4] = ua * (1 - u); sw[j * 4 + 1] = (1 - ua) * (1 - u); sw[j * 4 + 2] = u; }
         g.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(si, 4)); g.setAttribute('skinWeight', new THREE.Float32BufferAttribute(sw, 4));
-        const m = new THREE.SkinnedMesh(g, SKINMAT); m.castShadow = true; m.frustumCulled = false; root.add(m); m.bind(new THREE.Skeleton([A.sh, A.el])); });
+        const m = new THREE.SkinnedMesh(g, mat); m.castShadow = true; m.frustumCulled = false; root.add(m); m.bind(new THREE.Skeleton([anc, A.sh, A.el])); return m; };
+      arms.forEach((A, i) => { const sd = i ? 1 : -1, anc = new THREE.Group(); anc.position.set(sd * spec.shoulder[0], spec.shoulder[1], spec.shoulder[2]); root.add(anc); anc.updateMatrixWorld(true); A.anc = anc;
+        skin3(spec.part.arm.skin, A, sd, SKINMAT, anc);
+        if (spec.part.sleeve) for (const key in spec.part.sleeve) if (spec.part.sleeve[key] && PM[key]) skin3(spec.part.sleeve[key], A, sd, PM[key], anc); });   // (his shirt sleeves the same way: out of the shirt, not a tube on it)
     }
     const locks = spec.part.locks ? spec.part.locks.map((L) => { const g = new THREE.Group(); g.position.set(L.at[0], L.at[1], L.at[2]); g.scale.setScalar(L.s); neck.add(g); addParts(g, L.geo, PM); return g; }) : null;
     let hair = null;
@@ -1629,7 +1637,7 @@ export function createWorld() {
     if (her.k === 'clap') { const c = Math.sin(t / 65); tgt[1] += c * 0.3; tgt[4] -= c * 0.3; }
     if (her.k === 'hair') tgt[2] += Math.sin(t / 260) * 0.12;
     if (her.k === 'hold') tgt[7] -= Math.min(0.15, W.v / 600);
-    if (W.count > 75 && her.k === 'idle' && !R.camDrv) { tgt = [0.2, -2.5 - Math.sin(t / 90) * 0.42, 0.6, 0.55, -0.12, 1.05, 0.05, -0.08, 0, 0]; }   // the lights: she waves at you (the camera's in front), the outside hand
+    /* (the lights: the countdown scene at the end of animateCouple poses the two of you now) */
     const speaking = W.voiceT != null && W.t - W.voiceT < 80;   // (a pass on the two of you, owner 6 Oct: while she talks she turns to him, nods along, her hand going)
     if (speaking && (her.k === 'idle' || her.k === 'look' || her.k === 'hair')) { tgt[6] = -0.32; tgt[7] = -0.04 + Math.sin(t / 110) * 0.05; tgt[3] = 0.55; tgt[5] = 1.2 + Math.sin(t / 170) * 0.25; }
     if (her.k === 'idle' && !speaking && W.count <= 0 && W.v > 30 && !W.crash) { const ph = (t / 1000) % 18; if (ph > 11.5 && ph < 17) { const w = Math.sin(t / 230) * 0.13; tgt = POSES.idle.slice(); tgt[0] = 0.28; tgt[1] = -1.3 + w; tgt[2] = 0.32 + w * 0.8; tgt[8] = 0.12; tgt[6] = 0.38; tgt[7] = -0.05; } }   // (round 7: now and then at speed her outside hand out over the door, riding the wind - OutRun 2's girl)
@@ -1696,6 +1704,44 @@ export function createWorld() {
       D.neck.rotation.z = -0.6 * R.lean * 1.3; H.neck.rotation.z = 0.09 - 0.6 * R.lean;
     }
     if (!R.flying.length) for (const [P2, ph] of [[D, 0], [H, 1.7]]) { const r = P2.root; r.position.y = r.userData.home.p.y + Math.sin(t / 58 + ph) * 0.004 * Math.min(1, W.v / 30) + (R.land || 0) * -0.03; }   // (riding the road: a gentle bob, a jolt on landing)
+    if (!R.flying.length && !R.camDrv) sceneCouple(W, t, D, H);
+  }
+  // ---- the lights and the goal as little scenes (owner, 7 Oct: "turn the countdown and goal moments into short scenes"): while the
+  // camera is close on the two of you. The lights - she rests a hand on his shoulder and they look at each other, he nods; they turn to
+  // the camera, she waves, he lifts a hand; they get ready (she holds on, he leans to the wheel) for GO. The goal - they celebrate,
+  // high-five across the car, then lean together, her arm round him (a kiss on his cheek for an S or an A)
+  function sceneCouple(W, t, D, H) {
+    const sm = (x) => { x = Math.min(1, Math.max(0, x)); return x * x * (3 - 2 * x); };
+    const win = (v, a0, a1, b0, b1) => sm((v - a0) / (a1 - a0)) * (1 - sm((v - b0) / (b1 - b0)));   // up from a0 to a1, down from b0 to b1 (either direction)
+    const L = (a, b, k) => a + (b - a) * k;
+    const arm = (A, k, x, z, e, y) => { if (k <= 0) return; A.sh.rotation.x = L(A.sh.rotation.x, x, k); A.sh.rotation.z = L(A.sh.rotation.z, z, k); A.el.rotation.x = L(A.el.rotation.x, e, k); if (y != null) A.sh.rotation.y = L(A.sh.rotation.y, y, k); };
+    if (W.count > 0) {
+      const c = W.count;
+      const kA = win(c, 200, 190, 150, 138);   // her hand on his shoulder, a look between them, his nod
+      arm(H.arms[1], kA, 0.5, 1.12, 1.0, -0.2);
+      H.neck.rotation.y = L(H.neck.rotation.y, -0.58, kA); H.neck.rotation.x = L(H.neck.rotation.x, -0.03, kA);
+      D.neck.rotation.y = L(D.neck.rotation.y, 0.45, kA); D.neck.rotation.x += Math.sin(t / 130) * 0.08 * kA;
+      const kB = win(c, 146, 134, 88, 76);   // to the camera: she waves, he lifts a hand off the wheel
+      arm(H.arms[0], kB, 0.2, -2.5 - Math.sin(t / 90) * 0.42, 0.6);
+      arm(D.arms[0], kB, 1.3, 0.62 + Math.sin(t / 110) * 0.16, 1.15);
+      H.neck.rotation.y = L(H.neck.rotation.y, 0.12, kB); D.neck.rotation.y = L(D.neck.rotation.y, 0.05, kB);
+      const kC = win(c, 82, 70, 2, -6);   // ready: she holds on, he leans to the wheel, both eyes ahead
+      arm(H.arms[0], kC, 0.95, 0.15, 0.35); arm(H.arms[1], kC, 0.95, -0.15, 0.35);
+      H.neck.rotation.y = L(H.neck.rotation.y, 0, kC); D.neck.rotation.y = L(D.neck.rotation.y, 0, kC);
+      D.root.rotation.x = L(D.root.rotation.x, D.root.userData.home.r.x - 0.07, kC);
+      return;
+    }
+    const G = W.goalSeq; if (!G) return;
+    const g = G.t, good = G.rank === 'S' || G.rank === 'A' || G.rank === 'B', best = G.rank === 'S' || G.rank === 'A';
+    if (!good) return;   // (a C or a D: she sulks or looks away, as the mood has her)
+    const kH = win(g, 132, 148, 202, 218), cl = Math.sin(Math.PI * Math.min(1, Math.max(0, (g - 150) / 50)));   // the high-five across the car
+    arm(H.arms[1], kH, 0.38, 2.2 + 0.32 * cl, 0.4); arm(D.arms[1 - 1], kH, 0.38, -(2.2 + 0.32 * cl), 0.4);
+    H.neck.rotation.y = L(H.neck.rotation.y, -0.45, kH); D.neck.rotation.y = L(D.neck.rotation.y, 0.4, kH);
+    const kL = win(g, 222, 246, 385, 405), kiss = best ? win(g, 275, 292, 322, 338) : 0;   // leaning together, her arm round him
+    H.root.rotation.z += -0.13 * kL - 0.06 * kiss; D.root.rotation.z += 0.1 * kL;
+    arm(H.arms[1], kL, 0.32, 1.42, 0.62, -0.25);
+    H.neck.rotation.y = L(H.neck.rotation.y, -0.55 - 0.22 * kiss, kL); H.neck.rotation.z = L(H.neck.rotation.z, -0.16, kL);
+    D.neck.rotation.y = L(D.neck.rotation.y, 0.34, kL); D.neck.rotation.z = L(D.neck.rotation.z, 0.1, kL);
   }
 
   // ---------------------------------------------------------------- one picture
