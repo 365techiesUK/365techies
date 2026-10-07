@@ -1733,6 +1733,14 @@ export function createWorld() {
       V6.set(-0.02, 1.06 + 0.34 * a, 0.5); player.localToWorld(V6); V6.lerp(V4, e);   // (from a little above, aimed at their chests: their faces between the lights and the radio panel)
       camera.position.lerpVectors(V5, camera.position, e); camera.up.set(0, 1, 0); camera.lookAt(V6);
     }
+    if (W.goalSeq && !R.debugCam && !W.ferry && !cr && !R.camDrv) {   // the goal (audit, 7 Oct: the payoff was wiped in a second): the camera swings round from behind to in
+      // front of the two of you celebrating - the fireworks behind - holds there while the card is up, and swings back for the next round
+      const gt = W.goalSeq.t, ss = (a, b, x) => { const u = Math.min(1, Math.max(0, (x - a) / (b - a))); return u * u * (3 - 2 * u); };
+      const k = ss(25, 130, gt) * (1 - ss(400, 478, gt)), ph = (1 - k) * Math.PI, d = 3.1 + 2.6 * (1 - k), w = ss(0, 0.25, k);
+      player.updateMatrixWorld(); V5.set(-Math.sin(ph) * d * 0.95 + 0.9 * k, 1.75 + 0.55 * (1 - k) + 0.2 * Math.sin(gt / 140), -Math.cos(ph) * d); player.localToWorld(V5);
+      V6.set(1.9 * k - 0.05, 1.12 + 0.28 * (1 - k), 0.45); player.localToWorld(V6);   // (in front: the two of you framed right of centre, the results card on the left) V6.lerp(V4, 1 - w);
+      camera.position.lerpVectors(camera.position, V5, w); camera.up.set(0, 1, 0); camera.lookAt(V6);
+    }
     if (W.ferry) {   // aboard: the camera swings slowly round from behind to the side, the far shore coming up ahead
       const S = FERRY_SCENE[W.ferry.k], p = Math.min(1, W.ferry.t / W.ferry.dur), a = roadTh + S.cam[2] + (S.cam[3] - S.cam[2]) * (p * p * (3 - 2 * p)), dd = S.cam[0] * (1 - p * 0.15);
       camera.position.set(cx + Math.sin(a) * dd, cy + S.cam[1] * (1 + p * 0.3), cz - Math.cos(a) * dd); camera.up.set(0, 1, 0); camera.lookAt(cx + Math.sin(roadTh) * 5, cy + 1.4, cz - Math.cos(roadTh) * 5);

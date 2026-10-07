@@ -846,7 +846,7 @@
     }
     for (i = 0; i < W.field.length; i++) if (W.field[i].p > W.s) ahead++;
     var pos = ahead + 1;
-    if (pos !== W.pos && W.count <= 0) {
+    if (pos !== W.pos && W.count <= 0 && !W.goalSeq) {
       if (pos < W.pos) {
         var best = pos < (W.bestPos || 99); if (best && !W.crash) { W.score += 2000 * ((W.bestPos || W.pos) - pos); W.events.push({ sfx: 'overtake', x: 0 }); W.bestPos = pos; }
         if (best || W.t - W.posT > 90) { pop(W, pos === 1 ? 'INTO THE LEAD!' : 'UP TO P' + pos, best ? '+' + (2000 * 1).toLocaleString('en-GB') : '', 0, 'gold'); W.posT = W.t; }
@@ -1059,15 +1059,19 @@
     W.legT0 = W.t; W.legHearts = 0;
   }
   function gate(W, g) {
+    var saved = W.timeUp && !W.over;   // (out of time, rolled over the line)
+    if (saved) { W.timeUp = false; W.overT = 0; W.tuCoast = false; W.score += 10000; mood(W, 'cheer'); }
     if (g.kind === 'check' || g.kind === 'round') {
       var S = STAGES[g.st], add = Math.round(S.t * W.D.time * Math.max(0.8, Math.pow(0.95, W.round - 1)));
       if (g.kind === 'check') endLeg(W);
       W.stageNo++; W.stage = g.st; W.reqNext = Math.max(W.reqNext, W.t + 60 * 5);
       if (g.kind === 'round') {
-        W.route = [g.st]; W.legs = []; W.legT0 = W.t; W.legHearts = 0; W.runHearts = 0; W.runAsked = 0; W.result = null; rebunch(W); W.bestPos = 99;
+        W.route = [g.st]; W.legs = []; W.legT0 = W.t; W.legHearts = 0; W.runHearts = 0; W.runAsked = 0;
+        if (W.goalSeq) { W.roundPending = g.st; return; }   // (the goal's moment isn't over: the rest when it is - goalEnd)
+        W.result = null; rebunch(W); W.bestPos = 99;
         bannerOf(W, 'ROUND ' + W.round, RUNS[STAGES[g.st].run].banner + ' - busier and quicker', 'stage'); W.events.push({ say: 'Round ' + W.round }); W.sayLater = { id: 'at-' + STAGES[g.st].key, t: W.t + 150 };
       } else {
-        W.time += add; bannerOf(W, 'CHECKPOINT', 'EXTENDED TIME +' + add + ' SEC', 'check'); W.events.push({ sfx: 'check' }); W.events.push({ say: 'Checkpoint: ' + add + ' more seconds' });
+        W.time += add; bannerOf(W, saved ? 'JUST MADE IT!' : 'CHECKPOINT', 'EXTENDED TIME +' + add + ' SEC' + (saved ? '  ·  +10,000' : ''), saved ? 'gold' : 'check'); W.events.push({ sfx: 'check' }); W.events.push({ say: 'Checkpoint: ' + add + ' more seconds' });
         W.sayLater = { id: 'at-' + STAGES[g.st].key, t: W.t + 140 };   // (then she names the place)
         mood(W, 'cheer'); voice(W, 'check', true);
       }
@@ -1077,15 +1081,25 @@
       var asked = Math.max(1, W.runAsked * 3), pct = W.runHearts / asked, mark = pct * 70 + Math.min(30, W.time);
       var rank = mark >= 88 ? 'S' : mark >= 72 ? 'A' : mark >= 55 ? 'B' : mark >= 38 ? 'C' : 'D';
       var placeB = POS_BONUS[W.pos] || 0;
+      W.goalSeq = { t: 0, rank: rank };
       W.result = { t: W.t, route: W.route.slice(), legs: W.legs.slice(), hearts: W.runHearts, of: asked, timeBonus: bonus, love: love, rank: rank, round: W.round, goal: STAGES[g.st].name, pos: W.pos, of2: FIELD_N + 1, posBonus: placeB };
       W.score += bonus + love + placeB; W.round++;
       W.time = W.D.time * STAGES[RUN_START[nextRun(STAGES[g.st])]].t * Math.max(0.8, Math.pow(0.95, W.round - 1)) + 10;   // (the next run's first stage's time)
       bannerOf(W, W.pos === 1 ? 'YOU WIN!' : 'GOAL!', 'FINISHED P' + W.pos + ' OF ' + (FIELD_N + 1) + '  -  TIME BONUS +' + bonus.toLocaleString('en-GB'), 'goal');
       W.events.push({ sfx: 'goal' }); W.events.push({ say: 'Goal! Time bonus ' + bonus + ', love bonus ' + love + ', rank ' + rank });
       fx(W, { k: 'fireworks', x: 0 }); fx(W, { k: 'confetti', x: 0 });
-      mood(W, 'wave'); voice(W, 'goal', true); if (rank === 'S' || rank === 'A') W.sayLater = { id: 'love', t: W.t + 150 };
+      mood(W, rank === 'S' || rank === 'A' ? 'wave' : rank === 'B' ? 'clap' : rank === 'C' ? 'look' : 'sulk', 1); voice(W, 'goal', true); if (rank === 'S' || rank === 'A') W.sayLater = { id: 'love', t: W.t + 150 };
       if (W.req) { W.req = null; } W.reqSide = null; W.reqNext = W.t + 60 * 12;
     }
+  }
+  var TU_COAST = 5.5;   // m/s/s: rolling on, out of time, for a checkpoint in reach
+  function gateWithin(W, d) { var i = segIndex(W.s), n = Math.ceil(d / SEG); for (var j = 1; j <= n; j++) { var q = segAt(W, i + j); if (q && q.gate && q.gate.kind !== 'start') return true; } return false; }
+  var GOAL_SEQ = 60 * 8;
+  function goalEnd(W) {   // the goal's moment over: the card goes, and the next round starts (if its gate went by during it)
+    W.goalSeq = null; W.result = null; W.legT0 = W.t;
+    if (W.roundPending != null) { var st = W.roundPending; W.roundPending = null; rebunch(W); W.bestPos = 99;
+      bannerOf(W, 'ROUND ' + W.round, RUNS[STAGES[st].run].banner + ' - busier and quicker', 'stage'); W.events.push({ say: 'Round ' + W.round }); mood(W, 'cheer'); }
+    W.reqNext = Math.max(W.reqNext, W.t + 60 * 4);
   }
   function topSpeed(W) { return VMAX * CARS[W.car].top; }
   var CF = 0.32;   // how hard a bend pushes the car outwards: k * v * v * CF metres a second
@@ -1126,7 +1140,7 @@
   }
   function requests(W) {
     var i = segIndex(W.s), F = W.fork, R = W.req;
-    if (W.timeUp || W.count > 0) return;
+    if (W.timeUp || W.count > 0 || W.goalSeq) return;
     // coming up to a fork, she picks a road
     if (F && !F.s && !W.reqSide && i > F.a - 80 && i < F.a - 10) {
       var side = W.rng() < 0.5 ? -1 : 1;
@@ -1147,6 +1161,7 @@
   function step(W, inp) {
     inp = inp || {};
     W.t++;
+    var fireNow = !!(inp.fire || inp.alt); W.fireEdge = fireNow && !W.fireWas; W.fireWas = fireNow;   // (a fresh press of Space: skips the goal's moment, ends a time up)
     if (W.shake > 0) W.shake--;
     if (W.comboT > 0 && --W.comboT === 0) W.combo = 0;
     var D = W.D, C = CARS[W.car], i0 = segIndex(W.s), g = segAt(W, i0), top = topSpeed(W);
@@ -1172,17 +1187,25 @@
     }
     var score0 = W.score;
     for (var pk in W.pw) if (W.pw[pk] > 0 && --W.pw[pk] === 0) W.events.push({ sfx: 'powerEnd', k: pk });
-    if (!W.timeUp) {
+    if (W.goalSeq) {
+      var GS = W.goalSeq; GS.t++;
+      if (GS.t % 100 === 0) { var CEL = { S: ['cheer', 'wave'], A: ['wave', 'cheer'], B: ['clap', 'cheer'], C: ['look', 'clap'], D: ['sulk', 'sulk'] }[GS.rank] || ['cheer', 'wave']; mood(W, CEL[(GS.t / 100) % 2], 1); }   // (celebrating all through it, as the rank deserves)
+      var ai = autopilot(W, 0), skip = GS.t > 120 && W.fireEdge;
+      inp = { left: ai.left, right: ai.right, up: false, down: false, fire: false, alt: false };
+      W.nitroT = 0; W.v += (top * 0.6 - W.v) * 0.025;
+      if (GS.t >= GOAL_SEQ || skip) goalEnd(W);
+    }
+    if (!W.timeUp && !W.goalSeq) {
       var before = Math.ceil(W.time);
       W.time -= DT;
-      if (W.time <= 0) { W.time = 0; W.timeUp = true; W.events.push({ sfx: 'timeup' }); W.events.push({ say: 'Time up' }); bannerOf(W, 'TIME UP', '', 'red'); endDrift(W); mood(W, 'sad'); voice(W, 'timeup', true); W.req = null; W.reqSide = null; }
+      if (W.time <= 0) { W.time = 0; W.timeUp = true; W.timeUpT = W.t; W.tuCoast = gateWithin(W, W.v * W.v / (2 * TU_COAST)); W.tuBrake = Math.max(14, W.v / 3.4); W.events.push({ sfx: 'timeup' }); W.events.push({ say: 'Time up' }); bannerOf(W, 'TIME UP', '', 'red'); endDrift(W); mood(W, 'sad'); voice(W, 'timeup', true); W.req = null; W.reqSide = null; }
       else if (Math.ceil(W.time) < before && before <= 11) { W.events.push({ sfx: 'tick', n: before - 1 }); if (before === 11) voice(W, 'hurry', true); }
     }
 
     // ---- controls
     var L = !!inp.left, R = !!inp.right, brake = !!inp.down, out = !!W.crash;
     var wantBoost = !W.timeUp && !out && !!(inp.fire || inp.alt);
-    var gas = !W.timeUp && !out && (W.auto ? !brake : !!inp.up);
+    var gas = !W.timeUp && !out && !W.goalSeq && (W.auto ? !brake : !!inp.up);
     var target = out ? 0 : (R ? 1 : 0) - (L ? 1 : 0);
     W.steer += (target - W.steer) * (target === 0 ? 0.25 : 0.16);
     var pressed = (brake && !W.brakeHeld) || !!inp.brakeTap; W.brakeHeld = brake;   // a tap too quick to last a step still counts
@@ -1222,6 +1245,7 @@
     var hzN = top * (W.slipOn ? 1.04 : 1), hz = hzN * (W.boosting ? 1.55 : 1);
     var v = W.v, accel = 8.8 * C.acc * Math.max(0, 1 - Math.pow(v / hzN, 1.6)) + (W.boosting ? 26 * Math.max(0, 1 - Math.pow(v / hz, 3)) * (0.3 + 0.7 * Math.min(1, v / (top * 0.6))) : 0);   // (about 0.9 g off the line, 0-60 in under four seconds, then it takes its time to the top; was 1.6 g)
     if (out) v *= W.crash.hard ? (W.crash.t < W.crash.dur * 0.6 ? 0.986 : 0.9) : 0.9;
+    else if (W.timeUp && !W.goalSeq) v -= (W.tuCoast ? TU_COAST : W.tuBrake) * DT;   // (time up: rolling for a checkpoint in reach, or braking to a stop)
     else if (W.drift) v -= (2.5 + (brake ? 2 : 0)) * DT;
     else if (brake) v -= 12.5 * DT;   // (a sports car's brakes, about 1.3 g: was 2.6)
     else if (gas || W.boosting) v += accel * DT;
@@ -1371,7 +1395,8 @@
       mood(W, Math.random() < 0.5 ? 'look' : 'hair', Math.random() < 0.5 ? -1 : 1); if (W.t - W.voiceT > 60 * 20 && Math.random() < 0.5) voice(W, 'chat');
     }
 
-    if (W.timeUp && W.v < 1.5) { if (++W.overT > 70) W.over = true; }
+    if (W.timeUp && W.v < 1.5) { if (++W.overT > 40) W.over = true; }
+    if (W.timeUp && !W.tuCoast && W.t - W.timeUpT > 30 && W.fireEdge) W.over = true;   // (Space: straight to the result - one more go)
     if (W.t % 60 === 0) { var drop = i1 - 80 - W.base; if (drop > 300) { W.segs.splice(0, drop); W.base += drop; } }
     if (W.pw.double > 0 && W.score > score0) W.score += W.score - score0;
   }

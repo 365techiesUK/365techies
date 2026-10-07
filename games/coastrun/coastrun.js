@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=60';
+import { createWorld } from './world3d.js?v=61';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
@@ -205,6 +205,7 @@ function rivalTag(g, W, t, mode) {   // your place in the race, big, and the gap
   const n = E.FIELD_N + 1, p = Math.min(n, W.pos || n), ah = E.nextAhead(W), bh = E.nextBehind(W);
   const x = 14, y = 88, lead = p === 1;   // (below BEST and HURRY!)
   g.fillStyle = 'rgba(6,10,18,0.55)'; g.fillRect(x - 4, y - 13, 66, 22); g.fillStyle = lead ? '#ffd23f' : '#ffc23a'; g.fillRect(x - 4, y - 13, 1.4, 22);
+  if (R.posFlash && W.t - R.posFlash < 40 && W.t >= R.posFlash) { g.globalAlpha = 0.55 * (1 - (W.t - R.posFlash) / 40); g.fillStyle = R.posUp ? '#ffd23f' : '#4fa8ff'; g.fillRect(x - 4, y - 13, 66, 22); g.globalAlpha = 1; }   // (up or down a place)
   hudText(g, 'POS', x, y - 5, 5, '#c9d6e6', 'left', false);
   hudText(g, String(p), x + 13, y + 6, 15, lead ? '#ffd23f' : '#ffffff', 'left');
   hudText(g, '/' + n, x + 13 + (p > 9 ? 17 : 9.5), y + 6, 7, '#c9d6e6', 'left', false);
@@ -235,7 +236,10 @@ function clockExtras(g, W, t, pi) {   // the race against the clock: your best f
   const st = stretchOf(W, pi);
   if (st && W.count <= 0) {
     const b = bestOf(W, st.id); if (b) hudText(g, 'BEST ' + clock(b), 10, 58, 6.2, '#ffd98a');
-    const el = (W.t - W.legT0) / 60, done = (pi - st.from) * 4, left = (st.to - pi) * 4, pace = el > 12 ? done / el : 0;   // (judged after 12 s: off the line the average pace is slow)
+    const el = (W.t - W.legT0) / 60, done = (pi - st.from) * 4, left = (st.to - pi) * 4;
+    if (!R.pace || R.pace.leg !== W.legT0) R.pace = { leg: W.legT0, h: [] };   // (the pace over the last 10 s, not the average from the line - audit, 7 Oct: it said HURRY! when you were fine)
+    const PH = R.pace.h; if (!PH.length || W.t - PH[PH.length - 1][0] >= 30) PH.push([W.t, done]); while (PH.length > 21) PH.shift();
+    const pace = el > 12 && PH.length > 4 ? (done - PH[0][1]) / Math.max(1, (W.t - PH[0][0]) / 60) : 0;
     if (!W.timeUp && pace > 0 && left / Math.max(12, pace) > W.time + 1 && (t / 200 | 0) % 3) hudText(g, 'HURRY!', 10, b ? 69 : 60, 10, '#ff4d4d');
   }
   if (!W.timeUp && W.count <= 0 && W.time > 0 && W.time <= 5) {   // the last five seconds, big in the middle
@@ -318,6 +322,7 @@ function speedo(g, W, t) {   // the speed in big slanted digits, a rev bar that 
     g.fillStyle = on ? '#4fc3ff' : 'rgba(255,255,255,0.12)'; g.fillRect(xx, by2 - 7, bw3, 7); g.fillRect(xx + 1.3, by2 - 9, bw3 - 2.6, 2);
     if (on) { g.fillStyle = 'rgba(255,255,255,0.55)'; g.fillRect(xx + 0.8, by2 - 6, 1, 5); }
     if (live) { const k = Math.max(0, (W.nitroT || 0) / (E.NITRO_T || 150)); g.fillStyle = '#e8fbff'; g.fillRect(xx, by2 - 7 * k, bw3, 7 * k); }
+    if (on && i === show - 1 && R.nitroFlash && W.t - R.nitroFlash < 36 && W.t >= R.nitroFlash) { g.globalAlpha = 1 - (W.t - R.nitroFlash) / 36; g.fillStyle = '#ffffff'; g.fillRect(xx - 1, by2 - 10, bw3 + 2, 11); g.globalAlpha = 1; }   // (a bottle filled)
   }
   if (nb > 10) hudText(g, '+' + (nb - 10), bx + 10 * (bw3 + bgp) + 1, by2 - 9, 5.5, '#8fe3ff', 'left');
   g.fillStyle = 'rgba(255,255,255,0.14)'; g.fillRect(bx, by2 + 1.4, 10 * (bw3 + bgp) - bgp, 1.2);   // the next bottle, filling
@@ -326,8 +331,8 @@ function speedo(g, W, t) {   // the speed in big slanted digits, a rev bar that 
 }
 function results(g, W, t) {   // at the goal: each stretch's time and hearts, the bonuses and the rank
   const Rz = W.result; if (!Rz) return;
-  const age = W.t - Rz.t; if (age < 40 || age > 600) return;
-  const a = Math.min(1, (age - 40) / 20, (600 - age) / 25), x = GW / 2 - 110, y = 46, w = 220, h = 30 + Rz.legs.length * 11 + 41;
+  const age = W.t - Rz.t; if (age < 40 || age > 480) return;   // (up for the whole of the goal's moment now: it used to be wiped after ~1 s)
+  const a = Math.min(1, (age - 40) / 20, (480 - age) / 25), x = 10, y = 46, w = 220,   /* (on the left: the camera has the two of you on the right) */ h = 30 + Rz.legs.length * 11 + 41 + 14;
   g.save(); g.globalAlpha = a;
   g.fillStyle = 'rgba(6,10,18,0.8)'; g.fillRect(x, y, w, h);
   g.fillStyle = '#ffc23a'; g.fillRect(x + 10, y, w - 20, 1);
@@ -344,6 +349,11 @@ function results(g, W, t) {   // at the goal: each stretch's time and hearts, th
     hudText(g, 'LOVE BONUS  ' + Rz.love.toLocaleString('en-GB') + '  (' + Rz.hearts + ' ♥)', x + 12, yb + 11, 7, '#ffd1df', 'left', false);
     if (Rz.pos) hudText(g, 'FINISHED P' + Rz.pos + ' OF ' + Rz.of2 + (Rz.posBonus ? '  +' + Rz.posBonus.toLocaleString('en-GB') : ''), x + 12, yb + 22, 7, Rz.pos === 1 ? '#ffd23f' : '#ffffff', 'left', false);
   }
+  if (age > 110 + Rz.legs.length * 12) {   // her verdict on the drive (OutRun 2's Heart Attack grades), and how to carry on
+    const SAY = { S: 'SHE SAYS: BEST DAY EVER!', A: 'SHE SAYS: THAT WAS AMAZING!', B: 'SHE SAYS: NICE DRIVING!', C: 'SHE SAYS: NOT BAD...', D: 'SHE SAYS: HMPH.' };
+    hudText(g, SAY[Rz.rank] || '', x + 12, yb + 35, 6.6, Rz.rank === 'S' || Rz.rank === 'A' ? '#ff9ec4' : Rz.rank === 'D' ? '#9fb3c8' : '#ffd1df', 'left', false);
+    if (W.goalSeq && W.goalSeq.t > 120 && (t / 400 | 0) % 2) hudText(g, 'SPACE: CARRY ON', x + w - 10, y + h - 5, 5.2, '#c9d6e6', 'right', false);
+  }
   if (age > 90 + Rz.legs.length * 12) { const s = 1 + Math.max(0, 1 - (age - 90 - Rz.legs.length * 12) / 12) * 0.8; g.save(); g.translate(x + w - 26, yb + 6); g.scale(s, s); hudText(g, Rz.rank, 0, 8, 26, Rz.rank === 'S' ? '#ff4dd2' : Rz.rank === 'A' ? '#ffd400' : '#ffffff', 'center'); g.restore(); hudText(g, 'RANK', x + w - 26, yb - 12, 6, '#bfe6ff', 'center', false); }
   g.restore();
 }
@@ -359,6 +369,7 @@ function lights(g, W) {
 const BANNER_COL = { check: ['#ffd400', '#ffffff'], stage: ['#ffffff', '#bfe6ff'], goal: ['#4ade80', '#ffd400'], red: ['#ff4d4d', '#ffffff'], go: ['#3bff6a', '#ffffff'], gold: ['#ffd400', '#ffffff'] };
 function banner(g, W, t) {
   const b = W.banner; if (!b) return;
+  if (W.goalSeq && W.goalSeq.t > 40 && b.kind === 'goal') return;   // (the results card has it now)
   const age = W.t - b.t, dur = b.kind === 'go' ? 50 : b.kind === 'red' ? 400 : b.kind === 'stage' ? 200 : 160; if (age > dur || age < 0) return;
   if (b.kind === 'stage') {   // a new place: a sweeping card with its name
     const inK = Math.min(1, age / 14), outK = Math.min(1, (dur - age) / 18), S = E.STAGES.find((q) => q.name === b.txt);
@@ -375,15 +386,27 @@ function banner(g, W, t) {
   g.restore();
 }
 const POP_COL = { near: '#7fe8ff', drift: '#ffb347', gold: '#ffd400', nitro: '#7fb8ff', slip: '#c9b8ff', heart: '#ff8fb3', time: '#5dff9a', magnet: '#ff7b7b', shield: '#ffd23f', double: '#f2e3b3' };
-function pops(g, W) {
+function pops(g, W) {   // the pop-ups (audit, 7 Oct: a third of them landed on top of each other): stacked - the newest at the bottom, the others
+  // easing up out of its way - at most three at once, the least important dropped first; a bottle filled flashes the nitro gauge instead,
+  // and a change of place flashes the POS box
+  const live = [];
   for (let i = 0; i < W.pops.length; i++) {
     const p = W.pops[i], age = W.t - p.t; if (age > 70 || age < 0) continue;
-    const a = Math.min(1, (70 - age) / 18), y = 94 - age * 0.32, x = GW / 2 + Math.max(-1, Math.min(1, p.x / 5)) * 70;
-    g.globalAlpha = a;
-    hudText(g, p.txt, x, y, 10, POP_COL[p.kind] || '#ffffff', 'center');
-    if (p.sub) hudText(g, p.sub, x, y + 10, 8, '#ffffff', 'center');
-    g.globalAlpha = 1;
+    if (p.txt === '+1 NITRO') { R.nitroFlash = Math.max(R.nitroFlash || 0, p.t); continue; }
+    if (/^(UP TO P|DOWN TO P)/.test(p.txt)) { if ((R.posFlash || -1e9) < p.t) R.posFlash = p.t, R.posUp = p.txt[0] === 'U'; continue; }
+    live.push(p);
   }
+  const PRI = (p) => /^(RIVAL BACK|RIVAL AHEAD|SLIPSTREAM)/.test(p.txt) ? 0 : 1;
+  const show = live.sort((a, b) => PRI(b) - PRI(a) || b.t - a.t).slice(0, 3).sort((a, b) => b.t - a.t);
+  show.forEach((p, slot) => {
+    const age = W.t - p.t, a = Math.min(1, (70 - age) / 18, age / 4), ty = 96 - age * 0.16 - slot * 21;
+    p.sy = p.sy == null ? ty : p.sy + (ty - p.sy) * 0.35;   // (easing up when a new one comes in under it)
+    const x = GW / 2 + Math.max(-1, Math.min(1, p.x / 5)) * 46, s = 1 + Math.max(0, 1 - age / 7) * 0.25;
+    g.globalAlpha = a; g.save(); g.translate(x, p.sy); g.scale(s, s);
+    hudText(g, p.txt, 0, 0, 10, POP_COL[p.kind] || '#ffffff', 'center');
+    if (p.sub) hudText(g, p.sub, 0, 9, 7, '#ffffff', 'center');
+    g.restore(); g.globalAlpha = 1;
+  });
 }
 
 // ---------------------------------------------------------------- sounds: one-off effects, and the engine, wind and tyres that follow the car
@@ -727,11 +750,11 @@ function radioPanel(g, W, t, mode) {   // on the start line (◀ ▶ tune it) an
   if (!RAD.set || RAD.set.sound === false || (!count && !after && !shown)) return;
   const A2 = window.ARCADE365, inp = A2 && A2.input, off = RAD.set.music === false;
   if (count && inp) { if (inp.left && !RAD.l) tune(-1); if (inp.right && !RAD.r) tune(1); RAD.l = !!inp.left; RAD.r = !!inp.right; }
-  const i = Math.max(0, RADIO.findIndex((r) => r[0] === (RAD.set.radio || 'place'))), w = 184, x = GW / 2 - w / 2, y = GH - 66, h = 32;
+  const i = Math.max(0, RADIO.findIndex((r) => r[0] === (RAD.set.radio || 'place'))), w = 150, x = 10, y = GH - 98, h = 32;   // (bottom left, over the route map: it covered the two of you and the GO!)
   g.fillStyle = 'rgba(6,10,18,0.72)'; g.fillRect(x, y, w, h); g.fillStyle = '#ffc23a'; g.fillRect(x, y, w, 0.9);
   hudText(g, count ? 'PICK A STATION' : 'RADIO', x + 7, y + 8.5, 5.2, '#c9d6e6', 'left', false);
   hudText(g, count ? '◀  ▶ TO TUNE' : 'R TO TUNE', x + w - 7, y + 8.5, 5.2, '#ffc23a', 'right', false);
-  hudText(g, off ? 'OFF - TUNE IN TO TURN IT ON' : RADIO[i][1].toUpperCase(), GW / 2, y + 19, off ? 6.5 : 10, off ? '#ff9a8a' : '#ffffff', 'center', false);
+  hudText(g, off ? 'OFF - TUNE IN TO TURN IT ON' : RADIO[i][1].toUpperCase(), x + w / 2, y + 19, off ? 6 : 9, off ? '#ff9a8a' : '#ffffff', 'center', false);
   const dx = x + 16, dw = w - 32, dy = y + 26.5;   // the dial: a scale with a needle at this station
   g.fillStyle = 'rgba(255,255,255,0.25)'; g.fillRect(dx, dy, dw, 0.7);
   for (let k = 0; k < RADIO.length; k++) g.fillRect(dx + dw * k / (RADIO.length - 1) - 0.3, dy - 1.6, 0.6, 1.6);
@@ -866,7 +889,7 @@ A.start({
     '<b>Forks:</b> at the end of each stretch the road splits &mdash; keep to the <b>left</b> (west) or <b>right</b> (east) half to choose where you go next. The map in the bottom corner shows your way through the run&rsquo;s fifteen places: round 1 out through the town (Winton or Charminster, Kinson, Muscliff, Littledown and on), round 2 out along the coast. Don&rsquo;t hit the sign in the middle!',
     '<b>Rivals:</b> now and then a sports car as quick as you turns up ahead (RIVAL and the gap show at the top). Keep up with it and get past for <b>+3,000</b>, then stay ahead until it drops away for <b>+10,000</b>. Slipstream it and use your nitro: it fights back.',
     '<b>Nitro:</b> hold <b>Space</b> (or Shift, B or X, or the mouse button, or the <b>Nitro</b> button) and flames shoot from the pipes &mdash; well past full speed while the blue bar lasts. Fill it with <b>near misses</b> (passing cars closely), <b>slipstreams</b>, drifting, coins and the blue <b>nitro bottles</b>.',
-    '<b>Bonuses</b> on the road: a red <b>magnet</b> pulls in coins from every lane; a gold <b>star</b> puts a shield round the car &mdash; smash through traffic and signs without crashing; a purple <b>gem</b> doubles every point you score; a green <b>clock</b> adds five seconds. The ones you have on show under the score, running down.',
+    '<b>Bonuses</b> on the road: a red <b>magnet</b> pulls in coins from every lane; a gold <b>star</b> puts a shield round the car &mdash; smash through traffic and signs without crashing; a purple <b>gem</b> doubles every point you score; a green <b>clock</b> adds three seconds. The ones you have on show under the score, running down.',
     '<b>Jumps:</b> go over a crest fast and the car flies &mdash; points for every bit of air. <b>Coins</b> lie on the road in lines; get every coin in a line for a bonus.',
     '<b>Bumps:</b> running into the back of a car slows you right down; hitting a lamp post, palm tree or sign at speed spins you off (on Gentle you just bounce off). Bushes and beach umbrellas only slow you a little.',
     '<b>Start:</b> hold nitro as the lights turn green for a flying start. <b>Gentle</b> gives a little more time, less traffic and help round the bends, and only big crashes stop you. <b>P</b> pauses; the game also pauses itself if you click away.',

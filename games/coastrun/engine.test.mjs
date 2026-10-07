@@ -148,7 +148,11 @@ test('the goal: a time bonus, a love bonus, a rank, and round 2 goes on west alo
   assert.ok(goal); assert.equal(W.round, 2); assert.ok(W.score - s0 >= 12000 + 20000, 'time bonus and 5,000 a heart'); assert.ok(W.time > 50, 'the clock starts again');
   assert.ok(W.result && 'SABCD'.includes(W.result.rank), 'a rank: ' + (W.result && W.result.rank)); assert.equal(W.result.love, 20000); assert.equal(W.result.route.length, 5);
   assert.equal(E.STAGES[W.result.route[4]].key, 'harbour', 'all left: Poole Quay');
-  drive(W, 120, {});
+  // the goal's moment (7 Oct): the clock stops, the car drives itself, the card stays up - then round 2
+  const tFrozen = W.time; drive(W, 200, {});
+  assert.ok(W.goalSeq, 'the goal sequence is still on after 3 s'); assert.equal(W.time, tFrozen, 'the clock stops for it'); assert.ok(W.result, 'the results card stays up');
+  drive(W, 400, {});
+  assert.ok(!W.goalSeq && !W.result, 'over after 8 s, the card gone');
   assert.equal(W.stage, E.RUN_START[1]); assert.deepEqual(W.route, [E.RUN_START[1]], 'round 2: west along the coast'); assert.equal(E.STAGES[W.stage].key, 'wareham');
 });
 
@@ -327,4 +331,23 @@ test('nitro takes you well past full speed', () => {
   const W = E.newWorld(2, {}, 1); go(W); W.s = 60 * E.SEG; W.v = E.VMAX; W.boost = 1; clear(W);
   drive(W, 150, (w) => { w.x = 0; return { up: true, fire: true }; });
   assert.ok(W.v > E.VMAX * 1.15, 'over 15% past full speed: ' + Math.round(W.v / E.VMAX * 100) + '%');
+});
+
+test('time up (7 Oct): the car stops in a few seconds, Space ends it at once, and rolling over a checkpoint on zero saves you', () => {
+  // no checkpoint in reach: the brakes, stopped and over well inside 6 s (it used to roll on for ~32 s)
+  let W = E.newWorld(2, {}, 4); go(W); W.cars = []; W.v = 63; W.time = 0.02; let n = 0;
+  while (!W.over && n++ < 60 * 20) { W.cars = []; W.x = 0; E.step(W, {}); quiet(W); }
+  assert.ok(W.over && n < 60 * 6, 'over in ' + (n / 60).toFixed(1) + ' s');
+  // Space: a fresh press ends it straight away
+  W = E.newWorld(2, {}, 4); go(W); W.cars = []; W.v = 63; W.time = 0.02;
+  for (let i = 0; i < 90; i++) { W.cars = []; W.x = 0; E.step(W, {}); quiet(W); }
+  assert.ok(W.timeUp && !W.over); E.step(W, { fire: true }); assert.ok(W.over, 'Space skips to the result');
+  // a checkpoint in reach: you roll for it, and making it puts you back in the race
+  W = E.newWorld(2, {}, 4); go(W); W.cars = [];
+  W.s = (W.fork.split - 2) * E.SEG; W.x = -6; W.v = 40; drive(W, 30, {}); W.s = (W.fork.end - 1) * E.SEG; W.x = 0; drive(W, 5, {});   // (on to the second place, its checkpoint ahead)
+  const ci = findSeg(W, E.segIndex(W.s), (g) => g.gate && g.gate.kind === 'check');
+  assert.ok(ci > 0, 'a checkpoint ahead');
+  W.s = (ci - 30) * E.SEG; W.x = 0; W.v = 40; W.time = 0.02;
+  let saved = false; for (let i = 0; i < 600 && !W.over; i++) { W.cars = []; W.x = 0; E.step(W, {}); if (W.banner && W.banner.txt === 'JUST MADE IT!') saved = true; quiet(W); }
+  assert.ok(saved && !W.timeUp && !W.over && W.time > 20, 'just made it: back in the race with ' + W.time.toFixed(0) + ' s');
 });
