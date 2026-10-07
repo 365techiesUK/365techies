@@ -1216,8 +1216,11 @@
     W.wasBoost = W.boosting;
 
     // ---- speed
-    var hz = top * (W.boosting ? 1.22 : 1) * (W.slipOn ? 1.04 : 1);
-    var v = W.v, accel = 8.8 * C.acc * Math.max(0, 1 - Math.pow(v / hz, 1.6)) + (W.boosting ? 7 : 0);   // (about 0.9 g off the line, 0-60 in under four seconds, then it takes its time to the top; was 1.6 g)
+    // nitro (owner, 7 Oct: "make it go over 200 miles an hour ... when the nitrous kicks in it goes a lot faster"): its own top speed 1.55 times the car's
+    // (the roadster 218 mph, the GT 234, the hatch 205; was 1.22, 172 mph) and a hard shove towards it - one bottle from a 141 mph cruise passes 200 -
+    // softer from a crawl (the tyres spin); when it runs out the speed bleeds away over a few seconds rather than dropping straight back
+    var hzN = top * (W.slipOn ? 1.04 : 1), hz = hzN * (W.boosting ? 1.55 : 1);
+    var v = W.v, accel = 8.8 * C.acc * Math.max(0, 1 - Math.pow(v / hzN, 1.6)) + (W.boosting ? 26 * Math.max(0, 1 - Math.pow(v / hz, 3)) * (0.3 + 0.7 * Math.min(1, v / (top * 0.6))) : 0);   // (about 0.9 g off the line, 0-60 in under four seconds, then it takes its time to the top; was 1.6 g)
     if (out) v *= W.crash.hard ? (W.crash.t < W.crash.dur * 0.6 ? 0.986 : 0.9) : 0.9;
     else if (W.drift) v -= (2.5 + (brake ? 2 : 0)) * DT;
     else if (brake) v -= 12.5 * DT;   // (a sports car's brakes, about 1.3 g: was 2.6)
@@ -1227,7 +1230,7 @@
     var wasOff = W.off;
     W.off = !W.air && Math.abs(W.x) > roadHalf(g) + RUMBLE;
     if (W.off) { var offTop = top * D.off; if (v > offTop) v = Math.max(offTop, v - 22 * DT); if (!wasOff) knock(W); }
-    if (v > hz) v = Math.max(hz, v - 12 * DT);
+    if (v > hz) v = Math.max(hz, v - (W.boosting ? 12 : 7) * DT);   // (over the top after the nitro: easing back down)
     W.v = v = Math.max(0, v);
     // wheelspin: foot down from a standstill or a crawl, the rear tyres spin up (smoke, black lines, the screech: world3d.js, coastrun.js);
     // it eases as the speed builds and is gone by about 40 mph. Off the line at the green it always spins, a flying start too
@@ -1377,23 +1380,23 @@
   function autopilot(W, side) {
     var inp = { left: false, right: false, up: true, down: false, fire: false, alt: false };
     if (W.count > 0) { inp.fire = W.count < 8; return inp; }
-    var i = segIndex(W.s), F = W.fork, top = topSpeed(W), target = 0, k, c, j;
+    var i = segIndex(W.s), F = W.fork, top = topSpeed(W), target = 0, k, c, j, room = -1;
     if (F && !F.s && i > F.a - 60) target = (side || (W.reqSide ? W.reqSide.side : W.route.length % 2 ? 1 : -1)) * 6.5;
     else {   // stay in lane, or move one lane over to the one with the most room ahead; boxed in, brake
-      var cur = W.botLane == null ? 1 : W.botLane, best = -1e9, room = 1e9, close = 0, pickK = cur;
+      var cur = W.botLane == null ? 1 : W.botLane, best = -1e9, close = 0, pickK = cur; room = 1e9;
       for (k = Math.max(0, cur - 1); k <= Math.min(2, cur + 1); k++) {
         var L = LANES[k], free = 400, cl = 0, lo = Math.min(W.x, L) - 2.6, hi = Math.max(W.x, L) + 2.6;
         for (j = 0; j < W.cars.length; j++) {
           c = W.cars[j]; if (!sameRoad(W, c)) continue;
           var dz = c.s - W.s, closing = Math.max(0, W.v - c.v);
-          if (k !== cur && dz > -10 && dz < 12 + closing * 0.6 && c.x > lo && c.x < hi) free = -1;
+          if (k !== cur && dz > -10 && dz < 12 + closing * (W.v > top ? 1.6 : 0.6) && c.x > lo && c.x < hi) free = -1;
           else if (dz > (k === cur ? 0.5 : -6) && dz < free && Math.abs(c.x - L) < 2.8) { free = dz; cl = closing; }   // (in its own lane, only what's ahead: a racer sitting behind it once held it stopped)
         }
         var sc = free + (k === cur ? 25 : 0);
         if (sc > best) { best = sc; target = L; room = free; close = cl; pickK = k; }
       }
       W.botLane = pickK;
-      if (room < 14 + close * close / 40 + close * 0.3) W.botBrake = 4;
+      if (room < 14 + close * close / (W.v > top ? 20 : 40) + close * 0.3) W.botBrake = 4;   // (over its top speed - the nitro - it needs the brakes' real distance)
     }
     // aim for the lane, a little ahead, leaning into the bend by as much as it pushes
     var look = Math.max(12, W.v * 0.7), kAhead = 0;
@@ -1406,9 +1409,14 @@
     var maxK = 0; for (j = 2; j < 30; j++) maxK = Math.max(maxK, Math.abs(segAt(W, i + j).k));
     var tooFast = pushOut(W, maxK, W.v) > W.v * Math.sin(lim) * 0.85;
     if (tooFast && W.v > 24) { if (W.auto) inp.down = true; else inp.up = false; }
-    inp.fire = W.bottles > 0 && W.nitroT <= 0 && maxK < 1 / 260 && W.v > top * 0.6 && !(W.botBrake > 0);
+    // over the car's own top speed (the nitro, 7 Oct: 200 mph and more) a lift isn't enough: look as far ahead as it takes to stop and brake in time for
+    // each bend (to a little under the speed it can be taken at, on ~7.5 m/s/s), still steering as it brakes
+    var bendBr = false, stopFar = W.v > top ? Math.round(W.v * W.v / 15 / SEG) + 12 : 0;
+    for (j = 2; j < stopFar; j++) { var kk = Math.abs(segAt(W, i + j).k);
+      if (kk > 1e-4) { var vs = 0.88 * Math.sin(lim) * 0.85 / Math.max(1e-6, pushOut(W, kk, 1)); if (W.v > vs && W.v * W.v - vs * vs > 2 * 7.5 * j * SEG) { inp.down = true; inp.up = false; bendBr = true; } } }
+    inp.fire = W.bottles > 0 && W.nitroT <= 0 && maxK < 1 / 260 && W.v > top * 0.6 && !(W.botBrake > 0) && room >= 0 && W.v < top * 1.05;   // (not coming up to a fork; one bottle at a time)
     if (W.botBrake > 0) { W.botBrake--; inp.down = true; inp.up = false; }
-    if (inp.down && !W.drift) { inp.left = false; inp.right = false; }   // the driver brakes in a straight line, so it never drifts by accident
+    if (inp.down && !W.drift && !bendBr) { inp.left = false; inp.right = false; }   // the driver brakes in a straight line, so it never drifts by accident (but keeps steering as it brakes for a bend at nitro speed)
     return inp;
   }
 

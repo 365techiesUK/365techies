@@ -1724,7 +1724,7 @@ export function createWorld() {
     fill.position.copy(camera.position).add(V3.set(0, 0.6, 0)); fill.target.position.set(cx, cy + 1.62, cz);
     camera.rotation.z += POS.bank * 0.35 - W.steer * spd * (near ? 0.05 : 0.02);
     const kerb = !W.air && Math.abs(W.x) > HALF - 0.6 && Math.abs(W.x) < HALF + RUM + 0.4 && spd > 0.2;
-    if (R.shakeOn !== false && !cr && (spd > 0.65 || kerb)) { const a = Math.max(0, spd - 0.65) * 0.004 + R.boostK * 0.0012 + (kerb ? 0.003 : 0), ts = t / 1000; camera.rotation.x += (Math.sin(ts * 37) * 0.6 + Math.sin(ts * 61 + 1.3) * 0.4) * a * 0.5; camera.rotation.y += (Math.sin(ts * 43 + 2.1) * 0.6 + Math.sin(ts * 71) * 0.4) * a * 0.5; }   // a tremor at speed (a smooth shiver: a fresh random jolt every picture read as judder)
+    if (R.shakeOn !== false && !cr && (spd > 0.65 || kerb)) { const a = Math.max(0, Math.min(1.15, spd) - 0.65) * 0.004 + R.boostK * 0.0012 + (kerb ? 0.003 : 0), ts = t / 1000; camera.rotation.x += (Math.sin(ts * 37) * 0.6 + Math.sin(ts * 61 + 1.3) * 0.4) * a * 0.5; camera.rotation.y += (Math.sin(ts * 43 + 2.1) * 0.6 + Math.sin(ts * 71) * 0.4) * a * 0.5; }   // a tremor at speed (a smooth shiver: a fresh random jolt every picture read as judder)
     if (W.count > 0 && !R.debugCam && !W.ferry && !cr && !R.camDrv) {   // the lights (owner, 7 Oct: "more passes on the people and their faces" - so you SEE them): the camera starts in front of
       // the two of you, close on their faces, eases round past her side and settles behind the car for GO
       const p = 1 - W.count / 200, ss = (a, b, x) => { const u = Math.min(1, Math.max(0, (x - a) / (b - a))); return u * u * (3 - 2 * u); };
@@ -1755,7 +1755,7 @@ export function createWorld() {
       if (R.camShake > 0) camera.rotation.x += (Math.random() - 0.5) * R.camShake * 0.02;
     } else R.drvOn = false;
     camera.near = drv ? 0.12 : 0.4;
-    camera.fov += ((drv ? 60 + spd * 5 + R.boostK * 2 : near ? 50 + sk * 18 + Math.max(0, spd - 0.88) * 18 + R.boostK * 3 : 53 + spd * 6 + R.boostK * 5) + (R.nk || 0) * (drv ? 3 : 4) - camera.fov) * Math.min(1, dt * ((R.nk || 0) > 0.5 ? 10 : 3)); camera.updateProjectionMatrix();   // (wider as you go faster, but not so wide on the nitro that the road ahead shrinks away)
+    camera.fov += ((drv ? 60 + spd * 5 + R.boostK * 2 : near ? 50 + sk * 18 + Math.max(0, Math.min(1.3, spd) - 0.88) * 18 + R.boostK * 3 : 53 + spd * 6 + R.boostK * 5) + (R.nk || 0) * (drv ? 3 : 4) - camera.fov) * Math.min(1, dt * ((R.nk || 0) > 0.5 ? 10 : 3)); camera.updateProjectionMatrix();   // (wider as you go faster, but not so wide on the nitro that the road ahead shrinks away)
     // the sky things go round with the camera
     sky.position.copy(camera.position); stars.position.copy(camera.position); CUMU.position.set(camera.position.x, camera.position.y - 30, camera.position.z); CUMU.rotation.y = ringFar.rotation.y;
     turnRing(W, dt); heroStep(W, dt); ringFar.position.set(camera.position.x, camera.position.y - (ringFar.userData.hz || 0) - 30, camera.position.z);
@@ -1860,7 +1860,7 @@ export function createWorld() {
     // ---- draw: straight to the screen on a slow PC, otherwise through the glow, the grade and the blur
     R.boostK += ((W.boosting ? 1 : 0) - R.boostK) * Math.min(1, dt * 4); R.flash = Math.max(0, R.flash - dt * 2.2);
     if (R.low) renderer.render(scene, camera);
-    else { GRADE_U.time.value = (t % 10000) / 1000; GRADE_U.blur.value = R.boostK * 0.12 + Math.min(1, Math.max(0, (W.v / E.VMAX - 0.7) / 0.3)) * 0.22 + Math.max(0, W.v / E.VMAX - 0.88) * 0.45; GRADE_U.flash.value = R.flash * 0.5; composer.render(dt); }
+    else { GRADE_U.time.value = (t % 10000) / 1000; GRADE_U.blur.value = R.boostK * 0.12 + Math.min(1, Math.max(0, (W.v / E.VMAX - 0.7) / 0.3)) * 0.22 + Math.max(0, Math.min(1.2, W.v / E.VMAX) - 0.88) * 0.45; GRADE_U.flash.value = R.flash * 0.5; composer.render(dt); }
     return renderer.domElement;
   }
   // the sun's glare: a chain of soft rings from the sun through the middle of the picture, hidden when a hill is in the way
