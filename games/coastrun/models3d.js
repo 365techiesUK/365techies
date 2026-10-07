@@ -3248,7 +3248,7 @@ export function people() {
     });
   }
   function eyesOf(o) {
-    const her = !!o.long, r = her ? 0.0138 : 0.0145, iris = new THREE.Color(her ? '#3c7a8c' : '#4a3020'), irisL = new THREE.Color(her ? '#86bcc6' : '#8c6238'), c = new THREE.Color();
+    const her = !!o.long, r = her ? 0.0152 : 0.0155, iris = new THREE.Color(her ? '#3c7a8c' : '#4a3020'), irisL = new THREE.Color(her ? '#86bcc6' : '#8c6238'), c = new THREE.Color();
     const ball = new THREE.SphereGeometry(r, 30, 22), Q = ball.attributes.position, col = [];
     for (let i = 0; i < Q.count; i++) {
       const x = Q.getX(i), y = Q.getY(i), z = Q.getZ(i), th = Math.acos(Math.max(-1, Math.min(1, -z / r)));
@@ -3260,11 +3260,11 @@ export function people() {
     ball.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
     const lidCol = her ? '#c28e7a' : shade(o.skin, -0.05);
     const lidU = P((k) => {
-      k.put(new THREE.SphereGeometry(r * 1.1, 26, 10, 0, Math.PI * 2, 0, 1.22), lidCol, 0, 0, 0, 0, 0, 0, 1, 1, 1, 'skin');
-      const ly = r * 1.1 * Math.cos(1.22), lr = r * 1.1 * Math.sin(1.22);
+      k.put(new THREE.SphereGeometry(r * 1.1, 26, 10, 0, Math.PI * 2, 0, 1.06), lidCol, 0, 0, 0, 0, 0, 0, 1, 1, 1, 'skin');
+      const ly = r * 1.1 * Math.cos(1.06), lr = r * 1.1 * Math.sin(1.06);   // (lids a little more open: bright-eyed, not sleepy)
       k.put(new THREE.TorusGeometry(lr, her ? 0.0011 : 0.0007, 3, 22, Math.PI), her ? '#140c08' : '#2a1a12', 0, ly, 0, Math.PI / 2, 0, Math.PI, 1.04, 1.04, her ? 2.4 : 1.3, 'lit');   // the lashes
     });
-    const lidL = P((k) => { k.put(new THREE.SphereGeometry(r * 1.07, 26, 8, 0, Math.PI * 2, Math.PI - 1.16, 1.16), shade(o.skin, -0.03), 0, 0, 0, 0, 0, 0, 1, 1, 1, 'skin'); });
+    const lidL = P((k) => { k.put(new THREE.SphereGeometry(r * 1.07, 26, 8, 0, Math.PI * 2, Math.PI - 1.1, 1.1), shade(o.skin, -0.03), 0, 0, 0, 0, 0, 0, 1, 1, 1, 'skin'); });
     const at = [-1, 1].map((sd) => { const p = onFace(o, sd * 0.39, -0.035), H = HS(o), n = [p[0], p[1] - H.cy, p[2]], L = Math.hypot(n[0], n[1], n[2]); return [p[0] - n[0] / L * r * 0.6, p[1] - n[1] / L * r * 0.6, p[2] - n[2] / L * r * 0.6]; });
     return { ball: ball, lidU: lidU, lidL: lidL, at: at };
   }

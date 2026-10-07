@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=51';
+import * as MD from './models3d.js?v=52';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -1584,7 +1584,7 @@ export function createWorld() {
     }
     {   // their eyes (the second ten, pass 2): a blink every few seconds, small glances about; she looks at him while she chats, he at her; at you on the start line
       const eyeAt = (P2, yaw, pitch, ph) => { if (!P2.eyes) return; const bt = (t + ph) % 4100, bl = bt < 170 ? Math.sin(Math.PI * bt / 170) : 0, sac = Math.floor((t + ph) / 1700), jx = Math.sin(sac * 12.9898) * 0.1, jy = Math.sin(sac * 78.233) * 0.05, q = Math.min(1, dt * 18);
-        for (const e of P2.eyes) { e.look.rotation.y += (yaw + jx - e.look.rotation.y) * q; e.look.rotation.x += (pitch + jy - e.look.rotation.x) * q; e.lu.rotation.x = -bl * 1.12 + e.look.rotation.x * 0.45 + (e.squint || 0) * -0.18; e.ll.rotation.x = bl * 0.22 + (e.squint || 0) * 0.22; } };
+        for (const e of P2.eyes) { e.look.rotation.y += (yaw + jx - e.look.rotation.y) * q; e.look.rotation.x += (pitch + jy - e.look.rotation.x) * q; e.lu.rotation.x = -bl * 1.3 + e.look.rotation.x * 0.45 + (e.squint || 0) * -0.18; e.ll.rotation.x = bl * 0.22 + (e.squint || 0) * 0.22; } };
       const start = W.count > 30 && !R.camDrv, stv = W.steer || 0;
       eyeAt(C.her, start ? 0 : speaking ? -0.42 : her.k === 'look' ? (her.side || 1) * 0.3 : 0, start ? 0.06 : her.k === 'sulk' ? -0.22 : 0, 0);
       eyeAt(C.drv, start ? 0 : speaking && Math.abs(stv) < 0.3 ? 0.42 : -stv * 0.28, start ? 0.06 : 0, 1300);
