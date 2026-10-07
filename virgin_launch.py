@@ -298,10 +298,16 @@ def guide_task_head(d, crumbs):
 # Every picture and every frame of the video is a REAL screen: the add-on's popup (0.2.2), its Chrome Web Store page,
 # and the released v35 app's own Virgin screens, with made-up sample mailboxes (scratchpad 8682606b vem/: make_pics.py,
 # make_video.py). The app's own sign-in window is now the fallback (Virgin's check often stops it - IDF-12B).
-VEM_VIDEO = "/images/vem-howto-v1.mp4"
-VEM_POSTER = "/images/vem-howto-poster-v1.webp"
-VEM_VIDEO_SECS = 75
+# v2 (same day, owner: "a voiceover ... a woman talking"): Kokoro's British voice Emma reads each step (make_vo.py), each
+# scene lasts as long as its line, and there is a phone-shaped 720x1280 cut (phones get it: the wide one's text is tiny there).
+VEM_VIDEO = "/images/vem-howto-v2.mp4"
+VEM_VIDEO_TALL = "/images/vem-howto-tall-v2.mp4"
+VEM_POSTER = "/images/vem-howto-poster-v2.webp"
+VEM_POSTER_TALL = "/images/vem-howto-poster-tall-v2.webp"
+VEM_VIDEO_SECS = 85   # the lede says "An 85-second video": mind the a/an if this changes
 VEM_VIDEO_DATE = "2026-10-07"
+VEM_URL = "https://365techies.co.uk/" + VIRGIN_TOOL_SLUG + "/"
+VEM_SHARE_TEXT = "Moving off Virgin Media email? This free tool from 365 Techies moves it all into Gmail, and there's a short video showing how:"
 
 TOOL_FAQS = [
     ("How do I move my Virgin Media email to Gmail?",
@@ -469,9 +475,9 @@ def virgin_tool_page(setup_url):
       <div class="dh-in">
         <p class="dh-kicker">Watch it done</p>
         <h2 class="dh-h2" id="watch-title">The whole move, start to finish</h2>
-        <p class="dh-lede">Two free tools from us: the <b>365 Email Mover</b> copies your Virgin email in Chrome, then <b>365 PC Manager</b> moves it into Gmail. A {VEM_VIDEO_SECS}-second video of the real screens, with a made-up sample mailbox. No sound needed: the captions say what to press.</p>
-        <div class="vw__box">
-          <video id="vemvid" controls playsinline preload="none" poster="{VEM_POSTER}" width="1280" height="720" aria-label="How to move Virgin Media email to Gmail with the 365 Email Mover and 365 PC Manager, step by step">
+        <p class="dh-lede">Two free tools from us: the <b>365 Email Mover</b> copies your Virgin email in Chrome, then <b>365 PC Manager</b> moves it into Gmail. An {VEM_VIDEO_SECS}-second video of the real screens (a made-up sample mailbox), with a spoken guide and captions.</p>
+        <div class="vw__box" id="vembox">
+          <video id="vemvid" controls playsinline preload="none" poster="{VEM_POSTER}" width="1280" height="720" data-tall="{VEM_VIDEO_TALL}" data-tallposter="{VEM_POSTER_TALL}" aria-label="How to move Virgin Media email to Gmail with the 365 Email Mover and 365 PC Manager, step by step, with a spoken guide and captions">
             <source src="{VEM_VIDEO}" type="video/mp4" />
           </video>
           <button type="button" class="vw__play" id="vemplay" aria-label="Play the how-to video ({VEM_VIDEO_SECS} seconds)"><span>&#9654;</span></button>
@@ -483,6 +489,23 @@ def virgin_tool_page(setup_url):
         </ol>
         <p class="vw__cta"><a class="button primary" href="{EMAIL_MOVER_ADDON_URL}" target="_blank" rel="noopener" data-vem-addon>Add the Email Mover to Chrome &#8599;</a><a class="button secondary" href="{setup_url}" download data-vmc-dl>Download 365 PC Manager &#8595;</a></p>
         <p class="vw__note">Prefer pictures? <a href="#how">Every step below, with the screen you&rsquo;ll see</a> &middot; <a href="#move-for-me">or let us do it for &pound;60</a></p>
+        <div class="vw__more">
+          <div class="vw__qr" id="vemqr">
+            <canvas id="vemqrc" width="320" height="320" role="img" aria-label="QR code that opens this page on your phone"></canvas>
+            <div><p class="vw__mh">Watch it on your phone</p><p>Point your phone&rsquo;s camera at the code to open this page there &mdash; handy for following the video while you do it on the PC.</p></div>
+          </div>
+          <div class="vw__share">
+            <p class="vw__mh">Know someone moving off Virgin email?</p>
+            <p>Send them this page, free to use:</p>
+            <div class="vw__sb">
+              <a class="vw__sbtn vw__sbtn--wa" data-vemshare="whatsapp" href="https://wa.me/?text={{VEM_WA}}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.52 3.49A11.53 11.53 0 0012.05 0C5.6 0 .35 5.24.34 11.69c0 2.06.54 4.07 1.56 5.85L.24 24l6.6-1.73a11.71 11.71 0 005.2 1.32h.01c6.45 0 11.7-5.24 11.7-11.69a11.6 11.6 0 00-3.23-8.41zm-8.47 18.21h-.01a9.6 9.6 0 01-4.9-1.34l-.35-.21-3.64.96.97-3.55-.23-.36a9.62 9.62 0 01-1.47-5.13c0-5.31 4.33-9.63 9.65-9.63a9.58 9.58 0 016.81 2.83 9.53 9.53 0 012.82 6.81c0 5.31-4.33 9.62-9.65 9.62zm5.42-7.32c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.79-1.47-1.76-1.64-2.05-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.06 2.87 1.21 3.07.15.2 2.09 3.2 5.07 4.49.71.3 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.42-.07-.12-.27-.2-.57-.35z"/></svg>WhatsApp</a>
+              <a class="vw__sbtn vw__sbtn--fb" data-vemshare="facebook" href="https://www.facebook.com/sharer/sharer.php?u={{VEM_FB}}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.69.24 2.69.24v2.96h-1.52c-1.49 0-1.96.93-1.96 1.89v2.26h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg>Facebook</a>
+              <a class="vw__sbtn" data-vemshare="email" href="mailto:?subject={{VEM_SUBJ}}&amp;body={{VEM_BODY}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18a1 1 0 011 1v12a1 1 0 01-1 1H3a1 1 0 01-1-1V6a1 1 0 011-1zm9 7.2L4 7.3V17h16V7.3l-8 4.9zM5.2 7l6.8 4.2L18.8 7H5.2z"/></svg>Email</a>
+              <button type="button" class="vw__sbtn" data-vemshare="copy" id="vemcopy"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.6 13.4a1 1 0 010-1.4l3.5-3.5a3 3 0 114.2 4.2l-2 2a1 1 0 01-1.4-1.4l2-2a1 1 0 10-1.4-1.4l-3.5 3.5a1 1 0 01-1.4 0zm2.8-2.8a1 1 0 010 1.4l-3.5 3.5a3 3 0 11-4.2-4.2l2-2a1 1 0 011.4 1.4l-2 2a1 1 0 101.4 1.4l3.5-3.5a1 1 0 011.4 0z"/></svg><span>Copy the link</span></button>
+              <button type="button" class="vw__sbtn" data-vemshare="native" id="vemnative" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16a3 3 0 00-2.4 1.2l-6.7-3.4a3 3 0 000-1.6l6.7-3.4A3 3 0 1015 7a3 3 0 00.1.8L8.4 11.2a3 3 0 100 3.6l6.7 3.4A3 3 0 1018 16z"/></svg>More ways&hellip;</button>
+            </div>
+          </div>
+        </div>
       </div>
       <style>
         .vw__box{{position:relative;max-width:980px;margin:1.3rem auto 0;border-radius:20px;overflow:hidden;border:1px solid var(--hp-edge);box-shadow:0 34px 80px -30px rgba(0,0,0,.75);background:#090e20;aspect-ratio:16/9}}
@@ -500,6 +523,25 @@ def virgin_tool_page(setup_url):
         .vw__note{{text-align:center;margin:.9rem 0 0;font-size:.92rem;color:var(--hp-soft)}}
         .vw a:not(.button){{color:var(--cyan-soft)}}
         @media (max-width:760px){{.vw__three{{grid-template-columns:1fr}}.vw__play span{{width:68px;height:68px;font-size:1.6rem}}}}
+        .vw__box.is-tall{{max-width:420px;aspect-ratio:9/16}}
+        .vw__more{{max-width:980px;margin:1.5rem auto 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:1rem}}
+        .vw__qr,.vw__share{{padding:1.1rem 1.2rem;border-radius:18px;border:1px solid var(--hp-edge);background:var(--hp-card)}}
+        .vw__qr{{display:flex;align-items:center;gap:1.1rem}}
+        .vw__qr[hidden]{{display:none}}
+        .vw__qr canvas{{flex:0 0 auto;width:132px;height:132px;border-radius:10px;background:#fff}}
+        .vw__mh{{margin:0 0 .3rem;font-weight:700;font-size:1.02rem;line-height:1.35;color:var(--hp-ink)}}
+        .vw__qr p,.vw__share p{{margin:0;font-size:.92rem;line-height:1.5;color:var(--hp-body)}}
+        .vw__share p+p{{margin-top:0}}
+        .vw__sb{{display:flex;flex-wrap:wrap;gap:.55rem;margin:.8rem 0 0}}
+        .vw__sbtn{{display:inline-flex;align-items:center;gap:.45rem;min-height:44px;padding:.55rem .95rem;border-radius:999px;border:1px solid var(--hp-edge);background:rgba(255,255,255,.04);color:var(--hp-ink);font:inherit;font-weight:600;font-size:.92rem;line-height:1.2;text-decoration:none;cursor:pointer}}
+        .vw__sbtn:hover,.vw__sbtn:focus-visible{{border-color:var(--cyan-soft);background:rgba(29,151,227,.12)}}
+        .vw__sbtn svg{{width:18px;height:18px;fill:currentColor;flex:0 0 auto}}
+        .vw__sbtn--wa svg{{fill:#25d366}}
+        .vw__sbtn--fb svg{{fill:#1877f2}}
+        .vw__sbtn[hidden]{{display:none}}
+        .vw a.vw__sbtn{{color:var(--hp-ink)}}
+        @media (max-width:760px){{.vw__more{{grid-template-columns:1fr}}}}
+        @media (hover:none) and (pointer:coarse){{.vw__qr{{display:none}}}}
         @media (max-width:600px){{.vw__cta .button{{flex:1 1 100%;justify-content:center;text-align:center}}}}
       </style>
       <script>
@@ -509,6 +551,34 @@ def virgin_tool_page(setup_url):
           b.addEventListener('click',function(){{ hide(); try{{ var p=v.play(); if(p&&p.catch) p.catch(function(){{}}); }}catch(e){{}}
             try{{ if(typeof window.gtag==='function') window.gtag('event','vem_video_play',{{page:location.pathname}}); }}catch(e){{}} }});
           v.addEventListener('play',hide);
+          /* a phone held upright gets the phone-shaped video: the wide one's captions are tiny at that size (nothing has loaded yet: preload=none) */
+          try{{ if(window.matchMedia&&matchMedia('(max-width:600px) and (orientation:portrait)').matches){{
+            var sv=v.querySelector('source'); sv.src=v.getAttribute('data-tall'); v.poster=v.getAttribute('data-tallposter');
+            v.setAttribute('width','720'); v.setAttribute('height','1280'); document.getElementById('vembox').classList.add('is-tall'); v.load(); }} }}catch(e){{}}
+          /* the scan-me QR for computers: opens this page, at the video, on the phone */
+          (function(){{
+            var box=document.getElementById('vemqr'), cv=document.getElementById('vemqrc'); if(!box||!cv) return;
+            if(window.matchMedia&&matchMedia('(hover:none) and (pointer:coarse)').matches){{ box.hidden=true; return; }}
+            var URL='{VEM_URL}?utm_source=qr&utm_medium=page#watch';
+            function draw(){{ try{{ var q=window.qrcode(0,'M'); q.addData(URL); q.make();
+              var n=q.getModuleCount(), size=cv.width, cell=Math.floor(size/(n+4)), off=Math.floor((size-cell*n)/2), x=cv.getContext('2d');
+              x.fillStyle='#ffffff'; x.fillRect(0,0,size,size); x.fillStyle='#070d22';
+              for(var r=0;r<n;r++) for(var c=0;c<n;c++) if(q.isDark(r,c)) x.fillRect(off+c*cell,off+r*cell,cell,cell); }}catch(e){{ box.hidden=true; }} }}
+            function load(){{ if(window.qrcode){{ draw(); return; }} var sc=document.createElement('script'); sc.src='/js/vendor/qrcode-generator-1.4.4-qrcode.js?v=1'; sc.onload=draw; sc.onerror=function(){{ box.hidden=true; }}; document.head.appendChild(sc); }}
+            if('IntersectionObserver' in window){{ var io=new IntersectionObserver(function(en){{ if(en[0].isIntersecting){{ io.disconnect(); load(); }} }},{{rootMargin:'400px'}}); io.observe(box); }} else load();
+          }})();
+          /* share: WhatsApp / Facebook / email are plain links; Copy the link; More ways = the phone's own share menu */
+          (function(){{
+            function ga(how){{ try{{ if(typeof window.gtag==='function') window.gtag('event','vem_share',{{method:how,page:location.pathname}}); }}catch(e){{}} }}
+            var sh=document.querySelectorAll('[data-vemshare]'); for(var i=0;i<sh.length;i++) sh[i].addEventListener('click',function(){{ ga(this.getAttribute('data-vemshare')); }});
+            var cp=document.getElementById('vemcopy'), url='{VEM_URL}?utm_source=link&utm_medium=share';
+            if(cp) cp.addEventListener('click',function(){{ var sp=cp.querySelector('span');
+              function done(t){{ sp.textContent=t; setTimeout(function(){{ sp.textContent='Copy the link'; }},2500); }}
+              try{{ navigator.clipboard.writeText(url).then(function(){{ done('Link copied'); }},function(){{ done('Select and copy: '+url); }}); }}catch(e){{ done('Select and copy: '+url); }} }});
+            var nb=document.getElementById('vemnative');
+            if(nb&&navigator.share){{ nb.hidden=false; nb.addEventListener('click',function(){{
+              navigator.share({{title:'Move your Virgin Media email to Gmail, free',text:{{share_text_js}},url:'{VEM_URL}?utm_source=native&utm_medium=share'}}).catch(function(){{}}); }}); }}
+          }})();
           document.addEventListener('click',function(e){{ var t=e.target&&e.target.closest?e.target.closest('[data-vmc-dl]'):null;
             if(!t||t.closest('#watch,#choose')) return;
             try{{ if(typeof window.gtag==='function') window.gtag('event','pcm_download_click',{{page:location.pathname,place:'virgin_tools'}}); }}catch(e2){{}} }});
@@ -517,6 +587,13 @@ def virgin_tool_page(setup_url):
         }})();
       </script>
     </section>'''
+    from urllib.parse import quote
+    share_text_js = '"' + VEM_SHARE_TEXT.replace("\\", "\\\\").replace('"', '\\"') + '"'
+    watch = (watch.replace("{VEM_WA}", quote(VEM_SHARE_TEXT + " " + VEM_URL + "?utm_source=whatsapp&utm_medium=share", safe=""))
+                  .replace("{VEM_FB}", quote(VEM_URL + "?utm_source=facebook&utm_medium=share", safe=""))
+                  .replace("{VEM_SUBJ}", quote("Move your Virgin Media email to Gmail, free", safe=""))
+                  .replace("{VEM_BODY}", quote(VEM_SHARE_TEXT + "\n\n" + VEM_URL + "?utm_source=email&utm_medium=share", safe=""))
+                  .replace("{share_text_js}", share_text_js))
     choices = virgin_choices(setup_url, how_href="#how", how_label="How to use it, step by step", shots=False,
         also_html=('Deciding whether to keep your Virgin address? <a href="' + JUNARA + '">Keep it or move it</a> &middot; '
                    'moving by hand instead: <a href="' + GMAIL_PAGE + '">the Thunderbird guide</a> &middot; '
@@ -677,9 +754,9 @@ def virgin_tool_page(setup_url):
         video = {"@type": "VideoObject", "@id": bp.SITE + "/" + s + "/#video",
                  "name": "How to move Virgin Media email to Gmail, free",
                  "description": ("The 365 Email Mover add-on copies a Virgin Media mailbox in Chrome, then the free 365 PC Manager "
-                                 "app moves it into Gmail and checks every folder arrived. Real screens, a made-up sample mailbox."),
-                 "thumbnailUrl": [bp.SITE + VEM_POSTER, bp.SITE + "/images/vem-howto-poster-v1.jpg"],
-                 "uploadDate": VEM_VIDEO_DATE, "duration": "PT1M15S",
+                                 "app moves it into Gmail and checks every folder arrived. Real screens, a made-up sample mailbox, a spoken guide."),
+                 "thumbnailUrl": [bp.SITE + VEM_POSTER, bp.SITE + "/images/vem-howto-poster-v2.jpg"],
+                 "uploadDate": VEM_VIDEO_DATE, "duration": "PT1M25S",
                  "contentUrl": bp.SITE + VEM_VIDEO, "embedUrl": bp.SITE + "/" + s + "/#watch",
                  "publisher": {"@type": "Organization", "name": "365 Techies", "logo": {"@type": "ImageObject", "url": bp.SITE + "/logo.jpg"}}}
         return bp.graph([bp.crumb_sub(s, "Email Support", "email-support", _n), bp.webpage(s, _n, _d, image=VIRGIN_OG),
