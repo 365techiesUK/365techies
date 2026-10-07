@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=48';
+import * as MD from './models3d.js?v=49';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -1296,6 +1296,14 @@ export function createWorld() {
       const el = new THREE.Group(); el.position.set(0, -spec.elbow, 0); sh.add(el); const fa = new THREE.Group(); if (sd < 0) fa.scale.x = -1; el.add(fa); addParts(fa, sd < 0 && spec.part.foreL || spec.part.fore, PM);   // (the left forearm mirrored: thumbs outward)
       sh.rotation.order = 'YXZ'; return { sh: sh, el: el };   // out to the side, then forward, then turned
     });
+    if (spec.part.arm) {   // the arms: one skin each, shoulder to wrist, whose two "bones" are the shoulder and elbow groups - the elbow bends smoothly (it showed as a ball joint)
+      root.updateMatrixWorld(true);
+      arms.forEach((A, i) => { const sd = i ? 1 : -1, g = spec.part.arm.lit.clone(), P = g.attributes.position, n = P.count, si = new Uint16Array(n * 4), sw = new Float32Array(n * 4);
+        g.translate(sd * spec.shoulder[0], spec.shoulder[1], spec.shoulder[2]);
+        for (let j = 0; j < n; j++) { const y = P.getY(j) - (spec.shoulder[1] - spec.elbow), t = Math.min(1, Math.max(0, (0.04 - y) / 0.08)), u = t * t * (3 - 2 * t); si[j * 4 + 1] = 1; sw[j * 4] = 1 - u; sw[j * 4 + 1] = u; }
+        g.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(si, 4)); g.setAttribute('skinWeight', new THREE.Float32BufferAttribute(sw, 4));
+        const m = new THREE.SkinnedMesh(g, PLIT); m.castShadow = true; m.frustumCulled = false; root.add(m); m.bind(new THREE.Skeleton([A.sh, A.el])); });
+    }
     const locks = spec.part.locks ? spec.part.locks.map((L) => { const g = new THREE.Group(); g.position.set(L.at[0], L.at[1], L.at[2]); g.scale.setScalar(L.s); neck.add(g); addParts(g, L.geo, PM); return g; }) : null;
     let hair = null;
     if (spec.part.hair) {

@@ -418,7 +418,7 @@ const MODELS = {
     k.box(30, 0.2, 4, 0, 3.6, 8, '#e8e4dc'); for (let x = -14; x <= 14; x += 4) k.cyl(0.1, 0.1, 3.6, 6, x, 0, 9.8, '#9aa0a6');
     for (let i = 0; i < 10; i++) k.box(0.4, 0.9, 0.3, -6 + i * 1.2, 1.2, 6.2, ['#c0563a', '#e0b060', '#a86a8a', '#f2e6c8', '#e8a048'][i % 5]);   // the sand jars in the window
     for (let i = 0; i < 4; i++) k.cyl(0.06, 0.06, 7, 5, -15 + i * 10, 0, 13, '#e8ecea').box(1.6, 1.0, 0.05, -14.2 + i * 10, 6, 13, ['#d62828', '#1d7fd6', '#ffd23f', '#2a9d8f'][i]);
-    for (let i = 0; i < 5; i++) person(k, -13 + r() * 26, 0, 10 + r() * 4, r, r() < 0.3);
+    for (let i = 0; i < 5; i++) personTurned(k, -13 + r() * 26, 0, 10 + r() * 4, r, r() < 0.3);
   },
   oldbattery(k) {   // the Old Battery on the cliff over the Needles: low Victorian fort walls round a parade, two big guns on their mounts, the
     // little white coastguard lookout with its windows all round, a flagpole (+X towards the sea)
@@ -529,7 +529,7 @@ const MODELS = {
   },
   crowd(k, v) {   // a row of people cheering behind a barrier (on their +Z side, towards the road), at the start, the checkpoints and the goal
     const r = rnd(200 + v);
-    for (let i = 0; i < 9; i++) person(k, -6.4 + i * 1.6 + (r() - 0.5) * 0.7, 0, (r() - 0.5) * 0.9, r, r() < 0.8);
+    for (let i = 0; i < 9; i++) personTurned(k, -6.4 + i * 1.6 + (r() - 0.5) * 0.7, 0, (r() - 0.5) * 0.9, r, r() < 0.8);   // (facing the barrier and the road)
     k.box(15, 0.9, 0.12, 0, 0, 0.7, '#e8e4da', 0, 0, 0, 'shiny');
     for (let i = 0; i < 8; i++) k.box(1.8, 0.3, 0.13, -6.3 + i * 1.8, 0.45, 0.7, i % 2 ? '#1f2f4a' : '#e8e4da');
   },
@@ -642,7 +642,7 @@ const MODELS = {
     for (let i = 0; i < 11; i++) k.box(0.12, 4, 0.1, -10.5 + i * 2.1, 0, 5.05, '#6a4e34');
     k.box(7, 3, 0.12, 7, 0.5, 5.06, '#3a5566', 0, 0, 0, 'shiny');
     for (let i = 0; i < 4; i++) { const x = -8 + i * 4; k.cyl(0.5, 0.5, 0.06, 8, x, 0.75, 8.5, '#6a4e34').cyl(0.05, 0.05, 2.3, 4, x, 0, 8.5, '#9a9a9a').cone(1.4, 0.45, 8, x, 2.2, 8.5, ['#2f6a3a', '#e8e4da'][i % 2]); }
-    for (let i = 0; i < 5; i++) person(k, -9 + i * 4 + r(), 0, 10.5 + r(), r, false);
+    for (let i = 0; i < 5; i++) personTurned(k, -9 + i * 4 + r(), 0, 10.5 + r(), r, false);
   },
   landtrain(k, v) {   // the little land train that takes people out to the sandbank: a green engine and three open carriages under
     // striped canopies, people aboard (along +Z)
@@ -667,7 +667,7 @@ const MODELS = {
     for (const x of [-11.6, 11.6]) for (const z of [-1, 1]) k.box(0.55, 6.2, 0.55, x, 0, z, col);
     k.box(25, 0.4, 2.8, 0, 6, 0, col, 0, 0, 0, 'shiny');
     for (const z of [-1.35, 1.35]) { k.box(25, 0.14, 0.14, 0, 7.5, z, col); for (let i = -12; i <= 12; i += 1.5) k.box(0.1, 1.6, 0.1, i, 6.3, z, col, 0, 0, (i * 2) % 2 ? 0.55 : -0.55); }
-    const r = rnd(300 + v); for (let i = 0; i < 7; i++) person(k, -9 + i * 3 + r() * 1.2, 6.4, (r() - 0.5) * 1.2, r, true);
+    const r = rnd(300 + v); for (let i = 0; i < 7; i++) personTurned(k, -9 + i * 3 + r() * 1.2, 6.4, (r() - 0.5) * 1.2, r, true);   // (watching you come)
   },
   viaduct(k) {   // a stone railway viaduct striding over the road: a big arch for the road, smaller ones either side
     const sh = new THREE.Shape(), arch = (x1, x0, h) => { sh.lineTo(x1, 0); sh.lineTo(x1, h); sh.absarc((x0 + x1) / 2, h, (x1 - x0) / 2, 0, Math.PI, false); sh.lineTo(x0, 0); };
@@ -1085,7 +1085,7 @@ const MODELS = {
     k.box(0.1, 0.1, 1.3, 9.9, 5.0, 4.6, '#1a1a1a').box(0.08, 1.3, 1.0, 9.9, 3.6, 5.0, '#5a1f1a');   // the sign on its bracket (blank)
     for (const x of [-2.5, 2, 5.5]) { k.cyl(0.02, 0.02, 0.5, 4, x, 5.0, 4.4, '#222222'); k.ball(0.45, x, 4.8, 4.4, ['#e63946', '#ff7eb6', '#ffd23f', '#9b5de5'][(r() * 4) | 0], 1, 0.8, 1); }
     for (const x of [-1, 4.5]) k.box(2.6, 0.45, 0.6, x, 0.45, 6.4, '#6a4e34').box(2.6, 0.08, 1.6, x, 0.85, 6.4, '#8a6a48');
-    for (let i = 0; i < 4; i++) person(k, -8 + i * 4.4 + r(), 0, 8.6 + r(), r, false);
+    for (let i = 0; i < 4; i++) personTurned(k, -8 + i * 4.4 + r(), 0, 8.6 + r(), r, false);
   },
   corfechurch(k) {   // St Edward, King and Martyr, on the square at Corfe (its face +Z): the old west tower of grey Purbeck stone - battlements, a pinnacle
     // at each corner, louvred belfry windows - the nave behind it under stone slates, tall pointed windows, the churchyard wall and its headstones
@@ -2142,6 +2142,11 @@ function person(k, x, y, z, r, cheer) {   // one of the crowd, in grown-up propo
   if (bag < 0.1) k.box(0.07, 0.22, 0.25, x - 0.32, W - 0.14, z, ['#5a3a22', '#1a1a1a', '#c8102e', '#e9e2d0'][(q() * 4) | 0], 0, 0, 0, 'lit');   // a bag on the shoulder
   else if (bag < 0.18) k.box(0.28, 0.34, 0.13, x, W + 0.12, z + 0.16, ['#1d3557', '#2a2a2a', '#c1121f', '#2a6f4a'][(q() * 4) | 0], 0, 0, 0, 'lit');   // a rucksack
 }
+function personTurned(k, x, y, z, r, cheer) {   // one of the crowd facing +Z - the road's side wherever a model's +Z is turned to the road (owner, 7 Oct: "make the crowd face the race":
+  // the cheering crowds stood behind their barriers with their backs to it). Built as person() would, then turned round on the spot
+  const k2 = new Kit(); person(k2, x, y, z, r, cheer);
+  for (const key in k2.parts) for (const g of k2.parts[key]) { g.translate(-x, 0, -z); g.rotateY(Math.PI); g.translate(x, 0, z); (k.parts[key] || (k.parts[key] = [])).push(g); }
+}
 function sitter(k, x, y, z, r) {   // someone sat back in a deckchair, facing +Z: legs out in front, leaning back, an arm on the rest
   const sh = CROWD[(r() * CROWD.length) | 0], sk = SKIN[(r() * SKIN.length) | 0], legs = r() < 0.55 ? sk : ['#2d3a55', '#d8d2c4', '#1d4e89'][(r() * 3) | 0];
   for (const sd of [-1, 1]) k.put(capG(0.07, 0.48), legs, x + sd * 0.1, y + 0.3, z + 0.36, Math.PI / 2 - 0.3, 0, 0);
@@ -3122,8 +3127,7 @@ export function people() {
     return [Math.sin(phi) * r * (o.short ? 1.45 : 1.2) + Math.sin(phi) * lift, y, -Math.cos(phi) * r * (o.short ? 0.7 : 0.78) - Math.cos(phi) * lift]; };   // a point just on the body's surface (phi 0: the middle of the front)
   const fore = (o, wear) => P((k) => {   // the forearm, tapering to the wrist, and an open hand: palm, four fingers, a thumb (a pass, 6 Oct: they were a mannequin's paddles)
     const a = o.arm, sk = o.skin, fc = (r, l) => new THREE.CapsuleGeometry(r, l, 2, 6);
-    k.ball(a * 0.88, 0, 0, 0, o.long || o.short ? sk : o.sleeve, 1, 1, 1, 'lit', 10);   // the elbow
-    k.put(new THREE.LatheGeometry([[0, 0.02], [a * 0.8, 0.012], [a * 0.92, -0.03], [a * 0.86, -0.1], [a * 0.68, -0.2], [a * 0.58, -0.25], [a * 0.5, -0.274], [0, -0.282]].map(v2), 12), sk, 0, 0, 0, 0, 0, 0, 1, 1, 0.88, 'lit');
+    k.ball(a * 0.6, 0, -0.004, a * 0.27, sk, 1, 1, 1, 'lit', 10);   // the point of the elbow (inside the arm when it's straight; it shows as the arm bends - the arm itself is one skin now: part.arm)
     k.ball(0.034, 0, -0.31, 0, sk, 0.95, 1.15, 0.42, 'lit', 10);   // the palm
     for (let i = 0; i < 4; i++) { const L = [0.034, 0.041, 0.039, 0.031][i]; k.put(fc(0.0074, L), sk, (i - 1.5) * 0.0128, -0.342 - L / 2, -0.002, 0, 0, (i - 1.5) * -0.05, 1, 1, 0.85, 'lit'); }
     k.put(fc(0.0088, 0.028), sk, 0.031, -0.302, -0.012, 0, 0, 0.5, 1, 1, 1, 'lit');   // the thumb (outward: the left arm is mirrored)
@@ -3220,7 +3224,6 @@ export function people() {
         k.put(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 24, 0.0035, 4, false), '#e8c060', 0, 0, 0, 0, 0, 0, 1, 1, 1, 'chrome'); const pd = onBody(o, 0, 0.5, 0.008); k.ball(0.009, pd[0], pd[1], pd[2], '#f0d070', 1, 1.25, 0.6, 'chrome', 8); } }),   // her fine gold chain and its little pendant, lying on her skin
     head: P((k) => faceOf(k, o)),
     upper: P((k) => {
-      const a = o.arm; k.put(new THREE.LatheGeometry([[0, 0.03], [a * 0.75, 0.022], [a * 1.02, 0], [a * 1.1, -0.05], [a * 1.0, -0.14], [a * 0.9, -0.22], [a * 0.84, -0.255], [a * 0.55, -0.287], [0, -0.296]].map(v2), 12), o.short ? o.skin : o.sleeve, 0, 0, 0, 0, 0, 0, 1, 1, 0.92, 'lit');   // the upper arm: shoulder, a little curve of muscle, tapering to the elbow
       if (o.short) {   // a short shirt sleeve
         k.put(new THREE.CylinderGeometry(o.arm * 1.18, o.arm * 1.34, 0.14, 12), o.sleeve, 0, -0.055, 0, 0, 0, 0, 1, 1, 1, 'lit');
         // (no cap: the sleeve starts inside the torso)   // its top rounded off, flush with the tube
@@ -3228,6 +3231,11 @@ export function people() {
       }
     }),
     fore: fore(o), foreL: fore(o, o.short ? 'watch' : 'bangle'),   // (the left one wears his watch, her bangle)
+    arm: P((k) => {   // the arm, shoulder to wrist, as ONE skin that bends at the elbow (owner, 7 Oct: "fix her elbows" - it was an upper arm, a ball and a forearm, and the joint showed);
+      // world3d skins it to the shoulder and elbow groups. Shoulder, a curve of muscle, the elbow (rings close together, for a smooth bend), the forearm tapering to the wrist
+      const a = o.arm, E = o.elbow, pts = [[0, 0.03], [a * 0.75, 0.022], [a * 1.02, 0], [a * 1.1, -0.05], [a * 1.0, -0.14], [a * 0.92, -0.2], [a * 0.88, -E + 0.04], [a * 0.86, -E + 0.02], [a * 0.86, -E], [a * 0.88, -E - 0.02], [a * 0.92, -E - 0.04], [a * 0.88, -E - 0.08], [a * 0.8, -E - 0.14], [a * 0.68, -E - 0.2], [a * 0.58, -E - 0.25], [a * 0.5, -E - 0.274], [a * 0.25, -E - 0.281], [0, -E - 0.284]];
+      k.put(new THREE.LatheGeometry(pts.reverse().map(v2), 14), o.skin, 0, 0, 0, 0, 0, 0, 1, 1, 0.9, 'lit');
+    }),
     locks: o.long ? (() => {   // her locks of hair, each built round its root so it can swing back in the wind
       const zb = (x, y) => { const H = HS(o), v = Math.max(-1, Math.min(1, (y - H.cy) / (H.hh + 0.02))), c = Math.sqrt(Math.max(0, 1 - v * v)), u = Math.max(-c, Math.min(c, x / (H.hw + 0.02))); return skull(o, u, v, Math.sqrt(Math.max(0, 1 - u * u - v * v)), 0.02, [0, 0, 0])[2] + 0.012; };   // just outside the back of her hair
       const lock = (x, j, dz, r, fl, tp) => [[x * 0.8, 0.27, 0.06 - dz], [x * 1.15, 0.2, zb(x * 1.15, 0.2) - dz], [x * 1.25 + j, 0.04, zb(x * 1.15, 0.2) - 0.006 - dz], [x * 1.3 + j * 2, -0.29, zb(x * 1.15, 0.2) - dz], r, fl, tp];
@@ -3239,8 +3247,8 @@ export function people() {
     hair: null,
     scarf: null
   });
-  const driver = one({ collar: true, short: true, chest: 0.165, wide: 1.25, top: '#f2f2ee', sleeve: '#f2f2ee', skin: '#e2ae86', hair: '#2a1c12', arm: 0.052, shades: true });
-  const girl = one({ chest: 0.14, wide: 1.15, top: '#1fb5c4', sleeve: '#efbf98', skin: '#efbf98', hair: '#f0cd78', arm: 0.043, long: true, strap: true });
+  const driver = one({ elbow: 0.27, collar: true, short: true, chest: 0.165, wide: 1.25, top: '#f2f2ee', sleeve: '#f2f2ee', skin: '#e2ae86', hair: '#2a1c12', arm: 0.052, shades: true });
+  const girl = one({ elbow: 0.26, chest: 0.14, wide: 1.15, top: '#1fb5c4', sleeve: '#efbf98', skin: '#efbf98', hair: '#f0cd78', arm: 0.043, long: true, strap: true });
   const sw = P((k) => { k.put(new THREE.TorusGeometry(0.175, 0.022, 8, 24), '#151515', 0, 0, 0, 0, 0, 0, 1, 1, 1, 'trim'); k.box(0.3, 0.03, 0.02, 0, 0, 0, '#202020', 0, 0, 0, 'trim').cyl(0.045, 0.045, 0.03, 12, 0, 0, 0, '#2a2a2e', Math.PI / 2, 0, 'trim'); });
   return {
     driver: { part: driver, seat: [0.4, 0.53, 0.47], neck: 0.685, shoulder: [0.205, 0.56, 0], elbow: 0.27, scale: 0.98 },
