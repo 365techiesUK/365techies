@@ -1,7 +1,7 @@
 {
- "ver": 1,
- "updated": "2026-09-26",
- "about": "365 Techies programs check: security programs, PC optimisers, driver updaters, adware and remote-access tools, each with a factual reason and its sources. Used by 365 PC Manager and PC Service Professional. Read-only: nothing is removed automatically.",
+ "ver": 2,
+ "updated": "2026-10-07",
+ "about": "365 Techies programs check: security programs, PC optimisers, driver updaters, adware, remote-access tools and programs that no longer get security fixes, each with a factual reason and its sources. Used by 365 PC Manager and PC Service Professional. Read-only: nothing is removed automatically.",
  "rules": [
   {
    "id": "allow-acer-care-center",
@@ -3980,6 +3980,215 @@
    "examples": [
     "Zoho Assist",
     "Zoho Assist Unattended Agent"
+   ]
+  },
+  {
+   "id": "eol-flash",
+   "name": "Adobe Flash Player",
+   "publisher": "Adobe",
+   "cat": "outdated",
+   "kind": "eol",
+   "verdict": "remove",
+   "rx": "^Adobe Flash Player\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Adobe ended Flash Player on 31 December 2020 and it gets no security fixes. Nothing on the web uses it any more - remove it (Settings > Apps).",
+   "staff": "v36 (7 Oct 2026): no longer gets security fixes from its maker. Verdict 'update' = replace with the current version; 'remove' = nothing current needs it.",
+   "sources": [
+    {
+     "url": "https://www.adobe.com/products/flashplayer/end-of-life.html",
+     "supports": "Adobe stopped supporting Flash Player after 31 December 2020"
+    }
+   ]
+  },
+  {
+   "id": "eol-shockwave",
+   "name": "Adobe Shockwave Player",
+   "publisher": "Adobe",
+   "cat": "outdated",
+   "kind": "eol",
+   "verdict": "remove",
+   "rx": "^Adobe Shockwave Player\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Adobe ended Shockwave Player on 9 April 2019 - no security fixes since. Nothing current needs it - remove it.",
+   "staff": "v36 (7 Oct 2026): no longer gets security fixes from its maker. Verdict 'update' = replace with the current version; 'remove' = nothing current needs it.",
+   "sources": [
+    {
+     "url": "https://helpx.adobe.com/shockwave/shockwave-end-of-life-faq.html",
+     "supports": "Shockwave Player discontinued 9 April 2019"
+    }
+   ]
+  },
+  {
+   "id": "eol-silverlight",
+   "name": "Microsoft Silverlight",
+   "publisher": "Microsoft",
+   "cat": "outdated",
+   "kind": "eol",
+   "verdict": "remove",
+   "rx": "^Microsoft Silverlight\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Microsoft ended Silverlight on 12 October 2021 - no security fixes since. Nothing current needs it - remove it.",
+   "staff": "v36 (7 Oct 2026): no longer gets security fixes from its maker. Verdict 'update' = replace with the current version; 'remove' = nothing current needs it.",
+   "sources": [
+    {
+     "url": "https://learn.microsoft.com/en-us/lifecycle/products/silverlight-5",
+     "supports": "Silverlight 5 support ended 12 October 2021"
+    }
+   ]
+  },
+  {
+   "id": "eol-quicktime",
+   "name": "QuickTime for Windows",
+   "publisher": "Apple",
+   "cat": "outdated",
+   "kind": "eol",
+   "verdict": "remove",
+   "rx": "^QuickTime\\b",
+   "prx": "\\bApple\\b",
+   "scrx": "",
+   "reason": "QuickTime for Windows stopped getting updates in 2016, and security holes found in it were never fixed. Windows plays the same videos without it - remove it.",
+   "staff": "v36 (7 Oct 2026): no longer gets security fixes from its maker. Verdict 'update' = replace with the current version; 'remove' = nothing current needs it.",
+   "sources": [
+    {
+     "url": "https://www.us-cert.gov/ncas/alerts/TA16-105A",
+     "supports": "US-CERT: Apple ended support for QuickTime for Windows; uninstall it"
+    }
+   ]
+  },
+  {
+   "id": "eol-adobe-reader-old",
+   "name": "Adobe Reader / Acrobat XI and older",
+   "publisher": "Adobe",
+   "cat": "outdated",
+   "kind": "eol",
+   "verdict": "update",
+   "rx": "^Adobe (?:Acrobat )?Reader (?:XI|X|9|8|7)\\b|^Adobe Acrobat (?:XI|X|9|8|7)\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "This old Adobe Reader or Acrobat hasn't had security fixes since 2017 at the latest - and PDFs are a common way in for scams. Install the free, current Adobe Acrobat Reader instead, or ask us.",
+   "staff": "v36 (7 Oct 2026): no longer gets security fixes from its maker. Verdict 'update' = replace with the current version; 'remove' = nothing current needs it.",
+   "sources": [
+    {
+     "url": "https://helpx.adobe.com/support/programs/eol-matrix.html",
+     "supports": "Adobe Reader XI and Acrobat XI end of support 15 October 2017"
+    }
+   ]
+  },
+  {
+   "id": "eol-skype",
+   "name": "Skype",
+   "publisher": "Microsoft / Skype",
+   "cat": "outdated",
+   "kind": "eol",
+   "verdict": "remove",
+   "rx": "^Skype\\b(?! for Business)",
+   "prx": "",
+   "scrx": "",
+   "reason": "Microsoft shut Skype down on 5 May 2025 - it no longer works or gets fixes. The free Microsoft Teams replaces it; ask us if you'd like help moving across.",
+   "staff": "v36 (7 Oct 2026): no longer gets security fixes from its maker. Verdict 'update' = replace with the current version; 'remove' = nothing current needs it.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/en-us/skype/skype-is-retiring-in-may-2025-what-you-need-to-know-2a7d2501-427f-485e-8be0-2068a9f90472",
+     "supports": "Skype retired 5 May 2025; Teams Free replaces it"
+    }
+   ]
+  },
+  {
+   "id": "eol-windows-live",
+   "name": "Windows Live Essentials (Mail, Photo Gallery, Movie Maker)",
+   "publisher": "Microsoft",
+   "cat": "outdated",
+   "kind": "eol",
+   "verdict": "remove",
+   "rx": "^Windows Live (?:Essentials|Mail|Photo Gallery|Movie Maker|Writer)\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Microsoft ended Windows Live Essentials (Mail, Photo Gallery, Movie Maker) on 10 January 2017 - no security fixes since. Ask us about moving your email or photos to something current first.",
+   "staff": "v36 (7 Oct 2026): no longer gets security fixes from its maker. Verdict 'update' = replace with the current version; 'remove' = nothing current needs it.",
+   "sources": [
+    {
+     "url": "https://support.microsoft.com/help/13785",
+     "supports": "Windows Essentials 2012 support ended 10 January 2017"
+    }
+   ]
+  },
+  {
+   "id": "eol-picasa",
+   "name": "Picasa",
+   "publisher": "Google",
+   "cat": "outdated",
+   "kind": "eol",
+   "verdict": "remove",
+   "rx": "^Picasa\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Google stopped Picasa in 2016 and it gets no fixes. Removing it leaves your photos exactly where they are - ask us if you'd like a current photo viewer.",
+   "staff": "v36 (7 Oct 2026): no longer gets security fixes from its maker. Verdict 'update' = replace with the current version; 'remove' = nothing current needs it.",
+   "sources": [
+    {
+     "url": "https://googlephotos.blogspot.com/2016/02/moving-on-from-picasa.html",
+     "supports": "Google retired Picasa in 2016"
+    }
+   ]
+  },
+  {
+   "id": "eol-office-2010",
+   "name": "Microsoft Office 2010",
+   "publisher": "Microsoft",
+   "cat": "outdated",
+   "kind": "eol",
+   "verdict": "update",
+   "rx": "^Microsoft Office (?:Home and Student|Home and Business|Professional Plus|Professional|Standard|Starter)\\s+2010\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Microsoft stopped security fixes for Office 2010 on 13 October 2020. It still opens your documents, but files and attachments from others are riskier to open - ask us about Microsoft 365.",
+   "staff": "v36 (7 Oct 2026): no longer gets security fixes from its maker. Verdict 'update' = replace with the current version; 'remove' = nothing current needs it.",
+   "sources": [
+    {
+     "url": "https://learn.microsoft.com/en-us/lifecycle/end-of-support/end-of-support-2020",
+     "supports": "Office 2010 end of support 13 October 2020"
+    }
+   ]
+  },
+  {
+   "id": "eol-office-2013",
+   "name": "Microsoft Office 2013",
+   "publisher": "Microsoft",
+   "cat": "outdated",
+   "kind": "eol",
+   "verdict": "update",
+   "rx": "^Microsoft Office (?:Home and Student|Home and Business|Professional Plus|Professional|Standard)\\s+2013\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "Microsoft stopped security fixes for Office 2013 on 11 April 2023. It still opens your documents, but files and attachments from others are riskier to open - ask us about Microsoft 365.",
+   "staff": "v36 (7 Oct 2026): no longer gets security fixes from its maker. Verdict 'update' = replace with the current version; 'remove' = nothing current needs it.",
+   "sources": [
+    {
+     "url": "https://learn.microsoft.com/en-us/lifecycle/end-of-support/end-of-support-2023",
+     "supports": "Office 2013 end of support 11 April 2023"
+    }
+   ]
+  },
+  {
+   "id": "eol-java-old",
+   "name": "Java 6 / Java 7",
+   "publisher": "Oracle",
+   "cat": "outdated",
+   "kind": "eol",
+   "verdict": "remove",
+   "rx": "^Java(?:\\(TM\\))?\\s+(?:6|7)\\b",
+   "prx": "",
+   "scrx": "",
+   "reason": "This old Java hasn't had public security fixes since 2015. Most home PCs don't need Java at all - remove it, or ask us if a program of yours uses it.",
+   "staff": "v36 (7 Oct 2026): no longer gets security fixes from its maker. Verdict 'update' = replace with the current version; 'remove' = nothing current needs it.",
+   "sources": [
+    {
+     "url": "https://www.oracle.com/java/technologies/java-se-support-roadmap.html",
+     "supports": "Java SE 7 public updates ended April 2015"
+    }
    ]
   }
  ]
