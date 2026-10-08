@@ -7,8 +7,8 @@
 import * as THREE from 'three';
 import { GLTFLoader } from './loaders/GLTFLoader.js';
 
-const SEATS = { him: { seat: [0.4, 0.58, 0.42], turn: 0, file: 'him.glb' }, her: { seat: [-0.4, 0.56, 0.6], turn: -0.15, file: 'her.glb' } };
-const TINT = { him: { body: '#d9a47e', short: '#5a4433' }, her: { body: '#ebba95', long01: '#e2b46c' } };   // (a holiday tan, deeper: 8 Oct)
+const SEATS = { him: { seat: [0.4, 0.58, 0.42], turn: 0, file: 'him.glb?v=1' }, her: { seat: [-0.4, 0.56, 0.6], turn: -0.15, file: 'her.glb?v=1' } };
+const TINT = { him: { body: '#d1a688', short: '#5a4433' }, her: { body: '#e3bc9e', long01: '#e2b46c' } };   // (a holiday tan - 20% less saturated: it read orange under the warm sky)
 const WRIST = -0.27, FUN = { him: 0.32, her: 0.45 }, FINGERS = ['index', 'middle', 'ring', 'pinky'];
 const v4 = new THREE.Vector3(), v5 = new THREE.Vector3();
 const q1 = new THREE.Quaternion(), q2 = new THREE.Quaternion(), q3 = new THREE.Quaternion(), q4 = new THREE.Quaternion(), QI = new THREE.Quaternion();
@@ -38,6 +38,12 @@ function dress(mat, rim, hairTop) {
     sh.fragmentShader = 'uniform float uRim;\n' + sh.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n' +
       '{ vec3 nn = normalize(normal); float fr = 1.0 - clamp(dot(nn, normalize(vViewPosition)), 0.0, 1.0), back = clamp(dot(nn, normalize(vec3(0.35, 0.65, -0.68))) + 0.25, 0.0, 1.0);\n' +
       '  totalEmissiveRadiance += vec3(1.0, 0.62, 0.34) * pow(fr, 2.2) * back * uRim; }');   /* (a low sun from behind and above: hair and shoulders catch it, a fold facing you - a closed eyelid - does not) */
+    const tk = mat.userData.tk;
+    if (tk) {   // (her hair tucked behind her ear: strands in front of the ear plane and below her brows drawn back, in the hair's own space, before skinning)
+      const v3 = (q) => 'vec3(' + q.x.toFixed(4) + ',' + q.y.toFixed(4) + ',' + q.z.toFixed(4) + ')'; sh.uniforms.uTuck = mat.userData.tuck;
+      sh.vertexShader = 'uniform float uTuck;\n' + sh.vertexShader.replace('#include <skinning_vertex>', '{ vec3 rel = transformed - ' + v3(tk.E) + ', tF = ' + v3(tk.F) + '; float fr = dot(rel, tF) + 0.085;\n' +
+        '  float a = uTuck * smoothstep(0.0, 0.025, fr) * (1.0 - smoothstep(0.015, 0.05, rel.y)); transformed -= tF * fr * 0.9 * a; }\n#include <skinning_vertex>');
+    }
     if (hairTop != null) {
       const py = (hairTop - 0.13).toFixed(3), pz = '-0.050';
       sh.vertexShader = 'uniform float uWind; uniform float uTime;\n' + sh.vertexShader.replace('#include <skinning_vertex>', '#include <skinning_vertex>\n' +
@@ -48,12 +54,12 @@ function dress(mat, rim, hairTop) {
         '  transformed.x += a * uWind * 0.03 * g; }');
     }
   };
-  mat.customProgramCacheKey = () => 'mh' + (hairTop != null ? 'h' + hairTop.toFixed(3) : '');
+  mat.customProgramCacheKey = () => 'mh' + (hairTop != null ? 'h' + hairTop.toFixed(3) : '') + (mat.userData.tk ? 'tk' : '');
   mat.needsUpdate = true;
 }
 
 export async function attach(opt) {
-  opt = Object.assign({ sc: 0.93, dx: 0, dy: -0.055, dz: 0.02, fun: 1, cheek: 1, rim: 0.42, cine: 1, board: 1 }, opt || {});
+  opt = Object.assign({ sc: 0.93, dx: 0, dy: -0.055, dz: 0.02, fun: 1, cheek: 1, rim: 0.34, cine: 1, board: 1 }, opt || {});
   const W3 = window.COAST3D.world, scene = W3.scene, renderer = W3.renderer, L = new GLTFLoader(), base = new URL('.', import.meta.url).href;
   const files = {}; for (const who in SEATS) files[who] = await L.loadAsync(base + SEATS[who].file);
   const state = { people: [], car: null, last: 0, t0: performance.now(), calm: 0, relax: 0, touch: 0, flirt: 0, lastV: 0, acc: 0, lat: 0, latDir: new THREE.Vector3(), lastFwd: null,
@@ -124,8 +130,8 @@ export async function attach(opt) {
         if (!o.isMesh) return; o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false; o.userData.mh = true;
         const mt = o.material = o.material.clone(), n = (mt.name || '') + ' ' + o.name;
         for (const k in TINT[who]) if (n.includes(k)) mt.color.set(TINT[who][k]);
-        if (/short|long|eyebrow|eyelash/.test(n)) { mt.alphaTest = 0.45; mt.transparent = false; mt.depthWrite = true; mt.side = THREE.DoubleSide; } else { mt.transparent = false; mt.depthWrite = true; mt.alphaTest = 0; }
-        if (/body/.test(n)) mt.roughness = 0.5;
+        if (/short|long|eyebrow|eyelash/.test(n)) { mt.alphaTest = 0.3; mt.alphaToCoverage = true; mt.transparent = false; mt.depthWrite = true; mt.side = THREE.DoubleSide; } else { mt.transparent = false; mt.depthWrite = true; mt.alphaTest = 0; }
+        if (/body/.test(n)) mt.roughness = 0.66;   // (less shine)
         if (/sunglasses/.test(n)) mt.envMapIntensity = 1.6;
         if (!/eyelash|eyebrow|low-poly|teeth|tongue|sunglasses/.test(n)) { let top = null; if (/long01/.test(n)) { o.geometry.computeBoundingBox(); top = o.geometry.boundingBox.max.y; } dress(mt, opt.rim * (/body/.test(n) ? 1 : 0.8), top); mats.push({ mt: mt, hair: top != null }); }
         if (o.morphTargetDictionary) faces.push(o);
@@ -157,11 +163,23 @@ export async function attach(opt) {
       }
       state.people.push(P);
     }
+    for (const P of state.people) if (P.glasses) P.model.traverse((o) => {   // (his shades pushed up: a rigid copy on his head, swung up about his ears - turning the glasses bone that far stretched the frame across his face)
+      if (!o.isSkinnedMesh || !/sunglasses/.test(o.name + ' ' + (o.material.name || ''))) return; o.updateMatrixWorld(true);
+      const pa = o.geometry.attributes.position, v = new THREE.Vector3(), arr = new Float32Array(pa.count * 3), C = new THREE.Vector3(), pts = [];
+      for (let k = 0; k < pa.count; k++) { v.fromBufferAttribute(pa, k); o.applyBoneTransform(k, v); P.head.worldToLocal(v.applyMatrix4(o.matrixWorld)); arr[k * 3] = v.x; arr[k * 3 + 1] = v.y; arr[k * 3 + 2] = v.z; C.add(v); pts.push(v.clone()); }
+      C.multiplyScalar(1 / pa.count); pts.sort((a, b) => b.distanceTo(C) - a.distanceTo(C)); const far = pts.slice(0, Math.max(4, pts.length / 10 | 0)), pivot = far.reduce((a, b) => a.add(b), new THREE.Vector3()).multiplyScalar(1 / far.length);
+      const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(arr, 3)); if (o.geometry.attributes.uv) g.setAttribute('uv', o.geometry.attributes.uv); g.setIndex(o.geometry.index); g.computeVertexNormals();
+      const m = new THREE.Mesh(g, o.material); m.visible = false; m.castShadow = true; m.frustumCulled = false; m.userData.mh = true; P.head.add(m); (P.shadeParts = P.shadeParts || []).push({ mesh: m, src: o, lens: C, n: pa.count }); });
+    for (const P of state.people) if (P.shadeParts) { const C = new THREE.Vector3(); let n = 0; for (const q of P.shadeParts) { C.addScaledVector(q.lens, q.n); n += q.n; } P.shades = { parts: P.shadeParts, lens: C.multiplyScalar(1 / n) }; }   // (lens and frame: one lens point for both)
+    for (const P of state.people) if (P.who === 'her' && P.eyes.length) P.model.traverse((o) => {   // (her hair: where her face is, in the hair's own space - for the tuck)
+      if (!o.isSkinnedMesh || !/long01/.test(o.name + ' ' + (o.material.name || ''))) return; o.updateMatrixWorld(true);
+      const E = P.eyes.map((e) => o.worldToLocal(wp(e))).reduce((a, b) => a.add(b)).multiplyScalar(1 / P.eyes.length), F = E.clone().sub(o.worldToLocal(wp(P.head))); F.y = 0; F.normalize();
+      o.material.userData.tk = { E: E, F: F }; o.material.userData.tuck = { value: 0 }; o.material.needsUpdate = true; });
     state.him = state.people.find((P) => P.who === 'him'); state.her = state.people.find((P) => P.who === 'her');
     for (const P of state.people) {   // (each mouth in head space, from the eyes: for the kiss)
       const hd = P.head; hd.getWorldQuaternion(q3); car.getWorldQuaternion(q4); const Y = new THREE.Vector3(0, 1, 0).applyQuaternion(q4).applyQuaternion(q3.clone().invert()).normalize();
       const em = P.eyes.length ? P.eyes.map((e) => hd.worldToLocal(wp(e))).reduce((a, b) => a.add(b)).multiplyScalar(1 / P.eyes.length) : new THREE.Vector3(0, 0.09, 0.09);
-      const F = em.clone().sub(Y.clone().multiplyScalar(em.dot(Y))).normalize(); P.faceF = F; P.mouth = em.clone().sub(Y.clone().multiplyScalar(0.064)).add(F.clone().multiplyScalar(0.02)); }
+      const F = em.clone().sub(Y.clone().multiplyScalar(em.dot(Y))).normalize(); P.faceF = F; P.headUp = Y; P.mouth = em.clone().sub(Y.clone().multiplyScalar(0.064)).add(F.clone().multiplyScalar(0.02)); }
     state.kOff = { him: new THREE.Vector3(), her: new THREE.Vector3() }; state.mouthW = {};
     if (state.her) headscarf(state.her, car);
     if (opt.board && !car.userData.mhBoard) {   // a striped surfboard standing up out of the back behind her seat
@@ -262,7 +280,7 @@ export async function attach(opt) {
         if (P.groove > 0.01) { turnBy(P.head, right, beat * 0.085 * P.groove); turnBy(P.sp2, fwd, Math.sin(t * 2 * Math.PI * 0.95) * 0.03 * P.groove); turnBy(P.neck, fwd, Math.sin(t * 2 * Math.PI * 0.95) * 0.03 * P.groove); }
         if (lg > 0.01) turnBy(P.head, right, (me && (P.fl > 0.01 || (state.flirtT || 0) > 1.0) ? -0.13 : 0.26) * lg + Math.sin(t * 2 * Math.PI * 4) * 0.025 * lg);   // (laughing: head back - or, after the look, down)
         if (nitro > 0.01) turnBy(P.head, right, (me ? 0.26 : 0.2) * nitro);   // (the nitro: heads thrown back)
-        if (state.sing > 0.01) { const sw = Math.sin(t * 2 * Math.PI * 0.95); turnBy(P.head, fwd, sw * 0.13 * state.sing); turnBy(P.neck, fwd, sw * 0.05 * state.sing); turnBy(P.head, right, (me ? 0.07 + Math.max(0, beat) * 0.05 : 0.015 + Math.max(0, beat) * 0.03) * state.sing);   // (singing: swaying together, chins up, the beat in the head)
+        if (state.sing > 0.01) { const sw = Math.sin(t * 2 * Math.PI * 0.95); turnBy(P.head, fwd, sw * 0.16 * state.sing); turnBy(P.neck, fwd, sw * 0.07 * state.sing); turnBy(P.sp3, fwd, sw * 0.04 * state.sing);   /* (~12 deg each way, both together: it read as nothing at cruise distance) */ turnBy(P.head, right, (me ? 0.07 + Math.max(0, beat) * 0.05 : 0.015 + Math.max(0, beat) * 0.03) * state.sing);   // (singing: swaying together, chins up, the beat in the head)
           if (!me) { turnBy(P.sp2, right, 0.03 * state.sing); if (other) turnBy(P.head, upw, signedAngle(fwd, wp(other.head).sub(wp(P.head)), upw) * 0.24 * state.sing); }   // (he leans back a little, his head to her)
           if (me && other && state.singT > 1.3) { const want = signedAngle(fwd, wp(other.head).sub(wp(P.head)), upw); turnBy(P.head, upw, want * 0.32 * state.sing * cl((state.singT - 1.3) / 0.4, 0, 1)); } }   // (and she sings it at him)
         if (me && (state.seat || 0) > 0.01) turnBy(P.head, fwd, 0.21 * toOther * state.seat);   // (her head tipped towards him)
@@ -293,7 +311,7 @@ export async function attach(opt) {
         let dirUp = oE.clone().sub(oS), wrist = A.oldEl.localToWorld(new THREE.Vector3(0, WRIST, 0)), k = 0, rDir = null, rW = null, ik = null, point = 0, fist = 0, wave = 0, hold = 0;
         const away = right.clone().multiplyScalar(A.inner ? toOther : -toOther);   // (out from the body on this arm's side)
         const reachUp = (lift, w) => { const d = upw.clone().multiplyScalar(0.9).add(away.clone().multiplyScalar(0.38)).add(fwd.clone().multiplyScalar(-0.08)).normalize(); rDir = d; rW = S.clone().add(d.clone().multiplyScalar((A.L1 + A.L2) * 0.9)).add(upw.clone().multiplyScalar(lift)); k = w; ik = null; };
-        const relaxW = !me && !A.inner ? Math.max(state.relax, kissArm, state.sing || 0) : state.relax;
+        const relaxW = !me && !A.inner ? Math.max(state.relax * (1 - (state.sing || 0)), kissArm) : state.relax;   // (singing: both his hands on the wheel, drumming)
         if (!me && !A.inner && relaxW > 0.01 && P.door) {   // his outside arm along the door on a straight, elbow on the sill (one-handed: the inside hand drives)
           const elb = car.localToWorld(new THREE.Vector3(SEATS.him.seat[0] + 0.33, P.door.y + 0.06, SEATS.him.seat[2] - 0.02)), hand = car.localToWorld(new THREE.Vector3(SEATS.him.seat[0] + 0.36, P.door.y + 0.09 + 0.08 * (state.sing || 0) * Math.pow(Math.max(0, Math.sin(t * 2 * Math.PI * 1.9)), 2), SEATS.him.seat[2] - 0.27));   /* (singing: his hand slaps the door top on the beat) */   // (the elbow on the door's inner edge, the forearm along it)
           ik = { T: wrist.clone().lerp(hand, relaxW), pole: oE.clone().lerp(elb.add(upw.clone().multiplyScalar(-0.1)), relaxW) }; }
@@ -311,7 +329,10 @@ export async function attach(opt) {
           k = 0; rW = null; wave = state.wind; }
         if (me && !A.inner && state.sing > 0.01) {   // singing: her fist a microphone ~5 cm in front of her chin, the elbow up and out (a two-bone reach: aiming the upper arm left the fist at her chest)
           const mic = wp(P.head).add(fwd.clone().multiplyScalar(0.14)).add(upw.clone().multiplyScalar(-0.085)).add(away.clone().multiplyScalar(0.04));
-          ik = { T: wrist.clone().lerp(mic, state.sing), pole: S.clone().add(away.clone().multiplyScalar(0.35)).add(fwd.clone().multiplyScalar(0.15)).add(upw.clone().multiplyScalar(-0.38)) }; k = 0; rW = null; fist = 1; wave = 0; }   /* (the elbow ~45 deg down-out: the forearm rises to the mouth) */
+          const ch = cl(Math.min((state.singT - 1.0) / 0.25, (2.3 - state.singT) / 0.3), 0, 1), out = other ? S.clone().add(wp(other.head).add(upw.clone().multiplyScalar(-0.05)).sub(S).setLength((A.L1 + A.L2) * 0.95)) : mic;   /* (the chorus, ~1 s: the mic pushed out to him at full stretch) */
+          ik = { T: wrist.clone().lerp(mic.lerp(out, ch), state.sing), pole: S.clone().add(away.clone().multiplyScalar(0.35 * (1 - ch))).add(fwd.clone().multiplyScalar(0.15)).add(upw.clone().multiplyScalar(-0.38 - 0.2 * ch)) }; k = 0; rW = null; fist = 1; wave = 0; }
+        if (!me && state.sing > 0.01 && !ik && k < 0.01 && relaxW < 0.05) {   // singing: he drums both hands on the top of the wheel, alternately, on the beat
+          const bo = Math.pow(Math.max(0, Math.sin(t * 2 * Math.PI * 1.9 + (A.inner ? 0 : Math.PI))), 2); ik = { T: wrist.clone().add(upw.clone().multiplyScalar((0.02 + 0.05 * bo) * state.sing)), pole: oE.clone().add(upw.clone().multiplyScalar(-0.1)) }; }
         if (me && A.inner && ready && other) {   // the start line's 'ready' beat: her hand on his shoulder (holding on with both hands read as covering her top)
           const sh = other.arms.find((B) => B.inner); if (sh) { A.readyK = ease(A.readyK || 0, 1, Math.min(1, dt * 5)); ik = { T: wrist.clone().lerp(wp(sh.up).add(upw.clone().multiplyScalar(0.03)).add(right.clone().multiplyScalar(-0.03 * toOther)), A.readyK), pole: S.clone().add(upw.clone().multiplyScalar(-0.5)).add(fwd.clone().multiplyScalar(0.2)) }; k = 0; rW = null; } } else if (me && A.inner) A.readyK = 0;
         if (me && A.inner && state.airK > 0.05 && other) { const hs = other.arms.find((B) => B.inner);   // in the air she grabs his arm
@@ -322,7 +343,7 @@ export async function attach(opt) {
         if (!me && goalUp2 > 0.01) reachUp(0.02, goalUp2);   // (after the kiss: both of them, arms up)
         if (me && A.inner && kissArm > 0.01 && other) {   // the kiss: her near hand to her lap as they lean in (reaching across read as a bar), up to his cheek once they're close
           const toHer = wp(P.head).sub(wp(other.head)).normalize(), ofc = other.head.localToWorld(other.mouth.clone().add(other.faceF)).sub(other.head.localToWorld(other.mouth.clone())).normalize();
-          let ch = other.head.localToWorld(other.mouth.clone()).addScaledVector(toHer, 0.05).addScaledVector(ofc, -0.06).add(upw.clone().multiplyScalar(-0.05));
+          let ch = wp(other.sp3).addScaledVector(toHer, 0.12).add(upw.clone().multiplyScalar(-0.06));   /* (her hand on his chest, below the close-up's frame: at his jaw it read as a fingerless lump) */
           const dv = ch.clone().sub(S), mx = (A.L1 + A.L2) * 0.85; if (dv.length() > mx) ch = S.clone().add(dv.setLength(mx));   /* (the elbow kept bent) */
           const lap = wp(A.thigh).lerp(wp(A.calf), 0.5).add(upw.clone().multiplyScalar(0.08)), hk = cl((kissK - 0.5) / 0.4, 0, 1);
           ik = { T: wrist.clone().lerp(lap.lerp(ch, hk), kissArm), pole: S.clone().add(upw.clone().multiplyScalar(-0.45)).add(fwd.clone().multiplyScalar(0.3)) }; k = 0; rW = null; }
@@ -343,7 +364,9 @@ export async function attach(opt) {
           const hd = wp(ch[0]).sub(wp(A.ha)).normalize();
           for (let j = 0; j < 2; j++) { const a = wp(ch[j]), b = wp(ch[j + 1]), len = a.distanceTo(b), d0 = j ? wp(ch[j]).sub(wp(ch[j - 1])).normalize() : hd; aim(ch[j], a, b, b.clone().lerp(a.clone().add(d0.multiplyScalar(len)), o)); } });
       }
-      if (P.glasses && !me && shadesUp > 0.01) { const w0 = wp(P.glasses).add(upw.clone().multiplyScalar(0.072 * shadesUp)).add(fwd.clone().multiplyScalar(-0.02 * shadesUp)); P.glasses.position.copy(P.glasses.parent.worldToLocal(w0)); turnBy(P.glasses, right, -0.55 * shadesUp); }   // (the kiss: his shades pushed up onto his head first)
+      if (P.shades) { const k = !me ? shadesUp : 0; for (const q of P.shades.parts) { q.src.visible = k < 0.02; q.mesh.visible = k >= 0.02; }   // (the kiss: his shades swung up onto his hair about his ears)
+        if (k >= 0.02 && P.headUp) { const pv = P.shades.lens.clone().addScaledVector(P.faceF, -0.11).addScaledVector(P.headUp, -0.004), d0 = P.shades.lens.clone().sub(pv).normalize(), want = P.faceF.clone().multiplyScalar(0.34).add(P.headUp.clone().multiplyScalar(0.94)).normalize();   /* (pivoted at his ears, 11 cm behind the lenses: the frame's short arms put the measured pivot at his temples and the lenses on his brow) */
+          const q = new THREE.Quaternion().slerp(new THREE.Quaternion().setFromUnitVectors(d0, want), k); for (const pt of P.shades.parts) { pt.mesh.quaternion.copy(q); pt.mesh.position.copy(pv).sub(pv.clone().applyQuaternion(q)); } } }
       if (P.glasses) { const g = Math.max(dip * win(cnt, 84, 136, 6), P.fl * 0.6); if (g > 0.01) { const w0 = wp(P.glasses).add(upw.clone().multiplyScalar(-0.026 * g)).add(fwd.clone().multiplyScalar(0.011 * g)); P.glasses.position.copy(P.glasses.parent.worldToLocal(w0)); } }
       // ---- the face
       const om = P.old.mouth ? P.old.mouth.morphTargetInfluences : [0.3, 0, 0], F = P.face, kf = Math.min(1, dt * 10);
@@ -360,8 +383,9 @@ export async function attach(opt) {
         mouthSmileRight: cheek * 0.8, browOuterUpLeft: cheek * (me ? 0.7 : 1), eyeSquintLeft: Math.min(1, smile * 0.3 + cheek * 0.3 + lg * 0.6 + (me ? 0.25 * cl(wink * 1.6, 0, 1) : 0)) };   // (no wink: her lids are pink and a closed eye read as a 'black eye' (sceptic) - a smile, a tilt and one eyebrow instead)
       if (state.sing > 0.01) { const mo = Math.max(0, Math.sin(t * 2 * Math.PI * 3.8 + (me ? 0 : 1.3))); vals.jawOpen = Math.max(vals.jawOpen, state.sing * (0.3 + 0.62 * mo)); vals.mouthSmileLeft = Math.max(vals.mouthSmileLeft, 0.65 * state.sing); vals.browInnerUp = Math.max(vals.browInnerUp, 0.5 * state.sing); vals.mouthPucker *= 1 - state.sing; }   // (singing along)
       if (kissK > 0.01) { const ec = 0.92 * cl((kissK - 0.45) / 0.4, 0, 1); vals.mouthPucker = Math.max(vals.mouthPucker, (me ? 0.75 : 0.45) * kissK); vals.mouthSmileLeft *= 1 - 0.75 * kissK; vals.mouthSmileRight *= 1 - kissK; vals.jawOpen *= 1 - kissK; vals.eyeBlinkLeft = Math.max(vals.eyeBlinkLeft, ec); vals.eyeBlinkRight = Math.max(vals.eyeBlinkRight, ec); }   // (the kiss: eyes closed, lips puckered)
+      vals.jawOpen = vals.jawOpen < 0.12 ? 0 : (vals.jawOpen - 0.12) / 0.88;   // (a jaw only just open showed a dark line across the teeth - 'braces' (sceptic r12): small openings close; laughs and singing still open)
       for (const m of P.faces) { const d = m.morphTargetDictionary, inf = m.morphTargetInfluences; for (const n in vals) if (d[n] != null) inf[d[n]] = vals[n]; }
-      for (const M of P.mats) { M.mt.userData.time.value = t; if (M.hair) M.mt.userData.wind.value = Math.min(1.25, Math.min(1, W.v / 45) * (W.ferry ? 0.3 : 1) * (1 + 0.5 * state.wind + 0.3 * nitro)); }
+      for (const M of P.mats) { M.mt.userData.time.value = t; if (M.mt.userData.tuck) M.mt.userData.tuck.value = me ? kissArm : 0; if (M.hair) M.mt.userData.wind.value = Math.min(1.25, Math.min(1, W.v / 45) * (W.ferry ? 0.3 : 1) * (1 + 0.5 * state.wind + 0.3 * nitro)); }
     }
     if (state.kOff) {   // the kiss: the two mouths found; the bodies closed by a share of the gap each frame (she 62%, he 38%), capped; back to nothing after
       for (const P of state.people) if (P.mouth) { P.head.updateMatrixWorld(true); state.mouthW[P.who] = P.head.localToWorld(P.mouth.clone()); }
@@ -401,9 +425,9 @@ export async function attach(opt) {
       pos = new THREE.Vector3(-1.55 + 0.75 * e, 0.88 + 0.12 * e, -3.5 + 1.55 * e); look = new THREE.Vector3(0.05, 1.16, 0.5); fov = 30;   // (low at the front-left corner, pushing in on their faces)
     } else if (W.goalSeq) {   // the goal (sceptic r4): the game's swing round from behind to the front, high over the windscreen; in for the kiss (~2.7 s); back to 3.6 m with the car at ~76% of the width when the card comes (left)
       const t = state.gReal != null ? state.gReal : W.goalSeq.t, ss = (a0, b0, x) => { const u = cl((x - a0) / (b0 - a0), 0, 1); return u * u * (3 - 2 * u); };
-      const kk = ss(25, 130, t) * (1 - ss(400, 478, t)), card = ss(172, 212, t), ph = (1 - kk) * Math.PI + kk * (Math.PI / 4) * (1 - card), kiss = 0;   /* (round his side to 45 deg off the nose, low; to the front when the card comes) */
+      const kk = ss(25, 130, t) * (1 - ss(400, 478, t)), card = ss(172, 212, t), ph = (1 - kk) * Math.PI + kk * (Math.PI / 6) * (1 - card), kiss = 0;   /* (round his side to 45 deg off the nose, low; to the front when the card comes) */
       const d = 4.0 - 0.4 * card + 2.2 * (1 - kk);
-      pos = new THREE.Vector3(Math.sin(ph) * d * 0.95 + 0.3 * kk * card, 1.1 + 0.45 * card * kk + 1.1 * (1 - kk) + 0.06 * Math.sin(t / 140), -Math.cos(ph) * d);
+      pos = new THREE.Vector3(Math.sin(ph) * d * 0.95 + 0.3 * kk * card, 1.3 + 0.25 * card * kk + 1.1 * (1 - kk) + 0.06 * Math.sin(t / 140), -Math.cos(ph) * d);
       look = new THREE.Vector3(1.0 * card * kk + 0.02, 1.12 + 0.28 * (1 - kk) + 0.14 * kiss, 0.45); fov = 34; k = ss(0, 0.25, kk);   /* (look slid to +x = screen-left from the front: the car sits right of the card) */
       if (t > 118 && t < 180 && state.him && state.her) {   /* (out ~0.3 s before the arms go up at 198: the payoff wide) */   // the kiss: cut in close, in front at head height, a little to her side, both profiles; a slow push
         const fdir = (P) => { P.head.updateMatrixWorld(true); const m = car.worldToLocal(P.head.localToWorld(P.mouth.clone())); return [m, car.worldToLocal(P.head.localToWorld(P.mouth.clone().add(P.faceF))).sub(m)]; };
