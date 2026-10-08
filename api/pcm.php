@@ -184,6 +184,7 @@ $db = load($DATA);
 $now = gmdate('Y-m-d H:i');
 // 8 Oct 2026: a key that no longer opens a record (deleted, merged, or a sign-in record deleted while it waited for
 // approval) re-homes where we hold proof - pcm-rehome-lib.php. From here on $key is the record it leads to.
+// (Re-sent 8 Oct 2026: the first upload of this file, 35ed20b9, did not take on the server.)
 $PCM_REKEY = ''; $PCM_KEYGONE = false;
 if ($key !== '' && !(function_exists('plus_is_key') && plus_is_key($key))) {
     $rhName = isset($in['name']) ? (string)$in['name'] : '';
