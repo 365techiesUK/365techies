@@ -1860,7 +1860,7 @@ export function createWorld() {
       const gt = W.goalSeq.t, ss = (a, b, x) => { const u = Math.min(1, Math.max(0, (x - a) / (b - a))); return u * u * (3 - 2 * u); };
       const k = ss(25, 130, gt) * (1 - ss(400, 478, gt)), ph = (1 - k) * Math.PI, d = 3.1 + 2.6 * (1 - k), w = ss(0, 0.25, k);
       player.updateMatrixWorld(); V5.set(-Math.sin(ph) * d * 0.95 + 0.9 * k, 1.75 + 0.55 * (1 - k) + 0.2 * Math.sin(gt / 140), -Math.cos(ph) * d); player.localToWorld(V5);
-      V6.set(1.9 * k - 0.05, 1.12 + 0.28 * (1 - k), 0.45); player.localToWorld(V6);   // (in front: the two of you framed right of centre, the results card on the left) V6.lerp(V4, 1 - w);
+      V6.set(1.9 * k - 0.05, 1.12 + 0.28 * (1 - k), 0.45); player.localToWorld(V6); V6.lerp(V4, 1 - w);   // (in front: the two of you framed right of centre, the results card on the left)
       camera.position.lerpVectors(camera.position, V5, w); camera.up.set(0, 1, 0); camera.lookAt(V6);
     }
     if (W.ferry) {   // aboard: the camera swings slowly round from behind to the side, the far shore coming up ahead
