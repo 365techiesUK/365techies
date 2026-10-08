@@ -1151,7 +1151,7 @@
  },
  "free-pc-health-check": {
   "first": "2026-07-28",
-  "h": "732904eb94fcb58e",
+  "h": "ea2eba35ef8c57c2",
   "last": "2026-10-08"
  },
  "free-tools": {
@@ -1329,7 +1329,8 @@
  },
  "how-to-listen-to-the-radio-on-your-computer": {
   "first": "2026-10-08",
-  "h": "3f7d36f2d2937f48"
+  "h": "0637cfa59fe26b18",
+  "last": "2026-10-08"
  },
  "how-to-make-a-google-app-password": {
   "first": "2026-09-29",
@@ -2044,6 +2045,11 @@
   "first": "2026-07-28",
   "h": "2e0e385ffde3ab1e",
   "last": "2026-09-28"
+ },
+ "make-your-house-look-lived-in-while-away": {
+  "first": "2026-10-08",
+  "h": "d1383f47a1dc1d7f",
+  "last": "2026-10-08"
  },
  "malware-and-viruses": {
   "first": "2026-07-28",

@@ -42,8 +42,12 @@ SHOTS = {
     'printer': ('/images/pcm-feat-printers-v36.webp', 1272, 864, 'Printers in 365 PC Manager saying 2 documents are stuck in the queue, with a Clear stuck documents button', ('My PC', 'Printers')),
     'power':   ('/images/pcm-feat-power-v36.webp', 1272, 1408, 'Power and running cost in 365 PC Manager: hours on in the last 30 days, the energy and roughly what it cost, the Eco, Everyday and Full speed modes and an hour-by-hour power history', ('My PC', 'Power &amp; running cost')),
     'radio':   ('/images/pcm-feat-radio-v36.webp', 1864, 890, 'Radio in 365 PC Manager: radio for listeners in the United Kingdom, with the Near you list of Dorset stations - Hot Radio, Forest FM, Radio Wimborne, Nation Radio South Coast, Heart Dorset - and buttons for the BBC stations', ('Music &amp; games', 'the Radio tab')),
+    'hometimer': ('/images/pcm-feat-hometimer-v36.webp', 1132, 962, 'The Someone&rsquo;s home timer in 365 PC Manager: it plays Radio Wimborne from 08:00 until 10:30 every day at 35% volume, with Shift the times a little each day switched on, and Try it now and Save buttons', ('Music &amp; games', 'Big view, then Alarms &amp; timers')),
     'cds':     ('/images/pcm-feat-cds-v36.webp', 1272, 668, 'The CDs tab in 365 PC Manager on a PC with no CD drive: it explains that a plug-in USB CD drive works, under the music player (a sample library)', ('Music &amp; games', 'the CDs tab')),
 }
+
+# the picture's caption, where "catching it" doesn't fit
+CAPS = {'radio': 'The real app (a sample PC).', 'hometimer': 'The real app&rsquo;s timer (a sample setting).'}
 
 
 def _app_box(key, head, what_html, setup_url, note=''):
@@ -58,7 +62,7 @@ def _app_box(key, head, what_html, setup_url, note=''):
             f'<p style="margin:.7rem 0 0;font-size:.82rem;color:var(--muted)">Made by us, a family IT firm in Bournemouth since 1995, and digitally signed by 365 Techies Ltd.{note}</p></div>'
             f'<figure style="margin:0"><img src="{src}" width="{w}" height="{h}" alt="{alt}" loading="lazy" decoding="async" '
             f'style="display:block;width:100%;height:auto;border-radius:12px;border:1px solid rgba(125,170,220,.3);box-shadow:0 22px 50px -26px rgba(0,0,0,.8)">'
-            f'<figcaption style="font-size:.72rem;color:var(--muted);margin-top:.4rem">The real app catching it (a sample PC).</figcaption></figure></div>'
+            f'<figcaption style="font-size:.72rem;color:var(--muted);margin-top:.4rem">{CAPS.get(key, "The real app catching it (a sample PC).")}</figcaption></figure></div>'
             f'<style>@media (max-width:820px){{.pfa{{grid-template-columns:1fr!important}}}}</style>'
             f'<script>(function(){{var a=document.querySelectorAll("[data-pfa-dl]");for(var i=0;i<a.length;i++)a[i].addEventListener("click",function(){{'
             f'try{{if(typeof window.gtag==="function")window.gtag("event","pcm_download_click",{{page:location.pathname,place:"feature_"+this.getAttribute("data-pfa-dl")}});}}catch(e){{}}}});}})();</script>')
@@ -469,7 +473,7 @@ RD = {
         {'q': 'Is a radio app safe to install?', 'a': '<p>Stick to the broadcasters&rsquo; own players and apps you trust. Our free 365 PC Manager is digitally signed by 365 Techies Ltd, a family IT firm in Bournemouth since 1995, and has no adverts.</p>'},
         {'q': 'Can you set it up for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC and set up your favourite stations as one-click buttons while you watch, usually the same day. Remote help is from &pound;20 and no fix, no fee. Ring 01202 775566.</p>'},
     ],
-    'crossLinksHtml': '<p>Related help: <a href="/how-to-play-a-cd-on-windows-11/">playing CDs on Windows 11</a>, <a href="/bluetooth-headphones-sound-muffled-on-pc/">muffled headphones</a>, <a href="/wifi-signal-test/">Wi-Fi signal test</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/remote-support/">remote support</a>.</p>',
+    'crossLinksHtml': '<p>Related help: <a href="/make-your-house-look-lived-in-while-away/">a radio on a timer while you&rsquo;re away</a>, <a href="/how-to-play-a-cd-on-windows-11/">playing CDs on Windows 11</a>, <a href="/bluetooth-headphones-sound-muffled-on-pc/">muffled headphones</a>, <a href="/wifi-signal-test/">Wi-Fi signal test</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/remote-support/">remote support</a>.</p>',
 }
 
 # ============================================================ 6. CDs on Windows 11 (v36's CDs)
@@ -543,6 +547,80 @@ CD = {
     'crossLinksHtml': '<p>Related help: <a href="/how-to-listen-to-the-radio-on-your-computer/">listening to the radio on your computer</a>, <a href="/how-to-back-up-your-photos/">backing up your photos</a>, <a href="/transfer-photos-to-a-new-computer-bournemouth/">moving to a new computer</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/remote-support/">remote support</a>.</p>',
 }
 
+# ============================================================ 7. A house that looks and sounds lived-in (v36's timer)
+LV = {
+    'slug': 'make-your-house-look-lived-in-while-away',
+    'title': 'Make Your Home Look Lived-In While You&rsquo;re Away | 365 Techies',
+    'metaDesc': 'Going away? Police-backed ways to make your home look and sound lived-in: lamps and a radio on timers, post and curtains sorted, and a free PC radio timer.',
+    'ogTitle': 'Make your house look lived-in while you&rsquo;re away',
+    'crumbName': 'Make Your House Look Lived-In',
+    'eyebrow': '// GOING AWAY? MAKE IT LOOK LIVED-IN',
+    'h1': 'Make your house look <em class="grad grad--cyan">lived-in</em> while you&rsquo;re away',
+    'lede': 'Most burglars are opportunists looking for an empty house, so the aim is simple: make yours look and sound as if someone&rsquo;s home. Police advice is lamps and a radio on timers, no post piling up, curtains and the garden left looking normal, and every door and window properly locked. Here&rsquo;s the full checklist, and a free way to put the radio on a timer using your computer.',
+    'chips': ['Police-backed checklist', 'Free radio timer for your PC', 'Bournemouth family firm since 1995'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['See remote support', '/remote-support/'],
+    'ctaHead': 'Want it set up before you go?', 'ctaSub': 'We connect to your Windows PC and set the radio timer up with you, test it, and check the PC will wake for it. Usually the same day. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('The biggest wins', 'A lamp on a timer in the evening, a radio playing when someone would normally be in, and no post or parcels piling up.'),
+        ('Which radio station?', 'Police suggest a talk station: voices sound like people at home having a conversation. Keep it at normal speaking volume.'),
+        ('Timer plugs', 'A plug-in timer for a lamp or a radio costs a few pounds. Many digital ones have a random setting, so the times vary.'),
+        ('Using your computer', 'Our free 365 PC Manager plays the radio or your music between set times, shifting them a little each day. The PC can sleep, but must stay switched on.'),
+        ('Post and deliveries', 'Ask a neighbour to clear the post and parcels, or use Royal Mail&rsquo;s paid Keepsafe service. Cancel milk and papers.'),
+        ('Keep it quiet', 'Don&rsquo;t post that you&rsquo;re away until you&rsquo;re back, and keep your home address off the outside of luggage labels.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; START HERE', 'h2': 'The going-away checklist',
+         'html': '<p>Secured by Design, the police&rsquo;s own crime-prevention initiative, puts it simply: most burglars want to get in quickly, take something and get out, so an empty-looking house is what they look for. Make yours look lived-in, and make it hard to get into:</p>'
+                 '<ul><li><strong>Lights on timers.</strong> A lamp in the front room on a plug-in timer for the evening, and perhaps one upstairs later on. Not a light on all day and night: that looks just as empty.</li>'
+                 '<li><strong>A radio on a timer.</strong> Voices from inside at the times someone would usually be in &mdash; there&rsquo;s more on this below.</li>'
+                 '<li><strong>No post piling up.</strong> Ask a neighbour to push post right through the letterbox and take in parcels, or use Royal Mail&rsquo;s paid Keepsafe service, which holds your post until you&rsquo;re back. Cancel milk and newspapers.</li>'
+                 '<li><strong>Curtains as normal.</strong> Closed curtains in the daytime are a giveaway. Leave them as you would during the day, or ask a neighbour to open and close them.</li>'
+                 '<li><strong>A tidy garden and the bins.</strong> Cut the grass just before you go, and ask a neighbour to put your bins out and back on collection day. A car on the drive helps, if a neighbour can use it.</li>'
+                 '<li><strong>Lock up, and hide the keys.</strong> Lock every door and window, take the keys out of the locks and put them somewhere safe, away from the letterbox. Set the burglar alarm if you have one.</li>'
+                 '<li><strong>Valuables out of sight.</strong> Laptops, tablets and jewellery away from windows; important documents locked away or left with family.</li>'
+                 '<li><strong>Keep it quiet.</strong> Share the holiday photos when you&rsquo;re home, not while you&rsquo;re away, and keep your address on the inside of luggage labels.</li>'
+                 '<li><strong>Tell one trusted neighbour.</strong> Give them your mobile number and, if you&rsquo;re happy to, a key.</li></ul>'},
+        {'eyebrow': '/02 &mdash; THE RADIO', 'h2': 'Why a radio on a timer helps, and how to set one up',
+         'html': '<p>A burglar checking a house often listens at the door or a window. Voices inside are a reason to move on, which is why police advice includes a radio on a timer &mdash; ideally a <strong>talk station</strong>, so it sounds like people chatting rather than a radio left on.</p>'
+                 '<p><strong>With a plug-in timer and a radio</strong> (the classic way):</p>'
+                 '<ol><li>Plug the timer into a socket near the front of the house, and the radio into the timer.</li>'
+                 '<li>Tune the radio to a talk station and set the volume to ordinary speaking level: loud enough to hear at the front door, not across the street.</li>'
+                 '<li>Set the timer for the times someone would normally be in &mdash; say late morning and early evening. If it&rsquo;s a digital timer with a <strong>random</strong> setting, use it, so the times aren&rsquo;t the same every day.</li>'
+                 '<li>Leave the radio <strong>switched on</strong> at its own switch, so it plays whenever the timer gives it power. Test it a day or two before you go.</li></ol>'
+                 '<p>Smart plugs and smart bulbs do the same from a phone app, and many have an &ldquo;away&rdquo; mode that varies the times by itself. We can <a href="/cctv-smart-home/">set up smart lights and cameras</a> for you.</p>'},
+        {'eyebrow': '/03 &mdash; USING YOUR COMPUTER', 'h2': 'No timer plug? Let your computer play the radio',
+         'html': '__APP_BOX_HOMETIMER__'},
+        {'eyebrow': '/04 &mdash; FOR A PET', 'h2': 'Company for a pet left at home',
+         'html': '<p>The same timer works on ordinary days for a dog or cat left at home. Many dogs settle better with voices in the house, and council advice on barking dogs suggests leaving a radio on low &mdash; a talk station, or calm music rather than anything loud and heavy. Keep the volume gentle, or the neighbours will hear it too.</p>'
+                 '<p>A radio is company, not care: the RSPCA advises not leaving a dog alone for more than four hours.</p>'},
+        {'eyebrow': '/05 &mdash; WHAT IT COSTS', 'h2': 'What it costs to leave the computer on',
+         'html': '<p>Very little. Playing the radio, with the screen off, a laptop uses roughly 8 to 15 watts and a typical desktop 40 to 80 watts; asleep in between, a watt or three. With the radio on for four hours a day, that comes to roughly <strong>1p to 3p a day for a laptop</strong> and <strong>5p to 10p a day for a desktop</strong> at the current price cap of 26.32p a unit. A radio on a timer plug uses even less.</p>'
+                 '<p>Want the exact figure for your own computer? Try our <a href="/how-much-does-it-cost-to-run-a-pc-uk/">PC running cost calculator</a>.</p>'},
+        {'eyebrow': '/06 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _call_us('If you&rsquo;d like the radio timer set up and tested before you go, or you&rsquo;d like smart lights or a camera you can check from your phone, we&rsquo;re happy to help.')},
+    ],
+    'howToName': 'How to make your house look and sound lived-in while you are away',
+    'howToSteps': [
+        {'name': 'Put a lamp on a timer', 'text': 'Plug a lamp in the front room into a timer set for the evening, and perhaps one upstairs for later. Don&rsquo;t leave lights on all day and night.'},
+        {'name': 'Put a radio on a timer', 'text': 'Plug a radio into a timer near the front of the house, tuned to a talk station at speaking volume, set for times someone would usually be in. Or use the Someone&rsquo;s home timer in the free 365 PC Manager app.'},
+        {'name': 'Stop the post piling up', 'text': 'Ask a neighbour to clear the post and parcels, or use Royal Mail&rsquo;s paid Keepsafe service, and cancel milk and newspapers.'},
+        {'name': 'Leave the house looking normal', 'text': 'Leave curtains as they are in the daytime, cut the grass before you go, and ask a neighbour to put the bins out and back.'},
+        {'name': 'Lock up and keep it quiet', 'text': 'Lock every door and window, hide the keys away from the letterbox, set the alarm, and don&rsquo;t post that you&rsquo;re away until you&rsquo;re back.'},
+    ],
+    'faqs': [
+        {'q': 'Does leaving a radio on really put burglars off?', 'a': '<p>It helps as one part of making a house look occupied, which is why police advice includes lamps and radios on timers. Most burglars are opportunists looking for an empty house; voices inside and a lamp coming on in the evening make yours look like the wrong choice. It&rsquo;s no substitute for good locks and an alarm.</p>'},
+        {'q': 'Talk radio or music?', 'a': '<p>Talk, if you can: police advice is that voices sound like people at home having a conversation. Music is better than silence.</p>'},
+        {'q': 'Should I leave a light on all the time?', 'a': '<p>No. A light left on day and night looks as empty as one never switched on. Put lamps on timers for the evening, the way you&rsquo;d use them yourself.</p>'},
+        {'q': 'Will my computer switch itself on for the radio?', 'a': '<p>If it&rsquo;s asleep, yes: the free 365 PC Manager app wakes it a minute or so early using Windows&rsquo; own wake timer, as long as the power plan allows wake timers (the app shows this and can switch them on). If the computer is switched off, nothing can run. A laptop must be left plugged in.</p>'},
+        {'q': 'What if the internet goes off while I&rsquo;m away?', 'a': '<p>Then the radio can&rsquo;t play, because it comes over the internet. If your broadband is unreliable, set the timer to play your own songs instead: they&rsquo;re on the computer, so they play either way.</p>'},
+        {'q': 'Can I use BBC Radio 4 or LBC?', 'a': '<p>Not in our app: the BBC and Global (which runs LBC, Heart and Classic FM) only let their stations play in their own apps. Use another station or your own music, or put a real radio tuned to Radio 4 on a timer plug.</p>'},
+        {'q': 'Is it safe to leave the computer on while I&rsquo;m away?', 'a': '<p>Yes, much like leaving the broadband router on. It sleeps between plays. Leave it on a hard surface with its air vents clear, not on a bed or in a cupboard.</p>'},
+        {'q': 'Can you set it up for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, set the timer, test it with you and check the PC will wake for it, usually the same day. Remote help is from &pound;20 and no fix, no fee. Ring 01202 775566.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/how-to-listen-to-the-radio-on-your-computer/">listening to the radio on your computer</a>, <a href="/cctv-smart-home/">CCTV and smart home setup</a>, <a href="/lost-or-stolen-laptop-what-to-do/">lost or stolen laptop</a>, <a href="/how-much-does-it-cost-to-run-a-pc-uk/">what a PC costs to run</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>. The checklist follows the advice of <a href="https://www.securedbydesign.com/" rel="noopener" target="_blank">Secured by Design</a>, the police&rsquo;s crime-prevention initiative.</p>',
+}
+
 # the step-by-step panels (build_extra FIX_FLOW_PAGES format); the calculator page has none
 FLOWS = {
     BT['slug']: {'h2': 'Get proper sound back, step by step', 'ask': 'Do they sound right now?', 'tip': 'Play some music, then join a test call to be sure it stays right.',
@@ -574,12 +652,15 @@ def pages(setup_url):
         '__APP_BOX_CDS__': _app_box('cds', 'CDs: play them, and copy them to MP3',
             '<p style="margin:0">Put a CD in and it plays. It can also copy the CD, saving every song as an MP3 in your Music folder, with the album, artist and song names looked up for you on MusicBrainz (only the disc&rsquo;s ID is sent, and you can correct the names). '
             'No CD drive? It says so, and tells you what to plug in.</p>', setup_url),
+        '__APP_BOX_HOMETIMER__': _app_box('hometimer', 'Someone&rsquo;s home: the radio on a timer, from your PC',
+            '<p style="margin:0">Choose the times and days, the radio station or your own songs, and the volume. It plays between those times, and with <strong>Shift the times a little each day</strong> on, they move by up to 20 minutes each day so it never looks automatic. '
+            'The PC can be asleep: it wakes itself a minute or so early (a laptop must be plugged in), but it can&rsquo;t if it&rsquo;s switched off. It never interrupts music someone is playing. BBC and Global stations can&rsquo;t be used, as they only play in their own apps.</p>', setup_url),
         '__APP_BOX_POWER__': _app_box('power', 'Power &amp; running cost: what yours really uses',
             '<p style="margin:0">It records the power as it goes, hour by hour, and shows what it cost at your own price a unit, with Eco, Everyday and Full speed modes to cut it. '
             'On a laptop running on battery it reads the whole laptop; on a desktop, the processor and an NVIDIA graphics card &mdash; not the screen or disks, and it says so.</p>', setup_url),
     }
     out = []
-    for d in (BT, HZ, PQ, PC, RD, CD):
+    for d in (BT, HZ, PQ, PC, RD, CD, LV):
         d = dict(d, sections=[dict(s) for s in d['sections']])
         for k in ('title', 'metaDesc', 'ogTitle'):   # plain apostrophes: these also go into JSON-LD and meta tags
             d[k] = d[k].replace('&rsquo;', "'")
