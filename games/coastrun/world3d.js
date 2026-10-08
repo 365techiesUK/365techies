@@ -2006,6 +2006,7 @@ export function createWorld() {
   function flare(W) {
     const look = LOOK[R.lookKey] || {}, sd = SU.sunDir.value;
     let want = !R.low && !lit(look) && sd.y > 0.03 && R.tunK < 0.2 ? 1 : 0;
+    if (W.goalSeq) want = 0;   // (no flare over the goal: it washed the two of you out on the swing round - 8 Oct)
     SV.copy(camera.position).addScaledVector(sd, 1000).project(camera);
     if (SV.z > 1 || Math.abs(SV.x) > 1.25 || Math.abs(SV.y) > 1.25) want = 0;
     if (want && ++R.flareN % 6 === 0) {   // is a hill (or anything solid) in front of the sun?

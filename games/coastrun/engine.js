@@ -788,7 +788,7 @@
     return W;
   }
   function bannerOf(W, txt, sub, kind) { W.banner = { txt: txt, sub: sub || '', kind: kind || '', t: W.t }; }
-  function pop(W, txt, sub, x, kind) { W.pops.push({ txt: txt, sub: sub || '', x: x || 0, t: W.t, kind: kind || '' }); if (W.pops.length > 6) W.pops.shift(); }
+  function pop(W, txt, sub, x, kind) { if (W.goalSeq && String(txt).indexOf('GOAL') < 0) return; W.pops.push({ txt: txt, sub: sub || '', x: x || 0, t: W.t, kind: kind || '' }); if (W.pops.length > 6) W.pops.shift(); }
   function fx(W, o) { o.t = W.t; o.n = ++W.fxN; W.fx.push(o); if (W.fx.length > 200) W.fx.shift(); }
   function mood(W, k, side) { W.her = { k: k, side: side || 0, t: W.t }; }
   function voice(W, id, must) {   // something she says (coastrun.js plays it): never on top of the last thing she said
@@ -943,7 +943,7 @@
     }
     var want = Math.round(VIEW / (W.D.gap * Math.pow(0.96, Math.min(4, Math.max(0, W.round - 2)))) * (W.field.length ? 0.72 : 0.8)), n = 0;   // (the racers fill the road too: less traffic)
     for (i = 0; i < cars.length; i++) if (cars[i].s > W.s) n++;
-    if (n < want && W.t % 10 === 0) spawnCar(W, W.s + VIEW * (0.8 + W.rng() * 0.18));
+    if (n < want && W.t % 10 === 0 && !W.goalSeq) spawnCar(W, W.s + VIEW * (0.8 + W.rng() * 0.18));   // (none join while the goal plays)
   }
 
   // ---------------------------------------------------------------- the player
@@ -1097,6 +1097,8 @@
       var rank = mark >= 88 ? 'S' : mark >= 72 ? 'A' : mark >= 55 ? 'B' : mark >= 38 ? 'C' : 'D';
       var placeB = W.field.length ? POS_BONUS[W.pos] || 0 : 0;
       W.goalSeq = { t: 0, rank: rank, brake: Math.max(9, W.v * W.v / 540) };   // (pulling up within ~270 m, before the next road)
+      W.pops.length = 0;   // (the pop-ups from just before the line cleared: the goal's own banner is separate)
+      for (var ci = W.cars.length - 1; ci >= 0; ci--) { var cc = W.cars[ci]; if (cc.rival) continue; if (cc.s < W.s + 4) W.cars.splice(ci, 1); else { cc.v0 *= 1.5; cc.v = Math.max(cc.v, cc.v0); } }   // (the goal kept clear, 8 Oct: the cars behind - out of sight - gone, the ones ahead drive off)
       W.result = { t: W.t, route: W.route.slice(), legs: W.legs.slice(), hearts: W.runHearts, of: asked, timeBonus: bonus, love: love, rank: rank, round: W.round, goal: STAGES[g.st].name, pos: W.field.length ? W.pos : 0, of2: FIELD_N + 1, posBonus: placeB };
       W.score += bonus + love + placeB; W.round++;
       W.time = W.D.time * (RUNS[nextRun(STAGES[g.st])].tf || 1) * STAGES[RUN_START[nextRun(STAGES[g.st])]].t * Math.max(0.8, Math.pow(0.97, Math.max(0, W.round - 2))) + 10;   // (the next run's first stage's time)
@@ -1204,6 +1206,7 @@
     for (var pk in W.pw) if (W.pw[pk] > 0 && --W.pw[pk] === 0) W.events.push({ sfx: 'powerEnd', k: pk });
     if (W.goalSeq) {
       var GS = W.goalSeq; GS.t++;
+      if (GS.t === 30) for (var gi = W.cars.length - 1; gi >= 0; gi--) if (!W.cars[gi].rival && Math.abs(W.cars[gi].s - W.s) < 420) W.cars.splice(gi, 1);   // (half a second in, the camera swinging round: the road near you cleared - you'd overtake them braking, then they'd pass you in the shot)
       if (GS.t % 100 === 0) { var CEL = { S: ['cheer', 'wave'], A: ['wave', 'cheer'], B: ['clap', 'cheer'], C: ['look', 'clap'], D: ['sulk', 'sulk'] }[GS.rank] || ['cheer', 'wave']; mood(W, CEL[(GS.t / 100) % 2], 1); }   // (celebrating all through it, as the rank deserves)
       var ai = autopilot(W, 0), carry = GS.t > 60 && (W.fireEdge || W.demo), finish = GS.t > 60 && !!inp.down && !W.demo;
       inp = { left: ai.left, right: ai.right, up: false, down: false, fire: false, alt: false };

@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=70';
+import { createWorld } from './world3d.js?v=71';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
@@ -20,6 +20,13 @@ function wideGW() {   // the game's width in its own units for the space on the 
 const reducedMotion = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
 let world = null, worldTried = false;
 window.COAST3D = { get world() { return world; } };   // for the tests (read-only look at the 3D world)
+// the two of you as people (8 Oct 2026: people/people.js - MPFB models laid over the original couple), loaded once the 3D is warm; not on a
+// data saver or a small device, nor with ?nopeople (the original couple, for comparing)
+function peopleLoad() {
+  const nc = navigator.connection, small = navigator.deviceMemory && navigator.deviceMemory < 4;
+  if ((nc && nc.saveData) || small || /[?&]nopeople/.test(location.search)) return;
+  import('./people/people.js?v=1').then((m) => m.attach({})).catch((e) => { if (window.console) console.warn('365 Coast Run: people', e); });
+}
 function getWorld() { if (!worldTried) { worldTried = true; try { world = createWorld(); } catch (e) { world = null; if (window.console) console.warn('365 Coast Run: 3D failed', e); } } return world; }
 
 const BEST_KEY = 'coast365.best';
@@ -149,6 +156,8 @@ function draw(g, W, t, mode, info) {
   const took = performance.now() - t0;
   R.ft = R.ft * 0.92 + Math.max(frameDt * 1000, took) * 0.08; R.took = R.took * 0.92 + took * 0.08;
   if (!R.warmAt && wd.warmed && wd.warmed()) R.warmAt = t;
+  if (R.warmAt && !R.plain && !R.pplTried && t - R.warmAt > 6000 && R.scale >= 1 && (R.ft < 19 || FIXEDRES)) { R.pplTried = true; peopleLoad(); }   // (the two of you as people: only on a PC that has shown it runs the 3D smoothly at full size - a slow one stalled loading them, then dropped them anyway)
+  if (R.plain && window.COAST_PEOPLE && !window.COAST_PEOPLE.off) window.COAST_PEOPLE.detach();   // (dropped to the plainer look: the original couple back)
   if (R.warmAt && t - R.warmAt > 5000 && t - R.adj > 700 && !FIXEDRES) {
     if (R.ft > 20.5 && R.scale > 0.6) { R.scale = Math.max(0.6, +(R.scale - 0.08).toFixed(2)); R.adj = t; }
     else if (R.ft < 18 && R.took < 8 && R.scale < 1) { R.scale = Math.min(1, +(R.scale + 0.04).toFixed(2)); R.adj = t; }
@@ -156,8 +165,9 @@ function draw(g, W, t, mode, info) {
     else if (R.ft <= 26) R.lowN = 0;
   }
   g.setTransform(K, 0, 0, K, 0, 0);
-  { const fast = Math.max(R.boostK, Math.max(0, W.v / E.VMAX - 0.8) * 2.2); if (fast > 0.05 && !W.crash) speedLines(g, t, Math.min(1, fast)); }
-  hud(g, W, t, mode);
+  const ppl = window.COAST_PEOPLE, quiet = !!(ppl && !ppl.off && ppl.hudOff);   // (the goal's kiss close-up: no dashboard over it)
+  { const fast = Math.max(R.boostK, Math.max(0, W.v / E.VMAX - 0.8) * 2.2); if (fast > 0.05 && !W.crash && !quiet) speedLines(g, t, Math.min(1, fast)); }
+  if (!quiet) hud(g, W, t, mode);
   if (mode === 'play' && performance.now() - (R.camMsgT || -1e9) < 1400) { const c = CAMS.find((q) => q[0] === ((RAD.set && RAD.set.cam) || 'near')); hudText(g, 'Camera: ' + (c ? c[1] : 'Close') + '  (C to change)', GW / 2, GH * 0.3, 9, '#ffffff', 'center'); }
 }
 function speedLines(g, t, k) {   // streaks rushing past the sides and bottom of the picture (not the sky ahead, not the dashboard)
