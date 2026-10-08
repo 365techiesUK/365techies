@@ -275,6 +275,8 @@ if (($_POST['do'] ?? '') === 'del') {
             $wid = (string)($w['id'] ?? '');
             if (preg_match('/^[a-f0-9]{24}$/', $wid)) @unlink(__DIR__ . '/pcm-wifi-' . $wid . '.json');
         }
+        require_once __DIR__ . '/pcm-rehome-lib.php';
+        rehome_tombstone($db, $k);   // 8 Oct 2026: only its SimplyBook client id stays, so its PCs can find that client's other record
         unset($db['customers'][$k]);
         // their web sessions and SOS screenshots go too, matching staffdel in pcm-booking.php
         if (isset($db['websessions'])) foreach ($db['websessions'] as $wk=>$wv) if (($wv['key'] ?? '') === $k) unset($db['websessions'][$wk]);

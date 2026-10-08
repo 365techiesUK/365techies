@@ -65,6 +65,10 @@ if (!isset($db['customers'][$key]) && is_readable(__DIR__ . '/pcm-plus-lib.php')
         exit;
     }
 }
+// 8 Oct 2026: a merged or re-homed key leads to its record (pcm-rehome-lib.php; read only - the check-in repairs)
+require_once __DIR__ . '/pcm-rehome-lib.php';
+list($rhKey) = rehome_lookup($db, $key);
+if ($rhKey !== '') $key = $rhKey;
 if (!isset($db['customers'][$key])) deny('not on support');
 $c = $db['customers'][$key];
 $tier = (isset($c['tier']) && $c['tier'] === 'pro') ? 'pro' : 'free';

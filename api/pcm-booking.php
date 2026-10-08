@@ -421,6 +421,14 @@ function db_close($lk) { if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); } }
 function customer_snapshot() {
     global $key, $machine;
     list($lk, $db) = db_open();
+    // 8 Oct 2026: a key that no longer opens a record re-homes where we hold proof (pcm-rehome-lib.php) - the PC's
+    // check-in normally got there first; from here on $key is the record it leads to, for the rest of this request
+    if ($key !== '') {
+        require_once __DIR__ . '/pcm-rehome-lib.php';
+        list($rhKey, $rhHow, $rhChanged) = rehome_resolve($db, $key, $machine);
+        if ($rhKey !== '') $key = $rhKey;
+        if ($rhChanged) { db_save($db); rehome_slack_later(rehome_note($db, $rhKey, $rhHow, '')); }
+    }
     if ($key === '' || !isset($db['customers'][$key])) { db_close($lk); fail('not_registered'); }
     $c = $db['customers'][$key];
     if ($machine === '' || !isset($c['machines'][$machine])) { db_close($lk); fail('not_registered'); }
@@ -2398,6 +2406,8 @@ if ($action === 'staffdel') {
         $wid = (string)(isset($wfx['id']) ? $wfx['id'] : '');
         if (preg_match('/^[a-f0-9]{24}$/', $wid)) @unlink(__DIR__ . '/pcm-wifi-' . $wid . '.json');
     }
+    require_once __DIR__ . '/pcm-rehome-lib.php';
+    rehome_tombstone($db, $found);   // 8 Oct 2026: only its SimplyBook client id stays, so its PCs can find that client's other record
     unset($db['customers'][$found]);
     if (isset($db['websessions'])) foreach ($db['websessions'] as $wk => $wv) if ((isset($wv['key']) ? $wv['key'] : '') === $found) unset($db['websessions'][$wk]);
     db_save($db); db_close($lk);

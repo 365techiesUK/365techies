@@ -42,7 +42,15 @@ function save($f,$d){
     $tmp = $f . '.' . getmypid() . '.tmp';
     if (@file_put_contents($tmp, json_encode($d, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $f);
 }
-function out($a){ echo json_encode($a); exit; }
+// 8 Oct 2026 (pcm-rehome-lib.php): a re-homed key's reply tells a v36+ app the key to keep from now on (rekey), and a
+// key that opens nothing is said to be unknown (known:false) - only ever with customer records to hand, so a lost data
+// file can never sign every PC out
+function out($a){
+    global $PCM_REKEY, $PCM_KEYGONE;
+    if (is_array($a) && !empty($a['ok']) && !empty($PCM_REKEY)) $a['rekey'] = $PCM_REKEY;
+    if (is_array($a) && !empty($PCM_KEYGONE)) $a['known'] = false;
+    echo json_encode($a); exit;
+}
 /* uploader-supplied text that reaches customers' emails and the portal: tags out, control
    bytes out, capped. The uploader is our own tool, but its input is a customer's PC. */
 function pcm_txt($s, $max) { $s = trim(preg_replace('/[\x00-\x1F\x7F]+|\s+/', ' ', strip_tags((string)$s))); return function_exists('mb_substr') ? mb_substr($s, 0, $max, 'UTF-8') : substr($s, 0, $max); }
@@ -141,6 +149,7 @@ function pcm_mm_addon_out() { return PCM_MM_ADDON_URL !== '' ? array('mm_addon' 
 require_once __DIR__ . '/pcm-programs-lib.php';   // programs check: the list + the matching (top-level scope on purpose)
 require_once __DIR__ . '/pcm-gate.php';            // 29 Sep 2026: the minute poll answered by .htaccess while nothing waits
 require_once __DIR__ . '/pcm-installs-lib.php';    // 1 Oct 2026: installs counted from check-ins (top-level scope on purpose)
+require_once __DIR__ . '/pcm-rehome-lib.php';      // 8 Oct 2026: a key that no longer opens a record finds its way home
 // 8 Oct 2026: the paid app abroad, "Unlock everything" - switched off until the owner says go. Guarded, and every call is
 // behind function_exists: a missing file (a deploy may upload it after this one) can never stop a check-in.
 if (is_readable(__DIR__ . '/pcm-plus-lib.php')) require_once __DIR__ . '/pcm-plus-lib.php';
@@ -173,6 +182,16 @@ $machine = isset($in['machine'])  ? preg_replace('/[^a-f0-9]/','',substr($in['ma
 $db_lock = db_lock($DATA); // held until this request exits; serialises read-modify-write
 $db = load($DATA);
 $now = gmdate('Y-m-d H:i');
+// 8 Oct 2026: a key that no longer opens a record (deleted, merged, or a sign-in record deleted while it waited for
+// approval) re-homes where we hold proof - pcm-rehome-lib.php. From here on $key is the record it leads to.
+$PCM_REKEY = ''; $PCM_KEYGONE = false;
+if ($key !== '' && !(function_exists('plus_is_key') && plus_is_key($key))) {
+    $rhName = isset($in['name']) ? (string)$in['name'] : '';
+    list($rhKey, $rhHow, $rhChanged) = rehome_resolve($db, $key, $machine, $rhName);
+    if ($rhHow === 'merged' || $rhHow === 'alias') { $PCM_REKEY = $rhKey; $key = $rhKey; }
+    elseif ($rhHow === 'unknown') $PCM_KEYGONE = count($db['customers']) > 0;
+    if ($rhChanged) { save($DATA, $db); rehome_slack_later(rehome_note($db, $rhKey, $rhHow, $rhName), $db_lock); }
+}
 pcm_gate_mark_sb($db, $key);   // an SB key's 67-byte "services" post must keep reaching PHP from this address (pcm-gate.php)
 
 if ($action === 'activate') {
