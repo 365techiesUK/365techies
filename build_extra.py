@@ -840,7 +840,7 @@ def pcm_landing():
         </div>
         <div class="tile-grid" data-stagger>
 ''' + tiles([("shield","Health score","A clear 0&ndash;100 score and plain-English notes on anything worth sorting."),
-             ("spark","Check everything","Every check grouped on one Tools page with a search box. One tap runs fourteen of them and lists what needs a look."),
+             ("spark","Check everything","Every check grouped on one Tools page with a search box. One tap runs seventeen of them and lists what needs a look."),
              ("wifi","Network check &amp; devices","Wi-Fi signal, band and speed, a lag test for games and video calls, and the devices and shared folders on your home network."),
              ("lock","Network safety &amp; programs","Your firewall, anything your router has opened, Remote Desktop and old file sharing &mdash; plus two security programs fighting, or adware a home PC doesn&rsquo;t need."),
              ("eye","Scam check &amp; safety settings","Check a link or a leaked password safely, spot the fake &ldquo;I&rsquo;m not a robot&rdquo; trick, see which of Windows&rsquo; protections are on, and which programs used your camera and microphone."),
