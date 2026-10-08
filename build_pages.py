@@ -140,6 +140,10 @@ _VOLATILE = [
     # volatile, so a page whose stored date differed from the build date re-hashed differently on every build and
     # re-dated itself (135 pages looped the day after the flows shipped). Stamped text, not content.
     (_cdre.compile(r'<span class="ff-rev mono">Last reviewed [^<]*</span>'), '<span class="ff-rev mono">Last reviewed X</span>'),
+    # 8 Oct 2026: the 365 PC Manager promo band's laptop picture (on ~110 service and town pages) is a site-wide promo,
+    # not page content - swapping it for a new app version must not re-date them. Re-based once with REBASE_HASHES=1.
+    (_cdre.compile(r'<img src="/images/pcm-laptop-[\w-]+\.webp" alt="365 PC Manager on a laptop:[^"]*"[^>]*>'), '<img PCMBAND>'),
+    (_cdre.compile(r'(<a class="kb-shot" href="/free-pc-health-check/"[^>]*>)<img [^>]*>'), r'\1<img PCMBAND>'),
     (_cdre.compile(r'\?v=[\w.\-]+'), '?v=X'),
     (_cdre.compile(r'checked on \d{1,2} \w+ \d{4}', _cdre.I), 'checked on X'),
     (_cdre.compile(r'Dates checked: \d{1,2} \w+ \d{4}', _cdre.I), 'Dates checked: X'),
@@ -3326,7 +3330,7 @@ PCM_BAND = '''    <section class="section section--alt" aria-label="365 PC Manag
           </div>
         </div>
         <div data-reveal>
-          <img src="/images/pcm-laptop-health-v35.webp" alt="365 PC Manager on a laptop: the health score and what to do next" width="1040" height="810" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:14px;margin-bottom:1rem">
+          <img src="/images/pcm-laptop-home-v36-1200.webp" alt="365 PC Manager on a laptop: the new menu, the health score and what to do next" width="1040" height="810" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:14px;margin-bottom:1rem">
         <ul class="checklist" data-stagger>
           <li>Free forever, no sign-up, uninstall any time</li>
           <li>Every program kept up to date, not just Windows</li>
@@ -3633,7 +3637,7 @@ def keep_band(cfg):
     if cfg.get("app", True):
         app = f'''
           <div class="kb-card kb-app" data-reveal>
-            <a class="kb-shot" href="/free-pc-health-check/" aria-label="See 365 PC Manager, the free app"><img src="/images/pcm-laptop-health-v35.webp" width="2080" height="1620" alt="365 PC Manager Home - the health score, what to do next and the PC at a glance" loading="lazy" decoding="async"></a>
+            <a class="kb-shot" href="/free-pc-health-check/" aria-label="See 365 PC Manager, the free app"><img src="/images/pcm-laptop-home-v36-1200.webp" width="2080" height="1620" alt="365 PC Manager Home - the new menu, the health score and what to do next" loading="lazy" decoding="async"></a>
             <p class="kb-tag">FREE APP &middot; WINDOWS &middot; REAL SCREENSHOT</p>
             <h3>{cfg.get("app_h3", "See how this PC is really doing")}</h3>
             <ul class="kb-list">{li(cfg.get("app_list", KEEP_BAND_APP))}</ul>
