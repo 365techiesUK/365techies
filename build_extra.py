@@ -24104,6 +24104,15 @@ for _np in VIRGIN_GUIDE_PAGES:   # 29 Sep 2026 launch: Google app password + cha
     build_new_page(_np)
 _VL.virgin_tool_page(PCM_SETUP_V30)   # /virgin-email-mover/
 
+# 365 PC Manager feature pages (8 Oct 2026; owner: "draft those"): one real problem each, the free app as the quick check.
+# Held back (pcm_feature_pages_data.LIVE = False) until the new-look app screenshots are in; PCM_FEATURE_PREVIEW=1 builds
+# them locally for a look. Data + every claim's source: pcm_feature_pages_data.py.
+import os as _os_pfp, pcm_feature_pages_data as _PFP
+if _PFP.LIVE or _os_pfp.environ.get('PCM_FEATURE_PREVIEW') == '1':
+    FIX_FLOW_PAGES.update(_PFP.FLOWS)
+    for _np in _PFP.pages(PCM_SETUP_V30):
+        build_new_page(_np)
+
 # Parents' online-safety guide: hub + the six platforms Dorset Police's guide skips
 # (data + the "checked against the maker's own instructions" discipline live in
 # parents_guide_data.py; re-verify + bump CHECKED_ON there, never here).
