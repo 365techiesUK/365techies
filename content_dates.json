@@ -1151,7 +1151,7 @@
  },
  "free-pc-health-check": {
   "first": "2026-07-28",
-  "h": "c19cb5e810ea775b",
+  "h": "732904eb94fcb58e",
   "last": "2026-10-08"
  },
  "free-tools": {
@@ -1327,6 +1327,10 @@
   "h": "a9e454cb3168b9e5",
   "last": "2026-09-05"
  },
+ "how-to-listen-to-the-radio-on-your-computer": {
+  "first": "2026-10-08",
+  "h": "3f7d36f2d2937f48"
+ },
  "how-to-make-a-google-app-password": {
   "first": "2026-09-29",
   "h": "2df55c8d2bb89dd2",
@@ -1336,6 +1340,10 @@
   "first": "2026-06-16",
   "h": "c789ebb02fbd3aa0",
   "last": "2026-09-05"
+ },
+ "how-to-play-a-cd-on-windows-11": {
+  "first": "2026-10-08",
+  "h": "6d2f28a1100750d1"
  },
  "how-to-prepare-business-for-windows-11": {
   "first": "2026-06-16",

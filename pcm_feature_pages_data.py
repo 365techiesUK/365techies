@@ -37,10 +37,12 @@ PRICE_SRC = '<a href="https://www.ofgem.gov.uk/information-consumers/energy-advi
 # the app screens: the released v36 app CATCHING each problem (a made-up sample PC), cropped to the page below its menu bar,
 # 2x (scratchpad 8682606b art36/feat36.py). (file, width, height, alt, where it is in the app's menu)
 SHOTS = {
-    'sound':   ('/images/pcm-feat-sound-v36.webp', 1272, 1440, 'Sound check in 365 PC Manager saying the headphones are in phone-call mode, so sound is muffled: the Hands-Free headset is in use at 16 kHz mono, with a Play a test sound button', 'Sound check'),
-    'screen':  ('/images/pcm-feat-screen-v36.webp', 1272, 1012, 'Screen check in 365 PC Manager saying a sharper or smoother setting is available: a 2560 x 1440 monitor running at 60 Hz that can do 144 Hz', 'Screen check'),
-    'printer': ('/images/pcm-feat-printers-v36.webp', 1272, 864, 'Printers in 365 PC Manager saying 2 documents are stuck in the queue, with a Clear stuck documents button', 'Printers'),
-    'power':   ('/images/pcm-feat-power-v36.webp', 1272, 1408, 'Power and running cost in 365 PC Manager: hours on in the last 30 days, the energy and roughly what it cost, the Eco, Everyday and Full speed modes and an hour-by-hour power history', 'Power &amp; running cost'),
+    'sound':   ('/images/pcm-feat-sound-v36.webp', 1272, 1440, 'Sound check in 365 PC Manager saying the headphones are in phone-call mode, so sound is muffled: the Hands-Free headset is in use at 16 kHz mono, with a Play a test sound button', ('My PC', 'Sound check')),
+    'screen':  ('/images/pcm-feat-screen-v36.webp', 1272, 1012, 'Screen check in 365 PC Manager saying a sharper or smoother setting is available: a 2560 x 1440 monitor running at 60 Hz that can do 144 Hz', ('My PC', 'Screen check')),
+    'printer': ('/images/pcm-feat-printers-v36.webp', 1272, 864, 'Printers in 365 PC Manager saying 2 documents are stuck in the queue, with a Clear stuck documents button', ('My PC', 'Printers')),
+    'power':   ('/images/pcm-feat-power-v36.webp', 1272, 1408, 'Power and running cost in 365 PC Manager: hours on in the last 30 days, the energy and roughly what it cost, the Eco, Everyday and Full speed modes and an hour-by-hour power history', ('My PC', 'Power &amp; running cost')),
+    'radio':   ('/images/pcm-feat-radio-v36.webp', 1864, 890, 'Radio in 365 PC Manager: radio for listeners in the United Kingdom, with the Near you list of Dorset stations - Hot Radio, Forest FM, Radio Wimborne, Nation Radio South Coast, Heart Dorset - and buttons for the BBC stations', ('Music &amp; games', 'the Radio tab')),
+    'cds':     ('/images/pcm-feat-cds-v36.webp', 1272, 668, 'The CDs tab in 365 PC Manager on a PC with no CD drive: it explains that a plug-in USB CD drive works, under the music player (a sample library)', ('Music &amp; games', 'the CDs tab')),
 }
 
 
@@ -50,7 +52,7 @@ def _app_box(key, head, what_html, setup_url, note=''):
             f'border-radius:18px;border:1px solid rgba(29,151,227,.42);background:linear-gradient(135deg,rgba(29,151,227,.10),rgba(255,255,255,.02))">'
             f'<div><p class="mono" style="margin:0 0 .4rem;font-size:.72rem;letter-spacing:.08em;color:var(--cyan-soft)">FREE &middot; WINDOWS 10 &amp; 11 &middot; NO SIGN-UP</p>'
             f'<h3 style="margin:0 0 .5rem;font-size:1.25rem;line-height:1.25">{head}</h3>{what_html}'
-            f'<p style="margin:.6rem 0 0;font-size:.92rem">In the app: <b>My PC</b>, then <b>{where}</b>.</p>'
+            f'<p style="margin:.6rem 0 0;font-size:.92rem">In the app: <b>{where[0]}</b>, then <b>{where[1]}</b>.</p>'
             f'<p style="margin:1rem 0 0;display:flex;flex-wrap:wrap;gap:.6rem"><a class="button primary" href="{setup_url}" download data-pfa-dl="{key}" style="text-decoration:none">Download 365 PC Manager free &#8595;</a>'
             f'<a class="button secondary" href="/free-pc-health-check/" style="text-decoration:none">What else it checks</a></p>'
             f'<p style="margin:.7rem 0 0;font-size:.82rem;color:var(--muted)">Made by us, a family IT firm in Bournemouth since 1995, and digitally signed by 365 Techies Ltd.{note}</p></div>'
@@ -405,6 +407,142 @@ PC = {
     'crossLinksHtml': '<p>Related: <a href="/pc-benchmark/">free PC benchmark</a>, <a href="/computer-spec-checker/">check your PC&rsquo;s specs</a>, <a href="/gaming-pc-tune-up/">gaming PC tune-up</a>, <a href="/monitor-stuck-at-60hz/">monitor stuck at 60Hz</a>, <a href="/will-a-power-cut-damage-my-computer/">will a power cut damage my computer?</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>.</p>',
 }
 
+# ============================================================ 5. The radio on a computer (v36's Radio)
+RD = {
+    'slug': 'how-to-listen-to-the-radio-on-your-computer',
+    'title': 'Listen to the Radio on Your Computer (UK) | 365 Techies',
+    'metaDesc': 'Listen to BBC, Heart and your local radio free on a Windows PC or laptop: BBC Sounds, Global Player, Radioplayer or our free app. Plus fixes for no sound.',
+    'ogTitle': 'How to listen to the radio on your computer',
+    'crumbName': 'Listen to the Radio on Your Computer',
+    'eyebrow': '// THE RADIO ON YOUR COMPUTER',
+    'h1': 'How to listen to the <em class="grad grad--cyan">radio</em> on your computer',
+    'lede': 'Every UK station plays free on a Windows PC or laptop, with no aerial and no licence. BBC stations play on BBC Sounds, Heart, Capital, Classic FM and the other Global stations on Global Player, and most of the rest, local stations included, on Radioplayer or the station&rsquo;s own website. Here&rsquo;s the easy way to each, and what to do if there&rsquo;s no sound.',
+    'chips': ['Free, no aerial needed', 'Free radio app for Windows', 'Windows specialists since 1995'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['See remote support', '/remote-support/'],
+    'ctaHead': 'Want it set up for you?', 'ctaSub': 'We connect to your Windows PC and set up your favourite stations, one click each, while you watch. Usually the same day. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Does it cost anything?', 'No. Listening is free, and you don&rsquo;t need a TV licence for radio. It only uses some of your broadband.'),
+        ('BBC stations', 'BBC Sounds, at bbc.co.uk/sounds, with a free BBC account (the same one as BBC iPlayer).'),
+        ('Heart, Capital, Classic FM, Smooth, LBC', 'Global Player, at globalplayer.com. Global keeps its stations to its own player.'),
+        ('Most other UK stations', 'Radioplayer, at radioplayer.co.uk, or the station&rsquo;s own website. Local and community stations nearly all have a Listen live button.'),
+        ('No sound?', 'Check the volume, where the sound is going (speakers, headphones or a TV), and that the browser tab isn&rsquo;t muted.'),
+        ('Easiest of all', 'Our free 365 PC Manager app lists the stations near you and plays them in one click.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; START HERE', 'h2': 'The quickest way: in your web browser',
+         'html': '<p>You don&rsquo;t need to install anything to listen to the radio on a computer. Open your web browser &mdash; Edge, Chrome or Firefox &mdash; and go to the station&rsquo;s own player:</p>'
+                 '<ul><li><strong>BBC stations</strong> (Radio 2, Radio 4, 5 Live, your local BBC station such as Radio Solent): go to <strong>bbc.co.uk/sounds</strong>, choose <strong>Stations</strong>, pick one and press play. You&rsquo;ll be asked to sign in with a free <strong>BBC account</strong> &mdash; if you use BBC iPlayer, it&rsquo;s the same one.</li>'
+                 '<li><strong>Heart, Capital, Classic FM, Smooth, LBC, Gold and Radio X</strong>: these belong to Global, which plays them on its own <strong>Global Player</strong> at <strong>globalplayer.com</strong>.</li>'
+                 '<li><strong>Most other UK stations</strong>: <strong>Radioplayer</strong> at <strong>radioplayer.co.uk</strong>, set up by the BBC and commercial radio together, puts hundreds of stations in one place. Or search for the station&rsquo;s name: almost every station&rsquo;s website has a <strong>Listen live</strong> button.</li></ul>'
+                 '<p>Found one you like? Press <strong>Ctrl + D</strong> to bookmark it, so next time it&rsquo;s one click.</p>'},
+        {'eyebrow': '/02 &mdash; LOCAL RADIO', 'h2': 'Local radio around Bournemouth, Poole and Dorset',
+         'html': '<p>Local stations are the ones people miss most when they move to listening on a computer. Around here they include <strong>BBC Radio Solent</strong> (on BBC Sounds), <strong>Heart Dorset</strong> (on Global Player), <strong>Greatest Hits Radio Dorset</strong>, <strong>Hot Radio</strong>, <strong>Nation Radio South Coast</strong>, <strong>Wave 105</strong>, and community stations such as <strong>Forest FM</strong> and <strong>Radio Wimborne</strong>, which play on their own websites.</p>'
+                 '<p>Search for the station&rsquo;s name and &ldquo;listen live&rdquo;, and check you&rsquo;ve landed on the station&rsquo;s own website before you press play.</p>'},
+        {'eyebrow': '/03 &mdash; THE EASY WAY', 'h2': 'Or let our free app find them for you',
+         'html': '__APP_BOX_RADIO__'},
+        {'eyebrow': '/04 &mdash; NO SOUND?', 'h2': 'No sound, or it keeps stopping?',
+         'html': '<ul><li><strong>Check where the sound is going.</strong> Click the speaker icon by the clock: make sure it isn&rsquo;t muted, then use the arrow next to the volume slider to pick your speakers or headphones &mdash; not a TV that&rsquo;s switched off or headphones in a drawer.</li>'
+                 '<li><strong>Check the browser tab isn&rsquo;t muted.</strong> A small crossed-out speaker on the tab means it is: right-click the tab and choose <strong>Unmute site</strong> (or Unmute tab).</li>'
+                 '<li><strong>Press play yourself.</strong> Browsers don&rsquo;t let a page start sound on its own, so a radio player can sit there silently until you press its play button.</li>'
+                 '<li><strong>Stops and starts?</strong> That&rsquo;s the internet connection struggling. Move nearer the router, close other tabs (videos especially), or plug the computer into the router with a cable. Our <a href="/wifi-signal-test/">Wi-Fi signal test</a> shows how good your signal is.</li>'
+                 '<li><strong>&ldquo;Not available in your area&rdquo;?</strong> Many stations can only be played in the UK, because their music licences only cover UK listeners.</li></ul>'
+                 '<p>No sound from anything at all, not just the radio? See our <a href="/bluetooth-headphones-sound-muffled-on-pc/">muffled headphones fix</a>, or ring us.</p>'},
+        {'eyebrow': '/05 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _call_us('If the radio won&rsquo;t play, there&rsquo;s no sound from the computer at all, or you&rsquo;d just like your favourite stations set up as one-click buttons, we&rsquo;re happy to help.')},
+    ],
+    'howToName': 'How to listen to the radio on a Windows computer',
+    'howToSteps': [
+        {'name': 'Open your web browser', 'text': 'Open Edge, Chrome or Firefox. You don&rsquo;t need to install anything.'},
+        {'name': 'Go to the right player for the station', 'text': 'BBC stations: bbc.co.uk/sounds, signed in with a free BBC account. Heart, Capital, Classic FM, Smooth and LBC: globalplayer.com. Most others: radioplayer.co.uk or the station&rsquo;s own website.'},
+        {'name': 'Press play', 'text': 'Choose the station and press its play button. Browsers wait for you to press play before they make any sound.'},
+        {'name': 'Bookmark it', 'text': 'Press Ctrl + D to bookmark the page, so next time the station is one click away.'},
+        {'name': 'No sound? Check the output', 'text': 'Click the speaker icon by the clock, make sure it isn&rsquo;t muted, and pick your speakers or headphones. Right-click the browser tab and choose Unmute site if it is muted.'},
+    ],
+    'faqs': [
+        {'q': 'Is listening to the radio on a computer free?', 'a': '<p>Yes. The stations are free to listen to and you don&rsquo;t need a TV licence for radio. It uses some of your broadband: roughly 30 to 150 MB an hour, depending on the station&rsquo;s sound quality, which home broadband handles easily.</p>'},
+        {'q': 'Why do I have to sign in to BBC Sounds?', 'a': '<p>The BBC asks everyone to sign in with a free BBC account to listen on BBC Sounds. If you watch BBC iPlayer, you already have one: use the same email and password.</p>'},
+        {'q': 'Why can&rsquo;t I find Heart or Classic FM on other radio apps?', 'a': '<p>Global, which owns Heart, Capital, Classic FM, Smooth, LBC, Gold and Radio X, plays them on its own Global Player (globalplayer.com) rather than other apps. The BBC does the same with BBC Sounds.</p>'},
+        {'q': 'Can I listen to my local station?', 'a': '<p>Almost always. Local BBC stations are on BBC Sounds, and nearly every local and community station has a Listen live button on its own website. Around Bournemouth that includes Radio Solent, Heart Dorset, Greatest Hits Radio Dorset, Hot Radio, Forest FM and Radio Wimborne.</p>'},
+        {'q': 'Can I wake up to the radio on my computer?', 'a': '<p>Yes, with our free 365 PC Manager app: its wake-up alarm starts the radio or your music almost silent and lets it rise gently. BBC and Global stations play only in their own apps, so they can&rsquo;t be used as alarms; other stations can.</p>'},
+        {'q': 'Can I listen to UK radio when I&rsquo;m abroad?', 'a': '<p>Some stations, not all. Many can only be played in the UK, because their music licences only cover UK listeners.</p>'},
+        {'q': 'Is a radio app safe to install?', 'a': '<p>Stick to the broadcasters&rsquo; own players and apps you trust. Our free 365 PC Manager is digitally signed by 365 Techies Ltd, a family IT firm in Bournemouth since 1995, and has no adverts.</p>'},
+        {'q': 'Can you set it up for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC and set up your favourite stations as one-click buttons while you watch, usually the same day. Remote help is from &pound;20 and no fix, no fee. Ring 01202 775566.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related help: <a href="/how-to-play-a-cd-on-windows-11/">playing CDs on Windows 11</a>, <a href="/bluetooth-headphones-sound-muffled-on-pc/">muffled headphones</a>, <a href="/wifi-signal-test/">Wi-Fi signal test</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/remote-support/">remote support</a>.</p>',
+}
+
+# ============================================================ 6. CDs on Windows 11 (v36's CDs)
+CD = {
+    'slug': 'how-to-play-a-cd-on-windows-11',
+    'title': 'How to Play a CD on Windows 11 (and Copy It) | 365 Techies',
+    'metaDesc': 'CD won&rsquo;t play on Windows 11, or your laptop has no CD drive? How to play and copy CDs on Windows 11, step by step, with free tools and a cheap USB drive.',
+    'ogTitle': 'How to play a CD on Windows 11',
+    'crumbName': 'Play a CD on Windows 11',
+    'eyebrow': '// CDs ON WINDOWS 11',
+    'h1': 'How to play a <em class="grad grad--cyan">CD</em> on Windows 11',
+    'lede': 'Put the CD in and Windows 11&rsquo;s Media Player should start it. If nothing happens, open Media Player and choose the CD, or open it from File Explorer. And if your laptop has no CD drive &mdash; most new ones don&rsquo;t &mdash; a plug-in USB CD drive, usually under &pound;25, works straight away. Here&rsquo;s each step, and how to copy your CDs onto the computer.',
+    'chips': ['Works with any USB CD drive', 'Free CD player and copier', 'Windows specialists since 1995'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['See remote support', '/remote-support/'],
+    'ctaHead': 'CDs still won&rsquo;t play? We&rsquo;ll sort it.', 'ctaSub': 'We connect to your Windows PC, get the CD drive working and set up your music, while you watch. Usually the same day. No fix, no fee. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('To play a CD', 'Put it in. If nothing starts, open Media Player from the Start menu and choose the CD, or open the CD drive in File Explorer.'),
+        ('No CD drive?', 'Most new laptops have none. A USB CD or DVD drive, usually under &pound;25, plugs in and works with no setup.'),
+        ('The old Windows Media Player', 'Still there on Windows 11 as Windows Media Player Legacy, and can be added from Optional features if it&rsquo;s missing.'),
+        ('Copying CDs', 'Media Player copies to AAC, FLAC, WMA or ALAC, but not MP3. The old Windows Media Player and our free app copy to MP3.'),
+        ('Not recognised?', 'Check the drive appears under This PC, plug a USB drive straight into the computer, and try a different CD.'),
+        ('Free check', 'Our free 365 PC Manager app plays CDs, copies them to MP3 with the song names, and tells you if there&rsquo;s no drive.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; START HERE', 'h2': 'Playing a CD on Windows 11, step by step',
+         'html': '<ol><li><strong>Put the CD in</strong>, label side up. Give it ten seconds or so to spin up. Windows may ask what to do with audio CDs: choose <strong>Play audio CD</strong>.</li>'
+                 '<li><strong>Nothing happened?</strong> Click Start, type <strong>Media Player</strong> and open it. The CD appears in its list on the left: choose it and press <strong>Play</strong>.</li>'
+                 '<li><strong>Or use File Explorer.</strong> Open File Explorer (the folder on the taskbar), click <strong>This PC</strong> and double-click the CD drive. Double-click <strong>Track01</strong> to start playing.</li></ol>'
+                 '<p>Prefer the old Windows Media Player you know? It&rsquo;s still in Windows 11 as <strong>Windows Media Player Legacy</strong> &mdash; type that name in the Start menu. If it isn&rsquo;t there, open <strong>Settings &gt; System &gt; Optional features</strong> (on some versions, <strong>Settings &gt; Apps &gt; Optional features</strong>), choose <strong>View features</strong>, search for <strong>Windows Media Player Legacy</strong>, tick it and choose <strong>Next</strong>, then <strong>Add</strong>.</p>'},
+        {'eyebrow': '/02 &mdash; NO CD DRIVE?', 'h2': 'No CD drive on your laptop? A USB one works',
+         'html': '<p>Most laptops made in the last few years have no CD drive, and many desktops don&rsquo;t either. You don&rsquo;t need a new computer: a <strong>USB CD or DVD drive</strong> &mdash; a slim box with a USB lead, usually under &pound;25 &mdash; plugs into any USB socket and Windows uses it straight away, with nothing to install.</p>'
+                 '<ul><li>Plug it <strong>straight into the computer</strong>, not into a USB hub or the keyboard: CD drives need more power than a hub gives.</li>'
+                 '<li>Some come with a <strong>Y-shaped lead with two USB plugs</strong>: if the drive won&rsquo;t spin, plug in both.</li>'
+                 '<li>Newer laptops may only have the small, oval <strong>USB-C</strong> sockets: buy a drive with a USB-C lead, or use a small adapter.</li></ul>'},
+        {'eyebrow': '/03 &mdash; NOT RECOGNISED?', 'h2': 'CD won&rsquo;t play or isn&rsquo;t recognised?',
+         'html': '<ul><li><strong>Is the drive there?</strong> In File Explorer, click This PC. You should see a <strong>DVD RW Drive</strong> or similar. If it&rsquo;s missing, unplug a USB drive and plug it into a different socket; for a built-in drive, restart the computer.</li>'
+                 '<li><strong>Try another CD.</strong> A scratched or dirty disc can fail. Wipe it gently from the centre outwards with a soft cloth.</li>'
+                 '<li><strong>Some CDs from the early 2000s</strong> were copy-protected and refuse to play on computers. If one CD fails and others play, that may be why.</li>'
+                 '<li><strong>Choose what happens when you put a CD in.</strong> Open <strong>Settings &gt; Bluetooth &amp; devices &gt; AutoPlay</strong> and set <strong>Audio CD</strong> to play it.</li>'
+                 '<li><strong>Plays but no sound?</strong> Click the speaker icon by the clock and check the volume and where the sound is going &mdash; see our <a href="/how-to-listen-to-the-radio-on-your-computer/">radio guide&rsquo;s no-sound checks</a>.</li></ul>'},
+        {'eyebrow': '/04 &mdash; COPY YOUR CDS', 'h2': 'Copy your CDs onto the computer',
+         'html': '<p>Copying (or &ldquo;ripping&rdquo;) your CDs means you can play them without the disc, on the computer or a phone. Three free ways:</p>'
+                 '<ul><li><strong>Media Player</strong> (Windows 11&rsquo;s own): choose the CD and press <strong>Rip CD</strong>. It saves to AAC, FLAC, WMA or ALAC &mdash; but not MP3. Choose the format in its Settings first.</li>'
+                 '<li><strong>Windows Media Player Legacy</strong>: open <strong>Rip settings &gt; Format &gt; MP3</strong>, then <strong>Rip CD</strong>. MP3 plays on almost anything.</li>'
+                 '<li><strong>Our free 365 PC Manager app</strong>: copies to MP3 and looks up the album, artist and song names for you.</li></ul>'
+                 '<p>Either way, the songs land in your <strong>Music</strong> folder. Copy that folder to a USB stick or OneDrive too, so the music is safe if the computer ever fails.</p>'},
+        {'eyebrow': '/05 &mdash; THE QUICK WAY', 'h2': 'Our free app plays and copies CDs',
+         'html': '__APP_BOX_CDS__'},
+        {'eyebrow': '/06 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _call_us('If the CD drive isn&rsquo;t recognised, or you&rsquo;d like your whole CD shelf copied onto the computer and kept safe, we can help.')},
+    ],
+    'howToName': 'How to play a CD on Windows 11',
+    'howToSteps': [
+        {'name': 'Put the CD in', 'text': 'Put the CD in the drive, label side up, and give it about ten seconds. If Windows asks what to do with audio CDs, choose Play audio CD.'},
+        {'name': 'Open Media Player if nothing happens', 'text': 'Click Start, type Media Player and open it. Choose the CD in its list on the left and press Play.'},
+        {'name': 'Or open the CD in File Explorer', 'text': 'Open File Explorer, click This PC, double-click the CD drive and double-click Track01.'},
+        {'name': 'No CD drive? Plug in a USB one', 'text': 'Plug a USB CD or DVD drive straight into the computer, not a hub. If it has two USB plugs, use both. Windows uses it with nothing to install.'},
+        {'name': 'Still not recognised?', 'text': 'Check the drive appears under This PC, try another USB socket and another CD, and in Settings, Bluetooth and devices, AutoPlay, set Audio CD to play.'},
+    ],
+    'faqs': [
+        {'q': 'Does Windows 11 still play CDs?', 'a': '<p>Yes. Windows 11&rsquo;s Media Player plays audio CDs, and the old Windows Media Player is still available as Windows Media Player Legacy. What many new computers lack is the CD drive itself.</p>'},
+        {'q': 'My laptop has no CD drive. What do I need?', 'a': '<p>A USB CD or DVD drive, usually under &pound;25. It plugs into a USB socket and works straight away. Check whether your laptop has the usual rectangular USB sockets or only the small oval USB-C ones, and buy a drive to match.</p>'},
+        {'q': 'Where has Windows Media Player gone?', 'a': '<p>Windows 11 has a newer app called Media Player. The old one is still there as Windows Media Player Legacy: type that in the Start menu, or add it from Settings, Optional features, View features.</p>'},
+        {'q': 'Can Windows 11 copy a CD to MP3?', 'a': '<p>Not with the new Media Player, which copies to AAC, FLAC, WMA or ALAC. Windows Media Player Legacy can (Rip settings, Format, MP3), and so can our free 365 PC Manager app.</p>'},
+        {'q': 'Why does one CD play and another not?', 'a': '<p>Usually a scratched or dirty disc. A few CDs from the early 2000s were also copy-protected in ways that stop them playing on computers.</p>'},
+        {'q': 'Is it legal to copy my own CDs in the UK?', 'a': '<p>Strictly, UK law has had no exception for copying your own CDs since 2015, when the High Court overturned the one brought in the year before. In practice, copying music you own for your own listening is widely done; never share or sell the copies.</p>'},
+        {'q': 'Will my copied songs have their names?', 'a': '<p>Media Player and Windows Media Player Legacy look the names up online when they can. Our free app looks the album, artist and song names up on MusicBrainz, the free online music encyclopaedia, and lets you correct them.</p>'},
+        {'q': 'Can you copy all my CDs for me?', 'a': '<p>Yes. We can set it up remotely so copying each CD is one click, or do the whole shelf for you. Remote help is from &pound;20 and no fix, no fee. Ring 01202 775566.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related help: <a href="/how-to-listen-to-the-radio-on-your-computer/">listening to the radio on your computer</a>, <a href="/how-to-back-up-your-photos/">backing up your photos</a>, <a href="/transfer-photos-to-a-new-computer-bournemouth/">moving to a new computer</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/remote-support/">remote support</a>.</p>',
+}
+
 # the step-by-step panels (build_extra FIX_FLOW_PAGES format); the calculator page has none
 FLOWS = {
     BT['slug']: {'h2': 'Get proper sound back, step by step', 'ask': 'Do they sound right now?', 'tip': 'Play some music, then join a test call to be sure it stays right.',
@@ -413,6 +551,8 @@ FLOWS = {
                  'h3s': 'Still stuck at 60Hz after every step? That is a remote job.'},
     PQ['slug']: {'h2': 'Clear the queue, step by step', 'ask': 'Is it printing now?', 'tip': 'Print a test page from the program you were using.',
                  'h3s': 'Still stuck after every step? That is a remote job.'},
+    CD['slug']: {'h2': 'Get your CD playing, step by step', 'ask': 'Is it playing now?', 'tip': 'Set Audio CD to play in AutoPlay, so next time it starts by itself.',
+                 'h3s': 'Still won&rsquo;t play after every step? That is a remote job.'},
 }
 
 
@@ -428,12 +568,18 @@ def pages(setup_url):
         '__APP_BOX_PRINTER__': _app_box('printer', 'Printers: what&rsquo;s stuck, and one button to clear it',
             '<p style="margin:0">It lists every printer as Windows sees it, shows any documents stuck in the queue with a button that cancels only those, and tells you if Windows&rsquo; printing service has stopped. '
             'It only reads, until you press a button.</p>', setup_url),
+        '__APP_BOX_RADIO__': _app_box('radio', 'Radio: the stations near you, one click each',
+            '<p style="margin:0">It lists the stations for the country your PC is in, with the ones <strong>near you</strong> first and a heart to keep your favourites, and plays them in one click. '
+            'BBC and Global stations open in BBC Sounds and Global Player, because those broadcasters keep them to their own apps. The equaliser and Volume boost work on the music and stations it plays itself, and it can wake you with the radio.</p>', setup_url),
+        '__APP_BOX_CDS__': _app_box('cds', 'CDs: play them, and copy them to MP3',
+            '<p style="margin:0">Put a CD in and it plays. It can also copy the CD, saving every song as an MP3 in your Music folder, with the album, artist and song names looked up for you on MusicBrainz (only the disc&rsquo;s ID is sent, and you can correct the names). '
+            'No CD drive? It says so, and tells you what to plug in.</p>', setup_url),
         '__APP_BOX_POWER__': _app_box('power', 'Power &amp; running cost: what yours really uses',
             '<p style="margin:0">It records the power as it goes, hour by hour, and shows what it cost at your own price a unit, with Eco, Everyday and Full speed modes to cut it. '
             'On a laptop running on battery it reads the whole laptop; on a desktop, the processor and an NVIDIA graphics card &mdash; not the screen or disks, and it says so.</p>', setup_url),
     }
     out = []
-    for d in (BT, HZ, PQ, PC):
+    for d in (BT, HZ, PQ, PC, RD, CD):
         d = dict(d, sections=[dict(s) for s in d['sections']])
         for k in ('title', 'metaDesc', 'ogTitle'):   # plain apostrophes: these also go into JSON-LD and meta tags
             d[k] = d[k].replace('&rsquo;', "'")
