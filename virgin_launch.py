@@ -100,9 +100,10 @@ _VMC_JS = """    <script>
     </script>"""
 
 
-# Screens from 365 PC Manager v35 (6 Oct 2026; v30's set on 29 Sep): real renders of the app's own Virgin page with its made-up sample mailbox
+# Screens from 365 PC Manager v36 (8 Oct 2026, the signed release - its new menu shows the tool under Internet & email; v35's
+# set 6 Oct, v30's 29 Sep): real renders of the app's own Virgin page with its made-up sample mailbox
 # (yourname@virginmedia.com - never a customer's), in the laptop frame. Each has a 1200-wide and a 2080-wide file.
-# Made by frame_v35.py (session 81aaf1c9 scratchpad; v30's by pcm/frame_v30_virgin.py); the share card by pcm/og_virgin_v30.py.
+# Made by frame36.py (session 8682606b scratchpad art36; v35's by frame_v35.py, v30's by pcm/frame_v30_virgin.py); the share card by pcm/og_virgin_v30.py.
 VIRGIN_SHOTS = {
     "check": ("Check my Virgin email", "How many emails, how big, and how many days the move will take. It only reads.",
               "365 PC Manager&rsquo;s Virgin email check: 37,150 emails, 2.6 GB, about 6 days to move into Gmail (a sample mailbox)"),
@@ -123,8 +124,8 @@ VIRGIN_OG = "/images/pcm-virgin-og-v30.jpg"
 
 def virgin_shot(key, sizes):
     t, x, alt = VIRGIN_SHOTS[key]
-    return (f'<img src="/images/pcm-virgin-{key}-v35-1200.webp" srcset="/images/pcm-virgin-{key}-v35-1200.webp 1200w, '
-            f'/images/pcm-virgin-{key}-v35.webp 2080w" sizes="{sizes}" width="1200" height="935" alt="{alt}" loading="lazy" decoding="async">')
+    return (f'<img src="/images/pcm-virgin-{key}-v36-1200.webp" srcset="/images/pcm-virgin-{key}-v36-1200.webp 1200w, '
+            f'/images/pcm-virgin-{key}-v36.webp 2080w" sizes="{sizes}" width="1200" height="935" alt="{alt}" loading="lazy" decoding="async">')
 
 
 def _vmc_stuck():
@@ -300,12 +301,12 @@ def guide_task_head(d, crumbs):
 # make_video.py). The app's own sign-in window is now the fallback (Virgin's check often stops it - IDF-12B).
 # v2 (same day, owner: "a voiceover ... a woman talking"): Kokoro's British voice Emma reads each step (make_vo.py), each
 # scene lasts as long as its line, and there is a phone-shaped 720x1280 cut (phones get it: the wide one's text is tiny there).
-VEM_VIDEO = "/images/vem-howto-v2.mp4"
-VEM_VIDEO_TALL = "/images/vem-howto-tall-v2.mp4"
+VEM_VIDEO = "/images/vem-howto-v3.mp4"
+VEM_VIDEO_TALL = "/images/vem-howto-tall-v3.mp4"
 VEM_POSTER = "/images/vem-howto-poster-v2.webp"
 VEM_POSTER_TALL = "/images/vem-howto-poster-tall-v2.webp"
 VEM_VIDEO_SECS = 85   # the lede says "An 85-second video": mind the a/an if this changes
-VEM_VIDEO_DATE = "2026-10-07"
+VEM_VIDEO_DATE = "2026-10-08"
 VEM_URL = "https://365techies.co.uk/" + VIRGIN_TOOL_SLUG + "/"
 VEM_SHARE_TEXT = "Moving off Virgin Media email? This free tool from 365 Techies moves it all into Gmail, and there's a short video showing how:"
 
