@@ -43,4 +43,15 @@ if ($out['db_ok']) {
     $copy = $db; $r = rehome_resolve($copy, 'ZZREHOMECHECK', '000000000000', '');
     $out['resolve_how'] = $r[1];
 }
+// the customer file's SHAPE only (8 Oct: it read as zero customers): size, when written, how many entries each
+// top-level section holds, and any sibling copies (.tmp / .bak) with their sizes - names of sections, never contents
+$f = __DIR__ . '/pcm-data.json';
+$out['data_size'] = @filesize($f);
+$out['data_mtime'] = @filemtime($f);
+$shape = array();
+if (is_array($db)) foreach ($db as $k => $v) $shape[substr((string)$k, 0, 40)] = is_array($v) ? count($v) : gettype($v);
+$out['data_sections'] = $shape;
+$sib = array();
+foreach ((glob(__DIR__ . '/pcm-data.json*') ?: array()) as $g) if ($g !== $f) $sib[basename($g)] = array(@filesize($g), @filemtime($g));
+$out['data_siblings'] = $sib;
 echo json_encode($out);
