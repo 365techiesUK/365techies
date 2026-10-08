@@ -7,7 +7,8 @@ our own Search Console says one-problem fix pages and free in-page tools earn (s
 disappeared 123) while general how-to guides earn nothing, so each page here answers ONE search a person types, in the
 shape of printer-disappeared-after-windows-update (built by build_extra.build_new_page from this data).
 
-Every claim about the app is pinned to what the RELEASED app does (365 PC Manager v35):
+Every claim about the app is pinned to what the RELEASED app does (365 PC Manager v35, unchanged in v36 - released 8 Oct;
+v36 moved all four under My PC in its new menu):
   Sound check  (Sound.cs)   where the sound goes, mute and volume, a test sound and a microphone test; names Bluetooth
                             headphones stuck in phone-call ("Hands-Free") mode from the format Windows reports. It never
                             changes the default device - it opens Windows' Sound settings.
@@ -21,40 +22,41 @@ Every claim about the app is pinned to what the RELEASED app does (365 PC Manage
 NOT the v36 volume boost / equaliser: that only works on music and radio played in the app's own player - never claim
 it makes YouTube, calls or games louder.
 
-LIVE = False holds all four back until the new-look app screenshots are in (owner: the new version is "almost there").
+LIVE went True on 8 Oct 2026 with the released v36 app's own screens (it had held them back for the new look).
 Preview locally: set PCM_FEATURE_PREVIEW=1 and build; build again without it before committing anything else.
 The electricity price is Ofgem's cap for 1 Oct - 31 Dec 2026 (Direct Debit, GB average), read on ofgem.gov.uk on
 8 Oct 2026: 26.32p a kWh, 54.83p a day standing charge. Update PRICE_P / PRICE_FROM each quarter.
 """
 
-LIVE = False
+LIVE = True
 
 PRICE_P = 26.32            # pence per kWh, Ofgem price cap, Direct Debit, GB average
 PRICE_FROM = "1 October to 31 December 2026"
 PRICE_SRC = '<a href="https://www.ofgem.gov.uk/information-consumers/energy-advice-households/get-energy-price-cap-standing-charges-and-unit-rates-region" rel="noopener" target="_blank">Ofgem</a>'
 
-# the app screens (placeholders = the v35 renders until the new look is ready; swap the file names, keep the alts)
+# the app screens: the released v36 app CATCHING each problem (a made-up sample PC), cropped to the page below its menu bar,
+# 2x (scratchpad 8682606b art36/feat36.py). (file, width, height, alt, where it is in the app's menu)
 SHOTS = {
-    'sound':   ('/images/pcm-feat-sound-draft.webp', 'Sound check in 365 PC Manager: where the sound is going, its volume, a live level bar and a Play a test sound button'),
-    'screen':  ('/images/pcm-feat-screen-draft.webp', 'Screen check in 365 PC Manager: the screen&rsquo;s name and age, the size and refresh rate it is running at, and its own size'),
-    'printer': ('/images/pcm-feat-printers-draft.webp', 'Printers in 365 PC Manager: each printer as Windows sees it, whether anything is stuck in the queue, and buttons for printer settings and help'),
-    'power':   ('/images/pcm-feat-power-draft.webp', 'Power and running cost in 365 PC Manager: hours on, energy used and roughly what it cost, with the Eco, Everyday and Full speed modes'),
+    'sound':   ('/images/pcm-feat-sound-v36.webp', 1272, 1440, 'Sound check in 365 PC Manager saying the headphones are in phone-call mode, so sound is muffled: the Hands-Free headset is in use at 16 kHz mono, with a Play a test sound button', 'Sound check'),
+    'screen':  ('/images/pcm-feat-screen-v36.webp', 1272, 1012, 'Screen check in 365 PC Manager saying a sharper or smoother setting is available: a 2560 x 1440 monitor running at 60 Hz that can do 144 Hz', 'Screen check'),
+    'printer': ('/images/pcm-feat-printers-v36.webp', 1272, 864, 'Printers in 365 PC Manager saying 2 documents are stuck in the queue, with a Clear stuck documents button', 'Printers'),
+    'power':   ('/images/pcm-feat-power-v36.webp', 1272, 1408, 'Power and running cost in 365 PC Manager: hours on in the last 30 days, the energy and roughly what it cost, the Eco, Everyday and Full speed modes and an hour-by-hour power history', 'Power &amp; running cost'),
 }
-SHOT_W, SHOT_H = 1300, 1060
 
 
 def _app_box(key, head, what_html, setup_url, note=''):
-    src, alt = SHOTS[key]
+    src, w, h, alt, where = SHOTS[key]
     return (f'<div class="pfa" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:1.3rem;align-items:center;margin:.4rem 0 0;padding:1.2rem 1.3rem;'
             f'border-radius:18px;border:1px solid rgba(29,151,227,.42);background:linear-gradient(135deg,rgba(29,151,227,.10),rgba(255,255,255,.02))">'
             f'<div><p class="mono" style="margin:0 0 .4rem;font-size:.72rem;letter-spacing:.08em;color:var(--cyan-soft)">FREE &middot; WINDOWS 10 &amp; 11 &middot; NO SIGN-UP</p>'
             f'<h3 style="margin:0 0 .5rem;font-size:1.25rem;line-height:1.25">{head}</h3>{what_html}'
+            f'<p style="margin:.6rem 0 0;font-size:.92rem">In the app: <b>My PC</b>, then <b>{where}</b>.</p>'
             f'<p style="margin:1rem 0 0;display:flex;flex-wrap:wrap;gap:.6rem"><a class="button primary" href="{setup_url}" download data-pfa-dl="{key}" style="text-decoration:none">Download 365 PC Manager free &#8595;</a>'
             f'<a class="button secondary" href="/free-pc-health-check/" style="text-decoration:none">What else it checks</a></p>'
             f'<p style="margin:.7rem 0 0;font-size:.82rem;color:var(--muted)">Made by us, a family IT firm in Bournemouth since 1995, and digitally signed by 365 Techies Ltd.{note}</p></div>'
-            f'<figure style="margin:0"><img src="{src}" width="{SHOT_W}" height="{SHOT_H}" alt="{alt}" loading="lazy" decoding="async" '
+            f'<figure style="margin:0"><img src="{src}" width="{w}" height="{h}" alt="{alt}" loading="lazy" decoding="async" '
             f'style="display:block;width:100%;height:auto;border-radius:12px;border:1px solid rgba(125,170,220,.3);box-shadow:0 22px 50px -26px rgba(0,0,0,.8)">'
-            f'<figcaption style="font-size:.72rem;color:var(--muted);margin-top:.4rem">The real app, as it looks on a PC.</figcaption></figure></div>'
+            f'<figcaption style="font-size:.72rem;color:var(--muted);margin-top:.4rem">The real app catching it (a sample PC).</figcaption></figure></div>'
             f'<style>@media (max-width:820px){{.pfa{{grid-template-columns:1fr!important}}}}</style>'
             f'<script>(function(){{var a=document.querySelectorAll("[data-pfa-dl]");for(var i=0;i<a.length;i++)a[i].addEventListener("click",function(){{'
             f'try{{if(typeof window.gtag==="function")window.gtag("event","pcm_download_click",{{page:location.pathname,place:"feature_"+this.getAttribute("data-pfa-dl")}});}}catch(e){{}}}});}})();</script>')

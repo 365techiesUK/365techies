@@ -156,6 +156,10 @@
   "h": "368f9c0e4d913ada",
   "last": "2026-10-06"
  },
+ "bluetooth-headphones-sound-muffled-on-pc": {
+  "first": "2026-10-08",
+  "h": "9f6485a5838701f9"
+ },
  "book-a-collection": {
   "first": "2026-07-28",
   "h": "4f6ade3c20480c28",
@@ -1006,6 +1010,10 @@
   "h": "6ed9c90d0e1506d7",
   "last": "2026-09-28"
  },
+ "documents-stuck-in-print-queue": {
+  "first": "2026-10-08",
+  "h": "191ff9c56b4b8aae"
+ },
  "domain-expiry-checker": {
   "first": "2026-07-28",
   "h": "721c28f34e357f15",
@@ -1143,7 +1151,7 @@
  },
  "free-pc-health-check": {
   "first": "2026-07-28",
-  "h": "f01218b752d2d4b1",
+  "h": "cdbe236d407c411e",
   "last": "2026-10-08"
  },
  "free-tools": {
@@ -1250,6 +1258,10 @@
   "first": "2026-07-28",
   "h": "a2862e017de2ab5c",
   "last": "2026-10-06"
+ },
+ "how-much-does-it-cost-to-run-a-pc-uk": {
+  "first": "2026-10-08",
+  "h": "fcd37012bb8607a1"
  },
  "how-much-does-it-support-cost-uk-2026": {
   "first": "2026-06-16",
@@ -2110,6 +2122,10 @@
   "h": "3afaeb0adabdce02",
   "last": "2026-10-06"
  },
+ "monitor-stuck-at-60hz": {
+  "first": "2026-10-08",
+  "h": "b31907553ab25d0c"
+ },
  "monthly-it-support": {
   "first": "2026-07-28",
   "h": "777519aad9cd3b9e",
@@ -2127,7 +2143,7 @@
  },
  "move-virgin-media-email-to-gmail": {
   "first": "2026-07-28",
-  "h": "96c5a1793e5c6856",
+  "h": "54116ab716a32b0d",
   "last": "2026-10-08"
  },
  "nas-drive-not-showing-after-windows-11-update": {
@@ -2702,8 +2718,8 @@
  },
  "printer-support": {
   "first": "2026-07-28",
-  "h": "aa5c60818c87fdbd",
-  "last": "2026-10-06"
+  "h": "8919f92e8bd7a725",
+  "last": "2026-10-08"
  },
  "printer-wont-connect-after-changing-broadband": {
   "first": "2026-07-28",
@@ -3262,12 +3278,12 @@
  },
  "virgin-email-mover": {
   "first": "2026-09-29",
-  "h": "6c4f077731af44db",
+  "h": "0ca09381421d1415",
   "last": "2026-10-08"
  },
  "virgin-media-email-moving-to-junara": {
   "first": "2026-09-26",
-  "h": "edc55a40dd2acb16",
+  "h": "fde41f28c1673e46",
   "last": "2026-10-08"
  },
  "virgin-media-email-wont-add-to-new-outlook": {
