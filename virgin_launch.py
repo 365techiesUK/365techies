@@ -312,7 +312,7 @@ VEM_SHARE_TEXT = "Moving off Virgin Media email? This free tool from 365 Techies
 TOOL_FAQS = [
     ("How do I move my Virgin Media email to Gmail?",
      "On a Windows PC, with two free tools from us. Add the 365 Email Mover to Chrome, open your Virgin email in Chrome and "
-     "press Copy my email to this PC. Then in 365 PC Manager open Tools, then Virgin email - free, press Check my Virgin "
+     "press Copy my email to this PC. Then in 365 PC Manager open Internet &amp; email, then Virgin email - free, press Check my Virgin "
      "email, add your Gmail address and a <a href=\"/" + GAPP_SLUG + "/\">Google app password</a>, and start. It copies "
      "every folder into Gmail, carries on by itself each day, and checks at the end that everything arrived. The video on "
      "this page shows every step. Or we do the whole move for you for &pound;60 per email address, including a full "
@@ -427,7 +427,7 @@ def _vem_steps(setup_url):
          "", "pop", _pop("done", "The 365 Email Mover finished: 322 emails copied to Downloads, with the next steps in 365 PC Manager")),
     ]
     app = [
-        ("Open Tools, then Virgin email &ndash; free",
+        ("Open Internet &amp; email, then Virgin email &ndash; free",
          "No 365 PC Manager yet? It&rsquo;s free for Windows 10 and 11. The app spots your copy straight away: press "
          "<b>Check my Virgin email</b> and it reads the copy, so there&rsquo;s no Virgin sign-in.",
          dl, "lap", virgin_shot("found", _LAP)),
