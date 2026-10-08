@@ -2636,13 +2636,13 @@
  },
  "password-breach-checker": {
   "first": "2026-07-28",
-  "h": "144bfeb97910a192",
-  "last": "2026-09-28"
+  "h": "49ee9f5b4afe739f",
+  "last": "2026-10-08"
  },
  "password-generator": {
   "first": "2026-07-28",
-  "h": "bd0b78b6ae428fb2",
-  "last": "2026-09-28"
+  "h": "f6626aec64024372",
+  "last": "2026-10-08"
  },
  "password-manager-setup": {
   "first": "2026-07-28",
@@ -2651,8 +2651,8 @@
  },
  "password-strength-checker": {
   "first": "2026-07-28",
-  "h": "e97623c6ba5490a3",
-  "last": "2026-09-28"
+  "h": "2c9b180fb702da9a",
+  "last": "2026-10-08"
  },
  "pay": {
   "first": "2026-07-28",
@@ -2786,8 +2786,8 @@
  },
  "qr-code-generator": {
   "first": "2026-07-28",
-  "h": "c1279223254dc90a",
-  "last": "2026-09-28"
+  "h": "635f6d84c15799ce",
+  "last": "2026-10-08"
  },
  "quick-quote": {
   "first": "2026-07-28",
@@ -3496,8 +3496,8 @@
  },
  "wifi-qr-code-generator": {
   "first": "2026-07-28",
-  "h": "d75b966e553651d6",
-  "last": "2026-09-28"
+  "h": "499fde80fd45aa86",
+  "last": "2026-10-08"
  },
  "wifi-signal-test": {
   "first": "2026-07-28",

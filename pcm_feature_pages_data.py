@@ -42,13 +42,16 @@ SHOTS = {
     'printer': ('/images/pcm-feat-printers-v36.webp', 1272, 864, 'Printers in 365 PC Manager saying 2 documents are stuck in the queue, with a Clear stuck documents button', ('My PC', 'Printers')),
     'power':   ('/images/pcm-feat-power-v36.webp', 1272, 1408, 'Power and running cost in 365 PC Manager: hours on in the last 30 days, the energy and roughly what it cost, the Eco, Everyday and Full speed modes and an hour-by-hour power history', ('My PC', 'Power &amp; running cost')),
     'radio':   ('/images/pcm-feat-radio-v36.webp', 1864, 890, 'Radio in 365 PC Manager: radio for listeners in the United Kingdom, with the Near you list of Dorset stations - Hot Radio, Forest FM, Radio Wimborne, Nation Radio South Coast, Heart Dorset - and buttons for the BBC stations', ('Music &amp; games', 'the Radio tab')),
+    'passwords': ('/images/pcm-feat-passwords-v36.webp', 1292, 684, 'Scam check in 365 PC Manager: Has one of my passwords leaked? with a Check safely button, and Make me a strong password showing Nectar-Pelican-Sunflower-976% with Make another and Copy buttons', ('Safety', 'Scam check')),
+    'qr':      ('/images/pcm-feat-qr-v36.webp', 1300, 670, 'The QR code maker in 365 PC Manager: a web address, phone number or note turned into a QR code, with Save as a picture, Copy and Print buttons', ('Internet &amp; email', 'More internet tools, then QR code maker')),
+    'wificard': ('/images/pcm-feat-wificard-v36.webp', 1320, 724, 'The Guest Wi-Fi card in 365 PC Manager: the Wi-Fi name and password typed in, and a printable card with the QR code, the network name and the password', ('Internet &amp; email', 'More internet tools, then Guest Wi-Fi card')),
     'alarm':   ('/images/pcm-feat-alarm-v36.webp', 1132, 962, 'The wake-up alarm in 365 PC Manager: it rings at 07:00 on weekdays with Radio Wimborne, up to 40% volume, rising over 10 minutes from almost silent, with Try it now and Save buttons', ('Music &amp; games', 'Big view, then Alarms &amp; timers')),
     'hometimer': ('/images/pcm-feat-hometimer-v36.webp', 1132, 962, 'The Someone&rsquo;s home timer in 365 PC Manager: it plays Radio Wimborne from 08:00 until 10:30 every day at 35% volume, with Shift the times a little each day switched on, and Try it now and Save buttons', ('Music &amp; games', 'Big view, then Alarms &amp; timers')),
     'cds':     ('/images/pcm-feat-cds-v36.webp', 1272, 668, 'The CDs tab in 365 PC Manager on a PC with no CD drive: it explains that a plug-in USB CD drive works, under the music player (a sample library)', ('Music &amp; games', 'the CDs tab')),
 }
 
 # the picture's caption, where "catching it" doesn't fit
-CAPS = {'radio': 'The real app (a sample PC).', 'alarm': 'The real app&rsquo;s alarm (a sample setting).', 'hometimer': 'The real app&rsquo;s timer (a sample setting).'}
+CAPS = {'radio': 'The real app (a sample PC).', 'passwords': 'The real app, on our office PC.', 'qr': 'The real app, on our office PC.', 'wificard': 'The real app (sample details).', 'alarm': 'The real app&rsquo;s alarm (a sample setting).', 'hometimer': 'The real app&rsquo;s timer (a sample setting).'}
 
 
 def _app_box(key, head, what_html, setup_url, note=''):
@@ -739,3 +742,34 @@ def pages(setup_url):
         d['primaryCta'] = [d['primaryCta'][0], d['primaryCta'][1].replace('__PCM_SETUP__', setup_url)]
         out.append(d)
     return out
+
+
+# ---- the free tool pages whose job the app also does: an app box after "What next" (wave 5, 8 Oct 2026)
+def tool_boxes(setup_url):
+    """slug -> the section to insert on that tool page."""
+    pw_tail = ('<p style="margin:.6rem 0 0">Everything happens on your PC: nothing typed or made there is sent anywhere or kept, and a password you copy is kept out of Windows&rsquo; clipboard history.</p>')
+    boxes = {
+        'password-generator': _app_box('passwords', 'Make strong passwords on your PC',
+            '<p style="margin:0">Our free app makes the same kind of password &mdash; three random words, a number and a symbol, following the UK National Cyber Security Centre&rsquo;s advice &mdash; with one click, and four words if you want it even stronger. It also checks whether a password has leaked, and rates how strong one is as you type.</p>' + pw_tail, setup_url),
+        'password-strength-checker': _app_box('passwords', 'Check and make passwords on your PC',
+            '<p style="margin:0">Our free app rates a password as you type it into its leak check: an honest estimate that looks for the most-used passwords, common words and patterns first, then length &mdash; and it checks the password against known data breaches too. And when one isn&rsquo;t strong enough, it makes a new one &mdash; three random words, a number and a symbol &mdash; with one click.</p>' + pw_tail, setup_url),
+        'password-breach-checker': _app_box('passwords', 'Check for leaked passwords from your PC',
+            '<p style="margin:0">Our free app runs the same private check: it scrambles your password on your PC and sends only the first five characters of the scramble to the Have I Been Pwned database, so the password itself never leaves the computer. If one has leaked, it makes you a strong new one with one click.</p>' + pw_tail, setup_url),
+        'qr-code-generator': _app_box('qr', 'Make QR codes on your PC',
+            '<p style="margin:0">Our free app has a QR code maker for a web address, a phone number or a short note &mdash; for a poster, a letter or the club newsletter. It&rsquo;s made on your PC with nothing fetched from anywhere, and you can save it as a picture, copy it or print it straight away.</p>', setup_url),
+        'wifi-qr-code-generator': _app_box('wificard', 'Print a guest Wi-Fi card from your PC',
+            '<p style="margin:0">Type your Wi-Fi name and password into our free app and it makes a card with the QR code, the network name and the password on it, ready to print or save as a picture. Visitors point their phone&rsquo;s camera at it and they&rsquo;re on. Your password isn&rsquo;t kept or sent anywhere.</p>', setup_url),
+    }
+    return {slug: ('    <section class="section" aria-label="In our free app" id="in-the-app">\n      <div class="wrap">\n'
+                   '        <p class="eyebrow mono">// ALSO IN OUR FREE WINDOWS APP</p>\n'
+                   '        <h2 class="section-title" data-title>Prefer it on your PC?<span class="title-underline"></span></h2>\n'
+                   '        ' + box + '\n      </div>\n    </section>\n') for slug, box in boxes.items()}
+
+
+def tool_insert(content, section):
+    """Put the app section straight after the tool's What next cards (before its FAQs); else at the end."""
+    for mark in ('    <section class="faq-section', '<section class="faq-section'):
+        i = content.find(mark)
+        if i >= 0:
+            return content[:i] + section + content[i:]
+    return content + '\n' + section

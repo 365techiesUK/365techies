@@ -24115,6 +24115,11 @@ if _PFP.LIVE or _os_pfp.environ.get('PCM_FEATURE_PREVIEW') == '1':
     FIX_FLOW_PAGES.update(_PFP.FLOWS)
     for _np in _PFP.pages(PCM_SETUP_V30):
         build_new_page(_np)
+    # 8 Oct 2026: the free tool pages whose job the app also does get its box after What next
+    _PFP_TB = _PFP.tool_boxes(PCM_SETUP_V30)
+    for _kw in bp.PAGES:
+        if _kw.get('slug') in _PFP_TB and isinstance(_kw.get('content'), str):
+            _kw['content'] = _PFP.tool_insert(_kw['content'], _PFP_TB[_kw['slug']])
 
 # Parents' online-safety guide: hub + the six platforms Dorset Police's guide skips
 # (data + the "checked against the maker's own instructions" discipline live in
