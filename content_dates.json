@@ -1168,8 +1168,8 @@
  },
  "games": {
   "first": "2026-10-04",
-  "h": "0be698ad3f17112d",
-  "last": "2026-10-08"
+  "h": "ca6ac8f2a62b39c3",
+  "last": "2026-10-09"
  },
  "gaming-pc-slow-wont-load-games": {
   "first": "2026-09-05",
@@ -2681,6 +2681,14 @@
   "first": "2026-07-28",
   "h": "47671999844c29b9",
   "last": "2026-09-28"
+ },
+ "play-cribbage-online-free": {
+  "first": "2026-10-09",
+  "h": "dbf34f09d126800c"
+ },
+ "play-patience-online-free": {
+  "first": "2026-10-09",
+  "h": "dae3aeea83ea7b78"
  },
  "playstation-parental-controls-uk": {
   "first": "2026-08-18",

@@ -9,6 +9,7 @@ from playbook_tiles_data import PLAYBOOK_HERO_TILES   # 26 Sep 2026: the shared 
 import build_local      # registers 12 local/customer pages
 import build_extra      # registers 9 specialist/trust pages
 import games_hub_page   # /games/ - every free game on one page, from games/games.json (4 Oct 2026; hidden until the owner says)
+import games_landing    # /play-patience-online-free/ + /play-cribbage-online-free/ - the game pages Google can show, with videos (9 Oct 2026)
 import fuel_prices_page # /fuel-prices/ - cheapest petrol and diesel, whole UK first (4 Oct 2026; hidden until the owner says)
 import games_pcm_mode   # /games/?from=pcm - the launcher fills its window when 365 PC Manager opens it (5 Oct 2026)
 import simplybook_cluster  # SimplyBook integration pillar + 5 firsthand technical guides
