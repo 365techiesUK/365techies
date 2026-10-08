@@ -403,7 +403,7 @@ function db_open() {
     if (!$lk || !@flock($lk, LOCK_EX)) { http_response_code(503); fail('db_unavailable'); }
     if (!file_exists($DATA)) return array($lk, array('customers' => array()));
     $raw = (string)@file_get_contents($DATA);
-    if ($raw === '') return array($lk, array('customers' => array()));
+    if ($raw === '') { @flock($lk, LOCK_UN); @fclose($lk); http_response_code(503); fail('db_unavailable'); }   // 8 Oct 2026: a 0-byte customer file is a failure, never an empty shop
     $db = json_decode($raw, true);
     if (!is_array($db)) { @flock($lk, LOCK_UN); @fclose($lk); http_response_code(503); fail('db_unavailable'); }
     if (!isset($db['customers'])) $db['customers'] = array();
@@ -412,7 +412,7 @@ function db_open() {
 function db_save($db) {
     global $DATA;
     $tmp = $DATA . '.' . getmypid() . '.tmp';
-    if (@file_put_contents($tmp, json_encode($db, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $DATA);
+    { require_once __DIR__ . '/pcm-dbsafe-lib.php'; pcm_db_put($tmp, $db, $DATA); }   // 8 Oct 2026: never an empty file over the customers
 }
 function db_close($lk) { if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); } }
 

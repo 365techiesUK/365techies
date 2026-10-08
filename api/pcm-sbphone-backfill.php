@@ -97,8 +97,8 @@ unset($c);
 
 if ($LIVE && $filled > 0) {
     $tmp = $DATA . '.backfill.tmp';
-    if (@file_put_contents($tmp, json_encode($db, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $DATA);
-    else { fwrite(STDERR, "WRITE FAILED - nothing changed\n"); }
+    require_once __DIR__ . '/pcm-dbsafe-lib.php';   // 8 Oct 2026: never an empty file over the customers
+    if (!pcm_db_put($tmp, $db, $DATA)) { fwrite(STDERR, "WRITE FAILED - nothing changed\n"); }
 }
 if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); }
 

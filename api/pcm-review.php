@@ -2368,7 +2368,7 @@ function sr_resend_as_visit_once($dataFile = null, $from = 1789344000, $to = 178
             }
             if ($flipped > 0) {
                 $tmp = $dataFile . '.' . getmypid() . '.tmp';
-                if (@file_put_contents($tmp, json_encode($db, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $dataFile);
+                { require_once __DIR__ . '/pcm-dbsafe-lib.php'; pcm_db_put($tmp, $db, $dataFile); }   // 8 Oct 2026: never an empty file over the customers
             }
         }
         if ($dlk) { @flock($dlk, LOCK_UN); @fclose($dlk); }

@@ -134,7 +134,7 @@ if (is_array($db2) && isset($db2['customers'][$key]['machines'][$machine])) {
     if (!$technician) $db2['customers'][$key]['machines'][$machine]['selfrun_served'] = time();
     else unset($db2['customers'][$key]['machines'][$machine]['selfrun_served']);
     $tmp = $DATA . '.' . getmypid() . '.tmp';
-    if (@file_put_contents($tmp, json_encode($db2, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $DATA);
+    { require_once __DIR__ . '/pcm-dbsafe-lib.php'; pcm_db_put($tmp, $db2, $DATA); }   // 8 Oct 2026: never an empty file over the customers
 }
 if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); }
 

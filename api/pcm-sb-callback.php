@@ -146,7 +146,7 @@ foreach ($db['customers'] as $key => &$c) {
 }
 unset($c);
 $out = 'no_match'; // booking for someone not on PC Manager — still fine for the review email
-if ($hit) { $tmp = $DATA . '.sb.tmp'; if (@file_put_contents($tmp, json_encode($db, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $DATA); $out = 'ok'; }
+if ($hit) { $tmp = $DATA . '.sb.tmp'; { require_once __DIR__ . '/pcm-dbsafe-lib.php'; pcm_db_put($tmp, $db, $DATA); } $out = 'ok'; }
 if ($lk) { @flock($lk, LOCK_UN); @fclose($lk); }   // release the customer-DB lock BEFORE any slow SMTP work
 
 // Announce bookings that nothing else announces - the ones typed straight into

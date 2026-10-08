@@ -31,7 +31,7 @@ $PCM_CMDS = array('flushdns','cleartemp','collectlogs');
 function load($f){
     if (!file_exists($f)) return array('customers'=>array());
     $raw = (string)@file_get_contents($f);
-    if ($raw === '') return array('customers'=>array());
+    if ($raw === '') { http_response_code(503); exit(json_encode(array('ok'=>false,'error'=>'db_unavailable'))); }   // 8 Oct 2026: a 0-byte customer file is a failure, never an empty shop
     $d = json_decode($raw, true);
     if (!is_array($d)) { http_response_code(503); exit(json_encode(array('ok'=>false,'error'=>'db_unavailable'))); }
     if (!isset($d['customers'])) $d['customers'] = array();
@@ -40,7 +40,7 @@ function load($f){
 // Atomic write (temp + rename) so a crash mid-write can't leave a torn file that load() rejects.
 function save($f,$d){
     $tmp = $f . '.' . getmypid() . '.tmp';
-    if (@file_put_contents($tmp, json_encode($d, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $f);
+    { require_once __DIR__ . '/pcm-dbsafe-lib.php'; pcm_db_put($tmp, $d, $f); }   // 8 Oct 2026: never an empty file over the customers
 }
 // 8 Oct 2026 (pcm-rehome-lib.php): a re-homed key's reply tells a v36+ app the key to keep from now on (rekey), and a
 // key that opens nothing is said to be unknown (known:false) - only ever with customer records to hand, so a lost data

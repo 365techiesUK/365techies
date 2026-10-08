@@ -337,6 +337,11 @@ ErrorDocument 404 /404.html
 <FilesMatch "^pcm-rehome-(lib|test)\.php$">
   Require all denied
 </FilesMatch>
+# The customer file's safe save (8 Oct 2026, after pcm-data.json was found emptied): the library is include-only, its
+# test CLI-only, and the refusal log + its hourly Slack mark are private.
+<FilesMatch "^(pcm-dbsafe-(lib|test)\.php|pcm-db-refused\.(log|ts))$">
+  Require all denied
+</FilesMatch>
 # Free Virgin email tools (365 PC Manager v30): pcm-mailmover.php and pcm-mailmove-help.php stay served. Their
 # shared library and CLI test are never URLs. Their one store, the day's rate counter, is named sha1(...) + ".json",
 # so the ^[a-f0-9]{40}\.json$ rule further down already refuses it.
