@@ -158,7 +158,8 @@
  },
  "bluetooth-headphones-sound-muffled-on-pc": {
   "first": "2026-10-08",
-  "h": "9f6485a5838701f9"
+  "h": "b962056cb5e1f4ca",
+  "last": "2026-10-08"
  },
  "book-a-collection": {
   "first": "2026-07-28",
@@ -1012,7 +1013,8 @@
  },
  "documents-stuck-in-print-queue": {
   "first": "2026-10-08",
-  "h": "191ff9c56b4b8aae"
+  "h": "a5d0847d54b06c56",
+  "last": "2026-10-08"
  },
  "domain-expiry-checker": {
   "first": "2026-07-28",
@@ -1156,8 +1158,8 @@
  },
  "free-tools": {
   "first": "2026-07-28",
-  "h": "715346a7b8737a31",
-  "last": "2026-10-04"
+  "h": "fa4ea65ef9252060",
+  "last": "2026-10-08"
  },
  "fuel-prices": {
   "first": "2026-10-04",
@@ -1261,7 +1263,8 @@
  },
  "how-much-does-it-cost-to-run-a-pc-uk": {
   "first": "2026-10-08",
-  "h": "fcd37012bb8607a1"
+  "h": "6c8a458e59bee100",
+  "last": "2026-10-08"
  },
  "how-much-does-it-support-cost-uk-2026": {
   "first": "2026-06-16",
@@ -3571,8 +3574,8 @@
  },
  "windows-11-support": {
   "first": "2026-07-28",
-  "h": "89eb5be3403d6aec",
-  "last": "2026-10-06"
+  "h": "5d9f56ead239e8aa",
+  "last": "2026-10-08"
  },
  "windows-11-upgrade-service": {
   "first": "2026-07-28",

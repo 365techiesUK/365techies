@@ -3279,6 +3279,7 @@ TOOLS = {
   "vbuilder":     ("Victron System Builder", "/victron-system-builder/", "Four questions &#8594; a complete, honestly-sized Victron kit list with links to buy every part."),
   "pcbuild":      ("Custom PC Builder", "/custom-pc-builder/", "Your budget, split the way experienced builders do it &mdash; what to spend per part, and live links to buy."),
   "dns":          ("DNS Lookup", "/dns-lookup/", "Check any domain&rsquo;s A, MX, NS &amp; TXT records &mdash; the settings behind your website and email."),
+  "pcruncost":    ("PC Running Cost Calculator", "/how-much-does-it-cost-to-run-a-pc-uk/", "What your PC or gaming PC costs to run at today&rsquo;s UK electricity price cap &mdash; an hour, a day, a month and a year."),
   "pcbench":      ("PC Benchmark", "/pc-benchmark/", "How fast is your computer, really? Six live tests &mdash; CPU, encryption, memory, graphics &amp; storage &mdash; with a score you can share."),
   "healthcheck":  ("IT Health Check Tool", "/it-health-check-tool/", "Get an instant IT &amp; security score out of 100, plus a plain-English action plan."),
   "pcmapp":       ("365 PC Manager app", "/free-pc-health-check/", "365 PC Manager &mdash; our free little Windows app. An honest PC health check &mdash; health score, one-tap boost, no fake errors &mdash; from real local techies. <strong>Digitally signed</strong>, it installs in a couple of clicks and uninstalls just as easily."),

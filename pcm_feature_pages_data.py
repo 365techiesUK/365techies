@@ -80,7 +80,7 @@ def _call_us(what):
 # ============================================================ 1. Bluetooth headphones sound muffled
 BT = {
     'slug': 'bluetooth-headphones-sound-muffled-on-pc',
-    'title': 'Bluetooth Headphones Sound Muffled on PC? The Fix | 365 Techies',
+    'title': 'Bluetooth Headphones Sound Muffled on PC? Fix | 365 Techies',
     'metaDesc': 'Bluetooth headphones sound muffled or tinny on your Windows PC, often only on calls? Windows has put them in phone-call mode. Here is the fix.',
     'ogTitle': 'Bluetooth headphones sound muffled on your PC? Here&rsquo;s why',
     'crumbName': 'Bluetooth Headphones Sound Muffled',
@@ -225,7 +225,7 @@ HZ = {
 # ============================================================ 3. Documents stuck in the print queue
 PQ = {
     'slug': 'documents-stuck-in-print-queue',
-    'title': 'Document Stuck in Print Queue, Won&rsquo;t Delete? Fix | 365 Techies',
+    'title': 'Document Stuck in Print Queue? How to Clear It | 365 Techies',
     'metaDesc': 'A document stuck in the Windows print queue holds up everything behind it. How to clear it: Cancel all, restart the Print Spooler, then empty the queue.',
     'ogTitle': 'Document stuck in the print queue? Here&rsquo;s how to clear it',
     'crumbName': 'Document Stuck in Print Queue',
@@ -355,7 +355,7 @@ _CALC = ('<div class="pcc" id="pcc">'
 
 PC = {
     'slug': 'how-much-does-it-cost-to-run-a-pc-uk',
-    'title': 'How Much Does It Cost to Run a PC? UK Calculator | 365 Techies',
+    'title': 'How Much Does a PC Cost to Run? UK Calculator | 365 Techies',
     'metaDesc': f'What your PC or gaming PC costs to run at today&rsquo;s UK price cap ({PRICE_P}p a unit): an hour, a day, a year. Free calculator, plus the easy ways to cut it.',
     'ogTitle': 'How much does your PC cost to run? UK calculator',
     'crumbName': 'What a PC Costs to Run',
