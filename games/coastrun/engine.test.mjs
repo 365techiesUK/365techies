@@ -16,7 +16,7 @@ function clear(W) { W.cars = []; W.field = []; for (let i = W.base; i <= E.lastI
 test('a new game: Bournemouth first, the clock by speed, a car and an accelerator', () => {
   const g = E.newWorld(1, { car: 'hatch' }, 1), c = E.newWorld(2, { car: 'nope', pedal: 'hold' }, 1);
   assert.equal(g.stage, 0); assert.equal(E.STAGES[0].name, 'BOURNEMOUTH');
-  assert.equal(Math.round(g.time), Math.round(E.STAGES[0].t * 1.06 + 10), 'Gentle gives a little more time'); assert.equal(Math.round(c.time), Math.round(E.STAGES[0].t * 1.04 + 10), 'Classic: the first stage (and a little: 7 Oct, so nitro is margin, not rent) and ten seconds in hand');
+  assert.equal(Math.round(g.time), Math.round(E.STAGES[0].t * 1.2 + 10), 'Gentle gives a little more time'); assert.equal(Math.round(c.time), Math.round(E.STAGES[0].t * 1.11 + 10), 'Classic: the first stage (and a little: 7 Oct, so nitro is margin, not rent; re-tuned for 180 mph, 8 Oct) and ten seconds in hand');
   assert.equal(g.car, 'hatch'); assert.equal(c.car, 'roadster', 'an unknown car falls back to the Roadster');
   assert.equal(g.auto, true); assert.equal(c.auto, false);
   assert.ok(g.fork && g.fork.next.join() === '1,2', 'the first fork leads to the Purbeck Hills or the New Forest');
@@ -117,6 +117,17 @@ test('the flick (8 Oct): steering the other way into an S-bend swings the slide 
   assert.equal(W.drift, 0, 'let go and it straightens'); assert.equal(ends, 1, 'scored once, for the whole S');
   const jump = slips.slice(rel).reduce((m, a, q, s) => (q ? Math.max(m, Math.abs(a - s[q - 1])) : m), 0);
   assert.ok(air > 20 && jump < 0.02, 'over the crest it lands still sliding and unwinds, no snap straight: ' + air + ' steps in the air, biggest step ' + (jump * 57.3).toFixed(2) + ' deg');
+});
+
+test('flat out (owner, 8 Oct): the roadster runs up to about 180 mph, and one bottle of nitro takes it to about 230-240', () => {
+  const W = E.newWorld(2, {}, 3); go(W); clear(W);
+  const held = (w) => { w.x = 4.6; w.psi = w.phi = 0; w.cars = []; w.time = 99; w.drift = 0; w.air = false; };   // (in a lane: the middle meets the sign where the road forks)
+  W.v = 0; let t60 = 0;
+  for (let n = 0; n < 60 * 45; n++) { held(W); E.step(W, { up: true }); quiet(W); if (!t60 && E.mph(W) >= 60) t60 = n; }
+  assert.ok(E.mph(W) >= 176 && E.mph(W) <= 182, 'flat out: ' + E.mph(W) + ' mph'); assert.ok(t60 > 100 && t60 < 170, '0-60 in about 2-3 s: ' + (t60 / 60).toFixed(1) + ' s');
+  let peak = 0; W.bottles = 3; W.nitroT = 0;
+  for (let n = 0; n < 60 * 6; n++) { held(W); E.step(W, { up: true, fire: n < 2 }); quiet(W); peak = Math.max(peak, E.mph(W)); }
+  assert.ok(peak >= 228 && peak <= 242, 'one bottle: ' + peak + ' mph'); assert.ok(E.mph(W) < peak - 15, 'and it eases back after: ' + E.mph(W) + ' mph');
 });
 
 test('the tyres squeal near the limit in a bend, not on a gentle one', () => {
