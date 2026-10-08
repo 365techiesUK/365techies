@@ -97,6 +97,8 @@ check(strpos($red, "https://365techies.co.uk/pay/?\xE2\x80\xA6.") !== false && s
     'a link still says where it went (query and token shown as ...)', $red);
 check(strpos($red, 'https://365techies.co.uk/book-service/ and') !== false && strpos($red, 'https://365techies.co.uk/leave-a-review/!') !== false, 'plain page links are left as they are', $red);
 check(sentlog_add('Not an email', 's', 't') === false && !file_exists(SENTLOG_FILE), 'no address: nothing written');
+$rk = sentlog_redact("Your key:  UNLK-ABCD-EFGH-JK7M\nlower case unlk-abcd-efgh-jk7m too");
+check(strpos($rk, 'ABCD') === false && strpos($rk, 'abcd') === false && substr_count($rk, "UNLK-\xE2\x80\xA6-JK7M") === 1 && substr_count($rk, "UNLK-\xE2\x80\xA6-jk7m") === 1, 'an Unlock key emailed to a buyer: only its last four kept (8 Oct 2026)', $rk);
 $t0 = 1791360000;   // 7 Oct 2026, 08:00 UTC
 check(sentlog_add('Mary@Example.com ', 'Your booking is confirmed', "Hi Mary,\nSee you Tuesday. Manage it: https://365techies.co.uk/portal/?b=SECRET99", 'website', null, $t0), 'an email written down');
 sentlog_add('jo@example.org', 'Your 365 Techies sign-in code', 'A sign-in code for the 365 portal and 365 PC Manager (the code itself is not kept here).', 'sign-in code', null, $t0 + 60);

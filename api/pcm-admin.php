@@ -20,14 +20,16 @@ require_once __DIR__ . '/visitors-tally-lib.php';   // vis_staff_rec_ok() - the 
 function load($f){
     if (!file_exists($f)) return array('customers'=>array());
     $raw = (string)@file_get_contents($f);
-    if ($raw === '') return array('customers'=>array());
+    // 8 Oct 2026: a 0-byte customer file is a failure, never an empty shop
+    if ($raw === '') { http_response_code(503); exit('The customer file is empty on the server - nothing was changed. Restore it from a backup.'); }
     $d = json_decode($raw, true);
     if (!is_array($d)) { http_response_code(503); exit('Customer data is temporarily unavailable - please refresh in a moment.'); }
     if (!isset($d['customers'])) $d['customers'] = array();
     return $d;
 }
 // atomic write (temp + rename), matching pcm.php, so a crash mid-write can't leave a torn file
-function save($f,$d){ $tmp=$f.'.'.getmypid().'.tmp'; if(@file_put_contents($tmp, json_encode($d, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOCK_EX)!==false) @rename($tmp,$f); }
+// 8 Oct 2026: through pcm-dbsafe-lib.php - never an empty file over the customers
+function save($f,$d){ $tmp=$f.'.'.getmypid().'.tmp'; require_once __DIR__ . '/pcm-dbsafe-lib.php'; pcm_db_put($tmp, $d, $f); }
 function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES); }
 function newkey(){ $a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; $k=''; for($i=0;$i<12;$i++){ $k.=$a[random_int(0,strlen($a)-1)]; if($i==3||$i==7)$k.='-'; } return $k; }
 
@@ -275,6 +277,8 @@ if (($_POST['do'] ?? '') === 'del') {
             $wid = (string)($w['id'] ?? '');
             if (preg_match('/^[a-f0-9]{24}$/', $wid)) @unlink(__DIR__ . '/pcm-wifi-' . $wid . '.json');
         }
+        require_once __DIR__ . '/pcm-rehome-lib.php';
+        rehome_tombstone($db, $k);   // 8 Oct 2026: only its SimplyBook client id stays, so its PCs can find that client's other record
         unset($db['customers'][$k]);
         // their web sessions and SOS screenshots go too, matching staffdel in pcm-booking.php
         if (isset($db['websessions'])) foreach ($db['websessions'] as $wk=>$wv) if (($wv['key'] ?? '') === $k) unset($db['websessions'][$wk]);

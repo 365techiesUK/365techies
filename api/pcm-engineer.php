@@ -54,8 +54,8 @@ function eng_load($f) {
 }
 function eng_save($f, $d) {
     $tmp = $f . '.' . getmypid() . '.tmp';
-    if (@file_put_contents($tmp, json_encode($d, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX) === false) return false;
-    return @rename($tmp, $f);
+    require_once __DIR__ . '/pcm-dbsafe-lib.php';   // 8 Oct 2026: never an empty file over the customers
+    return pcm_db_put($tmp, $d, $f);
 }
 /* one line per attempt, newest last, capped - the owner's record of who ran what, where */
 function eng_log($runs, $row, $file) {

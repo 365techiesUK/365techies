@@ -16,7 +16,7 @@ function clear(W) { W.cars = []; W.field = []; for (let i = W.base; i <= E.lastI
 test('a new game: Bournemouth first, the clock by speed, a car and an accelerator', () => {
   const g = E.newWorld(1, { car: 'hatch' }, 1), c = E.newWorld(2, { car: 'nope', pedal: 'hold' }, 1);
   assert.equal(g.stage, 0); assert.equal(E.STAGES[0].name, 'BOURNEMOUTH');
-  assert.equal(Math.round(g.time), Math.round(E.STAGES[0].t * 1.06 + 10), 'Gentle gives a little more time'); assert.equal(Math.round(c.time), E.STAGES[0].t + 10, 'the first stage and ten seconds in hand');
+  assert.equal(Math.round(g.time), Math.round(E.STAGES[0].t * 1.2 + 10), 'Gentle gives a little more time'); assert.equal(Math.round(c.time), Math.round(E.STAGES[0].t * 1.11 + 10), 'Classic: the first stage (and a little: 7 Oct, so nitro is margin, not rent; re-tuned for 180 mph, 8 Oct) and ten seconds in hand');
   assert.equal(g.car, 'hatch'); assert.equal(c.car, 'roadster', 'an unknown car falls back to the Roadster');
   assert.equal(g.auto, true); assert.equal(c.auto, false);
   assert.ok(g.fork && g.fork.next.join() === '1,2', 'the first fork leads to the Purbeck Hills or the New Forest');
@@ -73,8 +73,8 @@ test('drifting: a tap of brake while turning at speed slides the car round the b
   assert.ok(Math.abs(W.x) < E.HALF, 'and still on the road round the bend: ' + W.x.toFixed(2));
   assert.ok(W.v > 45, 'keeping most of its speed'); assert.ok(W.boost > 0.2, 'filling the boost');
   const s0 = W.score; E.step(W, {}); assert.equal(W.drift, 1, 'let go: the slide eases off, not all at once');
-  let n = 1; while (W.drift && n < 60) { E.step(W, {}); n++; } quiet(W);
-  assert.equal(W.drift, 0, 'and straightens up'); assert.ok(n > 12 && n < 45, 'over a moment: ' + n + ' steps'); assert.ok(W.score - s0 >= 300, 'points for the drift');
+  let n = 1; while (W.drift && n < 120) { E.step(W, {}); n++; } quiet(W);
+  assert.equal(W.drift, 0, 'and straightens up'); assert.ok(n > 30 && n < 85, 'unwinding over most of a second, not snapping (7 Oct): ' + n + ' steps'); assert.ok(W.score - s0 >= 300, 'points for the drift');
   W.boost = 1; W.v = E.VMAX; drive(W, 60, (w) => { w.x = 0; return { fire: true }; });
   assert.ok(W.v > E.VMAX * 1.1, 'boost goes past full speed'); assert.ok(W.boost < 0.8);
 });
@@ -89,7 +89,45 @@ test('a drift answers the keys: held it swings wide, caught it straightens quick
   assert.ok(rises >= 15, 'the slide grows step by step: ' + rises);
   drive(W, 30, { right: true }); const full = W.psi - W.phi;
   E.step(W, { left: true }); let n = 1; while (W.drift && n < 60) { E.step(W, { left: true }); n++; } quiet(W);
-  assert.ok(full > 0.35, 'held: a full slide ' + full.toFixed(2)); assert.ok(n < 20, 'steering against it catches it quickly: ' + n + ' steps');
+  assert.ok(full > 0.35, 'held: a full slide ' + full.toFixed(2)); assert.ok(n < 34, 'steering against it catches it quicker than letting go: ' + n + ' steps');
+});
+
+test('the flick (8 Oct): steering the other way into an S-bend swings the slide straight through to the other side as one drift, scored once', () => {
+  const W = E.newWorld(2, {}, 5); go(W); clear(W);
+  const run = (j, a, b, sg, min) => { for (let d = a; d < b; d++) { const g = E.segAt(W, j + d); if (!g || g.fk || g.k * sg < min) return false; } return true; };
+  let i = -1, sg = 0;
+  for (let j = 60; j < E.lastIndex(W) - 140 && i < 0; j++) for (const s of [1, -1]) if (i < 0 && run(j, 0, 20, s, 1 / 260)) { for (let o = 22; o < 50; o += 2) if (run(j, o, o + 16, -s, 1 / 320)) { i = j; sg = s; break; } }
+  assert.ok(i > 0, 'an S-bend to try');
+  const into = sg > 0 ? { right: true } : { left: true }, back = sg > 0 ? { left: true } : { right: true };
+  W.s = (i - 2) * E.SEG; W.x = -sg * 2; W.v = E.topSpeed(W) * 0.9;
+  let ends = 0, flags = [], slips = [], swT = -1, n = 0;
+  const tick = (inp) => { E.step(W, inp); W.cars = []; for (const e of W.events) if (e.sfx === 'driftend') ends++; quiet(W); flags.push(W.drift); slips.push(W.psi - W.phi); n++; };
+  tick({ ...into, brakeTap: true }); assert.equal(W.drift, sg, 'a drift into the first bend');
+  while (n < 240 && swT < 0) { if (E.segAt(W, E.segIndex(W.s) + 3).k * sg < -1 / 400) swT = n; else tick(into); }
+  assert.ok(swT > 20, 'held into the first bend until the road turns the other way: ' + swT);
+  for (let k = 0; k < 96; k++) tick(back);
+  const flip = flags.slice(swT), slip = slips.slice(swT);
+  assert.ok(flip.every((f) => f !== 0), 'the drift stays on all the way through straight (no CLEAN DRIFT halfway)');
+  assert.equal(flags[flags.length - 1], -sg, 'and now slides the other way'); assert.equal(ends, 0, 'nothing scored yet');
+  const near = slip.filter((a) => Math.abs(a) < 6 / 57.3).length; assert.ok(near <= 9, 'it swings through straight, not stopping there: ' + near + ' steps within 6 degrees');
+  const peak = slips.slice(0, swT).reduce((m, a) => Math.max(m, a * sg), 0), from = slip.findIndex((a) => a * sg < 0.75 * peak), to = slip.findIndex((a) => a * sg < -0.75 * peak);
+  assert.ok(from >= 0 && to > from && to - from < 48, 'side to side in under 0.8 s: ' + (to - from) + ' steps');
+  const rel = slips.length; let air = 0; for (let k = 0; k < 240 && W.drift; k++) { tick({}); if (W.air) air++; }   // (this S runs over a crest: the slide waits in the air, 8 Oct)
+  for (let k = 0; k < 30; k++) tick({});
+  assert.equal(W.drift, 0, 'let go and it straightens'); assert.equal(ends, 1, 'scored once, for the whole S');
+  const jump = slips.slice(rel).reduce((m, a, q, s) => (q ? Math.max(m, Math.abs(a - s[q - 1])) : m), 0);
+  assert.ok(air > 20 && jump < 0.02, 'over the crest it lands still sliding and unwinds, no snap straight: ' + air + ' steps in the air, biggest step ' + (jump * 57.3).toFixed(2) + ' deg');
+});
+
+test('flat out (owner, 8 Oct): the roadster runs up to about 180 mph, and one bottle of nitro takes it to about 230-240', () => {
+  const W = E.newWorld(2, {}, 3); go(W); clear(W);
+  const held = (w) => { w.x = 4.6; w.psi = w.phi = 0; w.cars = []; w.time = 99; w.drift = 0; w.air = false; };   // (in a lane: the middle meets the sign where the road forks)
+  W.v = 0; let t60 = 0;
+  for (let n = 0; n < 60 * 45; n++) { held(W); E.step(W, { up: true }); quiet(W); if (!t60 && E.mph(W) >= 60) t60 = n; }
+  assert.ok(E.mph(W) >= 176 && E.mph(W) <= 182, 'flat out: ' + E.mph(W) + ' mph'); assert.ok(t60 > 100 && t60 < 170, '0-60 in about 2-3 s: ' + (t60 / 60).toFixed(1) + ' s');
+  let peak = 0; W.bottles = 3; W.nitroT = 0;
+  for (let n = 0; n < 60 * 6; n++) { held(W); E.step(W, { up: true, fire: n < 2 }); quiet(W); peak = Math.max(peak, E.mph(W)); }
+  assert.ok(peak >= 228 && peak <= 242, 'one bottle: ' + peak + ' mph'); assert.ok(E.mph(W) < peak - 15, 'and it eases back after: ' + E.mph(W) + ' mph');
 });
 
 test('the tyres squeal near the limit in a bend, not on a gentle one', () => {
@@ -136,20 +174,24 @@ test('hitting the sign in the middle of a fork crashes (Classic) and still picks
   assert.ok(crashed); assert.equal(W.route.length, 2);
 });
 
-test('the goal: a time bonus, a love bonus, a rank, and round 2 goes on west along the coast from Poole Quay', () => {
+test('the goal: a time bonus, a love bonus, a rank; then the game is complete, or Space carries on into town', () => {
   const W = E.newWorld(2, {}, 8); go(W);
   for (let k = 0; k < 4; k++) {
     W.s = (W.fork.split - 2) * E.SEG; W.x = -6; W.v = 40; W.cars = []; drive(W, 30, {});
-    W.s = (W.fork.end - 1) * E.SEG; W.x = 0; drive(W, 30, {});
+    W.s = (W.fork.end - 1) * E.SEG; W.x = 0; drive(W, 30, {}); while (W.ferry) { E.step(W, {}); quiet(W); }
   }
   assert.equal(W.route.length, 5); assert.ok(!E.STAGES[W.route[4]].next, 'the fifth place ends in a goal');
   W.s = (W.goalAt - 3) * E.SEG; W.time = 12.2; W.cars = []; W.runHearts = 4; W.runAsked = 3;
   const s0 = W.score; let goal = false; for (let i = 0; i < 40; i++) { E.step(W, {}); if (W.events.some((e) => e.sfx === 'goal')) goal = true; quiet(W); }
   assert.ok(goal); assert.equal(W.round, 2); assert.ok(W.score - s0 >= 12000 + 20000, 'time bonus and 5,000 a heart'); assert.ok(W.time > 50, 'the clock starts again');
   assert.ok(W.result && 'SABCD'.includes(W.result.rank), 'a rank: ' + (W.result && W.result.rank)); assert.equal(W.result.love, 20000); assert.equal(W.result.route.length, 5);
-  assert.equal(E.STAGES[W.result.route[4]].key, 'harbour', 'all left: Poole Quay');
-  drive(W, 120, {});
-  assert.equal(W.stage, E.RUN_START[1]); assert.deepEqual(W.route, [E.RUN_START[1]], 'round 2: west along the coast'); assert.equal(E.STAGES[W.stage].key, 'wareham');
+  assert.equal(E.STAGES[W.result.route[4]].key, 'lyme', 'all left: Lyme Regis');
+  const C = JSON.parse(JSON.stringify(W.complete || null));
+  // the goal's moment (7 Oct): the clock stops, the car drives itself, the card stays up - then round 2
+  const tFrozen = W.time; drive(W, 200, {});
+  assert.ok(W.goalSeq, 'the goal sequence is still on after 3 s'); assert.equal(W.time, tFrozen, 'the clock stops for it'); assert.ok(W.result, 'the results card stays up');
+  drive(W, 400, {});
+  assert.ok(W.over && W.complete && W.complete.goal === 'LYME REGIS' && 'SABCD'.includes(W.complete.rank), 'no input: the game is complete at the goal');
 });
 
 test('crashes: a lamp post at speed is a big crash on Classic; on Gentle a bounce, unless flat out; bushes only slow you', () => {
@@ -196,7 +238,7 @@ test('coins, a whole line of them, and nitro', () => {
   const j = findSeg(W, E.segIndex(W.s), (g) => (g.coins || []).some((c) => c.nitro));
   const nit = E.segAt(W, j).coins.find((c) => c.nitro);
   W.s = (j - 1) * E.SEG + 2; W.x = nit.x; W.boost = 0; W.v = 30; drive(W, 10, (w) => { w.x = nit.x; return {}; });
-  assert.ok(nit.got); assert.ok(W.bottles >= 13, 'three bottles of nitro');
+  assert.ok(nit.got); assert.ok(W.bottles >= 4, 'a bottle of nitro (earned now, 7 Oct: you start with three)');
 });
 
 test('walls and the sea wall keep the car on the land; the clock running out ends the game', () => {
@@ -230,20 +272,21 @@ test('the driver gets round five stretches at Gentle and Classic, and the score 
   assert.ok(F.score > 0, 'Fast runs');
 });
 
-test('the runs: the town, then west or east along the coast - each a pyramid of real roads, every place once in it, goals at the end', () => {
-  assert.deepEqual(E.RUNS.map((r) => r.levels), [5, 4, 2]);
+test('the runs: the coast first, then the town - each a pyramid, every place once in it, goals at the end', () => {
+  assert.deepEqual(E.RUNS.map((r) => r.levels), [5, 5]);
   for (let r = 0; r < E.RUNS.length; r++) {
     const run = E.STAGES.filter((S) => S.run === r), n = E.RUNS[r].levels;
     assert.equal(run.length, n * (n + 1) / 2); assert.equal(run.filter((S) => !S.next).length, n, 'a goal for each end');
     assert.equal(new Set(run.map((S) => S.key)).size, run.length, 'every place once in a run'); assert.equal(E.STAGES[E.RUN_START[r]].level, 1);
     for (const S of run) if (S.next) { const a = E.STAGES[S.next[0]], b = E.STAGES[S.next[1]]; assert.equal(a.level, S.level + 1); assert.equal(b.pos, a.pos + 1); assert.equal(a.pos, S.pos); assert.equal(a.run, r, 'stays in its run'); }
   }
-  assert.equal(E.STAGES[0].key, 'bournemouth', 'the town starts in Bournemouth'); assert.deepEqual(E.STAGES[0].next.map((n) => E.STAGES[n].key), ['winton', 'charminster']);
-  const W1 = E.STAGES[E.RUN_START[1]], E2 = E.STAGES[E.RUN_START[2]];
-  assert.equal(W1.key, 'wareham'); assert.deepEqual(W1.next.map((n) => E.STAGES[n].key), ['wool', 'purbeck']); assert.equal(E2.key, 'lymington');
-  const goal = (k) => E.STAGES.find((S) => S.run === 0 && S.key === k);
-  assert.equal(E.nextRun(goal('harbour')), 1, 'Poole Quay leads west'); assert.equal(E.nextRun(goal('wimborne')), 1); assert.equal(E.nextRun(goal('highcliffe')), 2, 'Highcliffe leads east'); assert.equal(E.nextRun(goal('ferndown')), 2); assert.equal(E.nextRun(goal('hengistbury')), 2);
-  assert.equal(E.nextRun(E.STAGES.find((S) => S.run === 1 && !S.next)), 0, 'the coast leads back into town');
+  // the coast first (7 Oct), the town as round 2
+  assert.equal(E.RUNS.length, 2); assert.equal(E.RUNS[0].key, 'coast'); assert.equal(E.RUNS[1].key, 'town');
+  assert.equal(E.STAGES[0].key, 'bournemouth', 'the coast starts in Bournemouth'); assert.deepEqual(E.STAGES[0].next.map((n) => E.STAGES[n].key), ['sandbanks', 'christchurch']);
+  const goals = E.STAGES.filter((S) => S.run === 0 && !S.next).map((S) => S.key); assert.deepEqual(goals, ['lyme', 'jurassic', 'portland', 'weymouth', 'needles'], 'five goals along the coast');
+  const T = E.STAGES[E.RUN_START[1]]; assert.equal(T.key, 'bournemouth', 'round 2 back into town from Bournemouth'); assert.deepEqual(T.next.map((n) => E.STAGES[n].key), ['winton', 'charminster']);
+  assert.equal(E.nextRun(E.STAGES.find((S) => S.run === 0 && !S.next)), 1, 'the coast leads into town'); assert.equal(E.nextRun(E.STAGES.find((S) => S.run === 1 && !S.next)), 0, 'the town back to the coast');
+  for (const k of E.PLACES.map((p) => p.key).filter((k) => k !== 'goldencap')) assert.ok(E.STAGES.some((S) => S.key === k), k + ' is on the map');
 });
 
 test('tunnels and bridges: the road keeps level through them, and their walls and railings keep the car in', () => {
@@ -327,4 +370,53 @@ test('nitro takes you well past full speed', () => {
   const W = E.newWorld(2, {}, 1); go(W); W.s = 60 * E.SEG; W.v = E.VMAX; W.boost = 1; clear(W);
   drive(W, 150, (w) => { w.x = 0; return { up: true, fire: true }; });
   assert.ok(W.v > E.VMAX * 1.15, 'over 15% past full speed: ' + Math.round(W.v / E.VMAX * 100) + '%');
+});
+
+test('time up (7 Oct): the car stops in a few seconds, Space ends it at once, and rolling over a checkpoint on zero saves you', () => {
+  // no checkpoint in reach: the brakes, stopped and over well inside 6 s (it used to roll on for ~32 s)
+  let W = E.newWorld(2, {}, 4); go(W); W.cars = []; W.v = 63; W.time = 0.02; let n = 0;
+  while (!W.over && n++ < 60 * 20) { W.cars = []; W.x = 0; E.step(W, {}); quiet(W); }
+  assert.ok(W.over && n < 60 * 6, 'over in ' + (n / 60).toFixed(1) + ' s');
+  // Space: a fresh press ends it straight away
+  W = E.newWorld(2, {}, 4); go(W); W.cars = []; W.v = 63; W.time = 0.02;
+  for (let i = 0; i < 90; i++) { W.cars = []; W.x = 0; E.step(W, {}); quiet(W); }
+  assert.ok(W.timeUp && !W.over); E.step(W, { fire: true }); assert.ok(W.over, 'Space skips to the result');
+  // a checkpoint in reach: you roll for it, and making it puts you back in the race
+  W = E.newWorld(2, {}, 4); go(W); W.cars = [];
+  W.s = (W.fork.split - 2) * E.SEG; W.x = -6; W.v = 40; drive(W, 30, {}); W.s = (W.fork.end - 1) * E.SEG; W.x = 0; drive(W, 5, {});   // (on to the second place, its checkpoint ahead)
+  const ci = findSeg(W, E.segIndex(W.s), (g) => g.gate && g.gate.kind === 'check');
+  assert.ok(ci > 0, 'a checkpoint ahead');
+  W.s = (ci - 30) * E.SEG; W.x = 0; W.v = 40; W.time = 0.02;
+  let saved = false; for (let i = 0; i < 600 && !W.over; i++) { W.cars = []; W.x = 0; E.step(W, {}); if (W.banner && W.banner.txt === 'JUST MADE IT!') saved = true; quiet(W); }
+  assert.ok(saved && !W.timeUp && !W.over && W.time > 20, 'just made it: back in the race with ' + W.time.toFixed(0) + ' s');
+});
+
+test('drifting (7 Oct): a drift held into the bend keeps its speed, a good one gives a shove coming out, and a bounce no longer stops you dead', () => {
+  const W = E.newWorld(2, {}, 3); go(W); W.cars = []; W.field = [];
+  const i = findSeg(W, E.segIndex(W.s) + 40, (g, j) => Math.abs(g.k) > 1 / 180 && Math.abs(E.segAt(W, j + 20).k) > 1 / 180);
+  assert.ok(i > 0, 'a bend');
+  const into = E.segAt(W, i).k > 0 ? 1 : -1, top = E.topSpeed(W);
+  W.s = (i - 2) * E.SEG; W.x = -into * 2; W.v = top * 0.9; W.autoDrift = true;
+  const key = into > 0 ? { right: true } : { left: true };
+  drive(W, 3, { ...key, down: true }); assert.ok(W.drift, 'a drift started');
+  const v0 = W.v; drive(W, 60, (w) => { w.cars = []; return into * w.x < 2.2 ? key : {}; });
+  assert.ok(W.drift && v0 - W.v < 2, 'a second held in the drift loses under 2 m/s: lost ' + (v0 - W.v).toFixed(2));
+  const vEnd = W.v; drive(W, 90, (w) => { w.cars = []; return {}; });   // let go: it straightens (over most of a second now), and comes out with a shove
+  assert.ok(!W.drift, 'the drift ended');
+  // a bounce on Gentle: down to about half speed, still moving
+  const B = E.newWorld(1, {}, 9); go(B); B.cars = [];
+  const li = findSeg(B, 50, (g) => (g.spr || []).some((p) => p.t === 'lamp' && p.x > 0)), lamp = E.segAt(B, li).spr.find((p) => p.t === 'lamp' && p.x > 0);
+  B.s = (li - 1) * E.SEG + 1; B.x = lamp.x - 0.3; B.v = 40; drive(B, 6, (w) => { w.x = lamp.x - 0.3; return {}; });
+  assert.ok(B.crash && !B.crash.hard, 'a bounce'); let n = 0; while (B.crash && n++ < 100) { E.step(B, {}); quiet(B); }
+  assert.ok(B.v > 12, 'still moving after a bounce: ' + B.v.toFixed(1) + ' m/s');
+});
+
+test('carrying on from a goal (7 Oct): Space in the goal moment, and round 2 goes back into town', () => {
+  const W = E.newWorld(2, {}, 8); go(W);
+  for (let k = 0; k < 4; k++) { W.s = (W.fork.split - 2) * E.SEG; W.x = 6; W.v = 40; W.cars = []; drive(W, 30, {}); W.s = (W.fork.end - 1) * E.SEG; W.x = 0; drive(W, 30, {}); while (W.ferry) { E.step(W, {}); quiet(W); } }
+  W.s = (W.goalAt - 3) * E.SEG; W.time = 12; W.cars = [];
+  let n = 0; while (!W.goalSeq && n++ < 60) { E.step(W, {}); quiet(W); }
+  assert.ok(W.goalSeq, 'the goal'); assert.equal(E.STAGES[W.route[4]].key, 'needles', 'all right: the Needles');
+  drive(W, 90, {}); E.step(W, { fire: true }); quiet(W); assert.ok(!W.goalSeq && !W.over, 'carried on');
+  drive(W, 700, {}); assert.equal(W.stage, E.RUN_START[1]); assert.equal(E.STAGES[W.stage].key, 'bournemouth', 'round 2: into town'); assert.equal(W.round, 2);
 });

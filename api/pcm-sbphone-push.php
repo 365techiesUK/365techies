@@ -308,8 +308,8 @@ foreach ($LIVE ? $plan : array() as $row) {
         $db2['customers'][$cand['key']]['sb_push_phone'] = $send;
         $db2['customers'][$cand['key']]['sb_push_src'] = $cand['src'];
         $tmp = $DATA . '.push.tmp';
-        if (@file_put_contents($tmp, json_encode($db2, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $DATA);
-        else fwrite(STDERR, "  STAMP FAILED for {$cand['key']} - the SimplyBook write landed; the log holds the truth\n");
+        require_once __DIR__ . '/pcm-dbsafe-lib.php';   // 8 Oct 2026: never an empty file over the customers
+        if (!pcm_db_put($tmp, $db2, $DATA)) fwrite(STDERR, "  STAMP FAILED for {$cand['key']} - the SimplyBook write landed; the log holds the truth\n");
     }
     if ($lk2) { @flock($lk2, LOCK_UN); @fclose($lk2); }
 }

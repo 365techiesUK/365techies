@@ -4,7 +4,7 @@
  * banners and the little labels) and makes the sounds: one-off effects, and the engine, wind and tyres that follow the
  * car, and the music: a track for each place (music/, Settings > Music, on unless switched off). A browser without 3D graphics
  * gets a short note instead of the game. */
-import { createWorld } from './world3d.js?v=56';
+import { createWorld } from './world3d.js?v=69';
 
 const E = window.CREngine, ART = window.CRArt, A = window.Arcade365;
 let GW = 384; const GH = 224;
@@ -31,6 +31,51 @@ let BEST = {}; try { BEST = JSON.parse(localStorage.getItem(BEST_KEY) || '{}') |
 })();
 const placeKey = (st) => (E.STAGES[st] ? E.STAGES[st].key : String(st));
 function bestOf(W, st) { const d = BEST['d' + W.diff]; return d && d[placeKey(st)] ? d[placeKey(st)] : 0; }
+// ---- your ghost (owner, 7 Oct, after the OutRun 2 audit: in place of the seven rubber-band racers): your best drive through each stage, kept
+// on this device by place and speed, played back beside you as a see-through car; the gap to it shows where your place in the race used to
+const GST = { W: null, leg: -1, rec: null, done: null, play: null, s0: 0 };
+const ghostKey = (W, key) => 'coast365.ghost.d' + W.diff + '.' + key;
+function ghostLoad(W, key) { try { const s = localStorage.getItem(ghostKey(W, key)); if (!s) return null; const o = JSON.parse(s); return o && o.p && o.p.length > 4 ? o : null; } catch (e) { return null; } }
+function ghostSave(W, key, sec, rec) {
+  if (!rec || rec.key !== key || rec.p.length < 5) return;
+  try { localStorage.setItem(ghostKey(W, key), JSON.stringify({ t: +sec.toFixed(2), p: rec.p })); } catch (e) {}
+}
+function ghostAt(p, col, v) {   // the point where column col reaches v (p sorted by it): [index, fraction]
+  let lo = 0, hi = p.length - 1; if (v <= p[0][col]) return [0, 0]; if (v >= p[hi][col]) return [hi, 0];
+  while (hi - lo > 1) { const m = (lo + hi) >> 1; if (p[m][col] <= v) lo = m; else hi = m; }
+  const a = p[lo][col], b = p[hi][col]; return [lo, b > a ? (v - a) / (b - a) : 0];
+}
+function ghostFrame(W, mode) {   // each picture (before the 3D world draws): record this stage, play back your best of it
+  W.ghost = null;
+  if (mode === 'title' || W.demo) return;
+  if (GST.W !== W) { GST.W = W; GST.leg = -1; GST.rec = null; GST.done = null; GST.play = null; }
+  if (W.count > 0) return;
+  if (W.stageNo !== GST.leg) {   // a new stage: the last one's drive put by (to be kept if it was your best), this one's ghost out
+    if (GST.rec) GST.done = GST.rec;
+    GST.leg = W.stageNo; GST.s0 = W.s; const key = placeKey(W.stage);
+    GST.rec = { key: key, p: [[0, 0, Math.round(W.x * 10)]] }; GST.play = ghostLoad(W, key); GST.gap = null;
+  }
+  if (W.goalSeq || W.timeUp) return;
+  const e = W.t - W.legT0, d = W.s - GST.s0, R0 = GST.rec;
+  if (e >= R0.p[R0.p.length - 1][0] + 6 && d >= 0) R0.p.push([e, Math.round(d * 10) / 10, Math.round(W.x * 10)]);
+  const P = GST.play; if (!P) return;
+  const [i, f] = ghostAt(P.p, 0, e), a = P.p[i], b = P.p[Math.min(P.p.length - 1, i + 1)];
+  const gd = a[1] + (b[1] - a[1]) * f, gx = (a[2] + (b[2] - a[2]) * f) / 10;
+  if (i < P.p.length - 1) W.ghost = { s: GST.s0 + gd, x: gx, near: Math.abs(GST.s0 + gd - W.s) };
+  const [j, h] = ghostAt(P.p, 1, d), tg = P.p[j][0] + ((P.p[Math.min(P.p.length - 1, j + 1)][0] - P.p[j][0]) * h);
+  GST.gap = d > 20 ? (e - tg) / 60 : null;   // seconds behind (+) or ahead (-) of your best, at this point of the road
+}
+function ghostTag(g, W, t, mode) {   // where the race place was: the gap to your ghost
+  if (mode === 'title' || W.count > 0 || W.demo) return;
+  const x = 14, y = 88;
+  g.fillStyle = 'rgba(6,10,18,0.55)'; g.fillRect(x - 4, y - 13, 74, 22); g.fillStyle = '#8fd8ff'; g.fillRect(x - 4, y - 13, 1.4, 22);
+  hudText(g, 'GHOST', x, y - 5, 5, '#c9d6e6', 'left', false);
+  if (!GST.play) { hudText(g, 'SET A TIME', x, y + 5, 6.2, '#8fd8ff', 'left', false); return; }
+  if (GST.gap == null) { hudText(g, 'BEST ' + clock(GST.play.t), x, y + 5, 6.2, '#ffd98a', 'left', false); return; }
+  const gp = GST.gap, ahead = gp < 0;
+  hudText(g, (ahead ? '-' : '+') + Math.abs(gp).toFixed(2) + 's', x, y + 6, 11, ahead ? '#5dff9a' : '#ff8a8a', 'left');
+  hudText(g, ahead ? 'AHEAD' : 'BEHIND', x + 70, y - 5, 5, ahead ? '#5dff9a' : '#ff8a8a', 'right', false);
+}
 function saveBest(W, st, sec) { const k = 'd' + W.diff; (BEST[k] || (BEST[k] = {}))[placeKey(st)] = sec; try { localStorage.setItem(BEST_KEY, JSON.stringify(BEST)); } catch (e) {} }
 const R = { lastT: 0, legN: 0, split: null, demoAcc: 0, W: null, goT: -1, shownScore: 0, lastV: 0, braking: false, boostK: 0, scale: 1, ft: 16.7, took: 4, adj: 0, lowN: 0, plain: false, warmAt: 0, shakeOn: true };
 const FIXEDRES = /[?&]fixedres/.test(location.search);   // (for the test pictures: never step the resolution down)
@@ -96,6 +141,7 @@ function draw(g, W, t, mode, info) {
   const cap = Math.sqrt(4.2e6 / (info.dw * info.dh)), k = Math.min(1, cap) * R.scale;
   wd.setSize(Math.max(64, Math.round(info.dw * k)), Math.max(64, Math.round(info.dh * k)));
   wd.setShake(R.shakeOn); wd.setCam((RAD.set && RAD.set.cam) || 'near');
+  ghostFrame(W, mode);   // (your ghost: where it is now, for the 3D world to draw)
   const lerped = smoothApply(W, alpha);
   let cv; try { cv = wd.render(W, t, mode); } finally { if (lerped) smoothUndo(W); }
   g.imageSmoothingEnabled = true; g.drawImage(cv, 0, 0, info.dw, info.dh);
@@ -157,7 +203,7 @@ function hud(g, W, t, mode) {
   hudText(g, 'SCORE', GW - 10, 13, 6.5, '#c9d6e6', 'right');
   hudText(g, Math.round(R.shownScore).toLocaleString('en-GB'), GW - 10, 29, 14, '#ffffff', 'right');
   const S0 = E.STAGES[W.stage] || E.STAGES[0];
-  hudText(g, 'STAGE ' + S0.level + '/' + E.RUNS[S0.run].levels + (W.round > 1 ? '  ·  ROUND ' + W.round : ''), GW - 10, 40, 6.2, '#c9d6e6', 'right');
+  hudText(g, 'STAGE ' + S0.level + '/' + E.RUNS[S0.run].levels + (W.round > 1 && !W.goalSeq ? '  ·  ROUND ' + W.round : ''), GW - 10, 40, 6.2, '#c9d6e6', 'right');
   if (mode !== 'title') { heart(g, GW - 30, 47.5, 3, '#ff7a9a'); hudText(g, String(W.runHearts || 0), GW - 10, 50.5, 7, '#ffd1df', 'right'); }
   // where you are: the place, and how far along it
   const st = stretchOf(W, pi), S = E.STAGES[(st && st.id) || 0];
@@ -168,7 +214,7 @@ function hud(g, W, t, mode) {
     g.fillStyle = '#ffc23a'; g.fillRect(bx, by + 0.6, Math.max(1, bw * p), 2.2);
     g.fillStyle = S.next ? '#ffffff' : '#4ade80'; g.fillRect(bx + bw - 1, by - 1, 2, 5.2);
   }
-  rivalTag(g, W, t, mode);
+  if (W.field && W.field.length) rivalTag(g, W, t, mode); else ghostTag(g, W, t, mode);
   routeMap(g, W, 8, GH - 46, t);
   powers(g, W, t);
   speedo(g, W, t);
@@ -205,6 +251,7 @@ function rivalTag(g, W, t, mode) {   // your place in the race, big, and the gap
   const n = E.FIELD_N + 1, p = Math.min(n, W.pos || n), ah = E.nextAhead(W), bh = E.nextBehind(W);
   const x = 14, y = 88, lead = p === 1;   // (below BEST and HURRY!)
   g.fillStyle = 'rgba(6,10,18,0.55)'; g.fillRect(x - 4, y - 13, 66, 22); g.fillStyle = lead ? '#ffd23f' : '#ffc23a'; g.fillRect(x - 4, y - 13, 1.4, 22);
+  if (R.posFlash && W.t - R.posFlash < 40 && W.t >= R.posFlash) { g.globalAlpha = 0.55 * (1 - (W.t - R.posFlash) / 40); g.fillStyle = R.posUp ? '#ffd23f' : '#4fa8ff'; g.fillRect(x - 4, y - 13, 66, 22); g.globalAlpha = 1; }   // (up or down a place)
   hudText(g, 'POS', x, y - 5, 5, '#c9d6e6', 'left', false);
   hudText(g, String(p), x + 13, y + 6, 15, lead ? '#ffd23f' : '#ffffff', 'left');
   hudText(g, '/' + n, x + 13 + (p > 9 ? 17 : 9.5), y + 6, 7, '#c9d6e6', 'left', false);
@@ -229,13 +276,16 @@ function clockExtras(g, W, t, pi) {   // the race against the clock: your best f
   if (W.legs.length < R.legN) R.legN = 0;   // a new round
   if (W.legs.length > R.legN) {   // a checkpoint (or the goal): this stage's time against your best
     const L = W.legs[W.legs.length - 1], prev = bestOf(W, L.st), rec = !prev || L.t < prev;
-    if (rec && !W.demo) saveBest(W, L.st, L.t);
+    if (rec && !W.demo) { saveBest(W, L.st, L.t); const k = placeKey(L.st); ghostSave(W, k, L.t, GST.done && GST.done.key === k ? GST.done : GST.rec && GST.rec.key === k ? GST.rec : null); }   // (a new best: its drive becomes the ghost)
     R.split = { t: L.t, prev: prev, rec: rec, at: W.t }; R.legN = W.legs.length;
   }
   const st = stretchOf(W, pi);
   if (st && W.count <= 0) {
     const b = bestOf(W, st.id); if (b) hudText(g, 'BEST ' + clock(b), 10, 58, 6.2, '#ffd98a');
-    const el = (W.t - W.legT0) / 60, done = (pi - st.from) * 4, left = (st.to - pi) * 4, pace = el > 12 ? done / el : 0;   // (judged after 12 s: off the line the average pace is slow)
+    const el = (W.t - W.legT0) / 60, done = (pi - st.from) * 4, left = (st.to - pi) * 4;
+    if (!R.pace || R.pace.leg !== W.legT0) R.pace = { leg: W.legT0, h: [] };   // (the pace over the last 10 s, not the average from the line - audit, 7 Oct: it said HURRY! when you were fine)
+    const PH = R.pace.h; if (!PH.length || W.t - PH[PH.length - 1][0] >= 30) PH.push([W.t, done]); while (PH.length > 21) PH.shift();
+    const pace = el > 12 && PH.length > 4 ? (done - PH[0][1]) / Math.max(1, (W.t - PH[0][0]) / 60) : 0;
     if (!W.timeUp && pace > 0 && left / Math.max(12, pace) > W.time + 1 && (t / 200 | 0) % 3) hudText(g, 'HURRY!', 10, b ? 69 : 60, 10, '#ff4d4d');
   }
   if (!W.timeUp && W.count <= 0 && W.time > 0 && W.time <= 5) {   // the last five seconds, big in the middle
@@ -245,7 +295,7 @@ function clockExtras(g, W, t, pi) {   // the race against the clock: your best f
   }
   const S = R.split;
   if (S && W.t - S.at < 240 && W.t >= S.at) {   // under the checkpoint banner: STAGE TIME, against your best
-    const a = Math.min(1, (240 - (W.t - S.at)) / 30), y = W.field && W.field.length ? 110 : 84;   // (under the POS box)
+    const a = Math.min(1, (240 - (W.t - S.at)) / 30), y = 110;   // (under the POS box, or the ghost's in its place)
     g.globalAlpha = a;
     hudText(g, 'STAGE TIME', 10, y, 5.2, '#c9d6e6');
     hudText(g, clock(S.t), 10, y + 11, 9, '#ffffff');
@@ -318,6 +368,7 @@ function speedo(g, W, t) {   // the speed in big slanted digits, a rev bar that 
     g.fillStyle = on ? '#4fc3ff' : 'rgba(255,255,255,0.12)'; g.fillRect(xx, by2 - 7, bw3, 7); g.fillRect(xx + 1.3, by2 - 9, bw3 - 2.6, 2);
     if (on) { g.fillStyle = 'rgba(255,255,255,0.55)'; g.fillRect(xx + 0.8, by2 - 6, 1, 5); }
     if (live) { const k = Math.max(0, (W.nitroT || 0) / (E.NITRO_T || 150)); g.fillStyle = '#e8fbff'; g.fillRect(xx, by2 - 7 * k, bw3, 7 * k); }
+    if (on && i === show - 1 && R.nitroFlash && W.t - R.nitroFlash < 36 && W.t >= R.nitroFlash) { g.globalAlpha = 1 - (W.t - R.nitroFlash) / 36; g.fillStyle = '#ffffff'; g.fillRect(xx - 1, by2 - 10, bw3 + 2, 11); g.globalAlpha = 1; }   // (a bottle filled)
   }
   if (nb > 10) hudText(g, '+' + (nb - 10), bx + 10 * (bw3 + bgp) + 1, by2 - 9, 5.5, '#8fe3ff', 'left');
   g.fillStyle = 'rgba(255,255,255,0.14)'; g.fillRect(bx, by2 + 1.4, 10 * (bw3 + bgp) - bgp, 1.2);   // the next bottle, filling
@@ -326,8 +377,8 @@ function speedo(g, W, t) {   // the speed in big slanted digits, a rev bar that 
 }
 function results(g, W, t) {   // at the goal: each stretch's time and hearts, the bonuses and the rank
   const Rz = W.result; if (!Rz) return;
-  const age = W.t - Rz.t; if (age < 40 || age > 600) return;
-  const a = Math.min(1, (age - 40) / 20, (600 - age) / 25), x = GW / 2 - 110, y = 46, w = 220, h = 30 + Rz.legs.length * 11 + 41;
+  const age = W.t - Rz.t; if (age < 40 || age > 480) return;   // (up for the whole of the goal's moment now: it used to be wiped after ~1 s)
+  const a = Math.min(1, (age - 40) / 20, (480 - age) / 25), x = 10, y = 46, w = 220,   /* (on the left: the camera has the two of you on the right) */ h = 30 + Rz.legs.length * 11 + 41 + 14;
   g.save(); g.globalAlpha = a;
   g.fillStyle = 'rgba(6,10,18,0.8)'; g.fillRect(x, y, w, h);
   g.fillStyle = '#ffc23a'; g.fillRect(x + 10, y, w - 20, 1);
@@ -344,6 +395,11 @@ function results(g, W, t) {   // at the goal: each stretch's time and hearts, th
     hudText(g, 'LOVE BONUS  ' + Rz.love.toLocaleString('en-GB') + '  (' + Rz.hearts + ' ♥)', x + 12, yb + 11, 7, '#ffd1df', 'left', false);
     if (Rz.pos) hudText(g, 'FINISHED P' + Rz.pos + ' OF ' + Rz.of2 + (Rz.posBonus ? '  +' + Rz.posBonus.toLocaleString('en-GB') : ''), x + 12, yb + 22, 7, Rz.pos === 1 ? '#ffd23f' : '#ffffff', 'left', false);
   }
+  if (age > 110 + Rz.legs.length * 12) {   // her verdict on the drive (OutRun 2's Heart Attack grades), and how to carry on
+    const SAY = { S: 'SHE SAYS: BEST DAY EVER!', A: 'SHE SAYS: THAT WAS AMAZING!', B: 'SHE SAYS: NICE DRIVING!', C: 'SHE SAYS: NOT BAD...', D: 'SHE SAYS: HMPH.' };
+    hudText(g, SAY[Rz.rank] || '', x + 12, yb + 35, 6.6, Rz.rank === 'S' || Rz.rank === 'A' ? '#ff9ec4' : Rz.rank === 'D' ? '#9fb3c8' : '#ffd1df', 'left', false);
+    if (W.goalSeq && W.goalSeq.t > 60) { const left = Math.max(0, Math.ceil((480 - W.goalSeq.t) / 60)); hudText(g, 'SPACE: CARRY ON TO ROUND ' + W.round + '   ·   ↓ FINISH  (' + left + ')', x + w / 2, y + h - 4, 5.2, (t / 400 | 0) % 2 ? '#ffffff' : '#ffc23a', 'center', false); }
+  }
   if (age > 90 + Rz.legs.length * 12) { const s = 1 + Math.max(0, 1 - (age - 90 - Rz.legs.length * 12) / 12) * 0.8; g.save(); g.translate(x + w - 26, yb + 6); g.scale(s, s); hudText(g, Rz.rank, 0, 8, 26, Rz.rank === 'S' ? '#ff4dd2' : Rz.rank === 'A' ? '#ffd400' : '#ffffff', 'center'); g.restore(); hudText(g, 'RANK', x + w - 26, yb - 12, 6, '#bfe6ff', 'center', false); }
   g.restore();
 }
@@ -359,6 +415,7 @@ function lights(g, W) {
 const BANNER_COL = { check: ['#ffd400', '#ffffff'], stage: ['#ffffff', '#bfe6ff'], goal: ['#4ade80', '#ffd400'], red: ['#ff4d4d', '#ffffff'], go: ['#3bff6a', '#ffffff'], gold: ['#ffd400', '#ffffff'] };
 function banner(g, W, t) {
   const b = W.banner; if (!b) return;
+  if (W.goalSeq && W.goalSeq.t > 40 && b.kind === 'goal') return;   // (the results card has it now)
   const age = W.t - b.t, dur = b.kind === 'go' ? 50 : b.kind === 'red' ? 400 : b.kind === 'stage' ? 200 : 160; if (age > dur || age < 0) return;
   if (b.kind === 'stage') {   // a new place: a sweeping card with its name
     const inK = Math.min(1, age / 14), outK = Math.min(1, (dur - age) / 18), S = E.STAGES.find((q) => q.name === b.txt);
@@ -375,15 +432,27 @@ function banner(g, W, t) {
   g.restore();
 }
 const POP_COL = { near: '#7fe8ff', drift: '#ffb347', gold: '#ffd400', nitro: '#7fb8ff', slip: '#c9b8ff', heart: '#ff8fb3', time: '#5dff9a', magnet: '#ff7b7b', shield: '#ffd23f', double: '#f2e3b3' };
-function pops(g, W) {
+function pops(g, W) {   // the pop-ups (audit, 7 Oct: a third of them landed on top of each other): stacked - the newest at the bottom, the others
+  // easing up out of its way - at most three at once, the least important dropped first; a bottle filled flashes the nitro gauge instead,
+  // and a change of place flashes the POS box
+  const live = [];
   for (let i = 0; i < W.pops.length; i++) {
     const p = W.pops[i], age = W.t - p.t; if (age > 70 || age < 0) continue;
-    const a = Math.min(1, (70 - age) / 18), y = 94 - age * 0.32, x = GW / 2 + Math.max(-1, Math.min(1, p.x / 5)) * 70;
-    g.globalAlpha = a;
-    hudText(g, p.txt, x, y, 10, POP_COL[p.kind] || '#ffffff', 'center');
-    if (p.sub) hudText(g, p.sub, x, y + 10, 8, '#ffffff', 'center');
-    g.globalAlpha = 1;
+    if (p.txt === '+1 NITRO') { R.nitroFlash = Math.max(R.nitroFlash || 0, p.t); continue; }
+    if (/^(UP TO P|DOWN TO P)/.test(p.txt)) { if ((R.posFlash || -1e9) < p.t) R.posFlash = p.t, R.posUp = p.txt[0] === 'U'; continue; }
+    live.push(p);
   }
+  const PRI = (p) => /^(RIVAL BACK|RIVAL AHEAD|SLIPSTREAM)/.test(p.txt) ? 0 : 1;
+  const show = live.sort((a, b) => PRI(b) - PRI(a) || b.t - a.t).slice(0, 3).sort((a, b) => b.t - a.t);
+  show.forEach((p, slot) => {
+    const age = W.t - p.t, a = Math.min(1, (70 - age) / 18, age / 4), ty = 96 - age * 0.16 - slot * 21;
+    p.sy = p.sy == null ? ty : p.sy + (ty - p.sy) * 0.35;   // (easing up when a new one comes in under it)
+    const x = GW / 2 + Math.max(-1, Math.min(1, p.x / 5)) * 46, s = 1 + Math.max(0, 1 - age / 7) * 0.25;
+    g.globalAlpha = a; g.save(); g.translate(x, p.sy); g.scale(s, s);
+    hudText(g, p.txt, 0, 0, 10, POP_COL[p.kind] || '#ffffff', 'center');
+    if (p.sub) hudText(g, p.sub, 0, 9, 7, '#ffffff', 'center');
+    g.restore(); g.globalAlpha = 1;
+  });
 }
 
 // ---------------------------------------------------------------- sounds: one-off effects, and the engine, wind and tyres that follow the car
@@ -727,11 +796,11 @@ function radioPanel(g, W, t, mode) {   // on the start line (◀ ▶ tune it) an
   if (!RAD.set || RAD.set.sound === false || (!count && !after && !shown)) return;
   const A2 = window.ARCADE365, inp = A2 && A2.input, off = RAD.set.music === false;
   if (count && inp) { if (inp.left && !RAD.l) tune(-1); if (inp.right && !RAD.r) tune(1); RAD.l = !!inp.left; RAD.r = !!inp.right; }
-  const i = Math.max(0, RADIO.findIndex((r) => r[0] === (RAD.set.radio || 'place'))), w = 184, x = GW / 2 - w / 2, y = GH - 66, h = 32;
+  const i = Math.max(0, RADIO.findIndex((r) => r[0] === (RAD.set.radio || 'place'))), w = 150, x = 10, y = GH - 98, h = 32;   // (bottom left, over the route map: it covered the two of you and the GO!)
   g.fillStyle = 'rgba(6,10,18,0.72)'; g.fillRect(x, y, w, h); g.fillStyle = '#ffc23a'; g.fillRect(x, y, w, 0.9);
   hudText(g, count ? 'PICK A STATION' : 'RADIO', x + 7, y + 8.5, 5.2, '#c9d6e6', 'left', false);
   hudText(g, count ? '◀  ▶ TO TUNE' : 'R TO TUNE', x + w - 7, y + 8.5, 5.2, '#ffc23a', 'right', false);
-  hudText(g, off ? 'OFF - TUNE IN TO TURN IT ON' : RADIO[i][1].toUpperCase(), GW / 2, y + 19, off ? 6.5 : 10, off ? '#ff9a8a' : '#ffffff', 'center', false);
+  hudText(g, off ? 'OFF - TUNE IN TO TURN IT ON' : RADIO[i][1].toUpperCase(), x + w / 2, y + 19, off ? 6 : 9, off ? '#ff9a8a' : '#ffffff', 'center', false);
   const dx = x + 16, dw = w - 32, dy = y + 26.5;   // the dial: a scale with a needle at this station
   g.fillStyle = 'rgba(255,255,255,0.25)'; g.fillRect(dx, dy, dw, 0.7);
   for (let k = 0; k < RADIO.length; k++) g.fillRect(dx + dw * k / (RADIO.length - 1) - 0.3, dy - 1.6, 0.6, 1.6);
@@ -804,7 +873,7 @@ function frameAudio(W, S, mode, SET) {
   AU.wind.f.frequency.setTargetAtTime(600 + pct * 1800, now, T);
   AU.wind.g.gain.setTargetAtTime(Math.min(0.09, pct * pct * 0.055 + (W.boosting ? 0.03 : 0)), now, T);
   AU.skid.g.gain.setTargetAtTime(W.air || W.crash ? 0 : (W.drift ? 0.028 : (W.slide || 0) * 0.016) * (AU.tyre ? 0.4 : 1), now, 0.03);   // (a little grit under the squeal)
-  { const slip = W.air || W.crash ? 0 : W.drift ? 0.7 + 0.3 * Math.min(1, (W.driftA || 0) / 0.45) : Math.max((W.slide || 0) * 0.85, (W.wspin || 0) * 0.9),   // (wheelspin pulling away: the screech too)   // a drift: the full squeal, rising with the slide; hard round a bend, braking hard or a quick flick: the tyres working (engine: slide)
+  { const slip = W.air || W.crash ? 0 : W.drift ? 0.7 + 0.3 * Math.min(1, Math.abs(W.driftA || 0) / 0.45) : Math.max((W.slide || 0) * 0.85, (W.wspin || 0) * 0.9),   // (wheelspin pulling away: the screech too)   // a drift: the full squeal, rising with the slide; hard round a bend, braking hard or a quick flick: the tyres working (engine: slide)
     f0 = (420 + slip * 80 + pct * 60) * (1 + (Math.random() - 0.5) * 0.03);
     const pan = Math.max(-0.5, Math.min(0.5, -(W.steer || 0) * 0.35));
     if (AU.tyre) {   // the recording: louder and a little higher the harder the slide and the faster you go, wavering as a real screech does
@@ -852,21 +921,21 @@ A.start({
   hires: () => true,
   step: smoothStep, hud: E.hud, draw: draw, sound: sound, frameAudio: frameAudio,
   quietSay: () => true,
-  overText: (W) => 'Time up – stage ' + W.stageNo + (W.round > 1 ? ', round ' + W.round : ''),
-  titleText: 'Race from Bournemouth seafront out through the town with your girlfriend beside you, before the clock runs out. Five stretches make a run: at every <b>fork</b> you choose your road, along the real roads, to one of five goals &mdash; then round 2 goes out to the coast. She asks for things on the way: do them for <b>hearts</b>.',
+  overText: (W) => W.complete ? 'Goal! ' + W.complete.goal.toLowerCase().replace(/(^|\s)\w/g, (c) => c.toUpperCase()) + ' – rank ' + W.complete.rank + (W.complete.round > 1 ? ', round ' + W.complete.round : '') : 'Time up – stage ' + W.stageNo + (W.round > 1 ? ', round ' + W.round : ''),
+  titleText: 'Race along the Dorset coast from Bournemouth seafront with your girlfriend beside you, before the clock runs out. Five stretches make a run: at every <b>fork</b> you choose your road, to one of five goals &mdash; Lyme Regis, Durdle Door, Portland, Weymouth or the Needles. Drift the bends, earn your nitro, and do what she asks for <b>hearts</b>.',
   keysText: '<b>&larr; &rarr;</b> steer &middot; <b>Space</b> boost &middot; <b>&darr;</b> brake &mdash; tap it while turning to <b>drift</b> &middot; <b>C</b> camera &middot; <b>P</b> pause',
   touchText: 'Touch the <b>left</b> or <b>right</b> of the screen to steer, <b>both at once</b> for nitro; <b>Brake</b> and <b>Nitro</b> at the sides too &mdash; the car goes by itself. Settings &gt; Touch steering for buttons instead.',
   help: [
-    '<b>The aim:</b> drive as far as you can before the clock runs out. Each stretch of road ends at a <b>checkpoint</b> that adds time. Five stretches make a run: reach one of the five <b>goals</b> for a time bonus, a love bonus and a rank, then on to round 2, out along the coast &mdash; busier and quicker.',
-    '<b>Beat the clock:</b> the clock never stops &mdash; if it reaches zero it&rsquo;s game over and you start again from Bournemouth. Every stage keeps your <b>best time</b> on this device: it shows under the stage clock, and at each checkpoint you see how you did against it &mdash; beat it for a <b>NEW RECORD</b>. <b>HURRY!</b> flashes when you&rsquo;re not on pace to make the next checkpoint.',
+    '<b>The aim:</b> reach a <b>goal</b> before the clock runs out. Each stretch of road ends at a <b>checkpoint</b> that adds time &mdash; a little less each time. Five stretches make a run: reach one of the five goals for a time bonus, a love bonus and a rank, and the game is won. Or press <b>Space</b> at the goal to carry on into round 2, back through the town &mdash; busier and quicker.',
+    '<b>Beat the clock:</b> the clock never stops &mdash; if it reaches zero it&rsquo;s game over, unless you roll over the next checkpoint before the car stops: <b>JUST MADE IT!</b> Every stage keeps your <b>best time</b> on this device: it shows under the stage clock, and at each checkpoint you see how you did against it &mdash; beat it for a <b>NEW RECORD</b>. <b>HURRY!</b> flashes when you&rsquo;re not on pace to make the next checkpoint.',
     '<b>Your passenger</b> asks for things as you go: a drift, a near miss, overtaking, coins, a jump, a slipstream, keeping clean or going flat out. Do it before her timer runs out for up to three <b>hearts</b>. Coming up to a fork she says which way she would like to go &mdash; take her road for two more. Hearts are worth points now and again at the goal, and they count towards your rank.',
     '<b>Steer</b> with the <b>&larr; &rarr;</b> arrow keys (or A and D). The car accelerates by itself; press <b>&darr;</b> (or S) to brake. In Settings you can choose to hold <b>&uarr;</b> to go instead.',
-    '<b>Bends</b> pull the car outwards &mdash; steer into them, and ease off (brake) for the sharp ones the black and white arrows warn you about. On <b>Gentle</b> the car helps you round.',
-    '<b>Drifting:</b> while turning at speed, <b>tap &darr;</b> &mdash; the back of the car slides out and you go round the bend sideways, scoring points and filling your nitro. Keep steering to hold the slide; straighten up to stop.',
-    '<b>Forks:</b> at the end of each stretch the road splits &mdash; keep to the <b>left</b> (west) or <b>right</b> (east) half to choose where you go next. The map in the bottom corner shows your way through the run&rsquo;s fifteen places: round 1 out through the town (Winton or Charminster, Kinson, Muscliff, Littledown and on), round 2 out along the coast. Don&rsquo;t hit the sign in the middle!',
-    '<b>Rivals:</b> now and then a sports car as quick as you turns up ahead (RIVAL and the gap show at the top). Keep up with it and get past for <b>+3,000</b>, then stay ahead until it drops away for <b>+10,000</b>. Slipstream it and use your nitro: it fights back.',
-    '<b>Nitro:</b> hold <b>Space</b> (or Shift, B or X, or the mouse button, or the <b>Nitro</b> button) and flames shoot from the pipes &mdash; well past full speed while the blue bar lasts. Fill it with <b>near misses</b> (passing cars closely), <b>slipstreams</b>, drifting, coins and the blue <b>nitro bottles</b>.',
-    '<b>Bonuses</b> on the road: a red <b>magnet</b> pulls in coins from every lane; a gold <b>star</b> puts a shield round the car &mdash; smash through traffic and signs without crashing; a purple <b>gem</b> doubles every point you score; a green <b>clock</b> adds five seconds. The ones you have on show under the score, running down.',
+    '<b>Bends</b> pull the car outwards &mdash; steer into them. On <b>Classic</b> and <b>Fast</b> the sharp ones (the black and white arrows warn you) are too quick to take on grip: drift them, or ease off. On <b>Gentle</b> the car helps you round.',
+    '<b>Drifting</b> is how you go fast: while turning at speed, <b>tap &darr;</b> &mdash; or, with automatic drifting on, just hold the turn into a bend &mdash; and the back slides out: you go round sideways at full speed. Keep steering into the bend to hold the slide; a clean one gives you a shove coming out, and drifts one after another <b>chain</b> (DRIFT x2, x3...) for more points and more nitro.',
+    '<b>Forks:</b> at the end of each stretch the road splits &mdash; keep to the <b>left</b> (west) or <b>right</b> (east) half to choose where you go next. The map in the bottom corner shows your way through the run&rsquo;s fifteen places: round 1 along the coast (Sandbanks or Christchurch, Old Harry, Wareham or Lymington, Corfe, Wool, the New Forest and on to the goals), round 2 back through the town. Don&rsquo;t hit the sign in the middle!',
+    '<b>Your ghost:</b> every stage keeps your best drive through it on this device, and next time it drives alongside you as a see-through blue car. The box on the left shows how far ahead (green) or behind (red) of it you are, in seconds &mdash; beat it and your new drive becomes the ghost.',
+    '<b>Nitro:</b> hold <b>Space</b> (or Shift, B or X, or the mouse button, or the <b>Nitro</b> button) and flames shoot from the pipes &mdash; well past full speed while the blue bar lasts. You start with three bottles: <b>earn</b> more by drifting (chained drifts fill it fastest), <b>near misses</b> (passing cars closely), <b>slipstreams</b> and lines of coins; now and then a blue <b>nitro bottle</b> on the road gives one more. From full speed one bottle takes you past 200 mph.',
+    '<b>Bonuses</b> on the road: a red <b>magnet</b> pulls in coins from every lane; a gold <b>star</b> puts a shield round the car &mdash; smash through traffic and signs without crashing; a purple <b>gem</b> doubles every point you score; a green <b>clock</b> adds three seconds. The ones you have on show under the score, running down.',
     '<b>Jumps:</b> go over a crest fast and the car flies &mdash; points for every bit of air. <b>Coins</b> lie on the road in lines; get every coin in a line for a bonus.',
     '<b>Bumps:</b> running into the back of a car slows you right down; hitting a lamp post, palm tree or sign at speed spins you off (on Gentle you just bounce off). Bushes and beach umbrellas only slow you a little.',
     '<b>Start:</b> hold nitro as the lights turn green for a flying start. <b>Gentle</b> gives a little more time, less traffic and help round the bends, and only big crashes stop you. <b>P</b> pauses; the game also pauses itself if you click away.',

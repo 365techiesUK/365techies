@@ -32,7 +32,7 @@ $PCM_CMDS = array('flushdns','cleartemp','collectlogs');
 function load($f){
     if (!file_exists($f)) return array('customers'=>array());
     $raw = (string)@file_get_contents($f);
-    if ($raw === '') return array('customers'=>array());
+    if ($raw === '') { http_response_code(503); exit(json_encode(array('ok'=>false,'error'=>'db_unavailable'))); }   // 8 Oct 2026: a 0-byte customer file is a failure, never an empty shop
     $d = json_decode($raw, true);
     if (!is_array($d)) { http_response_code(503); exit(json_encode(array('ok'=>false,'error'=>'db_unavailable'))); }
     if (!isset($d['customers'])) $d['customers'] = array();
@@ -41,9 +41,17 @@ function load($f){
 // Atomic write (temp + rename) so a crash mid-write can't leave a torn file that load() rejects.
 function save($f,$d){
     $tmp = $f . '.' . getmypid() . '.tmp';
-    if (@file_put_contents($tmp, json_encode($d, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $f);
+    { require_once __DIR__ . '/pcm-dbsafe-lib.php'; pcm_db_put($tmp, $d, $f); }   // 8 Oct 2026: never an empty file over the customers
 }
-function out($a){ echo json_encode($a); exit; }
+// 8 Oct 2026 (pcm-rehome-lib.php): a re-homed key's reply tells a v36+ app the key to keep from now on (rekey), and a
+// key that opens nothing is said to be unknown (known:false) - only ever with customer records to hand, so a lost data
+// file can never sign every PC out
+function out($a){
+    global $PCM_REKEY, $PCM_KEYGONE;
+    if (is_array($a) && !empty($a['ok']) && !empty($PCM_REKEY)) $a['rekey'] = $PCM_REKEY;
+    if (is_array($a) && !empty($PCM_KEYGONE)) $a['known'] = false;
+    echo json_encode($a); exit;
+}
 /* uploader-supplied text that reaches customers' emails and the portal: tags out, control
    bytes out, capped. The uploader is our own tool, but its input is a customer's PC. */
 function pcm_txt($s, $max) { $s = trim(preg_replace('/[\x00-\x1F\x7F]+|\s+/', ' ', strip_tags((string)$s))); return function_exists('mb_substr') ? mb_substr($s, 0, $max, 'UTF-8') : substr($s, 0, $max); }
@@ -142,6 +150,10 @@ function pcm_mm_addon_out() { return PCM_MM_ADDON_URL !== '' ? array('mm_addon' 
 require_once __DIR__ . '/pcm-programs-lib.php';   // programs check: the list + the matching (top-level scope on purpose)
 require_once __DIR__ . '/pcm-gate.php';            // 29 Sep 2026: the minute poll answered by .htaccess while nothing waits
 require_once __DIR__ . '/pcm-installs-lib.php';    // 1 Oct 2026: installs counted from check-ins (top-level scope on purpose)
+require_once __DIR__ . '/pcm-rehome-lib.php';      // 8 Oct 2026: a key that no longer opens a record finds its way home
+// 8 Oct 2026: the paid app abroad, "Unlock everything" - switched off until the owner says go. Guarded, and every call is
+// behind function_exists: a missing file (a deploy may upload it after this one) can never stop a check-in.
+if (is_readable(__DIR__ . '/pcm-plus-lib.php')) require_once __DIR__ . '/pcm-plus-lib.php';
 
 $raw = file_get_contents('php://input');
 $in = pcm_json_body($raw);
@@ -171,9 +183,25 @@ $machine = isset($in['machine'])  ? preg_replace('/[^a-f0-9]/','',substr($in['ma
 $db_lock = db_lock($DATA); // held until this request exits; serialises read-modify-write
 $db = load($DATA);
 $now = gmdate('Y-m-d H:i');
+// 8 Oct 2026: a key that no longer opens a record (deleted, merged, or a sign-in record deleted while it waited for
+// approval) re-homes where we hold proof - pcm-rehome-lib.php. From here on $key is the record it leads to.
+// (Re-sent 8 Oct 2026: the first upload of this file, 35ed20b9, did not take on the server.)
+$PCM_REKEY = ''; $PCM_KEYGONE = false;
+if ($key !== '' && !(function_exists('plus_is_key') && plus_is_key($key))) {
+    $rhName = isset($in['name']) ? (string)$in['name'] : '';
+    list($rhKey, $rhHow, $rhChanged) = rehome_resolve($db, $key, $machine, $rhName);
+    if ($rhHow === 'merged' || $rhHow === 'alias') { $PCM_REKEY = $rhKey; $key = $rhKey; }
+    elseif ($rhHow === 'unknown') $PCM_KEYGONE = count($db['customers']) > 0;
+    if ($rhChanged) { save($DATA, $db); rehome_slack_later(rehome_note($db, $rhKey, $rhHow, $rhName), $db_lock); }
+}
 pcm_gate_mark_sb($db, $key);   // an SB key's 67-byte "services" post must keep reaching PHP from this address (pcm-gate.php)
 
 if ($action === 'activate') {
+    // 8 Oct 2026: an "Unlock everything" key (pcm-plus-lib.php) binds this PC if the key has room - a customer key always wins
+    if ($key !== '' && !isset($db['customers'][$key]) && function_exists('plus_is_key') && plus_is_key($key)) {
+        $pr = plus_check($key, $machine, true);
+        out($pr['ok'] ? array('ok'=>true,'tier'=>'plus','customer'=>'','next'=>'','expires'=>(int)$pr['expires']) : array('ok'=>false,'error'=>'plus_' . $pr['error']));
+    }
     if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
     $c =& $db['customers'][$key];
     // any valid key binds the machine and registers it for health monitoring; tier decides features
@@ -195,7 +223,18 @@ if ($action === 'checkin') {
         inst_note($machine, (int)($in['ver'] ?? 0), !empty($in['w10']), $instLinked,
             $instLinked && (($db['customers'][$key]['tier'] ?? 'free') === 'pro'), (string)($_SERVER['REMOTE_ADDR'] ?? ''));
     } catch (Throwable $e) { }
-    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>true,'tier'=>'free') + $upd + pcm_news_out($db, 'free') + pcm_prog_ver() + pcm_mm_addon_out()); // key gone => downgrade
+    // 8 Oct 2026: an "Unlock everything" key - good for this PC: 'plus'; expired, refunded or never activated here: 'free'
+    // with the reason, so the app can say so. Offered nothing.
+    if ($key !== '' && !isset($db['customers'][$key]) && function_exists('plus_is_key') && plus_is_key($key)) {
+        $pr = plus_check($key, $machine, false);
+        // (a key that has run out is offered "Unlock everything" again - to renew - where the paid app is offered at all)
+        out(array('ok'=>true,'tier'=>$pr['ok'] ? 'plus' : 'free') + ($pr['ok'] ? array('expires'=>(int)$pr['expires'])
+                : array('plus_error'=>$pr['error']) + plus_offer_out(geo_cc((string)($_SERVER['REMOTE_ADDR'] ?? '')), plus_mhash($machine)))
+            + $upd + pcm_news_out($db, 'free') + pcm_prog_ver() + pcm_mm_addon_out());
+    }
+    if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>true,'tier'=>'free') + $upd + pcm_news_out($db, 'free') + pcm_prog_ver() + pcm_mm_addon_out()
+        // 8 Oct 2026: abroad, with the paid app switched on: "Unlock everything" in place of our UK plans (nothing while off)
+        + (function_exists('plus_offer_out') ? plus_offer_out(geo_cc((string)($_SERVER['REMOTE_ADDR'] ?? '')), plus_mhash($machine)) : array())); // key gone => downgrade
     $c =& $db['customers'][$key];
     $tier = ($c['tier'] ?? 'free');
     if ($machine !== '') {
@@ -796,6 +835,8 @@ if ($action === 'asset') {
 }
 
 if ($action === 'reportup') {
+    // 8 Oct 2026, "Unlock everything": an Unlock key's reports stay on the PC (owner's choice) - taken, not kept; no Slack, no email
+    if ($key !== '' && !isset($db['customers'][$key]) && function_exists('plus_is_key') && plus_is_key($key)) out(array('ok'=>true,'kept'=>false));
     if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
     if ($machine === '' || !isset($db['customers'][$key]['machines'][$machine])) out(array('ok'=>false,'error'=>'unknown_machine'));
     $b = base64_decode(substr((string)($in['html'] ?? ''), 0, 600000), true);
@@ -925,6 +966,9 @@ if ($action === 'reportup') {
 // headed "New website enquiry". Text only, built here from short capped fields, and only for a licence we know, so the
 // channel is not open to anyone. An unknown licence is exactly when the tool falls back to that webhook itself.
 if ($action === 'reportnote') {
+    // 8 Oct 2026: the Service Pass's "not in the portal" notice for an Unlock key - noted, never posted (the owner chose that
+    // an Unlock buyer's report stays on their PC). Answering ok also stops its last-resort post to the enquiries channel.
+    if ($key !== '' && !isset($db['customers'][$key]) && function_exists('plus_is_key') && plus_is_key($key)) out(array('ok'=>true,'posted'=>false));
     if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>false,'error'=>'unknown_key'));
     $esc = function ($s) { return str_replace(array('&', '<', '>'), array('&amp;', '&lt;', '&gt;'), (string)$s); };
     $cn = pcm_txt(isset($db['customers'][$key]['name']) ? $db['customers'][$key]['name'] : '', 80);

@@ -139,7 +139,9 @@ function bp_visit_of($b) {
 
 // read-modify-write bkmeta under the SAME lock the app uses (pcm-data.json.lock) - short hold, no API calls inside
 $dlk = @fopen($DATA . '.lock', 'c'); if ($dlk) @flock($dlk, LOCK_EX);
-$db = @json_decode((string)@file_get_contents($DATA), true); if (!is_array($db)) $db = array();
+$db = @json_decode((string)@file_get_contents($DATA), true);
+// 8 Oct 2026: an unreadable customer file is never "no customers" - skip this poll and write nothing
+if (!is_array($db) || !isset($db['customers'])) { if ($dlk) { @flock($dlk, LOCK_UN); @fclose($dlk); } jout(array('ok' => false, 'error' => 'customer file unreadable - nothing written')); }
 if (!isset($db['bkmeta']) || !is_array($db['bkmeta'])) $db['bkmeta'] = array();
 $toSlack = array(); $seeded = 0; $changed = 0; $toReview = array();
 foreach ($rows as $b) {
@@ -243,7 +245,7 @@ if (isset($br['result']) && is_array($br['result'])) {
 }
 foreach ($db['bkmeta'] as $k2 => $v2) if ((isset($v2['ts']) ? $v2['ts'] : 0) < time() - 86400 * 90) unset($db['bkmeta'][$k2]);
 $tmp = $DATA . '.' . getmypid() . '.tmp';
-if (@file_put_contents($tmp, json_encode($db, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $DATA);
+{ require_once __DIR__ . '/pcm-dbsafe-lib.php'; pcm_db_put($tmp, $db, $DATA); }   // 8 Oct 2026: never an empty file over the customers
 if ($dlk) { @flock($dlk, LOCK_UN); @fclose($dlk); }
 
 // Review asks for jobs that just went Completed - AFTER the DB lock, like Slack below.

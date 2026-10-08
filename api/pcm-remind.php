@@ -51,7 +51,7 @@ function with_db($DATA, $fn) {
     if (!is_array($db)) { @flock($lk, LOCK_UN); @fclose($lk); return false; }
     if (!isset($db['customers'])) $db['customers'] = array();
     $ret = $fn($db);
-    if (is_array($ret)) { $tmp = $DATA . '.' . getmypid() . '.tmp'; if (@file_put_contents($tmp, json_encode($ret, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $DATA); }
+    if (is_array($ret)) { $tmp = $DATA . '.' . getmypid() . '.tmp'; { require_once __DIR__ . '/pcm-dbsafe-lib.php'; pcm_db_put($tmp, $ret, $DATA); } }
     @flock($lk, LOCK_UN); @fclose($lk);
     return true;
 }

@@ -24104,6 +24104,15 @@ for _np in VIRGIN_GUIDE_PAGES:   # 29 Sep 2026 launch: Google app password + cha
     build_new_page(_np)
 _VL.virgin_tool_page(PCM_SETUP_V30)   # /virgin-email-mover/
 
+# 365 PC Manager feature pages (8 Oct 2026; owner: "draft those"): one real problem each, the free app as the quick check.
+# Held back (pcm_feature_pages_data.LIVE = False) until the new-look app screenshots are in; PCM_FEATURE_PREVIEW=1 builds
+# them locally for a look. Data + every claim's source: pcm_feature_pages_data.py.
+import os as _os_pfp, pcm_feature_pages_data as _PFP
+if _PFP.LIVE or _os_pfp.environ.get('PCM_FEATURE_PREVIEW') == '1':
+    FIX_FLOW_PAGES.update(_PFP.FLOWS)
+    for _np in _PFP.pages(PCM_SETUP_V30):
+        build_new_page(_np)
+
 # Parents' online-safety guide: hub + the six platforms Dorset Police's guide skips
 # (data + the "checked against the maker's own instructions" discipline live in
 # parents_guide_data.py; re-verify + bump CHECKED_ON there, never here).
@@ -25446,6 +25455,21 @@ def write_portal_page():
   #p365app .cm-head h2 { margin:0; }
   #p365app .cm-head .cm-sentb { margin:0; min-height:40px; padding:.4rem .8rem; font-size:.88rem; }
   #p365app .sn-dlg { max-width:780px; }
+  /* the paid app abroad (8 Oct 2026) */
+  #p365app .plus-new { display:flex; flex-wrap:wrap; align-items:center; gap:.4rem .8rem; margin:.4rem 0 .6rem; padding:.6rem .8rem; border:1px solid var(--pgood); border-radius:10px; }
+  #p365app .plus-key { font-family:var(--font-mono, monospace); font-size:1.15rem; letter-spacing:.06em; color:var(--pwhite); }
+  #p365app .plus-new button { margin:0; }
+  #p365app .plus-form label { margin-top:.2rem; }
+  #p365app .plus-row { display:flex; flex-wrap:wrap; gap:.5rem; }
+  #p365app .plus-row input { flex:1 1 12rem; width:auto; }
+  #p365app .plus-row select { flex:0 0 auto; width:auto; }
+  #p365app .plus-row button { margin:0; min-height:44px; }
+  #p365app .plus-tbl td .sm { margin:.15rem 0; }
+  #p365app .plus-test { display:inline-block; font-size:.72rem; font-weight:700; letter-spacing:.06em; padding:0 .35rem; border:1px solid var(--pwarn, #c90); border-radius:4px; color:var(--pwarn, #c90); }
+  #p365app .plus-log { margin:.7rem 0 0; }
+  #p365app .plus-log summary { cursor:pointer; min-height:44px; display:flex; align-items:center; }
+  #p365app .plus-log ul { margin:.2rem 0 0; padding-left:1.1rem; font-size:.9rem; }
+  #p365app .plus-log li { margin:.15rem 0; overflow-wrap:anywhere; }
   #p365app .sn-search { display:flex; gap:.5rem; margin:.85rem 0 .75rem; }
   #p365app .sn-search input { flex:1 1 auto; min-width:0; }
   #p365app .sn-search button { margin:0; flex:0 0 auto; min-height:44px; }
@@ -29463,6 +29487,62 @@ def write_portal_page():
 
   // SOS relay inbox: whole card stays hidden until a code is actually waiting, so the
   // console isn't cluttered on the 360 days a year nobody uses it
+  /* Sign-ins waiting for approval (8 Oct 2026). A booking sign-in whose email matches a plan (Pro) record is never given
+     the plan on the email alone - a booking account can be made with anyone's email - so the PC goes on a separate free
+     record and the plan record waits here (staffcustomers -> pending). Approve = the old console's approve, server-side
+     (staffpendsign -> ps_approve in pcm-pendsign-lib.php): the free record becomes the plan, the old record is retired. */
+  function psgRender(list) {
+    var card = document.getElementById('psgcard'), box = document.getElementById('psg');
+    if (!card || !box) return;
+    if (!list.length) { card.style.display = 'none'; box.innerHTML = ''; return; }
+    var byId = {};
+    var h = '<p class="quiet" style="margin:.1rem 0 .6rem">Someone signed in with a booking account whose email matches a plan customer. A booking account can be made with anyone\\u2019s email, so the plan is never handed over by itself: until you approve, their PC is on a separate <strong>free</strong> record and the app shows Free. Approve when you know it is them.</p>';
+    list.forEach(function (p) {
+      byId[p.id] = p;
+      var who = p.sbname || p.sbemail || 'Someone';
+      h += '<div class="row"><div style="flex:1;min-width:200px"><strong>' + esc(who) + '</strong>' + (p.sbemail && p.sbemail !== who ? ' <span class="quiet" style="margin:0">' + esc(p.sbemail) + '</span>' : '')
+        + '<br /><span class="quiet" style="margin:0">Email matches the plan record <strong>' + esc(p.name || '(no name)') + '</strong>' + (p.next ? ' \\u00b7 next visit ' + esc(p.next) : '') + '</span>'
+        + '<br /><span class="quiet" style="margin:0">' + (p.gone
+            ? '\\u26a0 The free record this sign-in made has since been deleted \\u2014 there is nothing to approve for now. It shows here to approve again once their PC is signed in to booking again; or dismiss this note.'
+            : 'Signed in ' + seenTxt(p.ts) + (p.pc ? ' on <strong>' + esc(p.pc) + '</strong>' : '') + ' \\u00b7 now on the free record \\u201c' + esc(p.lname) + '\\u201d') + '</span></div>'
+        + (p.gone ? '' : '<button class="sm psga" data-id="' + esc(p.id) + '">\\u2713 Approve</button> ')
+        + '<button class="sm ghost psgd" data-id="' + esc(p.id) + '">Dismiss</button></div>';
+    });
+    box.innerHTML = h;
+    card.style.display = '';
+    var send = function (b, p, what, okMsg) {
+      b.disabled = true;
+      post(BK, { action: 'staffpendsign', stoken: S.stoken, machine: mid(), 'do': what, cid: p.id, lid: p.lid || '' })
+        .then(function (r) {
+          if (r && r.ok) { if (okMsg) alert(okMsg); showStaff(); return; }
+          b.disabled = false;
+          var e = r && r.error;
+          alert(e === 'stale' || e === 'link_gone' || e === 'not_pending' || e === 'unknown_customer'
+            ? 'That sign-in has changed since this page loaded \\u2014 nothing was changed. The list will refresh.'
+            : (e === 'not_staff' ? 'Your staff sign-in expired \\u2014 sign in again. Nothing was changed.' : 'Couldn\\u2019t do that \\u2014 nothing was changed. Try again.'));
+          if (e !== 'not_staff') showStaff();
+        })
+        .catch(function () { b.disabled = false; alert('Couldn\\u2019t reach the server \\u2014 nothing was changed.'); });
+    };
+    Array.prototype.forEach.call(box.querySelectorAll('.psga'), function (b) {
+      b.onclick = function () {
+        var p = byId[b.getAttribute('data-id')]; if (!p) return;
+        var who = p.sbname || p.sbemail || 'this sign-in';
+        var msg = 'Approve ' + who + ' as the plan customer \\u201c' + (p.name || '(no name)') + '\\u201d?\\n\\n'
+          + 'The free record their PC is signed in to becomes the plan (the app shows it on its next check-in), and the old plan record is retired into it.';
+        if (p.pcs) msg += '\\n\\n\\u26a0 ' + p.pcs + ' PC(s) were activated with the old plan record\\u2019s own key. Those keep that key and will show Free after this until they are re-activated with the new record\\u2019s key (\\ud83d\\udd11 Key in the licence table, Customers tab).';
+        if (!confirm(msg)) return;
+        send(b, p, 'approve', p.pcs ? 'Approved. Remember: ' + p.pcs + ' PC(s) on the old plan key need re-activating with the new key.' : '');
+      };
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('.psgd'), function (b) {
+      b.onclick = function () {
+        var p = byId[b.getAttribute('data-id')]; if (!p) return;
+        if (!confirm('Dismiss this sign-in?\\n\\n' + (p.gone ? 'It only clears this note.' : (p.sbname || p.sbemail || 'They') + ' stays on a free record and is not given the plan \\u201c' + (p.name || '(no name)') + '\\u201d.'))) return;
+        send(b, p, 'dismiss', '');
+      };
+    });
+  }
   function loadSosq() {
     var card = document.getElementById('sosqcard'), box = document.getElementById('sosq');
     if (!card || !box) return;
@@ -29574,8 +29654,9 @@ def write_portal_page():
     var root = el; if (!root) return;
     nxWhere('Staff area');
     function cardOf(id) { var n = document.getElementById(id); return n ? (n.classList.contains('card') ? n : n.closest('.card')) : null; }
-    var diary = cardOf('dday'), sos = cardOf('sosqcard'), invq = cardOf('invqcard'), worth = cardOf('worthcall'), fleet = cardOf('ffleet'), comms = cardOf('cmbox'),
+    var diary = cardOf('dday'), sos = cardOf('sosqcard'), psg = cardOf('psgcard'), invq = cardOf('invqcard'), worth = cardOf('worthcall'), fleet = cardOf('ffleet'), comms = cardOf('cmbox'),
         act = cardOf('ab'), qbo = cardOf('qbosetup'), invp = cardOf('inviteplans'), geo = cardOf('geocard'), quick = cardOf('pcmadm'), live = cardOf('vislive'), lic = null,
+        plus = cardOf('pluscard'),   // 8 Oct 2026: the paid app abroad, on Setup
         inst = cardOf('instbox'), commsV = cardOf('cmvbox'),   // 1 Oct 2026: PC Manager installs, under the fleet
         cust = cardOf('custq');   // 6 Oct 2026: Find a customer, first on the Customers tab
     Array.prototype.forEach.call(root.querySelectorAll('.card > h2'), function (h2) { if (/PC Manager licences/.test(h2.textContent)) lic = h2.parentNode; });
@@ -29601,6 +29682,7 @@ def write_portal_page():
     grid.appendChild(colA); grid.appendChild(colB); grid.appendChild(colC);
     panels.today.appendChild(lstrip); panels.today.appendChild(kp);
     if (sos) panels.today.appendChild(sos);
+    if (psg) panels.today.appendChild(psg);   // 8 Oct 2026: sign-ins waiting for approval (shown only while one waits)
     panels.today.appendChild(grid);
     if (diary) colA.appendChild(diary);
     if (comms) colB.appendChild(comms);
@@ -29611,7 +29693,7 @@ def write_portal_page():
     if (fleet) panels.computers.appendChild(fleet);
     if (inst) panels.computers.appendChild(inst);
     if (invq) panels.invoices.appendChild(invq);
-    [qbo, invp, geo].forEach(function (c) { if (c) panels.setup.appendChild(c); });
+    [qbo, invp, geo, plus].forEach(function (c) { if (c) panels.setup.appendChild(c); });
     // the consoles are used every day, so their buttons ride in the tab bar instead of a card at the bottom
     if (quick) {
       var cons = bar.querySelector('.nx-cons');
@@ -30141,6 +30223,9 @@ def write_portal_page():
       // reading them aloud. Codes appear ONLY here (never in Slack) and expire
       // server-side after 15 minutes.
       h += '<div class="card" id="sosqcard" style="display:none;border-left:4px solid var(--pbad)"><h2>\\ud83c\\udd98 SOS codes waiting</h2><div id="sosq"></div></div>';
+      // 8 Oct 2026: a booking sign-in whose email matched a plan record waits here, on a separate free record, until
+      // approved (psgRender; the same card text is posted to #365-job-tracker). Shown only while one waits.
+      h += '<div class="card" id="psgcard" style="display:none;border-left:4px solid var(--pwarn)"><h2>\\u23f3 Sign-ins waiting for approval</h2><div id="psg"></div></div>';
       /* This month's jobs -> invoices: the Slack "New Job In" posts, the console's "Quote
          agreed", and PC Manager services on non-plan customers, with each one's invoice
          raised for review. First card on purpose: it is the money. */
@@ -30197,6 +30282,8 @@ def write_portal_page():
         + '<div class="quiet">Customers counted by postcode district, from the address on their record. Not search traffic \\u2014 real customers.</div>'
         + '<p style="margin:.5rem 0 0"><button class="sm ghost" id="geogo">Count by postcode</button></p>'
         + '<div id="geobox"></div></div>';
+      // 8 Oct 2026 (owner: "yes do both"): the paid app abroad - its switch (read-only here) and the Unlock keys
+      h += '<div class="card" id="pluscard"><h2>\\ud83d\\udd13 Paid app abroad: \\u201cUnlock everything\\u201d</h2><div id="plusbox"><p class="quiet">Loading\\u2026</p></div></div>';
       h += '<div class="card"><h2>Quick links</h2><div class="row">'
         + '<button class="sm" id="ncopen">\\u2795 New customer</button>'   // 2 Oct 2026: like Slack's "New job in" (ncOpen)
         + '<a class="btn sm ghost" href="https://365techies.secure.simplybook.it/v2/management/" target="_blank" rel="noopener">SimplyBook admin</a>'
@@ -30207,21 +30294,31 @@ def write_portal_page():
         + '<p class="quiet">Everything opens in a new tab - this page stays put. The consoles sign in with your staff session, no passphrase. Comms inbox = voicemails + texts, threaded per customer; AI pipeline = every AI enquiry from /ai/.</p></div>';
       h += '<div class="card"><h2>PC Manager licences</h2><div class="tblwrap"><table><tr><th>Customer</th><th>Plan</th><th>PCs</th><th>Worst PC</th><th>Seen</th><th>App</th><th></th></tr>';
       (d.customers || []).sort(function (a, b) { return (b.seen || '').localeCompare(a.seen || ''); }).forEach(function (c) {
-        h += '<tr><td><strong>' + esc(c.name) + '</strong>' + (c.fam ? ' \\ud83d\\udc6a' : '') + '<br /><span class="quiet mono" id="kv' + esc(c.id) + '">' + esc(c.keymask) + '</span> <button class="sm ghost kb" data-cid="' + esc(c.id) + '" title="Show + copy their activation key">\\ud83d\\udd11 Key</button> <button class="sm ghost vw" data-cid="' + esc(c.id) + '" title="View the portal as this customer">\\ud83d\\udc41 View as</button></td>'
+        // 8 Oct 2026: a record a booking sign-in made that shares its email with another looks like a duplicate - and is
+        // exactly the one a customer's app may be signed in to (Alex Simons: deleted, his app kept saying "Signed in as")
+        var twin = c.twin && c.twin.length ? c.twin.join('\\u201d, \\u201c') : '';
+        var pwarn = c.waits ? 'A booking sign-in made this record, and the plan record \\u201c' + c.waits + '\\u201d is waiting to be approved onto it \\u2014 approve or dismiss that on Today instead. The customer\\u2019s app is signed in to this record: deleting it leaves the app signed in to nothing and every booking fails.'
+          : (twin ? 'A booking sign-in made this record, and it shares its email with \\u201c' + twin + '\\u201d. If that customer\\u2019s 365 PC Manager is signed in to this record, deleting it leaves the app signed in to nothing and every booking fails. Check with them first.' : '');
+        h += '<tr><td><strong>' + esc(c.name) + '</strong>' + (c.fam ? ' \\ud83d\\udc6a' : '')
+          + (c.pend ? ' <span class="pill" style="background:rgba(224,179,65,.14);color:var(--pwarn)" title="A booking sign-in with this email is waiting on Today">\\u23f3 sign-in waiting</span>' : '')
+          + (c.waits ? '<br /><span class="quiet" style="margin:0;color:var(--pwarn)">\\u23f3 Made by a booking sign-in \\u2014 waiting to be approved as \\u201c' + esc(c.waits) + '\\u201d (on Today)</span>'
+            : (twin ? '<br /><span class="quiet" style="margin:0;color:var(--pwarn)">\\u26a0 Made by a booking sign-in \\u2014 same email as \\u201c' + esc(twin) + '\\u201d. Their app may be signed in to this one.</span>' : ''))
+          + '<br /><span class="quiet mono" id="kv' + esc(c.id) + '">' + esc(c.keymask) + '</span> <button class="sm ghost kb" data-cid="' + esc(c.id) + '" title="Show + copy their activation key">\\ud83d\\udd11 Key</button> <button class="sm ghost vw" data-cid="' + esc(c.id) + '" title="View the portal as this customer">\\ud83d\\udc41 View as</button></td>'
           + '<td><span class="pill ' + (c.tier === 'pro' ? 'pro">Pro' : 'free">Free') + '</span></td>'
           + '<td>' + c.pcs + '</td>'
           + '<td>' + (c.worst < 0 ? '\\u2014' : '<span class="' + (c.worst >= 80 ? 'ok' : 'wn') + '">' + c.worst + '%</span>') + '</td>'
           + '<td>' + seenTxt(c.seen) + '</td>'
           + '<td>' + (c.ver ? 'v' + c.ver : '\\u2014') + '</td>'
-          + '<td style="white-space:nowrap"><button class="sm ghost tf" data-cid="' + esc(c.id) + '" data-to="' + (c.tier === 'pro' ? 'free' : 'pro') + '" data-nm="' + esc(c.name) + '">\\u2192 ' + (c.tier === 'pro' ? 'Free' : 'Pro') + '</button> <button class="sm ghost xd" data-cid="' + esc(c.id) + '" data-nm="' + esc(c.name) + '" data-pcs="' + c.pcs + '" title="Delete this record" style="color:var(--pbad)">\\u2715 Delete</button></td></tr>';
+          + '<td style="white-space:nowrap"><button class="sm ghost tf" data-cid="' + esc(c.id) + '" data-to="' + (c.tier === 'pro' ? 'free' : 'pro') + '" data-nm="' + esc(c.name) + '">\\u2192 ' + (c.tier === 'pro' ? 'Free' : 'Pro') + '</button> <button class="sm ghost xd" data-cid="' + esc(c.id) + '" data-nm="' + esc(c.name) + '" data-pcs="' + c.pcs + '" data-warn="' + esc(pwarn) + '" title="Delete this record" style="color:var(--pbad)">\\u2715 Delete</button></td></tr>';
       });
       h += '</table></div></div>';
       el.classList.remove('nx-narrow');
       el.innerHTML = h;
       bindOut();
       nxStaffLayout();
-      loadDiary(); loadFleet(); loadInstalls(); cmBind(); loadComms('list');
+      loadDiary(); loadFleet(); loadInstalls(); loadPlus(); cmBind(); loadComms('list');
       loadSosq();
+      psgRender(d.pending || []);
       nxlLoad();
       qboSetup();
       invitePlansSetup();
@@ -30312,8 +30409,8 @@ def write_portal_page():
       });
       Array.prototype.forEach.call(document.querySelectorAll('#p365app .xd'), function (btn) {
         btn.onclick = function () {
-          var nm2 = btn.getAttribute('data-nm'), pcs = parseInt(btn.getAttribute('data-pcs'), 10) || 0;
-          if (!confirm('Delete \\u201c' + nm2 + '\\u201d completely?\\n\\nTheir activation key stops working' + (pcs ? ', their ' + pcs + ' PC(s) drop off the fleet' : '') + ', and this cannot be undone.')) return;
+          var nm2 = btn.getAttribute('data-nm'), pcs = parseInt(btn.getAttribute('data-pcs'), 10) || 0, warn = btn.getAttribute('data-warn') || '';
+          if (!confirm('Delete \\u201c' + nm2 + '\\u201d completely?\\n\\n' + (warn ? '\\u26a0 ' + warn + '\\n\\n' : '') + 'Their activation key stops working' + (pcs ? ', their ' + pcs + ' PC(s) drop off the fleet' : '') + ', and this cannot be undone.')) return;
           btn.disabled = true;
           post(BK, { action: 'staffdel', stoken: S.stoken, machine: mid(), cid: btn.getAttribute('data-cid') })
             .then(function (r) {
@@ -32533,9 +32630,9 @@ def write_portal_page():
       }
     });
   }
-  function loadInstalls() {
+  function loadInstalls(act) {   // act: 'ours' | 'notours' (7 Oct 2026: our own PCs on this connection)
     var box = document.getElementById('instbox'); if (!box) return;
-    post('/api/pcm-installs.php', { stoken: S.stoken, machine: mid(), who: INST.who })
+    post('/api/pcm-installs.php', { stoken: S.stoken, machine: mid(), who: INST.who, do: act || '' })
       .then(function (d) { INST.d = d; renderInstalls(); })
       .catch(function () { INST.d = { ok: false }; renderInstalls(); });
   }
@@ -32552,26 +32649,114 @@ def write_portal_page():
       box.innerHTML = h + '<p class="quiet">Couldn\\u2019t load the install count - refresh to retry.</p>';
     } else {
       var dl = d.downloads || { d7: 0, d30: 0 };
+      // 7 Oct 2026 (owner: "yes add it"): the first week was inflated by copies that ran once (antivirus firms' test
+      // machines, one-off tries) - so: still using it = seen on two or more different days
       h += '<div class="stats">'
         + '<div class="stat"><b>' + d.total + '</b><span>installs</span></div>'
-        + '<div class="stat g"><b>' + d.active7 + '</b><span>used this week</span></div>'
+        + '<div class="stat g"><b>' + (d.kept || 0) + '</b><span>still using it</span></div>'
+        + '<div class="stat g"><b>' + (d.days3 || 0) + '</b><span>used on 3+ days</span></div>'
+        + '<div class="stat"><b>' + (d.once || 0) + '</b><span>ran once only</span></div>'
         + '<div class="stat"><b>' + d.new7 + '</b><span>new this week</span></div>'
-        + '<div class="stat"><b>' + d.newToday + '</b><span>new today</span></div>'
         + '<div class="stat"><b>' + dl.d7 + '</b><span>download clicks this week</span></div></div>';
+      // 8 Oct 2026: still using it now also needs a sighting this week; used on 2+ days but not since = stopped
+      h += '<p class="quiet" style="margin:.55rem 0 0">Stopped using it: <b>' + (d.stopped || 0) + '</b> (used on two or more days, not in the last week) \\u00b7 used this week: <b>' + d.active7
+        + '</b> \\u00b7 new today: <b>' + d.newToday + '</b> \\u00b7 too soon to tell: <b>' + (d.soon || 0) + '</b> (first seen in the last two days)</p>';
       var max = 1; (d.daily || []).forEach(function (x) { if (x.n > max) max = x.n; });
       h += '<p class="quiet" style="margin:.7rem 0 .3rem">New installs, last 30 days</p><div class="instbars">'
         + (d.daily || []).map(function (x) { return '<span title="' + esc(x.d) + ': ' + x.n + '" style="height:' + Math.max(2, Math.round(40 * x.n / max)) + 'px"></span>'; }).join('') + '</div>';
       h += '<div class="instgrid"><div><h3>Countries</h3>'
-        + ((d.countries || []).length ? '<table>' + d.countries.map(function (c) { return '<tr><td>' + esc(instCountry(c.k)) + '</td><td class="num"><b>' + c.n + '</b></td><td class="num quiet">' + c.a7 + ' this week</td></tr>'; }).join('') + '</table>' : '<p class="quiet">None yet</p>')
+        + ((d.countries || []).length ? '<table>' + d.countries.map(function (c) { return '<tr><td>' + esc(instCountry(c.k)) + '</td><td class="num"><b>' + c.n + '</b></td><td class="num quiet">' + (c.kept || 0) + ' still using it</td></tr>'; }).join('') + '</table>' : '<p class="quiet">None yet</p>')
         + '</div><div><h3>Versions</h3>'
         + ((d.versions || []).length ? '<table>' + d.versions.map(function (v) { return '<tr><td>v' + v.k + '</td><td class="num"><b>' + v.n + '</b></td></tr>'; }).join('') + '</table>' : '<p class="quiet">None yet</p>')
         + '<p class="quiet" style="margin:.6rem 0 0">On Windows 10: <b>' + d.w10 + '</b> of ' + d.total + '</p>'
         + '<p class="quiet" style="margin:.2rem 0 0">Every install: ' + d.unlinked + ' never linked \\u00b7 ' + d.linked + ' linked but free \\u00b7 ' + d.plan + ' on a plan</p>'
         + '<p class="quiet" style="margin:.2rem 0 0">Download clicks, 30 days: <b>' + dl.d30 + '</b></p></div></div>';
-      h += '<p class="quiet" style="font-size:.9rem;margin:.7rem 0 0">Counted from the app\\u2019s own hourly check-in' + (d.since ? ' since ' + esc(d.since) : '') + '. Counting began on 1 Oct 2026, so copies already in use show up as \\u201cnew\\u201d the first time they start after that. A download click is a click on a download button (the live view, each visitor once a day) - not every click becomes an install. Countries come from the internet connection at check-in; no names or addresses are kept.</p>';
+      // our own PCs (7 Oct 2026): pressed on the connection our PCs use; only a scrambled code of it is kept
+      var oi = d.ours_info || {}, ou = d.ours || 0;
+      h += '<div class="inst-ours"><p class="quiet" style="margin:.8rem 0 .2rem">\\ud83c\\udfe0 <b>Our own PCs:</b> '
+        + (ou ? ou + ' left out of these figures' : 'none left out yet')
+        + (oi.here ? ' \\u00b7 this internet connection is marked as ours' + (oi.hereBy ? ' (by ' + esc(oi.hereBy) + (oi.hereSince ? ', ' + esc(oi.hereSince) : '') + ')' : '') : '')
+        + (oi.nets > (oi.here ? 1 : 0) ? ' \\u00b7 ' + (oi.nets - (oi.here ? 1 : 0)) + ' other connection' + (oi.nets - (oi.here ? 1 : 0) === 1 ? '' : 's') + ' marked' : '') + '.</p>'
+        + (d.note ? '<p class="quiet" style="margin:.2rem 0" role="status">' + esc(d.note) + '</p>' : '')
+        + '<button type="button" class="sm ghost" data-iours="' + (oi.here ? 'notours' : 'ours') + '" style="margin-top:.3rem">'
+        + (oi.here ? 'Count PCs on this connection again' : 'These PCs are ours: leave out PCs on this internet connection') + '</button>'
+        + (oi.here ? '' : '<p class="quiet" style="font-size:.88rem;margin:.35rem 0 0">Press it on the internet your own PCs use (at home or the office). A customer\\u2019s PC on your bench counts as ours only while it is here.</p>')
+        + '</div>';
+      h += '<p class="quiet" style="font-size:.9rem;margin:.7rem 0 0">Counted from the app\\u2019s own hourly check-in' + (d.since ? ' since ' + esc(d.since) : '') + '. <b>Still using it</b> = used on two or more different days, and seen in the last week; <b>used on 3+ days</b> = the surest sign of a real person (days are counted from 8 Oct 2026); <b>ran once</b> = seen on one day only, at least two days ago (mostly antivirus firms\\u2019 test machines and people who tried it once). Counting began on 1 Oct 2026, so copies already in use show up as \\u201cnew\\u201d the first time they start after that. A download click is a click on a download button (the live view, each visitor once a day) - not every click becomes an install. Countries come from the internet connection at check-in; no names or addresses are kept.</p>';
       box.innerHTML = h;
     }
     Array.prototype.forEach.call(box.querySelectorAll('[data-iw]'), function (b) { b.onclick = function () { INST.who = b.getAttribute('data-iw'); loadInstalls(); }; });
+    Array.prototype.forEach.call(box.querySelectorAll('[data-iours]'), function (b) { b.onclick = function () { b.disabled = true; loadInstalls(b.getAttribute('data-iours')); }; });
+  }
+  /* ---------- 8 Oct 2026: the paid app abroad, "Unlock everything" (api/pcm-plus-admin.php). The switch is NOT here - it
+     goes on in api/pcm-buy-config.php, deployed on the owner's go (api/pcm-buy.off on the server stops it at once).
+     Keys are made here for testing or a sale made by hand; a new key is shown once (only its hash is kept). ---------- */
+  var PLUS = { d: null, key: '', busy: false };
+  function loadPlus(act, extra) {
+    var box = document.getElementById('plusbox'); if (!box) return;
+    if (PLUS.busy) return; PLUS.busy = !!act;
+    var body = { stoken: S.stoken, machine: mid(), do: act || 'list' }; for (var k in (extra || {})) body[k] = extra[k];
+    post('/api/pcm-plus-admin.php', body)
+      .then(function (d) { PLUS.busy = false; PLUS.d = d; PLUS.key = (d && d.key) || ''; renderPlus(); })
+      .catch(function () { PLUS.busy = false; PLUS.d = { ok: false }; renderPlus(); });
+  }
+  function plusDay(t) { return t ? new Date(t * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : ''; }
+  function renderPlus() {
+    var box = document.getElementById('plusbox'); if (!box) return;
+    var d = PLUS.d;
+    if (!d || !d.ok) { box.innerHTML = '<p class="quiet">' + (d && d.error === 'auth' ? 'Your staff session has expired \\u2014 sign out and in again.' : 'Couldn\\u2019t load the keys \\u2014 refresh to retry.') + '</p>'; return; }
+    var h = '<p style="margin:.1rem 0 .5rem">' + (d.on ? '<b style="color:var(--pgood)">\\u25cf On</b> \\u2014 PCs outside the UK that aren\\u2019t linked to us are offered it' + (d.price ? ' at <b>' + esc(d.price) + '</b>' : '') + '.'
+        : '<b>\\u25cb Switched off</b> \\u2014 nobody is offered it (' + esc(d.why_off) + '). It goes on once you\\u2019ve chosen the payment company and the price.') + '</p>'
+      + '<p class="quiet" style="margin:0 0 .6rem">Outside the UK, the app\\u2019s locked \\u201cdo it for me\\u201d buttons offer \\u201cUnlock everything\\u201d instead of our support plans: the full service and the tools, no visits, email support. Their service reports stay on their PC \\u2014 nothing comes to Slack or email; the card counts the runs. Never offered to a PC linked to a customer. A key works on up to ' + (d.max_pcs || 3) + ' PCs, from the PC Manager release that includes it.</p>';
+    // Lemon Squeezy (8 Oct 2026): sales there make and email the key by themselves once the signing secret is on the server
+    var ls = d.ls || {};
+    h += '<p style="margin:0 0 .6rem">' + (ls.secret_set ? '<b style="color:var(--pgood)">\\u25cf Lemon Squeezy connected</b> \\u2014 each sale makes its key and emails it to the buyer from info@; a refund switches it off; a yearly subscription\\u2019s key follows its renewals.'
+        : '<b>\\u25cb Lemon Squeezy not connected yet</b> \\u2014 waiting for the webhook\\u2019s signing secret in api/pcm-ls-secret.php on the server. Until then Lemon Squeezy\\u2019s deliveries are turned away and it tries again later, so no sale is lost.') + '</p>';
+    if (PLUS.key) h += '<div class="plus-new" role="status"><span class="quiet">New key \\u2014 copy it now, it won\\u2019t be shown again:</span><b class="plus-key" id="plusnewkey">' + esc(PLUS.key) + '</b>'
+      + '<button type="button" class="sm ghost" id="pluscopy">Copy</button></div>';
+    if (d.note) h += '<p class="quiet" role="status" style="margin:.3rem 0">' + esc(d.note) + '</p>';
+    if (d.err) h += '<p class="err" role="alert">' + esc(d.err) + '</p>';
+    h += '<div class="plus-form"><label for="plusemail">Make a key (for testing, or a sale made by hand)</label>'
+      + '<div class="plus-row"><input id="plusemail" type="email" autocomplete="off" placeholder="The buyer\\u2019s email" />'
+      + '<select id="plusyears" aria-label="How long"><option value="1">1 year</option><option value="0">Lifetime</option></select>'
+      + '<input id="plusnote" type="text" maxlength="120" autocomplete="off" placeholder="Note (optional)" />'
+      + '<button type="button" class="sm" id="plusmake">Make a key</button></div></div>';
+    var keys = d.keys || [];
+    h += keys.length ? '<div class="tblwrap"><table class="plus-tbl"><tr><th>Key</th><th>Email</th><th>Made</th><th>Until</th><th>PCs</th><th>Full services</th><th>Status</th><th></th></tr>' + keys.map(function (k) {
+        var exp = k.expires ? plusDay(k.expires) : 'lifetime', gone = k.expires && k.expires * 1000 < Date.now();
+        return '<tr><td class="mono">\\u2026' + esc(k.last4) + (k.test ? ' <span class="plus-test" title="Made by a Lemon Squeezy test-mode order - no money was taken">TEST</span>' : '') + '</td><td>' + esc(k.email) + (k.note ? '<br /><span class="quiet">' + esc(k.note) + '</span>' : '') + '</td>'
+          + '<td>' + esc(plusDay(k.created)) + (k.by ? '<br /><span class="quiet">by ' + esc(k.by) + '</span>' : '') + '</td><td>' + esc(exp) + (gone ? ' (expired)' : '') + '</td>'
+          + '<td>' + k.pcs + ' of ' + (d.max_pcs || 3) + '</td><td>' + (k.runs || 0) + (k.last_run ? '<br /><span class="quiet">last ' + esc(plusDay(k.last_run)) + '</span>' : '') + '</td>'
+          + '<td>' + (k.status === 'active' ? 'working' : 'switched off') + '</td>'
+          + '<td><button type="button" class="sm ghost" data-plusact="' + (k.status === 'active' ? 'revoke' : 'restore') + '" data-plusid="' + esc(k.id) + '">' + (k.status === 'active' ? 'Switch off' : 'Switch on') + '</button>'
+          + (k.pcs ? ' <button type="button" class="sm ghost" data-plusact="freepcs" data-plusid="' + esc(k.id) + '">Clear PCs</button>' : '')
+          + (k.status === 'active' && k.email ? ' <button type="button" class="sm ghost" data-plusact="reissue" data-plusid="' + esc(k.id) + '" data-plusemail="' + esc(k.email) + '">Send a new key</button>' : '') + '</td></tr>';
+      }).join('') + '</table></div>' : '<p class="quiet">No keys yet.</p>';
+    var log = ls.log || [];
+    if (log.length) h += '<details class="plus-log"><summary>Lemon Squeezy\\u2019s last ' + log.length + ' deliveries</summary><ul>' + log.map(function (l) {
+        return '<li><span class="mono">' + esc(l.at) + ' UTC</span> ' + (l.code === 200 ? '' : '<b class="err">' + esc(String(l.code)) + '</b> ') + esc(l.event.replace(/_/g, ' ')) + ' \\u2014 ' + esc(l.note) + '</li>';
+      }).join('') + '</ul><p class="quiet" style="margin:.3rem 0 0">401 = not signed by Lemon Squeezy (ignored). 503 = the signing secret isn\\u2019t on the server yet. 409 = a renewal arrived before its order; Lemon Squeezy sends it again.</p></details>';
+    box.innerHTML = h;
+    var mk = document.getElementById('plusmake');
+    if (mk) mk.onclick = function () {
+      var em = document.getElementById('plusemail').value.trim();
+      if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(em)) { document.getElementById('plusemail').focus(); return; }
+      mk.disabled = true; mk.textContent = 'Making\\u2026';
+      loadPlus('issue', { email: em, years: parseInt(document.getElementById('plusyears').value, 10) || 0, note: document.getElementById('plusnote').value.trim() });
+    };
+    var cp = document.getElementById('pluscopy');
+    if (cp) cp.onclick = function () {
+      var t = PLUS.key;
+      try { navigator.clipboard.writeText(t).then(function () { cp.textContent = 'Copied'; }, function () { cp.textContent = 'Select it and copy'; }); } catch (e) { cp.textContent = 'Select it and copy'; }
+    };
+    Array.prototype.forEach.call(box.querySelectorAll('[data-plusact]'), function (b) {
+      b.onclick = function () {
+        var act = b.getAttribute('data-plusact');
+        if (act === 'revoke' && !window.confirm('Switch this key off? It stops working at its PCs\\u2019 next check-in. You can switch it back on.')) return;
+        if (act === 'reissue' && !window.confirm('Make a new key and email it to ' + b.getAttribute('data-plusemail') + '? Their old key stops working (for when a buyer lost the email, or their key got out).')) return;
+        b.disabled = true; loadPlus(act, { id: b.getAttribute('data-plusid') });
+      };
+    });
   }
   function loadFleet() {
     post(BK, { action: 'stafffleet', stoken: S.stoken, machine: mid() }).then(function (d) {

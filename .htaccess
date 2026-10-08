@@ -298,6 +298,13 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(comms-sent-(lib|test)\.php|pcm-sentlog-(lib|test)\.php|pcm-sentlog\.json(\..*)?)$">
   Require all denied
 </FilesMatch>
+# The paid app abroad, "Unlock everything" (8 Oct 2026): the library is include-only, the test CLI-only; pcm-plus.json holds
+# the Unlock keys (hashed) and buyers' emails; pcm-buy-config.php (switch, checkout link, price) is read as data, and
+# pcm-buy.off stops it at once; pcm-ls-secret.php is the owner's Lemon Squeezy signing secret and pcm-plus-ls.log the
+# webhook's log. pcm-plus-admin.php (staff session) and pcm-plus-ls.php (Lemon Squeezy's webhook, signed) stay served.
+<FilesMatch "^(pcm-plus-(lib|test)\.php|pcm-plus\.json(\..*)?|pcm-buy-config\.php|pcm-buy\.off|pcm-ls-secret\.php|pcm-plus-ls\.log)$">
+  Require all denied
+</FilesMatch>
 # Bournemouth weather record books (22 Sep 2026): the per-date record table is read by
 # bm-wx.php on the server (it is public Met Office data, but 300 KB nobody's browser
 # needs); the library and its test are include/CLI-only.
@@ -318,6 +325,21 @@ ErrorDocument 404 /404.html
 # App sign-in password reset (24 Sep 2026): the action lives in pcm-booking.php (staff token
 # gated); its generator library is include-only and its test suite CLI-only.
 <FilesMatch "^(pcm-apppass-lib\.php|pcm-apppass-test\.php)$">
+  Require all denied
+</FilesMatch>
+# Sign-ins waiting for approval (8 Oct 2026): the actions live in pcm-booking.php (signin/join mark,
+# staffpendsign staff token gated); the library is include-only and its test suite CLI-only.
+<FilesMatch "^pcm-pendsign-(lib|test)\.php$">
+  Require all denied
+</FilesMatch>
+# A PC whose key no longer opens a record finds its way home (8 Oct 2026): the re-home runs inside pcm.php,
+# pcm-booking.php and pcm-service.php; the library is include-only and its test suite CLI-only.
+<FilesMatch "^pcm-rehome-(lib|test)\.php$">
+  Require all denied
+</FilesMatch>
+# The customer file's safe save (8 Oct 2026, after pcm-data.json was found emptied): the library is include-only, its
+# test CLI-only, and the refusal log + its hourly Slack mark are private.
+<FilesMatch "^(pcm-dbsafe-(lib|test)\.php|pcm-db-refused\.(log|ts))$">
   Require all denied
 </FilesMatch>
 # Free Virgin email tools (365 PC Manager v30): pcm-mailmover.php and pcm-mailmove-help.php stay served. Their

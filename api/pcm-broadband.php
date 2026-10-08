@@ -53,7 +53,7 @@ function load($f){
 }
 function save_db($f,$d){
     $tmp = $f . '.' . getmypid() . '.tmp';
-    if (@file_put_contents($tmp, json_encode($d, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES), LOCK_EX) !== false) @rename($tmp, $f);
+    { require_once __DIR__ . '/pcm-dbsafe-lib.php'; pcm_db_put($tmp, $d, $f); }   // 8 Oct 2026: never an empty file over the customers
 }
 function bb_path($id){ return __DIR__ . '/pcm-bb-' . $id . '.json'; }
 function bb_load($id){

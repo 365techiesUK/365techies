@@ -18,7 +18,7 @@ import { RenderPass } from '../common/vendor/three-r185/addons/postprocessing/Re
 import { UnrealBloomPass } from '../common/vendor/three-r185/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from '../common/vendor/three-r185/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from '../common/vendor/three-r185/addons/postprocessing/ShaderPass.js';
-import * as MD from './models3d.js?v=49';
+import * as MD from './models3d.js?v=57';
 
 const E = window.CREngine, ART = window.CRArt, PAL = ART.PAL;
 const SEG = E.SEG, HALF = E.HALF, RUM = E.RUMBLE, CH = 20;
@@ -110,12 +110,12 @@ const FIELDS = {
 };
 const FLOWERS = { purbeck: 1, christchurch: 0.9, swanage: 0.8, lymington: 0.8, goldencap: 0.8, needles: 0.7, jurassic: 0.5, lyme: 0.6, weymouth: 0.5, bournemouth: 0.35, sandbanks: 0.3, forest: 0.25, portland: 0.2 };   // wild flowers in the grass close by
 const DRY = { forest: 0.9, jurassic: 0.8, goldencap: 0.8, weymouth: 0.7, portland: 0.9, purbeck: 0.45, christchurch: 0.4 };   // how much the grass has dried in patches
-const SANDY = { bournemouth: 1, sandbanks: 1, 'weymouth:preston': 1, 'weymouth:esplanade': 1, hengistbury: 1, 'swanage:front': 1 };   // a promenade, then sand down to the sea (not grass)
+const SANDY = { bournemouth: 1, sandbanks: 1, 'weymouth:preston': 1, 'weymouth:esplanade': 1, hengistbury: 1, 'swanage:front': 1, 'swanage:shellbay': 1, 'swanage:knoll': 1 };   // a promenade, then sand down to the sea (not grass)
 const BIG = { kingstatue: 1.5, swanhall: 1.35, alfredcolumn: 1.25, lighthouse: 1.15, hurstcastle: 1.6, obelisk: 1.35, castle: 1.5, arch: 1.4, goldcap: 1.3, headland: 1.3, priory: 1.35, cobb: 1.2, clock: 1.2, needles: 1.3 };   // the landmarks, grown so they read from far off
 const SIGNS = { gate: 1, gantry: 1, nose: 1, board: 1, chev: 1, warn: 1, banner: 1 };
 const lit = (look) => !!(look.night || look.dusk);   // lamps and headlights on
 // OutRun's way (owner, 5 Oct): the land side of the road ends at a boundary, and the place is packed in right behind it
-const VERGE_K = { 'weymouth:osmington': 'hedge', 'portland:causeway': 'vpost', 'swanage:harmans': 'wall', 'swanage:front': 'prom', 'wareham:heath': 'vpost', 'wareham:town': 'none', 'wareham:quay': 'none', 'wareham:causeway': 'vpost', 'wool:heath': 'vpost', 'wool:bovington': 'vpost', 'wool:village': 'hedge', 'kimmeridge:ridge': 'wall', 'kimmeridge:village': 'wall', 'kimmeridge:bay': 'vpost', 'wimborne:canford': 'hedge', 'wimborne:town': 'none', 'wimborne:square': 'none', 'ferndown:centre': 'none', 'ferndown:common': 'vpost', 'highcliffe:village': 'none', 'highcliffe:castle': 'vpost', 'bearcross:roundabout': 'none', 'bearcross:magna': 'hedge', 'hurn:holdenhurst': 'hedge', 'hurn:airport': 'vpost', 'hurn:village': 'vpost', 'towerpark:leisure': 'vpost', 'towerpark:mannings': 'vpost', 'kinson:village': 'none', 'muscliff:castlelane': 'hedge', 'muscliff:throop': 'vpost', 'littledown:castlepoint': 'none', 'littledown:park': 'hedge', 'winton:banks': 'none', 'charminster:road': 'none', winton: 'wall', charminster: 'wall', kinson: 'wall', muscliff: 'wall', littledown: 'wall', towerpark: 'wall', bearcross: 'wall', hurn: 'wall', wimborne: 'wall', ferndown: 'wall', highcliffe: 'wall', 'jurassic:castle': 'wall', 'jurassic:ranges': 'vpost', 'jurassic:cove': 'wall', 'lymington:town': 'prom', 'lymington:marina': 'hedge', 'lymington:marsh': 'hedge', 'forest:heath': 'vpost', 'forest:village': 'hedge', 'forest:woods': 'vpost', 'purbeck:village': 'wall', 'purbeck:heath': 'vpost', 'needles:yarmouth': 'wall', 'needles:downs': 'hedge', 'swanage:town': 'prom', bournemouth: 'prom', sandbanks: 'prom', weymouth: 'prom', christchurch: 'hedge', lymington: 'hedge', goldencap: 'hedge', purbeck: 'wall', lyme: 'wall', portland: 'wall', forest: 'fence', swanage: 'vpost', jurassic: 'vpost', needles: 'vpost', hengistbury: 'vpost', harbour: 'bollard' };
+const VERGE_K = { 'weymouth:osmington': 'hedge', 'portland:causeway': 'vpost', 'swanage:shellbay': 'none', 'swanage:knoll': 'none', 'swanage:village': 'hedge', 'swanage:downs': 'wall', 'swanage:front': 'prom', 'wareham:heath': 'vpost', 'wareham:town': 'none', 'wareham:quay': 'none', 'wareham:causeway': 'vpost', 'wool:heath': 'vpost', 'wool:bovington': 'vpost', 'wool:village': 'hedge', 'kimmeridge:ridge': 'wall', 'kimmeridge:village': 'wall', 'kimmeridge:bay': 'vpost', 'wimborne:canford': 'hedge', 'wimborne:town': 'none', 'wimborne:square': 'none', 'ferndown:centre': 'none', 'ferndown:common': 'vpost', 'highcliffe:village': 'none', 'highcliffe:castle': 'vpost', 'bearcross:roundabout': 'none', 'bearcross:magna': 'hedge', 'hurn:holdenhurst': 'hedge', 'hurn:airport': 'vpost', 'hurn:village': 'vpost', 'towerpark:leisure': 'vpost', 'towerpark:mannings': 'vpost', 'kinson:village': 'none', 'muscliff:castlelane': 'hedge', 'muscliff:throop': 'vpost', 'littledown:castlepoint': 'none', 'littledown:park': 'hedge', 'winton:banks': 'none', 'charminster:road': 'none', winton: 'wall', charminster: 'wall', kinson: 'wall', muscliff: 'wall', littledown: 'wall', towerpark: 'wall', bearcross: 'wall', hurn: 'wall', wimborne: 'wall', ferndown: 'wall', highcliffe: 'wall', 'jurassic:castle': 'wall', 'jurassic:ranges': 'vpost', 'jurassic:cove': 'wall', 'lymington:town': 'prom', 'lymington:marina': 'hedge', 'lymington:marsh': 'hedge', 'forest:heath': 'vpost', 'forest:village': 'hedge', 'forest:woods': 'vpost', 'purbeck:village': 'wall', 'purbeck:heath': 'vpost', 'needles:yarmouth': 'wall', 'needles:downs': 'hedge', 'swanage:town': 'prom', bournemouth: 'prom', sandbanks: 'prom', weymouth: 'prom', christchurch: 'hedge', lymington: 'hedge', goldencap: 'hedge', purbeck: 'wall', lyme: 'wall', portland: 'wall', forest: 'fence', swanage: 'vpost', jurassic: 'vpost', needles: 'vpost', hengistbury: 'vpost', harbour: 'bollard' };
 const ROWS = {   // set out at a steady spacing behind the boundary: [model, variants, every so many segments, how far out, sideways jitter]
   // the local run, plain for now: red-brick houses and shops both sides (Lyndhurst's will do until each place has its own)
   winton: [['brickhouse', 5, 3, 19.6, 0.5], ['tpole', 1, 12, 15.6, 0]],
@@ -129,16 +129,21 @@ const ROWS = {   // set out at a steady spacing behind the boundary: [model, var
   wimborne: [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]], 'wareham:heath': [], 'wareham:town': [['lymhouse', 8, 3, 19.6, 0.3]], 'wareham:quay': [], 'wareham:causeway': [], 'wool:heath': [], 'wool:bovington': [], 'wool:village': [['lulcottage', 5, 4, 21, 1], ['gardenwall', 4, 2, 17.8, 0]], 'kimmeridge:ridge': [], 'kimmeridge:village': [['purbeckcottage', 6, 4, 19.5, 0.6]], 'kimmeridge:bay': [], 'wimborne:canford': [], 'wimborne:town': [['lymhouse', 8, 3, 19.6, 0.3]], 'wimborne:square': [['parade', 8, 3, 20.4, 0.1]],
   ferndown: [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]], 'ferndown:centre': [['precinct', 3, 5, 22, 0.2]], 'ferndown:common': [],
   highcliffe: [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]], 'highcliffe:village': [['flatparade', 4, 4, 21, 0.2]], 'highcliffe:castle': [],
-  bournemouth: [['hutrow', 6, 4, 16.0, 0], ['hotel', 8, 7, 47, 4]], sandbanks: [['villa', 8, 6, 25, 2], ['palm', 3, 4, 16.6, 2]],
+  bournemouth: [['hutrow', 6, 4, 16.0, 0], ['hotel', 8, 7, 47, 4]], 'bournemouth:boscombe': [['hutrow', 6, 4, 16.0, 0], ['vicvilla', 4, 5, 45, 4], ['hotel', 8, 11, 56, 4]],   // (Boscombe: red-roofed villas and new flats on the cliff top)
+  'bournemouth:approach': [], 'bournemouth:durley': [['hutrow', 6, 4, 16.0, 0]], 'bournemouth:alum': [['hutrow', 6, 4, 16.0, 0]], 'bournemouth:middle': [['hutrow', 6, 4, 16.0, 0], ['vicvilla', 4, 8, 47, 5]],
+  'bournemouth:branksome': [['hutrow', 6, 5, 16.0, 0]], sandbanks: [['villa', 8, 6, 25, 2], ['palm', 3, 4, 16.6, 2]],
   'weymouth:osmington': [], 'weymouth:preston': [], 'weymouth:esplanade': [['terrace', 6, 3, 21, 0]], 'weymouth:harbour': [['terrace', 6, 3, 21, 0]], 'portland:underhill': [['purbeckcottage', 6, 3, 19.5, 0.5]], 'portland:tophill': [['purbeckcottage', 6, 9, 21, 3]], lyme: [['terrace', 6, 4, 22, 0]], harbour: [['quayfront', 8, 5, 27, 0]],
   christchurch: [['cottage', 2, 10, 24, 4], ['terrace', 6, 8, 38, 3]], lymington: [['cottage', 2, 9, 24, 5], ['tpole', 1, 12, 15.6, 0]],
-  purbeck: [['tpole', 1, 12, 15.6, 0]], hengistbury: [['lamp', 2, 6, 15.4, 0]], swanage: [['tpole', 1, 12, 15.6, 0]], 'swanage:herston': [['purbeckcottage', 6, 3, 19.5, 0.5]], 'swanage:town': [['terrace', 6, 3, 22, 0]], 'swanage:front': [['terrace', 6, 3, 22, 0]], 'needles:yarmouth': [['terrace', 6, 4, 23, 1]], 'needles:downs': [['thatch', 3, 11, 24, 6], ['tpole', 1, 14, 15.6, 0]], 'needles:alumbay': [], 'purbeck:village': [['purbeckcottage', 6, 3, 19.5, 0.5]], 'purbeck:heath': [], 'forest:heath': [], 'forest:village': [['brickhouse', 6, 3, 19.6, 0.4]], 'lymington:town': [['lymhouse', 8, 3, 19.6, 0.3]], 'kinson:redhill': [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]], 'kinson:village': [['flatparade', 4, 4, 21, 0.2]], 'kinson:common': [], 'muscliff:castlelane': [['semis', 4, 4, 24, 1], ['gardenwall', 4, 2, 17.8, 0]], 'muscliff:estate': [['estatehouse', 4, 4, 22, 1], ['gardenwall', 4, 2, 17.8, 0]], 'muscliff:throop': [], 'littledown:castlepoint': [], 'littledown:hospital': [], 'littledown:park': [], 'winton:deanpark': [['vicvilla', 4, 4, 21.5, 1.2]], 'winton:banks': [['parade', 8, 3, 20.4, 0.1]], 'winton:moordown': [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]], 'charminster:springbourne': [['vicvilla', 4, 3, 21.5, 0.8]], 'charminster:road': [['nightparade', 8, 3, 20.4, 0.1]], 'charminster:queenspark': [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]], 'jurassic:castle': [], 'jurassic:ranges': [], 'jurassic:cove': [['lulcottage', 6, 4, 19.6, 0.6]], 'jurassic:door': [['caravan', 4, 3, 22, 3], ['caravan', 4, 3, 33, 3]], 'lymington:marina': [['tpole', 1, 12, 15.6, 0]], 'lymington:marsh': [['tpole', 1, 14, 15.6, 0]], 'forest:woods': [['redwood', 3, 3, 16.6, 0.7]], goldencap: [['tpole', 1, 12, 15.6, 0]], needles: [['tpole', 1, 14, 15.6, 0]]
+  purbeck: [['tpole', 1, 12, 15.6, 0]], hengistbury: [['lamp', 2, 6, 15.4, 0]], swanage: [['tpole', 1, 12, 15.6, 0]], 'swanage:village': [['purbeckcottage', 6, 7, 21, 3]], 'swanage:shellbay': [], 'swanage:knoll': [], 'swanage:town': [['terrace', 6, 3, 22, 0]], 'swanage:front': [['terrace', 6, 3, 22, 0]], 'needles:yarmouth': [['terrace', 6, 4, 23, 1]], 'needles:downs': [['thatch', 3, 11, 24, 6], ['tpole', 1, 14, 15.6, 0]], 'needles:alumbay': [], 'purbeck:village': [['purbeckcottage', 6, 3, 19.5, 0.5]], 'purbeck:heath': [], 'forest:heath': [], 'forest:village': [['brickhouse', 6, 3, 19.6, 0.4]], 'lymington:town': [['lymhouse', 8, 3, 19.6, 0.3]], 'kinson:redhill': [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]], 'kinson:village': [['flatparade', 4, 4, 21, 0.2]], 'kinson:common': [], 'muscliff:castlelane': [['semis', 4, 4, 24, 1], ['gardenwall', 4, 2, 17.8, 0]], 'muscliff:estate': [['estatehouse', 4, 4, 22, 1], ['gardenwall', 4, 2, 17.8, 0]], 'muscliff:throop': [], 'littledown:castlepoint': [], 'littledown:hospital': [], 'littledown:park': [], 'winton:deanpark': [['vicvilla', 4, 4, 21.5, 1.2]], 'winton:banks': [['parade', 8, 3, 20.4, 0.1]], 'winton:moordown': [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]], 'charminster:springbourne': [['vicvilla', 4, 3, 21.5, 0.8]], 'charminster:road': [['nightparade', 8, 3, 20.4, 0.1]], 'charminster:queenspark': [['semis', 4, 4, 22, 0.8], ['gardenwall', 4, 2, 17.8, 0]], 'jurassic:castle': [], 'jurassic:ranges': [], 'jurassic:cove': [['lulcottage', 6, 4, 19.6, 0.6]], 'jurassic:door': [['caravan', 4, 3, 22, 3], ['caravan', 4, 3, 33, 3]], 'lymington:marina': [['tpole', 1, 12, 15.6, 0]], 'lymington:marsh': [['tpole', 1, 14, 15.6, 0]], 'forest:woods': [['redwood', 3, 3, 16.6, 0.7]], goldencap: [['tpole', 1, 12, 15.6, 0]], needles: [['tpole', 1, 14, 15.6, 0]]
 };
 const ROCKC = { hengistbury: '#c07a44', bournemouth: '#c9a66a', purbeck: '#e8e4d8', swanage: '#eeebe2', needles: '#efece4', jurassic: '#d8cfba', portland: '#c9c2b2', goldencap: '#d8a85e', lyme: '#7f8790', forest: '#a89070', christchurch: '#b9a98a', lymington: '#b9a98a', hengistbury: '#a87850' };   // the rock in the cuttings and cliffs
 const BUNT = { 'forest:village': 1, 'purbeck:village': 1, 'swanage:town': 1, 'needles:yarmouth': 1, bournemouth: 1, 'weymouth:esplanade': 1, 'weymouth:harbour': 1, lyme: 1, christchurch: 1, 'lymington:town': 1, sandbanks: 1 };   // flags strung over the road in the towns
 LOOK.charminster = Object.assign({}, LOOK.harbour, { heroLand: false, edge: null, fireworks: false, paved: 0, hills: 10, rise: 50, yellow: true, pave: 15.4, fog: [120, 900], glow: 0.5,   // (Charminster Road at night, as the owner filmed it: the restaurants lit along it)
   dress: [['oak', 1, 0.1, 30, 80], ['pine', 1, 0.1, 30, 90]] });
-const ROWS_SEA = { 'portland:underhill': 1, 'swanage:herston': 1, 'swanage:town': 1 };   // rows on the sea side too, where the sea is well back behind them (Swanage: the town between the road and the bay)
+const BLUFF_GAP = { 'bournemouth:approach': 0.05, 'bournemouth:durley': 0.22, 'bournemouth:alum': 0.22 };   // where Bournemouth's cliff opens (its height there): Pier Approach (the Bourne's
+// valley, the Lower Gardens behind the pier), Durley Chine and Alum Chine - wooded clefts down to the beach
+const OPENZ = { 'swanage:shellbay': 1, 'swanage:knoll': 1 };   // (open dunes and heath: no hedge on the land side, no fence along the sand - Studland, 7 Oct)
+const ROWS_SEA = { 'portland:underhill': 1, 'swanage:village': 1, 'swanage:town': 1 };   // rows on the sea side too, where the sea is well back behind them (Swanage: the town between the road and the bay)
 const NOYELLOW = { 'wareham:heath': 1, 'wareham:causeway': 1, 'wool:heath': 1, 'wool:bovington': 1, 'wimborne:canford': 1, 'ferndown:common': 1, 'highcliffe:castle': 1, 'muscliff:throop': 1, 'hurn:holdenhurst': 1, 'hurn:airport': 1, 'hurn:village': 1, 'bearcross:magna': 1 };   // (country lanes: no double yellow lines)
 const PAVE = { 'wareham:heath': 0.1, 'wareham:town': 20, 'wareham:quay': 21, 'wareham:causeway': 0.1, 'wool:heath': 0.1, 'wool:bovington': 0.1, 'wool:village': 18, 'wimborne:canford': 0.1, 'wimborne:town': 20, 'wimborne:square': 20.4, 'ferndown:centre': 21, 'ferndown:common': 0.1, 'highcliffe:village': 21, 'highcliffe:castle': 0.1, 'bearcross:roundabout': 20.4, 'hurn:holdenhurst': 0.1, 'hurn:airport': 0.1, 'hurn:village': 0.1, 'bearcross:magna': 0.1, 'winton:banks': 20.4, 'charminster:road': 20.4, 'kinson:village': 21, 'muscliff:throop': 0.1 };   // (Throop's lane: none)   // (where the shops come to the pavement: paved up to their fronts)
 LOOK.wareham = Object.assign({}, LOOK.christchurch, { heroLand: false, edge: null, hills: 30, rise: 90, yellow: true, pave: 15.4 });   // (Wareham and Wool: Christchurch's bright day inland; the Purbeck hills behind)
@@ -156,7 +161,7 @@ const MORE = {   // closer, thicker dressing behind the boundary (as look.dress:
   wimborne: [['strollers', 8, 0.1, 15.4, 17], ['flowerbed', 3, 0.12, 15.6, 18]],
   ferndown: [['strollers', 8, 0.1, 15.4, 17], ['flowerbed', 3, 0.12, 15.6, 18]],
   highcliffe: [['strollers', 8, 0.1, 15.4, 17], ['flowerbed', 3, 0.12, 15.6, 18]],
-  bournemouth: [['bush', 2, 0.9, 19.2, 37], ['gorse', 1, 0.45, 19.2, 37], ['heather', 2, 0.3, 20, 36], ['pine', 1, 0.55, 38, 80], ['oak', 1, 0.12, 42, 75]], sandbanks: [['palm', 3, 0.22, 17, 28], ['bush', 2, 0.25, 15.6, 22], ['strollers', 8, 0.1, 15.4, 19]],   // (bournemouth: the cliff face - scrub, gorse, sandy patches; pines along the top)
+  bournemouth: [['bush', 2, 1.3, 19.2, 37], ['gorse', 1, 0.6, 19.2, 37], ['heather', 2, 0.3, 20, 36], ['pine', 1, 0.55, 38, 80], ['oak', 1, 0.12, 42, 75]], sandbanks: [['palm', 3, 0.22, 17, 28], ['bush', 2, 0.25, 15.6, 22], ['strollers', 8, 0.1, 15.4, 19]],   // (bournemouth: the cliff face - scrub, gorse, sandy patches; pines along the top)
   christchurch: [['oak', 1, 0.2, 17, 40], ['bush', 2, 0.25, 15.6, 22]], purbeck: [['oak', 1, 0.2, 17, 45], ['sheep', 2, 0.3, 17, 50]],
   'swanage:town': [['flowerbed', 3, 0.3, 15.6, 18], ['strollers', 8, 0.18, 15.4, 18.5]],
   swanage: [['sheep', 2, 0.35, 17, 50], ['gorse', 1, 0.3, 15.6, 30], ['drywall', 3, 0.06, 17, 40], ['caravan', 4, 0.06, 18, 34], ['kiosk', 3, 0.025, 15.6, 18], ['carpark', 4, 0.03, 16.5, 22], ['picnic', 3, 0.05, 15.2, 21]],
@@ -169,22 +174,31 @@ const MORE = {   // closer, thicker dressing behind the boundary (as look.dress:
 for (const k in MORE) if (LOOK[k]) LOOK[k].dress = (LOOK[k].dress || []).concat(MORE[k]);   // (a part of a stage's ('swanage:town') goes to DRESSZ, below)
 const SEA_MORE = { 'portland:causeway': [['mooring', 6, 0.08, 30, 200], ['motorboat', 4, 0.03, 30, 200], ['windsurf', 4, 0.05, 30, 200]], 'weymouth:harbour': [['mooring', 6, 0.1, 20, 120], ['motorboat', 4, 0.05, 20, 120]], 'lymington:town': [['mooring', 6, 0.12, 6, 60], ['motorboat', 4, 0.03, 20, 100]], 'lymington:marina': [['marina', 3, 0.24, 3, 7], ['mooring', 6, 0.06, 40, 160], ['motorboat', 4, 0.03, 30, 140]],
   'lymington:marsh': [['mooring', 6, 0.05, 20, 200], ['motorboat', 4, 0.02, 40, 200], ['windsurf', 4, 0.02, 60, 220]], bournemouth: [['windsurf', 4, 0.07, 30, 220], ['motorboat', 4, 0.04, 40, 200]], sandbanks: [['windsurf', 4, 0.09, 25, 220], ['motorboat', 4, 0.05, 30, 200], ['marina', 3, 0.02, 7, 12]],
-  weymouth: [['windsurf', 4, 0.06, 30, 220], ['motorboat', 4, 0.04, 40, 200]], swanage: [['windsurf', 4, 0.03, 40, 220]], 'swanage:front': [['windsurf', 4, 0.05, 30, 200], ['motorboat', 4, 0.05, 30, 180], ['mooring', 6, 0.05, 40, 200]], 'needles:yarmouth': [['marina', 3, 0.08, 6, 12], ['mooring', 6, 0.12, 30, 220], ['motorboat', 4, 0.04, 30, 180]], 'needles:downs': [['mooring', 6, 0.03, 40, 220], ['motorboat', 4, 0.03, 40, 220]], 'needles:alumbay': [['motorboat', 4, 0.04, 40, 220]], christchurch: [['marsh', 4, 0.05, 20, 140], ['swans', 2, 0.035, 3, 14], ['marina', 3, 0.04, 9, 15], ['mooring', 6, 0.06, 30, 160]],
+  weymouth: [['windsurf', 4, 0.06, 30, 220], ['motorboat', 4, 0.04, 40, 200]], swanage: [['windsurf', 4, 0.03, 40, 220]], 'swanage:knoll': [['mooring', 6, 0.1, 40, 230], ['motorboat', 4, 0.05, 40, 200], ['windsurf', 4, 0.03, 30, 200]], 'swanage:front': [['windsurf', 4, 0.05, 30, 200], ['motorboat', 4, 0.05, 30, 180], ['mooring', 6, 0.05, 40, 200]], 'needles:yarmouth': [['marina', 3, 0.08, 6, 12], ['mooring', 6, 0.12, 30, 220], ['motorboat', 4, 0.04, 30, 180]], 'needles:downs': [['mooring', 6, 0.03, 40, 220], ['motorboat', 4, 0.03, 40, 220]], 'needles:alumbay': [['motorboat', 4, 0.04, 40, 220]], christchurch: [['marsh', 4, 0.05, 20, 140], ['swans', 2, 0.035, 3, 14], ['marina', 3, 0.04, 9, 15], ['mooring', 6, 0.06, 30, 160]],
   lymington: [['marina', 3, 0.16, 3, 7], ['motorboat', 4, 0.03, 30, 140]], lyme: [['motorboat', 4, 0.03, 30, 160], ['marina', 3, 0.025, 7, 12]], harbour: [['marina', 6, 0.06, 22, 30], ['portcrane', 3, 0.045, 200, 250]] };   // out on the water
 const BEACH = {   // the beach between the road and the water: [model, variants, a segment, from, to (less than 0: that far short of the water)]
   'lymington:town': [['strollers', 8, 0.2, 9.8, -2.6], ['tripkiosk', 2, 0.03, 10.6, 11.2]], 'lymington:marina': [['strollers', 8, 0.08, 9.8, -2.6]],   // (Lymington: the quay, the river bank, then the marsh)
   'lymington:marsh': [['reeds', 4, 0.5, 13, -1], ['saltpans', 2, 0.06, 20, -12], ['egrets', 3, 0.12, 13, -2], ['strollers', 8, 0.06, 10.6, 12.6], ['swans', 3, 0.03, 26, -3]],
   bournemouth: [['strollers', 8, 0.22, 11.8, 19], ['deckchairs', 4, 0.26, 15.5, -3.5], ['lifeguard', 1, 0.012, 20, -6]], sandbanks: [['marram', 6, 0.42, 11.8, 21], ['strollers', 8, 0.16, 11.8, 19], ['deckchairs', 4, 0.22, 15, -3.5]],
   'weymouth:esplanade': [['strollers', 8, 0.22, 11.8, 19], ['deckchairs', 4, 0.26, 15.5, -3.5]], 'weymouth:preston': [['strollers', 8, 0.06, 11.8, 19]], 'weymouth:harbour': [['strollers', 8, 0.18, 9.6, -2.6]], harbour: [['strollers', 8, 0.18, 9.6, -2.6], ['tripkiosk', 2, 0.035, 10.6, 11.2], ['canopy', 2, 0.012, 11.2, 11.6]], christchurch: [['reeds', 4, 0.34, 12, -0.5], ['strollers', 8, 0.05, 10, 16]], hengistbury: [['marram', 6, 0.36, 11.8, 21], ['strollers', 8, 0.08, 11.8, 19]],
-  'swanage:front': [['strollers', 8, 0.22, 11.8, 19], ['deckchairs', 4, 0.24, 15.5, -3.5], ['hut', 6, 0.18, 12.6, 13.4]]
+  'swanage:front': [['strollers', 8, 0.22, 11.8, 19], ['deckchairs', 4, 0.24, 15.5, -3.5], ['hut', 6, 0.18, 12.6, 13.4]],
+  'bournemouth:boscombe': [['strollers', 8, 0.4, 11.8, 19], ['deckchairs', 4, 0.3, 15.5, -3.5], ['lifeguard', 1, 0.012, 20, -6]],
+  'bournemouth:approach': [['strollers', 8, 0.45, 11.8, 19], ['deckchairs', 4, 0.4, 15.5, -3.5], ['lifeguard', 1, 0.02, 20, -6]],   // (by the pier: the busiest bit of the beach)
+  'swanage:shellbay': [['marram', 6, 0.55, 10.4, 20], ['strollers', 8, 0.07, 14, -3], ['deckchairs', 4, 0.05, 16, -3.5]],   // (Shell Bay: dunes and marram, a few on the sand)
+  'swanage:knoll': [['marram', 6, 0.3, 10.4, 15], ['hut', 6, 0.16, 12.6, 13.4], ['strollers', 8, 0.24, 14, -3], ['deckchairs', 4, 0.26, 15.5, -3.5]]   // (Knoll and Middle Beach: beach huts, the busy sand)
 };
 const QUAY = { harbour: 1, 'weymouth:harbour': 1, 'lymington:town': 1 };
 const MARSHY = { 'lymington:marsh': 1 };   // the sea side of the road saltmarsh and mud (Keyhaven)
 const FISH = { harbour: 1, 'weymouth:harbour': 1, 'lymington:town': 1 };   // fishing boats moored along the quay wall
 const GROYNE = { 'swanage:front': 'groyne', bournemouth: 'groyne', sandbanks: 'rockgroyne', hengistbury: 'longgroyne' };   // (Bournemouth's are timber, Sandbanks' granite boulders)
 const HARB = { sandbanks: [['mooring', 6, 0.16, 14, 210], ['motorboat', 4, 0.025, 30, 180], ['jetty', 3, 0.045, -3, -3]] };   // out in the harbour (lateral from its edge; a jetty from the bank)   // lamps along the water's edge (at night the quay side was a black void)
-const ZONES = { weymouth: [[0.14, 'osmington'], [0.3, 'preston'], [0.52, 'esplanade'], [1.01, 'harbour']], portland: [[0.2, 'causeway'], [0.32, 'underhill'], [0.5, 'tophill'], [1.01, 'bill']], wareham: [[0.3, 'heath'], [0.66, 'town'], [0.8, 'quay'], [1.01, 'causeway']], wool: [[0.32, 'heath'], [0.64, 'bovington'], [1.01, 'village']], kimmeridge: [[0.36, 'ridge'], [0.66, 'village'], [1.01, 'bay']], wimborne: [[0.32, 'canford'], [0.66, 'town'], [1.01, 'square']], ferndown: [[0.3, 'parley'], [0.64, 'centre'], [1.01, 'common']], highcliffe: [[0.33, 'somerford'], [0.66, 'village'], [1.01, 'castle']], towerpark: [[0.3, 'ringwood'], [0.62, 'mannings'], [1.01, 'leisure']], bearcross: [[0.3, 'roundabout'], [0.66, 'bearwood'], [1.01, 'magna']], hurn: [[0.3, 'holdenhurst'], [0.72, 'airport'], [1.01, 'village']], kinson: [[0.3, 'redhill'], [0.66, 'village'], [1.01, 'common']], muscliff: [[0.32, 'castlelane'], [0.62, 'estate'], [1.01, 'throop']], littledown: [[0.33, 'castlepoint'], [0.66, 'hospital'], [1.01, 'park']], winton: [[0.25, 'deanpark'], [0.66, 'banks'], [1.01, 'moordown']], charminster: [[0.3, 'springbourne'], [0.7, 'road'], [1.01, 'queenspark']], jurassic: [[0.18, 'castle'], [0.36, 'ranges'], [0.64, 'cove'], [1.01, 'door']], lymington: [[0.3, 'town'], [0.64, 'marina'], [1.01, 'marsh']], forest: [[0.3, 'heath'], [0.64, 'village'], [1.01, 'woods']], swanage: [[0.22, 'harmans'], [0.36, 'herston'], [0.48, 'town'], [1.01, 'front']], needles: [[0.24, 'yarmouth'], [0.68, 'downs'], [1.01, 'alumbay']], purbeck: [[0.3, 'heath'], [0.62, 'village'], [1.01, 'hills']] };   // (Purbeck: the heath, Corfe village under its castle, over the hills)   // (the Isle of Wight: off the ferry at Yarmouth, across West Wight, Alum Bay and the Needles)   // a stage in parts (where each ends, as a share of the stage): off the ferry through Studland, over the downs past Old Harry, down into Swanage
+const ZONES = { bournemouth: [[0.18, 'boscombe'], [0.38, 'eastcliff'], [0.52, 'approach'], [0.64, 'westcliff'], [0.69, 'durley'], [0.75, 'middle'], [0.8, 'alum'], [1.01, 'branksome']], weymouth: [[0.14, 'osmington'], [0.3, 'preston'], [0.52, 'esplanade'], [1.01, 'harbour']], portland: [[0.2, 'causeway'], [0.32, 'underhill'], [0.5, 'tophill'], [1.01, 'bill']], wareham: [[0.3, 'heath'], [0.66, 'town'], [0.8, 'quay'], [1.01, 'causeway']], wool: [[0.32, 'heath'], [0.64, 'bovington'], [1.01, 'village']], kimmeridge: [[0.36, 'ridge'], [0.66, 'village'], [1.01, 'bay']], wimborne: [[0.32, 'canford'], [0.66, 'town'], [1.01, 'square']], ferndown: [[0.3, 'parley'], [0.64, 'centre'], [1.01, 'common']], highcliffe: [[0.33, 'somerford'], [0.66, 'village'], [1.01, 'castle']], towerpark: [[0.3, 'ringwood'], [0.62, 'mannings'], [1.01, 'leisure']], bearcross: [[0.3, 'roundabout'], [0.66, 'bearwood'], [1.01, 'magna']], hurn: [[0.3, 'holdenhurst'], [0.72, 'airport'], [1.01, 'village']], kinson: [[0.3, 'redhill'], [0.66, 'village'], [1.01, 'common']], muscliff: [[0.32, 'castlelane'], [0.62, 'estate'], [1.01, 'throop']], littledown: [[0.33, 'castlepoint'], [0.66, 'hospital'], [1.01, 'park']], winton: [[0.25, 'deanpark'], [0.66, 'banks'], [1.01, 'moordown']], charminster: [[0.3, 'springbourne'], [0.7, 'road'], [1.01, 'queenspark']], jurassic: [[0.18, 'castle'], [0.36, 'ranges'], [0.64, 'cove'], [1.01, 'door']], lymington: [[0.3, 'town'], [0.64, 'marina'], [1.01, 'marsh']], forest: [[0.3, 'heath'], [0.64, 'village'], [1.01, 'woods']], swanage: [[0.12, 'shellbay'], [0.25, 'knoll'], [0.32, 'village'], [0.43, 'downs'], [0.48, 'town'], [1.01, 'front']], needles: [[0.24, 'yarmouth'], [0.68, 'downs'], [1.01, 'alumbay']], purbeck: [[0.3, 'heath'], [0.62, 'village'], [1.01, 'hills']] };   // (Purbeck: the heath, Corfe village under its castle, over the hills)   // (the Isle of Wight: off the ferry at Yarmouth, across West Wight, Alum Bay and the Needles)   // a stage in parts (where each ends, as a share of the stage): off the ferry through Studland, over the downs past Old Harry, down into Swanage
 const DRESSZ = {   // the dressing for a part of a stage (in place of the place's own)
+  'bournemouth:approach': [['pine', 1, 0.35, 30, 90], ['palm', 3, 0.16, 16, 34], ['flowerbed', 3, 0.3, 15.6, 30], ['strollers', 8, 0.25, 15.4, 30], ['kiosk', 3, 0.04, 16, 22], ['oak', 1, 0.15, 34, 80], ['hotel', 8, 0.05, 70, 120]],   // (the Lower Gardens behind the pier)
+  'bournemouth:durley': [['pine', 1, 0.9, 22, 90], ['bush', 2, 1.0, 17.5, 40], ['oak', 1, 0.25, 26, 80], ['strollers', 8, 0.08, 15.4, 19]],   // (a chine: a wooded cleft down to the beach)
+  'bournemouth:alum': [['pine', 1, 0.9, 22, 90], ['bush', 2, 1.0, 17.5, 40], ['oak', 1, 0.25, 26, 80], ['strollers', 8, 0.08, 15.4, 19]],
+  'bournemouth:middle': [['bush', 2, 1.3, 19.2, 37], ['gorse', 1, 0.6, 19.2, 37], ['pine', 1, 0.9, 36, 90], ['oak', 1, 0.12, 42, 75], ['hotel', 8, 0.02, 64, 110]],
+  'bournemouth:branksome': [['bush', 2, 1.0, 17, 40], ['pine', 1, 1.2, 22, 110], ['oak', 1, 0.15, 30, 90]],   // (Branksome's pinewoods on the way to Sandbanks)
   'weymouth:osmington': [['oak', 1, 0.14, 18, 60], ['sheep', 2, 0.3, 17, 60], ['hay', 1, 0.03, 17, 40], ['drywall', 3, 0.05, 17, 40], ['tuft', 6, 1.4, 8.8, 26]],
   'weymouth:preston': [['reeds', 4, 0.4, 16, 60], ['egrets', 3, 0.05, 20, 50], ['tuft', 6, 1.0, 8.8, 20]],   // (Lodmoor's reed beds inland of the sea wall)
   'weymouth:esplanade': [['flowerbed', 3, 0.3, 15.6, 18], ['strollers', 8, 0.16, 15.4, 18.5]], 'weymouth:harbour': [['strollers', 8, 0.2, 15.4, 18.5], ['flowerbed', 3, 0.1, 15.6, 18]],
@@ -228,8 +242,10 @@ const DRESSZ = {   // the dressing for a part of a stage (in place of the place'
   'forest:heath': [['heather', 2, 0.8, 15.4, 60], ['gorse', 1, 0.4, 15.4, 60], ['bracken', 2, 0.4, 15.4, 40], ['pine', 1, 0.1, 22, 80], ['birch', 1, 0.05, 18, 50], ['oak', 1, 0.03, 30, 80], ['ponies', 4, 0.06, 15.6, 30], ['tuft', 6, 0.4, 8.8, 14]],   // (the New Forest: open heath, ponies grazing, a lone oak)
   'forest:village': [['oak', 1, 0.08, 30, 70], ['strollers', 8, 0.1, 15.4, 16], ['ponies', 4, 0.012, 15.6, 17], ['tuft', 6, 0.8, 8.8, 14]],
   'forest:woods': [['beech', 2, 0.45, 19, 45], ['oak', 3, 0.25, 21, 50], ['bracken', 2, 0.7, 15.4, 30], ['deer', 4, 0.03, 19, 34], ['tuft', 6, 0.6, 8.8, 14]],
-  'swanage:harmans': [['sheep', 2, 0.3, 17, 50], ['drywall', 3, 0.08, 17, 40], ['oak', 1, 0.12, 18, 55], ['gorse', 1, 0.12, 15.6, 40], ['hay', 1, 0.03, 17, 40], ['tuft', 6, 1.4, 8.8, 26]],   // (Harman's Cross: fields, stone walls, the railway)
-  'swanage:herston': [['oak', 1, 0.06, 26, 60], ['strollers', 8, 0.08, 15.4, 18], ['flowerbed', 3, 0.12, 15.6, 18], ['tuft', 6, 0.8, 8.8, 16]],
+  'swanage:shellbay': [['heather', 2, 0.85, 15.4, 60], ['gorse', 1, 0.4, 15.4, 60], ['marram', 6, 0.4, 12, 22], ['pine', 1, 0.07, 26, 90], ['tuft', 6, 0.3, 8.8, 14]],   // (the heath behind the dunes: heather, gorse, Scots pines)
+  'swanage:knoll': [['heather', 2, 0.7, 15.4, 55], ['gorse', 1, 0.3, 15.4, 50], ['pine', 1, 0.1, 22, 80], ['birch', 1, 0.05, 18, 50], ['carpark', 4, 0.03, 16.5, 22], ['tuft', 6, 0.4, 8.8, 14]],
+  'swanage:village': [['oak', 1, 0.14, 24, 60], ['strollers', 8, 0.05, 15.4, 17], ['flowerbed', 3, 0.08, 15.6, 18], ['tuft', 6, 0.8, 8.8, 16]],   // (Studland: cottages among the trees)
+  'swanage:downs': [['sheep', 2, 0.3, 17, 50], ['drywall', 3, 0.08, 17, 40], ['gorse', 1, 0.14, 15.6, 40], ['tuft', 6, 1.4, 8.8, 26]],   // (Ballard Down and Ulwell: open chalk grass)
   'swanage:front': [['flowerbed', 3, 0.2, 15.6, 18], ['strollers', 8, 0.2, 15.4, 18.5], ['palm', 3, 0.06, 16, 20], ['kiosk', 3, 0.02, 15.6, 18]],
   'swanage:town': [['flowerbed', 3, 0.3, 15.6, 18], ['strollers', 8, 0.18, 15.4, 18.5], ['palm', 3, 0.08, 16, 20]],
   'purbeck:heath': [['heather', 2, 0.32, 12, 50], ['gorse', 1, 0.28, 12, 50], ['pine', 1, 0.14, 16, 70], ['birch', 1, 0.06, 15, 40], ['ponies', 4, 0.025, 15, 26], ['tuft', 6, 0.9, 8.8, 24]],   // (thinned: the heath ran 18-20 ms on a slow PC)
@@ -248,7 +264,7 @@ function zoneKey(W, g) {   // the place's key, or its part's ('swanage:town') wh
   for (const [e, z] of Z) if (f < e) return key + ':' + z;
   return key;
 }
-const HERO_UNTIL = { lymington: 0.3, portland: 0.5, weymouth: 0.4 }, HERO_FROM = { jurassic: 0.62, swanage: 0.46, weymouth: 0.22 };   // (Portland: its painting leads you there, then the 3D lighthouse takes over at the Bill: both at once read as two)   // (HERO_FROM: the painting arrives part way through - Durdle Door, over the last downs)   // a landmark painting that bows out part way through (Lymington's town: past it the river, the marshes and Hurst Castle are the view)
+const HERO_UNTIL = { lymington: 0.3, portland: 0.5, weymouth: 0.4, swanage: 0.3 }, HERO_FROM = { jurassic: 0.62, weymouth: 0.22 };   // (Swanage: Old Harry ahead across Studland Bay as you come along the beach - 7 Oct)   // (Portland: its painting leads you there, then the 3D lighthouse takes over at the Bill: both at once read as two)   // (HERO_FROM: the painting arrives part way through - Durdle Door, over the last downs)   // a landmark painting that bows out part way through (Lymington's town: past it the river, the marshes and Hurst Castle are the view)
 function stageFrac(W, g) { for (const s of W.stretch) if (s.id === g.st && g.i >= s.from && g.i < (s.to || 1e9)) return s.to ? (g.i - s.from) / Math.max(1, s.to - s.from) : 0; return 0; }
 const zt = (T, W, g) => { const z = zoneKey(W, g); return z in T ? T[z] : T[E.STAGES[g.st].key]; };   // a table's entry for the part of the stage, else the place's
 const BG_IMG = { bournemouth: 4, sandbanks: 4, christchurch: 4, purbeck: 4, swanage: 4, forest: 4, jurassic: 4, weymouth: 4, harbour: 4, lymington: 4, lyme: 4, portland: 4, goldencap: 4, needles: 4 };   // the places with a painted panorama (games/coastrun/bg/<place>.webp), and its version
@@ -392,7 +408,7 @@ export function createWorld() {
     shiny: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.26, metalness: 0.2 }),
     glow: new THREE.MeshBasicMaterial({ vertexColors: true, color: new THREE.Color(2.4, 2.4, 2.4) }),
     leaf: leafy(tex(MD.paintLeaves())), frond: leafy(tex(MD.paintFrond())), grass: leafy(tex(MD.paintGrass())),
-    wave: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82 }),
+    wave: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82 }), bob: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82 }),
     troof: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.9, emissive: '#3a3026' }),
     eyes: new THREE.MeshBasicMaterial({ vertexColors: true, color: new THREE.Color(0.7, 0.7, 0.66) }),
     twall: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82, emissive: '#ffe2bc', emissiveIntensity: 0.38 }),
@@ -435,7 +451,9 @@ export function createWorld() {
     for (let i = 0; i < P2.count; i++) { const y = P2.getY(i), x = P2.getX(i), f = 0.88 + 0.16 * Math.sin(x * 0.37 + y * 0.6); C3.setXYZ(i, C3.getX(i) * f, C3.getY(i) * f * (y < 1 ? 0.92 : 1), C3.getZ(i) * f); }
   });
   const WAVE_T = { value: 0 };   // the crowd's raised arms bob up and down, each at its own beat (by where it is)
-  MAT.wave.onBeforeCompile = (sh) => { sh.uniforms.uT = WAVE_T; sh.vertexShader = 'uniform float uT;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\ntransformed.y += sin(uT * 9.0 + position.x * 1.7 + position.z * 1.3) * 0.16;'); };
+  MAT.wave.onBeforeCompile = (sh) => { sh.uniforms.uT = WAVE_T; sh.vertexShader = 'uniform float uT;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\ntransformed.y += sin(uT * 9.0 + position.x * 1.7 + position.z * 1.3) * 0.16 + max(0.0, sin(uT * 6.3 + position.x * 0.9 + position.z * 1.1)) * 0.07;'); };
+  MAT.bob.onBeforeCompile = (sh) => { sh.uniforms.uT = WAVE_T; sh.vertexShader = 'uniform float uT;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\ntransformed.y += max(0.0, sin(uT * 6.3 + position.x * 0.9 + position.z * 1.1)) * 0.07;'); };   // (the start's crowd bouncing on its toes, each at its own beat)
+  MAT.bob.customProgramCacheKey = () => 'bob';
   MAT.wave.customProgramCacheKey = () => 'wave';
   const CAR = {
     paint: new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.36, metalness: 0.3, clearcoat: 1, clearcoatRoughness: 0.07, envMapIntensity: 1.25 }),
@@ -453,7 +471,40 @@ export function createWorld() {
   const RIM = { value: new THREE.Color(0, 0, 0) }, PLIT = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82, metalness: 0 });   // the two of you: a warm light round your edges, so you stand out from the road and from each other
   PLIT.onBeforeCompile = (sh) => { sh.uniforms.uRim = RIM; sh.fragmentShader = 'uniform vec3 uRim;\n' + sh.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n{ float rf = 1.0 - clamp(dot(normalize(normal), normalize(vViewPosition)), 0.0, 1.0); totalEmissiveRadiance += uRim * rf * rf; }'); };
   PLIT.customProgramCacheKey = () => 'plit';
-  const PM = { lit: PLIT };
+  // their skin (pass 1 of 10 on the two of you, owner 7 Oct: "as lifelike as you can get them"): light wraps softly round it and a warm red shows where
+  // light turns to shadow (skin scatters light under its surface) - in its diffuse light only: wrapped light in the SPECULAR blew up at grazing
+  // angles into blooming white spots. Matte-ish, a little specular, no clearcoat or sheen (their glints at the edges bloomed too)
+  const SKINMAT = new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.6, metalness: 0, specularIntensity: 0.3, emissive: new THREE.Color('#3a1c14'), emissiveIntensity: 0.22 });   // (round 4: a little warmth in the shade - the shadow side went muddy brown)
+  const WRAP_FROM = 'vec3 irradiance = dotNL * directLight.color;', WRAP_DIFF = 'reflectedLight.directDiffuse += irradiance * BRDF_Lambert( material.diffuseContribution );';
+  const WRAP_TO = 'vec3 irradiance = dotNL * directLight.color; float nlS = dot( geometryNormal, directLight.direction );\n\tvec3 irradianceW = ( vec3( saturate( ( nlS + 0.4 ) / 1.4 ) ) + vec3( 0.13, 0.022, 0.0 ) * smoothstep( -0.4, 0.15, nlS ) * ( 1.0 - smoothstep( 0.15, 0.7, nlS ) ) ) * directLight.color;';
+  SKINMAT.onBeforeCompile = (sh) => { sh.uniforms.uRim = RIM;
+    const ch = THREE.ShaderChunk.lights_physical_pars_fragment, i = ch.indexOf('void RE_Direct_Physical(');   // (only in the direct light from the sun and the fill)
+    const body = i < 0 ? ch : ch.slice(0, i) + ch.slice(i).replace(WRAP_FROM, WRAP_TO).replace(WRAP_DIFF, WRAP_DIFF.replace('irradiance *', 'irradianceW *'));
+    sh.fragmentShader = 'uniform vec3 uRim;\n' + sh.fragmentShader.replace('#include <lights_physical_pars_fragment>', body)
+      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n{ float rf = 1.0 - clamp(dot(normalize(normal), normalize(vViewPosition)), 0.0, 1.0); totalEmissiveRadiance += uRim * rf * rf; }'); };
+  SKINMAT.customProgramCacheKey = () => 'skin';
+  // their hair (passes 4-5): cards of fine strands, cut out where there are none, both sides drawn, the same warm rim of light as the rest of them
+  const HAIRMAT = new THREE.MeshStandardMaterial({ map: hairTex(), vertexColors: true, alphaTest: 0.42, side: THREE.DoubleSide, roughness: 0.48, metalness: 0 });
+  HAIRMAT.onBeforeCompile = (sh) => { sh.uniforms.uRim = RIM; sh.fragmentShader = 'uniform vec3 uRim;\n' + sh.fragmentShader.replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\n{ float rf = 1.0 - clamp(abs(dot(normalize(normal), normalize(vViewPosition))), 0.0, 1.0); totalEmissiveRadiance += uRim * rf * rf * 0.6; }'); };
+  HAIRMAT.customProgramCacheKey = () => 'hair';
+  const SATIN = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.36, metalness: 0 });   // (pass 7: her top)
+  SATIN.onBeforeCompile = PLIT.onBeforeCompile; SATIN.customProgramCacheKey = () => 'satin';
+  const EYEMAT = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.16, metalness: 0 });   // (their eyes: wet, a glint)
+  const LENSMAT = new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.04, metalness: 0.1, clearcoat: 0.8, clearcoatRoughness: 0.05, envMapIntensity: 1.9, transparent: true, opacity: 0.9, depthWrite: false });   /* (round 3: near-opaque - eyes half-seen through glass read as bug-eyed) */   // (their sunglasses: tinted glass you can see their eyes through)
+  // pass 7 (second ten): skin isn't smooth - a fine grain of pores and a softer mottling in its colour and its shine, worked out on the surface
+  // itself (no texture to load)
+  const SKIN_NOISE = 'varying vec3 vSkinP;\nfloat skH(vec3 p) { p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }\n' +
+    'float skN(vec3 x) { vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f); return mix(mix(mix(skH(i), skH(i + vec3(1,0,0)), f.x), mix(skH(i + vec3(0,1,0)), skH(i + vec3(1,1,0)), f.x), f.y), mix(mix(skH(i + vec3(0,0,1)), skH(i + vec3(1,0,1)), f.x), mix(skH(i + vec3(0,1,1)), skH(i + vec3(1,1,1)), f.x), f.y), f.z); }\n';
+  const skinBefore = SKINMAT.onBeforeCompile;
+  SKINMAT.onBeforeCompile = (sh) => { skinBefore(sh);
+    sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vSkinP;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvSkinP = position;');
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\n' + SKIN_NOISE)
+      .replace('#include <color_fragment>', '#include <color_fragment>\n{ float sn = skN(vSkinP * 260.0) * 0.55 + skN(vSkinP * 70.0) * 0.45; diffuseColor.rgb *= 0.955 + 0.09 * sn; diffuseColor.r += 0.018 * (skN(vSkinP * 28.0) - 0.5); }')
+      .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\nroughnessFactor = clamp(roughnessFactor * (0.9 + 0.2 * skN(vSkinP * 180.0)), 0.3, 1.0);'); };
+  const LENS2 = LENSMAT.clone(); LENS2.opacity = 0.86;   // (hers lighter glass than his)
+  LENSMAT.opacity = 0.96;   // (round 4: this line had kept his lenses at 0.8 - his eyes still showed through)
+  const PM = { lit: PLIT, skin: SKINMAT, hair: HAIRMAT, satin: SATIN, lens: LENSMAT, lens2: LENS2 };
+  const GHOSTMAT = new THREE.MeshStandardMaterial({ color: '#8fd8ff', emissive: '#1f5f8f', emissiveIntensity: 0.6, roughness: 0.35, metalness: 0.2, transparent: true, opacity: 0.32, depthWrite: false });   // (your ghost)
   const STARMAT = new THREE.SpriteMaterial({ map: starTex(), transparent: true, depthWrite: false });
   const STUB = new THREE.CylinderGeometry(0.13, 0.13, 0.12, 14);
   CAR.paint.onBeforeCompile = (sh) => { sh.fragmentShader = sh.fragmentShader.replace('#include <dithering_fragment>', '#include <dithering_fragment>\ngl_FragColor.b = mix(gl_FragColor.b, min(gl_FragColor.b, gl_FragColor.g + 0.05), 0.75);'); };   // a red that stays red: blue light on it reads grey, not magenta
@@ -681,7 +732,7 @@ export function createWorld() {
     if (look.bluff && g.sea === -side && lat > look.bluff.toe) {   // a cliff behind the promenade, eased in and out over the stretch's ends
       let rin = 0; while (rin < 30 && E.segAt(W, g.i - rin) && E.segAt(W, g.i - rin).st === g.st) rin++;
       let rout = 0; while (rout < 30 && E.segAt(W, g.i + rout) && E.segAt(W, g.i + rout).st === g.st && !E.segAt(W, g.i + rout).fk) rout++;
-      const c = look.bluff, t = Math.min(1, (lat - c.toe) / (c.top - c.toe)), ramp = Math.min(rin, rout) / 30;
+      const c = look.bluff, t = Math.min(1, (lat - c.toe) / (c.top - c.toe)), ramp = Math.min(rin, rout) / 30 * bluffF(W, g);
       if (ramp > 0) y = Math.max(y, roadY - 0.25 + c.h * ramp * (0.95 + 0.1 * fbm(wx / 90, wz / 90)) * t * t * (3 - 2 * t));
     }
     if (g.flat) y += (roadY - 0.15 - y) * g.flat * (1 - smooth(60, 140, dist));
@@ -697,12 +748,26 @@ export function createWorld() {
       cliff: L(look.cliff || '#8a7a6a'), shallow: lit(look) ? beach.clone().multiplyScalar(0.8) : L('#2ec4bc').lerp(beach, 0.25), deep: L(look.night ? '#06101e' : lit(look) ? '#1c4a62' : '#0c5288') };
     CC.set(st, c); return c;
   }
-  const LANDZ = { 'forest:heath': { g0: new THREE.Color('#8a8250'), g1: new THREE.Color('#7a6646'), dry: new THREE.Color('#8e6a62') } }, C3 = new THREE.Color();
+  const LANDZ = { 'forest:heath': { g0: new THREE.Color('#8a8250'), g1: new THREE.Color('#7a6646'), dry: new THREE.Color('#8e6a62') }, 'swanage:shellbay': { g0: new THREE.Color('#9a8a5c'), g1: new THREE.Color('#7c6448'), dry: new THREE.Color('#d2c08e') }, 'swanage:knoll': { g0: new THREE.Color('#8e8456'), g1: new THREE.Color('#766246'), dry: new THREE.Color('#a0786a') } }, C3 = new THREE.Color();   // (Studland: heath and sandy ground, 7 Oct)
   function landZone(W, g) {   // [the part's land colours, how much] for the land at segment g
     const zk = zoneKey(W, g), H = LANDZ[zk]; if (!H) return null;
     const Z = ZONES[E.STAGES[g.st].key]; let rec = null; for (const s of W.stretch) if (s.id === g.st && g.i >= s.from && g.i < (s.to || 1e9)) { rec = s; break; }
     const f = (g.i - rec.from) / Math.max(1, rec.to - rec.from), zi = Z.findIndex((z) => zk.endsWith(':' + z[1])), a = zi > 0 ? Z[zi - 1][0] : -1, b = Z[zi][0];
     return [H, smooth(a, a + 0.03, f) * (1 - smooth(b - 0.03, b, f))];
+  }
+  function bluffScrub(x, y, z, dist) {   // 0 = bare sand, 1 = scrub, on Bournemouth's cliff face (patches; more bare sand low down, more scrub up top)
+    const m = 0.58 - 0.1 * smooth(8, 28, dist || 0); return smooth(m - 0.035, m + 0.035, fbm(x / 22 + 3, (z + y * 1.7) / 22));
+  }
+  function zoneW(W, g, zk) {   // how far into its part of the stage segment g is (0 at the edges, eased over 0.03 of the stage, 1 inside)
+    const Z = ZONES[E.STAGES[g.st].key]; let rec = null; for (const s of W.stretch) if (s.id === g.st && g.i >= s.from && g.i < (s.to || 1e9)) { rec = s; break; }
+    if (!Z || !rec) return 0;
+    const f = (g.i - rec.from) / Math.max(1, rec.to - rec.from), zi = Z.findIndex((z) => zk.endsWith(':' + z[1])), a = zi > 0 ? Z[zi - 1][0] : -1, b = Z[zi][0];
+    return smooth(a, a + 0.03, f) * (1 - smooth(b - 0.03, b, f));
+  }
+  function bluffF(W, g) {   // the cliff's height here as a share of its full height (BLUFF_GAP: where it opens)
+    if (g.bgf != null) return g.bgf;
+    const zk = zoneKey(W, g), f0 = BLUFF_GAP[zk], v = f0 == null ? 1 : 1 - (1 - f0) * zoneW(W, g, zk);
+    if (zk.indexOf(':') > 0) g.bgf = v; return v;
   }
   function landTint(H, w, x, z, out) {   // the land's colour blended towards the part's own
     C3.copy(H.g0).lerp(H.g1, smooth(0.3, 0.7, fbm(x / 30, z / 30))).lerp(H.dry, smooth(0.55, 0.8, vnoise(x / 18 + 4, z / 18 + 7)) * 0.8).multiplyScalar(0.86 + vnoise(x / 6, z / 6) * 0.26);
@@ -718,6 +783,10 @@ export function createWorld() {
       if (dist != null && dist < 2.4 && !LOOK[PAL[st].key].night) out.lerp(GRAVEL, (1 - smooth(0.4, 2.4, dist)) * 0.45);   // a strip of gravel and dust beside the road
     } else if (kind === 'sand') out.copy(c.beach).multiplyScalar(0.93 + vnoise(x / 5, z / 5) * 0.12).lerp(c.wet, smooth(1.5, -0.3, y) * 0.5);
     else if (kind === 'prom') out.copy(LOOK[PAL[st].key].night ? ROCK : PROM).multiplyScalar(0.9 + vnoise(x / 2, z / 2) * 0.12); else if (kind === 'beach') out.copy(c.wet).lerp(c.beach, smooth(-0.2, 0.7, y)).multiplyScalar(0.95 + vnoise(x / 6, z / 6) * 0.1);
+    else if (kind === 'bluff') {   // Bournemouth's cliffs (owner's photos, 7 Oct): orange-yellow sand broken by scrub - gorse, bramble, holm oak - thicker higher up
+      const sc = bluffScrub(x, y, z, dist);
+      out.copy(BSAND).multiplyScalar(0.82 + vnoise(x / 3.5 + y / 2, z / 3.5) * 0.26).lerp(C4.copy(SCRUB[0]).lerp(SCRUB[1], vnoise(x / 8, z / 8 + y / 5)).multiplyScalar(0.85 + vnoise(x / 3, z / 3) * 0.3), sc);
+    }
     else if (kind === 'cliff') out.copy(c.cliff).multiplyScalar(0.8 + vnoise(x / 9 + y / 2.5, z / 9) * 0.3);
     else if (kind === 'marsh') out.copy(MARSHC[0]).lerp(MARSHC[1], smooth(0.3, 0.7, fbm(x / 22, z / 22))).lerp(MARSHC[2], smooth(0.6, 0.85, vnoise(x / 12 + 3, z / 12 + 5)) * 0.7).multiplyScalar(0.86 + vnoise(x / 5, z / 5) * 0.24);   // saltmarsh: green, olive, the purple of sea lavender
     else if (kind === 'mud') out.copy(MARSHC[3]).lerp(c.wet, 0.3).multiplyScalar(0.9 + vnoise(x / 4, z / 4) * 0.14);
@@ -725,8 +794,9 @@ export function createWorld() {
     else out.copy(c.shallow).lerp(c.deep, smooth(-1, -6, y));
     return out;
   }
-  const QK = { land: 'land', verge: 'land', top: 'land', foot: 'cliff', water: 'beach', bed: 'bed', deck: 'rock', drop: 'rock', rock: 'rock', sand: 'sand', prom: 'prom', marsh: 'marsh', mud: 'mud' };
+  const QK = { bluff: 'bluff', land: 'land', verge: 'land', top: 'land', foot: 'cliff', water: 'beach', bed: 'bed', deck: 'rock', drop: 'rock', rock: 'rock', sand: 'sand', prom: 'prom', marsh: 'marsh', mud: 'mud' };
   const MARSHC = [new THREE.Color('#6e7e44'), new THREE.Color('#8a8a52'), new THREE.Color('#8a6a72'), new THREE.Color('#5e5546')];
+  const SCRUB = [new THREE.Color('#4f7832'), new THREE.Color('#7c9a46')], BSAND = new THREE.Color('#ecc58c'), C4 = new THREE.Color();   // (the cliff's sand: pale, so it still reads as sand in the shade)
   const PROM = new THREE.Color('#d8d2c4'), GRAVEL = new THREE.Color('#7a7262'), UNDERC = new THREE.Color('#2c2f34');
   const ROCK = new THREE.Color('#8a8276');
   function rowAt(W, i) {   // the cross-section of the land at segment i, from far left to far right
@@ -752,6 +822,7 @@ export function createWorld() {
         if (zt(SANDY, W, g) && g.sea === d && !g.tun && !g.brg && (kind === 'verge' || kind === 'top' || kind === 'foot')) k2 = j === 0 ? 'prom' : 'sand';
         if (zt(MARSHY, W, g) && g.sea === d && !g.tun && !g.brg && j > 0) { if (kind === 'verge' || kind === 'top') k2 = 'marsh'; else if (kind === 'foot' || kind === 'water') k2 = 'mud'; }
         if (look.bluff && g.sea === -d && kind === 'land' && lat < look.bluff.toe) k2 = 'prom';
+        if (look.bluff && g.sea === -d && kind === 'land' && lat >= look.bluff.toe && lat <= look.bluff.top + 3 && bluffF(W, g) > 0.5) k2 = 'bluff';   // (the cliff face: sand and scrub)
         if (look.pave && !g.tun && !g.brg && !g.sea && kind === 'land' && lat < (zt(PAVE, W, g) || look.pave)) k2 = 'prom';   // (the town: pavement to the walls, or to the shop fronts)
         if (look.paved && !g.tun && !g.brg && ((g.sea === -d && kind === 'land' && lat < look.paved) || (g.sea === d && (kind === 'verge' || kind === 'top')))) k2 = 'prom';   // (a quay: paving both sides)
         if (look.harbour && g.sea === -d && kind === 'land' && lat > look.harbour.from - 3 && !g.tun) k2 = h < -0.5 ? 'bed' : 'sand';   // (the harbour's sandy edge)   // (the promenade runs on in front of the huts)
@@ -794,7 +865,7 @@ export function createWorld() {
     const corner = (p, nv, kind, st, row) => {
       pos.push(p[0], p[1], p[2]); nor.push(nv[0], nv[1], nv[2]);
       colourAt(kind, st, p[0], p[1], p[2], C1, p[4]); if (kind === 'land' && row.lz && row.lz[1] > 0) landTint(row.lz[0], row.lz[1], p[0], p[2], C1); col.push(C1.r, C1.g, C1.b); fld.push(kind === 'land' ? 0.02 + 0.98 * smooth(16, 52, p[4] || 0) : 0);   // (any land: mottled; far land: fields)
-      if (kind === 'cliff' || kind === 'rock') uv.push((p[0] + p[2]) / 5, p[1] / 3); else uv.push(p[0] / 4.5, p[2] / 4.5);
+      if (kind === 'cliff' || kind === 'rock' || kind === 'bluff') uv.push((p[0] + p[2]) / 5, p[1] / 3); else uv.push(p[0] / 4.5, p[2] / 4.5);
     };
     const FN = [0, 1, 0];
     for (let r = off; r < off + (i1 - i0); r++) {
@@ -897,13 +968,14 @@ export function createWorld() {
       const walls = [];
       if (g.wl) walls.push([-10.5, look.wall ? 'wall' : 'fence']);
       if (g.wr) walls.push([10.5, look.wall ? 'wall' : 'fence']);
-      if (look.hedge && !g.tun && !g.brg && !g.fk && !g.gate && !g.wet && !R.low) for (const d of [-1, 1]) {
+      const open = !!OPENZ[zoneKey(W, g)];
+      if (look.hedge && !open && !g.tun && !g.brg && !g.fk && !g.gate && !g.wet && !R.low) for (const d of [-1, 1]) {
         if (g.sea === d || (d < 0 ? g.wl : g.wr) || hash2(i, d * 7 + 3) < 0.12) continue;
         let kk = 0; for (let j = -4; j <= 4; j++) kk += E.segAt(W, i + j).k; kk /= 9;
         const lat = look.hedge + hash2(Math.floor(i / 9), d) * 4; if (Math.abs(kk) > 1e-4 && d === (kk > 0 ? 1 : -1) && lat > 0.5 / Math.abs(kk)) continue;
         place(W, i * SEG + SEG / 2, d * lat, 0, P); addAll(HEDGE[i % 3], P.x, groundAt(W, g, P, d * lat) - 0.15, P.z, -P.th);
       }
-      if (g.sea && g.sh - 1.5 < 26 && look.edge && !g.brg && !g.tun) walls.push([g.sea * (g.sh - 1.2), look.edge === 'rail' ? 'rail' : look.edge === 'quay' ? 'quay' : 'fence']);
+      if (g.sea && g.sh - 1.5 < 26 && look.edge && !open && !g.brg && !g.tun) walls.push([g.sea * (g.sh - 1.2), look.edge === 'rail' ? 'rail' : look.edge === 'quay' ? 'quay' : 'fence']);
       if (g.brg) walls.push([-E.BRG_W, 'rail'], [E.BRG_W, 'rail']);
       for (const wl of walls) { place(W, i * SEG + SEG / 2, wl[0], 0, P); addAll(MD.model(wl[1], 0), P.x, P.y, P.z, -P.th); }
       const fo = forkOut(g);
@@ -926,7 +998,7 @@ export function createWorld() {
           place(W, i * SEG + SEG / 2, d * lat, 0, P);
           if (t === 'brickhouse' || t === 'lymhouse' || t === 'purbeckcottage' || t === 'terrace') { let busy = false; for (let q = i - 16; q <= i + 40; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && sq.spr.some((it) => /^(lyndchurch|stthomas|minster|corfechurch|corfestation|stjohnchurch|stgeorge|portlandcastle)$/.test(it.t) && Math.sign(it.x) === d)) busy = true; } if (busy) continue; }   // (Lyndhurst's churchyard: the church seen from the road)
           if (/^(parade|nightparade|semis|vicvilla|flatparade|estatehouse|brickhouse|gardenwall|lymhouse|precinct|purbeckcottage|terrace)$/.test(t)) { let busy = false; for (let q = i - 5; q <= i + 6; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && (sq.spr.some((it) => /^(cornerbank|brickchurch|moderne|policestn|richmondpub|kinsonchurch|bearpub|minster|warehamhall|quayinn|granary|woolmanor|levelcross|stonepub|swanhall|kingstatue)$/.test(it.t) && Math.sign(it.x) === d) || sq.spr.some((it) => it.t === 'junction' && Math.sign(it.x) === d && Math.abs(q - i) <= 3))) busy = true; } if (busy) continue; }   // (a gap in the row where a landmark stands, and for a side street)
-          if (t === 'hutrow' || t === 'quayfront') { let busy = false; for (let q = i - 4; q <= i + 6; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && sq.spr.some((it) => it.t === 'clifflift' || it.t === 'zigzag' || it.t === 'customhouse')) busy = true; } if (busy) continue; }
+          if (t === 'hutrow' || t === 'quayfront') { let busy = false; for (let q = i - 4; q <= i + 6; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && sq.spr.some((it) => it.t === 'clifflift' || it.t === 'zigzag' || it.t === 'customhouse')) busy = true; } for (let q = i - 8; q <= i + 8 && !busy; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && sq.spr.some((it) => it.t === 'overstrand')) busy = true; } if (busy) continue; }
           const ry = /^(hotel|building|villa|terrace|cottage|quayfront|thatch|purbeckcottage|brickhouse|lymhouse|lulcottage|caravan|parade|nightparade|vicvilla|semis|flatparade|estatehouse|precinct)$/.test(t) ? faceRoad(d, P.th) : t === 'gardenwall' ? -P.th + (d < 0 ? Math.PI : 0) : t === 'tpole' ? -P.th : t === 'hutrow' ? -P.th + (d < 0 ? Math.PI : 0) : hash2(i, d) * Math.PI * 2;
           addAll(MD.model(t, Math.floor(hash2(i * 3, d + 5) * 997) % nv), P.x, groundAt(W, g, P, d * lat) - (t === 'tpole' ? 0.3 : 0.25), P.z, ry, 1);
         }
@@ -963,13 +1035,13 @@ export function createWorld() {
         if (it.t === 'board') ry = -P.th + d * 0.5;
         if (it.t === 'jet') ry = fr + Math.PI + 0.35 * (it.v - 1);   // (parked nose-in to the fence, a little askew)
         if (it.t === 'lightplane') ry = fr + (hash2(i, 41) - 0.5) * 0.8;
-        if (/^(pier|ferry|clifflift|zigzag|rowboats|dykes|littlesea|needles|yarmouthcastle|oldbattery|seabaths|hurstcastle|obelisk|lulcove|junction|approachlights)$/.test(it.t)) ry = fr + Math.PI / 2 - (it.t === 'pier' ? 0.72 * -d : 0);   // (a pier angled ahead, on either side)   // (+X away from the road; the piers angled 20 degrees ahead - square to the shore they lay off to the side, out of the chase camera's view)
+        if (/^(pier|ferry|clifflift|zigzag|overstrand|rowboats|dykes|littlesea|needles|yarmouthcastle|oldbattery|seabaths|hurstcastle|obelisk|lulcove|junction|approachlights)$/.test(it.t)) ry = fr + Math.PI / 2 - (it.t === 'pier' ? 0.72 * -d : 0);   // (a pier angled ahead, on either side)   // (+X away from the road; the piers angled 20 degrees ahead - square to the shore they lay off to the side, out of the chase camera's view)
         let y = P.y;
         if (it.t === 'pier' || it.t === 'seabaths') y = P.y - 0.15;   // (its deck level with the promenade)
         else if (/^(yacht|buoy|stack|arch|needles|ferry|cobb|goldcap|headland|rowboats|swans|yarmouthcastle|alumcliffs|hurstcastle|obelisk|lulcove|ledges|nothefort|breakwater)$/.test(it.t)) y = 0;
         else if (/^(footbridge|viaduct|rockarch|treearch|pierarch|liftbridge|chairlift|craneway)$/.test(it.t)) y = P.y - (it.t === 'rockarch' ? 1.5 : 0.3);
         else if (Math.abs(it.x) > HALF + 2) y = groundAt(W, g, P, it.x);
-        if (SIGNS[it.t]) { signParts(W, i, g, it, P, y, ry, signs, addModel, addAll); if (it.t === 'gate' || it.t === 'gantry' || it.t === 'banner') continue; }
+        if (SIGNS[it.t]) { signParts(W, i, g, it, P, y, ry, signs, addModel, addAll, group); if (it.t === 'gate' || it.t === 'gantry' || it.t === 'banner') continue; }
         const m = MD.model(it.t, it.v); if (!m) continue;
         if (it.soft) {
           const grp = new THREE.Group();
@@ -1055,6 +1127,7 @@ export function createWorld() {
           const h1 = hash2(i * 13 + q, ti * 17 + d), h2 = hash2(i * 3 + q * 11, ti * 5 - d), h3 = hash2(i + q * 29, ti * 37 + d * 3);
           const lat = t[3] + fo + h1 * (t[4] - t[3]); if (d === innerSide && lat > inner) continue;
           place(W, i * SEG + h2 * SEG, d * lat, 0, DP);
+          if (look.bluff && g.sea === -d && lat > look.bluff.toe && lat < look.bluff.top + 2 && /^(bush|gorse|heather)$/.test(t[0]) && bluffScrub(DP.x, groundAt(W, g, DP, d * lat), DP.z, lat - HALF - RUM) < 0.5) continue;   // (the scrub grows in patches: bare sand between)
           const y = groundAt(W, g, DP, d * lat) - (t[0] === 'tuft' ? 0.05 : 0.25) + (t[0] === 'balloon' ? 60 + h1 * 90 : 0);
           const ry = /^(hotel|building|villa|terrace|strollers|kiosk|carpark|boatyard|estatehouse|unitshed)$/.test(t[0]) ? faceRoad(d, DP.th) + (t[0] === 'strollers' ? (h3 - 0.5) * 0.6 : 0) : t[0] === 'drywall' ? -DP.th + (h3 - 0.5) * 0.5 : h3 * Math.PI * 2;
           addAll(MD.model(t[0], Math.floor(h3 * 997) % t[1]), DP.x, y, DP.z, ry, t[0] === 'tuft' || /^(hotel|building|villa|terrace|balloon|strollers|ponies|deer|caravan|kiosk|drywall|carpark|picnic|boatyard|estatehouse|thatch|unitshed)$/.test(t[0]) ? 1 : 0.8 + h2 * 0.45);
@@ -1074,7 +1147,7 @@ export function createWorld() {
     return heightOf(W, look, S, g, 'land', a, P.y, P.x, P.z, a - span, d);
   }
   const P2 = { x: 0, y: 0, z: 0, th: 0, bank: 0, g: null };
-  function signParts(W, i, g, it, P, y, ry, signs, addModel, addAll) {
+  function signParts(W, i, g, it, P, y, ry, signs, addModel, addAll, group) {
     const plane = (w, h, key, ox, oy, oz, flip) => {
       const pg = new THREE.PlaneGeometry(w, h); if (flip) { const u = pg.attributes.uv; for (let q = 0; q < u.count; q++) u.setX(q, 1 - u.getX(q)); }
       TMP.position.set(ox, oy, oz); TMP.rotation.set(0, 0, 0); TMP.scale.setScalar(1); TMP.updateMatrix(); pg.applyMatrix4(TMP.matrix);
@@ -1091,9 +1164,16 @@ export function createWorld() {
         poses(W, Math.min(E.lastIndex(W), i + 8));
         for (const d of [-1, 1]) {
           if (g.sea === d && g.sh < 20) continue;
-          for (const [o, t, lat] of [[-7, 'crowd', 12.6], [9, 'crowd', 12.6], [-22, 'flags', 11.8], [24, 'flags', 11.8]]) {
+          const START = it.v === 0, CR = START ? [[-14, 'crowdlite', 12.6], [1, 'crowdlite', 12.6], [16, 'crowdlite', 12.6], [-9, 'herofans', 12.2], [7, 'herofans', 12.2],
+            [31, 'crowdlite', 12.6], [46, 'crowdfar', 12.6], [61, 'crowdfar', 12.6], [76, 'crowdfar', 12.6], [91, 'crowdfar', 12.6], [112, 'crowdfar', 12.6], [140, 'crowdfar', 13.4], [-23, 'flags', 11.8], [24, 'flags', 11.8], [54, 'flags', 11.8], [99, 'flags', 11.8]]   // (owner, 7 Oct: "lots of people at the start, like on OutRun": three deep from beside the car to past the arch)
+            : [[-7, 'crowd', 12.6], [9, 'crowd', 12.6], [-22, 'flags', 11.8], [24, 'flags', 11.8]];
+          if (START && d < 0) { const s = i * SEG - 6, si = E.segIndex(s); if (si >= W.base) { place(W, s, -(HALF - 2.4), 0, P2); const sy = groundAt(W, E.segAt(W, si), P2, -(HALF - 2.4)) + 0.5, sr = faceRoad(-1, P2.th); addAll(MD.model('starter', 0), P2.x, sy, P2.z, sr);
+            const st = new THREE.Group(), arm = new THREE.Group(), fm = MD.model('starterflag', 0); st.position.set(P2.x, sy, P2.z); st.rotation.y = sr; arm.position.set(0.2, 1.98, 0); st.add(arm);   /* (st sits 0.5 up: the box) */
+            for (const key in fm) if (fm[key] && MAT[key]) { const ms = new THREE.Mesh(fm[key], MAT[key]); ms.castShadow = true; arm.add(ms); } group.add(st); R.starterArm = arm; } }   // the starter by the line: his flag arm waves through the lights and sweeps down at GO
+          for (const [o, t, lat] of CR) {
             const s = i * SEG + o, si = E.segIndex(s); if (si < W.base || si > E.lastIndex(W) - 1) continue;
             const gg = E.segAt(W, si); if (gg.fk) continue;
+            if (START && /^crowd/.test(t)) { let big = false; for (let q = si - 5; q <= si + 5 && !big; q++) { const sq = E.segAt(W, q); if (sq && sq.spr && sq.spr.some((x2) => /^(pier|overstrand|clifflift|zigzag)$/.test(x2.t) && Math.sign(x2.x) === d)) big = true; } if (big) continue; }   // (not across the pier's root)
             place(W, s, d * lat, 0, P2);
             addAll(MD.model(t, (i + o + d * 3) & 7), P2.x, groundAt(W, gg, P2, d * lat), P2.z, faceRoad(d, P2.th));
           }
@@ -1287,22 +1367,32 @@ export function createWorld() {
 
   // ---------------------------------------------------------------- the player's car
   const COUPLE = MD.people();
-  function addParts(group, geo, mats) { for (const k in geo) if (geo[k] && (mats[k] || CAR[k])) { const mesh = new THREE.Mesh(geo[k], mats[k] || CAR[k]); mesh.castShadow = k !== 'glow'; group.add(mesh); } }
+  function addParts(group, geo, mats) { for (const k in geo) if (geo[k] && (mats[k] || CAR[k])) { const mesh = new THREE.Mesh(geo[k], mats[k] || CAR[k]); mesh.castShadow = k !== 'glow' && k !== 'hair'; group.add(mesh); } }   // (hair cards would cast solid shadows)
   function personOf(spec) {   // a body with a neck, two shoulders and two elbows that bend, and (hers) a streaming tail of hair
-    const root = new THREE.Group(); root.position.set(spec.seat[0], spec.seat[1], spec.seat[2]); root.scale.setScalar(spec.scale || 1); addParts(root, spec.part.torso, PM);
-    const neck = new THREE.Group(); neck.position.set(0, spec.neck, 0); neck.scale.setScalar(0.76); root.add(neck); addParts(neck, spec.part.head, PM);
+    const root = new THREE.Group(); root.position.set(spec.seat[0], spec.seat[1], spec.seat[2]); root.scale.setScalar(spec.scale || 1); const chest = new THREE.Group(); root.add(chest); addParts(chest, spec.part.torso, PM);   // (pass 9: the chest group breathes)
+    const neck = new THREE.Group(); neck.position.set(0, spec.neck, spec.neckZ || 0); neck.scale.setScalar(0.83);   /* (heads 1.09x: they read tiny on their bodies - skeptic, round 0) */ root.add(neck); addParts(neck, spec.part.head, PM);
+    let eyes = null; if (spec.part.eye) { const E = spec.part.eye; eyes = E.at.map((p) => { const g = new THREE.Group(); g.position.set(p[0], p[1], p[2]); neck.add(g);   // (their eyes: each turns in its own place, its lids close)
+      const look = new THREE.Group(); g.add(look); look.add(new THREE.Mesh(E.ball, EYEMAT)); const lu = new THREE.Group(); g.add(lu); addParts(lu, E.lidU, PM); const ll = new THREE.Group(); g.add(ll); addParts(ll, E.lidL, PM); return { look: look, lu: lu, ll: ll }; }); }
+    const brows = spec.part.brows ? spec.part.brows.map((B) => { const g = new THREE.Group(); g.position.set(B.at[0], B.at[1], B.at[2]); g.userData.y0 = B.at[1]; g.userData.sd = B.sd; neck.add(g); addParts(g, B.geo, PM); return g; }) : null;   // (their brows, to lift and knit)
+    let mouth = null; if (spec.part.mouth) { mouth = new THREE.Mesh(spec.part.mouth, SKINMAT); mouth.castShadow = false; mouth.morphTargetInfluences = [0.3, 0, 0]; neck.add(mouth); }   // (pass 3: lips that smile, laugh, pout)
     const arms = [-1, 1].map((sd) => {
-      const sh = new THREE.Group(); sh.position.set(sd * spec.shoulder[0], spec.shoulder[1], spec.shoulder[2]); root.add(sh); addParts(sh, spec.part.upper, PM);
+      const sh = new THREE.Group(); sh.position.set(sd * spec.shoulder[0], spec.shoulder[1], spec.shoulder[2]); root.add(sh); if (!spec.part.sleeve) addParts(sh, spec.part.upper, PM);
       const el = new THREE.Group(); el.position.set(0, -spec.elbow, 0); sh.add(el); const fa = new THREE.Group(); if (sd < 0) fa.scale.x = -1; el.add(fa); addParts(fa, sd < 0 && spec.part.foreL || spec.part.fore, PM);   // (the left forearm mirrored: thumbs outward)
       sh.rotation.order = 'YXZ'; return { sh: sh, el: el };   // out to the side, then forward, then turned
     });
     if (spec.part.arm) {   // the arms: one skin each, shoulder to wrist, whose two "bones" are the shoulder and elbow groups - the elbow bends smoothly (it showed as a ball joint)
       root.updateMatrixWorld(true);
-      arms.forEach((A, i) => { const sd = i ? 1 : -1, g = spec.part.arm.lit.clone(), P = g.attributes.position, n = P.count, si = new Uint16Array(n * 4), sw = new Float32Array(n * 4);
+      const skin3 = (g0, A, sd, mat, anc) => {   // a part skinned to [the body at the shoulder, the shoulder, the elbow]
+        const g = g0.clone(), P = g.attributes.position, n = P.count, si = new Uint16Array(n * 4), sw = new Float32Array(n * 4);
         g.translate(sd * spec.shoulder[0], spec.shoulder[1], spec.shoulder[2]);
-        for (let j = 0; j < n; j++) { const y = P.getY(j) - (spec.shoulder[1] - spec.elbow), t = Math.min(1, Math.max(0, (0.04 - y) / 0.08)), u = t * t * (3 - 2 * t); si[j * 4 + 1] = 1; sw[j * 4] = 1 - u; sw[j * 4 + 1] = u; }
+        for (let j = 0; j < n; j++) { const yv = P.getY(j), y = yv - (spec.shoulder[1] - spec.elbow), t = Math.min(1, Math.max(0, (0.04 - y) / 0.08)), u = t * t * (3 - 2 * t);
+          const ta = Math.min(1, Math.max(0, (yv - spec.shoulder[1] + 0.035) / 0.075)), ua = ta * ta * (3 - 2 * ta) * 0.72;   // (the top of the arm stays with the body)
+          si[j * 4] = 0; si[j * 4 + 1] = 1; si[j * 4 + 2] = 2; sw[j * 4] = ua * (1 - u); sw[j * 4 + 1] = (1 - ua) * (1 - u); sw[j * 4 + 2] = u; }
         g.setAttribute('skinIndex', new THREE.Uint16BufferAttribute(si, 4)); g.setAttribute('skinWeight', new THREE.Float32BufferAttribute(sw, 4));
-        const m = new THREE.SkinnedMesh(g, PLIT); m.castShadow = true; m.frustumCulled = false; root.add(m); m.bind(new THREE.Skeleton([A.sh, A.el])); });
+        const m = new THREE.SkinnedMesh(g, mat); m.castShadow = true; m.frustumCulled = false; root.add(m); m.bind(new THREE.Skeleton([anc, A.sh, A.el])); return m; };
+      arms.forEach((A, i) => { const sd = i ? 1 : -1, anc = new THREE.Group(); anc.position.set(sd * spec.shoulder[0], spec.shoulder[1], spec.shoulder[2]); root.add(anc); anc.updateMatrixWorld(true); A.anc = anc;
+        skin3(spec.part.arm.skin, A, sd, SKINMAT, anc);
+        if (spec.part.sleeve) for (const key in spec.part.sleeve) if (spec.part.sleeve[key] && PM[key]) skin3(spec.part.sleeve[key], A, sd, PM[key], anc); });   // (his shirt sleeves the same way: out of the shirt, not a tube on it)
     }
     const locks = spec.part.locks ? spec.part.locks.map((L) => { const g = new THREE.Group(); g.position.set(L.at[0], L.at[1], L.at[2]); g.scale.setScalar(L.s); neck.add(g); addParts(g, L.geo, PM); return g; }) : null;
     let hair = null;
@@ -1315,11 +1405,11 @@ export function createWorld() {
       scarf = []; let parent = new THREE.Group(); parent.position.set(spec.scarfAt[0], spec.scarfAt[1], spec.scarfAt[2]); parent.scale.setScalar(1.028); neck.add(parent);
       spec.part.scarf.forEach((geo, i) => { const g = new THREE.Group(); g.position.set(0, 0, i ? 0.125 : 0.06); parent.add(g); addParts(g, geo, {}); scarf.push(g); parent = g; });
     }
-    if (spec.lean) root.rotation.x = spec.lean;   // leaning back in her seat
+    root.rotation.order = 'YXZ'; if (spec.lean) root.rotation.x = spec.lean; if (spec.turn) root.rotation.y = spec.turn;   // leaning back in her seat, turned a little towards him
     root.userData.home = { p: root.position.clone(), r: root.rotation.clone(), s: root.scale.clone() };
     const halo = new THREE.Group(); halo.position.set(0, 0.47, 0); halo.scale.setScalar(1.25); halo.visible = false; neck.add(halo); root.userData.halo = halo;   // the stars you see after a crash
     for (let i = 0; i < 5; i++) { const s = new THREE.Sprite(STARMAT); const a = i / 5 * Math.PI * 2; s.position.set(Math.cos(a) * 0.34, Math.sin(a * 2) * 0.04, Math.sin(a) * 0.34); s.scale.setScalar(0.32); halo.add(s); }
-    return { root: root, neck: neck, arms: arms, hair: hair, scarf: scarf, locks: locks };
+    return { root: root, neck: neck, arms: arms, hair: hair, scarf: scarf, locks: locks, mouth: mouth, chest: chest, eyes: eyes, brows: brows };
   }
   const FERRYG = new THREE.Group(); FERRYG.visible = false; scene.add(FERRYG); let ferryKind = '';
   const FERRY_SCENE = {   // [model, x, z (along the way: + ahead of the start), turn, scale] ; deck: the car's height and place on board
@@ -1353,15 +1443,24 @@ export function createWorld() {
     for (const k in m.body) if (m.body[k] && CAR[k]) { const mesh = new THREE.Mesh(m.body[k], CAR[k]); mesh.castShadow = k !== 'glow'; player.add(mesh); }
     wheels = m.wheels.map((p) => { const w = new THREE.Group(); for (const k in m.wheel) if (m.wheel[k] && CAR[k]) { const mesh = new THREE.Mesh(m.wheel[k], CAR[k]); mesh.castShadow = true; w.add(mesh); } w.position.set(p[0], p[1], p[2]); w.scale.x = (p[0] < 0 ? -1 : 1) * (m.open && p[2] > 0 ? 1.2 : 1); w.userData.home = { p: w.position.clone(), r: new THREE.Euler(), s: w.scale.clone() }; player.add(w); return w; });   // (mirrored on the left, so the spokes face out)
     R.hubs = m.wheels.map((p) => { const s = new THREE.Mesh(STUB, CAR.trim); s.position.set(p[0], p[1], p[2]); s.rotation.z = Math.PI / 2; s.visible = false; player.add(s); return s; });   // a hub, seen when a wheel's gone
+    if (R.ghostCar) scene.remove(R.ghostCar);   // your ghost (7 Oct): the same car in see-through blue
+    R.ghostCar = new THREE.Group(); R.ghostCar.visible = false; scene.add(R.ghostCar);
+    for (const k in m.body) if (m.body[k] && k !== 'glow') R.ghostCar.add(new THREE.Mesh(m.body[k], GHOSTMAT));
+    for (const p of m.wheels) for (const k in m.wheel) if (m.wheel[k]) { const w = new THREE.Mesh(m.wheel[k], GHOSTMAT); w.position.set(p[0], p[1], p[2]); w.scale.x = p[0] < 0 ? -1 : 1; R.ghostCar.add(w); }
+    { const gl = new THREE.Sprite(new THREE.SpriteMaterial({ map: flameGlow(), color: '#7fd0ff', transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, opacity: 0.5 })); gl.scale.set(5.5, 2.6, 1); gl.position.y = 0.9; R.ghostCar.add(gl); R.ghostGlow = gl; }   // (a soft blue glow: you can pick it out far down the road)
     const shadow = new THREE.Mesh(new THREE.PlaneGeometry(m.width + 0.7, m.len * 2 + 0.7), new THREE.MeshBasicMaterial({ map: radial(64, [[0, 'rgba(0,0,0,0.6)'], [0.7, 'rgba(0,0,0,0.32)'], [1, 'rgba(0,0,0,0)']]), transparent: true, depthWrite: false }));
     shadow.rotation.x = -Math.PI / 2; shadow.position.y = 0.04; player.add(shadow); player.userData.shadow = shadow;
     if (m.open) {   // the roadster: the two of you, and the steering wheel
       const drv = personOf(COUPLE.driver), her = personOf(COUPLE.girl), sw = new THREE.Group();
       player.add(drv.root); player.add(her.root);
+      R.keyL = new THREE.SpotLight('#fff0e0', 0, 7, 0.55, 0.7, 2); R.keyL.position.set(-1.6, 2.3, -2.6); R.keyL.target.position.set(0, 1.05, 0.5); player.add(R.keyL); player.add(R.keyL.target);   // (round 8: a key light and a rim light on the two of you,
+      R.rimL = new THREE.SpotLight('#dfe8ff', 0, 7, 0.6, 0.7, 2); R.rimL.position.set(0.3, 2.1, 2.4); R.rimL.target.position.set(0, 1.15, 0.45); player.add(R.rimL); player.add(R.rimL.target);   // up only while the cameras are close on you: the lights and the goal)
       sw.position.set(COUPLE.wheel.at[0], COUPLE.wheel.at[1], COUPLE.wheel.at[2]); sw.rotation.x = COUPLE.wheel.tilt; const inner = new THREE.Group(); sw.add(inner); addParts(inner, COUPLE.wheel.geo, {}); player.add(sw);
+      { const A = COUPLE.wheel.at, dy = -0.45, dz = -0.89, col = new THREE.Mesh(new THREE.CylinderGeometry(0.023, 0.028, 0.27, 12), MAT.trim), shr = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.05, 0.09, 14), MAT.trim);   // the steering column, into the dash (round 2: slim)
+        col.position.set(A[0], A[1] + dy * 0.16, A[2] + dz * 0.16); shr.position.set(A[0], A[1] + dy * 0.31, A[2] + dz * 0.31); col.rotation.x = shr.rotation.x = Math.atan2(dz, dy); player.add(col); player.add(shr); }
       const NS = 11, sg = new THREE.BufferGeometry(); sg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(NS * 2 * 3), 3));
       const idx = []; for (let tl = 0; tl < 1; tl++) for (let i = 0; i < NS - 1; i++) { const a = (tl * NS + i) * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); } sg.setIndex(idx);
-      const scarf = new THREE.Mesh(sg, new THREE.MeshStandardMaterial({ color: '#efe8da', roughness: 0.45, side: THREE.DoubleSide })); scarf.frustumCulled = false; player.add(scarf);
+      const scarf = new THREE.Mesh(sg, new THREE.MeshStandardMaterial({ color: '#e0505e', roughness: 0.4, side: THREE.DoubleSide })); scarf.frustumCulled = false; player.add(scarf);
       R.couple = { drv: drv, her: her, wheel: inner, cur: {}, scarf: scarf, NS: NS };
     }
     { const sg = m.body.paint.clone(); sg.translate(0, -0.6, 0); sg.scale(1.06, 1.08, 1.04); sg.translate(0, 0.6, 0); bubble.geometry.dispose(); bubble.geometry = sg; }   // the shield's shell, just outside the paint
@@ -1510,7 +1609,7 @@ export function createWorld() {
   // ---------------------------------------------------------------- the two of you, moving: his hands on the wheel, her arms and head by her mood, her hair in the wind
   const SCV = new THREE.Vector3();
   const POSES = {   // [left shoulder forward, left out, left elbow, right forward, right out, right elbow, head turn, head nod, left turn, right turn]
-    idle: [0.2, -0.8, 1.3, 0.14, -0.22, 0.9, 0, 0, 0.2, -0.35],
+    idle: [0.15, -0.25, 1.28, 0.35, -0.2, 0.64, 0, 0, 0.8, 0.4],   // (round 1 of the second ten: her outside hand on the door top, the other in her lap - solved, scratchpad herik.mjs)
     ask: [0.55, 0.12, 1.05, 1.15, -0.25, 0.75, -0.55, -0.05, 0, -0.4],
     cheer: [0.3, -2.6, 0.7, 0.3, 2.6, 0.7, 0, -0.25, 0, 0],
     wave: [0.55, 0.12, 1.05, 0.2, 2.5, 0.6, -0.3, -0.1, 0, 0],
@@ -1522,6 +1621,7 @@ export function createWorld() {
     clap: [0.95, 0.35, 1.5, 0.95, -0.35, 1.5, 0, -0.1, 0.5, -0.5],
     sulk: [0.3, 0.3, 1.85, 0.3, -0.3, 1.85, 0.5, 0.28, 1.0, -1.0]
   };
+  const LAP_TWIST = -1.3;
   function animateCouple(W, dt, t) {
     const C = R.couple; if (!C) return;
     if (R.flying.length) { if (C.scarf) C.scarf.visible = false; return; }   // thrown clear: their limbs are the crash's to move
@@ -1529,19 +1629,44 @@ export function createWorld() {
     let tgt = (POSES[her.k] || POSES.idle).slice();
     if (her.k === 'point') { const d = her.side || 1; tgt = d < 0 ? [1.4, 0, 0.3, 0.14, -0.22, 0.9, 0.55, -0.1, 0.75, 0] : [0.14, 0.22, 0.9, 1.4, 0, 0.3, -0.55, -0.1, 0, -0.75]; }
     if (her.k === 'cheer' || her.k === 'wave') { const w = Math.sin(t / 90) * 0.3; tgt[4] += her.k === 'wave' ? w * 1.4 : w; if (her.k === 'cheer') tgt[1] -= w; }
-    if (her.k === 'idle') { tgt[6] = Math.sin(t / 2300) * 0.45 + (W.drift ? -W.drift * 0.4 : 0); tgt[7] = Math.sin(t / 1700) * 0.06; }
+    if (her.k === 'idle') {   // (round 7: every few seconds she looks out at the view or across at him, holds it, then looks ahead again)
+      if (!R.hNext || t > R.hNext) { const q = Math.random(); R.hYaw = q < 0.5 ? 0.7 + Math.random() * 0.35 : q < 0.82 ? -0.6 : 0.25; R.hUntil = t + 1200 + Math.random() * 1300; R.hNext = R.hUntil + 2200 + Math.random() * 4500; }
+      tgt[6] = (t < R.hUntil ? R.hYaw : 0) + (W.drift ? -W.drift * 0.4 : 0); tgt[7] = Math.sin(t / 1700) * 0.05 + (t < R.hUntil && R.hYaw < 0 ? -0.03 : 0); }
     if (her.k === 'ask') tgt[7] += Math.sin(t / 120) * 0.08;
     if (her.k === 'look') { tgt = POSES.idle.slice(); tgt[6] = (her.side || 1) * 0.85; tgt[7] = -0.06 + Math.sin(t / 900) * 0.04; }   // looking out at the place, the sea, the view
     if (her.k === 'clap') { const c = Math.sin(t / 65); tgt[1] += c * 0.3; tgt[4] -= c * 0.3; }
     if (her.k === 'hair') tgt[2] += Math.sin(t / 260) * 0.12;
     if (her.k === 'hold') tgt[7] -= Math.min(0.15, W.v / 600);
-    if (W.count > 75 && her.k === 'idle' && !R.camDrv) { tgt = [0.2, -2.5 - Math.sin(t / 90) * 0.42, 0.6, 0.55, -0.12, 1.05, 0.05, -0.08, 0, 0]; }   // the lights: she waves at you (the camera's in front), the outside hand
+    /* (the lights: the countdown scene at the end of animateCouple poses the two of you now) */
     const speaking = W.voiceT != null && W.t - W.voiceT < 80;   // (a pass on the two of you, owner 6 Oct: while she talks she turns to him, nods along, her hand going)
     if (speaking && (her.k === 'idle' || her.k === 'look' || her.k === 'hair')) { tgt[6] = -0.32; tgt[7] = -0.04 + Math.sin(t / 110) * 0.05; tgt[3] = 0.55; tgt[5] = 1.2 + Math.sin(t / 170) * 0.25; }
-    for (let i = 0; i < 10; i++) cur[i] = cur[i] == null ? tgt[i] : cur[i] + (tgt[i] - cur[i]) * k;
+    if (her.k === 'idle' && !speaking && W.count <= 0 && W.v > 30 && !W.crash) { const ph = (t / 1000) % 18; if (ph > 11.5 && ph < 17) { const w = Math.sin(t / 230) * 0.13; tgt = POSES.idle.slice(); tgt[0] = 0.28; tgt[1] = -1.3 + w; tgt[2] = 0.32 + w * 0.8; tgt[8] = 0.12; tgt[6] = 0.38; tgt[7] = -0.05; } }   // (round 7: now and then at speed her outside hand out over the door, riding the wind - OutRun 2's girl)
+    for (let i = 0; i < 10; i++) cur[i] = cur[i] == null ? tgt[i] : cur[i] + (tgt[i] - cur[i]) * (i === 6 ? Math.min(1, dt * 4.5) : k);   // (her head turns ease over ~0.4 s)
+    {   // their mouths (pass 3): [smile, open, pout] - she laughs when she cheers, pouts in a sulk, and her mouth moves as she chats; he grins when she's happy, gapes at a crash
+      const MO = { idle: [0.35, 0, 0], cheer: [1, 0.6, 0], wave: [0.95, 0.4, 0], clap: [1, 0.5, 0], sulk: [0, 0, 1], sad: [0, 0, 0.7], ask: [0.55, 0.25, 0], look: [0.4, 0.05, 0], hair: [0.45, 0, 0], hold: [0.6, 0.65, 0], point: [0.6, 0.3, 0] };
+      const q = Math.min(1, dt * 10), mv = (M, g) => { if (!M) return; const mi = M.morphTargetInfluences; for (let j = 0; j < 3; j++) mi[j] += (g[j] - mi[j]) * q; };
+      const hg = (MO[her.k] || MO.idle).slice(); if (speaking && hg[1] < 0.5) { hg[1] = Math.max(hg[1], 0.15 + 0.35 * Math.abs(Math.sin(t / 95) * Math.sin(t / 61))); hg[0] = Math.max(hg[0], 0.45); }
+      if (W.count > 30 && !R.camDrv) { hg[0] = 0.95; hg[1] = Math.max(hg[1], 0.3); }   // (pass 10: on the start line, a big smile for the camera)
+      mv(C.her.mouth, hg); mv(C.drv.mouth, W.count > 30 ? [0.85, 0.12, 0] : W.crash ? [0, 0.9, 0] : her.k === 'cheer' || her.k === 'wave' || her.k === 'clap' ? [1, 0.3, 0] : W.boosting ? [0.7, 0.2, 0] : [0.25, 0, 0]);
+    }
+    {   // their eyes (the second ten, pass 2): a blink every few seconds, small glances about; she looks at him while she chats, he at her; at you on the start line
+      const eyeAt = (P2, yaw, pitch, ph) => { if (!P2.eyes) return; const bt = (t + ph) % 4100, bl = bt < 170 ? Math.sin(Math.PI * bt / 170) : 0, sac = Math.floor((t + ph) / 1700), jx = Math.sin(sac * 12.9898) * 0.1, jy = Math.sin(sac * 78.233) * 0.05, q = Math.min(1, dt * 18);
+        for (const e of P2.eyes) { e.look.rotation.y += (yaw + jx - e.look.rotation.y) * q; e.look.rotation.x += (pitch + jy - e.look.rotation.x) * q; e.lu.rotation.x = -bl * 1.3 + e.look.rotation.x * 0.45 + (e.squint || 0) * -0.18; e.ll.rotation.x = bl * 0.22 + (e.squint || 0) * 0.22; } };
+      const start = W.count > 30 && !R.camDrv, stv = W.steer || 0;
+      eyeAt(C.her, start ? 0 : speaking ? -0.42 : her.k === 'look' ? (her.side || 1) * 0.3 : 0, start ? 0.06 : her.k === 'sulk' ? -0.22 : 0, 0);
+      eyeAt(C.drv, start ? 0 : speaking && Math.abs(stv) < 0.3 ? 0.42 : -stv * 0.28, start ? 0.06 : 0, 1300);
+    }
+    {   // their expressions (second ten, pass 9): the brows lift with a smile, a question or a fright and knit in a sulk; a smile narrows the eyes
+      const ex = (P2, up, knit, squint) => { if (P2.brows) for (const g of P2.brows) { const sd = g.userData.sd, q = Math.min(1, dt * 8);
+          g.position.y += (g.userData.y0 + up * 0.0045 - knit * 0.0022 - g.position.y) * q; g.rotation.z += (sd * knit * 0.24 - sd * up * 0.05 - g.rotation.z) * q; }
+        if (P2.eyes) for (const e of P2.eyes) e.squint = (e.squint || 0) + (squint - (e.squint || 0)) * Math.min(1, dt * 8); };
+      const hk = her.k, happy = hk === 'cheer' || hk === 'wave' || hk === 'clap' || W.count > 30;
+      ex(C.her, happy ? 0.45 : hk === 'ask' ? 1 : hk === 'hold' ? 0.85 : hk === 'sulk' ? -0.3 : speaking ? 0.3 * Math.abs(Math.sin(t / 260)) : hk === 'look' ? 0.2 : 0, hk === 'sulk' || hk === 'sad' ? 1 : 0, happy ? 0.65 : 0.1);
+      ex(C.drv, W.crash ? 1.2 : W.boosting ? 0.4 : happy ? 0.2 : 0, 0, happy ? 0.5 : 0);
+    }
     const H = C.her; H.arms[0].sh.rotation.x = cur[0]; H.arms[0].sh.rotation.z = cur[1]; H.arms[0].el.rotation.x = cur[2];
-    H.arms[1].sh.rotation.x = cur[3]; H.arms[1].sh.rotation.z = cur[4]; H.arms[1].el.rotation.x = cur[5];
-    H.neck.rotation.y = cur[6]; H.neck.rotation.x = cur[7]; H.neck.rotation.z = 0.05; H.arms[0].sh.rotation.y = cur[8]; H.arms[1].sh.rotation.y = cur[9];
+    H.arms[1].sh.rotation.x = cur[3]; H.arms[1].sh.rotation.z = cur[4]; H.arms[1].el.rotation.x = cur[5]; R.lapK = (R.lapK || 0) + ((her.k === 'idle' && W.count <= 75 ? 1 : 0) - (R.lapK || 0)) * k; H.arms[1].el.rotation.y = LAP_TWIST * R.lapK;   // (round 2: her lap hand palm down)
+    H.neck.rotation.y = cur[6] + Math.sin(t / 1700 + 2) * 0.03; H.neck.rotation.x = cur[7] + Math.sin(t / 1300) * 0.018; H.neck.rotation.z = 0.09; H.arms[0].sh.rotation.y = cur[8]; H.arms[1].sh.rotation.y = cur[9];
     // her hair: hanging down when you're still, streaming out behind at speed, fluttering
     const sp = Math.min(1, W.v / 40);
     { const C = R.couple, sc = C.scarf; sc.visible = !R.flying.length;
@@ -1552,24 +1677,71 @@ export function createWorld() {
           for (let i = 0; i < C.NS; i++) {
             const f = i / (C.NS - 1), seg = 0.075, dz = 0.25 + sp * 0.75, dy = -0.95 + sp * 0.95, n = Math.hypot(dz, dy);
             if (i) { const ph = t / 70 - i * 0.9 + tl * 1.7, amp = f * sp; x += Math.sin(ph) * 0.03 * amp - 0.006 - 0.006 * (1 - sp); y += dy / n * seg + Math.cos(ph * 1.3) * 0.022 * amp; z += dz / n * seg; if (y < A.y - 0.28) y = A.y - 0.28; }
-            const w = 0.104 * (1 - f * 0.5), o = (tl * C.NS + i) * 2, tw = Math.sin(t / 60 - i * 0.8 + tl * 1.3) * 1.1 * f * sp, wx = Math.sin(tw) * w, wy = Math.cos(tw) * w;
+            const w = 0.05 * (1 - f * 0.6), o = (tl * C.NS + i) * 2, tw = Math.sin(t / 60 - i * 0.8 + tl * 1.3) * 1.1 * f * sp, wx = Math.sin(tw) * w, wy = Math.cos(tw) * w;
             P.setXYZ(o, x + wx, y + wy, z); P.setXYZ(o + 1, x - wx, y - wy, z);
           }
         }
         P.needsUpdate = true; sc.geometry.computeVertexNormals(); sc.geometry.computeBoundingSphere();
       } }
     if (H.scarf) H.scarf.forEach((g, i) => { g.rotation.x = (i ? 0.04 : 1.35 - sp * 1.15) + Math.sin(t / 45 + i * 1.6) * 0.32 * sp; g.rotation.y = (i ? 0 : -0.08) + Math.sin(t / 70 + i * 1.3) * 0.42 * sp; g.rotation.z = Math.sin(t / 55 + i) * 0.4 * sp; });
-    if (H.locks) H.locks.forEach((g, i) => { g.rotation.x = -sp * ((i >= H.locks.length - 2 ? 1.2 : 0.95) + 0.07 * Math.sin(t / (75 + i * 3) + i * 0.35)) - 0.04; g.rotation.z = ((i >= 1 && i <= 5 ? (i - 3) * 0.045 : 0) + Math.sin(t / (90 + i * 4) + i * 0.4) * 0.03) * sp; });
+    if (H.locks) H.locks.forEach((g, i) => { const fr = i === H.locks.length - 2, wv = 0.1 * Math.sin(t / (75 + i * 3) + i * 0.35) + 0.05 * Math.sin(t / (41 + i * 2) + i * 1.3);   // (round 7: two waves; her front lock lifts and whips)
+      g.rotation.x = -sp * ((i >= H.locks.length - 2 ? 1.2 : 0.95) + wv + (fr ? 0.3 : 0)) - 0.04; g.rotation.z = ((i >= 1 && i <= 5 ? (i - 3) * 0.045 : 0) + Math.sin(t / (90 + i * 4) + i * 0.4) * 0.06 + (fr ? Math.sin(t / 62) * 0.3 : 0)) * sp + (R.lean || 0) * 1.6; });
     if (H.hair) H.hair.forEach((g, i) => { g.rotation.x = (i ? 0.13 + (1 - sp) * 0.14 : 1.3 - sp * 0.62) + Math.sin(t / 65 + i * 1.2) * 0.13 * sp; g.rotation.y = (i ? 0 : 0.14) + Math.sin(t / 100 + i * 0.9) * 0.12 * sp; });
     // him: both hands on the wheel, turning it; a fist in the air at the goal
     const D = C.drv, st = W.steer, gl = her.k === 'wave' || (her.k === 'cheer' && W.banner && W.banner.kind === 'goal');
     C.wheel.rotation.z = -st * 1.5;
-    D.arms[0].sh.rotation.x = 1.12 - st * 0.2; D.arms[0].sh.rotation.z = 0.12; D.arms[0].sh.rotation.y = 0; D.arms[0].el.rotation.x = 0.3;
-    D.arms[1].sh.rotation.x = gl ? 0.2 : 1.12 + st * 0.2; D.arms[1].sh.rotation.z = gl ? 2.7 + Math.sin(t / 100) * 0.2 : -0.12; D.arms[1].sh.rotation.y = 0; D.arms[1].el.rotation.x = gl ? 0.4 : 0.3;
-    D.neck.rotation.y = -st * 0.22 + (her.k === 'ask' ? 0.3 : 0) + (speaking && Math.abs(st) < 0.3 ? 0.2 : 0); D.neck.rotation.x = 0.09;   // (a glance across at her while she talks)
+    D.arms[0].sh.rotation.x = 0.46 - st * 0.14; D.arms[0].sh.rotation.z = 0.08; D.arms[0].sh.rotation.y = 0; D.arms[0].el.rotation.x = 1.08 + st * 0.1;   // (hands at 9 and 3, elbows bent: solved, scratchpad armik.mjs)
+    D.arms[1].sh.rotation.x = gl ? 0.2 : 0.46 + st * 0.14; D.arms[1].sh.rotation.z = gl ? 2.7 + Math.sin(t / 100) * 0.2 : -0.08; D.arms[1].sh.rotation.y = 0; D.arms[1].el.rotation.x = gl ? 0.4 : 1.08 - st * 0.1;
+    const mir = (t % 13000) < 750 && Math.abs(st) < 0.2 && !W.crash ? Math.sin(Math.PI * (t % 13000) / 750) : 0;   // (pass 9: now and then a glance up at the mirror)
+    if (!R.gNext || t > R.gNext) { R.gAt = t; R.gNext = t + 6000 + Math.random() * 7000; } const gk = Math.abs(st) < 0.2 && t - R.gAt < 650 ? Math.sin(Math.PI * (t - R.gAt) / 650) : 0;   // (round 7: a quick glance across at her)
+    D.neck.rotation.y = -st * 0.34 - (R.lean || 0) * 0.6 + (her.k === 'ask' ? 0.3 : 0) + (speaking && Math.abs(st) < 0.3 ? 0.2 : 0) + mir * 0.3 + gk * 0.26 + Math.sin(t / 1900) * 0.025; D.neck.rotation.x = 0.09 - mir * 0.12 + Math.sin(t / 1400 + 1) * 0.015;   // (a glance across at her while she talks)
+    for (const [P2, ph] of [[D, 0], [C.her, 2.1]]) if (P2.chest) { const b = Math.sin(t / 720 + ph); P2.chest.scale.set(1 + 0.004 * b, 1 + 0.003 * b, 1 + 0.009 * b); }   // (breathing)
     // both lean a little into the bends
-    if (!R.flying.length) D.root.rotation.z = H.root.rotation.z = -st * Math.min(1, W.v / 50) * 0.22;
+    if (!R.flying.length) {   // (round 7: thrown out of the bends - up to ~7 degrees, lagging ~0.25 s - their heads kept nearly level; pressed back as you accelerate, forward braking)
+      const lt = st * Math.min(1, W.v / 40) * 0.12 + (W.drift ? W.drift * 0.04 : 0); R.lean = (R.lean || 0) + (lt - (R.lean || 0)) * Math.min(1, dt / 0.25);
+      const acc = R.pv == null ? 0 : (W.v - R.pv) / Math.max(1e-3, dt); R.pv = W.v; R.pitch = (R.pitch || 0) + (Math.max(-0.05, Math.min(0.05, acc * 0.0025)) - (R.pitch || 0)) * Math.min(1, dt / 0.3);
+      for (const P2 of [D, H]) { P2.root.rotation.z = R.lean * (P2 === D ? 1.3 : 1); P2.root.rotation.x = P2.root.userData.home.r.x + R.pitch; }   // (round 8: him ~9 degrees)
+      D.neck.rotation.z = -0.6 * R.lean * 1.3; H.neck.rotation.z = 0.09 - 0.6 * R.lean;
+    }
     if (!R.flying.length) for (const [P2, ph] of [[D, 0], [H, 1.7]]) { const r = P2.root; r.position.y = r.userData.home.p.y + Math.sin(t / 58 + ph) * 0.004 * Math.min(1, W.v / 30) + (R.land || 0) * -0.03; }   // (riding the road: a gentle bob, a jolt on landing)
+    if (!R.flying.length && !R.camDrv) sceneCouple(W, t, D, H);
+  }
+  // ---- the lights and the goal as little scenes (owner, 7 Oct: "turn the countdown and goal moments into short scenes"): while the
+  // camera is close on the two of you. The lights - she rests a hand on his shoulder and they look at each other, he nods; they turn to
+  // the camera, she waves, he lifts a hand; they get ready (she holds on, he leans to the wheel) for GO. The goal - they celebrate,
+  // high-five across the car, then lean together, her arm round him (a kiss on his cheek for an S or an A)
+  function sceneCouple(W, t, D, H) {
+    const sm = (x) => { x = Math.min(1, Math.max(0, x)); return x * x * (3 - 2 * x); };
+    const win = (v, a0, a1, b0, b1) => sm((v - a0) / (a1 - a0)) * (1 - sm((v - b0) / (b1 - b0)));   // up from a0 to a1, down from b0 to b1 (either direction)
+    const L = (a, b, k) => a + (b - a) * k;
+    const arm = (A, k, x, z, e, y) => { if (k <= 0) return; A.sh.rotation.x = L(A.sh.rotation.x, x, k); A.sh.rotation.z = L(A.sh.rotation.z, z, k); A.el.rotation.x = L(A.el.rotation.x, e, k); if (y != null) A.sh.rotation.y = L(A.sh.rotation.y, y, k); };
+    if (W.count > 0) {
+      const c = W.count;
+      const kA = win(c, 200, 190, 150, 138);   // her hand on his shoulder, a look between them, his nod
+      arm(H.arms[1], kA, 0.5, 1.12, 1.0, -0.2);
+      H.neck.rotation.y = L(H.neck.rotation.y, -0.58, kA); H.neck.rotation.x = L(H.neck.rotation.x, -0.03, kA);
+      D.neck.rotation.y = L(D.neck.rotation.y, 0.45, kA); D.neck.rotation.x += Math.sin(t / 130) * 0.08 * kA;
+      const kB = win(c, 146, 134, 88, 76);   // to the camera: she waves, he lifts a hand off the wheel
+      arm(H.arms[0], kB, 0.2, -2.5 - Math.sin(t / 90) * 0.42, 0.6);
+      arm(D.arms[0], kB, 1.3, 0.62 + Math.sin(t / 110) * 0.16, 1.15);
+      H.neck.rotation.y = L(H.neck.rotation.y, 0.12, kB); D.neck.rotation.y = L(D.neck.rotation.y, 0.05, kB);
+      const kC = win(c, 82, 70, 2, -6);   // ready: she holds on, he leans to the wheel, both eyes ahead
+      arm(H.arms[0], kC, 0.95, 0.15, 0.35); arm(H.arms[1], kC, 0.95, -0.15, 0.35);
+      H.neck.rotation.y = L(H.neck.rotation.y, 0, kC); D.neck.rotation.y = L(D.neck.rotation.y, 0, kC);
+      D.root.rotation.x = L(D.root.rotation.x, D.root.userData.home.r.x - 0.07, kC);
+      return;
+    }
+    const G = W.goalSeq; if (!G) return;
+    const g = G.t, good = G.rank === 'S' || G.rank === 'A' || G.rank === 'B', best = G.rank === 'S' || G.rank === 'A';
+    if (!good) return;   // (a C or a D: she sulks or looks away, as the mood has her)
+    const kH = win(g, 132, 148, 202, 218), cl = Math.sin(Math.PI * Math.min(1, Math.max(0, (g - 150) / 50)));   // the high-five across the car
+    arm(H.arms[1], kH, 0.38, 2.2 + 0.32 * cl, 0.4); arm(D.arms[1 - 1], kH, 0.38, -(2.2 + 0.32 * cl), 0.4);
+    H.neck.rotation.y = L(H.neck.rotation.y, -0.45, kH); D.neck.rotation.y = L(D.neck.rotation.y, 0.4, kH);
+    const kL = win(g, 222, 246, 385, 405), kiss = best ? win(g, 275, 292, 322, 338) : 0;   // leaning together, her arm round him
+    H.root.rotation.z += -0.13 * kL - 0.06 * kiss; D.root.rotation.z += 0.1 * kL;
+    arm(H.arms[1], kL, 0.32, 1.42, 0.62, -0.25);
+    H.neck.rotation.y = L(H.neck.rotation.y, -0.55 - 0.22 * kiss, kL); H.neck.rotation.z = L(H.neck.rotation.z, -0.16, kL);
+    D.neck.rotation.y = L(D.neck.rotation.y, 0.34, kL); D.neck.rotation.z = L(D.neck.rotation.z, 0.1, kL);
   }
 
   // ---------------------------------------------------------------- one picture
@@ -1587,6 +1759,11 @@ export function createWorld() {
     if (key !== R.lookKey) { R.lookKey = key; R.fade = R.look === null ? 1 : 0; R.look = here; setBackdrop(key, W); R.envDone = false; }
     R.fade = Math.min(1, R.fade + dt / 2.5);
     R.tunK += ((E.segAt(W, E.segIndex(W.s)).tun ? 1 : 0) - R.tunK) * Math.min(1, dt * 3.5); WAVE_T.value = t / 1000;
+    { const hero = W.count > 0 ? 1 : W.goalSeq ? Math.min(1, W.goalSeq.t / 40) : 0; R.heroL = (R.heroL || 0) + (hero - (R.heroL || 0)) * Math.min(1, dt * 3); if (R.keyL) { R.keyL.intensity = 7 * R.heroL; R.rimL.intensity = 9 * R.heroL; } }
+    if (R.starterArm && R.starterArm.parent) {   // the starter's flag: held up and waved while the lights count down, swept down (towards the road) at GO
+      const SA = R.starterArm; if (W.count > 0 || W.goT == null) { SA.rotation.x = 0; SA.rotation.z = Math.sin(t / 140) * 0.16; }
+      else { const u = Math.min(1, (W.t - W.goT) / 16); SA.rotation.z = 0; SA.rotation.x = 1.95 * u * u * (3 - 2 * u); }
+    }
     R.fieldKey = zoneKey(W, E.segAt(W, E.segIndex(W.s)));   // (a part of a stage with its own ground blends in as you arrive)
     setLook(here, R.fade >= 1 && !R.envDone ? 1 : Math.min(1, dt * 1.2));
     if (!R.envDone && (R.fade >= 1 || t - R.envT > 350)) { updateEnv(t); if (R.fade >= 1) R.envDone = true; }
@@ -1602,18 +1779,22 @@ export function createWorld() {
     { let up = 0, gp = 0, gr = 0; if (Math.abs(W.x) > HALF + RUM && !W.air) { const ly = landY(W, POS.x, cy, POS.z); if (ly != null) { up = Math.max(-0.5, Math.min(8, ly - cy));   // off the road: on the land,
         const hd = R.visHead || roadTh, fx0 = Math.sin(hd), fz0 = -Math.cos(hd), lf = landY(W, POS.x + fx0 * 1.4, cy, POS.z + fz0 * 1.4), lr = landY(W, POS.x - fz0 * 0.9, cy, POS.z + fx0 * 0.9);   // tilted to its slope
         if (lf != null) gp = Math.max(-0.35, Math.min(0.35, Math.atan((lf - ly) / 1.4))); if (lr != null) gr = Math.max(-0.35, Math.min(0.35, Math.atan((lr - ly) / 0.9))); } }
+      const dk2 = 1 - 0.5 * (R.driftK || 0); up *= dk2; gp *= dk2; gr *= dk2;   // (drifting over the kerb: half the jolt)
       const kg = Math.min(1, dt * 10); R.gLift = (R.gLift || 0) + (up - (R.gLift || 0)) * kg; R.gP = (R.gP || 0) + (gp - (R.gP || 0)) * kg; R.gR = (R.gR || 0) + (gr - (R.gR || 0)) * kg; cy += R.gLift; }
     const heading = roadTh + W.psi, travel = roadTh + W.phi; R.heading = heading;
     player.position.set(cx, cy, cz);
     const cr = W.crash;
-    R.psiK = (R.psiK || 1) + ((W.drift && !cr ? 1.75 : 1) - (R.psiK || 1)) * Math.min(1, dt * 4); R.visHead = roadTh + Math.sign(W.psi) * Math.min(Math.abs(W.psi) * R.psiK, Math.max(Math.abs(W.psi), 0.7));   // (never past about 40 degrees)
+    { const slip = W.psi - W.phi, a = Math.abs(slip), S = Math.min(1, Math.max(0, (a - 0.03) / 0.27)), ex = 1 + 0.35 * S * S * (3 - 2 * S), vs = Math.sign(slip) * 0.66 * Math.tanh(a * ex / 0.66);   // (drift, 7 Oct: one smooth curve - it used to switch)
+      R.vsS = R.vsS == null || cr ? vs : R.vsS + Math.max(-3.5 * dt, Math.min(3.5 * dt, (vs - R.vsS) * Math.min(1, dt * 13))); R.visSlip = cr ? 0 : R.vsS;   // (a short smooth lag - a hard rate cap left a corner at the end of a flick - with a cap for jolts)
+      R.visHead = roadTh + W.phi + (cr ? slip : R.vsS);
+      if (!cr) { const tv = roadTh + W.phi, A = 0.3; player.position.x += A * (Math.sin(tv) - Math.sin(R.visHead)); player.position.z += A * (Math.cos(R.visHead) - Math.cos(tv)); } }   // (the tail swings out round the front wheels)   // (never past about 40 degrees)
     // the body on its springs (owner, 6 Oct: "more realistic"): it dips under braking and squats as it pulls away, by how hard (the real
     // change of speed, smoothed), and leans out in a bend by how fast you're turning
     const dvdt = dt > 0 ? (W.v - (R.pv == null ? W.v : R.pv)) / dt : 0; R.pv = W.v;
     R.lonA = (R.lonA || 0) + (Math.max(-14, Math.min(10, cr ? 0 : dvdt)) - (R.lonA || 0)) * Math.min(1, dt * 4);
     R.latK = (R.latK || 0) + ((cr ? 0 : W.steer * Math.pow(Math.min(1.2, W.v / E.VMAX), 2)) - (R.latK || 0)) * Math.min(1, dt * 3);
     let yaw = -R.visHead, roll = POS.bank * 0.8 + R.latK * 0.06, pitch = Math.atan(gradeAt(W)) * 0.9 + (W.air ? clamp(W.vh * 0.012, -0.25, 0.2) : 0), lift = 0;
-    R.bodyR = (R.bodyR || 0) + ((W.drift && !cr ? W.steer * 0.08 : 0) - (R.bodyR || 0)) * Math.min(1, dt * 5); R.bodyP = (R.bodyP || 0) + ((W.boosting ? 0.012 : 0) + R.lonA * 0.0022 - (R.bodyP || 0)) * Math.min(1, dt * 5);
+    R.bodyR = (R.bodyR || 0) + ((cr ? 0 : (R.visSlip || 0) * 0.13) - (R.bodyR || 0)) * Math.min(1, dt * 10); R.bodyP = (R.bodyP || 0) + ((W.boosting ? 0.012 : 0) + R.lonA * 0.0022 + (W.drift && !cr ? (W.driftT < 0.18 ? -0.026 : 0.017) : 0) - (R.bodyP || 0)) * Math.min(1, dt * 5);   // (drift, 7 Oct: roll by the slide, a nose dip into it, a squat holding it)
     roll += R.bodyR + (R.gR || 0); pitch += R.bodyP + (R.gP || 0);
     if ((W.wspin || 0) > 0.1 && !cr) yaw += Math.sin(t / 85) * 0.025 * W.wspin;   // (the tail twitching as the tyres spin)
     if (W.kickA && !cr) yaw -= W.kickA;   // (nitro from low speed: the tail kicked out)
@@ -1633,12 +1814,13 @@ export function createWorld() {
     R.brakeK += (((W.v < R.lastV - 0.05 && !W.crash) || W.drift ? 1 : 0) - R.brakeK) * Math.min(1, dt * 12); R.lastV = W.v;
     CAR.brake.color.setScalar(1.05 + R.brakeK * 2.6);
     animateCouple(W, dt, t);
-    wheels.forEach((w, i) => { if (w.parent !== player) return; w.rotation.order = 'YXZ'; w.rotation.y = i < 2 ? -W.steer * 0.42 + (W.drift ? W.drift * 0.25 : 0) : 0; w.rotation.x = -R.wheelSpin - (i >= 2 ? R.rearSpin || 0 : 0); });
+    R.lockK = (R.lockK || 0) + ((Math.abs(R.visSlip || 0) > 0.06 ? 1 : 0) - (R.lockK || 0)) * Math.min(1, dt * 10);   // (opposite lock, eased in and out over ~0.1 s)
+    wheels.forEach((w, i) => { if (w.parent !== player) return; w.rotation.order = 'YXZ'; w.rotation.y = i < 2 ? (1 - R.lockK) * -W.steer * 0.42 + R.lockK * Math.max(-0.52, Math.min(0.52, (R.visSlip || 0) * 0.8)) : 0; w.rotation.x = -R.wheelSpin - (i >= 2 ? R.rearSpin || 0 : 0); });
     const sh = player.userData.shadow; sh.position.y = 0.05 - (W.h - E.heightAt(W, W.s)) - lift; sh.material.opacity = Math.max(0.15, 1 - (W.h - E.heightAt(W, W.s) + lift) * 0.2);
     // ---- the camera: behind and above, swinging round late, wider as you go faster
     R.crashK += ((cr && cr.hard ? 1 : 0) - R.crashK) * Math.min(1, dt * 2.5);
     const near = R.camNear !== false, spd = W.v / E.VMAX, sk = Math.min(0.5, Math.max(0, spd - 0.6)), zk = near ? Math.pow(Math.tan(25 * Math.PI / 180) / Math.tan(Math.min(80, Math.max(30, camera.fov - (R.nk || 0) * 4)) * Math.PI / 360), 0.7) : 1, camDist = (near ? (7.15 - (R.driftK || 0) * 0.45) * zk : 4.4 + spd * 0.5) + R.crashK * 3.8, camH = (near ? (1.9 + R.boostK * 0.3) * zk : 2.15 + spd * 0.2) + R.crashK * 1.7;   // (the whole rig scales round the car: same size, same place)   // Close: low behind the car; High: up enough to see the road over the two of you
-    const yawTarget = travel * 0.55 + heading * 0.45;
+    const hw = 0.45 - 0.25 * Math.min(1, Math.abs(R.visSlip || 0) / 0.3), yawTarget = travel * (1 - hw) + heading * hw;   // (in a drift the camera keeps more to the line the car's taking)
     if (!R.camInit) { R.camYaw = yawTarget; }
     let dy = yawTarget - R.camYaw; while (dy > Math.PI) dy -= 2 * Math.PI; while (dy < -Math.PI) dy += 2 * Math.PI;
     R.camYaw += dy * Math.min(1, dt * (cr ? 1.5 : near ? 3.8 : 5.5));
@@ -1657,14 +1839,14 @@ export function createWorld() {
       if (ly != null && R.camPos.y < ly + 1.1) R.camPos.y = ly + 1.1; }
     camera.position.copy(R.camPos);
     if (W.shake > 0 && R.shakeOn !== false) camera.position.add(V4.set((Math.random() - 0.5) * W.shake * 0.02, (Math.random() - 0.5) * W.shake * 0.02, 0));
-    if (near) { const io = (R.driftK || 0) * (W.steer || 0) * 2.2 * zk, la = (12 + R.boostK * 5) * zk; V4.set(cx + fx * la * (1 - R.crashK * 0.9) - fz * io, R.camY + 1.0 * zk + (cy - R.camY) * 0.35 + lift * 0.7 * R.crashK, cz + fz * la * (1 - R.crashK * 0.9) + fx * io); }
+    if (near) { const io = (R.driftK || 0) * (W.steer || 0) * 0.8 * zk, la = (12 + R.boostK * 5) * zk; V4.set(cx + fx * la * (1 - R.crashK * 0.9) - fz * io, R.camY + 1.0 * zk + (cy - R.camY) * 0.35 + lift * 0.7 * R.crashK, cz + fz * la * (1 - R.crashK * 0.9) + fx * io); }
     else V4.set(cx + fx * 12 * (1 - R.crashK * 0.9), R.camY + 1.55 + (cy - R.camY) * 0.35 + lift * 0.7 * R.crashK, cz + fz * 7 * (1 - R.crashK * 0.85));
     if (R.camShake > 0) { camera.position.add(V3.set((Math.random() - 0.5) * R.camShake, (Math.random() - 0.5) * R.camShake, (Math.random() - 0.5) * R.camShake)); R.camShake = Math.max(0, R.camShake - dt * 1.4); }
     camera.lookAt(V4);
     fill.position.copy(camera.position).add(V3.set(0, 0.6, 0)); fill.target.position.set(cx, cy + 1.62, cz);
     camera.rotation.z += POS.bank * 0.35 - W.steer * spd * (near ? 0.05 : 0.02);
     const kerb = !W.air && Math.abs(W.x) > HALF - 0.6 && Math.abs(W.x) < HALF + RUM + 0.4 && spd > 0.2;
-    if (R.shakeOn !== false && !cr && (spd > 0.65 || kerb)) { const a = Math.max(0, spd - 0.65) * 0.004 + R.boostK * 0.0012 + (kerb ? 0.003 : 0), ts = t / 1000; camera.rotation.x += (Math.sin(ts * 37) * 0.6 + Math.sin(ts * 61 + 1.3) * 0.4) * a * 0.5; camera.rotation.y += (Math.sin(ts * 43 + 2.1) * 0.6 + Math.sin(ts * 71) * 0.4) * a * 0.5; }   // a tremor at speed (a smooth shiver: a fresh random jolt every picture read as judder)
+    if (R.shakeOn !== false && !cr && (spd > 0.65 || kerb)) { const a = Math.max(0, Math.min(1.15, spd) - 0.65) * 0.004 + R.boostK * 0.0012 + (kerb ? 0.003 : 0), ts = t / 1000; camera.rotation.x += (Math.sin(ts * 37) * 0.6 + Math.sin(ts * 61 + 1.3) * 0.4) * a * 0.5; camera.rotation.y += (Math.sin(ts * 43 + 2.1) * 0.6 + Math.sin(ts * 71) * 0.4) * a * 0.5; }   // a tremor at speed (a smooth shiver: a fresh random jolt every picture read as judder)
     if (W.count > 0 && !R.debugCam && !W.ferry && !cr && !R.camDrv) {   // the lights (owner, 7 Oct: "more passes on the people and their faces" - so you SEE them): the camera starts in front of
       // the two of you, close on their faces, eases round past her side and settles behind the car for GO
       const p = 1 - W.count / 200, ss = (a, b, x) => { const u = Math.min(1, Math.max(0, (x - a) / (b - a))); return u * u * (3 - 2 * u); };
@@ -1672,6 +1854,14 @@ export function createWorld() {
       player.updateMatrixWorld(); V5.set(-Math.sin(ph) * d * 0.9 - 0.12 * (1 - a), 1.5 + 0.8 * a, -Math.cos(ph) * d); player.localToWorld(V5);
       V6.set(-0.02, 1.06 + 0.34 * a, 0.5); player.localToWorld(V6); V6.lerp(V4, e);   // (from a little above, aimed at their chests: their faces between the lights and the radio panel)
       camera.position.lerpVectors(V5, camera.position, e); camera.up.set(0, 1, 0); camera.lookAt(V6);
+    }
+    if (W.goalSeq && !R.debugCam && !W.ferry && !cr && !R.camDrv) {   // the goal (audit, 7 Oct: the payoff was wiped in a second): the camera swings round from behind to in
+      // front of the two of you celebrating - the fireworks behind - holds there while the card is up, and swings back for the next round
+      const gt = W.goalSeq.t, ss = (a, b, x) => { const u = Math.min(1, Math.max(0, (x - a) / (b - a))); return u * u * (3 - 2 * u); };
+      const k = ss(25, 130, gt) * (1 - ss(400, 478, gt)), ph = (1 - k) * Math.PI, d = 3.1 + 2.6 * (1 - k), w = ss(0, 0.25, k);
+      player.updateMatrixWorld(); V5.set(-Math.sin(ph) * d * 0.95 + 0.9 * k, 1.75 + 0.55 * (1 - k) + 0.2 * Math.sin(gt / 140), -Math.cos(ph) * d); player.localToWorld(V5);
+      V6.set(1.9 * k - 0.05, 1.12 + 0.28 * (1 - k), 0.45); player.localToWorld(V6);   // (in front: the two of you framed right of centre, the results card on the left) V6.lerp(V4, 1 - w);
+      camera.position.lerpVectors(camera.position, V5, w); camera.up.set(0, 1, 0); camera.lookAt(V6);
     }
     if (W.ferry) {   // aboard: the camera swings slowly round from behind to the side, the far shore coming up ahead
       const S = FERRY_SCENE[W.ferry.k], p = Math.min(1, W.ferry.t / W.ferry.dur), a = roadTh + S.cam[2] + (S.cam[3] - S.cam[2]) * (p * p * (3 - 2 * p)), dd = S.cam[0] * (1 - p * 0.15);
@@ -1695,7 +1885,7 @@ export function createWorld() {
       if (R.camShake > 0) camera.rotation.x += (Math.random() - 0.5) * R.camShake * 0.02;
     } else R.drvOn = false;
     camera.near = drv ? 0.12 : 0.4;
-    camera.fov += ((drv ? 60 + spd * 5 + R.boostK * 2 : near ? 50 + sk * 18 + Math.max(0, spd - 0.88) * 18 + R.boostK * 3 : 53 + spd * 6 + R.boostK * 5) + (R.nk || 0) * (drv ? 3 : 4) - camera.fov) * Math.min(1, dt * ((R.nk || 0) > 0.5 ? 10 : 3)); camera.updateProjectionMatrix();   // (wider as you go faster, but not so wide on the nitro that the road ahead shrinks away)
+    camera.fov += ((drv ? 60 + spd * 5 + R.boostK * 2 : near ? 50 + sk * 18 + Math.max(0, Math.min(1.3, spd) - 0.88) * 18 + R.boostK * 3 : 53 + spd * 6 + R.boostK * 5) + (R.nk || 0) * (drv ? 3 : 4) - camera.fov) * Math.min(1, dt * ((R.nk || 0) > 0.5 ? 10 : 3)); camera.updateProjectionMatrix();   // (wider as you go faster, but not so wide on the nitro that the road ahead shrinks away)
     // the sky things go round with the camera
     sky.position.copy(camera.position); stars.position.copy(camera.position); CUMU.position.set(camera.position.x, camera.position.y - 30, camera.position.z); CUMU.rotation.y = ringFar.rotation.y;
     turnRing(W, dt); heroStep(W, dt); ringFar.position.set(camera.position.x, camera.position.y - (ringFar.userData.hz || 0) - 30, camera.position.z);
@@ -1748,6 +1938,12 @@ export function createWorld() {
       } else if (R.rivalSkid && R.rivalSkid.has(c.id)) R.rivalSkid.delete(c.id);
     }
     for (const [id, m] of traffic) if (!seen.has(id)) { scene.remove(m); traffic.delete(id); }
+    if (R.ghostCar) {   // your ghost: on the road where your best drive was at this moment (not in a split's other branch, not right on top of you)
+      const G = W.ghost, gi = G ? E.segIndex(G.s) : 0, gs = G ? E.segAt(W, gi) : null;
+      R.ghostCar.visible = !!(G && gs && !(gs.fk && gs.fk.b) && !W.crash && !W.ferry && gi >= W.base && gi <= E.lastIndex(W));
+      if (R.ghostCar.visible) { place(W, G.s, G.x, 0, P2); R.ghostCar.position.set(P2.x, P2.y, P2.z); R.ghostCar.rotation.order = 'YXZ'; R.ghostCar.rotation.y = -P2.th; R.ghostCar.rotation.z = P2.bank * 0.8;
+        const nk = Math.min(1, Math.max(0.25, (G.near - 3) / 10)), fk = Math.min(1, Math.max(0, (G.near - 30) / 150)); GHOSTMAT.opacity = (0.34 + 0.3 * fk) * nk; R.ghostGlow.material.opacity = (0.25 + 0.55 * fk) * nk; R.ghostGlow.scale.set(5.5 + 6 * fk, 2.6 + 2 * fk, 1); }   // (bolder and brighter far off; faint right beside you)
+    }
 
     // ---- coins and nitro bottles near the car spin; a caught one flies up and vanishes
     let nc = 0, nn = 0; const PN = { magnet: 0, shield: 0, double: 0, time: 0 }, i0 = E.segIndex(W.s) - 2, i1 = E.segIndex(W.s + 420);
@@ -1800,7 +1996,7 @@ export function createWorld() {
     // ---- draw: straight to the screen on a slow PC, otherwise through the glow, the grade and the blur
     R.boostK += ((W.boosting ? 1 : 0) - R.boostK) * Math.min(1, dt * 4); R.flash = Math.max(0, R.flash - dt * 2.2);
     if (R.low) renderer.render(scene, camera);
-    else { GRADE_U.time.value = (t % 10000) / 1000; GRADE_U.blur.value = R.boostK * 0.12 + Math.min(1, Math.max(0, (W.v / E.VMAX - 0.7) / 0.3)) * 0.22 + Math.max(0, W.v / E.VMAX - 0.88) * 0.45; GRADE_U.flash.value = R.flash * 0.5; composer.render(dt); }
+    else { GRADE_U.time.value = (t % 10000) / 1000; GRADE_U.blur.value = R.boostK * 0.12 + Math.min(1, Math.max(0, (W.v / E.VMAX - 0.7) / 0.3)) * 0.22 + Math.max(0, Math.min(1.2, W.v / E.VMAX) - 0.88) * 0.45; GRADE_U.flash.value = R.flash * 0.5; composer.render(dt); }
     return renderer.domElement;
   }
   // the sun's glare: a chain of soft rings from the sun through the middle of the picture, hidden when a hill is in the way
@@ -1854,7 +2050,8 @@ export function createWorld() {
     const fx = Math.sin(heading), fz = -Math.cos(heading), rx = Math.cos(heading), rz = Math.sin(heading), len = carInfo ? carInfo.len : 2;
     const rear = (side) => [cx - fx * len * 0.62 + rx * side * 0.8, cy + 0.3, cz - fz * len * 0.62 + rz * side * 0.8];
     const tfx = Math.sin(travel), tfz = -Math.cos(travel);   // the way the car is really going
-    if (W.drift && !W.air) for (const sd of [-1, 1]) for (let q = 0; q < 3; q++) { const p = rear(sd), out = sd * (0.5 + Math.random() * 1.3);
+    const smk = W.drift && !W.air ? Math.min(1, Math.max(0, (Math.abs(R.visSlip || 0) - 0.12) / 0.25)) * Math.min(1, W.v / 40) : 0;   // (drift smoke by slide x speed: none once it's nearly straight)
+    if (smk > 0.05) for (const sd of [-1, 1]) for (let q = 0; q < Math.round(3 * smk); q++) { const p = rear(sd), out = sd * (0.5 + Math.random() * 1.3);
       tyre.emit(p[0] + rx * sd * 0.3 + (Math.random() - 0.5) * 0.3, p[1] - 0.1, p[2] + rz * sd * 0.3 + (Math.random() - 0.5) * 0.3, tfx * W.v * 0.6 + rx * out * 2.0, 0.6 + Math.random() * 0.5, tfz * W.v * 0.6 + rz * out * 2.0, 0.8, 4.6, '#d6dde6', 0.45, 1.5, 0, SMK); }
     if (W.off && W.v > 8 && !W.air) for (const sd of [-1, 1]) { const p = rear(sd);
       tyre.emit(p[0], p[1] - 0.08, p[2], tfx * W.v * 0.35 + rx * sd * 1.5, 0.4 + Math.random() * 0.8, tfz * W.v * 0.35 + rz * sd * 1.5, 0.4, 2.6, '#b3a385', 0.45, 1.1, 0, SMK); }
@@ -1864,7 +2061,7 @@ export function createWorld() {
     // wheelspin (pulling away): thick smoke boiling off the rear tyres, drifting back and up behind the car
     const ws = W.wspin || 0;
     if (ws > 0.08 && !W.air && !W.crash) for (const sd of [-1, 1]) for (let q = 0; q < Math.ceil(3.5 * ws); q++) { const p = rear(sd), back = 1.5 + Math.random() * 3;
-      tyre.emit(p[0] + rx * sd * 0.15 + (Math.random() - 0.5) * 0.35, p[1] - 0.14, p[2] + rz * sd * 0.15 + (Math.random() - 0.5) * 0.35, -tfx * back + rx * sd * Math.random() * 1.6, 0.35 + Math.random() * 0.9, -tfz * back + rz * sd * Math.random() * 1.6, 0.8, 4.4, '#e2e6ea', 0.22 + 0.3 * ws, 1.8, 0, SMK); }
+      tyre.emit(p[0] + rx * sd * 0.15 + (Math.random() - 0.5) * 0.35, p[1] - 0.14, p[2] + rz * sd * 0.15 + (Math.random() - 0.5) * 0.35, -tfx * back + rx * sd * Math.random() * 1.6, (W.count > 0 ? 0.12 : 0.35) + Math.random() * (W.count > 0 ? 0.3 : 0.9), -tfz * back + rz * sd * Math.random() * 1.6, 0.8, W.count > 0 ? 2.4 : 4.4, '#e2e6ea', (0.22 + 0.3 * ws) * (W.count > 0 ? 0.7 : 1), 1.8, 0, SMK); }
     // black lines: a drift lays wide ones, wheelspin two narrow dark ones from the rear tyres
     if ((W.drift || ws > 0.12) && !W.air && !W.crash) { const a = rear(-1.12), b = rear(1.12); skid.add(a, b, R.prevSkid, W.drift ? 0.17 : 0.13, W.drift ? 0.7 : Math.min(0.9, 0.35 + ws * 0.7)); R.prevSkid = [a, b]; } else R.prevSkid = null;
     // what the rules say happened
@@ -1873,10 +2070,10 @@ export function createWorld() {
       const F = W.fork, b = F && F.s && E.segIndex(W.s) >= F.split ? F.s : 0; place(W, W.s + 1.5, f.x, b, POS);
       const x = POS.x, y = W.h + 0.8, z = POS.z;
       switch (f.k) {
-        case 'coin': for (let i = 0; i < 10; i++) sparks.emit(x, y + 0.6, z, (Math.random() - 0.5) * 6, Math.random() * 5, (Math.random() - 0.5) * 6, 0.25, 0.5, '#ffe066', 1, 0.6); break;
-        case 'power': { const col = { magnet: '#ff5a5a', shield: '#ffd23f', double: '#f2e3b3', time: '#5dff9a' }[f.pw] || '#ffffff'; for (let i = 0; i < 26; i++) sparks.emit(x, y + 0.8, z, (Math.random() - 0.5) * 9, Math.random() * 7, (Math.random() - 0.5) * 9, 0.34, 0.6, col, 1, 0.8); R.flash = Math.max(R.flash, 0.2); break; }
+        case 'coin': for (let i = 0; i < 10; i++) sparks.emit(x + tfx * 2.4, y - 0.1, z + tfz * 2.4, (Math.random() - 0.5) * 6, Math.random() * 3, (Math.random() - 0.5) * 6, 0.18, 0.34, '#ffe066', 1, 0.5); break;   // (round 8: ahead of the bonnet, low - the flare covered her)
+        case 'power': { const col = { magnet: '#ff5a5a', shield: '#ffd23f', double: '#f2e3b3', time: '#5dff9a' }[f.pw] || '#ffffff'; for (let i = 0; i < 26; i++) sparks.emit(x + tfx * 2.4, y, z + tfz * 2.4, (Math.random() - 0.5) * 9, Math.random() * 5, (Math.random() - 0.5) * 9, 0.24, 0.42, col, 1, 0.7); R.flash = Math.max(R.flash, 0.2); break; }
         case 'smash': for (let i = 0; i < 30; i++) sparks.emit(x, y + 0.6, z, (Math.random() - 0.5) * 14, Math.random() * 8, (Math.random() - 0.5) * 14, 0.3, 0.6, i % 2 ? '#ffd23f' : '#ffffff', 1, 0.7, 9); R.camShake = Math.max(R.camShake || 0, 0.35); break;
-        case 'nitro': for (let i = 0; i < 18; i++) sparks.emit(x, y + 0.6, z, (Math.random() - 0.5) * 8, Math.random() * 6, (Math.random() - 0.5) * 8, 0.3, 0.6, '#5aa9ff', 1, 0.7); R.flash = Math.max(R.flash, 0.25); break;
+        case 'nitro': for (let i = 0; i < 18; i++) sparks.emit(x + tfx * 2.4, y, z + tfz * 2.4, (Math.random() - 0.5) * 8, Math.random() * 4, (Math.random() - 0.5) * 8, 0.22, 0.42, '#5aa9ff', 1, 0.6); R.flash = Math.max(R.flash, 0.25); break;
         case 'leaves': for (let i = 0; i < 26; i++) smoke.emit(x, y, z, (Math.random() - 0.5) * 8, 2 + Math.random() * 6, (Math.random() - 0.5) * 8, 0.25, 1.2, ['#3c8a3a', '#64b852', '#c8641e', '#ffd31a', '#e63946'][i % 5], 1, 0.3, 9); break;
         case 'bump': for (let i = 0; i < 14; i++) sparks.emit(x, y, z, (Math.random() - 0.5) * 8, Math.random() * 4, (Math.random() - 0.5) * 8, 0.18, 0.4, '#ffd27a', 1, 0.5, 9); break;
         case 'sparks': for (let i = 0; i < 30; i++) sparks.emit(x, y - 0.4, z, (Math.random() - 0.5) * 4 + tfx * W.v * (0.55 + Math.random() * 0.3), 1 + Math.random() * 4, (Math.random() - 0.5) * 4 + tfz * W.v * (0.55 + Math.random() * 0.3), 0.09, 0.04, i % 3 ? '#ffb347' : '#fff6dc', 1, 0.3 + Math.random() * 0.25, 9, SPK);
@@ -1977,6 +2174,20 @@ function plateTexture() {   // a yellow rear plate: 365 CR
   const t = tex(c, false); return t;
 }
 let FGLOW = null;
+let HAIRTEX = null;
+function hairTex() {   // a lock of hair for the two of you (passes 4-5): fine strands from the root down, thick at the root, thinning to wispy tips, fewer at the
+  // card's edges so no straight side shows; white-grey, so each card's own colour tints it
+  if (HAIRTEX) return HAIRTEX; const W = 128, H = 256, c = canvas(W, H), x = c.getContext('2d'); let sd = 7;
+  const rr = () => { sd = (sd * 16807) % 2147483647; return sd / 2147483647; };
+  for (let i = 0; i < 300; i++) {
+    const x0 = rr() * W, len = H * (0.5 + rr() * 0.5), l = Math.round(165 + rr() * 90), a = 0.55 + rr() * 0.45, wv = (rr() - 0.5) * 7;
+    const g = x.createLinearGradient(0, 0, 0, len); g.addColorStop(0, 'rgba(' + l + ',' + l + ',' + l + ',' + a + ')'); g.addColorStop(0.7, 'rgba(' + l + ',' + l + ',' + l + ',' + (a * 0.9) + ')'); g.addColorStop(1, 'rgba(' + l + ',' + l + ',' + l + ',0)');
+    x.strokeStyle = g; x.lineWidth = 1 + rr() * 2; x.beginPath(); x.moveTo(x0, 0); x.bezierCurveTo(x0 + wv, len * 0.33, x0 - wv, len * 0.66, x0 + wv * 0.5, len); x.stroke();
+  }
+  x.globalCompositeOperation = 'destination-in'; const e = x.createLinearGradient(0, 0, W, 0);
+  e.addColorStop(0, 'rgba(0,0,0,0)'); e.addColorStop(0.16, 'rgba(0,0,0,1)'); e.addColorStop(0.84, 'rgba(0,0,0,1)'); e.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = e; x.fillRect(0, 0, W, H);
+  return (HAIRTEX = tex(c, false));
+}
 let STARTEX = null;
 function starTex() {   // a cartoon star, yellow with a white edge
   if (STARTEX) return STARTEX; const c = canvas(64, 64), x = c.getContext('2d'); x.beginPath();

@@ -24,7 +24,7 @@
   else root.CREngine = factory();
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
-  var SEG = 4, HALF = 7, RUMBLE = 0.9, DT = 1 / 60, VMAX = 63, GRAV = 9.8 * 1.3;   // (VMAX 63 m/s = 141 mph, was 72 = 161: the owner asked for less arcade, 6 Oct)
+  var SEG = 4, HALF = 7, RUMBLE = 0.9, DT = 1 / 60, VMAX = 80.5, GRAV = 9.8 * 1.3, VTRAF = 63;   // (VMAX 80.5 m/s = 180 mph flat out: the owner, 8 Oct, "more like 180" - was 63 = 141 (6 Oct), 72 before. The traffic keeps its real-world pace: VTRAF)
   var VIEW = 900;                       // metres ahead the picture shows (the traffic lives within it)
   var CAR_W = 0.95, CAR_L = 2.2;        // half the player's car
   var LANES = [-4.6, 0, 4.6];
@@ -46,38 +46,38 @@
   // 1 right); band = the heights the road keeps to (metres above the sea); mix = traffic weights for VEH;
   // feat = tunnels, bridges and things over the road (over: models spanning it). Each place once here; RUNS below put them in order.
   var PLACES = [
-    { key: 'bournemouth', name: 'BOURNEMOUTH', seed: 1103, t: 63, len: 700, curvy: 0.55, hilly: 0.12, sea: -1, band: [3, 6], shores: [38, 44, 50, 56, 60, 66, 72, 48], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: { over: ['banner'] } },   // (shores: a wide sandy beach)
-    { key: 'sandbanks', name: 'SANDBANKS', seed: 1709, t: 55, len: 700, curvy: 0.6, hilly: 0.2, sea: -1, band: [3, 8], shores: [30, 34, 38, 42, 48, 54, 36, 40], mix: [5, 4, 1, 1, 3, 0, 0, 4], feat: { over: ['banner'] } },   // (no bridge: there is none on the spit)
-    { key: 'christchurch', name: 'CHRISTCHURCH', seed: 1811, t: 71, len: 700, curvy: 0.65, hilly: 0.3, sea: 1, band: [4, 13], shores: [20, 22, 24, 28, 32, 26, 22, 36], mix: [5, 4, 2, 1, 3, 1, 0, 2], feat: { bridge: 2 } },
-    { key: 'purbeck', name: 'CORFE CASTLE', seed: 2207, t: 72, len: 730, curvy: 0.75, hilly: 1, sea: 0, band: [14, 95], bands: [[0, [10, 26]], [0.3, [22, 34]], [0.62, [30, 90]]], noCut: [0.08, 0.7], mix: [5, 3, 2, 0, 3, 3, 1, 1], feat: { tunnel: 1, over: ['viaduct'] } },   // (noCut: no cutting through the heath's railway or the village)
-    { key: 'swanage', name: 'SWANAGE', seed: 2903, t: 71, len: 730, curvy: 0.7, hilly: 0.6, sea: -1, sh0: 150, shV: 0.6, band: [3, 40], bands: [[0, [24, 40]], [0.22, [12, 22]], [0.36, [6, 12]], [0.48, [3, 7]]], shoreZ: [[0, [140, 150, 160, 145, 155, 150, 160, 140]], [0.27, [105, 110, 115, 100, 110, 105, 115, 108]], [0.44, [80, 84, 88, 82, 86, 80, 88, 84]], [0.55, [24, 26, 28, 30, 26, 24, 28, 26]]], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: {} },   // (in from Corfe on the A351: Harman's Cross by the railway, Herston, the town, then the front - the bay to the sea side, Old Harry across it; sh0: the sea starts far off, shV: and comes in quicker)
+    { key: 'bournemouth', name: 'BOURNEMOUTH', seed: 1103, t: 50, len: 700, curvy: 0.55, hilly: 0.12, sea: -1, band: [3, 6], shores: [38, 44, 50, 56, 60, 66, 72, 48], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: { over: ['banner'] } },   // (shores: a wide sandy beach)
+    { key: 'sandbanks', name: 'SANDBANKS', seed: 1709, t: 51, len: 700, curvy: 0.6, hilly: 0.2, sea: -1, band: [3, 8], shores: [30, 34, 38, 42, 48, 54, 36, 40], mix: [5, 4, 1, 1, 3, 0, 0, 4], feat: { over: ['banner'] } },   // (no bridge: there is none on the spit)
+    { key: 'christchurch', name: 'CHRISTCHURCH', seed: 1811, t: 56, len: 700, curvy: 0.65, hilly: 0.3, sea: 1, band: [4, 13], shores: [20, 22, 24, 28, 32, 26, 22, 36], mix: [5, 4, 2, 1, 3, 1, 0, 2], feat: { bridge: 2 } },
+    { key: 'purbeck', name: 'CORFE CASTLE', seed: 2207, t: 55, len: 730, curvy: 0.75, hilly: 1, sea: 0, band: [14, 95], bands: [[0, [10, 26]], [0.3, [22, 34]], [0.62, [30, 90]]], noCut: [0.08, 0.7], mix: [5, 3, 2, 0, 3, 3, 1, 1], feat: { tunnel: 1, over: ['viaduct'] } },   // (noCut: no cutting through the heath's railway or the village)
+    { key: 'swanage', name: 'SWANAGE', seed: 2903, t: 51, len: 730, curvy: 0.7, hilly: 0.6, sea: -1, sh0: 26, shV: 0.6, band: [3, 30], bands: [[0, [3, 6]], [0.31, [5, 12]], [0.39, [16, 30]], [0.53, [6, 12]], [0.59, [3, 7]]], shoreZ: [[0, [26, 30, 28, 32, 27, 31, 29, 26]], [0.31, [60, 70, 80, 66, 74, 62, 78, 70]], [0.39, [150, 160, 170, 155, 165, 150, 168, 158]], [0.53, [72, 80, 86, 76, 82, 74, 84, 78]], [0.59, [24, 26, 28, 30, 26, 24, 28, 26]]], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: {} },   // (in off the chain ferry, 7 Oct - the coast run reaches it only from Sandbanks: Shell Bay's dunes and Studland's long beach close on the sea side, the heath and Little Sea inland, Studland village, over the downs by Ulwell, down into the town and along the front)
     { key: 'forest', name: 'NEW FOREST', seed: 3301, t: 63, len: 730, curvy: 0.85, hilly: 0.55, sea: 0, band: [10, 50], bands: [[0, [10, 22]], [0.3, [14, 26]], [0.64, [12, 40]]], mix: [5, 3, 2, 0, 3, 2, 1, 1], feat: { over: ['footbridge'] } },
-    { key: 'jurassic', name: 'DURDLE DOOR', seed: 4409, t: 74, len: 740, curvy: 0.8, hilly: 0.85, sea: -1, band: [30, 80], bands: [[0, [18, 30]], [0.18, [30, 60]], [0.36, [3, 9]], [0.64, [40, 80]]], shoreZ: [[0, [100, 110, 120, 95, 105, 115, 100, 110]], [0.18, [60, 70, 80, 65, 75, 70, 60, 80]], [0.36, [20, 22, 24, 26, 22, 20, 24, 22]], [0.64, [26, 30, 34, 38, 30, 28, 34, 32]]], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { tunnel: 1 } },   // (in four parts: Lulworth Castle's park, the ranges, West Lulworth and the Cove, the downs to the Door)
-    { key: 'weymouth', name: 'WEYMOUTH', seed: 4513, t: 64, len: 720, curvy: 0.6, hilly: 0.35, sea: -1, sh0: 120, shV: 0.8, band: [2, 45], bands: [[0, [20, 45]], [0.12, [4, 10]], [0.3, [3, 6]], [0.52, [2, 5]]], shoreZ: [[0, [110, 120, 130, 115, 125, 110, 130, 120]], [0.074, [14, 16, 18, 20, 16, 15, 18, 17]], [0.37, [30, 34, 38, 44, 36, 32, 40, 34]], [0.6, [12, 13, 14, 15, 13, 12, 14, 13]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: { over: ['banner'] } },   // (in from Wool on the A353: over Osmington Hill under the White Horse, down to the sea at Preston, the Esplanade, the harbour)
-    { key: 'harbour', name: 'POOLE HARBOUR', seed: 5503, t: 62, len: 720, curvy: 0.6, hilly: 0.12, sea: 1, band: [3, 8], shores: [16.5, 17, 18, 17.5, 16.5, 19, 18, 17], mix: [5, 4, 3, 2, 1, 0, 2, 2], feat: { bridge: 1 } },
-    { key: 'lymington', name: 'LYMINGTON', seed: 5617, t: 67, len: 720, curvy: 0.65, hilly: 0.3, sea: 1, band: [4, 13], bands: [[0, [4, 9]], [0.3, [3, 7]], [0.64, [3, 6]]], shoreZ: [[0, [17, 18, 19, 20, 18, 17.5, 19, 21]], [0.3, [18, 19, 20, 22, 19, 18.5, 21, 20]], [0.64, [44, 50, 56, 62, 48, 54, 66, 52]]], mix: [5, 4, 2, 1, 3, 1, 0, 3], feat: { bridge: 1 } },   // (shoreZ: the shore for each part of the stage)
+    { key: 'jurassic', name: 'DURDLE DOOR', seed: 4409, t: 45, len: 740, curvy: 0.8, hilly: 0.85, sea: -1, band: [30, 80], bands: [[0, [18, 30]], [0.18, [30, 60]], [0.36, [3, 9]], [0.64, [40, 80]]], shoreZ: [[0, [100, 110, 120, 95, 105, 115, 100, 110]], [0.18, [60, 70, 80, 65, 75, 70, 60, 80]], [0.36, [20, 22, 24, 26, 22, 20, 24, 22]], [0.64, [26, 30, 34, 38, 30, 28, 34, 32]]], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { tunnel: 1 } },   // (in four parts: Lulworth Castle's park, the ranges, West Lulworth and the Cove, the downs to the Door)
+    { key: 'weymouth', name: 'WEYMOUTH', seed: 4513, t: 44, len: 720, curvy: 0.6, hilly: 0.35, sea: -1, sh0: 120, shV: 0.8, band: [2, 45], bands: [[0, [20, 45]], [0.12, [4, 10]], [0.3, [3, 6]], [0.52, [2, 5]]], shoreZ: [[0, [110, 120, 130, 115, 125, 110, 130, 120]], [0.074, [14, 16, 18, 20, 16, 15, 18, 17]], [0.37, [30, 34, 38, 44, 36, 32, 40, 34]], [0.6, [12, 13, 14, 15, 13, 12, 14, 13]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: { over: ['banner'] } },   // (in from Wool on the A353: over Osmington Hill under the White Horse, down to the sea at Preston, the Esplanade, the harbour)
+    { key: 'harbour', name: 'POOLE HARBOUR', seed: 5503, t: 54, len: 720, curvy: 0.6, hilly: 0.12, sea: 1, band: [3, 8], shores: [16.5, 17, 18, 17.5, 16.5, 19, 18, 17], mix: [5, 4, 3, 2, 1, 0, 2, 2], feat: { bridge: 1 } },
+    { key: 'lymington', name: 'LYMINGTON', seed: 5617, t: 58, len: 720, curvy: 0.65, hilly: 0.3, sea: 1, band: [4, 13], bands: [[0, [4, 9]], [0.3, [3, 7]], [0.64, [3, 6]]], shoreZ: [[0, [17, 18, 19, 20, 18, 17.5, 19, 21]], [0.3, [18, 19, 20, 22, 19, 18.5, 21, 20]], [0.64, [44, 50, 56, 62, 48, 54, 66, 52]]], mix: [5, 4, 2, 1, 3, 1, 0, 3], feat: { bridge: 1 } },   // (shoreZ: the shore for each part of the stage)
     { key: 'lyme', name: 'LYME REGIS', seed: 6101, t: 51, len: 750, curvy: 0.75, hilly: 0.8, sea: -1, band: [10, 50], mix: [5, 3, 1, 1, 3, 0, 0, 2], feat: { tunnel: 1 } },
-    { key: 'portland', name: 'PORTLAND', seed: 6203, t: 54, len: 750, curvy: 0.8, hilly: 0.7, sea: -1, sh0: 18, shV: 1.0, band: [2, 80], bands: [[0, [3, 6]], [0.2, [8, 30]], [0.32, [45, 70]], [0.5, [8, 16]]], shoreZ: [[0, [14, 16, 18, 20, 16, 15, 18, 17]], [0.24, [34, 40, 46, 52, 38, 44, 50, 42]], [0.39, [80, 84, 88, 90, 82, 86, 90, 84]], [0.6, [24, 26, 28, 30, 26, 24, 30, 27]]], noCut: [0, 0.75], mix: [5, 3, 2, 0, 3, 1, 1, 1], feat: {} },   // (in from Weymouth on the A354: the causeway between the harbour and Chesil Beach, up through Fortuneswell, over Tophill's quarries, down to the Bill; no tunnels - Portland has none)
-    { key: 'goldencap', name: 'GOLDEN CAP', seed: 6307, t: 72, len: 760, curvy: 0.8, hilly: 0.9, sea: -1, band: [30, 90], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { tunnel: 1 } },
-    { key: 'hengistbury', name: 'HENGISTBURY HEAD', seed: 6409, t: 59, len: 740, curvy: 0.65, hilly: 0.4, sea: 1, band: [4, 22], shores: [30, 34, 38, 42, 46, 36, 40, 32], mix: [5, 4, 1, 1, 3, 0, 0, 3], feat: { bridge: 1 } },
-    { key: 'needles', name: 'THE NEEDLES', seed: 6607, t: 56, len: 760, curvy: 0.75, hilly: 0.8, sea: 1, band: [22, 70], bands: [[0, [3, 9]], [0.24, [14, 36]], [0.68, [22, 44]], [0.86, [32, 54]]], shores: [22, 26, 30, 34, 28, 24, 32, 26], mix: [5, 3, 1, 1, 3, 0, 0, 2] },   // (bands: Yarmouth at the water, over West Wight, up to the Needles; no tunnel)
+    { key: 'portland', name: 'PORTLAND', seed: 6203, t: 51, len: 750, curvy: 0.8, hilly: 0.7, sea: -1, sh0: 18, shV: 1.0, band: [2, 80], bands: [[0, [3, 6]], [0.2, [8, 30]], [0.32, [45, 70]], [0.5, [8, 16]]], shoreZ: [[0, [14, 16, 18, 20, 16, 15, 18, 17]], [0.24, [34, 40, 46, 52, 38, 44, 50, 42]], [0.39, [80, 84, 88, 90, 82, 86, 90, 84]], [0.6, [24, 26, 28, 30, 26, 24, 30, 27]]], noCut: [0, 0.75], mix: [5, 3, 2, 0, 3, 1, 1, 1], feat: {} },   // (in from Weymouth on the A354: the causeway between the harbour and Chesil Beach, up through Fortuneswell, over Tophill's quarries, down to the Bill; no tunnels - Portland has none)
+    { key: 'goldencap', name: 'GOLDEN CAP', seed: 6307, t: 60, len: 760, curvy: 0.8, hilly: 0.9, sea: -1, band: [30, 90], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: { tunnel: 1 } },
+    { key: 'hengistbury', name: 'HENGISTBURY HEAD', seed: 6409, t: 51, len: 740, curvy: 0.65, hilly: 0.4, sea: 1, band: [4, 22], shores: [30, 34, 38, 42, 46, 36, 40, 32], mix: [5, 4, 1, 1, 3, 0, 0, 3], feat: { bridge: 1 } },
+    { key: 'needles', name: 'THE NEEDLES', seed: 6607, t: 54, len: 760, curvy: 0.75, hilly: 0.8, sea: 1, band: [22, 70], bands: [[0, [3, 9]], [0.24, [14, 36]], [0.68, [22, 44]], [0.86, [32, 54]]], shores: [22, 26, 30, 34, 28, 24, 32, 26], mix: [5, 3, 1, 1, 3, 0, 0, 2] },   // (bands: Yarmouth at the water, over West Wight, up to the Needles; no tunnel)
     // the local run (owner, 6 Oct: "start in Bournemouth ... keep it local ... then work our way out ... the places in the right order"):
     // plain town streets for now, each built properly a level at a time (Winton and Charminster first)
-    { key: 'winton', name: 'WINTON', seed: 7101, t: 73, len: 700, curvy: 0.5, hilly: 0.25, sea: 0, band: [30, 46], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (up Wimborne Road: Dean Park, Winton Banks, Moordown)
-    { key: 'charminster', name: 'CHARMINSTER', seed: 7203, t: 71, len: 700, curvy: 0.5, hilly: 0.25, sea: 0, band: [28, 44], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Springbourne, Charminster Road, Queens Park)
-    { key: 'kinson', name: 'KINSON', seed: 7307, t: 60, len: 700, curvy: 0.55, hilly: 0.3, sea: 0, band: [20, 40], bands: [[0, [28, 40]], [0.3, [22, 32]], [0.66, [18, 34]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Redhill, the village green, St Andrew's)
-    { key: 'muscliff', name: 'MUSCLIFF & THROOP', seed: 7411, t: 62, len: 710, curvy: 0.6, hilly: 0.3, sea: 0, band: [8, 30], bands: [[0, [18, 30]], [0.32, [12, 24]], [0.62, [3, 8]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Castle Lane West, Throop Mill, the Stour)
-    { key: 'littledown', name: 'LITTLEDOWN', seed: 7513, t: 67, len: 700, curvy: 0.5, hilly: 0.25, sea: 0, band: [15, 35], bands: [[0, [20, 30]], [0.33, [15, 28]], [0.66, [12, 24]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Castlepoint, the hospital, Littledown Centre)
-    { key: 'towerpark', name: 'TOWER PARK', seed: 7617, t: 67, len: 710, curvy: 0.55, hilly: 0.3, sea: 0, band: [20, 40], bands: [[0, [24, 36]], [0.3, [26, 34]], [0.62, [26, 32]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Ringwood Road, Mannings Heath, the leisure park)
-    { key: 'bearcross', name: 'BEAR CROSS', seed: 7719, t: 73, len: 710, curvy: 0.55, hilly: 0.3, sea: 0, band: [25, 45], bands: [[0, [30, 36]], [0.3, [28, 42]], [0.66, [14, 34]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (the roundabout, Bearwood, Magna Road)
-    { key: 'hurn', name: 'HURN AIRPORT', seed: 7823, t: 65, len: 710, curvy: 0.6, hilly: 0.2, sea: 0, band: [8, 20], bands: [[0, [6, 12]], [0.3, [10, 16]], [0.72, [5, 12]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Holdenhurst, Hurn, Bournemouth Airport)
-    { key: 'wimborne', name: 'WIMBORNE MINSTER', seed: 7927, t: 53, len: 730, curvy: 0.6, hilly: 0.3, sea: 0, band: [10, 25], bands: [[0, [10, 22]], [0.32, [6, 12]], [0.66, [6, 12]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Canford Magna, the Minster)
-    { key: 'ferndown', name: 'FERNDOWN', seed: 8029, t: 54, len: 730, curvy: 0.6, hilly: 0.3, sea: 0, band: [20, 40], bands: [[0, [14, 26]], [0.3, [24, 34]], [0.64, [26, 42]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Ringwood Road north, West Parley)
+    { key: 'winton', name: 'WINTON', seed: 7101, t: 63, len: 700, curvy: 0.5, hilly: 0.25, sea: 0, band: [30, 46], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (up Wimborne Road: Dean Park, Winton Banks, Moordown)
+    { key: 'charminster', name: 'CHARMINSTER', seed: 7203, t: 65, len: 700, curvy: 0.5, hilly: 0.25, sea: 0, band: [28, 44], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Springbourne, Charminster Road, Queens Park)
+    { key: 'kinson', name: 'KINSON', seed: 7307, t: 49, len: 700, curvy: 0.55, hilly: 0.3, sea: 0, band: [20, 40], bands: [[0, [28, 40]], [0.3, [22, 32]], [0.66, [18, 34]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Redhill, the village green, St Andrew's)
+    { key: 'muscliff', name: 'MUSCLIFF & THROOP', seed: 7411, t: 54, len: 710, curvy: 0.6, hilly: 0.3, sea: 0, band: [8, 30], bands: [[0, [18, 30]], [0.32, [12, 24]], [0.62, [3, 8]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Castle Lane West, Throop Mill, the Stour)
+    { key: 'littledown', name: 'LITTLEDOWN', seed: 7513, t: 56, len: 700, curvy: 0.5, hilly: 0.25, sea: 0, band: [15, 35], bands: [[0, [20, 30]], [0.33, [15, 28]], [0.66, [12, 24]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Castlepoint, the hospital, Littledown Centre)
+    { key: 'towerpark', name: 'TOWER PARK', seed: 7617, t: 57, len: 710, curvy: 0.55, hilly: 0.3, sea: 0, band: [20, 40], bands: [[0, [24, 36]], [0.3, [26, 34]], [0.62, [26, 32]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Ringwood Road, Mannings Heath, the leisure park)
+    { key: 'bearcross', name: 'BEAR CROSS', seed: 7719, t: 60, len: 710, curvy: 0.55, hilly: 0.3, sea: 0, band: [25, 45], bands: [[0, [30, 36]], [0.3, [28, 42]], [0.66, [14, 34]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (the roundabout, Bearwood, Magna Road)
+    { key: 'hurn', name: 'HURN AIRPORT', seed: 7823, t: 56, len: 710, curvy: 0.6, hilly: 0.2, sea: 0, band: [8, 20], bands: [[0, [6, 12]], [0.3, [10, 16]], [0.72, [5, 12]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Holdenhurst, Hurn, Bournemouth Airport)
+    { key: 'wimborne', name: 'WIMBORNE MINSTER', seed: 7927, t: 44, len: 730, curvy: 0.6, hilly: 0.3, sea: 0, band: [10, 25], bands: [[0, [10, 22]], [0.32, [6, 12]], [0.66, [6, 12]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Canford Magna, the Minster)
+    { key: 'ferndown', name: 'FERNDOWN', seed: 8029, t: 48, len: 730, curvy: 0.6, hilly: 0.3, sea: 0, band: [20, 40], bands: [[0, [14, 26]], [0.3, [24, 34]], [0.64, [26, 42]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Ringwood Road north, West Parley)
     // the west coast run (owner, 6 Oct: "split the coast run and do Wareham and Wool"); Kimmeridge to join Swanage and Durdle Door by real roads
-    { key: 'wareham', name: 'WAREHAM', seed: 8233, t: 68, len: 720, curvy: 0.55, hilly: 0.25, sea: 0, band: [8, 22], bands: [[0, [14, 26]], [0.3, [6, 12]], [0.62, [3, 7]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Sandford's heath, the town inside its Saxon walls, the quay and the causeway over the Frome)
-    { key: 'wool', name: 'WOOL', seed: 8337, t: 68, len: 720, curvy: 0.6, hilly: 0.3, sea: 0, band: [8, 30], bands: [[0, [22, 40]], [0.32, [18, 30]], [0.64, [4, 10]]], mix: [5, 3, 2, 1, 3, 1, 1, 2], feat: {} },   // (the heath past the tank crossings, Bovington and the Tank Museum, over Wool Bridge into the village)
-    { key: 'kimmeridge', name: 'KIMMERIDGE', seed: 8441, t: 52, len: 730, curvy: 0.75, hilly: 0.7, sea: -1, sh0: 110, band: [8, 90], bands: [[0, [60, 95]], [0.36, [24, 40]], [0.66, [10, 18]]], shoreZ: [[0, [110, 120, 130, 115, 125, 110, 130, 120]], [0.36, [70, 75, 80, 72, 78, 70, 80, 75]], [0.66, [26, 28, 30, 32, 28, 26, 30, 28]]], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: {} },   // (along the Purbeck ridge, the village, down to the bay)
-    { key: 'highcliffe', name: 'HIGHCLIFFE', seed: 8131, t: 51, len: 730, curvy: 0.6, hilly: 0.3, sea: 0, band: [20, 35], bands: [[0, [6, 14]], [0.33, [14, 24]], [0.66, [24, 34]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (the castle, the clifftop)
+    { key: 'wareham', name: 'WAREHAM', seed: 8233, t: 61, len: 720, curvy: 0.55, hilly: 0.25, sea: 0, band: [8, 22], bands: [[0, [14, 26]], [0.3, [6, 12]], [0.62, [3, 7]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (Sandford's heath, the town inside its Saxon walls, the quay and the causeway over the Frome)
+    { key: 'wool', name: 'WOOL', seed: 8337, t: 59, len: 720, curvy: 0.6, hilly: 0.3, sea: 0, band: [8, 30], bands: [[0, [22, 40]], [0.32, [18, 30]], [0.64, [4, 10]]], mix: [5, 3, 2, 1, 3, 1, 1, 2], feat: {} },   // (the heath past the tank crossings, Bovington and the Tank Museum, over Wool Bridge into the village)
+    { key: 'kimmeridge', name: 'KIMMERIDGE', seed: 8441, t: 51, len: 730, curvy: 0.75, hilly: 0.7, sea: -1, sh0: 110, band: [8, 90], bands: [[0, [60, 95]], [0.36, [24, 40]], [0.66, [10, 18]]], shoreZ: [[0, [110, 120, 130, 115, 125, 110, 130, 120]], [0.36, [70, 75, 80, 72, 78, 70, 80, 75]], [0.66, [26, 28, 30, 32, 28, 26, 30, 28]]], mix: [5, 3, 1, 1, 3, 1, 0, 2], feat: {} },   // (along the Purbeck ridge, the village, down to the bay)
+    { key: 'highcliffe', name: 'HIGHCLIFFE', seed: 8131, t: 45, len: 730, curvy: 0.6, hilly: 0.3, sea: 0, band: [20, 35], bands: [[0, [6, 14]], [0.33, [14, 24]], [0.66, [24, 34]]], mix: [5, 4, 2, 2, 3, 0, 0, 2], feat: {} },   // (the castle, the clifftop)
   ];
   // t (each place): the seconds its checkpoint gives - its real drive time (stagetimes.mjs: the autopilot, a tidy driver, on every route,
   // normal difficulty, the 6 Oct handling) plus 2%, so the clock runs low before each checkpoint the way OutRun's does (owner, 6 Oct)
@@ -87,15 +87,14 @@
   // coast's goals bring you back into town. Within a run of n levels: level L (1..n) has L places; from place j of a level, left goes to
   // j and right to j + 1 of the next. (The owner split the old coast run, 6 Oct: Christchurch to Old Harry was no real road.)
   var RUNS = [
-    { key: 'town', levels: 5, banner: 'Back into town', places: ['bournemouth', 'winton', 'charminster', 'kinson', 'muscliff', 'littledown', 'towerpark', 'bearcross', 'hurn', 'christchurch', 'harbour', 'wimborne', 'ferndown', 'highcliffe', 'hengistbury'], names: { harbour: 'POOLE QUAY' } },
-    // Wareham > Wool (A352) | Corfe (A351); Wool > Weymouth (A353) | Durdle Door (B3071); Corfe > Durdle Door (the range road to East Lulworth) |
-    // Swanage; Weymouth > Portland | Lyme Regis (the coast road, past Golden Cap); Durdle Door > Lyme Regis (the A35, past Golden Cap) | Kimmeridge
-    // (the range road back east by Tyneham); Swanage > Kimmeridge (by Kingston and Steeple) | Sandbanks (Studland and the chain ferry)
-    { key: 'west', levels: 4, banner: 'West along the coast', places: ['wareham', 'wool', 'purbeck', 'weymouth', 'jurassic', 'swanage', 'portland', 'lyme', 'kimmeridge', 'sandbanks'], names: {} },
-    // Lymington > the New Forest (the A337 north by Brockenhurst) | the Needles (the car ferry to Yarmouth)
-    { key: 'east', levels: 2, banner: 'East to the Forest and the island', places: ['lymington', 'forest', 'needles'], names: {} }
+    // the coast first (owner, 7 Oct, after the OutRun 2 audit: the postcard places up front, the town as round 2). West to the left, east to the
+    // right: Bournemouth > Sandbanks | Christchurch; Sandbanks > Old Harry (the chain ferry to Studland) | Wareham; Christchurch > Wareham |
+    // Lymington; Old Harry > Kimmeridge | Corfe; Wareham > Corfe | Wool; Lymington > Wool | the New Forest; Kimmeridge > Lyme Regis | Durdle Door;
+    // Corfe > Durdle Door | Portland; Wool > Portland | Weymouth; the Forest > Weymouth | the Needles (the car ferry from Lymington). The five
+    // goals: Lyme Regis, Durdle Door, Portland, Weymouth and the Needles. (Three links are a map's licence, as OutRun's own are.)
+    { key: 'coast', levels: 5, banner: 'Along the coast', places: ['bournemouth', 'sandbanks', 'christchurch', 'swanage', 'wareham', 'lymington', 'kimmeridge', 'purbeck', 'wool', 'forest', 'lyme', 'jurassic', 'portland', 'weymouth', 'needles'], names: {} },
+    { key: 'town', levels: 5, tf: 1.05, banner: 'Back into town', places: ['bournemouth', 'winton', 'charminster', 'kinson', 'muscliff', 'littledown', 'towerpark', 'bearcross', 'hurn', 'christchurch', 'harbour', 'wimborne', 'ferndown', 'highcliffe', 'hengistbury'], names: { harbour: 'POOLE QUAY' } },
   ];
-  var GOAL_RUN = { harbour: 1, wimborne: 1, ferndown: 2, highcliffe: 2, hengistbury: 2 };   // the town's goals: which run they lead on to
   var STAGES = [], RUN_START = [];
   (function () {
     var byKey = {}; PLACES.forEach(function (p) { byKey[p.key] = p; });
@@ -109,7 +108,7 @@
       }
     });
   })();
-  function nextRun(S) { return S.run ? 0 : GOAL_RUN[S.key] || 1; }   // after a goal
+  function nextRun(S) { return S.run === 0 ? 1 : 0; }   // after a goal, if you carry on: the coast, then the town, then the coast again
   // the traffic: w = half its width, l = half its length (metres), v = its speed (share of full speed)
   var VEH = [
     { id: 'hatch', w: 0.9, l: 2.0, v: [0.4, 0.56] },
@@ -134,9 +133,9 @@
   // the speeds: more time, fewer and slower cars, bends that push less (assist), bounces instead of crashes at Gentle;
   // psiTop = how far from the road's direction the car turns at full speed (radians); req = which of a request's goals
   var DIFF = {
-    1: { time: 1.06, gap: 170, tv: 0.9, assist: 0.55, psiTop: 0.24, crash: false, off: 0.55, req: 0, rv: 0.88 },
-    2: { time: 1, gap: 115, tv: 1, assist: 0.2, psiTop: 0.21, crash: true, off: 0.45, req: 1, rv: 0.94 },
-    3: { time: 0.97, gap: 85, tv: 1.08, assist: 0.05, psiTop: 0.2, crash: true, off: 0.4, req: 2, rv: 0.99 }
+    1: { time: 1.2, gap: 170, tv: 0.9, assist: 0.55, psiTop: 0.24, crash: false, off: 0.55, req: 0, rv: 0.88, cf: 1 },
+    2: { time: 1.11, gap: 115, tv: 1, assist: 0.2, psiTop: 0.21, crash: true, off: 0.45, req: 1, rv: 0.94, cf: 1.2 },
+    3: { time: 1.09, gap: 85, tv: 1.08, assist: 0.05, psiTop: 0.2, crash: true, off: 0.4, req: 2, rv: 0.99, cf: 1.25 }
   };
   // what your passenger asks for: goal by speed (Gentle, Classic, Fast), seconds to do it in
   var REQ = {
@@ -263,7 +262,8 @@
 
   var FERRY = { 'sandbanks>swanage': { k: 'chain', dur: 270, title: 'ALL ABOARD!', sub: 'The chain ferry across to Studland', land: 'STUDLAND', landSub: 'On to Old Harry Rocks' },
     'swanage>sandbanks': { k: 'chain', dur: 270, title: 'ALL ABOARD!', sub: 'The chain ferry back across to Sandbanks', land: 'SANDBANKS', landSub: 'Along the spit to the goal' },
-    'lymington>needles': { k: 'car', dur: 390, title: 'ALL ABOARD!', sub: 'The car ferry to the Isle of Wight', land: 'ISLE OF WIGHT', landSub: 'Off the ferry at Yarmouth' } };
+    'lymington>needles': { k: 'car', dur: 390, title: 'ALL ABOARD!', sub: 'The car ferry to the Isle of Wight', land: 'ISLE OF WIGHT', landSub: 'Off the ferry at Yarmouth' },
+    'forest>needles': { k: 'car', dur: 390, title: 'ALL ABOARD!', sub: 'Lymington: the car ferry to the Isle of Wight', land: 'ISLE OF WIGHT', landSub: 'Off the ferry at Yarmouth' } };
   function buildStage(W, id) {
     var S = STAGES[id], prev = W.route && W.route.length && W.stretch.length ? STAGES[W.route[W.route.length - 1]].key : null, B = { W: W, S: S, rng: rnd(S.seed), k: 0, sh: S.sea ? S.sh0 || 30 : 0, shT: 26, nextSh: 60, bends: [], wallL: 0, wallR: 0 };
     var s0 = W.base + W.segs.length, i, first = !W.stretch.length, rec = { id: id, from: s0, to: 0, fork: null, side: W.pendingSide || 0 };
@@ -296,11 +296,11 @@
       put(W, b0, 'nose', 0, 0, { txt: L + '|' + R });
       for (i = 2; i < FB; i += 3) { put(W, b0 + i, 'gpost', -9.2, 0, { b: 1 }); put(W, b0 + i, 'gpost', 9.2, 0, { b: -1 }); }
     } else {   // the goal
-      for (i = 0; i < 30; i++) add(B, 0);
+      for (i = 0; i < 90; i++) add(B, 0);   // (a long straight past the goal: the car pulls up there for the celebration - 7 Oct)
       end = W.base + W.segs.length;
-      segAt(W, end - 18).gate = { kind: 'goal', st: id };
-      put(W, end - 18, 'gate', 0, 0, { v: 3 });
-      W.goalAt = end - 18;
+      segAt(W, end - 78).gate = { kind: 'goal', st: id };
+      put(W, end - 78, 'gate', 0, 0, { v: 3 });
+      W.goalAt = end - 78;
     }
     // heights: carried on from the road before, kept level through gates and forks
     var y0 = s0 > W.base ? segAt(W, s0 - 1).y2 : S.band[0] + Math.min(6, (S.band[1] - S.band[0]) / 2), flatTo = (S.next ? rec.fork.a : end) - 30;
@@ -409,10 +409,11 @@
           if (k % 110 === 55) put(W, i, 'finger', (k % 220 ? -1 : 1) * 10.2, 0.2);
           break;
         }
-        case 'swanage': {   // in four parts (world3d.js ZONES), in from Corfe on the A351: Harman's Cross with the steam railway alongside, Herston,
-          // the town, then the front along the bay
+        case 'swanage': {   // in six parts (world3d.js ZONES), off the chain ferry (7 Oct): Shell Bay's dunes, Knoll Beach, Studland village, the downs
+          // by Ulwell, the town, then the front along the bay
           var fz = k / Math.max(1, to - from);
-          if (fz < 0.22) { if (k % 3 === 0) put(W, i, 'railline', 28, 0); if (k % 110 === 55) put(W, i, 'finger', 10.2, 0.2); break; }
+          if (fz < 0.25) { if (r() < 0.06) put(W, i, ['heather', 'gorse'][(r() * 2) | 0], 11.6 + r() * 3, 0.8, { soft: true, v: 1 }); if (k % 120 === 50) put(W, i, 'finger', 10.2, 0.2); break; }   // (the heath right up to the road inland)
+          if (fz < 0.43) break;
           if (fz < 0.48) { lamps(9, 0, false); street(); break; }
           lamps(9, 0, true);
           onWater('yacht', 30, 140, 0.015, (r() * 3) | 0);
@@ -562,17 +563,19 @@
     function mark(t, f, xf, v) {
       for (var j = from + Math.round((to - from) * f), n = 0; n < 80; j++, n++) { var g = segAt(W, j); if (!g.tun && !g.brg && !g.gate && !g.fk && !g.over) { putAt(W, j, t, xf(g.sh), 0, { v: v || 0 }); return; } }
     }
-    if (S.key === 'bournemouth') {   // the pier from the promenade's edge out to sea (and Boscombe's further on); the cliff lifts and zig-zag paths up the cliff
+    if (S.key === 'bournemouth') {   // west along the beach from Boscombe Pier (owner, 7 Oct: "start ... by Boscombe Pier and then going on to Bournemouth Pier
+      // towards Sandbanks ... so people actually think they're on the beach"): Boscombe Pier behind the start line, the Overstrand just past it, the
+      // East Cliff and its lift, Bournemouth Pier in the gap of Pier Approach, the West Cliff lift, then the chines (world3d.js ZONES opens the cliff)
+      putAt(W, from - 22, 'pier', -14.9, 0, { v: 1 }); putAt(W, from + 20, 'overstrand', 17.4, 0, {});   // (from = 40 segments past the grid. Boscombe Pier ~150 m beyond the START arch: the camera swings round for GO and there it is)
       var pj = -1, best = 0;   // Bournemouth Pier at the end of a bend AWAY from the sea: as the car comes round it, the pier swings across the view ahead
-      for (var q = from + Math.round((to - from) * 0.16); q < from + Math.round((to - from) * 0.5); q++) {
+      for (var q = from + Math.round((to - from) * 0.39); q < from + Math.round((to - from) * 0.45); q++) {
         var kk = 0; for (var u = q - 70; u < q - 10; u++) kk += segAt(W, u).k * -S.sea;
         var g0 = segAt(W, q); if (kk > best && !g0.tun && !g0.brg && !g0.gate && !g0.fk && !g0.over) { best = kk; pj = q; }
       }
-      if (best < 60 / 600) pj = -1;
-      if (pj >= 0) putAt(W, pj, 'pier', -14.9, 0, { v: 0 }); else mark('pier', 0.24, function () { return -14.9; }, 0);
-      mark('pier', 0.74, function () { return -14.9; }, 1);
-      mark('clifflift', 0.14, function () { return 17.4; }, 0); mark('clifflift', 0.52, function () { return 17.4; }, 1);
-      mark('zigzag', 0.36, function () { return 17.4; }, 0); mark('zigzag', 0.64, function () { return 17.4; }, 1); mark('zigzag', 0.88, function () { return 17.4; }, 2);
+      if (best < 20 / 600) pj = -1;
+      if (pj >= 0) putAt(W, pj, 'pier', -14.9, 0, { v: 0 }); else mark('pier', 0.42, function () { return -14.9; }, 0);
+      mark('zigzag', 0.12, function () { return 17.4; }, 0); mark('zigzag', 0.24, function () { return 17.4; }, 1); mark('clifflift', 0.31, function () { return 17.4; }, 0);   // (the East Cliff lift)
+      mark('clifflift', 0.56, function () { return 17.4; }, 1); mark('zigzag', 0.61, function () { return 17.4; }, 2);   // (the West Cliff lift)
     }
     if (S.key === 'sandbanks') {   // a cross-Channel ferry going out through the harbour mouth; at the point, the hotel and the queue for the chain ferry
       mark('ferry', 0.5, function (h) { return -(Math.max(h, 20) + 70); });
@@ -600,12 +603,16 @@
       mark('stonepub', 0.44, function () { return -21; }); mark('corfechurch', 0.47, function () { return 30; });
       mark('corfestation', 0.665, function () { return 24; });   // (just past the village's last cottages: behind them it was hidden)
     }
-    if (S.key === 'swanage') {   // in from Corfe: the steam train by the road at Harman's Cross; Swanage station and the Town Hall (its front the
-      // old Mercers' Hall's) in the town; on the front the King Alfred column, the clock tower from London Bridge and the pier (Old Harry itself is
-      // the place's landmark painting, across the bay: as a 3D model from the road it read as a grey box)
-      mark('steamtrain', 0.1, function () { return 28; });
-      var sst = straightest(0.37, 0.42, 30, 10); if (sst >= 0) putAt(W, sst, 'corfestation', 26, 0, {});
-      var sth = straightest(0.42, 0.47, 30, 10); if (sth >= 0) putAt(W, sth, 'swanhall', 21, 0, {});
+    if (S.key === 'swanage') {   // off the chain ferry (owner, 7 Oct: "it doesn't look anything like Studland"): at Knoll Beach the National Trust's cafe
+      // between the road and the sand, the boardwalk out to Little Sea across the heath; in Studland village the old Norman church and the Bankes
+      // Arms above the bay; the obelisk on the down at Ulwell; Swanage station and the Town Hall (its front the old Mercers' Hall's) in the town; on
+      // the front the King Alfred column, the clock tower from London Bridge and the pier (Old Harry itself is the place's landmark painting, ahead
+      // across the bay as you come along Studland's beach: as a 3D model from the road it read as a grey box)
+      mark('visitorcentre', 0.17, function () { return -21; }); mark('littlesea', 0.21, function () { return 17; });
+      mark('kinsonchurch', 0.275, function () { return 25; }, 2); mark('stonepub', 0.3, function () { return -22; });
+      var uo = straightest(0.35, 0.4, 30, 10); if (uo >= 0) putAt(W, uo, 'obelisk', -48, 0, {});
+      var sst = straightest(0.43, 0.455, 30, 10); if (sst >= 0) putAt(W, sst, 'corfestation', 26, 0, {});
+      var sth = straightest(0.455, 0.48, 30, 10); if (sth >= 0) putAt(W, sth, 'swanhall', 21, 0, {});
       mark('alfredcolumn', 0.565, function (h) { return -(Math.min(h, 22) - 5); });
       mark('clocktower', 0.6, function () { return -12.6; }); mark('pier', 0.63, function () { return -14.9; }, 2);   // (all before ~0.68 of the stretch: after it the shore pulls away)
     }
@@ -749,7 +756,7 @@
         (s.coins || (s.coins = [])).push({ x: x, line: id, of: n, got: 0 });
       }
       i += n * 2 + 30 + ((r() * 45) | 0);
-      var roll = r(), pw = roll < 0.34 ? 'nitro' : roll < 0.4 ? 'magnet' : roll < 0.45 ? 'shield' : roll < 0.5 ? 'double' : roll < 0.55 ? 'time' : null;   // (nitro the commonest bonus by far)
+      var roll = r(), pw = roll < 0.1 ? 'nitro' : roll < 0.16 ? 'magnet' : roll < 0.21 ? 'shield' : roll < 0.26 ? 'double' : roll < 0.31 ? 'time' : null;   // (nitro earned now, owner 7 Oct: a bottle on the road now and then, not a third of every bonus)
       if (pw) { var sn = segAt(W, i), px = LANES[(r() * 3) | 0]; if (sn && !sn.fk) (sn.coins || (sn.coins = [])).push(pw === 'nitro' ? { x: px, nitro: true, got: 0 } : { x: px, pw: pw, got: 0 }); i += 15; }
     }
   }
@@ -797,7 +804,7 @@
     if (g.gate || (g.fk && g.fk.a)) return;
     if (g.fk && g.fk.b) b = W.fork && W.fork.s ? W.fork.s : (W.rng() < 0.5 ? -1 : 1);
     for (var j = 0; j < W.cars.length; j++) { var o = W.cars[j]; if (o.b === b && Math.abs(o.s - z) < 40 && Math.abs(o.x - x) < 3) return; }
-    var tv = W.D.tv * (1 + 0.06 * Math.min(4, W.round - 1)), v = VMAX * (T.v[0] + W.rng() * (T.v[1] - T.v[0])) * tv;
+    var tv = W.D.tv * (1 + 0.06 * Math.min(4, W.round - 1)), v = VTRAF * (T.v[0] + W.rng() * (T.v[1] - T.v[0])) * tv;
     W.cars.push({ id: W.carN++, s: z, x: x, tx: x, v: v, v0: v, t: t, b: b, col: (W.rng() * 8) | 0, lc: 60, hitT: -999, passed: false, ds: z - W.s, spin: 0 });
   }
   function sameRoad(W, c) { return !(W.fork && W.fork.s && c.b && c.b !== W.fork.s); }
@@ -808,11 +815,11 @@
   // THE FIELD (owner, 6 Oct: "cars that race you... start on a race line and all race off"): seven racers start on the grid with
   // you and race the whole run, through whichever fork you take. Near you each is a car on the road; out of sight it's carried
   // along at its own pace. They pace themselves off how far ahead or behind you they are, so there's always someone to catch.
-  var FIELD_N = 7, BOTTLES0 = 10, BOTTLE_MAX = 30, NITRO_T = 150, SKILL = [1.04, 1.02, 1.0, 0.99, 0.97, 0.95, 0.93];
+  var FIELD_N = 7, BOTTLES0 = 3, BOTTLE_MAX = 30, NITRO_T = 150, SKILL = [1.04, 1.02, 1.0, 0.99, 0.97, 0.95, 0.93];
   var CSCHEME = [[0, 0, 0, 0, 1, 0, 0], [1, 1, 1, 0, 0, 1, 0], [0, 0, 0, 1, 1, 0, 1], [1, 0, 1, 2, 0, 1, 3], [3, 2, 0, 0, 1, 0, 0]];   // per racer (wedge, lemans, raging, coupe9, barchetta, gtbrit, trident): which of its colours (never more than two red, or two silver/white, on one grid)
   var POS_BONUS = [0, 100000, 60000, 40000, 25000, 15000, 8000, 4000, 0];
-  function makeField(W) {
-    W.field = [];
+  function makeField(W) {   // (7 Oct: the seven racers taken out - the owner chose a ghost of your best run, OutRun 2's hook; the code stays, the field is empty)
+    W.field = []; W.pos = 1; return;
     var RT = [8, 9, 12, 10, 14, 11, 13];   // the fastest first: the wedge, the endurance racer, the sharp Italian, the turbo coupe, the open V12, the GT, the grand tourer
     for (var k = 0; k < FIELD_N; k++) W.field.push({ id: k, p: W.s + 70 - k * 8.5, x: k % 2 ? 4.6 : -4.6, v: 0, skill: SKILL[k], t: RT[k], col: CSCHEME[W.seed % CSCHEME.length][k], car: null });   // (a set colour scheme for the field: a mix, never more than two red cars)   // the grid: two columns, the fastest at the front; you at the back in the middle
     W.pos = FIELD_N + 1;
@@ -846,7 +853,7 @@
     }
     for (i = 0; i < W.field.length; i++) if (W.field[i].p > W.s) ahead++;
     var pos = ahead + 1;
-    if (pos !== W.pos && W.count <= 0) {
+    if (pos !== W.pos && W.count <= 0 && !W.goalSeq) {
       if (pos < W.pos) {
         var best = pos < (W.bestPos || 99); if (best && !W.crash) { W.score += 2000 * ((W.bestPos || W.pos) - pos); W.events.push({ sfx: 'overtake', x: 0 }); W.bestPos = pos; }
         if (best || W.t - W.posT > 90) { pop(W, pos === 1 ? 'INTO THE LEAD!' : 'UP TO P' + pos, best ? '+' + (2000 * 1).toLocaleString('en-GB') : '', 0, 'gold'); W.posT = W.t; }
@@ -934,7 +941,7 @@
       c = cars[i];
       if (c.s < W.s - 120 || c.s > W.s + VIEW + 120 || segIndex(c.s) > lastIndex(W) - 2 || (F && F.s && c.b && c.b !== F.s && segIndex(c.s) >= F.end - 2) || (!F && c.b)) cars.splice(i, 1);
     }
-    var want = Math.round(VIEW / (W.D.gap * Math.pow(0.92, Math.min(4, W.round - 1))) * (W.field.length ? 0.72 : 1)), n = 0;   // (the racers fill the road too: less traffic)
+    var want = Math.round(VIEW / (W.D.gap * Math.pow(0.96, Math.min(4, Math.max(0, W.round - 2)))) * (W.field.length ? 0.72 : 0.8)), n = 0;   // (the racers fill the road too: less traffic)
     for (i = 0; i < cars.length; i++) if (cars[i].s > W.s) n++;
     if (n < want && W.t % 10 === 0) spawnCar(W, W.s + VIEW * (0.8 + W.rng() * 0.18));
   }
@@ -964,7 +971,7 @@
     if (W.crash) return;
     var tx = clamp(Math.round(W.x / 4.6) * 4.6, -4.6, 4.6);
     W.crash = { t: 0, dur: hard ? 185 : 42, hard: hard, x0: W.x, tx: tx, spin: W.x < 0 ? 1 : -1, why: why || '', v0: W.v };
-    W.combo = 0; W.comboT = 0; W.drift = 0; W.boosting = false; W.shake = hard ? 26 : 12;
+    W.combo = 0; W.comboT = 0; W.drift = 0; W.driftChain = 1; W.chainUntil = 0; W.boosting = false; W.shake = hard ? 26 : 12;
     W.events.push({ sfx: hard ? 'crash' : 'bump', x: 0 });
     fx(W, { k: hard ? 'crash' : 'bump', x: W.x });
     if (hard) W.events.push({ say: 'Crash!' });
@@ -982,13 +989,19 @@
     W.events.push({ sfx: 'smash', x: 0 }); fx(W, { k: 'smash', x: W.x }); pop(W, 'SMASH!', '+1,000', 0, 'shield');
   }
   function knock(W) { if (W.req && W.req.k === 'clean') endReq(W, false); }   // any knock spoils a "careful" request
+  function flipBend(W, g, dir) {   // a bend the other way under the car or within ~50 m: the flick swings into it
+    var si = segIndex(W.s); for (var j = 0; j < 13; j++) { var gg = segAt(W, si + j); if (gg && !gg.fk && gg.k * dir >= 1 / 340) return true; }
+    return false;
+  }
   function endDrift(W) {
     if (W.driftT > 0.5) {
-      var p = Math.round(W.driftPts / 10) * 10; W.score += p;
-      pop(W, 'DRIFT', '+' + p.toLocaleString('en-GB'), W.drift, 'drift'); W.events.push({ sfx: 'driftend' });
+      var ch = W.driftChain || 1, clean = !W.crash && W.t - W.scrapeT > 30, p = Math.round(W.driftPts * ch / 10) * 10; W.score += p;
+      if (clean && W.driftT > 0.8 && !W.timeUp) { var top0 = topSpeed(W); W.v = Math.min(Math.max(W.v, top0 * 1.04), W.v + Math.min(4.5, 1.2 + W.driftT * 1.2) * (1 + 0.2 * (ch - 1))); }   // (a good one: a shove out of it)
+      W.chainUntil = W.t + 90; W.driftChain = Math.min(5, ch + 1);   // (the next drift within 1.5 s: a chain)
+      pop(W, ch > 1 ? 'DRIFT x' + ch : clean && W.driftT > 1.2 ? 'CLEAN DRIFT' : 'DRIFT', '+' + p.toLocaleString('en-GB'), W.drift, 'drift'); W.events.push({ sfx: 'driftend' });
       if (W.driftT > 1.2) { mood(W, 'cheer'); if (W.rng() < 0.35) voice(W, 'wow'); }
     }
-    W.drift = 0; W.driftT = 0; W.driftPts = 0; W.driftA = 0;
+    W.lastDrift = W.drift; W.driftEndT = W.t; W.drift = 0; W.driftT = 0; W.driftPts = 0; W.driftA = 0; W.driftV = 0;
   }
   function cross(W, i) {   // the car's nose passes into segment i
     var g = segAt(W, i), F = W.fork, j;
@@ -1024,7 +1037,7 @@
       if (!c.got && Math.abs(W.x - c.x) < (W.pw.magnet > 0 && !c.nitro && !c.pw ? 9.5 : 1.7) && W.h - heightAt(W, W.s) < 2.6) {
         c.got = W.t; c.gx = W.x;
         if (c.pw) bonus(W, c);
-        else if (c.nitro) { W.bottles = Math.min(BOTTLE_MAX, W.bottles + 3); W.events.push({ sfx: 'nitro', x: c.x - W.x }); pop(W, 'NITRO', '+3 BOTTLES', c.x - W.x, 'nitro'); fx(W, { k: 'nitro', x: c.x }); W.score += 500; }   // (owner, 6 Oct: three at a time, always plenty)
+        else if (c.nitro) { W.bottles = Math.min(BOTTLE_MAX, W.bottles + 1); W.events.push({ sfx: 'nitro', x: c.x - W.x }); pop(W, 'NITRO', '+1 BOTTLE', c.x - W.x, 'nitro'); fx(W, { k: 'nitro', x: c.x }); W.score += 500; }   // (owner, 6 Oct: three at a time, always plenty)
         else {
           W.coinRun = W.t - W.coinLast < 40 ? W.coinRun + 1 : 1; W.coinLast = W.t; W.coinsN++;
           W.score += 100 * Math.min(W.coinRun, 10); W.boost = Math.min(1, W.boost + 0.125);   // (eight coins: a bottle - one line of coins fills one)
@@ -1059,15 +1072,21 @@
     W.legT0 = W.t; W.legHearts = 0;
   }
   function gate(W, g) {
+    var saved = W.timeUp && !W.over;   // (out of time, rolled over the line)
+    if (saved) { W.timeUp = false; W.overT = 0; W.tuCoast = false; W.score += 10000; mood(W, 'cheer'); }
     if (g.kind === 'check' || g.kind === 'round') {
-      var S = STAGES[g.st], add = Math.round(S.t * W.D.time * Math.max(0.8, Math.pow(0.95, W.round - 1)));
       if (g.kind === 'check') endLeg(W);
+      var S = STAGES[g.st], taper = g.kind === 'check' ? 1 - 0.04 * Math.max(0, W.legs.length - 1) : 1;   // (each checkpoint further into a run gives a little less: the surplus used to snowball - audit, 7 Oct)
+      var add = Math.round(S.t * W.D.time * (RUNS[S.run].tf || 1) * taper * Math.max(0.8, Math.pow(0.97, Math.max(0, W.round - 2))));   // (tf: the town's streets - junctions, parked cars - a little more time)
       W.stageNo++; W.stage = g.st; W.reqNext = Math.max(W.reqNext, W.t + 60 * 5);
       if (g.kind === 'round') {
-        W.route = [g.st]; W.legs = []; W.legT0 = W.t; W.legHearts = 0; W.runHearts = 0; W.runAsked = 0; W.result = null; rebunch(W); W.bestPos = 99;
-        bannerOf(W, 'ROUND ' + W.round, RUNS[STAGES[g.st].run].banner + ' - busier and quicker', 'stage'); W.events.push({ say: 'Round ' + W.round }); W.sayLater = { id: 'at-' + STAGES[g.st].key, t: W.t + 150 };
+        W.clockHeld = false;
+        W.route = [g.st]; W.legs = []; W.legT0 = W.t; W.legHearts = 0; W.runHearts = 0; W.runAsked = 0;
+        if (W.goalSeq) { W.roundPending = g.st; return; }   // (the goal's moment isn't over: the rest when it is - goalEnd)
+        W.result = null; rebunch(W); W.bestPos = 99;
+        bannerOf(W, 'ROUND ' + W.round, RUNS[STAGES[g.st].run].banner + (W.round > 2 ? ' - busier and quicker' : ''), 'stage'); W.events.push({ say: 'Round ' + W.round }); W.sayLater = { id: 'at-' + STAGES[g.st].key, t: W.t + 150 };
       } else {
-        W.time += add; bannerOf(W, 'CHECKPOINT', 'EXTENDED TIME +' + add + ' SEC', 'check'); W.events.push({ sfx: 'check' }); W.events.push({ say: 'Checkpoint: ' + add + ' more seconds' });
+        W.time += add; bannerOf(W, saved ? 'JUST MADE IT!' : 'CHECKPOINT', 'EXTENDED TIME +' + add + ' SEC' + (saved ? '  ·  +10,000' : ''), saved ? 'gold' : 'check'); W.events.push({ sfx: 'check' }); W.events.push({ say: 'Checkpoint: ' + add + ' more seconds' });
         W.sayLater = { id: 'at-' + STAGES[g.st].key, t: W.t + 140 };   // (then she names the place)
         mood(W, 'cheer'); voice(W, 'check', true);
       }
@@ -1076,21 +1095,31 @@
       var bonus = Math.ceil(W.time) * 1000 * Math.min(W.round, 3), love = W.runHearts * 5000;
       var asked = Math.max(1, W.runAsked * 3), pct = W.runHearts / asked, mark = pct * 70 + Math.min(30, W.time);
       var rank = mark >= 88 ? 'S' : mark >= 72 ? 'A' : mark >= 55 ? 'B' : mark >= 38 ? 'C' : 'D';
-      var placeB = POS_BONUS[W.pos] || 0;
-      W.result = { t: W.t, route: W.route.slice(), legs: W.legs.slice(), hearts: W.runHearts, of: asked, timeBonus: bonus, love: love, rank: rank, round: W.round, goal: STAGES[g.st].name, pos: W.pos, of2: FIELD_N + 1, posBonus: placeB };
+      var placeB = W.field.length ? POS_BONUS[W.pos] || 0 : 0;
+      W.goalSeq = { t: 0, rank: rank, brake: Math.max(9, W.v * W.v / 540) };   // (pulling up within ~270 m, before the next road)
+      W.result = { t: W.t, route: W.route.slice(), legs: W.legs.slice(), hearts: W.runHearts, of: asked, timeBonus: bonus, love: love, rank: rank, round: W.round, goal: STAGES[g.st].name, pos: W.field.length ? W.pos : 0, of2: FIELD_N + 1, posBonus: placeB };
       W.score += bonus + love + placeB; W.round++;
-      W.time = W.D.time * STAGES[RUN_START[nextRun(STAGES[g.st])]].t * Math.max(0.8, Math.pow(0.95, W.round - 1)) + 10;   // (the next run's first stage's time)
-      bannerOf(W, W.pos === 1 ? 'YOU WIN!' : 'GOAL!', 'FINISHED P' + W.pos + ' OF ' + (FIELD_N + 1) + '  -  TIME BONUS +' + bonus.toLocaleString('en-GB'), 'goal');
+      W.time = W.D.time * (RUNS[nextRun(STAGES[g.st])].tf || 1) * STAGES[RUN_START[nextRun(STAGES[g.st])]].t * Math.max(0.8, Math.pow(0.97, Math.max(0, W.round - 2))) + 10;   // (the next run's first stage's time)
+      bannerOf(W, 'GOAL!', 'TIME BONUS +' + bonus.toLocaleString('en-GB'), 'goal');
       W.events.push({ sfx: 'goal' }); W.events.push({ say: 'Goal! Time bonus ' + bonus + ', love bonus ' + love + ', rank ' + rank });
       fx(W, { k: 'fireworks', x: 0 }); fx(W, { k: 'confetti', x: 0 });
-      mood(W, 'wave'); voice(W, 'goal', true); if (rank === 'S' || rank === 'A') W.sayLater = { id: 'love', t: W.t + 150 };
+      mood(W, rank === 'S' || rank === 'A' ? 'wave' : rank === 'B' ? 'clap' : rank === 'C' ? 'look' : 'sulk', 1); voice(W, 'goal', true); if (rank === 'S' || rank === 'A') W.sayLater = { id: 'love', t: W.t + 150 };
       if (W.req) { W.req = null; } W.reqSide = null; W.reqNext = W.t + 60 * 12;
     }
   }
+  var TU_COAST = 5.5;   // m/s/s: rolling on, out of time, for a checkpoint in reach
+  function gateWithin(W, d) { var i = segIndex(W.s), n = Math.ceil(d / SEG); for (var j = 1; j <= n; j++) { var q = segAt(W, i + j); if (q && q.gate && q.gate.kind !== 'start') return true; } return false; }
+  var GOAL_SEQ = 60 * 8;
+  function goalEnd(W) {   // the goal's moment over: the card goes, and the next round starts (if its gate went by during it)
+    W.goalSeq = null; W.result = null; W.legT0 = W.t;
+    if (W.roundPending != null) { var st = W.roundPending; W.roundPending = null; rebunch(W); W.bestPos = 99;
+      bannerOf(W, 'ROUND ' + W.round, RUNS[STAGES[st].run].banner + (W.round > 2 ? ' - busier and quicker' : ''), 'stage'); W.events.push({ say: 'Round ' + W.round }); mood(W, 'cheer'); }
+    W.reqNext = Math.max(W.reqNext, W.t + 60 * 4);
+  }
   function topSpeed(W) { return VMAX * CARS[W.car].top; }
-  var CF = 0.32;   // how hard a bend pushes the car outwards: k * v * v * CF metres a second
+  var CF = 0.25;   // how hard a bend pushes the car outwards: k * v * v * CF metres a second (0.32 x 63 / VMAX, 8 Oct: each bend is as hard at the new top speed as it was at the old)
   function turnLimit(W, v) { return (0.6 + (W.D.psiTop - 0.6) * Math.pow(Math.min(1, v / VMAX), 0.8)) * CARS[W.car].yaw; }   // the angle a held key turns the car to
-  function pushOut(W, k, v) { return k * v * v * CF * (1 - W.D.assist) * (1 - 0.58 * (W.dk || 0)) / CARS[W.car].grip; }   // (a drift eases the push, coming and going over a moment: dk)
+  function pushOut(W, k, v) { return k * v * v * CF * (W.D.cf || 1) * (1 - W.D.assist) * (1 - 0.58 * (W.dk || 0)) / CARS[W.car].grip; }   // (a drift eases the push, coming and going over a moment: dk)
 
   // ---------------------------------------------------------------- your passenger's requests
   // Every so often she asks for something; do it in time for hearts (3 if quick, 2 if not, 1 for half of it). Coming up to
@@ -1126,7 +1155,7 @@
   }
   function requests(W) {
     var i = segIndex(W.s), F = W.fork, R = W.req;
-    if (W.timeUp || W.count > 0) return;
+    if (W.timeUp || W.count > 0 || W.goalSeq) return;
     // coming up to a fork, she picks a road
     if (F && !F.s && !W.reqSide && i > F.a - 80 && i < F.a - 10) {
       var side = W.rng() < 0.5 ? -1 : 1;
@@ -1147,6 +1176,7 @@
   function step(W, inp) {
     inp = inp || {};
     W.t++;
+    var fireNow = !!(inp.fire || inp.alt); W.fireEdge = fireNow && !W.fireWas; W.fireWas = fireNow;   // (a fresh press of Space: skips the goal's moment, ends a time up)
     if (W.shake > 0) W.shake--;
     if (W.comboT > 0 && --W.comboT === 0) W.combo = 0;
     var D = W.D, C = CARS[W.car], i0 = segIndex(W.s), g = segAt(W, i0), top = topSpeed(W);
@@ -1154,7 +1184,7 @@
       W.count--;
       if (W.count === 180 || W.count === 120 || W.count === 60) W.events.push({ sfx: 'count' });
       if (W.count === 0) {
-        W.events.push({ sfx: 'go' }); bannerOf(W, 'GO!', 'RACE THEM TO THE COAST', 'go'); mood(W, 'cheer'); voice(W, 'go', true); W.legT0 = W.t; launchField(W); W.goT = W.t; W.launchT = 100;
+        W.events.push({ sfx: 'go' }); bannerOf(W, 'GO!', 'FROM BOSCOMBE PIER', 'go'); mood(W, 'cheer'); voice(W, 'go', true); W.legT0 = W.t; launchField(W); W.goT = W.t; W.launchT = 100;
         if (inp.fire || inp.alt) { W.v = top * 0.32; W.bottles = Math.min(BOTTLE_MAX, W.bottles + 1); W.score += 5000; pop(W, 'FLYING START', '+5,000 +1 NITRO', 0, 'gold'); W.events.push({ sfx: 'perfect' }); }
       }
       W.rev = (inp.fire || inp.alt || inp.up) ? Math.min(1, (W.rev || 0) + 0.05) : Math.max(0, (W.rev || 0) - 0.03);
@@ -1172,17 +1202,26 @@
     }
     var score0 = W.score;
     for (var pk in W.pw) if (W.pw[pk] > 0 && --W.pw[pk] === 0) W.events.push({ sfx: 'powerEnd', k: pk });
-    if (!W.timeUp) {
+    if (W.goalSeq) {
+      var GS = W.goalSeq; GS.t++;
+      if (GS.t % 100 === 0) { var CEL = { S: ['cheer', 'wave'], A: ['wave', 'cheer'], B: ['clap', 'cheer'], C: ['look', 'clap'], D: ['sulk', 'sulk'] }[GS.rank] || ['cheer', 'wave']; mood(W, CEL[(GS.t / 100) % 2], 1); }   // (celebrating all through it, as the rank deserves)
+      var ai = autopilot(W, 0), carry = GS.t > 60 && (W.fireEdge || W.demo), finish = GS.t > 60 && !!inp.down && !W.demo;
+      inp = { left: ai.left, right: ai.right, up: false, down: false, fire: false, alt: false };
+      W.nitroT = 0; W.v = Math.max(0, W.v - GS.brake * DT);   // (pulling up at the goal)
+      if (carry) { GS.carry = true; goalEnd(W); W.clockHeld = true; }   // (Space: on to the next round - its clock waits for its start line: you pull away from a standstill)
+      else if (GS.t >= GOAL_SEQ || finish) { W.complete = { goal: W.result ? W.result.goal : '', rank: GS.rank, round: W.round - 1 }; W.over = true; }   // (the goal: game complete)
+    }
+    if (!W.timeUp && !W.goalSeq && !W.clockHeld) {
       var before = Math.ceil(W.time);
       W.time -= DT;
-      if (W.time <= 0) { W.time = 0; W.timeUp = true; W.events.push({ sfx: 'timeup' }); W.events.push({ say: 'Time up' }); bannerOf(W, 'TIME UP', '', 'red'); endDrift(W); mood(W, 'sad'); voice(W, 'timeup', true); W.req = null; W.reqSide = null; }
+      if (W.time <= 0) { W.time = 0; W.timeUp = true; W.timeUpT = W.t; W.tuCoast = gateWithin(W, W.v * W.v / (2 * TU_COAST)); W.tuBrake = Math.max(14, W.v / 3.4); W.events.push({ sfx: 'timeup' }); W.events.push({ say: 'Time up' }); bannerOf(W, 'TIME UP', '', 'red'); endDrift(W); mood(W, 'sad'); voice(W, 'timeup', true); W.req = null; W.reqSide = null; }
       else if (Math.ceil(W.time) < before && before <= 11) { W.events.push({ sfx: 'tick', n: before - 1 }); if (before === 11) voice(W, 'hurry', true); }
     }
 
     // ---- controls
     var L = !!inp.left, R = !!inp.right, brake = !!inp.down, out = !!W.crash;
     var wantBoost = !W.timeUp && !out && !!(inp.fire || inp.alt);
-    var gas = !W.timeUp && !out && (W.auto ? !brake : !!inp.up);
+    var gas = !W.timeUp && !out && !W.goalSeq && (W.auto ? !brake : !!inp.up);
     var target = out ? 0 : (R ? 1 : 0) - (L ? 1 : 0);
     W.steer += (target - W.steer) * (target === 0 ? 0.25 : 0.16);
     var pressed = (brake && !W.brakeHeld) || !!inp.brakeTap; W.brakeHeld = brake;   // a tap too quick to last a step still counts
@@ -1190,17 +1229,28 @@
     if (brake && !W.drift) W.brakeT += DT; else W.brakeT = 0;
     // a drift: brake (a tap is enough) while turning at speed; it lasts while you hold the turn or the car is still sliding
     W.steerHold = target !== 0 && target === W.steerDir ? W.steerHold + 1 : 0; W.steerDir = target;
-    var autoGo = W.autoDrift && W.steerHold >= 12 && W.v > top * 0.55 && target * bendHere(W, g) >= 1 / 170;
+    var flick = target !== 0 && target === -(W.lastDrift || 0) && W.t - (W.driftEndT || -1e9) < 50 && target * bendHere(W, g) >= 1 / 340;   // (drift, 7 Oct: S-bends flow one drift into the next)
+    var autoGo = W.autoDrift && ((W.steerHold >= 12 && W.v > top * 0.55 && target * bendHere(W, g) >= 1 / 170) || (flick && W.v > top * 0.5));
     if (!W.drift && !out && !W.air && target !== 0 && W.v > top * 0.42 && (pressed || (brake && W.brakeT < 0.3) || autoGo)) {
-      W.drift = target; W.driftT = 0; W.driftPts = 0; W.driftA = Math.max(0.06, Math.abs(W.psi - W.phi)); W.events.push({ sfx: 'skid' });
-      W.psi += target * 0.06;   // the back starts to step out (the slide then grows: driftA)
+      W.drift = target; W.driftT = 0; W.driftPts = 0; W.driftA = Math.max(0.02, Math.abs(W.psi - W.phi)); W.driftV = 1.5; W.events.push({ sfx: 'skid' });   // (the tail starts swinging out - owner, 7 Oct: "it snaps")
+      if (!(W.t < (W.chainUntil || 0))) W.driftChain = 1;   // (a chain broken: too long since the last)
     }
     // in a drift the keys set the angle: hold the turn and the tail swings out to the full slide; let go and it straightens over half a
     // second (press again before it does and it swings back out); steer the other way to catch it quickly
     if (W.drift) {
-      var sIn = target * W.drift, aT = sIn > 0 ? 0.5 : 0;
-      W.driftA += (aT - W.driftA) * Math.min(1, (sIn > 0 ? 4.5 : sIn < 0 ? 7 : 3.2) * DT);
-      if (W.v < top * 0.3 || out || (sIn <= 0 && W.driftA < 0.12)) endDrift(W);
+      // the flick (owner + sceptic, 8 Oct): steer the other way into a bend that turns the other way and the slide swings straight through to
+      // the other side - one drift, the flag kept on through straight, the weight going across fastest as it passes straight, one score at the end
+      if (target * W.drift < 0 && W.v > top * 0.5 && !W.air && !out && flipBend(W, g, -W.drift)) {
+        W.drift = -W.drift; W.driftA = -W.driftA; W.driftV = -(W.driftV || 0); W.flipT = W.t; W.prevSIn = 1; W.events.push({ sfx: 'skid' });
+      }
+      var flipping = W.t - (W.flipT || -1e9) < 54;
+      var kb = Math.abs(bendHere(W, g)), sIn = target * W.drift, aT = sIn > 0 ? 0.52 + 0.07 * clamp((kb - 1 / 250) / (1 / 120 - 1 / 250), 0, 1) + 0.025 * Math.sin(W.t / 40) : 0, kS = flipping && sIn > 0 ? 30 : sIn > 0 ? 50 : sIn < 0 ? 62 : 14, cS = 2 * (flipping && sIn > 0 ? 0.8 : sIn < 0 ? 0.92 : 0.86) * Math.sqrt(kS);   // (held: swings out over ~0.5 s; let go: unwinds over ~0.8 s; caught against it: ~0.45 s)
+      if (sIn <= 0 && (W.prevSIn || 0) > 0) W.driftV = Math.min(W.driftV || 0, -0.12); W.prevSIn = sIn;   // (round 3: no carry-on after letting go)
+      if (!W.air) {   // (in the air the tyres do nothing, so the slide waits and unwinds once it lands: it used to run down mid-air, end, and the landing snapped it straight, 8 Oct)
+        W.driftV = (W.driftV || 0) + (kS * (aT - W.driftA) - cS * (W.driftV || 0)) * DT; W.driftA = W.driftA + W.driftV * DT;   // (negative: still sliding the old way, in a flick)
+        if (!flipping && W.driftA <= 0) { W.driftA = 0; if (W.driftV < 0) W.driftV = 0; }
+      }
+      if (W.v < top * 0.3 || out || (!W.air && ((sIn === 0 && Math.abs(W.driftA) < 0.018 && Math.abs(W.driftV) < 0.2) || (sIn < 0 && Math.abs(W.driftA) < 0.045)))) endDrift(W);
     }
     W.dk = (W.dk || 0) + ((W.drift ? 1 : 0) - (W.dk || 0)) * Math.min(1, (W.drift ? 6 : 3) * DT);
     if (W.nitroT > 0) W.nitroT--;
@@ -1216,10 +1266,15 @@
     W.wasBoost = W.boosting;
 
     // ---- speed
-    var hz = top * (W.boosting ? 1.22 : 1) * (W.slipOn ? 1.04 : 1);
-    var v = W.v, accel = 8.8 * C.acc * Math.max(0, 1 - Math.pow(v / hz, 1.6)) + (W.boosting ? 7 : 0);   // (about 0.9 g off the line, 0-60 in under four seconds, then it takes its time to the top; was 1.6 g)
-    if (out) v *= W.crash.hard ? (W.crash.t < W.crash.dur * 0.6 ? 0.986 : 0.9) : 0.9;
-    else if (W.drift) v -= (2.5 + (brake ? 2 : 0)) * DT;
+    // flat out (owner, 8 Oct: "more like 180 ... then the nitrous takes it up to about 240 or 230"): the roadster 180 mph, the GT 193, the hatch 169;
+    // 0-60 in 2.3 s, 90% of its top in ~12 s. Nitro: its own top speed 1.33 times the car's (240 / 257 / 225 mph) and a hard shove towards it - one
+    // bottle from cruise reaches ~234 (the roadster) - softer from a crawl (the tyres spin); when it runs out the speed bleeds away over a few seconds
+    // (was 141 mph and x1.55, one bottle ~204, 7 Oct)
+    var hzN = top * (W.slipOn ? 1.04 : 1), hz = hzN * (W.boosting ? 1.33 : 1);
+    var v = W.v, accel = 10.5 * C.acc * Math.max(0, 1 - Math.pow(v / hzN, 1.6)) + 3 * C.acc * Math.max(0, 1 - v / (hzN * 0.5)) + (W.boosting ? 38 * Math.max(0, 1 - Math.pow(v / hz, 3)) * (0.3 + 0.7 * Math.min(1, v / (top * 0.6))) : 0);   // (about 1.1 g off the line, then it takes its time to the top: 10.5 was 8.8 at 141 mph, 8 Oct)
+    if (out) v = W.crash.hard ? v * (W.crash.t < W.crash.dur * 0.6 ? 0.986 : 0.9) : Math.max(W.crash.v0 * 0.45, v * 0.95);   // (a bounce: down to about half speed, not a stop)
+    else if (W.timeUp && !W.goalSeq) v -= (W.tuCoast ? TU_COAST : W.tuBrake) * DT;   // (time up: rolling for a checkpoint in reach, or braking to a stop)
+    else if (W.drift && !W.air) v -= ((target * W.drift > 0 ? 0.5 : 2.2) + (brake ? 2 : 0) + (W.t - W.scrapeT < 10 ? 2 : 0)) * DT;   // (held: it keeps its speed; fought, braked or on the wall: it scrubs)
     else if (brake) v -= 12.5 * DT;   // (a sports car's brakes, about 1.3 g: was 2.6)
     else if (gas || W.boosting) v += accel * DT;
     else v -= (1.6 + 0.00035 * v * v) * DT;   // (off the throttle: the engine and the air slow it, gently)
@@ -1227,7 +1282,7 @@
     var wasOff = W.off;
     W.off = !W.air && Math.abs(W.x) > roadHalf(g) + RUMBLE;
     if (W.off) { var offTop = top * D.off; if (v > offTop) v = Math.max(offTop, v - 22 * DT); if (!wasOff) knock(W); }
-    if (v > hz) v = Math.max(hz, v - 12 * DT);
+    if (v > hz) v = Math.max(hz, v - (W.boosting ? 12 : 7) * DT);   // (over the top after the nitro: easing back down)
     W.v = v = Math.max(0, v);
     // wheelspin: foot down from a standstill or a crawl, the rear tyres spin up (smoke, black lines, the screech: world3d.js, coastrun.js);
     // it eases as the speed builds and is gone by about 40 mph. Off the line at the green it always spins, a flying start too
@@ -1243,20 +1298,22 @@
       // a drift: the car's line holds the bend (just enough to cancel its push, trimmed a little by the keys) while its
       // nose swings in; the slide grows over the first moment
       var sIn2 = target * W.drift, hold = Math.asin(clamp(pushOut(W, k, v) / Math.max(5, v), -0.6, 0.6)) + W.drift * (sIn2 > 0 ? 0.045 : sIn2 < 0 ? -0.03 : 0);   // (held: a tighter line; caught: a wider one)
+      { var rh = roadHalf(g), oOut = -W.drift * W.x, oIn = W.drift * W.x;   // the slide follows the road (as OutRun 2's does): eased back off the outside edge, and off the inside one
+        hold += W.drift * (0.07 * clamp((oOut - (rh - 3)) / 2, 0, 1) - 0.07 * clamp((oIn - (rh - 2.4)) / 1.5, 0, 1)); }
       if (!W.air) W.phi += (hold - W.phi) * Math.min(1, 4 * DT);
       want = W.phi + W.drift * W.driftA;
-      if (!W.air) W.psi += (want - W.psi) * Math.min(1, 8 * DT);
+      if (!W.air) W.psi += (want - W.psi) * Math.min(1, 9 * DT);
     } else {
       want = out ? W.psi : W.steer * lim;
-      if (!W.air) W.psi += (want - W.psi) * Math.min(1, (7 - 3.2 * Math.min(1, v / VMAX)) * DT);   // the car turns to the angle asked for (more slowly the faster it goes: it has weight)
-      var grip = 9 * C.grip * (W.off ? 0.7 : 1) * (W.air ? 0 : 1);   // (and its line follows a moment behind: was 12)
+      if (!W.air) W.psi += (want - W.psi) * Math.min(1, (7 - 3.2 * Math.min(1, v / VMAX)) * (1 - 0.7 * (W.dk || 0)) * DT);   // the car turns to the angle asked for (more slowly the faster it goes: it has weight)
+      var grip = 9 * C.grip * (W.off ? 0.7 : 1) * (W.air ? 0 : 1) * (1 - 0.75 * (W.dk || 0));   // (just out of a drift the grip comes back over a moment: it blends out, no last snap)   // (and its line follows a moment behind: was 12)
       W.phi += (W.psi - W.phi) * Math.min(1, grip * DT);
     }
     W.yawRate = (want - W.psi) * 7;
     { var lim2 = Math.max(0.05, turnLimit(W, v)), load = Math.abs(pushOut(W, k, v)) / Math.max(1, v * Math.sin(lim2)) * (target * k > 0 ? 1 : 0.6);   // how hard the tyres are working, for the squeal: near the limit in a bend,
       var work = out || W.air || W.drift || v < top * 0.35 ? 0 : Math.max(clamp((load - 0.3) / 0.3, 0, 1), clamp((Math.abs(W.psi - W.phi) - 0.03) / 0.06, 0, 1), brake && v > top * 0.5 ? 0.5 : 0);   // a quick flick at speed, a hard stop
       W.slide = (W.slide || 0) + (work - (W.slide || 0)) * Math.min(1, (work > (W.slide || 0) ? 10 : 5) * DT); }
-    if (out) { var cr = W.crash; cr.t++; if (cr.t > cr.dur * (cr.hard ? 0.88 : 0.55)) { W.x += (cr.tx - W.x) * 0.1; W.psi *= 0.85; W.phi *= 0.85; } if (cr.t >= cr.dur) { W.crash = null; W.v = 0; W.x = cr.tx; W.psi = W.phi = 0; W.steer = 0; } }
+    if (out) { var cr = W.crash; cr.t++; if (cr.t > cr.dur * (cr.hard ? 0.88 : 0.55)) { W.x += (cr.tx - W.x) * 0.1; W.psi *= 0.85; W.phi *= 0.85; } if (cr.t >= cr.dur) { W.crash = null; if (cr.hard) W.v = 0; W.x = cr.tx; W.psi = W.phi = 0; W.steer = 0; } }
 
     // ---- along and across; a bend pushes the car outwards
     W.s += v * Math.cos(W.phi) * DT;
@@ -1276,13 +1333,14 @@
     // ---- up and down: over a sharp crest the road falls away faster than the car can follow, and it flies
     var roadY = heightAt(W, W.s), roadVY = W.v * Math.cos(W.phi) * gradeAt(W, W.s);
     var under = segIndex(W.s), roofed = segAt(W, under).tun || segAt(W, under + 6).tun;   // never take off under (or just before) a tunnel's roof
+    var jk = Math.max(1, W.v / VTRAF); jk *= jk;   // (above the old top speed a jump keeps its length, so it's quicker rather than longer: at 180 mph it was 1.5x longer and the car flew off the road, 8 Oct)
     if (!W.air) {
       var need = (roadVY - W.vh) / DT;
-      if (need < -GRAV && W.v > 20 && !W.crash && !roofed) { W.air = true; W.airT = 0; W.vh = Math.min(W.vh, 7); W.h += W.vh * DT; }
+      if (need < -GRAV * jk && W.v > 20 && !W.crash && !roofed) { W.air = true; W.airT = 0; W.vh = Math.min(W.vh, 7 * Math.sqrt(jk)); W.h += W.vh * DT; }
       else { W.h = roadY; W.vh = roadVY; }
     }
     if (W.air) {
-      W.vh -= GRAV * 1.5 * DT; W.h += W.vh * DT; W.airT += DT;   // a little heavier in the air: a short, punchy jump
+      W.vh -= GRAV * 1.5 * jk * DT; W.h += W.vh * DT; W.airT += DT;   // a little heavier in the air: a short, punchy jump
       if (roofed && W.h > roadY + 2.2) { W.h = roadY + 2.2; W.vh = Math.min(W.vh, 0); }   // and if you fly into one, the roof keeps you down
       if (W.h <= roadY) {
         var hit = W.vh - roadVY; W.h = roadY; W.vh = roadVY; W.air = false; W.land = W.t;
@@ -1333,7 +1391,7 @@
         if (!out) { W.passN++; if (W.req && W.req.k === 'pass') W.req.have++; }
         if (dxx < hitW + 2.2 && W.t - car.hitT > 60 && W.v > top * 0.55 && !out) {
           W.combo = W.comboT > 0 ? Math.min(W.combo + 1, 9) : 1; W.comboT = 200; W.nearN++;
-          var pts = 500 * W.combo; W.score += pts; W.boost = Math.min(1, W.boost + 0.1);
+          var pts = 500 * W.combo; W.score += pts; W.boost = Math.min(1, W.boost + 0.2);   // (five near misses: a bottle)
           W.events.push({ sfx: 'near', x: car.x - W.x, n: W.combo });
           pop(W, W.combo > 1 ? 'NEAR MISS x' + W.combo : 'NEAR MISS', '+' + pts.toLocaleString('en-GB'), car.x - W.x, 'near');
           if (W.req && W.req.k === 'near') W.req.have++;
@@ -1353,13 +1411,14 @@
     // ---- drifting fills the boost and scores by speed and angle; points for speed
     if (W.drift) {
       var ang = Math.abs(W.psi - W.phi);
-      W.driftT += DT; W.driftPts += W.v / VMAX * ang * 70; W.boost = Math.min(1, W.boost + ang * 0.75 * DT);
-      if (W.t % 3 === 0) fx(W, { k: 'smoke', x: W.x, d: W.drift });
+      var onRd = W.air ? 0 : 1;   // (a drift carried over a jump: the air scores its own points, the tyres only on the road)
+      W.driftT += DT; W.driftPts += onRd * W.v / VMAX * ang * 70; W.boost = Math.min(1, W.boost + onRd * ang * 0.75 * (1 + 0.25 * ((W.driftChain || 1) - 1)) * DT);
+      if (W.t % 3 === 0 && onRd) fx(W, { k: 'smoke', x: W.x, d: W.drift });
     }
     if (W.off && W.v > 10 && W.t % 4 === 0) fx(W, { k: 'dust', x: W.x });
     if (W.boost >= 1 && W.bottles < BOTTLE_MAX) { W.boost -= 1; W.bottles++; pop(W, '+1 NITRO', 'A BOTTLE FILLED', 0, 'nitro'); W.events.push({ sfx: 'nitro', x: 0 }); }   // the meter full: another bottle
     else if (W.bottles >= BOTTLE_MAX) W.boost = Math.min(W.boost, 0.99);
-    if (!W.timeUp && !out) { var p2 = W.v / VMAX; W.sAcc += p2 * p2 * 32 * (W.boosting ? 1.5 : 1); var whole = Math.floor(W.sAcc); W.score += whole; W.sAcc -= whole; }
+    if (!W.timeUp && !out) { var p2 = W.v / VMAX; W.sAcc += p2 * p2 * 48 * (W.boosting ? 1.5 : 1); var whole = Math.floor(W.sAcc); W.score += whole; W.sAcc -= whole; }   // (48 was 32: at 180 mph a run is shorter, 8 Oct - a run scores about what it did, so the old Hall of Fame still counts)
     requests(W);
     var HOLD = { ask: 70, wave: 240, look: 210, hair: 170, sulk: 260, clap: 120, hold: W.boosting ? 1e9 : 50 };
     if (W.her.k !== 'idle' && W.her.k !== 'point' && W.t - W.her.t > (HOLD[W.her.k] || 110)) mood(W, 'idle');
@@ -1368,7 +1427,8 @@
       mood(W, Math.random() < 0.5 ? 'look' : 'hair', Math.random() < 0.5 ? -1 : 1); if (W.t - W.voiceT > 60 * 20 && Math.random() < 0.5) voice(W, 'chat');
     }
 
-    if (W.timeUp && W.v < 1.5) { if (++W.overT > 70) W.over = true; }
+    if (W.timeUp && W.v < 1.5) { if (++W.overT > 40) W.over = true; }
+    if (W.timeUp && !W.tuCoast && W.t - W.timeUpT > 30 && W.fireEdge) W.over = true;   // (Space: straight to the result - one more go)
     if (W.t % 60 === 0) { var drop = i1 - 80 - W.base; if (drop > 300) { W.segs.splice(0, drop); W.base += drop; } }
     if (W.pw.double > 0 && W.score > score0) W.score += W.score - score0;
   }
@@ -1377,23 +1437,23 @@
   function autopilot(W, side) {
     var inp = { left: false, right: false, up: true, down: false, fire: false, alt: false };
     if (W.count > 0) { inp.fire = W.count < 8; return inp; }
-    var i = segIndex(W.s), F = W.fork, top = topSpeed(W), target = 0, k, c, j;
+    var i = segIndex(W.s), F = W.fork, top = topSpeed(W), target = 0, k, c, j, room = -1;
     if (F && !F.s && i > F.a - 60) target = (side || (W.reqSide ? W.reqSide.side : W.route.length % 2 ? 1 : -1)) * 6.5;
     else {   // stay in lane, or move one lane over to the one with the most room ahead; boxed in, brake
-      var cur = W.botLane == null ? 1 : W.botLane, best = -1e9, room = 1e9, close = 0, pickK = cur;
+      var cur = W.botLane == null ? 1 : W.botLane, best = -1e9, close = 0, pickK = cur; room = 1e9;
       for (k = Math.max(0, cur - 1); k <= Math.min(2, cur + 1); k++) {
         var L = LANES[k], free = 400, cl = 0, lo = Math.min(W.x, L) - 2.6, hi = Math.max(W.x, L) + 2.6;
         for (j = 0; j < W.cars.length; j++) {
           c = W.cars[j]; if (!sameRoad(W, c)) continue;
           var dz = c.s - W.s, closing = Math.max(0, W.v - c.v);
-          if (k !== cur && dz > -10 && dz < 12 + closing * 0.6 && c.x > lo && c.x < hi) free = -1;
+          if (k !== cur && dz > -10 && dz < 12 + closing * (W.v > top ? 1.6 : 0.6) && c.x > lo && c.x < hi) free = -1;
           else if (dz > (k === cur ? 0.5 : -6) && dz < free && Math.abs(c.x - L) < 2.8) { free = dz; cl = closing; }   // (in its own lane, only what's ahead: a racer sitting behind it once held it stopped)
         }
         var sc = free + (k === cur ? 25 : 0);
         if (sc > best) { best = sc; target = L; room = free; close = cl; pickK = k; }
       }
       W.botLane = pickK;
-      if (room < 14 + close * close / 40 + close * 0.3) W.botBrake = 4;
+      if (room < 14 + close * close / (W.v > top ? 20 : 26) + close * 0.3) W.botBrake = 4;   // (its brakes' real distance, more again over its top speed - the nitro: 26 was 40 until 180 mph, 8 Oct)
     }
     // aim for the lane, a little ahead, leaning into the bend by as much as it pushes
     var look = Math.max(12, W.v * 0.7), kAhead = 0;
@@ -1401,14 +1461,24 @@
     kAhead /= 8;
     var lim = turnLimit(W, W.v);
     var need = Math.asin(clamp(pushOut(W, kAhead, W.v) / Math.max(5, W.v), -1, 1));
-    var u = (Math.atan2(target - W.x, look) + need) / Math.max(0.05, lim);
+    var xd = W.air ? 0 : W.v * Math.sin(W.phi) - pushOut(W, bendHere(W, segAt(W, i)), W.v);   // (how fast it is moving across: aim from where it will be, or at 180 mph it overshot its line onto the verge, 8 Oct)
+    var u = (Math.atan2(target - (W.x + xd * 0.3), look) + need) / Math.max(0.05, lim);
     if (u > 0.3) inp.right = true; else if (u < -0.3) inp.left = true;
-    var maxK = 0; for (j = 2; j < 30; j++) maxK = Math.max(maxK, Math.abs(segAt(W, i + j).k));
+    var maxK = 0; for (j = 2; j < Math.max(30, W.v * 0.48); j++) maxK = Math.max(maxK, Math.abs(segAt(W, i + j).k));
     var tooFast = pushOut(W, maxK, W.v) > W.v * Math.sin(lim) * 0.85;
+    var forkNear = F && !F.s && i > F.a - 120;
+    if (tooFast && W.v > 24 && W.autoDrift && W.v > top * 0.55 && !forkNear && W.v <= top * 1.02) {   // (a bend too quick to hold on grip: drift it, as a player would with auto-drift - hold the turn into it, easing off near the inside)
+      var into = kAhead > 0 ? 1 : -1; if (into * W.x < 2.2) { inp.right = into > 0; inp.left = into < 0; } else { inp.left = false; inp.right = false; } tooFast = false;
+    }
     if (tooFast && W.v > 24) { if (W.auto) inp.down = true; else inp.up = false; }
-    inp.fire = W.bottles > 0 && W.nitroT <= 0 && maxK < 1 / 260 && W.v > top * 0.6 && !(W.botBrake > 0);
+    // over the car's own top speed (the nitro, 7 Oct: 200 mph and more) a lift isn't enough: look as far ahead as it takes to stop and brake in time for
+    // each bend (to a little under the speed it can be taken at, on ~7.5 m/s/s), still steering as it brakes
+    var bendBr = false, stopFar = W.v > top ? Math.round(W.v * W.v / 15 / SEG) + 12 : 0;
+    for (j = 2; j < stopFar; j++) { var kk = Math.abs(segAt(W, i + j).k);
+      if (kk > 1e-4) { var vs = 0.88 * Math.sin(lim) * 0.85 / Math.max(1e-6, pushOut(W, kk, 1)); if (W.v > vs && W.v * W.v - vs * vs > 2 * 7.5 * j * SEG) { inp.down = true; inp.up = false; bendBr = true; } } }
+    inp.fire = W.bottles > 0 && W.nitroT <= 0 && maxK < 1 / 260 && W.v > top * 0.6 && !(W.botBrake > 0) && room >= 300 && W.v < top * 1.05;   // (not coming up to a fork; one bottle at a time; 300 m of clear lane - fired into traffic at 230 mph it crashed twice as often, 8 Oct)
     if (W.botBrake > 0) { W.botBrake--; inp.down = true; inp.up = false; }
-    if (inp.down && !W.drift) { inp.left = false; inp.right = false; }   // the driver brakes in a straight line, so it never drifts by accident
+    if (inp.down && !W.drift && !bendBr) { inp.left = false; inp.right = false; }   // the driver brakes in a straight line, so it never drifts by accident (but keeps steering as it brakes for a bend at nitro speed)
     return inp;
   }
 
