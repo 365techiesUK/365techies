@@ -26,4 +26,21 @@ foreach (array('pcm.php', 'pcm-booking.php', 'pcm-rehome-lib.php') as $f) {
     if ($row['stale'] && function_exists('opcache_invalidate')) $row['invalidated'] = (bool)@opcache_invalidate($p, false);
     $out[$f] = $row;
 }
+// is the pcm.php on disk the new one, and what does the re-home conclude for a made-up key on the live data? (counts and
+// yes/no only - nothing about any customer)
+$src = (string)@file_get_contents(__DIR__ . '/pcm.php');
+$out['php'] = PHP_VERSION;
+$out['pcm_md5'] = md5($src);
+$out['pcm_has_keygone'] = strpos($src, 'PCM_KEYGONE') !== false;
+$out['pcm_has_resend_note'] = strpos($src, 'Re-sent 8 Oct 2026') !== false;
+if (is_readable(__DIR__ . '/pcm-plus-lib.php')) require_once __DIR__ . '/pcm-plus-lib.php';
+$out['plus_fn'] = function_exists('plus_is_key');
+require_once __DIR__ . '/pcm-rehome-lib.php';
+$db = json_decode((string)@file_get_contents(__DIR__ . '/pcm-data.json'), true);
+$out['db_ok'] = is_array($db) && isset($db['customers']) && is_array($db['customers']);
+if ($out['db_ok']) {
+    $out['db_has_customers'] = count($db['customers']) > 0;
+    $copy = $db; $r = rehome_resolve($copy, 'ZZREHOMECHECK', '000000000000', '');
+    $out['resolve_how'] = $r[1];
+}
 echo json_encode($out);
