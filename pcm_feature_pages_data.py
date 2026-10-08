@@ -42,12 +42,13 @@ SHOTS = {
     'printer': ('/images/pcm-feat-printers-v36.webp', 1272, 864, 'Printers in 365 PC Manager saying 2 documents are stuck in the queue, with a Clear stuck documents button', ('My PC', 'Printers')),
     'power':   ('/images/pcm-feat-power-v36.webp', 1272, 1408, 'Power and running cost in 365 PC Manager: hours on in the last 30 days, the energy and roughly what it cost, the Eco, Everyday and Full speed modes and an hour-by-hour power history', ('My PC', 'Power &amp; running cost')),
     'radio':   ('/images/pcm-feat-radio-v36.webp', 1864, 890, 'Radio in 365 PC Manager: radio for listeners in the United Kingdom, with the Near you list of Dorset stations - Hot Radio, Forest FM, Radio Wimborne, Nation Radio South Coast, Heart Dorset - and buttons for the BBC stations', ('Music &amp; games', 'the Radio tab')),
+    'alarm':   ('/images/pcm-feat-alarm-v36.webp', 1132, 962, 'The wake-up alarm in 365 PC Manager: it rings at 07:00 on weekdays with Radio Wimborne, up to 40% volume, rising over 10 minutes from almost silent, with Try it now and Save buttons', ('Music &amp; games', 'Big view, then Alarms &amp; timers')),
     'hometimer': ('/images/pcm-feat-hometimer-v36.webp', 1132, 962, 'The Someone&rsquo;s home timer in 365 PC Manager: it plays Radio Wimborne from 08:00 until 10:30 every day at 35% volume, with Shift the times a little each day switched on, and Try it now and Save buttons', ('Music &amp; games', 'Big view, then Alarms &amp; timers')),
     'cds':     ('/images/pcm-feat-cds-v36.webp', 1272, 668, 'The CDs tab in 365 PC Manager on a PC with no CD drive: it explains that a plug-in USB CD drive works, under the music player (a sample library)', ('Music &amp; games', 'the CDs tab')),
 }
 
 # the picture's caption, where "catching it" doesn't fit
-CAPS = {'radio': 'The real app (a sample PC).', 'hometimer': 'The real app&rsquo;s timer (a sample setting).'}
+CAPS = {'radio': 'The real app (a sample PC).', 'alarm': 'The real app&rsquo;s alarm (a sample setting).', 'hometimer': 'The real app&rsquo;s timer (a sample setting).'}
 
 
 def _app_box(key, head, what_html, setup_url, note=''):
@@ -473,7 +474,7 @@ RD = {
         {'q': 'Is a radio app safe to install?', 'a': '<p>Stick to the broadcasters&rsquo; own players and apps you trust. Our free 365 PC Manager is digitally signed by 365 Techies Ltd, a family IT firm in Bournemouth since 1995, and has no adverts.</p>'},
         {'q': 'Can you set it up for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC and set up your favourite stations as one-click buttons while you watch, usually the same day. Remote help is from &pound;20 and no fix, no fee. Ring 01202 775566.</p>'},
     ],
-    'crossLinksHtml': '<p>Related help: <a href="/make-your-house-look-lived-in-while-away/">a radio on a timer while you&rsquo;re away</a>, <a href="/how-to-play-a-cd-on-windows-11/">playing CDs on Windows 11</a>, <a href="/bluetooth-headphones-sound-muffled-on-pc/">muffled headphones</a>, <a href="/wifi-signal-test/">Wi-Fi signal test</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/remote-support/">remote support</a>.</p>',
+    'crossLinksHtml': '<p>Related help: <a href="/how-to-set-an-alarm-on-your-computer/">waking up to the radio on your computer</a>, <a href="/make-your-house-look-lived-in-while-away/">a radio on a timer while you&rsquo;re away</a>, <a href="/how-to-play-a-cd-on-windows-11/">playing CDs on Windows 11</a>, <a href="/bluetooth-headphones-sound-muffled-on-pc/">muffled headphones</a>, <a href="/wifi-signal-test/">Wi-Fi signal test</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/remote-support/">remote support</a>.</p>',
 }
 
 # ============================================================ 6. CDs on Windows 11 (v36's CDs)
@@ -618,7 +619,71 @@ LV = {
         {'q': 'Is it safe to leave the computer on while I&rsquo;m away?', 'a': '<p>Yes, much like leaving the broadband router on. It sleeps between plays. Leave it on a hard surface with its air vents clear, not on a bed or in a cupboard.</p>'},
         {'q': 'Can you set it up for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, set the timer, test it with you and check the PC will wake for it, usually the same day. Remote help is from &pound;20 and no fix, no fee. Ring 01202 775566.</p>'},
     ],
-    'crossLinksHtml': '<p>Related: <a href="/how-to-listen-to-the-radio-on-your-computer/">listening to the radio on your computer</a>, <a href="/cctv-smart-home/">CCTV and smart home setup</a>, <a href="/lost-or-stolen-laptop-what-to-do/">lost or stolen laptop</a>, <a href="/how-much-does-it-cost-to-run-a-pc-uk/">what a PC costs to run</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>. The checklist follows the advice of <a href="https://www.securedbydesign.com/" rel="noopener" target="_blank">Secured by Design</a>, the police&rsquo;s crime-prevention initiative.</p>',
+    'crossLinksHtml': '<p>Related: <a href="/how-to-listen-to-the-radio-on-your-computer/">listening to the radio on your computer</a>, <a href="/how-to-set-an-alarm-on-your-computer/">a wake-up alarm on your computer</a>, <a href="/cctv-smart-home/">CCTV and smart home setup</a>, <a href="/lost-or-stolen-laptop-what-to-do/">lost or stolen laptop</a>, <a href="/how-much-does-it-cost-to-run-a-pc-uk/">what a PC costs to run</a> and <a href="/free-pc-health-check/">the free 365 PC Manager app</a>. The checklist follows the advice of <a href="https://www.securedbydesign.com/" rel="noopener" target="_blank">Secured by Design</a>, the police&rsquo;s crime-prevention initiative.</p>',
+}
+
+# ============================================================ 8. An alarm on a laptop or PC (v36's wake-up alarm)
+AL = {
+    'slug': 'how-to-set-an-alarm-on-your-computer',
+    'title': 'How to Set an Alarm on Your Laptop or PC | 365 Techies',
+    'metaDesc': 'Set an alarm on a Windows laptop or PC: the Clock app, why its alarm stays silent when the PC sleeps, and a free alarm that wakes it gently with the radio.',
+    'ogTitle': 'How to set an alarm on your laptop or PC',
+    'crumbName': 'Set an Alarm on Your Computer',
+    'eyebrow': '// AN ALARM ON YOUR COMPUTER',
+    'h1': 'How to set an <em class="grad grad--cyan">alarm</em> on your laptop or PC',
+    'lede': 'Windows has an alarm built in: the Clock app. The catch is that it only goes off while the computer is awake, and only with its own chimes &mdash; so if the PC has gone to sleep, nothing happens. Here&rsquo;s how to set it, how to stop it failing silently, and a free alarm that wakes the PC itself and starts the radio or your music softly, getting gently louder.',
+    'chips': ['Built into Windows 10 &amp; 11', 'Free radio alarm app', 'Windows specialists since 1995'],
+    'primaryCta': ['Call 01202 775566', 'tel:+441202775566'], 'secondaryCta': ['See remote support', '/remote-support/'],
+    'ctaHead': 'Want it set up for you?', 'ctaSub': 'We connect to your Windows PC, set your alarm, test it with you and check the PC will wake for it. Usually the same day. Call 01202 775566 or text 07520 615332.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Built into Windows', 'The Clock app: Start, type Clock, then Alarm and Add an alarm. Free, nothing to install.'),
+        ('The catch', 'Clock alarms only go off while the computer is awake. If it has gone to sleep, the alarm stays silent.'),
+        ('Stop it failing silently', 'Keep the computer plugged in, stop it sleeping for the night, and check the volume and speakers.'),
+        ('Waking to the radio or your music', 'The Clock app only has its own sounds. Our free 365 PC Manager plays a radio station or your songs.'),
+        ('Gentle wake-up', 'Our app starts almost silent and rises to the volume you choose, over 3 to 30 minutes.'),
+        ('Asleep is fine with our app', 'It wakes the PC a minute early on its own. A laptop must be plugged in, and nothing can wake a PC that&rsquo;s switched off.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; START HERE', 'h2': 'Set an alarm with Windows&rsquo; Clock app',
+         'html': '<ol><li>Click <strong>Start</strong>, type <strong>Clock</strong> and open the Clock app. (On Windows 10 it may be called <strong>Alarms &amp; Clock</strong>.)</li>'
+                 '<li>Choose <strong>Alarm</strong> on the left, then <strong>Add an alarm</strong> (the <strong>+</strong> button).</li>'
+                 '<li>Set the time and give it a name if you like. Tick <strong>Repeat alarm</strong> and choose the days, or leave it for just once.</li>'
+                 '<li>Pick a <strong>sound</strong> and a <strong>snooze time</strong>, then choose <strong>Save</strong>.</li></ol>'
+                 '<p>Each alarm has an on/off switch, so you can keep your usual ones and switch them off for the weekend. Before you rely on it, read the next part: the Clock app warns that its notifications only show if the PC is awake.</p>'},
+        {'eyebrow': '/02 &mdash; IT DIDN&rsquo;T GO OFF?', 'h2': 'Why the alarm didn&rsquo;t go off, and how to fix it',
+         'html': '<p>Almost always, the computer had gone to <strong>sleep</strong>. The Clock app can&rsquo;t wake it, so the alarm passes in silence. To make it reliable:</p>'
+                 '<ul><li><strong>Keep it awake for the night.</strong> Open <strong>Settings &gt; System &gt; Power &amp; battery</strong> (on a desktop, just <strong>Power</strong>; on Windows 10, <strong>Power &amp; sleep</strong>), open <strong>Screen and sleep</strong> (<strong>Screen, sleep &amp; hibernate timeouts</strong> on newer versions), and set the <strong>sleep</strong> setting for when it&rsquo;s plugged in to <strong>Never</strong>. Letting the <strong>screen</strong> turn off is fine.</li>'
+                 '<li><strong>Keep a laptop plugged in, with the lid open.</strong> Closing the lid usually sends a laptop to sleep.</li>'
+                 '<li><strong>Check the sound.</strong> Click the speaker icon by the clock: not muted, the volume up, and the sound going to speakers that are switched on &mdash; not headphones on the bedside table.</li>'
+                 '<li><strong>Test it.</strong> Set an alarm for two minutes&rsquo; time, walk away, and listen.</li></ul>'
+                 '<p>Leaving a computer awake all night costs very little, but it does cost something. If you&rsquo;d rather it slept, use an alarm that can wake it, like ours below.</p>'},
+        {'eyebrow': '/03 &mdash; THE GENTLE WAY', 'h2': 'Wake up to the radio, getting gently louder',
+         'html': '__APP_BOX_ALARM__'},
+        {'eyebrow': '/04 &mdash; PHONE OR COMPUTER?', 'h2': 'Phone or computer: which makes the better alarm?',
+         'html': '<p>For most people a phone by the bed is the simplest alarm. A computer earns its place when it&rsquo;s in the bedroom or the kitchen with proper speakers: you can wake to your favourite station or your own music at a sensible volume, without a phone under the pillow. It&rsquo;s also handy as a second alarm for important mornings &mdash; an early flight, a hospital appointment &mdash; in case the phone&rsquo;s been silenced.</p>'},
+        {'eyebrow': '/05 &mdash; WHEN TO CALL US', 'h2': 'When to call us',
+         'html': _call_us('If your alarm keeps failing, the computer won&rsquo;t wake, or there&rsquo;s no sound, we&rsquo;ll find out why and set it up properly with you.')},
+    ],
+    'howToName': 'How to set an alarm on a Windows laptop or PC',
+    'howToSteps': [
+        {'name': 'Open the Clock app', 'text': 'Click Start, type Clock and open the Clock app (Alarms &amp; Clock on Windows 10).'},
+        {'name': 'Add an alarm', 'text': 'Choose Alarm, then Add an alarm. Set the time, tick Repeat alarm and choose the days, pick a sound and a snooze time, and choose Save.'},
+        {'name': 'Stop the computer sleeping', 'text': 'The Clock app only rings while the computer is awake. In Settings, System, Power and battery, set sleep when plugged in to Never for the night, and keep a laptop plugged in with the lid open.'},
+        {'name': 'Check the sound', 'text': 'Make sure the volume is up, not muted, and going to speakers that are switched on. Test with an alarm two minutes ahead.'},
+        {'name': 'Or use an alarm that wakes the PC', 'text': 'The free 365 PC Manager app wakes the computer from sleep a minute early and starts the radio or your music, rising gently to the volume you choose.'},
+    ],
+    'faqs': [
+        {'q': 'Why didn&rsquo;t my alarm go off on my laptop?', 'a': '<p>Usually because the laptop was asleep: closing the lid or leaving it idle sends it to sleep, and the Clock app&rsquo;s alarms only sound while it&rsquo;s awake. Keep it plugged in with the lid open and sleep set to Never for the night, or use an alarm that can wake it.</p>'},
+        {'q': 'Will an alarm work if the computer is asleep?', 'a': '<p>Not the Clock app&rsquo;s. Our free 365 PC Manager&rsquo;s wake-up alarm wakes the computer a minute early using Windows&rsquo; own wake timer, as long as it&rsquo;s plugged in. Nothing can ring on a computer that&rsquo;s switched off.</p>'},
+        {'q': 'Can I wake up to the radio or my own music?', 'a': '<p>Not with the Clock app, which only has its own sounds. Our free app plays a radio station, your favourite songs, all your music shuffled, or a playlist.</p>'},
+        {'q': 'Can the alarm get louder gradually?', 'a': '<p>Yes, with our app: it starts almost silent and rises to the volume you choose over 3, 5, 10, 15, 20 or 30 minutes &mdash; or starts straight at that volume if you prefer.</p>'},
+        {'q': 'What if the internet is down in the morning?', 'a': '<p>Our app won&rsquo;t fail silently: if the station won&rsquo;t play, your songs play instead, and if there are none, Windows&rsquo; own alarm sound. It also turns Windows&rsquo; sound up to at least 30% if it was muted or very low.</p>'},
+        {'q': 'Can I wake up to BBC Radio 2 or Heart?', 'a': '<p>Not in our app: the BBC and Global (Heart, Capital, Classic FM, Smooth) only let their stations play in their own apps, so they can&rsquo;t be alarms. Choose another station, or your own music.</p>'},
+        {'q': 'What happens if I sleep through it?', 'a': '<p>The Clock app snoozes for the time you chose. Our app shows a Good morning window with Stop and Snooze (10 minutes), and switches itself off after an hour.</p>'},
+        {'q': 'Can you set it up for me?', 'a': '<p>Yes. With your permission we connect to your Windows PC, set the alarm, test it with you and check the computer wakes for it, usually the same day. Remote help is from &pound;20 and no fix, no fee. Ring 01202 775566.</p>'},
+    ],
+    'crossLinksHtml': '<p>Related: <a href="/how-to-listen-to-the-radio-on-your-computer/">listening to the radio on your computer</a>, <a href="/make-your-house-look-lived-in-while-away/">a radio on a timer while you&rsquo;re away</a>, <a href="/how-much-does-it-cost-to-run-a-pc-uk/">what a PC costs to run</a>, <a href="/free-pc-health-check/">the free 365 PC Manager app</a> and <a href="/remote-support/">remote support</a>.</p>',
 }
 
 # the step-by-step panels (build_extra FIX_FLOW_PAGES format); the calculator page has none
@@ -629,6 +694,8 @@ FLOWS = {
                  'h3s': 'Still stuck at 60Hz after every step? That is a remote job.'},
     PQ['slug']: {'h2': 'Clear the queue, step by step', 'ask': 'Is it printing now?', 'tip': 'Print a test page from the program you were using.',
                  'h3s': 'Still stuck after every step? That is a remote job.'},
+    AL['slug']: {'h2': 'Get your alarm going off, step by step', 'ask': 'Did it go off?', 'tip': 'Test it with an alarm two minutes ahead before you rely on it.',
+                 'h3s': 'Still silent after every step? That is a remote job.'},
     CD['slug']: {'h2': 'Get your CD playing, step by step', 'ask': 'Is it playing now?', 'tip': 'Set Audio CD to play in AutoPlay, so next time it starts by itself.',
                  'h3s': 'Still won&rsquo;t play after every step? That is a remote job.'},
 }
@@ -655,12 +722,15 @@ def pages(setup_url):
         '__APP_BOX_HOMETIMER__': _app_box('hometimer', 'Someone&rsquo;s home: the radio on a timer, from your PC',
             '<p style="margin:0">Choose the times and days, the radio station or your own songs, and the volume. It plays between those times, and with <strong>Shift the times a little each day</strong> on, they move by up to 20 minutes each day so it never looks automatic. '
             'The PC can be asleep: it wakes itself a minute or so early (a laptop must be plugged in), but it can&rsquo;t if it&rsquo;s switched off. It never interrupts music someone is playing. BBC and Global stations can&rsquo;t be used, as they only play in their own apps.</p>', setup_url),
+        '__APP_BOX_ALARM__': _app_box('alarm', 'A wake-up alarm that wakes the PC too',
+            '<p style="margin:0">Choose the time and the days (or just once), then what plays: a <strong>radio station</strong>, your favourite songs, all your music shuffled, or a playlist. It starts <strong>almost silent and rises</strong> to the volume you choose over 3 to 30 minutes, and a Good morning window has <strong>Stop</strong> and <strong>Snooze</strong> (10 minutes). '
+            'It won&rsquo;t fail silently: it turns Windows&rsquo; sound up if it&rsquo;s muted or very low, plays your songs if the station won&rsquo;t start, and Windows&rsquo; alarm sound if there are none. The PC can be asleep &mdash; it wakes itself a minute early (leave a laptop plugged in) &mdash; but not switched off. BBC and Global stations can&rsquo;t be alarms.</p>', setup_url),
         '__APP_BOX_POWER__': _app_box('power', 'Power &amp; running cost: what yours really uses',
             '<p style="margin:0">It records the power as it goes, hour by hour, and shows what it cost at your own price a unit, with Eco, Everyday and Full speed modes to cut it. '
             'On a laptop running on battery it reads the whole laptop; on a desktop, the processor and an NVIDIA graphics card &mdash; not the screen or disks, and it says so.</p>', setup_url),
     }
     out = []
-    for d in (BT, HZ, PQ, PC, RD, CD, LV):
+    for d in (BT, HZ, PQ, PC, RD, CD, LV, AL):
         d = dict(d, sections=[dict(s) for s in d['sections']])
         for k in ('title', 'metaDesc', 'ogTitle'):   # plain apostrophes: these also go into JSON-LD and meta tags
             d[k] = d[k].replace('&rsquo;', "'")
