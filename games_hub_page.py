@@ -63,6 +63,21 @@ _CATS = {
 }
 # a picture that lives somewhere other than games/img/ (Seafront's own page already has its levels as pictures)
 _IMG_ELSEWHERE = {"seafront": "/bournemouth/games/seafront/media/lv-pirate.webp"}
+# 8 Oct 2026: what each picture shows, for its alt text (search engines and image search read it). The covers' subjects
+# are the ones drawn in tools/covers/make-covers.py - keep them in step when a cover is redrawn. A game not listed
+# gets "A screen from <title>".
+_ALT = {
+    "solitaire": "Solitaire cover: cards cascading off the piles over Old Harry Rocks at sunrise",
+    "freecell": "FreeCell cover: Corfe Castle under a huge moon, with four Aces in the free cells",
+    "spider": "Spider Solitaire cover: a dewy spider&rsquo;s web on the heath at dawn, with cards caught in it",
+    "tripeaks": "TriPeaks cover: three chalk downs with a white horse, and a card glowing on each summit",
+    "pyramid": "Pyramid cover: a pyramid of cards against a New Forest sunset, with ponies grazing",
+    "hearts": "Hearts cover: Bournemouth Pier at sunset, hearts floating up and the Queen of spades",
+    "gin": "Gin Rummy cover: the beach huts at Bournemouth, with a winning hand laid down",
+    "cribbage": "Cribbage cover: a wooden peg board with brass pegs and the best hand there is, on a pub table",
+    "whist": "Whist cover: a card table by candlelight, with the four suits and the trump card turned up",
+    "seafront": "Seafront: a pirate raid off Bournemouth seafront",
+}
 _HEX = re.compile(r"^#[0-9a-fA-F]{6}$")
 # the Daily challenges tile's own look: gold, and a calendar with a star
 _DAILY_LOOK = {"c1": "#c98a00", "c2": "#4a3000",
@@ -124,7 +139,8 @@ def _tile(g, n):
     kind, hof = _kind(g)
     # the first screenful of pictures load at once, the rest when scrolled to
     lazy = "" if n <= 4 else ' loading="lazy"'
-    art = ('<img src="%s" alt="" width="%d" height="%d" decoding="async"%s />' % (pic[0], pic[1], pic[2], lazy)) if pic else \
+    alt = _ALT.get(g["id"]) or ("A screen from " + _esc(g.get("title", "")))
+    art = ('<img src="%s" alt="%s" width="%d" height="%d" decoding="async"%s />' % (pic[0], alt, pic[1], pic[2], lazy)) if pic else \
           '<span class="gt-icon" aria-hidden="true">%s</span>' % _esc(g.get("icon", ""))
     data = ' data-id="%s" data-kind="%s" data-store="%s"%s%s data-pic="%s"' % (
         _esc(g["id"]), kind, _esc(look.get("store", "")), ' data-hof="1"' if hof else "",
@@ -406,7 +422,7 @@ info_page(
     h1='Free games, <em class="grad grad--cyan">no adverts</em>',
     lede="Solitaire, Hearts, Cribbage, Whist and five more card games, plus our own arcade games &mdash; made by us in Bournemouth, for your PC, tablet or phone.",
     desc="Free Solitaire, FreeCell, Spider, TriPeaks, Pyramid, Hearts, Gin Rummy, Cribbage, Whist and arcade games from 365 Techies, Bournemouth. No adverts, no sign-in.",
-    title="Free Games - No Adverts, No Sign-In | 365 Techies",
+    title="Free Solitaire &amp; Card Games, No Adverts | 365 Techies",
     og_title="Free games, no adverts | 365 Techies",
     chips=["No adverts", "No sign-in", "Nothing to install"],
     task=True,
@@ -430,4 +446,30 @@ _page = next(p for p in bp.PAGES if p.get("slug") == "games")
 # while hidden, the page stays out of the site's own search as well (build_blog skips pages marked nosearch)
 _page["nosearch"] = not PUBLIC
 # what WhatsApp / Facebook show when the page is shared: the six games on one picture (made 4 Oct, scratchpad make_share_cards.py)
-_page["og_image"] = "/games/img/games-share-v3.jpg"   # v3 (5 Oct): names Hearts, Cribbage, Whist + 5 more AND shows a Hearts table (v1 named only three games; v2 named them but showed none)
+_page["og_image"] = "/games/img/games-share-v3.jpg"
+# 8 Oct 2026: the games in the page's structured data - one ItemList of VideoGame, built from games.json like the tiles,
+# so search engines and AI answers know this page lists free browser games (name, page, picture, free, no sign-in).
+def _games_itemlist():
+    import html as _h
+    items = []
+    for g in [x for x in _games() if not x.get("soon")]:
+        pic = _picture(g)
+        node = {"@type": "VideoGame", "name": _h.unescape(g["title"]), "url": g["url"],
+                "description": _h.unescape(re.sub(r"<[^>]+>", "", g.get("sub", ""))),
+                "genre": "Card game" if g.get("cat") == "Card games" else ("Arcade game" if g.get("cat") == "Arcade" else "Simulation"),
+                "gamePlatform": "Web browser", "applicationCategory": "Game", "operatingSystem": "Any (in a web browser)",
+                "inLanguage": "en-GB", "isAccessibleForFree": True,
+                "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP"},
+                "publisher": {"@id": bp.SITE + "/#business"}}
+        if pic:
+            node["image"] = bp.SITE + pic[0]
+        items.append({"@type": "ListItem", "position": len(items) + 1, "item": node})
+    return {"@type": "ItemList", "@id": bp.SITE + "/games/#games", "name": "Free games from 365 Techies",
+            "numberOfItems": len(items), "itemListElement": items}
+_orig_games_schema = _page["schema"]
+def _games_schema(s, _orig=_orig_games_schema):
+    import json as _j
+    obj = _j.loads(_orig(s))
+    obj.setdefault("@graph", []).append(_games_itemlist())
+    return _j.dumps(obj, indent=2, ensure_ascii=False)
+_page["schema"] = _games_schema   # v3 (5 Oct): names Hearts, Cribbage, Whist + 5 more AND shows a Hearts table (v1 named only three games; v2 named them but showed none)
