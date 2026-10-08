@@ -808,14 +808,14 @@ def pcm_landing():
       <div aria-hidden="true" style="position:absolute;left:50%;top:6%;transform:translateX(-50%);width:78%;height:64%;background:radial-gradient(ellipse at center,rgba(29,151,227,.22),rgba(29,151,227,0) 70%);filter:blur(46px);pointer-events:none;z-index:0"></div>
       <div class="wrap" style="max-width:1000px;position:relative;z-index:1">
         <div data-reveal style="position:relative;border-radius:20px;overflow:hidden;border:1px solid rgba(125,170,220,.3);box-shadow:0 34px 80px rgba(0,0,0,.55)">
-          <video id="pcmreel" muted loop playsinline preload="none" poster="/images/pcm-reel-poster-v35b-960.webp" width="1920" height="1080" aria-label="365 PC Manager in action: the health score and Eco, Everyday or Full speed, then Check everything, the network check, devices on your network, the screen and sound checks, safety settings, Scam check, our Virgin email tool and the games" style="width:100%;height:auto;display:block;background:#0a1226">
-            <source src="/images/pcm-reel-v35b.mp4" type="video/mp4" />
+          <video id="pcmreel" muted loop playsinline preload="none" poster="/images/pcm-reel-poster-v36-960.webp" width="1920" height="1080" aria-label="365 PC Manager version 36: the health score and the new menu, My PC, Internet and email, Scam check, your photos, then music, the radio near you, Auto DJ and the DJ decks, a wake-up alarm, Get help and the games" style="width:100%;height:auto;display:block;background:#0a1226">
+            <source src="/images/pcm-reel-v36.mp4" type="video/mp4" />
           </video>
           <button type="button" id="pcmreelplay" aria-label="Play the 365 PC Manager showcase" style="position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(7,13,34,.28);border:0;cursor:pointer">
             <span style="width:76px;height:76px;border-radius:50%;background:rgba(29,151,227,.94);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.9rem;padding-left:6px;box-shadow:0 12px 32px rgba(0,0,0,.45)">&#9654;</span>
           </button>
         </div>
-        <p class="mono" style="font-size:.72rem;color:var(--muted);margin:.85rem 0 0;text-align:center">The real app, recorded &mdash; health score &rarr; Check everything &rarr; network check &rarr; devices on your network &rarr; screen &amp; sound &rarr; safety settings &rarr; Scam check &rarr; our Virgin email tool &rarr; games. Nothing mocked up: one phone&rsquo;s name blurred, and the Virgin page shows the app&rsquo;s sample mailbox.</p>
+        <p class="mono" style="font-size:.72rem;color:var(--muted);margin:.85rem 0 0;text-align:center">The real app, version 36 &mdash; health score &rarr; My PC &rarr; internet &amp; email &rarr; Scam check &rarr; photos &rarr; music &rarr; radio &rarr; DJ decks &rarr; alarms &rarr; Get help &rarr; games. Nothing mocked up: the music screens show the app&rsquo;s sample library.</p>
       </div>
       <script>
         (function(){
@@ -1130,7 +1130,7 @@ def pcm_landing():
                       faqpage(s, _faqs)])
     add(slug=slug, title="Free PC Health Check for Windows | 365 PC Manager",
         desc=desc, og_title="Free PC Health Check - 365 PC Manager | 365 Techies", schema=schema, content=content,
-        og_image=bp.SITE + "/images/pcm-og-v35b.jpg")
+        og_image=bp.SITE + "/images/pcm-og-v36.jpg")
 pcm_landing()
 
 # ===================================================== 365 WIFI OPTIMIZER (live signal finder)
