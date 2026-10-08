@@ -39,7 +39,7 @@
       "title": "365 Eclipse", "icon": "✈️", "cat": "Arcade", "url": "https://365techies.co.uk/games/eclipse/", "pic": 2,
       "sub": "A 3D jet shooter: seven stages from harbour to orbit, four fighters, new guns and rockets to catch, and huge bosses." },
     { "id": "coastrun", "look": {"added": "2026-10-04", "c1": "#dc2626", "c2": "#5c0b0b", "store": "coast365", "glyph": "<path d='M5 17h14v-4.5l-2.5-5h-9L5 12.5zm1.5-4.5L8.4 9h7.2l1.9 3.5z'/><circle cx='8' cy='17.5' r='2'/><circle cx='16' cy='17.5' r='2'/>"},
-      "title": "365 Coast Run", "icon": "🏎️", "cat": "Arcade", "url": "https://365techies.co.uk/games/coastrun/", "pic": 4, "thumb": "https://365techies.co.uk/games/img/pcm/coastrun-v4.jpg",
+      "title": "365 Coast Run", "icon": "🏎️", "cat": "Arcade", "url": "https://365techies.co.uk/games/coastrun/", "pic": 5, "thumb": "https://365techies.co.uk/games/img/pcm/coastrun-v5.jpg",
       "sub": "A 3D road race along the Dorset coast with your girlfriend beside you: fifteen places, five goals - drift, jump and do what she asks for hearts." },
     { "id": "seafront", "look": {"c1": "#0284c7", "c2": "#063a5c", "store": "", "glyph": "<path d='M2 14c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2v3c-2.5 0-2.5-2-5-2s-2.5 2-5 2-2.5-2-5-2-2.5 2-5 2z'/><path d='M8 11c.6-3.8 3.4-6.5 7-6.5-2 1.6-3 3.9-3 6.5z'/>"},
       "title": "Seafront", "icon": "🌊", "cat": "Seafront", "url": "https://365techies.co.uk/bournemouth/games/seafront/play/",
