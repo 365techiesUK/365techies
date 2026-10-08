@@ -270,7 +270,7 @@
         "@type": "ImageObject",
         "url": "https://365techies.co.uk/og-image.jpg"
       },
-      "dateModified": "2026-10-07"
+      "dateModified": "2026-10-08"
     }
   ]
 }
@@ -765,9 +765,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 07 Oct 2026 &middot; 640be207ad</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 08 Oct 2026 &middot; f901ccb159</p><script>
 (function () {
-  var P365BUILD = '640be207ad';
+  var P365BUILD = 'f901ccb159';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -5788,6 +5788,62 @@
 
   // SOS relay inbox: whole card stays hidden until a code is actually waiting, so the
   // console isn't cluttered on the 360 days a year nobody uses it
+  /* Sign-ins waiting for approval (8 Oct 2026). A booking sign-in whose email matches a plan (Pro) record is never given
+     the plan on the email alone - a booking account can be made with anyone's email - so the PC goes on a separate free
+     record and the plan record waits here (staffcustomers -> pending). Approve = the old console's approve, server-side
+     (staffpendsign -> ps_approve in pcm-pendsign-lib.php): the free record becomes the plan, the old record is retired. */
+  function psgRender(list) {
+    var card = document.getElementById('psgcard'), box = document.getElementById('psg');
+    if (!card || !box) return;
+    if (!list.length) { card.style.display = 'none'; box.innerHTML = ''; return; }
+    var byId = {};
+    var h = '<p class="quiet" style="margin:.1rem 0 .6rem">Someone signed in with a booking account whose email matches a plan customer. A booking account can be made with anyone\u2019s email, so the plan is never handed over by itself: until you approve, their PC is on a separate <strong>free</strong> record and the app shows Free. Approve when you know it is them.</p>';
+    list.forEach(function (p) {
+      byId[p.id] = p;
+      var who = p.sbname || p.sbemail || 'Someone';
+      h += '<div class="row"><div style="flex:1;min-width:200px"><strong>' + esc(who) + '</strong>' + (p.sbemail && p.sbemail !== who ? ' <span class="quiet" style="margin:0">' + esc(p.sbemail) + '</span>' : '')
+        + '<br /><span class="quiet" style="margin:0">Email matches the plan record <strong>' + esc(p.name || '(no name)') + '</strong>' + (p.next ? ' \u00b7 next visit ' + esc(p.next) : '') + '</span>'
+        + '<br /><span class="quiet" style="margin:0">' + (p.gone
+            ? '\u26a0 The free record this sign-in made has since been deleted \u2014 there is nothing to approve for now. It shows here to approve again once their PC is signed in to booking again; or dismiss this note.'
+            : 'Signed in ' + seenTxt(p.ts) + (p.pc ? ' on <strong>' + esc(p.pc) + '</strong>' : '') + ' \u00b7 now on the free record \u201c' + esc(p.lname) + '\u201d') + '</span></div>'
+        + (p.gone ? '' : '<button class="sm psga" data-id="' + esc(p.id) + '">\u2713 Approve</button> ')
+        + '<button class="sm ghost psgd" data-id="' + esc(p.id) + '">Dismiss</button></div>';
+    });
+    box.innerHTML = h;
+    card.style.display = '';
+    var send = function (b, p, what, okMsg) {
+      b.disabled = true;
+      post(BK, { action: 'staffpendsign', stoken: S.stoken, machine: mid(), 'do': what, cid: p.id, lid: p.lid || '' })
+        .then(function (r) {
+          if (r && r.ok) { if (okMsg) alert(okMsg); showStaff(); return; }
+          b.disabled = false;
+          var e = r && r.error;
+          alert(e === 'stale' || e === 'link_gone' || e === 'not_pending' || e === 'unknown_customer'
+            ? 'That sign-in has changed since this page loaded \u2014 nothing was changed. The list will refresh.'
+            : (e === 'not_staff' ? 'Your staff sign-in expired \u2014 sign in again. Nothing was changed.' : 'Couldn\u2019t do that \u2014 nothing was changed. Try again.'));
+          if (e !== 'not_staff') showStaff();
+        })
+        .catch(function () { b.disabled = false; alert('Couldn\u2019t reach the server \u2014 nothing was changed.'); });
+    };
+    Array.prototype.forEach.call(box.querySelectorAll('.psga'), function (b) {
+      b.onclick = function () {
+        var p = byId[b.getAttribute('data-id')]; if (!p) return;
+        var who = p.sbname || p.sbemail || 'this sign-in';
+        var msg = 'Approve ' + who + ' as the plan customer \u201c' + (p.name || '(no name)') + '\u201d?\n\n'
+          + 'The free record their PC is signed in to becomes the plan (the app shows it on its next check-in), and the old plan record is retired into it.';
+        if (p.pcs) msg += '\n\n\u26a0 ' + p.pcs + ' PC(s) were activated with the old plan record\u2019s own key. Those keep that key and will show Free after this until they are re-activated with the new record\u2019s key (\ud83d\udd11 Key in the licence table, Customers tab).';
+        if (!confirm(msg)) return;
+        send(b, p, 'approve', p.pcs ? 'Approved. Remember: ' + p.pcs + ' PC(s) on the old plan key need re-activating with the new key.' : '');
+      };
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('.psgd'), function (b) {
+      b.onclick = function () {
+        var p = byId[b.getAttribute('data-id')]; if (!p) return;
+        if (!confirm('Dismiss this sign-in?\n\n' + (p.gone ? 'It only clears this note.' : (p.sbname || p.sbemail || 'They') + ' stays on a free record and is not given the plan \u201c' + (p.name || '(no name)') + '\u201d.'))) return;
+        send(b, p, 'dismiss', '');
+      };
+    });
+  }
   function loadSosq() {
     var card = document.getElementById('sosqcard'), box = document.getElementById('sosq');
     if (!card || !box) return;
@@ -5899,7 +5955,7 @@
     var root = el; if (!root) return;
     nxWhere('Staff area');
     function cardOf(id) { var n = document.getElementById(id); return n ? (n.classList.contains('card') ? n : n.closest('.card')) : null; }
-    var diary = cardOf('dday'), sos = cardOf('sosqcard'), invq = cardOf('invqcard'), worth = cardOf('worthcall'), fleet = cardOf('ffleet'), comms = cardOf('cmbox'),
+    var diary = cardOf('dday'), sos = cardOf('sosqcard'), psg = cardOf('psgcard'), invq = cardOf('invqcard'), worth = cardOf('worthcall'), fleet = cardOf('ffleet'), comms = cardOf('cmbox'),
         act = cardOf('ab'), qbo = cardOf('qbosetup'), invp = cardOf('inviteplans'), geo = cardOf('geocard'), quick = cardOf('pcmadm'), live = cardOf('vislive'), lic = null,
         plus = cardOf('pluscard'),   // 8 Oct 2026: the paid app abroad, on Setup
         inst = cardOf('instbox'), commsV = cardOf('cmvbox'),   // 1 Oct 2026: PC Manager installs, under the fleet
@@ -5927,6 +5983,7 @@
     grid.appendChild(colA); grid.appendChild(colB); grid.appendChild(colC);
     panels.today.appendChild(lstrip); panels.today.appendChild(kp);
     if (sos) panels.today.appendChild(sos);
+    if (psg) panels.today.appendChild(psg);   // 8 Oct 2026: sign-ins waiting for approval (shown only while one waits)
     panels.today.appendChild(grid);
     if (diary) colA.appendChild(diary);
     if (comms) colB.appendChild(comms);
@@ -6467,6 +6524,9 @@
       // reading them aloud. Codes appear ONLY here (never in Slack) and expire
       // server-side after 15 minutes.
       h += '<div class="card" id="sosqcard" style="display:none;border-left:4px solid var(--pbad)"><h2>\ud83c\udd98 SOS codes waiting</h2><div id="sosq"></div></div>';
+      // 8 Oct 2026: a booking sign-in whose email matched a plan record waits here, on a separate free record, until
+      // approved (psgRender; the same card text is posted to #365-job-tracker). Shown only while one waits.
+      h += '<div class="card" id="psgcard" style="display:none;border-left:4px solid var(--pwarn)"><h2>\u23f3 Sign-ins waiting for approval</h2><div id="psg"></div></div>';
       /* This month's jobs -> invoices: the Slack "New Job In" posts, the console's "Quote
          agreed", and PC Manager services on non-plan customers, with each one's invoice
          raised for review. First card on purpose: it is the money. */
@@ -6535,13 +6595,22 @@
         + '<p class="quiet">Everything opens in a new tab - this page stays put. The consoles sign in with your staff session, no passphrase. Comms inbox = voicemails + texts, threaded per customer; AI pipeline = every AI enquiry from /ai/.</p></div>';
       h += '<div class="card"><h2>PC Manager licences</h2><div class="tblwrap"><table><tr><th>Customer</th><th>Plan</th><th>PCs</th><th>Worst PC</th><th>Seen</th><th>App</th><th></th></tr>';
       (d.customers || []).sort(function (a, b) { return (b.seen || '').localeCompare(a.seen || ''); }).forEach(function (c) {
-        h += '<tr><td><strong>' + esc(c.name) + '</strong>' + (c.fam ? ' \ud83d\udc6a' : '') + '<br /><span class="quiet mono" id="kv' + esc(c.id) + '">' + esc(c.keymask) + '</span> <button class="sm ghost kb" data-cid="' + esc(c.id) + '" title="Show + copy their activation key">\ud83d\udd11 Key</button> <button class="sm ghost vw" data-cid="' + esc(c.id) + '" title="View the portal as this customer">\ud83d\udc41 View as</button></td>'
+        // 8 Oct 2026: a record a booking sign-in made that shares its email with another looks like a duplicate - and is
+        // exactly the one a customer's app may be signed in to (Alex Simons: deleted, his app kept saying "Signed in as")
+        var twin = c.twin && c.twin.length ? c.twin.join('\u201d, \u201c') : '';
+        var pwarn = c.waits ? 'A booking sign-in made this record, and the plan record \u201c' + c.waits + '\u201d is waiting to be approved onto it \u2014 approve or dismiss that on Today instead. The customer\u2019s app is signed in to this record: deleting it leaves the app signed in to nothing and every booking fails.'
+          : (twin ? 'A booking sign-in made this record, and it shares its email with \u201c' + twin + '\u201d. If that customer\u2019s 365 PC Manager is signed in to this record, deleting it leaves the app signed in to nothing and every booking fails. Check with them first.' : '');
+        h += '<tr><td><strong>' + esc(c.name) + '</strong>' + (c.fam ? ' \ud83d\udc6a' : '')
+          + (c.pend ? ' <span class="pill" style="background:rgba(224,179,65,.14);color:var(--pwarn)" title="A booking sign-in with this email is waiting on Today">\u23f3 sign-in waiting</span>' : '')
+          + (c.waits ? '<br /><span class="quiet" style="margin:0;color:var(--pwarn)">\u23f3 Made by a booking sign-in \u2014 waiting to be approved as \u201c' + esc(c.waits) + '\u201d (on Today)</span>'
+            : (twin ? '<br /><span class="quiet" style="margin:0;color:var(--pwarn)">\u26a0 Made by a booking sign-in \u2014 same email as \u201c' + esc(twin) + '\u201d. Their app may be signed in to this one.</span>' : ''))
+          + '<br /><span class="quiet mono" id="kv' + esc(c.id) + '">' + esc(c.keymask) + '</span> <button class="sm ghost kb" data-cid="' + esc(c.id) + '" title="Show + copy their activation key">\ud83d\udd11 Key</button> <button class="sm ghost vw" data-cid="' + esc(c.id) + '" title="View the portal as this customer">\ud83d\udc41 View as</button></td>'
           + '<td><span class="pill ' + (c.tier === 'pro' ? 'pro">Pro' : 'free">Free') + '</span></td>'
           + '<td>' + c.pcs + '</td>'
           + '<td>' + (c.worst < 0 ? '\u2014' : '<span class="' + (c.worst >= 80 ? 'ok' : 'wn') + '">' + c.worst + '%</span>') + '</td>'
           + '<td>' + seenTxt(c.seen) + '</td>'
           + '<td>' + (c.ver ? 'v' + c.ver : '\u2014') + '</td>'
-          + '<td style="white-space:nowrap"><button class="sm ghost tf" data-cid="' + esc(c.id) + '" data-to="' + (c.tier === 'pro' ? 'free' : 'pro') + '" data-nm="' + esc(c.name) + '">\u2192 ' + (c.tier === 'pro' ? 'Free' : 'Pro') + '</button> <button class="sm ghost xd" data-cid="' + esc(c.id) + '" data-nm="' + esc(c.name) + '" data-pcs="' + c.pcs + '" title="Delete this record" style="color:var(--pbad)">\u2715 Delete</button></td></tr>';
+          + '<td style="white-space:nowrap"><button class="sm ghost tf" data-cid="' + esc(c.id) + '" data-to="' + (c.tier === 'pro' ? 'free' : 'pro') + '" data-nm="' + esc(c.name) + '">\u2192 ' + (c.tier === 'pro' ? 'Free' : 'Pro') + '</button> <button class="sm ghost xd" data-cid="' + esc(c.id) + '" data-nm="' + esc(c.name) + '" data-pcs="' + c.pcs + '" data-warn="' + esc(pwarn) + '" title="Delete this record" style="color:var(--pbad)">\u2715 Delete</button></td></tr>';
       });
       h += '</table></div></div>';
       el.classList.remove('nx-narrow');
@@ -6550,6 +6619,7 @@
       nxStaffLayout();
       loadDiary(); loadFleet(); loadInstalls(); loadPlus(); cmBind(); loadComms('list');
       loadSosq();
+      psgRender(d.pending || []);
       nxlLoad();
       qboSetup();
       invitePlansSetup();
@@ -6640,8 +6710,8 @@
       });
       Array.prototype.forEach.call(document.querySelectorAll('#p365app .xd'), function (btn) {
         btn.onclick = function () {
-          var nm2 = btn.getAttribute('data-nm'), pcs = parseInt(btn.getAttribute('data-pcs'), 10) || 0;
-          if (!confirm('Delete \u201c' + nm2 + '\u201d completely?\n\nTheir activation key stops working' + (pcs ? ', their ' + pcs + ' PC(s) drop off the fleet' : '') + ', and this cannot be undone.')) return;
+          var nm2 = btn.getAttribute('data-nm'), pcs = parseInt(btn.getAttribute('data-pcs'), 10) || 0, warn = btn.getAttribute('data-warn') || '';
+          if (!confirm('Delete \u201c' + nm2 + '\u201d completely?\n\n' + (warn ? '\u26a0 ' + warn + '\n\n' : '') + 'Their activation key stops working' + (pcs ? ', their ' + pcs + ' PC(s) drop off the fleet' : '') + ', and this cannot be undone.')) return;
           btn.disabled = true;
           post(BK, { action: 'staffdel', stoken: S.stoken, machine: mid(), cid: btn.getAttribute('data-cid') })
             .then(function (r) {

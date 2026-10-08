@@ -327,6 +327,11 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(pcm-apppass-lib\.php|pcm-apppass-test\.php)$">
   Require all denied
 </FilesMatch>
+# Sign-ins waiting for approval (8 Oct 2026): the actions live in pcm-booking.php (signin/join mark,
+# staffpendsign staff token gated); the library is include-only and its test suite CLI-only.
+<FilesMatch "^pcm-pendsign-(lib|test)\.php$">
+  Require all denied
+</FilesMatch>
 # Free Virgin email tools (365 PC Manager v30): pcm-mailmover.php and pcm-mailmove-help.php stay served. Their
 # shared library and CLI test are never URLs. Their one store, the day's rate counter, is named sha1(...) + ".json",
 # so the ^[a-f0-9]{40}\.json$ rule further down already refuses it.

@@ -1442,9 +1442,9 @@ if ($action === 'verifycode') {
     }
     if ($cname !== '' && empty($c['name'])) $c['name'] = $cname;
     if (!isset($c['machines'])) $c['machines'] = array();
-    foreach ($pendingKeys as $pk)
-        if (isset($db['customers'][$pk]) && $pk !== $target)
-            $db['customers'][$pk]['pending_signin'] = array('cid' => $cid, 'email' => $email, 'link' => $target, 'sbname' => $cname, 'ts' => $now);
+    // flag each matched Pro record for staff approval (Slack card below, once the DB is saved)
+    require_once __DIR__ . '/pcm-pendsign-lib.php';
+    $psFresh = ps_flag($db, $pendingKeys, $target, $cid, $email, $cname, $now);
     // long-lived device session (60d sliding / 90d cap) - the best senior auth is the one
     // they almost never see. Server-revocable via weblogout / the websessions table.
     $wtok = bin2hex(random_bytes(24));
@@ -1457,6 +1457,7 @@ if ($action === 'verifycode') {
     wcookie_set($wtok, empty($in['shared']));   // shared device -> cookie dies with the browser
     pcm_welcome_maybe($c, $target, $email, $cname !== '' ? $cname : (isset($c['name']) ? $c['name'] : ''));
     db_save($db); db_close($lk);
+    if ($psFresh) pcm_slack_say(ps_card($cname, $email, $psFresh, 'join'));
 
     $tier = ((isset($c['tier']) && $c['tier'] === 'pro')) ? 'pro' : 'free';
     out(array('ok' => true, 'tier' => $tier, 'wtoken' => $wtok, 'customer' => isset($c['name']) ? $c['name'] : '',
@@ -1582,10 +1583,10 @@ if ($action === 'signin') {
     // a web-portal sign-in is not a PC - don't register a phantom machine in the fleet
     if (empty($in['web']) && !isset($c['machines'][$machine]))
         $c['machines'][$machine] = array('name' => $mname, 'score' => 0, 'verdict' => '', 'seen' => $now, 'activated' => $now);
-    // flag each matched Pro record for the owner's one-click approval, pointing at this booking identity
-    foreach ($pendingKeys as $pk)
-        if (isset($db['customers'][$pk]) && $pk !== $target)
-            $db['customers'][$pk]['pending_signin'] = array('cid' => $cid, 'email' => $cemail, 'link' => $target, 'sbname' => $cname, 'ts' => $now);
+    // flag each matched Pro record for staff approval, pointing at this booking identity. 8 Oct 2026: the mark alone
+    // reached nobody (only the old console showed it), so it now posts a Slack card and shows on the portal's Today.
+    require_once __DIR__ . '/pcm-pendsign-lib.php';
+    $psFresh = ps_flag($db, $pendingKeys, $target, $cid, $cemail, $cname, $now);
     // web portal: never hand the permanent licence key to a browser. Mint an expiring
     // server-side session token instead (12h sliding, purged like staff tokens).
     $wtok = '';
@@ -1603,6 +1604,7 @@ if ($action === 'signin') {
         pcm_welcome_maybe($c, $target, $cemail, $cname);
     }
     db_save($db); db_close($lk);
+    if ($psFresh) pcm_slack_say(ps_card($cname, $cemail, $psFresh, !empty($in['web']) ? 'web' : 'app', $mname));
 
     $tier = (($c['tier'] === 'pro')) ? 'pro' : 'free';
     if ($wtok !== '')
@@ -2188,6 +2190,14 @@ if ($action === 'stafflogout') {
 if ($action === 'staffcustomers') {
     need_staff();
     list($lk, $db) = db_open(); db_close($lk);
+    // 8 Oct 2026: sign-ins waiting for approval, and the records a sign-in made that share an email with another
+    // record (they look like duplicates, and a customer's app may be signed in to one) - pcm-pendsign-lib.php
+    require_once __DIR__ . '/pcm-pendsign-lib.php';
+    $allC = isset($db['customers']) && is_array($db['customers']) ? $db['customers'] : array();
+    $psList = ps_list($allC); $psTwins = ps_twins($allC); $psWaits = array();
+    foreach ($allC as $pk => $pc0)
+        if (ps_live($pc0) && isset($pc0['pending_signin']['link']) && is_string($pc0['pending_signin']['link']))
+            $psWaits[$pc0['pending_signin']['link']] = (string)(isset($pc0['name']) ? $pc0['name'] : '');
     $list = array();
     foreach ((isset($db['customers']) ? $db['customers'] : array()) as $k => $c) {
         if (!empty($c['merged_into'])) continue;
@@ -2205,10 +2215,41 @@ if ($action === 'staffcustomers') {
             'email' => (string)(isset($c['email']) ? $c['email'] : ''), 'tier' => ((isset($c['tier']) && $c['tier'] === 'pro') ? 'pro' : 'free'),
             'next' => (string)(isset($c['next']) ? $c['next'] : ''), 'pcs' => count($ms),
             'seen' => $lastSeen, 'ver' => $minVer, 'worst' => ($worst === 101 ? -1 : $worst),
-            'fam' => isset($c['family']['name']) ? (string)$c['family']['name'] : '');
+            'fam' => isset($c['family']['name']) ? (string)$c['family']['name'] : '',
+            'via' => (string)(isset($c['via']) ? $c['via'] : ''),
+            'twin' => isset($psTwins[$k]) ? $psTwins[$k] : array(),           // other records with this email (sign-in made)
+            'waits' => isset($psWaits[$k]) ? $psWaits[$k] : '',               // a plan record waits to be approved onto this one
+            'pend' => !empty($c['pending_signin']));                           // this plan record has a sign-in waiting
         if (count($list) >= 400) break;
     }
-    out(array('ok' => true, 'customers' => $list));
+    out(array('ok' => true, 'customers' => $list, 'pending' => $psList));
+}
+
+// staff: approve or dismiss a sign-in waiting for approval (the Today card). Approve = the old console's approve
+// (pcm-admin.php do=approve, now ps_approve): the free record the customer's app is signed in to becomes the plan and
+// the plan record is retired into it. cid = the plan record's opaque id, lid = the free record's, as the card showed
+// them - the server re-reads the link from the plan record's own mark, so a stale screen cannot approve anything else.
+if ($action === 'staffpendsign') {
+    need_staff();
+    require_once __DIR__ . '/pcm-pendsign-lib.php';
+    $cid2 = preg_replace('/[^a-f0-9]/', '', (string)(isset($in['cid']) ? $in['cid'] : ''));
+    $lid2 = preg_replace('/[^a-f0-9]/', '', (string)(isset($in['lid']) ? $in['lid'] : ''));
+    $do = (isset($in['do']) && $in['do'] === 'approve') ? 'approve' : ((isset($in['do']) && $in['do'] === 'dismiss') ? 'dismiss' : '');
+    if ($do === '' || $cid2 === '') fail('bad_request');
+    list($lk, $db) = db_open();
+    $orig = ps_find($db['customers'], $cid2);
+    if ($orig === '') { db_close($lk); fail('unknown_customer'); }
+    $sb = (string)(isset($db['customers'][$orig]['pending_signin']['sbname']) ? $db['customers'][$orig]['pending_signin']['sbname'] : '');
+    $r = $do === 'approve' ? ps_approve($db, $orig, $lid2, staff_who(), gmdate('Y-m-d H:i')) : ps_dismiss($db, $orig);
+    if (empty($r['ok'])) { db_close($lk); fail($r['error']); }
+    db_save($db); db_close($lk);
+    if ($do === 'approve')
+        pcm_slack_say(':white_check_mark: *Sign-in approved* - ' . ps_esc($sb !== '' ? $sb : $r['name']) . '\'s booking sign-in is now on the plan *'
+            . ps_esc($r['name']) . '*; their app follows on its next check-in.' . bk_by());
+    else
+        pcm_slack_say(':heavy_multiplication_x: *Sign-in request dismissed* - ' . ps_esc($sb !== '' ? $sb : 'the booking sign-in') . ' stays on a free record, not on the plan *'
+            . ps_esc($r['name']) . '*.' . bk_by());
+    out($r);
 }
 
 // staff: activate a customer's PC Manager - creates the record + key, returns the one-click
