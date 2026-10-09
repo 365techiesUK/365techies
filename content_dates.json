@@ -1168,7 +1168,7 @@
  },
  "games": {
   "first": "2026-10-04",
-  "h": "be6f154aed1506da",
+  "h": "276339b81a8eedce",
   "last": "2026-10-09"
  },
  "gaming-pc-slow-wont-load-games": {
@@ -2684,31 +2684,45 @@
  },
  "play-cribbage-online-free": {
   "first": "2026-10-09",
-  "h": "89469a2c404162c8",
+  "h": "6a0259ea52824136",
   "last": "2026-10-09"
  },
  "play-freecell-online-free": {
   "first": "2026-10-09",
-  "h": "3e804190605320a4",
+  "h": "f5795fc8536c37ba",
   "last": "2026-10-09"
  },
  "play-gin-rummy-online-free": {
   "first": "2026-10-09",
-  "h": "c0b838992e9eea95"
+  "h": "d392c0f7bfc2f44c",
+  "last": "2026-10-09"
  },
  "play-hearts-online-free": {
   "first": "2026-10-09",
-  "h": "aa2b533b492e5640",
+  "h": "2e82c70ba13ea7a5",
   "last": "2026-10-09"
  },
  "play-patience-online-free": {
   "first": "2026-10-09",
-  "h": "06f1a5078b9c4d5a",
+  "h": "28816236df6a49a2",
   "last": "2026-10-09"
+ },
+ "play-pyramid-solitaire-online-free": {
+  "first": "2026-10-09",
+  "h": "ab2761b9ce4079d8"
+ },
+ "play-spider-solitaire-online-free": {
+  "first": "2026-10-09",
+  "h": "0ff85b24241f00ec"
+ },
+ "play-tripeaks-solitaire-online-free": {
+  "first": "2026-10-09",
+  "h": "6f7d8113cbfa57a7"
  },
  "play-whist-online-free": {
   "first": "2026-10-09",
-  "h": "e512ddc594fcbeba"
+  "h": "dc245faa7d5933a4",
+  "last": "2026-10-09"
  },
  "playstation-parental-controls-uk": {
   "first": "2026-08-18",

@@ -51,8 +51,8 @@ _WHY_FREE = ('<p>We&rsquo;re <strong>365 Techies</strong>, a family-run computer
              '<a href="tel:+441202775566">01202 775566</a>.</p>')
 
 _ALL_GAMES = ('<p>The same no-adverts promise runs through every game on <a href="/games/">our games page</a>: '
-              '<a href="/play-patience-online-free/">Patience</a>, <a href="/play-freecell-online-free/">FreeCell</a>, <a href="/games/spider/">Spider</a>, '
-              '<a href="/games/tripeaks/">TriPeaks</a>, <a href="/games/pyramid/">Pyramid</a>, <a href="/play-hearts-online-free/">Hearts</a>, '
+              '<a href="/play-patience-online-free/">Patience</a>, <a href="/play-freecell-online-free/">FreeCell</a>, <a href="/play-spider-solitaire-online-free/">Spider</a>, '
+              '<a href="/play-tripeaks-solitaire-online-free/">TriPeaks</a>, <a href="/play-pyramid-solitaire-online-free/">Pyramid</a>, <a href="/play-hearts-online-free/">Hearts</a>, '
               '<a href="/play-gin-rummy-online-free/">Gin Rummy</a>, <a href="/play-cribbage-online-free/">Cribbage</a> and <a href="/play-whist-online-free/">Whist</a>, '
               'plus our own arcade games. They&rsquo;re also in the Games menu of our free Windows app, <a href="/free-pc-health-check/">365 PC Manager</a>.</p>')
 
@@ -135,7 +135,7 @@ PAT = {
         {'q': 'What is the Hall of Fame?', 'a': '<p>Win Today&rsquo;s deal and you can put your initials and town on the board for the fastest win that day &mdash; only if you choose to. Every win is checked by replaying it on our server, so nobody can cheat their way on.</p>'},
         {'q': 'Will my game be saved?', 'a': '<p>Yes, as you go, in your web browser, so you can stop and carry on later. Your scores are kept there too.</p>'},
     ],
-    'crossLinksHtml': '<p>More free games: <a href="/play-cribbage-online-free/">Cribbage</a>, <a href="/play-freecell-online-free/">FreeCell</a>, <a href="/games/spider/">Spider</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
+    'crossLinksHtml': '<p>More free games: <a href="/play-cribbage-online-free/">Cribbage</a>, <a href="/play-freecell-online-free/">FreeCell</a>, <a href="/play-spider-solitaire-online-free/">Spider</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
 }
 
 # ============================================================ Cribbage
@@ -308,7 +308,7 @@ FC = {
         {'q': 'What is the Hall of Fame?', 'a': '<p>Win Today&rsquo;s deal and you can put your initials and town on the board for the fastest win that day &mdash; only if you choose to. Every win is checked by replaying it on our server.</p>'},
         {'q': 'Will my game be saved?', 'a': '<p>Yes, as you go, in your web browser, so you can stop and carry on later. Your scores are kept there too.</p>'},
     ],
-    'crossLinksHtml': '<p>More free games: <a href="/play-patience-online-free/">Patience</a>, <a href="/play-hearts-online-free/">Hearts</a>, <a href="/games/spider/">Spider</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
+    'crossLinksHtml': '<p>More free games: <a href="/play-patience-online-free/">Patience</a>, <a href="/play-hearts-online-free/">Hearts</a>, <a href="/play-spider-solitaire-online-free/">Spider</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
 }
 
 # ============================================================ Hearts (9 Oct 2026)
@@ -563,6 +563,273 @@ WH = {
 }
 
 
+# The three solitaire games still without a page (9 Oct 2026; owner: "do Spider, TriPeaks and Pyramid pages next").
+# UK autocomplete: "spider solitaire 1 suit free no download", "spider solitaire no ads free", "original spider solitaire no
+# ads", "spider solitaire windows xp"; "tripeaks solitaire free online / free no download / no ads"; "pyramid solitaire
+# free online / free no download / classic no ads", "free pyramid solitaire no ads". Facts: each game's LV lines + help
+# (games/<id>/<id>.js), the winnable-deal lists in deals.js, used unless the player turns "Deals you can always win" off
+# (common/table.js SET.winnable: true), games-hof.php (Today's deal ranked by the fastest win, every win replayed; the
+# sprint), each journey.js (chapters). Spider scores the Windows way (engine.js: 500, -1 a move, +100 a finished run).
+_DAILY_ROW = ('Every day', 'Today&rsquo;s deal, the same cards for everyone, with a Hall of Fame for the fastest wins, and a 3-minute sprint.')
+_FREE_FAQ = {'q': 'Are there really no adverts?', 'a': '<p>None at all: no pop-ups between games, no videos to watch and no buttons that turn out to be adverts. We&rsquo;re 365 Techies, a family IT firm in Bournemouth &mdash; we&rsquo;re paid for looking after computers, not for showing adverts.</p>'}
+_INSTALL_FAQ = {'q': 'Do I need to download or install anything?', 'a': '<p>No. It plays in your web browser &mdash; Edge, Chrome, Safari or Firefox &mdash; on a PC, laptop, tablet or phone. If you use our free Windows app, 365 PC Manager, it&rsquo;s in its Games menu too.</p>'}
+_HOF_FAQ = {'q': 'What is the Hall of Fame?', 'a': '<p>Win Today&rsquo;s deal and you can put your initials and town on the board for the fastest win that day &mdash; only if you choose to. Every win is checked by replaying it on our server, so nobody can cheat their way on.</p>'}
+_SAVED_FAQ = {'q': 'Will my game be saved?', 'a': '<p>Yes, as you go, in your web browser, so you can stop and carry on later. Your scores are kept there too.</p>'}
+_UNDO_FAQ = {'q': 'Can I undo a move?', 'a': '<p>Yes, as many as you like, on every level except Expert.</p>'}
+_MY_SCORES = '<li><strong>My scores</strong> &mdash; wins, best times and your streak, kept in your browser. To carry them to another device, use <em>Keep my scores</em>.</li>'
+
+# ============================================================ Spider Solitaire
+SP_VIDEO = "/images/games-spider-video-v1.mp4"
+SP_POSTER = "/images/games-spider-poster-v1.webp"
+SP_SECS = 73
+SP_TRANSCRIPT = ("This is Spider Solitaire, from 365 Techies. It&rsquo;s free, there&rsquo;s nothing to install, and there are no adverts. "
+                 "Build runs from King down to Ace in one suit. A finished run lifts off the table. "
+                 "Any card can go on a card one higher. Stuck? Press Hint, or deal a new card onto every column. "
+                 "Easy is one suit, Normal is two, and Hard and Expert use all four. "
+                 "Your game is saved as you go, so you can stop and carry on later, on your PC, your tablet or your phone. Clear all eight runs, and the cards take a bow. "
+                 "There&rsquo;s a new deal every day, the same cards for everyone, with a Hall of Fame, a three-minute sprint, and a hundred-level Journey. "
+                 "Play free at 365techies.co.uk. No adverts. No sign-up. Just the cards.")
+
+SP = {
+    'slug': 'play-spider-solitaire-online-free',
+    'title': 'Play Spider Solitaire Online Free, No Adverts | 365 Techies',
+    'metaDesc': 'Play Spider Solitaire online free: one, two or four suits, no adverts, nothing to download, no sign-in. Every deal can be won, with a new deal every day.',
+    'ogTitle': 'Play Spider Solitaire online free - one suit to four, no adverts',
+    'crumbName': 'Play Spider Solitaire Online Free',
+    'eyebrow': '// FREE SPIDER SOLITAIRE',
+    'h1': 'Play Spider Solitaire online, <em class="grad grad--cyan">free and with no adverts</em>',
+    'lede': 'Spider Solitaire with big, clear cards &mdash; one suit, two or all four &mdash; right in your web browser. It&rsquo;s free, there&rsquo;s nothing to install, no sign-in, and no adverts. Not one. And every deal is one our solver has already won.',
+    'chips': ['No adverts, ever', 'Nothing to install', 'One suit to four'],
+    'primaryCta': ['Play Spider free', '/games/spider/'], 'secondaryCta': ['All our games', '/games/'],
+    'ctaHead': 'Fancy a game of Spider?', 'ctaSub': 'Free, from one suit to four, with no adverts, on your PC, tablet or phone. Nothing to install and no sign-in.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Price', 'Free. Nothing to buy, now or later.'),
+        ('Adverts', 'None. No pop-ups between games, no videos to sit through.'),
+        ('Install or sign-in?', 'Neither. It plays in your web browser; your game and scores are saved as you go.'),
+        ('Levels', 'Easy is one suit, Normal two, Hard all four with no Hint, and Expert all four with no Undo.'),
+        ('Can it be won?', 'Yes &mdash; every deal is one our solver has won at that level, checked move by move. Four suits too.'),
+        ('Help when stuck', 'Hint on Easy and Normal; Undo as often as you like on every level but Expert.'),
+        _DAILY_ROW,
+        ('And', 'A 100-level Journey along the Jurassic Coast to Lyme Regis, with three stars to win on each level.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; SEE IT IN A MINUTE', 'h2': 'Here&rsquo;s what it&rsquo;s like',
+         'html': _video('spider', 'Spider Solitaire from 365 Techies: King-to-Ace runs, Hint and dealing a new row, one suit to four, a win and the daily deal', SP_SECS, SP_POSTER, SP_VIDEO,
+                        SP_TRANSCRIPT, '/games/spider/', 'Play Spider free &#8594;')},
+        {'eyebrow': '/02 &mdash; NO ADVERTS', 'h2': 'Why there are no adverts, and never will be', 'html': _WHY_FREE},
+        {'eyebrow': '/03 &mdash; HOW TO PLAY', 'h2': 'How to play Spider Solitaire',
+         'html': '<p>Two packs &mdash; 104 cards &mdash; dealt into ten columns.</p>'
+                 '<ol><li><strong>The aim:</strong> make a run from King down to Ace in one suit. A finished run lifts itself off the table &mdash; clear all eight to win.</li>'
+                 '<li><strong>Any card</strong> can go on a card one step higher, whatever its suit &mdash; a 6 on any 7.</li>'
+                 '<li><strong>Cards move together</strong> only when they run down in order in one suit.</li>'
+                 '<li><strong>Tap the deck</strong> at the top left to deal a new card onto every column. Every column needs a card first.</li>'
+                 '<li><strong>Any card</strong> can go in an empty column &mdash; and an empty column is the most useful thing on the table.</li></ol>'
+                 '<p>Prefer the keyboard? The arrow keys choose a card and Enter plays it; N is a new game, U undo, H hint, space deals from the deck and F full screen.</p>'},
+        {'eyebrow': '/04 &mdash; ONE SUIT TO FOUR', 'h2': 'Four levels, and every deal can be won',
+         'html': '<ul><li><strong>Easy</strong> &mdash; one suit, with Undo and Hint. The place to start.</li>'
+                 '<li><strong>Normal</strong> &mdash; two suits, with Undo and Hint.</li>'
+                 '<li><strong>Hard</strong> &mdash; all four suits, with no Hint.</li>'
+                 '<li><strong>Expert</strong> &mdash; all four suits, with no Undo or Hint.</li></ul>'
+                 '<p>Every deal you&rsquo;re given is one our solver has already won at that level, checked move by move &mdash; four suits included &mdash; so if you&rsquo;re stuck, there <em>is</em> a way through. (That&rsquo;s the <em>Deals you can always win</em> setting; switch it off for a fresh shuffle that may not come out.)</p>'
+                 '<p>It&rsquo;s the classic Spider, the one that came with Windows XP: the same rules, and the same score &mdash; 500 to start, a point off for every move, 100 for every finished run &mdash; with bigger cards and no adverts.</p>'},
+        {'eyebrow': '/05 &mdash; EVERY DAY', 'h2': 'A daily deal, a Hall of Fame and a 3-minute sprint',
+         'html': '<ul><li><strong>Today&rsquo;s deal</strong> &mdash; the same cards for everyone, at each level. Win it and you can put your initials and town in the <strong>Hall of Fame</strong> for the fastest win. Every win is replayed move by move on our server before it counts, so the board is fair.</li>'
+                 '<li><strong>The 3-minute sprint</strong> &mdash; how many cards can you get into suit order in three minutes? 13 for every suit you clear. Send the link to a friend and see if they can beat you.</li>'
+                 '<li><strong>The Journey</strong> &mdash; a hundred levels along the Jurassic Coast, from the Osmington White Horse to Lyme Regis, each with three stars to win.</li>'
+                 + _MY_SCORES + '</ul>'},
+        {'eyebrow': '/06 &mdash; MORE GAMES', 'h2': 'Nine card games, all free with no adverts', 'html': _ALL_GAMES + _PLAY_TRACK},
+    ],
+    'howToName': 'How to play Spider Solitaire',
+    'howToSteps': [
+        {'name': 'Pick how many suits', 'text': 'Open Spider in your web browser and press Play. Easy is one suit; choose two or four suits under New game.'},
+        {'name': 'Build down the columns', 'text': 'Put any card on a card one step higher, whatever its suit, such as a 6 on any 7. Cards move together only when they run down in one suit.'},
+        {'name': 'Deal from the deck', 'text': 'When you run out of moves, tap the deck at the top left to deal a new card onto every column. Every column needs a card first.'},
+        {'name': 'Finish the runs', 'text': 'A run from King down to Ace in one suit lifts itself off the table. Clear all eight runs to win.'},
+        {'name': 'Use Hint and Undo', 'text': 'Stuck? Press Hint on Easy and Normal and a move lights up. Undo takes back as many moves as you like, on every level but Expert.'},
+    ],
+    'faqs': [
+        {'q': 'Is this Spider Solitaire really free?', 'a': '<p>Yes. There&rsquo;s nothing to buy and nothing to sign up for. It&rsquo;s made by 365 Techies, a family IT firm in Bournemouth, for our customers and anyone else who likes a game.</p>'},
+        _FREE_FAQ,
+        {'q': 'Can I play Spider with one suit?', 'a': '<p>Yes &mdash; that&rsquo;s Easy, and it&rsquo;s where most people start. Normal is two suits, and Hard and Expert use all four.</p>'},
+        {'q': 'Can every game of Spider be won?', 'a': '<p>Every deal we give you can. Each one has been won by our solver at that level first, checked move by move, four suits included. If you&rsquo;d rather have any shuffle at all, switch off <em>Deals you can always win</em> in Settings.</p>'},
+        {'q': 'Is it the same as Spider Solitaire on Windows XP?', 'a': '<p>The same rules &mdash; ten columns, two packs, a card dealt onto every column &mdash; and the same scoring, with bigger cards and no adverts. The deals are our own.</p>'},
+        _INSTALL_FAQ, _UNDO_FAQ, _HOF_FAQ, _SAVED_FAQ,
+    ],
+    'crossLinksHtml': '<p>More free games: <a href="/play-patience-online-free/">Patience</a>, <a href="/play-freecell-online-free/">FreeCell</a>, <a href="/play-tripeaks-solitaire-online-free/">TriPeaks</a>, <a href="/play-pyramid-solitaire-online-free/">Pyramid</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
+}
+
+# ============================================================ TriPeaks Solitaire
+TP_VIDEO = "/images/games-tripeaks-video-v1.mp4"
+TP_POSTER = "/images/games-tripeaks-poster-v1.webp"
+TP_SECS = 66
+TP_TRANSCRIPT = ("This is TriPeaks Solitaire, from 365 Techies. It&rsquo;s free, there&rsquo;s nothing to install, and there are no adverts. "
+                 "Clear the three peaks. Tap a card one higher or one lower than the card on the pile, in any suit. "
+                 "Keep a run going, and every card scores more. Clear the top of a peak for a bonus. "
+                 "Stuck? Turn a card over from the deck. On Easy every card is face up, and you can press Hint. "
+                 "Your game is saved as you go, so you can stop and carry on later, on your PC, your tablet or your phone. Clear all three peaks, and the cards take a bow. "
+                 "There&rsquo;s a new deal every day, the same cards for everyone, with a Hall of Fame, a three-minute sprint, and a hundred-level Journey. "
+                 "Play free at 365techies.co.uk. No adverts. No sign-up. Just the cards.")
+
+TP = {
+    'slug': 'play-tripeaks-solitaire-online-free',
+    'title': 'Free TriPeaks Solitaire Online, No Adverts | 365 Techies',
+    'metaDesc': 'Play TriPeaks Solitaire online free: one higher or one lower, three peaks to clear, no adverts, nothing to download, no sign-in. Every deal can be won.',
+    'ogTitle': 'Play TriPeaks Solitaire online free - no adverts',
+    'crumbName': 'Play TriPeaks Solitaire Online Free',
+    'eyebrow': '// FREE TRIPEAKS SOLITAIRE',
+    'h1': 'Play TriPeaks Solitaire online, <em class="grad grad--cyan">free and with no adverts</em>',
+    'lede': 'TriPeaks &mdash; one higher or one lower, three peaks to clear &mdash; with big, clear cards, right in your web browser. It&rsquo;s free, there&rsquo;s nothing to install, no sign-in, and no adverts. Not one. And every deal is one our solver has already won.',
+    'chips': ['No adverts, ever', 'Nothing to install', 'Every deal can be won'],
+    'primaryCta': ['Play TriPeaks free', '/games/tripeaks/'], 'secondaryCta': ['All our games', '/games/'],
+    'ctaHead': 'Fancy a game of TriPeaks?', 'ctaSub': 'Free, quick to learn and with no adverts, on your PC, tablet or phone. Nothing to install and no sign-in.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Price', 'Free. Nothing to buy, now or later.'),
+        ('Adverts', 'None. No pop-ups between games, no videos to sit through.'),
+        ('Install or sign-in?', 'Neither. It plays in your web browser; your game and scores are saved as you go.'),
+        ('How it plays', 'Tap a card one higher or one lower than the card on the pile, whatever the suit. The longer the run, the bigger the score.'),
+        ('Levels', 'Easy shows every card; Normal keeps the peaks face down; Hard and Expert don&rsquo;t let a King and an Ace join.'),
+        ('Can it be won?', 'Yes &mdash; every deal has been played through to a win by our solver first.'),
+        _DAILY_ROW,
+        ('And', 'A 100-level Journey up Dorset&rsquo;s hills to its highest point, with three stars to win on each level.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; SEE IT IN A MINUTE', 'h2': 'Here&rsquo;s what it&rsquo;s like',
+         'html': _video('tripeaks', 'TriPeaks Solitaire from 365 Techies: one higher or one lower, runs, turning the deck, a win and the daily deal', TP_SECS, TP_POSTER, TP_VIDEO,
+                        TP_TRANSCRIPT, '/games/tripeaks/', 'Play TriPeaks free &#8594;')},
+        {'eyebrow': '/02 &mdash; NO ADVERTS', 'h2': 'Why there are no adverts, and never will be', 'html': _WHY_FREE},
+        {'eyebrow': '/03 &mdash; HOW TO PLAY', 'h2': 'How to play TriPeaks Solitaire',
+         'html': '<ol><li><strong>The aim:</strong> clear all three peaks &mdash; 28 cards.</li>'
+                 '<li><strong>Tap a card</strong> that is one higher or one lower than the card on the pile, and it goes on the pile &mdash; a 7 or a 9 on an 8, whatever the suit. Then go again from the new card.</li>'
+                 '<li><strong>A card can only go</strong> once both cards on top of it have gone. Face-down cards turn over as they&rsquo;re freed.</li>'
+                 '<li><strong>Stuck? Tap the deck</strong> to turn a new card onto the pile. You go through the deck once, so make each card count.</li>'
+                 '<li><strong>On Easy and Normal, a King and an Ace join</strong> round the corner &mdash; an Ace on a King, or a King on an Ace.</li></ol>'
+                 '<p>Prefer the keyboard? The arrow keys choose a card and Enter plays it; N is a new game, U undo, H hint, space turns the deck and F full screen.</p>'},
+        {'eyebrow': '/04 &mdash; RUNS AND PEAKS', 'h2': 'Runs, peaks and four levels',
+         'html': '<p>Cards played one after another make a <strong>run</strong>, and each card in a run scores more than the last &mdash; so the longer the run, the bigger the score. Clearing the top of a peak scores <strong>250</strong>.</p>'
+                 '<ul><li><strong>Easy</strong> &mdash; every card face up, so you can plan ahead; King and Ace join; Undo and Hint.</li>'
+                 '<li><strong>Normal</strong> &mdash; the peaks stay face down until they&rsquo;re uncovered; King and Ace join; Undo and Hint.</li>'
+                 '<li><strong>Hard</strong> &mdash; King and Ace don&rsquo;t join, and there&rsquo;s no Hint.</li>'
+                 '<li><strong>Expert</strong> &mdash; as Hard, with no Undo either.</li></ul>'
+                 '<p>Every deal you&rsquo;re given has been played through to a win by our solver first, so there&rsquo;s always a way through. (That&rsquo;s the <em>Deals you can always win</em> setting; switch it off for a fresh shuffle that may not come out.)</p>'},
+        {'eyebrow': '/05 &mdash; EVERY DAY', 'h2': 'A daily deal, a Hall of Fame and a 3-minute sprint',
+         'html': '<ul><li><strong>Today&rsquo;s deal</strong> &mdash; the same cards for everyone, at each level. Win it and you can put your initials and town in the <strong>Hall of Fame</strong> for the fastest win. Every win is replayed move by move on our server before it counts, so the board is fair.</li>'
+                 '<li><strong>The 3-minute sprint</strong> &mdash; how many cards can you clear from the peaks in three minutes? All 28 wins it. Send the link to a friend and see if they can beat you.</li>'
+                 '<li><strong>The Journey</strong> &mdash; a hundred levels up Dorset&rsquo;s hills, from St Catherine&rsquo;s Hill to Lewesdon Hill, the county&rsquo;s highest point, each with three stars to win.</li>'
+                 + _MY_SCORES + '</ul>'},
+        {'eyebrow': '/06 &mdash; MORE GAMES', 'h2': 'Nine card games, all free with no adverts', 'html': _ALL_GAMES + _PLAY_TRACK},
+    ],
+    'howToName': 'How to play TriPeaks Solitaire',
+    'howToSteps': [
+        {'name': 'Start a game', 'text': 'Open TriPeaks in your web browser and press Play. Three peaks of cards are dealt, with one card turned up on the pile.'},
+        {'name': 'Play one higher or one lower', 'text': 'Tap a card that is one higher or one lower than the card on the pile, whatever the suit, such as a 7 or a 9 on an 8. Then go again from the new card.'},
+        {'name': 'Free the covered cards', 'text': 'A card can only go once both cards on top of it have gone. Face-down cards turn over as they are freed.'},
+        {'name': 'Turn the deck when stuck', 'text': 'Tap the deck to turn a new card onto the pile. You go through the deck once, so make each card count.'},
+        {'name': 'Clear all three peaks', 'text': 'Keep runs going for a bigger score; clearing the top of a peak scores 250. Clear all three peaks to win.'},
+    ],
+    'faqs': [
+        {'q': 'Is this TriPeaks really free?', 'a': '<p>Yes. There&rsquo;s nothing to buy and nothing to sign up for. It&rsquo;s made by 365 Techies, a family IT firm in Bournemouth, for our customers and anyone else who likes a game.</p>'},
+        _FREE_FAQ,
+        {'q': 'How do you play TriPeaks?', 'a': '<p>Tap a card that is one higher or one lower than the card on the pile, whatever the suit, and keep going from the new card. When nothing fits, turn a card from the deck. Clear all three peaks to win.</p>'},
+        {'q': 'Can every game of TriPeaks be won?', 'a': '<p>Every deal we give you can: each one has been played through to a win by our solver first. If you&rsquo;d rather have any shuffle at all, switch off <em>Deals you can always win</em> in Settings.</p>'},
+        {'q': 'What does &ldquo;King and Ace join&rdquo; mean?', 'a': '<p>On Easy and Normal the cards go round the corner: you can play an Ace on a King, or a King on an Ace. On Hard and Expert they don&rsquo;t, which makes it harder.</p>'},
+        _INSTALL_FAQ, _UNDO_FAQ, _HOF_FAQ, _SAVED_FAQ,
+    ],
+    'crossLinksHtml': '<p>More free games: <a href="/play-pyramid-solitaire-online-free/">Pyramid</a>, <a href="/play-spider-solitaire-online-free/">Spider</a>, <a href="/play-patience-online-free/">Patience</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
+}
+
+# ============================================================ Pyramid Solitaire
+PY_VIDEO = "/images/games-pyramid-video-v1.mp4"
+PY_POSTER = "/images/games-pyramid-poster-v1.webp"
+PY_SECS = 59
+PY_TRANSCRIPT = ("This is Pyramid Solitaire, from 365 Techies. It&rsquo;s free, there&rsquo;s nothing to install, and there are no adverts. "
+                 "Take away two cards that add up to thirteen. A Jack is eleven, a Queen is twelve, and a King goes on its own. "
+                 "Tap a card, then its partner. A card is free once both the cards on top of it have gone. "
+                 "Turn cards over from the deck to find more pairs. On Easy, you can go through the deck as often as you like. "
+                 "Your game is saved as you go, so you can stop and carry on later, on your PC, your tablet or your phone. Clear the whole pyramid, and the cards take a bow. "
+                 "There&rsquo;s a new deal every day, the same cards for everyone, with a Hall of Fame, a three-minute sprint, and a hundred-level Journey. "
+                 "Play free at 365techies.co.uk. No adverts. No sign-up. Just the cards.")
+
+_PAIRS = ('<div class="cmp-wrap" tabindex="0" role="group" aria-label="The pairs that make 13 (scrolls sideways on a small screen)"><table class="cmp-table">'
+          '<thead><tr><th>Card</th><th>Goes with</th></tr></thead><tbody>'
+          '<tr><td>Ace (1)</td><td>Queen (12)</td></tr>'
+          '<tr><td>2</td><td>Jack (11)</td></tr>'
+          '<tr><td>3</td><td>10</td></tr>'
+          '<tr><td>4</td><td>9</td></tr>'
+          '<tr><td>5</td><td>8</td></tr>'
+          '<tr><td>6</td><td>7</td></tr>'
+          '<tr><td>King (13)</td><td>Nothing &mdash; it goes on its own</td></tr>'
+          '</tbody></table></div>')
+
+PY = {
+    'slug': 'play-pyramid-solitaire-online-free',
+    'title': 'Play Pyramid Solitaire Online Free, No Adverts | 365 Techies',
+    'metaDesc': 'Play Pyramid Solitaire online free: take away pairs that make 13, no adverts, nothing to download, no sign-in. Every deal can be won, with a new deal every day.',
+    'ogTitle': 'Play Pyramid Solitaire online free - pairs that make 13, no adverts',
+    'crumbName': 'Play Pyramid Solitaire Online Free',
+    'eyebrow': '// FREE PYRAMID SOLITAIRE',
+    'h1': 'Play Pyramid Solitaire online, <em class="grad grad--cyan">free and with no adverts</em>',
+    'lede': 'Pyramid Solitaire &mdash; take away pairs that add up to 13 until the pyramid has gone &mdash; with big, clear cards, right in your web browser. It&rsquo;s free, there&rsquo;s nothing to install, no sign-in, and no adverts. Not one.',
+    'chips': ['No adverts, ever', 'Nothing to install', 'Every deal can be won'],
+    'primaryCta': ['Play Pyramid free', '/games/pyramid/'], 'secondaryCta': ['All our games', '/games/'],
+    'ctaHead': 'Fancy a game of Pyramid?', 'ctaSub': 'Free, quick to learn and with no adverts, on your PC, tablet or phone. Nothing to install and no sign-in.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Price', 'Free. Nothing to buy, now or later.'),
+        ('Adverts', 'None. No pop-ups between games, no videos to sit through.'),
+        ('Install or sign-in?', 'Neither. It plays in your web browser; your game and scores are saved as you go.'),
+        ('How it plays', 'Take away two cards that add up to 13. A Jack is 11, a Queen 12, and a King goes on its own.'),
+        ('Levels', 'Through the deck as often as you like on Easy, three times on Normal, twice on Hard and once on Expert.'),
+        ('Can it be won?', 'Yes &mdash; every deal has been played through to a win by our solver first, at that level.'),
+        ('Help when stuck', 'On Easy and Normal, the cards that go with the one you pick light up, and Hint shows a move. Undo on every level but Expert.'),
+        _DAILY_ROW,
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; SEE IT IN A MINUTE', 'h2': 'Here&rsquo;s what it&rsquo;s like',
+         'html': _video('pyramid', 'Pyramid Solitaire from 365 Techies: pairs that make 13, tapping a card and its partner, the deck, a win and the daily deal', PY_SECS, PY_POSTER, PY_VIDEO,
+                        PY_TRANSCRIPT, '/games/pyramid/', 'Play Pyramid free &#8594;')},
+        {'eyebrow': '/02 &mdash; NO ADVERTS', 'h2': 'Why there are no adverts, and never will be', 'html': _WHY_FREE},
+        {'eyebrow': '/03 &mdash; HOW TO PLAY', 'h2': 'How to play Pyramid Solitaire',
+         'html': '<ol><li><strong>The aim:</strong> clear the whole pyramid &mdash; 28 cards in seven rows.</li>'
+                 '<li><strong>Take away two cards that add up to 13.</strong> An Ace counts 1, a Jack 11 and a Queen 12 &mdash; so a 6 with a 7, a 5 with an 8, a 2 with a Jack, an Ace with a Queen. A <strong>King</strong> is 13 on its own.</li>'
+                 '<li><strong>Tap a card, then tap the card to go with it</strong> &mdash; or drag one onto the other. Tap a King and it goes straight away.</li>'
+                 '<li><strong>A card can only be used</strong> once both cards on top of it have gone.</li>'
+                 '<li><strong>Tap the deck</strong> to turn a card onto the pile beside it &mdash; the top card of the pile pairs too. When the deck is empty, tap it to turn the pile over again.</li></ol>'
+                 '<p>Prefer the keyboard? The arrow keys choose a card and Enter plays it; N is a new game, U undo, H hint, space turns the deck and F full screen.</p>'},
+        {'eyebrow': '/04 &mdash; PAIRS THAT MAKE 13', 'h2': 'The pairs at a glance, and four levels',
+         'html': _PAIRS + '<ul><li><strong>Easy</strong> &mdash; through the deck as often as you like, with Undo and Hint.</li>'
+                 '<li><strong>Normal</strong> &mdash; three times through the deck, with Undo and Hint.</li>'
+                 '<li><strong>Hard</strong> &mdash; twice through the deck, with no Hint.</li>'
+                 '<li><strong>Expert</strong> &mdash; once through the deck, with no Undo or Hint.</li></ul>'
+                 '<p>On Easy and Normal, the cards that go with the one you pick light up, so you don&rsquo;t need to do the sums. And every deal you&rsquo;re given has been played through to a win by our solver first, at that level &mdash; even Expert. (That&rsquo;s the <em>Deals you can always win</em> setting; switch it off for a fresh shuffle that may not come out.)</p>'},
+        {'eyebrow': '/05 &mdash; EVERY DAY', 'h2': 'A daily deal, a Hall of Fame and a 3-minute sprint',
+         'html': '<ul><li><strong>Today&rsquo;s deal</strong> &mdash; the same cards for everyone, at each level. Win it and you can put your initials and town in the <strong>Hall of Fame</strong> for the fastest win. Every win is replayed move by move on our server before it counts, so the board is fair.</li>'
+                 '<li><strong>The 3-minute sprint</strong> &mdash; how many cards can you clear from the pyramid in three minutes? All 28 wins it. Send the link to a friend and see if they can beat you.</li>'
+                 '<li><strong>The Journey</strong> &mdash; a hundred levels through the New Forest to the Solent, from Ringwood to Hurst Castle, each with three stars to win.</li>'
+                 + _MY_SCORES + '</ul>'},
+        {'eyebrow': '/06 &mdash; MORE GAMES', 'h2': 'Nine card games, all free with no adverts', 'html': _ALL_GAMES + _PLAY_TRACK},
+    ],
+    'howToName': 'How to play Pyramid Solitaire',
+    'howToSteps': [
+        {'name': 'Start a game', 'text': 'Open Pyramid in your web browser and press Play. 28 cards are dealt in a pyramid of seven rows, with the rest in the deck.'},
+        {'name': 'Pair cards that make 13', 'text': 'Tap a card, then a card that adds up to 13 with it: an Ace counts 1, a Jack 11 and a Queen 12. A King goes on its own.'},
+        {'name': 'Uncover the cards beneath', 'text': 'A card can only be used once both cards on top of it have gone.'},
+        {'name': 'Use the deck', 'text': 'Tap the deck to turn a card onto the pile; the top card of the pile pairs too. When the deck is empty, tap it to turn the pile over again, as many times as your level allows.'},
+        {'name': 'Clear the pyramid', 'text': 'Take away every card in the pyramid to win.'},
+    ],
+    'faqs': [
+        {'q': 'Is this Pyramid Solitaire really free?', 'a': '<p>Yes. There&rsquo;s nothing to buy and nothing to sign up for. It&rsquo;s made by 365 Techies, a family IT firm in Bournemouth, for our customers and anyone else who likes a game.</p>'},
+        _FREE_FAQ,
+        {'q': 'Which cards add up to 13 in Pyramid?', 'a': '<p>An Ace and a Queen, a 2 and a Jack, a 3 and a 10, a 4 and a 9, a 5 and an 8, and a 6 and a 7. A King is 13 on its own. On Easy and Normal the partners light up for you.</p>'},
+        {'q': 'Can every game of Pyramid be won?', 'a': '<p>Every deal we give you can: each one has been played through to a win by our solver first, at that level. If you&rsquo;d rather have any shuffle at all, switch off <em>Deals you can always win</em> in Settings.</p>'},
+        {'q': 'How many times can I go through the deck?', 'a': '<p>As often as you like on Easy, three times on Normal, twice on Hard and once on Expert.</p>'},
+        _INSTALL_FAQ, _UNDO_FAQ, _HOF_FAQ, _SAVED_FAQ,
+    ],
+    'crossLinksHtml': '<p>More free games: <a href="/play-tripeaks-solitaire-online-free/">TriPeaks</a>, <a href="/play-spider-solitaire-online-free/">Spider</a>, <a href="/play-patience-online-free/">Patience</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
+}
+
+
 def _extras(slug, video, poster, secs, name, desc, game_name, game_url, cover, og):
     page = next(p for p in bp.PAGES if p.get("slug") == slug)
     page["og_image"] = og
@@ -584,7 +851,7 @@ def _extras(slug, video, poster, secs, name, desc, game_name, game_url, cover, o
     page["schema"] = schema
 
 
-for _d in (PAT, CRB, FC, HE, GN, WH):
+for _d in (PAT, CRB, FC, HE, GN, WH, SP, TP, PY):
     _d = dict(_d)
     for _k in ('title', 'metaDesc', 'ogTitle'):   # plain apostrophes in titles, meta tags and JSON-LD
         _d[_k] = _d[_k].replace('&rsquo;', "'")
@@ -608,3 +875,12 @@ _extras('play-gin-rummy-online-free', GN_VIDEO, GN_POSTER, GN_SECS, 'Gin Rummy f
 _extras('play-whist-online-free', WH_VIDEO, WH_POSTER, WH_SECS, 'Whist from 365 Techies, in a minute',
         'The classic Whist card game free, with a computer partner against two computer players and no adverts: trumps, tricks, a won rubber, and the daily match with its Hall of Fame.',
         'Whist', '/games/whist/', '/games/img/covers/whist-v1.svg', '/images/games-whist-og-v1.jpg')
+_extras('play-spider-solitaire-online-free', SP_VIDEO, SP_POSTER, SP_SECS, 'Spider Solitaire from 365 Techies, in a minute',
+        'Free Spider Solitaire with no adverts, from one suit to four: King-to-Ace runs, Hint and dealing a new row, a win, and the daily deal with its Hall of Fame.',
+        'Spider Solitaire', '/games/spider/', '/games/img/covers/spider-v1.svg', '/images/games-spider-og-v1.jpg')
+_extras('play-tripeaks-solitaire-online-free', TP_VIDEO, TP_POSTER, TP_SECS, 'TriPeaks Solitaire from 365 Techies, in a minute',
+        'Free TriPeaks Solitaire with no adverts: one higher or one lower, runs that score more, turning the deck, a win, and the daily deal with its Hall of Fame.',
+        'TriPeaks Solitaire', '/games/tripeaks/', '/games/img/covers/tripeaks-v1.svg', '/images/games-tripeaks-og-v1.jpg')
+_extras('play-pyramid-solitaire-online-free', PY_VIDEO, PY_POSTER, PY_SECS, 'Pyramid Solitaire from 365 Techies, in a minute',
+        'Free Pyramid Solitaire with no adverts: pairs that make 13, a card and its partner, the deck, a win, and the daily deal with its Hall of Fame.',
+        'Pyramid Solitaire', '/games/pyramid/', '/games/img/covers/pyramid-v1.svg', '/images/games-pyramid-og-v1.jpg')
