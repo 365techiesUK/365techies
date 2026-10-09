@@ -1168,7 +1168,7 @@
  },
  "games": {
   "first": "2026-10-04",
-  "h": "d13c861da2f51011",
+  "h": "be6f154aed1506da",
   "last": "2026-10-09"
  },
  "gaming-pc-slow-wont-load-games": {
@@ -2684,21 +2684,31 @@
  },
  "play-cribbage-online-free": {
   "first": "2026-10-09",
-  "h": "062161665fbed481",
+  "h": "89469a2c404162c8",
   "last": "2026-10-09"
  },
  "play-freecell-online-free": {
   "first": "2026-10-09",
-  "h": "b22b10b94a561f25"
+  "h": "3e804190605320a4",
+  "last": "2026-10-09"
+ },
+ "play-gin-rummy-online-free": {
+  "first": "2026-10-09",
+  "h": "c0b838992e9eea95"
  },
  "play-hearts-online-free": {
   "first": "2026-10-09",
-  "h": "613f7a26b5e8bdcd"
+  "h": "aa2b533b492e5640",
+  "last": "2026-10-09"
  },
  "play-patience-online-free": {
   "first": "2026-10-09",
-  "h": "002d52a5bae419ae",
+  "h": "06f1a5078b9c4d5a",
   "last": "2026-10-09"
+ },
+ "play-whist-online-free": {
+  "first": "2026-10-09",
+  "h": "e512ddc594fcbeba"
  },
  "playstation-parental-controls-uk": {
   "first": "2026-08-18",

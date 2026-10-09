@@ -53,7 +53,7 @@ _WHY_FREE = ('<p>We&rsquo;re <strong>365 Techies</strong>, a family-run computer
 _ALL_GAMES = ('<p>The same no-adverts promise runs through every game on <a href="/games/">our games page</a>: '
               '<a href="/play-patience-online-free/">Patience</a>, <a href="/play-freecell-online-free/">FreeCell</a>, <a href="/games/spider/">Spider</a>, '
               '<a href="/games/tripeaks/">TriPeaks</a>, <a href="/games/pyramid/">Pyramid</a>, <a href="/play-hearts-online-free/">Hearts</a>, '
-              '<a href="/games/gin/">Gin Rummy</a>, <a href="/play-cribbage-online-free/">Cribbage</a> and <a href="/games/whist/">Whist</a>, '
+              '<a href="/play-gin-rummy-online-free/">Gin Rummy</a>, <a href="/play-cribbage-online-free/">Cribbage</a> and <a href="/play-whist-online-free/">Whist</a>, '
               'plus our own arcade games. They&rsquo;re also in the Games menu of our free Windows app, <a href="/free-pc-health-check/">365 PC Manager</a>.</p>')
 
 # ============================================================ Patience (Solitaire)
@@ -222,7 +222,7 @@ CRB = {
         {'q': 'Can I play against a friend?', 'a': '<p>Not yet &mdash; this is you against the computer. But Today&rsquo;s match is the same cards for everyone, so you can compare scores with friends in the Hall of Fame.</p>'},
         {'q': 'What is the Hall of Fame?', 'a': '<p>Win Today&rsquo;s match and you can put your initials and town on the board, ranked by the biggest winning margin &mdash; only if you choose to. The whole match is replayed on our server before it counts.</p>'},
     ],
-    'crossLinksHtml': '<p>More free games: <a href="/play-patience-online-free/">Patience</a>, <a href="/play-hearts-online-free/">Hearts</a>, <a href="/games/gin/">Gin Rummy</a>, <a href="/games/whist/">Whist</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
+    'crossLinksHtml': '<p>More free games: <a href="/play-patience-online-free/">Patience</a>, <a href="/play-hearts-online-free/">Hearts</a>, <a href="/play-gin-rummy-online-free/">Gin Rummy</a>, <a href="/play-whist-online-free/">Whist</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
 }
 
 
@@ -388,7 +388,178 @@ HE = {
         {'q': 'Can I play against friends?', 'a': '<p>Not yet &mdash; this is you against the computer. But Today&rsquo;s match is the same cards for everyone, so you can compare scores in the Hall of Fame.</p>'},
         {'q': 'What is the Hall of Fame?', 'a': '<p>Win Today&rsquo;s match and you can put your initials and town on the board, ranked by the lowest winning score &mdash; only if you choose to. The whole match is replayed on our server before it counts.</p>'},
     ],
-    'crossLinksHtml': '<p>More free games: <a href="/play-cribbage-online-free/">Cribbage</a>, <a href="/play-freecell-online-free/">FreeCell</a>, <a href="/games/gin/">Gin Rummy</a>, <a href="/games/whist/">Whist</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
+    'crossLinksHtml': '<p>More free games: <a href="/play-cribbage-online-free/">Cribbage</a>, <a href="/play-freecell-online-free/">FreeCell</a>, <a href="/play-gin-rummy-online-free/">Gin Rummy</a>, <a href="/play-whist-online-free/">Whist</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
+}
+
+
+# ============================================================ Gin Rummy (9 Oct 2026; owner: "do Gin Rummy and Whist pages next")
+# UK autocomplete: "gin rummy online free against computer", "play gin rummy online free without registration",
+# "gin rummy free online no download", "gin rummy no ads free", "best free gin rummy no ads". Facts: games/gin help +
+# engine.js (Sam; knock at 10 or less, undercut +25, gin +25, first to 100, a draw at two cards left); games-hof.php
+# (Today's match, ranked by the biggest winning margin, the whole match replayed).
+GN_VIDEO = "/images/games-gin-video-v1.mp4"
+GN_POSTER = "/images/games-gin-poster-v1.webp"
+GN_SECS = 81
+GN_TRANSCRIPT = ("This is Gin Rummy, from 365 Techies. It&rsquo;s free, there&rsquo;s nothing to install, and there are no adverts. "
+                 "You play against Sam, the computer. Take a card from the deck or the discard pile, then throw one away. "
+                 "Your hand is sorted into melds for you, and your deadwood is counted, so you always know where you stand. "
+                 "Knock when your deadwood is ten or less, or go Gin with none at all, for a 25-point bonus. "
+                 "There are four levels, from a gentle Sam to a sharp one, with a Hint on the easier two. "
+                 "Your game is saved as you go, so you can stop and carry on later, on your PC, your tablet or your phone. First to a hundred wins. "
+                 "Play today&rsquo;s match, the same cards for everyone, and get your initials into the Hall of Fame. Free at 365techies.co.uk.")
+
+_GN_SCORES = ('<div class="cmp-wrap" tabindex="0" role="group" aria-label="Gin Rummy scores (scrolls sideways on a small screen)"><table class="cmp-table">'
+              '<thead><tr><th>What happens</th><th>Score</th></tr></thead><tbody>'
+              '<tr><td>Deadwood (cards in no meld)</td><td>Ace 1, 2 to 10 their number, picture cards 10</td></tr>'
+              '<tr><td>You knock (deadwood 10 or less)</td><td>The difference between the two deadwoods</td></tr>'
+              '<tr><td>Undercut (their deadwood is as low as yours)</td><td>They score the difference, and 25 more</td></tr>'
+              '<tr><td>Gin (no deadwood at all)</td><td>Their deadwood, and 25 &mdash; nothing can be laid off</td></tr>'
+              '<tr><td>The match</td><td>First to 100 wins</td></tr>'
+              '</tbody></table></div>')
+
+GN = {
+    'slug': 'play-gin-rummy-online-free',
+    'title': 'Play Gin Rummy Online Free, No Adverts | 365 Techies',
+    'metaDesc': 'Play Gin Rummy online free against the computer: no adverts, no download, no registration. Your hand sorted and your deadwood counted for you.',
+    'ogTitle': 'Play Gin Rummy online free - against the computer, no adverts',
+    'crumbName': 'Play Gin Rummy Online Free',
+    'eyebrow': '// FREE GIN RUMMY',
+    'h1': 'Play Gin Rummy online, <em class="grad grad--cyan">free and with no adverts</em>',
+    'lede': 'Gin Rummy against the computer, right in your web browser &mdash; your hand sorted into melds and your deadwood counted for you. Free, nothing to install, no registration and no adverts. Not one.',
+    'chips': ['No adverts, ever', 'No registration', 'Deadwood counted for you'],
+    'primaryCta': ['Play Gin Rummy free', '/games/gin/'], 'secondaryCta': ['All our games', '/games/'],
+    'ctaHead': 'Fancy a game of Gin?', 'ctaSub': 'Free against the computer, with your hand sorted for you and no adverts, on your PC, tablet or phone. Nothing to install and no registration.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Price', 'Free. Nothing to buy, now or later.'),
+        ('Adverts', 'None. No pop-ups between hands, no videos to sit through.'),
+        ('Install or register?', 'Neither. It plays in your web browser; your game is saved as you go.'),
+        ('Who you play', 'Sam, the computer. Four levels, from gentle to sharp; a Hint on Easy and Normal.'),
+        ('Made easy', 'Your hand is laid out for you &mdash; melds first, then the loose cards &mdash; and your deadwood is counted under your name.'),
+        ('Scoring', 'Knock at 10 or less, go Gin with none; undercuts and Gin score 25 extra. First to 100 wins.'),
+        ('Every day', 'Today&rsquo;s match: the same cards for everyone, with a Hall of Fame for the biggest win.'),
+        ('Works on', 'A PC, laptop, tablet or phone &mdash; Windows, Mac, iPad, iPhone or Android.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; SEE IT IN A MINUTE', 'h2': 'Here&rsquo;s what it&rsquo;s like',
+         'html': _video('gin', 'Gin Rummy from 365 Techies against the computer: taking and discarding, your hand sorted into melds, deadwood counted, knocking, a win and the daily match', GN_SECS, GN_POSTER, GN_VIDEO,
+                        GN_TRANSCRIPT, '/games/gin/', 'Play Gin Rummy free &#8594;')},
+        {'eyebrow': '/02 &mdash; NO ADVERTS', 'h2': 'Why there are no adverts, and never will be', 'html': _WHY_FREE},
+        {'eyebrow': '/03 &mdash; HOW TO PLAY', 'h2': 'How to play Gin Rummy against the computer',
+         'html': '<ol><li><strong>Make melds:</strong> three or four of a kind (7 7 7), or three or more in a row in one suit (4 5 6 of hearts). Ace is low: A 2 3 is a run, Q K A isn&rsquo;t. Your hand is laid out for you &mdash; melds first, then the loose cards.</li>'
+                 '<li><strong>Your turn:</strong> take a card &mdash; tap the deck, or the face-up card on the discard pile &mdash; then tap one of yours to throw it away.</li>'
+                 '<li><strong>Deadwood</strong> is the cards in no meld. It&rsquo;s counted for you under your name.</li>'
+                 '<li><strong>Knock</strong> when your deadwood is 10 or less (the button appears): both hands go down, the other player lays off what they can on your melds, and you score the difference.</li>'
+                 '<li><strong>Gin</strong> is no deadwood at all: you score the other hand&rsquo;s deadwood and 25, and nothing can be laid off.</li>'
+                 '<li><strong>First to 100</strong> wins the match. If the deck runs down to two cards, the hand is a draw.</li></ol>'},
+        {'eyebrow': '/04 &mdash; SCORING', 'h2': 'Gin Rummy scoring at a glance',
+         'html': _GN_SCORES + '<p>You don&rsquo;t need to work any of it out: the game counts the deadwood, lays off the cards and adds up the scores for you.</p>'},
+        {'eyebrow': '/05 &mdash; EVERY DAY', 'h2': 'Today&rsquo;s match, a Hall of Fame and a 100-level Journey',
+         'html': '<ul><li><strong>Today&rsquo;s match</strong> &mdash; the same cards for everyone, at each level. Win it and you can put your initials and town in the <strong>Hall of Fame</strong>, ranked by the biggest winning margin. The whole match is replayed on our server &mdash; Sam&rsquo;s cards too &mdash; before a win counts.</li>'
+                 '<li><strong>Four levels</strong> &mdash; how good Sam is, from gentle to sharp. Easy and Normal have a Hint if you&rsquo;re not sure what to keep.</li>'
+                 '<li><strong>The Journey</strong> &mdash; a hundred levels, one hand a level, each with three stars to win.</li>'
+                 '<li><strong>Saved as you go</strong> &mdash; stop mid-match and carry on later, on the same device.</li></ul>'},
+        {'eyebrow': '/06 &mdash; MORE GAMES', 'h2': 'Nine card games, all free with no adverts', 'html': _ALL_GAMES + _PLAY_TRACK},
+    ],
+    'howToName': 'How to play Gin Rummy',
+    'howToSteps': [
+        {'name': 'Make melds', 'text': 'Collect three or four of a kind, or three or more cards in a row in one suit. Ace is low.'},
+        {'name': 'Take a card and throw one away', 'text': 'On your turn, take the top card of the deck or the face-up card on the discard pile, then discard one of yours.'},
+        {'name': 'Keep your deadwood low', 'text': 'Deadwood is the cards in no meld: Ace 1, 2 to 10 their number, picture cards 10.'},
+        {'name': 'Knock or go Gin', 'text': 'Knock when your deadwood is 10 or less and score the difference, or go Gin with no deadwood for the other hand&rsquo;s deadwood and 25.'},
+        {'name': 'Race to 100', 'text': 'Keep playing hands. The first player to reach 100 wins the match.'},
+    ],
+    'faqs': [
+        {'q': 'Can I play Gin Rummy online free against the computer?', 'a': '<p>Yes. You play Sam, the computer, at one of four levels. It&rsquo;s free, with no adverts, nothing to download and no registration.</p>'},
+        {'q': 'Are there really no adverts?', 'a': '<p>None at all: no pop-ups between hands, no videos to watch. We&rsquo;re 365 Techies, a family IT firm in Bournemouth &mdash; paid for looking after computers, not for showing adverts.</p>'},
+        {'q': 'Do I need to register or download anything?', 'a': '<p>No. It plays in your web browser on a PC, laptop, tablet or phone. It&rsquo;s also in the Games menu of our free Windows app, 365 PC Manager.</p>'},
+        {'q': 'What is deadwood?', 'a': '<p>The cards in your hand that aren&rsquo;t part of a meld. Aces count 1, number cards their number and picture cards 10. The game counts yours for you.</p>'},
+        {'q': 'What is an undercut?', 'a': '<p>When you knock but the other player&rsquo;s deadwood is as low as yours, or lower. They score the difference, and 25 more.</p>'},
+        {'q': 'What is the difference between Gin Rummy and Rummy?', 'a': '<p>In Gin Rummy you don&rsquo;t lay melds down as you go: you keep them in your hand until someone knocks or goes Gin, and the deadwood decides the score.</p>'},
+        {'q': 'Can I play against friends?', 'a': '<p>Not yet &mdash; this is you against the computer. But Today&rsquo;s match is the same cards for everyone, so you can compare scores in the Hall of Fame.</p>'},
+        {'q': 'What is the Hall of Fame?', 'a': '<p>Win Today&rsquo;s match and you can put your initials and town on the board, ranked by the biggest winning margin &mdash; only if you choose to. The whole match is replayed on our server before it counts.</p>'},
+    ],
+    'crossLinksHtml': '<p>More free games: <a href="/play-cribbage-online-free/">Cribbage</a>, <a href="/play-whist-online-free/">Whist</a>, <a href="/play-hearts-online-free/">Hearts</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
+}
+
+# ============================================================ Whist (9 Oct 2026)
+# UK autocomplete: "whist online free no download", "whist card game online free no download", "play whist against
+# computer", "whist card game rules". (Solo whist and knockout whist are other games - not targeted.) Facts: games/whist
+# help + engine.js (partner Jo vs Sam and Alex; trumps = the dealer's last card; tricks over six; 5 points a game, two
+# games the rubber); games-hof.php (Today's match, ranked by the fewest hands to win the rubber).
+WH_VIDEO = "/images/games-whist-video-v1.mp4"
+WH_POSTER = "/images/games-whist-poster-v1.webp"
+WH_SECS = 79
+WH_TRANSCRIPT = ("This is Whist, the classic card game, from 365 Techies. It&rsquo;s free, there&rsquo;s nothing to install, and there are no adverts. "
+                 "You and your partner Jo play against Sam and Alex. The last card dealt sets trumps, and the marker always shows them. "
+                 "Follow suit if you can. If you can&rsquo;t, a trump wins the trick. Win more than six tricks together to score. "
+                 "There are four levels, with a Hint on the easier two. "
+                 "Your game is saved as you go, so you can stop and carry on later, on your PC, your tablet or your phone. First to five points wins a game, and two games win the rubber. "
+                 "Play today&rsquo;s match, the same cards for everyone, and get your initials into the Hall of Fame. Free at 365techies.co.uk.")
+
+WH = {
+    'slug': 'play-whist-online-free',
+    'title': 'Play Whist Card Game Online Free, No Adverts | 365 Techies',
+    'metaDesc': 'Play the classic Whist card game online free with a computer partner against two computer players: no adverts, nothing to download, no sign-in.',
+    'ogTitle': 'Play Whist online free - the classic card game, no adverts',
+    'crumbName': 'Play Whist Online Free',
+    'eyebrow': '// FREE WHIST CARD GAME',
+    'h1': 'Play Whist online, <em class="grad grad--cyan">free and with no adverts</em>',
+    'lede': 'Classic whist &mdash; you and your partner Jo against Sam and Alex &mdash; right in your web browser. Free, nothing to install, no sign-in and no adverts. Not one.',
+    'chips': ['No adverts, ever', 'Nothing to install', 'A computer partner'],
+    'primaryCta': ['Play Whist free', '/games/whist/'], 'secondaryCta': ['All our games', '/games/'],
+    'ctaHead': 'Fancy a rubber of whist?', 'ctaSub': 'Free with a computer partner against two computer players, and no adverts, on your PC, tablet or phone. Nothing to install and no sign-in.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Price', 'Free. Nothing to buy, now or later.'),
+        ('Adverts', 'None. No pop-ups between hands, no videos to sit through.'),
+        ('Install or sign-in?', 'Neither. It plays in your web browser; your game is saved as you go.'),
+        ('Who you play', 'You and your partner Jo against Sam and Alex &mdash; all three played by the computer. Four levels; a Hint on Easy and Normal.'),
+        ('Trumps', 'The dealer&rsquo;s last card sets trumps for the hand, and the marker always shows them.'),
+        ('Scoring', 'A point for each trick over six. First to 5 points wins a game; two games win the rubber.'),
+        ('Every day', 'Today&rsquo;s match: the same cards for everyone, with a Hall of Fame for the fewest hands to win the rubber.'),
+        ('Works on', 'A PC, laptop, tablet or phone &mdash; Windows, Mac, iPad, iPhone or Android.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; SEE IT IN A MINUTE', 'h2': 'Here&rsquo;s what it&rsquo;s like',
+         'html': _video('whist', 'Whist from 365 Techies with a computer partner: trumps, following suit, winning tricks together, a won rubber and the daily match', WH_SECS, WH_POSTER, WH_VIDEO,
+                        WH_TRANSCRIPT, '/games/whist/', 'Play Whist free &#8594;')},
+        {'eyebrow': '/02 &mdash; NO ADVERTS', 'h2': 'Why there are no adverts, and never will be', 'html': _WHY_FREE},
+        {'eyebrow': '/03 &mdash; HOW TO PLAY', 'h2': 'How to play whist',
+         'html': '<ol><li><strong>Partners:</strong> you and Jo (across the table) play against Sam and Alex. Win tricks together.</li>'
+                 '<li><strong>Trumps:</strong> the dealer&rsquo;s last card is shown to everyone, and its suit is trumps for the hand. The marker at the top left always says what trumps are.</li>'
+                 '<li><strong>Tricks:</strong> everyone plays one card. You must follow suit if you can; if you can&rsquo;t, play any card &mdash; a trump wins the trick unless a higher trump beats it. Otherwise the highest card of the suit led wins (Ace is high).</li>'
+                 '<li><strong>Scoring:</strong> after 13 tricks, the side with more than six scores a point for each trick over six. First to 5 points wins a game; two games win the rubber.</li></ol>'},
+        {'eyebrow': '/04 &mdash; OLD TIPS', 'h2': 'The old whist tips, still worth knowing',
+         'html': '<ul><li><strong>Second hand plays low,</strong> third hand plays high.</li>'
+                 '<li><strong>Don&rsquo;t trump your partner&rsquo;s winning card.</strong></li>'
+                 '<li><strong>Lead back the suit your partner led.</strong></li></ul>'
+                 '<p>Not sure? On Easy and Normal, press Hint and the card to play lights up. And the levels set how good all three others are &mdash; your partner too.</p>'},
+        {'eyebrow': '/05 &mdash; EVERY DAY', 'h2': 'Today&rsquo;s match, a Hall of Fame and a 100-level Journey',
+         'html': '<ul><li><strong>Today&rsquo;s match</strong> &mdash; the same cards for everyone, at each level. Win the rubber and you can put your initials and town in the <strong>Hall of Fame</strong>, ranked by the fewest hands. The whole match is replayed on our server &mdash; the computer players&rsquo; cards too &mdash; before a win counts.</li>'
+                 '<li><strong>The Journey</strong> &mdash; a hundred levels, one hand a level, each with three stars to win.</li>'
+                 '<li><strong>Saved as you go</strong> &mdash; stop mid-rubber and carry on later, on the same device.</li></ul>'},
+        {'eyebrow': '/06 &mdash; MORE GAMES', 'h2': 'Nine card games, all free with no adverts', 'html': _ALL_GAMES + _PLAY_TRACK},
+    ],
+    'howToName': 'How to play whist',
+    'howToSteps': [
+        {'name': 'Sit with your partner', 'text': 'You and your partner sit opposite each other and play against the other two. Win tricks together.'},
+        {'name': 'See what trumps are', 'text': 'The dealer&rsquo;s last card is turned up for everyone; its suit is trumps for the hand.'},
+        {'name': 'Follow suit', 'text': 'Everyone plays one card and must follow the suit led if they can. If not, any card can be played, and a trump wins.'},
+        {'name': 'Win the trick', 'text': 'The highest trump, or else the highest card of the suit led, wins the trick. Ace is high.'},
+        {'name': 'Score the hand', 'text': 'After 13 tricks, the side with more than six scores a point for each trick over six. First to 5 points wins a game; two games win the rubber.'},
+    ],
+    'faqs': [
+        {'q': 'Can I play whist online free against the computer?', 'a': '<p>Yes. You and your partner Jo play against Sam and Alex, all three played by the computer. It&rsquo;s free, with no adverts, nothing to download and no sign-in.</p>'},
+        {'q': 'Are there really no adverts?', 'a': '<p>None at all: no pop-ups between hands, no videos to watch. We&rsquo;re 365 Techies, a family IT firm in Bournemouth &mdash; paid for looking after computers, not for showing adverts.</p>'},
+        {'q': 'Do I need to download anything?', 'a': '<p>No. It plays in your web browser on a PC, laptop, tablet or phone. It&rsquo;s also in the Games menu of our free Windows app, 365 PC Manager.</p>'},
+        {'q': 'Which whist is this?', 'a': '<p>Classic whist: four players in two partnerships, trumps set by the dealer&rsquo;s last card, a point for each trick over six. Solo whist and knockout whist are different games.</p>'},
+        {'q': 'How do you win at whist?', 'a': '<p>Win more than six of the 13 tricks with your partner to score. First side to 5 points wins a game, and two games win the rubber.</p>'},
+        {'q': 'Is my partner any good?', 'a': '<p>You choose: the four levels set how good all three others are, your partner Jo included. Easy and Normal have a Hint too.</p>'},
+        {'q': 'Can I play with friends?', 'a': '<p>Not yet &mdash; this is you with a computer partner against two computer players. But Today&rsquo;s match is the same cards for everyone, so you can compare in the Hall of Fame.</p>'},
+        {'q': 'What is the Hall of Fame?', 'a': '<p>Win Today&rsquo;s match and you can put your initials and town on the board, ranked by the fewest hands to win the rubber &mdash; only if you choose to. The whole match is replayed on our server before it counts.</p>'},
+    ],
+    'crossLinksHtml': '<p>More free games: <a href="/play-hearts-online-free/">Hearts</a>, <a href="/play-gin-rummy-online-free/">Gin Rummy</a>, <a href="/play-cribbage-online-free/">Cribbage</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
 }
 
 
@@ -413,7 +584,7 @@ def _extras(slug, video, poster, secs, name, desc, game_name, game_url, cover, o
     page["schema"] = schema
 
 
-for _d in (PAT, CRB, FC, HE):
+for _d in (PAT, CRB, FC, HE, GN, WH):
     _d = dict(_d)
     for _k in ('title', 'metaDesc', 'ogTitle'):   # plain apostrophes in titles, meta tags and JSON-LD
         _d[_k] = _d[_k].replace('&rsquo;', "'")
@@ -431,3 +602,9 @@ _extras('play-freecell-online-free', FC_VIDEO, FC_POSTER, FC_SECS, 'FreeCell fro
 _extras('play-hearts-online-free', HE_VIDEO, HE_POSTER, HE_SECS, 'Hearts from 365 Techies, in a minute',
         'The classic Hearts card game free against three computer players, with no adverts: passing, following suit, the scores each hand, a win, and the daily match with its Hall of Fame.',
         'Hearts', '/games/hearts/', '/games/img/covers/hearts-v1.svg', '/images/games-hearts-og-v1.jpg')
+_extras('play-gin-rummy-online-free', GN_VIDEO, GN_POSTER, GN_SECS, 'Gin Rummy from 365 Techies, in a minute',
+        'Free Gin Rummy against the computer with no adverts: your hand sorted into melds, deadwood counted, knocking and Gin, a win, and the daily match with its Hall of Fame.',
+        'Gin Rummy', '/games/gin/', '/games/img/covers/gin-v1.svg', '/images/games-gin-og-v1.jpg')
+_extras('play-whist-online-free', WH_VIDEO, WH_POSTER, WH_SECS, 'Whist from 365 Techies, in a minute',
+        'The classic Whist card game free, with a computer partner against two computer players and no adverts: trumps, tricks, a won rubber, and the daily match with its Hall of Fame.',
+        'Whist', '/games/whist/', '/games/img/covers/whist-v1.svg', '/images/games-whist-og-v1.jpg')

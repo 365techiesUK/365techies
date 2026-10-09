@@ -58,7 +58,7 @@ _SITE = "https://365techies.co.uk"
 # what each section of games.json is called on the page, and a line about it
 _CATS = {
     "Card games": ("Card games", "The classics, with big clear cards. Tap a card to play it &mdash; or drag it, if you prefer. "
-                   "See one in a minute: <a href=\"/play-patience-online-free/\">Patience</a> &middot; <a href=\"/play-freecell-online-free/\">FreeCell</a> &middot; <a href=\"/play-hearts-online-free/\">Hearts</a> &middot; <a href=\"/play-cribbage-online-free/\">Cribbage</a>."),
+                   "See one in a minute: <a href=\"/play-patience-online-free/\">Patience</a> &middot; <a href=\"/play-freecell-online-free/\">FreeCell</a> &middot; <a href=\"/play-hearts-online-free/\">Hearts</a> &middot; <a href=\"/play-gin-rummy-online-free/\">Gin Rummy</a> &middot; <a href=\"/play-cribbage-online-free/\">Cribbage</a> &middot; <a href=\"/play-whist-online-free/\">Whist</a>."),
     "Arcade": ("Arcade games", "Our own takes on the arcade games of the 80s and 90s. Each one has a <b>Gentle</b> speed for beginners."),
     "Seafront": ("Made in Bournemouth", "A 3D game on the real Bournemouth seafront. It runs best on a newer computer."),
 }
