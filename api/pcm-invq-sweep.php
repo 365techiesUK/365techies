@@ -563,6 +563,53 @@ function invq_quote_for_job($c, $jobId, $who) {
     return array('ok' => true, 'quote' => $estId, 'number' => $no, 'url' => $url, 'existed' => false);
 }
 
+/* A QUOTE started from a customer's PC (9 Oct 2026, owner: "send them an upgrade quote ... from it"). The same estimate
+   as a job's quote - the customer made or found by email, the next 4905/NNN, nothing emailed from here - but its lines
+   are what staff picked on the PC card ("16 GB memory - it has 8 GB"), one description line each, and the products and
+   prices go on in QuickBooks (the owner sets prices: never a price from here). $person = name/email/phone/company from
+   the PC Manager record; $tag names the PC for the log and QuickBooks' private note. */
+function invq_quote_for_pc($c, $person, $lines, $who, $tag) {
+    $email = invq_email_ok(isset($person['email']) ? $person['email'] : '');
+    if ($email === '') return array('ok' => false, 'error' => 'no_email');
+    if (empty($c['live'])) return array('ok' => false, 'error' => 'not_live');
+    if ($c['only'] !== '') return array('ok' => false, 'error' => 'only_key');
+    $L = array();
+    foreach ((array)$lines as $ln) { $ln = invq_str($ln, 200); if ($ln !== '') $L[] = $ln; if (count($L) >= 8) break; }
+    if (!$L) return array('ok' => false, 'error' => 'no_lines');
+    $store = invq_store_read();
+    $hourAgo = time() - 3600; $n = 0;
+    foreach ($store['created'] as $s) if ((int)$s['at'] > $hourAgo) $n++;
+    if ($n >= INVQ_MAX_CREATES_RUN) return array('ok' => false, 'error' => 'rate_limited');
+    $name = invq_str(isset($person['name']) ? $person['name'] : '', 90); if ($name === '') $name = $email;
+    $cu = invq_ensure_customer($c, array('email' => $email, 'name' => $name, 'phone' => isset($person['phone']) ? $person['phone'] : '',
+                                         'company' => isset($person['company']) ? $person['company'] : ''), 'pc ' . $tag);
+    if (empty($cu['ok'])) return $cu;
+    $lineObjs = array();
+    foreach ($L as $ln) $lineObjs[] = array('DetailType' => 'DescriptionOnly', 'Description' => $ln, 'DescriptionLineDetail' => new stdClass());
+    $est = array('CustomerRef' => array('value' => $cu['cid']), 'Line' => $lineObjs, 'TxnDate' => gmdate('Y-m-d'),
+                 'ExpirationDate' => gmdate('Y-m-d', time() + 30 * 86400), 'BillEmail' => array('Address' => $email),
+                 'PrivateNote' => 'Started from the PC card (' . invq_str($tag, 80) . ') in the staff portal by ' . $who);
+    $doc = invq_next_docnumber($c, 'Estimate');
+    if ($doc === '') { $all = invq_docnumbers($c, 'Estimate'); $doc = $all ? invq_next_number($all, '') : ''; }
+    if ($doc !== '') $est['DocNumber'] = $doc;
+    $res = invq_api($c, 'POST', '/estimate', $est);
+    if (!qbo_lib_ok($res) || empty($res['json']['Estimate']['Id'])) {
+        invq_log('quote create FAILED for pc ' . $tag . ' ' . invq_why($res));
+        return array('ok' => false, 'error' => 'qbo_estimate', 'why' => invq_why($res));
+    }
+    $estId = (string)$res['json']['Estimate']['Id'];
+    $no = (string)(isset($res['json']['Estimate']['DocNumber']) ? $res['json']['Estimate']['DocNumber'] : $doc);
+    $url = $c['host'] . '/app/estimate?txnId=' . rawurlencode($estId);
+    invq_store_locked(function ($d) use ($tag, $estId, $who) {
+        $d['created'][] = array('job' => 'pc:' . $tag, 'id' => 'est-' . $estId, 'amount' => 0, 'by' => $who, 'at' => time());
+        $d['cache'] = null;
+        return array('ok' => true, 'data' => $d);
+    });
+    invq_log('raised estimate ' . $estId . ($no !== '' ? ' #' . $no : '') . ' from pc ' . $tag . ' by ' . $who);
+    invq_slack(':memo: *Upgrade quote started* - ' . $name . ($no !== '' ? ' (#' . $no . ')' : '') . ', from their PC card: ' . implode('; ', $L) . ', by ' . $who . '. Add the products and prices and send it from QuickBooks: ' . $url);
+    return array('ok' => true, 'quote' => $estId, 'number' => $no, 'url' => $url);
+}
+
 /* The quote a job now has, on the job record (mirror of invq_job_link). */
 function invq_job_quote($jobId, $estId, $url, $no) {
     $r = invq_jobs_locked(function ($d) use ($jobId, $estId, $url, $no) {

@@ -24936,6 +24936,40 @@ def write_portal_page():
   #p365app .tlog { margin-top:.6rem; font-size: 0.9rem; max-height:180px; overflow:auto; }
   #p365app .tlog .lr { display:flex; gap:.5rem; padding:.32rem 0; border-bottom:1px solid rgba(42,59,99,.4); align-items:baseline; }
   #p365app .tlog .lr:last-child { border-bottom:0; }
+  /* the PC card (9 Oct 2026) - opened from a fleet row or "Worth a call" */
+  #p365app .tmodal.pcc { max-width:880px; }
+  #p365app .pcc-top { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; }
+  #p365app .pcc-bar { display:flex; flex-wrap:wrap; gap:.45rem .9rem; align-items:center; margin:.75rem 0 .2rem; font-size:.95rem; color:var(--psoft); }
+  #p365app .pcc-bar button { margin:0; }
+  #p365app .pcc-st { font-size:.9rem; color:var(--pwhite); }
+  #p365app .pcc-help { margin:.6rem 0 0; padding:.55rem .75rem; border-radius:10px; border:1px solid rgba(232,99,126,.45); background:rgba(232,99,126,.1); color:var(--pwhite); font-size:.95rem; }
+  #p365app .pcc-help button { margin:0; }
+  #p365app .pcc-grid { display:grid; grid-template-columns:1fr 1fr; gap:.8rem; margin-top:.8rem; }
+  @media (max-width:760px) { #p365app .pcc-grid { grid-template-columns:1fr; } }
+  #p365app .pcc-sec { background:var(--pink); border:1px solid var(--pline); border-radius:12px; padding:.75rem .85rem; min-width:0; }
+  #p365app .pcc-sec h4 { margin:0 0 .45rem; font-size:1rem; color:var(--pwhite); }
+  #p365app .pcc-dl { display:grid; grid-template-columns:auto 1fr; gap:.3rem .85rem; font-size:.95rem; margin:0; }
+  #p365app .pcc-dl dt { color:var(--pmut); }
+  #p365app .pcc-dl dd { margin:0; color:var(--pwhite); min-width:0; overflow-wrap:anywhere; }
+  #p365app .pcc-warn { display:flex; gap:.55rem; align-items:flex-start; padding:.38rem 0; border-bottom:1px solid rgba(42,59,99,.4); font-size:.95rem; color:var(--pwhite); }
+  #p365app .pcc-warn:last-child { border-bottom:0; }
+  #p365app .pcc .s { color:var(--pmut); font-size:.85rem; }
+  #p365app .pcc-spark { display:block; max-width:100%; height:auto; }
+  #p365app .pcc-sw summary { cursor:pointer; color:var(--psoft); font-size:.88rem; }
+  #p365app .pcc-sw div { max-height:200px; overflow:auto; font-size:.88rem; margin-top:.3rem; }
+  #p365app .pcc-note { border-bottom:1px solid rgba(42,59,99,.4); padding:.45rem 0; font-size:.95rem; color:var(--pwhite); overflow-wrap:anywhere; }
+  #p365app .pcc-note:last-child { border-bottom:0; }
+  #p365app .pcc-note .m { color:var(--pmut); font-size:.82rem; margin-top:.15rem; }
+  #p365app .pcc textarea, #p365app .pcc-q input[type=text] { width:100%; box-sizing:border-box; padding:.5rem .6rem; border-radius:9px; border:1px solid var(--pline); background:var(--ppanel); color:var(--pwhite); font:inherit; resize:vertical; }
+  #p365app .pcc-q { display:flex; gap:.5rem; align-items:center; margin:.3rem 0; }
+  #p365app .pcc-q input[type=checkbox] { width:auto; flex:0 0 auto; }
+  #p365app .pcc-acts { display:flex; flex-wrap:wrap; gap:.45rem; margin:.85rem 0 0; }
+  #p365app .pcc-acts .btn, #p365app .pcc-acts button { margin:0; }
+  #p365app tr.frow { cursor:pointer; }
+  #p365app tr.frow:hover td { background:rgba(29,151,227,.06); }
+  #p365app button.pcopen { background:none; border:0; padding:0; margin:0; color:inherit; font:inherit; cursor:pointer; text-align:left; box-shadow:none; }
+  #p365app button.pcopen:hover strong { text-decoration:underline; }
+  #p365app .fupd { font-size:.9rem; color:var(--psoft); margin:.1rem 0 .5rem; }
 
   /* ===== next-gen 3D health dashboard (namespaced ng*, fully scoped) ===== */
   #p365app { --ngcard:#111a3c; --ngraised:#16214a; --ngline:rgba(255,255,255,.10); --ngmut:#6d82ad; --ngspring:cubic-bezier(.34,1.56,.4,1); }
@@ -29477,7 +29511,7 @@ def write_portal_page():
 
 
   // ---------- staff panel: the daily-operations dashboard ----------
-  var AG = null, AG60 = null, selDay = null, FLEET = null, ftab = 'on';
+  var AG = null, AG60 = null, selDay = null, FLEET = null, ftab = 'on', fleetAuto = null;
   function iso(dt) { return dt.getFullYear() + '-' + ('0' + (dt.getMonth() + 1)).slice(-2) + '-' + ('0' + dt.getDate()).slice(-2); }
   function todayIso() { return iso(new Date()); }
   function fmtTime(tm) {
@@ -30261,6 +30295,7 @@ def write_portal_page():
         + '<div id="worthcall"><p class="quiet">Checking the fleet\\u2026</p></div></div>';
       h += '<div class="card"><h2>\\ud83d\\udda5 PC Manager fleet</h2>'
         + '<div class="stats" id="fstats"></div>'
+        + '<div class="fupd" id="fupd" aria-live="polite"></div>'
         + '<div class="ftabs" id="ftabs"></div><div class="tblwrap" id="ffleet"><p class="quiet">Loading the fleet\\u2026</p></div></div>';
       // 1 Oct 2026: every install, linked or not, counted from the app's own hourly check-in (api/pcm-installs.php)
       h += '<div class="card"><h2>\\ud83d\\udcc8 PC Manager installs</h2><div id="instbox"><p class="quiet">Counting\\u2026</p></div></div>';
@@ -31777,14 +31812,34 @@ def write_portal_page():
     if (m.fresh) return w;
     if (m.score > 0 && m.score < 55) w.push(['b', 'low health ' + m.score + '%']);
     if ((m.av || '').toUpperCase() === 'OFF') w.push(['b', 'antivirus OFF']);
-    if (!m.backup) w.push(['w', 'no backup']);
+    if (!m.backup) w.push(['w', bkWords(m)]);
     if (m.disk >= 85) w.push(['w', 'disk ' + m.disk + '%']);
     if (m.w10) w.push(['w', 'Windows 10']);
     if (m.reboot) w.push(['w', 'restart due']);
     if (latest && m.ver && m.ver < latest) w.push(['w', 'app v' + m.ver]);
     if (m.batt > 0 && m.batt < 60) w.push(['w', 'battery ' + m.batt + '%']);
-    if (m.help) w.push(['b', '\\ud83c\\udd98 asked for help']);
+    if (m.help) w.push(['b', '\\ud83c\\udd98 asked for help ' + seenAgo(m.help)]);
     return w;
+  }
+  // 9 Oct 2026: the app says WHY there is no backup (bstate) - a backup that ran but didn't finish is not "no backup"
+  function bkWords(m) {
+    var s = m.bstate || '';
+    return s === 'failed' ? 'backup didn\\u2019t finish' : s === 'stale' ? 'backup out of date' : s === 'partial' ? 'backup skipped files'
+      : s === 'photos' ? 'photos-only backup' : (s === 'norecord' || s === 'unknown') ? 'backup unconfirmed' : 'no backup';
+  }
+  // "12 min ago" from the server's "YYYY-MM-DD HH:MM" (UTC); the exact local time is seenLocal
+  function seenMs(seen) { return seen ? Date.parse(String(seen).replace(' ', 'T') + ':00Z') : NaN; }
+  function seenAgo(seen) {
+    var t = seenMs(seen); if (isNaN(t)) return seen ? esc(seen) : 'not seen yet';
+    var mins = Math.floor((Date.now() - t) / 60000);
+    if (mins < 2) return 'just now';
+    if (mins < 60) return mins + ' min ago';
+    var hrs = Math.floor(mins / 60); if (hrs < 24) return hrs + ' h ago';
+    var days = Math.floor(hrs / 24); return days === 1 ? 'yesterday' : days + ' days ago';
+  }
+  function seenLocal(seen) {
+    var t = seenMs(seen); if (isNaN(t)) return '';
+    var d = new Date(t); return d.getDate() + ' ' + MON[d.getMonth()] + ' ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
   }
   // rank a machine by how much it needs a friendly call - higher = more urgent
   function attentionScore(m) {
@@ -31874,9 +31929,11 @@ def write_portal_page():
       var chips = (m.warns || []).map(function (w) { return '<span class="chip ' + (w[0] === 'b' ? 'b' : 'w') + '">' + w[1] + '</span>'; }).join('');
       hh += '<div class="tline"><span class="ttime" style="flex:0 0 14px;padding-top:.35rem"><span class="dot" style="background:' + dot + '"></span></span>'
         + '<div class="tblock"><strong>' + esc(m.cust || 'Customer') + '</strong> \\u00b7 <span class="quiet" style="margin:0">' + esc(m.name) + '</span>'
-        + '<div class="chips">' + chips + '<span class="chip">seen ' + seenTxt(m.seen) + '</span></div></div>'
+        + '<div class="chips">' + chips + '<span class="chip" title="' + esc(seenLocal(m.seen)) + '">seen ' + seenAgo(m.seen) + '</span></div></div>'
         + '<div style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">'
         + (m.phone ? '<a class="btn sm" href="tel:' + esc(m.phone.replace(/\\s/g, '')) + '">\\ud83d\\udcde Call</a>' : '')
+        + (m.help ? '<button class="sm ghost wchelp" data-cid="' + esc(m.cid) + '" data-pc="' + esc(m.mid) + '" title="They asked for help ' + esc(seenLocal(m.help)) + ' - mark it dealt with">\\u2714 Help handled</button>' : '')
+        + '<button class="sm ghost wcpc" data-cid="' + esc(m.cid) + '" data-pc="' + esc(m.mid) + '">\\ud83d\\udda5 PC card</button>'
         + '<button class="sm ghost wcview" data-cid="' + esc(m.cid) + '">\\ud83d\\udc41 View</button>'
         + '<button class="sm ghost wchide" data-cid="' + esc(m.cid) + '" data-pc="' + esc(m.mid) + '" data-label="' + esc((m.cust || 'Customer') + ' \\u00b7 ' + m.name) + '" title="Take this PC off this list - for our own machines or ones not on support">Hide</button>'
         + (twin ? '<button class="sm ghost wcmerge" data-cid="' + esc(m.cid) + '" data-pc="' + esc(m.mid) + '" data-other="' + esc(twin.mid) + '" title="This customer has this PC listed twice - usually after Windows was reset or reinstalled">Listed twice \\u2013 merge</button>' : '')
@@ -31884,6 +31941,12 @@ def write_portal_page():
     });
     box.innerHTML = hh + hidTxt;
     wireWcHide(box);
+    Array.prototype.forEach.call(box.querySelectorAll('.wchelp'), function (btn) {
+      btn.onclick = function () { pcHelpDone(btn.getAttribute('data-cid'), btn.getAttribute('data-pc'), btn); };
+    });
+    Array.prototype.forEach.call(box.querySelectorAll('.wcpc'), function (btn) {
+      btn.onclick = function () { var m2 = pcFind(btn.getAttribute('data-cid'), btn.getAttribute('data-pc')); if (m2) pcCard(m2); };
+    });
     Array.prototype.forEach.call(box.querySelectorAll('.wcview'), function (btn) {
       btn.onclick = function () {
         btn.disabled = true;
@@ -32783,6 +32846,19 @@ def write_portal_page():
         m.warns = fleetWarnings(m, d.latest);
       });
       FLEET = d.machines || [];
+      // 9 Oct 2026 (owner: "how often does it actually update?"): when this list was read, and a refresh every 2 minutes
+      // while the page is on screen - each PC reports at most an hour ago (sooner with app v37, at once with Check now)
+      var fu = document.getElementById('fupd');
+      if (fu) {
+        var nd = new Date();
+        fu.innerHTML = 'Updated ' + ('0' + nd.getHours()).slice(-2) + ':' + ('0' + nd.getMinutes()).slice(-2)
+          + ' \\u00b7 <a href="#" id="fupdgo">Refresh now</a> \\u00b7 <span class="quiet" style="font-size:.85rem">refreshes itself every 2 minutes; each PC reports in at least hourly \\u2014 open one for <b>Check now</b></span>';
+        document.getElementById('fupdgo').onclick = function () { loadFleet(); return false; };
+      }
+      if (!fleetAuto) fleetAuto = setInterval(function () {
+        if (document.hidden || !S || !S.stoken || !document.getElementById('ffleet')) return;
+        loadFleet();
+      }, 120000);
       var on = FLEET.filter(function (m) { return m.on; }).length;
       var pro = FLEET.filter(function (m) { return m.tier === 'pro'; }).length;
       var warn = FLEET.filter(function (m) { return m.warns.length; }).length;
@@ -32819,24 +32895,360 @@ def write_portal_page():
       var wch = m.warns.length
         ? m.warns.map(function (w) { return '<span class="chip ' + w[0] + '">' + w[1] + '</span>'; }).join(' ')
         : (m.fresh ? '<span class="chip">first check due</span>' : '<span class="chip g">all good</span>');
-      hh += '<tr><td><span class="dot" style="background:' + (m.on ? 'var(--pgood)' : '#44507a') + '" title="' + (m.on ? 'on now' : 'offline') + '"></span></td>'
-        + '<td><strong>' + esc(m.name) + '</strong></td>'
+      hh += '<tr class="frow" data-cid="' + esc(m.cid) + '" data-mid="' + esc(m.mid) + '"><td><span class="dot" style="background:' + (m.on ? 'var(--pgood)' : '#44507a') + '" title="' + (m.on ? 'on now' : 'offline') + '"></span></td>'
+        + '<td><button type="button" class="pcopen" title="Open this PC\\u2019s card"><strong>' + esc(m.name) + '</strong></button>'
+        + (m.nn ? ' <span class="chip c" title="' + m.nn + ' staff note' + (m.nn === 1 ? '' : 's') + '">\\ud83d\\udcdd ' + m.nn + '</span>' : '') + '</td>'
         + '<td>' + esc(m.cust) + ' <span class="pill ' + (m.tier === 'pro' ? 'pro">Pro' : 'free">Free') + '</span></td>'
         + '<td><span style="color:' + col + ';font-weight:700">' + (m.fresh ? '\\u2014' : m.score + '%') + '</span>' + (m.verdict ? ' <span class="quiet">' + esc(m.verdict) + '</span>' : '') + '</td>'
         + '<td><div class="chips">' + wch + '</div></td>'
-        + '<td>' + seenTxt(m.seen) + '</td>'
+        + '<td title="' + esc(seenLocal(m.seen)) + '">' + seenAgo(m.seen) + '</td>'
         + '<td>' + (m.ver ? 'v' + m.ver : '\\u2014') + '</td>'
         + '<td>' + (m.mid ? '<button class="sm ghost tune" data-cid="' + esc(m.cid) + '" data-mid="' + esc(m.mid) + '" title="Safe tune-up">\\ud83d\\udee0</button>' : '') + '</td></tr>';
     });
     hh += '</table>';
     fv.innerHTML = hh;
     Array.prototype.forEach.call(fv.querySelectorAll('.tune'), function (btn) {
-      btn.onclick = function () {
+      btn.onclick = function (e) {
+        e.stopPropagation();
         var c = btn.getAttribute('data-cid'), md = btn.getAttribute('data-mid');
         var m2 = FLEET.filter(function (x) { return x.cid === c && x.mid === md; })[0];
         if (m2) openTuneup(m2);
       };
     });
+    // the whole row opens the PC card (its name is the keyboard way in)
+    Array.prototype.forEach.call(fv.querySelectorAll('tr.frow'), function (tr) {
+      tr.onclick = function () { var m2 = pcFind(tr.getAttribute('data-cid'), tr.getAttribute('data-mid')); if (m2) pcCard(m2); };
+    });
+  }
+
+  // ---------- the PC card (9 Oct 2026; owner: "more information on each customer's PC ... spec ... a link to a report
+  // ... notes ... link to Slack ... send them an upgrade quote"). Opened from a fleet row or "Worth a call". Everything on
+  // it is what the PC, its service reports and QuickBooks have told us (pcm-booking.php staffpc) - nothing guessed. ----------
+  var PCC = null;   // { m: the fleet row, d: the card's data, notes: staff notes, poll: the Check now timer }
+  function pcFind(cid, mid) { return (FLEET || []).filter(function (x) { return x.cid === cid && x.mid === mid; })[0] || null; }
+  function pcEsc(e) { if (e.key === 'Escape' && PCC && !document.getElementById('tmask')) pcClose(); }
+  function pcClose() {
+    var x = document.getElementById('pccmask'); if (x && x.parentNode) x.parentNode.removeChild(x);
+    if (PCC && PCC.poll) clearInterval(PCC.poll);
+    PCC = null; document.removeEventListener('keydown', pcEsc);
+  }
+  function pcCard(m) {
+    pcClose();
+    var mask = document.createElement('div');
+    mask.className = 'tmask'; mask.id = 'pccmask';
+    mask.onclick = function (e) { if (e.target === mask) pcClose(); };
+    mask.innerHTML = '<div class="tmodal pcc" role="dialog" aria-modal="true" aria-label="' + esc(m.name) + ' \\u2014 ' + esc(m.cust || 'Customer') + '">'
+      + '<div class="pcc-top"><div><h3>\\ud83d\\udda5 ' + esc(m.name) + '</h3><p class="quiet" style="margin:.15rem 0 0">' + esc(m.cust || 'Customer')
+      + ' <span class="pill ' + (m.tier === 'pro' ? 'pro">Pro' : 'free">Free') + '</span></p></div>'
+      + '<button class="sm ghost" id="pccx" aria-label="Close">\\u2715</button></div>'
+      + '<div id="pccbody"><p class="quiet">Opening\\u2026</p></div></div>';
+    el.appendChild(mask);
+    document.getElementById('pccx').onclick = pcClose;
+    document.addEventListener('keydown', pcEsc);
+    PCC = { m: m, d: null, notes: [], poll: null };
+    pcLoad();
+  }
+  function pcLoad(after) {
+    if (!PCC) return;
+    var m = PCC.m;
+    post(BK, { action: 'staffpc', stoken: S.stoken, machine: mid(), cid: m.cid, pc: m.mid }).then(function (r) {
+      if (!PCC || PCC.m !== m) return;
+      var b = document.getElementById('pccbody'); if (!b) return;
+      if (!r || !r.ok || !r.pc) { b.innerHTML = '<p class="quiet">Couldn\\u2019t open this PC' + (r && r.error === 'unknown_machine' ? ' \\u2014 it may have been merged or removed. Refresh the fleet.' : ' \\u2014 try again.') + '</p>'; return; }
+      PCC.d = r.pc; PCC.notes = r.snotes || [];
+      pcRender();
+      if (after) after();
+    }).catch(function () { var b = document.getElementById('pccbody'); if (b) b.innerHTML = '<p class="quiet">Couldn\\u2019t reach the server.</p>'; });
+  }
+  // the backup, in plain words: [level g|w|b, headline, detail]
+  function pcBk(d) {
+    var when = d.bwhen ? ' (' + d.bwhen + ')' : '', kind = { filehistory: 'File History', onedrive: 'OneDrive folder backup', winbackup: 'Windows Backup', usbphotos: 'photos copied to a USB stick' }[d.bkind] || '';
+    if (d.backup) return ['g', 'Backed up' + (kind ? ' \\u2014 ' + kind : '') + when, d.bnote || ''];
+    var s = d.bstate || '';
+    if (s === 'failed') return ['w', 'Windows Backup\\u2019s last run didn\\u2019t finish' + when, (d.bnote ? d.bnote + ' ' : '')
+      + 'If Windows says \\u201csome files were skipped\\u201d, the backup did complete \\u2014 app v37 counts that as a good backup.'];
+    if (s === 'stale') return ['w', 'Backup out of date' + when, d.bnote || 'Set up, but the last good backup is over six weeks old.'];
+    if (s === 'partial') return ['w', 'Backup skipped some files' + when, d.bnote || ''];
+    if (s === 'photos') return ['w', 'Only photos are copied' + when, d.bnote || 'A USB copy of their photos \\u2014 documents aren\\u2019t backed up.'];
+    if (s === 'norecord' || s === 'unknown') return ['w', 'Backup set up, but no finished run on record', d.bnote || ''];
+    return ['b', 'No backup found', 'PC Manager looks for File History, OneDrive backing up Documents, Desktop and Pictures, and Windows Backup and Restore \\u2014 none is set up.'];
+  }
+  function pcWarns(d) {
+    var w = [];
+    if (d.fresh) return w;
+    var bk = pcBk(d); if (bk[0] !== 'g') w.push(bk);
+    if ((d.av || '').toUpperCase() === 'OFF') w.push(['b', 'Antivirus real-time protection is off', '']);
+    if (d.disk >= 85) w.push([d.disk >= 92 ? 'b' : 'w', 'Main drive ' + d.disk + '% full', d.disk >= 92 ? 'Windows slows down and updates can fail this full.' : '']);
+    if (d.w10) w.push(['w', 'Windows 10', 'Free security updates ended 14 October 2025' + (d.w11 === 'no' ? ' \\u2014 and this PC can\\u2019t run Windows 11.' : (d.w11 === 'yes' ? ' \\u2014 this PC can run Windows 11.' : '.'))]);
+    if (d.reboot) w.push(['w', 'A restart is due', 'Updates are waiting for a restart to finish.']);
+    if (d.batt > 0 && d.batt < 60) w.push(['w', 'Battery health ' + d.batt + '%', 'It holds well under its original charge.']);
+    if (PCC && PCC.m && PCC.m.latest && d.ver && d.ver < PCC.m.latest) w.push(['w', 'App out of date (v' + d.ver + ')', 'It updates itself when it next restarts.']);
+    return w;
+  }
+  function pcOfc(o) {
+    if (!o) return '';
+    var p = String(o).split(':'), id = p[0] || '', st = p[1] || '', till = p[2] || '';
+    var names = { O365HomePremRetail: 'Microsoft 365 Family', O365PersonalRetail: 'Microsoft 365 Personal', O365BusinessRetail: 'Microsoft 365 Apps for business', O365ProPlusRetail: 'Microsoft 365 Apps' };
+    var w = { licensed: 'licensed', grace: 'in its grace period', lapsed: 'LAPSED', nolicence: 'no licence' }[st] || 'licence not readable';
+    var d = /^\\d{8}$/.test(till) ? (parseInt(till.slice(6), 10) + ' ' + MON[parseInt(till.slice(4, 6), 10) - 1] + ' ' + till.slice(0, 4)) : '';
+    return esc(names[id] || id || 'Office') + ' \\u2014 ' + w + (d ? ', until ' + d : '');
+  }
+  function pcSpark(hist) {
+    var h = (hist || []).filter(function (x) { return x && x[1] > 0; });
+    if (h.length < 2) return '';
+    var W = 220, H = 44, n = h.length;
+    var pts = h.map(function (x, i) { return (i * (W - 4) / (n - 1) + 2).toFixed(1) + ',' + (H - 3 - (Math.max(0, Math.min(100, x[1])) / 100) * (H - 6)).toFixed(1); }).join(' ');
+    return '<svg class="pcc-spark" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Health over the last ' + n + ' days: from ' + h[0][1] + '% to ' + h[n - 1][1] + '%">'
+      + '<polyline points="' + pts + '" fill="none" stroke="var(--pcyan)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" /></svg>'
+      + '<div class="quiet" style="font-size:.85rem;margin:0">' + n + ' days: ' + h[0][1] + '% \\u2192 ' + h[n - 1][1] + '%</div>';
+  }
+  function pcWhen(ts) { if (!ts) return ''; var d = new Date(ts * 1000); return d.getDate() + ' ' + MON[d.getMonth()] + ' ' + d.getFullYear(); }
+  function pcNoteText(t) {
+    return esc(t).replace(/(https:\\/\\/[^\\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/\\n/g, '<br />');
+  }
+  function pcNotesHtml() {
+    var l = (PCC && PCC.notes) || [];
+    if (!l.length) return '<p class="quiet" style="margin:.4rem 0 0">No notes yet. Only staff see them \\u2014 never the customer.</p>';
+    return l.map(function (n) {
+      return '<div class="pcc-note"><div>' + pcNoteText(n.t) + '</div><div class="m">' + esc(n.by || 'staff') + ' \\u00b7 ' + esc(pcWhen(n.ts)) + ' '
+        + ('0' + new Date(n.ts * 1000).getHours()).slice(-2) + ':' + ('0' + new Date(n.ts * 1000).getMinutes()).slice(-2)
+        + ' \\u00b7 <a href="#" class="pccndel" data-id="' + esc(n.id) + '">delete</a></div></div>';
+    }).join('');
+  }
+  // what an upgrade quote could say, from the facts on the card - staff tick, edit and add; QuickBooks gets the lines
+  function pcQuoteIdeas(d) {
+    var L = [], sys = (d.dsk || []).filter(function (x) { return x.sys; })[0];
+    if (d.ram > 0 && d.ram < 8) L.push('Memory upgrade to 16 GB (it has ' + d.ram + ' GB)');
+    else if (d.ram > 0 && d.ram < 16) L.push('Memory upgrade to 16 GB (it has ' + d.ram + ' GB)');
+    if (sys && sys.t === 'HDD') L.push('An SSD in place of the hard drive (' + sys.gb + ' GB) - much quicker');
+    if (d.disk >= 85) L.push('A larger drive - the main drive is ' + d.disk + '% full');
+    if (d.w10) L.push(d.w11 === 'no' ? 'A replacement PC - this one can\\u2019t run Windows 11' : 'Upgrade from Windows 10 to Windows 11');
+    if (d.batt > 0 && d.batt < 60) L.push('A new battery (health ' + d.batt + '%)');
+    if (!d.backup) L.push('A backup drive, with Windows Backup set up and checked');
+    if (d.pcage && d.pcage.date) {
+      var yrs = (Date.now() - Date.parse(d.pcage.date)) / (365.25 * 86400000);
+      if (yrs >= 6) L.push('A replacement PC (this one was bought ' + d.pcage.date + ')');
+    }
+    return L;
+  }
+  function pcRender() {
+    var b = document.getElementById('pccbody'); if (!b || !PCC || !PCC.d) return;
+    var d = PCC.d, m = PCC.m;
+    var t = seenMs(d.seen), on = !isNaN(t) && (Date.now() - t) < 70 * 60000;
+    var col = d.fresh ? 'var(--pmut)' : (d.score >= 80 ? 'var(--pgood)' : (d.score >= 55 ? 'var(--pwarn)' : 'var(--pbad)'));
+    var h = '<div class="pcc-bar"><span><span class="dot" style="background:' + (on ? 'var(--pgood)' : '#44507a') + '"></span> ' + (on ? 'On now' : 'Offline') + '</span>'
+      + '<span title="' + esc(seenLocal(d.seen)) + '">Last report ' + seenAgo(d.seen) + (d.seen ? ' (' + esc(seenLocal(d.seen)) + ')' : '') + '</span>'
+      + '<span>app v' + (d.ver || '?') + '</span>'
+      + '<button class="sm" id="pccchk" title="Ask the PC to re-check itself and report now">\\u21bb Check now</button><span class="pcc-st" id="pccst" aria-live="polite"></span></div>';
+    if (d.help) {
+      h += '<div class="pcc-help">\\ud83c\\udd98 <strong>Asked for help ' + esc(seenAgo(d.help)) + '</strong> (' + esc(seenLocal(d.help)) + ')'
+        + (d.shot ? ' \\u2014 with a picture of their screen (in the PCM admin console)' : '')
+        + ' <button class="sm" id="pcchelp" style="margin-left:.4rem">\\u2714 Mark as handled</button></div>';
+    } else if (d.help_done && d.help_done.at) {
+      h += '<p class="quiet" style="margin:.3rem 0 0;font-size:.88rem">Last help request ' + esc(seenLocal(d.help_done.at)) + ' \\u2014 handled by ' + esc(d.help_done.by || 'staff')
+        + (d.help_done.ts ? ' on ' + esc(pcWhen(d.help_done.ts)) : '') + ' \\u00b7 <a href="#" id="pcchelpundo">undo</a></p>';
+    }
+    // health + what needs a look
+    var ws = pcWarns(d);
+    h += '<div class="pcc-grid"><div class="pcc-sec"><h4>Health</h4><div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap">'
+      + '<div><span style="font-size:2rem;font-weight:800;color:' + col + '">' + (d.fresh ? '\\u2014' : d.score + '%') + '</span><div class="quiet" style="margin:0">' + esc(d.verdict || (d.fresh ? 'first check due' : '')) + '</div></div>'
+      + '<div>' + pcSpark(d.hist) + '</div></div>'
+      + (ws.length ? ws.map(function (w) { return '<div class="pcc-warn"><span class="chip ' + w[0] + '" style="flex:0 0 auto">' + (w[0] === 'b' ? '!' : '\\u2022') + '</span><div><div>' + esc(w[1]) + '</div>' + (w[2] ? '<div class="s">' + esc(w[2]) + '</div>' : '') + '</div></div>'; }).join('')
+        : '<p style="margin:.6rem 0 0;color:var(--pgood)">\\u2714 Nothing needs a look.</p>')
+      + ((d.notes || []).length ? '<div class="s" style="margin-top:.5rem">What the app says:</div>' + d.notes.map(function (n) { return '<div class="pcc-warn"><span class="chip">\\u2022</span><div class="s">' + esc(n) + '</div></div>'; }).join('') : '')
+      + '</div>';
+    // this PC
+    var bk = pcBk(d), drives = '';
+    if ((d.dsk || []).length) drives = d.dsk.map(function (x) { return (x.sys ? 'Windows drive: ' : '') + (x.t || 'drive') + ' ' + x.gb + ' GB' + (x.free ? ', ' + x.free + ' GB free' : ''); }).join('<br />');
+    else if ((d.drives || []).length) drives = d.drives.map(function (x) { return esc(x.model) + ' \\u00b7 ' + x.sizeGB + ' GB' + (x.wear != null ? ' \\u00b7 wear ' + x.wear + '%' : '') + (x.tbw != null ? ' \\u00b7 ' + x.tbw + ' TB written' : ''); }).join('<br />');
+    var sbc = { Updated: 'updated (2023 certificates)', InProgress: 'updating', NotStarted: 'not started yet', Error: 'error', nosb: 'Secure Boot off' }[d.sbc] || '';
+    var v37 = '<span class="quiet" style="font-size:.85rem">arrives with app v37</span>';
+    h += '<div class="pcc-sec"><h4>This PC</h4><dl class="pcc-dl">'
+      + '<dt>Model</dt><dd>' + (d.model ? esc(d.model) : '<span class="quiet" style="font-size:.85rem">from its first service report</span>') + '</dd>'
+      + '<dt>Processor</dt><dd>' + (d.cpu ? esc(d.cpu) : v37) + '</dd>'
+      + '<dt>Memory</dt><dd>' + (d.ram ? d.ram + ' GB' : v37) + '</dd>'
+      + '<dt>Drives</dt><dd>' + (drives || '<span class="quiet" style="font-size:.85rem">main drive ' + d.disk + '% full</span>') + '</dd>'
+      + '<dt>Windows</dt><dd>' + (d.w10 ? 'Windows 10' : 'Windows 11') + (d.wv ? ' ' + esc(d.wv) : '') + (d.w11 === 'no' ? ' \\u00b7 can\\u2019t run 11' : '') + '</dd>'
+      + (sbc ? '<dt>Secure Boot</dt><dd>' + sbc + '</dd>' : '')
+      + (d.ofc ? '<dt>Office</dt><dd>' + pcOfc(d.ofc) + '</dd>' : '')
+      + '<dt>Backup</dt><dd>' + esc(bk[1]) + '</dd>'
+      + (d.batt ? '<dt>Battery</dt><dd>' + d.batt + '% health</dd>' : '')
+      + (d.upd ? '<dt>Restarted</dt><dd>' + d.upd + ' day' + (d.upd === 1 ? '' : 's') + ' ago</dd>' : '')
+      + '<dt>Bought</dt><dd>' + (d.pcage ? esc(d.pcage.date) + (d.pcage.age ? ' (' + esc(d.pcage.age) + ')' : '') + (d.pcage.line ? '<div class="s">' + esc(d.pcage.line) + (d.pcage.num ? ' \\u00b7 invoice ' + esc(d.pcage.num) : '') + '</div>' : '')
+        : '<span class="quiet" style="font-size:.85rem">no matching invoice</span>') + '</dd>'
+      + (d.sw ? '<dt>Programs</dt><dd>' + d.sw.count + (d.sw.outdated ? ' \\u00b7 ' + d.sw.outdated + ' out of date' : '') + (d.sw.ts ? ' <span class="s">(' + esc(pcWhen(d.sw.ts)) + ')</span>' : '')
+        + ((d.sw.items || []).length ? '<details class="pcc-sw"><summary>The list</summary><div>' + d.sw.items.map(function (x) { return esc(x.n) + (x.v ? ' <span class="s">' + esc(x.v) + '</span>' : ''); }).join('<br />') + '</div></details>' : '') + '</dd>' : '')
+      + '</dl></div></div>';
+    // reports + notes
+    var reps = (d.reps || []).slice(0, 8);
+    h += '<div class="pcc-grid"><div class="pcc-sec"><h4>Reports</h4>'
+      + (reps.length ? reps.map(function (r) {
+          var k = r.kind === 'service' ? '\\ud83d\\udccb Service report' : r.kind === 'selfrun' ? '\\ud83d\\udccb Service (self-run)' : '\\ud83d\\udcc4 Health check';
+          return '<button class="sm ghost pccrep" data-ts="' + r.ts + '" style="display:block;width:100%;text-align:left;margin:.25rem 0">' + k + ' \\u00b7 ' + esc(pcWhen(r.ts)) + (r.score != null ? ' \\u00b7 ' + r.score + '%' : '') + '</button>';
+        }).join('') : '<p class="quiet" style="margin:0">No reports stored yet.</p>')
+      + ((d.jobs || []).length ? '<div class="s" style="margin-top:.6rem">The app has run: ' + d.jobs.slice(-5).reverse().map(function (J) {
+          return esc((J.job === 'service' ? 'a full service' : J.job === 'mailmove' ? 'an email move' : J.job) + ' ' + pcWhen(J.ts) + (J.ok ? '' : ' (didn\\u2019t finish)'));
+        }).join(', ') + '</div>' : '')
+      + '</div><div class="pcc-sec"><h4>Notes <span class="quiet" style="font-size:.8rem;font-weight:400">staff only</span></h4>'
+      + '<textarea id="pccntext" rows="3" maxlength="1500" placeholder="Anything worth knowing about this PC \\u2014 e.g. SSD fitted Sept 2024, prefers a call after 10"></textarea>'
+      + '<button class="sm" id="pccnsave" style="margin-top:.35rem">Save note</button> <span class="err" id="pccnerr" style="display:inline"></span>'
+      + '<div id="pccnotes">' + pcNotesHtml() + '</div></div></div>';
+    // actions
+    var ph = (d.phone || d.mobile || '').replace(/\\s/g, '');
+    h += '<div class="pcc-acts">'
+      + (ph ? '<a class="btn sm" href="tel:' + esc(ph) + '">\\ud83d\\udcde Call ' + esc(d.phone || d.mobile) + '</a>' : '')
+      + '<button class="sm ghost" id="pccview">\\ud83d\\udc41 View as customer</button>'
+      + '<button class="sm ghost" id="pcctune">\\ud83d\\udee0 Safe tune-up</button>'
+      + '<button class="sm ghost" id="pccslackb">\\ud83d\\udcac Post to Slack</button>'
+      + '<button class="sm ghost" id="pccquoteb">\\ud83d\\udcb7 Upgrade quote</button>'
+      + '<button class="sm ghost" id="pcccust">\\ud83d\\udc64 Customer card</button></div>'
+      + '<div id="pccpanel"></div>';
+    b.innerHTML = h;
+    pcWire();
+  }
+  function pcHelpDone(cid, pc, btn, undo) {
+    if (btn) btn.disabled = true;
+    post(BK, { action: 'staffpchelp', stoken: S.stoken, machine: mid(), cid: cid, pc: pc, undo: undo ? 1 : 0 }).then(function (r) {
+      if (!r || !r.ok) { if (btn) btn.disabled = false; alert('Couldn\\u2019t save that \\u2014 try again.'); return; }
+      var m2 = pcFind(cid, pc);
+      if (m2) { m2.help = r.help || ''; m2.warns = fleetWarnings(m2, m2.latest); }
+      renderFleet(); renderWorthCall();
+      if (PCC && PCC.d && PCC.m.cid === cid && PCC.m.mid === pc) { PCC.d.help = r.help || ''; PCC.d.help_done = r.help_done || null; pcRender(); }
+    }).catch(function () { if (btn) btn.disabled = false; alert('Couldn\\u2019t reach the server.'); });
+  }
+  function pcWire() {
+    var d = PCC.d, m = PCC.m, g = function (id) { return document.getElementById(id); };
+    // Check now: the PC's minute poll picks it up, re-checks, reports - we watch for the new report
+    g('pccchk').onclick = function () {
+      var b2 = this, st = g('pccst'), before = d.seen;
+      b2.disabled = true; st.textContent = 'Asking the PC\\u2026';
+      post(BK, { action: 'staffpccheck', stoken: S.stoken, machine: mid(), cid: m.cid, pc: m.mid }).then(function (r) {
+        if (!r || !r.ok) { b2.disabled = false; st.textContent = 'Couldn\\u2019t ask it \\u2014 try again.'; return; }
+        st.textContent = 'Asked \\u2014 if it\\u2019s on, it re-checks within a minute or so\\u2026';
+        var n = 0;
+        if (PCC.poll) clearInterval(PCC.poll);
+        PCC.poll = setInterval(function () {
+          n++;
+          post(BK, { action: 'staffpc', stoken: S.stoken, machine: mid(), cid: m.cid, pc: m.mid }).then(function (r2) {
+            if (!PCC || PCC.m !== m) return;
+            if (r2 && r2.ok && r2.pc && r2.pc.seen !== before) {
+              clearInterval(PCC.poll); PCC.poll = null; PCC.d = r2.pc; PCC.notes = r2.snotes || PCC.notes; pcRender();
+              var s2 = g('pccst'); if (s2) s2.textContent = '\\u2714 Fresh report at ' + seenLocal(r2.pc.seen);
+              loadFleet();
+            } else if (n >= 20) {
+              clearInterval(PCC.poll); PCC.poll = null; b2.disabled = false;
+              var s3 = g('pccst'); if (s3) s3.textContent = 'No answer yet \\u2014 the PC may be off or asleep. It reports itself next time it\\u2019s on.';
+            }
+          }).catch(function () {});
+        }, 9000);
+      }).catch(function () { b2.disabled = false; st.textContent = 'Couldn\\u2019t reach the server.'; });
+    };
+    if (g('pcchelp')) g('pcchelp').onclick = function () { pcHelpDone(m.cid, m.mid, this); };
+    if (g('pcchelpundo')) g('pcchelpundo').onclick = function () { pcHelpDone(m.cid, m.mid, null, true); return false; };
+    // reports open as a page of their own
+    Array.prototype.forEach.call(document.querySelectorAll('#pccbody .pccrep'), function (btn) {
+      btn.onclick = function () {
+        btn.disabled = true;
+        post(BK, { action: 'staffpcreport', stoken: S.stoken, machine: mid(), cid: m.cid, pc: m.mid, ts: parseInt(btn.getAttribute('data-ts'), 10) }).then(function (r) {
+          btn.disabled = false;
+          if (!r || !r.ok || !r.html) { alert('Couldn\\u2019t open that report \\u2014 try again.'); return; }
+          var bin = atob(r.html), arr = new Uint8Array(bin.length);
+          for (var bi = 0; bi < bin.length; bi++) arr[bi] = bin.charCodeAt(bi);
+          var url = URL.createObjectURL(new Blob([arr], { type: 'text/html' }));
+          window.open(url, '_blank');
+          setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+        }).catch(function () { btn.disabled = false; alert('Couldn\\u2019t reach the server.'); });
+      };
+    });
+    // notes
+    function wireDel() {
+      Array.prototype.forEach.call(document.querySelectorAll('#pccnotes .pccndel'), function (a) {
+        a.onclick = function () {
+          if (!confirm('Delete this note? It can\\u2019t be brought back.')) return false;
+          post(BK, { action: 'staffpcnote', stoken: S.stoken, machine: mid(), cid: m.cid, pc: m.mid, del: a.getAttribute('data-id') }).then(function (r) {
+            if (!r || !r.ok) { alert('Couldn\\u2019t delete it \\u2014 try again.'); return; }
+            PCC.notes = r.snotes || []; g('pccnotes').innerHTML = pcNotesHtml(); wireDel();
+            m.nn = PCC.notes.length; renderFleet();
+          }).catch(function () { alert('Couldn\\u2019t reach the server.'); });
+          return false;
+        };
+      });
+    }
+    wireDel();
+    g('pccnsave').onclick = function () {
+      var b2 = this, ta = g('pccntext'), txt = ta.value.trim(); g('pccnerr').textContent = '';
+      if (!txt) { g('pccnerr').textContent = 'Type a note first.'; ta.focus(); return; }
+      b2.disabled = true;
+      post(BK, { action: 'staffpcnote', stoken: S.stoken, machine: mid(), cid: m.cid, pc: m.mid, text: txt }).then(function (r) {
+        b2.disabled = false;
+        if (!r || !r.ok) { g('pccnerr').textContent = 'Not saved \\u2014 try again.'; return; }
+        ta.value = ''; PCC.notes = r.snotes || []; g('pccnotes').innerHTML = pcNotesHtml(); wireDel();
+        m.nn = PCC.notes.length; renderFleet();
+      }).catch(function () { b2.disabled = false; g('pccnerr').textContent = 'Couldn\\u2019t reach the server.'; });
+    };
+    // view as the customer sees it (the same as "Worth a call" > View)
+    g('pccview').onclick = function () {
+      var b2 = this; b2.disabled = true;
+      post(BK, { action: 'staffview', stoken: S.stoken, machine: mid(), cid: m.cid }).then(function (r) {
+        if (!r || !r.ok) { b2.disabled = false; alert('Couldn\\u2019t open the customer view \\u2014 try again.'); return; }
+        pcClose();
+        S = { wtoken: r.wtoken, name: r.name, tier: r.tier, back: { stoken: S.stoken, email: S.email, trust: S.trust } };
+        saveS(); showDash();
+      }).catch(function () { b2.disabled = false; alert('Couldn\\u2019t reach the server.'); });
+    };
+    g('pcctune').onclick = function () { var m2 = m; pcClose(); openTuneup(m2); };
+    g('pcccust').onclick = function () { var c2 = m.cid; pcClose(); if (NXL.show) NXL.show('customers'); cbkOpen('k:' + c2); };
+    // post a summary to Slack (the service reports channel), with a line of your own
+    g('pccslackb').onclick = function () {
+      var p = g('pccpanel');
+      p.innerHTML = '<div class="pcc-sec" style="margin-top:.7rem"><h4>\\ud83d\\udcac Post to Slack</h4>'
+        + '<p class="quiet" style="margin:0 0 .4rem">Posts this PC\\u2019s health, warnings and spec to the service reports channel, with anything you add.</p>'
+        + '<textarea id="pccsmsg" rows="2" maxlength="1200" placeholder="Anything to add? (optional)"></textarea>'
+        + '<button class="sm" id="pccsgo" style="margin-top:.35rem">Post it</button> <span id="pccsst"></span></div>';
+      g('pccsmsg').focus();
+      g('pccsgo').onclick = function () {
+        var b2 = this; b2.disabled = true; g('pccsst').textContent = 'Posting\\u2026';
+        post(BK, { action: 'staffpcslack', stoken: S.stoken, machine: mid(), cid: m.cid, pc: m.mid, msg: g('pccsmsg').value }).then(function (r) {
+          if (r && r.ok) { g('pccsst').textContent = '\\u2714 Posted to Slack.'; return; }
+          b2.disabled = false;
+          g('pccsst').textContent = r && r.error === 'slack_not_configured' ? 'The Slack app isn\\u2019t set up on the server.' : ('Not posted' + (r && r.why ? ' (Slack said: ' + r.why + ')' : '') + ' \\u2014 try again.');
+        }).catch(function () { b2.disabled = false; g('pccsst').textContent = 'Couldn\\u2019t reach the server.'; });
+      };
+    };
+    // start an upgrade quote in QuickBooks from what the card shows
+    g('pccquoteb').onclick = function () {
+      var p = g('pccpanel'), ideas = pcQuoteIdeas(d);
+      var rows = ideas.map(function (t, i) {
+        return '<label class="pcc-q"><input type="checkbox" class="pccqk" data-i="' + i + '" checked /> <input type="text" class="pccqt" data-i="' + i + '" value="' + esc(t) + '" maxlength="200" /></label>';
+      }).join('');
+      p.innerHTML = '<div class="pcc-sec" style="margin-top:.7rem"><h4>\\ud83d\\udcb7 Upgrade quote for ' + esc(d.cust || 'this customer') + '</h4>'
+        + (d.email ? '' : '<div class="tnote">There\\u2019s no email on this PC Manager record, so QuickBooks can\\u2019t take the quote. Add one on their customer card first.</div>')
+        + '<p class="quiet" style="margin:0 0 .4rem">Tick what to quote for (edit the words if you like). It starts the quote in QuickBooks with these lines and no prices \\u2014 add the products and prices there, then send it. Nothing is emailed from here.</p>'
+        + (rows || '<p class="quiet" style="margin:0 0 .4rem">Nothing on this PC suggests an upgrade \\u2014 write your own line below.</p>')
+        + '<label class="pcc-q"><input type="checkbox" class="pccqk" data-i="x" /> <input type="text" class="pccqt" data-i="x" placeholder="Another line, e.g. A 1 TB external drive for backups" maxlength="200" /></label>'
+        + '<button class="sm" id="pccqgo" style="margin-top:.4rem"' + (d.email ? '' : ' disabled') + '>Start the quote in QuickBooks</button> <span id="pccqst"></span></div>';
+      var x = p.querySelector('.pccqt[data-i="x"]'), xk = p.querySelector('.pccqk[data-i="x"]');
+      x.oninput = function () { xk.checked = x.value.trim() !== ''; };
+      g('pccqgo').onclick = function () {
+        var lines = [];
+        Array.prototype.forEach.call(p.querySelectorAll('.pccqk'), function (k) {
+          if (!k.checked) return; var tt = p.querySelector('.pccqt[data-i="' + k.getAttribute('data-i') + '"]'); var v = tt ? tt.value.trim() : ''; if (v) lines.push(v);
+        });
+        if (!lines.length) { g('pccqst').textContent = 'Tick at least one line.'; return; }
+        var b2 = this; b2.disabled = true; g('pccqst').textContent = 'Starting it in QuickBooks\\u2026';
+        post(INVQ, { action: 'pcquote', stoken: S.stoken, machine: mid(), cid: m.cid, pc: m.mid, lines: lines }).then(function (r) {
+          if (r && r.ok) {
+            g('pccqst').innerHTML = '\\u2714 Quote ' + (r.number ? '#' + esc(r.number) + ' ' : '') + 'started \\u2014 <a href="' + esc(r.url) + '" target="_blank" rel="noopener">open it in QuickBooks</a> to add the products and prices and send it.';
+            if (r.snotes) { PCC.notes = r.snotes; g('pccnotes').innerHTML = pcNotesHtml(); wireDel(); m.nn = PCC.notes.length; renderFleet(); }
+            return;
+          }
+          b2.disabled = false;
+          var why = { no_email: 'there\\u2019s no email for this customer', not_live: 'QuickBooks isn\\u2019t switched on for creating yet', only_key: 'QuickBooks is in test mode for one customer only',
+                      rate_limited: 'ten were made in the last hour \\u2014 wait a little', duplicate_name: 'QuickBooks already has a customer with this name but another email', unknown_machine: 'this PC has gone' }[r && r.error] || ((r && (r.why || r.error)) || 'try again');
+          g('pccqst').textContent = 'Not started \\u2014 ' + why + '.';
+        }).catch(function () { b2.disabled = false; g('pccqst').textContent = 'Couldn\\u2019t reach the server.'; });
+      };
+    };
   }
 
   // ---------- safe remote maintenance: staff tune-up panel (v18 command channel) ----------

@@ -261,6 +261,34 @@ if ($action === 'checkin') {
         // still waiting. Only a v31+ app sends them; an older app's check-in leaves what was there.
         if (isset($in['wv'])) $c['machines'][$machine]['wv'] = substr(preg_replace('/[^A-Za-z0-9]/', '', (string)$in['wv']), 0, 8);
         if (isset($in['sbc'])) { $sbc = (string)$in['sbc']; $c['machines'][$machine]['sbc'] = in_array($sbc, array('Updated', 'InProgress', 'NotStarted', 'Error', 'nosb', ''), true) ? $sbc : ''; }
+        // 9 Oct 2026 (owner: "more information on each customer's PC ... spec ... how quickly does it refresh"): WHY there is
+        // or isn't a backup - every app since v28 sends bstate, the server used to drop it, so the portal could only say
+        // "no backup" for a backup that ran but failed. v37 adds when, which kind, its own words, and the PC's spec and
+        // the reasons behind its score. All closed lists or capped text; an older app's check-in leaves what was there.
+        if (isset($in['bstate'])) { $bs = (string)$in['bstate']; $c['machines'][$machine]['bstate'] = in_array($bs, array('ok', 'none', 'stale', 'failed', 'unknown', 'norecord', 'partial', 'photos'), true) ? $bs : ''; }
+        if (isset($in['bwhen'])) $c['machines'][$machine]['bwhen'] = pcm_txt($in['bwhen'], 24);
+        if (isset($in['bkind'])) { $bk = (string)$in['bkind']; $c['machines'][$machine]['bkind'] = in_array($bk, array('filehistory', 'onedrive', 'winbackup', 'usbphotos', ''), true) ? $bk : ''; }
+        if (isset($in['bnote'])) $c['machines'][$machine]['bnote'] = pcm_txt($in['bnote'], 160);
+        if (isset($in['ram'])) $c['machines'][$machine]['ram'] = max(0, min(1024, intval($in['ram'])));
+        if (isset($in['cpu'])) $c['machines'][$machine]['cpu'] = pcm_txt($in['cpu'], 80);
+        if (isset($in['pcmodel'])) { $pm = pcm_txt($in['pcmodel'], 80); if ($pm !== '') $c['machines'][$machine]['model'] = $pm; }
+        if (isset($in['upd'])) $c['machines'][$machine]['upd'] = max(0, min(3650, intval($in['upd'])));
+        if (isset($in['w11'])) { $w11 = (string)$in['w11']; $c['machines'][$machine]['w11'] = in_array($w11, array('yes', 'no', ''), true) ? $w11 : ''; }
+        if (isset($in['dsk']) && is_array($in['dsk'])) {
+            $dl = array();
+            foreach (array_slice($in['dsk'], 0, 6) as $D) {
+                if (!is_array($D)) continue;
+                $dt = (string)($D['t'] ?? '');
+                $dl[] = array('t' => in_array($dt, array('SSD', 'NVMe', 'HDD', ''), true) ? $dt : '', 'gb' => max(0, min(100000, intval($D['gb'] ?? 0))),
+                              'free' => max(0, min(100000, intval($D['free'] ?? 0))), 'sys' => !empty($D['sys']));
+            }
+            $c['machines'][$machine]['dsk'] = $dl;
+        }
+        if (isset($in['notes']) && is_array($in['notes'])) {
+            $nl = array();
+            foreach (array_slice($in['notes'], 0, 10) as $N) { $N = pcm_txt(is_scalar($N) ? $N : '', 200); if ($N !== '') $nl[] = $N; }
+            $c['machines'][$machine]['notes'] = $nl;
+        }
         // PC Manager v32+: which Office and whether its licence is good, "<id>:<state>:<valid until yyyyMMdd>", e.g.
         // "O365HomePremRetail:licensed:20261216" (state licensed / grace / lapsed / nolicence / "" = can't tell).
         // No email or account id is ever sent. Only a v32+ app sends it; an older app's check-in leaves what was there.

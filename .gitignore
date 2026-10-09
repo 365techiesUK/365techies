@@ -22,6 +22,10 @@ api/pcm-jobs.log
 api/pcm-custbook.json
 api/pcm-custbook.json.lock
 api/pcm-custbook.json.*.tmp
+# staff notes on a PC (9 Oct 2026): runtime store, server-only
+api/pcm-pcnotes.json
+api/pcm-pcnotes.json.lock
+api/pcm-pcnotes.json.*.tmp
 api/pcm-invite.log
 api/pcm-invite-plans.json
 api/pcm-invite-allow.json

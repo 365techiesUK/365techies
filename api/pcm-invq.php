@@ -76,7 +76,7 @@ if ($who === '') $who = 'staff';
 
 $id  = preg_replace('/[^0-9]/', '', (string)(isset($in['id']) ? $in['id'] : ''));
 $job = preg_replace('/[^0-9a-zA-Z-]/', '', (string)(isset($in['job']) ? $in['job'] : ''));
-if (!in_array($action, array('list', 'recent', 'create', 'quote', 'pdf', 'send', 'hold', 'unhold', 'setjob', 'dismiss'), true)) fail('bad_action');
+if (!in_array($action, array('list', 'recent', 'create', 'quote', 'pdf', 'send', 'hold', 'unhold', 'setjob', 'dismiss', 'pcquote'), true)) fail('bad_action');
 
 /* "Not a job": a PC Manager service that was goodwill, a duplicate write-up, a
    test. Leaves the list; touches nothing in QuickBooks. */
@@ -158,6 +158,31 @@ if ($action === 'recent') {
     $rec = invq_recent($c, $days);
     if (empty($rec['ok'])) fail($rec['why']);
     out(array('ok' => true, 'days' => $days, 'since' => $rec['since'], 'rows' => $rec['rows']));
+}
+
+/* An upgrade QUOTE started from a customer's PC card (9 Oct 2026): the lines staff picked, the customer from that PC's
+   PC Manager record (never from the request), then products, prices and sending in QuickBooks. The quote is also noted
+   on the PC (pcm-pcnotes.json) so the card keeps its history. WRITE, but never an email. */
+if ($action === 'pcquote') {
+    $cid2 = preg_replace('/[^a-f0-9]/', '', substr((string)(isset($in['cid']) ? $in['cid'] : ''), 0, 12));
+    $pc = preg_replace('/[^a-f0-9]/', '', substr((string)(isset($in['pc']) ? $in['pc'] : ''), 0, 32));
+    $cust = null;
+    foreach ((isset($db['customers']) ? $db['customers'] : array()) as $k2 => $c2) {
+        if (!empty($c2['merged_into'])) continue;
+        if (substr(sha1('365cid|' . $k2), 0, 12) === $cid2 && isset($c2['machines'][$pc])) { $cust = $c2; break; }
+    }
+    if (!$cust) fail('unknown_machine');
+    $pcName = (string)(isset($cust['machines'][$pc]['name']) ? $cust['machines'][$pc]['name'] : 'PC');
+    $person = array('name' => (string)(isset($cust['name']) ? $cust['name'] : ''), 'email' => (string)(isset($cust['email']) ? $cust['email'] : ''),
+                    'phone' => (string)(isset($cust['sb_phone']) ? $cust['sb_phone'] : (isset($cust['phone']) ? $cust['phone'] : '')),
+                    'company' => (string)(isset($cust['company']) ? $cust['company'] : ''));
+    $lines = isset($in['lines']) && is_array($in['lines']) ? $in['lines'] : array();
+    $r = invq_quote_for_pc($c, $person, $lines, $who, $pcName . ' ' . $cid2 . '|' . $pc);
+    if (empty($r['ok'])) fail($r['error'], array('why' => isset($r['why']) ? $r['why'] : ''));
+    require_once __DIR__ . '/pcm-pcnotes-lib.php';
+    $L = array(); foreach ($lines as $ln) { $ln = invq_str($ln, 200); if ($ln !== '') $L[] = '- ' . $ln; if (count($L) >= 8) break; }
+    $nr = pcn_add($cid2, $pc, 'Upgrade quote ' . ($r['number'] !== '' ? '#' . $r['number'] . ' ' : '') . "started in QuickBooks:\n" . implode("\n", $L) . "\n" . $r['url'], $who);
+    out(array('ok' => true, 'quote' => $r['quote'], 'number' => $r['number'], 'url' => $r['url'], 'snotes' => !empty($nr['ok']) ? $nr['notes'] : null));
 }
 
 /* Start a QUOTE (QuickBooks estimate) for a job: customer + one line, then the products are

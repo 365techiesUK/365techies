@@ -3085,6 +3085,8 @@ if ($action === 'staffstatus') {
 if ($action === 'stafffleet') {
     need_staff();
     list($lk, $db) = db_open(); db_close($lk);
+    require_once __DIR__ . '/pcm-pcnotes-lib.php';
+    $pcNotes = pcn_counts();   // 9 Oct 2026: notes per PC, for the list
     $latest = 0;
     $vj = @json_decode((string)@file_get_contents(__DIR__ . '/../downloads/pcm/version.json'), true);
     if (is_array($vj)) $latest = intval(isset($vj['ver']) ? $vj['ver'] : 0);
@@ -3118,11 +3120,184 @@ if ($action === 'stafffleet') {
                 'wch' => !empty($m['wc_hide']),
                 'wchby' => (string)(isset($m['wc_hide']['by']) ? $m['wc_hide']['by'] : ''),
                 'wchts' => intval(isset($m['wc_hide']['ts']) ? $m['wc_hide']['ts'] : 0),
+                // 9 Oct 2026: why there is no backup (the app's own state - failed / out of date / some files skipped ...),
+                // and how many staff notes the PC has (pcm-pcnotes.json), for the list's chips
+                'bstate' => (string)(isset($m['bstate']) ? $m['bstate'] : ''),
+                'bwhen' => (string)(isset($m['bwhen']) ? $m['bwhen'] : ''),
+                'nn' => isset($pcNotes[$custId . '|' . $mid2]) ? (int)$pcNotes[$custId . '|' . $mid2] : 0,
                 'fresh' => !isset($m['diskpct']));
             if (count($ms) >= 600) break 2;
         }
     }
     out(array('ok' => true, 'latest' => $latest, 'machines' => $ms, 'now' => gmdate('Y-m-d H:i')));
+}
+
+/* ---- the PC card (9 Oct 2026; owner: "more information on each customer's PC ... spec ... a link to a report ...
+   notes ... link to Slack ... send them an upgrade quote ... we've actually got access to everyone's machine").
+   Staff only. Everything here is what the PC (check-ins, v37 adds spec), its service reports and QuickBooks (the asset
+   register) have already told us - nothing is guessed. */
+function staff_pc_find($db, $cid2, $pc) {
+    foreach ((isset($db['customers']) ? $db['customers'] : array()) as $k2 => $c2) {
+        if (!empty($c2['merged_into'])) continue;
+        if (substr(sha1('365cid|' . $k2), 0, 12) === $cid2) return isset($c2['machines'][$pc]) ? $k2 : '';
+    }
+    return '';
+}
+function staff_pc_in() {
+    global $in;
+    return array(preg_replace('/[^a-f0-9]/', '', substr((string)(isset($in['cid']) ? $in['cid'] : ''), 0, 12)),
+                 preg_replace('/[^a-f0-9]/', '', substr((string)(isset($in['pc']) ? $in['pc'] : ''), 0, 32)));
+}
+function staff_pc_detail($db, $k, $pc, $cid2) {
+    $c = $db['customers'][$k]; $m = $c['machines'][$pc];
+    $g = function ($f, $d = '') use ($m) { return isset($m[$f]) ? $m[$f] : $d; };
+    // reports, newest first: kind (health / service / selfrun) and the service score where it had one
+    $reps = array(); $repk = is_array($g('repk', array())) ? $g('repk', array()) : array(); $repm = is_array($g('repm', array())) ? $g('repm', array()) : array();
+    foreach ((is_array($g('reps', array())) ? $g('reps', array()) : array()) as $t) {
+        $t = (int)$t;
+        $reps[] = array('ts' => $t, 'kind' => (string)(isset($repk[(string)$t]) ? $repk[(string)$t] : 'health'),
+                        'score' => isset($repm[(string)$t]['score']) && $repm[(string)$t]['score'] !== null ? (int)$repm[(string)$t]['score'] : null);
+    }
+    usort($reps, function ($a, $b) { return $b['ts'] - $a['ts']; });
+    $sw = is_array($g('sw', null)) ? $g('sw', null) : null;
+    $swOut = $sw ? array('count' => (int)(isset($sw['count']) ? $sw['count'] : 0), 'updated' => (int)(isset($sw['updated']) ? $sw['updated'] : 0),
+                         'outdated' => (int)(isset($sw['outdated']) ? $sw['outdated'] : 0), 'ts' => (int)(isset($sw['ts']) ? $sw['ts'] : 0),
+                         'items' => array_slice(isset($sw['items']) && is_array($sw['items']) ? $sw['items'] : array(), 0, 200)) : null;
+    $asset = is_array($g('asset', null)) ? $g('asset', null) : null;
+    return array(
+        'cid' => $cid2, 'pc' => $pc,
+        'cust' => (string)(isset($c['name']) ? $c['name'] : ''), 'email' => (string)(isset($c['email']) ? $c['email'] : ''),
+        'phone' => (string)(isset($c['sb_phone']) ? $c['sb_phone'] : (isset($c['phone']) ? $c['phone'] : '')),
+        'mobile' => (string)(isset($c['mobile']) ? $c['mobile'] : ''),
+        'tier' => (isset($c['tier']) && $c['tier'] === 'pro') ? 'pro' : 'free', 'plan' => (string)(isset($c['plan']) ? $c['plan'] : ''),
+        'name' => (string)$g('name', 'PC'), 'score' => (int)$g('score', 0), 'verdict' => (string)$g('verdict', ''), 'seen' => (string)$g('seen', ''),
+        'ver' => (int)$g('ver', 0), 'av' => (string)$g('av', ''), 'disk' => (int)$g('diskpct', 0), 'w10' => !empty($m['w10']), 'reboot' => !empty($m['reboot']),
+        'batt' => (int)$g('batt', 0), 'help' => (string)$g('help', ''), 'fresh' => !isset($m['diskpct']),
+        'help_done' => (isset($m['help_done']) && is_array($m['help_done'])) ? $m['help_done'] : null, 'shot' => (string)$g('shot', ''),
+        'backup' => !empty($m['backup']), 'bstate' => (string)$g('bstate', ''), 'bwhen' => (string)$g('bwhen', ''), 'bkind' => (string)$g('bkind', ''), 'bnote' => (string)$g('bnote', ''),
+        'wv' => (string)$g('wv', ''), 'sbc' => (string)$g('sbc', ''), 'ofc' => (string)$g('ofc', ''),
+        'model' => (string)$g('model', ''), 'drives' => is_array($g('drives', array())) ? $g('drives', array()) : array(),
+        'ram' => (int)$g('ram', 0), 'cpu' => (string)$g('cpu', ''), 'dsk' => is_array($g('dsk', array())) ? $g('dsk', array()) : array(), 'upd' => (int)$g('upd', 0),
+        'w11' => (string)$g('w11', ''), 'notes' => is_array($g('notes', array())) ? $g('notes', array()) : array(),
+        'pcage' => ($asset && !empty($asset['pc']['date'])) ? array('date' => (string)$asset['pc']['date'], 'age' => (string)(isset($asset['pc']['age']) ? $asset['pc']['age'] : ''),
+                       'line' => (string)(isset($asset['pc']['line']) ? $asset['pc']['line'] : ''), 'num' => (string)(isset($asset['pc']['num']) ? $asset['pc']['num'] : '')) : null,
+        'sw' => $swOut, 'jobs' => is_array($g('jobs', array())) ? $g('jobs', array()) : array(),
+        'hist' => is_array($g('hist', array())) ? array_slice($g('hist', array()), -90) : array(),
+        'reps' => array_slice($reps, 0, 30), 'haslog' => !empty($m['logf']), 'logts' => (int)$g('logts', 0), 'rmaint' => !empty($m['rmaint']),
+        'reqcheck' => (int)$g('req_check', 0),
+        'crs' => (string)$g('crs', ''));
+}
+
+// staff: one PC's card (the fleet list row opened)
+if ($action === 'staffpc') {
+    need_staff();
+    list($cid2, $pc) = staff_pc_in();
+    list($lk, $db) = db_open(); db_close($lk);
+    $k = staff_pc_find($db, $cid2, $pc);
+    if ($k === '') fail('unknown_machine');
+    require_once __DIR__ . '/pcm-pcnotes-lib.php';
+    out(array('ok' => true, 'pc' => staff_pc_detail($db, $k, $pc, $cid2), 'snotes' => pcn_list($cid2, $pc), 'now' => gmdate('Y-m-d H:i')));
+}
+
+// staff: "Check now" - the PC re-runs its health check and checks in within about a minute (its minute poll sees
+// req_check: pcm.php shield). Works with every app since v18; nothing else changes on the PC.
+if ($action === 'staffpccheck') {
+    need_staff();
+    list($cid2, $pc) = staff_pc_in();
+    list($lk, $db) = db_open();
+    $k = staff_pc_find($db, $cid2, $pc);
+    if ($k === '') { db_close($lk); fail('unknown_machine'); }
+    $db['customers'][$k]['machines'][$pc]['req_check'] = time();
+    db_save($db); db_close($lk);
+    pcm_gate_sync($db);   // the PC's minute poll must reach PHP to see req_check (pcm-gate.php)
+    out(array('ok' => true, 'asked' => time(), 'seen' => (string)(isset($db['customers'][$k]['machines'][$pc]['seen']) ? $db['customers'][$k]['machines'][$pc]['seen'] : '')));
+}
+
+// staff: "Mark as handled" on a help request (9 Oct 2026, owner: "where it says asked for help, there's no way of
+// clearing that"). The request's time moves to help_done with who and when, so the chip and the call-list rank go; a
+// new request from the app (pcm.php help) sets 'help' again and it comes back. undo=1 puts the last one back.
+if ($action === 'staffpchelp') {
+    need_staff();
+    list($cid2, $pc) = staff_pc_in();
+    list($lk, $db) = db_open();
+    $k = staff_pc_find($db, $cid2, $pc);
+    if ($k === '') { db_close($lk); fail('unknown_machine'); }
+    $mm =& $db['customers'][$k]['machines'][$pc];
+    if (!empty($in['undo'])) {
+        if (!empty($mm['help_done']['at']) && empty($mm['help'])) { $mm['help'] = (string)$mm['help_done']['at']; unset($mm['help_done']); }
+    } elseif (!empty($mm['help'])) {
+        $mm['help_done'] = array('at' => (string)$mm['help'], 'by' => staff_first() !== '' ? staff_first() : 'staff', 'ts' => time());
+        unset($mm['help']);
+    }
+    $res = array('help' => (string)(isset($mm['help']) ? $mm['help'] : ''), 'help_done' => isset($mm['help_done']) ? $mm['help_done'] : null);
+    unset($mm);
+    db_save($db); db_close($lk);
+    out(array('ok' => true) + $res);
+}
+
+// staff: notes on a PC - add (text) or delete (id). Staff only; never shown to the customer.
+if ($action === 'staffpcnote') {
+    need_staff();
+    list($cid2, $pc) = staff_pc_in();
+    list($lk, $db) = db_open(); db_close($lk);
+    if (staff_pc_find($db, $cid2, $pc) === '') fail('unknown_machine');
+    require_once __DIR__ . '/pcm-pcnotes-lib.php';
+    $r = !empty($in['del']) ? pcn_del($cid2, $pc, (string)$in['del']) : pcn_add($cid2, $pc, (string)(isset($in['text']) ? $in['text'] : ''), staff_first());
+    if (empty($r['ok'])) fail($r['error']);
+    out(array('ok' => true, 'snotes' => $r['notes']));
+}
+
+// staff: open one of the PC's reports (the portal shows it as a page of its own) - the staff side of pcm.php reportget
+if ($action === 'staffpcreport') {
+    need_staff();
+    list($cid2, $pc) = staff_pc_in();
+    $rts = intval(isset($in['ts']) ? $in['ts'] : 0);
+    list($lk, $db) = db_open(); db_close($lk);
+    $k = staff_pc_find($db, $cid2, $pc);
+    if ($k === '') fail('unknown_machine');
+    $reps = isset($db['customers'][$k]['machines'][$pc]['reps']) ? (array)$db['customers'][$k]['machines'][$pc]['reps'] : array();
+    if (!in_array($rts, array_map('intval', $reps), true)) fail('not_found');
+    $f = __DIR__ . '/pcm-rep-' . substr(hash('sha256', $k), 0, 12) . '-' . $pc . '-' . $rts . '.html';
+    if (!is_readable($f)) fail('not_found');
+    out(array('ok' => true, 'html' => base64_encode((string)file_get_contents($f))));
+}
+
+// staff: post the PC's summary to Slack (the service reports channel, beside its reports), with an optional line from
+// the person posting. Text only, built here from what we hold - never from anything the request sends but that line.
+if ($action === 'staffpcslack') {
+    need_staff();
+    list($cid2, $pc) = staff_pc_in();
+    list($lk, $db) = db_open(); db_close($lk);
+    $k = staff_pc_find($db, $cid2, $pc);
+    if ($k === '') fail('unknown_machine');
+    $d = staff_pc_detail($db, $k, $pc, $cid2);
+    $esc = function ($s) { return str_replace(array('&', '<', '>'), array('&amp;', '&lt;', '&gt;'), (string)$s); };
+    $line = trim(preg_replace('/[\x00-\x09\x0B-\x1F\x7F]+/', ' ', (string)(isset($in['msg']) ? $in['msg'] : '')));
+    if (strlen($line) > 1200) $line = substr($line, 0, 1200);
+    $warn = array();
+    if (!$d['backup']) $warn[] = $d['bstate'] === 'failed' ? 'backup did not finish' : ($d['bstate'] === 'stale' ? 'backup out of date' : ($d['bstate'] === 'partial' ? 'backup skipped some files' : 'no backup'));
+    if ($d['disk'] >= 85) $warn[] = 'disk ' . $d['disk'] . '% full';
+    if (strtoupper($d['av']) === 'OFF') $warn[] = 'antivirus off';
+    if ($d['w10']) $warn[] = 'Windows 10';
+    if ($d['reboot']) $warn[] = 'restart due';
+    if ($d['batt'] > 0 && $d['batt'] < 60) $warn[] = 'battery ' . $d['batt'] . '%';
+    $spec = array();
+    if ($d['model'] !== '') $spec[] = $d['model'];
+    if ($d['cpu'] !== '') $spec[] = $d['cpu'];
+    if ($d['ram'] > 0) $spec[] = $d['ram'] . ' GB memory';
+    if ($d['pcage']) $spec[] = 'bought ' . $d['pcage']['date'] . ($d['pcage']['age'] !== '' ? ' (' . $d['pcage']['age'] . ')' : '');
+    $who = staff_first(); if ($who === '') $who = 'staff';
+    $lines = array(':computer: *' . $esc($d['cust'] !== '' ? $d['cust'] : 'Customer') . '* - ' . $esc($d['name']) . ' (' . ($d['tier'] === 'pro' ? 'Pro' : 'Free') . ')');
+    $lines[] = 'Health ' . ($d['fresh'] ? 'not checked yet' : $d['score'] . '%' . ($d['verdict'] !== '' ? ' - ' . $esc($d['verdict']) : '')) . ', seen ' . $esc($d['seen'] !== '' ? $d['seen'] . ' UTC' : 'never') . ', app v' . $d['ver'];
+    if ($warn) $lines[] = 'Warnings: ' . $esc(implode(', ', $warn));
+    if ($spec) $lines[] = $esc(implode(' | ', $spec));
+    if ($line !== '') $lines[] = '>' . str_replace("\n", "\n>", $esc($line));
+    $lines[] = '_Posted from the portal by ' . $esc($who) . ' - https://365techies.co.uk/portal/_';
+    require_once __DIR__ . '/pcm-slack-lib.php';   // top-level scope on purpose (php-include-scope-trap)
+    if (!slk_ready()) fail('slack_not_configured');
+    $r = slk_call('chat.postMessage', array('channel' => slk_report_channel(), 'text' => implode("\n", $lines)));
+    if (empty($r['ok'])) out(array('ok' => false, 'error' => 'slack', 'why' => (string)(isset($r['error']) ? $r['error'] : 'unknown')));
+    out(array('ok' => true));
 }
 
 // staff: hide one machine from "Worth a call today", or bring it back (owner, 28 Sep 2026: "can we have an option to
