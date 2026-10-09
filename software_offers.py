@@ -2,25 +2,26 @@
 # ONE table of products and prices, and which pages show which. build_pages.add() inserts the section just above a
 # page's FAQs. Prices are the owner's (Pax8 cost incl. the VAT Pax8 adds + margin; see the pax8-distributor memory).
 # A price change happens HERE only. Never put a price in this file the owner hasn't approved.
-# soon=True: not orderable yet (Microsoft licences wait on the Microsoft partner set-up) - shown, CTA "Register interest".
+# soon=True: not orderable yet - shown, CTA "Register interest". (9 Oct 2026: the Microsoft licences went live - Partner Center
+# CSP approved, Wirehive (Pax8 UK) authorised as indirect provider, Pax8 Microsoft partner shell 114871 submitted.)
 # price=None: no published price yet - the card says "Ask us for today's price".
 from urllib.parse import quote
 
 PRODUCTS = {
     "m365-basic": dict(
-        name="Microsoft 365 Business Basic", price="6.50", per="per person a month", soon=True,
+        name="Microsoft 365 Business Basic", price="6.50", per="per person a month",
         what="Business email on your own domain, Teams, 1&nbsp;TB of OneDrive storage each, and the web and mobile Office apps."),
     "m365-standard": dict(
-        name="Microsoft 365 Business Standard", price="12.50", per="per person a month", soon=True,
+        name="Microsoft 365 Business Standard", price="12.50", per="per person a month",
         what="Everything in Basic, plus the full Office apps &mdash; Word, Excel, Outlook and PowerPoint &mdash; installed on your computers."),
     "m365-premium": dict(
-        name="Microsoft 365 Business Premium", price="19.75", per="per person a month", soon=True,
+        name="Microsoft 365 Business Premium", price="19.75", per="per person a month",
         what="Everything in Standard, plus Microsoft&rsquo;s business security: Defender for Business and Intune device management."),
     "exchange": dict(
-        name="Business email only (Exchange Online)", price="3.75", per="per person a month", soon=True,
+        name="Business email only (Exchange Online)", price="3.75", per="per person a month",
         what="Professional email on your own domain with a 50&nbsp;GB mailbox, without the Office apps."),
     "defender": dict(
-        name="Microsoft Defender for Business", price="2.75", per="per person a month", soon=True,
+        name="Microsoft Defender for Business", price="2.75", per="per person a month",
         what="Microsoft&rsquo;s business antivirus and threat protection for your PCs, Macs, phones and tablets. Already included in Business Premium."),
     # Malwarebytes prices: owner, 3 Oct 2026 ("still all four"). Set against Malwarebytes' own UK prices that day:
     # Standard 1 device GBP 29.99/yr, Plus 3 devices + VPN GBP 69.98/yr, ThreatDown Core GBP 4.75/device/month (5-device minimum).
@@ -52,12 +53,13 @@ PRODUCTS = {
 
 # slug: (eyebrow, heading, lede, [product keys], bundle line or "")
 _M365 = ["m365-basic", "m365-standard", "m365-premium", "exchange"]
+_MICROSOFT = set(_M365 + ["defender"])   # the licences bought through Pax8's Microsoft partner shell (12-month NCE terms)
 _BIZ_LEDE = "We buy it, set it up for you and look after it &mdash; you deal with us, not a call centre."
 PAGE_OFFERS = {
     "which-microsoft-365-plan": ("// FROM 365 TECHIES", "Microsoft 365 business plans from us",
-        "Our price per person a month, set up by us. We&rsquo;re completing our Microsoft distributor set-up &mdash; register your interest now and we&rsquo;ll be in touch the moment it&rsquo;s live.", _M365, ""),
+        "Our price per person a month. We buy the licences, set them up for you and look after them &mdash; you deal with us, not a call centre.", _M365, ""),
     "microsoft-365-support": ("// FROM 365 TECHIES", "Microsoft 365 business plans from us",
-        "Our price per person a month, set up by us. We&rsquo;re completing our Microsoft distributor set-up &mdash; register your interest now and we&rsquo;ll be in touch the moment it&rsquo;s live.", _M365 + ["acronis-m365"], ""),
+        "Our price per person a month. We buy the licences, set them up for you and look after them &mdash; you deal with us, not a call centre.", _M365 + ["acronis-m365"], ""),
     "cloud-backup": ("// SET UP AND LOOKED AFTER BY US", "Backup we can set up for you", _BIZ_LEDE, ["acronis-pc", "acronis-m365"], ""),
     "backup-support": ("// SET UP AND LOOKED AFTER BY US", "Backup we can set up for you", _BIZ_LEDE, ["acronis-pc", "acronis-m365"], ""),
     "microsoft-365-backup-do-you-need-it": ("// SET UP AND LOOKED AFTER BY US", "Microsoft 365 backup from us", _BIZ_LEDE, ["acronis-m365", "acronis-pc"], ""),
@@ -107,13 +109,12 @@ def _bundle_card(key):
     items += "\n" + "\n".join(f'              <li>{x}</li>' for x in b["extras"])
     href = "/contact/?topic=business-it-support&amp;product=" + quote(b["name"])
     return (f'          <article class="swb-card">\n'
-            f'            <span class="swo-tag">AVAILABLE SOON</span>\n'
             f'            <h3 class="swb-name">{b["name"]}</h3>\n'
             f'            <p class="swb-desc">{b["desc"]}</p>\n'
             f'            <p class="swb-price"><b>&pound;{b["price"]}</b><span>per person a month, one computer each &middot; no VAT to add</span></p>\n'
             f'            <ul class="swb-list">\n{items}\n            </ul>\n'
             f'            <p class="swb-save">Bought separately: &pound;{separately:.2f}. You save &pound;{separately - float(b["price"]):.2f} a month per person.</p>\n'
-            f'            <a class="button primary" href="{href}" aria-label="Register interest: {b["name"]}">Register interest</a>\n'
+            f'            <a class="button primary" href="{href}" aria-label="Get this set up: {b["name"]}">Get this set up</a>\n'
             f'          </article>')
 
 def bundles_section():
@@ -128,7 +129,7 @@ def bundles_section():
         <div class="swb-grid">
 {cards}
         </div>
-        <p class="swo-note">The Microsoft 365 part starts as soon as our Microsoft distributor set-up completes &mdash; register your interest now and we&rsquo;ll be in touch. Microsoft 365 licences are on a 12-month term. Extra computers without a licence are &pound;{SUPPORT_FROM} a month each. On-site visits, parts and new set-ups are quoted before we start.</p>
+        <p class="swo-note">Microsoft 365 licences are on a 12-month term. Extra computers without a licence are &pound;{SUPPORT_FROM} a month each. On-site visits, parts and new set-ups are quoted before we start.</p>
       </div>
       <style>
       .swb-grid{{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.1rem;max-width:900px;margin:0 auto}}
@@ -171,9 +172,9 @@ def section(slug):
     eyebrow, heading, lede, keys, bundle = PAGE_OFFERS[slug]
     cards = "\n".join(_card(k) for k in keys)
     bundle_html = f'\n        <p class="swo-bundle">{bundle}</p>' if bundle else ""
-    soon = any(PRODUCTS[k].get("soon") for k in keys)
+    ms = any(k in _MICROSOFT for k in keys)   # (9 Oct 2026: was "any still coming soon" - the term matters most once they can be ordered)
     note = ("Prices are per month. We&rsquo;re not VAT registered, so there&rsquo;s no VAT to add."
-            + (" Microsoft 365 plans are on a 12-month term; a monthly rolling option is available at a higher price." if soon else ""))
+            + (" Microsoft 365 plans are on a 12-month term; a monthly rolling option is available at a higher price." if ms else ""))
     return f'''    <section class="section swo" id="software" aria-label="{heading}">
       <div class="wrap">
         <div class="section-head">
