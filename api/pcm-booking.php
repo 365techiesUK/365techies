@@ -39,6 +39,7 @@ $THROTTLE = __DIR__ . '/pcm-throttle.json';
    pcm-review.php for months. Nothing here is optional; do not move it. */
 require_once __DIR__ . '/pcm-bkpend-lib.php';
 require_once __DIR__ . '/pcm-gate.php';   // 29 Sep 2026: queued work opens the minute-poll gate (see that file)
+require_once __DIR__ . '/pcm-vname-lib.php';   // 9 Oct 2026: the app's version as people see it ("36.1" for build 37)
 // Safe-maintenance allow-list - MUST match pcm.php. Only these fixed ids can be queued; the app
 // maps each to a hard-coded, non-destructive routine and ignores anything else. See pcm.php note.
 $PCM_CMDS = array('flushdns','cleartemp','collectlogs');
@@ -2210,10 +2211,10 @@ if ($action === 'staffcustomers') {
     foreach ((isset($db['customers']) ? $db['customers'] : array()) as $k => $c) {
         if (!empty($c['merged_into'])) continue;
         $ms = isset($c['machines']) && is_array($c['machines']) ? $c['machines'] : array();
-        $lastSeen = ''; $minVer = 0; $worst = 101;
+        $lastSeen = ''; $minVer = 0; $minVn = ''; $worst = 101;
         foreach ($ms as $m) {
             if (isset($m['seen']) && $m['seen'] > $lastSeen) $lastSeen = $m['seen'];
-            $mv = intval(isset($m['ver']) ? $m['ver'] : 0); if ($minVer === 0 || ($mv > 0 && $mv < $minVer)) $minVer = $mv;
+            $mv = intval(isset($m['ver']) ? $m['ver'] : 0); if ($minVer === 0 || ($mv > 0 && $mv < $minVer)) { $minVer = $mv; $minVn = pcm_vname_m($m); }
             $sc = intval(isset($m['score']) ? $m['score'] : 0); if (count($ms) && $sc < $worst) $worst = $sc;
         }
         // keys are permanent bearer credentials - never ship them wholesale to a browser
@@ -2222,7 +2223,7 @@ if ($action === 'staffcustomers') {
             'name' => (string)(isset($c['name']) ? $c['name'] : ''),
             'email' => (string)(isset($c['email']) ? $c['email'] : ''), 'tier' => ((isset($c['tier']) && $c['tier'] === 'pro') ? 'pro' : 'free'),
             'next' => (string)(isset($c['next']) ? $c['next'] : ''), 'pcs' => count($ms),
-            'seen' => $lastSeen, 'ver' => $minVer, 'worst' => ($worst === 101 ? -1 : $worst),
+            'seen' => $lastSeen, 'ver' => $minVer, 'vn' => $minVn, 'worst' => ($worst === 101 ? -1 : $worst),
             'fam' => isset($c['family']['name']) ? (string)$c['family']['name'] : '',
             'via' => (string)(isset($c['via']) ? $c['via'] : ''),
             'twin' => isset($psTwins[$k]) ? $psTwins[$k] : array(),           // other records with this email (sign-in made)
@@ -2461,16 +2462,16 @@ if ($action === 'staffpcmlic') {
     $list = array();
     foreach ($hits as $k => $c) {
         $ms = isset($c['machines']) && is_array($c['machines']) ? $c['machines'] : array();
-        $lastSeen = ''; $maxVer = 0;
+        $lastSeen = ''; $maxVer = 0; $maxVn = '';
         foreach ($ms as $m) {
             if (isset($m['seen']) && $m['seen'] > $lastSeen) $lastSeen = $m['seen'];
-            $mv = intval(isset($m['ver']) ? $m['ver'] : 0); if ($mv > $maxVer) $maxVer = $mv;
+            $mv = intval(isset($m['ver']) ? $m['ver'] : 0); if ($mv > $maxVer) { $maxVer = $mv; $maxVn = pcm_vname_m($m); }
         }
         // same masked key + one-way id as staffcustomers: the bearer key never reaches the browser
         $list[] = array('id' => substr(sha1('365cid|' . $k), 0, 12), 'keymask' => substr($k, 0, 4) . '····',
             'name' => (string)(isset($c['name']) ? $c['name'] : ''),
             'tier' => ((isset($c['tier']) && $c['tier'] === 'pro') ? 'pro' : 'free'),
-            'pcs' => count($ms), 'seen' => $lastSeen, 'ver' => $maxVer);
+            'pcs' => count($ms), 'seen' => $lastSeen, 'ver' => $maxVer, 'vn' => $maxVn);
     }
     usort($list, function ($a, $b) { return strcmp($b['seen'], $a['seen']); });   // the PC in use now first
     out(array('ok' => true, 'match' => (count($byId) ? 'account' : (count($byEm) ? 'email' : '')),
@@ -3113,7 +3114,7 @@ if ($action === 'stafffleet') {
                 'av' => (string)(isset($m['av']) ? $m['av'] : ''),
                 'w10' => !empty($m['w10']),
                 'reboot' => !empty($m['reboot']),
-                'ver' => intval(isset($m['ver']) ? $m['ver'] : 0),
+                'ver' => intval(isset($m['ver']) ? $m['ver'] : 0), 'vn' => pcm_vname_m($m),
                 'batt' => intval(isset($m['batt']) ? $m['batt'] : 0),
                 'help' => (string)(isset($m['help']) ? $m['help'] : ''),
                 // hidden from "Worth a call today" by staff (staffwchide) - who and when, so a hidden PC is never a mystery
@@ -3171,7 +3172,7 @@ function staff_pc_detail($db, $k, $pc, $cid2) {
         'mobile' => (string)(isset($c['mobile']) ? $c['mobile'] : ''),
         'tier' => (isset($c['tier']) && $c['tier'] === 'pro') ? 'pro' : 'free', 'plan' => (string)(isset($c['plan']) ? $c['plan'] : ''),
         'name' => (string)$g('name', 'PC'), 'score' => (int)$g('score', 0), 'verdict' => (string)$g('verdict', ''), 'seen' => (string)$g('seen', ''),
-        'ver' => (int)$g('ver', 0), 'av' => (string)$g('av', ''), 'disk' => (int)$g('diskpct', 0), 'w10' => !empty($m['w10']), 'reboot' => !empty($m['reboot']),
+        'ver' => (int)$g('ver', 0), 'vn' => pcm_vname_m($m), 'av' => (string)$g('av', ''), 'disk' => (int)$g('diskpct', 0), 'w10' => !empty($m['w10']), 'reboot' => !empty($m['reboot']),
         'batt' => (int)$g('batt', 0), 'help' => (string)$g('help', ''), 'fresh' => !isset($m['diskpct']),
         'help_done' => (isset($m['help_done']) && is_array($m['help_done'])) ? $m['help_done'] : null, 'shot' => (string)$g('shot', ''),
         'backup' => !empty($m['backup']), 'bstate' => (string)$g('bstate', ''), 'bwhen' => (string)$g('bwhen', ''), 'bkind' => (string)$g('bkind', ''), 'bnote' => (string)$g('bnote', ''),
@@ -3288,7 +3289,7 @@ if ($action === 'staffpcslack') {
     if ($d['pcage']) $spec[] = 'bought ' . $d['pcage']['date'] . ($d['pcage']['age'] !== '' ? ' (' . $d['pcage']['age'] . ')' : '');
     $who = staff_first(); if ($who === '') $who = 'staff';
     $lines = array(':computer: *' . $esc($d['cust'] !== '' ? $d['cust'] : 'Customer') . '* - ' . $esc($d['name']) . ' (' . ($d['tier'] === 'pro' ? 'Pro' : 'Free') . ')');
-    $lines[] = 'Health ' . ($d['fresh'] ? 'not checked yet' : $d['score'] . '%' . ($d['verdict'] !== '' ? ' - ' . $esc($d['verdict']) : '')) . ', seen ' . $esc($d['seen'] !== '' ? $d['seen'] . ' UTC' : 'never') . ', app v' . $d['ver'];
+    $lines[] = 'Health ' . ($d['fresh'] ? 'not checked yet' : $d['score'] . '%' . ($d['verdict'] !== '' ? ' - ' . $esc($d['verdict']) : '')) . ', seen ' . $esc($d['seen'] !== '' ? $d['seen'] . ' UTC' : 'never') . ', app v' . ($d['vn'] !== '' ? $d['vn'] : $d['ver']);
     if ($warn) $lines[] = 'Warnings: ' . $esc(implode(', ', $warn));
     if ($spec) $lines[] = $esc(implode(' | ', $spec));
     if ($line !== '') $lines[] = '>' . str_replace("\n", "\n>", $esc($line));
@@ -3354,7 +3355,7 @@ if ($action === 'staffmergepc') {
     $kh = substr(hash('sha256', $found), 0, 12);
     $K =& $ms[$keep]; $D = $ms[$drop];
     $dreps = array_map('intval', isset($D['reps']) && is_array($D['reps']) ? $D['reps'] : array());
-    $side = function ($m) { return array('name' => (string)($m['name'] ?? 'PC'), 'seen' => (string)($m['seen'] ?? ''), 'ver' => intval($m['ver'] ?? 0),
+    $side = function ($m) { return array('name' => (string)($m['name'] ?? 'PC'), 'seen' => (string)($m['seen'] ?? ''), 'ver' => intval($m['ver'] ?? 0), 'vn' => pcm_vname_m($m),
         'reports' => count(isset($m['reps']) && is_array($m['reps']) ? $m['reps'] : array())); };
     $plan = array('keep' => $side($K) + array('pc' => $keep), 'drop' => $side($D) + array('pc' => $drop));
     if (!$go) { unset($K, $ms); db_close($lk); out(array('ok' => true, 'preview' => $plan)); }
@@ -3457,7 +3458,7 @@ if ($action === 'staffcmdlog') {
             // v29 email move (365 Mail Mover inside the app): the staff switch, who set it, and where the move is
             'mm' => !empty($m['mailmove']), 'mmby' => (string)(isset($m['mailmove']['by']) ? $m['mailmove']['by'] : ''),
             'mmts' => intval(isset($m['mailmove']['ts']) ? $m['mailmove']['ts'] : 0), 'mmdone' => intval(isset($m['mailmove_done']) ? $m['mailmove_done'] : 0),
-            'mmst' => isset($m['mmst']) && is_array($m['mmst']) ? $m['mmst'] : null, 'ver' => intval(isset($m['ver']) ? $m['ver'] : 0)));
+            'mmst' => isset($m['mmst']) && is_array($m['mmst']) ? $m['mmst'] : null, 'ver' => intval(isset($m['ver']) ? $m['ver'] : 0), 'vn' => pcm_vname_m($m)));
     }
     fail('unknown_customer');
 }

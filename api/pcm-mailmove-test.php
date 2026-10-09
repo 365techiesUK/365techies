@@ -75,7 +75,7 @@ echo "-- end to end (PHP's built-in server, a fake Slack)\n";
 $PHP = PHP_BINARY;
 $API = $TMP . DIRECTORY_SEPARATOR . 'api'; $SL = $TMP . DIRECTORY_SEPARATOR . 'slack';
 @mkdir($API); @mkdir($SL);
-foreach (array('pcm-mailmover.php', 'pcm-mailmove-help.php', 'pcm-mailmove-lib.php') as $f) copy(__DIR__ . '/' . $f, $API . '/' . $f);
+foreach (array('pcm-mailmover.php', 'pcm-mailmove-help.php', 'pcm-mailmove-lib.php', 'pcm-vname-lib.php') as $f) copy(__DIR__ . '/' . $f, $API . '/' . $f);
 $PAY = "Write-Output 'hello from the Mail Mover'\r\n\r\n# SIG # Begin signature block\r\n# MIIfakeSignature\r\n# SIG # End signature block\r\n";
 file_put_contents($API . '/mailmover-payload.ps1', $PAY);
 file_put_contents($API . '/pcm-data.json', json_encode(array('customers' => array('KEY-1' => array('machines' => array('abc123abc123' => array('mailmove' => 1), 'def456def456' => array()))))));

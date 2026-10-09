@@ -293,6 +293,11 @@ ErrorDocument 404 /404.html
 <FilesMatch "^pcm-pcnotes-(lib|test)\.php$">
   Require all denied
 </FilesMatch>
+# The app's version as people see it (9 Oct 2026): pcm-vname-lib.php is include-only (pcm.php, pcm-booking.php and the
+# Slack card libraries). Nothing here is a URL.
+<FilesMatch "^pcm-vname-lib\.php$">
+  Require all denied
+</FilesMatch>
 # Emails in the inbox (2 Oct 2026): mail-imap.php holds the mailbox passwords (server-only, made by the owner, never in
 # git); the library is include-only and the test CLI-only. Nothing here is a URL.
 <FilesMatch "^(mail-imap\.php(\.example)?|comms-mail-(lib|test)\.php)$">

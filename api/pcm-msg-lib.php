@@ -154,7 +154,7 @@ function msg_ctx_line($ctx) {
     if (array_key_exists('backup', $ctx)) $parts[] = 'backup ' . (!empty($ctx['backup']) ? 'on' : 'none');
     if (!empty($ctx['reboot'])) $parts[] = 'restart pending';
     if (isset($ctx['batt']) && is_numeric($ctx['batt']) && (int)$ctx['batt'] > 0) $parts[] = 'battery ' . max(0, min(100, (int)$ctx['batt'])) . '%';
-    if (isset($ctx['ver']) && is_numeric($ctx['ver']) && (int)$ctx['ver'] > 0) $parts[] = 'app v' . (int)$ctx['ver'];
+    if (isset($ctx['ver']) && is_numeric($ctx['ver']) && (int)$ctx['ver'] > 0) { require_once __DIR__ . '/pcm-vname-lib.php'; $parts[] = 'app v' . pcm_vname((int)$ctx['ver'], isset($ctx['vn']) && is_string($ctx['vn']) ? $ctx['vn'] : ''); }   // ("36.1" from build 37)
     return $parts ? mb_substr(implode(' · ', $parts), 0, 300) : '';
 }
 

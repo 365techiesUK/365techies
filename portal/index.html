@@ -765,9 +765,9 @@
     saved.userChoice.then(function () { saved = null; var w = document.getElementById('p365inst'); if (w) w.hidden = true; });
   });
 })();
-</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 09 Oct 2026 &middot; e3c638eee0</p><script>
+</script><p style="text-align:center;font-size:.72rem;color:#9fb5d3;opacity:.85;margin:.5rem 0 0">portal build 09 Oct 2026 &middot; 20785723f3</p><script>
 (function () {
-  var P365BUILD = 'e3c638eee0';
+  var P365BUILD = '20785723f3';
   // Tidy a self-reload's ?u= away IMMEDIATELY and synchronously: doing it later from
   // inside a check could clobber the app's overlay history state, and the lazy-loaded
   // gtag would record /portal/?u=... as a distinct page.
@@ -4595,7 +4595,7 @@
       + '<div class="ngctr"><div class="sc ngnum"' + (m.fresh ? '>\u2014' : ' id="ngscore">0') + '</div><div class="of">HEALTH</div></div></div>';
     var h = '<div class="ngwrap">'
       + '<div class="ngtop"><div class="nglogo">365</div><div><div class="ngname">' + esc(m.name) + '</div><div class="ngseen">Checked ' + seenTxt(m.seen) + '</div></div>'
-      + (m.ver ? '<span class="ngchip ok">\u2713 App v' + m.ver + '</span>' : '')
+      + (m.ver ? '<span class="ngchip ok">\u2713 App v' + (m.vn || m.ver) + '</span>' : '')
       + '<button class="sm ghost rcb" data-pc="' + esc(m.id) + '" style="margin:0 0 0 auto;padding:.35rem .7rem" title="Ask this PC for a fresh health check">\ud83e\ude7a Check now</button></div>'
       + '<div class="nghp" id="nghp" style="--nghue:' + col + '">' + ring
       + '<div class="nghp__main"><div class="nghp__verdict" style="color:' + col + '">' + esc(verdictTxt) + '</div>'
@@ -6644,7 +6644,7 @@
           + '<td>' + c.pcs + '</td>'
           + '<td>' + (c.worst < 0 ? '\u2014' : '<span class="' + (c.worst >= 80 ? 'ok' : 'wn') + '">' + c.worst + '%</span>') + '</td>'
           + '<td>' + seenTxt(c.seen) + '</td>'
-          + '<td>' + (c.ver ? 'v' + c.ver : '\u2014') + '</td>'
+          + '<td>' + (c.ver ? 'v' + (c.vn || c.ver) : '\u2014') + '</td>'
           + '<td style="white-space:nowrap"><button class="sm ghost tf" data-cid="' + esc(c.id) + '" data-to="' + (c.tier === 'pro' ? 'free' : 'pro') + '" data-nm="' + esc(c.name) + '">\u2192 ' + (c.tier === 'pro' ? 'Free' : 'Pro') + '</button> <button class="sm ghost xd" data-cid="' + esc(c.id) + '" data-nm="' + esc(c.name) + '" data-pcs="' + c.pcs + '" data-warn="' + esc(pwarn) + '" title="Delete this record" style="color:var(--pbad)">\u2715 Delete</button></td></tr>';
       });
       h += '</table></div></div>';
@@ -6997,7 +6997,7 @@
           var h = '';
           r.lic.forEach(function (l) {
             h += '<div style="margin:.1rem 0">' + lbl + '<span class="pill ' + (l.tier === 'pro' ? 'pro">Pro' : 'free">Free') + '</span> '
-              + '<span class="quiet">' + l.pcs + (l.pcs === 1 ? ' PC' : ' PCs') + (l.ver ? ' \u00b7 v' + l.ver : '') + (l.seen ? ' \u00b7 seen ' + seenTxt(l.seen) : '')
+              + '<span class="quiet">' + l.pcs + (l.pcs === 1 ? ' PC' : ' PCs') + (l.ver ? ' \u00b7 v' + (l.vn || l.ver) : '') + (l.seen ? ' \u00b7 seen ' + seenTxt(l.seen) : '')
               + (r.lic.length > 1 ? ' \u00b7 ' + esc(l.name) + ' <span class="mono">' + esc(l.keymask) + '</span>' : '') + '</span>'
               + (l.tier === 'pro'
                   ? ' <button class="sm ghost pcmtf" data-id="' + esc(l.id) + '" data-to="free" data-nm="' + esc(l.name) + '" style="margin:0 0 0 .3rem;padding:.15rem .5rem;font-size:.75rem">\u2192 Free</button>'
@@ -8105,7 +8105,7 @@
     if (m.disk >= 85) w.push(['w', 'disk ' + m.disk + '%']);
     if (m.w10) w.push(['w', 'Windows 10']);
     if (m.reboot) w.push(['w', 'restart due']);
-    if (latest && m.ver && m.ver < latest) w.push(['w', 'app v' + m.ver]);
+    if (latest && m.ver && m.ver < latest) w.push(['w', 'app v' + (m.vn || m.ver)]);
     if (m.batt > 0 && m.batt < 60) w.push(['w', 'battery ' + m.batt + '%']);
     if (m.help) w.push(['b', '\ud83c\udd98 asked for help ' + seenAgo(m.help)]);
     return w;
@@ -8167,7 +8167,7 @@
       b.onclick = function () {
         var q = { action: 'staffmergepc', stoken: S.stoken, machine: mid(), cid: b.getAttribute('data-cid'), pc: b.getAttribute('data-pc'), other: b.getAttribute('data-other') };
         b.disabled = true;
-        var side = function (x) { return 'app v' + (x.ver || '?') + ', last seen ' + (x.seen ? seenTxt(x.seen) : 'never') + ', ' + x.reports + ' report' + (x.reports === 1 ? '' : 's'); };
+        var side = function (x) { return 'app v' + (x.vn || x.ver || '?') + ', last seen ' + (x.seen ? seenTxt(x.seen) : 'never') + ', ' + x.reports + ' report' + (x.reports === 1 ? '' : 's'); };
         post(BK, q).then(function (p) {
           if (!p || !p.ok) { b.disabled = false; alert(p && p.error === 'not_same_customer' ? 'These two are on different licences, so they can’t be merged here.' : 'Couldn’t check the two entries - try again.'); return; }
           var k = p.preview.keep, dr = p.preview.drop;
@@ -9191,7 +9191,7 @@
         + '<td><span style="color:' + col + ';font-weight:700">' + (m.fresh ? '\u2014' : m.score + '%') + '</span>' + (m.verdict ? ' <span class="quiet">' + esc(m.verdict) + '</span>' : '') + '</td>'
         + '<td><div class="chips">' + wch + '</div></td>'
         + '<td title="' + esc(seenLocal(m.seen)) + '">' + seenAgo(m.seen) + '</td>'
-        + '<td>' + (m.ver ? 'v' + m.ver : '\u2014') + '</td>'
+        + '<td>' + (m.ver ? 'v' + (m.vn || m.ver) : '\u2014') + '</td>'
         + '<td>' + (m.mid ? '<button class="sm ghost tune" data-cid="' + esc(m.cid) + '" data-mid="' + esc(m.mid) + '" title="Safe tune-up">\ud83d\udee0</button>' : '') + '</td></tr>';
     });
     hh += '</table>';
@@ -9255,7 +9255,7 @@
     if (d.backup) return ['g', 'Backed up' + (kind ? ' \u2014 ' + kind : '') + when, d.bnote || ''];
     var s = d.bstate || '';
     if (s === 'failed') return ['w', 'Windows Backup\u2019s last run didn\u2019t finish' + when, (d.bnote ? d.bnote + ' ' : '')
-      + 'If Windows says \u201csome files were skipped\u201d, the backup did complete \u2014 app v37 counts that as a good backup.'];
+      + 'If Windows says \u201csome files were skipped\u201d, the backup did complete \u2014 app 36.1 counts that as a good backup.'];
     if (s === 'stale') return ['w', 'Backup out of date' + when, d.bnote || 'Set up, but the last good backup is over six weeks old.'];
     if (s === 'partial') return ['w', 'Backup skipped some files' + when, d.bnote || ''];
     if (s === 'photos') return ['w', 'Only photos are copied' + when, d.bnote || 'A USB copy of their photos \u2014 documents aren\u2019t backed up.'];
@@ -9271,7 +9271,7 @@
     if (d.w10) w.push(['w', 'Windows 10', 'Free security updates ended 14 October 2025' + (d.w11 === 'no' ? ' \u2014 and this PC can\u2019t run Windows 11.' : (d.w11 === 'yes' ? ' \u2014 this PC can run Windows 11.' : '.'))]);
     if (d.reboot) w.push(['w', 'A restart is due', 'Updates are waiting for a restart to finish.']);
     if (d.batt > 0 && d.batt < 60) w.push(['w', 'Battery health ' + d.batt + '%', 'It holds well under its original charge.']);
-    if (PCC && PCC.m && PCC.m.latest && d.ver && d.ver < PCC.m.latest) w.push(['w', 'App out of date (v' + d.ver + ')', 'It updates itself when it next restarts.']);
+    if (PCC && PCC.m && PCC.m.latest && d.ver && d.ver < PCC.m.latest) w.push(['w', 'App out of date (v' + (d.vn || d.ver) + ')', 'It updates itself when it next restarts.']);
     return w;
   }
   function pcOfc(o) {
@@ -9327,7 +9327,7 @@
     var col = d.fresh ? 'var(--pmut)' : (d.score >= 80 ? 'var(--pgood)' : (d.score >= 55 ? 'var(--pwarn)' : 'var(--pbad)'));
     var h = '<div class="pcc-bar"><span><span class="dot" style="background:' + (on ? 'var(--pgood)' : '#44507a') + '"></span> ' + (on ? 'On now' : 'Offline') + '</span>'
       + '<span title="' + esc(seenLocal(d.seen)) + '">Last report ' + seenAgo(d.seen) + (d.seen ? ' (' + esc(seenLocal(d.seen)) + ')' : '') + '</span>'
-      + '<span>app v' + (d.ver || '?') + '</span>'
+      + '<span>app v' + (d.vn || d.ver || '?') + '</span>'
       + '<button class="sm" id="pccchk" title="Ask the PC to re-check itself and report now">\u21bb Check now</button><span class="pcc-st" id="pccst" aria-live="polite"></span></div>';
     if (d.help) {
       h += '<div class="pcc-help">\ud83c\udd98 <strong>Asked for help ' + esc(seenAgo(d.help)) + '</strong> (' + esc(seenLocal(d.help)) + ')'
@@ -9351,7 +9351,7 @@
     if ((d.dsk || []).length) drives = d.dsk.map(function (x) { return (x.sys ? 'Windows drive: ' : '') + (x.t || 'drive') + ' ' + x.gb + ' GB' + (x.free ? ', ' + x.free + ' GB free' : ''); }).join('<br />');
     else if ((d.drives || []).length) drives = d.drives.map(function (x) { return esc(x.model) + ' \u00b7 ' + x.sizeGB + ' GB' + (x.wear != null ? ' \u00b7 wear ' + x.wear + '%' : '') + (x.tbw != null ? ' \u00b7 ' + x.tbw + ' TB written' : ''); }).join('<br />');
     var sbc = { Updated: 'updated (2023 certificates)', InProgress: 'updating', NotStarted: 'not started yet', Error: 'error', nosb: 'Secure Boot off' }[d.sbc] || '';
-    var v37 = '<span class="quiet" style="font-size:.85rem">arrives with app v37</span>';
+    var v37 = '<span class="quiet" style="font-size:.85rem">arrives with app 36.1</span>';   // (36.1 = build 37)
     h += '<div class="pcc-sec"><h4>This PC</h4><dl class="pcc-dl">'
       + '<dt>Model</dt><dd>' + (d.model ? esc(d.model) : '<span class="quiet" style="font-size:.85rem">from its first service report</span>') + '</dd>'
       + '<dt>Processor</dt><dd>' + (d.cpu ? esc(d.cpu) : v37) + '</dd>'

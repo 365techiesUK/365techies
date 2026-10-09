@@ -123,6 +123,7 @@ function mm_phase_label($p) {
 /* The Slack card (Block Kit + a plain-text fallback). $f: name, phone, email, virgin, count, mb, phase, ver, machine.
    450 MB a day is the Mail Mover's own pace under Gmail's 500 MB-a-day IMAP limit, so the days match the app's. */
 function mm_help_card($f, $now = null) {
+    require_once __DIR__ . '/pcm-vname-lib.php';   // 9 Oct 2026: "36.1" for build 37
     $mb = (float)$f['mb'];
     $size = $mb >= 1024 ? number_format($mb / 1024, 1) . ' GB' : number_format($mb, 0) . ' MB';
     $days = $mb > 0 ? max(1, (int)ceil($mb / 450)) : 0;
@@ -141,7 +142,7 @@ function mm_help_card($f, $now = null) {
         array('type' => 'header', 'text' => array('type' => 'plain_text', 'text' => "\xF0\x9F\x93\xA7 Virgin email move: please ring back", 'emoji' => true)),
         array('type' => 'section', 'fields' => $fields),
         array('type' => 'section', 'text' => array('type' => 'mrkdwn', 'text' => 'They pressed *Stuck? We\'ll do it for you* in the free email tools. The move is *£60 per email address*, including a full PC service with a written report - agree it on the phone before starting.')),
-        array('type' => 'context', 'elements' => array(array('type' => 'mrkdwn', 'text' => 'via 365 PC Manager v' . (int)$f['ver'] . ' · PC ' . mm_esc($f['machine']) . ' · ' . $when))),
+        array('type' => 'context', 'elements' => array(array('type' => 'mrkdwn', 'text' => 'via 365 PC Manager v' . pcm_vname((int)$f['ver']) . ' · PC ' . mm_esc($f['machine']) . ' · ' . $when))),
     );
     return array('text' => 'Virgin email move: please ring ' . mm_esc($f['name']) . ' on ' . mm_esc($f['phone']), 'blocks' => $blocks, 'unfurl_links' => false);
 }

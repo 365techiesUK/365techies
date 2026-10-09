@@ -151,6 +151,7 @@ require_once __DIR__ . '/pcm-programs-lib.php';   // programs check: the list + 
 require_once __DIR__ . '/pcm-gate.php';            // 29 Sep 2026: the minute poll answered by .htaccess while nothing waits
 require_once __DIR__ . '/pcm-installs-lib.php';    // 1 Oct 2026: installs counted from check-ins (top-level scope on purpose)
 require_once __DIR__ . '/pcm-rehome-lib.php';      // 8 Oct 2026: a key that no longer opens a record finds its way home
+require_once __DIR__ . '/pcm-vname-lib.php';       // 9 Oct 2026: the app's version as people see it ("36.1")
 // 8 Oct 2026: the paid app abroad, "Unlock everything" - switched off until the owner says go. Guarded, and every call is
 // behind function_exists: a missing file (a deploy may upload it after this one) can never stop a check-in.
 if (is_readable(__DIR__ . '/pcm-plus-lib.php')) require_once __DIR__ . '/pcm-plus-lib.php';
@@ -248,6 +249,8 @@ if ($action === 'checkin') {
             'av'=>substr((string)($in['av']??''),0,8), 'backup'=>!empty($in['backup']),
             'diskpct'=>intval($in['diskpct']??0), 'w10'=>!empty($in['w10']), 'reboot'=>!empty($in['reboot']),
             'ver'=>intval($in['ver']??0),
+            // 9 Oct 2026: the version as people see it ("36.1" from build 37) - pcm-vname-lib.php; older apps send none
+            'vn'=>(isset($in['vn']) && is_string($in['vn']) && preg_match('/^\d{1,3}(\.\d{1,3}){0,2}$/', $in['vn'])) ? $in['vn'] : '',
             'crs'=>substr((string)($in['crs']??''),0,8), 'crst'=>substr((string)($in['crst']??''),0,420),
             'batt'=>max(0,min(100,intval($in['batt']??0))),
             // customer's in-app "let 365 run safe maintenance" consent. Old apps never send it,
@@ -511,7 +514,7 @@ if ($action === 'overview') {
         }
         $ms[] = array('name'=>(string)($m['name'] ?? 'PC'), 'score'=>intval($m['score'] ?? 0),
             'verdict'=>(string)($m['verdict'] ?? ''), 'seen'=>(string)($m['seen'] ?? ''),
-            'disk'=>intval($m['diskpct'] ?? 0), 'backup'=>!empty($m['backup']), 'ver'=>intval($m['ver'] ?? 0),
+            'disk'=>intval($m['diskpct'] ?? 0), 'backup'=>!empty($m['backup']), 'ver'=>intval($m['ver'] ?? 0), 'vn'=>pcm_vname_m($m),
             'fresh'=>!isset($m['diskpct']),
             'id'=>(string)$id, 'batt'=>intval($m['batt'] ?? 0),
             'avon'=>($avr==='on'), 'avoff'=>($avr==='off'), 'w10'=>!empty($m['w10']),
