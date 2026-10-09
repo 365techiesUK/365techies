@@ -59,7 +59,9 @@ _SITE = "https://365techies.co.uk"
 _CATS = {
     "Card games": ("Card games", "The classics, with big clear cards. Tap a card to play it &mdash; or drag it, if you prefer. "
                    "See one in a minute: <a href=\"/play-patience-online-free/\">Patience</a> &middot; <a href=\"/play-freecell-online-free/\">FreeCell</a> &middot; <a href=\"/play-spider-solitaire-online-free/\">Spider</a> &middot; <a href=\"/play-tripeaks-solitaire-online-free/\">TriPeaks</a> &middot; <a href=\"/play-pyramid-solitaire-online-free/\">Pyramid</a> &middot; <a href=\"/play-hearts-online-free/\">Hearts</a> &middot; <a href=\"/play-gin-rummy-online-free/\">Gin Rummy</a> &middot; <a href=\"/play-cribbage-online-free/\">Cribbage</a> &middot; <a href=\"/play-whist-online-free/\">Whist</a>."),
-    "Arcade": ("Arcade games", "Our own takes on the arcade games of the 80s and 90s. Each one has a <b>Gentle</b> speed for beginners."),
+    "Arcade": ("Arcade games", "Our own takes on the arcade games of the 80s and 90s. Each one has a <b>Gentle</b> speed for beginners. "
+               "See one in a minute: <a href=\"/play-invaders-online-free/\">365 Invaders</a> &middot; <a href=\"/play-brick-breaker-online-free/\">Bat &amp; Ball</a> &middot; "
+               "<a href=\"/play-jet-shooter-game-online-free/\">Eclipse</a> &middot; <a href=\"/play-driving-game-online-free/\">Coast Run</a>."),
     "Seafront": ("Made in Bournemouth", "A 3D game on the real Bournemouth seafront. It runs best on a newer computer."),
 }
 # a picture that lives somewhere other than games/img/ (Seafront's own page already has its levels as pictures)

@@ -1168,7 +1168,7 @@
  },
  "games": {
   "first": "2026-10-04",
-  "h": "276339b81a8eedce",
+  "h": "a8548ad7cbd99958",
   "last": "2026-10-09"
  },
  "gaming-pc-slow-wont-load-games": {
@@ -2682,46 +2682,65 @@
   "h": "47671999844c29b9",
   "last": "2026-09-28"
  },
+ "play-brick-breaker-online-free": {
+  "first": "2026-10-09",
+  "h": "163ce5a457aacff5"
+ },
  "play-cribbage-online-free": {
   "first": "2026-10-09",
-  "h": "6a0259ea52824136",
+  "h": "2327314dd57a5b64",
   "last": "2026-10-09"
+ },
+ "play-driving-game-online-free": {
+  "first": "2026-10-09",
+  "h": "3bcb65f26eec3c9a"
  },
  "play-freecell-online-free": {
   "first": "2026-10-09",
-  "h": "f5795fc8536c37ba",
+  "h": "7a61cca10bd36fa3",
   "last": "2026-10-09"
  },
  "play-gin-rummy-online-free": {
   "first": "2026-10-09",
-  "h": "d392c0f7bfc2f44c",
+  "h": "fa8a43c82bb2e905",
   "last": "2026-10-09"
  },
  "play-hearts-online-free": {
   "first": "2026-10-09",
-  "h": "2e82c70ba13ea7a5",
+  "h": "2161d6c54789ab75",
   "last": "2026-10-09"
+ },
+ "play-invaders-online-free": {
+  "first": "2026-10-09",
+  "h": "2856dd342d249d7e"
+ },
+ "play-jet-shooter-game-online-free": {
+  "first": "2026-10-09",
+  "h": "04ed6d3abc446d8e"
  },
  "play-patience-online-free": {
   "first": "2026-10-09",
-  "h": "28816236df6a49a2",
+  "h": "f0aca460966b9553",
   "last": "2026-10-09"
  },
  "play-pyramid-solitaire-online-free": {
   "first": "2026-10-09",
-  "h": "ab2761b9ce4079d8"
+  "h": "2266f43462f5409c",
+  "last": "2026-10-09"
  },
  "play-spider-solitaire-online-free": {
   "first": "2026-10-09",
-  "h": "0ff85b24241f00ec"
+  "h": "54c48b2658d866e9",
+  "last": "2026-10-09"
  },
  "play-tripeaks-solitaire-online-free": {
   "first": "2026-10-09",
-  "h": "6f7d8113cbfa57a7"
+  "h": "6cd839bfa98af0b6",
+  "last": "2026-10-09"
  },
  "play-whist-online-free": {
   "first": "2026-10-09",
-  "h": "dc245faa7d5933a4",
+  "h": "a285c467899d4fb9",
   "last": "2026-10-09"
  },
  "playstation-parental-controls-uk": {

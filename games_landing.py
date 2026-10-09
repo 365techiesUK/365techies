@@ -29,15 +29,15 @@ SITE = bp.SITE
 UPLOADED = "2026-10-09"
 
 
-def _video(key, name, secs, poster, src, transcript, play_href, play_label):
+def _video(key, name, secs, poster, src, transcript, play_href, play_label, note=None):
     return ('<figure id="video" style="margin:0 0 1rem">'
             '<video controls playsinline preload="none" poster="%s" width="1920" height="1080" aria-label="%s" '
             'style="display:block;width:100%%;height:auto;border-radius:16px;border:1px solid rgba(125,170,220,.3);box-shadow:0 26px 60px -28px rgba(0,0,0,.85);background:#0a1226">'
             '<source src="%s" type="video/mp4" /></video>'
-            '<figcaption style="font-size:.8rem;color:var(--muted);margin-top:.5rem">The real game, recorded on a PC: %s seconds, with a spoken guide and captions.</figcaption></figure>'
+            '<figcaption style="font-size:.8rem;color:var(--muted);margin-top:.5rem">%s</figcaption></figure>'
             '<p style="margin:1rem 0 1.2rem"><a class="button primary" href="%s" style="text-decoration:none" data-gl-play="%s">%s</a></p>'
             '<details style="margin:.4rem 0 0"><summary style="cursor:pointer">What the video says</summary><p style="margin:.6rem 0 0">%s</p></details>'
-            % (poster, name, src, secs, play_href, key, play_label, transcript))
+            % (poster, name, src, (note or 'The real game, recorded on a PC: %s seconds, with a spoken guide and captions.') % secs, play_href, key, play_label, transcript))
 
 
 _PLAY_TRACK = ('<script>(function(){var a=document.querySelectorAll("[data-gl-play]");for(var i=0;i<a.length;i++)a[i].addEventListener("click",function(){'
@@ -54,7 +54,9 @@ _ALL_GAMES = ('<p>The same no-adverts promise runs through every game on <a href
               '<a href="/play-patience-online-free/">Patience</a>, <a href="/play-freecell-online-free/">FreeCell</a>, <a href="/play-spider-solitaire-online-free/">Spider</a>, '
               '<a href="/play-tripeaks-solitaire-online-free/">TriPeaks</a>, <a href="/play-pyramid-solitaire-online-free/">Pyramid</a>, <a href="/play-hearts-online-free/">Hearts</a>, '
               '<a href="/play-gin-rummy-online-free/">Gin Rummy</a>, <a href="/play-cribbage-online-free/">Cribbage</a> and <a href="/play-whist-online-free/">Whist</a>, '
-              'plus our own arcade games. They&rsquo;re also in the Games menu of our free Windows app, <a href="/free-pc-health-check/">365 PC Manager</a>.</p>')
+              'plus our own arcade games: <a href="/play-invaders-online-free/">365 Invaders</a>, <a href="/play-brick-breaker-online-free/">Bat &amp; Ball</a>, '
+              '<a href="/play-jet-shooter-game-online-free/">Eclipse</a> and <a href="/play-driving-game-online-free/">Coast Run</a>. '
+              'They&rsquo;re also in the Games menu of our free Windows app, <a href="/free-pc-health-check/">365 PC Manager</a>.</p>')
 
 # ============================================================ Patience (Solitaire)
 PAT_VIDEO = "/images/games-patience-video-v1.mp4"
@@ -830,7 +832,356 @@ PY = {
 }
 
 
-def _extras(slug, video, poster, secs, name, desc, game_name, game_url, cover, og):
+# ================================================================ the ARCADE games (9 Oct 2026; owner: "do the arcade games pages next")
+# ⚠ OUR names only: never the old arcade games' or their makers' names, anywhere (games rule), so the pages target the
+# generic UK words. UK autocomplete: "alien shooter game online free", "alien invasion game online free", "classic / 80s arcade
+# games online free no download", "arcade games no ads"; "brick breaker game free online", "brick breaker no ads", "block
+# breaker game online", "brick game online free no download"; "jet shooter arcade game", "plane shooting game arcade",
+# "vertical shooter arcade games", "space shooter game online"; "driving / racing / car games free online no download",
+# "driving game no ads", "car racing game no ads". Facts: each game's help + settings (games/<id>/<id>.js), the arcade
+# cabinet (games/common/arcade.js: today's top score on the title card, Challenge a friend, My scores), games-hof.php
+# $HOF_ARCADE (boards per speed: today / this week / all time / your town; a score is checked against how long the game
+# lasted), Eclipse's stages and bosses (eclipse/engine.js), Coast Run's places (coastrun/engine.js PLACES). Videos: real
+# gameplay on a virtual clock with a bot at the controls and each game's own logged sounds (scratchpad 8682606b av/cap.cjs,
+# sfx.cjs, make_arcade.py; Eclipse + Coast Run footage from the Retro Rebooted trailer's clips). Coast Run: NO voice (its rule).
+_ARCADE_NOTE = 'Real gameplay recorded on a PC, with the computer at the controls and the game&rsquo;s own sounds: %s seconds, with a spoken guide and captions.'
+_ARCADE_ALL = ('<p>The same no-adverts promise runs through every game on <a href="/games/">our games page</a>: our arcade games &mdash; '
+               '<a href="/play-invaders-online-free/">365 Invaders</a>, <a href="/play-brick-breaker-online-free/">365 Bat &amp; Ball</a>, '
+               '<a href="/play-jet-shooter-game-online-free/">365 Eclipse</a> and <a href="/play-driving-game-online-free/">365 Coast Run</a> &mdash; '
+               'and nine card games, from <a href="/play-patience-online-free/">Patience</a> and <a href="/play-freecell-online-free/">FreeCell</a> '
+               'to <a href="/play-cribbage-online-free/">Cribbage</a> and <a href="/play-whist-online-free/">Whist</a>. '
+               'They&rsquo;re all in the Games menu of our free Windows app, <a href="/free-pc-health-check/">365 PC Manager</a>, too.</p>')
+_ARCADE_FREE_FAQ = {'q': 'Are there really no adverts?', 'a': '<p>None at all: no pop-ups between games, no videos to sit through before you can play again, and no buttons that turn out to be adverts. We&rsquo;re 365 Techies, a family IT firm in Bournemouth &mdash; we&rsquo;re paid for looking after computers, not for showing adverts.</p>'}
+_ARCADE_INSTALL_FAQ = {'q': 'Do I need to download or install anything?', 'a': '<p>No. It plays in your web browser &mdash; Edge, Chrome, Safari or Firefox &mdash; with nothing to install and no sign-in. If you use our free Windows app, 365 PC Manager, it&rsquo;s in its Games menu too.</p>'}
+_ARCADE_HOF_FAQ = {'q': 'What is the Hall of Fame?', 'a': '<p>When a game ends with a good score, you can put your initials and town on the board &mdash; for today, this week, all time and your town, with a board for each speed. Only if you choose to. Each score is checked against how long the game lasted, so nobody can simply make one up, and the title screen shows today&rsquo;s top score to beat.</p>'}
+_ARCADE_DAILY = ('<ul><li><strong>The Hall of Fame</strong> &mdash; a board for each speed: today, this week, all time and your town. Finish with a good score and you can put your initials and town on it, if you like. The title screen shows today&rsquo;s top score to beat.</li>'
+                 '<li><strong>Challenge a friend</strong> &mdash; when the game ends, send the link and see if they can beat your score.</li>'
+                 '<li><strong>My scores and trophies</strong> &mdash; games played, your best and today&rsquo;s best, kept in your browser, with a trophy cabinet shared by all our games. To carry your scores to another device, use <em>Keep my scores</em>.</li></ul>')
+_ARCADE_DAILY_ROW = ('Hall of Fame', 'A board for each speed &mdash; today, this week, all time and your town &mdash; and today&rsquo;s top score on the title screen.')
+
+# ============================================================ 365 Invaders
+INV_VIDEO = "/images/games-invaders-video-v1.mp4"
+INV_POSTER = "/images/games-invaders-poster-v1.webp"
+INV_SECS = 61
+INV_TRANSCRIPT = ("This is 365 Invaders, our own eighties arcade game, from 365 Techies. It&rsquo;s free, there&rsquo;s nothing to install, and there are no adverts. "
+                  "Stop the invaders before they reach the ground, and catch the falling capsules for a spread shot, rapid fire or a shield. "
+                  "Hit six in a row for double points, then triple, then four times. "
+                  "There are three speeds. Gentle is slower, with five lives, and Fast is for experts. "
+                  "Every fifth wave, the Mothership arrives. Keep hitting it until it goes. "
+                  "Fancy the plain eighties look? Switch to Retro in Settings. "
+                  "Your best scores go in the Hall of Fame, for today, this week, all time, and your town. "
+                  "Play free at 365techies.co.uk. No adverts. No sign-up. Just the game.")
+
+INV = {
+    'slug': 'play-invaders-online-free',
+    'title': 'Free 80s Alien Shooter Game Online, No Adverts | 365 Techies',
+    'metaDesc': 'Play 365 Invaders free: our own 80s alien shooter in your browser. No adverts, no download, no sign-in. Power-ups, combos, a Mothership and a Hall of Fame.',
+    'ogTitle': 'Play 365 Invaders free - an 80s alien shooter, no adverts',
+    'crumbName': 'Play Invaders Online Free',
+    'eyebrow': '// FREE ARCADE &middot; 365 INVADERS',
+    'h1': 'An 80s alien shooter, <em class="grad grad--cyan">free and with no adverts</em>',
+    'lede': '365 Invaders is our own arcade game, made from scratch: rows of invaders marching down, four green shields and one ship to stop them. It plays in your web browser &mdash; free, nothing to install, no sign-in and no adverts. Not one.',
+    'chips': ['No adverts, ever', 'Nothing to install', 'A Hall of Fame'],
+    'primaryCta': ['Play 365 Invaders free', '/games/invaders/'], 'secondaryCta': ['All our games', '/games/'],
+    'ctaHead': 'Fancy a go?', 'ctaSub': 'Free, with no adverts, on your PC, laptop, tablet or phone. Nothing to install and no sign-in.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Price', 'Free. Nothing to buy, now or later.'),
+        ('Adverts', 'None. No pop-ups between games, no videos to sit through.'),
+        ('Install or sign-in?', 'Neither. It plays in your web browser.'),
+        ('Controls', 'Arrow keys (or A and D) or the mouse to move, Space or a click to fire. On a tablet or phone, buttons on the screen or a drag.'),
+        ('Speeds', 'Gentle (slower, with five lives), Classic (the old arcade pace) and Fast, for experts.'),
+        ('Two looks', 'Enhanced, with capsules, combos and a Mothership every fifth wave &mdash; or Retro, the plain game.'),
+        _ARCADE_DAILY_ROW,
+        ('Works on', 'A PC, laptop, tablet or phone &mdash; Windows, Mac, iPad, iPhone or Android.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; SEE IT IN A MINUTE', 'h2': 'Here&rsquo;s what it&rsquo;s like',
+         'html': _video('invaders', '365 Invaders: capsules, combos, the Mothership, the Retro look and the Hall of Fame', INV_SECS, INV_POSTER, INV_VIDEO,
+                        INV_TRANSCRIPT, '/games/invaders/', 'Play 365 Invaders free &#8594;', _ARCADE_NOTE)},
+        {'eyebrow': '/02 &mdash; NO ADVERTS', 'h2': 'Why there are no adverts, and never will be', 'html': _WHY_FREE},
+        {'eyebrow': '/03 &mdash; HOW TO PLAY', 'h2': 'How to play 365 Invaders',
+         'html': '<ol><li><strong>The aim:</strong> shoot every invader before they reach the ground. Clear them all and a new wave comes, starting a little lower.</li>'
+                 '<li><strong>Move</strong> with the arrow keys (or A and D), or just move the mouse. On a tablet or phone, use the &#9664; &#9654; buttons or drag on the screen.</li>'
+                 '<li><strong>Fire</strong> with the Space bar, a click or the Fire button. One shot at a time, so make each one count.</li>'
+                 '<li><strong>Hide behind the green shields.</strong> They wear away when they&rsquo;re hit, from either side.</li>'
+                 '<li><strong>Points:</strong> 10, 20 or 30 for an invader (the higher up, the more) and 50 to 300 for the red mystery ship across the top. An extra life at 1,500 points.</li></ol>'
+                 '<p>P pauses, and the game pauses itself if you click away to another window.</p>'},
+        {'eyebrow': '/04 &mdash; ENHANCED OR RETRO', 'h2': 'Capsules, combos and the Mothership &mdash; or the plain 80s game',
+         'html': '<ul><li><strong>Capsules</strong> sometimes fall when an invader is hit. Catch one with your ship: <strong>R</strong> rapid fire (two quicker shots), <strong>S</strong> a spread shot (three at once), <strong>+</strong> a shield bubble that takes one hit.</li>'
+                 '<li><strong>Combos:</strong> hit six in a row without missing for double points, then triple and four times. A miss starts it again.</li>'
+                 '<li><strong>The Mothership</strong> arrives every fifth wave. Keep hitting it and watch its bar at the top. A wave cleared without losing a ship is worth 500 more, and after the first extra life there&rsquo;s another every 5,000 points.</li>'
+                 '<li><strong>Retro</strong> (in Settings) is the plain game, without the extras &mdash; the look of an 80s arcade screen.</li></ul>'
+                 '<p>Three speeds: <strong>Gentle</strong> is slower with five lives, <strong>Classic</strong> is the old arcade pace and <strong>Fast</strong> is for experts.</p>'},
+        {'eyebrow': '/05 &mdash; HIGH SCORES', 'h2': 'A Hall of Fame for every speed', 'html': _ARCADE_DAILY},
+        {'eyebrow': '/06 &mdash; MORE GAMES', 'h2': 'Arcade and card games, all free with no adverts', 'html': _ARCADE_ALL + _PLAY_TRACK},
+    ],
+    'howToName': 'How to play 365 Invaders',
+    'howToSteps': [
+        {'name': 'Start a game', 'text': 'Open 365 Invaders in your web browser and press Play. Gentle is the default speed; change it in Settings.'},
+        {'name': 'Move and fire', 'text': 'Move with the arrow keys or the mouse, and fire with the Space bar or a click. One shot at a time.'},
+        {'name': 'Use the shields', 'text': 'Hide behind the four green shields. They wear away when they are hit, from either side.'},
+        {'name': 'Catch the capsules', 'text': 'Catch falling capsules for rapid fire, a spread shot or a shield, and hit six in a row for double points.'},
+        {'name': 'Beat the Mothership', 'text': 'Every fifth wave the Mothership arrives. Keep hitting it until it is destroyed, then clear the next wave.'},
+    ],
+    'faqs': [
+        {'q': 'Is 365 Invaders really free?', 'a': '<p>Yes. There&rsquo;s nothing to buy and nothing to sign up for. It&rsquo;s made by 365 Techies, a family IT firm in Bournemouth.</p>'},
+        _ARCADE_FREE_FAQ,
+        {'q': 'Is it the old arcade game?', 'a': '<p>No &mdash; it&rsquo;s our own game, built from scratch, with our own invaders, sounds and Mothership. Switch on Retro in Settings for the plain look of an 80s arcade screen.</p>'},
+        _ARCADE_INSTALL_FAQ,
+        {'q': 'Can I play on a tablet or phone?', 'a': '<p>Yes. Tap the &#9664; &#9654; buttons to move and Fire to shoot, or drag on the screen.</p>'},
+        {'q': 'How do I get an extra life?', 'a': '<p>At 1,500 points, then every 5,000. Gentle starts you with five lives.</p>'},
+        _ARCADE_HOF_FAQ,
+    ],
+    'crossLinksHtml': '<p>More free games: <a href="/play-brick-breaker-online-free/">365 Bat &amp; Ball</a>, <a href="/play-jet-shooter-game-online-free/">365 Eclipse</a>, <a href="/play-driving-game-online-free/">365 Coast Run</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
+}
+
+# ============================================================ 365 Bat & Ball
+BB_VIDEO = "/images/games-batball-video-v1.mp4"
+BB_POSTER = "/images/games-batball-poster-v1.webp"
+BB_SECS = 63
+BB_TRANSCRIPT = ("This is 365 Bat and Ball, from 365 Techies. It&rsquo;s free, there&rsquo;s nothing to install, and there are no adverts. "
+                 "Keep the ball in play with your bat, and break every brick. Where the ball lands on the bat sets where it goes. "
+                 "Catch the capsules for lasers, three balls, a wider bat, and more. "
+                 "Explosive bricks blow up everything around them, even the next explosive. Break bricks one after another for up to five times the points. "
+                 "On levels ten and twenty, the Mothership fires at your bat. "
+                 "There are twenty levels and three speeds, and your best scores go in the Hall of Fame. "
+                 "Play free at 365techies.co.uk. No adverts. No sign-up. Just the game.")
+
+_CAPSULES = ('<div class="cmp-wrap" tabindex="0" role="group" aria-label="The capsules (scrolls sideways on a small screen)"><table class="cmp-table">'
+             '<thead><tr><th>Capsule</th><th>What it does</th></tr></thead><tbody>'
+             '<tr><td>W</td><td>A wider bat</td></tr>'
+             '<tr><td>L</td><td>Lasers &mdash; press fire to shoot the bricks</td></tr>'
+             '<tr><td>C</td><td>Catch &mdash; the ball sticks to the bat until you fire</td></tr>'
+             '<tr><td>S</td><td>A slower ball</td></tr>'
+             '<tr><td>M</td><td>Three balls</td></tr>'
+             '<tr><td>F</td><td>A fireball</td></tr>'
+             '<tr><td>N</td><td>A safety net for one lost ball</td></tr>'
+             '<tr><td>B</td><td>Blast &mdash; your next three hits explode</td></tr>'
+             '<tr><td>+</td><td>An extra life</td></tr>'
+             '</tbody></table></div>')
+
+BB = {
+    'slug': 'play-brick-breaker-online-free',
+    'title': 'Play Brick Breaker Online Free, No Adverts | 365 Techies',
+    'metaDesc': 'Play 365 Bat & Ball, our own brick breaker, free in your browser: 20 levels, exploding bricks, lasers and three balls. No adverts, no download, no sign-in.',
+    'ogTitle': 'Play brick breaker online free - 365 Bat & Ball, no adverts',
+    'crumbName': 'Play Brick Breaker Online Free',
+    'eyebrow': '// FREE ARCADE &middot; 365 BAT &amp; BALL',
+    'h1': 'Play brick breaker online, <em class="grad grad--cyan">free and with no adverts</em>',
+    'lede': '365 Bat &amp; Ball is our own brick breaker: keep the ball bouncing, break every brick, and set off chains of exploding ones. Twenty levels, right in your web browser &mdash; free, nothing to install, no sign-in and no adverts. Not one.',
+    'chips': ['No adverts, ever', 'Nothing to install', '20 levels'],
+    'primaryCta': ['Play 365 Bat & Ball free', '/games/batball/'], 'secondaryCta': ['All our games', '/games/'],
+    'ctaHead': 'Fancy a go?', 'ctaSub': 'Free, with no adverts, on your PC, laptop, tablet or phone. Nothing to install and no sign-in.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Price', 'Free. Nothing to buy, now or later.'),
+        ('Adverts', 'None. No pop-ups between games or levels, no videos to sit through.'),
+        ('Install or sign-in?', 'Neither. It plays in your web browser.'),
+        ('Controls', 'The mouse (the easiest), the arrow keys, or a drag on a tablet. Space, a click or a tap launches the ball.'),
+        ('Levels', '20, with the Mothership on levels 10 and 20 &mdash; then they come round again, quicker.'),
+        ('Speeds', 'Gentle (a slower ball, a wider bat and five lives), Classic and Fast.'),
+        _ARCADE_DAILY_ROW,
+        ('Works on', 'A PC, laptop, tablet or phone &mdash; Windows, Mac, iPad, iPhone or Android.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; SEE IT IN A MINUTE', 'h2': 'Here&rsquo;s what it&rsquo;s like',
+         'html': _video('batball', '365 Bat & Ball: lasers, three balls, exploding bricks, the Mothership and the Hall of Fame', BB_SECS, BB_POSTER, BB_VIDEO,
+                        BB_TRANSCRIPT, '/games/batball/', 'Play 365 Bat &amp; Ball free &#8594;', _ARCADE_NOTE)},
+        {'eyebrow': '/02 &mdash; NO ADVERTS', 'h2': 'Why there are no adverts, and never will be', 'html': _WHY_FREE},
+        {'eyebrow': '/03 &mdash; HOW TO PLAY', 'h2': 'How to play 365 Bat &amp; Ball',
+         'html': '<ol><li><strong>The aim:</strong> keep the ball in play with your bat and break every brick to finish the level.</li>'
+                 '<li><strong>Move the bat</strong> with the mouse (the easiest), the arrow keys, or by dragging on a tablet. Space, a click or a tap launches the ball.</li>'
+                 '<li><strong>Aim with the bat:</strong> where the ball lands on it sets where it goes &mdash; near an end sends it off at an angle. Moving the bat as it lands steers it further.</li>'
+                 '<li><strong>Runs:</strong> break bricks one after another before the ball comes back to the bat &mdash; the bar at the top fills, and the points go up to five times.</li>'
+                 '<li><strong>Little invaders</strong> drift down from the hatches and knock the ball about &mdash; 100 points each. On levels 10 and 20 the Mothership fires at your bat: dodge, and keep hitting it.</li></ol>'
+                 '<p>P pauses, and the game pauses itself if you click away.</p>'},
+        {'eyebrow': '/04 &mdash; BRICKS AND CAPSULES', 'h2': 'Exploding bricks, and nine capsules to catch',
+         'html': '<p>Coloured bricks break at a touch. <strong>Silver</strong> takes a few hits, <strong>steel</strong> never breaks, <strong>gold</strong> always drops a capsule, and <strong>explosive</strong> bricks (the striped ones) blow up everything round them &mdash; even the next explosive. On some levels the bricks slide from side to side.</p>'
+                 + _CAPSULES +
+                 '<p>Three speeds: <strong>Gentle</strong> has a slower ball, a wider bat and five lives; <strong>Classic</strong> and <strong>Fast</strong> are quicker. There&rsquo;s an optional synthwave backing track in Settings.</p>'},
+        {'eyebrow': '/05 &mdash; HIGH SCORES', 'h2': 'A Hall of Fame for every speed', 'html': _ARCADE_DAILY},
+        {'eyebrow': '/06 &mdash; MORE GAMES', 'h2': 'Arcade and card games, all free with no adverts', 'html': _ARCADE_ALL + _PLAY_TRACK},
+    ],
+    'howToName': 'How to play 365 Bat & Ball',
+    'howToSteps': [
+        {'name': 'Start a game', 'text': 'Open 365 Bat & Ball in your web browser and press Play. Space, a click or a tap launches the ball.'},
+        {'name': 'Move the bat', 'text': 'Move the bat with the mouse, the arrow keys or a drag, and keep the ball in play.'},
+        {'name': 'Aim with the bat', 'text': 'Where the ball lands on the bat sets where it goes: near an end sends it off at an angle.'},
+        {'name': 'Catch the capsules', 'text': 'Catch capsules that fall from bricks for a wider bat, lasers, three balls, a fireball and more.'},
+        {'name': 'Clear the level', 'text': 'Break every brick to finish the level. Explosive bricks blow up everything round them. There are 20 levels.'},
+    ],
+    'faqs': [
+        {'q': 'Is 365 Bat & Ball really free?', 'a': '<p>Yes. There&rsquo;s nothing to buy and nothing to sign up for. It&rsquo;s made by 365 Techies, a family IT firm in Bournemouth.</p>'},
+        _ARCADE_FREE_FAQ,
+        {'q': 'How many levels are there?', 'a': '<p>Twenty, with the Mothership on levels 10 and 20. Then they come round again, quicker.</p>'},
+        {'q': 'What are the striped bricks?', 'a': '<p>Explosive bricks. Hit one and it blows up everything round it &mdash; even the next explosive, so one hit can set off a chain.</p>'},
+        _ARCADE_INSTALL_FAQ,
+        {'q': 'Can I play on a tablet or phone?', 'a': '<p>Yes. Drag on the screen to move the bat and tap to launch the ball &mdash; or use the buttons.</p>'},
+        _ARCADE_HOF_FAQ,
+    ],
+    'crossLinksHtml': '<p>More free games: <a href="/play-invaders-online-free/">365 Invaders</a>, <a href="/play-jet-shooter-game-online-free/">365 Eclipse</a>, <a href="/play-driving-game-online-free/">365 Coast Run</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
+}
+
+# ============================================================ 365 Eclipse
+ECL_VIDEO = "/images/games-eclipse-video-v1.mp4"
+ECL_POSTER = "/images/games-eclipse-poster-v1.webp"
+ECL_SECS = 65
+ECL_TRANSCRIPT = ("This is 365 Eclipse, a 3D jet shooter from 365 Techies. It&rsquo;s free, there&rsquo;s nothing to install, and there are no adverts. "
+                  "Choose your fighter, then fly seven stages, from the harbour to orbit. "
+                  "Catch the lettered pods for new guns, rockets and wingmen. And press Bomb to clear the screen. "
+                  "Every stage ends with a boss. Shoot its guns off first, then the core. "
+                  "Then up through the clouds, and out into space, under the eclipse. "
+                  "Gentle gives you five fighters and a shield, and your best scores go in the Hall of Fame. "
+                  "Play free at 365techies.co.uk. No adverts. No sign-up. Just the game.")
+
+_FIGHTERS = ('<div class="cmp-wrap" tabindex="0" role="group" aria-label="The four fighters (scrolls sideways on a small screen)"><table class="cmp-table">'
+             '<thead><tr><th>Fighter</th><th>What it&rsquo;s like</th></tr></thead><tbody>'
+             '<tr><td>Swift</td><td>The quickest, with the Vulcan gun</td></tr>'
+             '<tr><td>Striker</td><td>Starts with the Spread gun and Rockets</td></tr>'
+             '<tr><td>Titan</td><td>Slow but shielded, with the Laser</td></tr>'
+             '<tr><td>Wraith</td><td>Thunder that bends to its target, and Homing missiles</td></tr>'
+             '</tbody></table></div>')
+
+ECL = {
+    'slug': 'play-jet-shooter-game-online-free',
+    'title': 'Free 3D Jet Shooter Game Online, No Adverts | 365 Techies',
+    'metaDesc': 'Play 365 Eclipse free: our own 3D jet shooter in your browser. Seven stages from harbour to orbit, four fighters, huge bosses. No adverts, no download.',
+    'ogTitle': 'Play 365 Eclipse free - a 3D jet shooter, no adverts',
+    'crumbName': 'Play a Jet Shooter Online Free',
+    'eyebrow': '// FREE ARCADE &middot; 365 ECLIPSE',
+    'h1': 'A 3D jet shooter, <em class="grad grad--cyan">free and with no adverts</em>',
+    'lede': '365 Eclipse is our own arcade shoot &rsquo;em up: pick a fighter and fly seven stages, from the harbour to orbit, with new guns and rockets to catch and a huge boss at the end of each stage. In 3D, in your web browser &mdash; free, nothing to install, no sign-in and no adverts.',
+    'chips': ['No adverts, ever', 'Nothing to install', 'Seven stages'],
+    'primaryCta': ['Play 365 Eclipse free', '/games/eclipse/'], 'secondaryCta': ['All our games', '/games/'],
+    'ctaHead': 'Fancy a go?', 'ctaSub': 'Free, with no adverts, on your PC, laptop, tablet or phone. Nothing to install and no sign-in.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Price', 'Free. Nothing to buy, now or later.'),
+        ('Adverts', 'None. No pop-ups between games, no videos to sit through.'),
+        ('Install or sign-in?', 'Neither. It plays in your web browser.'),
+        ('Controls', 'Arrow keys (or W A S D) or the mouse to fly, Space or the mouse button to fire, B or right-click for a bomb. On a tablet, drag to fly.'),
+        ('Stages', 'Seven, from the harbour to orbit, each with a mid-boss and a boss.'),
+        ('Speeds', 'Gentle (five fighters and a two-hit shield), Classic and Fast.'),
+        _ARCADE_DAILY_ROW,
+        ('Works on', 'A PC, laptop, tablet or phone. It&rsquo;s 3D, so a newer device looks best; without 3D graphics it shows a plain flat picture instead.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; SEE IT IN A MINUTE', 'h2': 'Here&rsquo;s what it&rsquo;s like',
+         'html': _video('eclipse', '365 Eclipse: choosing a fighter, the harbour, a boss, the clouds, the eclipse and the Hall of Fame', ECL_SECS, ECL_POSTER, ECL_VIDEO,
+                        ECL_TRANSCRIPT, '/games/eclipse/', 'Play 365 Eclipse free &#8594;', _ARCADE_NOTE)},
+        {'eyebrow': '/02 &mdash; NO ADVERTS', 'h2': 'Why there are no adverts, and never will be', 'html': _WHY_FREE},
+        {'eyebrow': '/03 &mdash; HOW TO PLAY', 'h2': 'How to play 365 Eclipse',
+         'html': '<ol><li><strong>You fire when you choose.</strong> Hold Space or the mouse button (on a tablet, the Fire button) to shoot; tap it quickly and you fire faster still.</li>'
+                 '<li><strong>Fly</strong> with the arrow keys (or W A S D), the mouse, or by dragging anywhere on the screen. Only the tiny white dot in the middle of your fighter can be hit.</li>'
+                 '<li><strong>Catch the pods.</strong> Square gun pods: V Vulcan, S Spread, L Laser that goes through everything, T Thunder that bends to its target &mdash; the same letter again powers your gun up, to 4. Round rocket pods: R Rockets, H Homing missiles, C Cluster shells. Six-sided bonus pods: B an extra bomb, + a shield, W a wingman (up to two), &times;2 double points for 20 seconds.</li>'
+                 '<li><strong>Bombs:</strong> press B, right-click or Bomb for a carpet of blasts that clears every bullet. Up to seven.</li>'
+                 '<li><strong>Bosses:</strong> shoot off their guns for 5,000 each &mdash; the core takes half damage while its guns stand.</li></ol>'
+                 '<p>Shoot down a whole flight and the last one leaves a pod. Tanks, buildings, ships and trains leave gold medals: catch them one after another and each is worth more, up to 10,000. P pauses.</p>'},
+        {'eyebrow': '/04 &mdash; FOUR FIGHTERS, SEVEN STAGES', 'h2': 'From the harbour to orbit',
+         'html': _FIGHTERS +
+                 '<p>The seven stages: <strong>Harbour</strong>, <strong>City</strong>, <strong>Desert Base</strong>, <strong>Above the Clouds</strong>, <strong>Arctic Sea</strong>, <strong>Canyon Fortress</strong> and <strong>Eclipse</strong> &mdash; each with a mid-boss, and a boss to finish: the Leviathan, the Thunderhead, the Colossus, the Stormcrow, the Kraken, the Citadel and the Eclipse itself.</p>'
+                 '<p>Three speeds: <strong>Gentle</strong> gives you five fighters and a two-hit shield; <strong>Classic</strong> and <strong>Fast</strong> are for when you&rsquo;re ready. There&rsquo;s an optional techno track in Settings.</p>'},
+        {'eyebrow': '/05 &mdash; HIGH SCORES', 'h2': 'A Hall of Fame for every speed', 'html': _ARCADE_DAILY},
+        {'eyebrow': '/06 &mdash; MORE GAMES', 'h2': 'Arcade and card games, all free with no adverts', 'html': _ARCADE_ALL + _PLAY_TRACK},
+    ],
+    'howToName': 'How to play 365 Eclipse',
+    'howToSteps': [
+        {'name': 'Choose your fighter', 'text': 'Open 365 Eclipse in your web browser, pick Swift, Striker, Titan or Wraith, and press Play.'},
+        {'name': 'Fly and fire', 'text': 'Fly with the arrow keys, the mouse or a drag, and hold Space or the mouse button to fire. Only the white dot in the middle of your fighter can be hit.'},
+        {'name': 'Catch the pods', 'text': 'Catch lettered pods for new guns, rockets, shields, wingmen and bombs. The same gun letter again powers it up, to 4.'},
+        {'name': 'Bomb when it gets busy', 'text': 'Press B or right-click for a bomb that clears every bullet on the screen.'},
+        {'name': 'Beat the boss', 'text': 'Each stage ends with a boss. Shoot its guns off first, then the core. Seven stages take you from the harbour to orbit.'},
+    ],
+    'faqs': [
+        {'q': 'Is 365 Eclipse really free?', 'a': '<p>Yes. There&rsquo;s nothing to buy and nothing to sign up for. It&rsquo;s made by 365 Techies, a family IT firm in Bournemouth.</p>'},
+        _ARCADE_FREE_FAQ,
+        {'q': 'Which fighter should I pick?', 'a': '<p>Striker is a good start, with the Spread gun and Rockets. Swift is the quickest, Titan is slow but shielded, and Wraith has Thunder and Homing missiles. You can change in Settings before your next game.</p>'},
+        {'q': 'Does it need a fast computer?', 'a': '<p>It&rsquo;s 3D, so a newer PC, tablet or phone looks best &mdash; but it plays in any up-to-date browser, and a computer without 3D graphics gets a plain flat picture instead.</p>'},
+        _ARCADE_INSTALL_FAQ,
+        {'q': 'Can I play on a tablet or phone?', 'a': '<p>Yes. Drag anywhere to fly, hold Fire to shoot, and Bomb clears the screen.</p>'},
+        _ARCADE_HOF_FAQ,
+    ],
+    'crossLinksHtml': '<p>More free games: <a href="/play-invaders-online-free/">365 Invaders</a>, <a href="/play-brick-breaker-online-free/">365 Bat &amp; Ball</a>, <a href="/play-driving-game-online-free/">365 Coast Run</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
+}
+
+# ============================================================ 365 Coast Run (no voice - its rule: the game's own music and engine, captions)
+CR_VIDEO = "/images/games-coastrun-video-v1.mp4"
+CR_POSTER = "/images/games-coastrun-poster-v1.webp"
+CR_SECS = 72
+CR_NOTE = 'Real gameplay recorded on a PC, with the computer at the wheel and a few camera angles of our own: %s seconds, with the game&rsquo;s own music and engine, and captions.'
+CR_TRANSCRIPT = ("There&rsquo;s no voice in this one &mdash; just the game&rsquo;s own music and engine, and these captions. "
+                 "Free, no adverts: a 3D road race in your browser. No download and no sign-in. Press Play, and the lights turn green. "
+                 "From Bournemouth seafront: your girlfriend beside you. A red roadster, the open road and the Dorset coast. "
+                 "Beat the clock: drift, nitro, near misses. She asks for things as you go &mdash; a slipstream, a jump, the coins. Do them for hearts. "
+                 "Fifteen real places: choose your road at every fork. Sandbanks, Old Harry, Corfe, Swanage, the New Forest &mdash; the map shows your way. "
+                 "Five goals, Lyme Regis to the Needles: Durdle Door, Portland, Weymouth, Lyme Regis or the Needles &mdash; a time bonus, a love bonus and a rank. "
+                 "Hall of Fame: today, this week, all time, and your town. Next time, your best drive races you as a ghost car.")
+
+CR = {
+    'slug': 'play-driving-game-online-free',
+    'title': 'Free 3D Driving Game Online, No Adverts | 365 Techies',
+    'metaDesc': 'Play 365 Coast Run free: a 3D arcade racing game along the real Dorset coast, from Bournemouth to Lyme Regis. No download, no sign-in and no adverts.',
+    'ogTitle': 'Play 365 Coast Run free - a 3D driving game along the Dorset coast',
+    'crumbName': 'Play a Driving Game Online Free',
+    'eyebrow': '// FREE ARCADE &middot; 365 COAST RUN',
+    'h1': 'A 3D driving game along the Dorset coast, <em class="grad grad--cyan">free and with no adverts</em>',
+    'lede': '365 Coast Run is our own arcade road race: a red roadster, your girlfriend beside you, and the clock ticking, from Bournemouth seafront along the Dorset coast. In 3D, in your web browser &mdash; free, no download, no sign-in and no adverts. Not one.',
+    'chips': ['No adverts, ever', 'No download', 'Real Dorset places'],
+    'primaryCta': ['Play 365 Coast Run free', '/games/coastrun/'], 'secondaryCta': ['All our games', '/games/'],
+    'ctaHead': 'Fancy a drive?', 'ctaSub': 'Free, with no adverts, on your PC, laptop, tablet or phone. No download and no sign-in.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Price', 'Free. Nothing to buy, now or later.'),
+        ('Adverts', 'None. No pop-ups between runs, no videos to sit through.'),
+        ('Download or sign-in?', 'Neither. It plays in your web browser.'),
+        ('Controls', 'Left and right arrows to steer, Space for nitro, down to brake &mdash; tap it while turning to drift. The car goes by itself. On a phone, touch the left or right of the screen.'),
+        ('The route', 'Fifteen real places from Bournemouth seafront. Pick your road at every fork, to one of five goals.'),
+        ('Speeds', 'Gentle (more time, less traffic, help round the bends), Classic and Fast.'),
+        _ARCADE_DAILY_ROW,
+        ('Works on', 'A PC, laptop, tablet or phone. It&rsquo;s 3D, so a newer device looks best; on a slower one it turns the detail down by itself.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; SEE IT IN A MINUTE', 'h2': 'Here&rsquo;s what it&rsquo;s like',
+         'html': _video('coastrun', '365 Coast Run: Bournemouth seafront, drifting and nitro, Christchurch, Swanage, the goal at Durdle Door and the Hall of Fame', CR_SECS, CR_POSTER, CR_VIDEO,
+                        CR_TRANSCRIPT, '/games/coastrun/', 'Play 365 Coast Run free &#8594;', CR_NOTE)},
+        {'eyebrow': '/02 &mdash; NO ADVERTS', 'h2': 'Why there are no adverts, and never will be', 'html': _WHY_FREE},
+        {'eyebrow': '/03 &mdash; HOW TO PLAY', 'h2': 'How to play 365 Coast Run',
+         'html': '<ol><li><strong>The aim:</strong> reach a goal before the clock runs out. Each stretch of road ends at a checkpoint that adds time. Five stretches make a run.</li>'
+                 '<li><strong>Steer</strong> with the left and right arrow keys (or A and D). The car accelerates by itself; press down (or S) to brake.</li>'
+                 '<li><strong>Drift</strong> the bends: while turning at speed, tap down and the back slides out, so you go round sideways at full speed. Drifts one after another chain for more points and more nitro.</li>'
+                 '<li><strong>Nitro:</strong> hold Space and flames shoot from the pipes, well past full speed while the blue bar lasts. Earn more by drifting, near misses, slipstreams and lines of coins.</li>'
+                 '<li><strong>Your passenger</strong> asks for things as you go &mdash; a drift, a near miss, a jump, the coins. Do it before her timer runs out for up to three hearts, and take the road she asks for at a fork for two more.</li></ol>'
+                 '<p>On the road: a red magnet pulls in the coins, a gold star lets you smash through traffic, a purple gem doubles your points, and a green clock adds three seconds. P pauses.</p>'},
+        {'eyebrow': '/04 &mdash; FIFTEEN PLACES, FIVE GOALS', 'h2': 'From Bournemouth seafront to Lyme Regis',
+         'html': '<p>Every run starts on <strong>Bournemouth</strong> seafront. At the end of each stretch the road splits &mdash; keep left (west) or right (east) to choose where you go next, through real places like <strong>Sandbanks</strong>, <strong>Christchurch</strong>, <strong>Corfe Castle</strong>, <strong>Swanage</strong>, the <strong>New Forest</strong>, <strong>Lymington</strong>, <strong>Hengistbury Head</strong> and <strong>Golden Cap</strong>.</p>'
+                 '<p>There are five goals: <strong>Lyme Regis</strong>, <strong>Durdle Door</strong>, <strong>Portland</strong>, <strong>Weymouth</strong> and <strong>the Needles</strong>. Reach one for a time bonus, a love bonus and a rank &mdash; or carry on into round 2, back through the town, busier and quicker.</p>'
+                 '<p>Every stretch keeps your best time on your device, and next time your best drive races beside you as a see-through ghost car. Three speeds: <strong>Gentle</strong> gives a little more time, less traffic and help round the bends.</p>'},
+        {'eyebrow': '/05 &mdash; HIGH SCORES', 'h2': 'A Hall of Fame for every speed', 'html': _ARCADE_DAILY},
+        {'eyebrow': '/06 &mdash; MORE GAMES', 'h2': 'Arcade and card games, all free with no adverts', 'html': _ARCADE_ALL + _PLAY_TRACK},
+    ],
+    'howToName': 'How to play 365 Coast Run',
+    'howToSteps': [
+        {'name': 'Start the race', 'text': 'Open 365 Coast Run in your web browser and press Play. Hold nitro as the lights turn green for a flying start.'},
+        {'name': 'Steer and brake', 'text': 'Steer with the left and right arrow keys. The car goes by itself; press down to brake.'},
+        {'name': 'Drift the bends', 'text': 'While turning at speed, tap down to drift and go round sideways at full speed. Chained drifts earn more nitro.'},
+        {'name': 'Choose your road', 'text': 'At the end of each stretch the road splits: keep left or right to choose your next place.'},
+        {'name': 'Reach a goal', 'text': 'Beat the clock through five stretches to reach one of five goals: Lyme Regis, Durdle Door, Portland, Weymouth or the Needles.'},
+    ],
+    'faqs': [
+        {'q': 'Is 365 Coast Run really free?', 'a': '<p>Yes. There&rsquo;s nothing to buy and nothing to sign up for. It&rsquo;s made by 365 Techies, a family IT firm in Bournemouth.</p>'},
+        _ARCADE_FREE_FAQ,
+        {'q': 'Are the places real?', 'a': '<p>Yes &mdash; Bournemouth seafront, Sandbanks, Christchurch, Corfe Castle, Swanage, Durdle Door, Lyme Regis and more, drawn by us in our own style. The road between them is our own, made for racing.</p>'},
+        {'q': 'How do I drift?', 'a': '<p>While you&rsquo;re turning at speed, tap the down arrow and the back slides out. Keep steering into the bend to hold it. With automatic drifting on in Settings, just hold the turn into a bend.</p>'},
+        _ARCADE_INSTALL_FAQ,
+        {'q': 'Can I play on a phone or tablet?', 'a': '<p>Yes. Touch the left or right of the screen to steer, and both at once for nitro &mdash; or choose buttons in Settings. It&rsquo;s 3D, so a newer device looks best.</p>'},
+        _ARCADE_HOF_FAQ,
+    ],
+    'crossLinksHtml': '<p>More free games: <a href="/play-jet-shooter-game-online-free/">365 Eclipse</a>, <a href="/play-invaders-online-free/">365 Invaders</a>, <a href="/play-brick-breaker-online-free/">365 Bat &amp; Ball</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
+}
+
+
+def _extras(slug, video, poster, secs, name, desc, game_name, game_url, cover, og, genre='Card game'):
     page = next(p for p in bp.PAGES if p.get("slug") == slug)
     page["og_image"] = og
     orig = page["schema"]
@@ -843,7 +1194,7 @@ def _extras(slug, video, poster, secs, name, desc, game_name, game_url, cover, o
                   "contentUrl": SITE + video, "embedUrl": SITE + "/" + slug + "/#video", "inLanguage": "en-GB",
                   "publisher": {"@id": SITE + "/#business"}})
         g.append({"@type": "VideoGame", "@id": SITE + "/" + slug + "/#game", "name": game_name, "url": SITE + game_url,
-                  "description": desc, "genre": "Card game", "gamePlatform": "Web browser", "applicationCategory": "Game",
+                  "description": desc, "genre": genre, "gamePlatform": "Web browser", "applicationCategory": "Game",
                   "operatingSystem": "Any (in a web browser)", "playMode": "SinglePlayer", "inLanguage": "en-GB",
                   "isAccessibleForFree": True, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "GBP"},
                   "image": SITE + cover, "publisher": {"@id": SITE + "/#business"}, "subjectOf": {"@id": SITE + "/" + slug + "/#video"}})
@@ -851,7 +1202,7 @@ def _extras(slug, video, poster, secs, name, desc, game_name, game_url, cover, o
     page["schema"] = schema
 
 
-for _d in (PAT, CRB, FC, HE, GN, WH, SP, TP, PY):
+for _d in (PAT, CRB, FC, HE, GN, WH, SP, TP, PY, INV, BB, ECL, CR):
     _d = dict(_d)
     for _k in ('title', 'metaDesc', 'ogTitle'):   # plain apostrophes in titles, meta tags and JSON-LD
         _d[_k] = _d[_k].replace('&rsquo;', "'")
@@ -884,3 +1235,15 @@ _extras('play-tripeaks-solitaire-online-free', TP_VIDEO, TP_POSTER, TP_SECS, 'Tr
 _extras('play-pyramid-solitaire-online-free', PY_VIDEO, PY_POSTER, PY_SECS, 'Pyramid Solitaire from 365 Techies, in a minute',
         'Free Pyramid Solitaire with no adverts: pairs that make 13, a card and its partner, the deck, a win, and the daily deal with its Hall of Fame.',
         'Pyramid Solitaire', '/games/pyramid/', '/games/img/covers/pyramid-v1.svg', '/images/games-pyramid-og-v1.jpg')
+_extras('play-invaders-online-free', INV_VIDEO, INV_POSTER, INV_SECS, '365 Invaders from 365 Techies, in a minute',
+        'Our own free 80s-style alien shooter with no adverts: capsules, combos, the Mothership, the Retro look and the Hall of Fame.',
+        '365 Invaders', '/games/invaders/', '/games/img/invaders-v1.webp', '/images/games-invaders-og-v1.jpg', 'Arcade shooter')
+_extras('play-brick-breaker-online-free', BB_VIDEO, BB_POSTER, BB_SECS, '365 Bat & Ball from 365 Techies, in a minute',
+        'Our own free brick breaker with no adverts: lasers, three balls, exploding bricks, the Mothership and the Hall of Fame.',
+        '365 Bat & Ball', '/games/batball/', '/games/img/batball-v1.webp', '/images/games-batball-og-v1.jpg', 'Arcade brick breaker')
+_extras('play-jet-shooter-game-online-free', ECL_VIDEO, ECL_POSTER, ECL_SECS, '365 Eclipse from 365 Techies, in a minute',
+        'Our own free 3D jet shooter with no adverts: four fighters, seven stages from the harbour to orbit, bosses and the Hall of Fame.',
+        '365 Eclipse', '/games/eclipse/', '/games/img/eclipse-v2.webp', '/images/games-eclipse-og-v1.jpg', 'Arcade shoot-em-up')
+_extras('play-driving-game-online-free', CR_VIDEO, CR_POSTER, CR_SECS, '365 Coast Run from 365 Techies, in a minute',
+        'Our own free 3D driving game along the Dorset coast with no adverts: drifting, nitro, fifteen real places, five goals and the Hall of Fame.',
+        '365 Coast Run', '/games/coastrun/', '/games/img/coastrun-v5.webp', '/images/games-coastrun-og-v1.jpg', 'Arcade racing')
