@@ -51,8 +51,8 @@ _WHY_FREE = ('<p>We&rsquo;re <strong>365 Techies</strong>, a family-run computer
              '<a href="tel:+441202775566">01202 775566</a>.</p>')
 
 _ALL_GAMES = ('<p>The same no-adverts promise runs through every game on <a href="/games/">our games page</a>: '
-              '<a href="/play-patience-online-free/">Patience</a>, <a href="/games/freecell/">FreeCell</a>, <a href="/games/spider/">Spider</a>, '
-              '<a href="/games/tripeaks/">TriPeaks</a>, <a href="/games/pyramid/">Pyramid</a>, <a href="/games/hearts/">Hearts</a>, '
+              '<a href="/play-patience-online-free/">Patience</a>, <a href="/play-freecell-online-free/">FreeCell</a>, <a href="/games/spider/">Spider</a>, '
+              '<a href="/games/tripeaks/">TriPeaks</a>, <a href="/games/pyramid/">Pyramid</a>, <a href="/play-hearts-online-free/">Hearts</a>, '
               '<a href="/games/gin/">Gin Rummy</a>, <a href="/play-cribbage-online-free/">Cribbage</a> and <a href="/games/whist/">Whist</a>, '
               'plus our own arcade games. They&rsquo;re also in the Games menu of our free Windows app, <a href="/free-pc-health-check/">365 PC Manager</a>.</p>')
 
@@ -135,7 +135,7 @@ PAT = {
         {'q': 'What is the Hall of Fame?', 'a': '<p>Win Today&rsquo;s deal and you can put your initials and town on the board for the fastest win that day &mdash; only if you choose to. Every win is checked by replaying it on our server, so nobody can cheat their way on.</p>'},
         {'q': 'Will my game be saved?', 'a': '<p>Yes, as you go, in your web browser, so you can stop and carry on later. Your scores are kept there too.</p>'},
     ],
-    'crossLinksHtml': '<p>More free games: <a href="/play-cribbage-online-free/">Cribbage</a>, <a href="/games/freecell/">FreeCell</a>, <a href="/games/spider/">Spider</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
+    'crossLinksHtml': '<p>More free games: <a href="/play-cribbage-online-free/">Cribbage</a>, <a href="/play-freecell-online-free/">FreeCell</a>, <a href="/games/spider/">Spider</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
 }
 
 # ============================================================ Cribbage
@@ -222,7 +222,173 @@ CRB = {
         {'q': 'Can I play against a friend?', 'a': '<p>Not yet &mdash; this is you against the computer. But Today&rsquo;s match is the same cards for everyone, so you can compare scores with friends in the Hall of Fame.</p>'},
         {'q': 'What is the Hall of Fame?', 'a': '<p>Win Today&rsquo;s match and you can put your initials and town on the board, ranked by the biggest winning margin &mdash; only if you choose to. The whole match is replayed on our server before it counts.</p>'},
     ],
-    'crossLinksHtml': '<p>More free games: <a href="/play-patience-online-free/">Patience</a>, <a href="/games/hearts/">Hearts</a>, <a href="/games/gin/">Gin Rummy</a>, <a href="/games/whist/">Whist</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
+    'crossLinksHtml': '<p>More free games: <a href="/play-patience-online-free/">Patience</a>, <a href="/play-hearts-online-free/">Hearts</a>, <a href="/games/gin/">Gin Rummy</a>, <a href="/games/whist/">Whist</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
+}
+
+
+# ============================================================ FreeCell (9 Oct 2026; owner: "do FreeCell and Hearts pages next")
+# UK autocomplete: "freecell online free no ads", "freecell online free no sign up", "free freecell no ads",
+# "freecell windows xp / 7 / 11" (people after the Windows one). Facts: games/freecell/freecell.js LV + help; deals made
+# with Microsoft's own formula (engine.js: 214013 / 2531011), so the deal numbers match Windows FreeCell.
+FC_VIDEO = "/images/games-freecell-video-v1.mp4"
+FC_POSTER = "/images/games-freecell-poster-v1.webp"
+FC_SECS = 60
+FC_TRANSCRIPT = ("This is FreeCell, from 365 Techies. It&rsquo;s free, there&rsquo;s nothing to install, and there are no adverts. "
+                 "Every card is face up from the start, so you can plan ahead. And the deal numbers are the same as the FreeCell that came with Windows. "
+                 "The four free cells each hold a card while you get it out of the way. Tap a card or drag it, and press Hint if you&rsquo;re stuck. "
+                 "Easy has a Hint, Normal doesn&rsquo;t, and Hard and Expert give you fewer free cells. "
+                 "Your game is saved as you go, so you can stop and carry on later, on your PC, your tablet or your phone. And when you win, the cards take a bow. "
+                 "There&rsquo;s a new deal every day, the same cards for everyone, with a Hall of Fame, a three-minute sprint, and a hundred-level Journey. "
+                 "Play free at 365techies.co.uk. No adverts. No sign-up. Just the cards.")
+
+FC = {
+    'slug': 'play-freecell-online-free',
+    'title': 'Play FreeCell Online Free, No Adverts | 365 Techies',
+    'metaDesc': 'Play FreeCell online free: every card face up, the same deals as Windows FreeCell, no adverts, nothing to download, no sign-in. A new deal every day.',
+    'ogTitle': 'Play FreeCell online free - the Windows deals, no adverts',
+    'crumbName': 'Play FreeCell Online Free',
+    'eyebrow': '// FREE FREECELL',
+    'h1': 'Play FreeCell online, <em class="grad grad--cyan">free and with no adverts</em>',
+    'lede': 'FreeCell with big, clear cards and the same deals as the one that came with Windows &mdash; right in your web browser. It&rsquo;s free, there&rsquo;s nothing to install, no sign-in, and no adverts. Not one.',
+    'chips': ['No adverts, ever', 'Nothing to install', 'The Windows deals'],
+    'primaryCta': ['Play FreeCell free', '/games/freecell/'], 'secondaryCta': ['All our games', '/games/'],
+    'ctaHead': 'Fancy a game of FreeCell?', 'ctaSub': 'Free, with every card face up and no adverts, on your PC, tablet or phone. Nothing to install and no sign-in.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Price', 'Free. Nothing to buy, now or later.'),
+        ('Adverts', 'None. No pop-ups between games, no videos to sit through.'),
+        ('Install or sign-in?', 'Neither. It plays in your web browser; your game and scores are saved as you go.'),
+        ('The deals', 'Made the same way as Windows FreeCell, so deal 1 here is deal 1 there. Almost every deal can be won.'),
+        ('Levels', 'Easy (four free cells, Hint), Normal (no Hint), Hard (three free cells), Expert (two, no Undo).'),
+        ('Help when stuck', 'Hint on Easy; Undo as often as you like on every level but Expert.'),
+        ('Every day', 'Today&rsquo;s deal, the same cards for everyone, with a Hall of Fame for the fastest wins, and a 3-minute sprint.'),
+        ('Works on', 'A PC, laptop, tablet or phone &mdash; Windows, Mac, iPad, iPhone or Android.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; SEE IT IN A MINUTE', 'h2': 'Here&rsquo;s what it&rsquo;s like',
+         'html': _video('freecell', 'FreeCell from 365 Techies: every card face up, the free cells, Hint, the four levels, a win and the daily deal', FC_SECS, FC_POSTER, FC_VIDEO,
+                        FC_TRANSCRIPT, '/games/freecell/', 'Play FreeCell free &#8594;')},
+        {'eyebrow': '/02 &mdash; NO ADVERTS', 'h2': 'Why there are no adverts, and never will be', 'html': _WHY_FREE},
+        {'eyebrow': '/03 &mdash; HOW TO PLAY', 'h2': 'How to play FreeCell',
+         'html': '<ol><li><strong>The aim:</strong> build four piles at the top right, one for each suit, from Ace up to King.</li>'
+                 '<li><strong>Every card is face up</strong> from the start, so you can plan ahead &mdash; almost every deal can be won.</li>'
+                 '<li><strong>In the eight columns,</strong> put each card on one a step higher and the other colour &mdash; a red 6 on a black 7.</li>'
+                 '<li><strong>The four free cells</strong> at the top left each hold one card while you get it out of the way.</li>'
+                 '<li><strong>Any card</strong> can go in an empty column, and several cards in order move together when there&rsquo;s room.</li>'
+                 '<li><strong>Tap a card</strong> and it goes to the best place for it &mdash; a free cell if nothing else fits. Dragging works too.</li></ol>'
+                 '<p>Prefer the keyboard? The arrow keys choose a card and Enter plays it; N is a new game, U undo, H hint and F full screen.</p>'},
+        {'eyebrow': '/04 &mdash; LIKE WINDOWS', 'h2': 'The same FreeCell deals as Windows',
+         'html': '<p>FreeCell came with Windows for years, and lots of people still miss it. Our deals are made with the same formula Microsoft used, so <strong>deal 1 here is deal 1 in Windows FreeCell</strong>, and so on through the numbers &mdash; the same game you remember, with bigger cards and no adverts.</p>'
+                 '<ul><li><strong>Easy</strong> &mdash; four free cells, with Undo and Hint.</li>'
+                 '<li><strong>Normal</strong> &mdash; four free cells, with Undo but no Hint.</li>'
+                 '<li><strong>Hard</strong> &mdash; only three free cells, no Hint.</li>'
+                 '<li><strong>Expert</strong> &mdash; only two free cells, with no Undo or Hint. Harder levels score more.</li></ul>'},
+        {'eyebrow': '/05 &mdash; EVERY DAY', 'h2': 'A daily deal, a Hall of Fame and a 3-minute sprint',
+         'html': '<ul><li><strong>Today&rsquo;s deal</strong> &mdash; the same cards for everyone, at each level. Win it and you can put your initials and town in the <strong>Hall of Fame</strong> for the fastest win. Every win is replayed move by move on our server before it counts, so the board is fair.</li>'
+                 '<li><strong>The 3-minute sprint</strong> &mdash; how many cards can you get up to the piles in three minutes? Send the link to a friend and see if they can beat you.</li>'
+                 '<li><strong>The Journey</strong> &mdash; a hundred levels, each with three stars to win.</li>'
+                 '<li><strong>My scores</strong> &mdash; wins, best times and your streak, kept in your browser. To carry them to another device, use <em>Keep my scores</em>.</li></ul>'},
+        {'eyebrow': '/06 &mdash; MORE GAMES', 'h2': 'Nine card games, all free with no adverts', 'html': _ALL_GAMES + _PLAY_TRACK},
+    ],
+    'howToName': 'How to play FreeCell',
+    'howToSteps': [
+        {'name': 'Start a game', 'text': 'Open FreeCell in your web browser and press Play. Every card is dealt face up into eight columns.'},
+        {'name': 'Build down the columns', 'text': 'Put each card on one a step higher and the other colour, such as a red 6 on a black 7.'},
+        {'name': 'Use the free cells', 'text': 'Each of the four free cells at the top left holds one card while you get it out of the way.'},
+        {'name': 'Build the four piles', 'text': 'Move each Ace to the piles at the top right and build each suit up to the King. Any card can go in an empty column.'},
+        {'name': 'Use Hint and Undo', 'text': 'Stuck? Press Hint on Easy and the next move lights up. Undo takes back as many moves as you like, on every level but Expert.'},
+    ],
+    'faqs': [
+        {'q': 'Is this FreeCell really free?', 'a': '<p>Yes. There&rsquo;s nothing to buy and nothing to sign up for. It&rsquo;s made by 365 Techies, a family IT firm in Bournemouth.</p>'},
+        {'q': 'Are there really no adverts?', 'a': '<p>None at all: no pop-ups between games, no videos to watch. We&rsquo;re paid for looking after computers, not for showing adverts.</p>'},
+        {'q': 'Is it the same as Windows FreeCell?', 'a': '<p>The same rules, and the deals are made with the same formula Microsoft used, so each deal number matches Windows FreeCell. The cards are bigger, and there are no adverts.</p>'},
+        {'q': 'Can every FreeCell game be won?', 'a': '<p>Almost every deal can, with four free cells &mdash; that&rsquo;s the beauty of FreeCell. With fewer free cells, on Hard and Expert, it&rsquo;s much harder.</p>'},
+        {'q': 'Do I need to download or install anything?', 'a': '<p>No. It plays in your web browser on a PC, laptop, tablet or phone. If you use our free Windows app, 365 PC Manager, it&rsquo;s in its Games menu too.</p>'},
+        {'q': 'Can I undo a move?', 'a': '<p>Yes, as many as you like, on every level except Expert.</p>'},
+        {'q': 'What is the Hall of Fame?', 'a': '<p>Win Today&rsquo;s deal and you can put your initials and town on the board for the fastest win that day &mdash; only if you choose to. Every win is checked by replaying it on our server.</p>'},
+        {'q': 'Will my game be saved?', 'a': '<p>Yes, as you go, in your web browser, so you can stop and carry on later. Your scores are kept there too.</p>'},
+    ],
+    'crossLinksHtml': '<p>More free games: <a href="/play-patience-online-free/">Patience</a>, <a href="/play-hearts-online-free/">Hearts</a>, <a href="/games/spider/">Spider</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
+}
+
+# ============================================================ Hearts (9 Oct 2026)
+# UK autocomplete: "hearts card game classic free", "hearts card game free online no download", "free hearts no ads",
+# "hearts no ads", "play hearts online against computer", "hearts windows xp / 7". Facts: games/hearts help + engine.js
+# (players You, Sam, Jo, Alex; pass left/right/across/none; to 100, lowest wins; shooting the moon); games-hof.php
+# (Today's match, ranked by the lowest winning score, the whole match replayed).
+HE_VIDEO = "/images/games-hearts-video-v1.mp4"
+HE_POSTER = "/images/games-hearts-poster-v1.webp"
+HE_SECS = 75
+HE_TRANSCRIPT = ("This is Hearts, the classic card game, from 365 Techies. It&rsquo;s free, there&rsquo;s nothing to install, and there are no adverts. "
+                 "You play against Sam, Jo and Alex. Before each hand, pass three cards. Then follow suit, and try not to take any hearts, or the Queen of spades. "
+                 "Cards you can&rsquo;t play are dimmed, so you can&rsquo;t go wrong. There are four levels, with a Hint on the easier two. And you can slow the others down, if you like to watch. "
+                 "Your game is saved as you go, so you can stop and carry on later, on your PC, your tablet or your phone. When someone reaches a hundred, the lowest score wins. "
+                 "Play today&rsquo;s match, the same cards for everyone, and get your initials into the Hall of Fame. Free at 365techies.co.uk.")
+
+HE = {
+    'slug': 'play-hearts-online-free',
+    'title': 'Free Hearts Card Game Online, No Adverts | 365 Techies',
+    'metaDesc': 'Play the classic Hearts card game online free against the computer: no adverts, nothing to download, no sign-in. Four levels, a Hint and a daily match.',
+    'ogTitle': 'Play Hearts online free - the classic card game, no adverts',
+    'crumbName': 'Play Hearts Online Free',
+    'eyebrow': '// FREE HEARTS CARD GAME',
+    'h1': 'Play Hearts online, <em class="grad grad--cyan">free and with no adverts</em>',
+    'lede': 'The classic Hearts card game &mdash; the one that came with Windows &mdash; against three computer players, right in your web browser. Free, nothing to install, no sign-in, and no adverts. Not one.',
+    'chips': ['No adverts, ever', 'Nothing to install', 'Against the computer'],
+    'primaryCta': ['Play Hearts free', '/games/hearts/'], 'secondaryCta': ['All our games', '/games/'],
+    'ctaHead': 'Fancy a game of Hearts?', 'ctaSub': 'Free against three computer players, with no adverts, on your PC, tablet or phone. Nothing to install and no sign-in.',
+    'schemaKind': 'howto',
+    'atAGlance': [
+        ('Price', 'Free. Nothing to buy, now or later.'),
+        ('Adverts', 'None. No pop-ups between hands, no videos to sit through.'),
+        ('Install or sign-in?', 'Neither. It plays in your web browser; your game is saved as you go.'),
+        ('Who you play', 'Sam, Jo and Alex, the computer. Four levels; a Hint on Easy and Normal.'),
+        ('The rules', 'Pass three cards, follow suit, dodge the hearts and the Queen of spades. Lowest score at 100 wins.'),
+        ('Can&rsquo;t go wrong', 'Cards you can&rsquo;t play are dimmed, and tapping one tells you why.'),
+        ('Every day', 'Today&rsquo;s match: the same cards for everyone, with a Hall of Fame for the lowest winning score.'),
+        ('And', 'A 100-level Journey, one hand a level, and the others can play slower if you like to watch.'),
+    ],
+    'sections': [
+        {'eyebrow': '/01 &mdash; SEE IT IN A MINUTE', 'h2': 'Here&rsquo;s what it&rsquo;s like',
+         'html': _video('hearts', 'Hearts from 365 Techies against three computer players: passing, following suit, the scores each hand, a win and the daily match', HE_SECS, HE_POSTER, HE_VIDEO,
+                        HE_TRANSCRIPT, '/games/hearts/', 'Play Hearts free &#8594;')},
+        {'eyebrow': '/02 &mdash; NO ADVERTS', 'h2': 'Why there are no adverts, and never will be', 'html': _WHY_FREE},
+        {'eyebrow': '/03 &mdash; HOW TO PLAY', 'h2': 'How to play Hearts',
+         'html': '<ol><li><strong>Score as few points as you can.</strong> Every heart you take is 1 point and the Queen of spades is 13. The match ends when someone reaches 100 &mdash; the lowest score wins.</li>'
+                 '<li><strong>Pass three cards</strong> before each hand: tap three, then Pass. The passing goes left, then right, then across, then a hand with no passing. Cards passed to you glow.</li>'
+                 '<li><strong>Tricks:</strong> the 2 of clubs starts. Everyone plays one card, and you must follow suit if you can. The highest card of the suit led takes the trick (Ace is high) and leads the next one.</li>'
+                 '<li><strong>Hearts can&rsquo;t be led</strong> until one has been played on a trick, and no points go on the very first trick.</li>'
+                 '<li><strong>Shooting the moon:</strong> take <em>all</em> the hearts and the Queen and you score nothing &mdash; everyone else gets 26.</li></ol>'
+                 '<p>Cards you can&rsquo;t play are dimmed &mdash; tap one and you&rsquo;ll be told why. Prefer the keyboard? The arrow keys choose a card and Enter plays it; Tab reaches the buttons.</p>'},
+        {'eyebrow': '/04 &mdash; YOUR PACE', 'h2': 'Four levels, and the others play at your pace',
+         'html': '<ul><li><strong>Four levels</strong> &mdash; how good Sam, Jo and Alex are. Easy and Normal have a Hint if you&rsquo;re not sure what to pass or play.</li>'
+                 '<li><strong>Slow them down</strong> &mdash; Settings &gt; How fast the others play, if you like to watch every card.</li>'
+                 '<li><strong>The scores after every hand</strong>, and the running totals, so you always know who&rsquo;s heading for 100.</li>'
+                 '<li><strong>Saved as you go</strong> &mdash; stop mid-match and carry on later, on the same device.</li></ul>'},
+        {'eyebrow': '/05 &mdash; EVERY DAY', 'h2': 'Today&rsquo;s match, a Hall of Fame and a 100-level Journey',
+         'html': '<ul><li><strong>Today&rsquo;s match</strong> &mdash; the same cards for everyone, at each level. Win it and you can put your initials and town in the <strong>Hall of Fame</strong>, ranked by the lowest winning score. The whole match is replayed on our server &mdash; the computer players&rsquo; cards too &mdash; before a win counts.</li>'
+                 '<li><strong>The Journey</strong> &mdash; a hundred levels, one hand a level, each with three stars to win.</li></ul>'},
+        {'eyebrow': '/06 &mdash; MORE GAMES', 'h2': 'Nine card games, all free with no adverts', 'html': _ALL_GAMES + _PLAY_TRACK},
+    ],
+    'howToName': 'How to play Hearts',
+    'howToSteps': [
+        {'name': 'Pass three cards', 'text': 'Before each hand, choose three cards to pass: left, then right, then across, then a hand with no passing.'},
+        {'name': 'Lead the 2 of clubs', 'text': 'Whoever has the 2 of clubs starts the first trick.'},
+        {'name': 'Follow suit', 'text': 'Everyone plays one card and must follow the suit led if they can. The highest card of that suit takes the trick and leads next.'},
+        {'name': 'Dodge the points', 'text': 'Each heart you take is 1 point and the Queen of spades is 13. Hearts cannot be led until one has been played.'},
+        {'name': 'Finish at 100', 'text': 'Keep playing hands until someone reaches 100. The lowest score wins. Take every heart and the Queen to shoot the moon.'},
+    ],
+    'faqs': [
+        {'q': 'Can I play Hearts online free against the computer?', 'a': '<p>Yes. You play Sam, Jo and Alex, the computer, at one of four levels. It&rsquo;s free, with no adverts, nothing to download and no sign-in.</p>'},
+        {'q': 'Are there really no adverts?', 'a': '<p>None at all: no pop-ups between hands, no videos to watch. We&rsquo;re 365 Techies, a family IT firm in Bournemouth &mdash; paid for looking after computers, not for showing adverts.</p>'},
+        {'q': 'Is it like the Hearts that came with Windows?', 'a': '<p>Yes, the same classic rules: pass three cards, follow suit, dodge the hearts and the Queen of spades, and the lowest score when someone reaches 100 wins. Shooting the moon is in too.</p>'},
+        {'q': 'What is shooting the moon?', 'a': '<p>Taking every heart <em>and</em> the Queen of spades in one hand. Pull it off and you score nothing for that hand while everyone else gets 26.</p>'},
+        {'q': 'Do I need to download anything?', 'a': '<p>No. It plays in your web browser on a PC, laptop, tablet or phone. It&rsquo;s also in the Games menu of our free Windows app, 365 PC Manager.</p>'},
+        {'q': 'The computer plays too fast for me. Can I slow it down?', 'a': '<p>Yes: Settings &gt; How fast the others play.</p>'},
+        {'q': 'Can I play against friends?', 'a': '<p>Not yet &mdash; this is you against the computer. But Today&rsquo;s match is the same cards for everyone, so you can compare scores in the Hall of Fame.</p>'},
+        {'q': 'What is the Hall of Fame?', 'a': '<p>Win Today&rsquo;s match and you can put your initials and town on the board, ranked by the lowest winning score &mdash; only if you choose to. The whole match is replayed on our server before it counts.</p>'},
+    ],
+    'crossLinksHtml': '<p>More free games: <a href="/play-cribbage-online-free/">Cribbage</a>, <a href="/play-freecell-online-free/">FreeCell</a>, <a href="/games/gin/">Gin Rummy</a>, <a href="/games/whist/">Whist</a> and <a href="/games/">all our games</a>. Computer playing up? <a href="/remote-support/">Remote help</a> from 365 Techies.</p>',
 }
 
 
@@ -247,7 +413,7 @@ def _extras(slug, video, poster, secs, name, desc, game_name, game_url, cover, o
     page["schema"] = schema
 
 
-for _d in (PAT, CRB):
+for _d in (PAT, CRB, FC, HE):
     _d = dict(_d)
     for _k in ('title', 'metaDesc', 'ogTitle'):   # plain apostrophes in titles, meta tags and JSON-LD
         _d[_k] = _d[_k].replace('&rsquo;', "'")
@@ -259,3 +425,9 @@ _extras('play-patience-online-free', PAT_VIDEO, PAT_POSTER, PAT_SECS, 'Patience 
 _extras('play-cribbage-online-free', CRB_VIDEO, CRB_POSTER, CRB_SECS, 'Cribbage from 365 Techies, in a minute',
         'Free cribbage against the computer with no adverts: the crib, the play and the show all counted for you, four levels, a win, and the daily match with its Hall of Fame.',
         'Cribbage', '/games/cribbage/', '/games/img/covers/cribbage-v1.svg', '/images/games-cribbage-og-v1.jpg')
+_extras('play-freecell-online-free', FC_VIDEO, FC_POSTER, FC_SECS, 'FreeCell from 365 Techies, in a minute',
+        'Free FreeCell with the same deals as Windows and no adverts: every card face up, the free cells, Hint, four levels, a win, and the daily deal with its Hall of Fame.',
+        'FreeCell', '/games/freecell/', '/games/img/covers/freecell-v1.svg', '/images/games-freecell-og-v1.jpg')
+_extras('play-hearts-online-free', HE_VIDEO, HE_POSTER, HE_SECS, 'Hearts from 365 Techies, in a minute',
+        'The classic Hearts card game free against three computer players, with no adverts: passing, following suit, the scores each hand, a win, and the daily match with its Hall of Fame.',
+        'Hearts', '/games/hearts/', '/games/img/covers/hearts-v1.svg', '/images/games-hearts-og-v1.jpg')

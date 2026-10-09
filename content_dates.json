@@ -1168,7 +1168,7 @@
  },
  "games": {
   "first": "2026-10-04",
-  "h": "ca6ac8f2a62b39c3",
+  "h": "d13c861da2f51011",
   "last": "2026-10-09"
  },
  "gaming-pc-slow-wont-load-games": {
@@ -2684,11 +2684,21 @@
  },
  "play-cribbage-online-free": {
   "first": "2026-10-09",
-  "h": "dbf34f09d126800c"
+  "h": "062161665fbed481",
+  "last": "2026-10-09"
+ },
+ "play-freecell-online-free": {
+  "first": "2026-10-09",
+  "h": "b22b10b94a561f25"
+ },
+ "play-hearts-online-free": {
+  "first": "2026-10-09",
+  "h": "613f7a26b5e8bdcd"
  },
  "play-patience-online-free": {
   "first": "2026-10-09",
-  "h": "dae3aeea83ea7b78"
+  "h": "002d52a5bae419ae",
+  "last": "2026-10-09"
  },
  "playstation-parental-controls-uk": {
   "first": "2026-08-18",
