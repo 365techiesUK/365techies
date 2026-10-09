@@ -131,15 +131,16 @@ function plus_check($key, $machine, $bind, $now = null, $file = null) {
     if ((int)$e['expires'] && (int)$e['expires'] < $now) return array('ok' => false, 'error' => 'expired', 'expires' => (int)$e['expires']);
     if ($mh === '') return array('ok' => false, 'error' => 'not_this_pc');
     $day = gmdate('Y-m-d', $now);
+    $max = isset($e['max']) ? max(1, (int)$e['max']) : PLUS_MAX_PCS;   // (a free month: its own PC only)
     if (isset($e['pcs'][$mh])) {
         if ((string)($e['pcs'][$mh]['last'] ?? '') !== $day)   // seen: at most one write a day
             plus_locked(function (&$d) use ($h, $mh, $day) { if (!isset($d['keys'][$h]['pcs'][$mh])) return false; $d['keys'][$h]['pcs'][$mh]['last'] = $day; return true; }, $file);
         return array('ok' => true, 'expires' => (int)$e['expires']);
     }
     if (!$bind) return array('ok' => false, 'error' => 'not_this_pc');
-    $r = plus_locked(function (&$d) use ($h, $mh, $day) {
+    $r = plus_locked(function (&$d) use ($h, $mh, $day, $max) {
         if (!isset($d['keys'][$h])) return false;
-        if (count($d['keys'][$h]['pcs']) >= PLUS_MAX_PCS) return 'full';
+        if (count($d['keys'][$h]['pcs']) >= $max) return 'full';
         $d['keys'][$h]['pcs'][$mh] = array('first' => $day, 'last' => $day);
         return true;
     }, $file);
@@ -313,7 +314,90 @@ function plus_list($file = null) {
     $d = plus_load($file); $o = array();
     foreach (($d ? $d['keys'] : array()) as $e) $o[] = array('id' => $e['id'], 'last4' => $e['last4'], 'email' => $e['email'], 'created' => (int)$e['created'],
         'expires' => (int)$e['expires'], 'status' => $e['status'], 'provider' => $e['provider'], 'note' => $e['note'], 'by' => $e['by'], 'pcs' => count($e['pcs']),
-        'runs' => (int)($e['runs'] ?? 0), 'last_run' => (int)($e['last_run'] ?? 0), 'test' => !empty($e['test']));
+        'runs' => (int)($e['runs'] ?? 0), 'last_run' => (int)($e['last_run'] ?? 0), 'test' => !empty($e['test']), 'trial' => ($e['provider'] ?? '') === 'trial');
     usort($o, function ($a, $b) { return $b['created'] - $a['created']; });
+    return $o;
+}
+
+/* ---------------- a free month (9 Oct 2026) ----------------
+ * Owner: "people that have got the free version ... offer them like a 30-day trial ... activate their license and say
+ * that they've been specially approved ... fully featured ... so they can service their computers and get the proper
+ * reports". Staff choose installs in the portal's "PC Manager installs" card; each gets an Unlock key of its own:
+ * PLUS_TRIAL_DAYS long, for that one PC only (bound to it now, 'max' 1), provider 'trial', no email (we don't know who
+ * they are). The PC is handed the key at its next keyless check-in (pcm.php) - an app that knows what to do with one
+ * (build 37, "36.1", on) - and from then on checks in with it like any Unlock key: the full service self-run, its report
+ * on the PC unless they choose to send it to us for a free look-over (pcm-lookover.php). One free month per PC, ever.
+ * $d['trials'][install id] = {id (the key's record), at, by, until, key (the key itself - kept ONLY so the PC can be
+ * handed it again, e.g. after a reinstall, and dropped when the month is over), sent (first handed over), got (first
+ * check-in with it)}.
+ */
+if (!defined('PLUS_TRIAL_DAYS')) define('PLUS_TRIAL_DAYS', 30);
+if (!defined('PLUS_TRIAL_MIN_VER')) define('PLUS_TRIAL_MIN_VER', 37);   // the first build that takes a key from a check-in
+function plus_is_mhash($m) { return (bool)preg_match('/^[a-f0-9]{16}$/', (string)$m); }
+// Give one install its free month. -> {ok, until} | {ok:false, error: bad | already | busy}
+function plus_trial_give($mhash, $by, $now = null, $file = null) {
+    $now = $now === null ? time() : (int)$now;
+    if (!plus_is_mhash($mhash)) return array('ok' => false, 'error' => 'bad');
+    $res = array('ok' => false, 'error' => 'busy');
+    plus_locked(function (&$d) use ($mhash, $by, $now, &$res) {
+        if (!isset($d['trials']) || !is_array($d['trials'])) $d['trials'] = array();
+        if (isset($d['trials'][$mhash])) { $res = array('ok' => false, 'error' => 'already', 'until' => (int)$d['trials'][$mhash]['until']); return false; }
+        do { $key = plus_new_key(); $h = plus_hash($key); } while (isset($d['keys'][$h]));
+        $id = bin2hex(random_bytes(5)); $until = $now + PLUS_TRIAL_DAYS * 86400; $day = gmdate('Y-m-d', $now);
+        $d['keys'][$h] = array('id' => $id, 'last4' => substr($key, -4), 'email' => '', 'created' => $now, 'expires' => $until, 'status' => 'active',
+            'provider' => 'trial', 'order' => '', 'note' => 'Free ' . PLUS_TRIAL_DAYS . ' days for install ' . $mhash, 'by' => plus_cut($by, 30),
+            'pcs' => array($mhash => array('first' => $day, 'last' => $day)), 'max' => 1, 'install' => $mhash);
+        $d['trials'][$mhash] = array('id' => $id, 'at' => $now, 'by' => plus_cut($by, 30), 'until' => $until, 'key' => $key, 'sent' => 0, 'got' => 0);
+        $res = array('ok' => true, 'until' => $until);
+        return true;
+    }, $file);
+    return $res;
+}
+// For a keyless check-in from this install (app build $ver): the key to hand over now, or null. Handing it over is
+// noted (the first time, and again at most daily) - never in the check-in's way.
+function plus_trial_handover($mhash, $ver, $now = null, $file = null) {
+    $now = $now === null ? time() : (int)$now;
+    if (!plus_is_mhash($mhash) || (int)$ver < PLUS_TRIAL_MIN_VER) return null;
+    $d = plus_load($file);
+    if (!$d || !isset($d['trials'][$mhash])) return null;
+    $t = $d['trials'][$mhash];
+    if (empty($t['key']) || (int)$t['until'] <= $now) return null;
+    $h = plus_hash($t['key']);
+    if (!isset($d['keys'][$h]) || ($d['keys'][$h]['status'] ?? '') !== 'active') return null;   // switched off by staff
+    if (!(int)$t['sent'] || gmdate('Y-m-d', (int)$t['sent']) !== gmdate('Y-m-d', $now))
+        plus_locked(function (&$d) use ($mhash, $now) { if (!isset($d['trials'][$mhash])) return false; if (!(int)$d['trials'][$mhash]['sent']) $d['trials'][$mhash]['first_sent'] = $now; $d['trials'][$mhash]['sent'] = $now; return true; }, $file);
+    return array('key' => $t['key'], 'until' => (int)$t['until'], 'days' => PLUS_TRIAL_DAYS);
+}
+// A check-in WITH an Unlock key: is it a free month? -> {until, install} or null. The first one also notes 'got'.
+function plus_trial_of($key, $now = null, $file = null) {
+    $now = $now === null ? time() : (int)$now;
+    if (!plus_is_key($key)) return null;
+    $d = plus_load($file); $h = plus_hash($key);
+    if (!$d || !isset($d['keys'][$h]) || ($d['keys'][$h]['provider'] ?? '') !== 'trial') return null;
+    $mh = (string)($d['keys'][$h]['install'] ?? '');
+    if ($mh !== '' && isset($d['trials'][$mh]) && !(int)$d['trials'][$mh]['got'])
+        plus_locked(function (&$d) use ($mh, $now) { if (!isset($d['trials'][$mh]) || (int)$d['trials'][$mh]['got']) return false; $d['trials'][$mh]['got'] = $now; return true; }, $file);
+    return array('until' => (int)$d['keys'][$h]['expires'], 'install' => $mh);
+}
+// Tidy: a month that is over no longer needs its key kept (the record stays - one free month per PC, ever).
+function plus_trial_tidy($now = null, $file = null) {
+    $now = $now === null ? time() : (int)$now;
+    return plus_locked(function (&$d) use ($now) {
+        $ch = false;
+        foreach ((isset($d['trials']) && is_array($d['trials'])) ? $d['trials'] : array() as $mh => $t)
+            if (!empty($t['key']) && (int)$t['until'] + 86400 < $now) { $d['trials'][$mh]['key'] = ''; $ch = true; }
+        return $ch;
+    }, $file) === true;
+}
+// For the portal's installs list: install id => {state: waiting | has_it | ended | off, until, at, by}
+function plus_trial_states($now = null, $file = null) {
+    $now = $now === null ? time() : (int)$now;
+    $d = plus_load($file); $o = array();
+    foreach (($d && isset($d['trials']) && is_array($d['trials'])) ? $d['trials'] : array() as $mh => $t) {
+        $off = false;
+        foreach ($d['keys'] as $e) if (($e['id'] ?? '') === ($t['id'] ?? '-')) $off = ($e['status'] ?? '') !== 'active';
+        $state = $off ? 'off' : ((int)$t['until'] <= $now ? 'ended' : ((int)$t['got'] ? 'has_it' : 'waiting'));
+        $o[$mh] = array('state' => $state, 'until' => (int)$t['until'], 'at' => (int)$t['at'], 'by' => (string)$t['by'], 'sent' => (int)$t['sent'], 'got' => (int)$t['got'], 'id' => (string)$t['id']);
+    }
     return $o;
 }

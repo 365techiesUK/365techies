@@ -178,10 +178,13 @@ $P = (string)file_get_contents(__DIR__ . '/pcm.php');
 $iA = strpos($P, "if (\$action === 'activate') {"); $iPA = strpos($P, 'plus_check($key, $machine, true)', $iA); $iU = strpos($P, "out(array('ok'=>false,'error'=>'unknown_key'))", $iA);
 check($iA !== false && $iPA !== false && $iU !== false && $iPA < $iU, 'activate: an Unlock key is tried before "unknown key"');
 $iC = strpos($P, "if (\$action === 'checkin') {"); $iPC = strpos($P, 'plus_check($key, $machine, false)', $iC); $iK = strpos($P, "out(array('ok'=>true,'tier'=>'free') + \$upd", $iC);
-check($iC !== false && $iPC !== false && $iK !== false && $iPC < $iK && strpos(substr($P, $iK, 400), 'plus_offer_out(') !== false, 'check-in: an Unlock key is checked; only a KEYLESS answer carries the offer');
+check($iC !== false && $iPC !== false && $iK !== false && $iPC < $iK && strpos(substr($P, $iK, 700), 'plus_offer_out(') !== false, 'check-in: an Unlock key is checked; only a KEYLESS answer carries the offer');   // (700: 9 Oct 2026 the free-month hand-over sits in that answer too)
 check(substr_count($P, "!isset(\$db['customers'][\$key]) && function_exists('plus_is_key') && plus_is_key(\$key)") === 4, 'a customer key always wins over an Unlock key (activate, check-in, report, report notice)');
 check(strpos($P, "if (is_readable(__DIR__ . '/pcm-plus-lib.php')) require_once __DIR__ . '/pcm-plus-lib.php';") !== false && strpos($P, "function_exists('plus_offer_out') ? plus_offer_out(") !== false, 'guarded: a missing library can never stop a check-in');
-check(strpos($P, "array('plus_error'=>\$pr['error']) + plus_offer_out(") !== false, 'a key that has run out is offered Unlock again (to renew)');
+check(strpos($P, "\$offer = \$pr['ok'] ? array() : plus_offer_out(") !== false && strpos($P, "array('plus_error'=>\$pr['error']) + \$offer") !== false, 'a key that has run out is offered Unlock again (to renew)');
+// 9 Oct 2026: a free month that has ended - UK PCs are offered our plans even while the paid app is switched off
+check(strpos($P, "if (\$tri && !\$pr['ok'] && !isset(\$offer['offer']) && \$trOut['region'] === 'uk') \$offer = array('offer'=>'plan');") !== false, 'a free month over, in the UK: our plans are offered (even with the paid app off)');
+check(strpos($P, "\$trHand = (\$key === '' && function_exists('plus_trial_handover'))") !== false && strpos($P, "array('trial_key'=>\$trHand['key']") !== false, 'a keyless check-in hands over a waiting free month');
 foreach (array('reportup' => "out(array('ok'=>true,'kept'=>false))", 'reportnote' => "out(array('ok'=>true,'posted'=>false))") as $act => $ans) {
     $i0 = strpos($P, "if (\$action === '" . $act . "') {"); $iP = strpos($P, $ans, $i0); $iU = strpos($P, "out(array('ok'=>false,'error'=>'unknown_key'))", $i0);
     check($i0 !== false && $iP !== false && $iU !== false && $iP < $iU, $act . ': an Unlock key\'s report is taken and NOT kept or posted (stays on the PC; stops the Slack fallback)');
@@ -205,6 +208,49 @@ foreach (array('pcm-plus-admin.php', 'pcm.php', 'pcm-plus-ls.php') as $f) {
 $GI = (string)file_get_contents(__DIR__ . '/../.gitignore');
 foreach (array('api/pcm-plus.json', 'api/pcm-buy.off', 'api/pcm-ls-secret.php', 'api/pcm-plus-ls.log') as $f) check(preg_match('#^' . preg_quote($f, '#') . '\r?$#m', $GI) === 1, 'never committed: ' . $f);
 check(preg_match('#^api/pcm-buy-config\.php\r?$#m', $GI) === 0, 'the config IS in git (nothing secret in it)');
+
+echo "G  a free month (9 Oct 2026: staff give it in the installs card; the PC is handed the key at its next check-in)\n";
+$now = 1791000000; $mhA = plus_mhash('aaaaaaaa11111111'); $mhB = plus_mhash('bbbbbbbb22222222');
+check(plus_trial_give('not-an-id', 'Steve', $now) === array('ok' => false, 'error' => 'bad'), 'a made-up install id is refused');
+$g = plus_trial_give($mhA, 'Steve', $now);
+check(!empty($g['ok']) && $g['until'] === $now + 30 * 86400, 'given: 30 days from now');
+$g2 = plus_trial_give($mhA, 'David', $now + 3600);
+check($g2['ok'] === false && $g2['error'] === 'already', 'never twice for the same PC');
+check(plus_trial_handover($mhA, 36, $now) === null, 'a copy older than 36.1 (build 36) is not handed it - it updates itself first');
+check(plus_trial_handover($mhB, 37, $now) === null, 'a PC that was not given one gets nothing');
+$hv = plus_trial_handover($mhA, 37, $now + 60);
+check(is_array($hv) && plus_is_key($hv['key']) && $hv['until'] === $now + 30 * 86400 && $hv['days'] === 30, 'build 37 (36.1): handed a key of its own and the end date');
+$trialKey = $hv['key'];
+$st = plus_trial_states($now + 120);
+check($st[$mhA]['state'] === 'waiting' && $st[$mhA]['by'] === 'Steve' && $st[$mhA]['sent'] > 0, 'the portal sees it: given by Steve, handed over, not yet back');
+$pc = plus_check($trialKey, 'aaaaaaaa11111111', false, $now + 200);
+check(!empty($pc['ok']), 'the key already works on that PC (no activation step)');
+check(plus_check($trialKey, 'cccccccc33333333', true, $now + 200)['error'] === 'too_many_pcs', 'and on no other PC (one PC only)');
+$to = plus_trial_of($trialKey, $now + 300);
+check(is_array($to) && $to['until'] === $now + 30 * 86400 && $to['install'] === $mhA, 'a check-in with it: known as a free month');
+check(plus_trial_states($now + 400)[$mhA]['state'] === 'has_it', 'the portal sees it: has it');
+$st = plus_trial_states($now + 400);
+check($st[$mhA]['got'] > 0, 'first check-in with it noted');
+check(plus_trial_handover($mhA, 37, $now + 86400 * 2) !== null, 'reinstalled during the month (no key on the PC): handed it again');
+$ex = plus_check($trialKey, 'aaaaaaaa11111111', false, $now + 31 * 86400);
+check($ex['ok'] === false && $ex['error'] === 'expired', 'after 30 days: expired');
+check(plus_trial_handover($mhA, 37, $now + 31 * 86400) === null, 'and not handed over again');
+check(plus_trial_states($now + 31 * 86400)[$mhA]['state'] === 'ended', 'the portal sees it: ended');
+check(plus_trial_tidy($now + 32 * 86400) === true, 'tidy: the key itself is no longer kept once the month is over');
+$raw = (string)file_get_contents(PLUS_FILE);
+check(strpos($raw, $trialKey) === false, 'the key is gone from the store (only its hash and last four stay)');
+check(plus_trial_give($mhA, 'Steve', $now + 40 * 86400)['error'] === 'already', 'one free month per PC, ever - even after it ended');
+check(plus_trial_of('UNLK-2222-3333-4444', $now) === null, 'a key that is not a free month: not treated as one');
+$bought = plus_issue('buyer@example.com', 1, 'Steve', 'staff', '', 'hand sale', $now);
+check(plus_trial_of($bought[0], $now) === null, 'a bought Unlock key is not a free month');
+$keys = plus_list();
+$tk = null; foreach ($keys as $k) if ($k['trial']) $tk = $k;
+check($tk !== null && $tk['email'] === '' && $tk['provider'] === 'trial' && $tk['pcs'] === 1, 'the staff key list marks it a free month (no email; its one PC)');
+plus_set_status($tk['id'], 'revoked');
+$mhC = plus_mhash('dddddddd44444444'); plus_trial_give($mhC, 'Steve', $now);
+check(plus_trial_handover($mhC, 37, $now) !== null, '(a second PC given one)');
+foreach (plus_list() as $k) if ($k['trial'] && strpos($k['note'], $mhC) !== false) plus_set_status($k['id'], 'revoked');
+check(plus_trial_handover($mhC, 37, $now) === null && plus_trial_states($now)[$mhC]['state'] === 'off', 'switched off by staff: not handed over, shown as off');
 
 array_map('unlink', glob("$TMP/*")); @rmdir($TMP);
 echo "\n" . ($fails ? "pcm-plus-test: $fails FAILED\n" : "pcm-plus-test: all passed\n");

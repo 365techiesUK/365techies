@@ -16586,6 +16586,7 @@ _PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
             <li><strong>Website analytics</strong>, only after you accept analytics cookies. If you start a booking and do not finish it, we keep the phone number you entered for 24 hours so we can help you complete it, and your browser stores which page and campaign brought you here so an enquiry can be attributed correctly.</li>
             <li><strong>A live count of who is on the site right now</strong>, without cookies or anything stored on your device: the page being read, a rough town from your internet provider, where the visit came from (Google, Facebook and so on &mdash; never what was searched for), and the kind of device &mdash; phone, tablet or PC, the system and the browser, as any website sees. No names or IP addresses are kept, and it is all forgotten after five minutes.</li>
             <li><strong>A count of 365 PC Manager installs.</strong> The app checks with us for updates when it starts and every hour, whether or not you have linked it to us. For copies that are not linked, we keep only an anonymous install number, the app version, whether the PC runs Windows 10, the days it was first and last seen, and the country &mdash; worked out from the internet address at that moment; the address itself is not kept. Country data: IP geolocation by <a href="https://db-ip.com" rel="noopener">DB-IP</a>, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a>.</li>
+            <li><strong>A free month of 365 PC Manager.</strong> If we give a copy that is not linked to us a free month of everything, we keep a key for it against its anonymous install number until the month is over, and then only a scrambled record that it has had one. Its service reports stay on your PC. Only if you press <strong>&ldquo;Send my report to 365 Techies for a free look-over&rdquo;</strong> and tick to agree do we receive that report, with the name, email address and (if you give one) phone number you type, so a techie can look it over and email you. We keep it for 120 days.</li>
           </ul>
 
           <h2>Moving your email: the 365 Email Mover add-on and 365 PC Manager</h2>
@@ -24606,6 +24607,17 @@ def write_portal_page():
   #p365app .instgrid td { padding:.2rem .3rem; border-bottom:1px solid var(--pline); }
   #p365app .instgrid td.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
   @media (max-width:700px) { #p365app .instgrid { grid-template-columns:1fr; } }
+  /* 9 Oct 2026: a free month for people on the free app - the installs, one by one, with "Give 30 days free" */
+  #p365app .insttrial { margin-top:1.1rem; padding-top:.9rem; border-top:1px solid var(--pline); }
+  #p365app .insttrial h3 { margin:0 0 .3rem; font-size:1.05rem; }
+  #p365app .insttrial table { width:100%; border-collapse:collapse; font-size:.92rem; }
+  #p365app .insttrial th { text-align:left; font-weight:600; color:var(--pmuted,#9fb5d3); padding:.3rem .35rem; border-bottom:1px solid var(--pline); white-space:nowrap; }
+  #p365app .insttrial td { padding:.32rem .35rem; border-bottom:1px solid var(--pline); vertical-align:middle; }
+  #p365app .insttrial td.num { font-variant-numeric:tabular-nums; white-space:nowrap; }
+  #p365app .insttrial .itr-on { color:var(--pgood); font-weight:600; }
+  #p365app .insttrial .itr-wait { color:var(--pcyan); }
+  #p365app .insttrial .itr-actions { display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; margin:.55rem 0 .6rem; }
+  @media (max-width:700px) { #p365app .insttrial th:nth-child(4), #p365app .insttrial td:nth-child(4), #p365app .insttrial th:nth-child(5), #p365app .insttrial td:nth-child(5) { display:none; } }   /* (phones: the dates go, the button stays in view) */
   #p365app .chip.b { color:var(--pbad); border-color:rgba(232,99,126,.4); }
   #p365app .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:.3rem; }
   #p365app .amenu { position:relative; }
@@ -30364,6 +30376,7 @@ def write_portal_page():
       bindOut();
       nxStaffLayout();
       loadDiary(); loadFleet(); loadInstalls(); loadPlus(); cmBind(); loadComms('list');
+      lookoverFromHash();   // 9 Oct 2026: the Slack card's "Open the report" link
       loadSosq();
       psgRender(d.pending || []);
       nxlLoad();
@@ -32705,9 +32718,10 @@ def write_portal_page():
       }
     });
   }
-  function loadInstalls(act) {   // act: 'ours' | 'notours' (7 Oct 2026: our own PCs on this connection)
+  function loadInstalls(act, extra) {   // act: 'ours' | 'notours' (7 Oct 2026: our own PCs on this connection) | 'trial' {ids} (9 Oct 2026)
     var box = document.getElementById('instbox'); if (!box) return;
-    post('/api/pcm-installs.php', { stoken: S.stoken, machine: mid(), who: INST.who, do: act || '' })
+    var body = { stoken: S.stoken, machine: mid(), who: INST.who, do: act || '' }; for (var xk in (extra || {})) body[xk] = extra[xk];
+    post('/api/pcm-installs.php', body)
       .then(function (d) { INST.d = d; renderInstalls(); })
       .catch(function () { INST.d = { ok: false }; renderInstalls(); });
   }
@@ -32742,10 +32756,14 @@ def write_portal_page():
       h += '<div class="instgrid"><div><h3>Countries</h3>'
         + ((d.countries || []).length ? '<table>' + d.countries.map(function (c) { return '<tr><td>' + esc(instCountry(c.k)) + '</td><td class="num"><b>' + c.n + '</b></td><td class="num quiet">' + (c.kept || 0) + ' still using it</td></tr>'; }).join('') + '</table>' : '<p class="quiet">None yet</p>')
         + '</div><div><h3>Versions</h3>'
-        + ((d.versions || []).length ? '<table>' + d.versions.map(function (v) { return '<tr><td>v' + v.k + '</td><td class="num"><b>' + v.n + '</b></td></tr>'; }).join('') + '</table>' : '<p class="quiet">None yet</p>')
+        + ((d.versions || []).length ? '<table>' + d.versions.map(function (v) { return '<tr><td>v' + esc(v.vn || v.k) + '</td><td class="num"><b>' + v.n + '</b></td></tr>'; }).join('') + '</table>' : '<p class="quiet">None yet</p>')
         + '<p class="quiet" style="margin:.6rem 0 0">On Windows 10: <b>' + d.w10 + '</b> of ' + d.total + '</p>'
         + '<p class="quiet" style="margin:.2rem 0 0">Every install: ' + d.unlinked + ' never linked \\u00b7 ' + d.linked + ' linked but free \\u00b7 ' + d.plan + ' on a plan</p>'
         + '<p class="quiet" style="margin:.2rem 0 0">Download clicks, 30 days: <b>' + dl.d30 + '</b></p></div></div>';
+      // 9 Oct 2026 (owner: "people that have got the free version ... a 30-day trial ... fully featured ... say that
+      // they've been specially approved"): the installs one by one, each with "Give 30 days free" (api/pcm-installs.php
+      // do=trial -> pcm-plus-lib.php plus_trial_give). Only PCs never linked to us; one free month per PC, ever.
+      if (INST.who !== 'plan') h += instTrialHtml(d);
       // our own PCs (7 Oct 2026): pressed on the connection our PCs use; only a scrambled code of it is kept
       var oi = d.ours_info || {}, ou = d.ours || 0;
       h += '<div class="inst-ours"><p class="quiet" style="margin:.8rem 0 .2rem">\\ud83c\\udfe0 <b>Our own PCs:</b> '
@@ -32762,6 +32780,79 @@ def write_portal_page():
     }
     Array.prototype.forEach.call(box.querySelectorAll('[data-iw]'), function (b) { b.onclick = function () { INST.who = b.getAttribute('data-iw'); loadInstalls(); }; });
     Array.prototype.forEach.call(box.querySelectorAll('[data-iours]'), function (b) { b.onclick = function () { b.disabled = true; loadInstalls(b.getAttribute('data-iours')); }; });
+    // 9 Oct 2026: a free month - one PC, or everyone still using it (asked first)
+    Array.prototype.forEach.call(box.querySelectorAll('[data-itrial]'), function (b) {
+      b.onclick = function () {
+        var w = b.getAttribute('data-itrial'), ids = w === 'using' ? instTrialIds() : [w];
+        if (!ids.length) return;
+        if (ids.length > 1 && !confirm('Give 30 days of everything, free, to ' + ids.length + ' PCs? Each is told within the hour (once it is on 36.1).')) return;
+        b.disabled = true; b.textContent = 'Giving\\u2026';
+        loadInstalls('trial', { ids: ids });
+      };
+    });
+    var more = box.querySelector('[data-itmore]');
+    if (more) more.onclick = function () { INST.all = true; renderInstalls(); };
+  }
+  // the free PCs that can still be given a month and are still using the app
+  function instTrialIds() {
+    return ((INST.d && INST.d.rows) || []).filter(function (r) { return !r.k && !r.p && !r.trial && r.how === 'using'; }).map(function (r) { return r.id; });
+  }
+  function instDay(s) { if (!s) return ''; var t = new Date(s.length === 10 ? s + 'T12:00:00Z' : s * 1000); return t.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); }
+  function instTrialHtml(d) {
+    var rows = d.rows || [], days = d.trial_days || 30, minv = d.trial_min_ver || 37;
+    var using = instTrialIds();
+    var h = '<div class="insttrial"><h3>\\ud83c\\udf81 Give a free month</h3>'
+      + '<p class="quiet" style="margin:0 0 .3rem">Everything unlocked on that PC for ' + days + ' days \\u2014 the full automatic service with its report, and every tool. Within the hour the app tells them <i>\\u201c365 Techies has given this PC ' + days + ' days of everything, free\\u201d</i>. Their report stays on their PC unless they choose to send it to us for a free look-over (it arrives in Messages). Near the end it reminds them; after it, UK PCs are offered our plans. Only PCs never linked to us, one free month each. It needs PC Manager 36.1 \\u2014 an older copy updates itself first, then gets it.</p>';
+    h += '<div class="itr-actions">' + (using.length ? '<button type="button" class="sm" data-itrial="using">Give ' + days + ' days free to everyone still using it (' + using.length + ')</button>' : '<span class="quiet">Everyone still using it has been given a free month, or none can be.</span>') + '</div>';
+    if (!rows.length) return h + '<p class="quiet">No installs in this list.</p></div>';
+    var how = function (r) { return r.how === 'using' ? 'Still using it' + (r.n > 1 ? ' (' + r.n + ' days)' : '') : r.how === 'stopped' ? 'Stopped (' + r.n + ' days)' : r.how === 'once' ? 'Ran once' : 'New \\u2014 too soon to tell'; };
+    var trial = function (r) {
+      var t = r.trial;
+      if (t) {
+        if (t.state === 'has_it') return '<span class="itr-on">\\u2713 Has it until ' + instDay(t.until) + '</span>';
+        if (t.state === 'ended') return '<span class="quiet">Had it \\u2014 ended ' + instDay(t.until) + '</span>';
+        if (t.state === 'off') return '<span class="quiet">Switched off</span>';
+        return '<span class="itr-wait">Given ' + instDay(t.at) + (t.by ? ' by ' + esc(t.by) : '') + ' \\u2014 ' + (r.v < minv ? 'waiting for it to update to 36.1' : 'it gets it at its next check-in') + '</span>';
+      }
+      if (r.p) return '<span class="quiet">On a plan</span>';
+      if (r.k) return '<span class="quiet">Linked to a customer</span>';
+      return '<button type="button" class="sm ghost" data-itrial="' + esc(r.id) + '">Give ' + days + ' days free</button>';
+    };
+    var show = INST.all ? rows : rows.slice(0, 25);
+    h += '<div class="tblwrap"><table><thead><tr><th>Country</th><th>Version</th><th>Using it?</th><th>First seen</th><th>Last seen</th><th>Free month</th></tr></thead><tbody>'
+      + show.map(function (r) {
+          return '<tr><td>' + esc(instCountry(r.c)) + (r.w ? ' <span class="quiet">\\u00b7 Win 10</span>' : '') + '</td><td class="num">v' + esc(r.vn || r.v) + '</td><td>' + how(r) + '</td>'
+            + '<td class="num">' + instDay(r.f) + '</td><td class="num">' + instDay(r.l) + '</td><td>' + trial(r) + '</td></tr>';
+        }).join('') + '</tbody></table></div>';
+    if (rows.length > show.length) h += '<button type="button" class="sm ghost" data-itmore style="margin-top:.5rem">Show all ' + rows.length + '</button>';
+    return h + '</div>';
+  }
+  // 9 Oct 2026: a free-month report sent for a look-over - the Slack card links here (#lookover=<id>); opened signed in
+  function lookoverFromHash() {
+    var m = (location.hash || '').match(/^#lookover=([a-f0-9]{16})$/); if (!m) return;
+    var id = m[1], root = document.getElementById('p365app') || document.body;
+    post('/api/pcm-lookover.php', { do: 'view', id: id, stoken: S.stoken, machine: mid() }).then(function (r) {
+      var old = document.getElementById('lomask'); if (old) old.remove();
+      var mk = document.createElement('div'); mk.className = 'tmask'; mk.id = 'lomask';
+      var me = (r && r.meta) || {};
+      mk.innerHTML = '<div class="tmodal" role="dialog" aria-modal="true" aria-labelledby="loh"><h3 id="loh">\\ud83d\\udccb Report look-over</h3>'
+        + (r && r.ok ? '<p style="margin:.6rem 0 .2rem"><b>' + esc(me.name || 'No name') + '</b> \\u00b7 <a href="mailto:' + esc(me.email || '') + '">' + esc(me.email || '') + '</a>' + (me.phone ? ' \\u00b7 ' + esc(me.phone) : '') + '</p>'
+            + '<p class="quiet" style="margin:0 0 .8rem">On a free month of PC Manager' + (me.until ? ' (until ' + instDay(me.until) + ')' : '') + '. Sent their ' + (me.kind === 'health' ? 'health check' : 'full service report') + (me.at ? ' on ' + instDay(me.at) : '') + ' and asked a techie to look it over and email them.</p>'
+            + '<button type="button" class="sm" id="loopen">Open the report</button> '
+          : '<p class="quiet" style="margin:.6rem 0 .8rem">' + (r && r.error === 'gone' ? 'That report isn\\u2019t here any more (they are kept for 120 days).' : r && r.error === 'auth' ? 'Your staff session has expired \\u2014 sign out and in again.' : 'Couldn\\u2019t open it \\u2014 try again.') + '</p>')
+        + '<button type="button" class="sm ghost" id="loclose">Close</button></div>';
+      root.appendChild(mk);
+      var close = function () { mk.remove(); try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} };
+      document.getElementById('loclose').onclick = close;
+      mk.addEventListener('click', function (e) { if (e.target === mk) close(); });
+      var op = document.getElementById('loopen');
+      if (op) op.onclick = function () {
+        var bin = atob(r.html), arr = new Uint8Array(bin.length);
+        for (var bi = 0; bi < bin.length; bi++) arr[bi] = bin.charCodeAt(bi);
+        var url = URL.createObjectURL(new Blob([arr], { type: 'text/html' }));
+        window.open(url, '_blank'); setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+      };
+    }).catch(function () {});
   }
   /* ---------- 8 Oct 2026: the paid app abroad, "Unlock everything" (api/pcm-plus-admin.php). The switch is NOT here - it
      goes on in api/pcm-buy-config.php, deployed on the owner's go (api/pcm-buy.off on the server stops it at once).

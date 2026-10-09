@@ -43,6 +43,8 @@ RewriteCond %{DOCUMENT_ROOT}/api/.pcmgate/sb/%{REMOTE_ADDR} !-f
 RewriteRule ^api/pcm\.php$ - [R=204,L]
 # the gate's flag files are not for the web (they name customers' addresses)
 RewriteRule ^api/\.pcmgate(/|$) - [F]
+# 9 Oct 2026: reports sent for a free look-over (names, emails, PC details) - staff open them through api/pcm-lookover.php
+RewriteRule ^api/pcm-lookover(/|$) - [F]
 
 # --- Old WordPress AMP URLs (/slug/amp/ or ?amp) -> canonical non-AMP page ---
 # The new static site has no AMP. Strip the AMP path-suffix or query param so old
@@ -296,6 +298,11 @@ ErrorDocument 404 /404.html
 # The app's version as people see it (9 Oct 2026): pcm-vname-lib.php is include-only (pcm.php, pcm-booking.php and the
 # Slack card libraries). Nothing here is a URL.
 <FilesMatch "^pcm-vname-lib\.php$">
+  Require all denied
+</FilesMatch>
+# PC Manager's free month (9 Oct 2026): the look-over library is include-only and its test CLI-only (api/pcm-lookover.php
+# itself is the app's and staff's URL).
+<FilesMatch "^pcm-lookover-(lib|test)\.php$">
   Require all denied
 </FilesMatch>
 # Emails in the inbox (2 Oct 2026): mail-imap.php holds the mailbox passwords (server-only, made by the owner, never in

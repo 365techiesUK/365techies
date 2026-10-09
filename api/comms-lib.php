@@ -1134,6 +1134,12 @@ function comms_lead_from_post($m) {
         $bits = array();
         foreach (array('Virgin address', 'Mailbox', 'Got as far as') as $lb) { $x = comms_lead_field($all, array($lb)); if ($x !== '') $bits[] = $lb . ': ' . $x; }
         $body = $bits ? implode("\n", $bits) : 'Asked us to ring them about moving their Virgin email.';
+    } elseif ($lead['label'] === 'Report look-over') {
+        // PC Manager's free month (pcm-lookover.php lo_card, 9 Oct 2026): they sent their report and want an email back
+        $topic = 'Free month of PC Manager - asked for a free look-over of their ' . (stripos(comms_lead_field($all, array('Report')), 'health') !== false ? 'health check' : 'service report');
+        $link = preg_match('~https://365techies\.co\.uk/portal/#lookover=([a-f0-9]{16})~', lc_all_text($m), $lm) ? $lm[0] : '';   // (raw: the unwrapped text keeps a link's words, not its address)
+        $body = 'They ran PC Manager on a free month and asked a techie to look over the report and email them.' . ($link !== '' ? "\nThe report: " . $link : '');
+        $page = '';
     } elseif ($lead['label'] === 'Get Help button') {
         // the 365 Get Help add-on (pcm-gethelp-lib.php gh_card): the page they were on is another site's, so it goes in
         // the message as text - never the "via" page, which is one of ours

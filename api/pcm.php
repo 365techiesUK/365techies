@@ -228,12 +228,24 @@ if ($action === 'checkin') {
     // with the reason, so the app can say so. Offered nothing.
     if ($key !== '' && !isset($db['customers'][$key]) && function_exists('plus_is_key') && plus_is_key($key)) {
         $pr = plus_check($key, $machine, false);
+        // 9 Oct 2026: a free month (staff gave it in the portal) says so - and when it is over, where this PC is decides what's
+        // offered next: our plans in the UK (always), "Unlock everything" abroad where the paid app is switched on
+        $cc = geo_cc((string)($_SERVER['REMOTE_ADDR'] ?? ''));
+        $tri = plus_trial_of($key);
+        $trOut = $tri ? array('trial'=>1, 'trial_until'=>(int)$tri['until'], 'region'=>($cc === '' || in_array($cc, array('GB','IM','JE','GG'), true)) ? 'uk' : 'abroad') : array();
+        if ($tri && !$pr['ok'] && $pr['error'] === 'expired') $trOut['trial_ended'] = 1;
         // (a key that has run out is offered "Unlock everything" again - to renew - where the paid app is offered at all)
+        $offer = $pr['ok'] ? array() : plus_offer_out($cc, plus_mhash($machine));
+        if ($tri && !$pr['ok'] && !isset($offer['offer']) && $trOut['region'] === 'uk') $offer = array('offer'=>'plan');
         out(array('ok'=>true,'tier'=>$pr['ok'] ? 'plus' : 'free') + ($pr['ok'] ? array('expires'=>(int)$pr['expires'])
-                : array('plus_error'=>$pr['error']) + plus_offer_out(geo_cc((string)($_SERVER['REMOTE_ADDR'] ?? '')), plus_mhash($machine)))
+                : array('plus_error'=>$pr['error']) + $offer) + $trOut
             + $upd + pcm_news_out($db, 'free') + pcm_prog_ver() + pcm_mm_addon_out());
     }
+    // 9 Oct 2026: a free month waiting for this PC (staff gave it in the portal's installs card) is handed over here - to
+    // build 37 ("36.1") on, the first that knows what to do with it; an older copy gets it once it has updated itself
+    $trHand = ($key === '' && function_exists('plus_trial_handover')) ? plus_trial_handover(plus_mhash($machine), (int)($in['ver'] ?? 0)) : null;
     if ($key === '' || !isset($db['customers'][$key])) out(array('ok'=>true,'tier'=>'free') + $upd + pcm_news_out($db, 'free') + pcm_prog_ver() + pcm_mm_addon_out()
+        + ($trHand ? array('trial_key'=>$trHand['key'], 'trial_until'=>$trHand['until'], 'trial_days'=>$trHand['days']) : array())
         // 8 Oct 2026: abroad, with the paid app switched on: "Unlock everything" in place of our UK plans (nothing while off)
         + (function_exists('plus_offer_out') ? plus_offer_out(geo_cc((string)($_SERVER['REMOTE_ADDR'] ?? '')), plus_mhash($machine)) : array())); // key gone => downgrade
     $c =& $db['customers'][$key];

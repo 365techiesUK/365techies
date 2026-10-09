@@ -305,3 +305,7 @@ api/games-code-store/*.tmp
 # 365 Games - scores kept in 365 accounts (6 Oct 2026): runtime only, never in git (the .htaccess is)
 api/games-acct-store/*.json
 api/games-acct-store/*.tmp
+
+# 9 Oct 2026: PC Manager free month - reports sent for a free look-over (server only; the folder's .htaccess stays in git)
+api/pcm-lookover/*
+!api/pcm-lookover/.htaccess

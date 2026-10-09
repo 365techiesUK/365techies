@@ -108,6 +108,10 @@ function lc_lead($m) {
     if (preg_match('/^Get Help button: please ring (.+?) on (.+)$/m', $plain, $mm)) {
         return array('kind' => 'callback', 'label' => 'Get Help button', 'who' => trim($mm[1]) . ' (' . trim($mm[2]) . ')', 'number' => lc_number($all));
     }
+    // PC Manager's free month: "send my report for a free look-over" (pcm-lookover.php lo_card, 9 Oct 2026) - an email back
+    if (preg_match('/^Report look-over: please email (.+?) at (\S+@\S+)\s*$/m', $plain, $mm)) {
+        return array('kind' => 'web', 'label' => 'Report look-over', 'who' => trim($mm[1]), 'number' => lc_number($all));
+    }
     if (preg_match('/^Booking started but never finished\s*-\s*(.+)$/m', $plain, $mm)) {
         return array('kind' => 'callback', 'label' => 'Unfinished booking', 'who' => trim(strtok($mm[1], "\n")), 'number' => lc_number($all));
     }

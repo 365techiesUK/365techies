@@ -149,6 +149,31 @@ function inst_note($machine, $ver, $w10, $linked, $plan, $ip, $now = null) {
     return $what;
 }
 
+/* 9 Oct 2026: each install in the group, for the portal's list (who gets a free month). Newest seen first, then most days
+   used; up to $max. how: using (2+ days, seen this week) | stopped (2+ days, not this week) | once | soon. $trials: install
+   id => its free month (plus_trial_states). Never an address or a name - there are none. */
+function inst_rows(array $d, $who, array $trials = array(), $now = null, $max = 400) {
+    $now = $now === null ? time() : (int)$now;
+    $d7 = gmdate('Y-m-d', $now - 6 * 86400); $d2 = gmdate('Y-m-d', $now - 2 * 86400);
+    $rows = array();
+    foreach ((isset($d['m']) && is_array($d['m'])) ? $d['m'] : array() as $id => $e) {
+        if (!is_array($e) || !empty($e['o'])) continue;
+        $p = !empty($e['p']); $k = !empty($e['k']);
+        if ($who === 'free' && $p) continue;
+        if ($who === 'unlinked' && ($k || $p)) continue;
+        if ($who === 'plan' && !$p) continue;
+        $f = (string)(isset($e['f']) ? $e['f'] : ''); $l = (string)(isset($e['l']) ? $e['l'] : '');
+        $multi = $l > $f; $days = isset($e['n']) ? (int)$e['n'] : ($multi ? 2 : 1);
+        $how = $multi ? ($l >= $d7 ? 'using' : 'stopped') : ($f <= $d2 ? 'once' : 'soon');
+        $v = (int)(isset($e['v']) ? $e['v'] : 0);
+        $rows[] = array('id' => (string)$id, 'c' => (string)(isset($e['c']) ? $e['c'] : ''), 'v' => $v, 'vn' => function_exists('pcm_vname') ? pcm_vname($v) : (string)$v,
+            'w' => !empty($e['w']), 'f' => $f, 'l' => $l, 'n' => $days, 'how' => $how, 'k' => $k, 'p' => $p,
+            'trial' => isset($trials[$id]) ? $trials[$id] : null);
+    }
+    usort($rows, function ($a, $b) { $c = strcmp($b['l'], $a['l']); return $c !== 0 ? $c : $b['n'] - $a['n']; });
+    return array_slice($rows, 0, $max);
+}
+
 /* What the staff portal shows. $who: 'free' (not on a plan - linked or not; the default, as the owner asked),
    'unlinked' (never linked to us), 'plan' (on a plan) or 'all'. Active = seen in the last 7 / 30 days. */
 function inst_stats(array $d, $who, $now = null) {
@@ -196,7 +221,7 @@ function inst_stats(array $d, $who, $now = null) {
     uasort($cc, function ($a, $b) { return $b['n'] - $a['n']; });
     foreach (array_slice($cc, 0, 15, true) as $c => $x) $out['countries'][] = array('k' => (string)$c, 'n' => $x['n'], 'a7' => $x['a7'], 'kept' => $x['kept']);
     krsort($vv);
-    foreach ($vv as $v => $n) $out['versions'][] = array('k' => $v, 'n' => $n);
+    foreach ($vv as $v => $n) $out['versions'][] = array('k' => $v, 'n' => $n, 'vn' => function_exists('pcm_vname') ? pcm_vname($v) : (string)$v);   // ("36.1" for build 37)
     foreach ($daily as $day => $n) $out['daily'][] = array('d' => $day, 'n' => $n);
     return $out;
 }
