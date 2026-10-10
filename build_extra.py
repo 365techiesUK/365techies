@@ -47,6 +47,7 @@ from seo_wave9_data import SEO_WAVE9_PAGES
 from seo_wave10_data import SEO_WAVE10_PAGES
 from seo_wave11_data import SEO_WAVE11_PAGES
 from seo_wave12_data import SEO_WAVE12_PAGES
+from seo_wave13_data import SEO_WAVE13_PAGES   # 10 Oct 2026: Office 2021 end of support + Gmail's other-account change
 try:
     from new_pages_data import DELL_COMPARE_TABLES
 except ImportError:
@@ -77,7 +78,7 @@ SPECIALIST = [
    intro_paras="<p>Thinking about upgrading, or already on Windows 11 and something&rsquo;s not right? We handle the upgrade properly — checking compatibility, backing up your files and making sure everything still works afterwards.</p><p><strong>No lost files, no nasty surprises</strong> — just a clean, fast, secure Windows 11 setup and someone to call when it misbehaves.</p>",
    feats=["Windows 11 upgrades","Compatibility checks","Slow Windows fixes","Driver problems","Windows updates","New PC setup","File transfer","Microsoft account setup","Security settings"],
    tile_items=[("windows","Upgrades","Smooth, safe upgrades from Windows 10 with your files intact."),("monitor","Performance","Speed up a sluggish Windows 11 PC."),("wrench","Driver fixes","Sort out printers, audio, displays and device drivers."),("shield","Security","Sensible Windows security settings, configured for you."),("server","Updates","Keep Windows updated without the disruption."),("bolt","New PC setup","Set up a new Windows 11 machine the right way.")],
-   faqs=[("Should I upgrade to Windows 11?","If your PC is compatible, Windows 11 is a sensible, supported upgrade. We will check compatibility and advise honestly whether it is worth it for your machine."),("Will I lose my files upgrading to Windows 11?","No — we back up your data first and make sure everything transfers safely before and after the upgrade."),("My Windows 11 PC is slow — can you help?","Yes, we tune up slow Windows 11 PCs remotely, clearing out the causes and getting performance back."),("Windows 10 has ended — what should I do?","Microsoft ended support for Windows 10 in October 2025 (a paid consumer Extended Security Updates option runs for a further year). If your PC supports Windows 11 we&rsquo;ll upgrade it cleanly with your files intact; if not, we&rsquo;ll advise honestly on a sensible replacement. Try our <a href=\"/repair-or-replace-advisor/\">repair or replace advisor</a>.")],
+   faqs=[("Windows 11 version 24H2 stops getting updates on 13 October 2026. Do I need to do anything?", "Usually not. Microsoft is moving Home and Pro PCs on 24H2 to a newer version of Windows 11 automatically. To check yours, open Settings, then System, then About: the Version line says 24H2, 25H2 or later. If it still says 24H2, open Settings, then Windows Update, and click Check for updates. If the update is not offered, Microsoft may be holding it back on your PC while it fixes a compatibility problem (a &ldquo;safeguard hold&rdquo;) &mdash; do not force it, it arrives once fixed. Work computers managed by an IT department follow their own schedule. If an update keeps failing, we can look at it remotely."),("Should I upgrade to Windows 11?","If your PC is compatible, Windows 11 is a sensible, supported upgrade. We will check compatibility and advise honestly whether it is worth it for your machine."),("Will I lose my files upgrading to Windows 11?","No — we back up your data first and make sure everything transfers safely before and after the upgrade."),("My Windows 11 PC is slow — can you help?","Yes, we tune up slow Windows 11 PCs remotely, clearing out the causes and getting performance back."),("Windows 10 has ended — what should I do?","Microsoft ended support for Windows 10 in October 2025 (a paid consumer Extended Security Updates option runs for a further year). If your PC supports Windows 11 we&rsquo;ll upgrade it cleanly with your files intact; if not, we&rsquo;ll advise honestly on a sensible replacement. Try our <a href=\"/repair-or-replace-advisor/\">repair or replace advisor</a>.")],
    chips=["Upgrades &amp; setup","Compatibility checks","No lost files"],
      guides_title="What is Windows doing? Pick the closest, and fix it step by step on that page",
    guides=[
@@ -24217,6 +24218,8 @@ for _np in SEO_WAVE10_PAGES:
 for _np in SEO_WAVE11_PAGES:
     build_new_page(_np)
 for _np in SEO_WAVE12_PAGES:
+    build_new_page(_np)
+for _np in SEO_WAVE13_PAGES:
     build_new_page(_np)
 
 # The gated 2-page Home Assistant x Victron test (own module per the wave rule;

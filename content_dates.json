@@ -1098,8 +1098,8 @@
  },
  "fake-im-not-a-robot-scam": {
   "first": "2026-10-02",
-  "h": "3e455d94997fde18",
-  "last": "2026-10-06"
+  "h": "0ee3b89635e17f7d",
+  "last": "2026-10-10"
  },
  "family-it-support": {
   "first": "2026-07-28",
@@ -1200,6 +1200,10 @@
   "first": "2026-07-28",
   "h": "09898eb03baf7c7a",
   "last": "2026-09-26"
+ },
+ "gmail-check-mail-from-other-accounts-ending": {
+  "first": "2026-10-10",
+  "h": "8026ea14ff9291e5"
  },
  "google-workspace-support": {
   "first": "2026-07-28",
@@ -2120,8 +2124,8 @@
  },
  "microsoft-office-unlicensed-product-error": {
   "first": "2026-07-28",
-  "h": "2a894186db84163f",
-  "last": "2026-10-06"
+  "h": "85c824b30ccf59fb",
+  "last": "2026-10-10"
  },
  "microsoft-word-wont-open": {
   "first": "2026-07-28",
@@ -2159,12 +2163,12 @@
  },
  "move-plusnet-email-to-gmail": {
   "first": "2026-07-28",
-  "h": "aa3fbaf824422984",
+  "h": "e26b6b364daa0c05",
   "last": "2026-10-10"
  },
  "move-virgin-media-email-to-gmail": {
   "first": "2026-07-28",
-  "h": "9fb00408797a46fe",
+  "h": "3e7a33182668fca2",
   "last": "2026-10-10"
  },
  "nas-drive-not-showing-after-windows-11-update": {
@@ -2261,6 +2265,10 @@
   "first": "2026-07-28",
   "h": "82a31db045a93339",
   "last": "2026-09-29"
+ },
+ "office-2021-end-of-support": {
+  "first": "2026-10-10",
+  "h": "8128f58721c77092"
  },
  "office-moves-it-relocation": {
   "first": "2026-07-28",
@@ -3653,8 +3661,8 @@
  },
  "windows-11-support": {
   "first": "2026-07-28",
-  "h": "5d9f56ead239e8aa",
-  "last": "2026-10-08"
+  "h": "229a082efd07fb2f",
+  "last": "2026-10-10"
  },
  "windows-11-upgrade-service": {
   "first": "2026-07-28",
