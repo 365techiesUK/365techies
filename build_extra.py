@@ -48,6 +48,7 @@ from seo_wave10_data import SEO_WAVE10_PAGES
 from seo_wave11_data import SEO_WAVE11_PAGES
 from seo_wave12_data import SEO_WAVE12_PAGES
 from seo_wave13_data import SEO_WAVE13_PAGES   # 10 Oct 2026: Office 2021 end of support + Gmail's other-account change
+from seo_wave14_data import SEO_WAVE14_PAGES   # 11 Oct 2026: eir's EUR 18.99 webmail rise + Comcast email moving to Yahoo
 try:
     from new_pages_data import DELL_COMPARE_TABLES
 except ImportError:
@@ -24220,6 +24221,13 @@ for _np in SEO_WAVE11_PAGES:
 for _np in SEO_WAVE12_PAGES:
     build_new_page(_np)
 for _np in SEO_WAVE13_PAGES:
+    build_new_page(_np)
+# (11 Oct 2026) the wave-14 pages are written for readers in Ireland and the US: none of the UK-service extras -
+# no fix-it-with-me flow (its footer offers home visits in Dorset), no fix panel (UK plan prices), no 'Windows PCs only' notice
+FIX_FLOW_AUTO_SKIP.update(_np['slug'] for _np in SEO_WAVE14_PAGES)
+FIX_PANEL_OFF.update(_np['slug'] for _np in SEO_WAVE14_PAGES)
+bp._APPLE_NOTICE_SKIP.update(_np['slug'] for _np in SEO_WAVE14_PAGES)
+for _np in SEO_WAVE14_PAGES:
     build_new_page(_np)
 
 # The gated 2-page Home Assistant x Victron test (own module per the wave rule;

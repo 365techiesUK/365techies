@@ -441,6 +441,10 @@
   "h": "0693e7d131bc30ff",
   "last": "2026-10-06"
  },
+ "comcast-email-moving-to-yahoo": {
+  "first": "2026-10-11",
+  "h": "cca00953b720727e"
+ },
  "common-outlook-problems-and-fixes": {
   "first": "2026-06-16",
   "h": "a2ba642d9bfb638a",
@@ -1026,6 +1030,10 @@
   "h": "d13875e80a578584",
   "last": "2026-08-31"
  },
+ "eircom-email-price-increase": {
+  "first": "2026-10-11",
+  "h": "81ca5edb17f6d1a4"
+ },
  "email-basics-course": {
   "first": "2026-07-28",
   "h": "06736f9000a6d8a0",
@@ -1203,7 +1211,8 @@
  },
  "gmail-check-mail-from-other-accounts-ending": {
   "first": "2026-10-10",
-  "h": "8026ea14ff9291e5"
+  "h": "8acbf05a9f3d50f9",
+  "last": "2026-10-11"
  },
  "google-workspace-support": {
   "first": "2026-07-28",

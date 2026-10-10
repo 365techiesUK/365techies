@@ -52,6 +52,19 @@ PAGES = {
         "Gmail needs a Google app password, which needs 2-Step Verification switching on first. A big mailbox can take a "
         "few days, because Gmail only accepts about 500 MB a day; it carries on by itself. Do it while your Plusnet "
         "mailbox still works, and remember to tell people your new Gmail address."),
+    # 11 Oct 2026, the international email pages (seo_wave14_data.py). Techies One Mail reads by IMAP only: eir publishes
+    # POP only, so the eir box is honest that it depends on eir's unpublished IMAP connection.
+    "eircom-email-price-increase": (FIX, "Copy every folder with our free app",
+        "On a Windows PC, our free Techies One Mail can copy your whole eircom.net mailbox into Gmail, folder by folder and "
+        "Sent items included, without moving anything into the Inbox first. It never deletes anything.",
+        "It connects by IMAP, which eir does not publish: third-party settings sites list webmail.eircom.net on port 993. "
+        "If it won&rsquo;t connect, use the POP route above. Gmail needs a Google app password, which needs 2-Step "
+        "Verification switching on first, and it accepts about 500 MB a day, so a big mailbox carries on over a few days."),
+    "comcast-email-moving-to-yahoo": (FIX, "Rather skip Outlook? Use our free app",
+        "On a Windows PC, our free Techies One Mail can read your comcast.net email on Yahoo alongside your other addresses "
+        "in one window. If you decide to leave, it can copy the whole mailbox into Gmail, folder by folder.",
+        "Type in Yahoo&rsquo;s settings (imap.mail.yahoo.com, port 993; smtp.mail.yahoo.com, port 587) and use a Yahoo app "
+        "password. Moving into Gmail needs a Google app password, which needs 2-Step Verification switching on first."),
     "new-outlook-not-syncing": (ALT, "Fed up with the new Outlook?",
         "Our free Techies One Mail is a simpler email program for Windows PCs. It won&rsquo;t fix Outlook, but it can take "
         "its place for your email.",
@@ -125,6 +138,12 @@ def latest():
     return (r["url"], r["ver"], r["mb"]) if r else None
 
 
+# Pages without a "Fix it with me" section put the box after one of their own sections instead (its id="sN").
+PLACE_AFTER = {"eircom-email-price-increase": "s4", "comcast-email-moving-to-yahoo": "s4"}
+# Pages written for readers abroad: no "Rather we set it up?" phone button (we don't do set-ups overseas).
+NO_SETUP = {"eircom-email-price-increase", "comcast-email-moving-to-yahoo"}
+
+
 def box(slug):
     kind, heading, lede, note = PAGES[slug]
     rel = latest()
@@ -142,7 +161,7 @@ def box(slug):
           <p class="t1m__lede">{lede}</p>
           <ul class="t1m__pts">{points}</ul>
           <p class="t1m__note">{note} <a href="/techies-one-mail/">See what it does, with pictures</a>.</p>
-          <p class="t1m__cta"><a class="button primary button--lg" href="{path}">Download Techies One Mail, free</a><a class="button secondary button--lg" href="tel:+441202775566">Rather we set it up? 01202 775566</a></p>
+          <p class="t1m__cta"><a class="button primary button--lg" href="{path}">Download Techies One Mail, free</a>{'<a class="button secondary button--lg" href="/techies-one-mail/">What it looks like</a></p>' if slug in NO_SETUP else '<a class="button secondary button--lg" href="tel:+441202775566">Rather we set it up? 01202 775566</a></p>'}
           <p class="t1m__small mono">FOR WINDOWS 10 AND 11 PCs<span class="t1v"> &middot; VERSION {ver} &middot; {mb} MB</span> &middot; NOT FOR MAC, IPHONE OR ANDROID</p>
         </div>
       </div>
@@ -166,6 +185,9 @@ def insert(slug, html):
     if slug not in PAGES or 'id="techies-one-mail"' in html:
         return html
     i = html.find('<section class="section" aria-label="Fix it with me" id="fixflow"')
+    if i < 0 and slug in PLACE_AFTER:
+        m = re.search(r'<section\b[^>]*\bid="%s"' % PLACE_AFTER[slug], html)
+        i = m.start() if m else -1
     end = _section_end(html, i) if i >= 0 else -1
     if end < 0:
         raise SystemExit("techies_one_boxes: no 'Fix it with me' section on /%s/ - the box has nowhere to go" % slug)

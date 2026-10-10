@@ -110,7 +110,7 @@ SEO_WAVE13_PAGES = [
   'crumbName': 'Gmail and your other email',
   'eyebrow': '// EMAIL',
   'h1': 'Gmail stops collecting your other email in January 2027. Will your BT, Sky or Virgin address still work?',
-  'lede': 'If Gmail shows you the emails sent to another address &mdash; a BT, Sky, Virgin, TalkTalk or Yahoo one &mdash; or lets you send from it, that stops in January 2027. Your old address keeps working; Gmail just stops fetching it. Here is a two-minute check, and what to do instead.',
+  'lede': 'If Gmail shows you the emails sent to another address &mdash; a BT, Sky, Virgin, TalkTalk, Yahoo, AOL or Comcast one &mdash; or lets you send from it, that stops in January 2027. Your old address keeps working; Gmail just stops fetching it. Here is a two-minute check, and what to do instead.',
   'ctaHead': 'Rather we sorted it for you?',
   'ctaSub': 'We set up forwarding, your phone or Outlook remotely while you watch &mdash; one-off remote help from &pound;20. We move Virgin Media and Plusnet mailboxes into Gmail for &pound;60 per address; for other providers we quote before we start. Call 01202 775566.',
   'sections': [
@@ -152,6 +152,7 @@ SEO_WAVE13_PAGES = [
    {'q': 'When exactly does it stop?', 'a': 'Google stopped new set-ups after the first quarter of 2026. Existing users can keep collecting until January 2027, and &ldquo;Send as&rdquo; for other providers&rsquo; addresses also goes in January 2027. Google has not given an exact day.'},
    {'q': 'Does this change my Gmail address?', 'a': 'No. Your Gmail address, its mail and the Gmail app are unaffected. The change is only about Gmail fetching mail from, or sending as, other providers&rsquo; addresses.'},
    {'q': 'Will forwarding from BT, Sky or Virgin to Gmail still work?', 'a': 'Forwarding is set up with your other provider, not in Gmail, so Google&rsquo;s change does not stop it. Whether you can forward depends on your provider, so check its webmail settings or help pages.'},
+   {'q': 'I use Gmail for my Comcast, AOL or Yahoo email. Does this affect me?', 'a': 'Yes, if Gmail on the web collects that mail for you (Check mail from other accounts) or lets you send as that address. Both stop in January 2027 for any non-Google address. Reading the account in the Gmail phone app, or forwarding from the other provider, carries on. If you have a comcast.net address, it is also moving to Yahoo Mail: see <a href="/comcast-email-moving-to-yahoo/">Comcast email moving to Yahoo</a>.'},
    {'q': 'Can I still copy my old emails into Gmail?', 'a': 'Yes. Gmail&rsquo;s Import mail and contacts, under Accounts and Import in settings, still does a one-off copy. It does not keep collecting new mail afterwards.'}],
   'chips': ['Two-minute check', 'Mail already in Gmail stays', 'Help if you want it'],
   'primaryCta': ['Call 01202 775566', 'tel:+441202775566'],
