@@ -48,6 +48,8 @@ function template(id) {
   if (id.indexOf('split|') === 0) return (TPL[id] = tintOf(template(id.slice(6)), '#8cff2a', 0.5));
   if (id.indexOf('bosspart|') === 0) { const b = template('boss'), part = id.slice(9); return (TPL[id] = { w: b.w, h: b.h, cubes: b.cubes.filter((c) => inPart(c, part)) }); }
   if (id === 'bossrage') return (TPL[id] = tintOf(template('bosspart|C'), '#ff3050', 0.45));
+  if (id.indexOf('dread|') === 0) return (TPL[id] = tintOf(template(id.slice(6)), '#a00014', 0.6));   // the Dreadnought (11 Oct 2026)
+  if (id === 'vent') return (TPL[id] = tintOf(template('bosspart|C'), '#ff5a08', 0.78));   // the core venting after its beam: red-hot
   if (id.indexOf('rage|') === 0) return (TPL[id] = tintOf(template(id.slice(5)), '#ff2a2a', 0.55));
   if (id.indexOf('fade|') === 0) return (TPL[id] = tintOf(template(id.slice(5)), '#141030', 0.72));   // a phantom faded out
   if (id.indexOf('dmg|') === 0) return (TPL[id] = tintOf(template(id.slice(4)), '#ff3a1a', 0.4));   // a damaged carrier
@@ -107,6 +109,10 @@ export function createWorld() {
   let shieldPing = 0;
   const beamGlow = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 12, 1, true), new THREE.MeshBasicMaterial({ color: 0xff4f7a, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false }));
   scene.add(beamGlow);
+  // the Mothership's death beam (11 Oct 2026): a burning column, its glow round it
+  const rayGlow = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 1, 14, 1, true), new THREE.MeshBasicMaterial({ color: 0xff2a50, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false }));
+  rayGlow.visible = false; scene.add(rayGlow);
+  let lastBossX = null, bossRoll = 0;
   const groundLine = new THREE.Mesh(new THREE.BoxGeometry(GW, 0.7, 0.7), new THREE.MeshBasicMaterial({ color: 0x3fd94f })); groundLine.position.set(0, wy(GROUND), 0); scene.add(groundLine);
 
   // the sky: streaming stars, nebulae, the planet and its moon, asteroids, comets, the jump to hyperspace (sky3d.js)
@@ -410,18 +416,37 @@ export function createWorld() {
     }
     // the Mothership: its body and core, and whichever guns it still has (each flashes on its own when hit)
     coreShield.visible = false;
+    if (!W.boss) { rayGlow.visible = false; lastBossX = null; }
     if (W.boss) {
       const B = W.boss; let x = B.x + 24, y = B.y + 10;
       if (W.intro > 0) y -= (W.intro / 150) * 75;
       if (B.dead) { x += (Math.random() - 0.5) * 2; y += (Math.random() - 0.5) * 2; }
-      const o = { yaw: Math.sin(t / 900) * 0.25 * sway, pitch: -0.2 * K }, gunHit = B.L.flash > 3 || B.R.flash > 3;
-      const rage = B.phase === 3 && !B.dead && ((t / 140) | 0) % 2 === 0;
-      sprite(rage ? 'bossrage' : 'bosspart|C', x, y, Object.assign({ white: B.flash > 3 && !gunHit }, o));
-      if (B.L.hp > 0) sprite('bosspart|L', x, y, Object.assign({ white: B.L.flash > 3 }, o));
-      if (B.R.hp > 0) sprite('bosspart|R', x, y, Object.assign({ white: B.R.flash > 3 }, o));
+      const bvx = lastBossX == null ? 0 : B.x - lastBossX; lastBossX = B.x;
+      bossRoll += (clamp(-bvx * 0.22, -0.42, 0.42) - bossRoll) * 0.15;   // (it banks into a dash or a charge)
+      const o = { yaw: Math.sin(t / 900) * 0.25 * sway, pitch: -0.2 * K + (B.oy || 0) * 0.007 * K, roll: bossRoll * sway }, gunHit = B.L.flash > 3 || B.R.flash > 3;
+      const rage = B.phase === 3 && !B.dead && ((t / 140) | 0) % 2 === 0, pre = B.tier === 2 ? 'dread|' : '';
+      sprite(B.vent > 0 && ((t / 90) | 0) % 2 === 0 ? 'vent' : pre + (rage ? 'bossrage' : 'bosspart|C'), x, y, Object.assign({ white: B.flash > 3 && !gunHit }, o));
+      if (B.L.hp > 0) sprite(pre + 'bosspart|L', x, y, Object.assign({ white: B.L.flash > 3 }, o));
+      if (B.R.hp > 0) sprite(pre + 'bosspart|R', x, y, Object.assign({ white: B.R.flash > 3 }, o));
+      rayGlow.visible = false;
+      if (!B.dead && W.intro === 0) {
+        const R = B.ray, cx = B.x + B.w / 2, by = B.y + B.h - 2;
+        if (R && R.st === 'charge') {   // charging: a glow gathering under it, and the line it will fire down, flickering
+          const k = R.t / R.n;
+          if (W.frame % 3 === 0) flashLight(cx, by, '#ff3050', 2 + 6 * k, 6);
+          if (K > 0.02 && (W.frame >> 1) & 1) cube(wx(cx), wy((by + GROUND) / 2), 0, 0.35, GROUND - by, 0.35, C.set(0xff6070));
+          if (!REDUCED && W.frame % 2 === 0) sparks(cx + (Math.random() - 0.5) * 12, by + 2, 1, Math.random() < 0.5 ? '#ff3050' : '#ffffff', 0.4, 12, 0.35);
+        } else if (R && R.st === 'fire') {   // firing: a white-hot core in a red glow, burning where it meets the ground
+          const h = GROUND - by, fl = 0.85 + 0.15 * Math.sin(t / 22);
+          cube(wx(cx), wy(by + h / 2), 0, 1.4, h, 1.4, hot.set(0xffffff));
+          rayGlow.visible = true; rayGlow.position.set(wx(cx), wy(by + h / 2), 0); rayGlow.scale.set(4.2 * fl, h, 4.2 * fl); rayGlow.material.opacity = 0.42 + 0.12 * fl;
+          if (W.frame % 2 === 0) { sparks(cx, GROUND - 2, 2, Math.random() < 0.5 ? '#ffb070' : '#ff4030', 1.6, 20, 0.5); flashLight(cx, GROUND - 4, '#ff5030', 6, 4); }
+        }
+        if (B.vent > 0 && !REDUCED && W.frame % 4 === 0) sparks(cx + (Math.random() - 0.5) * 18, B.y + 6, 1, Math.random() < 0.6 ? '#b8b8c4' : '#ffb070', 0.35, 30, 0.6);   // steam off it
+      }
       if (K > 0.02 && !B.dead) {   // four big engines under it (coming down: full burn); an outer one sputters once its gun is gone
-        const bt = template('boss'), burn = W.intro > 0 ? 2.4 : 1 + (B.phase === 3 ? 0.5 : 0);
-        EU.set(o.pitch || 0, o.yaw || 0, 0); JQ.setFromEuler(EU);
+        const bt = template('boss'), burn = W.intro > 0 ? 2.4 : 1 + (B.phase === 3 ? 0.5 : 0) + (B.mv && B.mv.k !== 'swoop' ? 0.9 : 0);   // (full burn in a dash or a charge)
+        EU.set(o.pitch || 0, o.yaw || 0, o.roll || 0); JQ.setFromEuler(EU);
         [-0.36, -0.13, 0.13, 0.36].forEach((u, j) => {
           const gone = (j === 0 && B.L.hp <= 0) || (j === 3 && B.R.hp <= 0);
           if (gone && Math.random() < 0.6) return;
@@ -441,6 +466,7 @@ export function createWorld() {
     const angry = left > 0 && left <= 4 && W.phase === 'play', ab = fr - beatAt, beat = ab >= 0 && ab < 12 ? Math.exp(-ab / 3) : 0;
     for (let i = 0; i < nInv; i++) {
       const v = W.invaders[list ? list[i] : i]; if (!v.alive || i >= shown) continue;
+      const ag = !v.dv && !W.demo ? (v.ang || 0) : 0;   // ANGER (11 Oct 2026): 0 at the top, 1 just above the shields
       if (v.dv && (v.dv.ph === 'fly' || v.dv.ph === 'enter') && (!v.dv.on || v.dv.t < 0)) continue;   // (a bonus-stage flyer, or one of the swarm, not yet on its way)
       const art = X.artOf(v), id = art + v.f;
       let o;
@@ -472,13 +498,20 @@ export function createWorld() {
         const ak = fr - L.kn; if (ak >= 0 && ak < 16) { const e = Math.exp(-ak / 4); dz -= 7 * e * lv; pitch += 0.7 * e * lv; white = ak < 3; }
         // the last few: red, shaking, faster
         if (angry && lv) { dx += (Math.random() - 0.5) * 0.9 * lv; dy += (Math.random() - 0.5) * 0.9 * lv; }
+        // the lower they get, the angrier (owner: "shaking and thrashing ... as they get closer"): shaking, thrashing, straining
+        if (ag > 0.02 && lv) {
+          dx += (Math.random() - 0.5) * (0.4 + 2.4 * ag) * ag * lv; dy += (Math.random() - 0.5) * 1.8 * ag * lv;
+          roll += Math.sin(t / (60 - 34 * ag) + v.c * 1.3) * 0.5 * ag * lv; pitch += Math.sin(t / 75 + v.r) * 0.25 * ag * lv;
+          sy *= 1 + 0.1 * ag * Math.sin(t / 42 + v.c) * lv; sc2 *= 1 + 0.06 * ag;
+          if (ag > 0.55 && (fr + v.c * 7) % 11 === 0) sparks(v.x + 6 + (v.wx || 0), v.y + 8 + (v.wy || 0), 1, Math.random() < 0.5 ? '#ff4030' : '#ffb347', 0.3, 14, 0.4);   // (sparks off them)
+        }
         // the weave: where the engine says it is, banking into it
         dx += v.wx || 0; dy += v.wy || 0; roll -= clamp((v.wvx || 0) * 3, -0.3, 0.3) * lv;
         o = { cx: v.x + 6 + dx, cy: v.y + 4 + dy, yaw: Math.sin(t / 520 + v.c * 0.55 + v.r) * 0.38 * sway, pitch: Math.sin(t / 700 + v.r) * 0.12 * sway + pitch,
           roll: roll, scale: sc2, sy: sy, white: white, z: Math.sin(t / 480 + v.c * 0.4) * 2.2 * sway + dz };
       }
       if (v.split) o.scale = (o.scale == null ? 1 : o.scale) * (1 + 0.06 * Math.sin(t / 120 + v.c * 1.7));
-      const rage = angry && !v.dv && lv && ((t / 130) | 0) % 2 === 0;
+      const rage = (angry && !v.dv && lv && ((t / 130) | 0) % 2 === 0) || (ag > 0.35 && lv && (ag > 0.82 || ((t / (230 - 160 * ag)) | 0) % 2 === 0));   // (red with rage: flashing, then solid)
       let tpl = rage ? 'rage|' + id : v.split ? 'split|' + id : v.kind === 'carrier' && v.hp < 3 && (v.hp === 1 || ((t / 200) | 0) % 2) ? 'dmg|' + id : id;
       const pa = X.phantomAlpha(W, v);
       if (pa < 0.99) {   // a phantom fading: it flickers out as a dark ghost (shots go through it)
@@ -490,7 +523,7 @@ export function createWorld() {
       if (K > 0.02 && pa > 0.5) {   // its thrusters
         const d = v.dv;
         if (d) { const spd = Math.hypot(d.vx || 0, d.vy || 0); jets(id, o.cx, o.cy, o, 'rocket', clamp(spd / 3.5, 0.2, 1), fireOf(art), v.kind === 'carrier' ? 1.2 : 1, [d.vx || 0, d.vy || 1]); }
-        else jets(id, o.cx, o.cy, o, 'hover', (angry ? 0.8 : 0.25) + 0.25 * beat * lv + Math.min(0.3, Math.abs(v.wvx || 0) * 3), fireOf(art), v.kind === 'carrier' ? 1.2 : 1);
+        else jets(id, o.cx, o.cy, o, 'hover', (angry ? 0.8 : 0.25) + 0.25 * beat * lv + Math.min(0.3, Math.abs(v.wvx || 0) * 3) + 0.9 * ag, fireOf(art), v.kind === 'carrier' ? 1.2 : 1);   // (engines revving as they get angry)
       }
     }
     // the little ones

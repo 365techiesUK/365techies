@@ -2,7 +2,7 @@
  * on top (enhanced.js, overlay mode). R - or the 2D | 3D button on the screen (phones, tablets, the mouse) - swings the
  * picture between flat and 3D, live, mid-game: the same moment of the same game, both ways. No WebGL: the flat picture,
  * as before. ?look=flat starts flat (for recordings of the switch). */
-import { createWorld } from './world3d.js?v=11';
+import { createWorld } from './world3d.js?v=12';
 
 const X = window.InvEnh, Q = new URLSearchParams(location.search);
 // ?film=3840x2160 (for the 4K film): the 3D world drawn wide on its own canvas over the page - true 16:9, the sky filling

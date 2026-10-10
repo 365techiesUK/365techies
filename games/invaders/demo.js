@@ -121,6 +121,8 @@
       else if (f.k === 'wave' && W.entering) cut('swarm', t, 4600, {});   // (a wave flying in: ride in with it)
       else if (f.k === 'wave') cut('wide', t, 4000);
       else if (f.k === 'die') cut('wide', t, 2500);
+      else if (f.k === 'raycharge') cut('boss', t, 4600);   // (11 Oct 2026: its beam - close on it while it charges and sweeps)
+      else if (f.k === 'escorts' && !busy && since > 1200) cut('swarm', t, 3200, {});   // (its escorts streaming out: ride with them)
       else if (busy || since < 1500) continue;
       else if (f.k === 'dive') { var v = null; W.invaders.forEach(function (q) { if (q.alive && q.dv && q.dv.ph === 'peel' && q.dv.t < 4) v = q; }); if (v) cut('diver', t, 3400, { v: v }); }
       else if (f.k === 'split') cut('spot', t, 2400, { x: f.x, y: f.y, side: f.x < 112 ? 1 : -1 });

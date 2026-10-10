@@ -66,6 +66,15 @@
         if (t > 26) return;   // (it steers at the ship: shoot it while it's up there, side-step at the last moment)
         arrivalHazard(d.x + d.vx * f * Math.max(0, t) - 6, 24, t - 4, t + 16 / Math.max(0.6, d.vy * f), 300);   // (it steers at the ship: a wide berth)
       });
+      // the Mothership's death beam (11 Oct 2026): charging, it shows where it will start and which way it will sweep
+      var Bo0 = W.boss, Ry = Bo0 && !Bo0.dead && Bo0.ray;
+      if (Ry && rnd() >= blind * 0.5) {
+        var tStart = Ry.st === 'charge' ? (Ry.n - Ry.t) / f : 0, left = Ry.st === 'charge' ? 120 : Ry.n - Ry.t, bx0 = Bo0.x + Bo0.w / 2;
+        for (var kk = 0; kk <= left; kk += 8) {
+          var rxk = Math.max(LO, Math.min(HI + 6, bx0 + Ry.dir * 0.95 * kk));
+          arrivalHazard(rxk - 9, 18, tStart + kk / f - 6, tStart + (kk + 12) / f, 600);
+        }
+      }
       (W.minis || []).forEach(function (m) {
         if (m.y < 120) return;
         var t = (PY - (m.y + 5)) / Math.max(0.6, m.vy * f);

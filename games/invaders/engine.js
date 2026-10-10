@@ -55,7 +55,13 @@
     diamond: ['00001110000', '00111111100', '01111111110', '00111111100', '00001110000'],
     checker: ['10101010101', '01010101010', '10101010101', '01010101010', '10101010101'],
     split: ['11110001111', '11110001111', '11110001111', '11110001111', '11110001111'],
-    pyramid: ['00011111000', '00111111100', '01111111110', '11111111111', '11111111111']
+    pyramid: ['00011111000', '00111111100', '01111111110', '11111111111', '11111111111'],
+    // Sector 2 (11 Oct 2026)
+    ring: ['00111111100', '01100000110', '11000000011', '01100000110', '00111111100'],
+    wall: ['11111111111', '11111111111', '00000000000', '11111111111', '11111111111'],
+    zigzag: ['11100011100', '01110001110', '00111000111', '01110001110', '11100011100'],
+    cross: ['10000100001', '01001110010', '00111111100', '01001110010', '10000100001'],
+    arrow: ['00001110000', '00011111000', '00111011100', '01110001110', '11100000111']
   };
   var WAVES = [
     { name: 'First contact', shape: 'block' },
@@ -67,8 +73,24 @@
     { name: 'Twin fleet', shape: 'split', sniper: 'top', tip: 'Snipers along the top', hint: 'Two fleets, with snipers along the top' },
     { name: 'Bonus stage', bonus: 2, tip: "They can't fire - get them all", hint: "They can't fire back - shoot as many as you can" },
     { name: 'Armada', shape: 'pyramid', carrier: 'base', phantom: 'row1', sniper: 'ends', tip: 'Everything at once', hint: 'Snipers, phantoms and carriers together' },
-    { name: 'Mothership', boss: true }
+    { name: 'Dreadnought', boss: true },
+    // SECTOR 2 (11 Oct 2026; owner: "emphasise each level being different ... what level can you get to is what's important"):
+    // ten more, each with its own trick; after level 20 these come round again, a little faster each time (a new sector)
+    { name: 'Kamikaze', shape: 'block', dives: 0.55, tip: 'They keep diving', hint: 'Kamikaze - they keep diving at you' },
+    { name: 'Phantom fleet', shape: 'ring', phantom: 'all', tip: 'All of them fade', hint: 'Every one fades - shoot when solid' },
+    { name: 'Bonus stage', bonus: 1, tip: "They can't fire - get them all", hint: "They can't fire back - shoot as many as you can" },
+    { name: 'Iron wall', shape: 'wall', armour: 'all', tip: 'All armoured', hint: 'Every one wears armour - two hits each' },
+    { name: 'Mothership', boss: true },
+    { name: "Snipers' nest", shape: 'cross', sniper: 'top2', tip: 'Two rows of snipers', hint: 'Snipers in the top two rows - keep moving' },
+    { name: 'Splitter storm', shape: 'zigzag', splitAll: 1, tip: 'They split when hit', hint: 'The low ones split into little ones' },
+    { name: 'Bonus stage', bonus: 2, tip: "They can't fire - get them all", hint: "They can't fire back - shoot as many as you can" },
+    { name: 'Carrier wing', shape: 'arrow', carrier: 'wing', sniper: 'ends', tip: 'Carriers on the wings', hint: 'Carriers on the wings, snipers at the tips' },
+    { name: 'Dreadnought', boss: true }
   ];
+  function planIndex(plan, wave) {   // levels 1-20 in order; then Sector 2's ten come round again
+    if (wave <= plan.length) return wave - 1;
+    return plan.length > 10 ? 10 + (wave - 11) % (plan.length - 10) : (wave - 1) % plan.length;
+  }
   var KIND_PTS = { sniper: 40, phantom: 30, carrier: 60 };
   // the bonus stage's flight paths (game pixels, the centre of each invader): smooth curves through these points,
   // mirrored for some groups; 5 groups of 8 follow one another in a line
@@ -147,9 +169,12 @@
     var bossWave = W.enh && W.wave % BOSS_EVERY === 0;
     var top = 48 + 8 * Math.min(W.wave - 1, 5);   // each wave starts a row lower, up to five rows
     W.invaders = []; W.order = [];
-    var plan = W.plan || WAVES, th = W.enh && !bossWave ? plan[(W.wave - 1) % plan.length] : null;
+    var plan = W.plan || WAVES, th = W.enh && !bossWave ? plan[planIndex(plan, W.wave)] : null;
     if (th && th.boss) th = WAVES[0];   // (a plan with a Mothership on a wave that isn't a fifth)
-    W.theme = th || (bossWave ? { name: 'Mothership', boss: true } : null);
+    var tier = bossWave ? (W.wave / BOSS_EVERY) % 2 === 0 ? 2 : 1 : 0;   // the Mothership (5, 15...) and the Dreadnought (10, 20...)
+    W.theme = th || (bossWave ? { name: tier === 2 ? 'Dreadnought' : 'Mothership', boss: true, tier: tier } : null);
+    W.sector = Math.ceil(W.wave / 10);
+    W.secK = W.enh && W.wave > 20 ? 1 + 0.08 * Math.floor((W.wave - 11) / 10) : 1;   // each sector after the second a little faster
     W.stage = th && th.bonus ? { bonus: th.bonus, hits: 0, gone: 0, total: GROUPS * PER_GROUP, pts: 0, groups: [] } : null;
     if (W.stage) {   // the BONUS STAGE: groups that fly in along their paths, one after another
       for (var g = 0; g < GROUPS; g++) {
@@ -172,10 +197,11 @@
           if (th) {
             if (th.carrier === 'core' && r === 2 && c >= 4 && c <= 6) kind = 'carrier';
             else if (th.carrier === 'base' && r === 4 && (c === 1 || c === 5 || c === 9)) kind = 'carrier';
-            else if ((th.phantom === 'odd' && r % 2 === 1) || (th.phantom === 'row1' && r === 1)) kind = 'phantom';
-            else if ((th.sniper === 'top' && r === 0) || (th.sniper === 'ends' && r <= 1 && (c === first || c === last))) kind = 'sniper';
+            else if (th.carrier === 'wing' && r >= 3 && (c === first || c === last)) kind = 'carrier';
+            else if ((th.phantom === 'odd' && r % 2 === 1) || (th.phantom === 'row1' && r === 1) || th.phantom === 'all') kind = 'phantom';
+            else if ((th.sniper === 'top' && r === 0) || (th.sniper === 'top2' && r <= 1) || (th.sniper === 'ends' && r <= 1 && (c === first || c === last))) kind = 'sniper';
           }
-          var shell = th && th.armour === 'shell' && (!cell(r - 1, c) || !cell(r + 1, c) || !cell(r, c - 1) || !cell(r, c + 1));
+          var shell = th && (th.armour === 'all' || (th.armour === 'shell' && (!cell(r - 1, c) || !cell(r + 1, c) || !cell(r, c - 1) || !cell(r, c + 1))));
           at[r].push(W.invaders.length);
           W.invaders.push({ r: r, c: c, type: kind === 'std' ? TYPE[r] : 1, kind: kind, hp: kind === 'carrier' ? 3 : 1, x: 26 + c * CELL_X, y: top + r * CELL_Y, alive: true, f: 0,
             armor: kind !== 'carrier' && (r < armoured || shell) ? 1 : 0, split: false, dv: null });
@@ -184,10 +210,10 @@
       // the ripple moves the bottom row first, left to right, then the row above
       for (r = ROWS - 1; r >= 0; r--) for (c = 0; c < COLS; c++) if (at[r][c] >= 0) W.order.push(at[r][c]);
       // (the ripple moves one at a time, so a smaller formation would march faster: it marches at a full block's pace)
-      W.rateK = W.enh ? W.order.length / (ROWS * COLS) : 1;
+      W.rateK = W.enh ? W.order.length / (ROWS * COLS) * W.secK : 1;
       // Enhanced: splitters among the ordinary ones in the bottom two rows (one more every other wave, up to five)
       if (W.enh && W.wave >= W.sp.splitFrom) {
-        var want = Math.min(5, 1 + Math.floor((W.wave - W.sp.splitFrom) / 2)), lowRows = W.invaders.filter(function (v) { return v.r >= 3 && v.kind === 'std'; });
+        var want = th && th.splitAll ? 99 : Math.min(5, 1 + Math.floor((W.wave - W.sp.splitFrom) / 2)), lowRows = W.invaders.filter(function (v) { return v.r >= 3 && v.kind === 'std'; });
         for (var k = 0; k < want && lowRows.length; k++) { var pick = Math.floor(W.rng() * lowRows.length); lowRows[pick].split = true; lowRows.splice(pick, 1); }
       }
     }
@@ -200,7 +226,8 @@
     W.dir = 1; W.drop = false; W.ptr = 0; W.acc = 0; W.bombs = []; W.shots = []; W.saucer = null; W.caps = [];
     W.phase = 'spawn'; W.phaseT = 0; W.spawnN = 0; W.spawnAt = W.frame; W.bombT = 90;
     W.boss = null; W.intro = 0; W.minis = []; W.beam = null;
-    W.diveT = Math.round(W.sp.diveEvery * 1.4); W.snipeT = 150;
+    W.diveK = th && th.dives ? th.dives : 1;   // (Kamikaze: they dive much more often)
+    W.diveT = Math.round(W.sp.diveEvery * 1.4 * W.diveK); W.snipeT = 150; W.escorts = {};
     if (W.stage) W.shields = [];   // (the bonus stage: open sky)
     // Enhanced: the swarm FLIES IN (10 Oct 2026; owner: "they swarm ... they're coming in and you've got to deal with
     // them") - streams from both sides swoop low over the ship, loop and settle into their places; the march waits for
@@ -216,17 +243,22 @@
       W.events.push({ sfx: 'swarm' }); if (W.wave > 1) W.events.push({ say: 'Wave ' + W.wave + ' – here they come' });
     }
     if (bossWave) {
-      var hp = W.sp.bossHp + 8 * (W.wave / BOSS_EVERY - 1);   // each Mothership a little tougher
+      var hp = Math.round(W.sp.bossHp * 0.85) + 5 * (W.wave / BOSS_EVERY - 1);   // each a little tougher (11 Oct: it moves and has escorts now - less to chew through)
       var gun = Math.max(3, Math.round(hp * (W.sp.bossGun || 0.25))), core = Math.max(6, hp - 2 * gun);   // (sp.bossGun: each gun's share)
       W.boss = { x: (WIDTH - BOSS_W) / 2, y: BOSS_Y, w: BOSS_W, h: BOSS_H, hp: gun * 2 + core, max: gun * 2 + core, dir: 1, t: 0, fireT: 100, phase: 1, dead: 0, flash: 0, drops: 0,
-        L: { hp: gun, max: gun, flash: 0 }, R: { hp: gun, max: gun, flash: 0 }, C: { hp: core, max: core }, gun: 0, miniT: 200 };
+        L: { hp: gun, max: gun, flash: 0 }, R: { hp: gun, max: gun, flash: 0 }, C: { hp: core, max: core }, gun: 0, miniT: 200,
+        tier: tier, escT: 170, escSide: 1, mv: null, mvT: 260, oy: 0, ray: null, rayT: tier === 2 ? 640 : 9e9 };
       W.intro = 150;
-      W.events.push('warning'); W.events.push({ say: 'Wave ' + W.wave + ': the Mothership is coming! Shoot its two guns off first.' });
+      W.events.push('warning'); W.events.push({ say: 'Level ' + W.wave + ': the ' + (tier === 2 ? 'Dreadnought' : 'Mothership') + ' is coming! Shoot its two guns off first.' });
     }
     if (th && W.wave > 1) W.events.push({ say: 'Wave ' + W.wave + ': ' + th.name + (th.hint ? '. ' + th.hint : '') });
     fx(W, { k: 'wave', n: W.wave, boss: bossWave, name: W.theme ? W.theme.name : '', tip: th && th.tip ? th.tip : '', hint: th && th.hint ? th.hint : '', bonus: !!W.stage });
   }
 
+  function levelName(W, n) {   // a level's name (for the screens): 'Twin fleet', 'Mothership', ...
+    if (n % BOSS_EVERY === 0) return (n / BOSS_EVERY) % 2 === 0 ? 'Dreadnought' : 'Mothership';
+    var t = WAVES[planIndex(WAVES, n)]; return t ? t.name : '';
+  }
   function alive(W) { var n = 0; for (var i = 0; i < W.invaders.length; i++) if (W.invaders[i].alive) n++; return n; }
   function pos(inv) {   // where an invader is now: diving or flying in, or at its place in the formation and weaving about it
     return inv.dv ? inv.dv : (inv.wx || inv.wy) ? { x: inv.x + (inv.wx || 0), y: inv.y + (inv.wy || 0) } : inv;
@@ -236,14 +268,18 @@
     var n = 0; for (i = 0; i < W.invaders.length; i++) if (W.invaders[i].alive && !W.invaders[i].dv) n++;
     var wild = n > 0 && n <= 4 && !W.boss ? 2.2 : 1;
     W.wt = (W.wt || 0) + f * (wild > 1 ? 1.6 : 1);
-    var F = W.wt;
+    var F = W.wt, deep = 0;
     for (i = 0; i < W.invaders.length; i++) {
       v = W.invaders[i]; if (!v.alive) continue;
-      var k = v.c * 1.7 + v.r * 0.9;
-      var nx = A * wild * (0.6 * Math.sin(F * 0.021 + k) + 0.4 * Math.sin(F * 0.047 + v.c * 0.6));
+      // ANGER (11 Oct 2026; owner: "as they get further down ... angry, like they're shaking and thrashing"): 0 at the top,
+      // 1 just above the shields - the pictures redden and shake them, and they weave harder (so they're harder to hit)
+      v.ang = v.dv ? 0 : clamp((v.y - 64) / 110, 0, 1); if (v.ang > deep) deep = v.ang;
+      var k = v.c * 1.7 + v.r * 0.9, Aw = A * (1 + 0.9 * v.ang);
+      var nx = Aw * wild * (0.6 * Math.sin(F * (0.021 + 0.03 * v.ang) + k) + 0.4 * Math.sin(F * (0.047 + 0.05 * v.ang) + v.c * 0.6));
       v.wvx = nx - (v.wx || 0); v.wx = nx;   // (and how fast, so the pictures can bank it)
-      v.wy = A * wild * 0.7 * Math.sin(F * 0.033 + v.r * 1.3 + v.c * 0.8);
+      v.wy = Aw * wild * 0.7 * Math.sin(F * (0.033 + 0.03 * v.ang) + v.r * 1.3 + v.c * 0.8);
     }
+    W.deep = deep;
   }
   function box(inv) { var b = BOX[inv.type], p = pos(inv); return { x: p.x + b.x0, y: p.y, w: b.x1 - b.x0, h: 8 }; }
   function slotBox(inv) { var b = BOX[inv.type]; return { x: inv.x + b.x0, y: inv.y, w: b.x1 - b.x0, h: 8 }; }   // its place in the formation
@@ -488,6 +524,10 @@
     var flying = !!(v.dv && v.dv.ph === 'fly'), diving = !!v.dv && !flying, m = hitCombo(W);
     var base = KIND_PTS[v.kind] || POINTS[v.r], pts = flying ? 100 * m : base * m * (diving ? 2 : 1);
     addScore(W, pts);
+    if (v.esc && W.escorts && W.escorts[v.esc]) {   // the Mothership's escorts: a whole stream shot down pays, and drops a capsule
+      var Es = W.escorts[v.esc]; Es.hit++;
+      if (Es.hit === Es.n) { addScore(W, 500 * m); W.events.push('groupbonus'); fx(W, { k: 'escortbonus', x: p.x + 6, y: p.y + 4, pts: 500 * m }); maybeDrop(W, p.x + 6, p.y + 6, 1); }
+    }
     if (flying && W.stage) {   // the bonus stage: a whole group is worth more
       var G = W.stage.groups[v.dv.g]; W.stage.hits++; W.stage.pts += pts; G.hit++;
       if (G.hit === PER_GROUP) { addScore(W, 1000); W.stage.pts += 1000; W.events.push('groupbonus'); fx(W, { k: 'groupbonus', x: p.x + 6, y: p.y + 4 }); }
@@ -590,8 +630,8 @@
   function launchDivers(W) {
     if (W.boss || W.stage || W.entering || W.phase !== 'play' || W.wave < W.sp.diveFrom) return;
     if ((W.diveT -= (W.slow > 0 ? 0.5 : 1)) > 0) return;
-    var sp = W.sp, maxD = sp.diveMax[W.wave >= 7 ? 2 : W.wave >= 4 ? 1 : 0], n = 0, cand = [], i;
-    W.diveT = Math.round(sp.diveEvery * Math.max(0.55, 1 - (W.wave - 2) * 0.05) * (0.7 + W.rng() * 0.6));
+    var sp = W.sp, maxD = sp.diveMax[W.wave >= 7 ? 2 : W.wave >= 4 ? 1 : 0] + (W.diveK < 1 ? 1 : 0), n = 0, cand = [], i;
+    W.diveT = Math.round(sp.diveEvery * Math.max(0.55, 1 - (W.wave - 2) * 0.05) * (W.diveK || 1) * (0.7 + W.rng() * 0.6));
     for (i = 0; i < W.invaders.length; i++) { var v = W.invaders[i]; if (!v.alive) continue; if (v.dv) n++; else if (v.kind !== 'carrier') cand.push(v); }
     if (n >= maxD || cand.length <= 3) return;
     var minC = 99, maxC = -1;   // the old arcade shooters sent them from the edges of the formation
@@ -611,7 +651,12 @@
       if (d.ph === 'enter') {   // flying in along its stream
         if (d.t < 0) continue;
         var ep = d.path, eu = d.t / 22;
-        if (eu >= ep.length - 1) { d.ph = 'back'; continue; }
+        if (eu >= ep.length - 1) {
+          if (d.escort && !d.dives) { v.alive = false; v.dv = null; continue; }   // (an escort that swooped past: gone off the top)
+          if (d.escort) { d.ph = 'dive'; d.vx = clamp(d.vx || 0, -1.3, 1.3); d.vy = 0.5; }   // (an escort: down at the ship)
+          else d.ph = 'back';
+          continue;
+        }
         var eq = curve(ep, eu), ex = eq.x - 6, ey = eq.y - 4;
         if (d.on) { d.vx = ex - d.x; d.vy = ey - d.y; } d.on = true;
         d.x = ex; d.y = ey; if ((Math.floor(d.t) & 7) === 0) v.f ^= 1;
@@ -644,7 +689,7 @@
           if (shieldOrDie(W, p.x + 6, 'diver')) return;
           continue;
         }
-        if (d.y > GROUND + 6) { d.ph = 'back'; d.y = -14; d.x = v.x; }   // missed: round the back of the world to the top
+        if (d.y > GROUND + 6) { if (d.escort) { v.alive = false; v.dv = null; continue; } d.ph = 'back'; d.y = -14; d.x = v.x; }   // missed: round the back of the world to the top (an escort flies off)
       } else {   // home to its place in the formation (where it weaves)
         var hx = v.x + (v.wx || 0) - d.x, hy = v.y + (v.wy || 0) - d.y, dist = Math.hypot(hx, hy), spd = (d.entry ? 1.9 : 1.6) * f;
         if (dist <= spd) { v.dv = null; continue; }
@@ -709,7 +754,8 @@
       W.events.push({ sfx: 'deflect', x: x }); fx(W, { k: 'deflect', x: x, y: y });
       return 'deflect';
     }
-    var Pt = B[part]; Pt.hp--; B.hp--; B.flash = 6; if (part !== 'C') Pt.flash = 6;
+    var dmg = part === 'C' && B.vent > 0 ? Math.min(2, B[part].hp) : 1;   // (venting after its beam: double)
+    var Pt = B[part]; Pt.hp -= dmg; B.hp -= dmg; B.flash = 6; if (part !== 'C') Pt.flash = 6;
     var m = hitCombo(W);
     addScore(W, 10 * m);
     W.events.push({ sfx: 'bosshit', x: x });
@@ -727,15 +773,18 @@
     }
     if (B.C.hp <= 0) {
       var bonus = 1000 * Math.max(1, Math.round(W.wave / BOSS_EVERY));
-      B.dead = 150; W.bombs = []; W.minis = []; W.beam = null;
+      B.dead = 150; W.bombs = []; W.minis = []; W.beam = null; B.ray = null;
+      W.invaders.forEach(function (q) { if (q.alive && q.esc) { var qp = pos(q); q.alive = false; q.dv = null; fx(W, { k: 'kill', x: qp.x + 6, y: qp.y + 4, type: q.type, kind: q.kind, pts: 0, mult: 1, dive: true, f: q.f }); } });   // (its escorts go with it)
       addScore(W, bonus);
-      W.events.push({ sfx: 'bossdie', x: B.x + B.w / 2 }); W.events.push({ say: 'Mothership destroyed! +' + bonus });
+      W.lives = Math.min(9, W.lives + 1); W.events.push('extra'); fx(W, { k: 'extra' });   // a Mothership down is worth a life
+      W.events.push({ sfx: 'bossdie', x: B.x + B.w / 2 }); W.events.push({ say: (B.tier === 2 ? 'Dreadnought' : 'Mothership') + ' destroyed! +' + bonus + ' and an extra life' });
       fx(W, { k: 'bossdie', x: B.x + B.w / 2, y: B.y + B.h / 2, pts: bonus });
     }
     return 'hit';
   }
   function bossStep(W, f) {
     var B = W.boss, sp = W.sp, P = W.player;
+    if (B.oy == null) { B.oy = 0; if (B.mvT == null) B.mvT = 260; if (B.escT == null) B.escT = 170; if (B.rayT == null) B.rayT = 9e9; B.tier = B.tier || 1; B.escSide = B.escSide || 1; if (!W.escorts) W.escorts = {}; }   // (a Mothership made some other way: the new fight's defaults)
     B.t += f;
     if (B.flash) B.flash--; if (B.L.flash) B.L.flash--; if (B.R.flash) B.R.flash--;
     if (B.dead) {
@@ -743,31 +792,105 @@
       if (--B.dead === 0) W.boss = null;
       return;
     }
-    var spd = sp.bossSpeed * (B.phase === 3 ? 1.5 : B.phase === 2 ? 1.1 : 1) * f;   // (the core is a small target: it mustn't race about - farm, 9 Oct)
-    B.x += B.dir * spd;
-    if (B.x < LEFT) { B.x = LEFT; B.dir = 1; }
-    if (B.x + B.w > RIGHT) { B.x = RIGHT - B.w; B.dir = -1; }
-    B.y = BOSS_Y + Math.sin(B.t / 45) * (B.phase === 3 ? 8 : 6);
+    // (11 Oct 2026; owner: "the mothership level looked really boring") it moves with purpose - a dash across, a swoop down
+    // at you and back, an angry charge at your ship - launches streams of escorts that swoop out and dive, and once its core
+    // is open (the Dreadnought: from the start) it charges a death beam you can see coming, then sweeps it across the ground
+    var spd = sp.bossSpeed * (B.phase === 3 ? 1.5 : B.phase === 2 ? 1.1 : 1) * (B.tier === 2 ? 1.15 : 1) * f;   // (the core is a small target: it mustn't race about - farm, 9 Oct)
+    var R = B.ray;
+    if (R) bossRay(W, B, R, f);
+    else {
+      if (B.mv) {
+        B.mv.t += f;
+        if (B.mv.k === 'dash') spd *= 3.2;
+        if (B.mv.k === 'charge') { var tx = clamp(P.x + 6.5 - B.w / 2, LEFT, RIGHT - B.w); B.dir = tx > B.x ? 1 : -1; if (Math.abs(tx - B.x) < 2) spd = 0; else spd *= 2.4; }
+        if (B.mv.t >= B.mv.n) B.mv = null;
+      } else if ((B.mvT -= f) <= 0) {
+        var k = B.phase === 1 ? 'dash' : B.phase === 2 ? (W.rng() < 0.6 ? 'swoop' : 'dash') : (W.rng() < 0.45 ? 'charge' : 'swoop');
+        B.mv = { k: k, t: 0, n: k === 'swoop' ? 150 : k === 'charge' ? 110 : 46 };
+        B.mvT = Math.round((B.phase === 3 ? 200 : 300) * (0.75 + W.rng() * 0.5));
+        if (k === 'dash') B.dir = B.x + B.w / 2 < WIDTH / 2 ? 1 : -1;   // (across to the far side)
+        W.events.push({ sfx: 'bossmove', x: B.x + B.w / 2, k: k }); fx(W, { k: 'bossmove', m: k, x: B.x + B.w / 2, y: B.y + B.h });
+      }
+      B.x += B.dir * spd;
+      if (B.x < LEFT) { B.x = LEFT; B.dir = 1; }
+      if (B.x + B.w > RIGHT) { B.x = RIGHT - B.w; B.dir = -1; }
+      // the beam: with the core open (the Dreadnought: always), now and then - never while it's mid-move
+      if (!B.mv && (B.phase >= 2 || B.tier === 2) && (B.rayT -= f) <= 0 && W.intro === 0) {
+        B.ray = { st: 'charge', t: 0, n: 75, dir: P.x + 6.5 > B.x + B.w / 2 ? 1 : -1 };
+        B.rayT = Math.round((B.phase === 3 ? 420 : B.phase === 2 ? 600 : 820) * (0.85 + W.rng() * 0.3));
+        W.events.push({ sfx: 'raycharge', x: B.x + B.w / 2 }); fx(W, { k: 'raycharge', x: B.x + B.w / 2, y: B.y + B.h });
+      }
+    }
+    // the swoop: down towards you and back up (it's a bigger target down there - and a bigger threat)
+    var sw = B.mv && B.mv.k === 'swoop' ? Math.sin(Math.PI * B.mv.t / B.mv.n) : 0;
+    B.oy += ((sw * 34) - B.oy) * Math.min(1, 0.2 * f);
+    B.y = BOSS_Y + B.oy + Math.sin(B.t / 45) * (B.phase === 3 ? 8 : 6);
+    // escorts: a stream from its bay, from alternate sides (two at once when it's angry, and from the Dreadnought)
+    if (W.intro === 0 && (B.escT -= f) <= 0) {
+      var live = 0; for (var e = 0; e < W.invaders.length; e++) if (W.invaders[e].alive) live++;
+      B.escT = Math.round((B.phase === 1 ? 520 : B.phase === 2 ? 460 : 420) * (B.tier === 2 ? 1.2 : 1) * (0.85 + W.rng() * 0.3));
+      if (live <= 8) {
+        var both = B.phase === 3;
+        launchEscorts(W, B.phase === 1 ? 5 : 6, B.escSide); if (both) launchEscorts(W, B.phase === 1 ? 4 : 5, -B.escSide);
+        B.escSide = -B.escSide;
+      }
+    }
+    if (B.vent > 0) B.vent -= f;
+    if (R || B.vent > 0 || (B.mv && B.mv.k === 'charge')) { beat(W, Math.round(14 + 30 * B.hp / B.max)); return; }   // (no gunfire while the beam is on, while it vents, or while it charges at you)
     if ((B.fireT -= f) <= 0) {
       var by = B.y + B.h, cx;
       if (B.phase === 1) {   // the guns take turns, aimed at you
-        B.fireT = Math.round(sp.bossFire * 0.55 * (0.8 + W.rng() * 0.4));
+        B.fireT = Math.round(sp.bossFire * 0.55 * (B.tier === 2 ? 1.35 : 1) * (0.8 + W.rng() * 0.4));   // (the Dreadnought: slower guns - its beam is in play)
         var guns = []; if (B.L.hp > 0) guns.push(8); if (B.R.hp > 0) guns.push(40);
         cx = B.x + guns[B.gun++ % guns.length];
         W.bombs.push({ x: cx - 1, y: by - 2, dx: clamp((P.x + 6.5 - cx) / 90, -0.9, 0.9), kind: 3, f: 0 });
       } else {   // the core: fans of plasma, wider when it's angry
-        B.fireT = Math.round(sp.bossFire * (B.phase === 3 ? 0.65 : 0.95) * (0.8 + W.rng() * 0.4));
-        var n = B.phase === 3 ? 5 : 3; cx = B.x + B.w / 2 - 1;
+        B.fireT = Math.round(sp.bossFire * (B.phase === 3 ? 0.75 : 0.95) * (B.oy > 10 ? 1.4 : 1) * (B.tier === 2 ? 1.3 : 1) * (0.8 + W.rng() * 0.4));   // (the Dreadnought's beam is its weapon: less plasma)   // (swooping close: the plasma would arrive too fast)
+        var n = B.phase === 3 && B.tier !== 2 ? 4 : 3; cx = B.x + B.w / 2 - 1;
         for (var k = 0; k < n; k++) W.bombs.push({ x: cx, y: by, dx: (k - (n - 1) / 2) * 0.45, kind: 3, f: 0 });
       }
       W.events.push({ sfx: 'bossfire', x: cx }); fx(W, { k: 'bossfire', x: cx + 1, y: by });
     }
     var every = sp.bossMinis[B.phase === 3 ? 1 : 0];
-    if (B.phase >= 2 && every && (B.miniT -= f) <= 0 && W.minis.length < 6) {   // the open core sends down little ones
+    if (B.phase >= 2 && B.tier !== 2 && every && (B.miniT -= f) <= 0 && W.minis.length < 6) {   // the open core sends down little ones (the Mothership's; the Dreadnought has its beam)
       B.miniT = every;
       addMinis(W, B.x + B.w / 2, B.y + B.h, 'boss');
     }
     beat(W, Math.round(14 + 30 * B.hp / B.max));   // the heartbeat quickens as it weakens
+  }
+  function launchEscorts(W, n, side) {   // a stream of fighters out of its bay: out to one side, low over the ground, then a dive
+    var B = W.boss, bx = B.x + B.w / 2, by = B.y + B.h - 2;
+    var pts = [[bx, by], [112 + side * 62, 92], [112 + side * 96, 148], [112 + side * 46, 176], [112 - side * 16, 140], [112 - side * 36, 108]];
+    var away = pts.concat([[112 - side * 70, 40], [112 - side * 90, -40]]);   // (the ones that don't dive swoop past and away off the top)
+    var gid = (W.escG = (W.escG || 0) + 1);
+    for (var q = 0; q < n; q++) {
+      var r = q % 2 ? 1 : 3, dives = q % 2 === 0;
+      W.invaders.push({ r: r, c: 5, type: TYPE[r], kind: B.tier === 2 && q === 0 ? 'sniper' : 'std', hp: 1, x: bx - 6, y: by - 4, alive: true, f: 0, armor: 0, split: false, esc: gid,
+        dv: { ph: 'enter', escort: true, dives: dives, path: dives ? pts : away, t: -q * 9, x: bx - 6, y: by - 4, vx: 0, vy: 0, on: false, side: side, bombs: 0 } });
+    }
+    W.escorts[gid] = { n: n, hit: 0 };
+    W.events.push({ sfx: 'swarm' }); fx(W, { k: 'escorts', x: bx, y: by, n: n, side: side });
+  }
+  function bossRay(W, B, R, f) {   // the death beam: it stops and charges (you can see it coming), then sweeps across, burning through shields
+    var P = W.player;
+    R.t += f;
+    if (R.st === 'charge') {
+      if (R.t >= R.n) { R.st = 'fire'; R.t = 0; R.n = 120; W.events.push({ sfx: 'ray', x: B.x + B.w / 2 }); fx(W, { k: 'rayfire', x: B.x + B.w / 2, y: B.y + B.h }); }
+      return;
+    }
+    B.x += R.dir * 0.95 * f;   // the sweep: across, towards where you were
+    if (B.x < LEFT) { B.x = LEFT; R.dir = 1; }
+    if (B.x + B.w > RIGHT) { B.x = RIGHT - B.w; R.dir = -1; }
+    var rx = B.x + B.w / 2;
+    for (var i = 0; i < W.shields.length; i++) {   // it scorches holes through the shields
+      var S = W.shields[i]; if (rx + 3 < S.x || rx - 3 > S.x + S.w) continue;
+      for (var yy = 0; yy < S.h; yy++) for (var xx = Math.max(0, Math.floor(rx - 2 - S.x)); xx <= Math.min(S.w - 1, Math.ceil(rx + 1 - S.x)); xx++) if (S.px[yy * S.w + xx] && W.rng() < 0.12) { S.px[yy * S.w + xx] = 0; S.ver++; }   // (scorched, not wiped: a sweep leaves the shields holed)
+    }
+    if (!P.dead && Math.abs(P.x + 6.5 - rx) < 5) { shieldOrDie(W, rx, 'ray'); B.ray = null; return; }   // (a shield takes the whole beam)
+    if (R.t >= R.n) {   // spent: the core overheats and vents - it can't fire, and every hit on it counts double (dodge, then punish)
+      B.ray = null; B.mvT = Math.max(B.mvT, 160); B.vent = 160;
+      W.events.push({ sfx: 'vent', x: rx }); fx(W, { k: 'vent', x: rx, y: B.y + B.h / 2 });
+    }
   }
 
   // ---------------------------------------------------------------- bombs
@@ -790,7 +913,7 @@
     // in 3-5 seconds while still finding the controls (games audit, 5 Oct 2026)
     if (W.wave === 1 && W.sp.name === 'Gentle' && !W.touched && !W.shotsFired && W.frame < 600) return;
     if ((W.bombT -= (f == null ? 1 : f)) > 0 || W.bombs.length >= W.sp.bombs) return;
-    var reload = W.sp.reload * Math.max(0.6, 1 - (W.wave - 1) * 0.06);
+    var reload = W.sp.reload * Math.max(0.6, 1 - (W.wave - 1) * 0.06) / (W.secK || 1) * (1 - 0.25 * (W.deep || 0));   // (W.deep: how far down they are)
     W.bombT = Math.round(reload * (0.6 + W.rng() * 0.8));
     // the lowest invader in each column can drop one (not one that is out diving); a third of the time it's the column above the ship
     var low = {};
@@ -842,7 +965,7 @@
 
   return {
     WIDTH: WIDTH, HEIGHT: HEIGHT, PY: PY, GROUND: GROUND, ROWS: ROWS, COLS: COLS, SPEEDS: SPEEDS, POINTS: POINTS, MYSTERY: MYSTERY,
-    SHIELD_Y: SHIELD_Y, SAUCER_Y: SAUCER_Y, EXTRA_AT: EXTRA_AT, EXTRA_EVERY: EXTRA_EVERY, BOSS_EVERY: BOSS_EVERY, BOSS_W: BOSS_W, BOSS_H: BOSS_H,
+    SHIELD_Y: SHIELD_Y, SAUCER_Y: SAUCER_Y, EXTRA_AT: EXTRA_AT, EXTRA_EVERY: EXTRA_EVERY, BOSS_EVERY: BOSS_EVERY, BOSS_W: BOSS_W, BOSS_H: BOSS_H, levelName: levelName,
     BOSS_GUN_L: BOSS_GUN_L, BOSS_GUN_R: BOSS_GUN_R, MINI_W: MINI_W, MINI_H: MINI_H, MINI_PTS: MINI_PTS,
     POWER_NAMES: POWER_NAMES, SHAPES: SHAPES, WAVES: WAVES, KIND_PTS: KIND_PTS, PATHS: PATHS, GROUPS: GROUPS, PER_GROUP: PER_GROUP, phased: phased,
     newWorld: newWorld, step: step, hud: hud, alive: alive, box: box, slotBox: slotBox, pos: pos, shieldAt: shieldAt, nextWave: nextWave

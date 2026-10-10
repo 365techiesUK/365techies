@@ -256,10 +256,10 @@
   var X = window.InvEnh, current = null;
   var reducedMotion = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
   A.start({
-    id: 'invaders', store: 'inv365', title: '365 Invaders', width: E.WIDTH, height: E.HEIGHT, phoneFull: true,
+    id: 'invaders', store: 'inv365', title: '365 Invaders', width: E.WIDTH, height: E.HEIGHT, phoneFull: true, waveWord: 'level',   // (11 Oct 2026: levels - what level you reach is the game)
     speeds: { options: [[1, 'Gentle'], [2, 'Classic'], [3, 'Fast']], def: 1 },
     settings: [
-      { key: 'style', type: 'seg', label: 'Game', small: 'Enhanced has divers, armour, power-ups, combos and a Mothership every fifth wave. Retro is the plain game. Changes from your next game.',
+      { key: 'style', type: 'seg', label: 'Game', small: 'Enhanced has 20 different levels, divers, armour, power-ups, combos and a Mothership every fifth level. Retro is the plain game. Changes from your next game.',
         options: [['enh', 'Enhanced'], ['retro', 'Retro']], def: 'enh' },
       { key: 'look', type: 'seg', label: 'Look', small: '3D is the rebooted picture, Flat the 2D one (Enhanced). Press R in a game to swing between flat and 3D.',
         options: [['3d', '3D'], ['flat', 'Flat']], def: '3d' },
@@ -285,7 +285,10 @@
     // the Hall of Fame's boards: the same slots as My scores (Enhanced e1-e3, Retro v1-v3)
     hofLevels: [['e1', 'Gentle'], ['e2', 'Classic'], ['e3', 'Fast'], ['v1', 'Retro · Gentle'], ['v2', 'Retro · Classic'], ['v3', 'Retro · Fast']],
     styleName: function (set) { return set.style === 'retro' ? 'Retro' : 'Enhanced'; },
-    overText: function (W) { return W.landed ? 'They landed!' : 'Game over'; },
+    overText: function (W) {   // Enhanced: the level you reached leads the game-over card
+      if (!W.enh) return W.landed ? 'They landed!' : 'Game over';
+      return (W.landed ? 'They landed! ' : '') + 'Level ' + W.wave + (E.levelName ? ': ' + E.levelName(W, W.wave) : '');
+    },
     titleText: 'Stop the invaders before they reach the ground &mdash; and the ones that swoop down at you. Catch the falling capsules for <b>rapid fire</b>, a <b>spread shot</b>, a <b>laser</b>, <b>slow time</b> or a <b>shield</b>, and watch out for the Mothership.',
     keysText: '<b>&larr; &rarr;</b> or the mouse to move &middot; <b>Space</b> or click to fire &middot; <b>P</b> to pause',
     touchText: '<b>Play</b> goes full screen: slide a finger anywhere to move, hold it down to fire',
@@ -296,7 +299,7 @@
       { rows: ART.bot[0], colour: COL.bot, text: '= 10 points' }
     ],
     help: [
-      '<b>The aim:</b> shoot every invader before they reach the ground. Clear them all and a new wave comes, starting a little lower.',
+      '<b>The aim:</b> shoot every invader before they reach the ground, and see how many levels you can get through. Every level is different, every fifth is a Mothership (shoot its two guns off, then its core; dodge its beam and hit it while it cools down), and each sector of ten gets tougher.',
       '<b>Move</b> with the <b>&larr; &rarr;</b> arrow keys (or A and D), or just move the mouse. On a tablet, use the &#9664; &#9654; buttons or drag on the screen.',
       '<b>Fire</b> with the <b>Space bar</b>, a mouse click or the Fire button. One shot at a time, so make each one count.',
       '<b>Hide behind the green shields.</b> They wear away when they are hit, from either side.',

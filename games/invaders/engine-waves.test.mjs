@@ -14,13 +14,16 @@ function toWave(W, n) { while (W.wave < n) { W.invaders.forEach((v) => { v.alive
 function still(W) { W.sp = { ...W.sp, rate: 0 }; W.bombT = 1e9; W.saucerT = 1e9; W.diveT = 1e9; W.snipeT = 1e9; }
 const kinds = (W) => W.invaders.reduce((o, v) => { o[v.kind] = (o[v.kind] || 0) + 1; return o; }, {});
 
-test('Enhanced has ten different waves, then round again; Retro is always the classic block', () => {
+test('Enhanced has ten different waves, then Sector 2, then Sector 2 again a little faster; Retro is always the classic block', () => {
   const want = [[1, 'First contact', 55], [2, 'Chevron', 35], [3, 'Bonus stage', 40], [4, 'Fortress', 29], [6, 'Phantoms', 28], [7, 'Twin fleet', 40], [8, 'Bonus stage', 40], [9, 'Armada', 43]];
   const W = E.newWorld(2, 1, 'enh');
   for (const [n, name, count] of want) { toWave(W, n); assert.equal(W.theme.name, name, 'wave ' + n); assert.equal(W.invaders.length, count, name); }
-  toWave(W, 10); assert.ok(W.boss, 'wave 10: the Mothership');
-  toWave(W, 11); assert.equal(W.theme.name, 'First contact', 'then round again');
-  toWave(W, 12); assert.equal(W.theme.name, 'Chevron');
+  toWave(W, 10); assert.ok(W.boss, 'wave 10: the Dreadnought'); assert.equal(W.boss.tier, 2); assert.equal(W.theme.name, 'Dreadnought');
+  toWave(W, 11); assert.equal(W.theme.name, 'Kamikaze', 'Sector 2'); assert.equal(W.sector, 2);
+  toWave(W, 12); assert.equal(W.theme.name, 'Phantom fleet'); assert.ok(W.invaders.every((v) => v.kind === 'phantom'));
+  toWave(W, 14); assert.equal(W.theme.name, 'Iron wall'); assert.ok(W.invaders.every((v) => v.armor));
+  toWave(W, 15); assert.equal(W.boss.tier, 1, 'the Mothership again');
+  toWave(W, 21); assert.equal(W.theme.name, 'Kamikaze', 'Sector 3 = Sector 2 again'); assert.equal(W.sector, 3); assert.ok(W.secK > 1, 'a little faster');
   const R = E.newWorld(2, 1);
   for (let n = 1; n <= 8; n++) { toWave(R, n); assert.equal(R.invaders.length, 55); assert.ok(R.invaders.every((v) => !v.kind || v.kind === 'std')); }
 });

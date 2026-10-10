@@ -365,8 +365,17 @@
         floater('x' + f.n + ' COMBO', W.player.x + 6.5, PY - 18, ['#ffffff', '#ffffff', '#ffe14a', '#ff9a3d', '#ff4fd8'][f.n], f.n >= 3 ? 2 : 1, 70);
         ring(W.player.x + 6.5, PY + 3, 16, '#ffe14a', 18); comboPulse = 30; break;
       case 'extra': floater('1UP', 30, GROUND - 6, '#5cff8a', 2, 90); ring(30, GROUND + 6, 14, '#5cff8a', 24); break;
-      case 'wave': if (f.n > 1) { warpTo = 1; warpOff = skyT + 550; } BANNER = f.boss ? { a: 'WARNING', b: 'MOTHERSHIP APPROACHING', col: '#ff4060', life: 150, max: 150, warn: true } : f.name ? { a: 'WAVE ' + f.n, b: f.name.toUpperCase(), c: (f.tip || 'GET READY').toUpperCase(), col: f.bonus ? '#ffe14a' : '#7fe8ff', life: 170, max: 170, y: 134 } : { a: 'WAVE ' + f.n, b: 'GET READY', col: '#7fe8ff', life: 110, max: 110 }; break;
-      case 'cleared': if (f.bonus) { warpTo = 1; warpOff = 0; break; } if (!BANNER || BANNER.a !== 'PERFECT!') BANNER = { a: 'WAVE ' + f.n + ' CLEARED', b: '', col: '#5cff8a', life: 140, max: 140 }; warpTo = 1; warpOff = 0; break;
+      case 'wave': if (f.n > 1) { warpTo = 1; warpOff = skyT + 550; }   // (11 Oct 2026: LEVELs, with the sector map - how far, and what's coming)
+        BANNER = f.boss ? { a: 'WARNING', b: (f.name || 'Mothership').toUpperCase() + ' APPROACHING', col: '#ff4060', life: 170, max: 170, warn: true, map: f.n }
+          : f.name ? { a: 'LEVEL ' + f.n, b: f.name.toUpperCase(), c: (f.tip || 'GET READY').toUpperCase(), col: f.bonus ? '#ffe14a' : '#7fe8ff', life: 190, max: 190, y: 100, map: f.n }
+          : { a: 'LEVEL ' + f.n, b: 'GET READY', col: '#7fe8ff', life: 110, max: 110 }; break;
+      case 'cleared': if (f.bonus) { warpTo = 1; warpOff = 0; break; } if (!BANNER || BANNER.a !== 'PERFECT!') BANNER = { a: 'LEVEL ' + f.n + ' CLEARED', b: '', col: '#5cff8a', life: 140, max: 140 }; warpTo = 1; warpOff = 0; break;
+      case 'escortbonus': floater('+' + f.pts + ' STREAM!', f.x, f.y - 8, '#ffe14a', 1, 80); ring(f.x, f.y, 18, '#ffe14a', 22, 1.5); emit(f.x, f.y, 18, ['#ffe14a', '#ffffff'], 1.6, 28); break;
+      case 'raycharge': ring(f.x, f.y, 14, '#ff3050', 30, 1.5); flash(f.x, f.y, 10, '#ff3050', 30); break;
+      case 'rayfire': shake(2.4); screen('#ff2040', 0.14, 18); flash(f.x, f.y, 14, '#ffffff', 10); break;
+      case 'vent': emit(f.x, f.y, 14, ['#ffb070', '#ff6a2a', '#9a9aa8'], 0.9, 40, { vy: -0.5 }); floater('OVERHEATED!', f.x, f.y + 20, '#ff9a3d', 1, 90); break;
+      case 'bossmove': if (f.m === 'charge') { floater('INCOMING!', f.x, f.y + 22, '#ff4060', 1, 60); shake(1.2); } else if (f.m === 'swoop') shake(0.8); break;
+      case 'escorts': flash(f.x, f.y, 8, '#7fe8ff', 12); break;
       case 'perfect': BANNER = { a: 'PERFECT!', b: '+500 BONUS', col: '#ffe14a', life: 150, max: 150 }; break;
     }
   }
@@ -423,9 +432,11 @@
         var age = W.frame - (W.spawnAt + i + 1);
         if (age < 26) { var k = Math.max(0, age) / 26; yoff = -(1 - easeOut(k)) * 46; alpha = k; }
       }
-      var vx = v.x + (v.wx || 0), vy = v.y + (v.wy || 0) + yoff, pa = alpha * phantomAlpha(W, v);
-      if (pa > 0.5) hoverJets(artOf(v) + v.f, vx, vy, pa, 0.3 + Math.min(0.4, Math.abs(v.wvx || 0) * 4));
+      var vx = v.x + (v.wx || 0), vy = v.y + (v.wy || 0) + yoff, pa = alpha * phantomAlpha(W, v), ag = v.ang || 0;
+      if (ag > 0.05 && !REDUCED && !W.demo) { vx += (Math.random() - 0.5) * 2.6 * ag; vy += (Math.random() - 0.5) * 2 * ag; }   // (angrier the lower they get: shaking)
+      if (pa > 0.5) hoverJets(artOf(v) + v.f, vx, vy, pa, 0.3 + Math.min(0.4, Math.abs(v.wvx || 0) * 4) + 0.7 * ag);
       drawInvader(v, vx, vy, pa, t);
+      if (ag > 0.3 && pa > 0.5) blit(silhouette(artOf(v) + v.f, '#ff2424'), vx, vy, (ag - 0.3) * 0.75 * pa * (0.65 + 0.35 * Math.sin(t / (70 - 40 * ag) + v.c)));   // ...and red with rage
     }
   }
   function drawInvader(v, x, y, alpha, t) {
@@ -552,6 +563,8 @@
     }
     glowAt(halo(spr, 'h|boss|' + part + (rage ? 'r' : ''), rage ? '#ff3060' : PAL.boss.glow, K * 3), x, y, (rage ? 0.75 + 0.25 * Math.sin(t / 120) : 0.8) * alpha);
     blit(spr, x, y, alpha);
+    if (B.tier === 2) blit(cropped(silhouette('boss', '#c0102a'), 'bossd|' + part, x0, x1), x, y, 0.32 * alpha);   // the Dreadnought: blood red
+    if (!B.dead) drawRay(W, B, x, y, t, alpha);
     if (B.L.hp <= 0) light(x + GL, y + 10, 4 + Math.random() * 1.5, '#ff8a3d', 0.55 * alpha);   // the torn edges glow
     if (B.R.hp <= 0) light(x + GR, y + 10, 4 + Math.random() * 1.5, '#ff8a3d', 0.55 * alpha);
     // the core: shielded while a gun stands, then open and glowing - hotter when it's angry
@@ -566,6 +579,23 @@
     var fl = B.L.flash ? ['L', 0, GL, B.L.flash] : B.R.flash ? ['R', GR, E.BOSS_W, B.R.flash] : B.flash ? ['C', GL, GR, B.flash] : null;
     if (fl) blit(cropped(silhouette('boss', '#ffffff'), 'bossw|' + fl[0], fl[1], fl[2]), x, y, fl[3] / 6 * 0.8);
     if (!B.dead && W.intro === 0) drawBossBar(W);   // its strength, under the scores
+  }
+  function drawRay(W, B, x, y, t, alpha) {   // the death beam: charging (a glow and an aiming line), firing (a burning column); then venting
+    var bh = ART.boss.length, cx = x + E.BOSS_W / 2, by = y + bh - 2, R = B.ray;
+    if (R && R.st === 'charge') {
+      var k = R.t / R.n;
+      light(cx, by, 5 + 10 * k + Math.sin(t / 30) * 1.5, '#ff3050', 0.5 + 0.5 * k);
+      if ((R.t >> 1) & 1) rect(cx - 0.5, by, 1, GROUND - by, '#ff6070', 0.12 + 0.3 * k, true);
+    } else if (R && R.st === 'fire') {
+      var fl = 0.85 + 0.15 * Math.sin(t / 22);
+      rect(cx - 4, by, 8, GROUND - by, '#ff2a50', 0.22 * fl, true); rect(cx - 2, by, 4, GROUND - by, '#ff6080', 0.5 * fl, true); rect(cx - 0.5, by, 1, GROUND - by, '#ffffff', 0.95);
+      light(cx, by, 12, '#ff3050', 0.9); light(cx, GROUND - 2, 9 + Math.random() * 3, '#ff8040', 0.8);
+      if (Math.random() < 0.6) emit(cx, GROUND - 2, 2, ['#ffb070', '#ff5030', '#ffffff'], 1.4, 18, { vy: -1.2 });
+    }
+    if (B.vent > 0) {   // overheated: red-hot, steaming - hit it now
+      light(cx, y + 8, 9 + 3 * Math.sin(t / 50), '#ff6a2a', 0.85);
+      if (Math.random() < 0.35) emit(cx + (Math.random() - 0.5) * 16, y + 4, 1, ['#b8b8c4', '#ffb070'], 0.5, 36, { vy: -0.6 });
+    }
   }
   function drawBossBar(W) {   // [left gun][ core ][right gun], right of the combo, under WAVE: the core is grey while it's shielded
     var B = W.boss, bx0 = 72, gw = 22, cw = 48, gp = 2, rage = B.phase === 3;
@@ -613,7 +643,7 @@
       var got = W.combo % 6, py0 = W.mult > 1 ? 23 : 14;
       for (var c = 0; c < 6; c++) rect(8 + c * 4, py0, 3, 2, c < got ? '#ffe14a' : '#ffffff', c < got ? 1 : 0.18);
     }
-    text('WAVE ' + W.wave, GW / 2 + 2, 4, '#8fa3d1', 1);
+    text('LEVEL ' + W.wave, GW / 2 + 2, 4, '#8fa3d1', 1);
     text(pad5(info ? info.best : W.score), GW - 8, 4, '#ffd84a', 1, 'right', 0.35); text('BEST', GW - 44, 4, '#8fa3d1', 1, 'right');
     // the spare ships, and any power with the time it has left
     var n = Math.min(6, W.lives - (W.player.dead ? 0 : 1)), spr = sprite('ship');
@@ -643,6 +673,18 @@
     if (B.b) text(B.b, GW / 2, y + 7 * m + 8, '#ffffff', 1, null, 0.4 * a, a);
     if (B.c) text(B.c, GW / 2, y + 7 * m + 20, B.col, 1, null, 0.5 * a, a);
     if (B.warn) { rect(0, y - 8, GW, 2, '#ff4060', a * 0.6); rect(0, y + 7 * m + 20, GW, 2, '#ff4060', a * 0.6); }
+    if (B.map) drawMap(B.map, y + 7 * m + (B.warn ? 32 : 36), a);
+  }
+  function drawMap(n, y, a) {   // the sector map: this sector's ten levels - done, this one, still to come (Motherships red, bonus stages gold)
+    var sec = Math.ceil(n / 10), first = (sec - 1) * 10 + 1, x0 = GW / 2 - 4.5 * 14;
+    for (var i = 0; i < 10; i++) {
+      var L = first + i, x = x0 + i * 14, boss = L % 5 === 0, bonus = L % 10 === 3 || L % 10 === 8;
+      var col = boss ? '#ff4060' : bonus ? '#ffe14a' : '#7fe8ff', w = boss ? 7 : 5, h = w / 2;
+      if (L < n) rect(x - h, y - h, w, w, col, 0.85 * a);
+      else if (L === n) { var pz = 0.65 + 0.35 * Math.sin(skyT / 90); rect(x - h - 1, y - h - 1, w + 2, w + 2, '#ffffff', pz * a); rect(x - h, y - h, w, w, col, a); }
+      else { rect(x - h, y - h, w, 1, col, 0.55 * a); rect(x - h, y + h - 1, w, 1, col, 0.55 * a); rect(x - h, y - h, 1, w, col, 0.55 * a); rect(x + h - 1, y - h, 1, w, col, 0.55 * a); }
+    }
+    text('SECTOR ' + sec, GW / 2, y + 7, '#8fa3d1', 1, null, 0.3 * a, a);
   }
   var PROJ = null;   // the 3D picture's map from a game point to where it is on the screen (overlay mode)
   function drawFloaters() {
@@ -710,6 +752,10 @@
       A.noise(1.2, 0.11, 160, { type: 'lowpass', to: 2600, verb: 0.45 }); A.tone(44, 1.5, 0.09, { type: 'sawtooth', to: 66, attack: 0.25 }); A.tone(88, 1.2, 0.03, { type: 'sawtooth', to: 132, attack: 0.3, verb: 0.3 });
       return true;
     }
+    if (name === 'raycharge') { A.tone(90, 1.25, 0.07, { type: 'sawtooth', to: 720, attack: 0.9, pan: p }); A.tone(180, 1.25, 0.03, { type: 'square', to: 1440, attack: 0.9, pan: p, verb: 0.3 }); return true; }   // (a rising whine: it's coming)
+    if (name === 'ray') { A.noise(1.1, 0.14, 900, { type: 'bandpass', q: 0.6, to: 300, pan: p, verb: 0.4 }); A.tone(60, 2.0, 0.12, { type: 'sawtooth', to: 48, pan: p }); A.tone(121, 2.0, 0.05, { type: 'square', to: 97, pan: p, verb: 0.3 }); return true; }   // (the beam's roar)
+    if (name === 'vent') { A.noise(1.0, 0.09, 5200, { type: 'highpass', to: 1800, pan: p, verb: 0.3 }); A.tone(520, 0.5, 0.025, { type: 'triangle', to: 180, pan: p }); return true; }   // (a hiss of steam)
+    if (name === 'bossmove') { A.noise(0.6, 0.06, 500, { type: 'bandpass', q: 0.8, to: 2200, pan: p }); A.tone(70, 0.6, 0.05, { type: 'sawtooth', to: 110, pan: p }); return true; }   // (its engines surge)
     if (name === 'groupbonus') { [784, 988, 1175, 1568].forEach(function (f, k) { A.tone(f, 0.1, 0.045, { type: 'square', when: k * 0.06, verb: 0.35 }); }); return true; }
     return false;
   }
