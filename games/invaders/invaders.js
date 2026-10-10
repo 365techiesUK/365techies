@@ -241,23 +241,42 @@
     }
   }
 
+  // R: the reboot switch - the picture swings between flat and 3D, live (Enhanced in the 3D look; reboot.js)
+  document.addEventListener('keydown', function (e) {
+    if ((e.key || '').toLowerCase() !== 'r' || e.repeat || e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
+    if ((window.GameSocial && GameSocial.isOpen()) || (window.HallOfFame && HallOfFame.isOpen()) || (window.Looks && Looks.isOpen()) || (window.Keep && Keep.isOpen())) return;
+    var t = e.target; if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+    if ([].some.call(document.querySelectorAll('[aria-modal="true"]'), function (d) { return d.getClientRects().length > 0; })) return;
+    if (!window.Inv3D || !current || !current.enh) return;
+    window.Inv3D.toggle(); e.preventDefault();
+  });
+
   // Enhanced (3 Oct 2026, the default): power-ups, combos, the Mothership, a glowing hi-res picture and fuller sound -
   // enhanced.js. Retro: the plain game as it first went live, drawn small and blown up. Each keeps its own best scores.
   var X = window.InvEnh, current = null;
   var reducedMotion = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
   A.start({
-    id: 'invaders', store: 'inv365', title: '365 Invaders', width: E.WIDTH, height: E.HEIGHT,
+    id: 'invaders', store: 'inv365', title: '365 Invaders', width: E.WIDTH, height: E.HEIGHT, phoneFull: true,
     speeds: { options: [[1, 'Gentle'], [2, 'Classic'], [3, 'Fast']], def: 1 },
     settings: [
-      { key: 'style', type: 'seg', label: 'Game', small: 'Enhanced has power-ups, combos and a Mothership every fifth wave. Retro is the plain game. Changes from your next game.',
+      { key: 'style', type: 'seg', label: 'Game', small: 'Enhanced has divers, armour, power-ups, combos and a Mothership every fifth wave. Retro is the plain game. Changes from your next game.',
         options: [['enh', 'Enhanced'], ['retro', 'Retro']], def: 'enh' },
-      { key: 'music', type: 'switch', label: 'Music', small: 'A low space hum that builds as the invaders come down (Enhanced).', def: true },
+      { key: 'look', type: 'seg', label: 'Look', small: '3D is the rebooted picture, Flat the 2D one (Enhanced). Press R in a game to swing between flat and 3D.',
+        options: [['3d', '3D'], ['flat', 'Flat']], def: '3d' },
+      { key: 'music', type: 'switch', label: 'Music', small: 'Our own soundtrack, with its own music for the Mothership (Enhanced).', def: true },
       { key: 'shake', type: 'switch', label: 'Screen shake', small: 'The screen shakes when something big blows up (Enhanced).', def: !reducedMotion }
     ],
     newWorld: function (speed, set) { current = E.newWorld(speed, null, set && set.style === 'retro' ? 'classic' : 'enh'); return current; },
     hires: function (set, W) { return W ? W.enh : set.style !== 'retro'; },
     step: E.step, hud: E.hud,
-    draw: function (g, W, t, mode, info) { current = W; return W.enh ? X.draw(g, W, t, mode, info) : draw(g, W, t, mode, info); },
+    draw: function (g, W, t, mode, info) {
+      if (window.InvDemo) mode = window.InvDemo.frame(W, t, mode) || mode;   // the title screen's demo plays itself (demo.js)
+      current = W;
+      if (!W.enh) { if (window.Inv3D) window.Inv3D.showButton(false); return draw(g, W, t, mode, info); }
+      if (info.set && info.set.look !== 'flat' && window.Inv3D && window.Inv3D.ok()) return window.Inv3D.draw(g, W, t, mode, info);   // the 3D reboot (reboot.js)
+      if (window.Inv3D) window.Inv3D.showButton(false);   // (the 2D | 3D button only with the 3D look)
+      return X.draw(g, W, t, mode, info);
+    },
     sound: function (name, kit, e) { return current && current.enh ? X.sound(name, kit, e) : sound(name, kit, e); },
     frameAudio: X.frameAudio,
     quietSay: function (W) { return W.enh; },   // Enhanced draws its own banners and labels
@@ -267,9 +286,9 @@
     hofLevels: [['e1', 'Gentle'], ['e2', 'Classic'], ['e3', 'Fast'], ['v1', 'Retro · Gentle'], ['v2', 'Retro · Classic'], ['v3', 'Retro · Fast']],
     styleName: function (set) { return set.style === 'retro' ? 'Retro' : 'Enhanced'; },
     overText: function (W) { return W.landed ? 'They landed!' : 'Game over'; },
-    titleText: 'Stop the invaders before they reach the ground. Catch the falling capsules for <b>rapid fire</b>, a <b>spread shot</b> or a <b>shield</b> &mdash; and watch out for the Mothership.',
+    titleText: 'Stop the invaders before they reach the ground &mdash; and the ones that swoop down at you. Catch the falling capsules for <b>rapid fire</b>, a <b>spread shot</b>, a <b>laser</b>, <b>slow time</b> or a <b>shield</b>, and watch out for the Mothership.',
     keysText: '<b>&larr; &rarr;</b> or the mouse to move &middot; <b>Space</b> or click to fire &middot; <b>P</b> to pause',
-    touchText: 'Tap <b>&#9664; &#9654;</b> to move and <b>Fire</b> to shoot &mdash; or drag on the screen',
+    touchText: '<b>Play</b> goes full screen: slide a finger anywhere to move, hold it down to fire',
     legend: [
       { rows: ART.saucer, colour: COL.saucer, text: '= ? mystery' },
       { rows: ART.orb[0], colour: COL.orb, text: '= 30 points' },
@@ -282,10 +301,13 @@
       '<b>Fire</b> with the <b>Space bar</b>, a mouse click or the Fire button. One shot at a time, so make each one count.',
       '<b>Hide behind the green shields.</b> They wear away when they are hit, from either side.',
       '<b>Points:</b> 10, 20 or 30 for an invader (the higher up, the more) and 50 to 300 for the red mystery ship across the top. An extra life at 1,500 points.',
-      '<b>Capsules</b> sometimes fall when an invader is hit. Catch one with your ship: <b>R</b> rapid fire (two quicker shots), <b>S</b> spread shot (three at once), <b>+</b> a shield bubble that takes one hit.',
-      '<b>Combos:</b> hit six in a row without missing for double points, then triple and four times. A miss starts it again.',
-      '<b>The Mothership</b> arrives every fifth wave. Keep hitting it &mdash; watch its bar at the top. A wave cleared without losing a ship is worth 500 more, and after the first extra life there is another every 5,000 points.',
+      '<b>Capsules</b> sometimes fall when an invader is hit. Catch one with your ship: <b>R</b> rapid fire (two quicker shots), <b>S</b> spread shot (three at once), <b>L</b> a laser (hold Fire for a beam that burns through anything above you &mdash; even your own shields), the <b>hourglass</b> slow time (everything of theirs at half speed for a while), <b>+</b> a shield bubble that takes one hit.',
+      '<b>Divers</b> (Enhanced, from wave 2): now and then an invader loops out of the formation and swoops down at you, dropping bombs. Shoot it on the way down for double points &mdash; if it misses, it flies back to its place.',
+      '<b>Armour and splitters:</b> from wave 2 the top row wears steel armour &mdash; the first hit knocks it off. From wave 3 some of the bottom row glow green: hit one and it bursts into two little ones that chase your ship. A wave is not cleared until they are gone too.',
+      '<b>Combos:</b> hit six in a row without missing for double points, then triple and four times (the six pips under the score count them). A miss starts it again.',
+      '<b>The Mothership</b> arrives every fifth wave, in three stages. Its core is shielded while it has a gun, so <b>shoot off its two guns first</b> (left and right), then hit the core. When the core is weak it turns angry &mdash; faster, more shots, and it sends down little ones. Its bar at the top shows the guns and the core. A wave cleared without losing a ship is worth 500 more, and after the first extra life there is another every 5,000 points.',
       '<b>Settings:</b> <b>Speed</b> &mdash; Gentle is slower with five lives, Classic is the old arcade pace, Fast is for experts. <b>Game</b> &mdash; Enhanced, or Retro for the plain game without the extras.',
+      '<b>The 3D look:</b> Enhanced is drawn in 3D &mdash; press <b>R</b> during a game, or tap the <b>2D | 3D</b> button at the top right of the screen, to swing the picture between flat and 3D. Settings &gt; Look: Flat keeps the 2D picture.',
       '<b>P</b> pauses. The game also pauses itself if you click away to another window.'
     ]
   });

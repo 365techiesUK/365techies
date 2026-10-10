@@ -64,10 +64,16 @@
     var W = null, mode = 'title';   // title | play | paused | over
     var input = { left: false, right: false, fire: false, tap: false, up: false, down: false, mouseX: null };   // tap: a press too quick to last a whole step still counts
     var gestured = false;
+    // full screen on a phone (see immersive() below): on, its own true full screen, allowed to come on by itself, and
+    // whether the screen is this game's whole controller (no second action, no separate steering)
+    // (D.phoneFull: a game that has been tried full screen on phones - the others keep the page as it was)
+    var imm = false, immFs = false, immAuto = true, phoneFull = !!D.phoneFull, touchOnly = !D.touchMove && !D.alt;
+    if (phoneFull) document.body.classList.add('phonefull');
 
     // ------------------------------------------------------------ the screen: as big as fits, whole-number pixels when it can
     function fit() {
-      var bw = stage.clientWidth - 16, bh = stage.clientHeight - 16 - (pad.offsetParent ? pad.offsetHeight + 10 : 0);
+      var cs = getComputedStyle(stage), pv = (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.paddingBottom) || 0), ph = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
+      var bw = stage.clientWidth - ph, bh = stage.clientHeight - pv - (pad.offsetParent ? pad.offsetHeight + 10 : 0);   // (the stage's own padding: 8px, more in full screen)
       var dpr = Math.min(3, window.devicePixelRatio || 1);
       var s = Math.max(0.5, Math.min(bw / D.width, bh / D.height)), whole = Math.floor(s * dpr) / dpr;
       if (whole * dpr >= 2 && whole / s > 0.86) s = whole;   // a whole number of screen pixels per game pixel looks crisper
@@ -75,6 +81,8 @@
       cv.style.width = cssW + 'px'; cv.style.height = cssH + 'px';
       cv.width = Math.round(cssW * dpr); cv.height = Math.round(cssH * dpr);
       $('screenwrap').style.width = cssW + 'px'; $('screenwrap').style.height = cssH + 'px';
+      var free = bh - cssH;   // full screen on a phone: a little above the middle, so a thumb under it hides nothing
+      $('screenwrap').style.transform = imm && touchOnly && free > 60 ? 'translateY(' + Math.round(-free * 0.16) + 'px)' : '';
       draw(performance.now());
     }
     window.addEventListener('resize', fit);
@@ -116,7 +124,7 @@
         else input.mouseX = logicalX(e.clientX);
       }
     });
-    cv.addEventListener('pointerdown', function (e) {
+    function screenDown(e) {
       gestured = true;
       if (mode === 'title' || mode === 'over') { begin(); return; }
       if (mode === 'paused') { resume(); return; }
@@ -129,6 +137,12 @@
       }
       try { cv.setPointerCapture(e.pointerId); } catch (er) {}
       e.preventDefault();
+    }
+    cv.addEventListener('pointerdown', screenDown);
+    stage.addEventListener('pointerdown', function (e) {   // full screen on a phone: a finger anywhere steers - under the picture it hides nothing
+      if (!imm || !touchOnly || e.target === cv || e.pointerType === 'mouse' || mode !== 'play') return;
+      if (e.target.closest && e.target.closest('button, a, .ov')) return;
+      screenDown(e);
     });
     function lift(e) {
       if (e.pointerType !== 'mouse' && touching === e.pointerId) { touching = null; input.mouseX = null; input.touch = false; input.tx = null; input.ty = null; }
@@ -208,6 +222,7 @@
     // ------------------------------------------------------------ game states
     var played = 0, runP = null;   // steps played this game (paused time never counts), and its Hall of Fame ticket
     function begin() {
+      if (phoneFull && immAuto && document.body.classList.contains('touchy')) immersive(true);   // (Play is a tap: the phone allows full screen)
       closeSheets();
       played = 0; runP = window.HallOfFame && D.hof !== false ? HallOfFame.run() : null;
       W = D.newWorld(SET.speed, SET);
@@ -261,7 +276,13 @@
       else $('oHof').hidden = true;
       setTimeout(function () { if (mode === 'over') try { $('oPlay').focus({ preventScroll: true }); } catch (e) {} }, 600);
     }
-    function showOverlay(which) { ['title', 'paused', 'over'].forEach(function (k) { $('ov_' + k).hidden = k !== which; }); }
+    function showOverlay(which) {
+      ['title', 'paused', 'over'].forEach(function (k) { $('ov_' + k).hidden = k !== which; });
+      if (phoneFull) {   // a phone: the buttons only while a game is going - the title and game-over cards get the room
+        var idle = which === 'title' || which === 'over';
+        if (document.body.classList.contains('padidle') !== idle) { document.body.classList.toggle('padidle', idle); setTimeout(fit, 0); }
+      }
+    }
     document.addEventListener('visibilitychange', function () { if (document.hidden) pause(); });
     window.addEventListener('blur', function () { pause(); });
 
@@ -624,9 +645,36 @@
     $('sReset').onclick = function () { openD('dReset'); };
     $('rYes').onclick = function () { ST = blank(); save('stats', ST); closeSheets(); say('Your scores have been cleared'); lastHud = ''; if (W) hud(); };
     function toggleFull() { try { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen(); } catch (e) {} }
-    $('bFull').onclick = toggleFull;
-    if (!document.fullscreenEnabled) $('bFull').hidden = true;
-    document.addEventListener('fullscreenchange', function () { $('bFullL').textContent = document.fullscreenElement ? 'Leave full screen' : 'Full screen'; setTimeout(fit, 150); });
+    // ------------------------------------------------------------ full screen on a phone (11 Oct 2026; owner, playing on his phone:
+    // "I just want it to be full screen ... you don't need the left and right and the fire button"). Play takes the game
+    // over the whole screen: the bar goes, the phone's own full screen where it allows it (not iPhones - there the page
+    // still fills the screen), and in a game where the screen is the whole controller the buttons go too - a finger
+    // anywhere steers, held down it fires. A pause button floats in the corner; Leave full screen is on the pause card.
+    function immersive(on) {
+      on = !!on; if (on === imm) return; imm = on;
+      document.body.classList.toggle('immersive', on); document.body.classList.toggle('padless', on && touchOnly);
+      if (on) {
+        try {
+          if (document.fullscreenEnabled && !document.fullscreenElement) { var pr = document.documentElement.requestFullscreen({ navigationUI: 'hide' }); if (pr && pr.then) pr.then(function () { immFs = true; }, function () {}); }
+        } catch (e) {}
+      } else if (document.fullscreenElement) { immFs = false; try { document.exitFullscreen(); } catch (e) {} }
+      $('pFull').hidden = $('oFull').hidden = $('imxPause').hidden = !on;   // (the pause button is hidden in the markup too: a cached old arcade.css never shows it)
+      $('bFullL').textContent = on || document.fullscreenElement ? 'Leave full screen' : 'Full screen';
+      if (D.onImmersive) { try { D.onImmersive(on); } catch (e) {} }
+      fit(); setTimeout(fit, 120); setTimeout(fit, 450);
+    }
+    function leaveFull() { immAuto = false; immersive(false); }
+    $('pFull').onclick = leaveFull; $('oFull').onclick = leaveFull;
+    $('imxPause').onclick = function () { togglePause(); };
+    $('bFull').onclick = function () {
+      if (!phoneFull || !document.body.classList.contains('touchy')) { toggleFull(); return; }
+      if (imm) leaveFull(); else { immAuto = true; immersive(true); }
+    };
+    if (!document.fullscreenEnabled && !(phoneFull && document.body.classList.contains('touchy'))) $('bFull').hidden = true;
+    document.addEventListener('fullscreenchange', function () {
+      if (!document.fullscreenElement && imm && immFs) { immFs = false; immAuto = false; immersive(false); }   // swiped out of the phone's full screen: back to the page
+      $('bFullL').textContent = imm || document.fullscreenElement ? 'Leave full screen' : 'Full screen'; setTimeout(fit, 150);
+    });
     var sayT = 0;
     function say(t, quiet) { var el = $('toast'); if (!t) return; el.textContent = t; el.classList.toggle('quiet', !!quiet); el.classList.add('on'); clearTimeout(sayT); sayT = setTimeout(function () { el.classList.remove('on'); }, Math.min(6000, 1600 + t.length * 50)); }
 
@@ -637,7 +685,7 @@
     showOverlay('title');
     fit();
     requestAnimationFrame(frame);
-    window.ARCADE365 = { get world() { return W; }, get mode() { return mode; }, begin: begin, input: input, pause: pause, resume: resume };
+    window.ARCADE365 = { get world() { return W; }, get mode() { return mode; }, get immersive() { return imm; }, begin: begin, input: input, pause: pause, resume: resume, full: immersive };
 
     function buildUI() {
       var tb = function (id, icon, label, title, cls) { return '<button class="tb' + (cls ? ' ' + cls : '') + '" id="' + id + '" type="button" title="' + esc(title) + '">' + ICON[icon] + '<span class="lbl"' + (id === 'bFull' ? ' id="bFullL"' : '') + '>' + esc(label) + '</span>'
@@ -665,12 +713,12 @@
         + '<p class="ttop" id="tTop" hidden></p>'
         + (D.keysText ? '<p class="soft k-keys">' + D.keysText + '</p>' : '') + (D.touchText ? '<p class="soft k-touch">' + D.touchText + '</p>' : '')
         + '<p class="soft">Speed: <b id="tSpeed"></b> &middot; change it in Settings</p></div></div>'
-        + '<div class="ov" id="ov_paused" hidden><div class="ovbox"><h2>Paused</h2><p>Take your time &mdash; the game waits for you.</p><button class="btn go big" id="pGo" type="button">' + ICON.play + ' Carry on</button></div></div>'
+        + '<div class="ov" id="ov_paused" hidden><div class="ovbox"><h2>Paused</h2><p>Take your time &mdash; the game waits for you.</p><button class="btn go big" id="pGo" type="button">' + ICON.play + ' Carry on</button><div class="row"><button class="btn wide" id="pFull" type="button" hidden>Leave full screen</button></div></div></div>'
         + '<div class="ov" id="ov_over" hidden><div class="ovbox"><h2 id="oWhy">Game over</h2><div class="tiles"><div class="tile"><b id="oScore">0</b><span>Score</span></div><div class="tile"><b id="oWave">1</b><span>' + WORDC + '</span></div><div class="tile"><b id="oBest">0</b><span>Your best</span></div></div>'
-        + '<ul class="badges" id="oBadges"></ul><div class="lk-won" id="oTro" hidden></div><div id="oHof" hidden></div><div class="row"><button class="btn go wide big" id="oPlay" type="button">' + ICON.play + ' Play again</button><button class="btn wide" id="oShare" type="button">Challenge a friend</button><button class="btn wide" id="oStats" type="button">My scores</button></div></div></div>'
+        + '<ul class="badges" id="oBadges"></ul><div class="lk-won" id="oTro" hidden></div><div id="oHof" hidden></div><div class="row"><button class="btn go wide big" id="oPlay" type="button">' + ICON.play + ' Play again</button><button class="btn wide" id="oShare" type="button">Challenge a friend</button><button class="btn wide" id="oStats" type="button">My scores</button><button class="btn wide" id="oFull" type="button" hidden>Leave full screen</button></div></div></div>'
         + '</div><div class="pad" id="pad">' + (D.pad ? D.pad.map(function (b) { return '<button type="button" data-pad="' + b.act + '" class="' + (b.cls || '') + '">' + esc(b.label) + '</button>'; }).join('')
           : '<button type="button" data-pad="left" aria-label="Move left">&#9664;</button><button type="button" data-pad="fire" class="fire">Fire</button><button type="button" data-pad="right" aria-label="Move right">&#9654;</button>') + '</div>'
-        + '</main></div><div id="toast" role="status" aria-live="polite"></div>'
+        + '</main><button class="imx" id="imxPause" type="button" aria-label="Pause" hidden>' + ICON.pause + '</button></div><div id="toast" role="status" aria-live="polite"></div>'
         + sheet('dStats', 'My scores', (window.Looks && Looks.openTrophies ? '<button class="btn wide" type="button" id="sTro" style="width:100%;margin:2px 0 10px;display:flex;align-items:center;justify-content:center;gap:8px">' + ICON.trophy.replace('<svg ', '<svg style="width:22px;height:22px;color:#d9a520" ') + ' Trophies<small id="sTroS" style="margin-left:6px;opacity:.75"></small></button>' : '') + (window.Keep ? '<button class="btn wide" type="button" id="sCode" style="width:100%;margin:0 0 10px;display:flex;align-items:center;justify-content:center;gap:8px">&#128273; Keep my scores<small id="sCodeS" style="margin-left:6px;opacity:.75"></small></button>' : '') + '<p class="soft">' + (window.Keep ? 'Kept on this phone or computer &mdash; nothing is sent anywhere unless you use Keep my scores or join the Hall of Fame.' : 'Kept on this computer only &mdash; nothing is sent anywhere unless you join the Hall of Fame.') + '<span id="sWhich"></span></p><div class="tiles" id="sTiles"></div><div class="row"><button class="btn go wide" type="button" data-close>Close</button><button class="btn wide hofb" type="button" id="sHof">&#127942; Hall of Fame</button><button class="btn" type="button" id="sReset">Clear my scores</button></div>')
         + sheet('dSet', 'Settings', '<div class="set"><div><label>Speed</label><small>Gentle is slower, with more lives. Changes from your next game.</small></div><div class="seg" role="group" aria-label="Speed">' + speeds + '</div></div>'
           + segRows

@@ -81,3 +81,34 @@ body.touchy .pad { display: flex; }
 .picker button small { font: 500 12px/1.25 Archivo, sans-serif; color: #a9b7d6; }
 .picker button[aria-pressed="true"] { border-color: #7fe8ff; background: rgba(127, 232, 255, .16); box-shadow: 0 0 14px rgba(127, 232, 255, .35); }
 .pad button.alt { flex: 1.2; background: rgba(255, 180, 60, .2); border-color: rgba(255, 190, 90, .6); font-size: 20px; text-transform: uppercase; letter-spacing: .04em; }
+
+/* full screen on a phone (11 Oct 2026; arcade.js immersive()): Play takes the game over the whole screen. The bar goes;
+   in a game where the screen is the whole controller (a finger anywhere steers, held down it fires) the buttons go too;
+   a pause button floats in the top corner, clear of the picture. */
+body.immersive .bar { display: none; }
+body.immersive.padless .pad { display: none !important; }
+body.immersive #stage {
+  padding: max(8px, env(safe-area-inset-top, 0px)) max(6px, env(safe-area-inset-right, 0px)) max(8px, env(safe-area-inset-bottom, 0px)) max(6px, env(safe-area-inset-left, 0px));
+  touch-action: none; overscroll-behavior: none; -webkit-user-select: none; user-select: none;
+}
+body.immersive #screenwrap { z-index: 1; }
+body.immersive #screen { border-radius: 3px; }
+.imx { display: none; }
+body.immersive .imx {
+  display: grid; place-items: center; position: fixed; z-index: 3100; top: max(10px, env(safe-area-inset-top, 0px)); left: max(10px, env(safe-area-inset-left, 0px));
+  width: 46px; height: 46px; padding: 0; border-radius: 50%; border: 2px solid rgba(110, 230, 255, .6); background: rgba(6, 8, 30, .6); color: #dff6ff;
+  cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+body.immersive .imx svg { width: 22px; height: 22px; }
+/* a phone on its side (or any short or narrow touch screen), in a game tried full screen on phones: no buttons until a game is
+   going, and the title card down to its name, Play and how to steer - the description no longer pushes Play off the card */
+body.phonefull.padidle .pad { display: none !important; }
+@media (pointer: coarse) and (max-height: 520px), (pointer: coarse) and (max-width: 330px) {   /* (a narrow screen too: big text on a phone) */
+  body.phonefull .ovbox .legend, body.phonefull #ov_title .ovbox > p:not(.ttop):not(.k-touch), body.phonefull #ov_paused .ovbox > p { display: none; }
+  body.phonefull .ovbox h1 { font-size: 24px; margin-bottom: 4px; }
+  body.phonefull .ovbox .btn.big { min-height: 46px; font-size: 17px; padding: 0 14px; }
+  body.phonefull .ovbox .trow { flex-direction: column; align-items: stretch; gap: 8px; }
+  body.phonefull .ovbox .trow .btn.big { width: 100%; }
+}
+/* full screen held upright: a strip along the top kept clear for the pause button, so it never covers the scores */
+@media (orientation: portrait) { body.immersive #stage { padding-top: calc(max(8px, env(safe-area-inset-top, 0px)) + 54px); } }

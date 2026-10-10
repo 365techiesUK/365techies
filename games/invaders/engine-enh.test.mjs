@@ -2,7 +2,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
-const E = createRequire(import.meta.url)('./engine.js');
+const E0 = createRequire(import.meta.url)('./engine.js');
+// the mechanics tests run calm: no flying in, no weaving (the swarm has its own tests, engine-swarm.test.mjs)
+const E = { ...E0, newWorld: (speed, seed, style) => E0.newWorld(speed, seed, style, { calm: true }) };
 
 const idle = {};
 function play(W, n, input) { for (let i = 0; i < n && !W.over; i++) { E.step(W, input || idle); W.events.length = 0; } }
@@ -98,42 +100,7 @@ test('the shield bubble takes one bomb, then is gone', () => {
   assert.equal(W.lives, lives - 1, 'the next one hits');
 });
 
-test('every 5th wave is the Mothership: no formation, it must be shot down to clear the wave', () => {
-  const W = E.newWorld(1, 5, 'enh');
-  while (W.wave < 4) { only(W, []); toPlay(W); E.step(W, idle); play(W, 160); }
-  only(W, []); toPlay(W); E.step(W, idle);
-  const ev = []; for (let i = 0; i < 160; i++) { E.step(W, idle); ev.push(...W.events.map((e) => (typeof e === 'string' ? e : e.sfx || 'say'))); W.events.length = 0; }
-  assert.equal(W.wave, 5);
-  assert.ok(W.boss, 'the Mothership');
-  assert.equal(W.invaders.length, 0, 'no formation');
-  assert.ok(ev.includes('warning'), 'a warning first');
-  toPlay(W);
-  assert.equal(W.phase, 'play');
-  // shoot it down: stand under it and keep firing; its bombs are cleared each step so the test is about the hits
-  const hp = W.boss.hp; let n = 0;
-  W.shields = [];
-  while (W.boss && !W.boss.dead && n++ < 6000) { W.bombs = []; W.player.x = W.boss.x + 18; E.step(W, { fire: true }); W.events.length = 0; }
-  assert.ok(W.boss && W.boss.dead > 0, 'destroyed after ' + hp + ' hits');
-  assert.ok(W.score >= hp * 10 + 1000, 'hits plus the 1,000 bonus');
-  play(W, 400);
-  assert.equal(W.wave, 6, 'then the next wave');
-  assert.equal(W.invaders.length, 55, 'with a formation again');
-});
-
-test('the Mothership turns angry at half strength and fires five at a time', () => {
-  const W = enh(2, 9); still(W);
-  W.invaders = []; W.order = [];
-  W.boss = { x: 88, y: 40, w: 48, h: 20, hp: 10, max: 10, dir: 1, t: 0, fireT: 3, phase: 1, dead: 0, flash: 0, drops: 0 };
-  play(W, 5);
-  assert.equal(W.bombs.length, 3, 'three at a time');
-  W.bombs = [];
-  W.sp = { ...W.sp, bossSpeed: 0 }; W.boss.fireT = 999;   // hold it still while the shot climbs
-  W.boss.hp = 6; W.player.x = W.boss.x + 18; W.shields = [];
-  E.step(W, { fire: true }); play(W, 40);
-  assert.equal(W.boss.phase, 2);
-  W.bombs = []; W.boss.fireT = 1; E.step(W, idle);
-  assert.equal(W.bombs.length, 5, 'five when angry');
-});
+// (the Mothership's tests moved to engine-reboot.test.mjs on 9 Oct 2026, when it got its three stages)
 
 test('a wave cleared without losing a ship is worth 500 more', () => {
   const W = enh(); still(W); W.shields = [];
