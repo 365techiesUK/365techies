@@ -437,7 +437,7 @@ FAQS = [
 ]
 
 TRADEMARK = """    <section class="section t1p" aria-label="Trademarks">
-      <div class="wrap"><p class="t1p-tm">Microsoft, Microsoft 365, Outlook, Outlook Express, Hotmail, OneDrive, Word, Excel, PowerPoint, Windows and Windows Live are trademarks of the Microsoft group of companies. Thunderbird is a trademark of the Mozilla Foundation. Other names belong to their owners. Techies One Mail is made by 365 Techies Ltd and is not made, endorsed or supported by Microsoft or any other company named here.</p></div>
+      <div class="wrap"><p class="t1p-tm">Microsoft, Microsoft 365, Microsoft Edge, Outlook, Outlook Express, Hotmail, OneDrive, Word, Excel, PowerPoint, Windows and Windows Live are trademarks of the Microsoft group of companies. Thunderbird is a trademark of the Mozilla Foundation. Other names belong to their owners. Techies One Mail is made by 365 Techies Ltd and is not made, endorsed or supported by Microsoft or any other company named here.</p></div>
     </section>"""
 
 DESC = ("Techies One Mail: a free email program for Windows 10 and 11 that replaces Windows Mail and Outlook Express. "
