@@ -585,6 +585,17 @@ import os
 # as noise, gets ignored entirely. Posts now report the date their content genuinely
 # last changed; everything else omits lastmod rather than assert something untrue.
 LM = bp.TODAY   # fallback only - see _lastmod_for() below
+# 10 Oct 2026: the homepage is hand-written, so the build has no hash for it - and its <lastmod> was LM, today, on every
+# build: the build-date stamp the rest of this file exists to prevent, and a sitemap.xml that changed every midnight.
+# It now carries the date the page itself states in its schema (bump that by hand when the homepage's words change).
+import re as _lre
+try:
+    _hm = _lre.search(r'"dateModified":\s*"(\d{4}-\d\d-\d\d)"',
+                      open(os.path.join(bp.BASE, "index.html"), encoding="utf-8").read())
+    if _hm:
+        LM = _hm.group(1)
+except OSError:
+    pass
 
 
 def _lastmod_for(slug):

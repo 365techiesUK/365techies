@@ -38,13 +38,41 @@ API = os.path.join(os.path.dirname(os.path.abspath(__file__)), "api")
 
 
 def strip_for_depth(line):
-    """Braces that affect scope only - not ones inside strings or comments."""
-    s = re.sub(r"/\*.*?\*/", "", line)
-    s = re.sub(r"//.*$", "", s)
-    s = re.sub(r"#.*$", "", s)
-    s = re.sub(r"'(?:\\.|[^'\\])*'", "''", s)
-    s = re.sub(r'"(?:\\.|[^"\\])*"', '""', s)
-    return s
+    """Braces that affect scope only - not ones inside strings or comments.
+
+    One pass, left to right: whichever opens first - a quote or a comment - owns the
+    text after it. Until 10 Oct 2026 this stripped `#...` comments BEFORE quoted
+    strings, so a CSS colour inside a PHP string ('<style>body{background:#eef3f9}',
+    api/pcm-report.php) was cut to an unterminated quote: the string's `{` counted,
+    its `}` was thrown away, and every include below it read as FUNCTION SCOPE.
+    """
+    out = []
+    i, n = 0, len(line)
+    while i < n:
+        c, two = line[i], line[i:i + 2]
+        if two == "/*":
+            j = line.find("*/", i + 2)
+            if j < 0:
+                break               # runs on to the next line; scan() tracks that
+            i = j + 2
+        elif two == "//" or c == "#":
+            break
+        elif c in "'\"":
+            j = i + 1
+            while j < n:
+                if line[j] == "\\":
+                    j += 2
+                elif line[j] == c:
+                    j += 1
+                    break
+                else:
+                    j += 1
+            out.append(c + c)
+            i = j
+        else:
+            out.append(c)
+            i += 1
+    return "".join(out)
 
 
 def scan(path):

@@ -61,6 +61,54 @@ def strip(src):
     return "".join(out), None
 
 
+_HEREDOC = re.compile(r"<<<[ \t]*(['\"]?)([A-Za-z_]\w*)\1\r?\n")
+
+
+def php_close(src, i):
+    """Index of the ?> that really ends PHP mode at or after i, or -1.
+
+    A ?> inside a quoted string or a heredoc is just text - api/pcm-sbwrite-lib.php
+    writes "<?php exit; ?>\\n" into a guard file, and a plain find() ended the region
+    there, dropped the other 100 lines and reported {} +3 / () +2 on a file that
+    php -l passes. A // or # comment, though, DOES end at ?> (PHP's rule - one in
+    pcm-slack-lib.php once took /api/pcm-msg.php down), so those stop at the
+    newline or the tag.
+    """
+    n = len(src)
+    while i < n:
+        c, two = src[i], src[i:i + 2]
+        if two == "?>":
+            return i
+        if two == "/*":
+            j = src.find("*/", i + 2)
+            if j < 0:
+                return -1
+            i = j + 2
+        elif two == "//" or c == "#":
+            while i < n and src[i] != "\n" and src[i:i + 2] != "?>":
+                i += 1
+        elif c in "'\"":
+            j = i + 1
+            while j < n:
+                if src[j] == "\\":
+                    j += 2
+                elif src[j] == c:
+                    j += 1
+                    break
+                else:
+                    j += 1
+            i = j
+        elif two == "<<" and _HEREDOC.match(src, i):
+            tag = _HEREDOC.match(src, i).group(2)
+            end = re.compile(r"\n[ \t]*" + tag + r"\b").search(src, i)
+            if not end:
+                return -1
+            i = end.end()
+        else:
+            i += 1
+    return -1
+
+
 def php_regions(src):
     """Just the code inside <?php ... ?>, so HTML templates check correctly.
 
@@ -78,7 +126,7 @@ def php_regions(src):
             a, skip = a2, 3
         else:
             skip = 5
-        b = src.find("?>", a + skip)
+        b = php_close(src, a + skip)
         parts.append(src[a + skip:] if b < 0 else src[a + skip:b])
         if b < 0:
             break

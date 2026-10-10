@@ -20,10 +20,13 @@ TODAY = datetime.date.today().isoformat()
 # requestIdleCallback that eagerly downloads the 88 KB search index, while every
 # generated page got the current 6,941-byte copy without it. A content hash
 # changes exactly when the file does, and never otherwise.
+# 10 Oct 2026: hashed with line endings folded to LF. core.autocrlf checks the file out CRLF in a fresh worktree and
+# LF wherever a tool last wrote it, so the raw bytes gave every checkout its own ?v - a clean build in a new
+# worktree rewrote the ?v on all ~740 pages (and the pcbench.min.js ?v on three) with nothing changed.
 try:
     import hashlib as _shl
     with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "js", "search.js"), "rb") as _sf:
-        SEARCHV = _shl.sha1(_sf.read()).hexdigest()[:8]
+        SEARCHV = _shl.sha1(_sf.read().replace(b"\r\n", b"\n")).hexdigest()[:8]
 except Exception:
     SEARCHV = TODAY
 
@@ -33,7 +36,7 @@ def _jsv(name):
     try:
         import hashlib as _h
         with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "js", name), "rb") as _f:
-            return _h.sha1(_f.read()).hexdigest()[:8]
+            return _h.sha1(_f.read().replace(b"\r\n", b"\n")).hexdigest()[:8]
     except Exception:
         return TODAY
 SPECV = _jsv("spec-checker.js")
@@ -144,6 +147,10 @@ _VOLATILE = [
     # not page content - swapping it for a new app version must not re-date them. Re-based once with REBASE_HASHES=1.
     (_cdre.compile(r'<img src="/images/pcm-laptop-[\w-]+\.webp" alt="365 PC Manager on a laptop:[^"]*"[^>]*>'), '<img PCMBAND>'),
     (_cdre.compile(r'(<a class="kb-shot" href="/free-pc-health-check/"[^>]*>)<img [^>]*>'), r'\1<img PCMBAND>'),
+    # 10 Oct 2026: an <!--ssr:x-->...<!--/ssr:x--> region holds a live reading - PHP rewrites it on every request, and
+    # sea-today bakes the feed into it at build time with its own "as read at" stamp. Live data, not page copy: it
+    # re-dated sea-today on every build, so sessions restored the page and content_dates.json drifted from it.
+    (_cdre.compile(r'<!--ssr:([\w-]+)-->.*?<!--/ssr:\1-->', _cdre.S), r'<!--ssr:\1--><!--/ssr:\1-->'),
     (_cdre.compile(r'\?v=[\w.\-]+'), '?v=X'),
     (_cdre.compile(r'checked on \d{1,2} \w+ \d{4}', _cdre.I), 'checked on X'),
     (_cdre.compile(r'Dates checked: \d{1,2} \w+ \d{4}', _cdre.I), 'Dates checked: X'),

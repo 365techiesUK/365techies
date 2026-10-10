@@ -193,27 +193,27 @@
  },
  "bournemouth/games/seafront": {
   "first": "2026-09-26",
-  "h": "fa2fbec2e57a0e91",
+  "h": "2a0ea5853dfb7506",
   "last": "2026-10-04"
  },
  "bournemouth/live-map": {
   "first": "2026-09-02",
-  "h": "38c25a6091d0d386",
+  "h": "e2ba1fdccc59bae3",
   "last": "2026-10-04"
  },
  "bournemouth/sea-today": {
   "first": "2026-08-02",
-  "h": "9811befedddfa66e",
-  "last": "2026-10-06"
+  "h": "8926aef612981d0f",
+  "last": "2026-10-04"
  },
  "bournemouth/sunrise-sunset": {
   "first": "2026-08-03",
-  "h": "e441e26ec8144e96",
+  "h": "6cc3f562acb7e3fb",
   "last": "2026-10-04"
  },
  "bournemouth/weather": {
   "first": "2026-09-16",
-  "h": "1e50d08f4cc2f165",
+  "h": "dcc79a8b6b67f624",
   "last": "2026-10-04"
  },
  "bournemouth/weather-records": {
@@ -1955,8 +1955,8 @@
  },
  "join": {
   "first": "2026-07-28",
-  "h": "85c53ff414a44255",
-  "last": "2026-09-29"
+  "h": "7a0839b2e243ff21",
+  "last": "2026-10-06"
  },
  "landline-switch-off-help": {
   "first": "2026-07-28",
@@ -2120,7 +2120,7 @@
  },
  "microsoft-office-unlicensed-product-error": {
   "first": "2026-07-28",
-  "h": "05fdfbda439037a4",
+  "h": "2a894186db84163f",
   "last": "2026-10-06"
  },
  "microsoft-word-wont-open": {
@@ -2135,8 +2135,8 @@
  },
  "mobile-signal-check": {
   "first": "2026-08-17",
-  "h": "b36cb924e3d4bfcd",
-  "last": "2026-09-26"
+  "h": "af564a8ea5d322fc",
+  "last": "2026-10-06"
  },
  "mobile-tablet-support": {
   "first": "2026-07-28",
@@ -2346,6 +2346,10 @@
   "first": "2026-07-28",
   "h": "cde9e60116429d1c",
   "last": "2026-09-28"
+ },
+ "order-microsoft-365": {
+  "first": "2026-10-10",
+  "h": "b631dbf600961179"
  },
  "our-guarantees": {
   "first": "2026-07-28",
@@ -2755,8 +2759,8 @@
  },
  "portal": {
   "first": "2026-09-05",
-  "h": "1905ec169c6e9a9c",
-  "last": "2026-10-03"
+  "h": "09eff79c502ab511",
+  "last": "2026-10-10"
  },
  "pre-call-checklists": {
   "first": "2026-07-28",
@@ -2780,7 +2784,7 @@
  },
  "printer-disappeared-after-windows-update": {
   "first": "2026-07-28",
-  "h": "3eb079980a6f7767",
+  "h": "a79636e661a79f2c",
   "last": "2026-10-06"
  },
  "printer-prints-but-wont-scan-after-new-router": {
@@ -3100,7 +3104,7 @@
  },
  "shared-folders-not-working-after-windows-11-24h2-update": {
   "first": "2026-07-28",
-  "h": "40af538659bd9550",
+  "h": "f24803824ca3d070",
   "last": "2026-10-06"
  },
  "sharepoint-not-syncing-file-explorer": {
