@@ -44,9 +44,9 @@ PS5_EMULATOR_POST = dict(
   title="PS5 Emulator Downloads: Real or Fake?",
   lede="PS5 games are starting to run on PCs, and fake emulator downloads are cashing in. What is real, how to spot a fake, and what to do if you ran one.",
   body=(
-    # this article's own links and warning list (the post template styles neither: links match the text, lists get green ticks)
-    '<style>#ps5art a{color:var(--cyan);text-decoration:underline;text-underline-offset:2px}#ps5art a:hover{color:#fff}'
-    '#ps5art ul.flags li::before{content:"\\2715";color:#ff6b78}#ps5art .cmp-wrap{margin:1.2rem 0 1.6rem}'
+    # this article's own warning list and comparison table (the post template gives lists green ticks); its links are
+    # styled by the site-wide .article link rule (CSS v121, 10 Oct 2026), which replaced the #ps5art a rule here
+    '<style>#ps5art ul.flags li::before{content:"\\2715";color:#ff6b78}#ps5art .cmp-wrap{margin:1.2rem 0 1.6rem}'
     '#ps5art .cmp-table td,#ps5art .cmp-table th{text-align:left;vertical-align:top}'
     '#ps5art ol{counter-reset:s;display:grid;gap:.6rem;margin:0 0 1.6rem;padding:0;list-style:none}'
     '#ps5art ol li{position:relative;padding-left:2.1rem;color:var(--ink-3);line-height:1.6;counter-increment:s}'

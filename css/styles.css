@@ -1819,6 +1819,17 @@ html[class*="a11y-text-"] .nav-sos__long, html[class*="a11y-text-"] .nav-search_
   border: 1px solid rgba(29, 151, 227, 0.35); background: rgba(29, 151, 227, 0.07);
 }
 .article__callout p { margin: 0; color: var(--ink-3); }
+/* 10 Oct 2026: links in IT Advice posts looked exactly like the text around them (same colour, no underline) - styled as
+   .faq__ans a. Covers the post's own text, its lists and tables, the two notes (closing callout, Outlook "Windows PCs only")
+   and wrapped bodies like #ps5art. Left alone: the byline (p.mono, inline colour), the fix flow (it sits in a .section and
+   has its own link styles) and buttons; .related__links and .post-card are outside .article. CSS3 only, so old iPads get it too. */
+.article > p:not(.mono) a:not(.button), .article > :not(.section) p:not(.mono) a:not(.button),
+.article > :not(.section) li a:not(.button), .article > :not(.section) td a:not(.button), .article > :not(.section) th a:not(.button) {
+  color: var(--cyan); text-decoration: underline; text-underline-offset: 2px;
+}
+.article > p:not(.mono) a:not(.button):hover, .article > :not(.section) p:not(.mono) a:not(.button):hover,
+.article > :not(.section) li a:not(.button):hover, .article > :not(.section) td a:not(.button):hover,
+.article > :not(.section) th a:not(.button):hover { color: #fff; }
 .related { max-width: 760px; margin: 3rem auto 0; }
 .related__head { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; }
 .related__links { display: grid; gap: 0.6rem; }
