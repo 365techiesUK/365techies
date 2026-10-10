@@ -38,11 +38,39 @@ def shot(name, alt, eager=False):
             f'sizes="(max-width:880px) 100vw, 720px" width="1440" height="900" alt="{alt}"{lazy} decoding="async">')
 
 
+# The explainer film (made 10-11 Oct 2026: director/critic panels, the real app's demo mailbox, Lily's voice). A new cut
+# gets a NEW file name (images are cached for a year). Owner, 11 Oct 2026: "put the film on the product page".
+FILM = "/images/t1-mail-film-v2.mp4"
+FILM_POSTER = "/images/t1-mail-film-poster-v2.jpg"
+FILM_SECS = 78
+FILM_UPLOADED = "2026-10-11"
+FILM_SAYS = ("Techies One Mail: a free email program for Windows computers, from 365 Techies. If Windows Mail or Outlook "
+             "Express stopped, your email is most likely still with your email company. In this made-up inbox, your "
+             "daughter&rsquo;s email gets a green box: no warning signs. While you&rsquo;re reading, a fake tax refund email "
+             "arrives. Techies One is open, so obvious scams go to Scams, and the sender is blocked. It tells you why, in plain "
+             "English. The sender isn&rsquo;t the taxman. The link pretends to be a government website. It tries to rush you. "
+             "It can get things wrong. You can put it back, or ask us. Type your email address, and it fills in the settings "
+             "itself. Simple view gives you fewer, bigger buttons, and a green one that asks us to ring you back. We&rsquo;re "
+             "a Bournemouth family firm. Download it free at 365techies.co.uk, or ring us if you&rsquo;d rather we set it up.")
+
+
 CSS = """    <style>
       .t1p{--t1edge:rgba(125,170,220,.24);--t1fill:rgba(125,170,220,.06)}
       .t1p-shot{margin:0;border:1px solid var(--t1edge);border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 18px 50px rgba(0,0,0,.35)}
       .t1p-shot img{display:block;width:100%;height:auto}
       .t1p-cap{margin:.5rem 0 0;font-size:.82rem;color:var(--muted);text-align:center}
+      .t1p-film{position:relative;border:1px solid var(--t1edge);border-radius:14px;overflow:hidden;background:#060c1c;box-shadow:0 18px 50px rgba(0,0,0,.35);aspect-ratio:16/9}
+      .t1p-film video{display:block;width:100%;height:100%;object-fit:cover;background:#060c1c}
+      .t1p-play{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;border:0;padding:0 0 7%;background:transparent;cursor:pointer}
+      .t1p-play span{display:flex;align-items:center;gap:.6rem;background:rgba(6,12,28,.86);color:#fff;font-weight:700;font-size:1.05rem;padding:.85rem 1.4rem .85rem 1.1rem;border-radius:999px;border:1.5px solid rgba(255,255,255,.25);box-shadow:0 12px 32px rgba(0,0,0,.45);transition:transform .2s ease}
+      .t1p-play:hover span,.t1p-play:focus-visible span{transform:scale(1.05)}
+      .t1p-play svg{width:2.1rem;height:2.1rem;flex:none}
+      .t1p-film.on .t1p-play{display:none}
+      .t1p-play .short{display:none}
+      @media (max-width:520px){.t1p-play .long{display:none}.t1p-play .short{display:inline}.t1p-play span{font-size:.95rem;padding:.6rem 1.1rem .6rem .8rem}.t1p-play svg{width:1.7rem;height:1.7rem}}
+      .t1p-says{margin:.7rem 0 0;font-size:.9rem}
+      .t1p-says summary{cursor:pointer;color:var(--muted)}
+      .t1p-says p{margin:.5rem 0 0;line-height:1.6}
       .t1p-dl{max-width:880px;margin:0 auto;border:1px solid var(--t1edge);border-radius:16px;background:var(--t1fill);padding:clamp(1.1rem,3vw,1.8rem);display:flex;flex-direction:column;gap:.8rem}
       .t1p-dl h2,.t1p h2{margin:0}
       .t1p-dl p{margin:0}
@@ -104,10 +132,15 @@ def hero():
           <a class="dh-rating" href="/reviews/"><span><span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <strong>Our firm is rated 4.9 on Google</strong></span><span>365 Techies &middot; family-run since 1995</span></a>
           <p class="page-hero__byline mono"><span class="page-hero__byline-by">By the </span><a href="/meet-the-team/">365 Techies team</a> &middot; Reviewed __LASTMOD_HUMAN__</p>
         </div>
-        <figure>
-          <div class="t1p-shot">{shot("inbox-genuine", "Techies One Mail open on a Windows PC: folders on the left, the inbox in the middle and an email from Sarah on the right, with a green box saying no warning signs were found (a made-up sample mailbox)", eager=True)}</div>
-          <figcaption class="t1p-cap">The real program. The people and emails are made-up samples, apart from us.</figcaption>
+        <figure id="video" style="margin:0">
+          <div class="t1p-film" data-t1film>
+            <video controls playsinline preload="none" poster="{FILM_POSTER}" width="1920" height="1080" aria-label="Techies One Mail in {FILM_SECS} seconds: what it does, with a spoken guide and captions"><source src="{FILM}" type="video/mp4"></video>
+            <button class="t1p-play" type="button" aria-label="Play the {FILM_SECS}-second film about Techies One Mail"><span><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="23" fill="#00ce1b"/><path d="M19 15l15 9-15 9z" fill="#fff"/></svg><b class="long">Watch: what it does, in {FILM_SECS} seconds</b><b class="short">Watch the film ({FILM_SECS} s)</b></span></button>
+          </div>
+          <figcaption class="t1p-cap">The real program, with a spoken guide and captions. The people and emails are made-up samples, apart from us.</figcaption>
+          <details class="t1p-says"><summary>What the film says</summary><p>{FILM_SAYS}</p></details>
         </figure>
+        <script>(function(){{var f=document.querySelector("[data-t1film]");if(!f)return;var v=f.querySelector("video"),b=f.querySelector(".t1p-play");v.controls=false;b.addEventListener("click",function(){{f.classList.add("on");v.controls=true;v.play();}});v.addEventListener("play",function(){{f.classList.add("on");}});}})();</script>
       </div>
     </section>"""
 
@@ -471,8 +504,15 @@ def build():
             "publisher": {"@id": bp.SITE + "/#business"}, "provider": {"@id": bp.SITE + "/#business"},
             "datePublished": "2026-10-10", "url": f"{bp.SITE}/{s}/",
         }
+        video = {"@type": "VideoObject", "@id": f"{bp.SITE}/{s}/#video", "name": "Techies One Mail in %d seconds" % FILM_SECS,
+                 "description": ("What Techies One Mail does: plain-English scam warnings, adding a BT address, Simple view and "
+                                 "Get help, from 365 Techies in Bournemouth. The real program with a made-up demo mailbox."),
+                 "thumbnailUrl": [bp.SITE + FILM_POSTER], "uploadDate": FILM_UPLOADED,
+                 "duration": "PT%dM%dS" % (FILM_SECS // 60, FILM_SECS % 60), "contentUrl": bp.SITE + FILM,
+                 "embedUrl": f"{bp.SITE}/{s}/#video", "inLanguage": "en-GB", "publisher": {"@id": bp.SITE + "/#business"}}
+        app["subjectOf"] = {"@id": f"{bp.SITE}/{s}/#video"}
         return bp.graph([bp.crumb_sub(s, "Email Support", "email-support", NAME),
-                         bp.webpage(s, NAME, _d, image=bp.SITE + OG), app,
+                         bp.webpage(s, NAME, _d, image=bp.SITE + OG), app, video,
                          bp.howto_node(s, "How to install Techies One Mail", STEPS),
                          bp.faqpage(s, FAQS)])
 
