@@ -16608,6 +16608,7 @@ _PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
             <li><strong>Website analytics</strong>, only after you accept analytics cookies. If you start a booking and do not finish it, we keep the phone number you entered for 24 hours so we can help you complete it, and your browser stores which page and campaign brought you here so an enquiry can be attributed correctly.</li>
             <li><strong>A live count of who is on the site right now</strong>, without cookies or anything stored on your device: the page being read, a rough town from your internet provider, where the visit came from (Google, Facebook and so on &mdash; never what was searched for), and the kind of device &mdash; phone, tablet or PC, the system and the browser, as any website sees. No names or IP addresses are kept, and it is all forgotten after five minutes.</li>
             <li><strong>A count of 365 PC Manager installs.</strong> The app checks with us for updates when it starts and every hour, whether or not you have linked it to us. For copies that are not linked, we keep only an anonymous install number, the app version, whether the PC runs Windows 10, the days it was first and last seen, and the country &mdash; worked out from the internet address at that moment; the address itself is not kept. Country data: IP geolocation by <a href="https://db-ip.com" rel="noopener">DB-IP</a>, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a>.</li>
+            <li><strong>A count of Techies One Mail installs.</strong> Our Techies One Mail email program checks with us for updates when it starts and every few hours. It sends a random install number it made up for itself, the app&rsquo;s version, the version of Windows, and which kinds of email provider it is set up for (for example BT or Gmail) &mdash; never your email addresses, your emails, your contacts or your passwords, which stay on your PC. We keep those, the days it was first and last used and the country, worked out from the internet address at that moment; the address itself is not kept. An install we have not heard from for a year is deleted.</li>
             <li><strong>A free month of 365 PC Manager.</strong> If we give a copy that is not linked to us a free month of everything, we keep a key for it against its anonymous install number until the month is over, and then only a scrambled record that it has had one. Its service reports stay on your PC. Only if you press <strong>&ldquo;Send my report to 365 Techies for a free look-over&rdquo;</strong> and tick to agree do we receive that report, with the name, email address and (if you give one) phone number you type, so a techie can look it over and email you. We keep it for 120 days.</li>
             <li><strong>Ordering Microsoft 365 on our website.</strong> When you order on our Microsoft 365 order page we keep what you ordered; the business&rsquo;s name, address and company number; your name, email address and phone number; what you use for email today and anything you write to us; and, as our record of the agreement, the time you agreed to the Microsoft Customer Agreement, the 12-month term and our terms and the internet address you agreed from. Pax8, the distributor we buy Microsoft licences from, and Microsoft receive the business&rsquo;s details and the name and email address of the person who agreed, to set up the licences. GoCardless receives your name, email address and the business&rsquo;s address to set up your Direct Debit, and your bank details go only to them. We keep the order for as long as we supply the licences, and after that only as long as the law requires us to keep business records.</li>
           </ul>
@@ -30358,6 +30359,8 @@ def write_portal_page():
         + '<div class="ftabs" id="ftabs"></div><div class="tblwrap" id="ffleet"><p class="quiet">Loading the fleet\\u2026</p></div></div>';
       // 1 Oct 2026: every install, linked or not, counted from the app's own hourly check-in (api/pcm-installs.php)
       h += '<div class="card"><h2>\\ud83d\\udcc8 PC Manager installs</h2><div id="instbox"><p class="quiet">Counting\\u2026</p></div></div>';
+      // 10 Oct 2026: Techies One Mail, counted from the email app's own check-in (api/t1-installs.php)
+      h += '<div class="card"><h2>\\u2709\\ufe0f Techies One Mail installs</h2><div id="t1ibox"><p class="quiet">Counting\\u2026</p></div></div>';
       // 6 Oct 2026 (owner): find ANY customer - job cards, PC Manager, SimplyBook, the book - open them, edit them
       h += '<div class="card" id="custcard"><h2>\\ud83d\\udd0e Find a customer</h2>'
         + '<p class="quiet" style="margin:.1rem 0 .6rem">Everyone we\\u2019ve written up a job for, everyone with PC Manager and everyone who has booked \\u2014 by name, company, phone, email or postcode.</p>'
@@ -30422,7 +30425,7 @@ def write_portal_page():
       el.innerHTML = h;
       bindOut();
       nxStaffLayout();
-      loadDiary(); loadFleet(); loadInstalls(); loadPlus(); cmBind(); loadComms('list');
+      loadDiary(); loadFleet(); loadInstalls(); loadT1Installs(); loadPlus(); cmBind(); loadComms('list');
       lookoverFromHash();   // 9 Oct 2026: the Slack card's "Open the report" link
       loadM365(m365FromHash);   // 9 Oct 2026: Microsoft 365 orders (+ the Slack card's "Open the order" link)
       loadSosq();
@@ -32874,6 +32877,44 @@ def write_portal_page():
         }).join('') + '</tbody></table></div>';
     if (rows.length > show.length) h += '<button type="button" class="sm ghost" data-itmore style="margin-top:.5rem">Show all ' + rows.length + '</button>';
     return h + '</div>';
+  }
+  // 10 Oct 2026 (owner: "yes, build the updater, check-ins and portal card"): Techies One Mail installs - same words as
+  // the PC Manager card. Only anonymous figures exist: an install number the app made up, version, Windows, the KINDS of
+  // email provider and the country. Our own PCs = the connections marked on the PC Manager card.
+  var T1I = { d: null };
+  var T1_PROVIDERS = { gmail: 'Gmail', microsoft: 'Outlook.com / Hotmail', microsoft365: 'Microsoft 365 (business)', yahoo: 'Yahoo', aol: 'AOL', bt: 'BT', virgin: 'Virgin Media', sky: 'Sky', plusnet: 'Plusnet', other: 'Other' };
+  function loadT1Installs() {
+    var box = document.getElementById('t1ibox'); if (!box) return;
+    post('/api/t1-installs.php', { stoken: S.stoken, machine: mid() })
+      .then(function (d) { T1I.d = d; renderT1Installs(); })
+      .catch(function () { T1I.d = { ok: false }; renderT1Installs(); });
+  }
+  function renderT1Installs() {
+    var box = document.getElementById('t1ibox'); if (!box) return;
+    var d = T1I.d;
+    if (!d || !d.ok) { box.innerHTML = '<p class="quiet">Couldn\\u2019t load the Techies One Mail figures - refresh to retry.</p>'; return; }
+    var h = '<div class="stats">'
+      + '<div class="stat"><b>' + d.total + '</b><span>installs</span></div>'
+      + '<div class="stat g"><b>' + (d.kept || 0) + '</b><span>still using it</span></div>'
+      + '<div class="stat g"><b>' + (d.days3 || 0) + '</b><span>used on 3+ days</span></div>'
+      + '<div class="stat"><b>' + (d.once || 0) + '</b><span>ran once only</span></div>'
+      + '<div class="stat"><b>' + d.new7 + '</b><span>new this week</span></div></div>';
+    h += '<p class="quiet" style="margin:.55rem 0 0">Stopped using it: <b>' + (d.stopped || 0) + '</b> \\u00b7 used this week: <b>' + d.active7
+      + '</b> \\u00b7 too soon to tell: <b>' + (d.soon || 0) + '</b> \\u00b7 our own PCs left out: <b>' + (d.ours || 0) + '</b></p>';
+    var max = 1; (d.daily || []).forEach(function (x) { if (x.n > max) max = x.n; });
+    h += '<p class="quiet" style="margin:.7rem 0 .3rem">New installs, last 30 days</p><div class="instbars">'
+      + (d.daily || []).map(function (x) { return '<span title="' + esc(x.d) + ': ' + x.n + '" style="height:' + Math.max(2, Math.round(40 * x.n / max)) + 'px"></span>'; }).join('') + '</div>';
+    h += '<div class="instgrid"><div><h3>Email providers</h3>'
+      + ((d.providers || []).length ? '<table>' + d.providers.map(function (p) { return '<tr><td>' + esc(T1_PROVIDERS[p.k] || p.k) + '</td><td class="num"><b>' + p.n + '</b></td></tr>'; }).join('') + '</table>' : '<p class="quiet">None yet</p>')
+      + '<h3 style="margin-top:.8rem">Countries</h3>'
+      + ((d.countries || []).length ? '<table>' + d.countries.map(function (c) { return '<tr><td>' + esc(instCountry(c.k)) + '</td><td class="num"><b>' + c.n + '</b></td><td class="num quiet">' + (c.kept || 0) + ' still using it</td></tr>'; }).join('') + '</table>' : '<p class="quiet">None yet</p>')
+      + '</div><div><h3>Versions</h3>'
+      + ((d.versions || []).length ? '<table>' + d.versions.map(function (v) { return '<tr><td>v' + esc(v.k) + '</td><td class="num"><b>' + v.n + '</b></td></tr>'; }).join('') + '</table>' : '<p class="quiet">None yet</p>')
+      + '<p class="quiet" style="margin:.6rem 0 0">Windows 10: <b>' + (d.w10 || 0) + '</b> \\u00b7 Windows 11: <b>' + (d.w11 || 0) + '</b></p>'
+      + '<p class="quiet" style="margin:.2rem 0 0">Offered to the updater: <b>' + (d.latest ? 'v' + esc(d.latest.ver) : 'nothing yet') + '</b></p></div></div>';
+    h += '<p class="quiet" style="font-size:.9rem;margin:.7rem 0 0">Counted from the app\\u2019s own check-in (when it starts and every few hours)' + (d.since ? ' since ' + esc(d.since) : '')
+      + '. Only anonymous figures: never an email address, a name or an email. One install can use several email providers.</p>';
+    box.innerHTML = h;
   }
   // 9 Oct 2026: a free-month report sent for a look-over - the Slack card links here (#lookover=<id>); opened signed in
   function lookoverFromHash() {

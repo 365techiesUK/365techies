@@ -460,6 +460,11 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(pcm-installs\.json(\..*)?|pcm-installs-lib\.php|pcm-installs-test\.php|pcm-geoip-lib\.php|geo[46]\.bin)$">
   Require all denied
 </FilesMatch>
+# 10 Oct 2026: Techies One Mail installs - the store, its library and test (t1-checkin.php and t1-installs.php stay
+# served: the check-in keeps only what its library allows, and the staff figures authenticate per request)
+<FilesMatch "^(t1-installs\.json(\..*)?|t1-installs-lib\.php|t1-installs-test\.php)$">
+  Require all denied
+</FilesMatch>
 # 29 Sep 2026: the statistics store, its library, its test and its cron are never URLs either
 # (visitors.php and visitors-stats.php stay served - both authenticate per request).
 <FilesMatch "^(visitors-key\.php|visitors-cache\.json(\..*)?|visitors-stats\.json(\..*)?|visitors-tally-lib\.php|visitors-tally-test\.php|visitors-cron\.php)$">

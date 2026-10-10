@@ -207,6 +207,10 @@ api/visitors-cache.json.tmp
 api/pcm-installs.json
 api/pcm-installs.json.lock
 api/pcm-installs.json.*.tmp
+# 10 Oct 2026: Techies One Mail installs counted from check-ins (t1-installs-lib.php)
+api/t1-installs.json
+api/t1-installs.json.lock
+api/t1-installs.json.*.tmp
 # 29 Sep 2026: the statistics store (where the views come from), its lock and its temp files
 api/visitors-stats.json
 api/visitors-stats.json.lock
