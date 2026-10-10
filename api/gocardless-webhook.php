@@ -78,10 +78,17 @@ if (!is_array($seen)) $seen = array();
 
 $notes = array();      // Slack lines to post AFTER the response, so a slow Slack never times the webhook out
 $acted = 0;
+/* 9 Oct 2026: Microsoft 365 orders from the website (api/m365-order-lib.php) set up a Direct Debit through a billing
+   request too. An event about one of THEIR billing requests or mandates only says which order to look at: after the
+   response, GoCardless is asked directly (m365_dd_refresh) - the event is never taken at its word. */
+require_once __DIR__ . '/m365-order-lib.php';
+$m365 = array();
 foreach ($events as $ev) {
     if (!is_array($ev)) continue;
     $id = (string)(isset($ev['id']) ? $ev['id'] : '');
     if (pl_seen_has($seen, $id)) continue;                       // redelivery: accept, do nothing
+    $mo = m365_event_match($ev);
+    if ($mo !== '') $m365[$mo] = 1;
     $said = '';
     $r = null;
     pl_store_locked(PLQ_STORE, function ($data) use ($ev, &$r) {
@@ -105,3 +112,4 @@ if (@file_put_contents($tmp, json_encode($seen), LOCK_EX) !== false) @rename($tm
 http_response_code(204);
 if (function_exists('fastcgi_finish_request')) { @fastcgi_finish_request(); }
 foreach ($notes as $n) plq_slack($n);
+foreach (array_keys($m365) as $mo) m365_dd_refresh($mo);

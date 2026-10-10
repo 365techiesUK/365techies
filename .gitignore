@@ -309,3 +309,12 @@ api/games-acct-store/*.tmp
 # 9 Oct 2026: PC Manager free month - reports sent for a free look-over (server only; the folder's .htaccess stays in git)
 api/pcm-lookover/*
 !api/pcm-lookover/.htaccess
+
+# 9 Oct 2026: Microsoft 365 orders from the website - the store, its lock/temp files and log (names, addresses), and the
+# Pax8 API secret + its token cache (server-only; the owner makes api/pax8-key.php on the server)
+api/m365-orders.json
+api/m365-orders.json.lock
+api/m365-orders.json.*.tmp
+api/m365-orders.log
+api/pax8-key.php
+api/pax8-token.json

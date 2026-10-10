@@ -7,22 +7,29 @@
 # price=None: no published price yet - the card says "Ask us for today's price".
 from urllib.parse import quote
 
+# pax8=(Pax8 product id, its 1-year commitment term id): what the portal's "Order in Pax8" button orders (api/m365-order.php,
+# 9 Oct 2026). Read from the Pax8 API that day (GET /products/{id} + /dependencies). The ids are not secret.
 PRODUCTS = {
     "m365-basic": dict(
         name="Microsoft 365 Business Basic", price="6.50", per="per person a month",
-        what="Business email on your own domain, Teams, 1&nbsp;TB of OneDrive storage each, and the web and mobile Office apps."),
+        what="Business email on your own domain, Teams, 1&nbsp;TB of OneDrive storage each, and the web and mobile Office apps.",
+        pax8=("9c773c32-9871-4a12-a592-b2ee129fef61", "dbe23f9e-6817-496d-b998-05dbe403a970")),
     "m365-standard": dict(
         name="Microsoft 365 Business Standard", price="12.50", per="per person a month",
-        what="Everything in Basic, plus the full Office apps &mdash; Word, Excel, Outlook and PowerPoint &mdash; installed on your computers."),
+        what="Everything in Basic, plus the full Office apps &mdash; Word, Excel, Outlook and PowerPoint &mdash; installed on your computers.",
+        pax8=("9e8ff14a-a4ae-441a-af3d-9b23b3ab01be", "3541a30e-cb61-4ac8-a391-dcd69af1afe4")),
     "m365-premium": dict(
         name="Microsoft 365 Business Premium", price="19.75", per="per person a month",
-        what="Everything in Standard, plus Microsoft&rsquo;s business security: Defender for Business and Intune device management."),
+        what="Everything in Standard, plus Microsoft&rsquo;s business security: Defender for Business and Intune device management.",
+        pax8=("05df4303-8948-4198-ac48-33c27d044f69", "2dd31680-f585-4487-835a-3b3e954e940c")),
     "exchange": dict(
         name="Business email only (Exchange Online)", price="3.75", per="per person a month",
-        what="Professional email on your own domain with a 50&nbsp;GB mailbox, without the Office apps."),
+        what="Professional email on your own domain with a 50&nbsp;GB mailbox, without the Office apps.",
+        pax8=("b2286d6e-4d50-40b5-b60b-b7dce26bf423", "a0fb6ac8-165d-40fe-bd86-e2c2bbc77186")),
     "defender": dict(
         name="Microsoft Defender for Business", price="2.75", per="per person a month",
-        what="Microsoft&rsquo;s business antivirus and threat protection for your PCs, Macs, phones and tablets. Already included in Business Premium."),
+        what="Microsoft&rsquo;s business antivirus and threat protection for your PCs, Macs, phones and tablets. Already included in Business Premium.",
+        pax8=("5b44a6b1-a3f0-4cc0-8b86-0a0cac618ffd", "3cfb34d6-44cb-4252-a242-05ee905c57cd")),
     # Malwarebytes prices: owner, 3 Oct 2026 ("still all four"). Set against Malwarebytes' own UK prices that day:
     # Standard 1 device GBP 29.99/yr, Plus 3 devices + VPN GBP 69.98/yr, ThreatDown Core GBP 4.75/device/month (5-device minimum).
     "mb-home": dict(
@@ -147,6 +154,31 @@ def bundles_section():
     </section>'''
 
 CONTACT = "/contact/?topic=software-we-supply&amp;product="
+# 9 Oct 2026 (owner: "yes build it with option B"): the Microsoft licences are ordered on our own page - plan, people,
+# business, Microsoft's agreement and a Direct Debit - and the order waits in the portal for one press of "Order in Pax8".
+ORDER_SLUG = "order-microsoft-365"
+ORDERABLE = [k for k in ["m365-basic", "m365-standard", "m365-premium", "exchange", "defender"] if PRODUCTS[k].get("pax8")]
+
+def order_href(key):
+    return f"/{ORDER_SLUG}/?plan={key}"
+
+def _plain(s):
+    return s.replace("&nbsp;", " ").replace("&mdash;", "-").replace("&rsquo;", "'").replace("&amp;", "&")
+
+def write_order_plans_php(path):
+    """api/m365-order-plans.php - the orderable products for the server, written from PRODUCTS on every build so a price
+    is still only ever set above. Include-only (.htaccess denies it as a URL)."""
+    def q(s):
+        return "'" + str(s).replace("\\", "\\\\").replace("'", "\\'") + "'"
+    rows = []
+    for k in ORDERABLE:
+        p = PRODUCTS[k]
+        rows.append(f"    {q(k)} => array('name' => {q(_plain(p['name']))}, 'price' => {q(p['price'])}, "
+                    f"'pax8' => {q(p['pax8'][0])}, 'commit' => {q(p['pax8'][1])}),")
+    src = ("<?php\n// WRITTEN BY THE BUILD from software_offers.py PRODUCTS - edit prices THERE, never here. Include-only.\n"
+           "return array(\n" + "\n".join(rows) + "\n);\n")
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        f.write(src)
 
 def _card(key):
     p = PRODUCTS[key]
@@ -155,10 +187,11 @@ def _card(key):
         price = f'<p class="swo-price"><b>&pound;{p["price"]}</b><span>{p["per"]}</span></p>'
     else:
         price = f'<p class="swo-price swo-price--ask"><b>Ask us</b><span>for today&rsquo;s price, {p["per"]}</span></p>'
-    label = "Register interest" if p.get("soon") else "Get this set up"   # short: "Ask us to set this up" wrapped in a 250px card
+    orderable = key in ORDERABLE and not p.get("soon") and p.get("price")
+    label = "Register interest" if p.get("soon") else ("Order online" if orderable else "Get this set up")   # short: a 250px card
     # the product name travels to the contact form (forms.js puts it in the message), so the Slack card says what was asked
     plain = p["name"].replace("&nbsp;", " ").replace("&mdash;", "-").replace("&rsquo;", "'")
-    href = CONTACT + quote(plain)
+    href = order_href(key) if orderable else CONTACT + quote(plain)
     return (f'          <article class="swo-card">{tag}\n'
             f'            <h3 class="swo-name">{p["name"]}</h3>\n'
             f'            <p class="swo-what">{p["what"]}</p>\n'

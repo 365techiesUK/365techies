@@ -89,6 +89,12 @@ $cm = comms_sweep();
 require_once __DIR__ . '/pcm-paylink-sweep.php';
 $pl = paylink_sweep();
 
+/* Microsoft 365 orders from the website (9 Oct 2026): the same insurance for their Direct Debits - orders whose
+   GoCardless page has not come back yet, after the webhook's head start, a few a tick, for up to 14 days. Read-only
+   against GoCardless; one Slack line when one is set up. A clean no-op with no orders or no token. */
+require_once __DIR__ . '/m365-order-lib.php';
+try { $pl['m365'] = m365_sweep(); } catch (Throwable $e) { $pl['m365'] = array('error' => 'exception'); }
+
 /* Invoices waiting for someone's OK: one Slack line a day, after nine, naming
    every QuickBooks invoice with a balance that has never been emailed. Same
    placement, same reason. Read-only against QuickBooks; silent when the queue

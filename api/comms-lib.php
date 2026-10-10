@@ -1140,6 +1140,16 @@ function comms_lead_from_post($m) {
         $link = preg_match('~https://365techies\.co\.uk/portal/#lookover=([a-f0-9]{16})~', lc_all_text($m), $lm) ? $lm[0] : '';   // (raw: the unwrapped text keeps a link's words, not its address)
         $body = 'They ran PC Manager on a free month and asked a techie to look over the report and email them.' . ($link !== '' ? "\nThe report: " . $link : '');
         $page = '';
+    } elseif ($lead['label'] === 'Microsoft 365 order') {
+        // an order from /order-microsoft-365/ (m365-order-lib.php m365_card, 9 Oct 2026): what they ordered, and the order in the portal
+        $what = comms_lead_field($all, array('Order'));
+        $topic = 'Microsoft 365 order' . ($what !== '' ? ': ' . $what : '');
+        $link = preg_match('~https://365techies\.co\.uk/portal/#m365order=([a-f0-9]{10})~', lc_all_text($m), $lm) ? $lm[0] : '';   // (raw, as for look-overs)
+        $bits = array();
+        foreach (array('Monthly', 'Email today', 'Direct Debit') as $lb) { $x = comms_lead_field($all, array($lb)); if ($x !== '') $bits[] = $lb . ': ' . $x; }
+        $msg = comms_lead_quote($all, 'Message');
+        $body = 'Ordered Microsoft 365 on the website.' . ($bits ? "\n" . implode("\n", $bits) : '') . ($msg !== '' ? "\nTheir message: " . $msg : '') . ($link !== '' ? "\nThe order: " . $link : '');
+        $page = '/order-microsoft-365/';
     } elseif ($lead['label'] === 'Get Help button') {
         // the 365 Get Help add-on (pcm-gethelp-lib.php gh_card): the page they were on is another site's, so it goes in
         // the message as text - never the "via" page, which is one of ours

@@ -112,6 +112,10 @@ function lc_lead($m) {
     if (preg_match('/^Report look-over: please email (.+?) at (\S+@\S+)\s*$/m', $plain, $mm)) {
         return array('kind' => 'web', 'label' => 'Report look-over', 'who' => trim($mm[1]), 'number' => lc_number($all));
     }
+    // a Microsoft 365 order from the website (m365-order-lib.php m365_card, 9 Oct 2026) - ring them about setting it up
+    if (preg_match('/^Microsoft 365 order from (.+?)\s*\((.+)\)\s*$/m', $plain, $mm)) {
+        return array('kind' => 'web', 'label' => 'Microsoft 365 order', 'who' => trim($mm[1]), 'number' => lc_number($all));
+    }
     if (preg_match('/^Booking started but never finished\s*-\s*(.+)$/m', $plain, $mm)) {
         return array('kind' => 'callback', 'label' => 'Unfinished booking', 'who' => trim(strtok($mm[1], "\n")), 'number' => lc_number($all));
     }

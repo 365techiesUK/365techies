@@ -305,6 +305,12 @@ ErrorDocument 404 /404.html
 <FilesMatch "^pcm-lookover-(lib|test)\.php$">
   Require all denied
 </FilesMatch>
+# Microsoft 365 orders from the website (9 Oct 2026): api/m365-order.php is the URL. The store and log hold businesses'
+# names, addresses and the people who agreed; pax8-key.php holds the Pax8 API secret (server-only, made by the owner,
+# never in git) and pax8-token.json a 24-hour token; the library, the plans file and the test are include/CLI-only.
+<FilesMatch "^(m365-orders\.(json(\..*)?|log)|m365-order-(lib|plans|test)\.php|pax8-key\.php|pax8-token\.json)$">
+  Require all denied
+</FilesMatch>
 # Emails in the inbox (2 Oct 2026): mail-imap.php holds the mailbox passwords (server-only, made by the owner, never in
 # git); the library is include-only and the test CLI-only. Nothing here is a URL.
 <FilesMatch "^(mail-imap\.php(\.example)?|comms-mail-(lib|test)\.php)$">

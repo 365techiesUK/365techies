@@ -457,6 +457,28 @@ def book_service():
         desc=desc, og_title="Book a Service | 365 Techies", schema=schema, content=content)
 book_service()
 
+# ===================================================== ORDER MICROSOFT 365 (9 Oct 2026)
+# Owner: "I thought the customers could buy it directly on our website" -> "yes build it with option B": the order, the
+# Microsoft Customer Agreement and a GoCardless Direct Debit on our own page; the order waits in the staff portal for
+# a person to press "Order in Pax8". The page and form live in m365_order.py, the server in api/m365-order.php. Products
+# and prices: software_offers.py (the plans file the server reads is written from it here, on every build).
+import m365_order as _m365o
+import software_offers as _swo_order
+
+def order_m365_page():
+    slug = _swo_order.ORDER_SLUG
+    desc = ("Order Microsoft 365 Business Basic, Standard, Premium or Exchange email for your business from 365 Techies: "
+            "pick your plan, set up a Direct Debit, and we set it up for you. UK businesses, no VAT to add.")
+    content = _m365o.order_page_content(bp.task_head, bc_sub, faq_html, bp.gc_badge)
+    def schema(s, _desc=desc, _faqs=_m365o.FAQS):
+        return graph([crumb_sub(s, "Microsoft 365 plans", "which-microsoft-365-plan", "Order Microsoft 365"),
+                      webpage(s, "Order Microsoft 365 for your business", _desc), faqpage(s, _faqs)])
+    # noindex: a checkout, not a page to rank - /which-microsoft-365-plan/ is the one Google should show
+    add(slug=slug, title="Order Microsoft 365 for Your Business | 365 Techies", desc=desc,
+        og_title="Order Microsoft 365 | 365 Techies", schema=schema, content=content, robots="noindex,follow")
+    _swo_order.write_order_plans_php(_os_pcm.path.join(bp.BASE, "api", "m365-order-plans.php"))
+order_m365_page()
+
 # ---- 365 PC Manager - free download landing page ----
 # Owner supplies the hosted (ideally code-signed) .exe URL. Until then the page
 # routes to "ask us to install it" rather than showing a dead download button.
@@ -16587,6 +16609,7 @@ _PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
             <li><strong>A live count of who is on the site right now</strong>, without cookies or anything stored on your device: the page being read, a rough town from your internet provider, where the visit came from (Google, Facebook and so on &mdash; never what was searched for), and the kind of device &mdash; phone, tablet or PC, the system and the browser, as any website sees. No names or IP addresses are kept, and it is all forgotten after five minutes.</li>
             <li><strong>A count of 365 PC Manager installs.</strong> The app checks with us for updates when it starts and every hour, whether or not you have linked it to us. For copies that are not linked, we keep only an anonymous install number, the app version, whether the PC runs Windows 10, the days it was first and last seen, and the country &mdash; worked out from the internet address at that moment; the address itself is not kept. Country data: IP geolocation by <a href="https://db-ip.com" rel="noopener">DB-IP</a>, licensed under <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a>.</li>
             <li><strong>A free month of 365 PC Manager.</strong> If we give a copy that is not linked to us a free month of everything, we keep a key for it against its anonymous install number until the month is over, and then only a scrambled record that it has had one. Its service reports stay on your PC. Only if you press <strong>&ldquo;Send my report to 365 Techies for a free look-over&rdquo;</strong> and tick to agree do we receive that report, with the name, email address and (if you give one) phone number you type, so a techie can look it over and email you. We keep it for 120 days.</li>
+            <li><strong>Ordering Microsoft 365 on our website.</strong> When you order on our Microsoft 365 order page we keep what you ordered; the business&rsquo;s name, address and company number; your name, email address and phone number; what you use for email today and anything you write to us; and, as our record of the agreement, the time you agreed to the Microsoft Customer Agreement, the 12-month term and our terms and the internet address you agreed from. Pax8, the distributor we buy Microsoft licences from, and Microsoft receive the business&rsquo;s details and the name and email address of the person who agreed, to set up the licences. GoCardless receives your name, email address and the business&rsquo;s address to set up your Direct Debit, and your bank details go only to them. We keep the order for as long as we supply the licences, and after that only as long as the law requires us to keep business records.</li>
           </ul>
 
           <h2>Moving your email: the 365 Email Mover add-on and 365 PC Manager</h2>
@@ -16707,6 +16730,8 @@ info_page(
           <p>Monthly plans are paid in advance by Direct Debit (via GoCardless). One-off work is quoted and agreed before we begin. Prices are shown on our website or in your quote.</p>
           <h2>Cancelling a monthly plan</h2>
           <p>Our monthly plans are rolling and cancel-anytime &mdash; there is no long lock-in contract. Just let us know and we&rsquo;ll stop your plan at the end of your current period.</p>
+          <h2>Microsoft 365 business licences</h2>
+          <p>Microsoft 365 business licences we buy for you are not a monthly plan: they run on Microsoft&rsquo;s 12-month term and are paid monthly by Direct Debit, at the price on our website when you ordered. Microsoft lets them be cancelled or reduced within 7 days of the order; after that they run to the end of the 12 months. They renew for another 12 months unless you tell us before the renewal date that you want to stop or change them, and if our price is changing we tell you before then. You can add people at any time. Microsoft asks every business customer to accept the <a href="https://www.microsoft.com/licensing/docs/customeragreement">Microsoft Customer Agreement</a>, and we place an order only after a person here has checked it.</p>
           <h2>Changing your mind about something you bought &mdash; your 14-day right</h2>
           <p>If you are a consumer and you bought from us at a distance &mdash; online, by phone, by email, or anywhere other than face to face &mdash; you have the right to change your mind for <strong>14 days</strong>, starting the day after the goods reach you. You do not have to give a reason.</p>
           <ul>
@@ -24497,6 +24522,23 @@ def write_portal_page():
   #p365app .err { color:var(--pbad); font-size: 0.9rem; margin-top:.55rem; min-height:1.2em; }
   #p365app .row { display:flex; gap:.9rem; align-items:center; padding:.55rem 0; border-bottom:1px solid rgba(42,59,99,.5); flex-wrap:wrap; }
   #p365app .row:last-child { border-bottom:0; }
+  /* 9 Oct 2026: Microsoft 365 orders (m365Render) - one block per order, its three steps as a short list */
+  #p365app .m3o { padding:.75rem 0 .8rem; border-bottom:1px solid rgba(42,59,99,.6); }
+  #p365app .m3o:last-of-type { border-bottom:0; }
+  #p365app .m3o--hl { box-shadow:0 0 0 2px var(--pcyan); border-radius:10px; padding-left:.6rem; padding-right:.6rem; }
+  #p365app .m3o__top { display:flex; flex-wrap:wrap; gap:.3rem .6rem; align-items:center; }
+  #p365app .m3o__what { margin:.25rem 0 0; }
+  #p365app .m3steps { margin:.2rem 0 .4rem; padding-left:1.25rem; display:flex; flex-direction:column; gap:.45rem; line-height:1.5; }
+  #p365app .m3steps li.m3ok::marker { color:var(--pgood); }
+  #p365app .m3steps li.m3bad::marker { color:var(--pbad); }
+  #p365app .m3steps li.m3ok > b { color:var(--pgood); }
+  #p365app .m3o button[disabled] { opacity:.45; cursor:not-allowed; }
+  #p365app .m3btns { display:flex; flex-wrap:wrap; gap:.4rem; margin:.35rem 0 0; }
+  #p365app .m3pre { display:flex; flex-wrap:wrap; align-items:center; gap:.3rem; margin:.3rem 0 0; color:var(--pmut); }
+  #p365app .m3pre input { width:auto; min-width:0; flex:0 1 15rem; padding:.4rem .55rem; font-size:.95rem; }
+  #p365app .m3more summary { cursor:pointer; color:var(--psoft); font-size:.9rem; }
+  #p365app .m3log { margin:.4rem 0 0; padding-left:1.1rem; color:var(--pmut); font-size:.85rem; line-height:1.5; }
+  #p365app .m3foot { margin:.4rem 0 0; }
   #p365app .ringS { position:relative; width:56px; height:56px; flex:0 0 56px; }
   #p365app .ringS svg { transform:rotate(-90deg); display:block; }
   #p365app .ringS b { position:absolute; inset:0; display:grid; place-items:center; font-size: 0.9rem; color:var(--pwhite); }
@@ -29716,7 +29758,8 @@ def write_portal_page():
         act = cardOf('ab'), qbo = cardOf('qbosetup'), invp = cardOf('inviteplans'), geo = cardOf('geocard'), quick = cardOf('pcmadm'), live = cardOf('vislive'), lic = null,
         plus = cardOf('pluscard'),   // 8 Oct 2026: the paid app abroad, on Setup
         inst = cardOf('instbox'), commsV = cardOf('cmvbox'),   // 1 Oct 2026: PC Manager installs, under the fleet
-        cust = cardOf('custq');   // 6 Oct 2026: Find a customer, first on the Customers tab
+        cust = cardOf('custq'),   // 6 Oct 2026: Find a customer, first on the Customers tab
+        m365 = cardOf('m365card');   // 9 Oct 2026: Microsoft 365 orders, on Today under the sign-ins (shown only while one waits)
     Array.prototype.forEach.call(root.querySelectorAll('.card > h2'), function (h2) { if (/PC Manager licences/.test(h2.textContent)) lic = h2.parentNode; });
     var TABS = [['today', 'Today'], ['live', 'Live'], ['customers', 'Customers'], ['computers', 'Computers'], ['invoices', 'Invoices'], ['setup', 'Setup']];
     var bar = document.createElement('div'); bar.className = 'nx-sbar';
@@ -29741,6 +29784,7 @@ def write_portal_page():
     panels.today.appendChild(lstrip); panels.today.appendChild(kp);
     if (sos) panels.today.appendChild(sos);
     if (psg) panels.today.appendChild(psg);   // 8 Oct 2026: sign-ins waiting for approval (shown only while one waits)
+    if (m365) panels.today.appendChild(m365);
     panels.today.appendChild(grid);
     if (diary) colA.appendChild(diary);
     if (comms) colB.appendChild(comms);
@@ -30284,6 +30328,9 @@ def write_portal_page():
       // 8 Oct 2026: a booking sign-in whose email matched a plan record waits here, on a separate free record, until
       // approved (psgRender; the same card text is posted to #365-job-tracker). Shown only while one waits.
       h += '<div class="card" id="psgcard" style="display:none;border-left:4px solid var(--pwarn)"><h2>\\u23f3 Sign-ins waiting for approval</h2><div id="psg"></div></div>';
+      // 9 Oct 2026 (owner: "yes build it with option B"): Microsoft 365 orders from /order-microsoft-365/, waiting for a
+      // person to press Order in Pax8 (m365Render). Shown only while there is one from the last 60 days.
+      h += '<div class="card" id="m365card" style="display:none;border-left:4px solid var(--pcyan)"><h2>\\ud83d\\uded2 Microsoft 365 orders</h2><div id="m365box"></div></div>';
       /* This month's jobs -> invoices: the Slack "New Job In" posts, the console's "Quote
          agreed", and PC Manager services on non-plan customers, with each one's invoice
          raised for review. First card on purpose: it is the money. */
@@ -30377,6 +30424,7 @@ def write_portal_page():
       nxStaffLayout();
       loadDiary(); loadFleet(); loadInstalls(); loadPlus(); cmBind(); loadComms('list');
       lookoverFromHash();   // 9 Oct 2026: the Slack card's "Open the report" link
+      loadM365(m365FromHash);   // 9 Oct 2026: Microsoft 365 orders (+ the Slack card's "Open the order" link)
       loadSosq();
       psgRender(d.pending || []);
       nxlLoad();
@@ -32853,6 +32901,150 @@ def write_portal_page():
         window.open(url, '_blank'); setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
       };
     }).catch(function () {});
+  }
+  /* ---------- 9 Oct 2026 (owner: "yes build it with option B"): Microsoft 365 orders from /order-microsoft-365/
+     (api/m365-order.php). Three steps per order: the customer's Direct Debit (GoCardless), Order in Pax8 (a REAL order,
+     after Pax8's own ?isMock check), then the monthly Direct Debit on that order's own mandate. Nothing is bought or
+     charged until a person presses the button and says yes. ---------- */
+  var M365 = { d: null, all: false };
+  function loadM365(then) {
+    post('/api/m365-order.php', { 'do': 'list', stoken: S.stoken, machine: mid() })
+      .then(function (r) { M365.d = r; m365Render(); if (then) then(); }).catch(function () {});
+  }
+  function m365When(ts) { if (!ts) return ''; var t = new Date(ts * 1000); return t.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + ' ' + t.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }); }
+  var M365_ERR = {
+    no_pax8: 'Pax8 isn\\u2019t connected on the server yet (api/pax8-key.php is missing). Order it by hand in Pax8, then press Mark as ordered.',
+    no_gocardless: 'GoCardless isn\\u2019t connected on the server (api/pcm-gocardless.php).',
+    no_dd: 'Their Direct Debit isn\\u2019t set up yet, so nothing can be ordered.',
+    existing_tenant: 'They already have Microsoft 365, so Pax8 must take it over: order it by hand in Pax8, then press Mark as ordered.',
+    bad_prefix: 'The Microsoft account name must be 3 to 40 letters and numbers, nothing else.',
+    busy: 'Someone pressed this for the same order a moment ago. Wait a few minutes, then refresh.',
+    already_ordered: 'It is already ordered.', already: 'Already done.', already_ready: 'Their Direct Debit is already set up.',
+    cancelled: 'This order is cancelled. Reopen it first.', not_ordered: 'Order it in Pax8 first.', no_mandate: 'There is no Direct Debit mandate on this order.',
+    not_staff: 'Your staff sign-in has expired. Sign in again; nothing was changed.', unknown_order: 'That order isn\\u2019t there any more. Refresh the page.'
+  };
+  function m365Say(r) {
+    var e = (r && r.error) || 'network';
+    if (e === 'pax8_failed') return 'Pax8 stopped it (' + (r.stage || '?') + '). Nothing was bought.\\n\\n' + (r.why || '');
+    if (e === 'gc_failed') return 'GoCardless said no. Nothing was changed.\\n\\n' + (r.why || '');
+    return M365_ERR[e] || 'That didn\\u2019t work (' + e + '). Nothing was changed. Try again.';
+  }
+  function m365Act(id, what, extra, btn, okMsg) {
+    var body = { 'do': what, id: id, stoken: S.stoken, machine: mid() }; for (var k in (extra || {})) body[k] = extra[k];
+    var was = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = 'Working\\u2026'; }
+    return post('/api/m365-order.php', body).then(function (r) {
+      if (btn) { btn.disabled = false; btn.textContent = was; }
+      if (r && r.ok && r.order && M365.d && M365.d.orders) {
+        M365.d.orders = M365.d.orders.map(function (o) { return o.id === r.order.id ? r.order : o; });
+        m365Render(); if (okMsg) alert(okMsg(r));
+      } else if (!(r && r.ok)) alert(m365Say(r));
+      return r;
+    }).catch(function () { if (btn) { btn.disabled = false; btn.textContent = was; } alert('Couldn\\u2019t reach the server. Nothing was changed.'); });
+  }
+  var M365_STATE = { waiting: ['Waiting for their Direct Debit', 'var(--pwarn)'], ready: ['Ready to order in Pax8', 'var(--pcyan)'],
+    ordered: ['Ordered \\u2014 start the payments', 'var(--pcyan)'], done: ['Done', 'var(--pgood)'], cancelled: ['Cancelled', 'var(--pmut)'] };
+  function m365Row(o) {
+    var b = o.biz || {}, p = o.person || {}, dd = o.dd || {}, px = o.pax8 || {}, pay = o.pay || {};
+    var st = M365_STATE[o.state] || ['?', 'var(--pmut)'], live = o.state !== 'cancelled';
+    var h = '<div class="m3o" id="m3o-' + esc(o.id) + '" data-id="' + esc(o.id) + '">'
+      + '<div class="m3o__top"><strong>' + esc(b.name) + '</strong> <span class="pill" style="color:' + st[1] + ';border:1px solid ' + st[1] + ';background:transparent">' + st[0] + '</span>'
+      + ' <span class="quiet" style="margin:0">ordered ' + esc(m365When(o.at)) + '</span></div>'
+      + '<div class="m3o__what">' + esc(o.qty) + ' \\u00d7 ' + esc(o.plan_name) + ' \\u00b7 <b>' + esc(o.monthly_txt) + ' a month</b> <span class="quiet" style="margin:0">(' + esc(o.each_txt) + ' each, 12-month term)</span></div>'
+      + '<div class="quiet" style="margin:.1rem 0 .5rem">' + esc((p.first || '') + ' ' + (p.last || '')) + ' \\u00b7 <a href="mailto:' + esc(p.email) + '">' + esc(p.email) + '</a> \\u00b7 <a href="tel:' + esc(String(p.phone || '').replace(/[^0-9+]/g, '')) + '">' + esc(p.phone) + '</a> \\u00b7 ' + esc(b.postcode) + '</div>'
+      + '<ol class="m3steps">';
+    // 1. their Direct Debit
+    var ddTxt = dd.state === 'ready' ? '\\u2713 Set up' + (dd.mstatus ? ' (' + esc(String(dd.mstatus).replace(/_/g, ' ')) + ')' : '') + (dd.ready_at ? ', ' + esc(m365When(dd.ready_at)) : '')
+      : dd.state === 'waiting' ? '\\u23f3 Sent to GoCardless\\u2019s page ' + esc(m365When(dd.at)) + ' \\u2014 not finished yet' + (dd.why ? ' (' + esc(dd.why) + ')' : '')
+      : '\\u2717 Not set up' + (dd.why ? ': ' + esc(dd.why) : '');
+    h += '<li class="' + (dd.state === 'ready' ? 'm3ok' : dd.state === 'waiting' ? 'm3wait' : 'm3bad') + '"><b>Their Direct Debit:</b> ' + ddTxt;
+    if (live && dd.state !== 'ready') h += '<span class="m3btns">' + (dd.br ? '<button type="button" class="sm ghost" data-m3="check">Check now</button>' : '')
+      + '<button type="button" class="sm ghost" data-m3="ddlink">Email them a new link</button></span>';
+    h += '</li>';
+    // 2. Pax8
+    h += '<li class="' + (px.state === 'ordered' ? 'm3ok' : px.state === 'failed' ? 'm3bad' : 'm3wait') + '"><b>Pax8:</b> ';
+    if (px.state === 'ordered') {
+      h += '\\u2713 Ordered ' + esc(m365When(px.at)) + (px.by ? ' by ' + esc(px.by) : '') + (px.hand ? ' (by hand)' : '') + (px.order ? ' \\u00b7 Pax8 order ' + esc(px.order) : '') + (o.prefix && !px.hand ? ' \\u00b7 ' + esc(o.prefix) + '.onmicrosoft.com' : '');
+    } else if (o.email_now === 'microsoft') {
+      h += 'They already have Microsoft 365' + (o.now_with ? ' (with ' + esc(o.now_with) + ')' : '') + ', so Pax8 can\\u2019t make a new account. In Pax8: add the company, send their Microsoft 365 admin the GDAP link, then order it there.'
+        + (live ? '<span class="m3btns"><a class="btn sm ghost" href="https://app.pax8.com/" target="_blank" rel="noopener">Open Pax8</a><button type="button" class="sm ghost" data-m3="markordered">Mark as ordered</button></span>' : '');
+    } else {
+      if (px.state === 'failed') h += '<span style="color:var(--pbad)">Stopped at ' + esc(px.stage || '?') + ': ' + esc(px.why || '') + '</span><br />';
+      if (px.state === 'placing') h += '<span style="color:var(--pwarn)">An order was started ' + esc(m365When(px.at)) + ' \\u2014 check Pax8 before trying again.</span><br />';
+      if (live) {
+        h += '<span class="m3pre">Microsoft account: <input type="text" class="m3prefix" value="' + esc(o.prefix || '') + '" maxlength="40" aria-label="Microsoft account name" autocomplete="off" spellcheck="false" />.onmicrosoft.com</span>'
+          + '<span class="m3btns"><button type="button" class="sm" data-m3="pax8"' + (dd.state === 'ready' && M365.d.pax8 ? '' : ' disabled title="' + (dd.state !== 'ready' ? 'Waiting for their Direct Debit' : 'Pax8 isn\\u2019t connected on the server') + '"') + '>\\ud83d\\uded2 Order in Pax8</button>'
+          + '<button type="button" class="sm ghost" data-m3="markordered">Mark as ordered by hand</button></span>';
+      }
+    }
+    h += '</li>';
+    // 3. their monthly payments
+    h += '<li class="' + (pay.state === 'started' ? 'm3ok' : 'm3wait') + '"><b>Monthly payments:</b> ';
+    if (pay.state === 'started') h += '\\u2713 ' + esc(o.monthly_txt) + ' a month' + (pay.first ? ', first on ' + esc(pay.first) : '') + (pay.hand ? ' (set up by hand' + (pay.sub ? ': ' + esc(pay.sub) : '') + ')' : '') + (pay.by ? ' \\u00b7 ' + esc(pay.by) : '');
+    else if (px.state === 'ordered' && live) h += 'Not started.<span class="m3btns">' + (dd.state === 'ready' ? '<button type="button" class="sm" data-m3="startpay">Start ' + esc(o.monthly_txt) + ' a month</button>' : '')
+      + '<button type="button" class="sm ghost" data-m3="markpaid">Mark as set up by hand</button></span>';
+    else h += '<span class="quiet" style="margin:0">After the Pax8 order.</span>';
+    h += '</li></ol>';
+    // the rest, folded
+    var ag = o.agreed || {};
+    h += '<details class="m3more"><summary>Details and history</summary><div class="quiet" style="margin:.4rem 0 0;line-height:1.6">'
+      + esc(b.street) + (b.street2 ? ', ' + esc(b.street2) : '') + ', ' + esc(b.city) + ' ' + esc(b.postcode)
+      + (b.crn ? '<br />Company number ' + esc(b.crn) : '') + (o.domain ? '<br />Domain ' + esc(o.domain) : '')
+      + '<br />Email today: ' + esc(o.email_now_txt) + (o.now_with ? ' (' + esc(o.now_with) + ')' : '')
+      + (o.notes ? '<br />Their message: ' + esc(o.notes) : '')
+      + '<br />Agreed (Microsoft Customer Agreement, 12-month term, our terms, can sign for the business): ' + esc(m365When(ag.at)) + (ag.ip ? ' from ' + esc(ag.ip) : '')
+      + '</div><ul class="m3log">' + (o.log || []).slice().reverse().map(function (l) { return '<li>' + esc(m365When(l.at)) + ' \\u00b7 ' + esc(l.by) + ' \\u00b7 ' + esc(l.what) + '</li>'; }).join('') + '</ul></details>';
+    h += '<div class="m3foot">' + (live ? '<button type="button" class="sm ghost" data-m3="cancel" style="color:var(--pbad)">Cancel order</button>' : '<button type="button" class="sm ghost" data-m3="reopen">Reopen</button>') + '</div></div>';
+    return h;
+  }
+  function m365Render() {
+    var card = document.getElementById('m365card'), box = document.getElementById('m365box');
+    if (!card || !box) return;
+    var d = M365.d;
+    if (!d || !d.ok) { card.style.display = 'none'; return; }
+    var now = Date.now() / 1000, rows = d.orders || [];
+    var openO = rows.filter(function (o) { return o.state !== 'done' && o.state !== 'cancelled'; });
+    var recent = rows.filter(function (o) { return (now - o.at) < 60 * 86400 || (o.state !== 'done' && o.state !== 'cancelled'); });
+    if (!recent.length) { card.style.display = 'none'; box.innerHTML = ''; return; }
+    card.style.display = '';
+    var h = '<p class="quiet" style="margin:.1rem 0 .7rem">Ordered on the website. Each one: their Direct Debit, then <b>Order in Pax8</b> (Pax8 checks it first; nothing is bought if the check fails), then start their monthly payments. Then ring them to set up their email and people.</p>';
+    if (!d.pax8) h += '<p class="quiet" style="margin:0 0 .6rem;color:var(--pwarn)">\\u26a0 Pax8 isn\\u2019t connected on the server yet (api/pax8-key.php), so Order in Pax8 can\\u2019t work. Until it is: order by hand in Pax8, then press Mark as ordered.</p>';
+    if (!d.gocardless) h += '<p class="quiet" style="margin:0 0 .6rem;color:var(--pwarn)">\\u26a0 GoCardless isn\\u2019t connected on the server, so Direct Debits can\\u2019t be set up from the order page.</p>';
+    var show = M365.all ? recent : openO;
+    if (!show.length) h += '<p class="quiet">Nothing waiting.</p>';
+    show.forEach(function (o) { h += m365Row(o); });
+    var fin = recent.length - openO.length;
+    if (fin) h += '<button type="button" class="sm ghost" data-m3all="1">' + (M365.all ? 'Hide finished' : 'Show finished and cancelled (' + fin + ')') + '</button>';
+    box.innerHTML = h;
+    box.onclick = function (e) {
+      var t = e.target.closest ? e.target.closest('[data-m3],[data-m3all]') : null; if (!t || t.disabled) return;
+      if (t.hasAttribute('data-m3all')) { M365.all = !M365.all; m365Render(); return; }
+      var row = t.closest('.m3o'), id = row && row.getAttribute('data-id'), o = null;
+      (M365.d.orders || []).forEach(function (x) { if (x.id === id) o = x; }); if (!o) return;
+      var act = t.getAttribute('data-m3'), who = o.biz.name, n = o.qty + ' \\u00d7 ' + o.plan_name;
+      if (act === 'check') m365Act(id, 'check', {}, t, function (r) { return r.order.dd.state === 'ready' ? 'Their Direct Debit is set up.' : 'Not finished yet. GoCardless says it is still waiting for them.'; });
+      else if (act === 'ddlink') { if (confirm('Email ' + o.person.email + ' a new link to set up their Direct Debit?\\n\\nThe link opens GoCardless\\u2019s own page and works once.')) m365Act(id, 'ddlink', {}, t, function (r) { return r.sent ? 'Emailed.' : 'The link was made but the email didn\\u2019t send \\u2014 check the email settings.'; }); }
+      else if (act === 'pax8') {
+        var pre = (row.querySelector('.m3prefix') || {}).value || '';
+        pre = pre.toLowerCase().replace(/\\s+/g, '');
+        if (!/^[a-z0-9]{3,40}$/.test(pre)) { alert(M365_ERR.bad_prefix); return; }
+        if (!confirm('Place a REAL order with Pax8?\\n\\n' + n + ' for ' + who + '\\n12-month term, billed monthly. ' + o.monthly_txt + ' a month to the customer.\\nTheir new Microsoft account: ' + pre + '.onmicrosoft.com\\n\\nPax8 checks the order first, and nothing is bought if that check fails. Once placed, Microsoft lets it be cancelled or reduced only within 7 days.')) return;
+        m365Act(id, 'pax8order', { prefix: pre }, t, function () { return 'Ordered in Pax8. Next: start their monthly payments, then ring them to set up their email and people.'; });
+      }
+      else if (act === 'startpay') { if (confirm('Start the monthly Direct Debit?\\n\\n' + o.monthly_txt + ' a month from ' + who + ' (' + n + '), on the mandate they set up with this order. GoCardless emails them the date before the first payment.')) m365Act(id, 'startpay', {}, t, function (r) { return 'Started.' + (r.order.pay.first ? ' First payment ' + r.order.pay.first + '.' : ''); }); }
+      else if (act === 'markordered') { var ref = prompt('Mark as ordered in Pax8 by hand.\\n\\nPax8 order number (optional):', ''); if (ref !== null) m365Act(id, 'mark', { what: 'ordered', ref: ref }, t); }
+      else if (act === 'markpaid') { var ref2 = prompt('Mark the monthly payments as set up by hand (e.g. in the GoCardless dashboard).\\n\\nSubscription reference or a note (optional):', ''); if (ref2 !== null) m365Act(id, 'mark', { what: 'paid', ref: ref2 }, t); }
+      else if (act === 'cancel') { var why = prompt('Cancel this order in the portal?\\n\\nThis only marks it cancelled here. It does NOT cancel anything at Pax8 or GoCardless \\u2014 do that there if it is needed.\\n\\nReason (optional):', ''); if (why !== null) m365Act(id, 'mark', { what: 'cancel', ref: why }, t); }
+      else if (act === 'reopen') m365Act(id, 'mark', { what: 'reopen' }, t);
+    };
+  }
+  function m365FromHash() {
+    var m = (location.hash || '').match(/^#m365order=([a-f0-9]{10})$/); if (!m) return;
+    var found = (M365.d && M365.d.orders || []).filter(function (o) { return o.id === m[1]; })[0];
+    if (!found) return;
+    if (found.state === 'done' || found.state === 'cancelled') { M365.all = true; m365Render(); }
+    var n = document.getElementById('m3o-' + m[1]);
+    if (n) { n.classList.add('m3o--hl'); setTimeout(function () { n.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 300); }
   }
   /* ---------- 8 Oct 2026: the paid app abroad, "Unlock everything" (api/pcm-plus-admin.php). The switch is NOT here - it
      goes on in api/pcm-buy-config.php, deployed on the owner's go (api/pcm-buy.off on the server stops it at once).
