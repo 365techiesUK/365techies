@@ -143,6 +143,9 @@ _VOLATILE = [
     # volatile, so a page whose stored date differed from the build date re-hashed differently on every build and
     # re-dated itself (135 pages looped the day after the flows shipped). Stamped text, not content.
     (_cdre.compile(r'<span class="ff-rev mono">Last reviewed [^<]*</span>'), '<span class="ff-rev mono">Last reviewed X</span>'),
+    # 10 Oct 2026: the fix flow's own stylesheet (FIX_FLOW_STYLE, inline on ~139 pages) is presentation, not advice -
+    # underlining its links must not re-date every flow page (owner's call). Re-based once with REBASE_HASHES=1.
+    (_cdre.compile(r'<style>\s*#fixflow \.ff\{.*?</style>', _cdre.S), '<style>FIXFLOW</style>'),
     # 8 Oct 2026: the 365 PC Manager promo band's laptop picture (on ~110 service and town pages) is a site-wide promo,
     # not page content - swapping it for a new app version must not re-date them. Re-based once with REBASE_HASHES=1.
     (_cdre.compile(r'<img src="/images/pcm-laptop-[\w-]+\.webp" alt="365 PC Manager on a laptop:[^"]*"[^>]*>'), '<img PCMBAND>'),
@@ -3421,7 +3424,7 @@ FIX_FLOW_STYLE = r"""      <style>
       #fixflow .ff-end p{margin:0 0 .6rem;line-height:1.6}
       #fixflow .ff-end .ff-cta{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:.8rem}
 .ff-areas{margin:1rem .2rem 0;font-size:.86rem;line-height:1.55;color:var(--ink-2,#dfe9f7);opacity:.88}
-.ff-areas a{color:var(--cyan-soft,#6cc4f5)}
+      #fixflow .ff a:not(.ff-open):not(.button),#fixflow .lede a{color:var(--cyan-soft,#6cc4f5);text-decoration:underline;text-underline-offset:2px} #fixflow .ff a:not(.ff-open):not(.button):hover,#fixflow .lede a:hover{color:#fff}
       #fixflow .ff-end .ff-cta .button{min-height:44px}
       #fixflow .ff-plan{margin-top:1rem;padding:1rem 1.1rem;border-radius:12px;border:1px solid rgba(125,170,220,.25);background:rgba(255,255,255,.03);font-size:.9rem;line-height:1.6}
       #fixflow .ff-plan b{color:var(--cyan-soft,#6cc4f5)}
