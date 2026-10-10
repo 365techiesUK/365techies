@@ -20,6 +20,7 @@ import win10_esu_business   # commercial Windows 10 ESU: doubling + cumulative p
 import ccb_rebuild_case_study  # measured WordPress->static before/after (CCB rebuild)
 import beckox_rebuild_case_study  # NAMED manufacturer case study (permission 2026-08-13)
 import bournemouth_data     # Bournemouth365 section, page 1 of 5: Friday Fireworks (founding doc in seo-research)
+import tips_by_email        # /tips-by-email/ + the sign-up box under every article (10 Oct 2026; double opt-in via api/t1-signup.php)
 import ai_pages             # /ai/ section (9 pages, copy in ai_pages_data.py) - GATED: AI_LAUNCH=False means it registers NOTHING until the owner-authorised release commit
 from build_pages import (add, graph, crumb, webpage, faqpage, faq_html, cta,
                          hero, SITE, write_all)
@@ -148,6 +149,7 @@ def make_post(slug, cat, title, lede, body, points, related, faqs=None, dt="2026
         </div>
       </div>
     </section>''',
+      tips_by_email.BOX,   # 10 Oct 2026: tips by email - stripped from the content hash, so adding it re-dates nothing
       faq_html(faqs) if faqs else "",
       # learning funnel: home-audience advice readers are exactly who the free courses serve
       bp.COURSES_BAND if cat in ("Home Users", "Windows") else "",
@@ -766,7 +768,8 @@ def _s_title(t):
     return _sre.sub(r"\s+", " ", t) or (t or "")
 
 def _s_headings(content):
-    hs = _sre.findall(r"<h[1-3][^>]*>(.*?)</h[1-3]>", content or "", _sre.S)
+    content = _sre.sub(r"<!--tbe-->.*?<!--/tbe-->", "", content or "", flags=_sre.S)   # the tips sign-up box is on every article, not about any of them
+    hs = _sre.findall(r"<h[1-3][^>]*>(.*?)</h[1-3]>", content, _sre.S)
     return " ".join(_s_txt(h) for h in hs)[:220]
 
 def _s_cat(s):

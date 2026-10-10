@@ -66,6 +66,11 @@ api/pcm-msg-*.json.*.tmp
 api/pcm-msg-beat.json
 api/pcm-msg-cron.lock
 api/tm-key.php
+# Tips by email sign-ups (10 Oct 2026): names + emails until Techies One Mail collects them
+api/t1-signups.json
+api/t1-signups.json.*
+api/t1-signup-rate.json
+api/t1-signup-rate.json.*
 api/tm-rate.json
 api/tm-log.json
 api/tm-sched.json

@@ -16645,6 +16645,15 @@ _PRIVACY_BODY = """          <p class="mono" style="color:var(--cyan)">%s</p>
             <li>If you&rsquo;re <strong>signed in to your 365 account</strong> on that computer, the Hall of Fame uses the initials of your name and the town from your postcode area, with a &ldquo;365 member&rdquo; badge &mdash; again, only once you&rsquo;ve ticked the box.</li>
           </ul>
 
+          <h2 id="tips-by-email" style="scroll-margin-top:calc(var(--header-h) + var(--ticker-h) + 1rem)">Our tips by email</h2>
+          <p>If you sign up for our <a href="/tips-by-email/">tips by email</a> (tips, news and offers from us), we keep your email address, your first name if you give one, which page you signed up on, and when you agreed and the exact words you agreed to. We send one email first, asking you to confirm: you are only on the list once you press the button on the page it opens. If you don&rsquo;t, we delete your address after a week.</p>
+          <ul>
+            <li>Once you have confirmed, your details move from our website to our own email program on our office computer, and are deleted from the website. Our tips are sent from there, from our own email account, not through a mailing-list company.</li>
+            <li>We send about one email a month. Each one has an unsubscribe link, and you can also reply &ldquo;STOP&rdquo;. We keep a note that you unsubscribed so that you are never added again by mistake.</li>
+            <li>Our tips emails contain nothing that tracks whether you open them or what you click.</li>
+            <li>So that one computer cannot sign up a flood of addresses, we keep a scrambled code made from your internet address for an hour; the address itself is not kept.</li>
+          </ul>
+
           <h2>How we use your information</h2>
           <ul>
             <li>To provide, manage and improve our IT support and services.</li>

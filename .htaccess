@@ -376,6 +376,12 @@ ErrorDocument 404 /404.html
 <FilesMatch "^(pcm-gethelp-lib\.php|pcm-gethelp-test\.php)$">
   Require all denied
 </FilesMatch>
+# Tips by email (10 Oct 2026): t1-signup.php stays served (the sign-up box, the confirm page, Techies One Mail's
+# collection). Its store holds names and emails until the app collects them; the rate file holds hashed visitors.
+# Neither, nor the library or the CLI test, is ever a URL. (The store's .lock and .tmp companions too.)
+<FilesMatch "^(t1-signup-(lib|test)\.php|t1-signups\.json(\..*)?|t1-signup-rate\.json(\..*)?)$">
+  Require all denied
+</FilesMatch>
 # The GoCardless webhook endpoint secret. gocardless-webhook.php itself MUST stay
 # served - it is the URL GoCardless posts to - and it trusts nothing without this.
 <Files "gocardless-webhook-secret.php">

@@ -151,6 +151,9 @@ _VOLATILE = [
     # sea-today bakes the feed into it at build time with its own "as read at" stamp. Live data, not page copy: it
     # re-dated sea-today on every build, so sessions restored the page and content_dates.json drifted from it.
     (_cdre.compile(r'<!--ssr:([\w-]+)-->.*?<!--/ssr:\1-->', _cdre.S), r'<!--ssr:\1--><!--/ssr:\1-->'),
+    # 10 Oct 2026: the tips-by-email sign-up box under every advice article (tips_by_email.BOX) is a site-wide sign-up,
+    # not the article's content - adding it, or rewording it, must not re-date ~95 articles. An ADDITION, so no re-base.
+    (_cdre.compile(r'\s*<!--tbe-->.*?<!--/tbe-->', _cdre.S), ''),
     (_cdre.compile(r'\?v=[\w.\-]+'), '?v=X'),
     (_cdre.compile(r'checked on \d{1,2} \w+ \d{4}', _cdre.I), 'checked on X'),
     (_cdre.compile(r'Dates checked: \d{1,2} \w+ \d{4}', _cdre.I), 'Dates checked: X'),
