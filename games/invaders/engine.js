@@ -766,7 +766,7 @@
       var both = B.L.hp <= 0 && B.R.hp <= 0;
       W.events.push({ sfx: 'bosspart', x: gx }); W.events.push({ say: both ? 'Both guns gone - hit the core!' : 'A gun blown off!' });
       fx(W, { k: 'bosspart', part: part, x: gx, y: B.y + B.h / 2 });
-      if (both) { B.phase = 2; B.miniT = W.sp.bossMinis[0] ? 90 : 9e9; fx(W, { k: 'coreopen', x: B.x + B.w / 2, y: B.y + B.h / 2 }); }
+      if (both) { B.phase = 2; B.miniT = W.sp.bossMinis[0] ? 90 : 9e9; B.rayT = Math.min(B.rayT == null ? 9e9 : B.rayT, 240); fx(W, { k: 'coreopen', x: B.x + B.w / 2, y: B.y + B.h / 2 }); }   // (the core open: its beam comes soon after)
     }
     if (part === 'C' && B.phase === 2 && B.C.hp <= B.C.max * 0.4) {
       B.phase = 3; if (B.miniT > W.sp.bossMinis[1]) B.miniT = 60; W.events.push('bossrage'); W.events.push({ say: 'The Mothership is angry!' }); fx(W, { k: 'rage', x: B.x + B.w / 2, y: B.y + B.h / 2 });
@@ -816,8 +816,10 @@
       if (B.x + B.w > RIGHT) { B.x = RIGHT - B.w; B.dir = -1; }
       // the beam: with the core open (the Dreadnought: always), now and then - never while it's mid-move
       if (!B.mv && (B.phase >= 2 || B.tier === 2) && (B.rayT -= f) <= 0 && W.intro === 0) {
-        B.ray = { st: 'charge', t: 0, n: 75, dir: P.x + 6.5 > B.x + B.w / 2 ? 1 : -1 };
-        B.rayT = Math.round((B.phase === 3 ? 420 : B.phase === 2 ? 600 : 820) * (0.85 + W.rng() * 0.3));
+        // it sweeps towards you only when you have room to run ahead of it - never into a corner
+        var pc = P.x + 6.5, toward = pc > B.x + B.w / 2 ? 1 : -1, room = toward > 0 ? RIGHT - pc : pc - LEFT;
+        B.ray = { st: 'charge', t: 0, n: 75, dir: room >= 84 ? toward : -toward };
+        B.rayT = Math.round((B.phase === 3 ? 420 : B.phase === 2 ? 600 : 820) * (B.tier === 2 ? 1 : 1.2) * (0.85 + W.rng() * 0.3));   // (the Mothership: a little less often)
         W.events.push({ sfx: 'raycharge', x: B.x + B.w / 2 }); fx(W, { k: 'raycharge', x: B.x + B.w / 2, y: B.y + B.h });
       }
     }
@@ -878,7 +880,7 @@
       if (R.t >= R.n) { R.st = 'fire'; R.t = 0; R.n = 120; W.events.push({ sfx: 'ray', x: B.x + B.w / 2 }); fx(W, { k: 'rayfire', x: B.x + B.w / 2, y: B.y + B.h }); }
       return;
     }
-    B.x += R.dir * 0.95 * f;   // the sweep: across, towards where you were
+    B.x += R.dir * 0.6 * f;   // the sweep: slower than your ship, so it can always be outrun
     if (B.x < LEFT) { B.x = LEFT; R.dir = 1; }
     if (B.x + B.w > RIGHT) { B.x = RIGHT - B.w; R.dir = -1; }
     var rx = B.x + B.w / 2;

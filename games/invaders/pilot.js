@@ -71,7 +71,7 @@
       if (Ry && rnd() >= blind * 0.5) {
         var tStart = Ry.st === 'charge' ? (Ry.n - Ry.t) / f : 0, left = Ry.st === 'charge' ? 120 : Ry.n - Ry.t, bx0 = Bo0.x + Bo0.w / 2;
         for (var kk = 0; kk <= left; kk += 8) {
-          var rxk = Math.max(LO, Math.min(HI + 6, bx0 + Ry.dir * 0.95 * kk));
+          var rxk = Math.max(LO, Math.min(HI + 6, bx0 + Ry.dir * 0.6 * kk));
           arrivalHazard(rxk - 9, 18, tStart + kk / f - 6, tStart + (kk + 12) / f, 600);
         }
       }

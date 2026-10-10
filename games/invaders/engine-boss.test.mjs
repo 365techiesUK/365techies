@@ -135,3 +135,12 @@ test('after its beam the core vents: it holds its fire, and a hit on it counts d
   W.shots.push({ x: B.x + B.w / 2, y: B.y + B.h + 2, dx: 0, vy: 4, spread: false }); for (let i = 0; i < 4; i++) { E.step(W, idle); W.events.length = 0; }
   assert.equal(W.boss.C.hp, hp - 2, 'double damage');
 });
+
+test('with both guns shot off in play, the Mothership gets its beam (soon)', () => {
+  const W = E.newWorld(2, 21, 'enh'); toBoss(W, 5); noFire(W); W.boss.escT = 1e9; W.player.x = 4;
+  const B = W.boss; B.L.hp = 1; B.R.hp = 1;
+  for (const gx of [B.x + 8, B.x + 40]) { W.shots.push({ x: gx, y: B.y + B.h + 2, dx: 0, vy: 4, spread: false }); for (let i = 0; i < 6; i++) { B.mv = null; B.mvT = 1e9; E.step(W, idle); W.events.length = 0; } }
+  assert.equal(B.phase, 2, 'core open');
+  let saw = false; for (let i = 0; i < 400 && !saw; i++) { B.mv = null; B.mvT = 1e9; E.step(W, idle); W.events.length = 0; if (B.ray) saw = true; }
+  assert.ok(saw, 'its beam came');
+});
