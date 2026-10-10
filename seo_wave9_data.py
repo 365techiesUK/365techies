@@ -1146,9 +1146,7 @@ SEO_WAVE9_PAGES = [
   'serviceName': 'Email Setup and Support',
   'sections': [{'eyebrow': '/01 &mdash; WHY THE NEW OUTLOOK STRUGGLES',
                 'h2': 'A different program that adds accounts a different way',
-                'html': '<p>The new Outlook is not an update to the old one. It is a separate '
-                        'program, built from the web version, and it adds accounts through '
-                        'Microsoft&rsquo;s own service rather than directly from your PC. For a '
+                'html': '<p>The new Outlook is not an update to the old one. It is a separate program that sets up accounts in its own way; for Gmail and Yahoo, Microsoft says it syncs a copy of the mail through its own data centres.' ' For a '
                         'Microsoft or Google address that is seamless. For an address from a '
                         'broadband provider it has to guess the settings, and the guess is often '
                         'wrong: it picks the old POP method instead of IMAP, tries a port the '
@@ -1229,11 +1227,7 @@ SEO_WAVE9_PAGES = [
                         'refuses, check them against Virgin&rsquo;s own email settings page rather '
                         'than a forum post &mdash; and if anything on this page ever disagrees with '
                         'Virgin&rsquo;s, Virgin is right.</p><p>Once it connects, the folders fill '
-                        'over a few minutes. One thing worth knowing: the new Outlook works by '
-                        'copying an IMAP mailbox through Microsoft&rsquo;s servers, which is what '
-                        'lets it show your mail anywhere. If you would rather your Virgin mail did '
-                        'not pass through Microsoft at all, the classic Outlook in section 05 '
-                        'connects directly.</p>'},
+                        'over a few minutes. One thing worth knowing: Microsoft says the new Outlook syncs a copy of Gmail and Yahoo mail through its data centres, but has not said clearly how IMAP accounts such as Virgin are handled.' ' If you want to be sure your Virgin mail does not pass through Microsoft, the classic Outlook in section 05 connects directly.' '</p>'},
                {'eyebrow': '/05 &mdash; THE FALLBACK',
                 'h2': 'Classic Outlook still works, and it is one toggle away',
                 'html': '<p>If the new Outlook will not take the account however carefully the settings are entered &mdash; it happens, and it is not you &mdash; switch back. The toggle at the top-right of the new Outlook returns you to classic Outlook, which adds provider accounts the way it always has and is still supported. Add the Virgin account there with the same manual IMAP settings and the same app password; classic Outlook needs it too. We have a separate guide to the switch, including what to do if the toggle has gone missing.</p><p>Two other things that often unstick a stubborn account. If it added but shows nothing, remove it and add it again from scratch rather than editing; the new Outlook hides half of an account&rsquo;s settings and editing rarely reaches the wrong one. And if the account adds but cannot send, the outgoing server is the likely culprit: port 465, SSL, and sign-in required with the app password, exactly as Virgin states.</p><p>If you would rather not spend an evening on it, this is a fifteen-minute job for us over a remote session, while you watch and keep the password to yourself.</p>'},

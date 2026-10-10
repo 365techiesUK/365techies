@@ -141,7 +141,8 @@ SNIPPETS = {
         "desc": "Cannot start Microsoft Outlook, cannot open the Outlook window? Run outlook.exe /resetnavpane to rebuild the corrupt profile file. Full fix order here.",
     },
     "new-outlook-not-syncing": {
-        "desc": "New Outlook not syncing or stuck on old mail? It only holds what it has downloaded. Widen Days of email to save, then reset the account in this order.",
+        "title": "New Outlook Not Syncing Emails Automatically? How to Fix",
+        "desc": "New Outlook not syncing emails automatically? Press F9 to force a sync now, reset the offline setting, then check the account is still connected.",
     },
     "new-outlook-no-send-receive-button": {
         "desc": "There is no Send/Receive button in new Outlook, by design. What replaced it, how to force a sync now, and what to do when mail still will not arrive.",
@@ -900,6 +901,11 @@ SNIPPETS = {
     "meet-the-team": {
         "desc": "Meet the team behind 365 Techies, a family-run IT support business in Bournemouth looking after Dorset homes and businesses with patience since 1995.",
     },
+    # 10 Oct 2026: the Techies One Mail product page (techies_one_page.py) - its title/desc are also its llms.txt line
+    "techies-one-mail": {
+        "title": "Techies One Mail | Free Replacement for Windows Mail",
+        "desc": "Techies One Mail: a free email program for Windows 10 and 11 that replaces Windows Mail and Outlook Express. BT, Sky and Gmail ready, with scam warnings.",
+    },
     "free-pc-health-check": {
         "desc": "365 PC Manager: the must-have free PC health check for Windows 10 and 11. It checks your network, programs, updates and backup. No fake errors or scares.",
     },
@@ -1072,6 +1078,37 @@ SNIPPETS = {
     },
     "computer-fault-checker": {
         "desc": "Computer playing up? Pick what's wrong and our free checker shows the likely cause, whether it's worth repairing, and the easiest next step.",
+    },
+    # 10 Oct 2026: email-page snippets from the fan-out review, each checked by a sceptic against the page body and GSC (seo-research/email-pages-seo-2026-10-10/check.json)
+    "outlook-stuck-in-outbox": {
+        "desc": "Outlook email stuck in the Outbox? Usually one attachment over about 25MB is jamming the queue. Go offline, move it to Drafts and send a link instead.",
+    },
+    "emails-on-computer-but-not-phone": {
+        "desc": "Emails on your computer but not your phone? Usually the computer is using POP and taking mail off the server first, or the phone missed a password change.",
+    },
+    "outlook-add-in-not-loading": {
+        "desc": "Outlook add-in not loading, missing from the ribbon or disabled? Re-tick it in COM Add-ins, enable it from Disabled Items, then set it to Always enable.",
+    },
+    "new-outlook-only-showing-recent-emails": {
+        "desc": "New Outlook only showing recent emails, not old ones? It keeps at most 180 days on your PC, but the rest is almost certainly safe on the server.",
+    },
+    "outlook-rules-not-working-new-outlook": {
+        "desc": "Outlook rules not working in the new Outlook? Client-only rules from classic Outlook do not carry over. Recreate them in Settings and switch them on.",
+    },
+    "outlook-out-of-office-not-working": {
+        "desc": "Outlook Automatic Replies greyed out? It usually means a POP or IMAP account, which has no Out of Office button. How to check, and what works instead.",
+    },
+    "new-outlook-emails-stuck-in-drafts": {
+        "desc": "New Outlook has no Outbox for many accounts, so an email that fails to send slips back into Drafts. Nothing is lost: check Sent, then press Send again.",
+    },
+    "outlook-not-showing-new-emails": {
+        "desc": "Outlook not showing new emails but says this folder is up to date? Press F9, turn off Work Offline and reset the view, then rebuild the OST.",
+    },
+    "outlook-working-offline-wont-turn-off": {
+        "desc": "Outlook stuck on Working Offline? Click Work Offline on the Send / Receive tab so it un-highlights. Greyed out? Try Safe Mode, then repair the account.",
+    },
+    "take-over-email-domain-after-buying-business": {
+        "desc": "Bought a small business? Secure the domain first, because it controls the email. What to ask the seller for, and what to do when nobody has the logins.",
     },
 }
 

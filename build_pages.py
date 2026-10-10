@@ -393,6 +393,7 @@ NAV_MENUS = [
         ("Home IT Support", "/home-it-support-subscriptions/"),
         ("Home Support Plans", "/home-it-support-plans/"),
         ("365 PC Manager &mdash; free app", "/free-pc-health-check/"),
+        ("Techies One Mail &mdash; free email app", "/techies-one-mail/"),   # 10 Oct 2026
         ("Help for Seniors", "/computer-help-for-seniors/"),
         ("Families", "/family-it-support/"),
         ("Home Workers", "/it-support-for-home-workers/"),
@@ -472,6 +473,7 @@ NAV_MENUS = [
             ("Spot the Scam Quiz", "/spot-the-scam/"),
             ("Free Online Safety Course", "/online-safety-course/"),
         ]), ("Email", [
+            ("Techies One Mail &mdash; free email app", "/techies-one-mail/"),   # 10 Oct 2026
             ("Free Virgin Email Mover", "/virgin-email-mover/"),
         ]), ("On the road", [
             ("UK Fuel Prices", "/fuel-prices/"),   # 4 Oct 2026, owner: "go public"
@@ -820,6 +822,7 @@ FOOTER = '''  <footer class="site-footer">
         <a href="/free-courses/">Free Courses</a>
         <a href="/free-tools/">All Free Tools &#8594;</a>
         <a href="/free-pc-health-check/">365 PC Manager &mdash; free app</a>
+        <a href="/techies-one-mail/">Techies One Mail &mdash; free email app</a>
         <a href="/games/">Free Games &mdash; no adverts</a>
         <a href="/online-safety-course/">Free Online Safety Course</a>
         <a href="/broadband-speed-checker/">Broadband Speed Test</a>

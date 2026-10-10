@@ -44,7 +44,7 @@ PAGES = {
         "Our free Techies One Mail for Windows PCs has Plusnet&rsquo;s settings built in, and if you move to Gmail it can "
         "copy your Plusnet email across too.",
         "It reads your email from Plusnet&rsquo;s server (IMAP), not POP. Older force9 and free-online addresses may need "
-        "their settings typing in. If a Plusnet mailbox closes or lapses, no program can reach it, so copy what you want "
+        "their settings typed in. If a Plusnet mailbox closes or lapses, no program can reach it, so copy what you want "
         "to keep first."),
     "move-plusnet-email-to-gmail": (FIX, "Copy your Plusnet email to Gmail yourself, free",
         "On a Windows PC, our free Techies One Mail can copy all your Plusnet email into Gmail, folder by folder, and it "
@@ -77,9 +77,9 @@ PAGES = {
 
 POINTS = [
     "Free, from 365 Techies, the family IT firm that wrote this guide",
-    "Signed by 365 Techies Ltd, and it keeps itself up to date",
+    "Signed by 365 Techies Ltd, and it tells you when there&rsquo;s an update",
     "Big, clear buttons, and warnings about scam emails",
-    "Your email and passwords stay on your PC: we never see them",
+    "Your email goes straight between your PC and your provider: we never see it or your passwords",
 ]
 
 STYLE = """      <style>
@@ -91,6 +91,7 @@ STYLE = """      <style>
         .t1m__pts li{display:flex;gap:.5rem;align-items:flex-start;line-height:1.45}
         .t1m__pts li::before{content:"\\2713";color:var(--pgood,#00ce1b);font-weight:700;flex:0 0 auto}
         .t1m__note{color:var(--muted);font-size:.95rem;line-height:1.5}
+        .t1m p a:not([class]){color:var(--cyan);text-decoration:underline;text-underline-offset:2px}
         .t1m__cta{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.2rem}
         .t1m__cta .button{flex:1 1 15rem;text-align:center}
         .t1m__small{color:var(--faint,var(--muted));font-size:.72rem;letter-spacing:.04em}
@@ -98,16 +99,30 @@ STYLE = """      <style>
 """
 
 
-def latest():
-    """The newest signed release (downloads/t1/version.json): (url, version, size in MB), or None."""
+def release():
+    """The newest signed release, for the boxes AND the product page (techies_one_page.py), so they can never disagree:
+    {url, path, ver, size, mb, sha256, notes}, or None if downloads/t1/version.json is unreadable, points elsewhere, or
+    its installer is not in the site."""
     try:
         with open(os.path.join(bp.BASE, "downloads", "t1", "version.json"), encoding="utf-8") as f:
             v = json.load(f)
-        if re.fullmatch(r"https://365techies\.co\.uk/downloads/t1/TechiesOneMail-Setup-[0-9.]+\.exe", v.get("url", "")):
-            return v["url"], v["ver"], max(1, round(int(v.get("size") or 0) / 1_000_000))
+        url = v.get("url", "")
+        if not re.fullmatch(r"https://365techies\.co\.uk/downloads/t1/TechiesOneMail-Setup-[0-9.]+\.exe", url):
+            return None
+        path = url.replace("https://365techies.co.uk", "")
+        if not os.path.isfile(os.path.join(bp.BASE, path.lstrip("/").replace("/", os.sep))):
+            return None
+        size = int(v.get("size") or 0)
+        return {"url": url, "path": path, "ver": v["ver"], "size": size, "mb": max(1, round(size / 1_048_576)),
+                "sha256": v.get("sha256", ""), "notes": v.get("notes", "")}
     except (OSError, ValueError, KeyError):
-        pass
-    return None
+        return None
+
+
+def latest():
+    """(url, version, size in MB) of the newest release, or None - what the boxes print."""
+    r = release()
+    return (r["url"], r["ver"], r["mb"]) if r else None
 
 
 def box(slug):
@@ -126,7 +141,7 @@ def box(slug):
           <h2>{heading}</h2>
           <p class="t1m__lede">{lede}</p>
           <ul class="t1m__pts">{points}</ul>
-          <p class="t1m__note">{note}</p>
+          <p class="t1m__note">{note} <a href="/techies-one-mail/">See what it does, with pictures</a>.</p>
           <p class="t1m__cta"><a class="button primary button--lg" href="{path}">Download Techies One Mail, free</a><a class="button secondary button--lg" href="tel:+441202775566">Rather we set it up? 01202 775566</a></p>
           <p class="t1m__small mono">FOR WINDOWS 10 AND 11 PCs<span class="t1v"> &middot; VERSION {ver} &middot; {mb} MB</span> &middot; NOT FOR MAC, IPHONE OR ANDROID</p>
         </div>
@@ -159,3 +174,87 @@ def insert(slug, html):
 
 
 bp.PAGE_FILTERS.append(insert)
+
+
+# ---- One-line mentions (10 Oct 2026): pages where Techies One Mail is an honest alternative but a full box would be too
+# much. The sentences come from the 10 Oct email-pages review (D:\claude\seo-research\email-pages-seo-2026-10-10,
+# proposals + a sceptic's check); [square brackets] mark the link text to the product page. Same placement rule as the
+# box: straight after "Fix it with me", or just before the FAQ on pages without one. Same exclusions too (Virgin,
+# Microsoft 365 admin/business, scam emergencies, phones/Mac, /new-outlook-blank-screen/).
+MENTIONS = {
+    # 10 Oct 2026: one honest line linking to /techies-one-mail/, only on email pages where a sceptic agreed it
+    # helps the reader (seo-research/email-pages-seo-2026-10-10/check.json). [brackets] become the link.
+    "email-support":
+        "Find Outlook hard work? Our free [Techies One Mail] is a simpler email program for Windows PCs, with the settings for BT, Sky, Plusnet, Gmail and Outlook.com built in.",
+    "outlook-not-syncing":
+        "Rather stop using Outlook altogether? Our free [Techies One Mail] is a simpler email program for Windows PCs that shows the email kept with your provider, the same as webmail. It does not repair Outlook.",
+    "outlook-problems":
+        "Had enough of Outlook altogether? Our free [Techies One Mail] is a simpler email program for Windows PCs, with a big-text view and the settings for BT, Sky, Plusnet and Gmail built in. It does not repair Outlook or open .pst files.",
+    "outlook-search-greyed-out":
+        "Fed up with Outlook&rsquo;s search? Our free [Techies One Mail] for Windows PCs searches the email your provider keeps for you, a folder at a time and older emails included, but not mail kept only in a .pst file.",
+    "outlook-modern-authentication-not-working":
+        "Got a Hotmail or Outlook.com address and an older Outlook that can&rsquo;t sign in the modern way? Our free [Techies One Mail] for Windows PCs signs in on Microsoft&rsquo;s own page; for now that page lists us as an unverified publisher.",
+    "outlook-search-not-finding-old-emails":
+        "Use Outlook.com or Hotmail at home and fancy a simpler program? Our free [Techies One Mail] for Windows PCs searches the email kept with your provider a folder at a time, old emails included, though not old Outlook .pst archive files.",
+    "outlook-stuck-in-sign-in-loop":
+        "Rather not fight the new Outlook at all? Our free [Techies One Mail] is a simpler email program for Windows PCs that works with BT, Sky, Gmail, Hotmail and more.",
+    "how-to-stop-spam-emails":
+        "On a Windows PC? Our free [Techies One Mail] can block senders, unsubscribe safely from genuine mailing lists and warn about likely scam emails while it&rsquo;s open on your screen, though it can&rsquo;t stop junk being sent to you.",
+    "outlook-cannot-open-the-outlook-window":
+        "Outlook still won&rsquo;t open? Our free [Techies One Mail] is a separate, simpler email program for Windows PCs that can show the email kept with your provider, though it won&rsquo;t repair Outlook or open its .pst files.",
+    "outlook-opens-then-closes":
+        "Outlook keeps closing on you? Our free [Techies One Mail] is a separate, simpler email program for Windows PCs that can show the email kept with your provider, though it won&rsquo;t repair Outlook or open its .pst files.",
+    "outlook-search-not-returning-all-results":
+        "Happy to leave Outlook on a home PC? Our free [Techies One Mail], a simpler email program for Windows, searches the email kept with your provider a folder at a time, old email included, though it won&rsquo;t fix Outlook&rsquo;s own search or search .pst archives.",
+    "outlook-stuck-on-loading-profile":
+        "Outlook still stuck on Loading Profile? Our free [Techies One Mail] is a separate, simpler email program for Windows PCs that can show the email kept with your provider, though it won&rsquo;t repair Outlook or open its .pst files.",
+    "outlook-not-responding":
+        "If you are fed up with Outlook freezing and don&rsquo;t need its add-ins, our free [Techies One Mail] is a simpler email program for Windows PCs that reads the email kept with your provider, though it won&rsquo;t repair Outlook.",
+    "outlook-rules-not-working-new-outlook":
+        "If your address is Gmail or Yahoo, where Microsoft says the new Outlook doesn&rsquo;t support rules yet, our free [Techies One Mail] for Windows PCs can still sort email from a person into a folder while it is open.",
+    "outlook-wont-open-after-update":
+        "If Outlook still won&rsquo;t open and you only need your email, not add-ins or accounts software, our free [Techies One Mail] is a simpler email program for Windows PCs that reads your email straight from your provider, though it won&rsquo;t repair Outlook.",
+    "how-to-go-back-to-classic-outlook":
+        "No classic Outlook on your PC to go back to? Our free [Techies One Mail] is a simpler email program for Windows PCs.",
+    "new-outlook-search-not-working":
+        "Rather not fight the new Outlook&rsquo;s sync window? Our free [Techies One Mail] for Windows PCs searches the email kept with your provider a folder at a time, older messages included.",
+    "outlook-not-sending-emails":
+        "Using BT, Sky or Plusnet email on a Windows PC and tired of fiddling with sending settings? Our free [Techies One Mail] has them built in.",
+    "outlook-wont-open-in-safe-mode":
+        "Need your email while Outlook won&rsquo;t open? If it is kept online, our free [Techies One Mail] for Windows PCs can show it, though it does not repair Outlook.",
+    "new-outlook-wont-open":
+        "If the new Outlook still won&rsquo;t open, our free [Techies One Mail] is a simpler email program for Windows PCs that shows the email kept with your provider, though it does not repair Outlook.",
+    "outlook-not-showing-new-emails":
+        "If webmail shows your emails but Outlook still won&rsquo;t, our free [Techies One Mail] for Windows PCs shows the same emails kept with your provider, though it does not repair Outlook.",
+    "outlook-working-offline-wont-turn-off":
+        "If Outlook is still stuck offline after these steps, our free [Techies One Mail] is a simpler email program for Windows PCs that reads the emails kept with your provider, though it does not repair Outlook.",
+}
+
+
+def mention(slug):
+    s = MENTIONS[slug]
+    s = s.replace("[", '<a href="/techies-one-mail/" style="color:var(--cyan);text-decoration:underline;'
+                      'text-underline-offset:2px">', 1).replace("]", "</a>", 1)
+    return f"""    <section class="section t1mention" aria-label="Another way: Techies One Mail">
+      <div class="wrap" style="max-width:880px">
+        <p style="margin:0;padding:.9rem 1.1rem;border-left:3px solid var(--cyan-soft,#6cc4f5);background:rgba(125,170,220,.06);border-radius:0 10px 10px 0;line-height:1.6">{s}</p>
+      </div>
+    </section>
+"""
+
+
+def insert_mention(slug, html):
+    if slug not in MENTIONS or slug in PAGES or 'class="section t1mention"' in html:
+        return html
+    i = html.find('<section class="section" aria-label="Fix it with me" id="fixflow"')
+    if i >= 0:
+        end = _section_end(html, i)
+    else:
+        j = html.find('<section class="faq-section')
+        end = j if j >= 0 else -1
+    if end < 0:
+        raise SystemExit("techies_one_boxes: nowhere to put the Techies One mention on /%s/" % slug)
+    return html[:end] + "\n" + mention(slug) + html[end:]
+
+
+bp.PAGE_FILTERS.append(insert_mention)
