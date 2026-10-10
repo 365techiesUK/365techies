@@ -34,6 +34,8 @@ foreach (array(array('xyz', '0.13.0'), array('', '0.13.0'), array($ID, 'abc'), a
     check(t1i_note($bad[0], $bad[1], '', array(), '8.8.8.8', $T) === '', 'refused: id "' . substr($bad[0], 0, 8) . '", version "' . $bad[1] . '"');
 check(t1i_windows('10.0.22000') === '11' && t1i_windows('10.0.19045') === '10' && t1i_windows('6.1.7601') === '' && t1i_windows('') === '', 'Windows 10 or 11 from the build number');
 $lk = fopen($F . '.lock', 'c'); flock($lk, LOCK_EX);
+check(t1i_note(str_repeat('0', 32), '0.13.1', 'test', array(), '8.8.8.8', $T) === '', 'the all-zero test number is refused');
+check(t1i_stats(array('m' => array(t1i_test_key() => array('v' => '0.13.1', 'f' => '2026-10-10', 'l' => '2026-10-10'))), $T)['total'] === 0, 'the old test check-in is never counted');
 check(t1i_note(str_repeat('cd34', 8), '0.13.0', '', array(), '8.8.8.8', $T) === 'busy', 'another write under way: skipped, not blocked');
 flock($lk, LOCK_UN); fclose($lk);
 file_put_contents($F . '.bad', 'x');

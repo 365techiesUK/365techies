@@ -49,6 +49,7 @@ function t1i_vcmp($a, $b) { return version_compare((string)$a, (string)$b); }
 function t1i_note($id, $ver, $win, $providers, $ip, $now = null) {
     $id = preg_replace('/[^a-f0-9]/', '', strtolower((string)$id));
     if (strlen($id) < 16 || strlen($id) > 64) return '';
+    if (trim($id, '0') === '') return '';   // the all-zero test number, never a real install
     $ver = t1i_clean_version($ver);
     if ($ver === '') return '';
     $now = $now === null ? time() : (int)$now;
@@ -86,6 +87,7 @@ function t1i_note($id, $ver, $win, $providers, $ip, $now = null) {
             $d['m'][$key] = array_merge($row, array('f' => $day, 'l' => $day, 'c' => geo_cc($ip), 'n' => 1));
             $what = 'new';
         }
+        unset($d['m'][t1i_test_key()]);   // the one test check-in sent before test numbers were refused (10 Oct 2026)
         $cut = gmdate('Y-m-d', $now - 365 * 86400);   // an install not seen for a year is gone for good
         foreach ($d['m'] as $k => $e) if ((string)($e['l'] ?? '') < $cut) unset($d['m'][$k]);
         $tmp = $file . '.' . getmypid() . '.tmp';
@@ -97,6 +99,9 @@ function t1i_note($id, $ver, $win, $providers, $ip, $now = null) {
     }
     return $what;
 }
+
+// The store key of the all-zero test number Claude sent on 10 Oct 2026 checking the live update offer: never counted.
+function t1i_test_key() { return substr(sha1('t1inst|' . str_repeat('0', 32)), 0, 16); }
 
 /* The newest release, for the app's updater: downloads/t1/version.json {ver, url, sha256, size, notes}. Only a complete,
    sane entry on our own downloads folder is offered (the app checks the file's fingerprint and our signature again). */
@@ -124,8 +129,8 @@ function t1i_stats(array $d, $now = null) {
         'ours' => 0, 'w10' => 0, 'w11' => 0, 'countries' => array(), 'versions' => array(), 'providers' => array(), 'daily' => array());
     $cc = array(); $vv = array(); $pp = array(); $daily = array();
     for ($i = 29; $i >= 0; $i--) $daily[gmdate('Y-m-d', $now - $i * 86400)] = 0;
-    foreach ((isset($d['m']) && is_array($d['m'])) ? $d['m'] : array() as $e) {
-        if (!is_array($e)) continue;
+    foreach ((isset($d['m']) && is_array($d['m'])) ? $d['m'] : array() as $k => $e) {
+        if (!is_array($e) || $k === t1i_test_key()) continue;
         if (!empty($e['o'])) { $out['ours']++; continue; }
         $f = (string)($e['f'] ?? ''); $l = (string)($e['l'] ?? '');
         $out['total']++;
