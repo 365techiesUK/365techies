@@ -1048,6 +1048,65 @@ Stuck? 365 Techies email support: 01202 775566 - https://365techies.co.uk/email-
         </div>
       </div>
     </section>
+<!--tbe-->
+    <section class="section tbe" aria-label="Tips by email" id="tips">
+      <div class="wrap" style="max-width:680px">
+        <form id="tbe-form" novalidate style="max-width:540px;margin:0 auto;display:flex;flex-direction:column;gap:.7rem;background:rgba(125,170,220,.05);border:1px solid rgba(125,170,220,.22);border-radius:16px;padding:1.4rem">
+          <p class="mono" style="margin:0;color:var(--muted);font-size:.7rem;letter-spacing:.07em">// FREE &middot; TIPS BY EMAIL</p>
+          <h2 style="margin:0;font-size:1.35rem;line-height:1.25">Get our tips by email</h2>
+          <p style="margin:0;color:var(--muted)">About once a month: scams doing the rounds locally, simple fixes for everyday computer problems, and news and offers from us. Plain English, from the same family-run team since 1995.</p>
+          <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
+          <label for="tbe-name" class="mono" style="font-size:.68rem;letter-spacing:.06em;color:var(--muted)">YOUR FIRST NAME (OPTIONAL)</label>
+          <input id="tbe-name" type="text" autocomplete="given-name" maxlength="80" style="width:100%;padding:.75rem .9rem;border-radius:10px;border:1px solid rgba(125,170,220,.32);background:rgba(10,20,40,.5);color:inherit;font:inherit;box-sizing:border-box" />
+          <label for="tbe-email" class="mono" style="font-size:.68rem;letter-spacing:.06em;color:var(--muted)">YOUR EMAIL ADDRESS</label>
+          <input id="tbe-email" type="email" required autocomplete="email" maxlength="160" placeholder="you@example.com" style="width:100%;padding:.75rem .9rem;border-radius:10px;border:1px solid rgba(125,170,220,.32);background:rgba(10,20,40,.5);color:inherit;font:inherit;box-sizing:border-box" />
+          <label for="tbe-agree" style="display:flex;gap:.6rem;align-items:flex-start;cursor:pointer;line-height:1.45;margin-top:.2rem">
+            <input id="tbe-agree" type="checkbox" style="flex:0 0 auto;width:1.25rem;height:1.25rem;margin:.12rem 0 0;accent-color:var(--cyan,#2bb3ff)" />
+            <span>Yes, please send me 365 Techies&rsquo; tips, news and offers by email, about once a month. I can unsubscribe at any time.</span>
+          </label>
+          <button type="submit" id="tbe-go" class="button primary button--lg" style="width:100%;margin-top:.3rem">Send me the tips &#8594;</button>
+          <p id="tbe-msg" role="status" aria-live="polite" style="margin:0;min-height:1em;font-size:.95rem;text-align:center"></p>
+          <p style="margin:0;text-align:center;color:var(--muted);font-size:.85rem">We email you first to check it&rsquo;s really you. Your details stay with 365 Techies, never sold or shared. <a href="/privacy-policy/#tips-by-email" style="color:var(--cyan-soft,#6cc4f5);text-decoration:underline">How we look after them</a>.</p>
+        </form>
+      </div>
+    </section>
+    <script>
+      (function () {
+        var f = document.getElementById('tbe-form'); if (!f) return;
+        f.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var em = document.getElementById('tbe-email'), nm = document.getElementById('tbe-name'), ag = document.getElementById('tbe-agree'),
+              btn = document.getElementById('tbe-go'), msg = document.getElementById('tbe-msg');
+          function say(t) { msg.textContent = t; msg.style.color = 'var(--pbad,#e8637e)'; }
+          var ev = (em.value || '').trim();
+          if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(ev)) { say('Please pop in your email address.'); em.focus(); return; }
+          if (!ag.checked) { say('Please tick the box to say yes.'); ag.focus(); return; }
+          btn.disabled = true; var lbl = btn.textContent; btn.textContent = 'Sending…'; msg.textContent = '';
+          fetch('/api/t1-signup.php', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: ev, name: (nm.value || '').trim(), agree: true, website: (f.website && f.website.value) || '', page: location.pathname }) })
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+              if (d && d.ok) {
+                var box = document.createElement('div'); box.setAttribute('role', 'status'); box.style.cssText = 'text-align:center;padding:.4rem 0';
+                var big = document.createElement('p'); big.style.cssText = 'font-size:1.2rem;font-weight:700;margin:0 0 .4rem;color:var(--pgood,#00ce1b)'; big.textContent = 'Nearly there! Please check your email.';
+                var p1 = document.createElement('p'); p1.style.margin = '0 0 .4rem'; p1.appendChild(document.createTextNode('We’ve sent an email to '));
+                var b = document.createElement('strong'); b.textContent = ev; p1.appendChild(b); p1.appendChild(document.createTextNode('. Open it and press the button to say yes.'));
+                var p2 = document.createElement('p'); p2.style.cssText = 'margin:0;color:var(--muted);font-size:.92rem'; p2.textContent = 'Not there in a few minutes? Have a look in your junk or spam folder. Nothing is sent until you press that button.';
+                box.appendChild(big); box.appendChild(p1); box.appendChild(p2); f.replaceChildren(box);
+                try { if (typeof gtag === 'function') gtag('event', 'tips_signup', { page: location.pathname }); } catch (_e) {}
+              } else {
+                btn.disabled = false; btn.textContent = lbl;
+                say(d && d.error === 'email' ? 'That email address doesn’t look quite right. Please check it.'
+                  : d && d.error === 'agree' ? 'Please tick the box to say yes.'
+                  : d && d.error === 'rate' ? 'One moment, please try again shortly.'
+                  : 'Sorry, that didn’t go through. Please try again, or call us on 01202 775566.');
+              }
+            })
+            .catch(function () { btn.disabled = false; btn.textContent = lbl; say('Couldn’t reach us just now. Please try again.'); });
+        });
+      })();
+    </script>
+<!--/tbe-->
     <section class="faq-section section--alt" id="faq" aria-label="Frequently asked questions">
       <div class="wrap">
         <p class="eyebrow eyebrow--center mono" data-reveal>// GOOD QUESTIONS</p>

@@ -2844,7 +2844,7 @@
  },
  "privacy-policy": {
   "first": "2026-07-28",
-  "h": "430f16780a3efc08",
+  "h": "a884a15c02fb0421",
   "last": "2026-10-10"
  },
  "pstn-switch-off-business": {
@@ -3281,6 +3281,10 @@
   "first": "2026-07-28",
   "h": "7a8855eed093eed0",
   "last": "2026-09-26"
+ },
+ "tips-by-email": {
+  "first": "2026-10-10",
+  "h": "c47f0199b64290ef"
  },
  "transfer-microsoft-365-when-owner-leaves": {
   "first": "2026-09-05",
