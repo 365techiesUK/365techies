@@ -20,6 +20,7 @@ import win10_esu_business   # commercial Windows 10 ESU: doubling + cumulative p
 import ccb_rebuild_case_study  # measured WordPress->static before/after (CCB rebuild)
 import beckox_rebuild_case_study  # NAMED manufacturer case study (permission 2026-08-13)
 import bournemouth_data     # Bournemouth365 section, page 1 of 5: Friday Fireworks (founding doc in seo-research)
+from ps5_emulator_post import PS5_EMULATOR_POST   # IT Advice post: PS5 emulators, real or fake (10 Oct 2026)
 import tips_by_email        # /tips-by-email/ + the sign-up box under every article (10 Oct 2026; double opt-in via api/t1-signup.php)
 import techies_one_boxes    # Techies One Mail box on the 9 email fix pages it genuinely helps (10 Oct 2026; a write_all page filter)
 import techies_one_page     # /techies-one-mail/ - the Techies One Mail product page (10 Oct 2026)
@@ -459,6 +460,7 @@ POSTS = [
    points=["Plug the monitor into your HDMI or USB-C port","Turn the monitor on and select the right input","Let Windows detect it automatically","Go to Settings, then System, then Display","Choose Extend these displays to use both screens","Drag the screen boxes to match your desk layout","Pick which screen is your main one"],
    related=[("New Computer Setup","/new-computer-setup/"),("Content Creator PCs","/content-creator-pcs/"),("Custom-Built PCs","/custom-pc-builds/"),("Computer Repairs","/computer-repairs/")],
    faqs=[("My second monitor is not detected &mdash; what now?","Check the cable is firmly in and the monitor is on the correct input, then in Display settings click Detect. A different cable or port often fixes it."),("Can I use a TV as a second screen?","Yes &mdash; most TVs work as a monitor over HDMI. They&rsquo;re great for bigger text, though a proper monitor is sharper up close."),("Which cable do I need?","Look at the ports on your computer and monitor &mdash; usually HDMI or USB-C. If you&rsquo;re unsure, tell us the make and model and we&rsquo;ll advise.")]),
+ PS5_EMULATOR_POST,   # 10 Oct 2026: fake PS5 emulator downloads (ps5_emulator_post.py)
 ]
 
 import datetime as _dt

@@ -1495,8 +1495,8 @@
  },
  "it-advice": {
   "first": "2026-07-28",
-  "h": "f0ebe739781284c1",
-  "last": "2026-10-03"
+  "h": "ae649e36bfa98612",
+  "last": "2026-10-10"
  },
  "it-health-check-tool": {
   "first": "2026-07-28",
@@ -2846,6 +2846,10 @@
   "first": "2026-07-28",
   "h": "d4dfd835d278ec17",
   "last": "2026-10-10"
+ },
+ "ps5-emulator-real-or-fake": {
+  "first": "2026-10-10",
+  "h": "86248e866ef22df1"
  },
  "pstn-switch-off-business": {
   "first": "2026-07-28",
